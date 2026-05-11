@@ -4,7 +4,7 @@
 
 meta:
   name: CRPTO
-  subtitle: Credit Risk + Predict-Then-Optimize
+  subtitle: Conformal Robust Predict-Then-Optimize
 
 color:
   palette:

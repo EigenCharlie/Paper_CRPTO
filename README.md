@@ -1,4 +1,4 @@
-# CRPTO — Credit Risk + Predict-Then-Optimize
+# CRPTO — Conformal Robust Predict-Then-Optimize
 
 Pipeline de investigación y libro Quarto que acompañan el paper **CRPTO**, una metodología que integra *conformal prediction* con *optimización robusta de carteras* aplicada a riesgo de crédito (datos de Lending Club, 2007–2020).
 

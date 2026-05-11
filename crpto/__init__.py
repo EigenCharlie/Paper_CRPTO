@@ -1,4 +1,9 @@
-"""CRPTO — Credit Risk + Predict-Then-Optimize.
+"""CRPTO — Conformal Robust Predict-Then-Optimize.
+
+The package is named after the paper's core thesis: combine conformal
+prediction with robust portfolio optimization. CRPTO is applied to credit
+risk (Lending Club data) but the acronym itself refers to the
+methodological pair, not to the domain.
 
 Public API for the standalone Paper_CRPTO research pipeline. This top-level
 ``crpto`` package re-exports the most useful entry points from the internal

@@ -1,5 +1,5 @@
 cff-version: 1.2.0
-title: "CRPTO: Credit Risk + Predict-Then-Optimize con conformal prediction"
+title: "CRPTO: Conformal Robust Predict-Then-Optimize aplicado a credit risk"
 message: "If you use this software or the accompanying paper, please cite the work below."
 type: software
 authors:

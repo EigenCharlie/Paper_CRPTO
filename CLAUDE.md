@@ -2,7 +2,7 @@
 
 ## Quién soy y qué es este proyecto
 
-Soy Carlos Vergara, científico de datos terminando un paper académico de tesis. **CRPTO** (Credit Risk + Predict-Then-Optimize) integra **conformal prediction** con **optimización robusta de carteras** sobre datos de Lending Club. Esta carpeta es una **copia curada paper-ready** extraída del proyecto padre `lending-club-risk-project`; la copia no debe re-correr el **pipeline de búsqueda** del champion sin permiso explícito.
+Soy Carlos Vergara, científico de datos terminando un paper académico de tesis. **CRPTO** (Conformal Robust Predict-Then-Optimize) aplica **conformal prediction** + **optimización robusta de carteras** al dominio de **credit risk** usando datos de Lending Club. Esta carpeta es una **copia curada paper-ready** extraída del proyecto padre `lending-club-risk-project`; la copia no debe re-correr el **pipeline de búsqueda** del champion sin permiso explícito.
 
 **Prefiero código simple y funcional. Sin sobre-ingeniería, sin abstracciones prematuras, sin refactors gratuitos.**
 
