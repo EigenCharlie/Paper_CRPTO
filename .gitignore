@@ -27,6 +27,13 @@ _freeze/
 reports/run_logs/*/
 !reports/run_logs/.gitkeep
 
+# Original secret-bearing source files dropped by the user — never commit.
+*_original
+**/*_original
+secrets.*
+!secrets.example
+**/.dvc_credentials*
+
 # Data (DVC tracked — do not commit to git, use DVC remote)
 data/raw/*
 data/processed/*

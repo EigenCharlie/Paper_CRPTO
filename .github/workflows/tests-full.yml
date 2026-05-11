@@ -1,0 +1,76 @@
+name: tests-full
+
+# Manually-triggered full test suite. Pulls champion artefacts from the
+# DagsHub DVC remote and runs the regression hash checks plus the slow
+# tests. NOT wired to push events — it would be too expensive (and add
+# zero value to a single-author academic project) to run on every commit.
+#
+# Trigger it from the GitHub UI (Actions tab → tests-full → Run workflow)
+# whenever you want to verify the champion is still bit-exact against the
+# DVC remote (e.g. before a paper submission, after a major refactor).
+#
+# Required repository secrets:
+# - DAGSHUB_USER_TOKEN
+# - DAGSHUB_USER
+# - DAGSHUB_REPO (= Lending-Club-End-to-End)
+
+on:
+  workflow_dispatch:
+
+concurrency:
+  group: tests-full-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  pytest-full:
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    env:
+      DAGSHUB_USER_TOKEN: ${{ secrets.DAGSHUB_USER_TOKEN }}
+      DAGSHUB_TOKEN: ${{ secrets.DAGSHUB_TOKEN }}
+      DAGSHUB_USER: ${{ secrets.DAGSHUB_USER }}
+      DAGSHUB_REPO: ${{ secrets.DAGSHUB_REPO }}
+      AWS_ACCESS_KEY_ID: ${{ secrets.DAGSHUB_TOKEN }}
+      AWS_SECRET_ACCESS_KEY: ${{ secrets.DAGSHUB_TOKEN }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install uv
+        uses: astral-sh/setup-uv@v7
+        with:
+          enable-cache: true
+
+      - name: Set up Python
+        run: uv python install 3.11
+
+      - name: Sync deps
+        run: uv sync --extra dev --extra search --frozen
+
+      - name: DVC pull (champion artefacts)
+        run: uv run dvc pull --no-run-cache 2>&1 | tail -20
+        continue-on-error: true
+
+      - name: Manifest regression (hash check vs frozen champion)
+        run: uv run pytest tests/test_manifest_regression.py -v
+
+      - name: Full author tests
+        run: |
+          uv run pytest \
+            tests/test_models/ \
+            tests/test_optimization/ \
+            tests/test_utils/ \
+            tests/test_features/ \
+            tests/test_crpto_final_sync.py \
+            tests/test_quarto_book_guardrails.py \
+            -q
+
+      - name: Upload coverage if generated
+        if: always()
+        uses: actions/upload-artifact@v7
+        with:
+          name: pytest-output
+          path: |
+            coverage.xml
+            .pytest_cache/
+          retention-days: 7
+          if-no-files-found: ignore
