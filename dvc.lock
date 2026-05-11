@@ -99,8 +99,8 @@ stages:
       size: 142993295
     - path: scripts/materialize_feature_artifacts.py
       hash: md5
-      md5: 0f681ebe8fceb1342a1e1ece0c9a7c6a
-      size: 3203
+      md5: 6197aa4b71d81ce723ba896a0409b8f3
+      size: 3722
     outs:
     - path: data/processed/calibration_fe.parquet
       hash: md5
