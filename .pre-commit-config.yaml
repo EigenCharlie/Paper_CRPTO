@@ -36,13 +36,8 @@ repos:
 
   - repo: local
     hooks:
-      - id: mypy
-        name: mypy (gradual)
-        entry: uv run mypy src scripts
-        language: system
-        types: [python]
-        pass_filenames: false
-        stages: [pre-push]
+      # mypy runs in CI (see .github/workflows/test.yml) with continue-on-error
+      # while the legacy codebase is gradually annotated. Not enforced locally.
 
       - id: dvc-status
         name: dvc status (drift detection)
