@@ -98,6 +98,65 @@ def _load_json(path: Path) -> Any:
         return {"_parse_error": str(err), "_path": str(path)}
 
 
+# Reverse map for the writer: namespace -> canonical filename. The first filename
+# of each ``_STATE_LAYOUT`` entry is the writer target so the loader can read it
+# back round-trip.
+_WRITE_TARGETS: dict[tuple[str, ...], str] = {ns: files[0] for ns, files in _STATE_LAYOUT.items()}
+
+
+def write_pipeline_state(
+    namespace: str | tuple[str, ...],
+    payload: dict[str, Any],
+    *,
+    repo_root: Path | str | None = None,
+    models_dir: str = "models",
+    merge: bool = False,
+) -> Path:
+    """Write a status JSON for ``namespace`` and return the path it landed on.
+
+    Use either a tuple (``("conformal", "policy")``) or the slash form
+    (``"conformal/policy"``). Unknown namespaces fall back to
+    ``models/<namespace>_status.json`` so callers don't have to declare ahead.
+
+    Args:
+        namespace: Identifier as it would appear in :func:`load_pipeline_state`.
+        payload: JSON-serialisable dict to persist.
+        repo_root: Defaults to the repository root inferred from this file.
+        models_dir: Sub-directory holding status JSONs.
+        merge: When True and the target file exists, deep-merges ``payload``
+            into the previous content (top-level keys). When False, overwrites.
+
+    Returns:
+        The :class:`pathlib.Path` the JSON was written to.
+    """
+    if isinstance(namespace, str):
+        parts = tuple(p for p in namespace.split("/") if p)
+    else:
+        parts = tuple(namespace)
+    if not parts:
+        raise ValueError("namespace must be a non-empty tuple or 'a/b' string.")
+
+    target_name = _WRITE_TARGETS.get(parts)
+    if target_name is None:
+        target_name = "_".join(parts) + "_status.json"
+
+    root = Path(repo_root) if repo_root else DEFAULT_REPO_ROOT
+    target_path = root / models_dir / target_name
+    target_path.parent.mkdir(parents=True, exist_ok=True)
+
+    if merge and target_path.is_file():
+        prev = _load_json(target_path)
+        if isinstance(prev, dict):
+            merged = {**prev, **payload}
+            payload = merged
+
+    target_path.write_text(
+        json.dumps(payload, indent=2, sort_keys=True, default=str) + "\n",
+        encoding="utf-8",
+    )
+    return target_path
+
+
 def load_pipeline_state(
     *,
     repo_root: Path | str | None = None,

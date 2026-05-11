@@ -20,19 +20,29 @@ MLflow tracking URI is configured (DagsHub by default — see ``.env.example``).
 from __future__ import annotations
 
 import hashlib
-from collections.abc import Callable, Mapping
+from collections.abc import Callable, Iterator, Mapping
 from contextlib import contextmanager
 from pathlib import Path
-from typing import Any, TypeVar
+from typing import Any, TypeVar, cast
 
 T = TypeVar("T", bound=Callable[..., Any])
 
+# We deliberately type ``mlflow`` as ``Any`` so the runtime fallback when the
+# package is missing does not confuse type-checkers. The presence flag below is
+# the single source of truth for code paths.
+mlflow: Any
+PandasDataset: Any
 try:  # pragma: no cover — exercised only when mlflow is installed.
-    import mlflow
-    from mlflow.data.pandas_dataset import PandasDataset
+    import mlflow as _mlflow
+    from mlflow.data.pandas_dataset import PandasDataset as _PandasDataset
+
+    mlflow = _mlflow
+    PandasDataset = _PandasDataset
+    _HAS_MLFLOW = True
 except ImportError:  # pragma: no cover
-    mlflow = None  # type: ignore[assignment]
-    PandasDataset = None  # type: ignore[assignment]
+    mlflow = None
+    PandasDataset = None
+    _HAS_MLFLOW = False
 
 
 # ---------------------------------------------------------------------------
@@ -60,7 +70,7 @@ def register_parquet_dataset(
     Returns the dataset object (or ``None`` if MLflow is not installed) so
     callers can attach it to ``mlflow.evaluate``.
     """
-    if mlflow is None or PandasDataset is None:
+    if not _HAS_MLFLOW:
         return None
     import pandas as pd  # local import keeps base deps light.
 
@@ -89,10 +99,11 @@ def trace(name: str | None = None) -> Callable[[T], T]:
     """Decorator that wraps a function in an ``mlflow.trace`` span when possible."""
 
     def decorator(fn: T) -> T:
-        if mlflow is None or not hasattr(mlflow, "trace"):
+        if not _HAS_MLFLOW or not hasattr(mlflow, "trace"):
             return fn
         try:  # pragma: no cover — depends on installed MLflow version.
-            return mlflow.trace(name=name or fn.__name__)(fn)  # type: ignore[attr-defined]
+            wrapped = mlflow.trace(name=name or fn.__name__)(fn)
+            return cast(T, wrapped)
         except Exception:
             return fn
 
@@ -118,7 +129,7 @@ def set_paper_tags(
     Falls back to ``mlflow.log_param`` when ``set_tag`` is not available
     (older client versions) and silently no-ops when MLflow is missing.
     """
-    if mlflow is None:
+    if not _HAS_MLFLOW:
         return
     tags: dict[str, Any] = {"paper.run_tag": run_tag}
     if section is not None:
@@ -148,12 +159,12 @@ def paper_run(
     policy: str | None = None,
     run_tag: str = PAPER_RUN_TAG,
     nested: bool = False,
-) -> Any:
+) -> Iterator[Any]:
     """Start an MLflow run with the CRPTO paper tag schema applied.
 
     Yields the active run (or ``None`` when MLflow is unavailable).
     """
-    if mlflow is None:
+    if not _HAS_MLFLOW:
         yield None
         return
     with mlflow.start_run(run_name=run_name, nested=nested) as run:

@@ -236,6 +236,10 @@ check_untyped_defs = true
 follow_imports = "silent"
 show_error_codes = true
 pretty = true
+# Suppress import-untyped (mypy 1.x) globally: most third-party scientific libs
+# (pandas, sklearn, mlflow, ...) don't ship stubs and we don't want each call
+# site littered with `# type: ignore[import-untyped]`.
+disable_error_code = ["import-untyped"]
 
 [[tool.mypy.overrides]]
 module = [
@@ -254,5 +258,25 @@ module = [
     "pyepo.*",
     "shap.*",
     "plotly.*",
+    "pandas.*",
+    "pandera.*",
+    "mlflow.*",
+    "duckdb.*",
+    "loguru.*",
 ]
 ignore_missing_imports = true
+
+# Strict mode for the new, fully-annotated modules. Legacy code stays under the
+# global laxer config. Promote modules to this list once they pass cleanly.
+[[tool.mypy.overrides]]
+module = [
+    "src.optimization.policy",
+    "src.utils.pipeline_state",
+    "src.utils.mlflow_tracing",
+    "src.utils.optuna_storage",
+]
+disallow_untyped_defs = true
+disallow_incomplete_defs = true
+disallow_untyped_decorators = true
+warn_return_any = true
+no_implicit_optional = true

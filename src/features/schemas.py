@@ -99,3 +99,47 @@ def validate_time_series(df: pd.DataFrame) -> pd.DataFrame:
 def validate_predictions(df: pd.DataFrame) -> pd.DataFrame:
     """Validate prediction output DataFrame."""
     return prediction_schema.validate(df)
+
+
+# ---------------------------------------------------------------------------
+# DataFrameModel variants (Pandera 0.20+ class-based style)
+# ---------------------------------------------------------------------------
+#
+# The dict-based ``DataFrameSchema`` above remains the canonical contract used
+# by the pipeline. The class-based ``DataFrameModel`` form below is the
+# recommended modern style for new schemas: it gives IDE autocomplete, is
+# subclass-friendly, and renders cleanly in MRM model cards.
+
+
+class PredictionOutputModel(pa.DataFrameModel):
+    """Class-based equivalent of :data:`prediction_schema`."""
+
+    pd_point: pa.typing.Series[float] = pa.Field(ge=0.0, le=1.0)
+    pd_low: pa.typing.Series[float] = pa.Field(ge=0.0, le=1.0)
+    pd_high: pa.typing.Series[float] = pa.Field(ge=0.0, le=1.0)
+
+    @pa.dataframe_check
+    def low_le_point_le_high(cls, df: pd.DataFrame) -> bool:
+        return bool(((df["pd_low"] <= df["pd_point"]) & (df["pd_point"] <= df["pd_high"])).all())
+
+    class Config:
+        coerce = True
+        strict = False
+
+
+class ConformalOutputModel(pa.DataFrameModel):
+    """Class-based equivalent of :data:`conformal_output_schema`."""
+
+    y_pred: pa.typing.Series[float] = pa.Field(ge=0.0, le=1.0)
+    pd_low_90: pa.typing.Series[float] = pa.Field(ge=0.0, le=1.0)
+    pd_high_90: pa.typing.Series[float] = pa.Field(ge=0.0, le=1.0)
+    grade: pa.typing.Series[str] = pa.Field(nullable=True)
+    width_90: pa.typing.Series[float] = pa.Field(ge=0.0)
+
+    @pa.dataframe_check
+    def low_le_high(cls, df: pd.DataFrame) -> bool:
+        return bool((df["pd_low_90"] <= df["pd_high_90"]).all())
+
+    class Config:
+        coerce = True
+        strict = False

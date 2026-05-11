@@ -39,6 +39,21 @@ def _resolve_journal_path(study_name: str, directory: Path | None = None) -> Pat
     return base / f"{study_name}.log"
 
 
+_JOURNAL_URL_PREFIXES = ("journal:", "journal+file:", "journalfile:")
+
+
+def _is_journal_url(url: str) -> bool:
+    return url.startswith(_JOURNAL_URL_PREFIXES)
+
+
+def _journal_path_from_url(url: str) -> str:
+    """Strip the ``journal:`` prefix from a URL, returning the bare filesystem path."""
+    for prefix in _JOURNAL_URL_PREFIXES:
+        if url.startswith(prefix):
+            return url[len(prefix) :].lstrip("/")
+    return url
+
+
 def make_storage(
     study_name: str,
     *,
@@ -47,13 +62,24 @@ def make_storage(
 ) -> optuna.storages.BaseStorage:
     """Return an Optuna storage backend appropriate for the current environment.
 
-    ``backend="auto"`` honours the ``OPTUNA_STORAGE`` env variable when set
-    (any URL accepted by :func:`optuna.create_study`), otherwise uses
-    JournalStorage (write-optimised).
+    Resolution order when ``backend="auto"``:
+
+    1. If ``OPTUNA_STORAGE`` is set and starts with ``journal:`` (or
+       ``journal+file:``, ``journalfile:``), use :class:`JournalFileStorage`.
+    2. Else if ``OPTUNA_STORAGE`` is set with any RDB URL, hand it to
+       :class:`optuna.storages.RDBStorage` directly so callers can configure
+       SQLite/PostgreSQL/MySQL via env var without code changes.
+    3. Otherwise, fall back to JournalStorage with a per-study log under
+       ``data/processed/optuna/<study>.log``.
     """
     env_url = os.environ.get("OPTUNA_STORAGE", "").strip()
     if backend == "auto" and env_url:
-        logger.info("Using OPTUNA_STORAGE from environment: {}", env_url)
+        if _is_journal_url(env_url):
+            journal_path = Path(_journal_path_from_url(env_url))
+            journal_path.parent.mkdir(parents=True, exist_ok=True)
+            logger.info("Using OPTUNA_STORAGE journal file: {}", journal_path)
+            return _make_journal_storage(journal_path, study_name=study_name)
+        logger.info("Using OPTUNA_STORAGE RDB URL: {}", env_url)
         return optuna.storages.RDBStorage(env_url)
 
     if backend == "sqlite":
@@ -62,15 +88,40 @@ def make_storage(
         return optuna.storages.RDBStorage(url)
 
     journal_path = _resolve_journal_path(study_name, directory=directory)
-    try:
-        # Optuna >=4.0 exposes JournalFileStorage; earlier versions need the
-        # legacy JournalFileOpenLock backend. Import lazily to stay compatible.
-        from optuna.storages import JournalFileStorage, JournalStorage  # type: ignore
-    except ImportError:  # pragma: no cover — only fires on very old Optuna.
-        logger.warning("Optuna JournalStorage unavailable; falling back to SQLite.")
-        return make_storage(study_name, backend="sqlite", directory=directory)
+    return _make_journal_storage(journal_path, study_name=study_name)
 
-    backend_file = JournalFileStorage(str(journal_path))
+
+def _make_journal_storage(journal_path: Path, *, study_name: str) -> optuna.storages.BaseStorage:
+    # Optuna 4 deprecated ``JournalFileStorage`` in favour of
+    # ``optuna.storages.journal.JournalFileBackend``. On Windows, the default
+    # symlink-based lock fails without admin privileges; use
+    # ``JournalFileOpenLock`` (open-with-O_EXCL) when available.
+    try:
+        from optuna.storages import JournalStorage
+        from optuna.storages.journal import JournalFileBackend  # type: ignore[import-not-found]
+    except ImportError:
+        try:
+            # Optuna <4 fallback (legacy import path)
+            from optuna.storages import (  # type: ignore[attr-defined,no-redef]
+                JournalFileStorage as JournalFileBackend,
+                JournalStorage,
+            )
+        except ImportError:  # pragma: no cover — only fires on very old Optuna.
+            logger.warning("Optuna JournalStorage unavailable; falling back to SQLite.")
+            return make_storage(study_name, backend="sqlite")
+
+    lock_obj: object | None = None
+    try:
+        from optuna.storages.journal import JournalFileOpenLock  # type: ignore[import-not-found]
+
+        lock_obj = JournalFileOpenLock(str(journal_path))
+    except ImportError:
+        lock_obj = None
+
+    if lock_obj is not None:
+        backend_file = JournalFileBackend(str(journal_path), lock_obj=lock_obj)
+    else:
+        backend_file = JournalFileBackend(str(journal_path))
     return JournalStorage(backend_file)
 
 
@@ -95,10 +146,8 @@ def make_study(
     if pruner == "median":
         pruner_obj: optuna.pruners.BasePruner = optuna.pruners.MedianPruner()
     elif pruner == "wilcoxon":
-        try:
-            pruner_obj = optuna.pruners.WilcoxonPruner()  # type: ignore[attr-defined]
-        except AttributeError:  # pragma: no cover — Optuna <4
-            pruner_obj = optuna.pruners.MedianPruner()
+        wilcoxon_cls = getattr(optuna.pruners, "WilcoxonPruner", None)
+        pruner_obj = wilcoxon_cls() if wilcoxon_cls else optuna.pruners.MedianPruner()
     else:
         pruner_obj = optuna.pruners.NopPruner()
 

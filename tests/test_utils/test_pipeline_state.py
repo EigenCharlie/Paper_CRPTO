@@ -72,3 +72,51 @@ def test_namespaces_are_addressable(namespace: tuple[str, str]) -> None:
     # No assertion on truthiness — these may be missing in a partial extract,
     # we just make sure addressing them doesn't blow up.
     _ = state.get(*namespace, default=None)
+
+
+# ---------------------------------------------------------------------------
+# write_pipeline_state
+# ---------------------------------------------------------------------------
+
+
+def test_write_pipeline_state_round_trip(tmp_path: Path) -> None:
+    """Writing a known namespace and reading it back must return the payload verbatim."""
+    from src.utils.pipeline_state import write_pipeline_state
+
+    payload = {"coverage": {"target": 0.9, "observed": 0.913}}
+    out_path = write_pipeline_state(
+        ("conformal", "policy"),
+        payload,
+        repo_root=tmp_path,
+    )
+    assert out_path.name == "conformal_policy_status.json"
+    assert out_path.is_file()
+    state = load_pipeline_state(repo_root=tmp_path)
+    assert state.get("conformal", "policy") == payload
+
+
+def test_write_pipeline_state_unknown_namespace_falls_back(tmp_path: Path) -> None:
+    from src.utils.pipeline_state import write_pipeline_state
+
+    out = write_pipeline_state("unknown/topic", {"value": 1}, repo_root=tmp_path)
+    assert out.name == "unknown_topic_status.json"
+
+
+def test_write_pipeline_state_merge_combines_keys(tmp_path: Path) -> None:
+    from src.utils.pipeline_state import write_pipeline_state
+
+    write_pipeline_state("paper/evidence", {"status": "pass"}, repo_root=tmp_path)
+    write_pipeline_state(
+        "paper/evidence", {"checked_at": "2026-05-10"}, repo_root=tmp_path, merge=True
+    )
+    state = load_pipeline_state(repo_root=tmp_path)
+    payload = state.get("paper", "evidence")
+    assert payload["status"] == "pass"
+    assert payload["checked_at"] == "2026-05-10"
+
+
+def test_write_pipeline_state_string_namespace_accepted(tmp_path: Path) -> None:
+    from src.utils.pipeline_state import write_pipeline_state
+
+    out = write_pipeline_state("paper/promotion", {"run_tag": "rt"}, repo_root=tmp_path)
+    assert out.name == "final_project_promotion.json"
