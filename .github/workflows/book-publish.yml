@@ -44,7 +44,7 @@ jobs:
         run: uv run -- quarto render book --to html --no-execute
 
       - name: Upload Pages artifact
-        uses: actions/upload-pages-artifact@v3
+        uses: actions/upload-pages-artifact@v5
         with:
           path: book/_book
 
