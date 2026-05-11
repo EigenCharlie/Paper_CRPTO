@@ -176,13 +176,31 @@ PowerShell usa la `.venv/Scripts` normal. Ver
 
 **Render PDF falla** — necesitas LuaLaTeX. Instala TeX Live (`scoop install latex` o paquete oficial). Alternativa: comenta el bloque `pdf:` de `book/_quarto.yml`.
 
+## Herramientas interactivas para reviewers
+
+Comandos opcionales útiles para inspeccionar el champion sin tocar el pipeline:
+
+```powershell
+just duckdb              # REPL DuckDB sobre data/processed/crpto.duckdb
+just datasette           # UI web sobre el warehouse (requiere datasette + datasette-duckdb)
+just dbt-docs            # UI dbt en http://localhost:8088
+just optuna-dashboard    # Optuna Dashboard sobre el journal de HPO
+just pipeline-state      # Snapshot JSON de todos los status del pipeline
+```
+
+Ninguno modifica artefactos congelados — solo leen `data/processed/` y `models/`.
+
 ## Documentación adicional
 
 - [`CLAUDE.md`](CLAUDE.md) — Contexto operativo para Claude Code (champion, comandos, convenciones).
+- [`CONTRIBUTING.md`](CONTRIBUTING.md) — Cómo reproducir las salidas y qué requiere plan de revalidación.
+- [`CHANGELOG.md`](CHANGELOG.md) — Historial de cambios.
+- [`docs/ACADEMIC_CONTEXT.md`](docs/ACADEMIC_CONTEXT.md) — Single-author, dataset estático, sin producción.
 - [`docs/SCOPE_AND_GOVERNANCE.md`](docs/SCOPE_AND_GOVERNANCE.md) — Alcance CRPTO, límites del repo público y reglas de refactor.
+- [`docs/refactor/`](docs/refactor/) — Planes de refactor diferido (MAPIE, conformal split, feature_config Parquet).
 - [`docs/research/`](docs/research/) — Dossier académico (conformal prediction readme, audit, integrations).
 - [`docs/security/SECRETS_AND_REMOTES.md`](docs/security/SECRETS_AND_REMOTES.md) — Variables de entorno, secretos, remotes DVC/MLflow y WSL/Windows.
-- [`EXTRACTION_MANIFEST.json`](EXTRACTION_MANIFEST.json) — Hashes de artefactos congelados.
+- [`EXTRACTION_MANIFEST.json`](EXTRACTION_MANIFEST.json) + [`EXTRACTION_MANIFEST.md`](EXTRACTION_MANIFEST.md) — Hashes y narrativa de la extracción.
 
 ## Citar este trabajo
 
@@ -192,4 +210,5 @@ Ver [`CITATION.cff`](CITATION.cff). Resumen:
 
 ## Licencia
 
-Código bajo [MIT](LICENSE). Texto, figuras y libro bajo CC BY 4.0.
+- Código fuente: [MIT](LICENSE).
+- Texto del libro/paper, figuras y tablas: [CC BY 4.0](LICENSE-CONTENT).

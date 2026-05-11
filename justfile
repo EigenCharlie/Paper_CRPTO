@@ -125,6 +125,19 @@ dbt-docs:
     uv run dbt docs generate --project-dir dbt_project --profiles-dir dbt_project
     uv run dbt docs serve --project-dir dbt_project --profiles-dir dbt_project --port 8088
 
+# --- DuckDB CLI ---------------------------------------------------------
+
+# Interactive DuckDB session over the CRPTO warehouse. Useful for MRM
+# reviewers who want to inspect the marts without booting a Quarto chunk.
+duckdb FILE="data/processed/crpto.duckdb":
+    uv run duckdb "{{FILE}}"
+
+# Optional Datasette UI. Requires the duckdb-datasette plugin; if it is not
+# installed this recipe fails fast with a helpful pointer.
+datasette FILE="data/processed/crpto.duckdb":
+    @uv run python -c "import datasette" 2>&1 || echo "Run: uv pip install datasette datasette-duckdb"
+    uv run datasette serve --plugins-dir=. -i "{{FILE}}"
+
 # --- One-shot orchestrator ----------------------------------------------
 
 all:

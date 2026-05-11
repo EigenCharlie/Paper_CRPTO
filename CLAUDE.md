@@ -8,7 +8,14 @@ Soy Carlos Vergara, científico de datos terminando un paper académico de tesis
 
 ## Contexto académico (lectura obligatoria)
 
-Antes de cualquier cambio estructural, lee [`docs/ACADEMIC_CONTEXT.md`](docs/ACADEMIC_CONTEXT.md). Lo crítico:
+Antes de cualquier cambio estructural, lee en este orden:
+
+1. [`docs/ACADEMIC_CONTEXT.md`](docs/ACADEMIC_CONTEXT.md) — naturaleza single-author / dataset estático / no producción y consecuencias operacionales.
+2. [`docs/SCOPE_AND_GOVERNANCE.md`](docs/SCOPE_AND_GOVERNANCE.md) — qué entra en CRPTO, lista explícita de stages prohibidos en `main`, refactor lanes con precondiciones, release checklist.
+3. [`CONTRIBUTING.md`](CONTRIBUTING.md) — qué se puede cambiar libremente vs. qué requiere plan de revalidación.
+4. [`EXTRACTION_MANIFEST.md`](EXTRACTION_MANIFEST.md) — qué es exactamente lo "congelado" y cómo los tests de regresión lo enforzan.
+
+Lo crítico de `ACADEMIC_CONTEXT.md`:
 
 - **Single-author.** Yo soy el único que toca este repo. No hay PR reviews, no hay branch protection necesaria, no hay reviewers que aprueben. Las reglas de operación existen para disciplinar agentes, no para satisfacer un proceso corporativo.
 - **Dataset estático.** Lending Club cerró originación retail en 2020. No vamos a recibir datos nuevos. Sin streaming, sin concept drift por cohortes nuevas. Si re-entrenamos, es sobre el mismo histórico.
