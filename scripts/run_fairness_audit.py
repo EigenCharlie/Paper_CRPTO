@@ -764,6 +764,7 @@ def main(config_path: str = "configs/fairness_policy.yaml", run_tag: str | None 
             "fairness_threshold_source": threshold_source,
             "outcome_mode": outcome_mode,
         },
+        path=output.get("threshold_semantics_json", "models/threshold_semantics.json"),
     )
 
     pass_label = "PASS" if overall_pass else "FAIL"

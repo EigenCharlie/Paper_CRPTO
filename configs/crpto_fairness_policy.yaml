@@ -36,6 +36,7 @@ output:
   audit_parquet: data/processed/fairness_audit.parquet
   frontier_parquet: data/processed/fairness_threshold_frontier.parquet
   status_json: models/fairness_audit_status.json
+  threshold_semantics_json: models/threshold_semantics.json
 
 fairlearn_sidecar:
   enabled: true

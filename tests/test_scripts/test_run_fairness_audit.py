@@ -70,6 +70,7 @@ def test_run_fairness_uses_threshold_artifact(tmp_path) -> None:
             "audit_parquet": str(data_dir / "fairness_audit.parquet"),
             "frontier_parquet": str(data_dir / "fairness_threshold_frontier.parquet"),
             "status_json": str(model_dir / "fairness_audit_status.json"),
+            "threshold_semantics_json": str(model_dir / "threshold_semantics.json"),
         },
         "fairlearn_sidecar": {
             "enabled": True,
@@ -159,6 +160,7 @@ def test_run_fairness_auto_selects_threshold_and_writes_decision_policy(tmp_path
             "audit_parquet": str(data_dir / "fairness_audit.parquet"),
             "frontier_parquet": str(data_dir / "fairness_threshold_frontier.parquet"),
             "status_json": str(model_dir / "fairness_audit_status.json"),
+            "threshold_semantics_json": str(model_dir / "threshold_semantics.json"),
         },
         "fairlearn_sidecar": {
             "enabled": True,

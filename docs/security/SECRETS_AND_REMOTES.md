@@ -1,7 +1,7 @@
 # Secrets, remotes and local credentials
 
-This repository should be safe to push to GitHub without real credentials.
-Only templates belong in Git.
+This public repository should be safe to push to GitHub without real
+credentials. Only templates belong in Git.
 
 ## Files
 
@@ -22,8 +22,8 @@ Use `.env.example` as the canonical list. The most common values are:
 
 ## GitHub Actions secrets
 
-For a private repo with DVC/MLflow enabled, configure these in GitHub
-repository settings, not in files:
+For CI with DVC/MLflow enabled, configure these in GitHub repository settings,
+not in files:
 
 - `DAGSHUB_TOKEN`
 - `MLFLOW_TRACKING_USERNAME`
@@ -34,6 +34,18 @@ repository settings, not in files:
 The default workflows avoid pulling large DVC artifacts. They validate the
 book, metadata, and artifact-independent tests. Full artifact tests should run
 locally or in CI only after a DVC remote is configured.
+
+## GitHub security settings
+
+For `EigenCharlie/Paper_CRPTO`, keep these enabled in repository settings:
+
+- Dependency graph and Dependabot security updates.
+- Secret scanning.
+- Branch protection on `main` with required checks `ruff`, `pytest`, `build`.
+
+`dependency-review` requires the Dependency graph. If GitHub reports the
+repository as unsupported, enable it in Settings -> Security and analysis
+before merging dependency PRs.
 
 ## WSL and Windows venvs
 

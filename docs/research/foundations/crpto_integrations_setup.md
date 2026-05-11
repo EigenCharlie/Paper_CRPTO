@@ -12,14 +12,19 @@ Target repository:
 EigenCharlie/Paper_CRPTO
 ```
 
-Recommended first publication:
+Repository state:
 
-1. Create the repository as private.
-2. Commit only Git-safe files: source, docs, Quarto, tables, figures, JSON
+- Public repo: <https://github.com/EigenCharlie/Paper_CRPTO>
+- GitHub Pages target: <https://eigencharlie.github.io/Paper_CRPTO/>
+- `main` is protected by `ruff`, `pytest` and `build`.
+
+Publication rules:
+
+1. Commit only Git-safe files: source, docs, Quarto, tables, figures, JSON
    statuses, DVC lock and DVC pointer files.
-3. Keep `.env`, `.env.*` except examples, `.dvc/config.local`, raw data,
+2. Keep `.env`, `.env.*` except examples, `.dvc/config.local`, raw data,
    processed data, model binaries and local caches out of Git.
-4. Configure GitHub Pages only after reviewing the rendered book content.
+3. Review the rendered book before treating GitHub Pages as publication-ready.
 
 ## DVC
 

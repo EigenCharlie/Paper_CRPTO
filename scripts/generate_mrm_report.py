@@ -274,8 +274,8 @@ def main(config_path: str = "configs/mrm_policy.yaml", run_tag: str | None = Non
     with open(output_path, "w", encoding="utf-8") as f:
         json.dump(report, f, indent=2, default=str)
 
-    # Write models/mrm_report_status.json wrapper for Streamlit pages
-    status_path = Path("models/mrm_report_status.json")
+    # Write a compact status wrapper for governance dashboards and pipeline state.
+    status_path = Path(cfg["output"].get("mrm_status_json", "models/mrm_report_status.json"))
     status_path.parent.mkdir(parents=True, exist_ok=True)
     status_path.write_text(
         json.dumps(

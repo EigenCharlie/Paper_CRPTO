@@ -16,6 +16,7 @@ def test_is_journal_url_recognises_prefixes() -> None:
     assert optuna_storage._is_journal_url("journal:/tmp/x.log")
     assert optuna_storage._is_journal_url("journal+file:/tmp/x.log")
     assert optuna_storage._is_journal_url("journalfile:/tmp/x.log")
+    assert optuna_storage._is_journal_url("journalFile:/tmp/x.log")
     assert not optuna_storage._is_journal_url("sqlite:///tmp/x.db")
     assert not optuna_storage._is_journal_url("postgresql://u:p@h/db")
 
@@ -23,15 +24,17 @@ def test_is_journal_url_recognises_prefixes() -> None:
 @pytest.mark.parametrize(
     ("url", "expected_suffix"),
     [
-        ("journal:/tmp/x.log", "tmp/x.log"),
+        ("journal:/tmp/x.log", "/tmp/x.log"),
+        ("journal:///tmp/x.log", "/tmp/x.log"),
         ("journal:tmp/x.log", "tmp/x.log"),
-        ("journal+file:/foo/y.log", "foo/y.log"),
+        ("journal+file:/foo/y.log", "/foo/y.log"),
         ("journalfile:foo/y.log", "foo/y.log"),
+        ("journalFile:C:/Users/carlos/optuna.log", "C:/Users/carlos/optuna.log"),
     ],
 )
 def test_journal_path_from_url(url: str, expected_suffix: str) -> None:
     out = optuna_storage._journal_path_from_url(url)
-    assert out.endswith(expected_suffix)
+    assert out == expected_suffix
 
 
 def test_make_storage_journal_default(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:

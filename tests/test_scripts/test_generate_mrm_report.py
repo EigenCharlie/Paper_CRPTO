@@ -54,7 +54,10 @@ def test_generate_mrm_report_overall_pass_with_pipeline_summary(tmp_path) -> Non
             "governance_status": str(model_dir / "governance_status.json"),
             "fairness_status": str(model_dir / "fairness_audit_status.json"),
         },
-        "output": {"mrm_report_json": str(report_dir / "mrm_validation_report.json")},
+        "output": {
+            "mrm_report_json": str(report_dir / "mrm_validation_report.json"),
+            "mrm_status_json": str(model_dir / "mrm_report_status.json"),
+        },
     }
     cfg_path = tmp_path / "mrm_policy.yaml"
     cfg_path.write_text(yaml.safe_dump(cfg), encoding="utf-8")
@@ -116,7 +119,10 @@ def test_generate_mrm_report_exports_skops_sidecar(tmp_path, monkeypatch) -> Non
             "governance_status": str(model_dir / "governance_status.json"),
             "fairness_status": str(model_dir / "fairness_audit_status.json"),
         },
-        "output": {"mrm_report_json": str(report_dir / "mrm_validation_report.json")},
+        "output": {
+            "mrm_report_json": str(report_dir / "mrm_validation_report.json"),
+            "mrm_status_json": str(model_dir / "mrm_report_status.json"),
+        },
     }
     cfg_path = tmp_path / "mrm_policy.yaml"
     cfg_path.write_text(yaml.safe_dump(cfg), encoding="utf-8")
@@ -170,7 +176,10 @@ def test_generate_mrm_report_prefers_explicit_or_env_run_tag_over_pipeline_summa
             "governance_status": str(model_dir / "governance_status.json"),
             "fairness_status": str(model_dir / "fairness_audit_status.json"),
         },
-        "output": {"mrm_report_json": str(report_dir / "mrm_validation_report.json")},
+        "output": {
+            "mrm_report_json": str(report_dir / "mrm_validation_report.json"),
+            "mrm_status_json": str(model_dir / "mrm_report_status.json"),
+        },
     }
     cfg_path = tmp_path / "mrm_policy.yaml"
     cfg_path.write_text(yaml.safe_dump(cfg), encoding="utf-8")

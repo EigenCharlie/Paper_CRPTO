@@ -39,18 +39,21 @@ def _resolve_journal_path(study_name: str, directory: Path | None = None) -> Pat
     return base / f"{study_name}.log"
 
 
-_JOURNAL_URL_PREFIXES = ("journal:", "journal+file:", "journalfile:")
+_JOURNAL_URL_PREFIXES = ("journal+file:", "journalfile:", "journal:")
 
 
 def _is_journal_url(url: str) -> bool:
-    return url.startswith(_JOURNAL_URL_PREFIXES)
+    return url.lower().startswith(_JOURNAL_URL_PREFIXES)
 
 
 def _journal_path_from_url(url: str) -> str:
     """Strip the ``journal:`` prefix from a URL, returning the bare filesystem path."""
     for prefix in _JOURNAL_URL_PREFIXES:
-        if url.startswith(prefix):
-            return url[len(prefix) :].lstrip("/")
+        if url.lower().startswith(prefix):
+            value = url[len(prefix) :]
+            if value.startswith("///"):
+                return "/" + value[3:]
+            return value
     return url
 
 

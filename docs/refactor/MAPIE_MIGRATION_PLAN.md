@@ -1,7 +1,9 @@
 # MAPIE 0.9 → 1.x migration plan
 
-**Status**: Documented, not executed. Requires drift validation against the
-frozen champion conformal artefact.
+**Status**: Partially code-compatible, not champion-revalidated. The CRPTO
+runtime is already on MAPIE 1.x and the main helper imports use the 1.x class
+names, but the frozen champion conformal artefact has not been regenerated or
+drift-tested under a fresh MAPIE 1.x run.
 
 ## Context
 
@@ -14,14 +16,14 @@ MAPIE 1.0 rewrote the public API:
 - The conformity score selection moved from string `method=` arguments to
   explicit `conformity_score=` objects.
 
-`pyproject.toml` already pins `mapie>=1.4` and `uv.lock` records `1.4.0`, so
-the runtime is on MAPIE 1.x. However `src/models/conformal.py` and
-`scripts/generate_conformal_intervals.py` still use the 0.9 call style. The
-1.x library accepts the legacy classes for a deprecation window (which is
-why nothing is broken today), but the deprecation warnings are visible and
-we cannot rely on them remaining a no-op forever.
+`pyproject.toml` already pins `mapie>=1.4`, so the runtime is on MAPIE 1.x.
+`src/models/conformal.py` has been moved to the 1.x public class names for the
+helper surface. This is **not** the same as validating the CRPTO champion:
+protected stages such as `crpto.conformal.intervals` and
+`crpto.conformal.validation` remain blocked until the drift harness below is
+run on a branch.
 
-## Why it was not executed in the bootstrap
+## Why the champion was not re-run in the bootstrap
 
 The champion's conformal artefact
 `data/processed/conformal_intervals_mondrian.parquet` was generated under
@@ -63,7 +65,7 @@ Execute the migration when ALL of the following can be verified:
 4. **MRM sign-off.** If drift exceeds tolerance, the change is *not* a
    refactor — it is a model change and needs a fresh run-tag.
 
-## Patch shape (preview)
+## Patch shape (reference)
 
 ```python
 # Before (MAPIE 0.9 style)

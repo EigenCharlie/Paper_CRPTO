@@ -88,6 +88,7 @@ def test_write_pipeline_state_round_trip(tmp_path: Path) -> None:
         ("conformal", "policy"),
         payload,
         repo_root=tmp_path,
+        allow_protected=True,
     )
     assert out_path.name == "conformal_policy_status.json"
     assert out_path.is_file()
@@ -105,18 +106,33 @@ def test_write_pipeline_state_unknown_namespace_falls_back(tmp_path: Path) -> No
 def test_write_pipeline_state_merge_combines_keys(tmp_path: Path) -> None:
     from src.utils.pipeline_state import write_pipeline_state
 
-    write_pipeline_state("paper/evidence", {"status": "pass"}, repo_root=tmp_path)
     write_pipeline_state(
-        "paper/evidence", {"checked_at": "2026-05-10"}, repo_root=tmp_path, merge=True
+        "paper/evidence", {"status": "pass", "nested": {"a": 1}}, repo_root=tmp_path
+    )
+    write_pipeline_state(
+        "paper/evidence",
+        {"checked_at": "2026-05-10", "nested": {"b": 2}},
+        repo_root=tmp_path,
+        merge=True,
     )
     state = load_pipeline_state(repo_root=tmp_path)
     payload = state.get("paper", "evidence")
     assert payload["status"] == "pass"
     assert payload["checked_at"] == "2026-05-10"
+    assert payload["nested"] == {"a": 1, "b": 2}
 
 
 def test_write_pipeline_state_string_namespace_accepted(tmp_path: Path) -> None:
     from src.utils.pipeline_state import write_pipeline_state
 
-    out = write_pipeline_state("paper/promotion", {"run_tag": "rt"}, repo_root=tmp_path)
+    out = write_pipeline_state(
+        "paper/promotion", {"run_tag": "rt"}, repo_root=tmp_path, allow_protected=True
+    )
     assert out.name == "final_project_promotion.json"
+
+
+def test_write_pipeline_state_refuses_protected_status_by_default(tmp_path: Path) -> None:
+    from src.utils.pipeline_state import write_pipeline_state
+
+    with pytest.raises(PermissionError):
+        write_pipeline_state("paper/promotion", {"run_tag": "rt"}, repo_root=tmp_path)

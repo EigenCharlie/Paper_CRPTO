@@ -37,7 +37,7 @@ Stages DVC que regeneran estos artefactos (`crpto.pd.champion`, `crpto.conformal
 - **Optimización**: Pyomo 6.10 + HiGHS 1.14 (LP/MILP), OR-Tools 9.10, PyEPO 1.1 (SPO+, opcional).
 - **Data**: pandas 2.3, numpy 2.4, pyarrow 23, duckdb 1.5, pandera 0.31.
 - **Pipeline**: DVC 3.67 (con remote S3), dbt-duckdb 1.10, MLflow 3.12, DagsHub 0.7.
-- **Docs**: Quarto (libro de 24 capítulos en español, HTML + PDF).
+- **Docs**: Quarto 1.9+ (libro de 24 capítulos en español, HTML + PDF).
 - **Tooling**: ruff 0.15, pytest 9, pre-commit 4, jupytext 1.19.
 
 Lista completa: `pyproject.toml`. Versiones efectivas: `uv.lock`.
@@ -47,7 +47,7 @@ Lista completa: `pyproject.toml`. Versiones efectivas: `uv.lock`.
 - **OS**: Windows 11 Pro. Shell por defecto: PowerShell; `bash` disponible vía Git Bash.
 - **Venv**: `.venv/Scripts/python.exe` (Windows) — NUNCA `.venv/bin/python` (eso es Linux/macOS).
 - **Task runner**: `justfile` (cross-platform). Existió un `Makefile` que se retiró por bug Linux-only.
-- **Quarto CLI**: debe estar en PATH. `quarto --version` ≥ 1.5.
+- **Quarto CLI**: debe estar en PATH. `quarto --version` ≥ 1.9.
 
 ## Comandos clave
 
@@ -156,7 +156,8 @@ El archivo `.env` está en `.gitignore`. Nunca commitear tokens.
 7. **No bypassar hooks** (`--no-verify`) sin permiso.
 8. **Cross-platform**: cualquier script o comando debe correr en Windows PowerShell sin Git Bash.
 9. **`uv run`** para invocar herramientas Python (`pytest`, `quarto`, `dbt`, `dvc`, `mlflow`, `optuna`).
-10. **Branch de trabajo**: nunca tocar `main`/`master`/`paper-final` directamente. El repo aún no está en GitHub — se subirá tras cerrar las fases del plan.
+10. **Repo público**: `https://github.com/EigenCharlie/Paper_CRPTO`. No subir secretos ni artefactos pesados; usar DVC remote para datos/modelos.
+11. **Branch de trabajo**: para código/refactors usa rama y PR. Hotfixes de docs/CI en `main` solo si el usuario lo pide explícitamente.
 
 ## Qué stages son seguros re-correr
 
@@ -176,6 +177,14 @@ El archivo `.env` está en `.gitignore`. Nunca commitear tokens.
 | `crpto.paper.spo_stability` | ✅ Sí | Determinista. |
 | `crpto.book.render` | ✅ Sí | Render Quarto; output a `book/_book/`. |
 
+## Scope operativo
+
+El documento rector es `docs/SCOPE_AND_GOVERNANCE.md`. En corto:
+
+- Seguro: docs, Quarto no-execute, CI, tests utilitarios, tablas/figuras/evidence/journal package.
+- Revisar antes: cambios dbt/DVC/dependencias que afecten contratos de datos.
+- No seguro en `main`: PD champion, intervalos conformal, validación conformal, optimización portfolio, exact eval, MAPIE/conformal/feature-config migrations sin drift report.
+
 ## Sub-agentes y MCP útiles
 
 - `Explore` (built-in) para búsquedas de código y archivos.
@@ -183,7 +192,7 @@ El archivo `.env` está en `.gitignore`. Nunca commitear tokens.
 - **Context7 MCP** — docs actualizadas de pandas/sklearn/MAPIE/Quarto/dbt.
 - **Chrome/Playwright MCP** — QA visual del libro renderizado.
 - **DuckDB MCP** — queries directas a `data/processed/crpto.duckdb`.
-- **GitHub MCP** — cuando el repo esté en GitHub (futuro).
+- **GitHub MCP** — repo `EigenCharlie/Paper_CRPTO`.
 
 ## Skills custom del proyecto (`.claude/skills/`)
 
@@ -196,7 +205,9 @@ El archivo `.env` está en `.gitignore`. Nunca commitear tokens.
 
 ## Plan vigente
 
-Las mejoras estructurales del proyecto están descritas en `~/.claude/plans/analiza-a-fondo-el-zesty-sphinx.md` (6 fases, ROI-priorizado). Las fases 0–3 se ejecutan antes de subir el repo a GitHub.
+Las fases bootstrap ya fueron publicadas. Los cambios estructurales que quedan
+viven como planes explícitos en `docs/refactor/` y no se ejecutan sin validar
+drift contra el champion congelado.
 
 ## Cómo me gusta trabajar
 

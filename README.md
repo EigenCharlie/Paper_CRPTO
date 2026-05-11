@@ -25,7 +25,7 @@ Hashes SHA256 de los artefactos críticos están en [`EXTRACTION_MANIFEST.json`]
 | Python | 3.11 (≤3.12) | Declarado en `.python-version` y `pyproject.toml`. |
 | [uv](https://docs.astral.sh/uv/) | 0.4+ | Gestor de dependencias. Reemplaza pip/poetry. |
 | [just](https://github.com/casey/just) | 1.28+ | Task runner cross-platform. Reemplaza `make`. Windows: `winget install Casey.Just`. |
-| [Quarto CLI](https://quarto.org/docs/get-started/) | 1.5+ | Para renderizar el libro. |
+| [Quarto CLI](https://quarto.org/docs/get-started/) | 1.9+ | Para renderizar el libro. CI usa 1.9.35. |
 | LaTeX (LuaLaTeX) | TeX Live 2024+ | Solo si renderizas el PDF. Opcional para HTML. |
 | DuckDB CLI | 1.3+ | Opcional, queries directas a `data/processed/crpto.duckdb`. |
 | Git | 2.40+ | Para hooks pre-commit. |
@@ -80,6 +80,17 @@ just dbt-build          # marts materializadas
 # Listado completo
 just help
 ```
+
+## Alcance y reglas de operación
+
+El repositorio es público y está dedicado solo a CRPTO. El alcance operativo,
+qué se puede regenerar, qué no debe tocarse en `main`, cómo manejar secretos y
+qué refactors requieren revalidación están documentados en
+[`docs/SCOPE_AND_GOVERNANCE.md`](docs/SCOPE_AND_GOVERNANCE.md).
+
+Regla corta: documentación, CI, tablas, figuras y journal package son seguros;
+reentrenar PD, recalcular intervalos conformal o reoptimizar el champion no lo
+es sin una rama de revalidación y drift report.
 
 ## Estructura
 
@@ -168,6 +179,7 @@ PowerShell usa la `.venv/Scripts` normal. Ver
 ## Documentación adicional
 
 - [`CLAUDE.md`](CLAUDE.md) — Contexto operativo para Claude Code (champion, comandos, convenciones).
+- [`docs/SCOPE_AND_GOVERNANCE.md`](docs/SCOPE_AND_GOVERNANCE.md) — Alcance CRPTO, límites del repo público y reglas de refactor.
 - [`docs/research/`](docs/research/) — Dossier académico (conformal prediction readme, audit, integrations).
 - [`docs/security/SECRETS_AND_REMOTES.md`](docs/security/SECRETS_AND_REMOTES.md) — Variables de entorno, secretos, remotes DVC/MLflow y WSL/Windows.
 - [`EXTRACTION_MANIFEST.json`](EXTRACTION_MANIFEST.json) — Hashes de artefactos congelados.

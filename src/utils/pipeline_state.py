@@ -1,4 +1,4 @@
-"""Read-only aggregator over the many ``models/*_status.json`` files.
+"""Aggregator over the many ``models/*_status.json`` files.
 
 The CRPTO pipeline writes one JSON per stage (conformal policy, fairness audit,
 SPO comparison, alpha sweep, paper figures, ...). Twenty-plus files end up in
@@ -6,8 +6,9 @@ SPO comparison, alpha sweep, paper figures, ...). Twenty-plus files end up in
 a single namespaced view that helps both Quarto chapters and Claude Code skills
 locate the right slice of state without hard-coding paths in every chunk.
 
-The function never writes anything — it is safe to call against a frozen
-champion build.
+The default read path is safe against a frozen champion build. The writer is
+additive for new stage statuses and refuses protected champion status files
+unless the caller opts in explicitly.
 
 Example:
     >>> from src.utils.pipeline_state import load_pipeline_state
@@ -103,6 +104,23 @@ def _load_json(path: Path) -> Any:
 # back round-trip.
 _WRITE_TARGETS: dict[tuple[str, ...], str] = {ns: files[0] for ns, files in _STATE_LAYOUT.items()}
 
+_PROTECTED_WRITE_TARGETS = {
+    "final_project_promotion.json",
+    "pd_training_status.json",
+    "conformal_policy_status.json",
+}
+
+
+def _deep_merge(left: dict[str, Any], right: dict[str, Any]) -> dict[str, Any]:
+    merged = dict(left)
+    for key, value in right.items():
+        previous = merged.get(key)
+        if isinstance(previous, dict) and isinstance(value, dict):
+            merged[key] = _deep_merge(previous, value)
+        else:
+            merged[key] = value
+    return merged
+
 
 def write_pipeline_state(
     namespace: str | tuple[str, ...],
@@ -111,6 +129,7 @@ def write_pipeline_state(
     repo_root: Path | str | None = None,
     models_dir: str = "models",
     merge: bool = False,
+    allow_protected: bool = False,
 ) -> Path:
     """Write a status JSON for ``namespace`` and return the path it landed on.
 
@@ -123,8 +142,10 @@ def write_pipeline_state(
         payload: JSON-serialisable dict to persist.
         repo_root: Defaults to the repository root inferred from this file.
         models_dir: Sub-directory holding status JSONs.
-        merge: When True and the target file exists, deep-merges ``payload``
-            into the previous content (top-level keys). When False, overwrites.
+        merge: When True and the target file exists, recursively merges
+            ``payload`` into the previous content. When False, overwrites.
+        allow_protected: Must be True to write status files tied to the frozen
+            champion/promotion contract.
 
     Returns:
         The :class:`pathlib.Path` the JSON was written to.
@@ -142,13 +163,17 @@ def write_pipeline_state(
 
     root = Path(repo_root) if repo_root else DEFAULT_REPO_ROOT
     target_path = root / models_dir / target_name
+    if target_name in _PROTECTED_WRITE_TARGETS and not allow_protected:
+        raise PermissionError(
+            f"{target_name} is a protected CRPTO champion status. "
+            "Pass allow_protected=True only in an explicit revalidation workflow."
+        )
     target_path.parent.mkdir(parents=True, exist_ok=True)
 
     if merge and target_path.is_file():
         prev = _load_json(target_path)
         if isinstance(prev, dict):
-            merged = {**prev, **payload}
-            payload = merged
+            payload = _deep_merge(prev, payload)
 
     target_path.write_text(
         json.dumps(payload, indent=2, sort_keys=True, default=str) + "\n",
