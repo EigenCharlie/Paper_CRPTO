@@ -46,6 +46,7 @@ book:
         - chapters/21-gobernanza-explicabilidad-dataset.qmd
         - chapters/22-literatura-trazabilidad-entorno.qmd
         - chapters/23-apendices-regulatorios-y-future-work.qmd
+    - chapters/glosario.qmd
     - references.qmd
 
 lang: es

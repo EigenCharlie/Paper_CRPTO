@@ -2,9 +2,27 @@
 
 ## Quién soy y qué es este proyecto
 
-Soy Carlos Vergara, científico de datos terminando un paper académico de tesis. **CRPTO** (Credit Risk + Predict-Then-Optimize) integra **conformal prediction** con **optimización robusta de carteras** sobre datos de Lending Club. Esta carpeta es una **copia curada paper-ready** extraída del proyecto padre `lending-club-risk-project`; la copia no debe re-correr el champion sin permiso explícito.
+Soy Carlos Vergara, científico de datos terminando un paper académico de tesis. **CRPTO** (Credit Risk + Predict-Then-Optimize) integra **conformal prediction** con **optimización robusta de carteras** sobre datos de Lending Club. Esta carpeta es una **copia curada paper-ready** extraída del proyecto padre `lending-club-risk-project`; la copia no debe re-correr el **pipeline de búsqueda** del champion sin permiso explícito.
 
 **Prefiero código simple y funcional. Sin sobre-ingeniería, sin abstracciones prematuras, sin refactors gratuitos.**
+
+## Contexto académico (lectura obligatoria)
+
+Antes de cualquier cambio estructural, lee [`docs/ACADEMIC_CONTEXT.md`](docs/ACADEMIC_CONTEXT.md). Lo crítico:
+
+- **Single-author.** Yo soy el único que toca este repo. No hay PR reviews, no hay branch protection necesaria, no hay reviewers que aprueben. Las reglas de operación existen para disciplinar agentes, no para satisfacer un proceso corporativo.
+- **Dataset estático.** Lending Club cerró originación retail en 2020. No vamos a recibir datos nuevos. Sin streaming, sin concept drift por cohortes nuevas. Si re-entrenamos, es sobre el mismo histórico.
+- **No va a producción.** Output: paper + journal + libro Quarto + MRM dossier. Sin servicio live, sin SLAs, sin on-call.
+- **GitHub Actions minimalista.** Solo `book-publish.yml` (Pages) y `lint.yml` se mantienen. `test.yml`, `dbt.yml`, `book-build.yml` se retiraron porque el pre-push hook ya valida lo equivalente en local.
+
+## Re-corrida del champion: matiz importante
+
+El "champion congelado" se refiere al **pipeline de búsqueda** que produjo las decisiones del paper:
+
+- ❌ **Prohibido sin permiso explícito**: `crpto.portfolio.bound_exact_eval` (es la búsqueda de 276k políticas — el resultado rank-1 es la contribución del paper).
+- ❌ **Prohibido sin permiso explícito**: cualquier HPO Optuna que re-busque hiperparámetros.
+- ✅ **Permitido para validación** (drift check requerido): `crpto.pd.champion`, `crpto.conformal.intervals`, `crpto.conformal.validation`, `crpto.portfolio.optimization`. Estos usan hiperparámetros/policies ya elegidos y congelados en `configs/`. Tolerancias documentadas en `ACADEMIC_CONTEXT.md`.
+- ✅ **Libre re-corrida**: `crpto.paper.*` y `crpto.book.render`.
 
 ## Champion congelado — NO RE-CORRER
 

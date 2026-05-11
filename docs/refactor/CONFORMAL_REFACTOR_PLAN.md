@@ -1,6 +1,28 @@
 # Refactor plan — `src/models/conformal.py`
 
-**Status**: Documented, not executed. Requires a champion-aware migration window.
+**Status**: First slice executed (diagnostics functions extracted). Class
+extraction (`ProbabilityRegressor`, `PrefitClassifierAdapter`,
+`PrefitCalibratedClassifierAdapter`) still pending — needs a calibrator
+re-pickle window.
+
+## What is done
+
+- `validate_coverage` and `summarize_prediction_sets` moved to
+  `src/models/conformal_diagnostics.py` (pure data summaries, no pickled
+  state). `conformal.py` re-exports them so legacy imports keep working.
+- `tests/test_models/test_calibrator_pickle_compat.py` added. Any future
+  refactor that mutates `__module__` for the pickled classes will fail
+  this test, forcing explicit pickle compat shims.
+- `tests/test_models/test_conformal_artifact_properties.py` added. Validates
+  the structural invariants of the frozen
+  `conformal_intervals_mondrian.parquet` (monotone bounds, 90/95 coverage,
+  Mondrian conditional coverage by grade).
+
+## What remains
+
+The big-ticket move — splitting the three classes plus the 12 regression /
+classification / Mondrian functions into focused submodules — is still
+deferred.
 
 ## Context
 

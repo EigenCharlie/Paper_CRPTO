@@ -24,6 +24,13 @@ stages:
       - data/processed/calibration_fe.parquet
       - scripts/train_pd_model.py
       - configs/crpto_pd_model.yaml
+    params:
+      - params.yaml:
+          - paper.run_tag
+          - champion.return_robust
+          - pd.model
+          - pd.catboost
+          - pd.calibration
     outs:
       - models/pd_canonical.cbm
       - models/pd_canonical_calibrator.pkl
@@ -33,6 +40,12 @@ stages:
       - data/processed/test_predictions.parquet
       - scripts/generate_conformal_intervals.py
       - configs/crpto_conformal_policy.yaml
+    params:
+      - params.yaml:
+          - conformal.alpha
+          - conformal.coverage_targets
+          - conformal.mondrian
+          - conformal.variant_selection
     outs:
       - data/processed/conformal_intervals_mondrian.parquet
   crpto.conformal.validation:
@@ -40,6 +53,12 @@ stages:
     deps:
       - data/processed/conformal_intervals_mondrian.parquet
       - scripts/validate_conformal_policy.py
+    params:
+      - params.yaml:
+          - conformal.coverage_targets
+          - champion.v_alpha_001
+          - champion.gamma_cp_alpha_001
+          - champion.alpha_exact_pass
     outs:
       - models/conformal_policy_status.json
   crpto.portfolio.optimization:
@@ -48,6 +67,13 @@ stages:
       - data/processed/test_predictions.parquet
       - data/processed/conformal_intervals_mondrian.parquet
       - scripts/optimize_portfolio.py
+    params:
+      - params.yaml:
+          - portfolio.policy_mode
+          - portfolio.uncertainty_aversion
+          - portfolio.max_concentration
+          - portfolio.max_portfolio_pd
+          - portfolio.min_budget_utilization
     outs:
       - data/processed/portfolio_allocations.parquet
   crpto.portfolio.bound_exact_eval:
@@ -98,6 +124,10 @@ stages:
       - book/index.qmd
       - book/chapters
       - book/styles.scss
+    params:
+      - params.yaml:
+          - book.freeze
+          - book.formats
     outs:
       - book/_book:
           cache: false

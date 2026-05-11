@@ -1,2 +1,6 @@
 [core]
     no_scm = true
+    remote = dagshub
+['remote "dagshub"']
+    url = https://dagshub.com/EigenCharlie/Paper_CRPTO.dvc
+    auth = basic

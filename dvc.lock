@@ -20,6 +20,11 @@ stages:
       hash: md5
       md5: 01d664a81e2dd7f4092be8db171fd7e0
       size: 6116
+    params:
+      params.yaml:
+        book.formats:
+        - html
+        book.freeze: auto
     outs:
     - path: book/_book
       hash: md5
@@ -128,6 +133,16 @@ stages:
       hash: md5
       md5: 6b2c78ba87f2622da89762fa44a4a538
       size: 85095
+    params:
+      params.yaml:
+        champion.return_robust: 170464.54
+        paper.run_tag: paper-thesis-final-economic-2026-04-06
+        pd.calibration: auto
+        pd.catboost:
+          depth: 8
+          iterations: 4200
+          learning_rate: 0.03
+        pd.model: catboost
     outs:
     - path: models/pd_canonical.cbm
       hash: md5
@@ -153,6 +168,17 @@ stages:
       hash: md5
       md5: 5544f4b3ea4a705a2fde588a914f5877
       size: 63126
+    params:
+      params.yaml:
+        conformal.alpha: 0.01
+        conformal.coverage_targets:
+        - 0.9
+        - 0.95
+        conformal.mondrian:
+          enabled: true
+          partition_by: grade
+        conformal.variant_selection:
+          rank1_path: rank1_alpha01_bound_aware_276k_full_2026-04-05-1734
     outs:
     - path: data/processed/conformal_intervals_mondrian.parquet
       hash: md5
@@ -170,6 +196,14 @@ stages:
       hash: md5
       md5: b06007a04691eb71d4309779bd3cab89
       size: 26186
+    params:
+      params.yaml:
+        champion.alpha_exact_pass: true
+        champion.gamma_cp_alpha_001: 0.18591
+        champion.v_alpha_001: 0.03645
+        conformal.coverage_targets:
+        - 0.9
+        - 0.95
     outs:
     - path: models/conformal_policy_status.json
       hash: md5
@@ -191,6 +225,13 @@ stages:
       hash: md5
       md5: 7ddf20e344d96939ff82fb6f0dcdccbc
       size: 11357
+    params:
+      params.yaml:
+        portfolio.max_concentration: 0.25
+        portfolio.max_portfolio_pd: 0.1
+        portfolio.min_budget_utilization: 0.5
+        portfolio.policy_mode: bound_aware
+        portfolio.uncertainty_aversion: 0.0
     outs:
     - path: data/processed/portfolio_allocations.parquet
       hash: md5

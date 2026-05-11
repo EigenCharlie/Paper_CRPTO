@@ -1,0 +1,163 @@
+---
+title: "Glosario"
+subtitle: "Términos clave del paper CRPTO"
+---
+
+# Glosario {#sec-glosario .unnumbered}
+
+Términos técnicos usados en el manuscrito y el dossier extendido. Se ordenan alfabéticamente. Las siglas siguen el uso de la literatura inglesa cuando esa es la convención dominante (e.g. PD, LGD, ECE) y se traducen donde la versión en español es más legible.
+
+## A
+
+**Alpha (α)**
+:   Nivel de miscoverage tolerado en *conformal prediction*. Para un valor `α = 0.10`, la garantía marginal es `P(y ∈ [low, high]) ≥ 1 − α = 0.90`. CRPTO reporta resultados para `α ∈ {0.10, 0.05, 0.01}`.
+
+**APS (Adaptive Prediction Sets)**
+:   Método de *conformal classification* que pondera la probabilidad cumulativa de las clases más probables hasta cubrir `1 − α`. Variante usada en MAPIE 1.x bajo el nombre `aps`.
+
+**AUC (Area Under the ROC Curve)**
+:   Métrica de discriminación de un clasificador binario. Independiente de la calibración.
+
+## B
+
+**Backtesting**
+:   Evaluación contrafactual de la política CRPTO sobre cohortes históricas, comparando el portafolio escogido vs el realizado.
+
+**Brier score**
+:   Promedio cuadrático del error de predicción probabilística. Combina calibración y discriminación; menor es mejor.
+
+**Bound-aware search**
+:   Búsqueda exhaustiva de políticas de portafolio que respeta las cotas del intervalo conformal (no sólo el punto). Es la estrategia que genera las 276 869 políticas candidatas del champion CRPTO.
+
+## C
+
+**Calibración (Venn-Abers, Isotonic, Platt)**
+:   Transformaciones que ajustan las probabilidades crudas del modelo para que `P(y=1|score=p) ≈ p`. CRPTO usa Venn-Abers en producción por su garantía conformal nativa.
+
+**CatBoost**
+:   Gradient boosting de Yandex. Modelo PD principal del champion.
+
+**Champion (CRPTO)**
+:   Configuración final escogida para el paper. Run tag: `paper-thesis-final-economic-2026-04-06`. Política: `bound_aware_276k_economic_champion`. Retorno robusto: `$170 464,54`.
+
+**Conformal prediction**
+:   Marco que produce intervalos `[low, high]` con cobertura garantizada en muestras finitas, sin asumir distribución del residual. Base teórica: intercambiabilidad.
+
+**Cobertura condicional**
+:   Cobertura que se mantiene dentro de subgrupos (e.g. por *grade* del préstamo) — más fuerte que la marginal. Mondrian CP la aproxima por particiones.
+
+**CQR (Conformalized Quantile Regression)**
+:   Variante conformal que usa regresión cuantil como nonconformity score. Comparado en `chapters/09-spo-regret.qmd`.
+
+## D
+
+**DagsHub**
+:   Plataforma de DVC + MLflow + Git para proyectos ML. CRPTO la usa como remote de DVC y tracking de MLflow.
+
+**Default**
+:   Evento binario `y = 1` para préstamos con status `Charged Off` o `Default` en LendingClub. Default rate base: ≈ 12 %.
+
+**DPD (Demographic Parity Difference)**
+:   Métrica de fairness: `|P(ŷ=1|A=a) − P(ŷ=1|A=b)|`. Auditada por grupo demográfico proxy en `chapters/10-fair-lending.qmd`.
+
+**DVC**
+:   Data Version Control. Versiona artefactos grandes (parquets, modelos) fuera de Git, con remoto compartido.
+
+## E
+
+**ECE (Expected Calibration Error)**
+:   Métrica de calibración. Promedio ponderado del gap entre frecuencia observada y probabilidad media por bin. CRPTO usa `n_bins = 15`.
+
+**EOdds (Equalized Odds)**
+:   Métrica de fairness: igualdad de TPR y FPR entre grupos.
+
+## F
+
+**Fairness audit**
+:   Evaluación sistemática de DPD/EOdds/DIR por grupo demográfico (proxy: zip, employment, purpose). Resultados en `reports/mrm/`.
+
+**Funded set**
+:   Préstamos escogidos por la política CRPTO bajo presupuesto fijo. Composición analizada en `chapters/12-funded-set.qmd`.
+
+## G
+
+**Gamma (γ)**
+:   Peso de blending entre PD puntual y cota conformal en las políticas `blended_uncertainty`. `γ = 0` = punto; `γ = 1` = peor caso conformal.
+
+**Γ_CP (Gamma_CP)**
+:   Brecha conformal observada del champion: `0.18591` para `α = 0.01`. Mide la diferencia entre cobertura observada y target.
+
+**Grade**
+:   Calificación crediticia de LendingClub (`A`–`G`). Usada como variable Mondrian para conformal condicional.
+
+## I
+
+**IV (Information Value)**
+:   Métrica de discriminación univariada para WoE-encoded features. CRPTO la usa para ranking de features en `chapters/04-resultados.qmd`.
+
+## L
+
+**LGD (Loss Given Default)**
+:   Fracción del exposure perdida cuando ocurre default. En CRPTO se trata como punto fijo `0.45` (proxy estándar) y como upper bound conformal en algunas variantes robustas.
+
+## M
+
+**MAPIE**
+:   Librería Python de conformal prediction. CRPTO la usa en versión 1.4 con las clases `SplitConformalRegressor`, `SplitConformalClassifier`, `CrossConformalRegressor` y `VennAbersCalibrator`.
+
+**Mondrian CP**
+:   Variante de split conformal que estratifica por una variable categórica (e.g. *grade*). Da cobertura condicional aproximada.
+
+**MRM (Model Risk Management)**
+:   Marco regulatorio (SR 11-7 en EE. UU., BCBS-239 globalmente) que define expectativas de gobernanza para modelos. CRPTO entrega un dossier MRM en `reports/mrm/` y `chapters/11-mrm.qmd`.
+
+## P
+
+**PD (Probability of Default)**
+:   Probabilidad que el préstamo entre en default antes del horizonte. Output principal del modelo CatBoost canónico.
+
+**PIT (Pre-Issuance Test)**
+:   No aplica a CRPTO en el sentido bancario — se menciona sólo cuando se cita literatura de calibración secuencial.
+
+**Política CRPTO**
+:   Función `(pd_point, pd_low, pd_high, lgd, presupuesto) → asignación`. CRPTO compara 7 modos (`point_estimate`, `hard_worst_case`, `blended_uncertainty`, `capped_blended_uncertainty`, `tail_blended_uncertainty`, `segment_tail_blended_uncertainty`, `segment_relative_tail_blended_uncertainty`). Ver `src/optimization/policy.py`.
+
+## R
+
+**Región robusta**
+:   Conjunto de políticas vecinas del champion que también pasan el test `α_exact_pass = True`. CRPTO reporta `45/45` para `α = 0.01`.
+
+**Retorno robusto**
+:   Retorno realizado del portafolio bajo el peor escenario conformal. Para el champion: `$170 464,54`.
+
+**RAPS (Regularized Adaptive Prediction Sets)**
+:   Variante de APS con regularización para reducir el tamaño promedio del set. Comparado en `chapters/08-ablacion-mondrian.qmd`.
+
+## S
+
+**SHAP (SHapley Additive exPlanations)**
+:   Atribución de aportes por feature al score individual. Usado en `chapters/04-resultados.qmd` para explicabilidad del champion.
+
+**SPO+ (Smart Predict-then-Optimize)**
+:   Loss decision-aware de Elmachtoub & Grigas (2022). Comparador del enfoque CRPTO en `chapters/09-spo-regret.qmd`.
+
+**SR 11-7**
+:   *Supervisory Guidance on Model Risk Management* de la Reserva Federal (2011). Marco MRM canónico en EE. UU.
+
+## T
+
+**Temporal holdout**
+:   Particionamiento out-of-time del dataset: train hasta cierto año, test desde el año siguiente. Estrategia de validación principal de CRPTO (vs train aleatorio).
+
+## V
+
+**V (alpha_weighted_miscoverage)**
+:   Métrica de miscoverage del champion. Para `α = 0.01`, vale `0.03645`. Mide la fracción ponderada de loans donde `y_true ∉ [pd_low, pd_high]`.
+
+**Venn-Abers**
+:   Calibrador conformal que produce intervalos `[p₀, p₁]` con garantía de cobertura. Usado por CRPTO como calibrador del PD canónico. Wrapper en `src/models/venn_abers.py`.
+
+## W
+
+**WoE (Weight of Evidence)**
+:   Transformación supervisada de variables categóricas: `WoE(x) = log(P(x|y=1) / P(x|y=0))`. CRPTO usa OptBinning para WoE de `grade`, `purpose`, `home_ownership`.
