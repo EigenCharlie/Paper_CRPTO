@@ -1,0 +1,27 @@
+## Apéndices Regulatorios y Future Work {#sec-crpto-regulatory-future-work}
+
+Este capítulo guarda material útil para journal, appendix o respuesta a reviewers, pero lo separa explícitamente del champion CRPTO. La regla es simple: estas piezas explican conexiones y extensiones; no cambian la policy oficial `bound_aware_276k_economic_champion` ni los artefactos canónicos de CRPTO.
+
+### Señal SICR conformal
+
+El ancho del intervalo conformal puede leerse como una señal complementaria de deterioro crediticio. En el libro grande, esta idea se documentaba en el capítulo de gobernanza IFRS9: un umbral `t* = 0.30` capturaba `75.8%` de defaults no detectados por triggers tradicionales y generaba una lectura de costo prudencial adicional. Para CRPTO, la lectura correcta es más acotada:
+
+- la señal SICR demuestra que la incertidumbre conformal tiene valor regulatorio más allá del optimizador de portafolio;
+- no forma parte del run champion ni de la región robusta `45/45`;
+- puede alimentar un apéndice de journal si el venue pide impacto prudencial o conexión con IFRS9.
+
+### Costo de misclasificación Stage 1/2
+
+La superficie de costo Stage 1/2 ayuda a defender por qué una señal de incertidumbre puede justificar prudencia aun cuando la PD puntual no cruza un umbral estático. En CRPTO, esta pieza funciona como puente conceptual: el funded set y el bound alpha-gamma ya muestran no-cobertura ponderada; el apéndice regulatorio traduce esa lógica hacia deterioro crediticio y errores de staging.
+
+### Temporal uncertainty y conformal online
+
+La versión actual de CRPTO es uniperiodo: decide un funded set OOT y evalúa defaults realizados. El future work natural es secuencial: recalibrar intervalos con conformal online, monitorear drift por periodo y ejecutar la política en ciclos de originación. La nota `docs/research/future_work/crpto_temporal_uncertainty_vnext_2026-04-02.md` queda como soporte de ese roadmap.
+
+### Validación hardening
+
+La nota `docs/research/future_work/crpto_validation_hardening_notes_2026-03-30.md` conserva aprendizajes de bootstrap diagnostics, calibration mapping, model-shift semantics y monotonic challenger ideas. Su rol es defensivo: ayuda a explicar por qué ciertas alternativas se cerraron como negativas o research-only, sin reabrir la promoción del champion.
+
+### Qué no entra al paper base
+
+No entran al cuerpo principal del paper CRPTO: survival/LGD/EAD, IFRS9 macro completo, causal/CATE, GPU/RAPIDS, quantum, Streamlit, FastAPI ni insights factory. Pueden aparecer como futuras extensiones o como comparación editorial, pero no como dependencia metodológica del resultado central.

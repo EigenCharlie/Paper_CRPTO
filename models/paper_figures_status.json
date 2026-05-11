@@ -1,0 +1,20 @@
+{
+  "schema_version": "2026-03-21.1",
+  "generated_at_utc": "2026-05-10T01:07:25.010639+00:00",
+  "run_tag": "untracked",
+  "output_dir": "/mnt/c/Users/carlos/Documents/Paper_CRPTO/reports/crpto/figures",
+  "figures_attempted": 5,
+  "figures_succeeded": 5,
+  "errors": {},
+  "files": [
+    "crpto_fig10_cqr_per_grade.pdf",
+    "crpto_fig11_crpto_stability.pdf",
+    "crpto_fig12_crpto_conceptual_pipeline.pdf",
+    "crpto_fig13_alpha_gamma_funded_set.pdf",
+    "crpto_fig14_robust_region_heatmap.pdf",
+    "crpto_fig7_uncertainty_baselines.pdf",
+    "crpto_fig8_alpha_pareto.pdf",
+    "crpto_fig9_spo_regret.pdf",
+    "crpto_fig_alpha_gamma_bound.pdf"
+  ]
+}

@@ -1,0 +1,301 @@
+{
+  "overall_pass": true,
+  "checks": {
+    "pass_psi": true,
+    "pass_breach_ratio": true,
+    "pass_score_psi": true,
+    "pass_auc_delta": true,
+    "pass_brier_increase": true,
+    "pass_calibration_gap_delta": true,
+    "pass_predictive_drift": true,
+    "pass_fairness": true,
+    "pass_c2st": false,
+    "pass_explainability": true,
+    "pass_reason_code_stability": true,
+    "warn_c2st": true,
+    "warn_distribution_tests": true,
+    "warn_explainability": false,
+    "warn_reason_code_stability": false
+  },
+  "thresholds": {
+    "psi_threshold": 0.25,
+    "ks_pvalue_min": 0.01,
+    "cvm_pvalue_min": 0.01,
+    "c2st_auc_max": 0.6,
+    "max_feature_breach_ratio": 0.15,
+    "score_psi_max": 0.15,
+    "auc_delta_max": 0.05,
+    "brier_increase_max": 0.02,
+    "calibration_gap_delta_max": 0.02,
+    "explanation_rank_overlap_top10_min": 0.6,
+    "explanation_shap_psi_max": 0.25,
+    "reason_code_stability_min": 0.55
+  },
+  "summary": {
+    "n_features": 33,
+    "max_psi": 0.13944722694322031,
+    "mean_psi": 0.024499996173148176,
+    "min_ks_pvalue": 0.0,
+    "min_cvm_pvalue": 8.80828621152574e-09,
+    "c2st_auc": 0.9853501044444442,
+    "psi_breaches": 0,
+    "ks_breaches": 32,
+    "cvm_breaches": 33,
+    "feature_breach_ratio": 0.0,
+    "distribution_warning_ratio": 0.9848484848484849,
+    "c2st_rows_used": 100000,
+    "c2st_materiality": "severe",
+    "c2st_effective_driver_count": 1,
+    "score_psi": 0.01430573726529544,
+    "auc_train_reference": 0.7464579629585804,
+    "auc_test_oot": 0.7118119107831851,
+    "auc_delta_train_to_test": 0.03464605217539529,
+    "brier_train_reference": 0.13796511693423574,
+    "brier_test_oot": 0.1550631955367288,
+    "brier_increase_train_to_test": 0.017098078602493044,
+    "calibration_gap_train_reference": 0.0303899887875225,
+    "calibration_gap_test_oot": 0.0034155097827143766,
+    "calibration_gap_delta": 0.0,
+    "train_eval_rows": 100000,
+    "test_eval_rows": 100000,
+    "n_explanation_segments": 1,
+    "min_rank_overlap_top10": 0.9,
+    "max_explanation_shap_psi": 0.06104327913317865,
+    "min_reason_code_stability": 1.0,
+    "fairness_overall_pass": true,
+    "fairness_primary_threshold": 0.35,
+    "challenger_promotable": false,
+    "model_shift_type": "mixed_shift",
+    "governance_posture": "candidate_gate"
+  },
+  "warnings": {
+    "warn_c2st": true,
+    "warn_distribution_tests": true,
+    "warn_explainability": false,
+    "warn_reason_code_stability": false
+  },
+  "c2st": {
+    "auc": 0.9853501044444442,
+    "materiality": "severe",
+    "effective_driver_count": 1,
+    "top_drivers": [
+      {
+        "feature": "int_rate",
+        "importance_auc": 0.4170757822222219
+      },
+      {
+        "feature": "loan_to_income",
+        "importance_auc": 0.00718282296296265
+      },
+      {
+        "feature": "pub_rec",
+        "importance_auc": 0.004748391851851608
+      },
+      {
+        "feature": "has_bankruptcy",
+        "importance_auc": 0.003179000740740475
+      },
+      {
+        "feature": "loan_amnt",
+        "importance_auc": 0.0025205829629626844
+      },
+      {
+        "feature": "fico_score",
+        "importance_auc": 0.0018507688888886875
+      },
+      {
+        "feature": "inq_last_6mths",
+        "importance_auc": 0.0005079955555552887
+      },
+      {
+        "feature": "term",
+        "importance_auc": 0.000483162962962654
+      },
+      {
+        "feature": "credit_age_years",
+        "importance_auc": 0.000386952592592323
+      },
+      {
+        "feature": "revol_bal_to_income",
+        "importance_auc": 0.000345855555555256
+      }
+    ]
+  },
+  "model_shift": {
+    "shift_type": "mixed_shift",
+    "structural_shift_level": "severe",
+    "predictive_degradation_level": "moderate",
+    "governance_posture": "candidate_gate",
+    "c2st_materiality": "severe",
+    "pvalue_interpretation": "Both structural shift and predictive degradation are present. This combination deserves the strongest governance posture."
+  },
+  "artifacts": {
+    "drift_monitoring_path": "data/processed/drift_monitoring.parquet",
+    "explanation_drift_path": "data/processed/explanation_drift.parquet",
+    "fairness_status_path": "models/fairness_audit_status.json",
+    "fairness_frontier_path": "data/processed/fairness_threshold_frontier.parquet",
+    "challenger_promotion_report_path": "models/challenger_promotion_report.json",
+    "model_shift_status_path": "models/model_shift_status.json"
+  },
+  "top_drift_features": [
+    {
+      "feature": "fico_score",
+      "train_n": 798550,
+      "test_n": 276869,
+      "psi": 0.13944722694322031,
+      "ks_statistic": 0.15457282396927496,
+      "ks_pvalue": 0.0,
+      "cvm_statistic": 3230.128652537591,
+      "cvm_pvalue": 4.865294239708717e-07,
+      "pass_psi": true,
+      "pass_ks": false,
+      "pass_cvm": false
+    },
+    {
+      "feature": "int_rate",
+      "train_n": 798550,
+      "test_n": 276869,
+      "psi": 0.10118060476101726,
+      "ks_statistic": 0.09481768715722516,
+      "ks_pvalue": 0.0,
+      "cvm_statistic": 398.7076133590017,
+      "cvm_pvalue": 1.135480649505638e-07,
+      "pass_psi": true,
+      "pass_ks": false,
+      "pass_cvm": false
+    },
+    {
+      "feature": "revol_bal_to_income",
+      "train_n": 798482,
+      "test_n": 276157,
+      "psi": 0.05347961324875766,
+      "ks_statistic": 0.09122311383287474,
+      "ks_pvalue": 0.0,
+      "cvm_statistic": 909.8105939357774,
+      "cvm_pvalue": 2.1943404671098676e-07,
+      "pass_psi": true,
+      "pass_ks": false,
+      "pass_cvm": false
+    },
+    {
+      "feature": "delinq_severity",
+      "train_n": 798550,
+      "test_n": 276869,
+      "psi": 0.05178332227166686,
+      "ks_statistic": 0.0916698979201469,
+      "ks_pvalue": 0.0,
+      "cvm_statistic": 44606.0478113642,
+      "cvm_pvalue": 2.134860395242022e-06,
+      "pass_psi": true,
+      "pass_ks": false,
+      "pass_cvm": false
+    },
+    {
+      "feature": "log_revol_bal",
+      "train_n": 798550,
+      "test_n": 276869,
+      "psi": 0.045158456442640646,
+      "ks_statistic": 0.07714231680126768,
+      "ks_pvalue": 0.0,
+      "cvm_statistic": 581.7568173016189,
+      "cvm_pvalue": 1.863552576697458e-07,
+      "pass_psi": true,
+      "pass_ks": false,
+      "pass_cvm": false
+    },
+    {
+      "feature": "revol_bal",
+      "train_n": 798550,
+      "test_n": 276869,
+      "psi": 0.045158456442640646,
+      "ks_statistic": 0.07714231680126768,
+      "ks_pvalue": 0.0,
+      "cvm_statistic": 581.7568173016189,
+      "cvm_pvalue": 1.863552576697458e-07,
+      "pass_psi": true,
+      "pass_ks": false,
+      "pass_cvm": false
+    },
+    {
+      "feature": "loan_to_income",
+      "train_n": 798482,
+      "test_n": 276157,
+      "psi": 0.040709068313852514,
+      "ks_statistic": 0.05937315877269134,
+      "ks_pvalue": 0.0,
+      "cvm_statistic": 200.07670529338066,
+      "cvm_pvalue": 4.4769498996899415e-08,
+      "pass_psi": true,
+      "pass_ks": false,
+      "pass_cvm": false
+    },
+    {
+      "feature": "loan_to_income_sq",
+      "train_n": 798482,
+      "test_n": 276157,
+      "psi": 0.040709068313852514,
+      "ks_statistic": 0.05937315877269134,
+      "ks_pvalue": 0.0,
+      "cvm_statistic": 200.07670714583946,
+      "cvm_pvalue": 4.476950465903684e-08,
+      "pass_psi": true,
+      "pass_ks": false,
+      "pass_cvm": false
+    },
+    {
+      "feature": "delinq_recency",
+      "train_n": 798550,
+      "test_n": 276869,
+      "psi": 0.038966862981116755,
+      "ks_statistic": 0.08135488943770064,
+      "ks_pvalue": 0.0,
+      "cvm_statistic": 11755.072386931657,
+      "cvm_pvalue": 9.791550346083255e-07,
+      "pass_psi": true,
+      "pass_ks": false,
+      "pass_cvm": false
+    },
+    {
+      "feature": "credit_age_years",
+      "train_n": 798550,
+      "test_n": 276869,
+      "psi": 0.029775277868375027,
+      "ks_statistic": 0.054973967117968536,
+      "ks_pvalue": 0.0,
+      "cvm_statistic": 290.1511620187666,
+      "cvm_pvalue": 1.0223037416601244e-07,
+      "pass_psi": true,
+      "pass_ks": false,
+      "pass_cvm": false
+    }
+  ],
+  "top_explanation_breaches": [
+    {
+      "segment_type": "overall",
+      "segment": "all",
+      "reference_period": "2018Q1|2018Q2|2018Q3|2018Q4|2019Q1|2019Q2|2019Q3",
+      "comparison_period": "2019Q4|2020Q1|2020Q2|2020Q3",
+      "reference_n": 4763,
+      "comparison_n": 237,
+      "rank_overlap_top10": 0.9,
+      "avg_shap_psi_top5": 0.044564149041987314,
+      "max_shap_psi_top5": 0.06104327913317865,
+      "reason_code_match_rate": 1.0,
+      "pass_rank_overlap": true,
+      "pass_distribution_shift": true,
+      "pass_reason_code_stability": true,
+      "passed_all": true,
+      "feature_psi_details": "[{\"feature\": \"int_rate\", \"psi\": 0.0571152296148128}, {\"feature\": \"term\", \"psi\": 0.05398847136247015}, {\"feature\": \"fico_score\", \"psi\": 0.06104327913317865}, {\"feature\": \"home_ownership\", \"psi\": 0.03675845025796413}, {\"feature\": \"many_recent_opens\", \"psi\": 0.013915314841510859}]",
+      "reason_code_details": "[{\"band\": \"low\", \"reference_reason\": \"int_rate\", \"comparison_reason\": \"int_rate\", \"matched\": true}, {\"band\": \"near_threshold\", \"reference_reason\": \"int_rate\", \"comparison_reason\": \"int_rate\", \"matched\": true}]"
+    }
+  ],
+  "primary_threshold": 0.35,
+  "explainability_pass": true,
+  "explanation_drift_pass": true,
+  "reason_code_stability_pass": true,
+  "challenger_promotable": false,
+  "policy_config": "configs/mrm_policy.yaml",
+  "schema_version": "2026-03-06.1",
+  "generated_at_utc": "2026-04-07T17:43:53.829393+00:00",
+  "run_tag": "crpto-e2e-all-champions-2026-04-07"
+}

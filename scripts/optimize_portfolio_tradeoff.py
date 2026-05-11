@@ -1,0 +1,1056 @@
+"""Portfolio robustness trade-off analysis.
+
+Evaluates the explicit cost of robustness across:
+- portfolio PD caps (risk tolerance grid)
+- uncertainty aversion penalties in the objective
+
+Usage:
+    uv run python scripts/optimize_portfolio_tradeoff.py
+"""
+
+from __future__ import annotations
+
+import argparse
+import os
+from datetime import UTC, datetime
+from pathlib import Path
+
+import numpy as np
+import pandas as pd
+import yaml
+from loguru import logger
+
+from src.models.conformal_artifacts import load_conformal_intervals
+from src.optimization.portfolio_model import (
+    compute_effective_pd,
+    optimize_portfolio_allocation,
+)
+from src.utils.artifact_metadata import resolve_run_tag
+from src.utils.pipeline_runtime import (
+    atomic_write_json,
+    atomic_write_parquet,
+    atomic_write_pickle,
+    write_last_valid_artifact,
+    write_runtime_checkpoint,
+    write_runtime_status,
+)
+
+SCHEMA_VERSION = "2026-03-08.1"
+
+
+def _artifact_path(path_like: str | Path) -> Path:
+    path = Path(path_like)
+    root = str(os.environ.get("GPU_REPLAY_ARTIFACT_ROOT", "")).strip()
+    return (Path(root) / path) if root else path
+
+
+def _parse_percent_series(series: pd.Series) -> np.ndarray:
+    if pd.api.types.is_numeric_dtype(series):
+        values = pd.to_numeric(series, errors="coerce").to_numpy(dtype=float)
+    else:
+        values = (
+            series.astype(str)
+            .str.strip()
+            .str.rstrip("%")
+            .pipe(pd.to_numeric, errors="coerce")
+            .to_numpy(dtype=float)
+        )
+    values = np.nan_to_num(values, nan=12.0)
+    return values / 100.0
+
+
+def _load_candidates() -> pd.DataFrame:
+    fe_path = Path("data/processed/test_fe.parquet")
+    raw_path = Path("data/processed/test.parquet")
+    return pd.read_parquet(fe_path if fe_path.exists() else raw_path)
+
+
+def _load_intervals(conformal_intervals_path: str | None = None) -> pd.DataFrame:
+    intervals, path, is_legacy = load_conformal_intervals(
+        allow_legacy_fallback=False,
+        override_path=conformal_intervals_path,
+    )
+    logger.info(
+        f"Loaded conformal intervals from {path} (legacy={is_legacy}, rows={len(intervals):,})"
+    )
+    return intervals
+
+
+def _resolve_output_dirs(artifact_namespace: str | None = None) -> tuple[Path, Path]:
+    if artifact_namespace:
+        ns = str(artifact_namespace).strip().replace("/", "_")
+        data_dir = _artifact_path(Path("data/processed/portfolio_tradeoff") / ns)
+        model_dir = _artifact_path(Path("models/portfolio_tradeoff") / ns)
+    else:
+        data_dir = _artifact_path("data/processed")
+        model_dir = _artifact_path("models")
+    data_dir.mkdir(parents=True, exist_ok=True)
+    model_dir.mkdir(parents=True, exist_ok=True)
+    return data_dir, model_dir
+
+
+def _resolve_interval_columns(intervals: pd.DataFrame) -> tuple[str, str, str]:
+    col_point = "y_pred" if "y_pred" in intervals.columns else "pd_point"
+    col_low = "pd_low_90" if "pd_low_90" in intervals.columns else "pd_low"
+    col_high = "pd_high_90" if "pd_high_90" in intervals.columns else "pd_high"
+    return col_point, col_low, col_high
+
+
+def _align_loans_and_intervals(
+    candidates: pd.DataFrame,
+    intervals: pd.DataFrame,
+    max_candidates: int,
+    random_state: int,
+) -> tuple[pd.DataFrame, pd.DataFrame]:
+    """Align candidate loans with interval rows by id where possible."""
+    max_candidates_norm = None if int(max_candidates) <= 0 else int(max_candidates)
+    if "id" in candidates.columns and "id" in intervals.columns:
+        cand = candidates.copy()
+        ints = intervals.copy()
+        cand["_id_join"] = cand["id"].astype(str)
+        ints["_id_join"] = ints["id"].astype(str)
+        ints = ints.drop_duplicates(subset="_id_join", keep="first")
+        merged = cand.merge(ints, on="_id_join", how="inner", suffixes=("", "_int"))
+        if merged.empty:
+            raise ValueError("ID-based merge between candidates and intervals returned zero rows.")
+
+        n = len(merged) if max_candidates_norm is None else min(len(merged), max_candidates_norm)
+        if len(merged) > n:
+            idx = np.random.default_rng(random_state).choice(
+                np.arange(len(merged)), size=n, replace=False
+            )
+            idx = np.sort(idx)
+            merged = merged.iloc[idx].reset_index(drop=True)
+        else:
+            merged = merged.reset_index(drop=True)
+
+        loans = merged[candidates.columns].copy()
+        interval_cols = [c for c in intervals.columns if c in merged.columns]
+        ints_aligned = merged[interval_cols].copy()
+        logger.info(
+            f"Aligned tradeoff candidates and intervals by id: n={len(loans):,} "
+            f"(candidate_rows={len(candidates):,}, interval_rows={len(intervals):,})"
+        )
+        return loans, ints_aligned
+
+    if "_row_number" in intervals.columns:
+        cand = candidates.copy()
+        ints = intervals.copy()
+        cand["_row_number"] = np.arange(len(cand))
+        merged = cand.merge(ints, on="_row_number", how="inner", suffixes=("", "_int"))
+        assert len(merged) == len(cand), (
+            f"_row_number merge size mismatch: {len(merged)} != {len(cand)}"
+        )
+        n = len(merged) if max_candidates_norm is None else min(len(merged), max_candidates_norm)
+        if len(merged) > n:
+            idx = np.random.default_rng(random_state).choice(
+                np.arange(len(merged)), size=n, replace=False
+            )
+            merged = merged.iloc[np.sort(idx)].reset_index(drop=True)
+        else:
+            merged = merged.reset_index(drop=True)
+        loans = merged[candidates.columns].copy()
+        interval_cols = [c for c in intervals.columns if c in merged.columns]
+        ints_aligned = merged[interval_cols].copy()
+        logger.info(f"Aligned tradeoff candidates and intervals by _row_number: n={len(loans):,}")
+        return loans, ints_aligned
+
+    logger.warning(
+        "Conformal interval artifact has no id or _row_number alignment key; using positional fallback in tradeoff analysis."
+    )
+    n = min(len(candidates), len(intervals))
+    if max_candidates_norm is not None:
+        n = min(n, max_candidates_norm)
+    idx = np.random.default_rng(random_state).choice(np.arange(n), size=n, replace=False)
+    idx = np.sort(idx)
+    loans = candidates.iloc[idx].reset_index(drop=True).copy()
+    ints_aligned = intervals.iloc[idx].reset_index(drop=True).copy()
+    return loans, ints_aligned
+
+
+def _write_candidate_universe(loans: pd.DataFrame, *, path: str, run_tag: str) -> None:
+    if "id" not in loans.columns:
+        logger.warning("Tradeoff candidate universe not persisted: missing id column.")
+        return
+    out = loans.loc[:, ["id"]].copy()
+    out["sample_order"] = np.arange(len(out), dtype=int)
+    out["run_tag"] = str(run_tag)
+    out_path = _artifact_path(path)
+    out_path.parent.mkdir(parents=True, exist_ok=True)
+    out.to_parquet(out_path, index=False)
+    logger.info("Saved candidate universe: {}", out_path)
+
+
+def _parse_float_grid(raw: str) -> list[float]:
+    vals = []
+    for token in raw.split(","):
+        token = token.strip()
+        if not token:
+            continue
+        vals.append(float(token))
+    if not vals:
+        raise ValueError("Grid cannot be empty.")
+    return sorted(set(vals))
+
+
+def _resolve_grid_profile(
+    grid_profile: str,
+    risk_grid: str,
+    aversion_grid: str,
+) -> tuple[list[float], list[float]]:
+    profiles = {
+        "custom": (risk_grid, aversion_grid),
+        "quick": ("0.08,0.10,0.12", "0.0,0.5,1.0"),
+        "night": ("0.05,0.06,0.08,0.10,0.12,0.14", "0.0,0.25,0.5,1.0,1.5,2.0,3.0"),
+        "balanced": (
+            "0.05,0.06,0.08,0.10,0.12,0.14,0.16,0.18,0.20",
+            "0.0,0.25,0.5,1.0,1.5,2.0,3.0",
+        ),
+    }
+    raw_risk, raw_averse = profiles.get(grid_profile, profiles["custom"])
+    return _parse_float_grid(raw_risk), _parse_float_grid(raw_averse)
+
+
+def _solve_single(
+    loans: pd.DataFrame,
+    pd_point: np.ndarray,
+    pd_low: np.ndarray,
+    pd_high: np.ndarray,
+    lgd: np.ndarray,
+    int_rates: np.ndarray,
+    default_flag: np.ndarray | None,
+    total_budget: float,
+    max_concentration: float,
+    risk_tolerance: float,
+    robust: bool,
+    uncertainty_aversion: float,
+    min_budget_utilization: float,
+    pd_cap_slack_penalty: float,
+    time_limit: int,
+    threads: int,
+    solver_backend: str = "highs",
+    policy_mode: str = "hard_worst_case",
+    gamma: float = 1.0,
+    delta_cap_quantile: float = 1.0,
+    tail_focus_quantile: float = 1.0,
+    random_seed: int | None = None,
+    cuopt_presolve: int | None = 1,
+) -> tuple[dict[str, float | int | str], np.ndarray]:
+    segment_labels: np.ndarray | None = None
+    if policy_mode in {
+        "segment_tail_blended_uncertainty",
+        "segment_relative_tail_blended_uncertainty",
+    }:
+        grade = (
+            loans["grade"].fillna("unknown").astype(str)
+            if "grade" in loans.columns
+            else pd.Series(["unknown"] * len(loans))
+        )
+        term = (
+            loans["term"].fillna("unknown").astype(str)
+            if "term" in loans.columns
+            else pd.Series(["unknown"] * len(loans))
+        )
+        verification = (
+            loans["verification_status"].fillna("unknown").astype(str)
+            if "verification_status" in loans.columns
+            else pd.Series(["unknown"] * len(loans))
+        )
+        segment_labels = (grade + "|" + term + "|" + verification).to_numpy(dtype=object)
+    pd_constraint = compute_effective_pd(
+        pd_point=pd_point,
+        pd_high=pd_high,
+        policy_mode=policy_mode,
+        gamma=gamma,
+        delta_cap_quantile=delta_cap_quantile,
+        tail_focus_quantile=tail_focus_quantile,
+        segment_labels=segment_labels,
+    )
+    solution = optimize_portfolio_allocation(
+        loans=loans,
+        pd_point=pd_point,
+        pd_low=pd_low,
+        pd_high=pd_high,
+        lgd=lgd,
+        int_rates=int_rates,
+        total_budget=total_budget,
+        max_concentration=max_concentration,
+        max_portfolio_pd=risk_tolerance,
+        robust=robust,
+        uncertainty_aversion=uncertainty_aversion,
+        min_budget_utilization=min_budget_utilization,
+        pd_cap_slack_penalty=pd_cap_slack_penalty,
+        pd_constraint_override=pd_constraint,
+        time_limit=time_limit,
+        threads=threads,
+        solver_backend=solver_backend,
+        random_seed=random_seed,
+        cuopt_presolve=cuopt_presolve,
+    )
+
+    n = len(loans)
+    allocation = np.array([solution["allocation"][i] for i in range(n)], dtype=float)
+    loan_amounts = (
+        loans["loan_amnt"].to_numpy(dtype=float)
+        if "loan_amnt" in loans.columns
+        else np.ones(n) * 10_000
+    )
+    total_allocated = float(np.sum(allocation * loan_amounts))
+
+    expected_loss = float(np.sum(allocation * loan_amounts * pd_point * lgd))
+    worst_loss = float(np.sum(allocation * loan_amounts * pd_high * lgd))
+    expected_return = float(np.sum(allocation * loan_amounts * int_rates))
+    economic_return = expected_return - expected_loss
+    realized_total_return = _compute_realized_total_return(
+        solution["allocation"],
+        loan_amounts,
+        int_rates,
+        default_flag if default_flag is not None else np.zeros(n, dtype=int),
+        lgd=float(np.mean(lgd)),
+    )
+    uncertainty_cost = float(
+        uncertainty_aversion
+        * np.sum(allocation * loan_amounts * np.clip(pd_high - pd_point, 0.0, 1.0) * lgd)
+    )
+    worst_pd = float(np.sum(allocation * loan_amounts * pd_high) / (total_allocated + 1e-6))
+    point_pd = float(np.sum(allocation * loan_amounts * pd_point) / (total_allocated + 1e-6))
+
+    return {
+        "solver_status": str(solution["solver_status"]),
+        "solver_backend": str(solver_backend),
+        "policy_mode": str(policy_mode),
+        "gamma": float(gamma),
+        "delta_cap_quantile": float(delta_cap_quantile),
+        "tail_focus_quantile": float(tail_focus_quantile),
+        "objective_value": float(solution["objective_value"]),
+        "n_funded": int(solution["n_funded"]),
+        "total_allocated": total_allocated,
+        "expected_return_gross": expected_return,
+        "expected_loss_point": expected_loss,
+        "expected_return_net_point": economic_return,
+        "realized_total_return": realized_total_return,
+        "worst_case_loss": worst_loss,
+        "uncertainty_penalty_cost": uncertainty_cost,
+        "pd_cap_slack": float(solution.get("pd_cap_slack", 0.0)),
+        "worst_case_pd": worst_pd,
+        "point_pd": point_pd,
+    }, allocation
+
+
+def _compute_realized_total_return(
+    allocation: dict[int, float],
+    loan_amounts: np.ndarray,
+    int_rates: np.ndarray,
+    default_flag: np.ndarray,
+    *,
+    lgd: float = 0.45,
+) -> float:
+    total = 0.0
+    for i in range(len(loan_amounts)):
+        alloc = float(allocation.get(i, 0.0))
+        if alloc <= 0.01:
+            continue
+        if int(default_flag[i]) == 1:
+            total += alloc * float(loan_amounts[i]) * (-lgd)
+        else:
+            total += alloc * float(loan_amounts[i]) * float(int_rates[i])
+    return float(total)
+
+
+def _allocation_similarity(a: np.ndarray, b: np.ndarray) -> float:
+    denom = float(np.linalg.norm(a) * np.linalg.norm(b))
+    if denom <= 1e-12:
+        return 1.0
+    return float(np.clip(np.dot(a, b) / denom, -1.0, 1.0))
+
+
+def _select_research_policies(
+    frontier: pd.DataFrame,
+) -> tuple[
+    pd.DataFrame,
+    dict[str, float | int | str],
+    dict[str, float | int | str] | None,
+    dict[str, float | int | str] | None,
+    dict[str, float | int | str] | None,
+]:
+    work = frontier.copy()
+    work["ab_pass_rank"] = work["ab_pass"].fillna(False).astype(bool)
+    work["realized_total_return_rank"] = pd.to_numeric(
+        work["realized_total_return"], errors="coerce"
+    ).fillna(float("-inf"))
+    work["price_of_robustness_rank"] = pd.to_numeric(
+        work["price_of_robustness"], errors="coerce"
+    ).fillna(float("inf"))
+    selected = (
+        work.loc[work["policy"] != "nonrobust"]
+        .sort_values(
+            ["ab_pass_rank", "realized_total_return_rank", "price_of_robustness_rank"],
+            ascending=[False, False, True],
+        )
+        .iloc[0]
+    )
+    robust_pool = work.loc[
+        (work["policy"] != "nonrobust")
+        & work["ab_pass_rank"]
+        & (pd.to_numeric(work["gamma"], errors="coerce").fillna(0.0) > 0.0)
+    ].copy()
+    robust_selected: dict[str, float | int | str] | None = None
+    balanced_selected: dict[str, float | int | str] | None = None
+    guardrail_selected: dict[str, float | int | str] | None = None
+    if not robust_pool.empty:
+        robust_pool["gamma_rank"] = pd.to_numeric(robust_pool["gamma"], errors="coerce").fillna(0.0)
+        robust_pool["lambda_rank"] = pd.to_numeric(
+            robust_pool["uncertainty_aversion"], errors="coerce"
+        ).fillna(0.0)
+        robust_pool["robustness_aware_score"] = (
+            robust_pool["realized_total_return_rank"]
+            * np.sqrt(np.clip(robust_pool["gamma_rank"].to_numpy(dtype=float), 0.0, None))
+            * (1.0 + 0.05 * np.clip(robust_pool["lambda_rank"].to_numpy(dtype=float), 0.0, 1.0))
+        )
+        robust_selected = (
+            robust_pool.sort_values(
+                [
+                    "robustness_aware_score",
+                    "realized_total_return_rank",
+                    "price_of_robustness_rank",
+                ],
+                ascending=[False, False, True],
+            )
+            .iloc[0]
+            .to_dict()
+        )
+        balanced_selected = (
+            robust_pool.sort_values(
+                [
+                    "realized_total_return_rank",
+                    "gamma_rank",
+                    "lambda_rank",
+                    "price_of_robustness_rank",
+                ],
+                ascending=[False, False, True, True],
+            )
+            .iloc[0]
+            .to_dict()
+        )
+        por_pct_col = (
+            pd.to_numeric(robust_pool["price_of_robustness_pct"], errors="coerce")
+            if "price_of_robustness_pct" in robust_pool.columns
+            else (-pd.to_numeric(robust_pool["price_of_robustness"], errors="coerce").fillna(0.0))
+        )
+        guardrail_pool = robust_pool.loc[por_pct_col.fillna(-999.0) >= -25.0].copy()
+        if guardrail_pool.empty:
+            guardrail_pool = robust_pool.copy()
+        guardrail_selected = (
+            guardrail_pool.sort_values(
+                [
+                    "realized_total_return_rank",
+                    "price_of_robustness_rank",
+                    "gamma_rank",
+                    "lambda_rank",
+                ],
+                ascending=[False, False, False, True],
+            )
+            .iloc[0]
+            .to_dict()
+        )
+    frontier_out = frontier.copy()
+    frontier_out["selected_for_champion"] = False
+    frontier_out.loc[selected.name, "selected_for_champion"] = True
+    frontier_out["selected_for_robustness_aware"] = False
+    frontier_out["selected_for_balanced_robustness"] = False
+    frontier_out["selected_for_guardrail_robustness"] = False
+    if robust_selected is not None:
+        robust_mask = (
+            frontier_out["risk_tolerance"].eq(float(robust_selected["risk_tolerance"]))
+            & frontier_out["policy_mode"].eq(str(robust_selected["policy_mode"]))
+            & frontier_out["gamma"].eq(float(robust_selected["gamma"]))
+            & frontier_out["uncertainty_aversion"].eq(
+                float(robust_selected["uncertainty_aversion"])
+            )
+        )
+        frontier_out.loc[robust_mask, "selected_for_robustness_aware"] = True
+    if balanced_selected is not None:
+        balanced_mask = (
+            frontier_out["risk_tolerance"].eq(float(balanced_selected["risk_tolerance"]))
+            & frontier_out["policy_mode"].eq(str(balanced_selected["policy_mode"]))
+            & frontier_out["gamma"].eq(float(balanced_selected["gamma"]))
+            & frontier_out["uncertainty_aversion"].eq(
+                float(balanced_selected["uncertainty_aversion"])
+            )
+        )
+        frontier_out.loc[balanced_mask, "selected_for_balanced_robustness"] = True
+    if guardrail_selected is not None:
+        guardrail_mask = (
+            frontier_out["risk_tolerance"].eq(float(guardrail_selected["risk_tolerance"]))
+            & frontier_out["policy_mode"].eq(str(guardrail_selected["policy_mode"]))
+            & frontier_out["gamma"].eq(float(guardrail_selected["gamma"]))
+            & frontier_out["uncertainty_aversion"].eq(
+                float(guardrail_selected["uncertainty_aversion"])
+            )
+        )
+        frontier_out.loc[guardrail_mask, "selected_for_guardrail_robustness"] = True
+    return frontier_out, selected.to_dict(), robust_selected, balanced_selected, guardrail_selected
+
+
+_select_champion_policy = _select_research_policies
+
+
+def main(
+    config_path: str = "configs/optimization.yaml",
+    risk_grid: str = "0.06,0.08,0.10,0.12",
+    aversion_grid: str = "0.0,0.5,1.0,2.0",
+    max_candidates: int = 3000,
+    random_state: int = 42,
+    robust_min_budget_utilization: float = 0.05,
+    strict_risk_threshold: float = 0.12,
+    robust_pd_slack_penalty: float = 1.5,
+    grid_profile: str = "custom",
+    solver_backend: str = "highs",
+    candidate_universe_path: str = "data/processed/champion_candidate_universe.parquet",
+    conformal_intervals_path: str | None = None,
+    artifact_namespace: str | None = None,
+    run_tag: str | None = None,
+):
+    stage_name = "portfolio_tradeoff"
+    write_runtime_status(stage_name, phase="loading_inputs", state="running")
+    with open(config_path, encoding="utf-8") as f:
+        config = yaml.safe_load(f)
+
+    risk_values, aversion_values = _resolve_grid_profile(grid_profile, risk_grid, aversion_grid)
+
+    candidates = _load_candidates().reset_index(drop=True)
+    intervals = _load_intervals(conformal_intervals_path=conformal_intervals_path).reset_index(
+        drop=True
+    )
+    loans, ints = _align_loans_and_intervals(
+        candidates=candidates,
+        intervals=intervals,
+        max_candidates=max_candidates,
+        random_state=random_state,
+    )
+    n = len(loans)
+    resolved_run_tag = (
+        str(run_tag).strip() if run_tag is not None else resolve_run_tag(require_explicit=True)
+    )
+    _write_candidate_universe(loans, path=candidate_universe_path, run_tag=resolved_run_tag)
+    candidate_universe_resolved = _artifact_path(candidate_universe_path)
+    write_runtime_checkpoint(
+        stage_name,
+        "candidate_universe_prepared",
+        {
+            "n_candidates_available": int(min(len(candidates), len(intervals))),
+            "n_candidates_used": int(n),
+            "risk_grid_count": len(risk_values),
+            "aversion_grid_count": len(aversion_values),
+        },
+    )
+
+    col_point, col_low, col_high = _resolve_interval_columns(ints)
+    pd_point = ints[col_point].to_numpy(dtype=float)
+    pd_low = ints[col_low].to_numpy(dtype=float)
+    pd_high = ints[col_high].to_numpy(dtype=float)
+    lgd = np.full(n, 0.45, dtype=float)
+    int_rates = (
+        _parse_percent_series(loans["int_rate"])
+        if "int_rate" in loans.columns
+        else np.full(n, 0.12)
+    )
+    default_flag = (
+        pd.to_numeric(loans["default_flag"], errors="coerce").fillna(0).to_numpy(dtype=int)
+        if "default_flag" in loans.columns
+        else np.zeros(n, dtype=int)
+    )
+    policy_grid: list[tuple[str, float, float, float]] = [
+        ("hard_worst_case", 1.0, 1.0, 1.0),
+        ("blended_uncertainty", 0.0, 1.0, 1.0),
+        ("blended_uncertainty", 0.05, 1.0, 1.0),
+        ("blended_uncertainty", 0.10, 1.0, 1.0),
+        ("blended_uncertainty", 0.15, 1.0, 1.0),
+        ("blended_uncertainty", 0.20, 1.0, 1.0),
+        ("blended_uncertainty", 0.25, 1.0, 1.0),
+        ("blended_uncertainty", 0.35, 1.0, 1.0),
+        ("blended_uncertainty", 0.50, 1.0, 1.0),
+        ("capped_blended_uncertainty", 0.05, 0.50, 1.0),
+        ("capped_blended_uncertainty", 0.10, 0.50, 1.0),
+        ("capped_blended_uncertainty", 0.15, 0.50, 1.0),
+        ("capped_blended_uncertainty", 0.20, 0.50, 1.0),
+        ("capped_blended_uncertainty", 0.25, 0.50, 1.0),
+        ("capped_blended_uncertainty", 0.35, 0.50, 1.0),
+        ("capped_blended_uncertainty", 0.50, 0.50, 1.0),
+        ("capped_blended_uncertainty", 0.05, 0.75, 1.0),
+        ("capped_blended_uncertainty", 0.10, 0.75, 1.0),
+        ("capped_blended_uncertainty", 0.15, 0.75, 1.0),
+        ("capped_blended_uncertainty", 0.20, 0.75, 1.0),
+        ("capped_blended_uncertainty", 0.25, 0.75, 1.0),
+        ("capped_blended_uncertainty", 0.35, 0.75, 1.0),
+        ("capped_blended_uncertainty", 0.50, 0.75, 1.0),
+        ("capped_blended_uncertainty", 0.05, 0.90, 1.0),
+        ("capped_blended_uncertainty", 0.10, 0.90, 1.0),
+        ("capped_blended_uncertainty", 0.15, 0.90, 1.0),
+        ("capped_blended_uncertainty", 0.20, 0.90, 1.0),
+        ("capped_blended_uncertainty", 0.25, 0.90, 1.0),
+        ("capped_blended_uncertainty", 0.35, 0.90, 1.0),
+        ("capped_blended_uncertainty", 0.50, 0.90, 1.0),
+        ("capped_blended_uncertainty", 0.05, 1.00, 1.0),
+        ("capped_blended_uncertainty", 0.10, 1.00, 1.0),
+        ("capped_blended_uncertainty", 0.15, 1.00, 1.0),
+        ("capped_blended_uncertainty", 0.20, 1.00, 1.0),
+        ("capped_blended_uncertainty", 0.25, 1.00, 1.0),
+        ("capped_blended_uncertainty", 0.35, 1.00, 1.0),
+        ("capped_blended_uncertainty", 0.50, 1.00, 1.0),
+        ("tail_blended_uncertainty", 0.10, 1.0, 0.75),
+        ("tail_blended_uncertainty", 0.20, 1.0, 0.75),
+        ("tail_blended_uncertainty", 0.35, 1.0, 0.75),
+        ("tail_blended_uncertainty", 0.50, 1.0, 0.75),
+        ("tail_blended_uncertainty", 0.10, 1.0, 0.90),
+        ("tail_blended_uncertainty", 0.20, 1.0, 0.90),
+        ("tail_blended_uncertainty", 0.35, 1.0, 0.90),
+        ("tail_blended_uncertainty", 0.50, 1.0, 0.90),
+        ("tail_blended_uncertainty", 0.10, 1.0, 0.95),
+        ("tail_blended_uncertainty", 0.20, 1.0, 0.95),
+        ("tail_blended_uncertainty", 0.35, 1.0, 0.95),
+        ("tail_blended_uncertainty", 0.50, 1.0, 0.95),
+        ("segment_tail_blended_uncertainty", 0.05, 1.0, 0.75),
+        ("segment_tail_blended_uncertainty", 0.10, 1.0, 0.75),
+        ("segment_tail_blended_uncertainty", 0.20, 1.0, 0.75),
+        ("segment_tail_blended_uncertainty", 0.35, 1.0, 0.75),
+        ("segment_tail_blended_uncertainty", 0.05, 1.0, 0.90),
+        ("segment_tail_blended_uncertainty", 0.10, 1.0, 0.90),
+        ("segment_tail_blended_uncertainty", 0.20, 1.0, 0.90),
+        ("segment_tail_blended_uncertainty", 0.35, 1.0, 0.90),
+        ("segment_relative_tail_blended_uncertainty", 0.05, 1.0, 0.75),
+        ("segment_relative_tail_blended_uncertainty", 0.10, 1.0, 0.75),
+        ("segment_relative_tail_blended_uncertainty", 0.20, 1.0, 0.75),
+        ("segment_relative_tail_blended_uncertainty", 0.05, 1.0, 0.90),
+        ("segment_relative_tail_blended_uncertainty", 0.10, 1.0, 0.90),
+        ("segment_relative_tail_blended_uncertainty", 0.20, 1.0, 0.90),
+    ]
+
+    rows: list[dict[str, float | int | str]] = []
+    summary_rows: list[dict[str, float | int | str]] = []
+
+    logger.info(
+        f"Starting robustness trade-off optimization on n={n:,}, "
+        f"risk_grid={risk_values}, aversion_grid={aversion_values}"
+    )
+    write_runtime_status(
+        stage_name,
+        phase="solving_frontier",
+        state="running",
+        run_tag=resolved_run_tag,
+    )
+
+    for risk_tol in risk_values:
+        baseline, baseline_alloc = _solve_single(
+            loans=loans,
+            pd_point=pd_point,
+            pd_low=pd_low,
+            pd_high=pd_high,
+            lgd=lgd,
+            int_rates=int_rates,
+            default_flag=default_flag,
+            total_budget=float(config["portfolio"]["total_budget"]),
+            max_concentration=float(config["portfolio"]["max_concentration"]),
+            risk_tolerance=float(risk_tol),
+            robust=False,
+            uncertainty_aversion=0.0,
+            min_budget_utilization=0.0,
+            pd_cap_slack_penalty=0.0,
+            time_limit=int(config["optimization"]["time_limit"]),
+            threads=int(config["optimization"]["threads"]),
+            solver_backend=solver_backend,
+        )
+        rows.append(
+            {
+                "policy": "nonrobust",
+                "policy_mode": "point_estimate",
+                "gamma": 0.0,
+                "risk_tolerance": float(risk_tol),
+                "uncertainty_aversion": 0.0,
+                "min_budget_utilization": 0.0,
+                "pd_cap_slack_penalty": 0.0,
+                "price_of_robustness": 0.0,
+                "price_of_robustness_pct": 0.0,
+                "realized_total_return": float(baseline["realized_total_return"]),
+                "ab_diff_total_return": 0.0,
+                "ab_pass": True,
+                **baseline,
+            }
+        )
+        baseline_ret = float(baseline["expected_return_net_point"])
+        baseline_realized = float(baseline["realized_total_return"])
+
+        robust_candidates = []
+        for policy_mode, gamma, delta_cap_quantile, tail_focus_quantile in policy_grid:
+            for lam in aversion_values:
+                enforce_floor = float(risk_tol) <= float(strict_risk_threshold)
+                min_util = float(robust_min_budget_utilization) if enforce_floor else 0.0
+                slack_penalty = float(robust_pd_slack_penalty) if enforce_floor else 0.0
+                robust_run, robust_alloc = _solve_single(
+                    loans=loans,
+                    pd_point=pd_point,
+                    pd_low=pd_low,
+                    pd_high=pd_high,
+                    lgd=lgd,
+                    int_rates=int_rates,
+                    default_flag=default_flag,
+                    total_budget=float(config["portfolio"]["total_budget"]),
+                    max_concentration=float(config["portfolio"]["max_concentration"]),
+                    risk_tolerance=float(risk_tol),
+                    robust=True,
+                    uncertainty_aversion=float(lam),
+                    min_budget_utilization=min_util,
+                    pd_cap_slack_penalty=slack_penalty,
+                    time_limit=int(config["optimization"]["time_limit"]),
+                    threads=int(config["optimization"]["threads"]),
+                    solver_backend=solver_backend,
+                    policy_mode=policy_mode,
+                    gamma=float(gamma),
+                    delta_cap_quantile=float(delta_cap_quantile),
+                    tail_focus_quantile=float(tail_focus_quantile),
+                )
+                robust_ret = float(robust_run["expected_return_net_point"])
+                por = baseline_ret - robust_ret
+                por_pct = por / (abs(baseline_ret) + 1e-6) * 100.0
+                realized_total_return = float(robust_run["realized_total_return"])
+                ab_diff_total_return = float(realized_total_return - baseline_realized)
+                ab_pass = bool(ab_diff_total_return >= -(abs(baseline_realized) * 0.05))
+                funded_ratio = float(robust_run["n_funded"] / max(float(baseline["n_funded"]), 1.0))
+                worst_case_pd_reduction_bps = float(
+                    (float(baseline["worst_case_pd"]) - float(robust_run["worst_case_pd"])) * 1e4
+                )
+                allocation_similarity = _allocation_similarity(baseline_alloc, robust_alloc)
+                eligible_for_canonical_selection = bool(
+                    policy_mode
+                    in {
+                        "blended_uncertainty",
+                        "capped_blended_uncertainty",
+                        "tail_blended_uncertainty",
+                        "segment_tail_blended_uncertainty",
+                        "segment_relative_tail_blended_uncertainty",
+                    }
+                )
+                row = {
+                    "policy": "robust",
+                    "risk_tolerance": float(risk_tol),
+                    "uncertainty_aversion": float(lam),
+                    "min_budget_utilization": min_util,
+                    "pd_cap_slack_penalty": slack_penalty,
+                    "price_of_robustness": float(por),
+                    "price_of_robustness_pct": float(por_pct),
+                    "realized_total_return": float(realized_total_return),
+                    "ab_diff_total_return": ab_diff_total_return,
+                    "ab_pass": ab_pass,
+                    "funded_ratio_vs_control": funded_ratio,
+                    "worst_case_pd_reduction_bps": worst_case_pd_reduction_bps,
+                    "allocation_similarity": allocation_similarity,
+                    "eligible_for_canonical_selection": eligible_for_canonical_selection,
+                    **robust_run,
+                }
+                rows.append(row)
+                robust_candidates.append(row)
+
+        best_robust = sorted(
+            robust_candidates,
+            key=lambda r: (
+                bool(r["ab_pass"]),
+                float(r["realized_total_return"]),
+                -float(r["price_of_robustness"]),
+            ),
+            reverse=True,
+        )[0]
+        summary_rows.append(
+            {
+                "risk_tolerance": float(risk_tol),
+                "baseline_nonrobust_return": baseline_ret,
+                "baseline_nonrobust_realized_return": baseline_realized,
+                "best_robust_return": float(best_robust["expected_return_net_point"]),
+                "best_robust_realized_return": float(best_robust["realized_total_return"]),
+                "best_robust_lambda": float(best_robust["uncertainty_aversion"]),
+                "best_robust_policy_mode": str(best_robust["policy_mode"]),
+                "best_robust_gamma": float(best_robust["gamma"]),
+                "best_robust_delta_cap_quantile": float(best_robust["delta_cap_quantile"]),
+                "best_robust_min_budget_utilization": float(best_robust["min_budget_utilization"]),
+                "best_robust_pd_cap_slack_penalty": float(best_robust["pd_cap_slack_penalty"]),
+                "best_robust_pd_cap_slack": float(best_robust["pd_cap_slack"]),
+                "best_robust_worst_pd": float(best_robust["worst_case_pd"]),
+                "best_robust_funded": int(best_robust["n_funded"]),
+                "baseline_nonrobust_funded": int(baseline["n_funded"]),
+                "price_of_robustness": float(best_robust["price_of_robustness"]),
+                "price_of_robustness_pct": float(best_robust["price_of_robustness_pct"]),
+                "ab_diff_total_return": float(best_robust["ab_diff_total_return"]),
+                "ab_pass": bool(best_robust["ab_pass"]),
+            }
+        )
+
+    frontier = pd.DataFrame(rows)
+    (
+        frontier,
+        champion_row,
+        robust_research_row,
+        balanced_research_row,
+        guardrail_research_row,
+    ) = _select_research_policies(frontier)
+    summary = pd.DataFrame(summary_rows).sort_values("risk_tolerance")
+    summary["selected_for_champion"] = summary["risk_tolerance"].eq(
+        float(champion_row["risk_tolerance"])
+    )
+
+    data_dir, model_dir = _resolve_output_dirs(artifact_namespace)
+
+    frontier_path = data_dir / "portfolio_robustness_frontier.parquet"
+    summary_path = data_dir / "portfolio_robustness_summary.parquet"
+    research_policy_path = model_dir / "portfolio_research_policy.json"
+    atomic_write_parquet(frontier, frontier_path, index=False)
+    atomic_write_parquet(summary, summary_path, index=False)
+
+    research_payload = {
+        "schema_version": SCHEMA_VERSION,
+        "generated_at_utc": datetime.now(tz=UTC).isoformat(),
+        "run_tag": resolved_run_tag,
+        "selection_stage": "tradeoff_research_only",
+        "selection_policy": {
+            "rank_order": [
+                "ab_pass(desc)",
+                "realized_total_return(desc)",
+                "price_of_robustness(asc)",
+            ]
+        },
+        "research_selection_policy": {
+            "name": "robustness_aware",
+            "rank_order": [
+                "ab_pass(desc)",
+                "realized_total_return * sqrt(gamma) * (1 + 0.05 * min(lambda, 1))",
+                "realized_total_return(desc)",
+                "price_of_robustness(asc)",
+            ],
+        },
+        "selected_policy": {
+            "risk_tolerance": float(champion_row["risk_tolerance"]),
+            "policy_mode": str(champion_row["policy_mode"]),
+            "gamma": float(champion_row["gamma"]),
+            "delta_cap_quantile": float(champion_row["delta_cap_quantile"]),
+            "uncertainty_aversion": float(champion_row["uncertainty_aversion"]),
+            "min_budget_utilization": float(champion_row["min_budget_utilization"]),
+            "pd_cap_slack_penalty": float(champion_row["pd_cap_slack_penalty"]),
+            "pd_cap_slack": float(champion_row["pd_cap_slack"]),
+            "solver_backend": str(champion_row["solver_backend"]),
+        },
+        "selection_metrics": {
+            "ab_pass": bool(champion_row["ab_pass"]),
+            "ab_diff_total_return": float(champion_row["ab_diff_total_return"]),
+            "realized_total_return": float(champion_row["realized_total_return"]),
+            "price_of_robustness": float(champion_row["price_of_robustness"]),
+            "price_of_robustness_pct": float(champion_row["price_of_robustness_pct"]),
+            "n_funded": int(champion_row["n_funded"]),
+        },
+        "selected_policy_robustness_aware": (
+            {
+                "risk_tolerance": float(robust_research_row["risk_tolerance"]),
+                "policy_mode": str(robust_research_row["policy_mode"]),
+                "gamma": float(robust_research_row["gamma"]),
+                "delta_cap_quantile": float(robust_research_row["delta_cap_quantile"]),
+                "uncertainty_aversion": float(robust_research_row["uncertainty_aversion"]),
+                "min_budget_utilization": float(robust_research_row["min_budget_utilization"]),
+                "pd_cap_slack_penalty": float(robust_research_row["pd_cap_slack_penalty"]),
+                "pd_cap_slack": float(robust_research_row["pd_cap_slack"]),
+                "solver_backend": str(robust_research_row["solver_backend"]),
+            }
+            if robust_research_row is not None
+            else None
+        ),
+        "selected_policy_balanced_robustness": (
+            {
+                "risk_tolerance": float(balanced_research_row["risk_tolerance"]),
+                "policy_mode": str(balanced_research_row["policy_mode"]),
+                "gamma": float(balanced_research_row["gamma"]),
+                "delta_cap_quantile": float(balanced_research_row["delta_cap_quantile"]),
+                "uncertainty_aversion": float(balanced_research_row["uncertainty_aversion"]),
+                "min_budget_utilization": float(balanced_research_row["min_budget_utilization"]),
+                "pd_cap_slack_penalty": float(balanced_research_row["pd_cap_slack_penalty"]),
+                "pd_cap_slack": float(balanced_research_row["pd_cap_slack"]),
+                "solver_backend": str(balanced_research_row["solver_backend"]),
+            }
+            if balanced_research_row is not None
+            else None
+        ),
+        "research_selection_metrics": (
+            {
+                "ab_pass": bool(robust_research_row["ab_pass"]),
+                "ab_diff_total_return": float(robust_research_row["ab_diff_total_return"]),
+                "realized_total_return": float(robust_research_row["realized_total_return"]),
+                "price_of_robustness": float(robust_research_row["price_of_robustness"]),
+                "price_of_robustness_pct": float(robust_research_row["price_of_robustness_pct"]),
+                "n_funded": int(robust_research_row["n_funded"]),
+                "robustness_aware_score": float(robust_research_row["robustness_aware_score"]),
+            }
+            if robust_research_row is not None
+            else None
+        ),
+        "balanced_selection_policy": {
+            "name": "balanced_robustness",
+            "rank_order": [
+                "ab_pass(desc)",
+                "realized_total_return(desc)",
+                "gamma(desc)",
+                "uncertainty_aversion(asc)",
+                "price_of_robustness(asc)",
+            ],
+        },
+        "balanced_selection_metrics": (
+            {
+                "ab_pass": bool(balanced_research_row["ab_pass"]),
+                "ab_diff_total_return": float(balanced_research_row["ab_diff_total_return"]),
+                "realized_total_return": float(balanced_research_row["realized_total_return"]),
+                "price_of_robustness": float(balanced_research_row["price_of_robustness"]),
+                "price_of_robustness_pct": float(balanced_research_row["price_of_robustness_pct"]),
+                "n_funded": int(balanced_research_row["n_funded"]),
+            }
+            if balanced_research_row is not None
+            else None
+        ),
+        "guardrail_selection_policy": {
+            "name": "guardrail_robustness",
+            "constraints": {
+                "gamma_gt_zero": True,
+                "ab_pass_frontier": True,
+                "price_of_robustness_pct_gte": -25.0,
+            },
+            "fallback": "balanced_robustness",
+            "rank_order": [
+                "realized_total_return(desc)",
+                "price_of_robustness_pct(desc)",
+                "gamma(desc)",
+                "uncertainty_aversion(asc)",
+            ],
+        },
+        "selected_policy_guardrail_robustness": (
+            {
+                "risk_tolerance": float(guardrail_research_row["risk_tolerance"]),
+                "policy_mode": str(guardrail_research_row["policy_mode"]),
+                "gamma": float(guardrail_research_row["gamma"]),
+                "delta_cap_quantile": float(guardrail_research_row["delta_cap_quantile"]),
+                "uncertainty_aversion": float(guardrail_research_row["uncertainty_aversion"]),
+                "min_budget_utilization": float(guardrail_research_row["min_budget_utilization"]),
+                "pd_cap_slack_penalty": float(guardrail_research_row["pd_cap_slack_penalty"]),
+                "pd_cap_slack": float(guardrail_research_row["pd_cap_slack"]),
+                "solver_backend": str(guardrail_research_row["solver_backend"]),
+            }
+            if guardrail_research_row is not None
+            else None
+        ),
+        "guardrail_selection_metrics": (
+            {
+                "ab_pass": bool(guardrail_research_row["ab_pass"]),
+                "ab_diff_total_return": float(guardrail_research_row["ab_diff_total_return"]),
+                "realized_total_return": float(guardrail_research_row["realized_total_return"]),
+                "price_of_robustness": float(guardrail_research_row["price_of_robustness"]),
+                "price_of_robustness_pct": float(guardrail_research_row["price_of_robustness_pct"]),
+                "n_funded": int(guardrail_research_row["n_funded"]),
+            }
+            if guardrail_research_row is not None
+            else None
+        ),
+        "frontier_path": str(frontier_path),
+        "summary_path": str(summary_path),
+        "candidate_universe_path": str(candidate_universe_resolved),
+    }
+    atomic_write_json(research_policy_path, research_payload)
+
+    payload = {
+        "risk_grid": risk_values,
+        "aversion_grid": aversion_values,
+        "policy_grid": [
+            {
+                "policy_mode": mode,
+                "gamma": gamma,
+                "delta_cap_quantile": q_cap,
+                "tail_focus_quantile": q_tail,
+            }
+            for mode, gamma, q_cap, q_tail in policy_grid
+        ],
+        "n_candidates": int(n),
+        "n_candidates_available": int(min(len(candidates), len(intervals))),
+        "n_candidates_used": int(n),
+        "max_candidates_requested": None if int(max_candidates) <= 0 else int(max_candidates),
+        "grid_profile": grid_profile,
+        "solver_backend": solver_backend,
+        "frontier_path": str(frontier_path),
+        "summary_path": str(summary_path),
+        "research_policy_path": str(research_policy_path),
+        "candidate_universe_path": str(candidate_universe_resolved),
+        "conformal_intervals_path": str(conformal_intervals_path or ""),
+        "artifact_namespace": str(artifact_namespace or ""),
+        "selected_policy": research_payload["selected_policy"],
+        "summary_rows": summary.to_dict(orient="records"),
+    }
+    atomic_write_pickle(model_dir / "portfolio_robustness_results.pkl", payload)
+    write_last_valid_artifact(
+        stage_name,
+        artifact_key="portfolio_robustness_summary",
+        artifact_path=summary_path,
+        run_tag=resolved_run_tag,
+        extra={
+            "frontier_rows": len(frontier),
+            "summary_rows": len(summary),
+            "selected_policy_mode": str(champion_row["policy_mode"]),
+            "artifact_namespace": str(artifact_namespace or ""),
+        },
+    )
+    write_runtime_status(
+        stage_name,
+        phase="completed",
+        state="completed",
+        run_tag=resolved_run_tag,
+        extra={
+            "frontier_path": str(frontier_path),
+            "summary_path": str(summary_path),
+            "research_policy_path": str(research_policy_path),
+            "n_candidates_used": int(n),
+            "artifact_namespace": str(artifact_namespace or ""),
+        },
+    )
+
+    logger.info(f"Saved robustness frontier: {frontier_path} ({len(frontier):,} rows)")
+    logger.info(f"Saved robustness summary: {summary_path} ({len(summary):,} rows)")
+    logger.info(f"Saved research portfolio policy: {research_policy_path}")
+    logger.info("Best robust policy per risk tolerance:")
+    logger.info(f"\n{summary}")
+
+
+if __name__ == "__main__":
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--config", default="configs/optimization.yaml")
+    parser.add_argument("--risk_grid", default="0.06,0.08,0.10,0.12")
+    parser.add_argument("--aversion_grid", default="0.0,0.5,1.0,2.0")
+    parser.add_argument("--max_candidates", type=int, default=3000)
+    parser.add_argument("--random_state", type=int, default=42)
+    parser.add_argument("--robust_min_budget_utilization", type=float, default=0.05)
+    parser.add_argument("--strict_risk_threshold", type=float, default=0.12)
+    parser.add_argument("--robust_pd_slack_penalty", type=float, default=1.5)
+    parser.add_argument("--grid-profile", dest="grid_profile", default="custom")
+    parser.add_argument("--solver_backend", choices=["highs", "cuopt"], default="highs")
+    parser.add_argument(
+        "--candidate_universe_path",
+        default="data/processed/champion_candidate_universe.parquet",
+    )
+    parser.add_argument("--conformal-intervals-path", default=None)
+    parser.add_argument("--artifact-namespace", default=None)
+    parser.add_argument("--run-tag", default=None)
+    args = parser.parse_args()
+    main(
+        config_path=args.config,
+        risk_grid=args.risk_grid,
+        aversion_grid=args.aversion_grid,
+        max_candidates=args.max_candidates,
+        random_state=args.random_state,
+        robust_min_budget_utilization=args.robust_min_budget_utilization,
+        strict_risk_threshold=args.strict_risk_threshold,
+        robust_pd_slack_penalty=args.robust_pd_slack_penalty,
+        grid_profile=args.grid_profile,
+        solver_backend=args.solver_backend,
+        candidate_universe_path=args.candidate_universe_path,
+        conformal_intervals_path=args.conformal_intervals_path,
+        artifact_namespace=args.artifact_namespace,
+        run_tag=args.run_tag,
+    )

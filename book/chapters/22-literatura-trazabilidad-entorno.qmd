@@ -1,0 +1,506 @@
+# Literatura, Trazabilidad Y Entorno Reproducible
+
+Contexto académico, contribuciones, notebooks, artefactos y configuración que ayudan a decidir qué va al paper y qué al journal.
+
+::: {.callout-note}
+Este capítulo es un dossier curado desde secciones previas del libro original que CRPTO reutilizaba implícitamente. Los bloques de código se conservan como referencia estática para evitar que el render del libro dependa de ejecuciones exploratorias no necesarias.
+:::
+
+## Fuente curada: `book/chapters/18-research-agenda/18a-state-of-the-art.qmd`
+
+## Estado del Arte
+
+El proyecto se ubica en la interseccion de varias literaturas maduras y unas pocas intersecciones todavia poco exploradas. La fuente maestra para este mapa es `docs/PAPER_REFERENCES_STATE_OF_ART.md`, que cataloga aproximadamente 80 trabajos organizados en 12 categorias tematicas.
+
+### Mapa tematico
+
+| Eje | Estado de la literatura | Gap relevante para el proyecto |
+|---|---|---|
+| Conformal foundations | muy desarrollado | pocas aplicaciones integradas a decision crediticia |
+| Mondrian / group-conditional | activo 2023-2026 | evidencia aplicada en credito real aun limitada |
+| Conformal + robust optimization | emergente | casi nula integracion operativa en portafolio crediticio |
+| IFRS9 / lifetime credit risk | madura por separado | ausencia practica de UQ distribution-free en pipelines ECL |
+| Decision-focused learning | expansion rapida | poco dialogo con incertidumbre conformal en credito |
+
+: Panorama del estado del arte
+
+### Corriente 1: Fundamentos de prediccion conformal
+
+La prediccion conformal fue establecida formalmente por [@vovk2005] en el marco del *algorithmic learning*, proporcionando garantias de cobertura finita bajo la unica condicion de intercambiabilidad. El trabajo de [@papadopoulos2002] introdujo la variante inductiva (*split conformal*) que reduce drasticamente el costo computacional al separar el conjunto de calibracion del de entrenamiento, a cambio de una particion de datos. La guia introductoria de [@angelopoulos2023] popularizo el marco en la comunidad de ML, mientras que [@romano2019] propuso *Conformalized Quantile Regression* (CQR), que combina regresion cuantilica con calibracion conformal para producir intervalos adaptativos en anchura. Mas recientemente, [@bates2021rcps] y [@angelopoulos2025ltt] desarrollaron marcos de *risk control* distribution-free, [@angelopoulos2024risk] extendio el enfoque a control de riesgo conformal para pérdidas monotónicas, y el survey de [@cpsurvey2025] consolida el estado del campo con una perspectiva de datos.
+
+**Brecha para este proyecto**: la mayoria de estos trabajos son fundamentales y genericos; la aplicacion a dominios especificos de decision financiera sigue siendo limitada.
+
+### Corriente 2: Cobertura condicional y Mondrian
+
+El procedimiento Mondrian, introducido en [@vovk2005] y desarrollado como distribucion predictiva por [@bostrom2021], ofrece garantias de cobertura group-conditional al calibrar intervalos dentro de particiones predefinidas. [@ding2023] abordaron la escalabilidad del enfoque cuando el numero de clases es grande, mostrando que la particion debe equilibrar granularidad con tamano de muestra de calibracion. [@gibbs2024] formalizaron garantias condicionales mas fuertes, y [@bairaktari2025] propusieron *Kandinsky conformal prediction* para particiones multi-atributo. [@zhou2024] exploro la cobertura ecualizada para grupos seleccionados adaptativamente, y [@plassier2024] abordo la validez condicional aproximada.
+
+**Brecha para este proyecto**: ninguno de estos trabajos evalua Mondrian conformal sobre particiones de riesgo crediticio (grades A--G) con validacion out-of-time. La evidencia aplicada en credito es practicamente inexistente.
+
+### Corriente 3: Prediccion conformal y optimizacion robusta
+
+La conexion entre conjuntos conformales y optimizacion robusta fue inaugurada por [@johnstone2021], quienes propusieron usar intervalos conformales como conjuntos de incertidumbre para programas robustos. [@patel2024] extendieron esta idea al caso contextual, donde los conjuntos de incertidumbre dependen de covariables observadas. [@yeh2026] propusieron calibracion conformal end-to-end para optimizacion bajo incertidumbre, y [@chenreddy2024] abordaron la optimizacion robusta condicional. [@zhao2025robust] formalizaron la interaccion entre conformal y *satisficing*, y [@bao2025croms] propusieron seleccion optima de modelo para optimizacion robusta conformada. [@chan2024inverse] exploraron la optimizacion inversa conformal, y [@iutzeler2025dro] conectaron prediccion de riesgo conformal con optimizacion distributivamente robusta.
+
+**Brecha para este proyecto**: a pesar de la riqueza de este subcampo, ninguno de los trabajos opera sobre portafolios de credito real. La conexion entre intervalos conformales, scoring crediticio calibrado y asignacion de capital permanece inexplorada.
+
+### Corriente 4: Prediccion conformal en finanzas
+
+[@noguer2024survey] ofrecio un survey de prediccion conformal en finanzas que cubre portafolios de equity, commodities y derivados. [@kato2025] propuso seleccion de portafolios basada en predicciones conformales, y [@noguer2024portfolio] exploro la optimizacion de portafolio conformal. [@fantazzini2024] aplico inferencia conformal adaptativa a medidas de riesgo de mercado. [@liu2026portfolio] conecto prediccion conformal online con algoritmos de portafolio universal.
+
+**Brecha para este proyecto**: estos trabajos operan predominantemente en mercados de equity y derivados. La aplicacion a credito minorista --- donde el "retorno" es un cupon fijo y el "riesgo" es un evento binario de default --- tiene caracteristicas suficientemente distintas como para requerir evaluacion independiente.
+
+### Corriente 5: Decision-focused learning y predict-then-optimize
+
+[@elmachtoub2022] introdujeron la perdida SPO+ que optimiza la prediccion teniendo en cuenta directamente la calidad de la decision downstream. [@donti2017] propusieron aprendizaje end-to-end en optimizacion estocastica, y [@mandi2024] sistematizaron el campo en un survey comprensivo. [@sun2024ptc] propusieron *Predict-then-Calibrate*, un paradigma que separa la prediccion de la cuantificacion de incertidumbre via calibracion por cuantiles residuales, logrando garantias de cobertura independientes del modelo predictivo para LP contextuales robustos. [@kiyani2025] exploraron los fundamentos de teoria de decision para prediccion conformal, y [@yeh2025training] propusieron entrenamiento de riesgo conformal que optimiza directamente el control de riesgo conformal.
+
+**Brecha para este proyecto**: la interaccion entre decision-focused learning e incertidumbre conformal en credito es practicamente inexistente. El proyecto aborda esta brecha al incorporar tanto intervalos conformales como una implementacion de SPO+ (vease `sec-estrella-results`), permitiendo la comparacion directa entre ambos paradigmas.
+
+### Corriente 6: Riesgo crediticio, IFRS 9 y analisis de supervivencia
+
+[@barcena2024] aplicaron ML con riesgos competitivos para estimar PD lifetime bajo IFRS 9. [@sicr2025] compararon definiciones de eventos SICR, y [@ifrsboard2024] publico un analisis de retroalimentacion sobre las dificultades practicas de los triggers actuales. [@botha2026] abordaron la modelizacion de la estructura temporal de default bajo IFRS 9, y [@bellini2024] ofrecieron un tratamiento comprehensivo de modelizacion practica de riesgo de credito. [@ecb2024] documenta las expectativas supervisoras del BCE sobre *overlays* y mejoras de modelos. En el ambito de scoring, [@lessmann2015] y [@ayari2026] proporcionan benchmarks sistematicos de algoritmos de clasificacion para credito.
+
+**Brecha para este proyecto**: ningun trabajo identificado conecta prediccion conformal con el pipeline completo de IFRS 9, incluyendo staging (SICR), provision (ECL por rango) y analisis de sensibilidad. Esta ausencia es la motivacion central del Paper 2 (`sec-p2-intro`).
+
+### Corriente 7: Inferencia causal en credito
+
+[@chernozhukov2018] establecieron el marco de Double/Debiased ML para estimacion de parametros de tratamiento, y [@athey2019] propusieron los bosques causales para estimacion de efectos heterogeneos (CATE). [@causalfinance2023] reviso el uso de inferencia causal en banca y finanzas. El proyecto utiliza CATE para ajustar decisiones de portafolio (vease `sec-cate-portfolio`), pero la combinacion de intervalos conformales sobre estimaciones CATE en credito permanece inexplorada.
+
+### Hallazgos de posicionamiento
+
+La revision curada del proyecto enfatiza seis vacios que se organizan en tres niveles de profundidad. Los dos primeros son **fundacionales**: la ausencia de papers que integren conformal con IFRS9 end-to-end y la casi nula evidencia de conformal prediction aplicada a robust portfolio allocation en credito. Estos vacios son los mas graves porque significan que las dos aplicaciones mas naturales de la incertidumbre conformal en banca — provisionar con bandas y asignar capital con proteccion — carecen de precedentes publicados. Sin resolver estos, las aplicaciones mas especificas no tienen base.
+
+Los dos siguientes son **metodologicos**: la falta de uso explicito del ancho conformal como senal SICR y la escasez de sistemas completos CatBoost → calibracion → CP → decision robusta. Estos vacios operan un nivel mas abajo: asumen que la integracion fundacional es posible y preguntan *como* implementarla. El ancho como senal SICR es una propuesta concreta que convierte un subproducto del intervalo en un trigger prudencial; el pipeline completo es la evidencia de que la cadena puede ejecutarse end-to-end sin que las piezas se desacoplen.
+
+Los dos ultimos son de **gobernanza y validacion**: la ausencia de evaluacion de Mondrian conformal sobre grades crediticios con datos OOT y la nula integracion de prediccion conformal con validacion de modelos (MRM / SR 11-7). Estos vacios son los que determinan si un resultado academico puede cruzar hacia la practica bancaria. Un regulador no pregunta solo si el modelo funciona — pregunta si se puede verificar que funciona, por segmento y en datos que el modelo no vio durante entrenamiento. Sin cobertura OOT verificable por grade y sin un marco de validacion compatible con SR 11-7, la prediccion conformal permanece como curiosidad metodologica.
+
+Cada uno de estos seis vacios corresponde a una contribucion especifica de la tesis, y su organizacion jerarquica refleja la estructura del propio pipeline: primero se establece la viabilidad fundacional (Papers 2 y Estrella), luego se demuestra la implementacion metodologica (Pipeline completo + SICR conformal), y finalmente se valida la gobernanza (Paper 3 + MRM).
+
+::: {.callout-important}
+## Seis vacios identificados en la literatura
+La revision sistematica de ~80 papers revela que, a marzo de 2026:
+
+1. **Zero papers** combinan prediccion conformal con provisiones IFRS 9 end-to-end.
+2. **Zero papers** evaluan Mondrian conformal sobre grades crediticios con validacion OOT.
+3. **Zero papers** utilizan intervalos conformales como conjuntos de incertidumbre para optimizacion robusta de portafolio *crediticio*.
+4. **Zero papers** integran la perdida SPO+ con incertidumbre conformal en un contexto de credito.
+5. **Zero papers** proponen el ancho conformal como senal SICR.
+6. **Zero papers** incorporan prediccion conformal en el marco de validacion de modelos (MRM/SR 11-7).
+
+Cada uno de estos vacios corresponde a una contribucion especifica de la tesis.
+:::
+
+### Como se posiciona el proyecto
+
+El proyecto no compite principalmente en "otra mejora incremental de scoring". Su posicionamiento mas fuerte es el de una plataforma aplicada que conecta:
+
+- probabilidad calibrada,
+- incertidumbre observable,
+- optimizacion / provision,
+- gobernanza y reproducibilidad.
+
+| Tema | Pregunta central | Donde se cristaliza en este proyecto |
+|---|---|---|
+| scoring calibrado | como convertir score en probabilidad defendible? | `sec-calibration-selection` y `sec-model-champion` |
+| conformal por grupo | como medir incertidumbre util por segmento? | `sec-mondrian` y Paper 3 |
+| decision robusta | como usar esa incertidumbre para asignar capital? | `sec-robust-portfolio` y CRPTO |
+| IFRS9 con incertidumbre | como se mueve la provision bajo escenarios y lifetime risk? | `sec-ecl-calculation` y Paper 2 |
+| gobernanza aplicada | como sostener la conversacion ante auditoria y comite? | `sec-mrm` |
+
+: Matriz tematica maestra del panorama research
+
+### Implicacion
+
+Esta ubicacion permite una estrategia de publicacion por piezas sin perder coherencia global: cada paper vive en una interseccion distinta, pero todos beben del mismo nucleo experimental y del mismo vocabulario metodologico. La coherencia no es solo retorica: los tres papers comparten el mismo modelo base (CatBoost calibrado), el mismo pipeline conformal (MAPIE Mondrian), los mismos datos out-of-time y la misma infraestructura de reproducibilidad, lo cual elimina la posibilidad de que resultados contradictorios entre papers se deban a diferencias de implementacion.
+
+## Fuente curada: `book/chapters/18-research-agenda/18b-thesis-contributions.qmd`
+
+## Contribuciones de la Tesis
+
+La tesis completa debe leerse como un sistema de contribuciones encadenadas, no como una suma de notebooks o dashboards. Esa lectura ya no depende de una página específica de Streamlit: queda fijada oficialmente en este capítulo del libro. Las contribuciones se organizan en cuatro dimensiones --- metodologica, tecnica, operativa y regulatoria --- que reflejan las capas del pipeline y las audiencias a las que cada aporte se dirige.
+
+::: {.callout-tip}
+## La tesis en una oracion
+Esta tesis demuestra que la combinacion de calibracion probabilistica, prediccion conformal Mondrian e incertidumbre distribution-free produce un sistema de gestion de riesgo crediticio que es simultaneamente mas robusto en sus decisiones, mas transparente en su gobernanza y mas informativo en sus provisiones que los pipelines convencionales basados en predicciones puntuales.
+:::
+
+### Contribuciones metodologicas
+
+Las contribuciones metodologicas constituyen el nucleo teorico de la tesis y representan los aportes con mayor potencial de generalizacion mas alla del dominio de credito.
+
+**Predict-then-optimize con prediccion conformal.** La contribucion central de la tesis es la formalizacion del uso de intervalos conformales como conjuntos de incertidumbre para optimizacion robusta de portafolio crediticio (`sec-estrella-intro`). A diferencia de los conjuntos de incertidumbre clasicos de [@bertsimas2004], que requieren especificacion ad hoc o supuestos distribucionales, los intervalos conformales heredan directamente la garantia de cobertura del procedimiento conformal. La evidencia empirica muestra que esta conexion produce portafolios cuya calidad es verificable en terminos de cobertura y estabilidad, y que el nivel conformal $1-\alpha$ funciona como una palanca de robustez con consecuencias economicas observables.
+
+**Mondrian conformal para scoring crediticio.** La evaluacion sistematica de Mondrian conformal prediction sobre particiones de riesgo crediticio (grades A--G) con datos out-of-time constituye la primera evidencia aplicada de esta configuracion en credito minorista. Los resultados demuestran que la cobertura global puede enmascarar subcobertura sistematica en los grades de mayor riesgo, y que Mondrian corrige esta deficiencia con un costo controlado en anchura de intervalo. La version detallada de ese draft vive en el carril Paper 3, fuera del build core.
+
+**IFRS 9 con incertidumbre distribution-free.** La integracion de intervalos conformales en el pipeline completo de IFRS 9 --- abarcando staging (SICR conformal), provision (ECL por rango) y analisis de sensibilidad (`sec-p2-intro`) --- es una contribucion sin precedentes en la literatura identificada. El ancho del intervalo conformal como senal complementaria de deterioro crediticio y la cuantificacion del rango de provisiones bajo incertidumbre responden directamente a las demandas regulatorias de mayor transparencia y prospectividad.
+
+**Calibracion integrada en el pipeline conformal.** El pipeline establece una secuencia rigurosa calibracion -> conformal -> decision que garantiza que los intervalos se construyen sobre probabilidades genuinas, no sobre scores arbitrarios. La seleccion automatica entre Platt [@platt1999], isotonica [@zadrozny2002] y Venn-Abers [@vovk2014] mediante validacion temporal multi-metrica asegura que la calibracion es optima para cada run experimental.
+
+### Contribuciones tecnicas
+
+Las contribuciones tecnicas reflejan la implementacion del pipeline end-to-end y las decisiones de ingenieria que hacen posible la reproducibilidad y escalabilidad del sistema.
+
+**Pipeline completo CatBoost -> Calibracion -> MAPIE -> Pyomo.** La tesis implementa un pipeline operativo que conecta cuatro capas tecnologicas: un modelo de scoring (CatBoost con busqueda de hiperparametros via Optuna), una capa de calibracion probabilistica (con seleccion automatica de metodo), un generador de intervalos conformales (MAPIE 1.3.0 con SplitConformalRegressor y particion Mondrian), y un optimizador de portafolio (Pyomo con solver HiGHS [@huangfu_parallelizing_2018]). Cada capa persiste sus artefactos de forma trazable, y el contrato de modelo (`models/pd_model_contract.json`) garantiza la coherencia de features a lo largo de todo el flujo.
+
+**Integracion de SPO+.** El pipeline incorpora una implementacion de la perdida SPO+ [@elmachtoub2022] que permite comparar el paradigma predict-then-optimize conformal con decision-focused learning. La implementacion utiliza un MLP punto-a-punto con costos calibrados de PD (no binarios), lo cual resolvio el problema del paisaje plano que impedia la convergencia en versiones anteriores. Los resultados muestran una reduccion de regret del 49.1% frente al enfoque two-stage, con significancia estadistica verificada via test de Wilcoxon.
+
+**Infraestructura de champion search.** El sistema de busqueda de champion implementa cuatro modos de ejecucion (smoke, canonical_rebuild, champion_search, insights_factory) con perfiles configurables en YAML, persistencia de resultados en `models/champion_registry.json`, y soporte para aceleracion GPU via RAPIDS en los componentes de optimizacion y simulacion A/B.
+
+### Contribuciones operativas
+
+Las contribuciones operativas demuestran que el pipeline no es solo un prototipo academico sino un sistema desplegable con gobernanza explicita.
+
+| Contribucion | Claim defendible |
+|---|---|
+| calibracion + conformal + robustez | el proyecto deja de decidir sobre un punto y pasa a decidir sobre un rango plausible |
+| survival + IFRS9 | misma PD puntual puede tener lecturas prudenciales distintas segun el tiempo |
+| causalidad + policy | no solo clasificamos riesgo; tambien preguntamos donde intervenir |
+| explainability + MRM | el modelo puede discutirse en lenguaje de negocio y control, no solo con metricas |
+
+: Matriz corta de claims de tesis y su valor practico
+
+**Pipeline end-to-end reproducible.** La tesis implementa un pipeline de 14 scripts orquestados secuencialmente, con artefactos congelados y persistidos en cada etapa. El Quarto book, el companion Streamlit reducido (5 labs) y los artefactos DVC forman un sistema de documentacion integrado que permite a cualquier evaluador reproducir los resultados desde los datos crudos hasta las decisiones de portafolio.
+
+**Simulacion A/B retroactiva.** El script `scripts/simulate_ab_test.py` implementa una simulacion retroactiva que compara la politica robusta (conformal) contra la politica no-robusta (puntual) sobre los mismos datos historicos, cuantificando la diferencia en retorno ajustado por riesgo. Esta simulacion proporciona evidencia causal contrafactual que refuerza los claims de superioridad de la politica conformal.
+
+**Auditoria de fairness.** El pipeline incluye una auditoria completa de paridad demografica, igualdad de oportunidades e impacto disparejo sobre los grupos protegidos, lo cual anticipa las crecientes demandas regulatorias sobre equidad algoritmica en credito.
+
+| Aporte | Evidencia |
+|---|---|
+| Pipeline end-to-end reproducible | libro + Streamlit + artefactos congelados |
+| Gobernanza explicita | fairness, MRM, champion registry |
+| Companion interactivo | 5 labs locales opcionales |
+| Trazabilidad de notebooks | inventario y manifests |
+
+: Contribuciones operativas de la tesis
+
+### Contribuciones regulatorias
+
+Las contribuciones regulatorias conectan el pipeline con los marcos normativos que rigen la gestion de riesgo crediticio en instituciones financieras.
+
+**Senal SICR conformal.** El ancho del intervalo conformal como senal complementaria de deterioro crediticio (`sec-sicr-signal`) responde directamente a las criticas del IFRS Board [@ifrsboard2024] sobre la insuficiencia de los triggers actuales basados en DPD y umbrales estaticos de PD. El umbral optimo $t^* = 0.30$ captura el 75.8% de defaults no detectados por triggers tradicionales, lo cual demuestra el valor anadido de la senal conformal.
+
+**ECL con bandas de incertidumbre.** La produccion de provisiones ECL por rango --- donde cada prestamo y el portafolio agregado tienen una estimacion puntual, un limite optimista y un limite adverso --- proporciona la informacion que los equipos prudenciales necesitan para calibrar *overlays* y buffers de capital (`sec-ecl-calculation`). La banda ECL de \$288.5M (267% de la estimacion puntual de \$107.9M) cuantifica la magnitud de incertidumbre que las practicas actuales ignoran.
+
+**Sensibilidad multi-dimensional.** El analisis de sensibilidad que combina nivel conformal, metodo de supervivencia y escenario macroeconomico (`sec-sensitivity-stress`) produce un mapa de provisiones que facilita la comunicacion con supervisores y la definicion de politicas prudenciales informadas.
+
+**Validacion MRM conforme a SR 11-7.** El reporte MRM generado por `scripts/generate_mrm_report.py` organiza la evidencia de validacion del modelo siguiendo los lineamientos SR 11-7 de la Reserva Federal, lo cual demuestra que el pipeline conformal es compatible con los marcos de gobernanza existentes.
+
+### Contribuciones de defendibilidad
+
+La tesis tambien aporta algo menos visible, pero crucial: una forma de documentar proyectos de riesgo donde claims, artefactos y narrativa permanecen alineados. Esa disciplina reduce la brecha entre:
+
+- investigacion aplicada,
+- revision de jurados,
+- y preparacion de papers.
+
+### Claim central
+
+El claim mas fuerte y sostenible del proyecto es:
+
+> en riesgo crediticio, la combinacion de calibracion, incertidumbre conformal y decision robusta produce un sistema mas defendible que un pipeline centrado solo en prediccion puntual.
+
+Ese claim se sostiene porque cada componente tiene evidencia propia y, ademas, porque la integracion completa ya fue ejecutada y documentada. La calibracion mejora la confiabilidad de las probabilidades predichas; los intervalos conformales cuantifican la incertidumbre con garantias formales; la optimizacion robusta traduce esa incertidumbre en decisiones mas estables; y la trazabilidad completa permite auditar cada paso del proceso. Ningun componente por separado seria suficiente para sostener el claim; es la integracion coherente de los cuatro la que constituye la contribucion central de la tesis.
+
+## Fuente curada: `book/chapters/A-notebook-atlas.qmd`
+
+Este apéndice no inventaria procedencia de notebooks. Su función es otra: **mostrar qué evidencia visual del proyecto sí merece quedar cristalizada en el libro** y cómo conecta con decisiones reales de modelado, incertidumbre, provisión y negocio.
+
+Cada entrada del atlas cumple la misma regla editorial: una figura entra aquí si ayuda a explicar mejor, demostrar mejor o conectar mejor con negocio. Si una imagen solo sirve para recordar de qué notebook salió, no pertenece al libro.
+
+## Evidencia visual reutilizable
+
+```html
+<div id="atlas-evidence"></div>
+```
+
+## Inventario de notebooks y su relación con el libro
+
+| Notebook | Tema | Capítulos relacionados |
+|---|---|---|
+| `01_eda_lending_club.ipynb` | Exploración del dataset, distribuciones, defaults por grade | `sec-eda-highlights`, `sec-geographic-temporal` |
+| `02_feature_engineering.ipynb` | WOE/IV, OptBinning, features derivadas | `sec-woe-iv`, `sec-derived-features` |
+| `03_pd_modeling.ipynb` | LR baseline, CatBoost, HPO, calibración | `sec-lr-baseline`, `sec-catboost-tuned`, `sec-calibration-selection` |
+| `04_conformal_prediction.ipynb` | Split conformal, Mondrian, variantes | `sec-split-conformal`, `sec-mondrian`, `sec-cqr-variants` |
+| `05_time_series_forecasting.ipynb` | AutoARIMA, reconciliación jerárquica | `sec-time-series` |
+| `06_survival_analysis.ipynb` | Cox PH, RSF, CIF | `sec-survival` |
+| `07_causal_inference.ipynb` | DML, CATE, policy, simulación A/B | `sec-causal-inference`, `sec-ab-testing` |
+| `08_portfolio_optimization.ipynb` | Formulación LP, robust, frontera | `sec-deterministic-portfolio`, `sec-robust-portfolio` |
+| `09_end_to_end_pipeline.ipynb` | ECL, escenarios, SICR, sensibilidad | `sec-ecl-calculation`, `sec-scenario-analysis` |
+| `13_model_explainability.ipynb` | SHAP global/local, ALE, drift | `sec-global-explanations`, `sec-local-explanations` |
+
+: Mapeo de notebooks del proyecto a capítulos del libro
+
+## Regla editorial
+
+Regla editorial CRPTO: toda afirmación cuantitativa debe apuntar a un artefacto versionado, un script generador o una tabla reproducible del dossier.
+
+## Fuente curada: `book/chapters/C-artifact-catalog.qmd`
+
+Este catálogo no pretende listar cada archivo generado en el proyecto. Su función editorial es más precisa: **registrar los artefactos canónicos que sostienen claims del libro, del companion y de los papers**.
+
+## Catálogo mínimo de artefactos críticos
+
+```html
+<div id="artifact-catalog"></div>
+```
+
+## Regla de trazabilidad
+
+Cada claim importante del libro debería poder seguir esta cadena:
+
+$$
+\text{claim} \rightarrow \text{artefacto} \rightarrow \text{script/config} \rightarrow \text{run tag}
+$$
+
+Cuando esa cadena se rompe, el proyecto pierde defendibilidad. Por eso este catálogo no es un anexo ornamental: es una herramienta de auditoría narrativa.
+
+## Artefactos adicionales frecuentemente consultados
+
+| Artefacto | Path | Uso principal |
+|---|---|---|
+| Contrato del modelo PD | `models/pd_model_contract.json` | Features canónicas, tipos, thresholds |
+| Modelo champion | `models/pd_canonical.cbm` | CatBoost entrenado y congelado |
+| Calibrador seleccionado | `models/pd_canonical_calibrator.pkl` | Platt/Isotonic/Venn-Abers promovido |
+| Intervalos conformales | `data/processed/conformal_intervals_mondrian.parquet` | $[PD_{low}, PD_{high}]$ por préstamo |
+| Backtesting mensual | `data/processed/conformal_backtest_monthly.parquet` | Cobertura temporal y alertas |
+| Grid SICR conformal | `data/processed/sicr_conformal_grid.parquet` | Búsqueda de $t^*$ óptimo |
+| Comparación BMA vs CP | `data/processed/bma_comparison.parquet` | Ancho, cobertura y min-grade |
+| Portafolio champion | `data/processed/portfolio_allocations.parquet` | Asignación robusta final |
+| Frontera de robustez | `data/processed/portfolio_robustness_frontier.parquet` | Pareto riesgo-retorno-robustez |
+| Resumen del pipeline | `data/processed/pipeline_summary.json` | KPIs cross-módulo |
+| Training record PD | `models/pd_training_record.pkl` | Historial completo de entrenamiento |
+| Registro MRM | `reports/mrm/mrm_validation_report.json` | Reporte SR 11-7 consolidado |
+
+: Artefactos canónicos adicionales del pipeline
+
+## Fuente curada: `book/chapters/D-configuration-reference.qmd`
+
+El proyecto ya no depende de “parámetros escondidos en notebooks”. La capa `configs/` concentra las decisiones declarativas que gobiernan modelado, conformal, fairness, optimización y perfiles de ejecución.
+
+### Configuraciones clave
+
+| Archivo | Función |
+|---|---|
+| `configs/pd_model.yaml` | configuración base del modelo PD |
+| `configs/conformal_policy.yaml` | metas y thresholds de cobertura |
+| `configs/fairness_policy.yaml` | límites de fairness y política de evaluación |
+| `configs/mrm_policy.yaml` | reglas de gobernanza y validación |
+| `configs/optimization.yaml` | parámetros de portafolio robusto |
+| `configs/time_series.yaml` | forecasting y escenarios temporales |
+
+: Núcleo de configuración declarativa
+
+### Perfiles de ejecución
+
+La carpeta `configs/profiles/` empaqueta modos de trabajo completos, por ejemplo:
+
+- `canonical_operational.yaml`
+- `canonical_confirmatory_full.yaml`
+- `crpto_e2e_default.yaml`
+- `search_pd_default.yaml`
+
+Esta separación es valiosa porque desacopla:
+
+1. la lógica del pipeline,
+2. la política de validación,
+3. el contexto de ejecución.
+
+### Convención recomendada
+
+Una configuración útil en este proyecto debería responder tres preguntas sin ambigüedad:
+
+- qué método se está usando;
+- con qué thresholds o constraints;
+- bajo qué perfil narrativo u operacional corre.
+
+### Relación con el libro
+
+Muchos capítulos del libro citan resultados ya consolidados. Este anexo recuerda que esos resultados no nacen de magia editorial: nacen de YAML y JSON concretos, versionados y trazables. Esa disciplina es parte central de la madurez técnica del proyecto.
+
+## Fuente curada: `book/chapters/F-rerun-v2-refactor.qmd`
+
+## Rerun V2 y Refactorización
+
+### Qué cambió realmente
+
+El rerun V2 no fue solo “correr de nuevo” el pipeline. Fue una refactorización metodológica y operativa cuyo objetivo era convertir el proyecto en algo más reproducible, más auditable y más honesto editorialmente. Los cambios más importantes fueron:
+
+1. **Producer canónico de features**: el pipeline ya no depende de artefactos heredados o notebooks viejos para reconstruir `train_fe`, `calibration_fe`, `test_fe`, `feature_config.pkl` y `woe_encoders.pkl`.
+2. **Separación explícita entre champion y universo research**: el manifest V2 distingue core CatBoost, core logístico, challenger-only y columnas metadata/target.
+3. **Hardening de runs largos**: validación temprana de configs, checkpoints, runtime status y artefactos atómicos.
+4. **Calibración más defendible**: Brier decomposition y Murphy diagram como evidencia persistida, no solo como narrativa.
+5. **Causal reubicado**: deja de venderse como parte promotable del pipeline champion y pasa a ser un lane research-grade de intervención/pricing.
+6. **Bundle trazable**: el champion bundle ahora puede mostrar explícitamente cuando consume artefactos de run tags mezclados.
+
+### Estado del contrato V2
+
+```python
+
+import sys
+from pathlib import Path
+
+sys.path.insert(0, str(Path.cwd().parent if Path.cwd().name == "book" else Path.cwd()))
+from book._helpers.load_artifacts import try_load_json, try_load_parquet
+
+import pandas as pd
+
+manifest = try_load_parquet("feature_manifest_v2")
+contract = try_load_json("pd_model_contract", directory="models", default={})
+
+rows = [
+    {"Elemento": "Columnas en splits FE canónicos", "Valor": int(len(manifest)) if not manifest.empty else None, "Lectura": "Universo auditable completo de features y metadata."},
+    {"Elemento": "Features champion CatBoost", "Valor": int(manifest["is_core_catboost"].sum()) if not manifest.empty else contract.get("n_features"), "Lectura": "Contrato oficial del champion."},
+    {"Elemento": "Features baseline logístico", "Valor": int(manifest["is_core_logreg"].sum()) if not manifest.empty else None, "Lectura": "Baseline lineal más ancho que el champion tabular."},
+    {"Elemento": "Features challenger-only", "Valor": int(manifest["is_challenger_only"].sum()) if not manifest.empty else None, "Lectura": "Espacio de búsqueda research sin contaminar el contrato champion."},
+    {"Elemento": "Shapes FE (train/cal/test)", "Valor": str(contract.get("split_shapes", {})), "Lectura": "Todos los splits comparten el mismo universo de columnas antes de congelar subsets."},
+]
+
+pd.DataFrame(rows)
+```
+
+La mejora conceptual aquí es importante: el champion ya no se confunde con el dataframe FE completo. El champion es un **subset congelado**, no el universo total de columnas disponibles.
+
+### Qué aportó la refactorización
+
+La refactorización sí tuvo valor real en cinco frentes:
+
+- **Reproducibilidad**: ahora existe una cadena canónica desde splits temporales hasta artefactos de libro.
+- **Gobernanza**: quedó visible qué se usa en champion, qué se deja en challenger y qué se excluye por sparsity o por rol editorial.
+- **Resumibilidad**: los runs largos ya no dependen de “que no se caiga la máquina”; hay runtime statuses y checkpoints.
+- **Narrativa honesta**: Quarto puede leer artefactos reales en vez de sostener claims congelados.
+- **Recuperación conformal**: el rerun V2 dejó visible que el problema no era “MAPIE no sirve”, sino que el canónico estaba demasiado conservador y además el `shrinkback` deshacía parte del ajuste útil por grupo. La segunda vuelta conformal posterior recuperó el gate operativo.
+
+```python
+
+import sys
+from pathlib import Path
+
+sys.path.insert(0, str(Path.cwd().parent if Path.cwd().name == "book" else Path.cwd()))
+from book._helpers.load_artifacts import try_load_json
+
+import pandas as pd
+
+conformal = try_load_json("conformal_policy_status", directory="models", default={})
+
+rows = [
+    {"Indicador": "overall_pass", "Valor": conformal.get("overall_pass"), "Lectura": "La policy conformal ya cierra operativamente."},
+    {"Indicador": "strict_overall_pass", "Valor": conformal.get("strict_overall_pass"), "Lectura": "La capa estadística estricta sigue siendo diagnóstica."},
+    {"Indicador": "methodological_justification_pass", "Valor": conformal.get("methodological_justification_pass"), "Lectura": "La justificación metodológica ya aplica."},
+    {"Indicador": "coverage_90", "Valor": conformal.get("coverage_90"), "Lectura": "Cobertura prudente dentro de materialidad."},
+    {"Indicador": "avg_width_90", "Valor": conformal.get("avg_width_90"), "Lectura": "Ancho ya por debajo del máximo 0.80."},
+    {"Indicador": "warning_alerts", "Valor": conformal.get("warning_alerts"), "Lectura": "Persisten solo 2 warnings mensuales concentrados."},
+]
+
+pd.DataFrame(rows)
+```
+
+### Monotonic constraints: qué sirvieron y qué no
+
+Las restricciones monotónicas sí dejaron algo valioso, pero la lectura final del proyecto cambió respecto al momento del rerun V2. Primero consolidaron:
+
+- un spec monotónico auditable;
+- el resolver canónico hacia el orden CatBoost;
+- un challenger promotion report con guardrails explícitos.
+
+```python
+
+import sys
+from pathlib import Path
+
+sys.path.insert(0, str(Path.cwd().parent if Path.cwd().name == "book" else Path.cwd()))
+from book._helpers.load_artifacts import try_load_json
+
+import pandas as pd
+
+promotion = try_load_json("challenger_promotion_report", directory="models", default={})
+deltas = promotion.get("deltas", {})
+checks = promotion.get("promotion_checks", {})
+
+rows = [
+    {"Chequeo": "challenger_promotable", "Valor": promotion.get("challenger_promotable"), "Lectura": "Resultado final del challenger monotónico."},
+    {"Chequeo": "auc_drop", "Valor": deltas.get("auc_drop"), "Lectura": "Costo en ranking frente al champion."},
+    {"Chequeo": "brier_increase_pct", "Valor": deltas.get("brier_increase_pct"), "Lectura": "Costo en calidad probabilística."},
+    {"Chequeo": "ece_delta", "Valor": deltas.get("ece_delta"), "Lectura": "Costo en calibración."},
+    {"Chequeo": "fairness_ok", "Valor": checks.get("fairness_ok"), "Lectura": "No rompe fairness."},
+    {"Chequeo": "predictive_drift_ok", "Valor": checks.get("predictive_drift_ok"), "Lectura": "No pasó el guardrail predictivo/drift."},
+]
+
+pd.DataFrame(rows)
+```
+
+Esa fue la lectura intermedia. La lectura final del proyecto es más fuerte: después de corregir la semántica de fairness para que la búsqueda del challenger y la auditoría oficial midieran lo mismo, el carril monotónico sí terminó **promoviéndose al champion vigente**. Lo que convirtió a monotonicidad en champion no fue una sola métrica aislada, sino la combinación de:
+
+- no regresión operativa en AUC/Brier bajo la comparación oficial;
+- cierre de fairness sobre `approval`;
+- y evidencia posterior a la promoción: `monotonicity_audit_status.json` queda en `PASS` con cero disrupciones entre bandas y cero violaciones en las features monotónicas activas.
+
+La lección útil del rerun V2 no es entonces “la monotonicidad no funcionó”, sino algo más interesante: el rerun dejó la infraestructura y el lenguaje de promoción listos, y el cierre final llegó cuando la semántica de fairness quedó alineada con la decisión real.
+
+### Por qué causal antes se narraba más “end-to-end”
+
+Durante buena parte del proyecto sí tenía sentido contar causalidad como parte del pipeline end-to-end, pero en un sentido amplio: el carril causal tenía estimación, policy simulation, backtest y una integración tentativa con portafolio. En ese momento el valor del bloque era explorar si una capa de intervención podía convivir con el stack predictivo.
+
+El rerun V2 cambió esa lectura por dos razones:
+
+1. el proyecto ya tiene guardrails mejores y más explícitos;
+2. una vez esos guardrails existen, el lane causal **no pasa sensibilidad**, aunque sí pase overlap y aunque la policy luzca económicamente interesante.
+
+```python
+
+import sys
+from pathlib import Path
+
+sys.path.insert(0, str(Path.cwd().parent if Path.cwd().name == "book" else Path.cwd()))
+from book._helpers.load_artifacts import try_load_json
+
+import pandas as pd
+
+effect = try_load_json("causal_effect_status", directory="models", default={})
+sensitivity = try_load_json("causal_sensitivity_status", directory="models", default={})
+policy = try_load_json("causal_policy_rule", directory="models", default={})
+oot = try_load_json("causal_policy_oot_status", directory="models", default={})
+portfolio = try_load_json("cate_portfolio_status", directory="models", default={})
+
+rows = [
+    {"Métrica": "ATE oficial", "Valor": effect.get("ate"), "Lectura": "Señal causal media positiva bajo LinearDML."},
+    {"Métrica": "Overlap pass", "Valor": effect.get("overlap_pass"), "Lectura": "El soporte de tratamiento es suficiente."},
+    {"Métrica": "Sensitivity pass", "Valor": sensitivity.get("sensitivity_pass"), "Lectura": "Este es el bloqueo real."},
+    {"Métrica": "Robustness value", "Valor": sensitivity.get("robustness_value"), "Lectura": "Queda por debajo del umbral de promoción."},
+    {"Métrica": "Policy rule", "Valor": policy.get("selected_rule"), "Lectura": "La mejor regla discreta sigue siendo research-grade."},
+    {"Métrica": "OOT total net value", "Valor": oot.get("total_net_value"), "Lectura": "La policy es económicamente prometedora, pero no suficiente."},
+    {"Métrica": "CATE portfolio state", "Valor": portfolio.get("promotion_state"), "Lectura": "El optimizador causal queda bloqueado por policy gate."},
+]
+
+pd.DataFrame(rows)
+```
+
+Entonces, la respuesta correcta es:
+
+- **sí** tuvo sentido narrarlo como parte del pipeline end-to-end durante la fase exploratoria;
+- **no** corresponde seguir narrándolo así en la versión oficial del libro, porque hoy ya sabemos que no forma parte del champion pipeline.
+
+No fue un error histórico grave: fue una hipótesis de integración razonable que el proyecto terminó falsando de forma útil.
+
+### Qué más amerita ampliar búsqueda
+
+Después del rerun y de la recuperación conformal, la frontera principal que sigue justificando nueva búsqueda es **causal**. Conformal ya no está bloqueado; lo que queda allí es una mejora incremental de eficiencia, no una deuda estructural del pipeline.
+
+Sí amerita exploración adicional:
+
+- **Causal**: si y solo si la búsqueda se enfoca en robustez/sensibilidad, no en “forzar” otro rerun full.
+- **Conformal**: solo como optimización fina para reducir sobre-cobertura manteniendo el gate actual en PASS.
+- **Calibración slice-aware / PD validation**: porque la nueva lectura por cohortes ya mostró que el siguiente cuello de botella no es AUC sino persistencia de desviaciones por quarter y grade.
+- **IFRS9 temporal defensibility**: porque la capa diagnóstica nueva muestra anchura de incertidumbre macro alta y estabilidad temporal insuficiente.
+
+Solo amerita búsqueda secundaria:
+
+- **Monotonic challengers adicionales**: ya no como sustituto urgente del champion, sino como carril de refinamiento estructural si aparece una mejora clara sin romper el hardening actual.
+- **Time-series intervals**: si se quiere mejorar la narrativa IFRS9 de incertidumbre macro, pero no parece la mayor fuente de upside inmediato.
+
+No amerita ampliar búsqueda de forma prioritaria:
+
+- PD champion base;
+- survival core;
+- LGD/EAD base;
+- portfolio champion robusto.
+
+La lectura general post-rerun es que el proyecto ya no necesita “buscar en todas partes”, sino **cerrar bien la frontera causal y, si compensa el costo marginal, afinar la eficiencia conformal sin reabrir la arquitectura**.

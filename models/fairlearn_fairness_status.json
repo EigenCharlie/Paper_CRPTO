@@ -1,0 +1,69 @@
+{
+  "primary_status_path": "models/fairness_audit_status.json",
+  "group_metrics_path": "data/processed/fairlearn_group_metrics.parquet",
+  "n_attributes": 6,
+  "attributes": [
+    {
+      "attribute": "home_ownership",
+      "demographic_parity_difference": 0.008742234380824332,
+      "equalized_odds_difference": 0.022086796811760956,
+      "dpd_ci_low": 0.00953831531946169,
+      "dpd_ci_high": 0.01338160527857427,
+      "eo_ci_low": 0.01675560254403783,
+      "eo_ci_high": 0.029423131504257353
+    },
+    {
+      "attribute": "annual_inc_quartile",
+      "demographic_parity_difference": 0.008400704557627536,
+      "equalized_odds_difference": 0.022249134036549156,
+      "dpd_ci_low": 0.006981762248958292,
+      "dpd_ci_high": 0.01345159921475334,
+      "eo_ci_low": 0.019293967031339274,
+      "eo_ci_high": 0.04380429053341763
+    },
+    {
+      "attribute": "verification_status",
+      "demographic_parity_difference": 0.01152366673334193,
+      "equalized_odds_difference": 0.024771462501377073,
+      "dpd_ci_low": 0.008401353349679794,
+      "dpd_ci_high": 0.013176169941118563,
+      "eo_ci_low": 0.011089250099697393,
+      "eo_ci_high": 0.03205558241323281
+    },
+    {
+      "attribute": "home_ownership__x__annual_inc_quartile",
+      "demographic_parity_difference": 0.014363846487668086,
+      "equalized_odds_difference": 0.03637090327737813,
+      "dpd_ci_low": 0.011677299308878281,
+      "dpd_ci_high": 0.017165245649591144,
+      "eo_ci_low": 0.0187982195845697,
+      "eo_ci_high": 0.04479807513049959
+    },
+    {
+      "attribute": "home_ownership__x__verification_status",
+      "demographic_parity_difference": 0.0343875474383778,
+      "equalized_odds_difference": 0.0636573811298401,
+      "dpd_ci_low": 0.02823498181736677,
+      "dpd_ci_high": 0.045446982772927906,
+      "eo_ci_low": 0.03538279343935319,
+      "eo_ci_high": 0.08757241988805607
+    },
+    {
+      "attribute": "annual_inc_quartile__x__verification_status",
+      "demographic_parity_difference": 0.02054232397484057,
+      "equalized_odds_difference": 0.04371873973202878,
+      "dpd_ci_low": 0.015066526101497746,
+      "dpd_ci_high": 0.027925765159232813,
+      "eo_ci_low": 0.02860218728639783,
+      "eo_ci_high": 0.07252232082281743
+    }
+  ],
+  "bootstrap_samples": 10,
+  "bootstrap_rows_used": 10000,
+  "bootstrap_max_rows": 10000,
+  "prediction_threshold": 0.35,
+  "outcome_mode": "approval",
+  "schema_version": "2026-03-06.1-fairlearn",
+  "generated_at_utc": "2026-04-07T17:42:54.658367+00:00",
+  "run_tag": "crpto-e2e-all-champions-2026-04-07"
+}

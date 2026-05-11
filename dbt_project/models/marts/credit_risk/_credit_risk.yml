@@ -1,0 +1,5 @@
+version: 2
+
+models:
+  - name: fct_portfolio_allocation
+    description: Selected CRPTO bound-aware champion policy.

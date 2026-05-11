@@ -1,0 +1,133 @@
+project:
+  type: book
+  output-dir: _book
+
+quarto-required: ">=1.5.0"
+
+book:
+  title: "CRPTO"
+  subtitle: "Credit Risk + Predict-Then-Optimize con conformal prediction"
+  author: "Carlos Alfredo Vergara Rojas"
+  date: today
+  date-format: long
+  search:
+    location: sidebar
+    type: textbox
+  page-footer:
+    left: "Carlos Alfredo Vergara Rojas · CRPTO · 2026"
+    right: "Generado con [Quarto](https://quarto.org)"
+  chapters:
+    - index.qmd
+    - part: "Manuscrito CRPTO y evidencia paper-ready"
+      chapters:
+        - chapters/01-introduccion.qmd
+        - chapters/02-marco-teorico.qmd
+        - chapters/03-metodologia.qmd
+        - chapters/04-resultados.qmd
+        - chapters/05-discusion.qmd
+        - chapters/06-blueprint-manuscrito.qmd
+        - chapters/06b-guia-editorial-claims.qmd
+        - chapters/07-apendice-robustez.qmd
+        - chapters/08-ablacion-mondrian.qmd
+        - chapters/09-spo-regret.qmd
+        - chapters/10-fair-lending.qmd
+        - chapters/11-mrm.qmd
+        - chapters/12-funded-set.qmd
+        - chapters/13-trazabilidad.qmd
+        - chapters/14-release.qmd
+    - part: "Dossier extendido para journal y appendix"
+      chapters:
+        - chapters/15-fundamentos-riesgo-ml.qmd
+        - chapters/16-fundamentos-conformal-optimizacion.qmd
+        - chapters/17-pipeline-datos-features.qmd
+        - chapters/18-pd-calibracion-champion.qmd
+        - chapters/19-conformal-dossier.qmd
+        - chapters/20-portafolio-policy.qmd
+        - chapters/21-gobernanza-explicabilidad-dataset.qmd
+        - chapters/22-literatura-trazabilidad-entorno.qmd
+        - chapters/23-apendices-regulatorios-y-future-work.qmd
+    - references.qmd
+
+lang: es
+bibliography: references.bib
+csl: apa.csl
+link-citations: true
+link-bibliography: true
+
+fig-cap-location: top
+fig-align: center
+citations-hover: true
+crossrefs-hover: true
+callout-appearance: simple
+lightbox: auto
+
+execute:
+  freeze: auto
+  echo: false
+  warning: false
+
+format:
+  html:
+    theme:
+      light: [cosmo, styles.scss]
+      dark: [darkly, styles.scss]
+    toc: true
+    toc-depth: 3
+    toc-location: right
+    number-sections: true
+    number-depth: 3
+    code-copy: true
+    code-overflow: wrap
+    code-fold: show
+    code-tools:
+      source: false
+      toggle: true
+      caption: "Código"
+    code-link: true
+    smooth-scroll: true
+    df-print: paged
+    link-external-icon: true
+    link-external-newwindow: true
+    include-after-body: includes/apa-figures.html
+    grid:
+      sidebar-width: 280px
+      body-width: 920px
+      margin-width: 260px
+    fig-responsive: true
+    html-math-method: mathjax
+    anchor-sections: true
+    citations-style: apa
+
+  pdf:
+    documentclass: scrbook
+    classoption: [oneside, openany]
+    include-in-header: latex/preamble.tex
+    toc: true
+    toc-depth: 3
+    number-sections: true
+    number-depth: 3
+    pdf-engine: lualatex
+    fig-pos: "H"
+    geometry:
+      - top=2.5cm
+      - bottom=2.5cm
+      - left=2.5cm
+      - right=2.5cm
+    colorlinks: true
+    linkcolor: NavyBlue
+    urlcolor: NavyBlue
+    citecolor: NavyBlue
+
+  # Typst output for fast preview iterations (Quarto 1.4+). Not the final journal
+  # PDF (that one keeps LuaLaTeX). Enable via: `quarto render book --to typst`.
+  typst:
+    toc: true
+    toc-depth: 3
+    number-sections: true
+    columns: 1
+    section-numbering: 1.1.1
+    margin:
+      x: 2.5cm
+      y: 2.5cm
+    fontsize: 11pt
+    bibliographystyle: apa

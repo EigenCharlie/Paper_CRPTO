@@ -1,0 +1,8 @@
+{
+  "stage_name": "pd_training",
+  "phase": "config_validated",
+  "state": "completed",
+  "config_path": "configs/pd_model.champion.yaml",
+  "updated_at_utc": "2026-04-07T18:31:44.231035+00:00",
+  "validate_only": true
+}

@@ -1,0 +1,92 @@
+schema_version: "2026-05-10.1"
+pipelines:
+  -
+    pipeline: crpto_core_canonical
+    objective: "Rebuild reproducible de datos, features, PD champion, calibrador y artefactos conformal/portfolio usados por CRPTO."
+    upstream: "data/raw/Loan_status_2007-2020Q3.csv"
+    outputs:
+      - models/pd_canonical.cbm
+      - models/pd_canonical_calibrator.pkl
+      - data/processed/test_predictions.parquet
+      - models/pd_training_status.json
+    served_by:
+      - preflight
+      - core_data_pd
+      - core_conformal
+      - core_portfolio
+    forbidden_lanes:
+      - temporal_ifrs9
+      - survival_lgd_ead
+      - causal_cate
+      - gpu_rapids
+      - streamlit_app
+      - insights_factory
+  -
+    pipeline: search_pd
+    objective: Referencia congelada del PD champion; no reabre HPO salvo investigacion futura explicita.
+    upstream: crpto_core_canonical
+    outputs:
+      - models/pd_training_record.pkl
+      - models/pd_model_contract.json
+    served_by:
+      - core_data_pd
+      - diagnostics_governance
+    promotion_policy: explicit_champion_only
+  -
+    pipeline: search_conformal
+    objective: "Benchmark Mondrian/CQR/set-prediction y seleccion del ganador CRPTO rank 1."
+    upstream: crpto_core_canonical
+    outputs:
+      - models/conformal_variant_selection_status.json
+      - models/conformal_policy_status.json
+      - data/processed/conformal_variant_benchmark.parquet
+    served_by:
+      - core_conformal
+      - diagnostics_governance
+    promotion_policy: freeze_if_available
+  -
+    pipeline: search_portfolio
+    objective: "Seleccion economica bound-aware, frontera robusta, A/B congelado y exact alpha-gamma validation."
+    upstream: search_conformal
+    outputs:
+      - models/champion_portfolio_policy.json
+      - data/processed/portfolio_robustness_summary.parquet
+      - data/processed/alpha_gamma_bound_validation_exact.json
+    served_by:
+      - core_portfolio
+      - publication_exports
+    promotion_policy: explicit_champion_only
+  -
+    pipeline: crpto_e2e
+    objective: "Stack end-to-end standalone CRPTO para paper, journal package, tablas, figuras y libro Quarto."
+    upstream: "data/raw/Loan_status_2007-2020Q3.csv"
+    outputs:
+      - models/champion_search_bundle.json
+      - "reports/crpto/tables/*"
+      - "reports/crpto/figures/*"
+      - book/_book/index.html
+    served_by:
+      - preflight
+      - core_data_pd
+      - core_conformal
+      - core_portfolio
+      - diagnostics_governance
+      - publication_exports
+    forbidden_lanes:
+      - temporal_ifrs9
+      - survival_lgd_ead
+      - causal_cate
+      - gpu_rapids
+      - streamlit_app
+      - insights_factory
+  -
+    pipeline: diagnostics_governance
+    objective: "Fair lending, drift, model-risk management, calibration/backtesting interpretation and publication guardrails."
+    upstream: crpto_core_canonical
+    outputs:
+      - models/governance_status.json
+      - models/mrm_report_status.json
+      - models/fairness_audit_status.json
+    served_by:
+      - diagnostics_governance
+    promotion_policy: diagnostic_support_only

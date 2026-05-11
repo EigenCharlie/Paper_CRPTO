@@ -1,0 +1,22 @@
+{
+  "schema_version": "2026-03-13.1",
+  "generated_at_utc": "2026-05-11T03:06:07.307192+00:00",
+  "run_tag": "run-fairness-auto",
+  "pd_internal_selected_threshold": null,
+  "pd_internal_fallback_threshold": null,
+  "fairness_primary_threshold": 0.35,
+  "decision_policy_global_threshold": 0.35,
+  "source_artifacts": {
+    "fairness_status": "/tmp/pytest-of-eigenlinux/pytest-2/test_run_fairness_auto_selects0/models/fairness_audit_status.json",
+    "fairness_decision_policy": "/tmp/pytest-of-eigenlinux/pytest-2/test_run_fairness_auto_selects0/models/fairness_decision_policy.json",
+    "fairness_frontier": "/tmp/pytest-of-eigenlinux/pytest-2/test_run_fairness_auto_selects0/data/processed/fairness_threshold_frontier.parquet"
+  },
+  "business_meaning": {
+    "pd_internal_selected_threshold": "Threshold interno de screening/seleccion PD usado en busqueda y analisis tecnico.",
+    "pd_internal_fallback_threshold": "Fallback interno tomado de la policy de fairness durante la busqueda de threshold PD.",
+    "fairness_primary_threshold": "Threshold operativo principal para auditoria de fairness y narrativa de aprobacion.",
+    "decision_policy_global_threshold": "Threshold operativo global aplicado por la policy de decision/aprobacion."
+  },
+  "fairness_threshold_source": "decision_policy_artifact_auto_selected",
+  "outcome_mode": "approval"
+}

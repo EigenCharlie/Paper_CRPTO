@@ -1,0 +1,254 @@
+/*-- scss:defaults --*/
+
+// CRPTO brand palette
+$crpto-primary:        #1f6feb;
+$crpto-primary-soft:   #f6f8fb;
+$crpto-accent:         #5fa8ff;
+$crpto-surface:        #f8fafc;
+$crpto-ink:            #152238;
+$crpto-muted:          #526173;
+$crpto-subtle:         #64748b;
+$crpto-border:         rgba(21, 34, 56, 0.12);
+$crpto-border-soft:    rgba(21, 34, 56, 0.10);
+$crpto-shadow:         rgba(21, 34, 56, 0.05);
+$crpto-band-train:     #e7f0ff;
+$crpto-band-cal:       #eef7e9;
+$crpto-band-test:      #fff2e3;
+
+$font-family-sans-serif: "Inter", "Source Sans 3", "Segoe UI", sans-serif;
+$font-family-serif:      "Source Serif 4", Georgia, serif;
+$link-color:             $crpto-primary;
+
+/*-- scss:rules --*/
+
+:root {
+  --book-figure-max-width:      860px;
+  --book-figure-max-width-wide: 1040px;
+  --crpto-primary:              #{$crpto-primary};
+  --crpto-accent:               #{$crpto-accent};
+  --crpto-surface:              #{$crpto-surface};
+  --crpto-ink:                  #{$crpto-ink};
+  --crpto-muted:                #{$crpto-muted};
+  --crpto-border:               #{$crpto-border};
+}
+
+.quarto-title-block .title { letter-spacing: 0; }
+.table  { font-size: 0.92rem; }
+.callout { border-radius: 6px; }
+
+/* CRPTO custom components */
+.whole-game-intro {
+  width: min(100%, 1000px);
+  margin: 0 0 1.6rem;
+  padding: 1rem 1.1rem;
+  border-left: 4px solid var(--crpto-primary);
+  background: $crpto-primary-soft;
+  border-radius: 6px;
+}
+
+.whole-game-question {
+  display: block;
+  margin-bottom: 0.35rem;
+  color: var(--crpto-primary);
+  font-size: 0.82rem;
+  font-weight: 700;
+  text-transform: uppercase;
+}
+
+.mini-abstract { margin: 1rem 0 1.5rem; }
+
+.chapter-landing-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
+  gap: 1rem;
+  margin: 1.25rem 0 2rem;
+}
+
+.chapter-card {
+  padding: 1rem 1.1rem;
+  border: 1px solid var(--crpto-border);
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.9);
+  box-shadow: 0 10px 22px $crpto-shadow;
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+
+.chapter-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 14px 28px rgba(31, 111, 235, 0.12);
+}
+
+.chapter-card h3,
+.chapter-card h4,
+.chapter-card p:last-child { margin-bottom: 0; }
+
+.figure-stack {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 1.55rem;
+  margin: 1.2rem auto;
+  width: min(100%, var(--book-figure-max-width-wide));
+}
+
+.figure-stack > p,
+.figure-stack > figure,
+.figure-stack > .cell,
+.figure-stack > .quarto-figure {
+  width: 100%;
+  max-width: var(--book-figure-max-width-wide);
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.book-flow,
+.book-band {
+  width: min(100%, var(--book-figure-max-width-wide));
+  margin: 1.2rem auto 1.4rem;
+  border: 1px solid $crpto-border-soft;
+  border-radius: 8px;
+  padding: 1rem;
+  background: var(--crpto-surface);
+}
+
+.book-flow__row,
+.book-band__row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: stretch;
+  gap: 0.8rem;
+}
+
+.book-flow__card,
+.book-band__segment {
+  flex: 1 1 180px;
+  padding: 0.9rem 1rem;
+  border-radius: 8px;
+  border: 1px solid $crpto-border-soft;
+  background: #ffffff;
+}
+
+.book-flow__card strong,
+.book-band__segment strong {
+  display: block;
+  margin-bottom: 0.2rem;
+  color: var(--crpto-ink);
+}
+
+.book-flow__card span,
+.book-band__segment span,
+.book-flow__note,
+.book-band__note {
+  color: var(--crpto-muted);
+  font-size: 0.93rem;
+  line-height: 1.45;
+}
+
+.book-flow__arrow {
+  display: flex;
+  align-items: center;
+  color: $crpto-subtle;
+  font-weight: 700;
+  font-size: 1.2rem;
+}
+
+.book-band__segment--train { background: $crpto-band-train; }
+.book-band__segment--cal   { background: $crpto-band-cal; }
+.book-band__segment--test  { background: $crpto-band-test; }
+
+.equation-card {
+  width: min(100%, var(--book-figure-max-width));
+  margin: 1.15rem auto 1.45rem;
+  padding: 1rem 1.1rem;
+  border: 1px solid $crpto-border-soft;
+  border-left: 4px solid var(--crpto-primary);
+  border-radius: 8px;
+  background: var(--crpto-surface);
+}
+
+.equation-card__label {
+  display: inline-block;
+  margin-bottom: 0.5rem;
+  color: var(--crpto-primary);
+  font-size: 0.8rem;
+  font-weight: 700;
+  text-transform: uppercase;
+}
+
+.equation-card__formula { margin-bottom: 0.7rem; font-size: 1.08rem; }
+
+.equation-card__body {
+  color: var(--crpto-muted);
+  font-size: 0.96rem;
+  line-height: 1.65;
+}
+
+.pipeline-inline {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.55rem 0.7rem;
+  align-items: center;
+  margin: 1rem 0 1.2rem;
+}
+
+.pipeline-inline__step {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.55rem;
+  padding: 0.45rem 0.65rem;
+  border: 1px solid var(--crpto-border);
+  border-radius: 8px;
+  background: #ffffff;
+}
+
+.pipeline-inline__arrow {
+  color: $crpto-subtle;
+  font-weight: 700;
+}
+
+.pipeline-inline__label {
+  font-weight: 600;
+  color: var(--crpto-ink);
+}
+
+.pipeline-inline__meta {
+  color: $crpto-subtle;
+  font-size: 0.82rem;
+}
+
+/* Responsive */
+@media (max-width: 720px) {
+  .chapter-landing-grid { grid-template-columns: 1fr; }
+  .book-flow__arrow { display: none; }
+}
+
+/* Dark mode (Quarto darkly toggle) */
+[data-bs-theme="dark"] {
+  --crpto-surface: #1a2030;
+  --crpto-ink:     #e4e8ef;
+  --crpto-muted:   #9aa5b8;
+  --crpto-border:  rgba(255, 255, 255, 0.12);
+
+  .whole-game-intro { background: rgba(31, 111, 235, 0.10); }
+  .chapter-card     { background: #1c2331; }
+  .book-flow,
+  .book-band        { background: #1a2030; }
+  .book-flow__card,
+  .book-band__segment,
+  .pipeline-inline__step { background: #1c2331; }
+  .equation-card    { background: #1a2030; }
+  .book-band__segment--train { background: rgba(31, 111, 235, 0.18); }
+  .book-band__segment--cal   { background: rgba(102, 187, 106, 0.18); }
+  .book-band__segment--test  { background: rgba(255, 167, 38, 0.18); }
+}
+
+/* Print / PDF styles */
+@media print {
+  .chapter-card { box-shadow: none; border: 1px solid #ccc; }
+  .chapter-card:hover { transform: none; }
+  .whole-game-intro,
+  .book-flow,
+  .book-band,
+  .equation-card { break-inside: avoid; }
+  a { color: var(--crpto-ink); text-decoration: none; }
+  .sidebar, .quarto-title-banner { display: none; }
+}

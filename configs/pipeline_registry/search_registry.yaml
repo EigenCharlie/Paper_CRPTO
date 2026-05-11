@@ -1,0 +1,59 @@
+schema_version: "2026-05-10.1"
+searches:
+  -
+    search: crpto_pd_champion_replay
+    scripts:
+      - scripts/train_pd_model.py
+    artifacts:
+      - models/pd_training_status.json
+      - models/pd_training_record.pkl
+    target_pipeline: search_pd
+    can_promote: false
+    status: frozen_champion
+  -
+    search: crpto_conformal_reopen_rank1
+    scripts:
+      - scripts/benchmark_conformal_variants.py
+      - scripts/validate_conformal_policy.py
+    artifacts:
+      - models/conformal_variant_selection_status.json
+      - models/conformal_policy_status.json
+      - data/processed/conformal_variant_benchmark.parquet
+    target_pipeline: search_conformal
+    can_promote: false
+    status: frozen_winner
+  -
+    search: crpto_cqr_ablation
+    scripts:
+      - scripts/run_cqr_comparison.py
+      - scripts/run_cqr_mondrian.py
+    artifacts:
+      - models/cqr_comparison_status.json
+      - models/cqr_mondrian_status.json
+    target_pipeline: search_conformal
+    can_promote: false
+    status: appendix_evidence
+  -
+    search: crpto_portfolio_bound_aware_276k
+    scripts:
+      - scripts/select_economic_portfolio_policy.py
+      - scripts/validate_alpha_gamma_bound.py
+    artifacts:
+      - models/champion_portfolio_policy.json
+      - data/processed/alpha_gamma_bound_validation_exact.json
+    target_pipeline: search_portfolio
+    can_promote: false
+    status: paper_grade_champion
+  -
+    search: crpto_spo_regret_stability
+    scripts:
+      - scripts/run_crpto_vs_spo_stability.py
+      - scripts/run_spo_comparison.py
+      - scripts/run_spo_real.py
+    artifacts:
+      - models/spo_comparison_status.json
+      - models/spo_real_training_status.json
+      - data/processed/crpto_vs_spo_stability.json
+    target_pipeline: publication_exports
+    can_promote: false
+    status: comparison_evidence

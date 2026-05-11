@@ -1,0 +1,4009 @@
+{
+  "schema_version": 4,
+  "project_name": "CRPTO",
+  "source_project": "local source repository; read-only during extraction; absolute source path intentionally omitted in final package",
+  "source_project_note": "El proyecto origen no fue borrado ni modificado por esta extracción final.",
+  "destination": "/mnt/c/Users/carlos/Documents/Paper_CRPTO",
+  "generated_at_utc": "2026-05-10T18:02:13.078150+00:00",
+  "summary": {
+    "file_count_excluding_runtime_outputs": 652,
+    "total_bytes_excluding_runtime_outputs": 3050531190,
+    "total_bytes_on_disk_including_runtime_and_dvc_cache": 11596168023,
+    "observed_du_human_after_final_pass": "11G",
+    "runtime_outputs_excluded": [
+      ".venv/",
+      "book/_book/",
+      "book/_freeze/",
+      "book/.quarto/",
+      ".pytest_cache/",
+      "__pycache__/",
+      "dbt_project/target/",
+      "dbt_project/logs/",
+      ".dvc/cache/",
+      ".dvc/tmp/"
+    ],
+    "skipped_missing_count": 0
+  },
+  "champion_metrics": {
+    "alpha01_exact_pass": true,
+    "alpha01_gamma_cp": 0.18591,
+    "alpha01_weighted_miscoverage_V": 0.03645,
+    "champion_label": "bound_aware_276k_economic_champion",
+    "realized_total_return": 170464.5429284627,
+    "robust_region_alpha01_passers": 45,
+    "robust_region_unique_policies": 45,
+    "run_tag": "paper-thesis-final-economic-2026-04-06"
+  },
+  "second_pass_additions": {
+    "extended_book_chapters_added": 8,
+    "foundation_docs_added": 10,
+    "book_total_rendered_chapters": 24
+  },
+  "critical_hashes": {
+    "README.md": {
+      "sha256": "536e31e9196267f6071d9e949e468f37caa889c19c07ddf116f1af3c8968f650",
+      "bytes": 1716,
+      "hash_source": "computed"
+    },
+    "pyproject.toml": {
+      "sha256": "88479dda2b04bd383e7652326a968e2b5bf04c3c7f718dce1f067d05048a5a24",
+      "bytes": 1716,
+      "hash_source": "computed"
+    },
+    "uv.lock": {
+      "sha256": "fb5e0b1e228cf96a573d68378e4101a03fee178730c7e14ea60e12d58dac4f90",
+      "bytes": 606174,
+      "hash_source": "computed"
+    },
+    ".python-version": {
+      "sha256": "49a506dd32096b010d75205acf3430c9ae6c40351888129499e5a5e487126c93",
+      "bytes": 5,
+      "hash_source": "computed"
+    },
+    "Makefile": {
+      "sha256": "2278ae6be28cdee3e9cc8c976243100af3579a09add0e9b8bf58e5b6491e3921",
+      "bytes": 823,
+      "hash_source": "computed"
+    },
+    "dvc.yaml": {
+      "sha256": "fccda51bb581229b2263147379dabf8ba2e292d0ca04db19adb6835161010780",
+      "bytes": 3907,
+      "hash_source": "computed"
+    },
+    "dvc.lock": {
+      "sha256": "d3fcf4c6ec66dd39d7b44a78f2575535d10ab3c911ba0f417eccc14a7395a60b",
+      "bytes": 8773,
+      "hash_source": "computed"
+    },
+    "book/_quarto.yml": {
+      "sha256": "390d48dba3d6cc32b659e8f2cdae9517b677822ee3b9877bf481046b9bdf77af",
+      "bytes": 2067,
+      "hash_source": "computed"
+    },
+    "book/index.qmd": {
+      "sha256": "7f957bd7d26da145cf7992b9f60562cb31f097bb0cfe18d183c008e5fa2002b1",
+      "bytes": 3877,
+      "hash_source": "computed"
+    },
+    "book/references.bib": {
+      "sha256": "7963e5199290c9a2d388fde87cb77be725f871841bbe19876cc4ae5007f97dc9",
+      "bytes": 19287,
+      "hash_source": "computed"
+    },
+    "paper/CRPTO.qmd": {
+      "sha256": "c020d6f09c610d02abc15bde385fd398bb91285c73d1ea4d05b145c6323ef1e9",
+      "bytes": 851,
+      "hash_source": "computed"
+    },
+    "docs/research/crpto_extraction_completeness_audit_2026-05-10.md": {
+      "sha256": "782840c749a93ec68f6daca84526d0c44c47048b76bfe3ae76b6a1d6bb9fd844",
+      "bytes": 7032,
+      "hash_source": "computed"
+    },
+    "data/raw/Loan_status_2007-2020Q3.csv": {
+      "sha256": "5878af2a088f8ab5214c9337289fb8b5eb6c6338fd3f417b6cdc18513dc6f35f",
+      "bytes": 1773470505,
+      "hash_source": "preserved_size_match"
+    },
+    "data/processed/final_project_summary.parquet": {
+      "sha256": "82c7bc6aed0e42300d1bc344a17c9454c8e640e0ab9d3dcb362a4a4aca952752",
+      "bytes": 16440,
+      "hash_source": "computed"
+    },
+    "data/processed/pipeline_summary.json": {
+      "sha256": "14f1c11ec62a21e0e29db6dc744cdde61f6fa188bf50338d2bd9f706dcff2810",
+      "bytes": 4654,
+      "hash_source": "computed"
+    },
+    "models/final_project_promotion.json": {
+      "sha256": "b96f68a95ada85668aac0b5ecbc2b1f5f624d111d36fd5407ed4126c8ab92d70",
+      "bytes": 8066,
+      "hash_source": "computed"
+    },
+    "models/champion_portfolio_policy.json": {
+      "sha256": "42403102699b7e1b2f4cc48a7e6259243001439fa5f90e952e734311f92688c0",
+      "bytes": 2806,
+      "hash_source": "computed"
+    },
+    "models/champion_registry.json": {
+      "sha256": "6d20a4bc26e4a9762aa2d49bcac507e7e0528ebbe400c2a37ddc24f809a11f50",
+      "bytes": 77426,
+      "hash_source": "computed"
+    },
+    "models/pd_canonical.cbm": {
+      "sha256": "8dd448f069cc28ccf1e23273544c620a0ee4872e4d38566f181451648ed06b82",
+      "bytes": 5394848,
+      "hash_source": "computed"
+    },
+    "models/pd_canonical_calibrator.pkl": {
+      "sha256": "be7fe607d5b36423d08fa4884004f25f61cd9ba816fc0b404b0a7081c9821b89",
+      "bytes": 9503845,
+      "hash_source": "computed"
+    },
+    "models/conformal_results_mondrian.pkl": {
+      "sha256": "e8f004e03daf40c9c0ac8222d6654c2bcbbf340454dbeaece90b8caeb35b6862",
+      "bytes": 3492,
+      "hash_source": "computed"
+    },
+    "models/crpto_evidence_status.json": {
+      "sha256": "7b301f35a42860f47dcb65b10622e8b4897f52a0e2ece2cd29e29bde69aa580a",
+      "bytes": 4693,
+      "hash_source": "computed"
+    },
+    "models/crpto_journal_package_status.json": {
+      "sha256": "bd6ca346341ac41595500f2c7885d1edd5409ff169df29409894dcd5a41415f5",
+      "bytes": 2621,
+      "hash_source": "computed"
+    },
+    "book/chapters/01-introduccion.qmd": {
+      "sha256": "68aad7550fb78cc6c22ff203161ce47c481764ba1f71e536652a51a57547d609",
+      "bytes": 13394,
+      "hash_source": "computed"
+    },
+    "book/chapters/02-marco-teorico.qmd": {
+      "sha256": "eddd6c20151e4d790c0050c6703377a56ede42bbea6c71870168d16d43cdcb0d",
+      "bytes": 28298,
+      "hash_source": "computed"
+    },
+    "book/chapters/03-metodologia.qmd": {
+      "sha256": "8f37ac76580ad71a0cb4cbdf748285257cd3d848755a3398db36df690fd22590",
+      "bytes": 20837,
+      "hash_source": "computed"
+    },
+    "book/chapters/04-resultados.qmd": {
+      "sha256": "91c30aa40e02803fed175e5af85018a8a6e578a52adceed123e8305e278693e2",
+      "bytes": 36816,
+      "hash_source": "computed"
+    },
+    "book/chapters/05-discusion.qmd": {
+      "sha256": "6711a1be39754140ab55fef14387e0ce86200d315c4985260a1a7781eb1e598c",
+      "bytes": 29347,
+      "hash_source": "computed"
+    },
+    "book/chapters/06-blueprint-manuscrito.qmd": {
+      "sha256": "e057bd487f144139bed052fae4ee4a54de14287d1a6177945c248594185a8325",
+      "bytes": 12749,
+      "hash_source": "computed"
+    },
+    "book/chapters/07-apendice-robustez.qmd": {
+      "sha256": "d5eec210e4726f9baf0497f022d74bb27f630d6a98b242718341cb469856a324",
+      "bytes": 10122,
+      "hash_source": "computed"
+    },
+    "book/chapters/08-ablacion-mondrian.qmd": {
+      "sha256": "98c61b562309547ed83263f402e395a2ecd8d6b6134f5c85f05370c3191d41fa",
+      "bytes": 8461,
+      "hash_source": "computed"
+    },
+    "book/chapters/09-spo-regret.qmd": {
+      "sha256": "659b017656c9a2e5973165ae38263a08c297e1aff7af8ff804bc61579088571c",
+      "bytes": 9995,
+      "hash_source": "computed"
+    },
+    "book/chapters/10-fair-lending.qmd": {
+      "sha256": "0bb868f89bd97cb207909b5ae5d1555573c5f4f318960286db7821a95486b3e1",
+      "bytes": 8438,
+      "hash_source": "computed"
+    },
+    "book/chapters/11-mrm.qmd": {
+      "sha256": "a86dbb95164164c55b0db8a6ef7e12ebec086d5595a907c9c29b69484cba3043",
+      "bytes": 8394,
+      "hash_source": "computed"
+    },
+    "book/chapters/12-funded-set.qmd": {
+      "sha256": "dab7f1c928c681b2f7d843f055d31e753dca270615f68dab234c556c348eaff3",
+      "bytes": 9507,
+      "hash_source": "computed"
+    },
+    "book/chapters/13-trazabilidad.qmd": {
+      "sha256": "81b2037d0aa2ef1413a24468617be4294e3e3dfeea9cf99fb4f2554f029d673b",
+      "bytes": 17957,
+      "hash_source": "computed"
+    },
+    "book/chapters/14-release.qmd": {
+      "sha256": "df3bffa9d30ac1687b5dc576bb37313076a168eaec94b9c040d1fff4a7987087",
+      "bytes": 14130,
+      "hash_source": "computed"
+    },
+    "book/chapters/15-fundamentos-riesgo-ml.qmd": {
+      "sha256": "34d8750bd06aa7d3bf93c28e21f72ab200e36a72f68b6080423e22feb9757a98",
+      "bytes": 12403,
+      "hash_source": "computed"
+    },
+    "book/chapters/16-fundamentos-conformal-optimizacion.qmd": {
+      "sha256": "266177aff401736c795c8b56ad4ca0092ef2725ce00ab5be9f17de257eefc0fd",
+      "bytes": 53258,
+      "hash_source": "computed"
+    },
+    "book/chapters/17-pipeline-datos-features.qmd": {
+      "sha256": "2b3ca94dee73fcf8ea8eb687378db3b9e21ebfb8ff5daf1cd66932ce59259179",
+      "bytes": 62219,
+      "hash_source": "computed"
+    },
+    "book/chapters/18-pd-calibracion-champion.qmd": {
+      "sha256": "d187f915d19b526c7cc799ffbc52267e58e4089f66cf0ff21975d4cf61b8467a",
+      "bytes": 70281,
+      "hash_source": "computed"
+    },
+    "book/chapters/19-conformal-dossier.qmd": {
+      "sha256": "b3c09599a771c10f7311ddd99b4ed19d6af315c586966a6264b4127916d7b73e",
+      "bytes": 55564,
+      "hash_source": "computed"
+    },
+    "book/chapters/20-portafolio-policy.qmd": {
+      "sha256": "7fbd4c109429d8ec9a5c8d41622e732aa7f3425355479b84da3367e5f5979768",
+      "bytes": 32624,
+      "hash_source": "computed"
+    },
+    "book/chapters/21-gobernanza-explicabilidad-dataset.qmd": {
+      "sha256": "497e1c2c71241b1a1ac00c9136254c81c4d15e9611ff2a64a7495380dffb3a95",
+      "bytes": 99192,
+      "hash_source": "computed"
+    },
+    "book/chapters/22-literatura-trazabilidad-entorno.qmd": {
+      "sha256": "a984e2f22b0865aba68e39574b450eb505708e8448b1d81d43af808c111a3550",
+      "bytes": 41141,
+      "hash_source": "computed"
+    },
+    "docs/research/foundations/crpto_artifact_retention_policy.md": {
+      "sha256": "e6f1c65b020708139048221de19b93199db7004f8c6f5534ea35216f80858427",
+      "bytes": 3177,
+      "hash_source": "computed"
+    },
+    "docs/research/foundations/crpto_conformal_prediction_readme.md": {
+      "sha256": "4b46cddad92f2477114dfcee8faded853d5cba8ce606295a9a56bbd2abacf928",
+      "bytes": 14444,
+      "hash_source": "computed"
+    },
+    "docs/research/foundations/crpto_integrations_setup.md": {
+      "sha256": "a802573805172385eb560e9ada157a5df890b62dbf69ba96ab1d8f2b63b29da6",
+      "bytes": 4035,
+      "hash_source": "computed"
+    },
+    "docs/research/foundations/crpto_model_risk_management.md": {
+      "sha256": "3c1fb73f341d353a20009b4ac92d67a6243a3f05393f4aaa96255c5da4d722b1",
+      "bytes": 13554,
+      "hash_source": "computed"
+    },
+    "docs/research/foundations/crpto_paper_development_playbook_2026.md": {
+      "sha256": "ec3b10771d880b19ea761360170939dc055e98dcbf82a61990c7cd7305b0775c",
+      "bytes": 4131,
+      "hash_source": "computed"
+    },
+    "docs/research/foundations/crpto_pipeline_topology_2026-03-31.md": {
+      "sha256": "c7b7c53454ec97502cfdd76bf87c787a44ac8c369eb17b86888e4057d996ac2d",
+      "bytes": 2898,
+      "hash_source": "computed"
+    },
+    "docs/research/foundations/crpto_project_justification.md": {
+      "sha256": "54d2266dc3978a547075cc0eecaee6bcd38c4aaba867200709a7fc432836444e",
+      "bytes": 5317,
+      "hash_source": "computed"
+    },
+    "docs/research/foundations/crpto_quarto_traceability_2026-03-30.md": {
+      "sha256": "864b07c54c580018842908c95609fb3a7e42f75f4d5e8dd2ef83a8bb2e69e7ae",
+      "bytes": 18827,
+      "hash_source": "computed"
+    },
+    "docs/research/foundations/crpto_references_state_of_art.md": {
+      "sha256": "b534d17a170028755cbabae542a3456e977e36cb9370c8d754bca7c8341e65b6",
+      "bytes": 13695,
+      "hash_source": "computed"
+    },
+    "docs/research/foundations/crpto_runbook.md": {
+      "sha256": "83ff11511cf1cf71297e902102677b08667ec5abc1f9f676965ef9715b1e452b",
+      "bytes": 25521,
+      "hash_source": "computed"
+    },
+    "reports/crpto/figures/crpto_fig10_cqr_per_grade.pdf": {
+      "sha256": "626770d893d44b194c89e1e233a1c998e1c2884b539fd046860750de23e07238",
+      "bytes": 24782,
+      "hash_source": "computed"
+    },
+    "reports/crpto/figures/crpto_fig10_cqr_per_grade.png": {
+      "sha256": "122edb76aee32f510a98e97a12b46e2f972a5431261f9a01628ccbd519d1d380",
+      "bytes": 114779,
+      "hash_source": "computed"
+    },
+    "reports/crpto/figures/crpto_fig11_crpto_stability.pdf": {
+      "sha256": "e97c2b2c5ed3cf3f437f2be8cf2fb11f95d84761b5c8d20abb193319a3cfa161",
+      "bytes": 24298,
+      "hash_source": "computed"
+    },
+    "reports/crpto/figures/crpto_fig11_crpto_stability.png": {
+      "sha256": "d8e8ac0a5169dc571ef6f34945a962afa00fb8b6b3bcb175324129f4d47dc983",
+      "bytes": 263110,
+      "hash_source": "computed"
+    },
+    "reports/crpto/figures/crpto_fig12_crpto_conceptual_pipeline.pdf": {
+      "sha256": "82c233a72043872887d567ce94f1ad0e5487ebec456c6a9ecbfefed122dd233e",
+      "bytes": 18650,
+      "hash_source": "computed"
+    },
+    "reports/crpto/figures/crpto_fig12_crpto_conceptual_pipeline.png": {
+      "sha256": "c760abf24c6d098f683e50adc1b543ad0a2f87f977124d65ea82850d646fcc2b",
+      "bytes": 98327,
+      "hash_source": "computed"
+    },
+    "reports/crpto/figures/crpto_fig13_alpha_gamma_funded_set.pdf": {
+      "sha256": "e9125ae6aebbb4cdbcdcaf35cbfd41b97986eb752846709cc88619b4dd2731f3",
+      "bytes": 16929,
+      "hash_source": "computed"
+    },
+    "reports/crpto/figures/crpto_fig13_alpha_gamma_funded_set.png": {
+      "sha256": "00ce382ca03d05588346b019ca51fbde3754cea642f4e2613a9d327371d6786a",
+      "bytes": 135477,
+      "hash_source": "computed"
+    },
+    "reports/crpto/figures/crpto_fig14_robust_region_heatmap.pdf": {
+      "sha256": "724f55fc9ae7fd5e299b41e2dc901a0ae1352710ac0513bcc53d360d6b37404d",
+      "bytes": 17301,
+      "hash_source": "computed"
+    },
+    "reports/crpto/figures/crpto_fig14_robust_region_heatmap.png": {
+      "sha256": "0a6aba041fc6c77733ad7c0dbd93e0bb4efce6100f58a810d5ea616a9a52acb9",
+      "bytes": 115299,
+      "hash_source": "computed"
+    },
+    "reports/crpto/figures/crpto_fig7_uncertainty_baselines.pdf": {
+      "sha256": "253e5e8a2f2e7e61e5f4b5ba4364afb5168dc29e931d43915f53851fce04758d",
+      "bytes": 26784,
+      "hash_source": "computed"
+    },
+    "reports/crpto/figures/crpto_fig7_uncertainty_baselines.png": {
+      "sha256": "144d8b25c56ffefe0990dc50ee576677e277f3af44885b1c39062f257a7f37e7",
+      "bytes": 204999,
+      "hash_source": "computed"
+    },
+    "reports/crpto/figures/crpto_fig8_alpha_pareto.pdf": {
+      "sha256": "b87ea723a5638f5ba490cd391173dabec26b6d9057616ac36697469655c0d2fe",
+      "bytes": 31051,
+      "hash_source": "computed"
+    },
+    "reports/crpto/figures/crpto_fig8_alpha_pareto.png": {
+      "sha256": "481fb87938932f246761de0b6749741df4ab347d78cae2d7f097b9f9d8b4ff90",
+      "bytes": 220288,
+      "hash_source": "computed"
+    },
+    "reports/crpto/figures/crpto_fig9_spo_regret.pdf": {
+      "sha256": "ab5abb77dbbb3fb36b0b0f540be348b70f9cb6718cf6a2e4e7a6d83f19e64122",
+      "bytes": 35002,
+      "hash_source": "computed"
+    },
+    "reports/crpto/figures/crpto_fig9_spo_regret.png": {
+      "sha256": "473c245962abe77fa0551be4f858633f1b4f765e4bc9aca6de32fc03b16d65ec",
+      "bytes": 153657,
+      "hash_source": "computed"
+    },
+    "reports/crpto/figures/crpto_fig_alpha_gamma_bound.pdf": {
+      "sha256": "28a56c3c7fbe68fe87838f180c325b8a20345a6df8a199c525178cd3ae306e78",
+      "bytes": 32938,
+      "hash_source": "computed"
+    },
+    "reports/crpto/figures/crpto_fig_alpha_gamma_bound.png": {
+      "sha256": "7c765dad7a9f8965f674ea4ff84c43b73ca8a7768471a72c00bf01f6cf4483ed",
+      "bytes": 273773,
+      "hash_source": "computed"
+    },
+    "reports/crpto/tables/crpto_table0_key_metrics.csv": {
+      "sha256": "b27cbb58d6014026c742fc70cf94ffbb7a6017d84d1033c1257c06423ac06417",
+      "bytes": 640,
+      "hash_source": "computed"
+    },
+    "reports/crpto/tables/crpto_table0_key_metrics.tex": {
+      "sha256": "b5bbeea7be9d94f64f9da61a6dc0943d5970d729e820ac7893de9f5f93bae91e",
+      "bytes": 729,
+      "hash_source": "computed"
+    },
+    "reports/crpto/tables/crpto_table1_robustness_summary.csv": {
+      "sha256": "8f71d845f84d4a9923d0df1014413cc4be35aae20d3bb7e1aba10a21920c1450",
+      "bytes": 975,
+      "hash_source": "computed"
+    },
+    "reports/crpto/tables/crpto_table1_robustness_summary.tex": {
+      "sha256": "ea7d53da4406761c3b2f6880549270e4a4c81b8b6249e66df54f69449eb5057c",
+      "bytes": 1280,
+      "hash_source": "computed"
+    },
+    "reports/crpto/tables/crpto_table2_conformal_variant_benchmark.csv": {
+      "sha256": "acdb6c8b9f315d3ffa1ae6b863169de8d27061c2b2d58dded8ac9a7cad9914ee",
+      "bytes": 777,
+      "hash_source": "computed"
+    },
+    "reports/crpto/tables/crpto_table2_conformal_variant_benchmark.tex": {
+      "sha256": "769271f55093b9f76f243065534e2d35718be31a51253d8c57b33d008c982fb5",
+      "bytes": 905,
+      "hash_source": "computed"
+    },
+    "reports/crpto/tables/crpto_tableA10_conformal_finalist_exact_bound_eval.csv": {
+      "sha256": "7899f9860bbc392422f157dbf898c597d424cd3cdc250ac1bc0fc64b02f97779",
+      "bytes": 1604,
+      "hash_source": "computed"
+    },
+    "reports/crpto/tables/crpto_tableA10_conformal_finalist_exact_bound_eval.tex": {
+      "sha256": "0066c688b74ee57cab5d4e9fb176bf657040a986cfde1971ea5c2477aab015b6",
+      "bytes": 1989,
+      "hash_source": "computed"
+    },
+    "reports/crpto/tables/crpto_tableA11_enhanced_synthetic_shift.csv": {
+      "sha256": "2a31a10e8e8da5a6f724f69878b5c77543a969f2412911e2b87e2d555c1a68d7",
+      "bytes": 1079,
+      "hash_source": "computed"
+    },
+    "reports/crpto/tables/crpto_tableA11_enhanced_synthetic_shift.tex": {
+      "sha256": "d98d4117cb38283ca73fd5cf983ece5efd8f6f535324e32b179de379b75410c0",
+      "bytes": 1051,
+      "hash_source": "computed"
+    },
+    "reports/crpto/tables/crpto_tableA12_tail_risk_oce_cvar.csv": {
+      "sha256": "af7e574c4d48578bbc58f99ec384e427fe3b8e334d70423e587e5bca90c13b66",
+      "bytes": 558,
+      "hash_source": "computed"
+    },
+    "reports/crpto/tables/crpto_tableA12_tail_risk_oce_cvar.tex": {
+      "sha256": "b54fe611c52ae0ca221b049c6229a66b2a99411a1a983389367ecb0bf499e8dd",
+      "bytes": 534,
+      "hash_source": "computed"
+    },
+    "reports/crpto/tables/crpto_tableA13_satisficing_margins.csv": {
+      "sha256": "86e9b7ce774f0df36cdf5c334d6c942acb3a9f3dbca7f81ae2c7f7127b499311",
+      "bytes": 622,
+      "hash_source": "computed"
+    },
+    "reports/crpto/tables/crpto_tableA13_satisficing_margins.tex": {
+      "sha256": "7068ec8ddb98480062f2f9d32ffed06d103eaa408b1e2e2b90fc4c00076de15c",
+      "bytes": 799,
+      "hash_source": "computed"
+    },
+    "reports/crpto/tables/crpto_tableA14_dependency_cluster_diagnostics.csv": {
+      "sha256": "4e11c5ec1b1b7dee52e5833304c978513f411ff7c7d728b97ee7df1e03d697b1",
+      "bytes": 3068,
+      "hash_source": "computed"
+    },
+    "reports/crpto/tables/crpto_tableA14_dependency_cluster_diagnostics.tex": {
+      "sha256": "0755fe417efd64c5a7906838e163193a3ad11685a076efb2d95ec88670386b80",
+      "bytes": 3211,
+      "hash_source": "computed"
+    },
+    "reports/crpto/tables/crpto_tableA15_leave_one_period_stress.csv": {
+      "sha256": "a12aca20253e993d7e34c6cca781d4931e49c5614801e307580f590c020bac0d",
+      "bytes": 1447,
+      "hash_source": "computed"
+    },
+    "reports/crpto/tables/crpto_tableA15_leave_one_period_stress.tex": {
+      "sha256": "bc6fd7d72afe476d66ca86b24a0d37bd298b00e6d01829dd51e7f73e3ca61086",
+      "bytes": 1202,
+      "hash_source": "computed"
+    },
+    "reports/crpto/tables/crpto_tableA16_bootstrap_funded_set_metrics.csv": {
+      "sha256": "5819fe63c32c8cd8439de337003c2e1f8308e1b909f9c3c04795f758bfe6ede1",
+      "bytes": 505,
+      "hash_source": "computed"
+    },
+    "reports/crpto/tables/crpto_tableA16_bootstrap_funded_set_metrics.tex": {
+      "sha256": "a45deeace565559d74296e7354ebfd651fdda7ef23a2568ee35996aafbf23bf8",
+      "bytes": 602,
+      "hash_source": "computed"
+    },
+    "reports/crpto/tables/crpto_tableA17_budget_cap_lgd_sensitivity.csv": {
+      "sha256": "a2cda52c98c550bd697e10448df49958f24314d5f16c2beb99f125b716b9af01",
+      "bytes": 1646,
+      "hash_source": "computed"
+    },
+    "reports/crpto/tables/crpto_tableA17_budget_cap_lgd_sensitivity.tex": {
+      "sha256": "84a2c81e048612962d1467872c5fbceb3c23646faa162f645bdd79bc3b435167",
+      "bytes": 1711,
+      "hash_source": "computed"
+    },
+    "reports/crpto/tables/crpto_tableA18_robust_region_policy_family.csv": {
+      "sha256": "d326a41e7169c7674e464e6c65b460f6fdf2a91f691e599a51b2089314b6a3d4",
+      "bytes": 1358,
+      "hash_source": "computed"
+    },
+    "reports/crpto/tables/crpto_tableA18_robust_region_policy_family.tex": {
+      "sha256": "db99b2e4eb5d17c4977403ec8af975f26d2f4860085ff6e23ae7c64af67bc715",
+      "bytes": 1914,
+      "hash_source": "computed"
+    },
+    "reports/crpto/tables/crpto_tableA1_benchmark_by_group.csv": {
+      "sha256": "d0ca94f87e5730b58b33c4b93d0f0cd6c6a428fd9496af1992b2ab1178d4f45f",
+      "bytes": 1042,
+      "hash_source": "computed"
+    },
+    "reports/crpto/tables/crpto_tableA1_benchmark_by_group.tex": {
+      "sha256": "eee58014ab244beb2ccad58c33bba7514e3b2823f06bb6a7fcfcfa10f1f701cc",
+      "bytes": 1036,
+      "hash_source": "computed"
+    },
+    "reports/crpto/tables/crpto_tableA2_robustness_frontier.csv": {
+      "sha256": "338c97ef75c5b5e48c132da14ffc5fbd6641db0b08fddc3570c7fb210b7ab5e1",
+      "bytes": 12224,
+      "hash_source": "computed"
+    },
+    "reports/crpto/tables/crpto_tableA2_robustness_frontier.tex": {
+      "sha256": "7498b23d57041343a981ca8ce5402b8a43e1c530f4b992f8d96ceb77c78ce759",
+      "bytes": 13496,
+      "hash_source": "computed"
+    },
+    "reports/crpto/tables/crpto_tableA3_nested_holdout.csv": {
+      "sha256": "debaf81b5a8347958e641f8cd6ea7585d67cc9e4e8ef7c7639a6ba2d714ee84f",
+      "bytes": 1167,
+      "hash_source": "computed"
+    },
+    "reports/crpto/tables/crpto_tableA3_nested_holdout.tex": {
+      "sha256": "6ec6efd4cfcad40c7203ba3f08e65b26c6ad0421d57f96de9f77fe6497aee255",
+      "bytes": 1516,
+      "hash_source": "computed"
+    },
+    "reports/crpto/tables/crpto_tableA4_segment_period_sensitivity.csv": {
+      "sha256": "2a81af867a878a1f35abb9dec9b39fd3dc26a2001a6f4f074d59a5eea44436ae",
+      "bytes": 4859,
+      "hash_source": "computed"
+    },
+    "reports/crpto/tables/crpto_tableA4_segment_period_sensitivity.tex": {
+      "sha256": "ec7686b7417e784191065c87ac07a0c2ee27721684525773c9e770dd18564c24",
+      "bytes": 3863,
+      "hash_source": "computed"
+    },
+    "reports/crpto/tables/crpto_tableA5_decision_aware_selector.csv": {
+      "sha256": "7fdffc888d2de4cba84224ba95d31e9b9c6413f2859a74fe383a347379e5fc64",
+      "bytes": 1139,
+      "hash_source": "computed"
+    },
+    "reports/crpto/tables/crpto_tableA5_decision_aware_selector.tex": {
+      "sha256": "c7993020408ce83f3553390b6fa32fafa5a6ef671f7e2165f12b0f836a42a8b2",
+      "bytes": 1298,
+      "hash_source": "computed"
+    },
+    "reports/crpto/tables/crpto_tableA6_synthetic_shift.csv": {
+      "sha256": "b4d7da72c3cc10f5f4852870188f830412048a51b7130a5c6afb7f8d8a008545",
+      "bytes": 1055,
+      "hash_source": "computed"
+    },
+    "reports/crpto/tables/crpto_tableA6_synthetic_shift.tex": {
+      "sha256": "48764cbf4fdbf87e8f0dc9b79a9dea76d5afe8315f59cc5dd626c08659cc5013",
+      "bytes": 1009,
+      "hash_source": "computed"
+    },
+    "reports/crpto/tables/crpto_tableA7_funded_set_loans.csv": {
+      "sha256": "d5fbec772facd217791e71daf621a8e2ae2b6895dff621da2e379addee5ed976",
+      "bytes": 45335,
+      "hash_source": "computed"
+    },
+    "reports/crpto/tables/crpto_tableA7_funded_set_loans.tex": {
+      "sha256": "f32ae026ec5bfc0b6e78892e8da0b7cefda517d27b3e5002b11099b611d4b409",
+      "bytes": 57899,
+      "hash_source": "computed"
+    },
+    "reports/crpto/tables/crpto_tableA8_funded_set_composition.csv": {
+      "sha256": "bf44e16f8eb6d38789eb19feaab17811bc9fb5d88369f47dc286169c3fa25ca8",
+      "bytes": 2187,
+      "hash_source": "computed"
+    },
+    "reports/crpto/tables/crpto_tableA8_funded_set_composition.tex": {
+      "sha256": "49387307ad50bce617327b5f50d627185faf454a9958af17030f53f9629434c8",
+      "bytes": 2365,
+      "hash_source": "computed"
+    },
+    "reports/crpto/tables/crpto_tableA9_strict_temporal_holdout.csv": {
+      "sha256": "839fd8f96467ccd79d897c13ca63d7ab2c6e3223084b46d3d4b8fd54e19cf212",
+      "bytes": 719,
+      "hash_source": "computed"
+    },
+    "reports/crpto/tables/crpto_tableA9_strict_temporal_holdout.tex": {
+      "sha256": "561ba33db3869f749f4b02bfb0fa1f3557688c5127252fb59888d8a3537ae29c",
+      "bytes": 974,
+      "hash_source": "computed"
+    },
+    "docs/research/crpto_size_dependency_data_audit_2026-05-10.md": {
+      "sha256": "3d4fb799a62c6445620914edd2fc36743d80fb4377d308c4154684b217bcee73",
+      "bytes": 35674,
+      "hash_source": "computed"
+    },
+    "book/chapters/06b-guia-editorial-claims.qmd": {
+      "sha256": "aefd50532411021f8a22e4c08c4e12518f0ccd69e61e39de228f5b9fc1b703d8",
+      "bytes": 13908,
+      "hash_source": "computed"
+    },
+    "book/chapters/23-apendices-regulatorios-y-future-work.qmd": {
+      "sha256": "466f3947844e9c4901a99ed3d75d88f75094e197ea0cf9bd56ac3559af8ec482",
+      "bytes": 2660,
+      "hash_source": "computed"
+    },
+    "book/_book/index.html": {
+      "sha256": "a0deb5a62d4cfab7975e8f591c0e725751b988f64cd38068a439df6d756eb923",
+      "bytes": 41949,
+      "hash_source": "computed"
+    },
+    "docs/research/crpto_repo_sync_closure_2026-05-04.md": {
+      "sha256": "7d1ee25524020be6d9c1e320c9c837f687e9c666071764681ceb3415f0e41be2",
+      "bytes": 3021,
+      "hash_source": "computed"
+    },
+    "configs/pipeline_registry/pipeline_matrix.yaml": {
+      "sha256": "a1cc76441dff0bd1fb861a6e389f81f2aad213f035db00390c02c385a0414e8f",
+      "bytes": 3071,
+      "hash_source": "computed"
+    },
+    "configs/pipeline_registry/artifact_flow_registry.yaml": {
+      "sha256": "2b46e8a384d7e0b9c3eb63f79ebdb59ddee17ffaa0d817746c1fc02a8cdbef88",
+      "bytes": 4610,
+      "hash_source": "computed"
+    },
+    "configs/pipeline_registry/script_role_registry.yaml": {
+      "sha256": "7a1f18f717db3adda988a19f8885acf52b2b338f87da7d5721de7cc82ed528b3",
+      "bytes": 5037,
+      "hash_source": "computed"
+    },
+    "configs/pipeline_registry/search_registry.yaml": {
+      "sha256": "0a7b4a48778149109f15fe7118d60bce252197965b2dd1b252c9eb959eab5524",
+      "bytes": 1823,
+      "hash_source": "computed"
+    },
+    "configs/profiles/crpto_e2e_default.yaml": {
+      "sha256": "3e0efd74e1871cd98bc19ee4a4505e92f12fac8ef7491e3922f0941841ec9783",
+      "bytes": 1215,
+      "hash_source": "computed"
+    },
+    "configs/profiles/crpto_core_canonical_cpu.yaml": {
+      "sha256": "1ebb9b6194cd826ab4c3cca13cda0cad3e19a2a8834a7e7f9fb0a73e034a9ee7",
+      "bytes": 962,
+      "hash_source": "computed"
+    },
+    "configs/profiles/crpto_diagnostics_governance_default.yaml": {
+      "sha256": "b3074db324e6f5bb652708e7b5cdaba9a6b27da19ab4a097e50324eb51ee4547",
+      "bytes": 590,
+      "hash_source": "computed"
+    },
+    "models/pipeline_registry/pipeline_matrix.json": {
+      "sha256": "53c8fe7186cb62e9b367335dcf361cc25df035e61af5e02f1803a5ec51c4d90b",
+      "bytes": 3613,
+      "hash_source": "computed"
+    },
+    "models/pipeline_registry/artifact_flow_registry.json": {
+      "sha256": "2e31d5f6bb0fa1ca560ce90da5de1d2505f8d2a31bf6e7126a302e7a243abec4",
+      "bytes": 5703,
+      "hash_source": "computed"
+    },
+    "models/pipeline_registry/script_role_registry.json": {
+      "sha256": "3e4e733045d9b44ed438cae640ceecf874eb4db9acfa01f5b36e03da7f558d2d",
+      "bytes": 6294,
+      "hash_source": "computed"
+    },
+    "models/pipeline_registry/search_registry.json": {
+      "sha256": "a862ba1b9df8fc3c5c7318446d24065e135355b199e756f94907c1af21b4bc0b",
+      "bytes": 2217,
+      "hash_source": "computed"
+    },
+    "dbt_project/dbt_project.yml": {
+      "sha256": "f02dc4544e8caa69d35d2c6e1f097da2f625157cc3c257d3d9f2e21255bc67ef",
+      "bytes": 697,
+      "hash_source": "computed"
+    },
+    "dbt_project/profiles.yml": {
+      "sha256": "e106b2e5eea00dcaad36b3b7ea97a1a8c097d2e1a2a33f270a382e6fb65ec5db",
+      "bytes": 161,
+      "hash_source": "computed"
+    },
+    "scripts/validate_conformal_experiment.py": {
+      "sha256": "300e92fe7633f22e883988aca94123eef8cad54bfd5211ee3e0812a33e7c0f4e",
+      "bytes": 3533,
+      "hash_source": "computed"
+    }
+  },
+  "validation_results": {
+    "branding_public_scan": "pass: no legacy extraction branding tokens outside rendered/cache outputs",
+    "source_path_scan": "pass: no source repo absolute path outside rendered/cache outputs",
+    "pytest_crpto_suite": "pass: uv run pytest -q",
+    "quarto_html_render": "pass: 26 entries rendered to book/_book/index.html",
+    "dbt_parse": "pass: uv run dbt parse --project-dir dbt_project --profiles-dir dbt_project",
+    "dbt_test": "pass: 2 data tests",
+    "dvc_status": "pass: uv run dvc status --no-updates -> Data and pipelines are up to date",
+    "dvc_lock": "pass: uv run dvc commit -f updated all CRPTO stages without rerunning training",
+    "make_note": "Makefile exists; direct uv/quarto/dbt/dvc equivalents were executed in this pass."
+  },
+  "files": [
+    {
+      "path": ".dvc/config",
+      "bytes": 25,
+      "role": "generated_or_curated"
+    },
+    {
+      "path": ".dvcignore",
+      "bytes": 48,
+      "role": "generated_or_curated"
+    },
+    {
+      "path": ".gitignore",
+      "bytes": 326,
+      "role": "generated_or_curated"
+    },
+    {
+      "path": ".python-version",
+      "bytes": 5,
+      "role": "generated_or_curated"
+    },
+    {
+      "path": "EXTRACTION_MANIFEST.json",
+      "bytes": 131842,
+      "role": "generated_or_curated"
+    },
+    {
+      "path": "Makefile",
+      "bytes": 823,
+      "role": "generated_or_curated"
+    },
+    {
+      "path": "README.md",
+      "bytes": 1716,
+      "role": "generated_or_curated"
+    },
+    {
+      "path": "book/_helpers/__init__.py",
+      "bytes": 83,
+      "role": "generated_or_curated"
+    },
+    {
+      "path": "book/_helpers/load_artifacts.py",
+      "bytes": 4109,
+      "role": "generated_or_curated"
+    },
+    {
+      "path": "book/_helpers/plot_helpers.py",
+      "bytes": 4086,
+      "role": "generated_or_curated"
+    },
+    {
+      "path": "book/_quarto.yml",
+      "bytes": 2067,
+      "role": "generated_or_curated"
+    },
+    {
+      "path": "book/apa.csl",
+      "bytes": 85658,
+      "role": "generated_or_curated"
+    },
+    {
+      "path": "book/assets/figures/editorial/ale_fico_score.png",
+      "bytes": 127996,
+      "role": "generated_or_curated"
+    },
+    {
+      "path": "book/assets/figures/editorial/ale_int_rate.png",
+      "bytes": 102291,
+      "role": "generated_or_curated"
+    },
+    {
+      "path": "book/assets/figures/editorial/alpha_eligible_loans.png",
+      "bytes": 105904,
+      "role": "generated_or_curated"
+    },
+    {
+      "path": "book/assets/figures/editorial/alpha_pareto_frontier.png",
+      "bytes": 224395,
+      "role": "generated_or_curated"
+    },
+    {
+      "path": "book/assets/figures/editorial/conformal_coverage_by_grade.png",
+      "bytes": 141082,
+      "role": "generated_or_curated"
+    },
+    {
+      "path": "book/assets/figures/editorial/conformal_width_vs_target.png",
+      "bytes": 192408,
+      "role": "generated_or_curated"
+    },
+    {
+      "path": "book/assets/figures/editorial/diagrama-crpto.png",
+      "bytes": 5942753,
+      "role": "generated_or_curated"
+    },
+    {
+      "path": "book/assets/figures/editorial/pd_pr_curve.png",
+      "bytes": 188341,
+      "role": "generated_or_curated"
+    },
+    {
+      "path": "book/assets/figures/editorial/pd_reliability_curve.png",
+      "bytes": 217073,
+      "role": "generated_or_curated"
+    },
+    {
+      "path": "book/assets/figures/editorial/pd_roc_curve.png",
+      "bytes": 226095,
+      "role": "generated_or_curated"
+    },
+    {
+      "path": "book/assets/figures/editorial/shap_family_mass.png",
+      "bytes": 212535,
+      "role": "generated_or_curated"
+    },
+    {
+      "path": "book/assets/figures/editorial/uncertainty_baselines_tradeoff.png",
+      "bytes": 201046,
+      "role": "generated_or_curated"
+    },
+    {
+      "path": "book/assets/figures/notebooks/ale_curves.png",
+      "bytes": 267462,
+      "role": "generated_or_curated"
+    },
+    {
+      "path": "book/assets/figures/notebooks/calibration_curves.png",
+      "bytes": 150507,
+      "role": "generated_or_curated"
+    },
+    {
+      "path": "book/assets/figures/notebooks/default_rate_by_grade.png",
+      "bytes": 103684,
+      "role": "generated_or_curated"
+    },
+    {
+      "path": "book/assets/figures/notebooks/default_rate_grade_x_term.png",
+      "bytes": 60953,
+      "role": "generated_or_curated"
+    },
+    {
+      "path": "book/assets/figures/notebooks/feature_family_decomposition.png",
+      "bytes": 140777,
+      "role": "generated_or_curated"
+    },
+    {
+      "path": "book/assets/figures/notebooks/interval_width_distribution.png",
+      "bytes": 142922,
+      "role": "generated_or_curated"
+    },
+    {
+      "path": "book/assets/figures/notebooks/iv_ranking.png",
+      "bytes": 149554,
+      "role": "generated_or_curated"
+    },
+    {
+      "path": "book/assets/figures/notebooks/monotonicity_verification.png",
+      "bytes": 216796,
+      "role": "generated_or_curated"
+    },
+    {
+      "path": "book/assets/figures/notebooks/portfolio_time_series_overview.png",
+      "bytes": 252837,
+      "role": "generated_or_curated"
+    },
+    {
+      "path": "book/assets/figures/notebooks/roc_curves.png",
+      "bytes": 187585,
+      "role": "generated_or_curated"
+    },
+    {
+      "path": "book/assets/figures/notebooks/shap_bar_importance.png",
+      "bytes": 131612,
+      "role": "generated_or_curated"
+    },
+    {
+      "path": "book/assets/figures/notebooks/shap_beeswarm.png",
+      "bytes": 246855,
+      "role": "generated_or_curated"
+    },
+    {
+      "path": "book/assets/figures/notebooks/shap_vs_permutation.png",
+      "bytes": 90935,
+      "role": "generated_or_curated"
+    },
+    {
+      "path": "book/assets/figures/notebooks/target_distribution.png",
+      "bytes": 89846,
+      "role": "generated_or_curated"
+    },
+    {
+      "path": "book/assets/figures/notebooks/uncertainty_sets.png",
+      "bytes": 115500,
+      "role": "generated_or_curated"
+    },
+    {
+      "path": "book/assets/figures/notebooks/woe_binning_top6.png",
+      "bytes": 124583,
+      "role": "generated_or_curated"
+    },
+    {
+      "path": "book/assets/figures/publication/crpto_fig10_cqr_per_grade.pdf",
+      "bytes": 24782,
+      "role": "generated_or_curated"
+    },
+    {
+      "path": "book/assets/figures/publication/crpto_fig10_cqr_per_grade.png",
+      "bytes": 114779,
+      "role": "generated_or_curated"
+    },
+    {
+      "path": "book/assets/figures/publication/crpto_fig11_crpto_stability.pdf",
+      "bytes": 24298,
+      "role": "generated_or_curated"
+    },
+    {
+      "path": "book/assets/figures/publication/crpto_fig11_crpto_stability.png",
+      "bytes": 263110,
+      "role": "generated_or_curated"
+    },
+    {
+      "path": "book/assets/figures/publication/crpto_fig12_crpto_conceptual_pipeline.pdf",
+      "bytes": 18650,
+      "role": "generated_or_curated"
+    },
+    {
+      "path": "book/assets/figures/publication/crpto_fig12_crpto_conceptual_pipeline.png",
+      "bytes": 98327,
+      "role": "generated_or_curated"
+    },
+    {
+      "path": "book/assets/figures/publication/crpto_fig13_alpha_gamma_funded_set.pdf",
+      "bytes": 16929,
+      "role": "generated_or_curated"
+    },
+    {
+      "path": "book/assets/figures/publication/crpto_fig13_alpha_gamma_funded_set.png",
+      "bytes": 135477,
+      "role": "generated_or_curated"
+    },
+    {
+      "path": "book/assets/figures/publication/crpto_fig14_robust_region_heatmap.pdf",
+      "bytes": 17301,
+      "role": "generated_or_curated"
+    },
+    {
+      "path": "book/assets/figures/publication/crpto_fig14_robust_region_heatmap.png",
+      "bytes": 115299,
+      "role": "generated_or_curated"
+    },
+    {
+      "path": "book/assets/figures/publication/crpto_fig7_uncertainty_baselines.pdf",
+      "bytes": 26784,
+      "role": "generated_or_curated"
+    },
+    {
+      "path": "book/assets/figures/publication/crpto_fig7_uncertainty_baselines.png",
+      "bytes": 204999,
+      "role": "generated_or_curated"
+    },
+    {
+      "path": "book/assets/figures/publication/crpto_fig8_alpha_pareto.pdf",
+      "bytes": 31051,
+      "role": "generated_or_curated"
+    },
+    {
+      "path": "book/assets/figures/publication/crpto_fig8_alpha_pareto.png",
+      "bytes": 220288,
+      "role": "generated_or_curated"
+    },
+    {
+      "path": "book/assets/figures/publication/crpto_fig9_spo_regret.pdf",
+      "bytes": 35002,
+      "role": "generated_or_curated"
+    },
+    {
+      "path": "book/assets/figures/publication/crpto_fig9_spo_regret.png",
+      "bytes": 153657,
+      "role": "generated_or_curated"
+    },
+    {
+      "path": "book/assets/figures/publication/crpto_fig_alpha_gamma_bound.pdf",
+      "bytes": 32938,
+      "role": "generated_or_curated"
+    },
+    {
+      "path": "book/assets/figures/publication/crpto_fig_alpha_gamma_bound.png",
+      "bytes": 273773,
+      "role": "generated_or_curated"
+    },
+    {
+      "path": "book/chapters/01-introduccion.qmd",
+      "bytes": 13394,
+      "role": "generated_or_curated"
+    },
+    {
+      "path": "book/chapters/02-marco-teorico.qmd",
+      "bytes": 28298,
+      "role": "generated_or_curated"
+    },
+    {
+      "path": "book/chapters/03-metodologia.qmd",
+      "bytes": 20837,
+      "role": "generated_or_curated"
+    },
+    {
+      "path": "book/chapters/04-resultados.qmd",
+      "bytes": 36816,
+      "role": "generated_or_curated"
+    },
+    {
+      "path": "book/chapters/05-discusion.qmd",
+      "bytes": 29347,
+      "role": "generated_or_curated"
+    },
+    {
+      "path": "book/chapters/06-blueprint-manuscrito.qmd",
+      "bytes": 12749,
+      "role": "generated_or_curated"
+    },
+    {
+      "path": "book/chapters/06b-guia-editorial-claims.qmd",
+      "bytes": 13908,
+      "role": "generated_or_curated"
+    },
+    {
+      "path": "book/chapters/07-apendice-robustez.qmd",
+      "bytes": 10122,
+      "role": "generated_or_curated"
+    },
+    {
+      "path": "book/chapters/08-ablacion-mondrian.qmd",
+      "bytes": 8461,
+      "role": "generated_or_curated"
+    },
+    {
+      "path": "book/chapters/09-spo-regret.qmd",
+      "bytes": 9995,
+      "role": "generated_or_curated"
+    },
+    {
+      "path": "book/chapters/10-fair-lending.qmd",
+      "bytes": 8438,
+      "role": "generated_or_curated"
+    },
+    {
+      "path": "book/chapters/11-mrm.qmd",
+      "bytes": 8394,
+      "role": "generated_or_curated"
+    },
+    {
+      "path": "book/chapters/12-funded-set.qmd",
+      "bytes": 9507,
+      "role": "generated_or_curated"
+    },
+    {
+      "path": "book/chapters/13-trazabilidad.qmd",
+      "bytes": 17957,
+      "role": "generated_or_curated"
+    },
+    {
+      "path": "book/chapters/14-release.qmd",
+      "bytes": 14130,
+      "role": "generated_or_curated"
+    },
+    {
+      "path": "book/chapters/15-fundamentos-riesgo-ml.qmd",
+      "bytes": 12403,
+      "role": "generated_or_curated"
+    },
+    {
+      "path": "book/chapters/16-fundamentos-conformal-optimizacion.qmd",
+      "bytes": 53258,
+      "role": "generated_or_curated"
+    },
+    {
+      "path": "book/chapters/17-pipeline-datos-features.qmd",
+      "bytes": 62210,
+      "role": "generated_or_curated"
+    },
+    {
+      "path": "book/chapters/18-pd-calibracion-champion.qmd",
+      "bytes": 70266,
+      "role": "generated_or_curated"
+    },
+    {
+      "path": "book/chapters/19-conformal-dossier.qmd",
+      "bytes": 55540,
+      "role": "generated_or_curated"
+    },
+    {
+      "path": "book/chapters/20-portafolio-policy.qmd",
+      "bytes": 32618,
+      "role": "generated_or_curated"
+    },
+    {
+      "path": "book/chapters/21-gobernanza-explicabilidad-dataset.qmd",
+      "bytes": 99156,
+      "role": "generated_or_curated"
+    },
+    {
+      "path": "book/chapters/22-literatura-trazabilidad-entorno.qmd",
+      "bytes": 41141,
+      "role": "generated_or_curated"
+    },
+    {
+      "path": "book/chapters/23-apendices-regulatorios-y-future-work.qmd",
+      "bytes": 2660,
+      "role": "generated_or_curated"
+    },
+    {
+      "path": "book/includes/_paper-autocontenido.qmd",
+      "bytes": 235,
+      "role": "generated_or_curated"
+    },
+    {
+      "path": "book/includes/_whole-game-close.qmd",
+      "bytes": 214,
+      "role": "generated_or_curated"
+    },
+    {
+      "path": "book/includes/apa-figures.html",
+      "bytes": 2521,
+      "role": "generated_or_curated"
+    },
+    {
+      "path": "book/index.qmd",
+      "bytes": 3877,
+      "role": "generated_or_curated"
+    },
+    {
+      "path": "book/latex/preamble.tex",
+      "bytes": 393,
+      "role": "generated_or_curated"
+    },
+    {
+      "path": "book/references.bib",
+      "bytes": 19287,
+      "role": "generated_or_curated"
+    },
+    {
+      "path": "book/references.qmd",
+      "bytes": 31,
+      "role": "generated_or_curated"
+    },
+    {
+      "path": "book/styles.scss",
+      "bytes": 3925,
+      "role": "generated_or_curated"
+    },
+    {
+      "path": "configs/crpto_conformal_policy.yaml",
+      "bytes": 1388,
+      "role": "generated_or_curated"
+    },
+    {
+      "path": "configs/crpto_conformal_policy_sensitivity.yaml",
+      "bytes": 1471,
+      "role": "generated_or_curated"
+    },
+    {
+      "path": "configs/crpto_fairness_policy.yaml",
+      "bytes": 1540,
+      "role": "generated_or_curated"
+    },
+    {
+      "path": "configs/crpto_mrm_policy.yaml",
+      "bytes": 2621,
+      "role": "generated_or_curated"
+    },
+    {
+      "path": "configs/crpto_optimization.yaml",
+      "bytes": 1683,
+      "role": "generated_or_curated"
+    },
+    {
+      "path": "configs/crpto_pd_model.yaml",
+      "bytes": 4076,
+      "role": "generated_or_curated"
+    },
+    {
+      "path": "configs/pipeline_registry/artifact_flow_registry.yaml",
+      "bytes": 4610,
+      "role": "generated_or_curated"
+    },
+    {
+      "path": "configs/pipeline_registry/pipeline_matrix.yaml",
+      "bytes": 3071,
+      "role": "generated_or_curated"
+    },
+    {
+      "path": "configs/pipeline_registry/script_role_registry.yaml",
+      "bytes": 5037,
+      "role": "generated_or_curated"
+    },
+    {
+      "path": "configs/pipeline_registry/search_registry.yaml",
+      "bytes": 1823,
+      "role": "generated_or_curated"
+    },
+    {
+      "path": "configs/pipelines/crpto_e2e.yaml",
+      "bytes": 359,
+      "role": "generated_or_curated"
+    },
+    {
+      "path": "configs/profiles/crpto_core_canonical_cpu.yaml",
+      "bytes": 962,
+      "role": "generated_or_curated"
+    },
+    {
+      "path": "configs/profiles/crpto_default.yaml",
+      "bytes": 377,
+      "role": "generated_or_curated"
+    },
+    {
+      "path": "configs/profiles/crpto_diagnostics_governance_default.yaml",
+      "bytes": 590,
+      "role": "generated_or_curated"
+    },
+    {
+      "path": "configs/profiles/crpto_e2e_default.yaml",
+      "bytes": 1215,
+      "role": "generated_or_curated"
+    },
+    {
+      "path": "data/processed/ab_attribution_by_amount.parquet",
+      "bytes": 6162,
+      "role": "generated_or_curated"
+    },
+    {
+      "path": "data/processed/ab_attribution_by_cohort.parquet",
+      "bytes": 6287,
+      "role": "generated_or_curated"
+    },
+    {
+      "path": "data/processed/ab_attribution_by_grade.parquet",
+      "bytes": 6083,
+      "role": "generated_or_curated"
+    },
+    {
+      "path": "data/processed/ab_simulation_results.parquet",
+      "bytes": 5771,
+      "role": "generated_or_curated"
+    },
+    {
+      "path": "data/processed/ab_simulation_summary.parquet",
+      "bytes": 3046,
+      "role": "generated_or_curated"
+    },
+    {
+      "path": "data/processed/alpha_gamma_bound/canonical_alpha_gamma_bound_validation_exact.json",
+      "bytes": 7178,
+      "role": "generated_or_curated"
+    },
+    {
+      "path": "data/processed/alpha_gamma_bound/canonical_proxy_vs_exact.parquet",
+      "bytes": 31926,
+      "role": "generated_or_curated"
+    },
+    {
+      "path": "data/processed/alpha_gamma_bound/rank1_score_decile_raw_bins5_mgs100_alpha_gamma_bound_validation_exact.json",
+      "bytes": 7288,
+      "role": "generated_or_curated"
+    },
+    {
+      "path": "data/processed/alpha_gamma_bound/rank1_score_decile_raw_bins5_mgs100_proxy_vs_exact.parquet",
+      "bytes": 32049,
+      "role": "generated_or_curated"
+    },
+    {
+      "path": "data/processed/alpha_gamma_bound/rank2_grade_cal_bins10_mgs100_alpha_gamma_bound_validation_exact.json",
+      "bytes": 7270,
+      "role": "generated_or_curated"
+    },
+    {
+      "path": "data/processed/alpha_gamma_bound/rank2_grade_cal_bins10_mgs100_proxy_vs_exact.parquet",
+      "bytes": 31905,
+      "role": "generated_or_curated"
+    },
+    {
+      "path": "data/processed/alpha_gamma_bound/rank3_grade_cal_bins10_mgs1000_alpha_gamma_bound_validation_exact.json",
+      "bytes": 7270,
+      "role": "generated_or_curated"
+    },
+    {
+      "path": "data/processed/alpha_gamma_bound/rank3_grade_cal_bins10_mgs1000_proxy_vs_exact.parquet",
+      "bytes": 31905,
+      "role": "generated_or_curated"
+    },
+    {
+      "path": "data/processed/alpha_gamma_bound_finalist_sweep.json",
+      "bytes": 24889,
+      "role": "generated_or_curated"
+    },
+    {
+      "path": "data/processed/alpha_gamma_bound_finalist_sweep.parquet",
+      "bytes": 17649,
+      "role": "generated_or_curated"
+    },
+    {
+      "path": "data/processed/alpha_gamma_bound_proxy_vs_exact.parquet",
+      "bytes": 31939,
+      "role": "generated_or_curated"
+    },
+    {
+      "path": "data/processed/alpha_gamma_bound_validation.json",
+      "bytes": 6991,
+      "role": "generated_or_curated"
+    },
+    {
+      "path": "data/processed/alpha_gamma_bound_validation_exact.json",
+      "bytes": 7090,
+      "role": "generated_or_curated"
+    },
+    {
+      "path": "data/processed/alpha_sweep_pareto_both.parquet",
+      "bytes": 19748,
+      "role": "generated_or_curated"
+    },
+    {
+      "path": "data/processed/alpha_sweep_pareto_mondrian.parquet",
+      "bytes": 18700,
+      "role": "generated_or_curated"
+    },
+    {
+      "path": "data/processed/calibration.parquet",
+      "bytes": 27931750,
+      "role": "generated_or_curated"
+    },
+    {
+      "path": "data/processed/calibration_cumulative_diffs.parquet",
+      "bytes": 7455657,
+      "role": "generated_or_curated"
+    },
+    {
+      "path": "data/processed/calibration_curve_data.parquet",
+      "bytes": 3126,
+      "role": "generated_or_curated"
+    },
+    {
+      "path": "data/processed/calibration_fe.parquet",
+      "bytes": 39804503,
+      "role": "generated_or_curated"
+    },
+    {
+      "path": "data/processed/conformal_backtest_alerts.parquet",
+      "bytes": 4746,
+      "role": "generated_or_curated"
+    },
+    {
+      "path": "data/processed/conformal_backtest_monthly.parquet",
+      "bytes": 13615,
+      "role": "generated_or_curated"
+    },
+    {
+      "path": "data/processed/conformal_backtest_monthly_grade.parquet",
+      "bytes": 15524,
+      "role": "generated_or_curated"
+    },
+    {
+      "path": "data/processed/conformal_diagnostic_metrics.json",
+      "bytes": 411,
+      "role": "generated_or_curated"
+    },
+    {
+      "path": "data/processed/conformal_gap/conformal-reopen-2026-04-03-2149__resume__2026-04-05-1612/conformal_reopen_phase1_final_candidates.parquet",
+      "bytes": 16340,
+      "role": "generated_or_curated"
+    },
+    {
+      "path": "data/processed/conformal_gap/conformal-reopen-2026-04-03-2149__resume__2026-04-05-1612/conformal_reopen_phase1_shortlist.parquet",
+      "bytes": 6910,
+      "role": "generated_or_curated"
+    },
+    {
+      "path": "data/processed/conformal_gap/conformal-reopen-2026-04-03-2149__resume__2026-04-05-1612__phase1__final__rank-1/conformal_backtest_alerts.parquet",
+      "bytes": 4746,
+      "role": "generated_or_curated"
+    },
+    {
+      "path": "data/processed/conformal_gap/conformal-reopen-2026-04-03-2149__resume__2026-04-05-1612__phase1__final__rank-1/conformal_backtest_monthly.parquet",
+      "bytes": 13575,
+      "role": "generated_or_curated"
+    },
+    {
+      "path": "data/processed/conformal_gap/conformal-reopen-2026-04-03-2149__resume__2026-04-05-1612__phase1__final__rank-1/conformal_backtest_monthly_grade.parquet",
+      "bytes": 14506,
+      "role": "generated_or_curated"
+    },
+    {
+      "path": "data/processed/conformal_gap/conformal-reopen-2026-04-03-2149__resume__2026-04-05-1612__phase1__final__rank-1/conformal_diagnostic_metrics.json",
+      "bytes": 433,
+      "role": "generated_or_curated"
+    },
+    {
+      "path": "data/processed/conformal_gap/conformal-reopen-2026-04-03-2149__resume__2026-04-05-1612__phase1__final__rank-1/conformal_group_coverage_floor_report.parquet",
+      "bytes": 4179,
+      "role": "generated_or_curated"
+    },
+    {
+      "path": "data/processed/conformal_gap/conformal-reopen-2026-04-03-2149__resume__2026-04-05-1612__phase1__final__rank-1/conformal_group_metrics_mondrian.parquet",
+      "bytes": 7879,
+      "role": "generated_or_curated"
+    },
+    {
+      "path": "data/processed/conformal_gap/conformal-reopen-2026-04-03-2149__resume__2026-04-05-1612__phase1__final__rank-1/conformal_intervals_mondrian.parquet",
+      "bytes": 5256767,
+      "role": "generated_or_curated"
+    },
+    {
+      "path": "data/processed/conformal_gap/conformal-reopen-2026-04-03-2149__resume__2026-04-05-1612__phase1__final__rank-1/conformal_local_diagnostics.parquet",
+      "bytes": 177681217,
+      "role": "generated_or_curated"
+    },
+    {
+      "path": "data/processed/conformal_gap/conformal-reopen-2026-04-03-2149__resume__2026-04-05-1612__phase1__final__rank-1/conformal_mondrian_tuning_90.parquet",
+      "bytes": 15513,
+      "role": "generated_or_curated"
+    },
+    {
+      "path": "data/processed/conformal_gap/conformal-reopen-2026-04-03-2149__resume__2026-04-05-1612__phase1__final__rank-1/conformal_mondrian_tuning_90_pareto.parquet",
+      "bytes": 15513,
+      "role": "generated_or_curated"
+    },
+    {
+      "path": "data/processed/conformal_gap/conformal-reopen-2026-04-03-2149__resume__2026-04-05-1612__phase1__final__rank-1/conformal_policy_checks.parquet",
+      "bytes": 7532,
+      "role": "generated_or_curated"
+    },
+    {
+      "path": "data/processed/conformal_gap/conformal-reopen-2026-04-03-2149__resume__2026-04-05-1612__phase1__final__rank-1/conformal_shrinkback_report.parquet",
+      "bytes": 5493,
+      "role": "generated_or_curated"
+    },
+    {
+      "path": "data/processed/conformal_gap/conformal-reopen-2026-04-03-2149__resume__2026-04-05-1612__phase1__final__rank-1/conformal_temporal_coverage_floor_report.parquet",
+      "bytes": 5501,
+      "role": "generated_or_curated"
+    },
+    {
+      "path": "data/processed/conformal_gap/conformal-reopen-2026-04-03-2149__resume__2026-04-05-1612__phase1__final__rank-1/conformal_temporal_diagnostics.parquet",
+      "bytes": 60554,
+      "role": "generated_or_curated"
+    },
+    {
+      "path": "data/processed/conformal_gap/conformal-reopen-2026-04-03-2149__resume__2026-04-05-1612__phase1__final__rank-1/conformal_variant_benchmark.parquet",
+      "bytes": 29298,
+      "role": "generated_or_curated"
+    },
+    {
+      "path": "data/processed/conformal_gap/conformal-reopen-2026-04-03-2149__resume__2026-04-05-1612__phase1__final__rank-1/conformal_variant_benchmark_by_group.parquet",
+      "bytes": 39853,
+      "role": "generated_or_curated"
+    },
+    {
+      "path": "data/processed/conformal_gap/conformal-reopen-2026-04-03-2149__resume__2026-04-05-1612__phase1__final__rank-1/conformal_variant_selection_report.parquet",
+      "bytes": 29298,
+      "role": "generated_or_curated"
+    },
+    {
+      "path": "data/processed/conformal_gap/conformal-reopen-2026-04-03-2149__resume__2026-04-05-1612__phase1__final__rank-1/pd_conformal_width_attribution.parquet",
+      "bytes": 8247,
+      "role": "generated_or_curated"
+    },
+    {
+      "path": "data/processed/conformal_gap/conformal-reopen-2026-04-03-2149__resume__2026-04-05-1612__phase1__final__rank-1/pd_set_prediction_benchmark.parquet",
+      "bytes": 8921,
+      "role": "generated_or_curated"
+    },
+    {
+      "path": "data/processed/conformal_gap/conformal-reopen-2026-04-03-2149__resume__2026-04-05-1612__phase1__final__rank-1/pd_set_prediction_by_slice.parquet",
+      "bytes": 7103,
+      "role": "generated_or_curated"
+    },
+    {
+      "path": "data/processed/conformal_gap/conformal-reopen-2026-04-03-2149__resume__2026-04-05-1612__phase1__final__rank-1/pd_set_prediction_cases.parquet",
+      "bytes": 2358189,
+      "role": "generated_or_curated"
+    },
+    {
+      "path": "data/processed/conformal_gap/conformal-reopen-2026-04-03-2149__resume__2026-04-05-1612__phase1__final__rank-1/pd_set_prediction_sensitivity.parquet",
+      "bytes": 7645,
+      "role": "generated_or_curated"
+    },
+    {
+      "path": "data/processed/conformal_gap/conformal-reopen-2026-04-03-2149__resume__2026-04-05-1612__phase1__final__rank-2/conformal_backtest_alerts.parquet",
+      "bytes": 6590,
+      "role": "generated_or_curated"
+    },
+    {
+      "path": "data/processed/conformal_gap/conformal-reopen-2026-04-03-2149__resume__2026-04-05-1612__phase1__final__rank-2/conformal_backtest_monthly.parquet",
+      "bytes": 13689,
+      "role": "generated_or_curated"
+    },
+    {
+      "path": "data/processed/conformal_gap/conformal-reopen-2026-04-03-2149__resume__2026-04-05-1612__phase1__final__rank-2/conformal_backtest_monthly_grade.parquet",
+      "bytes": 15566,
+      "role": "generated_or_curated"
+    },
+    {
+      "path": "data/processed/conformal_gap/conformal-reopen-2026-04-03-2149__resume__2026-04-05-1612__phase1__final__rank-2/conformal_diagnostic_metrics.json",
+      "bytes": 435,
+      "role": "generated_or_curated"
+    },
+    {
+      "path": "data/processed/conformal_gap/conformal-reopen-2026-04-03-2149__resume__2026-04-05-1612__phase1__final__rank-2/conformal_group_coverage_floor_report.parquet",
+      "bytes": 4176,
+      "role": "generated_or_curated"
+    },
+    {
+      "path": "data/processed/conformal_gap/conformal-reopen-2026-04-03-2149__resume__2026-04-05-1612__phase1__final__rank-2/conformal_group_metrics_mondrian.parquet",
+      "bytes": 7944,
+      "role": "generated_or_curated"
+    },
+    {
+      "path": "data/processed/conformal_gap/conformal-reopen-2026-04-03-2149__resume__2026-04-05-1612__phase1__final__rank-2/conformal_intervals_mondrian.parquet",
+      "bytes": 5380815,
+      "role": "generated_or_curated"
+    },
+    {
+      "path": "data/processed/conformal_gap/conformal-reopen-2026-04-03-2149__resume__2026-04-05-1612__phase1__final__rank-2/conformal_local_diagnostics.parquet",
+      "bytes": 177852390,
+      "role": "generated_or_curated"
+    },
+    {
+      "path": "data/processed/conformal_gap/conformal-reopen-2026-04-03-2149__resume__2026-04-05-1612__phase1__final__rank-2/conformal_mondrian_tuning_90.parquet",
+      "bytes": 15474,
+      "role": "generated_or_curated"
+    },
+    {
+      "path": "data/processed/conformal_gap/conformal-reopen-2026-04-03-2149__resume__2026-04-05-1612__phase1__final__rank-2/conformal_mondrian_tuning_90_pareto.parquet",
+      "bytes": 15474,
+      "role": "generated_or_curated"
+    },
+    {
+      "path": "data/processed/conformal_gap/conformal-reopen-2026-04-03-2149__resume__2026-04-05-1612__phase1__final__rank-2/conformal_policy_checks.parquet",
+      "bytes": 7536,
+      "role": "generated_or_curated"
+    },
+    {
+      "path": "data/processed/conformal_gap/conformal-reopen-2026-04-03-2149__resume__2026-04-05-1612__phase1__final__rank-2/conformal_shrinkback_report.parquet",
+      "bytes": 5493,
+      "role": "generated_or_curated"
+    },
+    {
+      "path": "data/processed/conformal_gap/conformal-reopen-2026-04-03-2149__resume__2026-04-05-1612__phase1__final__rank-2/conformal_temporal_coverage_floor_report.parquet",
+      "bytes": 5521,
+      "role": "generated_or_curated"
+    },
+    {
+      "path": "data/processed/conformal_gap/conformal-reopen-2026-04-03-2149__resume__2026-04-05-1612__phase1__final__rank-2/conformal_temporal_diagnostics.parquet",
+      "bytes": 60480,
+      "role": "generated_or_curated"
+    },
+    {
+      "path": "data/processed/conformal_gap/conformal-reopen-2026-04-03-2149__resume__2026-04-05-1612__phase1__final__rank-2/conformal_variant_benchmark.parquet",
+      "bytes": 29324,
+      "role": "generated_or_curated"
+    },
+    {
+      "path": "data/processed/conformal_gap/conformal-reopen-2026-04-03-2149__resume__2026-04-05-1612__phase1__final__rank-2/conformal_variant_benchmark_by_group.parquet",
+      "bytes": 39851,
+      "role": "generated_or_curated"
+    },
+    {
+      "path": "data/processed/conformal_gap/conformal-reopen-2026-04-03-2149__resume__2026-04-05-1612__phase1__final__rank-2/conformal_variant_selection_report.parquet",
+      "bytes": 29324,
+      "role": "generated_or_curated"
+    },
+    {
+      "path": "data/processed/conformal_gap/conformal-reopen-2026-04-03-2149__resume__2026-04-05-1612__phase1__final__rank-2/pd_conformal_width_attribution.parquet",
+      "bytes": 8336,
+      "role": "generated_or_curated"
+    },
+    {
+      "path": "data/processed/conformal_gap/conformal-reopen-2026-04-03-2149__resume__2026-04-05-1612__phase1__final__rank-2/pd_set_prediction_benchmark.parquet",
+      "bytes": 8931,
+      "role": "generated_or_curated"
+    },
+    {
+      "path": "data/processed/conformal_gap/conformal-reopen-2026-04-03-2149__resume__2026-04-05-1612__phase1__final__rank-2/pd_set_prediction_by_slice.parquet",
+      "bytes": 7103,
+      "role": "generated_or_curated"
+    },
+    {
+      "path": "data/processed/conformal_gap/conformal-reopen-2026-04-03-2149__resume__2026-04-05-1612__phase1__final__rank-2/pd_set_prediction_cases.parquet",
+      "bytes": 2363805,
+      "role": "generated_or_curated"
+    },
+    {
+      "path": "data/processed/conformal_gap/conformal-reopen-2026-04-03-2149__resume__2026-04-05-1612__phase1__final__rank-2/pd_set_prediction_sensitivity.parquet",
+      "bytes": 7678,
+      "role": "generated_or_curated"
+    },
+    {
+      "path": "data/processed/conformal_gap/conformal-reopen-2026-04-03-2149__resume__2026-04-05-1612__phase1__final__rank-3/conformal_backtest_alerts.parquet",
+      "bytes": 6590,
+      "role": "generated_or_curated"
+    },
+    {
+      "path": "data/processed/conformal_gap/conformal-reopen-2026-04-03-2149__resume__2026-04-05-1612__phase1__final__rank-3/conformal_backtest_monthly.parquet",
+      "bytes": 13689,
+      "role": "generated_or_curated"
+    },
+    {
+      "path": "data/processed/conformal_gap/conformal-reopen-2026-04-03-2149__resume__2026-04-05-1612__phase1__final__rank-3/conformal_backtest_monthly_grade.parquet",
+      "bytes": 15566,
+      "role": "generated_or_curated"
+    },
+    {
+      "path": "data/processed/conformal_gap/conformal-reopen-2026-04-03-2149__resume__2026-04-05-1612__phase1__final__rank-3/conformal_diagnostic_metrics.json",
+      "bytes": 435,
+      "role": "generated_or_curated"
+    },
+    {
+      "path": "data/processed/conformal_gap/conformal-reopen-2026-04-03-2149__resume__2026-04-05-1612__phase1__final__rank-3/conformal_group_coverage_floor_report.parquet",
+      "bytes": 4176,
+      "role": "generated_or_curated"
+    },
+    {
+      "path": "data/processed/conformal_gap/conformal-reopen-2026-04-03-2149__resume__2026-04-05-1612__phase1__final__rank-3/conformal_group_metrics_mondrian.parquet",
+      "bytes": 7944,
+      "role": "generated_or_curated"
+    },
+    {
+      "path": "data/processed/conformal_gap/conformal-reopen-2026-04-03-2149__resume__2026-04-05-1612__phase1__final__rank-3/conformal_intervals_mondrian.parquet",
+      "bytes": 5380815,
+      "role": "generated_or_curated"
+    },
+    {
+      "path": "data/processed/conformal_gap/conformal-reopen-2026-04-03-2149__resume__2026-04-05-1612__phase1__final__rank-3/conformal_local_diagnostics.parquet",
+      "bytes": 177607429,
+      "role": "generated_or_curated"
+    },
+    {
+      "path": "data/processed/conformal_gap/conformal-reopen-2026-04-03-2149__resume__2026-04-05-1612__phase1__final__rank-3/conformal_mondrian_tuning_90.parquet",
+      "bytes": 15474,
+      "role": "generated_or_curated"
+    },
+    {
+      "path": "data/processed/conformal_gap/conformal-reopen-2026-04-03-2149__resume__2026-04-05-1612__phase1__final__rank-3/conformal_mondrian_tuning_90_pareto.parquet",
+      "bytes": 15474,
+      "role": "generated_or_curated"
+    },
+    {
+      "path": "data/processed/conformal_gap/conformal-reopen-2026-04-03-2149__resume__2026-04-05-1612__phase1__final__rank-3/conformal_policy_checks.parquet",
+      "bytes": 7536,
+      "role": "generated_or_curated"
+    },
+    {
+      "path": "data/processed/conformal_gap/conformal-reopen-2026-04-03-2149__resume__2026-04-05-1612__phase1__final__rank-3/conformal_shrinkback_report.parquet",
+      "bytes": 5493,
+      "role": "generated_or_curated"
+    },
+    {
+      "path": "data/processed/conformal_gap/conformal-reopen-2026-04-03-2149__resume__2026-04-05-1612__phase1__final__rank-3/conformal_temporal_coverage_floor_report.parquet",
+      "bytes": 5521,
+      "role": "generated_or_curated"
+    },
+    {
+      "path": "data/processed/conformal_gap/conformal-reopen-2026-04-03-2149__resume__2026-04-05-1612__phase1__final__rank-3/conformal_temporal_diagnostics.parquet",
+      "bytes": 59663,
+      "role": "generated_or_curated"
+    },
+    {
+      "path": "data/processed/conformal_gap/conformal-reopen-2026-04-03-2149__resume__2026-04-05-1612__phase1__final__rank-3/conformal_variant_benchmark.parquet",
+      "bytes": 29406,
+      "role": "generated_or_curated"
+    },
+    {
+      "path": "data/processed/conformal_gap/conformal-reopen-2026-04-03-2149__resume__2026-04-05-1612__phase1__final__rank-3/conformal_variant_benchmark_by_group.parquet",
+      "bytes": 33995,
+      "role": "generated_or_curated"
+    },
+    {
+      "path": "data/processed/conformal_gap/conformal-reopen-2026-04-03-2149__resume__2026-04-05-1612__phase1__final__rank-3/conformal_variant_selection_report.parquet",
+      "bytes": 29406,
+      "role": "generated_or_curated"
+    },
+    {
+      "path": "data/processed/conformal_gap/conformal-reopen-2026-04-03-2149__resume__2026-04-05-1612__phase1__final__rank-3/pd_conformal_width_attribution.parquet",
+      "bytes": 8336,
+      "role": "generated_or_curated"
+    },
+    {
+      "path": "data/processed/conformal_gap/conformal-reopen-2026-04-03-2149__resume__2026-04-05-1612__phase1__final__rank-3/pd_set_prediction_benchmark.parquet",
+      "bytes": 8930,
+      "role": "generated_or_curated"
+    },
+    {
+      "path": "data/processed/conformal_gap/conformal-reopen-2026-04-03-2149__resume__2026-04-05-1612__phase1__final__rank-3/pd_set_prediction_by_slice.parquet",
+      "bytes": 7103,
+      "role": "generated_or_curated"
+    },
+    {
+      "path": "data/processed/conformal_gap/conformal-reopen-2026-04-03-2149__resume__2026-04-05-1612__phase1__final__rank-3/pd_set_prediction_cases.parquet",
+      "bytes": 2364690,
+      "role": "generated_or_curated"
+    },
+    {
+      "path": "data/processed/conformal_gap/conformal-reopen-2026-04-03-2149__resume__2026-04-05-1612__phase1__final__rank-3/pd_set_prediction_sensitivity.parquet",
+      "bytes": 7653,
+      "role": "generated_or_curated"
+    },
+    {
+      "path": "data/processed/conformal_group_coverage_floor_report.parquet",
+      "bytes": 4158,
+      "role": "generated_or_curated"
+    },
+    {
+      "path": "data/processed/conformal_group_metrics_mondrian.parquet",
+      "bytes": 7926,
+      "role": "generated_or_curated"
+    },
+    {
+      "path": "data/processed/conformal_intervals_mondrian.parquet",
+      "bytes": 5364073,
+      "role": "generated_or_curated"
+    },
+    {
+      "path": "data/processed/conformal_mondrian_tuning_90.parquet",
+      "bytes": 15852,
+      "role": "generated_or_curated"
+    },
+    {
+      "path": "data/processed/conformal_mondrian_tuning_90_pareto.parquet",
+      "bytes": 15852,
+      "role": "generated_or_curated"
+    },
+    {
+      "path": "data/processed/conformal_policy_checks.parquet",
+      "bytes": 7532,
+      "role": "generated_or_curated"
+    },
+    {
+      "path": "data/processed/conformal_policy_sensitivity_checks.parquet",
+      "bytes": 7586,
+      "role": "generated_or_curated"
+    },
+    {
+      "path": "data/processed/conformal_temporal_diagnostics.parquet",
+      "bytes": 10338,
+      "role": "generated_or_curated"
+    },
+    {
+      "path": "data/processed/conformal_variant_benchmark.parquet",
+      "bytes": 21591,
+      "role": "generated_or_curated"
+    },
+    {
+      "path": "data/processed/conformal_variant_benchmark_by_group.parquet",
+      "bytes": 7411,
+      "role": "generated_or_curated"
+    },
+    {
+      "path": "data/processed/cqr_comparison.parquet",
+      "bytes": 6102,
+      "role": "generated_or_curated"
+    },
+    {
+      "path": "data/processed/cqr_mondrian_comparison.parquet",
+      "bytes": 7366,
+      "role": "generated_or_curated"
+    },
+    {
+      "path": "data/processed/cqr_mondrian_group_coverage.parquet",
+      "bytes": 3853,
+      "role": "generated_or_curated"
+    },
+    {
+      "path": "data/processed/crpto.duckdb",
+      "bytes": 12288,
+      "role": "generated_or_curated"
+    },
+    {
+      "path": "data/processed/crpto_vs_spo_stability.json",
+      "bytes": 6434,
+      "role": "generated_or_curated"
+    },
+    {
+      "path": "data/processed/crpto_vs_spo_stability_detail.parquet",
+      "bytes": 9971,
+      "role": "generated_or_curated"
+    },
+    {
+      "path": "data/processed/drift_monitoring.parquet",
+      "bytes": 8139,
+      "role": "generated_or_curated"
+    },
+    {
+      "path": "data/processed/explanation_drift.parquet",
+      "bytes": 12567,
+      "role": "generated_or_curated"
+    },
+    {
+      "path": "data/processed/fairlearn_group_metrics.parquet",
+      "bytes": 4136,
+      "role": "generated_or_curated"
+    },
+    {
+      "path": "data/processed/fairness_audit.parquet",
+      "bytes": 6712,
+      "role": "generated_or_curated"
+    },
+    {
+      "path": "data/processed/fairness_threshold_frontier.parquet",
+      "bytes": 7159,
+      "role": "generated_or_curated"
+    },
+    {
+      "path": "data/processed/feature_config.pkl",
+      "bytes": 3580,
+      "role": "generated_or_curated"
+    },
+    {
+      "path": "data/processed/feature_manifest_v2.json",
+      "bytes": 56108,
+      "role": "generated_or_curated"
+    },
+    {
+      "path": "data/processed/feature_manifest_v2.parquet",
+      "bytes": 10289,
+      "role": "generated_or_curated"
+    },
+    {
+      "path": "data/processed/final_project_summary.parquet",
+      "bytes": 16440,
+      "role": "generated_or_curated"
+    },
+    {
+      "path": "data/processed/final_project_summary.parquet.dvc",
+      "bytes": 125,
+      "role": "generated_or_curated"
+    },
+    {
+      "path": "data/processed/loan_master.parquet",
+      "bytes": 153933059,
+      "role": "generated_or_curated"
+    },
+    {
+      "path": "data/processed/monotonicity_band_summary.parquet",
+      "bytes": 4065,
+      "role": "generated_or_curated"
+    },
+    {
+      "path": "data/processed/monotonicity_feature_report.parquet",
+      "bytes": 2455,
+      "role": "generated_or_curated"
+    },
+    {
+      "path": "data/processed/pd_backtesting_by_band.parquet",
+      "bytes": 4607,
+      "role": "generated_or_curated"
+    },
+    {
+      "path": "data/processed/pd_backtesting_by_grade.parquet",
+      "bytes": 7708,
+      "role": "generated_or_curated"
+    },
+    {
+      "path": "data/processed/pd_backtesting_quarter_materiality.parquet",
+      "bytes": 4631,
+      "role": "generated_or_curated"
+    },
+    {
+      "path": "data/processed/pd_conformal_width_attribution.parquet",
+      "bytes": 8299,
+      "role": "generated_or_curated"
+    },
+    {
+      "path": "data/processed/pipeline_summary.json",
+      "bytes": 4654,
+      "role": "generated_or_curated"
+    },
+    {
+      "path": "data/processed/portfolio_allocations.parquet",
+      "bytes": 2676209,
+      "role": "generated_or_curated"
+    },
+    {
+      "path": "data/processed/portfolio_bound_aware/rank1_alpha01_bound_aware_25k_gpu_2026-04-05-1611c/portfolio_bound_aware_bound_eval.parquet",
+      "bytes": 45407,
+      "role": "generated_or_curated"
+    },
+    {
+      "path": "data/processed/portfolio_bound_aware/rank1_alpha01_bound_aware_25k_gpu_2026-04-05-1611c/portfolio_bound_aware_frontier.parquet",
+      "bytes": 47848,
+      "role": "generated_or_curated"
+    },
+    {
+      "path": "data/processed/portfolio_bound_aware/rank1_alpha01_bound_aware_25k_gpu_2026-04-05-1611c/portfolio_bound_aware_frontier_raw.parquet",
+      "bytes": 72130,
+      "role": "generated_or_curated"
+    },
+    {
+      "path": "data/processed/portfolio_bound_aware/rank1_alpha01_bound_aware_25k_gpu_2026-04-05-1611c/portfolio_bound_aware_shortlist.parquet",
+      "bytes": 33886,
+      "role": "generated_or_curated"
+    },
+    {
+      "path": "data/processed/portfolio_bound_aware/rank1_alpha01_bound_aware_276k_full_2026-04-05-1734/portfolio_bound_aware_bound_eval.parquet",
+      "bytes": 48376,
+      "role": "generated_or_curated"
+    },
+    {
+      "path": "data/processed/portfolio_bound_aware/rank1_alpha01_bound_aware_276k_full_2026-04-05-1734/portfolio_bound_aware_frontier.parquet",
+      "bytes": 22205,
+      "role": "generated_or_curated"
+    },
+    {
+      "path": "data/processed/portfolio_bound_aware/rank1_alpha01_bound_aware_276k_full_2026-04-05-1734/portfolio_bound_aware_frontier_raw.parquet",
+      "bytes": 22819,
+      "role": "generated_or_curated"
+    },
+    {
+      "path": "data/processed/portfolio_bound_aware/rank1_alpha01_bound_aware_276k_full_2026-04-05-1734/portfolio_bound_aware_shortlist.parquet",
+      "bytes": 35173,
+      "role": "generated_or_curated"
+    },
+    {
+      "path": "data/processed/portfolio_bound_aware/rank1_alpha01_bound_aware_5k_corrected_2026-04-05-1548/portfolio_bound_aware_bound_eval.parquet",
+      "bytes": 55244,
+      "role": "generated_or_curated"
+    },
+    {
+      "path": "data/processed/portfolio_bound_aware/rank1_alpha01_bound_aware_5k_corrected_2026-04-05-1548/portfolio_bound_aware_frontier.parquet",
+      "bytes": 67021,
+      "role": "generated_or_curated"
+    },
+    {
+      "path": "data/processed/portfolio_bound_aware/rank1_alpha01_bound_aware_5k_corrected_2026-04-05-1548/portfolio_bound_aware_frontier_raw.parquet",
+      "bytes": 62324,
+      "role": "generated_or_curated"
+    },
+    {
+      "path": "data/processed/portfolio_bound_aware/rank1_alpha01_bound_aware_5k_corrected_2026-04-05-1548/portfolio_bound_aware_shortlist.parquet",
+      "bytes": 41490,
+      "role": "generated_or_curated"
+    },
+    {
+      "path": "data/processed/portfolio_robustness_frontier.parquet",
+      "bytes": 43654,
+      "role": "generated_or_curated"
+    },
+    {
+      "path": "data/processed/portfolio_robustness_summary.parquet",
+      "bytes": 14334,
+      "role": "generated_or_curated"
+    },
+    {
+      "path": "data/processed/portfolio_tradeoff/conformal-finalist-rank1_score_decile_raw_bins5_mgs100/portfolio_robustness_frontier.parquet",
+      "bytes": 63073,
+      "role": "generated_or_curated"
+    },
+    {
+      "path": "data/processed/portfolio_tradeoff/conformal-finalist-rank1_score_decile_raw_bins5_mgs100/portfolio_robustness_summary.parquet",
+      "bytes": 14429,
+      "role": "generated_or_curated"
+    },
+    {
+      "path": "data/processed/portfolio_tradeoff/conformal-finalist-rank2_grade_cal_bins10_mgs100/portfolio_robustness_frontier.parquet",
+      "bytes": 43825,
+      "role": "generated_or_curated"
+    },
+    {
+      "path": "data/processed/portfolio_tradeoff/conformal-finalist-rank2_grade_cal_bins10_mgs100/portfolio_robustness_summary.parquet",
+      "bytes": 14353,
+      "role": "generated_or_curated"
+    },
+    {
+      "path": "data/processed/portfolio_tradeoff/conformal-finalist-rank3_grade_cal_bins10_mgs1000/portfolio_robustness_frontier.parquet",
+      "bytes": 43825,
+      "role": "generated_or_curated"
+    },
+    {
+      "path": "data/processed/portfolio_tradeoff/conformal-finalist-rank3_grade_cal_bins10_mgs1000/portfolio_robustness_summary.parquet",
+      "bytes": 14353,
+      "role": "generated_or_curated"
+    },
+    {
+      "path": "data/processed/portfolio_tradeoff/conformal_finalist_comparison.parquet",
+      "bytes": 14546,
+      "role": "generated_or_curated"
+    },
+    {
+      "path": "data/processed/roc_curve_data.parquet",
+      "bytes": 13049,
+      "role": "generated_or_curated"
+    },
+    {
+      "path": "data/processed/spo_training_loss.parquet",
+      "bytes": 2457,
+      "role": "generated_or_curated"
+    },
+    {
+      "path": "data/processed/statistical_calibration_tests.json",
+      "bytes": 452,
+      "role": "generated_or_curated"
+    },
+    {
+      "path": "data/processed/test.parquet",
+      "bytes": 32441172,
+      "role": "generated_or_curated"
+    },
+    {
+      "path": "data/processed/test_fe.parquet",
+      "bytes": 46448903,
+      "role": "generated_or_curated"
+    },
+    {
+      "path": "data/processed/test_predictions.parquet",
+      "bytes": 12547567,
+      "role": "generated_or_curated"
+    },
+    {
+      "path": "data/processed/train.parquet",
+      "bytes": 142993295,
+      "role": "generated_or_curated"
+    },
+    {
+      "path": "data/processed/train_fe.parquet",
+      "bytes": 208450864,
+      "role": "generated_or_curated"
+    },
+    {
+      "path": "data/processed/uncertainty_baselines_by_grade.parquet",
+      "bytes": 2599,
+      "role": "generated_or_curated"
+    },
+    {
+      "path": "data/processed/uncertainty_baselines_comparison.parquet",
+      "bytes": 5130,
+      "role": "generated_or_curated"
+    },
+    {
+      "path": "data/processed/woe_encoders.pkl",
+      "bytes": 3552,
+      "role": "generated_or_curated"
+    },
+    {
+      "path": "data/raw/Loan_status_2007-2020Q3.csv",
+      "bytes": 1773470505,
+      "role": "generated_or_curated"
+    },
+    {
+      "path": "data/raw/Loan_status_2007-2020Q3.csv.dvc",
+      "bytes": 128,
+      "role": "generated_or_curated"
+    },
+    {
+      "path": "dbt_project/.user.yml",
+      "bytes": 41,
+      "role": "generated_or_curated"
+    },
+    {
+      "path": "dbt_project/dbt_project.yml",
+      "bytes": 697,
+      "role": "generated_or_curated"
+    },
+    {
+      "path": "dbt_project/models/marts/analytics/_analytics.yml",
+      "bytes": 194,
+      "role": "generated_or_curated"
+    },
+    {
+      "path": "dbt_project/models/marts/analytics/fct_conformal_coverage.sql",
+      "bytes": 227,
+      "role": "generated_or_curated"
+    },
+    {
+      "path": "dbt_project/models/marts/analytics/fct_model_performance_by_cohort.sql",
+      "bytes": 336,
+      "role": "generated_or_curated"
+    },
+    {
+      "path": "dbt_project/models/marts/credit_risk/_credit_risk.yml",
+      "bytes": 116,
+      "role": "generated_or_curated"
+    },
+    {
+      "path": "dbt_project/models/marts/credit_risk/fct_portfolio_allocation.sql",
+      "bytes": 237,
+      "role": "generated_or_curated"
+    },
+    {
+      "path": "dbt_project/models/staging/_sources.yml",
+      "bytes": 221,
+      "role": "generated_or_curated"
+    },
+    {
+      "path": "dbt_project/models/staging/_staging.yml",
+      "bytes": 253,
+      "role": "generated_or_curated"
+    },
+    {
+      "path": "dbt_project/models/staging/stg_conformal_intervals.sql",
+      "bytes": 383,
+      "role": "generated_or_curated"
+    },
+    {
+      "path": "dbt_project/models/staging/stg_portfolio_allocations.sql",
+      "bytes": 647,
+      "role": "generated_or_curated"
+    },
+    {
+      "path": "dbt_project/models/staging/stg_test_predictions.sql",
+      "bytes": 253,
+      "role": "generated_or_curated"
+    },
+    {
+      "path": "dbt_project/profiles.yml",
+      "bytes": 161,
+      "role": "generated_or_curated"
+    },
+    {
+      "path": "dbt_project/tests/assert_default_rate_reasonable.sql",
+      "bytes": 202,
+      "role": "generated_or_curated"
+    },
+    {
+      "path": "dbt_project/tests/assert_pd_in_range.sql",
+      "bytes": 225,
+      "role": "generated_or_curated"
+    },
+    {
+      "path": "docs/research/README.md",
+      "bytes": 150,
+      "role": "generated_or_curated"
+    },
+    {
+      "path": "docs/research/crpto_audit_2026-05-04.md",
+      "bytes": 15279,
+      "role": "generated_or_curated"
+    },
+    {
+      "path": "docs/research/crpto_backlog_2026-05-04.md",
+      "bytes": 36091,
+      "role": "generated_or_curated"
+    },
+    {
+      "path": "docs/research/crpto_conditional_tightening_appendix_2026-05-04.md",
+      "bytes": 2814,
+      "role": "generated_or_curated"
+    },
+    {
+      "path": "docs/research/crpto_editorial_claims_references.qmd",
+      "bytes": 13821,
+      "role": "generated_or_curated"
+    },
+    {
+      "path": "docs/research/crpto_extraction_completeness_audit_2026-05-10.md",
+      "bytes": 7089,
+      "role": "generated_or_curated"
+    },
+    {
+      "path": "docs/research/crpto_journal_package_2026-05-04.md",
+      "bytes": 3230,
+      "role": "generated_or_curated"
+    },
+    {
+      "path": "docs/research/crpto_p1_evidence_2026-05-04.md",
+      "bytes": 2940,
+      "role": "generated_or_curated"
+    },
+    {
+      "path": "docs/research/crpto_quarto_expansion_2026-05-04.md",
+      "bytes": 3316,
+      "role": "generated_or_curated"
+    },
+    {
+      "path": "docs/research/crpto_repo_sync_closure_2026-05-04.md",
+      "bytes": 3021,
+      "role": "generated_or_curated"
+    },
+    {
+      "path": "docs/research/crpto_size_dependency_data_audit_2026-05-10.md",
+      "bytes": 35674,
+      "role": "generated_or_curated"
+    },
+    {
+      "path": "docs/research/foundations/crpto_artifact_retention_policy.md",
+      "bytes": 3177,
+      "role": "generated_or_curated"
+    },
+    {
+      "path": "docs/research/foundations/crpto_calibration_method_selection.md",
+      "bytes": 7835,
+      "role": "generated_or_curated"
+    },
+    {
+      "path": "docs/research/foundations/crpto_conformal_libraries_comparison.md",
+      "bytes": 15678,
+      "role": "generated_or_curated"
+    },
+    {
+      "path": "docs/research/foundations/crpto_conformal_prediction_quick_reference.md",
+      "bytes": 15093,
+      "role": "generated_or_curated"
+    },
+    {
+      "path": "docs/research/foundations/crpto_conformal_prediction_readme.md",
+      "bytes": 14444,
+      "role": "generated_or_curated"
+    },
+    {
+      "path": "docs/research/foundations/crpto_conformal_prediction_research_2026.md",
+      "bytes": 31786,
+      "role": "generated_or_curated"
+    },
+    {
+      "path": "docs/research/foundations/crpto_decision_changes_and_learnings.md",
+      "bytes": 19056,
+      "role": "generated_or_curated"
+    },
+    {
+      "path": "docs/research/foundations/crpto_documentation_map.md",
+      "bytes": 4739,
+      "role": "generated_or_curated"
+    },
+    {
+      "path": "docs/research/foundations/crpto_integrations_setup.md",
+      "bytes": 4035,
+      "role": "generated_or_curated"
+    },
+    {
+      "path": "docs/research/foundations/crpto_model_risk_management.md",
+      "bytes": 13554,
+      "role": "generated_or_curated"
+    },
+    {
+      "path": "docs/research/foundations/crpto_paper_development_playbook_2026.md",
+      "bytes": 4115,
+      "role": "generated_or_curated"
+    },
+    {
+      "path": "docs/research/foundations/crpto_pipeline_topology_2026-03-31.md",
+      "bytes": 2898,
+      "role": "generated_or_curated"
+    },
+    {
+      "path": "docs/research/foundations/crpto_portfolio_selector_literature_2020_2026.md",
+      "bytes": 9632,
+      "role": "generated_or_curated"
+    },
+    {
+      "path": "docs/research/foundations/crpto_project_justification.md",
+      "bytes": 5317,
+      "role": "generated_or_curated"
+    },
+    {
+      "path": "docs/research/foundations/crpto_quarto_traceability_2026-03-30.md",
+      "bytes": 18799,
+      "role": "generated_or_curated"
+    },
+    {
+      "path": "docs/research/foundations/crpto_references_state_of_art.md",
+      "bytes": 13695,
+      "role": "generated_or_curated"
+    },
+    {
+      "path": "docs/research/foundations/crpto_runbook.md",
+      "bytes": 25425,
+      "role": "generated_or_curated"
+    },
+    {
+      "path": "docs/research/future_work/crpto_classification_conformal_memo_2026-04-03.md",
+      "bytes": 11397,
+      "role": "generated_or_curated"
+    },
+    {
+      "path": "docs/research/future_work/crpto_temporal_uncertainty_vnext_2026-04-02.md",
+      "bytes": 5502,
+      "role": "generated_or_curated"
+    },
+    {
+      "path": "docs/research/future_work/crpto_validation_hardening_notes_2026-03-30.md",
+      "bytes": 2268,
+      "role": "generated_or_curated"
+    },
+    {
+      "path": "dvc.lock",
+      "bytes": 8773,
+      "role": "generated_or_curated"
+    },
+    {
+      "path": "dvc.yaml",
+      "bytes": 3907,
+      "role": "generated_or_curated"
+    },
+    {
+      "path": "models/ab_attribution_status.json",
+      "bytes": 1232,
+      "role": "generated_or_curated"
+    },
+    {
+      "path": "models/ab_simulation_status_explicit_champion_only_baseline.json",
+      "bytes": 2481,
+      "role": "generated_or_curated"
+    },
+    {
+      "path": "models/alpha_sweep_status.json",
+      "bytes": 966,
+      "role": "generated_or_curated"
+    },
+    {
+      "path": "models/champion_portfolio_policy.json",
+      "bytes": 2806,
+      "role": "generated_or_curated"
+    },
+    {
+      "path": "models/champion_registry.json",
+      "bytes": 77426,
+      "role": "generated_or_curated"
+    },
+    {
+      "path": "models/champion_search_bundle.json",
+      "bytes": 154361,
+      "role": "generated_or_curated"
+    },
+    {
+      "path": "models/conformal_gap/conformal-reopen-2026-04-03-2149__resume__2026-04-05-1612/conformal_reopen_status.json",
+      "bytes": 31298,
+      "role": "generated_or_curated"
+    },
+    {
+      "path": "models/conformal_gap/conformal-reopen-2026-04-03-2149__resume__2026-04-05-1612__phase1__final__rank-1/conformal_policy_status.json",
+      "bytes": 12688,
+      "role": "generated_or_curated"
+    },
+    {
+      "path": "models/conformal_gap/conformal-reopen-2026-04-03-2149__resume__2026-04-05-1612__phase1__final__rank-1/conformal_policy_validation.yaml",
+      "bytes": 2046,
+      "role": "generated_or_curated"
+    },
+    {
+      "path": "models/conformal_gap/conformal-reopen-2026-04-03-2149__resume__2026-04-05-1612__phase1__final__rank-1/conformal_results_mondrian.pkl",
+      "bytes": 3983,
+      "role": "generated_or_curated"
+    },
+    {
+      "path": "models/conformal_gap/conformal-reopen-2026-04-03-2149__resume__2026-04-05-1612__phase1__final__rank-1/conformal_variant_selection_status.json",
+      "bytes": 29600,
+      "role": "generated_or_curated"
+    },
+    {
+      "path": "models/conformal_gap/conformal-reopen-2026-04-03-2149__resume__2026-04-05-1612__phase1__final__rank-1/pd_conformal_width_attribution_status.json",
+      "bytes": 1147,
+      "role": "generated_or_curated"
+    },
+    {
+      "path": "models/conformal_gap/conformal-reopen-2026-04-03-2149__resume__2026-04-05-1612__phase1__final__rank-1/pd_set_prediction_status.json",
+      "bytes": 14336,
+      "role": "generated_or_curated"
+    },
+    {
+      "path": "models/conformal_gap/conformal-reopen-2026-04-03-2149__resume__2026-04-05-1612__phase1__final__rank-2/conformal_policy_status.json",
+      "bytes": 12788,
+      "role": "generated_or_curated"
+    },
+    {
+      "path": "models/conformal_gap/conformal-reopen-2026-04-03-2149__resume__2026-04-05-1612__phase1__final__rank-2/conformal_policy_validation.yaml",
+      "bytes": 2046,
+      "role": "generated_or_curated"
+    },
+    {
+      "path": "models/conformal_gap/conformal-reopen-2026-04-03-2149__resume__2026-04-05-1612__phase1__final__rank-2/conformal_results_mondrian.pkl",
+      "bytes": 4155,
+      "role": "generated_or_curated"
+    },
+    {
+      "path": "models/conformal_gap/conformal-reopen-2026-04-03-2149__resume__2026-04-05-1612__phase1__final__rank-2/conformal_variant_selection_status.json",
+      "bytes": 29704,
+      "role": "generated_or_curated"
+    },
+    {
+      "path": "models/conformal_gap/conformal-reopen-2026-04-03-2149__resume__2026-04-05-1612__phase1__final__rank-2/pd_conformal_width_attribution_status.json",
+      "bytes": 1214,
+      "role": "generated_or_curated"
+    },
+    {
+      "path": "models/conformal_gap/conformal-reopen-2026-04-03-2149__resume__2026-04-05-1612__phase1__final__rank-2/pd_set_prediction_status.json",
+      "bytes": 14332,
+      "role": "generated_or_curated"
+    },
+    {
+      "path": "models/conformal_gap/conformal-reopen-2026-04-03-2149__resume__2026-04-05-1612__phase1__final__rank-3/conformal_policy_status.json",
+      "bytes": 12788,
+      "role": "generated_or_curated"
+    },
+    {
+      "path": "models/conformal_gap/conformal-reopen-2026-04-03-2149__resume__2026-04-05-1612__phase1__final__rank-3/conformal_policy_validation.yaml",
+      "bytes": 2046,
+      "role": "generated_or_curated"
+    },
+    {
+      "path": "models/conformal_gap/conformal-reopen-2026-04-03-2149__resume__2026-04-05-1612__phase1__final__rank-3/conformal_results_mondrian.pkl",
+      "bytes": 4158,
+      "role": "generated_or_curated"
+    },
+    {
+      "path": "models/conformal_gap/conformal-reopen-2026-04-03-2149__resume__2026-04-05-1612__phase1__final__rank-3/conformal_variant_selection_status.json",
+      "bytes": 29908,
+      "role": "generated_or_curated"
+    },
+    {
+      "path": "models/conformal_gap/conformal-reopen-2026-04-03-2149__resume__2026-04-05-1612__phase1__final__rank-3/pd_conformal_width_attribution_status.json",
+      "bytes": 1215,
+      "role": "generated_or_curated"
+    },
+    {
+      "path": "models/conformal_gap/conformal-reopen-2026-04-03-2149__resume__2026-04-05-1612__phase1__final__rank-3/pd_set_prediction_status.json",
+      "bytes": 14340,
+      "role": "generated_or_curated"
+    },
+    {
+      "path": "models/conformal_gap_summary.json",
+      "bytes": 6013,
+      "role": "generated_or_curated"
+    },
+    {
+      "path": "models/conformal_method_registry.json",
+      "bytes": 3114,
+      "role": "generated_or_curated"
+    },
+    {
+      "path": "models/conformal_policy_sensitivity_status.json",
+      "bytes": 14603,
+      "role": "generated_or_curated"
+    },
+    {
+      "path": "models/conformal_policy_status.json",
+      "bytes": 12464,
+      "role": "generated_or_curated"
+    },
+    {
+      "path": "models/conformal_results_mondrian.pkl",
+      "bytes": 3492,
+      "role": "generated_or_curated"
+    },
+    {
+      "path": "models/conformal_variant_selection_status.json",
+      "bytes": 8493,
+      "role": "generated_or_curated"
+    },
+    {
+      "path": "models/cqr_comparison_status.json",
+      "bytes": 2199,
+      "role": "generated_or_curated"
+    },
+    {
+      "path": "models/cqr_mondrian_status.json",
+      "bytes": 2250,
+      "role": "generated_or_curated"
+    },
+    {
+      "path": "models/crpto_evidence_status.json",
+      "bytes": 4693,
+      "role": "generated_or_curated"
+    },
+    {
+      "path": "models/crpto_journal_package_status.json",
+      "bytes": 2621,
+      "role": "generated_or_curated"
+    },
+    {
+      "path": "models/decision_threshold.json",
+      "bytes": 61351,
+      "role": "generated_or_curated"
+    },
+    {
+      "path": "models/decision_threshold_v2.json",
+      "bytes": 61351,
+      "role": "generated_or_curated"
+    },
+    {
+      "path": "models/fairlearn_fairness_status.json",
+      "bytes": 2564,
+      "role": "generated_or_curated"
+    },
+    {
+      "path": "models/fairness_audit_status.json",
+      "bytes": 3329,
+      "role": "generated_or_curated"
+    },
+    {
+      "path": "models/fairness_decision_policy.json",
+      "bytes": 363,
+      "role": "generated_or_curated"
+    },
+    {
+      "path": "models/final_project_promotion.json",
+      "bytes": 8066,
+      "role": "generated_or_curated"
+    },
+    {
+      "path": "models/governance_status.json",
+      "bytes": 9577,
+      "role": "generated_or_curated"
+    },
+    {
+      "path": "models/mrm_report_status.json",
+      "bytes": 522,
+      "role": "generated_or_curated"
+    },
+    {
+      "path": "models/paper_figures_status.json",
+      "bytes": 657,
+      "role": "generated_or_curated"
+    },
+    {
+      "path": "models/pd_canonical.cbm",
+      "bytes": 5394848,
+      "role": "generated_or_curated"
+    },
+    {
+      "path": "models/pd_canonical_calibrator.pkl",
+      "bytes": 9503845,
+      "role": "generated_or_curated"
+    },
+    {
+      "path": "models/pd_conformal_width_attribution_status.json",
+      "bytes": 847,
+      "role": "generated_or_curated"
+    },
+    {
+      "path": "models/pd_model_contract.json",
+      "bytes": 1504,
+      "role": "generated_or_curated"
+    },
+    {
+      "path": "models/pd_model_contract.pkl",
+      "bytes": 499,
+      "role": "generated_or_curated"
+    },
+    {
+      "path": "models/pd_training_checkpoints/calibration_selection.json",
+      "bytes": 19754,
+      "role": "generated_or_curated"
+    },
+    {
+      "path": "models/pd_training_checkpoints/config_validation.json",
+      "bytes": 1973,
+      "role": "generated_or_curated"
+    },
+    {
+      "path": "models/pd_training_checkpoints/feature_resolution.json",
+      "bytes": 1785,
+      "role": "generated_or_curated"
+    },
+    {
+      "path": "models/pd_training_checkpoints/hpo_summary.json",
+      "bytes": 1105,
+      "role": "generated_or_curated"
+    },
+    {
+      "path": "models/pd_training_record.pkl",
+      "bytes": 21977,
+      "role": "generated_or_curated"
+    },
+    {
+      "path": "models/pd_training_status.json",
+      "bytes": 221,
+      "role": "generated_or_curated"
+    },
+    {
+      "path": "models/pipeline_registry/artifact_flow_registry.json",
+      "bytes": 5703,
+      "role": "generated_or_curated"
+    },
+    {
+      "path": "models/pipeline_registry/pipeline_matrix.json",
+      "bytes": 3613,
+      "role": "generated_or_curated"
+    },
+    {
+      "path": "models/pipeline_registry/script_role_registry.json",
+      "bytes": 6294,
+      "role": "generated_or_curated"
+    },
+    {
+      "path": "models/pipeline_registry/search_registry.json",
+      "bytes": 2217,
+      "role": "generated_or_curated"
+    },
+    {
+      "path": "models/pipeline_results.pkl",
+      "bytes": 366,
+      "role": "generated_or_curated"
+    },
+    {
+      "path": "models/portfolio_bound_aware/rank1_alpha01_bound_aware_25k_gpu_2026-04-05-1611c/gpu_samples.csv",
+      "bytes": 77626,
+      "role": "generated_or_curated"
+    },
+    {
+      "path": "models/portfolio_bound_aware/rank1_alpha01_bound_aware_25k_gpu_2026-04-05-1611c/portfolio_bound_aware_exact_context.json",
+      "bytes": 3884,
+      "role": "generated_or_curated"
+    },
+    {
+      "path": "models/portfolio_bound_aware/rank1_alpha01_bound_aware_25k_gpu_2026-04-05-1611c/portfolio_bound_aware_runtime_checkpoints/001_frontier_complete.json",
+      "bytes": 538,
+      "role": "generated_or_curated"
+    },
+    {
+      "path": "models/portfolio_bound_aware/rank1_alpha01_bound_aware_25k_gpu_2026-04-05-1611c/portfolio_bound_aware_runtime_checkpoints/002_shortlist_built.json",
+      "bytes": 656,
+      "role": "generated_or_curated"
+    },
+    {
+      "path": "models/portfolio_bound_aware/rank1_alpha01_bound_aware_25k_gpu_2026-04-05-1611c/portfolio_bound_aware_runtime_checkpoints/003_selection_complete.json",
+      "bytes": 638,
+      "role": "generated_or_curated"
+    },
+    {
+      "path": "models/portfolio_bound_aware/rank1_alpha01_bound_aware_25k_gpu_2026-04-05-1611c/portfolio_bound_aware_runtime_status.json",
+      "bytes": 715,
+      "role": "generated_or_curated"
+    },
+    {
+      "path": "models/portfolio_bound_aware/rank1_alpha01_bound_aware_25k_gpu_2026-04-05-1611c/portfolio_bound_aware_selection.json",
+      "bytes": 5726,
+      "role": "generated_or_curated"
+    },
+    {
+      "path": "models/portfolio_bound_aware/rank1_alpha01_bound_aware_25k_gpu_2026-04-05-1611c/resource_snapshot.json",
+      "bytes": 1829,
+      "role": "generated_or_curated"
+    },
+    {
+      "path": "models/portfolio_bound_aware/rank1_alpha01_bound_aware_276k_full_2026-04-05-1734/gpu_samples.csv",
+      "bytes": 288825,
+      "role": "generated_or_curated"
+    },
+    {
+      "path": "models/portfolio_bound_aware/rank1_alpha01_bound_aware_276k_full_2026-04-05-1734/portfolio_bound_aware_exact_context.json",
+      "bytes": 3667,
+      "role": "generated_or_curated"
+    },
+    {
+      "path": "models/portfolio_bound_aware/rank1_alpha01_bound_aware_276k_full_2026-04-05-1734/portfolio_bound_aware_runtime_checkpoints/001_frontier_complete.json",
+      "bytes": 532,
+      "role": "generated_or_curated"
+    },
+    {
+      "path": "models/portfolio_bound_aware/rank1_alpha01_bound_aware_276k_full_2026-04-05-1734/portfolio_bound_aware_runtime_checkpoints/002_shortlist_built.json",
+      "bytes": 653,
+      "role": "generated_or_curated"
+    },
+    {
+      "path": "models/portfolio_bound_aware/rank1_alpha01_bound_aware_276k_full_2026-04-05-1734/portfolio_bound_aware_runtime_checkpoints/003_selection_complete.json",
+      "bytes": 632,
+      "role": "generated_or_curated"
+    },
+    {
+      "path": "models/portfolio_bound_aware/rank1_alpha01_bound_aware_276k_full_2026-04-05-1734/portfolio_bound_aware_runtime_status.json",
+      "bytes": 710,
+      "role": "generated_or_curated"
+    },
+    {
+      "path": "models/portfolio_bound_aware/rank1_alpha01_bound_aware_276k_full_2026-04-05-1734/portfolio_bound_aware_selection.json",
+      "bytes": 5503,
+      "role": "generated_or_curated"
+    },
+    {
+      "path": "models/portfolio_bound_aware/rank1_alpha01_bound_aware_276k_full_2026-04-05-1734/resource_snapshot.json",
+      "bytes": 1833,
+      "role": "generated_or_curated"
+    },
+    {
+      "path": "models/portfolio_bound_aware/rank1_alpha01_bound_aware_5k_corrected_2026-04-05-1548/portfolio_bound_aware_runtime_checkpoints/001_frontier_complete.json",
+      "bytes": 537,
+      "role": "generated_or_curated"
+    },
+    {
+      "path": "models/portfolio_bound_aware/rank1_alpha01_bound_aware_5k_corrected_2026-04-05-1548/portfolio_bound_aware_runtime_checkpoints/002_shortlist_built.json",
+      "bytes": 786,
+      "role": "generated_or_curated"
+    },
+    {
+      "path": "models/portfolio_bound_aware/rank1_alpha01_bound_aware_5k_corrected_2026-04-05-1548/portfolio_bound_aware_runtime_checkpoints/003_selection_complete.json",
+      "bytes": 636,
+      "role": "generated_or_curated"
+    },
+    {
+      "path": "models/portfolio_bound_aware/rank1_alpha01_bound_aware_5k_corrected_2026-04-05-1548/portfolio_bound_aware_runtime_status.json",
+      "bytes": 717,
+      "role": "generated_or_curated"
+    },
+    {
+      "path": "models/portfolio_bound_aware/rank1_alpha01_bound_aware_5k_corrected_2026-04-05-1548/portfolio_bound_aware_selection.json",
+      "bytes": 5788,
+      "role": "generated_or_curated"
+    },
+    {
+      "path": "models/portfolio_bound_aware/rank1_alpha01_bound_aware_5k_corrected_2026-04-05-1548/resource_snapshot.json",
+      "bytes": 1105,
+      "role": "generated_or_curated"
+    },
+    {
+      "path": "models/portfolio_optimization_last_valid_artifact.json",
+      "bytes": 335,
+      "role": "generated_or_curated"
+    },
+    {
+      "path": "models/portfolio_optimization_runtime_status.json",
+      "bytes": 340,
+      "role": "generated_or_curated"
+    },
+    {
+      "path": "models/portfolio_research_policy.json",
+      "bytes": 3932,
+      "role": "generated_or_curated"
+    },
+    {
+      "path": "models/portfolio_results.pkl",
+      "bytes": 3746514,
+      "role": "generated_or_curated"
+    },
+    {
+      "path": "models/portfolio_robustness_results.pkl",
+      "bytes": 4652,
+      "role": "generated_or_curated"
+    },
+    {
+      "path": "models/portfolio_tradeoff/conformal-finalist-rank1_score_decile_raw_bins5_mgs100/portfolio_research_policy.json",
+      "bytes": 4084,
+      "role": "generated_or_curated"
+    },
+    {
+      "path": "models/portfolio_tradeoff/conformal-finalist-rank1_score_decile_raw_bins5_mgs100/portfolio_robustness_results.pkl",
+      "bytes": 5274,
+      "role": "generated_or_curated"
+    },
+    {
+      "path": "models/portfolio_tradeoff/conformal-finalist-rank2_grade_cal_bins10_mgs100/portfolio_research_policy.json",
+      "bytes": 4068,
+      "role": "generated_or_curated"
+    },
+    {
+      "path": "models/portfolio_tradeoff/conformal-finalist-rank2_grade_cal_bins10_mgs100/portfolio_robustness_results.pkl",
+      "bytes": 5250,
+      "role": "generated_or_curated"
+    },
+    {
+      "path": "models/portfolio_tradeoff/conformal-finalist-rank3_grade_cal_bins10_mgs1000/portfolio_research_policy.json",
+      "bytes": 4071,
+      "role": "generated_or_curated"
+    },
+    {
+      "path": "models/portfolio_tradeoff/conformal-finalist-rank3_grade_cal_bins10_mgs1000/portfolio_robustness_results.pkl",
+      "bytes": 5254,
+      "role": "generated_or_curated"
+    },
+    {
+      "path": "models/portfolio_tradeoff_last_valid_artifact.json",
+      "bytes": 409,
+      "role": "generated_or_curated"
+    },
+    {
+      "path": "models/portfolio_tradeoff_runtime_status.json",
+      "bytes": 469,
+      "role": "generated_or_curated"
+    },
+    {
+      "path": "models/spo_comparison_status.json",
+      "bytes": 3942,
+      "role": "generated_or_curated"
+    },
+    {
+      "path": "models/spo_real_training_status.json",
+      "bytes": 2411,
+      "role": "generated_or_curated"
+    },
+    {
+      "path": "models/threshold_semantics.json",
+      "bytes": 1355,
+      "role": "generated_or_curated"
+    },
+    {
+      "path": "models/uncertainty_baselines_status.json",
+      "bytes": 1426,
+      "role": "generated_or_curated"
+    },
+    {
+      "path": "notebooks/10_crpto_cp_robust_opt.ipynb",
+      "bytes": 16722,
+      "role": "generated_or_curated"
+    },
+    {
+      "path": "paper/CRPTO.qmd",
+      "bytes": 851,
+      "role": "generated_or_curated"
+    },
+    {
+      "path": "pyproject.toml",
+      "bytes": 1716,
+      "role": "generated_or_curated"
+    },
+    {
+      "path": "reports/crpto/figures/crpto_fig10_cqr_per_grade.pdf",
+      "bytes": 24782,
+      "role": "generated_or_curated"
+    },
+    {
+      "path": "reports/crpto/figures/crpto_fig10_cqr_per_grade.png",
+      "bytes": 114779,
+      "role": "generated_or_curated"
+    },
+    {
+      "path": "reports/crpto/figures/crpto_fig11_crpto_stability.pdf",
+      "bytes": 24298,
+      "role": "generated_or_curated"
+    },
+    {
+      "path": "reports/crpto/figures/crpto_fig11_crpto_stability.png",
+      "bytes": 263110,
+      "role": "generated_or_curated"
+    },
+    {
+      "path": "reports/crpto/figures/crpto_fig12_crpto_conceptual_pipeline.pdf",
+      "bytes": 18650,
+      "role": "generated_or_curated"
+    },
+    {
+      "path": "reports/crpto/figures/crpto_fig12_crpto_conceptual_pipeline.png",
+      "bytes": 98327,
+      "role": "generated_or_curated"
+    },
+    {
+      "path": "reports/crpto/figures/crpto_fig13_alpha_gamma_funded_set.pdf",
+      "bytes": 16929,
+      "role": "generated_or_curated"
+    },
+    {
+      "path": "reports/crpto/figures/crpto_fig13_alpha_gamma_funded_set.png",
+      "bytes": 135477,
+      "role": "generated_or_curated"
+    },
+    {
+      "path": "reports/crpto/figures/crpto_fig14_robust_region_heatmap.pdf",
+      "bytes": 17301,
+      "role": "generated_or_curated"
+    },
+    {
+      "path": "reports/crpto/figures/crpto_fig14_robust_region_heatmap.png",
+      "bytes": 115299,
+      "role": "generated_or_curated"
+    },
+    {
+      "path": "reports/crpto/figures/crpto_fig7_uncertainty_baselines.pdf",
+      "bytes": 26784,
+      "role": "generated_or_curated"
+    },
+    {
+      "path": "reports/crpto/figures/crpto_fig7_uncertainty_baselines.png",
+      "bytes": 204999,
+      "role": "generated_or_curated"
+    },
+    {
+      "path": "reports/crpto/figures/crpto_fig8_alpha_pareto.pdf",
+      "bytes": 31051,
+      "role": "generated_or_curated"
+    },
+    {
+      "path": "reports/crpto/figures/crpto_fig8_alpha_pareto.png",
+      "bytes": 220288,
+      "role": "generated_or_curated"
+    },
+    {
+      "path": "reports/crpto/figures/crpto_fig9_spo_regret.pdf",
+      "bytes": 35002,
+      "role": "generated_or_curated"
+    },
+    {
+      "path": "reports/crpto/figures/crpto_fig9_spo_regret.png",
+      "bytes": 153657,
+      "role": "generated_or_curated"
+    },
+    {
+      "path": "reports/crpto/figures/crpto_fig_alpha_gamma_bound.pdf",
+      "bytes": 32938,
+      "role": "generated_or_curated"
+    },
+    {
+      "path": "reports/crpto/figures/crpto_fig_alpha_gamma_bound.png",
+      "bytes": 273773,
+      "role": "generated_or_curated"
+    },
+    {
+      "path": "reports/crpto/tables/crpto_table0_key_metrics.csv",
+      "bytes": 640,
+      "role": "generated_or_curated"
+    },
+    {
+      "path": "reports/crpto/tables/crpto_table0_key_metrics.tex",
+      "bytes": 729,
+      "role": "generated_or_curated"
+    },
+    {
+      "path": "reports/crpto/tables/crpto_table1_robustness_summary.csv",
+      "bytes": 975,
+      "role": "generated_or_curated"
+    },
+    {
+      "path": "reports/crpto/tables/crpto_table1_robustness_summary.tex",
+      "bytes": 1280,
+      "role": "generated_or_curated"
+    },
+    {
+      "path": "reports/crpto/tables/crpto_table2_conformal_variant_benchmark.csv",
+      "bytes": 777,
+      "role": "generated_or_curated"
+    },
+    {
+      "path": "reports/crpto/tables/crpto_table2_conformal_variant_benchmark.tex",
+      "bytes": 905,
+      "role": "generated_or_curated"
+    },
+    {
+      "path": "reports/crpto/tables/crpto_tableA10_conformal_finalist_exact_bound_eval.csv",
+      "bytes": 1604,
+      "role": "generated_or_curated"
+    },
+    {
+      "path": "reports/crpto/tables/crpto_tableA10_conformal_finalist_exact_bound_eval.tex",
+      "bytes": 1989,
+      "role": "generated_or_curated"
+    },
+    {
+      "path": "reports/crpto/tables/crpto_tableA11_enhanced_synthetic_shift.csv",
+      "bytes": 1079,
+      "role": "generated_or_curated"
+    },
+    {
+      "path": "reports/crpto/tables/crpto_tableA11_enhanced_synthetic_shift.tex",
+      "bytes": 1051,
+      "role": "generated_or_curated"
+    },
+    {
+      "path": "reports/crpto/tables/crpto_tableA12_tail_risk_oce_cvar.csv",
+      "bytes": 558,
+      "role": "generated_or_curated"
+    },
+    {
+      "path": "reports/crpto/tables/crpto_tableA12_tail_risk_oce_cvar.tex",
+      "bytes": 534,
+      "role": "generated_or_curated"
+    },
+    {
+      "path": "reports/crpto/tables/crpto_tableA13_satisficing_margins.csv",
+      "bytes": 622,
+      "role": "generated_or_curated"
+    },
+    {
+      "path": "reports/crpto/tables/crpto_tableA13_satisficing_margins.tex",
+      "bytes": 799,
+      "role": "generated_or_curated"
+    },
+    {
+      "path": "reports/crpto/tables/crpto_tableA14_dependency_cluster_diagnostics.csv",
+      "bytes": 3068,
+      "role": "generated_or_curated"
+    },
+    {
+      "path": "reports/crpto/tables/crpto_tableA14_dependency_cluster_diagnostics.tex",
+      "bytes": 3211,
+      "role": "generated_or_curated"
+    },
+    {
+      "path": "reports/crpto/tables/crpto_tableA15_leave_one_period_stress.csv",
+      "bytes": 1447,
+      "role": "generated_or_curated"
+    },
+    {
+      "path": "reports/crpto/tables/crpto_tableA15_leave_one_period_stress.tex",
+      "bytes": 1202,
+      "role": "generated_or_curated"
+    },
+    {
+      "path": "reports/crpto/tables/crpto_tableA16_bootstrap_funded_set_metrics.csv",
+      "bytes": 505,
+      "role": "generated_or_curated"
+    },
+    {
+      "path": "reports/crpto/tables/crpto_tableA16_bootstrap_funded_set_metrics.tex",
+      "bytes": 602,
+      "role": "generated_or_curated"
+    },
+    {
+      "path": "reports/crpto/tables/crpto_tableA17_budget_cap_lgd_sensitivity.csv",
+      "bytes": 1646,
+      "role": "generated_or_curated"
+    },
+    {
+      "path": "reports/crpto/tables/crpto_tableA17_budget_cap_lgd_sensitivity.tex",
+      "bytes": 1711,
+      "role": "generated_or_curated"
+    },
+    {
+      "path": "reports/crpto/tables/crpto_tableA18_robust_region_policy_family.csv",
+      "bytes": 1358,
+      "role": "generated_or_curated"
+    },
+    {
+      "path": "reports/crpto/tables/crpto_tableA18_robust_region_policy_family.tex",
+      "bytes": 1914,
+      "role": "generated_or_curated"
+    },
+    {
+      "path": "reports/crpto/tables/crpto_tableA1_benchmark_by_group.csv",
+      "bytes": 1042,
+      "role": "generated_or_curated"
+    },
+    {
+      "path": "reports/crpto/tables/crpto_tableA1_benchmark_by_group.tex",
+      "bytes": 1036,
+      "role": "generated_or_curated"
+    },
+    {
+      "path": "reports/crpto/tables/crpto_tableA2_robustness_frontier.csv",
+      "bytes": 12224,
+      "role": "generated_or_curated"
+    },
+    {
+      "path": "reports/crpto/tables/crpto_tableA2_robustness_frontier.tex",
+      "bytes": 13496,
+      "role": "generated_or_curated"
+    },
+    {
+      "path": "reports/crpto/tables/crpto_tableA3_nested_holdout.csv",
+      "bytes": 1167,
+      "role": "generated_or_curated"
+    },
+    {
+      "path": "reports/crpto/tables/crpto_tableA3_nested_holdout.tex",
+      "bytes": 1516,
+      "role": "generated_or_curated"
+    },
+    {
+      "path": "reports/crpto/tables/crpto_tableA4_segment_period_sensitivity.csv",
+      "bytes": 4859,
+      "role": "generated_or_curated"
+    },
+    {
+      "path": "reports/crpto/tables/crpto_tableA4_segment_period_sensitivity.tex",
+      "bytes": 3863,
+      "role": "generated_or_curated"
+    },
+    {
+      "path": "reports/crpto/tables/crpto_tableA5_decision_aware_selector.csv",
+      "bytes": 1139,
+      "role": "generated_or_curated"
+    },
+    {
+      "path": "reports/crpto/tables/crpto_tableA5_decision_aware_selector.tex",
+      "bytes": 1298,
+      "role": "generated_or_curated"
+    },
+    {
+      "path": "reports/crpto/tables/crpto_tableA6_synthetic_shift.csv",
+      "bytes": 1055,
+      "role": "generated_or_curated"
+    },
+    {
+      "path": "reports/crpto/tables/crpto_tableA6_synthetic_shift.tex",
+      "bytes": 1009,
+      "role": "generated_or_curated"
+    },
+    {
+      "path": "reports/crpto/tables/crpto_tableA7_funded_set_loans.csv",
+      "bytes": 45335,
+      "role": "generated_or_curated"
+    },
+    {
+      "path": "reports/crpto/tables/crpto_tableA7_funded_set_loans.tex",
+      "bytes": 57899,
+      "role": "generated_or_curated"
+    },
+    {
+      "path": "reports/crpto/tables/crpto_tableA8_funded_set_composition.csv",
+      "bytes": 2187,
+      "role": "generated_or_curated"
+    },
+    {
+      "path": "reports/crpto/tables/crpto_tableA8_funded_set_composition.tex",
+      "bytes": 2365,
+      "role": "generated_or_curated"
+    },
+    {
+      "path": "reports/crpto/tables/crpto_tableA9_strict_temporal_holdout.csv",
+      "bytes": 719,
+      "role": "generated_or_curated"
+    },
+    {
+      "path": "reports/crpto/tables/crpto_tableA9_strict_temporal_holdout.tex",
+      "bytes": 974,
+      "role": "generated_or_curated"
+    },
+    {
+      "path": "reports/dvc/metrics_summary.json",
+      "bytes": 3592,
+      "role": "generated_or_curated"
+    },
+    {
+      "path": "reports/mrm/.gitignore",
+      "bytes": 28,
+      "role": "generated_or_curated"
+    },
+    {
+      "path": "reports/mrm/corepd_model_card.html",
+      "bytes": 36877,
+      "role": "generated_or_curated"
+    },
+    {
+      "path": "reports/mrm/corepd_model_card.json",
+      "bytes": 814,
+      "role": "generated_or_curated"
+    },
+    {
+      "path": "reports/mrm/mrm_validation_report.json",
+      "bytes": 77894,
+      "role": "generated_or_curated"
+    },
+    {
+      "path": "reports/mrm/skops/pd_logreg_baseline.skops",
+      "bytes": 41836,
+      "role": "generated_or_curated"
+    },
+    {
+      "path": "reports/paper_material/paper1/tables/crpto_table0_key_metrics.csv",
+      "bytes": 640,
+      "role": "generated_or_curated"
+    },
+    {
+      "path": "reports/paper_material/paper1/tables/crpto_table0_key_metrics.tex",
+      "bytes": 729,
+      "role": "generated_or_curated"
+    },
+    {
+      "path": "reports/paper_material/paper1/tables/crpto_table1_robustness_summary.csv",
+      "bytes": 975,
+      "role": "generated_or_curated"
+    },
+    {
+      "path": "reports/paper_material/paper1/tables/crpto_table1_robustness_summary.tex",
+      "bytes": 1280,
+      "role": "generated_or_curated"
+    },
+    {
+      "path": "reports/paper_material/paper1/tables/crpto_table2_conformal_variant_benchmark.csv",
+      "bytes": 777,
+      "role": "generated_or_curated"
+    },
+    {
+      "path": "reports/paper_material/paper1/tables/crpto_table2_conformal_variant_benchmark.tex",
+      "bytes": 905,
+      "role": "generated_or_curated"
+    },
+    {
+      "path": "reports/paper_material/paper1/tables/crpto_tableA1_benchmark_by_group.csv",
+      "bytes": 1042,
+      "role": "generated_or_curated"
+    },
+    {
+      "path": "reports/paper_material/paper1/tables/crpto_tableA1_benchmark_by_group.tex",
+      "bytes": 1036,
+      "role": "generated_or_curated"
+    },
+    {
+      "path": "reports/paper_material/paper1/tables/crpto_tableA2_robustness_frontier.csv",
+      "bytes": 12224,
+      "role": "generated_or_curated"
+    },
+    {
+      "path": "reports/paper_material/paper1/tables/crpto_tableA2_robustness_frontier.tex",
+      "bytes": 13496,
+      "role": "generated_or_curated"
+    },
+    {
+      "path": "reports/paper_material/paper1/tables/crpto_tableA3_nested_holdout.csv",
+      "bytes": 1167,
+      "role": "generated_or_curated"
+    },
+    {
+      "path": "reports/paper_material/paper1/tables/crpto_tableA3_nested_holdout.tex",
+      "bytes": 1516,
+      "role": "generated_or_curated"
+    },
+    {
+      "path": "reports/paper_material/paper1/tables/crpto_tableA4_segment_period_sensitivity.csv",
+      "bytes": 4859,
+      "role": "generated_or_curated"
+    },
+    {
+      "path": "reports/paper_material/paper1/tables/crpto_tableA4_segment_period_sensitivity.tex",
+      "bytes": 3863,
+      "role": "generated_or_curated"
+    },
+    {
+      "path": "reports/paper_material/paper1/tables/crpto_tableA5_decision_aware_selector.csv",
+      "bytes": 1093,
+      "role": "generated_or_curated"
+    },
+    {
+      "path": "reports/paper_material/paper1/tables/crpto_tableA5_decision_aware_selector.tex",
+      "bytes": 1268,
+      "role": "generated_or_curated"
+    },
+    {
+      "path": "reports/paper_material/paper1/tables/crpto_tableA6_synthetic_shift.csv",
+      "bytes": 1055,
+      "role": "generated_or_curated"
+    },
+    {
+      "path": "reports/paper_material/paper1/tables/crpto_tableA6_synthetic_shift.tex",
+      "bytes": 1009,
+      "role": "generated_or_curated"
+    },
+    {
+      "path": "reports/run_comparisons/crpto-e2e-all-champions-2026-04-07/baseline_snapshot.json",
+      "bytes": 144105,
+      "role": "generated_or_curated"
+    },
+    {
+      "path": "reports/run_comparisons/crpto-e2e-all-champions-2026-04-07/comparison.json",
+      "bytes": 51411,
+      "role": "generated_or_curated"
+    },
+    {
+      "path": "reports/run_comparisons/crpto-e2e-all-champions-2026-04-07/comparison.md",
+      "bytes": 1744,
+      "role": "generated_or_curated"
+    },
+    {
+      "path": "reports/run_logs/.gitkeep",
+      "bytes": 0,
+      "role": "generated_or_curated"
+    },
+    {
+      "path": "reports/run_logs/crpto-e2e-all-champions-2026-04-07/core_conformal.log",
+      "bytes": 18359,
+      "role": "generated_or_curated"
+    },
+    {
+      "path": "reports/run_logs/crpto-e2e-all-champions-2026-04-07/core_data_pd.log",
+      "bytes": 36529,
+      "role": "generated_or_curated"
+    },
+    {
+      "path": "reports/run_logs/crpto-e2e-all-champions-2026-04-07/core_portfolio.log",
+      "bytes": 506568,
+      "role": "generated_or_curated"
+    },
+    {
+      "path": "reports/run_logs/crpto-e2e-all-champions-2026-04-07/diagnostics_governance.log",
+      "bytes": 12907,
+      "role": "generated_or_curated"
+    },
+    {
+      "path": "reports/run_logs/crpto-e2e-all-champions-2026-04-07/heartbeat.json",
+      "bytes": 298,
+      "role": "generated_or_curated"
+    },
+    {
+      "path": "reports/run_logs/crpto-e2e-all-champions-2026-04-07/master.log",
+      "bytes": 9857,
+      "role": "generated_or_curated"
+    },
+    {
+      "path": "reports/run_logs/crpto-e2e-all-champions-2026-04-07/preflight.log",
+      "bytes": 1808,
+      "role": "generated_or_curated"
+    },
+    {
+      "path": "reports/run_logs/crpto-e2e-all-champions-2026-04-07/publication_exports.log",
+      "bytes": 13021,
+      "role": "generated_or_curated"
+    },
+    {
+      "path": "reports/run_logs/crpto-e2e-all-champions-2026-04-07/run_info.json",
+      "bytes": 1892,
+      "role": "generated_or_curated"
+    },
+    {
+      "path": "reports/run_logs/crpto-e2e-all-champions-2026-04-07/run_summary.json",
+      "bytes": 520,
+      "role": "generated_or_curated"
+    },
+    {
+      "path": "reports/run_logs/crpto-e2e-all-champions-2026-04-07/status/core_conformal.exit",
+      "bytes": 2,
+      "role": "generated_or_curated"
+    },
+    {
+      "path": "reports/run_logs/crpto-e2e-all-champions-2026-04-07/status/core_conformal.json",
+      "bytes": 1357,
+      "role": "generated_or_curated"
+    },
+    {
+      "path": "reports/run_logs/crpto-e2e-all-champions-2026-04-07/status/core_data_pd.exit",
+      "bytes": 2,
+      "role": "generated_or_curated"
+    },
+    {
+      "path": "reports/run_logs/crpto-e2e-all-champions-2026-04-07/status/core_data_pd.json",
+      "bytes": 1112,
+      "role": "generated_or_curated"
+    },
+    {
+      "path": "reports/run_logs/crpto-e2e-all-champions-2026-04-07/status/core_portfolio.exit",
+      "bytes": 2,
+      "role": "generated_or_curated"
+    },
+    {
+      "path": "reports/run_logs/crpto-e2e-all-champions-2026-04-07/status/core_portfolio.json",
+      "bytes": 1726,
+      "role": "generated_or_curated"
+    },
+    {
+      "path": "reports/run_logs/crpto-e2e-all-champions-2026-04-07/status/diagnostics_governance.exit",
+      "bytes": 2,
+      "role": "generated_or_curated"
+    },
+    {
+      "path": "reports/run_logs/crpto-e2e-all-champions-2026-04-07/status/diagnostics_governance.json",
+      "bytes": 2872,
+      "role": "generated_or_curated"
+    },
+    {
+      "path": "reports/run_logs/crpto-e2e-all-champions-2026-04-07/status/overall.exit",
+      "bytes": 2,
+      "role": "generated_or_curated"
+    },
+    {
+      "path": "reports/run_logs/crpto-e2e-all-champions-2026-04-07/status/preflight.exit",
+      "bytes": 2,
+      "role": "generated_or_curated"
+    },
+    {
+      "path": "reports/run_logs/crpto-e2e-all-champions-2026-04-07/status/preflight.json",
+      "bytes": 1072,
+      "role": "generated_or_curated"
+    },
+    {
+      "path": "reports/run_logs/crpto-e2e-all-champions-2026-04-07/status/publication_exports.exit",
+      "bytes": 2,
+      "role": "generated_or_curated"
+    },
+    {
+      "path": "reports/run_logs/crpto-e2e-all-champions-2026-04-07/status/publication_exports.json",
+      "bytes": 1294,
+      "role": "generated_or_curated"
+    },
+    {
+      "path": "scripts/__init__.py",
+      "bytes": 0,
+      "role": "generated_or_curated"
+    },
+    {
+      "path": "scripts/analyze_crpto_evidence.py",
+      "bytes": 49144,
+      "role": "generated_or_curated"
+    },
+    {
+      "path": "scripts/backtest_conformal_coverage.py",
+      "bytes": 14986,
+      "role": "generated_or_curated"
+    },
+    {
+      "path": "scripts/benchmark_conformal_variants.py",
+      "bytes": 32241,
+      "role": "generated_or_curated"
+    },
+    {
+      "path": "scripts/build_champion_search_bundle.py",
+      "bytes": 6800,
+      "role": "generated_or_curated"
+    },
+    {
+      "path": "scripts/build_crpto_journal_package.py",
+      "bytes": 26247,
+      "role": "generated_or_curated"
+    },
+    {
+      "path": "scripts/build_pipeline_results.py",
+      "bytes": 4726,
+      "role": "generated_or_curated"
+    },
+    {
+      "path": "scripts/export_crpto_tables.py",
+      "bytes": 9944,
+      "role": "generated_or_curated"
+    },
+    {
+      "path": "scripts/export_dvc_metrics.py",
+      "bytes": 9393,
+      "role": "generated_or_curated"
+    },
+    {
+      "path": "scripts/generate_conformal_intervals.py",
+      "bytes": 63358,
+      "role": "generated_or_curated"
+    },
+    {
+      "path": "scripts/generate_crpto_figures.py",
+      "bytes": 49143,
+      "role": "generated_or_curated"
+    },
+    {
+      "path": "scripts/generate_governance_status.py",
+      "bytes": 28987,
+      "role": "generated_or_curated"
+    },
+    {
+      "path": "scripts/generate_mrm_report.py",
+      "bytes": 11770,
+      "role": "generated_or_curated"
+    },
+    {
+      "path": "scripts/materialize_feature_artifacts.py",
+      "bytes": 3263,
+      "role": "generated_or_curated"
+    },
+    {
+      "path": "scripts/optimize_portfolio.py",
+      "bytes": 11367,
+      "role": "generated_or_curated"
+    },
+    {
+      "path": "scripts/optimize_portfolio_tradeoff.py",
+      "bytes": 45813,
+      "role": "generated_or_curated"
+    },
+    {
+      "path": "scripts/render_quarto.sh",
+      "bytes": 50,
+      "role": "generated_or_curated"
+    },
+    {
+      "path": "scripts/run_alpha_sweep.py",
+      "bytes": 15909,
+      "role": "generated_or_curated"
+    },
+    {
+      "path": "scripts/run_comparison.py",
+      "bytes": 44815,
+      "role": "generated_or_curated"
+    },
+    {
+      "path": "scripts/run_cqr_comparison.py",
+      "bytes": 13029,
+      "role": "generated_or_curated"
+    },
+    {
+      "path": "scripts/run_cqr_mondrian.py",
+      "bytes": 16379,
+      "role": "generated_or_curated"
+    },
+    {
+      "path": "scripts/run_crpto_notebook_suite.py",
+      "bytes": 2211,
+      "role": "generated_or_curated"
+    },
+    {
+      "path": "scripts/run_crpto_pipeline.py",
+      "bytes": 4019,
+      "role": "generated_or_curated"
+    },
+    {
+      "path": "scripts/run_crpto_vs_spo_stability.py",
+      "bytes": 23657,
+      "role": "generated_or_curated"
+    },
+    {
+      "path": "scripts/run_fairness_audit.py",
+      "bytes": 30737,
+      "role": "generated_or_curated"
+    },
+    {
+      "path": "scripts/run_gpu_replay.py",
+      "bytes": 20033,
+      "role": "generated_or_curated"
+    },
+    {
+      "path": "scripts/run_spo_comparison.py",
+      "bytes": 8867,
+      "role": "generated_or_curated"
+    },
+    {
+      "path": "scripts/run_spo_real.py",
+      "bytes": 25979,
+      "role": "generated_or_curated"
+    },
+    {
+      "path": "scripts/search/__init__.py",
+      "bytes": 0,
+      "role": "generated_or_curated"
+    },
+    {
+      "path": "scripts/search/compare_conformal_portfolio_finalists.py",
+      "bytes": 6359,
+      "role": "generated_or_curated"
+    },
+    {
+      "path": "scripts/search/resume_conformal_reopen_closure.py",
+      "bytes": 2075,
+      "role": "generated_or_curated"
+    },
+    {
+      "path": "scripts/search/run_conformal_reopen_search.py",
+      "bytes": 42720,
+      "role": "generated_or_curated"
+    },
+    {
+      "path": "scripts/search/run_conformal_search.py",
+      "bytes": 510,
+      "role": "generated_or_curated"
+    },
+    {
+      "path": "scripts/search/run_portfolio_bound_aware_search.py",
+      "bytes": 51787,
+      "role": "generated_or_curated"
+    },
+    {
+      "path": "scripts/search/run_portfolio_bound_exact_eval.py",
+      "bytes": 9204,
+      "role": "generated_or_curated"
+    },
+    {
+      "path": "scripts/search/run_portfolio_search.py",
+      "bytes": 513,
+      "role": "generated_or_curated"
+    },
+    {
+      "path": "scripts/search/sweep_alpha_gamma_bound_finalists.py",
+      "bytes": 3893,
+      "role": "generated_or_curated"
+    },
+    {
+      "path": "scripts/select_economic_portfolio_policy.py",
+      "bytes": 23997,
+      "role": "generated_or_curated"
+    },
+    {
+      "path": "scripts/simulate_ab_test.py",
+      "bytes": 38363,
+      "role": "generated_or_curated"
+    },
+    {
+      "path": "scripts/train_pd_model.py",
+      "bytes": 85190,
+      "role": "generated_or_curated"
+    },
+    {
+      "path": "scripts/validate_alpha_gamma_bound.py",
+      "bytes": 21204,
+      "role": "generated_or_curated"
+    },
+    {
+      "path": "scripts/validate_conformal_experiment.py",
+      "bytes": 3533,
+      "role": "generated_or_curated"
+    },
+    {
+      "path": "scripts/validate_conformal_policy.py",
+      "bytes": 26196,
+      "role": "generated_or_curated"
+    },
+    {
+      "path": "src/__init__.py",
+      "bytes": 41,
+      "role": "generated_or_curated"
+    },
+    {
+      "path": "src/data/__init__.py",
+      "bytes": 52,
+      "role": "generated_or_curated"
+    },
+    {
+      "path": "src/data/build_datasets.py",
+      "bytes": 26896,
+      "role": "generated_or_curated"
+    },
+    {
+      "path": "src/data/make_dataset.py",
+      "bytes": 6043,
+      "role": "generated_or_curated"
+    },
+    {
+      "path": "src/data/prepare_dataset.py",
+      "bytes": 3946,
+      "role": "generated_or_curated"
+    },
+    {
+      "path": "src/evaluation/__init__.py",
+      "bytes": 63,
+      "role": "generated_or_curated"
+    },
+    {
+      "path": "src/evaluation/ab_testing.py",
+      "bytes": 6482,
+      "role": "generated_or_curated"
+    },
+    {
+      "path": "src/evaluation/backtesting.py",
+      "bytes": 21201,
+      "role": "generated_or_curated"
+    },
+    {
+      "path": "src/evaluation/calibration_mapping.py",
+      "bytes": 16598,
+      "role": "generated_or_curated"
+    },
+    {
+      "path": "src/evaluation/coverage_tests.py",
+      "bytes": 5964,
+      "role": "generated_or_curated"
+    },
+    {
+      "path": "src/evaluation/encoding_stability.py",
+      "bytes": 6079,
+      "role": "generated_or_curated"
+    },
+    {
+      "path": "src/evaluation/explainability.py",
+      "bytes": 10634,
+      "role": "generated_or_curated"
+    },
+    {
+      "path": "src/evaluation/fairness.py",
+      "bytes": 13779,
+      "role": "generated_or_curated"
+    },
+    {
+      "path": "src/evaluation/metrics.py",
+      "bytes": 7955,
+      "role": "generated_or_curated"
+    },
+    {
+      "path": "src/evaluation/model_shift.py",
+      "bytes": 3735,
+      "role": "generated_or_curated"
+    },
+    {
+      "path": "src/evaluation/monotonicity.py",
+      "bytes": 4159,
+      "role": "generated_or_curated"
+    },
+    {
+      "path": "src/evaluation/pd_validation_interpretation.py",
+      "bytes": 6152,
+      "role": "generated_or_curated"
+    },
+    {
+      "path": "src/evaluation/slicing_functions.py",
+      "bytes": 3932,
+      "role": "generated_or_curated"
+    },
+    {
+      "path": "src/features/__init__.py",
+      "bytes": 50,
+      "role": "generated_or_curated"
+    },
+    {
+      "path": "src/features/feature_engineering.py",
+      "bytes": 27828,
+      "role": "generated_or_curated"
+    },
+    {
+      "path": "src/features/schemas.py",
+      "bytes": 3501,
+      "role": "generated_or_curated"
+    },
+    {
+      "path": "src/models/__init__.py",
+      "bytes": 86,
+      "role": "generated_or_curated"
+    },
+    {
+      "path": "src/models/calibration.py",
+      "bytes": 4184,
+      "role": "generated_or_curated"
+    },
+    {
+      "path": "src/models/conformal.py",
+      "bytes": 32112,
+      "role": "generated_or_curated"
+    },
+    {
+      "path": "src/models/conformal_artifacts.py",
+      "bytes": 1865,
+      "role": "generated_or_curated"
+    },
+    {
+      "path": "src/models/conformal_registry.py",
+      "bytes": 4423,
+      "role": "generated_or_curated"
+    },
+    {
+      "path": "src/models/conformal_tuning.py",
+      "bytes": 29560,
+      "role": "generated_or_curated"
+    },
+    {
+      "path": "src/models/optuna_tuning.py",
+      "bytes": 28301,
+      "role": "generated_or_curated"
+    },
+    {
+      "path": "src/models/pd_contract.py",
+      "bytes": 4633,
+      "role": "generated_or_curated"
+    },
+    {
+      "path": "src/models/pd_model.py",
+      "bytes": 10186,
+      "role": "generated_or_curated"
+    },
+    {
+      "path": "src/models/pd_pipeline.py",
+      "bytes": 6885,
+      "role": "generated_or_curated"
+    },
+    {
+      "path": "src/models/venn_abers.py",
+      "bytes": 1806,
+      "role": "generated_or_curated"
+    },
+    {
+      "path": "src/optimization/__init__.py",
+      "bytes": 78,
+      "role": "generated_or_curated"
+    },
+    {
+      "path": "src/optimization/cuopt_adapter.py",
+      "bytes": 6436,
+      "role": "generated_or_curated"
+    },
+    {
+      "path": "src/optimization/portfolio_model.py",
+      "bytes": 16929,
+      "role": "generated_or_curated"
+    },
+    {
+      "path": "src/optimization/robust_opt.py",
+      "bytes": 2642,
+      "role": "generated_or_curated"
+    },
+    {
+      "path": "src/optimization/sda.py",
+      "bytes": 3389,
+      "role": "generated_or_curated"
+    },
+    {
+      "path": "src/optimization/spo_integration.py",
+      "bytes": 2508,
+      "role": "generated_or_curated"
+    },
+    {
+      "path": "src/utils/__init__.py",
+      "bytes": 57,
+      "role": "generated_or_curated"
+    },
+    {
+      "path": "src/utils/artifact_metadata.py",
+      "bytes": 2007,
+      "role": "generated_or_curated"
+    },
+    {
+      "path": "src/utils/baseline_registry.py",
+      "bytes": 1171,
+      "role": "generated_or_curated"
+    },
+    {
+      "path": "src/utils/io_utils.py",
+      "bytes": 2632,
+      "role": "generated_or_curated"
+    },
+    {
+      "path": "src/utils/mlflow_utils.py",
+      "bytes": 5170,
+      "role": "generated_or_curated"
+    },
+    {
+      "path": "src/utils/pipeline_runtime.py",
+      "bytes": 4094,
+      "role": "generated_or_curated"
+    },
+    {
+      "path": "src/utils/pipeline_topology.py",
+      "bytes": 5590,
+      "role": "generated_or_curated"
+    },
+    {
+      "path": "src/utils/replay_manifest.py",
+      "bytes": 2266,
+      "role": "generated_or_curated"
+    },
+    {
+      "path": "src/utils/threshold_semantics.py",
+      "bytes": 6472,
+      "role": "generated_or_curated"
+    },
+    {
+      "path": "src/utils/visualization.py",
+      "bytes": 4433,
+      "role": "generated_or_curated"
+    },
+    {
+      "path": "tests/__init__.py",
+      "bytes": 0,
+      "role": "generated_or_curated"
+    },
+    {
+      "path": "tests/test_crpto_final_sync.py",
+      "bytes": 3949,
+      "role": "generated_or_curated"
+    },
+    {
+      "path": "tests/test_evaluation/test_backtesting.py",
+      "bytes": 5618,
+      "role": "generated_or_curated"
+    },
+    {
+      "path": "tests/test_evaluation/test_calibration_mapping.py",
+      "bytes": 2996,
+      "role": "generated_or_curated"
+    },
+    {
+      "path": "tests/test_evaluation/test_fairness.py",
+      "bytes": 6974,
+      "role": "generated_or_curated"
+    },
+    {
+      "path": "tests/test_evaluation/test_metrics.py",
+      "bytes": 3921,
+      "role": "generated_or_curated"
+    },
+    {
+      "path": "tests/test_evaluation/test_model_shift.py",
+      "bytes": 1216,
+      "role": "generated_or_curated"
+    },
+    {
+      "path": "tests/test_evaluation/test_pd_validation_interpretation.py",
+      "bytes": 1717,
+      "role": "generated_or_curated"
+    },
+    {
+      "path": "tests/test_models/test_calibration.py",
+      "bytes": 4679,
+      "role": "generated_or_curated"
+    },
+    {
+      "path": "tests/test_models/test_conformal.py",
+      "bytes": 16777,
+      "role": "generated_or_curated"
+    },
+    {
+      "path": "tests/test_models/test_conformal_artifacts.py",
+      "bytes": 1181,
+      "role": "generated_or_curated"
+    },
+    {
+      "path": "tests/test_models/test_conformal_edge_cases.py",
+      "bytes": 8327,
+      "role": "generated_or_curated"
+    },
+    {
+      "path": "tests/test_models/test_conformal_tuning.py",
+      "bytes": 15390,
+      "role": "generated_or_curated"
+    },
+    {
+      "path": "tests/test_models/test_pd_contract.py",
+      "bytes": 7773,
+      "role": "generated_or_curated"
+    },
+    {
+      "path": "tests/test_models/test_pd_model.py",
+      "bytes": 9094,
+      "role": "generated_or_curated"
+    },
+    {
+      "path": "tests/test_quarto_book_guardrails.py",
+      "bytes": 1891,
+      "role": "generated_or_curated"
+    },
+    {
+      "path": "tests/test_scripts/__init__.py",
+      "bytes": 0,
+      "role": "generated_or_curated"
+    },
+    {
+      "path": "tests/test_scripts/test_benchmark_conformal_variants.py",
+      "bytes": 578,
+      "role": "generated_or_curated"
+    },
+    {
+      "path": "tests/test_scripts/test_build_crpto_journal_package.py",
+      "bytes": 461,
+      "role": "generated_or_curated"
+    },
+    {
+      "path": "tests/test_scripts/test_export_crpto_tables.py",
+      "bytes": 305,
+      "role": "generated_or_curated"
+    },
+    {
+      "path": "tests/test_scripts/test_generate_mrm_report.py",
+      "bytes": 7254,
+      "role": "generated_or_curated"
+    },
+    {
+      "path": "tests/test_scripts/test_optimize_portfolio_tradeoff.py",
+      "bytes": 2777,
+      "role": "generated_or_curated"
+    },
+    {
+      "path": "tests/test_scripts/test_run_crpto_vs_spo_stability.py",
+      "bytes": 422,
+      "role": "generated_or_curated"
+    },
+    {
+      "path": "tests/test_scripts/test_run_fairness_audit.py",
+      "bytes": 7319,
+      "role": "generated_or_curated"
+    },
+    {
+      "path": "tests/test_scripts/test_run_portfolio_bound_aware_search.py",
+      "bytes": 7198,
+      "role": "generated_or_curated"
+    },
+    {
+      "path": "tests/test_scripts/test_run_spo_real.py",
+      "bytes": 7514,
+      "role": "generated_or_curated"
+    },
+    {
+      "path": "tests/test_scripts/test_select_economic_portfolio_policy.py",
+      "bytes": 14114,
+      "role": "generated_or_curated"
+    },
+    {
+      "path": "tests/test_scripts/test_validate_conformal_experiment.py",
+      "bytes": 547,
+      "role": "generated_or_curated"
+    },
+    {
+      "path": "tests/test_scripts/test_validate_conformal_policy.py",
+      "bytes": 27961,
+      "role": "generated_or_curated"
+    },
+    {
+      "path": "uv.lock",
+      "bytes": 606174,
+      "role": "generated_or_curated"
+    }
+  ],
+  "skipped_missing": [],
+  "final_exhaustive_pass_additions": {
+    "book_entries_rendered": 26,
+    "standalone_chapters": 24,
+    "new_book_chapters": [
+      "book/chapters/06b-guia-editorial-claims.qmd",
+      "book/chapters/23-apendices-regulatorios-y-future-work.qmd"
+    ],
+    "book_figure_assets_count": 46,
+    "foundation_docs_total": 17,
+    "future_work_docs_total": 3,
+    "tests_added_from_source_contracts": 22,
+    "registries_curated": [
+      "configs/pipeline_registry/*.yaml",
+      "models/pipeline_registry/*.json"
+    ],
+    "profiles_added": [
+      "crpto_e2e_default",
+      "crpto_core_canonical_cpu",
+      "crpto_diagnostics_governance_default"
+    ]
+  }
+}

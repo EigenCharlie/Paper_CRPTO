@@ -1,0 +1,13 @@
+{
+  "global_threshold": 0.35,
+  "overrides": [],
+  "selection": {
+    "source": "fairness_frontier_auto_select",
+    "n_passed": 6,
+    "worst_eo_gap": 0.0636573811298401,
+    "approval_rate": 0.9955430185394537
+  },
+  "schema_version": "2026-03-06.1",
+  "generated_at_utc": "2026-04-07T17:42:18.523782+00:00",
+  "run_tag": "crpto-e2e-all-champions-2026-04-07"
+}

@@ -1,0 +1,7 @@
+crpto_dbt:
+  target: dev
+  outputs:
+    dev:
+      type: duckdb
+      path: "{{ env_var('CRPTO_DUCKDB_PATH', 'data/processed/crpto.duckdb') }}"
+      threads: 4

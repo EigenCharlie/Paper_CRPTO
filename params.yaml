@@ -1,0 +1,52 @@
+# DVC params — centralized read-only view of the YAML knobs the pipeline
+# already exposes. Existing scripts continue to read from configs/<file>.yaml;
+# this file lets `dvc params diff` highlight the cross-stage values that matter.
+#
+# Update procedure: when you change a value here, mirror it in the underlying
+# config to keep the DVC stage cache valid. The two will be unified in a later
+# refactor (see plan §5).
+
+paper:
+  run_tag: "paper-thesis-final-economic-2026-04-06"
+  champion_policy: "bound_aware_276k_economic_champion"
+  region_robust: "45/45"
+
+champion:
+  return_robust: 170464.54
+  v_alpha_001: 0.03645
+  gamma_cp_alpha_001: 0.18591
+  alpha_exact_pass: true
+
+pd:
+  model: "catboost"
+  catboost:
+    depth: 8
+    iterations: 4200
+    learning_rate: 0.03
+  calibration: "auto"   # auto chooses among isotonic / platt / venn-abers
+
+conformal:
+  alpha: 0.01
+  coverage_targets: [0.90, 0.95]
+  mondrian:
+    enabled: true
+    partition_by: "grade"
+  variant_selection:
+    rank1_path: "rank1_alpha01_bound_aware_276k_full_2026-04-05-1734"
+
+portfolio:
+  policy_mode: "bound_aware"
+  uncertainty_aversion: 0.0
+  max_concentration: 0.25
+  max_portfolio_pd: 0.10
+  min_budget_utilization: 0.5
+
+optuna:
+  storage: "journal"          # journal | sqlite | auto
+  sampler: "tpe"
+  pruner: "median"
+  seed: 42
+
+book:
+  freeze: "auto"
+  formats: ["html"]

@@ -1,0 +1,22 @@
+name: crpto_dbt
+version: "1.0.0"
+config-version: 2
+profile: crpto_dbt
+
+model-paths: ["models"]
+test-paths: ["tests"]
+seed-paths: ["seeds"]
+macro-paths: ["macros"]
+
+vars:
+  crpto_data_dir: "{{ env_var('CRPTO_DATA_DIR', 'data/processed') }}"
+  crpto_portfolio_dir: "{{ env_var('CRPTO_PORTFOLIO_DIR', 'data/processed/portfolio_bound_aware/rank1_alpha01_bound_aware_276k_full_2026-04-05-1734') }}"
+  crpto_conformal_winner_dir: "{{ env_var('CRPTO_CONFORMAL_WINNER_DIR', 'data/processed/conformal_gap/conformal-reopen-2026-04-03-2149__resume__2026-04-05-1612__phase1__final__rank-1') }}"
+
+models:
+  crpto_dbt:
+    +materialized: view
+    staging:
+      +schema: staging
+    marts:
+      +schema: marts

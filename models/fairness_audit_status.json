@@ -1,0 +1,117 @@
+{
+  "overall_pass": true,
+  "n_attributes": 6,
+  "n_base_attributes": 3,
+  "n_intersectional_attributes": 3,
+  "n_passed": 6,
+  "attributes": [
+    {
+      "attribute": "home_ownership",
+      "dpd": 0.008742234380824332,
+      "eo_gap": 0.022086796811760956,
+      "dir": 0.9912481257421258,
+      "tpr_gap": 0.003461823899529315,
+      "fpr_gap": 0.022086796811760956,
+      "passed_dpd": true,
+      "passed_eo": true,
+      "passed_dir": true,
+      "passed_all": true,
+      "attribute_type": "base"
+    },
+    {
+      "attribute": "annual_inc_quartile",
+      "dpd": 0.008400704557627536,
+      "eo_gap": 0.022249134036549156,
+      "dir": 0.9915953879107448,
+      "tpr_gap": 0.003462939364403339,
+      "fpr_gap": 0.022249134036549156,
+      "passed_dpd": true,
+      "passed_eo": true,
+      "passed_dir": true,
+      "passed_all": true,
+      "attribute_type": "base"
+    },
+    {
+      "attribute": "verification_status",
+      "dpd": 0.01152366673334193,
+      "eo_gap": 0.024771462501377073,
+      "dir": 0.9884514222176747,
+      "tpr_gap": 0.00523918531670553,
+      "fpr_gap": 0.024771462501377073,
+      "passed_dpd": true,
+      "passed_eo": true,
+      "passed_dir": true,
+      "passed_all": true,
+      "attribute_type": "base"
+    },
+    {
+      "attribute": "home_ownership__x__annual_inc_quartile",
+      "dpd": 0.014363846487668086,
+      "eo_gap": 0.03637090327737813,
+      "dir": 0.9856351875292462,
+      "tpr_gap": 0.005516043679281046,
+      "fpr_gap": 0.03637090327737813,
+      "passed_dpd": true,
+      "passed_eo": true,
+      "passed_dir": true,
+      "passed_all": true,
+      "attribute_type": "intersectional"
+    },
+    {
+      "attribute": "home_ownership__x__verification_status",
+      "dpd": 0.0343875474383778,
+      "eo_gap": 0.0636573811298401,
+      "dir": 0.9655997718523373,
+      "tpr_gap": 0.01650250650050855,
+      "fpr_gap": 0.0636573811298401,
+      "passed_dpd": true,
+      "passed_eo": true,
+      "passed_dir": true,
+      "passed_all": true,
+      "attribute_type": "intersectional"
+    },
+    {
+      "attribute": "annual_inc_quartile__x__verification_status",
+      "dpd": 0.02054232397484057,
+      "eo_gap": 0.04371873973202878,
+      "dir": 0.9794546321542239,
+      "tpr_gap": 0.009328152306949944,
+      "fpr_gap": 0.04371873973202878,
+      "passed_dpd": true,
+      "passed_eo": true,
+      "passed_dir": true,
+      "passed_all": true,
+      "attribute_type": "intersectional"
+    }
+  ],
+  "prediction_threshold": 0.35,
+  "primary_threshold": 0.35,
+  "prediction_threshold_source": "decision_policy_artifact_auto_selected",
+  "outcome_mode": "approval",
+  "thresholds": {
+    "dpd": 0.1,
+    "eo_gap": 0.11,
+    "dir": 0.8
+  },
+  "threshold_frontier": {
+    "path": "data/processed/fairness_threshold_frontier.parquet",
+    "thresholds": [
+      0.35,
+      0.4,
+      0.45,
+      0.5
+    ],
+    "worst_primary_attribute": "home_ownership__x__verification_status",
+    "selected_threshold": 0.35,
+    "all_primary_pass": true
+  },
+  "decision_policy": {
+    "path": "models/fairness_decision_policy.json",
+    "global_threshold": 0.35,
+    "n_overrides": 0
+  },
+  "policy_config": "configs/fairness_policy.yaml",
+  "schema_version": "2026-03-06.1",
+  "generated_at_utc": "2026-04-07T17:42:20.905091+00:00",
+  "run_tag": "crpto-e2e-all-champions-2026-04-07"
+}

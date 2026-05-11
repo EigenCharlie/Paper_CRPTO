@@ -1,0 +1,36 @@
+cff-version: 1.2.0
+title: "CRPTO: Credit Risk + Predict-Then-Optimize con conformal prediction"
+message: "If you use this software or the accompanying paper, please cite the work below."
+type: software
+authors:
+  - given-names: Carlos Alfredo
+    family-names: Vergara Rojas
+    email: cavr94@gmail.com
+abstract: >
+  CRPTO is an end-to-end research pipeline that integrates calibrated probability-of-default
+  modeling, Mondrian conformal prediction intervals, and robust portfolio optimization on
+  Lending Club loan-level data. The accompanying Quarto book documents the methodology, the
+  paper-final champion (run tag paper-thesis-final-economic-2026-04-06), and an extended
+  dossier of regulatory, fairness, and MRM evidence.
+keywords:
+  - credit risk
+  - probability of default
+  - conformal prediction
+  - predict-then-optimize
+  - robust optimization
+  - portfolio optimization
+  - model risk management
+  - lending club
+license: MIT
+version: "0.1.0"
+date-released: "2026-04-06"
+url: "https://github.com/EigenCharlie/Paper_CRPTO"
+repository-code: "https://github.com/EigenCharlie/Paper_CRPTO"
+preferred-citation:
+  type: thesis
+  authors:
+    - given-names: Carlos Alfredo
+      family-names: Vergara Rojas
+  title: "CRPTO: predict-then-optimize con conformal prediction para riesgo de crédito"
+  year: 2026
+  thesis-type: "Master's thesis"

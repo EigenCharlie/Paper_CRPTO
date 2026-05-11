@@ -1,0 +1,196 @@
+{
+  "schema_version": "2026-05-10.1",
+  "artifacts": [
+    {
+      "artifact": "data/raw/Loan_status_2007-2020Q3.csv",
+      "producer": "external raw dataset copied for CRPTO independence",
+      "consumers": [
+        "src/data/make_dataset.py",
+        "src/data/prepare_dataset.py"
+      ],
+      "category": "raw_data",
+      "canonicality": "source_input",
+      "disposition": "keep"
+    },
+    {
+      "artifact": "data/processed/train.parquet",
+      "producer": "src/data/prepare_dataset.py",
+      "consumers": [
+        "scripts/train_pd_model.py"
+      ],
+      "category": "split",
+      "canonicality": "crpto_canonical",
+      "disposition": "keep"
+    },
+    {
+      "artifact": "data/processed/calibration.parquet",
+      "producer": "src/data/prepare_dataset.py",
+      "consumers": [
+        "scripts/train_pd_model.py",
+        "scripts/generate_conformal_intervals.py"
+      ],
+      "category": "split",
+      "canonicality": "crpto_canonical",
+      "disposition": "keep"
+    },
+    {
+      "artifact": "data/processed/test.parquet",
+      "producer": "src/data/prepare_dataset.py",
+      "consumers": [
+        "scripts/train_pd_model.py",
+        "scripts/optimize_portfolio.py"
+      ],
+      "category": "split",
+      "canonicality": "crpto_canonical",
+      "disposition": "keep"
+    },
+    {
+      "artifact": "data/processed/train_fe.parquet",
+      "producer": "scripts/materialize_feature_artifacts.py",
+      "consumers": [
+        "scripts/train_pd_model.py"
+      ],
+      "category": "features",
+      "canonicality": "crpto_canonical",
+      "disposition": "keep"
+    },
+    {
+      "artifact": "data/processed/calibration_fe.parquet",
+      "producer": "scripts/materialize_feature_artifacts.py",
+      "consumers": [
+        "scripts/generate_conformal_intervals.py"
+      ],
+      "category": "features",
+      "canonicality": "crpto_canonical",
+      "disposition": "keep"
+    },
+    {
+      "artifact": "data/processed/test_fe.parquet",
+      "producer": "scripts/materialize_feature_artifacts.py",
+      "consumers": [
+        "scripts/train_pd_model.py",
+        "scripts/optimize_portfolio.py"
+      ],
+      "category": "features",
+      "canonicality": "crpto_canonical",
+      "disposition": "keep"
+    },
+    {
+      "artifact": "models/pd_canonical.cbm",
+      "producer": "scripts/train_pd_model.py",
+      "consumers": [
+        "scripts/generate_conformal_intervals.py",
+        "scripts/benchmark_conformal_variants.py"
+      ],
+      "category": "pd_model",
+      "canonicality": "crpto_champion",
+      "disposition": "keep"
+    },
+    {
+      "artifact": "models/pd_canonical_calibrator.pkl",
+      "producer": "scripts/train_pd_model.py",
+      "consumers": [
+        "scripts/generate_conformal_intervals.py",
+        "scripts/validate_conformal_policy.py"
+      ],
+      "category": "pd_calibration",
+      "canonicality": "crpto_champion",
+      "disposition": "keep"
+    },
+    {
+      "artifact": "data/processed/test_predictions.parquet",
+      "producer": "scripts/train_pd_model.py",
+      "consumers": [
+        "scripts/generate_conformal_intervals.py",
+        "scripts/optimize_portfolio.py",
+        "dbt_project"
+      ],
+      "category": "predictions",
+      "canonicality": "crpto_canonical",
+      "disposition": "keep"
+    },
+    {
+      "artifact": "data/processed/conformal_intervals_mondrian.parquet",
+      "producer": "scripts/generate_conformal_intervals.py",
+      "consumers": [
+        "scripts/optimize_portfolio.py",
+        "scripts/validate_alpha_gamma_bound.py",
+        "dbt_project"
+      ],
+      "category": "conformal",
+      "canonicality": "crpto_winner",
+      "disposition": "keep"
+    },
+    {
+      "artifact": "models/conformal_policy_status.json",
+      "producer": "scripts/validate_conformal_policy.py",
+      "consumers": [
+        "tests/test_crpto_final_sync.py",
+        "book",
+        "reports/crpto/tables"
+      ],
+      "category": "governance",
+      "canonicality": "crpto_winner",
+      "disposition": "keep"
+    },
+    {
+      "artifact": "models/champion_portfolio_policy.json",
+      "producer": "scripts/select_economic_portfolio_policy.py",
+      "consumers": [
+        "tests/test_crpto_final_sync.py",
+        "book",
+        "reports/crpto/tables"
+      ],
+      "category": "portfolio_policy",
+      "canonicality": "crpto_champion",
+      "disposition": "keep"
+    },
+    {
+      "artifact": "data/processed/alpha_gamma_bound_validation_exact.json",
+      "producer": "scripts/validate_alpha_gamma_bound.py",
+      "consumers": [
+        "reports/crpto/tables",
+        "reports/crpto/figures",
+        "book"
+      ],
+      "category": "alpha_gamma_bound",
+      "canonicality": "paper_grade_evidence",
+      "disposition": "keep"
+    },
+    {
+      "artifact": "reports/crpto/tables/*",
+      "producer": "scripts/export_crpto_tables.py",
+      "consumers": [
+        "paper/CRPTO.qmd",
+        "book",
+        "journal package"
+      ],
+      "category": "publication_table",
+      "canonicality": "paper_ready",
+      "disposition": "keep"
+    },
+    {
+      "artifact": "reports/crpto/figures/*",
+      "producer": "scripts/generate_crpto_figures.py",
+      "consumers": [
+        "paper/CRPTO.qmd",
+        "book",
+        "journal package"
+      ],
+      "category": "publication_figure",
+      "canonicality": "paper_ready",
+      "disposition": "keep"
+    },
+    {
+      "artifact": "book/_book/index.html",
+      "producer": "quarto render book --to html",
+      "consumers": [
+        "author review",
+        "journal appendix planning"
+      ],
+      "category": "quarto_book",
+      "canonicality": "standalone_crpto",
+      "disposition": "keep"
+    }
+  ]
+}

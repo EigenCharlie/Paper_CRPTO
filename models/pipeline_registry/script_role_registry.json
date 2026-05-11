@@ -1,0 +1,208 @@
+{
+  "schema_version": "2026-05-10.1",
+  "scripts": [
+    {
+      "script": "scripts/run_crpto_pipeline.py",
+      "role": "fixed CRPTO end-to-end orchestrator",
+      "category": "pipeline",
+      "pipeline_owner": "crpto_e2e",
+      "status": "public"
+    },
+    {
+      "script": "scripts/materialize_feature_artifacts.py",
+      "role": "CRPTO feature artifacts",
+      "category": "core",
+      "pipeline_owner": "crpto_core_canonical",
+      "status": "core"
+    },
+    {
+      "script": "scripts/train_pd_model.py",
+      "role": "PD champion training/calibration or frozen replay",
+      "category": "core",
+      "pipeline_owner": "crpto_core_canonical",
+      "status": "core"
+    },
+    {
+      "script": "scripts/generate_conformal_intervals.py",
+      "role": "Mondrian conformal interval generation",
+      "category": "core",
+      "pipeline_owner": "search_conformal",
+      "status": "core"
+    },
+    {
+      "script": "scripts/benchmark_conformal_variants.py",
+      "role": "conformal finalist benchmark",
+      "category": "search",
+      "pipeline_owner": "search_conformal",
+      "status": "paper"
+    },
+    {
+      "script": "scripts/backtest_conformal_coverage.py",
+      "role": "temporal and group conformal diagnostics",
+      "category": "diagnostics",
+      "pipeline_owner": "search_conformal",
+      "status": "paper"
+    },
+    {
+      "script": "scripts/validate_conformal_policy.py",
+      "role": "conformal policy gate",
+      "category": "governance",
+      "pipeline_owner": "search_conformal",
+      "status": "core"
+    },
+    {
+      "script": "scripts/optimize_portfolio.py",
+      "role": "deterministic and robust portfolio allocation",
+      "category": "optimization",
+      "pipeline_owner": "search_portfolio",
+      "status": "core"
+    },
+    {
+      "script": "scripts/optimize_portfolio_tradeoff.py",
+      "role": "frontier and conformal finalist tradeoff comparison",
+      "category": "optimization",
+      "pipeline_owner": "search_portfolio",
+      "status": "paper"
+    },
+    {
+      "script": "scripts/select_economic_portfolio_policy.py",
+      "role": "bound-aware economic champion selector",
+      "category": "optimization",
+      "pipeline_owner": "search_portfolio",
+      "status": "paper"
+    },
+    {
+      "script": "scripts/validate_alpha_gamma_bound.py",
+      "role": "exact alpha-gamma robust-region validation",
+      "category": "validation",
+      "pipeline_owner": "search_portfolio",
+      "status": "paper"
+    },
+    {
+      "script": "scripts/simulate_ab_test.py",
+      "role": "explicit champion A/B evidence",
+      "category": "evaluation",
+      "pipeline_owner": "search_portfolio",
+      "status": "paper"
+    },
+    {
+      "script": "scripts/run_fairness_audit.py",
+      "role": "fair lending checkpoint",
+      "category": "governance",
+      "pipeline_owner": "diagnostics_governance",
+      "status": "paper"
+    },
+    {
+      "script": "scripts/generate_governance_status.py",
+      "role": "drift and governance status",
+      "category": "governance",
+      "pipeline_owner": "diagnostics_governance",
+      "status": "paper"
+    },
+    {
+      "script": "scripts/generate_mrm_report.py",
+      "role": "MRM report generation",
+      "category": "governance",
+      "pipeline_owner": "diagnostics_governance",
+      "status": "paper"
+    },
+    {
+      "script": "scripts/export_crpto_tables.py",
+      "role": "publication table export",
+      "category": "publication",
+      "pipeline_owner": "publication_exports",
+      "status": "public"
+    },
+    {
+      "script": "scripts/generate_crpto_figures.py",
+      "role": "publication figure export",
+      "category": "publication",
+      "pipeline_owner": "publication_exports",
+      "status": "public"
+    },
+    {
+      "script": "scripts/analyze_crpto_evidence.py",
+      "role": "evidence consistency analysis",
+      "category": "publication",
+      "pipeline_owner": "publication_exports",
+      "status": "public"
+    },
+    {
+      "script": "scripts/build_crpto_journal_package.py",
+      "role": "journal package builder",
+      "category": "publication",
+      "pipeline_owner": "publication_exports",
+      "status": "public"
+    },
+    {
+      "script": "scripts/run_crpto_vs_spo_stability.py",
+      "role": "SPO/regret stability evidence",
+      "category": "publication",
+      "pipeline_owner": "publication_exports",
+      "status": "paper"
+    },
+    {
+      "script": "scripts/run_spo_comparison.py",
+      "role": "SPO baseline comparison",
+      "category": "publication",
+      "pipeline_owner": "publication_exports",
+      "status": "paper"
+    },
+    {
+      "script": "scripts/run_spo_real.py",
+      "role": "SPO real training status reproduction",
+      "category": "publication",
+      "pipeline_owner": "publication_exports",
+      "status": "paper"
+    },
+    {
+      "script": "scripts/run_cqr_comparison.py",
+      "role": "CQR ablation evidence",
+      "category": "publication",
+      "pipeline_owner": "search_conformal",
+      "status": "paper"
+    },
+    {
+      "script": "scripts/run_cqr_mondrian.py",
+      "role": "CQR-Mondrian appendix evidence",
+      "category": "publication",
+      "pipeline_owner": "search_conformal",
+      "status": "paper"
+    },
+    {
+      "script": "scripts/run_alpha_sweep.py",
+      "role": "alpha sensitivity and Pareto sweep",
+      "category": "publication",
+      "pipeline_owner": "search_conformal",
+      "status": "paper"
+    },
+    {
+      "script": "scripts/build_champion_search_bundle.py",
+      "role": "CRPTO champion bundle assembly",
+      "category": "publication",
+      "pipeline_owner": "crpto_e2e",
+      "status": "paper"
+    },
+    {
+      "script": "scripts/build_pipeline_results.py",
+      "role": "KPI aggregation for CRPTO artifacts",
+      "category": "core",
+      "pipeline_owner": "crpto_e2e",
+      "status": "core"
+    },
+    {
+      "script": "scripts/export_dvc_metrics.py",
+      "role": "DVC metrics summary export",
+      "category": "core",
+      "pipeline_owner": "publication_exports",
+      "status": "core"
+    },
+    {
+      "script": "scripts/render_quarto.sh",
+      "role": "Quarto render helper",
+      "category": "publication",
+      "pipeline_owner": "publication_exports",
+      "status": "public"
+    }
+  ]
+}

@@ -1,0 +1,10 @@
+version: 2
+
+sources:
+  - name: crpto_files
+    meta:
+      external_location: "{{ var('crpto_data_dir') }}"
+    tables:
+      - name: test_predictions
+      - name: conformal_intervals
+      - name: portfolio_allocations

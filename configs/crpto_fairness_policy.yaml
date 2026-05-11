@@ -1,0 +1,50 @@
+policy:
+  dpd_threshold: 0.10       # demographic parity difference < 0.10
+  eo_gap_threshold: 0.11    # equalized odds gap < 0.11 (operational tolerance)
+  dir_threshold: 0.80       # disparate impact ratio > 0.80 (4/5ths rule)
+  prediction_threshold: 0.35 # fallback operational cutoff; artifact-driven policy remains authoritative
+  outcome_mode: approval    # evaluate fairness on favorable decision (approval)
+
+threshold_policy:
+  use_artifact: true
+  artifact_path: models/decision_threshold.json
+  selected_threshold_key: selected_threshold
+
+decision_policy:
+  auto_select: true
+  artifact_path: models/fairness_decision_policy.json
+
+intersectional:
+  enabled: true
+  max_order: 2
+  min_group_size: 500
+
+attributes:
+  - name: home_ownership
+    column: home_ownership
+  - name: annual_inc_quartile
+    column: annual_inc
+    binning: quartile
+  - name: verification_status
+    column: verification_status
+
+artifacts:
+  test_predictions_path: data/processed/test_predictions.parquet
+  test_data_path: data/processed/test_fe.parquet
+
+output:
+  audit_parquet: data/processed/fairness_audit.parquet
+  frontier_parquet: data/processed/fairness_threshold_frontier.parquet
+  status_json: models/fairness_audit_status.json
+
+fairlearn_sidecar:
+  enabled: true
+  status_json: models/fairlearn_fairness_status.json
+  group_metrics_parquet: data/processed/fairlearn_group_metrics.parquet
+  bootstrap_samples: 10
+  bootstrap_max_rows: 10000
+  bootstrap_random_state: 42
+
+threshold_frontier:
+  enabled: true
+  thresholds: [0.35, 0.40, 0.45, 0.50]

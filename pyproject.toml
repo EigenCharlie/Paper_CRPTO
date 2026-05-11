@@ -1,0 +1,258 @@
+[project]
+name = "crpto"
+version = "0.1.0"
+description = "Credit Risk + Predict-Then-Optimize: conformal prediction + robust portfolio optimization. Standalone research pipeline and Quarto book accompanying the CRPTO paper."
+readme = "README.md"
+requires-python = ">=3.11,<3.13"
+license = { text = "MIT" }
+authors = [{ name = "Carlos Alfredo Vergara Rojas", email = "cavr94@gmail.com" }]
+keywords = [
+    "credit-risk",
+    "probability-of-default",
+    "conformal-prediction",
+    "predict-then-optimize",
+    "robust-optimization",
+    "portfolio-optimization",
+    "model-risk-management",
+    "fairness",
+    "lending-club",
+    "catboost",
+    "mapie",
+    "pyomo",
+    "quarto",
+]
+classifiers = [
+    "Development Status :: 4 - Beta",
+    "Intended Audience :: Science/Research",
+    "Intended Audience :: Financial and Insurance Industry",
+    "License :: OSI Approved :: MIT License",
+    "Operating System :: OS Independent",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Topic :: Scientific/Engineering :: Artificial Intelligence",
+    "Topic :: Scientific/Engineering :: Information Analysis",
+    "Topic :: Scientific/Engineering :: Mathematics",
+    "Typing :: Typed",
+]
+
+dependencies = [
+    # Core data & numerics — floors aligned with uv.lock effective versions
+    "pandas>=2.3,<3",
+    "numpy>=2.0,<3",
+    "pyarrow>=18",
+    "scipy>=1.14,<2",
+    "scikit-learn>=1.6,<2",
+    "joblib>=1.5",
+    "pandera>=0.25",
+    "tqdm>=4.66",
+    # ML / Conformal / Calibration
+    "catboost>=1.2,<1.3",            # PIN — champion reproducibility
+    "optuna>=4.0",
+    "mapie>=1.4",
+    "fairlearn>=0.12",
+    "betacal>=1.1",
+    "venn-abers>=1.5",
+    "skops>=0.12",
+    "optbinning>=0.21",
+    # Optimization
+    "pyomo>=6.10",
+    "highspy>=1.10",
+    "ortools>=9.10",
+    # Data orchestration & MLOps
+    "dvc[s3]>=3.60",
+    "mlflow>=3.10",
+    "dagshub>=0.7",
+    "duckdb>=1.3",
+    "dbt-duckdb>=1.10",
+    # Visualization
+    "matplotlib>=3.10",
+    "seaborn>=0.13",
+    "plotly>=6.0",
+    # Notebooks / Jupyter
+    "nbformat>=5.10",
+    "nbclient>=0.10",
+    "ipykernel>=6.29",
+    # Runtime & config
+    "pyyaml>=6.0",
+    "python-dotenv>=1.0",
+    "loguru>=0.7",
+    # Testing baseline (also exposed in dev extra)
+    "pytest>=9.0",
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest-cov>=7.0",
+    "ruff>=0.10",
+    "mypy>=1.13",
+    "hypothesis>=6.115",
+    "nbstripout>=0.9",
+    "jupytext>=1.19",
+    "jupyter>=1.1",
+    "pre-commit>=4.0",
+    "optuna-integration>=4.0",
+]
+search = [
+    "optuna-integration>=4.0",
+]
+spo = [
+    "pyepo>=1.0",
+    "torch>=2.5",
+]
+docs = [
+    "jupyterlab>=4.5",
+]
+
+[project.urls]
+Homepage = "https://github.com/EigenCharlie/Paper_CRPTO"
+Repository = "https://github.com/EigenCharlie/Paper_CRPTO"
+Issues = "https://github.com/EigenCharlie/Paper_CRPTO/issues"
+Documentation = "https://github.com/EigenCharlie/Paper_CRPTO#readme"
+Changelog = "https://github.com/EigenCharlie/Paper_CRPTO/blob/main/CHANGELOG.md"
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src", "crpto"]
+
+# ---------------------------------------------------------------------------
+# Ruff
+# ---------------------------------------------------------------------------
+[tool.ruff]
+target-version = "py311"
+line-length = 100
+extend-exclude = [
+    "book/_book",
+    "book/_freeze",
+    "book/.quarto",
+    ".venv",
+    "data",
+    "models",
+    "reports",
+]
+
+[tool.ruff.lint]
+select = [
+    "E",     # pycodestyle errors
+    "F",     # pyflakes
+    "W",     # pycodestyle warnings
+    "I",     # isort
+    "UP",    # pyupgrade
+    "B",     # flake8-bugbear
+    "SIM",   # flake8-simplify
+    "C4",    # flake8-comprehensions
+    "RET",   # flake8-return
+    "RUF",   # ruff-specific
+    "PERF",  # perflint
+    "FURB",  # refurb
+    "T20",   # flake8-print (catch stray prints)
+    "PIE",   # flake8-pie
+    "PT",    # flake8-pytest-style
+]
+ignore = [
+    "E501",   # long lines (line-length=100 already enforced)
+    "PERF203",
+    "PERF401", # research scripts often append rich dict rows for readability
+    "PERF403",
+    "B008",
+    "PT011",  # broad pytest.raises (research code often needs this)
+    "PT018",
+    "RET504",
+    "RUF001",
+    "RUF002",
+    "RUF003",
+    "RUF007",
+    "RUF015",
+    "RUF046",
+    "RUF059",
+    "FURB171",
+]
+
+[tool.ruff.lint.per-file-ignores]
+"tests/**/*.py"     = ["T20", "B011", "PT011"]
+"notebooks/**/*.py" = ["T20", "B018"]
+"notebooks/**/*.ipynb" = ["T20", "B018"]
+"scripts/**/*.py"   = ["T20"]
+"book/_helpers/**"  = ["T20"]
+
+[tool.ruff.lint.isort]
+known-first-party = ["crpto", "src"]
+combine-as-imports = true
+
+[tool.ruff.format]
+quote-style = "double"
+indent-style = "space"
+docstring-code-format = true
+
+# ---------------------------------------------------------------------------
+# Pytest
+# ---------------------------------------------------------------------------
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+addopts = "-q --tb=short --strict-markers --strict-config"
+markers = [
+    "slow: marks tests as slow",
+    "integration: marks integration tests",
+]
+filterwarnings = [
+    "ignore::DeprecationWarning:catboost.*",
+    "ignore::DeprecationWarning:pandera.*",
+    "ignore::PendingDeprecationWarning",
+]
+
+# ---------------------------------------------------------------------------
+# Coverage
+# ---------------------------------------------------------------------------
+[tool.coverage.run]
+branch = true
+source = ["src"]
+omit = ["tests/*", "scripts/*", "notebooks/*"]
+
+[tool.coverage.report]
+exclude_lines = [
+    "pragma: no cover",
+    "if TYPE_CHECKING:",
+    "raise NotImplementedError",
+    "if __name__ == .__main__.:",
+]
+show_missing = true
+skip_covered = false
+
+# ---------------------------------------------------------------------------
+# Mypy
+# ---------------------------------------------------------------------------
+[tool.mypy]
+python_version = "3.11"
+files = ["src", "scripts"]
+strict_optional = true
+warn_redundant_casts = true
+warn_unused_ignores = true
+warn_unreachable = true
+disallow_untyped_defs = false   # gradual — flip to true later
+check_untyped_defs = true
+follow_imports = "silent"
+show_error_codes = true
+pretty = true
+
+[[tool.mypy.overrides]]
+module = [
+    "catboost.*",
+    "mapie.*",
+    "venn_abers.*",
+    "betacal.*",
+    "optbinning.*",
+    "skops.*",
+    "fairlearn.*",
+    "pyomo.*",
+    "highspy.*",
+    "ortools.*",
+    "dvc.*",
+    "dagshub.*",
+    "pyepo.*",
+    "shap.*",
+    "plotly.*",
+]
+ignore_missing_imports = true

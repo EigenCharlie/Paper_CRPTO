@@ -1,0 +1,108 @@
+# Python
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.ruff_cache/
+.mypy_cache/
+.venv/
+.venv-wsl/
+.venv-*/
+.venv-broken-posix/
+
+# Quarto
+book/_book/
+book/.quarto/
+book/_freeze/
+_book/
+_freeze/
+
+# Local runtime
+.env
+.env.*
+!.env.example
+!.env.local.example
+.envrc
+.direnv/
+*.log
+reports/run_logs/*/
+!reports/run_logs/.gitkeep
+
+# Data (DVC tracked — do not commit to git, use DVC remote)
+data/raw/*
+data/processed/*
+data/processed/optuna/
+# Allow .gitkeep markers if present
+!data/raw/
+!data/processed/
+!data/raw/.gitkeep
+!data/processed/.gitkeep
+# Allow DVC pointer files for GitHub/DVC reproducibility.
+!data/raw/*.dvc
+!data/processed/*.dvc
+
+# DVC cache, locks, tmp (only `.dvc/config` and `dvc.yaml`/`dvc.lock` belong in git)
+.dvc/cache/
+.dvc/tmp/
+.dvc/lock
+.dvc/config.local
+
+# dbt compile output (regenerable)
+dbt_project/target/
+dbt_project/dbt_packages/
+dbt_project/logs/
+dbt_project/.user.yml
+
+# Models / heavy artefacts — keep them out of git (use DVC remote instead).
+# Use ** patterns so subdirectories are caught.
+**/*.cbm
+**/*.pkl
+**/*.onnx
+**/*.skops
+**/gpu_samples.csv
+**/portfolio_*shortlist*.parquet
+**/portfolio_*samples*.parquet
+# Allow the small status JSONs and manifest at the models/ root.
+!models/*_status.json
+!models/final_project_promotion.json
+!models/crpto_*.json
+!models/champion_*.json
+!models/conformal_method_registry.json
+!models/conformal_gap_summary.json
+
+# Reports (large generated outputs)
+reports/run_logs/
+reports/notebook_images/
+reports/paper_material/
+catboost_info/
+
+# Duckdb
+*.duckdb
+*.duckdb.wal
+
+# Claude Code local-only settings
+.claude/settings.local.json
+.claude/skills/local/
+
+# OS / editor
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+*.swp
+
+# MLflow local
+mlruns/
+mlartifacts/
+
+# Optuna local
+optuna.db
+optuna.db-journal
+
+# Coverage
+.coverage
+.coverage.*
+coverage.xml
+htmlcov/
+
+# Hypothesis
+.hypothesis/

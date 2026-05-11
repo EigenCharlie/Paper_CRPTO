@@ -1,0 +1,62 @@
+```{=html}
+<div class="chapter-landing-grid" aria-label="Navegación curada de capítulos clave">
+  <a class="chapter-card" href="chapters/01-introduccion.html">
+    <h4>Introducción</h4>
+    <p>Problema, gap aplicado y framing CRPTO.</p>
+  </a>
+  <a class="chapter-card" href="chapters/02-marco-teorico.html">
+    <h4>Marco teórico</h4>
+    <p>Alpha-Gamma, Markov, tightening condicional y uncertainty sets.</p>
+  </a>
+  <a class="chapter-card" href="chapters/03-metodologia.html">
+    <h4>Metodología</h4>
+    <p>Pipeline CP → robustez → evidencia CRPTO, SPO+ y baselines.</p>
+  </a>
+  <a class="chapter-card" href="chapters/04-resultados.html">
+    <h4>Resultados</h4>
+    <p>Pareto, región robusta, stress tests, funded set y comparadores.</p>
+  </a>
+  <a class="chapter-card" href="chapters/06b-guia-editorial-claims.html">
+    <h4>Guía editorial</h4>
+    <p>Claims, preguntas de reviewer, audiencias y referencias locales.</p>
+  </a>
+  <a class="chapter-card" href="chapters/07-apendice-robustez.html">
+    <h4>Apéndice journal</h4>
+    <p>A12-A18, figuras CRPTO y checklist reproducible.</p>
+  </a>
+  <a class="chapter-card" href="chapters/13-trazabilidad.html">
+    <h4>Trazabilidad</h4>
+    <p>Mapa claim → artefacto → script → test y política de freeze.</p>
+  </a>
+  <a class="chapter-card" href="chapters/23-apendices-regulatorios-y-future-work.html">
+    <h4>Puentes regulatorios</h4>
+    <p>SICR, temporal uncertainty y future work fuera del champion.</p>
+  </a>
+</div>
+```
+
+<!--
+Migración futura a Quarto listings (cuando se añada frontmatter a los .qmd):
+
+```yaml
+listing:
+  id: chapter-landing
+  contents: chapters/*.qmd
+  type: grid
+  fields: [title, description]
+  filter-ui: false
+  sort-ui: false
+  categories: false
+```
+
+Requiere que cada chapter expose en su frontmatter:
+
+```yaml
+---
+title: "Resultados"
+description: "Pareto, región robusta, stress tests..."
+order: 4
+categories: [paper-ready]
+---
+```
+-->

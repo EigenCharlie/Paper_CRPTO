@@ -1,0 +1,27 @@
+schema_version: "2026-05-10.1"
+profile_name: crpto_core_canonical_cpu
+pipeline_family: crpto_core_canonical
+description: >
+  Perfil CPU reproducible para reconstruir el stack CRPTO desde raw data y
+  artefactos congelados. No ejecuta RAPIDS, notebooks, temporal IFRS9, survival,
+  causal ni insights factory.
+execution:
+  writes_canonical_artifacts: true
+  promotion_state: operationally_frozen
+  include_rapids: false
+  include_notebooks: false
+  include_conformal_sensitivity: false
+defaults:
+  sampling_profile: champion64safe
+  expected_upstream_registry: configs/baselines/canonical_operational_baseline.json
+search_space:
+  conformal:
+    partition_probability_sources: [calibrated]
+    n_score_bins_candidates: [10]
+    fallback_modes: [global_only]
+    score_scale_families: [bernoulli_sqrt]
+    min_group_sizes: [100]
+    calibration_fraction: 0.5
+  portfolio:
+    execution_mode: freeze_if_available
+    policy_selector_default: explicit_champion_only

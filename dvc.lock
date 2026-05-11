@@ -1,0 +1,261 @@
+schema: '2.0'
+stages:
+  crpto.book.render:
+    cmd: uv run -- quarto render book --to html
+    deps:
+    - path: book/_quarto.yml
+      hash: md5
+      md5: a13ad56f33ed08ba65d37a475b63bd31
+      size: 3450
+    - path: book/chapters
+      hash: md5
+      md5: c41f30b794f4c899f05f36d8a718df4c.dir
+      size: 671713
+      nfiles: 24
+    - path: book/index.qmd
+      hash: md5
+      md5: a4a24f77d5b90388b255cafd18c70ea6
+      size: 2492
+    - path: book/styles.scss
+      hash: md5
+      md5: 01d664a81e2dd7f4092be8db171fd7e0
+      size: 6116
+    outs:
+    - path: book/_book
+      hash: md5
+      md5: cea94c3dd6cbe386ca4d34a725200bca.dir
+      size: 16809905
+      nfiles: 84
+  crpto.paper.figures:
+    cmd: python scripts/generate_crpto_figures.py --paper crpto
+    deps:
+    - path: scripts/generate_crpto_figures.py
+      hash: md5
+      md5: 362e200caf936e60ff593f47461640e0
+      size: 49143
+    outs:
+    - path: reports/crpto/figures/crpto_fig7_uncertainty_baselines.png
+      hash: md5
+      md5: 18d75c463160ef8551e6890cebee3a49
+      size: 204999
+  crpto.paper.export_tables:
+    cmd: python scripts/export_crpto_tables.py
+    deps:
+    - path: data/processed/pipeline_summary.json
+      hash: md5
+      md5: 73e3acf8d23ad78d4ed504b56ec45776
+      size: 4654
+    - path: models/final_project_promotion.json
+      hash: md5
+      md5: 5d789be10b37de798d6de0d66c843b6e
+      size: 8066
+    - path: scripts/export_crpto_tables.py
+      hash: md5
+      md5: 3549b88bd052fbcf84a623b238e8884c
+      size: 9930
+    outs:
+    - path: reports/crpto/tables/crpto_table0_key_metrics.csv
+      hash: md5
+      md5: 2389cf20700d366e677ef94a85a65db2
+      size: 640
+  crpto.data.dataset:
+    cmd: python src/data/make_dataset.py --input
+      data/raw/Loan_status_2007-2020Q3.csv --output
+      data/processed/loan_master.parquet
+    deps:
+    - path: data/raw/Loan_status_2007-2020Q3.csv
+      hash: md5
+      md5: 65adade308f21d60b7213088a88e684d
+      size: 1773470505
+    - path: src/data/make_dataset.py
+      hash: md5
+      md5: db3ad91755800ce8e32e355b397e4211
+      size: 6043
+    outs:
+    - path: data/processed/loan_master.parquet
+      hash: md5
+      md5: c797870fac75b62bbfa2dba9900e1f53
+      size: 153933059
+  crpto.data.features:
+    cmd: python scripts/materialize_feature_artifacts.py --config
+      configs/crpto_pd_model.yaml
+    deps:
+    - path: configs/crpto_pd_model.yaml
+      hash: md5
+      md5: 7627e63fb4f95eedb7f1809ada33916c
+      size: 4076
+    - path: data/processed/test.parquet
+      hash: md5
+      md5: 16bf66b611311120d8b55768f88fe7c4
+      size: 32441172
+    - path: data/processed/train.parquet
+      hash: md5
+      md5: 88d8fbcb58640f47d4c02e2ff66bcb90
+      size: 142993295
+    - path: scripts/materialize_feature_artifacts.py
+      hash: md5
+      md5: 0f681ebe8fceb1342a1e1ece0c9a7c6a
+      size: 3203
+    outs:
+    - path: data/processed/calibration_fe.parquet
+      hash: md5
+      md5: fdfae34b8857f1506d1fe5628c5d1e94
+      size: 39804503
+    - path: data/processed/test_fe.parquet
+      hash: md5
+      md5: f01eea4760d8eb4d58cfeb274da46e09
+      size: 46448903
+    - path: data/processed/train_fe.parquet
+      hash: md5
+      md5: 786ec03f467835a63db38b45ab94f3c5
+      size: 208450864
+  crpto.pd.champion:
+    cmd: python scripts/train_pd_model.py --config configs/crpto_pd_model.yaml
+    deps:
+    - path: configs/crpto_pd_model.yaml
+      hash: md5
+      md5: 7627e63fb4f95eedb7f1809ada33916c
+      size: 4076
+    - path: data/processed/calibration_fe.parquet
+      hash: md5
+      md5: fdfae34b8857f1506d1fe5628c5d1e94
+      size: 39804503
+    - path: data/processed/train_fe.parquet
+      hash: md5
+      md5: 786ec03f467835a63db38b45ab94f3c5
+      size: 208450864
+    - path: scripts/train_pd_model.py
+      hash: md5
+      md5: 6b2c78ba87f2622da89762fa44a4a538
+      size: 85095
+    outs:
+    - path: models/pd_canonical.cbm
+      hash: md5
+      md5: e66735accaef6c398c8665b2da5b9002
+      size: 5394848
+    - path: models/pd_canonical_calibrator.pkl
+      hash: md5
+      md5: 543497cab73675673dad1bccbae4746d
+      size: 9503845
+  crpto.conformal.intervals:
+    cmd: python scripts/generate_conformal_intervals.py --config
+      configs/crpto_conformal_policy.yaml
+    deps:
+    - path: configs/crpto_conformal_policy.yaml
+      hash: md5
+      md5: 28f433a566347d2d1703b38d266a672f
+      size: 1388
+    - path: data/processed/test_predictions.parquet
+      hash: md5
+      md5: d16ecc0b4badc4c0949e6eb1e1adbbce
+      size: 12547567
+    - path: scripts/generate_conformal_intervals.py
+      hash: md5
+      md5: 5544f4b3ea4a705a2fde588a914f5877
+      size: 63126
+    outs:
+    - path: data/processed/conformal_intervals_mondrian.parquet
+      hash: md5
+      md5: 158c6322e701fa45407a4c769a8a704a
+      size: 5364073
+  crpto.conformal.validation:
+    cmd: python scripts/validate_conformal_policy.py --config
+      configs/crpto_conformal_policy.yaml
+    deps:
+    - path: data/processed/conformal_intervals_mondrian.parquet
+      hash: md5
+      md5: 158c6322e701fa45407a4c769a8a704a
+      size: 5364073
+    - path: scripts/validate_conformal_policy.py
+      hash: md5
+      md5: b06007a04691eb71d4309779bd3cab89
+      size: 26186
+    outs:
+    - path: models/conformal_policy_status.json
+      hash: md5
+      md5: 13cdbf5d1dc6051c80a8c7d31bd78ec4
+      size: 12465
+  crpto.portfolio.optimization:
+    cmd: python scripts/optimize_portfolio.py --config
+      configs/crpto_optimization.yaml
+    deps:
+    - path: data/processed/conformal_intervals_mondrian.parquet
+      hash: md5
+      md5: 158c6322e701fa45407a4c769a8a704a
+      size: 5364073
+    - path: data/processed/test_predictions.parquet
+      hash: md5
+      md5: d16ecc0b4badc4c0949e6eb1e1adbbce
+      size: 12547567
+    - path: scripts/optimize_portfolio.py
+      hash: md5
+      md5: 7ddf20e344d96939ff82fb6f0dcdccbc
+      size: 11357
+    outs:
+    - path: data/processed/portfolio_allocations.parquet
+      hash: md5
+      md5: a5a64027caf731dca5b951a7a62bf4dd
+      size: 2676209
+  crpto.portfolio.bound_exact_eval:
+    cmd: python scripts/search/run_portfolio_bound_exact_eval.py --config
+      configs/crpto_optimization.yaml
+    deps:
+    - path:
+        data/processed/portfolio_bound_aware/rank1_alpha01_bound_aware_276k_full_2026-04-05-1734/portfolio_bound_aware_shortlist.parquet
+      hash: md5
+      md5: 187c6d2320f82472c738cb63a49fbaec
+      size: 35173
+    - path: scripts/search/run_portfolio_bound_exact_eval.py
+      hash: md5
+      md5: 753271c9a959eb1a765f71a791ac537d
+      size: 9204
+    outs:
+    - path:
+        data/processed/portfolio_bound_aware/rank1_alpha01_bound_aware_276k_full_2026-04-05-1734/portfolio_bound_aware_bound_eval.parquet
+      hash: md5
+      md5: 176384711f07133a62a6cecf6af02dbc
+      size: 48376
+  crpto.paper.evidence:
+    cmd: python scripts/analyze_crpto_evidence.py
+    deps:
+    - path: models/final_project_promotion.json
+      hash: md5
+      md5: 5d789be10b37de798d6de0d66c843b6e
+      size: 8066
+    - path: scripts/analyze_crpto_evidence.py
+      hash: md5
+      md5: 3bb5086de93ecce9e1d92225aaf9c2e0
+      size: 49099
+    outs:
+    - path: models/crpto_evidence_status.json
+      hash: md5
+      md5: 2c4d9a141d90a5014167fc567623035e
+      size: 4693
+  crpto.paper.journal_package:
+    cmd: python scripts/build_crpto_journal_package.py
+    deps:
+    - path: reports/crpto/tables/crpto_tableA7_funded_set_loans.csv
+      hash: md5
+      md5: 55c86a6d4dbeb2169c57aadf21a3ff2b
+      size: 45335
+    - path: scripts/build_crpto_journal_package.py
+      hash: md5
+      md5: ad5b4108f3612d3eda9945134f33d0a5
+      size: 26242
+    outs:
+    - path: models/crpto_journal_package_status.json
+      hash: md5
+      md5: fed6e01e4549880530cf17d23234a74f
+      size: 2621
+  crpto.paper.spo_stability:
+    cmd: python scripts/run_crpto_vs_spo_stability.py
+    deps:
+    - path: scripts/run_crpto_vs_spo_stability.py
+      hash: md5
+      md5: a1c0c9f51398d8462074310a49c2cead
+      size: 23657
+    outs:
+    - path: data/processed/crpto_vs_spo_stability.json
+      hash: md5
+      md5: d05f8c7fde9d510a9518ad41681fe827
+      size: 6434

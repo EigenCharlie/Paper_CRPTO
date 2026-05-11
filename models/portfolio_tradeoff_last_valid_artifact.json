@@ -1,0 +1,11 @@
+{
+  "stage_name": "portfolio_tradeoff",
+  "artifact_key": "portfolio_robustness_summary",
+  "artifact_path": "data/processed/portfolio_robustness_summary.parquet",
+  "validated_at_utc": "2026-04-07T16:09:24.690607+00:00",
+  "run_tag": "crpto-e2e-all-champions-2026-04-07",
+  "frontier_rows": 570,
+  "summary_rows": 3,
+  "selected_policy_mode": "segment_tail_blended_uncertainty",
+  "artifact_namespace": ""
+}

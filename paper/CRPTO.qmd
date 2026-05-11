@@ -1,0 +1,28 @@
+---
+title: "CRPTO"
+author: "Carlos Alfredo Vergara Rojas"
+lang: es
+bibliography: ../book/references.bib
+format:
+  html:
+    toc: true
+  pdf:
+    documentclass: article
+execute:
+  freeze: true
+---
+
+# Resumen
+
+CRPTO integra prediccion de default calibrada, intervalos conformales Mondrian y optimizacion robusta de portafolio. El champion congelado `bound_aware_276k_economic_champion` obtiene retorno robusto de `$170,464.54` con `V=0.03645`, `Gamma_CP=0.18591` y exact pass en `alpha=0.01`.
+
+# Manuscrito
+
+Este archivo es el punto de partida del manuscrito standalone. La version larga y sus apendices estan en `book/`.
+
+# Artefactos principales
+
+- `models/final_project_promotion.json`
+- `models/champion_portfolio_policy.json`
+- `reports/crpto/tables/crpto_table0_key_metrics.csv`
+- `reports/crpto/figures/crpto_fig12_crpto_conceptual_pipeline.png`

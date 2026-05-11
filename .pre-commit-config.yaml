@@ -1,0 +1,66 @@
+default_install_hook_types: [pre-commit, pre-push]
+default_stages: [pre-commit]
+fail_fast: false
+
+repos:
+  - repo: https://github.com/astral-sh/ruff-pre-commit
+    rev: v0.15.12
+    hooks:
+      - id: ruff
+        args: [--fix]
+      - id: ruff-format
+
+  - repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v5.0.0
+    hooks:
+      - id: trailing-whitespace
+        exclude: '^(book/_freeze/|book/_book/|.*\.cbm|.*\.pkl|.*\.parquet)'
+      - id: end-of-file-fixer
+        exclude: '^(book/_freeze/|book/_book/|.*\.cbm|.*\.pkl|.*\.parquet)'
+      - id: check-yaml
+        exclude: 'dbt_project/profiles\.yml'
+      - id: check-toml
+      - id: check-json
+      - id: check-added-large-files
+        args: [--maxkb=2000]
+        exclude: '^(EXTRACTION_MANIFEST\.json|models/.*\.cbm|models/.*\.pkl|book/_freeze/|book/_book/|book/apa\.csl|book/assets/figures/editorial/diagrama-crpto\.png)'
+      - id: check-merge-conflict
+      - id: detect-private-key
+      - id: mixed-line-ending
+        args: [--fix=lf]
+
+  - repo: https://github.com/kynan/nbstripout
+    rev: 0.9.1
+    hooks:
+      - id: nbstripout
+
+  - repo: local
+    hooks:
+      - id: mypy
+        name: mypy (gradual)
+        entry: uv run mypy src scripts
+        language: system
+        types: [python]
+        pass_filenames: false
+        stages: [pre-push]
+
+      - id: dvc-status
+        name: dvc status (drift detection)
+        entry: uv run dvc status --quiet
+        language: system
+        pass_filenames: false
+        stages: [pre-push]
+
+      - id: pytest-smoke
+        name: pytest smoke (final-sync + quarto guardrails)
+        entry: uv run pytest tests/test_crpto_final_sync.py tests/test_quarto_book_guardrails.py -q
+        language: system
+        pass_filenames: false
+        stages: [pre-push]
+
+      - id: validate-champion
+        name: validate champion artefacts
+        entry: uv run python -c "import json; from pathlib import Path; m=json.loads(Path('EXTRACTION_MANIFEST.json').read_text()); print('manifest OK, keys:', len(m))"
+        language: system
+        pass_filenames: false
+        stages: [pre-push]

@@ -1,0 +1,75 @@
+name: test
+
+on:
+  pull_request:
+  push:
+    branches: [main, paper-final]
+
+concurrency:
+  group: test-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  pytest:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install uv
+        uses: astral-sh/setup-uv@v3
+        with:
+          enable-cache: true
+
+      - name: Set up Python
+        run: uv python install 3.11
+
+      - name: Sync deps (dev + search, omit spo for CI speed)
+        run: uv sync --extra dev --extra search --frozen
+
+      - name: Run smoke tests
+        run: uv run pytest tests/test_crpto_final_sync.py tests/test_quarto_book_guardrails.py -q
+
+      - name: Run artifact-independent tests
+        run: |
+          uv run pytest \
+            tests/test_optimization/test_policy.py \
+            tests/test_utils/test_pipeline_state.py \
+            -q --cov=src --cov-report=xml --cov-report=term
+
+      - name: Run full fast tests when local artifacts are available
+        run: |
+          if [ -f data/processed/test_predictions.parquet ]; then
+            uv run pytest -q -m "not slow" --cov=src --cov-append --cov-report=xml --cov-report=term
+          else
+            echo "Skipping full fast suite: DVC artifacts are not present in this checkout."
+          fi
+
+      - name: Upload coverage
+        if: success()
+        uses: actions/upload-artifact@v4
+        with:
+          name: coverage-xml
+          path: coverage.xml
+          retention-days: 7
+
+  mypy:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install uv
+        uses: astral-sh/setup-uv@v3
+        with:
+          enable-cache: true
+
+      - name: Set up Python
+        run: uv python install 3.11
+
+      - name: Sync deps
+        run: uv sync --extra dev --frozen
+
+      - name: Mypy
+        run: uv run mypy src scripts
+        continue-on-error: true  # gradual rollout

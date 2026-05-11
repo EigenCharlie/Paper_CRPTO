@@ -1,0 +1,13 @@
+version: 2
+
+models:
+  - name: stg_test_predictions
+    columns:
+      - name: loan_id
+      - name: pd_point
+  - name: stg_conformal_intervals
+    columns:
+      - name: loan_id
+  - name: stg_portfolio_allocations
+    columns:
+      - name: policy_mode
