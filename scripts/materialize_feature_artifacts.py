@@ -8,6 +8,7 @@ from pathlib import Path
 import pandas as pd
 from loguru import logger
 
+from src.features.feature_config_io import save_feature_config
 from src.features.feature_engineering import (
     TARGET,
     apply_woe_encoders,
@@ -73,6 +74,12 @@ def main(output_dir: str = "data/processed") -> None:
         woe_encoders=encoders,
         output_dir=output_dir,
     )
+    # Dual-write the feature config as a YAML companion alongside the legacy
+    # pickle. The pickle remains canonical for the frozen champion; the YAML
+    # is human-readable and round-trip compatible. See
+    # ``docs/refactor/FEATURE_CONFIG_PARQUET_PLAN.md`` for the migration plan.
+    yaml_path = output_path / "feature_config.yml"
+    save_feature_config(feature_config, yaml_path=yaml_path)
     write_last_valid_artifact(
         stage_name,
         artifact_key="feature_manifest_v2",
@@ -89,6 +96,7 @@ def main(output_dir: str = "data/processed") -> None:
         extra={
             "feature_manifest_path": str(output_path / "feature_manifest_v2.parquet"),
             "feature_config_path": str(output_path / "feature_config.pkl"),
+            "feature_config_yaml_path": str(yaml_path),
         },
     )
 

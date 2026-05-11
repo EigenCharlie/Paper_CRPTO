@@ -59,11 +59,10 @@ typography:
     color: crpto-primary
     decoration: underline
 
-# logo: omit until brand mark assets exist. When ready, populate as:
-#   logo:
-#     small:  assets/logo-small.png
-#     medium: assets/logo.png
-#     large:  assets/logo-large.png
+logo:
+  small:  assets/logo-small.svg
+  medium: assets/logo.svg
+  large:  assets/logo.svg
 
 defaults:
   bootstrap:

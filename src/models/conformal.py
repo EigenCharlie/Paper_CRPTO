@@ -13,79 +13,16 @@ from typing import Any
 import numpy as np
 import pandas as pd
 from loguru import logger
-from sklearn.base import BaseEstimator, RegressorMixin
 
-
-class ProbabilityRegressor(BaseEstimator, RegressorMixin):
-    """Wrap classifier predict_proba as a regression predictor.
-
-    Optionally applies a probability calibrator after raw predictions.
-    """
-
-    def __init__(self, classifier, calibrator: Any | None = None):
-        self.classifier = classifier
-        self.calibrator = calibrator
-        self.is_fitted_ = True  # required for MAPIE prefit checks
-
-    def fit(self, X, y):
-        """Already fitted - no-op for MAPIE interface."""
-        return self
-
-    def predict(self, X):
-        """Return calibrated P(default) in [0, 1]."""
-        raw = self.classifier.predict_proba(X)[:, 1]
-        return apply_probability_calibrator(self.calibrator, raw)
-
-
-class PrefitClassifierAdapter(BaseEstimator):
-    """Small sklearn-style adapter for prefit classifiers inside MAPIE checks."""
-
-    def __init__(self, classifier, n_features_in: int | None = None):
-        self.classifier = classifier
-        classes = getattr(classifier, "classes_", np.array([0, 1]))
-        self.classes_ = np.asarray(classes)
-        self.n_features_in_ = int(n_features_in or getattr(classifier, "n_features_in_", 0) or 0)
-        self.feature_names_in_ = np.asarray(
-            [f"f{i}" for i in range(self.n_features_in_)], dtype=object
-        )
-        self.is_fitted_ = True
-
-    def fit(self, X, y):
-        return self
-
-    def _is_minimal_probe(self, X: pd.DataFrame) -> bool:
-        if X.shape[0] != 1 or X.shape[1] != self.n_features_in_:
-            return False
-        numeric = X.apply(pd.to_numeric, errors="coerce")
-        return bool(np.isfinite(numeric.to_numpy()).all() and np.allclose(numeric.to_numpy(), 0.0))
-
-    def predict(self, X):
-        X_df = pd.DataFrame(X) if not isinstance(X, pd.DataFrame) else X
-        if self._is_minimal_probe(X_df):
-            return np.zeros(len(X_df), dtype=int)
-        return self.classifier.predict(X_df)
-
-    def predict_proba(self, X):
-        X_df = pd.DataFrame(X) if not isinstance(X, pd.DataFrame) else X
-        if self._is_minimal_probe(X_df):
-            return np.column_stack([np.ones(len(X_df)), np.zeros(len(X_df))])
-        return self.classifier.predict_proba(X_df)
-
-
-class PrefitCalibratedClassifierAdapter(PrefitClassifierAdapter):
-    """Prefit classifier adapter that applies a probability calibrator."""
-
-    def __init__(self, classifier, calibrator: Any | None = None, n_features_in: int | None = None):
-        super().__init__(classifier, n_features_in=n_features_in)
-        self.calibrator = calibrator
-
-    def predict_proba(self, X):
-        raw = super().predict_proba(X)
-        if self.calibrator is None:
-            return raw
-        p_pos = apply_probability_calibrator(self.calibrator, raw[:, 1])
-        p_neg = np.clip(1.0 - p_pos, 0.0, 1.0)
-        return np.column_stack([p_neg, p_pos])
+# The three sklearn-style adapter classes used to live here. They moved to
+# ``conformal_adapters.py`` so the file is shorter, but their ``__module__``
+# attribute still reports this module so older pickles (e.g.
+# ``models/pd_canonical_calibrator.pkl``) continue to deserialize.
+from src.models.conformal_adapters import (  # noqa: F401, E402
+    PrefitCalibratedClassifierAdapter,
+    PrefitClassifierAdapter,
+    ProbabilityRegressor,
+)
 
 
 def apply_probability_calibrator(calibrator: Any, scores: np.ndarray) -> np.ndarray:

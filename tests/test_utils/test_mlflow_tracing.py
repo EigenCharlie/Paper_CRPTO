@@ -90,3 +90,31 @@ def test_set_paper_tags_uses_extra(monkeypatch: pytest.MonkeyPatch) -> None:
     assert captured["paper.section"] == "results"
     assert captured["paper.policy"] == "point"
     assert captured["paper.variant"] == "A"
+
+
+def test_set_paper_tags_rejects_unknown_run_tag(monkeypatch: pytest.MonkeyPatch) -> None:
+    """Non-canonical run_tags must be opted in via allow_new_run_tag=True."""
+    monkeypatch.setattr(mlflow_tracing, "_HAS_MLFLOW", True)
+    monkeypatch.setattr(mlflow_tracing, "mlflow", object())
+
+    with pytest.raises(ValueError, match="canonical paper tag"):
+        set_paper_tags(run_tag="paper-thesis-revalidation-2027")
+
+
+def test_set_paper_tags_accepts_new_tag_with_opt_in(monkeypatch: pytest.MonkeyPatch) -> None:
+    """allow_new_run_tag=True must let revalidation cohorts proceed."""
+    monkeypatch.setattr(mlflow_tracing, "_HAS_MLFLOW", True)
+    captured: dict[str, Any] = {}
+
+    class _StubMlflow:
+        @staticmethod
+        def set_tags(tags: dict[str, Any]) -> None:
+            captured.update(tags)
+
+        @staticmethod
+        def log_param(key: str, value: Any) -> None:
+            captured[key] = value
+
+    monkeypatch.setattr(mlflow_tracing, "mlflow", _StubMlflow)
+    set_paper_tags(run_tag="paper-thesis-revalidation-2027", allow_new_run_tag=True)
+    assert captured["paper.run_tag"] == "paper-thesis-revalidation-2027"

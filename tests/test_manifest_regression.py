@@ -35,6 +35,9 @@ PROTECTED_CHAMPION_FILES = (
     "models/pd_canonical.cbm",
     "models/pd_canonical_calibrator.pkl",
     "models/final_project_promotion.json",
+    "models/conformal_policy_status.json",
+    "models/champion_portfolio_policy.json",
+    "models/champion_registry.json",
 )
 
 

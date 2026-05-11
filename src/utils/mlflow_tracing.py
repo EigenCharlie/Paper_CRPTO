@@ -116,6 +116,10 @@ def trace(name: str | None = None) -> Callable[[T], T]:
 
 PAPER_RUN_TAG = "paper-thesis-final-economic-2026-04-06"
 
+# Paper run tags are immutable once published. Allow only the canonical tag
+# by default; callers performing an authorised revalidation must opt in.
+_PROTECTED_PAPER_RUN_TAGS = frozenset({PAPER_RUN_TAG})
+
 
 def set_paper_tags(
     *,
@@ -123,14 +127,26 @@ def set_paper_tags(
     section: str | None = None,
     policy: str | None = None,
     extra: Mapping[str, Any] | None = None,
+    allow_new_run_tag: bool = False,
 ) -> None:
     """Apply the CRPTO ``paper.*`` tag schema to the currently active run.
 
     Falls back to ``mlflow.log_param`` when ``set_tag`` is not available
     (older client versions) and silently no-ops when MLflow is missing.
+
+    Args:
+        allow_new_run_tag: Must be True when ``run_tag`` differs from the
+            canonical :data:`PAPER_RUN_TAG`. Prevents accidental mislabelling
+            of revalidation runs as the frozen paper run.
     """
     if not _HAS_MLFLOW:
         return
+    if run_tag not in _PROTECTED_PAPER_RUN_TAGS and not allow_new_run_tag:
+        raise ValueError(
+            f"run_tag={run_tag!r} is not the canonical paper tag "
+            f"({PAPER_RUN_TAG!r}). Pass allow_new_run_tag=True only when "
+            f"intentionally starting a revalidation cohort under a new tag."
+        )
     tags: dict[str, Any] = {"paper.run_tag": run_tag}
     if section is not None:
         tags["paper.section"] = section
@@ -159,6 +175,7 @@ def paper_run(
     policy: str | None = None,
     run_tag: str = PAPER_RUN_TAG,
     nested: bool = False,
+    allow_new_run_tag: bool = False,
 ) -> Iterator[Any]:
     """Start an MLflow run with the CRPTO paper tag schema applied.
 
@@ -168,5 +185,10 @@ def paper_run(
         yield None
         return
     with mlflow.start_run(run_name=run_name, nested=nested) as run:
-        set_paper_tags(run_tag=run_tag, section=section, policy=policy)
+        set_paper_tags(
+            run_tag=run_tag,
+            section=section,
+            policy=policy,
+            allow_new_run_tag=allow_new_run_tag,
+        )
         yield run
