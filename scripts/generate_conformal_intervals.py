@@ -18,6 +18,7 @@ import pandas as pd
 from catboost import CatBoostClassifier
 from loguru import logger
 
+from src.features.feature_config_io import load_feature_config as load_feature_config_artifact
 from src.models.calibration import load_probability_calibrator
 from src.models.conformal import (
     apply_probability_calibrator,
@@ -206,9 +207,14 @@ def _resolve_features(
     # Fallback path if model metadata is unavailable.
     feature_cfg_path = Path("data/processed/feature_config.pkl")
     feature_cfg: dict[str, Any] = {}
-    if feature_cfg_path.exists():
-        with open(feature_cfg_path, "rb") as f:
-            feature_cfg = pickle.load(f)
+    try:
+        feature_cfg = load_feature_config_artifact(
+            pickle_path=feature_cfg_path,
+            yaml_path=feature_cfg_path.with_suffix(".yml"),
+            prefer="auto",
+        )
+    except (FileNotFoundError, TypeError) as exc:
+        logger.warning(f"Unable to load fallback feature_config from {feature_cfg_path}: {exc}")
 
     if isinstance(feature_cfg, dict):
         catboost_features = feature_cfg.get("CATBOOST_FEATURES", [])
