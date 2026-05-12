@@ -90,6 +90,10 @@ reports/notebook_images/
 reports/paper_material/
 catboost_info/
 
+# Local literature PDFs copied for reading only. Keep citations/DOIs in
+# book/references.bib and docs; do not commit copyrighted PDFs.
+Papers_tesis/
+
 # Duckdb
 *.duckdb
 *.duckdb.wal

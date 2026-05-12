@@ -7,22 +7,19 @@ stages:
       hash: md5
       md5: 95ac52c4b69b5427d1777286af4e527a
       size: 4040
-      isexec: true
     - path: book/chapters
       hash: md5
-      md5: 09e7d5ff0141506bf0ce2bc88263f15d.dir
-      size: 681428
+      md5: 60e24ca8eeb42ba7b9aaca68c96458f8.dir
+      size: 687648
       nfiles: 25
     - path: book/index.qmd
       hash: md5
-      md5: ad9e2b6145967174d39f4285736677bc
+      md5: d45aa01c989bcd6918f2e10194db5dd1
       size: 3819
-      isexec: true
     - path: book/styles.scss
       hash: md5
       md5: 7322205de7140f8e89e36da55575e955
       size: 7279
-      isexec: true
     params:
       params.yaml:
         book.formats:
@@ -31,8 +28,8 @@ stages:
     outs:
     - path: book/_book
       hash: md5
-      md5: 1cf41b7b6cdab1e41d67a2dd695a332e.dir
-      size: 16952443
+      md5: 84e1640d8e7c85bdee7290d7ecf5fec0.dir
+      size: 17142858
       nfiles: 87
   crpto.paper.figures:
     cmd: python scripts/generate_crpto_figures.py --paper crpto
@@ -201,8 +198,8 @@ stages:
       size: 12547567
     - path: scripts/generate_conformal_intervals.py
       hash: md5
-      md5: 5544f4b3ea4a705a2fde588a914f5877
-      size: 63126
+      md5: 36450ba953599ee034adb6cf022197df
+      size: 63445
     params:
       params.yaml:
         conformal.alpha: 0.01
@@ -310,19 +307,45 @@ stages:
   crpto.paper.journal_package:
     cmd: python scripts/build_crpto_journal_package.py
     deps:
+    - path: data/processed/crpto_vs_spo_stability.json
+      hash: md5
+      md5: d05f8c7fde9d510a9518ad41681fe827
+      size: 6434
+    - path:
+        data/processed/portfolio_bound_aware/rank1_alpha01_bound_aware_276k_full_2026-04-05-1734/portfolio_bound_aware_bound_eval.parquet
+      hash: md5
+      md5: 176384711f07133a62a6cecf6af02dbc
+      size: 48376
+    - path:
+        data/processed/portfolio_bound_aware/rank1_alpha01_bound_aware_276k_full_2026-04-05-1734/portfolio_bound_aware_shortlist.parquet
+      hash: md5
+      md5: 187c6d2320f82472c738cb63a49fbaec
+      size: 35173
+    - path: models/final_project_promotion.json
+      hash: md5
+      md5: 5d789be10b37de798d6de0d66c843b6e
+      size: 8066
+    - path: models/spo_real_training_status.json
+      hash: md5
+      md5: e682d6ef32b1f3a5ed3ba4f68daf3e44
+      size: 2411
     - path: reports/crpto/tables/crpto_tableA7_funded_set_loans.csv
       hash: md5
       md5: 55c86a6d4dbeb2169c57aadf21a3ff2b
       size: 45335
+    - path: reports/crpto/tables/crpto_tableA8_funded_set_composition.csv
+      hash: md5
+      md5: d75b3b71c097c3df8240217eec28735e
+      size: 2187
     - path: scripts/build_crpto_journal_package.py
       hash: md5
-      md5: ad5b4108f3612d3eda9945134f33d0a5
-      size: 26242
+      md5: 8bd73d369b8a51e04a0ff3e44e7f4935
+      size: 33141
     outs:
     - path: models/crpto_journal_package_status.json
       hash: md5
-      md5: fed6e01e4549880530cf17d23234a74f
-      size: 2621
+      md5: b35c7f4286479134aed289c49d7c5442
+      size: 3116
   crpto.paper.spo_stability:
     cmd: python scripts/run_crpto_vs_spo_stability.py
     deps:
@@ -335,3 +358,57 @@ stages:
       hash: md5
       md5: d05f8c7fde9d510a9518ad41681fe827
       size: 6434
+  crpto.paper.tail_satisficing_audit:
+    cmd: python scripts/build_tail_satisficing_challenger_audit.py
+    deps:
+    - path: configs/crpto_optimization.yaml
+      hash: md5
+      md5: 9077d7117a99181c2f083af11fe422fc
+      size: 1683
+    - path: configs/crpto_tail_satisficing_objective.yaml
+      hash: md5
+      md5: d4734ca3642b0c5a4c7a70facb638ccc
+      size: 1679
+    - path:
+        data/processed/conformal_gap/conformal-reopen-2026-04-03-2149__resume__2026-04-05-1612__phase1__final__rank-1/conformal_intervals_mondrian.parquet
+      hash: md5
+      md5: dbd129062f5f606349cb41f3a88baa67
+      size: 5256767
+    - path:
+        data/processed/portfolio_bound_aware/rank1_alpha01_bound_aware_276k_full_2026-04-05-1734/portfolio_bound_aware_shortlist.parquet
+      hash: md5
+      md5: 187c6d2320f82472c738cb63a49fbaec
+      size: 35173
+    - path: data/processed/test.parquet
+      hash: md5
+      md5: 16bf66b611311120d8b55768f88fe7c4
+      size: 32441172
+    - path: data/processed/test_fe.parquet
+      hash: md5
+      md5: f01eea4760d8eb4d58cfeb274da46e09
+      size: 46448903
+    - path: models/final_project_promotion.json
+      hash: md5
+      md5: 5d789be10b37de798d6de0d66c843b6e
+      size: 8066
+    - path: reports/crpto/tables/crpto_tableA7_funded_set_loans.csv
+      hash: md5
+      md5: 55c86a6d4dbeb2169c57aadf21a3ff2b
+      size: 45335
+    - path: scripts/build_tail_satisficing_challenger_audit.py
+      hash: md5
+      md5: ed7739c6f4fe3458f91e5ee8fd07dbc4
+      size: 16577
+    - path: scripts/optimize_portfolio_tradeoff.py
+      hash: md5
+      md5: 450e7461b1d64924387fa55532a202e5
+      size: 45793
+    - path: src/optimization/tail_satisficing_objective.py
+      hash: md5
+      md5: 1d0489c792b45f57a58a6b737fde5df8
+      size: 9356
+    outs:
+    - path: models/crpto_tail_satisficing_audit_status.json
+      hash: md5
+      md5: f53d7f2c6c943a17d3643975f8f75b20
+      size: 2259

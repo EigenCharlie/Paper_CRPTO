@@ -17,6 +17,12 @@ import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
 
+from src.optimization.tail_satisficing_objective import (
+    entropic_oce,
+    funded_loss_rate,
+    weighted_cvar,
+)
+
 ROOT = Path(__file__).resolve().parents[1]
 TABLE_DIR = ROOT / "reports" / "crpto" / "tables"
 FIG_DIR = ROOT / "reports" / "crpto" / "figures"
@@ -28,6 +34,8 @@ FUNDED_LOANS = TABLE_DIR / "crpto_tableA7_funded_set_loans.csv"
 FUNDED_COMPOSITION = TABLE_DIR / "crpto_tableA8_funded_set_composition.csv"
 PROMOTION_PATH = MODELS_DIR / "final_project_promotion.json"
 STATUS_PATH = MODELS_DIR / "crpto_journal_package_status.json"
+SPO_REAL_STATUS_PATH = MODELS_DIR / "spo_real_training_status.json"
+SPO_STABILITY_PATH = DATA_DIR / "crpto_vs_spo_stability.json"
 SHORTLIST_PATH = (
     DATA_DIR
     / "portfolio_bound_aware"
@@ -54,20 +62,29 @@ def _load_json(path: Path) -> dict[str, Any]:
 
 def _write_json(path: Path, payload: dict[str, Any]) -> None:
     path.parent.mkdir(parents=True, exist_ok=True)
-    path.write_text(json.dumps(payload, indent=2, sort_keys=True) + "\n", encoding="utf-8")
+    path.write_text(
+        json.dumps(payload, indent=2, sort_keys=True) + "\n",
+        encoding="utf-8",
+        newline="",
+    )
 
 
 def _write_table(name: str, frame: pd.DataFrame) -> list[Path]:
     TABLE_DIR.mkdir(parents=True, exist_ok=True)
     csv_path = TABLE_DIR / f"{name}.csv"
     tex_path = TABLE_DIR / f"{name}.tex"
-    frame.to_csv(csv_path, index=False)
-    frame.to_latex(
-        tex_path,
+    csv_text = frame.to_csv(index=False, lineterminator="\n")
+    tex_text = frame.to_latex(
         index=False,
         escape=True,
         float_format=lambda value: f"{value:.6f}",
     )
+    for path, text in [(csv_path, csv_text), (tex_path, tex_text)]:
+        if path.exists():
+            existing = path.read_bytes().decode("utf-8")
+            if existing == text:
+                continue
+        path.write_text(text, encoding="utf-8", newline="")
     print(f"Wrote {csv_path.relative_to(ROOT)}")
     print(f"Wrote {tex_path.relative_to(ROOT)}")
     return [csv_path, tex_path]
@@ -86,7 +103,7 @@ def _save_figure(name: str) -> list[Path]:
 
 
 def _relative(paths: list[Path]) -> list[str]:
-    return list(dict.fromkeys(str(path.relative_to(ROOT)) for path in paths))
+    return list(dict.fromkeys(path.relative_to(ROOT).as_posix() for path in paths))
 
 
 def _as_rate(series: pd.Series) -> pd.Series:
@@ -124,39 +141,28 @@ def _weighted_metric(frame: pd.DataFrame, weights: pd.Series, column: str) -> fl
     return float((weights.astype(float) * pd.to_numeric(frame[column], errors="coerce")).sum())
 
 
-def _weighted_cvar(loss_rate: pd.Series, weights: pd.Series, tail: float) -> float:
-    order = np.argsort(-loss_rate.to_numpy(dtype=float))
-    sorted_loss = loss_rate.to_numpy(dtype=float)[order]
-    sorted_weights = weights.to_numpy(dtype=float)[order]
-    target = 1.0 - float(tail)
-    used = 0.0
-    total = 0.0
-    for loss, weight in zip(sorted_loss, sorted_weights, strict=False):
-        if used >= target:
-            break
-        take = min(float(weight), target - used)
-        total += float(loss) * take
-        used += take
-    return total / max(used, 1e-12)
-
-
 def _build_tail_risk_table(funded: pd.DataFrame) -> pd.DataFrame:
     rows: list[dict[str, Any]] = []
     weights = funded["portfolio_weight"]
     for lgd in LGD_GRID:
-        loss_rate = (
-            funded["y_true"] * float(lgd) - (1.0 - funded["y_true"]) * funded["int_rate_decimal"]
+        loss_rate = pd.Series(
+            funded_loss_rate(
+                funded["y_true"].to_numpy(dtype=float),
+                funded["int_rate_decimal"].to_numpy(dtype=float),
+                lgd=float(lgd),
+            ),
+            index=funded.index,
         )
         theta = 5.0
-        oce = float(np.log(np.sum(weights * np.exp(theta * loss_rate))) / theta)
+        oce = round(float(entropic_oce(loss_rate, weights, theta=theta, stable=False)), 17)
         rows.append(
             {
                 "lgd": float(lgd),
                 "mean_loss_rate": float(np.sum(weights * loss_rate)),
                 "entropic_oce_theta5": oce,
-                "cvar_90_loss_rate": _weighted_cvar(loss_rate, weights, 0.90),
-                "cvar_95_loss_rate": _weighted_cvar(loss_rate, weights, 0.95),
-                "cvar_99_loss_rate": _weighted_cvar(loss_rate, weights, 0.99),
+                "cvar_90_loss_rate": weighted_cvar(loss_rate, weights, tail=0.90),
+                "cvar_95_loss_rate": weighted_cvar(loss_rate, weights, tail=0.95),
+                "cvar_99_loss_rate": weighted_cvar(loss_rate, weights, tail=0.99),
                 "funded_set_repriced_return": _return_from_frame(
                     funded,
                     weights,
@@ -418,6 +424,134 @@ def _build_robust_region_table(shortlist: pd.DataFrame) -> pd.DataFrame:
     return rows.sort_values(["risk_tolerance", "gamma"]).reset_index(drop=True)
 
 
+def _regret_delta_vs_two_stage(reference: float, observed: float) -> float:
+    return float((reference - observed) / max(reference, 1e-12) * 100.0)
+
+
+def _range_text(values: list[float], *, precision: int = 4) -> str:
+    return f"{float(values[0]):.{precision}f}--{float(values[1]):.{precision}f}"
+
+
+def _build_regret_auditability_frontier(
+    spo_status: dict[str, Any],
+    stability: dict[str, Any],
+    promotion: dict[str, Any],
+) -> pd.DataFrame:
+    results = spo_status["results"]
+    stability_summary = stability["stability_summary"]
+    champion = promotion["final_champion"]
+    robust_region = promotion["robust_region_summary"]
+
+    two_stage_regret = float(results["two_stage"]["mean_regret"])
+    spo_regret = float(results["spo_plus"]["mean_regret"])
+    crpto_regret = float(results["conformal_robust"]["mean_regret"])
+    crpto_checks = int(bool(stability_summary["coverage_always_above_target"]))
+    crpto_checks += int(bool(champion["alpha01_exact_pass"]))
+    crpto_checks += int(float(robust_region["alpha01_pass_rate"]) >= 1.0)
+
+    rows = [
+        {
+            "method": "Two-stage baseline",
+            "mean_regret": two_stage_regret,
+            "regret_delta_vs_two_stage_pct": 0.0,
+            "coverage_90_range": "not_applicable",
+            "exact_funded_set_bound": False,
+            "robust_region_pass": False,
+            "auditability_evidence_count": 0,
+            "paper_role": "Regret baseline for the decision-focused comparison.",
+            "source": "models/spo_real_training_status.json",
+        },
+        {
+            "method": "SPO+",
+            "mean_regret": spo_regret,
+            "regret_delta_vs_two_stage_pct": _regret_delta_vs_two_stage(
+                two_stage_regret,
+                spo_regret,
+            ),
+            "coverage_90_range": "not_applicable",
+            "exact_funded_set_bound": False,
+            "robust_region_pass": False,
+            "auditability_evidence_count": 0,
+            "paper_role": (
+                "Regret-efficient comparator; temporal improvement range "
+                f"{_range_text(stability_summary['spo_improvement_range_pct'], precision=2)}%."
+            ),
+            "source": "models/spo_real_training_status.json",
+        },
+        {
+            "method": "CRPTO robust",
+            "mean_regret": crpto_regret,
+            "regret_delta_vs_two_stage_pct": _regret_delta_vs_two_stage(
+                two_stage_regret,
+                crpto_regret,
+            ),
+            "coverage_90_range": _range_text(stability_summary["coverage_range"]),
+            "exact_funded_set_bound": bool(champion["alpha01_exact_pass"]),
+            "robust_region_pass": bool(float(robust_region["alpha01_pass_rate"]) >= 1.0),
+            "auditability_evidence_count": crpto_checks,
+            "paper_role": "Auditable robust champion: coverage, exact bound and 45/45 region.",
+            "source": (
+                "models/spo_real_training_status.json; "
+                "data/processed/crpto_vs_spo_stability.json; "
+                "models/final_project_promotion.json"
+            ),
+        },
+    ]
+    return pd.DataFrame(rows)
+
+
+def _plot_regret_auditability_frontier(frontier: pd.DataFrame) -> list[Path]:
+    fig, ax = plt.subplots(figsize=(8.4, 5.4))
+    colors = {
+        "Two-stage baseline": "#607D8B",
+        "SPO+": "#1565C0",
+        "CRPTO robust": "#2E7D32",
+    }
+    offsets = {
+        "Two-stage baseline": (8, 12),
+        "SPO+": (8, 12),
+        "CRPTO robust": (-86, 12),
+    }
+    for _, row in frontier.iterrows():
+        method = str(row["method"])
+        ax.scatter(
+            float(row["mean_regret"]),
+            int(row["auditability_evidence_count"]),
+            s=170,
+            color=colors[method],
+            edgecolor="#263238",
+            linewidth=0.9,
+            zorder=3,
+        )
+        ax.annotate(
+            method,
+            (
+                float(row["mean_regret"]),
+                int(row["auditability_evidence_count"]),
+            ),
+            xytext=offsets[method],
+            textcoords="offset points",
+            fontsize=10,
+            fontweight="bold",
+        )
+    ax.set_xlabel("Mean decision regret (lower is better)")
+    ax.set_ylabel("Verifiable risk-control checks passed (0-3)")
+    ax.set_title("Regret-auditability frontier")
+    ax.set_xlim(left=0.0)
+    ax.set_ylim(-0.25, 3.35)
+    ax.set_yticks([0, 1, 2, 3])
+    ax.grid(alpha=0.25)
+    ax.text(
+        0.0,
+        -0.20,
+        "Checks: temporal 90% coverage target, exact funded-set alpha bound, robust-region pass.",
+        transform=ax.transAxes,
+        fontsize=8.6,
+        color="#455A64",
+    )
+    return _save_figure("crpto_fig15_regret_auditability_frontier")
+
+
 def _plot_conceptual_pipeline() -> list[Path]:
     fig, ax = plt.subplots(figsize=(13, 4.8))
     ax.axis("off")
@@ -532,10 +666,19 @@ def _plot_robust_region_heatmap(shortlist: pd.DataFrame) -> list[Path]:
 def _write_markdown_dossier(status: dict[str, Any]) -> Path:
     path = DOCS_DIR / "crpto_journal_package_2026-05-04.md"
     lines = [
-        "# CRPTO Journal Package - 2026-05-04",
+        "# paper-crpto Journal Package - 2026-05-04",
         "",
         "This dossier records the journal-oriented tables and figures generated from",
         "frozen CRPTO artifacts. It does not reopen the champion search.",
+        "",
+        "## Standalone Scope - 2026-05-12",
+        "",
+        "This package is the journal/appendix layer for `Paper_CRPTO`. It is intentionally",
+        "larger than the short paper: A12--A21, Figures 12--15 and the robustness notes",
+        "can be selected into a journal appendix, reviewer response or future thesis",
+        "chapter without changing the official champion.",
+        "A20--A21 are generated by `scripts/build_tail_satisficing_challenger_audit.py`",
+        "as a slower journal-only add-on.",
         "",
         "## Generated artifacts",
         "",
@@ -546,11 +689,16 @@ def _write_markdown_dossier(status: dict[str, Any]) -> Path:
         "",
         "## Scope notes",
         "",
-        "- A12--A18 are diagnostic robustness and packaging tables.",
+        "- A12--A21 are diagnostic robustness, comparator and packaging tables.",
+        "- A20--A21 are diagnostic challenger and cluster-bound audit tables from",
+        "  the separate tail-satisficing audit script.",
         "- Budget and segment-cap sensitivity are funded-set diagnostics, not",
         "  re-optimized portfolios.",
         "- Tail-risk and bootstrap return columns are funded-set repricing diagnostics;",
         "  the official champion return remains sourced from `final_project_promotion.json`.",
+        "- `src/optimization/tail_satisficing_objective.py` exposes the same",
+        "  OCE/CVaR/satisficing primitives as a future-experiment scaffold,",
+        "  but this package still does not promote a new objective.",
         "- The official champion remains `bound_aware_276k_economic_champion`.",
         "",
         "## Appendix map",
@@ -564,22 +712,27 @@ def _write_markdown_dossier(status: dict[str, Any]) -> Path:
         "| A16 bootstrap funded-set metrics | Adds empirical intervals for realized funded-set quantities. | Not a conformal guarantee. |",
         "| A17 budget/LGD/cap sensitivity | Checks practical sensitivity to budget, LGD and segment caps. | Cap checks are diagnostics, not solver constraints. |",
         "| A18 robust region by family | Summarizes the `45/45` alpha01-safe region by `risk_tolerance x gamma`. | Bound-aware family only. |",
+        "| A19 regret-auditability frontier | Compares two-stage, SPO+ and CRPTO robust on regret versus verifiable risk controls. | Trade-off diagnostic, not a new champion selector. |",
+        "| A20 tail-satisficing challenger | Re-solves the 45 alpha-safe policies and ranks a CVaR/OCE/satisficing challenger. | Generated separately; audit only, no champion promotion. |",
+        "| A21 cluster-bound tightening | Quantifies cluster-aware Hoeffding thresholds. | Transparent caveat, not tighter than Markov here. |",
         "",
         "## Quarto integration",
         "",
-        "- `book/chapters/14g-manuscript-blueprint.qmd` uses",
+        "- `book/chapters/06-blueprint-manuscrito.qmd` uses",
         "  these artifacts to define the paper outline and final table/figure plan.",
-        "- `book/chapters/14h-journal-appendix-robustness.qmd`",
-        "  renders A12--A18 and Figures 12--14.",
+        "- `book/chapters/07-apendice-robustez.qmd`",
+        "  renders A12--A21 and Figures 12--15.",
         "",
     ]
-    path.write_text("\n".join(lines), encoding="utf-8")
+    path.write_text("\n".join(lines), encoding="utf-8", newline="")
     print(f"Wrote {path.relative_to(ROOT)}")
     return path
 
 
 def build_journal_package() -> dict[str, Any]:
     promotion = _load_json(PROMOTION_PATH)
+    spo_status = _load_json(SPO_REAL_STATUS_PATH)
+    stability = _load_json(SPO_STABILITY_PATH)
     funded = _funded_frame()
     funded_composition = pd.read_csv(FUNDED_COMPOSITION)
     shortlist = pd.read_parquet(SHORTLIST_PATH)
@@ -611,13 +764,16 @@ def build_journal_package() -> dict[str, Any]:
         "crpto_tableA18_robust_region_policy_family",
         _build_robust_region_table(shortlist),
     )
+    regret_frontier = _build_regret_auditability_frontier(spo_status, stability, promotion)
+    artifacts += _write_table("crpto_tableA19_regret_auditability_frontier", regret_frontier)
     artifacts += _plot_conceptual_pipeline()
     artifacts += _plot_alpha_gamma_funded_set(bound_eval, promotion)
     artifacts += _plot_robust_region_heatmap(shortlist)
+    artifacts += _plot_regret_auditability_frontier(regret_frontier)
 
     status = {
         "generated_at_utc": datetime.now(UTC).isoformat(),
-        "schema_version": 1,
+        "schema_version": 2,
         "run_tag": promotion["run_tag"],
         "champion_label": promotion["final_champion"]["label"],
         "generated_artifacts": _relative(artifacts),
@@ -626,6 +782,8 @@ def build_journal_package() -> dict[str, Any]:
                 FUNDED_LOANS,
                 FUNDED_COMPOSITION,
                 PROMOTION_PATH,
+                SPO_REAL_STATUS_PATH,
+                SPO_STABILITY_PATH,
                 SHORTLIST_PATH,
                 BOUND_EVAL_PATH,
                 ALPHA_SWEEP_PATH,
@@ -638,6 +796,7 @@ def build_journal_package() -> dict[str, Any]:
             "Budget and cap sensitivity are diagnostics on the exported funded set.",
             "Repriced funded-set return diagnostics are not replacements for the official champion return.",
             "Official champion metrics remain sourced from final_project_promotion.json.",
+            "A19/Fig15 compare regret against verifiable risk-control checks; they are not a new selector.",
         ],
     }
     dossier = _write_markdown_dossier(status)

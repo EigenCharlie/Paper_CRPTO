@@ -95,7 +95,7 @@ El run operativo vigente `crpto-e2e-all-champions-2026-04-07` reporta AUC 0.7124
 
 ## Refresh de PDFs nuevos descargados
 
-La carpeta `C:\Users\carlos\Documents\Papers_tesis` contiene ahora 17 PDFs. Además de los 10 PDFs base, se re-leyeron los 7 PDFs recientes que se habían propuesto para ampliar el estado del arte. El resultado principal es que no obligan a cambiar el champion ni a reentrenar, pero sí endurecen la agenda editorial: el paper debe declarar que CRPTO hoy es post-hoc/two-stage y que la versión journal puede moverse hacia selección conformal decision-aware, riesgo OCE/CVaR, cobertura multi-distribución y calibración online.
+La carpeta local `Papers_tesis/` contiene 17 PDFs de literatura y queda ignorada por Git; la trazabilidad pública vive en BibTeX, DOI/enlaces y notas Markdown. Además de los 10 PDFs base, se re-leyeron los 7 PDFs recientes que se habían propuesto para ampliar el estado del arte. El resultado principal es que no obligan a cambiar el champion ni a reentrenar, pero sí endurecen la agenda editorial: el paper debe declarar que CRPTO hoy es post-hoc/two-stage y que la versión journal puede moverse hacia selección conformal decision-aware, riesgo OCE/CVaR, cobertura multi-distribución y calibración online.
 
 | PDF nuevo | Lectura clave | Formula/figura relevante | Falta o mejora concreta para CRPTO |
 |---|---|---|---|

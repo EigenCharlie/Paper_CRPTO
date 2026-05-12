@@ -1,8 +1,10 @@
 """Unit tests for PD model training and calibration."""
 
+import joblib
 import numpy as np
 import pandas as pd
 import pytest
+import yaml
 from sklearn.datasets import make_classification
 
 from src.models.calibration import (
@@ -13,6 +15,7 @@ from src.models.calibration import (
 from src.models.optuna_tuning import SEARCH_SPACE_VERSION, resolve_optuna_study_name
 from src.models.pd_model import (
     get_available_features,
+    resolve_feature_sets,
     temporal_train_val_split,
     train_baseline,
     train_catboost_default,
@@ -79,6 +82,47 @@ def test_get_available_features_empty_df():
     df = pd.DataFrame({"unrelated": [1]})
     result = get_available_features(df)
     assert result == []
+
+
+def test_resolve_feature_sets_prefers_yaml_companion(tmp_path):
+    df = pd.DataFrame(
+        {
+            "yaml_feature": [1.0, 2.0],
+            "pickle_feature": [3.0, 4.0],
+            "grade": ["A", "B"],
+        }
+    )
+    pkl = tmp_path / "feature_config.pkl"
+    yml = tmp_path / "feature_config.yml"
+    joblib.dump(
+        {
+            "CATBOOST_FEATURES": ["pickle_feature"],
+            "CATEGORICAL_FEATURES": [],
+            "LOGREG_FEATURES": ["pickle_feature"],
+        },
+        pkl,
+    )
+    yml.write_text(
+        yaml.safe_dump(
+            {
+                "CATBOOST_FEATURES": ["yaml_feature", "grade"],
+                "CATEGORICAL_FEATURES": ["grade"],
+                "LOGREG_FEATURES": ["yaml_feature"],
+            }
+        ),
+        encoding="utf-8",
+    )
+
+    result = resolve_feature_sets(
+        df,
+        feature_source="feature_config",
+        feature_config_path=pkl,
+    )
+
+    assert result["feature_source"] == "feature_config"
+    assert result["catboost_features"] == ["yaml_feature", "grade"]
+    assert result["categorical_features"] == ["grade"]
+    assert result["logreg_features"] == ["yaml_feature"]
 
 
 # ── train_baseline ──

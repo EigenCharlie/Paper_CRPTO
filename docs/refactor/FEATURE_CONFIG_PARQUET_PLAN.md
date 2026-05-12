@@ -1,7 +1,11 @@
 # `feature_config.pkl` → Parquet + schema migration plan
 
-**Status**: Documented, not executed. Pickle change cascades through
-`crpto.data.features` and downstream.
+**Status**: YAML dual-write and reader migration are partially executed. The
+pipeline still preserves `feature_config.pkl`, but
+`src/features/feature_config_io.py` can read/write the YAML companion and the
+main PD/conformal consumers prefer YAML when present, with pickle fallback.
+The full Parquet/dataclass replacement remains deferred because it cascades
+through `crpto.data.features` and downstream.
 
 ## Context
 

@@ -27,7 +27,7 @@ git clone https://github.com/EigenCharlie/Paper_CRPTO.git
 cd Paper_CRPTO
 uv venv
 uv sync --extra dev --extra search
-just smoke           # runs lint + pre-push test suite
+just smoke           # runs artifact-independent guardrail tests
 ```
 
 To re-render the Quarto book without re-executing any chunks (uses

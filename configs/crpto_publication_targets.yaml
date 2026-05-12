@@ -34,6 +34,76 @@ primary_target:
     - "Create anonymized online supplement from paper/supplement_ijds.qmd."
     - "Remove author-identifying GitHub/DagsHub URLs from the anonymous PDF unless policy allows non-anonymous companion disclosure."
     - "Freeze a release tag and reproducibility bundle after anonymity decision."
+  current_paper_scope:
+    include:
+      - "Frozen post-hoc CRPTO champion and exact alpha-safe robust region."
+      - "A3--A21 as supplement/appendix evidence generated from frozen artifacts."
+      - "Regret-auditability frontier as the body-level SPO+/CRPTO trade-off."
+      - "OCE/CVaR and robust satisficing as diagnostics, not new selectors."
+      - "Cluster-aware dependence caveat/proposition in the theory supplement."
+      - "Quarto/DVC/DagsHub/MLflow companion after anonymity handling."
+    out_of_scope_method_extensions:
+      - "OCE/CVaR as an optimized portfolio objective."
+      - "Multi-distribution or online conformal prediction as the promoted conformal layer."
+      - "Online DFL, SPO+ + conformal hybrid training, or causal CRPTO."
+      - "Multi-period portfolio, production dashboard, field trial, or package extraction."
+
+journal_strengthening_pack:
+  stance: "Selected former P2/P3 ideas are included as current paper/journal diagnostics or framing, while method-changing variants remain backlog."
+  include_in_current_submission:
+    regret_auditability_frontier:
+      status: include_body
+      role: "Central trade-off: SPO+ wins regret, CRPTO buys coverage, exact funded-set control and auditability."
+      artifacts:
+        - reports/crpto/tables/crpto_tableA19_regret_auditability_frontier.csv
+        - reports/crpto/figures/crpto_fig15_regret_auditability_frontier.png
+      requires_new_run: false
+    tail_risk_oce_cvar_diagnostic:
+      status: include_supplement
+      role: "Tail-risk audit of the selected funded set under LGD alternatives."
+      artifacts:
+        - reports/crpto/tables/crpto_tableA12_tail_risk_oce_cvar.csv
+        - reports/crpto/tables/crpto_tableA20_tail_satisficing_challenger_audit.csv
+      requires_new_run: false
+    robust_satisficing_margins:
+      status: include_supplement_or_short_body
+      role: "OR/committee margins for return, V, Gamma_CP, zero violation and robust-region pass."
+      artifacts:
+        - reports/crpto/tables/crpto_tableA13_satisficing_margins.csv
+      requires_new_run: false
+    dependence_aware_bound:
+      status: include_theory_appendix_or_caveat
+      role: "Cluster-aware conditional tightening statement; Markov remains the main distribution-free bound."
+      artifacts:
+        - reports/crpto/tables/crpto_tableA14_dependency_cluster_diagnostics.csv
+        - reports/crpto/tables/crpto_tableA21_cluster_bound_tightening.csv
+        - docs/research/crpto_conditional_tightening_appendix_2026-05-04.md
+      requires_new_run: false
+    tail_satisficing_challenger_audit:
+      status: include_supplement
+      role: "Journal-only audit that re-solves the 45 robust-region policies and ranks a tail-satisficing challenger without promoting it over the frozen champion."
+      artifacts:
+        - reports/crpto/tables/crpto_tableA20_tail_satisficing_challenger_audit.csv
+        - models/crpto_tail_satisficing_audit_status.json
+      requires_new_run: false
+  backlog_not_blocking:
+    multi_dataset_credit_replication:
+      status: journal_backlog_not_blocker
+      role: "External validity experiment for a later journal revision or follow-up study."
+      requires_new_dataset: true
+      requires_new_run: true
+    tail_satisficing_objective_scaffold:
+      status: research_scaffold_not_champion
+      role: "Reusable OCE/CVaR/satisficing scoring layer for a future isolated search or sensitivity experiment."
+      config: configs/crpto_tail_satisficing_objective.yaml
+      module: src/optimization/tail_satisficing_objective.py
+      requires_new_dataset: false
+      requires_new_run: true
+  still_out_of_scope:
+    - "OCE/CVaR as a promoted optimized portfolio objective or hard search constraint for the current champion."
+    - "Multi-distribution conformal prediction as the promoted conformal layer."
+    - "Online conformal recalibration, online DFL, SPO+ + conformal hybrid training or causal CRPTO."
+    - "Production monitoring, package extraction, field trial or multi-period portfolio."
 
 secondary_targets:
   - id: ejor
@@ -109,3 +179,4 @@ current_decision:
     - operations_research
     - informs_ijoo
   reason: "CRPTO currently has the strongest fit as reproducible decision-focused data science with OR substance."
+  p2_p3_boundary: "P2/P3 are no longer a blanket exclusion: the journal strengthening pack enters as diagnostics, framing and theory caveat; method-changing extensions remain future work and are not acceptance criteria."

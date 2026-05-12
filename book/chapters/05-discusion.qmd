@@ -146,7 +146,7 @@ La tabla siguiente convierte esa trazabilidad en una regla de defensa editorial:
 | P1 post-seleccion 5K--25K--276K y holdout temporal estricto | `crpto_tableA3_nested_holdout.csv`, `crpto_tableA9_strict_temporal_holdout.csv`, `crpto_evidence_status.json` | `test_crpto_p1_evidence_artifacts_exist` |
 | P1 selector CROMS-style + exact finalists | `crpto_tableA5_decision_aware_selector.csv`, `crpto_tableA10_conformal_finalist_exact_bound_eval.csv` | `test_crpto_p1_evidence_artifacts_exist` |
 | P1 segment/funded-set/shift sensitivity | `crpto_tableA4_segment_period_sensitivity.csv`, `crpto_tableA7_funded_set_loans.csv`, `crpto_tableA8_funded_set_composition.csv`, `crpto_tableA6_synthetic_shift.csv`, `crpto_tableA11_enhanced_synthetic_shift.csv` | `test_crpto_p1_evidence_artifacts_exist` |
-| Journal package A12--A18 | `crpto_tableA12_tail_risk_oce_cvar.csv`--`crpto_tableA18_robust_region_policy_family.csv`, `crpto_fig12`--`crpto_fig14` | `test_crpto_journal_package_artifacts_exist` |
+| Journal package A12--A21 | `crpto_tableA12_tail_risk_oce_cvar.csv`--`crpto_tableA21_cluster_bound_tightening.csv`, `crpto_fig12`--`crpto_fig15` | `test_crpto_journal_package_artifacts_exist` y `test_tail_satisficing_audit_artifacts_exist` |
 | PD operativo AUC/Brier/ECE | `data/processed/pipeline_summary.json`, `reports/dvc/metrics_summary.json` | comparacion solo dentro de familia PD |
 | Ownership DVC/Git correcto | `dvc.yaml`, `dvc.lock`, punteros `.dvc` | `test_dvc_outputs_are_not_tracked_directly_by_git` |
 

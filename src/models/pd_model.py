@@ -2,7 +2,6 @@
 
 from __future__ import annotations
 
-import pickle
 from pathlib import Path
 from typing import Any
 
@@ -13,19 +12,12 @@ from loguru import logger
 from sklearn.linear_model import LogisticRegression
 from sklearn.metrics import roc_auc_score
 
+from src.features.feature_config_io import load_feature_config as load_feature_config_artifact
 from src.features.feature_engineering import (
     CATBOOST_FEATURES as CANONICAL_CATBOOST_FEATURES,
-)
-from src.features.feature_engineering import (
     CATEGORICAL_FEATURES as CANONICAL_CATEGORICAL_FEATURES,
-)
-from src.features.feature_engineering import (
     LOGREG_FEATURES as CANONICAL_LOGREG_FEATURES,
-)
-from src.features.feature_engineering import (
     NUMERIC_FEATURES as CANONICAL_NUMERIC_FEATURES,
-)
-from src.features.feature_engineering import (
     WOE_FEATURES as CANONICAL_WOE_FEATURES,
 )
 
@@ -45,13 +37,26 @@ def get_available_features(df: pd.DataFrame) -> list[str]:
 
 
 def load_feature_config(feature_config_path: str | Path) -> dict[str, Any]:
-    """Load persisted feature config artifact if available."""
+    """Load persisted feature config artifact if available.
+
+    The YAML companion is preferred when it exists; the legacy pickle remains
+    the fallback for frozen champion artifacts.
+    """
     path = Path(feature_config_path)
-    if not path.exists():
+    yaml_path = path if path.suffix.lower() in {".yml", ".yaml"} else path.with_suffix(".yml")
+    if not path.exists() and not yaml_path.exists():
         return {}
-    with open(path, "rb") as f:
-        cfg = pickle.load(f)
-    return cfg if isinstance(cfg, dict) else {}
+    try:
+        if path.suffix.lower() in {".yml", ".yaml"}:
+            return load_feature_config_artifact(yaml_path=path, prefer="yaml")
+        return load_feature_config_artifact(
+            pickle_path=path,
+            yaml_path=yaml_path,
+            prefer="auto",
+        )
+    except (FileNotFoundError, TypeError) as exc:
+        logger.warning(f"Unable to load feature_config from {path}: {exc}")
+        return {}
 
 
 def resolve_feature_sets(

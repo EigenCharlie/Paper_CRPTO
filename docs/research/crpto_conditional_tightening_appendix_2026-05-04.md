@@ -41,6 +41,46 @@ Under those extra assumptions, the weighted sum `V = sum_i w_i Z_i` becomes a
 sum of bounded independent terms. Hoeffding gives a tail bound based on
 `sum_i w_i^2`; Bernstein additionally uses conditional variance and `w_max`.
 
+## Cluster-Aware Journal Proposition
+
+The journal-strengthening version can state a weaker dependence-aware
+proposition without pretending that loan-level indicators are independent.
+Partition the funded set into clusters `g = 1, ..., G` such as period, grade, or
+period-grade. Define
+
+```text
+Z_g = sum_{i in g} w_i 1{Y_i > u_i(alpha)}
+W_g = sum_{i in g} w_i.
+```
+
+Within each cluster, the miss indicators may be arbitrarily dependent. After
+conditioning on the calibration sample and the fixed funded allocation, assume
+only that the cluster aggregates `Z_g` are independent or conditionally
+independent across `g`. Then `0 <= Z_g <= W_g` and Hoeffding gives
+
+```text
+P(V - E[V] >= t) <= exp(-2 t^2 / sum_g W_g^2).
+```
+
+This is not the main theorem. It is a transparent supplement result: it moves
+the extra assumption from loan-level independence to cross-cluster independence
+and makes the exposure concentration term explicit. Table A14 supplies the
+period, grade and period-grade weights that determine whether this tightening
+is practically useful.
+
+The numerical add-on is now Table A21:
+
+| Cluster | 90% threshold | 95% threshold | Interpretation |
+|---|---:|---:|---|
+| period | 0.538 | 0.612 | Looser than the main `sqrt(alpha) = 0.100` Markov reporting threshold. |
+| grade | 0.630 | 0.717 | Looser than Markov because exposure is concentrated by grade. |
+| period-grade | 0.332 | 0.377 | Best of the cluster partitions, but still not tighter than Markov. |
+
+So the dependence-aware result is mathematically transparent, but empirically
+not more tight than Markov for this funded-set exposure concentration. It is
+therefore useful as a journal caveat and reviewer-defense calculation, not as a
+replacement main theorem.
+
 ## Dependency Caveat
 
 Split conformal itself does not automatically make the test indicators

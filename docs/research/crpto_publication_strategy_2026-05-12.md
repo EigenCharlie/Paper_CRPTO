@@ -59,7 +59,7 @@ The first paper draft should be written as:
 
 - title: `CRPTO: Conformal Robust Predict-Then-Optimize for Auditable Credit Portfolio Decisions`;
 - body: 25-page IJDS-style manuscript;
-- supplement: A3--A18, proofs, extended tables, reproducibility and MRM/fairness;
+- supplement: A3--A21, proofs, extended tables, reproducibility and MRM/fairness;
 - review mode: anonymous by default;
 - companion: GitHub/DVC/DagsHub/MLflow after the anonymity policy is handled.
 
@@ -72,10 +72,47 @@ The short paper should keep only the strongest body material:
 - Markov bound and conditional tightening caveat;
 - champion metrics;
 - robust region `45/45`;
-- one concise SPO+/DFL comparison;
+- regret-auditability frontier with one concise SPO+/DFL comparison;
 - data/code reproducibility statement.
 
 Everything else lives in the supplement or book.
+
+## Submission Scope Lock
+
+The current paper is still centered on the frozen CRPTO champion, but P2/P3 are
+no longer treated as a blanket exclusion. The journal strengthening pack enters
+when it uses frozen artifacts and does not change the promoted policy: OCE/CVaR
+as a diagnostic, satisficing as margin evidence, regret-auditability as the
+SPO+/CRPTO comparator, and dependence-aware theory as a caveated supplement
+proposition.
+
+In scope for the current paper:
+
+- frozen CRPTO post-hoc champion;
+- calibrated PD -> Mondrian conformal intervals -> robust portfolio decision;
+- exact alpha-safe funded-set validation and `45/45` robust region;
+- A3--A21 as supplement evidence;
+- regret-auditability frontier in the body;
+- OCE/CVaR tail-risk diagnostics and robust satisficing margins in the
+  supplement;
+- cluster-aware dependence caveat/proposition with Markov retained as the main
+  distribution-free bound;
+- reproducibility via Quarto, DVC, DagsHub/MLflow and guardrail tests.
+
+Out of scope for the current paper:
+
+- OCE/CVaR as the optimized objective or constraint;
+- multi-distribution robust conformal prediction as the promoted layer;
+- online conformal recalibration or online DFL;
+- SPO+ + conformal hybrid training;
+- multi-dataset credit replication as current evidence;
+- causal/CATE CRPTO;
+- multi-period portfolio rebalancing;
+- field trial, production monitoring dashboard, or open-source package
+  extraction.
+
+If any of those become central, the project moves to a new run/protocol rather
+than quietly expanding the current manuscript.
 
 ## Template Policy
 
@@ -88,6 +125,8 @@ uses Quarto skeletons for writing:
 
 When the text is ready for submission, convert or render the IJDS `.qmd` into
 the official IJDS LaTeX template rather than inventing a custom journal style.
+The author portal/Overleaf template uses `\documentclass[ijds,dblanonrev]{informs4}`
+for double-anonymous review, so the conversion target is explicit.
 
 ## Pivot Rules
 

@@ -1,7 +1,7 @@
 # CRPTO task runner — cross-platform via `just`.
 # Install: https://github.com/casey/just  (or `winget install Casey.Just` on Windows)
 
-set windows-shell := ["pwsh.exe", "-NoLogo", "-NoProfile", "-Command"]
+set windows-shell := ["powershell.exe", "-NoLogo", "-NoProfile", "-Command"]
 set dotenv-load := true
 
 # --- Setup ---------------------------------------------------------------
@@ -112,7 +112,7 @@ dbt-build:
 # --- Governance ---------------------------------------------------------
 
 validate-champion:
-    uv run python -c "import json, hashlib; from pathlib import Path; m=json.loads(Path('EXTRACTION_MANIFEST.json').read_text()); print('manifest loaded:', len(m), 'top-level keys')"
+    uv run pytest tests/test_manifest_regression.py -q
 
 mrm-card:
     uv run python -c "print('use /crpto-mrm-card via Claude Code or write the script')"

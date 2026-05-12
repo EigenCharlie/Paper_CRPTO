@@ -108,8 +108,30 @@ stages:
     deps:
       - scripts/build_crpto_journal_package.py
       - reports/crpto/tables/crpto_tableA7_funded_set_loans.csv
+      - reports/crpto/tables/crpto_tableA8_funded_set_composition.csv
+      - models/final_project_promotion.json
+      - models/spo_real_training_status.json
+      - data/processed/crpto_vs_spo_stability.json
+      - data/processed/portfolio_bound_aware/rank1_alpha01_bound_aware_276k_full_2026-04-05-1734/portfolio_bound_aware_shortlist.parquet
+      - data/processed/portfolio_bound_aware/rank1_alpha01_bound_aware_276k_full_2026-04-05-1734/portfolio_bound_aware_bound_eval.parquet
     outs:
       - models/crpto_journal_package_status.json
+  crpto.paper.tail_satisficing_audit:
+    cmd: python scripts/build_tail_satisficing_challenger_audit.py
+    deps:
+      - scripts/build_tail_satisficing_challenger_audit.py
+      - src/optimization/tail_satisficing_objective.py
+      - scripts/optimize_portfolio_tradeoff.py
+      - configs/crpto_optimization.yaml
+      - configs/crpto_tail_satisficing_objective.yaml
+      - models/final_project_promotion.json
+      - reports/crpto/tables/crpto_tableA7_funded_set_loans.csv
+      - data/processed/test.parquet
+      - data/processed/test_fe.parquet
+      - data/processed/conformal_gap/conformal-reopen-2026-04-03-2149__resume__2026-04-05-1612__phase1__final__rank-1/conformal_intervals_mondrian.parquet
+      - data/processed/portfolio_bound_aware/rank1_alpha01_bound_aware_276k_full_2026-04-05-1734/portfolio_bound_aware_shortlist.parquet
+    outs:
+      - models/crpto_tail_satisficing_audit_status.json
   crpto.paper.figures:
     cmd: python scripts/generate_crpto_figures.py --paper crpto
     deps:
