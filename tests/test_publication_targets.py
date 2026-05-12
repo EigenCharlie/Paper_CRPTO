@@ -35,3 +35,24 @@ def test_ijds_sources_are_anonymous_by_default() -> None:
         text = path.read_text(encoding="utf-8")
         assert 'author: "Anonymous"' in text
         assert "Carlos Alfredo Vergara Rojas" not in text
+        assert "TODO(manuscript)" not in text
+
+
+def test_current_submission_excludes_p2_p3_scope() -> None:
+    cfg = yaml.safe_load(Path("configs/crpto_publication_targets.yaml").read_text(encoding="utf-8"))
+    boundary = cfg["current_decision"]["p2_p3_boundary"]
+    excluded = cfg["primary_target"]["current_paper_scope"]["exclude_p2_p3"]
+
+    assert "future work" in boundary
+    assert len(excluded) >= 4
+
+    body = Path("paper/CRPTO_ijds.qmd").read_text(encoding="utf-8")
+    supplement = Path("paper/supplement_ijds.qmd").read_text(encoding="utf-8")
+    closure = Path("docs/research/crpto_submission_closure_2026-05-12.md").read_text(
+        encoding="utf-8"
+    )
+
+    for text in (body, supplement, closure):
+        assert "P2" in text
+        assert "P3" in text
+        assert "future work" in text.lower()

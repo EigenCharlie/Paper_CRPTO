@@ -21,3 +21,5 @@ libro independiente.
   navegacion y diseno retenidas del libro grande para GitHub Pages.
 - `crpto_publication_strategy_2026-05-12.md`: decision de venue, plantilla,
   anonimato, pivotes y salida IJDS/EJOR.
+- `crpto_submission_closure_2026-05-12.md`: cierre operativo del submission
+  IJDS; fija que P2/P3 son future work y lista los gates finales.

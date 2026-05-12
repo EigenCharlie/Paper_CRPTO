@@ -26,7 +26,11 @@ execute:
 Primary target: INFORMS Journal on Data Science. This draft is intentionally
 anonymous and capped conceptually at a 25-page body, excluding references and
 appendices. The final submission PDF should be produced with the official IJDS
-LaTeX template.
+LaTeX template using double-anonymous review settings.
+
+The submission scope is locked: P2 and P3 backlog items are future work, not
+requirements for this paper. They may appear only as limitations or future
+research directions.
 :::
 
 # Abstract
@@ -93,6 +97,8 @@ from frozen outputs rather than manually transcribed summaries. Third, it
 documents the governance boundary between safe paper-facing reruns and
 protected stages that would change the promoted champion.
 
+![CRPTO maps calibrated PDs through a conformal uncertainty layer into an auditable robust portfolio decision.](../reports/crpto/figures/crpto_fig12_crpto_conceptual_pipeline.png){#fig-crpto-pipeline width="90%"}
+
 # Related Work
 
 CRPTO builds on conformal prediction, especially split conformal methods and
@@ -129,11 +135,10 @@ optimization, multi-distribution conformal validity, online conformal portfolio
 methods, and end-to-end conformal risk training [@bao2025croms;
 @yang2026multidistribution; @liu2026portfolio; @yeh2025training;
 @zhao2025robust]. These are important, but they are deliberately separated from
-the present contribution. The claim here is a reproducible two-stage bridge,
-not a new online or end-to-end training algorithm.
-
-<!-- TODO(manuscript): tighten this review to the final IJDS page budget after the
-official template is installed. -->
+the present contribution. In the project backlog they are P2/P3 items: useful
+extensions for a later paper, but not missing evidence for this submission. The
+claim here is a reproducible two-stage bridge, not a new online,
+multi-distribution, causal, or end-to-end training algorithm.
 
 # Method
 
@@ -235,6 +240,13 @@ bundle without revealing author identity. Repository and remote-storage URLs
 will be disclosed according to the journal's double-anonymous and
 data/code-disclosure policy.
 
+The body-supplement split is fixed before submission. The body keeps the CRPTO
+pipeline, the alpha-to-portfolio link, the robust-region evidence, and the core
+metrics. The online supplement carries A3--A18, the conformal finalist
+ablation, funded-set loan audit, tail-risk diagnostics, MRM/fairness material,
+and reproduction commands. This keeps the IJDS body focused while preserving
+the audit trail that reviewers need.
+
 # Results
 
 Table 1 summarizes the frozen paper-facing metrics. The calibrated PD layer is
@@ -269,6 +281,10 @@ pass the exact `alpha = 0.01` check. The selected policy is the economic
 champion inside that exact robust region, not merely the first feasible point.
 The supplement reports the full alpha/gamma funded-set table, robust-region
 heatmap, and policy-family appendix.
+
+![Alpha connects the conformal layer to funded-set quantities and portfolio-level risk.](../reports/crpto/figures/crpto_fig13_alpha_gamma_funded_set.png){#fig-alpha-gamma width="90%"}
+
+![The final evaluated robust region has 45/45 alpha-safe policies.](../reports/crpto/figures/crpto_fig14_robust_region_heatmap.png){#fig-robust-region width="90%"}
 
 # Robustness And Comparators
 
@@ -346,8 +362,16 @@ for future work so that the present paper can keep its central claim sharp:
 calibrated prediction uncertainty can be converted into an auditable robust
 credit portfolio decision with reproducible evidence.
 
-<!-- TODO(manuscript): after the body is complete, convert this source into the
-official IJDS LaTeX template and decide how the companion is disclosed under
-double-anonymous review. -->
+These directions are not blockers for this submission. In the repository
+backlog, P2 items require new methods, new runs, or new proofs, and P3 items
+belong to broader thesis or product work. This paper therefore submits the
+frozen CRPTO result as an auditable post-hoc predict-then-optimize contribution;
+it does not ask reviewers to evaluate a sequential, causal, production, or
+open-source-package version of CRPTO.
+
+The final production step is mechanical: convert this source into the official
+IJDS LaTeX template, keep `dblanonrev`, submit the title page separately, and
+disclose the companion bundle according to the journal's data/code policy and
+double-anonymous review rules.
 
 # References

@@ -35,6 +35,17 @@ La contribución central sigue siendo la misma: **CRPTO post-hoc auditable con e
 Criba de mejoras según si preservan o cambian la dirección del paper.
 :::
 
+::: {.callout-important}
+## Regla de alcance para este paper
+
+P2 y P3 no son pendientes del submission actual. P2 queda como agenda
+metodológica posterior y P3 como trabajo de tesis/producto. En este paper solo
+entran el champion CRPTO congelado, la región robusta, el paquete A3--A18 como
+evidencia de supplement y la reproducibilidad Quarto/DVC/DagsHub/MLflow. Si una
+idea requiere nuevo objetivo, nuevo dataset, nueva búsqueda, producción viva o
+nueva teoría principal, no bloquea este submission.
+:::
+
 ### Manifest por sección del capítulo 14
 
 ::: {#tbl-crpto-section-extraction-manifest}
@@ -189,8 +200,8 @@ del dossier está lista para ser usada como fuente de manuscrito.
 | Champion sincronizado | `uv run pytest tests/test_crpto_final_sync.py` | Todos los tests del CRPTO pasan. |
 | Quarto registrado | `uv run pytest tests/test_quarto_book_guardrails.py` | Todas las páginas `.qmd` están en `_quarto.yml`. |
 | Venue definido | `configs/crpto_publication_targets.yaml` | IJDS primario y EJOR pivote siguen declarados. |
-| Manuscrito IJDS | `just paper-ijds` | `paper/CRPTO_ijds.html` renderiza sin ejecutar pipeline. |
-| Supplement IJDS | `just paper-ijds-supplement` | `paper/supplement_ijds.html` renderiza sin ejecutar pipeline. |
+| Manuscrito + supplement IJDS | `just paper-submission` | `paper/CRPTO_ijds.html` y `paper/supplement_ijds.html` renderizan sin ejecutar pipeline. |
+| Alcance P2/P3 | `configs/crpto_publication_targets.yaml` + esta página | P2/P3 quedan declarados como future work, no como requisito del paper. |
 | Tablas canónicas | `uv run python scripts/export_crpto_tables.py` | A0 usa `models/final_project_promotion.json`. |
 | P1 evidence | `uv run python scripts/analyze_crpto_evidence.py --include-hardening` | A3--A11 actualizadas y status JSON coherente. |
 | Journal package | `uv run python scripts/build_crpto_journal_package.py` | A12--A18 y Fig 12--14 actualizadas. |
@@ -200,6 +211,7 @@ del dossier está lista para ser usada como fuente de manuscrito.
 | Companion surface | `14o` + `14n` | Quarto/DVC/MLflow declarados como companion primario; Streamlit no bloquea release. |
 | Render targeted | `uv run -- quarto render book/chapters/14-release.qmd --to html --no-execute` | Página renderiza sin errores. |
 | Hooks | `uv run pre-commit run` | Sin drift de formato ni archivos grandes. |
+| Plantilla IJDS | `INFORMS-IJDS-Template.tex` | Conversión final usa `dblanonrev`; no se inventa estilo propio. |
 
 Checklist de release paper-facing.
 :::

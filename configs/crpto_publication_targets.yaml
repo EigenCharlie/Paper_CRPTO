@@ -34,6 +34,16 @@ primary_target:
     - "Create anonymized online supplement from paper/supplement_ijds.qmd."
     - "Remove author-identifying GitHub/DagsHub URLs from the anonymous PDF unless policy allows non-anonymous companion disclosure."
     - "Freeze a release tag and reproducibility bundle after anonymity decision."
+  current_paper_scope:
+    include:
+      - "Frozen post-hoc CRPTO champion and exact alpha-safe robust region."
+      - "A3--A18 as supplement/appendix evidence generated from frozen artifacts."
+      - "Quarto/DVC/DagsHub/MLflow companion after anonymity handling."
+    exclude_p2_p3:
+      - "OCE/CVaR as an optimized portfolio objective."
+      - "Multi-distribution or online conformal prediction as the promoted conformal layer."
+      - "Online DFL, SPO+ + conformal hybrid training, or causal CRPTO."
+      - "Multi-period portfolio, production dashboard, field trial, or package extraction."
 
 secondary_targets:
   - id: ejor
@@ -109,3 +119,4 @@ current_decision:
     - operations_research
     - informs_ijoo
   reason: "CRPTO currently has the strongest fit as reproducible decision-focused data science with OR substance."
+  p2_p3_boundary: "P2/P3 backlog items are future work and are not acceptance criteria for the current IJDS submission."

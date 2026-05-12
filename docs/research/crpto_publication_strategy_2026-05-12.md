@@ -77,6 +77,35 @@ The short paper should keep only the strongest body material:
 
 Everything else lives in the supplement or book.
 
+## Submission Scope Lock
+
+The current paper is **not** a P2/P3 paper. P2 and P3 items are useful research
+directions, but they are not missing work for the IJDS submission. They should
+appear only in the limitations/future-work paragraph or in reviewer-response
+language.
+
+In scope for the current paper:
+
+- frozen CRPTO post-hoc champion;
+- calibrated PD -> Mondrian conformal intervals -> robust portfolio decision;
+- exact alpha-safe funded-set validation and `45/45` robust region;
+- A3--A18 as supplement evidence;
+- reproducibility via Quarto, DVC, DagsHub/MLflow and guardrail tests.
+
+Out of scope for the current paper:
+
+- OCE/CVaR as the optimized objective or constraint;
+- multi-distribution robust conformal prediction as the promoted layer;
+- online conformal recalibration or online DFL;
+- SPO+ + conformal hybrid training;
+- causal/CATE CRPTO;
+- multi-period portfolio rebalancing;
+- field trial, production monitoring dashboard, or open-source package
+  extraction.
+
+If any of those become central, the project moves to a new run/protocol rather
+than quietly expanding the current manuscript.
+
 ## Template Policy
 
 Do not optimize the final PDF template before the venue is fixed. The repo now
@@ -88,6 +117,8 @@ uses Quarto skeletons for writing:
 
 When the text is ready for submission, convert or render the IJDS `.qmd` into
 the official IJDS LaTeX template rather than inventing a custom journal style.
+The author portal/Overleaf template uses `\documentclass[ijds,dblanonrev]{informs4}`
+for double-anonymous review, so the conversion target is explicit.
 
 ## Pivot Rules
 

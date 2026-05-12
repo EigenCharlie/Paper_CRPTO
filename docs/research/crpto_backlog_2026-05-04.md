@@ -157,11 +157,26 @@ cleanup" for the current CRPTO.
 - The current paper is a **CRPTO post-hoc auditable** paper with a frozen
   economic champion.
 - P0/P1/P1-J items strengthen the current paper without changing its direction.
-- P2 items are real methodological extensions and should be opened only with a
-  named run/protocol.
-- P3 items belong to broader thesis/product work.
+- P2 items are **not pending work for this paper**. They are real
+  methodological extensions and should be opened only with a named run/protocol
+  after the current submission.
+- P3 items are **not part of this paper**. They belong to broader
+  thesis/product work.
 - If any diagnostic table contradicts `models/final_project_promotion.json`,
   the promotion artifact wins.
+
+## Current IJDS Submission Scope
+
+The IJDS submission includes the frozen CRPTO champion, the robust-region
+evidence, the A3--A18 supplement, and the reproducibility package. It excludes
+all P2/P3 extensions as acceptance criteria.
+
+| Lane | Current-paper status | Rule |
+|---|---|---|
+| P0 | Active maintenance | Keep green before every submission-facing change. |
+| P1/P1-J | Included as paper/supplement evidence | Use existing artifacts only; do not re-search. |
+| P2 | Future-methodology only | Mention in future work; do not implement for this paper. |
+| P3 | Future thesis/product only | Do not use as a blocker or submission requirement. |
 
 ## P0 - Keep Current Paper Publishable
 
