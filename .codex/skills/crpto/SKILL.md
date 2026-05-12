@@ -22,7 +22,7 @@ Use this skill for work inside the standalone `Paper_CRPTO` repository.
 
 ## Common checks
 
-```bash
+```powershell
 uv run pytest tests/test_crpto_final_sync.py tests/test_quarto_book_guardrails.py -q
 uv run dbt deps --project-dir dbt_project --profiles-dir dbt_project
 uv run dbt parse --project-dir dbt_project --profiles-dir dbt_project
@@ -30,17 +30,10 @@ uv run dvc status --no-updates
 uv run -- quarto render book --to html --no-execute
 ```
 
-For WSL, prefer:
-
-```bash
-export UV_PROJECT_ENVIRONMENT=.venv-wsl
-export UV_LINK_MODE=copy
-```
-
-For Windows PowerShell, use the default `.venv/Scripts` environment.
+Use Windows PowerShell and the default `.venv/Scripts` environment. Do not use
+non-Windows shells as the normal execution path for this repo.
 
 ## Publication flow
 
-The GitHub repository should be named `Paper_CRPTO`. Create it private first,
-push the first commit after secret scans pass, then decide whether to make the
-book public through GitHub Pages.
+The GitHub repository is `EigenCharlie/Paper_CRPTO`; the book publishes through
+GitHub Pages after `book-publish` passes.

@@ -190,9 +190,8 @@ These are discovery inputs only. They should not be cited in the book as scholar
 - `docs/MODEL_RISK_MANAGEMENT.md`
 - `SESSION_STATE.md`
 - `reports/mrm/mrm_validation_report.json`
-- `.claude/projects/-home-eigenlinux-projects-Paper_CRPTO/memory/project_quarto_book_progress.md`
-- `.claude/projects/-home-eigenlinux-projects-Paper_CRPTO/memory/project_mega_run_20260312.md`
-- Codex thread registry metadata from `.codex/state_5.sqlite`
+- historical Claude memory exports from the original extraction workspace
+- Codex thread registry metadata from the original extraction workspace
 
 Use rule:
 

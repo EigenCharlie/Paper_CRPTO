@@ -10,8 +10,8 @@ stages:
       isexec: true
     - path: book/chapters
       hash: md5
-      md5: fe9bcdab8295628ca704d612d04498fa.dir
-      size: 681435
+      md5: 09e7d5ff0141506bf0ce2bc88263f15d.dir
+      size: 681428
       nfiles: 25
     - path: book/index.qmd
       hash: md5
@@ -31,8 +31,8 @@ stages:
     outs:
     - path: book/_book
       hash: md5
-      md5: 94c65ae5de37a6d8e768e9495b9b82f1.dir
-      size: 16952132
+      md5: 1cf41b7b6cdab1e41d67a2dd695a332e.dir
+      size: 16952443
       nfiles: 87
   crpto.paper.figures:
     cmd: python scripts/generate_crpto_figures.py --paper crpto

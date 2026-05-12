@@ -241,10 +241,9 @@ uv run pytest tests/test_crpto_final_sync.py
 
 Para renderizar solo esta parte del libro:
 
-```bash
-cd book
-QUARTO_PYTHON="$(pwd)/../.venv/bin/python" quarto render chapters/06-blueprint-manuscrito.qmd --to html
-QUARTO_PYTHON="$(pwd)/../.venv/bin/python" quarto render chapters/07-apendice-robustez.qmd --to html
+```powershell
+uv run -- quarto render book/chapters/06-blueprint-manuscrito.qmd --to html --no-execute
+uv run -- quarto render book/chapters/07-apendice-robustez.qmd --to html --no-execute
 ```
 
 ::: {.callout-important}

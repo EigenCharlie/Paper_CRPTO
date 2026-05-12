@@ -29,8 +29,9 @@ configuration.
 
 ## Lessons from the extraction
 
-- Windows/WSL line endings can dirty `.dvc` pointer files, so `.gitattributes`
-  pins DVC/YAML/Quarto/Python/text files to LF.
+- Mixed shell line endings can dirty `.dvc` pointer files, so `.gitattributes`
+  pins DVC/YAML/Quarto/Python/text files to LF. The current working mode is
+  Windows PowerShell native.
 - Local secret duplicates such as `.env_original` and root-level `config.local`
   create accidental-push risk; secrets now live in `.env` and
   `.dvc/config.local` only.

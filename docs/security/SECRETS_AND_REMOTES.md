@@ -70,23 +70,18 @@ For `EigenCharlie/Paper_CRPTO`, keep these enabled in repository settings:
 repository as unsupported, enable it in Settings -> Security and analysis
 before merging dependency PRs.
 
-## WSL and Windows venvs
+## Windows-native environment
 
-Do not share one `.venv` between WSL and Windows PowerShell. If you work from
-WSL, run:
+The official local environment for this standalone repository is Windows
+PowerShell with `.venv/Scripts`.
 
-```bash
-export UV_PROJECT_ENVIRONMENT=.venv-wsl
-export UV_LINK_MODE=copy
-uv sync --extra dev --extra search
-```
-
-If you work from Windows PowerShell, use:
+Use:
 
 ```powershell
 uv venv
 uv sync --extra dev --extra search
 ```
 
-This prevents WSL `uv run` from replacing a Windows `.venv/Scripts` environment
-with a POSIX `.venv/bin` environment.
+Do not set custom Python/Quarto environment overrides for normal work. `uv run`
+selects the project venv and `uv run -- quarto ...` provides the right Python
+context for Quarto renders.

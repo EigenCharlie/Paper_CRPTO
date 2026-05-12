@@ -112,15 +112,17 @@ The default CI must remain lightweight: `lint` and `book-publish` run on push.
 The artifact-aware `tests-full` workflow is manual and should be run before
 journal milestones or any protected-stage revalidation.
 
-## Environments
+## Environment
 
-Use separate virtual environments per OS:
+Use the Windows-native project environment:
 
 - Windows PowerShell: `.venv/Scripts/python.exe`
-- WSL: `UV_PROJECT_ENVIRONMENT=.venv-wsl` and `UV_LINK_MODE=copy`
+- Python tools: `uv run ...`
+- Quarto renders: `uv run -- quarto ...`
 
-Do not share the same `.venv` between Windows and WSL. Use `uv run` for Python
-tools and `uv run -- quarto ...` for book renders.
+Do not route normal CRPTO work through non-Windows shells. If a shell or tool
+creates a non-Windows virtualenv layout, treat it as a misconfigured local
+environment and recreate the venv from PowerShell.
 
 ## Release checklist
 

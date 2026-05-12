@@ -198,7 +198,7 @@ del dossier está lista para ser usada como fuente de manuscrito.
 | DVC local | `uv run dvc status --no-updates` | Datos y pipelines al día. |
 | DagsHub remote | `uv run dvc status -c -r dagshub` | Cache y remoto sincronizados. |
 | Companion surface | `14o` + `14n` | Quarto/DVC/MLflow declarados como companion primario; Streamlit no bloquea release. |
-| Render targeted | `bash scripts/render_quarto.sh render book/chapters/14-release.qmd --to html` | Página renderiza sin errores. |
+| Render targeted | `uv run -- quarto render book/chapters/14-release.qmd --to html --no-execute` | Página renderiza sin errores. |
 | Hooks | `uv run pre-commit run` | Sin drift de formato ni archivos grandes. |
 
 Checklist de release paper-facing.

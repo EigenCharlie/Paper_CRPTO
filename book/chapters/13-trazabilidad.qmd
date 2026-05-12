@@ -179,9 +179,9 @@ pd.DataFrame(
 
 ### Runbook: regenerar el paquete completo
 
-```bash
-# 1. Activar entorno
-source .venv/bin/activate
+```powershell
+# 1. Verificar entorno Windows nativo
+uv run python --version
 
 # 2. Regenerar tablas paper-facing canónicas (A0-A6)
 uv run python scripts/export_crpto_tables.py
@@ -199,10 +199,10 @@ uv run python scripts/generate_crpto_figures.py
 uv run pytest tests/test_crpto_final_sync.py tests/test_quarto_book_guardrails.py
 
 # 7. Renderizar libro Quarto
-bash scripts/render_quarto.sh render book/ --to html
+uv run -- quarto render book --to html --no-execute
 
 # 8. Abrir resultado
-ls book/_output/index.html
+Test-Path book/_book/index.html
 ```
 
 ### Runbook: familias congeladas vs familias de búsqueda

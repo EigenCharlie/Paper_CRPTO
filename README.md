@@ -30,7 +30,8 @@ Hashes SHA256 de los artefactos críticos están en [`EXTRACTION_MANIFEST.json`]
 | DuckDB CLI | 1.3+ | Opcional, queries directas a `data/processed/crpto.duckdb`. |
 | Git | 2.40+ | Para hooks pre-commit. |
 
-En Windows, `uv` y `quarto` deben estar en `PATH`. El venv del proyecto vive en `.venv/Scripts/` (Windows), no en `.venv/bin/` (Linux/macOS).
+En Windows, `uv`, `just` y `quarto` deben estar en `PATH`. El venv oficial del
+proyecto vive en `.venv/Scripts/`; usa PowerShell como shell normal de trabajo.
 
 ## Setup rápido
 
@@ -188,12 +189,9 @@ just paper-submission
 
 **Render del libro falla con `ModuleNotFoundError`** — los chunks Python requieren el venv activo. `uv run -- quarto render book` resuelve esto.
 
-**`.venv/bin/python: no such file`** — ese path es Linux/macOS. En Windows usa `.venv/Scripts/python.exe` o, mejor, `uv run python` (cross-platform).
-
-**WSL reemplaza la `.venv` de Windows** — no compartas una sola `.venv` entre
-WSL y PowerShell. En WSL usa `UV_PROJECT_ENVIRONMENT=.venv-wsl`; en Windows
-PowerShell usa la `.venv/Scripts` normal. Ver
-[`docs/security/SECRETS_AND_REMOTES.md`](docs/security/SECRETS_AND_REMOTES.md).
+**El entorno Python parece incorrecto** — borra variables locales que cambien el
+entorno de `uv` o Quarto, recrea con `uv venv && uv sync --extra dev --extra
+search`, y trabaja desde PowerShell en `C:\Users\carlos\Documents\Paper_CRPTO`.
 
 **`dvc status` muestra muchos cambios** — probablemente el lockfile cambió. Ejecuta `just dvc-status` para ver detalle. Si los stages del champion están afectados, NO repro: documenta y consulta antes.
 
@@ -226,7 +224,7 @@ Ninguno modifica artefactos congelados — solo leen `data/processed/` y `models
 - [`docs/research/`](docs/research/) — Dossier académico (conformal prediction readme, audit, integrations).
 - [`paper/README.md`](paper/README.md) — Workspace de manuscrito, target IJDS y
   comandos de render.
-- [`docs/security/SECRETS_AND_REMOTES.md`](docs/security/SECRETS_AND_REMOTES.md) — Variables de entorno, secretos, remotes DVC/MLflow y WSL/Windows.
+- [`docs/security/SECRETS_AND_REMOTES.md`](docs/security/SECRETS_AND_REMOTES.md) — Variables de entorno, secretos y remotes DVC/MLflow para Windows.
 - [`EXTRACTION_MANIFEST.json`](EXTRACTION_MANIFEST.json) + [`EXTRACTION_MANIFEST.md`](EXTRACTION_MANIFEST.md) — Hashes y narrativa de la extracción.
 
 ## Citar este trabajo

@@ -4,23 +4,17 @@ This runbook is scoped to the standalone `Paper_CRPTO` package.
 
 ## Environment
 
-```bash
+```powershell
 uv sync --extra dev --extra search
 cp .env.example .env
 ```
 
-On WSL, avoid clobbering a Windows virtualenv:
-
-```bash
-export UV_PROJECT_ENVIRONMENT=.venv-wsl
-export UV_LINK_MODE=copy
-```
-
-On Windows PowerShell, keep the default `.venv/Scripts` environment.
+Use Windows PowerShell and the default `.venv/Scripts` environment. Do not set
+custom Python/Quarto environment overrides for normal work.
 
 ## Safe daily checks
 
-```bash
+```powershell
 uv run pytest tests/test_crpto_final_sync.py tests/test_quarto_book_guardrails.py -q
 uv run dbt deps --project-dir dbt_project --profiles-dir dbt_project
 uv run dbt parse --project-dir dbt_project --profiles-dir dbt_project
@@ -32,7 +26,7 @@ uv run -- quarto render book --to html --no-execute
 
 Safe deterministic outputs:
 
-```bash
+```powershell
 uv run python scripts/export_crpto_tables.py
 uv run python scripts/generate_crpto_figures.py --paper crpto
 uv run python scripts/analyze_crpto_evidence.py

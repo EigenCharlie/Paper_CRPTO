@@ -1,0 +1,7 @@
+[shell_environment_policy]
+inherit = "core"
+
+[shell_environment_policy.set]
+PYTHONIOENCODING = "utf-8"
+QUARTO_LOG_LEVEL = "WARNING"
+UV_LINK_MODE = "copy"

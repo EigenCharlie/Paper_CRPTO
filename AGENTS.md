@@ -1,4 +1,4 @@
-# CLAUDE.md — Contexto para Claude Code en Paper_CRPTO
+# AGENTS.md — Contexto para Codex en Paper_CRPTO
 
 ## Quién soy y qué es este proyecto
 
@@ -218,7 +218,7 @@ El documento rector es `docs/SCOPE_AND_GOVERNANCE.md`. En corto:
 - **DuckDB MCP** — queries directas a `data/processed/crpto.duckdb`.
 - **GitHub MCP** — repo `EigenCharlie/Paper_CRPTO`.
 
-## Skills custom del proyecto (`.claude/skills/`)
+## Skills custom del proyecto (`.codex/skills/`)
 
 - `/crpto-render` — render del libro + QA visual con Playwright.
 - `/crpto-stage` — `dvc repro` de un stage aislado, con dry-run.

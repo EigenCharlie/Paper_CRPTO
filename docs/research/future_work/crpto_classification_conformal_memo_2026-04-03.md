@@ -4,7 +4,10 @@
 
 Date: 2026-04-03
 
-Source reviewed: local PDF `/home/eigenlinux/documentos/Applied_Conformal_Prediction (2).pdf`, Chapter 3, especially Sections 3.2-3.5 (pp. 63-87 in the PDF pagination shown by the text extract).
+Source reviewed during the original extraction: a local copy of
+`Applied_Conformal_Prediction (2).pdf`, Chapter 3, especially Sections 3.2-3.5
+(pp. 63-87 in the PDF pagination shown by the text extract). The standalone
+CRPTO repo does not depend on the original local filesystem path.
 
 ## Bottom line
 
