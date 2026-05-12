@@ -22,56 +22,92 @@ execute:
 ::: {.callout-note}
 ## Scope
 
-This supplement is the IJDS online-supplement scaffold. It should absorb the
-material that is too long for the 25-page body but still necessary for reviewer
-trust: proofs, robustness tables A3--A18, reproducibility, MRM, fairness and
+This supplement is the IJDS online-supplement draft. It collects the material
+that is too long for the 25-page body but still necessary for reviewer trust:
+proof details, robustness tables A3--A18, reproducibility, MRM, fairness and
 artifact lineage.
 :::
 
 # Appendix A: Theoretical Details
 
-- Markov bound proof for fixed allocation.
-- Conditional Hoeffding/Bernstein tightening and dependence caveat.
-- Notation table: `Y_i`, `p_hat_i`, `u_i(alpha)`, `x_i`, `w_i`, `Gamma_CP`,
-  `gamma`, `V`.
+This appendix contains the formal notation and proof details that are too long
+for the IJDS body. The body states the operational guarantee in words; here the
+portfolio quantities are defined explicitly so that the bound check can be
+reproduced from the frozen artifacts.
+
+| Symbol | Meaning |
+|---|---|
+| `Y_i` | Realized default indicator or bounded loss proxy for loan `i`. |
+| `p_hat_i` | Calibrated probability of default used by the decision layer. |
+| `u_i(alpha)` | Upper conformal endpoint at miscoverage level `alpha`. |
+| `x_i` | Funded decision or allocation weight. |
+| `w_i` | Normalized funded-set weight used in the portfolio bound. |
+| `gamma` | Policy parameter in the robust optimization rule. |
+| `Gamma_CP` | Portfolio-level conformal risk metric reported after allocation. |
+| `V(alpha)` | Weighted funded-set miscoverage quantity. |
+
+For a fixed funded allocation, conformal coverage controls the expected
+interval miss indicator under the stated exchangeability design. Normalized
+funded weights turn loan-level misses into `V(alpha)`. A Markov-style argument
+then converts the expected weighted miss control into the portfolio-level
+quantity checked in the exact funded-set evaluation. Conditional
+Hoeffding/Bernstein tightenings are reported as sensitivity calculations rather
+than as the main theorem, because the Lending Club evaluation is temporal and
+dependence-aware theory is kept as future work.
 
 # Appendix B: P1 Evidence
 
-Include or reference:
+The P1 evidence package records the checks used to promote CRPTO from a
+promising conformal/optimization pipeline to a paper-ready result. These tables
+are regenerated from frozen artifacts and are not hand-edited.
 
-- A3 nested holdout;
-- A4 segment-period sensitivity;
-- A5 decision-aware conformal selector;
-- A6 synthetic shift;
-- A7 funded-set loan export;
-- A8 funded-set composition;
-- A9 strict temporal holdout;
-- A10 conformal finalist exact bound evaluation;
-- A11 enhanced synthetic shift.
+| Appendix table | Role |
+|---|---|
+| A3 nested holdout | Confirms the promoted result under an additional validation split. |
+| A4 segment-period sensitivity | Checks whether conclusions depend on a narrow time segment. |
+| A5 decision-aware selector | Compares conformal candidates through decision-facing metrics. |
+| A6 synthetic shift | Stress-tests uncertainty behavior under controlled perturbations. |
+| A7 funded-set loan export | Gives the reviewer a row-level funded-set audit trail. |
+| A8 funded-set composition | Summarizes grade, amount, and risk composition of the chosen portfolio. |
+| A9 strict temporal holdout | Separates final evidence from earlier model-selection decisions. |
+| A10 finalist exact bound evaluation | Verifies exact alpha-safe status for conformal finalists. |
+| A11 enhanced synthetic shift | Extends shift checks around the final promoted policy. |
 
 # Appendix C: Journal Robustness Package
 
-Include or reference:
+The journal robustness package addresses likely reviewer objections that do not
+fit in the body without crowding the main narrative.
 
-- A12 tail-risk OCE/CVaR diagnostics;
-- A13 satisficing margins;
-- A14 dependency cluster diagnostics;
-- A15 leave-one-period stress;
-- A16 bootstrap funded-set metrics;
-- A17 budget/LGD/cap sensitivity;
-- A18 robust region by policy family.
+| Appendix table | Role |
+|---|---|
+| A12 tail-risk OCE/CVaR diagnostics | Shows whether tail-risk objectives tell the same qualitative story. |
+| A13 satisficing margins | Measures distance from policy feasibility boundaries. |
+| A14 dependency cluster diagnostics | Checks whether correlated segments drive the bound. |
+| A15 leave-one-period stress | Removes one period at a time to assess temporal fragility. |
+| A16 bootstrap funded-set metrics | Quantifies sampling variation in funded-set summaries. |
+| A17 budget/LGD/cap sensitivity | Varies operational assumptions around budget and exposure. |
+| A18 robust region by policy family | Confirms that the robust region is not tied to one narrow policy family. |
 
 # Appendix D: Fair Lending, MRM And Governance
 
-Summarize the proxy/intersectional fairness audit, MRM card, challenger policy
-and retraining triggers. State clearly that the open Lending Club data does not
-provide direct protected attributes for legal fairness certification.
+The governance appendix summarizes proxy and intersectional fairness audits,
+model-risk-management cards, challenger criteria, and retraining triggers. The
+fairness analysis is framed as a model-risk diagnostic rather than as a legal
+certification. The public Lending Club data do not contain direct protected
+attributes, so the paper cannot claim statutory fair-lending compliance.
+
+The MRM material documents intended use, out-of-scope use, model assumptions,
+calibration and conformal diagnostics, challenger policies, artifact lineage,
+and escalation triggers. In the CRPTO setting, a retraining trigger is not an
+automatic production process; it is a research governance event that would
+require a new run tag and a fresh drift report against the frozen champion.
 
 # Appendix E: Reproducibility
 
-List the minimal reviewer commands:
+The reviewer-facing reproduction path separates artifact-independent checks
+from artifact-aware validation. The minimal local checks are:
 
-```bash
+```powershell
 just setup-base
 just smoke
 just tables
@@ -80,9 +116,15 @@ just journal-package
 just book
 ```
 
-Also include:
+The full artifact-aware validation additionally requires credentials for the
+remote artifact store and should be run only when the review process allows the
+companion bundle to be disclosed. The key invariant is the manifest hash policy:
+protected model, conformal, and portfolio artifacts must match the recorded
+hashes unless a new run tag and drift report are explicitly created.
 
-- DVC remote and artifact policy after anonymity handling;
-- MLflow/DagsHub run lineage after anonymity handling;
-- release tag and manifest hash policy;
-- known slow stages and stages that must not be rerun without drift validation.
+The following stages must not be rerun as routine reproduction steps:
+`crpto.pd.champion`, `crpto.conformal.intervals`,
+`crpto.conformal.validation`, `crpto.portfolio.optimization`, and especially
+`crpto.portfolio.bound_exact_eval`. Paper-facing commands such as table,
+figure, evidence, journal-package, and book renders are safe because they
+consume frozen inputs.
