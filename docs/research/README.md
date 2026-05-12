@@ -13,7 +13,9 @@ libro independiente.
   dependencia.
 - `crpto_p1_evidence_2026-05-04.md`: evidencia P1 alrededor del champion
   congelado.
-- `crpto_journal_package_2026-05-04.md`: tablas A12--A19 y figuras journal.
+- `crpto_journal_package_2026-05-04.md`: tablas A12--A21 y figuras journal.
+- `crpto_tail_satisficing_audit_status.json` / A20--A21: audit journal
+  adicional para challenger tail-satisficing y bound cluster-aware.
 - `crpto_quarto_expansion_2026-05-04.md`: expansion del libro y reglas de
   compresion paper/journal.
 - `crpto_conditional_tightening_appendix_2026-05-04.md`: lemma condicional de

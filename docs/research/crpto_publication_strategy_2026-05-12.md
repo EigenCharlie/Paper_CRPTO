@@ -59,7 +59,7 @@ The first paper draft should be written as:
 
 - title: `CRPTO: Conformal Robust Predict-Then-Optimize for Auditable Credit Portfolio Decisions`;
 - body: 25-page IJDS-style manuscript;
-- supplement: A3--A19, proofs, extended tables, reproducibility and MRM/fairness;
+- supplement: A3--A21, proofs, extended tables, reproducibility and MRM/fairness;
 - review mode: anonymous by default;
 - companion: GitHub/DVC/DagsHub/MLflow after the anonymity policy is handled.
 
@@ -91,7 +91,7 @@ In scope for the current paper:
 - frozen CRPTO post-hoc champion;
 - calibrated PD -> Mondrian conformal intervals -> robust portfolio decision;
 - exact alpha-safe funded-set validation and `45/45` robust region;
-- A3--A19 as supplement evidence;
+- A3--A21 as supplement evidence;
 - regret-auditability frontier in the body;
 - OCE/CVaR tail-risk diagnostics and robust satisficing margins in the
   supplement;

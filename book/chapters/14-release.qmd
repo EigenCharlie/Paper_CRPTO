@@ -19,7 +19,7 @@ La contribución central sigue siendo la misma: **CRPTO post-hoc auditable con e
 | Propuesta | ¿Cambia la dirección? | Decisión | Por qué |
 |---|---:|---|---|
 | Manifest de extracción paper/journal/tesis | No | Implementado aquí | Ordena contenido existente sin crear claims nuevos. |
-| Matriz completa de tablas/figuras | No | Implementado aquí | Clasifica evidencia ya generada A0--A19 y Fig 7--15. |
+| Matriz completa de tablas/figuras | No | Implementado aquí | Clasifica evidencia ya generada A0--A21 y Fig 7--15. |
 | Banco de respuestas por venue | No | Implementado aquí | Ayuda a escribir y responder reviewers sin tocar artefactos. |
 | Release checklist con DVC/DagsHub/Quarto/tests | No | Implementado aquí | Formaliza reproducibilidad ya existente. |
 | Decisión de companion URL | No | Implementado aquí | Declara que Quarto es la superficie primaria y Streamlit queda opcional. |
@@ -45,7 +45,7 @@ P2 y P3 ya no son una exclusión en bloque. Para este paper sí entran los
 elementos que fortalecen el journal sin cambiar método: regret-auditability,
 OCE/CVaR diagnóstico, satisficing margins y caveat/proposición
 dependence-aware. También entran el champion CRPTO congelado, la región
-robusta, el paquete A3--A19 y la reproducibilidad Quarto/DVC/DagsHub/MLflow. Si
+robusta, el paquete A3--A21 y la reproducibilidad Quarto/DVC/DagsHub/MLflow. Si
 una idea requiere nuevo objetivo, nuevo dataset, nueva búsqueda, producción viva
 o nueva teoría principal, queda en backlog y no bloquea este submission.
 :::
@@ -64,7 +64,7 @@ o nueva teoría principal, queda en backlog y no bloquea este submission.
 | `14e` | Discusión, limitaciones y roadmap | cuerpo discusión | cuerpo + future work | sí | IFRS9/CATE como conexiones, no contribución central. |
 | `14f` | Guía editorial y referencias numeradas | insumo | insumo | sí | Convertir a related work formal al escribir. |
 | `14g` | Blueprint del manuscrito | insumo | insumo | sí | Usar como skeleton; no citar como resultado. |
-| `14h` | Appendix A12--A19 | appendix selectivo | appendix fuerte | sí | Diagnóstico journal, no nueva promoción del champion. |
+| `14h` | Appendix A12--A21 | appendix selectivo | appendix fuerte | sí | Diagnóstico journal, no nueva promoción del champion. |
 | `14i` | Ablación Mondrian | appendix corto | appendix | sí | Defender `score_decile_mondrian` vs `grade`. |
 | `14j` | Protocolo SPO+ | appendix corto | appendix | sí | Separar regret 49.1% de cobertura/auditabilidad. |
 | `14k` | Fair lending checkpoint | appendix/governance | appendix | sí | Proxy/intersectional, no certificación legal de atributos protegidos. |
@@ -76,7 +76,7 @@ o nueva teoría principal, queda en backlog y no bloquea este submission.
 Manifest de uso por sección del capítulo 14.
 :::
 
-### Manifest de tablas A0--A19
+### Manifest de tablas A0--A21
 
 ::: {#tbl-crpto-table-extraction-manifest}
 
@@ -102,6 +102,8 @@ Manifest de uso por sección del capítulo 14.
 | A17 | Budget/LGD/cap sensitivity | No | Sí | Sí | Diagnóstico aplicado, no solver con caps nuevos. |
 | A18 | Robust region by family | Sí o appendix corto | Sí | Sí | Evidencia visual/tabular de región `45/45`. |
 | A19 | Regret-auditability frontier | Sí | Sí | Sí | SPO+ gana regret; CRPTO compra cobertura, bound exacto y región robusta. |
+| A20 | Tail-satisficing challenger audit | No | Sí | Sí | Challenger journal: 2% menos retorno por 22.6% menor CVaR 95%; no reemplaza champion. |
+| A21 | Cluster-bound tightening | No | Sí | Sí | Cota dependence-aware transparente, pero no más tight que Markov. |
 
 Manifest de tablas para decidir cuerpo, appendix y tesis.
 :::
@@ -184,7 +186,7 @@ La decision activa de publicacion es:
 | Rol | Venue | Plantilla / salida | Regla |
 |---|---|---|---|
 | Primario | INFORMS Journal on Data Science | IJDS LaTeX oficial; `paper/CRPTO_ijds.qmd` como fuente de escritura | cuerpo anonimo de 25 paginas + online supplement |
-| Suplemento primario | IJDS online supplement | `paper/supplement_ijds.qmd` | A3--A19, pruebas, reproducibilidad, MRM y fairness |
+| Suplemento primario | IJDS online supplement | `paper/supplement_ijds.qmd` | A3--A21, pruebas, reproducibilidad, MRM y fairness |
 | Pivote | European Journal of Operational Research | Elsevier `elsarticle` cuando se active el pivote | usar si el paper lee mas como OR aplicada |
 | Stretch | INFORMS Journal on Optimization / Management Science / Operations Research | plantillas oficiales respectivas | solo si mejora teoria, insight gerencial o contribucion OR |
 
@@ -212,7 +214,8 @@ del dossier está lista para ser usada como fuente de manuscrito.
 | Alcance P2/P3 | `configs/crpto_publication_targets.yaml` + esta página | Journal strengthening pack entra como diagnóstico/framing; extensiones metodológicas quedan future work. |
 | Tablas canónicas | `uv run python scripts/export_crpto_tables.py` | A0 usa `models/final_project_promotion.json`. |
 | P1 evidence | `uv run python scripts/analyze_crpto_evidence.py --include-hardening` | A3--A11 actualizadas y status JSON coherente. |
-| Journal package | `uv run python scripts/build_crpto_journal_package.py` | A12--A19 y Fig 12--15 actualizadas. |
+| Journal package | `uv run python scripts/build_crpto_journal_package.py` | Tablas journal base y Fig 12--15 actualizadas. |
+| Tail-satisficing audit | `uv run python scripts/build_tail_satisficing_challenger_audit.py` | A20--A21 actualizadas. |
 | Figuras paper-facing | `uv run python scripts/generate_crpto_figures.py` | Fig 7--11 reproducibles. |
 | DVC local | `uv run dvc status --no-updates` | Datos y pipelines al día. |
 | DagsHub remote | `uv run dvc status -c -r dagshub` | Cache y remoto sincronizados. |

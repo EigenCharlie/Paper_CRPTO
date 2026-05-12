@@ -13,7 +13,7 @@ Current paper:
 - calibrated PD -> Mondrian conformal intervals -> robust portfolio decision;
 - exact `alpha = 0.01` funded-set validation;
 - `45/45` robust-region evidence;
-- A3--A19 online supplement;
+- A3--A21 online supplement;
 - regret-auditability frontier in the body/comparator section;
 - OCE/CVaR and satisficing diagnostics in the supplement;
 - cluster-aware dependence caveat/proposition in the theory supplement;
@@ -42,11 +42,13 @@ and are not acceptance criteria for this submission.
 | Surface | File | Status |
 |---|---|---|
 | IJDS body | `paper/CRPTO_ijds.qmd` | Active anonymous body source with regret-auditability framing. |
-| IJDS supplement | `paper/supplement_ijds.qmd` | Active online supplement source for A3--A19, MRM/fairness and reproducibility. |
+| IJDS supplement | `paper/supplement_ijds.qmd` | Active online supplement source for A3--A21, MRM/fairness and reproducibility. |
 | Venue config | `configs/crpto_publication_targets.yaml` | IJDS primary, EJOR pivot, journal strengthening pack classified. |
 | Release manifest | `book/chapters/14-release.qmd` | Body/appendix split, companion decision and release gates. |
 | Backlog | `docs/research/crpto_backlog_2026-05-04.md` | Diagnostic pack included; method-changing P2/P3 remains backlog. |
 | Future objective scaffold | `src/optimization/tail_satisficing_objective.py` and `configs/crpto_tail_satisficing_objective.yaml` | OCE/CVaR/satisficing scoring is implemented for future named experiments, not for the current champion. |
+| Tail-satisficing audit | `reports/crpto/tables/crpto_tableA20_tail_satisficing_challenger_audit.csv` | Journal-only challenger audit over 45 alpha-safe policies; no promotion change. |
+| Cluster-bound audit | `reports/crpto/tables/crpto_tableA21_cluster_bound_tightening.csv` | Dependence-aware Hoeffding calculation; transparent but not tighter than Markov here. |
 
 ## Final Submission Gates
 

@@ -224,7 +224,43 @@ Lectura para el paper: CRPTO no promete dominar a SPO+ en regret puro. Su
 contribucion es hacer visible el precio de comprar cobertura, bound exacto y
 auditabilidad del funded set.
 
-### Appendix A3--A19 recomendado
+### A20. Challenger tail-satisficing
+
+Esta tabla re-suelve las 45 policies de la region robusta con HiGHS y las
+ordena por una regla journal-only: satisficing pass, menor CVaR 95%, menor OCE
+entropico y mayor retorno. No promueve un nuevo champion. Sirve para responder
+la pregunta de reviewer: "si optimizaran por cola/satisficing, que policy
+apareceria?".
+
+```{python}
+#| label: tbl-crpto-journal-tail-satisficing-challenger
+#| tbl-cap: "A20. Auditoria tail-satisficing de las 45 policies alpha-safe"
+
+tail_challenger = read_table("crpto_tableA20_tail_satisficing_challenger_audit.csv")
+tail_challenger.head(12)
+```
+
+Lectura: el challenger rank 1 reduce el CVaR 95% frente al economic champion con
+una perdida de retorno cercana a 2%. Es evidencia de trade-off, no una
+correccion de la policy promovida.
+
+### A21. Bound cluster-aware
+
+Esta tabla convierte el caveat de dependencia en numeros. Bajo independencia
+condicional entre agregados de cluster, la cota Hoeffding usa
+`sum_g W_g^2`. En este funded set, la concentracion de exposicion hace que esa
+cota sea mas laxa que `sqrt(alpha)`, asi que Markov sigue siendo el bound
+principal del paper.
+
+```{python}
+#| label: tbl-crpto-journal-cluster-bound-tightening
+#| tbl-cap: "A21. Cotas cluster-aware bajo supuestos adicionales de independencia"
+
+cluster_bounds = read_table("crpto_tableA21_cluster_bound_tightening.csv")
+cluster_bounds
+```
+
+### Appendix A3--A21 recomendado
 
 ::: {#tbl-crpto-appendix-map}
 
@@ -247,6 +283,8 @@ auditabilidad del funded set.
 | A17 | presupuesto, LGD y caps | appendix journal |
 | A18 | robust region by policy family | cuerpo corto o appendix |
 | A19 | regret-auditability frontier | cuerpo corto y appendix |
+| A20 | tail-satisficing challenger audit | appendix journal |
+| A21 | cluster-bound tightening | appendix teorico |
 
 Mapa recomendado del appendix del CRPTO.
 :::
@@ -259,6 +297,7 @@ Para regenerar el paquete completo de esta pagina:
 uv run python scripts/export_crpto_tables.py
 uv run python scripts/analyze_crpto_evidence.py
 uv run python scripts/build_crpto_journal_package.py
+uv run python scripts/build_tail_satisficing_challenger_audit.py
 uv run pytest tests/test_crpto_final_sync.py
 ```
 
@@ -272,7 +311,7 @@ uv run -- quarto render book/chapters/07-apendice-robustez.qmd --to html --no-ex
 ::: {.callout-important}
 ## Regla de sincronizacion
 
-Si alguna tabla A12--A19 contradice `models/final_project_promotion.json`, gana
+Si alguna tabla A12--A21 contradice `models/final_project_promotion.json`, gana
 `final_project_promotion.json`. Las tablas nuevas son evidencia de robustez,
 sensibilidad y empaque journal; no son una promocion nueva del champion.
 :::

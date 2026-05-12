@@ -23,7 +23,7 @@ execute:
 ## Scope
 
 This online supplement supports the IJDS submission body. It collects proof
-details, robustness tables A3--A19, reproducibility commands, model-risk
+details, robustness tables A3--A21, reproducibility commands, model-risk
 material, fairness diagnostics, and artifact lineage. It does not introduce a
 new champion, new dataset, new search space, or new claim family.
 :::
@@ -119,9 +119,11 @@ future journal hardening.
 
 # Appendix C: Journal Robustness Package
 
-Tables A12--A19 answer likely reviewer questions that are too detailed for the
+Tables A12--A21 answer likely reviewer questions that are too detailed for the
 25-page body. They are diagnostic by design, except A19 also supports the body
-framing around regret-auditability.
+framing around regret-auditability. A20 and A21 are journal-only add-ons: they
+audit a tail-satisficing challenger and make the dependence-aware caveat
+numerical without changing the champion.
 
 | Table | Role | Scope caveat |
 |---|---|---|
@@ -133,6 +135,8 @@ framing around regret-auditability.
 | A17 budget/LGD/cap sensitivity | Varies operating assumptions. | Segment caps are diagnostics, not solver constraints. |
 | A18 robust region by policy family | Summarizes alpha-safe policies by bound-aware family. | Compatible leaderboard only inside the final family. |
 | A19 regret-auditability frontier | Compares two-stage, SPO+, and CRPTO robust on regret versus risk-control checks. | Comparator framing, not a new champion selector. |
+| A20 tail-satisficing challenger audit | Re-solves the 45 robust-region policies and ranks them by satisficing pass, CVaR, OCE, and return. | Journal audit only; the top challenger is not promoted over the frozen champion. |
+| A21 cluster-bound tightening | Reports cluster-aware Hoeffding thresholds by period, grade, and period-grade. | Transparent caveat; not tighter than Markov for the observed exposure concentration. |
 
 ![Uncertainty baselines remain supplement evidence; they justify why conformal robust sets are used without replacing the champion.](../reports/crpto/figures/crpto_fig7_uncertainty_baselines.png){#fig-supp-uncertainty-baselines width="90%"}
 
@@ -216,7 +220,7 @@ The active IJDS submission surfaces are:
 | Surface | Source | Role |
 |---|---|---|
 | Anonymous body | `paper/CRPTO_ijds.qmd` | 25-page IJDS-style manuscript source. |
-| Online supplement | `paper/supplement_ijds.qmd` | Proofs, A3--A19, MRM/fairness, reproducibility. |
+| Online supplement | `paper/supplement_ijds.qmd` | Proofs, A3--A21, MRM/fairness, reproducibility. |
 | Long companion | `book/` | Public companion after anonymity handling. |
 | Publication config | `configs/crpto_publication_targets.yaml` | Venue, template, anonymity, and pivot rules. |
 

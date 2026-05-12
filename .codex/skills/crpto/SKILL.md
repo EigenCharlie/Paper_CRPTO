@@ -59,8 +59,8 @@ Protected DVC stages:
   `crpto.portfolio.optimization`. If the user explicitly permits them, run them
   as a drift check and validate hashes before/after.
 - Safe paper stages: `crpto.paper.export_tables`, `crpto.paper.evidence`,
-  `crpto.paper.journal_package`, `crpto.paper.figures`,
-  `crpto.paper.spo_stability`, and `crpto.book.render`.
+  `crpto.paper.journal_package`, `crpto.paper.tail_satisficing_audit`,
+  `crpto.paper.figures`, `crpto.paper.spo_stability`, and `crpto.book.render`.
 
 If the user says a change may touch the champion, isolate the work:
 
@@ -80,6 +80,11 @@ The active paper scope is the journal strengthening pack:
 - A13: robust satisficing margins for committee/OR framing.
 - A14: dependence-aware caveat or supplement proposition, with cluster
   diagnostics as evidence rather than proof of independence.
+- A20: tail-satisficing challenger audit over the 45 existing alpha-safe
+  policies. It is a journal-only comparator and must not promote a new champion.
+- A21: cluster-bound tightening table. Use it to make the dependence-aware
+  caveat mathematically transparent, while saying plainly that it is not tighter
+  than Markov under the current exposure concentration.
 - Multi-dataset credit replication remains journal backlog and does not block
   the current submission.
 
@@ -96,6 +101,9 @@ scoring layer. The default rule is:
   artifacts.
 - It may generate new diagnostic tables, figures, configs, tests, and docs.
 - It must not replace the champion objective, rank-1 policy, or frozen outputs.
+- A tail-satisficing challenger audit may re-solve the 45 existing shortlist
+  policies under a new paper/audit stage if outputs are new and the status marks
+  `champion_promotion_changed=false`.
 - If used for a new search, store results under a new experiment path and make
   the comparison explicit against the frozen champion.
 
@@ -103,7 +111,7 @@ scoring layer. The default rule is:
 
 For the current submission, keep these gates visible:
 
-- Consolidate A19/Fig15, paper/supplement, docs, and `dvc.lock`.
+- Consolidate A19/Fig15, A20/A21, paper/supplement, docs, and `dvc.lock`.
 - Sweep the manuscript for stale numbers, captions, body-vs-appendix placement,
   and IJDS length.
 - Convert the final `.qmd` into the official IJDS LaTeX template when the PDF
@@ -120,8 +128,10 @@ Use focused checks while editing, then close with the strongest feasible set:
 
 ```powershell
 uv run python scripts/build_crpto_journal_package.py
+uv run python scripts/build_tail_satisficing_challenger_audit.py
 uv run pytest tests/test_publication_targets.py -q
 uv run pytest tests/test_scripts/test_build_crpto_journal_package.py -q
+uv run pytest tests/test_scripts/test_tail_satisficing_challenger_audit.py -q
 just smoke
 just lint
 just validate-champion

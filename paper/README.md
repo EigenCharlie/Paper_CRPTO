@@ -19,7 +19,8 @@ the submission-shaped versions are written.
 
 Selected P2/P3-inspired diagnostics are part of the current paper/journal pack:
 regret-auditability, OCE/CVaR tail risk, robust satisficing margins, and the
-dependence-aware caveat. The active submission still uses the frozen CRPTO
+dependence-aware caveat. The tail-satisficing challenger audit and cluster-bound
+table are supplement-only add-ons. The active submission still uses the frozen CRPTO
 result plus supplement evidence generated from existing artifacts; future
 online, causal, multi-distribution, multi-dataset, production, or package tracks
 remain future work.

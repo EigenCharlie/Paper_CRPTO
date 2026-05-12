@@ -52,11 +52,13 @@ def test_journal_strengthening_pack_classifies_current_and_backlog_items() -> No
         "tail_risk_oce_cvar_diagnostic",
         "robust_satisficing_margins",
         "dependence_aware_bound",
+        "tail_satisficing_challenger_audit",
     }
     assert included["regret_auditability_frontier"]["status"] == "include_body"
     assert included["tail_risk_oce_cvar_diagnostic"]["status"] == "include_supplement"
     assert included["robust_satisficing_margins"]["status"] == ("include_supplement_or_short_body")
     assert included["dependence_aware_bound"]["status"] == "include_theory_appendix_or_caveat"
+    assert included["tail_satisficing_challenger_audit"]["status"] == "include_supplement"
     assert backlog["multi_dataset_credit_replication"]["status"] == ("journal_backlog_not_blocker")
 
     body = Path("paper/CRPTO_ijds.qmd").read_text(encoding="utf-8")

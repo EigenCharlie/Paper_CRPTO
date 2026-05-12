@@ -31,7 +31,8 @@ This is not a permission to reopen the champion search.
 | Pareto regret-auditability frontier | Included in body/supplement | A19 + Fig 15 from SPO+ and CRPTO status artifacts | Comparator framing, not a new selector. |
 | OCE/CVaR tail-risk audit | Included in supplement | A12 | Diagnostic repricing only; the future objective scaffold is not promoted as champion. |
 | Robust satisficing margins | Included in supplement or short body paragraph | A13 | Threshold/margin evidence, not a new policy objective. |
-| Dependence-aware bound | Included as caveat/proposition | A14 + conditional tightening note | Markov remains the main distribution-free theorem. |
+| Tail-satisficing challenger audit | Included in supplement | A20 | Re-solves and re-ranks the 45 robust-region policies; journal audit only, no promotion change. |
+| Dependence-aware bound | Included as caveat/proposition | A14 + A21 + conditional tightening note | Markov remains the main distribution-free theorem. |
 | Multi-dataset credit replication | Backlog journal/follow-up | none yet | Requires a new dataset, leakage checks and protocol; not a submission blocker. |
 
 ## Consolidated Status Matrix
@@ -55,8 +56,8 @@ experiments or theory.
 | P1/J | Implemented | Uncertainty-set baselines | CP vs bootstrap/parametric/ellipsoidal evidence | `uncertainty_baselines_comparison.parquet`, `uncertainty_baselines_by_grade.parquet`, `04-resultados` | No | strengthens current paper | use to justify conformal robust set selection |
 | P1/J | Implemented | CQR comparator evidence | conformal alternative | `cqr_comparison_status.json`, `cqr_mondrian_status.json`, `crpto_fig10`, `04-resultados` | No | complements paper | keep as comparator/appendix; do not replace official Mondrian winner |
 | P1/J | Implemented | Manuscript blueprint | paper structure | `06-blueprint-manuscrito.qmd` | No | prepares manuscript | compress into actual paper draft when writing starts |
-| P1/J | Pending | Standalone manuscript extraction | final submission artifact | `06-blueprint-manuscrito`, `14-release`, A1--A19, figures | No | required for submission | write the short paper from the book package; no champion changes |
-| P1/J | Implemented | Journal appendix A12--A19 | appendix evidence | `07-apendice-robustez.qmd` | No | complements paper | use as appendix package, not new champion evidence |
+| P1/J | Pending | Standalone manuscript extraction | final submission artifact | `06-blueprint-manuscrito`, `14-release`, A1--A21, figures | No | required for submission | write the short paper from the book package; no champion changes |
+| P1/J | Implemented | Journal appendix A12--A21 | appendix evidence | `07-apendice-robustez.qmd` | No | complements paper | use as appendix package, not new champion evidence |
 | P1/J | Implemented | Mondrian ablation page | conformal winner defense | `08-ablacion-mondrian.qmd` | No | strengthens method selection | use when reviewer asks why score-decile, not grade |
 | P1/J | Implemented | SPO+ protocol page | DFL comparator | `09-spo-regret.qmd` | No | strengthens comparator narrative | keep train-time 49.1% and temporal stability configs separate |
 | P1/J | Implemented | Fair lending checkpoint | governance/funded set | `10-fair-lending.qmd` | No | strengthens auditability | cite as proxy/intersectional audit, not legal protected-attribute proof |
@@ -68,8 +69,9 @@ experiments or theory.
 | P1/J | Implemented | Journal figures | visual explanation/results | `crpto_fig12`--`crpto_fig14` | No | improves paper readability | choose which figures go to body vs appendix |
 | P1/J | Implemented | Tail risk diagnostics | funded-set risk | A12 | No | complements paper | do not cite repriced return as official return |
 | P1/J | Implemented | Satisficing margins | OR framing | A13 | No | complements paper | justify thresholds if moved to body |
-| P1/J | Implemented | Dependence diagnostics | conditional tightening | A14 | No | complements theory | do not claim independence from this table |
+| P1/J | Implemented | Dependence diagnostics | conditional tightening | A14, A21 | No | complements theory | do not claim independence from these tables |
 | P1/J | Implemented | Regret-auditability frontier | SPO+/CRPTO comparator framing | A19, Fig 15 | No | strengthens body narrative | report SPO+ as low-regret corner and CRPTO as auditable-risk-control corner |
+| P1/J | Implemented | Tail-satisficing challenger audit | OR/journal comparator | A20, `crpto_tail_satisficing_audit_status.json` | No | strengthens supplement | report as audit-only challenger; champion rank remains official |
 | P1/J | Implemented | Temporal stress and bootstrap | robustness | A15, A16 | No | complements paper | keep as descriptive appendix evidence |
 | P1/J | Implemented | Budget/LGD/cap sensitivity | applied credit robustness | A17 | No | complements paper | cap checks are diagnostics, not solver constraints |
 | P1/J | Implemented | Robust region family table | compatible leaderboard | A18 | No | strengthens results | report only inside bound-aware family |
@@ -127,7 +129,7 @@ are about manuscript quality, not new champion selection.
 
 | Item | Uses existing artifacts? | Needs new run? | Why it is immediate | Done when |
 |---|---|---|---|---|
-| Extract standalone manuscript draft | Yes: `06-blueprint-manuscrito`, `14-release`, A1--A19, figures | No | converts book evidence into a journal-shaped paper | abstract, intro, related work, theory, method, results and appendix skeleton exist outside the book |
+| Extract standalone manuscript draft | Yes: `06-blueprint-manuscrito`, `14-release`, A1--A21, figures | No | converts book evidence into a journal-shaped paper | abstract, intro, related work, theory, method, results and appendix skeleton exist outside the book |
 | Final body-vs-appendix table/figure selection | Yes | No | avoids overloading the paper body | final list maps each table/figure to body, appendix or thesis-only |
 | Write alpha sweep / alpha-Gamma narrative | Yes | No | turns old "alpha sweep" task into a clear business-policy dial | body text explains alpha, width, Gamma_CP, funded set and robust region without overclaiming |
 | Write uncertainty-baseline narrative | Yes | No | answers why conformal robust sets, not bootstrap/parametric sets | comparator table/figure is tied to the CRPTO contribution |
@@ -184,7 +186,7 @@ cleanup" for the current CRPTO.
 ## Current IJDS Submission Scope
 
 The IJDS submission includes the frozen CRPTO champion, the robust-region
-evidence, the A3--A19 supplement, the regret-auditability frontier, and the
+evidence, the A3--A21 supplement, the regret-auditability frontier, and the
 reproducibility package. It excludes method-changing P2/P3 extensions as
 acceptance criteria.
 
@@ -239,7 +241,7 @@ without changing the official champion or reopening the search.
 | Item | Implemented artifact | What it adds | Scope caveat |
 |---|---|---|---|
 | Convert chapter 14 into paper blueprint | `book/chapters/06-blueprint-manuscrito.qmd` | target venue, abstract, claims C1--C7, manuscript outline, final table/figure plan and notation | blueprint, not final manuscript |
-| Appendix A12--A19 | `book/chapters/07-apendice-robustez.qmd` | renders tail risk, satisficing, dependency, stress, bootstrap, LGD/cap, robust-region and regret-auditability evidence | appendix material unless a journal asks for more body evidence |
+| Appendix A12--A21 | `book/chapters/07-apendice-robustez.qmd` | renders tail risk, satisficing, dependency, stress, bootstrap, LGD/cap, robust-region, regret-auditability, tail-satisficing challenger and cluster-bound evidence | appendix material unless a journal asks for more body evidence |
 | Clean CRPTO figure | `crpto_fig12_crpto_conceptual_pipeline.png` | candidate Figure 1 | visual explanation only |
 | Alpha -> Gamma_CP -> funded set figure | `crpto_fig13_alpha_gamma_funded_set.png` | connects conformal alpha to portfolio quantities | diagnostic curve from frozen artifacts |
 | Robust region heatmap | `crpto_fig14_robust_region_heatmap.png` | visualizes the `45/45` robust region | summarizes final mini-grid, not a new search |
@@ -251,7 +253,9 @@ without changing the official champion or reopening the search.
 | Budget / LGD / cap sensitivity | `crpto_tableA17_budget_cap_lgd_sensitivity.csv` | reprices under budgets, LGD alternatives and segment caps | cap check is diagnostic, not a constrained optimization |
 | Robust region by policy family | `crpto_tableA18_robust_region_policy_family.csv` | groups final policies by `risk_tolerance x gamma` and confirms all pass | compatible leaderboard only within bound-aware family |
 | Regret-auditability frontier | `crpto_tableA19_regret_auditability_frontier.csv`, `crpto_fig15_regret_auditability_frontier.png` | compares two-stage, SPO+ and CRPTO robust across regret and verifiable risk controls | comparator framing, not a new champion selector |
-| Reproducible generator | `scripts/build_crpto_journal_package.py`, `models/crpto_journal_package_status.json` | regenerates A12--A19 and figures from frozen artifacts | no champion promotion logic |
+| Tail-satisficing challenger audit | `crpto_tableA20_tail_satisficing_challenger_audit.csv`, `models/crpto_tail_satisficing_audit_status.json` | identifies a CVaR/OCE/satisficing challenger among the 45 alpha-safe policies | journal audit only; selected challenger is not promoted |
+| Cluster-bound tightening audit | `crpto_tableA21_cluster_bound_tightening.csv` | quantifies cluster-aware Hoeffding thresholds for period, grade and period-grade | transparent caveat; not tighter than Markov under current exposure concentration |
+| Reproducible generator | `scripts/build_crpto_journal_package.py`, `models/crpto_journal_package_status.json` | regenerates the base journal package and figures from frozen artifacts; A20--A21 use the separate tail audit script | no champion promotion logic |
 | OCE/CVaR/satisficing objective scaffold | `src/optimization/tail_satisficing_objective.py`, `configs/crpto_tail_satisficing_objective.yaml` | provides deterministic CVaR, entropic OCE and threshold-margin scoring for future variants | research scaffold only; no current search, promotion or frozen artifact replacement |
 
 ### Quarto Expansion Snapshot - 2026-05-05
@@ -320,7 +324,7 @@ as a staging area for paper, journal and thesis:
 
 These pages are intentionally more explanatory than a journal paper. They keep
 the claim ladder, reviewer Q&A, artifact placement map, local numbered
-references `[1]`, `[2]`, ... and the A12--A19 appendix package that can later be
+references `[1]`, `[2]`, ... and the A12--A21 appendix package that can later be
 compressed into the manuscript.
 
 The extraction/release manifest explicitly classifies OCE/CVaR optimization,

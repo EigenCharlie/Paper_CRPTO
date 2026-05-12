@@ -37,7 +37,7 @@ primary_target:
   current_paper_scope:
     include:
       - "Frozen post-hoc CRPTO champion and exact alpha-safe robust region."
-      - "A3--A19 as supplement/appendix evidence generated from frozen artifacts."
+      - "A3--A21 as supplement/appendix evidence generated from frozen artifacts."
       - "Regret-auditability frontier as the body-level SPO+/CRPTO trade-off."
       - "OCE/CVaR and robust satisficing as diagnostics, not new selectors."
       - "Cluster-aware dependence caveat/proposition in the theory supplement."
@@ -63,6 +63,7 @@ journal_strengthening_pack:
       role: "Tail-risk audit of the selected funded set under LGD alternatives."
       artifacts:
         - reports/crpto/tables/crpto_tableA12_tail_risk_oce_cvar.csv
+        - reports/crpto/tables/crpto_tableA20_tail_satisficing_challenger_audit.csv
       requires_new_run: false
     robust_satisficing_margins:
       status: include_supplement_or_short_body
@@ -75,7 +76,15 @@ journal_strengthening_pack:
       role: "Cluster-aware conditional tightening statement; Markov remains the main distribution-free bound."
       artifacts:
         - reports/crpto/tables/crpto_tableA14_dependency_cluster_diagnostics.csv
+        - reports/crpto/tables/crpto_tableA21_cluster_bound_tightening.csv
         - docs/research/crpto_conditional_tightening_appendix_2026-05-04.md
+      requires_new_run: false
+    tail_satisficing_challenger_audit:
+      status: include_supplement
+      role: "Journal-only audit that re-solves the 45 robust-region policies and ranks a tail-satisficing challenger without promoting it over the frozen champion."
+      artifacts:
+        - reports/crpto/tables/crpto_tableA20_tail_satisficing_challenger_audit.csv
+        - models/crpto_tail_satisficing_audit_status.json
       requires_new_run: false
   backlog_not_blocking:
     multi_dataset_credit_replication:
