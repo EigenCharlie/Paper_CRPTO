@@ -28,9 +28,10 @@ anonymous and capped conceptually at a 25-page body, excluding references and
 appendices. The final submission PDF should be produced with the official IJDS
 LaTeX template using double-anonymous review settings.
 
-The submission scope is locked: P2 and P3 backlog items are future work, not
-requirements for this paper. They may appear only as limitations or future
-research directions.
+The submission scope is locked around the frozen CRPTO champion, but selected
+journal-strengthening items now enter the paper as diagnostics and framing:
+regret-auditability, OCE/CVaR tail risk, satisficing margins, and a
+dependence-aware caveat. Method-changing P2/P3 variants remain future work.
 :::
 
 # Abstract
@@ -129,16 +130,17 @@ PD model end-to-end through the optimizer. Instead, it asks what can be achieved
 when a calibrated predictive system is already frozen and the decision layer
 must remain explainable to credit-risk reviewers.
 
-Finally, several recent papers point to future extensions rather than to the
-core claim of this manuscript: conformal model selection for robust
-optimization, multi-distribution conformal validity, online conformal portfolio
-methods, and end-to-end conformal risk training [@bao2025croms;
+Finally, recent work on conformal model selection for robust optimization,
+multi-distribution conformal validity, online conformal portfolio methods,
+end-to-end conformal risk training, and conformal satisficing [@bao2025croms;
 @yang2026multidistribution; @liu2026portfolio; @yeh2025training;
-@zhao2025robust]. These are important, but they are deliberately separated from
-the present contribution. In the project backlog they are P2/P3 items: useful
-extensions for a later paper, but not missing evidence for this submission. The
-claim here is a reproducible two-stage bridge, not a new online,
-multi-distribution, causal, or end-to-end training algorithm.
+@zhao2025robust] motivates the journal-strengthening package in this paper. We
+use those ideas where they can be evaluated from frozen CRPTO artifacts:
+OCE/CVaR appears as a tail-risk diagnostic, robust satisficing appears as
+committee-style margin evidence, and SPO+ motivates the regret-auditability
+frontier. The method-changing variants--optimized OCE/CVaR objectives, online
+or multi-dataset protocols, causal layers, and hybrid decision-focused
+training--remain future work rather than hidden acceptance criteria.
 
 # Method
 
@@ -208,14 +210,16 @@ then converts expected weighted miscoverage control into a finite-sample
 portfolio-level statement. The empirical exact bound check reported in this
 paper is the operational version of that statement.
 
-This theory is intentionally not presented as a dependence-aware theorem for
-all possible adaptive credit policies. The Lending Club evaluation is temporal,
-and temporal dependence is handled empirically through strict out-of-time
-splits, temporal backtesting, and robustness appendices. Hoeffding/Bernstein
-tightenings and dependence caveats are placed in the online supplement. This
-keeps the body claim honest: CRPTO supplies auditable finite-sample language
-for a frozen allocation and a documented validation design, not a universal
-guarantee against every market regime shift.
+This theory is intentionally not presented as a universal dependence-free
+tightening for all adaptive credit policies. The Lending Club evaluation is
+temporal, and temporal dependence is handled empirically through strict
+out-of-time splits, temporal backtesting, and robustness appendices. The online
+supplement adds a cluster-aware conditional proposition: dependence may be
+arbitrary inside period or grade clusters, but sharper Hoeffding/Bernstein-style
+bounds require independence or conditional independence across those clusters.
+Markov therefore remains the main distribution-free claim, while the
+dependence-aware material is a transparent journal caveat rather than an
+overstated theorem.
 
 # Experimental Design
 
@@ -242,10 +246,11 @@ data/code-disclosure policy.
 
 The body-supplement split is fixed before submission. The body keeps the CRPTO
 pipeline, the alpha-to-portfolio link, the robust-region evidence, and the core
-metrics. The online supplement carries A3--A18, the conformal finalist
-ablation, funded-set loan audit, tail-risk diagnostics, MRM/fairness material,
-and reproduction commands. This keeps the IJDS body focused while preserving
-the audit trail that reviewers need.
+metrics, plus the compact regret-auditability frontier. The online supplement
+carries A3--A19, the conformal finalist ablation, funded-set loan audit,
+tail-risk diagnostics, satisficing margins, dependence diagnostics,
+MRM/fairness material, and reproduction commands. This keeps the IJDS body
+focused while preserving the audit trail that reviewers need.
 
 # Results
 
@@ -311,12 +316,31 @@ artifact traceability, and exact funded-set checks. The manuscript therefore
 does not claim to dominate SPO+ on every regret metric; it claims a different
 auditability/economic trade-off.
 
+## Regret-Auditability Frontier
+
+The SPO+ comparator makes the trade-off sharp. In the paired regret experiment,
+SPO+ reduces mean regret from `0.4259` to `0.2168`, a `49.1%` improvement over
+the two-stage baseline. The CRPTO robust point has higher decision regret
+(`0.9474`) in that protocol because it is not trained to minimize regret; it is
+constructed to expose and control predictive uncertainty before funding. The
+frontier is therefore not a single leaderboard. It asks what the method buys
+besides regret: temporal coverage above target, an exact funded-set
+`alpha = 0.01` pass, and a `45/45` robust region.
+
+| Method | Mean regret | Regret delta vs. two-stage | Verifiable risk controls |
+|---|---:|---:|---:|
+| Two-stage baseline | `0.4259` | `0.0%` | `0/3` |
+| SPO+ | `0.2168` | `49.1% lower` | `0/3` |
+| CRPTO robust | `0.9474` | `122.5% higher` | `3/3` |
+
+![CRPTO sits on the auditable-risk-control corner, while SPO+ occupies the low-regret corner.](../reports/crpto/figures/crpto_fig15_regret_auditability_frontier.png){#fig-regret-auditability width="82%"}
+
 The online supplement contains the robustness package: nested holdout,
 segment-period sensitivity, decision-aware conformal selector checks,
 synthetic-shift diagnostics, conformal finalist exact evaluation, tail-risk
 OCE/CVaR diagnostics, satisficing margins, dependency clusters, bootstrap
 funded-set metrics, budget/LGD/cap sensitivity, and robust-region summaries by
-policy family.
+policy family, plus the A19 regret-auditability frontier.
 
 # Reproducibility And Companion
 
@@ -352,22 +376,15 @@ does not assert that robust conformal policies dominate all decision-focused
 learners on regret. It also does not treat synthetic shift as a substitute for
 new external cohorts.
 
-The next research directions are clear. OCE/CVaR objectives could make
-tail-risk aversion more explicit. Online conformal methods could adapt CRPTO to
-sequential originations if new lending data existed. Multi-distribution
-conformal prediction could formalize robustness across borrower subpopulations
-or macro regimes. Causal variants could separate credit allocation from
-repayment response under changing funding policies. These extensions are left
-for future work so that the present paper can keep its central claim sharp:
-calibrated prediction uncertainty can be converted into an auditable robust
-credit portfolio decision with reproducible evidence.
-
-These directions are not blockers for this submission. In the repository
-backlog, P2 items require new methods, new runs, or new proofs, and P3 items
-belong to broader thesis or product work. This paper therefore submits the
-frozen CRPTO result as an auditable post-hoc predict-then-optimize contribution;
-it does not ask reviewers to evaluate a sequential, causal, production, or
-open-source-package version of CRPTO.
+The next research directions are clear and are now separated into two groups.
+The current paper includes the safe journal-strengthening package: OCE/CVaR as
+a tail-risk audit, satisficing as margin evidence, SPO+ as the low-regret corner
+of the regret-auditability frontier, and dependence as a formal caveat. The
+future backlog remains larger: optimized OCE/CVaR objectives, online conformal
+methods, multi-distribution conformal validity, causal variants, and
+multi-dataset credit replication all require new protocols, data, or proofs.
+Those directions are valuable, but they are not blockers for submitting the
+frozen CRPTO result as an auditable post-hoc predict-then-optimize contribution.
 
 The final production step is mechanical: convert this source into the official
 IJDS LaTeX template, keep `dblanonrev`, submit the title page separately, and

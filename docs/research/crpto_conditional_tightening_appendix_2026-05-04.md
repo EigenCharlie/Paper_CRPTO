@@ -41,6 +41,33 @@ Under those extra assumptions, the weighted sum `V = sum_i w_i Z_i` becomes a
 sum of bounded independent terms. Hoeffding gives a tail bound based on
 `sum_i w_i^2`; Bernstein additionally uses conditional variance and `w_max`.
 
+## Cluster-Aware Journal Proposition
+
+The journal-strengthening version can state a weaker dependence-aware
+proposition without pretending that loan-level indicators are independent.
+Partition the funded set into clusters `g = 1, ..., G` such as period, grade, or
+period-grade. Define
+
+```text
+Z_g = sum_{i in g} w_i 1{Y_i > u_i(alpha)}
+W_g = sum_{i in g} w_i.
+```
+
+Within each cluster, the miss indicators may be arbitrarily dependent. After
+conditioning on the calibration sample and the fixed funded allocation, assume
+only that the cluster aggregates `Z_g` are independent or conditionally
+independent across `g`. Then `0 <= Z_g <= W_g` and Hoeffding gives
+
+```text
+P(V - E[V] >= t) <= exp(-2 t^2 / sum_g W_g^2).
+```
+
+This is not the main theorem. It is a transparent supplement result: it moves
+the extra assumption from loan-level independence to cross-cluster independence
+and makes the exposure concentration term explicit. Table A14 supplies the
+period, grade and period-grade weights that determine whether this tightening
+is practically useful.
+
 ## Dependency Caveat
 
 Split conformal itself does not automatically make the test indicators

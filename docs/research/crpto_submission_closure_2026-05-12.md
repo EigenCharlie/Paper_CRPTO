@@ -13,29 +13,40 @@ Current paper:
 - calibrated PD -> Mondrian conformal intervals -> robust portfolio decision;
 - exact `alpha = 0.01` funded-set validation;
 - `45/45` robust-region evidence;
-- A3--A18 online supplement;
+- A3--A19 online supplement;
+- regret-auditability frontier in the body/comparator section;
+- OCE/CVaR and satisficing diagnostics in the supplement;
+- cluster-aware dependence caveat/proposition in the theory supplement;
 - Quarto/DVC/DagsHub/MLflow reproducibility story after anonymity handling.
 
-Not current paper:
+Backlog for journal/follow-up, not blockers:
 
-- P2 methodology extensions: OCE/CVaR objective, MDCP, online conformal,
-  online DFL, SPO+ + conformal hybrid, dependence-aware main theorem,
-  multi-dataset replication, regret-auditability frontier.
-- P3 thesis/product tracks: multi-period portfolios, causal CRPTO, package
-  extraction, multi-asset validation, field trial, production dashboard.
+- OCE/CVaR or satisficing as a promoted optimized objective or hard
+  portfolio-search constraint. The scoring scaffold now exists in
+  `src/optimization/tail_satisficing_objective.py`, but it is not connected to
+  champion promotion;
+- MDCP, online conformal, online DFL, SPO+ + conformal hybrid, or causal CRPTO;
+- dependence-aware main theorem without the cluster assumptions stated in the
+  supplement;
+- multi-dataset credit replication as a new external-validity experiment;
+- P3 thesis/product tracks: multi-period portfolios, package extraction,
+  multi-asset validation, field trial, production dashboard.
 
-P2/P3 items may appear in discussion and future work. They are not acceptance
-criteria for this submission.
+P2/P3 are therefore not a blanket exclusion anymore. The journal strengthening
+pack enters when it is diagnostic, comparator framing, or a caveated theory
+appendix based on frozen artifacts. Method-changing variants remain future work
+and are not acceptance criteria for this submission.
 
 ## Implemented Submission Surfaces
 
 | Surface | File | Status |
 |---|---|---|
-| IJDS body | `paper/CRPTO_ijds.qmd` | Active anonymous body source with P2/P3 boundary. |
-| IJDS supplement | `paper/supplement_ijds.qmd` | Active online supplement source for A3--A18, MRM/fairness and reproducibility. |
-| Venue config | `configs/crpto_publication_targets.yaml` | IJDS primary, EJOR pivot, P2/P3 excluded from current paper. |
+| IJDS body | `paper/CRPTO_ijds.qmd` | Active anonymous body source with regret-auditability framing. |
+| IJDS supplement | `paper/supplement_ijds.qmd` | Active online supplement source for A3--A19, MRM/fairness and reproducibility. |
+| Venue config | `configs/crpto_publication_targets.yaml` | IJDS primary, EJOR pivot, journal strengthening pack classified. |
 | Release manifest | `book/chapters/14-release.qmd` | Body/appendix split, companion decision and release gates. |
-| Backlog | `docs/research/crpto_backlog_2026-05-04.md` | P2/P3 explicitly demoted to future work. |
+| Backlog | `docs/research/crpto_backlog_2026-05-04.md` | Diagnostic pack included; method-changing P2/P3 remains backlog. |
+| Future objective scaffold | `src/optimization/tail_satisficing_objective.py` and `configs/crpto_tail_satisficing_objective.yaml` | OCE/CVaR/satisficing scoring is implemented for future named experiments, not for the current champion. |
 
 ## Final Submission Gates
 
@@ -60,3 +71,16 @@ uv run dvc status -c -r dagshub
 Final PDF production uses the official IJDS LaTeX template with
 double-anonymous review settings. The public companion is disclosed according to
 the IJDS data/code policy and the double-anonymous review process.
+
+## Remaining Human-Facing Closeout
+
+These are the real remaining tasks after the code/evidence pack is committed:
+
+| Task | Owner | Blocking status |
+|---|---|---|
+| Final manuscript sweep for stale numbers, captions, appendix placement and IJDS length | author + agent | blocks submission PDF |
+| Apply the official IJDS LaTeX template to the final `.qmd` export | author + agent | blocks submission PDF |
+| Review anonymization for author names, GitHub, DagsHub and MLflow links | author + agent | blocks double-anonymous submission |
+| Decide companion disclosure timing under IJDS policy | author | blocks final cover-letter/package wording |
+| Create release tag and reproducibility bundle | author + agent | only after final PDF is ready |
+| `dvc push` new non-frozen outputs | optional | only if remote sync is desired and credentials are available |

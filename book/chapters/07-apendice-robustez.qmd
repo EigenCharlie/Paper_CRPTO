@@ -8,7 +8,8 @@ page-layout: article
 Esta pagina agrupa el material que fortalece el CRPTO sin cambiar su
 direccion. La idea es dejar listo el paquete de appendix para una version
 journal: tail risk, satisficing, dependencia, stress temporal, bootstrap,
-sensibilidad a presupuesto/LGD/caps y region robusta por familia de policy.
+sensibilidad a presupuesto/LGD/caps, region robusta por familia de policy y
+frontera regret-auditabilidad.
 
 Los artefactos se generan con:
 
@@ -202,7 +203,28 @@ Esta es una de las mejores defensas del paper: el resultado de abril no es
 "un champion con suerte", sino una region final donde todas las policies
 evaluadas pasan el gate exacto.
 
-### Appendix A3--A18 recomendado
+### A19. Frontera regret-auditabilidad
+
+Esta tabla vuelve explicita la comparacion editorial con SPO+: SPO+ gana el
+juego de regret, mientras CRPTO ocupa la esquina donde hay cobertura temporal,
+bound exacto y region robusta verificable. No es un nuevo selector ni una
+promocion alternativa del champion.
+
+```{python}
+#| label: tbl-crpto-journal-regret-auditability
+#| tbl-cap: "A19. Frontera regret-auditability entre two-stage, SPO+ y CRPTO"
+
+frontier = read_table("crpto_tableA19_regret_auditability_frontier.csv")
+frontier
+```
+
+![Frontera regret-auditability: SPO+ reduce regret; CRPTO robust acumula controles verificables de riesgo.](../../reports/crpto/figures/crpto_fig15_regret_auditability_frontier.png){#fig-p1-regret-auditability fig-alt="Scatter plot con regret medio en el eje x y controles verificables de riesgo en el eje y para two-stage, SPO+ y CRPTO robust."}
+
+Lectura para el paper: CRPTO no promete dominar a SPO+ en regret puro. Su
+contribucion es hacer visible el precio de comprar cobertura, bound exacto y
+auditabilidad del funded set.
+
+### Appendix A3--A19 recomendado
 
 ::: {#tbl-crpto-appendix-map}
 
@@ -224,6 +246,7 @@ evaluadas pasan el gate exacto.
 | A16 | bootstrap funded-set metrics | appendix journal |
 | A17 | presupuesto, LGD y caps | appendix journal |
 | A18 | robust region by policy family | cuerpo corto o appendix |
+| A19 | regret-auditability frontier | cuerpo corto y appendix |
 
 Mapa recomendado del appendix del CRPTO.
 :::
@@ -249,7 +272,7 @@ uv run -- quarto render book/chapters/07-apendice-robustez.qmd --to html --no-ex
 ::: {.callout-important}
 ## Regla de sincronizacion
 
-Si alguna tabla A12--A18 contradice `models/final_project_promotion.json`, gana
+Si alguna tabla A12--A19 contradice `models/final_project_promotion.json`, gana
 `final_project_promotion.json`. Las tablas nuevas son evidencia de robustez,
 sensibilidad y empaque journal; no son una promocion nueva del champion.
 :::

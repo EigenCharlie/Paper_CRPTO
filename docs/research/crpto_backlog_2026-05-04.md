@@ -20,6 +20,20 @@ can be reorganized, rendered and revalidated, but anything that changes the
 champion, the guarantee, the dataset universe, or the search space requires a
 named new run and explicit drift validation.
 
+## Journal Strengthening Pack - 2026-05-12
+
+The current paper now includes selected former P2/P3 ideas when they are
+diagnostic, comparator framing, or caveated theory based on frozen artifacts.
+This is not a permission to reopen the champion search.
+
+| Item | Current-paper status | Evidence | Boundary |
+|---|---|---|---|
+| Pareto regret-auditability frontier | Included in body/supplement | A19 + Fig 15 from SPO+ and CRPTO status artifacts | Comparator framing, not a new selector. |
+| OCE/CVaR tail-risk audit | Included in supplement | A12 | Diagnostic repricing only; the future objective scaffold is not promoted as champion. |
+| Robust satisficing margins | Included in supplement or short body paragraph | A13 | Threshold/margin evidence, not a new policy objective. |
+| Dependence-aware bound | Included as caveat/proposition | A14 + conditional tightening note | Markov remains the main distribution-free theorem. |
+| Multi-dataset credit replication | Backlog journal/follow-up | none yet | Requires a new dataset, leakage checks and protocol; not a submission blocker. |
+
 ## Consolidated Status Matrix
 
 This matrix is the current operational backlog view. It separates maintenance,
@@ -41,8 +55,8 @@ experiments or theory.
 | P1/J | Implemented | Uncertainty-set baselines | CP vs bootstrap/parametric/ellipsoidal evidence | `uncertainty_baselines_comparison.parquet`, `uncertainty_baselines_by_grade.parquet`, `04-resultados` | No | strengthens current paper | use to justify conformal robust set selection |
 | P1/J | Implemented | CQR comparator evidence | conformal alternative | `cqr_comparison_status.json`, `cqr_mondrian_status.json`, `crpto_fig10`, `04-resultados` | No | complements paper | keep as comparator/appendix; do not replace official Mondrian winner |
 | P1/J | Implemented | Manuscript blueprint | paper structure | `06-blueprint-manuscrito.qmd` | No | prepares manuscript | compress into actual paper draft when writing starts |
-| P1/J | Pending | Standalone manuscript extraction | final submission artifact | `06-blueprint-manuscrito`, `14-release`, A1--A18, figures | No | required for submission | write the short paper from the book package; no champion changes |
-| P1/J | Implemented | Journal appendix A12--A18 | appendix evidence | `07-apendice-robustez.qmd` | No | complements paper | use as appendix package, not new champion evidence |
+| P1/J | Pending | Standalone manuscript extraction | final submission artifact | `06-blueprint-manuscrito`, `14-release`, A1--A19, figures | No | required for submission | write the short paper from the book package; no champion changes |
+| P1/J | Implemented | Journal appendix A12--A19 | appendix evidence | `07-apendice-robustez.qmd` | No | complements paper | use as appendix package, not new champion evidence |
 | P1/J | Implemented | Mondrian ablation page | conformal winner defense | `08-ablacion-mondrian.qmd` | No | strengthens method selection | use when reviewer asks why score-decile, not grade |
 | P1/J | Implemented | SPO+ protocol page | DFL comparator | `09-spo-regret.qmd` | No | strengthens comparator narrative | keep train-time 49.1% and temporal stability configs separate |
 | P1/J | Implemented | Fair lending checkpoint | governance/funded set | `10-fair-lending.qmd` | No | strengthens auditability | cite as proxy/intersectional audit, not legal protected-attribute proof |
@@ -55,18 +69,19 @@ experiments or theory.
 | P1/J | Implemented | Tail risk diagnostics | funded-set risk | A12 | No | complements paper | do not cite repriced return as official return |
 | P1/J | Implemented | Satisficing margins | OR framing | A13 | No | complements paper | justify thresholds if moved to body |
 | P1/J | Implemented | Dependence diagnostics | conditional tightening | A14 | No | complements theory | do not claim independence from this table |
+| P1/J | Implemented | Regret-auditability frontier | SPO+/CRPTO comparator framing | A19, Fig 15 | No | strengthens body narrative | report SPO+ as low-regret corner and CRPTO as auditable-risk-control corner |
 | P1/J | Implemented | Temporal stress and bootstrap | robustness | A15, A16 | No | complements paper | keep as descriptive appendix evidence |
 | P1/J | Implemented | Budget/LGD/cap sensitivity | applied credit robustness | A17 | No | complements paper | cap checks are diagnostics, not solver constraints |
 | P1/J | Implemented | Robust region family table | compatible leaderboard | A18 | No | strengthens results | report only inside bound-aware family |
-| P2 | Pending | OCE/CVaR as optimization target | portfolio search objective | A12 is diagnostic only | Yes | can strengthen or redirect method | implement tail-risk-aware search if approved |
+| P2 | Scaffolded | OCE/CVaR as optimization target | portfolio search objective | `src/optimization/tail_satisficing_objective.py`, `configs/crpto_tail_satisficing_objective.yaml`; A12 remains diagnostic | Yes | can strengthen or redirect method | run only as a named future experiment, not as current champion promotion |
 | P2 | Pending | Multi-distribution robust CP | conformal layer | none | Yes | new methodological direction | design source/group robust calibration |
 | P2 | Pending | Online conformal recalibration | deployment/streaming | none | Yes | new sequential direction | simulate monthly recalibration and coverage regret |
 | P2 | Pending | Online DFL comparison | DFL benchmark | SPO+ static evidence exists | Yes | new comparison direction | build repeated-decision experiment |
 | P2 | Pending | SPO+ + conformal hybrid | model training/calibration | current SPO+ and CP are separate | Yes | could change method | train decision-loss-aware predictor/calibrator with CP wrapper |
-| P2 | Pending | Robust satisficing policy | OR objective | A13 is diagnostic only | Yes | new OR variant | optimize thresholds/margins directly |
-| P2 | Pending | Dependence-aware main bound | theory | conditional lemma exists | No metric, but new proof | journal theory direction | prove a valid concentration result under shared calibration dependence |
+| P2 | Scaffolded | Robust satisficing policy | OR objective | `src/optimization/tail_satisficing_objective.py`, `configs/crpto_tail_satisficing_objective.yaml`; A13 remains diagnostic | Yes | new OR variant | optimize thresholds/margins directly only in an isolated future run |
+| P2 | Pending | Dependence-aware main bound beyond cluster caveat | theory | conditional lemma and cluster-aware caveat exist | No metric, but new proof | journal theory direction | prove a valid concentration result without silently assuming independence |
 | P2 | Pending | Multi-dataset credit replication | external validity | none | Yes | top-venue validation | run Lending Club-like pipeline on another credit dataset |
-| P2 | Pending | Pareto regret-auditability frontier | OR/DFL framing | SPO+ and CRPTO diagnostics exist | Maybe | strengthens MS/OR story | formalize tradeoff between regret reduction and coverage/auditability |
+| P2 | Pending | Hybrid regret-auditability objective | OR/DFL framing | A19/Fig15 diagnostic frontier exists | Yes | possible follow-up | train or search hybrids only under a new protocol |
 | P3 | Future | Multi-period portfolio | production realism | none | Yes | new paper/product track | model state transitions and rebalancing |
 | P3 | Future | Conformal CATE / causal CRPTO | causal decision layer | CATE lane exists as `insights_only` | Yes | new paper direction | require identification, overlap, policy value and causal sensitivity checks |
 | P3 | Future | Distribution shift / online conformal CRPTO | sequential uncertainty | `time_series_vnext` is `research_only` | Yes | new sequential direction | use ACI/online CP only after interval gate is promotable |
@@ -112,7 +127,7 @@ are about manuscript quality, not new champion selection.
 
 | Item | Uses existing artifacts? | Needs new run? | Why it is immediate | Done when |
 |---|---|---|---|---|
-| Extract standalone manuscript draft | Yes: `06-blueprint-manuscrito`, `14-release`, A1--A18, figures | No | converts book evidence into a journal-shaped paper | abstract, intro, related work, theory, method, results and appendix skeleton exist outside the book |
+| Extract standalone manuscript draft | Yes: `06-blueprint-manuscrito`, `14-release`, A1--A19, figures | No | converts book evidence into a journal-shaped paper | abstract, intro, related work, theory, method, results and appendix skeleton exist outside the book |
 | Final body-vs-appendix table/figure selection | Yes | No | avoids overloading the paper body | final list maps each table/figure to body, appendix or thesis-only |
 | Write alpha sweep / alpha-Gamma narrative | Yes | No | turns old "alpha sweep" task into a clear business-policy dial | body text explains alpha, width, Gamma_CP, funded set and robust region without overclaiming |
 | Write uncertainty-baseline narrative | Yes | No | answers why conformal robust sets, not bootstrap/parametric sets | comparator table/figure is tied to the CRPTO contribution |
@@ -157,25 +172,27 @@ cleanup" for the current CRPTO.
 - The current paper is a **CRPTO post-hoc auditable** paper with a frozen
   economic champion.
 - P0/P1/P1-J items strengthen the current paper without changing its direction.
-- P2 items are **not pending work for this paper**. They are real
-  methodological extensions and should be opened only with a named run/protocol
-  after the current submission.
-- P3 items are **not part of this paper**. They belong to broader
-  thesis/product work.
+- Selected P2/P3-inspired diagnostics are now part of the journal strengthening
+  pack: OCE/CVaR diagnostic, satisficing margins, regret-auditability frontier
+  and dependence-aware caveat.
+- Method-changing P2 items remain backlog and should be opened only with a
+  named run/protocol after the current submission.
+- P3 items remain thesis/product work unless a venue explicitly asks for them.
 - If any diagnostic table contradicts `models/final_project_promotion.json`,
   the promotion artifact wins.
 
 ## Current IJDS Submission Scope
 
 The IJDS submission includes the frozen CRPTO champion, the robust-region
-evidence, the A3--A18 supplement, and the reproducibility package. It excludes
-all P2/P3 extensions as acceptance criteria.
+evidence, the A3--A19 supplement, the regret-auditability frontier, and the
+reproducibility package. It excludes method-changing P2/P3 extensions as
+acceptance criteria.
 
 | Lane | Current-paper status | Rule |
 |---|---|---|
 | P0 | Active maintenance | Keep green before every submission-facing change. |
 | P1/P1-J | Included as paper/supplement evidence | Use existing artifacts only; do not re-search. |
-| P2 | Future-methodology only | Mention in future work; do not implement for this paper. |
+| P2 | Split | Diagnostic/framing pack enters; method-changing variants stay future work. |
 | P3 | Future thesis/product only | Do not use as a blocker or submission requirement. |
 
 ## P0 - Keep Current Paper Publishable
@@ -222,7 +239,7 @@ without changing the official champion or reopening the search.
 | Item | Implemented artifact | What it adds | Scope caveat |
 |---|---|---|---|
 | Convert chapter 14 into paper blueprint | `book/chapters/06-blueprint-manuscrito.qmd` | target venue, abstract, claims C1--C7, manuscript outline, final table/figure plan and notation | blueprint, not final manuscript |
-| Appendix A12--A18 | `book/chapters/07-apendice-robustez.qmd` | renders tail risk, satisficing, dependency, stress, bootstrap, LGD/cap and robust-region evidence | appendix material unless a journal asks for more body evidence |
+| Appendix A12--A19 | `book/chapters/07-apendice-robustez.qmd` | renders tail risk, satisficing, dependency, stress, bootstrap, LGD/cap, robust-region and regret-auditability evidence | appendix material unless a journal asks for more body evidence |
 | Clean CRPTO figure | `crpto_fig12_crpto_conceptual_pipeline.png` | candidate Figure 1 | visual explanation only |
 | Alpha -> Gamma_CP -> funded set figure | `crpto_fig13_alpha_gamma_funded_set.png` | connects conformal alpha to portfolio quantities | diagnostic curve from frozen artifacts |
 | Robust region heatmap | `crpto_fig14_robust_region_heatmap.png` | visualizes the `45/45` robust region | summarizes final mini-grid, not a new search |
@@ -233,7 +250,9 @@ without changing the official champion or reopening the search.
 | Bootstrap funded-set metrics | `crpto_tableA16_bootstrap_funded_set_metrics.csv` | adds empirical intervals for return, default, `V` and miscoverage counts | descriptive bootstrap, not formal conformal guarantee |
 | Budget / LGD / cap sensitivity | `crpto_tableA17_budget_cap_lgd_sensitivity.csv` | reprices under budgets, LGD alternatives and segment caps | cap check is diagnostic, not a constrained optimization |
 | Robust region by policy family | `crpto_tableA18_robust_region_policy_family.csv` | groups final policies by `risk_tolerance x gamma` and confirms all pass | compatible leaderboard only within bound-aware family |
-| Reproducible generator | `scripts/build_crpto_journal_package.py`, `models/crpto_journal_package_status.json` | regenerates A12--A18 and figures from frozen artifacts | no champion promotion logic |
+| Regret-auditability frontier | `crpto_tableA19_regret_auditability_frontier.csv`, `crpto_fig15_regret_auditability_frontier.png` | compares two-stage, SPO+ and CRPTO robust across regret and verifiable risk controls | comparator framing, not a new champion selector |
+| Reproducible generator | `scripts/build_crpto_journal_package.py`, `models/crpto_journal_package_status.json` | regenerates A12--A19 and figures from frozen artifacts | no champion promotion logic |
+| OCE/CVaR/satisficing objective scaffold | `src/optimization/tail_satisficing_objective.py`, `configs/crpto_tail_satisficing_objective.yaml` | provides deterministic CVaR, entropic OCE and threshold-margin scoring for future variants | research scaffold only; no current search, promotion or frozen artifact replacement |
 
 ### Quarto Expansion Snapshot - 2026-05-05
 
@@ -259,15 +278,15 @@ paths, claims and caches synchronized as new evidence pages are added.
 
 | Item | Literature driver | Implementation sketch | Acceptance criteria |
 |---|---|---|---|
-| OCE/CVaR funded-set conformal risk as optimization target | Conformal Risk Training | A12 now reports diagnostic OCE/CVaR; the P2 version would replace or augment expected weighted miscoverage with OCE/CVaR-style tail risk during search | reports tail-risk metrics as constraints/objectives alongside official return, `V`, `gamma_cp` and price of robustness |
+| OCE/CVaR funded-set conformal risk as optimization target | Conformal Risk Training | The scoring scaffold now exists in `src/optimization/tail_satisficing_objective.py`; the P2 version would attach it to a named future search rather than to the frozen champion | reports tail-risk metrics as constraints/objectives alongside official return, `V`, `gamma_cp` and price of robustness |
 | Multi-distribution robust conformal layer | MDCP | Calibrate for multiple possible sources/groups without assuming test-time group availability | reports worst-source coverage and robust set width |
 | Online conformal recalibration | UP-OCP / ACI | Update conformal quantiles under streaming monthly originations | coverage regret or online miscoverage is tracked over time |
 | Online DFL comparison | Online DFL | Compare CRPTO, SPO+ and online DFL under drift and repeated decisions | reports static/dynamic regret plus coverage and auditability metrics |
 | SPO+ + conformal hybrid | SPO+, end-to-end conformal calibration | Train the predictor or calibration layer with decision loss while retaining conformal wrapper | shows whether regret improves without losing coverage traceability |
-| Robust satisficing policy | Conformal Robust Optimization and Satisficing | Add a satisficing objective where policies meet risk/return thresholds instead of maximizing return alone | reports fragility/satisficing margin next to price of robustness |
-| Dependence-aware main bound | CRC + concentration under dependence | Upgrade the conditional Hoeffding/Bernstein lemma into a main theorem that explicitly handles the shared calibration-set dependence structure | Markov remains valid; any tighter main claim has a proof that does not assume independence silently |
+| Robust satisficing policy | Conformal Robust Optimization and Satisficing | The same scaffold evaluates threshold margins; a future run could optimize those margins directly | reports fragility/satisficing margin next to price of robustness |
+| Dependence-aware main bound beyond cluster caveat | CRC + concentration under dependence | Upgrade the conditional Hoeffding/Bernstein lemma into a main theorem that explicitly handles the shared calibration-set dependence structure without relying on cross-cluster independence | Markov remains valid; any tighter main claim has a proof that does not assume independence silently |
 | Multi-dataset credit replication | external validity / credit risk | Repeat the frozen CRPTO protocol on a separate credit dataset with fresh leakage checks and artifact ownership | coverage, return, `V`, `gamma_cp` and price of robustness are reported on at least one independent dataset |
-| Pareto regret-auditability frontier | DFL + OR decision theory | Formalize the tradeoff between regret-oriented training/optimization and auditable conformal risk control | reports a frontier or scalar objective where CRPTO, SPO+ and hybrids can be compared without mixing incompatible leaderboards |
+| Hybrid regret-auditability objective | DFL + OR decision theory | Move beyond the current A19 diagnostic frontier and train or search policies on a combined regret/auditability objective | reports a frontier or scalar objective where CRPTO, SPO+ and hybrids can be compared without mixing incompatible leaderboards |
 
 ## P3 - Broader Thesis / Product Track
 
@@ -301,7 +320,7 @@ as a staging area for paper, journal and thesis:
 
 These pages are intentionally more explanatory than a journal paper. They keep
 the claim ladder, reviewer Q&A, artifact placement map, local numbered
-references `[1]`, `[2]`, ... and the A12--A18 appendix package that can later be
+references `[1]`, `[2]`, ... and the A12--A19 appendix package that can later be
 compressed into the manuscript.
 
 The extraction/release manifest explicitly classifies OCE/CVaR optimization,

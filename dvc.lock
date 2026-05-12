@@ -10,12 +10,12 @@ stages:
       isexec: true
     - path: book/chapters
       hash: md5
-      md5: 7444a720fbbd9e08e8d79ea1d7b28b2a.dir
-      size: 682140
+      md5: 8c4b2fc607eb208b9b1247bf30fd4c3f.dir
+      size: 685571
       nfiles: 25
     - path: book/index.qmd
       hash: md5
-      md5: ad9e2b6145967174d39f4285736677bc
+      md5: e27d4eb2deeb2a8699f56f880b89b0d0
       size: 3819
       isexec: true
     - path: book/styles.scss
@@ -31,8 +31,8 @@ stages:
     outs:
     - path: book/_book
       hash: md5
-      md5: 36d22c77dd22a122dd6587b9f7cdcf2e.dir
-      size: 17109385
+      md5: 175aa8f71957394917682968bb28111c.dir
+      size: 17123394
       nfiles: 87
   crpto.paper.figures:
     cmd: python scripts/generate_crpto_figures.py --paper crpto
@@ -310,19 +310,45 @@ stages:
   crpto.paper.journal_package:
     cmd: python scripts/build_crpto_journal_package.py
     deps:
+    - path: data/processed/crpto_vs_spo_stability.json
+      hash: md5
+      md5: d05f8c7fde9d510a9518ad41681fe827
+      size: 6434
+    - path:
+        data/processed/portfolio_bound_aware/rank1_alpha01_bound_aware_276k_full_2026-04-05-1734/portfolio_bound_aware_bound_eval.parquet
+      hash: md5
+      md5: 176384711f07133a62a6cecf6af02dbc
+      size: 48376
+    - path:
+        data/processed/portfolio_bound_aware/rank1_alpha01_bound_aware_276k_full_2026-04-05-1734/portfolio_bound_aware_shortlist.parquet
+      hash: md5
+      md5: 187c6d2320f82472c738cb63a49fbaec
+      size: 35173
+    - path: models/final_project_promotion.json
+      hash: md5
+      md5: 5d789be10b37de798d6de0d66c843b6e
+      size: 8066
+    - path: models/spo_real_training_status.json
+      hash: md5
+      md5: e682d6ef32b1f3a5ed3ba4f68daf3e44
+      size: 2411
     - path: reports/crpto/tables/crpto_tableA7_funded_set_loans.csv
       hash: md5
       md5: 55c86a6d4dbeb2169c57aadf21a3ff2b
       size: 45335
+    - path: reports/crpto/tables/crpto_tableA8_funded_set_composition.csv
+      hash: md5
+      md5: d75b3b71c097c3df8240217eec28735e
+      size: 2187
     - path: scripts/build_crpto_journal_package.py
       hash: md5
-      md5: ad5b4108f3612d3eda9945134f33d0a5
-      size: 26242
+      md5: cdb767fda1c0a146bf7cb8f6bec19f28
+      size: 32531
     outs:
     - path: models/crpto_journal_package_status.json
       hash: md5
-      md5: fed6e01e4549880530cf17d23234a74f
-      size: 2621
+      md5: afbf0d30697caa7eb37be8974db13a1c
+      size: 3116
   crpto.paper.spo_stability:
     cmd: python scripts/run_crpto_vs_spo_stability.py
     deps:

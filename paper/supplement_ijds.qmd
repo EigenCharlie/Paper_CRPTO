@@ -23,19 +23,21 @@ execute:
 ## Scope
 
 This online supplement supports the IJDS submission body. It collects proof
-details, robustness tables A3--A18, reproducibility commands, model-risk
+details, robustness tables A3--A19, reproducibility commands, model-risk
 material, fairness diagnostics, and artifact lineage. It does not introduce a
 new champion, new dataset, new search space, or new claim family.
 :::
 
 ::: {.callout-important}
-## Current-Paper Boundary
+## Journal Strengthening Pack
 
-P2 and P3 backlog items are not part of this submission. OCE/CVaR optimization,
-multi-distribution conformal prediction, online conformal recalibration,
-online DFL, causal CRPTO, multi-period portfolios, production monitoring, and
-open-source package extraction are future work only. They are cited to position
-the method, not to define missing acceptance criteria for the current paper.
+Selected former P2/P3 ideas are included here when they can be evaluated from
+frozen artifacts: OCE/CVaR as a tail-risk diagnostic, robust satisficing as
+committee-style margins, regret-auditability as the SPO+/CRPTO comparator, and
+dependence-aware theory as a caveat/proposition. Optimized OCE/CVaR objectives,
+multi-distribution or online conformal prediction, online DFL, causal CRPTO,
+multi-period portfolios, production monitoring, package extraction, and
+multi-dataset credit replication remain future work only.
 :::
 
 # Appendix A: Theoretical Details
@@ -68,6 +70,30 @@ Lending Club evaluation is temporal and the funded set shares calibration and
 selection history. The paper therefore keeps Markov as the main claim and uses
 the tightening appendix as sensitivity evidence, not as a stronger theorem.
 
+## Cluster-Aware Conditional Tightening
+
+Let clusters `g = 1, ..., G` represent period, grade, or period-grade cells, and
+let
+
+```text
+Z_g = sum_{i in g} w_i 1{Y_i > u_i(alpha)}.
+```
+
+Within each cluster, defaults and conformal misses may be arbitrarily
+dependent. If, after conditioning on the calibration sample and fixed funded
+allocation, the cluster aggregates are independent or conditionally
+independent across `g`, then the weighted noncoverage sum admits a
+cluster-level concentration bound. A Hoeffding-style version is
+
+```text
+P(V - E[V] >= t) <= exp(-2 t^2 / sum_g W_g^2),
+```
+
+where `W_g = sum_{i in g} w_i` is the cluster exposure share. This proposition
+does not replace the main Markov bound because the cross-cluster assumption is
+additional. Table A14 reports the relevant exposure and miscoverage
+concentration so reviewers can audit where that assumption would matter.
+
 # Appendix B: P1 Evidence
 
 The P1 package strengthens the frozen champion without reopening search. Tables
@@ -93,8 +119,9 @@ future journal hardening.
 
 # Appendix C: Journal Robustness Package
 
-Tables A12--A18 answer likely reviewer questions that are too detailed for the
-25-page body. They are diagnostic by design.
+Tables A12--A19 answer likely reviewer questions that are too detailed for the
+25-page body. They are diagnostic by design, except A19 also supports the body
+framing around regret-auditability.
 
 | Table | Role | Scope caveat |
 |---|---|---|
@@ -105,10 +132,13 @@ Tables A12--A18 answer likely reviewer questions that are too detailed for the
 | A16 bootstrap funded-set metrics | Adds empirical intervals for return, defaults, `V`, and misses. | Bootstrap interval, not conformal guarantee. |
 | A17 budget/LGD/cap sensitivity | Varies operating assumptions. | Segment caps are diagnostics, not solver constraints. |
 | A18 robust region by policy family | Summarizes alpha-safe policies by bound-aware family. | Compatible leaderboard only inside the final family. |
+| A19 regret-auditability frontier | Compares two-stage, SPO+, and CRPTO robust on regret versus risk-control checks. | Comparator framing, not a new champion selector. |
 
 ![Uncertainty baselines remain supplement evidence; they justify why conformal robust sets are used without replacing the champion.](../reports/crpto/figures/crpto_fig7_uncertainty_baselines.png){#fig-supp-uncertainty-baselines width="90%"}
 
 ![SPO+ is retained as an auditability/regret comparator, not as a replacement champion.](../reports/crpto/figures/crpto_fig9_spo_regret.png){#fig-supp-spo width="90%"}
+
+![A19 materializes the regret-auditability frontier: SPO+ is the low-regret corner, while CRPTO robust is the auditable-risk-control corner.](../reports/crpto/figures/crpto_fig15_regret_auditability_frontier.png){#fig-supp-regret-auditability width="82%"}
 
 ![CQR is retained as conformal appendix evidence, not as the promoted method.](../reports/crpto/figures/crpto_fig10_cqr_per_grade.png){#fig-supp-cqr width="90%"}
 
@@ -186,7 +216,7 @@ The active IJDS submission surfaces are:
 | Surface | Source | Role |
 |---|---|---|
 | Anonymous body | `paper/CRPTO_ijds.qmd` | 25-page IJDS-style manuscript source. |
-| Online supplement | `paper/supplement_ijds.qmd` | Proofs, A3--A18, MRM/fairness, reproducibility. |
+| Online supplement | `paper/supplement_ijds.qmd` | Proofs, A3--A19, MRM/fairness, reproducibility. |
 | Long companion | `book/` | Public companion after anonymity handling. |
 | Publication config | `configs/crpto_publication_targets.yaml` | Venue, template, anonymity, and pivot rules. |
 

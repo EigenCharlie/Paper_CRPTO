@@ -170,7 +170,7 @@ pero una validación externa real sigue siendo trabajo futuro.
 Las paginas @sec-p1-manuscript-blueprint y @sec-p1-journal-appendix convierten
 esta guia editorial en un paquete de escritura mas cercano al manuscrito. El
 blueprint define venue target, abstract operativo, claims C1--C7, notacion unica
-y plan de figuras/tablas. El appendix journal agrega A12--A18 y tres figuras
+y plan de figuras/tablas. El appendix journal agrega A12--A19 y cuatro figuras
 paper-grade generadas desde artefactos congelados.
 
 | Nuevo material | Papel editorial | Artefacto |
@@ -179,14 +179,14 @@ paper-grade generadas desde artefactos congelados.
 | Figura CRPTO limpia | Figura 1 candidata | `crpto_fig12_crpto_conceptual_pipeline.png` |
 | Figura alpha -> `Gamma_CP` -> funded set | puente teoria-metodo | `crpto_fig13_alpha_gamma_funded_set.png` |
 | Heatmap region robusta | evidencia visual `45/45` | `crpto_fig14_robust_region_heatmap.png` |
-| A12--A18 | robustness appendix journal | `scripts/build_crpto_journal_package.py` |
+| A12--A19 | robustness appendix journal | `scripts/build_crpto_journal_package.py` |
 | Status del paquete | trazabilidad y fuente canonica | `models/crpto_journal_package_status.json` |
 
 : Material journal-ready agregado al CRPTO {#tbl-crpto-journal-ready-package}
 
 La regla de jerarquia sigue intacta: si una tabla diagnostica nueva entra en
 tension con `models/final_project_promotion.json`, gana la promocion oficial.
-A12--A18 fortalecen robustez y escritura journal, pero no re-promueven el
+A12--A19 fortalecen robustez y escritura journal, pero no re-promueven el
 champion.
 
 ### Referencias numeradas locales

@@ -76,7 +76,7 @@ robusta verificable, no en otro leaderboard predictivo.
 | C4 | El bound controla no-cobertura ponderada del funded set bajo supuestos distribution-free. | Teorico | `thm-conformal-feasibility`, Markov, `V <= sqrt(alpha)` |
 | C5 | La policy oficial es economic champion, no theorem-tight. | Empirico-editorial | `final_project_promotion.json`, retorno `$170.5K`, `alpha01_exact_pass=true` |
 | C6 | La region robusta final es completa, no un punto aislado. | Empirico | `45/45` policies pass en el OOT completo `276k` |
-| C7 | La evidencia CRPTO y journal-package muestra robustez adicional sin cambiar la direccion del paper. | Robustez | A3--A18, Figuras 12--14 |
+| C7 | La evidencia CRPTO y journal-package muestra robustez adicional sin cambiar la direccion del paper. | Robustez | A3--A19, Figuras 12--15 |
 
 Claims numerados para transformar el libro en manuscrito.
 :::
@@ -98,9 +98,9 @@ incertidumbre, hacia composicion del funded set.
 | 4. Theory | `Gamma_CP`, `V`, Markov, tightening condicional como appendix | 14b, appendix condicional |
 | 5. Experimental design | Lending Club OOT, artifacts, compatible leaderboards | 14c, docs de sincronizacion |
 | 6. Results | champion, region robusta, comparadores, SPO+ y alpha frontier | 14d |
-| 7. Robustness | nested/temporal holdout, funded set, shift, tail risk | 14d, 14h, A3--A18 |
+| 7. Robustness | nested/temporal holdout, funded set, shift, tail risk | 14d, 14h, A3--A19 |
 | 8. Discussion | limitaciones, governance, future work sin overclaim | 14e |
-| Appendix | pruebas, tablas A3--A18, reproducibility checklist | 14b, 14h |
+| Appendix | pruebas, tablas A3--A19, reproducibility checklist | 14b, 14h |
 
 Skeleton recomendado del paper.
 :::
@@ -120,7 +120,7 @@ seleccion sugerida es:
 | Tabla 1: metricas core | resultados | fija PD, CP y portfolio sin mezclar familias | `crpto_table0_key_metrics.csv` |
 | Tabla 2: champion y comparadores | resultados | economic vs theorem-tight vs balanced | `crpto_table1_champion_policy.csv` y A13 |
 | Tabla 3: robustez P1 | appendix corto | post-seleccion, temporal, selector, shift | A3--A11 |
-| Tabla 4: robustness journal | appendix largo | tail risk, bootstrap, dependencia, LGD/caps | A12--A18 |
+| Tabla 4: robustness journal | appendix largo | tail risk, bootstrap, dependencia, LGD/caps, regret-auditability | A12--A19 |
 
 Seleccion de figuras y tablas para el manuscrito.
 :::
@@ -141,7 +141,7 @@ El appendix puede cargar la evidencia de stress y trazabilidad.
 | C4 | `scripts/validate_alpha_gamma_bound.py`, bound eval `276k` | `test_crpto_champion_artifacts_agree` | teoria y appendix |
 | C5 | `models/final_project_promotion.json` | `test_crpto_champion_artifacts_agree` | resultados |
 | C6 | `portfolio_bound_aware_shortlist.parquet`, A18 | journal package guardrail | resultados/appendix |
-| C7 | A3--A18, status P1 y journal package | P1 evidence tests | robustness |
+| C7 | A3--A19, status P1 y journal package | P1 evidence tests | robustness |
 
 Mapa compacto para escribir y auditar el paper.
 :::
@@ -230,7 +230,7 @@ pasar este checklist:
 - `Y_i` se define como target observado/acotado; PD latente queda como lectura
   adicional bajo supuesto.
 - Las familias de metricas no se mezclan en un solo leaderboard.
-- Las tablas A12--A18 se presentan como robustness/journal package, no como una
+- Las tablas A12--A19 se presentan como robustness/journal package, no como una
   nueva busqueda de champion.
 - El related work incluye CP/CRC/RCPS, RO, Predict-then-Calibrate, DFL, CROMS,
   MDCP, online CP y conformal risk training.

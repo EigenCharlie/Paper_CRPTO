@@ -24,7 +24,7 @@ El champion oficial es `bound_aware_276k_economic_champion` del run `paper-thesi
 Este libro no intenta ser todavía el paper final. Funciona como dossier editorial y técnico: conserva explicaciones largas, decisiones metodológicas, vínculos con artefactos, preguntas de reviewer, tablas y figuras que después se comprimirán en tres salidas distintas:
 
 - **Paper corto**: claim CRPTO, teorema, champion, región robusta, comparación SPO+ y tablas esenciales.
-- **Journal version**: appendices A3--A18, trazabilidad, MRM, fairness, funded set, stress tests y material editorial.
+- **Journal version**: appendices A3--A19, trazabilidad, MRM, fairness, funded set, stress tests y material editorial.
 - **Libro de trabajo**: fundamentos, decisiones descartadas, runbooks, evidencia de calibración/conformal, conexiones regulatorias y agenda futura.
 
 ## Regla de lectura
@@ -36,7 +36,7 @@ Si una explicación es demasiado larga para un paper de 30--40 páginas, puede s
 | Si estás preparando... | Lee primero | Usa como evidencia |
 |---|---|---|
 | Paper corto | [Introducción](chapters/01-introduccion.qmd), [marco teórico](chapters/02-marco-teorico.qmd), [metodología](chapters/03-metodologia.qmd), [resultados](chapters/04-resultados.qmd) y [discusión](chapters/05-discusion.qmd) | Tablas principales, Figura 1, champion oficial y claim-artifact-test |
-| Journal version | [Blueprint](chapters/06-blueprint-manuscrito.qmd), [apéndice de robustez](chapters/07-apendice-robustez.qmd), [ablación Mondrian](chapters/08-ablacion-mondrian.qmd), [SPO+](chapters/09-spo-regret.qmd) y [trazabilidad](chapters/13-trazabilidad.qmd) | A3--A18, Figuras 7--14, fairness, MRM y runbook reproducible |
+| Journal version | [Blueprint](chapters/06-blueprint-manuscrito.qmd), [apéndice de robustez](chapters/07-apendice-robustez.qmd), [ablación Mondrian](chapters/08-ablacion-mondrian.qmd), [SPO+](chapters/09-spo-regret.qmd) y [trazabilidad](chapters/13-trazabilidad.qmd) | A3--A19, Figuras 7--15, fairness, MRM y runbook reproducible |
 | Revisión técnica | [Dossier conformal](chapters/19-conformal-dossier.qmd), [portafolio/policy](chapters/20-portafolio-policy.qmd), [gobernanza](chapters/21-gobernanza-explicabilidad-dataset.qmd) y [entorno](chapters/22-literatura-trazabilidad-entorno.qmd) | DVC, MLflow/DagsHub, perfiles congelados, tests y manifiestos |
 | Agenda futura | [Discusión](chapters/05-discusion.qmd), [release](chapters/14-release.qmd) y [apéndices regulatorios/future work](chapters/23-apendices-regulatorios-y-future-work.qmd) | Qué no cambia el champion y qué requiere un nuevo protocolo |
 

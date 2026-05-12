@@ -17,10 +17,12 @@ the submission-shaped versions are written.
 - `CRPTO_ijds.qmd`: IJDS-style anonymous body source.
 - `supplement_ijds.qmd`: IJDS-style online supplement source.
 
-P2/P3 backlog items are not part of the current paper. The active submission is
-the frozen CRPTO result plus supplement evidence generated from existing
-artifacts; future online, causal, multi-distribution, production, or package
-tracks are discussed only as future work.
+Selected P2/P3-inspired diagnostics are part of the current paper/journal pack:
+regret-auditability, OCE/CVaR tail risk, robust satisficing margins, and the
+dependence-aware caveat. The active submission still uses the frozen CRPTO
+result plus supplement evidence generated from existing artifacts; future
+online, causal, multi-distribution, multi-dataset, production, or package tracks
+remain future work.
 
 ## Render Commands
 
@@ -33,3 +35,10 @@ just paper-submission
 The final submission PDF should use the official venue template. These Quarto
 files are the writing source of truth until the IJDS LaTeX template is applied
 with double-anonymous settings.
+
+## Closeout Gates
+
+Before tagging a submission release, do a final sweep for stale numbers,
+captions, body-vs-supplement placement, and IJDS length. Keep public GitHub,
+DagsHub, and MLflow links anonymized in the manuscript unless the venue policy
+or cover-letter disclosure requires otherwise.

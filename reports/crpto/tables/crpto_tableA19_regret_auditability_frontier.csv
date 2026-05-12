@@ -1,0 +1,4 @@
+method,mean_regret,regret_delta_vs_two_stage_pct,coverage_90_range,exact_funded_set_bound,robust_region_pass,auditability_evidence_count,paper_role,source
+Two-stage baseline,0.42589625543096554,0.0,not_applicable,False,False,0,Regret baseline for the decision-focused comparison.,models/spo_real_training_status.json
+SPO+,0.21683697549265343,49.08690256662728,not_applicable,False,False,0,Regret-efficient comparator; temporal improvement range 41.73--57.56%.,models/spo_real_training_status.json
+CRPTO robust,0.947429495839504,-122.45546509461502,0.9207--0.9858,True,True,3,"Auditable robust champion: coverage, exact bound and 45/45 region.",models/spo_real_training_status.json; data/processed/crpto_vs_spo_stability.json; models/final_project_promotion.json

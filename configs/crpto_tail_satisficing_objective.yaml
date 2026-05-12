@@ -1,0 +1,59 @@
+version: "2026-05-12"
+status: research_scaffold
+scope: future_search_only
+
+description: >
+  Experimental OCE/CVaR/satisficing objective scaffold for future CRPTO
+  journal variants. This config documents a scoring layer only; it does not
+  replace the frozen champion objective or re-run the 276k policy search.
+
+inputs:
+  allowed:
+    - frozen funded-set exports
+    - frozen conformal intervals
+    - frozen promotion/status JSON files
+    - future isolated experiment outputs
+  forbidden_without_explicit_approval:
+    - overwriting models/final_project_promotion.json
+    - overwriting portfolio_bound_aware champion directories
+    - updating EXTRACTION_MANIFEST.json
+    - promoting a new rank-1 policy
+
+tail_risk:
+  loss_rate_definition: "default_flag * lgd - (1 - default_flag) * int_rate"
+  cvar_tail: 0.95
+  entropic_oce_theta: 5.0
+
+satisficing_thresholds:
+  expected_return:
+    sense: min
+    threshold: 150000.0
+  weighted_miscoverage:
+    sense: max
+    threshold: 0.04
+  gamma_cp:
+    sense: max
+    threshold: 0.20
+  exact_pass:
+    sense: equals
+    threshold: true
+  robust_region_pass:
+    sense: equals
+    threshold: true
+
+objective_score:
+  formula: >
+    expected_return - risk_scale * (cvar_penalty * cvar_loss_rate
+    + oce_penalty * entropic_oce
+    + satisficing_shortfall_penalty * satisficing_shortfall)
+  risk_scale: 1000000.0
+  cvar_penalty: 0.0
+  oce_penalty: 0.0
+  satisficing_shortfall_penalty: 1.0
+
+promotion_rule:
+  current_submission: "diagnostic_only"
+  future_experiment: >
+    Store any optimized or searched variant under a new experiment path and
+    compare it against the frozen CRPTO champion without replacing frozen
+    artifacts.

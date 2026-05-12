@@ -1,0 +1,9 @@
+\begin{tabular}{lrrlrrrll}
+\toprule
+method & mean\_regret & regret\_delta\_vs\_two\_stage\_pct & coverage\_90\_range & exact\_funded\_set\_bound & robust\_region\_pass & auditability\_evidence\_count & paper\_role & source \\
+\midrule
+Two-stage baseline & 0.425896 & 0.000000 & not\_applicable & False & False & 0 & Regret baseline for the decision-focused comparison. & models/spo\_real\_training\_status.json \\
+SPO+ & 0.216837 & 49.086903 & not\_applicable & False & False & 0 & Regret-efficient comparator; temporal improvement range 41.73--57.56\%. & models/spo\_real\_training\_status.json \\
+CRPTO robust & 0.947429 & -122.455465 & 0.9207--0.9858 & True & True & 3 & Auditable robust champion: coverage, exact bound and 45/45 region. & models/spo\_real\_training\_status.json; data/processed/crpto\_vs\_spo\_stability.json; models/final\_project\_promotion.json \\
+\bottomrule
+\end{tabular}

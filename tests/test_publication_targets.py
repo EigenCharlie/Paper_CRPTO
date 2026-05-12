@@ -38,13 +38,26 @@ def test_ijds_sources_are_anonymous_by_default() -> None:
         assert "TODO(manuscript)" not in text
 
 
-def test_current_submission_excludes_p2_p3_scope() -> None:
+def test_journal_strengthening_pack_classifies_current_and_backlog_items() -> None:
     cfg = yaml.safe_load(Path("configs/crpto_publication_targets.yaml").read_text(encoding="utf-8"))
     boundary = cfg["current_decision"]["p2_p3_boundary"]
-    excluded = cfg["primary_target"]["current_paper_scope"]["exclude_p2_p3"]
+    pack = cfg["journal_strengthening_pack"]
+    included = pack["include_in_current_submission"]
+    backlog = pack["backlog_not_blocking"]
 
+    assert "no longer a blanket exclusion" in boundary
     assert "future work" in boundary
-    assert len(excluded) >= 4
+    assert set(included) == {
+        "regret_auditability_frontier",
+        "tail_risk_oce_cvar_diagnostic",
+        "robust_satisficing_margins",
+        "dependence_aware_bound",
+    }
+    assert included["regret_auditability_frontier"]["status"] == "include_body"
+    assert included["tail_risk_oce_cvar_diagnostic"]["status"] == "include_supplement"
+    assert included["robust_satisficing_margins"]["status"] == ("include_supplement_or_short_body")
+    assert included["dependence_aware_bound"]["status"] == "include_theory_appendix_or_caveat"
+    assert backlog["multi_dataset_credit_replication"]["status"] == ("journal_backlog_not_blocker")
 
     body = Path("paper/CRPTO_ijds.qmd").read_text(encoding="utf-8")
     supplement = Path("paper/supplement_ijds.qmd").read_text(encoding="utf-8")
@@ -53,6 +66,7 @@ def test_current_submission_excludes_p2_p3_scope() -> None:
     )
 
     for text in (body, supplement, closure):
-        assert "P2" in text
-        assert "P3" in text
-        assert "future work" in text.lower()
+        assert "regret-auditability" in text.lower()
+        assert "OCE/CVaR" in text
+        assert "satisficing" in text.lower()
+        assert "multi-dataset" in text.lower()
