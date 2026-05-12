@@ -46,7 +46,7 @@ cp .env.example .env
 # Edita .env (DagsHub/MLflow/DVC standalone de CRPTO)
 
 # Verifica que todo está sano
-just smoke              # ruff + pytest + dbt parse + dbt test
+just smoke              # tests críticos rápidos
 ```
 
 ## Comandos principales

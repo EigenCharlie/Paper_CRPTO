@@ -7,7 +7,7 @@
 Curated bibliography for the Lending Club Risk Project publication strategy.
 Each entry includes a direct link for easy access.
 
-May 2026 update: the CRPTO audit re-read the 17 local PDFs in `C:\Users\carlos\Documents\Papers_tesis`, corrected metadata for the new papers, and added online, multi-distribution, end-to-end and satisficing conformal work as explicit future-work references.
+May 2026 update: the CRPTO audit re-read the 17 local PDFs in the ignored `Papers_tesis/` reading folder, corrected metadata for the new papers, and added online, multi-distribution, end-to-end and satisficing conformal work as explicit future-work references. The PDFs are intentionally not committed; public traceability lives in BibTeX, DOI/URL links and Markdown notes.
 
 ---
 
