@@ -19,3 +19,5 @@ libro independiente.
   Hoeffding/Bernstein y caveats de dependencia.
 - `crpto_quarto_design_practices_2026-05-12.md`: practicas de render,
   navegacion y diseno retenidas del libro grande para GitHub Pages.
+- `crpto_publication_strategy_2026-05-12.md`: decision de venue, plantilla,
+  anonimato, pivotes y salida IJDS/EJOR.

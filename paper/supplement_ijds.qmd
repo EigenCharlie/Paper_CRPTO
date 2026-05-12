@@ -1,0 +1,88 @@
+---
+title: "Online Supplement for CRPTO"
+author: "Anonymous"
+date: today
+lang: en
+bibliography: ../book/references.bib
+format:
+  html:
+    toc: true
+    number-sections: true
+  pdf:
+    documentclass: article
+    number-sections: true
+    geometry:
+      - margin=1in
+execute:
+  freeze: auto
+  echo: false
+  warning: false
+---
+
+::: {.callout-note}
+## Scope
+
+This supplement is the IJDS online-supplement scaffold. It should absorb the
+material that is too long for the 25-page body but still necessary for reviewer
+trust: proofs, robustness tables A3--A18, reproducibility, MRM, fairness and
+artifact lineage.
+:::
+
+# Appendix A: Theoretical Details
+
+- Markov bound proof for fixed allocation.
+- Conditional Hoeffding/Bernstein tightening and dependence caveat.
+- Notation table: `Y_i`, `p_hat_i`, `u_i(alpha)`, `x_i`, `w_i`, `Gamma_CP`,
+  `gamma`, `V`.
+
+# Appendix B: P1 Evidence
+
+Include or reference:
+
+- A3 nested holdout;
+- A4 segment-period sensitivity;
+- A5 decision-aware conformal selector;
+- A6 synthetic shift;
+- A7 funded-set loan export;
+- A8 funded-set composition;
+- A9 strict temporal holdout;
+- A10 conformal finalist exact bound evaluation;
+- A11 enhanced synthetic shift.
+
+# Appendix C: Journal Robustness Package
+
+Include or reference:
+
+- A12 tail-risk OCE/CVaR diagnostics;
+- A13 satisficing margins;
+- A14 dependency cluster diagnostics;
+- A15 leave-one-period stress;
+- A16 bootstrap funded-set metrics;
+- A17 budget/LGD/cap sensitivity;
+- A18 robust region by policy family.
+
+# Appendix D: Fair Lending, MRM And Governance
+
+Summarize the proxy/intersectional fairness audit, MRM card, challenger policy
+and retraining triggers. State clearly that the open Lending Club data does not
+provide direct protected attributes for legal fairness certification.
+
+# Appendix E: Reproducibility
+
+List the minimal reviewer commands:
+
+```bash
+just setup-base
+just smoke
+just tables
+just figures
+just journal-package
+just book
+```
+
+Also include:
+
+- DVC remote and artifact policy after anonymity handling;
+- MLflow/DagsHub run lineage after anonymity handling;
+- release tag and manifest hash policy;
+- known slow stages and stages that must not be rerun without drift validation.

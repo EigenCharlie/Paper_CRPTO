@@ -1,0 +1,135 @@
+# paper-crpto Publication Strategy - 2026-05-12
+
+## Decision
+
+Write the first submission for **INFORMS Journal on Data Science (IJDS)** and
+keep **European Journal of Operational Research (EJOR)** as the primary pivot.
+
+The working rule is:
+
+- primary venue: IJDS;
+- secondary venue: EJOR;
+- stretch venues: INFORMS Journal on Optimization, Management Science and
+  Operations Research;
+- applied fallbacks: Decision Support Systems and Expert Systems with
+  Applications.
+
+This decision is encoded in `configs/crpto_publication_targets.yaml`.
+
+## Why IJDS First
+
+IJDS is the best first target because paper-crpto is not just a credit-risk
+case study. The contribution is a reproducible decision-focused data science
+pipeline: calibrated PD, conformal uncertainty, robust optimization,
+artifact-backed tables, DVC lineage and a public companion.
+
+Official IJDS guidance is unusually aligned with the project:
+
+- initial submissions should fit a 25-page IJDS-style body, excluding
+  references and appendices;
+- appendices and lengthy robustness material should be online supplements;
+- submissions use the IJDS LaTeX template;
+- IJDS uses double-anonymous review for submissions on or after
+  January 1, 2025;
+- data/code disclosure and reproducibility are explicit parts of the process.
+
+Sources:
+
+- IJDS submission guidelines:
+  <https://pubsonline.informs.org/page/ijds/submission-guidelines>
+- IJDS data/code disclosure policy:
+  <https://pubsonline.informs.org/page/ijds/data-and-code-disclosure-policy>
+
+## Why EJOR Second
+
+EJOR is the strongest second target if the paper reads more as operational
+research than data science. Its scope is explicitly about both OR methodology
+and decision-making practice. CRPTO can fit as an innovative OR application or
+theory/methodology paper if we emphasize conformal uncertainty sets, robust
+portfolio decisions, price of robustness and the `45/45` robust region.
+
+Source:
+
+- EJOR journal page and aims/scope:
+  <https://www.sciencedirect.com/journal/european-journal-of-operational-research>
+
+## What This Means For The Manuscript
+
+The first paper draft should be written as:
+
+- title: `CRPTO: Conformal Robust Predict-Then-Optimize for Auditable Credit Portfolio Decisions`;
+- body: 25-page IJDS-style manuscript;
+- supplement: A3--A18, proofs, extended tables, reproducibility and MRM/fairness;
+- review mode: anonymous by default;
+- companion: GitHub/DVC/DagsHub/MLflow after the anonymity policy is handled.
+
+The short paper should keep only the strongest body material:
+
+- problem and contribution;
+- PD calibration summary;
+- Mondrian conformal layer;
+- robust portfolio formulation;
+- Markov bound and conditional tightening caveat;
+- champion metrics;
+- robust region `45/45`;
+- one concise SPO+/DFL comparison;
+- data/code reproducibility statement.
+
+Everything else lives in the supplement or book.
+
+## Template Policy
+
+Do not optimize the final PDF template before the venue is fixed. The repo now
+uses Quarto skeletons for writing:
+
+- `paper/CRPTO_ijds.qmd`: IJDS first-submission body;
+- `paper/supplement_ijds.qmd`: IJDS online supplement;
+- `paper/CRPTO.qmd`: generic landing manuscript stub.
+
+When the text is ready for submission, convert or render the IJDS `.qmd` into
+the official IJDS LaTeX template rather than inventing a custom journal style.
+
+## Pivot Rules
+
+Stay with IJDS if the paper's strongest claim is:
+
+- reproducible decision-focused data science;
+- auditability and code/data disclosure;
+- a complete pipeline from prediction to decision.
+
+Pivot to EJOR if the paper's strongest claim becomes:
+
+- robust optimization methodology;
+- operational decision practice;
+- applied OR evidence and sensitivity analysis.
+
+Pivot to INFORMS Journal on Optimization only if a stronger optimization or
+dependence-aware theory contribution is added.
+
+Treat Management Science and Operations Research as stretch targets, not the
+first submission path, unless the manuscript gains broader managerial or OR
+theory significance beyond the current Lending Club study.
+
+## Anonymity And Public Repo
+
+The repository is public, but IJDS requires double-anonymous manuscripts. Before
+submission:
+
+- remove author names from the manuscript and supplement;
+- avoid first-person claims that reveal ownership of the public repo;
+- decide whether the GitHub/DagsHub companion is disclosed in the cover letter,
+  supplement, or only after review according to journal policy;
+- create a release tag for the reproducibility bundle once anonymity handling is
+  settled.
+
+## Current Implementation
+
+- Config: `configs/crpto_publication_targets.yaml`.
+- Body skeleton: `paper/CRPTO_ijds.qmd`.
+- Supplement skeleton: `paper/supplement_ijds.qmd`.
+- Book linkage: `book/chapters/06-blueprint-manuscrito.qmd` and
+  `book/chapters/14-release.qmd`.
+- Commands:
+  - `just paper-ijds`
+  - `just paper-ijds-supplement`
+  - `just paper-submission`

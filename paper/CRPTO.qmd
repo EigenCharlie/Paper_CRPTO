@@ -18,7 +18,20 @@ CRPTO integra prediccion de default calibrada, intervalos conformales Mondrian y
 
 # Manuscrito
 
-Este archivo es el punto de partida del manuscrito standalone. La version larga y sus apendices estan en `book/`.
+Este archivo es el punto de entrada generico del manuscrito standalone. La
+decision editorial activa esta en
+`../configs/crpto_publication_targets.yaml`: escribir primero para **INFORMS
+Journal on Data Science** y mantener **European Journal of Operational
+Research** como pivote principal.
+
+Los borradores de trabajo son:
+
+- `CRPTO_ijds.qmd`: cuerpo anonimo IJDS, conceptualmente limitado a 25 paginas
+  excluyendo referencias y appendix.
+- `supplement_ijds.qmd`: online supplement IJDS con A3--A18, robustez,
+  reproducibilidad, MRM y fairness.
+
+La version larga y sus apendices estan en `book/`.
 
 # Artefactos principales
 

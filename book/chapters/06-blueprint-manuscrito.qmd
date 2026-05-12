@@ -14,24 +14,36 @@ incertidumbre conformal en una decision de portafolio auditable**.
 
 ### Venue objetivo
 
-El proyecto ya tiene suficiente evidencia para apuntar a un journal de
-operations/management, pero el enfasis cambia segun el venue:
+La decision editorial activa es escribir primero para **INFORMS Journal on Data
+Science (IJDS)** y mantener **European Journal of Operational Research (EJOR)**
+como pivote principal. Esta decision queda versionada en
+`configs/crpto_publication_targets.yaml` y desarrollada en
+`docs/research/crpto_publication_strategy_2026-05-12.md`.
+
+El proyecto ya tiene suficiente evidencia para apuntar a un journal serio, pero
+el enfasis cambia segun el venue:
 
 ::: {#tbl-crpto-target-venue}
 
 | Venue | Enfasis requerido | Que ya tenemos | Que conviene reforzar |
 |---|---|---|---|
-| *Management Science* | decision bajo incertidumbre, auditabilidad y valor economico | champion economico, region robusta `45/45`, funded set exacto | narrativa de managerial insight, governance y respuesta a post-seleccion |
-| *Operations Research* | formulacion, garantia y relacion CP -> RO | bound `V`, `Gamma_CP`, Markov distribution-free, tightening condicional | prueba mas compacta y appendix teorico de dependencia |
-| *EJOR* | experimento aplicado robusto y reproducible | pipeline end-to-end, comparadores, stress tests, DVC/MLflow | tablas de sensibilidad y reproducibilidad operacional |
+| *INFORMS Journal on Data Science* | data science reproducible para decisiones | DVC/DagsHub/MLflow, Quarto companion, pipeline PD -> CP -> LP, tablas/figuras reproducibles | manuscrito anonimo de 25 paginas + online supplement |
+| *EJOR* | metodologia OR y practica de decision | robust optimization, region `45/45`, sensibilidad, stress tests | lenguaje OR mas fuerte y menos pipeline narrativo |
+| *INFORMS Journal on Optimization* | contribucion de optimizacion | bound, LP robusto, satisficing diagnostics | prueba/algoritmo mas fuerte o dependencia-aware theorem |
+| *Management Science* | managerial insight y valor economico | champion economico, governance, auditabilidad | insight gerencial mas generalizable |
+| *Operations Research* | formulacion OR amplia y concisa | relacion CP -> RO, garantia Markov, region robusta | contribucion teorica/OR mas fuerte que el caso Lending Club |
 
-Venue target recomendado para la primera version.
+Venue target recomendado y pivotes.
 :::
 
-Mi recomendacion actual es escribir el primer borrador con tono
-*Management Science / Operations Research*. Si en revision interna sentimos que
-la teoria queda demasiado conservadora para OR, la misma evidencia se puede
-reorientar a EJOR sin cambiar champion ni artefactos.
+El primer borrador debe escribirse como **paper IJDS**: cuerpo anonimo,
+conceptualmente limitado a 25 paginas, con appendix online separado. Si en
+revision interna sentimos que la historia queda mas OR que data science, se
+reorienta a **EJOR** sin cambiar champion ni artefactos.
+
+Los esqueletos activos son `paper/CRPTO_ijds.qmd` y
+`paper/supplement_ijds.qmd`. El archivo `paper/CRPTO.qmd` queda como entrada
+generica, no como formato final.
 
 ### Abstract operativo
 

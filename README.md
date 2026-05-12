@@ -92,6 +92,31 @@ Regla corta: documentación, CI, tablas, figuras y journal package son seguros;
 reentrenar PD, recalcular intervalos conformal o reoptimizar el champion no lo
 es sin una rama de revalidación y drift report.
 
+## Estrategia de publicación
+
+La decisión editorial activa es escribir primero para **INFORMS Journal on Data
+Science** y mantener **European Journal of Operational Research** como pivote
+principal si el manuscrito termina leyendo más como OR aplicada que como data
+science reproducible. La decisión vive en
+[`configs/crpto_publication_targets.yaml`](configs/crpto_publication_targets.yaml)
+y está explicada en
+[`docs/research/crpto_publication_strategy_2026-05-12.md`](docs/research/crpto_publication_strategy_2026-05-12.md).
+
+Los borradores de extracción están en [`paper/`](paper/):
+
+- `paper/CRPTO_ijds.qmd`: cuerpo anónimo IJDS.
+- `paper/supplement_ijds.qmd`: online supplement con A3--A18, reproducibilidad,
+  MRM y fairness.
+- `paper/CRPTO.qmd`: entrada genérica.
+
+Comandos rápidos:
+
+```powershell
+just paper-ijds
+just paper-ijds-supplement
+just paper-submission
+```
+
 ## Estructura
 
 ```
@@ -133,7 +158,7 @@ es sin una rama de revalidación y drift report.
 │   ├── crpto/figures/       # 8 PNGs/PDFs
 │   └── mrm/                 # Model risk cards (skops)
 ├── docs/research/           # dossier académico
-├── paper/                   # manuscrito principal
+├── paper/                   # manuscrito principal + versión IJDS + supplement
 └── notebooks/               # exploraciones Jupyter
 ```
 
@@ -199,6 +224,8 @@ Ninguno modifica artefactos congelados — solo leen `data/processed/` y `models
 - [`docs/SCOPE_AND_GOVERNANCE.md`](docs/SCOPE_AND_GOVERNANCE.md) — Alcance CRPTO, límites del repo público y reglas de refactor.
 - [`docs/refactor/`](docs/refactor/) — Planes de refactor diferido (MAPIE, conformal split, feature_config Parquet).
 - [`docs/research/`](docs/research/) — Dossier académico (conformal prediction readme, audit, integrations).
+- [`paper/README.md`](paper/README.md) — Workspace de manuscrito, target IJDS y
+  comandos de render.
 - [`docs/security/SECRETS_AND_REMOTES.md`](docs/security/SECRETS_AND_REMOTES.md) — Variables de entorno, secretos, remotes DVC/MLflow y WSL/Windows.
 - [`EXTRACTION_MANIFEST.json`](EXTRACTION_MANIFEST.json) + [`EXTRACTION_MANIFEST.md`](EXTRACTION_MANIFEST.md) — Hashes y narrativa de la extracción.
 

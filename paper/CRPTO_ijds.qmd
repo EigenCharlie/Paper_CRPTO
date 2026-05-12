@@ -1,0 +1,137 @@
+---
+title: "CRPTO: Conformal Robust Predict-Then-Optimize for Auditable Credit Portfolio Decisions"
+author: "Anonymous"
+date: today
+lang: en
+bibliography: ../book/references.bib
+format:
+  html:
+    toc: true
+    number-sections: true
+    code-fold: true
+  pdf:
+    documentclass: article
+    number-sections: true
+    geometry:
+      - margin=1in
+execute:
+  freeze: auto
+  echo: false
+  warning: false
+---
+
+::: {.callout-note}
+## Submission Target
+
+Primary target: INFORMS Journal on Data Science. This draft is intentionally
+anonymous and capped conceptually at a 25-page body, excluding references and
+appendices. The final submission PDF should be produced with the official IJDS
+LaTeX template.
+:::
+
+# Abstract
+
+Credit portfolio decisions often rely on calibrated default probabilities while
+treating prediction uncertainty as a diagnostic rather than a decision input. We
+propose Conformal Robust Predict-Then-Optimize (CRPTO), a post-hoc auditable
+framework that maps Mondrian conformal prediction intervals into robust
+portfolio constraints. On a 276,869-loan out-of-time Lending Club evaluation,
+the promoted economic policy earns `$170.5K` on a `$1M` budget while passing the
+exact `alpha = 0.01` funded-set bound (`V = 0.03645`,
+`Gamma_CP = 0.18591`, zero violation). The final robust region contains `45/45`
+alpha-safe policies, indicating that the result is not a single-point artifact.
+The contribution is not another predictive leaderboard, but a reproducible
+bridge from calibrated probabilistic learning to auditable robust credit
+decisions.
+
+**Keywords:** conformal prediction; robust optimization; predict-then-optimize;
+credit risk; portfolio optimization; reproducible data science.
+
+# Introduction
+
+Write the IJDS introduction from the book's compressed route:
+
+- problem: calibrated PD is not enough for auditable credit allocation;
+- gap: uncertainty is rarely passed into the optimizer with finite-sample
+  language;
+- contribution: CRPTO maps conformal uncertainty into robust decisions;
+- evidence: frozen economic champion, exact funded-set bound, robust region;
+- reproducibility: DVC, DagsHub, MLflow, Quarto and guardrail tests.
+
+# Related Work
+
+Compress the book's related-work map into four blocks:
+
+- conformal prediction, risk control and learn-then-test;
+- robust optimization and conformal uncertainty sets;
+- predict-then-calibrate, SPO+ and decision-focused learning;
+- recent extensions: CROMS, MDCP, online conformal and conformal risk training.
+
+# Method
+
+## Calibrated PD Layer
+
+Summarize the CatBoost + Venn-Abers PD layer and explain why the goal is not to
+maximize AUC in isolation.
+
+## Mondrian Conformal Layer
+
+Define the conformal score, Mondrian partition and upper bound `u_i(alpha)`.
+
+## Robust Portfolio Layer
+
+Define the funded decision, budget, `risk_tolerance`, policy mode and robust
+constraint. Keep `gamma` (policy parameter) separate from `Gamma_CP` (portfolio
+metric).
+
+# Theory
+
+State the main Markov-style finite-sample guarantee for a fixed allocation and
+bounded observed target. Move Hoeffding/Bernstein tightening to the supplement
+unless the journal version adds a dependence-aware proof.
+
+# Experimental Design
+
+Describe the Lending Club data, temporal split, frozen champion policy,
+compatible leaderboards and artifact ownership. Make clear that paper-facing
+reruns consume frozen decisions rather than reopening the search.
+
+# Results
+
+Core body tables and figures:
+
+- Table 1: PD, conformal and portfolio metrics from
+  `reports/crpto/tables/crpto_table0_key_metrics.csv`;
+- Figure 1: `crpto_fig12_crpto_conceptual_pipeline`;
+- Figure 2: `crpto_fig13_alpha_gamma_funded_set`;
+- Figure 3: `crpto_fig14_robust_region_heatmap`;
+- champion metrics from `models/final_project_promotion.json`.
+
+# Robustness And Comparators
+
+Keep the body concise. Use only the evidence needed to answer the most likely
+IJDS reviewer objections:
+
+- nested/temporal confirmation;
+- conformal finalist exact evaluation;
+- uncertainty-set baselines;
+- SPO+ as a regret/auditability comparator;
+- funded-set composition and robust region.
+
+# Reproducibility And Companion
+
+The anonymous submission should describe the reproducibility bundle without
+revealing author identity. The public repository, DVC remote and MLflow/DagsHub
+links can be disclosed according to the journal's anonymity and data/code
+policy.
+
+# Discussion
+
+Emphasize what CRPTO does and does not claim:
+
+- it converts uncertainty into auditable decisions;
+- it does not claim to dominate SPO+ on regret;
+- it does not treat synthetic shift as an external-dataset replacement;
+- OCE/CVaR, online conformal, MDCP and causal CRPTO are future work.
+
+# References

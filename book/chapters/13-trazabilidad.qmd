@@ -196,7 +196,7 @@ uv run python scripts/build_crpto_journal_package.py
 uv run python scripts/generate_crpto_figures.py
 
 # 6. Validar coherencia con tests guardrail
-uv run pytest tests/test_docs/ -k "crpto or crpto or paper1"
+uv run pytest tests/test_crpto_final_sync.py tests/test_quarto_book_guardrails.py
 
 # 7. Renderizar libro Quarto
 bash scripts/render_quarto.sh render book/ --to html

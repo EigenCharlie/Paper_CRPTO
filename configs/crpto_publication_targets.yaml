@@ -1,0 +1,111 @@
+version: "2026-05-12"
+project: paper-crpto
+decision_status: active
+
+primary_target:
+  id: informs_ijds
+  role: primary
+  name: "INFORMS Journal on Data Science"
+  publisher: INFORMS
+  manuscript_source: paper/CRPTO_ijds.qmd
+  supplement_source: paper/supplement_ijds.qmd
+  template_family: "INFORMS IJDS LaTeX"
+  template_note: "Use the official INFORMS-IJDS-Template.tex when producing the submission PDF."
+  official_urls:
+    submission_guidelines: "https://pubsonline.informs.org/page/ijds/submission-guidelines"
+    data_code_policy: "https://pubsonline.informs.org/page/ijds/data-and-code-disclosure-policy"
+  constraints:
+    initial_submission_pages: 25
+    page_limit_excludes:
+      - references
+      - appendices
+    online_supplement: separate_file
+    review_model: double_anonymous
+    anonymity_start_date: "2025-01-01"
+    submission_file: pdf_from_ijds_latex_template
+    data_code_disclosure: required_at_submission_acknowledgment
+    accepted_paper_reproducibility: data_code_required_unless_exempt
+  crpto_fit:
+    - "Decision-focused data science with auditable reproducibility."
+    - "DVC/DagsHub/MLflow companion already matches data/code disclosure expectations."
+    - "25-page body encourages compression of the current Quarto dossier."
+  required_before_submission:
+    - "Create anonymized IJDS PDF from paper/CRPTO_ijds.qmd."
+    - "Create anonymized online supplement from paper/supplement_ijds.qmd."
+    - "Remove author-identifying GitHub/DagsHub URLs from the anonymous PDF unless policy allows non-anonymous companion disclosure."
+    - "Freeze a release tag and reproducibility bundle after anonymity decision."
+
+secondary_targets:
+  - id: ejor
+    role: secondary
+    name: "European Journal of Operational Research"
+    publisher: Elsevier
+    template_family: "Elsevier elsarticle"
+    official_urls:
+      journal: "https://www.sciencedirect.com/journal/european-journal-of-operational-research"
+    crpto_fit:
+      - "Operational research methodology plus decision-making practice."
+      - "Strong fit if the manuscript emphasizes robust optimization and applied decision value."
+    pivot_trigger:
+      - "IJDS desk-rejects as too OR/methodological."
+      - "Internal draft reads more like robust optimization than data science."
+  - id: informs_ijoo
+    role: stretch_theory
+    name: "INFORMS Journal on Optimization"
+    publisher: INFORMS
+    template_family: "INFORMS optimization journal style"
+    official_urls:
+      journal: "https://pubsonline.informs.org/journal/ijoo"
+    crpto_fit:
+      - "Good stretch only if the dependence-aware theory or optimization contribution becomes central."
+    pivot_trigger:
+      - "A stronger theorem, algorithm, or satisficing/robust optimization formulation is added."
+  - id: management_science
+    role: stretch_managerial
+    name: "Management Science"
+    publisher: INFORMS
+    template_family: "Management Science LaTeX"
+    official_urls:
+      submission_guidelines: "https://pubsonline.informs.org/page/mnsc/submission-guidelines"
+    crpto_fit:
+      - "Possible stretch if managerial decision value and governance become the dominant story."
+    pivot_trigger:
+      - "The paper gains broader managerial insight beyond the Lending Club experiment."
+  - id: operations_research
+    role: stretch_or
+    name: "Operations Research"
+    publisher: INFORMS
+    template_family: "INFORMS Operations Research style"
+    official_urls:
+      submission_guidelines: "https://pubsonline.informs.org/page/opre/submission-guidelines"
+    crpto_fit:
+      - "Possible stretch if the OR contribution is stronger than the empirical pipeline."
+    pivot_trigger:
+      - "The paper can be written as a broad OR method with concise proofs and code/data disclosure."
+  - id: decision_support_systems
+    role: applied_fallback
+    name: "Decision Support Systems"
+    publisher: Elsevier
+    template_family: "Elsevier article template"
+    official_urls:
+      journal: "https://www.sciencedirect.com/journal/decision-support-systems"
+    crpto_fit:
+      - "Applied fallback if the decision-support framing dominates the methodological framing."
+  - id: expert_systems_with_applications
+    role: applied_fallback
+    name: "Expert Systems with Applications"
+    publisher: Elsevier
+    template_family: "Elsevier article template"
+    official_urls:
+      journal: "https://www.sciencedirect.com/journal/expert-systems-with-applications"
+    crpto_fit:
+      - "Applied fallback if the manuscript is judged primarily as an intelligent risk system."
+
+current_decision:
+  write_first_for: informs_ijds
+  keep_second_ready_for: ejor
+  do_not_write_first_for:
+    - management_science
+    - operations_research
+    - informs_ijoo
+  reason: "CRPTO currently has the strongest fit as reproducible decision-focused data science with OR substance."

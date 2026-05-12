@@ -15,6 +15,10 @@ book/.quarto/
 book/_freeze/
 _book/
 _freeze/
+paper/*.html
+paper/*.pdf
+paper/*.tex
+paper/*_files/
 
 # Local runtime
 .env

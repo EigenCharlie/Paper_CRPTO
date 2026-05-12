@@ -58,6 +58,17 @@ journal-package:
 
 paper-export: tables figures evidence journal-package book
 
+# IJDS-oriented manuscript body (HTML writing preview).
+paper-ijds:
+    uv run -- quarto render paper/CRPTO_ijds.qmd --to html --no-execute
+
+# IJDS-oriented online supplement (HTML writing preview).
+paper-ijds-supplement:
+    uv run -- quarto render paper/supplement_ijds.qmd --to html --no-execute
+
+# Render the current submission-shaped manuscript surfaces.
+paper-submission: paper-ijds paper-ijds-supplement
+
 # --- Quarto book ---------------------------------------------------------
 
 book:

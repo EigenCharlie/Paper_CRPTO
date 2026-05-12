@@ -23,7 +23,7 @@ La contribución central sigue siendo la misma: **CRPTO post-hoc auditable con e
 | Banco de respuestas por venue | No | Implementado aquí | Ayuda a escribir y responder reviewers sin tocar artefactos. |
 | Release checklist con DVC/DagsHub/Quarto/tests | No | Implementado aquí | Formaliza reproducibilidad ya existente. |
 | Decisión de companion URL | No | Implementado aquí | Declara que Quarto es la superficie primaria y Streamlit queda opcional. |
-| Scaffold standalone del paper | No, pero es prematuro | Diferido | Conviene crearlo cuando elijamos venue y formato. |
+| Scaffold standalone del paper | No | Implementado | IJDS queda como primer target; `paper/CRPTO_ijds.qmd` y `paper/supplement_ijds.qmd` son los esqueletos activos. |
 | Protocolo prospectivo pre-declarado | No para la tesis, sí para evidencia journal | Backlog | Requiere nuevo run o una regla declarada antes de buscar. |
 | Dataset externo | No cambia CRPTO, pero agrega evidencia nueva | Backlog | Necesita fuente externa comparable. |
 | Bound dependence-aware | Fortalece teoría, puede cambiar énfasis OR | Backlog | Requiere prueba nueva; Markov sigue como claim principal. |
@@ -156,6 +156,27 @@ Superficies de companion y regla de uso.
 Mientras el capítulo 14 siga funcionando como repositorio editorial amplio, el companion oficial es **Quarto + DVC/DagsHub/MLflow**. Streamlit puede volver como producto o visualización para comité, pero no debe arrastrar claims, métricas ni números que no estén sincronizados con `models/final_project_promotion.json`.
 :::
 
+### Decision de venue y plantilla
+
+La decision activa de publicacion es:
+
+::: {#tbl-crpto-publication-targets}
+
+| Rol | Venue | Plantilla / salida | Regla |
+|---|---|---|---|
+| Primario | INFORMS Journal on Data Science | IJDS LaTeX oficial; `paper/CRPTO_ijds.qmd` como fuente de escritura | cuerpo anonimo de 25 paginas + online supplement |
+| Suplemento primario | IJDS online supplement | `paper/supplement_ijds.qmd` | A3--A18, pruebas, reproducibilidad, MRM y fairness |
+| Pivote | European Journal of Operational Research | Elsevier `elsarticle` cuando se active el pivote | usar si el paper lee mas como OR aplicada |
+| Stretch | INFORMS Journal on Optimization / Management Science / Operations Research | plantillas oficiales respectivas | solo si mejora teoria, insight gerencial o contribucion OR |
+
+Decision de venue, plantilla y salida actual.
+:::
+
+No se instala todavia la plantilla final porque el texto debe madurar primero en
+Quarto. Cuando el borrador IJDS este estable, se copia/convierte a la plantilla
+oficial IJDS y se aplica la politica de anonimato antes de generar el PDF de
+submission.
+
 ### Release checklist para congelar una versión paper-facing
 
 Este checklist no genera evidencia nueva. Sirve para declarar que una versión
@@ -166,7 +187,10 @@ del dossier está lista para ser usada como fuente de manuscrito.
 | Gate | Comando / artefacto | Criterio |
 |---|---|---|
 | Champion sincronizado | `uv run pytest tests/test_crpto_final_sync.py` | Todos los tests del CRPTO pasan. |
-| Quarto registrado | `uv run pytest tests/test_docs/test_quarto_book_guardrails.py` | Todas las páginas `.qmd` están en `_quarto.yml`. |
+| Quarto registrado | `uv run pytest tests/test_quarto_book_guardrails.py` | Todas las páginas `.qmd` están en `_quarto.yml`. |
+| Venue definido | `configs/crpto_publication_targets.yaml` | IJDS primario y EJOR pivote siguen declarados. |
+| Manuscrito IJDS | `just paper-ijds` | `paper/CRPTO_ijds.html` renderiza sin ejecutar pipeline. |
+| Supplement IJDS | `just paper-ijds-supplement` | `paper/supplement_ijds.html` renderiza sin ejecutar pipeline. |
 | Tablas canónicas | `uv run python scripts/export_crpto_tables.py` | A0 usa `models/final_project_promotion.json`. |
 | P1 evidence | `uv run python scripts/analyze_crpto_evidence.py --include-hardening` | A3--A11 actualizadas y status JSON coherente. |
 | Journal package | `uv run python scripts/build_crpto_journal_package.py` | A12--A18 y Fig 12--14 actualizadas. |
