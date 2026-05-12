@@ -41,7 +41,7 @@ This preserves historical reproducibility without adding large blobs to Git.
 
 ## Guardrails Added
 
-- `tests/test_docs/test_crpto_final_sync.py` checks that promotion,
+- `tests/test_crpto_final_sync.py` checks that promotion,
   champion policy, registry, DVC metrics, and paper-facing tables agree on the
   economic champion.
 - The same test prevents duplicate search names in

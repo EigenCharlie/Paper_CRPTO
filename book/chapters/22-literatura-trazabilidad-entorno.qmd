@@ -10,7 +10,7 @@ Este capítulo es un dossier curado desde secciones previas del libro original q
 
 ## Estado del Arte
 
-El proyecto se ubica en la interseccion de varias literaturas maduras y unas pocas intersecciones todavia poco exploradas. La fuente maestra para este mapa es `docs/PAPER_REFERENCES_STATE_OF_ART.md`, que cataloga aproximadamente 80 trabajos organizados en 12 categorias tematicas.
+El proyecto se ubica en la interseccion de varias literaturas maduras y unas pocas intersecciones todavia poco exploradas. La fuente maestra para este mapa es `docs/research/foundations/crpto_references_state_of_art.md`, que cataloga aproximadamente 80 trabajos organizados en 12 categorias tematicas.
 
 ### Mapa tematico
 

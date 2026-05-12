@@ -1,9 +1,13 @@
-# CRPTO Conditional Tightening Appendix - 2026-05-04
+# paper-crpto Conditional Tightening Appendix - 2026-05-04
 
 This note records the dependency audit behind the conditional Hoeffding/Bernstein
 tightening used in the CRPTO theory section. It is an appendix to
-`book/chapters/14b-theoretical-framework.qmd`, not a new
+`book/chapters/02-marco-teorico.qmd`, not a new
 empirical claim and not a replacement for the main Markov theorem.
+
+Standalone note: this appendix is retained because it is useful for the journal
+version and reviewer response package. It must not be upgraded to the main claim
+unless a dependence-aware proof or prospective validation design is added.
 
 ## Main Distribution-Free Claim
 

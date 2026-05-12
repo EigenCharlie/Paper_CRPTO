@@ -1,10 +1,24 @@
-# CRPTO Backlog - 2026-05-04
+# paper-crpto Backlog - 2026-05-04
 
 This backlog separates improvements that are already applied in the current
 CRPTO from future work that requires new experiments, proofs, or
 external validation. The current official champion remains
 `bound_aware_276k_economic_champion`; this backlog must not be used to reopen the
 champion unless a new search run is explicitly approved.
+
+## Standalone Scope - 2026-05-12
+
+This backlog now belongs to the independent `Paper_CRPTO` repository. Items that
+mention Paper 2, causal CRPTO, Streamlit, research labs or product dashboards are
+kept only as historical/future-work context; they are not dependencies of the
+current paper-crpto build. The only operational pipeline family in this repo is
+the CRPTO family: `crpto_e2e`, `crpto_core_canonical_cpu`,
+`crpto_diagnostics_governance_default` and the frozen champion consumers.
+
+The rule is intentionally conservative: paper-ready and journal-ready evidence
+can be reorganized, rendered and revalidated, but anything that changes the
+champion, the guarantee, the dataset universe, or the search space requires a
+named new run and explicit drift validation.
 
 ## Consolidated Status Matrix
 
@@ -14,29 +28,29 @@ experiments or theory.
 
 | Priority | Status | Work item | Affects | Current artifact | Needs new run/metric? | Paper impact | Next action |
 |---|---|---|---|---|---|---|---|
-| P0 | Maintenance | Champion sync guardrails | official CRPTO metrics | `tests/test_docs/test_crpto_final_sync.py` | No | keeps paper aligned | keep tests green before any paper/table change |
+| P0 | Maintenance | Champion sync guardrails | official CRPTO metrics | `tests/test_crpto_final_sync.py` | No | keeps paper aligned | keep tests green before any paper/table change |
 | P0 | Maintenance | Canonical paper tables | body tables and DVC metrics | `scripts/export_crpto_tables.py` | No | prevents metric drift | regenerate only from canonical promotion |
 | P0 | Maintenance | DVC/Dagshub ownership | reproducibility | `dvc.lock`, `.dvc` pointers | No | supports artifact-backed claims | keep local and remote status clean |
 | P0 | Maintenance | MLflow final run discoverability | experiment lineage | DagsHub MLflow run `6af4b95d152c47ec9420d5b1a2e78959` | No | supports reproducibility appendix | keep final metrics and artifacts traceable |
 | P0 | Maintenance | Pipeline freeze / explicit champion reruns | reproducible reruns | `run_long_pipeline.py`, `configs/profiles/*`, `explicit_champion_only` | No | prevents accidental re-search | only `search_*` families reopen searches; paper/core reruns consume frozen champion |
 | P1 | Implemented | Nested/post-selection evidence | post-selection criticism | A3, A9, `crpto_evidence_status.json` | No for current paper | strengthens current paper | only future hardening is a prospective pre-declared split |
 | P1 | Implemented | Decision-aware conformal selector | CROMS-style selector narrative | A5, A10 | No for current paper | strengthens current paper | future work is training score by decision loss |
-| P1 | Implemented | Conditional tightening lemma | theory appendix | `14b`, tightening appendix | No for current paper | strengthens theory with caveat | prove dependence-aware version only for journal extension |
+| P1 | Implemented | Conditional tightening lemma | theory appendix | `02-marco-teorico`, tightening appendix | No for current paper | strengthens theory with caveat | prove dependence-aware version only for journal extension |
 | P1 | Implemented | Synthetic/period shift evidence | robustness | A4, A6, A7, A8, A11 | No for current paper | strengthens current paper | external dataset remains future work |
-| P1/J | Implemented | Alpha sweep and alpha-Gamma validation | alpha/robustness narrative | `alpha_sweep_pareto_mondrian.parquet`, `alpha_sweep_pareto_both.parquet`, `alpha_gamma_bound/*`, `14d` | No | strengthens current paper | use as supporting alpha policy evidence, not a new champion search |
-| P1/J | Implemented | Uncertainty-set baselines | CP vs bootstrap/parametric/ellipsoidal evidence | `uncertainty_baselines_comparison.parquet`, `uncertainty_baselines_by_grade.parquet`, `14d` | No | strengthens current paper | use to justify conformal robust set selection |
-| P1/J | Implemented | CQR comparator evidence | conformal alternative | `cqr_comparison_status.json`, `cqr_mondrian_status.json`, `crpto_fig10`, `14d` | No | complements paper | keep as comparator/appendix; do not replace official Mondrian winner |
-| P1/J | Implemented | Manuscript blueprint | paper structure | `14g-manuscript-blueprint.qmd` | No | prepares manuscript | compress into actual paper draft when writing starts |
-| P1/J | Pending | Standalone manuscript extraction | final submission artifact | `14g`, `14o`, A1--A18, figures | No | required for submission | write the short paper from the book package; no champion changes |
-| P1/J | Implemented | Journal appendix A12--A18 | appendix evidence | `14h-journal-appendix-robustness.qmd` | No | complements paper | use as appendix package, not new champion evidence |
-| P1/J | Implemented | Mondrian ablation page | conformal winner defense | `14i-mondrian-ablation.qmd` | No | strengthens method selection | use when reviewer asks why score-decile, not grade |
-| P1/J | Implemented | SPO+ protocol page | DFL comparator | `14j-spo-protocol-and-regret.qmd` | No | strengthens comparator narrative | keep train-time 49.1% and temporal stability configs separate |
-| P1/J | Implemented | Fair lending checkpoint | governance/funded set | `14k-fair-lending-checkpoint.qmd` | No | strengthens auditability | cite as proxy/intersectional audit, not legal protected-attribute proof |
-| P1/J | Implemented | MRM/SR 11-7 approval page | model risk management | `14l-governance-mrm-approval.qmd` | No | strengthens deployment credibility | keep triggers and challenger criteria aligned with MRM artifacts |
-| P1/J | Implemented | Funded-set composition page | portfolio evidence | `14m-funded-set-composition.qmd` | No | strengthens result audit | use in appendix to show no hidden segment drives champion |
-| P1/J | Implemented | Artifact traceability runbook | reproducibility | `14n-artifact-traceability.qmd` | No | strengthens reviewer response | keep claim-script-test paths real, including freeze/search pipeline rules |
-| P1/J | Implemented | Paper/journal/thesis extraction map | editorial planning | `crpto/index.qmd` | No | preserves rich book content | later compress, but do not delete useful thesis evidence now |
-| P1/J | Implemented | Extraction/release manifest | paper/journal/thesis packaging | `14o-extraction-release-manifest.qmd` | No | strengthens editorial extraction | use before creating the standalone manuscript; Quarto is the primary companion surface |
+| P1/J | Implemented | Alpha sweep and alpha-Gamma validation | alpha/robustness narrative | `alpha_sweep_pareto_mondrian.parquet`, `alpha_sweep_pareto_both.parquet`, `alpha_gamma_bound/*`, `04-resultados` | No | strengthens current paper | use as supporting alpha policy evidence, not a new champion search |
+| P1/J | Implemented | Uncertainty-set baselines | CP vs bootstrap/parametric/ellipsoidal evidence | `uncertainty_baselines_comparison.parquet`, `uncertainty_baselines_by_grade.parquet`, `04-resultados` | No | strengthens current paper | use to justify conformal robust set selection |
+| P1/J | Implemented | CQR comparator evidence | conformal alternative | `cqr_comparison_status.json`, `cqr_mondrian_status.json`, `crpto_fig10`, `04-resultados` | No | complements paper | keep as comparator/appendix; do not replace official Mondrian winner |
+| P1/J | Implemented | Manuscript blueprint | paper structure | `06-blueprint-manuscrito.qmd` | No | prepares manuscript | compress into actual paper draft when writing starts |
+| P1/J | Pending | Standalone manuscript extraction | final submission artifact | `06-blueprint-manuscrito`, `14-release`, A1--A18, figures | No | required for submission | write the short paper from the book package; no champion changes |
+| P1/J | Implemented | Journal appendix A12--A18 | appendix evidence | `07-apendice-robustez.qmd` | No | complements paper | use as appendix package, not new champion evidence |
+| P1/J | Implemented | Mondrian ablation page | conformal winner defense | `08-ablacion-mondrian.qmd` | No | strengthens method selection | use when reviewer asks why score-decile, not grade |
+| P1/J | Implemented | SPO+ protocol page | DFL comparator | `09-spo-regret.qmd` | No | strengthens comparator narrative | keep train-time 49.1% and temporal stability configs separate |
+| P1/J | Implemented | Fair lending checkpoint | governance/funded set | `10-fair-lending.qmd` | No | strengthens auditability | cite as proxy/intersectional audit, not legal protected-attribute proof |
+| P1/J | Implemented | MRM/SR 11-7 approval page | model risk management | `11-mrm.qmd` | No | strengthens deployment credibility | keep triggers and challenger criteria aligned with MRM artifacts |
+| P1/J | Implemented | Funded-set composition page | portfolio evidence | `12-funded-set.qmd` | No | strengthens result audit | use in appendix to show no hidden segment drives champion |
+| P1/J | Implemented | Artifact traceability runbook | reproducibility | `13-trazabilidad.qmd` | No | strengthens reviewer response | keep claim-script-test paths real, including freeze/search pipeline rules |
+| P1/J | Implemented | Paper/journal/book extraction map | editorial planning | `book/index.qmd` | No | preserves rich book content | later compress, but do not delete useful extended evidence now |
+| P1/J | Implemented | Extraction/release manifest | paper/journal/thesis packaging | `14-release.qmd` | No | strengthens editorial extraction | use before creating the standalone manuscript; Quarto is the primary companion surface |
 | P1/J | Implemented | Journal figures | visual explanation/results | `crpto_fig12`--`crpto_fig14` | No | improves paper readability | choose which figures go to body vs appendix |
 | P1/J | Implemented | Tail risk diagnostics | funded-set risk | A12 | No | complements paper | do not cite repriced return as official return |
 | P1/J | Implemented | Satisficing margins | OR framing | A13 | No | complements paper | justify thresholds if moved to body |
@@ -58,7 +72,7 @@ experiments or theory.
 | P3 | Future | Distribution shift / online conformal CRPTO | sequential uncertainty | `time_series_vnext` is `research_only` | Yes | new sequential direction | use ACI/online CP only after interval gate is promotable |
 | P3 | Future | Open-source CRPTO package | adoption/software | current codebase modules | Yes | thesis/product differentiator | extract a clean library/API after paper method stabilizes |
 | P3 | Future | Multi-asset credit validation | external validity | none | Yes | broader thesis validation | test another credit product |
-| P3 | Future | Direct protected-attribute / temporal fairness validation | fairness/governance | proxy base + proxy-intersectional audit exists in `14k` | Yes | complements thesis | repeat with protected attributes if available and monitor disparity over time |
+| P3 | Future | Direct protected-attribute / temporal fairness validation | fairness/governance | proxy base + proxy-intersectional audit exists in `10-fair-lending` | Yes | complements thesis | repeat with protected attributes if available and monitor disparity over time |
 | P3 | Future | Field trial or counterfactual deployment study | real-world validation | offline evidence exists | Yes | product/doctoral differentiator | run partner pilot or rigorous replay study |
 | P3 | Future | Production monitoring dashboard | productization | artifacts exist, dashboard not live | Yes | product track | expose champion/DVC/MLflow/drift in one view |
 
@@ -81,14 +95,14 @@ venue extensions. The current backlog keeps those lanes separate.
 | Uncertainty-set baselines | Closed as comparator evidence | `data/processed/uncertainty_baselines_comparison.parquet`, `data/processed/uncertainty_baselines_by_grade.parquet`, `crpto_fig7_uncertainty_baselines` | conformal Mondrian is the defendable robust set; bootstrap/parametric are comparators |
 | CQR alternative | Closed as appendix/comparator, not champion | `models/cqr_comparison_status.json`, `models/cqr_mondrian_status.json`, `crpto_fig10_cqr_per_grade` | keep as related evidence; no method replacement in current paper |
 | SICR trigger optimization and ECL alpha sensitivity | Closed, but belongs to Paper 2 | `sicr_trigger_optimization.parquet`, `ecl_alpha_sensitivity.parquet`, Paper 2 figures | cite only as IFRS9/mega-extension context, not CRPTO champion evidence |
-| SPO+ / DFL comparison | Closed for current comparator layer | `models/spo_comparison_status.json`, `models/spo_real_training_status.json`, `14j-spo-protocol-and-regret.qmd` | use as regret/auditability comparator, not as a promoted CRPTO policy |
-| Quarto scaffolding and CRPTO pages | Closed | `14a`--`14o`, `_quarto.yml`, rendered/freeze cache | book remains rich; future manuscript extracts rather than deletes |
+| SPO+ / DFL comparison | Closed for current comparator layer | `models/spo_comparison_status.json`, `models/spo_real_training_status.json`, `09-spo-regret.qmd` | use as regret/auditability comparator, not as a promoted CRPTO policy |
+| Quarto scaffolding and CRPTO pages | Closed | `01-introduccion`--`14-release`, `_quarto.yml`, rendered/freeze cache | book remains rich; future manuscript extracts rather than deletes |
 | Pipeline-first topology and notebook roles | Closed | `configs/pipeline_registry/*`, `scripts/run_long_pipeline.py`, `docs/RUNBOOK.md` | pipelines are producer/search/paper/research lanes; notebooks are executable documentation, not canonical producers |
 | Insights factory / research labs | Closed as sidecar | `research_labs` profile, notebook atlas, governance docs | useful source of figures and ideas, but not a CRPTO champion dependency |
 | Publication figures | Mostly closed for current evidence | `crpto_fig7`, `crpto_fig10`, `crpto_fig12`--`crpto_fig14`, alpha-gamma figures | remaining action is editorial selection for body vs appendix |
-| A/B, fairness, MRM and governance concerns | Closed for current paper | `14j`, `14k`, `14l`, `14n`, guardrail tests | cite as auditability/governance, with proxy and diagnostic caveats |
+| A/B, fairness, MRM and governance concerns | Closed for current paper | `09-spo-regret`, `10-fair-lending`, `11-mrm`, `13-trazabilidad`, guardrail tests | cite as auditability/governance, with proxy and diagnostic caveats |
 | Time-series interval redesign | Closed as `research_only` | `docs/TIME_SERIES_VNEXT_DECISION_2026-04-02.md`, `models/time_series_vnext_status.json` | valuable for Paper 2/mega extension, not current CRPTO |
-| Causal/CATE lane | Closed as `insights_only` for current paper | `14e`, Paper 2 mega-extension page, causal artifacts | future causal CRPTO, not current champion contribution |
+| Causal/CATE lane | Closed as `insights_only` for current paper | `05-discusion`, Paper 2 mega-extension page, causal artifacts | future causal CRPTO, not current champion contribution |
 | Streamlit companion | Partially deferred | `docs/STREAMLIT_QUARTO_MIGRATION_REGISTRY.yml`, book pages, Streamlit app | Quarto is the primary paper surface; a live dashboard is product/P3 unless a venue requests a companion URL |
 
 ### Immediate Work That Does Not Change The Paper Direction
@@ -98,7 +112,7 @@ are about manuscript quality, not new champion selection.
 
 | Item | Uses existing artifacts? | Needs new run? | Why it is immediate | Done when |
 |---|---|---|---|---|
-| Extract standalone manuscript draft | Yes: `14g`, `14o`, A1--A18, figures | No | converts book evidence into a journal-shaped paper | abstract, intro, related work, theory, method, results and appendix skeleton exist outside the book |
+| Extract standalone manuscript draft | Yes: `06-blueprint-manuscrito`, `14-release`, A1--A18, figures | No | converts book evidence into a journal-shaped paper | abstract, intro, related work, theory, method, results and appendix skeleton exist outside the book |
 | Final body-vs-appendix table/figure selection | Yes | No | avoids overloading the paper body | final list maps each table/figure to body, appendix or thesis-only |
 | Write alpha sweep / alpha-Gamma narrative | Yes | No | turns old "alpha sweep" task into a clear business-policy dial | body text explains alpha, width, Gamma_CP, funded set and robust region without overclaiming |
 | Write uncertainty-baseline narrative | Yes | No | answers why conformal robust sets, not bootstrap/parametric sets | comparator table/figure is tied to the CRPTO contribution |
@@ -114,12 +128,12 @@ direction are now reflected in the CRPTO Quarto pages.
 
 | Item closed in Quarto | Page | Evidence surfaced | Still pending |
 |---|---|---|---|
-| Uncertainty-baseline narrative | `14d-results.qmd` | comparator table from `uncertainty_baselines_comparison.parquet` and worst-grade table from `uncertainty_baselines_by_grade.parquet` | choose whether Fig 7/table stays in body or moves to appendix during manuscript extraction |
-| CQR comparator narrative | `14d-results.qmd` | CQR table from `cqr_mondrian_comparison.parquet` plus Fig 10 interpretation | only a future CQR retraining/decision-aware run would make it a method candidate |
-| Alpha sweep narrative | `14d-results.qmd` | compact alpha table from `alpha_sweep_pareto_both.parquet` and explicit warning that the sweep is not the champion source | final paper may compress this to one paragraph plus figure |
-| A/B bootstrap guard | `14d-results.qmd` | `ab_pass_all`, `45/45` region and official return from `champion_portfolio_policy.json` | no new metric needed |
-| Freeze/search pipeline rule | `14n-artifact-traceability.qmd` | family table for `crpto_e2e`, `paper2_e2e`, `core_canonical`, `search_pd`, `search_conformal`, `search_portfolio` | keep profiles and runbook aligned if pipeline families change |
-| Companion URL decision | `14o-extraction-release-manifest.qmd` | Quarto + DVC/DagsHub/MLflow declared as current companion; Streamlit deferred | stable public URL only when final deployment target is chosen |
+| Uncertainty-baseline narrative | `04-resultados.qmd` | comparator table from `uncertainty_baselines_comparison.parquet` and worst-grade table from `uncertainty_baselines_by_grade.parquet` | choose whether Fig 7/table stays in body or moves to appendix during manuscript extraction |
+| CQR comparator narrative | `04-resultados.qmd` | CQR table from `cqr_mondrian_comparison.parquet` plus Fig 10 interpretation | only a future CQR retraining/decision-aware run would make it a method candidate |
+| Alpha sweep narrative | `04-resultados.qmd` | compact alpha table from `alpha_sweep_pareto_both.parquet` and explicit warning that the sweep is not the champion source | final paper may compress this to one paragraph plus figure |
+| A/B bootstrap guard | `04-resultados.qmd` | `ab_pass_all`, `45/45` region and official return from `champion_portfolio_policy.json` | no new metric needed |
+| Freeze/search pipeline rule | `13-trazabilidad.qmd` | family table for `crpto_e2e`, CRPTO core/diagnostic profiles and frozen champion consumers | keep profiles and runbook aligned if pipeline families change |
+| Companion URL decision | `14-release.qmd` | Quarto + DVC/DagsHub/MLflow declared as current companion; Streamlit deferred | stable public URL only when final deployment target is chosen |
 
 ### Keep As Future Paper / Journal Extension
 
@@ -153,12 +167,12 @@ cleanup" for the current CRPTO.
 
 | Item | Why it matters | Artifact / owner | Acceptance criteria |
 |---|---|---|---|
-| Keep champion sync guardrails green | Prevents the economic champion from being overwritten by quick/search runs | `tests/test_docs/test_crpto_final_sync.py` | promotion, policy, registry, DVC metrics and paper tables agree |
+| Keep champion sync guardrails green | Prevents the economic champion from being overwritten by quick/search runs | `tests/test_crpto_final_sync.py` | promotion, policy, registry, DVC metrics and paper tables agree |
 | Keep tables generated from canonical promotion | Avoids legacy 5,001-frontier drift | `scripts/export_crpto_tables.py` | table 0 reports `$170.5K`, `V=0.03645`, `gamma_cp=0.18591`, `45/45` region |
 | Keep DVC/Dagshub ownership clean | Makes results reproducible without Git blobs | `dvc.lock`, `.dvc` pointers | `dvc status --no-updates` and `dvc status -c -r dagshub` are clean |
 | Keep MLflow CRPTO final run discoverable | Preserves experiment tracking for the paper-facing closure | DagsHub MLflow run `6af4b95d152c47ec9420d5b1a2e78959` | run logs final champion metrics and canonical artifacts |
-| Keep paper/core profiles frozen | Prevents `crpto_e2e`, `paper2_e2e`, `canonical_rebuild` and `core_canonical` from re-searching a known champion | `run_long_pipeline.py`, `configs/profiles/*` | non-search families use `freeze_if_available` and `explicit_champion_only`; search families remain explicit |
-| Keep the Quarto book richer than the manuscript | Preserves reviewer-facing reasoning before paper compression | `book/chapters/14f-editorial-claims-references.qmd` | claim ladder, reviewer Q&A, paper-placement table and numbered references stay rendered |
+| Keep paper/core profiles frozen | Prevents CRPTO reruns from re-searching a known champion | `scripts/run_crpto_pipeline.py`, `configs/profiles/*`, `configs/pipelines/crpto_e2e.yaml` | non-search CRPTO stages use `freeze_if_available` and `explicit_champion_only`; search families require explicit approval |
+| Keep the Quarto book richer than the manuscript | Preserves reviewer-facing reasoning before paper compression | `book/chapters/06b-guia-editorial-claims.qmd` | claim ladder, reviewer Q&A, paper-placement table and numbered references stay rendered |
 
 ## P1 - Journal-Grade Evidence
 
@@ -180,7 +194,7 @@ the champion search.
 |---|---|---|---|
 | Nested holdout / post-selection validation | `crpto_tableA3_nested_holdout.csv`, `crpto_tableA9_strict_temporal_holdout.csv`, `models/crpto_evidence_status.json` | the 5K -> 25K -> 276K chain is explicit, and the frozen champion also passes `alpha01` on strict temporal confirmation slices; both 2018 selection and 2019--2020 confirmation have zero violation | a fully prospective protocol where the strict split is declared before any policy search |
 | Decision-aware conformal selector | `crpto_tableA5_decision_aware_selector.csv`, `crpto_tableA10_conformal_finalist_exact_bound_eval.csv` | a CROMS-style screen selects rank 1 after combining conformal gates, A/B pass, tradeoff return and exact 276K bound metrics for ranks 1, 2 and 3; ranks 2/3 pass exact portfolio eval but fail min-group conformal coverage | full prospective training where the conformal score itself is optimized for decision loss |
-| Conditional tightening lemma | `book/chapters/14b-theoretical-framework.qmd`, `docs/research/crpto_conditional_tightening_appendix_2026-05-04.md` | Hoeffding/Bernstein tightening is stated as conditional on additional independence assumptions, while Markov remains the main distribution-free theorem | empirical or theoretical justification of conditional independence, or a weaker dependence-aware concentration result |
+| Conditional tightening lemma | `book/chapters/02-marco-teorico.qmd`, `docs/research/crpto_conditional_tightening_appendix_2026-05-04.md` | Hoeffding/Bernstein tightening is stated as conditional on additional independence assumptions, while Markov remains the main distribution-free theorem | empirical or theoretical justification of conditional independence, or a weaker dependence-aware concentration result |
 | External or synthetic shift replication | `crpto_tableA6_synthetic_shift.csv`, `crpto_tableA11_enhanced_synthetic_shift.csv` | OOT covariate-reweighting and adversarial label-flip stress tests keep coverage above 90% across high-PD, high-grade-risk, late-period and weakest-segment scenarios | true external credit dataset replication |
 | Segment-period sensitivity | `crpto_tableA4_segment_period_sensitivity.csv`, `crpto_tableA7_funded_set_loans.csv`, `crpto_tableA8_funded_set_composition.csv` | all observed period-grade cuts stay above 90% coverage; the exact funded set is exported loan-by-loan and summarized by period/grade composition | external or prospective funded-set composition replication |
 
@@ -192,8 +206,8 @@ without changing the official champion or reopening the search.
 
 | Item | Implemented artifact | What it adds | Scope caveat |
 |---|---|---|---|
-| Convert chapter 14 into paper blueprint | `book/chapters/14g-manuscript-blueprint.qmd` | target venue, abstract, claims C1--C7, manuscript outline, final table/figure plan and notation | blueprint, not final manuscript |
-| Appendix A12--A18 | `book/chapters/14h-journal-appendix-robustness.qmd` | renders tail risk, satisficing, dependency, stress, bootstrap, LGD/cap and robust-region evidence | appendix material unless a journal asks for more body evidence |
+| Convert chapter 14 into paper blueprint | `book/chapters/06-blueprint-manuscrito.qmd` | target venue, abstract, claims C1--C7, manuscript outline, final table/figure plan and notation | blueprint, not final manuscript |
+| Appendix A12--A18 | `book/chapters/07-apendice-robustez.qmd` | renders tail risk, satisficing, dependency, stress, bootstrap, LGD/cap and robust-region evidence | appendix material unless a journal asks for more body evidence |
 | Clean CRPTO figure | `crpto_fig12_crpto_conceptual_pipeline.png` | candidate Figure 1 | visual explanation only |
 | Alpha -> Gamma_CP -> funded set figure | `crpto_fig13_alpha_gamma_funded_set.png` | connects conformal alpha to portfolio quantities | diagnostic curve from frozen artifacts |
 | Robust region heatmap | `crpto_fig14_robust_region_heatmap.png` | visualizes the `45/45` robust region | summarizes final mini-grid, not a new search |
@@ -214,14 +228,14 @@ short paper, a journal version and a thesis chapter without losing context.
 
 | Page | Status | What it adds | Later placement |
 |---|---|---|---|
-| `index.qmd` | Implemented | curated navigation through `14a`--`14o` and extraction rule paper/journal/thesis | editorial hub |
-| `14i-mondrian-ablation.qmd` | Implemented | rank 1/2/3 conformal ablation and winner configuration | appendix or method robustness |
-| `14j-spo-protocol-and-regret.qmd` | Implemented | SPO+ train-time vs temporal protocol split | comparator appendix |
-| `14k-fair-lending-checkpoint.qmd` | Implemented | 3 base + 3 proxy-intersectional fairness checks, all PASS | governance appendix |
-| `14l-governance-mrm-approval.qmd` | Implemented | SR 11-7 gates, challenger criteria and retraining triggers | governance appendix / thesis |
-| `14m-funded-set-composition.qmd` | Implemented | funded-set loan/period/grade composition | results appendix |
-| `14n-artifact-traceability.qmd` | Implemented | claim -> artifact -> script -> test map and runbook | reproducibility appendix |
-| `14o-extraction-release-manifest.qmd` | Implemented | direction filter, table/figure placement, venue response bank and release checklist | editorial/reproducibility supplement |
+| `index.qmd` | Implemented | curated navigation through `01-introduccion`--`14-release` and extraction rule paper/journal/thesis | editorial hub |
+| `08-ablacion-mondrian.qmd` | Implemented | rank 1/2/3 conformal ablation and winner configuration | appendix or method robustness |
+| `09-spo-regret.qmd` | Implemented | SPO+ train-time vs temporal protocol split | comparator appendix |
+| `10-fair-lending.qmd` | Implemented | 3 base + 3 proxy-intersectional fairness checks, all PASS | governance appendix |
+| `11-mrm.qmd` | Implemented | SR 11-7 gates, challenger criteria and retraining triggers | governance appendix / thesis |
+| `12-funded-set.qmd` | Implemented | funded-set loan/period/grade composition | results appendix |
+| `13-trazabilidad.qmd` | Implemented | claim -> artifact -> script -> test map and runbook | reproducibility appendix |
+| `14-release.qmd` | Implemented | direction filter, table/figure placement, venue response bank and release checklist | editorial/reproducibility supplement |
 
 Remaining Quarto maintenance is not about reducing content. It is about keeping
 paths, claims and caches synchronized as new evidence pages are added.
@@ -259,16 +273,16 @@ The Quarto book now includes an explicit editorial guide and two journal-facing
 pages for CRPTO, plus the new support pages that make the book useful
 as a staging area for paper, journal and thesis:
 
-- `book/chapters/14f-editorial-claims-references.qmd`
-- `book/chapters/14g-manuscript-blueprint.qmd`
-- `book/chapters/14h-journal-appendix-robustness.qmd`
-- `book/chapters/14i-mondrian-ablation.qmd`
-- `book/chapters/14j-spo-protocol-and-regret.qmd`
-- `book/chapters/14k-fair-lending-checkpoint.qmd`
-- `book/chapters/14l-governance-mrm-approval.qmd`
-- `book/chapters/14m-funded-set-composition.qmd`
-- `book/chapters/14n-artifact-traceability.qmd`
-- `book/chapters/14o-extraction-release-manifest.qmd`
+- `book/chapters/06b-guia-editorial-claims.qmd`
+- `book/chapters/06-blueprint-manuscrito.qmd`
+- `book/chapters/07-apendice-robustez.qmd`
+- `book/chapters/08-ablacion-mondrian.qmd`
+- `book/chapters/09-spo-regret.qmd`
+- `book/chapters/10-fair-lending.qmd`
+- `book/chapters/11-mrm.qmd`
+- `book/chapters/12-funded-set.qmd`
+- `book/chapters/13-trazabilidad.qmd`
+- `book/chapters/14-release.qmd`
 
 These pages are intentionally more explanatory than a journal paper. They keep
 the claim ladder, reviewer Q&A, artifact placement map, local numbered
@@ -282,7 +296,7 @@ multi-period portfolio and open-source packaging as backlog items
 because they would introduce a new method, guarantee or dataset rather than
 merely organizing existing evidence.
 
-Because `book/_quarto.yml` uses `execute.freeze: true`, rendered cache updates
+Because `book/_quarto.yml` uses `execute.freeze: auto`, rendered cache updates
 under `book/_freeze/chapters/` should be treated as
 intentional reproducibility artifacts when they correspond to a real Quarto page
 update. Do not clean them blindly; review them with the page they freeze.

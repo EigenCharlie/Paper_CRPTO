@@ -1,7 +1,18 @@
-# CRPTO Audit - CRPTO
+# paper-crpto Audit - 2026-05-04
 
 Fecha: 2026-05-04
 Objetivo editorial: paper publicable tipo Management Science / Operations Research / EJOR sobre Conformal Robust Predict-then-Optimize (CRPTO).
+
+## Adaptacion standalone - 2026-05-12
+
+Este documento fue migrado al repositorio independiente `Paper_CRPTO`. Las rutas
+apuntan ahora al libro standalone (`book/chapters/01-introduccion.qmd` a
+`book/chapters/14-release.qmd`), a las tablas `reports/crpto/tables/`, a las
+figuras `reports/crpto/figures/` y a los artefactos congelados propios del repo.
+
+Las menciones a Paper 2, Paper Mondrian, causal, Streamlit o research labs se
+leen como contexto historico/future-work del proyecto padre. No son dependencias
+del paper-crpto ni justifican traer esos pipelines a este repositorio.
 
 ## Decision canonica
 
@@ -64,7 +75,7 @@ El run operativo vigente `crpto-e2e-all-champions-2026-04-07` reporta AUC 0.7124
 | PD | AUC, Brier, ECE, PR-AUC entre runs PD | retorno de portafolio o bound-aware |
 | Conformal | coverage, width, min group coverage, Winkler entre variantes conformal | AUC PD o retorno |
 | Portfolio | retorno, funded count, price of robustness dentro del mismo selector | bound `V` si cambia la familia |
-| Bound-aware | `alpha01_exact_pass`, `V`, `gamma_cp`, `violation`, region pass | tablas legacy de paper1 |
+| Bound-aware | `alpha01_exact_pass`, `V`, `gamma_cp`, `violation`, region pass | tablas legacy del proyecto padre |
 | DVC canonico | snapshot operativo vigente | experimental HPO no promovido |
 
 ## Matriz de literatura local - PDFs base
@@ -110,7 +121,7 @@ La carpeta `C:\Users\carlos\Documents\Papers_tesis` contiene ahora 17 PDFs. Adem
 
 ## Auditoria del bound
 
-Estado corregido en `book/chapters/14b-theoretical-framework.qmd`:
+Estado corregido en `book/chapters/02-marco-teorico.qmd`:
 
 - El teorema ahora controla un target acotado `Y_i in [0,1]` y la no cobertura ponderada `V = sum_i w_i 1{Y_i > u_i}`.
 - La interpretacion de `Y_i` como PD latente se marca como supuesto adicional, no como observable.
@@ -132,26 +143,26 @@ Riesgo matematico que sigue abierto para journal: formalizar si el wrapper confo
 | Conformal winner coverage/ancho/min group | `conformal_upstream.winner_metrics` | sincronizado |
 | PD operativo AUC/Brier/ECE | `pipeline_summary.json`, `reports/dvc/metrics_summary.json` | sincronizado con nota de familia |
 | Historico PD mejor que actual | `models/search_pd/pd-hpo-local-2026-04-03-1325` | documentado, no promovido |
-| Tablas paper1 | `reports/crpto/tables/*`, `scripts/export_crpto_tables.py` | regeneradas desde fuentes canonicas |
+| Tablas paper-crpto | `reports/crpto/tables/*`, `scripts/export_crpto_tables.py` | regeneradas desde fuentes canonicas |
 
 ## Cambios Quarto aplicados
 
-- `14c-methodology.qmd`: elimina la contradiccion que decia que el economic champion no era oficial; agrega jerarquia de artefactos canonicos.
-- `14b-theoretical-framework.qmd`: acota el bound a target observado/no cobertura ponderada y separa garantia distribution-free de validacion empirica post-seleccion.
-- `14a-introduction-motivation.qmd`: agrega Online DFL, CROMS, end-to-end conformal calibration, robust CP multi-distribucion y fuente final de policy.
-- `14e-discussion-conclusions.qmd`: actualiza auditoria, reproducibilidad, limitaciones y future work con los papers recientes, incluyendo selección conformal decision-aware y riesgo OCE/CVaR.
-- `book/references.bib` y `docs/PAPER_REFERENCES_STATE_OF_ART.md`: corrigen metadatos de los PDFs recientes y documentan Online DFL, MDCP, CROMS, UP-OCP, end-to-end conformal calibration, conformal risk training y CRO/CRS.
+- `03-metodologia.qmd`: elimina la contradiccion que decia que el economic champion no era oficial; agrega jerarquia de artefactos canonicos.
+- `02-marco-teorico.qmd`: acota el bound a target observado/no cobertura ponderada y separa garantia distribution-free de validacion empirica post-seleccion.
+- `01-introduccion.qmd`: agrega Online DFL, CROMS, end-to-end conformal calibration, robust CP multi-distribucion y fuente final de policy.
+- `05-discusion.qmd`: actualiza auditoria, reproducibilidad, limitaciones y future work con los papers recientes, incluyendo selección conformal decision-aware y riesgo OCE/CVaR.
+- `book/references.bib` y `docs/research/foundations/crpto_references_state_of_art.md`: corrigen metadatos de los PDFs recientes y documentan Online DFL, MDCP, CROMS, UP-OCP, end-to-end conformal calibration, conformal risk training y CRO/CRS.
 - `reports/crpto/tables/*`: regeneradas desde la promocion final para eliminar drift legacy.
 
 ## Issues separados
 
-1. Paper Mondrian: hay drift de metricas entre el libro y `papers/paper3_copa2026/paper3_mondrian.pdf`; no bloquea el CRPTO.
+1. Paper Mondrian: hay drift de metricas en el proyecto padre; no bloquea el CRPTO standalone.
 2. Paper-facing tables: ya fueron regeneradas desde `final_project_promotion.json`; mantener `scripts/export_crpto_tables.py` como unica ruta de actualizacion.
 3. Tightening teorico: Hoeffding/Bernstein requieren supuestos adicionales y posiblemente nested holdout/post-selection correction.
 
 ## Plan de mejora priorizado
 
-1. Crear una tabla journal `claim -> artifact -> test` dentro del apendice reproducible. **Aplicado** en `book/chapters/14e-discussion-conclusions.qmd` como `tbl-crpto-claim-artifact-test`.
+1. Crear una tabla journal `claim -> artifact -> test` dentro del apendice reproducible. **Aplicado** en `book/chapters/05-discusion.qmd` como `tbl-crpto-claim-artifact-test`.
 2. Formalizar un lemma separado para la lectura de PD latente, o retirar esa lectura del theorem principal.
 3. Agregar experimento future-work minimo: nested holdout para confirmar que la seleccion bound-aware no usa el mismo OOT como unica evidencia.
 4. Agregar un selector conformal decision-aware inspirado en CROMS: comparar familias por retorno robusto, `V`, `gamma_cp`, violación y métricas conformales, manteniendo la selección en holdout separado.

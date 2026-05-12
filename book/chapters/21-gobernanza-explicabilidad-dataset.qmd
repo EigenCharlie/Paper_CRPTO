@@ -1654,7 +1654,7 @@ Estas capas son justamente las que suelen faltar en papers de scoring centrados 
 
 ### Lectura académica
 
-La literatura más reciente que el proyecto curó en `docs/PAPER_REFERENCES_STATE_OF_ART.md` sugiere que los vacíos están menos en “otro modelo tabular para Lending Club” y más en las combinaciones:
+La literatura más reciente que el proyecto curó en `docs/research/foundations/crpto_references_state_of_art.md` sugiere que los vacíos están menos en “otro modelo tabular para Lending Club” y más en las combinaciones:
 
 1. conformal + robust optimization;
 2. conformal + IFRS9 / SICR;

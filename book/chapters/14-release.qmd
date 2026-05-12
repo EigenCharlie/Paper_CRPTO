@@ -165,7 +165,7 @@ del dossier está lista para ser usada como fuente de manuscrito.
 
 | Gate | Comando / artefacto | Criterio |
 |---|---|---|
-| Champion sincronizado | `uv run pytest tests/test_docs/test_crpto_final_sync.py` | Todos los tests del CRPTO pasan. |
+| Champion sincronizado | `uv run pytest tests/test_crpto_final_sync.py` | Todos los tests del CRPTO pasan. |
 | Quarto registrado | `uv run pytest tests/test_docs/test_quarto_book_guardrails.py` | Todas las páginas `.qmd` están en `_quarto.yml`. |
 | Tablas canónicas | `uv run python scripts/export_crpto_tables.py` | A0 usa `models/final_project_promotion.json`. |
 | P1 evidence | `uv run python scripts/analyze_crpto_evidence.py --include-hardening` | A3--A11 actualizadas y status JSON coherente. |

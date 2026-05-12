@@ -18,6 +18,10 @@ $crpto-band-test:      #fff2e3;
 $font-family-sans-serif: "Inter", "Source Sans 3", "Segoe UI", sans-serif;
 $font-family-serif:      "Source Serif 4", Georgia, serif;
 $link-color:             $crpto-primary;
+$body-bg:                #f3f6f9;
+$body-color:             $crpto-ink;
+$headings-color:         $crpto-ink;
+$code-bg:                #eef3f8;
 
 /*-- scss:rules --*/
 
@@ -30,11 +34,56 @@ $link-color:             $crpto-primary;
   --crpto-ink:                  #{$crpto-ink};
   --crpto-muted:                #{$crpto-muted};
   --crpto-border:               #{$crpto-border};
+  --crpto-page-bg:              #f3f6f9;
+  --crpto-sidebar-bg:           #eef3f8;
 }
 
 .quarto-title-block .title { letter-spacing: 0; }
 .table  { font-size: 0.92rem; }
 .callout { border-radius: 6px; }
+
+body {
+  background: linear-gradient(180deg, #f6f8fb 0%, var(--crpto-page-bg) 100%);
+  color: var(--crpto-ink);
+}
+
+main.content {
+  padding-block: clamp(1rem, 2vw, 2rem);
+  padding-inline: clamp(0.25rem, 1vw, 1rem);
+  overflow-x: hidden;
+}
+
+#quarto-document-content {
+  max-width: 100%;
+  overflow-x: hidden;
+}
+
+#quarto-sidebar,
+#quarto-margin-sidebar {
+  background: var(--crpto-sidebar-bg);
+}
+
+#quarto-sidebar {
+  border-right: 1px solid var(--crpto-border);
+  box-shadow: 10px 0 30px rgba(21, 34, 56, 0.04);
+}
+
+#quarto-sidebar .sidebar-item-text,
+#quarto-sidebar .sidebar-title {
+  letter-spacing: 0;
+}
+
+.quarto-figure,
+.cell-output-display,
+.table-responsive {
+  max-width: 100%;
+  overflow-x: auto;
+}
+
+img {
+  max-width: 100%;
+  height: auto;
+}
 
 /* CRPTO custom components */
 .whole-game-intro {
@@ -227,6 +276,8 @@ $link-color:             $crpto-primary;
   --crpto-ink:     #e4e8ef;
   --crpto-muted:   #9aa5b8;
   --crpto-border:  rgba(255, 255, 255, 0.12);
+  --crpto-page-bg: #101625;
+  --crpto-sidebar-bg: #141b2a;
 
   .whole-game-intro { background: rgba(31, 111, 235, 0.10); }
   .chapter-card     { background: #1c2331; }
@@ -239,6 +290,11 @@ $link-color:             $crpto-primary;
   .book-band__segment--train { background: rgba(31, 111, 235, 0.18); }
   .book-band__segment--cal   { background: rgba(102, 187, 106, 0.18); }
   .book-band__segment--test  { background: rgba(255, 167, 38, 0.18); }
+}
+
+body.quarto-dark,
+[data-bs-theme="dark"] body {
+  background: linear-gradient(180deg, #111827 0%, var(--crpto-page-bg) 100%);
 }
 
 /* Print / PDF styles */

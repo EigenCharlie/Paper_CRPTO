@@ -1,16 +1,28 @@
-# CRPTO Quarto Expansion - 2026-05-04
+# paper-crpto Quarto Expansion - 2026-05-04
 
 This note records the book-side expansion added after the P1 hardening work. The
 purpose is to keep the Quarto book richer than the eventual paper manuscript:
 more explanation, more reviewer-facing context, and a local numeric reference
 guide for the CRPTO section.
 
+## Standalone Adaptation - 2026-05-12
+
+This note has been adapted for the independent `Paper_CRPTO` repository. The
+old monorepo chapter labels are no longer the source of truth; the standalone
+book uses `01-introduccion.qmd` through `14-release.qmd` for the paper-ready
+package and `15-fundamentos-riesgo-ml.qmd` through
+`23-apendices-regulatorios-y-future-work.qmd` for the extended journal dossier.
+
+The Quarto book is now the public companion surface through GitHub Pages. Local
+renders remain useful for validation, but the public artifact is rebuilt by the
+GitHub Actions `book-publish` workflow from the standalone repository.
+
 ## Book Changes
 
-- Added `book/chapters/14f-editorial-claims-references.qmd`.
-- Added `book/chapters/14g-manuscript-blueprint.qmd`.
-- Added `book/chapters/14h-journal-appendix-robustness.qmd`.
-- Added the new page to `book/_quarto.yml` under Part IV.
+- Added `book/chapters/06b-guia-editorial-claims.qmd`.
+- Added `book/chapters/06-blueprint-manuscrito.qmd`.
+- Added `book/chapters/07-apendice-robustez.qmd`.
+- Added the new pages to `book/_quarto.yml` under the paper-ready CRPTO part.
 - Reworked the CRPTO landing page so it no longer depends on hard-coded
   chapter numbers and now explains how to read the book as an editorial dossier.
 - Updated the introduction scope: the conditional Hoeffding/Bernstein tightening
@@ -82,3 +94,19 @@ The documentation tests should verify that:
 - the appendix page references A12--A18 and the new figures;
 - the CRPTO docs still point to the official economic champion and do
   not reopen the champion search.
+
+## Quarto Practices Retained From The Parent Book
+
+- Keep `execute.freeze` enabled so editorial renders do not silently recompute
+  champion artifacts.
+- Use a landing page with a compact whole-game explanation, route table and
+  chapter cards, rather than a marketing-style hero page.
+- Prefer callouts for scope, caveats and reviewer-facing warnings; keep theorem,
+  artifact and table claims linked to reproducible paths.
+- Preserve search, page navigation, repository actions and sidebar tools in
+  `book/_quarto.yml` because reviewers need inspection paths. PDF remains an
+  explicit local/release artifact until the Pages workflow builds it.
+- Keep figure widths, table overflow and dark-mode styling explicit in
+  `book/styles.scss` so GitHub Pages and local renders behave consistently.
+- Do not bring Streamlit, dashboard, Paper 2 or research-lab navigation into the
+  public CRPTO companion unless a future venue explicitly asks for it.

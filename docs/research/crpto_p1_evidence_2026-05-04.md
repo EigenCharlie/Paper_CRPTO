@@ -1,8 +1,14 @@
-# CRPTO P1 Evidence - 2026-05-04
+# paper-crpto P1 Evidence - 2026-05-04
 
 This dossier records the P1 evidence now materialized around the official
 `paper-thesis-final-economic-2026-04-06` champion. It does not reopen the
 champion search.
+
+## Standalone Scope - 2026-05-12
+
+The evidence here is part of the independent paper-crpto dossier. It can be
+rendered, audited and cited from the standalone Quarto book, but it should still
+be read as evidence around the frozen champion rather than a new search.
 
 ## Generated artifacts
 

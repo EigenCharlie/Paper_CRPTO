@@ -21,7 +21,7 @@ Esta segunda pasada revisó el libro Quarto completo y documentación fuente par
 
 - `docs/research/foundations/crpto_model_risk_management.md` desde `docs/MODEL_RISK_MANAGEMENT.md`
 - `docs/research/foundations/crpto_paper_development_playbook_2026.md` desde `docs/PAPER_DEVELOPMENT_PLAYBOOK_2026.md`
-- `docs/research/foundations/crpto_references_state_of_art.md` desde `docs/PAPER_REFERENCES_STATE_OF_ART.md`
+- `docs/research/foundations/crpto_references_state_of_art.md` desde el mapa bibliografico original del proyecto padre
 - `docs/research/foundations/crpto_runbook.md` desde `docs/RUNBOOK.md`
 - `docs/research/foundations/crpto_pipeline_topology_2026-03-31.md` desde `docs/PIPELINE_FIRST_TOPOLOGY_2026-03-31.md`
 - `docs/research/foundations/crpto_artifact_retention_policy.md` desde `docs/ARTIFACT_RETENTION_POLICY.md`

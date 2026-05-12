@@ -236,7 +236,7 @@ Para regenerar el paquete completo de esta pagina:
 uv run python scripts/export_crpto_tables.py
 uv run python scripts/analyze_crpto_evidence.py
 uv run python scripts/build_crpto_journal_package.py
-uv run pytest tests/test_docs/test_crpto_final_sync.py
+uv run pytest tests/test_crpto_final_sync.py
 ```
 
 Para renderizar solo esta parte del libro:

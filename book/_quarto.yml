@@ -13,9 +13,25 @@ book:
   search:
     location: sidebar
     type: textbox
+    show-item-context: true
+    collapse-after: 4
+    copy-button: true
+  page-navigation: true
+  repo-url: "https://github.com/EigenCharlie/Paper_CRPTO"
+  repo-actions: [edit, issue]
+  sidebar:
+    style: docked
+    collapse-level: 2
+    tools:
+      - icon: github
+        text: GitHub
+        href: "https://github.com/EigenCharlie/Paper_CRPTO"
+      - icon: database
+        text: DagsHub
+        href: "https://dagshub.com/EigenCharlie94/Paper_CRPTO"
   page-footer:
     left: "Carlos Alfredo Vergara Rojas · CRPTO · 2026"
-    right: "Generado con [Quarto](https://quarto.org)"
+    right: "[GitHub](https://github.com/EigenCharlie/Paper_CRPTO) · [DagsHub](https://dagshub.com/EigenCharlie94/Paper_CRPTO) · [Quarto](https://quarto.org)"
   chapters:
     - index.qmd
     - part: "Manuscrito CRPTO y evidencia paper-ready"

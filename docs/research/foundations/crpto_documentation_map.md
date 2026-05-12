@@ -19,7 +19,7 @@ Quick reference for the current documentation stack after the pipeline-first ref
 | **Search wave 2026-04** | `docs/PIPELINE_FIRST_TOPOLOGY_2026-03-31.md` | Pipeline-first taxonomy including the new `search_out_of_scope_temporal_ifrs9_ifrs9` lane for exhaustive April runs |
 | **TS vNext decision** | `docs/TIME_SERIES_VNEXT_DECISION_2026-04-02.md` | Current keep / research / do-not-promote decision for the time-series redesign lane |
 | **History / learnings** | `docs/DECISION_CHANGES_AND_LEARNINGS.md` | Historical decisions, fixes, and practical learnings |
-| **Paper references** | `docs/PAPER_REFERENCES_STATE_OF_ART.md` | Curated literature map for papers and thesis chapters |
+| **Paper references** | `docs/research/foundations/crpto_references_state_of_art.md` | Curated literature map for papers and thesis chapters |
 | **Backlog** | `docs/backlog-papers-unified.md` | Unified backlog for papers, experiments, and documentation follow-ups |
 | **Conformal note** | `docs/conformal_prediction_README.md` | Compact operational/research entrypoint for conformal material |
 

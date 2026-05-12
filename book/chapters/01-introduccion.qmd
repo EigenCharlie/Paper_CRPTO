@@ -14,7 +14,7 @@ Tercero, la prediccion conformal, establecida formalmente por [@vovk2005] y popu
 
 ### Brecha en la literatura {#sec-crpto-gap}
 
-La curaduria de `docs/PAPER_REFERENCES_STATE_OF_ART.md` muestra un panorama sugerente:
+La curaduria de `docs/research/foundations/crpto_references_state_of_art.md` muestra un panorama sugerente:
 
 - si existen trabajos sobre *Conformal Robust Optimization* [@johnstone2021; @patel2024; @zhao2025robust];
 - si existe la literatura clasica de *price of robustness* y SPO+ [@bertsimas2004; @elmachtoub2022];

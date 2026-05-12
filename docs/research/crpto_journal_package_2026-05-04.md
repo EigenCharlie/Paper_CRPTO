@@ -1,7 +1,14 @@
-# CRPTO Journal Package - 2026-05-04
+# paper-crpto Journal Package - 2026-05-04
 
 This dossier records the journal-oriented tables and figures generated from
 frozen CRPTO artifacts. It does not reopen the champion search.
+
+## Standalone Scope - 2026-05-12
+
+This package is the journal/appendix layer for `Paper_CRPTO`. It is intentionally
+larger than the short paper: A12--A18, Figures 12--14 and the robustness notes
+can be selected into a journal appendix, reviewer response or future thesis
+chapter without changing the official champion.
 
 ## Generated artifacts
 
@@ -49,7 +56,7 @@ frozen CRPTO artifacts. It does not reopen the champion search.
 
 ## Quarto integration
 
-- `book/chapters/14g-manuscript-blueprint.qmd` uses
+- `book/chapters/06-blueprint-manuscrito.qmd` uses
   these artifacts to define the paper outline and final table/figure plan.
-- `book/chapters/14h-journal-appendix-robustness.qmd`
+- `book/chapters/07-apendice-robustez.qmd`
   renders A12--A18 and Figures 12--14.
