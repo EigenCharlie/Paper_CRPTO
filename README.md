@@ -2,7 +2,7 @@
 
 Pipeline de investigación y libro Quarto que acompañan el paper **CRPTO**, una metodología que integra *conformal prediction* con *optimización robusta de carteras* aplicada a riesgo de crédito (datos de Lending Club, 2007–2020).
 
-> Esta carpeta es una **copia curada paper-ready** extraída del proyecto padre `lending-club-risk-project`. No se modifica para preservar la reproducibilidad del *champion* congelado.
+> CRPTO opera como repositorio standalone: GitHub, DVC y MLflow apuntan a recursos propios del paper. La historia de extracción y aprendizajes queda documentada en [`docs/PROJECT_HISTORY.md`](docs/PROJECT_HISTORY.md).
 
 ## Champion congelado
 
@@ -42,7 +42,7 @@ just setup-base
 
 # Copia el archivo de entorno y rellena con tus tokens reales
 cp .env.example .env
-# Edita .env (DagsHub, MLflow, DVC remote opcional)
+# Edita .env (DagsHub/MLflow/DVC standalone de CRPTO)
 
 # Verifica que todo está sano
 just smoke              # ruff + pytest + dbt parse + dbt test
@@ -101,7 +101,7 @@ es sin una rama de revalidación y drift report.
 │   ├── settings.json        # Permisos pre-aprobados (compartido)
 │   └── skills/              # 6 skills custom (/crpto-render, /crpto-smoke, ...)
 ├── .codex/                  # Skill local CRPTO para Codex
-├── .github/workflows/       # CI/CD (lint, test, dbt, book-build, book-publish)
+├── .github/workflows/       # CI/CD (lint, book-publish, tests-full manual)
 ├── .pre-commit-config.yaml  # ruff + nbstripout + dvc-status + smoke
 ├── pyproject.toml           # Deps y tooling (ruff, pytest, mypy)
 ├── uv.lock                  # Lockfile reproducible

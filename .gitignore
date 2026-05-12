@@ -23,6 +23,8 @@ _freeze/
 !.env.local.example
 .envrc
 .direnv/
+config.local
+config.local.*
 *.log
 reports/run_logs/*/
 !reports/run_logs/.gitkeep
@@ -41,11 +43,14 @@ data/processed/optuna/
 # Allow .gitkeep markers if present
 !data/raw/
 !data/processed/
+!data/processed/**/
 !data/raw/.gitkeep
 !data/processed/.gitkeep
 # Allow DVC pointer files for GitHub/DVC reproducibility.
 !data/raw/*.dvc
 !data/processed/*.dvc
+data/processed/**/*
+!data/processed/**/*.dvc
 
 # DVC cache, locks, tmp (only `.dvc/config` and `dvc.yaml`/`dvc.lock` belong in git)
 .dvc/cache/

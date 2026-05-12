@@ -15,7 +15,7 @@ Failure modes this catches:
   (e.g. ``crpto_table0_key_metrics.csv``) with different formatting.
 * A line-ending fix-up touched a paper-tracked text file.
 
-The first three protected files are tested individually so the failure
+The protected files are tested individually so the failure
 message is immediately actionable. The rest are tested parametrically and
 report aggregate drift counts.
 """
@@ -24,12 +24,18 @@ from __future__ import annotations
 
 import hashlib
 import json
+import os
 from pathlib import Path
 from typing import Any
 
 import pytest
 
 MANIFEST_PATH = Path("EXTRACTION_MANIFEST.json")
+STRICT_ARTIFACTS = os.getenv("CRPTO_REQUIRE_DVC_ARTIFACTS", "").lower() in {
+    "1",
+    "true",
+    "yes",
+}
 
 PROTECTED_CHAMPION_FILES = (
     "models/pd_canonical.cbm",
@@ -77,13 +83,19 @@ def critical_hashes(manifest: dict[str, Any]) -> dict[str, dict[str, Any]]:
 def test_protected_champion_artefact_hash(
     rel_path: str, critical_hashes: dict[str, dict[str, Any]]
 ) -> None:
-    """Bit-exact hash check on the three never-overwrite-without-revalidation files."""
+    """Bit-exact hash check on never-overwrite-without-revalidation files."""
     expected = critical_hashes.get(rel_path)
     if not expected or "sha256" not in expected:
-        pytest.skip(f"{rel_path} not in manifest critical_hashes.")
+        msg = f"{rel_path} not in manifest critical_hashes."
+        if STRICT_ARTIFACTS:
+            pytest.fail(msg)
+        pytest.skip(msg)
     abs_path = Path(rel_path)
     if not abs_path.is_file():
-        pytest.skip(f"{rel_path} not present locally — run `dvc pull`.")
+        msg = f"{rel_path} not present locally — run `dvc pull`."
+        if STRICT_ARTIFACTS:
+            pytest.fail(msg)
+        pytest.skip(msg)
     actual = _sha256_of_file(abs_path)
     assert actual == expected["sha256"], (
         f"Champion drift detected on {rel_path}:\n"
@@ -171,6 +183,10 @@ def test_manifest_hash_sweep_summary(critical_hashes: dict[str, dict[str, Any]])
     if drift:
         msg = "\n".join(f"  {p}\n    expected={e}\n    actual=  {a}" for p, e, a in drift)
         pytest.fail(f"{len(drift)} frozen artefacts drifted from manifest:\n{msg}")
+
+    if missing and STRICT_ARTIFACTS:
+        msg = "\n".join(f"  {p}" for p in missing)
+        pytest.fail(f"{len(missing)} frozen artefacts missing after DVC pull:\n{msg}")
 
     assert checked > 0, "No frozen artefacts found on disk — partial checkout? Run `dvc pull`."
 

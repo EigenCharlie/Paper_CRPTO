@@ -1,8 +1,9 @@
 # CRPTO scope and governance
 
 This repository is the standalone home for the CRPTO paper, journal package,
-Quarto book and reproducibility pipeline. It is intentionally narrower than
-the parent `lending-club-risk-project`.
+Quarto book and reproducibility pipeline. It is intentionally scoped to the
+CRPTO paper lane only; extraction history and lessons are kept in
+`docs/PROJECT_HISTORY.md`.
 
 ## Public scope
 
@@ -103,10 +104,13 @@ GitHub repository security currently expects:
 
 - Dependency graph and Dependabot security updates enabled.
 - Secret scanning enabled.
-- Branch protection on `main` requiring `ruff`, `pytest` and `build`.
+- No required branch protection in the current single-author academic mode.
+  If CRPTO becomes multi-author, re-enable branch protection with at least
+  `lint` and `book-publish` as required checks.
 
-The default CI must remain artifact-aware: it should pass without DVC pull and
-only run full champion tests when local/DVC artifacts are present.
+The default CI must remain lightweight: `lint` and `book-publish` run on push.
+The artifact-aware `tests-full` workflow is manual and should be run before
+journal milestones or any protected-stage revalidation.
 
 ## Environments
 

@@ -7,6 +7,7 @@ stages:
       hash: md5
       md5: fa85f05191cacb00ad42c05a55c3ea1d
       size: 3479
+      isexec: true
     - path: book/chapters
       hash: md5
       md5: 897808297c824542516253bb41638288.dir
@@ -16,10 +17,12 @@ stages:
       hash: md5
       md5: a4a24f77d5b90388b255cafd18c70ea6
       size: 2492
+      isexec: true
     - path: book/styles.scss
       hash: md5
       md5: 01d664a81e2dd7f4092be8db171fd7e0
       size: 6116
+      isexec: true
     params:
       params.yaml:
         book.formats:
@@ -28,7 +31,7 @@ stages:
     outs:
     - path: book/_book
       hash: md5
-      md5: 0ad1d314c745b3a4e35fcc9cd6b94958.dir
+      md5: 5444a9522227720adc9c47868aa415e7.dir
       size: 16900831
       nfiles: 87
   crpto.paper.figures:
@@ -89,31 +92,63 @@ stages:
       hash: md5
       md5: 7627e63fb4f95eedb7f1809ada33916c
       size: 4076
+      isexec: true
     - path: data/processed/test.parquet
       hash: md5
       md5: 16bf66b611311120d8b55768f88fe7c4
       size: 32441172
+      isexec: true
     - path: data/processed/train.parquet
       hash: md5
       md5: 88d8fbcb58640f47d4c02e2ff66bcb90
       size: 142993295
+      isexec: true
     - path: scripts/materialize_feature_artifacts.py
       hash: md5
       md5: 6197aa4b71d81ce723ba896a0409b8f3
       size: 3722
+      isexec: true
     outs:
     - path: data/processed/calibration_fe.parquet
       hash: md5
       md5: fdfae34b8857f1506d1fe5628c5d1e94
       size: 39804503
+      isexec: true
+    - path: data/processed/feature_config.pkl
+      hash: md5
+      md5: e799ebe038e6d2f47ab25dafee96a1c8
+      size: 3580
+      isexec: true
+    - path: data/processed/feature_config.yml
+      hash: md5
+      md5: e222862721bbf0215643478270ce496f
+      size: 9557
+      isexec: true
+    - path: data/processed/feature_manifest_v2.json
+      hash: md5
+      md5: 948803ff8d8a9993ce9fbdb46037404d
+      size: 56108
+      isexec: true
+    - path: data/processed/feature_manifest_v2.parquet
+      hash: md5
+      md5: 156baba8afdd5af9d27145924a932272
+      size: 10289
+      isexec: true
     - path: data/processed/test_fe.parquet
       hash: md5
       md5: f01eea4760d8eb4d58cfeb274da46e09
       size: 46448903
+      isexec: true
     - path: data/processed/train_fe.parquet
       hash: md5
       md5: 786ec03f467835a63db38b45ab94f3c5
       size: 208450864
+      isexec: true
+    - path: data/processed/woe_encoders.pkl
+      hash: md5
+      md5: ccb667ad366c30c51954ccbe208a1c59
+      size: 3552
+      isexec: true
   crpto.pd.champion:
     cmd: python scripts/train_pd_model.py --config configs/crpto_pd_model.yaml
     deps:

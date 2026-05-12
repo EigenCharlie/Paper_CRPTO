@@ -1,0 +1,6 @@
+outs:
+- md5: 187c6d2320f82472c738cb63a49fbaec
+  size: 35173
+  isexec: true
+  hash: md5
+  path: portfolio_bound_aware_shortlist.parquet

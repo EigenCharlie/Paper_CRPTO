@@ -45,7 +45,7 @@ class ProbabilityRegressor(BaseEstimator, RegressorMixin):
         self.calibrator = calibrator
         self.is_fitted_ = True  # required for MAPIE prefit checks
 
-    def fit(self, X, y):  # noqa: ARG002
+    def fit(self, X, y):
         """Already fitted — no-op for MAPIE interface."""
         return self
 
@@ -72,7 +72,7 @@ class PrefitClassifierAdapter(BaseEstimator):
         )
         self.is_fitted_ = True
 
-    def fit(self, X, y):  # noqa: ARG002
+    def fit(self, X, y):
         return self
 
     def _is_minimal_probe(self, X: pd.DataFrame) -> bool:

@@ -17,6 +17,11 @@ stages:
       - data/processed/train_fe.parquet
       - data/processed/test_fe.parquet
       - data/processed/calibration_fe.parquet
+      - data/processed/feature_config.pkl
+      - data/processed/feature_config.yml
+      - data/processed/feature_manifest_v2.json
+      - data/processed/feature_manifest_v2.parquet
+      - data/processed/woe_encoders.pkl
   crpto.pd.champion:
     cmd: python scripts/train_pd_model.py --config configs/crpto_pd_model.yaml
     deps:

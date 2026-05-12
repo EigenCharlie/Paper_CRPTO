@@ -13,12 +13,32 @@ credentials. Only templates belong in Git.
 
 Use `.env.example` as the canonical list. The most common values are:
 
-- `DAGSHUB_OWNER`, `DAGSHUB_USER`, `DAGSHUB_REPO=Paper_CRPTO`
+- `DAGSHUB_OWNER=EigenCharlie94`, `DAGSHUB_USER=EigenCharlie94`,
+  `DAGSHUB_REPO=Paper_CRPTO`
 - `DAGSHUB_TOKEN` or `DAGSHUB_USER_TOKEN`
 - `MLFLOW_TRACKING_URI`, `MLFLOW_TRACKING_USERNAME`,
   `MLFLOW_TRACKING_PASSWORD`
 - `CRPTO_DATA_DIR`, `CRPTO_MODELS_DIR`, `CRPTO_DUCKDB_PATH`
 - `OPTUNA_STORAGE` when using persistent Optuna studies
+
+## Standalone remotes
+
+CRPTO no longer points to the parent DagsHub project. The committed DVC remote
+is:
+
+```text
+https://dagshub.com/EigenCharlie94/Paper_CRPTO.s3
+```
+
+The MLflow tracking URI is:
+
+```text
+https://dagshub.com/EigenCharlie94/Paper_CRPTO.mlflow
+```
+
+The old parent project (`EigenCharlie94/Lending-Club-End-to-End`) may still be
+mentioned in learning/provenance notes, but it must not appear in active
+runtime config, `.env.example`, DVC config or GitHub Actions secrets.
 
 ## GitHub Actions secrets
 
@@ -26,6 +46,7 @@ For CI with DVC/MLflow enabled, configure these in GitHub repository settings,
 not in files:
 
 - `DAGSHUB_TOKEN`
+- `DAGSHUB_USER_TOKEN`
 - `MLFLOW_TRACKING_USERNAME`
 - `MLFLOW_TRACKING_PASSWORD`
 - `AWS_ACCESS_KEY_ID`, `AWS_SECRET_ACCESS_KEY`, `AWS_ENDPOINT_URL` if using an
@@ -41,7 +62,9 @@ For `EigenCharlie/Paper_CRPTO`, keep these enabled in repository settings:
 
 - Dependency graph and Dependabot security updates.
 - Secret scanning.
-- Branch protection on `main` with required checks `ruff`, `pytest`, `build`.
+- Optional branch protection on `main` if the project becomes multi-author.
+  In the current single-author academic mode, `lint` and `book-publish` run on
+  push, while `tests-full` is manually triggered before journal milestones.
 
 `dependency-review` requires the Dependency graph. If GitHub reports the
 repository as unsupported, enable it in Settings -> Security and analysis

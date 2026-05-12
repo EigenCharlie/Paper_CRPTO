@@ -10,12 +10,15 @@ exists, and how `tests/test_manifest_regression.py` enforces it.
 
 - **Schema version**: 4 (top-level key `schema_version`).
 - **Champion run tag**: `paper-thesis-final-economic-2026-04-06`.
-- **134 critical files** hashed under `critical_hashes` (SHA256 + byte
+- **150 critical files** are hashed under `critical_hashes` (SHA256 + byte
   count).
-- **3 files are flagged as non-overwriteable** without a fresh run tag:
+- **6 files are flagged as non-overwriteable** without a fresh run tag:
   - `models/pd_canonical.cbm`
   - `models/pd_canonical_calibrator.pkl`
   - `models/final_project_promotion.json`
+  - `models/conformal_policy_status.json`
+  - `models/champion_portfolio_policy.json`
+  - `models/champion_registry.json`
 - **Regenerable from frozen inputs** (allowed to drift):
   - `models/crpto_evidence_status.json`
   - `models/crpto_journal_package_status.json`
@@ -75,9 +78,14 @@ It is **not** regenerated for routine documentation, CI or test changes.
 
 ## Pointing to the parent project
 
-The manifest deliberately does not store the absolute path of the parent
-`lending-club-risk-project` repository. If you need to reproduce the
-extraction:
+The manifest deliberately keeps only provenance about the parent
+`lending-club-risk-project` repository. Active remotes are standalone:
+
+- GitHub: `EigenCharlie/Paper_CRPTO`
+- DVC: `https://dagshub.com/EigenCharlie94/Paper_CRPTO.s3`
+- MLflow: `https://dagshub.com/EigenCharlie94/Paper_CRPTO.mlflow`
+
+If you need to reproduce the original extraction:
 
 1. Clone the parent locally.
 2. Mount this repository's `destination` as the output directory.

@@ -1,0 +1,20 @@
+*.dvc text eol=lf
+dvc.yaml text eol=lf
+dvc.lock text eol=lf
+*.yml text eol=lf
+*.yaml text eol=lf
+*.qmd text eol=lf
+*.md text eol=lf
+*.py text eol=lf
+*.json text eol=lf
+*.csv text eol=lf
+*.tex text eol=lf
+
+*.parquet binary
+*.pkl binary
+*.cbm binary
+*.duckdb binary
+*.png binary
+*.jpg binary
+*.jpeg binary
+*.pdf binary

@@ -36,8 +36,8 @@ repos:
 
   - repo: local
     hooks:
-      # mypy runs in CI (see .github/workflows/test.yml) with continue-on-error
-      # while the legacy codebase is gradually annotated. Not enforced locally.
+      # mypy is intentionally not enforced locally while the legacy codebase is
+      # gradually annotated. Keep strict checks scoped to the modules that opt in.
 
       - id: dvc-status
         name: dvc status (drift detection)

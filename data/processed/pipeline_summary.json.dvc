@@ -1,0 +1,6 @@
+outs:
+- md5: 73e3acf8d23ad78d4ed504b56ec45776
+  size: 4654
+  isexec: true
+  hash: md5
+  path: pipeline_summary.json

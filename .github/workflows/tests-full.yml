@@ -12,7 +12,7 @@ name: tests-full
 # Required repository secrets:
 # - DAGSHUB_USER_TOKEN
 # - DAGSHUB_USER
-# - DAGSHUB_REPO (= Lending-Club-End-to-End)
+# - DAGSHUB_REPO (= Paper_CRPTO)
 
 on:
   workflow_dispatch:
@@ -32,6 +32,9 @@ jobs:
       DAGSHUB_REPO: ${{ secrets.DAGSHUB_REPO }}
       AWS_ACCESS_KEY_ID: ${{ secrets.DAGSHUB_TOKEN }}
       AWS_SECRET_ACCESS_KEY: ${{ secrets.DAGSHUB_TOKEN }}
+      AWS_ENDPOINT_URL: https://dagshub.com/EigenCharlie94/Paper_CRPTO.s3
+      MLFLOW_TRACKING_URI: https://dagshub.com/EigenCharlie94/Paper_CRPTO.mlflow
+      CRPTO_REQUIRE_DVC_ARTIFACTS: "1"
     steps:
       - uses: actions/checkout@v4
 
@@ -47,8 +50,7 @@ jobs:
         run: uv sync --extra dev --extra search --frozen
 
       - name: DVC pull (champion artefacts)
-        run: uv run dvc pull --no-run-cache 2>&1 | tail -20
-        continue-on-error: true
+        run: uv run dvc pull --no-run-cache
 
       - name: Manifest regression (hash check vs frozen champion)
         run: uv run pytest tests/test_manifest_regression.py -v

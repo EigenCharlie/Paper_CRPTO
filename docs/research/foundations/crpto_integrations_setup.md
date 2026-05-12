@@ -16,7 +16,8 @@ Repository state:
 
 - Public repo: <https://github.com/EigenCharlie/Paper_CRPTO>
 - GitHub Pages target: <https://eigencharlie.github.io/Paper_CRPTO/>
-- `main` is protected by `ruff`, `pytest` and `build`.
+- `main` is intentionally not branch-protected in the current single-author
+  academic mode. `lint` and `book-publish` run on push; `tests-full` is manual.
 
 Publication rules:
 
@@ -33,7 +34,8 @@ but GitHub should receive only DVC metadata and pointer files. Configure a
 remote outside Git before pushing data:
 
 ```bash
-uv run dvc remote add -d dagshub <remote-url-from-dagshub-or-storage-ui>
+uv run dvc remote add -d dagshub s3://dvc
+uv run dvc remote modify dagshub endpointurl https://dagshub.com/EigenCharlie94/Paper_CRPTO.s3
 uv run dvc push -r dagshub
 ```
 
@@ -45,10 +47,10 @@ Store credentials in environment variables or `.dvc/config.local`, never in
 Use `.env.example` as the source of truth:
 
 ```bash
-DAGSHUB_OWNER=EigenCharlie
-DAGSHUB_USER=EigenCharlie
+DAGSHUB_OWNER=EigenCharlie94
+DAGSHUB_USER=EigenCharlie94
 DAGSHUB_REPO=Paper_CRPTO
-MLFLOW_TRACKING_URI=https://dagshub.com/EigenCharlie/Paper_CRPTO.mlflow
+MLFLOW_TRACKING_URI=https://dagshub.com/EigenCharlie94/Paper_CRPTO.mlflow
 MLFLOW_EXPERIMENT_NAME=crpto
 ```
 
