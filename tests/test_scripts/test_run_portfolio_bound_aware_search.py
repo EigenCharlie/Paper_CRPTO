@@ -6,6 +6,7 @@ from scripts.search.run_portfolio_bound_aware_search import (
     _aggregate_exact_results,
     _build_stratified_shortlist,
     _policy_semantic_key,
+    _targeted_policy_grid,
 )
 
 
@@ -195,3 +196,26 @@ def test_aggregate_exact_results_prefers_alpha01_passers() -> None:
     assert bool(ranked.iloc[0]["alpha01_exact_pass"]) is True
     assert float(ranked.iloc[0]["risk_tolerance"]) == 0.16
     assert bool(ranked.iloc[1]["alpha01_exact_pass"]) is False
+
+
+def test_targeted_policy_grid_includes_segment_tail_families() -> None:
+    grid = _targeted_policy_grid(
+        gamma_values=[0.5],
+        delta_cap_quantiles=[0.75],
+        tail_focus_quantiles=[0.9],
+        policy_modes=[
+            "blended_uncertainty",
+            "capped_blended_uncertainty",
+            "tail_blended_uncertainty",
+            "segment_tail_blended_uncertainty",
+            "segment_relative_tail_blended_uncertainty",
+        ],
+    )
+
+    assert {row[0] for row in grid} == {
+        "blended_uncertainty",
+        "capped_blended_uncertainty",
+        "tail_blended_uncertainty",
+        "segment_tail_blended_uncertainty",
+        "segment_relative_tail_blended_uncertainty",
+    }

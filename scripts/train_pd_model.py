@@ -1254,45 +1254,77 @@ def main(
     X_cal_cb = _prepare_catboost_frame(cal, catboost_features, categorical_features)
     X_test_cb = _prepare_catboost_frame(test, catboost_features, categorical_features)
 
-    X_train_fit_lr, lr_fill = _prepare_logreg_frame(train_fit, logreg_features)
-    X_test_lr, _ = _prepare_logreg_frame(test, logreg_features, fill_values=lr_fill)
+    sandbox_cfg = config.get("sandbox_search", {}) or {}
+    skip_auxiliary_models = bool(sandbox_cfg.get("skip_auxiliary_models", False))
+    skip_diagnostic_exports = bool(sandbox_cfg.get("skip_diagnostic_exports", False))
+    skip_shap_export = bool(sandbox_cfg.get("skip_shap_export", False))
+
+    if skip_auxiliary_models:
+        X_train_fit_lr = pd.DataFrame(index=train_fit.index)
+        X_test_lr = pd.DataFrame(index=test.index)
+        lr_fill = pd.Series(dtype=float)
+    else:
+        X_train_fit_lr, lr_fill = _prepare_logreg_frame(train_fit, logreg_features)
+        X_test_lr, _ = _prepare_logreg_frame(test, logreg_features, fill_values=lr_fill)
 
     # Baseline LR
-    lr_model, lr_metrics = train_baseline(
-        X_train_fit_lr,
-        y_train_fit,
-        X_test_lr,
-        y_test,
-        sample_weight=train_fit_weights,
-    )
-    _write_training_status(
-        status_path,
-        phase="baseline_trained",
-        state="running",
-        config_path=config_path,
-        extra={"baseline_auc": float(lr_metrics.get("auc_roc", 0.0))},
-    )
+    if skip_auxiliary_models:
+        lr_model = None
+        lr_metrics = {"skipped": True, "reason": "sandbox_search_skip_auxiliary_models"}
+        _write_training_status(
+            status_path,
+            phase="baseline_skipped",
+            state="running",
+            config_path=config_path,
+            extra={"reason": "sandbox_search_skip_auxiliary_models"},
+        )
+    else:
+        lr_model, lr_metrics = train_baseline(
+            X_train_fit_lr,
+            y_train_fit,
+            X_test_lr,
+            y_test,
+            sample_weight=train_fit_weights,
+        )
+        _write_training_status(
+            status_path,
+            phase="baseline_trained",
+            state="running",
+            config_path=config_path,
+            extra={"baseline_auc": float(lr_metrics.get("auc_roc", 0.0))},
+        )
 
     # CatBoost default
-    cb_default_model, cb_default_metrics = train_catboost_default(
-        X_train_fit_cb,
-        y_train_fit,
-        X_val_cb,
-        y_val,
-        X_test=X_test_cb,
-        y_test=y_test,
-        cat_features=categorical_features,
-        params=config["model"].get("params", {}),
-        sample_weight=train_fit_weights,
-        eval_sample_weight=train_val_weights,
-    )
-    _write_training_status(
-        status_path,
-        phase="default_catboost_trained",
-        state="running",
-        config_path=config_path,
-        extra={"validation_auc": float(cb_default_metrics.get("validation_auc", 0.0))},
-    )
+    if skip_auxiliary_models:
+        cb_default_model = None
+        cb_default_metrics = {"skipped": True, "reason": "sandbox_search_skip_auxiliary_models"}
+        _write_training_status(
+            status_path,
+            phase="default_catboost_skipped",
+            state="running",
+            config_path=config_path,
+            extra={"reason": "sandbox_search_skip_auxiliary_models"},
+        )
+    else:
+        cb_default_model, cb_default_metrics = train_catboost_default(
+            X_train_fit_cb,
+            y_train_fit,
+            X_val_cb,
+            y_val,
+            X_test=X_test_cb,
+            y_test=y_test,
+            cat_features=categorical_features,
+            params=config["model"].get("params", {}),
+            sample_weight=train_fit_weights,
+            eval_sample_weight=train_val_weights,
+        )
+        _write_training_status(
+            status_path,
+            phase="default_catboost_trained",
+            state="running",
+            config_path=config_path,
+            extra={"validation_auc": float(cb_default_metrics.get("validation_auc", 0.0))},
+        )
 
     # CatBoost tuned (Optuna)
     hpo_cfg = config.get("hpo", {})
@@ -1361,6 +1393,7 @@ def main(
             local_refine_space=dict(hpo_cfg.get("local_refine", {}) or {}),
             constraints_policy=dict(hpo_cfg.get("constraints_policy", {}) or {}),
             search_space_version=str(hpo_cfg.get("search_space_version", "cb_space_v2")),
+            enqueue_trials=list(hpo_cfg.get("enqueue_trials", []) or []),
         )
 
         if bool(seed_replay_cfg.get("enabled", True)):
@@ -1428,6 +1461,7 @@ def main(
             "best_params": cb_tuned_metrics.get("best_params", {}),
             "hpo_trials_executed": int(cb_tuned_metrics.get("hpo_trials_executed", 0)),
             "hpo_best_validation_auc": float(cb_tuned_metrics.get("hpo_best_validation_auc", 0.0)),
+            "enqueued_prior_trials": int(cb_tuned_metrics.get("enqueued_prior_trials", 0)),
             "seed_replay_report": seed_replay_report,
         },
     )
@@ -1468,10 +1502,14 @@ def main(
         }
 
     # Raw probabilities
-    y_prob_default_test = cb_default_model.predict_proba(X_test_cb)[:, 1]
     y_prob_tuned_test = cb_tuned_model.predict_proba(X_test_cb)[:, 1]
     y_prob_tuned_val = cb_tuned_model.predict_proba(X_val_cb)[:, 1]
     y_prob_tuned_cal = cb_tuned_model.predict_proba(X_cal_cb)[:, 1]
+    y_prob_default_test = (
+        y_prob_tuned_test.copy()
+        if cb_default_model is None
+        else cb_default_model.predict_proba(X_test_cb)[:, 1]
+    )
 
     # Robust calibration policy selection via temporal folds on calibration set
     cal_splits = _build_calibration_backtest_splits(cal, n_folds=4, date_col="issue_d")
@@ -1763,15 +1801,19 @@ def main(
         )
     )
     try:
+        if skip_diagnostic_exports:
+            raise RuntimeError("sandbox_search_skip_diagnostic_exports")
         import matplotlib.pyplot as plt
 
+        murphy_models = {
+            "CatBoost tuned raw": y_prob_tuned_test,
+            f"CatBoost tuned calibrated ({selected_cal_method})": y_prob_final,
+        }
+        if lr_model is not None:
+            murphy_models["LogReg baseline"] = lr_model.predict_proba(X_test_lr)[:, 1]
         ax = plot_murphy_diagram(
             y_test.values,
-            {
-                "CatBoost tuned raw": y_prob_tuned_test,
-                f"CatBoost tuned calibrated ({selected_cal_method})": y_prob_final,
-                "LogReg baseline": lr_model.predict_proba(X_test_lr)[:, 1],
-            },
+            murphy_models,
             title="Murphy Diagram: Raw vs Calibrated PD Forecasts",
         )
         ax.figure.tight_layout()
@@ -1791,7 +1833,10 @@ def main(
         config["output"].get("default_model_path", "models/pd_catboost_default.cbm")
     )
     default_model_path.parent.mkdir(parents=True, exist_ok=True)
-    cb_default_model.save_model(str(default_model_path))
+    if cb_default_model is None:
+        shutil.copy2(model_path, default_model_path)
+    else:
+        cb_default_model.save_model(str(default_model_path))
 
     tuned_model_path = _artifact_path(
         config["output"].get("tuned_model_path", "models/pd_catboost_tuned.cbm")
@@ -1891,6 +1936,8 @@ def main(
     # ── SHAP feature importance export (CatBoost native) ──
     shap_artifact: dict[str, Any] = {"exported": False}
     try:
+        if skip_shap_export:
+            raise RuntimeError("sandbox_search_skip_shap_export")
         from catboost import Pool as _SHAPPool
 
         shap_pool = _SHAPPool(X_test_cb, cat_features=categorical_features)
@@ -1944,7 +1991,11 @@ def main(
         config["output"].get("test_predictions_path", "data/processed/test_predictions.parquet")
     )
     test_predictions_path.parent.mkdir(parents=True, exist_ok=True)
-    y_prob_lr = lr_model.predict_proba(X_test_lr)[:, 1]
+    y_prob_lr = (
+        np.full(len(y_test), np.nan, dtype=float)
+        if lr_model is None
+        else lr_model.predict_proba(X_test_lr)[:, 1]
+    )
     preds_df = pd.DataFrame(
         {
             "loan_id": test["id"].astype(str) if "id" in test.columns else test.index.astype(str),
@@ -1975,7 +2026,9 @@ def main(
         "feature_count_default": len(catboost_features),
         "feature_count_tuned": len(catboost_features),
         "logreg_feature_names": list(logreg_features),
-        "logreg_coefficients": {
+        "logreg_coefficients": {}
+        if lr_model is None
+        else {
             feature: float(coef)
             for feature, coef in zip(
                 logreg_features,

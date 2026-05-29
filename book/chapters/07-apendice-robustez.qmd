@@ -289,6 +289,20 @@ cluster_bounds
 Mapa recomendado del appendix del CRPTO.
 :::
 
+### Registro de resultados negativos
+
+El appendix de robustez se complementa con un **registro de resultados
+negativos**: challengers PD evaluados y descartados, la debilidad conformal de
+grade E y los frentes de bound que no cambiaron el teorema principal. Tratados
+como límites metodológicos defendibles (no como fracasos), fortalecen el paper
+porque demuestran que el champion sobrevivió a búsquedas serias. El registro
+completo y sus condiciones de reapertura viven en
+[`23-apendices-regulatorios-y-future-work.qmd`](23-apendices-regulatorios-y-future-work.qmd)
+(@sec-crpto-negative-results) y en los dossiers
+`docs/research/crpto_regret_auditability_sandbox_closure_2026-05-28.md` y
+`docs/research/crpto_bound_improvement_intake_2026-05-21.md`. Todo es
+documentación histórica: no reabre el champion congelado.
+
 ### Checklist reproducible
 
 Para regenerar el paquete completo de esta pagina:

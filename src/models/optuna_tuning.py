@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import gc
+from pathlib import Path
 from typing import Any
 
 import numpy as np
@@ -15,6 +16,21 @@ from src.models.calibration import expected_calibration_error
 from src.models.pd_model import CATEGORICAL_FEATURES, _catboost_base_params
 
 SEARCH_SPACE_VERSION = "cb_space_v2"
+_JOURNAL_STORAGE_PREFIXES = ("journal+file:", "journalfile:", "journal:")
+
+
+def _is_journal_storage_url(url: str) -> bool:
+    return url.lower().startswith(_JOURNAL_STORAGE_PREFIXES)
+
+
+def _journal_path_from_storage_url(url: str) -> str:
+    for prefix in _JOURNAL_STORAGE_PREFIXES:
+        if url.lower().startswith(prefix):
+            value = url[len(prefix) :]
+            if value.startswith("///"):
+                return "/" + value[3:]
+            return value
+    return url
 
 
 def resolve_optuna_study_name(
@@ -71,6 +87,7 @@ def train_catboost_tuned_optuna(
     local_refine_space: dict[str, Any] | None = None,
     constraints_policy: dict[str, Any] | None = None,
     search_space_version: str = SEARCH_SPACE_VERSION,
+    enqueue_trials: list[dict[str, Any]] | None = None,
 ) -> tuple[CatBoostClassifier, dict[str, Any]]:
     """Tune CatBoost with Optuna and return best fitted model and metadata."""
     import optuna
@@ -80,9 +97,15 @@ def train_catboost_tuned_optuna(
 
     base = _catboost_base_params(base_params)
     base["verbose"] = 0
+    has_monotone_constraints = bool(str(base.get("monotone_constraints", "")).strip())
+    if has_monotone_constraints:
+        base["grow_policy"] = "SymmetricTree"
     search_space_mode_resolved = str(search_space_mode or "global").strip().lower() or "global"
     local_refine_space = dict(local_refine_space or {})
+    if has_monotone_constraints:
+        local_refine_space["grow_policy"] = ["SymmetricTree"]
     constraints_policy = dict(constraints_policy or {})
+    enqueue_trials = list(enqueue_trials or [])
 
     incumbent_metrics: dict[str, float] = {}
 
@@ -171,11 +194,87 @@ def train_catboost_tuned_optuna(
             params.pop("depth", None)
         else:
             params.pop("max_leaves", None)
+        if has_monotone_constraints:
+            params["grow_policy"] = "SymmetricTree"
+            params.pop("max_leaves", None)
 
         if str(params.get("task_type", "")).strip().upper() == "GPU":
             params.pop("rsm", None)
 
         return {key: value for key, value in params.items() if value is not None}
+
+    def _sanitize_enqueued_trial(raw_params: dict[str, Any]) -> dict[str, Any]:
+        """Keep only parameters that are actually sampled by the active Optuna space."""
+        allowed = {
+            "bootstrap_type",
+            "grow_policy",
+            "learning_rate",
+            "l2_leaf_reg",
+            "min_data_in_leaf",
+            "random_strength",
+            "border_count",
+            "leaf_estimation_iterations",
+            "rsm",
+            "depth",
+            "max_leaves",
+            "subsample",
+            "bagging_temperature",
+        }
+        if search_space_mode_resolved == "local_refine":
+            allowed.add("iterations")
+        params: dict[str, Any] = {}
+        for key, value in dict(raw_params or {}).items():
+            key_str = str(key)
+            if (
+                key_str in allowed
+                or key_str.startswith(("feature_weight__", "first_use_penalty__"))
+            ):
+                params[key_str] = value
+
+        if has_monotone_constraints:
+            params["grow_policy"] = "SymmetricTree"
+            params.pop("max_leaves", None)
+        if str(params.get("grow_policy", base.get("grow_policy", "SymmetricTree"))) == "Lossguide":
+            params.pop("depth", None)
+        else:
+            params.pop("max_leaves", None)
+        if str(params.get("bootstrap_type", base.get("bootstrap_type", "MVS"))) == "Bayesian":
+            params.pop("subsample", None)
+        else:
+            params.pop("bagging_temperature", None)
+        if str(base.get("task_type", "")).strip().upper() == "GPU":
+            params.pop("rsm", None)
+        return {key: value for key, value in params.items() if value is not None}
+
+    def _trial_params_match(left: dict[str, Any], right: dict[str, Any]) -> bool:
+        if set(left) != set(right):
+            return False
+        for key, left_value in left.items():
+            right_value = right.get(key)
+            try:
+                if abs(float(left_value) - float(right_value)) > 1e-12:
+                    return False
+            except (TypeError, ValueError):
+                if str(left_value) != str(right_value):
+                    return False
+        return True
+
+    def _enqueue_prior_trials(study: optuna.Study) -> int:
+        enqueued = 0
+        existing = [dict(trial.params) for trial in study.trials]
+        for raw_params in enqueue_trials:
+            params = _sanitize_enqueued_trial(raw_params)
+            if not params:
+                continue
+            if any(_trial_params_match(params, trial_params) for trial_params in existing):
+                continue
+            try:
+                study.enqueue_trial(params, skip_if_exists=True)
+            except TypeError:
+                study.enqueue_trial(params)
+            existing.append(params)
+            enqueued += 1
+        return enqueued
 
     def _local_refine_params(trial: optuna.Trial, *, is_gpu: bool) -> dict[str, Any]:
         params = {**base}
@@ -372,9 +471,12 @@ def train_catboost_tuned_optuna(
             bootstrap_type = trial.suggest_categorical(
                 "bootstrap_type", ["Bayesian", "Bernoulli", "MVS"]
             )
-            grow_policy = trial.suggest_categorical(
-                "grow_policy", ["SymmetricTree", "Depthwise", "Lossguide"]
+            grow_policy_choices = (
+                ["SymmetricTree"]
+                if has_monotone_constraints
+                else ["SymmetricTree", "Depthwise", "Lossguide"]
             )
+            grow_policy = trial.suggest_categorical("grow_policy", grow_policy_choices)
             params = {
                 **base,
                 "learning_rate": trial.suggest_float("learning_rate", 0.005, 0.20, log=True),
@@ -459,32 +561,47 @@ def train_catboost_tuned_optuna(
         storage_obj: Any = study_storage
         hb_interval = max(0, int(storage_heartbeat_interval))
         hb_grace = max(0, int(storage_grace_period))
-        # For long-running trials on SQLite, use a longer connection timeout and
-        # heartbeat to recover stale RUNNING trials after crashes/restarts.
-        if str(study_storage).startswith(("sqlite:///", "sqlite+pysqlite:///")):
-            engine_kwargs = {"connect_args": {"timeout": max(1, int(sqlite_timeout_seconds))}}
+        storage_text = str(study_storage)
+        if _is_journal_storage_url(storage_text):
+            journal_path = _journal_path_from_storage_url(storage_text)
+            Path(journal_path).parent.mkdir(parents=True, exist_ok=True)
+            from src.utils.optuna_storage import _make_journal_storage
+
+            storage_obj = _make_journal_storage(
+                Path(journal_path),
+                study_name=resolve_optuna_study_name(
+                    study_name,
+                    search_space_version=search_space_version,
+                ),
+            )
         else:
-            engine_kwargs = None
-        if hb_interval > 0 or hb_grace > 0:
-            try:
-                failed_cb = None
-                if int(retry_failed_trials) > 0:
-                    failed_cb = optuna.storages.RetryFailedTrialCallback(
-                        max_retry=int(retry_failed_trials)
+            # For long-running trials on SQLite, use a longer connection timeout and
+            # heartbeat to recover stale RUNNING trials after crashes/restarts.
+            if storage_text.startswith(("sqlite:///", "sqlite+pysqlite:///")):
+                engine_kwargs = {"connect_args": {"timeout": max(1, int(sqlite_timeout_seconds))}}
+            else:
+                engine_kwargs = None
+            if hb_interval > 0 or hb_grace > 0:
+                try:
+                    failed_cb = None
+                    if int(retry_failed_trials) > 0:
+                        failed_cb = optuna.storages.RetryFailedTrialCallback(
+                            max_retry=int(retry_failed_trials)
+                        )
+                        retry_callback = failed_cb
+                    storage_obj = optuna.storages.RDBStorage(
+                        url=storage_text,
+                        engine_kwargs=engine_kwargs,
+                        heartbeat_interval=hb_interval or None,
+                        grace_period=hb_grace or None,
+                        failed_trial_callback=failed_cb,
                     )
-                    retry_callback = failed_cb
-                storage_obj = optuna.storages.RDBStorage(
-                    url=str(study_storage),
-                    engine_kwargs=engine_kwargs,
-                    heartbeat_interval=hb_interval or None,
-                    grace_period=hb_grace or None,
-                    failed_trial_callback=failed_cb,
-                )
-            except Exception as exc:
-                logger.warning(
-                    "Optuna RDBStorage heartbeat/retry setup failed; falling back to storage URL. "
-                    f"reason={exc}"
-                )
+                except Exception as exc:
+                    logger.warning(
+                        "Optuna RDBStorage heartbeat/retry setup failed; falling back to storage "
+                        "URL. reason={}",
+                        exc,
+                    )
         create_study_kwargs["storage"] = storage_obj
         create_study_kwargs["study_name"] = resolve_optuna_study_name(
             study_name,
@@ -493,6 +610,7 @@ def train_catboost_tuned_optuna(
         create_study_kwargs["load_if_exists"] = bool(load_if_exists)
 
     study = optuna.create_study(**create_study_kwargs)
+    n_enqueued_prior_trials = _enqueue_prior_trials(study)
     if search_space_mode_resolved == "local_refine" and bool(
         local_refine_space.get("enqueue_base_trial", True)
     ):
@@ -605,6 +723,7 @@ def train_catboost_tuned_optuna(
         "model_type": "catboost_tuned",
         "search_space_mode": search_space_mode_resolved,
         "constraint_baseline_metrics": incumbent_metrics,
+        "enqueued_prior_trials": n_enqueued_prior_trials,
     }
     if X_test is not None and y_test is not None:
         y_test_prob = best_model.predict_proba(X_test)[:, 1]

@@ -43,13 +43,7 @@ from src.utils.pipeline_runtime import (  # noqa: E402
 
 SCHEMA_VERSION = "2026-04-05.2"
 STAGE_NAME = "portfolio_bound_aware"
-DEFAULT_INCUMBENT_POLICY_PATH = (
-    ROOT
-    / "models"
-    / "portfolio_bound_aware"
-    / "rank1_alpha01_bound_aware"
-    / "portfolio_bound_aware_selection.json"
-)
+DEFAULT_INCUMBENT_POLICY_PATH = ROOT / "models" / "champion_portfolio_policy.json"
 DEFAULT_EXACT_HELPER_SCRIPT = ROOT / "scripts" / "search" / "run_portfolio_bound_exact_eval.py"
 SEMANTIC_POLICY_FIELDS = [
     "risk_tolerance",
@@ -141,6 +135,26 @@ def _targeted_policy_grid(
                 grid.append(
                     (
                         "tail_blended_uncertainty",
+                        float(gamma),
+                        1.0,
+                        float(tail_focus_quantile),
+                    )
+                )
+        if use_all or "segment_tail_blended_uncertainty" in allowed:
+            for tail_focus_quantile in tail_focus_quantiles:
+                grid.append(
+                    (
+                        "segment_tail_blended_uncertainty",
+                        float(gamma),
+                        1.0,
+                        float(tail_focus_quantile),
+                    )
+                )
+        if use_all or "segment_relative_tail_blended_uncertainty" in allowed:
+            for tail_focus_quantile in tail_focus_quantiles:
+                grid.append(
+                    (
+                        "segment_relative_tail_blended_uncertainty",
                         float(gamma),
                         1.0,
                         float(tail_focus_quantile),
@@ -844,9 +858,11 @@ def _selection_reason(row: pd.Series) -> str:
 
 def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser()
-    parser.add_argument("--config", default="configs/optimization.yaml")
+    parser.add_argument("--config", default="configs/crpto_optimization.yaml")
     parser.add_argument("--conformal-intervals-path", required=True)
     parser.add_argument("--run-label", default="rank1_bound_aware")
+    parser.add_argument("--output-dir", default="")
+    parser.add_argument("--model-dir", default="")
     parser.add_argument("--risk-grid", default="0.14,0.15,0.16,0.17")
     parser.add_argument("--aversion-grid", default="0.0,0.25")
     parser.add_argument("--gamma-grid", default="0.2,0.35,0.5")
@@ -883,8 +899,16 @@ def main(argv: list[str] | None = None) -> int:
     args = parser.parse_args(argv)
 
     run_label = str(args.run_label).strip().replace("/", "_")
-    output_dir = ROOT / "data" / "processed" / "portfolio_bound_aware" / run_label
-    model_dir = ROOT / "models" / "portfolio_bound_aware" / run_label
+    output_dir = (
+        Path(str(args.output_dir)).expanduser()
+        if str(args.output_dir).strip()
+        else ROOT / "data" / "processed" / "portfolio_bound_aware" / run_label
+    )
+    model_dir = (
+        Path(str(args.model_dir)).expanduser()
+        if str(args.model_dir).strip()
+        else ROOT / "models" / "portfolio_bound_aware" / run_label
+    )
     output_dir.mkdir(parents=True, exist_ok=True)
     model_dir.mkdir(parents=True, exist_ok=True)
 

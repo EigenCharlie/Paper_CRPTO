@@ -152,6 +152,32 @@ excusa post-hoc.
 No. A6 y A11 fortalecen la evidencia bajo reponderación y flips adversariales,
 pero una validación externa real sigue siendo trabajo futuro.
 
+### Reviewer-defense bank gobernado {#sec-crpto-reviewer-defense-bank}
+
+Las preguntas anteriores cubren las objeciones más frecuentes en prosa. La tabla
+siguiente es el **banco gobernado completo** (13 objeciones) que se usa para
+preparar el rebuttal IJDS y la defensa de tesis. Cada fila fija la objeción
+probable, la respuesta gobernada y la evidencia canónica. La regla es no
+improvisar: si llega una objeción nueva, primero se busca aquí.
+
+| Objeción probable | Respuesta gobernada | Evidencia |
+|---|---|---|
+| "Conformal no garantiza cobertura condicional perfecta." | Correcto; el claim usa cobertura marginal/Mondrian y reporta límites explícitos. | @sec-thm-feasibility; cap. 07; ablación Mondrian (cap. 08). |
+| "AUC no basta para decidir portafolios." | Precisamente: el paper separa ranking, calibración, incertidumbre y valor económico. | Tabla 0 (`crpto_table0_key_metrics.csv`); escalera de claims (esta página). |
+| "SPO+/DFL podría reducir regret." | Sí; CRPTO no compite como regret-minimizer universal, sino como puente auditable con restricciones conformales. | cap. 09 (`@fig-p1-spo-regret`); registro de negativos. |
+| "Lending Club no es banco regulado." | Se presenta como dataset público de originación, no como validación contractual bancaria. | `docs/ACADEMIC_CONTEXT.md`; limitaciones del cuerpo. |
+| "Fair lending no está probado." | No se hace claim legal; solo proxy governance y source/fairness boundary. | cap. 10; `models/fairness_audit_status.json`. |
+| "IFRS9/SICR parece otro paper." | En IJDS entra como implicación/limitación; la tesis puede expandirlo. | cap. 23 (señal SICR conformal). |
+| "El resultado podría ser un punto aislado." | La región robusta muestra `45/45` políticas alpha01-safe. | `crpto_tableA18`; Fig 14; @sec-crpto-results. |
+| "¿La validación PD se está tratando como clasificación?" | No. CRPTO separa risk differentiation, risk quantification, calibración y valor económico antes de optimizar portafolio. | Tabla 0; cap. 02; `crpto_metrics_triage_2026-05-18.md`. |
+| "¿El backtesting multi-periodo es confiable por defecto?" | No se sobrepromete: las pruebas multi-periodo dependen del estimador, tamaño efectivo y autocorrelación; quedan como caveat o appendix controlado. | cap. 07 (A14--A15); `crpto_metrics_triage_2026-05-18.md`. |
+| "¿Usar ML en IRB implica perder auditabilidad?" | No. ML queda como soporte selectivo para imputación, factores, residuos o challengers; el champion no se reabre sin gate reproducible. | cap. 13 (freeze policy); `crpto_metrics_triage_2026-05-18.md`. |
+| "¿WOE/scorecards son estables bajo monitoreo?" | Se tratan como inputs auditables con caveats: IV no es soberano y WoE puede volverse inestable si se recalcula bajo datos etiquetados por el propio modelo. | `crpto_metrics_triage_2026-05-18.md`. |
+| "¿Los umbrales IV/PSI/correlación prueban calidad del modelo?" | No. Son heurísticas operativas útiles, no evidencia estadística suficiente; los umbrales tipo 0.02/0.1 son sensibles a desbalance y deben gobernarse como incertidumbre estimable. | `crpto_metrics_triage_2026-05-18.md`. |
+| "¿Los árboles sobre residuos contradicen el scorecard auditable?" | No. Quedan como validación de segmentos y búsqueda de factores omitidos; no reemplazan el champion ni la calibración oficial. | Paper 4 como agenda; `crpto_metrics_triage_2026-05-18.md`. |
+
+: Banco gobernado de respuestas a reviewers del CRPTO {#tbl-crpto-reviewer-defense-bank}
+
 ### Qué puede entrar al paper final
 
 | Material del libro | Ubicación probable en paper | Motivo |

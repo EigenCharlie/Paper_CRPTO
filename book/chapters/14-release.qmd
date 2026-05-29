@@ -227,6 +227,73 @@ del dossier está lista para ser usada como fuente de manuscrito.
 Checklist de release paper-facing.
 :::
 
+### Stop-rules de alcance
+
+La criba de @tbl-crpto-no-direction-change-filter decide qué cambia o no la
+dirección del paper. Las stop-rules de alcance son su complemento permanente:
+clasifican cada pieza de material en una de cuatro acciones para que CRPTO no
+vuelva a entrar en loops de expansión.
+
+::: {#tbl-crpto-scope-stop-rules}
+
+| Acción | Qué clasifica aquí |
+|---|---|
+| **Promover** | Material que fortalece el claim CRPTO central; evidencia que ya tiene artefacto, tabla y test; fuentes independientes que aclaran métricas, gobernanza o límites. |
+| **Apéndice** | Robustez A3--A18; fairness proxy y MRM; tail-risk OCE/CVaR; CROMS-lite como selector de finalists, no entrenamiento end-to-end. |
+| **Park** | Online conformal; MDCP/multi-source conformal; OCE/CVaR como nuevo objetivo; DFL/SPO+ como reemplazo del champion; dataset externo si no está disponible y versionado. |
+| **Archivar** | Material de intake externo no académico como evidencia pública directa; capturas o materiales privados/no redistribuibles; rutas con nombres personales en paquetes anonimizados. |
+
+Stop-rules de alcance del CRPTO.
+:::
+
+### Gates editoriales permanentes
+
+Cada pieza candidata a entrar al manuscrito o a la tesis pasa por seis gates. Si
+falla cualquiera, la acción está predefinida. Estos gates operacionalizan la
+[regla de reapertura](13-trazabilidad.qmd) y las stop-rules anteriores.
+
+::: {#tbl-crpto-editorial-gates}
+
+| Gate | Pregunta | Acción si falla |
+|---|---|---|
+| Claim gate | ¿Este texto cambia o fortalece C1--C7? | Mover a tesis, supplement o archive. |
+| Artifact gate | ¿Hay tabla, figura, JSON, script o test que lo sostenga? | Reescribir como limitación o eliminar. |
+| Page gate | ¿Cabe en 25 páginas IJDS? | Comprimir o mandar al supplement. |
+| Thesis gate | ¿Ayuda a defender profundidad, originalidad o madurez? | Si no, no entra a tesis. |
+| Anonymity gate | ¿Revela identidad, rutas locales o material privado? | Reemplazar por path relativo o quitar. |
+| Promotion gate | ¿Intenta reemplazar el champion oficial? | Bloquear salvo nuevo protocolo aprobado. |
+
+Gates editoriales permanentes del CRPTO.
+:::
+
+### Checklist de anonimización y doble ciego
+
+IJDS usa revisión doble anónima desde 2025 y exige disclosure de data/code al
+envío y a la aceptación. El cuerpo y el supplement enviados no deben exponer
+identidad, rutas personales ni material privado. Las rutas locales pueden vivir
+en el libro interno; la versión enviada las reemplaza por paths relativos del
+paquete reproducible.
+
+::: {#tbl-crpto-anonymization-checklist}
+
+| Riesgo | Acción |
+|---|---|
+| Alias interno heredado en superficie pública | Reemplazar por CRPTO/Paper CRPTO o eliminar. |
+| Rutas locales con usuario, máquina o carpeta personal | Convertir a paths relativos del paquete reproducible. |
+| URLs de repositorio o DagsHub identificables | Retener solo cuando la fase editorial lo permita. |
+| Notebooks con metadata personal | Limpiar kernels, execution paths y outputs irrelevantes. |
+| MLflow/DVC remotos identificables | Documentar estructura reproducible sin revelar cuenta. |
+| Acknowledgments o notas de autoría | Mover a versión post-aceptación. |
+| Capturas o materiales privados de terceros | Excluir del paquete público. |
+
+Checklist de release doble anónimo y disclosure data/code.
+:::
+
+La estrategia de disclosure es: declarar Lending Club/Kaggle como fuente externa
+estática; publicar scripts, configs, tests y tablas derivadas; documentar qué
+artefactos pesados se regeneran y cuáles se versionan vía DVC; y no redistribuir
+material privado de terceros.
+
 ### Qué queda explícitamente fuera de esta implementación
 
 Las siguientes piezas son valiosas, pero sí cambian método, evidencia o alcance.

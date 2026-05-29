@@ -273,6 +273,14 @@ $$
 La cobertura se garantiza **dentro de cada grupo**, no solo marginalmente.
 :::
 
+::: {.callout-important}
+## Por qué Mondrian condiciona por grupo y no por instancia
+
+La garantía Mondrian es **condicional por grupo** (una partición finita de grades), no condicional por instancia. Esto no es una limitación de implementación: la cobertura condicional exacta a nivel de cada $x$ es **imposible** sin supuestos distribucionales adicionales [@barber2021limits]. Cualquier método distribution-free que prometa cobertura para cada punto colapsa a intervalos no informativos. Mondrian es, por tanto, el compromiso honesto: recupera cobertura útil sobre una partición finita y auditable (los grades A--G), no una promesa de cobertura puntual que no se puede sostener.
+
+Esta es la lectura correcta de la **debilidad residual en grades extremos** (grade E al piso estricto del 90%): es un límite documentado del compromiso grupo-condicional bajo tamaños de calibración desiguales, no un defecto oculto. Se registra como resultado negativo defendible en @sec-crpto-negative-results y en el dossier `docs/research/crpto_bound_improvement_intake_2026-05-21.md`. El paper CRPTO **no** promete cobertura condicional perfecta; promete la cobertura grupo-condicional que el comité de riesgo puede verificar empíricamente.
+:::
+
 ::: {.callout-note}
 ## Calibración reduce la brecha de cobertura condicional
 

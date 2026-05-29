@@ -265,6 +265,27 @@ pd.DataFrame(
 `crpto_e2e`, `paper2_e2e`, `core_canonical` y `canonical_rebuild` son rutas de regeneración, no rutas de descubrimiento. Si un rerun de esas familias produce una policy distinta al economic champion `rt=0.175`, `gamma=0.45`, `blended_uncertainty`, `uncertainty_aversion=0.10`, eso es una regresión del pipeline y no un nuevo resultado del paper. La única forma válida de cambiar el champion es abrir una familia `search_*`, versionar el run, comparar por familia compatible y actualizar la promoción explícitamente.
 :::
 
+### Regla de reapertura de líneas estacionadas
+
+La regla anti-regresión protege el champion contra reruns accidentales. Su
+complemento es la **regla de reapertura**: define cuándo una línea estacionada
+(challenger PD, variante conformal, frente de bound) puede volver a la columna
+vertebral del manuscrito. Una línea parqueada se reabre **solo si cumple las tres
+condiciones**:
+
+1. cambia un claim, una tabla de appendix, una figura del cuerpo o una respuesta
+   probable de reviewer;
+2. tiene artefacto trazable y test o chequeo reproducible asociado;
+3. no contradice `models/final_project_promotion.json`.
+
+Si una propuesta no cumple las tres, no entra al spine: queda como agenda de
+tesis, nota de supplement o registro de resultado negativo (ver
+[`23-apendices-regulatorios-y-future-work.qmd`](23-apendices-regulatorios-y-future-work.qmd)).
+El protocolo gobernado completo de reapertura del champion vive en
+`docs/research/crpto_champion_reopen_plan_2026-05-21.md` y el contrato
+anti-cherry-pick en `docs/research/crpto_champion_tournament_protocol_2026-05-25.md`;
+ambos son documentación histórica y no reabren el champion congelado por sí solos.
+
 ### Regla sobre `_freeze`
 
 El libro usa `execute: freeze: true` en `book/_quarto.yml`. Eso significa que

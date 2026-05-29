@@ -1,0 +1,81 @@
+schema_version: "2026-05-12.1"
+profile_name: regret_auditability_sandbox
+description: Orchestrator profile for the isolated CRPTO regret-auditability sandbox.
+writes_canonical_artifacts: false
+orchestrator: scripts/search/run_regret_auditability_sandbox.py
+artifact_root_template: "D:/crpto_experiments/regret_auditability/{run_tag}"
+profiles:
+  pd: configs/profiles/search_pd_extensive.yaml
+  conformal: configs/profiles/search_conformal_extensive.yaml
+  portfolio: configs/profiles/search_portfolio_extensive.yaml
+resource_policy:
+  cpu: "AMD Ryzen 9 5900X, 12 cores / 24 threads"
+  ram_gb: 64
+  no_gpu: true
+  heartbeat_seconds: 60
+  reserve_logical_cpus: 2
+  min_available_ram_gb: 10
+defaults:
+  pd_hpo_workers: 4
+  catboost_threads_per_worker: 5
+  pd_broad_top_lanes_from_smoke: 6
+  pd_refine_top_lanes_from_broad: 3
+  conformal_workers: 6
+  portfolio_workers: 4
+  highs_threads_per_worker: 4
+adaptive_budget:
+  pd_smoke_trials_per_lane: 12
+  pd_broad_trials_per_lane: 300
+  pd_refine_trials_per_lane: 300
+  portfolio_proxy_candidates: 100000
+  portfolio_shortlist_top_k: 1000
+  portfolio_random_states: [42, 52, 62]
+  portfolio_risk_step: 0.01
+  portfolio_gamma_step: 0.10
+  portfolio_aversion_grid: [0, 0.02, 0.05, 0.10, 0.25, 0.50]
+  portfolio_cap_tail_quantiles: [0.60, 0.75, 0.90, 1.0]
+phase_handoff:
+  pd_smoke_to_broad: "rank all feature-profile x monotonic-policy lanes on OOT AUC, then Brier/ECE"
+  pd_broad_to_refine: "rerun only top lanes and initialize local-refine from each lane's broad best params"
+  pd_refine_to_conformal: "copy best refined model/calibrator under artifact_root/pd/best/models"
+  conformal_to_portfolio: "portfolio consumes only the sandbox conformal finalist artifact"
+runtime_notes:
+  gpu_probe: "CatBoost GPU smoke passes, but CatBoost monotone_constraints fail on GPU; PD remains CPU to preserve monotonic method family."
+  pd_failure_policy: "A failed PD lane is logged and skipped; the phase continues as long as at least one candidate produces a training record."
+  per_lane_logs: "Each command writes logs under artifact_root/logs/<phase>/."
+guardrails:
+  fail_on_outputs:
+    - EXTRACTION_MANIFEST.json
+    - models/pd_canonical.cbm
+    - models/pd_canonical_calibrator.pkl
+    - models/final_project_promotion.json
+    - models/conformal_policy_status.json
+    - data/processed/conformal_intervals_mondrian.parquet
+    - data/processed/portfolio_bound_aware/**
+metrics:
+  regret_formula: "oracle_realized_return_same_budget_concentration_and_expost_default_cap - policy_realized_return"
+  auditability_score:
+    max_score: 100
+    weights:
+      coverage90_pass: 15
+      coverage95_pass: 10
+      min_group_coverage_pass: 15
+      no_critical_alerts: 10
+      alpha01_exact_pass: 15
+      violation_zero: 10
+      v_within_sqrt_alpha: 10
+      monotonic_audit_pass: 10
+      reproducible_resume_manifest: 5
+final_table_columns:
+  - regret
+  - robust_return
+  - price_of_robustness
+  - coverage
+  - min_group_coverage
+  - width
+  - winkler
+  - V
+  - Gamma_CP
+  - violation
+  - funded_count
+  - auditability_score

@@ -25,3 +25,111 @@ La nota `docs/research/future_work/crpto_validation_hardening_notes_2026-03-30.m
 ### Qué no entra al paper base
 
 No entran al cuerpo principal del paper CRPTO: survival/LGD/EAD, IFRS9 macro completo, causal/CATE, GPU/RAPIDS, quantum, Streamlit, FastAPI ni insights factory. Pueden aparecer como futuras extensiones o como comparación editorial, pero no como dependencia metodológica del resultado central.
+
+### Roadmap IJDS (6 meses) y tesis (12 meses)
+
+El horizonte operativo es doble: **IJDS en 6 meses** y **tesis de maestría en 12 meses**. La estrategia es trabajar una sola columna vertebral CRPTO durante los primeros meses y separar las salidas formales cuando el manuscrito IJDS esté casi congelado.
+
+::: {#tbl-crpto-roadmap-ijds}
+
+| Mes | Entregable | Gate de salida |
+|---:|---|---|
+| 1 | Claim freeze, figuras candidatas, tablas candidatas y page-budget ledger. | 3 figuras, 2--3 tablas y C1--C7 congelados. |
+| 2 | Method/theory draft: PD calibrada, CP Mondrian, `Gamma_CP`, `V`, LP robusto. | El texto no promete online, IFRS9 contractual ni regret mínimo. |
+| 3 | Results draft: champion, comparadores, región robusta y SPO boundary. | Números sincronizados con artefactos canónicos. |
+| 4 | Supplement A--F: pruebas, A3--A18, MRM/fairness, reproducibilidad. | Todos los claims del cuerpo tienen artifact/test trace. |
+| 5 | Anonimización, data/code disclosure, reviewer-defense bank. | Sin rutas personales ni alias internos heredados en paquete público. |
+| 6 | Pre-submission audit y versión enviada. | Render limpio, tests documentales pasan y page budget cumple IJDS. |
+
+Roadmap IJDS a 6 meses.
+:::
+
+::: {#tbl-crpto-roadmap-thesis}
+
+| Meses | Entregable | Gate de salida |
+|---|---|---|
+| 1--3 | Fundamentos seleccionados desde el libro (ver mapa de expansión). | Lectura autosuficiente sin convertir la tesis en manual entero. |
+| 4--6 | Capítulo CRPTO alineado con el paper IJDS. | El núcleo empírico coincide con el manuscript freeze. |
+| 7--8 | Capítulo de gobernanza, reproducibilidad y límites. | MRM, fairness proxy, source governance y artifact traceability conectados. |
+| 9--10 | Capítulo de extensiones controladas. | Paper 4, IFRS9, CATE, online y DLA clasificados como agenda o appendix. |
+| 11 | Ensamble de defensa: contribuciones, limitaciones y preguntas difíciles. | Cada pregunta esperada tiene evidencia o frontera explícita. |
+| 12 | Cierre: narrativa, formato, bibliografía y reproducibilidad. | Tesis renderizada, coherente y sin claims huérfanos. |
+
+Roadmap tesis a 12 meses.
+:::
+
+### Backlog priorizado P0--P3
+
+::: {#tbl-crpto-backlog}
+
+| Prioridad | Trabajo | Salida esperada |
+|---:|---|---|
+| P0 | Mantener evidence spine C1--C7 con tablas, figuras, scripts y tests (ver cap. 13). | Supplement y defensa. |
+| P0 | Sostener el page-budget ledger del cuerpo IJDS (ver cap. 06). | Control de 25 páginas. |
+| P0 | Conservar Fig. 12--14 y Tables 0--2/A18 como paquete visual decisivo. | Draft IJDS. |
+| P1 | Mantener el reviewer-defense bank de 13 objeciones (ver cap. 06b). | Rebuttal y tesis. |
+| P1 | Sostener el checklist de anonimización y data/code disclosure (ver cap. 14). | Submission package. |
+| P1 | Expandir el capítulo de tesis con fundamentos selectivos del libro. | Tesis. |
+| P2 | Documentar resultados negativos como límites metodológicos (esta página). | Supplement/tesis. |
+| P2 | Preparar apéndice pedagógico sobre WOE, Brier, Gini, ECE y PSI. | Tesis. |
+| P3 | Mantener GPU/quantum como agenda externa, no CRPTO. | Archivo. |
+
+Backlog priorizado del CRPTO.
+:::
+
+### Matriz de intake: libro completo -> paper / tesis
+
+El libro completo del proyecto padre sigue siendo el repositorio intelectual; CRPTO importa solo lo que fortalece el argumento central. Esta matriz fija qué entra al cuerpo IJDS, qué entra a tesis y bajo qué regla.
+
+::: {#tbl-crpto-intake-matrix}
+
+| Fuente del libro | IJDS | Tesis | Regla |
+|---|:--:|:--:|---|
+| Fundamentos de credit risk, PD/LGD/EAD, calibración y Gini | Sí, comprimido | Sí, ampliado | Definir lenguaje, no convertir en curso. |
+| Predicción conformal y límites de cobertura condicional | Sí | Sí | Citar CP/CRC/RCPS y usar límites para no sobreprometer. |
+| Robust optimization y price of robustness | Sí | Sí | Conectar `Gamma_CP` con decisión, no con tuning arbitrario. |
+| Feature engineering, WOE/IV y scorecards | Contexto mínimo | Sí | Útil para explicar inputs auditables, no claim principal. |
+| PD model champion y calibración Venn-Abers | Sí | Sí | Gate antes de optimización. |
+| Mondrian conformal y ablation | Sí, cuerpo + supplement | Sí | Defender `score_decile_mondrian` frente a `grade`. |
+| Portfolio LP y robust region | Sí, central | Sí | Núcleo empírico. |
+| IFRS9/SICR | Implicación/limitación | Sí | No hacerlo segunda contribución IJDS. |
+| Explainability, fairness proxy y MRM | Discusión/supplement | Sí | Responde implicaciones prácticas/éticas. |
+| Paper 4 living lab | Solo imports gobernados | Sí | Tail-risk, source/online caveats y framing; no promoción automática. |
+| GPU, quantum y agenda futura | No | Opcional | Mantener fuera del paper CRPTO. |
+
+Matriz de intake del libro completo hacia paper y tesis.
+:::
+
+### Mapa de expansión de tesis
+
+Para la tesis de maestría, CRPTO debe **expandirse, no inflarse**. El capítulo central sigue una ruta clara: (1) problema aplicado de originación y selección de portafolio; (2) fundamentos mínimos de PD calibrada, conformal prediction y robust optimization; (3) metodología CRPTO; (4) resultados canónicos y región robusta; (5) governance, fairness proxy, MRM y reproducibilidad; (6) límites y agenda doctoral/Paper 4.
+
+::: {#tbl-crpto-thesis-expansion}
+
+| Tema del libro | Uso en tesis |
+|---|---|
+| Fundamentos formales de credit risk | Contexto para lectores no especialistas. |
+| Linaje, anti-leakage y split temporal | Defensa de validez del diseño experimental. |
+| WOE/IV, feature contract y gobernanza de inputs | Contrato de features auditable. |
+| Calibración, Brier/Gini/ECE y selección multi-criterio | Por qué la PD entra al LP tras un gate. |
+| CP, Mondrian y backtesting | Capa conformal y sus límites. |
+| Optimización determinística/robusta y política | Núcleo metodológico. |
+| MRM, drift, PSI y controles de modelo | Capítulo de gobernanza. |
+| Explanation drift y reason-code governance | Auditabilidad de explicaciones. |
+| Núcleo CRPTO completo | Capítulo central alineado al paper. |
+| Cierre de living lab y límites de Paper 4 | Agenda y madurez metodológica. |
+
+Mapa de expansión de tesis (qué traer del libro).
+:::
+
+Qué **no** conviene traer al claim central de tesis: GPU, quantum, CATE profundo, IFRS9 contractual, online conformal y DLA quedan como agenda o apéndice de investigación. El riesgo de una tesis no es quedarse corta: es parecer que tiene cinco tesis distintas peleando por el centro.
+
+### Registro de resultados negativos {#sec-crpto-negative-results}
+
+Los resultados negativos no son fracaso editorial: son evidencia de madurez metodológica y protegen el paper de sobreprometer. El registro convierte los frentes cerrados en límites defendibles.
+
+- **Tres challengers PD evaluados y descartados.** Una búsqueda externa amplia produjo `bureau_behavior_15` (AUC `+0.008` sobre el incumbente, pero peor ECE y debilidad conformal en grade E), `canonical_4` (la firma más limpia, sin reemplazo de portafolio) y `affordability_rate_5`. Ninguno reemplaza el champion congelado. Detalle en `docs/research/crpto_regret_auditability_sandbox_closure_2026-05-28.md`.
+- **Debilidad conformal en grade E.** La configuración conformal del sandbox falla el piso estricto de cobertura de grupo al 90% en grade E y queda débil en E/G al 95%; es un límite explícito, no un resultado oculto. Ver `docs/research/crpto_bound_improvement_intake_2026-05-21.md`.
+- **Frentes de bound que no cambiaron el teorema principal.** Tightening dependence-aware, CRC/LTT como pérdida de decisión directa y conjuntos de incertidumbre menos conservadores quedan como agenda; Markov sigue siendo la cota principal. Las condiciones de reapertura y el contrato anti-cherry-pick están en `docs/research/crpto_champion_reopen_plan_2026-05-21.md` y `docs/research/crpto_champion_tournament_protocol_2026-05-25.md`.
+
+Todos estos registros son **documentación histórica**: no reabren el champion congelado ni modifican `models/final_project_promotion.json`.

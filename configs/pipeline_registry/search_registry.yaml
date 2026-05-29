@@ -57,3 +57,17 @@ searches:
     target_pipeline: publication_exports
     can_promote: false
     status: comparison_evidence
+  -
+    search: crpto_regret_auditability_sandbox
+    scripts:
+      - scripts/search/run_regret_auditability_sandbox.py
+      - scripts/train_pd_model.py
+      - scripts/generate_conformal_intervals.py
+      - scripts/search/run_portfolio_bound_aware_search.py
+    artifacts:
+      - D:/crpto_experiments/regret_auditability/{run_tag}/sandbox_manifest.json
+      - D:/crpto_experiments/regret_auditability/{run_tag}/heartbeat.json
+      - D:/crpto_experiments/regret_auditability/{run_tag}/portfolio/{run_tag}/data/portfolio_bound_aware_frontier.parquet
+    target_pipeline: regret_auditability_sandbox
+    can_promote: false
+    status: sandbox_branch_only
