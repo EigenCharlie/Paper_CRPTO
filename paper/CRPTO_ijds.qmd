@@ -4,6 +4,8 @@ author: "Anonymous"
 date: today
 lang: en
 bibliography: ../book/references.bib
+csl: ../book/apa.csl
+link-citations: true
 format:
   html:
     toc: true
@@ -104,7 +106,7 @@ protected stages that would change the promoted champion.
 
 CRPTO builds on conformal prediction, especially split conformal methods and
 their risk-control extensions [@vovk2005; @angelopoulos2023;
-@angelopoulos2024risk; @bates2021rcps]. The relevant property is not that
+@angelopoulos2024foundations; @angelopoulos2024risk; @bates2021rcps]. The relevant property is not that
 conformal intervals are the narrowest possible uncertainty summaries. It is
 that they provide distribution-free coverage language under explicit
 exchangeability assumptions, and that this language can be audited without
@@ -136,7 +138,7 @@ end-to-end conformal risk training, and conformal satisficing [@bao2025croms;
 @yang2026multidistribution; @liu2026portfolio; @yeh2025training;
 @zhao2025robust] motivates the journal-strengthening package in this paper. We
 use those ideas where they can be evaluated from frozen CRPTO artifacts:
-OCE/CVaR appears as a tail-risk diagnostic, robust satisficing appears as
+OCE/CVaR [@rockafellar2000cvar; @bental2007oce] appears as a tail-risk diagnostic, robust satisficing appears as
 committee-style margin evidence, and SPO+ motivates the regret-auditability
 frontier. The method-changing variants--optimized OCE/CVaR objectives, online
 or multi-dataset protocols, causal layers, and hybrid decision-focused

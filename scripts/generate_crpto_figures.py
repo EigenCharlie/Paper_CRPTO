@@ -1305,6 +1305,123 @@ def _paper3_fig_calibration_stat_tests() -> None:
     _save(fig, "p3_fig_calibration_stat_tests")
 
 
+def _crpto_fig16_tail_risk_frontier() -> None:
+    """Fig 16 — Tail-risk (CVaR95) vs realized return across the 45-policy robust region.
+
+    Reads the committed Table A20 CSV (no DVC dependency). Visualizes the
+    journal-strengthening tail-risk/return trade-off and where the frozen
+    economic champion sits relative to the satisficing pass/fail policies.
+    """
+    csv = (
+        REPO_ROOT
+        / "reports"
+        / "crpto"
+        / "tables"
+        / "crpto_tableA20_tail_satisficing_challenger_audit.csv"
+    )
+    if not csv.exists():
+        logger.warning("A20 CSV not found — skipping fig16")
+        return
+    df = pd.read_csv(csv)
+    ret = df["realized_total_return"].to_numpy(float) / 1e3
+    cvar = df["cvar_95_loss_rate"].to_numpy(float)
+    passed = df["satisficing_pass"].astype(bool).to_numpy()
+    role = df["paper_role"].astype(str).to_numpy()
+
+    fig, ax = plt.subplots(figsize=(COL2, HEIGHT_M))
+    ax.scatter(
+        ret[~passed],
+        cvar[~passed],
+        s=45,
+        facecolors="none",
+        edgecolors=PALETTE["gray"],
+        linewidths=1.0,
+        label=f"Satisficing fail (n={int((~passed).sum())})",
+        zorder=3,
+    )
+    ax.scatter(
+        ret[passed],
+        cvar[passed],
+        s=55,
+        color=PALETTE["blue"],
+        edgecolors="white",
+        linewidths=0.5,
+        label=f"Satisficing pass (n={int(passed.sum())})",
+        zorder=4,
+    )
+    champ = role == "economic_champion"
+    if champ.any():
+        cx, cy = float(ret[champ][0]), float(cvar[champ][0])
+        ax.scatter(
+            [cx],
+            [cy],
+            s=260,
+            marker="*",
+            color=PALETTE["orange"],
+            edgecolors="black",
+            linewidths=0.6,
+            label="Frozen economic champion",
+            zorder=6,
+        )
+        ax.annotate(
+            f"Champion: ${cx:.1f}K\n" + r"CVaR$_{95}$=" + f"{cy:.3f}",
+            (cx, cy),
+            textcoords="offset points",
+            xytext=(10, 8),
+            fontsize=7.5,
+            fontweight="bold",
+            color=PALETTE["orange"],
+        )
+    if passed.any():
+        idx = np.where(passed)[0]
+        j = int(idx[np.argmin(cvar[idx])])
+        ax.annotate(
+            "lowest tail-risk\n(satisficing pass)",
+            (ret[j], cvar[j]),
+            textcoords="offset points",
+            xytext=(6, -24),
+            fontsize=7,
+            color=PALETTE["blue"],
+            arrowprops={"arrowstyle": "->", "color": PALETTE["blue"], "lw": 0.7},
+        )
+    ax.set_xlabel("Realized portfolio return (USD thousands)")
+    ax.set_ylabel(r"CVaR$_{95}$ loss rate (tail risk)")
+    ax.set_title(r"Tail-Risk vs. Return Across the 45-Policy Robust Region (OOT, $\alpha=0.01$)")
+    ax.legend(loc="upper left", fontsize=7.2)
+    fig.tight_layout()
+    _save(fig, "crpto_fig16_tail_risk_frontier")
+
+
+def _crpto_fig17_tail_risk_lgd() -> None:
+    """Fig 17 — Funded-set tail-risk measures (CVaR / OCE) vs LGD assumption (Table A12)."""
+    csv = REPO_ROOT / "reports" / "crpto" / "tables" / "crpto_tableA12_tail_risk_oce_cvar.csv"
+    if not csv.exists():
+        logger.warning("A12 CSV not found — skipping fig17")
+        return
+    df = pd.read_csv(csv).sort_values("lgd")
+    lgd = df["lgd"].to_numpy(float)
+
+    fig, ax = plt.subplots(figsize=(COL1 * 1.7, HEIGHT_M))
+    series = [
+        ("cvar_90_loss_rate", r"CVaR$_{90}$", PALETTE["sky"], "o"),
+        ("cvar_95_loss_rate", r"CVaR$_{95}$", PALETTE["blue"], "s"),
+        ("cvar_99_loss_rate", r"CVaR$_{99}$", PALETTE["red"], "^"),
+        ("entropic_oce_theta5", r"OCE ($\theta=5$)", PALETTE["green"], "D"),
+        ("mean_loss_rate", "Mean (no tail)", PALETTE["gray"], "v"),
+    ]
+    for col, lab, c, mk in series:
+        if col in df.columns:
+            ax.plot(lgd, df[col].to_numpy(float), marker=mk, color=c, label=lab, ms=5)
+    ax.axvline(0.45, color=PALETTE["black"], lw=0.8, ls=":", label="Champion LGD = 0.45")
+    ax.axhline(0.0, color=PALETTE["lgray"], lw=0.7)
+    ax.set_xlabel("Loss Given Default (LGD)")
+    ax.set_ylabel("Funded-set loss rate")
+    ax.set_title("Tail Risk of the Frozen Funded Set vs. LGD Assumption")
+    ax.legend(loc="upper left", fontsize=7.0)
+    fig.tight_layout()
+    _save(fig, "crpto_fig17_tail_risk_lgd")
+
+
 # ── Dispatch ──────────────────────────────────────────────────────────────────
 
 PAPER3_FIGS = [
@@ -1329,6 +1446,8 @@ CRPTO_FIGS = [
     _crpto_fig9_spo_regret,
     _crpto_fig10_cqr_comparison,
     _crpto_fig11_crpto_stability,
+    _crpto_fig16_tail_risk_frontier,
+    _crpto_fig17_tail_risk_lgd,
 ]
 
 

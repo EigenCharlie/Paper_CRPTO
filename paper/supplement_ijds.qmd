@@ -4,6 +4,8 @@ author: "Anonymous"
 date: today
 lang: en
 bibliography: ../book/references.bib
+csl: ../book/apa.csl
+link-citations: true
 format:
   html:
     toc: true
@@ -123,7 +125,10 @@ Tables A12--A21 answer likely reviewer questions that are too detailed for the
 25-page body. They are diagnostic by design, except A19 also supports the body
 framing around regret-auditability. A20 and A21 are journal-only add-ons: they
 audit a tail-satisficing challenger and make the dependence-aware caveat
-numerical without changing the champion.
+numerical without changing the champion. Table A12 follows the standard
+definitions of Conditional Value-at-Risk [@rockafellar2000cvar] and the
+Optimized Certainty Equivalent [@bental2007oce]; both are reported as post-hoc
+tail-risk summaries of the frozen funded set, not as the optimized objective.
 
 | Table | Role | Scope caveat |
 |---|---|---|
@@ -146,13 +151,20 @@ numerical without changing the champion.
 
 ![CQR is retained as conformal appendix evidence, not as the promoted method.](../reports/crpto/figures/crpto_fig10_cqr_per_grade.png){#fig-supp-cqr width="90%"}
 
+![Tail-risk versus realized return across the 45-policy robust region (Table A20). Twelve policies pass the satisficing committee; the frozen economic champion (star) deliberately trades some tail risk for return rather than minimizing CVaR, so the headline result is a defendable point inside the robust region rather than the lowest-tail corner.](../reports/crpto/figures/crpto_fig16_tail_risk_frontier.png){#fig-supp-tail-frontier width="90%"}
+
+![Tail risk of the frozen funded set under varying loss-given-default (Table A12). CVaR grows with the assumed LGD while the OCE and the mean loss rate stay milder, confirming that OCE/CVaR enter the paper as post-hoc stress summaries rather than as the optimized objective.](../reports/crpto/figures/crpto_fig17_tail_risk_lgd.png){#fig-supp-tail-lgd width="82%"}
+
 # Appendix D: Fair Lending, MRM, And Governance
 
 The fairness section is a model-risk diagnostic. The public Lending Club data do
 not contain direct protected attributes, so the paper cannot claim statutory
-fair-lending certification. The supplement reports proxy and intersectional
-diagnostics to show that the selected funded set does not hide an obvious weak
-segment under the available columns.
+fair-lending certification. Where protected attributes are unavailable, the
+standard practice is to proxy them--for example via Bayesian Improved Surname
+Geocoding [@cfpb2014bisg]--and to interpret machine-learning underwriting
+fairness with care [@finreglab2023fairness]. The supplement reports proxy and
+intersectional diagnostics to show that the selected funded set does not hide an
+obvious weak segment under the available columns.
 
 The MRM material documents intended use, out-of-scope use, model assumptions,
 calibration and conformal diagnostics, challenger criteria, artifact lineage,

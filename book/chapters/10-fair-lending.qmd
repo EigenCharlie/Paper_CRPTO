@@ -25,7 +25,7 @@ audit_df = pd.read_parquet(REPO_ROOT / "data" / "processed" / "fairness_audit.pa
 
 ### Marco de medición
 
-La política aplicada al champion sigue tres métricas estándar de fair lending, alineadas con el lenguaje regulatorio (CRA, ECOA, GDPR Art. 22) y con la literatura de fairlearn:
+La política aplicada al champion sigue tres métricas estándar de fair lending, alineadas con el lenguaje regulatorio (CRA, ECOA, GDPR Art. 22) y con la literatura de equidad algorítmica y de suscripción de crédito con ML [@hardt2016; @finreglab2023fairness]:
 
 ::: {#tbl-crpto-fairness-metrics}
 
@@ -71,7 +71,7 @@ El atributo "intersectional" más restrictivo es `home_ownership × verification
 
 ### Por qué Lending Club no permite auditoría sobre raza/género — y qué sí prueba esta auditoría
 
-Lending Club no publica raza, género ni edad de los solicitantes en los datos abiertos. Por eso esta auditoría no debe leerse como certificación legal de no discriminación sobre clases protegidas directas. Lo que sí prueba es más acotado y útil para el paper: sobre los atributos disponibles que funcionan como **proxies socioeconómicos y de calidad de información** (`home_ownership`, `annual_inc_quartile`, `verification_status`) y sobre sus cruces, la decisión de aprobación/funding del champion no concentra disparidad por encima del umbral definido en `fairness_policy.yaml`.
+Lending Club no publica raza, género ni edad de los solicitantes en los datos abiertos. Cuando esos atributos no están disponibles, la práctica regulatoria estándar es **inferirlos** mediante proxies como Bayesian Improved Surname Geocoding (BISG) [@cfpb2014bisg]; sin embargo, ese método requiere apellido y geolocalización, que tampoco aparecen en el dataset público, por lo que aquí usamos proxies socioeconómicos y de calidad de información (`home_ownership`, `annual_inc_quartile`, `verification_status`) en su lugar. Por eso esta auditoría no debe leerse como certificación legal de no discriminación sobre clases protegidas directas. Lo que sí prueba es más acotado y útil para el paper: sobre los atributos disponibles que funcionan como **proxies socioeconómicos y de calidad de información** (`home_ownership`, `annual_inc_quartile`, `verification_status`) y sobre sus cruces, la decisión de aprobación/funding del champion no concentra disparidad por encima del umbral definido en `fairness_policy.yaml`.
 
 La auditoría intersectional cumple además una función específica que la auditoría base por atributo no captura: **detecta concentraciones de adverse selection** que aparecen sólo cuando dos atributos se cruzan. Que `home_ownership × verification_status` tenga el peor DPD pero aún pase con margen es la evidencia clave disponible en este dataset: el funded set no concentra rechazos en una intersección particular de atributos proxy. La extensión natural para tesis o validación externa sería repetir el checkpoint con atributos protegidos observados y con monitoreo temporal prospectivo.
 

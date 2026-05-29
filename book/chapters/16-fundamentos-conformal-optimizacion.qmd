@@ -89,7 +89,7 @@ La intercambiabilidad es estrictamente más débil que el supuesto i.i.d. (indep
 
 ::: {.callout-tip}
 ## Intercambiabilidad en datos de crédito
-En este proyecto, los splits temporales (train/calibración/test) violan la intercambiabilidad estricta porque la distribución de préstamos puede cambiar con el tiempo (concept drift). Sin embargo, la predicción conformal es notablemente robusta en la práctica: incluso bajo desviaciones moderadas de la intercambiabilidad, la cobertura empírica permanece cercana a la garantía teórica. En el cierre final OOT (2018--2020), la variante promovida `score_decile_mondrian` alcanza 92.97% de cobertura al 90% con cobertura mínima por grupo de 91.90%, lo que indica un conservadurismo útil sin perder legibilidad regulatoria del baseline.
+En este proyecto, los splits temporales (train/calibración/test) violan la intercambiabilidad estricta porque la distribución de préstamos puede cambiar con el tiempo (concept drift). Sin embargo, la predicción conformal es notablemente robusta en la práctica: incluso bajo desviaciones moderadas de la intercambiabilidad, la cobertura empírica permanece cercana a la garantía teórica. Cuando el supuesto se rompe de forma sistemática, la teoría ofrece correcciones: la predicción conformal ponderada bajo *covariate shift* [@tibshirani2019covshift] reescala los scores por la razón de densidades entre calibración y test, y la inferencia conformal adaptativa [@gibbs2021aci] ajusta el nivel en línea período a período. CRPTO no aplica estas correcciones de forma activa --- prefiere documentar el shift empíricamente vía backtesting temporal y stress sintético (Tablas A6/A11) ---, pero su existencia explica por qué la cobertura empírica se mantiene cercana al objetivo pese al carácter temporal del split. En el cierre final OOT (2018--2020), la variante promovida `score_decile_mondrian` alcanza 92.97% de cobertura al 90% con cobertura mínima por grupo de 91.90%, lo que indica un conservadurismo útil sin perder legibilidad regulatoria del baseline.
 :::
 
 #### La garantía de cobertura
@@ -360,6 +360,10 @@ Los fundamentos teóricos presentados en esta sección se basan en los siguiente
 
 - **Boström et al.** [@bostrom2021]: Formaliza las distribuciones predictivas conformales Mondrian con garantías de cobertura condicional por grupo. Es la base teórica directa de nuestro enfoque de partición por grado crediticio.
 
+- **Angelopoulos, Barber y Bates** [@angelopoulos2024foundations]: Monografía moderna que sistematiza los fundamentos teóricos de la predicción conformal (intercambiabilidad, cobertura marginal/condicional, scores, extensiones a control de riesgo). Es la referencia teórica de cabecera para situar el `thm-conformal-feasibility` dentro del marco general.
+
+- **Guan** [@guan2023localized]: Propone *localized conformal prediction*, un marco que generaliza la conformalización ponderando localmente los scores de calibración. Es el complemento adaptativo natural a Mondrian: donde Mondrian particiona en grupos discretos (grados), la versión localizada pondera de forma continua en el espacio de features.
+
 ## Fuente curada: `book/chapters/02-glossary/02d-optimization-or.qmd`
 
 ## Optimización e Investigación de Operaciones
@@ -575,6 +579,33 @@ En la configuración del proyecto (`configs/optimization.yaml`), el parámetro `
 :::
 
 La frontera de Pareto entre retorno y robustez se explora en el script `scripts/optimize_portfolio_tradeoff.py`, que genera el *tradeoff curve* variando el parámetro $\gamma$ y registrando el PoR resultante.
+
+### Medidas de Riesgo de Cola: CVaR y OCE {#sec-cvar-oce}
+
+El precio de la robustez resume el costo *promedio* de protegerse, pero no dice nada sobre la **cola** de la distribución de pérdidas del portafolio. Para auditar ese extremo, el proyecto reporta dos medidas de riesgo coherentes ampliamente usadas en finanzas, siempre como **diagnóstico post-hoc** del funded set congelado (no como objetivo optimizado; ver Tabla A12 del supplement).
+
+**Conditional Value-at-Risk (CVaR).** Introducida por @rockafellar2000cvar, la CVaR al nivel $\beta$ es la pérdida esperada condicional a estar en el peor $(1-\beta)$ de los escenarios. Su forma variacional, clave para la tratabilidad, es:
+
+$$
+\text{CVaR}_\beta(L) = \min_{\eta \in \mathbb{R}}\;\Big\{\,\eta + \tfrac{1}{1-\beta}\,\mathbb{E}\big[(L-\eta)^+\big]\Big\}
+$$ {#eq-cvar}
+
+A diferencia del VaR, la CVaR es **coherente** (en particular subaditiva) y convexa en la asignación, de modo que minimizar CVaR sobre el portafolio sigue siendo un LP. En CRPTO la usamos para verificar que el funded set promovido no esconde una cola de pérdidas desproporcionada frente a las demás políticas de la región robusta.
+
+**Optimized Certainty Equivalent (OCE).** Propuesto por @bental2007oce, el OCE generaliza la utilidad esperada: para una función de desutilidad $u(\cdot)$ convexa, no decreciente y normalizada,
+
+$$
+\text{OCE}_u(L) = \min_{\eta \in \mathbb{R}}\;\Big\{\,\eta + \mathbb{E}\big[u(L-\eta)\big]\Big\}
+$$ {#eq-oce}
+
+La CVaR es un caso particular del OCE con desutilidad lineal a trozos $u(t)=\tfrac{1}{1-\beta}t^+$. El OCE entrega así una **familia paramétrica** de medidas coherentes que permite estresar el funded set bajo distintas aversiones a la cola sin reentrenar nada.
+
+![Riesgo de cola del funded set congelado bajo distintos supuestos de LGD (Tabla A12 del supplement). La CVaR crece con la severidad asumida de la pérdida, mientras que el OCE y la media se mantienen más suaves: confirma que CVaR/OCE operan como *diagnósticos de estrés* del champion, no como el objetivo optimizado.](../assets/figures/publication/crpto_fig17_tail_risk_lgd.png){#fig-tail-risk-lgd width="80%"}
+
+::: {.callout-note}
+## Por qué la cola y no solo la media
+Dos políticas con el mismo retorno esperado pueden tener colas de pérdida muy distintas. CVaR y OCE hacen visible esa diferencia y conectan el lenguaje conformal (cobertura del peor caso *por préstamo*, vía $u_i(\alpha)$) con el lenguaje de riesgo financiero (pérdida esperada en la *cola del portafolio*). En el proyecto son diagnósticos que refuerzan la decisión congelada; convertir OCE/CVaR en el objetivo optimizado es trabajo futuro explícito.
+:::
 
 ### Smart Predict, then Optimize (SPO+)
 
