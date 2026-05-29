@@ -135,6 +135,18 @@ Un ECE < 0.01 indica calibración excelente. Nuestro modelo calibrado con Venn-A
 
 **D² Brier**: Análogo al R² para el Brier Score, mide la mejora relativa del modelo sobre un predictor naive (frecuencia marginal).
 
+### Métricas de estabilidad poblacional (PSI/CSI)
+
+Las métricas anteriores evalúan un modelo en un corte fijo; el monitoreo en el tiempo necesita además medir **drift** entre la población de desarrollo y la de aplicación. El **Population Stability Index (PSI)** compara dos distribuciones (entrenamiento vs. OOT, o periodo $t$ vs. $t+1$) discretizadas en $B$ bins:
+
+$$
+\text{PSI} = \sum_{b=1}^{B} (p_b - q_b)\,\ln\!\frac{p_b}{q_b}
+$$
+
+donde $p_b$ y $q_b$ son las proporciones de masa en el bin $b$ de cada población. Las reglas de pulgar de la industria son `PSI < 0.10` (estable), `0.10--0.25` (cambio moderado, vigilar) y `> 0.25` (cambio material, posible *trigger* de re-entrenamiento). Aplicado a una feature individual se le llama a veces **Characteristic Stability Index (CSI)**; aplicado al score agregado da el *score PSI*.
+
+El proyecto usa PSI por feature, *score PSI* y WOE PSI como controles de gobernanza, con `PSI = 0.25` como umbral duro (véase el capítulo de gobernanza y explicabilidad). La lectura editorial correcta es que estos umbrales son **heurísticas operativas, no evidencia estadística suficiente**: el PSI es sensible al binning y al desbalance, por lo que el proyecto lo complementa con un *Classifier Two-Sample Test* (C2ST) [@lopezpaz2018c2st], que pregunta qué tan fácil es distinguir desarrollo de aplicación con un clasificador. Esa cautela queda documentada en `docs/research/crpto_metrics_triage_2026-05-18.md`.
+
 ### Gradient Boosting y CatBoost
 
 **Gradient Boosting** es un ensemble de árboles de decisión entrenados secuencialmente, donde cada árbol corrige los errores del anterior. La predicción final es la suma ponderada de todas las predicciones individuales.

@@ -278,11 +278,22 @@ oficial: el economic champion sigue siendo el champion promovido.
 
 ```{python}
 #| label: tbl-crpto-journal-tail-constrained-reopt
-#| tbl-cap: "A22. Frontera retorno-vs-CVaR con techo de cola como restriccion de seleccion"
+#| tbl-cap: "A22. Frontera retorno-vs-CVaR con techo de cola como restriccion de seleccion (columnas clave; CSV completo en reports/crpto/tables/)"
 
 tail_reopt = read_table("crpto_tableA22_tail_constrained_reoptimization.csv")
-tail_reopt
+_a22_cols = {
+    "cvar95_cap": "CVaR95 cap",
+    "selected_paper_role": "Rol",
+    "selected_realized_total_return": "Retorno",
+    "return_delta_vs_champion_pct": "Delta% vs champ",
+    "selected_decision_time_cvar95": "CVaR95 dt",
+    "selected_alpha01_weighted_miscoverage_V": "V",
+    "selected_n_funded": "n fin.",
+}
+tail_reopt[list(_a22_cols)].rename(columns=_a22_cols).round(4)
 ```
+
+![Frontera eficiente retorno-vs-CVaR de A22: cada punto es la policy `alpha01`-safe de mayor retorno admisible bajo un techo de CVaR *decision-time*; el economic champion congelado (estrella) ocupa la esquina de mayor retorno y mayor cola, y el cap mas estricto (diamante) marca el extremo del challenger.](../assets/figures/publication/crpto_fig18_tail_constrained_frontier.png){#fig-p1-tail-constrained-frontier fig-alt="Linea ascendente de retorno realizado (eje y, miles USD) contra techo de CVaR95 decision-time (eje x); el economic champion es una estrella en la esquina superior derecha y el cap mas estricto un diamante abajo a la izquierda."}
 
 Lectura: la frontera muestra cuanto retorno se conserva al endurecer el techo de
 CVaR. Coherente con A20, el economic champion no es la esquina de menor cola: en
@@ -313,7 +324,7 @@ distribucion de grupo desconocida domina el conjunto de test.
 #| tbl-cap: "A23. Cobertura 90% por grupo y peor celda grade x vintage"
 
 multidist = read_table("crpto_tableA23_multidistribution_robustness.csv")
-multidist
+multidist.round(4)
 ```
 
 Lectura: la cobertura marginal y la de cada `grade` se mantienen sobre el target
@@ -342,8 +353,10 @@ una validacion de streaming.
 #| tbl-cap: "A24. Cobertura por vintage, cobertura acumulada y target ACI alpha_t"
 
 online_stab = read_table("crpto_tableA24_online_conformal_stability.csv")
-online_stab
+online_stab.round(4)
 ```
+
+![Estabilidad conformal online (A24): cobertura por vintage y cobertura acumulada *streaming* se mantienen sobre el target 90% en los 11 trimestres, mientras el target `alpha_t` del controlador ACI de Gibbs-Candes apenas se desplaza --- evidencia de que la recalibracion online tendria poco que corregir en este OOT estatico.](../assets/figures/publication/crpto_fig19_online_coverage_aci.png){#fig-p1-online-coverage-aci fig-alt="Lineas de cobertura por vintage y cobertura acumulada por encima de la linea de target 90% a lo largo de 11 trimestres OOT, con la trayectoria del target ACI alpha_t en un eje secundario subiendo levemente de 0.10 a 0.12."}
 
 Lectura: la cobertura se mantiene sobre el target en los 11 vintages y la
 cobertura acumulada converge cerca del 93%. La tasa de default cae fuertemente a

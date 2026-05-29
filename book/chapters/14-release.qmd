@@ -131,6 +131,8 @@ Manifest de tablas para decidir cuerpo, appendix y tesis.
 | Fig 15 | `crpto_fig15_regret_auditability_frontier` | Sí | Sí | Sí | Separa el claim de regret SPO+ del claim de auditabilidad CRPTO. |
 | Fig 16 | `crpto_fig16_tail_risk_frontier` | No | Sí | Sí | Muestra el frontier retorno--CVaR del challenger tail-satisficing como auditoría, no como reemplazo del champion. |
 | Fig 17 | `crpto_fig17_tail_risk_lgd` | No | Sí | Sí | Sensibilidad LGD del funded set congelado; confirma que CVaR/OCE son diagnósticos de cola. |
+| Fig 18 | `crpto_fig18_tail_constrained_frontier` | No | Sí | Sí | Frontera retorno-vs-CVaR de A22; champion en la esquina de mayor retorno y mayor cola. |
+| Fig 19 | `crpto_fig19_online_coverage_aci` | No | Sí | Sí | Estabilidad conformal online (A24): cobertura por vintage y target ACI. |
 | Fig alpha-gamma | `crpto_fig_alpha_gamma_bound` | Quizá | Sí | Sí | Figura técnica del bound. |
 
 Manifest de figuras para extraer paper y appendix.

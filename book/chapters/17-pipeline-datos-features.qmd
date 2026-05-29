@@ -270,7 +270,7 @@ Las herramientas GPU son parte del *insights factory* --- un carril de investiga
 
 ### El Dataset de Lending Club
 
-El proyecto utiliza el dataset **Lending Club Loan Data 2007--2020Q3**, disponible públicamente en Kaggle. Lending Club fue la plataforma de préstamos peer-to-peer más grande de Estados Unidos hasta su transición a banca comercial en 2020. El dataset contiene información de todos los préstamos originados en la plataforma durante 13 años, incluyendo características del solicitante, condiciones del préstamo y resultado final (pagado vs. default).
+El proyecto utiliza el dataset **Lending Club Loan Data 2007--2020Q3**, disponible públicamente en Kaggle. Lending Club fue la plataforma de préstamos peer-to-peer más grande de Estados Unidos hasta su transición a banca comercial en 2020; estudios de la Reserva Federal documentan su rol como originador fintech y el papel de los datos alternativos y el ML en su suscripción [@jagtiani2019altdata]. El dataset contiene información de todos los préstamos originados en la plataforma durante 13 años, incluyendo características del solicitante, condiciones del préstamo y resultado final (pagado vs. default).
 
 ```python
 

@@ -249,10 +249,12 @@ data/code-disclosure policy.
 The body-supplement split is fixed before submission. The body keeps the CRPTO
 pipeline, the alpha-to-portfolio link, the robust-region evidence, and the core
 metrics, plus the compact regret-auditability frontier. The online supplement
-carries A3--A21, the conformal finalist ablation, funded-set loan audit,
-tail-risk diagnostics, satisficing margins, dependence diagnostics,
-MRM/fairness material, and reproduction commands. This keeps the IJDS body
-focused while preserving the audit trail that reviewers need.
+carries A3--A24, the conformal finalist ablation, funded-set loan audit,
+tail-risk diagnostics, satisficing margins, dependence diagnostics, the CVaR/OCE
+tail-constrained re-optimization (A22) and the multi-distribution (A23) and
+online ACI-stability (A24) diagnostics, MRM/fairness material, and reproduction
+commands. This keeps the IJDS body focused while preserving the audit trail that
+reviewers need.
 
 # Results
 
@@ -353,7 +355,9 @@ synthetic-shift diagnostics, conformal finalist exact evaluation, tail-risk
 OCE/CVaR diagnostics, satisficing margins, dependency clusters, bootstrap
 funded-set metrics, budget/LGD/cap sensitivity, and robust-region summaries by
 policy family, plus the A19 regret-auditability frontier, A20 tail-satisficing
-challenger audit, and A21 cluster-bound tightening audit.
+challenger audit, A21 cluster-bound tightening audit, A22 CVaR/OCE
+tail-constrained re-optimization, and A23--A24 multi-distribution and online
+(ACI) conformal-stability diagnostics.
 
 # Reproducibility And Companion
 

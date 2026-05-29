@@ -9,8 +9,8 @@ stages:
       size: 4040
     - path: book/chapters
       hash: md5
-      md5: f0415a9f6e44a2d3df8b1a493042e3b9.dir
-      size: 734750
+      md5: ac41b76d0ee58330cb8d67858f6225ca.dir
+      size: 738765
       nfiles: 25
     - path: book/index.qmd
       hash: md5
@@ -28,16 +28,16 @@ stages:
     outs:
     - path: book/_book
       hash: md5
-      md5: e2479245b716064eb4580b6f15121b83.dir
-      size: 18010582
-      nfiles: 93
+      md5: b8556054f2827d790396f6f9042044cd.dir
+      size: 18170073
+      nfiles: 95
   crpto.paper.figures:
     cmd: python scripts/generate_crpto_figures.py --paper crpto
     deps:
     - path: scripts/generate_crpto_figures.py
       hash: md5
-      md5: d7f0c806c973a0db9c26422ca6bca66e
-      size: 53490
+      md5: 167ee637022c8eb3871a917bfa644eb4
+      size: 58100
     outs:
     - path: reports/crpto/figures/crpto_fig7_uncertainty_baselines.png
       hash: md5
