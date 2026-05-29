@@ -8,7 +8,7 @@
 ¿Qué ganamos cuando la incertidumbre predictiva deja de ser un diagnóstico y se vuelve una entrada explícita del optimizador? Este libro independiente abre el dossier CRPTO alrededor de esa tesis y conserva tanto el material paper-ready como la evidencia extendida para journal, apéndices y respuestas a reviewers.
 :::
 
-![Diagrama maestro de CRPTO: datos, calibración PD, incertidumbre conformal, optimización robusta y decisiones financieras.](assets/figures/editorial/diagrama-crpto.png){#fig-crpto-overview fig-alt="Diagrama horizontal de CRPTO con datos, calibración, incertidumbre conformal, optimización robusta y decisiones financieras."}
+![Las seis etapas del pipeline CRPTO --- datos y split temporal, PD calibrada, conformal Mondrian, conjunto de incertidumbre, LP robusto y política promovida con bound exacto --- anotadas con las métricas del cierre `276k` ($170,464.54, $V=0.03645$, $\Gamma_{\text{CP}}=0.18591$, región robusta `45/45`).](assets/figures/editorial/diagrama-crpto.png){#fig-crpto-overview fig-alt="Diagrama maestro horizontal de seis paneles: (1) datos y split temporal de Lending Club, (2) PD calibrada CatBoost+Venn-Abers con curva de calibración, (3) conformal Mondrian con cobertura 90%, (4) conjunto de incertidumbre y prima conformal, (5) LP robusto de portafolio, (6) política promovida bound_aware_276k con bound exacto; pie con la evidencia del paper."}
 
 ::: {.callout-note .mini-abstract}
 ## Mini-abstract

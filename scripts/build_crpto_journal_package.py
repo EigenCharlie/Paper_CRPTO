@@ -9,6 +9,7 @@ appendix material.
 from __future__ import annotations
 
 import json
+import shutil
 from datetime import UTC, datetime
 from pathlib import Path
 from typing import Any
@@ -26,6 +27,7 @@ from src.optimization.tail_satisficing_objective import (
 ROOT = Path(__file__).resolve().parents[1]
 TABLE_DIR = ROOT / "reports" / "crpto" / "tables"
 FIG_DIR = ROOT / "reports" / "crpto" / "figures"
+BOOK_FIG_DIR = ROOT / "book" / "assets" / "figures" / "publication"
 DOCS_DIR = ROOT / "docs" / "research"
 MODELS_DIR = ROOT / "models"
 DATA_DIR = ROOT / "data" / "processed"
@@ -90,6 +92,13 @@ def _write_table(name: str, frame: pd.DataFrame) -> list[Path]:
     return [csv_path, tex_path]
 
 
+def _mirror_to_book(*paths: Path) -> None:
+    """Copy generated figures into the book's publication assets directory."""
+    BOOK_FIG_DIR.mkdir(parents=True, exist_ok=True)
+    for path in paths:
+        shutil.copy2(path, BOOK_FIG_DIR / path.name)
+
+
 def _save_figure(name: str) -> list[Path]:
     FIG_DIR.mkdir(parents=True, exist_ok=True)
     png_path = FIG_DIR / f"{name}.png"
@@ -97,6 +106,7 @@ def _save_figure(name: str) -> list[Path]:
     plt.savefig(png_path, dpi=220, bbox_inches="tight")
     plt.savefig(pdf_path, bbox_inches="tight")
     plt.close()
+    _mirror_to_book(png_path, pdf_path)
     print(f"Wrote {png_path.relative_to(ROOT)}")
     print(f"Wrote {pdf_path.relative_to(ROOT)}")
     return [png_path, pdf_path]
@@ -553,47 +563,26 @@ def _plot_regret_auditability_frontier(frontier: pd.DataFrame) -> list[Path]:
 
 
 def _plot_conceptual_pipeline() -> list[Path]:
-    fig, ax = plt.subplots(figsize=(13, 4.8))
-    ax.axis("off")
-    boxes = [
-        ("PD calibrada\nCatBoost + Venn-Abers", 0.04, "#DCEBFF"),
-        ("Intervalo conformal\n[PD_low, PD_high]", 0.22, "#E6F4EA"),
-        ("Uncertainty set\nu_i(alpha)", 0.40, "#FFF3CD"),
-        ("LP robusto\nrisk-return + tau", 0.58, "#FCE4EC"),
-        ("Funded set\n335 loans / $1M", 0.76, "#EDE7F6"),
-        ("Bound eval\nV, Gamma_CP, violation", 0.91, "#E0F7FA"),
-    ]
-    for text, x, color in boxes:
-        ax.text(
-            x,
-            0.55,
-            text,
-            ha="center",
-            va="center",
-            fontsize=10.5,
-            bbox={
-                "boxstyle": "round,pad=0.45,rounding_size=0.05",
-                "facecolor": color,
-                "edgecolor": "#2F3A4A",
-                "linewidth": 1.2,
-            },
-        )
-    for start, end in zip(boxes[:-1], boxes[1:], strict=False):
-        ax.annotate(
-            "",
-            xy=(end[1] - 0.075, 0.55),
-            xytext=(start[1] + 0.075, 0.55),
-            arrowprops={"arrowstyle": "->", "lw": 1.6, "color": "#2F3A4A"},
-        )
-    ax.text(
-        0.5,
-        0.12,
-        "CRPTO: uncertainty is not a diagnostic afterthought; it becomes a portfolio constraint.",
-        ha="center",
-        fontsize=11,
-        color="#263238",
-    )
-    return _save_figure("crpto_fig12_crpto_conceptual_pipeline")
+    """Publish the hand-authored editorial master diagram as the conceptual pipeline.
+
+    The official CRPTO pipeline figure is the paper-grade master diagram in
+    ``book/assets/figures/editorial/diagrama-crpto.png``. This copies it into the
+    figure package as ``crpto_fig12`` so the book appendix and the paper Figure 1
+    reuse the same paper-grade asset instead of a plain block diagram.
+    """
+    from PIL import Image
+
+    src = ROOT / "book" / "assets" / "figures" / "editorial" / "diagrama-crpto.png"
+    FIG_DIR.mkdir(parents=True, exist_ok=True)
+    png_path = FIG_DIR / "crpto_fig12_crpto_conceptual_pipeline.png"
+    pdf_path = FIG_DIR / "crpto_fig12_crpto_conceptual_pipeline.pdf"
+    with Image.open(src) as img:
+        rgb = img.convert("RGB")
+        rgb.save(png_path)
+        rgb.save(pdf_path, "PDF", resolution=300.0)
+    _mirror_to_book(png_path, pdf_path)
+    print(f"Wrote {png_path.relative_to(ROOT)} (from editorial master diagram)")
+    return [png_path, pdf_path]
 
 
 def _plot_alpha_gamma_funded_set(bound_eval: pd.DataFrame, promotion: dict[str, Any]) -> list[Path]:

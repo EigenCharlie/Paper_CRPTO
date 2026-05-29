@@ -47,10 +47,12 @@ def read_table(name: str) -> pd.DataFrame:
 ### Figura conceptual CRPTO
 
 La Figura @fig-p1-crpto-conceptual es la candidata natural para Figura 1 del
-paper. Su valor es editorial: muestra que la incertidumbre no es un diagnostico
-posterior, sino una restriccion que viaja hasta la decision.
+paper y reutiliza el diagrama maestro oficial del libro (@fig-crpto-overview). Su
+valor es editorial: muestra que la incertidumbre no es un diagnostico posterior,
+sino una restriccion que viaja hasta la decision, con las metricas del cierre
+`276k` anotadas en cada etapa.
 
-![Pipeline conceptual CRPTO: PD calibrada, intervalo conformal, conjunto de incertidumbre, LP robusto, funded set y evaluacion del bound.](../assets/figures/publication/crpto_fig12_crpto_conceptual_pipeline.png){#fig-p1-crpto-conceptual fig-alt="Diagrama horizontal de seis bloques que conecta PD calibrada, intervalo conformal, uncertainty set, LP robusto, funded set y bound eval."}
+![Diagrama maestro CRPTO (Figura 1 candidata): las seis etapas del pipeline --- datos y split temporal, PD calibrada, conformal Mondrian, conjunto de incertidumbre, LP robusto y politica promovida con bound exacto --- anotadas con AUC, cobertura, $\Gamma_{\text{CP}}$, $V$ y el retorno del economic champion.](../assets/figures/publication/crpto_fig12_crpto_conceptual_pipeline.png){#fig-p1-crpto-conceptual fig-alt="Diagrama maestro de seis paneles que conecta datos de Lending Club, PD calibrada con curva de calibracion, conformal Mondrian con cobertura 90%, conjunto de incertidumbre y prima conformal, LP robusto de portafolio, y politica promovida bound_aware_276k con bound exacto y pie de evidencia del paper."}
 
 ### Alpha, `Gamma_CP` y funded set
 
@@ -80,7 +82,7 @@ optimizacion.
 #| tbl-cap: "A12. Tail risk del funded set exacto bajo LGD alternativos"
 
 tail = read_table("crpto_tableA12_tail_risk_oce_cvar.csv")
-tail
+tail.round(4)
 ```
 
 Lectura: `mean_loss_rate` negativo equivale a retorno medio positivo. Los
@@ -100,7 +102,7 @@ sino que pasamos umbrales minimos de seguridad y holgura.
 #| tbl-cap: "A13. Margenes satisficing de la policy oficial"
 
 satisficing = read_table("crpto_tableA13_satisficing_margins.csv")
-satisficing
+satisficing.round(4)
 ```
 
 Esta tabla es util para la introduccion y la discusion. Permite decir que el
@@ -119,7 +121,7 @@ concentracion por periodo, grade y periodo-grade.
 #| tbl-cap: "A14. Clusters con mayor exposicion y contribucion al bound"
 
 dependency = read_table("crpto_tableA14_dependency_cluster_diagnostics.csv")
-dependency.sort_values(["exposure_share", "V_contribution"], ascending=False).head(15)
+dependency.sort_values(["exposure_share", "V_contribution"], ascending=False).head(15).round(4)
 ```
 
 Esta tabla no prueba independencia. Su funcion es mas honesta: mostrar donde
@@ -138,7 +140,7 @@ periodos y re-normaliza pesos para medir sensibilidad.
 #| tbl-cap: "A15. Stress leave-one-period-out y overweight 2x sobre el funded set"
 
 period_stress = read_table("crpto_tableA15_leave_one_period_stress.csv")
-period_stress
+period_stress.round(4)
 ```
 
 De nuevo, esto es diagnostico, no re-optimizacion. Sirve para revisar si `V`,
@@ -156,7 +158,7 @@ reviewers que pidan incertidumbre de segundo orden.
 #| tbl-cap: "A16. Bootstrap empirico del funded set exacto"
 
 bootstrap = read_table("crpto_tableA16_bootstrap_funded_set_metrics.csv")
-bootstrap
+bootstrap.round(4)
 ```
 
 La fila de retorno bootstrap tambien usa `funded_set_repriced_return_lgd45`;
@@ -177,7 +179,17 @@ La tabla A17 agrupa tres preguntas aplicadas:
 #| tbl-cap: "A17. Sensibilidad diagnostica a presupuesto, LGD y caps de concentracion"
 
 budget_cap_lgd = read_table("crpto_tableA17_budget_cap_lgd_sensitivity.csv")
-budget_cap_lgd
+budget_cap_lgd[
+    [
+        "sensitivity_type",
+        "scenario",
+        "value",
+        "funded_set_repriced_return_lgd45",
+        "weighted_default_rate",
+        "weighted_miscoverage_V",
+        "diagnostic_pass",
+    ]
+].round(4)
 ```
 
 La columna `diagnostic_pass` en los caps no dice que el optimizador resolvio un
@@ -196,7 +208,18 @@ Esta tabla es el par tabular del heatmap. Resume todas las familias finales
 #| tbl-cap: "A18. Region robusta final por familia risk_tolerance x gamma"
 
 robust_region = read_table("crpto_tableA18_robust_region_policy_family.csv")
-robust_region
+robust_region[
+    [
+        "risk_tolerance",
+        "gamma",
+        "n_policies",
+        "alpha01_pass_rate",
+        "best_return",
+        "min_V",
+        "median_gamma_cp",
+        "all_alpha01_pass",
+    ]
+].round(4)
 ```
 
 Esta es una de las mejores defensas del paper: el resultado de abril no es
@@ -215,7 +238,17 @@ promocion alternativa del champion.
 #| tbl-cap: "A19. Frontera regret-auditability entre two-stage, SPO+ y CRPTO"
 
 frontier = read_table("crpto_tableA19_regret_auditability_frontier.csv")
-frontier
+frontier[
+    [
+        "method",
+        "mean_regret",
+        "regret_delta_vs_two_stage_pct",
+        "coverage_90_range",
+        "exact_funded_set_bound",
+        "robust_region_pass",
+        "auditability_evidence_count",
+    ]
+].round(4)
 ```
 
 ![Frontera regret-auditability: SPO+ reduce regret; CRPTO robust acumula controles verificables de riesgo.](../assets/figures/publication/crpto_fig15_regret_auditability_frontier.png){#fig-p1-regret-auditability fig-alt="Scatter plot con regret medio en el eje x y controles verificables de riesgo en el eje y para two-stage, SPO+ y CRPTO robust."}
@@ -237,7 +270,17 @@ apareceria?".
 #| tbl-cap: "A20. Auditoria tail-satisficing de las 45 policies alpha-safe"
 
 tail_challenger = read_table("crpto_tableA20_tail_satisficing_challenger_audit.csv")
-tail_challenger.head(12)
+tail_challenger[
+    [
+        "tail_satisficing_rank",
+        "paper_role",
+        "realized_total_return",
+        "return_delta_vs_champion_pct",
+        "cvar_95_loss_rate",
+        "entropic_oce_theta5",
+        "satisficing_pass",
+    ]
+].head(12).round(4)
 ```
 
 Lectura: el challenger rank 1 reduce el CVaR 95% frente al economic champion con
@@ -259,7 +302,17 @@ principal del paper.
 #| tbl-cap: "A21. Cotas cluster-aware bajo supuestos adicionales de independencia"
 
 cluster_bounds = read_table("crpto_tableA21_cluster_bound_tightening.csv")
-cluster_bounds
+cluster_bounds[
+    [
+        "cluster_type",
+        "n_clusters",
+        "max_cluster_exposure_share",
+        "delta",
+        "markov_sqrt_alpha_threshold",
+        "cluster_hoeffding_threshold",
+        "cluster_bound_tighter_than_markov",
+    ]
+].round(4)
 ```
 
 ### A22. Re-optimizacion con restriccion de cola (CVaR/OCE)
