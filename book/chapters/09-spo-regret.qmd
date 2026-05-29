@@ -172,7 +172,7 @@ verificables. El eje vertical no es un score subjetivo; cuenta tres checks que
 un reviewer puede auditar desde artefactos congelados: cobertura temporal sobre
 target, bound exacto del funded set y region robusta `45/45`.
 
-![Frontera regret-auditability usada para separar el claim de SPO+ del claim de CRPTO.](../../reports/crpto/figures/crpto_fig15_regret_auditability_frontier.png){#fig-spo-regret-auditability fig-alt="Scatter plot que compara two-stage, SPO+ y CRPTO robust por regret medio y controles verificables de riesgo."}
+![Frontera regret-auditability usada para separar el claim de SPO+ del claim de CRPTO.](../assets/figures/publication/crpto_fig15_regret_auditability_frontier.png){#fig-spo-regret-auditability fig-alt="Scatter plot que compara two-stage, SPO+ y CRPTO robust por regret medio y controles verificables de riesgo."}
 
 Esta figura permite decir en el cuerpo del paper que CRPTO no intenta ganar el
 torneo de regret puro. La historia publicable es mas fuerte: cuando un comite

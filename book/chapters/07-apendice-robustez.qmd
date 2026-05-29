@@ -50,7 +50,7 @@ La Figura @fig-p1-crpto-conceptual es la candidata natural para Figura 1 del
 paper. Su valor es editorial: muestra que la incertidumbre no es un diagnostico
 posterior, sino una restriccion que viaja hasta la decision.
 
-![Pipeline conceptual CRPTO: PD calibrada, intervalo conformal, conjunto de incertidumbre, LP robusto, funded set y evaluacion del bound.](../../reports/crpto/figures/crpto_fig12_crpto_conceptual_pipeline.png){#fig-p1-crpto-conceptual fig-alt="Diagrama horizontal de seis bloques que conecta PD calibrada, intervalo conformal, uncertainty set, LP robusto, funded set y bound eval."}
+![Pipeline conceptual CRPTO: PD calibrada, intervalo conformal, conjunto de incertidumbre, LP robusto, funded set y evaluacion del bound.](../assets/figures/publication/crpto_fig12_crpto_conceptual_pipeline.png){#fig-p1-crpto-conceptual fig-alt="Diagrama horizontal de seis bloques que conecta PD calibrada, intervalo conformal, uncertainty set, LP robusto, funded set y bound eval."}
 
 ### Alpha, `Gamma_CP` y funded set
 
@@ -58,7 +58,7 @@ La Figura @fig-p1-alpha-gamma-funded-set conecta el parametro conformal con las
 cantidades que el comite de riesgo si puede leer: prima de robustez, no
 cobertura ponderada y numero de prestamos financiados.
 
-![Relacion entre alpha, Gamma_CP, no-cobertura ponderada V y numero de prestamos financiados.](../../reports/crpto/figures/crpto_fig13_alpha_gamma_funded_set.png){#fig-p1-alpha-gamma-funded-set fig-alt="Grafica de lineas que muestra Gamma_CP, V, raiz de alpha y numero de prestamos financiados al variar alpha."}
+![Relacion entre alpha, Gamma_CP, no-cobertura ponderada V y numero de prestamos financiados.](../assets/figures/publication/crpto_fig13_alpha_gamma_funded_set.png){#fig-p1-alpha-gamma-funded-set fig-alt="Grafica de lineas que muestra Gamma_CP, V, raiz de alpha y numero de prestamos financiados al variar alpha."}
 
 ### Region robusta `45/45`
 
@@ -66,7 +66,7 @@ La Figura @fig-p1-robust-region-heatmap es la evidencia visual de que el
 champion no es un punto aislado. Cada celda resume la mejor rentabilidad de una
 familia `risk_tolerance` por `gamma`, dentro de la mini-grid final exacta.
 
-![Heatmap de la region robusta final por risk_tolerance y gamma.](../../reports/crpto/figures/crpto_fig14_robust_region_heatmap.png){#fig-p1-robust-region-heatmap fig-alt="Heatmap de retornos por risk tolerance y gamma; todas las familias pasan alpha01 en la region robusta final."}
+![Heatmap de la region robusta final por risk_tolerance y gamma.](../assets/figures/publication/crpto_fig14_robust_region_heatmap.png){#fig-p1-robust-region-heatmap fig-alt="Heatmap de retornos por risk tolerance y gamma; todas las familias pasan alpha01 en la region robusta final."}
 
 ### A12. Tail risk OCE/CVaR
 
@@ -218,7 +218,7 @@ frontier = read_table("crpto_tableA19_regret_auditability_frontier.csv")
 frontier
 ```
 
-![Frontera regret-auditability: SPO+ reduce regret; CRPTO robust acumula controles verificables de riesgo.](../../reports/crpto/figures/crpto_fig15_regret_auditability_frontier.png){#fig-p1-regret-auditability fig-alt="Scatter plot con regret medio en el eje x y controles verificables de riesgo en el eje y para two-stage, SPO+ y CRPTO robust."}
+![Frontera regret-auditability: SPO+ reduce regret; CRPTO robust acumula controles verificables de riesgo.](../assets/figures/publication/crpto_fig15_regret_auditability_frontier.png){#fig-p1-regret-auditability fig-alt="Scatter plot con regret medio en el eje x y controles verificables de riesgo en el eje y para two-stage, SPO+ y CRPTO robust."}
 
 Lectura para el paper: CRPTO no promete dominar a SPO+ en regret puro. Su
 contribucion es hacer visible el precio de comprar cobertura, bound exacto y
@@ -244,7 +244,7 @@ Lectura: el challenger rank 1 reduce el CVaR 95% frente al economic champion con
 una perdida de retorno cercana a 2%. Es evidencia de trade-off, no una
 correccion de la policy promovida.
 
-![Frontera tail-risk vs. retorno sobre las 45 políticas de la región robusta (Tabla A20). Doce políticas pasan el comité de *satisficing*; el champion económico congelado (estrella) sacrifica algo de riesgo de cola a cambio de retorno en lugar de minimizar la CVaR, lo que muestra que el resultado es un punto defendible dentro de la región robusta y no la esquina de menor cola.](../../reports/crpto/figures/crpto_fig16_tail_risk_frontier.png){#fig-p1-tail-risk-frontier fig-alt="Scatter de retorno realizado (eje x) contra CVaR 95% (eje y) para las 45 políticas de la región robusta; las que pasan satisficing en azul lleno, las que fallan en círculos grises huecos, y el champion económico como estrella naranja en la zona de mayor retorno."}
+![Frontera tail-risk vs. retorno sobre las 45 políticas de la región robusta (Tabla A20). Doce políticas pasan el comité de *satisficing*; el champion económico congelado (estrella) sacrifica algo de riesgo de cola a cambio de retorno en lugar de minimizar la CVaR, lo que muestra que el resultado es un punto defendible dentro de la región robusta y no la esquina de menor cola.](../assets/figures/publication/crpto_fig16_tail_risk_frontier.png){#fig-p1-tail-risk-frontier fig-alt="Scatter de retorno realizado (eje x) contra CVaR 95% (eje y) para las 45 políticas de la región robusta; las que pasan satisficing en azul lleno, las que fallan en círculos grises huecos, y el champion económico como estrella naranja en la zona de mayor retorno."}
 
 ### A21. Bound cluster-aware
 

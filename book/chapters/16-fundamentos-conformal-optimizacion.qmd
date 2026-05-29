@@ -680,7 +680,7 @@ En este proyecto, SPO+ se aplica de la siguiente manera:
 
 ::: {.callout-note}
 ## Resultado empírico
-El pipeline SPO+ v2 del proyecto logra una **reducción de regret del 48.51%** respecto al two-stage baseline en el cierre curado PyEPO 1.3.7, con significancia estadística (Wilcoxon `p = 3.80e-163`). Esto demuestra que optimizar directamente la calidad de la decisión crediticia produce portafolios sustancialmente mejores que optimizar la precisión de la predicción y luego usar esas predicciones como entrada a un optimizador.
+El pipeline SPO+ v2 del proyecto logra una **reducción de regret del 49.09%** respecto al two-stage baseline en el artefacto local A19/Figura 15 (`0.425896` a `0.216837`, Wilcoxon `p = 1.39e-164`). El cierre curado PyEPO 1.3.7 reporta una lectura compatible de **48.51%** bajo un protocolo pareado separado (`0.358073` a `0.184366`, Wilcoxon `p = 3.80e-163`). Esto demuestra que optimizar directamente la calidad de la decisión crediticia produce portafolios sustancialmente mejores que optimizar la precisión de la predicción y luego usar esas predicciones como entrada a un optimizador.
 :::
 
 Un aspecto crítico de implementación es que SPO+ requiere costos **continuos**, no binarios. Usar labels binarios de default (0/1) produce un paisaje de pérdida plano donde el gradiente de SPO+ es casi cero. Por esto, el proyecto utiliza las PDs calibradas como costos del LP, lo que produce un paisaje de gradientes informativo.

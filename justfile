@@ -69,6 +69,18 @@ paper-ijds-supplement:
 # Render the current submission-shaped manuscript surfaces.
 paper-submission: paper-ijds paper-ijds-supplement
 
+# IJDS-oriented manuscript body (local HTML-print PDF verification draft).
+paper-ijds-pdf:
+    uv run python scripts/render_submission_pdf_previews.py --body-only
+
+# IJDS-oriented online supplement (local HTML-print PDF verification draft).
+paper-ijds-supplement-pdf:
+    uv run python scripts/render_submission_pdf_previews.py --supplement-only
+
+# Render local PDF verification drafts for the submission surfaces.
+paper-submission-pdf: paper-submission
+    uv run python scripts/render_submission_pdf_previews.py
+
 # --- Quarto book ---------------------------------------------------------
 
 book:

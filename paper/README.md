@@ -16,6 +16,8 @@ the submission-shaped versions are written.
 - `CRPTO.qmd`: generic landing manuscript stub.
 - `CRPTO_ijds.qmd`: IJDS-style anonymous body source.
 - `supplement_ijds.qmd`: IJDS-style online supplement source.
+- `submission/README.md`: IJDS handoff checklist, anonymity guardrails, PDF
+  draft commands, and SPO+ numbering rule.
 
 Selected P2/P3-inspired diagnostics are part of the current paper/journal pack:
 regret-auditability, OCE/CVaR tail risk, robust satisficing margins, and the
@@ -31,11 +33,14 @@ remain future work.
 just paper-ijds
 just paper-ijds-supplement
 just paper-submission
+just paper-submission-pdf
 ```
 
-The final submission PDF should use the official venue template. These Quarto
-files are the writing source of truth until the IJDS LaTeX template is applied
-with double-anonymous settings.
+The HTML render is the writing preview; the PDF render is an HTML-print
+verification draft produced from the anonymous previews. The final submission
+PDF should use the official venue template. These Quarto files are the writing
+source of truth until the IJDS LaTeX template is applied with double-anonymous
+settings.
 
 ## Closeout Gates
 

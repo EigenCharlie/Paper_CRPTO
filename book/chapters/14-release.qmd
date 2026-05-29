@@ -66,7 +66,7 @@ o nueva teoría principal, queda en backlog y no bloquea este submission.
 | `14g` | Blueprint del manuscrito | insumo | insumo | sí | Usar como skeleton; no citar como resultado. |
 | `14h` | Appendix A12--A21 | appendix selectivo | appendix fuerte | sí | Diagnóstico journal, no nueva promoción del champion. |
 | `14i` | Ablación Mondrian | appendix corto | appendix | sí | Defender `score_decile_mondrian` vs `grade`. |
-| `14j` | Protocolo SPO+ | appendix corto | appendix | sí | Separar regret 48.51% de cobertura/auditabilidad. |
+| `14j` | Protocolo SPO+ | appendix corto | appendix | sí | Separar A19/Figura 15 (`49.09%`) del closeout PyEPO (`48.51%`) y de cobertura/auditabilidad. |
 | `14k` | Fair lending checkpoint | appendix/governance | appendix | sí | Proxy/intersectional, no certificación legal de atributos protegidos. |
 | `14l` | MRM / SR 11-7 | appendix/governance | appendix | sí | Fortalece auditabilidad, no metodología nueva. |
 | `14m` | Funded set composition | appendix resultados | appendix | sí | Mostrar que el champion no depende de un segmento oculto. |
@@ -124,6 +124,8 @@ Manifest de tablas para decidir cuerpo, appendix y tesis.
 | Fig 13 | `crpto_fig13_alpha_gamma_funded_set` | Sí | Sí | Sí | Une teoría y decisión. |
 | Fig 14 | `crpto_fig14_robust_region_heatmap` | Sí | Sí | Sí | Muestra región robusta, no punto aislado. |
 | Fig 15 | `crpto_fig15_regret_auditability_frontier` | Sí | Sí | Sí | Separa el claim de regret SPO+ del claim de auditabilidad CRPTO. |
+| Fig 16 | `crpto_fig16_tail_risk_frontier` | No | Sí | Sí | Muestra el frontier retorno--CVaR del challenger tail-satisficing como auditoría, no como reemplazo del champion. |
+| Fig 17 | `crpto_fig17_tail_risk_lgd` | No | Sí | Sí | Sensibilidad LGD del funded set congelado; confirma que CVaR/OCE son diagnósticos de cola. |
 | Fig alpha-gamma | `crpto_fig_alpha_gamma_bound` | Quizá | Sí | Sí | Figura técnica del bound. |
 
 Manifest de figuras para extraer paper y appendix.
@@ -193,10 +195,14 @@ La decision activa de publicacion es:
 Decision de venue, plantilla y salida actual.
 :::
 
-No se instala todavia la plantilla final porque el texto debe madurar primero en
-Quarto. Cuando el borrador IJDS este estable, se copia/convierte a la plantilla
-oficial IJDS y se aplica la politica de anonimato antes de generar el PDF de
-submission.
+La fuente activa de escritura vive en Quarto (`paper/CRPTO_ijds.qmd` y
+`paper/supplement_ijds.qmd`) y ya mantiene autoría anónima para revisión. El
+paquete operativo de submission vive en `paper/submission/`: conserva checklist
+de anonimato, comandos de render, enlaces a la plantilla oficial IJDS y la regla
+de no venderizar plantillas o material privado dentro del repo. La conversión
+final a PDF de submission usa la plantilla oficial IJDS con `dblanonrev`; los
+PDF generados por Quarto son borradores locales de verificación, no sustitutos
+del estilo oficial del journal.
 
 ### Release checklist para congelar una versión paper-facing
 
@@ -211,18 +217,19 @@ del dossier está lista para ser usada como fuente de manuscrito.
 | Quarto registrado | `uv run pytest tests/test_quarto_book_guardrails.py` | Todas las páginas `.qmd` están en `_quarto.yml`. |
 | Venue definido | `configs/crpto_publication_targets.yaml` | IJDS primario y EJOR pivote siguen declarados. |
 | Manuscrito + supplement IJDS | `just paper-submission` | `paper/CRPTO_ijds.html` y `paper/supplement_ijds.html` renderizan sin ejecutar pipeline. |
+| PDF local de verificación | `just paper-submission-pdf` | `paper/CRPTO_ijds.pdf` y `paper/supplement_ijds.pdf` renderizan como borradores HTML-print para inspección visual; el PDF oficial usa la plantilla IJDS. |
 | Alcance P2/P3 | `configs/crpto_publication_targets.yaml` + esta página | Journal strengthening pack entra como diagnóstico/framing; extensiones metodológicas quedan future work. |
 | Tablas canónicas | `uv run python scripts/export_crpto_tables.py` | A0 usa `models/final_project_promotion.json`. |
 | P1 evidence | `uv run python scripts/analyze_crpto_evidence.py --include-hardening` | A3--A11 actualizadas y status JSON coherente. |
-| Journal package | `uv run python scripts/build_crpto_journal_package.py` | Tablas journal base y Fig 12--15 actualizadas. |
+| Journal package | `uv run python scripts/build_crpto_journal_package.py` | Tablas journal base y status JSON actualizados. |
 | Tail-satisficing audit | `uv run python scripts/build_tail_satisficing_challenger_audit.py` | A20--A21 actualizadas. |
-| Figuras paper-facing | `uv run python scripts/generate_crpto_figures.py` | Fig 7--11 reproducibles. |
+| Figuras paper-facing | `uv run python scripts/generate_crpto_figures.py` | Fig 7--17 reproducibles desde artefactos congelados. |
 | DVC local | `uv run dvc status --no-updates` | Datos y pipelines al día. |
 | DagsHub remote | `uv run dvc status -c -r dagshub` | Cache y remoto sincronizados. |
 | Companion surface | `14o` + `14n` | Quarto/DVC/MLflow declarados como companion primario; Streamlit no bloquea release. |
 | Render targeted | `uv run -- quarto render book/chapters/14-release.qmd --to html --no-execute` | Página renderiza sin errores. |
 | Hooks | `uv run pre-commit run` | Sin drift de formato ni archivos grandes. |
-| Plantilla IJDS | `INFORMS-IJDS-Template.tex` | Conversión final usa `dblanonrev`; no se inventa estilo propio. |
+| Plantilla IJDS | `paper/submission/README.md` + fuente oficial INFORMS | Conversión final usa `dblanonrev`; no se inventa estilo propio ni se publica material privado del venue. |
 
 Checklist de release paper-facing.
 :::
