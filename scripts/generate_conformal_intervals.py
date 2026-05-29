@@ -56,27 +56,14 @@ TARGET_COL = "default_flag"
 GROUP_COL = "grade"
 
 
-def _resolve_artifact_paths(
-    namespace: str | None = None,
-    artifact_root: str | Path | None = None,
-) -> dict[str, Path]:
+def _resolve_artifact_paths(namespace: str | None = None) -> dict[str, Path]:
     if namespace:
         ns = str(namespace).strip().replace("/", "_")
-        if artifact_root is not None:
-            root = Path(artifact_root)
-            data_dir = root / ns / "data"
-            models_dir = root / ns / "models"
-        else:
-            data_dir = Path("data/processed/conformal_gap") / ns
-            models_dir = Path("models/conformal_gap") / ns
+        data_dir = Path("data/processed/conformal_gap") / ns
+        models_dir = Path("models/conformal_gap") / ns
     else:
-        if artifact_root is not None:
-            root = Path(artifact_root)
-            data_dir = root / "data"
-            models_dir = root / "models"
-        else:
-            data_dir = Path("data/processed")
-            models_dir = Path("models")
+        data_dir = Path("data/processed")
+        models_dir = Path("models")
     data_dir.mkdir(parents=True, exist_ok=True)
     models_dir.mkdir(parents=True, exist_ok=True)
     return {
@@ -167,9 +154,9 @@ def _stage_metrics(
     }
 
 
-def _load_model(model_override_path: str | None = None) -> tuple[CatBoostClassifier, Path]:
+def _load_model() -> tuple[CatBoostClassifier, Path]:
     """Load canonical PD model (with fallback candidates)."""
-    model_path = Path(model_override_path) if model_override_path else resolve_model_path()
+    model_path = resolve_model_path()
 
     model = CatBoostClassifier()
     model.load_model(str(model_path))
@@ -194,27 +181,19 @@ def _resolve_features(
     model: CatBoostClassifier,
     cal_df: pd.DataFrame,
     test_df: pd.DataFrame,
-    contract_path: Path | None = None,
 ) -> tuple[list[str], list[str]]:
     """Resolve feature list, preferring explicit contract then model metadata."""
-    contract_candidates = []
-    if contract_path is not None:
-        contract_candidates.append(contract_path)
-    if CONTRACT_PATH not in contract_candidates:
-        contract_candidates.append(CONTRACT_PATH)
-
-    for candidate in contract_candidates:
-        contract = load_contract(candidate)
-        if isinstance(contract, dict):
-            contract_features = contract.get("feature_names", [])
-            contract_categorical = contract.get("categorical_features", [])
-            if contract_features:
-                categorical = [c for c in contract_categorical if c in contract_features]
-                logger.info(
-                    f"Using {len(contract_features)} contract features "
-                    f"({len(categorical)} categorical) from {candidate}"
-                )
-                return list(contract_features), categorical
+    contract = load_contract(CONTRACT_PATH)
+    if isinstance(contract, dict):
+        contract_features = contract.get("feature_names", [])
+        contract_categorical = contract.get("categorical_features", [])
+        if contract_features:
+            categorical = [c for c in contract_categorical if c in contract_features]
+            logger.info(
+                f"Using {len(contract_features)} contract features ({len(categorical)} categorical) "
+                f"from {CONTRACT_PATH}"
+            )
+            return list(contract_features), categorical
 
     model_features = list(getattr(model, "feature_names_", []) or [])
     if model_features:
@@ -372,8 +351,6 @@ def main(
     mode: str = "search",
     replay_manifest_path: str | None = None,
     calibrator_override_path: str | None = None,
-    model_override_path: str | None = None,
-    artifact_root: str | Path | None = None,
 ):
     logger.info("Starting Mondrian conformal interval generation with 90% auto-tuning")
     run_mode = str(mode or "search").strip().lower() or "search"
@@ -389,7 +366,7 @@ def main(
         return
 
     # Load artifacts and data.
-    model, model_path = _load_model(model_override_path)
+    model, model_path = _load_model()
     calibrator = _load_calibrator(calibrator_override_path)
     cal_df = read_with_fallback(
         "data/processed/calibration_fe.parquet", "data/processed/calibration.parquet"
@@ -401,12 +378,7 @@ def main(
     if GROUP_COL not in cal_df.columns or GROUP_COL not in test_df.columns:
         raise KeyError(f"Missing group column '{GROUP_COL}' in calibration/test data.")
 
-    features, categorical = _resolve_features(
-        model,
-        cal_df,
-        test_df,
-        contract_path=model_path.parent / "pd_model_contract.json",
-    )
+    features, categorical = _resolve_features(model, cal_df, test_df)
     X_cal = _build_feature_matrix(cal_df, features, categorical)
     y_cal = cal_df[TARGET_COL].astype(float)
     X_test = _build_feature_matrix(test_df, features, categorical)
@@ -1200,7 +1172,7 @@ def main(
     )
 
     # Persist artifacts.
-    paths = _resolve_artifact_paths(artifact_namespace, artifact_root=artifact_root)
+    paths = _resolve_artifact_paths(artifact_namespace)
     intervals_mondrian_path = paths["intervals"]
     group_metrics_path = paths["group_metrics"]
     tuning_path = paths["tuning"]
@@ -1225,7 +1197,6 @@ def main(
 
     payload = {
         "model_path": str(model_path),
-        "model_override_path": str(model_override_path or ""),
         "calibrator_override_path": str(calibrator_override_path or ""),
         "metrics_90": {k: to_python_scalar(v) for k, v in metrics_90.items()},
         "metrics_95": {k: to_python_scalar(v) for k, v in metrics_95.items()},
@@ -1374,8 +1345,6 @@ if __name__ == "__main__":
     parser.add_argument("--calibration_fraction", type=float, default=1.0)
     parser.add_argument("--evaluation_scope", choices=["test", "holdout"], default="test")
     parser.add_argument("--artifact_namespace", default=None)
-    parser.add_argument("--artifact_root", default=None)
-    parser.add_argument("--model_override_path", default=None)
     parser.add_argument("--calibrator_override_path", default=None)
     parser.add_argument("--mode", choices=["search", "replay"], default="search")
     parser.add_argument("--replay_manifest", default=None)
@@ -1437,6 +1406,4 @@ if __name__ == "__main__":
         ),
         mode=str(args.mode),
         replay_manifest_path=args.replay_manifest,
-        model_override_path=args.model_override_path,
-        artifact_root=args.artifact_root,
     )
