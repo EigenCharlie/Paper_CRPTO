@@ -153,7 +153,7 @@ tail-risk summaries of the frozen funded set, not as the optimized objective.
 
 ![Tail-risk versus realized return across the 45-policy robust region (Table A20). Twelve policies pass the satisficing committee; the frozen economic champion (star) deliberately trades some tail risk for return rather than minimizing CVaR, so the headline result is a defendable point inside the robust region rather than the lowest-tail corner.](../reports/crpto/figures/crpto_fig16_tail_risk_frontier.png){#fig-supp-tail-frontier width="90%"}
 
-![Tail risk of the frozen funded set under varying loss-given-default (Table A12). CVaR grows with the assumed LGD while the OCE and the mean loss rate stay milder, confirming that OCE/CVaR enter the paper as post-hoc stress summaries rather than as the optimized objective.](../reports/crpto/figures/crpto_fig17_tail_risk_lgd.png){#fig-supp-tail-lgd width="82%"}
+![Tail risk of the frozen funded set under varying loss-given-default (Table A12). CVaR grows with the assumed LGD while the OCE and the mean loss rate stay milder, confirming that OCE/CVaR enter the paper as post-hoc stress summaries rather than as the optimized objective.](../reports/crpto/figures/crpto_fig17_tail_risk_lgd.png){#fig-supp-tail-lgd width="82%" fig-alt="Line chart of frozen funded-set loss rate versus LGD (0.35 to 0.60) for CVaR90, CVaR95, CVaR99, OCE and the mean; CVaR grows with LGD while OCE and the mean stay mild."}
 
 # Appendix D: Fair Lending, MRM, And Governance
 

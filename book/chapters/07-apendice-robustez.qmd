@@ -244,6 +244,8 @@ Lectura: el challenger rank 1 reduce el CVaR 95% frente al economic champion con
 una perdida de retorno cercana a 2%. Es evidencia de trade-off, no una
 correccion de la policy promovida.
 
+![Frontera tail-risk vs. retorno sobre las 45 políticas de la región robusta (Tabla A20). Doce políticas pasan el comité de *satisficing*; el champion económico congelado (estrella) sacrifica algo de riesgo de cola a cambio de retorno en lugar de minimizar la CVaR, lo que muestra que el resultado es un punto defendible dentro de la región robusta y no la esquina de menor cola.](../../reports/crpto/figures/crpto_fig16_tail_risk_frontier.png){#fig-p1-tail-risk-frontier fig-alt="Scatter de retorno realizado (eje x) contra CVaR 95% (eje y) para las 45 políticas de la región robusta; las que pasan satisficing en azul lleno, las que fallan en círculos grises huecos, y el champion económico como estrella naranja en la zona de mayor retorno."}
+
 ### A21. Bound cluster-aware
 
 Esta tabla convierte el caveat de dependencia en numeros. Bajo independencia

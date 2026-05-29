@@ -600,7 +600,7 @@ $$ {#eq-oce}
 
 La CVaR es un caso particular del OCE con desutilidad lineal a trozos $u(t)=\tfrac{1}{1-\beta}t^+$. El OCE entrega así una **familia paramétrica** de medidas coherentes que permite estresar el funded set bajo distintas aversiones a la cola sin reentrenar nada.
 
-![Riesgo de cola del funded set congelado bajo distintos supuestos de LGD (Tabla A12 del supplement). La CVaR crece con la severidad asumida de la pérdida, mientras que el OCE y la media se mantienen más suaves: confirma que CVaR/OCE operan como *diagnósticos de estrés* del champion, no como el objetivo optimizado.](../assets/figures/publication/crpto_fig17_tail_risk_lgd.png){#fig-tail-risk-lgd width="80%"}
+![Riesgo de cola del funded set congelado bajo distintos supuestos de LGD (Tabla A12 del supplement). La CVaR crece con la severidad asumida de la pérdida, mientras que el OCE y la media se mantienen más suaves: confirma que CVaR/OCE operan como *diagnósticos de estrés* del champion, no como el objetivo optimizado.](../assets/figures/publication/crpto_fig17_tail_risk_lgd.png){#fig-tail-risk-lgd width="80%" fig-alt="Gráfica de líneas del loss rate del funded set congelado frente a LGD (0.35 a 0.60) para CVaR90, CVaR95, CVaR99, OCE y la media; las CVaR crecen con la LGD mientras OCE y media permanecen bajas, con la LGD del champion (0.45) marcada."}
 
 ::: {.callout-note}
 ## Por qué la cola y no solo la media
