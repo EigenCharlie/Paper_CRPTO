@@ -89,10 +89,10 @@ La diferencia de ancho (0.7842 vs 0.7533) es real pero modesta: `score_decile_mo
 | Cobertura marginal 90% | 92.97% | 92.24% | Ambos sobre-cubren; diferencia de ~73 bps. |
 | Ancho medio 90% | 0.7842 | 0.7533 | El baseline es más estrecho; gana en eficiencia marginal. |
 | Cobertura mínima por grupo | 91.90% | 87.77% | Diferencia decisiva: el winner respeta el piso 90% por grupo. |
-| Winkler 90% | 1.111 | no reportado | Penaliza ancho cuando hay miscoverage; coherente con lectura de eficiencia. |
+| Winkler 90% | 1.111 | No reportado | Penaliza ancho cuando hay miscoverage; coherente con lectura de eficiencia. |
 | Promovibilidad (`policy_overall_pass`) | True | False | Sólo el winner pasa el gate de promoción. |
 | Justificación metodológica | True | False | Sólo el winner satisface la auditoría conformal. |
-| Aporte al cierre `bound-aware` | habilita región exacta `45/45` | aún fallaba `α=0.01` exacto | Diferencia decisiva del cierre final. |
+| Aporte al cierre `bound-aware` | Habilita región exacta `45/45` | Aún fallaba `α=0.01` exacto | Diferencia decisiva del cierre final. |
 
 Comparación de ejes entre el winner conformal y el baseline regulatorio `grade`.
 :::

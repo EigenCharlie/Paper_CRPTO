@@ -52,10 +52,10 @@ Las figuras `fig-conformal-coverage-grade` y `fig-conformal-width-tradeoff` anti
 
 | Chequeo operativo | Qué valida | Por qué importa |
 |---|---|---|
-| cobertura global | que el intervalo cumple la promesa promedio | evita vender una banda que luce precisa pero falla masivamente |
-| cobertura mínima por grupo | que los segmentos más delicados no queden desprotegidos | impide que un promedio global esconda problemas en grades concretos |
-| ancho promedio | que la incertidumbre siga siendo utilizable | un intervalo demasiado ancho puede ser correcto pero inútil |
-| alertas de backtesting | si la cobertura aguanta mejor el paso del tiempo | es la parte prudencial de conformal, no solo la parte estadística |
+| Cobertura global | Que el intervalo cumple la promesa promedio | Evita vender una banda que luce precisa pero falla masivamente |
+| Cobertura mínima por grupo | Que los segmentos más delicados no queden desprotegidos | Impide que un promedio global esconda problemas en grades concretos |
+| Ancho promedio | Que la incertidumbre siga siendo utilizable | Un intervalo demasiado ancho puede ser correcto pero inútil |
+| Alertas de backtesting | Si la cobertura aguanta mejor el paso del tiempo | Es la parte prudencial de conformal, no solo la parte estadística |
 
 : Checklist editorial de validez conformal en el pipeline
 

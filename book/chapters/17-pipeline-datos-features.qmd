@@ -20,10 +20,10 @@ Las herramientas se eligieron con tres criterios:
 
 | Principio de ingeniería | Cómo se materializa en este proyecto |
 |---|---|
-| una sola fuente de verdad | lógica reusable en `src/`, no duplicada entre scripts, notebooks y Streamlit |
-| contratos explícitos | schemas Pandera, configs YAML y artefactos versionados |
-| baseline abierto | CatBoost, MAPIE, Pyomo, HiGHS, DVC y Quarto sin dependencia de licencias cerradas |
-| separación de carriles | baseline operativo CPU vs insight factory / research en GPU |
+| Una sola fuente de verdad | Lógica reusable en `src/`, no duplicada entre scripts, notebooks y Streamlit |
+| Contratos explícitos | Schemas Pandera, configs YAML y artefactos versionados |
+| Baseline abierto | CatBoost, MAPIE, Pyomo, HiGHS, DVC y Quarto sin dependencia de licencias cerradas |
+| Separación de carriles | Baseline operativo CPU vs insight factory / research en GPU |
 
 : Prácticas de ingeniería que sostienen el stack, más allá de la lista de librerías
 
@@ -240,11 +240,11 @@ Las herramientas GPU son parte del *insights factory* --- un carril de investiga
 
 | Bloque | Riesgo metodológico dominante | Mitigación en el stack |
 |---|---|---|
-| datos | leakage, mezcla de cortes temporales, drift silencioso | DVC, dbt, Pandera, splits OOT |
-| modelado PD | sobreajuste, mala calibración, métricas engañosas | Optuna, calibration layer, tests y benchmarks |
-| conformal | buena cobertura global pero mala utilidad por grupo o en el tiempo | Mondrian, policy status, backtesting, Winkler |
-| optimización | maximizar retorno ignorando ambigüedad | uncertainty sets + policy champion |
-| IFRS9 / governance | provisiones sensibles a supuestos y artefactos opacos | escenarios, MRM, registry, fairness, explainability |
+| Datos | Leakage, mezcla de cortes temporales, drift silencioso | DVC, dbt, Pandera, splits OOT |
+| Modelado PD | Sobreajuste, mala calibración, métricas engañosas | Optuna, calibration layer, tests y benchmarks |
+| Conformal | Buena cobertura global pero mala utilidad por grupo o en el tiempo | Mondrian, policy status, backtesting, Winkler |
+| Optimización | Maximizar retorno ignorando ambigüedad | Uncertainty sets + policy champion |
+| IFRS9 / governance | Provisiones sensibles a supuestos y artefactos opacos | Escenarios, MRM, registry, fairness, explainability |
 
 : Riesgos metodológicos y la parte del stack que los contiene
 
@@ -258,7 +258,7 @@ Las herramientas GPU son parte del *insights factory* --- un carril de investiga
 | Pyomo | 6.8+ | `pyproject.toml` |
 | HiGHS | 1.10+ | `pyproject.toml` |
 | Quarto | 1.9.35 | `quarto --version` |
-| uv | latest | `uv --version` |
+| Uv | Latest | `uv --version` |
 
 : Versiones clave del stack
 
@@ -382,11 +382,11 @@ El dataset `loan_master` es el input principal del pipeline. El `time_series` al
 
 | Dataset / artefacto | Consumidores principales | Qué evita |
 |---|---|---|
-| `lending_club_cleaned.parquet` | preparación temporal, QA, EDA | repetir limpieza en notebooks y scripts |
-| `Train`, `Calibration`, `Test OOT` | PD, conformal, monitoreo | mezclar ajuste, calibración y evaluación final |
-| `loan_master.parquet` | PD, survival, causal, explainability, portafolio | mantener varias copias divergentes de features base |
-| `time_series.parquet` | forecasting, escenarios IFRS9, stress temporal | derivar series cada vez desde cero |
-| `ead_dataset.parquet` | severidad / exposición al default | contaminar EAD con préstamos irrelevantes para ese objetivo |
+| `lending_club_cleaned.parquet` | Preparación temporal, QA, EDA | Repetir limpieza en notebooks y scripts |
+| `Train`, `Calibration`, `Test OOT` | PD, conformal, monitoreo | Mezclar ajuste, calibración y evaluación final |
+| `loan_master.parquet` | PD, survival, causal, explainability, portafolio | Mantener varias copias divergentes de features base |
+| `time_series.parquet` | Forecasting, escenarios IFRS9, stress temporal | Derivar series cada vez desde cero |
+| `ead_dataset.parquet` | Severidad / exposición al default | Contaminar EAD con préstamos irrelevantes para ese objetivo |
 
 : Por qué existen varios datasets y quién los consume
 
@@ -421,8 +421,8 @@ Cada transición deja inputs y outputs explícitos. Eso ayuda a auditar qué pro
 | `make_dataset` | `src/data/make_dataset.py` | `lending_club_cleaned.parquet` | ¿Ya tenemos una versión limpia y defendible del dataset crudo? |
 | `prepare_dataset` | `src/data/prepare_dataset.py` | `train/calibration/test` | ¿La evaluación respeta el tiempo y separa calibración del test? |
 | `build_datasets` | `src/data/build_datasets.py` | `loan_master`, `time_series`, `ead_dataset` | ¿Cada módulo downstream recibe el insumo correcto? |
-| `dbt + Feast` | staging semántico y catálogo de features | vistas y features declaradas | ¿Dónde vive la definición estable de una feature? |
-| `DVC lock + artifacts` | repositorio y storage remoto | huellas de versión | ¿Qué run produjo exactamente el artefacto citado en el libro? |
+| `dbt + Feast` | Staging semántico y catálogo de features | Vistas y features declaradas | ¿Dónde vive la definición estable de una feature? |
+| `DVC lock + artifacts` | Repositorio y storage remoto | Huellas de versión | ¿Qué run produjo exactamente el artefacto citado en el libro? |
 
 : Resumen operativo de DuckDB, dbt, Feast y DVC en la cadena de datos
 

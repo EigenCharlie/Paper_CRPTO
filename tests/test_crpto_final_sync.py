@@ -74,7 +74,12 @@ def test_crpto_champion_artifacts_agree() -> None:
 
 
 def test_crpto_status_paths_are_sanitized() -> None:
-    for path in ["models/crpto_evidence_status.json", "models/crpto_journal_package_status.json"]:
+    for path in [
+        "models/crpto_evidence_status.json",
+        "models/crpto_journal_package_status.json",
+        "models/crpto_tail_constrained_reopt_status.json",
+        "models/crpto_distribution_robustness_status.json",
+    ]:
         text = Path(path).read_text(encoding="utf-8").lower()
         assert not any(token in text for token in LEGACY_TOKENS)
 
@@ -84,6 +89,9 @@ def test_crpto_tables_and_figures_exist() -> None:
         "reports/crpto/tables/crpto_table0_key_metrics.csv",
         "reports/crpto/tables/crpto_tableA7_funded_set_loans.csv",
         "reports/crpto/tables/crpto_tableA18_robust_region_policy_family.csv",
+        "reports/crpto/tables/crpto_tableA22_tail_constrained_reoptimization.csv",
+        "reports/crpto/tables/crpto_tableA23_multidistribution_robustness.csv",
+        "reports/crpto/tables/crpto_tableA24_online_conformal_stability.csv",
         "reports/crpto/figures/crpto_fig12_crpto_conceptual_pipeline.png",
         "reports/crpto/figures/crpto_fig14_robust_region_heatmap.png",
     ]

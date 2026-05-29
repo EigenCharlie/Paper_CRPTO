@@ -63,7 +63,7 @@ El paper actual es fuerte como **CRPTO post-hoc auditable**: toma una PD calibra
 
 ::: {.callout-tip}
 ## Lectura editorial recomendada
-El claim fuerte no es "CRPTO domina a SPO+ en toda metrica". El claim publicable es mas preciso: CRPTO paga un precio de regret para comprar auditabilidad, cobertura verificable y una region robusta exacta dentro de la cual la policy economica puede promoverse sin ambiguedad. Esa lectura alinea el paper con Management Science / Operations Research / EJOR mejor que una narrativa de leaderboard unico.
+El claim fuerte no es "CRPTO domina a SPO+ en toda metrica". El claim publicable es mas preciso: CRPTO paga un precio de regret para comprar auditabilidad, cobertura verificable y una region robusta exacta dentro de la cual la policy economica puede promoverse sin ambiguedad. Esa lectura alinea el paper con el encaje de *INFORMS Journal on Data Science* --- data science reproducible al servicio de una decision --- mejor que una narrativa de leaderboard unico.
 :::
 
 ### Relevancia metodologica

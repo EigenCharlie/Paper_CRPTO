@@ -262,31 +262,125 @@ cluster_bounds = read_table("crpto_tableA21_cluster_bound_tightening.csv")
 cluster_bounds
 ```
 
-### Appendix A3--A21 recomendado
+### A22. Re-optimizacion con restriccion de cola (CVaR/OCE)
+
+Esta tabla cierra el item P2 "OCE/CVaR como restriccion re-optimizada":
+convierte el diagnostico de cola A12 en una **restriccion activa de seleccion**.
+Re-resuelve las 45 politicas de la region robusta con HiGHS, mide para cada
+funded set la CVaR 95% y el OCE entropico del peor caso *decision-time* ---
+basado en la cota conformal `pd_high` ($u_i$), no en defaults observados --- y
+barre un techo de CVaR como constraint: en cada nivel selecciona la politica
+`alpha01`-safe de mayor retorno que respeta el techo. El resultado es la frontera
+retorno-vs-cola y una politica *tail-constrained challenger*. La decision se toma
+solo con intervalos conformales; los labels entran unicamente en el retorno
+realizado congelado. No reabre la busqueda del champion ni reemplaza la policy
+oficial: el economic champion sigue siendo el champion promovido.
+
+```{python}
+#| label: tbl-crpto-journal-tail-constrained-reopt
+#| tbl-cap: "A22. Frontera retorno-vs-CVaR con techo de cola como restriccion de seleccion"
+
+tail_reopt = read_table("crpto_tableA22_tail_constrained_reoptimization.csv")
+tail_reopt
+```
+
+Lectura: la frontera muestra cuanto retorno se conserva al endurecer el techo de
+CVaR. Coherente con A20, el economic champion no es la esquina de menor cola: en
+el cierre `276k` ocupa el extremo de mayor retorno y mayor CVaR de la frontera, y
+sigue siendo la policy oficial. Al imponer un techo mas estricto aparece un
+*tail-constrained challenger* que reduce la CVaR *decision-time* a cambio de un
+costo de retorno acotado (cercano al `-2%`); ese challenger coincide con el rank 1
+de satisficing de A20, lo que refuerza que la lectura de trade-off es estable
+entre criterios. Como la cota usa
+`pd_high` (peor caso conformal), es mas conservadora que la CVaR realizada de
+A20, y es justamente la cantidad que un comite puede restringir *ex-ante*. El
+soporte teorico para tratar CVaR/OCE como objetivo de control conformal viene de
+[@angelopoulos2026nonmonotonic] (perdidas no monotonas), [@rockafellar2000cvar]
+(CVaR) y [@bental2007oce] (OCE). El estado reproducible queda en
+`models/crpto_tail_constrained_reopt_status.json`.
+
+### A23. Robustez multi-distribucion (cobertura por grupo y celda)
+
+Esta tabla responde el item P2 "robustez multi-distribucion / grupos
+desconocidos" en el espiritu de [@yang2026multidistribution] y
+[@bhattacharyya2026groupweighted]. Sobre los intervalos conformales congelados
+mide la cobertura 90% marginal, por `grade` y por la celda `grade x vintage` mas
+adversa con soporte minimo, para ver si la garantia sobrevive cuando una
+distribucion de grupo desconocida domina el conjunto de test.
+
+```{python}
+#| label: tbl-crpto-journal-multidistribution
+#| tbl-cap: "A23. Cobertura 90% por grupo y peor celda grade x vintage"
+
+multidist = read_table("crpto_tableA23_multidistribution_robustness.csv")
+multidist
+```
+
+Lectura: la cobertura marginal y la de cada `grade` se mantienen sobre el target
+90% --- grade E es el mas ajustado, coherente con la debilidad conformal
+documentada en el registro de negativos --- pero la peor celda `grade x vintage`
+cae por debajo del 90%. Es decir: la cobertura es robusta a nivel de grupo
+conocido, mientras que la celda fina mas adversa exhibe un gap. Ese es
+exactamente el riesgo que la cobertura multi-distribucion (MDCP /
+group-weighted) atacaria; aqui queda documentado como caveat honesto, no como
+fallo del champion. El estado reproducible queda en
+`models/crpto_distribution_robustness_status.json`.
+
+### A24. Estabilidad conformal online sobre la secuencia OOT
+
+Esta tabla aterriza el item P2 "conformal online" como diagnostico sobre la
+secuencia de vintages OOT, en el espiritu de ACI [@gibbs2021aci], gradient
+equilibrium [@angelopoulos2025gradient] y online CP via universal portfolios
+[@liu2026portfolio]. Reporta la cobertura por periodo, la cobertura acumulada
+("streaming") y la trayectoria del target `alpha_t` que seguiria un controlador
+ACI de Gibbs-Candes. Como el dataset es estatico (Lending Club cerro originacion
+en 2020), esto es un diagnostico de cuanto trabajaria un controlador online, no
+una validacion de streaming.
+
+```{python}
+#| label: tbl-crpto-journal-online-stability
+#| tbl-cap: "A24. Cobertura por vintage, cobertura acumulada y target ACI alpha_t"
+
+online_stab = read_table("crpto_tableA24_online_conformal_stability.csv")
+online_stab
+```
+
+Lectura: la cobertura se mantiene sobre el target en los 11 vintages y la
+cobertura acumulada converge cerca del 93%. La tasa de default cae fuertemente a
+lo largo de la secuencia, pero la cobertura no se degrada; en consecuencia, el
+target `alpha_t` del controlador ACI apenas se desplaza (deriva pequena, porque
+el sistema sobre-cubre). La lectura honesta es que la recalibracion online no es
+necesaria sobre este OOT estatico, y la tabla deja la receta para un despliegue
+en streaming real.
+
+### Appendix A3--A24 recomendado
 
 ::: {#tbl-crpto-appendix-map}
 
 | Tabla | Rol | Body o appendix |
 |---|---|---|
-| A3 | nested holdout 5k -> 25k -> 276k | appendix principal |
-| A4 | sensibilidad periodo-grade | appendix principal |
-| A5 | decision-aware conformal selector | appendix principal |
-| A6 | synthetic shift basico | appendix principal |
-| A7 | funded-set loan export | appendix online |
-| A8 | funded-set composition | appendix online |
-| A9 | strict temporal holdout | appendix principal |
-| A10 | exact eval ranks 1/2/3 | appendix principal |
-| A11 | enhanced synthetic shift | appendix principal |
-| A12 | OCE/CVaR tail risk | appendix journal |
-| A13 | satisficing margins | cuerpo corto o appendix |
-| A14 | dependencia por clusters | appendix teorico |
-| A15 | leave-one-period-out stress | appendix journal |
-| A16 | bootstrap funded-set metrics | appendix journal |
-| A17 | presupuesto, LGD y caps | appendix journal |
-| A18 | robust region by policy family | cuerpo corto o appendix |
-| A19 | regret-auditability frontier | cuerpo corto y appendix |
-| A20 | tail-satisficing challenger audit | appendix journal |
-| A21 | cluster-bound tightening | appendix teorico |
+| A3 | Nested holdout 5k -> 25k -> 276k | Appendix principal |
+| A4 | Sensibilidad periodo-grade | Appendix principal |
+| A5 | Decision-aware conformal selector | Appendix principal |
+| A6 | Synthetic shift basico | Appendix principal |
+| A7 | Funded-set loan export | Appendix online |
+| A8 | Funded-set composition | Appendix online |
+| A9 | Strict temporal holdout | Appendix principal |
+| A10 | Exact eval ranks 1/2/3 | Appendix principal |
+| A11 | Enhanced synthetic shift | Appendix principal |
+| A12 | OCE/CVaR tail risk | Appendix journal |
+| A13 | Satisficing margins | Cuerpo corto o appendix |
+| A14 | Dependencia por clusters | Appendix teorico |
+| A15 | Leave-one-period-out stress | Appendix journal |
+| A16 | Bootstrap funded-set metrics | Appendix journal |
+| A17 | Presupuesto, LGD y caps | Appendix journal |
+| A18 | Robust region by policy family | Cuerpo corto o appendix |
+| A19 | Regret-auditability frontier | Cuerpo corto y appendix |
+| A20 | Tail-satisficing challenger audit | Appendix journal |
+| A21 | Cluster-bound tightening | Appendix teorico |
+| A22 | CVaR/OCE tail-constrained re-optimization | Appendix journal |
+| A23 | Robustez multi-distribucion (grupo/celda) | Appendix journal |
+| A24 | Estabilidad conformal online (ACI) | Appendix journal |
 
 Mapa recomendado del appendix del CRPTO.
 :::
@@ -326,6 +420,8 @@ uv run python scripts/export_crpto_tables.py
 uv run python scripts/analyze_crpto_evidence.py
 uv run python scripts/build_crpto_journal_package.py
 uv run python scripts/build_tail_satisficing_challenger_audit.py
+uv run python scripts/build_tail_constrained_reoptimization.py
+uv run python scripts/build_distribution_robustness_diagnostics.py
 uv run pytest tests/test_crpto_final_sync.py
 ```
 
@@ -339,11 +435,15 @@ uv run -- quarto render book/chapters/07-apendice-robustez.qmd --to html --no-ex
 ::: {.callout-important}
 ## Regla de sincronizacion
 
-Si alguna tabla A12--A21 contradice `models/final_project_promotion.json`, gana
+Si alguna tabla A12--A24 contradice `models/final_project_promotion.json`, gana
 `final_project_promotion.json`. Las tablas nuevas son evidencia de robustez,
-sensibilidad y empaque journal; no son una promocion nueva del champion.
+sensibilidad y empaque journal; no son una promocion nueva del champion. En
+particular, A22 reporta una politica *tail-constrained challenger*, no un nuevo
+champion: la policy oficial sigue siendo el economic champion.
 :::
 
 El estado reproducible queda registrado en
-`models/crpto_journal_package_status.json` y el dossier asociado queda en
+`models/crpto_journal_package_status.json`,
+`models/crpto_tail_constrained_reopt_status.json` y
+`models/crpto_distribution_robustness_status.json`; el dossier asociado queda en
 `docs/research/crpto_journal_package_2026-05-04.md`.

@@ -55,10 +55,10 @@ Frente al bootstrap y otros métodos clásicos, la banda conformal entrega un me
 
 | Método | Tipo de conjunto | Cobertura | Ancho medio | Min group coverage | Garantía formal |
 |---|---|---:|---:|---:|---|
-| Winner conformal (`score_decile_mondrian`) | box (cota superior por loan) | 92.97% | 0.7842 | 91.90% | Sí (marginal, distribution-free) |
-| Bootstrap percentil | box (percentil empírico) | 89.83% | 0.9523 | 61.93% | No (asintótica) |
-| BMA (Bayesian Model Averaging) | elipsoidal (posteriors) | ~90% | depende del prior | no evaluado | Condicional al prior |
-| Bertsimas-Sim ($\Gamma$ fijo) | presupuesto de desviaciones | por diseño | depende de $\Gamma$ | no evaluado | Sí (worst-case) |
+| Winner conformal (`score_decile_mondrian`) | Box (cota superior por loan) | 92.97% | 0.7842 | 91.90% | Sí (marginal, distribution-free) |
+| Bootstrap percentil | Box (percentil empírico) | 89.83% | 0.9523 | 61.93% | No (asintótica) |
+| BMA (Bayesian Model Averaging) | Elipsoidal (posteriors) | ~90% | Depende del prior | No evaluado | Condicional al prior |
+| Bertsimas-Sim ($\Gamma$ fijo) | Presupuesto de desviaciones | Por diseño | Depende de $\Gamma$ | No evaluado | Sí (worst-case) |
 
 : Comparación de conjuntos de incertidumbre para optimización robusta {#tbl-crpto-baseline}
 
@@ -427,7 +427,7 @@ La frontera de @fig-p1-alpha-pareto evidencia esa elección: el codo entre eligi
 
 El test set OOT (2018--2020) contiene un cambio de régimen natural: la tasa de default cae de 24.5% (2018 H1) a 1.35% (2020, inicio de COVID). Este gradiente provee un quasi-experimento para evaluar si la calidad de decisión se degrada bajo distributional shift. SPO+ se entrena una sola vez por seed sobre datos 2007--2017 y se evalúa en cada periodo --- simulando un despliegue productivo donde el modelo no se recalibra.
 
-| Periodo | n | Default % | Regret SPO+ | Regret 2-Stage | SPO+ mejora | Cobertura 90% | Ancho medio |
+| Periodo | N | Default % | Regret SPO+ | Regret 2-Stage | SPO+ mejora | Cobertura 90% | Ancho medio |
 |---------|------:|------:|------:|------:|------:|------:|------:|
 | 2018 H1 | 110,839 | 24.5% | 0.0874 | 0.1500 | 41.7% | 92.07% | 0.7639 |
 | 2018 H2 | 86,339 | 23.3% | 0.0799 | 0.1621 | 50.7% | 92.07% | 0.7534 |
