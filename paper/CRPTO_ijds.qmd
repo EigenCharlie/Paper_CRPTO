@@ -326,10 +326,14 @@ auditability/economic trade-off.
 
 ## Regret-Auditability Frontier
 
-The SPO+ comparator makes the trade-off sharp. In the curated PyEPO 1.3.7 paired
-rerun, SPO+ reduces mean regret from `0.358073` to `0.184366`, a `48.51%`
-improvement over the two-stage baseline (Wilcoxon `p = 3.80e-163`). The CRPTO robust point has higher decision regret
-(`0.9474`) in that protocol because it is not trained to minimize regret; it is
+The SPO+ comparator makes the trade-off sharp. In the committed A19/Fig. 15
+artifact, SPO+ reduces mean regret from `0.425896` to `0.216837`, a `49.09%`
+improvement over the two-stage baseline (Wilcoxon `p = 1.39e-164`). A later
+PyEPO 1.3.7 paired rerun independently reports the same conclusion
+under a slightly different protocol (`0.358073` to `0.184366`, `48.51%`;
+Wilcoxon `p = 3.80e-163`), so we treat it as a curated closeout note rather
+than as the numeric source for A19. The CRPTO robust point has higher decision
+regret (`0.947429`) because it is not trained to minimize regret; it is
 constructed to expose and control predictive uncertainty before funding. The
 frontier is therefore not a single leaderboard. It asks what the method buys
 besides regret: temporal coverage above target, an exact funded-set
@@ -337,9 +341,9 @@ besides regret: temporal coverage above target, an exact funded-set
 
 | Method | Mean regret | Regret delta vs. two-stage | Verifiable risk controls |
 |---|---:|---:|---:|
-| Two-stage baseline | `0.358073` | `0.0%` | `0/3` |
-| SPO+ | `0.184366` | `48.51% lower` | `0/3` |
-| CRPTO robust | `0.9474` | `122.5% higher` | `3/3` |
+| Two-stage baseline | `0.425896` | `0.0%` | `0/3` |
+| SPO+ | `0.216837` | `49.09% lower` | `0/3` |
+| CRPTO robust | `0.947429` | `122.46% higher` | `3/3` |
 
 ![CRPTO sits on the auditable-risk-control corner, while SPO+ occupies the low-regret corner.](../reports/crpto/figures/crpto_fig15_regret_auditability_frontier.png){#fig-regret-auditability width="82%"}
 

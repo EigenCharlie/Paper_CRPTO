@@ -23,7 +23,8 @@ También se incorporó como prosa curada:
 
 - la evidence card IFRS9/SICR (`t*=0.30`, recall `75.8%`, ECL proxy `+22%`);
 - el cierre PyEPO/SPO del 2026-05-28 (`48.51%`, `0.184366` vs `0.358073`,
-  Wilcoxon `p = 3.80e-163`);
+  Wilcoxon `p = 3.80e-163`), tratado como protocolo separado de A19/Figura 15
+  (`49.09%`, `0.216837` vs `0.425896`);
 - la síntesis de challengers como resultados negativos o señales de protocolo
   futuro, no como candidatos promovidos.
 

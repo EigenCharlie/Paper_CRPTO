@@ -1379,7 +1379,7 @@ def _crpto_fig16_tail_risk_frontier() -> None:
             "lowest tail-risk\n(satisficing pass)",
             (ret[j], cvar[j]),
             textcoords="offset points",
-            xytext=(6, -24),
+            xytext=(8, 14),
             fontsize=7,
             color=PALETTE["blue"],
             arrowprops={"arrowstyle": "->", "color": PALETTE["blue"], "lw": 0.7},

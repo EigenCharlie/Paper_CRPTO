@@ -34,7 +34,7 @@ created. CRPTO imports only the conclusion needed for IJDS/thesis appendix:
 |---|---:|---|
 | SPO+ mean regret | `0.184366` | Appendix comparator only. |
 | Two-stage mean regret | `0.358073` | Baseline for the paired comparison. |
-| SPO+ improvement | `48.51%` | Replaces the rounded historical `49.1%` wording. |
+| SPO+ improvement | `48.51%` | Curated PyEPO closeout value; separate from the committed A19/Fig. 15 artifact (`49.09%`). |
 | Paired Wilcoxon | `p = 3.80e-163` | Statistical support for the comparator. |
 
 Interpretation: SPO+ remains the regret winner, as expected. CRPTO remains the
