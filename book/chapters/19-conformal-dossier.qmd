@@ -893,7 +893,7 @@ La `fig-estrella-uncertainty-baselines` presenta la comparación con el formato 
 
 ![Comparación publication-quality de baselines de incertidumbre: CP Mondrian vs BMA vs Bootstrap, evaluados sobre 276K préstamos OOT.](../assets/figures/publication/crpto_fig7_uncertainty_baselines.png)
 
-## Fuente curada: `book/chapters/13-advanced-topics/13b-alpha-sweep-pareto.qmd`
+## Material curado: alpha sweep y frontera de Pareto
 
 ## Alpha Sweep y Frontera de Pareto
 

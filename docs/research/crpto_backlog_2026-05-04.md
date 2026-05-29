@@ -59,7 +59,7 @@ experiments or theory.
 | P1/J | Pending | Standalone manuscript extraction | final submission artifact | `06-blueprint-manuscrito`, `14-release`, A1--A21, figures | No | required for submission | write the short paper from the book package; no champion changes |
 | P1/J | Implemented | Journal appendix A12--A21 | appendix evidence | `07-apendice-robustez.qmd` | No | complements paper | use as appendix package, not new champion evidence |
 | P1/J | Implemented | Mondrian ablation page | conformal winner defense | `08-ablacion-mondrian.qmd` | No | strengthens method selection | use when reviewer asks why score-decile, not grade |
-| P1/J | Implemented | SPO+ protocol page | DFL comparator | `09-spo-regret.qmd` | No | strengthens comparator narrative | keep train-time 49.1% and temporal stability configs separate |
+| P1/J | Implemented | SPO+ protocol page | DFL comparator | `09-spo-regret.qmd` | No | strengthens comparator narrative | keep curated train-time 48.51% and temporal stability configs separate |
 | P1/J | Implemented | Fair lending checkpoint | governance/funded set | `10-fair-lending.qmd` | No | strengthens auditability | cite as proxy/intersectional audit, not legal protected-attribute proof |
 | P1/J | Implemented | MRM/SR 11-7 approval page | model risk management | `11-mrm.qmd` | No | strengthens deployment credibility | keep triggers and challenger criteria aligned with MRM artifacts |
 | P1/J | Implemented | Funded-set composition page | portfolio evidence | `12-funded-set.qmd` | No | strengthens result audit | use in appendix to show no hidden segment drives champion |

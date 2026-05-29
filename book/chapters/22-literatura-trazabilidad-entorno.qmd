@@ -140,7 +140,7 @@ Las contribuciones tecnicas reflejan la implementacion del pipeline end-to-end y
 
 **Pipeline completo CatBoost -> Calibracion -> MAPIE -> Pyomo.** La tesis implementa un pipeline operativo que conecta cuatro capas tecnologicas: un modelo de scoring (CatBoost con busqueda de hiperparametros via Optuna), una capa de calibracion probabilistica (con seleccion automatica de metodo), un generador de intervalos conformales (MAPIE 1.3.0 con SplitConformalRegressor y particion Mondrian), y un optimizador de portafolio (Pyomo con solver HiGHS [@huangfu_parallelizing_2018]). Cada capa persiste sus artefactos de forma trazable, y el contrato de modelo (`models/pd_model_contract.json`) garantiza la coherencia de features a lo largo de todo el flujo.
 
-**Integracion de SPO+.** El pipeline incorpora una implementacion de la perdida SPO+ [@elmachtoub2022] que permite comparar el paradigma predict-then-optimize conformal con decision-focused learning. La implementacion utiliza un MLP punto-a-punto con costos calibrados de PD (no binarios), lo cual resolvio el problema del paisaje plano que impedia la convergencia en versiones anteriores. Los resultados muestran una reduccion de regret del 49.1% frente al enfoque two-stage, con significancia estadistica verificada via test de Wilcoxon.
+**Integracion de SPO+.** El pipeline incorpora una implementacion de la perdida SPO+ [@elmachtoub2022] que permite comparar el paradigma predict-then-optimize conformal con decision-focused learning. La implementacion utiliza un MLP punto-a-punto con costos calibrados de PD (no binarios), lo cual resolvio el problema del paisaje plano que impedia la convergencia en versiones anteriores. El cierre curado PyEPO 1.3.7 muestra una reduccion de regret del `48.51%` frente al enfoque two-stage, con significancia estadistica verificada via test de Wilcoxon (`p = 3.80e-163`).
 
 **Infraestructura de champion search.** El sistema de busqueda de champion implementa cuatro modos de ejecucion (smoke, canonical_rebuild, champion_search, insights_factory) con perfiles configurables en YAML, persistencia de resultados en `models/champion_registry.json`, y soporte para aceleracion GPU via RAPIDS en los componentes de optimizacion y simulacion A/B.
 
@@ -458,7 +458,7 @@ effect = try_load_json("causal_effect_status", directory="models", default={})
 sensitivity = try_load_json("causal_sensitivity_status", directory="models", default={})
 policy = try_load_json("causal_policy_rule", directory="models", default={})
 oot = try_load_json("causal_policy_oot_status", directory="models", default={})
-portfolio = try_load_json("cate_portfolio_status", directory="models", default={})
+portfolio_state = "no importado al paquete CRPTO"
 
 rows = [
     {"Métrica": "ATE oficial", "Valor": effect.get("ate"), "Lectura": "Señal causal media positiva bajo LinearDML."},
@@ -467,7 +467,7 @@ rows = [
     {"Métrica": "Robustness value", "Valor": sensitivity.get("robustness_value"), "Lectura": "Queda por debajo del umbral de promoción."},
     {"Métrica": "Policy rule", "Valor": policy.get("selected_rule"), "Lectura": "La mejor regla discreta sigue siendo research-grade."},
     {"Métrica": "OOT total net value", "Valor": oot.get("total_net_value"), "Lectura": "La policy es económicamente prometedora, pero no suficiente."},
-    {"Métrica": "CATE portfolio state", "Valor": portfolio.get("promotion_state"), "Lectura": "El optimizador causal queda bloqueado por policy gate."},
+    {"Métrica": "CATE portfolio state", "Valor": portfolio_state, "Lectura": "El optimizador causal queda bloqueado por policy gate y no entra al champion."},
 ]
 
 pd.DataFrame(rows)

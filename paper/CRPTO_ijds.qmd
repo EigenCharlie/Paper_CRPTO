@@ -308,6 +308,12 @@ the highest robust return inside the exact feasible region. This differs from
 a workflow where conformal intervals are plotted after the optimizer has
 already chosen a point-PD allocation.
 
+The supplement also carries the reviewer-facing robustness checks: nested
+holdout, strict temporal holdout, exact evaluation of conformal finalists,
+uncertainty-set baselines, funded-set composition, and the `45/45` robust-region
+summary. Those diagnostics strengthen the frozen champion without reopening the
+search.
+
 The third concern is whether a decision-focused or SPO+ model would be a
 stronger baseline. CRPTO treats SPO+ as an important comparator, but not as the
 same governance object. Decision-focused training can reduce regret relative
@@ -318,9 +324,9 @@ auditability/economic trade-off.
 
 ## Regret-Auditability Frontier
 
-The SPO+ comparator makes the trade-off sharp. In the paired regret experiment,
-SPO+ reduces mean regret from `0.4259` to `0.2168`, a `49.1%` improvement over
-the two-stage baseline. The CRPTO robust point has higher decision regret
+The SPO+ comparator makes the trade-off sharp. In the curated PyEPO 1.3.7 paired
+rerun, SPO+ reduces mean regret from `0.358073` to `0.184366`, a `48.51%`
+improvement over the two-stage baseline (Wilcoxon `p = 3.80e-163`). The CRPTO robust point has higher decision regret
 (`0.9474`) in that protocol because it is not trained to minimize regret; it is
 constructed to expose and control predictive uncertainty before funding. The
 frontier is therefore not a single leaderboard. It asks what the method buys
@@ -329,8 +335,8 @@ besides regret: temporal coverage above target, an exact funded-set
 
 | Method | Mean regret | Regret delta vs. two-stage | Verifiable risk controls |
 |---|---:|---:|---:|
-| Two-stage baseline | `0.4259` | `0.0%` | `0/3` |
-| SPO+ | `0.2168` | `49.1% lower` | `0/3` |
+| Two-stage baseline | `0.358073` | `0.0%` | `0/3` |
+| SPO+ | `0.184366` | `48.51% lower` | `0/3` |
 | CRPTO robust | `0.9474` | `122.5% higher` | `3/3` |
 
 ![CRPTO sits on the auditable-risk-control corner, while SPO+ occupies the low-regret corner.](../reports/crpto/figures/crpto_fig15_regret_auditability_frontier.png){#fig-regret-auditability width="82%"}

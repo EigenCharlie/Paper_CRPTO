@@ -6,9 +6,11 @@
 
 ## Bottom Line
 
-PyEPO 1.3 is now mature enough to reopen the **SPO/DFL lane as a bounded,
-isolated prototype**, especially for the Paper 4 agenda. It does not replace
-CRPTO. The strongest near-term contribution is a cleaner comparator suite:
+PyEPO 1.3 matured enough to reopen the **SPO/DFL lane as a bounded, isolated
+prototype**, especially for the Paper 4 agenda. The 2026-05-28 closeout below
+now satisfies the CRPTO stop rule: we import the paired SPO+ rerun as appendix
+evidence, but we do not import the full suite, add a dependency, or replace
+CRPTO. The strongest contribution is a cleaner comparator boundary:
 
 1. `SPOPlus` as the existing regret-minimizing baseline.
 2. `regularizedFrankWolfeFenchelYoung` (RFYL) as the new low-friction
@@ -22,6 +24,28 @@ CRPTO. The strongest near-term contribution is a cleaner comparator suite:
 The key update relative to the older v32 SPO blocker is that we do **not** need
 `cvxpy/cvxpylayers` to make a formal PyEPO prototype. PyEPO 1.3.7 works in an
 isolated OR-Tools environment with PyTorch autograd modules.
+
+## Curated Closeout - 2026-05-28
+
+The parent project completed the PyEPO 1.3.7 rerun after this intake memo was
+created. CRPTO imports only the conclusion needed for IJDS/thesis appendix:
+
+| Result | Curated value | CRPTO decision |
+|---|---:|---|
+| SPO+ mean regret | `0.184366` | Appendix comparator only. |
+| Two-stage mean regret | `0.358073` | Baseline for the paired comparison. |
+| SPO+ improvement | `48.51%` | Replaces the rounded historical `49.1%` wording. |
+| Paired Wilcoxon | `p = 3.80e-163` | Statistical support for the comparator. |
+
+Interpretation: SPO+ remains the regret winner, as expected. CRPTO remains the
+coverage/auditability method because the PyEPO suite does not provide conformal
+coverage, exact funded-set bound guarantees, or a replacement for the frozen
+`bound_aware_276k_economic_champion`. RFYL, CaVE and PFYL-Mul stay in the Paper 4
+DFL lab as comparator research, not as CRPTO promotion evidence.
+
+Operational decision: do not copy PyEPO run directories, solver logs, Gurobi
+artifacts or new dependencies into this repo. Keep this memo and the SPO+ chapter
+language as the self-contained record.
 
 ## Version Check
 
@@ -135,6 +159,10 @@ optional/isolated.
 | `book/chapters/09-spo-regret.qmd` | Frames SPO+ as a regret comparator, not a conformal replacement. | Add a short PyEPO 1.3 footnote only after a real rerun. |
 
 ## Recommended Experiments
+
+Historical intake status: Experiment A is now closed by the 2026-05-28 rerun.
+Experiments B--D remain Paper 4 research lanes and are not prerequisites for
+the CRPTO IJDS manuscript.
 
 - **A - SPO+ repro rerun**: run `scripts/run_spo_real.py` in the isolated PyEPO
   env (`n_items=100`, `budget=30`, `epochs=50`, `seeds=5`). Gate: reproduces the

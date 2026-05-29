@@ -303,6 +303,18 @@ completo y sus condiciones de reapertura viven en
 `docs/research/crpto_bound_improvement_intake_2026-05-21.md`. Todo es
 documentación histórica: no reabre el champion congelado.
 
+::: {#tbl-crpto-negative-challenger-summary}
+
+| Señal | Resultado curado | Lectura editorial |
+|---|---|---|
+| `bureau_behavior_15` | AUC/Brier mejores que el incumbente, pero peor ECE y debilidad conformal en grade E. | Señal predictiva útil; no reemplaza el stack PD+CP+portfolio congelado. |
+| `affordability_rate_5` | Exact pass viable en algunas políticas, pero retornos por debajo del champion y cobertura sensible. | Apéndice de sensibilidad, no candidato promovido. |
+| `canonical_4_return_aware` | Retorno `+$146.80` vs champion con exact pass, pero `V=0.058675` y `Gamma_CP=0.270366`. | Posible reapertura futura con protocolo sellado; no mejora bajo los gates actuales. |
+| `canonical_4__phase1__portfolio` | Retorno alto en búsqueda temprana, pero `V=0.07055`, `Gamma_CP=0.517574` y cobertura débil. | Evidencia negativa fuerte contra perseguir retorno sin control robusto. |
+
+Síntesis de challengers importada como evidencia estática en `reports/crpto/appendix/`.
+:::
+
 ### Checklist reproducible
 
 Para regenerar el paquete completo de esta pagina:

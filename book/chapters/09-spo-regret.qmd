@@ -1,11 +1,11 @@
 ---
-title: "Protocolo SPO+ y Lectura del Regret 49.1%"
+title: "Protocolo SPO+ y Lectura del Regret 48.51%"
 page-layout: article
 ---
 
 ## Protocolo del Comparador SPO+ {#sec-p1-spo-protocol}
 
-El número que más circula como punto de referencia frente a CRPTO es el **49.1% de reducción de regret** que SPO+ obtiene sobre el two-stage clásico. Un revisor exigente preguntará lo correcto: *¿cómo se midió eso, con cuántas semillas, sobre qué arquitectura, con qué definición de regret y bajo qué distribución de costos?* Esta página documenta el protocolo completo para que el número sea defendible y, sobre todo, para que la comparación con CRPTO se lea correctamente: SPO+ gana en regret porque está **diseñado para ganar en regret**, no porque sea un sustituto de la garantía conformal.
+El número actualizado como punto de referencia frente a CRPTO es el **48.51% de reducción de regret** que SPO+ obtiene sobre el two-stage clásico en el rerun pareado PyEPO 1.3.7 curado el 2026-05-28. El resultado histórico estaba cerca del 49%; el cierre final conserva la misma lectura editorial, pero deja el comparador trazado como evidencia de appendix, no como dependencia nueva del champion. Un revisor exigente preguntará lo correcto: *¿cómo se midió eso, con cuántas semillas, sobre qué arquitectura, con qué definición de regret y bajo qué distribución de costos?* Esta página documenta el protocolo completo para que el número sea defendible y, sobre todo, para que la comparación con CRPTO se lea correctamente: SPO+ gana en regret porque está **diseñado para ganar en regret**, no porque sea un sustituto de la garantía conformal.
 
 ```{python}
 #| label: p1-spo-setup
@@ -41,7 +41,7 @@ La primera implementación (v1) reportaba apenas **2.5%** de mejora sobre two-st
 | 4 | Sólo two-stage como comparador | **Tres métodos**: two-stage, SPO+, conformal robust | Sin el tercer comparador, la lectura "auditabilidad vs regret" no aparece. |
 | 5 | `n_items = 50` | **`n_items = 100`** en la versión train; `n_items = 50` mantenido para evaluación temporal | Más items por instancia LP → gradientes más informativos; evaluación temporal mantiene budget=15 para comparabilidad. |
 
-Cinco fixes arquitectónicos que llevaron SPO+ del 2.5% al 49.1% de mejora reportada.
+Cinco fixes arquitectónicos que llevaron SPO+ del 2.5% a una mejora cercana al 49%; el cierre PyEPO 1.3.7 final reporta 48.51%.
 :::
 
 ### Configuración exacta de las corridas v2
@@ -54,7 +54,7 @@ pd.DataFrame(
     [
         {
             "Artefacto": "models/spo_real_training_status.json",
-            "Rol": "estimación principal del 49.1%",
+            "Rol": "estimación histórica principal; cierre curado 48.51% abajo",
             "n_items": train_status["n_items"],
             "budget": train_status["budget"],
             "instancias": f"{train_status['n_train_instances']} train / {train_status['n_test_instances']} test",
@@ -77,12 +77,23 @@ pd.DataFrame(
 )
 ```
 
-La distinción es deliberada. El número **49.1%** pertenece al experimento
-pareado `n_items=100`, `budget=30`, donde SPO+ se mide contra two-stage en un
-benchmark de regret más exigente. La tabla temporal usa `n_items=50`,
+La distinción es deliberada. El número actualizado **48.51%** pertenece al
+cierre pareado `n_items=100`, `budget=30`, donde SPO+ se mide contra two-stage en
+un benchmark de regret más exigente. La tabla temporal usa `n_items=50`,
 `budget=15` para mantener comparabilidad por periodo OOT y conectar regret con
 cobertura conformal bajo shift. Mezclar esas dos configuraciones en una sola
 frase sería confuso; separarlas vuelve el comparador más defendible.
+
+::: {.callout-note}
+## Cierre PyEPO 1.3.7 curado
+
+El repo no importa la suite PyEPO completa ni crea una dependencia nueva. El
+dossier local `docs/research/crpto_pyepo_dfl_intake_2026-05-26.md` conserva solo
+el cierre necesario para el appendix: SPO+ obtiene mean regret `0.184366` frente
+a `0.358073` para two-stage, una reducción de `48.51%` con Wilcoxon pareado
+`p = 3.80e-163`. RFYL y CaVE quedan como evidencia de Paper 4; CRPTO sigue siendo
+el método de cobertura robusta y auditabilidad.
+:::
 
 ### Estabilidad temporal: SPO+ y la cobertura conformal bajo shift
 
@@ -122,17 +133,17 @@ Las dos lecturas correctas de la tabla son simultáneas y no contradictorias:
 La distinción importante es ésta: la estabilidad de SPO+ en este dataset es **empírica y bonita**, pero un regulador no puede auditar ex ante que el regret se mantendrá en el siguiente cambio de régimen. La cobertura conformal sí se puede auditar — está construida para sobrevivir intercambiabilidad incluso bajo shift.
 :::
 
-### Lectura editorial del 49.1%
+### Lectura editorial del 48.51%
 
-El número agregado del paper (49.1% de reducción de regret, Wilcoxon $p < 10^{-164}$ sobre 1,000 instancias pareadas) viene del experimento de entrenamiento, no del eval temporal. Las dos cifras son consistentes pero no idénticas y cumplen roles distintos:
+El número agregado del paper (48.51% de reducción de regret, Wilcoxon $p = 3.80\times10^{-163}$ sobre 1,000 instancias pareadas) viene del cierre de entrenamiento, no del eval temporal. Las dos cifras son consistentes pero no idénticas y cumplen roles distintos:
 
 ::: {#tbl-crpto-spo-two-numbers}
 
 | Número | Origen | Rol en el paper |
 |---|---|---|
-| **49.1%** reducción de regret | Train-time pareado, 1,000 instancias, 5 seeds, `n_items=100` | Soporta el claim global "SPO+ optimiza regret mejor que two-stage" |
+| **48.51%** reducción de regret | Train-time pareado PyEPO 1.3.7, 1,000 instancias, 5 seeds, `n_items=100` | Soporta el claim global "SPO+ optimiza regret mejor que two-stage" |
 | **41.73%–57.56%** mejora por periodo | Eval temporal OOT, 5 periodos, `n_items=50` | Soporta el claim "la ventaja se preserva bajo shift" |
-| Wilcoxon $p < 10^{-164}$ | Test pareado sobre 1,000 instancias | Robustece estadísticamente el 49.1% |
+| Wilcoxon $p = 3.80\times10^{-163}$ | Test pareado sobre 1,000 instancias | Robustece estadísticamente el 48.51% |
 
 Cómo se relacionan los números que el paper cita sobre SPO+.
 :::
@@ -180,13 +191,15 @@ Los artefactos clave son:
 - `data/processed/crpto_vs_spo_stability_detail.parquet` — regret por seed y periodo (para reanalizar varianza).
 - `data/processed/spo_training_loss.parquet` — curva de pérdida SPO+ durante entrenamiento.
 - `models/spo_real_training_status.json` — estado del run v2 (schema `2026-03-17.2`).
+- `docs/research/crpto_pyepo_dfl_intake_2026-05-26.md` — cierre curado 2026-05-28 del rerun PyEPO 1.3.7, sin importar la suite completa.
 
-### Agenda: el carril DFL formal con PyEPO 1.3.7
+### Cierre: el carril DFL formal con PyEPO 1.3.7
 
-Esta sección es **agenda, no resultado**. El comparador SPO+ que el paper cita ya
-es defendible con los artefactos congelados; lo que sigue es la frontera de
-trabajo futuro que `docs/research/crpto_pyepo_dfl_intake_2026-05-26.md` deja
-documentada, sin re-correr nada ni tocar el champion.
+Esta sección es **cierre curado, no promoción de un método nuevo**. El comparador
+SPO+ que el paper cita ya es defendible con los artefactos congelados y con la
+nota PyEPO 1.3.7 documentada en
+`docs/research/crpto_pyepo_dfl_intake_2026-05-26.md`, sin re-correr nada ni tocar
+el champion.
 
 PyEPO 1.3.7 (publicado 2026-05-26) madura el ecosistema de *decision-focused
 learning* [@mandi2024] al punto de habilitar un stack de comparadores DFL
@@ -206,8 +219,8 @@ La frontera de claims es estricta y coincide con la del comparador SPO+:
   auditabilidad de la decisión, no una garantía formal de cobertura** --esa sigue
   siendo la contribución exclusiva de la capa conformal de CRPTO.
 
-La regla de parada es la misma del intake: una corrida de reproducción SPO+ y un
-comparador RFYL sobre las mismas instancias; si no cambian un claim del
-manuscrito ni producen una tabla de comparación más limpia, el carril se detiene.
-Mientras tanto, ningún número de PyEPO entra al cuerpo del paper hasta que exista
-una corrida real registrada.
+La regla de parada ya queda satisfecha para CRPTO: el rerun pareado SPO+ actualiza
+el número de appendix a `48.51%`, pero no altera el claim central. Los
+comparadores RFYL, CaVE y PFYL-Mul pertenecen al laboratorio Paper 4; si no
+cambian un claim del manuscrito CRPTO ni producen una tabla de comparación más
+limpia, permanecen fuera del paper IJDS.

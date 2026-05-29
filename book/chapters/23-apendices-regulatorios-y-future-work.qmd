@@ -4,11 +4,22 @@ Este capítulo guarda material útil para journal, appendix o respuesta a review
 
 ### Señal SICR conformal
 
-El ancho del intervalo conformal puede leerse como una señal complementaria de deterioro crediticio. En el libro grande, esta idea se documentaba en el capítulo de gobernanza IFRS9: un umbral `t* = 0.30` capturaba `75.8%` de defaults no detectados por triggers tradicionales y generaba una lectura de costo prudencial adicional. Para CRPTO, la lectura correcta es más acotada:
+El ancho del intervalo conformal puede leerse como una señal complementaria de deterioro crediticio. CRPTO conserva esta pieza como **evidence card IFRS9-inspired**, no como modelo contractual IFRS9 ni como dependencia de un libro externo.
 
-- la señal SICR demuestra que la incertidumbre conformal tiene valor regulatorio más allá del optimizador de portafolio;
-- no forma parte del run champion ni de la región robusta `45/45`;
-- puede alimentar un apéndice de journal si el venue pide impacto prudencial o conexión con IFRS9.
+::: {.callout-note}
+## Evidence card IFRS9/SICR
+
+| Lectura | Valor curado | Uso permitido |
+|---|---:|---|
+| Umbral de ancho conformal | `t*=0.30` | Señal auxiliar de incertidumbre para deterioro crediticio. |
+| Recall de defaults omitidos por triggers clásicos | `75.8%` | Evidencia de utilidad regulatoria, no claim de staging contractual. |
+| Sensibilidad proxy de ECL al pasar de 90% a 99% | `+22%` | Costo prudencial de elegir una cota conformal más conservadora. |
+
+La señal SICR demuestra que la incertidumbre conformal tiene valor regulatorio
+más allá del optimizador de portafolio, pero no forma parte del run champion ni
+de la región robusta `45/45`. Puede alimentar un apéndice de journal si el venue
+pide impacto prudencial o conexión con IFRS9.
+:::
 
 ### Costo de misclasificación Stage 1/2
 
@@ -79,7 +90,7 @@ Backlog priorizado del CRPTO.
 
 ### Matriz de intake: libro completo -> paper / tesis
 
-El libro completo del proyecto padre sigue siendo el repositorio intelectual; CRPTO importa solo lo que fortalece el argumento central. Esta matriz fija qué entra al cuerpo IJDS, qué entra a tesis y bajo qué regla.
+El barrido final deja a CRPTO como repositorio autocontenido: importa, resume o registra solo lo que fortalece el argumento central, y deja fuera experimentos que no cambian el paper IJDS ni la tesis. Esta matriz fija qué entra al cuerpo IJDS, qué entra a tesis y bajo qué regla.
 
 ::: {#tbl-crpto-intake-matrix}
 
@@ -95,6 +106,7 @@ El libro completo del proyecto padre sigue siendo el repositorio intelectual; CR
 | IFRS9/SICR | Implicación/limitación | Sí | No hacerlo segunda contribución IJDS. |
 | Explainability, fairness proxy y MRM | Discusión/supplement | Sí | Responde implicaciones prácticas/éticas. |
 | Paper 4 living lab | Solo imports gobernados | Sí | Tail-risk, source/online caveats y framing; no promoción automática. |
+| Ledgers livianos heredados | Appendix/dossier | Sí | Solo CSVs curados en `reports/crpto/appendix/`; no entran a tablas oficiales. |
 | GPU, quantum y agenda futura | No | Opcional | Mantener fuera del paper CRPTO. |
 
 Matriz de intake del libro completo hacia paper y tesis.
@@ -131,5 +143,6 @@ Los resultados negativos no son fracaso editorial: son evidencia de madurez meto
 - **Tres challengers PD evaluados y descartados.** Una búsqueda externa amplia produjo `bureau_behavior_15` (AUC `+0.008` sobre el incumbente, pero peor ECE y debilidad conformal en grade E), `canonical_4` (la firma más limpia, sin reemplazo de portafolio) y `affordability_rate_5`. Ninguno reemplaza el champion congelado. Detalle en `docs/research/crpto_regret_auditability_sandbox_closure_2026-05-28.md`.
 - **Debilidad conformal en grade E.** La configuración conformal del sandbox falla el piso estricto de cobertura de grupo al 90% en grade E y queda débil en E/G al 95%; es un límite explícito, no un resultado oculto. Ver `docs/research/crpto_bound_improvement_intake_2026-05-21.md`.
 - **Frentes de bound que no cambiaron el teorema principal.** Tightening dependence-aware, CRC/LTT como pérdida de decisión directa y conjuntos de incertidumbre menos conservadores quedan como agenda; Markov sigue siendo la cota principal. Las condiciones de reapertura y el contrato anti-cherry-pick están en `docs/research/crpto_champion_reopen_plan_2026-05-21.md` y `docs/research/crpto_champion_tournament_protocol_2026-05-25.md`.
+- **Ledgers estáticos de auditoría.** Los CSVs curados en `reports/crpto/appendix/` preservan evidencia de challengers y reapertura sin contaminar `reports/crpto/tables/`, que sigue siendo la superficie canónica generada por scripts. En particular, `canonical_4_return_aware` queda como señal de protocolo futuro (`+$146.80` de retorno, pero peor `V=0.058675` y `Gamma_CP=0.270366`), no como candidato promovido.
 
 Todos estos registros son **documentación histórica**: no reabren el champion congelado ni modifican `models/final_project_promotion.json`.

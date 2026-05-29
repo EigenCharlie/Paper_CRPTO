@@ -66,7 +66,7 @@ o nueva teoría principal, queda en backlog y no bloquea este submission.
 | `14g` | Blueprint del manuscrito | insumo | insumo | sí | Usar como skeleton; no citar como resultado. |
 | `14h` | Appendix A12--A21 | appendix selectivo | appendix fuerte | sí | Diagnóstico journal, no nueva promoción del champion. |
 | `14i` | Ablación Mondrian | appendix corto | appendix | sí | Defender `score_decile_mondrian` vs `grade`. |
-| `14j` | Protocolo SPO+ | appendix corto | appendix | sí | Separar regret 49.1% de cobertura/auditabilidad. |
+| `14j` | Protocolo SPO+ | appendix corto | appendix | sí | Separar regret 48.51% de cobertura/auditabilidad. |
 | `14k` | Fair lending checkpoint | appendix/governance | appendix | sí | Proxy/intersectional, no certificación legal de atributos protegidos. |
 | `14l` | MRM / SR 11-7 | appendix/governance | appendix | sí | Fortalece auditabilidad, no metodología nueva. |
 | `14m` | Funded set composition | appendix resultados | appendix | sí | Mostrar que el champion no depende de un segmento oculto. |

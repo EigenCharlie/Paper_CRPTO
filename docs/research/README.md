@@ -41,8 +41,12 @@ congelado):
   y gates no negociables.
 - `crpto_bound_improvement_intake_2026-05-21.md`: paquete PD/conformal challenger
   y frentes de mejora del bound (agenda).
-- `crpto_pyepo_dfl_intake_2026-05-26.md`: PyEPO 1.3.7 desbloquea comparador
-  DFL/SPO+ aislado; CRPTO mantiene PyEPO como apendice de comparacion.
+- `crpto_pyepo_dfl_intake_2026-05-26.md`: PyEPO 1.3.7 desbloquea y cierra el
+  comparador DFL/SPO+ aislado; CRPTO conserva solo el rerun pareado como
+  apendice de comparacion.
+- `crpto_parent_intake_register_2026-05-29.md`: registro final de CSVs
+  importados, exclusiones, señales de búsqueda futura y regla de no reapertura
+  del champion.
 - `crpto_mini_book_expansion_audit_2026-05-21.md`: trazabilidad de los controles
   editoriales fundidos en capitulos del libro.
 - `crpto_book_audit_2026-05-21.md`: checklist de QA de render y frontera de
