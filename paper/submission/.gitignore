@@ -1,0 +1,18 @@
+# Do NOT vendor the official INFORMS template or build artifacts.
+# Authors download informs4.cls + informs2014.bst from the INFORMS author portal
+# and drop them here locally; they must not be committed.
+informs4.cls
+informs*.bst
+*.bst
+*.cls
+# LaTeX build artifacts
+*.aux
+*.bbl
+*.blg
+*.log
+*.out
+*.synctex.gz
+*.fls
+*.fdb_latexmk
+# Compiled submission PDF (regenerate locally)
+CRPTO_ijds_submission.pdf

@@ -100,7 +100,10 @@ Papers_tesis/
 
 # Claude Code local-only settings
 .claude/settings.local.json
+.claude/scheduled_tasks.lock
 .claude/skills/local/
+# Source diagram drop-off (vendored copy lives in book/assets/figures/editorial/)
+diagrama.png
 
 # OS / editor
 .DS_Store

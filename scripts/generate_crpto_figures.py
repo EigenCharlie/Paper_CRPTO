@@ -89,6 +89,10 @@ OUT_DIR.mkdir(parents=True, exist_ok=True)
 BOOK_FIG_DIR = REPO_ROOT / "book" / "assets" / "figures" / "publication"
 BOOK_FIG_DIR.mkdir(parents=True, exist_ok=True)
 BOOK_OUTPUT_FIG_DIR = REPO_ROOT / "book" / "_output" / "assets" / "figures" / "publication"
+# Dossier figures (PD curves, etc.) referenced by the Spanish book chapters live
+# here; we regenerate them in the journal house style and overwrite in place so
+# the chapter `.png` references need no edits.
+EDITORIAL_FIG_DIR = REPO_ROOT / "book" / "assets" / "figures" / "editorial"
 
 
 def _save(fig: plt.Figure, name: str) -> None:
@@ -100,6 +104,18 @@ def _save(fig: plt.Figure, name: str) -> None:
             BOOK_OUTPUT_FIG_DIR.mkdir(parents=True, exist_ok=True)
             shutil.copy2(path, BOOK_OUTPUT_FIG_DIR / f"{name}.{ext}")
     logger.info(f"Saved: {name}.pdf / .png")
+    plt.close(fig)
+
+
+def _save_editorial(fig: plt.Figure, name: str) -> None:
+    """Overwrite a dossier figure in book/assets/figures/editorial (PNG, 300 DPI).
+
+    The editorial dir is PNG-only by convention and the chapters include the
+    ``.png`` files directly, so we keep a single 300 DPI raster (print standard).
+    """
+    EDITORIAL_FIG_DIR.mkdir(parents=True, exist_ok=True)
+    fig.savefig(EDITORIAL_FIG_DIR / f"{name}.png")
+    logger.info(f"Saved editorial: {name}.png")
     plt.close(fig)
 
 
@@ -1562,6 +1578,118 @@ PAPER2_FIGS = [
     _paper2_fig5_ecl_alpha_sensitivity,
     _paper2_fig6_bma_vs_cp,
 ]
+# ── Dossier figures (Spanish book chapters; house-style restyle) ───────────────
+
+_PD_MODELS = [
+    ("LogReg baseline", "y_prob_lr", PALETTE["gray"]),
+    ("CatBoost tuned", "y_prob_cb_tuned", PALETTE["blue"]),
+    ("CatBoost calibrado", "pd_calibrated", PALETTE["red"]),
+]
+
+
+def _dossier_pd_roc() -> None:
+    """ROC OOT for the candidate PD models (restyled, AUC-annotated)."""
+    from sklearn.metrics import roc_auc_score, roc_curve
+
+    df = pd.read_parquet(DATA_DIR / "test_predictions.parquet")
+    y = df["y_true"].to_numpy()
+    fig, ax = plt.subplots(figsize=(COL2 * 0.7, HEIGHT_M))
+    ax.plot([0, 1], [0, 1], color=PALETTE["lgray"], linestyle="--", linewidth=1.0)
+    for label, col, color in _PD_MODELS:
+        fpr, tpr, _ = roc_curve(y, df[col].to_numpy())
+        auc = roc_auc_score(y, df[col].to_numpy())
+        ax.plot(fpr, tpr, color=color, label=f"{label} (AUC = {auc:.4f})")
+    ax.set_xlabel("Tasa de falsos positivos")
+    ax.set_ylabel("Tasa de verdaderos positivos")
+    ax.set_title("ROC OOT — modelos PD candidatos")
+    ax.legend(loc="lower right", fontsize=7.5)
+    ax.set_xlim(0, 1)
+    ax.set_ylim(0, 1.02)
+    fig.tight_layout()
+    _save_editorial(fig, "pd_roc_curve")
+
+
+def _dossier_pd_pr() -> None:
+    """Precision–recall OOT for the candidate PD models (AP-annotated)."""
+    from sklearn.metrics import average_precision_score, precision_recall_curve
+
+    df = pd.read_parquet(DATA_DIR / "test_predictions.parquet")
+    y = df["y_true"].to_numpy()
+    prevalence = float(y.mean())
+    fig, ax = plt.subplots(figsize=(COL2 * 0.7, HEIGHT_M))
+    for label, col, color in _PD_MODELS:
+        prec, rec, _ = precision_recall_curve(y, df[col].to_numpy())
+        ap = average_precision_score(y, df[col].to_numpy())
+        ax.plot(rec, prec, color=color, label=f"{label} (AP = {ap:.4f})")
+    ax.axhline(
+        prevalence,
+        color=PALETTE["lgray"],
+        linestyle="--",
+        linewidth=1.0,
+        label=f"Prevalencia ({prevalence:.3f})",
+    )
+    ax.set_xlabel("Recall")
+    ax.set_ylabel("Precisión")
+    ax.set_title("Curva precisión–recall OOT — modelos PD")
+    ax.legend(loc="upper right", fontsize=7.5)
+    ax.set_xlim(0, 1)
+    ax.set_ylim(0, 1.02)
+    fig.tight_layout()
+    _save_editorial(fig, "pd_pr_curve")
+
+
+def _dossier_pd_reliability() -> None:
+    """Reliability curve before/after calibration (quantile bins, restyled).
+
+    Recomputed from the frozen ``test_predictions.parquet`` with quantile bins so
+    the high-PD tail is stable (the uniform-bin artifact is noisy where few loans
+    fall), keeping the same source as the ROC/PR panels.
+    """
+    from sklearn.calibration import calibration_curve
+
+    df = pd.read_parquet(DATA_DIR / "test_predictions.parquet")
+    y = df["y_true"].to_numpy()
+    series = [
+        ("CatBoost sin calibrar", "y_prob_cb_tuned", PALETTE["orange"]),
+        ("CatBoost calibrado", "pd_calibrated", PALETTE["blue"]),
+    ]
+    top = 0.0
+    curves = []
+    for label, col, color in series:
+        frac_pos, mean_pred = calibration_curve(
+            y, df[col].to_numpy(), n_bins=15, strategy="quantile"
+        )
+        curves.append((label, mean_pred, frac_pos, color))
+        top = max(top, float(mean_pred.max()), float(frac_pos.max()))
+    top *= 1.05
+    fig, ax = plt.subplots(figsize=(COL2 * 0.58, HEIGHT_M))
+    ax.plot(
+        [0, top],
+        [0, top],
+        color=PALETTE["lgray"],
+        linestyle="--",
+        linewidth=1.0,
+        label="Calibración perfecta",
+    )
+    for label, mean_pred, frac_pos, color in curves:
+        ax.plot(mean_pred, frac_pos, marker="o", markersize=3, color=color, label=label)
+    ax.set_xlabel("Probabilidad media predicha")
+    ax.set_ylabel("Frecuencia observada")
+    ax.set_title("Curva de fiabilidad — calibración PD")
+    ax.legend(loc="upper left", fontsize=7.5)
+    ax.set_xlim(0, top)
+    ax.set_ylim(0, top)
+    fig.tight_layout()
+    _save_editorial(fig, "pd_reliability_curve")
+
+
+DOSSIER_FIGS = [
+    _dossier_pd_roc,
+    _dossier_pd_pr,
+    _dossier_pd_reliability,
+]
+
+
 CRPTO_FIGS = [
     _crpto_fig7_uncertainty_baselines,
     _crpto_fig8_alpha_pareto,
@@ -1583,6 +1711,7 @@ def main() -> None:
     figs_to_run: list = []
     if args.paper in ("crpto", "all"):
         figs_to_run.extend(CRPTO_FIGS)
+        figs_to_run.extend(DOSSIER_FIGS)
 
     logger.info(f"Generating {len(figs_to_run)} figures → {OUT_DIR}")
     errors = []
