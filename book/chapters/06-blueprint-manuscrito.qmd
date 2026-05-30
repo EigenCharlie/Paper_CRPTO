@@ -6,44 +6,31 @@ page-layout: article
 ## Blueprint Journal-Ready {#sec-p1-manuscript-blueprint}
 
 Esta pagina traduce el dossier largo del libro en una arquitectura de paper.
-No reemplaza las secciones metodologicas previas: las comprime en una forma que
-pueda convertirse despues en manuscrito para *Management Science*, *Operations
-Research* o *European Journal of Operational Research*. La regla editorial es
-mantener una tesis clara: **CRPTO no compite por ganar AUC; compite por convertir
-incertidumbre conformal en una decision de portafolio auditable**.
+No reemplaza las secciones metodologicas previas: las comprime en la forma del
+manuscrito objetivo para **INFORMS Journal on Data Science (IJDS)**. La regla
+editorial es mantener una tesis clara: **CRPTO no compite por ganar AUC; compite
+por convertir incertidumbre conformal en una decision de portafolio auditable**.
 
 ### Venue objetivo
 
-La decision editorial activa es escribir primero para **INFORMS Journal on Data
-Science (IJDS)** y mantener **European Journal of Operational Research (EJOR)**
-como pivote principal. Esta decision queda versionada en
-`configs/crpto_publication_targets.yaml` y desarrollada en
-`docs/research/crpto_publication_strategy_2026-05-12.md`.
+El venue esta decidido: el manuscrito se escribe para **INFORMS Journal on Data
+Science (IJDS)**, cuyo encaje es directo --- data science reproducible al
+servicio de una decision de credito --- y queda versionado en
+`configs/crpto_publication_targets.yaml` y desarrollado en
+`docs/research/crpto_publication_strategy_2026-05-12.md`. Lo que IJDS pide ya
+existe en el proyecto: pipeline reproducible (DVC/DagsHub/MLflow, companion
+Quarto, cadena PD -> CP -> LP), tablas y figuras regenerables, y una
+contribucion de decision auditable. Lo unico pendiente es la forma editorial ---
+un cuerpo anonimo de 25 paginas con un online supplement separado.
 
-El proyecto ya tiene suficiente evidencia para apuntar a un journal serio, pero
-el enfasis cambia segun el venue:
+El primer borrador se escribe entonces como **paper IJDS**: cuerpo anonimo,
+conceptualmente limitado a 25 paginas, con appendix online separado. Si una
+revision interna concluyera que la historia lee mas como OR aplicada que como
+data science, *European Journal of Operational Research* (EJOR) queda como unico
+pivote de respaldo, sin cambiar champion ni artefactos.
 
-::: {#tbl-crpto-target-venue}
-
-| Venue | Enfasis requerido | Que ya tenemos | Que conviene reforzar |
-|---|---|---|---|
-| *INFORMS Journal on Data Science* | data science reproducible para decisiones | DVC/DagsHub/MLflow, Quarto companion, pipeline PD -> CP -> LP, tablas/figuras reproducibles | manuscrito anonimo de 25 paginas + online supplement |
-| *EJOR* | metodologia OR y practica de decision | robust optimization, region `45/45`, sensibilidad, stress tests | lenguaje OR mas fuerte y menos pipeline narrativo |
-| *INFORMS Journal on Optimization* | contribucion de optimizacion | bound, LP robusto, satisficing diagnostics | prueba/algoritmo mas fuerte o dependencia-aware theorem |
-| *Management Science* | managerial insight y valor economico | champion economico, governance, auditabilidad | insight gerencial mas generalizable |
-| *Operations Research* | formulacion OR amplia y concisa | relacion CP -> RO, garantia Markov, region robusta | contribucion teorica/OR mas fuerte que el caso Lending Club |
-
-Venue target recomendado y pivotes.
-:::
-
-El primer borrador debe escribirse como **paper IJDS**: cuerpo anonimo,
-conceptualmente limitado a 25 paginas, con appendix online separado. Si en
-revision interna sentimos que la historia queda mas OR que data science, se
-reorienta a **EJOR** sin cambiar champion ni artefactos.
-
-Los esqueletos activos son `paper/CRPTO_ijds.qmd` y
-`paper/supplement_ijds.qmd`. El archivo `paper/CRPTO.qmd` queda como entrada
-generica, no como formato final.
+Los esqueletos activos son `paper/CRPTO_ijds.qmd` y `paper/supplement_ijds.qmd`.
+El archivo `paper/CRPTO.qmd` queda como entrada generica, no como formato final.
 
 ### Abstract operativo
 
@@ -71,12 +58,12 @@ robusta verificable, no en otro leaderboard predictivo.
 | Claim | Formulacion para paper | Estatus | Evidencia primaria |
 |---|---|---|---|
 | C1 | La base PD calibrada es suficientemente estable para alimentar incertidumbre conformal. | Empirico | AUC `0.7124`, Brier `0.1546`, ECE `0.0064`, tests de calibracion |
-| C2 | La capa conformal Mondrian produce cobertura util y trazable para decision. | Empirico-conformal | coverage 90 `92.97%`, min group coverage `91.90%`, Winkler `1.111` |
-| C3 | El intervalo conformal se puede mapear a un conjunto de incertidumbre usado por un LP robusto. | Metodologico | definiciones `u_i(alpha)`, `Gamma_CP`, policy modes |
+| C2 | La capa conformal Mondrian produce cobertura util y trazable para decision. | Empirico-conformal | Coverage 90 `92.97%`, min group coverage `91.90%`, Winkler `1.111` |
+| C3 | El intervalo conformal se puede mapear a un conjunto de incertidumbre usado por un LP robusto. | Metodologico | Definiciones `u_i(alpha)`, `Gamma_CP`, policy modes |
 | C4 | El bound controla no-cobertura ponderada del funded set bajo supuestos distribution-free. | Teorico | `thm-conformal-feasibility`, Markov, `V <= sqrt(alpha)` |
 | C5 | La policy oficial es economic champion, no theorem-tight. | Empirico-editorial | `final_project_promotion.json`, retorno `$170.5K`, `alpha01_exact_pass=true` |
 | C6 | La region robusta final es completa, no un punto aislado. | Empirico | `45/45` policies pass en el OOT completo `276k` |
-| C7 | La evidencia CRPTO y journal-package muestra robustez adicional sin cambiar la direccion del paper. | Robustez | A3--A21, Figuras 12--15 |
+| C7 | La evidencia CRPTO y journal-package muestra robustez adicional sin cambiar la direccion del paper. | Robustez | A3--A24, Figuras 12--17 |
 
 Claims numerados para transformar el libro en manuscrito.
 :::
@@ -92,15 +79,15 @@ incertidumbre, hacia composicion del funded set.
 
 | Seccion | Papel en el manuscrito | Material fuente |
 |---|---|---|
-| 1. Introduction | gap, pregunta, contribuciones C1--C7 | 14a, 14f, esta pagina |
+| 1. Introduction | Gap, pregunta, contribuciones C1--C7 | 14a, 14f, esta pagina |
 | 2. Related work | CP/CRC/RCPS, RO, Predict-then-Calibrate, DFL/SPO+ | 14a, 14f, referencias [1]--[17] |
 | 3. Method | PD calibrada -> CP Mondrian -> uncertainty set -> LP robusto | 14b, 14c |
 | 4. Theory | `Gamma_CP`, `V`, Markov, tightening condicional como appendix | 14b, appendix condicional |
 | 5. Experimental design | Lending Club OOT, artifacts, compatible leaderboards | 14c, docs de sincronizacion |
-| 6. Results | champion, region robusta, comparadores, SPO+ y alpha frontier | 14d |
-| 7. Robustness | nested/temporal holdout, funded set, shift, tail risk | 14d, 14h, A3--A21 |
-| 8. Discussion | limitaciones, governance, future work sin overclaim | 14e |
-| Appendix | pruebas, tablas A3--A21, reproducibility checklist | 14b, 14h |
+| 6. Results | Champion, region robusta, comparadores, SPO+ y alpha frontier | 14d |
+| 7. Robustness | nested/temporal holdout, funded set, shift, tail risk, re-opt de cola y multi-distribucion/online | 14d, 14h, A3--A24 |
+| 8. Discussion | Limitaciones, governance, future work sin overclaim | 14e |
+| Appendix | Pruebas, tablas A3--A24, reproducibility checklist | 14b, 14h |
 
 Skeleton recomendado del paper.
 :::
@@ -137,13 +124,13 @@ seleccion sugerida es:
 
 | Elemento | Ubicacion probable | Razon | Artefacto |
 |---|---|---|---|
-| Figura 1: pipeline CRPTO | cuerpo | explica el aporte en una sola vista | `crpto_fig12_crpto_conceptual_pipeline.png` |
-| Figura 2: alpha -> `Gamma_CP` -> funded set | teoria/metodo | une parametro conformal y decision | `crpto_fig13_alpha_gamma_funded_set.png` |
-| Figura 3: region robusta `45/45` | resultados | muestra que el champion no es aislado | `crpto_fig14_robust_region_heatmap.png` |
-| Tabla 1: metricas core | resultados | fija PD, CP y portfolio sin mezclar familias | `crpto_table0_key_metrics.csv` |
-| Tabla 2: champion y comparadores | resultados | economic vs theorem-tight vs balanced | `crpto_table1_champion_policy.csv` y A13 |
-| Tabla 3: robustez P1 | appendix corto | post-seleccion, temporal, selector, shift | A3--A11 |
-| Tabla 4: robustness journal | appendix largo | tail risk, bootstrap, dependencia, LGD/caps, regret-auditability | A12--A21 |
+| Figura 1: pipeline CRPTO | Cuerpo | Explica el aporte en una sola vista | `crpto_fig12_crpto_conceptual_pipeline.png` |
+| Figura 2: alpha -> `Gamma_CP` -> funded set | teoria/metodo | Une parametro conformal y decision | `crpto_fig13_alpha_gamma_funded_set.png` |
+| Figura 3: region robusta `45/45` | Resultados | Muestra que el champion no es aislado | `crpto_fig14_robust_region_heatmap.png` |
+| Tabla 1: metricas core | Resultados | Fija PD, CP y portfolio sin mezclar familias | `crpto_table0_key_metrics.csv` |
+| Tabla 2: champion y comparadores | Resultados | Economic vs theorem-tight vs balanced | `crpto_table1_champion_policy.csv` y A13 |
+| Tabla 3: robustez P1 | Appendix corto | Post-seleccion, temporal, selector, shift | A3--A11 |
+| Tabla 4: robustness journal | Appendix largo | Tail risk, bootstrap, dependencia, LGD/caps, regret-auditability, re-opt de cola, multi-distribucion y online | A12--A24 |
 
 Seleccion de figuras y tablas para el manuscrito.
 :::
@@ -164,12 +151,12 @@ fuente de escritura y el detalle por tabla está en
 
 | Paquete | Contenido | Fuente en el libro |
 |---|---|---|
-| A. Proof details | Teorema Markov y tightening Hoeffding/Bernstein como condicional. | cap. 02 (`thm-conformal-feasibility`); apéndice condicional. |
-| B. Conformal ablation | Ranks 1--3, `grade` vs `score_decile_mondrian`, coverage por grupo. | cap. 08 (ablación Mondrian); A10. |
-| C. Robustness A3--A18 | Nested/temporal holdouts, synthetic shift, tail diagnostics, bootstrap, dependency. | cap. 07 (apéndice journal). |
-| D. Funded set | Composición periodo × grade y loan-level export resumido. | cap. 12 (funded set); A7--A8. |
-| E. Fairness/MRM | Proxy audit, controles SR 11-7 y source-governance caveats. | cap. 10 (fair lending); cap. 11 (MRM). |
-| F. Reproducibility | Claim -> artifact -> script -> test, paths DVC/MLflow y data/code disclosure. | cap. 13 (trazabilidad); cap. 14 (release). |
+| A. Proof details | Teorema Markov y tightening Hoeffding/Bernstein como condicional. | Cap. 02 (`thm-conformal-feasibility`); apéndice condicional. |
+| B. Conformal ablation | Ranks 1--3, `grade` vs `score_decile_mondrian`, coverage por grupo. | Cap. 08 (ablación Mondrian); A10. |
+| C. Robustness A3--A18 | Nested/temporal holdouts, synthetic shift, tail diagnostics, bootstrap, dependency. | Cap. 07 (apéndice journal). |
+| D. Funded set | Composición periodo × grade y loan-level export resumido. | Cap. 12 (funded set); A7--A8. |
+| E. Fairness/MRM | Proxy audit, controles SR 11-7 y source-governance caveats. | Cap. 10 (fair lending); cap. 11 (MRM). |
+| F. Reproducibility | Claim -> artifact -> script -> test, paths DVC/MLflow y data/code disclosure. | Cap. 13 (trazabilidad); cap. 14 (release). |
 
 Paquetes A--F del online supplement IJDS.
 :::
@@ -180,13 +167,13 @@ Paquetes A--F del online supplement IJDS.
 
 | Claim | Artifact canonico | Test/guardrail | Donde va |
 |---|---|---|---|
-| C1 | `reports/dvc/metrics_summary.json`, `data/processed/pipeline_summary.json` | doc guardrails de baseline operacional | resultados, Tabla 1 |
-| C2 | `conformal_upstream.winner_metrics`, `alpha_sweep_pareto_mondrian.parquet` | tests de CRPTO y guardrails conformales | metodo/resultados |
-| C3 | `scripts/run_portfolio_bound_aware_search.py`, `champion_portfolio_policy.json` | consistency tests de champion | metodo |
-| C4 | `scripts/validate_alpha_gamma_bound.py`, bound eval `276k` | `test_crpto_champion_artifacts_agree` | teoria y appendix |
-| C5 | `models/final_project_promotion.json` | `test_crpto_champion_artifacts_agree` | resultados |
-| C6 | `portfolio_bound_aware_shortlist.parquet`, A18 | journal package guardrail | resultados/appendix |
-| C7 | A3--A21, status P1 y journal package | P1 evidence tests | robustness |
+| C1 | `reports/dvc/metrics_summary.json`, `data/processed/pipeline_summary.json` | Doc guardrails de baseline operacional | Resultados, Tabla 1 |
+| C2 | `conformal_upstream.winner_metrics`, `alpha_sweep_pareto_mondrian.parquet` | Tests de CRPTO y guardrails conformales | metodo/resultados |
+| C3 | `scripts/run_portfolio_bound_aware_search.py`, `champion_portfolio_policy.json` | Consistency tests de champion | Metodo |
+| C4 | `scripts/validate_alpha_gamma_bound.py`, bound eval `276k` | `test_crpto_champion_artifacts_agree` | Teoria y appendix |
+| C5 | `models/final_project_promotion.json` | `test_crpto_champion_artifacts_agree` | Resultados |
+| C6 | `portfolio_bound_aware_shortlist.parquet`, A18 | Journal package guardrail | resultados/appendix |
+| C7 | A3--A24, status P1 y journal package | P1 evidence + journal package tests | Robustness |
 
 Mapa compacto para escribir y auditar el paper.
 :::
@@ -197,16 +184,16 @@ Mapa compacto para escribir y auditar el paper.
 
 | Simbolo | Significado | Donde se usa | Regla editorial |
 |---|---|---|---|
-| `Y_i` | default observado o target acotado evaluado | bound, exact eval | no llamarlo PD latente sin supuesto adicional |
-| `p_hat_i` | PD puntual calibrada | PD, CP, LP | viene de CatBoost + Venn-Abers |
-| `u_i(alpha)` | cota superior conformal | uncertainty set | entrada prudente del optimizador |
-| `x_i` | decision o fraccion de asignacion | LP | puede ser continua en el solver operativo |
-| `a_i` | monto del prestamo | presupuesto | normaliza exposicion |
-| `w_i` | peso de portafolio financiado | bound | `w_i = x_i a_i / sum_j x_j a_j` |
-| `tau` | techo de riesgo ponderado | LP robusto | se reporta como `risk_tolerance` |
-| `Gamma_CP` | prima conformal ponderada | teoria/resultados | no mezclar con `gamma` del solver |
-| `gamma` | parametro de policy del robust LP | search de portafolio | se reporta junto con `risk_tolerance` |
-| `V` | no-cobertura ponderada del funded set | exact eval | cantidad principal del bound empirico |
+| `Y_i` | Default observado o target acotado evaluado | Bound, exact eval | No llamarlo PD latente sin supuesto adicional |
+| `p_hat_i` | PD puntual calibrada | PD, CP, LP | Viene de CatBoost + Venn-Abers |
+| `u_i(alpha)` | Cota superior conformal | Uncertainty set | Entrada prudente del optimizador |
+| `x_i` | Decision o fraccion de asignacion | LP | Puede ser continua en el solver operativo |
+| `a_i` | Monto del prestamo | Presupuesto | Normaliza exposicion |
+| `w_i` | Peso de portafolio financiado | Bound | `w_i = x_i a_i / sum_j x_j a_j` |
+| `tau` | Techo de riesgo ponderado | LP robusto | Se reporta como `risk_tolerance` |
+| `Gamma_CP` | Prima conformal ponderada | teoria/resultados | No mezclar con `gamma` del solver |
+| `gamma` | Parametro de policy del robust LP | Search de portafolio | Se reporta junto con `risk_tolerance` |
+| `V` | No-cobertura ponderada del funded set | Exact eval | Cantidad principal del bound empirico |
 
 Notacion canonica para evitar drift entre 14b, 14c y 14d.
 :::
@@ -218,23 +205,34 @@ explique como una policy con cierto `gamma` genera cierto `Gamma_CP`.
 
 ### Related work compacto con referencias numeradas
 
-El related work del paper puede comprimirse en cuatro bloques:
+El related work del paper puede comprimirse en cinco bloques:
 
 1. **Conformal prediction y risk control.** La validez finita de CP viene de
-   Vovk et al. [1] y de la exposicion moderna de Angelopoulos y Bates [2].
-   RCPS, LTT y CRC amplian el lenguaje hacia control de riesgos definidos por
-   el usuario [3]--[5].
-2. **Robust optimization.** Bertsimas y Sim dan el lenguaje del precio de la
-   robustez [6]. Johnstone y Cox y los trabajos de conformal robust optimization
-   muestran como pasar de sets conformales a decisiones robustas [7], [8].
+   Vovk et al. [1], de la exposicion moderna de Angelopoulos y Bates [2] y de la
+   monografia de fundamentos [18]. RCPS, LTT y CRC amplian el lenguaje hacia
+   control de riesgos definidos por el usuario [3]--[5], con la extension a
+   perdidas no monotonas [24]. Los limites de la inferencia condicional [20], la
+   cobertura por grupos [21] y la version localizada [22] explican por que solo
+   prometemos cobertura marginal/Mondrian, y la robustez al ruido de etiquetas
+   [23] sostiene los stress de flips.
+2. **Robust optimization y conformal RO.** Bertsimas y Sim dan el lenguaje del
+   precio de la robustez [6]. Johnstone y Cox [7], la version contextual [8] y la
+   optimizacion-satisficing conformal [27] muestran como pasar de sets
+   conformales a decisiones robustas con cobertura calibrada.
 3. **Predict-then-calibrate y DFL.** Predict-then-Calibrate es el vecino mas
    cercano por su separacion post-hoc entre prediccion, calibracion y LP [9].
    SPO+ y Online DFL son comparadores decision-focused que optimizan regret,
-   pero no entregan el mismo tipo de cobertura auditable [15], [16].
-4. **Frontera reciente.** CROMS, end-to-end conformal calibration, conformal
-   risk training, MDCP y online CP via universal portfolios apuntan a la version
-   siguiente del proyecto [10]--[14]. Sirven para reforzar actualidad, no para
+   pero no entregan el mismo tipo de cobertura auditable [15], [16]; la raiz
+   task-based [28] y los regret robustos [29] completan esa familia.
+4. **Frontera reciente y medidas de cola.** CROMS, end-to-end conformal
+   calibration, conformal risk training, MDCP y online CP via universal
+   portfolios apuntan a la version siguiente del proyecto [10]--[14], junto al
+   equilibrio de gradiente online [30]. La re-optimizacion con cota de cola se
+   apoya en CVaR [25] y OCE [26]. Sirven para reforzar actualidad, no para
    cambiar el champion actual.
+5. **Credito, fairness y datos.** El contexto del caso de uso se ancla en el
+   desempeno y equidad de los scores [31], el rol de datos alternativos en
+   LendingClub [32], el proxy BISG [33] y el marco de fairness de FinRegLab [34].
 
 La lista numerada completa esta en `docs/research/crpto_editorial_claims_references.qmd`. En el paper
 final, estos numeros se reemplazan por citas BibTeX normales; en el libro se
@@ -275,7 +273,7 @@ pasar este checklist:
 - `Y_i` se define como target observado/acotado; PD latente queda como lectura
   adicional bajo supuesto.
 - Las familias de metricas no se mezclan en un solo leaderboard.
-- Las tablas A12--A21 se presentan como robustness/journal package, no como una
+- Las tablas A12--A24 se presentan como robustness/journal package, no como una
   nueva busqueda de champion.
 - El related work incluye CP/CRC/RCPS, RO, Predict-then-Calibrate, DFL, CROMS,
   MDCP, online CP y conformal risk training.

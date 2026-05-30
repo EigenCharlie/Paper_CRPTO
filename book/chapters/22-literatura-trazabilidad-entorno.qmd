@@ -16,11 +16,11 @@ El proyecto se ubica en la interseccion de varias literaturas maduras y unas poc
 
 | Eje | Estado de la literatura | Gap relevante para el proyecto |
 |---|---|---|
-| Conformal foundations | muy desarrollado | pocas aplicaciones integradas a decision crediticia |
-| Mondrian / group-conditional | activo 2023-2026 | evidencia aplicada en credito real aun limitada |
-| Conformal + robust optimization | emergente | casi nula integracion operativa en portafolio crediticio |
-| IFRS9 / lifetime credit risk | madura por separado | ausencia practica de UQ distribution-free en pipelines ECL |
-| Decision-focused learning | expansion rapida | poco dialogo con incertidumbre conformal en credito |
+| Conformal foundations | Muy desarrollado | Pocas aplicaciones integradas a decision crediticia |
+| Mondrian / group-conditional | Activo 2023-2026 | Evidencia aplicada en credito real aun limitada |
+| Conformal + robust optimization | Emergente | Casi nula integracion operativa en portafolio crediticio |
+| IFRS9 / lifetime credit risk | Madura por separado | Ausencia practica de UQ distribution-free en pipelines ECL |
+| Decision-focused learning | Expansion rapida | Poco dialogo con incertidumbre conformal en credito |
 
 : Panorama del estado del arte
 
@@ -99,11 +99,11 @@ El proyecto no compite principalmente en "otra mejora incremental de scoring". S
 
 | Tema | Pregunta central | Donde se cristaliza en este proyecto |
 |---|---|---|
-| scoring calibrado | como convertir score en probabilidad defendible? | `sec-calibration-selection` y `sec-model-champion` |
-| conformal por grupo | como medir incertidumbre util por segmento? | `sec-mondrian` y Paper 3 |
-| decision robusta | como usar esa incertidumbre para asignar capital? | `sec-robust-portfolio` y CRPTO |
-| IFRS9 con incertidumbre | como se mueve la provision bajo escenarios y lifetime risk? | `sec-ecl-calculation` y Paper 2 |
-| gobernanza aplicada | como sostener la conversacion ante auditoria y comite? | `sec-mrm` |
+| Scoring calibrado | Como convertir score en probabilidad defendible? | `sec-calibration-selection` y `sec-model-champion` |
+| Conformal por grupo | Como medir incertidumbre util por segmento? | `sec-mondrian` y Paper 3 |
+| Decision robusta | Como usar esa incertidumbre para asignar capital? | `sec-robust-portfolio` y CRPTO |
+| IFRS9 con incertidumbre | Como se mueve la provision bajo escenarios y lifetime risk? | `sec-ecl-calculation` y Paper 2 |
+| Gobernanza aplicada | Como sostener la conversacion ante auditoria y comite? | `sec-mrm` |
 
 : Matriz tematica maestra del panorama research
 
@@ -150,10 +150,10 @@ Las contribuciones operativas demuestran que el pipeline no es solo un prototipo
 
 | Contribucion | Claim defendible |
 |---|---|
-| calibracion + conformal + robustez | el proyecto deja de decidir sobre un punto y pasa a decidir sobre un rango plausible |
-| survival + IFRS9 | misma PD puntual puede tener lecturas prudenciales distintas segun el tiempo |
-| causalidad + policy | no solo clasificamos riesgo; tambien preguntamos donde intervenir |
-| explainability + MRM | el modelo puede discutirse en lenguaje de negocio y control, no solo con metricas |
+| Calibracion + conformal + robustez | El proyecto deja de decidir sobre un punto y pasa a decidir sobre un rango plausible |
+| Survival + IFRS9 | Misma PD puntual puede tener lecturas prudenciales distintas segun el tiempo |
+| Causalidad + policy | No solo clasificamos riesgo; tambien preguntamos donde intervenir |
+| Explainability + MRM | El modelo puede discutirse en lenguaje de negocio y control, no solo con metricas |
 
 : Matriz corta de claims de tesis y su valor practico
 
@@ -165,10 +165,10 @@ Las contribuciones operativas demuestran que el pipeline no es solo un prototipo
 
 | Aporte | Evidencia |
 |---|---|
-| Pipeline end-to-end reproducible | libro + Streamlit + artefactos congelados |
-| Gobernanza explicita | fairness, MRM, champion registry |
+| Pipeline end-to-end reproducible | Libro + Streamlit + artefactos congelados |
+| Gobernanza explicita | Fairness, MRM, champion registry |
 | Companion interactivo | 5 labs locales opcionales |
-| Trazabilidad de notebooks | inventario y manifests |
+| Trazabilidad de notebooks | Inventario y manifests |
 
 : Contribuciones operativas de la tesis
 
@@ -280,12 +280,12 @@ El proyecto ya no depende de “parámetros escondidos en notebooks”. La capa 
 
 | Archivo | Función |
 |---|---|
-| `configs/pd_model.yaml` | configuración base del modelo PD |
-| `configs/conformal_policy.yaml` | metas y thresholds de cobertura |
-| `configs/fairness_policy.yaml` | límites de fairness y política de evaluación |
-| `configs/mrm_policy.yaml` | reglas de gobernanza y validación |
-| `configs/optimization.yaml` | parámetros de portafolio robusto |
-| `configs/time_series.yaml` | forecasting y escenarios temporales |
+| `configs/pd_model.yaml` | Configuración base del modelo PD |
+| `configs/conformal_policy.yaml` | Metas y thresholds de cobertura |
+| `configs/fairness_policy.yaml` | Límites de fairness y política de evaluación |
+| `configs/mrm_policy.yaml` | Reglas de gobernanza y validación |
+| `configs/optimization.yaml` | Parámetros de portafolio robusto |
+| `configs/time_series.yaml` | Forecasting y escenarios temporales |
 
 : Núcleo de configuración declarativa
 

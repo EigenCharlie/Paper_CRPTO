@@ -1157,10 +1157,10 @@ Cuando una variable es alta en SHAP y alta en permutación, suele ser una señal
 
 | Cuadrante | Cómo leerlo | Ejemplo típico en el proyecto |
 |---|---|---|
-| Alta atribución + alta sensibilidad | driver estructural: explica mucho y romperlo daña el modelo | `int_rate` |
-| Alta atribución + sensibilidad moderada | señal frecuente, importante para muchas predicciones, pero no única | `term` |
-| Baja atribución + alta sensibilidad | feature de apoyo que se vuelve crítica en ciertos segmentos | algunas señales de historial crediticio |
-| Baja atribución + baja sensibilidad | señal secundaria, útil más por contexto que por dependencia fuerte | variables auxiliares del perfil del hogar |
+| Alta atribución + alta sensibilidad | Driver estructural: explica mucho y romperlo daña el modelo | `int_rate` |
+| Alta atribución + sensibilidad moderada | Señal frecuente, importante para muchas predicciones, pero no única | `term` |
+| Baja atribución + alta sensibilidad | Feature de apoyo que se vuelve crítica en ciertos segmentos | Algunas señales de historial crediticio |
+| Baja atribución + baja sensibilidad | Señal secundaria, útil más por contexto que por dependencia fuerte | Variables auxiliares del perfil del hogar |
 
 : Taxonomía maestra de interpretabilidad: atribución vs sensibilidad
 
@@ -1208,10 +1208,10 @@ En particular, `int_rate` y `term` aparecen como variables controlables. Eso es 
 
 | Familia | Controlabilidad | Uso editorial en el libro |
 |---|---|---|
-| `pricing` | alta | palancas reales de política comercial y simulación causal |
-| `credit_quality` | baja | contexto estructural del prestatario; no debe venderse como palanca de intervención |
-| `capacity` | media | puede detonar documentación o filtros de elegibilidad, no siempre cambio de precio |
-| `household_profile` | baja-media | aporta estabilidad descriptiva y vigilancia, más que acción directa |
+| `pricing` | Alta | Palancas reales de política comercial y simulación causal |
+| `credit_quality` | Baja | Contexto estructural del prestatario; no debe venderse como palanca de intervención |
+| `capacity` | Media | Puede detonar documentación o filtros de elegibilidad, no siempre cambio de precio |
+| `household_profile` | Baja-media | Aporta estabilidad descriptiva y vigilancia, más que acción directa |
 
 : Atribución y grado de controlabilidad para lectura de negocio
 
@@ -1265,9 +1265,9 @@ En este préstamo, el FICO de 767 y la tasa de 8.19% empujan fuertemente el scor
 
 | Caso | Contexto | PD calibrada | Intervalo 90% | Drivers dominantes | Lectura operativa |
 |---|---|---:|---|---|---|
-| Aprobable con confianza | Grade A, plazo 36m, tasa baja | 5.64% | [0.00%, 18.14%] | FICO alto, tasa baja, menor presión financiera | decisión relativamente estable; el intervalo es amplio pero sigue lejos de zona crítica |
-| Zona gris | Grade C, plazo 60m, DTI alto | ≈ 18% | banda moderada-alta | tasa, plazo y capacidad se contrapesan | conviene revisión manual o política más prudente |
-| Riesgo alto con explicación consistente | Grade F/G, precio alto y estrés financiero | > 35% | banda alta y desplazada | precio, plazo largo, historial débil | rechazo o pricing muy defensivo; no hace falta “explicar de más” para ver el problema |
+| Aprobable con confianza | Grade A, plazo 36m, tasa baja | 5.64% | [0.00%, 18.14%] | FICO alto, tasa baja, menor presión financiera | Decisión relativamente estable; el intervalo es amplio pero sigue lejos de zona crítica |
+| Zona gris | Grade C, plazo 60m, DTI alto | ≈ 18% | Banda moderada-alta | Tasa, plazo y capacidad se contrapesan | Conviene revisión manual o política más prudente |
+| Riesgo alto con explicación consistente | Grade F/G, precio alto y estrés financiero | > 35% | Banda alta y desplazada | Precio, plazo largo, historial débil | Rechazo o pricing muy defensivo; no hace falta “explicar de más” para ver el problema |
 
 : Tres minicasos que resumen cómo leer SHAP + PD + intervalo conformal
 
@@ -1277,10 +1277,10 @@ Una explicación local útil debe poder traducirse a reason codes. En este proye
 
 | Familia | Cómo se comunica |
 |---|---|
-| `credit_quality` | historial y calidad crediticia del solicitante |
-| `capacity` | presión financiera o capacidad de pago |
-| `pricing` | condiciones del contrato ofrecido |
-| `household_profile` | estabilidad del hogar y contexto del solicitante |
+| `credit_quality` | Historial y calidad crediticia del solicitante |
+| `capacity` | Presión financiera o capacidad de pago |
+| `pricing` | Condiciones del contrato ofrecido |
+| `household_profile` | Estabilidad del hogar y contexto del solicitante |
 
 : Familias de reason codes
 
@@ -1302,9 +1302,9 @@ Las explicaciones locales sirven para tres momentos operativos:
 
 | Momento | Pregunta de negocio | Uso de la explicación |
 |---|---|---|
-| Originación | ¿por qué este préstamo quedó en zona gris? | identificar palancas de precio, plazo o documentación |
-| Validación | ¿la razón local coincide con la teoría del modelo? | detectar atajos o señales no plausibles |
-| Auditoría | ¿puedo reconstruir la decisión? | asociar score, intervalo y drivers a un caso concreto |
+| Originación | ¿por qué este préstamo quedó en zona gris? | Identificar palancas de precio, plazo o documentación |
+| Validación | ¿la razón local coincide con la teoría del modelo? | Detectar atajos o señales no plausibles |
+| Auditoría | ¿puedo reconstruir la decisión? | Asociar score, intervalo y drivers a un caso concreto |
 
 : Usos operativos de explicaciones locales
 
@@ -1338,11 +1338,11 @@ El artefacto `explanation_drift.parquet` compara un periodo de referencia amplio
 
 | Indicador | Valor | Lectura |
 |---|---:|---|
-| `rank_overlap_top10` | 1.00 | mismo top 10 global |
-| `avg_shap_psi_top5` | 0.0491 | cambio pequeño en masa SHAP |
-| `max_shap_psi_top5` | 0.0757 | sin desplazamiento severo |
-| `reason_code_match_rate` | 1.00 | reason codes líderes estables |
-| `passed_all` | `True` | snapshot en verde |
+| `rank_overlap_top10` | 1.00 | Mismo top 10 global |
+| `avg_shap_psi_top5` | 0.0491 | Cambio pequeño en masa SHAP |
+| `max_shap_psi_top5` | 0.0757 | Sin desplazamiento severo |
+| `reason_code_match_rate` | 1.00 | Reason codes líderes estables |
+| `passed_all` | `True` | Snapshot en verde |
 
 : Resumen de drift explicativo
 
@@ -1370,9 +1370,9 @@ Esta separación permite respuestas más finas. No toda alerta de datos requiere
 
 | Si observamos... | Entonces conviene... |
 |---|---|
-| drift de datos sin drift explicativo ni pérdida de cobertura | reforzar monitoreo, no necesariamente reentrenar |
-| drift explicativo con performance estable | abrir challenger review: el modelo puede seguir “acertando” por razones peores |
-| drift explicativo + caída de cobertura/performance | activar escalamiento MRM y revisión de datos/artefactos |
+| Drift de datos sin drift explicativo ni pérdida de cobertura | Reforzar monitoreo, no necesariamente reentrenar |
+| Drift explicativo con performance estable | Abrir challenger review: el modelo puede seguir “acertando” por razones peores |
+| Drift explicativo + caída de cobertura/performance | Activar escalamiento MRM y revisión de datos/artefactos |
 
 : Caja de decisión para drift explicativo y challenger review
 
@@ -1400,10 +1400,10 @@ Ejemplo concreto: una misma cohorte de préstamos aparece como estructura de `gr
 
 | Lente sobre el dataset | Pregunta que responde | Dónde se profundiza |
 |---|---|---|
-| estructura básica | qué tan grande, heterogéneo y desbalanceado es el problema | 51 |
-| geografía y tiempo | cómo cambia el riesgo por estado, cohorte y régimen | 52 |
-| benchmark externo | qué tan competitivos son nuestros resultados frente a Lending Club en la literatura | 53 |
-| modelado / incertidumbre / causalidad | qué otras caras del mismo dataset aparecen en el resto del libro | capítulos 5 al 13 |
+| Estructura básica | Qué tan grande, heterogéneo y desbalanceado es el problema | 51 |
+| Geografía y tiempo | Cómo cambia el riesgo por estado, cohorte y régimen | 52 |
+| Benchmark externo | Qué tan competitivos son nuestros resultados frente a Lending Club en la literatura | 53 |
+| Modelado / incertidumbre / causalidad | Qué otras caras del mismo dataset aparecen en el resto del libro | Capítulos 5 al 13 |
 
 : Dataset 360° como puente entre pipeline e insights factory
 
@@ -1501,19 +1501,19 @@ Aunque el dataset es amplio, el proyecto organiza la historia en torno a unas po
 
 | Familia | Variables emblemáticas | Papel en la narrativa |
 |---|---|---|
-| Precio / contrato | `int_rate`, `term` | resumen del riesgo percibido en originación |
-| Calidad crediticia | `fico_score`, historial | solvencia previa del cliente |
-| Capacidad | `dti`, ingreso | presión financiera |
-| Perfil del hogar | `home_ownership`, verificación | estabilidad y contexto |
+| Precio / contrato | `int_rate`, `term` | Resumen del riesgo percibido en originación |
+| Calidad crediticia | `fico_score`, historial | Solvencia previa del cliente |
+| Capacidad | `dti`, ingreso | Presión financiera |
+| Perfil del hogar | `home_ownership`, verificación | Estabilidad y contexto |
 
 : Familias con valor narrativo y operativo
 
 | Señal observada en el EDA | Ejemplo en Lending Club | Qué capítulo la retoma |
 |---|---|---|
-| Riesgo creciente por `grade` | `A` ≈ 5.6% vs `G` ≈ 47.7% de default | conformal, IFRS9, fairness |
-| Riesgo creciente por `term` | 60m empeora el perfil dentro de varios grades | survival, pricing, portafolio |
-| Mezcla de producto heterogénea | no todos los propósitos tienen el mismo riesgo ni el mismo monto | dataset 360, causalidad, optimización |
-| Desbalance moderado | 18.5% de default, no un evento ultra-raro | calibración, métricas, A/B |
+| Riesgo creciente por `grade` | `A` ≈ 5.6% vs `G` ≈ 47.7% de default | Conformal, IFRS9, fairness |
+| Riesgo creciente por `term` | 60m empeora el perfil dentro de varios grades | Survival, pricing, portafolio |
+| Mezcla de producto heterogénea | No todos los propósitos tienen el mismo riesgo ni el mismo monto | Dataset 360, causalidad, optimización |
+| Desbalance moderado | 18.5% de default, no un evento ultra-raro | Calibración, métricas, A/B |
 
 : Cómo el EDA se convierte en decisiones metodológicas posteriores
 
@@ -1552,8 +1552,8 @@ La presencia de estados con mucho menor soporte muestral también es una adverte
 
 | Lo que muestra la geografía | Lo que no conviene sobrerreaccionar | Lectura útil para el libro |
 |---|---|---|
-| algunos estados combinan más volumen y más default | no toda diferencia estatal justifica una política separada | usar geografía como contexto, no como partición principal del pipeline |
-| hay jurisdicciones con soporte muestral bajo | un grupo pequeño puede inducir falsas señales | preferir grupos con estabilidad y semántica de negocio como `grade` |
+| Algunos estados combinan más volumen y más default | No toda diferencia estatal justifica una política separada | Usar geografía como contexto, no como partición principal del pipeline |
+| Hay jurisdicciones con soporte muestral bajo | Un grupo pequeño puede inducir falsas señales | Preferir grupos con estabilidad y semántica de negocio como `grade` |
 
 : Cómo leer la geografía sin sobreprometer segmentación
 
@@ -1566,7 +1566,7 @@ El proyecto usa una división temporal explícita, no un *shuffle split*. La nar
 | Split | Filas | Periodo narrativo |
 |---|---:|---|
 | Train | 1,346,311 | 2007-2017 |
-| Calibration | 237,584 | ventana de ajuste intermedia |
+| Calibration | 237,584 | Ventana de ajuste intermedia |
 | Test OOT | 276,869 | 2018-2020 |
 
 : Esquema temporal del pipeline

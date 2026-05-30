@@ -28,7 +28,7 @@ Los borradores de trabajo son:
 
 - `CRPTO_ijds.qmd`: cuerpo anonimo IJDS, conceptualmente limitado a 25 paginas
   excluyendo referencias y appendix.
-- `supplement_ijds.qmd`: online supplement IJDS con A3--A21, robustez,
+- `supplement_ijds.qmd`: online supplement IJDS con A3--A24, robustez,
   reproducibilidad, MRM y fairness.
 
 La version larga y sus apendices estan en `book/`.

@@ -208,7 +208,7 @@ if cb_default:
     pd.DataFrame(list(metrics_default.items()), columns=["Métrica", "Valor"])
 ```
 
-Con un AUC de 0.7128, el CatBoost default ya supera sustancialmente a la LR baseline (0.679, ver `sec-lr-baseline`), demostrando que las interacciones no lineales y el procesamiento nativo de categorías aportan +0.034 AUC (+5.0% relativo). La pregunta es si la optimización de hiperparámetros y las restricciones monotónicas pueden mejorar aún más este rendimiento.
+Con un AUC de 0.7124, el CatBoost default ya supera sustancialmente a la LR baseline (0.683, ver `sec-lr-baseline`), demostrando que las interacciones no lineales y el procesamiento nativo de categorías aportan +0.029 AUC (+4.3% relativo). La pregunta es si la optimización de hiperparámetros y las restricciones monotónicas pueden mejorar aún más este rendimiento.
 
 ### Optimización con Optuna (HPO)
 
@@ -284,7 +284,7 @@ optuna_results = {
 pd.DataFrame(list(optuna_results.items()), columns=["Aspecto", "Valor"])
 ```
 
-Los trials de Optuna alcanzaron un AUC de validación de 0.7221, pero el AUC en el test OOT es 0.7128 --- una brecha de 0.0093 que indica *temporal overfitting* al set de validación. El set de validación temporal cubre un período específico (cola del período 2007--2017), mientras que el test OOT abarca 2018--2020 con condiciones macroeconómicas potencialmente diferentes. El champion actual utiliza cuatro restricciones monotónicas (`installment:1`, `annual_inc:-1`, `dti:1`, `loan_to_income:1`) seleccionadas por búsqueda exhaustiva por bloques y refinadas por HPO local, y el calibrador Venn-Abers fue promovido automáticamente por la política temporal multi-fold.
+Los trials de Optuna alcanzaron un AUC de validación de 0.7223, pero el AUC en el test OOT es 0.7124 --- una brecha de 0.0099 que indica *temporal overfitting* al set de validación. El set de validación temporal cubre un período específico (cola del período 2007--2017), mientras que el test OOT abarca 2018--2020 con condiciones macroeconómicas potencialmente diferentes. El champion actual utiliza cuatro restricciones monotónicas (`installment:1`, `annual_inc:-1`, `dti:1`, `loan_to_income:1`) seleccionadas por búsqueda exhaustiva por bloques y refinadas por HPO local, y el calibrador Venn-Abers fue promovido automáticamente por la política temporal multi-fold.
 
 #### Visualización del Proceso HPO
 
@@ -400,7 +400,7 @@ Vale la pena explicitar esta sección porque, sin ese contexto, una mejora peque
 
 ::: {.callout-warning}
 ## Ganancia marginal del HPO
-La mejora del tuning de Optuna sobre el CatBoost default es marginal en AUC OOT (0.7128 con y sin HPO). El valor real del pipeline no reside en exprimir décimas de AUC, sino en la calibración post-hoc, las restricciones monotónicas, y la capa conformal downstream.
+La mejora del tuning de Optuna sobre el CatBoost default es marginal en AUC OOT (0.7124 con y sin HPO). El valor real del pipeline no reside en exprimir décimas de AUC, sino en la calibración post-hoc, las restricciones monotónicas, y la capa conformal downstream.
 :::
 
 Tres factores explican esta convergencia:
@@ -452,7 +452,7 @@ La robustez de CatBoost a los hiperparámetros es una ventaja en el contexto del
 El pipeline exporta valores SHAP usando la implementación **nativa de CatBoost** (`get_feature_importance(type='ShapValues')`), que es exacta para árboles oblivious --- a diferencia de la librería SHAP genérica, que usa aproximaciones kernel o tree para modelos de terceros. Los artefactos generados son:
 
 - `models/shap_values_test.npz`: Matriz completa de SHAP values para el test set (comprimida).
-- `models/shap_feature_importance.json`: Top-20 features ordenados por $|\text{SHAP}|$ medio.
+- El bloque `explainability.top_global_drivers` de `data/processed/pipeline_summary.json`: top features globales ordenados por importancia $|\text{SHAP}|$ media.
 
 Estos artefactos alimentan las explicaciones globales y locales del capítulo de interpretabilidad (`sec-global-explanations`) y el desarrollo ampliado de MRM (`sec-mrm-report-detail`).
 
@@ -724,7 +724,7 @@ El impacto de la calibración es dramático:
 - **Brier Score**: De 0.2095 a 0.1546, una reducción del 26.2%. La calibración mejora la calidad de las probabilidades sin reentrenar el modelo.
 - **ECE**: 0.0064 --- la frecuencia observada de default en cada bin de probabilidad difiere en promedio solo 0.64 puntos porcentuales de la probabilidad predicha. Esto es excelente para uso en ECL e IFRS9.
 - **D² Brier**: De -0.2217 (peor que el predictor naive) a +0.0986 (mejor que el predictor naive). La calibración transforma un modelo que, en términos de probabilidad absoluta, era **peor que predecir siempre la tasa base**, en uno que genuinamente agrega valor probabilístico.
-- **AUC**: 0.7128 $\rightarrow$ 0.7127, variación en la cuarta decimal. La calibración no afecta la discriminación, como esperamos teóricamente.
+- **AUC**: 0.7124 sin cambio material con la calibración. La calibración no afecta la discriminación, como esperamos teóricamente.
 
 ### Descomposición del Brier Score
 
@@ -904,10 +904,10 @@ models_data = [
     {"Modelo": "Logistic Regression", "AUC": 0.683, "Gini": 0.366,
      "Brier": 0.2313, "ECE": "N/A", "D² Brier": -0.349,
      "Calibrado": "No", "Status": "Baseline"},
-    {"Modelo": "CatBoost (default)", "AUC": 0.7128, "Gini": 0.4256,
+    {"Modelo": "CatBoost (default)", "AUC": 0.7124, "Gini": 0.4249,
      "Brier": 0.2095, "ECE": "N/A", "D² Brier": -0.222,
      "Calibrado": "No", "Status": "Candidato"},
-    {"Modelo": "CatBoost (monotónico)", "AUC": 0.7128, "Gini": 0.4256,
+    {"Modelo": "CatBoost (monotónico)", "AUC": 0.7124, "Gini": 0.4249,
      "Brier": 0.2095, "ECE": "N/A", "D² Brier": -0.222,
      "Calibrado": "No", "Status": "Candidato"},
     {"Modelo": "CatBoost monotónico + Venn-Abers", "AUC": round(pipeline_summary.get("pd_auc", 0), 4),

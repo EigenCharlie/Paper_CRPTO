@@ -1,0 +1,106 @@
+{
+  "diagnostic_only": true,
+  "overall_pass": true,
+  "severity": "warning",
+  "signal_type": "material_slice_deviation",
+  "summary": {
+    "gap": 0.0026550238659114322,
+    "gap_bp": 26.55023865911432,
+    "abs_gap_bp": 26.55023865911432,
+    "materiality_band": "low",
+    "grade_material_breaches": 1,
+    "max_grade_gap_bp": 507.225447549276,
+    "band_material_breaches": 1,
+    "max_band_gap_bp": 160.26695962362837,
+    "global_brier": 0.15463051782916892,
+    "global_ece": 0.006379675621599359,
+    "worst_protected_group_ece": 0.021540776718198477,
+    "worst_grade_brier": 0.24104901112917315,
+    "max_decile_gap_bp": 168.75745454345503,
+    "persistent_quarter_gaps": 8,
+    "n_quarters_evaluated": 9,
+    "exact_binomial_p_value": 0.0007157999395488739,
+    "hl_p_value": 0.0,
+    "predicted_pd_inside_jeffreys": false
+  },
+  "quarter_rows": [
+    {
+      "issue_quarter": "2018Q1",
+      "n_obs": 53924,
+      "observed_default_rate": 0.2329945849714413,
+      "mean_predicted_pd": 0.2154554186518523,
+      "rate_gap": 0.01753916631958899,
+      "abs_gap_bp": 175.3916631958899
+    },
+    {
+      "issue_quarter": "2018Q2",
+      "n_obs": 56915,
+      "observed_default_rate": 0.2556268119125011,
+      "mean_predicted_pd": 0.22076424063290606,
+      "rate_gap": 0.03486257127959502,
+      "abs_gap_bp": 348.6257127959502
+    },
+    {
+      "issue_quarter": "2018Q3",
+      "n_obs": 47168,
+      "observed_default_rate": 0.23289094301221167,
+      "mean_predicted_pd": 0.22108089847018017,
+      "rate_gap": 0.011810044542031495,
+      "abs_gap_bp": 118.10044542031494
+    },
+    {
+      "issue_quarter": "2018Q4",
+      "n_obs": 39171,
+      "observed_default_rate": 0.23305506624798958,
+      "mean_predicted_pd": 0.220510756155411,
+      "rate_gap": 0.012544310092578587,
+      "abs_gap_bp": 125.44310092578587
+    },
+    {
+      "issue_quarter": "2019Q1",
+      "n_obs": 27508,
+      "observed_default_rate": 0.21241093500072705,
+      "mean_predicted_pd": 0.2166885452353189,
+      "rate_gap": -0.004277610234591861,
+      "abs_gap_bp": 42.77610234591861
+    },
+    {
+      "issue_quarter": "2019Q2",
+      "n_obs": 22737,
+      "observed_default_rate": 0.20191757927606985,
+      "mean_predicted_pd": 0.21258154254177034,
+      "rate_gap": -0.010663963265700488,
+      "abs_gap_bp": 106.63963265700488
+    },
+    {
+      "issue_quarter": "2019Q3",
+      "n_obs": 16603,
+      "observed_default_rate": 0.1451544901523821,
+      "mean_predicted_pd": 0.20750430468773834,
+      "rate_gap": -0.062349814535356235,
+      "abs_gap_bp": 623.4981453535623
+    },
+    {
+      "issue_quarter": "2019Q4",
+      "n_obs": 8557,
+      "observed_default_rate": 0.08425850181138249,
+      "mean_predicted_pd": 0.21131537285529073,
+      "rate_gap": -0.12705687104390823,
+      "abs_gap_bp": 1270.5687104390822
+    },
+    {
+      "issue_quarter": "2020Q1",
+      "n_obs": 2977,
+      "observed_default_rate": 0.0141081625797783,
+      "mean_predicted_pd": 0.2047846456046201,
+      "rate_gap": -0.1906764830248418,
+      "abs_gap_bp": 1906.764830248418
+    }
+  ],
+  "artifacts": {
+    "quarter_materiality_path": "data/processed/pd_backtesting_quarter_materiality.parquet"
+  },
+  "schema_version": "2026-03-30.1",
+  "generated_at_utc": "2026-04-07T17:43:11.322026+00:00",
+  "run_tag": "paper1-e2e-all-champions-2026-04-07"
+}

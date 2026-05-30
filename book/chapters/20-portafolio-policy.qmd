@@ -35,10 +35,10 @@ La figura `fig-uncertainty-sets` conecta estadística con OR: cada intervalo con
 
 | Capa de entrada | Qué aporta a la optimización | Qué error evita |
 |---|---|---|
-| `pd_point` | ranking base y retorno esperado | decidir como si el score fuera exacto |
-| intervalo conformal | rango plausible de riesgo por préstamo | sobreasignar capital a candidatos con alta ambigüedad |
-| policy champion | umbrales y perfil económico promovido | dejar la selección final en tuning implícito o subjetivo |
-| evaluación A/B y regret | evidencia económica posterior | confundir elegancia metodológica con valor real |
+| `pd_point` | Ranking base y retorno esperado | Decidir como si el score fuera exacto |
+| Intervalo conformal | Rango plausible de riesgo por préstamo | Sobreasignar capital a candidatos con alta ambigüedad |
+| Policy champion | Umbrales y perfil económico promovido | Dejar la selección final en tuning implícito o subjetivo |
+| Evaluación A/B y regret | Evidencia económica posterior | Confundir elegancia metodológica con valor real |
 
 : Cómo se traduce la estadística en decisión de portafolio
 

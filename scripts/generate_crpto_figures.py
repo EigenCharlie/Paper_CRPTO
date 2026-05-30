@@ -1422,6 +1422,128 @@ def _crpto_fig17_tail_risk_lgd() -> None:
     _save(fig, "crpto_fig17_tail_risk_lgd")
 
 
+def _crpto_fig18_tail_constrained_frontier() -> None:
+    """Fig 18 — A22 efficient return-vs-CVaR frontier under the tail constraint.
+
+    Reads the committed Table A22 CSV (no DVC dependency). Each point is the
+    highest-return alpha01-safe policy admissible under a decision-time CVaR cap;
+    the frozen economic champion sits at the high-return, high-CVaR corner.
+    """
+    csv = (
+        REPO_ROOT
+        / "reports"
+        / "crpto"
+        / "tables"
+        / "crpto_tableA22_tail_constrained_reoptimization.csv"
+    )
+    if not csv.exists():
+        logger.warning("A22 CSV not found — skipping fig18")
+        return
+    df = pd.read_csv(csv).sort_values("selected_decision_time_cvar95")
+    cvar = df["selected_decision_time_cvar95"].to_numpy(float)
+    ret = df["selected_realized_total_return"].to_numpy(float) / 1e3
+    role = df["selected_paper_role"].astype(str).to_numpy()
+
+    fig, ax = plt.subplots(figsize=(COL2, HEIGHT_M))
+    ax.plot(
+        cvar,
+        ret,
+        "-o",
+        color=PALETTE["blue"],
+        ms=5,
+        lw=1.3,
+        label=r"Efficient frontier (max return $\mid$ CVaR$_{95}\leq$ cap)",
+        zorder=3,
+    )
+    ax.scatter(
+        [float(cvar[0])],
+        [float(ret[0])],
+        s=80,
+        marker="D",
+        color=PALETTE["green"],
+        edgecolors="white",
+        linewidths=0.5,
+        label="Tightest tail cap (challenger end)",
+        zorder=5,
+    )
+    champ = role == "economic_champion"
+    if champ.any():
+        cx, cy = float(cvar[champ][0]), float(ret[champ][0])
+        ax.scatter(
+            [cx],
+            [cy],
+            s=260,
+            marker="*",
+            color=PALETTE["orange"],
+            edgecolors="black",
+            linewidths=0.6,
+            label="Economic champion (official)",
+            zorder=6,
+        )
+        ax.annotate(
+            f"Champion: ${cy:.1f}K\n" + r"CVaR$_{95}$=" + f"{cx:.3f}",
+            (cx, cy),
+            textcoords="offset points",
+            xytext=(-16, -26),
+            ha="right",
+            va="top",
+            fontsize=7.5,
+            fontweight="bold",
+            color=PALETTE["orange"],
+        )
+    ax.set_xlabel(r"Decision-time CVaR$_{95}$ cap (conformal worst case)")
+    ax.set_ylabel("Realized portfolio return (USD thousands)")
+    ax.set_title(r"A22 — Return vs. Tail-Risk Frontier Under the CVaR Constraint ($\alpha=0.01$)")
+    ax.legend(loc="lower right", fontsize=7.2)
+    fig.tight_layout()
+    _save(fig, "crpto_fig18_tail_constrained_frontier")
+
+
+def _crpto_fig19_online_coverage_aci() -> None:
+    """Fig 19 — A24 per-vintage coverage, cumulative coverage and ACI alpha_t.
+
+    Reads the committed Table A24 CSV. Shows that coverage holds across the OOT
+    vintage sequence and that the Gibbs-Candes ACI target barely drifts, i.e. an
+    online controller would have little to do on this static OOT.
+    """
+    csv = (
+        REPO_ROOT / "reports" / "crpto" / "tables" / "crpto_tableA24_online_conformal_stability.csv"
+    )
+    if not csv.exists():
+        logger.warning("A24 CSV not found — skipping fig19")
+        return
+    df = pd.read_csv(csv)
+    x = np.arange(len(df))
+    periods = df["period"].astype(str).to_numpy()
+    cov = df["coverage_90"].to_numpy(float)
+    cum = df["cumulative_coverage_90"].to_numpy(float)
+    alpha_t = df["aci_alpha_target_before"].to_numpy(float)
+
+    fig, ax = plt.subplots(figsize=(COL2, HEIGHT_M))
+    ax.plot(x, cov, "-o", color=PALETTE["blue"], ms=5, label="Per-vintage coverage")
+    ax.plot(x, cum, "--s", color=PALETTE["green"], ms=4, label="Cumulative (streaming) coverage")
+    ax.axhline(0.90, color=PALETTE["red"], lw=0.9, ls=":", label="Target 90%")
+    ax.set_ylim(0.88, 1.005)
+    ax.set_xticks(x)
+    ax.set_xticklabels(periods, rotation=45, ha="right", fontsize=6.5)
+    ax.set_xlabel("OOT vintage")
+    ax.set_ylabel("Conformal coverage (90% target)")
+
+    ax2 = ax.twinx()
+    ax2.plot(
+        x, alpha_t, "-^", color=PALETTE["orange"], ms=4, lw=0.9, label=r"ACI target $\alpha_t$"
+    )
+    ax2.set_ylabel(r"ACI target $\alpha_t$", color=PALETTE["orange"])
+    ax2.tick_params(axis="y", labelcolor=PALETTE["orange"])
+
+    lines1, labels1 = ax.get_legend_handles_labels()
+    lines2, labels2 = ax2.get_legend_handles_labels()
+    ax.legend(lines1 + lines2, labels1 + labels2, loc="center left", fontsize=7.0)
+    ax.set_title("A24 — Online Conformal Stability Across the OOT Vintage Sequence")
+    fig.tight_layout()
+    _save(fig, "crpto_fig19_online_coverage_aci")
+
+
 # ── Dispatch ──────────────────────────────────────────────────────────────────
 
 PAPER3_FIGS = [
@@ -1448,6 +1570,8 @@ CRPTO_FIGS = [
     _crpto_fig11_crpto_stability,
     _crpto_fig16_tail_risk_frontier,
     _crpto_fig17_tail_risk_lgd,
+    _crpto_fig18_tail_constrained_frontier,
+    _crpto_fig19_online_coverage_aci,
 ]
 
 

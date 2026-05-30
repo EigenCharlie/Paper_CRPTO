@@ -1,0 +1,45 @@
+{
+  "champion_promotion_changed": false,
+  "elapsed_sec": 1.066145,
+  "generated_artifacts": [
+    "reports/crpto/tables/crpto_tableA23_multidistribution_robustness.csv",
+    "reports/crpto/tables/crpto_tableA23_multidistribution_robustness.tex",
+    "reports/crpto/tables/crpto_tableA24_online_conformal_stability.csv",
+    "reports/crpto/tables/crpto_tableA24_online_conformal_stability.tex"
+  ],
+  "generated_at_utc": "2026-05-29T04:16:46.996425+00:00",
+  "multidistribution_robustness": {
+    "all_grades_meet_target": true,
+    "all_supported_cells_meet_target": false,
+    "marginal_coverage_90": 0.9293384235866059,
+    "min_grade_coverage_90": 0.9003509420022164,
+    "min_grade_period_cell_coverage_90": 0.8762765121759623,
+    "min_period_coverage_90": 0.9225192106405249,
+    "n_supported_cells": 47,
+    "robust_coverage_gap": 0.02372348782403777,
+    "worst_grade": "E",
+    "worst_grade_period_cell": "E|2018Q4",
+    "worst_period": "2018Q4"
+  },
+  "notes": [
+    "Read-only diagnostics on frozen Mondrian conformal intervals.",
+    "A23 stresses coverage across unknown groups (grade, grade x vintage).",
+    "A24 is a static-OOT online-control diagnostic, not streaming validation."
+  ],
+  "online_conformal_stability": {
+    "aci_alpha_target_max_abs_deviation": 0.02292023539471473,
+    "aci_step_gamma": 0.05,
+    "all_periods_meet_target": true,
+    "default_rate_first": 0.2329945849714413,
+    "default_rate_last": 0.002061855670103093,
+    "final_cumulative_coverage_90": 0.9293384235866059,
+    "first_period": "2018Q1",
+    "last_period": "2020Q3",
+    "max_period_coverage_90": 0.9979381443298969,
+    "min_period_coverage_90": 0.9225192106405249,
+    "n_periods": 11
+  },
+  "schema_version": "2026-05-28.1",
+  "source_intervals": "data/processed/conformal_intervals_mondrian.parquet",
+  "target_coverage_90": 0.9
+}

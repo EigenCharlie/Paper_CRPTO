@@ -5,7 +5,7 @@ page-layout: article
 
 ## Checkpoint de Fair Lending {#sec-p1-fair-lending}
 
-El CRPTO defiende auditabilidad como diferencia editorial frente a SPO+ y otros métodos decision-focused. Auditabilidad no es sólo cobertura conformal verificable — incluye también la **auditoría de fair lending** sobre el funded set efectivo. Esta página documenta la prueba completa y muestra que el champion oficial pasa los seis tests definidos en el `fairness_policy.yaml` del proyecto, incluyendo tres tests **intersectional** que son la evidencia más exigente de la auditoría.
+El CRPTO defiende auditabilidad como diferencia editorial frente a SPO+ y otros métodos decision-focused. Auditabilidad no es sólo cobertura conformal verificable — incluye también la **auditoría de fair lending** sobre el funded set efectivo. Que los credit scores tradicionales puedan exhibir desempeño desigual y misclasificación concentrada en prestatarios de bajo score [@albanesi2024credit] es precisamente lo que hace que verificar la disparidad de la decisión de funding sea parte del estándar de auditabilidad, no un accesorio. Esta página documenta la prueba completa y muestra que el champion oficial pasa los seis tests definidos en el `fairness_policy.yaml` del proyecto, incluyendo tres tests **intersectional** que son la evidencia más exigente de la auditoría.
 
 ```{python}
 #| label: p1-fairness-setup

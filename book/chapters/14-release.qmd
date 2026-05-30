@@ -19,7 +19,7 @@ La contribución central sigue siendo la misma: **CRPTO post-hoc auditable con e
 | Propuesta | ¿Cambia la dirección? | Decisión | Por qué |
 |---|---:|---|---|
 | Manifest de extracción paper/journal/tesis | No | Implementado aquí | Ordena contenido existente sin crear claims nuevos. |
-| Matriz completa de tablas/figuras | No | Implementado aquí | Clasifica evidencia ya generada A0--A21 y Fig 7--15. |
+| Matriz completa de tablas/figuras | No | Implementado aquí | Clasifica evidencia ya generada A0--A24 y Fig 7--17. |
 | Banco de respuestas por venue | No | Implementado aquí | Ayuda a escribir y responder reviewers sin tocar artefactos. |
 | Release checklist con DVC/DagsHub/Quarto/tests | No | Implementado aquí | Formaliza reproducibilidad ya existente. |
 | Decisión de companion URL | No | Implementado aquí | Declara que Quarto es la superficie primaria y Streamlit queda opcional. |
@@ -43,11 +43,13 @@ Criba de mejoras según si preservan o cambian la dirección del paper.
 
 P2 y P3 ya no son una exclusión en bloque. Para este paper sí entran los
 elementos que fortalecen el journal sin cambiar método: regret-auditability,
-OCE/CVaR diagnóstico, satisficing margins y caveat/proposición
-dependence-aware. También entran el champion CRPTO congelado, la región
-robusta, el paquete A3--A21 y la reproducibilidad Quarto/DVC/DagsHub/MLflow. Si
-una idea requiere nuevo objetivo, nuevo dataset, nueva búsqueda, producción viva
-o nueva teoría principal, queda en backlog y no bloquea este submission.
+OCE/CVaR --- ya como restricción re-optimizada de selección (A22), no solo
+diagnóstico ---, satisficing margins, robustez multi-distribución (A23),
+estabilidad conformal online (A24) y caveat/proposición dependence-aware.
+También entran el champion CRPTO congelado, la región robusta, el paquete
+A3--A24 y la reproducibilidad Quarto/DVC/DagsHub/MLflow. Si una idea requiere
+entrenamiento end-to-end, nuevo dataset externo, reabrir la búsqueda del
+champion o producción viva, queda en backlog y no bloquea este submission.
 :::
 
 ### Manifest por sección del capítulo 14
@@ -56,27 +58,27 @@ o nueva teoría principal, queda en backlog y no bloquea este submission.
 
 | Página | Rol actual en Quarto | Paper corto | Journal version | Tesis/libro | Regla editorial |
 |---|---|---|---|---|---|
-| `index` | Hub de lectura | no entra | no entra | sí | Mantener como navegación curada. |
-| `14a` | Introducción, gap y alcance | cuerpo | cuerpo | sí | Comprimir, no cambiar el claim. |
-| `14b` | Teoría CRPTO y bound | cuerpo teoría | cuerpo + appendix | sí | Markov principal; tightening condicional separado. |
-| `14c` | Metodología y artefactos | cuerpo método | cuerpo + supplement | sí | No mezclar familias de métricas. |
-| `14d` | Resultados y evidencia CRPTO | cuerpo resultados | cuerpo + appendix | sí | Champion y región robusta al cuerpo; A3--A11 al appendix. |
-| `14e` | Discusión, limitaciones y roadmap | cuerpo discusión | cuerpo + future work | sí | IFRS9/CATE como conexiones, no contribución central. |
-| `14f` | Guía editorial y referencias numeradas | insumo | insumo | sí | Convertir a related work formal al escribir. |
-| `14g` | Blueprint del manuscrito | insumo | insumo | sí | Usar como skeleton; no citar como resultado. |
-| `14h` | Appendix A12--A21 | appendix selectivo | appendix fuerte | sí | Diagnóstico journal, no nueva promoción del champion. |
-| `14i` | Ablación Mondrian | appendix corto | appendix | sí | Defender `score_decile_mondrian` vs `grade`. |
-| `14j` | Protocolo SPO+ | appendix corto | appendix | sí | Separar A19/Figura 15 (`49.09%`) del closeout PyEPO (`48.51%`) y de cobertura/auditabilidad. |
-| `14k` | Fair lending checkpoint | appendix/governance | appendix | sí | Proxy/intersectional, no certificación legal de atributos protegidos. |
-| `14l` | MRM / SR 11-7 | appendix/governance | appendix | sí | Fortalece auditabilidad, no metodología nueva. |
-| `14m` | Funded set composition | appendix resultados | appendix | sí | Mostrar que el champion no depende de un segmento oculto. |
-| `14n` | Trazabilidad y runbook | supplement | supplement | sí | Mantener paths y tests reales. |
-| `14o` | Manifest de extracción y release | no entra | supplement editorial | sí | Controlar qué se mueve al manuscrito. |
+| `index` | Hub de lectura | No entra | No entra | Sí | Mantener como navegación curada. |
+| `14a` | Introducción, gap y alcance | Cuerpo | Cuerpo | Sí | Comprimir, no cambiar el claim. |
+| `14b` | Teoría CRPTO y bound | Cuerpo teoría | Cuerpo + appendix | Sí | Markov principal; tightening condicional separado. |
+| `14c` | Metodología y artefactos | Cuerpo método | Cuerpo + supplement | Sí | No mezclar familias de métricas. |
+| `14d` | Resultados y evidencia CRPTO | Cuerpo resultados | Cuerpo + appendix | Sí | Champion y región robusta al cuerpo; A3--A11 al appendix. |
+| `14e` | Discusión, limitaciones y roadmap | Cuerpo discusión | Cuerpo + future work | Sí | IFRS9/CATE como conexiones, no contribución central. |
+| `14f` | Guía editorial y referencias numeradas | Insumo | Insumo | Sí | Convertir a related work formal al escribir. |
+| `14g` | Blueprint del manuscrito | Insumo | Insumo | Sí | Usar como skeleton; no citar como resultado. |
+| `14h` | Appendix A12--A24 | Appendix selectivo | Appendix fuerte | Sí | Diagnóstico journal, no nueva promoción del champion. |
+| `14i` | Ablación Mondrian | Appendix corto | Appendix | Sí | Defender `score_decile_mondrian` vs `grade`. |
+| `14j` | Protocolo SPO+ | Appendix corto | Appendix | Sí | Separar A19/Figura 15 (`49.09%`) del closeout PyEPO (`48.51%`) y de cobertura/auditabilidad. |
+| `14k` | Fair lending checkpoint | appendix/governance | Appendix | Sí | Proxy/intersectional, no certificación legal de atributos protegidos. |
+| `14l` | MRM / SR 11-7 | appendix/governance | Appendix | Sí | Fortalece auditabilidad, no metodología nueva. |
+| `14m` | Funded set composition | Appendix resultados | Appendix | Sí | Mostrar que el champion no depende de un segmento oculto. |
+| `14n` | Trazabilidad y runbook | Supplement | Supplement | Sí | Mantener paths y tests reales. |
+| `14o` | Manifest de extracción y release | No entra | Supplement editorial | Sí | Controlar qué se mueve al manuscrito. |
 
 Manifest de uso por sección del capítulo 14.
 :::
 
-### Manifest de tablas A0--A21
+### Manifest de tablas A0--A24
 
 ::: {#tbl-crpto-table-extraction-manifest}
 
@@ -104,6 +106,9 @@ Manifest de uso por sección del capítulo 14.
 | A19 | Regret-auditability frontier | Sí | Sí | Sí | SPO+ gana regret; CRPTO compra cobertura, bound exacto y región robusta. |
 | A20 | Tail-satisficing challenger audit | No | Sí | Sí | Challenger journal: 2% menos retorno por 22.6% menor CVaR 95%; no reemplaza champion. |
 | A21 | Cluster-bound tightening | No | Sí | Sí | Cota dependence-aware transparente, pero no más tight que Markov. |
+| A22 | CVaR/OCE tail-constrained re-opt | No | Sí | Sí | Re-optimización con restricción de cola como constraint de selección; challenger journal, no champion. |
+| A23 | Multi-distribution robustness | No | Sí | Sí | Cobertura worst-case por grade y celda grade × vintage; motiva MDCP/group-weighted. |
+| A24 | Online conformal stability | No | Sí | Sí | Diagnóstico ACI sobre la secuencia de vintages; OOT estático, no validación de streaming. |
 
 Manifest de tablas para decidir cuerpo, appendix y tesis.
 :::
@@ -114,18 +119,20 @@ Manifest de tablas para decidir cuerpo, appendix y tesis.
 
 | Figura | Artefacto | Paper corto | Journal appendix | Tesis/libro | Lectura |
 |---|---|---:|---:|---:|---|
-| Overview editorial | `diagrama-crpto.png` | Quizá | No | Sí | Excelente para libro; el paper prefiere Fig 12. |
+| Diagrama maestro (Fig 1) | `diagrama-crpto.png` | Sí | Sí | Sí | Diagrama maestro oficial paper-grade; se publica también como `crpto_fig12` (Figura 1 del paper). |
 | Fig 7 | `crpto_fig7_uncertainty_baselines` | No | Sí | Sí | Baselines de incertidumbre. |
 | Fig 8 | `crpto_fig8_alpha_pareto` | Quizá | Sí | Sí | Alpha frontier y trade-off. |
 | Fig 9 | `crpto_fig9_spo_regret` | Quizá | Sí | Sí | Comparador SPO+; acompañar con `14j`. |
 | Fig 10 | `crpto_fig10_cqr_per_grade` | No | Sí | Sí | Útil para appendix conformal. |
 | Fig 11 | `crpto_fig11_crpto_stability` | Quizá | Sí | Sí | Shift temporal y cobertura. |
-| Fig 12 | `crpto_fig12_crpto_conceptual_pipeline` | Sí | Sí | Sí | Candidata a Figura 1. |
+| Fig 12 | `crpto_fig12_crpto_conceptual_pipeline` | Sí | Sí | Sí | Figura 1 del paper = diagrama maestro oficial (`diagrama-crpto.png`). |
 | Fig 13 | `crpto_fig13_alpha_gamma_funded_set` | Sí | Sí | Sí | Une teoría y decisión. |
 | Fig 14 | `crpto_fig14_robust_region_heatmap` | Sí | Sí | Sí | Muestra región robusta, no punto aislado. |
 | Fig 15 | `crpto_fig15_regret_auditability_frontier` | Sí | Sí | Sí | Separa el claim de regret SPO+ del claim de auditabilidad CRPTO. |
 | Fig 16 | `crpto_fig16_tail_risk_frontier` | No | Sí | Sí | Muestra el frontier retorno--CVaR del challenger tail-satisficing como auditoría, no como reemplazo del champion. |
 | Fig 17 | `crpto_fig17_tail_risk_lgd` | No | Sí | Sí | Sensibilidad LGD del funded set congelado; confirma que CVaR/OCE son diagnósticos de cola. |
+| Fig 18 | `crpto_fig18_tail_constrained_frontier` | No | Sí | Sí | Frontera retorno-vs-CVaR de A22; champion en la esquina de mayor retorno y mayor cola. |
+| Fig 19 | `crpto_fig19_online_coverage_aci` | No | Sí | Sí | Estabilidad conformal online (A24): cobertura por vintage y target ACI. |
 | Fig alpha-gamma | `crpto_fig_alpha_gamma_bound` | Quizá | Sí | Sí | Figura técnica del bound. |
 
 Manifest de figuras para extraer paper y appendix.
@@ -187,10 +194,9 @@ La decision activa de publicacion es:
 
 | Rol | Venue | Plantilla / salida | Regla |
 |---|---|---|---|
-| Primario | INFORMS Journal on Data Science | IJDS LaTeX oficial; `paper/CRPTO_ijds.qmd` como fuente de escritura | cuerpo anonimo de 25 paginas + online supplement |
-| Suplemento primario | IJDS online supplement | `paper/supplement_ijds.qmd` | A3--A21, pruebas, reproducibilidad, MRM y fairness |
-| Pivote | European Journal of Operational Research | Elsevier `elsarticle` cuando se active el pivote | usar si el paper lee mas como OR aplicada |
-| Stretch | INFORMS Journal on Optimization / Management Science / Operations Research | plantillas oficiales respectivas | solo si mejora teoria, insight gerencial o contribucion OR |
+| Primario | INFORMS Journal on Data Science | IJDS LaTeX oficial; `paper/CRPTO_ijds.qmd` como fuente de escritura | Cuerpo anonimo de 25 paginas + online supplement |
+| Suplemento primario | IJDS online supplement | `paper/supplement_ijds.qmd` | A3--A24, pruebas, reproducibilidad, MRM y fairness |
+| Pivote | European Journal of Operational Research | Elsevier `elsarticle` cuando se active el pivote | Unico respaldo, solo si el paper lee mas como OR aplicada |
 
 Decision de venue, plantilla y salida actual.
 :::
@@ -218,11 +224,13 @@ del dossier está lista para ser usada como fuente de manuscrito.
 | Venue definido | `configs/crpto_publication_targets.yaml` | IJDS primario y EJOR pivote siguen declarados. |
 | Manuscrito + supplement IJDS | `just paper-submission` | `paper/CRPTO_ijds.html` y `paper/supplement_ijds.html` renderizan sin ejecutar pipeline. |
 | PDF local de verificación | `just paper-submission-pdf` | `paper/CRPTO_ijds.pdf` y `paper/supplement_ijds.pdf` renderizan como borradores HTML-print para inspección visual; el PDF oficial usa la plantilla IJDS. |
-| Alcance P2/P3 | `configs/crpto_publication_targets.yaml` + esta página | Journal strengthening pack entra como diagnóstico/framing; extensiones metodológicas quedan future work. |
+| Alcance P2/P3 | `configs/crpto_publication_targets.yaml` + esta página | P2 implementado como A22--A24 sin reabrir champion; quedan en backlog el entrenamiento end-to-end, el dataset externo y el streaming real. |
 | Tablas canónicas | `uv run python scripts/export_crpto_tables.py` | A0 usa `models/final_project_promotion.json`. |
 | P1 evidence | `uv run python scripts/analyze_crpto_evidence.py --include-hardening` | A3--A11 actualizadas y status JSON coherente. |
 | Journal package | `uv run python scripts/build_crpto_journal_package.py` | Tablas journal base y status JSON actualizados. |
 | Tail-satisficing audit | `uv run python scripts/build_tail_satisficing_challenger_audit.py` | A20--A21 actualizadas. |
+| P2 re-opt de cola | `uv run python scripts/build_tail_constrained_reoptimization.py` | A22 y `crpto_tail_constrained_reopt_status.json` actualizados. |
+| P2 multi-distribucion/online | `uv run python scripts/build_distribution_robustness_diagnostics.py` | A23--A24 y `crpto_distribution_robustness_status.json` actualizados. |
 | Figuras paper-facing | `uv run python scripts/generate_crpto_figures.py` | Fig 7--17 reproducibles desde artefactos congelados. |
 | DVC local | `uv run dvc status --no-updates` | Datos y pipelines al día. |
 | DagsHub remote | `uv run dvc status -c -r dagshub` | Cache y remoto sincronizados. |

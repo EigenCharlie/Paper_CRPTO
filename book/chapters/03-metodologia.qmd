@@ -11,7 +11,7 @@ La evaluación usa el universo OOT del proyecto sobre Lending Club, con partici�
 | Modelo base | CatBoost calibrado |
 | Método de calibración | Venn-Abers (MAPIE 1.3 nativo, ver @sec-p1-vennabers) |
 | AUC OOT | 0.7124 |
-| HPO | refinamiento local sobre challenger monotónico |
+| HPO | Refinamiento local sobre challenger monotónico |
 
 : Base predictiva del experimento {#tbl-crpto-base}
 
@@ -111,15 +111,15 @@ adicional alrededor de la policy congelada.
 
 | Evidencia P1 | Artefacto | Qué responde | Cómo leerla |
 |---|---|---|---|
-| Progresión post-selección | `crpto_tableA3_nested_holdout.csv` | ¿El 276K final coincide con la cadena 5K -> 25K -> full OOT? | confirma que el economic champion no salió de una tabla aislada |
-| Holdout temporal estricto | `crpto_tableA9_strict_temporal_holdout.csv` | ¿La policy congelada sobrevive a slices temporales sin solapamiento? | confirma robustez temporal sin afirmar selección prospectiva completa |
-| Funded-set loan export | `crpto_tableA7_funded_set_loans.csv` | ¿Qué préstamos exactos financia el champion? | permite inspección loan-level y composición real del riesgo |
-| Composición funded set | `crpto_tableA8_funded_set_composition.csv` | ¿Algún periodo/grade domina el retorno? | resume concentración, default ponderado y contribución a `V` |
-| Selector decision-aware | `crpto_tableA5_decision_aware_selector.csv` | ¿El conformal winner sigue siendo razonable al mirar decisión? | rank 1 gana por gate conjunto, no solo por cobertura global |
-| Exact eval finalists | `crpto_tableA10_conformal_finalist_exact_bound_eval.csv` | ¿Ranks 2/3 fueron evaluados con bound exacto? | pasan portfolio exacto, pero fallan cobertura mínima de grupo |
-| Shift sintético | `crpto_tableA6_synthetic_shift.csv` | ¿La cobertura aguanta reponderaciones OOT? | primer stress de covariate shift |
-| Shift endurecido | `crpto_tableA11_enhanced_synthetic_shift.csv` | ¿La cobertura aguanta flips adversariales de defaults? | stress más duro, todavía no external validation |
-| Tightening condicional | `docs/research/crpto_conditional_tightening_appendix_2026-05-04.md` | ¿Cuándo se pueden usar Hoeffding/Bernstein? | solo bajo independencia adicional; Markov sigue siendo principal |
+| Progresión post-selección | `crpto_tableA3_nested_holdout.csv` | ¿El 276K final coincide con la cadena 5K -> 25K -> full OOT? | Confirma que el economic champion no salió de una tabla aislada |
+| Holdout temporal estricto | `crpto_tableA9_strict_temporal_holdout.csv` | ¿La policy congelada sobrevive a slices temporales sin solapamiento? | Confirma robustez temporal sin afirmar selección prospectiva completa |
+| Funded-set loan export | `crpto_tableA7_funded_set_loans.csv` | ¿Qué préstamos exactos financia el champion? | Permite inspección loan-level y composición real del riesgo |
+| Composición funded set | `crpto_tableA8_funded_set_composition.csv` | ¿Algún periodo/grade domina el retorno? | Resume concentración, default ponderado y contribución a `V` |
+| Selector decision-aware | `crpto_tableA5_decision_aware_selector.csv` | ¿El conformal winner sigue siendo razonable al mirar decisión? | Rank 1 gana por gate conjunto, no solo por cobertura global |
+| Exact eval finalists | `crpto_tableA10_conformal_finalist_exact_bound_eval.csv` | ¿Ranks 2/3 fueron evaluados con bound exacto? | Pasan portfolio exacto, pero fallan cobertura mínima de grupo |
+| Shift sintético | `crpto_tableA6_synthetic_shift.csv` | ¿La cobertura aguanta reponderaciones OOT? | Primer stress de covariate shift |
+| Shift endurecido | `crpto_tableA11_enhanced_synthetic_shift.csv` | ¿La cobertura aguanta flips adversariales de defaults? | Stress más duro, todavía no external validation |
+| Tightening condicional | `docs/research/crpto_conditional_tightening_appendix_2026-05-04.md` | ¿Cuándo se pueden usar Hoeffding/Bernstein? | Solo bajo independencia adicional; Markov sigue siendo principal |
 
 : Mapa metodológico de evidencia CRPTO para el CRPTO {#tbl-crpto-evidence-methodology}
 
@@ -136,10 +136,10 @@ El pipeline actual ya es decision-aware en la capa de portafolio, pero todavia n
 
 | Capa | Estado actual | Lectura correcta |
 |---|---|---|
-| PD base | seleccionada por calidad predictiva, calibracion y gobernanza monotónica | upstream regulatorio y probabilistico |
-| Conformal winner | seleccionado por cobertura, ancho, cobertura minima de grupo y Winkler | uncertainty set eficiente, todavia no entrenado por perdida economica |
-| Bound-aware portfolio | seleccionado por retorno dentro de una region que pasa `alpha01` exactamente | capa decision-aware del paper |
-| Paper/journal futuro | seleccionar o entrenar el score conformal por retorno robusto, `V`, `gamma_cp` y violacion | extension CROMS / end-to-end conformal risk |
+| PD base | Seleccionada por calidad predictiva, calibracion y gobernanza monotónica | Upstream regulatorio y probabilistico |
+| Conformal winner | Seleccionado por cobertura, ancho, cobertura minima de grupo y Winkler | Uncertainty set eficiente, todavia no entrenado por perdida economica |
+| Bound-aware portfolio | Seleccionado por retorno dentro de una region que pasa `alpha01` exactamente | Capa decision-aware del paper |
+| Paper/journal futuro | Seleccionar o entrenar el score conformal por retorno robusto, `V`, `gamma_cp` y violacion | Extension CROMS / end-to-end conformal risk |
 
 : Estado decision-aware por capa del pipeline CRPTO {#tbl-crpto-decision-aware-status}
 

@@ -79,23 +79,14 @@ La version actual todavia enfrenta limites claros que deben ser reconocidos expl
 
 ### Trabajo futuro {#sec-crpto-future}
 
-Las extensiones mas prometedoras del CRPTO se organizan en tres horizontes. A corto plazo, ya quedaron materializadas las piezas P1 que no cambian la direccion del paper: progresion post-seleccion 5K--25K--276K, nested holdout temporal estrictamente disjunto, export per-loan del funded set, selector tipo CROMS con evaluacion exacta de ranks 1--3, lemma condicional Hoeffding/Bernstein y stress tests sinteticos por reponderacion y flips de labels. El siguiente salto journal no es volver a cambiar el champion, sino convertir esas evidencias en un protocolo prospectivo: declarar el split antes de la busqueda, conseguir un dataset externo comparable si existe, y entrenar una seleccion conformal que optimice decision loss desde el inicio. A mediano plazo, la extensión a un pipeline genuinamente secuencial en el sentido de @powell2026sdam --- donde la política CFA se re-ejecute en cada ciclo de originación, la función de transición $S^M$ capture la evolución del portafolio, y el estado de creencias $B_t$ se actualice mediante conformal prediction online [@gibbs2021aci; @liu2026portfolio] u online DFL [@capitaine2026online] --- permitiría evaluar el sistema en un entorno operativo real y abriría la puerta a la comparación formal entre políticas CFA, VFA y DLA dentro del mismo problema (véase @sec-crpto-future). A largo plazo, la integracion con sistemas de monitoreo en tiempo real y la extension a multiples clases de activo constituirian la validacion definitiva de la propuesta.
+El paquete journal del proyecto ya no es una hoja de ruta de pendientes: las prioridades P0, P1 y P2 están **implementadas** como evidencia reproducible en el apéndice journal (@sec-p1-journal-appendix), y por eso esta versión del libro las presenta como evidencia y no como promesa. En concreto:
 
-La hoja de ruta queda entonces ordenada por dependencia, no por entusiasmo bibliografico:
+- **P0 --- sincronización.** El economic champion y el bound exacto coinciden entre `models/final_project_promotion.json`, DVC y las tablas paper-facing (guardrail `tests/test_crpto_final_sync.py`).
+- **P1 --- robustez post-selección.** Progresión 5K--25K--276K y holdout temporal estricto (A3, A9), selector tipo CROMS con eval exacta de ranks 1--3 (A5, A10), tightening condicional Hoeffding/Bernstein (`lem-conditional-tightening` y apéndice de dependencia), y sensibilidad periodo-segmento, composición del funded set y stress sintético (A4, A6--A8, A11).
+- **P1/J --- paquete journal.** Tail risk, satisficing, dependencia, stress temporal, bootstrap, LGD/caps y región robusta por familia (A12--A21), trazados en `models/crpto_journal_package_status.json`.
+- **P2 --- extensiones decision-aware y robustas, ya materializadas sin reabrir el champion.** Re-optimización con restricción de cola CVaR/OCE como constraint activo de selección (A22, @sec-p1-journal-appendix), robustez multi-distribución por grade y celda grade $\times$ vintage (A23, en el espíritu de [@yang2026multidistribution; @bhattacharyya2026groupweighted]), y diagnóstico de estabilidad conformal online tipo ACI sobre la secuencia de vintages (A24, [@gibbs2021aci; @angelopoulos2025gradient; @liu2026portfolio]).
 
-| Prioridad | Mejora | Paper que la motiva | Estado / criterio de cierre |
-|---|---|---|---|
-| P0 | mantener el champion economico y el bound exacto sincronizados | auditoria interna / CRC-LTT | `models/final_project_promotion.json`, DVC y tablas paper-facing coinciden |
-| P1 | progresion post-seleccion 5K--25K--276K + confirmacion temporal estricta | LTT / RCPS | implementado en `crpto_tableA3_nested_holdout.csv` y `crpto_tableA9_strict_temporal_holdout.csv`; protocolo prospectivo queda como extension |
-| P1 | selector conformal decision-aware | CROMS [@bao2025croms] | implementado como screen en `crpto_tableA5_decision_aware_selector.csv` con exact eval ranks 1--3 en `crpto_tableA10_conformal_finalist_exact_bound_eval.csv`; entrenamiento decision-aware queda como extension |
-| P1 | tightening condicional del bound | CRC + concentracion clasica | implementado como `lem-conditional-tightening` y apendice de dependencia; no reemplaza Markov |
-| P1 | sensibilidad periodo-segmento, funded-set composition y shift sintetico | MDCP / online CP | implementado en `crpto_tableA4_segment_period_sensitivity.csv`, `crpto_tableA7_funded_set_loans.csv`, `crpto_tableA8_funded_set_composition.csv`, `crpto_tableA6_synthetic_shift.csv` y `crpto_tableA11_enhanced_synthetic_shift.csv` |
-| P1/J | paquete journal de tail risk, satisficing, dependencia, stress temporal, bootstrap, LGD/caps y region robusta por familia | conformal risk training / satisficing / robustness | implementado en `crpto_tableA12_tail_risk_oce_cvar.csv`--`crpto_tableA18_robust_region_policy_family.csv`, `models/crpto_journal_package_status.json` y @sec-p1-journal-appendix |
-| P2 | funded-set risk OCE/CVaR como constraint re-optimizado | conformal risk training [@yeh2025training] | ya existe diagnostico A12; faltaria convertirlo en objetivo o restriccion de search |
-| P2 | robustez multi-distribucion / grupos desconocidos | MDCP [@yang2026multidistribution] | cobertura robusta ante fuente o grupo test-time no observado |
-| P2 | conformal online y DFL online | UP-OCP [@liu2026portfolio], Online DFL [@capitaine2026online] | recalibracion secuencial bajo drift y originacion continua |
-
-: Roadmap journal priorizado para CRPTO {#tbl-crpto-journal-roadmap}
+Lo que queda fuera de esta versión es deliberadamente *otro paper*, no un pendiente de éste: entrenar la selección conformal end-to-end por decision loss [@yeh2025training; @yeh2026], validar sobre un dataset externo comparable, y desplegar la política en un ciclo de originación genuinamente secuencial [@powell2026sdam] con recalibración online real [@capitaine2026online]. Los tres requieren datos o un protocolo que este proyecto, por diseño (dataset estático cerrado en 2020, single-author, sin producción), no puede cerrar aquí; ninguno reabre el champion congelado.
 
 ### Reproducibility appendix
 
@@ -138,16 +129,17 @@ La tabla siguiente convierte esa trazabilidad en una regla de defensa editorial:
 | Claim | Artefacto canonico | Guardrail / verificacion |
 |---|---|---|
 | Champion oficial = economic champion | `models/final_project_promotion.json`, `models/champion_portfolio_policy.json` | `tests/test_crpto_final_sync.py` |
-| Retorno oficial `$170.5K` | `final_champion.realized_total_return` | tabla `crpto_table0_key_metrics.csv` y DVC metric `crpto.final.robust_return` |
-| `alpha01_exact_pass=true` | `final_champion.alpha01_exact_pass` | guardrail de sync del CRPTO |
-| `V=0.03645`, `gamma_cp=0.18591`, `violation=0` | `final_champion` y bound eval `276k` | guardrail de sync + tablas paper-facing |
+| Retorno oficial `$170.5K` | `final_champion.realized_total_return` | Tabla `crpto_table0_key_metrics.csv` y DVC metric `crpto.final.robust_return` |
+| `alpha01_exact_pass=true` | `final_champion.alpha01_exact_pass` | Guardrail de sync del CRPTO |
+| `V=0.03645`, `gamma_cp=0.18591`, `violation=0` | `final_champion` y bound eval `276k` | Guardrail de sync + tablas paper-facing |
 | Region robusta `45/45` | `robust_region_summary` | DVC metrics `crpto.final.robust_region_*` |
 | Winner conformal `coverage_90=92.97%` | `conformal_upstream.winner_metrics` | `scripts/export_crpto_tables.py` |
 | P1 post-seleccion 5K--25K--276K y holdout temporal estricto | `crpto_tableA3_nested_holdout.csv`, `crpto_tableA9_strict_temporal_holdout.csv`, `crpto_evidence_status.json` | `test_crpto_p1_evidence_artifacts_exist` |
 | P1 selector CROMS-style + exact finalists | `crpto_tableA5_decision_aware_selector.csv`, `crpto_tableA10_conformal_finalist_exact_bound_eval.csv` | `test_crpto_p1_evidence_artifacts_exist` |
 | P1 segment/funded-set/shift sensitivity | `crpto_tableA4_segment_period_sensitivity.csv`, `crpto_tableA7_funded_set_loans.csv`, `crpto_tableA8_funded_set_composition.csv`, `crpto_tableA6_synthetic_shift.csv`, `crpto_tableA11_enhanced_synthetic_shift.csv` | `test_crpto_p1_evidence_artifacts_exist` |
 | Journal package A12--A21 | `crpto_tableA12_tail_risk_oce_cvar.csv`--`crpto_tableA21_cluster_bound_tightening.csv`, `crpto_fig12`--`crpto_fig15` | `test_crpto_journal_package_artifacts_exist` y `test_tail_satisficing_audit_artifacts_exist` |
-| PD operativo AUC/Brier/ECE | `data/processed/pipeline_summary.json`, `reports/dvc/metrics_summary.json` | comparacion solo dentro de familia PD |
+| P2 re-optimizacion de cola y robustez multi-distribucion/online (A22--A24) | `crpto_tableA22_tail_constrained_reoptimization.csv`, `crpto_tableA23_multidistribution_robustness.csv`, `crpto_tableA24_online_conformal_stability.csv`, `crpto_tail_constrained_reopt_status.json`, `crpto_distribution_robustness_status.json` | `test_crpto_tables_and_figures_exist` |
+| PD operativo AUC/Brier/ECE | `data/processed/pipeline_summary.json`, `reports/dvc/metrics_summary.json` | Comparacion solo dentro de familia PD |
 | Ownership DVC/Git correcto | `dvc.yaml`, `dvc.lock`, punteros `.dvc` | `test_dvc_outputs_are_not_tracked_directly_by_git` |
 
 : Mapa claim--artefacto--test para la version journal {#tbl-crpto-claim-artifact-test}

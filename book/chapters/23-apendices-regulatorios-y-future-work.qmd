@@ -82,7 +82,7 @@ Roadmap tesis a 12 meses.
 | P1 | Sostener el checklist de anonimización y data/code disclosure (ver cap. 14). | Submission package. |
 | P1 | Expandir el capítulo de tesis con fundamentos selectivos del libro. | Tesis. |
 | P2 | Documentar resultados negativos como límites metodológicos (esta página). | Supplement/tesis. |
-| P2 | Preparar apéndice pedagógico sobre WOE, Brier, Gini, ECE y PSI. | Tesis. |
+| P2 | Apéndice pedagógico WOE/Brier/Gini/ECE/PSI: integrado en el capítulo de fundamentos (cap. 15). | Hecho (tesis). |
 | P3 | Mantener GPU/quantum como agenda externa, no CRPTO. | Archivo. |
 
 Backlog priorizado del CRPTO.
