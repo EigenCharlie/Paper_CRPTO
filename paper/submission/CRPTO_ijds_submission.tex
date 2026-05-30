@@ -1,0 +1,127 @@
+%% =====================================================================
+%% CRPTO -- INFORMS Journal on Data Science (IJDS) submission skeleton
+%% =====================================================================
+%% This is a READY-TO-FILL skeleton in the official INFORMS class. It is the
+%% double-anonymous submission scaffold; the prose is ported from the source of
+%% truth `paper/CRPTO_ijds.qmd` at finalization (see the `% PORT:` markers).
+%%
+%% REQUIRED (NOT vendored in this repo, per the no-vendoring rule):
+%%   - informs4.cls          INFORMS document class
+%%   - informs2014.bst        INFORMS BibTeX style
+%% Download both from the INFORMS author portal or Overleaf:
+%%   https://pubsonline.informs.org/authorportal/latex-style-files
+%%   https://www.overleaf.com/latex/templates/template-for-informs-journal-on-data-science/sbthszxgycfn
+%% Drop informs4.cls + informs2014.bst next to this file, then build:
+%%   pdflatex CRPTO_ijds_submission
+%%   bibtex   CRPTO_ijds_submission
+%%   pdflatex CRPTO_ijds_submission
+%%   pdflatex CRPTO_ijds_submission
+%%
+%% `dblanonrev` keeps the manuscript anonymous (IJDS uses double-anonymous
+%% review for submissions on/after 2025-01-01). Do NOT add author names,
+%% affiliations, acknowledgements, or repository URLs to this body.
+%% =====================================================================
+\documentclass[ijds,dblanonrev]{informs4}
+
+% --- Spacing / theorem / equation conventions (INFORMS defaults) ---
+\OneAndAHalfSpacedXI
+\TheoremsNumberedThrough
+\EquationsNumberedThrough
+\MANUSCRIPTNO{}  % left blank for initial submission
+
+% --- Math + graphics packages used by the manuscript ---
+\usepackage{amsmath,amssymb,mathtools}
+\usepackage{booktabs}
+\usepackage{graphicx}
+\graphicspath{{../../reports/crpto/figures/}}
+
+\begin{document}
+
+\RUNAUTHOR{Anonymous}
+\RUNTITLE{Conformal Robust Predict-Then-Optimize for Credit Portfolios}
+
+\TITLE{CRPTO: Conformal Robust Predict-Then-Optimize for Auditable Credit
+Portfolio Decisions}
+
+% Authors hidden under dblanonrev; keep the block empty/anonymous.
+\ARTICLEAUTHORS{%
+  \AUTHOR{}
+  \AFF{}
+}
+
+\ABSTRACT{%
+We study credit portfolio selection when default probabilities are calibrated
+but decision uncertainty remains material. We propose Conformal Robust
+Predict-Then-Optimize (CRPTO), a post-hoc auditable framework that maps Mondrian
+conformal prediction intervals into robust portfolio constraints. On a
+276{,}869-loan out-of-time Lending Club evaluation, the promoted economic policy
+earns \$170{,}464.54 on a \$1M budget while passing the exact $\alpha=0.01$
+funded-set bound ($V=0.03645$, $\Gamma_{\mathrm{CP}}=0.18591$, zero violation).
+The promoted robust region contains $45/45$ alpha-safe policies, indicating the
+result is not a single-point artifact. The contribution is not another
+predictive leaderboard, but a reproducible bridge from calibrated probabilistic
+learning to auditable robust credit decisions.%
+}
+
+\KEYWORDS{conformal prediction; robust optimization; predict-then-optimize;
+credit risk; portfolio optimization; reproducible data science}
+
+\maketitle
+
+% =====================================================================
+\section{Introduction}\label{sec:intro}
+% PORT: paper/CRPTO_ijds.qmd -> # Introduction. Keep contributions C1--C7 framing.
+% Figure 1 is the CRPTO master diagram (= crpto_fig12, the book master diagram).
+\begin{figure}[t]
+  \centering
+  \includegraphics[width=\textwidth]{crpto_fig12_crpto_conceptual_pipeline.png}
+  \caption{CRPTO maps calibrated PDs through a conformal uncertainty layer into
+  an auditable robust portfolio decision.}
+  \label{fig:pipeline}
+\end{figure}
+
+% =====================================================================
+\section{Related Work}\label{sec:related}
+% PORT: paper/CRPTO_ijds.qmd -> # Related Work (CP/CRC, robust optimization,
+% predict-then-optimize/DFL, recent conformal-RO frontier). BibTeX keys already
+% live in ../../book/references.bib.
+
+% =====================================================================
+\section{Method}\label{sec:method}
+% PORT: # Method (## Calibrated PD Layer, ## Mondrian Conformal Layer,
+% ## Robust Portfolio Layer).
+\subsection{Calibrated PD Layer}\label{sec:method-pd}
+\subsection{Mondrian Conformal Layer}\label{sec:method-cp}
+\subsection{Robust Portfolio Layer}\label{sec:method-lp}
+
+% =====================================================================
+\section{Theory}\label{sec:theory}
+% PORT: # Theory. Markov feasibility bound is the principal claim; the
+% Hoeffding/Bernstein tightening is a conditional appendix result.
+
+% =====================================================================
+\section{Experimental Design}\label{sec:design}
+% PORT: # Experimental Design (Lending Club OOT, leakage controls, artifacts).
+
+% =====================================================================
+\section{Results}\label{sec:results}
+% PORT: # Results. Core metrics (Table 1): AUC 0.7124, Brier 0.1546, ECE 0.0064;
+% conformal coverage 92.97% (min group 91.90%); economic champion return
+% \$170{,}464.54, V=0.03645, Gamma_CP=0.18591; robust region 45/45.
+
+% =====================================================================
+\section{Robustness and Comparators}\label{sec:robustness}
+% PORT: # Robustness And Comparators (## Regret-Auditability Frontier). The full
+% A3--A24 package lives in the online supplement (supplement_ijds.qmd).
+
+% =====================================================================
+\section{Discussion}\label{sec:discussion}
+% PORT: # Discussion (limitations, governance, honest future work).
+
+% Reproducibility/companion disclosure is kept for the cover letter / non-
+% anonymous version, not the double-anonymous body.
+
+\bibliographystyle{informs2014}
+\bibliography{../../book/references}
+
+\end{document}

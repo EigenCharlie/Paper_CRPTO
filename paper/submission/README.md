@@ -29,6 +29,31 @@ Do not vendor private template downloads, reviewer forms, or authenticated
 publisher material into this repository. Keep only public links and the
 conversion notes needed to reproduce the submission package.
 
+## Official LaTeX Submission Build
+
+`CRPTO_ijds_submission.tex` is a ready-to-fill skeleton in the official INFORMS
+class (`\documentclass[ijds,dblanonrev]{informs4}`) that mirrors the manuscript
+structure and pre-fills the title, abstract, keywords, Figure 1, and the
+bibliography wiring (`informs2014.bst` + `../../book/references.bib`). Prose is
+ported from `paper/CRPTO_ijds.qmd` at finalization (see the `% PORT:` markers).
+
+To produce the official submission PDF:
+
+1. Download `informs4.cls` and `informs2014.bst` from the INFORMS author portal
+   (or Overleaf) and drop them next to `CRPTO_ijds_submission.tex`. These are
+   gitignored on purpose (`paper/submission/.gitignore`) — do not commit them.
+2. Build:
+
+   ```bash
+   pdflatex CRPTO_ijds_submission
+   bibtex   CRPTO_ijds_submission
+   pdflatex CRPTO_ijds_submission
+   pdflatex CRPTO_ijds_submission
+   ```
+
+3. The `dblanonrev` option keeps the body anonymous; verify against the anonymity
+   checklist below before uploading.
+
 ## Anonymity Checklist
 
 - Manuscript metadata uses `author: "Anonymous"`.
@@ -61,7 +86,7 @@ These protocols are compatible but not interchangeable.
 ## Final Assembly Checklist
 
 - Compress body text to the IJDS page budget after PDF pagination is available.
-- Keep A3--A21 in the online supplement unless a reviewer-facing argument needs
+- Keep A3--A24 in the online supplement unless a reviewer-facing argument needs
   one compact table in the body.
 - Preserve CRPTO as the coverage/auditability method and SPO+ as the low-regret
   comparator.
