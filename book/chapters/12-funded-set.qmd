@@ -7,6 +7,8 @@ page-layout: article
 
 El champion oficial financia 335 préstamos en el OOT 276K, con retorno realizado de $170,464.54 y `V = 0.03645` (no-cobertura ponderada bajo `α=0.01`). Esa cifra agregada esconde la pregunta operativa que un comité de riesgo va a formular primero: **¿de dónde vienen esos 335 préstamos? ¿concentra el funded set algún periodo o grado peligroso? ¿qué segmentos cargan el bound?**
 
+El conteo de 335 es el del export loan-level exacto (`crpto_tableA7_funded_set_loans.csv`); las auditorías de re-solve con HiGHS (A20/A22) reportan ~341 préstamos sobre el **mismo** funded set porque cuentan asignaciones fraccionales cercanas al umbral de inclusión. La diferencia es de convención de conteo, no de composición.
+
 Esta página descompone el funded set por periodo × grado y conecta cada celda con su contribución al bound exacto, usando los artefactos `crpto_tableA8_funded_set_composition.csv` (composición exacta) y `crpto_tableA4_segment_period_sensitivity.csv` (cobertura conformal por segmento).
 
 ```{python}

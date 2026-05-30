@@ -1,0 +1,5 @@
+outs:
+- md5: d425d8afdb5f418a7f01086a837e2805
+  size: 6719261
+  hash: md5
+  path: bma_comparison.parquet

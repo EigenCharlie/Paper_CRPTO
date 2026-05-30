@@ -153,7 +153,7 @@ The champion model is a CatBoost classifier trained on the frozen feature
 contract and calibrated before it is exposed to conformal and optimization
 layers. The paper reports discrimination and probability quality together:
 the frozen PD layer reaches AUC `0.7124`, Brier score `0.1546`, and expected
-calibration error approximately `0.0063` on the paper-facing evaluation
+calibration error approximately `0.0064` on the paper-facing evaluation
 summary. These numbers matter because the optimizer consumes probabilities, not
 rankings alone.
 
@@ -260,7 +260,7 @@ reviewers need.
 
 Table 1 summarizes the frozen paper-facing metrics. The calibrated PD layer is
 not a leaderboard model, but it is stable enough for decision use: AUC
-`0.7124`, Brier score `0.1546`, and ECE near `0.0063`. The conformal layer
+`0.7124`, Brier score `0.1546`, and ECE near `0.0064`. The conformal layer
 provides conservative empirical coverage, with 90% coverage `0.9297` and 95%
 coverage `0.9664` for the promoted conformal winner. The portfolio layer then
 turns this uncertainty into a robust allocation with exact alpha-safe checks.
@@ -269,7 +269,7 @@ turns this uncertainty into a robust allocation with exact alpha-safe checks.
 |---|---:|---:|
 | PD | AUC | `0.7124` |
 | PD | Brier score | `0.1546` |
-| PD | ECE | `0.0063` |
+| PD | ECE | `0.0064` |
 | Conformal | Coverage 90% | `0.9297` |
 | Conformal | Coverage 95% | `0.9664` |
 | Conformal | Minimum group coverage 90% | `0.9190` |
