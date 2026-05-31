@@ -21,9 +21,32 @@ de la región robusta `45/45`. Puede alimentar un apéndice de journal si el ven
 pide impacto prudencial o conexión con IFRS9.
 :::
 
+### Riesgos competitivos y sobreprovisión IFRS9 {#sec-crpto-competing-risks}
+
+Un préstamo Grade A que se prepaga en el mes 18 nunca incumple: salió del libro sin generar pérdida. Kaplan-Meier (KM) no lo sabe —trata el prepago como censura no informativa y redistribuye la masa de default sobre los meses restantes—, mientras que la *Cumulative Incidence Function* (CIF) respeta el mecanismo real de riesgos competitivos: si el préstamo salió por prepago, su default ya no es posible. Esta distinción tiene impacto material en la provisión IFRS9 de Stage 2.
+
+El artefacto `data/processed/cif_ecl_impact.parquet` compara el ECL de Stage 2 bajo ambos enfoques sobre el mismo universo OOT, y `competing_risks_cif.parquet` guarda las funciones de incidencia por grade y horizonte (12m--60m). El hallazgo se incorpora como **evidence card**, no como política de provisión vigente.
+
+::: {.callout-note}
+## Evidence card: KM vs CIF en ECL Stage 2
+
+| Grade | ECL Stage 2 KM | ECL Stage 2 CIF | Exceso por préstamo | Exceso portafolio |
+|---|---:|---:|---:|---:|
+| A | \$1,124.89 | \$824.74 | \$300.14 | \$21.73M |
+| B | \$1,593.57 | \$1,168.37 | \$425.20 | \$32.02M |
+| C | \$2,265.11 | \$1,660.73 | \$604.38 | \$42.65M |
+| D | \$3,173.29 | \$2,326.59 | \$846.71 | \$38.64M |
+
+El exceso de KM sobre CIF es capital sobreprovisional generado por ignorar el prepago como evento competitivo. El acumulado Grade A--D supera los **\$135.0M** (\$153.6M sumando E--G). El factor de corrección lifetime es `cf_lifetime = 0.7332`, uniforme por construcción del modelo.
+:::
+
+El patrón no es aleatorio: Grade A concentra la mayor sobreprovisión relativa porque sus prestatarios prepagan con más frecuencia —el comportamiento del buen deudor que liquida cuando bajan las tasas—, mientras Grade D tiene el mayor exceso por préstamo en valor absoluto. La lección encadena con el dossier de calibración: mejores curvas de supervivencia (el RSF del padre reporta c-index 0.6797) producen mejores estimaciones de PD lifetime y, por tanto, provisiones más precisas. Los `hazard_ratios.parquet` confirman la dirección económica esperada (`int_rate` y `loan_to_income` con razones de riesgo > 1; `fico_score` < 1).
+
+Esta pieza es deliberadamente **diagnóstica**: es un análisis comparativo congelado sobre el OOT, no la política oficial de provisión ni parte del run champion. Para promoverla a estándar productivo se requeriría validación multi-escenario (estabilidad del exceso bajo macro adverso, donde el prepago puede colapsar), trazabilidad SR 11-7 e IFRS9 B5.5.42, y benchmark contra curvas de industria. Es el tipo de hallazgo que el venue puede pedir como impacto prudencial, pero no cambia la región robusta `45/45` ni el bound alpha-gamma de CRPTO.
+
 ### Costo de misclasificación Stage 1/2
 
-La superficie de costo Stage 1/2 ayuda a defender por qué una señal de incertidumbre puede justificar prudencia aun cuando la PD puntual no cruza un umbral estático. En CRPTO, esta pieza funciona como puente conceptual: el funded set y el bound alpha-gamma ya muestran no-cobertura ponderada; el apéndice regulatorio traduce esa lógica hacia deterioro crediticio y errores de staging.
+La superficie de costo Stage 1/2 (artefacto `stage_cost_by_grade.parquet`) ayuda a defender por qué una señal de incertidumbre puede justificar prudencia aun cuando la PD puntual no cruza un umbral estático. En CRPTO, esta pieza funciona como puente conceptual: el funded set y el bound alpha-gamma ya muestran no-cobertura ponderada; el apéndice regulatorio traduce esa lógica hacia deterioro crediticio y errores de staging.
 
 ### Temporal uncertainty y conformal online
 

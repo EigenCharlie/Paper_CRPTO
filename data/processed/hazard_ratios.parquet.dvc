@@ -1,0 +1,5 @@
+outs:
+- md5: 18ac73913824d4fae3dabfd391718857
+  size: 10709
+  hash: md5
+  path: hazard_ratios.parquet

@@ -7,6 +7,30 @@ page-layout: article
 
 La diferencia editorial clave entre CRPTO y los métodos decision-focused puros (SPO+, end-to-end DFL) es que CRPTO está **construido para pasar una auditoría de Model Risk Management** según el marco SR 11-7 de la Reserva Federal y las expectativas equivalentes del BCE/EBA. Esta página documenta los gates aplicados al champion oficial y muestra los cuatro subsistemas pasando simultáneamente — la firma operativa de un sistema desplegable, no un modelo de paper aislado.
 
+### Qué es Model Risk Management y por qué importa {#sec-crpto-mrm-foundations}
+
+Model Risk Management (MRM) es la disciplina que identifica, mide, monitorea y controla el riesgo que surge del uso de modelos cuantitativos en decisiones financieras [@sr117]. Un modelo, en este contexto, es cualquier método que aplica teoría estadística, económica o matemática para procesar datos y producir estimaciones. La definición tiene tres consecuencias: los modelos son simplificaciones de la realidad, las simplificaciones pueden estar equivocadas, y los modelos equivocados cuestan dinero —un PD sobreoptimista subprovisiona y expone a pérdidas inesperadas; uno excesivamente conservador inmoviliza capital. Por eso un buen AUC no basta: un modelo puede discriminar bien y aun así ser peligroso si está mal calibrado, si sus intervalos son inválidos, o si sus predicciones ya no corresponden a la distribución actual.
+
+La disciplina se organiza en **tres pilares** cuya separación es no negociable en banca regulada:
+
+| Pilar | Descripción | Cómo se simula en CRPTO |
+|---|---|---|
+| **Desarrollo** | Selección de datos, features, algoritmo, calibración, documentación | Pipeline reproducible con artefactos congelados y run tags |
+| **Validación** | Revisión independiente: replicación, supuestos, benchmarks, estrés | Controles automatizados que evalúan los artefactos de forma programática e independiente del entrenamiento |
+| **Uso y monitoreo** | Implementación, monitoreo de drift, triggers de re-entrenamiento | Reporte MRM versionado + política de gobernanza con umbrales explícitos |
+
+: Los tres pilares de MRM y su traducción al contexto académico de CRPTO {#tbl-crpto-mrm-pillars}
+
+En una institución, quien construye el modelo no puede ser quien lo valida. En este contexto académico single-author la independencia se **simula** mediante controles programáticos sobre los artefactos —una limitación honesta que se documenta, no se oculta (ver @sec-crpto-mrm-limits).
+
+#### Marco regulatorio de referencia
+
+Los dos marcos globales de MRM son **SR 11-7** (Fed/OCC, 2011) [@sr117] y **SS1/23** (PRA/Bank of England, 2023). SR 11-7 exige inventario de modelos, validación independiente, monitoreo continuo, documentación replicable y gobernanza con roles claros. SS1/23 añade *tiering* de modelos por materialidad, articulación de un *model risk appetite*, y la inclusión explícita de modelos de terceros en scope —relevante aquí porque librerías open-source como CatBoost o MAPIE entran en esa categoría. Los modelos de ECL (IFRS9) están explícitamente en scope porque su impacto en estado de resultados y ratios de capital es material y la fórmula `ECL = PD × LGD × EAD × DF` encadena varios modelos.
+
+### La distinción central: "pasa" no es lo mismo que "es bueno" {#sec-crpto-mrm-pass-vs-good}
+
+MRM separa dos juicios que suelen confundirse. **"Pasa"** significa que el modelo cumple los umbrales mínimos de gobernanza para permanecer en uso —condición necesaria, no suficiente. **"Es bueno"** es un juicio más amplio: adecuación al propósito, eficiencia frente a alternativas, alineación con el apetito de riesgo. Un modelo puede pasar MRM y aun así ser inferior a un challenger no promovido, tener limitaciones conocidas, o ser adecuado para provisión pero no para pricing. El reporte MRM documenta el piso de gobernanza; la decisión de si el modelo es "suficientemente bueno" para un propósito específico corresponde al comité de riesgo. CRPTO adopta esta distinción de forma literal: el champion **pasa** 4/4 subsistemas, pero el dossier registra abiertamente sus warnings estadísticos y limitaciones en lugar de presentarlo como perfecto.
+
 ```{python}
 #| label: p1-mrm-setup
 #| include: false
@@ -158,6 +182,33 @@ Un revisor que viene del lado de operations research tiende a leer "auditabilida
 - **Las restricciones monotónicas, fairness y triggers de retraining tienen que reaplicarse manualmente**, porque la red no las preserva por construcción.
 
 CRPTO, en cambio, expone cada pieza al auditor por separado: la PD calibrada se auditea con los tests de calibración (KS/Kuiper/ECE), la cobertura conformal se verifica empíricamente, el LP robusto es un programa lineal cuya factibilidad se puede inspeccionar fila por fila, y el funded set se audita por fairness directamente. Cada subsistema es individualmente vetable y individualmente reproducible. Eso es lo que `compliance_summary.n_passing = 4` significa operativamente.
+
+### Cómo un comité de riesgo consumiría este reporte {#sec-crpto-mrm-committee}
+
+En una institución, el reporte MRM no se archiva: es el insumo de decisiones de gobernanza. El comité recibe un resumen ejecutivo (semáforo de subsistemas, métricas clave, observaciones pendientes), no el JSON crudo. La decisión sigue una matriz estándar:
+
+| Escenario | Decisión | Acción | Escalamiento |
+|---|---|---|---|
+| 4/4 PASS, sin observaciones | Aprobar | Monitoreo trimestral | Ninguno |
+| 4/4 PASS, observaciones informativas | Aprobar con nota | Documentar + plan de monitoreo | Ninguno |
+| 3/4 PASS (un subsistema FAIL) | Aprobación condicional | Plan de remediación con fecha, monitoreo mensual | Director de Riesgos |
+| 2/4 o menos PASS | Bloquear | Suspender uso, re-entrenamiento urgente | Comité ejecutivo + regulador |
+| Trigger de re-entrenamiento activado | Bloqueo preventivo | Re-entrenar, challenger en paralelo | Director de Riesgos |
+
+: Matriz de decisión del comité de riesgo ante resultados MRM {#tbl-crpto-mrm-decision}
+
+El caso de CRPTO es "4/4 PASS con observaciones informativas": aprobación del stack core con monitoreo continuo, con la remediación conformal pendiente como mejora incremental, no como bloqueo.
+
+### Limitaciones honestas del MRM en contexto académico {#sec-crpto-mrm-limits}
+
+Un sistema MRM maduro no oculta sus límites; los documenta. Los de CRPTO son cuatro:
+
+1. **Validación no independiente.** Validador y desarrollador son la misma persona; la independencia se simula con controles programáticos. En banca real esto no sería aceptable bajo SR 11-7 sin revisión por un tercero.
+2. **Sobre-cobertura conformal.** Los intervalos son más conservadores que el 90% nominal (+2 a +3 pp). Es prudente (protege contra sub-provisión) y corregible con ACI (@sec-crpto-regulatory-future-work), pero queda como warning estadístico vivo.
+3. **Ventana de drift única.** El monitoreo compara train vs un único snapshot OOT; producción exigiría ventanas deslizantes y alertas progresivas por segmento.
+4. **Snapshot vs monitoreo continuo.** El reporte es un punto en el tiempo; un sistema completo añadiría ejecución programada, alertas automáticas e integración con gestión de incidentes.
+
+Estas limitaciones son consecuencia directa de la naturaleza single-author / dataset-estático del proyecto (ver `docs/ACADEMIC_CONTEXT.md`) y delimitan honestamente hasta dónde llega el claim de auditabilidad.
 
 ### Reproducibilidad
 
