@@ -130,7 +130,21 @@ surface induced by the downstream decision [@elmachtoub2022; @donti2017;
 @mandi2024]. CRPTO is intentionally more conservative. It does not retrain the
 PD model end-to-end through the optimizer. Instead, it asks what can be achieved
 when a calibrated predictive system is already frozen and the decision layer
-must remain explainable to credit-risk reviewers.
+must remain explainable to credit-risk reviewers. Robust losses for
+decision-focused learning [@schutte2024robust] share this protective intent, but
+operate at training time rather than as a post-hoc auditable constraint.
+
+The fourth foundation is machine learning for credit scoring, where gradient
+boosting and benchmark studies define the performance frontier on retail panels
+[@lessmann2015; @ayari2026; @boosting2025default; @xia2017]. Work specific to
+the Lending Club platform spans alternative-data fintech lending
+[@jagtiani2019altdata], scorecard equity [@albanesi2024credit], two-stage
+learning under fragmentary data [@liu2026twostage], and operations-research
+treatments of the same investment-decision problem CRPTO studies
+[@aior2025lendingclub]. CRPTO does not compete on raw ranking against this
+literature; its champion AUC is deliberately mid-range. The contribution is the
+auditable bridge from a calibrated, frozen PD model to a robust portfolio
+decision, not another point on the credit-scoring leaderboard.
 
 Finally, recent work on conformal model selection for robust optimization,
 multi-distribution conformal validity, online conformal portfolio methods,

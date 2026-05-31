@@ -1,0 +1,5 @@
+outs:
+- md5: 35eb3294a5cc8bb93437efa441335cfe
+  size: 11546
+  hash: md5
+  path: cif_ecl_impact.parquet
