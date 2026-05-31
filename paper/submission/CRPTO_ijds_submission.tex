@@ -1,17 +1,16 @@
 %% =====================================================================
-%% CRPTO -- INFORMS Journal on Data Science (IJDS) submission skeleton
+%% CRPTO -- INFORMS Journal on Data Science (IJDS) submission manuscript
 %% =====================================================================
-%% This is a READY-TO-FILL skeleton in the official INFORMS class. It is the
-%% double-anonymous submission scaffold; the prose is ported from the source of
-%% truth `paper/CRPTO_ijds.qmd` at finalization (see the `% PORT:` markers).
+%% Double-anonymous submission body in the official INFORMS class. The prose is
+%% ported from the source of truth `paper/CRPTO_ijds.qmd`; keep the two in sync.
 %%
 %% REQUIRED (NOT vendored in this repo, per the no-vendoring rule):
 %%   - informs4.cls          INFORMS document class
-%%   - informs2014.bst        INFORMS BibTeX style
-%% Download both from the INFORMS author portal or Overleaf:
+%%   - informs2014.bst       INFORMS BibTeX style
+%% `informs4` is NOT on CTAN/TeX Live; download both from the INFORMS author
+%% portal or Overleaf and drop them next to this file, then build:
 %%   https://pubsonline.informs.org/authorportal/latex-style-files
 %%   https://www.overleaf.com/latex/templates/template-for-informs-journal-on-data-science/sbthszxgycfn
-%% Drop informs4.cls + informs2014.bst next to this file, then build:
 %%   pdflatex CRPTO_ijds_submission
 %%   bibtex   CRPTO_ijds_submission
 %%   pdflatex CRPTO_ijds_submission
@@ -50,17 +49,17 @@ Portfolio Decisions}
 }
 
 \ABSTRACT{%
-We study credit portfolio selection when default probabilities are calibrated
-but decision uncertainty remains material. We propose Conformal Robust
-Predict-Then-Optimize (CRPTO), a post-hoc auditable framework that maps Mondrian
-conformal prediction intervals into robust portfolio constraints. On a
-276{,}869-loan out-of-time Lending Club evaluation, the promoted economic policy
-earns \$170{,}464.54 on a \$1M budget while passing the exact $\alpha=0.01$
-funded-set bound ($V=0.03645$, $\Gamma_{\mathrm{CP}}=0.18591$, zero violation).
-The promoted robust region contains $45/45$ alpha-safe policies, indicating the
-result is not a single-point artifact. The contribution is not another
-predictive leaderboard, but a reproducible bridge from calibrated probabilistic
-learning to auditable robust credit decisions.%
+Credit portfolio decisions often rely on calibrated default probabilities while
+treating prediction uncertainty as a diagnostic rather than a decision input. We
+propose Conformal Robust Predict-Then-Optimize (CRPTO), a post-hoc auditable
+framework that maps Mondrian conformal prediction intervals into robust portfolio
+constraints. On a 276{,}869-loan out-of-time Lending Club evaluation, the promoted
+economic policy earns \$170{,}464.54 on a \$1M budget while passing the exact
+$\alpha=0.01$ funded-set bound ($V=0.03645$, $\Gamma_{\mathrm{CP}}=0.18591$, zero
+violation). The promoted robust region contains $45/45$ alpha-safe policies,
+indicating that the result is not a single-point artifact. The contribution is not
+another predictive leaderboard, but a reproducible bridge from calibrated
+probabilistic learning to auditable robust credit decisions.%
 }
 
 \KEYWORDS{conformal prediction; robust optimization; predict-then-optimize;
@@ -70,56 +69,390 @@ credit risk; portfolio optimization; reproducible data science}
 
 % =====================================================================
 \section{Introduction}\label{sec:intro}
-% PORT: paper/CRPTO_ijds.qmd -> # Introduction. Keep contributions C1--C7 framing.
-% Figure 1 is the CRPTO master diagram (= crpto_fig12, the book master diagram).
+
+Credit allocation is a predict-then-decide problem. A lender first estimates a
+probability of default (PD), then chooses which loans to fund under a budget and
+risk appetite. The modeling literature has become very good at the first step:
+calibration, discrimination, and backtesting are now standard ingredients of
+credit-risk model validation \citep{lessmann2015,bellini2024}. The second step is
+less settled. Once a calibrated PD enters an optimizer, uncertainty is often
+treated as a reporting diagnostic rather than as a constraint that can change the
+funded set.
+
+That separation is uncomfortable in auditable credit decisions. A portfolio policy
+can have a reasonable average PD and still concentrate probability mass in loans
+where the model is most uncertain. Conversely, a policy that is too conservative
+can pass every risk check while destroying economic value. The scientific question
+in this paper is therefore not whether one can build a slightly better credit
+classifier. It is whether finite-sample predictive uncertainty can be carried into
+a robust portfolio decision in a way that is transparent enough for a reviewer to
+audit.
+
+CRPTO answers this question with a post-hoc, reproducible pipeline. It starts from
+a calibrated CatBoost PD model, constructs Mondrian conformal intervals over
+PD-scale predictions, and maps the upper conformal endpoint into robust portfolio
+constraints. The procedure is deliberately modular: the predictive model,
+conformal layer, optimization policy, and paper artifacts each have separate
+contracts. This modularity is a feature rather than an engineering accident. It
+lets the paper ask whether a frozen prediction system can be converted into a
+defendable decision system without reopening hyperparameter search whenever the
+manuscript or appendix changes.
+
+The empirical setting is the Lending Club retail-loan panel, with an out-of-time
+evaluation set of 276{,}869 loans. The promoted economic policy earns
+\$170{,}464.54 on a \$1M budget, passes the exact funded-set bound at
+$\alpha=0.01$, and lies inside a robust region where $45/45$ evaluated policies
+satisfy the same exact alpha-safe check. The headline result is not a single lucky
+allocation. It is a reproducible bridge from calibrated probabilistic learning to
+robust, auditable credit portfolio choice.
+
+The paper makes three contributions. First, it gives a concrete CRPTO construction
+for credit portfolios: calibrated PD, Mondrian conformal uncertainty, and robust
+budgeted optimization. Second, it provides an artifact-backed empirical study where
+every paper table and figure is generated from frozen outputs rather than manually
+transcribed summaries. Third, it documents the governance boundary between safe
+paper-facing reruns and protected stages that would change the promoted champion.
+
 \begin{figure}[t]
   \centering
   \includegraphics[width=\textwidth]{crpto_fig12_crpto_conceptual_pipeline.png}
-  \caption{CRPTO maps calibrated PDs through a conformal uncertainty layer into
-  an auditable robust portfolio decision.}
+  \caption{CRPTO maps calibrated PDs through a conformal uncertainty layer into an
+  auditable robust portfolio decision.}
   \label{fig:pipeline}
 \end{figure}
 
 % =====================================================================
 \section{Related Work}\label{sec:related}
-% PORT: paper/CRPTO_ijds.qmd -> # Related Work (CP/CRC, robust optimization,
-% predict-then-optimize/DFL, recent conformal-RO frontier). BibTeX keys already
-% live in ../../book/references.bib.
+
+CRPTO builds on conformal prediction, especially split conformal methods and their
+risk-control extensions \citep{vovk2005,angelopoulos2023,angelopoulos2024foundations,angelopoulos2024risk,bates2021rcps}.
+The relevant property is not that conformal intervals are the narrowest possible
+uncertainty summaries. It is that they provide distribution-free coverage language
+under explicit exchangeability assumptions, and that this language can be audited
+without trusting a fully parametric posterior. Mondrian and group-conditional
+variants are especially natural in credit because risk grades are already used as
+business and governance partitions \citep{bostrom2021,gibbs2024,zhou2024}.
+
+The second foundation is robust optimization. Classical robust optimization frames
+uncertainty as a set against which a decision must remain feasible, with the price
+of robustness made visible as a design trade-off \citep{bertsimas2004}. Recent work
+connects conformal prediction and robust optimization more directly by using
+conformal uncertainty sets in downstream decisions
+\citep{johnstone2021,patel2024,sun2024ptc,yeh2026}. CRPTO follows this line, but its
+empirical emphasis is different: the uncertainty set is not an abstract benchmark
+instance, but a credit-risk interval artifact with DVC/MLflow-style lineage, paper
+tables, and model-risk documentation.
+
+The third foundation is predict-then-optimize and decision-focused learning. SPO+
+and modern decision-focused learning ask models to respect the loss surface induced
+by the downstream decision \citep{elmachtoub2022,donti2017,mandi2024}. CRPTO is
+intentionally more conservative. It does not retrain the PD model end-to-end through
+the optimizer. Instead, it asks what can be achieved when a calibrated predictive
+system is already frozen and the decision layer must remain explainable to
+credit-risk reviewers. Robust losses for decision-focused learning
+\citep{schutte2024robust} share this protective intent, but operate at training time
+rather than as a post-hoc auditable constraint.
+
+The fourth foundation is machine learning for credit scoring, where gradient
+boosting and benchmark studies define the performance frontier on retail panels
+\citep{lessmann2015,ayari2026,boosting2025default,xia2017}. Work specific to the
+Lending Club platform spans alternative-data fintech lending
+\citep{jagtiani2019altdata}, scorecard equity \citep{albanesi2024credit}, two-stage
+learning under fragmentary data \citep{liu2026twostage}, and operations-research
+treatments of the same investment-decision problem CRPTO studies
+\citep{aior2025lendingclub}. CRPTO does not compete on raw ranking against this
+literature; its champion AUC is deliberately mid-range. The contribution is the
+auditable bridge from a calibrated, frozen PD model to a robust portfolio decision,
+not another point on the credit-scoring leaderboard.
+
+Finally, recent work on conformal model selection for robust optimization,
+multi-distribution conformal validity, online conformal portfolio methods,
+end-to-end conformal risk training, and conformal satisficing
+\citep{bao2025croms,yang2026multidistribution,liu2026portfolio,yeh2025training,zhao2025robust}
+motivates the journal-strengthening package in this paper. We use those ideas where
+they can be evaluated from frozen CRPTO artifacts: OCE/CVaR
+\citep{rockafellar2000cvar,bental2007oce} appears as a tail-risk diagnostic, robust
+satisficing appears as committee-style margin evidence, and SPO+ motivates the
+regret-auditability frontier. The method-changing variants---optimized OCE/CVaR
+objectives, online or multi-dataset protocols, causal layers, and hybrid
+decision-focused training---remain future work rather than hidden acceptance
+criteria.
 
 % =====================================================================
 \section{Method}\label{sec:method}
-% PORT: # Method (## Calibrated PD Layer, ## Mondrian Conformal Layer,
-% ## Robust Portfolio Layer).
+
 \subsection{Calibrated PD Layer}\label{sec:method-pd}
+
+The predictive layer estimates a one-period default probability for each loan. The
+champion model is a CatBoost classifier trained on the frozen feature contract and
+calibrated before it is exposed to conformal and optimization layers. The paper
+reports discrimination and probability quality together: the frozen PD layer reaches
+AUC $0.7124$, Brier score $0.1546$, and expected calibration error approximately
+$0.0064$ on the paper-facing evaluation summary. These numbers matter because the
+optimizer consumes probabilities, not rankings alone.
+
+Calibration is treated as a contract. The downstream layers do not receive a
+free-form classifier; they receive a calibrated PD vector, feature metadata, and a
+model contract that fixes feature order and categorical handling. This prevents a
+common reproducibility failure in applied predict-then-optimize studies: a table can
+change because a preprocessing artifact drifted, even though the optimization code
+did not change.
+
 \subsection{Mondrian Conformal Layer}\label{sec:method-cp}
+
+For each loan $i$, let $\hat{p}_i$ denote the calibrated PD. The conformal layer
+forms prediction intervals on the PD scale and records the upper endpoint
+$u_i(\alpha)$. Operationally, CRPTO evaluates Mondrian partitions rather than a
+single global interval. The promoted uncertainty artifact uses a score-decile-based
+Mondrian partition selected by out-of-time interval quality, while grade-based
+partitions remain the natural governance baseline.
+
+The resulting conformal summary is intentionally more than a scalar coverage number.
+The paper-facing metrics include 90\% coverage $0.9297$, 95\% coverage $0.9664$,
+average 90\% interval width $0.7842$, minimum group 90\% coverage $0.9190$, and 90\%
+Winkler score $1.1107$ for the promoted conformal winner. Backtesting also records
+diagnostic statistical tests. Some high-powered Kupiec and Christoffersen
+unconditional-coverage tests reject because the sample is large, but the
+non-statistical policy checks pass and the independence components do not flag
+clustering. We therefore use these tests as diagnostics, not as a reason to reopen
+the champion search.
+
 \subsection{Robust Portfolio Layer}\label{sec:method-lp}
+
+The decision variable is the funded amount or inclusion weight for each eligible
+loan. The optimizer maximizes realized economic return under a \$1M budget and
+policy constraints that cap portfolio risk after replacing point PD estimates with
+conformal upper endpoints. The promoted policy has $\texttt{risk\_tolerance}=0.175$,
+$\texttt{policy\_mode}=\texttt{blended\_uncertainty}$, policy parameter
+$\gamma=0.45$, and $\texttt{uncertainty\_aversion}=0.1$.
+
+Two quantities are kept separate throughout the paper. The lowercase $\gamma$ is a
+policy parameter controlling how the optimizer blends uncertainty in the portfolio
+rule. $\Gamma_{\mathrm{CP}}$, by contrast, is a portfolio-level conformal metric
+computed after the funded set is chosen. The promoted policy has
+$\Gamma_{\mathrm{CP}}(\alpha=0.01)=0.18591$, weighted miscoverage
+$V(\alpha=0.01)=0.03645$, and zero exact violation at $\alpha=0.01$. This distinction
+is small typographically but central for auditability.
 
 % =====================================================================
 \section{Theory}\label{sec:theory}
-% PORT: # Theory. Markov feasibility bound is the principal claim; the
-% Hoeffding/Bernstein tightening is a conditional appendix result.
+
+The theoretical role of conformal prediction in CRPTO is modest and explicit. For a
+fixed allocation evaluated on exchangeable calibration/test data, conformal coverage
+controls the expected rate at which outcomes fall outside the constructed uncertainty
+intervals. When funded-set weights are non-negative and normalized, this yields a
+weighted miscoverage quantity $V(\alpha)$ that can be monitored after the decision. A
+Markov-style argument then converts expected weighted miscoverage control into a
+finite-sample portfolio-level statement. The empirical exact bound check reported in
+this paper is the operational version of that statement.
+
+This theory is intentionally not presented as a universal dependence-free tightening
+for all adaptive credit policies. The Lending Club evaluation is temporal, and
+temporal dependence is handled empirically through strict out-of-time splits, temporal
+backtesting, and robustness appendices. The online supplement adds a cluster-aware
+conditional proposition: dependence may be arbitrary inside period or grade clusters,
+but sharper Hoeffding/Bernstein-style bounds require independence or conditional
+independence across those clusters. Markov therefore remains the main
+distribution-free claim, while the dependence-aware material is a transparent journal
+caveat rather than an overstated theorem.
 
 % =====================================================================
 \section{Experimental Design}\label{sec:design}
-% PORT: # Experimental Design (Lending Club OOT, leakage controls, artifacts).
+
+The empirical study uses Lending Club retail-loan data covering originations from
+2007 through 2020. The raw panel is cleaned into a static feature store and split
+temporally. The final evaluation set contains 276{,}869 loans, large enough to stress
+both probability calibration and decision-level robustness.
+
+The design distinguishes three kinds of computation. Predictive and conformal searches
+choose models, calibration, partitions, and policy families. Those searches are frozen
+for this manuscript. Paper-facing reruns regenerate tables, figures, evidence
+summaries, and Quarto outputs from the frozen artifacts. Validation reruns are allowed
+only when they consume frozen choices and produce a drift report against the recorded
+champion. This separation is central to the paper's reproducibility claim: the
+manuscript can evolve without quietly reopening the 276k-policy search that selected
+the promoted result.
+
+All primary artifacts are represented as files with explicit ownership: model
+binaries, calibration objects, conformal intervals, portfolio allocations, tables,
+figures, and status JSON files. The anonymous submission describes the bundle without
+revealing author identity. Repository and remote-storage URLs will be disclosed
+according to the journal's double-anonymous and data/code-disclosure policy.
+
+The body-supplement split is fixed before submission. The body keeps the CRPTO
+pipeline, the alpha-to-portfolio link, the robust-region evidence, and the core
+metrics, plus the compact regret-auditability frontier. The online supplement carries
+A3--A24, the conformal finalist ablation, funded-set loan audit, tail-risk
+diagnostics, satisficing margins, dependence diagnostics, the CVaR/OCE
+tail-constrained re-optimization (A22) and the multi-distribution (A23) and online
+ACI-stability (A24) diagnostics, MRM/fairness material, and reproduction commands.
+This keeps the IJDS body focused while preserving the audit trail that reviewers need.
 
 % =====================================================================
 \section{Results}\label{sec:results}
-% PORT: # Results. Core metrics (Table 1): AUC 0.7124, Brier 0.1546, ECE 0.0064;
-% conformal coverage 92.97% (min group 91.90%); economic champion return
-% \$170{,}464.54, V=0.03645, Gamma_CP=0.18591; robust region 45/45.
+
+Table~\ref{tab:core} summarizes the frozen paper-facing metrics. The calibrated PD
+layer is not a leaderboard model, but it is stable enough for decision use: AUC
+$0.7124$, Brier score $0.1546$, and ECE near $0.0064$. The conformal layer provides
+conservative empirical coverage, with 90\% coverage $0.9297$ and 95\% coverage
+$0.9664$ for the promoted conformal winner. The portfolio layer then turns this
+uncertainty into a robust allocation with exact alpha-safe checks.
+
+\begin{table}[t]
+  \centering
+  \caption{Frozen paper-facing core metrics by layer.}
+  \label{tab:core}
+  \begin{tabular}{llr}
+    \toprule
+    Layer & Metric & Value \\
+    \midrule
+    PD        & AUC                          & $0.7124$ \\
+    PD        & Brier score                  & $0.1546$ \\
+    PD        & ECE                          & $0.0064$ \\
+    Conformal & Coverage 90\%                & $0.9297$ \\
+    Conformal & Coverage 95\%                & $0.9664$ \\
+    Conformal & Minimum group coverage 90\%  & $0.9190$ \\
+    Portfolio & Robust return                & \$170{,}464.54 \\
+    Portfolio & $V(\alpha=0.01)$             & $0.03645$ \\
+    Portfolio & $\Gamma_{\mathrm{CP}}(\alpha=0.01)$ & $0.18591$ \\
+    Portfolio & Exact alpha violation        & $0.0$ \\
+    \bottomrule
+  \end{tabular}
+\end{table}
+
+The robust policy does pay for robustness: its price of robustness is
+$-\$14{,}465.69$, or approximately $-10.56\%$, relative to the comparison frontier.
+This is not a defect of the method; it is the economic trade-off CRPTO makes visible.
+A reviewer can see what was sacrificed to obtain a funded set that passes the exact
+bound.
+
+The robust-region analysis is the strongest evidence that the result is not a single
+point artifact. Across the evaluated region, $45/45$ unique policies pass the exact
+$\alpha=0.01$ check. The selected policy is the economic champion inside that exact
+robust region, not merely the first feasible point. The supplement reports the full
+alpha/gamma funded-set table, robust-region heatmap, and policy-family appendix.
+
+\begin{figure}[t]
+  \centering
+  \includegraphics[width=0.9\textwidth]{crpto_fig13_alpha_gamma_funded_set.png}
+  \caption{Alpha connects the conformal layer to funded-set quantities and
+  portfolio-level risk.}
+  \label{fig:alpha-gamma}
+\end{figure}
+
+\begin{figure}[t]
+  \centering
+  \includegraphics[width=0.9\textwidth]{crpto_fig14_robust_region_heatmap.png}
+  \caption{The final evaluated robust region has $45/45$ alpha-safe policies.}
+  \label{fig:robust-region}
+\end{figure}
 
 % =====================================================================
 \section{Robustness and Comparators}\label{sec:robustness}
-% PORT: # Robustness And Comparators (## Regret-Auditability Frontier). The full
-% A3--A24 package lives in the online supplement (supplement_ijds.qmd).
+
+The first robustness concern is temporal leakage. CRPTO addresses it through
+out-of-time splits, temporal backtesting, and a strict distinction between
+calibration, test, and paper-facing outputs. The paper does not claim that a Lending
+Club static panel substitutes for future originations after the retail platform
+closed. It claims that within the available historical panel, the promoted policy
+survives the documented temporal validation design.
+
+The second concern is whether conformal uncertainty is doing decision work or only
+adding conservative decoration. The answer is visible in the portfolio frontier.
+Policies are evaluated by return, exact alpha pass/fail, weighted miscoverage, and
+$\Gamma_{\mathrm{CP}}$; the promoted point is selected because it earns the highest
+robust return inside the exact feasible region. This differs from a workflow where
+conformal intervals are plotted after the optimizer has already chosen a point-PD
+allocation.
+
+The supplement also carries the reviewer-facing robustness checks: nested holdout,
+strict temporal holdout, exact evaluation of conformal finalists, uncertainty-set
+baselines, funded-set composition, and the $45/45$ robust-region summary. Those
+diagnostics strengthen the frozen champion without reopening the search.
+
+The third concern is whether a decision-focused or SPO+ model would be a stronger
+baseline. CRPTO treats SPO+ as an important comparator, but not as the same governance
+object. Decision-focused training can reduce regret relative to an optimization loss,
+while CRPTO prioritizes calibrated uncertainty, artifact traceability, and exact
+funded-set checks. The manuscript therefore does not claim to dominate SPO+ on every
+regret metric; it claims a different auditability/economic trade-off.
+
+\subsection{Regret-Auditability Frontier}\label{sec:regret}
+
+The SPO+ comparator makes the trade-off sharp. In the committed A19/Figure~\ref{fig:regret}
+artifact, SPO+ reduces mean regret from $0.425896$ to $0.216837$, a $49.09\%$
+improvement over the two-stage baseline (Wilcoxon $p=1.39\times10^{-164}$). A later
+PyEPO 1.3.7 paired rerun independently reports the same conclusion under a slightly
+different protocol ($0.358073$ to $0.184366$, $48.51\%$; Wilcoxon
+$p=3.80\times10^{-163}$), so we treat it as a curated closeout note rather than as the
+numeric source for A19. The CRPTO robust point has higher decision regret ($0.947429$)
+because it is not trained to minimize regret; it is constructed to expose and control
+predictive uncertainty before funding. The frontier is therefore not a single
+leaderboard. It asks what the method buys besides regret: temporal coverage above
+target, an exact funded-set $\alpha=0.01$ pass, and a $45/45$ robust region.
+
+\begin{table}[t]
+  \centering
+  \caption{Regret-auditability frontier: CRPTO trades regret for verifiable risk
+  controls.}
+  \label{tab:regret}
+  \begin{tabular}{lrrr}
+    \toprule
+    Method & Mean regret & Regret $\Delta$ vs. two-stage & Verifiable risk controls \\
+    \midrule
+    Two-stage baseline & $0.425896$ & $0.0\%$           & $0/3$ \\
+    SPO+               & $0.216837$ & $49.09\%$ lower   & $0/3$ \\
+    CRPTO robust       & $0.947429$ & $122.46\%$ higher & $3/3$ \\
+    \bottomrule
+  \end{tabular}
+\end{table}
+
+\begin{figure}[t]
+  \centering
+  \includegraphics[width=0.82\textwidth]{crpto_fig15_regret_auditability_frontier.png}
+  \caption{CRPTO sits on the auditable-risk-control corner, while SPO+ occupies the
+  low-regret corner.}
+  \label{fig:regret}
+\end{figure}
+
+The online supplement contains the robustness package: nested holdout, segment-period
+sensitivity, decision-aware conformal selector checks, synthetic-shift diagnostics,
+conformal finalist exact evaluation, tail-risk OCE/CVaR diagnostics, satisficing
+margins, dependency clusters, bootstrap funded-set metrics, budget/LGD/cap sensitivity,
+and robust-region summaries by policy family, plus the A19 regret-auditability frontier,
+A20 tail-satisficing challenger audit, A21 cluster-bound tightening audit, A22 CVaR/OCE
+tail-constrained re-optimization, and A23--A24 multi-distribution and online (ACI)
+conformal-stability diagnostics.
 
 % =====================================================================
 \section{Discussion}\label{sec:discussion}
-% PORT: # Discussion (limitations, governance, honest future work).
 
-% Reproducibility/companion disclosure is kept for the cover letter / non-
-% anonymous version, not the double-anonymous body.
+CRPTO is useful precisely because it stays close to the operational reality of
+credit-risk analytics. Many institutions already have calibrated PD models and
+portfolio policies. Replacing them with an end-to-end decision-focused learner may be
+scientifically attractive but organizationally difficult. CRPTO offers a middle path:
+keep the predictive model auditable, quantify uncertainty with a finite-sample
+conformal layer, and make the optimizer pay attention to the upper end of plausible
+default risk.
+
+The limits are equally important. CRPTO does not prove that Lending Club is a universal
+proxy for modern credit origination. It does not claim legal fairness certification,
+because the public data lack direct protected attributes. It does not assert that
+robust conformal policies dominate all decision-focused learners on regret. It also
+does not treat synthetic shift as a substitute for new external cohorts.
+
+The next research directions are clear and are now separated into two groups. The
+current paper includes the safe journal-strengthening package: OCE/CVaR as a tail-risk
+audit, satisficing as margin evidence, SPO+ as the low-regret corner of the
+regret-auditability frontier, and dependence as a formal caveat. The future backlog
+remains larger: optimized OCE/CVaR objectives, online conformal methods,
+multi-distribution conformal validity, causal variants, and multi-dataset credit
+replication all require new protocols, data, or proofs. Those directions are valuable,
+but they are not blockers for submitting the frozen CRPTO result as an auditable
+post-hoc predict-then-optimize contribution.
+
+% Reproducibility/companion disclosure is kept for the cover letter / non-anonymous
+% version, not the double-anonymous body.
 
 \bibliographystyle{informs2014}
 \bibliography{../../book/references}

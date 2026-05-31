@@ -31,11 +31,24 @@ conversion notes needed to reproduce the submission package.
 
 ## Official LaTeX Submission Build
 
-`CRPTO_ijds_submission.tex` is a ready-to-fill skeleton in the official INFORMS
-class (`\documentclass[ijds,dblanonrev]{informs4}`) that mirrors the manuscript
-structure and pre-fills the title, abstract, keywords, Figure 1, and the
-bibliography wiring (`informs2014.bst` + `../../book/references.bib`). Prose is
-ported from `paper/CRPTO_ijds.qmd` at finalization (see the `% PORT:` markers).
+`CRPTO_ijds_submission.tex` is the full manuscript body in the official INFORMS
+class (`\documentclass[ijds,dblanonrev]{informs4}`). The prose is **already
+ported** from `paper/CRPTO_ijds.qmd`: title, abstract, keywords, all ten
+sections, two `booktabs` tables (core metrics, regret frontier), four figures,
+and the `informs2014.bst` + `../../book/references.bib` bibliography wiring. All
+33 cited keys resolve against `references.bib` and the float/environment
+structure is balanced. The only missing inputs are the publisher class/style
+files.
+
+> **`informs4` is not on CTAN/TeX Live.** A `tlmgr`/CTAN search returns no
+> package; the class and style are distributed only through the INFORMS author
+> portal (or the IJDS Overleaf template). The `.tex` therefore cannot be compiled
+> in this repo's TinyTeX until those files are downloaded — this is expected, not
+> a defect.
+
+Page budget: the body is currently ~7.6 of 25 allowed pages (see
+`docs/research/crpto_ijds_page_budget_2026.md`). The binding task is **expansion**
+(promote supplement material into Method/Theory/Results), not compression.
 
 To produce the official submission PDF:
 
