@@ -57,14 +57,17 @@ the optional tightening arguments.
 | `a_i` | Loan amount or exposure. |
 | `w_i` | Normalized funded-set weight, `x_i a_i / sum_j x_j a_j`. |
 | `gamma` | Robust-policy tuning parameter in the optimization rule. |
-| `Gamma_CP` | Portfolio-level conformal risk metric after allocation. |
+| `Gamma_CP` | Portfolio-level conformal risk metric after allocation: `sum_i w_i (u_i - p_hat_i)`, with clipping at one on the PD scale. |
 | `V(alpha)` | Weighted funded-set miscoverage quantity. |
 
 For a fixed allocation, conformal coverage controls the expected interval miss
 indicator under the stated exchangeability design. CRPTO converts loan-level
 misses into the funded-set quantity `V(alpha)` using normalized exposure
-weights. A Markov-style argument then gives the main conservative portfolio
-bound used in the exact alpha-safe check.
+weights. The portfolio-level theorem assumes weighted funded-set validity,
+`E[V(alpha)] <= alpha`, rather than claiming that marginal split conformal
+automatically controls every adaptively selected subportfolio. A Markov-style
+argument then gives the main conservative portfolio bound used in the exact
+alpha-safe check.
 
 Hoeffding/Bernstein-style tightenings are deliberately secondary. They are
 reported only under additional conditional-independence assumptions because the
@@ -149,6 +152,19 @@ frozen funded set or intervals, never as a re-promoted champion.
 | A22 tail-constrained re-optimization | Re-solves the 45 robust-region policies and selects the max-return policy under a decision-time (pd_high-based) CVaR cap, tracing the return-vs-CVaR frontier. | CVaR/OCE as an active selection constraint; reports a tail-constrained challenger, not a new champion. |
 | A23 multi-distribution robustness | Worst-case 90% coverage by grade and grade x vintage cell on the frozen intervals. | Read-only diagnostic; the worst fine cell motivates MDCP/group-weighted as future work. |
 | A24 online conformal stability | Per-vintage and cumulative coverage plus the Gibbs-Candes ACI target trajectory over the OOT vintage sequence. | Static-OOT online-control diagnostic, not a streaming validation. |
+
+## Why A21--A24 Do Not Strengthen the Main Claim
+
+A21--A24 are designed to make the paper harder to over-read. A21 shows that a
+cluster-aware tightening is transparent but not sharper than Markov under the
+observed exposure concentration. A23 shows where weighted, group-weighted, or
+multi-distribution conformal methods would matter if CRPTO were recalibrated
+under a new protocol. A24 shows that an online controller would have little to
+correct on the frozen OOT vintages, but it is still a replay, not evidence from
+a live stream. Together, these artifacts protect the IJDS claim: the submitted
+result is an auditable post-hoc conformal robust credit-portfolio decision with
+an exact frozen funded-set certificate, not a universal conditional-coverage or
+online-deployment guarantee.
 
 ## Decision-Certificate Landscape
 

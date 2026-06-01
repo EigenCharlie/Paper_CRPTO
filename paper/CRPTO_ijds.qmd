@@ -48,8 +48,10 @@ exact `alpha = 0.01` funded-set bound (`V = 0.03645`,
 `Gamma_CP = 0.18591`, zero violation). The final robust region contains `45/45`
 alpha-safe policies, indicating that the result is not a single-point artifact.
 The contribution is not another predictive leaderboard, but an auditable
-conformal robust credit-portfolio decision built from frozen calibrated PD
-artifacts.
+post-hoc conformal robust credit-portfolio decision pipeline that maps frozen
+calibrated PD artifacts into a robust funded set, reports an explicit
+conformal robustness premium, and verifies exact alpha-safe weighted
+miscoverage on the promoted portfolio.
 
 **Keywords:** conformal prediction; robust optimization; predict-then-optimize;
 credit risk; portfolio optimization; reproducible data science.
@@ -101,9 +103,13 @@ decision-focused learning. The novelty claim is therefore specific, not
 leaderboard-oriented: CRPTO is an auditable conformal robust credit-portfolio
 decision built from frozen calibrated PD artifacts. Third, it provides an
 artifact-backed empirical study where every paper table and figure is generated
-from frozen outputs rather than manually transcribed summaries, and it
-documents the governance boundary between safe paper-facing reruns and
-protected stages that would change the promoted champion.
+from frozen outputs rather than manually transcribed summaries. The key claim
+is deliberately surgical: CRPTO maps frozen calibrated PD artifacts into a
+robust funded set, reports the portfolio-level conformal premium `Gamma_CP`,
+and verifies exact alpha-safe weighted miscoverage on the promoted Lending Club
+portfolio. The paper also documents the governance boundary between safe
+paper-facing reruns and protected stages that would change the promoted
+champion.
 
 ![CRPTO's central move is operational rather than decorative: calibrated PD intervals become robust optimization inputs, and the promoted funding policy is then audited against exact funded-set risk controls.](../reports/crpto/figures/crpto_fig12_crpto_conceptual_pipeline.png){#fig-crpto-pipeline width="90%"}
 
@@ -245,10 +251,12 @@ estimates with conformal upper endpoints. The promoted policy has
 Two quantities are kept separate throughout the paper. The lowercase `gamma`
 is a policy parameter controlling how the optimizer blends uncertainty in the
 portfolio rule. `Gamma_CP`, by contrast, is a portfolio-level conformal metric
-computed after the funded set is chosen. The promoted policy has
-`Gamma_CP(alpha = 0.01) = 0.18591`, weighted miscoverage
-`V(alpha = 0.01) = 0.03645`, and zero exact violation at `alpha = 0.01`.
-This distinction is small typographically but central for auditability.
+computed after the funded set is chosen: it is the allocation-weighted gap
+between the conformal upper endpoint and calibrated PD, with clipping at one
+on the PD scale. The promoted policy has `Gamma_CP(alpha = 0.01) = 0.18591`,
+weighted miscoverage `V(alpha = 0.01) = 0.03645`, and zero exact violation at
+`alpha = 0.01`. This distinction is small typographically but central for
+auditability.
 
 # Theory
 
@@ -257,10 +265,16 @@ For a fixed allocation evaluated on exchangeable calibration/test data,
 conformal coverage controls the expected rate at which outcomes fall outside
 the constructed uncertainty intervals. When funded-set weights are
 non-negative and normalized, this yields a weighted miscoverage quantity
-`V(alpha)` that can be monitored after the decision. A Markov-style argument
+`V(alpha)` that can be monitored after the decision. The formal portfolio
+statement assumes weighted funded-set validity: the optimizer's allocation
+does not concentrate exposure in a region whose noncoverage is worse than the
+nominal conformal level, unless such weighting is covered by a declared
+Mondrian, localized, or multi-distribution guarantee. A Markov-style argument
 then converts expected weighted miscoverage control into a finite-sample
 portfolio-level statement. The empirical exact bound check reported in this
-paper is the operational version of that statement.
+paper is the operational validation of that statement after the frozen policy
+search, not a claim that post-selection evaluation creates a stronger conformal
+guarantee.
 
 This theory is intentionally not presented as a universal dependence-free
 tightening for all adaptive credit policies. The Lending Club evaluation is
@@ -274,18 +288,38 @@ dependence-aware material is a transparent journal caveat rather than an
 overstated theorem.
 
 The compact validity ladder below is the paper's guardrail against
-overclaiming. CRPTO uses the first two levels as evidence, reports the next two
-as diagnostics, and leaves online/live control for a new protocol.
+overclaiming. CRPTO uses the first two levels as evidence, states weighted
+funded-set validity as the theorem's portfolio-level assumption, reports
+multi-distribution checks as diagnostics, and leaves online/live control for a
+new protocol.
 
 | Validity level | What it supports | CRPTO status |
 |---|---|---|
 | Marginal split conformal | Population-level coverage under exchangeability. | Core interval guarantee. |
 | Mondrian/group conformal | Coverage within declared partitions. | Used for score-decile and grade audits. |
-| Weighted/localized coverage | Coverage under weights, local neighborhoods, or selected groups. | Diagnostic motivation for A23. |
+| Weighted/localized coverage | Coverage under weights, local neighborhoods, or selected groups. | Explicit theorem assumption plus A23 diagnostic evidence. |
 | Multi-distribution coverage | Robustness across multiple source distributions. | Read-only stress evidence, not recalibration. |
 | Online/adaptive coverage | Sequential alpha updates under live drift. | A24 replay only; not a live deployment claim. |
 
 : Coverage-validity ladder used in the paper claims.
+
+The bound is therefore read as three linked objects. First, the deterministic
+identity says that if the funded set satisfies `sum_i w_i u_i <= tau`, realized
+risk can exceed `tau` only through the weighted noncoverage term `V(alpha)`.
+Second, the statistical step assumes weighted funded-set validity,
+`E[V(alpha)] <= alpha`, rather than pretending that marginal split conformal
+alone controls every adaptive subportfolio. Third, the frozen empirical
+certificate verifies the promoted decision exactly on the 276,869-loan OOT
+evaluation.
+
+| Claim component | CRPTO evidence | Boundary |
+|---|---|---|
+| Deterministic portfolio identity | Exact funded-set audit computes `V`, `Gamma_CP`, and violation after allocation. | Does not require a new statistical guarantee. |
+| Split/Mondrian validity | OOT coverage, minimum group coverage, and temporal diagnostics. | Not exact conditional coverage for every borrower profile. |
+| Weighted funded-set validity | Exact alpha-safe certificate plus A23 weighted/multi-distribution stress evidence. | Assumption for the theorem; empirical audit after frozen selection. |
+| Post-selection robustness | Nested 5K -> 25K -> 276K chain and `45/45` final robust-region pass. | Strong audit evidence, not a prospective live-selection guarantee. |
+
+: Assumption-to-evidence map for the CRPTO bound.
 
 # Experimental Design
 
@@ -345,6 +379,16 @@ turns this uncertainty into a robust allocation with exact alpha-safe checks.
 | Portfolio | Exact alpha violation | `0.0` |
 
 : Frozen paper-facing metrics by layer.
+
+The exact certificate in the body is intentionally small. It exposes the
+objects that connect the theorem to the frozen champion without making the
+reader infer them from a figure.
+
+| `alpha` | `Gamma_CP` | `V(alpha)` | `sqrt(alpha)` | violation | pass |
+|---:|---:|---:|---:|---:|:---:|
+| `0.01` | `0.18591` | `0.03645` | `0.10000` | `0.00000` | yes |
+
+: Exact alpha-safe certificate for the promoted funded set.
 
 The robust policy does pay for robustness: its price of robustness is
 `-$14,465.69`, or approximately `-10.56%`, relative to the comparison frontier.
