@@ -1,4 +1,4 @@
-# Dossier Conformal, Baselines Y Alpha Sweep
+# Dossier Conformal, Baselines y Alpha Sweep
 
 Evidencia técnica ampliada para elegir la capa conformal, comparar incertidumbre y justificar el barrido de alpha.
 
@@ -400,7 +400,7 @@ $$
 \left| P\left(Y_{n+1} \in C_\alpha(X_{n+1}) \mid X_{n+1} \in G\right) - (1 - \alpha) \right| \leq \epsilon, \quad \forall\, G \in \mathcal{G}
 $$
 
-El algoritmo funciona como un procedimiento de boosting: ajusta iterativamente el cuantil conformal para satisfacer la cobertura de todos los grupos simultáneamente. Para nuestro pipeline, multivalid CP podría garantizar cobertura por grade Y por DTI-bucket Y por vintage sin requerir que estos formen una partición disjunta. Esto permanece como una extensión futura; con 237K observaciones de calibración y solo 7 grades disjuntos, Mondrian estándar es suficiente para el caso actual.
+El algoritmo funciona como un procedimiento de boosting: ajusta iterativamente el cuantil conformal para satisfacer la cobertura de todos los grupos simultáneamente. Para nuestro pipeline, multivalid CP podría garantizar cobertura por grade y por DTI-bucket y por vintage sin requerir que estos formen una partición disjunta. Esto permanece como una extensión futura; con 237K observaciones de calibración y solo 7 grades disjuntos, Mondrian estándar es suficiente para el caso actual.
 
 ## Fuente curada: `book/chapters/07-conformal/07c-cqr-variants-benchmark.qmd`
 

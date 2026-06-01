@@ -1,4 +1,4 @@
-# Fundamentos Conformal Y Optimización Robusta
+# Fundamentos Conformal y Optimización Robusta
 
 Marco teórico extendido para convertir incertidumbre conformal en conjuntos robustos de decisión.
 

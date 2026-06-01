@@ -1,4 +1,4 @@
-# PD, Calibración Y Champion Predictivo
+# PD, Calibración y Champion Predictivo
 
 Dossier predictivo que sostiene el score PD usado por CRPTO y sus decisiones robustas.
 

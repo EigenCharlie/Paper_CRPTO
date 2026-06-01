@@ -187,7 +187,7 @@ decision.
 
 | Paper family | Domain contribution | CRPTO distinction |
 |---|---|---|
-| Lending Club / fintech credit scoring [@jagtiani2019altdata; @albanesi2024credit; @liu2026twostage]. | Measures predictive and scorecard behavior on platform or fintech lending data. | Uses the PD model as an auditable input to a decision certificate. |
+| Lending Club / fintech credit scoring [@jagtiani2019altdata; @albanesi2024credit; @zheng2026twostage]. | Measures predictive and scorecard behavior on platform or fintech lending data. | Uses the PD model as an auditable input to a decision certificate. |
 | P2P investment support [@guo2016p2p; @babaei2020p2p]. | Combines borrower-level prediction with portfolio-style investment recommendation. | Adds conformal uncertainty and exact alpha-safe funded-set validation. |
 | Robust P2P credit portfolio optimization [@chi2019p2p]. | Brings data-driven robust optimization into P2P lending. | Makes the uncertainty set a conformal artifact with frozen lineage. |
 | AI/OR digital lending optimization [@aior2025lendingclub]. | Frames Lending Club funding as multi-objective OR. | Keeps risk controls and artifact governance as first-class outputs. |

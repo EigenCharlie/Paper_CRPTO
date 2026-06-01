@@ -105,8 +105,8 @@ future work.
 | G4 | Roles of Alternative Data and ML in Fintech Lending (LendingClub) | Jagtiani & Lemieux | 2019 | FRB Philadelphia | `jagtiani2019altdata` |
 | G5 | A boosted decision tree approach with Bayesian HPO for credit scoring | Xia et al. | 2017 | Expert Sys. w/ Applications | `xia2017` |
 | G6 | Integrating AI and OR for Investment Decision-Making (LendingClub) | — | 2025 | JORS | `aior2025lendingclub` |
-| G7 | Two-Stage ML for Credit Risk with Fragmentary Data | Liu et al. | 2026 | Expert Sys. w/ Applications | `liu2026twostage` |
-| G8 | Comparative Analysis of Boosting Algorithms for Default Prediction | — | 2025 | Cogent Econ. & Finance | `boosting2025default` |
+| G7 | Two-Stage ML for Credit Risk with Fragmentary Data | Zheng et al. | 2026 | Expert Sys. w/ Applications | `zheng2026twostage` |
+| G8 | Comparative Analysis of Boosting Algorithms for Predicting Personal Default | Nguyen and Ngo | 2025 | Cogent Econ. & Finance | `boosting2025default` |
 
 ## H. Causal Inference in Credit
 

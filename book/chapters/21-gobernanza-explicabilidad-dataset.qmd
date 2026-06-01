@@ -1,4 +1,4 @@
-# Gobernanza, Explicabilidad Y Dataset 360
+# Gobernanza, Explicabilidad y Dataset 360
 
 Material para appendix journal, defensa MRM, interpretabilidad y descripción profunda del universo Lending Club.
 

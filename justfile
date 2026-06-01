@@ -84,12 +84,15 @@ paper-submission-pdf: paper-submission
 # --- Quarto book ---------------------------------------------------------
 
 book:
+    uv run python scripts/write_book_build_info.py
     uv run -- quarto render book --to html
 
 book-pdf:
+    uv run python scripts/write_book_build_info.py
     uv run -- quarto render book --to pdf
 
 book-all:
+    uv run python scripts/write_book_build_info.py
     uv run -- quarto render book
 
 book-preview:

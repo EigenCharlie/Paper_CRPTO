@@ -2,13 +2,13 @@
 
 {{< include includes/_paper-autocontenido.qmd >}}
 
+{{< include includes/_build-info.qmd >}}
+
 ::: {.whole-game-intro}
 <span class="whole-game-question">Pregunta central</span>
 
 ¿Qué ganamos cuando la incertidumbre predictiva deja de ser un diagnóstico y se vuelve una entrada explícita del optimizador? Este libro independiente abre el dossier CRPTO alrededor de esa tesis y conserva tanto el material paper-ready como la evidencia extendida para journal, apéndices y respuestas a reviewers.
 :::
-
-![Las seis etapas del pipeline CRPTO --- datos y split temporal, PD calibrada, conformal Mondrian, conjunto de incertidumbre, LP robusto y política promovida con bound exacto --- anotadas con las métricas del cierre `276k` ($170,464.54, $V=0.03645$, $\Gamma_{\text{CP}}=0.18591$, región robusta `45/45`).](assets/figures/editorial/diagrama-crpto.png){#fig-crpto-overview fig-alt="Diagrama maestro horizontal de seis paneles: (1) datos y split temporal de Lending Club, (2) PD calibrada CatBoost+Venn-Abers con curva de calibración, (3) conformal Mondrian con cobertura 90%, (4) conjunto de incertidumbre y prima conformal, (5) LP robusto de portafolio, (6) política promovida bound_aware_276k con bound exacto; pie con la evidencia del paper."}
 
 ::: {.callout-note .mini-abstract}
 ## Mini-abstract
@@ -17,7 +17,48 @@
 **Hallazgo**: el resultado clave no es un AUC aislado, sino la posibilidad de cuantificar explícitamente el trade-off entre retorno, cobertura, robustez y auditabilidad.
 :::
 
+![Las seis etapas del pipeline CRPTO --- datos y split temporal, PD calibrada, conformal Mondrian, conjunto de incertidumbre, LP robusto y política promovida con bound exacto --- anotadas con las métricas del cierre `276k` ($170,464.54, $V=0.03645$, $\Gamma_{\text{CP}}=0.18591$, región robusta `45/45`).](assets/figures/editorial/diagrama-crpto.png){#fig-crpto-overview fig-alt="Diagrama maestro horizontal de seis paneles: (1) datos y split temporal de Lending Club, (2) PD calibrada CatBoost+Venn-Abers con curva de calibración, (3) conformal Mondrian con cobertura 90%, (4) conjunto de incertidumbre y prima conformal, (5) LP robusto de portafolio, (6) política promovida bound_aware_276k con bound exacto; pie con la evidencia del paper."}
+
 El champion oficial es `bound_aware_276k_economic_champion` del run `paper-thesis-final-economic-2026-04-06`, con retorno `$170,464.54`, `V = 0.03645`, `Gamma_CP = 0.18591`, `alpha01_exact_pass = true` y región robusta `45/45`.
+
+## Rutas rápidas
+
+::: {.route-grid}
+::: {.route-card}
+### Paper IJDS
+[Leer el cuerpo paper-ready](chapters/01-introduccion.qmd)
+
+Claim CRPTO, teoría mínima, metodología, resultados, regret-auditability y discusión.
+:::
+
+::: {.route-card}
+### Tesis
+[Leer el dossier extendido](chapters/15-fundamentos-riesgo-ml.qmd)
+
+Fundamentos, contexto de crédito, conformal, robustez, gobernanza y trazabilidad.
+:::
+
+::: {.route-card}
+### Supplement
+[Ver apéndice y robustez](chapters/07-apendice-robustez.qmd)
+
+A3--A24, diagnósticos, MRM/fairness, comparadores y paquete de reproducibilidad.
+:::
+
+::: {.route-card}
+### Bibliografía
+[Mapa CRPTO actualizado](chapters/24-bibliografia-crpto-actualizada.qmd)
+
+Literatura nueva organizada por familias, uso en paper/tesis y frontera de claims.
+:::
+
+::: {.route-card}
+### Future Work
+[Ver agenda controlada](chapters/23-apendices-regulatorios-y-future-work.qmd)
+
+Qué puede entrar como diagnóstico seguro y qué exige un protocolo nuevo.
+:::
+:::
 
 ## Qué contiene este libro
 

@@ -1,4 +1,4 @@
-# Pipeline, Datos Y Features
+# Pipeline, Datos y Features
 
 Material de método y reproducibilidad previo al CRPTO: origen de datos, split temporal, leakage, WOE/IV y contrato de features.
 

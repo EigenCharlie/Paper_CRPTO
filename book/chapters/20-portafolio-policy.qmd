@@ -1,4 +1,4 @@
-# Portafolio Robusto Y Selección De Política
+# Portafolio Robusto y Selección de Política
 
 Puente entre predict-then-optimize, política económica y frontera de robustez que alimenta el claim central de CRPTO.
 

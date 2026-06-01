@@ -1,4 +1,4 @@
-# Fundamentos De Riesgo Crediticio Y ML
+# Fundamentos de Riesgo Crediticio y ML
 
 Base conceptual que el capítulo CRPTO original daba por conocida: PD, calibración, métricas y modelos tabulares.
 

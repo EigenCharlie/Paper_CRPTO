@@ -145,12 +145,13 @@ stages:
     outs:
       - data/processed/crpto_vs_spo_stability.json
   crpto.book.render:
-    cmd: uv run -- quarto render book --to html
+    cmd: uv run python scripts/write_book_build_info.py && uv run -- quarto render book --to html
     deps:
       - book/_quarto.yml
       - book/index.qmd
       - book/chapters
       - book/styles.scss
+      - scripts/write_book_build_info.py
     params:
       - params.yaml:
           - book.freeze

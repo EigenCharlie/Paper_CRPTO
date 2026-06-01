@@ -80,6 +80,52 @@ main.content {
   overflow-x: auto;
 }
 
+#quarto-document-content table {
+  display: block;
+  width: 100%;
+  max-width: 100%;
+  overflow-x: auto;
+  white-space: normal;
+}
+
+#quarto-document-content th,
+#quarto-document-content td {
+  vertical-align: top;
+}
+
+@media (max-width: 760px) {
+  .page-columns {
+    display: block !important;
+  }
+
+  main.content {
+    width: min(320px, calc(100vw - 2rem)) !important;
+    max-width: min(320px, calc(100vw - 2rem)) !important;
+    margin-inline: auto;
+    overflow-x: hidden;
+  }
+
+  .table {
+    font-size: 0.82rem;
+  }
+
+  #quarto-document-content {
+    overflow-x: hidden;
+  }
+
+  #quarto-document-content th,
+  #quarto-document-content td {
+    min-width: 0;
+    overflow-wrap: anywhere;
+  }
+
+  .route-grid,
+  .bibliography-map,
+  .chapter-landing-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
 img {
   max-width: 100%;
   height: auto;
@@ -105,6 +151,63 @@ img {
 }
 
 .mini-abstract { margin: 1rem 0 1.5rem; }
+
+.build-info {
+  display: inline-block;
+  margin: 0.15rem 0 1rem;
+  padding: 0.35rem 0.55rem;
+  border: 1px solid var(--crpto-border);
+  border-radius: 6px;
+  background: #ffffff;
+  color: var(--crpto-muted);
+  font-size: 0.86rem;
+}
+
+.route-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 0.85rem;
+  margin: 1rem 0 1.35rem;
+}
+
+.route-card {
+  min-height: 100%;
+  padding: 0.9rem 1rem;
+  border: 1px solid var(--crpto-border);
+  border-radius: 8px;
+  background: #ffffff;
+  box-shadow: 0 8px 18px $crpto-shadow;
+}
+
+.route-card h3 {
+  margin-top: 0;
+  font-size: 1rem;
+}
+
+.route-card p:last-child { margin-bottom: 0; }
+
+.bibliography-map {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 1rem;
+  margin: 1rem 0 1.5rem;
+}
+
+.bibliography-card {
+  padding: 1rem 1.1rem;
+  border: 1px solid var(--crpto-border);
+  border-radius: 8px;
+  background: #ffffff;
+}
+
+.bibliography-card h3 {
+  margin-top: 0;
+  font-size: 1.03rem;
+}
+
+.bibliography-card p {
+  margin-bottom: 0.45rem;
+}
 
 .chapter-landing-grid {
   display: grid;

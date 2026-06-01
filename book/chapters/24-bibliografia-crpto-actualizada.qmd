@@ -1,0 +1,124 @@
+# Bibliografía CRPTO actualizada
+
+Esta página resume la biblioteca nueva que alimenta el paper IJDS, el
+supplement y la tesis. No reemplaza el capítulo de estado del arte; funciona
+como mapa rápido para saber qué aporta cada familia de papers y dónde conviene
+usarla.
+
+## Mapa por familia
+
+::: {.bibliography-map}
+::: {.bibliography-card}
+### Conformal foundations
+**Papers:** Vovk, Papadopoulos, Angelopoulos, Bates, Barber, Gibbs/Candès.
+
+**Uso:** paper y tesis.
+
+**Protege:** CRPTO usa garantías marginales/particionadas, no cobertura condicional exacta gratuita.
+:::
+
+::: {.bibliography-card}
+### Group, weighted y multi-distribution CP
+**Papers:** Mondrian, Barber, Guan, Jonkers, Liu multi-source, Yang MDCP, Bhattacharyya group-weighted.
+
+**Uso:** supplement A23 y tesis.
+
+**Protege:** celdas finas y cambios de distribución son diagnósticos/future work, no claims ocultos.
+:::
+
+::: {.bibliography-card}
+### CP + robust decisions
+**Papers:** Johnstone, Patel, Sun PTC, Yeh E2E, Hu CRC, Chen/Reddy.
+
+**Uso:** related work IJDS.
+
+**Protege:** CRPTO está en el vecindario CP+RO, pero con un portafolio crediticio auditado.
+:::
+
+::: {.bibliography-card}
+### Decision certificates
+**Papers:** CROM, CREDO, CREME, conformal satisficing.
+
+**Uso:** supplement y future work.
+
+**Protege:** pueden inspirar CRPTO v2, pero no seleccionan el champion actual.
+:::
+
+::: {.bibliography-card}
+### P2P / Lending Club optimization
+**Papers:** Guo, Chi, Babaei/Bamdad, Torkian/Bamdad/Sarfaraz.
+
+**Uso:** related work y tesis.
+
+**Protege:** la novedad no es "usar OR en Lending Club"; es la unión conformal + robustez + lineage.
+:::
+
+::: {.bibliography-card}
+### Credit scoring y asignación
+**Papers:** Lessmann, Ayari, Khandani, Jagtiani/Lemieux, Albanesi, Blattner, Brevoort, Fuster.
+
+**Uso:** introducción, MRM y tesis.
+
+**Protege:** AUC no es el centro: la PD calibrada entra a una decisión de capital.
+:::
+
+::: {.bibliography-card}
+### Decision-focused learning
+**Papers:** Donti, Elmachtoub/Grigas, Mandi, Schutte.
+
+**Uso:** comparador A19.
+
+**Protege:** SPO+ gana regret; CRPTO gana auditabilidad y controles verificables.
+:::
+
+::: {.bibliography-card}
+### Finance conformal portfolios
+**Papers:** Noguer, Kato, Liu online portfolio.
+
+**Uso:** contexto financiero.
+
+**Protege:** finanzas CP existe, pero crédito minorista tiene payoff binario y gobernanza distinta.
+:::
+
+::: {.bibliography-card}
+### IFRS9, MRM y fairness
+**Papers:** Basel, SR 11-7, ECB/IFRS9, CFPB BISG, FinRegLab.
+
+**Uso:** tesis y appendix.
+
+**Protege:** fairness/provisión son límites y extensiones, no certificaciones legales del paper IJDS.
+:::
+:::
+
+## Uso en el paper IJDS
+
+El cuerpo IJDS debe citar solo lo necesario para defender la frontera:
+
+- CP foundations y límites de cobertura.
+- CP + robust optimization y prescriptive analytics.
+- P2P/Lending Club como predecesores de dominio.
+- Ordinal conformal credit scoring como frontera de claim.
+- SPO+/DFL como comparador de regret.
+- CREDO/CREME/CROM como agenda de certificados, no como selector del champion.
+
+## Uso en la tesis
+
+La tesis puede usar el mapa completo. Ahí sí conviene ampliar:
+
+- credit invisibility, ruido de medición y proxies protegidos;
+- ECL/IFRS9 y survival como agenda prudencial;
+- online/multi-distribution conformal como protocolo futuro;
+- decision certificates como posible evolución del bound-aware audit;
+- P2P/Lending Club OR como linaje aplicado de la optimización.
+
+## Regla de claim
+
+La formulación segura es:
+
+> No encontramos un trabajo que una, en el mismo artefacto auditable, PD
+> calibrada sobre Lending Club, intervalos conformales, optimización robusta de
+> portafolio crediticio, exact funded-set validation y gobernanza reproducible.
+
+Esa frase es más fuerte que "nadie ha hecho conformal en crédito" porque
+reconoce los vecinos reales y mantiene el centro de CRPTO donde debe estar:
+decisión robusta auditable desde artefactos predictivos congelados.

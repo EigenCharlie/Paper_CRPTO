@@ -1,25 +1,30 @@
 schema: '2.0'
 stages:
   crpto.book.render:
-    cmd: uv run -- quarto render book --to html
+    cmd: uv run python scripts/write_book_build_info.py && uv run -- quarto
+      render book --to html
     deps:
     - path: book/_quarto.yml
       hash: md5
-      md5: 95ac52c4b69b5427d1777286af4e527a
-      size: 4040
+      md5: 53d41e74150cb805442f72c375d337b6
+      size: 4097
     - path: book/chapters
       hash: md5
-      md5: 555a2d07e4586167a5c7c495a001ecef.dir
-      size: 762865
-      nfiles: 25
+      md5: ea257312f607f1d1fed0a800b9330e54.dir
+      size: 766843
+      nfiles: 26
     - path: book/index.qmd
       hash: md5
-      md5: 19b9a94f829c0150c3731caf43879dcc
-      size: 4309
+      md5: c4953804269c57658dea5c79659bc107
+      size: 5339
     - path: book/styles.scss
       hash: md5
-      md5: 7322205de7140f8e89e36da55575e955
-      size: 7279
+      md5: c869ec8f5c92ab03e56d7b99e09c60e9
+      size: 9130
+    - path: scripts/write_book_build_info.py
+      hash: md5
+      md5: 43b5b0b11353e424318574b8c6643235
+      size: 1127
     params:
       params.yaml:
         book.formats:
@@ -28,9 +33,9 @@ stages:
     outs:
     - path: book/_book
       hash: md5
-      md5: eba740d74a7578b0c06bf8b4b1a3d810.dir
-      size: 14777553
-      nfiles: 95
+      md5: 0263a8387eb44fbc3385a15251eadadd.dir
+      size: 14856366
+      nfiles: 96
   crpto.paper.figures:
     cmd: python scripts/generate_crpto_figures.py --paper crpto
     deps:

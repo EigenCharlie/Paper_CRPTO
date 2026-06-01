@@ -1,4 +1,4 @@
-## Discusion y Conclusiones {#sec-crpto-discussion}
+## Discusión y Conclusiones {#sec-crpto-discussion}
 
 El CRPTO articula la tesis mas ambiciosa del proyecto: convertir incertidumbre predictiva en un objeto directamente util para optimizacion de decision. La evidencia actual ya permite sostener tres conclusiones provisionales.
 

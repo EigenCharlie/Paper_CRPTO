@@ -61,6 +61,7 @@ book:
         - chapters/20-portafolio-policy.qmd
         - chapters/21-gobernanza-explicabilidad-dataset.qmd
         - chapters/22-literatura-trazabilidad-entorno.qmd
+        - chapters/24-bibliografia-crpto-actualizada.qmd
         - chapters/23-apendices-regulatorios-y-future-work.qmd
     - chapters/glosario.qmd
     - references.qmd

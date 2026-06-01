@@ -1,4 +1,4 @@
-# Literatura, Trazabilidad Y Entorno Reproducible
+# Literatura, Trazabilidad y Entorno Reproducible
 
 Contexto académico, contribuciones, notebooks, artefactos y configuración que ayudan a decidir qué va al paper y qué al journal.
 
@@ -10,42 +10,42 @@ Este capítulo es un dossier curado desde secciones previas del libro original q
 
 ## Estado del Arte
 
-El proyecto se ubica en la interseccion de varias literaturas maduras y unas pocas intersecciones todavia poco exploradas. La fuente maestra para este mapa es `docs/research/foundations/crpto_references_state_of_art.md`, que cataloga aproximadamente 80 trabajos organizados en 12 categorias tematicas.
+El proyecto se ubica en la intersección de varias literaturas maduras y unas pocas intersecciones todavía poco exploradas. La fuente maestra para este mapa es `docs/research/foundations/crpto_references_state_of_art.md`, que cataloga aproximadamente 80 trabajos organizados en 12 categorías temáticas.
 
-### Mapa tematico
+### Mapa temático
 
 | Eje | Estado de la literatura | Gap relevante para el proyecto |
 |---|---|---|
-| Conformal foundations | Muy desarrollado | Pocas aplicaciones integradas a decision crediticia |
-| Mondrian / group-conditional | Activo 2023-2026 | Evidencia aplicada en credito real aun limitada |
-| Conformal + robust optimization | Emergente | Integracion operativa aun rara en portafolio crediticio |
-| IFRS9 / lifetime credit risk | Madura por separado | Ausencia practica de UQ distribution-free en pipelines ECL |
-| Decision-focused learning | Expansion rapida | Poco dialogo con incertidumbre conformal en credito |
+| Conformal foundations | Muy desarrollado | Pocas aplicaciones integradas a decisión crediticia |
+| Mondrian / group-conditional | Activo 2023-2026 | Evidencia aplicada en crédito real aún limitada |
+| Conformal + robust optimization | Emergente | Integración operativa aún rara en portafolio crediticio |
+| IFRS9 / lifetime credit risk | Madura por separado | Ausencia práctica de UQ distribution-free en pipelines ECL |
+| Decision-focused learning | Expansión rápida | Poco diálogo con incertidumbre conformal en crédito |
 
 : Panorama del estado del arte
 
-### Mapa bibliografico actualizado CRPTO
+### Mapa bibliográfico actualizado CRPTO
 
-El intake bibliografico de mayo de 2026 deja el mapa mas fino: existen
+El intake bibliográfico de mayo de 2026 deja el mapa más fino: existen
 predecesores cercanos en P2P lending, credit scoring conformal ordinal,
 conformal robust optimization y decision certificates. Por eso el claim fuerte
-ya no debe ser "nadie ha trabajado nada parecido" sino una afirmacion mas
+ya no debe ser "nadie ha trabajado nada parecido" sino una afirmación más
 defendible: no encontramos un trabajo que una, en el mismo artefacto auditable,
-PD calibrada sobre Lending Club, intervalos conformales, optimizacion robusta
+PD calibrada sobre Lending Club, intervalos conformales, optimización robusta
 de portafolio crediticio, exact funded-set validation y gobernanza de
 reproducibilidad.
 
 | Bloque | Papers que ahora deben aparecer | Lectura para tesis/paper |
 |---|---|---|
-| Conformal foundations | Vovk, Papadopoulos, Angelopoulos, Bates, Barber, Gibbs/Candes. | Base de cobertura y limites de cobertura condicional. |
+| Conformal foundations | Vovk, Papadopoulos, Angelopoulos, Bates, Barber, Gibbs/Candes. | Base de cobertura y límites de cobertura condicional. |
 | Group/weighted/MD coverage | Mondrian, Barber, Guan, Jonkers, Liu multi-source, Yang MDCP, Bhattacharyya group-weighted. | Sustenta A23 y evita sobreprometer cobertura exacta por perfil. |
 | Conformal + robust decisions | Johnstone, Patel, Sun PTC, Yeh E2E, Hu CRC, Chen/Reddy. | Vecindario teorico directo de CRPTO. |
 | Decision certificates | CROM, CREDO, CREME, conformal satisficing. | Future work natural, no selector oculto del champion. |
 | P2P/Lending Club OR | Guo, Chi, Babaei/Bamdad, Torkian/Bamdad/Sarfaraz. | Predecesores de dominio que obligan a precisar la novedad. |
-| Credit scoring y asignacion | Lessmann, Ayari, Khandani, Jagtiani, Albanesi, Blattner, Brevoort, Fuster. | Contexto de scoring, equidad, ruido y credit invisibility. |
-| Decision-focused learning | Donti, Elmachtoub/Grigas, Mandi, Schutte. | Comparador de regret; CRPTO prioriza auditoria y riesgo. |
-| Finance conformal portfolios | Noguer, Kato, Liu online portfolio. | Vecinos financieros fuera de credito minorista. |
-| IFRS9 / MRM / governance | Basel, SR 11-7, ECB/IFRS9, FinRegLab, CFPB BISG. | Tesis/supplement, no contribucion central IJDS. |
+| Credit scoring y asignación | Lessmann, Ayari, Khandani, Jagtiani, Albanesi, Blattner, Brevoort, Fuster. | Contexto de scoring, equidad, ruido y credit invisibility. |
+| Decision-focused learning | Donti, Elmachtoub/Grigas, Mandi, Schutte. | Comparador de regret; CRPTO prioriza auditoría y riesgo. |
+| Finance conformal portfolios | Noguer, Kato, Liu online portfolio. | Vecinos financieros fuera de crédito minorista. |
+| IFRS9 / MRM / governance | Basel, SR 11-7, ECB/IFRS9, FinRegLab, CFPB BISG. | Tesis/supplement, no contribución central IJDS. |
 
 ### Corriente 1: Fundamentos de prediccion conformal
 
