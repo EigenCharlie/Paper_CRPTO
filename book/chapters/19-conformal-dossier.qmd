@@ -3,10 +3,12 @@
 Evidencia técnica ampliada para elegir la capa conformal, comparar incertidumbre y justificar el barrido de alpha.
 
 ::: {.callout-note}
-Este capítulo es un dossier curado desde secciones previas del libro original que CRPTO reutilizaba implícitamente. Los bloques de código se conservan como referencia estática para evitar que el render del libro dependa de ejecuciones exploratorias no necesarias.
+Nota editorial: este capítulo conserva material técnico de soporte para tesis, supplement y revisión. Los bloques de código quedan acotados visualmente por defecto; la lectura principal está en el texto, las tablas y las figuras.
 :::
 
-## Fuente curada: `book/chapters/07-conformal/index.qmd`
+::: {.source-note}
+**Procedencia:** `book/chapters/07-conformal/index.qmd`
+:::
 
 El modelo PD champion produce una estimación puntual calibrada — pero una estimación puntual, por precisa que sea, no captura la **incertidumbre** inherente a la predicción. En riesgo crediticio, ignorar la incertidumbre tiene consecuencias directas: provisiones subestimadas, portafolios frágiles y decisiones que colapsan ante escenarios adversos.
 
@@ -61,19 +63,21 @@ Las figuras `fig-conformal-coverage-grade` y `fig-conformal-width-tradeoff` anti
 
 Este capítulo documenta la implementación completa de CP en el pipeline: desde los fundamentos teóricos de split conformal, pasando por la extensión Mondrian que garantiza cobertura por grupo (grade), hasta el benchmark de variantes, el backtesting temporal y la extensión a LGD/EAD.
 
-```html
-<div class="capítulo-landing-grid">
-  <div class="capítulo-card"><h4><a href="07a-split-conformal-basics.html">24. Split Conformal</a></h4><p>Garantía finita, API MAPIE y scores de no conformidad.</p></div>
-  <div class="capítulo-card"><h4><a href="07b-mondrian-group-conditional.html">25. Mondrian</a></h4><p>Cobertura por grade y validez útil por grupo.</p></div>
-  <div class="capítulo-card"><h4><a href="07c-cqr-variants-benchmark.html">26. Variantes</a></h4><p>Benchmark de variantes, selección y trade-offs.</p></div>
-  <div class="capítulo-card"><h4><a href="07d-backtest-monitoring.html">27. Monitoreo</a></h4><p>Backtest mensual, alertas y lectura prudencial.</p></div>
-  <div class="capítulo-card"><h4><a href="07e-lgd-ead-conformal.html">28. LGD / EAD</a></h4><p>Extensión conformal fuera de PD y promoción del carril.</p></div>
-</div>
-```
+| Bloque del dossier | Función en CRPTO |
+|---|---|
+| Split conformal | Fija la garantía finita, la semántica de $\alpha$ y los scores de no conformidad. |
+| Mondrian por grade | Lleva la cobertura a segmentos de negocio, no solo al promedio global. |
+| Variantes y benchmarks | Justifica por qué el carril promovido usa Mondrian y no BMA, bootstrap o CQR. |
+| Backtest temporal | Verifica que la cobertura se mantenga en el OOT y bajo cortes de régimen. |
+| Alpha sweep | Conecta cobertura, ancho del intervalo, elegibilidad y decisión económica. |
+
+: Mapa curado del dossier conformal
 
 > Nota curatorial: el cierre editorial compartido del libro original se omitió aquí para mantener este dossier independiente y centrado en CRPTO.
 
-## Fuente curada: `book/chapters/07-conformal/07a-split-conformal-basics.qmd`
+::: {.source-note}
+**Procedencia:** `book/chapters/07-conformal/07a-split-conformal-basics.qmd`
+:::
 
 ## Fundamentos de Split Conformal
 
@@ -246,7 +250,9 @@ Los intervalos conformal $[\text{PD}_\text{low}, \text{PD}_\text{high}]$ son el 
 2. **Señal SICR conformal** en IFRS9 (`sec-sicr-signal`): el ancho $\text{PD}_\text{high} - \text{PD}_\text{point}$ como trigger de deterioro
 3. **Backtesting de cobertura** (`sec-backtest-monitoring`): monitoreo mensual de que la garantía se mantiene
 
-## Fuente curada: `book/chapters/07-conformal/07b-mondrian-group-conditional.qmd`
+::: {.source-note}
+**Procedencia:** `book/chapters/07-conformal/07b-mondrian-group-conditional.qmd`
+:::
 
 ## Mondrian: Cobertura Condicional por Grupo
 
@@ -402,7 +408,9 @@ $$
 
 El algoritmo funciona como un procedimiento de boosting: ajusta iterativamente el cuantil conformal para satisfacer la cobertura de todos los grupos simultáneamente. Para nuestro pipeline, multivalid CP podría garantizar cobertura por grade y por DTI-bucket y por vintage sin requerir que estos formen una partición disjunta. Esto permanece como una extensión futura; con 237K observaciones de calibración y solo 7 grades disjuntos, Mondrian estándar es suficiente para el caso actual.
 
-## Fuente curada: `book/chapters/07-conformal/07c-cqr-variants-benchmark.qmd`
+::: {.source-note}
+**Procedencia:** `book/chapters/07-conformal/07c-cqr-variants-benchmark.qmd`
+:::
 
 ## CQR y Benchmark de Variantes
 
@@ -575,7 +583,9 @@ En contexto de originación: 36% de préstamos en la cola de incertidumbre alta 
 La cobertura de 87.35% está ligeramente por debajo del 90% nominal — una discrepancia pequeña atribuible a la naturaleza discreta del score LAC (opera sobre clases, no continuo), que genera cuantiles más conservadores. Este es un comportamiento esperado y documentado del SplitConformalClassifier con LAC en problemas binarios con alto desbalance de clases.
 :::
 
-## Fuente curada: `book/chapters/07-conformal/07d-backtest-monitoring.qmd`
+::: {.source-note}
+**Procedencia:** `book/chapters/07-conformal/07d-backtest-monitoring.qmd`
+:::
 
 ## Backtest y Monitoreo de Cobertura
 
@@ -835,7 +845,9 @@ El **SSC** (Cobertura estratificada por tamaño) verifica que la cobertura empí
 El **CWC** de ~0.243 indica que el sistema logra cobertura prudente con intervalos razonablemente informativos. No es el punto ideal teórico de eficiencia, pero sí una solución operativamente defendible para la tesis y el pipeline de decisión bajo incertidumbre.
 :::
 
-## Fuente curada: `book/chapters/13-advanced-topics/13a-uncertainty-baselines.qmd`
+::: {.source-note}
+**Procedencia:** `book/chapters/13-advanced-topics/13a-uncertainty-baselines.qmd`
+:::
 
 ## Baselines de Incertidumbre: BMA vs CP
 
@@ -893,7 +905,9 @@ La `fig-estrella-uncertainty-baselines` presenta la comparación con el formato 
 
 ![Comparación publication-quality de baselines de incertidumbre: CP Mondrian vs BMA vs Bootstrap, evaluados sobre 276K préstamos OOT.](../assets/figures/publication/crpto_fig7_uncertainty_baselines.png)
 
-## Material curado: alpha sweep y frontera de Pareto
+::: {.source-note}
+**Material curado:** alpha sweep y frontera de Pareto
+:::
 
 ## Alpha Sweep y Frontera de Pareto
 

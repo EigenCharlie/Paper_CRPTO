@@ -132,18 +132,18 @@ resultados para fortalecer la narrativa.
 
 ### Estado decision-aware del diseño actual {#sec-crpto-decision-aware-status}
 
-El pipeline actual ya es decision-aware en la capa de portafolio, pero todavia no en toda la cadena conformal. Esta distincion evita sobreprometer y, al mismo tiempo, deja claro donde esta la contribucion real:
+El pipeline actual ya es decision-aware en la capa de portafolio, pero todavía no en toda la cadena conformal. Esta distinción evita sobreprometer y, al mismo tiempo, deja claro donde está la contribución real:
 
 | Capa | Estado actual | Lectura correcta |
 |---|---|---|
-| PD base | Seleccionada por calidad predictiva, calibracion y gobernanza monotónica | Upstream regulatorio y probabilistico |
-| Conformal winner | Seleccionado por cobertura, ancho, cobertura minima de grupo y Winkler | Uncertainty set eficiente, todavia no entrenado por perdida economica |
-| Bound-aware portfolio | Seleccionado por retorno dentro de una region que pasa `alpha01` exactamente | Capa decision-aware del paper |
-| Paper/journal futuro | Seleccionar o entrenar el score conformal por retorno robusto, `V`, `gamma_cp` y violacion | Extension CROMS / end-to-end conformal risk |
+| PD base | Seleccionada por calidad predictiva, calibración y gobernanza monotónica | Upstream regulatorio y probabilístico |
+| Conformal winner | Seleccionado por cobertura, ancho, cobertura mínima de grupo y Winkler | Uncertainty set eficiente, todavía no entrenado por pérdida económica |
+| Bound-aware portfolio | Seleccionado por retorno dentro de una región que pasa `alpha01` exactamente | Capa decision-aware del paper |
+| Paper/journal futuro | Seleccionar o entrenar el score conformal por retorno robusto, `V`, `gamma_cp` y violación | Extensión CROMS / end-to-end conformal risk |
 
 : Estado decision-aware por capa del pipeline CRPTO {#tbl-crpto-decision-aware-status}
 
-Esta separacion es importante porque CROMS [@bao2025croms], conformal calibration end-to-end [@yeh2026] y conformal risk training [@yeh2025training] sugieren una version mas integrada del mismo programa. El presente paper no necesita esa extension para sostener su claim actual: la contribucion demostrada es que una capa conformal ya calibrada puede alimentar una policy robusta exacta, auditable y economicamente promotable. La version journal puede cerrar el ciclo completo haciendo que la seleccion conformal sea tambien decision-aware.
+Esta separación es importante porque CROMS [@bao2025croms], conformal calibration end-to-end [@yeh2026] y conformal risk training [@yeh2025training] sugieren una versión más integrada del mismo programa. El presente paper no necesita esa extensión para sostener su claim actual: la contribución demostrada es que una capa conformal ya calibrada puede alimentar una policy robusta exacta, auditable y económicamente promotable. La versión journal puede cerrar el ciclo completo haciendo que la selección conformal sea también decision-aware.
 
 ### Construcción del conjunto de incertidumbre
 

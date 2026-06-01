@@ -18,7 +18,7 @@ The Quarto article PDF proxy rendered successfully on 2026-06-01.
 
 | Surface | Local file | Proxy pages | Scope caveat |
 |---|---|---:|---|
-| IJDS body draft | `paper/CRPTO_ijds.pdf` | 15 | Includes references and generic Quarto formatting, not official IJDS pagination. |
+| IJDS body draft | `paper/CRPTO_ijds.pdf` | 14 | Includes references and generic Quarto formatting, not official IJDS pagination. |
 
 This is comfortably below the 25-page conceptual limit even before excluding
 references. The exact page budget must be rechecked after porting into the
@@ -26,22 +26,23 @@ official IJDS template, but the current draft is not page-constrained.
 
 ## Current Usage By Section
 
-Approximate prose counts exclude YAML, submission-target callout, references,
-table rows, figure markdown, code fences, captions, and inline citation keys.
+Approximate counts exclude YAML and references, but include compact table rows
+that remain in the manuscript body. They are therefore an operational body
+budget, not a pure prose-only count.
 
 | Section | Words | Approx. prose pages |
 |---|---:|---:|
-| Abstract | 164 | 0.31 |
-| Introduction | 499 | 0.95 |
-| Related Work | 536 | 1.02 |
-| Method | 569 | 1.08 |
-| Theory | 481 | 0.92 |
-| Experimental Design | 260 | 0.50 |
-| Results | 401 | 0.76 |
-| Robustness And Comparators | 510 | 0.97 |
-| Reproducibility And Companion | 177 | 0.34 |
-| Discussion | 420 | 0.80 |
-| **Total body prose** | **4,017** | **7.65** |
+| Abstract | 182 | 0.35 |
+| Introduction | 520 | 0.99 |
+| Related Work | 860 | 1.64 |
+| Method | 596 | 1.14 |
+| Theory | 712 | 1.36 |
+| Experimental Design | 279 | 0.53 |
+| Results | 796 | 1.52 |
+| Robustness and Comparators | 698 | 1.33 |
+| Reproducibility and Companion | 181 | 0.34 |
+| Discussion | 309 | 0.59 |
+| **Total body budget** | **5,133** | **9.78** |
 
 Body floats after the current polish:
 
@@ -51,15 +52,16 @@ Body floats after the current polish:
 | Tables | 9 | 0.3 page each | 2.7 |
 | **Float allowance** | 14 |  | **4.7** |
 
-**Estimated body length before references: ~12.4 pages.** The Quarto PDF proxy
-lands at 15 pages including references, which is consistent with this estimate.
+**Estimated body length before references: ~12.0--12.5 pages.** The Quarto PDF
+proxy lands at 14 pages including references after the submission-target callout
+was removed and the regret/table floats were compacted.
 
 ## Interpretation
 
 The draft has enough headroom for IJDS. The risk is no longer "too long"; the
 main editorial risk is whether the body gives reviewers enough evidence without
 feeling like a bibliography dump. The current version uses the headroom well:
-the body now includes the bound claim stack, the closer-work boundary, the
+the body now includes the bound claim stack, the closest-work boundary, the
 exact certificate, the reviewer claim checks, and the regret-auditability
 frontier.
 

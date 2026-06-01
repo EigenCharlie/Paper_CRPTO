@@ -51,12 +51,12 @@ Portfolio Decisions}
 \ABSTRACT{%
 Credit portfolio decisions often rely on calibrated default probabilities while
 treating prediction uncertainty as a diagnostic rather than a decision input. We
-propose Conformal Robust Predict-Then-Optimize (CRPTO), a post-hoc auditable
-decision-audit pattern that maps Mondrian conformal prediction intervals into
-robust portfolio constraints after a calibrated PD model is already frozen. On a
-276{,}869-loan out-of-time Lending Club evaluation, the promoted economic policy
-earns \$170.5K on a \$1M budget while passing the exact $\alpha=0.01$ funded-set
-bound ($V=0.03645$, $\Gamma_{\mathrm{CP}}=0.18591$, zero violation). The final
+introduce Conformal Robust Predict-Then-Optimize (CRPTO) as a reusable post-hoc
+decision audit: given a frozen calibrated PD artifact, CRPTO maps Mondrian
+conformal prediction intervals into robust portfolio constraints and then
+certifies the funded set. On a 276{,}869-loan out-of-time Lending Club evaluation,
+the promoted economic policy earns \$170.5K on a \$1M budget while passing the exact $\alpha=0.01$ funded-set
+bound ($V(\alpha)=0.03645$, $\Gamma_{\mathrm{CP}}=0.18591$, zero violation). The final
 robust region contains $45/45$ alpha-safe policies, indicating that the result is
 not a single-point artifact. The contribution is not another predictive
 leaderboard, but an auditable post-hoc conformal robust credit-portfolio decision
@@ -126,7 +126,7 @@ portfolio.
 
 \begin{figure}[t]
   \centering
-  \includegraphics[width=\textwidth]{crpto_fig1_journal_pipeline.png}
+  \includegraphics[width=\textwidth]{crpto_fig1_journal_pipeline.pdf}
   \caption{CRPTO maps frozen calibrated PD artifacts through a Mondrian conformal
   uncertainty layer into an auditable robust portfolio decision and exact
   funded-set certificate.}
@@ -189,6 +189,30 @@ regret-auditability frontier. The method-changing variants---optimized OCE/CVaR
 objectives, online or multi-dataset protocols, causal layers, and hybrid
 decision-focused training---remain future work rather than hidden acceptance
 criteria.
+
+\subsection{Closest Work Boundary}\label{sec:closest}
+
+CRPTO is not first in any broad individual family; its claim is the combination of
+calibrated PD, conformal uncertainty, robust credit-portfolio optimization, exact
+funded-set validation, and reproducible artifact governance.
+
+\begin{table}[t]
+  \centering
+  \small
+  \caption{Closest work boundary for CRPTO.}
+  \label{tab:closest-work}
+  \begin{tabular}{p{0.23\textwidth}p{0.23\textwidth}p{0.23\textwidth}p{0.23\textwidth}}
+    \toprule
+    Neighboring literature & What it contributes & What CRPTO adds & Why not enough \\
+    \midrule
+    P2P/Lending Club OR & Robust or multi-objective funding models. & Conformal PD uncertainty plus exact funded-set validation. & Leaves a gap between prediction uncertainty and a post-allocation certificate. \\
+    Conformal credit scoring & Intervals for score uncertainty. & A downstream robust portfolio decision. & Does not audit a budgeted funded set or economic policy. \\
+    Conformal robust optimization & Conformal sets in robust decisions. & Frozen credit-risk lineage, PD governance and funded-set certificate. & Not credit-specific enough for PD artifact governance. \\
+    Decision-focused learning & Regret-aligned training. & Post-hoc governance for existing calibrated PD models. & Does not certify risk controls after a frozen artifact. \\
+    Conformal finance portfolios & Financial portfolio applications. & Retail-credit payoffs, default risk and model-risk documentation. & Market-return portfolios face different payoffs and controls. \\
+    \bottomrule
+  \end{tabular}
+\end{table}
 
 % =====================================================================
 \section{Method}\label{sec:method}
@@ -289,7 +313,7 @@ evaluation creates a stronger conformal guarantee.
 
 \begin{figure}[t]
   \centering
-  \includegraphics[width=0.95\textwidth]{crpto_fig20_bound_claim_layers.png}
+  \includegraphics[width=0.95\textwidth]{crpto_fig20_bound_claim_layers.pdf}
   \caption{The CRPTO bound claim stack separates conformal endpoints,
   deterministic portfolio accounting, the weighted-validity assumption, and the
   frozen exact certificate.}
@@ -305,7 +329,8 @@ conformal alone controls every adaptive subportfolio. Third, the frozen empirica
 certificate verifies the promoted decision exactly on the 276{,}869-loan OOT
 evaluation.
 
-Let $Z_i(\alpha)=\mathbf{1}\{Y_i>u_i(\alpha)\}$ and
+For a fixed promoted allocation evaluated after the OOT labels are held out, let
+$Z_i(\alpha)=\mathbf{1}\{Y_i>u_i(\alpha)\}$ and
 $w_i=x_i a_i/\sum_j x_j a_j$ for the funded set. If the robust constraint keeps
 $\sum_i w_i u_i(\alpha)\le\tau$, then
 \[
@@ -416,16 +441,21 @@ makes that choice auditable rather than implicit.
   \centering
   \caption{Champion and comparator roles inside the final alpha-safe region.}
   \label{tab:champion-comparators}
-  \begin{tabular}{lrrrrl}
+  \begin{tabular}{lrrrrr}
     \toprule
-    Policy role & $\tau$ & $\gamma$ & Return & $V(0.01)$ & Interpretation \\
+    Policy role & $\tau$ & $\gamma$ & Return & $V(0.01)$ & $\Gamma_{\mathrm{CP}}$ \\
     \midrule
-    Economic champion & $0.175$ & $0.45$ & \$170{,}464.54 & $0.03645$ & Highest-return exact-safe point. \\
-    Theorem-tight & $0.175$ & $0.55$ & \$166{,}269.82 & $0.03003$ & Tighter certificate, lower return. \\
-    Balanced & $0.170$ & $0.45$ & \$169{,}389.58 & $0.03545$ & Nearby lower-$\tau$ alternative. \\
+    Economic champion & $0.175$ & $0.45$ & \$170{,}464.54 & $0.03645$ & $0.18591$ \\
+    Theorem-tight & $0.175$ & $0.55$ & \$166{,}269.82 & $0.03003$ & $0.15971$ \\
+    Balanced & $0.170$ & $0.45$ & \$169{,}389.58 & $0.03545$ & $0.17758$ \\
     \bottomrule
   \end{tabular}
 \end{table}
+
+The economic champion is the highest-return promoted point in the exact-safe
+region. The theorem-tight comparator buys a tighter certificate at a return cost,
+while the balanced comparator shows that a nearby lower-$\tau$ alternative has
+similar economics.
 
 The robust policy does pay for robustness: its price of robustness is
 $-\$14{,}465.69$, or approximately $-10.56\%$, relative to the comparison frontier.
@@ -457,7 +487,7 @@ alpha/gamma funded-set table, robust-region heatmap, and policy-family appendix.
 
 \begin{figure}[t]
   \centering
-  \includegraphics[width=0.9\textwidth]{crpto_fig13_alpha_gamma_funded_set.png}
+  \includegraphics[width=0.88\textwidth]{crpto_fig13_alpha_gamma_funded_set.pdf}
   \caption{Alpha connects the conformal layer to funded-set quantities and
   portfolio-level risk.}
   \label{fig:alpha-gamma}
@@ -465,7 +495,7 @@ alpha/gamma funded-set table, robust-region heatmap, and policy-family appendix.
 
 \begin{figure}[t]
   \centering
-  \includegraphics[width=0.9\textwidth]{crpto_fig14_robust_region_heatmap.png}
+  \includegraphics[width=0.9\textwidth]{crpto_fig14_robust_region_heatmap.pdf}
   \caption{The final evaluated robust region has $45/45$ alpha-safe policies.}
   \label{fig:robust-region}
 \end{figure}
@@ -532,11 +562,24 @@ target, an exact funded-set $\alpha=0.01$ pass, and a $45/45$ robust region.
 
 \begin{figure}[t]
   \centering
-  \includegraphics[width=0.82\textwidth]{crpto_fig15_regret_auditability_frontier.png}
+  \includegraphics[width=0.58\textwidth]{crpto_fig15_regret_auditability_frontier.pdf}
   \caption{CRPTO sits on the auditable-risk-control corner, while SPO+ occupies the
   low-regret corner.}
   \label{fig:regret}
 \end{figure}
+
+\subsection{Managerial Implication}\label{sec:managerial}
+
+For a credit-risk committee, CRPTO turns a modeling artifact into a decision
+conversation. The committee can pick a risk cap $\tau$, inspect how a policy
+parameter $\gamma$ changes the funded set, read $\Gamma_{\mathrm{CP}}$ as the
+conformal robustness premium paid by that funded set, and compare $V(\alpha)$
+with the stated bound tolerance. The method therefore supports a practical
+question: whether the observed economic return is worth the explicit price of
+robustness. If the committee wants lower regret, the SPO+ corner is visible; if
+it wants stronger validity language, the validity ladder states the new
+calibration protocol that would be required. That separation is the managerial
+value of the paper.
 
 The online supplement contains the robustness package: nested holdout, segment-period
 sensitivity, decision-aware conformal selector checks, synthetic-shift diagnostics,

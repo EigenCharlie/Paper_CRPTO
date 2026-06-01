@@ -21,66 +21,35 @@
 
 El champion oficial es `bound_aware_276k_economic_champion` del run `paper-thesis-final-economic-2026-04-06`, con retorno `$170,464.54`, `V = 0.03645`, `Gamma_CP = 0.18591`, `alpha01_exact_pass = true` y región robusta `45/45`.
 
-## Rutas rápidas
+## Mapa editorial
 
-::: {.route-grid}
-::: {.route-card}
-### Paper IJDS
-[Leer el cuerpo paper-ready](chapters/01-introduccion.qmd)
+Este libro no intenta ser todavía el paper final. Funciona como dossier editorial
+y técnico: conserva explicaciones largas, decisiones metodológicas, vínculos con
+artefactos, preguntas de reviewer, tablas y figuras que después se comprimen en
+el cuerpo IJDS, el online supplement y la tesis.
 
-Claim CRPTO, teoría mínima, metodología, resultados, regret-auditability y discusión.
-:::
-
-::: {.route-card}
-### Tesis
-[Leer el dossier extendido](chapters/15-fundamentos-riesgo-ml.qmd)
-
-Fundamentos, contexto de crédito, conformal, robustez, gobernanza y trazabilidad.
-:::
-
-::: {.route-card}
-### Supplement
-[Ver apéndice y robustez](chapters/07-apendice-robustez.qmd)
-
-A3--A24, diagnósticos, MRM/fairness, comparadores y paquete de reproducibilidad.
-:::
-
-::: {.route-card}
-### Bibliografía
-[Mapa CRPTO actualizado](chapters/24-bibliografia-crpto-actualizada.qmd)
-
-Literatura nueva organizada por familias, uso en paper/tesis y frontera de claims.
-:::
-
-::: {.route-card}
-### Future Work
-[Ver agenda controlada](chapters/23-apendices-regulatorios-y-future-work.qmd)
-
-Qué puede entrar como diagnóstico seguro y qué exige un protocolo nuevo.
-:::
-:::
-
-## Qué contiene este libro
-
-Este libro no intenta ser todavía el paper final. Funciona como dossier editorial y técnico: conserva explicaciones largas, decisiones metodológicas, vínculos con artefactos, preguntas de reviewer, tablas y figuras que después se comprimirán en tres salidas distintas:
-
-- **Paper corto**: claim CRPTO, teorema, champion, región robusta, comparación SPO+ y tablas esenciales.
-- **Journal version**: appendices A3--A24, trazabilidad, MRM, fairness, funded set, stress tests, re-optimización de cola y diagnósticos multi-distribución/online, y material editorial.
-- **Libro de trabajo**: fundamentos, decisiones descartadas, runbooks, evidencia de calibración/conformal, conexiones regulatorias y agenda futura.
-
-## Regla de lectura
-
-Si una explicación es demasiado larga para un paper de 30--40 páginas, puede seguir siendo valiosa aquí. El paper final heredará los claims y las tablas; el libro preserva el razonamiento, las cautelas y la trazabilidad.
-
-## Rutas de lectura
-
-| Si estás preparando... | Lee primero | Usa como evidencia |
+| Superficie | Qué defiende | Evidencia visible |
 |---|---|---|
-| Paper corto | [Introducción](chapters/01-introduccion.qmd), [marco teórico](chapters/02-marco-teorico.qmd), [metodología](chapters/03-metodologia.qmd), [resultados](chapters/04-resultados.qmd) y [discusión](chapters/05-discusion.qmd) | Tablas principales, Figura 1, champion oficial y claim-artifact-test |
-| Journal version | [Blueprint](chapters/06-blueprint-manuscrito.qmd), [apéndice de robustez](chapters/07-apendice-robustez.qmd), [ablación Mondrian](chapters/08-ablacion-mondrian.qmd), [SPO+](chapters/09-spo-regret.qmd) y [trazabilidad](chapters/13-trazabilidad.qmd) | A3--A24, Figuras 7--17, fairness, MRM y runbook reproducible |
-| Revisión técnica | [Dossier conformal](chapters/19-conformal-dossier.qmd), [portafolio/policy](chapters/20-portafolio-policy.qmd), [gobernanza](chapters/21-gobernanza-explicabilidad-dataset.qmd) y [entorno](chapters/22-literatura-trazabilidad-entorno.qmd) | DVC, MLflow/DagsHub, perfiles congelados, tests y manifiestos |
-| Agenda futura | [Discusión](chapters/05-discusion.qmd), [release](chapters/14-release.qmd) y [apéndices regulatorios/future work](chapters/23-apendices-regulatorios-y-future-work.qmd) | Qué no cambia el champion y qué requiere un nuevo protocolo |
+| Paper IJDS | El claim estrecho: una PD calibrada congelada puede convertirse en una decisión robusta y auditable mediante conformal prediction. | Teoría mínima, Figura 1, exact funded-set certificate, región robusta `45/45` y frontera regret-auditability. |
+| Online supplement | Que el resultado no es frágil ni cherry-picked. | A3--A24, ablations, stress tests, MRM/fairness, funded-set audit, SPO+, tail risk y diagnósticos multi-distribución/online. |
+| Tesis | El superconjunto académico y operativo del paper. | Fundamentos, arquitectura reproducible, gobernanza, trazabilidad, bibliografía extendida y future work controlado. |
+| Reproducibilidad | Que las cifras vienen de artefactos versionados, no de edición manual. | DVC, manifests, tablas/figuras regenerables, tests de sincronía y guardrails de champion congelado. |
 
-## Navegación curada
+: Mapa de superficies del dossier CRPTO.
 
-{{< include includes/_chapter-landing.qmd >}}
+## Contrato de lectura
+
+La lectura correcta es de claim a evidencia. El paper hereda las afirmaciones y
+las tablas esenciales; el libro preserva el razonamiento, las cautelas y la
+trazabilidad. Cuando una explicación es demasiado larga para IJDS, no se borra:
+se mantiene aquí como soporte de tesis, supplement o respuesta a reviewer.
+
+## Frontera del claim
+
+| El libro puede explicar... | El paper debe afirmar... |
+|---|---|
+| Fundamentos amplios de crédito, conformal prediction, robust optimization, MRM y fairness. | Un patrón post-hoc auditable para llevar intervalos conformales de una PD congelada a un LP robusto de portafolio. |
+| Robustez extendida, stress tests, tail risk, satisficing, SPO+ y diagnósticos online/multi-distribución. | Que esos análisis fortalecen el champion congelado sin reabrir la búsqueda ni vender un protocolo live. |
+| Bibliografía de tesis y future work. | Una frontera de novelty estrecha frente a P2P/Lending Club OR, conformal credit scoring, CP+RO, DFL/SPO+ y conformal finance. |
+
+: Regla editorial para mantener separado el dossier amplio del claim IJDS.

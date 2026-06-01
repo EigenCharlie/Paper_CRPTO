@@ -34,6 +34,7 @@ book:
     right: "[GitHub](https://github.com/EigenCharlie/Paper_CRPTO) · [DagsHub](https://dagshub.com/EigenCharlie94/Paper_CRPTO) · [Quarto](https://quarto.org)"
   chapters:
     - index.qmd
+    - chapters/00-crpto-en-una-pagina.qmd
     - part: "Manuscrito CRPTO y evidencia paper-ready"
       chapters:
         - chapters/01-introduccion.qmd
@@ -90,13 +91,14 @@ format:
       light: [cosmo, styles.scss]
       dark: [darkly, styles.scss]
     toc: true
-    toc-depth: 3
+    toc-depth: 2
     toc-location: right
     number-sections: true
     number-depth: 3
     code-copy: true
     code-overflow: wrap
-    code-fold: show
+    code-fold: true
+    code-summary: "Mostrar código"
     code-tools:
       source: false
       toggle: true

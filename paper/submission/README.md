@@ -19,6 +19,9 @@ PDF should be produced with the official INFORMS IJDS LaTeX template and
 double-anonymous review option (`dblanonrev`), not with a hand-written local
 style.
 
+Editorial submission notes, venue reminders and page-budget comments belong in
+this README or the cover-letter checklist, not in the anonymous manuscript body.
+
 ## Official Template Sources
 
 - INFORMS author portal: <https://pubsonline.informs.org/authorportal/latex-style-files>
@@ -39,7 +42,9 @@ the new journal pipeline Figure 1, the bound-claim stack, alpha-gamma,
 robust-region and regret-auditability figures, plus the core, exact-certificate,
 champion-comparator, funded-set audit and regret tables. The
 `informs2014.bst` + `../../book/references.bib` bibliography wiring is already
-present. The only missing inputs are the publisher class/style files.
+present. Journal figures use the available PDF/vector exports from
+`reports/crpto/figures/` where possible. The only missing inputs are the
+publisher class/style files.
 
 > **`informs4` is not on CTAN/TeX Live.** A `tlmgr`/CTAN search returns no
 > package; the class and style are distributed only through the INFORMS author
@@ -47,8 +52,8 @@ present. The only missing inputs are the publisher class/style files.
 > in this repo's TinyTeX until those files are downloaded — this is expected, not
 > a defect.
 
-Page budget: the Quarto proxy body currently renders to 15 pages including
-references, with an estimated body-before-references length of ~12.4 pages (see
+Page budget: the Quarto proxy body currently renders to 14 pages including
+references, with an estimated body-before-references length of ~12.0--12.5 pages (see
 `docs/research/crpto_ijds_page_budget_2026.md`). The binding task is now
 **polish**, not compression: keep the claim surgical, captions assertive, and
 the QMD/official-template surfaces synchronized before a real submission build.

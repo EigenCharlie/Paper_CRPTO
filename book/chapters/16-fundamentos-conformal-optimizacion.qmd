@@ -3,10 +3,12 @@
 Marco teórico extendido para convertir incertidumbre conformal en conjuntos robustos de decisión.
 
 ::: {.callout-note}
-Este capítulo es un dossier curado desde secciones previas del libro original que CRPTO reutilizaba implícitamente. Los bloques de código se conservan como referencia estática para evitar que el render del libro dependa de ejecuciones exploratorias no necesarias.
+Nota editorial: este capítulo conserva material técnico de soporte para tesis, supplement y revisión. Los bloques de código quedan acotados visualmente por defecto; la lectura principal está en el texto, las tablas y las figuras.
 :::
 
-## Fuente curada: `book/chapters/02-glossary/02c-uncertainty-conformal.qmd`
+::: {.source-note}
+**Procedencia:** `book/chapters/02-glossary/02c-uncertainty-conformal.qmd`
+:::
 
 ## Incertidumbre y Predicción Conformal
 
@@ -26,8 +28,8 @@ La incertidumbre en las predicciones de un modelo tiene dos fuentes fundamentalm
 ## Ejemplo en riesgo crediticio
 Considérese un préstamo de grado G con un historial crediticio muy corto. La incertidumbre sobre su PD tiene ambos componentes:
 
-- **Aleatórica**: Aun conociendo perfectamente todas las características del prestatario, existe variabilidad inherente en si entrará o no en default.
-- **Epistémica**: Dado que los préstamos grado G con historial corto son relativamente escasos en el conjunto de entrenamiento, el modelo tiene menos evidencia para estimar su PD con precisión. Con más datos de prestatarios similares, esta componente se reduciría.
+- **Aleatórica**: Aún conociendo perfectamente todas las características del prestatario, existe variabilidad inherente en si entrará o no en default.
+- **Epistémica**: Dado que los préstamos grado G con historial corto son relativamente escasos en el conjunto de entrenamiento, el modelo tiene menos evidencia para estimar su PD con precisión. Con más datos de prestatarios similares, este componente se reduciría.
 
 En la práctica, los intervalos conformales capturan ambas fuentes de incertidumbre simultáneamente, sin necesidad de descomponerlas explícitamente.
 :::
@@ -175,7 +177,7 @@ La versión 1.3.0 de MAPIE reemplazó completamente la API anterior. Los cambios
 - `SplitConformalRegressor` reemplaza a `MapieRegressor`
 - `SplitConformalClassifier` reemplaza a `MapieClassifier`
 - El flujo es `fit()` → `conformalize()` → `predict_interval()`
-- El nivel de confianza se especifica en `__init__` con `confidence_level` (no `alpha` en `predict`)
+- El nivel de confianza se específica en `__init__` con `confidence_level` (no `alpha` en `predict`)
 - Los modelos pre-entrenados usan `prefit=True` (no `cv="prefit"`)
 :::
 
@@ -394,7 +396,9 @@ Los fundamentos teóricos presentados en esta sección se basan en los siguiente
 
 - **Guan** [@guan2023localized]: Propone *localized conformal prediction*, un marco que generaliza la conformalización ponderando localmente los scores de calibración. Es el complemento adaptativo natural a Mondrian: donde Mondrian particiona en grupos discretos (grados), la versión localizada pondera de forma continua en el espacio de features.
 
-## Fuente curada: `book/chapters/02-glossary/02d-optimization-or.qmd`
+::: {.source-note}
+**Procedencia:** `book/chapters/02-glossary/02d-optimization-or.qmd`
+:::
 
 ## Optimización e Investigación de Operaciones
 
@@ -743,7 +747,6 @@ En el proyecto, HiGHS se invoca a través de Pyomo con la configuración definid
 
 El pipeline completo del proyecto integra todos los conceptos presentados en esta sección en una cadena coherente:
 
-```html
 <div class="pipeline-inline" aria-label="Cadena integrada predict-then-optimize con incertidumbre conformal">
   <span class="pipeline-inline__step"><span class="pipeline-inline__label">CatBoost PD</span><span class="pipeline-inline__meta">Predicción</span></span>
   <span class="pipeline-inline__arrow" aria-hidden="true">→</span>
@@ -759,7 +762,6 @@ El pipeline completo del proyecto integra todos los conceptos presentados en est
   <span class="pipeline-inline__arrow" aria-hidden="true">→</span>
   <span class="pipeline-inline__step"><span class="pipeline-inline__label">x*</span><span class="pipeline-inline__meta">Portafolio</span></span>
 </div>
-```
 
 Este pipeline tiene tres propiedades que lo distinguen del enfoque estándar en credit risk analytics:
 

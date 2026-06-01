@@ -3,10 +3,12 @@
 Material para appendix journal, defensa MRM, interpretabilidad y descripción profunda del universo Lending Club.
 
 ::: {.callout-note}
-Este capítulo es un dossier curado desde secciones previas del libro original que CRPTO reutilizaba implícitamente. Los bloques de código se conservan como referencia estática para evitar que el render del libro dependa de ejecuciones exploratorias no necesarias.
+Nota editorial: este capítulo conserva material técnico de soporte para tesis, supplement y revisión. Los bloques de código quedan acotados visualmente por defecto; la lectura principal está en el texto, las tablas y las figuras.
 :::
 
-## Fuente curada: `book/chapters/10-ifrs9-governance/10e-model-risk-management.qmd`
+::: {.source-note}
+**Procedencia:** `book/chapters/10-ifrs9-governance/10e-model-risk-management.qmd`
+:::
 
 ## Gestión de Riesgo de Modelo
 
@@ -90,24 +92,24 @@ La lectura prudente no es “el modelo es justo” en sentido absoluto. La lectu
 
 ### Proxies, ruido y frontera de datos protegidos
 
-La bibliografia nueva ayuda a afinar el lenguaje de gobernanza. La ausencia de
+La bibliografía nueva ayuda a afinar el lenguaje de gobernanza. La ausencia de
 atributos protegidos directos no significa ausencia de riesgo de equidad; solo
-limita el tipo de afirmacion que puede hacerse. En credito, los proxies de
+limita el tipo de afirmación que puede hacerse. En crédito, los proxies de
 raza, geografia, historia crediticia y comportamiento financiero pueden cargar
-informacion sensible o incompleta. Por eso la auditoria de CRPTO debe
+información sensible o incompleta. Por eso la auditoría de CRPTO debe
 presentarse como control sobre atributos disponibles y proxies razonables, no
 como certificacion legal de fair lending.
 
 | Riesgo | Evidencia externa | Uso en CRPTO |
 |---|---|---|
-| Credit invisibility | Muchas personas no tienen historia suficiente para scoring tradicional [@brevoort2016creditinvisibles]. | Limite de cobertura del dataset Lending Club. |
-| Ruido de medicion | El ruido en reportes crediticios puede afectar asignacion y pricing [@blattner2021noise]. | Motivo para exigir calibracion, intervalos y segment checks. |
-| Modelos predictivos y asignacion | ML puede mejorar prediccion y aun asi cambiar quien recibe credito [@fuster2022predictably]. | Separar performance de consecuencias decisionales. |
-| Proxies protegidos | BISG y aproximaciones similares son utiles, pero imperfectas [@cfpb2014bisg; @finreglab2023fairness]. | Fairness proxy como diagnostico, no certificacion. |
-| Gobernanza de provision | ECL y overlays requieren trazabilidad de supuestos [@basel2015ecl]. | Mantener IFRS9 como extension documentada, no dependencia IJDS. |
+| Credit invisibility | Muchas personas no tienen historia suficiente para scoring tradicional [@brevoort2016creditinvisibles]. | Límite de cobertura del dataset Lending Club. |
+| Ruido de medición | El ruido en reportes crediticios puede afectar asignación y pricing [@blattner2021noise]. | Motivo para exigir calibración, intervalos y segment checks. |
+| Modelos predictivos y asignación | ML puede mejorar predicción y aún así cambiar quien recibe crédito [@fuster2022predictably]. | Separar performance de consecuencias decisionales. |
+| Proxies protegidos | BISG y aproximaciones similares son útiles, pero imperfectas [@cfpb2014bisg; @finreglab2023fairness]. | Fairness proxy como diagnóstico, no certificacion. |
+| Gobernanza de provisión | ECL y overlays requieren trazabilidad de supuestos [@basel2015ecl]. | Mantener IFRS9 como extensión documentada, no dependencia IJDS. |
 
-Esta frontera no debilita el proyecto. Al contrario: hace que la tesis sea mas
-creible, porque distingue con claridad entre evidencia estadistica disponible,
+Esta frontera no debilita el proyecto. Al contrario: hace que la tesis sea más
+creible, porque distingue con claridad entre evidencia estadística disponible,
 decisiones auditables y claims regulatorios que exigirian datos protegidos o un
 proceso legal externo.
 
@@ -211,7 +213,7 @@ rows = [
     {"Tema": "PD gap global", "Señal": f"{pdv.get('gap_bp', 0):.1f} bp", "Lectura": "La desviación agregada es baja frente a la escala del portafolio."},
     {"Tema": "Bootstrap slice CI exclusions", "Señal": boot.get("slice_ci_exclusions"), "Lectura": "Varios slices quedan persistentemente lejos de cero bajo remuestreo explícito."},
     {"Tema": "Calibration mapping winner", "Señal": calibration_mapping.get("best_candidate", {}).get("candidate_id"), "Lectura": "El calibrador vigente sigue siendo el mejor observable en la lane sidecar."},
-    {"Tema": "Calibration mapping decision", "Señal": calibration_mapping.get("recommendation"), "Lectura": "La lane shadow cerró con `keep_current_calibrator`; el valor restante es interpretativo, no un remapeo fácil."},
+    {"Tema": "Calibration mapping decisión", "Señal": calibration_mapping.get("recommendation"), "Lectura": "La lane shadow cerró con `keep_current_calibrator`; el valor restante es interpretativo, no un remapeo fácil."},
     {"Tema": "Peor grade gap", "Señal": f"{pdv.get('max_grade_gap_bp', 0):.1f} bp", "Lectura": "Los slices siguen importando más que la media global."},
     {"Tema": "IFRS9 dominant driver", "Señal": ifrs9_summary.get("dominant_ifrs9_driver"), "Lectura": "La sensibilidad actual del ECL parece más dominada por LGD que por PD."},
     {"Tema": "ADF near-unit-root power", "Señal": f"{ifrs9_summary.get('near_unit_root_power', 0):.3f}", "Lectura": "La potencia cerca de raíz unitaria sigue siendo baja."},
@@ -312,27 +314,29 @@ Las oportunidades de mejora siguen siendo concretas:
 
 Con esto, MRM deja de ser un apéndice regulatorio y pasa a ser parte central del valor metodológico del proyecto.
 
-## Fuente curada: `book/chapters/10-ifrs9-governance/10f-mrm-deep-dive.qmd`
+::: {.source-note}
+**Procedencia:** `book/chapters/10-ifrs9-governance/10f-mrm-deep-dive.qmd`
+:::
 
 ## Gestión de Riesgo de Modelo
 
-Este capitulo es un complemento dedicado a la seccion resumen de MRM (`sec-mrm`). Mientras esa seccion presenta las conclusiones operativas compactas, aqui desarrollamos en profundidad que es Model Risk Management, por que existe, como se implementa en la practica regulatoria, y como nuestro pipeline traduce esos principios en controles concretos y verificables.
+Este capítulo es un complemento dedicado a la sección resumen de MRM (`sec-mrm`). Mientras esa sección presenta las conclusiones operativas compactas, aquí desarrollamos en profundidad qué es Model Risk Management, por qué existe, cómo se implementa en la práctica regulatoria, y cómo nuestro pipeline traduce esos principios en controles concretos y verificables.
 
-El objetivo es que este capitulo pueda leerse de forma autonoma: alguien que no haya pasado por los capitulos anteriores deberia poder entender tanto la teoria general de MRM como la implementacion especifica de este proyecto.
+El objetivo es que este capítulo pueda leerse de forma autónoma: alguien que no haya pasado por los capítulos anteriores debería poder entender tanto la teoría general de MRM como la implementación específica de este proyecto.
 
 ### Que es Model Risk Management?
 
-**Model Risk Management** (MRM) es la disciplina que identifica, mide, monitorea y controla el riesgo que surge del uso de modelos cuantitativos en decisiones financieras. Un "modelo" en este contexto es cualquier metodo cuantitativo, sistema o enfoque que aplica teoria estadistica, economica o matematica para procesar datos de entrada y producir estimaciones cuantitativas [@sr117].
+**Model Risk Management** (MRM) es la disciplina que identifica, mide, monitorea y controla el riesgo que surge del uso de modelos cuantitativos en decisiones financieras. Un "modelo" en este contexto es cualquier método cuantitativo, sistema o enfoque que aplica teoría estadística, económica o matemática para procesar datos de entrada y producir estimaciones cuantitativas [@sr117].
 
-La definicion tiene tres implicaciones criticas:
+La definición tiene tres implicaciones críticas:
 
-1. **Los modelos son simplificaciones de la realidad.** Por construccion, omiten factores, asumen distribuciones, y extrapolan relaciones historicas hacia el futuro.
-2. **Las simplificaciones pueden estar equivocadas.** Un modelo puede producir estimaciones incorrectas por errores de implementacion, datos inapropiados, o supuestos que dejan de ser validos.
-3. **Los modelos equivocados cuestan dinero.** En credito, un modelo de PD sobreoptimista subprovisiona y expone al banco a perdidas inesperadas; uno excesivamente conservador desperdicia capital y reduce la competitividad.
+1. **Los modelos son simplificaciones de la realidad.** Por construcción, omiten factores, asumen distribuciones, y extrapolan relaciones históricas hacia el futuro.
+2. **Las simplificaciones pueden estar equivocadas.** Un modelo puede producir estimaciones incorrectas por errores de implementación, datos inapropiados, o supuestos que dejan de ser validos.
+3. **Los modelos equivocados cuestan dinero.** En crédito, un modelo de PD sobreoptimista subprovisiona y expone al banco a pérdidas inesperadas; uno excesivamente conservador desperdicia capital y reduce la competitividad.
 
 ::: {.callout-note}
-## Por que no basta con "el modelo tiene buen AUC"
-Un modelo puede tener excelente poder discriminante (AUC alto) y sin embargo ser peligroso: si esta mal calibrado, si sus intervalos de confianza son invalidos, si discrimina por atributos protegidos, o si sus predicciones ya no corresponden a la distribucion actual de datos. MRM existe precisamente para evaluar todas estas dimensiones de forma sistematica.
+## Por qué no basta con "el modelo tiene buen AUC"
+Un modelo puede tener excelente poder discriminante (AUC alto) y sin embargo ser peligroso: si está mal calibrado, si sus intervalos de confianza son inválidos, si discrimina por atributos protegidos, o si sus predicciones ya no corresponden a la distribución actual de datos. MRM existe precisamente para evaluar todas estas dimensiones de forma sistemática.
 :::
 
 #### Los Tres Pilares de MRM
@@ -341,22 +345,22 @@ Toda la disciplina se organiza alrededor de tres pilares fundamentales:
 
 | Pilar | Descripcion | Responsable tipico |
 |-------|------------|-------------------|
-| **Desarrollo** | Construccion del modelo: seleccion de datos, features, algoritmo, calibracion, documentacion | Equipo de modelado |
-| **Validacion** | Revision independiente: replicacion de resultados, evaluacion de supuestos, benchmarks, tests de estres | Equipo de validacion (independiente) |
-| **Uso y Monitoreo** | Implementacion en produccion, monitoreo continuo, triggers de re-entrenamiento, gobernanza de decisiones | Usuarios del modelo + equipo de monitoreo |
+| **Desarrollo** | Construcción del modelo: selección de datos, features, algoritmo, calibración, documentación | Equipo de modelado |
+| **Validación** | Revisión independiente: replicación de resultados, evaluación de supuestos, benchmarks, tests de estrés | Equipo de validación (independiente) |
+| **Uso y Monitoreo** | Implementación en producción, monitoreo continuo, triggers de re-entrenamiento, gobernanza de decisiones | Usuarios del modelo + equipo de monitoreo |
 
 : Los tres pilares de Model Risk Management
 
-La separacion entre desarrollo y validacion es **no negociable** en regulacion bancaria: quien construye el modelo no puede ser quien lo valida. En nuestro contexto academico, simulamos esta separacion a traves de controles automatizados que evaluan los artefactos del pipeline de forma programatica e independiente del proceso de entrenamiento.
+La separación entre desarrollo y validación es **no negociable** en regulación bancaria: quien construye el modelo no puede ser quien lo valida. En nuestro contexto académico, simulamos esta separación a través de controles automatizados que evalúan los artefactos del pipeline de forma programática e independiente del proceso de entrenamiento.
 
-#### Quien Usa MRM en la Organizacion
+#### Quien Usa MRM en la Organización
 
-MRM no es solo un tema tecnico --- es un lenguaje compartido entre multiples actores:
+MRM no es solo un tema técnico --- es un lenguaje compartido entre múltiples actores:
 
-- **Comite de Riesgos**: revisa los resultados MRM para decidir si un modelo puede seguir en produccion o necesita restricciones.
-- **Auditoria Interna**: verifica que los controles MRM existen, se ejecutan, y producen documentacion trazable.
-- **Reguladores** (Fed, OCC, PRA, CNBV): inspeccionan el inventario de modelos, la frecuencia de validacion, y la calidad de la documentacion.
-- **Validadores de modelo**: ejecutan la revision independiente, producen hallazgos, y asignan calificaciones de riesgo al modelo.
+- **Comité de Riesgos**: revisa los resultados MRM para decidir si un modelo puede seguir en producción o necesita restricciones.
+- **Auditoría Interna**: verifica que los controles MRM existen, se ejecutan, y producen documentación trazable.
+- **Reguladores** (Fed, OCC, PRA, CNBV): inspeccionan el inventario de modelos, la frecuencia de validación, y la calidad de la documentación.
+- **Validadores de modelo**: ejecutan la revisión independiente, producen hallazgos, y asignan calificaciones de riesgo al modelo.
 - **Usuarios del modelo** (originadores, provisionadores): necesitan entender las limitaciones del modelo que usan para tomar decisiones.
 
 ### Marco Regulatorio
@@ -367,33 +371,33 @@ Los dos marcos regulatorios de referencia global para MRM son:
 
 La *Supervisory Guidance on Model Risk Management* (SR 11-7) del Board of Governors de la Federal Reserve y la OCC es el documento fundacional. Sus requisitos principales son:
 
-1. **Inventario de modelos**: todo modelo en uso debe estar registrado, con metadatos de version, propietario, fecha de ultima validacion y calificacion de riesgo.
-2. **Validacion independiente**: revisiones periodicas por personal que no participo en el desarrollo, con alcance suficiente para evaluar solidez conceptual, verificacion de resultados, y analisis de outcomes.
-3. **Monitoreo continuo**: seguimiento de performance en produccion, deteccion de drift, y triggers automaticos de re-validacion.
-4. **Documentacion**: suficiente para que un tercero pueda entender, replicar y evaluar el modelo.
-5. **Gobernanza**: roles y responsabilidades claros, escalamiento de hallazgos, y proceso formal de aprobacion.
+1. **Inventario de modelos**: todo modelo en uso debe estar registrado, con metadatos de versión, propietario, fecha de última validación y calificacion de riesgo.
+2. **Validación independiente**: revisiones periódicas por personal que no participó en el desarrollo, con alcance suficiente para evaluar solidez conceptual, verificación de resultados, y análisis de outcomes.
+3. **Monitoreo continuo**: seguimiento de performance en producción, detección de drift, y triggers automáticos de re-validación.
+4. **Documentación**: suficiente para que un tercero pueda entender, replicar y evaluar el modelo.
+5. **Gobernanza**: roles y responsabilidades claros, escalamiento de hallazgos, y proceso formal de aprobación.
 
 #### SS1/23 (PRA/BoE, 2023)
 
-El Supervisory Statement SS1/23 del Prudential Regulation Authority (Bank of England) actualiza y extiende estos principios con enfasis en:
+El Supervisory Statement SS1/23 del Prudential Regulation Authority (Bank of England) actualiza y extiende estos principios con énfasis en:
 
 - **Tiering de modelos** por materialidad: no todos los modelos requieren el mismo nivel de gobernanza.
-- **Model risk appetite**: las instituciones deben articular cuanto riesgo de modelo estan dispuestas a aceptar.
-- **Vendor model risk**: los modelos de terceros (incluyendo librerias open-source como CatBoost o MAPIE) tambien estan en scope.
+- **Model risk appetite**: las instituciones deben articular cuanto riesgo de modelo están dispuestas a aceptar.
+- **Vendor model risk**: los modelos de terceros (incluyendo librerias open-source como CatBoost o MAPIE) también están en scope.
 
-#### Conexion con IFRS9
+#### Conexión con IFRS9
 
-Los modelos de ECL (Expected Credit Loss) estan explicitamente en el scope de MRM porque:
+Los modelos de ECL (Expected Credit Loss) están explícitamente en el scope de MRM porque:
 
 - **Impacto material**: las provisiones ECL afectan directamente el estado de resultados y los ratios de capital.
-- **Complejidad**: la formula ECL = PD x LGD x EAD x DF involucra multiples modelos interconectados.
-- **Juicio de gestion**: los escenarios macroeconomicos y la ponderacion de probabilidades involucran juicio experto que debe ser auditable.
+- **Complejidad**: la formula ECL = PD x LGD x EAD x DF involucra múltiples modelos interconectados.
+- **Juicio de gestión**: los escenarios macroeconómicos y la ponderación de probabilidades involucran juicio experto que debe ser auditable.
 
-En nuestro pipeline, esto se traduce en que el modelo de PD, el sistema conformal, la logica de staging SICR, y la optimizacion de portafolio --- todos los componentes que alimentan el calculo ECL (`sec-ecl-calculation`) --- estan sujetos a controles MRM.
+En nuestro pipeline, esto se traduce en que el modelo de PD, el sistema conformal, la lógica de staging SICR, y la optimización de portafolio --- todos los componentes que alimentan el calculo ECL (`sec-ecl-calculation`) --- están sujetos a controles MRM.
 
-### Nuestro Reporte MRM: Interpretacion Detallada
+### Nuestro Reporte MRM: Interpretación Detallada
 
-El artefacto central de gobernanza es `reports/mrm/mrm_validation_report.json`, generado por `scripts/generate_mrm_report.py`. Este reporte consolida cuatro subsistemas de control en un unico veredicto auditable.
+El artefacto central de gobernanza es `reports/mrm/mrm_validation_report.json`, generado por `scripts/generate_mrm_report.py`. Este reporte consolida cuatro subsistemas de control en un único veredicto auditable.
 
 ```python
 
@@ -456,7 +460,7 @@ A continuacion desglosamos cada subsistema.
 
 #### Subsistema 1: Pipeline Predictivo
 
-El primer subsistema evalua la calidad del modelo de PD como motor predictivo. Los controles verifican que el modelo mantiene poder discriminante, esta bien calibrado, y no muestra degradacion material respecto al entrenamiento.
+El primer subsistema evalúa la calidad del modelo de PD como motor predictivo. Los controles verifican que el modelo mantiene poder discriminante, está bien calibrado, y no muestra degradación material respecto al entrenamiento.
 
 ```python
 
@@ -466,25 +470,25 @@ import pandas as pd
 if mrm:
     ps = mrm["pipeline_summary"]
     rows = [
-        {"Metrica": "AUC-ROC (test OOT)", "Valor": f"{ps['pd_auc']:.4f}", "Umbral": "> 0.65", "Estado": "PASS"},
-        {"Metrica": "Indice de Gini", "Valor": f"{ps['pd_gini']:.4f}", "Umbral": "> 0.30", "Estado": "PASS"},
-        {"Metrica": "Brier Score", "Valor": f"{ps['pd_brier']:.4f}", "Umbral": "< 0.20", "Estado": "PASS"},
-        {"Metrica": "ECE (calibracion)", "Valor": f"{ps['pd_ece']:.4f}", "Umbral": "< 0.02", "Estado": "PASS"},
-        {"Metrica": "Metodo de calibracion", "Valor": str(ps['calibration_method']), "Umbral": "Auto-seleccion", "Estado": "INFO"},
-        {"Metrica": "Concordancia RSF", "Valor": f"{ps.get('survival_rsf_concordance', 0):.4f}", "Umbral": "> 0.60", "Estado": "PASS"},
+        {"Métrica": "AUC-ROC (test OOT)", "Valor": f"{ps['pd_auc']:.4f}", "Umbral": "> 0.65", "Estado": "PASS"},
+        {"Métrica": "Índice de Gini", "Valor": f"{ps['pd_gini']:.4f}", "Umbral": "> 0.30", "Estado": "PASS"},
+        {"Métrica": "Brier Score", "Valor": f"{ps['pd_brier']:.4f}", "Umbral": "< 0.20", "Estado": "PASS"},
+        {"Métrica": "ECE (calibración)", "Valor": f"{ps['pd_ece']:.4f}", "Umbral": "< 0.02", "Estado": "PASS"},
+        {"Métrica": "Método de calibración", "Valor": str(ps['calibration_method']), "Umbral": "Auto-selección", "Estado": "INFO"},
+        {"Métrica": "Concordancia RSF", "Valor": f"{ps.get('survival_rsf_concordance', 0):.4f}", "Umbral": "> 0.60", "Estado": "PASS"},
     ]
     Markdown(pd.DataFrame(rows).astype(str).to_markdown(index=False, disable_numparse=True))
 else:
     Markdown("*No disponible.*")
 ```
 
-**Interpretacion**: El AUC de 0.7124 indica poder discriminante moderado-bueno, consistente con la dificultad inherente del problema (predecir default en prestamos personales no asegurados con informacion de originacion solamente). El Brier score de 0.1546 y el ECE de 0.0064 confirman buena calibracion --- el modelo no solo ordena bien los riesgos, sino que las probabilidades asignadas son confiables.
+**Interpretación**: El AUC de 0.7124 indica poder discriminante moderado-bueno, consistente con la dificultad inherente del problema (predecir default en préstamos personales no asegurados con información de originación solamente). El Brier score de 0.1546 y el ECE de 0.0064 confirman buena calibración --- el modelo no solo ordena bien los riesgos, sino que las probabilidades asignadas son confiables.
 
-El metodo de calibracion (Venn-Abers) fue seleccionado automaticamente por la politica temporal de validacion, no fijado a priori. Esto es un ejemplo de como la configuracion (`configs/pd_model.yaml`) define `method: auto` y el artefacto runtime (`data/processed/model_comparison.json`) registra la seleccion efectiva.
+El método de calibración (Venn-Abers) fue seleccionado automáticamente por la política temporal de validación, no fijado a priori. Esto es un ejemplo de como la configuración (`configs/pd_model.yaml`) define `method: auto` y el artefacto runtime (`data/processed/model_comparison.json`) registra la selección efectiva.
 
 #### Subsistema 2: Sistema Conformal
 
-El subsistema conformal es el mas complejo de interpretar porque combina controles operacionales (que deben pasar) con tests estadisticos (que operan como diagnosticos).
+El subsistema conformal es el más complejo de interpretar porque combina controles operacionales (que deben pasar) con tests estadísticos (que operan como diagnósticos).
 
 ```python
 
@@ -494,16 +498,16 @@ import pandas as pd
 if mrm:
     cs = mrm["conformal_status"]
     rows = [
-        {"Control": "Cobertura empirica 90%", "Valor": f"{cs['coverage_90']:.2%}", "Umbral": ">= 90%", "Estado": "PASS"},
-        {"Control": "Cobertura empirica 95%", "Valor": f"{cs['coverage_95']:.2%}", "Umbral": ">= 95%", "Estado": "PASS"},
-        {"Control": "Cobertura minima por grupo (90%)", "Valor": f"{cs['min_group_coverage_90']:.2%}", "Umbral": ">= 85%", "Estado": "PASS"},
+        {"Control": "Cobertura empírica 90%", "Valor": f"{cs['coverage_90']:.2%}", "Umbral": ">= 90%", "Estado": "PASS"},
+        {"Control": "Cobertura empírica 95%", "Valor": f"{cs['coverage_95']:.2%}", "Umbral": ">= 95%", "Estado": "PASS"},
+        {"Control": "Cobertura mínima por grupo (90%)", "Valor": f"{cs['min_group_coverage_90']:.2%}", "Umbral": ">= 85%", "Estado": "PASS"},
         {"Control": "Ancho promedio 90%", "Valor": f"{cs['avg_width_90']:.4f}", "Umbral": "< 0.80", "Estado": "FAIL" if "avg_width_90" in cs.get("failing_non_statistical_checks", []) else "PASS"},
         {"Control": "Winkler score 90% (compensado)", "Valor": f"{cs['winkler_90']:.4f}", "Umbral": f"< {cs.get('winkler_90_compensated_threshold', 1.22)}", "Estado": "PASS" if cs.get("winkler_90_policy_pass") else "FAIL"},
-        {"Control": "Alertas criticas", "Valor": str(cs['critical_alerts']), "Umbral": "= 0", "Estado": "PASS"},
+        {"Control": "Alertas críticas", "Valor": str(cs['critical_alerts']), "Umbral": "= 0", "Estado": "PASS"},
         {"Control": "Alertas warning", "Valor": str(cs['warning_alerts']), "Umbral": "Informativo", "Estado": "INFO"},
         {"Control": "Checks no-estadisticos", "Valor": f"{9 - len(cs.get('failing_non_statistical_checks', []))}/9", "Umbral": "Todos PASS", "Estado": "PASS" if cs.get("non_statistical_checks_pass") else "FAIL"},
         {"Control": "overall_pass", "Valor": str(cs['overall_pass']), "Umbral": "True", "Estado": "PASS" if cs.get("overall_pass") else "FAIL"},
-        {"Control": "strict_overall_pass", "Valor": str(cs['strict_overall_pass']), "Umbral": "Diagnostico", "Estado": "INFO"},
+        {"Control": "strict_overall_pass", "Valor": str(cs['strict_overall_pass']), "Umbral": "Diagnóstico", "Estado": "INFO"},
     ]
     Markdown(pd.DataFrame(rows).astype(str).to_markdown(index=False, disable_numparse=True))
 else:
@@ -527,31 +531,31 @@ if mrm:
     rows = [
         {
             "Test": "Kupiec 90%",
-            "Estadistico": f"LR = {kupiec_90.get('lr_statistic', 0):.1f}",
+            "Estadístico": f"LR = {kupiec_90.get('lr_statistic', 0):.1f}",
             "p-valor": f"{kupiec_90.get('p_value', 0):.4f}",
             "Rechaza H0": "Si",
-            "Interpretacion": f"Tasa violacion {kupiec_90.get('violation_rate', 0):.2%} vs nominal 10%",
+            "Interpretación": f"Tasa violación {kupiec_90.get('violation_rate', 0):.2%} vs nominal 10%",
         },
         {
             "Test": "Kupiec 95%",
-            "Estadistico": f"LR = {kupiec_95.get('lr_statistic', 0):.1f}",
+            "Estadístico": f"LR = {kupiec_95.get('lr_statistic', 0):.1f}",
             "p-valor": f"{kupiec_95.get('p_value', 0):.4f}",
             "Rechaza H0": "Si",
-            "Interpretacion": f"Tasa violacion {kupiec_95.get('violation_rate', 0):.2%} vs nominal 5%",
+            "Interpretación": f"Tasa violación {kupiec_95.get('violation_rate', 0):.2%} vs nominal 5%",
         },
         {
             "Test": "Christoffersen Ind. 90%",
-            "Estadistico": f"LR_ind = {christ_90.get('lr_ind', 0):.2f}",
+            "Estadístico": f"LR_ind = {christ_90.get('lr_ind', 0):.2f}",
             "p-valor": f"{christ_90.get('p_ind', 0):.4f}",
             "Rechaza H0": "No",
-            "Interpretacion": "Violaciones NO agrupadas temporalmente",
+            "Interpretación": "Violaciones NO agrupadas temporalmente",
         },
         {
             "Test": "Christoffersen Ind. 95%",
-            "Estadistico": f"LR_ind = {christ_95.get('lr_ind', 0):.2f}",
+            "Estadístico": f"LR_ind = {christ_95.get('lr_ind', 0):.2f}",
             "p-valor": f"{christ_95.get('p_ind', 0):.4f}",
             "Rechaza H0": "Si",
-            "Interpretacion": "Agrupamiento marginal en 95%",
+            "Interpretación": "Agrupamiento marginal en 95%",
         },
     ]
     Markdown(pd.DataFrame(rows).astype(str).to_markdown(index=False, disable_numparse=True))
@@ -560,20 +564,20 @@ else:
 ```
 
 ::: {.callout-warning}
-## Por que el sistema conformal hoy pasa aunque los tests estadisticos sigan rechazando
+## Por qué el sistema conformal hoy pasa aunque los tests estadísticos sigan rechazando
 
-Las pruebas de Kupiec y Christoffersen siguen rechazando $H_0$ (cobertura nominal = cobertura empirica) con $p \approx 0$. Esto ocurre porque con $N = 276{,}869$ observaciones, la potencia estadistica detecta cualquier desviacion persistente, incluso cuando esa desviacion es operativamente aceptable. La recuperacion conformal V3 redujo el ancho promedio (`avg_width_90 ≈ 0.756`), elimino el fallo no estadistico y dejo el gate operativo en PASS.
+Las pruebas de Kupiec y Christoffersen siguen rechazando $H_0$ (cobertura nominal = cobertura empírica) con $p \approx 0$. Esto ocurre porque con $N = 276{,}869$ observaciones, la potencia estadística detecta cualquier desviación persistente, incluso cuando esa desviación es operativamente aceptable. La recuperación conformal V3 redujo el ancho promedio (`avg_width_90 ≈ 0.756`), eliminó el fallo no estadístico y dejó el gate operativo en PASS.
 
-1. **La desviacion de cobertura queda dentro de materialidad**: +2.02pp al 90% y +1.54pp al 95%, ambas por debajo del umbral de 3%.
-2. **Sigue siendo conservadora**: sobre-cobertura significa que los intervalos protegen mas de lo nominal, no menos.
+1. **La desviación de cobertura queda dentro de materialidad**: +2.02pp al 90% y +1.54pp al 95%, ambas por debajo del umbral de 3%.
+2. **Sigue siendo conservadora**: sobre-cobertura significa que los intervalos protegen más de lo nominal, no menos.
 3. **No rompe estabilidad operativa**: `critical_alerts = 0`, `warning_alerts = 2`, y la independencia al 90% sigue siendo aceptable.
 
-La conclusion oficial ya no es "FAIL metodologico acotado al lane conformal", sino **PASS operacional con diagnosticos estadisticos informativos**.
+La conclusión oficial ya no es "FAIL metodológico acotado al lane conformal", sino **PASS operacional con diagnósticos estadísticos informativos**.
 :::
 
-##### Justificacion Metodologica Formal
+##### Justificación Metodológica Formal
 
-El sistema implementa un mecanismo de justificacion metodologica (`methodological_justification`) para exactamente este caso: cuando las unicas fallas que permanecen son estadisticas y el resto de la policy operativa ya paso. En el estado actual, esa justificacion **si aplica** y por eso `overall_pass = True` mientras `strict_overall_pass = False`.
+El sistema implementa un mecanismo de justificación metodológica (`methodological_justification`) para exactamente este caso: cuando las únicas fallas que permanecen son estadísticas y el resto de la policy operativa ya pasó. En el estado actual, esa justificación **sí aplica** y por eso `overall_pass = True` mientras `strict_overall_pass = False`.
 
 ```python
 
@@ -584,31 +588,31 @@ if mrm:
     mj = mrm["conformal_status"].get("methodological_justification", {})
     rows = [
         {
-            "Condicion": "Solo fallan tests estadisticos",
+            "Condición": "Solo fallan tests estadísticos",
             "Requerido": "True",
             "Observado": str(mj.get("only_statistical_failures", "N/A")),
             "Estado": "PASS" if mj.get("only_statistical_failures") else "FAIL",
         },
         {
-            "Condicion": f"Desviacion cobertura 90% < {mj.get('max_coverage_deviation_for_statistical_warning_90', 0.03):.0%}",
+            "Condición": f"Desviacion cobertura 90% < {mj.get('max_coverage_deviation_for_statistical_warning_90', 0.03):.0%}",
             "Requerido": "True",
             "Observado": f"{mj.get('coverage_deviation_90', 0):.2%}",
             "Estado": "PASS" if mj.get("coverage_materiality_ok") else "FAIL",
         },
         {
-            "Condicion": f"Desviacion cobertura 95% < {mj.get('max_coverage_deviation_for_statistical_warning_95', 0.03):.0%}",
+            "Condición": f"Desviacion cobertura 95% < {mj.get('max_coverage_deviation_for_statistical_warning_95', 0.03):.0%}",
             "Requerido": "True",
             "Observado": f"{mj.get('coverage_deviation_95', 0):.2%}",
             "Estado": "PASS" if mj.get("coverage_materiality_ok") else "FAIL",
         },
         {
-            "Condicion": "Independencia de violaciones (Christoffersen) 90%",
+            "Condición": "Independencia de violaciones (Christoffersen) 90%",
             "Requerido": "True",
             "Observado": f"p = {mj.get('min_christoffersen_independence_pvalue_90', 0):.2f} threshold",
             "Estado": "PASS" if mj.get("independence_ok_90") else "FAIL",
         },
         {
-            "Condicion": "Winkler 90% en banda compensada",
+            "Condición": "Winkler 90% en banda compensada",
             "Requerido": "True",
             "Observado": f"{mj.get('winkler_90_policy_mode', 'N/A')}",
             "Estado": "PASS" if mj.get("winkler_90_compensated_pass") else "FAIL",
@@ -621,7 +625,7 @@ else:
 
 #### Subsistema 3: Gobernanza y Drift
 
-Este subsistema evalua si el modelo mantiene estabilidad en el tiempo, si las distribuciones de features no han cambiado materialmente, y si la explicabilidad permanece coherente.
+Este subsistema evalúa si el modelo mantiene estabilidad en el tiempo, si las distribuciones de features no han cambiado materialmente, y si la explicabilidad permanece coherente.
 
 ```python
 
@@ -634,11 +638,11 @@ if mrm:
     summary = gs["summary"]
 
     rows = [
-        {"Control": "PSI maximo de features", "Valor": f"{summary['max_psi']:.4f}", "Umbral": f"< {gs['thresholds']['psi_threshold']}", "Estado": "PASS" if checks["pass_psi"] else "FAIL"},
+        {"Control": "PSI máximo de features", "Valor": f"{summary['max_psi']:.4f}", "Umbral": f"< {gs['thresholds']['psi_threshold']}", "Estado": "PASS" if checks["pass_psi"] else "FAIL"},
         {"Control": "PSI de score", "Valor": f"{summary['score_psi']:.4f}", "Umbral": f"< {gs['thresholds']['score_psi_max']}", "Estado": "PASS" if checks["pass_score_psi"] else "FAIL"},
         {"Control": "Delta AUC (train vs test)", "Valor": f"{summary['auc_delta_train_to_test']:.4f}", "Umbral": f"< {gs['thresholds']['auc_delta_max']}", "Estado": "PASS" if checks["pass_auc_delta"] else "FAIL"},
         {"Control": "Incremento Brier", "Valor": f"{summary['brier_increase_train_to_test']:.4f}", "Umbral": f"< {gs['thresholds']['brier_increase_max']}", "Estado": "PASS" if checks["pass_brier_increase"] else "FAIL"},
-        {"Control": "Delta gap calibracion", "Valor": f"{summary['calibration_gap_delta']:.4f}", "Umbral": f"< {gs['thresholds']['calibration_gap_delta_max']}", "Estado": "PASS" if checks["pass_calibration_gap_delta"] else "FAIL"},
+        {"Control": "Delta gap calibración", "Valor": f"{summary['calibration_gap_delta']:.4f}", "Umbral": f"< {gs['thresholds']['calibration_gap_delta_max']}", "Estado": "PASS" if checks["pass_calibration_gap_delta"] else "FAIL"},
         {"Control": "Rank overlap SHAP top-10", "Valor": f"{summary['min_rank_overlap_top10']:.2f}", "Umbral": f">= {gs['thresholds']['explanation_rank_overlap_top10_min']}", "Estado": "PASS" if checks["pass_explainability"] else "FAIL"},
         {"Control": "Estabilidad reason codes", "Valor": f"{summary['min_reason_code_stability']:.2f}", "Umbral": f">= {gs['thresholds']['reason_code_stability_min']}", "Estado": "PASS" if checks["pass_reason_code_stability"] else "FAIL"},
         {"Control": "Fairness global", "Valor": str(summary['fairness_overall_pass']), "Umbral": "True", "Estado": "PASS" if checks["pass_fairness"] else "FAIL"},
@@ -657,7 +661,7 @@ El test Classifier Two-Sample Test (C2ST) entrena un clasificador para distingui
 
 En el snapshot vigente:
 
-- el `C2ST` sigue siendo severo y no debe maquillarse;
+- el `C2ST` sigue siendo severo y no debe maquíllarse;
 - pero PSI, score PSI y degradación predictiva siguen dentro de política;
 - además, la gobernanza ahora ya expone *drivers* del shift, con `int_rate` dominando la separación train-vs-test.
 
@@ -692,11 +696,11 @@ else:
     Markdown("*No disponible.*")
 ```
 
-Los features con mayor drift (`fico_score`, `int_rate`, `revol_bal_to_income`) son exactamente los que esperariamos en un periodo que incluye 2018-2020: cambios en politica monetaria, tightening crediticio pre-COVID, y comportamiento de consumo alterado. El punto importante es que **ninguno cruza el umbral de PSI = 0.25** que activaria el trigger de re-entrenamiento.
+Los features con mayor drift (`fico_score`, `int_rate`, `revol_bal_to_income`) son exactamente los que esperaríamos en un periodo que incluye 2018-2020: cambios en política monetaria, tightening crediticio pre-COVID, y comportamiento de consumo alterado. El punto importante es que **ninguno cruza el umbral de PSI = 0.25** que activaría el trigger de re-entrenamiento.
 
 #### Subsistema 4: Fairness
 
-El subsistema de fairness evalua si la politica de decision (threshold de aprobacion) produce disparidades inaceptables entre grupos demograficos.
+El subsistema de fairness evalúa si la política de decisión (threshold de aprobación) produce disparidades inaceptables entre grupos demográficos.
 
 ```python
 
@@ -737,17 +741,17 @@ if mrm:
     min_dir = min(a["dir"] for a in attrs)
 
     rows = [
-        {"Metrica": "Demographic Parity Difference (DPD)", "Umbral": f"< {thr['dpd']}", "Peor observado": f"{max_dpd:.4f}", "Margen": f"{thr['dpd'] - max_dpd:.4f}"},
-        {"Metrica": "Equalized Odds Gap (EO)", "Umbral": f"< {thr['eo_gap']}", "Peor observado": f"{max_eo:.4f}", "Margen": f"{thr['eo_gap'] - max_eo:.4f}"},
-        {"Metrica": "Disparate Impact Ratio (DIR)", "Umbral": f"> {thr['dir']}", "Peor observado": f"{min_dir:.4f}", "Margen": f"{min_dir - thr['dir']:.4f}"},
-        {"Metrica": "Threshold de decision", "Umbral": "---", "Peor observado": f"{fs['prediction_threshold']}", "Margen": "---"},
+        {"Métrica": "Demographic Parity Difference (DPD)", "Umbral": f"< {thr['dpd']}", "Peor observado": f"{max_dpd:.4f}", "Margen": f"{thr['dpd'] - max_dpd:.4f}"},
+        {"Métrica": "Equalized Odds Gap (EO)", "Umbral": f"< {thr['eo_gap']}", "Peor observado": f"{max_eo:.4f}", "Margen": f"{thr['eo_gap'] - max_eo:.4f}"},
+        {"Métrica": "Disparate Impact Ratio (DIR)", "Umbral": f"> {thr['dir']}", "Peor observado": f"{min_dir:.4f}", "Margen": f"{min_dir - thr['dir']:.4f}"},
+        {"Métrica": "Threshold de decisión", "Umbral": "---", "Peor observado": f"{fs['prediction_threshold']}", "Margen": "---"},
     ]
     Markdown(pd.DataFrame(rows).astype(str).to_markdown(index=False, disable_numparse=True))
 else:
     Markdown("*No disponible.*")
 ```
 
-La conclusion de fairness no es que "el modelo es justo" en sentido absoluto --- esa afirmacion seria epistemologicamente insostenible. Lo que el subsistema documenta es que **bajo los umbrales regulatorios vigentes y el threshold de decision actual (0.35), no se detectan disparidades materiales** en los atributos auditados.
+La conclusión de fairness no es que "el modelo es justo" en sentido absoluto --- esa afirmación sería epistemológicamente insostenible. Lo que el subsistema documenta es que **bajo los umbrales regulatorios vigentes y el threshold de decisión actual (0.35), no se detectan disparidades materiales** en los atributos auditados.
 
 #### Capas diagnósticas adicionales absorbidas por MRM
 
@@ -786,27 +790,27 @@ else:
 La lectura editorial importante es esta: el proyecto ya no se queda con “4/4 PASS” y se acabó la historia. Ahora también puede decir:
 
 - el champion monotónico pasó su auditoría estructural;
-- el bootstrap confirma que la materialidad por slices sigue viva aun con gap agregado pequeño;
+- el bootstrap confirma que la materialidad por slices sigue viva aún con gap agregado pequeño;
 - la validación PD global no está rota, pero sí hay desviaciones persistentes por cohortes;
 - un remapeo ligero de calibración no resolvió el problema por sí solo;
 - IFRS9 tiene una limitación abierta de estabilidad temporal;
 - el encoding y binning no parecen ser la fuente del problema;
 - el lenguaje de drift ahora distingue separabilidad estructural de degradación predictiva.
 
-### Interpretacion de Resultados
+### Interpretación de Resultados
 
 #### Que Significa "4/4 PASS" Operativamente
 
 El veredicto actual `overall_pass = True` con 4/4 subsistemas aprobados significa que el modelo:
 
 1. **Es defendible en el core predictivo**: pipeline, gobernanza, fairness y conformal pasan bajo la policy operativa.
-2. **No activa una crisis general del modelo**, porque los triggers duros de drift/pipeline no estan disparados.
-3. **Mantiene warnings metodologicos acotados**, sobre todo en la capa estadistica conformal, sin bloquear el uso del sistema.
-4. **La documentacion es trazable**: artefactos, configuracion, run tags y versiones estan registrados.
+2. **No activa una crisis general del modelo**, porque los triggers duros de drift/pipeline no están disparados.
+3. **Mantiene warnings metodológicos acotados**, sobre todo en la capa estadística conformal, sin bloquear el uso del sistema.
+4. **La documentación es trazable**: artefactos, configuración, run tags y versiones están registrados.
 
 El hecho de quedar en 4/4 PASS **no significa que todo sea perfecto**. El reporte todavía registra:
 
-- 4 fallas estadisticas conformales (Kupiec/Christoffersen) que diagnostican sobre-cobertura.
+- 4 fallas estadísticas conformales (Kupiec/Christoffersen) que diagnostican sobre-cobertura.
 - C2ST warning severo por alta separabilidad temporal, ahora con drivers identificados.
 - `bootstrap_validation = diagnostic fail` por persistencia material en varios slices bajo remuestreo explícito.
 - Drift estadisticamente detectable en algunas distribuciones marginales, pero no material por PSI.
@@ -816,7 +820,7 @@ El hecho de quedar en 4/4 PASS **no significa que todo sea perfecto**. El report
 
 Estas observaciones quedan documentadas como items de monitoreo continuo, no como bloqueos.
 
-#### Que Activaria un FAIL y Que Remediacion Existe
+#### Qué activaría un FAIL y qué remediación existe
 
 ```python
 
@@ -830,44 +834,44 @@ rows = [
     {
         "Escenario de FAIL": f"PSI de features > {rt.get('psi_threshold', 0.25)}",
         "Subsistema": "Gobernanza",
-        "Severidad": "Critica",
-        "Remediacion": "Re-entrenamiento inmediato con datos recientes",
+        "Severidad": "Crítica",
+        "Remediación": "Re-entrenamiento inmediato con datos recientes",
     },
     {
         "Escenario de FAIL": f"Degradacion AUC > {rt.get('auc_degradation_threshold', 0.03):.0%}",
         "Subsistema": "Pipeline",
-        "Severidad": "Critica",
-        "Remediacion": "Re-entrenamiento + revision de features",
+        "Severidad": "Crítica",
+        "Remediación": "Re-entrenamiento + revisión de features",
     },
     {
         "Escenario de FAIL": f"Degradacion cobertura > {rt.get('coverage_degradation_threshold', 0.02):.0%}",
         "Subsistema": "Conformal",
-        "Severidad": "Critica",
-        "Remediacion": "Re-calibracion conformal + revision de grupos Mondrian",
+        "Severidad": "Crítica",
+        "Remediación": "Re-calibración conformal + revisión de grupos Mondrian",
     },
     {
         "Escenario de FAIL": "Fairness: DPD > 0.10 en atributo base",
         "Subsistema": "Fairness",
         "Severidad": "Alta",
-        "Remediacion": "Ajustar threshold o aplicar overrides por grupo",
+        "Remediación": "Ajustar threshold o aplicar overrides por grupo",
     },
     {
-        "Escenario de FAIL": "Cobertura minima por grupo < 85%",
+        "Escenario de FAIL": "Cobertura mínima por grupo < 85%",
         "Subsistema": "Conformal",
         "Severidad": "Alta",
-        "Remediacion": "Revisar calibracion Mondrian del grupo afectado",
+        "Remediación": "Revisar calibración Mondrian del grupo afectado",
     },
     {
         "Escenario de FAIL": "Winkler fuera de banda compensada",
         "Subsistema": "Conformal",
         "Severidad": "Media",
-        "Remediacion": "Revisar calidad de intervalos, posible ACI",
+        "Remediación": "Revisar calidad de intervalos, posible ACI",
     },
     {
         "Escenario de FAIL": "Rank overlap SHAP < 0.60",
         "Subsistema": "Gobernanza",
         "Severidad": "Media",
-        "Remediacion": "Investigar cambio en drivers, documentar si es economicamente justificado",
+        "Remediación": "Investigar cambio en drivers, documentar si es económicamente justificado",
     },
 ]
 Markdown(pd.DataFrame(rows).astype(str).to_markdown(index=False, disable_numparse=True))
@@ -875,9 +879,9 @@ Markdown(pd.DataFrame(rows).astype(str).to_markdown(index=False, disable_numpars
 
 #### La Desviacion de Cobertura Dentro de Materialidad
 
-Un punto que merece enfasis especial es la relacion entre la desviacion de cobertura observada y el umbral de materialidad.
+Un punto que merece énfasis especial es la relación entre la desviación de cobertura observada y el umbral de materialidad.
 
-La **cobertura nominal** del sistema conformal es 90%. La **cobertura empirica** observada en el test OOT es 93.07%, una desviacion de +3.07 puntos porcentuales. El umbral de materialidad configurado es 3%.
+La **cobertura nominal** del sistema conformal es 90%. La **cobertura empírica** observada en el test OOT es 93.07%, una desviación de +3.07 puntos porcentuales. El umbral de materialidad configurado es 3%.
 
 $$
 \text{Desviacion} = |92.02\% - 90\%| = 2.02\% < 3\% = \text{Umbral de materialidad}
@@ -885,25 +889,25 @@ $$
 
 Esta sobre-cobertura sigue siendo **conservadora por diseño**, pero ya no bloquea el gate operativo. El sistema conformal produce intervalos prudentes, con anchura ya dentro del umbral definido, lo cual:
 
-- **Reduce el riesgo de sub-provision**: intervalos mas anchos implican ECL conservativo mayor, que es preferible a sub-estimar.
+- **Reduce el riesgo de sub-provision**: intervalos más anchos implican ECL conservativo mayor, que es preferible a sub-estimar.
 - **Es corregible con ACI**: Adaptive Conformal Inference ajustaria dinamicamente los cuantiles para acercarse al 90% nominal.
-- **No afecta decisiones de portafolio materialmente**: la optimizacion robusta ya incorpora el ancho del intervalo como parametro de incertidumbre (`sec-robust-portfolio`).
+- **No afecta decisiones de portafolio materialmente**: la optimización robusta ya incorpora el ancho del intervalo como parámetro de incertidumbre (`sec-robust-portfolio`).
 
-### El Rol del Comite de Riesgo
+### El Rol del Comité de Riesgo
 
-En una institucion financiera, el reporte MRM no es un artefacto tecnico que se archiva --- es el insumo principal para decisiones de gobernanza. Esta seccion describe como un comite de riesgo consumiria este reporte.
+En una institución financiera, el reporte MRM no es un artefacto técnico que se archiva --- es el insumo principal para decisiones de gobernanza. Esta sección describe como un comité de riesgo consumiría este reporte.
 
-#### Como se Presenta el Reporte
+#### Cómo se presenta el reporte
 
-El comite recibe un resumen ejecutivo con tres elementos:
+El comité recibe un resumen ejecutivo con tres elementos:
 
 1. **Semaforo de subsistemas**: la tabla consolidada 4/4 PASS, con observaciones estadísticas localizadas en conformal.
-2. **Metricas clave**: AUC, cobertura, PSI maximo, y estado de fairness.
+2. **Métricas clave**: AUC, cobertura, PSI máximo, y estado de fairness.
 3. **Observaciones pendientes**: items que requieren monitoreo pero no accion inmediata.
 
-El comite **no revisa** el JSON crudo ni los detalles tecnicos de cada test estadistico. Eso es responsabilidad del equipo de validacion.
+El comité **no revisa** el JSON crudo ni los detalles técnicos de cada test estadístico. Eso es responsabilidad del equipo de validación.
 
-#### Matriz de Decision
+#### Matriz de Decisión
 
 ```python
 
@@ -913,31 +917,31 @@ import pandas as pd
 rows = [
     {
         "Escenario": "4/4 PASS, sin observaciones",
-        "Decision": "Aprobar",
+        "Decisión": "Aprobar",
         "Accion": "Continuar monitoreo trimestral",
         "Escalamiento": "Ninguno",
     },
     {
         "Escenario": "4/4 PASS, con observaciones informativas",
-        "Decision": "Aprobar con nota",
+        "Decisión": "Aprobar con nota",
         "Accion": "Documentar observaciones, plan de monitoreo",
         "Escalamiento": "Ninguno",
     },
     {
         "Escenario": "3/4 PASS (un subsistema en FAIL)",
-        "Decision": "Aprobacion condicional",
-        "Accion": "Plan de remediacion con fecha limite, monitoreo mensual",
+        "Decisión": "Aprobación condicional",
+        "Accion": "Plan de remediación con fecha límite, monitoreo mensual",
         "Escalamiento": "Director de Riesgos",
     },
     {
         "Escenario": "2/4 o menos PASS",
-        "Decision": "Bloquear",
+        "Decisión": "Bloquear",
         "Accion": "Suspender uso en decisiones, re-entrenamiento urgente",
-        "Escalamiento": "Comite ejecutivo + regulador",
+        "Escalamiento": "Comité ejecutivo + regulador",
     },
     {
         "Escenario": "Trigger de re-entrenamiento activado",
-        "Decision": "Bloquear preventivo",
+        "Decisión": "Bloquear preventivo",
         "Accion": "Iniciar re-entrenamiento, modelo challenger en paralelo",
         "Escalamiento": "Director de Riesgos",
     },
@@ -945,26 +949,26 @@ rows = [
 Markdown(pd.DataFrame(rows).astype(str).to_markdown(index=False, disable_numparse=True))
 ```
 
-**Nuestro caso actual**: estamos en el escenario "4/4 PASS, con observaciones informativas". La decision correspondiente es **aprobacion del stack core con monitoreo continuo**, no una reapertura del pipeline completo. La remediación pendiente en conformal ya no es un bloqueo, sino una oportunidad de mejora incremental si se quiere reducir todavía más la sobre-cobertura.
+**Nuestro caso actual**: estamos en el escenario "4/4 PASS, con observaciones informativas". La decisión correspondiente es **aprobación del stack core con monitoreo continuo**, no una reapertura del pipeline completo. La remediación pendiente en conformal ya no es un bloqueo, sino una oportunidad de mejora incremental si se quiere reducir todavía más la sobre-cobertura.
 
 #### La Diferencia Entre "Pasa" y "Es Bueno"
 
-Esta distincion es sutil pero crucial en MRM:
+Esta distinción es sutil pero crucial en MRM:
 
-- **"Pasa"** significa que el modelo cumple los umbrales minimos de gobernanza para permanecer en uso. Es una condicion necesaria pero no suficiente.
-- **"Es bueno"** es un juicio mas amplio que incluye: adecuacion al proposito, eficiencia relativa a alternativas, y alineacion con el apetito de riesgo.
+- **"Pasa"** significa que el modelo cumple los umbrales mínimos de gobernanza para permanecer en uso. Es una condición necesaria pero no suficiente.
+- **"Es bueno"** es un juicio más amplio que incluye: adecuacion al propósito, eficiencia relativa a alternativas, y alineacion con el apetito de riesgo.
 
 Un modelo puede pasar MRM y sin embargo:
 
-- Ser inferior a un challenger que aun no se ha promovido.
-- Tener limitaciones conocidas (por ejemplo, no capturar shocks macroeconomicos nuevos).
-- Ser adecuado para decisiones de provision pero no para pricing.
+- Ser inferior a un challenger que aún no se ha promovido.
+- Tener limitaciones conocidas (por ejemplo, no capturar shocks macroeconómicos nuevos).
+- Ser adecuado para decisiones de provisión pero no para pricing.
 
-El reporte MRM documenta el piso de gobernanza. La decision de si el modelo es "suficientemente bueno" para el proposito especifico corresponde al comite de riesgo con input del area de negocio.
+El reporte MRM documenta el piso de gobernanza. La decisión de si el modelo es "suficientemente bueno" para el propósito específico corresponde al comité de riesgo con input del área de negocio.
 
 ### Pipeline Integrity y Trazabilidad
 
-Un componente frecuentemente subestimado de MRM es la **trazabilidad de artefactos**: poder demostrar que el modelo en produccion es exactamente el que fue validado, y que los datos usados para la validacion son los correctos.
+Un componente frecuentemente subestimado de MRM es la **trazabilidad de artefactos**: poder demostrar que el modelo en producción es exactamente el que fue validado, y que los datos usados para la validación son los correctos.
 
 ```python
 
@@ -973,11 +977,11 @@ import pandas as pd
 
 if mrm:
     rows = [
-        {"Artefacto": "Modelo CatBoost", "Ruta": mrm["model"]["champion_artifact"], "Trazable": "Si (run_tag)"},
-        {"Artefacto": "Reporte MRM", "Ruta": "reports/mrm/mrm_validation_report.json", "Trazable": f"Si (v{mrm['schema_version']})"},
-        {"Artefacto": "Intervalos conformales", "Ruta": mrm["conformal_status"]["intervals_path"], "Trazable": "Si (run_tag)"},
-        {"Artefacto": "Configuracion MRM", "Ruta": mrm["governance_status"]["policy_config"], "Trazable": "Si (YAML versionado)"},
-        {"Artefacto": "Fairness audit", "Ruta": mrm["fairness_status"].get("policy_config", "configs/fairness_policy.yaml"), "Trazable": "Si (run_tag)"},
+        {"Artefacto": "Modelo CatBoost", "Ruta": mrm["model"]["champion_artifact"], "Trazable": "Sí (run_tag)"},
+        {"Artefacto": "Reporte MRM", "Ruta": "reports/mrm/mrm_validation_report.json", "Trazable": f"Sí (v{mrm['schema_version']})"},
+        {"Artefacto": "Intervalos conformales", "Ruta": mrm["conformal_status"]["intervals_path"], "Trazable": "Sí (run_tag)"},
+        {"Artefacto": "Configuración MRM", "Ruta": mrm["governance_status"]["policy_config"], "Trazable": "Sí (YAML versionado)"},
+        {"Artefacto": "Fairness audit", "Ruta": mrm["fairness_status"].get("policy_config", "configs/fairness_policy.yaml"), "Trazable": "Sí (run_tag)"},
         {"Artefacto": "Run tag principal", "Ruta": "---", "Trazable": mrm.get("run_tag", "N/A")},
     ]
     Markdown(pd.DataFrame(rows).astype(str).to_markdown(index=False, disable_numparse=True))
@@ -985,21 +989,21 @@ else:
     Markdown("*No disponible.*")
 ```
 
-La trazabilidad se implementa a traves de:
+La trazabilidad se implementa a través de:
 
-1. **Run tags**: cada ejecucion del pipeline genera un tag unico (ejemplo: `paper-grade-2026-03-22`) que se propaga a todos los artefactos.
-2. **Schema versions**: cada JSON de estado tiene una version de esquema que permite detectar incompatibilidades.
+1. **Run tags**: cada ejecución del pipeline genera un tag único (ejemplo: `paper-grade-2026-03-22`) que se propaga a todos los artefactos.
+2. **Schema versions**: cada JSON de estado tiene una versión de esquema que permite detectar incompatibilidades.
 3. **Timestamps UTC**: todas las marcas temporales usan UTC para evitar ambiguedades de timezone.
-4. **Configuracion versionada**: los archivos YAML en `configs/` estan bajo control de versiones (git), y los artefactos runtime registran que configuracion usaron.
+4. **Configuración versionada**: los archivos YAML en `configs/` están bajo control de versiones (git), y los artefactos runtime registran que configuración usaron.
 
 ::: {.callout-tip}
-## Patron de inversion de dependencia
-Los archivos de configuracion (`configs/mrm_policy.yaml`, `configs/conformal_policy.yaml`) son **plantillas con defaults**. El artefacto runtime es la fuente de verdad. Esto evita el problema comun donde la configuracion dice una cosa pero el modelo en produccion uso otra.
+## Patrón de inversión de dependencia
+Los archivos de configuración (`configs/mrm_policy.yaml`, `configs/conformal_policy.yaml`) son **plantillas con defaults**. El artefacto runtime es la fuente de verdad. Esto evita el problema comun donde la configuración dice una cosa pero el modelo en producción uso otra.
 :::
 
 ### Challenger Framework
 
-El proceso de promover un modelo challenger a campeon es uno de los controles mas importantes de MRM. Nuestro framework requiere tres condiciones simultaneas:
+El proceso de promover un modelo challenger a campeón es uno de los controles más importantes de MRM. Nuestro framework requiere tres condiciones simultáneas:
 
 ```python
 
@@ -1015,18 +1019,18 @@ if mrm:
     rows = []
     for c in criteria:
         rows.append({
-            "Tipo": "Mejora de metrica",
-            "Requisito": f"{c['metric']}: mejora minima {c['improvement_min']}",
+            "Tipo": "Mejora de métrica",
+            "Requisito": f"{c['metric']}: mejora mínima {c['improvement_min']}",
         })
     for p in promotion:
         for k, v in p.items():
             rows.append({
-                "Tipo": "Gate de promocion",
+                "Tipo": "Gate de promoción",
                 "Requisito": f"{k} = {v}",
             })
     for k, v in constraints.items():
         rows.append({
-            "Tipo": "Restriccion de modelado",
+            "Tipo": "Restricción de modelado",
             "Requisito": f"{k} = {v}",
         })
     Markdown(pd.DataFrame(rows).astype(str).to_markdown(index=False, disable_numparse=True))
@@ -1034,9 +1038,9 @@ else:
     Markdown("*No disponible.*")
 ```
 
-Notar que la promocion no es solo un tema de "mejor AUC": el challenger debe pasar la politica conformal, la auditoria de fairness, y los checks de gobernanza. Un modelo con AUC superior pero que no cumple fairness **no puede ser promovido**.
+Notar que la promoción no es solo un tema de "mejor AUC": el challenger debe pasar la política conformal, la auditoría de fairness, y los checks de gobernanza. Un modelo con AUC superior pero que no cumple fairness **no puede ser promovido**.
 
-Las restricciones de modelado (`no_smote`, `monotonic_constraints_required`) reflejan decisiones de politica: SMOTE introduce observaciones sinteticas que no tienen respaldo economico, y las restricciones monotonicas aseguran que la PD se comporte de forma coherente con la teoria crediticia (mas riesgo no puede reducir la PD).
+Las restricciones de modelado (`no_smote`, `monotonic_constraints_required`) reflejan decisiones de política: SMOTE introduce observaciones sinteticas que no tienen respaldo económico, y las restricciones monotónicas aseguran que la PD se comporte de forma coherente con la teoría crediticia (más riesgo no puede reducir la PD).
 
 ### Limitaciones y Mejoras Futuras
 
@@ -1044,44 +1048,44 @@ El sistema MRM actual es funcional y auditable, pero tiene limitaciones que debe
 
 #### Limitacion 1: Sobre-cobertura Conformal
 
-La sobre-cobertura de +2.52% indica que los intervalos son mas conservadores de lo necesario. **Adaptive Conformal Inference (ACI)** [@gibbs2021aci] ajustaria dinamicamente los cuantiles conformal en cada timestep:
+La sobre-cobertura de +2.52% indica que los intervalos son más conservadores de lo necesario. **Adaptive Conformal Inference (ACI)** [@gibbs2021aci] ajustaria dinamicamente los cuantiles conformal en cada timestep:
 
 $$
 \alpha_{t+1} = \alpha_t + \gamma \cdot (\alpha - \mathbf{1}\{Y_t \notin \hat{C}_t\})
 $$
 
-donde $\gamma$ es la tasa de aprendizaje del ajuste. Esto reduciria la sobre-cobertura sin sacrificar la garantia de validez marginal.
+donde $\gamma$ es la tasa de aprendizaje del ajuste. Esto reduciria la sobre-cobertura sin sacrificar la garantía de validez marginal.
 
-#### Limitacion 2: Ventana de Drift Unica
+#### Limitacion 2: Ventana de Drift Única
 
-El monitoreo de drift compara un periodo de referencia (train) contra un periodo de contraste (test OOT) como un unico snapshot. En produccion, se necesita:
+El monitoreo de drift compara un periodo de referencia (train) contra un periodo de contraste (test OOT) como un único snapshot. En producción, se necesita:
 
-- **Ventanas deslizantes**: monitoreo mensual o trimestral, no una comparacion puntual.
+- **Ventanas deslizantes**: monitoreo mensual o trimestral, no una comparación puntual.
 - **Alertas progresivas**: warning cuando PSI > 0.10, alerta cuando > 0.15, bloqueo cuando > 0.25.
 - **Drift por segmento**: no solo drift global, sino por grade, por vintage, por producto.
 
-#### Limitacion 3: Validacion No-Independiente
+#### Limitacion 3: Validación No-Independiente
 
-En el contexto de esta tesis, el "validador" y el "desarrollador" son la misma persona. La independencia se simula a traves de controles programaticos, pero en una institucion financiera esto no seria aceptable bajo SR 11-7. La siguiente mejora seria:
+En el contexto de esta tesis, el "validador" y el "desarrollador" son la misma persona. La independencia se simula a través de controles programáticos, pero en una institución financiera esto no sería aceptable bajo SR 11-7. La siguiente mejora sería:
 
-- Publicar el reporte MRM para revision por un colega o asesor.
-- Implementar controles de acceso que impidan modificar artefactos de validacion desde el pipeline de desarrollo.
+- Publicar el reporte MRM para revisión por un colega o asesor.
+- Implementar controles de acceso que impidan modificar artefactos de validación desde el pipeline de desarrollo.
 
 #### Limitacion 4: Snapshot vs Monitoreo Continuo
 
 El reporte actual es un snapshot en un punto del tiempo. Un sistema MRM completo incluiria:
 
-- Ejecucion programada (cron/Airflow) del reporte.
-- Alertas automaticas por correo o Slack cuando un control falla.
-- Dashboard de monitoreo en tiempo real (parcialmente cubierto por la aplicacion Streamlit).
-- Integracion con el sistema de gestion de incidentes.
+- Ejecución programada (cron/Airflow) del reporte.
+- Alertas automáticas por correo o Slack cuando un control falla.
+- Dashboard de monitoreo en tiempo real (parcialmente cubierto por la aplicación Streamlit).
+- Integración con el sistema de gestión de incidentes.
 
 ::: {.callout-note}
-## Conexion con el Backtest Conformal
-El monitoreo conformal detallado, incluyendo metricas HSIC, SSC, MWI y CWC, esta cubierto en `sec-backtest-monitoring`. Los resultados de ese backtest alimentan directamente el subsistema conformal del reporte MRM.
+## Conexión con el Backtest Conformal
+El monitoreo conformal detallado, incluyendo métricas HSIC, SSC, MWI y CWC, está cubierto en `sec-backtest-monitoring`. Los resultados de ese backtest alimentan directamente el subsistema conformal del reporte MRM.
 :::
 
-### Resumen del Capitulo
+### Resumen del Capítulo
 
 | Dimension | Estado | Referencia |
 |-----------|--------|-----------|
@@ -1093,9 +1097,11 @@ El monitoreo conformal detallado, incluyendo metricas HSIC, SSC, MWI y CWC, esta
 
 : Resumen de resultados MRM por subsistema
 
-El sistema MRM implementado traduce los principios de SR 11-7 en controles concretos, automatizados y trazables. La recuperacion conformal posterior al rerun V2 deja una lectura mas madura que la version anterior: el core predictivo queda fuerte y el lane conformal ya cruza los gates operativos, pero sin esconder que persisten warnings estadisticos por sobre-cobertura. Un sistema de gobernanza maduro no solo detecta desviaciones --- las contextualiza, las documenta, y distingue entre alertas diagnósticas y bloqueos reales.
+El sistema MRM implementado traduce los principios de SR 11-7 en controles concretos, automatizados y trazables. La recuperación conformal posterior al rerun V2 deja una lectura más madura que la versión anterior: el core predictivo queda fuerte y el lane conformal ya cruza los gates operativos, pero sin esconder que persisten warnings estadísticos por sobre-cobertura. Un sistema de gobernanza maduro no solo detecta desviaciones --- las contextualiza, las documenta, y distingue entre alertas diagnósticas y bloqueos reales.
 
-## Fuente curada: `book/chapters/11-explainability/index.qmd`
+::: {.source-note}
+**Procedencia:** `book/chapters/11-explainability/index.qmd`
+:::
 
 ::: {.whole-game-intro}
 **Pregunta central**: ¿Puede el modelo PD defender sus decisiones ante un comité de riesgo, un regulador, y un prestatario?
@@ -1118,15 +1124,17 @@ Este capítulo triangula tres lentes complementarias:
 En este libro usamos "explicabilidad" para referirnos a técnicas post-hoc (SHAP, ALE) que explican un modelo complejo, e "interpretabilidad" para modelos intrínsecamente transparentes (regresión logística). El baseline LR del `sec-lr-baseline` es interpretable; el CatBoost champion requiere explicabilidad.
 :::
 
-```html
-<div class="capítulo-landing-grid">
-  <div class="capítulo-card"><h4><a href="11a-global-explanations.html">47. Globales</a></h4><p>Drivers globales, familias y sensibilidad.</p></div>
-  <div class="capítulo-card"><h4><a href="11b-local-explanations.html">48. Locales</a></h4><p>Casos representativos, reason codes y decisiones.</p></div>
-  <div class="capítulo-card"><h4><a href="11c-explanation-drift.html">49. Drift</a></h4><p>Estabilidad temporal de SHAP y explicaciones.</p></div>
-</div>
-```
+| Bloque de explicabilidad | Función en CRPTO |
+|---|---|
+| Global | Identifica drivers estructurales del champion y familias de features. |
+| Local | Traduce predicciones individuales a reason codes y lectura de decisión. |
+| Drift explicativo | Vigila que las explicaciones no cambien de forma incoherente por cohorte. |
 
-## Fuente curada: `book/chapters/11-explainability/11a-global-explanations.qmd`
+: Mapa curado del dossier de explicabilidad
+
+::: {.source-note}
+**Procedencia:** `book/chapters/11-explainability/11a-global-explanations.qmd`
+:::
 
 ## Explicaciones Globales
 
@@ -1257,7 +1265,9 @@ La `fig-ale-curves` complementa los rankings SHAP con información sobre *direcc
 
 El siguiente paso es bajar de esta vista de portafolio a casos concretos, donde la pregunta deja de ser "qué mueve al modelo en promedio" y pasa a ser "por qué este préstamo quedó donde quedó".
 
-## Fuente curada: `book/chapters/11-explainability/11b-local-explanations.qmd`
+::: {.source-note}
+**Procedencia:** `book/chapters/11-explainability/11b-local-explanations.qmd`
+:::
 
 ## Explicaciones Locales
 
@@ -1343,7 +1353,9 @@ También hay que evitar una falsa sensación de precisión: un *reason code* es 
 
 Con esa convención, la explicación deja de ser una nota anecdótica y se convierte en un artefacto formal de decisión.
 
-## Fuente curada: `book/chapters/11-explainability/11c-explanation-drift.qmd`
+::: {.source-note}
+**Procedencia:** `book/chapters/11-explainability/11c-explanation-drift.qmd`
+:::
 
 ## Drift de Explicaciones
 
@@ -1411,7 +1423,9 @@ El snapshot actual es corto y agregado. Todavía falta:
 
 Pese a ello, el estado actual ya mejora mucho la práctica usual: el proyecto no solo reporta qué tan bien predice el modelo, sino si sigue contando la misma historia económica a lo largo del tiempo.
 
-## Fuente curada: `book/chapters/12-dataset-360/index.qmd`
+::: {.source-note}
+**Procedencia:** `book/chapters/12-dataset-360/index.qmd`
+:::
 
 ::: {.whole-game-intro}
 <span class="whole-game-question">Pregunta central</span>
@@ -1438,17 +1452,19 @@ Ejemplo concreto: una misma cohorte de préstamos aparece como estructura de `gr
 
 ## Navegación curada
 
-```html
-<div class="capítulo-landing-grid">
-  <div class="capítulo-card"><h4><a href="12a-eda-highlights.html">51. EDA</a></h4><p>Magnitud, composición y gradientes de riesgo.</p></div>
-  <div class="capítulo-card"><h4><a href="12b-geographic-temporal.html">52. Geo-Temporal</a></h4><p>Estados, cohortes y dinámica por periodo.</p></div>
-  <div class="capítulo-card"><h4><a href="12c-literature-benchmark.html">53. Benchmark</a></h4><p>Métricas frente a estudios publicados con Lending Club.</p></div>
-</div>
-```
+| Bloque Dataset 360 | Función en CRPTO |
+|---|---|
+| EDA | Fija magnitud, composición y gradientes de riesgo del panel Lending Club. |
+| Geo-temporal | Explica cohortes, cortes OOT y cambio de régimen antes de modelar. |
+| Benchmark | Conecta el dataset con estudios publicados y ubica el aporte CRPTO. |
+
+: Mapa curado del dossier Dataset 360
 
 > Nota curatorial: el cierre editorial compartido del libro original se omitió aquí para mantener este dossier independiente y centrado en CRPTO.
 
-## Fuente curada: `book/chapters/12-dataset-360/12a-eda-highlights.qmd`
+::: {.source-note}
+**Procedencia:** `book/chapters/12-dataset-360/12a-eda-highlights.qmd`
+:::
 
 ## Hallazgos Clave del EDA
 
@@ -1551,7 +1567,9 @@ Con este diagnóstico, el resto del libro deja de depender de intuiciones blanda
 
 El objetivo no es “mostrar gráficos bonitos”, sino fijar el terreno sobre el cual una decisión de riesgo puede ser defendida.
 
-## Fuente curada: `book/chapters/12-dataset-360/12b-geographic-temporal.qmd`
+::: {.source-note}
+**Procedencia:** `book/chapters/12-dataset-360/12b-geographic-temporal.qmd`
+:::
 
 ## Análisis Geográfico y Temporal
 
@@ -1630,11 +1648,13 @@ Este capítulo habilita tres decisiones de diseño:
 
 La conclusión de fondo es sencilla: el dataset no es solo grande; es dinámico y heterogéneo. El pipeline completo fue construido para respetar esa realidad.
 
-## Fuente curada: `book/chapters/12-dataset-360/12c-literature-benchmark.qmd`
+::: {.source-note}
+**Procedencia:** `book/chapters/12-dataset-360/12c-literature-benchmark.qmd`
+:::
 
 ## Benchmark contra Literatura
 
-El valor de este libro no depende de superar un leaderboard aislado. Aun así, es importante ubicar el resultado del pipeline frente a referencias publicadas para evitar dos errores opuestos: vender de más lo conseguido o subestimar su relevancia.
+El valor de este libro no depende de superar un leaderboard aislado. Aún así, es importante ubicar el resultado del pipeline frente a referencias publicadas para evitar dos errores opuestos: vender de más lo conseguido o subestimar su relevancia.
 
 ### Punto de comparación disponible
 

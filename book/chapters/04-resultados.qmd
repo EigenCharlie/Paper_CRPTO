@@ -329,7 +329,7 @@ donde $\bar{r}_{\text{funded}}$ es el retorno neto promedio del funded set. La c
 El comparador theorem-tight (gamma=0.55) baja $\Gamma_{\text{CP}}$ a `0.159714` con un retorno menor (`$166,270`), instanciando exactamente la frontera del corollary: menor presupuesto conformal → menor precio de robustez → menor retorno. Las tres policies (economic, balanced, theorem-tight) ordenan limpiamente esa frontera empírica dentro de la región robusta.
 
 ::: {.column-page}
-![Comparación de decision regret entre three-stage, SPO+ end-to-end y CRPTO (Conformal Robust). En el artefacto local de la figura, SPO+ logra 49.09% menos regret que two-stage por diseño; CRPTO paga un precio de auditabilidad mayor en regret a cambio de garantías formales de cobertura.](../assets/figures/publication/crpto_fig9_spo_regret.png){#fig-p1-spo-regret fig-alt="Comparación de regret: two-stage vs SPO+ vs CRPTO para el CRPTO."}
+![Comparación de decisión regret entre three-stage, SPO+ end-to-end y CRPTO (Conformal Robust). En el artefacto local de la figura, SPO+ logra 49.09% menos regret que two-stage por diseño; CRPTO paga un precio de auditabilidad mayor en regret a cambio de garantías formales de cobertura.](../assets/figures/publication/crpto_fig9_spo_regret.png){#fig-p1-spo-regret fig-alt="Comparación de regret: two-stage vs SPO+ vs CRPTO para el CRPTO."}
 :::
 
 ::: {.callout-note}
@@ -438,7 +438,7 @@ El test set OOT (2018--2020) contiene un cambio de régimen natural: la tasa de 
 : Estabilidad CRPTO vs SPO+ bajo distributional shift (5 seeds, $n_{items}=50$, $budget=15$) {#tbl-crpto-stability}
 
 ::: {.column-page}
-![Estabilidad bajo distributional shift: Panel A muestra el regret de decisión por periodo para tres métodos (two-stage, SPO+, CRPTO); Panel B muestra la cobertura conformal 90% y el ancho medio del intervalo. La cobertura se mantiene por encima del target 90% en todos los periodos, incluyendo el quiebre de régimen COVID (2020).](../assets/figures/publication/crpto_fig11_crpto_stability.png){#fig-p1-shift-stability fig-alt=”Estabilidad CRPTO vs SPO+ bajo distributional shift: regret por periodo y cobertura conformal.”}
+![Estabilidad bajo distributional shift: Panel A muestra el regret de decisión por periodo para tres métodos (two-stage, SPO+, CRPTO); Panel B muestra la cobertura conformal 90% y el ancho medio del intervalo. La cobertura se mantiene por encima del target 90% en todos los periodos, incluyendo el quiebre de régimen COVID (2020).](../assets/figures/publication/crpto_fig11_crpto_stability.png){#fig-p1-shift-stability fig-alt="Estabilidad CRPTO vs SPO+ bajo distributional shift: regret por periodo y cobertura conformal."}
 :::
 
 ::: {.callout-note}

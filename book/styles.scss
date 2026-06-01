@@ -80,12 +80,63 @@ main.content {
   overflow-x: auto;
 }
 
+#quarto-document-content .quarto-figure.page-full,
+#quarto-document-content figure.page-full,
+#quarto-document-content p.page-full,
+#quarto-document-content a.page-full,
+#quarto-document-content .cell-output-display.page-full,
+#quarto-document-content div.column-page,
+#quarto-document-content div.column-page-inset,
+#quarto-document-content div.column-screen,
+#quarto-document-content div.column-screen-inset,
+#quarto-document-content .quarto-figure.column-page,
+#quarto-document-content figure.column-page,
+#quarto-document-content p.column-page,
+#quarto-document-content .cell-output-display.column-page {
+  grid-column: body-content-start / body-content-end !important;
+  width: 100% !important;
+  max-width: 100% !important;
+  margin-left: auto !important;
+  margin-right: auto !important;
+}
+
+#quarto-document-content .quarto-figure.page-columns,
+#quarto-document-content figure.page-columns,
+#quarto-document-content p.page-columns,
+#quarto-document-content a.page-columns {
+  display: block !important;
+}
+
+#quarto-document-content img.column-page,
+#quarto-document-content img.column-page-inset,
+#quarto-document-content img.column-screen,
+#quarto-document-content img.column-screen-inset {
+  grid-column: auto !important;
+  width: auto !important;
+  max-width: 100% !important;
+}
+
+#quarto-document-content .quarto-figure img,
+#quarto-document-content figure img,
+#quarto-document-content p > img {
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
+  height: auto;
+}
+
 #quarto-document-content table {
   display: block;
   width: 100%;
   max-width: 100%;
   overflow-x: auto;
   white-space: normal;
+}
+
+#quarto-document-content table.table,
+#quarto-document-content .cell-output-display table {
+  width: max-content;
+  min-width: 100%;
 }
 
 #quarto-document-content th,
@@ -115,7 +166,8 @@ main.content {
 
   #quarto-document-content th,
   #quarto-document-content td {
-    min-width: 0;
+    min-width: 8.5rem;
+    max-width: 18rem;
     overflow-wrap: anywhere;
   }
 
@@ -367,6 +419,44 @@ img {
   font-size: 0.82rem;
 }
 
+.source-note {
+  margin: 0.7rem 0 1rem;
+  padding: 0.45rem 0.65rem;
+  border-left: 3px solid $crpto-border-soft;
+  color: $crpto-subtle;
+  font-size: 0.84rem;
+  line-height: 1.35;
+}
+
+.source-note code {
+  color: inherit;
+  font-size: 0.82rem;
+  white-space: normal;
+  overflow-wrap: anywhere;
+}
+
+.cell details,
+details.code-fold {
+  margin: 0.65rem 0 1rem;
+}
+
+.cell details > summary,
+details.code-fold > summary {
+  color: var(--crpto-primary);
+  font-size: 0.86rem;
+  font-weight: 600;
+}
+
+#quarto-document-content pre {
+  max-height: 20rem;
+  overflow: auto;
+}
+
+#quarto-document-content pre.sourceCode,
+#quarto-document-content div.sourceCode pre {
+  border-left: 3px solid $crpto-border-soft;
+}
+
 /* Responsive */
 @media (max-width: 720px) {
   .chapter-landing-grid { grid-template-columns: 1fr; }
@@ -390,6 +480,7 @@ img {
   .book-band__segment,
   .pipeline-inline__step { background: #1c2331; }
   .equation-card    { background: #1a2030; }
+  .source-note      { color: #9aa5b8; }
   .book-band__segment--train { background: rgba(31, 111, 235, 0.18); }
   .book-band__segment--cal   { background: rgba(102, 187, 106, 0.18); }
   .book-band__segment--test  { background: rgba(255, 167, 38, 0.18); }

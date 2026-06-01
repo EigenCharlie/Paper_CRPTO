@@ -131,7 +131,7 @@ Las dos lecturas correctas de la tabla son simultáneas y no contradictorias:
 
 2. **La cobertura conformal se mantiene por encima del target** en todos los periodos (`{python} f"{summary['coverage_range'][0]*100:.2f}%"` – `{python} f"{summary['coverage_range'][1]*100:.2f}%"`), incluyendo el quiebre COVID. La sobre-cobertura en 2020 (98.58%) es una propiedad **diseñada**, no accidental: con default rate cayendo a 1.35%, los intervalos sobre la mayoría de loans cubren ampliamente.
 
-La distinción importante es ésta: la estabilidad de SPO+ en este dataset es **empírica y bonita**, pero un regulador no puede auditar ex ante que el regret se mantendrá en el siguiente cambio de régimen. La cobertura conformal sí se puede auditar — está construida para sobrevivir intercambiabilidad incluso bajo shift.
+La distinción importante es esta: la estabilidad de SPO+ en este dataset es **empírica y bonita**, pero un regulador no puede auditar ex ante que el regret se mantendrá en el siguiente cambio de régimen. La cobertura conformal sí se puede auditar — está construida para sobrevivir intercambiabilidad incluso bajo shift.
 :::
 
 ### Lectura editorial de los dos números SPO+
@@ -152,7 +152,7 @@ Cómo se relacionan los números que el paper cita sobre SPO+.
 
 ### Por qué CRPTO no compite en regret y por qué eso no es una derrota
 
-La métrica de regret aquí es **decision regret**: la pérdida de elegir la acción óptima bajo costos predichos versus elegir la acción óptima bajo costos verdaderos, evaluada sobre la distribución verdadera. SPO+ minimiza esa cantidad por diseño — su gradiente es exactamente el subdiferencial del SPO loss, y las arquitecturas v2 (point-wise equivariant, costos calibrados) le dan al optimizador toda la información correcta.
+La métrica de regret aquí es **decisión regret**: la pérdida de elegir la acción óptima bajo costos predichos versus elegir la acción óptima bajo costos verdaderos, evaluada sobre la distribución verdadera. SPO+ minimiza esa cantidad por diseño — su gradiente es exactamente el subdiferencial del SPO loss, y las arquitecturas v2 (point-wise equivariant, costos calibrados) le dan al optimizador toda la información correcta.
 
 CRPTO no participa en ese juego. CRPTO pega la cota superior conformal $u_i = p_i^H(\alpha)$ a la restricción de PD ponderada del LP y luego maximiza retorno sujeto a esa restricción. Eso produce, por construcción, una decisión más conservadora que la del SPO+ — y por lo tanto un regret más alto en el sentido decisional puro. La métrica de éxito de CRPTO es otra: **la garantía de cobertura del intervalo**, que el regulador puede verificar empíricamente periodo a periodo.
 
@@ -165,19 +165,19 @@ Esa simetría entre fortalezas es la contribución editorial más importante del
 
 ### Frontera regret-auditability para el paper
 
-La version journal materializa esa simetria en la tabla A19 y la Figura
+La versión journal materializa esa simetria en la tabla A19 y la Figura
 @fig-spo-regret-auditability. La regla de lectura es simple: SPO+ ocupa la
 esquina de menor regret, mientras CRPTO ocupa la esquina de controles de riesgo
 verificables. El eje vertical no es un score subjetivo; cuenta tres checks que
 un reviewer puede auditar desde artefactos congelados: cobertura temporal sobre
-target, bound exacto del funded set y region robusta `45/45`.
+target, bound exacto del funded set y región robusta `45/45`.
 
 ![Frontera regret-auditability usada para separar el claim de SPO+ del claim de CRPTO.](../assets/figures/publication/crpto_fig15_regret_auditability_frontier.png){#fig-spo-regret-auditability fig-alt="Scatter plot que compara two-stage, SPO+ y CRPTO robust por regret medio y controles verificables de riesgo."}
 
 Esta figura permite decir en el cuerpo del paper que CRPTO no intenta ganar el
-torneo de regret puro. La historia publicable es mas fuerte: cuando un comite
+torneo de regret puro. La historia publicable es más fuerte: cuando un comité
 necesita cobertura, exact bound y trazabilidad del funded set, el costo en
-regret se vuelve explicito.
+regret se vuelve explícito.
 
 ### Reproducibilidad
 

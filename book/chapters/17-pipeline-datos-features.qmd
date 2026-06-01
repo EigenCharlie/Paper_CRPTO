@@ -3,10 +3,12 @@
 Material de método y reproducibilidad previo al CRPTO: origen de datos, split temporal, leakage, WOE/IV y contrato de features.
 
 ::: {.callout-note}
-Este capítulo es un dossier curado desde secciones previas del libro original que CRPTO reutilizaba implícitamente. Los bloques de código se conservan como referencia estática para evitar que el render del libro dependa de ejecuciones exploratorias no necesarias.
+Nota editorial: este capítulo conserva material técnico de soporte para tesis, supplement y revisión. Los bloques de código quedan acotados visualmente por defecto; la lectura principal está en el texto, las tablas y las figuras.
 :::
 
-## Fuente curada: `book/chapters/03-tech-stack.qmd`
+::: {.source-note}
+**Procedencia:** `book/chapters/03-tech-stack.qmd`
+:::
 
 Este capítulo documenta las librerías y herramientas utilizadas en el proyecto, junto con la **justificación** de por qué cada una fue seleccionada sobre sus alternativas. El stack completo se gestiona con `uv` (no pip) y las versiones están fijadas en `pyproject.toml`.
 
@@ -42,7 +44,7 @@ ml_stack = [
      "Justificación": "Estándar de facto para ML en Python. Provee CalibratedClassifierCV, IsotonicRegression, y todas las métricas de evaluación"},
     {"Librería": "Optuna 4.7", "Rol": "HPO (320 trials CatBoost)",
      "Alternativas": "Hyperopt, Ray Tune, Optuna",
-     "Justificación": "TPE sampler es state-of-the-art para HPO con presupuesto limitado, pruning via MedianPruner, integración nativa con CatBoost"},
+     "Justificación": "TPE sampler es state-of-the-art para HPO con presupuesto limitado, pruning vía MedianPruner, integración nativa con CatBoost"},
     {"Librería": "OptBinning 0.19+", "Rol": "WOE/IV binning",
      "Alternativas": "scorecardpy, binning manual",
      "Justificación": "Binning óptimo basado en programación matemática, soporta constraints regulatorios (monotonía, máximo de bins)"},
@@ -159,7 +161,7 @@ mlops_stack = [
      "Justificación": "Feature store open-source con DuckDB backend para serving local, Field API + feast.types para definición de features"},
     {"Librería": "dbt-duckdb 1.10", "Rol": "Transformaciones SQL sobre parquet",
      "Alternativas": "pandas puro, polars",
-     "Justificación": "SQL semántico sobre parquet via read_parquet(), staging/marts/tests, linaje documentable para auditoría"},
+     "Justificación": "SQL semántico sobre parquet vía read_parquet(), staging/marts/tests, linaje documentable para auditoría"},
 ]
 
 pd.DataFrame(mlops_stack)
@@ -264,7 +266,9 @@ Las herramientas GPU son parte del *insights factory* --- un carril de investiga
 
 > Nota curatorial: el cierre editorial compartido del libro original se omitió aquí para mantener este dossier independiente y centrado en CRPTO.
 
-## Fuente curada: `book/chapters/04-pipeline-overview/04a-data-ingestion-lineage.qmd`
+::: {.source-note}
+**Procedencia:** `book/chapters/04-pipeline-overview/04a-data-ingestion-lineage.qmd`
+:::
 
 ## Ingesta de Datos y Linaje
 
@@ -431,7 +435,9 @@ Cada transición deja inputs y outputs explícitos. Eso ayuda a auditar qué pro
 Los artefactos binarios (parquet, pkl, cbm) se almacenan fuera de Git y se versionan con DVC. Los archivos `.dvc` del repositorio actúan como punteros a esos artefactos. En la práctica, esto permite mantener el código liviano mientras los datos y modelos pesados conservan una procedencia clara.
 :::
 
-## Fuente curada: `book/chapters/04-pipeline-overview/04b-temporal-splitting.qmd`
+::: {.source-note}
+**Procedencia:** `book/chapters/04-pipeline-overview/04b-temporal-splitting.qmd`
+:::
 
 ## Estrategia de Splitting Temporal
 
@@ -498,7 +504,6 @@ Usar el mismo set para calibración de probabilidades y para conformización int
 
 A diferencia de una extracción aleatoria, el set de calibración se extrae del **final** del período de entrenamiento (los últimos meses antes del corte OOT):
 
-```html
 <div class="book-band">
   <div class="book-band__row">
     <div class="book-band__segment book-band__segment--train">
@@ -519,7 +524,6 @@ A diferencia de una extracción aleatoria, el set de calibración se extrae del 
   </div>
   <p class="book-band__note">La calibración se toma del tramo final del entrenamiento para parecerse más al mundo que luego verá el test OOT.</p>
 </div>
-```
 
 Esta estrategia temporal tiene dos ventajas:
 
@@ -554,7 +558,9 @@ Para validar que el split temporal no introduce sesgos sistemáticos, verificamo
 Todas las métricas reportadas en este libro --- AUC, Brier, cobertura conformal, ECL, retorno de portafolio --- se calculan **exclusivamente** sobre el set de test OOT (2018--2020). Ninguna métrica se reporta sobre datos de entrenamiento o validación. Esto garantiza que los números reflejan rendimiento genuino en un escenario prospectivo, no sobreajuste al pasado.
 :::
 
-## Fuente curada: `book/chapters/05-feature-engineering/05a-woe-iv-optbinning.qmd`
+::: {.source-note}
+**Procedencia:** `book/chapters/05-feature-engineering/05a-woe-iv-optbinning.qmd`
+:::
 
 ## WOE, IV y OptBinning
 
@@ -649,7 +655,9 @@ La figura `fig-iv-ranking` permite aterrizar el criterio de selección en el pro
 
 La figura `fig-woe-top6` muestra algo que suele perderse cuando solo vemos tablas: el binning no se usa por estética, sino para convertir relaciones ruidosas en una señal más ordenada y más fácil de explicar ante negocio o validación de modelo.
 
-## Fuente curada: `book/chapters/05-feature-engineering/05b-derived-features-ratios.qmd`
+::: {.source-note}
+**Procedencia:** `book/chapters/05-feature-engineering/05b-derived-features-ratios.qmd`
+:::
 
 ## Features Derivadas: Ratios, Flags e Interacciones
 
@@ -818,7 +826,9 @@ fam
 
 El aprendizaje importante no es que “más variables siempre mejoran”. Es que el proyecto ahora puede demostrar qué quedó en el champion, qué quedó como challenger y qué quedó fuera por sparsity o por bajo valor editorial. Esa trazabilidad era una de las metas centrales del rerun.
 
-## Fuente curada: `book/chapters/05-feature-engineering/05c-feature-contract.qmd`
+::: {.source-note}
+**Procedencia:** `book/chapters/05-feature-engineering/05c-feature-contract.qmd`
+:::
 
 ## Contrato de Features y Validación
 
@@ -975,7 +985,6 @@ Los schemas usan `strict=False`, lo que permite columnas adicionales no especifi
 
 La validación se integra en el pipeline como un *gate* entre etapas:
 
-```html
 <div class="book-flow">
   <div class="book-flow__row">
     <div class="book-flow__card">
@@ -1011,7 +1020,6 @@ La validación se integra en el pipeline como un *gate* entre etapas:
   </div>
   <p class="book-flow__note">La idea central es simple: validar temprano para no descubrir inconsistencias recién cuando ya estamos optimizando portafolio o calculando IFRS9.</p>
 </div>
-```
 
 Si una validación falla, el pipeline se detiene con un error descriptivo que indica qué columna, qué regla y qué valores violaron el schema. Esto es preferible a dejar que un error de datos se propague silenciosamente hasta producir predicciones incorrectas o portafolios subóptimos.
 

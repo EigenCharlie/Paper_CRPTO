@@ -1,0 +1,65 @@
+# CRPTO en una página
+
+Esta página fija la lectura corta del proyecto sin convertir el libro en un
+índice técnico. Si un jurado, reviewer o lector externo solo mira una página,
+debería llevarse esta idea: **CRPTO convierte incertidumbre conformal de una PD
+calibrada congelada en una decisión de portafolio robusta y auditable**.
+
+## La pregunta
+
+En crédito, una PD calibrada no decide por sí sola. El paso delicado ocurre
+cuando esa probabilidad entra a un optimizador que asigna capital. CRPTO pregunta
+qué cambia si la incertidumbre predictiva deja de ser un diagnóstico posterior y
+se vuelve una restricción explícita de la decisión.
+
+## La respuesta CRPTO
+
+| Capa | Qué hace | Evidencia actual |
+|---|---|---|
+| PD calibrada | Produce probabilidades auditables para el OOT de Lending Club. | AUC `0.7124`, Brier `0.1546`, ECE `0.0064`. |
+| Conformal Mondrian | Convierte la PD puntual en intervalos sobre la escala de riesgo. | Coverage 90% `0.9297`, min-group `0.9190`. |
+| LP robusto | Usa la señal conformal superior para financiar préstamos bajo presupuesto y tolerancia de riesgo. | Budget `$1M`, `tau = 0.175`, `gamma = 0.45`. |
+| Certificado exacto | Audita el funded set promovido sobre 276,869 préstamos OOT. | Return `$170,464.54`, `V = 0.03645`, `Gamma_CP = 0.18591`, `45/45` pass. |
+
+: Respuesta CRPTO en cuatro capas auditables.
+
+## El claim publicable
+
+CRPTO no afirma ser el primer modelo de PD, el primer método conformal, el primer
+portafolio Lending Club ni el primer trabajo de optimización robusta. El claim
+defendible es más específico:
+
+> Un pipeline post-hoc auditable que toma una PD calibrada congelada, construye
+> intervalos conformales Mondrian, los lleva a un LP robusto de portafolio
+> crediticio y verifica exactamente la no-cobertura ponderada del funded set.
+
+## Qué puede hacer un comité de riesgo
+
+| Objeto | Lectura operacional |
+|---|---|
+| `tau` | Techo de riesgo ponderado que el comité acepta para el portafolio. |
+| `gamma` | Parámetro de policy que decide cuánto castiga la incertidumbre en el LP. |
+| `Gamma_CP` | Prima conformal realizada: cuánto riesgo adicional reconoce el funded set frente a la PD puntual. |
+| `V(alpha)` | No-cobertura ponderada observada del funded set. |
+| `price_of_robustness` | Retorno sacrificado por comprar auditabilidad y control de incertidumbre. |
+
+: Objetos que convierten el resultado CRPTO en una conversación de comité.
+
+## Qué no afirma
+
+::: {.callout-warning}
+CRPTO no es un sistema en producción, no es certificación legal de fairness, no
+prueba cobertura condicional perfecta, no usa datos externos post-2020, no
+reemplaza SPO+ como minimizador universal de regret y no reabre el champion
+congelado. Es un resultado paper-facing sobre un panel histórico estático con
+artefactos, límites y pruebas de sincronía explícitos.
+:::
+
+## Por qué importa para IJDS
+
+La fortaleza IJDS no es el tamaño del modelo sino el contrato data-science:
+predicción calibrada, incertidumbre conformal, optimización robusta,
+trazabilidad de artefactos, guardrails reproducibles y una frontera honesta
+frente a trabajos cercanos. Esa combinación vuelve auditable una decisión que
+normalmente quedaría escondida entre una métrica predictiva y una política de
+portafolio.

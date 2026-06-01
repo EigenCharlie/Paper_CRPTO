@@ -15,9 +15,9 @@ La biblioteca local queda organizada en tres superficies excluyentes:
 | `Papers_tesis/supplement` | 28 | Soporte de appendix, robustness, caveats y future work cercano. |
 | `Papers_tesis/tesis` | 12 | Contexto amplio para el libro/tesis que no debe inflar el paper. |
 
-La regla practica es mantener el paper en el claim estrecho: **post-hoc
-conformal robust credit-portfolio decision audit desde artefactos PD
-congelados**. Lo que exige otro protocolo --- online, multi-distribucion,
+La regla práctica es mantener el paper en el claim estrecho: **post-hoc
+conformal robust credit-portfolio decisión audit desde artefactos PD
+congelados**. Lo que exige otro protocolo --- online, multi-distribución,
 dataset externo, causalidad, fairness legal o re-entrenamiento end-to-end ---
 vive en supplement/tesis aunque sea bibliograficamente muy valioso.
 
@@ -25,16 +25,27 @@ vive en supplement/tesis aunque sea bibliograficamente muy valioso.
 
 | Familia | Papers locales principales | Entra al cuerpo IJDS | Rol exacto en CRPTO |
 |---|---|---:|---|
-| Conformal foundations y risk control | Vovk; Angelopoulos/Bates; Bates RCPS; Learn-Then-Test; foundations monograph | Si | Fija cobertura marginal/particionada, control de riesgo y el lenguaje formal del bound. |
-| Limites condicionales, weighted y shift CP | Barber limits/beyond exchangeability; Tibshirani covariate shift; Guan localized; Jonkers; Bhattacharyya group-weighted; Yang MDCP | Parcial | Entra como guardrail: no vender cobertura condicional, ponderada o multi-distribucion sin protocolo nuevo. |
-| CP + robust optimization / prescriptive analytics | Bertsimas-Sim; Bertsimas-Gupta-Kallus; Bertsimas-Kallus; Johnstone-Cox; Patel; Sun PTC; Hu CRC | Si | Ubica el puente CP -> RO y muestra que CRPTO aporta el aterrizaje crediticio auditable con lineage. |
-| Certificados de decision conformal | Bao CROMS; Lekeufack CDT; Kiyani; Zhou CREDO/CREME; Lin inverse optimization; Zhao satisficing | Parcial | Soporta selector, A13/A20 y future work de CRPTO v2; no reemplaza el champion actual. |
-| P2P / Lending Club OR | Guo; Chi; Babaei; Torkian/Bamdad/Sarfaraz | Si | Evita overclaim: CRPTO no es el primer optimizador Lending Club; aporta incertidumbre conformal, certificado y trazabilidad. |
-| Credit scoring, fintech y fairness | Lessmann/Ayari en BibTeX; Jagtiani; Albanesi; Khandani; Blattner; Brevoort; Fuster; CFPB; FinRegLab | Parcial | Introduccion, MRM y limites de fairness/proxy; AUC y equidad no son el claim central. |
-| Decision-focused learning / SPO+ | Donti; Elmachtoub-Grigas; Mandi; Schutte | Si | Comparador de regret: SPO+ puede ganar regret, CRPTO compra auditabilidad verificable. |
-| Tail risk, OCE/CVaR y satisficing | Rockafellar-Uryasev; Ben-Tal/Teboulle; Zhao satisficing; non-monotonic CRC | Supplement | Justifica A12, A20, A22 y la lectura de comite sin promover un nuevo objective. |
-| Finance conformal portfolios y online CP | Noguer; Kato; Liu online universal portfolio; Gibbs-Candes ACI | Tesis/supplement | Muestra vecindad financiera y agenda secuencial; no es claim live/streaming de IJDS. |
-| IFRS9, MRM y credito prudencial | Basel; SR 11-7/ECB en referencias; credit invisibles/noise | Tesis | Contexto de gobernanza y tesis; se menciona como limite o implicacion, no como contribucion IJDS. |
+| Conformal foundations y risk control | Vovk; Angelopoulos/Bates; Bates RCPS; Learn-Then-Test; foundations monograph | Sí | Fija cobertura marginal/particionada, control de riesgo y el lenguaje formal del bound. |
+| Límites condicionales, weighted y shift CP | Barber limits/beyond exchangeability; Tibshirani covariate shift; Guan localized; Jonkers; Bhattacharyya group-weighted; Yang MDCP | Parcial | Entra como guardrail: no vender cobertura condicional, ponderada o multi-distribución sin protocolo nuevo. |
+| CP + robust optimization / prescriptive analytics | Bertsimas-Sim; Bertsimas-Gupta-Kallus; Bertsimas-Kallus; Johnstone-Cox; Patel; Sun PTC; Hu CRC | Sí | Ubica el puente CP -> RO y muestra que CRPTO aporta el aterrizaje crediticio auditable con lineage. |
+| Certificados de decisión conformal | Bao CROMS; Lekeufack CDT; Kiyani; Zhou CREDO/CREME; Lin inverse optimization; Zhao satisficing | Parcial | Soporta selector, A13/A20 y future work de CRPTO v2; no reemplaza el champion actual. |
+| P2P / Lending Club OR | Guo; Chi; Babaei; Torkian/Bamdad/Sarfaraz | Sí | Evita overclaim: CRPTO no es el primer optimizador Lending Club; aporta incertidumbre conformal, certificado y trazabilidad. |
+| Credit scoring, fintech y fairness | Lessmann/Ayari en BibTeX; Jagtiani; Albanesi; Khandani; Blattner; Brevoort; Fuster; CFPB; FinRegLab | Parcial | Introducción, MRM y límites de fairness/proxy; AUC y equidad no son el claim central. |
+| Decision-focused learning / SPO+ | Donti; Elmachtoub-Grigas; Mandi; Schutte | Sí | Comparador de regret: SPO+ puede ganar regret, CRPTO compra auditabilidad verificable. |
+| Tail risk, OCE/CVaR y satisficing | Rockafellar-Uryasev; Ben-Tal/Teboulle; Zhao satisficing; non-monotonic CRC | Supplement | Justifica A12, A20, A22 y la lectura de comité sin promover un nuevo objective. |
+| Finance conformal portfolios y online CP | Noguer; Kato; Liu online universal portfolio; Gibbs-Candès ACI | Tesis/supplement | Muestra vecindad financiera y agenda secuencial; no es claim live/streaming de IJDS. |
+| IFRS9, MRM y crédito prudencial | Basel; SR 11-7/ECB en referencias; credit invisibles/noise | Tesis | Contexto de gobernanza y tesis; se menciona como límite o implicacion, no como contribución IJDS. |
+
+## Matriz de claims protegidos
+
+| Claim que queremos defender | Bibliografía que lo protege | Frase que debe evitarse |
+|---|---|---|
+| La contribución no es AUC sino decisión auditable. | Credit scoring, fintech lending, P2P OR y DFL/SPO+. | "CRPTO gana porque predice mejor". |
+| La garantía conformal se usa con cautela. | Foundations CP, limits of conditional inference, weighted/localized CP. | "Tenemos cobertura condicional perfecta". |
+| El bound del funded set requiere una lectura ponderada explícita. | Risk control, weighted CP, conformal robust optimization. | "La validez marginal controla automáticamente cualquier subportfolio adaptativo". |
+| El resultado no es un punto aislado. | Robust optimization, satisficing y robust-region evidence. | "Encontramos una policy que casualmente pasa". |
+| SPO+ es un comparador fuerte pero no el mismo objeto de gobierno. | Decision-focused learning y robust losses. | "CRPTO domina a SPO+ en regret". |
+| A22--A24 son journal hardening, no promoción de un nuevo champion. | Tail risk/OCE/CVaR, MDCP y online CP. | "El paper ya resuelve cola, multi-distribución y streaming en producción". |
 
 ## Mapa por familia
 
@@ -67,7 +78,7 @@ vive en supplement/tesis aunque sea bibliograficamente muy valioso.
 :::
 
 ::: {.bibliography-card}
-### Decision certificates
+### Decisión certificates
 **Papers:** CROM, CREDO, CREME, conformal satisficing.
 
 **Uso:** supplement y future work.
@@ -139,7 +150,7 @@ La tesis puede usar el mapa completo. Ahí sí conviene ampliar:
 - credit invisibility, ruido de medición y proxies protegidos;
 - ECL/IFRS9 y survival como agenda prudencial;
 - online/multi-distribution conformal como protocolo futuro;
-- decision certificates como posible evolución del bound-aware audit;
+- decisión certificates como posible evolución del bound-aware audit;
 - P2P/Lending Club OR como linaje aplicado de la optimización.
 
 ## Regla de claim

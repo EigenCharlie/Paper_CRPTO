@@ -7,6 +7,14 @@ page-layout: article
 
 Esta página es el **índice maestro** del CRPTO. Cumple un rol específico que ningún chapter narrativo cumple: dar a un revisor (académico, regulatorio o interno) la capacidad de tomar cualquier claim del paper, encontrar el artefacto exacto que lo soporta, identificar el script generador y verificar el guardrail que mantiene la coherencia. Es el contrato de trazabilidad operativa del proyecto.
 
+| Claim del paper | Artefacto que lo ancla | Guardrail que lo protege | Lectura rápida |
+|---|---|---|---|
+| La PD es insumo calibrado, no contribución principal. | `models/pd_canonical.*`, `crpto_table0_key_metrics.csv` | Manifest + final-sync tests | La base predictiva es estable y trazable. |
+| La incertidumbre conformal entra al LP robusto. | `conformal_intervals_mondrian.parquet`, `champion_portfolio_policy.json` | Conformal/model tests + policy config | El intervalo no se gráfica al final: cambia la decisión. |
+| El bound se audita sobre el funded set. | `portfolio_bound_aware_bound_eval.parquet`, `final_project_promotion.json` | `test_crpto_final_sync.py` | `V`, `Gamma_CP` y violation vienen del portafolio promovido. |
+| El champion no es un punto aislado. | `crpto_tableA18_robust_region_policy_family.csv` | Journal-package status + DVC lock | `45/45` policies pasan `alpha = 0.01`. |
+| El supplement no re-promueve otro método. | A12--A24 + status JSONs | Scope notes + smoke tests | Tail, MDCP/online y SPO+ son diagnósticos o comparadores. |
+
 ```{python}
 #| label: p1-traceability-setup
 #| include: false
@@ -323,7 +331,7 @@ Si cualquier tabla del paquete (A0–A18) o cualquier figura (7–14) contradice
 status_files = [
     {
         "Path": "models/final_project_promotion.json",
-        "Rol": "Champion oficial + region robusta + comparadores documentados",
+        "Rol": "Champion oficial + región robusta + comparadores documentados",
         "Schema": "2026-04-05.1",
     },
     {
@@ -403,7 +411,7 @@ pd.DataFrame(status_files)
 | ¿Cuál es el bound exacto y cómo se demuestra? | [`02-marco-teorico.qmd`](02-marco-teorico.qmd) (`thm-conformal-feasibility`) |
 | ¿Cuál es la región robusta? | [`04-resultados.qmd`](04-resultados.qmd) sección `Región robusta completa` + Fig 14 |
 | ¿Qué pasó con el shift COVID? | [`04-resultados.qmd`](04-resultados.qmd) (@sec-crpto-shift-stability) |
-| ¿Cuáles son los appendices journal? | [`07-apendice-robustez.qmd`](07-apendice-robustez.qmd) (@sec-p1-journal-appendix) |
+| ¿Cuáles son los apéndices journal? | [`07-apendice-robustez.qmd`](07-apendice-robustez.qmd) (@sec-p1-journal-appendix) |
 | ¿Cómo regenero todo? | Esta página, sección Runbook arriba |
 | ¿Cómo sé que un rerun no reabre búsqueda? | Esta página, sección `Runbook: familias congeladas vs familias de búsqueda` |
 

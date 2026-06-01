@@ -58,7 +58,7 @@ Términos técnicos usados en el manuscrito y el dossier extendido. Se ordenan a
 :   Evento binario `y = 1` para préstamos con status `Charged Off` o `Default` en LendingClub. Default rate base: ≈ 12 %.
 
 **DPD (Demographic Parity Difference)**
-:   Métrica de fairness: `|P(ŷ=1|A=a) − P(ŷ=1|A=b)|`. Auditada por grupo demográfico proxy en `chapters/10-fair-lending.qmd`.
+:   Métrica de fairness: `|P(Å·=1|A=a) − P(Å·=1|A=b)|`. Auditada por grupo demográfico proxy en `chapters/10-fair-lending.qmd`.
 
 **DVC**
 :   Data Version Control. Versiona artefactos grandes (parquets, modelos) fuera de Git, con remoto compartido.
@@ -98,7 +98,7 @@ Términos técnicos usados en el manuscrito y el dossier extendido. Se ordenan a
 ## L
 
 **LGD (Loss Given Default)**
-:   Fracción del exposure perdida cuando ocurre default. En CRPTO se trata como punto fijo `0.45` (proxy estándar) y como upper bound conformal en algunas variantes robustas.
+:   Fracción del exposure pérdida cuando ocurre default. En CRPTO se trata como punto fijo `0.45` (proxy estándar) y como upper bound conformal en algunas variantes robustas.
 
 ## M
 

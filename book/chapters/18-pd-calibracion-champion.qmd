@@ -3,10 +3,12 @@
 Dossier predictivo que sostiene el score PD usado por CRPTO y sus decisiones robustas.
 
 ::: {.callout-note}
-Este capítulo es un dossier curado desde secciones previas del libro original que CRPTO reutilizaba implícitamente. Los bloques de código se conservan como referencia estática para evitar que el render del libro dependa de ejecuciones exploratorias no necesarias.
+Nota editorial: este capítulo conserva material técnico de soporte para tesis, supplement y revisión. Los bloques de código quedan acotados visualmente por defecto; la lectura principal está en el texto, las tablas y las figuras.
 :::
 
-## Fuente curada: `book/chapters/06-pd-modeling/06a-logistic-regression-baseline.qmd`
+::: {.source-note}
+**Procedencia:** `book/chapters/06-pd-modeling/06a-logistic-regression-baseline.qmd`
+:::
 
 ## Regresión Logística: Baseline Interpretable
 
@@ -84,7 +86,9 @@ La comparación LR vs. CatBoost justifica el uso de un modelo más complejo:
 
 Estas mejoras justifican la complejidad adicional de CatBoost para un modelo de producción, mientras que la LR queda como referencia interpretable para auditoría regulatoria.
 
-## Fuente curada: `book/chapters/06-pd-modeling/06b-catboost-tuned.qmd`
+::: {.source-note}
+**Procedencia:** `book/chapters/06-pd-modeling/06b-catboost-tuned.qmd`
+:::
 
 ## CatBoost: Default y Optimizado con Optuna
 
@@ -98,12 +102,12 @@ El gradient boosting estándar calcula los residuos sobre las mismas observacion
 
 #### Arboles Oblivious (Simétricos)
 
-CatBoost utiliza por defecto *oblivious decision trees* (ODT), donde cada nivel del árbol usa la **misma condición de split** para todos los nodos de ese nivel. Esto significa que un árbol de profundidad $d$ tiene exactamente $2^d$ hojas, y la estructura se puede representar como una tabla de verdad de $d$ condiciones binarias.
+CatBoost utiliza por defecto *oblivious decisión trees* (ODT), donde cada nivel del árbol usa la **misma condición de split** para todos los nodos de ese nivel. Esto significa que un árbol de profundidad $d$ tiene exactamente $2^d$ hojas, y la estructura se puede representar como una tabla de verdad de $d$ condiciones binarias.
 
 Las ventajas para credit scoring son:
 
 - **Regularización implícita**: la simetría reduce drásticamente el número de parámetros libres, previniendo overfitting.
-- **Velocidad de inferencia**: la predicción se resuelve como una tabla de lookup, no como una travesía del árbol.
+- **Velocidad de inferencia**: la predicción se resuelve como una tabla de lookup, no como una travésía del árbol.
 - **Estabilidad**: modelos entrenados con semillas diferentes producen predicciones más similares entre sí.
 
 #### Manejo Nativo de Categorías y NaN
@@ -129,13 +133,13 @@ La selección de CatBoost como modelo principal no es arbitraria. Para aplicacio
 | **Calibración** | Mejor out-of-box | Requiere post-hoc | Requiere post-hoc |
 | **Sensibilidad a HPO** | Baja (defaults robustos) | Media-alta | Alta |
 | **Arboles** | Oblivious (regularizados) | Asimétricos | Asimétricos (leaf-wise) |
-| **Ordered boosting** | Si | No | No |
+| **Ordered boosting** | Sí | No | No |
 
 : Comparación de frameworks de gradient boosting para credit scoring
 
 ::: {.callout-tip}
 ## Calibración out-of-box
-La combinación de ordered boosting y árboles oblivious produce predicciones que son *a priori* mejor calibradas que las de XGBoost/LightGBM. Esto es relevante en credit scoring, donde las probabilidades no solo deben ordenar bien a los clientes (discriminación), sino reflejar la tasa de default real (calibración). Aun así, la calibración post-hoc es necesaria para uso regulatorio --- ver `sec-calibration-selection`.
+La combinación de ordered boosting y árboles oblivious produce predicciones que son *a priori* mejor calibradas que las de XGBoost/LightGBM. Esto es relevante en credit scoring, donde las probabilidades no solo deben ordenar bien a los clientes (discriminación), sino reflejar la tasa de default real (calibración). Aún así, la calibración post-hoc es necesaria para uso regulatorio --- ver `sec-calibration-selection`.
 :::
 
 ::: {.callout-note}
@@ -456,7 +460,9 @@ El pipeline exporta valores SHAP usando la implementación **nativa de CatBoost*
 
 Estos artefactos alimentan las explicaciones globales y locales del capítulo de interpretabilidad (`sec-global-explanations`) y el desarrollo ampliado de MRM (`sec-mrm-report-detail`).
 
-## Fuente curada: `book/chapters/06-pd-modeling/06c-calibration-selection.qmd`
+::: {.source-note}
+**Procedencia:** `book/chapters/06-pd-modeling/06c-calibration-selection.qmd`
+:::
 
 ## Selección de Calibración
 
@@ -875,7 +881,9 @@ La `fig-calibration-curves` muestra las curvas de calibración (reliability diag
 El calibrador se aplica a **todas** las predicciones downstream del modelo. Si el archivo `.pkl` se corrompe o se pierde, las predicciones del modelo revertirán a los scores brutos sin calibrar --- con Brier de 0.205 en lugar de 0.154. El pipeline verifica la existencia del calibrador al inicio de cada script y falla con un error explícito si no lo encuentra. DVC rastrea este artefacto junto con el modelo base.
 :::
 
-## Fuente curada: `book/chapters/06-pd-modeling/06d-model-comparison-champion.qmd`
+::: {.source-note}
+**Procedencia:** `book/chapters/06-pd-modeling/06d-model-comparison-champion.qmd`
+:::
 
 ## Comparación de Modelos y Selección del Champion
 
@@ -1009,7 +1017,7 @@ La figura `fig-pd-pr` complementa el AUC-ROC con una lectura más exigente para 
 
 ### Diagnóstico fino del champion
 
-El Streamlit local añadía una capa diagnóstica que vale la pena fijar en el libro porque responde una objeción frecuente: un champion puede verse sólido en promedio y aun así esconder problemas en eventos raros, slices de cartera o corridas de replay. El snapshot oficial deja tres conclusiones claras:
+El Streamlit local añadía una capa diagnóstica que vale la pena fijar en el libro porque responde una objeción frecuente: un champion puede verse sólido en promedio y aún así esconder problemas en eventos raros, slices de cartera o corridas de replay. El snapshot oficial deja tres conclusiones claras:
 
 1. la calibración global sigue siendo fuerte (`ECE = 0.0057`);
 2. los puntos más exigentes aparecen en slices específicos, no en el promedio;

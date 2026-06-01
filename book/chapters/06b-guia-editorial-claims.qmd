@@ -96,7 +96,7 @@ La literatura más reciente marca hacia dónde crecería una versión futura:
 CROMS sugiere selección de modelos conformales con criterio de robust
 optimization [10]; end-to-end conformal calibration y conformal risk training
 apuntan a entrenar la calibración con la decisión aguas abajo [11], [12];
-multi-distribution robust CP y online CP via universal portfolios apuntan a
+multi-distribution robust CP y online CP vía universal portfolios apuntan a
 shift y streaming [13], [14]. Online DFL abre el comparador dinámico para
 decisiones repetidas [16]. Ninguna de esas líneas invalida el paper actual; más
 bien confirma que la dirección del paper es contemporánea y fértil.
@@ -211,9 +211,9 @@ improvisar: si llega una objeción nueva, primero se busca aquí.
 
 ### Paquete journal-ready CRPTO
 
-Las paginas @sec-p1-manuscript-blueprint y @sec-p1-journal-appendix convierten
-esta guia editorial en un paquete de escritura mas cercano al manuscrito. El
-blueprint define venue target, abstract operativo, claims C1--C7, notacion unica
+Las páginas @sec-p1-manuscript-blueprint y @sec-p1-journal-appendix convierten
+esta guía editorial en un paquete de escritura más cercano al manuscrito. El
+blueprint define venue target, abstract operativo, claims C1--C7, notacion única
 y plan de figuras/tablas. El appendix journal agrega A12--A24 y las figuras
 paper-grade generadas desde artefactos congelados.
 
@@ -222,16 +222,16 @@ paper-grade generadas desde artefactos congelados.
 | Blueprint del manuscrito | Estructura paper-ready y mapa claim -> artifact -> test -> location | `06-blueprint-manuscrito.qmd` |
 | Figura CRPTO limpia | Figura 1 IJDS | `crpto_fig1_journal_pipeline.png` |
 | Figura pila del bound | Puente visual entre endpoint conformal, identidad, supuesto y certificado | `crpto_fig20_bound_claim_layers.png` |
-| Figura alpha -> `Gamma_CP` -> funded set | Puente teoria-metodo | `crpto_fig13_alpha_gamma_funded_set.png` |
-| Heatmap region robusta | Evidencia visual `45/45` | `crpto_fig14_robust_region_heatmap.png` |
+| Figura alpha -> `Gamma_CP` -> funded set | Puente teoría-método | `crpto_fig13_alpha_gamma_funded_set.png` |
+| Heatmap región robusta | Evidencia visual `45/45` | `crpto_fig14_robust_region_heatmap.png` |
 | A12--A24 | Robustness appendix journal | `scripts/build_crpto_journal_package.py`; `scripts/build_tail_satisficing_challenger_audit.py`; `scripts/build_tail_constrained_reoptimization.py`; `scripts/build_distribution_robustness_diagnostics.py` |
-| A22--A24 (re-opt de cola, multi-distribucion y online) | Cierre P2 sin reabrir champion | `scripts/build_tail_constrained_reoptimization.py`; `scripts/build_distribution_robustness_diagnostics.py` |
-| Status del paquete | Trazabilidad y fuente canonica | `models/crpto_journal_package_status.json`; `models/crpto_tail_constrained_reopt_status.json`; `models/crpto_distribution_robustness_status.json` |
+| A22--A24 (re-opt de cola, multi-distribución y online) | Cierre P2 sin reabrir champion | `scripts/build_tail_constrained_reoptimization.py`; `scripts/build_distribution_robustness_diagnostics.py` |
+| Status del paquete | Trazabilidad y fuente canónica | `models/crpto_journal_package_status.json`; `models/crpto_tail_constrained_reopt_status.json`; `models/crpto_distribution_robustness_status.json` |
 
 : Material journal-ready agregado al CRPTO {#tbl-crpto-journal-ready-package}
 
 La regla de jerarquia sigue intacta: si una tabla diagnostica nueva entra en
-tension con `models/final_project_promotion.json`, gana la promocion oficial.
+tension con `models/final_project_promotion.json`, gana la promoción oficial.
 A12--A24 fortalecen robustez y escritura journal, pero no re-promueven el
 champion: A22 reporta un *tail-constrained challenger*, no un nuevo champion.
 
@@ -277,7 +277,7 @@ cola como extensión P2.
 [13] Yang and Jin (2026), *Multi-Distribution Robust Conformal Prediction*.
 Motiva validación robusta ante múltiples fuentes o distribuciones.
 
-[14] Liu, Dobriban and Orabona (2026), *Online Conformal Prediction via
+[14] Liu, Dobriban and Orabona (2026), *Online Conformal Prediction vía
 Universal Portfolio Algorithms*. Motiva recalibración online bajo streaming.
 
 [15] Elmachtoub and Grigas (2022), *Smart Predict, then Optimize*. Base de SPO+
@@ -286,7 +286,7 @@ y decision-focused learning.
 [16] Capitaine et al. (2026), *Online Decision-Focused Learning*. Extiende DFL a
 decisiones online y drift.
 
-[17] Powell (2026), *Sequential Decision Analytics and Modeling*. Da el lenguaje
+[17] Powell (2026), *Sequential Decisión Analytics and Modeling*. Da el lenguaje
 CFA/VFA/DLA para clasificar CRPTO como política parametrizada auditable.
 
 La biblioteca de tesis (`Papers_tesis`) añade las siguientes fuentes, ya

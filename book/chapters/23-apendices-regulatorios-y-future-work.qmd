@@ -12,7 +12,7 @@ tesis y el paper deben separar tres categorías:
 |---|---|---|---|
 | Diagnóstico seguro | Sí, si consume artefactos congelados. | A20 tail-satisficing, A21 cluster bounds, A22 challenger CVaR/OCE, A23 MD coverage read-only, A24 ACI replay. | Render, citas y pruebas documentales. |
 | Posicionamiento literario | Sí, como related work o limitación. | Hu CRC, CREDO, CREME, ordinal CP credit scoring, P2P robust lending. | No prometer resultados no ejecutados. |
-| Método nuevo | No como requisito del paper actual. | CQR/utility-directed CP promovido [@cortesgomez2025utility], conformal decision theory [@lekeufack2023cdt], CRC como selector, CREME para escoger robustez, online conformal live, E2E conformal training. | Nuevo protocolo, drift report y permiso explícito si toca champion. |
+| Método nuevo | No como requisito del paper actual. | CQR/utility-directed CP promovido [@cortesgomez2025utility], conformal decisión theory [@lekeufack2023cdt], CRC como selector, CREME para escoger robustez, online conformal live, E2E conformal training. | Nuevo protocolo, drift report y permiso explícito si toca champion. |
 
 La regla editorial es simple: si una idea cambia intervalos, PD, política,
 selector o exact bound, es future work. Si solo lee outputs congelados y ayuda a
@@ -62,7 +62,7 @@ Esta pieza es deliberadamente **diagnóstica**: es un análisis comparativo cong
 
 ### Costo de misclasificación Stage 1/2
 
-La superficie de costo Stage 1/2 (artefacto `stage_cost_by_grade.parquet`) ayuda a defender por qué una señal de incertidumbre puede justificar prudencia aun cuando la PD puntual no cruza un umbral estático. En CRPTO, esta pieza funciona como puente conceptual: el funded set y el bound alpha-gamma ya muestran no-cobertura ponderada; el apéndice regulatorio traduce esa lógica hacia deterioro crediticio y errores de staging.
+La superficie de costo Stage 1/2 (artefacto `stage_cost_by_grade.parquet`) ayuda a defender por qué una señal de incertidumbre puede justificar prudencia aún cuando la PD puntual no cruza un umbral estático. En CRPTO, esta pieza funciona como puente conceptual: el funded set y el bound alpha-gamma ya muestran no-cobertura ponderada; el apéndice regulatorio traduce esa lógica hacia deterioro crediticio y errores de staging.
 
 ### Temporal uncertainty y conformal online
 

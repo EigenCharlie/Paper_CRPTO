@@ -3,10 +3,12 @@
 Base conceptual que el capítulo CRPTO original daba por conocida: PD, calibración, métricas y modelos tabulares.
 
 ::: {.callout-note}
-Este capítulo es un dossier curado desde secciones previas del libro original que CRPTO reutilizaba implícitamente. Los bloques de código se conservan como referencia estática para evitar que el render del libro dependa de ejecuciones exploratorias no necesarias.
+Nota editorial: este capítulo conserva material técnico de soporte para tesis, supplement y revisión. Los bloques de código quedan acotados visualmente por defecto; la lectura principal está en el texto, las tablas y las figuras.
 :::
 
-## Fuente curada: `book/chapters/02-glossary/02a-credit-risk-fundamentals.qmd`
+::: {.source-note}
+**Procedencia:** `book/chapters/02-glossary/02a-credit-risk-fundamentals.qmd`
+:::
 
 ## Fundamentos de Riesgo Crediticio
 
@@ -95,35 +97,37 @@ En Lending Club, los préstamos se clasifican en grados de A (menor riesgo) a G 
 
 : Grados de riesgo de Lending Club (valores aproximados del dataset)
 
-### Credit scoring como infraestructura de asignacion
+### Credit scoring como infraestructura de asignación
 
 La literatura nueva refuerza una lectura importante para la tesis: un modelo de
-credit scoring no es solo un clasificador. En originacion, pricing,
-provisionamiento y seleccion de portafolio, el score es una infraestructura de
-asignacion de capital y de oportunidades. Por eso un AUC aceptable no basta si
-la probabilidad esta mal calibrada, si el ruido de medicion afecta a ciertos
-segmentos, o si la decision downstream amplifica una debilidad del score.
+credit scoring no es solo un clasificador. En originación, pricing,
+provisionamiento y selección de portafolio, el score es una infraestructura de
+asignación de capital y de oportunidades. Por eso un AUC aceptable no basta si
+la probabilidad está mal calibrada, si el ruido de medición afecta a ciertos
+segmentos, o si la decisión downstream amplifica una debilidad del score.
 
-La tesis debe usar esta distincion para evitar dos errores. El primero es
+La tesis debe usar esta distinción para evitar dos errores. El primero es
 presentar CRPTO como otra competencia de ranking; los benchmarks de credit
 scoring ya cubren ese terreno [@lessmann2015; @ayari2026]. El segundo es
-tratar fairness, credit invisibility y medicion ruidosa como apendices eticos
-separados. En credito, esos problemas cambian el conjunto de personas que
+tratar fairness, credit invisibility y medición ruidosa como apéndices eticos
+separados. En crédito, esos problemas cambian el conjunto de personas que
 puede acceder a precio, cupo o financiacion [@khandani2010consumer;
 @brevoort2016creditinvisibles; @blattner2021noise; @fuster2022predictably].
-La contribucion de CRPTO se vuelve mas clara si la PD calibrada se describe
-como un insumo gobernado que despues entra a una decision robusta, no como un
+La contribución de CRPTO se vuelve más clara si la PD calibrada se describe
+como un insumo gobernado que después entra a una decisión robusta, no como un
 fin en si mismo.
 
 | Capa | Riesgo si se ignora | Como lo usa CRPTO |
 |---|---|---|
-| Calibracion de PD | ECL, pricing y restricciones de riesgo se vuelven numericamente fragiles. | Gate antes de construir intervalos y portafolios. |
+| Calibración de PD | ECL, pricing y restricciones de riesgo se vuelven numericamente frágiles. | Gate antes de construir intervalos y portafolios. |
 | Segmentos y credit grades | La cobertura global puede ocultar subcobertura en grupos de riesgo. | Particiones Mondrian y auditorias por grade/score. |
-| Ruido y credit invisibility | El score puede ser menos informativo para poblaciones con poca historia crediticia. | Limite declarado por ausencia de atributos protegidos directos. |
-| ECL y provisionamiento | El rango de perdida importa tanto como el punto estimado. | Agenda de tesis/appendix, no claim central IJDS. |
-| Decision de portafolio | Un buen ranking puede producir una mala asignacion de capital. | Optimización robusta con incertidumbre conformal. |
+| Ruido y credit invisibility | El score puede ser menos informativo para poblaciones con poca historia crediticia. | Límite declarado por ausencia de atributos protegidos directos. |
+| ECL y provisionamiento | El rango de pérdida importa tanto como el punto estimado. | Agenda de tesis/appendix, no claim central IJDS. |
+| Decisión de portafolio | Un buen ranking puede producir una mala asignación de capital. | Optimización robusta con incertidumbre conformal. |
 
-## Fuente curada: `book/chapters/02-glossary/02b-ml-statistics-foundations.qmd`
+::: {.source-note}
+**Procedencia:** `book/chapters/02-glossary/02b-ml-statistics-foundations.qmd`
+:::
 
 ## Fundamentos de ML y Estadística
 
