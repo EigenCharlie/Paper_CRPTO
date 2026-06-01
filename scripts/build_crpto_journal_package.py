@@ -51,6 +51,11 @@ BOUND_EVAL_PATH = (
     / "portfolio_bound_aware_bound_eval.parquet"
 )
 ALPHA_SWEEP_PATH = DATA_DIR / "alpha_sweep_pareto_mondrian.parquet"
+JOURNAL_PIPELINE_ASSETS = [
+    FIG_DIR / "crpto_fig1_journal_pipeline.png",
+    FIG_DIR / "crpto_fig1_journal_pipeline.pdf",
+    FIG_DIR / "crpto_fig1_journal_pipeline.svg",
+]
 
 DEFAULT_LGD = 0.45
 LGD_GRID = [0.35, 0.45, 0.60]
@@ -110,6 +115,21 @@ def _save_figure(name: str) -> list[Path]:
     print(f"Wrote {png_path.relative_to(ROOT)}")
     print(f"Wrote {pdf_path.relative_to(ROOT)}")
     return [png_path, pdf_path]
+
+
+def _publish_journal_pipeline_assets() -> list[Path]:
+    """Mirror the hand-authored IJDS pipeline figure into the book assets."""
+    missing = [
+        path.relative_to(ROOT).as_posix() for path in JOURNAL_PIPELINE_ASSETS if not path.exists()
+    ]
+    if missing:
+        raise FileNotFoundError(
+            "Missing journal pipeline assets: " + ", ".join(missing),
+        )
+    _mirror_to_book(*JOURNAL_PIPELINE_ASSETS)
+    for path in JOURNAL_PIPELINE_ASSETS:
+        print(f"Published static asset {path.relative_to(ROOT)}")
+    return JOURNAL_PIPELINE_ASSETS
 
 
 def _relative(paths: list[Path]) -> list[str]:
@@ -563,12 +583,11 @@ def _plot_regret_auditability_frontier(frontier: pd.DataFrame) -> list[Path]:
 
 
 def _plot_conceptual_pipeline() -> list[Path]:
-    """Publish the hand-authored editorial master diagram as the conceptual pipeline.
+    """Publish the hand-authored editorial master diagram as a companion pipeline.
 
-    The official CRPTO pipeline figure is the paper-grade master diagram in
-    ``book/assets/figures/editorial/diagrama-crpto.png``. This copies it into the
-    figure package as ``crpto_fig12`` so the book appendix and the paper Figure 1
-    reuse the same paper-grade asset instead of a plain block diagram.
+    The IJDS Figure 1 is the static ``crpto_fig1_journal_pipeline`` asset. This
+    function keeps the longer book/editorial master diagram available as
+    ``crpto_fig12`` for the companion and thesis surfaces.
     """
     from PIL import Image
 
@@ -680,7 +699,12 @@ def _plot_alpha_gamma_funded_set(bound_eval: pd.DataFrame, promotion: dict[str, 
     if data.empty:
         data = bound_eval.sort_values(["return_first_rank", "alpha"]).groupby("alpha").head(1)
 
-    fig, ax1 = plt.subplots(figsize=(8.5, 5.2))
+    fig, (ax1, ax2) = plt.subplots(
+        1,
+        2,
+        figsize=(11.2, 4.8),
+        gridspec_kw={"width_ratios": [1.45, 1.0]},
+    )
     ax1.plot(data["alpha"], data["gamma_cp"], marker="o", label="Gamma_CP", color="#0B5CAD")
     ax1.plot(
         data["alpha"],
@@ -696,20 +720,45 @@ def _plot_alpha_gamma_funded_set(bound_eval: pd.DataFrame, promotion: dict[str, 
         label="sqrt(alpha)",
         color="#616161",
     )
-    ax1.set_xlabel("alpha")
+    ax1.axvline(0.01, color="#263238", linestyle=":", linewidth=1.1)
+    alpha01 = data.loc[data["alpha"].eq(0.01)]
+    if not alpha01.empty:
+        row = alpha01.iloc[0]
+        ax1.annotate(
+            "alpha=0.01\nexact pass",
+            (float(row["alpha"]), float(row["weighted_miscoverage_V"])),
+            xytext=(18, 22),
+            textcoords="offset points",
+            arrowprops={"arrowstyle": "->", "color": "#263238", "lw": 0.9},
+            fontsize=8.5,
+        )
+    ax1.set_xlabel("Conformal alpha")
     ax1.set_ylabel("Weighted bound quantities")
+    ax1.set_title("Bound quantities")
     ax1.grid(alpha=0.25)
-    ax2 = ax1.twinx()
-    ax2.plot(data["alpha"], data["n_funded"], marker="^", color="#2E7D32", label="n_funded")
+    ax1.legend(loc="best", frameon=False)
+
+    ax2.plot(data["alpha"], data["n_funded"], marker="^", color="#2E7D32", linewidth=2.0)
+    ax2.fill_between(data["alpha"], data["n_funded"], alpha=0.14, color="#2E7D32")
+    ax2.axvline(0.01, color="#263238", linestyle=":", linewidth=1.1)
+    ax2.set_xlabel("Conformal alpha")
     ax2.set_ylabel("Funded loans")
-    lines, labels = ax1.get_legend_handles_labels()
-    lines2, labels2 = ax2.get_legend_handles_labels()
-    ax1.legend(lines + lines2, labels + labels2, loc="best", frameon=False)
-    ax1.set_title("Alpha to Gamma_CP to funded-set behavior")
+    ax2.set_title("Funded-set size")
+    ax2.grid(alpha=0.25)
+    fig.suptitle("Alpha to Gamma_CP to funded-set audit", fontsize=14, fontweight="bold")
+    fig.text(
+        0.5,
+        0.01,
+        "The promoted policy is read through both quantities: weighted noncoverage V and the realized conformal robustness premium Gamma_CP.",
+        ha="center",
+        fontsize=8.8,
+        color="#455A64",
+    )
+    fig.tight_layout(rect=(0, 0.05, 1, 0.94))
     return _save_figure("crpto_fig13_alpha_gamma_funded_set")
 
 
-def _plot_robust_region_heatmap(shortlist: pd.DataFrame) -> list[Path]:
+def _plot_robust_region_heatmap(shortlist: pd.DataFrame, promotion: dict[str, Any]) -> list[Path]:
     pivot = shortlist.pivot_table(
         index="risk_tolerance",
         columns="gamma",
@@ -730,8 +779,49 @@ def _plot_robust_region_heatmap(shortlist: pd.DataFrame) -> list[Path]:
             value = pivot.iloc[i, j]
             if pd.notna(value):
                 ax.text(j, i, f"{value / 1000:.0f}K", ha="center", va="center", color="white")
+    champion = promotion["final_champion"]
+    champion_gamma = float(champion["gamma"])
+    champion_tau = float(champion["risk_tolerance"])
+    if not pivot.empty:
+        col = int(np.argmin(np.abs(pivot.columns.to_numpy(dtype=float) - champion_gamma)))
+        row = int(np.argmin(np.abs(pivot.index.to_numpy(dtype=float) - champion_tau)))
+        ax.scatter(
+            col,
+            row,
+            marker="*",
+            s=360,
+            color="#FDD835",
+            edgecolor="#263238",
+            linewidth=1.1,
+            zorder=4,
+        )
+        ax.annotate(
+            "economic\nchampion",
+            (col, row),
+            xytext=(10, -24),
+            textcoords="offset points",
+            color="#263238",
+            fontsize=8.5,
+            fontweight="bold",
+            bbox={
+                "boxstyle": "round,pad=0.18",
+                "facecolor": "white",
+                "edgecolor": "none",
+                "alpha": 0.82,
+            },
+            zorder=5,
+        )
     cbar = fig.colorbar(im, ax=ax)
     cbar.set_label("Realized return")
+    fig.text(
+        0.5,
+        0.01,
+        "All 45 policies in the final region pass the exact alpha=0.01 funded-set check.",
+        ha="center",
+        fontsize=8.8,
+        color="#455A64",
+    )
+    fig.tight_layout(rect=(0, 0.04, 1, 1))
     return _save_figure("crpto_fig14_robust_region_heatmap")
 
 
@@ -746,7 +836,7 @@ def _write_markdown_dossier(status: dict[str, Any]) -> Path:
         "## Standalone Scope - 2026-05-12",
         "",
         "This package is the journal/appendix layer for `Paper_CRPTO`. It is intentionally",
-        "larger than the short paper: A12--A21, Figures 12--15 and the robustness notes",
+        "larger than the short paper: A12--A24, Figures 1, 12--20 and the robustness notes",
         "can be selected into a journal appendix, reviewer response or future thesis",
         "chapter without changing the official champion.",
         "A20--A21 are generated by `scripts/build_tail_satisficing_challenger_audit.py`",
@@ -761,7 +851,7 @@ def _write_markdown_dossier(status: dict[str, Any]) -> Path:
         "",
         "## Scope notes",
         "",
-        "- A12--A21 are diagnostic robustness, comparator and packaging tables.",
+        "- A12--A24 are diagnostic robustness, comparator and packaging tables.",
         "- A20--A21 are diagnostic challenger and cluster-bound audit tables from",
         "  the separate tail-satisficing audit script.",
         "- Budget and segment-cap sensitivity are funded-set diagnostics, not",
@@ -793,7 +883,7 @@ def _write_markdown_dossier(status: dict[str, Any]) -> Path:
         "- `book/chapters/06-blueprint-manuscrito.qmd` uses",
         "  these artifacts to define the paper outline and final table/figure plan.",
         "- `book/chapters/07-apendice-robustez.qmd`",
-        "  renders A12--A21 and Figures 12--15 plus the bound-claim stack figure.",
+        "  renders A12--A24 and Figures 1, 12--20 plus the bound-claim stack figure.",
         "",
     ]
     path.write_text("\n".join(lines), encoding="utf-8", newline="")
@@ -838,10 +928,11 @@ def build_journal_package() -> dict[str, Any]:
     )
     regret_frontier = _build_regret_auditability_frontier(spo_status, stability, promotion)
     artifacts += _write_table("crpto_tableA19_regret_auditability_frontier", regret_frontier)
+    artifacts += _publish_journal_pipeline_assets()
     artifacts += _plot_conceptual_pipeline()
     artifacts += _plot_bound_claim_layers()
     artifacts += _plot_alpha_gamma_funded_set(bound_eval, promotion)
-    artifacts += _plot_robust_region_heatmap(shortlist)
+    artifacts += _plot_robust_region_heatmap(shortlist, promotion)
     artifacts += _plot_regret_auditability_frontier(regret_frontier)
 
     status = {
@@ -860,6 +951,7 @@ def build_journal_package() -> dict[str, Any]:
                 SHORTLIST_PATH,
                 BOUND_EVAL_PATH,
                 ALPHA_SWEEP_PATH,
+                *JOURNAL_PIPELINE_ASSETS,
             ]
         ),
         "bootstrap_draws": BOOTSTRAP_DRAWS,

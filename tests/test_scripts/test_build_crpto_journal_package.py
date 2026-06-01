@@ -28,6 +28,9 @@ def test_build_crpto_journal_package_script_runs() -> None:
     generated = [
         Path("models/crpto_journal_package_status.json"),
         Path("docs/research/crpto_journal_package_2026-05-04.md"),
+        Path("book/assets/figures/publication/crpto_fig1_journal_pipeline.png"),
+        Path("book/assets/figures/publication/crpto_fig1_journal_pipeline.pdf"),
+        Path("book/assets/figures/publication/crpto_fig1_journal_pipeline.svg"),
         Path("reports/crpto/figures/crpto_fig12_crpto_conceptual_pipeline.png"),
         Path("reports/crpto/figures/crpto_fig12_crpto_conceptual_pipeline.pdf"),
         Path("reports/crpto/figures/crpto_fig13_alpha_gamma_funded_set.png"),
@@ -36,6 +39,8 @@ def test_build_crpto_journal_package_script_runs() -> None:
         Path("reports/crpto/figures/crpto_fig14_robust_region_heatmap.pdf"),
         Path("reports/crpto/figures/crpto_fig15_regret_auditability_frontier.png"),
         Path("reports/crpto/figures/crpto_fig15_regret_auditability_frontier.pdf"),
+        Path("reports/crpto/figures/crpto_fig20_bound_claim_layers.png"),
+        Path("reports/crpto/figures/crpto_fig20_bound_claim_layers.pdf"),
         Path("reports/crpto/tables/crpto_tableA19_regret_auditability_frontier.csv"),
         Path("reports/crpto/tables/crpto_tableA19_regret_auditability_frontier.tex"),
     ]

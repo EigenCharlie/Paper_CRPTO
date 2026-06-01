@@ -52,14 +52,17 @@ Portfolio Decisions}
 Credit portfolio decisions often rely on calibrated default probabilities while
 treating prediction uncertainty as a diagnostic rather than a decision input. We
 propose Conformal Robust Predict-Then-Optimize (CRPTO), a post-hoc auditable
-framework that maps Mondrian conformal prediction intervals into robust portfolio
-constraints. On a 276{,}869-loan out-of-time Lending Club evaluation, the promoted
-economic policy earns \$170{,}464.54 on a \$1M budget while passing the exact
-$\alpha=0.01$ funded-set bound ($V=0.03645$, $\Gamma_{\mathrm{CP}}=0.18591$, zero
-violation). The promoted robust region contains $45/45$ alpha-safe policies,
-indicating that the result is not a single-point artifact. The contribution is not
-another predictive leaderboard, but a reproducible bridge from calibrated
-probabilistic learning to auditable robust credit decisions.%
+decision-audit pattern that maps Mondrian conformal prediction intervals into
+robust portfolio constraints after a calibrated PD model is already frozen. On a
+276{,}869-loan out-of-time Lending Club evaluation, the promoted economic policy
+earns \$170.5K on a \$1M budget while passing the exact $\alpha=0.01$ funded-set
+bound ($V=0.03645$, $\Gamma_{\mathrm{CP}}=0.18591$, zero violation). The final
+robust region contains $45/45$ alpha-safe policies, indicating that the result is
+not a single-point artifact. The contribution is not another predictive
+leaderboard, but an auditable post-hoc conformal robust credit-portfolio decision
+pipeline that maps frozen calibrated PD artifacts into a robust funded set,
+reports an explicit conformal robustness premium, and verifies exact alpha-safe
+weighted miscoverage on the promoted portfolio.%
 }
 
 \KEYWORDS{conformal prediction; robust optimization; predict-then-optimize;
@@ -106,18 +109,27 @@ satisfy the same exact alpha-safe check. The headline result is not a single luc
 allocation. It is a reproducible bridge from calibrated probabilistic learning to
 robust, auditable credit portfolio choice.
 
-The paper makes three contributions. First, it gives a concrete CRPTO construction
-for credit portfolios: calibrated PD, Mondrian conformal uncertainty, and robust
-budgeted optimization. Second, it provides an artifact-backed empirical study where
-every paper table and figure is generated from frozen outputs rather than manually
-transcribed summaries. Third, it documents the governance boundary between safe
-paper-facing reruns and protected stages that would change the promoted champion.
+The paper makes three contributions. First, it gives a reusable CRPTO construction
+for credit portfolios: frozen calibrated PD, Mondrian conformal uncertainty, and
+robust budgeted optimization as a post-hoc decision audit. Second, it positions
+that construction against the nearest decision literature: data-driven robust
+optimization, P2P lending portfolio models, conformal credit scoring, and
+decision-focused learning. The novelty claim is therefore specific, not
+leaderboard-oriented: CRPTO is an auditable conformal robust credit-portfolio
+decision built from frozen calibrated PD artifacts. Third, it provides an
+artifact-backed empirical study where every paper table and figure is generated
+from frozen outputs rather than manually transcribed summaries. The key claim is
+deliberately surgical: CRPTO maps frozen calibrated PD artifacts into a robust
+funded set, reports the portfolio-level conformal premium $\Gamma_{\mathrm{CP}}$,
+and verifies exact alpha-safe weighted miscoverage on the promoted Lending Club
+portfolio.
 
 \begin{figure}[t]
   \centering
-  \includegraphics[width=\textwidth]{crpto_fig12_crpto_conceptual_pipeline.png}
-  \caption{CRPTO maps calibrated PDs through a conformal uncertainty layer into an
-  auditable robust portfolio decision.}
+  \includegraphics[width=\textwidth]{crpto_fig1_journal_pipeline.png}
+  \caption{CRPTO maps frozen calibrated PD artifacts through a Mondrian conformal
+  uncertainty layer into an auditable robust portfolio decision and exact
+  funded-set certificate.}
   \label{fig:pipeline}
 \end{figure}
 
@@ -226,10 +238,34 @@ conformal upper endpoints. The promoted policy has $\texttt{risk\_tolerance}=0.1
 $\texttt{policy\_mode}=\texttt{blended\_uncertainty}$, policy parameter
 $\gamma=0.45$, and $\texttt{uncertainty\_aversion}=0.1$.
 
+Schematically, the robust decision layer solves
+\[
+\begin{aligned}
+\max_x\quad & \sum_i x_i a_i r_i \\
+\text{s.t.}\quad & \sum_i x_i a_i \le B,\\
+& \sum_i x_i a_i \tilde p_i(\alpha,\gamma)
+   \le \tau \sum_i x_i a_i,\\
+& 0 \le x_i \le \bar x_i,
+\end{aligned}
+\]
+where $a_i$ is exposure, $r_i$ is the realized economic payoff proxy, $\tau$ is
+the risk-tolerance cap, and
+\[
+\tilde p_i(\alpha,\gamma)=\hat p_i+\gamma\left(u_i(\alpha)-\hat p_i\right)
+\]
+on the PD scale, clipped to the feasible probability range. Additional
+operational filters and caps live in the frozen policy configuration; the
+manuscript displays the core statistical-to-decision contract because that is
+the reusable CRPTO pattern.
+
 Two quantities are kept separate throughout the paper. The lowercase $\gamma$ is a
 policy parameter controlling how the optimizer blends uncertainty in the portfolio
 rule. $\Gamma_{\mathrm{CP}}$, by contrast, is a portfolio-level conformal metric
-computed after the funded set is chosen. The promoted policy has
+computed after the funded set is chosen:
+\[
+\Gamma_{\mathrm{CP}}(\alpha)=\sum_i w_i\left(u_i(\alpha)-\hat p_i\right)_+.
+\]
+The promoted policy has
 $\Gamma_{\mathrm{CP}}(\alpha=0.01)=0.18591$, weighted miscoverage
 $V(\alpha=0.01)=0.03645$, and zero exact violation at $\alpha=0.01$. This distinction
 is small typographically but central for auditability.
@@ -241,10 +277,45 @@ The theoretical role of conformal prediction in CRPTO is modest and explicit. Fo
 fixed allocation evaluated on exchangeable calibration/test data, conformal coverage
 controls the expected rate at which outcomes fall outside the constructed uncertainty
 intervals. When funded-set weights are non-negative and normalized, this yields a
-weighted miscoverage quantity $V(\alpha)$ that can be monitored after the decision. A
-Markov-style argument then converts expected weighted miscoverage control into a
-finite-sample portfolio-level statement. The empirical exact bound check reported in
-this paper is the operational version of that statement.
+weighted miscoverage quantity $V(\alpha)$ that can be monitored after the decision.
+The formal portfolio statement assumes weighted funded-set validity: the optimizer's
+allocation does not concentrate exposure in a region whose noncoverage is worse than
+the nominal conformal level, unless such weighting is covered by a declared Mondrian,
+localized, or multi-distribution guarantee. A Markov-style argument then converts
+expected weighted miscoverage control into a finite-sample portfolio-level statement.
+The empirical exact bound check reported in this paper is the operational validation
+of that statement after the frozen policy search, not a claim that post-selection
+evaluation creates a stronger conformal guarantee.
+
+\begin{figure}[t]
+  \centering
+  \includegraphics[width=0.95\textwidth]{crpto_fig20_bound_claim_layers.png}
+  \caption{The CRPTO bound claim stack separates conformal endpoints,
+  deterministic portfolio accounting, the weighted-validity assumption, and the
+  frozen exact certificate.}
+  \label{fig:bound-stack}
+\end{figure}
+
+The bound is read as three linked objects. First, the deterministic identity says
+that if the funded set satisfies $\sum_i w_i u_i(\alpha)\le \tau$, realized risk
+can exceed $\tau$ only through the weighted noncoverage term $V(\alpha)$. Second,
+the statistical step assumes weighted funded-set validity,
+$\mathbb{E}[V(\alpha)]\le\alpha$, rather than pretending that marginal split
+conformal alone controls every adaptive subportfolio. Third, the frozen empirical
+certificate verifies the promoted decision exactly on the 276{,}869-loan OOT
+evaluation.
+
+Let $Z_i(\alpha)=\mathbf{1}\{Y_i>u_i(\alpha)\}$ and
+$w_i=x_i a_i/\sum_j x_j a_j$ for the funded set. If the robust constraint keeps
+$\sum_i w_i u_i(\alpha)\le\tau$, then
+\[
+\sum_i w_iY_i \le \tau+\sum_i w_iZ_i(\alpha)=\tau+V(\alpha).
+\]
+Under weighted funded-set validity, $\mathbb{E}[V(\alpha)]\le\alpha$; Markov then
+gives $\mathbb{P}(V(\alpha)\ge t)\le\alpha/t$. Setting $t=\sqrt{\alpha}$ yields
+the displayed distribution-free portfolio statement. The exact certificate in this
+paper is the empirical audit of the frozen selected policy, not a stronger
+post-selection conformal theorem.
 
 This theory is intentionally not presented as a universal dependence-free tightening
 for all adaptive credit policies. The Lending Club evaluation is temporal, and
@@ -320,6 +391,42 @@ uncertainty into a robust allocation with exact alpha-safe checks.
   \end{tabular}
 \end{table}
 
+The exact certificate in the body is intentionally small. It exposes the objects
+that connect the theorem to the frozen champion without making the reader infer them
+from a figure.
+
+\begin{table}[t]
+  \centering
+  \caption{Exact alpha-safe certificate for the promoted funded set.}
+  \label{tab:exact-certificate}
+  \begin{tabular}{rrrrr}
+    \toprule
+    $\alpha$ & $\Gamma_{\mathrm{CP}}$ & $V(\alpha)$ & $\sqrt{\alpha}$ & Violation \\
+    \midrule
+    $0.01$ & $0.18591$ & $0.03645$ & $0.10000$ & $0.00000$ \\
+    \bottomrule
+  \end{tabular}
+\end{table}
+
+The promoted policy is deliberately the economic champion inside the exact-safe
+region, not the tightest certificate available. Table~\ref{tab:champion-comparators}
+makes that choice auditable rather than implicit.
+
+\begin{table}[t]
+  \centering
+  \caption{Champion and comparator roles inside the final alpha-safe region.}
+  \label{tab:champion-comparators}
+  \begin{tabular}{lrrrrl}
+    \toprule
+    Policy role & $\tau$ & $\gamma$ & Return & $V(0.01)$ & Interpretation \\
+    \midrule
+    Economic champion & $0.175$ & $0.45$ & \$170{,}464.54 & $0.03645$ & Highest-return exact-safe point. \\
+    Theorem-tight & $0.175$ & $0.55$ & \$166{,}269.82 & $0.03003$ & Tighter certificate, lower return. \\
+    Balanced & $0.170$ & $0.45$ & \$169{,}389.58 & $0.03545$ & Nearby lower-$\tau$ alternative. \\
+    \bottomrule
+  \end{tabular}
+\end{table}
+
 The robust policy does pay for robustness: its price of robustness is
 $-\$14{,}465.69$, or approximately $-10.56\%$, relative to the comparison frontier.
 This is not a defect of the method; it is the economic trade-off CRPTO makes visible.
@@ -331,6 +438,22 @@ point artifact. Across the evaluated region, $45/45$ unique policies pass the ex
 $\alpha=0.01$ check. The selected policy is the economic champion inside that exact
 robust region, not merely the first feasible point. The supplement reports the full
 alpha/gamma funded-set table, robust-region heatmap, and policy-family appendix.
+
+\begin{table}[t]
+  \centering
+  \caption{Compact funded-set audit by grade bucket.}
+  \label{tab:funded-set-audit}
+  \begin{tabular}{lrrrrr}
+    \toprule
+    Grade bucket & Loans & Exposure share & Default rate & $V$ contribution & Mean $u_i(0.01)$ \\
+    \midrule
+    A--B & $23$ & $9.60\%$ & $1.25\%$ & $0.00120$ & $0.11682$ \\
+    C    & $114$ & $32.56\%$ & $2.66\%$ & $0.00865$ & $0.17257$ \\
+    D    & $147$ & $45.72\%$ & $5.05\%$ & $0.02310$ & $0.33576$ \\
+    E--G & $51$ & $12.12\%$ & $2.89\%$ & $0.00350$ & $0.46493$ \\
+    \bottomrule
+  \end{tabular}
+\end{table}
 
 \begin{figure}[t]
   \centering

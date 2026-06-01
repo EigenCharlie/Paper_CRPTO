@@ -220,11 +220,11 @@ paper-grade generadas desde artefactos congelados.
 | Nuevo material | Papel editorial | Artefacto |
 |---|---|---|
 | Blueprint del manuscrito | Estructura paper-ready y mapa claim -> artifact -> test -> location | `06-blueprint-manuscrito.qmd` |
-| Figura CRPTO limpia | Figura 1 candidata | `crpto_fig12_crpto_conceptual_pipeline.png` |
+| Figura CRPTO limpia | Figura 1 IJDS | `crpto_fig1_journal_pipeline.png` |
 | Figura pila del bound | Puente visual entre endpoint conformal, identidad, supuesto y certificado | `crpto_fig20_bound_claim_layers.png` |
 | Figura alpha -> `Gamma_CP` -> funded set | Puente teoria-metodo | `crpto_fig13_alpha_gamma_funded_set.png` |
 | Heatmap region robusta | Evidencia visual `45/45` | `crpto_fig14_robust_region_heatmap.png` |
-| A12--A21 | Robustness appendix journal | `scripts/build_crpto_journal_package.py`; `scripts/build_tail_satisficing_challenger_audit.py` |
+| A12--A24 | Robustness appendix journal | `scripts/build_crpto_journal_package.py`; `scripts/build_tail_satisficing_challenger_audit.py`; `scripts/build_tail_constrained_reoptimization.py`; `scripts/build_distribution_robustness_diagnostics.py` |
 | A22--A24 (re-opt de cola, multi-distribucion y online) | Cierre P2 sin reabrir champion | `scripts/build_tail_constrained_reoptimization.py`; `scripts/build_distribution_robustness_diagnostics.py` |
 | Status del paquete | Trazabilidad y fuente canonica | `models/crpto_journal_package_status.json`; `models/crpto_tail_constrained_reopt_status.json`; `models/crpto_distribution_robustness_status.json` |
 

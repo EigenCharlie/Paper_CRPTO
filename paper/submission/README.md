@@ -31,14 +31,15 @@ conversion notes needed to reproduce the submission package.
 
 ## Official LaTeX Submission Build
 
-`CRPTO_ijds_submission.tex` is the full manuscript body in the official INFORMS
-class (`\documentclass[ijds,dblanonrev]{informs4}`). The prose is **already
-ported** from `paper/CRPTO_ijds.qmd`: title, abstract, keywords, all ten
-sections, two `booktabs` tables (core metrics, regret frontier), four figures,
-and the `informs2014.bst` + `../../book/references.bib` bibliography wiring. All
-33 cited keys resolve against `references.bib` and the float/environment
-structure is balanced. The only missing inputs are the publisher class/style
-files.
+`CRPTO_ijds_submission.tex` is the official-template handoff draft in the
+INFORMS class (`\documentclass[ijds,dblanonrev]{informs4}`). The source of
+truth remains `paper/CRPTO_ijds.qmd`; the `.tex` is a synchronized submission
+surface for the central IJDS body: title, abstract, keywords, core sections,
+the new journal pipeline Figure 1, the bound-claim stack, alpha-gamma,
+robust-region and regret-auditability figures, plus the core, exact-certificate,
+champion-comparator, funded-set audit and regret tables. The
+`informs2014.bst` + `../../book/references.bib` bibliography wiring is already
+present. The only missing inputs are the publisher class/style files.
 
 > **`informs4` is not on CTAN/TeX Live.** A `tlmgr`/CTAN search returns no
 > package; the class and style are distributed only through the INFORMS author
@@ -46,9 +47,11 @@ files.
 > in this repo's TinyTeX until those files are downloaded — this is expected, not
 > a defect.
 
-Page budget: the body is currently ~7.6 of 25 allowed pages (see
-`docs/research/crpto_ijds_page_budget_2026.md`). The binding task is **expansion**
-(promote supplement material into Method/Theory/Results), not compression.
+Page budget: the Quarto proxy body currently renders to 15 pages including
+references, with an estimated body-before-references length of ~12.4 pages (see
+`docs/research/crpto_ijds_page_budget_2026.md`). The binding task is now
+**polish**, not compression: keep the claim surgical, captions assertive, and
+the QMD/official-template surfaces synchronized before a real submission build.
 
 To produce the official submission PDF:
 
@@ -98,10 +101,12 @@ These protocols are compatible but not interchangeable.
 
 ## Final Assembly Checklist
 
-- Compress body text to the IJDS page budget after PDF pagination is available.
+- Recheck the official-template page budget after PDF pagination is available.
 - Keep A3--A24 in the online supplement unless a reviewer-facing argument needs
   one compact table in the body.
 - Preserve CRPTO as the coverage/auditability method and SPO+ as the low-regret
   comparator.
+- Keep `CRPTO_ijds_submission.tex` synchronized with the QMD whenever the body
+  adds or demotes a figure, table, theorem statement or major result paragraph.
 - Regenerate previews with `just paper-submission` before release.
 - Run the repository gates: `just lint`, `just smoke`, `just validate-champion`.

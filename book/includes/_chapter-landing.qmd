@@ -22,7 +22,7 @@
   </a>
   <a class="chapter-card" href="chapters/07-apendice-robustez.html">
     <h4>Apéndice journal</h4>
-    <p>A12-A18, figuras CRPTO y checklist reproducible.</p>
+    <p>A12-A24, figuras CRPTO y checklist reproducible.</p>
   </a>
   <a class="chapter-card" href="chapters/13-trazabilidad.html">
     <h4>Trazabilidad</h4>

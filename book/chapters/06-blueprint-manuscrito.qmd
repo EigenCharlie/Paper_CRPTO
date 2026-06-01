@@ -108,7 +108,7 @@ tabla se mueve al online supplement o a la tesis.
 | 4. Theory | 3.0 | `Gamma_CP`, `V`, bound principal; pruebas largas al supplement. |
 | 5. Experimental Design | 2.5 | Dataset, split OOT, leakage controls y artifacts. |
 | 6. Results | 5.0 | Champion, región robusta, ablation y comparadores. |
-| 7. Robustness | 1.5 | Compacta; el grueso A3--A18 vive en el supplement. |
+| 7. Robustness | 1.5 | Compacta; el grueso A3--A24 vive en el supplement. |
 | 8. Discussion | 2.0 | Implicaciones, límites, MRM/fairness proxy y futuro. |
 | Buffer editorial | 1.0 | Títulos, figuras, transiciones y ajustes finales. |
 
@@ -124,7 +124,7 @@ seleccion sugerida es:
 
 | Elemento | Ubicacion probable | Razon | Artefacto |
 |---|---|---|---|
-| Figura 1: pipeline CRPTO | Cuerpo | Explica el aporte en una sola vista | `crpto_fig12_crpto_conceptual_pipeline.png` |
+| Figura 1: pipeline CRPTO | Cuerpo | Explica el aporte en una sola vista IJDS | `crpto_fig1_journal_pipeline.png` |
 | Figura bound: pila de claim | Teoria | Separa endpoint conformal, identidad deterministica, supuesto ponderado y certificado exacto | `crpto_fig20_bound_claim_layers.png` |
 | Figura 2: alpha -> `Gamma_CP` -> funded set | teoria/metodo | Une parametro conformal y decision | `crpto_fig13_alpha_gamma_funded_set.png` |
 | Figura 3: region robusta `45/45` | Resultados | Muestra que el champion no es aislado | `crpto_fig14_robust_region_heatmap.png` |
@@ -154,7 +154,7 @@ fuente de escritura y el detalle por tabla está en
 |---|---|---|
 | A. Proof details | Teorema Markov y tightening Hoeffding/Bernstein como condicional. | Cap. 02 (`thm-conformal-feasibility`); apéndice condicional. |
 | B. Conformal ablation | Ranks 1--3, `grade` vs `score_decile_mondrian`, coverage por grupo. | Cap. 08 (ablación Mondrian); A10. |
-| C. Robustness A3--A18 | Nested/temporal holdouts, synthetic shift, tail diagnostics, bootstrap, dependency. | Cap. 07 (apéndice journal). |
+| C. Robustness A3--A24 | Nested/temporal holdouts, synthetic shift, tail diagnostics, bootstrap, dependency, tail-constrained challenger, multi-distribución y online ACI. | Cap. 07 (apéndice journal). |
 | D. Funded set | Composición periodo × grade y loan-level export resumido. | Cap. 12 (funded set); A7--A8. |
 | E. Fairness/MRM | Proxy audit, controles SR 11-7 y source-governance caveats. | Cap. 10 (fair lending); cap. 11 (MRM). |
 | F. Reproducibility | Claim -> artifact -> script -> test, paths DVC/MLflow y data/code disclosure. | Cap. 13 (trazabilidad); cap. 14 (release). |

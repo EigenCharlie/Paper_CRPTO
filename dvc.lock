@@ -10,8 +10,8 @@ stages:
       size: 4097
     - path: book/chapters
       hash: md5
-      md5: aee184148c98a2fccf01f8ffdfba5694.dir
-      size: 773429
+      md5: 80d2046245d25b7e9c6a06cdd406fd54.dir
+      size: 778033
       nfiles: 26
     - path: book/index.qmd
       hash: md5
@@ -33,8 +33,8 @@ stages:
     outs:
     - path: book/_book
       hash: md5
-      md5: 404d0d5f9d331b6474de012477511857.dir
-      size: 14972425
+      md5: a5f72e8429ae5cdc563850ec02211dad.dir
+      size: 14779991
       nfiles: 97
   crpto.paper.figures:
     cmd: python scripts/generate_crpto_figures.py --paper crpto
@@ -334,6 +334,18 @@ stages:
       hash: md5
       md5: e682d6ef32b1f3a5ed3ba4f68daf3e44
       size: 2411
+    - path: reports/crpto/figures/crpto_fig1_journal_pipeline.pdf
+      hash: md5
+      md5: 9dd92dd687cc1a38d1d9309478200393
+      size: 22089
+    - path: reports/crpto/figures/crpto_fig1_journal_pipeline.png
+      hash: md5
+      md5: 219d9f4199a655356d11564ab8f8daf8
+      size: 1075147
+    - path: reports/crpto/figures/crpto_fig1_journal_pipeline.svg
+      hash: md5
+      md5: 71563c6c8e9b0e10d8f159b8ad360484
+      size: 19699
     - path: reports/crpto/tables/crpto_tableA7_funded_set_loans.csv
       hash: md5
       md5: 55c86a6d4dbeb2169c57aadf21a3ff2b
@@ -344,13 +356,13 @@ stages:
       size: 2187
     - path: scripts/build_crpto_journal_package.py
       hash: md5
-      md5: d04a0da968794360a40ff5e6b62f36ad
-      size: 35678
+      md5: dcffb770a8875edf18c04d9058e5fd6b
+      size: 38777
     outs:
     - path: models/crpto_journal_package_status.json
       hash: md5
-      md5: 0b35e5637977b6c0c2c317919c6b5da2
-      size: 3244
+      md5: 8067a7a5d0f9f2d08fbfb8707d37fe7c
+      size: 3610
   crpto.paper.spo_stability:
     cmd: python scripts/run_crpto_vs_spo_stability.py
     deps:

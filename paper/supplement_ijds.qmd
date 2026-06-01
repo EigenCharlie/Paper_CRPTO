@@ -168,6 +168,25 @@ audit path explicit.
 | The supplement strengthens interpretation without moving the champion. | A20--A24 challenger, dependence, tail-risk, multi-distribution, and online diagnostics. | Journal robustness tables and Figures 15--19. | Scope caveats in each table; challenger outputs are labeled as non-promoted diagnostics. |
 | The manuscript is reproducible at the artifact level. | Tables, figures, Quarto pages, and status JSONs regenerate from frozen inputs. | Repository code, DVC metadata, rendered book/paper outputs. | Pre-push smoke/lint hooks, DVC status checks, and manifest validation before release. |
 
+## Funded-Set Audit Card
+
+Table A8 is intentionally more granular than the manuscript body. For reviewers
+who need the short version, the promoted policy funds 335 loans on a `$1M`
+budget. The exposure-weighted audit below collapses the period-by-grade table
+into four grade buckets. It is a diagnostic view of the frozen funded set, not
+a new selector or a re-optimized policy.
+
+| Grade bucket | Funded loans | Exposure share | Weighted default rate | `V` contribution | Mean `u_i(0.01)` |
+|---|---:|---:|---:|---:|---:|
+| A-B | `23` | `9.60%` | `1.25%` | `0.00120` | `0.11682` |
+| C | `114` | `32.56%` | `2.66%` | `0.00865` | `0.17257` |
+| D | `147` | `45.72%` | `5.05%` | `0.02310` | `0.33576` |
+| E-G | `51` | `12.12%` | `2.89%` | `0.00350` | `0.46493` |
+
+The concentration pattern is useful for interpretation: most exposure sits in
+C/D loans, D contributes the largest share of the exact `V(alpha = 0.01)`, and
+the high-risk E-G tail is visible but not the hidden driver of the certificate.
+
 ## Why A21--A24 Do Not Strengthen the Main Claim
 
 A21--A24 are designed to make the paper harder to over-read. A21 shows that a

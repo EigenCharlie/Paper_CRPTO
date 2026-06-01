@@ -109,6 +109,9 @@ stages:
       - scripts/build_crpto_journal_package.py
       - reports/crpto/tables/crpto_tableA7_funded_set_loans.csv
       - reports/crpto/tables/crpto_tableA8_funded_set_composition.csv
+      - reports/crpto/figures/crpto_fig1_journal_pipeline.png
+      - reports/crpto/figures/crpto_fig1_journal_pipeline.pdf
+      - reports/crpto/figures/crpto_fig1_journal_pipeline.svg
       - models/final_project_promotion.json
       - models/spo_real_training_status.json
       - data/processed/crpto_vs_spo_stability.json

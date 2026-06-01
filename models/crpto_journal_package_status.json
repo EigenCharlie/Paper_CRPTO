@@ -19,6 +19,9 @@
     "reports/crpto/tables/crpto_tableA18_robust_region_policy_family.tex",
     "reports/crpto/tables/crpto_tableA19_regret_auditability_frontier.csv",
     "reports/crpto/tables/crpto_tableA19_regret_auditability_frontier.tex",
+    "reports/crpto/figures/crpto_fig1_journal_pipeline.png",
+    "reports/crpto/figures/crpto_fig1_journal_pipeline.pdf",
+    "reports/crpto/figures/crpto_fig1_journal_pipeline.svg",
     "reports/crpto/figures/crpto_fig12_crpto_conceptual_pipeline.png",
     "reports/crpto/figures/crpto_fig12_crpto_conceptual_pipeline.pdf",
     "reports/crpto/figures/crpto_fig20_bound_claim_layers.png",
@@ -31,7 +34,7 @@
     "reports/crpto/figures/crpto_fig15_regret_auditability_frontier.pdf",
     "docs/research/crpto_journal_package_2026-05-04.md"
   ],
-  "generated_at_utc": "2026-06-01T16:18:04.709966+00:00",
+  "generated_at_utc": "2026-06-01T20:35:23.646983+00:00",
   "notes": [
     "No champion search was reopened.",
     "Budget and cap sensitivity are diagnostics on the exported funded set.",
@@ -49,6 +52,9 @@
     "data/processed/crpto_vs_spo_stability.json",
     "data/processed/portfolio_bound_aware/rank1_alpha01_bound_aware_276k_full_2026-04-05-1734/portfolio_bound_aware_shortlist.parquet",
     "data/processed/portfolio_bound_aware/rank1_alpha01_bound_aware_276k_full_2026-04-05-1734/portfolio_bound_aware_bound_eval.parquet",
-    "data/processed/alpha_sweep_pareto_mondrian.parquet"
+    "data/processed/alpha_sweep_pareto_mondrian.parquet",
+    "reports/crpto/figures/crpto_fig1_journal_pipeline.png",
+    "reports/crpto/figures/crpto_fig1_journal_pipeline.pdf",
+    "reports/crpto/figures/crpto_fig1_journal_pipeline.svg"
   ]
 }

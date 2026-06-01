@@ -119,13 +119,14 @@ Manifest de tablas para decidir cuerpo, appendix y tesis.
 
 | Figura | Artefacto | Paper corto | Journal appendix | Tesis/libro | Lectura |
 |---|---|---:|---:|---:|---|
-| Diagrama maestro (Fig 1) | `diagrama-crpto.png` | Sí | Sí | Sí | Diagrama maestro oficial paper-grade; se publica también como `crpto_fig12` (Figura 1 del paper). |
+| Pipeline IJDS (Fig 1) | `crpto_fig1_journal_pipeline` | Sí | Sí | Sí | Figura corta paper-grade para IJDS; muestra PD congelada, conformal Mondrian, LP robusto y certificado. |
+| Diagrama maestro del libro | `diagrama-crpto.png` / `crpto_fig12_crpto_conceptual_pipeline` | No | Quizá | Sí | Vista pedagógica larga del companion; ya no es la Figura 1 principal del paper. |
 | Fig 7 | `crpto_fig7_uncertainty_baselines` | No | Sí | Sí | Baselines de incertidumbre. |
 | Fig 8 | `crpto_fig8_alpha_pareto` | Quizá | Sí | Sí | Alpha frontier y trade-off. |
 | Fig 9 | `crpto_fig9_spo_regret` | Quizá | Sí | Sí | Comparador SPO+; acompañar con `14j`. |
 | Fig 10 | `crpto_fig10_cqr_per_grade` | No | Sí | Sí | Útil para appendix conformal. |
 | Fig 11 | `crpto_fig11_crpto_stability` | Quizá | Sí | Sí | Shift temporal y cobertura. |
-| Fig 12 | `crpto_fig12_crpto_conceptual_pipeline` | Sí | Sí | Sí | Figura 1 del paper = diagrama maestro oficial (`diagrama-crpto.png`). |
+| Fig 12 | `crpto_fig12_crpto_conceptual_pipeline` | No | Sí | Sí | Diagrama maestro companion; útil para tesis/libro si se necesita una vista más pedagógica que la Fig 1 IJDS. |
 | Fig 13 | `crpto_fig13_alpha_gamma_funded_set` | Sí | Sí | Sí | Une teoría y decisión. |
 | Fig 14 | `crpto_fig14_robust_region_heatmap` | Sí | Sí | Sí | Muestra región robusta, no punto aislado. |
 | Fig 15 | `crpto_fig15_regret_auditability_frontier` | Sí | Sí | Sí | Separa el claim de regret SPO+ del claim de auditabilidad CRPTO. |
@@ -145,7 +146,7 @@ Manifest de figuras para extraer paper y appendix.
 
 | Reviewer pregunta | Respuesta corta | Mejor evidencia | Venue donde más importa |
 |---|---|---|---|
-| ¿No es solo otro modelo de PD? | No: la contribución es mapear incertidumbre conformal a una restricción robusta auditable. | `14b`, `14c`, Fig 12 | Todos |
+| ¿No es solo otro modelo de PD? | No: la contribución es mapear incertidumbre conformal a una restricción robusta auditable. | `14b`, `14c`, Fig 1 IJDS | Todos |
 | ¿Por qué no optimizan solo SPO+? | SPO+ gana regret; CRPTO compra cobertura verificable y auditabilidad. | `14j`, Fig 9, Fig 15, A19 | MS/EJOR |
 | ¿La garantía post-selección es demasiado optimista? | El teorema es distribution-free para asignación fija; P1 agrega evidencia temporal y exact eval, no sobrepromete garantía prospectiva. | A3, A9, A10, `14b` | OR/MS |
 | ¿Por qué `score_decile_mondrian` y no `grade`? | `grade` es baseline interpretable; `score_decile_mondrian` gana por cobertura mínima y selector objetivo. | `14i`, A10 | Todos |
@@ -255,7 +256,7 @@ vuelva a entrar en loops de expansión.
 | Acción | Qué clasifica aquí |
 |---|---|
 | **Promover** | Material que fortalece el claim CRPTO central; evidencia que ya tiene artefacto, tabla y test; fuentes independientes que aclaran métricas, gobernanza o límites. |
-| **Apéndice** | Robustez A3--A18; fairness proxy y MRM; tail-risk OCE/CVaR; CROMS-lite como selector de finalists, no entrenamiento end-to-end. |
+| **Apéndice** | Robustez A3--A24; fairness proxy y MRM; tail-risk OCE/CVaR; CROMS-lite como selector de finalists, no entrenamiento end-to-end. |
 | **Park** | Online conformal; MDCP/multi-source conformal; OCE/CVaR como nuevo objetivo; DFL/SPO+ como reemplazo del champion; dataset externo si no está disponible y versionado. |
 | **Archivar** | Material de intake externo no académico como evidencia pública directa; capturas o materiales privados/no redistribuibles; rutas con nombres personales en paquetes anonimizados. |
 

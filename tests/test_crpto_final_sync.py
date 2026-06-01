@@ -92,8 +92,17 @@ def test_crpto_tables_and_figures_exist() -> None:
         "reports/crpto/tables/crpto_tableA22_tail_constrained_reoptimization.csv",
         "reports/crpto/tables/crpto_tableA23_multidistribution_robustness.csv",
         "reports/crpto/tables/crpto_tableA24_online_conformal_stability.csv",
+        "reports/crpto/figures/crpto_fig1_journal_pipeline.png",
+        "reports/crpto/figures/crpto_fig1_journal_pipeline.pdf",
+        "reports/crpto/figures/crpto_fig1_journal_pipeline.svg",
+        "book/assets/figures/publication/crpto_fig1_journal_pipeline.png",
+        "book/assets/figures/publication/crpto_fig1_journal_pipeline.pdf",
+        "book/assets/figures/publication/crpto_fig1_journal_pipeline.svg",
         "reports/crpto/figures/crpto_fig12_crpto_conceptual_pipeline.png",
+        "reports/crpto/figures/crpto_fig13_alpha_gamma_funded_set.png",
         "reports/crpto/figures/crpto_fig14_robust_region_heatmap.png",
+        "reports/crpto/figures/crpto_fig15_regret_auditability_frontier.png",
+        "reports/crpto/figures/crpto_fig20_bound_claim_layers.png",
     ]
     for item in required:
         assert Path(item).exists(), item

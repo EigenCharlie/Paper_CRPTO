@@ -34,7 +34,7 @@ GitHub Actions `book-publish` workflow from the standalone repository.
 - Added a manuscript blueprint with target venue, abstract, claims C1--C7,
   paper outline, final table/figure plan, notation and claim-artifact-test
   location map.
-- Added a journal appendix page that renders A12--A21 plus four new figures:
+- Added a journal appendix page that renders A12--A24 plus the journal figure set:
   CRPTO conceptual pipeline, alpha -> `Gamma_CP` -> funded set, and robust
   region heatmap.
 
@@ -58,9 +58,12 @@ Generated tables:
 
 Generated figures:
 
+- `reports/crpto/figures/crpto_fig1_journal_pipeline.png`
 - `reports/crpto/figures/crpto_fig12_crpto_conceptual_pipeline.png`
 - `reports/crpto/figures/crpto_fig13_alpha_gamma_funded_set.png`
 - `reports/crpto/figures/crpto_fig14_robust_region_heatmap.png`
+- `reports/crpto/figures/crpto_fig15_regret_auditability_frontier.png`
+- `reports/crpto/figures/crpto_fig20_bound_claim_layers.png`
 
 Status artifact:
 
@@ -79,7 +82,7 @@ the reasoning that justifies compression decisions. The new page separates:
 - robustness checks that belong in appendix;
 - future work that should not be sold as current evidence;
 - local numeric references `[1]`, `[2]`, ... for the CRPTO narrative.
-- A12--A21 robustness evidence that can be pushed to appendix instead of
+- A12--A24 robustness evidence that can be pushed to appendix instead of
   crowding the paper body.
 
 ## Guardrails
@@ -91,7 +94,7 @@ The documentation tests should verify that:
   numbered references;
 - the manuscript blueprint contains venue, claims C1--C7 and final table/figure
   plan;
-- the appendix page references A12--A21 and the new figures;
+- the appendix page references A12--A24 and the new figures;
 - the CRPTO docs still point to the official economic champion and do
   not reopen the champion search.
 

@@ -47,12 +47,12 @@ def read_table(name: str) -> pd.DataFrame:
 ### Figura conceptual CRPTO
 
 La Figura @fig-p1-crpto-conceptual es la candidata natural para Figura 1 del
-paper y reutiliza el diagrama maestro oficial del libro (@fig-crpto-overview). Su
-valor es editorial: muestra que la incertidumbre no es un diagnostico posterior,
-sino una restriccion que viaja hasta la decision, con las metricas del cierre
-`276k` anotadas en cada etapa.
+paper IJDS: es la version corta, limpia y en ingles del flujo PD -> CP ->
+incertidumbre -> LP -> certificado. El diagrama maestro largo del libro
+(@fig-crpto-overview) queda como companion visual y como vista pedagogica de la
+tesis.
 
-![Diagrama maestro CRPTO (Figura 1 candidata): las seis etapas del pipeline --- datos y split temporal, PD calibrada, conformal Mondrian, conjunto de incertidumbre, LP robusto y politica promovida con bound exacto --- anotadas con AUC, cobertura, $\Gamma_{\text{CP}}$, $V$ y el retorno del economic champion.](../assets/figures/publication/crpto_fig12_crpto_conceptual_pipeline.png){#fig-p1-crpto-conceptual fig-alt="Diagrama maestro de seis paneles que conecta datos de Lending Club, PD calibrada con curva de calibracion, conformal Mondrian con cobertura 90%, conjunto de incertidumbre y prima conformal, LP robusto de portafolio, y politica promovida bound_aware_276k con bound exacto y pie de evidencia del paper."}
+![Pipeline CRPTO para IJDS: un modelo PD calibrado congelado produce intervalos conformales Mondrian, la señal robusta entra al optimizador de portafolio y la policy promovida queda auditada con retorno, $V$, $\Gamma_{\text{CP}}$ y certificado exacto.](../assets/figures/publication/crpto_fig1_journal_pipeline.png){#fig-p1-crpto-conceptual fig-alt="Figura de cuatro paneles que conecta PD calibrada congelada, intervalos conformales Mondrian, optimizacion robusta de portafolio y policy promovida auditable con metricas del champion."}
 
 ### Alpha, `Gamma_CP` y funded set
 

@@ -18,7 +18,7 @@ The Quarto article PDF proxy rendered successfully on 2026-06-01.
 
 | Surface | Local file | Proxy pages | Scope caveat |
 |---|---|---:|---|
-| IJDS body draft | `paper/CRPTO_ijds.pdf` | 14 | Includes references and generic Quarto formatting, not official IJDS pagination. |
+| IJDS body draft | `paper/CRPTO_ijds.pdf` | 15 | Includes references and generic Quarto formatting, not official IJDS pagination. |
 
 This is comfortably below the 25-page conceptual limit even before excluding
 references. The exact page budget must be rechecked after porting into the
@@ -31,28 +31,28 @@ table rows, figure markdown, code fences, captions, and inline citation keys.
 
 | Section | Words | Approx. prose pages |
 |---|---:|---:|
-| Abstract | 145 | 0.28 |
-| Introduction | 484 | 0.92 |
-| Related Work | 526 | 1.00 |
-| Method | 409 | 0.78 |
-| Theory | 338 | 0.64 |
-| Experimental Design | 254 | 0.48 |
-| Results | 296 | 0.56 |
-| Robustness And Comparators | 473 | 0.90 |
+| Abstract | 164 | 0.31 |
+| Introduction | 499 | 0.95 |
+| Related Work | 536 | 1.02 |
+| Method | 569 | 1.08 |
+| Theory | 481 | 0.92 |
+| Experimental Design | 260 | 0.50 |
+| Results | 401 | 0.76 |
+| Robustness And Comparators | 510 | 0.97 |
 | Reproducibility And Companion | 177 | 0.34 |
-| Discussion | 412 | 0.78 |
-| **Total body prose** | **3,514** | **6.69** |
+| Discussion | 420 | 0.80 |
+| **Total body prose** | **4,017** | **7.65** |
 
 Body floats after the current polish:
 
 | Float type | Count | Budget heuristic | Approx. pages |
 |---|---:|---:|---:|
 | Figures | 5 | 0.4 page each | 2.0 |
-| Tables | 7 | 0.3 page each | 2.1 |
-| **Float allowance** | 12 |  | **4.1** |
+| Tables | 9 | 0.3 page each | 2.7 |
+| **Float allowance** | 14 |  | **4.7** |
 
-**Estimated body length before references: ~10.8 pages.** The Quarto PDF proxy
-lands at 14 pages including references, which is consistent with this estimate.
+**Estimated body length before references: ~12.4 pages.** The Quarto PDF proxy
+lands at 15 pages including references, which is consistent with this estimate.
 
 ## Interpretation
 

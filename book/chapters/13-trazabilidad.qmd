@@ -72,7 +72,7 @@ pd.DataFrame(
         },
         {
             "Claim": "C7: Evidencia P1 + journal-package fortalece sin cambiar dirección",
-            "Evidencia": "A3-A11 (P1) + A12-A18 (journal) todas pasan policy oficial",
+            "Evidencia": "A3-A11 (P1) + A12-A24 (journal) todas preservan policy oficial",
             "Artefacto": "models/crpto_evidence_status.json + crpto_journal_package_status.json",
             "Script": "scripts/analyze_crpto_evidence.py + scripts/build_crpto_journal_package.py",
             "Test": "tests/test_crpto_final_sync.py",
@@ -89,6 +89,12 @@ pd.DataFrame(
 
 pd.DataFrame(
     [
+        {
+            "Figura": "Fig 1: IJDS journal pipeline",
+            "Path": "reports/crpto/figures/crpto_fig1_journal_pipeline.png",
+            "Script": "scripts/build_crpto_journal_package.py (publishes static asset)",
+            "Fuente": "hand-authored SVG/PDF/PNG journal figure",
+        },
         {
             "Figura": "Fig 7: uncertainty baselines tradeoff",
             "Path": "reports/crpto/figures/crpto_fig7_uncertainty_baselines.png",
@@ -173,6 +179,12 @@ pd.DataFrame(
         {"Tabla": "A16", "Rol": "Bootstrap empírico del funded set", "Generador": "build_crpto_journal_package.py"},
         {"Tabla": "A17", "Rol": "Sensibilidad presupuesto, LGD, caps de concentración", "Generador": "build_crpto_journal_package.py"},
         {"Tabla": "A18", "Rol": "Región robusta por familia risk_tolerance × gamma", "Generador": "build_crpto_journal_package.py"},
+        {"Tabla": "A19", "Rol": "Regret-auditability frontier", "Generador": "build_crpto_journal_package.py"},
+        {"Tabla": "A20", "Rol": "Tail-satisficing challenger audit", "Generador": "build_tail_satisficing_challenger_audit.py"},
+        {"Tabla": "A21", "Rol": "Cluster-bound tightening audit", "Generador": "build_tail_satisficing_challenger_audit.py"},
+        {"Tabla": "A22", "Rol": "Tail-constrained CVaR/OCE reoptimization", "Generador": "build_tail_constrained_reoptimization.py"},
+        {"Tabla": "A23", "Rol": "Multi-distribution coverage stress", "Generador": "build_distribution_robustness_diagnostics.py"},
+        {"Tabla": "A24", "Rol": "Online conformal stability / ACI replay", "Generador": "build_distribution_robustness_diagnostics.py"},
     ]
 )
 ```
@@ -189,7 +201,7 @@ uv run python scripts/export_crpto_tables.py
 # 3. Regenerar evidencia CRPTO con hardening (A7-A11)
 uv run python scripts/analyze_crpto_evidence.py --include-hardening
 
-# 4. Regenerar journal package (A12-A18 + Figuras 12-14)
+# 4. Regenerar journal package (A12-A19 + Figuras 1, 12-15, 20)
 uv run python scripts/build_crpto_journal_package.py
 
 # 5. (Opcional) Regenerar figuras publicación (7-11)
@@ -331,7 +343,7 @@ status_files = [
     },
     {
         "Path": "models/crpto_journal_package_status.json",
-        "Rol": "Estado del journal package (A12-A18 + Figuras 12-14)",
+        "Rol": "Estado del journal package (A12-A19 + Figuras 1, 12-15, 20)",
         "Schema": "2026-05-04.1",
     },
     {

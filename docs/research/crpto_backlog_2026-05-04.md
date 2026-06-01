@@ -57,7 +57,7 @@ experiments or theory.
 | P1/J | Implemented | CQR comparator evidence | conformal alternative | `cqr_comparison_status.json`, `cqr_mondrian_status.json`, `crpto_fig10`, `04-resultados` | No | complements paper | keep as comparator/appendix; do not replace official Mondrian winner |
 | P1/J | Implemented | Manuscript blueprint | paper structure | `06-blueprint-manuscrito.qmd` | No | prepares manuscript | compress into actual paper draft when writing starts |
 | P1/J | Pending | Standalone manuscript extraction | final submission artifact | `06-blueprint-manuscrito`, `14-release`, A1--A21, figures | No | required for submission | write the short paper from the book package; no champion changes |
-| P1/J | Implemented | Journal appendix A12--A21 | appendix evidence | `07-apendice-robustez.qmd` | No | complements paper | use as appendix package, not new champion evidence |
+| P1/J | Implemented | Journal appendix A12--A24 | appendix evidence | `07-apendice-robustez.qmd` | No | complements paper | use as appendix package, not new champion evidence |
 | P1/J | Implemented | Mondrian ablation page | conformal winner defense | `08-ablacion-mondrian.qmd` | No | strengthens method selection | use when reviewer asks why score-decile, not grade |
 | P1/J | Implemented | SPO+ protocol page | DFL comparator | `09-spo-regret.qmd` | No | strengthens comparator narrative | keep A19/Fig. 15 (`49.09%`), PyEPO closeout (`48.51%`) and temporal stability configs separate |
 | P1/J | Implemented | Fair lending checkpoint | governance/funded set | `10-fair-lending.qmd` | No | strengthens auditability | cite as proxy/intersectional audit, not legal protected-attribute proof |
@@ -241,8 +241,8 @@ without changing the official champion or reopening the search.
 | Item | Implemented artifact | What it adds | Scope caveat |
 |---|---|---|---|
 | Convert chapter 14 into paper blueprint | `book/chapters/06-blueprint-manuscrito.qmd` | target venue, abstract, claims C1--C7, manuscript outline, final table/figure plan and notation | blueprint, not final manuscript |
-| Appendix A12--A21 | `book/chapters/07-apendice-robustez.qmd` | renders tail risk, satisficing, dependency, stress, bootstrap, LGD/cap, robust-region, regret-auditability, tail-satisficing challenger and cluster-bound evidence | appendix material unless a journal asks for more body evidence |
-| Clean CRPTO figure | `crpto_fig12_crpto_conceptual_pipeline.png` | candidate Figure 1 | visual explanation only |
+| Appendix A12--A24 | `book/chapters/07-apendice-robustez.qmd` | renders tail risk, satisficing, dependency, stress, bootstrap, LGD/cap, robust-region, regret-auditability, tail-satisficing, cluster-bound, tail-constrained, multi-distribution and online evidence | appendix material unless a journal asks for more body evidence |
+| Clean CRPTO figure | `crpto_fig1_journal_pipeline.png` | IJDS Figure 1 | visual explanation only |
 | Alpha -> Gamma_CP -> funded set figure | `crpto_fig13_alpha_gamma_funded_set.png` | connects conformal alpha to portfolio quantities | diagnostic curve from frozen artifacts |
 | Robust region heatmap | `crpto_fig14_robust_region_heatmap.png` | visualizes the `45/45` robust region | summarizes final mini-grid, not a new search |
 | OCE/CVaR funded-set risk | `crpto_tableA12_tail_risk_oce_cvar.csv` | reports mean loss, entropic OCE and CVaR under LGD 35/45/60 | return column is funded-set repricing diagnostic, not official champion return |
@@ -324,7 +324,7 @@ as a staging area for paper, journal and thesis:
 
 These pages are intentionally more explanatory than a journal paper. They keep
 the claim ladder, reviewer Q&A, artifact placement map, local numbered
-references `[1]`, `[2]`, ... and the A12--A21 appendix package that can later be
+references `[1]`, `[2]`, ... and the A12--A24 appendix package that can later be
 compressed into the manuscript.
 
 The extraction/release manifest explicitly classifies OCE/CVaR optimization,
