@@ -585,6 +585,89 @@ def _plot_conceptual_pipeline() -> list[Path]:
     return [png_path, pdf_path]
 
 
+def _plot_bound_claim_layers() -> list[Path]:
+    """Show the three-layer claim stack behind the CRPTO bound."""
+    steps = [
+        {
+            "title": "Conformal endpoint",
+            "body": "u_i(alpha) caps\nPD-scale uncertainty",
+            "note": "interval artifact",
+            "color": "#E7F0FA",
+        },
+        {
+            "title": "Deterministic identity",
+            "body": "risk <= tau + V(alpha)\nwhen sum w_i u_i <= tau",
+            "note": "portfolio accounting",
+            "color": "#F1F8E9",
+        },
+        {
+            "title": "Weighted validity",
+            "body": "E[V(alpha)] <= alpha\nunder funded-set weights",
+            "note": "stated assumption",
+            "color": "#FFF8E1",
+        },
+        {
+            "title": "Exact certificate",
+            "body": "V = 0.03645 < sqrt(alpha)\nviolation = 0; 45/45 pass",
+            "note": "frozen audit",
+            "color": "#FCE4EC",
+        },
+    ]
+
+    fig, ax = plt.subplots(figsize=(11.2, 3.4))
+    ax.axis("off")
+    xs = [0.11, 0.37, 0.63, 0.89]
+    for x, step in zip(xs, steps, strict=True):
+        text = f"{step['title']}\n\n{step['body']}\n\n{step['note']}"
+        ax.text(
+            x,
+            0.58,
+            text,
+            ha="center",
+            va="center",
+            fontsize=9.2,
+            linespacing=1.2,
+            transform=ax.transAxes,
+            bbox={
+                "boxstyle": "round,pad=0.55,rounding_size=0.08",
+                "facecolor": step["color"],
+                "edgecolor": "#263238",
+                "linewidth": 1.1,
+            },
+        )
+
+    for left, right in zip(xs[:-1], xs[1:], strict=True):
+        ax.annotate(
+            "",
+            xy=(right - 0.105, 0.58),
+            xytext=(left + 0.105, 0.58),
+            xycoords=ax.transAxes,
+            arrowprops={"arrowstyle": "->", "lw": 1.6, "color": "#263238"},
+        )
+
+    ax.text(
+        0.5,
+        0.94,
+        "CRPTO bound claim stack",
+        ha="center",
+        va="center",
+        fontsize=14,
+        fontweight="bold",
+        transform=ax.transAxes,
+    )
+    ax.text(
+        0.5,
+        0.12,
+        "The theorem separates deterministic portfolio accounting, an explicit weighted-validity assumption, and the frozen empirical certificate.",
+        ha="center",
+        va="center",
+        fontsize=8.8,
+        color="#455A64",
+        transform=ax.transAxes,
+    )
+    return _save_figure("crpto_fig20_bound_claim_layers")
+
+
 def _plot_alpha_gamma_funded_set(bound_eval: pd.DataFrame, promotion: dict[str, Any]) -> list[Path]:
     champion = promotion["final_champion"]
     mask = (
@@ -710,7 +793,7 @@ def _write_markdown_dossier(status: dict[str, Any]) -> Path:
         "- `book/chapters/06-blueprint-manuscrito.qmd` uses",
         "  these artifacts to define the paper outline and final table/figure plan.",
         "- `book/chapters/07-apendice-robustez.qmd`",
-        "  renders A12--A21 and Figures 12--15.",
+        "  renders A12--A21 and Figures 12--15 plus the bound-claim stack figure.",
         "",
     ]
     path.write_text("\n".join(lines), encoding="utf-8", newline="")
@@ -756,6 +839,7 @@ def build_journal_package() -> dict[str, Any]:
     regret_frontier = _build_regret_auditability_frontier(spo_status, stability, promotion)
     artifacts += _write_table("crpto_tableA19_regret_auditability_frontier", regret_frontier)
     artifacts += _plot_conceptual_pipeline()
+    artifacts += _plot_bound_claim_layers()
     artifacts += _plot_alpha_gamma_funded_set(bound_eval, promotion)
     artifacts += _plot_robust_region_heatmap(shortlist)
     artifacts += _plot_regret_auditability_frontier(regret_frontier)

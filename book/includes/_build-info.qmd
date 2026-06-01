@@ -1,3 +1,3 @@
 ::: {.build-info}
-Build: `0923e0e` | Rama: `main` | Actualizado: `2026-06-01`
+Build: `9a895f6` | Rama: `main` | Actualizado: `2026-06-01`
 :::

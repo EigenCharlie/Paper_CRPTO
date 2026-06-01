@@ -221,6 +221,7 @@ paper-grade generadas desde artefactos congelados.
 |---|---|---|
 | Blueprint del manuscrito | Estructura paper-ready y mapa claim -> artifact -> test -> location | `06-blueprint-manuscrito.qmd` |
 | Figura CRPTO limpia | Figura 1 candidata | `crpto_fig12_crpto_conceptual_pipeline.png` |
+| Figura pila del bound | Puente visual entre endpoint conformal, identidad, supuesto y certificado | `crpto_fig20_bound_claim_layers.png` |
 | Figura alpha -> `Gamma_CP` -> funded set | Puente teoria-metodo | `crpto_fig13_alpha_gamma_funded_set.png` |
 | Heatmap region robusta | Evidencia visual `45/45` | `crpto_fig14_robust_region_heatmap.png` |
 | A12--A21 | Robustness appendix journal | `scripts/build_crpto_journal_package.py`; `scripts/build_tail_satisficing_challenger_audit.py` |

@@ -153,6 +153,21 @@ frozen funded set or intervals, never as a re-promoted champion.
 | A23 multi-distribution robustness | Worst-case 90% coverage by grade and grade x vintage cell on the frozen intervals. | Read-only diagnostic; the worst fine cell motivates MDCP/group-weighted as future work. |
 | A24 online conformal stability | Per-vintage and cumulative coverage plus the Gibbs-Candes ACI target trajectory over the OOT vintage sequence. | Static-OOT online-control diagnostic, not a streaming validation. |
 
+## Reviewer Claim Checks
+
+Table A25 links the paper's main claims to the evidence surface and guardrails a
+reviewer can inspect. The point is not to add another result, but to make the
+audit path explicit.
+
+| Claim | Evidence | Artifact | Test or guardrail |
+|---|---|---|---|
+| The predictive input is a frozen calibrated PD artifact, not a refreshed leaderboard model. | AUC, Brier, ECE, temporal backtesting, and calibration diagnostics. | `models/pd_canonical.cbm`, `models/pd_canonical_calibrator.pkl`, paper-facing metric tables. | `EXTRACTION_MANIFEST.json` and champion validation hashes. |
+| The conformal layer gives conservative OOT uncertainty on the PD scale. | 90% and 95% coverage, minimum group coverage, and grade/decile audits. | `data/processed/conformal_intervals_mondrian.parquet`. | Conformal validation status and smoke tests that check final metric synchronization. |
+| The promoted funded set passes the exact alpha-safe bound. | `V(alpha = 0.01) = 0.03645`, `Gamma_CP = 0.18591`, zero violation. | `models/final_project_promotion.json`, bound-evaluation parquet, Table A13. | Frozen exact-evaluation artifact and final-sync regression tests. |
+| The result is not an isolated lucky policy. | `45/45` policies pass in the final robust region. | Table A18 and robust-region heatmap. | Protected search/evaluation split; no rerun of the champion search in paper builds. |
+| The supplement strengthens interpretation without moving the champion. | A20--A24 challenger, dependence, tail-risk, multi-distribution, and online diagnostics. | Journal robustness tables and Figures 15--19. | Scope caveats in each table; challenger outputs are labeled as non-promoted diagnostics. |
+| The manuscript is reproducible at the artifact level. | Tables, figures, Quarto pages, and status JSONs regenerate from frozen inputs. | Repository code, DVC metadata, rendered book/paper outputs. | Pre-push smoke/lint hooks, DVC status checks, and manifest validation before release. |
+
 ## Why A21--A24 Do Not Strengthen the Main Claim
 
 A21--A24 are designed to make the paper harder to over-read. A21 shows that a
@@ -169,7 +184,7 @@ online-deployment guarantee.
 ## Decision-Certificate Landscape
 
 The main manuscript positions CRPTO as an auditable post-hoc bridge, not as the
-only possible conformal decision framework. Table A25 clarifies the certificate
+only possible conformal decision framework. Table A26 clarifies the certificate
 landscape that motivated the journal package.
 
 | Family | Certificate object | What CRPTO uses now | Future-work boundary |
@@ -182,7 +197,7 @@ landscape that motivated the journal package.
 
 ## Coverage-Validity Ladder
 
-Table A26 records the validity ladder used to interpret A23--A24. The purpose is
+Table A27 records the validity ladder used to interpret A23--A24. The purpose is
 to keep the strongest claims aligned with the available evidence.
 
 | Level | Claim form | Supporting CRPTO evidence | Boundary |
@@ -195,7 +210,7 @@ to keep the strongest claims aligned with the available evidence.
 
 ## Lending-Club And P2P Predecessors
 
-Table A27 anchors the empirical domain lineage. These papers narrow the novelty
+Table A28 anchors the empirical domain lineage. These papers narrow the novelty
 claim: CRPTO is not the first Lending Club model, not the first P2P portfolio
 optimizer, and not the first conformal credit-scoring application. Its claim is
 the audited coupling of conformal PD uncertainty with a robust credit-portfolio

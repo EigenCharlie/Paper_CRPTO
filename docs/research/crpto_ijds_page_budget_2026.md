@@ -1,82 +1,75 @@
-> **RESEARCH NOTE** — IJDS page-budget ledger for the CRPTO manuscript body.
+> **RESEARCH NOTE** -- IJDS page-budget ledger for the CRPTO manuscript body.
 > Working material for submission planning. The body source of truth is
-> `paper/CRPTO_ijds.qmd`; the LaTeX surface is
-> `paper/submission/CRPTO_ijds_submission.tex`.
+> `paper/CRPTO_ijds.qmd`; the final production surface should still be the
+> official IJDS/INFORMS LaTeX template.
 
-# CRPTO — IJDS Page-Budget Ledger (2026)
+# CRPTO -- IJDS Page-Budget Ledger (2026-06-01)
 
-IJDS caps the manuscript body at **25 pages**, excluding references and the online
-supplement. This ledger estimates current usage so the body can be tuned before
-submission. Because the official `informs4.cls` is gatekept by the INFORMS author
-portal and is **not** on CTAN/TeX Live, the submission `.tex` cannot be compiled
-locally for exact pagination; this ledger uses a word-count proxy instead.
+IJDS caps the manuscript body at **25 pages**, excluding references and the
+online supplement. The official `informs4.cls` template is not available in this
+repository, so this ledger uses two proxies:
 
-## Method
+- Quarto PDF dry run: `uv run -- quarto render paper/CRPTO_ijds.qmd --to pdf`.
+- Word/floats proxy: body prose by section plus a conservative float allowance.
 
-- Source: `paper/CRPTO_ijds.qmd` body prose (front matter, the submission-target
-  callout, code, table rows, figure markup and citation keys are excluded from the
-  word count).
-- Proxy: **~525 words/page** for a 1.5-spaced single-column journal body
-  (`\OneAndAHalfSpacedXI`, the informs4 default). This is conservative; INFORMS
-  body pages often run a little denser.
-- Floats: each in-body figure is budgeted at ~0.4 pg and each table at ~0.3 pg.
+## Dry-Run Result
 
-## Current usage by section
+The Quarto article PDF proxy rendered successfully on 2026-06-01.
 
-| Section | Words | ~Pages |
+| Surface | Local file | Proxy pages | Scope caveat |
+|---|---|---:|---|
+| IJDS body draft | `paper/CRPTO_ijds.pdf` | 14 | Includes references and generic Quarto formatting, not official IJDS pagination. |
+
+This is comfortably below the 25-page conceptual limit even before excluding
+references. The exact page budget must be rechecked after porting into the
+official IJDS template, but the current draft is not page-constrained.
+
+## Current Usage By Section
+
+Approximate prose counts exclude YAML, submission-target callout, references,
+table rows, figure markdown, code fences, captions, and inline citation keys.
+
+| Section | Words | Approx. prose pages |
 |---|---:|---:|
-| Abstract | 125 | 0.24 |
-| Introduction | 406 | 0.77 |
-| Related Work | 426 | 0.81 |
-| Method | 427 | 0.81 |
-| Theory | 174 | 0.33 |
+| Abstract | 145 | 0.28 |
+| Introduction | 484 | 0.92 |
+| Related Work | 526 | 1.00 |
+| Method | 409 | 0.78 |
+| Theory | 338 | 0.64 |
 | Experimental Design | 254 | 0.48 |
-| Results | 183 | 0.35 |
-| Robustness and Comparators | 439 | 0.84 |
-| Reproducibility and Companion | 126 | 0.24 |
-| Discussion | 263 | 0.50 |
-| **Total (prose only)** | **2,823** | **5.38** |
+| Results | 296 | 0.56 |
+| Robustness And Comparators | 473 | 0.90 |
+| Reproducibility And Companion | 177 | 0.34 |
+| Discussion | 412 | 0.78 |
+| **Total body prose** | **3,514** | **6.69** |
 
-Body floats: **4 figures** (pipeline, alpha–gamma, robust-region heatmap,
-regret-auditability frontier) ≈ 1.6 pg; **2 tables** (core metrics, regret
-frontier) ≈ 0.6 pg.
+Body floats after the current polish:
 
-**Estimated body length: ~7.6 pages of 25.**
+| Float type | Count | Budget heuristic | Approx. pages |
+|---|---:|---:|---:|
+| Figures | 5 | 0.4 page each | 2.0 |
+| Tables | 7 | 0.3 page each | 2.1 |
+| **Float allowance** | 12 |  | **4.1** |
 
-## Reading: the constraint is inverted
+**Estimated body length before references: ~10.8 pages.** The Quarto PDF proxy
+lands at 14 pages including references, which is consistent with this estimate.
 
-The original parent roadmap framed A3 as "compress the body to the 25-page
-budget." For the CRPTO manuscript as written, that is **not** the binding
-constraint: the draft is a compact, extended-abstract-style body at roughly
-**30% of the page allowance**. The risk for an IJDS submission is the opposite —
-a body that reads thin against reviewer expectations for a full research article.
+## Interpretation
 
-The ~17 pages of headroom should be used to **promote the strongest supplement
-material into the body**, not to cut. Recommended promotions, in priority order:
+The draft has enough headroom for IJDS. The risk is no longer "too long"; the
+main editorial risk is whether the body gives reviewers enough evidence without
+feeling like a bibliography dump. The current version uses the headroom well:
+the body now includes the bound claim stack, the closer-work boundary, the
+exact certificate, the reviewer claim checks, and the regret-auditability
+frontier.
 
-| Target section | Promote from supplement | Why it strengthens the body | Est. add |
-|---|---|---|---|
-| Method | Formal `u_i(α) → robust LP` constraint derivation; explicit objective + constraints | Reviewers expect the optimization model written out, not described | +1.5 pg |
-| Theory | The Markov proposition statement + proof sketch, and the cluster-aware conditional bound | Currently only narrated; IJDS wants the lemma/proof in-body | +2.0 pg |
-| Experimental Design | Split sizes table, feature-contract summary, leakage controls | Makes the empirical design auditable at a glance | +1.0 pg |
-| Results | A18 robust-region policy-family table (compact), funded-set composition by grade | Direct evidence the 45/45 region is not a single point | +1.5 pg |
-| Robustness | One compact A22 (CVaR/OCE) panel + A23 multi-distribution summary | Shows tail and distribution robustness in-body, not only appendix | +1.5 pg |
+## Before Real Submission
 
-Promoting these would bring the body to roughly **15–16 pages**, a healthy IJDS
-length that still leaves comfortable margin and keeps A3–A24 in the supplement.
-
-## Hard limits to respect when expanding
-
-- Keep **3–4 figures** as the visual spine; additional evidence goes to the
-  supplement to avoid float clutter.
-- Do **not** promote method-changing P2/P3 variants (optimized OCE/CVaR objective,
-  online conformal, causal layers) into the body — they remain future work.
-- Every promoted number must trace to a frozen artifact (the claim→artifact→test
-  rule), so promotion is a writing task, not a re-run.
-
-## Action
-
-A3 is therefore re-scoped from "trim to 25 pp" to **"expand the body from ~7.6 to
-~15 pp by promoting the listed supplement material, capped well under 25 pp."**
-This is a finalization-time writing task and is gated on porting the prose into
-the official `informs4` template (which requires the portal download).
+- Port the manuscript into the official IJDS/INFORMS LaTeX template and re-count
+  body pages there.
+- If the official template gets tight, demote the body-level reviewer-check
+  table or the robust-region heatmap to the supplement before cutting theory.
+- Keep the bound claim stack in the body; it explains the method faster than
+  another paragraph.
+- Keep the exact certificate in the body; it is the strongest auditability
+  object in the paper.

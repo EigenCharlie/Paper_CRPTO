@@ -125,6 +125,7 @@ seleccion sugerida es:
 | Elemento | Ubicacion probable | Razon | Artefacto |
 |---|---|---|---|
 | Figura 1: pipeline CRPTO | Cuerpo | Explica el aporte en una sola vista | `crpto_fig12_crpto_conceptual_pipeline.png` |
+| Figura bound: pila de claim | Teoria | Separa endpoint conformal, identidad deterministica, supuesto ponderado y certificado exacto | `crpto_fig20_bound_claim_layers.png` |
 | Figura 2: alpha -> `Gamma_CP` -> funded set | teoria/metodo | Une parametro conformal y decision | `crpto_fig13_alpha_gamma_funded_set.png` |
 | Figura 3: region robusta `45/45` | Resultados | Muestra que el champion no es aislado | `crpto_fig14_robust_region_heatmap.png` |
 | Tabla 1: metricas core | Resultados | Fija PD, CP y portfolio sin mezclar familias | `crpto_table0_key_metrics.csv` |

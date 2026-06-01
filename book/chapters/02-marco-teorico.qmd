@@ -83,6 +83,8 @@ separadas tanto en el libro como en el paper IJDS:
 
 : Lectura honesta del bound: identidad, supuesto y certificado {#tbl-bound-honest-reading}
 
+![La pila del bound separa la identidad determinística, el supuesto de validez ponderada y el certificado exacto congelado.](../assets/figures/publication/crpto_fig20_bound_claim_layers.png){#fig-bound-claim-stack-book fig-alt="Diagrama conceptual en cuatro bloques: endpoint conformal, identidad determinística, validez ponderada y certificado exacto del funded set."}
+
 #### Presupuesto conformal de robustez
 
 ::: {#def-gamma-cp}

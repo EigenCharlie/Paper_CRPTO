@@ -32,6 +32,8 @@ as a slower journal-only add-on.
 - `reports/crpto/tables/crpto_tableA19_regret_auditability_frontier.tex`
 - `reports/crpto/figures/crpto_fig12_crpto_conceptual_pipeline.png`
 - `reports/crpto/figures/crpto_fig12_crpto_conceptual_pipeline.pdf`
+- `reports/crpto/figures/crpto_fig20_bound_claim_layers.png`
+- `reports/crpto/figures/crpto_fig20_bound_claim_layers.pdf`
 - `reports/crpto/figures/crpto_fig13_alpha_gamma_funded_set.png`
 - `reports/crpto/figures/crpto_fig13_alpha_gamma_funded_set.pdf`
 - `reports/crpto/figures/crpto_fig14_robust_region_heatmap.png`
@@ -73,4 +75,4 @@ as a slower journal-only add-on.
 - `book/chapters/06-blueprint-manuscrito.qmd` uses
   these artifacts to define the paper outline and final table/figure plan.
 - `book/chapters/07-apendice-robustez.qmd`
-  renders A12--A21 and Figures 12--15.
+  renders A12--A21 and Figures 12--15 plus the bound-claim stack figure.
