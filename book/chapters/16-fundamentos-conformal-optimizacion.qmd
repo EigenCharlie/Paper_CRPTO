@@ -303,6 +303,36 @@ Es posible que un método logre excelente cobertura *marginal* (promedio global)
 En nuestros experimentos de alpha sweep, el enfoque Mondrian identifica 25,625 préstamos elegibles (9.3% del test set) para reclasificación a alpha = 0.10, mientras que el enfoque global no identifica ninguno al mismo nivel --- demostrando que la granularidad condicional es operativamente superior.
 :::
 
+#### Escalera de validez conformal
+
+La bibliografía reciente obliga a separar con cuidado qué tipo de validez se
+está reclamando. En CRPTO, la garantía operacional principal es marginal o
+Mondrian por partición definida; no es cobertura condicional exacta para cada
+perfil individual. Esa precisión protege el paper y fortalece la tesis.
+
+| Nivel | Qué permite decir | Dónde queda CRPTO |
+|---|---|---|
+| Marginal split conformal | La cobertura promedio sobre la población exchangeable alcanza el objetivo [@vovk2005; @angelopoulos2023]. | Base estadística de los intervalos. |
+| Mondrian / group conformal | La cobertura se audita por particiones predefinidas [@bostrom2021; @gibbs2024]. | Lectura natural por grade y score decile. |
+| Cobertura ponderada o localizada | La cobertura se adapta a pesos, vecindarios o grupos seleccionados [@barber2023beyond; @guan2023localized; @jonkers2024wcps]. | Diagnóstico/future work, no método promovido. |
+| Multi-distribución | Se controla validez bajo varias fuentes o ambientes [@liu2024multisource; @yang2026multidistribution]. | A23 como stress read-only. |
+| Online/adaptativa | El nivel se ajusta secuencialmente ante drift [@gibbs2021aci; @liu2026portfolio]. | A24 como replay OOT, no despliegue live. |
+
+#### Escalera de decisión conformal
+
+También conviene distinguir si la incertidumbre conformal se queda en una
+predicción o si entra a una decisión. La tesis debe presentar CRPTO como una
+posición intermedia: más fuerte que graficar intervalos después del modelo, más
+conservadora que reentrenar todo end-to-end.
+
+| Escalón | Uso de la incertidumbre | Ejemplo en la literatura | Lectura para CRPTO |
+|---|---|---|---|
+| Intervalo descriptivo | Reporta incertidumbre, pero no cambia la decisión. | Conformal credit scoring ordinal [@kawasumi2026ordinal]. | Vecino de dominio, no sustituto. |
+| Conjunto de incertidumbre | El intervalo define el peor caso del optimizador. | CP + robust optimization [@johnstone2021; @patel2024]. | Núcleo CRPTO. |
+| Control robusto de pérdida | Certifica una pérdida o propiedad decisional. | CRC y conformal robustness control [@angelopoulos2024risk; @hu2026crc]. | Extensión natural. |
+| Selección de modelo/decisión | El certificado escoge entre modelos o decisiones. | CROM, CREDO y CREME [@bao2025croms; @zhou2025credo; @zhou2026creme]. | V2 posible, no selector del champion actual. |
+| Entrenamiento end-to-end | El modelo aprende con pérdida downstream. | SPO+ y DFL robusto [@elmachtoub2022; @schutte2024robust]. | Comparador A19; cambia el artefacto predictivo. |
+
 #### Métricas de evaluación integral
 
 Para evaluar intervalos conformales de forma integral, se utilizan las siguientes métricas:

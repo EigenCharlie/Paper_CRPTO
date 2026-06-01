@@ -94,9 +94,14 @@ probabilistic learning to robust, auditable credit portfolio choice.
 
 The paper makes three contributions. First, it gives a concrete CRPTO
 construction for credit portfolios: calibrated PD, Mondrian conformal
-uncertainty, and robust budgeted optimization. Second, it provides an
+uncertainty, and robust budgeted optimization. Second, it positions that
+construction against the nearest decision literature: data-driven robust
+optimization, P2P lending portfolio models, conformal credit scoring, and
+decision-focused learning. The novelty claim is therefore specific, not
+leaderboard-oriented: CRPTO is an auditable bridge from conformal credit-risk
+uncertainty to a frozen robust funding decision. Third, it provides an
 artifact-backed empirical study where every paper table and figure is generated
-from frozen outputs rather than manually transcribed summaries. Third, it
+from frozen outputs rather than manually transcribed summaries, and it
 documents the governance boundary between safe paper-facing reruns and
 protected stages that would change the promoted champion.
 
@@ -112,14 +117,21 @@ that they provide distribution-free coverage language under explicit
 exchangeability assumptions, and that this language can be audited without
 trusting a fully parametric posterior. Mondrian and group-conditional variants
 are especially natural in credit because risk grades are already used as
-business and governance partitions [@bostrom2021; @gibbs2024; @zhou2024].
+business and governance partitions [@bostrom2021; @gibbs2024; @zhou2024], while
+recent impossibility and weighted-coverage results mark the boundary between
+marginal validity, group validity, and the stronger conditional guarantees that
+cannot be obtained for free [@barber2021limits; @barber2023beyond;
+@jonkers2024wcps].
 
 The second foundation is robust optimization. Classical robust optimization
 frames uncertainty as a set against which a decision must remain feasible, with
 the price of robustness made visible as a design trade-off [@bertsimas2004].
-Recent work connects conformal prediction and robust optimization more directly
-by using conformal uncertainty sets in downstream decisions [@johnstone2021;
-@patel2024; @sun2024ptc; @yeh2026]. CRPTO follows this line, but its empirical
+Data-driven robust and prescriptive-analytics work then connects predictive
+models to downstream decisions while keeping the uncertainty-to-action contract
+explicit [@bertsimas2018datadriven; @bertsimas2020prescriptive]. Recent work
+connects conformal prediction and robust optimization more directly by using
+conformal uncertainty sets in downstream decisions [@johnstone2021; @patel2024;
+@sun2024ptc; @yeh2026; @hu2026crc]. CRPTO follows this line, but its empirical
 emphasis is different: the uncertainty set is not an abstract benchmark
 instance, but a credit-risk interval artifact with DVC/MLflow-style lineage,
 paper tables, and model-risk documentation.
@@ -134,29 +146,36 @@ must remain explainable to credit-risk reviewers. Robust losses for
 decision-focused learning [@schutte2024robust] share this protective intent, but
 operate at training time rather than as a post-hoc auditable constraint.
 
-The fourth foundation is machine learning for credit scoring, where gradient
-boosting and benchmark studies define the performance frontier on retail panels
-[@lessmann2015; @ayari2026; @boosting2025default; @xia2017]. Work specific to
-the Lending Club platform spans alternative-data fintech lending
-[@jagtiani2019altdata], scorecard equity [@albanesi2024credit], two-stage
-learning under fragmentary data [@liu2026twostage], and operations-research
-treatments of the same investment-decision problem CRPTO studies
-[@aior2025lendingclub]. CRPTO does not compete on raw ranking against this
+The fourth foundation is machine learning and optimization for credit
+decisions. Credit-scoring benchmarks define the performance frontier on retail
+panels [@lessmann2015; @ayari2026; @boosting2025default; @xia2017], while work
+on fintech lending and consumer-credit allocation studies platform structure,
+credit invisibility, measurement noise, and scorecard equity
+[@jagtiani2019altdata; @albanesi2024credit; @khandani2010consumer;
+@brevoort2016creditinvisibles; @blattner2021noise; @fuster2022predictably].
+In the P2P/Lending Club decision neighborhood, prior work studies
+instance-based investment support, robust credit portfolio optimization, and
+multi-objective AI/OR funding policies [@guo2016p2p; @chi2019p2p;
+@babaei2020p2p; @aior2025lendingclub]. Recent ordinal conformal credit-scoring
+work also means that the safe claim is not "no conformal prediction in credit"
+[@kawasumi2026ordinal]. CRPTO does not compete on raw ranking against this
 literature; its champion AUC is deliberately mid-range. The contribution is the
-auditable bridge from a calibrated, frozen PD model to a robust portfolio
-decision, not another point on the credit-scoring leaderboard.
+auditable bridge from a calibrated, frozen PD model to a conformal robust
+portfolio decision, not another point on the credit-scoring leaderboard.
 
 Finally, recent work on conformal model selection for robust optimization,
 multi-distribution conformal validity, online conformal portfolio methods,
-end-to-end conformal risk training, and conformal satisficing [@bao2025croms;
-@yang2026multidistribution; @liu2026portfolio; @yeh2025training;
+end-to-end conformal risk training, robust conformal decision certificates, and
+conformal satisficing [@bao2025croms; @yang2026multidistribution;
+@liu2026portfolio; @yeh2025training; @zhou2025credo; @zhou2026creme;
 @zhao2025robust] motivates the journal-strengthening package in this paper. We
 use those ideas where they can be evaluated from frozen CRPTO artifacts:
-OCE/CVaR [@rockafellar2000cvar; @bental2007oce] appears as a tail-risk diagnostic, robust satisficing appears as
-committee-style margin evidence, and SPO+ motivates the regret-auditability
-frontier. The method-changing variants--optimized OCE/CVaR objectives, online
-or multi-dataset protocols, causal layers, and hybrid decision-focused
-training--remain future work rather than hidden acceptance criteria.
+OCE/CVaR [@rockafellar2000cvar; @bental2007oce] appears as a tail-risk
+diagnostic, robust satisficing appears as committee-style margin evidence, and
+SPO+ motivates the regret-auditability frontier. The method-changing
+variants--optimized OCE/CVaR objectives, online or multi-dataset protocols,
+causal layers, and hybrid decision-focused training--remain future work rather
+than hidden acceptance criteria.
 
 # Method
 
@@ -405,15 +424,21 @@ universal proxy for modern credit origination. It does not claim legal fairness
 certification, because the public data lack direct protected attributes. It
 does not assert that robust conformal policies dominate all decision-focused
 learners on regret. It also does not treat synthetic shift as a substitute for
-new external cohorts.
+new external cohorts. Its conformal guarantee is marginal or partitioned by the
+chosen Mondrian design, not exact conditional coverage for every borrower
+profile. It is also not an online deployment study: there are no new
+post-2020 retail originations, no live monitoring loop, and no end-to-end
+utility-directed conformal learner replacing the frozen PD artifact.
 
 The next research directions are clear and are now separated into two groups.
 The current paper includes the safe journal-strengthening package: OCE/CVaR as
 a tail-risk audit, satisficing as margin evidence, SPO+ as the low-regret corner
 of the regret-auditability frontier, and dependence as a formal caveat. The
 future backlog remains larger: optimized OCE/CVaR objectives, online conformal
-methods, multi-distribution conformal validity, causal variants, and
-multi-dataset credit replication all require new protocols, data, or proofs.
+methods, multi-distribution conformal validity, utility-directed or
+decision-theoretic conformal variants [@cortesgomez2025utility;
+@lekeufack2023cdt], causal variants, and multi-dataset credit replication all
+require new protocols, data, or proofs.
 Those directions are valuable, but they are not blockers for submitting the
 frozen CRPTO result as an auditable post-hoc predict-then-optimize contribution.
 

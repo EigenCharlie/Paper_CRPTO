@@ -2,6 +2,22 @@
 
 Este capítulo guarda material útil para journal, appendix o respuesta a reviewers, pero lo separa explícitamente del champion CRPTO. La regla es simple: estas piezas explican conexiones y extensiones; no cambian la policy oficial `bound_aware_276k_economic_champion` ni los artefactos canónicos de CRPTO.
 
+### Regla de separación: diagnóstico seguro vs método nuevo
+
+El intake bibliográfico nuevo agrega muchas ideas atractivas, pero no todas
+tienen el mismo estatus operativo. Para proteger el champion congelado, la
+tesis y el paper deben separar tres categorías:
+
+| Categoría | Puede entrar ahora | Ejemplos | Gate |
+|---|---|---|---|
+| Diagnóstico seguro | Sí, si consume artefactos congelados. | A20 tail-satisficing, A21 cluster bounds, A22 challenger CVaR/OCE, A23 MD coverage read-only, A24 ACI replay. | Render, citas y pruebas documentales. |
+| Posicionamiento literario | Sí, como related work o limitación. | Hu CRC, CREDO, CREME, ordinal CP credit scoring, P2P robust lending. | No prometer resultados no ejecutados. |
+| Método nuevo | No como requisito del paper actual. | CQR/utility-directed CP promovido [@cortesgomez2025utility], conformal decision theory [@lekeufack2023cdt], CRC como selector, CREME para escoger robustez, online conformal live, E2E conformal training. | Nuevo protocolo, drift report y permiso explícito si toca champion. |
+
+La regla editorial es simple: si una idea cambia intervalos, PD, política,
+selector o exact bound, es future work. Si solo lee outputs congelados y ayuda a
+explicar el resultado, puede entrar al supplement, al libro o a la defensa.
+
 ### Señal SICR conformal
 
 El ancho del intervalo conformal puede leerse como una señal complementaria de deterioro crediticio. CRPTO conserva esta pieza como **evidence card IFRS9-inspired**, no como modelo contractual IFRS9 ni como dependencia de un libro externo.

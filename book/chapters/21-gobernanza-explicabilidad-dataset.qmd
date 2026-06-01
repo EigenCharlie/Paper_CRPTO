@@ -88,6 +88,29 @@ pd.DataFrame(rows)
 
 La lectura prudente no es “el modelo es justo” en sentido absoluto. La lectura correcta es más concreta: **la política vigente no muestra disparidades materiales bajo los atributos y umbrales auditados hoy**.
 
+### Proxies, ruido y frontera de datos protegidos
+
+La bibliografia nueva ayuda a afinar el lenguaje de gobernanza. La ausencia de
+atributos protegidos directos no significa ausencia de riesgo de equidad; solo
+limita el tipo de afirmacion que puede hacerse. En credito, los proxies de
+raza, geografia, historia crediticia y comportamiento financiero pueden cargar
+informacion sensible o incompleta. Por eso la auditoria de CRPTO debe
+presentarse como control sobre atributos disponibles y proxies razonables, no
+como certificacion legal de fair lending.
+
+| Riesgo | Evidencia externa | Uso en CRPTO |
+|---|---|---|
+| Credit invisibility | Muchas personas no tienen historia suficiente para scoring tradicional [@brevoort2016creditinvisibles]. | Limite de cobertura del dataset Lending Club. |
+| Ruido de medicion | El ruido en reportes crediticios puede afectar asignacion y pricing [@blattner2021noise]. | Motivo para exigir calibracion, intervalos y segment checks. |
+| Modelos predictivos y asignacion | ML puede mejorar prediccion y aun asi cambiar quien recibe credito [@fuster2022predictably]. | Separar performance de consecuencias decisionales. |
+| Proxies protegidos | BISG y aproximaciones similares son utiles, pero imperfectas [@cfpb2014bisg; @finreglab2023fairness]. | Fairness proxy como diagnostico, no certificacion. |
+| Gobernanza de provision | ECL y overlays requieren trazabilidad de supuestos [@basel2015ecl]. | Mantener IFRS9 como extension documentada, no dependencia IJDS. |
+
+Esta frontera no debilita el proyecto. Al contrario: hace que la tesis sea mas
+creible, porque distingue con claridad entre evidencia estadistica disponible,
+decisiones auditables y claims regulatorios que exigirian datos protegidos o un
+proceso legal externo.
+
 ### C2ST y representatividad: qué agrega realmente
 
 El proyecto añadió una capa de representatividad basada en **Classifier Two-Sample Test** (C2ST), un enfoque útil cuando PSI por sí solo se queda corto [@lopezpaz2018c2st]. El punto no es sustituir PSI, sino enriquecer la lectura de drift con una pregunta más exigente: ¿qué tan fácil es distinguir train y test con un clasificador, y qué señales explican esa separación?

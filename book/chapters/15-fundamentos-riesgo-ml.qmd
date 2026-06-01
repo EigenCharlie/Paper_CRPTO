@@ -68,7 +68,7 @@ El **SICR** (Significant Increase in Credit Risk) es el trigger que mueve un pr�
 
 ::: {.callout-tip}
 ## Innovación del proyecto
-En este proyecto proponemos usar el **ancho del intervalo conformal** como señal adicional de SICR. Un intervalo más ancho indica mayor incertidumbre sobre la PD, lo que puede señalar deterioro antes de que se refleje en el punto estimado. Esta es una contribución original --- no existen papers previos que usen el ancho conformal como trigger SICR.
+En este proyecto proponemos usar el **ancho del intervalo conformal** como señal adicional de SICR. Un intervalo más ancho indica mayor incertidumbre sobre la PD, lo que puede señalar deterioro antes de que se refleje en el punto estimado. En la biblioteca revisada no identificamos un precedente que use el ancho conformal como trigger SICR dentro de un pipeline IFRS9-inspired.
 :::
 
 ### Basilea III y Capital Regulatorio
@@ -94,6 +94,34 @@ En Lending Club, los préstamos se clasifican en grados de A (menor riesgo) a G 
 | G | ~45--55% | ~30--31% |
 
 : Grados de riesgo de Lending Club (valores aproximados del dataset)
+
+### Credit scoring como infraestructura de asignacion
+
+La literatura nueva refuerza una lectura importante para la tesis: un modelo de
+credit scoring no es solo un clasificador. En originacion, pricing,
+provisionamiento y seleccion de portafolio, el score es una infraestructura de
+asignacion de capital y de oportunidades. Por eso un AUC aceptable no basta si
+la probabilidad esta mal calibrada, si el ruido de medicion afecta a ciertos
+segmentos, o si la decision downstream amplifica una debilidad del score.
+
+La tesis debe usar esta distincion para evitar dos errores. El primero es
+presentar CRPTO como otra competencia de ranking; los benchmarks de credit
+scoring ya cubren ese terreno [@lessmann2015; @ayari2026]. El segundo es
+tratar fairness, credit invisibility y medicion ruidosa como apendices eticos
+separados. En credito, esos problemas cambian el conjunto de personas que
+puede acceder a precio, cupo o financiacion [@khandani2010consumer;
+@brevoort2016creditinvisibles; @blattner2021noise; @fuster2022predictably].
+La contribucion de CRPTO se vuelve mas clara si la PD calibrada se describe
+como un insumo gobernado que despues entra a una decision robusta, no como un
+fin en si mismo.
+
+| Capa | Riesgo si se ignora | Como lo usa CRPTO |
+|---|---|---|
+| Calibracion de PD | ECL, pricing y restricciones de riesgo se vuelven numericamente fragiles. | Gate antes de construir intervalos y portafolios. |
+| Segmentos y credit grades | La cobertura global puede ocultar subcobertura en grupos de riesgo. | Particiones Mondrian y auditorias por grade/score. |
+| Ruido y credit invisibility | El score puede ser menos informativo para poblaciones con poca historia crediticia. | Limite declarado por ausencia de atributos protegidos directos. |
+| ECL y provisionamiento | El rango de perdida importa tanto como el punto estimado. | Agenda de tesis/appendix, no claim central IJDS. |
+| Decision de portafolio | Un buen ranking puede producir una mala asignacion de capital. | Optimización robusta con incertidumbre conformal. |
 
 ## Fuente curada: `book/chapters/02-glossary/02b-ml-statistics-foundations.qmd`
 

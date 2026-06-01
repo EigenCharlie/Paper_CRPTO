@@ -42,6 +42,22 @@ La figura `fig-uncertainty-sets` conecta estadística con OR: cada intervalo con
 
 : Cómo se traduce la estadística en decisión de portafolio
 
+## Linaje de portafolio crediticio
+
+La bibliografia revisada permite contar el linaje de CRPTO con mas precision.
+El paper no inventa la optimizacion de portafolio ni el uso de ML en P2P
+lending; la contribucion es la union auditable entre PD calibrada,
+incertidumbre conformal y decision robusta congelada.
+
+| Tradicion | Que aporta | Limite que deja abierto para CRPTO |
+|---|---|---|
+| Media-varianza y portafolio clasico | Formaliza el trade-off retorno/riesgo como decision de asignacion. | No modela default binario ni cobertura de incertidumbre por prestamo. |
+| Robust optimization | Hace explicito el precio de protegerse contra incertidumbre [@bertsimas2004]. | El conjunto de incertidumbre suele venir de supuestos o tuning. |
+| Data-driven robust / prescriptive analytics | Conecta prediccion, decision y robustez con datos [@bertsimas2018datadriven; @bertsimas2020prescriptive]. | No resuelve por si solo el problema de validez finita del intervalo. |
+| P2P credit portfolio | Lleva ML y optimizacion al dominio Lending Club/P2P [@guo2016p2p; @chi2019p2p; @babaei2020p2p; @aior2025lendingclub]. | No acopla conformal coverage, bound exacto y lineage congelado. |
+| Conformal robust decisions | Usa conjuntos conformales en decisiones robustas [@johnstone2021; @patel2024; @hu2026crc]. | La mayoria de ejemplos no vive en un portafolio crediticio real. |
+| CRPTO | Convierte intervalos conformales de PD en una politica robusta auditada. | No pretende reemplazar DFL ni online conformal; los compara o difiere. |
+
 ```html
 <div class="capítulo-landing-grid">
   <div class="capítulo-card"><h4><a href="09a-deterministic-portfolio.html">35. Determinístico</a></h4><p>Formulación base LP y restricciones canónicas.</p></div>

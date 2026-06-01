@@ -18,11 +18,34 @@ El proyecto se ubica en la interseccion de varias literaturas maduras y unas poc
 |---|---|---|
 | Conformal foundations | Muy desarrollado | Pocas aplicaciones integradas a decision crediticia |
 | Mondrian / group-conditional | Activo 2023-2026 | Evidencia aplicada en credito real aun limitada |
-| Conformal + robust optimization | Emergente | Casi nula integracion operativa en portafolio crediticio |
+| Conformal + robust optimization | Emergente | Integracion operativa aun rara en portafolio crediticio |
 | IFRS9 / lifetime credit risk | Madura por separado | Ausencia practica de UQ distribution-free en pipelines ECL |
 | Decision-focused learning | Expansion rapida | Poco dialogo con incertidumbre conformal en credito |
 
 : Panorama del estado del arte
+
+### Mapa bibliografico actualizado CRPTO
+
+El intake bibliografico de mayo de 2026 deja el mapa mas fino: existen
+predecesores cercanos en P2P lending, credit scoring conformal ordinal,
+conformal robust optimization y decision certificates. Por eso el claim fuerte
+ya no debe ser "nadie ha trabajado nada parecido" sino una afirmacion mas
+defendible: no encontramos un trabajo que una, en el mismo artefacto auditable,
+PD calibrada sobre Lending Club, intervalos conformales, optimizacion robusta
+de portafolio crediticio, exact funded-set validation y gobernanza de
+reproducibilidad.
+
+| Bloque | Papers que ahora deben aparecer | Lectura para tesis/paper |
+|---|---|---|
+| Conformal foundations | Vovk, Papadopoulos, Angelopoulos, Bates, Barber, Gibbs/Candes. | Base de cobertura y limites de cobertura condicional. |
+| Group/weighted/MD coverage | Mondrian, Barber, Guan, Jonkers, Liu multi-source, Yang MDCP, Bhattacharyya group-weighted. | Sustenta A23 y evita sobreprometer cobertura exacta por perfil. |
+| Conformal + robust decisions | Johnstone, Patel, Sun PTC, Yeh E2E, Hu CRC, Chen/Reddy. | Vecindario teorico directo de CRPTO. |
+| Decision certificates | CROM, CREDO, CREME, conformal satisficing. | Future work natural, no selector oculto del champion. |
+| P2P/Lending Club OR | Guo, Chi, Babaei/Bamdad, Torkian/Bamdad/Sarfaraz. | Predecesores de dominio que obligan a precisar la novedad. |
+| Credit scoring y asignacion | Lessmann, Ayari, Khandani, Jagtiani, Albanesi, Blattner, Brevoort, Fuster. | Contexto de scoring, equidad, ruido y credit invisibility. |
+| Decision-focused learning | Donti, Elmachtoub/Grigas, Mandi, Schutte. | Comparador de regret; CRPTO prioriza auditoria y riesgo. |
+| Finance conformal portfolios | Noguer, Kato, Liu online portfolio. | Vecinos financieros fuera de credito minorista. |
+| IFRS9 / MRM / governance | Basel, SR 11-7, ECB/IFRS9, FinRegLab, CFPB BISG. | Tesis/supplement, no contribucion central IJDS. |
 
 ### Corriente 1: Fundamentos de prediccion conformal
 
@@ -34,19 +57,33 @@ La prediccion conformal fue establecida formalmente por [@vovk2005] en el marco 
 
 El procedimiento Mondrian, introducido en [@vovk2005] y desarrollado como distribucion predictiva por [@bostrom2021], ofrece garantias de cobertura group-conditional al calibrar intervalos dentro de particiones predefinidas. [@ding2023] abordaron la escalabilidad del enfoque cuando el numero de clases es grande, mostrando que la particion debe equilibrar granularidad con tamano de muestra de calibracion. [@gibbs2024] formalizaron garantias condicionales mas fuertes, y [@bairaktari2025] propusieron *Kandinsky conformal prediction* para particiones multi-atributo. [@zhou2024] exploro la cobertura ecualizada para grupos seleccionados adaptativamente, y [@plassier2024] abordo la validez condicional aproximada.
 
-**Brecha para este proyecto**: ninguno de estos trabajos evalua Mondrian conformal sobre particiones de riesgo crediticio (grades A--G) con validacion out-of-time. La evidencia aplicada en credito es practicamente inexistente.
+**Brecha para este proyecto**: ya no conviene afirmar que no existe prediccion conformal en credito, porque hay trabajo ordinal reciente [@kawasumi2026ordinal]. La brecha defendible es mas estrecha: la evidencia publicada que conecte particiones de riesgo crediticio, validacion out-of-time, intervalos PD y decision de portafolio sigue siendo muy limitada.
 
 ### Corriente 3: Prediccion conformal y optimizacion robusta
 
 La conexion entre conjuntos conformales y optimizacion robusta fue inaugurada por [@johnstone2021], quienes propusieron usar intervalos conformales como conjuntos de incertidumbre para programas robustos. [@patel2024] extendieron esta idea al caso contextual, donde los conjuntos de incertidumbre dependen de covariables observadas. [@yeh2026] propusieron calibracion conformal end-to-end para optimizacion bajo incertidumbre, y [@chenreddy2024] abordaron la optimizacion robusta condicional. [@zhao2025robust] formalizaron la interaccion entre conformal y *satisficing*, y [@bao2025croms] propusieron seleccion optima de modelo para optimizacion robusta conformada. [@chan2024inverse] exploraron la optimizacion inversa conformal, y [@iutzeler2025dro] conectaron prediccion de riesgo conformal con optimizacion distributivamente robusta.
 
-**Brecha para este proyecto**: a pesar de la riqueza de este subcampo, ninguno de los trabajos opera sobre portafolios de credito real. La conexion entre intervalos conformales, scoring crediticio calibrado y asignacion de capital permanece inexplorada.
+**Brecha para este proyecto**: a pesar de la riqueza de este subcampo, los ejemplos cercanos suelen ser abstractos, LPs contextuales generales o decisiones robustas fuera de credito. La conexion entre intervalos conformales, scoring crediticio calibrado, P2P/Lending Club y asignacion robusta de capital sigue siendo el espacio especifico de CRPTO.
 
 ### Corriente 4: Prediccion conformal en finanzas
 
 [@noguer2024survey] ofrecio un survey de prediccion conformal en finanzas que cubre portafolios de equity, commodities y derivados. [@kato2025] propuso seleccion de portafolios basada en predicciones conformales, y [@noguer2024portfolio] exploro la optimizacion de portafolio conformal. [@fantazzini2024] aplico inferencia conformal adaptativa a medidas de riesgo de mercado. [@liu2026portfolio] conecto prediccion conformal online con algoritmos de portafolio universal.
 
 **Brecha para este proyecto**: estos trabajos operan predominantemente en mercados de equity y derivados. La aplicacion a credito minorista --- donde el "retorno" es un cupon fijo y el "riesgo" es un evento binario de default --- tiene caracteristicas suficientemente distintas como para requerir evaluacion independiente.
+
+### Corriente 4b: P2P lending y portafolios de credito
+
+El intake nuevo deja claro que el vecindario aplicado de CRPTO ya existe. Guo
+et al. estudian evaluacion de riesgo para inversion P2P [@guo2016p2p], Chi,
+Ding y Peng formulan un problema robusto de portafolio P2P [@chi2019p2p],
+Babaei y Bamdad proponen soporte multiobjetivo para inversion P2P
+[@babaei2020p2p], y Torkian, Bamdad y Sarfaraz llevan una lectura AI/OR
+multiobjetivo al dominio de digital lending [@aior2025lendingclub].
+
+**Brecha para este proyecto**: estos trabajos hacen que el paper de CRPTO deba
+ser preciso. La novedad no es "usar optimizacion en Lending Club"; es usar la
+incertidumbre conformal de una PD calibrada como objeto de decision robusta,
+con exact funded-set validation y trazabilidad de artefactos.
 
 ### Corriente 5: Decision-focused learning y predict-then-optimize
 
@@ -66,27 +103,36 @@ La conexion entre conjuntos conformales y optimizacion robusta fue inaugurada po
 
 ### Hallazgos de posicionamiento
 
-La revision curada del proyecto enfatiza seis vacios que se organizan en tres niveles de profundidad. Los dos primeros son **fundacionales**: la ausencia de papers que integren conformal con IFRS9 end-to-end y la casi nula evidencia de conformal prediction aplicada a robust portfolio allocation en credito. Estos vacios son los mas graves porque significan que las dos aplicaciones mas naturales de la incertidumbre conformal en banca — provisionar con bandas y asignar capital con proteccion — carecen de precedentes publicados. Sin resolver estos, las aplicaciones mas especificas no tienen base.
+La revision curada del proyecto enfatiza seis vacios que se organizan en tres niveles de profundidad. Los dos primeros son **fundacionales**: la ausencia de papers que integren conformal con IFRS9 end-to-end y la ausencia de un ejemplo auditable que combine conformal prediction, PD calibrada y robust portfolio allocation en credito. Estos vacios son importantes porque las dos aplicaciones mas naturales de la incertidumbre conformal en banca — provisionar con bandas y asignar capital con proteccion — todavia no tienen una ruta aplicada completa. Sin resolver estos, las aplicaciones mas especificas no tienen base.
 
 Los dos siguientes son **metodologicos**: la falta de uso explicito del ancho conformal como senal SICR y la escasez de sistemas completos CatBoost → calibracion → CP → decision robusta. Estos vacios operan un nivel mas abajo: asumen que la integracion fundacional es posible y preguntan *como* implementarla. El ancho como senal SICR es una propuesta concreta que convierte un subproducto del intervalo en un trigger prudencial; el pipeline completo es la evidencia de que la cadena puede ejecutarse end-to-end sin que las piezas se desacoplen.
 
-Los dos ultimos son de **gobernanza y validacion**: la ausencia de evaluacion de Mondrian conformal sobre grades crediticios con datos OOT y la nula integracion de prediccion conformal con validacion de modelos (MRM / SR 11-7). Estos vacios son los que determinan si un resultado academico puede cruzar hacia la practica bancaria. Un regulador no pregunta solo si el modelo funciona — pregunta si se puede verificar que funciona, por segmento y en datos que el modelo no vio durante entrenamiento. Sin cobertura OOT verificable por grade y sin un marco de validacion compatible con SR 11-7, la prediccion conformal permanece como curiosidad metodologica.
+Los dos ultimos son de **gobernanza y validacion**: la escasez de evaluacion de Mondrian conformal sobre grades crediticios con datos OOT y la falta de integracion explicita de prediccion conformal con validacion de modelos (MRM / SR 11-7). Estos vacios son los que determinan si un resultado academico puede cruzar hacia la practica bancaria. Un regulador no pregunta solo si el modelo funciona — pregunta si se puede verificar que funciona, por segmento y en datos que el modelo no vio durante entrenamiento. Sin cobertura OOT verificable por grade y sin un marco de validacion compatible con SR 11-7, la prediccion conformal permanece como curiosidad metodologica.
 
 Cada uno de estos seis vacios corresponde a una contribucion especifica de la tesis, y su organizacion jerarquica refleja la estructura del propio pipeline: primero se establece la viabilidad fundacional (Papers 2 y Estrella), luego se demuestra la implementacion metodologica (Pipeline completo + SICR conformal), y finalmente se valida la gobernanza (Paper 3 + MRM).
 
 ::: {.callout-important}
-## Seis vacios identificados en la literatura
-La revision sistematica de ~80 papers revela que, a marzo de 2026:
+## Seis vacios reformulados
+La revision sistematica de la biblioteca CRPTO revela estos claims defendibles:
 
-1. **Zero papers** combinan prediccion conformal con provisiones IFRS 9 end-to-end.
-2. **Zero papers** evaluan Mondrian conformal sobre grades crediticios con validacion OOT.
-3. **Zero papers** utilizan intervalos conformales como conjuntos de incertidumbre para optimizacion robusta de portafolio *crediticio*.
-4. **Zero papers** integran la perdida SPO+ con incertidumbre conformal en un contexto de credito.
-5. **Zero papers** proponen el ancho conformal como senal SICR.
-6. **Zero papers** incorporan prediccion conformal en el marco de validacion de modelos (MRM/SR 11-7).
+1. No identificamos una integracion de prediccion conformal con provisiones IFRS 9 end-to-end.
+2. La evidencia de Mondrian conformal sobre grades crediticios con validacion OOT sigue siendo limitada.
+3. No identificamos un paper que use intervalos conformales como conjuntos de incertidumbre para optimizacion robusta de portafolio crediticio con funded-set validation.
+4. No identificamos una integracion de perdida SPO+ e incertidumbre conformal en credito que preserve el mismo contrato de auditoria.
+5. No identificamos el ancho conformal como senal SICR en un pipeline IFRS9-inspired.
+6. No identificamos prediccion conformal integrada de forma explicita en un dossier MRM/SR 11-7.
 
 Cada uno de estos vacios corresponde a una contribucion especifica de la tesis.
 :::
+
+La lectura actualizada reemplaza el lenguaje absoluto de "zero papers" por un
+lenguaje de claim auditable. Kawasumi et al. muestran que ya existe conformal
+prediction en credit scoring ordinal [@kawasumi2026ordinal]; Guo, Chi,
+Babaei/Bamdad y Torkian/Bamdad/Sarfaraz muestran que P2P lending ya tiene
+modelos de inversion y optimizacion [@guo2016p2p; @chi2019p2p;
+@babaei2020p2p; @aior2025lendingclub]. CRPTO se sostiene porque integra esas
+familias con cobertura conformal, robustez de portafolio y trazabilidad de
+artefactos, no porque las literaturas vecinas no existan.
 
 ### Como se posiciona el proyecto
 
@@ -128,7 +174,7 @@ Las contribuciones metodologicas constituyen el nucleo teorico de la tesis y rep
 
 **Predict-then-optimize con prediccion conformal.** La contribucion central de la tesis es la formalizacion del uso de intervalos conformales como conjuntos de incertidumbre para optimizacion robusta de portafolio crediticio (`sec-estrella-intro`). A diferencia de los conjuntos de incertidumbre clasicos de [@bertsimas2004], que requieren especificacion ad hoc o supuestos distribucionales, los intervalos conformales heredan directamente la garantia de cobertura del procedimiento conformal. La evidencia empirica muestra que esta conexion produce portafolios cuya calidad es verificable en terminos de cobertura y estabilidad, y que el nivel conformal $1-\alpha$ funciona como una palanca de robustez con consecuencias economicas observables.
 
-**Mondrian conformal para scoring crediticio.** La evaluacion sistematica de Mondrian conformal prediction sobre particiones de riesgo crediticio (grades A--G) con datos out-of-time constituye la primera evidencia aplicada de esta configuracion en credito minorista. Los resultados demuestran que la cobertura global puede enmascarar subcobertura sistematica en los grades de mayor riesgo, y que Mondrian corrige esta deficiencia con un costo controlado en anchura de intervalo. La version detallada de ese draft vive en el carril Paper 3, fuera del build core.
+**Mondrian conformal para scoring crediticio.** La evaluacion sistematica de Mondrian conformal prediction sobre particiones de riesgo crediticio (grades A--G) con datos out-of-time constituye una evidencia aplicada especifica de esta configuracion en credito minorista. Los resultados demuestran que la cobertura global puede enmascarar subcobertura sistematica en los grades de mayor riesgo, y que Mondrian corrige esta deficiencia con un costo controlado en anchura de intervalo. La version detallada de ese draft vive en el carril Paper 3, fuera del build core.
 
 **IFRS 9 con incertidumbre distribution-free.** La integracion de intervalos conformales en el pipeline completo de IFRS 9 --- abarcando staging (SICR conformal), provision (ECL por rango) y analisis de sensibilidad (`sec-p2-intro`) --- es una contribucion sin precedentes en la literatura identificada. El ancho del intervalo conformal como senal complementaria de deterioro crediticio y la cuantificacion del rango de provisiones bajo incertidumbre responden directamente a las demandas regulatorias de mayor transparencia y prospectividad.
 
