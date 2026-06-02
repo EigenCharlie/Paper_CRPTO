@@ -1,6 +1,6 @@
 <!-- Extracted and sanitized for the standalone CRPTO book on 2026-05-10. -->
 
-## Guía Editorial, Claims y Referencias {#sec-crpto-editorial-guide}
+# Guía Editorial, Claims y Referencias {#sec-crpto-editorial-guide}
 
 Esta página existe porque el libro cumple una función distinta al paper. El
 paper final debe ser breve, selectivo y persuasivo; el libro puede ser más

@@ -548,17 +548,17 @@ def _crpto_fig7_uncertainty_baselines() -> None:
     results = status.get("results", {})
     methods_order = ["conformal_mondrian", "bootstrap", "parametric_gaussian", "ellipsoidal_grade"]
     method_labels_map = {
-        "conformal_mondrian": "Mondrian CP",
-        "bootstrap": "Bootstrap",
-        "parametric_gaussian": "Parametric (Gauss.)",
-        "ellipsoidal_grade": "Ellipsoidal",
+        "conformal_mondrian": "Mondrian\nCP",
+        "bootstrap": "Bootstrap\nset",
+        "parametric_gaussian": "Gaussian\nparametric",
+        "ellipsoidal_grade": "Ellipsoidal\ngrade",
     }
 
     metrics = ["empirical_coverage", "avg_width", "min_group_coverage"]
     metric_labels = ["Empirical Coverage", "Mean Width", "Min-Grade Coverage"]
     colors_m = [PALETTE["blue"], PALETTE["orange"], PALETTE["green"], PALETTE["red"]]
 
-    fig, axes = plt.subplots(1, 3, figsize=(COL2, HEIGHT_M))
+    fig, axes = plt.subplots(1, 3, figsize=(COL2 * 1.12, HEIGHT_M))
     nominal = 0.90
 
     for ax, metric, mlabel in zip(axes, metrics, metric_labels, strict=False):
@@ -585,8 +585,9 @@ def _crpto_fig7_uncertainty_baselines() -> None:
 
         ax.set_xticks(range(len(methods_order)))
         ax.set_xticklabels(
-            [method_labels_map[m] for m in methods_order], rotation=30, ha="right", fontsize=7.5
+            [method_labels_map[m] for m in methods_order], rotation=0, ha="center", fontsize=6.7
         )
+        ax.tick_params(axis="x", pad=2)
         ax.set_ylabel(mlabel, fontsize=8)
         ax.set_title(mlabel, fontsize=9)
         if metric == "empirical_coverage":
@@ -597,7 +598,7 @@ def _crpto_fig7_uncertainty_baselines() -> None:
         fontsize=10,
         y=1.02,
     )
-    fig.tight_layout()
+    fig.tight_layout(rect=(0, 0, 1, 0.95))
     _save(fig, "crpto_fig7_uncertainty_baselines")
 
 
@@ -647,11 +648,15 @@ def _crpto_fig8_alpha_pareto() -> None:
             color=var_colors[var],
             label=var_labels[var],
         )
-        for _, row in sub.iterrows():
+        for idx, (_, row) in enumerate(sub.iterrows()):
+            offset_y = 4 if idx % 2 == 0 else -8
+            offset_x = 4 if idx < len(sub) - 1 else -24
             ax.annotate(
-                f"  α={row[alpha_col]:.2f}",
+                f"α={row[alpha_col]:.2f}",
                 (row[cov_col], row[width_col]),
                 fontsize=6.5,
+                xytext=(offset_x, offset_y),
+                textcoords="offset points",
                 va="center",
             )
     ax.set_xlabel("Empirical Coverage")
@@ -1383,10 +1388,17 @@ def _crpto_fig16_tail_risk_frontier() -> None:
             f"Champion: ${cx:.1f}K\n" + r"CVaR$_{95}$=" + f"{cy:.3f}",
             (cx, cy),
             textcoords="offset points",
-            xytext=(10, 8),
+            xytext=(-58, 8),
             fontsize=7.5,
             fontweight="bold",
             color=PALETTE["orange"],
+            ha="right",
+            bbox={
+                "boxstyle": "round,pad=0.18",
+                "facecolor": "white",
+                "edgecolor": "none",
+                "alpha": 0.75,
+            },
         )
     if passed.any():
         idx = np.where(passed)[0]
@@ -1500,12 +1512,18 @@ def _crpto_fig18_tail_constrained_frontier() -> None:
             f"Champion: ${cy:.1f}K\n" + r"CVaR$_{95}$=" + f"{cx:.3f}",
             (cx, cy),
             textcoords="offset points",
-            xytext=(-16, -26),
+            xytext=(-44, -28),
             ha="right",
             va="top",
             fontsize=7.5,
             fontweight="bold",
             color=PALETTE["orange"],
+            bbox={
+                "boxstyle": "round,pad=0.18",
+                "facecolor": "white",
+                "edgecolor": "none",
+                "alpha": 0.75,
+            },
         )
     ax.set_xlabel(r"Decision-time CVaR$_{95}$ cap (conformal worst case)")
     ax.set_ylabel("Realized portfolio return (USD thousands)")
@@ -1542,7 +1560,7 @@ def _crpto_fig19_online_coverage_aci() -> None:
     ax.set_ylim(0.88, 1.005)
     ax.set_xticks(x)
     ax.set_xticklabels(periods, rotation=45, ha="right", fontsize=6.5)
-    ax.set_xlabel("OOT vintage")
+    ax.set_xlabel("")
     ax.set_ylabel("Conformal coverage (90% target)")
 
     ax2 = ax.twinx()
@@ -1554,9 +1572,16 @@ def _crpto_fig19_online_coverage_aci() -> None:
 
     lines1, labels1 = ax.get_legend_handles_labels()
     lines2, labels2 = ax2.get_legend_handles_labels()
-    ax.legend(lines1 + lines2, labels1 + labels2, loc="center left", fontsize=7.0)
+    ax.legend(
+        lines1 + lines2,
+        labels1 + labels2,
+        loc="upper center",
+        bbox_to_anchor=(0.5, -0.26),
+        ncol=2,
+        fontsize=7.0,
+    )
     ax.set_title("A24 — Online Conformal Stability Across the OOT Vintage Sequence")
-    fig.tight_layout()
+    fig.subplots_adjust(left=0.10, right=0.90, bottom=0.27, top=0.86)
     _save(fig, "crpto_fig19_online_coverage_aci")
 
 

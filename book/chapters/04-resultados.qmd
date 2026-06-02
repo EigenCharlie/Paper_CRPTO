@@ -1,4 +1,4 @@
-## Resultados {#sec-crpto-results}
+# Resultados {#sec-crpto-results}
 
 Los resultados del CRPTO deben leerse como una prueba de viabilidad del marco, no como un torneo aislado de AUC. La evidencia relevante está en la interacción entre incertidumbre y decisión.
 

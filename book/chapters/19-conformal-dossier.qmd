@@ -6,6 +6,26 @@ Evidencia técnica ampliada para elegir la capa conformal, comparar incertidumbr
 Nota editorial: este capítulo conserva material técnico de soporte para tesis, supplement y revisión. Los bloques de código quedan acotados visualmente por defecto; la lectura principal está en el texto, las tablas y las figuras.
 :::
 
+::: {.use-grid}
+::: {.use-card}
+**Uso IJDS**
+
+Capa conformal del claim: Mondrian CP, evidencia de cobertura y alpha sweep que alimenta la política robusta.
+:::
+
+::: {.use-card}
+**Uso tesis**
+
+Fundamentos y variantes conformales para explicar la decisión metodológica sin comprimir el razonamiento.
+:::
+
+::: {.use-card}
+**Uso supplement**
+
+Baselines, CQR, backtesting y diagnósticos de cobertura para mostrar que la capa conformal no es decorativa.
+:::
+:::
+
 ::: {.source-note}
 **Procedencia:** `book/chapters/07-conformal/index.qmd`
 :::
@@ -43,11 +63,11 @@ pd.DataFrame(overview)
 ```
 
 ::: {.column-page}
-![Cobertura conformal observada por grade del portafolio, usada para verificar validez útil a nivel de negocio.](../assets/figures/editorial/conformal_coverage_by_grade.png)
+![Cobertura conformal observada por grade del portafolio, usada para verificar validez útil a nivel de negocio.](../assets/figures/editorial/conformal_coverage_by_grade.png){fig-alt="Barras de cobertura conformal observada por grade de Lending Club, comparadas contra el target de cobertura."}
 :::
 
 ::: {.column-page}
-![Trade-off entre cobertura objetivo e intervalo promedio para variantes global y Mondrian del pipeline.](../assets/figures/editorial/conformal_width_vs_target.png)
+![Trade-off entre cobertura objetivo e intervalo promedio para variantes global y Mondrian del pipeline.](../assets/figures/editorial/conformal_width_vs_target.png){fig-alt="Gráfico de líneas del ancho promedio del intervalo contra cobertura objetivo para variantes conformales global y Mondrian."}
 :::
 
 Las figuras `fig-conformal-coverage-grade` y `fig-conformal-width-tradeoff` anticipan el argumento del capítulo completo: la validez relevante para riesgo no es solo marginal, sino también segmentada y económicamente usable.
@@ -449,7 +469,7 @@ display
 ```
 
 ::: {.column-page}
-![Distribución del ancho de intervalos en variantes conformales, útil para comparar eficiencia más allá de la cobertura agregada.](../assets/figures/notebooks/interval_width_distribution.png)
+![Distribución del ancho de intervalos en variantes conformales, útil para comparar eficiencia más allá de la cobertura agregada.](../assets/figures/notebooks/interval_width_distribution.png){fig-alt="Distribuciones de ancho de intervalos conformales por variante, usadas para comparar eficiencia además de cobertura agregada."}
 :::
 
 La figura `fig-interval-width-distribution` ayuda a leer el benchmark con una lente adicional: no basta cubrir, también importa cuánta resolución práctica conservan los intervalos.
@@ -867,7 +887,7 @@ El contraste entre métodos sobre el mismo universo OOT sigue siendo válido, pe
 Los números cuentan una historia concreta. Bootstrap logra 89.83% de cobertura *en promedio*, pero solo 61.93% en su peor grupo. El winner conformal final `score_decile_mondrian` supera 91.9% en cobertura mínima por grupo y además mantiene intervalos materialmente más estrechos. Para IFRS9, la diferencia no es académica: un sistema que solo luce bien en promedio sistematiza provisiones basadas en incertidumbre sesgada hacia ciertos segmentos. El supervisor de riesgo que pregunta "¿sus intervalos cubren en todos los segmentos?" no puede satisfacerse con un promedio del 89%.
 
 ::: {.column-page}
-![Trade-off entre cobertura, anchura y cobertura mínima por grupo para los baselines de incertidumbre evaluados.](../assets/figures/editorial/uncertainty_baselines_tradeoff.png)
+![Trade-off entre cobertura, anchura y cobertura mínima por grupo para los baselines de incertidumbre evaluados.](../assets/figures/editorial/uncertainty_baselines_tradeoff.png){fig-alt="Comparación de baselines de incertidumbre por cobertura, ancho de intervalo y cobertura mínima por grupo."}
 :::
 
 ### Qué muestra BMA
@@ -903,7 +923,7 @@ El trade-off actual no se interpreta ya como "usar grade porque sí". La lectura
 
 La `fig-estrella-uncertainty-baselines` presenta la comparación con el formato y nivel de detalle utilizado en el CRPTO (`sec-estrella-results`). Esta figura resume las tres dimensiones del trade-off (cobertura global, ancho medio, cobertura mínima por grupo) en un solo panel, facilitando la lectura comparativa para revisores de journals.
 
-![Comparación publication-quality de baselines de incertidumbre: CP Mondrian vs BMA vs Bootstrap, evaluados sobre 276K préstamos OOT.](../assets/figures/publication/crpto_fig7_uncertainty_baselines.png)
+![Comparación publication-quality de baselines de incertidumbre: CP Mondrian vs BMA vs Bootstrap, evaluados sobre 276K préstamos OOT.](../assets/figures/publication/crpto_fig7_uncertainty_baselines.png){fig-alt="Figura de publicación que compara CP Mondrian, BMA y Bootstrap sobre 276K préstamos OOT en cobertura, eficiencia y cobertura por grupo."}
 
 ::: {.source-note}
 **Material curado:** alpha sweep y frontera de Pareto
@@ -929,11 +949,11 @@ El artefacto `alpha_sweep_pareto_both.parquet` contiene 16 configuraciones y res
 El patrón es monotónico y útil: mayor confianza implica mayor ancho. Lo importante es que el costo no es lineal para decisión; llega un punto donde casi no quedan observaciones elegibles o el portafolio se vuelve demasiado conservador.
 
 ::: {.column-page}
-![Frontera alpha-cobertura-anchura para los barridos global y Mondrian del parámetro conformal.](../assets/figures/editorial/alpha_pareto_frontier.png)
+![Frontera alpha-cobertura-anchura para los barridos global y Mondrian del parámetro conformal.](../assets/figures/editorial/alpha_pareto_frontier.png){fig-alt="Frontera que relaciona alpha conformal, cobertura observada y ancho promedio para barridos global y Mondrian."}
 :::
 
 ::: {.column-page}
-![Cantidad de préstamos elegibles bajo la policy PD_high < 0.10 al variar alpha para la variante Mondrian.](../assets/figures/editorial/alpha_eligible_loans.png)
+![Cantidad de préstamos elegibles bajo la policy PD_high < 0.10 al variar alpha para la variante Mondrian.](../assets/figures/editorial/alpha_eligible_loans.png){fig-alt="Línea de préstamos elegibles bajo la regla PD_high menor a 0.10 mientras varía alpha en la variante Mondrian."}
 :::
 
 ### Frontera de Pareto operativa
@@ -968,4 +988,4 @@ La frontera actual resume un universo y un run congelados. El paso natural sigui
 
 La `fig-estrella-alpha-pareto` muestra la frontera Pareto con el formato utilizado en el CRPTO, donde el eje horizontal representa el nivel de confianza (1-α) y el eje vertical los KPIs de portafolio resultantes. Esta visualización permite a un revisor evaluar de un vistazo cuánto "cuesta" cada punto porcentual adicional de confianza en términos de retorno esperado.
 
-![Frontera Pareto de alpha sweep: trade-off entre nivel de confianza conformal y KPIs de portafolio, formato de publicación.](../assets/figures/publication/crpto_fig8_alpha_pareto.png)
+![Frontera Pareto de alpha sweep: trade-off entre nivel de confianza conformal y KPIs de portafolio, formato de publicación.](../assets/figures/publication/crpto_fig8_alpha_pareto.png){fig-alt="Frontera Pareto de publicación que muestra trade-offs entre nivel conformal, cobertura, ancho y KPIs de portafolio."}

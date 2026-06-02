@@ -6,6 +6,26 @@ Material para appendix journal, defensa MRM, interpretabilidad y descripción pr
 Nota editorial: este capítulo conserva material técnico de soporte para tesis, supplement y revisión. Los bloques de código quedan acotados visualmente por defecto; la lectura principal está en el texto, las tablas y las figuras.
 :::
 
+::: {.use-grid}
+::: {.use-card}
+**Uso IJDS**
+
+Controles de MRM, fair lending y límites del dataset necesarios para que el claim sea sobrio y defendible.
+:::
+
+::: {.use-card}
+**Uso tesis**
+
+Superconjunto de gobernanza, explicabilidad, dataset 360 y evidencia regulatoria alrededor de CRPTO.
+:::
+
+::: {.use-card}
+**Uso supplement**
+
+Diagnósticos fairness/MRM/EDA que soportan revisiones sin sobrecargar el cuerpo principal del paper.
+:::
+:::
+
 ::: {.source-note}
 **Procedencia:** `book/chapters/10-ifrs9-governance/10e-model-risk-management.qmd`
 :::
@@ -318,7 +338,7 @@ Con esto, MRM deja de ser un apéndice regulatorio y pasa a ser parte central de
 **Procedencia:** `book/chapters/10-ifrs9-governance/10f-mrm-deep-dive.qmd`
 :::
 
-## Gestión de Riesgo de Modelo
+## Evidencia MRM y backtesting conformal
 
 Este capítulo es un complemento dedicado a la sección resumen de MRM (`sec-mrm`). Mientras esa sección presenta las conclusiones operativas compactas, aquí desarrollamos en profundidad qué es Model Risk Management, por qué existe, cómo se implementa en la práctica regulatoria, y cómo nuestro pipeline traduce esos principios en controles concretos y verificables.
 
@@ -1157,11 +1177,11 @@ El artefacto `shap_summary.parquet` resume 42 variables explicadas globalmente. 
 La mezcla es saludable desde el punto de vista de negocio: el modelo no se apoya en un único atajo espurio, sino en una combinación de precio, contrato, calidad crediticia y capacidad financiera.
 
 ::: {.column-page}
-![Resumen global SHAP del modelo champion, con las variables que más empujan el score de default.](../assets/figures/notebooks/shap_beeswarm.png)
+![Resumen global SHAP del modelo champion, con las variables que más empujan el score de default.](../assets/figures/notebooks/shap_beeswarm.png){fig-alt="SHAP beeswarm del modelo champion que ordena variables por impacto y muestra dirección e intensidad del efecto sobre default."}
 :::
 
 ::: {.column-page}
-![Comparación visual entre ranking SHAP y permutation importance para validar qué señales son estructurales.](../assets/figures/notebooks/shap_vs_permutation.png)
+![Comparación visual entre ranking SHAP y permutation importance para validar qué señales son estructurales.](../assets/figures/notebooks/shap_vs_permutation.png){fig-alt="Comparación entre ranking SHAP y permutation importance para identificar señales estables del modelo PD."}
 :::
 
 Las figuras `fig-shap-beeswarm` y `fig-shap-vs-permutation` convierten la narrativa global en evidencia visual: no solo sabemos qué variables aparecen arriba, sino cómo se distribuye su efecto y qué tan sensible es el desempeño a perturbarlas.
@@ -1202,15 +1222,15 @@ Las curvas ALE (`ale_curves.parquet`) son la verificación de monotonía y estab
 La ventaja de ALE frente a PDP es que reduce la distorsión por correlación entre variables. En un problema crediticio donde `int_rate`, `fico_score` y `grade` están ligados, esa precaución no es opcional.
 
 ::: {.column-page}
-![Curva ALE de la tasa de interés, usada para verificar forma funcional y monotonía local del driver más importante.](../assets/figures/editorial/ale_int_rate.png)
+![Curva ALE de la tasa de interés, usada para verificar forma funcional y monotonía local del driver más importante.](../assets/figures/editorial/ale_int_rate.png){fig-alt="Curva ALE de tasa de interés que muestra cómo cambia localmente la predicción de default a lo largo del rango de la variable."}
 :::
 
 ::: {.column-page}
-![Curva ALE del puntaje FICO, usada para verificar la respuesta local de una señal de calidad crediticia.](../assets/figures/editorial/ale_fico_score.png)
+![Curva ALE del puntaje FICO, usada para verificar la respuesta local de una señal de calidad crediticia.](../assets/figures/editorial/ale_fico_score.png){fig-alt="Curva ALE de puntaje FICO que muestra la relación local entre calidad crediticia y probabilidad de default."}
 :::
 
 ::: {.column-page}
-![Chequeo de monotonía y consistencia funcional en variables clave del modelo.](../assets/figures/notebooks/monotonicity_verification.png)
+![Chequeo de monotonía y consistencia funcional en variables clave del modelo.](../assets/figures/notebooks/monotonicity_verification.png){fig-alt="Panel de verificación de monotonía para variables clave, usado como control de consistencia funcional del modelo."}
 :::
 
 ### Familias de variables y controlabilidad
@@ -1228,11 +1248,11 @@ Esta taxonomía permite separar dos conversaciones distintas:
 2. qué puede ajustar el negocio para mover el riesgo observado.
 
 ::: {.column-page}
-![Descomposición por familias de variables en las explicaciones globales del modelo.](../assets/figures/editorial/shap_family_mass.png)
+![Descomposición por familias de variables en las explicaciones globales del modelo.](../assets/figures/editorial/shap_family_mass.png){fig-alt="Gráfico de barras de masa SHAP agregada por familia de variables para explicar la contribución global de cada bloque."}
 :::
 
 ::: {.column-page}
-![Importancia SHAP agregada en formato barra para lectura ejecutiva.](../assets/figures/notebooks/shap_bar_importance.png)
+![Importancia SHAP agregada en formato barra para lectura ejecutiva.](../assets/figures/notebooks/shap_bar_importance.png){fig-alt="Ranking de importancia SHAP agregada en barras, con las variables más influyentes del modelo champion."}
 :::
 
 En particular, `int_rate` y `term` aparecen como variables controlables. Eso es útil para pricing y diseño de oferta, pero exige vigilancia para no caer en una retroalimentación circular entre precio, selección y riesgo.
@@ -1259,7 +1279,7 @@ La lección principal de este capítulo es que el modelo sí puede defenderse gl
 
 Las curvas ALE (*Accumulated Local Effects*) muestran cómo cambia la predicción promedio del modelo a lo largo del rango de cada variable, aislando su efecto de las correlaciones con otras features. A diferencia de los PDP (*Partial Dependence Plots*), las curvas ALE no sufren de extrapolación en zonas de baja densidad.
 
-![Curvas ALE para las variables principales del modelo, mostrando la forma funcional de su relación con la probabilidad de default.](../assets/figures/notebooks/ale_curves.png)
+![Curvas ALE para las variables principales del modelo, mostrando la forma funcional de su relación con la probabilidad de default.](../assets/figures/notebooks/ale_curves.png){fig-alt="Panel de curvas ALE para las variables principales, mostrando formas funcionales parciales respecto a la probabilidad de default."}
 
 La `fig-ale-curves` complementa los rankings SHAP con información sobre *dirección y forma*: `int_rate` tiene un efecto monotónicamente creciente (como se espera), `fico_score` tiene un efecto decreciente con pendiente más pronunciada debajo de 680, y `dti` muestra un umbral no lineal alrededor de 25% donde el riesgo acelera.
 
@@ -1486,7 +1506,7 @@ En el split de entrenamiento usado para construcción de features y modelado pri
 La mezcla de plazos confirma que el problema no es homogéneo: una porción material del portafolio está expuesta a horizontes contractuales largos, lo que justifica el uso posterior de supervivencia, IFRS9 lifetime y escenarios temporales.
 
 ::: {.column-page}
-![Distribución global de la variable objetivo en el universo de entrenamiento, con mayoría de préstamos pagados y una tasa de default material.](../assets/figures/notebooks/target_distribution.png)
+![Distribución global de la variable objetivo en el universo de entrenamiento, con mayoría de préstamos pagados y una tasa de default material.](../assets/figures/notebooks/target_distribution.png){fig-alt="Barras de distribución de la variable objetivo, comparando préstamos pagados contra préstamos en default en el universo de entrenamiento."}
 :::
 
 La figura `fig-target-distribution` cumple una función de onboarding: antes de discutir modelos sofisticados, deja claro que estamos frente a un problema desbalanceado pero no extremo, donde el default es lo bastante frecuente como para exigir calibración y lo bastante costoso como para no tratarlo como ruido.
@@ -1515,11 +1535,11 @@ Este patrón valida dos decisiones estructurales del libro:
 La diferencia de 42pp entre Grade A (5.63%) y Grade G (47.71%) es la razón empírica directa por la que el sistema conformal usa **partición Mondrian por grade** en lugar de un cuantil global (`sec-mondrian`): los scores de no-conformidad tienen distribuciones estructuralmente distintas por grade, y un cuantil global inevitablemente sub-cubre en los grades de alto riesgo o sobre-cubre en los de bajo riesgo.
 
 ::: {.column-page}
-![Tasa de default por grade en Lending Club, usada como evidencia base del gradiente económico de riesgo.](../assets/figures/notebooks/default_rate_by_grade.png)
+![Tasa de default por grade en Lending Club, usada como evidencia base del gradiente económico de riesgo.](../assets/figures/notebooks/default_rate_by_grade.png){fig-alt="Barras de tasa de default por grade de Lending Club, mostrando incremento de riesgo en grados crediticios peores."}
 :::
 
 ::: {.column-page}
-![Mapa de calor del default rate por combinación de grade y plazo contractual.](../assets/figures/notebooks/default_rate_grade_x_term.png)
+![Mapa de calor del default rate por combinación de grade y plazo contractual.](../assets/figures/notebooks/default_rate_grade_x_term.png){fig-alt="Heatmap de tasa de default por combinación de grade y plazo contractual, usado para ver interacción entre calidad crediticia y term."}
 :::
 
 Las figuras `fig-default-rate-grade` y `fig-grade-term-default` hacen visible el orden económico que luego reaparece en conformal, IFRS9 y optimización: el dataset sí tiene una estructura de riesgo interpretable y consistente. También muestran algo importante para negocio: el plazo de 60 meses no es solo “más largo”, sino un régimen claramente más exigente para varios grades.
@@ -1615,7 +1635,7 @@ El proyecto usa una división temporal explícita, no un *shuffle split*. La nar
 Esta estructura cumple dos objetivos. Primero, evita contaminación entre desarrollo y evaluación. Segundo, reproduce la forma en que un banco realmente desplegaría el modelo: entrenando en historia conocida y enfrentándolo luego a un periodo futuro.
 
 ::: {.column-page}
-![Vista agregada de series temporales del portafolio Lending Club: default, volumen, tasa y DTI a lo largo del tiempo.](../assets/figures/notebooks/portfolio_time_series_overview.png)
+![Vista agregada de series temporales del portafolio Lending Club: default, volumen, tasa y DTI a lo largo del tiempo.](../assets/figures/notebooks/portfolio_time_series_overview.png){fig-alt="Panel de series temporales del portafolio Lending Club con default, volumen, tasa de interés y DTI a lo largo del tiempo."}
 :::
 
 La figura `fig-portfolio-time-overview` ayuda a leer el capítulo con ojos de negocio: el portafolio cambia en volumen, precio promedio y fragilidad financiera. Por eso el test más creíble del libro nunca es aleatorio; siempre es temporal.

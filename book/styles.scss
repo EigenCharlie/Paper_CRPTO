@@ -42,6 +42,10 @@ $code-bg:                #eef3f8;
 .table  { font-size: 0.92rem; }
 .callout { border-radius: 6px; }
 
+html {
+  scroll-padding-top: 5rem;
+}
+
 body {
   background: linear-gradient(180deg, #f6f8fb 0%, var(--crpto-page-bg) 100%);
   color: var(--crpto-ink);
@@ -71,6 +75,16 @@ main.content {
 #quarto-sidebar .sidebar-item-text,
 #quarto-sidebar .sidebar-title {
   letter-spacing: 0;
+}
+
+a:focus-visible,
+button:focus-visible,
+summary:focus-visible,
+.aa-Input:focus-visible,
+.sidebar-item-container:focus-within {
+  outline: 3px solid rgba(31, 111, 235, 0.35);
+  outline-offset: 2px;
+  border-radius: 6px;
 }
 
 .quarto-figure,
@@ -125,6 +139,15 @@ main.content {
   height: auto;
 }
 
+#quarto-document-content figcaption,
+#quarto-document-content .figure-caption,
+#quarto-document-content .table-caption,
+#quarto-document-content caption {
+  color: var(--crpto-muted);
+  font-size: 0.88rem;
+  line-height: 1.45;
+}
+
 #quarto-document-content table {
   display: block;
   width: 100%;
@@ -150,8 +173,8 @@ main.content {
   }
 
   main.content {
-    width: min(320px, calc(100vw - 2rem)) !important;
-    max-width: min(320px, calc(100vw - 2rem)) !important;
+    width: min(100%, calc(100vw - 1.5rem)) !important;
+    max-width: min(100%, calc(100vw - 1.5rem)) !important;
     margin-inline: auto;
     overflow-x: hidden;
   }
@@ -172,6 +195,7 @@ main.content {
   }
 
   .route-grid,
+  .use-grid,
   .bibliography-map,
   .chapter-landing-grid {
     grid-template-columns: 1fr;
@@ -234,6 +258,41 @@ img {
 .route-card h3 {
   margin-top: 0;
   font-size: 1rem;
+}
+
+.use-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
+  gap: 0.75rem;
+  margin: 1rem 0 1.25rem;
+}
+
+.use-card {
+  padding: 0.8rem 0.9rem;
+  border: 1px solid var(--crpto-border);
+  border-left: 4px solid var(--crpto-primary);
+  border-radius: 8px;
+  background: #ffffff;
+  box-shadow: 0 8px 18px $crpto-shadow;
+}
+
+.use-card strong {
+  display: block;
+  margin-bottom: 0.25rem;
+  color: var(--crpto-primary);
+  font-size: 0.82rem;
+  text-transform: uppercase;
+}
+
+.use-card p {
+  margin-bottom: 0;
+  color: var(--crpto-muted);
+  font-size: 0.92rem;
+  line-height: 1.45;
+}
+
+.route-card a {
+  font-weight: 600;
 }
 
 .route-card p:last-child { margin-bottom: 0; }
@@ -443,6 +502,7 @@ details.code-fold {
 .cell details > summary,
 details.code-fold > summary {
   color: var(--crpto-primary);
+  cursor: pointer;
   font-size: 0.86rem;
   font-weight: 600;
 }
@@ -463,6 +523,18 @@ details.code-fold > summary {
   .book-flow__arrow { display: none; }
 }
 
+@media (prefers-reduced-motion: reduce) {
+  html:focus-within { scroll-behavior: auto; }
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    scroll-behavior: auto !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
 /* Dark mode (Quarto darkly toggle) */
 [data-bs-theme="dark"] {
   --crpto-surface: #1a2030;
@@ -474,6 +546,7 @@ details.code-fold > summary {
 
   .whole-game-intro { background: rgba(31, 111, 235, 0.10); }
   .chapter-card     { background: #1c2331; }
+  .use-card          { background: #1c2331; }
   .book-flow,
   .book-band        { background: #1a2030; }
   .book-flow__card,
@@ -496,6 +569,7 @@ body.quarto-dark,
   .chapter-card { box-shadow: none; border: 1px solid #ccc; }
   .chapter-card:hover { transform: none; }
   .whole-game-intro,
+  .use-card,
   .book-flow,
   .book-band,
   .equation-card { break-inside: avoid; }

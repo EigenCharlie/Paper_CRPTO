@@ -571,6 +571,31 @@ def _plot_regret_auditability_frontier(frontier: pd.DataFrame) -> list[Path]:
     ax.set_ylim(-0.25, 3.35)
     ax.set_yticks([0, 1, 2, 3])
     ax.grid(alpha=0.25)
+    ax.annotate(
+        "lower regret",
+        xy=(0.04, 0.06),
+        xytext=(0.18, 0.13),
+        xycoords="axes fraction",
+        textcoords="axes fraction",
+        arrowprops={"arrowstyle": "->", "lw": 0.8, "color": "#455A64"},
+        fontsize=8.0,
+        color="#455A64",
+        ha="center",
+        va="center",
+    )
+    ax.annotate(
+        "more auditable",
+        xy=(0.95, 0.90),
+        xytext=(0.95, 0.62),
+        xycoords="axes fraction",
+        textcoords="axes fraction",
+        arrowprops={"arrowstyle": "->", "lw": 0.8, "color": "#455A64"},
+        fontsize=8.0,
+        color="#455A64",
+        ha="center",
+        va="center",
+        rotation=90,
+    )
     ax.text(
         0.0,
         -0.20,
@@ -609,25 +634,25 @@ def _plot_bound_claim_layers() -> list[Path]:
     steps = [
         {
             "title": "Conformal endpoint",
-            "body": "u_i(alpha) caps\nPD-scale uncertainty",
+            "body": "u_i(α) caps\nPD-scale uncertainty",
             "note": "interval artifact",
             "color": "#E7F0FA",
         },
         {
             "title": "Deterministic identity",
-            "body": "risk <= tau + V(alpha)\nwhen sum w_i u_i <= tau",
+            "body": "risk ≤ τ + V(α)\nif ∑w_i u_i(α) ≤ τ",
             "note": "portfolio accounting",
             "color": "#F1F8E9",
         },
         {
             "title": "Weighted validity",
-            "body": "E[V(alpha)] <= alpha\nunder funded-set weights",
+            "body": "E[V(α)] ≤ α\nunder funded-set weights",
             "note": "stated assumption",
             "color": "#FFF8E1",
         },
         {
             "title": "Exact certificate",
-            "body": "V = 0.03645 < sqrt(alpha)\nviolation = 0; 45/45 pass",
+            "body": "V = 0.03645 < √α\nviolation = 0; 45/45 pass",
             "note": "frozen audit",
             "color": "#FCE4EC",
         },
@@ -705,19 +730,25 @@ def _plot_alpha_gamma_funded_set(bound_eval: pd.DataFrame, promotion: dict[str, 
         figsize=(11.2, 4.8),
         gridspec_kw={"width_ratios": [1.45, 1.0]},
     )
-    ax1.plot(data["alpha"], data["gamma_cp"], marker="o", label="Gamma_CP", color="#0B5CAD")
+    ax1.plot(
+        data["alpha"],
+        data["gamma_cp"],
+        marker="o",
+        label=r"$\Gamma_{\mathrm{CP}}$",
+        color="#0B5CAD",
+    )
     ax1.plot(
         data["alpha"],
         data["weighted_miscoverage_V"],
         marker="s",
-        label="V",
+        label=r"$V(\alpha)$",
         color="#B00020",
     )
     ax1.plot(
         data["alpha"],
         data["sqrt_alpha"],
         linestyle="--",
-        label="sqrt(alpha)",
+        label=r"$\sqrt{\alpha}$",
         color="#616161",
     )
     ax1.axvline(0.01, color="#263238", linestyle=":", linewidth=1.1)
@@ -725,31 +756,35 @@ def _plot_alpha_gamma_funded_set(bound_eval: pd.DataFrame, promotion: dict[str, 
     if not alpha01.empty:
         row = alpha01.iloc[0]
         ax1.annotate(
-            "alpha=0.01\nexact pass",
+            r"$\alpha=0.01$" + "\nexact pass",
             (float(row["alpha"]), float(row["weighted_miscoverage_V"])),
             xytext=(18, 22),
             textcoords="offset points",
             arrowprops={"arrowstyle": "->", "color": "#263238", "lw": 0.9},
             fontsize=8.5,
         )
-    ax1.set_xlabel("Conformal alpha")
+    ax1.set_xlabel(r"Conformal level $\alpha$")
     ax1.set_ylabel("Weighted bound quantities")
-    ax1.set_title("Bound quantities")
+    ax1.set_title(r"Bound quantities ($\tau=0.175,\ \gamma=0.45$)")
     ax1.grid(alpha=0.25)
     ax1.legend(loc="best", frameon=False)
 
     ax2.plot(data["alpha"], data["n_funded"], marker="^", color="#2E7D32", linewidth=2.0)
     ax2.fill_between(data["alpha"], data["n_funded"], alpha=0.14, color="#2E7D32")
     ax2.axvline(0.01, color="#263238", linestyle=":", linewidth=1.1)
-    ax2.set_xlabel("Conformal alpha")
+    ax2.set_xlabel(r"Conformal level $\alpha$")
     ax2.set_ylabel("Funded loans")
     ax2.set_title("Funded-set size")
     ax2.grid(alpha=0.25)
-    fig.suptitle("Alpha to Gamma_CP to funded-set audit", fontsize=14, fontweight="bold")
+    fig.suptitle(
+        r"$\alpha \rightarrow \Gamma_{\mathrm{CP}} \rightarrow$ funded-set audit",
+        fontsize=14,
+        fontweight="bold",
+    )
     fig.text(
         0.5,
         0.01,
-        "The promoted policy is read through both quantities: weighted noncoverage V and the realized conformal robustness premium Gamma_CP.",
+        r"The promoted policy is read through weighted noncoverage $V(\alpha)$ and the realized conformal robustness premium $\Gamma_{\mathrm{CP}}$.",
         ha="center",
         fontsize=8.8,
         color="#455A64",
@@ -773,7 +808,7 @@ def _plot_robust_region_heatmap(shortlist: pd.DataFrame, promotion: dict[str, An
     ax.set_yticklabels([f"{x:.3f}" for x in pivot.index])
     ax.set_xlabel("gamma")
     ax.set_ylabel("risk_tolerance")
-    ax.set_title("Robust region: best realized return by policy family")
+    ax.set_title("Robust region: max return by aggregated policy cell")
     for i in range(pivot.shape[0]):
         for j in range(pivot.shape[1]):
             value = pivot.iloc[i, j]
@@ -816,7 +851,7 @@ def _plot_robust_region_heatmap(shortlist: pd.DataFrame, promotion: dict[str, An
     fig.text(
         0.5,
         0.01,
-        "All 45 policies in the final region pass the exact alpha=0.01 funded-set check.",
+        "Fifteen cells summarize 45 alpha-safe policies (three variants per cell); all pass exact alpha=0.01.",
         ha="center",
         fontsize=8.8,
         color="#455A64",

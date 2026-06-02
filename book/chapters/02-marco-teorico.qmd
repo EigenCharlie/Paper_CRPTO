@@ -1,4 +1,4 @@
-## Marco Teórico {#sec-crpto-theory}
+# Marco Teórico {#sec-crpto-theory}
 
 El marco teórico del paper combina tres tradiciones que normalmente se estudian por separado: predicción probabilística calibrada, incertidumbre distribution-free y optimización robusta.
 

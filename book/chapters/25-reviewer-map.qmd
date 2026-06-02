@@ -1,0 +1,38 @@
+# Mapa para Reviewers IJDS
+
+Esta página traduce el dossier CRPTO a preguntas probables de revisión. La regla
+editorial es simple: cada claim fuerte debe apuntar a evidencia visible, un
+artefacto reproducible y una frontera clara de lo que el paper no está
+afirmando.
+
+## Preguntas centrales
+
+| Pregunta del reviewer | Respuesta corta | Dónde mirar | Artefacto/Test |
+|---|---|---|---|
+| ¿Esto es solo un clasificador de riesgo? | No. El clasificador es el insumo congelado; la contribución es llevar una PD calibrada a una decisión robusta y auditable. | [Resultados](04-resultados.qmd), Figura 1 del paper, [funded set](12-funded-set.qmd). | `paper/CRPTO_ijds.qmd`, `tests/test_crpto_final_sync.py`, `reports/crpto/figures/crpto_fig1_journal_pipeline.png`. |
+| ¿CP + robust optimization ya existe? | Sí como familias separadas; CRPTO fija el vínculo post-hoc desde una PD calibrada congelada hasta un funded set auditable en crédito. | [Marco teórico](02-marco-teorico.qmd), [bibliografía](24-bibliografia-crpto-actualizada.qmd), closest-work boundary del paper. | `book/references.bib`, `paper/CRPTO_ijds.qmd`, `reports/crpto/tables/crpto_tableA20_closest_work.csv`. |
+| ¿El bound sobrepromete cobertura individual? | No. El paper separa identidad determinística, supuesto de validez ponderada y certificado exacto sobre el funded set. | [Marco teórico](02-marco-teorico.qmd), [apéndice de robustez](07-apendice-robustez.qmd), Figura de tres capas. | `scripts/build_crpto_journal_package.py`, `reports/crpto/figures/crpto_fig20_bound_claim_layers.png`, `portfolio_bound_aware_bound_eval.parquet`. |
+| ¿El champion fue cherry-picked? | El punto rank-1 se acompaña con una región robusta: `45/45` políticas pasan el certificado exacto en el vecindario relevante. | [Resultados](04-resultados.qmd), [apéndice de robustez](07-apendice-robustez.qmd), Figura de región robusta. | `reports/crpto/figures/crpto_fig14_robust_region_heatmap.png`, `reports/crpto/tables/crpto_tableA18_robust_region.csv`. |
+| ¿Un AUC medio debilita el paper? | No si el claim se formula como decisión robusta desde PD calibrada; el objetivo no es vender el mejor ranking de crédito. | [PD y calibración](18-pd-calibracion-champion.qmd), [resultados](04-resultados.qmd), paper body. | `models/pd_canonical_calibrator.pkl`, `models/final_project_promotion.json`, `tests/test_crpto_final_sync.py`. |
+| ¿SPO+ domina en regret? | SPO+ puede ganar en regret, pero queda en otra esquina de la frontera: menos regret no equivale a mayor auditabilidad conformal. | [SPO y regret](09-spo-regret.qmd), [portafolio](20-portafolio-policy.qmd), supplement. | `reports/crpto/figures/crpto_fig15_regret_auditability_frontier.png`, `reports/crpto/tables/crpto_tableA19_spo_regret_auditability.csv`. |
+| ¿Hay riesgo de fair lending legal? | El paper no hace un claim legal causal; reporta diagnósticos proxy y limita la lectura a fairness técnica y MRM. | [Fair lending](10-fair-lending.qmd), [gobernanza](21-gobernanza-explicabilidad-dataset.qmd), supplement. | Artefactos MRM/fairness en `reports/mrm/` y tests de sincronía paper-ready. |
+| ¿El paquete es reproducible? | Sí para superficies paper-ready: tablas, figuras y renders se regeneran desde artefactos congelados; los stages de búsqueda permanecen protegidos. | [Trazabilidad](13-trazabilidad.qmd), [release](14-release.qmd), [literatura y entorno](22-literatura-trazabilidad-entorno.qmd). | `EXTRACTION_MANIFEST.json`, `just figures`, `just journal-package`, `just smoke`. |
+
+: Mapa claim-evidencia-artefacto para priorizar lectura de revisión IJDS.
+
+## Prioridad de lectura
+
+1. [CRPTO en una página](00-crpto-en-una-pagina.qmd): problema, método, resultado y límites.
+2. [Introducción](01-introduccion.qmd): novelty claim y alcance exacto.
+3. [Marco teórico](02-marco-teorico.qmd): vínculo $\alpha \rightarrow \Gamma_{\text{CP}}$ y frontera del bound.
+4. [Metodología](03-metodologia.qmd): pipeline congelado y reglas de decisión.
+5. [Resultados](04-resultados.qmd): evidencia central, región robusta y lectura del regret.
+6. [Apéndice de robustez](07-apendice-robustez.qmd): controles que evitan sobreclaiming.
+7. [Bibliografía CRPTO](24-bibliografia-crpto-actualizada.qmd): precedentes y frontera frente a trabajos cercanos.
+
+## Regla de escritura
+
+Si una frase del paper no puede mapearse a una fila de esta página o a una tabla
+equivalente del supplement, debe bajarse de tono, moverse al libro o convertirse
+en future work. Esa disciplina mantiene el paper fuerte sin hacerlo parecer más
+general de lo que el experimento demuestra.

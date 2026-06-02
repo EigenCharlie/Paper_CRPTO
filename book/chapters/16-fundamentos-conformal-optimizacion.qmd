@@ -6,6 +6,26 @@ Marco teórico extendido para convertir incertidumbre conformal en conjuntos rob
 Nota editorial: este capítulo conserva material técnico de soporte para tesis, supplement y revisión. Los bloques de código quedan acotados visualmente por defecto; la lectura principal está en el texto, las tablas y las figuras.
 :::
 
+::: {.use-grid}
+::: {.use-card}
+**Uso IJDS**
+
+Teoría compacta del bound: split conformal, presupuesto de robustez y vínculo entre cobertura y factibilidad.
+:::
+
+::: {.use-card}
+**Uso tesis**
+
+Fundamentos extendidos para explicar por qué CRPTO combina incertidumbre predictiva y optimización robusta.
+:::
+
+::: {.use-card}
+**Uso supplement**
+
+Caveats técnicos, alternativas conformales y lectura de colas cuando el reviewer pide más formalización.
+:::
+:::
+
 ::: {.source-note}
 **Procedencia:** `book/chapters/02-glossary/02c-uncertainty-conformal.qmd`
 :::

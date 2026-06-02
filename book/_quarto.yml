@@ -10,6 +10,19 @@ book:
   author: "Carlos Alfredo Vergara Rojas"
   date: today
   date-format: long
+  description: "Libro técnico y dossier reproducible de CRPTO: conformal prediction, optimización robusta de portafolio y credit risk sobre Lending Club."
+  site-url: "https://eigencharlie.github.io/Paper_CRPTO/"
+  favicon: assets/logo-small.svg
+  image: "https://eigencharlie.github.io/Paper_CRPTO/assets/figures/editorial/diagrama-crpto.png"
+  image-alt: "Diagrama maestro del pipeline CRPTO con datos, PD calibrada, conformal Mondrian, optimización robusta y política promovida."
+  open-graph:
+    image: "https://eigencharlie.github.io/Paper_CRPTO/assets/figures/editorial/diagrama-crpto.png"
+    image-alt: "Diagrama maestro del pipeline CRPTO."
+    locale: es_CO
+  twitter-card:
+    image: "https://eigencharlie.github.io/Paper_CRPTO/assets/figures/editorial/diagrama-crpto.png"
+    image-alt: "Diagrama maestro del pipeline CRPTO."
+    card-style: summary_large_image
   search:
     location: sidebar
     type: textbox
@@ -17,10 +30,17 @@ book:
     collapse-after: 4
     copy-button: true
   page-navigation: true
+  back-to-top-navigation: true
+  bread-crumbs: true
+  reader-mode: true
   repo-url: "https://github.com/EigenCharlie/Paper_CRPTO"
+  repo-branch: main
+  repo-subdir: book
   repo-actions: [edit, issue]
   sidebar:
     style: docked
+    logo: assets/logo.svg
+    logo-alt: "CRPTO"
     collapse-level: 2
     tools:
       - icon: github
@@ -63,6 +83,7 @@ book:
         - chapters/21-gobernanza-explicabilidad-dataset.qmd
         - chapters/22-literatura-trazabilidad-entorno.qmd
         - chapters/24-bibliografia-crpto-actualizada.qmd
+        - chapters/25-reviewer-map.qmd
         - chapters/23-apendices-regulatorios-y-future-work.qmd
     - chapters/glosario.qmd
     - references.qmd

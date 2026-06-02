@@ -1,4 +1,4 @@
-## Apéndices Regulatorios y Future Work {#sec-crpto-regulatory-future-work}
+# Apéndices Regulatorios y Future Work {#sec-crpto-regulatory-future-work}
 
 Este capítulo guarda material útil para journal, appendix o respuesta a reviewers, pero lo separa explícitamente del champion CRPTO. La regla es simple: estas piezas explican conexiones y extensiones; no cambian la policy oficial `bound_aware_276k_economic_champion` ni los artefactos canónicos de CRPTO.
 

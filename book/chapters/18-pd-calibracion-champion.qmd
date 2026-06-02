@@ -6,6 +6,26 @@ Dossier predictivo que sostiene el score PD usado por CRPTO y sus decisiones rob
 Nota editorial: este capítulo conserva material técnico de soporte para tesis, supplement y revisión. Los bloques de código quedan acotados visualmente por defecto; la lectura principal está en el texto, las tablas y las figuras.
 :::
 
+::: {.use-grid}
+::: {.use-card}
+**Uso IJDS**
+
+Defensa del artefacto PD congelado: discriminación suficiente, calibración útil y salida compatible con decisión robusta.
+:::
+
+::: {.use-card}
+**Uso tesis**
+
+Selección del champion predictivo, calibradores, métricas y explicación de por qué AUC no es el claim central.
+:::
+
+::: {.use-card}
+**Uso supplement**
+
+Diagnósticos de calibración, comparación de modelos y evidencia para responder objeciones sobre el score base.
+:::
+:::
+
 ::: {.source-note}
 **Procedencia:** `book/chapters/06-pd-modeling/06a-logistic-regression-baseline.qmd`
 :::
@@ -874,7 +894,7 @@ La métrica realmente informativa en este contexto es el **length scale σ** de 
 
 La `fig-calibration-curves` muestra las curvas de calibración (reliability diagrams) de los tres métodos candidatos. Una calibración perfecta seguiría la diagonal: la probabilidad predicha de 0.20 debería corresponder a un 20% de defaults observados. El método ganador se acerca más a esa diagonal en todo el rango de probabilidades.
 
-![Curvas de calibración (reliability diagrams) de los métodos candidatos evaluados sobre el conjunto de test OOT.](../assets/figures/notebooks/calibration_curves.png)
+![Curvas de calibración (reliability diagrams) de los métodos candidatos evaluados sobre el conjunto de test OOT.](../assets/figures/notebooks/calibration_curves.png){fig-alt="Reliability diagrams comparativos de modelos PD candidatos sobre test OOT, con línea ideal de calibración y curvas por método."}
 
 ::: {.callout-warning}
 ## El calibrador es un artefacto crítico
@@ -958,11 +978,11 @@ La calibración es donde la diferencia entre modelos raw y calibrados es más dr
 Un ECE de 0.0064 significa que las probabilidades predichas están, en promedio, muy cerca de las frecuencias de default observadas. Para IFRS9, fairness, staging y policy de portafolio, esta calidad probabilística importa más que una mejora marginal de ranking aislada.
 
 ::: {.column-page}
-![Curvas ROC de los modelos PD principales evaluados en el proyecto.](../assets/figures/editorial/pd_roc_curve.png)
+![Curvas ROC de los modelos PD principales evaluados en el proyecto.](../assets/figures/editorial/pd_roc_curve.png){fig-alt="Curvas ROC comparativas de los modelos PD principales, usadas para contrastar discriminación en el conjunto OOT."}
 :::
 
 ::: {.column-page}
-![Diagrama de confiabilidad del champion y sus comparadores, usado para justificar la promoción del calibrador Venn-Abers.](../assets/figures/editorial/pd_reliability_curve.png)
+![Diagrama de confiabilidad del champion y sus comparadores, usado para justificar la promoción del calibrador Venn-Abers.](../assets/figures/editorial/pd_reliability_curve.png){fig-alt="Diagrama de confiabilidad que compara probabilidades predichas y tasas observadas para el champion calibrado y sus comparadores."}
 :::
 
 Las figuras `fig-pd-roc` y `fig-pd-calibration` muestran por qué el champion no se define solo por ranking. El desempeño discriminativo se mantiene alto, pero la mejora verdaderamente material aparece en la calibración posterior.
@@ -1010,7 +1030,7 @@ pd.DataFrame(list(metrics.items()), columns=["Métrica", "Valor"])
 ```
 
 ::: {.column-page}
-![Curva Precision-Recall del champion y sus comparadores, relevante por el desbalance de clases del problema.](../assets/figures/editorial/pd_pr_curve.png)
+![Curva Precision-Recall del champion y sus comparadores, relevante por el desbalance de clases del problema.](../assets/figures/editorial/pd_pr_curve.png){fig-alt="Curvas Precision-Recall del champion PD y modelos comparadores, enfocadas en rendimiento bajo desbalance de default."}
 :::
 
 La figura `fig-pd-pr` complementa el AUC-ROC con una lectura más exigente para clases desbalanceadas. El champion no solo separa mejor que el baseline; también conserva una frontera precision-recall competitiva cuando la tasa de default observada es baja.
@@ -1134,7 +1154,7 @@ Nuestro AUC está en el centro del rango publicado. Estudios que reportan AUC > 
 
 La `fig-roc-curves-comparison` muestra las curvas ROC de todos los modelos evaluados (Logistic Regression, CatBoost default, CatBoost tuned) sobre el test set OOT. La separación entre LR y CatBoost es visible, pero la diferencia entre CatBoost default y tuned es marginal --- consistente con la discusión en `sec-tuning-gain` sobre la robustez de los hiperparámetros por defecto.
 
-![Curvas ROC comparativas de los modelos evaluados sobre el test set OOT (276,869 préstamos).](../assets/figures/notebooks/roc_curves.png)
+![Curvas ROC comparativas de los modelos evaluados sobre el test set OOT (276,869 préstamos).](../assets/figures/notebooks/roc_curves.png){fig-alt="Panel de curvas ROC para modelos evaluados en 276869 préstamos OOT, con áreas bajo la curva por candidato."}
 
 ::: {.callout-tip}
 ## Más allá del AUC

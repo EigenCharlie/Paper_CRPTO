@@ -1,4 +1,4 @@
-## Introducción y Motivación {#sec-crpto-intro}
+# Introducción y Motivación {#sec-crpto-intro}
 
 La mayoría de los pipelines de crédito siguen una receta implícita: predecir una PD puntual y optimizar decisiones como si esa predicción fuera exacta. El problema es conocido y profundo: pequeñas desviaciones de calibración o cambios de régimen pueden inducir políticas frágiles, justo en la capa donde se asigna capital.
 

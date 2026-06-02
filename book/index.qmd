@@ -17,7 +17,7 @@
 **Hallazgo**: el resultado clave no es un AUC aislado, sino la posibilidad de cuantificar explícitamente el trade-off entre retorno, cobertura, robustez y auditabilidad.
 :::
 
-![Las seis etapas del pipeline CRPTO --- datos y split temporal, PD calibrada, conformal Mondrian, conjunto de incertidumbre, LP robusto y política promovida con bound exacto --- anotadas con las métricas del cierre `276k` ($170,464.54, $V=0.03645$, $\Gamma_{\text{CP}}=0.18591$, región robusta `45/45`).](assets/figures/editorial/diagrama-crpto.png){#fig-crpto-overview fig-alt="Diagrama maestro horizontal de seis paneles: (1) datos y split temporal de Lending Club, (2) PD calibrada CatBoost+Venn-Abers con curva de calibración, (3) conformal Mondrian con cobertura 90%, (4) conjunto de incertidumbre y prima conformal, (5) LP robusto de portafolio, (6) política promovida bound_aware_276k con bound exacto; pie con la evidencia del paper."}
+![Las seis etapas del pipeline CRPTO --- datos y split temporal, PD calibrada, conformal Mondrian, conjunto de incertidumbre, LP robusto y política promovida con bound exacto --- anotadas con las métricas del cierre `276k` ($170,464.54, $V=0.03645$, $\Gamma_{\text{CP}}=0.18591$, región robusta `45/45`).](assets/figures/editorial/diagrama-crpto.png){#fig-crpto-overview fig-alt="Diagrama maestro del pipeline CRPTO en seis etapas desde datos hasta política promovida auditable."}
 
 El champion oficial es `bound_aware_276k_economic_champion` del run `paper-thesis-final-economic-2026-04-06`, con retorno `$170,464.54`, `V = 0.03645`, `Gamma_CP = 0.18591`, `alpha01_exact_pass = true` y región robusta `45/45`.
 
@@ -43,6 +43,34 @@ La lectura correcta es de claim a evidencia. El paper hereda las afirmaciones y
 las tablas esenciales; el libro preserva el razonamiento, las cautelas y la
 trazabilidad. Cuando una explicación es demasiado larga para IJDS, no se borra:
 se mantiene aquí como soporte de tesis, supplement o respuesta a reviewer.
+
+## Rutas de lectura
+
+::: {.route-grid}
+::: {.route-card}
+### En 20 minutos
+[CRPTO en una página](chapters/00-crpto-en-una-pagina.qmd) → [Resultados](chapters/04-resultados.qmd) → [Discusión](chapters/05-discusion.qmd).
+Ruta para captar problema, método, resultado y límite sin entrar al dossier completo.
+:::
+
+::: {.route-card}
+### Reviewer IJDS
+[Mapa reviewer](chapters/25-reviewer-map.qmd) → [Introducción](chapters/01-introduccion.qmd) → [Marco teórico](chapters/02-marco-teorico.qmd) → [Metodología](chapters/03-metodologia.qmd) → [Resultados](chapters/04-resultados.qmd) → [Apéndice de robustez](chapters/07-apendice-robustez.qmd).
+Ruta para verificar novelty, bound, evidencia central, artefactos y controles de robustez.
+:::
+
+::: {.route-card}
+### Tesis
+[Fundamentos de riesgo](chapters/15-fundamentos-riesgo-ml.qmd) → [Conformal y optimización](chapters/16-fundamentos-conformal-optimizacion.qmd) → [Pipeline](chapters/17-pipeline-datos-features.qmd) → [Gobernanza](chapters/21-gobernanza-explicabilidad-dataset.qmd) → [Bibliografía](chapters/24-bibliografia-crpto-actualizada.qmd).
+Ruta para leer CRPTO como superconjunto académico del paper.
+:::
+
+::: {.route-card}
+### Reproducibilidad
+[Trazabilidad](chapters/13-trazabilidad.qmd) → [Release](chapters/14-release.qmd) → [Pipeline](chapters/17-pipeline-datos-features.qmd) → [Literatura y entorno](chapters/22-literatura-trazabilidad-entorno.qmd).
+Ruta para auditar artefactos, builds, guardrails y evidencia regenerable.
+:::
+:::
 
 ## Frontera del claim
 

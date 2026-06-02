@@ -99,7 +99,7 @@ portfolio. The paper also documents the governance boundary between safe
 paper-facing reruns and protected stages that would change the promoted
 champion.
 
-![CRPTO's central move is operational rather than decorative: frozen calibrated PD artifacts become Mondrian conformal intervals, the upper-risk signal enters a robust portfolio optimizer, and the promoted funding policy is audited against exact funded-set controls.](../reports/crpto/figures/crpto_fig1_journal_pipeline.png){#fig-crpto-pipeline width="94%"}
+![CRPTO's central move is operational rather than decorative: frozen calibrated PD artifacts become Mondrian conformal intervals, the upper-risk signal enters a robust portfolio optimizer, and the promoted funding policy is audited against exact funded-set controls.](../reports/crpto/figures/crpto_fig1_journal_pipeline.png){#fig-crpto-pipeline width="94%" fig-alt="Four-stage CRPTO pipeline from frozen calibrated PD to Mondrian conformal intervals, robust portfolio optimization, and promoted auditable policy."}
 
 # Related Work
 
@@ -297,7 +297,11 @@ guarantee.
 
 : Assumption-to-evidence map for the CRPTO bound.
 
-![The bound claim stack separates deterministic accounting, the weighted-validity assumption, and the frozen exact certificate.](../reports/crpto/figures/crpto_fig20_bound_claim_layers.png){#fig-bound-claim-stack width="94%"}
+The figure below is the paper's main guardrail against overclaiming: it
+separates what is deterministic, what is assumed, and what is empirically
+certified after the frozen selection.
+
+![The bound claim stack separates deterministic accounting, the weighted-validity assumption, and the frozen exact certificate.](../reports/crpto/figures/crpto_fig20_bound_claim_layers.png){#fig-bound-claim-stack width="94%" fig-alt="Four-block bound claim stack separating conformal endpoint, deterministic identity, weighted validity assumption, and exact frozen certificate."}
 
 This theory is intentionally not presented as a universal dependence-free
 tightening for all adaptive credit policies. The Lending Club evaluation is
@@ -473,9 +477,9 @@ bucket rather than hidden in an unreported tail segment.
 
 : Compact funded-set audit by grade bucket.
 
-![The alpha-gamma view makes the statistical-to-economic link auditable: the same conformal level controls funded-set weighted miscoverage $V(\alpha)$ and portfolio-level $\Gamma_{\mathrm{CP}}$.](../reports/crpto/figures/crpto_fig13_alpha_gamma_funded_set.png){#fig-alpha-gamma width="88%"}
+![The alpha-gamma view makes the statistical-to-economic link auditable: the same conformal level controls funded-set weighted miscoverage $V(\alpha)$ and portfolio-level $\Gamma_{\mathrm{CP}}$.](../reports/crpto/figures/crpto_fig13_alpha_gamma_funded_set.png){#fig-alpha-gamma width="88%" fig-alt="Two-panel alpha sweep showing Gamma_CP, weighted miscoverage V, square-root alpha bound, and funded-set size for the promoted policy."}
 
-![The promoted point is not isolated: every evaluated policy in the final robust region passes the exact alpha-safe check, and the selected policy is the highest-return point inside that safe region.](../reports/crpto/figures/crpto_fig14_robust_region_heatmap.png){#fig-robust-region width="90%"}
+![The promoted point is not isolated: every evaluated policy in the final robust region passes the exact alpha-safe check, and the selected policy is the highest-return point inside that safe region.](../reports/crpto/figures/crpto_fig14_robust_region_heatmap.png){#fig-robust-region width="90%" fig-alt="Heatmap of robust-region realized return by risk tolerance and gamma, with the economic champion marked and all 45 policies alpha-safe."}
 
 The compact reviewer checks below summarize the body-level defense. The
 supplement expands the same structure into artifact and guardrail references.
@@ -547,7 +551,7 @@ trade-off explicit rather than burying it in a single score.
 
 : Regret-auditability frontier by method.
 
-![The regret-auditability frontier shows the paper's trade-off in one panel: SPO+ is the low-regret corner, while CRPTO robust is the auditable-risk-control corner with all three verifiable checks passing.](../reports/crpto/figures/crpto_fig15_regret_auditability_frontier.png){#fig-regret-auditability width="58%"}
+![The regret-auditability frontier shows the paper's trade-off in one panel: SPO+ is the low-regret corner, while CRPTO robust is the auditable-risk-control corner with all three verifiable checks passing.](../reports/crpto/figures/crpto_fig15_regret_auditability_frontier.png){#fig-regret-auditability width="58%" fig-alt="Scatter plot comparing two-stage, SPO+, and CRPTO robust by mean decision regret and number of verifiable risk-control checks passed."}
 
 ## Managerial Implication
 

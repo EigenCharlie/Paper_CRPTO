@@ -409,7 +409,7 @@ online_stab = read_table("crpto_tableA24_online_conformal_stability.csv")
 online_stab.round(4)
 ```
 
-![Estabilidad conformal online (A24): cobertura por vintage y cobertura acumulada *streaming* se mantienen sobre el target 90% en los 11 trimestres, mientras el target `alpha_t` del controlador ACI de Gibbs-Candès apenas se desplaza --- evidencia de que la recalibración online tendria poco que corregir en este OOT estático.](../assets/figures/publication/crpto_fig19_online_coverage_aci.png){#fig-p1-online-coverage-aci fig-alt="Líneas de cobertura por vintage y cobertura acumulada por encima de la línea de target 90% a lo largo de 11 trimestres OOT, con la trayectoria del target ACI alpha_t en un eje secundario subiendo levemente de 0.10 a 0.12."}
+![Estabilidad conformal online (A24): cobertura por vintage y cobertura acumulada *streaming* se mantienen sobre el target 90% en los 11 trimestres, mientras el target `alpha_t` del controlador ACI de Gibbs-Candès apenas se desplaza --- evidencia de que la recalibración online tendria poco que corregir en este OOT estático.](../assets/figures/publication/crpto_fig19_online_coverage_aci.png){#fig-p1-online-coverage-aci fig-alt="Cobertura conformal online por trimestre OOT y trayectoria del controlador ACI."}
 
 Lectura: la cobertura se mantiene sobre el target en los 11 vintages y la
 cobertura acumulada converge cerca del 93%. La tasa de default cae fuertemente a

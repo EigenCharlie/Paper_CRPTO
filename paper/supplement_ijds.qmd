@@ -243,15 +243,15 @@ decision.
 | AI/OR digital lending optimization [@aior2025lendingclub]. | Frames Lending Club funding as multi-objective OR. | Keeps risk controls and artifact governance as first-class outputs. |
 | Ordinal conformal credit scoring [@kawasumi2026ordinal]. | Applies conformal prediction to credit-score intervals. | CRPTO moves from score uncertainty to a robust portfolio decision. |
 
-![Uncertainty baselines remain supplement evidence; they justify why conformal robust sets are used without replacing the champion.](../reports/crpto/figures/crpto_fig7_uncertainty_baselines.png){#fig-supp-uncertainty-baselines width="90%"}
+![Uncertainty baselines remain supplement evidence; they justify why conformal robust sets are used without replacing the champion.](../reports/crpto/figures/crpto_fig7_uncertainty_baselines.png){#fig-supp-uncertainty-baselines width="90%" fig-alt="Three-panel comparison of uncertainty set methods by empirical coverage, mean interval width, and minimum grade coverage."}
 
-![SPO+ is retained as an auditability/regret comparator, not as a replacement champion.](../reports/crpto/figures/crpto_fig9_spo_regret.png){#fig-supp-spo width="90%"}
+![SPO+ is retained as an auditability/regret comparator, not as a replacement champion.](../reports/crpto/figures/crpto_fig9_spo_regret.png){#fig-supp-spo width="90%" fig-alt="Decision regret comparison of two-stage, SPO+, and conformal robust methods, with SPO+ showing lower regret."}
 
-![A19 materializes the regret-auditability frontier: SPO+ is the low-regret corner, while CRPTO robust is the auditable-risk-control corner.](../reports/crpto/figures/crpto_fig15_regret_auditability_frontier.png){#fig-supp-regret-auditability width="82%"}
+![A19 materializes the regret-auditability frontier: SPO+ is the low-regret corner, while CRPTO robust is the auditable-risk-control corner.](../reports/crpto/figures/crpto_fig15_regret_auditability_frontier.png){#fig-supp-regret-auditability width="82%" fig-alt="Scatter plot of regret versus verifiable risk controls, positioning SPO+ as low-regret and CRPTO robust as high-auditability."}
 
-![CQR is retained as conformal appendix evidence, not as the promoted method.](../reports/crpto/figures/crpto_fig10_cqr_per_grade.png){#fig-supp-cqr width="90%"}
+![CQR is retained as conformal appendix evidence, not as the promoted method.](../reports/crpto/figures/crpto_fig10_cqr_per_grade.png){#fig-supp-cqr width="90%" fig-alt="Coverage by Lending Club grade for CQR and conformal variants, used as appendix evidence rather than promoted method."}
 
-![Tail-risk versus realized return across the 45-policy robust region (Table A20). Twelve policies pass the satisficing committee; the frozen economic champion (star) deliberately trades some tail risk for return rather than minimizing CVaR, so the headline result is a defendable point inside the robust region rather than the lowest-tail corner.](../reports/crpto/figures/crpto_fig16_tail_risk_frontier.png){#fig-supp-tail-frontier width="90%"}
+![Tail-risk versus realized return across the 45-policy robust region (Table A20). Twelve policies pass the satisficing committee; the frozen economic champion (star) deliberately trades some tail risk for return rather than minimizing CVaR, so the headline result is a defendable point inside the robust region rather than the lowest-tail corner.](../reports/crpto/figures/crpto_fig16_tail_risk_frontier.png){#fig-supp-tail-frontier width="90%" fig-alt="Scatter plot of tail risk versus realized return across 45 robust-region policies, with satisficing pass policies and frozen economic champion marked."}
 
 ![Tail risk of the frozen funded set under varying loss-given-default (Table A12). CVaR grows with the assumed LGD while the OCE and the mean loss rate stay milder, confirming that OCE/CVaR enter the paper as post-hoc stress summaries rather than as the optimized objective.](../reports/crpto/figures/crpto_fig17_tail_risk_lgd.png){#fig-supp-tail-lgd width="82%" fig-alt="Line chart of frozen funded-set loss rate versus LGD (0.35 to 0.60) for CVaR90, CVaR95, CVaR99, OCE and the mean; CVaR grows with LGD while OCE and the mean stay mild."}
 

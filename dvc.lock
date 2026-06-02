@@ -6,21 +6,21 @@ stages:
     deps:
     - path: book/_quarto.yml
       hash: md5
-      md5: 85c5f90b2542524fce93ac55c5c05514
-      size: 4175
+      md5: e603e3ca777e32aeac860a14aafddb90
+      size: 5253
     - path: book/chapters
       hash: md5
-      md5: 4392bf44741b3f5976bdda4309863cd1.dir
-      size: 785441
-      nfiles: 27
+      md5: 034db0577bf1d64a1bf8a51184346615.dir
+      size: 796626
+      nfiles: 28
     - path: book/index.qmd
       hash: md5
-      md5: 71650e3f5a248fd77f93bcf3f7cb8fcd
-      size: 4334
+      md5: 9bd599596a48fc6f19e35202f28353da
+      size: 5598
     - path: book/styles.scss
       hash: md5
-      md5: f7dcf828f3fcbc66ee146f2a36b1ed45
-      size: 11518
+      md5: 2a43791aea83d8c367d0a091aea0b80f
+      size: 13044
     - path: scripts/write_book_build_info.py
       hash: md5
       md5: 43b5b0b11353e424318574b8c6643235
@@ -33,21 +33,21 @@ stages:
     outs:
     - path: book/_book
       hash: md5
-      md5: 66c5da6beab7ef4ecf3161cef132028f.dir
-      size: 14659442
-      nfiles: 98
+      md5: 61e5322e2a694c1271ce2598b0bb4301.dir
+      size: 14614762
+      nfiles: 101
   crpto.paper.figures:
     cmd: python scripts/generate_crpto_figures.py --paper crpto
     deps:
     - path: scripts/generate_crpto_figures.py
       hash: md5
-      md5: 15400f314f922f8b945cbb83c0df9318
-      size: 63007
+      md5: e5263be923ddd2a8d2f42c8abda21a49
+      size: 63824
     outs:
     - path: reports/crpto/figures/crpto_fig7_uncertainty_baselines.png
       hash: md5
-      md5: 18d75c463160ef8551e6890cebee3a49
-      size: 204999
+      md5: 85f05f2e949d67439642114474312733
+      size: 162435
   crpto.paper.export_tables:
     cmd: python scripts/export_crpto_tables.py
     deps:
@@ -356,12 +356,12 @@ stages:
       size: 2187
     - path: scripts/build_crpto_journal_package.py
       hash: md5
-      md5: dcffb770a8875edf18c04d9058e5fd6b
-      size: 38777
+      md5: e345471f18e9da919af23de5077b5c56
+      size: 39678
     outs:
     - path: models/crpto_journal_package_status.json
       hash: md5
-      md5: 8067a7a5d0f9f2d08fbfb8707d37fe7c
+      md5: 734a14c0fc5aa321fa4d48dfb2992c2e
       size: 3610
   crpto.paper.spo_stability:
     cmd: python scripts/run_crpto_vs_spo_stability.py

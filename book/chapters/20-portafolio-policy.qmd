@@ -6,6 +6,26 @@ Puente entre predict-then-optimize, política económica y frontera de robustez 
 Nota editorial: este capítulo conserva material técnico de soporte para tesis, supplement y revisión. Los bloques de código quedan acotados visualmente por defecto; la lectura principal está en el texto, las tablas y las figuras.
 :::
 
+::: {.use-grid}
+::: {.use-card}
+**Uso IJDS**
+
+Puente decisional del paper: LP robusto, selección de política y frontera retorno-robustez-auditabilidad.
+:::
+
+::: {.use-card}
+**Uso tesis**
+
+Formulación completa de portafolio, solver, política económica y lectura operativa del champion.
+:::
+
+::: {.use-card}
+**Uso supplement**
+
+Fronteras, ablations, regret y detalles de selección para demostrar que el resultado no es cherry-picked.
+:::
+:::
+
 ::: {.source-note}
 **Procedencia:** `book/chapters/09-portfolio/index.qmd`
 :::
@@ -30,7 +50,7 @@ Toda la optimización usa **HiGHS** como solver LP/MILP open-source [@huangfu_pa
 :::
 
 ::: {.column-page}
-![Visualización de conjuntos de incertidumbre usados por la capa de optimización robusta para transformar intervalos conformales en restricciones de decisión.](../assets/figures/notebooks/uncertainty_sets.png)
+![Visualización de conjuntos de incertidumbre usados por la capa de optimización robusta para transformar intervalos conformales en restricciones de decisión.](../assets/figures/notebooks/uncertainty_sets.png){fig-alt="Visualización de conjuntos de incertidumbre tipo caja derivados de intervalos conformales para alimentar restricciones robustas de decisión."}
 :::
 
 La figura `fig-uncertainty-sets` conecta estadística con OR: cada intervalo conformal deja de ser una salida descriptiva y se convierte en una región factible de decisión.
@@ -284,7 +304,7 @@ donde $PD_i^{\text{scenario}} \in \{\underline{PD}_i, \widehat{PD}_i, \overline{
 
 La `fig-uncertainty-sets-portfolio` ilustra cómo los intervalos conformales por préstamo se traducen geométricamente en el conjunto de incertidumbre tipo caja que el optimizador robusto debe satisfacer. Cada préstamo aporta un rango $[\underline{PD}_i, \overline{PD}_i]$; el producto cartesiano de estos rangos define la "caja" dentro de la cual el portafolio debe permanecer factible.
 
-![Conjuntos de incertidumbre tipo caja derivados de los intervalos conformales Mondrian, mostrando la relación entre PD puntual, límite inferior y límite superior por préstamo candidato.](../assets/figures/notebooks/uncertainty_sets.png)
+![Conjuntos de incertidumbre tipo caja derivados de los intervalos conformales Mondrian, mostrando la relación entre PD puntual, límite inferior y límite superior por préstamo candidato.](../assets/figures/notebooks/uncertainty_sets.png){fig-alt="Diagrama de intervalos por préstamo candidato que ubica PD puntual, límite inferior y límite superior conformal."}
 
 ::: {.source-note}
 **Procedencia:** `book/chapters/09-portfolio/09c-policy-selection.qmd`

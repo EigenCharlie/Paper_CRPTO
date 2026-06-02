@@ -6,6 +6,26 @@ Material de método y reproducibilidad previo al CRPTO: origen de datos, split t
 Nota editorial: este capítulo conserva material técnico de soporte para tesis, supplement y revisión. Los bloques de código quedan acotados visualmente por defecto; la lectura principal está en el texto, las tablas y las figuras.
 :::
 
+::: {.use-grid}
+::: {.use-card}
+**Uso IJDS**
+
+Resumen de datos, split temporal, prevención de leakage y contrato reproducible de features.
+:::
+
+::: {.use-card}
+**Uso tesis**
+
+Arquitectura completa de datos, herramientas, versionado y decisiones de ingeniería del proyecto.
+:::
+
+::: {.use-card}
+**Uso supplement**
+
+Linaje de features y trazabilidad para justificar que las salidas paper-ready vienen de artefactos congelados.
+:::
+:::
+
 ::: {.source-note}
 **Procedencia:** `book/chapters/03-tech-stack.qmd`
 :::
@@ -645,11 +665,11 @@ El IV también se usa como criterio de ordenamiento en los notebooks de análisi
 
 ::: {.figure-stack}
 
-![Ranking IV de variables candidatas para el pipeline de feature engineering.](../assets/figures/notebooks/iv_ranking.png)
+![Ranking IV de variables candidatas para el pipeline de feature engineering.](../assets/figures/notebooks/iv_ranking.png){fig-alt="Gráfico de barras que ordena variables candidatas por Information Value para priorizar señales del pipeline de features."}
 
 La figura `fig-iv-ranking` permite aterrizar el criterio de selección en el problema real de Lending Club: no todas las columnas aportan lo mismo, y varias de las señales fuertes coinciden con intuiciones clásicas de riesgo, como grado, tasa y proxies de carga financiera.
 
-![Binning WOE supervisado para las variables más importantes del bloque de feature engineering.](../assets/figures/notebooks/woe_binning_top6.png)
+![Binning WOE supervisado para las variables más importantes del bloque de feature engineering.](../assets/figures/notebooks/woe_binning_top6.png){fig-alt="Panel de binning WOE supervisado para las seis variables principales, con bins ordenados y evidencia de separación de riesgo."}
 
 :::
 
@@ -788,7 +808,7 @@ En conjunto, los ratios, flags, transformaciones logarítmicas e interacciones c
 
 La `fig-feature-family-decomposition` muestra la distribución de las 42 features del contrato canónico por familia de origen. La mezcla resultante combina señales crudas del buró con ratios derivados, flags binarios y codificaciones WOE, lo que le da al modelo múltiples vistas complementarias del mismo prestatario.
 
-![Descomposición del feature set canónico por familia de origen: ratios, flags, categorías, WOE y variables crudas.](../assets/figures/notebooks/feature_family_decomposition.png)
+![Descomposición del feature set canónico por familia de origen: ratios, flags, categorías, WOE y variables crudas.](../assets/figures/notebooks/feature_family_decomposition.png){fig-alt="Gráfico de composición que muestra la cantidad relativa de features canónicos por familia: ratios, flags, categorías, WOE y variables crudas."}
 
 ### Qué cambió en el rerun V2
 

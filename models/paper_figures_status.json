@@ -1,10 +1,10 @@
 {
   "schema_version": "2026-03-21.1",
-  "generated_at_utc": "2026-05-29T15:25:21.207868+00:00",
+  "generated_at_utc": "2026-06-02T03:10:04.814326+00:00",
   "run_tag": "untracked",
   "output_dir": "C:\\Users\\carlos\\Documents\\Paper_CRPTO\\reports\\crpto\\figures",
-  "figures_attempted": 9,
-  "figures_succeeded": 9,
+  "figures_attempted": 12,
+  "figures_succeeded": 12,
   "errors": {},
   "files": [
     "crpto_fig10_cqr_per_grade.pdf",
@@ -17,6 +17,8 @@
     "crpto_fig17_tail_risk_lgd.pdf",
     "crpto_fig18_tail_constrained_frontier.pdf",
     "crpto_fig19_online_coverage_aci.pdf",
+    "crpto_fig1_journal_pipeline.pdf",
+    "crpto_fig20_bound_claim_layers.pdf",
     "crpto_fig7_uncertainty_baselines.pdf",
     "crpto_fig8_alpha_pareto.pdf",
     "crpto_fig9_spo_regret.pdf",
