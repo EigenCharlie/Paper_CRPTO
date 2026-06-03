@@ -179,6 +179,25 @@ torneo de regret puro. La historia publicable es más fuerte: cuando un comité
 necesita cobertura, exact bound y trazabilidad del funded set, el costo en
 regret se vuelve explícito.
 
+#### Posicionamiento frente a la teoría general de la frontera
+
+Un revisor que conozca la literatura reciente notará que existe una línea que da
+garantías distribution-free y de muestra finita **conjuntas sobre miscoverage y
+regret**, trazando la frontera de Pareto miscoverage--regret para familias de
+políticas robust predict-then-optimize [@zhou2025credo; @zhou2026creme]. Esa
+línea es la **teoría general** de la frontera que la Figura
+@fig-spo-regret-auditability dibuja: muestra cómo calibrar un nivel de robustez
+contra una preferencia costo--riesgo en una familia de optimización abstracta.
+CRPTO es el objeto **complementario y aplicado**. No propone un nuevo estimador
+de frontera; instancia una esquina de esa frontera sobre un artefacto de riesgo
+de crédito congelado y de estilo productivo, con un premio de robustez conformal
+nombrado ($\Gamma_{\mathrm{CP}}$), un certificado exacto del funded set, auditoría
+por grade y trazabilidad de model risk que un comité puede inspeccionar. La
+distinción que conviene declarar explícitamente: CRPTO no compite con esa teoría
+en generalidad; la **aterriza** en una decisión de cartera de crédito auditable
+sobre Lending Club. Esto convierte un vecino teórico cercano en un apoyo, no en
+una amenaza al claim.
+
 ### Reproducibilidad
 
 ```bash

@@ -85,6 +85,7 @@ book:
         - chapters/24-bibliografia-crpto-actualizada.qmd
         - chapters/25-reviewer-map.qmd
         - chapters/23-apendices-regulatorios-y-future-work.qmd
+        - chapters/26-sintesis-tesis.qmd
     - chapters/glosario.qmd
     - references.qmd
 

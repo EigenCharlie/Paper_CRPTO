@@ -127,6 +127,20 @@ La idea importante no es memorizar el teorema, sino entender qué promete el mé
 
 Esta garantía es **marginal** --- se cumple en promedio sobre la distribución conjunta de los datos de calibración y el nuevo punto de test. No garantiza cobertura condicional para cada subgrupo de préstamos (para eso se necesita el enfoque Mondrian, descrito en `sec-mondrian-primer`).
 
+::: {.callout-note}
+## Por qué un intervalo conformal es mejor insumo de decisión que un punto
+
+La utilidad de la predicción conformal no es solo teórica. En un ensayo
+controlado aleatorizado y pre-registrado, dar a personas conjuntos de predicción
+conformales mejoró de forma estadísticamente significativa la calidad de sus
+decisiones frente a conjuntos de tamaño fijo con la misma cobertura nominal
+[@cresswell2024]: el ancho del intervalo comunica incertidumbre y ofrece
+alternativas, exactamente la señal que un comité de riesgo necesita para decidir
+sobre un préstamo dudoso. Ese es el puente conceptual de todo el proyecto: el
+intervalo conformal no es un adorno diagnóstico, sino el objeto que vuelve la
+decisión de cartera auditable y mejor informada que una PD puntual.
+:::
+
 #### Scores de nonconformidad
 
 El concepto central del framework conformal es el **score de nonconformidad** (*nonconformity score*), denotado $s(x, y)$. Este score mide qué tan "inusual" o "no conforme" es una observación $(x, y)$ respecto al patrón aprendido por el modelo. A mayor score, más atípica es la observación.
