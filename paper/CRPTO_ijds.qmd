@@ -482,11 +482,35 @@ region. The theorem-tight comparator buys a tighter certificate at a return
 cost, while the balanced comparator shows that a nearby lower-$\tau$ alternative
 has similar economics.
 
-The robust policy does pay for robustness: its price of robustness is
-`-$14,465.69`, or approximately `-10.56%`, relative to the comparison frontier.
-This is not a defect of the method; it is the economic trade-off CRPTO makes
-visible. A reviewer can see what was sacrificed to obtain a funded set that
-passes the exact bound.
+It is worth anchoring the robustness cost in dollars rather than asserting it.
+The frozen `price_of_robustness` field is defined as the non-robust baseline's
+expected return minus the robust policy's expected return, both valued under
+point PDs on the same `$1M` budget. For the champion it is `-$14,465.69`
+(`-10.56%`); the negative sign is meaningful, not a typo. Under the point-PD
+valuation the robust policy is not more conservative on paper than the non-robust
+baseline -- it is `$14,465.69` richer -- and the realized out-of-time return then
+lands higher still. The committee-facing reading is the three-number ladder
+below, all from the same frozen champion record (`tau = 0.175`, `gamma = 0.45`,
+`alpha = 0.01`).
+
+| Quantity | Value | Source field |
+|---|---:|---|
+| Non-robust baseline expected return (point PD) | `$137,014.58` | `price_of_robustness` ledger base |
+| CRPTO robust expected return (point PD) | `$151,480.27` | `expected_return_net_point` |
+| CRPTO robust realized return (OOT) | `$170,464.54` | `realized_total_return` |
+| Recorded price of robustness | `-$14,465.69` (`-10.56%`) | `price_of_robustness` |
+| Funded loans / budget | `335` / `$1,000,000` | `n_funded` / `total_allocated` |
+
+: Economic anchor for the promoted champion. The robust policy improves the
+point-PD expected return over the non-robust baseline (hence the negative price
+of robustness), and the realized OOT return exceeds the robust expectation.
+
+The point is therefore not that robustness must be paid for in lost return. On
+this evaluation the conformal robust funded set is economically competitive with
+-- in fact ahead of -- the non-robust baseline while additionally carrying the
+exact alpha-safe certificate. The value of reporting the ledger is auditability:
+a reviewer sees the baseline, the expectation, and the realized return on one
+budget instead of a single net figure that hides which way the trade-off went.
 
 The robust-region analysis is the strongest evidence that the result is not a
 single point artifact. Across the evaluated region, `45/45` unique policies
@@ -657,7 +681,8 @@ conversation. The committee can pick a risk cap $\tau$, inspect how a policy
 parameter $\gamma$ changes the funded set, read $\Gamma_{\mathrm{CP}}$ as the conformal
 robustness premium paid by that funded set, and compare $V(\alpha)$ with the
 stated bound tolerance. The method therefore supports a practical question:
-whether the observed economic return is worth the explicit price of robustness.
+whether the realized economic return justifies the signed price of robustness,
+which on this evaluation is favorable rather than a cost.
 If the committee wants lower regret, the SPO+ corner is visible; if it wants
 stronger validity language, the validity ladder states the new calibration
 protocol that would be required. That separation is the managerial value of the

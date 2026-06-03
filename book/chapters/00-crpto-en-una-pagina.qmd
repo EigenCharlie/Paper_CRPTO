@@ -41,7 +41,7 @@ defendible es más específico:
 | `gamma` | Parámetro de policy que decide cuánto castiga la incertidumbre en el LP. |
 | `Gamma_CP` | Prima conformal realizada: cuánto riesgo adicional reconoce el funded set frente a la PD puntual. |
 | `V(alpha)` | No-cobertura ponderada observada del funded set. |
-| `price_of_robustness` | Retorno sacrificado por comprar auditabilidad y control de incertidumbre. |
+| `price_of_robustness` | Retorno esperado (point-PD) de la baseline no-robusta menos el de la policy robusta; con signo. En el champion vale `-$14,465.69` (negativo: la policy robusta supera a la baseline). |
 
 : Objetos que convierten el resultado CRPTO en una conversación de comité.
 
