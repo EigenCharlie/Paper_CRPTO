@@ -646,6 +646,11 @@ Si el sacrificio es pequeño, la prudencia sale barata. Si el sacrificio es dema
 En la configuración del proyecto (`configs/optimization.yaml`), el parámetro `max_price_of_robustness_pct` establece un umbral de `-15%`. Si una política robusta sacrifica más del 15% de retorno respecto al equivalente no robusto, se activa la política de *fallback* (`nonrobust_equivalent`). Este mecanismo evita que intervalos conformales excesivamente conservadores produzcan portafolios poco defendibles desde negocio.
 :::
 
+::: {.callout-note}
+## El signo importa: en este proyecto el precio salió favorable
+La guía anterior describe el caso *típico*, donde la robustez cuesta retorno. El campo congelado `price_of_robustness` se define con signo: retorno esperado de la baseline no-robusta menos el de la policy robusta. Para el champion vale `-$14,465.69` (`-10.56%`) — **negativo** — porque el funded set conformal-robusto promovido no solo no sacrifica retorno esperado frente a la baseline, sino que lo supera (ver la instanciación empírica del Corolario 1 en @sec-crpto-results). Un PoR negativo no contradice la teoría: el corollary acota el precio *conceptual* máximo; el precio *medido* sobre este funded set resultó a favor de la prudencia.
+:::
+
 La frontera de Pareto entre retorno y robustez se explora en el script `scripts/optimize_portfolio_tradeoff.py`, que genera el *tradeoff curve* variando el parámetro $\gamma$ y registrando el PoR resultante.
 
 ### Medidas de Riesgo de Cola: CVaR y OCE {#sec-cvar-oce}

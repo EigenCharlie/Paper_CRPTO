@@ -128,7 +128,7 @@ checkpoint MRM/fair-lending sin convertirlo en un claim legal.
 | `V` | No-cobertura ponderada del funded set | Cuánto default realizado quedó fuera de la cota |
 | `violation` | Exceso de riesgo ponderado sobre `tau` | Incumplimiento del límite de portafolio |
 | `alpha01_exact_pass` | Check exacto de bound en OOT | Semáforo para promoción paper-facing |
-| `price_of_robustness` | Retorno sacrificado por protegerse | Costo económico de auditabilidad |
+| `price_of_robustness` | Retorno esperado baseline no-robusta menos robusta (con signo; `-$14,465.69` en el champion) | Costo/beneficio económico de la robustez, auditable |
 
 : Diccionario operativo del CRPTO {#tbl-crpto-operational-dictionary}
 
