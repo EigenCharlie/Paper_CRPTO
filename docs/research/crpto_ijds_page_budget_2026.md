@@ -32,29 +32,32 @@ budget, not a pure prose-only count.
 
 | Section | Words | Approx. prose pages |
 |---|---:|---:|
-| Abstract | 182 | 0.35 |
-| Introduction | 520 | 0.99 |
-| Related Work | 860 | 1.64 |
-| Method | 596 | 1.14 |
-| Theory | 712 | 1.36 |
-| Experimental Design | 279 | 0.53 |
-| Results | 796 | 1.52 |
-| Robustness and Comparators | 698 | 1.33 |
-| Reproducibility and Companion | 181 | 0.34 |
-| Discussion | 309 | 0.59 |
-| **Total body budget** | **5,133** | **9.78** |
+| Abstract | 162 | 0.31 |
+| Introduction | 533 | 1.02 |
+| Related Work | 572 | 1.09 |
+| Method | 565 | 1.08 |
+| Theory | 628 | 1.20 |
+| Experimental Design | 377 | 0.72 |
+| Results | 465 | 0.89 |
+| Robustness and Comparators | 1,151 | 2.19 |
+| Reproducibility and Companion | 175 | 0.33 |
+| Discussion | 283 | 0.54 |
+| **Total body budget** | **4,911** | **9.35** |
 
-Body floats after the current polish:
+Body floats after the round-8 expansion (split table promoted to Experimental
+Design; tail-risk/distribution-robustness subsection promoted to Robustness):
 
 | Float type | Count | Budget heuristic | Approx. pages |
 |---|---:|---:|---:|
 | Figures | 5 | 0.4 page each | 2.0 |
-| Tables | 9 | 0.3 page each | 2.7 |
-| **Float allowance** | 14 |  | **4.7** |
+| Tables | 11 | 0.3 page each | 3.3 |
+| **Float allowance** | 16 |  | **5.3** |
 
-**Estimated body length before references: ~12.0--12.5 pages.** The Quarto PDF
-proxy lands at 14 pages including references after the submission-target callout
-was removed and the regret/table floats were compacted.
+**Estimated body length before references: ~14.7 pages.** Round 8 promoted three
+high-value supplement items into the body (temporal split table, A22/A20 tail-risk
+frontier, A23 worst-grade coverage), lifting the body from ~12 to ~14.7 estimated
+pages -- the target 14--16 pp band that reads as a full research article while
+staying well under the 25-page IJDS cap.
 
 ## Interpretation
 

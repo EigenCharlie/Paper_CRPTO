@@ -374,8 +374,27 @@ post-selection conformal theorem.
 
 The empirical study uses Lending Club retail-loan data covering originations
 from 2007 through 2020. The raw panel is cleaned into a static feature store and
-split temporally. The final evaluation set contains 276,869 loans, large enough
-to stress both probability calibration and decision-level robustness.
+split temporally with a January 2018 cutoff, so that calibration and evaluation
+use only loans originated after the training window. The calibration block plays
+the dual role required by split conformal: it is held out from training and used
+exclusively to fit the conformal quantiles. The final evaluation set contains
+276,869 loans, large enough to stress both probability calibration and
+decision-level robustness.
+
+| Split | Period | Loans | Role |
+|---|---|---:|---|
+| Train | Jun 2007 -- Mar 2017 | `1,346,311` | Fit PD model and monotonic constraints. |
+| Calibration | Mar 2017 -- Dec 2017 | `237,584` | Fit Mondrian conformal quantiles (held out from training). |
+| Test (OOT) | Jan 2018 -- Sep 2020 | `276,869` | Evaluate coverage, run the portfolio decision, and audit the exact bound. |
+
+: Temporal out-of-time split. The January 2018 cutoff keeps the test window
+(including the 2020 COVID regime) strictly after training and calibration, so no
+future information leaks into the funded-set decision.
+
+The out-of-time design is deliberately adversarial to the method: the test window
+spans an expansion (2018--2019) and a regime break (2020 COVID), so coverage and
+the funded-set certificate are measured under a documented distribution shift
+rather than on a random split that would let the model see the future.
 
 The design distinguishes three kinds of computation. Predictive and conformal
 searches choose models, calibration, partitions, and policy families. Those
@@ -594,6 +613,42 @@ model-risk lineage that a credit committee can inspect. A reviewer who knows the
 general theory should therefore read CRPTO not as a competing estimator but as
 the credit-decision instantiation that connects that theory to an auditable
 Lending Club funded set.
+
+## Tail Risk and Distribution Robustness
+
+Two reviewer questions deserve a body-level answer rather than an appendix-only
+one: what does the champion give up on the tail, and does its coverage hold once
+the evaluation is sliced by grade? Both are addressed by re-solving the frozen
+robust region under additional summaries; neither re-promotes the champion.
+
+The first question is a tail-risk frontier. Re-solving the 45 robust-region
+policies under a decision-time CVaR$_{95}$ cap (computed from the conformal upper
+endpoints, supplement A22) traces an explicit return-versus-tail trade-off. The
+tightest admissible tail cap selects a challenger earning `$160,978` (`-5.57%`
+versus the champion) at CVaR$_{95}$ `0.406`, while the frozen economic champion
+deliberately sits at the high-return, high-tail corner. A satisficing screen
+(supplement A20) makes the same point from the committee side: the top
+tail-satisficing challenger cuts CVaR$_{95}$ by `22.58%` at a return cost of only
+`1.99%`. The champion is therefore a deliberate, auditable choice on a visible
+frontier, not the lowest-tail policy and not a hidden corner.
+
+| Policy | Realized return | $\Delta$ return | CVaR$_{95}$ | $\Delta$ CVaR |
+|---|---:|---:|---:|---:|
+| Economic champion (frozen) | `$170,464.54` | `0.0%` | `0.2542` | `0.0%` |
+| Top tail-satisficing challenger (A20) | `$167,069.48` | `-1.99%` | `0.1968` | `-22.58%` |
+| Tightest CVaR-capped policy (A22) | `$160,978.00` | `-5.57%` | `0.4061` | cap-binding |
+
+: Tail-risk trade-off across the robust region. The champion maximizes return
+inside the exact alpha-safe region; tighter tail control is available at a
+documented return cost.
+
+The second question is distribution robustness across grades. On the frozen
+intervals, the worst per-grade 90% coverage is grade E at `0.9004`, still above
+the `0.90` target, with the marginal coverage at `0.9293` (supplement A23). No
+grade falls below target, so the conservative marginal coverage is not hiding a
+failing segment; the thinnest grade$\times$vintage cells are where a future
+group-weighted or multi-distribution recalibration would matter, and we mark that
+as future work rather than a present guarantee.
 
 ## Managerial Implication
 
