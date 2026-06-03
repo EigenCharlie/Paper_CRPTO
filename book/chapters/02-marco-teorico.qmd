@@ -150,7 +150,7 @@ $$
 \mathbb{P}\!\left(\sum_i w_i\, Y_i > \tau + t\right) \leq \frac{\alpha}{t}
 $$ {#eq-prob-violation}
 
-**(c)** Evaluando en $t = \sqrt{\alpha}$ (tasa óptima de Markov):
+**(c)** Evaluando en $t = \sqrt{\alpha}$ (el punto que iguala umbral y cola en el paso de Markov):
 
 $$
 \mathbb{P}\!\left(\sum_i w_i\, Y_i > \tau + \sqrt{\alpha}\right) \leq \sqrt{\alpha}
@@ -179,6 +179,23 @@ $$
 Esta condición se obtiene directamente si los pesos son fijos/no adaptativos frente a los labels evaluados y la garantía conformal aplica de forma uniforme a la población ponderada relevante. Bajo Mondrian o weighted conformal, puede refinarse como $\mathbb{E}[V]\leq\sum_g W_g\alpha_g$, con $W_g=\sum_{i\in g}w_i$.
 
 **Paso 3 (Resultados).** La parte (a) sigue de $\mathbb{E}[\max(0, \sum w_i Y_i - \tau)] \leq \mathbb{E}[V] \leq \alpha$. La parte (b) aplica la desigualdad de Markov a $V$: $\mathbb{P}(V > t) \leq \mathbb{E}[V]/t \leq \alpha/t$. La parte (c) sustituye $t = \sqrt{\alpha}$. $\square$
+
+::: {.callout-note}
+## Por qué $t = \sqrt{\alpha}$ y por qué la cota es deliberadamente laxa
+
+La elección $t = \sqrt{\alpha}$ es por **interpretabilidad, no por optimalidad
+global**: deja el umbral una potencia de $\sqrt{\alpha}$ por encima del nivel
+nominal y produce la lectura limpia "la miscoverage supera $\sqrt{\alpha}$ con
+probabilidad a lo sumo $\sqrt{\alpha}$". Markov usa solo el primer momento de
+$V$, de modo que es el argumento más débil defendible: cualquier control de
+segundo momento o de diferencias acotadas (Chebyshev, Hoeffding o Bernstein)
+lo aprieta **siempre que se cumpla el supuesto adicional de independencia entre
+clusters**. Esos tightenings condicionales viven en el apéndice A21
+(`crpto_conditional_tightening_appendix`), no en el resultado principal, porque
+la contribución central de CRPTO es la construcción de decisión auditable, no la
+cota de cola más fina posible. Markov queda como el bound distribution-free
+principal precisamente porque no exige ese supuesto.
+:::
 
 #### Validación empírica del vínculo $\alpha \leftrightarrow \Gamma$
 

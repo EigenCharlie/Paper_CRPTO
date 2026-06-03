@@ -1,0 +1,81 @@
+# Síntesis: del paper a la tesis a la defensa {#sec-crpto-sintesis}
+
+Este capítulo cierra el libro conectando explícitamente las tres superficies del
+proyecto. No repite resultados: traza cómo el mismo cuerpo de evidencia se lee a
+tres resoluciones distintas, y deja un mapa claim → capítulo para que un jurado,
+un reviewer o el propio autor encuentre en segundos dónde vive cada afirmación.
+
+## Las tres superficies de CRPTO
+
+El proyecto produce un único resultado congelado y lo expone a tres niveles de
+detalle. La distinción importa porque cada audiencia entra por una superficie
+distinta y necesita poder bajar a la siguiente sin perder la trazabilidad.
+
+| Superficie | Qué es | Para quién | Extensión | Fuente de verdad |
+|---|---|---|---|---|
+| Paper IJDS | Manuscrito compacto del claim central | Revisor de journal | ~12--14 pp + supplement | `paper/CRPTO_ijds.qmd` |
+| Libro (tesis) | Dossier extendido con fundamentos, gobernanza y apéndices | Jurado de tesis, lector técnico | 28 capítulos | `book/chapters/*.qmd` |
+| Defensa | Recorrido oral por claim, evidencia y límites | Comité de defensa | 1 sesión | este capítulo + @sec-crpto-sintesis-mapa |
+
+: Las tres superficies sobre el mismo resultado congelado.
+
+La regla de coherencia entre superficies es estricta: **ninguna superficie puede
+afirmar más que el certificado exacto del funded set**. El paper comprime, el
+libro amplía, la defensa narra; las tres apuntan al mismo
+`models/final_project_promotion.json` y a los mismos hashes del
+`EXTRACTION_MANIFEST.json`. Si un número difiere entre superficies, gana el
+artefacto congelado, no el texto.
+
+## Cómo se proyecta el libro sobre el paper
+
+El paper IJDS no es un resumen del libro: es una de sus proyecciones. Cada
+sección del manuscrito tiene un respaldo extendido en el libro, y cada apéndice
+del supplement tiene un dossier que lo origina.
+
+| Sección del paper | Respaldo extendido en el libro |
+|---|---|
+| Introduction / claim | @sec-crpto-sintesis (este capítulo), [CRPTO en una página](00-crpto-en-una-pagina.qmd) |
+| Related Work / closest-work boundary | [Marco teórico](02-marco-teorico.qmd), [literatura](22-literatura-trazabilidad-entorno.qmd) |
+| Method (PD, conformal, LP) | [Metodología](03-metodologia.qmd), [pipeline](17-pipeline-datos-features.qmd), [PD/calibración](18-pd-calibracion-champion.qmd), [conformal dossier](19-conformal-dossier.qmd), [portafolio](20-portafolio-policy.qmd) |
+| Theory (Markov, validity ladder) | [Marco teórico](02-marco-teorico.qmd), [apéndice de robustez](07-apendice-robustez.qmd) |
+| Results / certificado exacto | [Resultados](04-resultados.qmd), [funded set](12-funded-set.qmd) |
+| Robustness / regret-auditability | [Ablación Mondrian](08-ablacion-mondrian.qmd), [SPO regret](09-spo-regret.qmd), [apéndice de robustez](07-apendice-robustez.qmd) |
+| Discussion / límites | [Discusión](05-discusion.qmd), [apéndices regulatorios y future work](23-apendices-regulatorios-y-future-work.qmd) |
+| Reproducibility | [Trazabilidad](13-trazabilidad.qmd), [release](14-release.qmd) |
+
+: Proyección sección-del-paper → capítulo-del-libro.
+
+## Mapa claim → capítulo para la defensa {#sec-crpto-sintesis-mapa}
+
+Esta es la tabla operativa de la defensa. Cada fila es una afirmación que el
+proyecto sostiene, dónde se demuestra, y cuál es el límite honesto que la
+acompaña. Complementa el [mapa para reviewers](25-reviewer-map.qmd), que está
+orientado a objeciones; esta tabla está orientada a navegación.
+
+| Claim | Dónde se demuestra | Límite declarado |
+|---|---|---|
+| La PD calibrada congelada es apta para decisión (no para liderar ranking). | [PD/calibración](18-pd-calibracion-champion.qmd), [resultados](04-resultados.qmd) | AUC medio (`0.7124`); el valor está en la calibración, no en discriminación. |
+| Mondrian da cobertura grupo-condicional útil, no solo marginal. | [conformal dossier](19-conformal-dossier.qmd), [ablación](08-ablacion-mondrian.qmd) | No es cobertura condicional exacta por perfil; es por partición declarada. |
+| El intervalo conformal mejora la decisión, no la decora. | [fundamentos conformal](16-fundamentos-conformal-optimizacion.qmd) | Evidencia externa (RCT) más el certificado propio; no es prueba causal sobre comités reales. |
+| El LP robusto convierte la señal conformal en un funded set. | [metodología](03-metodologia.qmd), [portafolio](20-portafolio-policy.qmd) | Uniperiodo, presupuesto fijo `$1M`, panel histórico estático. |
+| El funded set pasa el bound exacto `α=0.01`. | [marco teórico](02-marco-teorico.qmd), [funded set](12-funded-set.qmd) | Validación empírica post-selección, no garantía conformal más fuerte. |
+| El resultado no es un punto aislado (`45/45`). | [resultados](04-resultados.qmd), [apéndice de robustez](07-apendice-robustez.qmd) | Región robusta evaluada, no garantía de selección prospectiva en vivo. |
+| CRPTO compra auditabilidad, no mínimo regret. | [SPO regret](09-spo-regret.qmd) | SPO+ gana en regret; la frontera lo hace explícito. |
+| El sistema pasa una auditoría MRM SR 11-7. | [MRM](11-mrm.qmd), [gobernanza](21-gobernanza-explicabilidad-dataset.qmd) | Validación no independiente (single-author); se simula con controles programáticos. |
+| Todo el resultado es reproducible desde artefactos. | [trazabilidad](13-trazabilidad.qmd), [release](14-release.qmd) | Datos pesados fuera de git; verificados por hash de manifest. |
+
+: Mapa claim → capítulo → límite para la sesión de defensa.
+
+## El cierre honesto
+
+El proyecto se puede defender en una frase y se puede auditar en 28 capítulos.
+La frase es la del [one-pager](00-crpto-en-una-pagina.qmd): CRPTO convierte
+incertidumbre conformal de una PD calibrada congelada en una decisión de
+portafolio robusta y auditable. La auditoría son los artefactos congelados, las
+pruebas de sincronía y la frontera explícita frente a los trabajos más cercanos
+([marco teórico](02-marco-teorico.qmd), [SPO regret](09-spo-regret.qmd)).
+
+Lo que mantiene unidas a las tres superficies no es el texto, sino la disciplina
+de no afirmar más de lo que el certificado exacto sostiene. Esa disciplina —y no
+el tamaño del modelo— es la contribución que el proyecto lleva a un jurado de
+tesis y a un comité editorial de IJDS por igual.
