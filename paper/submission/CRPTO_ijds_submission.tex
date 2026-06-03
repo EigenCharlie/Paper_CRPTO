@@ -368,8 +368,32 @@ caveat rather than an overstated theorem.
 
 The empirical study uses Lending Club retail-loan data covering originations from
 2007 through 2020. The raw panel is cleaned into a static feature store and split
-temporally. The final evaluation set contains 276{,}869 loans, large enough to stress
-both probability calibration and decision-level robustness.
+temporally with a January 2018 cutoff, so calibration and evaluation use only loans
+originated after the training window. The calibration block plays the dual role
+required by split conformal: held out from training and used only to fit the
+conformal quantiles. The final evaluation set contains 276{,}869 loans, large enough
+to stress both probability calibration and decision-level robustness.
+
+\begin{table}[t]
+  \centering
+  \caption{Temporal out-of-time split. The January 2018 cutoff keeps the test
+  window (including the 2020 COVID regime) strictly after training and calibration.}
+  \label{tab:split}
+  \begin{tabular}{llrl}
+    \toprule
+    Split & Period & Loans & Role \\
+    \midrule
+    Train       & Jun 2007 -- Mar 2017 & 1{,}346{,}311 & Fit PD model and monotonic constraints. \\
+    Calibration & Mar 2017 -- Dec 2017 & 237{,}584     & Fit Mondrian conformal quantiles (held out). \\
+    Test (OOT)  & Jan 2018 -- Sep 2020 & 276{,}869     & Coverage, portfolio decision, exact-bound audit. \\
+    \bottomrule
+  \end{tabular}
+\end{table}
+
+The out-of-time design is deliberately adversarial: the test window spans an
+expansion (2018--2019) and a regime break (2020 COVID), so coverage and the
+funded-set certificate are measured under a documented distribution shift rather
+than on a random split that would let the model see the future.
 
 The design distinguishes three kinds of computation. Predictive and conformal searches
 choose models, calibration, partitions, and policy families. Those searches are frozen
@@ -600,6 +624,41 @@ instantiates one corner of that frontier on a frozen, production-style
 credit-risk artifact, with a named conformal robustness premium
 $\Gamma_{\mathrm{CP}}$, an exact funded-set certificate, grade-level audits, and
 model-risk lineage that a credit committee can inspect.
+
+\subsection{Tail Risk and Distribution Robustness}\label{sec:tail-dist}
+
+Two reviewer questions deserve a body-level answer: what does the champion give up
+on the tail, and does its coverage hold once the evaluation is sliced by grade?
+Both are addressed by re-solving the frozen robust region under additional
+summaries; neither re-promotes the champion. Re-solving the 45 robust-region
+policies under a decision-time CVaR$_{95}$ cap (supplement A22) traces an explicit
+return-versus-tail trade-off; a satisficing screen (A20) makes the same point from
+the committee side. The champion is a deliberate, auditable choice on a visible
+frontier, not the lowest-tail policy.
+
+\begin{table}[t]
+  \centering
+  \caption{Tail-risk trade-off across the robust region. The champion maximizes
+  return inside the exact alpha-safe region; tighter tail control is available at a
+  documented return cost.}
+  \label{tab:tail}
+  \begin{tabular}{lrrrr}
+    \toprule
+    Policy & Realized return & $\Delta$ return & CVaR$_{95}$ & $\Delta$ CVaR \\
+    \midrule
+    Economic champion (frozen)          & \$170{,}464.54 & $0.0\%$   & $0.2542$ & $0.0\%$ \\
+    Top tail-satisficing challenger (A20) & \$167{,}069.48 & $-1.99\%$ & $0.1968$ & $-22.58\%$ \\
+    Tightest CVaR-capped policy (A22)   & \$160{,}978.00 & $-5.57\%$ & $0.4061$ & cap-binding \\
+    \bottomrule
+  \end{tabular}
+\end{table}
+
+On distribution robustness, the worst per-grade 90\% coverage on the frozen
+intervals is grade E at $0.9004$, still above the $0.90$ target, with marginal
+coverage at $0.9293$ (supplement A23). No grade falls below target, so the
+conservative marginal coverage is not hiding a failing segment; the thinnest
+grade$\times$vintage cells are where a future group-weighted or multi-distribution
+recalibration would matter, marked as future work rather than a present guarantee.
 
 \subsection{Managerial Implication}\label{sec:managerial}
 
