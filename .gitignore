@@ -128,3 +128,4 @@ htmlcov/
 
 # Hypothesis
 .hypothesis/
+.tmp_*/
