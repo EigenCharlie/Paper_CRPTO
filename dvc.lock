@@ -6,13 +6,13 @@ stages:
     deps:
     - path: book/_quarto.yml
       hash: md5
-      md5: 202564b4d09ace4944315b769d2e9c47
-      size: 5294
+      md5: df5bda1791542b4fb822d78427473893
+      size: 5470
     - path: book/chapters
       hash: md5
-      md5: 1e9a5b7d6397cab9c0495cb04f978426.dir
-      size: 807795
-      nfiles: 29
+      md5: d8b5c1b30ab889961c53e29602e4d56e.dir
+      size: 822563
+      nfiles: 32
     - path: book/index.qmd
       hash: md5
       md5: 9bd599596a48fc6f19e35202f28353da
@@ -33,9 +33,9 @@ stages:
     outs:
     - path: book/_book
       hash: md5
-      md5: 2aa3e057c2f5e993aee5132035f88a49.dir
-      size: 14708648
-      nfiles: 102
+      md5: 54af594ed225b6f50adf73fc8a43aac8.dir
+      size: 14962178
+      nfiles: 105
   crpto.paper.figures:
     cmd: python scripts/generate_crpto_figures.py --paper crpto
     deps:

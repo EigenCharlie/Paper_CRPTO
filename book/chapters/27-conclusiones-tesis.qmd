@@ -1,0 +1,83 @@
+# Conclusiones {#sec-crpto-conclusiones}
+
+Este capítulo cierra la tesis en formato de defensa. No repite los resultados
+—están en [Resultados](04-resultados.qmd) y en los
+[resultados auxiliares](28-resultados-auxiliares.qmd)— sino que enuncia qué se
+contribuyó, qué quedó fuera por diseño, y qué abre el trabajo para el futuro. La
+[síntesis](26-sintesis-tesis.qmd) mapea las tres superficies del proyecto; aquí
+se evalúa la tesis como un todo.
+
+## Qué se contribuyó
+
+La tesis sostiene cinco contribuciones, cada una anclada a evidencia congelada:
+
+1. **Un puente post-hoc auditable de incertidumbre a decisión.** CRPTO toma una PD
+   calibrada congelada, construye intervalos conformales Mondrian y los inyecta
+   como restricciones de un LP robusto de portafolio. La contribución no es un
+   nuevo modelo predictivo, sino la *composición auditable* de piezas conocidas en
+   una decisión crediticia defendible.
+2. **Un certificado exacto sobre el funded set.** La política promovida pasa el
+   bound exacto a $\alpha = 0.01$ (`V = 0.03645`, `Γ_CP = 0.18591`, violación
+   cero), con una garantía distribution-free tipo Markov sobre la no-cobertura
+   ponderada. El certificado es post-selección y empírico, y la tesis es explícita
+   sobre ese matiz.
+3. **Evidencia de que el resultado no es un punto aislado.** La región robusta
+   contiene `45/45` políticas alpha-safe; el champion es el de mayor retorno dentro
+   de esa región exacta, no el primer punto factible.
+4. **Una separación honesta frente a los métodos de regret.** CRPTO no compite con
+   SPO+ en regret —de hecho lo cede— sino que compra auditabilidad y control de
+   cola verificables. La frontera regret-auditabilidad hace ese intercambio
+   explícito en lugar de esconderlo en un único número.
+5. **Una cadena de reproducibilidad de extremo a extremo.** Cada tabla y figura se
+   regenera desde artefactos congelados; cada afirmación fuerte tiene un mapa
+   claim → artefacto → prueba. La gobernanza (MRM SR 11-7, fair lending proxy,
+   trazabilidad) se trata como salida de primera clase, no como apéndice.
+
+## Qué quedó fuera, y por qué
+
+La fuerza de la tesis está tanto en lo que afirma como en lo que se niega a
+afirmar. Quedaron deliberadamente fuera del claim central:
+
+- **Cobertura condicional exacta por perfil.** La garantía es marginal o
+  particionada por el diseño Mondrian declarado; perfiles individuales no tienen
+  garantía exacta.
+- **Un tightening distribution-free más fuerte que Markov.** Las versiones
+  Hoeffding/Bernstein existen como apéndice condicional bajo independencia entre
+  clusters, supuesto que split conformal no garantiza estrictamente.
+- **Despliegue online / no estacionario.** El panel es estático y post-2020 no hay
+  originación nueva; el diagnóstico ACI (A24) es un *replay*, no un stream vivo.
+- **Certificación legal de fair lending.** Los datos públicos no contienen
+  atributos protegidos directos; la auditoría es proxy y técnica, no legal.
+- **Reentrenamiento end-to-end decision-focused.** Cambiaría el artefacto
+  predictivo congelado; se mantiene como dirección futura, no como método de la
+  tesis.
+
+Estas exclusiones no son lagunas: son la frontera que mantiene el certificado
+exacto defendible.
+
+## Trabajo futuro
+
+El proyecto deja un backlog ordenado y trazable, no una lista de deseos:
+
+| Línea futura | Qué requeriría | Soporte ya presente en la tesis |
+|---|---|---|
+| Objetivo OCE/CVaR optimizado (no solo diagnóstico) | Reformular el LP con cola en la función objetivo | Apéndice A22 (re-optimización tail-constrained como challenger) |
+| Cobertura multi-distribución / group-weighted | Nuevo protocolo de calibración | Apéndice A23 (peor celda grade×vintage como diagnóstico) |
+| Conformal online / no estacionario | Stream de originación real, recalibración secuencial | Apéndice A24 (replay ACI sobre vintages OOT) |
+| Selección conformal decision-aware (estilo CROMS) | Holdout separado, registro pre-declarado | Protocolo de torneo ya diseñado en `docs/research` |
+| Réplica multi-dataset | Otro panel de crédito real con originación | Pipeline y contratos reproducibles ya parametrizados |
+
+La dirección del campo —calibración conformal end-to-end, control de riesgo
+OCE/CVaR, frontera miscoverage--regret— confirma que CRPTO se presenta como una
+instancia aplicada y auditable, no como la última palabra metodológica.
+
+## Cierre
+
+La pregunta de la tesis era si la incertidumbre predictiva finita puede entrar a
+una decisión de cartera de crédito de forma lo bastante transparente para que un
+revisor la audite. La respuesta, sobre 276 869 préstamos out-of-time, es sí: la
+incertidumbre conformal cambia el funded set, deja un certificado exacto, y lo
+hace sin sacrificar valor económico frente a la línea base no robusta. Esa
+combinación —decisión robusta, certificado auditable y reproducibilidad de
+artefactos— es la contribución que la tesis lleva a un jurado y, en su forma
+comprimida, a un comité editorial de INFORMS.

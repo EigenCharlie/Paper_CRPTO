@@ -1,0 +1,77 @@
+# Prólogo de tesis {#sec-crpto-prologo}
+
+Este prólogo enmarca el proyecto como **tesis** antes de que el resto del libro
+lo desarrolle como evidencia técnica y como manuscrito. La [página única](00-crpto-en-una-pagina.qmd)
+da la versión de un párrafo; la [introducción](01-introduccion.qmd) abre el
+argumento científico; este capítulo responde a las preguntas que un jurado hace
+primero: por qué este problema, por qué este alcance, y cómo leer el documento.
+
+## El problema, antes del método
+
+La asignación de crédito es una decisión bajo incertidumbre que se toma millones
+de veces y cuyo error se mide en dinero real. La práctica dominante reduce esa
+incertidumbre a un número —una probabilidad de incumplimiento (PD) puntual— y
+optimiza como si ese número fuera exacto. Cuando la estimación falla —por cambio
+de régimen macroeconómico, *drift* temporal o simple error de calibración— la
+pérdida se materializa antes de que el monitoreo la detecte, y la decisión ya
+asignó capital sobre una certeza que no existía.
+
+La tesis parte de una incomodidad concreta con esa práctica: **la incertidumbre
+predictiva suele tratarse como un diagnóstico posterior, no como una restricción
+que pueda cambiar a quién se le presta**. CRPTO propone lo contrario —llevar la
+incertidumbre conformal al optimizador como conjunto de restricciones robustas— y
+lo hace de forma deliberadamente auditable, porque en crédito una decisión que no
+se puede explicar a un comité de riesgo no se puede desplegar.
+
+## Naturaleza y límites honestos del proyecto
+
+Para que el jurado lea la evidencia con el contrato correcto, conviene fijar
+desde el inicio qué es y qué no es esta tesis (el detalle operativo está en
+`docs/ACADEMIC_CONTEXT.md`):
+
+| Dimensión | Esta tesis |
+|---|---|
+| Autoría | Single-author; la validación independiente se **simula** con controles programáticos, no se delega a un equipo. |
+| Datos | Panel histórico estático de Lending Club (2007--2020); no hay originación nueva ni *streaming*. |
+| Destino | Aporte académico + manuscrito para INFORMS Journal on Data Science; **no** es un sistema en producción. |
+| Champion | Congelado y verificado por hash; los resultados no se reabren sin un protocolo de búsqueda aprobado. |
+
+Estos límites no son disculpas: son la frontera que mantiene cada afirmación
+trazable a un artefacto congelado. La contribución de la tesis es precisamente la
+disciplina de no afirmar más de lo que el certificado exacto del funded set
+sostiene.
+
+## Objetivos de la tesis
+
+1. **Construir** un puente reproducible desde una PD calibrada congelada hasta una
+   decisión de portafolio robusta, vía intervalos conformales Mondrian
+   (Capítulos [@sec-crpto-methodology], [@sec-crpto-results]).
+2. **Demostrar** que ese puente admite un certificado exacto de no-cobertura
+   ponderada sobre el funded set, con una garantía distribution-free tipo Markov
+   (Capítulo [marco teórico](02-marco-teorico.qmd)).
+3. **Auditar** la decisión bajo los marcos de gobernanza que un regulador
+   esperaría —MRM SR 11-7, fair lending, trazabilidad de artefactos— en lugar de
+   reportar solo métricas predictivas ([gobernanza](11-mrm.qmd),
+   [fair lending](10-fair-lending.qmd), [trazabilidad](13-trazabilidad.qmd)).
+4. **Delimitar** la contribución frente a la literatura más cercana
+   (predict-then-optimize, optimización robusta data-driven, conformal en crédito,
+   frontera miscoverage--regret), declarando explícitamente qué queda como trabajo
+   futuro ([conclusiones](27-conclusiones-tesis.qmd)).
+
+## Cómo leer esta tesis
+
+El libro tiene dos lecturas según la audiencia:
+
+- **Lectura corta (manuscrito):** [one-pager](00-crpto-en-una-pagina.qmd) →
+  [introducción](01-introduccion.qmd) → [metodología](03-metodologia.qmd) →
+  [resultados](04-resultados.qmd) → [discusión](05-discusion.qmd). Reproduce el
+  argumento del paper IJDS.
+- **Lectura larga (tesis):** añade el dossier extendido (fundamentos, pipeline,
+  PD/calibración, conformal, portafolio, gobernanza), los
+  [resultados auxiliares](28-resultados-auxiliares.qmd) que no entran al paper por
+  límite de páginas, y cierra con la [síntesis](26-sintesis-tesis.qmd) y las
+  [conclusiones](27-conclusiones-tesis.qmd).
+
+La regla de oro entre ambas lecturas es la del [mapa para reviewers](25-reviewer-map.qmd):
+cada afirmación fuerte apunta a una evidencia visible, un artefacto y una prueba
+de sincronía. Lo que sigue es el desarrollo de esa cadena.
