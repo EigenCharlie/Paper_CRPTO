@@ -115,3 +115,35 @@ These protocols are compatible but not interchangeable.
   adds or demotes a figure, table, theorem statement or major result paragraph.
 - Regenerate previews with `just paper-submission` before release.
 - Run the repository gates: `just lint`, `just smoke`, `just validate-champion`.
+
+## FINAL STEP — official compile (do only when the paper is agreed closed)
+
+This is intentionally the **last** action before upload, gated on an explicit
+decision to freeze the manuscript. Do not do it as routine polishing; the body
+is still evolving until then. `CRPTO_ijds_submission.tex` already carries the full
+ported prose, the economic-anchor ladder, and the temporal-split and tail-risk
+tables, so the only missing inputs are the publisher class/style files.
+
+1. **Confirm closure.** The body content, numbers, and figures are final and the
+   repository gates pass.
+2. **Download the official template files** (gitignored on purpose; never commit):
+   - `informs4.cls` and `informs2014.bst` from the INFORMS author portal
+     <https://pubsonline.informs.org/authorportal/latex-style-files> or the
+     IJDS Overleaf template (v2.00, 29 Apr 2025 — the latest as of 2026)
+     <https://www.overleaf.com/latex/templates/template-for-informs-journal-on-data-science/sbthszxgycfn>.
+   - Drop both next to `CRPTO_ijds_submission.tex`. The fastest path is to paste
+     the `.tex` into the Overleaf template, which already bundles both files.
+3. **Compile:**
+
+   ```bash
+   pdflatex CRPTO_ijds_submission
+   bibtex   CRPTO_ijds_submission
+   pdflatex CRPTO_ijds_submission
+   pdflatex CRPTO_ijds_submission
+   ```
+
+4. **Recount the official-template page budget** and demote body floats to the
+   supplement only if it exceeds 25 pages (current Quarto-proxy body is ~14.7 pp,
+   so headroom is expected).
+5. **Verify anonymity** against the checklist above, then upload the body PDF and
+   submit the title page separately.
