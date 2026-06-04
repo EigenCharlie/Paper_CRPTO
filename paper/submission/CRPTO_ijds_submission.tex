@@ -268,19 +268,24 @@ $\gamma=0.45$, and $\texttt{uncertainty\_aversion}=0.1$.
 Schematically, the robust decision layer solves
 \[
 \begin{aligned}
-\max_x\quad & \sum_i x_i a_i r_i \\
+\max_x\quad & \sum_i x_i a_i \left(c_i - \tilde p_i(\alpha,\gamma)\,L\right) \\
 \text{s.t.}\quad & \sum_i x_i a_i \le B,\\
 & \sum_i x_i a_i \tilde p_i(\alpha,\gamma)
    \le \tau \sum_i x_i a_i,\\
 & 0 \le x_i \le \bar x_i,
 \end{aligned}
 \]
-where $a_i$ is exposure, $r_i$ is the realized economic payoff proxy, $\tau$ is
-the risk-tolerance cap, and
+where $a_i$ is exposure, $c_i$ is the loan coupon, $L$ is the loss-given-default
+($L=0.45$ in the frozen evaluation), $\tau$ is the risk-tolerance cap, and
 \[
 \tilde p_i(\alpha,\gamma)=\hat p_i+\gamma\left(u_i(\alpha)-\hat p_i\right)
 \]
-on the PD scale, clipped to the feasible probability range. Additional
+on the PD scale, clipped to the feasible probability range. The objective is the
+\emph{expected} net return $c_i-\tilde p_i L$; the headline \$170{,}464.54 is the
+\emph{realized} return of the same funded set, scored post hoc on observed
+defaults (a funded loan earns $c_i a_i$ if it survives and loses $L a_i$ if it
+defaults). The optimizer never sees outcomes, so the realized figure is an
+out-of-sample audit of the policy, not the objective it maximized. Additional
 operational filters and caps live in the frozen policy configuration; the
 manuscript displays the core statistical-to-decision contract because that is
 the reusable CRPTO pattern.
@@ -624,14 +629,18 @@ target, an exact funded-set $\alpha=0.01$ pass, and a $45/45$ robust region.
 \end{table}
 
 The regret column must be read with its protocol in mind, and the last two
-columns prevent a one-dimensional reading. Mean regret comes from the
-decision-regret experiment (A19/PyEPO), which scores each method on a normalized
-decision-loss scale, not on the funded portfolio; on that scale SPO+ is the
-low-regret method by construction. The right-hand columns report what the credit
-decision actually delivers: only CRPTO produces a budgeted funded set with a
-certified realized return (\$170{,}464.54 on the \$1M budget) and the three
-verifiable risk controls. ``Higher regret'' is therefore the cost of carrying
-conformal uncertainty into the decision, not evidence that CRPTO funds worse loans.
+columns prevent a one-dimensional reading. Mean regret comes from a separate
+decision-regret experiment (A19/PyEPO) run on small synthetic optimization
+instances (50 items, budget 15, five seeds), scoring each method on a normalized
+decision-loss scale rather than on the \$1M funded portfolio; on that scale SPO+
+is the low-regret method by construction. The favorable price of robustness above
+and the higher CRPTO regret here are not in tension---they are two different
+measurements (a real \$1M funded set versus a synthetic regret benchmark). The
+right-hand columns report what the credit decision actually delivers: only CRPTO
+produces a budgeted funded set with a certified realized return (\$170{,}464.54 on
+the \$1M budget) and the three verifiable risk controls. ``Higher regret'' is
+therefore the cost of carrying conformal uncertainty into a different, synthetic
+decision, not evidence that CRPTO funds worse loans.
 
 \begin{figure}[t]
   \centering
