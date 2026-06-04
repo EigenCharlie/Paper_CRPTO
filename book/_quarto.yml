@@ -55,6 +55,7 @@ book:
   chapters:
     - index.qmd
     - chapters/00-crpto-en-una-pagina.qmd
+    - chapters/00b-prologo-tesis.qmd
     - part: "Manuscrito CRPTO y evidencia paper-ready"
       chapters:
         - chapters/01-introduccion.qmd
@@ -85,7 +86,11 @@ book:
         - chapters/24-bibliografia-crpto-actualizada.qmd
         - chapters/25-reviewer-map.qmd
         - chapters/23-apendices-regulatorios-y-future-work.qmd
+    - part: "Cierre de tesis"
+      chapters:
+        - chapters/28-resultados-auxiliares.qmd
         - chapters/26-sintesis-tesis.qmd
+        - chapters/27-conclusiones-tesis.qmd
     - chapters/glosario.qmd
     - references.qmd
 

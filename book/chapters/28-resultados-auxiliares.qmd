@@ -1,0 +1,99 @@
+# Resultados auxiliares {#sec-crpto-aux-results}
+
+Este capítulo reúne resultados congelados que **no entran al paper IJDS** por
+límite de páginas y de alcance, pero que fortalecen la tesis. Son evidencia
+auxiliar y diagnóstica: ninguno reemplaza al champion ni reabre la búsqueda, y
+cada cifra proviene de un artefacto congelado. El criterio de inclusión es el del
+[prólogo](00b-prologo-tesis.qmd): material que un jurado querría ver, pero que
+diluiría el claim quirúrgico del manuscrito.
+
+## Supervivencia y riesgos competitivos {#sec-aux-survival}
+
+El paper trata la PD como un evento a un horizonte fijo. La tesis puede ir más
+lejos y modelar el *tiempo* hasta el evento, distinguiendo default de prepago como
+riesgos que compiten. Esto importa para IFRS9: un préstamo que prepaga nunca
+incumple, y Kaplan-Meier (KM) lo trata como censura no informativa, sobreestimando
+la PD lifetime.
+
+Los modelos de supervivencia alcanzan un poder discriminante moderado, coherente
+con la dificultad del problema (artefacto `pipeline_summary.json`):
+
+| Modelo | Concordancia (c-index) |
+|---|---:|
+| Cox Proportional Hazards | `0.6948` |
+| Random Survival Forest | `0.6948` |
+
+Las razones de riesgo del modelo Cox (`hazard_ratios.parquet`) confirman la
+dirección económica esperada: variables de apalancamiento elevan el hazard de
+default y las de capacidad de pago lo reducen.
+
+| Variable | Razón de riesgo (`exp_coef`) | Lectura |
+|---|---:|---|
+| `loan_to_income` | `2.87` | Mayor apalancamiento sobre ingreso → mayor hazard. |
+| `many_recent_opens` | `1.10` | Apertura reciente de cuentas → mayor hazard. |
+| `rev_utilization` | `0.91` | (forma cuadrática/controles; efecto neto moderado). |
+| `installment_burden` | `0.23` | Captura interacción con monto/plazo bajo controles. |
+
+: Razones de riesgo seleccionadas del modelo Cox (todas con `p < 1e-6`).
+
+El hallazgo de gobernanza ya documentado en los
+[apéndices regulatorios](23-apendices-regulatorios-y-future-work.qmd) se apoya en
+estas curvas: corregir KM por la función de incidencia acumulada (CIF) de riesgos
+competitivos reduce la sobreprovisión de Stage 2 en **\$135.0M** (grades A--D;
+`$153.6M` sumando E--G), con factor de corrección `cf_lifetime = 0.7332`. Esa
+pieza es diagnóstica —no es la política de provisión vigente— pero cuantifica por
+qué ignorar el prepago infla el ECL.
+
+## Sensibilidad A/B: robusto vs no robusto {#sec-aux-ab}
+
+Una pregunta natural de comité es si la capa de robustez *cambia algo medible* en
+la decisión. La simulación A/B congelada (`ab_simulation_summary.parquet`)
+contrasta una rama de control contra una de tratamiento sobre el mismo presupuesto
+de `$1M`:
+
+| Métrica | Control | Tratamiento | Lift |
+|---|---:|---:|---:|
+| Retorno medio por préstamo financiado | `$421.82` | `$458.33` | `+8.66%` |
+| Préstamos financiados | `235` | `223` | `-5.11%` |
+| Capital asignado | `$1,000,000` | `$1,000,000` | `0%` |
+| Retorno total | `$99,126.68` | `$102,207.51` | `+3.11%` |
+
+: Sensibilidad A/B sobre el mismo presupuesto. El tratamiento financia menos
+préstamos pero de mayor retorno por unidad de exposición.
+
+La lectura es consistente con el resto de la tesis: la rama más cuidadosa con la
+incertidumbre concentra el capital en préstamos de mejor retorno ajustado, subiendo
+el retorno por préstamo (+8.66%) y el total (+3.11%) aun financiando menos cuentas.
+Es evidencia auxiliar de que la capa de robustez no es decorativa, alineada con el
+signo favorable del *price of robustness* del champion.
+
+## Señal SICR conformal {#sec-aux-sicr}
+
+El ancho del intervalo conformal puede leerse como señal complementaria de
+deterioro crediticio. La grilla `sicr_conformal_grid.parquet` barre umbrales de
+PD y de ancho y reporta cuántos defaults omitidos por triggers de PD clásicos
+captura adicionalmente el ancho conformal. En el punto curado del proyecto
+(documentado como *evidence card* en los
+[apéndices regulatorios](23-apendices-regulatorios-y-future-work.qmd)), la señal
+de ancho recupera una fracción material de los defaults que un umbral de PD
+puntual deja pasar, a un costo prudencial explícito en provisiones. Como las
+demás piezas de este capítulo, es señal regulatoria auxiliar: demuestra que la
+incertidumbre conformal tiene valor más allá del optimizador, pero no forma parte
+del run champion ni de la región robusta `45/45`.
+
+## Por qué estos resultados son auxiliares y no del paper
+
+Las tres piezas comparten una frontera deliberada con el manuscrito IJDS:
+
+- **Survival/competing-risks** depende de un modelo de tiempo-al-evento distinto
+  del PD a horizonte fijo del champion; entra a la tesis como contexto IFRS9, no
+  al paper.
+- **A/B** es una simulación de sensibilidad, no el certificado exacto; refuerza la
+  intuición económica sin ser la garantía.
+- **SICR** es una *evidence card* regulatoria, no una contribución de staging
+  contractual.
+
+Mantenerlas separadas del cuerpo del paper preserva el claim quirúrgico de CRPTO;
+incluirlas en la tesis muestra la profundidad del proyecto y responde de antemano
+las preguntas de un jurado sobre lifetime PD, valor de la robustez y conexión con
+provisiones.
