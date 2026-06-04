@@ -14,6 +14,8 @@ proyecto, y cada cifra proviene del artefacto congelado
 PD → conformal → decisión no se detiene en el funded set, sino que tiene una
 consecuencia medible en el balance.
 
+![El arco completo de CRPTO, de la PD calibrada a la provisión auditable. La incertidumbre conformal (ancho del intervalo) gobierna tanto la decisión del funded set como la señal de staging IFRS9, cerrando el recorrido de la tesis en un solo flujo.](../assets/figures/publication/crpto_fig21_end_to_end_arc.png){#fig-crpto-arc width="100%" fig-alt="Diagrama de flujo de cinco etapas: PD calibrada (AUC 0.7124), conformal Mondrian (cobertura 92.97%), LP robusto (tau 0.175, gamma 0.45), funded set con certificado ($170,464.54, V=0.03645) y provisión ECL IFRS9 ($875.9M)."}
+
 ## De la PD calibrada a la provisión
 
 Bajo IFRS9 cada préstamo aporta a la provisión según

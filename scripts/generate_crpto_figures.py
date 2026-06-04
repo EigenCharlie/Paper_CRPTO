@@ -1708,6 +1708,112 @@ def _dossier_pd_reliability() -> None:
     _save_editorial(fig, "pd_reliability_curve")
 
 
+def _crpto_fig21_end_to_end_arc() -> None:
+    """Fig 21 — end-to-end CRPTO arc: PD -> conformal -> robust LP -> funded set -> ECL.
+
+    Hand-laid flow diagram (no data dependency) summarizing the full thesis arc
+    with the frozen headline number at each stage. Title-style house figure.
+    """
+    stages = [
+        ("Calibrated PD", "CatBoost + Venn-Abers", "AUC 0.7124\nECE 0.0064", PALETTE["blue"]),
+        (
+            "Mondrian\nconformal",
+            "Upper endpoint u(α)",
+            "cov 92.97%\nmin-grp 91.90%",
+            PALETTE["sky"],
+        ),
+        ("Robust\nportfolio LP", "ũ(α,γ) as risk cap", "τ=0.175  γ=0.45", PALETTE["green"]),
+        (
+            "Funded set\n+ certificate",
+            "Exact α-safe audit",
+            "$170,464.54\nV=0.03645",
+            PALETTE["orange"],
+        ),
+        ("IFRS9 ECL\nprovision", "SICR conformal", "$875.9M\n[455.4, 1563.3]", PALETTE["red"]),
+    ]
+    n = len(stages)
+    fig, ax = plt.subplots(figsize=(COL2, HEIGHT_M))
+    ax.set_xlim(0, n)
+    ax.set_ylim(0, 1)
+    ax.axis("off")
+    box_w, box_h, y0 = 0.78, 0.42, 0.29
+    for i, (title, sub, metric, color) in enumerate(stages):
+        x = i + 0.5
+        rect = plt.Rectangle(
+            (x - box_w / 2, y0),
+            box_w,
+            box_h,
+            facecolor=color,
+            alpha=0.16,
+            edgecolor=color,
+            linewidth=1.4,
+            zorder=2,
+        )
+        ax.add_patch(rect)
+        ax.text(
+            x,
+            y0 + box_h - 0.075,
+            title,
+            ha="center",
+            va="center",
+            fontsize=8.3,
+            fontweight="bold",
+            color="black",
+            zorder=3,
+        )
+        ax.text(
+            x,
+            y0 + box_h / 2 - 0.02,
+            sub,
+            ha="center",
+            va="center",
+            fontsize=6.6,
+            color="#333333",
+            style="italic",
+            zorder=3,
+        )
+        ax.text(
+            x,
+            y0 + 0.06,
+            metric,
+            ha="center",
+            va="center",
+            fontsize=6.8,
+            color=color,
+            fontweight="bold",
+            zorder=3,
+        )
+        if i < n - 1:
+            ax.annotate(
+                "",
+                xy=(x + box_w / 2 + 0.21, y0 + box_h / 2),
+                xytext=(x + box_w / 2 + 0.01, y0 + box_h / 2),
+                arrowprops={"arrowstyle": "-|>", "color": PALETTE["gray"], "lw": 1.6},
+                zorder=1,
+            )
+    ax.text(
+        n / 2,
+        0.93,
+        "The CRPTO arc: from calibrated PD to auditable provision",
+        ha="center",
+        va="center",
+        fontsize=9.5,
+        fontweight="bold",
+    )
+    ax.text(
+        n / 2,
+        0.10,
+        "Conformal uncertainty (interval width) drives both the funded-set decision "
+        "and the IFRS9 staging signal.",
+        ha="center",
+        va="center",
+        fontsize=7.0,
+        color="#444444",
+    )
+    fig.tight_layout()
+    _save(fig, "crpto_fig21_end_to_end_arc")
+
+
 DOSSIER_FIGS = [
     _dossier_pd_roc,
     _dossier_pd_pr,
@@ -1725,6 +1831,7 @@ CRPTO_FIGS = [
     _crpto_fig17_tail_risk_lgd,
     _crpto_fig18_tail_constrained_frontier,
     _crpto_fig19_online_coverage_aci,
+    _crpto_fig21_end_to_end_arc,
 ]
 
 

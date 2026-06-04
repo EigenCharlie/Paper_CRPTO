@@ -12,6 +12,9 @@ Términos técnicos usados en el manuscrito y el dossier extendido. Se ordenan a
 **Alpha (α)**
 :   Nivel de miscoverage tolerado en *conformal prediction*. Para un valor `α = 0.10`, la garantía marginal es `P(y ∈ [low, high]) ≥ 1 − α = 0.90`. CRPTO reporta resultados para `α ∈ {0.10, 0.05, 0.01}`.
 
+**ACI (Adaptive Conformal Inference)**
+:   Recalibración secuencial del nivel conformal `α_t` bajo *drift* (Gibbs & Candès 2021). En CRPTO aparece como diagnóstico A24 sobre los *vintages* OOT congelados (un *replay*, no un stream en vivo).
+
 **APS (Adaptive Prediction Sets)**
 :   Método de *conformal classification* que pondera la probabilidad cumulativa de las clases más probables hasta cubrir `1 − α`. Variante usada en MAPIE 1.x bajo el nombre `aps`.
 
@@ -46,8 +49,14 @@ Términos técnicos usados en el manuscrito y el dossier extendido. Se ordenan a
 **Cobertura condicional**
 :   Cobertura que se mantiene dentro de subgrupos (e.g. por *grade* del préstamo) — más fuerte que la marginal. Mondrian CP la aproxima por particiones.
 
+**CIF (Cumulative Incidence Function)**
+:   Función de incidencia acumulada en un modelo de riesgos competitivos: `F_k(t) = P(T ≤ t, ε = k)`. A diferencia de Kaplan-Meier, respeta que un préstamo prepagado ya no puede incumplir. Corrige la sobreprovisión IFRS9 de Stage 2 (ver @sec-aux-survival).
+
 **CQR (Conformalized Quantile Regression)**
 :   Variante conformal que usa regresión cuantil como nonconformity score. Comparado en `chapters/09-spo-regret.qmd`.
+
+**CVaR (Conditional Value-at-Risk)**
+:   Pérdida esperada condicionada a estar en la peor cola (e.g. peor 5 %). Métrica de riesgo de cola coherente (Rockafellar & Uryasev 2000). En CRPTO entra como *diagnóstico* y como restricción del *challenger* A22, no como objetivo del champion.
 
 ## D
 
@@ -65,8 +74,14 @@ Términos técnicos usados en el manuscrito y el dossier extendido. Se ordenan a
 
 ## E
 
+**EAD (Exposure at Default)**
+:   Exposición al momento del default. En este proyecto se aproxima por el monto del préstamo (`loan_amnt`) y es uno de los factores de la fórmula ECL.
+
 **ECE (Expected Calibration Error)**
 :   Métrica de calibración. Promedio ponderado del gap entre frecuencia observada y probabilidad media por bin. CRPTO usa `n_bins = 15`.
+
+**ECL (Expected Credit Loss)**
+:   Provisión contable IFRS9: `ECL = PD_eff × LGD × EAD × DF`. La PD efectiva depende del *stage*. CRPTO propaga la incertidumbre conformal hasta el ECL (ver @sec-crpto-ecl): baseline `$875.9M`, severe `$1 487.9M` (+69.9 %).
 
 **EOdds (Equalized Odds)**
 :   Métrica de fairness: igualdad de TPR y FPR entre grupos.
@@ -108,8 +123,16 @@ Términos técnicos usados en el manuscrito y el dossier extendido. Se ordenan a
 **Mondrian CP**
 :   Variante de split conformal que estratifica por una variable categórica (e.g. *grade*). Da cobertura condicional aproximada.
 
+**MDCP (Multi-Distribution Conformal Prediction)**
+:   Conformal prediction con cobertura uniforme cuando el test proviene de una fuente desconocida o mezcla de fuentes (Yang & Jin 2026). En CRPTO motiva el diagnóstico A23, no una recalibración (es trabajo futuro).
+
 **MRM (Model Risk Management)**
 :   Marco regulatorio (SR 11-7 en EE. UU., BCBS-239 globalmente) que define expectativas de gobernanza para modelos. CRPTO entrega un dossier MRM en `reports/mrm/` y `chapters/11-mrm.qmd`.
+
+## O
+
+**OCE (Optimized Certainty Equivalent)**
+:   Medida de riesgo convexa de Ben-Tal & Teboulle (2007) que generaliza el valor esperado penalizando la cola vía una función de desutilidad. En CRPTO acompaña a CVaR como resumen de cola post-hoc (A22), no como objetivo optimizado.
 
 ## P
 
@@ -118,6 +141,9 @@ Términos técnicos usados en el manuscrito y el dossier extendido. Se ordenan a
 
 **PIT (Pre-Issuance Test)**
 :   No aplica a CRPTO en el sentido bancario — se menciona sólo cuando se cita literatura de calibración secuencial.
+
+**Price of robustness**
+:   Campo congelado `price_of_robustness`, definido **con signo** como el retorno esperado (point-PD) de la baseline no-robusta menos el de la política robusta. Para el champion vale `−$14 465,69` (`−10,56 %`); el signo negativo indica que la robustez *mejora* el retorno esperado frente a la baseline (ver @sec-crpto-results). No confundir con el `Γ` de Bertsimas-Sim ni con `Γ_CP`.
 
 **Política CRPTO**
 :   Función `(pd_point, pd_low, pd_high, lgd, presupuesto) → asignación`. CRPTO compara 7 modos (`point_estimate`, `hard_worst_case`, `blended_uncertainty`, `capped_blended_uncertainty`, `tail_blended_uncertainty`, `segment_tail_blended_uncertainty`, `segment_relative_tail_blended_uncertainty`). Ver `src/optimization/policy.py`.
@@ -135,8 +161,14 @@ Términos técnicos usados en el manuscrito y el dossier extendido. Se ordenan a
 
 ## S
 
+**Satisficing (robusto)**
+:   Criterio de decisión que exige que una política *satisfaga* un conjunto de umbrales (retorno, `V`, cola) en lugar de optimizar uno solo. En CRPTO aparece como auditoría de *challenger* (A20): 12 de las 45 políticas pasan el comité de satisficing.
+
 **SHAP (SHapley Additive exPlanations)**
 :   Atribución de aportes por feature al score individual. Usado en `chapters/04-resultados.qmd` para explicabilidad del champion.
+
+**SICR (Significant Increase in Credit Risk)**
+:   Disparador IFRS9 que mueve un préstamo de Stage 1 a Stage 2 (PD a 12 meses → lifetime). CRPTO añade una señal conformal: un intervalo ancho con PD no decreciente migra a Stage 2 aunque el incremento absoluto de PD no cruce el umbral clásico (ver @sec-crpto-ecl).
 
 **SPO+ (Smart Predict-then-Optimize)**
 :   Loss decision-aware de Elmachtoub & Grigas (2022). Comparador del enfoque CRPTO en `chapters/09-spo-regret.qmd`.
