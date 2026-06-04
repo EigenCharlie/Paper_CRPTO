@@ -1,0 +1,5 @@
+outs:
+- md5: 25396d2d604bddaea934437ce1669f31
+  size: 17684
+  hash: md5
+  path: ifrs9_scenario_summary.parquet

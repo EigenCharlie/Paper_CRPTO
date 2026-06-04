@@ -89,6 +89,7 @@ book:
     - part: "Cierre de tesis"
       chapters:
         - chapters/28-resultados-auxiliares.qmd
+        - chapters/29-ecl-incertidumbre.qmd
         - chapters/26-sintesis-tesis.qmd
         - chapters/27-conclusiones-tesis.qmd
     - chapters/glosario.qmd
