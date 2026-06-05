@@ -1,0 +1,4 @@
+alpha,expected_V_leq,empirical_V,markov_threshold,hoeffding_threshold_indep,bernstein_threshold_indep,tail_prob_delta,empirical_V_below_all
+0.01,0.01,0.03645,0.1,0.1081,0.0701,0.1,True
+0.05,0.05,0.03645,0.2236,0.1291,0.1069,0.2236,True
+0.1,0.1,0.03645,0.3162,0.1694,0.1593,0.3162,True
