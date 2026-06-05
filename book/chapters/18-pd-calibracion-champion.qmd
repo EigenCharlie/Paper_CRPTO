@@ -1137,18 +1137,18 @@ Eso cambia el tono de esta sección. Ya no se trata solo de “qué modelo tuvo 
 
 ### Posicionamiento en la Literatura
 
-El AUC alrededor de `0.713` se sitúa en el rango competitivo para modelos de ML sobre el dataset de Lending Club:
+El AUC del champion (`0.7124`) se sitúa en el rango competitivo para modelos de ML sobre el dataset de Lending Club:
 
 | Estudio | Mejor modelo | AUC reportado |
 |---------|-------------|--------------|
 | @lessmann2015 | Random Forest | 0.69--0.71 |
 | @ayari2026 | CatBoost | 0.71--0.73 |
 | @xia2017 | XGBoost + stacking | 0.72--0.74 |
-| **Este proyecto** | CatBoost + Venn-Abers | **0.713** |
+| **Este proyecto** | CatBoost + Venn-Abers | **0.7124** |
 
 : Comparación con literatura publicada sobre Lending Club
 
-Nuestro AUC está en el centro del rango publicado. Estudios que reportan AUC > 0.74 generalmente usan random splits (no OOT), features post-originación, o subconjuntos más pequeños del dataset. Con split temporal estricto y contrato champion de 42 features anti-leakage sobre un universo FE mucho más amplio, 0.713 es un resultado competitivo y honesto.
+Nuestro AUC está en el centro del rango publicado. Estudios que reportan AUC > 0.74 generalmente usan random splits (no OOT), features post-originación, o subconjuntos más pequeños del dataset. Con split temporal estricto y contrato champion de 42 features anti-leakage sobre un universo FE mucho más amplio, `0.7124` es un resultado competitivo y honesto.
 
 ### Evidencia Visual: Curvas ROC
 
@@ -1158,5 +1158,5 @@ La `fig-roc-curves-comparison` muestra las curvas ROC de todos los modelos evalu
 
 ::: {.callout-tip}
 ## Más allá del AUC
-La contribución de este proyecto no es obtener el AUC más alto posible --- es construir un pipeline end-to-end que transforma el AUC 0.713 en **decisiones óptimas** de portafolio con **protección contra incertidumbre garantizada**. El modelo PD es un componente, no el producto final. Un modelo con AUC 0.75 pero sin intervalos conformales ni optimización robusta produce peores decisiones que un modelo con AUC 0.71 integrado en el pipeline completo.
+La contribución de este proyecto no es obtener el AUC más alto posible --- es construir un pipeline end-to-end que transforma el AUC `0.7124` en **decisiones óptimas** de portafolio con **protección contra incertidumbre garantizada**. El modelo PD es un componente, no el producto final. Un modelo con AUC 0.75 pero sin intervalos conformales ni optimización robusta produce peores decisiones que un modelo con AUC 0.71 integrado en el pipeline completo.
 :::
