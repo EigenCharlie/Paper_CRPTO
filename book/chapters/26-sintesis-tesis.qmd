@@ -14,7 +14,7 @@ distinta y necesita poder bajar a la siguiente sin perder la trazabilidad.
 | Superficie | Qué es | Para quién | Extensión | Fuente de verdad |
 |---|---|---|---|---|
 | Paper IJDS | Manuscrito compacto del claim central | Revisor de journal | ~12--14 pp + supplement | `paper/CRPTO_ijds.qmd` |
-| Libro (tesis) | Dossier extendido con fundamentos, gobernanza y apéndices | Jurado de tesis, lector técnico | 28 capítulos | `book/chapters/*.qmd` |
+| Libro (tesis) | Dossier extendido con fundamentos, gobernanza y apéndices | Jurado de tesis, lector técnico | 30 capítulos | `book/chapters/*.qmd` |
 | Defensa | Recorrido oral por claim, evidencia y límites | Comité de defensa | 1 sesión | este capítulo + @sec-crpto-sintesis-mapa |
 
 : Las tres superficies sobre el mismo resultado congelado.
@@ -70,7 +70,7 @@ orientado a objeciones; esta tabla está orientada a navegación.
 
 ## El cierre honesto
 
-El proyecto se puede defender en una frase y se puede auditar en 28 capítulos.
+El proyecto se puede defender en una frase y se puede auditar en 30 capítulos.
 La frase es la del [one-pager](00-crpto-en-una-pagina.qmd): CRPTO convierte
 incertidumbre conformal de una PD calibrada congelada en una decisión de
 portafolio robusta y auditable. La auditoría son los artefactos congelados, las
