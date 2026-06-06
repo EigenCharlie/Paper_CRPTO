@@ -1,0 +1,14 @@
+\begin{tabular}{llrrrlr}
+\toprule
+dataset & metric & estimate & ci\_low & ci\_high & method & n \\
+\midrule
+Prosper & auc\_roc & 0.7073 & 0.6956 & 0.7190 & Hanley-McNeil large-sample approximation & 10531 \\
+Prosper & coverage\_90 & 0.9204 & 0.9151 & 0.9254 & Wilson binomial interval & 10531 \\
+Prosper & coverage\_alpha01 & 0.9943 & 0.9927 & 0.9956 & Wilson binomial interval & 10531 \\
+Prosper & robust\_objective & 199419.0888 & 186546.0471 & 213330.6987 & Funded-loan contribution bootstrap; solver input uncertainty is not resampled & 234 \\
+Freddie FM48 & auc\_roc & 0.7839 & 0.7799 & 0.7878 & Hanley-McNeil large-sample approximation & 1396053 \\
+Freddie FM48 & coverage\_90 & 0.9745 & 0.9743 & 0.9748 & Wilson binomial interval & 1396053 \\
+Freddie FM48 & coverage\_alpha01 & 0.9907 & 0.9906 & 0.9909 & Wilson binomial interval & 1396053 \\
+Freddie FM48 & robust\_objective & 1291227.5802 & 1062741.9025 & 1535012.3146 & Funded-loan contribution bootstrap; solver input uncertainty is not resampled & 143 \\
+\bottomrule
+\end{tabular}

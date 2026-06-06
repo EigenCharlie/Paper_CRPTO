@@ -91,6 +91,9 @@ Términos técnicos usados en el manuscrito y el dossier extendido. Se ordenan a
 **Fairness audit**
 :   Evaluación sistemática de DPD/EOdds/DIR por grupo demográfico (proxy: zip, employment, purpose). Resultados en `reports/mrm/`.
 
+**Freddie/Mendeley FM48**
+:   Réplica externa de hipotecas unifamiliares derivada del dataset loan-level de Freddie Mac y del paquete procesado Mendeley (ventana de default a 48 meses, grupos `red/green`, splits `train/OOS/OOT`). Promovida como evidencia económica externa: `3 173 355` filas, `1 396 053` candidatos OOT, certificado all-candidate (ver @sec-crpto-multidataset).
+
 **Funded set**
 :   Préstamos escogidos por la política CRPTO bajo presupuesto fijo. Composición analizada en `chapters/12-funded-set.qmd`.
 
@@ -143,7 +146,10 @@ Términos técnicos usados en el manuscrito y el dossier extendido. Se ordenan a
 :   No aplica a CRPTO en el sentido bancario — se menciona sólo cuando se cita literatura de calibración secuencial.
 
 **Price of robustness**
-:   Campo congelado `price_of_robustness`, definido **con signo** como el retorno esperado (point-PD) de la baseline no-robusta menos el de la política robusta. Para el champion vale `−$14 465,69` (`−10,56 %`); el signo negativo indica que la robustez *mejora* el retorno esperado frente a la baseline (ver @sec-crpto-results). No confundir con el `Γ` de Bertsimas-Sim ni con `Γ_CP`.
+:   Campo congelado `price_of_robustness`, definido **con signo** como el retorno esperado (point-PD) de la baseline no-robusta menos el de la política robusta. Para el champion vale `−$14 465,69` (`−10,56 %`); el signo negativo indica que la robustez *mejora* el retorno esperado frente a la baseline (ver @sec-crpto-results). En las réplicas externas congeladas la prima es positiva y **crece con la tasa de default del panel** (`+1,00 %` a `+9,46 %`; ver @sec-crpto-multidataset): el champion favorable es el caso seleccionado, no la aplicación ciega. No confundir con el `Γ` de Bertsimas-Sim ni con `Γ_CP`.
+
+**Prosper**
+:   Réplica externa de préstamos personales de marketplace con estados finales, monto y tasa/yield observables. Promovida como evidencia económica externa: `54 807` filas, `10 531` candidatos OOT, LP robusto resuelto sobre todo el universo (ver @sec-crpto-multidataset).
 
 **Política CRPTO**
 :   Función `(pd_point, pd_low, pd_high, lgd, presupuesto) → asignación`. CRPTO compara 7 modos (`point_estimate`, `hard_worst_case`, `blended_uncertainty`, `capped_blended_uncertainty`, `tail_blended_uncertainty`, `segment_tail_blended_uncertainty`, `segment_relative_tail_blended_uncertainty`). Ver `src/optimization/policy.py`.

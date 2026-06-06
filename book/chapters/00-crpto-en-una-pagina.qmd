@@ -20,6 +20,7 @@ se vuelve una restricción explícita de la decisión.
 | Conformal Mondrian | Convierte la PD puntual en intervalos sobre la escala de riesgo. | Coverage 90% `0.9297`, min-group `0.9190`. |
 | LP robusto | Usa la señal conformal superior para financiar préstamos bajo presupuesto y tolerancia de riesgo. | Budget `$1M`, `tau = 0.175`, `gamma = 0.45`. |
 | Certificado exacto | Audita el funded set promovido sobre 276,869 préstamos OOT. | Return `$170,464.54`, `V = 0.03645`, `Gamma_CP = 0.18591`, `45/45` pass. |
+| Réplica externa | Aplica la receta congelada a Prosper y Freddie/Mendeley sin reabrir Lending Club. | Prosper coverage90 `0.9205`, Freddie coverage90 `0.9745`; robust LP positivo en ambos. |
 
 : Respuesta CRPTO en cuatro capas auditables.
 
@@ -49,10 +50,12 @@ defendible es más específico:
 
 ::: {.callout-warning}
 CRPTO no es un sistema en producción, no es certificación legal de fairness, no
-prueba cobertura condicional perfecta, no usa datos externos post-2020, no
-reemplaza SPO+ como minimizador universal de regret y no reabre el champion
-congelado. Es un resultado paper-facing sobre un panel histórico estático con
-artefactos, límites y pruebas de sincronía explícitos.
+prueba cobertura condicional perfecta, no reemplaza SPO+ como minimizador
+universal de regret y no reabre el champion congelado. Aunque ahora incluye
+réplicas externas estáticas en Prosper y Freddie/Mendeley, sigue sin ser una
+validación live post-2020 ni una garantía universal por producto crediticio. Es
+un resultado paper-facing sobre paneles históricos estáticos con artefactos,
+límites y pruebas de sincronía explícitos.
 :::
 
 ## Por qué importa para IJDS

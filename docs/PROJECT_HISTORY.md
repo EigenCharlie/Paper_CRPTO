@@ -7,8 +7,8 @@ configuration.
 
 ## Origin
 
-- The first standalone CRPTO folder was extracted from the broader
-  `lending-club-risk-project`.
+- The first standalone CRPTO folder was extracted from a broader internal
+  research workspace.
 - The extraction copied only the CRPTO paper lane: Lending Club data,
   canonical PD artifacts, conformal diagnostics, robust portfolio optimization,
   paper tables/figures, Quarto book chapters, dbt lineage and tests.

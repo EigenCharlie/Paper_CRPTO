@@ -1,8 +1,8 @@
 # EXTRACTION_MANIFEST — human summary
 
 `EXTRACTION_MANIFEST.json` is a machine-readable record of how this
-standalone repository was extracted from the parent
-`lending-club-risk-project`. This Markdown file is the human-readable
+standalone repository was extracted from an internal research workspace. This
+Markdown file is the human-readable
 companion: it explains what the manifest contains, why each section
 exists, and how `tests/test_manifest_regression.py` enforces it.
 
@@ -31,7 +31,7 @@ exists, and how `tests/test_manifest_regression.py` enforces it.
 | --- | --- |
 | `schema_version` | Integer; the format of this manifest. Bump only when the JSON shape changes. |
 | `project_name` | Always `CRPTO`. |
-| `source_project` | The parent project. The absolute path was intentionally omitted to avoid leaking local paths. |
+| `source_project` | Internal provenance label. Absolute paths and external workspace names are intentionally omitted. |
 | `source_project_note` | Confirms the parent was not modified during extraction. |
 | `destination` | Absolute path where the standalone repo was materialised. |
 | `generated_at_utc` | When the manifest was produced. |
@@ -76,10 +76,10 @@ Regenerating means re-running the extraction tooling under a new
 
 It is **not** regenerated for routine documentation, CI or test changes.
 
-## Pointing to the parent project
+## Standalone Provenance
 
-The manifest deliberately keeps only provenance about the parent
-`lending-club-risk-project` repository. Active remotes are standalone:
+The manifest deliberately keeps only minimal extraction provenance. Active
+remotes are standalone:
 
 - GitHub: `EigenCharlie/Paper_CRPTO`
 - DVC: `https://dagshub.com/EigenCharlie94/Paper_CRPTO.s3`
@@ -87,9 +87,9 @@ The manifest deliberately keeps only provenance about the parent
 
 If you need to reproduce the original extraction:
 
-1. Clone the parent locally.
+1. Restore the internal source workspace under local institutional controls.
 2. Mount this repository's `destination` as the output directory.
-3. Run the extraction script (kept in the parent project, not here).
+3. Run the extraction script from the controlled source workspace.
 4. Compare the new manifest to this one; the only fields that should
    differ are `generated_at_utc` and `destination`.
 

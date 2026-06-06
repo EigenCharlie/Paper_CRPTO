@@ -19,13 +19,13 @@ La contribución central sigue siendo la misma: **CRPTO post-hoc auditable con e
 | Propuesta | ¿Cambia la dirección? | Decisión | Por qué |
 |---|---:|---|---|
 | Manifest de extracción paper/journal/tesis | No | Implementado aquí | Ordena contenido existente sin crear claims nuevos. |
-| Matriz completa de tablas/figuras | No | Implementado aquí | Clasifica evidencia ya generada A0--A24 y Fig 7--17. |
+| Matriz completa de tablas/figuras | No | Implementado aquí | Clasifica evidencia ya generada A0--A27 y Fig 7--23. |
 | Banco de respuestas por venue | No | Implementado aquí | Ayuda a escribir y responder reviewers sin tocar artefactos. |
 | Release checklist con DVC/DagsHub/Quarto/tests | No | Implementado aquí | Formaliza reproducibilidad ya existente. |
 | Decisión de companion URL | No | Implementado aquí | Declara que Quarto es la superficie primaria y Streamlit queda opcional. |
 | Scaffold standalone del paper | No | Implementado | IJDS queda como primer target; `paper/CRPTO_ijds.qmd` y `paper/supplement_ijds.qmd` son los esqueletos activos. |
 | Protocolo prospectivo pre-declarado | No para la tesis, sí para evidencia journal | Backlog | Requiere nuevo run o una regla declarada antes de buscar. |
-| Dataset externo / multi-dataset replication | No cambia CRPTO, pero agrega evidencia nueva | Backlog journal | Necesita fuente externa comparable; no bloquea esta publicación. |
+| Dataset externo / multi-dataset replication | No cambia CRPTO, pero agrega evidencia nueva | Implementado como A25--A33 | Prosper/Freddie fortalecen el claim; Home Credit queda archivado por falta de contrato económico. |
 | Pareto regret-auditability frontier | No | Implementar ahora | Usa SPO+ y CRPTO ya existentes para separar regret de auditabilidad. |
 | OCE/CVaR como diagnóstico de cola | No | Implementar ahora | A12 audita el funded set; no cambia el objetivo. |
 | Robust satisficing margins | No | Implementar ahora | A13 traduce evidencia a umbrales OR/comité. |
@@ -45,10 +45,11 @@ P2 y P3 ya no son una exclusión en bloque. Para este paper sí entran los
 elementos que fortalecen el journal sin cambiar método: regret-auditability,
 OCE/CVaR --- ya como restricción re-optimizada de selección (A22), no solo
 diagnóstico ---, satisficing margins, robustez multi-distribución (A23),
-estabilidad conformal online (A24) y caveat/proposición dependence-aware.
+estabilidad conformal online (A24), réplica externa Prosper/Freddie (A25--A33)
+y caveat/proposición dependence-aware.
 También entran el champion CRPTO congelado, la región robusta, el paquete
-A3--A24 y la reproducibilidad Quarto/DVC/DagsHub/MLflow. Si una idea requiere
-entrenamiento end-to-end, nuevo dataset externo, reabrir la búsqueda del
+A3--A33 y la reproducibilidad Quarto/DVC/DagsHub/MLflow. Si una idea requiere
+entrenamiento end-to-end, validación prospectiva/live, reabrir la búsqueda del
 champion o producción viva, queda en backlog y no bloquea este submission.
 :::
 
@@ -66,7 +67,7 @@ champion o producción viva, queda en backlog y no bloquea este submission.
 | `14e` | Discusión, limitaciones y roadmap | Cuerpo discusión | Cuerpo + future work | Sí | IFRS9/CATE como conexiones, no contribución central. |
 | `14f` | Guía editorial y referencias numeradas | Insumo | Insumo | Sí | Convertir a related work formal al escribir. |
 | `14g` | Blueprint del manuscrito | Insumo | Insumo | Sí | Usar como skeleton; no citar como resultado. |
-| `14h` | Appendix A12--A24 | Appendix selectivo | Appendix fuerte | Sí | Diagnóstico journal, no nueva promoción del champion. |
+| `14h` | Appendix A12--A33 | Appendix selectivo | Appendix fuerte | Sí | Diagnóstico journal y réplica externa, no nueva promoción del champion. |
 | `14i` | Ablación Mondrian | Apéndice corto | Appendix | Sí | Defender `score_decile_mondrian` vs `grade`. |
 | `14j` | Protocolo SPO+ | Apéndice corto | Appendix | Sí | Separar A19/Figura 15 (`49.09%`) del closeout PyEPO (`48.51%`) y de cobertura/auditabilidad. |
 | `14k` | Fair lending checkpoint | appendix/governance | Appendix | Sí | Proxy/intersectional, no certificación legal de atributos protegidos. |
@@ -78,7 +79,7 @@ champion o producción viva, queda en backlog y no bloquea este submission.
 Manifest de uso por sección del capítulo 14.
 :::
 
-### Manifest de tablas A0--A24
+### Manifest de tablas A0--A27
 
 ::: {#tbl-crpto-table-extraction-manifest}
 
@@ -90,7 +91,7 @@ Manifest de uso por sección del capítulo 14.
 | A3 | Nested holdout 5K--25K--276K | Apéndice corto | Sí | Sí | Responde crítica de post-selección. |
 | A4 | Sensibilidad periodo × grade | Apéndice corto | Sí | Sí | Evidencia de piso por segmento. |
 | A5 | Selector CROMS-style | Apéndice corto | Sí | Sí | Decision-aware screen, no entrenamiento decision-aware. |
-| A6 | Synthetic shift básico | Apéndice corto | Sí | Sí | Stress de covariate shift, no dataset externo. |
+| A6 | Synthetic shift básico | Apéndice corto | Sí | Sí | Stress de covariate shift interno; A25--A33 cubren réplica externa. |
 | A7 | Funded-set loan export | No | Supplement | Sí | Demasiado granular para cuerpo. |
 | A8 | Funded-set composition | Apéndice corto | Sí | Sí | Muy útil para reviewer de robustez aplicada. |
 | A9 | Strict temporal holdout | Apéndice corto | Sí | Sí | Evidencia fuerte sin cambiar champion. |
@@ -109,6 +110,9 @@ Manifest de uso por sección del capítulo 14.
 | A22 | CVaR/OCE tail-constrained re-opt | No | Sí | Sí | Re-optimización con restricción de cola como constraint de selección; challenger journal, no champion. |
 | A23 | Multi-distribution robustness | No | Sí | Sí | Cobertura worst-case por grade y celda grade × vintage; motiva MDCP/group-weighted. |
 | A24 | Online conformal stability | No | Sí | Sí | Diagnóstico ACI sobre la secuencia de vintages; OOT estático, no validación de streaming. |
+| A25 | External replication gate | Sí o appendix corto | Sí | Sí | Prosper/Freddie pasan gates conformales y LP robusto positivo; no reemplaza certificado Lending Club. |
+| A26 | External candidate sensitivity | No | Sí | Sí | Audita estabilidad del objetivo LP al ampliar candidatos OOT. |
+| A27 | Freddie horizon sensitivity | No | Sí | Sí | Justifica FM48 frente a ventanas 12/24/36/60 meses. |
 
 Manifest de tablas para decidir cuerpo, appendix y tesis.
 :::
@@ -154,7 +158,7 @@ Manifest de figuras para extraer paper y appendix.
 | ¿La región `45/45` es un artifact de tuning? | La región completa reduce el riesgo de single-point champion, y A18 reporta familia compatible. | Fig 14, A18 | MS/EJOR |
 | ¿Qué pasa con fairness? | Pasa proxy base + proxy-intersectional; atributos protegidos directos quedan fuera por limitación del dataset. | `14k`, `fairness_audit_status.json` | MS/EJOR |
 | ¿Qué pasa con regulación/MRM? | CRPTO es auditable por subsistema: PD, conformal, LP, fairness y governance. | `14l`, MRM report | MS/EJOR |
-| ¿Los stress tests reemplazan validación externa? | No; fortalecen robustez interna. Dataset externo queda como journal/future work. | A6, A11, `14e` | Todos |
+| ¿Los stress tests reemplazan validación externa? | No; fortalecen robustez interna. La réplica externa estática ya entra como Prosper/Freddie A25--A33. | A6, A11, A25--A33, @sec-crpto-multidataset | Todos |
 | ¿Qué agrega OCE/CVaR? | A12 audita cola de pérdida del funded set bajo LGD alternativos; no redefine el objetivo. | A12, supplement | OR/MS |
 | ¿Qué agrega satisficing? | A13 traduce retorno, `V`, `Gamma_CP`, violación cero y región robusta a márgenes de comité. | A13, supplement | OR/MS |
 | ¿Por qué no OCE/CVaR como objetivo? | Convertirlo en objective cambia el search y sería paper siguiente. | A12, backlog | OR/MS |
@@ -197,7 +201,7 @@ La decisión activa de publicación es:
 | Rol | Venue | Plantilla / salida | Regla |
 |---|---|---|---|
 | Primario | INFORMS Journal on Data Science | IJDS LaTeX oficial; `paper/CRPTO_ijds.qmd` como fuente de escritura | Cuerpo anonimo de 25 páginas + online supplement |
-| Suplemento primario | IJDS online supplement | `paper/supplement_ijds.qmd` | A3--A24, pruebas, reproducibilidad, MRM y fairness |
+| Suplemento primario | IJDS online supplement | `paper/supplement_ijds.qmd` | A3--A33, pruebas, reproducibilidad, MRM y fairness |
 | Pivote | European Journal of Operational Research | Elsevier `elsarticle` cuando se active el pivote | Único respaldo, solo si el paper lee más como OR aplicada |
 
 Decisión de venue, plantilla y salida actual.
@@ -226,13 +230,14 @@ del dossier está lista para ser usada como fuente de manuscrito.
 | Venue definido | `configs/crpto_publication_targets.yaml` | IJDS primario y EJOR pivote siguen declarados. |
 | Manuscrito + supplement IJDS | `just paper-submission` | `paper/CRPTO_ijds.html` y `paper/supplement_ijds.html` renderizan sin ejecutar pipeline. |
 | PDF local de verificación | `just paper-submission-pdf` | `paper/CRPTO_ijds.pdf` y `paper/supplement_ijds.pdf` renderizan como borradores HTML-print para inspección visual; el PDF oficial usa la plantilla IJDS. |
-| Alcance P2/P3 | `configs/crpto_publication_targets.yaml` + esta página | P2 implementado como A22--A24 sin reabrir champion; quedan en backlog el entrenamiento end-to-end, el dataset externo y el streaming real. |
+| Alcance P2/P3 | `configs/crpto_publication_targets.yaml` + esta página | P2 implementado como A22--A27 sin reabrir champion; quedan en backlog el entrenamiento end-to-end, validación live/prospectiva y streaming real. |
 | Tablas canónicas | `uv run python scripts/export_crpto_tables.py` | A0 usa `models/final_project_promotion.json`. |
 | P1 evidence | `uv run python scripts/analyze_crpto_evidence.py --include-hardening` | A3--A11 actualizadas y status JSON coherente. |
 | Journal package | `uv run python scripts/build_crpto_journal_package.py` | Tablas journal base y status JSON actualizados. |
 | Tail-satisficing audit | `uv run python scripts/build_tail_satisficing_challenger_audit.py` | A20--A21 actualizadas. |
 | P2 re-opt de cola | `uv run python scripts/build_tail_constrained_reoptimization.py` | A22 y `crpto_tail_constrained_reopt_status.json` actualizados. |
 | P2 multi-distribución/online | `uv run python scripts/build_distribution_robustness_diagnostics.py` | A23--A24 y `crpto_distribution_robustness_status.json` actualizados. |
+| P2 réplica externa | `uv run python scripts/build_multidataset_external_replication.py` | A25--A33, Fig 22--24 y `crpto_multidataset_external_status.json` actualizados. |
 | Figuras paper-facing | `uv run python scripts/generate_crpto_figures.py` | Fig 7--17 reproducibles desde artefactos congelados. |
 | DVC local | `uv run dvc status --no-updates` | Datos y pipelines al día. |
 | DagsHub remote | `uv run dvc status -c -r dagshub` | Cache y remoto sincronizados. |
@@ -256,8 +261,8 @@ vuelva a entrar en loops de expansión.
 | Acción | Qué clasifica aquí |
 |---|---|
 | **Promover** | Material que fortalece el claim CRPTO central; evidencia que ya tiene artefacto, tabla y test; fuentes independientes que aclaran métricas, gobernanza o límites. |
-| **Apéndice** | Robustez A3--A24; fairness proxy y MRM; tail-risk OCE/CVaR; CROMS-lite como selector de finalists, no entrenamiento end-to-end. |
-| **Park** | Online conformal; MDCP/multi-source conformal; OCE/CVaR como nuevo objetivo; DFL/SPO+ como reemplazo del champion; dataset externo si no está disponible y versionado. |
+| **Apéndice** | Robustez A3--A33; fairness proxy y MRM; tail-risk OCE/CVaR; CROMS-lite como selector de finalists, no entrenamiento end-to-end; réplica externa estática. |
+| **Park** | Online conformal live; MDCP/multi-source conformal formal; OCE/CVaR como nuevo objetivo; DFL/SPO+ como reemplazo del champion; dataset externo adicional si no está disponible y versionado. |
 | **Archivar** | Material de intake externo no académico como evidencia pública directa; capturas o materiales privados/no redistribuibles; rutas con nombres personales en paquetes anonimizados. |
 
 Stop-rules de alcance del CRPTO.
@@ -322,10 +327,10 @@ Por eso no se implementan como parte de este cierre:
 - agregar MDCP o cobertura multi-fuente;
 - probar el bound dependence-aware como claim principal sin supuestos
   cluster-aware explícitos;
-- declarar validación externa sin dataset externo;
+- declarar validación prospectiva/live sin dataset nuevo ni protocolo sellado;
 - usar atributos protegidos directos que Lending Club abierto no contiene.
 - exigir un dashboard Streamlit vivo como condición del paper actual.
 
 La regla de cierre es simple: **todo lo que clasifica evidencia existente sí
-entra; todo lo que crea una nueva policy, una nueva garantía o un nuevo dataset
-queda en backlog**.
+entra; todo lo que crea una nueva policy, una nueva garantía o un nuevo
+protocolo prospectivo queda en backlog**.

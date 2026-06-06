@@ -608,7 +608,7 @@ funded_composition.sort_values("exposure_share", ascending=False).head(12)[
 ]
 ```
 
-La tabla de stress sintético repondera el OOT hacia cola de PD, grades E/F/G, periodos tardíos y mezcla de bajo riesgo/COVID. Es un test de covariate shift, no un reemplazo de dataset externo, pero sirve como primer puente hacia MDCP y conformal online: bajo todas las reponderaciones, la cobertura ponderada al 90% se mantiene sobre el target.
+La tabla de stress sintético repondera el OOT hacia cola de PD, grades E/F/G, periodos tardíos y mezcla de bajo riesgo/COVID. Es un test de covariate shift interno, ahora complementado por la réplica externa A25--A33, y sirve como puente hacia MDCP y conformal online: bajo todas las reponderaciones, la cobertura ponderada al 90% se mantiene sobre el target.
 
 ```{python}
 #| label: tbl-crpto-synthetic-shift
@@ -629,7 +629,7 @@ synthetic[
 ]
 ```
 
-El stress endurecido agrega perturbaciones adversariales de labels: convierte una fracción de no-defaults en defaults en la cola de PD, grades E/F/G, periodos tardíos y el segmento más débil observado. Esto no simula una fuente externa completa, pero sí responde a una crítica más dura: incluso cuando forzamos defaults adicionales en cortes relevantes, la cobertura 90% permanece por encima del target.
+El stress endurecido agrega perturbaciones adversariales de labels: convierte una fracción de no-defaults en defaults en la cola de PD, grades E/F/G, periodos tardíos y el segmento más débil observado. Esto no simula una fuente externa completa; esa pieza queda cubierta por Prosper/Freddie en @sec-crpto-multidataset. Su función es responder a una crítica complementaria: incluso cuando forzamos defaults adicionales en cortes relevantes, la cobertura 90% permanece por encima del target.
 
 ```{python}
 #| label: tbl-crpto-enhanced-synthetic-shift

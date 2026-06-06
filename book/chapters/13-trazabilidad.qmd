@@ -13,7 +13,7 @@ Esta página es el **índice maestro** del CRPTO. Cumple un rol específico que 
 | La incertidumbre conformal entra al LP robusto. | `conformal_intervals_mondrian.parquet`, `champion_portfolio_policy.json` | Conformal/model tests + policy config | El intervalo no se gráfica al final: cambia la decisión. |
 | El bound se audita sobre el funded set. | `portfolio_bound_aware_bound_eval.parquet`, `final_project_promotion.json` | `test_crpto_final_sync.py` | `V`, `Gamma_CP` y violation vienen del portafolio promovido. |
 | El champion no es un punto aislado. | `crpto_tableA18_robust_region_policy_family.csv` | Journal-package status + DVC lock | `45/45` policies pasan `alpha = 0.01`. |
-| El supplement no re-promueve otro método. | A12--A24 + status JSONs | Scope notes + smoke tests | Tail, MDCP/online y SPO+ son diagnósticos o comparadores. |
+| El supplement no re-promueve otro método. | A12--A33 + status JSONs | Scope notes + smoke tests | Tail, MDCP/online, SPO+ y réplica externa son diagnósticos o comparadores. |
 
 ```{python}
 #| label: p1-traceability-setup
@@ -80,9 +80,9 @@ pd.DataFrame(
         },
         {
             "Claim": "C7: Evidencia P1 + journal-package fortalece sin cambiar dirección",
-            "Evidencia": "A3-A11 (P1) + A12-A24 (journal) todas preservan policy oficial",
-            "Artefacto": "models/crpto_evidence_status.json + crpto_journal_package_status.json",
-            "Script": "scripts/analyze_crpto_evidence.py + scripts/build_crpto_journal_package.py",
+            "Evidencia": "A3-A11 (P1) + A12-A27 (journal) todas preservan policy oficial",
+            "Artefacto": "models/crpto_evidence_status.json + crpto_journal_package_status.json + crpto_multidataset_external_status.json",
+            "Script": "scripts/analyze_crpto_evidence.py + scripts/build_crpto_journal_package.py + scripts/build_multidataset_external_replication.py",
             "Test": "tests/test_crpto_final_sync.py",
         },
     ]
@@ -193,6 +193,9 @@ pd.DataFrame(
         {"Tabla": "A22", "Rol": "Tail-constrained CVaR/OCE reoptimization", "Generador": "build_tail_constrained_reoptimization.py"},
         {"Tabla": "A23", "Rol": "Multi-distribution coverage stress", "Generador": "build_distribution_robustness_diagnostics.py"},
         {"Tabla": "A24", "Rol": "Online conformal stability / ACI replay", "Generador": "build_distribution_robustness_diagnostics.py"},
+        {"Tabla": "A25", "Rol": "External replication gate on Prosper/Freddie", "Generador": "build_multidataset_external_replication.py"},
+        {"Tabla": "A26", "Rol": "External candidate-pool sensitivity", "Generador": "build_multidataset_external_replication.py"},
+        {"Tabla": "A27", "Rol": "Freddie horizon sensitivity", "Generador": "build_multidataset_external_replication.py"},
     ]
 )
 ```

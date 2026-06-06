@@ -34,11 +34,16 @@ the promoted economic policy earns `$170.5K` on a `$1M` budget while passing the
 exact $\alpha = 0.01$ funded-set bound ($V(\alpha) = 0.03645$,
 $\Gamma_{\mathrm{CP}} = 0.18591$, zero violation). The final robust region contains `45/45`
 alpha-safe policies, indicating that the result is not a single-point artifact.
+External frozen replications on Prosper marketplace loans and Freddie/Mendeley
+single-family mortgages preserve the conformal gates and produce positive robust
+LP objectives, strengthening the claim that the CRPTO recipe is not a
+Lending-Club-only artifact.
 The contribution is not another predictive leaderboard, but an auditable
 post-hoc conformal robust credit-portfolio decision pipeline that maps frozen
 calibrated PD artifacts into a robust funded set, reports an explicit
 conformal robustness premium, and verifies exact alpha-safe weighted
-miscoverage on the promoted portfolio.
+miscoverage on the promoted Lending Club portfolio while documenting external
+economic replications under the same frozen recipe.
 
 **Keywords:** conformal prediction; robust optimization; predict-then-optimize;
 credit risk; portfolio optimization; reproducible data science.
@@ -83,7 +88,13 @@ out-of-time evaluation set of 276,869 loans. The promoted economic policy earns
 $\alpha = 0.01$, and lies inside a robust region where `45/45` evaluated
 policies satisfy the same exact alpha-safe check. The headline result is not a
 single lucky allocation. It is a reproducible bridge from calibrated
-probabilistic learning to robust, auditable credit portfolio choice.
+probabilistic learning to robust, auditable credit portfolio choice. To address
+the natural "single dataset" concern without reopening the Lending Club
+champion, we also freeze two external economic replications: Prosper final-status
+marketplace loans and a Freddie/Mendeley single-family mortgage panel with
+out-of-sample and out-of-time splits. These replications are not new champions;
+they test whether the same PD-to-conformal-to-LP recipe remains economically
+usable on different credit products.
 
 The paper makes three contributions. First, it gives a reusable CRPTO
 construction for credit portfolios: frozen calibrated PD, Mondrian conformal
@@ -95,13 +106,16 @@ decision-focused learning. The novelty claim is therefore specific, not
 leaderboard-oriented: CRPTO is an auditable conformal robust credit-portfolio
 decision built from frozen calibrated PD artifacts. Third, it provides an
 artifact-backed empirical study where every paper table and figure is generated
-from frozen outputs rather than manually transcribed summaries. The key claim
-is deliberately surgical: CRPTO maps frozen calibrated PD artifacts into a
-robust funded set, reports the portfolio-level conformal premium
+from frozen outputs rather than manually transcribed summaries. Fourth, it adds
+external economic replications on Prosper and Freddie/Mendeley to separate the
+methodological claim from the idiosyncrasies of one P2P panel. The key claim is
+deliberately surgical: CRPTO maps frozen calibrated PD artifacts into a robust
+funded set, reports the portfolio-level conformal premium
 $\Gamma_{\mathrm{CP}}$, and verifies exact alpha-safe weighted miscoverage on the promoted Lending Club
-portfolio. The paper also documents the governance boundary between safe
-paper-facing reruns and protected stages that would change the promoted
-champion.
+portfolio, while showing that the conformal and LP gates remain viable on two
+additional credit datasets. The paper also documents the governance boundary
+between safe paper-facing reruns and protected stages that would change the
+promoted champion.
 
 ![CRPTO's central move is operational rather than decorative: frozen calibrated PD artifacts become Mondrian conformal intervals, the upper-risk signal enters a robust portfolio optimizer, and the promoted funding policy is audited against exact funded-set controls.](../reports/crpto/figures/crpto_fig1_journal_pipeline.png){#fig-crpto-pipeline width="94%" fig-alt="Four-stage CRPTO pipeline from frozen calibrated PD to Mondrian conformal intervals, robust portfolio optimization, and promoted auditable policy."}
 
@@ -168,10 +182,12 @@ conformal satisficing motivates the journal-strengthening package
 can be evaluated from frozen CRPTO artifacts:
 OCE/CVaR [@rockafellar2000cvar; @bental2007oce] appears as a tail-risk
 diagnostic, robust satisficing appears as committee-style margin evidence, and
-SPO+ motivates the regret-auditability frontier. The method-changing
-variants--optimized OCE/CVaR objectives, online or multi-dataset protocols,
-causal layers, and hybrid decision-focused training--remain future work rather
-than hidden acceptance criteria.
+SPO+ motivates the regret-auditability frontier. The external Prosper and
+Freddie/Mendeley runs are a separate, frozen replication protocol rather than a
+new method-changing search. The remaining method-changing variants--optimized
+OCE/CVaR objectives, online protocols, causal layers, and hybrid
+decision-focused training--remain future work rather than hidden acceptance
+criteria.
 
 ## Closest Work Boundary
 
@@ -422,12 +438,33 @@ data/code-disclosure policy.
 The body-supplement split is fixed before submission. The body keeps the CRPTO
 pipeline, the alpha-to-portfolio link, the robust-region evidence, and the core
 metrics, plus the compact regret-auditability frontier. The online supplement
-carries A3--A24, the conformal finalist ablation, funded-set loan audit,
+carries A3--A33, the conformal finalist ablation, funded-set loan audit,
 tail-risk diagnostics, satisficing margins, dependence diagnostics, the CVaR/OCE
 tail-constrained re-optimization (A22) and the multi-distribution (A23) and
-online ACI-stability (A24) diagnostics, MRM/fairness material, and reproduction
-commands. This keeps the IJDS body focused while preserving the audit trail that
-reviewers need.
+online ACI-stability (A24) diagnostics, the external economic replication
+tables (A25--A33), MRM/fairness material, and reproduction commands. This keeps
+the IJDS body focused while preserving the audit trail that reviewers need.
+
+## Multi-Dataset External Replication Protocol
+
+The external-replication layer is deliberately narrower than a new benchmark
+campaign. We reuse the frozen CRPTO recipe--CatBoost PD, calibration,
+train-only WOE/IV feature screening, Mondrian conformal intervals, and the same
+bound-aware robust LP--on two credit datasets with economic fields. Prosper
+contributes final-status marketplace loans with observed outcome, loan amount,
+yield/rate, and a temporal OOT window [@prosperLoanData]. Freddie/Mendeley
+contributes processed single-family mortgage panels derived from the Freddie Mac
+loan-level ecosystem, including 12--60 month default windows and train/OOS/OOT
+splits [@freddieMacSfLoanLevel; @mushava2023classimbalance]. Home Credit was
+audited but not promoted because it lacks a clean investment-return and exposure
+contract comparable to Lending Club, Prosper, and Freddie.
+
+The replication gate is fixed before inclusion: global 90% coverage must meet
+target, the $\alpha=0.01$ conformal coverage must be reportable, and the LP must
+return a positive robust objective when economic fields are available. This gate
+does not re-promote the Lending Club champion and does not claim a new exact
+funded-set theorem for every external portfolio. Its purpose is empirical:
+address whether the method survives two materially different credit products.
 
 # Results
 
@@ -555,6 +592,62 @@ supplement expands the same structure into artifact and guardrail references.
 | "The champion is cherry-picked." | The promoted policy is the best-return point inside a final `45/45` alpha-safe robust region. | Robust-region heatmap and protected-stage manifest. |
 
 : Reviewer claim checks in the main manuscript.
+
+## Multi-Dataset External Economic Replication
+
+The strongest reviewer objection after the 276,869-loan Lending Club audit is
+generalization. The table below answers that objection without changing the champion:
+the same frozen recipe is applied to two external credit products. Prosper is a
+marketplace personal-loan panel with final statuses and a full OOT economic
+candidate universe. Freddie FM48 is a collateralized mortgage panel, using the
+48-month red+green default window with provided train/OOS/OOT structure. Both
+pass the conformal gates and both return positive robust LP objectives.
+
+| Dataset | Product | Rows | Default rate | AUC | Coverage 90% | $\alpha=0.01$ coverage | OOT candidates | Robust LP objective |
+|---|---|---:|---:|---:|---:|---:|---:|---:|
+| Prosper | Marketplace personal loans | `54,807` | `30.92%` | `0.7074` | `0.9205` | `0.9943` | `10,531` | `$199,419` |
+| Freddie FM48 | Single-family mortgages | `3,173,355` | `1.45%` | `0.7839` | `0.9745` | `0.9907` | `1,396,053` | `$1,291,228` |
+
+: External economic replications using the frozen CRPTO recipe. The table is
+generated from `crpto_tableA25_external_replication_gate.csv`; Home Credit is
+archived but not promoted because it lacks a comparable economic
+exposure/return contract.
+
+Figure @fig-external-replication summarizes the same result visually. Prosper
+uses its full `10,531`-loan OOT economic universe. Freddie is evaluated on
+`1,396,053` OOT economic candidates. A sparse all-candidate LP solves the full
+Freddie universe and returns the same robust objective as the top screens; the
+worst funded loan has rank `551`, with zero funded loans outside the top-250,000
+screen. The supplement reports this as an exhaustiveness certificate rather than
+as an unverified shortlist caveat.
+
+![External CRPTO replications preserve the conformal gates and produce positive robust LP value on two materially different credit products.](../reports/crpto/figures/crpto_fig22_external_replication.png){#fig-external-replication width="94%" fig-alt="Two-panel external replication figure. The left panel shows 90 percent and alpha 0.01 coverage for Prosper and Freddie FM48 above target lines; the right panel shows positive robust LP objective values and OOT candidate counts."}
+
+The external layer also surfaces a result a single-dataset champion cannot show.
+The signed price of robustness--using the same convention as the Lending Club
+field, $(\text{nonrobust}-\text{robust})/\text{nonrobust}$--is a *positive*
+premium under frozen application, and it grows with the panel default rate
+(Table @tbl-price-of-robustness). Within Freddie, the high-default `red` segment
+pays more than `green`; across datasets, Prosper's `30.92%` default panel pays the
+largest premium. The reading is economic, not incidental: higher default risk
+widens the conformal intervals, so the robust worst case discounts more return,
+and discrimination (AUC) does not order the premium on its own. On the *selected*
+Lending Club champion the signed price is favorable (`-10.56%`), because the
+bound-aware search found a robust funded set that also wins expected return. The
+honest summary is that robustness is never economically catastrophic: under blind
+application the coverage guarantee costs a single-digit to low-double-digit
+premium, and under selection it can be free.
+
+| Frozen application | Panel default | Price of robustness |
+|---|---:|---:|
+| Freddie FM48 (green) | `0.58%` | `+1.00%` |
+| Freddie FM48 (combined) | `1.45%` | `+1.09%` |
+| Freddie FM48 (red) | `2.97%` | `+2.37%` |
+| Prosper final-status | `30.92%` | `+9.46%` |
+
+: Price of robustness by frozen application, ordered by panel default rate, from
+`crpto_tableA34_price_of_robustness_cross_dataset.csv`. The selected Lending Club
+champion is `-10.56%` (favorable under selection, not blind application). {#tbl-price-of-robustness}
 
 # Robustness and Comparators
 
@@ -709,7 +802,9 @@ funded-set metrics, budget/LGD/cap sensitivity, and robust-region summaries by
 policy family, plus the A19 regret-auditability frontier, A20 tail-satisficing
 challenger audit, A21 cluster-bound tightening audit, A22 CVaR/OCE
 tail-constrained re-optimization, and A23--A24 multi-distribution and online
-(ACI) conformal-stability diagnostics.
+(ACI) conformal-stability diagnostics, plus A25--A33 external economic
+replication, exhaustiveness, interval, subperiod, and sensitivity audits on
+Prosper and Freddie/Mendeley.
 
 # Reproducibility and Companion
 
@@ -719,7 +814,10 @@ versioned together. Heavy data and model artifacts are stored outside Git and
 verified through manifest hashes. The paper-facing commands regenerate tables,
 figures, evidence summaries, and HTML/PDF manuscript surfaces from frozen
 inputs; protected champion stages are not rerun without an explicit drift
-validation plan.
+validation plan. The external-replication summaries are stored locally under
+`reports/crpto/multidataset/source/` and regenerated into Tables A25--A33 and
+Figures 22--24 by `scripts/build_multidataset_external_replication.py`, so the
+submission does not depend on exploratory paths or browser sessions.
 
 For double-anonymous review, this manuscript omits author-identifying URLs and
 uses neutral language around repository ownership. The data/code companion can
@@ -743,16 +841,20 @@ middle path: keep the predictive model auditable, quantify uncertainty with a
 finite-sample conformal layer, and make the optimizer pay attention to the
 upper end of plausible default risk.
 
-The limits are equally important. CRPTO does not prove that Lending Club is a
-universal proxy for modern credit origination, and it does not claim legal
+The limits are equally important. CRPTO does not prove that any one public
+dataset is a universal proxy for modern credit origination, even after the
+Prosper and Freddie/Mendeley replications. Those external runs strengthen the
+empirical defense across credit products, but they remain static historical
+replications, not a prospective deployment. The paper also does not claim legal
 fair-lending certification because the public data lack direct protected
 attributes. It does not assert that robust conformal policies dominate all
-decision-focused learners on regret, and it does not treat synthetic shift as a
-substitute for new external cohorts. Its conformal guarantee is marginal or
-partitioned by the chosen Mondrian design, not exact conditional coverage for
-every borrower profile. Finally, this is not an online deployment study: there
-are no new post-2020 retail originations, no live monitoring loop, and no
-end-to-end utility-directed conformal learner replacing the frozen PD artifact.
+decision-focused learners on regret, and it does not treat synthetic shift or
+external static panels as substitutes for live post-deployment monitoring. Its
+conformal guarantee is marginal or partitioned by the chosen Mondrian design,
+not exact conditional coverage for every borrower profile. Finally, this is not
+an online deployment study: there are no new post-2020 Lending Club retail
+originations, no live monitoring loop, and no end-to-end utility-directed
+conformal learner replacing the frozen PD artifact.
 
 The next research directions are clear and are now separated into two groups.
 The current paper includes the safe journal-strengthening package: OCE/CVaR as
@@ -761,8 +863,9 @@ of the regret-auditability frontier, and dependence as a formal caveat. The
 future backlog remains larger: optimized OCE/CVaR objectives, online conformal
 methods, multi-distribution conformal validity, utility-directed or
 decision-theoretic conformal variants [@cortesgomez2025utility;
-@lekeufack2023cdt], causal variants, and multi-dataset credit replication all
-require new protocols, data, or proofs.
+@lekeufack2023cdt], causal variants, broader asset-class panels, and
+prospective multi-period origination studies all require new protocols, data, or
+proofs.
 Those directions are valuable, but they are not blockers for presenting the
 frozen CRPTO result as an auditable post-hoc predict-then-optimize contribution.
 

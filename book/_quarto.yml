@@ -62,6 +62,7 @@ book:
         - chapters/02-marco-teorico.qmd
         - chapters/03-metodologia.qmd
         - chapters/04-resultados.qmd
+        - chapters/30-replicacion-multidataset.qmd
         - chapters/05-discusion.qmd
         - chapters/06-blueprint-manuscrito.qmd
         - chapters/06b-guia-editorial-claims.qmd

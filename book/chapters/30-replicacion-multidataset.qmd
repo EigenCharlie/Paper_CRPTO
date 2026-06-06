@@ -1,0 +1,191 @@
+---
+title: "Replicación multidataset"
+page-layout: article
+---
+
+# Replicación multidataset {#sec-crpto-multidataset}
+
+La réplica multidataset entra al dossier con una regla estricta: **no reabre el
+champion Lending Club**. El certificado exacto del paper sigue siendo el funded
+set promovido en Lending Club. Lo que A25--A33 agregan es evidencia externa de
+que la receta CRPTO -- PD calibrada, intervalos conformales Mondrian y LP robusto
+bound-aware -- no depende de un solo panel P2P, y que el caso Freddie no queda
+apoyado en una pantalla pequeña de candidatos.
+
+## Decisión editorial
+
+Se evaluaron tres fuentes externas. Prosper aporta préstamos personales de
+marketplace lending con estados finales, montos y tasa/yield observables
+[@prosperLoanData]. Freddie/Mendeley aporta hipotecas unifamiliares derivadas
+del dataset loan-level de Freddie Mac y organizadas con ventanas de default,
+grupos `red/green` y splits `train/OOS/OOT`
+[@freddieMacSfLoanLevel; @mushava2023classimbalance]. Home Credit se conserva
+como fuente archivada de scoring [@homeCreditDefaultRisk], pero no se promueve
+porque no tiene un contrato limpio de `exposure + return` comparable con Lending
+Club, Prosper o Freddie.
+
+| Fuente | Producto crediticio | Decisión |
+|---|---|---|
+| Prosper final-status | Préstamos personales marketplace | Promovido como réplica económica externa. |
+| Freddie/Mendeley FM48 | Hipotecas unifamiliares | Promovido como réplica económica externa. |
+| Home Credit Default Risk | Scoring de consumo | Archivado; útil para PD/conformal, no para claim económico principal. |
+
+: Decisión de inclusión para el frente multidataset.
+
+## Gate externo principal
+
+La tabla A25 resume los dos datasets promovidos. Ambos mantienen cobertura global
+sobre 90%, cobertura alpha = 0.01 reportable cerca o por encima de 99% y objetivo
+LP robusto positivo. Freddie tiene una cobertura mínima de grupo débil en una
+celda pequeña; por eso el paper cita el gate global y deja la granularidad como
+caveat, no como garantía condicional perfecta.
+
+| Dataset | Filas | Default | AUC | Coverage 90% | alpha = 0.01 coverage | OOT candidates | Robust LP |
+|---|---:|---:|---:|---:|---:|---:|---:|
+| Prosper final-status | `54,807` | `30.92%` | `0.7074` | `0.9205` | `0.9943` | `10,531` | `$199,419` |
+| Freddie/Mendeley FM48 | `3,173,355` | `1.45%` | `0.7839` | `0.9745` | `0.9907` | `1,396,053` | `$1,291,228` |
+
+: A25. Gate externo principal para las réplicas económicas promovidas.
+
+![Réplica externa CRPTO: Prosper y Freddie/Mendeley preservan los gates conformales y valor económico robusto positivo.](../assets/figures/publication/crpto_fig22_external_replication.png){#fig-book-external-replication width="88%" fig-alt="Gráfico de barras que compara Prosper y Freddie FM48 en cobertura 90%, cobertura alpha 0.01, AUC y objetivo LP robusto."}
+
+La lectura correcta es empírica, no teoremática: A25 fortalece el argumento
+"no fue suerte de Lending Club", pero no convierte CRPTO en una garantía
+universal para todo producto crediticio. El claim exacto alpha-safe permanece
+en la policy promovida de Lending Club.
+
+## Sensibilidad por candidatos
+
+A26 verifica que el objetivo robusto externo no dependa de una muestra
+minúscula de candidatos OOT. Prosper alcanza el mismo objetivo al usar el
+universo completo de `10,531` candidatos. Freddie mantiene el objetivo promovido
+desde el top-`50,000` hasta el top-`250,000`, mientras las muestras aleatorias
+mejoran con el tamaño del pool y no superan el screening por retorno.
+
+| Dataset | Pantalla | Cap | Robust LP medio | Nonrobust LP medio | n financiados medio |
+|---|---|---:|---:|---:|---:|
+| Prosper | top net return | all | `$199,419` | `$220,260` | `234` |
+| Prosper | random | `5,000` | `$183,374` | `$205,554` | `231` |
+| Freddie FM48 | top net return | `250,000` | `$1,291,228` | `$1,305,409` | `146` |
+| Freddie FM48 | random | `25,000` | `$1,192,926` | `$1,209,899` | `116` |
+
+: A26. Sensibilidad compacta del objetivo LP externo por pantalla de candidatos.
+
+![Sensibilidad de candidatos externos: los objetivos robustos promovidos se estabilizan con pools amplios y las muestras aleatorias quedan por debajo del screening top-return.](../assets/figures/publication/crpto_fig23_external_candidate_sensitivity.png){#fig-book-external-candidate-sensitivity width="88%" fig-alt="Gráfico de líneas del objetivo LP robusto por tamaño de pool y pantalla de candidatos para Prosper y Freddie."}
+
+## Certificado all-candidate Freddie
+
+A28 elimina el caveat de cap para Freddie. El LP sparse se resolvió en `500,000`,
+`1,000,000` y en los `1,396,053` candidatos OOT completos. En los tres casos el
+objetivo robusto queda exactamente en `$1,291,228` y el objetivo nonrobust en
+`$1,305,409`; el óptimo robusto all-candidate financia `143` préstamos y el peor
+rank financiado es `551`. Es decir: el screening top-return no es un supuesto
+frágil, sino una pantalla dominante certificada por el solve completo.
+
+| Dataset | Cap | Candidatos resueltos | Robust LP | Nonrobust LP | Financiados | Peor rank financiado |
+|---|---:|---:|---:|---:|---:|---:|
+| Prosper | all | `10,531` | `$199,419` | `$220,260` | `234` | `508` |
+| Freddie FM48 | `500,000` | `500,000` | `$1,291,228` | `$1,305,409` | `143` | `551` |
+| Freddie FM48 | `1,000,000` | `1,000,000` | `$1,291,228` | `$1,305,409` | `143` | `551` |
+| Freddie FM48 | all | `1,396,053` | `$1,291,228` | `$1,305,409` | `143` | `551` |
+
+: A28. Exhaustividad LP externa. En Freddie, cero préstamos financiados quedan
+fuera del top-`250,000`.
+
+![Certificado all-candidate Freddie: el objetivo LP es invariante al pasar de 500k a todo el universo OOT, y el peor rank financiado queda muy dentro de la pantalla top-return.](../assets/figures/publication/crpto_fig24_freddie_all_candidate_certificate.png){#fig-book-freddie-all-candidate fig-alt="Figura de dos paneles con objetivo robusto y nonrobust invariante por cap Freddie, y comparación logarítmica de candidatos OOT totales frente al peor rank financiado."}
+
+## Por qué Freddie FM48
+
+A27 audita las ventanas Freddie antes de promover FM48. FM12 falla cobertura
+global; FM24 y FM36 pasan el target 90% pero quedan por debajo de 99% en el gate
+alpha = 0.01; FM60 también queda corto en ese gate. FM48 es la única ventana que
+supera ambos umbrales y conserva objetivo robusto positivo en el screening de
+horizontes.
+
+| Variante | Ventana | Default | Coverage 90% | alpha = 0.01 coverage | Decisión |
+|---|---:|---:|---:|---:|---|
+| FM12 both | 12 | `0.60%` | `0.7578` | `0.9774` | Sensibilidad |
+| FM24 both | 24 | `1.03%` | `0.9369` | `0.9889` | Sensibilidad |
+| FM36 both | 36 | `1.14%` | `0.9057` | `0.9871` | Sensibilidad |
+| FM48 both | 48 | `1.45%` | `0.9745` | `0.9907` | Promovido |
+| FM60 both | 60 | `2.18%` | `0.9591` | `0.9822` | Sensibilidad |
+
+: A27. Sensibilidad Freddie por ventana de default; el objetivo económico de la
+tabla es de screening, mientras el objetivo promovido final queda en A25.
+
+## Auditorías extendidas
+
+A29--A33 son los anexos que vuelven defendible el frente ante preguntas de
+reviewer. No todos son positivos, y esa es precisamente su utilidad editorial:
+documentan cuándo el método sostiene el claim global y cuándo una lectura
+condicional sería excesiva.
+
+| Auditoría | Resultado | Lectura para el paper |
+|---|---|---|
+| A29 Freddie Mondrian sparse | Los grupos elegibles (`cal+test >= 500`) cubren `1,396,010` de `1,396,053` filas OOT; los grupos sparse suman solo `43` filas. | La cobertura global es fuerte; la cobertura condicional perfecta no se promete. |
+| A30 intervalos | Prosper coverage90 CI `[0.9151, 0.9254]`; Freddie coverage90 CI `[0.9743, 0.9748]`. | Los gates globales no dependen de un punto estimado inestable. |
+| A31 subperiodos | Prosper 2012/2013 y Freddie 2015Q1--Q4 mantienen coverage90 por encima de target. | La réplica no depende de un único OOT favorable; Freddie 2015Q4 alpha01 `0.9896` se reporta como borde. |
+| A32 Prosper default sensitivity | Main, `Defaulted` only y `Chargedoff` only pasan 90% y alpha01, todos con LP robusto positivo. | La definición de default no decide por sí sola el claim Prosper. |
+| A33 Freddie red/green | `both` y `green` pasan alpha01; `red` falla alpha01 (`0.9850`) aunque mantiene coverage90 y LP positivo. | FM48 combinado es el claim promovido; red queda como sensibilidad honesta. |
+
+## El precio de robustez crece con el riesgo del panel
+
+La réplica externa no solo confirma que los gates se sostienen: revela un patrón
+económico que un champion de un solo dataset no podía mostrar. El campo
+`price_of_robustness_pct` --definido con el mismo signo que en Lending Club, como
+`(no-robusto − robusto) / no-robusto`-- es **positivo** en las aplicaciones
+congeladas externas y **crece monótonamente con la tasa de default del panel**.
+
+| Aplicación congelada | Default del panel | AUC | Precio de robustez |
+|---|---:|---:|---:|
+| Freddie FM48 (green) | `0.58%` | `0.700` | `+1.00%` |
+| Freddie FM48 (combinado) | `1.45%` | `0.784` | `+1.09%` |
+| Freddie FM48 (red) | `2.97%` | `0.700` | `+2.37%` |
+| Prosper final-status | `30.92%` | `0.707` | `+9.46%` |
+
+: A34. Precio de robustez por aplicación congelada, ordenado por tasa de default.
+Todas usan la misma receta sin búsqueda de champion. Fuente:
+`crpto_tableA34_price_of_robustness_cross_dataset.csv`.
+
+La lectura tiene base teórica limpia: más riesgo de default ensancha los
+intervalos conformales, así que el peor caso robusto descuenta más retorno y la
+prima por comprar la garantía de cobertura sube. Dentro de Freddie, el segmento
+`red` (default `2.97%`) paga más que `green` (`0.58%`); entre datasets, Prosper
+(`30.92%`) paga la prima más alta. La discriminación (AUC) no ordena la prima por
+sí sola --`green` y `red` tienen AUC casi idéntico pero distinta prima--: lo que
+manda es el riesgo irreducible del panel.
+
+Lending Club es la excepción informativa: su precio de robustez es **favorable**
+(`−10.56%`), pero ese número proviene del champion *seleccionado* por la búsqueda
+bound-aware, no de una aplicación ciega de la receta. La selección encontró
+precisamente un funded set robusto que además gana en retorno esperado. Reportar
+ambas cosas --la prima positiva acotada bajo aplicación congelada y el caso
+favorable bajo selección-- es más honesto y más fuerte que afirmar que la robustez
+es siempre gratis o siempre cara.
+
+El mensaje editorial es directo: **la robustez nunca es económicamente
+catastrófica**. Bajo aplicación congelada la prima se queda en un dígito a
+dígito-bajo-doble, y bajo selección puede volverse favorable. CRPTO mide en qué
+régimen está cada panel en vez de asumir un costo fijo de robustez.
+
+## Qué mejora en el paper
+
+La réplica externa cambia la defensa ante reviewers. Antes, la respuesta honesta
+era: "CRPTO se demuestra en Lending Club y no afirmamos generalización". Ahora
+la respuesta es más fuerte: "el certificado exacto sigue en Lending Club, pero
+la receta conserva gates conformales y valor LP positivo en Prosper y Freddie".
+
+Ese matiz mejora tres claims:
+
+1. El método no parece depender de una idiosincrasia de Lending Club.
+2. El precio de robustez deja de ser un número aislado de Lending Club y se
+   vuelve un patrón interpretable: una prima positiva acotada que crece con el
+   riesgo del panel, comparable entre un P2P de consumo y un panel hipotecario.
+3. Home Credit se descarta por criterio económico explícito, no por conveniencia
+   de resultados.
+
+Los artefactos autocontenidos viven en `reports/crpto/multidataset/source/`,
+las tablas publicables en `reports/crpto/tables/crpto_tableA25_*` a
+`crpto_tableA33_*`, las figuras en `reports/crpto/figures/crpto_fig22_*` a
+`crpto_fig24_*`, y el status en
+`models/crpto_multidataset_external_status.json`.

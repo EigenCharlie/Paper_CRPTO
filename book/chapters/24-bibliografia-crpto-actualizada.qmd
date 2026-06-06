@@ -17,9 +17,11 @@ La biblioteca local queda organizada en tres superficies excluyentes:
 
 La regla práctica es mantener el paper en el claim estrecho: **post-hoc
 conformal robust credit-portfolio decisión audit desde artefactos PD
-congelados**. Lo que exige otro protocolo --- online, multi-distribución,
-dataset externo, causalidad, fairness legal o re-entrenamiento end-to-end ---
-vive en supplement/tesis aunque sea bibliograficamente muy valioso.
+congelados**. Lo que exige otro protocolo --- online, multi-distribución formal,
+validación prospectiva/live, causalidad, fairness legal o re-entrenamiento
+end-to-end --- vive en supplement/tesis aunque sea bibliograficamente muy
+valioso. La réplica externa estática Prosper/Freddie ya queda cubierta por
+A25--A33.
 
 ## Matriz paper / supplement / tesis
 
