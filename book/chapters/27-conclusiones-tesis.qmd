@@ -9,7 +9,7 @@ se evalúa la tesis como un todo.
 
 ## Qué se contribuyó
 
-La tesis sostiene cinco contribuciones, cada una anclada a evidencia congelada:
+La tesis sostiene seis contribuciones, cada una anclada a evidencia congelada:
 
 1. **Un puente post-hoc auditable de incertidumbre a decisión.** CRPTO toma una PD
    calibrada congelada, construye intervalos conformales Mondrian y los inyecta
@@ -32,6 +32,15 @@ La tesis sostiene cinco contribuciones, cada una anclada a evidencia congelada:
    regenera desde artefactos congelados; cada afirmación fuerte tiene un mapa
    claim → artefacto → prueba. La gobernanza (MRM SR 11-7, fair lending proxy,
    trazabilidad) se trata como salida de primera clase, no como apéndice.
+6. **Una réplica económica externa que separa el método del dataset.** La receta
+   congelada (PD calibrada → conformal Mondrian → LP robusto) preserva los gates
+   conformales y produce valor LP robusto positivo en Prosper y Freddie/Mendeley,
+   con un certificado all-candidate sobre `1 396 053` candidatos OOT en Freddie
+   (ver @sec-crpto-multidataset). Más allá de desactivar la objeción
+   "solo-Lending-Club", revela un patrón económico interpretable: bajo aplicación
+   congelada el precio de robustez es una prima positiva que crece con el default
+   del panel (de `+1.0%` a `+9.5%`), y es favorable solo en el champion
+   *seleccionado* de Lending Club.
 
 ## Qué quedó fuera, y por qué
 
@@ -65,7 +74,7 @@ El proyecto deja un backlog ordenado y trazable, no una lista de deseos:
 | Cobertura multi-distribución / group-weighted | Nuevo protocolo de calibración | Apéndice A23 (peor celda grade×vintage como diagnóstico) |
 | Conformal online / no estacionario | Stream de originación real, recalibración secuencial | Apéndice A24 (replay ACI sobre vintages OOT) |
 | Selección conformal decision-aware (estilo CROMS) | Holdout separado, registro pre-declarado | Protocolo de torneo ya diseñado en `docs/research` |
-| Réplica multi-dataset | Otro panel de crédito real con originación | Pipeline y contratos reproducibles ya parametrizados |
+| Réplica multi-dataset prospectiva / en vivo | Panel de crédito con originación nueva y monitoreo en vivo | Réplica estática externa ya hecha (Prosper, Freddie; @sec-crpto-multidataset) |
 
 La dirección del campo —calibración conformal end-to-end, control de riesgo
 OCE/CVaR, frontera miscoverage--regret— confirma que CRPTO se presenta como una

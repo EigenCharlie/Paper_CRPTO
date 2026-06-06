@@ -147,6 +147,8 @@ congeladas externas y **crece monótonamente con la tasa de default del panel**.
 Todas usan la misma receta sin búsqueda de champion. Fuente:
 `crpto_tableA34_price_of_robustness_cross_dataset.csv`.
 
+![El precio de robustez crece con la tasa de default del panel: las aplicaciones congeladas (Freddie green/combinado/red, Prosper) forman una serie positiva y monótona, mientras el champion seleccionado de Lending Club queda como referencia favorable por debajo de cero.](../assets/figures/publication/crpto_fig25_price_of_robustness_scaling.png){#fig-book-price-scaling width="85%" fig-alt="Gráfico de líneas en eje x logarítmico: el precio de robustez sube de +1.00% a +9.46% al crecer la tasa de default del panel; Lending Club aparece como línea de referencia en -10.56%."}
+
 La lectura tiene base teórica limpia: más riesgo de default ensancha los
 intervalos conformales, así que el peor caso robusto descuenta más retorno y la
 prima por comprar la garantía de cobertura sube. Dentro de Freddie, el segmento

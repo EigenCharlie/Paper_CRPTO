@@ -40,6 +40,7 @@ del supplement tiene un dossier que lo origina.
 | Theory (Markov, validity ladder) | [Marco teórico](02-marco-teorico.qmd), [apéndice de robustez](07-apendice-robustez.qmd) |
 | Results / certificado exacto | [Resultados](04-resultados.qmd), [funded set](12-funded-set.qmd) |
 | Robustness / regret-auditability | [Ablación Mondrian](08-ablacion-mondrian.qmd), [SPO regret](09-spo-regret.qmd), [apéndice de robustez](07-apendice-robustez.qmd) |
+| Multi-Dataset External Replication | [Replicación multidataset](30-replicacion-multidataset.qmd) |
 | Discussion / límites | [Discusión](05-discusion.qmd), [apéndices regulatorios y future work](23-apendices-regulatorios-y-future-work.qmd) |
 | Reproducibility | [Trazabilidad](13-trazabilidad.qmd), [release](14-release.qmd) |
 
@@ -61,6 +62,7 @@ orientado a objeciones; esta tabla está orientada a navegación.
 | El funded set pasa el bound exacto `α=0.01`. | [marco teórico](02-marco-teorico.qmd), [funded set](12-funded-set.qmd) | Validación empírica post-selección, no garantía conformal más fuerte. |
 | El resultado no es un punto aislado (`45/45`). | [resultados](04-resultados.qmd), [apéndice de robustez](07-apendice-robustez.qmd) | Región robusta evaluada, no garantía de selección prospectiva en vivo. |
 | CRPTO compra auditabilidad, no mínimo regret. | [SPO regret](09-spo-regret.qmd) | SPO+ gana en regret; la frontera lo hace explícito. |
+| La receta CRPTO se sostiene fuera de Lending Club. | [Replicación multidataset](30-replicacion-multidataset.qmd) | Réplica estática externa (Prosper, Freddie); el certificado exacto sigue solo en LC y el precio de robustez crece con el default del panel. |
 | El sistema pasa una auditoría MRM SR 11-7. | [MRM](11-mrm.qmd), [gobernanza](21-gobernanza-explicabilidad-dataset.qmd) | Validación no independiente (single-author); se simula con controles programáticos. |
 | Todo el resultado es reproducible desde artefactos. | [trazabilidad](13-trazabilidad.qmd), [release](14-release.qmd) | Datos pesados fuera de git; verificados por hash de manifest. |
 
