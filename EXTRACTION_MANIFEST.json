@@ -3,7 +3,7 @@
   "project_name": "CRPTO",
   "source_project": "local source repository; read-only during extraction; absolute source path intentionally omitted in final package",
   "source_project_note": "El proyecto origen no fue borrado ni modificado por esta extracción final.",
-  "destination": "/mnt/c/Users/carlos/Documents/Paper_CRPTO",
+  "destination": "C:\\Users\\carlos\\Documents\\Paper_CRPTO",
   "generated_at_utc": "2026-05-10T18:02:13.078150+00:00",
   "summary": {
     "file_count_excluding_runtime_outputs": 652,
