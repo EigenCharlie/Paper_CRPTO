@@ -14,10 +14,14 @@ the submission-shaped versions are written.
 ## Files
 
 - `CRPTO.qmd`: generic landing manuscript stub.
-- `CRPTO_ijds.qmd`: IJDS-style anonymous body source.
+- `CRPTO_ijds.qmd`: active IJDS-style anonymous body source and current
+  manuscript source of truth.
 - `supplement_ijds.qmd`: IJDS-style online supplement source.
 - `submission/README.md`: IJDS handoff checklist, anonymity guardrails, PDF
   draft commands, and SPO+ numbering rule.
+- `submission/COVER_LETTER_AND_DISCLOSURE.md`: editor-facing cover letter and
+  data/code disclosure draft; keep it out of the anonymous reviewer packet
+  unless the submission system asks for disclosure text.
 
 Selected P2/P3-inspired diagnostics are part of the current paper/journal pack:
 regret-auditability, OCE/CVaR tail risk, robust satisficing margins, and the

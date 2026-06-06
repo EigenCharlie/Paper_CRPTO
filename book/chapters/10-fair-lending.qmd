@@ -31,7 +31,7 @@ La política aplicada al champion sigue tres métricas estándar de fair lending
 
 | Métrica | Definición | Umbral | Lectura operativa |
 |---|---|---|---|
-| **Demographic Parity Difference (DPD)** | $\max_{g,g'} \|P(\hat{y}=1\|g) - P(\hat{y}=1\|g')\|$ | DPD ≤ 0.05 | Diferencia máxima en tasa de aprobación entre grupos. |
+| **Demographic Parity Difference (DPD)** | Máxima diferencia absoluta entre tasas de aprobación por grupo. | DPD ≤ 0.05 | Diferencia máxima en tasa de aprobación entre grupos. |
 | **Equalized Odds Gap (EO)** | $\max(\text{TPR gap}, \text{FPR gap})$ entre grupos | EO ≤ 0.10 | Asegura que TPR y FPR no diverjan entre grupos. |
 | **Disparate Impact Ratio (DIR)** | $\min_g \text{rate}_g / \max_g \text{rate}_g$ | DIR ≥ 0.80 | Regla del "four-fifths" del EEOC. |
 

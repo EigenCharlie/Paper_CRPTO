@@ -19,9 +19,7 @@ from pathlib import Path
 
 DEFAULT_SOURCE_DIR = Path("Papers_tesis")
 DEFAULT_AUDIT_PATH = Path("docs/research/papers_tesis_deep_audit_2026-06-06.md")
-DEFAULT_MATRIX_PATH = Path(
-    "reports/crpto/literature/papers_tesis_source_matrix_2026-06-06.csv"
-)
+DEFAULT_MATRIX_PATH = Path("reports/crpto/literature/papers_tesis_source_matrix_2026-06-06.csv")
 DEFAULT_CAPTION_PATH = Path(
     "reports/crpto/literature/papers_tesis_figure_caption_index_2026-06-06.csv"
 )
@@ -1868,7 +1866,8 @@ def write_audit(
         "La agenda extendida CRPTO/tesis es el destino correcto para fuentes que fortalecen governance, source/shift robustness, fairness proxy, IFRS9/SICR proxy, DFL ampliado y data-quality/equity. Estas fuentes no reabren el champion CRPTO:",
         "",
         markdown_table(
-            extended, ["relative_path", "decision", "extended_lab_value", "evidence_gate", "stop_rule"]
+            extended,
+            ["relative_path", "decision", "extended_lab_value", "evidence_gate", "stop_rule"],
         ),
         "",
         "## Experimentos evidence-gated",

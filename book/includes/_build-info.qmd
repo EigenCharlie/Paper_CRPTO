@@ -1,3 +1,3 @@
 ::: {.build-info}
-Build: `edcb853` | Rama: `main` | Actualizado: `2026-06-01`
+Build: `a750b7f` | Rama: `codex/integral-project-polish` | Actualizado: `2026-06-06`
 :::

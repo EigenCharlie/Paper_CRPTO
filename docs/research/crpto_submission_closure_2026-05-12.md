@@ -13,7 +13,7 @@ Current paper:
 - calibrated PD -> Mondrian conformal intervals -> robust portfolio decision;
 - exact `alpha = 0.01` funded-set validation;
 - `45/45` robust-region evidence;
-- A3--A33 online supplement;
+- A3--A34 online supplement;
 - regret-auditability frontier in the body/comparator section;
 - OCE/CVaR and satisficing diagnostics in the supplement;
 - cluster-aware dependence caveat/proposition in the theory supplement;
@@ -31,7 +31,7 @@ Backlog for journal/follow-up, not blockers:
 - dependence-aware main theorem without the cluster assumptions stated in the
   supplement;
 - prospective/live multi-dataset validation beyond the static Prosper/Freddie
-  replications now included as A25--A33;
+  replications now included as A25--A34;
 - P3 thesis/product tracks: multi-period portfolios, package extraction,
   multi-asset validation, field trial, production dashboard.
 
@@ -45,7 +45,7 @@ and are not acceptance criteria for this submission.
 | Surface | File | Status |
 |---|---|---|
 | IJDS body | `paper/CRPTO_ijds.qmd` | Active anonymous body source with regret-auditability framing. |
-| IJDS supplement | `paper/supplement_ijds.qmd` | Active online supplement source for A3--A33, MRM/fairness and reproducibility. |
+| IJDS supplement | `paper/supplement_ijds.qmd` | Active online supplement source for A3--A34, MRM/fairness and reproducibility. |
 | Venue config | `configs/crpto_publication_targets.yaml` | IJDS primary, EJOR pivot, journal strengthening pack classified. |
 | Release manifest | `book/chapters/14-release.qmd` | Body/appendix split, companion decision and release gates. |
 | Backlog | `docs/research/crpto_backlog_2026-05-04.md` | Diagnostic pack included; method-changing P2/P3 remains backlog. |

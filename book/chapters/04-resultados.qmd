@@ -608,7 +608,7 @@ funded_composition.sort_values("exposure_share", ascending=False).head(12)[
 ]
 ```
 
-La tabla de stress sintético repondera el OOT hacia cola de PD, grades E/F/G, periodos tardíos y mezcla de bajo riesgo/COVID. Es un test de covariate shift interno, ahora complementado por la réplica externa A25--A33, y sirve como puente hacia MDCP y conformal online: bajo todas las reponderaciones, la cobertura ponderada al 90% se mantiene sobre el target.
+La tabla de stress sintético repondera el OOT hacia cola de PD, grades E/F/G, periodos tardíos y mezcla de bajo riesgo/COVID. Es un test de covariate shift interno, ahora complementado por la réplica externa A25--A34, y sirve como puente hacia MDCP y conformal online: bajo todas las reponderaciones, la cobertura ponderada al 90% se mantiene sobre el target.
 
 ```{python}
 #| label: tbl-crpto-synthetic-shift

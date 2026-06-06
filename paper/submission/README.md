@@ -5,6 +5,8 @@ source of truth remains:
 
 - `paper/CRPTO_ijds.qmd` for the anonymous manuscript body.
 - `paper/supplement_ijds.qmd` for the anonymous online supplement.
+- `paper/submission/COVER_LETTER_AND_DISCLOSURE.md` for editor-facing cover
+  letter language and data/code disclosure timing.
 
 ## Render Commands
 
@@ -21,6 +23,11 @@ style.
 
 Editorial submission notes, venue reminders and page-budget comments belong in
 this README or the cover-letter checklist, not in the anonymous manuscript body.
+
+`COVER_LETTER_AND_DISCLOSURE.md` is intentionally separated from the anonymous
+body and supplement. Use it for editor-facing disclosure fields, then keep the
+reviewer packet free of public repository URLs, author identity, local paths and
+private remote details.
 
 ## Official Template Sources
 
@@ -52,11 +59,14 @@ publisher class/style files.
 > in this repo's TinyTeX until those files are downloaded — this is expected, not
 > a defect.
 
-Page budget: the Quarto proxy body currently renders to 14 pages including
-references, with an estimated body-before-references length of ~12.0--12.5 pages (see
-`docs/research/crpto_ijds_page_budget_2026.md`). The binding task is now
-**polish**, not compression: keep the claim surgical, captions assertive, and
-the QMD/official-template surfaces synchronized before a real submission build.
+Page budget: the local Chrome-print proxy currently renders to `24` pages for
+the body and `22` pages for the online supplement. The binding page count is
+still the official INFORMS template count, not the Chrome proxy; the older
+`docs/research/crpto_ijds_page_budget_2026.md` estimate should be read as a
+pre-template planning memo. The binding task is now **polish plus official
+template pagination**, not broad compression: keep the claim surgical, captions
+assertive, and the QMD/official-template surfaces synchronized before a real
+submission build.
 
 To produce the official submission PDF:
 
@@ -81,6 +91,7 @@ To produce the official submission PDF:
 - Supplement metadata uses `author: "Anonymous"`.
 - Public GitHub, DVC, MLflow, DagsHub and personal URLs are described as a
   companion package but not exposed in the double-anonymous body.
+- Cover-letter/data-code wording lives in `COVER_LETTER_AND_DISCLOSURE.md`.
 - Title-page, acknowledgements and repository disclosure are kept for the cover
   letter or for post-acceptance policy, not the anonymous manuscript.
 - Local paths, private workspace paths and usernames do not appear in the submitted
@@ -107,7 +118,7 @@ These protocols are compatible but not interchangeable.
 ## Final Assembly Checklist
 
 - Recheck the official-template page budget after PDF pagination is available.
-- Keep A3--A33 in the online supplement unless a reviewer-facing argument needs
+- Keep A3--A34 in the online supplement unless a reviewer-facing argument needs
   one compact table in the body.
 - Preserve CRPTO as the coverage/auditability method and SPO+ as the low-regret
   comparator.
@@ -143,7 +154,8 @@ tables, so the only missing inputs are the publisher class/style files.
    ```
 
 4. **Recount the official-template page budget** and demote body floats to the
-   supplement only if it exceeds 25 pages (current Quarto-proxy body is ~14.7 pp,
-   so headroom is expected).
+   supplement only if it exceeds 25 pages. The local Chrome-print body preview is
+   currently 24 pages, but this is a verification proxy, not the final venue
+   pagination.
 5. **Verify anonymity** against the checklist above, then upload the body PDF and
    submit the title page separately.

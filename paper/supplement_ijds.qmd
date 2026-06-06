@@ -25,7 +25,7 @@ execute:
 ## Scope
 
 This online supplement supports the IJDS submission body. It collects proof
-details, robustness and external-replication tables A3--A33, reproducibility
+details, robustness and external-replication tables A3--A34, reproducibility
 commands, model-risk material, fairness diagnostics, and artifact lineage. It
 does not introduce a new Lending Club champion, protected search rerun, hidden
 selection criterion, or new claim family.
@@ -160,15 +160,16 @@ future journal hardening.
 
 # Appendix C: Journal Robustness Package
 
-Tables A12--A33 answer likely reviewer questions that are too detailed for the
+Tables A12--A34 answer likely reviewer questions that are too detailed for the
 25-page body. They are diagnostic by design, except A19 also supports the body
-framing around regret-auditability and A25--A33 support the external-replication
-defense. A20--A33 are journal-only add-ons: A20 audits a tail-satisficing
+framing around regret-auditability and A25--A34 support the external-replication
+defense. A20--A34 are journal-only add-ons: A20 audits a tail-satisficing
 challenger; A21 makes the dependence-aware caveat numerical; A22 turns the
 tail-risk diagnostic into an *active CVaR/OCE selection constraint* (a labeled
 challenger, not a new champion); A23--A24 stress multi-distribution coverage and
-online (ACI) stability on the frozen conformal intervals; and A25--A33 test and
-audit the same frozen recipe on external economic datasets. Table A12 follows the standard
+online (ACI) stability on the frozen conformal intervals; A25--A34 cover the
+external economic layer by testing the same frozen recipe and adding the
+cross-dataset price-of-robustness scaling readout. Table A12 follows the standard
 definitions of Conditional
 Value-at-Risk [@rockafellar2000cvar] and the Optimized Certainty Equivalent
 [@bental2007oce], and the non-monotonic risk-control framing behind A22 follows
@@ -321,7 +322,7 @@ to make the audit path explicit.
 | The conformal layer gives conservative OOT uncertainty on the PD scale. | 90% and 95% coverage, minimum group coverage, and grade/decile audits. | `data/processed/conformal_intervals_mondrian.parquet`. | Conformal validation status and smoke tests that check final metric synchronization. |
 | The promoted funded set passes the exact alpha-safe bound. | `V(alpha = 0.01) = 0.03645`, `Gamma_CP = 0.18591`, zero violation. | `models/final_project_promotion.json`, bound-evaluation parquet, Table A13. | Frozen exact-evaluation artifact and final-sync regression tests. |
 | The result is not an isolated lucky policy. | `45/45` policies pass in the final robust region. | Table A18 and robust-region heatmap. | Protected search/evaluation split; no rerun of the champion search in paper builds. |
-| The supplement strengthens interpretation without moving the champion. | A20--A33 challenger, dependence, tail-risk, multi-distribution, online, and external-replication diagnostics. | Journal robustness tables and Figures 15--24. | Scope caveats in each table; challenger and external outputs are labeled as non-promoted diagnostics. |
+| The supplement strengthens interpretation without moving the champion. | A20--A34 challenger, dependence, tail-risk, multi-distribution, online, and external-replication diagnostics. | Journal robustness tables and Figures 15--25. | Scope caveats in each table; challenger and external outputs are labeled as non-promoted diagnostics. |
 | The manuscript is reproducible at the artifact level. | Tables, figures, Quarto pages, and status JSONs regenerate from frozen inputs. | Repository code, DVC metadata, rendered book/paper outputs. | Pre-push smoke/lint hooks, DVC status checks, and manifest validation before release. |
 
 ## Funded-Set Audit Card
@@ -343,18 +344,19 @@ The concentration pattern is useful for interpretation: most exposure sits in
 C/D loans, D contributes the largest share of the exact `V(alpha = 0.01)`, and
 the high-risk E-G tail is visible but not the hidden driver of the certificate.
 
-## Why A21--A33 Do Not Strengthen the Main Claim
+## Why A21--A34 Do Not Strengthen the Main Claim
 
-A21--A33 are designed to make the paper harder to over-read. A21 shows that a
+A21--A34 are designed to make the paper harder to over-read. A21 shows that a
 cluster-aware tightening is transparent but not sharper than Markov under the
 observed exposure concentration. A23 shows where weighted, group-weighted, or
 multi-distribution conformal methods would matter if CRPTO were recalibrated
 under a new protocol. A24 shows that an online controller would have little to
 correct on the frozen OOT vintages, but it is still a replay, not evidence from
-a live stream. A25--A33 show that the same recipe clears useful gates on Prosper
+a live stream. A25--A34 show that the same recipe clears useful gates on Prosper
 and Freddie/Mendeley, that Freddie's full candidate universe has been solved,
-and that subperiod/definition/segment sensitivities are documented. They still
-do not create a new exact funded-set theorem for every external portfolio.
+that subperiod/definition/segment sensitivities are documented, and that the
+economic cost of applying the frozen recipe scales with panel risk. They
+still do not create a new exact funded-set theorem for every external portfolio.
 Together, these artifacts protect the IJDS claim: the submitted result is an
 auditable post-hoc conformal robust credit-portfolio decision with an exact
 frozen Lending Club funded-set certificate and external economic replication
@@ -372,7 +374,7 @@ certificate landscape that motivated the journal package.
 | Split/Mondrian CP | Marginal or partitioned coverage of PD-scale intervals [@vovk2005; @bostrom2021; @gibbs2024]. | Upper conformal endpoint becomes the robust PD input. | Stronger conditional guarantees require new assumptions or diagnostics. |
 | Data-driven robust optimization | Feasibility against an uncertainty set [@bertsimas2004; @bertsimas2018datadriven]. | Budgeted robust portfolio with exact funded-set check. | New robust objectives or uncertainty sets would be new research lanes. |
 | Conformal robustness control | Robustness probability or loss control in downstream decisions [@johnstone2021; @hu2026crc]. | Used as positioning language and audit inspiration. | Not re-promoted as a new CRPTO selector. |
-| CROM/CREME/CREDO | Model or decision certificates for robust optimization [@bao2025croms; @zhou2025credo; @zhou2026creme]. | Used to motivate A20--A33 challenger and replication diagnostics. | Could become a CRPTO v2 certificate, but only with a new protocol. |
+| CROM/CREME/CREDO | Model or decision certificates for robust optimization [@bao2025croms; @zhou2025credo; @zhou2026creme]. | Used to motivate A20--A34 challenger and replication diagnostics. | Could become a CRPTO v2 certificate, but only with a new protocol. |
 | Decision-focused learning | Regret-aware training through the optimization loss [@elmachtoub2022; @schutte2024robust]. | SPO+ is a comparator in A19. | End-to-end retraining would change the frozen predictive artifact. |
 
 ## Coverage-Validity Ladder
@@ -387,7 +389,7 @@ purpose is to keep the strongest claims aligned with the available evidence.
 | Weighted / localized coverage | Coverage under known weights or local neighborhoods [@barber2023beyond; @guan2023localized; @jonkers2024wcps]. | A23 reports where reweighting/group focus would matter. | Not fitted as a new interval method. |
 | Multi-distribution validity | Coverage across multiple source distributions [@liu2024multisource; @yang2026multidistribution; @bhattacharyya2026groupweighted]. | A23 worst-cell table is a read-only stress test. | Full MDCP would need a new calibration protocol. |
 | Online validity | Sequential alpha adaptation [@gibbs2021aci; @liu2026portfolio]. | A24 replays OOT vintages as a static online diagnostic. | Not evidence from a live stream. |
-| External economic replication | Frozen recipe transfer to different credit products. | A25--A33 report Prosper and Freddie/Mendeley scoring, conformal, LP, exhaustiveness, and sensitivity gates. | Replication evidence, not a new universal guarantee. |
+| External economic replication | Frozen recipe transfer to different credit products. | A25--A34 report Prosper and Freddie/Mendeley scoring, conformal, LP, exhaustiveness, sensitivity gates, and price-of-robustness scaling. | Replication evidence, not a new universal guarantee. |
 
 ## Lending-Club And P2P Predecessors
 
@@ -425,7 +427,7 @@ A19--A33 should be read as literature-aligned stress evidence. A19 places CRPTO
 against the regret-driven training tradition; A20--A22 translate tail risk and
 satisficing into challenger audits without changing the champion; and A23--A24
 show where multi-distribution and online conformal work would enter if the
-project moved from a frozen historical panel to a new protocol. A25--A33 add the
+project moved from a frozen historical panel to a new protocol. A25--A34 add the
 external economic replication layer on Prosper and Freddie/Mendeley, including
 Freddie all-candidate exhaustiveness and negative/sparse-cell sensitivities,
 while preserving the Lending Club certificate boundary. This keeps the
@@ -508,7 +510,7 @@ The active IJDS submission surfaces are:
 | Surface | Source | Role |
 |---|---|---|
 | Anonymous body | `paper/CRPTO_ijds.qmd` | 25-page IJDS-style manuscript source. |
-| Online supplement | `paper/supplement_ijds.qmd` | Proofs, A3--A33, MRM/fairness, reproducibility. |
+| Online supplement | `paper/supplement_ijds.qmd` | Proofs, A3--A34, MRM/fairness, reproducibility. |
 | Long companion | `book/` | Public companion after anonymity handling. |
 | Publication config | `configs/crpto_publication_targets.yaml` | Venue, template, anonymity, and pivot rules. |
 

@@ -87,7 +87,7 @@ El horizonte operativo es doble: **IJDS en 6 meses** y **tesis de maestría en 1
 | 1 | Claim freeze, figuras candidatas, tablas candidatas y page-budget ledger. | 3 figuras, 2--3 tablas y C1--C7 congelados. |
 | 2 | Method/theory draft: PD calibrada, CP Mondrian, `Gamma_CP`, `V`, LP robusto. | El texto no promete online, IFRS9 contractual ni regret mínimo. |
 | 3 | Results draft: champion, comparadores, región robusta y SPO boundary. | Números sincronizados con artefactos canónicos. |
-| 4 | Supplement A--F: pruebas, A3--A33, MRM/fairness, reproducibilidad. | Todos los claims del cuerpo tienen artifact/test trace. |
+| 4 | Supplement A--F: pruebas, A3--A34, MRM/fairness, reproducibilidad. | Todos los claims del cuerpo tienen artifact/test trace. |
 | 5 | Anonimización, data/code disclosure, reviewer-defense bank. | Sin rutas personales ni alias internos heredados en paquete público. |
 | 6 | Pre-submission audit y versión enviada. | Render limpio, tests documentales pasan y page budget cumple IJDS. |
 

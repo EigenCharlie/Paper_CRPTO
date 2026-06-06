@@ -21,7 +21,7 @@ congelados**. Lo que exige otro protocolo --- online, multi-distribución formal
 validación prospectiva/live, causalidad, fairness legal o re-entrenamiento
 end-to-end --- vive en supplement/tesis aunque sea bibliograficamente muy
 valioso. La réplica externa estática Prosper/Freddie ya queda cubierta por
-A25--A33.
+A25--A34.
 
 La evidencia fila-a-fila de este inventario vive en
 `docs/research/papers_tesis_deep_audit_2026-06-06.md` y en las tres tablas de

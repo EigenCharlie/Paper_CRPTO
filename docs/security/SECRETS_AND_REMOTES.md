@@ -36,9 +36,17 @@ The MLflow tracking URI is:
 https://dagshub.com/EigenCharlie94/Paper_CRPTO.mlflow
 ```
 
-The old old upstream GitHub remote (`EigenCharlie94/Lending-Club-End-to-End`) may still be
+The old upstream GitHub remote (`EigenCharlie94/Lending-Club-End-to-End`) may still be
 mentioned in learning/provenance notes, but it must not appear in active
 runtime config, `.env.example`, DVC config or GitHub Actions secrets.
+
+Some frozen JSON artifacts still contain absolute WSL-era paths such as
+`/mnt/c/Users/...` or `/home/eigenlinux/...`. Treat those values as historical
+execution provenance only. They are not active runtime configuration, they do
+not contain credentials, and they should not be rewritten merely for cosmetics:
+changing them would alter frozen artifact bytes without changing the scientific
+result. Active scripts must construct paths from the repository root, config
+files, or CLI arguments.
 
 ## GitHub Actions secrets
 
