@@ -1,6 +1,6 @@
 # CRPTO Champion Reopen Plan - 2026-05-21
 
-> Ported from the parent research factory
+> Ported from the CRPTO research archive
 > (`paper1_champion_reopen_plan_2026-05-21`). **Documentation only.** Records the
 > governed reopen sequence and non-negotiable gates. The frozen champion is not
 > reopened by porting this plan; superseded in outcome by
@@ -95,7 +95,7 @@ Stop and park the challenger if any of these happen:
   beat the current champion under exact validation.
 - **Append**: keep as stronger challenger appendix if PD/conformal improves but
   portfolio does not replace champion.
-- **Park**: keep for Paper 4 if it teaches a method lesson but does not change
+- **Park**: keep for agenda extendida CRPTO/tesis if it teaches a method lesson but does not change
   CRPTO.
 - **Delete/archive**: discard scratch runs and repeated variants that do not
   change the decision.

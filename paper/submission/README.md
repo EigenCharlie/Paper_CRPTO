@@ -83,7 +83,7 @@ To produce the official submission PDF:
   companion package but not exposed in the double-anonymous body.
 - Title-page, acknowledgements and repository disclosure are kept for the cover
   letter or for post-acceptance policy, not the anonymous manuscript.
-- Local paths, parent-project paths and usernames do not appear in the submitted
+- Local paths, private workspace paths and usernames do not appear in the submitted
   sources.
 
 ## SPO+ Numbering Rule

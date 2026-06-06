@@ -1,6 +1,6 @@
 # paper-crpto Quarto Design Practices - 2026-05-12
 
-This note records the Quarto practices retained from the parent book and adapted
+This note records the Quarto practices retained from the historical book and adapted
 for the independent `Paper_CRPTO` repository.
 
 ## Purpose
@@ -37,7 +37,7 @@ submission PDF.
 
 ## Practices Not Ported
 
-- Streamlit/showcase navigation from the parent project is not part of the
+- Streamlit/showcase navigation from the historical workspace is not part of the
   public CRPTO companion. It remains product/P3 work unless a venue asks for an
   interactive dashboard.
 - Paper 2, causal, survival/IFRS9 and research-lab navigation are not book

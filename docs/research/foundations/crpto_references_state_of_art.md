@@ -1,6 +1,6 @@
 # Crpto References State Of Art
 
-> Documento curado para el dossier CRPTO independiente desde el mapa bibliografico original del proyecto padre.
+> Documento curado para el dossier CRPTO independiente desde el mapa bibliografico original del dossier historico CRPTO.
 
 # Paper References — State of the Art (March 2026)
 

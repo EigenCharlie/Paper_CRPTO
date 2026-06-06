@@ -7,7 +7,7 @@ libro independiente.
 ## Documentos principales
 
 - `crpto_audit_2026-05-04.md`: auditoria de champion, literatura y cambios
-  paper-facing migrados desde el proyecto padre.
+  paper-facing migrados desde el dossier historico CRPTO.
 - `crpto_backlog_2026-05-04.md`: backlog operativo con P0/P1/P2/P3 y el
   journal strengthening pack de regret-auditability, OCE/CVaR, satisficing y
   dependencia.
@@ -31,8 +31,12 @@ libro independiente.
 - `crpto_submission_closure_2026-05-12.md`: cierre operativo del submission
   IJDS; separa el pack incluido de los P2/P3 metodologicos que siguen como
   future work y lista los gates finales.
+- `papers_tesis_deep_audit_2026-06-06.md`: auditoria exhaustiva de los 61 PDFs
+  en `Papers_tesis/`, con matriz fuente, indice de captions y curaduria de
+  visual sinks en `reports/crpto/literature/`; reemplaza la lectura parcial de
+  mayo para claims, appendix, tesis y agenda extendida.
 
-## Material nuevo importado del padre (2026-05-18 -- 2026-05-28)
+## Material historico consolidado (2026-05-18 -- 2026-05-28)
 
 Gobernanza y resultados de busqueda (documentacion historica; el champion sigue
 congelado):
@@ -48,7 +52,7 @@ congelado):
 - `crpto_pyepo_dfl_intake_2026-05-26.md`: PyEPO 1.3.7 desbloquea y cierra el
   comparador DFL/SPO+ aislado; CRPTO conserva solo el rerun pareado como
   apendice de comparacion.
-- `crpto_parent_intake_register_2026-05-29.md`: registro final de CSVs
+- `crpto_source_intake_register_2026-05-29.md`: registro final de CSVs
   importados, exclusiones, señales de búsqueda futura y regla de no reapertura
   del champion.
 - `crpto_mini_book_expansion_audit_2026-05-21.md`: trazabilidad de los controles

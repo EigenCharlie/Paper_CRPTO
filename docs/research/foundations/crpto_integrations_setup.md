@@ -1,7 +1,7 @@
 # CRPTO integrations setup
 
 This note documents integrations for the standalone `Paper_CRPTO` repository.
-It intentionally excludes the parent project's Streamlit, FastAPI, causal,
+It intentionally excludes historical Streamlit, FastAPI, causal,
 survival, IFRS9 and insights-factory lanes.
 
 ## GitHub

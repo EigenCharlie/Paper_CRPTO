@@ -1,6 +1,6 @@
 # CRPTO Conformal Bound Foundations - 2026-05-19
 
-> Ported from the parent research factory (`angelopoulos_conformal_bound_intake_2026-05-19`).
+> Ported from the CRPTO research archive (`angelopoulos_conformal_bound_intake_2026-05-19`).
 > Records how the Angelopoulos / Bates / Barber line updates the CRPTO manuscript
 > without reopening the frozen champion search.
 
@@ -23,7 +23,7 @@ constraint. The Markov bound remains the main distribution-free statement; the
 exact `276k` evidence remains empirical validation of the frozen policy, not a
 stronger post-selection theorem.
 
-## Agenda / Paper 4 lanes
+## Agenda / agenda extendida CRPTO/tesis lanes
 
 The same source pack opens four bounded research lanes (agenda, not main claim):
 

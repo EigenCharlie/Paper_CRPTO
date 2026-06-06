@@ -36,7 +36,7 @@ The MLflow tracking URI is:
 https://dagshub.com/EigenCharlie94/Paper_CRPTO.mlflow
 ```
 
-The old parent project (`EigenCharlie94/Lending-Club-End-to-End`) may still be
+The old old upstream GitHub remote (`EigenCharlie94/Lending-Club-End-to-End`) may still be
 mentioned in learning/provenance notes, but it must not appear in active
 runtime config, `.env.example`, DVC config or GitHub Actions secrets.
 

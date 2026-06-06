@@ -23,6 +23,12 @@ end-to-end --- vive en supplement/tesis aunque sea bibliograficamente muy
 valioso. La réplica externa estática Prosper/Freddie ya queda cubierta por
 A25--A33.
 
+La evidencia fila-a-fila de este inventario vive en
+`docs/research/papers_tesis_deep_audit_2026-06-06.md` y en las tres tablas de
+`reports/crpto/literature/`. Esa auditoría es la fuente operativa para decidir
+si una referencia se promueve al cuerpo IJDS, se usa en appendix, queda para
+tesis o se aparca como future gate.
+
 ## Matriz paper / supplement / tesis
 
 | Familia | Papers locales principales | Entra al cuerpo IJDS | Rol exacto en CRPTO |

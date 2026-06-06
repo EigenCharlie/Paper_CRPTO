@@ -1,6 +1,6 @@
-# CRPTO Parent Intake Register - 2026-05-29
+# CRPTO Source Intake Register - 2026-05-29
 
-Este registro cierra el barrido final del proyecto padre hacia `Paper_CRPTO`.
+Este registro cierra el barrido final del dossier historico CRPTO hacia `Paper_CRPTO`.
 La decisión editorial es mantener CRPTO autocontenido para tesis/IJDS: traer
 evidencia liviana y texto curado, no copiar el laboratorio completo ni reabrir el
 champion.

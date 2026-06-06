@@ -192,7 +192,7 @@ improvisar: si llega una objeción nueva, primero se busca aquí.
 | "¿Usar ML en IRB implica perder auditabilidad?" | No. ML queda como soporte selectivo para imputación, factores, residuos o challengers; el champion no se reabre sin gate reproducible. | Cap. 13 (freeze policy); `crpto_metrics_triage_2026-05-18.md`. |
 | "¿WOE/scorecards son estables bajo monitoreo?" | Se tratan como inputs auditables con caveats: IV no es soberano y WoE puede volverse inestable si se recalcula bajo datos etiquetados por el propio modelo. | `crpto_metrics_triage_2026-05-18.md`. |
 | "¿Los umbrales IV/PSI/correlación prueban calidad del modelo?" | No. Son heurísticas operativas útiles, no evidencia estadística suficiente; los umbrales tipo 0.02/0.1 son sensibles a desbalance y deben gobernarse como incertidumbre estimable. | `crpto_metrics_triage_2026-05-18.md`. |
-| "¿Los árboles sobre residuos contradicen el scorecard auditable?" | No. Quedan como validación de segmentos y búsqueda de factores omitidos; no reemplazan el champion ni la calibración oficial. | Paper 4 como agenda; `crpto_metrics_triage_2026-05-18.md`. |
+| "¿Los árboles sobre residuos contradicen el scorecard auditable?" | No. Quedan como validación de segmentos y búsqueda de factores omitidos; no reemplazan el champion ni la calibración oficial. | Agenda extendida CRPTO/tesis; `crpto_metrics_triage_2026-05-18.md`. |
 
 : Banco gobernado de respuestas a reviewers del CRPTO {#tbl-crpto-reviewer-defense-bank}
 
@@ -239,6 +239,31 @@ tension con `models/final_project_promotion.json`, gana la promoción oficial.
 A12--A33 fortalecen robustez y escritura journal, pero no re-promueven el
 champion: A22 reporta un *tail-constrained challenger* y A25--A33 reportan
 réplica externa, no un nuevo champion.
+
+### Auditoría Papers_tesis 2026-06-06 {#sec-crpto-papers-tesis-deep-audit}
+
+El source pack de tesis queda auditado con una regla evidence-gated: leer mucho,
+promover poco y no cambiar el champion sin un gate capaz de modificar C1--C7.
+La auditoría cubre los 61 PDFs locales de `Papers_tesis/`: 21 en `paper/`, 28
+en `supplement/` y 12 en `tesis/`.
+
+| Artefacto | Uso editorial |
+|---|---|
+| `docs/research/papers_tesis_deep_audit_2026-06-06.md` | Memo paper-by-paper con conceptos, claims, método, conclusiones, figuras/tablas útiles, limitaciones, destino editorial y acción requerida. |
+| `reports/crpto/literature/papers_tesis_source_matrix_2026-06-06.csv` | Matriz fuente para decidir `promote`, `append`, `park` o `future_gate` sin depender de memoria editorial. |
+| `reports/crpto/literature/papers_tesis_figure_caption_index_2026-06-06.csv` | Índice de figuras/tablas detectadas en PDFs para seleccionar visual sinks sin copiar figuras ajenas. |
+| `reports/crpto/literature/papers_tesis_curated_visual_sinks_2026-06-06.csv` | Lista corta de sinks visuales que pueden inspirar figuras propias del paper, supplement o tesis. |
+
+: Artefactos canónicos de la auditoría Papers_tesis 2026-06-06 {#tbl-crpto-papers-tesis-audit-artifacts}
+
+La regla de absorción es conservadora. En el cuerpo CRPTO solo entran fuentes que
+sostienen directamente CP/CRC/LTT, robust optimization, CP -> RO /
+Predict-then-Calibrate, contexto Lending Club y DFL/SPO+ como comparador. Las
+fuentes de Hu CRC, utility-directed CP, group-weighted/localized/source-shift,
+decision-risk certificates, IFRS9 y fairness/equity quedan como related work,
+appendix o future work. Ese material fortalece límites de claim y defensa ante
+reviewers; no reabre la policy promovida ni convierte diagnósticos en método
+oficial.
 
 ### Referencias numeradas locales
 

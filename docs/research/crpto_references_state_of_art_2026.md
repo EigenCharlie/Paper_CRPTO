@@ -1,5 +1,5 @@
 > **RESEARCH NOTE** — Curated state-of-the-art bibliography for CRPTO, ported and
-> de-identified from the parent Lending Club project's reference ledger
+> de-identified from the CRPTO reference ledger
 > (`docs/PAPER_REFERENCES_STATE_OF_ART.md`). This is working material for the
 > IJDS paper and the thesis; it does not replace the live policy or results. The
 > canonical citation database is `book/references.bib`.

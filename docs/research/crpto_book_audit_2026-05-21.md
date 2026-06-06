@@ -1,13 +1,13 @@
 # CRPTO Book QA Audit - 2026-05-21
 
-> Ported and adapted from the parent research factory
-> (`quarto_book_crpto_full_audit_2026-05-21`). The parent audit covered the full
-> 123-chapter archive; this child version keeps the **reusable render-QA checklist
+> Ported and adapted from the CRPTO research archive
+> (`quarto_book_crpto_full_audit_2026-05-21`). The historical audit covered the full
+> 123-chapter archive; this CRPTO version keeps the **reusable render-QA checklist
 > and the alias/anonymization boundary** for the CRPTO book.
 
 ## Three-layer architecture
 
-1. **Intellectual archive** (parent project): full implementation narrative, side
+1. **Intellectual archive** (historical CRPTO archive): full implementation narrative, side
    papers, exploratory lanes, research governance.
 2. **CRPTO book** (this repo, `book/`): focused extraction layer for IJDS, online
    supplement and thesis chapter design.
@@ -43,7 +43,7 @@
   composition, fair-lending proxy, MRM, claim-artifact-test map, data/code
   disclosure.
 - **Thesis chapter**: foundations, WOE/IV governance, metric-governance caveats,
-  full Paper 4 living-lab closure, research stop rules.
+  full agenda extendida CRPTO/tesis living-lab closure, research stop rules.
 - **Out of IJDS body**: GPU, quantum, deep IFRS9 contractual claims, CATE policy
   value, online conformal, MDCP, DLA, OCE/CVaR as a new optimized objective.
 
