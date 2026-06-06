@@ -30,9 +30,9 @@ el cuerpo IJDS, el online supplement y la tesis.
 
 | Superficie | Qué defiende | Evidencia visible |
 |---|---|---|
-| Paper IJDS | El claim estrecho: una PD calibrada congelada puede convertirse en una decisión robusta y auditable mediante conformal prediction. | Teoría mínima, Figura 1, exact funded-set certificate, región robusta `45/45` y frontera regret-auditability. |
-| Online supplement | Que el resultado no es frágil ni cherry-picked. | A3--A24, ablations, stress tests, MRM/fairness, funded-set audit, SPO+, tail risk y diagnósticos multi-distribución/online. |
-| Tesis | El superconjunto académico y operativo del paper. | Fundamentos, arquitectura reproducible, gobernanza, trazabilidad, bibliografía extendida y future work controlado. |
+| Paper IJDS | El claim estrecho: una PD calibrada congelada puede convertirse en una decisión robusta y auditable mediante conformal prediction. | Teoría mínima, Figura 1, exact funded-set certificate, región robusta `45/45`, frontera regret-auditability y réplica externa compacta. |
+| Online supplement | Que el resultado no es frágil ni cherry-picked. | A3--A33, ablations, stress tests, MRM/fairness, funded-set audit, SPO+, tail risk, diagnósticos multi-distribución/online y Prosper/Freddie. |
+| Tesis | El superconjunto académico y operativo del paper. | Fundamentos, arquitectura reproducible, gobernanza, trazabilidad, réplica multidataset, bibliografía extendida y future work controlado. |
 | Reproducibilidad | Que las cifras vienen de artefactos versionados, no de edición manual. | DVC, manifests, tablas/figuras regenerables, tests de sincronía y guardrails de champion congelado. |
 
 : Mapa de superficies del dossier CRPTO.
@@ -77,7 +77,7 @@ Ruta para auditar artefactos, builds, guardrails y evidencia regenerable.
 | El libro puede explicar... | El paper debe afirmar... |
 |---|---|
 | Fundamentos amplios de crédito, conformal prediction, robust optimization, MRM y fairness. | Un patrón post-hoc auditable para llevar intervalos conformales de una PD congelada a un LP robusto de portafolio. |
-| Robustez extendida, stress tests, tail risk, satisficing, SPO+ y diagnósticos online/multi-distribución. | Que esos análisis fortalecen el champion congelado sin reabrir la búsqueda ni vender un protocolo live. |
+| Robustez extendida, stress tests, tail risk, satisficing, SPO+, diagnósticos online/multi-distribución y réplica externa. | Que esos análisis fortalecen el champion congelado sin reabrir la búsqueda ni vender un protocolo live o universal. |
 | Bibliografía de tesis y future work. | Una frontera de novelty estrecha frente a P2P/Lending Club OR, conformal credit scoring, CP+RO, DFL/SPO+ y conformal finance. |
 
 : Regla editorial para mantener separado el dossier amplio del claim IJDS.

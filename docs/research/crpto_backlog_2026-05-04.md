@@ -20,6 +20,13 @@ can be reorganized, rendered and revalidated, but anything that changes the
 champion, the guarantee, the dataset universe, or the search space requires a
 named new run and explicit drift validation.
 
+## Superseded Note - 2026-06-05
+
+The multidataset credit replication item below is no longer backlog for the
+current IJDS package. It is implemented as A25--A33 using curated Prosper and
+Freddie/Mendeley summaries. Future work now refers to prospective/live external
+validation or new datasets beyond those static replications.
+
 ## Journal Strengthening Pack - 2026-05-12
 
 The current paper now includes selected former P2/P3 ideas when they are
@@ -33,7 +40,7 @@ This is not a permission to reopen the champion search.
 | Robust satisficing margins | Included in supplement or short body paragraph | A13 | Threshold/margin evidence, not a new policy objective. |
 | Tail-satisficing challenger audit | Included in supplement | A20 | Re-solves and re-ranks the 45 robust-region policies; journal audit only, no promotion change. |
 | Dependence-aware bound | Included as caveat/proposition | A14 + A21 + conditional tightening note | Markov remains the main distribution-free theorem. |
-| Multi-dataset credit replication | Backlog journal/follow-up | none yet | Requires a new dataset, leakage checks and protocol; not a submission blocker. |
+| Multi-dataset credit replication | Implemented in IJDS supplement | A25--A33 + Fig 22--24 | Static Prosper/Freddie replication; live/prospective validation remains future work. |
 
 ## Consolidated Status Matrix
 
@@ -51,13 +58,13 @@ experiments or theory.
 | P1 | Implemented | Nested/post-selection evidence | post-selection criticism | A3, A9, `crpto_evidence_status.json` | No for current paper | strengthens current paper | only future hardening is a prospective pre-declared split |
 | P1 | Implemented | Decision-aware conformal selector | CROMS-style selector narrative | A5, A10 | No for current paper | strengthens current paper | future work is training score by decision loss |
 | P1 | Implemented | Conditional tightening lemma | theory appendix | `02-marco-teorico`, tightening appendix | No for current paper | strengthens theory with caveat | prove dependence-aware version only for journal extension |
-| P1 | Implemented | Synthetic/period shift evidence | robustness | A4, A6, A7, A8, A11 | No for current paper | strengthens current paper | external dataset remains future work |
+| P1 | Implemented | Synthetic/period shift evidence | robustness | A4, A6, A7, A8, A11 | No for current paper | strengthens current paper | complements the static external replication A25--A33 |
 | P1/J | Implemented | Alpha sweep and alpha-Gamma validation | alpha/robustness narrative | `alpha_sweep_pareto_mondrian.parquet`, `alpha_sweep_pareto_both.parquet`, `alpha_gamma_bound/*`, `04-resultados` | No | strengthens current paper | use as supporting alpha policy evidence, not a new champion search |
 | P1/J | Implemented | Uncertainty-set baselines | CP vs bootstrap/parametric/ellipsoidal evidence | `uncertainty_baselines_comparison.parquet`, `uncertainty_baselines_by_grade.parquet`, `04-resultados` | No | strengthens current paper | use to justify conformal robust set selection |
 | P1/J | Implemented | CQR comparator evidence | conformal alternative | `cqr_comparison_status.json`, `cqr_mondrian_status.json`, `crpto_fig10`, `04-resultados` | No | complements paper | keep as comparator/appendix; do not replace official Mondrian winner |
 | P1/J | Implemented | Manuscript blueprint | paper structure | `06-blueprint-manuscrito.qmd` | No | prepares manuscript | compress into actual paper draft when writing starts |
 | P1/J | Pending | Standalone manuscript extraction | final submission artifact | `06-blueprint-manuscrito`, `14-release`, A1--A21, figures | No | required for submission | write the short paper from the book package; no champion changes |
-| P1/J | Implemented | Journal appendix A12--A24 | appendix evidence | `07-apendice-robustez.qmd` | No | complements paper | use as appendix package, not new champion evidence |
+| P1/J | Implemented | Journal appendix A12--A33 | appendix evidence | `07-apendice-robustez.qmd` | No | complements paper | use as appendix package, not new champion evidence |
 | P1/J | Implemented | Mondrian ablation page | conformal winner defense | `08-ablacion-mondrian.qmd` | No | strengthens method selection | use when reviewer asks why score-decile, not grade |
 | P1/J | Implemented | SPO+ protocol page | DFL comparator | `09-spo-regret.qmd` | No | strengthens comparator narrative | keep A19/Fig. 15 (`49.09%`), PyEPO closeout (`48.51%`) and temporal stability configs separate |
 | P1/J | Implemented | Fair lending checkpoint | governance/funded set | `10-fair-lending.qmd` | No | strengthens auditability | cite as proxy/intersectional audit, not legal protected-attribute proof |
@@ -186,9 +193,9 @@ cleanup" for the current CRPTO.
 ## Current IJDS Submission Scope
 
 The IJDS submission includes the frozen CRPTO champion, the robust-region
-evidence, the A3--A21 supplement, the regret-auditability frontier, and the
-reproducibility package. It excludes method-changing P2/P3 extensions as
-acceptance criteria.
+evidence, the A3--A33 supplement, the regret-auditability frontier, the static
+Prosper/Freddie external replication layer, and the reproducibility package. It
+excludes method-changing P2/P3 extensions as acceptance criteria.
 
 | Lane | Current-paper status | Rule |
 |---|---|---|
@@ -241,7 +248,7 @@ without changing the official champion or reopening the search.
 | Item | Implemented artifact | What it adds | Scope caveat |
 |---|---|---|---|
 | Convert chapter 14 into paper blueprint | `book/chapters/06-blueprint-manuscrito.qmd` | target venue, abstract, claims C1--C7, manuscript outline, final table/figure plan and notation | blueprint, not final manuscript |
-| Appendix A12--A24 | `book/chapters/07-apendice-robustez.qmd` | renders tail risk, satisficing, dependency, stress, bootstrap, LGD/cap, robust-region, regret-auditability, tail-satisficing, cluster-bound, tail-constrained, multi-distribution and online evidence | appendix material unless a journal asks for more body evidence |
+| Appendix A12--A33 | `book/chapters/07-apendice-robustez.qmd` | renders tail risk, satisficing, dependency, stress, bootstrap, LGD/cap, robust-region, regret-auditability, tail-satisficing, cluster-bound, tail-constrained, multi-distribution, online and external-replication evidence | appendix material unless a journal asks for more body evidence |
 | Clean CRPTO figure | `crpto_fig1_journal_pipeline.png` | IJDS Figure 1 | visual explanation only |
 | Alpha -> Gamma_CP -> funded set figure | `crpto_fig13_alpha_gamma_funded_set.png` | connects conformal alpha to portfolio quantities | diagnostic curve from frozen artifacts |
 | Robust region heatmap | `crpto_fig14_robust_region_heatmap.png` | visualizes the `45/45` robust region | summarizes final mini-grid, not a new search |
@@ -324,7 +331,7 @@ as a staging area for paper, journal and thesis:
 
 These pages are intentionally more explanatory than a journal paper. They keep
 the claim ladder, reviewer Q&A, artifact placement map, local numbered
-references `[1]`, `[2]`, ... and the A12--A24 appendix package that can later be
+references `[1]`, `[2]`, ... and the A12--A33 appendix package that can later be
 compressed into the manuscript.
 
 The extraction/release manifest explicitly classifies OCE/CVaR optimization,

@@ -1,0 +1,5 @@
+application,panel_default_rate,auc_roc,price_of_robustness_pct,protocol
+Freddie FM48 (green),0.005819,0.6997,0.010039,frozen_application
+Freddie FM48 (combined),0.014544,0.7839,0.010864,frozen_application
+Freddie FM48 (red),0.029721,0.7001,0.023689,frozen_application
+Prosper final-status,0.309176,0.7074,0.094619,frozen_application

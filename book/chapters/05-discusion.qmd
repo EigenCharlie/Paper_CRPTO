@@ -65,7 +65,7 @@ La versión actual todavía enfrenta límites claros que deben ser reconocidos e
 
 - **Dataset estático**: Lending Club es un dataset cerrado (2007--2020) que no permite evaluar el comportamiento del sistema ante datos verdaderamente nuevos. Los resultados OOT (2018--2020) simulan un escenario prospectivo, pero no equivalen a un despliegue en producción con datos en streaming.
 - **Ausencia de conformal online**: el pipeline actual recalibra los intervalos conformales sobre un set de calibración fijo. En un entorno productivo, sería deseable usar variantes de conformal prediction adaptativa [@gibbs2021aci] que ajusten la cobertura ante distribution shift.
-- **Clase de activo única**: todos los resultados se obtienen sobre préstamos personales no garantizados. La generalización a hipotecas, tarjetas de crédito o creditos corporativos requiere validación específica, ya que las distribuciones de PD y LGD difieren sustancialmente.
+- **Champion de activo único, con réplica externa estática**: el certificado exacto promovido sigue anclado a Lending Club y no debe leerse como una garantía universal. La réplica en Prosper y Freddie/Mendeley reduce la crítica de "un solo dataset", pero sigue siendo evidencia histórica estática; tarjetas de crédito, crédito corporativo o despliegues live requerirían protocolos específicos.
 - **Holgura de la cota teórica**: el `thm-conformal-feasibility` establece la correspondencia formal entre $\alpha$ y la garantía de factibilidad del portafolio, pero la cota es Markov-tight (la mejor posible sin supuestos distribucionales adicionales). El cierre bound-aware la vuelve mucho más útil empíricamente, pero no elimina su conservadurismo teórico. El `lem-conditional-tightening` agrega el tightening Hoeffding/Bernstein bajo independencia condicional; aún así, debe leerse como resultado **condicional** y no como reemplazo del teorema principal.
 - **Selección conformal aún no entrenada decision-aware**: la variante conformal promovida se eligió por cobertura, ancho, cobertura mínima de grupo y Winkler, y la política bound-aware se seleccionó después sobre la frontera robusta. La auditoría CRPTO ya agrega un selector tipo CROMS sobre finalists existentes (tabla A5) y evaluación exacta para ranks 1--3 (tabla A10), pero una extensión más ambiciosa sigue siendo entrenar o calibrar el score conformal usando directamente riesgo decisional, retorno robusto, `V`, `gamma_cp` y violación.
 - **Fairness proxy, no atributos protegidos directos**: el checkpoint de fair lending ya evalúa 3 atributos base y 3 cruces interseccionales proxy sobre el funded set, todos PASS con `outcome_mode=approval` y `threshold=0.35` (véase @sec-p1-fair-lending). La limitación real no es ausencia de intersección, sino ausencia de atributos protegidos directos en Lending Club abierto (raza, género, edad) y ausencia de monitoreo fairness temporal prospectivo. Una extensión relevante sería repetir la auditoría con atributos protegidos observados en una fuente autorizada, o con monitoreo online de disparidad por periodo.
@@ -75,7 +75,7 @@ La versión actual todavía enfrenta límites claros que deben ser reconocidos e
 
 - la cota del `thm-conformal-feasibility` es conservadora (Markov); cotas más ajustadas requieren supuestos de independencia que split conformal no garantiza estrictamente;
 - el resultado económico depende de una policy y un run concretos, aunque el `276k` final, la confirmacion temporal estricta de la tabla A9 y la región robusta completa reducen ese riesgo;
-- el análisis de estabilidad bajo distributional shift (@sec-crpto-shift-stability), los stress tests sintéticos de la tabla A6 y el stress endurecido por flips de labels de la tabla A11 confirman que la cobertura conformal se mantiene en los cortes evaluados. Una validación más robusta requeriría múltiples datasets independientes o un split prospectivo declarado antes de cualquier búsqueda.
+- el análisis de estabilidad bajo distributional shift (@sec-crpto-shift-stability), los stress tests sintéticos de la tabla A6, el stress endurecido por flips de labels de la tabla A11 y las réplicas Prosper/Freddie de A25--A33 confirman que la cobertura conformal se mantiene en cortes y datasets relevantes. Una validación más fuerte requeriría un split prospectivo declarado antes de cualquier búsqueda o datos live posteriores al diseño del protocolo.
 
 ### Trabajo futuro {#sec-crpto-future}
 
@@ -83,10 +83,10 @@ El paquete journal del proyecto ya no es una hoja de ruta de pendientes: las pri
 
 - **P0 --- sincronización.** El economic champion y el bound exacto coinciden entre `models/final_project_promotion.json`, DVC y las tablas paper-facing (guardrail `tests/test_crpto_final_sync.py`).
 - **P1 --- robustez post-selección.** Progresión 5K--25K--276K y holdout temporal estricto (A3, A9), selector tipo CROMS con eval exacta de ranks 1--3 (A5, A10), tightening condicional Hoeffding/Bernstein (`lem-conditional-tightening` y apéndice de dependencia), y sensibilidad periodo-segmento, composición del funded set y stress sintético (A4, A6--A8, A11).
-- **P1/J --- paquete journal.** Tail risk, satisficing, dependencia, stress temporal, bootstrap, LGD/caps, región robusta por familia, regret-auditability, re-opt de cola, multi-distribución y online ACI (A12--A24), trazados en `models/crpto_journal_package_status.json` y status complementarios.
-- **P2 --- extensiones decision-aware y robustas, ya materializadas sin reabrir el champion.** Re-optimización con restricción de cola CVaR/OCE como constraint activo de selección (A22, @sec-p1-journal-appendix), robustez multi-distribución por grade y celda grade $\times$ vintage (A23, en el espíritu de [@yang2026multidistribution; @bhattacharyya2026groupweighted]), y diagnóstico de estabilidad conformal online tipo ACI sobre la secuencia de vintages (A24, [@gibbs2021aci; @angelopoulos2025gradient; @liu2026portfolio]).
+- **P1/J --- paquete journal.** Tail risk, satisficing, dependencia, stress temporal, bootstrap, LGD/caps, región robusta por familia, regret-auditability, re-opt de cola, multi-distribución, online ACI y réplica externa (A12--A33), trazados en `models/crpto_journal_package_status.json`, `models/crpto_distribution_robustness_status.json` y `models/crpto_multidataset_external_status.json`.
+- **P2 --- extensiones decision-aware y robustas, ya materializadas sin reabrir el champion.** Re-optimización con restricción de cola CVaR/OCE como constraint activo de selección (A22, @sec-p1-journal-appendix), robustez multi-distribución por grade y celda grade $\times$ vintage (A23, en el espíritu de [@yang2026multidistribution; @bhattacharyya2026groupweighted]), diagnóstico de estabilidad conformal online tipo ACI sobre la secuencia de vintages (A24, [@gibbs2021aci; @angelopoulos2025gradient; @liu2026portfolio]) y réplica económica externa en Prosper/Freddie (A25--A33).
 
-Lo que queda fuera de esta versión es deliberadamente *otro paper*, no un pendiente de éste: entrenar la selección conformal end-to-end por decisión loss [@yeh2025training; @yeh2026], validar sobre un dataset externo comparable, y desplegar la política en un ciclo de originación genuinamente secuencial [@powell2026sdam] con recalibración online real [@capitaine2026online]. Los tres requieren datos o un protocolo que este proyecto, por diseño (dataset estático cerrado en 2020, single-author, sin producción), no puede cerrar aquí; ninguno reabre el champion congelado.
+Lo que queda fuera de esta versión es deliberadamente *otro paper*, no un pendiente de éste: entrenar la selección conformal end-to-end por decisión loss [@yeh2025training; @yeh2026], ampliar a validación prospectiva/live con protocolo sellado, y desplegar la política en un ciclo de originación genuinamente secuencial [@powell2026sdam] con recalibración online real [@capitaine2026online]. Esos frentes requieren datos o un protocolo que este proyecto, por diseño (paneles históricos, single-author, sin producción), no puede cerrar aquí; ninguno reabre el champion congelado.
 
 ### Reproducibility appendix
 
@@ -118,7 +118,23 @@ La reproducibilidad del paper está mejor resuelta que su cierre teórico. El ca
 - `reports/crpto/tables/crpto_tableA16_bootstrap_funded_set_metrics.csv`
 - `reports/crpto/tables/crpto_tableA17_budget_cap_lgd_sensitivity.csv`
 - `reports/crpto/tables/crpto_tableA18_robust_region_policy_family.csv`
+- `reports/crpto/tables/crpto_tableA19_regret_auditability_frontier.csv`
+- `reports/crpto/tables/crpto_tableA20_tail_satisficing_challenger_audit.csv`
+- `reports/crpto/tables/crpto_tableA21_cluster_bound_tightening.csv`
+- `reports/crpto/tables/crpto_tableA22_tail_constrained_reoptimization.csv`
+- `reports/crpto/tables/crpto_tableA23_multidistribution_robustness.csv`
+- `reports/crpto/tables/crpto_tableA24_online_conformal_stability.csv`
+- `reports/crpto/tables/crpto_tableA25_external_replication_gate.csv`
+- `reports/crpto/tables/crpto_tableA26_external_candidate_sensitivity.csv`
+- `reports/crpto/tables/crpto_tableA27_freddie_horizon_sensitivity.csv`
+- `reports/crpto/tables/crpto_tableA28_external_lp_exhaustiveness.csv`
+- `reports/crpto/tables/crpto_tableA29_freddie_mondrian_sparse_group_audit.csv`
+- `reports/crpto/tables/crpto_tableA30_external_metric_intervals.csv`
+- `reports/crpto/tables/crpto_tableA31_external_subperiod_metrics.csv`
+- `reports/crpto/tables/crpto_tableA32_prosper_default_definition_sensitivity.csv`
+- `reports/crpto/tables/crpto_tableA33_freddie_segment_sensitivity.csv`
 - `models/crpto_journal_package_status.json`
+- `models/crpto_multidataset_external_status.json`
 - `docs/research/crpto_journal_package_2026-05-04.md`
 - `docs/research/crpto_conditional_tightening_appendix_2026-05-04.md`
 
@@ -137,8 +153,9 @@ La tabla siguiente convierte esa trazabilidad en una regla de defensa editorial:
 | P1 post-selección 5K--25K--276K y holdout temporal estricto | `crpto_tableA3_nested_holdout.csv`, `crpto_tableA9_strict_temporal_holdout.csv`, `crpto_evidence_status.json` | `test_crpto_p1_evidence_artifacts_exist` |
 | P1 selector CROMS-style + exact finalists | `crpto_tableA5_decision_aware_selector.csv`, `crpto_tableA10_conformal_finalist_exact_bound_eval.csv` | `test_crpto_p1_evidence_artifacts_exist` |
 | P1 segment/funded-set/shift sensitivity | `crpto_tableA4_segment_period_sensitivity.csv`, `crpto_tableA7_funded_set_loans.csv`, `crpto_tableA8_funded_set_composition.csv`, `crpto_tableA6_synthetic_shift.csv`, `crpto_tableA11_enhanced_synthetic_shift.csv` | `test_crpto_p1_evidence_artifacts_exist` |
-| Journal package A12--A24 | `crpto_tableA12_tail_risk_oce_cvar.csv`--`crpto_tableA24_online_conformal_stability.csv`, `crpto_fig1`, `crpto_fig12`--`crpto_fig20` | `test_crpto_final_sync`, `test_build_crpto_journal_package_script_runs` y auditorías P2 complementarias |
+| Journal package A12--A33 | `crpto_tableA12_tail_risk_oce_cvar.csv`--`crpto_tableA33_freddie_segment_sensitivity.csv`, `crpto_fig1`, `crpto_fig12`--`crpto_fig24` | `test_crpto_final_sync`, `test_build_crpto_journal_package_script_runs`, `scripts/build_multidataset_external_replication.py` y auditorías P2 complementarias |
 | P2 re-optimización de cola y robustez multi-distribución/online (A22--A24) | `crpto_tableA22_tail_constrained_reoptimization.csv`, `crpto_tableA23_multidistribution_robustness.csv`, `crpto_tableA24_online_conformal_stability.csv`, `crpto_tail_constrained_reopt_status.json`, `crpto_distribution_robustness_status.json` | `test_crpto_tables_and_figures_exist` |
+| Réplica económica externa (A25--A33) | `crpto_tableA25_external_replication_gate.csv`--`crpto_tableA33_freddie_segment_sensitivity.csv`, `crpto_fig22_external_replication`--`crpto_fig24_freddie_all_candidate_certificate` | `scripts/build_multidataset_external_replication.py` y `models/crpto_multidataset_external_status.json` |
 | PD operativo AUC/Brier/ECE | `data/processed/pipeline_summary.json`, `reports/dvc/metrics_summary.json` | Comparación solo dentro de familia PD |
 | Ownership DVC/Git correcto | `dvc.yaml`, `dvc.lock`, punteros `.dvc` | `test_dvc_outputs_are_not_tracked_directly_by_git` |
 
@@ -151,7 +168,7 @@ La mejor continuacion no es expandir alcance indiscriminadamente, sino endurecer
 1. defender el paper actual como **CRPTO post-hoc auditable** con el champion económico ya congelado;
 2. si el venue lo exige, elevar el holdout temporal estricto actual a un protocolo prospectivo declarado antes de la búsqueda;
 3. presentar el `lem-conditional-tightening` como apéndice teórico condicional, manteniendo Markov como claim principal;
-4. replicar el análisis de estabilidad (@sec-crpto-shift-stability) sobre datasets independientes cuando exista una fuente externa comparable;
+4. ampliar la réplica externa estática de A25--A33 hacia un protocolo prospectivo sellado cuando exista una fuente nueva o live;
 5. construir una segunda contribución, no mezclada con el paper actual, donde CROMS / OCE-CVaR / online conformal conviertan la selección conformal en una capa plenamente decision-aware entrenada desde el inicio.
 
 ### Conclusión general {#sec-crpto-conclusion}

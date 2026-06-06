@@ -25,9 +25,10 @@ execute:
 ## Scope
 
 This online supplement supports the IJDS submission body. It collects proof
-details, robustness tables A3--A24, reproducibility commands, model-risk
-material, fairness diagnostics, and artifact lineage. It does not introduce a
-new champion, new dataset, new search space, or new claim family.
+details, robustness and external-replication tables A3--A33, reproducibility
+commands, model-risk material, fairness diagnostics, and artifact lineage. It
+does not introduce a new Lending Club champion, protected search rerun, hidden
+selection criterion, or new claim family.
 :::
 
 ::: {.callout-important}
@@ -36,10 +37,12 @@ new champion, new dataset, new search space, or new claim family.
 Selected former P2/P3 ideas are included here when they can be evaluated from
 frozen artifacts: OCE/CVaR as a tail-risk diagnostic, robust satisficing as
 committee-style margins, regret-auditability as the SPO+/CRPTO comparator, and
-dependence-aware theory as a caveat/proposition. Optimized OCE/CVaR objectives,
-multi-distribution or online conformal prediction, online DFL, causal CRPTO,
-multi-period portfolios, production monitoring, package extraction, and
-multi-dataset credit replication remain future work only.
+dependence-aware theory as a caveat/proposition. The multidataset layer is now
+included as a frozen external economic replication on Prosper and Freddie/Mendeley:
+it tests transfer of the CRPTO recipe without reopening the Lending Club
+champion. Optimized OCE/CVaR objectives, full multi-distribution or online
+conformal prediction, online DFL, causal CRPTO, multi-period portfolios,
+production monitoring, and package extraction remain future work only.
 :::
 
 # Appendix A: Theoretical Details
@@ -157,14 +160,16 @@ future journal hardening.
 
 # Appendix C: Journal Robustness Package
 
-Tables A12--A24 answer likely reviewer questions that are too detailed for the
+Tables A12--A33 answer likely reviewer questions that are too detailed for the
 25-page body. They are diagnostic by design, except A19 also supports the body
-framing around regret-auditability. A20--A24 are journal-only add-ons: A20
-audits a tail-satisficing challenger; A21 makes the dependence-aware caveat
-numerical; A22 turns the tail-risk diagnostic into an *active CVaR/OCE selection
-constraint* (a labeled challenger, not a new champion); and A23--A24 stress
-multi-distribution coverage and online (ACI) stability on the frozen conformal
-intervals. Table A12 follows the standard definitions of Conditional
+framing around regret-auditability and A25--A33 support the external-replication
+defense. A20--A33 are journal-only add-ons: A20 audits a tail-satisficing
+challenger; A21 makes the dependence-aware caveat numerical; A22 turns the
+tail-risk diagnostic into an *active CVaR/OCE selection constraint* (a labeled
+challenger, not a new champion); A23--A24 stress multi-distribution coverage and
+online (ACI) stability on the frozen conformal intervals; and A25--A33 test and
+audit the same frozen recipe on external economic datasets. Table A12 follows the standard
+definitions of Conditional
 Value-at-Risk [@rockafellar2000cvar] and the Optimized Certainty Equivalent
 [@bental2007oce], and the non-monotonic risk-control framing behind A22 follows
 [@angelopoulos2026nonmonotonic]; all are reported as post-hoc summaries of the
@@ -185,12 +190,128 @@ frozen funded set or intervals, never as a re-promoted champion.
 | A22 tail-constrained re-optimization | Re-solves the 45 robust-region policies and selects the max-return policy under a decision-time (pd_high-based) CVaR cap, tracing the return-vs-CVaR frontier. | CVaR/OCE as an active selection constraint; reports a tail-constrained challenger, not a new champion. |
 | A23 multi-distribution robustness | Worst-case 90% coverage by grade and grade x vintage cell on the frozen intervals. | Read-only diagnostic; the worst fine cell motivates MDCP/group-weighted as future work. |
 | A24 online conformal stability | Per-vintage and cumulative coverage plus the Gibbs-Candes ACI target trajectory over the OOT vintage sequence. | Static-OOT online-control diagnostic, not a streaming validation. |
+| A25 external replication gate | Applies the frozen CRPTO scoring/conformal/LP recipe to Prosper final-status loans and Freddie/Mendeley FM48. | External economic replication; not a Lending Club champion rerun and not a new exact theorem. |
+| A26 external candidate sensitivity | Checks whether the robust LP objective is stable as the OOT candidate pool grows. | Candidate-pool audit; confirms the reported objectives are not a tiny shortlist artifact. |
+| A27 Freddie horizon sensitivity | Audits Freddie/Mendeley default windows and red/green groups before selecting FM48 for the external table. | Dataset-selection audit; FM48 is promoted because it clears both coverage gates and keeps positive robust LP value. |
+| A28 external LP exhaustiveness | Solves Prosper all-candidate LP and Freddie caps `500k`, `1M`, and `all`. | Exhaustiveness certificate; the Freddie all-candidate optimum matches the screened optimum. |
+| A29 Freddie sparse Mondrian audit | Splits Freddie coverage by all groups, eligible groups, and sparse fallback groups. | Documents sparse cells; does not claim perfect conditional coverage in every tiny group. |
+| A30 external metric intervals | Adds uncertainty intervals for AUC, coverage, alpha coverage, and robust objective. | Bootstrap for funded-loan contribution only; it does not resample solver inputs. |
+| A31 external OOT subperiod metrics | Breaks Prosper by OOT year and Freddie by OOT quarter. | Subperiod audit; Freddie 2015Q4 alpha coverage is just below 99%. |
+| A32 Prosper default-definition sensitivity | Repeats Prosper under main, defaulted-only, and chargedoff-only labels. | Default semantics audit; all three variants pass the global gates. |
+| A33 Freddie segment sensitivity | Repeats Freddie FM48 for red, green, and combined groups. | Segment audit; green and combined pass alpha01, red remains a documented caveat. |
+| A34 cross-dataset price of robustness | Orders the frozen external applications (Freddie green/combined/red and Prosper) by panel default rate and reports the signed price of robustness. | Positive premium under blind application that grows with panel default risk; the favorable Lending Club value is the selected-champion contrast. |
+
+## External Multi-Dataset Replication
+
+The external layer addresses the most natural single-dataset criticism without
+changing the official Lending Club champion. Prosper final-status loans provide a
+second P2P-style consumer-credit panel with direct investment fields
+[@prosperLoanData]. Freddie/Mendeley FM48 provides a mortgage-credit panel built
+from Freddie Mac loan-level performance data with train/OOS/OOT splits and
+multiple default windows [@freddieMacSfLoanLevel; @mushava2023classimbalance].
+Home Credit was audited as a scoring/conformal source [@homeCreditDefaultRisk]
+but is not promoted because it lacks a clean `exposure + return` investment
+contract comparable to Lending Club, Prosper, or Freddie.
+
+| Dataset | Rows | Default rate | AUC | Coverage 90% | alpha = 0.01 coverage | OOT candidates | Robust LP objective |
+|---|---:|---:|---:|---:|---:|---:|---:|
+| Prosper final-status | `54,807` | `30.92%` | `0.7074` | `0.9205` | `0.9943` | `10,531` | `$199,419` |
+| Freddie/Mendeley FM48 | `3,173,355` | `1.45%` | `0.7839` | `0.9745` | `0.9907` | `1,396,053` | `$1,291,228` |
+
+: A25. External replication gate on the two promoted economic datasets. The
+source CSV is `reports/crpto/tables/crpto_tableA25_external_replication_gate.csv`.
+
+![A25 external replication gate: Prosper and Freddie/Mendeley both clear the
+global conformal and alpha = 0.01 coverage checks, with positive robust LP
+objectives.](../reports/crpto/figures/crpto_fig22_external_replication.png){#fig-supp-external-replication width="88%" fig-alt="Bar chart comparing Prosper final-status and Freddie FM48 on coverage 90 percent, alpha 0.01 coverage, AUC and robust LP objective."}
+
+Table A26 checks whether the reported external robust objectives depend on an
+artificially tiny candidate pool. Prosper reaches the same robust LP objective
+using all `10,531` OOT candidates. Freddie remains stable at `$1,291,228` from
+the top-`50,000` through top-`250,000` candidate pools, while random pools improve
+monotonically with larger caps and stay below the top-return screen. A28 then
+removes the remaining shortlist concern by solving Freddie on `500,000`,
+`1,000,000`, and all `1,396,053` OOT candidates; the robust and nonrobust
+objectives are identical across those three solves.
+
+![A26 external candidate-pool sensitivity: robust LP value stabilizes for the
+reported Prosper and Freddie promoted runs, and Freddie random pools improve
+with candidate cap without overtaking the top-return screen.](../reports/crpto/figures/crpto_fig23_external_candidate_sensitivity.png){#fig-supp-external-candidate-sensitivity width="88%" fig-alt="Line chart of robust LP objective by candidate cap and sampling mode for Prosper and Freddie external replications."}
+
+![A28 Freddie all-candidate certificate: the full `1,396,053`-candidate LP gives the same objective as the large top screens, and the all-candidate optimum funds only loans with rank at most `551`.](../reports/crpto/figures/crpto_fig24_freddie_all_candidate_certificate.png){#fig-supp-freddie-all-candidate width="88%" fig-alt="Two-panel Freddie FM48 certificate showing unchanged robust and nonrobust objectives across 500k, 1M, and all candidates, plus a log-scale comparison of all OOT candidates and worst funded rank."}
+
+| Dataset | Candidate cap | Candidates solved | Robust LP objective | Nonrobust LP objective | Funded loans | Worst funded rank |
+|---|---:|---:|---:|---:|---:|---:|
+| Prosper | all | `10,531` | `$199,419` | `$220,260` | `234` | `508` |
+| Freddie FM48 | `500,000` | `500,000` | `$1,291,228` | `$1,305,409` | `143` | `551` |
+| Freddie FM48 | `1,000,000` | `1,000,000` | `$1,291,228` | `$1,305,409` | `143` | `551` |
+| Freddie FM48 | all | `1,396,053` | `$1,291,228` | `$1,305,409` | `143` | `551` |
+
+: A28. External LP exhaustiveness. The Freddie all-candidate run funds zero
+loans outside the top-250,000 screen and therefore converts the former cap
+caveat into an auditable dominance certificate.
+
+Table A27 documents why Freddie/Mendeley FM48 is the reported mortgage
+replication. FM24 and FM36 are informative but miss one of the promoted gates;
+FM60 keeps high 90% coverage but falls short at alpha = 0.01. FM48 is the only
+Freddie horizon that clears the two conformal gates while preserving positive
+economic robust value. This is a dataset-level selection audit, not a new search
+over the Lending Club champion.
+
+A29--A33 record the extended multidataset audit layer. The most important caveat
+is Freddie's sparse Mondrian behavior: across all `29` Freddie groups, tiny
+groups with only `43` OOT rows drive a minimum reported coverage of `0.5`.
+After requiring at least `500` calibration+test rows per group, `25` eligible
+groups cover `1,396,010` OOT rows and the minimum 90% coverage rises to
+`0.8854`; this is close to, but still below, the nominal 90% threshold. The
+paper therefore claims global external coverage and reports group diagnostics,
+not perfect conditional validity in every sparse mortgage cell.
+
+| Audit | Main finding | Caveat |
+|---|---|---|
+| A29 sparse groups | Eligible Freddie groups cover `1,396,010 / 1,396,053` OOT rows; sparse groups contain only `43` OOT rows. | Minimum eligible 90% coverage is `0.8854`, so this remains diagnostic. |
+| A30 intervals | Prosper AUC `0.7073` CI `[0.6956, 0.7190]`; Freddie AUC `0.7839` CI `[0.7799, 0.7878]`. | Robust-objective interval bootstraps funded-loan contributions only. |
+| A31 subperiods | Prosper 2012 and 2013 both pass alpha coverage; Freddie quarters keep 90% coverage above target. | Freddie 2015Q4 alpha01 coverage is `0.9896`, just below 99%. |
+| A32 Prosper defaults | Main, defaulted-only, and chargedoff-only definitions all pass 90% and alpha01 gates with positive all-candidate robust LP. | Default semantics change default rate and robust objective, so the main status definition remains declared. |
+| A33 Freddie segments | Combined FM48 and green pass alpha01; all segment LPs are solved on all candidates with positive robust value. | Red passes 90% coverage but alpha01 is `0.9850`, so it is sensitivity evidence, not a promoted standalone claim. |
+
+## Cross-Dataset Price of Robustness
+
+A34 turns the external layer into a positive economic finding rather than a
+defensive gate. Using the same signed convention as the Lending Club champion
+field, $(\text{nonrobust}-\text{robust})/\text{nonrobust}$, the price of
+robustness is a *positive* premium on every frozen external application and it
+increases monotonically with the panel default rate.
+
+| Frozen application | Panel default rate | AUC | Price of robustness |
+|---|---:|---:|---:|
+| Freddie FM48 (green) | `0.58%` | `0.700` | `+1.00%` |
+| Freddie FM48 (combined) | `1.45%` | `0.784` | `+1.09%` |
+| Freddie FM48 (red) | `2.97%` | `0.700` | `+2.37%` |
+| Prosper final-status | `30.92%` | `0.707` | `+9.46%` |
+
+: A34. Price of robustness by frozen application, ordered by panel default rate.
+The source CSV is
+`reports/crpto/tables/crpto_tableA34_price_of_robustness_cross_dataset.csv`.
+
+Two readings matter. First, the premium tracks irreducible default risk, not
+discrimination: the `green` and `red` Freddie segments have nearly identical AUC
+but different premiums, while their default rates differ by roughly a factor of
+five. Higher default risk widens the conformal intervals, so the robust worst
+case discounts more economic return. Second, the *selected* Lending Club champion
+has a favorable signed price (`-10.56%`): bound-aware search located a robust
+funded set that also wins expected return. Reporting both--a bounded positive
+premium under blind application and a favorable value under selection--is more
+defensible than claiming robustness is uniformly free or uniformly costly. The
+headline is that robustness is never economically catastrophic in these panels:
+the coverage guarantee costs at most a low-double-digit premium, and CRPTO
+measures which regime a given panel is in.
 
 ## Reviewer Claim Checks
 
-Table A25 links the paper's main claims to the evidence surface and guardrails a
-reviewer can inspect. The point is not to add another result, but to make the
-audit path explicit.
+The table below links the paper's main claims to the evidence surface and
+guardrails a reviewer can inspect. The point is not to add another result, but
+to make the audit path explicit.
 
 | Claim | Evidence | Artifact | Test or guardrail |
 |---|---|---|---|
@@ -198,7 +319,7 @@ audit path explicit.
 | The conformal layer gives conservative OOT uncertainty on the PD scale. | 90% and 95% coverage, minimum group coverage, and grade/decile audits. | `data/processed/conformal_intervals_mondrian.parquet`. | Conformal validation status and smoke tests that check final metric synchronization. |
 | The promoted funded set passes the exact alpha-safe bound. | `V(alpha = 0.01) = 0.03645`, `Gamma_CP = 0.18591`, zero violation. | `models/final_project_promotion.json`, bound-evaluation parquet, Table A13. | Frozen exact-evaluation artifact and final-sync regression tests. |
 | The result is not an isolated lucky policy. | `45/45` policies pass in the final robust region. | Table A18 and robust-region heatmap. | Protected search/evaluation split; no rerun of the champion search in paper builds. |
-| The supplement strengthens interpretation without moving the champion. | A20--A24 challenger, dependence, tail-risk, multi-distribution, and online diagnostics. | Journal robustness tables and Figures 15--19. | Scope caveats in each table; challenger outputs are labeled as non-promoted diagnostics. |
+| The supplement strengthens interpretation without moving the champion. | A20--A33 challenger, dependence, tail-risk, multi-distribution, online, and external-replication diagnostics. | Journal robustness tables and Figures 15--24. | Scope caveats in each table; challenger and external outputs are labeled as non-promoted diagnostics. |
 | The manuscript is reproducible at the artifact level. | Tables, figures, Quarto pages, and status JSONs regenerate from frozen inputs. | Repository code, DVC metadata, rendered book/paper outputs. | Pre-push smoke/lint hooks, DVC status checks, and manifest validation before release. |
 
 ## Funded-Set Audit Card
@@ -220,37 +341,42 @@ The concentration pattern is useful for interpretation: most exposure sits in
 C/D loans, D contributes the largest share of the exact `V(alpha = 0.01)`, and
 the high-risk E-G tail is visible but not the hidden driver of the certificate.
 
-## Why A21--A24 Do Not Strengthen the Main Claim
+## Why A21--A33 Do Not Strengthen the Main Claim
 
-A21--A24 are designed to make the paper harder to over-read. A21 shows that a
+A21--A33 are designed to make the paper harder to over-read. A21 shows that a
 cluster-aware tightening is transparent but not sharper than Markov under the
 observed exposure concentration. A23 shows where weighted, group-weighted, or
 multi-distribution conformal methods would matter if CRPTO were recalibrated
 under a new protocol. A24 shows that an online controller would have little to
 correct on the frozen OOT vintages, but it is still a replay, not evidence from
-a live stream. Together, these artifacts protect the IJDS claim: the submitted
-result is an auditable post-hoc conformal robust credit-portfolio decision with
-an exact frozen funded-set certificate, not a universal conditional-coverage or
+a live stream. A25--A33 show that the same recipe clears useful gates on Prosper
+and Freddie/Mendeley, that Freddie's full candidate universe has been solved,
+and that subperiod/definition/segment sensitivities are documented. They still
+do not create a new exact funded-set theorem for every external portfolio.
+Together, these artifacts protect the IJDS claim: the submitted result is an
+auditable post-hoc conformal robust credit-portfolio decision with an exact
+frozen Lending Club funded-set certificate and external economic replication
+evidence, not a universal conditional-coverage, cross-dataset, or
 online-deployment guarantee.
 
 ## Decision-Certificate Landscape
 
 The main manuscript positions CRPTO as an auditable post-hoc bridge, not as the
-only possible conformal decision framework. Table A26 clarifies the certificate
-landscape that motivated the journal package.
+only possible conformal decision framework. The table below clarifies the
+certificate landscape that motivated the journal package.
 
 | Family | Certificate object | What CRPTO uses now | Future-work boundary |
 |---|---|---|---|
 | Split/Mondrian CP | Marginal or partitioned coverage of PD-scale intervals [@vovk2005; @bostrom2021; @gibbs2024]. | Upper conformal endpoint becomes the robust PD input. | Stronger conditional guarantees require new assumptions or diagnostics. |
 | Data-driven robust optimization | Feasibility against an uncertainty set [@bertsimas2004; @bertsimas2018datadriven]. | Budgeted robust portfolio with exact funded-set check. | New robust objectives or uncertainty sets would be new research lanes. |
 | Conformal robustness control | Robustness probability or loss control in downstream decisions [@johnstone2021; @hu2026crc]. | Used as positioning language and audit inspiration. | Not re-promoted as a new CRPTO selector. |
-| CROM/CREME/CREDO | Model or decision certificates for robust optimization [@bao2025croms; @zhou2025credo; @zhou2026creme]. | Used to motivate A20--A24 challenger diagnostics. | Could become a CRPTO v2 certificate, but only with a new protocol. |
+| CROM/CREME/CREDO | Model or decision certificates for robust optimization [@bao2025croms; @zhou2025credo; @zhou2026creme]. | Used to motivate A20--A33 challenger and replication diagnostics. | Could become a CRPTO v2 certificate, but only with a new protocol. |
 | Decision-focused learning | Regret-aware training through the optimization loss [@elmachtoub2022; @schutte2024robust]. | SPO+ is a comparator in A19. | End-to-end retraining would change the frozen predictive artifact. |
 
 ## Coverage-Validity Ladder
 
-Table A27 records the validity ladder used to interpret A23--A24. The purpose is
-to keep the strongest claims aligned with the available evidence.
+The table below records the validity ladder used to interpret A23--A33. The
+purpose is to keep the strongest claims aligned with the available evidence.
 
 | Level | Claim form | Supporting CRPTO evidence | Boundary |
 |---|---|---|---|
@@ -259,10 +385,11 @@ to keep the strongest claims aligned with the available evidence.
 | Weighted / localized coverage | Coverage under known weights or local neighborhoods [@barber2023beyond; @guan2023localized; @jonkers2024wcps]. | A23 reports where reweighting/group focus would matter. | Not fitted as a new interval method. |
 | Multi-distribution validity | Coverage across multiple source distributions [@liu2024multisource; @yang2026multidistribution; @bhattacharyya2026groupweighted]. | A23 worst-cell table is a read-only stress test. | Full MDCP would need a new calibration protocol. |
 | Online validity | Sequential alpha adaptation [@gibbs2021aci; @liu2026portfolio]. | A24 replays OOT vintages as a static online diagnostic. | Not evidence from a live stream. |
+| External economic replication | Frozen recipe transfer to different credit products. | A25--A33 report Prosper and Freddie/Mendeley scoring, conformal, LP, exhaustiveness, and sensitivity gates. | Replication evidence, not a new universal guarantee. |
 
 ## Lending-Club And P2P Predecessors
 
-Table A28 anchors the empirical domain lineage. These papers narrow the novelty
+The table below anchors the empirical domain lineage. These papers narrow the novelty
 claim: CRPTO is not the first Lending Club model, not the first P2P portfolio
 optimizer, and not the first conformal credit-scoring application. Its claim is
 the audited coupling of conformal PD uncertainty with a robust credit-portfolio
@@ -292,11 +419,14 @@ decision.
 
 ![A24 online conformal stability: per-vintage and cumulative coverage stay above the 90% target across the eleven OOT vintages while the Gibbs-Candes ACI target alpha_t barely drifts, indicating an online controller would have little to correct on this static OOT.](../reports/crpto/figures/crpto_fig19_online_coverage_aci.png){#fig-supp-online-aci width="88%" fig-alt="Per-vintage and cumulative coverage lines above a 90% target line across eleven OOT quarters, with the ACI target alpha_t on a secondary axis rising slightly from 0.10 to 0.12."}
 
-A19--A24 should be read as literature-aligned stress evidence. A19 places CRPTO
+A19--A33 should be read as literature-aligned stress evidence. A19 places CRPTO
 against the regret-driven training tradition; A20--A22 translate tail risk and
 satisficing into challenger audits without changing the champion; and A23--A24
 show where multi-distribution and online conformal work would enter if the
-project moved from a frozen historical panel to a new protocol. This keeps the
+project moved from a frozen historical panel to a new protocol. A25--A33 add the
+external economic replication layer on Prosper and Freddie/Mendeley, including
+Freddie all-candidate exhaustiveness and negative/sparse-cell sensitivities,
+while preserving the Lending Club certificate boundary. This keeps the
 supplement ambitious without silently changing the submitted method.
 
 # Appendix D: Fair Lending, MRM, And Governance
@@ -376,7 +506,7 @@ The active IJDS submission surfaces are:
 | Surface | Source | Role |
 |---|---|---|
 | Anonymous body | `paper/CRPTO_ijds.qmd` | 25-page IJDS-style manuscript source. |
-| Online supplement | `paper/supplement_ijds.qmd` | Proofs, A3--A24, MRM/fairness, reproducibility. |
+| Online supplement | `paper/supplement_ijds.qmd` | Proofs, A3--A33, MRM/fairness, reproducibility. |
 | Long companion | `book/` | Public companion after anonymity handling. |
 | Publication config | `configs/crpto_publication_targets.yaml` | Venue, template, anonymity, and pivot rules. |
 

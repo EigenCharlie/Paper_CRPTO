@@ -45,7 +45,7 @@ empíricos, otros son de ingeniería reproducible.
 | 4 | El bound controla no-cobertura ponderada del funded set | `thm-conformal-feasibility` y `V` | no decir que controla directamente una PD latente sin supuesto adicional |
 | 5 | Existe una región robusta completa en OOT | `45/45` policies pass alpha01 en `276k` | no decir que eso elimina toda incertidumbre post-selección |
 | 6 | El champion oficial es económico, no theorem-tight | retorno `$170.5K`, `V=0.03645`, `gamma_cp=0.18591` | no mezclarlo con el comparador theorem-tight |
-| 7 | La evidencia CRPTO fortalece el paper sin cambiar dirección | A7--A11, apéndice condicional | no venderlo como validación externa final |
+| 7 | La evidencia CRPTO fortalece el paper sin cambiar dirección | A7--A11, apéndice condicional, A25--A33 | no venderlo como validación live o universal |
 
 : Escalera editorial de claims del CRPTO {#tbl-crpto-claim-ladder}
 
@@ -148,7 +148,9 @@ excusa post-hoc.
 
 **¿Los stress tests reemplazan un dataset externo?**
 No. A6 y A11 fortalecen la evidencia bajo reponderación y flips adversariales,
-pero una validación externa real sigue siendo trabajo futuro.
+pero no reemplazan la réplica externa. Esa capa ya queda cubierta por A25--A33
+en Prosper y Freddie/Mendeley; lo que sigue fuera es una validación live o
+prospectiva con protocolo sellado.
 
 ### Qué puede entrar al paper final
 
@@ -160,7 +162,8 @@ pero una validación externa real sigue siendo trabajo futuro.
 | P1 strict temporal holdout | Appendix o robustness checks | responde post-selección |
 | Funded-set composition | Appendix | útil para reviewers de crédito y riesgo |
 | A10 exact finalists | Appendix | defiende el selector conformal |
-| A11 enhanced shift | Appendix | fortalece robustness sin afirmar external validation |
+| A11 enhanced shift | Appendix | fortalece robustness interna; A25--A33 cubren réplica externa estática |
+| A25--A33 external replication | cuerpo corto y appendix | responde la crítica de un solo dataset sin reabrir el champion |
 | Referencias numeradas | Related work del paper | ayuda a pasar de libro a manuscrito |
 
 : Destino editorial probable del material del libro {#tbl-crpto-paper-placement}
@@ -170,7 +173,7 @@ pero una validación externa real sigue siendo trabajo futuro.
 Las paginas @sec-p1-manuscript-blueprint y @sec-p1-journal-appendix convierten
 esta guia editorial en un paquete de escritura mas cercano al manuscrito. El
 blueprint define venue target, abstract operativo, claims C1--C7, notacion unica
-y plan de figuras/tablas. El appendix journal agrega A12--A24 y las figuras
+y plan de figuras/tablas. El appendix journal agrega A12--A33 y las figuras
 paper-grade, incluida la nueva Figura 1 IJDS, generadas o publicadas desde artefactos congelados.
 
 | Nuevo material | Papel editorial | Artefacto |
@@ -179,14 +182,15 @@ paper-grade, incluida la nueva Figura 1 IJDS, generadas o publicadas desde artef
 | Figura CRPTO limpia | Figura 1 IJDS | `crpto_fig1_journal_pipeline.png` |
 | Figura alpha -> `Gamma_CP` -> funded set | puente teoria-metodo | `crpto_fig13_alpha_gamma_funded_set.png` |
 | Heatmap region robusta | evidencia visual `45/45` | `crpto_fig14_robust_region_heatmap.png` |
-| A12--A24 | robustness appendix journal | `scripts/build_crpto_journal_package.py`; `scripts/build_tail_satisficing_challenger_audit.py`; `scripts/build_tail_constrained_reoptimization.py`; `scripts/build_distribution_robustness_diagnostics.py` |
-| Status del paquete | trazabilidad y fuente canonica | `models/crpto_journal_package_status.json` |
+| A12--A33 | robustness appendix journal | `scripts/build_crpto_journal_package.py`; `scripts/build_tail_satisficing_challenger_audit.py`; `scripts/build_tail_constrained_reoptimization.py`; `scripts/build_distribution_robustness_diagnostics.py`; `scripts/build_multidataset_external_replication.py` |
+| A25--A33 | réplica externa Prosper/Freddie | `models/crpto_multidataset_external_status.json` |
+| Status del paquete | trazabilidad y fuente canonica | `models/crpto_journal_package_status.json`; `models/crpto_multidataset_external_status.json` |
 
 : Material journal-ready agregado al CRPTO {#tbl-crpto-journal-ready-package}
 
 La regla de jerarquia sigue intacta: si una tabla diagnostica nueva entra en
 tension con `models/final_project_promotion.json`, gana la promocion oficial.
-A12--A24 fortalecen robustez y escritura journal, pero no re-promueven el
+A12--A33 fortalecen robustez y escritura journal, pero no re-promueven el
 champion.
 
 ### Referencias numeradas locales

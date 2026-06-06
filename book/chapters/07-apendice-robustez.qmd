@@ -419,7 +419,145 @@ el sistema sobre-cubre). La lectura honesta es que la recalibración online no e
 necesaria sobre este OOT estático, y la tabla deja la receta para un despliegue
 en streaming real.
 
-### Appendix A3--A24 recomendado
+### A25--A33. Réplica económica externa
+
+La capa multidataset usa resúmenes curados locales y no toca el champion Lending
+Club. Prosper y Freddie/Mendeley se promueven porque tienen outcome, exposición,
+tasa o retorno y OOT económico; Home Credit queda archivado como scoring-only.
+A28 cierra el caveat de candidatos Freddie resolviendo el universo OOT completo;
+A29--A33 documentan grupos escasos, intervalos, subperiodos, sensibilidad de
+default Prosper y segmentos red/green Freddie.
+
+```{python}
+#| label: tbl-crpto-journal-external-replication
+#| tbl-cap: "A25. Gate externo principal en Prosper y Freddie/Mendeley"
+
+external_gate = read_table("crpto_tableA25_external_replication_gate.csv")
+external_gate[
+    [
+        "dataset",
+        "credit_product",
+        "n_rows",
+        "default_rate",
+        "auc_roc",
+        "coverage_90",
+        "alpha01_coverage",
+        "oot_candidates",
+        "robust_objective",
+        "gate",
+    ]
+].round(4)
+```
+
+![Réplica externa CRPTO: Prosper y Freddie/Mendeley preservan gates conformales y valor LP robusto positivo.](../assets/figures/publication/crpto_fig22_external_replication.png){#fig-p1-external-replication fig-alt="Gráfico de barras que compara coverage 90%, alpha 0.01 coverage, AUC y objetivo LP robusto para Prosper y Freddie FM48."}
+
+```{python}
+#| label: tbl-crpto-journal-external-candidate-sensitivity
+#| tbl-cap: "A26. Sensibilidad externa por tamaño y pantalla de candidatos"
+
+external_candidates = read_table("crpto_tableA26_external_candidate_sensitivity.csv")
+external_candidates[
+    [
+        "dataset",
+        "screen",
+        "candidate_cap",
+        "runs",
+        "robust_objective_mean",
+        "nonrobust_objective_mean",
+        "robust_n_funded_mean",
+    ]
+].round(4)
+```
+
+![Sensibilidad externa por candidatos: los objetivos promovidos se estabilizan al ampliar el pool OOT.](../assets/figures/publication/crpto_fig23_external_candidate_sensitivity.png){#fig-p1-external-candidate-sensitivity fig-alt="Gráfico de líneas de objetivo LP robusto por candidate cap y estrategia de pantalla para Prosper y Freddie FM48."}
+
+```{python}
+#| label: tbl-crpto-journal-freddie-horizon-sensitivity
+#| tbl-cap: "A27. Sensibilidad Freddie/Mendeley por ventana de default"
+
+freddie_horizon = read_table("crpto_tableA27_freddie_horizon_sensitivity.csv")
+freddie_horizon[
+    [
+        "variant",
+        "window_months",
+        "default_rate",
+        "auc_roc",
+        "coverage_90",
+        "alpha01_coverage",
+        "coverage90_pass",
+        "alpha01_pass",
+        "recommendation",
+    ]
+].round(4)
+```
+
+Lectura: A25--A33 son evidencia de transferencia de receta, no de una garantía
+universal. El certificado exacto alpha-safe del paper sigue siendo el funded set
+Lending Club; Prosper y Freddie fortalecen la defensa empírica contra la crítica
+de "un solo dataset".
+
+```{python}
+#| label: tbl-crpto-journal-external-lp-exhaustiveness
+#| tbl-cap: "A28. Exhaustividad LP externa y certificado all-candidate"
+
+external_lp = read_table("crpto_tableA28_external_lp_exhaustiveness.csv")
+external_lp[
+    [
+        "dataset",
+        "candidate_cap",
+        "n_candidates",
+        "robust_objective",
+        "nonrobust_objective",
+        "robust_n_funded",
+        "robust_max_funded_rank",
+        "solver_success",
+    ]
+].round(4)
+```
+
+![Certificado Freddie all-candidate (A28): el solve completo confirma que el objetivo LP promovido no depende de un cap de candidatos.](../assets/figures/publication/crpto_fig24_freddie_all_candidate_certificate.png){#fig-p1-freddie-all-candidate fig-alt="Figura con objetivo robusto y nonrobust invariante por cap Freddie y peor rank financiado en el solve all-candidate."}
+
+```{python}
+#| label: tbl-crpto-journal-freddie-mondrian-sparse
+#| tbl-cap: "A29. Auditoría Freddie de grupos Mondrian escasos"
+
+freddie_sparse = read_table("crpto_tableA29_freddie_mondrian_sparse_group_audit.csv")
+freddie_sparse.round(4)
+```
+
+```{python}
+#| label: tbl-crpto-journal-external-metric-intervals
+#| tbl-cap: "A30. Intervalos de métricas externas"
+
+external_intervals = read_table("crpto_tableA30_external_metric_intervals.csv")
+external_intervals.round(4)
+```
+
+```{python}
+#| label: tbl-crpto-journal-external-subperiods
+#| tbl-cap: "A31. Métricas externas por subperiodo OOT"
+
+external_subperiods = read_table("crpto_tableA31_external_subperiod_metrics.csv")
+external_subperiods.round(4)
+```
+
+```{python}
+#| label: tbl-crpto-journal-prosper-default-sensitivity
+#| tbl-cap: "A32. Sensibilidad Prosper por definición de default"
+
+prosper_defaults = read_table("crpto_tableA32_prosper_default_definition_sensitivity.csv")
+prosper_defaults.round(4)
+```
+
+```{python}
+#| label: tbl-crpto-journal-freddie-segment-sensitivity
+#| tbl-cap: "A33. Sensibilidad Freddie FM48 por segmento red/green"
+
+freddie_segments = read_table("crpto_tableA33_freddie_segment_sensitivity.csv")
+freddie_segments.round(4)
+```
+
+### Appendix A3--A33 recomendado
 
 ::: {#tbl-crpto-appendix-map}
 
@@ -447,6 +585,15 @@ en streaming real.
 | A22 | CVaR/OCE tail-constrained re-optimization | Appendix journal |
 | A23 | Robustez multi-distribución (grupo/celda) | Appendix journal |
 | A24 | Estabilidad conformal online (ACI) | Appendix journal |
+| A25 | Gate externo Prosper/Freddie | Cuerpo corto y appendix |
+| A26 | Sensibilidad externa por candidatos | Appendix journal |
+| A27 | Sensibilidad Freddie por horizonte | Appendix journal |
+| A28 | Exhaustividad LP all-candidate | Appendix journal |
+| A29 | Auditoría Freddie Mondrian sparse | Appendix journal |
+| A30 | Intervalos de métricas externas | Appendix journal |
+| A31 | Subperiodos OOT externos | Appendix journal |
+| A32 | Sensibilidad Prosper por definición de default | Appendix journal |
+| A33 | Sensibilidad Freddie red/green | Appendix journal |
 
 Mapa recomendado del appendix del CRPTO.
 :::
@@ -488,6 +635,7 @@ uv run python scripts/build_crpto_journal_package.py
 uv run python scripts/build_tail_satisficing_challenger_audit.py
 uv run python scripts/build_tail_constrained_reoptimization.py
 uv run python scripts/build_distribution_robustness_diagnostics.py
+uv run python scripts/build_multidataset_external_replication.py
 uv run pytest tests/test_crpto_final_sync.py
 ```
 
@@ -501,15 +649,18 @@ uv run -- quarto render book/chapters/07-apendice-robustez.qmd --to html --no-ex
 ::: {.callout-important}
 ## Regla de sincronizacion
 
-Si alguna tabla A12--A24 contradice `models/final_project_promotion.json`, gana
+Si alguna tabla A12--A33 contradice `models/final_project_promotion.json`, gana
 `final_project_promotion.json`. Las tablas nuevas son evidencia de robustez,
 sensibilidad y empaque journal; no son una promoción nueva del champion. En
 particular, A22 reporta una política *tail-constrained challenger*, no un nuevo
-champion: la policy oficial sigue siendo el economic champion.
+champion, y A25--A33 reportan réplica externa y auditorías de exhaustividad, no
+un reemplazo del certificado Lending Club: la policy oficial sigue siendo el
+economic champion.
 :::
 
 El estado reproducible queda registrado en
 `models/crpto_journal_package_status.json`,
 `models/crpto_tail_constrained_reopt_status.json` y
-`models/crpto_distribution_robustness_status.json`; el dossier asociado queda en
+`models/crpto_distribution_robustness_status.json`; la réplica externa queda en
+`models/crpto_multidataset_external_status.json`; el dossier asociado queda en
 `docs/research/crpto_journal_package_2026-05-04.md`.

@@ -107,7 +107,7 @@ These protocols are compatible but not interchangeable.
 ## Final Assembly Checklist
 
 - Recheck the official-template page budget after PDF pagination is available.
-- Keep A3--A24 in the online supplement unless a reviewer-facing argument needs
+- Keep A3--A33 in the online supplement unless a reviewer-facing argument needs
   one compact table in the body.
 - Preserve CRPTO as the coverage/auditability method and SPO+ as the low-regret
   comparator.

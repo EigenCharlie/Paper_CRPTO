@@ -37,10 +37,11 @@ primary_target:
   current_paper_scope:
     include:
       - "Frozen post-hoc CRPTO champion and exact alpha-safe robust region."
-      - "A3--A21 as supplement/appendix evidence generated from frozen artifacts."
+      - "A3--A33 as supplement/appendix evidence generated from frozen artifacts."
       - "Regret-auditability frontier as the body-level SPO+/CRPTO trade-off."
       - "OCE/CVaR and robust satisficing as diagnostics, not new selectors."
       - "Cluster-aware dependence caveat/proposition in the theory supplement."
+      - "Prosper/Freddie external economic replication without reopening the Lending Club champion."
       - "Quarto/DVC/DagsHub/MLflow companion after anonymity handling."
     out_of_scope_method_extensions:
       - "OCE/CVaR as an optimized portfolio objective."
@@ -86,18 +87,51 @@ journal_strengthening_pack:
         - reports/crpto/tables/crpto_tableA20_tail_satisficing_challenger_audit.csv
         - models/crpto_tail_satisficing_audit_status.json
       requires_new_run: false
+    tail_constrained_reoptimization:
+      status: include_supplement
+      role: "CVaR/OCE tail-constrained re-optimization over the frozen robust-region policies; challenger evidence only."
+      artifacts:
+        - reports/crpto/tables/crpto_tableA22_tail_constrained_reoptimization.csv
+        - models/crpto_tail_constrained_reopt_status.json
+      requires_new_run: false
+    distribution_online_diagnostics:
+      status: include_supplement
+      role: "Multi-distribution and online ACI diagnostics over frozen Lending Club conformal intervals."
+      artifacts:
+        - reports/crpto/tables/crpto_tableA23_multidistribution_robustness.csv
+        - reports/crpto/tables/crpto_tableA24_online_conformal_stability.csv
+        - models/crpto_distribution_robustness_status.json
+      requires_new_run: false
+    multidataset_external_replication:
+      status: include_supplement_or_short_body
+      role: "External economic replication on Prosper and Freddie/Mendeley; it supports transfer of the recipe without replacing the Lending Club certificate."
+      artifacts:
+        - reports/crpto/tables/crpto_tableA25_external_replication_gate.csv
+        - reports/crpto/tables/crpto_tableA26_external_candidate_sensitivity.csv
+        - reports/crpto/tables/crpto_tableA27_freddie_horizon_sensitivity.csv
+        - reports/crpto/tables/crpto_tableA28_external_lp_exhaustiveness.csv
+        - reports/crpto/tables/crpto_tableA29_freddie_mondrian_sparse_group_audit.csv
+        - reports/crpto/tables/crpto_tableA30_external_metric_intervals.csv
+        - reports/crpto/tables/crpto_tableA31_external_subperiod_metrics.csv
+        - reports/crpto/tables/crpto_tableA32_prosper_default_definition_sensitivity.csv
+        - reports/crpto/tables/crpto_tableA33_freddie_segment_sensitivity.csv
+        - reports/crpto/figures/crpto_fig22_external_replication.png
+        - reports/crpto/figures/crpto_fig23_external_candidate_sensitivity.png
+        - reports/crpto/figures/crpto_fig24_freddie_all_candidate_certificate.png
+        - models/crpto_multidataset_external_status.json
+      requires_new_run: false
   backlog_not_blocking:
-    multi_dataset_credit_replication:
-      status: journal_backlog_not_blocker
-      role: "External validity experiment for a later journal revision or follow-up study."
-      requires_new_dataset: true
-      requires_new_run: true
     tail_satisficing_objective_scaffold:
       status: research_scaffold_not_champion
       role: "Reusable OCE/CVaR/satisficing scoring layer for a future isolated search or sensitivity experiment."
       config: configs/crpto_tail_satisficing_objective.yaml
       module: src/optimization/tail_satisficing_objective.py
       requires_new_dataset: false
+      requires_new_run: true
+    prospective_multidataset_validation:
+      status: future_protocol_not_blocker
+      role: "Prospective/live external validation beyond the static Prosper/Freddie replications."
+      requires_new_dataset: true
       requires_new_run: true
   still_out_of_scope:
     - "OCE/CVaR as a promoted optimized portfolio objective or hard search constraint for the current champion."

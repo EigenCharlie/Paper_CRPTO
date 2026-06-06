@@ -59,7 +59,8 @@ The first paper draft should be written as:
 
 - title: `CRPTO: Conformal Robust Predict-Then-Optimize for Auditable Credit Portfolio Decisions`;
 - body: 25-page IJDS-style manuscript;
-- supplement: A3--A21, proofs, extended tables, reproducibility and MRM/fairness;
+- supplement: A3--A33, proofs, extended tables, reproducibility,
+  MRM/fairness and external replication;
 - review mode: anonymous by default;
 - companion: GitHub/DVC/DagsHub/MLflow after the anonymity policy is handled.
 
@@ -91,12 +92,14 @@ In scope for the current paper:
 - frozen CRPTO post-hoc champion;
 - calibrated PD -> Mondrian conformal intervals -> robust portfolio decision;
 - exact alpha-safe funded-set validation and `45/45` robust region;
-- A3--A21 as supplement evidence;
+- A3--A33 as supplement evidence;
 - regret-auditability frontier in the body;
 - OCE/CVaR tail-risk diagnostics and robust satisficing margins in the
   supplement;
 - cluster-aware dependence caveat/proposition with Markov retained as the main
   distribution-free bound;
+- external economic replication on Prosper and Freddie/Mendeley as A25--A33,
+  without reopening the Lending Club champion;
 - reproducibility via Quarto, DVC, DagsHub/MLflow and guardrail tests.
 
 Out of scope for the current paper:
@@ -105,7 +108,8 @@ Out of scope for the current paper:
 - multi-distribution robust conformal prediction as the promoted layer;
 - online conformal recalibration or online DFL;
 - SPO+ + conformal hybrid training;
-- multi-dataset credit replication as current evidence;
+- prospective/live multidataset validation beyond the static Prosper/Freddie
+  replications;
 - causal/CATE CRPTO;
 - multi-period portfolio rebalancing;
 - field trial, production monitoring dashboard, or open-source package

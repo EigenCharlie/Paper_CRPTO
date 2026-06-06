@@ -1,0 +1,3 @@
+dataset,credit_product,external_role,n_rows,default_rate,auc_roc,pr_auc,brier,coverage_90,min_group_coverage_90,alpha01_coverage,oot_candidates,lp_candidate_cap,robust_objective,price_of_robustness_pct,gate
+Prosper,Marketplace personal loans,main external economic replication,54807,0.3091758352035324,0.7074290432845566,0.4484817219126147,0.1781741704802637,0.9205159821682634,0.8850308641975309,0.9943090202029784,10531,all,199419.08877567088,0.094619019478566,pass
+Freddie FM48,Single-family mortgages,main external economic replication,3173355,0.0145435981792141,0.7838634726333499,0.0517822051269566,0.0128541034734516,0.974523173547136,0.5,0.9907116706887202,1396053,all,1291227.5801824057,0.0108636254963404,pass

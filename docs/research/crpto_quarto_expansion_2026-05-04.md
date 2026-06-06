@@ -34,7 +34,7 @@ GitHub Actions `book-publish` workflow from the standalone repository.
 - Added a manuscript blueprint with target venue, abstract, claims C1--C7,
   paper outline, final table/figure plan, notation and claim-artifact-test
   location map.
-- Added a journal appendix page that renders A12--A24 plus the journal figure set:
+- Added a journal appendix page that now renders A12--A33 plus the journal figure set:
   CRPTO conceptual pipeline, alpha -> `Gamma_CP` -> funded set, and robust
   region heatmap.
 
@@ -82,7 +82,7 @@ the reasoning that justifies compression decisions. The new page separates:
 - robustness checks that belong in appendix;
 - future work that should not be sold as current evidence;
 - local numeric references `[1]`, `[2]`, ... for the CRPTO narrative.
-- A12--A24 robustness evidence that can be pushed to appendix instead of
+- A12--A33 robustness evidence that can be pushed to appendix instead of
   crowding the paper body.
 
 ## Guardrails
@@ -94,7 +94,7 @@ The documentation tests should verify that:
   numbered references;
 - the manuscript blueprint contains venue, claims C1--C7 and final table/figure
   plan;
-- the appendix page references A12--A24 and the new figures;
+- the appendix page references A12--A33 and the new figures;
 - the CRPTO docs still point to the official economic champion and do
   not reopen the champion search.
 

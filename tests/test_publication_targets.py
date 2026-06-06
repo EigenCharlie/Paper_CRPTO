@@ -53,13 +53,35 @@ def test_journal_strengthening_pack_classifies_current_and_backlog_items() -> No
         "robust_satisficing_margins",
         "dependence_aware_bound",
         "tail_satisficing_challenger_audit",
+        "tail_constrained_reoptimization",
+        "distribution_online_diagnostics",
+        "multidataset_external_replication",
     }
     assert included["regret_auditability_frontier"]["status"] == "include_body"
     assert included["tail_risk_oce_cvar_diagnostic"]["status"] == "include_supplement"
     assert included["robust_satisficing_margins"]["status"] == ("include_supplement_or_short_body")
     assert included["dependence_aware_bound"]["status"] == "include_theory_appendix_or_caveat"
     assert included["tail_satisficing_challenger_audit"]["status"] == "include_supplement"
-    assert backlog["multi_dataset_credit_replication"]["status"] == ("journal_backlog_not_blocker")
+    assert included["tail_constrained_reoptimization"]["status"] == "include_supplement"
+    assert included["distribution_online_diagnostics"]["status"] == "include_supplement"
+    assert included["multidataset_external_replication"]["status"] == (
+        "include_supplement_or_short_body"
+    )
+    multidataset_artifacts = included["multidataset_external_replication"]["artifacts"]
+    assert "reports/crpto/tables/crpto_tableA28_external_lp_exhaustiveness.csv" in (
+        multidataset_artifacts
+    )
+    assert "reports/crpto/tables/crpto_tableA33_freddie_segment_sensitivity.csv" in (
+        multidataset_artifacts
+    )
+    assert "reports/crpto/figures/crpto_fig24_freddie_all_candidate_certificate.png" in (
+        multidataset_artifacts
+    )
+    for artifact in multidataset_artifacts:
+        assert Path(artifact).exists(), artifact
+    assert backlog["prospective_multidataset_validation"]["status"] == (
+        "future_protocol_not_blocker"
+    )
 
     body = Path("paper/CRPTO_ijds.qmd").read_text(encoding="utf-8")
     supplement = Path("paper/supplement_ijds.qmd").read_text(encoding="utf-8")
