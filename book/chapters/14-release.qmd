@@ -216,6 +216,24 @@ final a PDF de submission usa la plantilla oficial IJDS con `dblanonrev`; los
 PDF generados por Quarto son borradores locales de verificación, no sustitutos
 del estilo oficial del journal.
 
+### Higiene del source pack Papers_tesis
+
+La auditoría `papers_tesis_deep_audit_2026-06-06` reemplaza la lectura parcial
+de mayo y fija el split real `paper/`--`supplement/`--`tesis` como regla de
+ingesta. El objetivo no es inflar el manuscrito, sino mantener un mapa
+autocontenido para decidir qué entra al cuerpo, qué va al supplement y qué
+queda como tesis o agenda extendida.
+
+| Superficie | Tamaño | Regla de uso |
+|---|---:|---|
+| `Papers_tesis/paper/` | 21 PDFs | Fuentes core para CP/CRC/LTT, robust optimization, conformal RO/Predict-then-Calibrate, Lending Club y DFL como comparador. Pueden entrar al cuerpo o appendix si sostienen C1--C7. |
+| `Papers_tesis/supplement/` | 28 PDFs | Frontera metodológica: source/shift, localized/group-weighted, online, tail risk, certificados de decisión y utility-directed CP. Entra como appendix/future work, no como cambio de champion. |
+| `Papers_tesis/tesis/` | 12 PDFs | Contexto amplio para tesis: IFRS9/ECL, MRM, fairness proxy, data quality, credit invisibles y fundamentos de robust optimization. El cuerpo IJDS solo toma lo que fortalece el argumento central. |
+| Auditoría 2026-06-06 | 1 memo + 3 CSVs | Fuente operativa para `promote`, `append`, `park` y `future_gate`: `docs/research/papers_tesis_deep_audit_2026-06-06.md` y `reports/crpto/literature/`. |
+| Evidence cards extendidas | 1 memo + 10 CSVs | PyEPO/DFL, FICO proxy, IFRS9/SICR y CRC/LTT--CROMS-lite quedan en `docs/research/crpto_extended_evidence_cards_2026-06-06.md` y `reports/crpto/extended/`; alimentan tesis, appendix y reviewer-defense, no el claim central IJDS. |
+
+: Higiene editorial del source pack Papers_tesis {#tbl-crpto-papers-tesis-source-pack-hygiene}
+
 ### Release checklist para congelar una versión paper-facing
 
 Este checklist no genera evidencia nueva. Sirve para declarar que una versión

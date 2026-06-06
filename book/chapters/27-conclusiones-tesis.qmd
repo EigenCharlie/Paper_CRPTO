@@ -86,7 +86,10 @@ La pregunta de la tesis era si la incertidumbre predictiva finita puede entrar a
 una decisión de cartera de crédito de forma lo bastante transparente para que un
 revisor la audite. La respuesta, sobre 276 869 préstamos out-of-time, es sí: la
 incertidumbre conformal cambia el funded set, deja un certificado exacto, y lo
-hace sin sacrificar valor económico frente a la línea base no robusta. Esa
-combinación —decisión robusta, certificado auditable y reproducibilidad de
-artefactos— es la contribución que la tesis lleva a un jurado y, en su forma
-comprimida, a un comité editorial de INFORMS.
+hace sin sacrificar valor económico frente a la línea base no robusta. La réplica
+externa en Prosper y Freddie muestra además que esa receta no es una idiosincrasia
+de Lending Club, y que el precio de robustez es una prima acotada y medible que
+crece con el riesgo del panel. Esa combinación —decisión robusta, certificado
+auditable, evidencia externa y reproducibilidad de artefactos— es la contribución
+que la tesis lleva a un jurado y, en su forma comprimida, a un comité editorial de
+INFORMS.

@@ -847,20 +847,17 @@ middle path: keep the predictive model auditable, quantify uncertainty with a
 finite-sample conformal layer, and make the optimizer pay attention to the
 upper end of plausible default risk.
 
-The external replications also yield a positive economic reading, not only a
-robustness check. Under blind frozen application--with no champion search--the
-signed price of robustness is a positive premium that increases with the panel
-default rate, from roughly `+1.0%` on the low-default Freddie green segment to
-`+9.5%` on the high-default Prosper panel, with the within-Freddie red segment
-paying more than green at near-identical discrimination. The premium therefore
-tracks the panel's irreducible default risk rather than its AUC: higher default
-risk widens the conformal intervals, so the robust worst case discounts more
-economic return. The favorable Lending Club value (`-10.56%`) is the exception
-that proves the rule, because it is the one panel where a bound-aware search
-actively selected a robust funded set that also wins expected return. The
-practical message for a risk committee is that buying the conformal coverage
-guarantee is never economically catastrophic here: it costs a bounded,
-single-digit-to-low-double-digit premium that the method quantifies per panel.
+The external replications also change how to read the price of robustness. The
+cross-dataset pattern reported above (it scales with panel default risk rather
+than discrimination) matters less as a number than as a reframing: robustness is
+not a fixed toll but a panel-specific premium that the method measures rather
+than assumes. For a risk committee this turns the governance question from "can
+we afford robustness?" into "how large is the coverage premium on this book?",
+which CRPTO answers with a bounded figure per panel. It also tempers the
+contribution honestly. The favorable Lending Club value reflects champion
+selection, so the transferable claim is the bounded, measurable premium under
+blind application, not a universal free lunch; the recipe carries its own price
+tag wherever it is applied.
 
 The limits are equally important. CRPTO does not prove that any one public
 dataset is a universal proxy for modern credit origination, even after the

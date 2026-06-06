@@ -22,7 +22,7 @@ This policy defines the active vs historical vs generated contract for project a
 
 - `docs/` root: active technical and editorial references.
 - `reports/` root: editorial outputs still used by Quarto, Streamlit, deploy, MRM, or technical logging.
-- `reports/paper_material/`: only publication figures/tables that still feed papers, the book, or review workflows.
+- `reports/crpto/`: only publication figures/tables that still feed papers, the book, or review workflows.
 - `reports/notebook_images/`: only image families still consumed by Quarto, Streamlit, poster, or thesis document builders.
 
 ### Historical surfaces
@@ -44,7 +44,7 @@ This policy defines the active vs historical vs generated contract for project a
 - Canonical targets protected from notebook writes:
   - `data/processed/*`
   - `models/*`
-  - `reports/paper_material/*`
+  - `reports/crpto/*`
   - `reports/figures/*`
 - Redirected notebook-generated files are stored under:
   - `reports/notebook_exec/generated/`

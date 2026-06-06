@@ -93,7 +93,7 @@ El repo no importa la suite PyEPO completa ni crea una dependencia nueva. El
 dossier local `docs/research/crpto_pyepo_dfl_intake_2026-05-26.md` conserva solo
 el cierre necesario para el appendix: SPO+ obtiene mean regret `0.184366` frente
 a `0.358073` para two-stage, una reducción de `48.51%` con Wilcoxon pareado
-`p = 3.80e-163`. RFYL y CaVE quedan como evidencia de Paper 4; CRPTO sigue siendo
+`p = 3.80e-163`. RFYL y CaVE quedan como evidencia de agenda extendida CRPTO/tesis; CRPTO sigue siendo
 el método de cobertura robusta y auditabilidad.
 :::
 
@@ -213,7 +213,8 @@ Los artefactos clave son:
 - `data/processed/crpto_vs_spo_stability_detail.parquet` — regret por seed y periodo (para reanalizar varianza).
 - `data/processed/spo_training_loss.parquet` — curva de pérdida SPO+ durante entrenamiento.
 - `models/spo_real_training_status.json` — estado del run v2 (schema `2026-03-17.2`).
-- `docs/research/crpto_pyepo_dfl_intake_2026-05-26.md` — cierre curado 2026-05-28 del rerun PyEPO 1.3.7, sin importar la suite completa.
+- `docs/research/crpto_pyepo_dfl_intake_2026-05-26.md` — cierre curado 2026-05-28 del rerun PyEPO 1.3.7.
+- `reports/crpto/extended/crpto_extended_pyepo_dfl_full_summary_20260528.csv` — tabla curada de la suite DFL completa para tesis/appendix, sin logs ni dependencias pesadas.
 
 ### Cierre: el carril DFL formal con PyEPO 1.3.7
 
@@ -229,7 +230,7 @@ learning* [@mandi2024] al punto de habilitar un stack de comparadores DFL
 `cvxpy/cvxpylayers` y corre en un entorno OR-Tools opcional. Para la forma actual
 del problema CRPTO --una selección de portafolio sobre un LP continuo-- el método
 más natural no es SPO+ sino `regularizedFrankWolfeFenchelYoung` (RFYL), que sólo
-necesita un oráculo de optimización lineal. Eso da a la agenda Paper 4 un
+necesita un oráculo de optimización lineal. Eso da a la agenda extendida CRPTO/tesis un
 experimento DFL "formal" más creíble que el surrogate oracle-regret anterior.
 
 La frontera de claims es estricta y coincide con la del comparador SPO+:
@@ -244,6 +245,6 @@ La frontera de claims es estricta y coincide con la del comparador SPO+:
 La regla de parada ya queda satisfecha para CRPTO: el rerun pareado SPO+ deja
 el closeout en `48.51%`, mientras A19/Figura 15 conserva su `49.09%` local; esa
 diferencia de protocolo no altera el claim central. Los
-comparadores RFYL, CaVE y PFYL-Mul pertenecen al laboratorio Paper 4; si no
+comparadores RFYL, CaVE y PFYL-Mul pertenecen al laboratorio agenda extendida CRPTO/tesis; si no
 cambian un claim del manuscrito CRPTO ni producen una tabla de comparación más
 limpia, permanecen fuera del paper IJDS.

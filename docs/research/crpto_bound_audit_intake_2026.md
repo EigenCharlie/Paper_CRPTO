@@ -1,5 +1,5 @@
 > **RESEARCH NOTE** — Bound-and-literature audit ported and de-identified from the
-> parent project's CRPTO bound-audit ledger (May 2026). Working material for the
+> CRPTO bound-audit ledger (May 2026). Working material for the
 > IJDS paper; the canonical numbers live in `EXTRACTION_MANIFEST.json` and
 > `models/final_project_promotion.json`.
 
@@ -89,7 +89,7 @@ champion and must not be mixed with the bound-aware family).
 
 Open journal risk: formalize whether the conformal wrapper should cover observed
 default, latent PD, expected loss, or a calibrated risk score. The validation code
-(`scripts/validate_alpha_gamma_bound.py` in the parent) uses `y_true`/`default_flag`
+(`scripts/validate_alpha_gamma_bound.py` in this repository) uses `y_true`/`default_flag`
 against `pd_high`, so the text must not claim more than that without an extra lemma.
 
 ## Claim → artifact map

@@ -1,6 +1,6 @@
 # CRPTO / IJDS Champion Tournament Protocol - 2026-05-25
 
-> Ported from the parent research factory
+> Ported from the CRPTO research archive
 > (`paper1_crpto_ijds_champion_tournament_protocol_2026-05-25`). **Documentation
 > only.** Defines the governed, anti-cherry-pick tournament that *would* govern
 > any future champion reopen. The frozen champion
@@ -50,7 +50,7 @@ Before any serious medium/full run, the run root must contain:
 
 A late idea may be added only by opening a new protocol version **before** running
 its downstream portfolio stage. Late ideas cannot enter the same tournament as
-champion candidates after seeing portfolio results; they go to Paper 4, appendix,
+champion candidates after seeing portfolio results; they go to agenda extendida CRPTO/tesis, appendix,
 or a future protocol.
 
 ## Candidate Lanes
@@ -116,7 +116,7 @@ Promote only paper-facing artifacts (child convention): a tournament final
 summary CSV under `reports/crpto/tables/`, a negative-results registry CSV under
 `reports/crpto/tables/`, and a `docs/research/crpto_champion_decision_memo_<date>.md`.
 The manuscript body changes only after the decision memo says `promote`. Appendix
-receives high-value negative or theorem-tight evidence. Paper 4 receives ideas
+receives high-value negative or theorem-tight evidence. agenda extendida CRPTO/tesis receives ideas
 that teach a method lesson but fail replacement gates.
 
 ## What Not To Re-run

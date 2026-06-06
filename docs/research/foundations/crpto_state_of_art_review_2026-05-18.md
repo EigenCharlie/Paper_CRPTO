@@ -1,8 +1,8 @@
 # CRPTO State-of-the-Art Review - 2026-05-18
 
-> Ported from the parent research factory
-> (`paper1_paper4_state_of_art_review_2026-05-18`). Consolidates a deeper
-> literature pass for the official CRPTO manuscript and the long-horizon Paper 4
+> Ported from the CRPTO research archive
+> (`crpto_state_of_art_review_2026-05-18`). Consolidates a deeper
+> literature pass for the official CRPTO manuscript and the long-horizon agenda extendida CRPTO/tesis
 > living lab agenda. It is not a new experimental loop and not a Quarto rewrite.
 > The output is a source map and a claim-governance recommendation.
 
@@ -23,10 +23,10 @@ reviewer defense, not new claims:
 - Mention CVaR/OCE only as a tail-risk challenger appendix/sensitivity; do not
   reopen the champion.
 
-Paper 4 remains a governed living lab (agenda). Its strongest contribution is
+agenda extendida CRPTO/tesis remains a governed living lab (agenda). Its strongest contribution is
 not a near-term publication claim; it is a documented boundary map for seven
 ambitious extensions. Four lanes are append-worthy as evidence appendices, while
-three remain parked. The prudential IFRS9-inspired material enters Paper 4 as
+three remain parked. The prudential IFRS9-inspired material enters agenda extendida CRPTO/tesis as
 proxy evidence (ECL scenarios, conformal ECL ranges, SICR width signal,
 CIF/prepayment correction, stage-cost governance, TS-to-ECL stress context),
 never as contractual IFRS 9.
@@ -101,13 +101,13 @@ the official champion is not tail-risk optimized:
 
 - Rockafellar and Uryasev support the CVaR optimization formulation.
 - Ben-Tal and Teboulle support OCE as a convex risk-measure family.
-- The Paper 4 CVaR/OCE experiment is useful as a challenger appendix because it
+- The agenda extendida CRPTO/tesis CVaR/OCE experiment is useful as a challenger appendix because it
   improved tail framing but did not beat paired wealth.
 
 Recommended use: keep this as appendix/sensitivity. Do not reopen the economic
 champion unless future paired replay beats it robustly.
 
-## Paper 4 (agenda): Best Literature Fit By Lane
+## agenda extendida CRPTO/tesis (agenda): Best Literature Fit By Lane
 
 ### IFRS9/SICR
 
@@ -203,7 +203,7 @@ integration and manuscript extraction.
 ## Bibliography Integration Patch (2026-05-18)
 
 Adds only sources that now appear in the manuscript; destinations expressed by
-manuscript role (child chapter labels differ from the parent's `14x` scheme):
+manuscript role (standalone CRPTO chapter labels differ from the old `14x` scheme):
 
 | source | manuscript role | reason |
 | --- | --- | --- |
@@ -215,8 +215,8 @@ manuscript role (child chapter labels differ from the parent's `14x` scheme):
 | `cfpb_bisg_proxy` | fairness proxy boundary | Document why surname plus fine geography are needed for BISG-style proxy analysis. |
 | `zhang2018_fair_proxy` | fairness proxy boundary | Support the fair-lending proxy boundary and why current fields are insufficient for legal claims. |
 
-No IFRS9, SPO/DFL prototype or Paper 4-only sources were integrated into CRPTO
-in this patch. Those remain Paper 4 (agenda) material unless a future appendix or
+No IFRS9, SPO/DFL prototype or agenda extendida CRPTO/tesis-only sources were integrated into CRPTO
+in this patch. Those remain agenda extendida CRPTO/tesis (agenda) material unless a future appendix or
 reviewer request creates a concrete textual need.
 
 ## Metrics Binder Addendum
@@ -229,7 +229,7 @@ leaderboard, and that rank metrics are meaningful only after the PD layer is
 calibration-gated. Albanesi and Vamossy can support the credit scoring/equity
 motivation as context only; it does not authorize a legal fair-lending claim.
 
-For Paper 4, the binder opens one bounded future appendix: FICO/score proxy vs
+For agenda extendida CRPTO/tesis, the binder opens one bounded future appendix: FICO/score proxy vs
 champion ML, with misclassification, ranking difference and observable-group
 diagnostics. Dinga et al. is taxonomy-only, Somers' D is optional metric
 sensitivity, and ReScorer stays parked unless the project later audits

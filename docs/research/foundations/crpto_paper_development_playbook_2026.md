@@ -95,8 +95,8 @@ The shared best-practices page includes:
 
 Generated outputs:
 - `reports/crpto/*`
-- `reports/paper_material/paper2/*`
-- `reports/paper_material/paper3/*`
+- `reports/crpto/extended/*`
+- `reports/crpto/extended/*`
 
 Batch execution command:
 - `uv run python scripts/run_paper_notebook_suite.py`

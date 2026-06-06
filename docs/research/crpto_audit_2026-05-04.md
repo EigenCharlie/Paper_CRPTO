@@ -11,7 +11,7 @@ apuntan ahora al libro standalone (`book/chapters/01-introduccion.qmd` a
 figuras `reports/crpto/figures/` y a los artefactos congelados propios del repo.
 
 Las menciones a Paper 2, Paper Mondrian, causal, Streamlit o research labs se
-leen como contexto historico/future-work del proyecto padre. No son dependencias
+leen como contexto historico/future-work del dossier historico CRPTO. No son dependencias
 del paper-crpto ni justifican traer esos pipelines a este repositorio.
 
 ## Decision canonica
@@ -75,7 +75,7 @@ El run operativo vigente `crpto-e2e-all-champions-2026-04-07` reporta AUC 0.7124
 | PD | AUC, Brier, ECE, PR-AUC entre runs PD | retorno de portafolio o bound-aware |
 | Conformal | coverage, width, min group coverage, Winkler entre variantes conformal | AUC PD o retorno |
 | Portfolio | retorno, funded count, price of robustness dentro del mismo selector | bound `V` si cambia la familia |
-| Bound-aware | `alpha01_exact_pass`, `V`, `gamma_cp`, `violation`, region pass | tablas legacy del proyecto padre |
+| Bound-aware | `alpha01_exact_pass`, `V`, `gamma_cp`, `violation`, region pass | tablas legacy del dossier historico CRPTO |
 | DVC canonico | snapshot operativo vigente | experimental HPO no promovido |
 
 ## Matriz de literatura local - PDFs base
@@ -156,7 +156,7 @@ Riesgo matematico que sigue abierto para journal: formalizar si el wrapper confo
 
 ## Issues separados
 
-1. Paper Mondrian: hay drift de metricas en el proyecto padre; no bloquea el CRPTO standalone.
+1. Paper Mondrian: hay drift de metricas en el dossier historico CRPTO; no bloquea el CRPTO standalone.
 2. Paper-facing tables: ya fueron regeneradas desde `final_project_promotion.json`; mantener `scripts/export_crpto_tables.py` como unica ruta de actualizacion.
 3. Tightening teorico: Hoeffding/Bernstein requieren supuestos adicionales y posiblemente nested holdout/post-selection correction.
 

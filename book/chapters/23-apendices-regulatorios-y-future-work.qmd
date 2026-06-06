@@ -101,7 +101,7 @@ Roadmap IJDS a 6 meses.
 | 1--3 | Fundamentos seleccionados desde el libro (ver mapa de expansión). | Lectura autosuficiente sin convertir la tesis en manual entero. |
 | 4--6 | Capítulo CRPTO alineado con el paper IJDS. | El núcleo empírico coincide con el manuscript freeze. |
 | 7--8 | Capítulo de gobernanza, reproducibilidad y límites. | MRM, fairness proxy, source governance y artifact traceability conectados. |
-| 9--10 | Capítulo de extensiones controladas. | Paper 4, IFRS9, CATE, online y DLA clasificados como agenda o appendix. |
+| 9--10 | Capítulo de extensiones controladas. | agenda extendida CRPTO/tesis, IFRS9, CATE, online y DLA clasificados como agenda o appendix. |
 | 11 | Ensamble de defensa: contribuciones, limitaciones y preguntas difíciles. | Cada pregunta esperada tiene evidencia o frontera explícita. |
 | 12 | Cierre: narrativa, formato, bibliografía y reproducibilidad. | Tesis renderizada, coherente y sin claims huérfanos. |
 
@@ -144,7 +144,7 @@ El barrido final deja a CRPTO como repositorio autocontenido: importa, resume o 
 | Portfolio LP y robust region | Sí, central | Sí | Núcleo empírico. |
 | IFRS9/SICR | Implicación/limitación | Sí | No hacerlo segunda contribución IJDS. |
 | Explainability, fairness proxy y MRM | Discusión/supplement | Sí | Responde implicaciones prácticas/éticas. |
-| Paper 4 living lab | Solo imports gobernados | Sí | Tail-risk, source/online caveats y framing; no promoción automática. |
+| agenda extendida CRPTO/tesis living lab | Solo imports gobernados | Sí | Tail-risk, source/online caveats y framing; no promoción automática. |
 | Ledgers livianos heredados | Appendix/dossier | Sí | Solo CSVs curados en `reports/crpto/appendix/`; no entran a tablas oficiales. |
 | GPU, quantum y agenda futura | No | Opcional | Mantener fuera del paper CRPTO. |
 
@@ -153,7 +153,7 @@ Matriz de intake del libro completo hacia paper y tesis.
 
 ### Mapa de expansión de tesis
 
-Para la tesis de maestría, CRPTO debe **expandirse, no inflarse**. El capítulo central sigue una ruta clara: (1) problema aplicado de originación y selección de portafolio; (2) fundamentos mínimos de PD calibrada, conformal prediction y robust optimization; (3) metodología CRPTO; (4) resultados canónicos y región robusta; (5) governance, fairness proxy, MRM y reproducibilidad; (6) límites y agenda doctoral/Paper 4.
+Para la tesis de maestría, CRPTO debe **expandirse, no inflarse**. El capítulo central sigue una ruta clara: (1) problema aplicado de originación y selección de portafolio; (2) fundamentos mínimos de PD calibrada, conformal prediction y robust optimization; (3) metodología CRPTO; (4) resultados canónicos y región robusta; (5) governance, fairness proxy, MRM y reproducibilidad; (6) límites y agenda doctoral/agenda extendida CRPTO/tesis.
 
 ::: {#tbl-crpto-thesis-expansion}
 
@@ -168,12 +168,38 @@ Para la tesis de maestría, CRPTO debe **expandirse, no inflarse**. El capítulo
 | MRM, drift, PSI y controles de modelo | Capítulo de gobernanza. |
 | Explanation drift y reason-code governance | Auditabilidad de explicaciones. |
 | Núcleo CRPTO completo | Capítulo central alineado al paper. |
-| Cierre de living lab y límites de Paper 4 | Agenda y madurez metodológica. |
+| Cierre de living lab y límites de agenda extendida CRPTO/tesis | Agenda y madurez metodológica. |
 
 Mapa de expansión de tesis (qué traer del libro).
 :::
 
 Qué **no** conviene traer al claim central de tesis: GPU, quantum, CATE profundo, IFRS9 contractual, online conformal y DLA quedan como agenda o apéndice de investigación. El riesgo de una tesis no es quedarse corta: es parecer que tiene cinco tesis distintas peleando por el centro.
+
+### Evidence cards extendidas 2026-06-06 {#sec-crpto-extended-evidence-cards}
+
+El cierre de consolidación deja cuatro evidence cards autocontenidas en
+`docs/research/crpto_extended_evidence_cards_2026-06-06.md` y
+`reports/crpto/extended/`. Su función es fortalecer tesis, appendix y defensa
+ante reviewers sin convertir el IJDS en un paper distinto.
+
+::: {#tbl-crpto-extended-evidence-cards}
+
+| Card | Evidencia retenida | Uso en tesis | Uso IJDS |
+|---|---|---|---|
+| PyEPO 1.3.7 / DFL formal suite | SPO+ full mean regret `0.122379`; RFYL `0.125405`; CaVE `0.128109`; temporal SPO+ `0.061835`. | Appendix DFL y comparación regret-auditabilidad. | Contexto SPO+; no reemplazo del champion. |
+| FICO proxy vs champion | AUC `+0.10757`, Gini/Somers' D `+0.21514`, Brier `-0.010815`, ECE `-0.022137`; `48.65%` de préstamos con cambio de ranking >= 20 pp. | Model-risk y score-governance. | Solo si reviewer pide benchmark de score tradicional. |
+| IFRS9/SICR prudential absorption | ECL severe `USD 1.479B`, conformal high/point `3.26x`, SICR recall `75.8%`, added ECL `USD 56.6M`. | Appendix prudencial y capítulo de tesis. | Implicación/limitación; no segunda contribución. |
+| CRC/LTT + CROMS-lite governance | `22` policies pasan gates operacionales; una pasa source-hardening; selector muestra tradeoff retorno vs source defense. | Governance de decisión y future selector protocol. | Reviewer-defense; A5/A10 siguen siendo la superficie compacta. |
+
+Evidence cards extendidas retenidas para tesis y appendix.
+:::
+
+La frontera es tan importante como la evidencia: DFL no trae cobertura
+conformal, FICO governance no es fair-lending legal, IFRS9/SICR no es allowance
+contractual, y CRC/LTT--CROMS-lite no es entrenamiento end-to-end ni protocolo
+de promoción. Con esto, la tesis gana madurez sin desplazar el claim central:
+CRPTO compra auditabilidad verificable bajo incertidumbre, no mínimo regret ni
+certificación regulatoria total.
 
 ### Registro de resultados negativos {#sec-crpto-negative-results}
 

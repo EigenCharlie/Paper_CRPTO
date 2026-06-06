@@ -1,15 +1,17 @@
 # PyEPO 1.3 Intake Memo - 2026-05-26
 
-> Ported from the parent research factory (`pyepo_1_3_intake_2026-05-26`).
-> Evaluates PyEPO 1.3 for the CRPTO project, the Quarto book and the Paper 4
+> Ported from the CRPTO research archive (`pyepo_1_3_intake_2026-05-26`).
+> Evaluates PyEPO 1.3 for the CRPTO project, the Quarto book and the agenda extendida CRPTO/tesis
 > agenda. It is not a promotion artifact and does not modify the frozen champion.
 
 ## Bottom Line
 
 PyEPO 1.3 matured enough to reopen the **SPO/DFL lane as a bounded, isolated
-prototype**, especially for the Paper 4 agenda. The 2026-05-28 closeout below
+prototype**, especially for the agenda extendida CRPTO/tesis agenda. The 2026-05-28 closeout below
 now satisfies the CRPTO stop rule: we import the paired SPO+ rerun as appendix
-evidence, but we do not import the full suite, add a dependency, or replace
+evidence and, after the 2026-06-06 consolidation, retain only curated full-suite
+summary tables under `reports/crpto/extended/`. We do not import solver logs,
+run directories, new runtime dependencies, or any claim that would replace
 CRPTO. The strongest contribution is a cleaner comparator boundary:
 
 1. `SPOPlus` as the existing regret-minimizing baseline.
@@ -27,7 +29,7 @@ isolated OR-Tools environment with PyTorch autograd modules.
 
 ## Curated Closeout - 2026-05-28
 
-The parent project completed the PyEPO 1.3.7 rerun after this intake memo was
+The CRPTO research archive completed the PyEPO 1.3.7 rerun after this intake memo was
 created. CRPTO imports only the conclusion needed for IJDS/thesis appendix:
 
 | Result | Curated value | CRPTO decision |
@@ -40,12 +42,12 @@ created. CRPTO imports only the conclusion needed for IJDS/thesis appendix:
 Interpretation: SPO+ remains the regret winner, as expected. CRPTO remains the
 coverage/auditability method because the PyEPO suite does not provide conformal
 coverage, exact funded-set bound guarantees, or a replacement for the frozen
-`bound_aware_276k_economic_champion`. RFYL, CaVE and PFYL-Mul stay in the Paper 4
+`bound_aware_276k_economic_champion`. RFYL, CaVE and PFYL-Mul stay in the agenda extendida CRPTO/tesis
 DFL lab as comparator research, not as CRPTO promotion evidence.
 
 Operational decision: do not copy PyEPO run directories, solver logs, Gurobi
-artifacts or new dependencies into this repo. Keep this memo and the SPO+ chapter
-language as the self-contained record.
+artifacts or new dependencies into this repo. Keep this memo, the SPO+ chapter
+language and the curated evidence-card CSVs as the self-contained record.
 
 ## Version Check
 
@@ -75,7 +77,7 @@ projection).
 - Weak for the current continuous/fractional CRPTO champion.
 - Requires `optDatasetConstrs`, which needs Gurobi-backed constraint extraction.
 
-Decision: Paper 4 only, as a small Gurobi-enabled binary lane. Do not import into
+Decision: agenda extendida CRPTO/tesis only, as a small Gurobi-enabled binary lane. Do not import into
 the CRPTO main claim.
 
 ### Regularized Frank-Wolfe
@@ -88,7 +90,7 @@ OR-Tools-style `optModel`.
 - Good for continuous LP portfolio selection; better than CaVE for the current
   CRPTO shape.
 - Avoids the old `cvxpy/cvxpylayers` dependency blocker.
-- Gives Paper 4 a more credible "formal DFL" experiment than the earlier
+- Gives agenda extendida CRPTO/tesis a more credible "formal DFL" experiment than the earlier
   oracle-regret surrogate.
 
 Decision: **promote to next experiment** as a third DFL comparator beside
@@ -122,7 +124,7 @@ reviewer-facing reproducibility language.
 
 ## Local Probe
 
-The parent probe created a dedicated environment outside the repo with PyTorch +
+The isolated probe created a dedicated environment outside the repo with PyTorch +
 OR-Tools. The Windows-first equivalent (isolated, optional, never the default
 `.venv`):
 
@@ -161,7 +163,7 @@ optional/isolated.
 ## Recommended Experiments
 
 Historical intake status: Experiment A is now closed by the 2026-05-28 rerun.
-Experiments B--D remain Paper 4 research lanes and are not prerequisites for
+Experiments B--D remain agenda extendida CRPTO/tesis research lanes and are not prerequisites for
 the CRPTO IJDS manuscript.
 
 - **A - SPO+ repro rerun**: run `scripts/run_spo_real.py` in the isolated PyEPO
@@ -171,13 +173,13 @@ the CRPTO IJDS manuscript.
 - **B - RFYL comparator**: add `regularizedFrankWolfeFenchelYoung` to the same
   sampled instances; compare two-stage Ridge, SPO+, RFYL and CRPTO robust costs.
   Gate: finite, stable regret across seeds; improves over two-stage or gives a
-  useful speed/stability trade-off. Sink: Paper 4 DFL lane; optional CRPTO
+  useful speed/stability trade-off. Sink: agenda extendida CRPTO/tesis DFL lane; optional CRPTO
   appendix.
 - **C - multiplicative PFYL for risk-only costs**: positive costs only (`PD`,
   `PD_high`, ECL). Do not use raw `PD * LGD - int_rate` unless reframed. Sink:
-  Paper 4 only.
+  agenda extendida CRPTO/tesis only.
 - **D - CaVE binary prototype**: only if Gurobi is available; convert to binary
-  top-k/fixed-budget, use `optDatasetConstrs` + `coneAlignedCosine`. Sink: Paper 4
+  top-k/fixed-budget, use `optDatasetConstrs` + `coneAlignedCosine`. Sink: agenda extendida CRPTO/tesis
   method appendix.
 
 ## Claim Boundaries
@@ -198,7 +200,7 @@ For **CRPTO**, keep PyEPO as a comparator appendix. The core claim remains CRPTO
 calibrated PD plus Mondrian conformal uncertainty plus a robust portfolio policy
 that is auditable.
 
-For **Paper 4 (agenda)**, reopen the SPO/DFL lane with a new stop rule: one SPO+
+For **agenda extendida CRPTO/tesis (agenda)**, reopen the SPO/DFL lane with a new stop rule: one SPO+
 rerun, one RFYL comparator, optional multiplicative PFYL risk-only probe, optional
 CaVE binary probe only if Gurobi is available. If those do not change a manuscript
 claim or produce a cleaner comparator table, stop.

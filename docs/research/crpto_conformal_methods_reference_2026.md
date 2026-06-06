@@ -1,5 +1,5 @@
 > **RESEARCH NOTE** — Conformal-prediction methods reference, ported and condensed
-> from the parent project's `conformal_prediction_research_2026.md`. Technical
+> from the CRPTO archive's `conformal_prediction_research_2026.md`. Technical
 > support for the CRPTO methods chapter; the live policy/results are in
 > `data/processed/conformal_intervals_mondrian.parquet` and
 > `models/conformal_policy_status.json`.

@@ -1,32 +1,32 @@
 # Metrics for Credit and ML Models - triage 2026-05-18
 
-> Ported from the parent research factory
+> Ported from the CRPTO research archive
 > (`metrics_credit_ml_models_triage_2026-05-18`). Closes the intake of the
 > practitioner binder "Metrics for Credit and ML Models.pdf" (five pieces on
 > discrimination, calibration, equity and trust). Decides what enters CRPTO,
-> what enters Paper 4 (agenda), and what stays parked.
+> what enters agenda extendida CRPTO/tesis (agenda), and what stays parked.
 
 ## Source status
 
 | Source | Status | Verified source | Project use |
 | --- | --- | --- | --- |
-| Wuthrich, "Model Selection with Gini Indices under Auto-Calibration" | peer-reviewed journal article, European Actuarial Journal 2023 | https://doi.org/10.1007/s13385-022-00339-9 | CRPTO + Paper 4 |
-| Albanesi and Vamossy, "Credit Scores: Performance and Equity" | NBER Working Paper 32917, 2024 | https://doi.org/10.3386/w32917 | Paper 4 strong context; CRPTO light context |
+| Wuthrich, "Model Selection with Gini Indices under Auto-Calibration" | peer-reviewed journal article, European Actuarial Journal 2023 | https://doi.org/10.1007/s13385-022-00339-9 | CRPTO + agenda extendida CRPTO/tesis |
+| Albanesi and Vamossy, "Credit Scores: Performance and Equity" | NBER Working Paper 32917, 2024 | https://doi.org/10.3386/w32917 | agenda extendida CRPTO/tesis strong context; CRPTO light context |
 | Dinga et al., "Beyond accuracy" | bioRxiv preprint, 2019 | https://doi.org/10.1101/743138 | metric taxonomy context only |
 | Somers' D / ordered association material | binder material | binder PDF | optional metric appendix |
 | ReScorer | binder material, GenAI/e-commerce reason scoring | binder PDF | park |
 
 ## Prudential (Paper 2) absorption check
 
-Paper 2 no longer needs to be a near-term standalone target. Paper 4 is the live
+Paper 2 no longer needs to be a near-term standalone target. agenda extendida CRPTO/tesis is the live
 lab and future full-paper container, so it absorbs all useful prudential
 evidence: ECL scenarios, conformal ECL ranges, SICR by conformal width,
 CIF/prepayment, stage-cost governance and TS-to-ECL context. Absorption is
-complete for planning, but bounded in claim language: Paper 4 keeps the material
+complete for planning, but bounded in claim language: agenda extendida CRPTO/tesis keeps the material
 as an `IFRS9-inspired SICR/ECL proxy` lane, not a contractual IFRS 9
 implementation.
 
-| Prudential evidence | Paper 4 destination | Decision |
+| Prudential evidence | agenda extendida CRPTO/tesis destination | Decision |
 | --- | --- | --- |
 | ECL by scenario and conformal range | IFRS9 evidence card | append |
 | SICR conformal threshold `t*=0.30`, recall 75.8%, ECL +56.6M | IFRS9 evidence card | append strong |
@@ -52,9 +52,9 @@ that were already true:
 Do not add Dinga, Somers' D, or ReScorer to the CRPTO bibliography unless a
 future appendix explicitly needs them.
 
-## What changes for Paper 4 (agenda)
+## What changes for agenda extendida CRPTO/tesis (agenda)
 
-| Source | Use in Paper 4 | Decision |
+| Source | Use in agenda extendida CRPTO/tesis | Decision |
 | --- | --- | --- |
 | Wuthrich | Calibration-gated Gini/AUC: ranking is interpreted only after calibration | append methodological |
 | Albanesi and Vamossy | FICO/score proxy vs champion ML, misclassification, ranking difference, observable vulnerable groups | append strong |
@@ -62,9 +62,9 @@ future appendix explicitly needs them.
 | Somers' D | Bootstrap/tie sensitivity for Gini/AUC/Somers' D | optional |
 | ReScorer | Only if we audit LLM reasons in the research workflow | park |
 
-## Executed bounded experiment for Paper 4
+## Executed bounded experiment for agenda extendida CRPTO/tesis
 
-The compact experiment was executed on 2026-05-19 through the consolidated Paper 4
+The compact experiment was executed on 2026-05-19 through the consolidated agenda extendida CRPTO/tesis
 frontier runner, without creating a new versioned wave.
 
 **Question.** Does the project champion materially improve ranking and
@@ -100,13 +100,13 @@ ranking and the champion ranking. The result survives the intended observable
 slices (income tails, high DTI, no-mortgage, thin-file proxy, grades A-E) as an
 appendix diagnostic.
 
-**Decision.** Append to Paper 4 as metric-governance evidence. CRPTO can use
+**Decision.** Append to agenda extendida CRPTO/tesis as metric-governance evidence. CRPTO can use
 this only as light context if needed. No fair-lending legal claim is allowed.
 
 ## Editorial decision
 
 - CRPTO gets a surgical calibration/equity-context reinforcement.
-- Paper 4 gets an IFRS9 evidence card and a future metric-governance experiment
+- agenda extendida CRPTO/tesis gets an IFRS9 evidence card and a future metric-governance experiment
   design.
-- No new `paper4_v###`, no new exploratory CSV wave, and no
+- No new `extended_agenda_v###`, no new exploratory CSV wave, and no
   commit-per-iteration artifact should be created from this intake.

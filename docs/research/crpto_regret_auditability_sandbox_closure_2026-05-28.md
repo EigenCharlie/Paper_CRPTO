@@ -1,6 +1,6 @@
 # CRPTO Regret-Auditability Sandbox Closure - 2026-05-28
 
-> Ported from the parent research factory
+> Ported from the CRPTO research archive
 > (`paper1_regret_auditability_sandbox_closure_2026-05-28`). **Documentation
 > only.** This is the closure record of the broader regret-auditability search:
 > the frozen champion (`paper-thesis-final-economic-2026-04-06`) is **not**
@@ -38,18 +38,18 @@ Frozen champion reference (unchanged):
   aversion `0.1`
 - region: `45/45`
 
-## What Was Evaluated (parent-staged, not promoted)
+## What Was Evaluated (archive-staged, not promoted)
 
-The useful sandbox material was absorbed in the parent through paper-facing and
+The useful sandbox material was absorbed in the CRPTO research archive through paper-facing and
 research artifacts (the dated CSV tables and staged PD challenger models live in
-the parent research factory; the child keeps the **conclusions** below, not the
+the CRPTO research archive; the child keeps the **conclusions** below, not the
 challenger weights). Child-side companions:
 
 - [crpto_bound_improvement_intake_2026-05-21](crpto_bound_improvement_intake_2026-05-21.md)
 - [crpto_champion_reopen_plan_2026-05-21](crpto_champion_reopen_plan_2026-05-21.md)
 - [crpto_champion_tournament_protocol_2026-05-25](crpto_champion_tournament_protocol_2026-05-25.md)
 
-Three external PD challengers were staged in the parent and evaluated:
+Three external PD challengers were staged in the CRPTO research archive and evaluated:
 `bureau_behavior_15`, `affordability_rate_5`, `canonical_4`. None were promoted.
 
 ## PD Findings
@@ -98,7 +98,7 @@ grade `E` weakness makes it hard to promote without further conformal repair.
 ## Portfolio And Bound Findings
 
 The portfolio layer is where the frozen champion remains strongest as a balanced
-paper-facing claim. The parent decision table contained 73 exact/pass decision
+paper-facing claim. The archived decision table contained 73 exact/pass decision
 rows:
 
 - `35` append-or-park rows with no champion case
@@ -132,7 +132,7 @@ search did not find a free lunch.
 
 Recommended paper framing: main text keeps the frozen economic champion as the
 primary CRPTO result; appendix reports the governed reopen/tournament as
-robustness and sensitivity evidence; Paper 4 / methods appendix uses the
+robustness and sensitivity evidence; agenda extendida CRPTO/tesis / methods appendix uses the
 regret-auditability frontier and PyEPO regret suite to discuss decision
 efficiency vs auditability.
 

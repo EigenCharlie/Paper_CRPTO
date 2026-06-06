@@ -1,6 +1,6 @@
 # CRPTO Bound-Improvement Intake - 2026-05-21
 
-> Ported from the parent research factory
+> Ported from the CRPTO research archive
 > (`paper1_bound_improvement_intake_2026-05-21`). **Documentation only.** Records
 > the PD/conformal challenger package from the external regret-auditability
 > sandbox and the gates a bound-improvement lane must pass. The frozen champion is

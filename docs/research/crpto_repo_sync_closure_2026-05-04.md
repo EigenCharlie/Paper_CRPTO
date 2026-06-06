@@ -15,7 +15,7 @@ the Claude follow-up commit on branch
   - `models/champion_portfolio_policy.json`
   - `models/champion_registry.json`
   - `data/processed/final_project_summary.parquet`
-  - `reports/paper_material/crpto/tables/*`
+  - `reports/crpto/tables/*`
 - Key closure metrics:
   - realized return: `170464.5429284627`
   - `alpha01_exact_pass=true`

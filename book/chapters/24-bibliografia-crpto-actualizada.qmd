@@ -23,6 +23,12 @@ end-to-end --- vive en supplement/tesis aunque sea bibliograficamente muy
 valioso. La réplica externa estática Prosper/Freddie ya queda cubierta por
 A25--A33.
 
+La evidencia fila-a-fila de este inventario vive en
+`docs/research/papers_tesis_deep_audit_2026-06-06.md` y en las tres tablas de
+`reports/crpto/literature/`. Esa auditoría es la fuente operativa para decidir
+si una referencia se promueve al cuerpo IJDS, se usa en appendix, queda para
+tesis o se aparca como future gate.
+
 ## Matriz paper / supplement / tesis
 
 | Familia | Papers locales principales | Entra al cuerpo IJDS | Rol exacto en CRPTO |
@@ -154,6 +160,20 @@ La tesis puede usar el mapa completo. Ahí sí conviene ampliar:
 - online/multi-distribution conformal como protocolo futuro;
 - decisión certificates como posible evolución del bound-aware audit;
 - P2P/Lending Club OR como linaje aplicado de la optimización.
+
+### Evidence cards empíricas extendidas
+
+La bibliografía nueva se complementa con evidence cards empíricas en
+`reports/crpto/extended/`. No son citas ni sustituyen a `book/references.bib`;
+son registros de frontera que muestran qué material queda listo para tesis o
+appendix sin entrar al cuerpo IJDS.
+
+| Card | Literatura que conversa con ella | Lectura segura |
+|---|---|---|
+| PyEPO/DFL formal suite | SPO+, DFL survey, RFYL/CaVE/PyEPO | DFL gana regret; CRPTO compra auditabilidad y cobertura verificable. |
+| FICO proxy vs champion | Albanesi-Vamossy, Wuthrich, credit score governance | El champion mejora al score proxy como diagnóstico MRM; no hay claim legal de equidad. |
+| IFRS9/SICR prudential absorption | Basel/ECL, ECB/IFRS9, competing risks | La incertidumbre conformal tiene lectura prudencial; no es IFRS9 contractual. |
+| CRC/LTT y CROMS-lite | CRC, LTT, CROMS, conformal decision theory | Los selectors y gates son defensa metodológica; no reabren el champion. |
 
 ## Regla de claim
 
