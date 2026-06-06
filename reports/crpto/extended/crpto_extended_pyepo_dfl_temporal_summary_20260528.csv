@@ -1,0 +1,8 @@
+method,method_display,mean_regret,std_regret,median_regret,n_observations,improvement_vs_two_stage_pct,auditability_score,wilcoxon_vs_two_stage_pvalue,coverage_90,coverage_95,avg_width_90,min_grade_coverage_90,claim_boundary
+spo_plus,SPO+,0.0618354020273836,0.03380288935725,0.0581223666667938,4000,61.071811924299126,1.0,0.0,,,,,DFL regret comparator; no conformal or funded-set guarantee.
+rfyl,RFYL,0.0714477125165904,0.0389106162370471,0.0653685815632343,4000,55.02042692078969,1.0,0.0,,,,,DFL regret comparator; no conformal or funded-set guarantee.
+cave,CaVE,0.0722844527933302,0.0401676482170303,0.0663828151300549,4000,54.49366100242058,1.0,0.0,,,,,DFL regret comparator; no conformal or funded-set guarantee.
+pairwise_ltr,Pairwise LTR,0.101961096906175,0.0501978972064505,0.0945730153471231,4000,35.810868832878825,1.0,0.0,,,,,DFL regret comparator; no conformal or funded-set guarantee.
+two_stage,Two-stage Ridge,0.1588448003741014,0.0690559441094283,0.1495100259780883,4000,0.0,1.0,,,,,,DFL regret comparator; no conformal or funded-set guarantee.
+pfyl_mul,PFYL-Mul,0.3881303746810818,0.1253694356853472,0.3741091026458889,4000,-144.34565835552985,1.0,1.0,,,,,DFL regret comparator; no conformal or funded-set guarantee.
+crpto_robust,CRPTO robust,0.5156464260656085,0.1746959563322267,0.509262406732887,4000,-224.6227906767878,3.0,1.0,0.929338423586606,0.9623395902033092,0.764155715329014,0.9003509420022164,DFL regret comparator; no conformal or funded-set guarantee.

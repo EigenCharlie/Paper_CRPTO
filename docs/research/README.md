@@ -35,6 +35,11 @@ libro independiente.
   en `Papers_tesis/`, con matriz fuente, indice de captions y curaduria de
   visual sinks en `reports/crpto/literature/`; reemplaza la lectura parcial de
   mayo para claims, appendix, tesis y agenda extendida.
+- `crpto_extended_evidence_cards_2026-06-06.md`: evidence cards autocontenidas
+  para PyEPO/DFL, FICO proxy vs champion, IFRS9/SICR prudential absorption y
+  CRC/LTT--CROMS-lite governance; la superficie canonica vive en
+  `reports/crpto/extended/` y solo alimenta tesis, appendix o respuestas a
+  reviewers sin reabrir el champion.
 
 ## Material historico consolidado (2026-05-18 -- 2026-05-28)
 

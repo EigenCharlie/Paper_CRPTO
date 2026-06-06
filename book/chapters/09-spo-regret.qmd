@@ -213,7 +213,8 @@ Los artefactos clave son:
 - `data/processed/crpto_vs_spo_stability_detail.parquet` — regret por seed y periodo (para reanalizar varianza).
 - `data/processed/spo_training_loss.parquet` — curva de pérdida SPO+ durante entrenamiento.
 - `models/spo_real_training_status.json` — estado del run v2 (schema `2026-03-17.2`).
-- `docs/research/crpto_pyepo_dfl_intake_2026-05-26.md` — cierre curado 2026-05-28 del rerun PyEPO 1.3.7, sin importar la suite completa.
+- `docs/research/crpto_pyepo_dfl_intake_2026-05-26.md` — cierre curado 2026-05-28 del rerun PyEPO 1.3.7.
+- `reports/crpto/extended/crpto_extended_pyepo_dfl_full_summary_20260528.csv` — tabla curada de la suite DFL completa para tesis/appendix, sin logs ni dependencias pesadas.
 
 ### Cierre: el carril DFL formal con PyEPO 1.3.7
 
@@ -229,7 +230,7 @@ learning* [@mandi2024] al punto de habilitar un stack de comparadores DFL
 `cvxpy/cvxpylayers` y corre en un entorno OR-Tools opcional. Para la forma actual
 del problema CRPTO --una selección de portafolio sobre un LP continuo-- el método
 más natural no es SPO+ sino `regularizedFrankWolfeFenchelYoung` (RFYL), que sólo
-necesita un oráculo de optimización lineal. Eso da a la agenda agenda extendida CRPTO/tesis un
+necesita un oráculo de optimización lineal. Eso da a la agenda extendida CRPTO/tesis un
 experimento DFL "formal" más creíble que el surrogate oracle-regret anterior.
 
 La frontera de claims es estricta y coincide con la del comparador SPO+:

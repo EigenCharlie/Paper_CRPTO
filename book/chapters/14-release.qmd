@@ -230,6 +230,7 @@ queda como tesis o agenda extendida.
 | `Papers_tesis/supplement/` | 28 PDFs | Frontera metodológica: source/shift, localized/group-weighted, online, tail risk, certificados de decisión y utility-directed CP. Entra como appendix/future work, no como cambio de champion. |
 | `Papers_tesis/tesis/` | 12 PDFs | Contexto amplio para tesis: IFRS9/ECL, MRM, fairness proxy, data quality, credit invisibles y fundamentos de robust optimization. El cuerpo IJDS solo toma lo que fortalece el argumento central. |
 | Auditoría 2026-06-06 | 1 memo + 3 CSVs | Fuente operativa para `promote`, `append`, `park` y `future_gate`: `docs/research/papers_tesis_deep_audit_2026-06-06.md` y `reports/crpto/literature/`. |
+| Evidence cards extendidas | 1 memo + 10 CSVs | PyEPO/DFL, FICO proxy, IFRS9/SICR y CRC/LTT--CROMS-lite quedan en `docs/research/crpto_extended_evidence_cards_2026-06-06.md` y `reports/crpto/extended/`; alimentan tesis, appendix y reviewer-defense, no el claim central IJDS. |
 
 : Higiene editorial del source pack Papers_tesis {#tbl-crpto-papers-tesis-source-pack-hygiene}
 

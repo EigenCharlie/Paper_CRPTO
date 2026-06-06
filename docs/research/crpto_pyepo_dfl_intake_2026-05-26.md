@@ -9,7 +9,9 @@
 PyEPO 1.3 matured enough to reopen the **SPO/DFL lane as a bounded, isolated
 prototype**, especially for the agenda extendida CRPTO/tesis agenda. The 2026-05-28 closeout below
 now satisfies the CRPTO stop rule: we import the paired SPO+ rerun as appendix
-evidence, but we do not import the full suite, add a dependency, or replace
+evidence and, after the 2026-06-06 consolidation, retain only curated full-suite
+summary tables under `reports/crpto/extended/`. We do not import solver logs,
+run directories, new runtime dependencies, or any claim that would replace
 CRPTO. The strongest contribution is a cleaner comparator boundary:
 
 1. `SPOPlus` as the existing regret-minimizing baseline.
@@ -44,8 +46,8 @@ coverage, exact funded-set bound guarantees, or a replacement for the frozen
 DFL lab as comparator research, not as CRPTO promotion evidence.
 
 Operational decision: do not copy PyEPO run directories, solver logs, Gurobi
-artifacts or new dependencies into this repo. Keep this memo and the SPO+ chapter
-language as the self-contained record.
+artifacts or new dependencies into this repo. Keep this memo, the SPO+ chapter
+language and the curated evidence-card CSVs as the self-contained record.
 
 ## Version Check
 

@@ -175,6 +175,32 @@ Mapa de expansión de tesis (qué traer del libro).
 
 Qué **no** conviene traer al claim central de tesis: GPU, quantum, CATE profundo, IFRS9 contractual, online conformal y DLA quedan como agenda o apéndice de investigación. El riesgo de una tesis no es quedarse corta: es parecer que tiene cinco tesis distintas peleando por el centro.
 
+### Evidence cards extendidas 2026-06-06 {#sec-crpto-extended-evidence-cards}
+
+El cierre de consolidación deja cuatro evidence cards autocontenidas en
+`docs/research/crpto_extended_evidence_cards_2026-06-06.md` y
+`reports/crpto/extended/`. Su función es fortalecer tesis, appendix y defensa
+ante reviewers sin convertir el IJDS en un paper distinto.
+
+::: {#tbl-crpto-extended-evidence-cards}
+
+| Card | Evidencia retenida | Uso en tesis | Uso IJDS |
+|---|---|---|---|
+| PyEPO 1.3.7 / DFL formal suite | SPO+ full mean regret `0.122379`; RFYL `0.125405`; CaVE `0.128109`; temporal SPO+ `0.061835`. | Appendix DFL y comparación regret-auditabilidad. | Contexto SPO+; no reemplazo del champion. |
+| FICO proxy vs champion | AUC `+0.10757`, Gini/Somers' D `+0.21514`, Brier `-0.010815`, ECE `-0.022137`; `48.65%` de préstamos con cambio de ranking >= 20 pp. | Model-risk y score-governance. | Solo si reviewer pide benchmark de score tradicional. |
+| IFRS9/SICR prudential absorption | ECL severe `USD 1.479B`, conformal high/point `3.26x`, SICR recall `75.8%`, added ECL `USD 56.6M`. | Appendix prudencial y capítulo de tesis. | Implicación/limitación; no segunda contribución. |
+| CRC/LTT + CROMS-lite governance | `22` policies pasan gates operacionales; una pasa source-hardening; selector muestra tradeoff retorno vs source defense. | Governance de decisión y future selector protocol. | Reviewer-defense; A5/A10 siguen siendo la superficie compacta. |
+
+Evidence cards extendidas retenidas para tesis y appendix.
+:::
+
+La frontera es tan importante como la evidencia: DFL no trae cobertura
+conformal, FICO governance no es fair-lending legal, IFRS9/SICR no es allowance
+contractual, y CRC/LTT--CROMS-lite no es entrenamiento end-to-end ni protocolo
+de promoción. Con esto, la tesis gana madurez sin desplazar el claim central:
+CRPTO compra auditabilidad verificable bajo incertidumbre, no mínimo regret ni
+certificación regulatoria total.
+
 ### Registro de resultados negativos {#sec-crpto-negative-results}
 
 Los resultados negativos no son fracaso editorial: son evidencia de madurez metodológica y protegen el paper de sobreprometer. El registro convierte los frentes cerrados en límites defendibles.
