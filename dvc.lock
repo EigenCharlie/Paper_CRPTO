@@ -33,7 +33,7 @@ stages:
     outs:
     - path: book/_book
       hash: md5
-      md5: bd02afa3f08cf0527cd82a563efdbd7f.dir
+      md5: 459e0a242da6a53ee74ec822606873d3.dir
       size: 15967707
       nfiles: 112
   crpto.paper.figures:
