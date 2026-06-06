@@ -118,10 +118,9 @@ is favorable only on the selected Lending Club champion. The key claim is
 deliberately surgical: CRPTO maps frozen calibrated PD artifacts into a robust
 funded set, reports the portfolio-level conformal premium
 $\Gamma_{\mathrm{CP}}$, and verifies exact alpha-safe weighted miscoverage on the promoted Lending Club
-portfolio, while showing that the conformal and LP gates remain viable on two
-additional credit datasets. The paper also documents the governance boundary
-between safe paper-facing reruns and protected stages that would change the
-promoted champion.
+portfolio. The same conformal and LP gates remain viable on two additional credit
+datasets, and the paper documents the governance boundary between safe
+paper-facing reruns and protected stages that would change the promoted champion.
 
 ![CRPTO's central move is operational rather than decorative: frozen calibrated PD artifacts become Mondrian conformal intervals, the upper-risk signal enters a robust portfolio optimizer, and the promoted funding policy is audited against exact funded-set controls.](../reports/crpto/figures/crpto_fig1_journal_pipeline.png){#fig-crpto-pipeline width="94%" fig-alt="Four-stage CRPTO pipeline from frozen calibrated PD to Mondrian conformal intervals, robust portfolio optimization, and promoted auditable policy."}
 
@@ -633,7 +632,7 @@ The external layer also surfaces a result a single-dataset champion cannot show.
 The signed price of robustness--using the same convention as the Lending Club
 field, $(\text{nonrobust}-\text{robust})/\text{nonrobust}$--is a *positive*
 premium under frozen application, and it grows with the panel default rate
-(Table @tbl-price-of-robustness). Within Freddie, the high-default `red` segment
+(Table @tbl-price-of-robustness, Figure @fig-price-scaling). Within Freddie, the high-default `red` segment
 pays more than `green`; across datasets, Prosper's `30.92%` default panel pays the
 largest premium. The reading is economic, not incidental: higher default risk
 widens the conformal intervals, so the robust worst case discounts more return,
@@ -654,6 +653,8 @@ premium, and under selection it can be free.
 : Price of robustness by frozen application, ordered by panel default rate, from
 `crpto_tableA34_price_of_robustness_cross_dataset.csv`. The selected Lending Club
 champion is `-10.56%` (favorable under selection, not blind application). {#tbl-price-of-robustness}
+
+![The price of robustness scales with panel default risk: the frozen external applications form a positive, monotone series, while the selected Lending Club champion sits below zero as a favorable reference.](../reports/crpto/figures/crpto_fig25_price_of_robustness_scaling.png){#fig-price-scaling width="78%" fig-alt="Line chart on a log-scale default-rate axis: the price of robustness rises from +1.00 percent to +9.46 percent across frozen applications, with Lending Club at -10.56 percent drawn as a reference line below zero."}
 
 # Robustness and Comparators
 
@@ -890,5 +891,20 @@ prospective multi-period origination studies all require new protocols, data, or
 proofs.
 Those directions are valuable, but they are not blockers for presenting the
 frozen CRPTO result as an auditable post-hoc predict-then-optimize contribution.
+
+# Conclusion
+
+CRPTO shows that finite-sample predictive uncertainty can be carried from a
+frozen calibrated PD model into a robust, budget-constrained credit-portfolio
+decision that a reviewer can audit end to end. On the Lending Club out-of-time
+panel the promoted policy earns `$170,464.54` on a `$1M` budget while passing the
+exact $\alpha = 0.01$ funded-set bound, and it lies inside a `45/45` alpha-safe
+robust region rather than at a single lucky point. The external Prosper and
+Freddie/Mendeley replications show the recipe is not a Lending-Club artifact and
+expose an economically interpretable regularity: the price of robustness is a
+bounded premium that scales with the panel's default risk. The contribution is
+deliberately scoped---an auditable post-hoc bridge, not a new end-to-end learner
+or a live-deployment study---and every reported number is regenerable from frozen
+artifacts.
 
 # References
