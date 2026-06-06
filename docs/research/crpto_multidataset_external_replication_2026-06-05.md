@@ -82,6 +82,9 @@ universal exact certificate.
   - `reports/crpto/figures/crpto_fig22_external_replication.png`
   - `reports/crpto/figures/crpto_fig23_external_candidate_sensitivity.png`
   - `reports/crpto/figures/crpto_fig24_freddie_all_candidate_certificate.png`
+  - `reports/crpto/figures/crpto_fig25_price_of_robustness_scaling.png`
+    (A34 cross-dataset price-of-robustness scaling; built by
+    `scripts/generate_crpto_figures.py`)
 - Book copies:
   - `book/assets/figures/publication/crpto_fig22_external_replication.png`
   - `book/assets/figures/publication/crpto_fig23_external_candidate_sensitivity.png`

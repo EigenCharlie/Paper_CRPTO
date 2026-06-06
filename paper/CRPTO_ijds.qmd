@@ -37,7 +37,10 @@ alpha-safe policies, indicating that the result is not a single-point artifact.
 External frozen replications on Prosper marketplace loans and Freddie/Mendeley
 single-family mortgages preserve the conformal gates and produce positive robust
 LP objectives, strengthening the claim that the CRPTO recipe is not a
-Lending-Club-only artifact.
+Lending-Club-only artifact. Across these external panels the price of robustness
+is a positive premium that grows with the panel default rate (from `+1.0%` to
+`+9.5%`), turning the replication into an economically interpretable result rather
+than a single defensive gate.
 The contribution is not another predictive leaderboard, but an auditable
 post-hoc conformal robust credit-portfolio decision pipeline that maps frozen
 calibrated PD artifacts into a robust funded set, reports an explicit
@@ -96,7 +99,7 @@ out-of-sample and out-of-time splits. These replications are not new champions;
 they test whether the same PD-to-conformal-to-LP recipe remains economically
 usable on different credit products.
 
-The paper makes three contributions. First, it gives a reusable CRPTO
+The paper makes four contributions. First, it gives a reusable CRPTO
 construction for credit portfolios: frozen calibrated PD, Mondrian conformal
 uncertainty, and robust budgeted optimization as a post-hoc decision audit.
 Second, it positions that
@@ -107,8 +110,11 @@ leaderboard-oriented: CRPTO is an auditable conformal robust credit-portfolio
 decision built from frozen calibrated PD artifacts. Third, it provides an
 artifact-backed empirical study where every paper table and figure is generated
 from frozen outputs rather than manually transcribed summaries. Fourth, it adds
-external economic replications on Prosper and Freddie/Mendeley to separate the
-methodological claim from the idiosyncrasies of one P2P panel. The key claim is
+external economic replications on Prosper and Freddie/Mendeley that separate the
+methodological claim from the idiosyncrasies of one P2P panel and reveal an
+economically interpretable pattern: under blind frozen application the price of
+robustness is a positive premium that grows with the panel default rate, while it
+is favorable only on the selected Lending Club champion. The key claim is
 deliberately surgical: CRPTO maps frozen calibrated PD artifacts into a robust
 funded set, reports the portfolio-level conformal premium
 $\Gamma_{\mathrm{CP}}$, and verifies exact alpha-safe weighted miscoverage on the promoted Lending Club
@@ -841,6 +847,21 @@ middle path: keep the predictive model auditable, quantify uncertainty with a
 finite-sample conformal layer, and make the optimizer pay attention to the
 upper end of plausible default risk.
 
+The external replications also yield a positive economic reading, not only a
+robustness check. Under blind frozen application--with no champion search--the
+signed price of robustness is a positive premium that increases with the panel
+default rate, from roughly `+1.0%` on the low-default Freddie green segment to
+`+9.5%` on the high-default Prosper panel, with the within-Freddie red segment
+paying more than green at near-identical discrimination. The premium therefore
+tracks the panel's irreducible default risk rather than its AUC: higher default
+risk widens the conformal intervals, so the robust worst case discounts more
+economic return. The favorable Lending Club value (`-10.56%`) is the exception
+that proves the rule, because it is the one panel where a bound-aware search
+actively selected a robust funded set that also wins expected return. The
+practical message for a risk committee is that buying the conformal coverage
+guarantee is never economically catastrophic here: it costs a bounded,
+single-digit-to-low-double-digit premium that the method quantifies per panel.
+
 The limits are equally important. CRPTO does not prove that any one public
 dataset is a universal proxy for modern credit origination, even after the
 Prosper and Freddie/Mendeley replications. Those external runs strengthen the
@@ -851,7 +872,11 @@ attributes. It does not assert that robust conformal policies dominate all
 decision-focused learners on regret, and it does not treat synthetic shift or
 external static panels as substitutes for live post-deployment monitoring. Its
 conformal guarantee is marginal or partitioned by the chosen Mondrian design,
-not exact conditional coverage for every borrower profile. Finally, this is not
+not exact conditional coverage for every borrower profile. The external panels
+make this concrete: on Freddie the all-group minimum coverage is driven by tiny
+sparse Mondrian cells, and the high-default red segment misses the strict
+$\alpha = 0.01$ gate at `0.9850`; both are reported as honest sensitivity
+evidence rather than promoted as conditional guarantees. Finally, this is not
 an online deployment study: there are no new post-2020 Lending Club retail
 originations, no live monitoring loop, and no end-to-end utility-directed
 conformal learner replacing the frozen PD artifact.

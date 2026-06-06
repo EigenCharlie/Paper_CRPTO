@@ -294,6 +294,8 @@ increases monotonically with the panel default rate.
 The source CSV is
 `reports/crpto/tables/crpto_tableA34_price_of_robustness_cross_dataset.csv`.
 
+![A34 price-of-robustness scaling: under frozen application the premium is positive and increases with the panel default rate, while the selected Lending Club champion (`-10.56%`) is a favorable reference below zero.](../reports/crpto/figures/crpto_fig25_price_of_robustness_scaling.png){#fig-supp-price-scaling width="82%" fig-alt="Line chart on a log-scale x-axis showing the price of robustness rising from +1.00 percent to +9.46 percent as the panel default rate increases, with Lending Club at -10.56 percent as a reference line."}
+
 Two readings matter. First, the premium tracks irreducible default risk, not
 discrimination: the `green` and `red` Freddie segments have nearly identical AUC
 but different premiums, while their default rates differ by roughly a factor of

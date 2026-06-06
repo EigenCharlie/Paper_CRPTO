@@ -1814,6 +1814,93 @@ def _crpto_fig21_end_to_end_arc() -> None:
     _save(fig, "crpto_fig21_end_to_end_arc")
 
 
+def _crpto_fig25_price_of_robustness_scaling() -> None:
+    """Fig 25 — price of robustness scales with panel default rate (A34).
+
+    Frozen external applications (Freddie green/combined/red and Prosper) show a
+    positive premium that increases monotonically with the panel default rate.
+    The selected Lending Club champion is drawn as a contrasting favorable
+    reference line (it is a single selected point, not part of the default-rate
+    series). Data: models/crpto_multidataset_external_status.json.
+    """
+    status = _load_json(MODELS_DIR / "crpto_multidataset_external_status.json")
+    seg_label = {
+        "green": "Freddie green",
+        "both": "Freddie combined",
+        "red": "Freddie red",
+    }
+    pts: list[tuple[str, float, float]] = []
+    for seg in status["freddie_segment_sensitivity"]:
+        if seg["segment"] in seg_label:
+            pts.append(
+                (
+                    seg_label[seg["segment"]],
+                    float(seg["default_rate"]) * 100.0,
+                    float(seg["price_of_robustness_pct"]) * 100.0,
+                )
+            )
+    for rep in status["external_replications"]:
+        if rep["dataset"] == "Prosper":
+            pts.append(
+                (
+                    "Prosper",
+                    float(rep["default_rate"]) * 100.0,
+                    float(rep["price_of_robustness_pct"]) * 100.0,
+                )
+            )
+    pts.sort(key=lambda r: r[1])
+    labels = [p[0] for p in pts]
+    x = np.array([p[1] for p in pts])
+    y = np.array([p[2] for p in pts])
+
+    lc_price = -10.56  # selected Lending Club champion (frozen field)
+
+    fig, ax = plt.subplots(figsize=(COL2, HEIGHT_M))
+    ax.set_xscale("log")
+    ax.set_xlim(0.4, 55)
+    ax.set_ylim(-13.5, 12.5)
+    ax.axhline(0.0, color=PALETTE["gray"], lw=1.0, ls="--", zorder=1)
+    ax.axhline(
+        lc_price,
+        color=PALETTE["orange"],
+        lw=1.4,
+        ls=":",
+        zorder=2,
+        label="Lending Club selected champion (−10.56%)",
+    )
+    ax.plot(
+        x,
+        y,
+        "-o",
+        color=PALETTE["green"],
+        lw=1.7,
+        ms=7,
+        zorder=3,
+        label="Frozen application (no champion search)",
+    )
+    for lab, xi, yi in zip(labels, x, y, strict=True):
+        ax.annotate(
+            f"{lab}\n+{yi:.2f}%",
+            (xi, yi),
+            textcoords="offset points",
+            xytext=(7, 7),
+            fontsize=6.5,
+            color=PALETTE["green"],
+            fontweight="bold",
+        )
+    ax.text(0.46, 1.2, "robustness costs a premium", fontsize=6.4, color="#666", style="italic")
+    ax.text(0.46, -2.6, "robustness adds value", fontsize=6.4, color="#666", style="italic")
+    ax.set_xticks([0.5, 1, 2, 5, 10, 30])
+    ax.set_xticklabels(["0.5", "1", "2", "5", "10", "30"])
+    ax.tick_params(which="minor", bottom=False)
+    ax.set_xlabel("Panel default rate (%, log scale)")
+    ax.set_ylabel("Price of robustness (%)")
+    ax.set_title("Price of robustness scales with panel default risk")
+    ax.legend(loc="lower right", fontsize=6.6)
+    fig.tight_layout()
+    _save(fig, "crpto_fig25_price_of_robustness_scaling")
+
+
 DOSSIER_FIGS = [
     _dossier_pd_roc,
     _dossier_pd_pr,
@@ -1832,6 +1919,7 @@ CRPTO_FIGS = [
     _crpto_fig18_tail_constrained_frontier,
     _crpto_fig19_online_coverage_aci,
     _crpto_fig21_end_to_end_arc,
+    _crpto_fig25_price_of_robustness_scaling,
 ]
 
 
