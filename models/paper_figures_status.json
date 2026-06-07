@@ -1,8 +1,8 @@
 {
   "schema_version": "2026-03-21.1",
-  "generated_at_utc": "2026-06-07T10:14:29.601870+00:00",
+  "generated_at_utc": "2026-06-07T19:01:08.276351+00:00",
   "run_tag": "untracked",
-  "output_dir": "C:\\Users\\carlos\\Documents\\Paper_CRPTO_science_upgrade_experiment\\reports\\crpto\\figures",
+  "output_dir": "reports/crpto/figures",
   "figures_attempted": 14,
   "figures_succeeded": 14,
   "errors": {},

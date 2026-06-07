@@ -1,12 +1,18 @@
 {
   "overall_pass": true,
+  "gate_overall_pass": true,
   "strict_overall_pass": false,
   "non_statistical_checks_pass": true,
+  "diagnostic_statistical_pass": false,
   "methodological_justification_pass": true,
-  "methodological_justification_status": "eligible_statistical_warning_only",
+  "methodological_justification_status": "diagnostic_statistical_tests_not_gating",
   "statistical_tests_role": "diagnostic_informational",
   "checks_passed": 9,
   "checks_total": 13,
+  "gate_checks_passed": 9,
+  "gate_checks_total": 9,
+  "diagnostic_checks_passed": 0,
+  "diagnostic_checks_total": 4,
   "failing_checks": [
     "kupiec_pvalue_90",
     "kupiec_pvalue_95",
@@ -19,7 +25,14 @@
     "christoffersen_pvalue_90",
     "christoffersen_pvalue_95"
   ],
+  "gate_failing_checks": [],
   "failing_non_statistical_checks": [],
+  "diagnostic_failing_checks": [
+    "kupiec_pvalue_90",
+    "kupiec_pvalue_95",
+    "christoffersen_pvalue_90",
+    "christoffersen_pvalue_95"
+  ],
   "coverage_90": 0.9290241955581882,
   "coverage_95": 0.966283693732415,
   "avg_width_90": 0.7611849331856254,
@@ -120,6 +133,8 @@
     "winkler_90_compensated_pass": false,
     "winkler_90_compensated_threshold": 1.22,
     "decision": true,
+    "gate_overall_pass": true,
+    "statistical_tests_gate_role": "diagnostic_informational",
     "justification_role": "diagnostic_warning_not_blocking_for_promotion"
   },
   "latest_backtest_month": "2020-09-01 00:00:00",
@@ -132,6 +147,6 @@
     "reason": "missing_status_artifact"
   },
   "schema_version": "2026-03-01.1",
-  "generated_at_utc": "2026-06-07T16:42:51.566307+00:00",
+  "generated_at_utc": "2026-06-07T19:35:26.856190+00:00",
   "run_tag": "paper-thesis-final-economic-2026-04-06"
 }

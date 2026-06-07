@@ -425,11 +425,18 @@ def test_validate_conformal_policy_allows_methodological_justification_for_stats
 
     status = json.loads((model_dir / "conformal_policy_status.json").read_text(encoding="utf-8"))
 
-    assert status["overall_pass"] is True  # methodological justification elevates overall
+    assert status["overall_pass"] is True  # diagnostic p-values do not gate promotion
+    assert status["gate_overall_pass"] is True
     assert status["strict_overall_pass"] is False
     assert status["non_statistical_checks_pass"] is True
+    assert status["diagnostic_statistical_pass"] is False
     assert status["methodological_justification_pass"] is True
-    assert status["methodological_justification_status"] == "eligible_statistical_warning_only"
+    assert (
+        status["methodological_justification_status"] == "diagnostic_statistical_tests_not_gating"
+    )
+    assert status["gate_checks_passed"] == status["gate_checks_total"] == 9
+    assert status["diagnostic_checks_passed"] == 0
+    assert status["diagnostic_checks_total"] == 4
     assert (
         status["methodological_justification"]["justification_role"]
         == "diagnostic_warning_not_blocking_for_promotion"

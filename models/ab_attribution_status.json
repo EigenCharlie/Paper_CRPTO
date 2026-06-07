@@ -24,9 +24,9 @@
     "amount"
   ],
   "artifact_paths": {
-    "grade": "/mnt/c/Users/carlos/Documents/Paper_CRPTO/data/processed/ab_attribution_by_grade.parquet",
-    "cohort": "/mnt/c/Users/carlos/Documents/Paper_CRPTO/data/processed/ab_attribution_by_cohort.parquet",
-    "amount": "/mnt/c/Users/carlos/Documents/Paper_CRPTO/data/processed/ab_attribution_by_amount.parquet"
+    "grade": "data/processed/ab_attribution_by_grade.parquet",
+    "cohort": "data/processed/ab_attribution_by_cohort.parquet",
+    "amount": "data/processed/ab_attribution_by_amount.parquet"
   },
   "note": "Attribution uses canonical portfolio_allocations + conformal_intervals_mondrian (OOT test set)."
 }

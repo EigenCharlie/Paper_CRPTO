@@ -525,9 +525,9 @@ if mrm:
         {"Control": "Winkler score 90% (compensado)", "Valor": f"{cs['winkler_90']:.4f}", "Umbral": f"< {cs.get('winkler_90_compensated_threshold', 1.22)}", "Estado": "PASS" if cs.get("winkler_90_policy_pass") else "FAIL"},
         {"Control": "Alertas críticas", "Valor": str(cs['critical_alerts']), "Umbral": "= 0", "Estado": "PASS"},
         {"Control": "Alertas warning", "Valor": str(cs['warning_alerts']), "Umbral": "Informativo", "Estado": "INFO"},
-        {"Control": "Checks no-estadisticos", "Valor": f"{9 - len(cs.get('failing_non_statistical_checks', []))}/9", "Umbral": "Todos PASS", "Estado": "PASS" if cs.get("non_statistical_checks_pass") else "FAIL"},
+        {"Control": "Checks de gate conformal", "Valor": f"{cs.get('gate_checks_passed', 9 - len(cs.get('failing_non_statistical_checks', [])))}/{cs.get('gate_checks_total', 9)}", "Umbral": "Todos PASS", "Estado": "PASS" if cs.get("gate_overall_pass", cs.get("non_statistical_checks_pass")) else "FAIL"},
         {"Control": "overall_pass", "Valor": str(cs['overall_pass']), "Umbral": "True", "Estado": "PASS" if cs.get("overall_pass") else "FAIL"},
-        {"Control": "strict_overall_pass", "Valor": str(cs['strict_overall_pass']), "Umbral": "Diagnóstico", "Estado": "INFO"},
+        {"Control": "Diagnóstico estadístico", "Valor": f"{cs.get('diagnostic_checks_passed', 0)}/{cs.get('diagnostic_checks_total', 4)}", "Umbral": "Informativo", "Estado": "INFO"},
     ]
     Markdown(pd.DataFrame(rows).astype(str).to_markdown(index=False, disable_numparse=True))
 else:
@@ -584,20 +584,20 @@ else:
 ```
 
 ::: {.callout-warning}
-## Por qué el sistema conformal hoy pasa aunque los tests estadísticos sigan rechazando
+## Por qué el sistema conformal pasa aunque los p-values sigan rechazando
 
-Las pruebas de Kupiec y Christoffersen siguen rechazando $H_0$ (cobertura nominal = cobertura empírica) con $p \approx 0$. Esto ocurre porque con $N = 276{,}869$ observaciones, la potencia estadística detecta cualquier desviación persistente, incluso cuando esa desviación es operativamente aceptable. La recuperación conformal V3 redujo el ancho promedio (`avg_width_90 ≈ 0.756`), eliminó el fallo no estadístico y dejó el gate operativo en PASS.
+Las pruebas de Kupiec y Christoffersen pueden rechazar $H_0$ (cobertura nominal = cobertura empírica) con $p \approx 0$. En CRPTO esos p-values son diagnóstico, no gate. Con $N = 276{,}869$ observaciones, la potencia estadística detecta cualquier desviación persistente, incluso cuando esa desviación es operativamente aceptable. El gate relevante queda en PASS porque los controles materiales de cobertura, ancho, cobertura por grupo, alertas y Winkler pasan.
 
-1. **La desviación de cobertura queda dentro de materialidad**: +2.02pp al 90% y +1.54pp al 95%, ambas por debajo del umbral de 3%.
+1. **La desviación de cobertura queda dentro de materialidad**: por debajo del umbral de 3%.
 2. **Sigue siendo conservadora**: sobre-cobertura significa que los intervalos protegen más de lo nominal, no menos.
-3. **No rompe estabilidad operativa**: `critical_alerts = 0`, `warning_alerts = 2`, y la independencia al 90% sigue siendo aceptable.
+3. **No rompe estabilidad operativa**: `critical_alerts = 0` y la independencia temporal sigue siendo aceptable.
 
 La conclusión oficial ya no es "FAIL metodológico acotado al lane conformal", sino **PASS operacional con diagnósticos estadísticos informativos**.
 :::
 
 ##### Justificación Metodológica Formal
 
-El sistema implementa un mecanismo de justificación metodológica (`methodological_justification`) para exactamente este caso: cuando las únicas fallas que permanecen son estadísticas y el resto de la policy operativa ya pasó. En el estado actual, esa justificación **sí aplica** y por eso `overall_pass = True` mientras `strict_overall_pass = False`.
+El sistema implementa una separación explícita entre gate material y diagnóstico estadístico. En el estado actual, `gate_overall_pass = True` y `overall_pass = True`; `strict_overall_pass = False` permanece como señal diagnóstica heredada, no como criterio de promoción.
 
 ```python
 

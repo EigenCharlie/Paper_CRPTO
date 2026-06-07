@@ -531,12 +531,28 @@ def _gate_semantic_coherence(cur_metrics: dict[str, Any]) -> GateResult:
         or bool(storytelling_ts_promotable) == time_series_interval_promotable
     ) and (storytelling_ts_decision in (None, "", time_series_final_decision))
 
-    storytelling_conformal_ok = storytelling.get("conformal_strict_policy_pass") in (
-        None,
-        bool(conformal.get("strict_overall_pass", False)),
-    ) and storytelling.get("conformal_methodological_justification_pass") in (
-        None,
-        bool(conformal.get("methodological_justification_pass", False)),
+    conformal_gate_pass = bool(
+        conformal.get("gate_overall_pass", conformal.get("overall_pass", False))
+    )
+    storytelling_conformal_gate = storytelling.get(
+        "conformal_overall_pass", storytelling.get("conformal_gate_overall_pass")
+    )
+    storytelling_conformal_ok = (
+        storytelling_conformal_gate
+        in (
+            None,
+            conformal_gate_pass,
+        )
+        and storytelling.get("conformal_strict_policy_pass")
+        in (
+            None,
+            bool(conformal.get("strict_overall_pass", False)),
+        )
+        and storytelling.get("conformal_methodological_justification_pass")
+        in (
+            None,
+            bool(conformal.get("methodological_justification_pass", False)),
+        )
     )
 
     checks = {
@@ -558,6 +574,8 @@ def _gate_semantic_coherence(cur_metrics: dict[str, Any]) -> GateResult:
                 "storytelling_final_decision": storytelling_ts_decision,
             },
             "conformal": {
+                "status_gate_overall_pass": conformal_gate_pass,
+                "storytelling_gate_overall_pass": storytelling_conformal_gate,
                 "status_strict_overall_pass": bool(conformal.get("strict_overall_pass", False)),
                 "status_methodological_justification_pass": bool(
                     conformal.get("methodological_justification_pass", False)

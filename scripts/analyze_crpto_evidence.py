@@ -108,6 +108,14 @@ BOUND_STAGES = [
 ]
 
 
+def _bound_stage_shortlist_path(run_dir: str) -> Path:
+    run_path = DATA / "portfolio_bound_aware" / run_dir
+    exact_path = run_path / "portfolio_bound_aware_shortlist_exact.parquet"
+    if exact_path.exists():
+        return exact_path
+    return run_path / "portfolio_bound_aware_shortlist.parquet"
+
+
 def _load_json(path: Path) -> dict[str, Any]:
     return json.loads(path.read_text(encoding="utf-8"))
 
@@ -277,9 +285,7 @@ def _build_nested_holdout_table(promotion: dict[str, Any]) -> pd.DataFrame:
         selection_path = (
             MODELS / "portfolio_bound_aware" / run_dir / "portfolio_bound_aware_selection.json"
         )
-        shortlist_path = (
-            DATA / "portfolio_bound_aware" / run_dir / "portfolio_bound_aware_shortlist.parquet"
-        )
+        shortlist_path = _bound_stage_shortlist_path(run_dir)
         selection = _load_json(selection_path)
         shortlist = pd.read_parquet(shortlist_path)
         metrics = dict(selection["selected_metrics"])

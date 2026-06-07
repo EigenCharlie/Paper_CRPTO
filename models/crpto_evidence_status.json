@@ -68,11 +68,11 @@
     "models/crpto_evidence_status.json",
     "docs/research/crpto_p1_evidence_2026-05-04.md"
   ],
-  "generated_at_utc": "2026-05-11T03:06:04.986887+00:00",
+  "generated_at_utc": "2026-06-07T19:00:56.257936+00:00",
   "nested_holdout": {
-    "final_V": 0.03645,
+    "final_V": 0.028875,
     "final_alpha01_exact_pass": true,
-    "final_gamma_cp": 0.18591,
+    "final_gamma_cp": 0.187987,
     "final_matches_champion": true,
     "final_return": 170464.5429284627,
     "scope": "staged_5k_25k_276k_post_selection_confirmation",

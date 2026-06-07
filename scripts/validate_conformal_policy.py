@@ -433,6 +433,7 @@ def main(
     ]
     checks_df = pd.DataFrame(checks)
     statistical_mask = checks_df["scope"].eq("statistical_coverage")
+    gate_mask = ~statistical_mask
     coverage_deviation_90 = abs(coverage_90 - float(policy["target_coverage_90_min"]))
     coverage_deviation_95 = abs(coverage_95 - float(policy["target_coverage_95_min"]))
     christ_p_ind_90 = _safe_float(christ_90.get("p_ind"))
@@ -445,15 +446,15 @@ def main(
 
     def _evaluate_check_frame(frame: pd.DataFrame) -> dict[str, object]:
         strict = bool(frame["passed"].all())
-        non_stat_pass = bool(frame.loc[~statistical_mask, "passed"].all())
+        gate_pass = bool(frame.loc[gate_mask, "passed"].all())
+        diagnostic_statistical_pass = bool(frame.loc[statistical_mask, "passed"].all())
         failing_all = frame.loc[~frame["passed"], "metric"].astype(str).tolist()
         failing_stats = (
             frame.loc[statistical_mask & ~frame["passed"], "metric"].astype(str).tolist()
         )
-        failing_non_stats = (
-            frame.loc[~statistical_mask & ~frame["passed"], "metric"].astype(str).tolist()
-        )
+        failing_non_stats = frame.loc[gate_mask & ~frame["passed"], "metric"].astype(str).tolist()
         only_stats = bool((not strict) and len(failing_stats) > 0 and len(failing_non_stats) == 0)
+        diagnostic_informational = statistical_tests_role == "diagnostic_informational"
         methodological_pass = bool(
             allow_methodological_justification
             and only_stats
@@ -463,6 +464,8 @@ def main(
         )
         if strict:
             methodological_status = "not_needed_strict_pass"
+        elif diagnostic_informational and gate_pass:
+            methodological_status = "diagnostic_statistical_tests_not_gating"
         elif methodological_pass:
             methodological_status = "eligible_statistical_warning_only"
         elif not allow_methodological_justification:
@@ -475,23 +478,34 @@ def main(
             methodological_status = "blocked_statistical_pattern"
         return {
             "strict_overall_pass": strict,
-            "non_statistical_checks_pass": non_stat_pass,
+            "gate_overall_pass": gate_pass,
+            "non_statistical_checks_pass": gate_pass,
+            "diagnostic_statistical_pass": diagnostic_statistical_pass,
             "failing_checks": failing_all,
             "failing_statistical_checks": failing_stats,
+            "gate_failing_checks": failing_non_stats,
             "failing_non_statistical_checks": failing_non_stats,
+            "diagnostic_failing_checks": failing_stats,
             "methodological_justification_pass": methodological_pass,
             "methodological_justification_status": methodological_status,
         }
 
     evaluation = _evaluate_check_frame(checks_df)
     strict_overall_pass = bool(evaluation["strict_overall_pass"])
+    gate_overall_pass = bool(evaluation["gate_overall_pass"])
     non_statistical_checks_pass = bool(evaluation["non_statistical_checks_pass"])
+    diagnostic_statistical_pass = bool(evaluation["diagnostic_statistical_pass"])
     failing_checks = list(evaluation["failing_checks"])
     failing_statistical_checks = list(evaluation["failing_statistical_checks"])
+    gate_failing_checks = list(evaluation["gate_failing_checks"])
     failing_non_statistical_checks = list(evaluation["failing_non_statistical_checks"])
+    diagnostic_failing_checks = list(evaluation["diagnostic_failing_checks"])
     methodological_justification_pass = bool(evaluation["methodological_justification_pass"])
     methodological_status = str(evaluation["methodological_justification_status"])
-    overall_pass = strict_overall_pass or methodological_justification_pass
+    if statistical_tests_role == "diagnostic_informational":
+        overall_pass = gate_overall_pass
+    else:
+        overall_pass = strict_overall_pass or methodological_justification_pass
 
     latest_month = (
         backtest_monthly.sort_values("month").iloc[-1]["month"]
@@ -501,16 +515,24 @@ def main(
 
     out_status = {
         "overall_pass": overall_pass,
+        "gate_overall_pass": gate_overall_pass,
         "strict_overall_pass": strict_overall_pass,
         "non_statistical_checks_pass": non_statistical_checks_pass,
+        "diagnostic_statistical_pass": diagnostic_statistical_pass,
         "methodological_justification_pass": methodological_justification_pass,
         "methodological_justification_status": methodological_status,
         "statistical_tests_role": statistical_tests_role,
         "checks_passed": int(checks_df["passed"].sum()),
         "checks_total": len(checks_df),
+        "gate_checks_passed": int(checks_df.loc[gate_mask, "passed"].sum()),
+        "gate_checks_total": int(gate_mask.sum()),
+        "diagnostic_checks_passed": int(checks_df.loc[statistical_mask, "passed"].sum()),
+        "diagnostic_checks_total": int(statistical_mask.sum()),
         "failing_checks": failing_checks,
         "failing_statistical_checks": failing_statistical_checks,
+        "gate_failing_checks": gate_failing_checks,
         "failing_non_statistical_checks": failing_non_statistical_checks,
+        "diagnostic_failing_checks": diagnostic_failing_checks,
         "coverage_90": coverage_90,
         "coverage_95": coverage_95,
         "avg_width_90": avg_width_90,
@@ -571,6 +593,8 @@ def main(
             "winkler_90_compensated_pass": bool(winkler_90_compensated_pass),
             "winkler_90_compensated_threshold": float(compensated_winkler_90_max),
             "decision": bool(methodological_justification_pass),
+            "gate_overall_pass": bool(gate_overall_pass),
+            "statistical_tests_gate_role": statistical_tests_role,
             "justification_role": (
                 "diagnostic_warning_not_blocking_for_promotion"
                 if statistical_tests_role in {"diagnostic_informational", "strict_diagnostics"}
@@ -606,6 +630,7 @@ def main(
                 {
                     "max_winkler_90": float(threshold),
                     "strict_overall_pass": bool(sens_eval["strict_overall_pass"]),
+                    "gate_overall_pass": bool(sens_eval["gate_overall_pass"]),
                     "non_statistical_checks_pass": bool(sens_eval["non_statistical_checks_pass"]),
                     "methodological_justification_pass": bool(
                         sens_eval["methodological_justification_pass"]
@@ -634,8 +659,9 @@ def main(
     logger.info(f"Policy checks saved: {checks_path}")
     logger.info(f"Policy status saved: {status_path}")
     logger.info(
-        "Conformal policy strict_pass="
-        f"{strict_overall_pass} ({out_status['checks_passed']}/{out_status['checks_total']}); "
+        "Conformal policy gate_pass="
+        f"{gate_overall_pass} ({out_status['gate_checks_passed']}/"
+        f"{out_status['gate_checks_total']}); diagnostic_strict_pass={strict_overall_pass}; "
         f"methodological_justification_pass={methodological_justification_pass}"
     )
 

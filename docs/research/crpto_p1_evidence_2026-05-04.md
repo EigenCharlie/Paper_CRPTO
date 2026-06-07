@@ -52,7 +52,7 @@ be read as evidence around the frozen champion rather than a new search.
 ## Key status
 
 - Nested final return: `170464.542928`.
-- Nested final V: `0.036450`.
+- Nested final V: `0.028875`.
 - Decision-aware selected rank: `1`.
 - Worst segment coverage 90: `0.903203`.
 - Worst synthetic coverage 90: `0.929714`.

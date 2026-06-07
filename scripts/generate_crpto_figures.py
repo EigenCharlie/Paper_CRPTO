@@ -1950,7 +1950,7 @@ def main() -> None:
     status = {
         **build_artifact_metadata(schema_version="2026-03-21.1"),
         "generated_at_utc": pd.Timestamp.utcnow().isoformat(),
-        "output_dir": str(OUT_DIR),
+        "output_dir": OUT_DIR.relative_to(REPO_ROOT).as_posix(),
         "figures_attempted": len(figs_to_run),
         "figures_succeeded": len(figs_to_run) - len(errors),
         "errors": dict(errors),

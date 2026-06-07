@@ -2,26 +2,33 @@
 
 ## Scope
 
-This is an isolated experiment on branch `codex/experiment-scientific-upgrades` in
-`C:\Users\carlos\Documents\Paper_CRPTO_science_upgrade_experiment`.
+This is an isolated scientific revalidation on branch
+`codex/experiment-scientific-upgrades`. The goal is not to silently replace the
+frozen IJDS champion. The goal is to learn what changes when the scientific
+stack is upgraded, fix standalone Windows/DVC contracts that were exposed by the
+rerun, and decide whether the branch is a merge candidate, a rebaseline
+candidate, or only a learning branch.
 
-The stable work on `main` already merged low- and medium-risk upgrades. This report covers the
-explicitly risky scientific replay: upgrade the upstream scientific stack, rerun frozen stages, and
-measure reproducibility/drift without changing `main`.
+This report documents the third route adopted after the first replay:
+
+1. Keep the dependency experiment alive.
+2. Separate genuine paper-facing gates from diagnostic p-values.
+3. Make CRPTO standalone and repo-relative, with no WSL or parent-project paths.
+4. Fix DVC contracts that made regenerated artifacts implicit or side-effectful.
+5. Regenerate paper/book outputs from the improved graph before making a merge
+   decision.
 
 ## Effective experimental stack
-
-The experimental environment resolved to:
 
 | Package | Version |
 | --- | ---: |
 | `numpy` | `2.4.6` |
 | `pandas` | `2.3.3` |
 | `scikit-learn` | `1.9.0` |
-| `scipy` | `1.15.3` |
+| `scipy` | `1.17.1` |
 | `catboost` | `1.2.10` |
 | `mapie` | `1.4.0` |
-| `fairlearn` | `0.13.0` |
+| `fairlearn` | `0.14.0` |
 | `pandera` | `0.31.1` |
 | `ortools` | `9.11.4210` |
 | `pyomo` | `6.10.1` |
@@ -31,46 +38,27 @@ The experimental environment resolved to:
 | `protobuf` | `5.26.1` |
 | `mlflow` | `3.13.0` |
 | `starlette` | `1.2.1` |
+| `cvxpy` | `1.9.1` |
 
-Important resolver side effect: upgrading `ortools` to `9.11.4210` forced older DBT/protobuf
-constraints (`dbt-core==1.10.8`, `protobuf==5.26.1`). That is acceptable for this isolated replay,
-but it is not a clean stable-branch upgrade candidate unless the DBT/protobuf constraint interaction
-is resolved.
+Additional safe upgrades applied during this pass:
 
-## Contract issues found during replay
+- `scipy 1.15.3 -> 1.17.1`
+- `fairlearn 0.13.0 -> 0.14.0`
+- `cvxpy 1.8.2 -> 1.9.1`
 
-The experiment surfaced several pipeline contract mismatches that were hidden by the frozen artifacts:
+The `ortools 9.11.4210` resolver side effect keeps `dbt-core` at `1.10.8` and
+`protobuf` at `5.26.1`. This is not a scientific degradation by itself: DBT is
+only used for local DuckDB model checks, not for the IJDS estimator, conformal
+policy or portfolio optimizer. It is still a maintenance smell for a direct
+merge because it couples the optimization stack to data-build tooling.
 
-| Area | Finding | Experimental action |
-| --- | --- | --- |
-| Feature materialization | DVC called `scripts/materialize_feature_artifacts.py --config`, but the script did not accept `--config`. | Added ignored compatibility arg. |
-| PD champion | DVC did not pass the explicit official run tag, while metadata now requires one. | Added `--run-tag` to `scripts/train_pd_model.py` and to DVC. |
-| PD config | `configs/crpto_pd_model.yaml` pointed to stale `configs/fairness_policy.yaml`. | Updated to `configs/crpto_fairness_policy.yaml`. |
-| Conformal intervals | DVC called `scripts/generate_conformal_intervals.py --config`, but the script did not accept it; it also needed explicit run tag. | Added compatibility args and DVC run tag. |
-| Conformal validation | DVC did not pass `--run-tag`. | Added the official run tag to the stage command. |
-| Conformal backtest | `validate_conformal_policy.py` consumes backtest parquet files that are not produced by DVC's interval stage. | Ran `scripts/backtest_conformal_coverage.py` manually and marked this as graph debt. |
-| Exact portfolio replay | DVC passed `--config`, but the helper requires `--context-path`. The context also contains historical WSL paths. | Pointed DVC to the frozen exact context and normalized historical repo paths in memory. |
-
-## Results so far
-
-### Baseline validations before replay
-
-Before rerunning frozen stages, the experimental environment passed:
-
-- `uv pip check`
-- `just lint`
-- `just smoke`
-- `just dbt-test` after `uv run dbt deps`
-- `just validate-champion`
+## Replay results
 
 ### PD replay
 
 `crpto.pd.champion` completed under the experimental stack.
 
-Metrics below compare `main` frozen predictions with the experimental replay predictions in
-`data/processed/test_predictions.parquet`.
-
-| Metric | `main` | Experiment | Delta | Direction |
+| Metric | Frozen `main` | Experiment | Delta | Direction |
 | --- | ---: | ---: | ---: | --- |
 | AUC ROC | `0.712438241694` | `0.712677784555` | `+0.000239542861` | Better |
 | Brier score | `0.154630517829` | `0.154590736760` | `-0.000039781069` | Better |
@@ -79,26 +67,15 @@ Metrics below compare `main` frozen predictions with the experimental replay pre
 | ECE, 20 bins | `0.006694598684` | `0.007068428020` | `+0.000373829336` | Worse |
 | D2 Brier | `0.098239224398` | `0.098471216168` | `+0.000231991770` | Better |
 
-This stage rewrote frozen model artifacts in the experiment, so the manifest is expected to fail after
-the replay. The direction is mostly favorable but the effect sizes are tiny; the scientific conclusion is
-"no material PD degradation under the upgraded stack", not "new champion".
+Interpretation: no material PD degradation. The effects are tiny and mostly
+favorable, but this is not a new champion claim unless a new run tag is accepted.
 
 ### Conformal replay
 
-`crpto.conformal.intervals` completed and selected:
+`crpto.conformal.intervals` completed with the upgraded stack and
+`crpto.conformal.validation` now reports separate gate and diagnostic fields.
 
-- partition: `grade`
-- probability source: `raw`
-- `n_bins`: `10`
-- tuned `alpha_used`: `0.08`
-- score scale family: `bernoulli_sqrt`
-- holdout coverage: `0.9148`
-- holdout min-group coverage: `0.8976`
-- holdout width: `0.7725`
-
-Final interval metrics against current `main`:
-
-| Metric | `main` | Experiment | Delta | Direction |
+| Metric | Frozen `main` | Experiment | Delta | Direction |
 | --- | ---: | ---: | ---: | --- |
 | 90% coverage | `0.929338423587` | `0.929024195558` | `-0.000314228028` | Slightly worse, still above target |
 | 95% coverage | `0.962339590203` | `0.966283693732` | `+0.003944103529` | Better coverage |
@@ -109,20 +86,26 @@ Final interval metrics against current `main`:
 | Backtest warning alerts | `0` | `1` | `+1` | Worse |
 | MAPIE MWI 90 | `null` | `1.189698007553` | n/a | Now computed with MAPIE 1.4 API |
 
-`crpto.conformal.validation` completed with:
+Current validation status:
 
-- `overall_pass=true`
-- `strict_overall_pass=false`
-- `checks_passed=9/13`
-- `methodological_justification_pass=true`
-- failing checks: Kupiec and Christoffersen p-values at 90% and 95%
+| Field | Value |
+| --- | ---: |
+| `overall_pass` | `true` |
+| `gate_overall_pass` | `true` |
+| `gate_checks_passed` | `9/9` |
+| `strict_overall_pass` | `false` |
+| `diagnostic_statistical_pass` | `false` |
+| `diagnostic_checks_passed` | `0/4` |
+| Diagnostic failing checks | Kupiec and Christoffersen p-values at 90% and 95% |
 
-Interpretation: this is the same strict/overall pattern already present in the standalone bootstrap
-commit (`2026-05-10`, `70b5ea7`): `overall_pass=true`, `strict_overall_pass=false`, `9/13`, and the
-same four statistical failures. The strict failures are diagnostic p-value checks, not the promotion
-gate. The actual gate is `overall_pass`, supported by `methodological_justification_pass=true` because
-all non-statistical checks pass, coverage deviations stay within the 3 pp materiality band, and
-Christoffersen independence p-values pass.
+Interpretation: `strict_overall_pass=false` is historical and diagnostic. The
+bootstrap commit already had the same pattern: `overall_pass=true`,
+`strict_overall_pass=false`, `9/13`, and the same four p-value failures. The
+reason is not subcoverage; it is overcoverage with a very large OOT sample.
+For IJDS, the material gate is coverage, width, group coverage, warning alerts,
+Winkler score, independence/materiality and downstream portfolio validity.
+Kupiec and Christoffersen p-values remain useful diagnostics, but they should
+not be the promotion gate for this paper.
 
 ### Portfolio replay
 
@@ -137,15 +120,8 @@ Christoffersen independence p-values pass.
 | Scenario expected | `$10,411.83` |
 | Scenario worst case | `$45,000.00` |
 
-`crpto.portfolio.bound_exact_eval` completed after two attempts:
-
-- attempt 1 completed all 180 bound checks but failed during aggregation because the input shortlist
-  already contained stale `alpha01_*`/`alpha03_*` columns; pandas merged the new metrics with suffixes
-  and the selector looked for unsuffixed names.
-- attempt 2 completed after making aggregation idempotent and persisting `bound_eval` before
-  selection.
-
-Final exact replay:
+`crpto.portfolio.bound_exact_eval` now uses the frozen exact context through a
+DVC stage and reuses a complete 180-row bound-eval cache when present.
 
 | Metric | Experimental value |
 | --- | ---: |
@@ -159,79 +135,81 @@ Final exact replay:
 | Alpha 0.01 Gamma_CP | `0.187987` |
 | Exact bound rows | `180` |
 
-The economic champion identity and robust return survived the exact replay. The frozen promotion JSON
-still reports the official alpha-0.01 values (`V=0.03645`, `Gamma_CP=0.18591`), while the enriched
-shortlist now carries replay exact metrics (`V=0.028875`, `Gamma_CP=0.187987`) after idempotent
-re-aggregation. Treat those as replay diagnostics until their lineage is documented explicitly.
+Interpretation: the economic champion identity and robust return survived the
+exact replay. The replay exact metrics differ from the frozen promotion JSON
+values (`V=0.03645`, `Gamma_CP=0.18591`), so they should remain replay
+diagnostics unless the branch is promoted into a formal rebaseline.
 
-### Paper and book replay
+## Contract fixes implemented
 
-Downstream paper/book stages completed after hydrating auxiliary, non-DVC artifacts that the book
-references implicitly:
+| Area | Issue found | Fix |
+| --- | --- | --- |
+| DVC CLI contracts | Several stages had stale args (`--config`, missing `--run-tag`, exact helper with no `--context-path`). | Stage commands and script parsers were aligned. |
+| Conformal backtest | Validation consumed monthly/alert backtest outputs that DVC did not produce. | Added `crpto.conformal.backtest` and made validation depend on its outputs. |
+| Conformal outputs | `conformal.intervals` produced multiple consumed artifacts not declared in DVC. | Declared group metrics, tuning, floor, shrinkback, attribution and MAPIE result outputs. |
+| Conformal gate | `strict_overall_pass` mixed material gates with diagnostic statistical p-values. | Added `gate_overall_pass`, `diagnostic_statistical_pass`, gate counts and diagnostic counts. |
+| Exact eval side effects | Exact helper rewrote its input shortlist and wrote absolute paths after resolving context paths. | Split input `shortlist.parquet` from derived `shortlist_exact.parquet`; payload paths are repo-relative. |
+| Exact eval runtime | DVC removed `bound_eval` before the helper could reuse it. | Marked `bound_eval` as persistent and added cache validation. |
+| Tail audit runtime | A20 replay solved 45 policies even when a complete matching audit table existed. | Added complete-table reuse with source-metric validation. |
+| WSL provenance | Historical JSONs had WSL/intermediate parent paths. | Normalized active JSON artifacts to repo-relative paths or explicit legacy placeholders. |
+| Figure status | `paper_figures_status.json` wrote an absolute local `output_dir`. | Changed producer and artifact to `reports/crpto/figures`. |
 
-- `data/processed/alpha_sweep_pareto_both.parquet`
-- `data/processed/uncertainty_baselines_comparison.parquet`
-- `data/processed/uncertainty_baselines_by_grade.parquet`
-- `data/processed/cqr_mondrian_comparison.parquet`
-- `data/processed/cqr_comparison.parquet`
-- `data/processed/cqr_mondrian_group_coverage.parquet`
-- 11 additional `data/processed/*.parquet` artifacts referenced by the book
-- `reports/mrm/`
+## Paper/book impact
 
-Figure generation completed with `14/14` figures after hydration. The Quarto HTML book rendered
-successfully.
+The book narrative now explains the conformal gate as:
+
+- `overall_pass=true`
+- `gate_overall_pass=true`
+- `gate_checks_passed=9/9`
+- `strict_overall_pass=false` only because p-value diagnostics are strict
+  statistical checks, not the IJDS promotion criterion.
+
+The paper-facing tables, evidence report, figures, journal package and tail
+audit were regenerated from the improved DAG. `uv run dvc status` is clean after
+the rerun.
+
+## Path hygiene
+
+The branch now passes a source/artifact scan for legacy Linux mount paths,
+the former parent-project slug, WSL hostnames and distro labels.
+
+The parent WSL project was not needed for recovery in this pass.
 
 ## Final checks
 
 | Check | Result |
 | --- | --- |
 | `uv pip check` | Pass |
-| `just lint` | Pass |
+| Focused evaluation/optimization tests | Pass |
 | `just smoke` | Pass |
-| `just dbt-test` | Pass |
-| `uv run dvc status` | Pass: data and pipelines are up to date |
-| `just validate-champion` | Expected fail: 8 frozen artifacts drifted |
+| `uv run dvc status` | Pass |
+| `crpto.portfolio.bound_exact_eval` | Pass, reused 180-row exact cache |
+| `crpto.paper.export_tables` | Pass |
+| `crpto.paper.evidence` | Pass |
+| `crpto.paper.figures` | Pass |
+| `crpto.paper.journal_package` | Pass |
+| `crpto.paper.tail_satisficing_audit` | Pass, reused complete A20 table |
+| `just validate-champion` | Expected fail: 22 frozen model/data/table artifacts drifted |
 
-Additional focused checks after conformal-validator fixes:
+Additional focused checks:
 
-- `uv run pytest tests/test_scripts/test_validate_conformal_policy.py`: Pass (`9 passed`)
-- `uv run ruff check scripts/validate_conformal_policy.py tests/test_scripts/test_validate_conformal_policy.py`: Pass
-
-Frozen artifacts that drifted from `EXTRACTION_MANIFEST.json`:
-
-- `models/pd_canonical.cbm`
-- `models/pd_canonical_calibrator.pkl`
-- `models/conformal_results_mondrian.pkl`
-- `models/conformal_policy_status.json`
-- `data/processed/feature_manifest_v2.json`
-- `data/processed/feature_manifest_v2.parquet`
-- `data/processed/test_predictions.parquet`
-- `data/processed/portfolio_bound_aware/rank1_alpha01_bound_aware_276k_full_2026-04-05-1734/portfolio_bound_aware_shortlist.parquet`
+- `uv run pytest tests/test_scripts/test_validate_conformal_policy.py`
+- `uv run pytest tests/test_scripts/test_run_portfolio_bound_exact_eval.py`
+- `uv run pytest tests/test_scripts/test_run_portfolio_bound_aware_search.py`
+- `uv run ruff check` on modified pipeline scripts
 
 ## Current interpretation
 
-The experiment supports four conclusions:
+The branch is stronger than a code-only cleanup and safer than a blind rebaseline.
+It demonstrates that the upgraded stack can reproduce the economic story while
+exposing and fixing real standalone/DVC problems.
 
-1. `strict_overall_pass=false` is not a blocker by itself. It is the historical diagnostic state of the
-   conformal policy, and #37 reproduces it with `overall_pass=true`.
-2. The scientific-stack replay is promising: PD metrics are stable/slightly improved, conformal metrics
-   remain inside policy, and the economic champion identity survives.
-3. The merge risk is not the strict conformal flag; it is the protected-artifact hash drift, the
-   OR-Tools/DBT/protobuf resolver side effect, and the exact-shortlist metric lineage.
-4. The replay exposed real reproducibility debt in CLI/DVC contracts. Those fixes are useful and should
-   be separated from any decision to accept regenerated scientific artifacts.
+Merge decision:
 
-## Pending
-
-- Decide whether to extract a small, safe PR for contract-only fixes:
-  - DVC/script CLI compatibility.
-  - exact-helper path normalization for historical WSL provenance.
-  - idempotent exact aggregation when the shortlist already contains exact columns.
-  - MAPIE 1.4-compatible conformal MWI cross-check.
-  - conformal status wording that marks `diagnostic_informational` statistical tests as non-blocking
-    when methodological justification passes.
-  - explicit DVC modeling for book/paper auxiliary artifacts that are currently implicit.
-- If #37 is considered for merge, decide first whether it is:
-  - a code-only reproducibility PR that excludes regenerated frozen artifacts;
-  - a formal revalidation PR that updates `EXTRACTION_MANIFEST.json` with a drift report;
-  - or a learning-only branch that remains unmerged.
+- As a learning branch, #37 is already valuable.
+- As a direct merge, the blocker is not `strict_overall_pass`; it is whether we
+  want to accept protected-artifact drift and the DBT/protobuf resolver side
+  effect on `main`.
+- As an IJDS revalidation candidate, the next clean step would be a formal drift
+  report and a deliberate decision about whether to regenerate
+  `EXTRACTION_MANIFEST.json` under a new schema/run note.

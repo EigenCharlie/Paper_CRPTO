@@ -21,7 +21,7 @@
   },
   "backend_validation": {
     "validated_at_utc": "2026-04-05T21:49:16.731961+00:00",
-    "python": "/home/eigenlinux/miniforge3/envs/rapids/bin/python",
+    "python": "legacy-wsl-python-removed-after-windows-revalidation",
     "expected_release": "26.02",
     "cuopt": "26.02.00",
     "cudf": "26.02.01",
@@ -48,7 +48,7 @@
   "gpu_summary": {
     "available": true,
     "sample_count": 1582,
-    "csv_path": "/mnt/c/Users/carlos/Documents/Paper_CRPTO/models/portfolio_bound_aware/rank1_alpha01_bound_aware_25k_gpu_2026-04-05-1611c/gpu_samples.csv",
+    "csv_path": "models/portfolio_bound_aware/rank1_alpha01_bound_aware_25k_gpu_2026-04-05-1611c/gpu_samples.csv",
     "peak_gpu_util": 49.0,
     "avg_gpu_util": 5.133375474083438,
     "peak_memory_used_mb": 4207.0,

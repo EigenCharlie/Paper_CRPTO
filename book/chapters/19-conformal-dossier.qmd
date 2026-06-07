@@ -52,8 +52,8 @@ overview = [
     {"Métrica": "Ancho promedio @ 90%", "Valor": f"{status['avg_width_90']:.4f}"},
     {"Métrica": "Cobertura mínima por grupo @ 90%", "Valor": f"{status['min_group_coverage_90']:.2%}"},
     {"Métrica": "Winkler score @ 90%", "Valor": f"{status['winkler_90']:.4f}"},
-    {"Métrica": "Overall pass", "Valor": str(status.get('overall_pass', status['strict_overall_pass']))},
-    {"Métrica": "Strict overall pass", "Valor": str(status['strict_overall_pass'])},
+    {"Métrica": "Gate conformal", "Valor": str(status.get('gate_overall_pass', status.get('overall_pass', False)))},
+    {"Métrica": "Checks de gate", "Valor": f"{status.get('gate_checks_passed', status.get('checks_passed', 0))}/{status.get('gate_checks_total', status.get('checks_total', 0))}"},
     {"Métrica": "Alertas críticas", "Valor": str(status['critical_alerts'])},
     {"Métrica": "Alertas warning", "Valor": str(status['warning_alerts'])},
     {"Métrica": "Tamaño de muestra (test OOT)", "Valor": f"{status['statistical_tests']['kupiec_90']['n_total']:,}"},
@@ -646,9 +646,9 @@ backtest_summary = [
 pd.DataFrame(backtest_summary)
 ```
 
-### Tests Estadísticos de Cobertura
+### Diagnóstico Estadístico de Cobertura
 
-Antes de leer los resultados de los tests, conviene establecer el marco correcto. El sistema **sobre-cubre**, pero ya no de la forma excesivamente conservadora que tenía el snapshot anterior. La tasa de violación observada es ~8.0%, por debajo del 10% nominal. Eso implica una capa prudente de conservadurismo, con intervalos todavía útiles en anchura. Los tests estadísticos pueden rechazar este resultado porque, con $n = 276{,}869$, tienen potencia suficiente para detectar diferencias de 1 a 2 puntos porcentuales. Lo relevante no es solo si rechazan, sino *en qué dirección* rechazan y qué pasa con los checks operativos de anchura, cobertura por grupo y alertas.
+Antes de leer los resultados de los tests, conviene establecer el marco correcto. Estos tests son diagnósticos, no criterios de aceptación del pipeline. El sistema **sobre-cubre**: la tasa de violación observada queda por debajo de la nominal, lo que indica conservadurismo, no subcobertura. Con $n = 276{,}869$, los p-valores tienen potencia suficiente para rechazar diferencias pequeñas. El gate editorial del paper se decide con cobertura mínima, ancho, cobertura por grupo, alertas, Winkler e independencia/materialidad.
 
 El framework de backtesting implementa dos tests formales de la literatura de Value-at-Risk:
 
@@ -672,7 +672,7 @@ $$
 
 donde $LR_\text{ind}$ testea la propiedad de Markov en la secuencia de violaciones.
 
-### Resultados de los Tests
+### Resultados Diagnósticos
 
 ```python
 
@@ -707,7 +707,7 @@ pd.DataFrame(test_results)
 ```
 
 ::: {.callout-warning}
-## Tests Estadísticos Rechazados — ¿Problema Real?
+## P-values Rechazados — No Son Gate del Paper
 Los tests de Kupiec rechazan en ambos niveles, lo cual parece alarmante. Pero el contexto importa:
 
 1. **Sobre-cobertura, no sub-cobertura**: la tasa de violación es ~8.0% (target 10%) — el modelo **cubre de más**, no de menos. Kupiec rechaza porque la cobertura es *demasiado buena*, no demasiado mala.

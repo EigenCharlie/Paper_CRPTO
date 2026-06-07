@@ -10,8 +10,8 @@ stages:
       size: 5565
     - path: book/chapters
       hash: md5
-      md5: 6bc9c03992009a06aa66a6a880f23b7c.dir
-      size: 870853
+      md5: 8177dab061fa0deb05b0b95519163348.dir
+      size: 870860
       nfiles: 34
     - path: book/index.qmd
       hash: md5
@@ -33,16 +33,16 @@ stages:
     outs:
     - path: book/_book
       hash: md5
-      md5: dc47517348709e27665c5b20d93ebd1f.dir
-      size: 18748858
+      md5: f5c27119a7a827882bd22eeff9c82099.dir
+      size: 18745247
       nfiles: 115
   crpto.paper.figures:
     cmd: python scripts/generate_crpto_figures.py --paper crpto
     deps:
     - path: scripts/generate_crpto_figures.py
       hash: md5
-      md5: a1e4f80980d04d20b6766345b1a1cac0
-      size: 70121
+      md5: a5d0c068ace61d3a32199a64207cabbb
+      size: 70150
     outs:
     - path: reports/crpto/figures/crpto_fig7_uncertainty_baselines.png
       hash: md5
@@ -55,19 +55,24 @@ stages:
       hash: md5
       md5: 73e3acf8d23ad78d4ed504b56ec45776
       size: 4654
+    - path:
+        data/processed/portfolio_bound_aware/rank1_alpha01_bound_aware_276k_full_2026-04-05-1734/portfolio_bound_aware_shortlist_exact.parquet
+      hash: md5
+      md5: c02d82ac23d427df4d1947a7aa8edca7
+      size: 34640
     - path: models/final_project_promotion.json
       hash: md5
       md5: 5d789be10b37de798d6de0d66c843b6e
       size: 8066
     - path: scripts/export_crpto_tables.py
       hash: md5
-      md5: 253f64afdb1548fe508df5d1f78ae971
-      size: 10287
+      md5: 812d754db30acdd6d4611d5659971157
+      size: 10641
     outs:
     - path: reports/crpto/tables/crpto_table0_key_metrics.csv
       hash: md5
-      md5: 2389cf20700d366e677ef94a85a65db2
-      size: 640
+      md5: 72f58da51cef554580d1fbde7323a582
+      size: 659
   crpto.data.dataset:
     cmd: python src/data/make_dataset.py --input
       data/raw/Loan_status_2007-2020Q3.csv --output
@@ -208,23 +213,79 @@ stages:
         conformal.variant_selection:
           rank1_path: rank1_alpha01_bound_aware_276k_full_2026-04-05-1734
     outs:
+    - path: data/processed/conformal_group_coverage_floor_report.parquet
+      hash: md5
+      md5: 8bce7b199340708c79580f2c4a225945
+      size: 4169
+    - path: data/processed/conformal_group_metrics_mondrian.parquet
+      hash: md5
+      md5: 0992c12aa3395f791fe8312cb4c22768
+      size: 7937
     - path: data/processed/conformal_intervals_mondrian.parquet
       hash: md5
       md5: 7fc63539ae0710f832fb675904feb6c6
       size: 5397832
+    - path: data/processed/conformal_mondrian_tuning_90.parquet
+      hash: md5
+      md5: fbd6dbe48d516092cdad7626d36bae9c
+      size: 16260
+    - path: data/processed/conformal_mondrian_tuning_90_pareto.parquet
+      hash: md5
+      md5: db22d864936480fe7040fb971cbd880e
+      size: 15929
+    - path: data/processed/conformal_shrinkback_report.parquet
+      hash: md5
+      md5: 46cb1cf0e2121b100621c1e949372a9a
+      size: 5493
+    - path: data/processed/conformal_temporal_coverage_floor_report.parquet
+      hash: md5
+      md5: 1afca53de79cb8610af9795ca4b48d2b
+      size: 5521
+    - path: data/processed/pd_conformal_width_attribution.parquet
+      hash: md5
+      md5: fb19d808af17ea505f63b4eabbdd480d
+      size: 8327
+    - path: models/conformal_results_mondrian.pkl
+      hash: md5
+      md5: fdfc547c99476329b5f45fc53009880c
+      size: 3511
+    - path: models/pd_conformal_width_attribution_status.json
+      hash: md5
+      md5: f0849f35327bfcb71a259cfb19f5a76d
+      size: 899
   crpto.conformal.validation:
     cmd: python scripts/validate_conformal_policy.py --config
       configs/crpto_conformal_policy.yaml --run-tag
       paper-thesis-final-economic-2026-04-06
     deps:
+    - path: configs/crpto_conformal_policy.yaml
+      hash: md5
+      md5: 28f433a566347d2d1703b38d266a672f
+      size: 1388
+    - path: data/processed/conformal_backtest_alerts.parquet
+      hash: md5
+      md5: 28b8ed3983efa25f57741970180c2605
+      size: 6506
+    - path: data/processed/conformal_backtest_monthly.parquet
+      hash: md5
+      md5: 8c0a55ded82de1ad41b6a8d23dd6e3a6
+      size: 13649
+    - path: data/processed/conformal_group_metrics_mondrian.parquet
+      hash: md5
+      md5: 0992c12aa3395f791fe8312cb4c22768
+      size: 7937
     - path: data/processed/conformal_intervals_mondrian.parquet
       hash: md5
       md5: 7fc63539ae0710f832fb675904feb6c6
       size: 5397832
+    - path: models/conformal_results_mondrian.pkl
+      hash: md5
+      md5: fdfc547c99476329b5f45fc53009880c
+      size: 3511
     - path: scripts/validate_conformal_policy.py
       hash: md5
-      md5: 40ab9f316429b235a99cc5c12ab8868f
-      size: 27088
+      md5: 7b1e5e27aa4c1f1c9fded0f4909b0d6b
+      size: 28793
     params:
       params.yaml:
         champion.alpha_exact_pass: true
@@ -236,8 +297,8 @@ stages:
     outs:
     - path: models/conformal_policy_status.json
       hash: md5
-      md5: e34a25453d05b1ee8caaa68f8b001e6f
-      size: 4326
+      md5: 9dd4548cbc38218bf418b65e09dae738
+      size: 4791
   crpto.portfolio.optimization:
     cmd: python scripts/optimize_portfolio.py --config
       configs/crpto_optimization.yaml
@@ -278,34 +339,48 @@ stages:
     - path:
         models/portfolio_bound_aware/rank1_alpha01_bound_aware_276k_full_2026-04-05-1734/portfolio_bound_aware_exact_context.json
       hash: md5
-      md5: c177184dc4eb544d9fc3684ab7e09d0e
-      size: 3667
+      md5: 8b10f6edb1045193291391a8affbe1ad
+      size: 3453
     - path: scripts/search/run_portfolio_bound_exact_eval.py
       hash: md5
-      md5: 7418bb21856366159e00fca89a98a77f
-      size: 10388
+      md5: ff378c9a1db3a9e68ce60ad6e31f4c9f
+      size: 11898
+    - path: src/utils/pipeline_runtime.py
+      hash: md5
+      md5: 31ba28decfe8cfe6a1818a5f27a9458a
+      size: 4108
     outs:
     - path:
         data/processed/portfolio_bound_aware/rank1_alpha01_bound_aware_276k_full_2026-04-05-1734/portfolio_bound_aware_bound_eval.parquet
       hash: md5
       md5: abe765987e53d817659f50bba8a07258
       size: 54034
+    - path:
+        data/processed/portfolio_bound_aware/rank1_alpha01_bound_aware_276k_full_2026-04-05-1734/portfolio_bound_aware_shortlist_exact.parquet
+      hash: md5
+      md5: c02d82ac23d427df4d1947a7aa8edca7
+      size: 34640
   crpto.paper.evidence:
     cmd: python scripts/analyze_crpto_evidence.py
     deps:
+    - path:
+        data/processed/portfolio_bound_aware/rank1_alpha01_bound_aware_276k_full_2026-04-05-1734/portfolio_bound_aware_shortlist_exact.parquet
+      hash: md5
+      md5: c02d82ac23d427df4d1947a7aa8edca7
+      size: 34640
     - path: models/final_project_promotion.json
       hash: md5
       md5: 5d789be10b37de798d6de0d66c843b6e
       size: 8066
     - path: scripts/analyze_crpto_evidence.py
       hash: md5
-      md5: f36a137c0551853085e0b15ea28c413c
-      size: 49416
+      md5: c8ebd95ceddbdb0275ae6412541a9d5b
+      size: 49651
     outs:
     - path: models/crpto_evidence_status.json
       hash: md5
-      md5: 2c4d9a141d90a5014167fc567623035e
-      size: 4693
+      md5: 117e6a5a096e48011aae91fb1be9b690
+      size: 4695
   crpto.paper.journal_package:
     cmd: python scripts/build_crpto_journal_package.py
     deps:
@@ -319,7 +394,7 @@ stages:
       md5: abe765987e53d817659f50bba8a07258
       size: 54034
     - path:
-        data/processed/portfolio_bound_aware/rank1_alpha01_bound_aware_276k_full_2026-04-05-1734/portfolio_bound_aware_shortlist.parquet
+        data/processed/portfolio_bound_aware/rank1_alpha01_bound_aware_276k_full_2026-04-05-1734/portfolio_bound_aware_shortlist_exact.parquet
       hash: md5
       md5: c02d82ac23d427df4d1947a7aa8edca7
       size: 34640
@@ -353,13 +428,13 @@ stages:
       size: 2187
     - path: scripts/build_crpto_journal_package.py
       hash: md5
-      md5: e2ce28801abcf61c08d0c14de252db30
-      size: 42163
+      md5: 62e7e35a725a59b24ee6b3c06af4d8ec
+      size: 42437
     outs:
     - path: models/crpto_journal_package_status.json
       hash: md5
-      md5: 98ca9a25cd557c3fbe88f2d2d5fac0c5
-      size: 3610
+      md5: 702a7396709276ec2c0df123136f1ff1
+      size: 3616
   crpto.paper.spo_stability:
     cmd: python scripts/run_crpto_vs_spo_stability.py
     deps:
@@ -389,7 +464,7 @@ stages:
       md5: dbd129062f5f606349cb41f3a88baa67
       size: 5256767
     - path:
-        data/processed/portfolio_bound_aware/rank1_alpha01_bound_aware_276k_full_2026-04-05-1734/portfolio_bound_aware_shortlist.parquet
+        data/processed/portfolio_bound_aware/rank1_alpha01_bound_aware_276k_full_2026-04-05-1734/portfolio_bound_aware_shortlist_exact.parquet
       hash: md5
       md5: c02d82ac23d427df4d1947a7aa8edca7
       size: 34640
@@ -411,8 +486,8 @@ stages:
       size: 45335
     - path: scripts/build_tail_satisficing_challenger_audit.py
       hash: md5
-      md5: ed7739c6f4fe3458f91e5ee8fd07dbc4
-      size: 16577
+      md5: b0790e99b3b0593b62df40a2a8d08c19
+      size: 18672
     - path: scripts/optimize_portfolio_tradeoff.py
       hash: md5
       md5: 450e7461b1d64924387fa55532a202e5
@@ -424,5 +499,43 @@ stages:
     outs:
     - path: models/crpto_tail_satisficing_audit_status.json
       hash: md5
-      md5: c3f13d6d1f1237cc05c3c34b177ad655
-      size: 2260
+      md5: d63ae7c182a1337d9e08c4c593b6c77f
+      size: 2310
+  crpto.conformal.backtest:
+    cmd: python scripts/backtest_conformal_coverage.py --intervals-path
+      data/processed/conformal_intervals_mondrian.parquet --output-dir
+      data/processed
+    deps:
+    - path: data/processed/conformal_intervals_mondrian.parquet
+      hash: md5
+      md5: 7fc63539ae0710f832fb675904feb6c6
+      size: 5397832
+    - path: data/processed/test.parquet
+      hash: md5
+      md5: 16bf66b611311120d8b55768f88fe7c4
+      size: 32441172
+    - path: data/processed/test_fe.parquet
+      hash: md5
+      md5: b652096333bd0b75313dda8ef6df53ab
+      size: 46448903
+    - path: scripts/backtest_conformal_coverage.py
+      hash: md5
+      md5: 4cb7de8d1ad1c808a6b10a1a9f6a4c7f
+      size: 14986
+    outs:
+    - path: data/processed/conformal_backtest_alerts.parquet
+      hash: md5
+      md5: 28b8ed3983efa25f57741970180c2605
+      size: 6506
+    - path: data/processed/conformal_backtest_monthly.parquet
+      hash: md5
+      md5: 8c0a55ded82de1ad41b6a8d23dd6e3a6
+      size: 13649
+    - path: data/processed/conformal_backtest_monthly_grade.parquet
+      hash: md5
+      md5: 565ce5645f87ea9515533dd0522e7d3d
+      size: 15575
+    - path: data/processed/conformal_diagnostic_metrics.json
+      hash: md5
+      md5: 8028b241ff563108400780599cab5280
+      size: 399

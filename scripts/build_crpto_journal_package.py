@@ -44,6 +44,7 @@ SHORTLIST_PATH = (
     / "rank1_alpha01_bound_aware_276k_full_2026-04-05-1734"
     / "portfolio_bound_aware_shortlist.parquet"
 )
+SHORTLIST_EXACT_PATH = SHORTLIST_PATH.with_name("portfolio_bound_aware_shortlist_exact.parquet")
 BOUND_EVAL_PATH = (
     DATA_DIR
     / "portfolio_bound_aware"
@@ -65,6 +66,10 @@ BOOTSTRAP_SEED = 20260504
 
 def _load_json(path: Path) -> dict[str, Any]:
     return json.loads(path.read_text(encoding="utf-8"))
+
+
+def _portfolio_shortlist_path() -> Path:
+    return SHORTLIST_EXACT_PATH if SHORTLIST_EXACT_PATH.exists() else SHORTLIST_PATH
 
 
 def _write_json(path: Path, payload: dict[str, Any]) -> None:
@@ -951,7 +956,8 @@ def build_journal_package() -> dict[str, Any]:
     stability = _load_json(SPO_STABILITY_PATH)
     funded = _funded_frame()
     funded_composition = pd.read_csv(FUNDED_COMPOSITION)
-    shortlist = pd.read_parquet(SHORTLIST_PATH)
+    shortlist_path = _portfolio_shortlist_path()
+    shortlist = pd.read_parquet(shortlist_path)
     bound_eval = pd.read_parquet(BOUND_EVAL_PATH)
 
     artifacts: list[Path] = []
@@ -1002,7 +1008,7 @@ def build_journal_package() -> dict[str, Any]:
                 PROMOTION_PATH,
                 SPO_REAL_STATUS_PATH,
                 SPO_STABILITY_PATH,
-                SHORTLIST_PATH,
+                shortlist_path,
                 BOUND_EVAL_PATH,
                 ALPHA_SWEEP_PATH,
                 *JOURNAL_PIPELINE_ASSETS,
