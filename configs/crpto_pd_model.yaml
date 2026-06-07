@@ -122,7 +122,7 @@ calibration:
 
 decision_threshold:
   enabled: true
-  fairness_policy_path: configs/fairness_policy.yaml
+  fairness_policy_path: configs/crpto_fairness_policy.yaml
   min_threshold: 0.05
   max_threshold: 0.95
   step: 0.01

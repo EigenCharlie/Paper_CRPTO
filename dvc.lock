@@ -33,8 +33,8 @@ stages:
     outs:
     - path: book/_book
       hash: md5
-      md5: a4323559daa11f42e24aaf981b07f65d.dir
-      size: 18764654
+      md5: dc47517348709e27665c5b20d93ebd1f.dir
+      size: 18748858
       nfiles: 115
   crpto.paper.figures:
     cmd: python scripts/generate_crpto_figures.py --paper crpto
@@ -84,92 +84,82 @@ stages:
     outs:
     - path: data/processed/loan_master.parquet
       hash: md5
-      md5: c797870fac75b62bbfa2dba9900e1f53
-      size: 153933059
+      md5: 01b5a7d50f9cd9dd81474e54db096a2c.dir
+      size: 203291457
+      nfiles: 1
   crpto.data.features:
     cmd: python scripts/materialize_feature_artifacts.py --config
       configs/crpto_pd_model.yaml
     deps:
     - path: configs/crpto_pd_model.yaml
       hash: md5
-      md5: 7627e63fb4f95eedb7f1809ada33916c
-      size: 4076
-      isexec: true
+      md5: 084e6a7df1f95b5f696d072eafa32a1d
+      size: 4082
     - path: data/processed/test.parquet
       hash: md5
       md5: 16bf66b611311120d8b55768f88fe7c4
       size: 32441172
-      isexec: true
     - path: data/processed/train.parquet
       hash: md5
       md5: 88d8fbcb58640f47d4c02e2ff66bcb90
       size: 142993295
-      isexec: true
     - path: scripts/materialize_feature_artifacts.py
       hash: md5
-      md5: 6197aa4b71d81ce723ba896a0409b8f3
-      size: 3722
-      isexec: true
+      md5: b66605bdc32a240ddaf777ca74e7940d
+      size: 3892
     outs:
     - path: data/processed/calibration_fe.parquet
       hash: md5
-      md5: fdfae34b8857f1506d1fe5628c5d1e94
+      md5: 1385806f4496d187bbe0b02f57cd5ede
       size: 39804503
-      isexec: true
     - path: data/processed/feature_config.pkl
       hash: md5
       md5: e799ebe038e6d2f47ab25dafee96a1c8
       size: 3580
-      isexec: true
     - path: data/processed/feature_config.yml
       hash: md5
       md5: e222862721bbf0215643478270ce496f
       size: 9557
-      isexec: true
     - path: data/processed/feature_manifest_v2.json
       hash: md5
-      md5: 948803ff8d8a9993ce9fbdb46037404d
-      size: 56108
-      isexec: true
+      md5: a1fc3b88ef93e0d984056f71c42333e2
+      size: 58241
     - path: data/processed/feature_manifest_v2.parquet
       hash: md5
-      md5: 156baba8afdd5af9d27145924a932272
+      md5: 5d70cf3d2a889e5755210539abbf030c
       size: 10289
-      isexec: true
     - path: data/processed/test_fe.parquet
       hash: md5
-      md5: f01eea4760d8eb4d58cfeb274da46e09
+      md5: b652096333bd0b75313dda8ef6df53ab
       size: 46448903
-      isexec: true
     - path: data/processed/train_fe.parquet
       hash: md5
-      md5: 786ec03f467835a63db38b45ab94f3c5
-      size: 208450864
-      isexec: true
+      md5: 90772b558de1ba6e0b0f496ccee7ed9c
+      size: 208450868
     - path: data/processed/woe_encoders.pkl
       hash: md5
       md5: ccb667ad366c30c51954ccbe208a1c59
       size: 3552
-      isexec: true
   crpto.pd.champion:
     cmd: python scripts/train_pd_model.py --config configs/crpto_pd_model.yaml
+      --run-tag paper-thesis-final-economic-2026-04-06
     deps:
     - path: configs/crpto_pd_model.yaml
       hash: md5
-      md5: 7627e63fb4f95eedb7f1809ada33916c
-      size: 4076
+      md5: 084e6a7df1f95b5f696d072eafa32a1d
+      size: 4082
     - path: data/processed/calibration_fe.parquet
       hash: md5
-      md5: fdfae34b8857f1506d1fe5628c5d1e94
+      md5: 1385806f4496d187bbe0b02f57cd5ede
       size: 39804503
     - path: data/processed/train_fe.parquet
       hash: md5
-      md5: 786ec03f467835a63db38b45ab94f3c5
-      size: 208450864
+      md5: 90772b558de1ba6e0b0f496ccee7ed9c
+      size: 208450868
     - path: scripts/train_pd_model.py
       hash: md5
-      md5: 6b2c78ba87f2622da89762fa44a4a538
-      size: 85095
+      md5: cf5fdc72ec6d5002a57b6576d400abad
+      size: 85217
     params:
       params.yaml:
         champion.return_robust: 170464.54
@@ -183,15 +173,16 @@ stages:
     outs:
     - path: models/pd_canonical.cbm
       hash: md5
-      md5: e66735accaef6c398c8665b2da5b9002
-      size: 5394848
+      md5: 3feb789c23f69521be7fb6687553e05c
+      size: 4231912
     - path: models/pd_canonical_calibrator.pkl
       hash: md5
-      md5: 543497cab73675673dad1bccbae4746d
+      md5: 9507cdbd7cf41eb849140ddaac586aab
       size: 9503845
   crpto.conformal.intervals:
     cmd: python scripts/generate_conformal_intervals.py --config
-      configs/crpto_conformal_policy.yaml
+      configs/crpto_conformal_policy.yaml --run-tag
+      paper-thesis-final-economic-2026-04-06
     deps:
     - path: configs/crpto_conformal_policy.yaml
       hash: md5
@@ -199,12 +190,12 @@ stages:
       size: 1388
     - path: data/processed/test_predictions.parquet
       hash: md5
-      md5: d16ecc0b4badc4c0949e6eb1e1adbbce
-      size: 12547567
+      md5: 8022f6e92a519e1a12f6fac5671c9260
+      size: 12554263
     - path: scripts/generate_conformal_intervals.py
       hash: md5
-      md5: 36450ba953599ee034adb6cf022197df
-      size: 63445
+      md5: 6871ec6a1a0522e6973a31b4d8254c49
+      size: 63789
     params:
       params.yaml:
         conformal.alpha: 0.01
@@ -219,16 +210,17 @@ stages:
     outs:
     - path: data/processed/conformal_intervals_mondrian.parquet
       hash: md5
-      md5: 158c6322e701fa45407a4c769a8a704a
-      size: 5364073
+      md5: 7fc63539ae0710f832fb675904feb6c6
+      size: 5397832
   crpto.conformal.validation:
     cmd: python scripts/validate_conformal_policy.py --config
-      configs/crpto_conformal_policy.yaml
+      configs/crpto_conformal_policy.yaml --run-tag
+      paper-thesis-final-economic-2026-04-06
     deps:
     - path: data/processed/conformal_intervals_mondrian.parquet
       hash: md5
-      md5: 158c6322e701fa45407a4c769a8a704a
-      size: 5364073
+      md5: 7fc63539ae0710f832fb675904feb6c6
+      size: 5397832
     - path: scripts/validate_conformal_policy.py
       hash: md5
       md5: b06007a04691eb71d4309779bd3cab89
@@ -244,20 +236,20 @@ stages:
     outs:
     - path: models/conformal_policy_status.json
       hash: md5
-      md5: 13cdbf5d1dc6051c80a8c7d31bd78ec4
-      size: 12465
+      md5: 13fc31db8150c5c2cc5736a46eb4e25f
+      size: 4282
   crpto.portfolio.optimization:
     cmd: python scripts/optimize_portfolio.py --config
       configs/crpto_optimization.yaml
     deps:
     - path: data/processed/conformal_intervals_mondrian.parquet
       hash: md5
-      md5: 158c6322e701fa45407a4c769a8a704a
-      size: 5364073
+      md5: 7fc63539ae0710f832fb675904feb6c6
+      size: 5397832
     - path: data/processed/test_predictions.parquet
       hash: md5
-      md5: d16ecc0b4badc4c0949e6eb1e1adbbce
-      size: 12547567
+      md5: 8022f6e92a519e1a12f6fac5671c9260
+      size: 12554263
     - path: scripts/optimize_portfolio.py
       hash: md5
       md5: 7ddf20e344d96939ff82fb6f0dcdccbc
@@ -272,27 +264,32 @@ stages:
     outs:
     - path: data/processed/portfolio_allocations.parquet
       hash: md5
-      md5: a5a64027caf731dca5b951a7a62bf4dd
-      size: 2676209
+      md5: 6cbdcfd680e3b695821fb3d2e5b584b1
+      size: 61185
   crpto.portfolio.bound_exact_eval:
-    cmd: python scripts/search/run_portfolio_bound_exact_eval.py --config
-      configs/crpto_optimization.yaml
+    cmd: python scripts/search/run_portfolio_bound_exact_eval.py --context-path
+      models/portfolio_bound_aware/rank1_alpha01_bound_aware_276k_full_2026-04-05-1734/portfolio_bound_aware_exact_context.json
     deps:
     - path:
         data/processed/portfolio_bound_aware/rank1_alpha01_bound_aware_276k_full_2026-04-05-1734/portfolio_bound_aware_shortlist.parquet
       hash: md5
-      md5: 187c6d2320f82472c738cb63a49fbaec
-      size: 35173
+      md5: c02d82ac23d427df4d1947a7aa8edca7
+      size: 34640
+    - path:
+        models/portfolio_bound_aware/rank1_alpha01_bound_aware_276k_full_2026-04-05-1734/portfolio_bound_aware_exact_context.json
+      hash: md5
+      md5: c177184dc4eb544d9fc3684ab7e09d0e
+      size: 3667
     - path: scripts/search/run_portfolio_bound_exact_eval.py
       hash: md5
-      md5: 753271c9a959eb1a765f71a791ac537d
-      size: 9204
+      md5: 7418bb21856366159e00fca89a98a77f
+      size: 10388
     outs:
     - path:
         data/processed/portfolio_bound_aware/rank1_alpha01_bound_aware_276k_full_2026-04-05-1734/portfolio_bound_aware_bound_eval.parquet
       hash: md5
-      md5: 176384711f07133a62a6cecf6af02dbc
-      size: 48376
+      md5: abe765987e53d817659f50bba8a07258
+      size: 54034
   crpto.paper.evidence:
     cmd: python scripts/analyze_crpto_evidence.py
     deps:
@@ -319,13 +316,13 @@ stages:
     - path:
         data/processed/portfolio_bound_aware/rank1_alpha01_bound_aware_276k_full_2026-04-05-1734/portfolio_bound_aware_bound_eval.parquet
       hash: md5
-      md5: 176384711f07133a62a6cecf6af02dbc
-      size: 48376
+      md5: abe765987e53d817659f50bba8a07258
+      size: 54034
     - path:
         data/processed/portfolio_bound_aware/rank1_alpha01_bound_aware_276k_full_2026-04-05-1734/portfolio_bound_aware_shortlist.parquet
       hash: md5
-      md5: 187c6d2320f82472c738cb63a49fbaec
-      size: 35173
+      md5: c02d82ac23d427df4d1947a7aa8edca7
+      size: 34640
     - path: models/final_project_promotion.json
       hash: md5
       md5: 5d789be10b37de798d6de0d66c843b6e
@@ -394,15 +391,15 @@ stages:
     - path:
         data/processed/portfolio_bound_aware/rank1_alpha01_bound_aware_276k_full_2026-04-05-1734/portfolio_bound_aware_shortlist.parquet
       hash: md5
-      md5: 187c6d2320f82472c738cb63a49fbaec
-      size: 35173
+      md5: c02d82ac23d427df4d1947a7aa8edca7
+      size: 34640
     - path: data/processed/test.parquet
       hash: md5
       md5: 16bf66b611311120d8b55768f88fe7c4
       size: 32441172
     - path: data/processed/test_fe.parquet
       hash: md5
-      md5: f01eea4760d8eb4d58cfeb274da46e09
+      md5: b652096333bd0b75313dda8ef6df53ab
       size: 46448903
     - path: models/final_project_promotion.json
       hash: md5
@@ -427,5 +424,5 @@ stages:
     outs:
     - path: models/crpto_tail_satisficing_audit_status.json
       hash: md5
-      md5: f53d7f2c6c943a17d3643975f8f75b20
-      size: 2259
+      md5: c3f13d6d1f1237cc05c3c34b177ad655
+      size: 2260

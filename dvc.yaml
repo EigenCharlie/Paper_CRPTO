@@ -23,7 +23,7 @@ stages:
       - data/processed/feature_manifest_v2.parquet
       - data/processed/woe_encoders.pkl
   crpto.pd.champion:
-    cmd: python scripts/train_pd_model.py --config configs/crpto_pd_model.yaml
+    cmd: python scripts/train_pd_model.py --config configs/crpto_pd_model.yaml --run-tag paper-thesis-final-economic-2026-04-06
     deps:
       - data/processed/train_fe.parquet
       - data/processed/calibration_fe.parquet
@@ -40,7 +40,7 @@ stages:
       - models/pd_canonical.cbm
       - models/pd_canonical_calibrator.pkl
   crpto.conformal.intervals:
-    cmd: python scripts/generate_conformal_intervals.py --config configs/crpto_conformal_policy.yaml
+    cmd: python scripts/generate_conformal_intervals.py --config configs/crpto_conformal_policy.yaml --run-tag paper-thesis-final-economic-2026-04-06
     deps:
       - data/processed/test_predictions.parquet
       - scripts/generate_conformal_intervals.py
@@ -54,7 +54,7 @@ stages:
     outs:
       - data/processed/conformal_intervals_mondrian.parquet
   crpto.conformal.validation:
-    cmd: python scripts/validate_conformal_policy.py --config configs/crpto_conformal_policy.yaml
+    cmd: python scripts/validate_conformal_policy.py --config configs/crpto_conformal_policy.yaml --run-tag paper-thesis-final-economic-2026-04-06
     deps:
       - data/processed/conformal_intervals_mondrian.parquet
       - scripts/validate_conformal_policy.py
@@ -82,9 +82,10 @@ stages:
     outs:
       - data/processed/portfolio_allocations.parquet
   crpto.portfolio.bound_exact_eval:
-    cmd: python scripts/search/run_portfolio_bound_exact_eval.py --config configs/crpto_optimization.yaml
+    cmd: python scripts/search/run_portfolio_bound_exact_eval.py --context-path models/portfolio_bound_aware/rank1_alpha01_bound_aware_276k_full_2026-04-05-1734/portfolio_bound_aware_exact_context.json
     deps:
       - data/processed/portfolio_bound_aware/rank1_alpha01_bound_aware_276k_full_2026-04-05-1734/portfolio_bound_aware_shortlist.parquet
+      - models/portfolio_bound_aware/rank1_alpha01_bound_aware_276k_full_2026-04-05-1734/portfolio_bound_aware_exact_context.json
       - scripts/search/run_portfolio_bound_exact_eval.py
     outs:
       - data/processed/portfolio_bound_aware/rank1_alpha01_bound_aware_276k_full_2026-04-05-1734/portfolio_bound_aware_bound_eval.parquet

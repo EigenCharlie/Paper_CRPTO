@@ -99,10 +99,10 @@ def _copy_replay_artifact(source: Path, target: Path, *, run_tag: str) -> None:
     shutil.copy2(source, target)
 
 
-def _restore_replay_namespace(source_namespace: str) -> None:
+def _restore_replay_namespace(source_namespace: str, *, run_tag: str | None = None) -> None:
     source_paths = _resolve_artifact_paths(source_namespace)
     target_paths = _resolve_artifact_paths(None)
-    run_tag = resolve_run_tag(require_explicit=True)
+    run_tag = resolve_run_tag(run_tag, require_explicit=True)
     for key, source in source_paths.items():
         if key in {"data_dir", "models_dir"}:
             continue
@@ -351,6 +351,7 @@ def main(
     mode: str = "search",
     replay_manifest_path: str | None = None,
     calibrator_override_path: str | None = None,
+    run_tag: str | None = None,
 ):
     logger.info("Starting Mondrian conformal interval generation with 90% auto-tuning")
     run_mode = str(mode or "search").strip().lower() or "search"
@@ -362,7 +363,7 @@ def main(
             raise ValueError(
                 "Conformal replay requires source_namespace + restore_blessed_namespace."
             )
-        _restore_replay_namespace(source_namespace)
+        _restore_replay_namespace(source_namespace, run_tag=run_tag)
         return
 
     # Load artifacts and data.
@@ -1183,7 +1184,7 @@ def main(
     width_attr_path = paths["width_attr"]
     results_path = paths["results"]
     width_attr_status_path = paths["width_attr_status"]
-    resolved_run_tag = resolve_run_tag(require_explicit=True)
+    resolved_run_tag = resolve_run_tag(run_tag, require_explicit=True)
 
     intervals_df.to_parquet(intervals_mondrian_path, index=False)
     group_metrics_df.to_parquet(group_metrics_path, index=False)
@@ -1312,6 +1313,11 @@ if __name__ == "__main__":
         return tuple(values)
 
     parser = argparse.ArgumentParser()
+    parser.add_argument(
+        "--config",
+        default=None,
+        help="Accepted for DVC compatibility; CLI flags keep the effective policy values.",
+    )
     parser.add_argument("--alpha_target_90", type=float, default=0.10)
     parser.add_argument("--alpha_95", type=float, default=0.05)
     parser.add_argument("--alpha_candidates_90", default="0.10,0.095,0.09,0.085,0.08")
@@ -1348,6 +1354,7 @@ if __name__ == "__main__":
     parser.add_argument("--calibrator_override_path", default=None)
     parser.add_argument("--mode", choices=["search", "replay"], default="search")
     parser.add_argument("--replay_manifest", default=None)
+    parser.add_argument("--run-tag", default=None)
     args = parser.parse_args()
     main(
         alpha_target_90=args.alpha_target_90,
@@ -1406,4 +1413,5 @@ if __name__ == "__main__":
         ),
         mode=str(args.mode),
         replay_manifest_path=args.replay_manifest,
+        run_tag=args.run_tag,
     )

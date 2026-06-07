@@ -55,5 +55,20 @@
     "avg_memory_used_mb": 3963.4336043360436,
     "peak_power_draw_w": 121.85,
     "avg_power_draw_w": 25.447101964769672
+  },
+  "exact_helper_python": "C:\\Users\\carlos\\Documents\\Paper_CRPTO_science_upgrade_experiment\\.venv\\Scripts\\python.exe",
+  "exact_helper_end": {
+    "captured_at_utc": "2026-06-07T09:12:17.424051+00:00",
+    "cpu_count": 24,
+    "memory_probe_error": "[Errno 2] No such file or directory: '\\\\proc\\\\meminfo'",
+    "gpu": {
+      "name": "NVIDIA GeForce RTX 3080",
+      "driver_version": "595.71",
+      "memory_total_mb": 10240.0,
+      "memory_used_mb": 3833.0,
+      "memory_free_mb": 6221.0,
+      "gpu_util_pct": 21.0,
+      "memory_util_pct": 4.0
+    }
   }
 }

@@ -35,6 +35,45 @@ from src.utils.pipeline_runtime import (  # noqa: E402
     write_runtime_status,
 )
 
+LEGACY_REPO_PREFIXES = (
+    "/mnt/c/Users/carlos/Documents/Paper_CRPTO",
+    "C:/Users/carlos/Documents/Paper_CRPTO",
+    r"C:\Users\carlos\Documents\Paper_CRPTO",
+)
+CONTEXT_PATH_KEYS = (
+    "conformal_intervals_path",
+    "frontier_raw_path",
+    "frontier_path",
+    "shortlist_path",
+    "bound_eval_path",
+    "selection_path",
+    "runtime_status_path",
+    "runtime_checkpoint_dir",
+    "resource_snapshot_path",
+)
+
+
+def _resolve_repo_path(raw_path: object) -> Path:
+    path_text = str(raw_path)
+    normalized = path_text.replace("\\", "/")
+    for prefix in LEGACY_REPO_PREFIXES:
+        normalized_prefix = prefix.replace("\\", "/")
+        if normalized == normalized_prefix:
+            return ROOT
+        if normalized.startswith(f"{normalized_prefix}/"):
+            return ROOT / Path(normalized.removeprefix(f"{normalized_prefix}/"))
+
+    path = Path(path_text)
+    if path.is_absolute():
+        return path
+    return ROOT / path
+
+
+def _normalize_context_paths(context: dict[str, object]) -> None:
+    for key in CONTEXT_PATH_KEYS:
+        if key in context:
+            context[key] = str(_resolve_repo_path(context[key]))
+
 
 def _eta_seconds(elapsed_sec: float, completed: int, total: int) -> float | None:
     if completed <= 0 or total <= 0 or completed >= total:
@@ -97,6 +136,7 @@ def main(argv: list[str] | None = None) -> int:
 
     context_path = Path(args.context_path).resolve()
     context = json.loads(context_path.read_text(encoding="utf-8"))
+    _normalize_context_paths(context)
     status_path = Path(str(context["runtime_status_path"]))
     checkpoint_dir = Path(str(context["runtime_checkpoint_dir"]))
     resource_snapshot_path = Path(str(context["resource_snapshot_path"]))
@@ -168,6 +208,7 @@ def main(argv: list[str] | None = None) -> int:
                 )
 
     bound_eval = pd.DataFrame(bound_rows)
+    atomic_write_parquet(bound_eval, bound_eval_path, index=False)
     shortlist_eval = _aggregate_exact_results(shortlist=shortlist, bound_eval=bound_eval)
     selected = shortlist_eval.iloc[0].copy()
     selected_policy = _policy_from_row(
@@ -197,7 +238,6 @@ def main(argv: list[str] | None = None) -> int:
     }
 
     atomic_write_parquet(shortlist_eval, shortlist_path, index=False)
-    atomic_write_parquet(bound_eval, bound_eval_path, index=False)
     atomic_write_json(selection_path, payload)
 
     resource_payload = json.loads(resource_snapshot_path.read_text(encoding="utf-8"))

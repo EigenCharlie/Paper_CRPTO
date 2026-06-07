@@ -1,5 +1,5 @@
 {
-  "config_path": "configs/pd_model.champion.yaml",
+  "config_path": "configs/crpto_pd_model.yaml",
   "output": {
     "model_path": "models/pd_canonical.cbm",
     "conformal_path": "models/pd_canonical_calibrator.pkl",
@@ -9,9 +9,9 @@
     "checkpoint_dir": "models/pd_training_checkpoints",
     "brier_decomposition_path": "data/processed/brier_score_decomposition.json",
     "murphy_diagram_path": "reports/figures/calibration/murphy_diagram.png",
-    "canonical_model_path": "models/pd_canonical.cbm",
-    "canonical_calibrator_path": "models/pd_canonical_calibrator.pkl",
-    "contract_path": "models/pd_model_contract.json",
+    "canonical_model_path": "models\\pd_canonical.cbm",
+    "canonical_calibrator_path": "models\\pd_canonical_calibrator.pkl",
+    "contract_path": "models\\pd_model_contract.json",
     "logreg_model_path": "models/pd_logreg_baseline.pkl",
     "training_record_path": "models/pd_training_record.pkl",
     "seed_replay_status_path": "models/pd_hpo_seed_replay_status.json",

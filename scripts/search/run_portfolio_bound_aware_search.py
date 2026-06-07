@@ -826,6 +826,14 @@ def _aggregate_exact_results(
     )
 
     work = shortlist.copy()
+    exact_metric_prefixes = ("alpha01_", "alpha03_", "alpha10_")
+    stale_exact_cols = [
+        col
+        for col in work.columns
+        if any(col.startswith(prefix) for prefix in exact_metric_prefixes)
+    ]
+    if stale_exact_cols:
+        work = work.drop(columns=stale_exact_cols)
     work = work.merge(alpha01, on=SEMANTIC_POLICY_FIELDS, how="left")
     work = work.merge(alpha03, on=SEMANTIC_POLICY_FIELDS, how="left")
     work = work.merge(alpha10, on=SEMANTIC_POLICY_FIELDS, how="left")

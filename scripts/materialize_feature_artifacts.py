@@ -103,6 +103,11 @@ def main(output_dir: str = "data/processed") -> None:
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
+    parser.add_argument(
+        "--config",
+        default=None,
+        help="Accepted for DVC compatibility; feature artifacts use the canonical split files.",
+    )
     parser.add_argument("--output_dir", default="data/processed")
     args = parser.parse_args()
     main(output_dir=args.output_dir)
