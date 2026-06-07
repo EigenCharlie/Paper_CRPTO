@@ -13,6 +13,7 @@ chapter 14:
 
 from __future__ import annotations
 
+import argparse
 import json
 from pathlib import Path
 from typing import Any
@@ -83,8 +84,8 @@ def _write_table(name: str, frame: pd.DataFrame) -> None:
         escape=True,
         float_format=lambda value: f"{value:.6f}",
     )
-    print(f"Wrote {csv_path.relative_to(ROOT)}")
-    print(f"Wrote {tex_path.relative_to(ROOT)}")
+    print(f"Wrote {csv_path.relative_to(ROOT).as_posix()}")
+    print(f"Wrote {tex_path.relative_to(ROOT).as_posix()}")
 
 
 def _table0_key_metrics(
@@ -255,7 +256,15 @@ def _table_a2_frontier(shortlist: pd.DataFrame, promotion: dict[str, Any]) -> pd
     return frontier[keep].rename(columns={"ab_pass_all": "ab_pass"}).reset_index(drop=True)
 
 
-def main() -> int:
+def main(argv: list[str] | None = None) -> int:
+    parser = argparse.ArgumentParser()
+    parser.add_argument(
+        "--skip-evidence",
+        action="store_true",
+        help="Only export core paper tables; leave P1 evidence to its dedicated DVC stage.",
+    )
+    args = parser.parse_args(argv)
+
     promotion = _load_json(MODELS / "final_project_promotion.json")
     pipeline_summary = _load_json(DATA / "pipeline_summary.json")
     dvc_metrics = _load_json(ROOT / "reports" / "dvc" / "metrics_summary.json")["metrics"]
@@ -272,7 +281,8 @@ def main() -> int:
     _write_table("crpto_table2_conformal_variant_benchmark", _table2_conformal_benchmark(promotion))
     _write_table("crpto_tableA1_benchmark_by_group", _table_a1_group_benchmark())
     _write_table("crpto_tableA2_robustness_frontier", _table_a2_frontier(shortlist, promotion))
-    build_p1_evidence()
+    if not args.skip_evidence:
+        build_p1_evidence()
     return 0
 
 

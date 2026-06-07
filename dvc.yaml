@@ -89,7 +89,7 @@ stages:
     outs:
       - data/processed/portfolio_bound_aware/rank1_alpha01_bound_aware_276k_full_2026-04-05-1734/portfolio_bound_aware_bound_eval.parquet
   crpto.paper.export_tables:
-    cmd: python scripts/export_crpto_tables.py
+    cmd: python scripts/export_crpto_tables.py --skip-evidence
     deps:
       - models/final_project_promotion.json
       - data/processed/pipeline_summary.json

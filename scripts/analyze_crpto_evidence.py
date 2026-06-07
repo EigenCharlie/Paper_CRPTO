@@ -128,9 +128,14 @@ def _write_table(name: str, frame: pd.DataFrame) -> list[Path]:
         escape=True,
         float_format=lambda value: f"{value:.6f}",
     )
-    print(f"Wrote {csv_path.relative_to(ROOT)}")
-    print(f"Wrote {tex_path.relative_to(ROOT)}")
+    print(f"Wrote {_repo_path(csv_path)}")
+    print(f"Wrote {_repo_path(tex_path)}")
     return [csv_path, tex_path]
+
+
+def _repo_path(path: Path) -> str:
+    """Return a stable repository-relative path for published artifacts."""
+    return path.relative_to(ROOT).as_posix()
 
 
 def _append_unique(paths: list[Path], path: Path) -> None:
@@ -139,7 +144,7 @@ def _append_unique(paths: list[Path], path: Path) -> None:
 
 
 def _relative_artifacts(paths: list[Path]) -> list[str]:
-    return list(dict.fromkeys(str(path.relative_to(ROOT)) for path in paths))
+    return list(dict.fromkeys(_repo_path(path) for path in paths))
 
 
 def _safe_float(value: Any) -> float | None:
@@ -297,7 +302,7 @@ def _build_nested_holdout_table(promotion: dict[str, Any]) -> pd.DataFrame:
                 "alpha01_gamma_cp": float(metrics["alpha01_gamma_cp"]),
                 "alpha01_violation": float(metrics["alpha01_violation"]),
                 "selected_matches_final_champion": _policy_matches(metrics, champion),
-                "source_artifact": str(selection_path.relative_to(ROOT)),
+                "source_artifact": _repo_path(selection_path),
             }
         )
     return pd.DataFrame(rows)
@@ -858,7 +863,7 @@ def _build_finalist_exact_eval_table() -> pd.DataFrame:
                 "policy_gamma": float(policy["gamma"]),
                 "policy_uncertainty_aversion": float(policy["uncertainty_aversion"]),
                 **result["metrics"],
-                "intervals_path": str(finalist["intervals_path"].relative_to(ROOT)),
+                "intervals_path": _repo_path(finalist["intervals_path"]),
             }
         )
     return pd.DataFrame(rows)
@@ -976,7 +981,7 @@ def _attach_hardening_status(status: dict[str, Any], artifacts: list[Path]) -> N
         status["conditional_tightening"].update(
             {
                 "status": "implemented_as_conditional_appendix",
-                "appendix_artifact": str(THEORY_APPENDIX_PATH.relative_to(ROOT)),
+                "appendix_artifact": _repo_path(THEORY_APPENDIX_PATH),
                 "main_theorem_role": "Markov remains the distribution-free guarantee.",
                 "tightening_role": "Hoeffding/Bernstein require additional conditional independence.",
             }
@@ -987,7 +992,7 @@ def _attach_hardening_status(status: dict[str, Any], artifacts: list[Path]) -> N
             "status": "implemented",
             "n_funded_loans": len(funded),
             "total_funded_exposure": float(funded["funded_exposure"].sum()),
-            "artifact": str(HARDENING_TABLES["funded_loans"].relative_to(ROOT)),
+            "artifact": _repo_path(HARDENING_TABLES["funded_loans"]),
         }
     if HARDENING_TABLES["funded_composition"].exists():
         composition = pd.read_csv(HARDENING_TABLES["funded_composition"])
@@ -997,7 +1002,7 @@ def _attach_hardening_status(status: dict[str, Any], artifacts: list[Path]) -> N
             "n_segments": len(composition),
             "largest_segment": f"{top['period']}/{top['original_grade']}",
             "largest_segment_exposure_share": float(top["exposure_share"]),
-            "artifact": str(HARDENING_TABLES["funded_composition"].relative_to(ROOT)),
+            "artifact": _repo_path(HARDENING_TABLES["funded_composition"]),
         }
     if HARDENING_TABLES["strict_holdout"].exists():
         holdout = pd.read_csv(HARDENING_TABLES["strict_holdout"])
@@ -1005,7 +1010,7 @@ def _attach_hardening_status(status: dict[str, Any], artifacts: list[Path]) -> N
             "status": "implemented",
             "strict_disjoint_split": True,
             "all_alpha01_pass": bool(holdout["alpha01_exact_pass"].all()),
-            "artifact": str(HARDENING_TABLES["strict_holdout"].relative_to(ROOT)),
+            "artifact": _repo_path(HARDENING_TABLES["strict_holdout"]),
         }
     if HARDENING_TABLES["finalist_exact"].exists():
         exact = pd.read_csv(HARDENING_TABLES["finalist_exact"])
@@ -1021,7 +1026,7 @@ def _attach_hardening_status(status: dict[str, Any], artifacts: list[Path]) -> N
             ]
             .astype(int)
             .tolist(),
-            "artifact": str(HARDENING_TABLES["finalist_exact"].relative_to(ROOT)),
+            "artifact": _repo_path(HARDENING_TABLES["finalist_exact"]),
         }
     if HARDENING_TABLES["enhanced_shift"].exists():
         shift = pd.read_csv(HARDENING_TABLES["enhanced_shift"])
@@ -1032,7 +1037,7 @@ def _attach_hardening_status(status: dict[str, Any], artifacts: list[Path]) -> N
             "worst_scenario": str(worst["scenario"]),
             "worst_coverage_90": float(worst["coverage_90"]),
             "all_coverage90_pass": bool(shift["coverage90_pass"].all()),
-            "artifact": str(HARDENING_TABLES["enhanced_shift"].relative_to(ROOT)),
+            "artifact": _repo_path(HARDENING_TABLES["enhanced_shift"]),
         }
 
 
@@ -1040,11 +1045,17 @@ def _build_markdown_dossier(status: dict[str, Any]) -> Path:
     DOCS_OUT.mkdir(parents=True, exist_ok=True)
     path = DOCS_OUT / "crpto_p1_evidence_2026-05-04.md"
     lines = [
-        "# CRPTO P1 Evidence - 2026-05-04",
+        "# paper-crpto P1 Evidence - 2026-05-04",
         "",
         "This dossier records the P1 evidence now materialized around the official",
         "`paper-thesis-final-economic-2026-04-06` champion. It does not reopen the",
         "champion search.",
+        "",
+        "## Standalone Scope - 2026-05-12",
+        "",
+        "The evidence here is part of the independent paper-crpto dossier. It can be",
+        "rendered, audited and cited from the standalone Quarto book, but it should still",
+        "be read as evidence around the frozen champion rather than a new search.",
         "",
         "## Generated artifacts",
         "",
@@ -1124,11 +1135,11 @@ def build_p1_evidence(*, include_hardening: bool = False) -> dict[str, Any]:
         "champion_label": promotion["final_champion"]["label"],
         "generated_artifacts": _relative_artifacts(artifacts),
         "source_artifacts": [
-            str(PROMOTION_PATH.relative_to(ROOT)),
-            str(CONFORMAL_CANDIDATES_PATH.relative_to(ROOT)),
-            str(CONFORMAL_WINNER_INTERVALS_PATH.relative_to(ROOT)),
-            str(PORTFOLIO_FINALIST_PATH.relative_to(ROOT)),
-            str(TEST_PATH.relative_to(ROOT)),
+            _repo_path(PROMOTION_PATH),
+            _repo_path(CONFORMAL_CANDIDATES_PATH),
+            _repo_path(CONFORMAL_WINNER_INTERVALS_PATH),
+            _repo_path(PORTFOLIO_FINALIST_PATH),
+            _repo_path(TEST_PATH),
         ],
         "nested_holdout": {
             "scope": "staged_5k_25k_276k_post_selection_confirmation",
@@ -1173,8 +1184,8 @@ def build_p1_evidence(*, include_hardening: bool = False) -> dict[str, Any]:
     status["generated_artifacts"] = _relative_artifacts(artifacts)
     _write_json(STATUS_PATH, status)
     _build_markdown_dossier(status)
-    print(f"Wrote {STATUS_PATH.relative_to(ROOT)}")
-    print(f"Wrote {dossier_path.relative_to(ROOT)}")
+    print(f"Wrote {_repo_path(STATUS_PATH)}")
+    print(f"Wrote {_repo_path(dossier_path)}")
     return status
 
 
