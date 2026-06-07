@@ -34,7 +34,8 @@ The experimental environment resolved to:
 
 Important resolver side effect: upgrading `ortools` to `9.11.4210` forced older DBT/protobuf
 constraints (`dbt-core==1.10.8`, `protobuf==5.26.1`). That is acceptable for this isolated replay,
-but it is not a clean stable-branch upgrade candidate.
+but it is not a clean stable-branch upgrade candidate unless the DBT/protobuf constraint interaction
+is resolved.
 
 ## Contract issues found during replay
 
@@ -66,13 +67,21 @@ Before rerunning frozen stages, the experimental environment passed:
 
 `crpto.pd.champion` completed under the experimental stack.
 
-| Metric | Experimental value |
-| --- | ---: |
-| AUC ROC | `0.7126777845551742` |
-| Brier score | `0.1545907367602431` |
+Metrics below compare `main` frozen predictions with the experimental replay predictions in
+`data/processed/test_predictions.parquet`.
+
+| Metric | `main` | Experiment | Delta | Direction |
+| --- | ---: | ---: | ---: | --- |
+| AUC ROC | `0.712438241694` | `0.712677784555` | `+0.000239542861` | Better |
+| Brier score | `0.154630517829` | `0.154590736760` | `-0.000039781069` | Better |
+| Log loss | `0.477061133261` | `0.476942645225` | `-0.000118488036` | Better |
+| ECE, 10 bins | `0.006379675622` | `0.006152293607` | `-0.000227382015` | Better |
+| ECE, 20 bins | `0.006694598684` | `0.007068428020` | `+0.000373829336` | Worse |
+| D2 Brier | `0.098239224398` | `0.098471216168` | `+0.000231991770` | Better |
 
 This stage rewrote frozen model artifacts in the experiment, so the manifest is expected to fail after
-the replay. That is the point of the branch, not a candidate change for `main`.
+the replay. The direction is mostly favorable but the effect sizes are tiny; the scientific conclusion is
+"no material PD degradation under the upgraded stack", not "new champion".
 
 ### Conformal replay
 
@@ -87,16 +96,18 @@ the replay. That is the point of the branch, not a candidate change for `main`.
 - holdout min-group coverage: `0.8976`
 - holdout width: `0.7725`
 
-Final interval metrics:
+Final interval metrics against current `main`:
 
-| Metric | Experimental value |
-| --- | ---: |
-| 90% coverage | `0.9290241955581882` |
-| 90% average width | `0.7611849331856254` |
-| 90% min-group coverage | `0.9005356483191725` |
-| 95% coverage | `0.966283693732415` |
-| 90% Winkler | `1.1896980075533712` |
-| Backtest alerts | `1` |
+| Metric | `main` | Experiment | Delta | Direction |
+| --- | ---: | ---: | ---: | --- |
+| 90% coverage | `0.929338423587` | `0.929024195558` | `-0.000314228028` | Slightly worse, still above target |
+| 95% coverage | `0.962339590203` | `0.966283693732` | `+0.003944103529` | Better coverage |
+| 90% average width | `0.764155715329` | `0.761184933186` | `-0.002970782143` | Better |
+| 90% min-group coverage | `0.900350942002` | `0.900535648319` | `+0.000184706317` | Better |
+| 90% Winkler | `1.193742537951` | `1.189698007553` | `-0.004044530398` | Better |
+| 95% Winkler | `1.130559407415` | `1.112168938538` | `-0.018390468876` | Better |
+| Backtest warning alerts | `0` | `1` | `+1` | Worse |
+| MAPIE MWI 90 | `null` | `1.189698007553` | n/a | Now computed with MAPIE 1.4 API |
 
 `crpto.conformal.validation` completed with:
 
@@ -106,9 +117,12 @@ Final interval metrics:
 - `methodological_justification_pass=true`
 - failing checks: Kupiec and Christoffersen p-values at 90% and 95%
 
-Interpretation: the non-statistical policy gates still pass, and the failures are statistical
-diagnostics caused by systematic over-coverage on a very large sample. This is scientifically useful
-drift, but not a stable-branch merge candidate.
+Interpretation: this is the same strict/overall pattern already present in the standalone bootstrap
+commit (`2026-05-10`, `70b5ea7`): `overall_pass=true`, `strict_overall_pass=false`, `9/13`, and the
+same four statistical failures. The strict failures are diagnostic p-value checks, not the promotion
+gate. The actual gate is `overall_pass`, supported by `methodological_justification_pass=true` because
+all non-statistical checks pass, coverage deviations stay within the 3 pp materiality band, and
+Christoffersen independence p-values pass.
 
 ### Portfolio replay
 
@@ -145,9 +159,10 @@ Final exact replay:
 | Alpha 0.01 Gamma_CP | `0.187987` |
 | Exact bound rows | `180` |
 
-The economic champion identity and robust return survived the exact replay, but some exact diagnostic
-columns changed because the helper re-aggregated the shortlist. This is another reason not to merge
-artifact changes from this branch into `main`.
+The economic champion identity and robust return survived the exact replay. The frozen promotion JSON
+still reports the official alpha-0.01 values (`V=0.03645`, `Gamma_CP=0.18591`), while the enriched
+shortlist now carries replay exact metrics (`V=0.028875`, `Gamma_CP=0.187987`) after idempotent
+re-aggregation. Treat those as replay diagnostics until their lineage is documented explicitly.
 
 ### Paper and book replay
 
@@ -177,6 +192,11 @@ successfully.
 | `uv run dvc status` | Pass: data and pipelines are up to date |
 | `just validate-champion` | Expected fail: 8 frozen artifacts drifted |
 
+Additional focused checks after conformal-validator fixes:
+
+- `uv run pytest tests/test_scripts/test_validate_conformal_policy.py`: Pass (`9 passed`)
+- `uv run ruff check scripts/validate_conformal_policy.py tests/test_scripts/test_validate_conformal_policy.py`: Pass
+
 Frozen artifacts that drifted from `EXTRACTION_MANIFEST.json`:
 
 - `models/pd_canonical.cbm`
@@ -192,13 +212,14 @@ Frozen artifacts that drifted from `EXTRACTION_MANIFEST.json`:
 
 The experiment supports four conclusions:
 
-1. The stable dependency upgrade path should stop at the already merged low- and medium-risk sets.
-2. Scientific-stack upgrades are not a routine dependency maintenance task for this paper because
-   they mutate frozen model artifacts and alter conformal statistical diagnostics.
-3. The replay exposed real reproducibility debt in CLI/DVC contracts. Those fixes are useful, but
-   they should be promoted separately from any scientific artifact changes.
-4. The exact economic champion is robust to the solver replay in this branch, but the PD/conformal
-   upstream replay changes enough frozen artifacts that the branch should remain experimental.
+1. `strict_overall_pass=false` is not a blocker by itself. It is the historical diagnostic state of the
+   conformal policy, and #37 reproduces it with `overall_pass=true`.
+2. The scientific-stack replay is promising: PD metrics are stable/slightly improved, conformal metrics
+   remain inside policy, and the economic champion identity survives.
+3. The merge risk is not the strict conformal flag; it is the protected-artifact hash drift, the
+   OR-Tools/DBT/protobuf resolver side effect, and the exact-shortlist metric lineage.
+4. The replay exposed real reproducibility debt in CLI/DVC contracts. Those fixes are useful and should
+   be separated from any decision to accept regenerated scientific artifacts.
 
 ## Pending
 
@@ -206,5 +227,11 @@ The experiment supports four conclusions:
   - DVC/script CLI compatibility.
   - exact-helper path normalization for historical WSL provenance.
   - idempotent exact aggregation when the shortlist already contains exact columns.
+  - MAPIE 1.4-compatible conformal MWI cross-check.
+  - conformal status wording that marks `diagnostic_informational` statistical tests as non-blocking
+    when methodological justification passes.
   - explicit DVC modeling for book/paper auxiliary artifacts that are currently implicit.
-- Do not merge regenerated scientific artifacts from this experimental branch into `main`.
+- If #37 is considered for merge, decide first whether it is:
+  - a code-only reproducibility PR that excludes regenerated frozen artifacts;
+  - a formal revalidation PR that updates `EXTRACTION_MANIFEST.json` with a drift report;
+  - or a learning-only branch that remains unmerged.

@@ -139,6 +139,9 @@ def test_aggregate_exact_results_prefers_alpha01_passers() -> None:
                 "ab_pass_all": True,
                 "realized_total_return": 90_000.0,
                 "price_of_robustness": -10_000.0,
+                "alpha01_exact_pass": False,
+                "alpha01_weighted_miscoverage_V": 9.99,
+                "alpha01_gamma_cp": 9.99,
             },
             {
                 "candidate_rank": 2,
@@ -154,6 +157,9 @@ def test_aggregate_exact_results_prefers_alpha01_passers() -> None:
                 "ab_pass_all": True,
                 "realized_total_return": 120_000.0,
                 "price_of_robustness": -35_000.0,
+                "alpha01_exact_pass": True,
+                "alpha01_weighted_miscoverage_V": 0.01,
+                "alpha01_gamma_cp": 0.01,
             },
         ]
     )
@@ -195,7 +201,9 @@ def test_aggregate_exact_results_prefers_alpha01_passers() -> None:
 
     assert bool(ranked.iloc[0]["alpha01_exact_pass"]) is True
     assert float(ranked.iloc[0]["risk_tolerance"]) == 0.16
+    assert float(ranked.iloc[0]["alpha01_weighted_miscoverage_V"]) == 0.08
     assert bool(ranked.iloc[1]["alpha01_exact_pass"]) is False
+    assert not any(col.endswith(("_x", "_y")) for col in ranked.columns)
 
 
 def test_targeted_policy_grid_includes_segment_tail_families() -> None:

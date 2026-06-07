@@ -23,6 +23,7 @@ try:
 
     _MAPIE_MWI_AVAILABLE = True
 except ImportError:
+    _mapie_mwi_score = None
     _MAPIE_MWI_AVAILABLE = False
 from src.utils.artifact_metadata import build_artifact_metadata, resolve_run_tag
 from src.utils.baseline_registry import resolve_official_baseline_run_tag
@@ -129,6 +130,27 @@ def _safe_float(value: object, default: float = float("nan")) -> float:
         return float(value)
     except (TypeError, ValueError):
         return default
+
+
+def _compute_mapie_mwi_score(
+    y_true: np.ndarray,
+    lower: np.ndarray,
+    upper: np.ndarray,
+    *,
+    confidence_level: float,
+) -> float:
+    """Compute MAPIE MWI across current and legacy MAPIE metric signatures."""
+    if _mapie_mwi_score is None:
+        raise RuntimeError("MAPIE regression_mwi_score is not available.")
+    y = np.asarray(y_true, dtype=float)
+    lo = np.asarray(lower, dtype=float)
+    hi = np.asarray(upper, dtype=float)
+    y_pis = np.stack([lo, hi], axis=1)[:, :, np.newaxis]
+    try:
+        return float(_mapie_mwi_score(y, y_pis, confidence_level=confidence_level))
+    except TypeError:
+        alpha = 1.0 - confidence_level
+        return float(np.mean(_mapie_mwi_score(y, lo, hi, alpha_=alpha)))
 
 
 def _apply_artifact_namespace(
@@ -263,7 +285,12 @@ def main(
     mapie_mwi_90: float | None = None
     if _MAPIE_MWI_AVAILABLE and y90.size:
         try:
-            mapie_mwi_90 = float(np.mean(_mapie_mwi_score(y90, lo90, hi90, alpha_=0.10)))
+            mapie_mwi_90 = _compute_mapie_mwi_score(
+                y90,
+                lo90,
+                hi90,
+                confidence_level=0.90,
+            )
             delta = abs(mapie_mwi_90 - winkler_90)
             if delta > 0.01:
                 logger.warning(
@@ -546,7 +573,7 @@ def main(
             "decision": bool(methodological_justification_pass),
             "justification_role": (
                 "diagnostic_warning_not_blocking_for_promotion"
-                if statistical_tests_role == "strict_diagnostics"
+                if statistical_tests_role in {"diagnostic_informational", "strict_diagnostics"}
                 else "strict_blocking"
             ),
         },
@@ -602,6 +629,7 @@ def main(
     status_path.parent.mkdir(parents=True, exist_ok=True)
     with open(status_path, "w", encoding="utf-8") as f:
         json.dump(out_status, f, indent=2)
+        f.write("\n")
 
     logger.info(f"Policy checks saved: {checks_path}")
     logger.info(f"Policy status saved: {status_path}")

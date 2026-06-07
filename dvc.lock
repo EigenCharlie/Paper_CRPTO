@@ -223,8 +223,8 @@ stages:
       size: 5397832
     - path: scripts/validate_conformal_policy.py
       hash: md5
-      md5: b06007a04691eb71d4309779bd3cab89
-      size: 26186
+      md5: 40ab9f316429b235a99cc5c12ab8868f
+      size: 27088
     params:
       params.yaml:
         champion.alpha_exact_pass: true
@@ -236,8 +236,8 @@ stages:
     outs:
     - path: models/conformal_policy_status.json
       hash: md5
-      md5: 13fc31db8150c5c2cc5736a46eb4e25f
-      size: 4282
+      md5: e34a25453d05b1ee8caaa68f8b001e6f
+      size: 4326
   crpto.portfolio.optimization:
     cmd: python scripts/optimize_portfolio.py --config
       configs/crpto_optimization.yaml

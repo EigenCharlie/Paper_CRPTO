@@ -34,7 +34,7 @@
   "winkler_90_compensated_pass": false,
   "winkler_90_compensated_threshold": 1.22,
   "winkler_95": 1.1121689385388684,
-  "mapie_mwi_90": null,
+  "mapie_mwi_90": 1.1896980075533712,
   "kupiec_pvalue_90": 0.0,
   "kupiec_pvalue_95": 0.0,
   "christoffersen_pvalue_90": 0.0,
@@ -120,7 +120,7 @@
     "winkler_90_compensated_pass": false,
     "winkler_90_compensated_threshold": 1.22,
     "decision": true,
-    "justification_role": "strict_blocking"
+    "justification_role": "diagnostic_warning_not_blocking_for_promotion"
   },
   "latest_backtest_month": "2020-09-01 00:00:00",
   "intervals_path": "data\\processed\\conformal_intervals_mondrian.parquet",
@@ -132,6 +132,6 @@
     "reason": "missing_status_artifact"
   },
   "schema_version": "2026-03-01.1",
-  "generated_at_utc": "2026-06-07T02:39:12.920284+00:00",
+  "generated_at_utc": "2026-06-07T16:42:51.566307+00:00",
   "run_tag": "paper-thesis-final-economic-2026-04-06"
 }

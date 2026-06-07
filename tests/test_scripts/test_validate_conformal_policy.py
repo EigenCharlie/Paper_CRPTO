@@ -18,6 +18,53 @@ def _set_run_tag(monkeypatch: pytest.MonkeyPatch) -> None:
     monkeypatch.setenv("PIPELINE_RUN_TAG", "run-conformal-test")
 
 
+def test_compute_mapie_mwi_score_uses_current_mapie_signature(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    def _fake_current_score(
+        y_true: np.ndarray,
+        y_pis: np.ndarray,
+        *,
+        confidence_level: float,
+    ) -> float:
+        assert y_true.shape == (3,)
+        assert y_pis.shape == (3, 2, 1)
+        assert confidence_level == pytest.approx(0.90)
+        return 1.23
+
+    monkeypatch.setattr(policy_mod, "_mapie_mwi_score", _fake_current_score)
+
+    score = policy_mod._compute_mapie_mwi_score(
+        np.array([0.1, 0.2, 0.3]),
+        np.array([0.0, 0.1, 0.2]),
+        np.array([0.2, 0.3, 0.4]),
+        confidence_level=0.90,
+    )
+
+    assert score == pytest.approx(1.23)
+
+
+def test_compute_mapie_mwi_score_keeps_legacy_alpha_signature(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    def _fake_legacy_score(*_args, **_kwargs):
+        if "confidence_level" in _kwargs:
+            raise TypeError("legacy signature")
+        assert _kwargs["alpha_"] == pytest.approx(0.10)
+        return np.array([1.10, 1.30])
+
+    monkeypatch.setattr(policy_mod, "_mapie_mwi_score", _fake_legacy_score)
+
+    score = policy_mod._compute_mapie_mwi_score(
+        np.array([0.1, 0.2]),
+        np.array([0.0, 0.1]),
+        np.array([0.2, 0.3]),
+        confidence_level=0.90,
+    )
+
+    assert score == pytest.approx(1.20)
+
+
 def test_validate_conformal_policy_includes_statistical_checks(tmp_path) -> None:
     data_dir = tmp_path / "data" / "processed"
     model_dir = tmp_path / "models"
@@ -322,7 +369,7 @@ def test_validate_conformal_policy_allows_methodological_justification_for_stats
             "min_kupiec_pvalue_95": 0.01,
             "min_christoffersen_pvalue_90": 0.01,
             "min_christoffersen_pvalue_95": 0.01,
-            "statistical_tests_role": "strict_diagnostics",
+            "statistical_tests_role": "diagnostic_informational",
             "allow_methodological_justification": True,
             "max_coverage_deviation_for_statistical_warning_90": 0.03,
             "max_coverage_deviation_for_statistical_warning_95": 0.03,
@@ -383,6 +430,10 @@ def test_validate_conformal_policy_allows_methodological_justification_for_stats
     assert status["non_statistical_checks_pass"] is True
     assert status["methodological_justification_pass"] is True
     assert status["methodological_justification_status"] == "eligible_statistical_warning_only"
+    assert (
+        status["methodological_justification"]["justification_role"]
+        == "diagnostic_warning_not_blocking_for_promotion"
+    )
     assert status["failing_non_statistical_checks"] == []
     assert set(status["failing_statistical_checks"]) == {
         "kupiec_pvalue_90",
