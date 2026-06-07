@@ -52,8 +52,10 @@ submission PDF.
 
 - Public render: `uv run -- quarto render book --to html --no-execute`.
 - Local full validation: run the CRPTO smoke tests first, then render the book.
-- Optional PDF: use `just book-pdf` only after the local TeX/Typst toolchain is
-  installed and the target venue format is known.
+- Full-book PDF: intentionally deferred. The HTML book is the canonical live
+  dossier; `CRPTO.pdf` is too large and layout-fragile to maintain before the
+  thesis section set and APA layout are fixed. Keep local PDF work focused on
+  `CRPTO_ijds.pdf` and `supplement_ijds.pdf`.
 
 ## Design Rule
 

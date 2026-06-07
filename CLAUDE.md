@@ -83,7 +83,7 @@ just setup-base             # sin pyepo/torch
 
 # Render del libro
 just book                   # uv run -- quarto render book --to html
-just book-pdf               # uv run -- quarto render book --to pdf
+just book-pdf               # no-op intencional: PDF completo diferido hasta tesis curada
 just book-preview           # quarto preview book (live reload)
 
 # Tests y validación

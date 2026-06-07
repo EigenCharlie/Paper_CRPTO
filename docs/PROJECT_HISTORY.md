@@ -26,6 +26,9 @@ configuration.
   active configs, templates, workflows or secrets.
 - The frozen champion remains `paper-thesis-final-economic-2026-04-06`; stages
   that search for the champion remain blocked unless a revalidation plan exists.
+- WSL-era absolute paths preserved inside frozen JSON status files are treated
+  as provenance, not active configuration. They are left intact unless a future
+  revalidation deliberately re-freezes the artifact family under a new run tag.
 
 ## Lessons from the extraction
 

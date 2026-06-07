@@ -10,13 +10,13 @@ stages:
       size: 5565
     - path: book/chapters
       hash: md5
-      md5: 4f7eca3aaa9cc6fadc834ff9cecf097f.dir
-      size: 867075
+      md5: 6bc9c03992009a06aa66a6a880f23b7c.dir
+      size: 870853
       nfiles: 34
     - path: book/index.qmd
       hash: md5
-      md5: 3ebdc3d82b75f5c458a1540e8f05b563
-      size: 5695
+      md5: 890ed0bf0d1a4fbd4fc527942d446ecd
+      size: 5729
     - path: book/styles.scss
       hash: md5
       md5: 2a43791aea83d8c367d0a091aea0b80f
@@ -33,9 +33,9 @@ stages:
     outs:
     - path: book/_book
       hash: md5
-      md5: b67c2163d54bafab6d6ead02c62ba7bf.dir
-      size: 15991890
-      nfiles: 112
+      md5: a4323559daa11f42e24aaf981b07f65d.dir
+      size: 18764654
+      nfiles: 115
   crpto.paper.figures:
     cmd: python scripts/generate_crpto_figures.py --paper crpto
     deps:
@@ -356,12 +356,12 @@ stages:
       size: 2187
     - path: scripts/build_crpto_journal_package.py
       hash: md5
-      md5: f2deaf7d8be40b851dc4e38f659fdd94
-      size: 40940
+      md5: e2ce28801abcf61c08d0c14de252db30
+      size: 42163
     outs:
     - path: models/crpto_journal_package_status.json
       hash: md5
-      md5: ef61917dfca7cec55420a1f17a6d831c
+      md5: 98ca9a25cd557c3fbe88f2d2d5fac0c5
       size: 3610
   crpto.paper.spo_stability:
     cmd: python scripts/run_crpto_vs_spo_stability.py

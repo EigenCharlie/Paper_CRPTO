@@ -14,10 +14,23 @@ dataset hunt. The most useful work is:
 1. port the body into the official IJDS LaTeX template and re-check 25-page fit;
 2. perform a final double-anonymous sweep of the body, supplement, cover letter
    and submission PDF;
-3. keep the multidataset layer as A25--A33, with Freddie all-candidate
-   exhaustiveness as the main new defense against the single-dataset critique;
+3. keep the multidataset layer as A25--A34, with Freddie all-candidate
+   exhaustiveness and price-of-robustness scaling as the main new defenses
+   against the single-dataset critique;
 4. avoid method-changing runs unless they are explicitly scoped as a new paper
    or future protocol.
+
+## 2026-06-06 Closeout Update
+
+The active submission previews are now the anonymous body and supplement PDFs
+only: `paper/CRPTO_ijds.pdf` (24-page Chrome-print verification proxy) and
+`paper/supplement_ijds.pdf` (22-page proxy). The full-book `CRPTO.pdf` is no
+longer maintained because it is too large and layout-fragile for the current
+thesis stage; the Quarto book remains the canonical HTML dossier until the
+master's thesis section set and APA layout are fixed. The editor-facing
+cover-letter/data-code disclosure draft now lives in
+`paper/submission/COVER_LETTER_AND_DISCLOSURE.md`, separate from the
+double-anonymous reviewer packet.
 
 ## IJDS Fit Gate
 
@@ -35,8 +48,8 @@ submissions on and after 2025-01-01.
 | Models / algorithms | Frozen CatBoost PD -> Mondrian conformal intervals -> robust portfolio LP -> exact funded-set audit. | Ready. |
 | Decision relevance | Credit allocation under budget/risk appetite; funded set, return, price of robustness, MRM/fairness diagnostics. | Ready. |
 | Practical and ethical implications | Reproducibility companion, governance/MRM, fair-lending caveat, anonymization boundary, no overclaiming. | Ready with final submission sweep. |
-| Page limit and supplement split | Body is ~7.7k words with six figures; supplement carries A3--A33. | Needs official template page check. |
-| Data/code disclosure | Repository has code, DVC/MLflow lineage, manifests, and source logs. | Ready after anonymity/disclosure timing decision. |
+| Page limit and supplement split | Body is ~7.7k words with six figures; supplement carries A3--A34. Local Chrome-print proxy is 24 pages body / 22 pages supplement. | Needs official template page check. |
+| Data/code disclosure | Repository has code, DVC/MLflow lineage, manifests, and source logs; editor-facing wording is separated from the reviewer packet. | Ready after final venue disclosure timing decision. |
 
 ## Current Strongest Paper Claims
 
@@ -45,7 +58,7 @@ submissions on and after 2025-01-01.
 | CRPTO is a decision pipeline, not a classifier paper. | The body centers funded-set economics, exact alpha-safe audit and robust-region evidence. | `paper/CRPTO_ijds.qmd`, Fig. 1, Fig. 13, Fig. 14. |
 | The exact certificate is honest about assumptions. | Theory separates deterministic identity, weighted-validity assumption and frozen empirical certificate. | Bound claim stack, supplement Appendix A. |
 | The champion is not a single lucky point. | `45/45` robust-region policies pass the exact alpha01 check. | `crpto_tableA18_robust_region_policy_family.csv`. |
-| The single-dataset critique is materially reduced. | Prosper and Freddie pass global gates; Freddie is solved on all `1,396,053` OOT candidates. | A25--A33, Fig. 24, `crpto_multidataset_external_status.json`. |
+| The single-dataset critique is materially reduced. | Prosper and Freddie pass global gates; Freddie is solved on all `1,396,053` OOT candidates and the price-of-robustness scaling is reported. | A25--A34, Fig. 24--25, `crpto_multidataset_external_status.json`. |
 | Regret and auditability are not confused. | SPO+ is framed as low-regret; CRPTO is framed as auditable risk control. | A19, Fig. 15. |
 
 ## Multidataset Readiness
@@ -88,9 +101,9 @@ external subgroup.
 | P0 | Compile the final body in the official IJDS template and re-count pages. | Submission PDF. | The Quarto proxy is under budget, but IJDS template is the real gate. |
 | P0 | Run final anonymous sweep for author names, public URLs, acknowledgments and metadata. | Body, supplement, submission PDF. | Double-anonymous review is now required. |
 | P0 | Verify all paper/supplement figures are included near first citation in the template PDF. | Submission PDF. | IJDS explicitly asks tables/figures to remain near citations. |
-| P1 | Add the multidataset reviewer question to the book reviewer map. | Book. | Makes the A25--A33 defense easy to find. |
-| P1 | Keep the readiness memo and publication-target YAML aligned. | Docs/config. | Avoids stale A21/A27 ranges and makes release review faster. |
-| P1 | Prepare a cover-letter paragraph that frames CRPTO as data science for decisions. | Submission package. | Directly addresses IJDS editorial fit. |
+| P1 | Add the multidataset reviewer question to the book reviewer map. | Book. | Done in the A25--A34 reviewer-map pass. |
+| P1 | Keep the readiness memo and publication-target YAML aligned. | Docs/config. | Updated through A34/Fig. 25 closeout. |
+| P1 | Prepare a cover-letter paragraph that frames CRPTO as data science for decisions. | Submission package. | Done in `paper/submission/COVER_LETTER_AND_DISCLOSURE.md`. |
 
 ## QA Results From This Audit
 

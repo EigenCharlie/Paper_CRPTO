@@ -419,7 +419,7 @@ el sistema sobre-cubre). La lectura honesta es que la recalibración online no e
 necesaria sobre este OOT estático, y la tabla deja la receta para un despliegue
 en streaming real.
 
-### A25--A33. Réplica económica externa
+### A25--A34. Réplica económica externa
 
 La capa multidataset usa resúmenes curados locales y no toca el champion Lending
 Club. Prosper y Freddie/Mendeley se promueven porque tienen outcome, exposición,
@@ -491,7 +491,7 @@ freddie_horizon[
 ].round(4)
 ```
 
-Lectura: A25--A33 son evidencia de transferencia de receta, no de una garantía
+Lectura: A25--A34 son evidencia de transferencia de receta, no de una garantía
 universal. El certificado exacto alpha-safe del paper sigue siendo el funded set
 Lending Club; Prosper y Freddie fortalecen la defensa empírica contra la crítica
 de "un solo dataset".
@@ -557,7 +557,7 @@ freddie_segments = read_table("crpto_tableA33_freddie_segment_sensitivity.csv")
 freddie_segments.round(4)
 ```
 
-### Appendix A3--A33 recomendado
+### Appendix A3--A34 recomendado
 
 ::: {#tbl-crpto-appendix-map}
 
@@ -649,11 +649,11 @@ uv run -- quarto render book/chapters/07-apendice-robustez.qmd --to html --no-ex
 ::: {.callout-important}
 ## Regla de sincronizacion
 
-Si alguna tabla A12--A33 contradice `models/final_project_promotion.json`, gana
+Si alguna tabla A12--A34 contradice `models/final_project_promotion.json`, gana
 `final_project_promotion.json`. Las tablas nuevas son evidencia de robustez,
 sensibilidad y empaque journal; no son una promoción nueva del champion. En
 particular, A22 reporta una política *tail-constrained challenger*, no un nuevo
-champion, y A25--A33 reportan réplica externa y auditorías de exhaustividad, no
+champion, y A25--A34 reportan réplica externa y auditorías de exhaustividad, no
 un reemplazo del certificado Lending Club: la policy oficial sigue siendo el
 economic champion.
 :::

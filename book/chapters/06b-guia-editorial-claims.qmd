@@ -47,7 +47,7 @@ empíricos, otros son de ingeniería reproducible.
 | 4 | El bound controla no-cobertura ponderada del funded set | @sec-thm-feasibility y `V` | No decir que controla directamente una PD latente sin supuesto adicional |
 | 5 | Existe una región robusta completa en OOT | `45/45` policies pass alpha01 en `276k` | No decir que eso elimina toda incertidumbre post-selección |
 | 6 | El champion oficial es económico, no theorem-tight | Retorno `$170.5K`, `V=0.03645`, `gamma_cp=0.18591` | No mezclarlo con el comparador theorem-tight |
-| 7 | La evidencia CRPTO fortalece el paper sin cambiar dirección | A7--A11, apéndice condicional, A25--A33 | No venderlo como validación live o universal |
+| 7 | La evidencia CRPTO fortalece el paper sin cambiar dirección | A7--A11, apéndice condicional, A25--A34 | No venderlo como validación live o universal |
 
 : Escalera editorial de claims del CRPTO {#tbl-crpto-claim-ladder}
 
@@ -166,7 +166,7 @@ excusa post-hoc.
 
 **¿Los stress tests reemplazan un dataset externo?**
 No. A6 y A11 fortalecen la evidencia bajo reponderación y flips adversariales,
-pero no reemplazan la réplica externa. Esa capa ya queda cubierta por A25--A33
+pero no reemplazan la réplica externa. Esa capa ya queda cubierta por A25--A34
 en Prosper y Freddie/Mendeley; lo que sigue fuera es una validación live o
 prospectiva con protocolo sellado.
 
@@ -206,8 +206,8 @@ improvisar: si llega una objeción nueva, primero se busca aquí.
 | Holdout temporal estricto CRPTO | Appendix o robustness checks | Responde post-selección |
 | Funded-set composition | Appendix | Útil para reviewers de crédito y riesgo |
 | A10 exact finalists | Appendix | Defiende el selector conformal |
-| A11 enhanced shift | Appendix | Fortalece robustness interna; A25--A33 cubren réplica externa estática |
-| A25--A33 external replication | Cuerpo corto y appendix | Responde la crítica de un solo dataset sin reabrir el champion |
+| A11 enhanced shift | Appendix | Fortalece robustness interna; A25--A34 cubren réplica externa estática |
+| A25--A34 external replication | Cuerpo corto y appendix | Responde la crítica de un solo dataset sin reabrir el champion |
 | Referencias numeradas | Related work del paper | Ayuda a pasar de libro a manuscrito |
 
 : Destino editorial probable del material del libro {#tbl-crpto-paper-placement}
@@ -217,7 +217,7 @@ improvisar: si llega una objeción nueva, primero se busca aquí.
 Las páginas @sec-p1-manuscript-blueprint y @sec-p1-journal-appendix convierten
 esta guía editorial en un paquete de escritura más cercano al manuscrito. El
 blueprint define venue target, abstract operativo, claims C1--C7, notacion única
-y plan de figuras/tablas. El appendix journal agrega A12--A33 y las figuras
+y plan de figuras/tablas. El appendix journal agrega A12--A34 y las figuras
 paper-grade generadas desde artefactos congelados.
 
 | Nuevo material | Papel editorial | Artefacto |
@@ -227,17 +227,17 @@ paper-grade generadas desde artefactos congelados.
 | Figura pila del bound | Puente visual entre endpoint conformal, identidad, supuesto y certificado | `crpto_fig20_bound_claim_layers.png` |
 | Figura alpha -> `Gamma_CP` -> funded set | Puente teoría-método | `crpto_fig13_alpha_gamma_funded_set.png` |
 | Heatmap región robusta | Evidencia visual `45/45` | `crpto_fig14_robust_region_heatmap.png` |
-| A12--A33 | Robustness appendix journal | `scripts/build_crpto_journal_package.py`; `scripts/build_tail_satisficing_challenger_audit.py`; `scripts/build_tail_constrained_reoptimization.py`; `scripts/build_distribution_robustness_diagnostics.py`; `scripts/build_multidataset_external_replication.py` |
+| A12--A34 | Robustness appendix journal | `scripts/build_crpto_journal_package.py`; `scripts/build_tail_satisficing_challenger_audit.py`; `scripts/build_tail_constrained_reoptimization.py`; `scripts/build_distribution_robustness_diagnostics.py`; `scripts/build_multidataset_external_replication.py`; `scripts/build_price_of_robustness_cross_dataset.py` |
 | A22--A24 (re-opt de cola, multi-distribución y online) | Cierre P2 sin reabrir champion | `scripts/build_tail_constrained_reoptimization.py`; `scripts/build_distribution_robustness_diagnostics.py` |
-| A25--A33 (Prosper/Freddie) | Réplica externa sin reabrir Lending Club | `scripts/build_multidataset_external_replication.py` |
+| A25--A34 (Prosper/Freddie) | Réplica externa sin reabrir Lending Club | `scripts/build_multidataset_external_replication.py`; `scripts/build_price_of_robustness_cross_dataset.py` |
 | Status del paquete | Trazabilidad y fuente canónica | `models/crpto_journal_package_status.json`; `models/crpto_tail_constrained_reopt_status.json`; `models/crpto_distribution_robustness_status.json`; `models/crpto_multidataset_external_status.json` |
 
 : Material journal-ready agregado al CRPTO {#tbl-crpto-journal-ready-package}
 
 La regla de jerarquia sigue intacta: si una tabla diagnostica nueva entra en
 tension con `models/final_project_promotion.json`, gana la promoción oficial.
-A12--A33 fortalecen robustez y escritura journal, pero no re-promueven el
-champion: A22 reporta un *tail-constrained challenger* y A25--A33 reportan
+A12--A34 fortalecen robustez y escritura journal, pero no re-promueven el
+champion: A22 reporta un *tail-constrained challenger* y A25--A34 reportan
 réplica externa, no un nuevo champion.
 
 ### Auditoría Papers_tesis 2026-06-06 {#sec-crpto-papers-tesis-deep-audit}

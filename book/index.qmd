@@ -23,15 +23,16 @@ El champion oficial es `bound_aware_276k_economic_champion` del run `paper-thesi
 
 ## Mapa editorial
 
-Este libro no intenta ser todavía el paper final. Funciona como dossier editorial
-y técnico: conserva explicaciones largas, decisiones metodológicas, vínculos con
-artefactos, preguntas de reviewer, tablas y figuras que después se comprimen en
-el cuerpo IJDS, el online supplement y la tesis.
+Este libro es el companion vivo del paper y de la tesis. No compite con el
+cuerpo IJDS: lo respalda. Conserva explicaciones largas, decisiones
+metodológicas, vínculos con artefactos, preguntas de reviewer, tablas y figuras
+que el manuscrito comprime en una historia corta y que la tesis desarrolla como
+superconjunto académico.
 
 | Superficie | Qué defiende | Evidencia visible |
 |---|---|---|
 | Paper IJDS | El claim estrecho: una PD calibrada congelada puede convertirse en una decisión robusta y auditable mediante conformal prediction. | Teoría mínima, Figura 1, exact funded-set certificate, región robusta `45/45`, frontera regret-auditability y réplica externa compacta. |
-| Online supplement | Que el resultado no es frágil ni cherry-picked. | A3--A33, ablations, stress tests, MRM/fairness, funded-set audit, SPO+, tail risk, diagnósticos multi-distribución/online y Prosper/Freddie. |
+| Online supplement | Que el resultado no es frágil ni cherry-picked. | A3--A34, ablations, stress tests, MRM/fairness, funded-set audit, SPO+, tail risk, diagnósticos multi-distribución/online y Prosper/Freddie. |
 | Tesis | El superconjunto académico y operativo del paper. | Fundamentos, arquitectura reproducible, gobernanza, trazabilidad, réplica multidataset, bibliografía extendida y future work controlado. |
 | Reproducibilidad | Que las cifras vienen de artefactos versionados, no de edición manual. | DVC, manifests, tablas/figuras regenerables, tests de sincronía y guardrails de champion congelado. |
 

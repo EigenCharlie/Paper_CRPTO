@@ -118,7 +118,7 @@ adicional alrededor de la policy congelada.
 | Selector decision-aware | `crpto_tableA5_decision_aware_selector.csv` | ¿El conformal winner sigue siendo razonable al mirar decisión? | Rank 1 gana por gate conjunto, no solo por cobertura global |
 | Exact eval finalists | `crpto_tableA10_conformal_finalist_exact_bound_eval.csv` | ¿Ranks 2/3 fueron evaluados con bound exacto? | Pasan portfolio exacto, pero fallan cobertura mínima de grupo |
 | Shift sintético | `crpto_tableA6_synthetic_shift.csv` | ¿La cobertura aguanta reponderaciones OOT? | Primer stress de covariate shift |
-| Shift endurecido | `crpto_tableA11_enhanced_synthetic_shift.csv` | ¿La cobertura aguanta flips adversariales de defaults? | Stress más duro; ahora complementado por A25--A33 como réplica externa |
+| Shift endurecido | `crpto_tableA11_enhanced_synthetic_shift.csv` | ¿La cobertura aguanta flips adversariales de defaults? | Stress más duro; ahora complementado por A25--A34 como réplica externa |
 | Tightening condicional | `docs/research/crpto_conditional_tightening_appendix_2026-05-04.md` | ¿Cuándo se pueden usar Hoeffding/Bernstein? | Solo bajo independencia adicional; Markov sigue siendo principal |
 | Réplica multidataset | `crpto_tableA25_external_replication_gate.csv`--`crpto_tableA27_freddie_horizon_sensitivity.csv` | ¿El método sigue funcionando fuera de Lending Club? | Prosper/Freddie como evidencia económica externa; Home Credit archivado por no tener contrato inversión-retorno |
 

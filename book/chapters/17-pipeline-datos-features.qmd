@@ -418,7 +418,7 @@ El dataset `loan_master` es el input principal del pipeline. El `time_series` al
 
 El linaje completo desde el CSV crudo hasta los artefactos finales se gestiona con **DVC** (Data Version Control). Más que pensar en un DAG técnico, conviene leerlo como una cadena operativa de transformación:
 
-```mermaid
+```{mermaid}
 flowchart LR
     raw[CSV crudo\nLoan_status_2007-2020Q3.csv] --> clean[Limpieza inicial\nmake_dataset.py]
     clean --> cleaned[lending_club_cleaned.parquet]
@@ -524,6 +524,7 @@ Usar el mismo set para calibración de probabilidades y para conformización int
 
 A diferencia de una extracción aleatoria, el set de calibración se extrae del **final** del período de entrenamiento (los últimos meses antes del corte OOT):
 
+```{=html}
 <div class="book-band">
   <div class="book-band__row">
     <div class="book-band__segment book-band__segment--train">
@@ -544,6 +545,7 @@ A diferencia de una extracción aleatoria, el set de calibración se extrae del 
   </div>
   <p class="book-band__note">La calibración se toma del tramo final del entrenamiento para parecerse más al mundo que luego verá el test OOT.</p>
 </div>
+```
 
 Esta estrategia temporal tiene dos ventajas:
 
@@ -1005,6 +1007,7 @@ Los schemas usan `strict=False`, lo que permite columnas adicionales no especifi
 
 La validación se integra en el pipeline como un *gate* entre etapas:
 
+```{=html}
 <div class="book-flow">
   <div class="book-flow__row">
     <div class="book-flow__card">
@@ -1040,6 +1043,7 @@ La validación se integra en el pipeline como un *gate* entre etapas:
   </div>
   <p class="book-flow__note">La idea central es simple: validar temprano para no descubrir inconsistencias recién cuando ya estamos optimizando portafolio o calculando IFRS9.</p>
 </div>
+```
 
 Si una validación falla, el pipeline se detiene con un error descriptivo que indica qué columna, qué regla y qué valores violaron el schema. Esto es preferible a dejar que un error de datos se propague silenciosamente hasta producir predicciones incorrectas o portafolios subóptimos.
 

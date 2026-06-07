@@ -7,7 +7,7 @@ page-layout: article
 
 La réplica multidataset entra al dossier con una regla estricta: **no reabre el
 champion Lending Club**. El certificado exacto del paper sigue siendo el funded
-set promovido en Lending Club. Lo que A25--A33 agregan es evidencia externa de
+set promovido en Lending Club. Lo que A25--A34 agregan es evidencia externa de
 que la receta CRPTO -- PD calibrada, intervalos conformales Mondrian y LP robusto
 bound-aware -- no depende de un solo panel P2P, y que el caso Freddie no queda
 apoyado en una pantalla pequeña de candidatos.

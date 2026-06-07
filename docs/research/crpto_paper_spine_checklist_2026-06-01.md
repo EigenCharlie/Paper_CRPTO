@@ -10,7 +10,7 @@ aligned while the manuscript keeps improving.
 | Conformal intervals are decision inputs, not decorative uncertainty plots. | Method, Theory, Results. | Alpha-gamma figure, `V(alpha)`, `Gamma_CP`, exact alpha check. | Do not imply exact conditional coverage by borrower profile. |
 | The champion is selected inside an exact alpha-safe robust region. | Results. | Robust return `$170,464.54`, `45/45` region, exact pass. | Do not rerun `bound_exact_eval` or HPO without a new protocol. |
 | SPO+ is a valid low-regret comparator but not the same governance object. | Robustness and Comparators. | A19/Fig. 15, regret-auditability frontier. | Do not claim CRPTO dominates DFL on regret. |
-| A20--A33 strengthen the journal story without promoting a new champion. | Supplement. | Tail, satisficing, cluster, CVaR/OCE, MDCP/ACI diagnostics and Prosper/Freddie replication. | Keep challenger/external diagnostics distinct from official policy. |
+| A20--A34 strengthen the journal story without promoting a new champion. | Supplement. | Tail, satisficing, cluster, CVaR/OCE, MDCP/ACI diagnostics, Prosper/Freddie replication and price-of-robustness scaling. | Keep challenger/external diagnostics distinct from official policy. |
 | Fairness and MRM are governance diagnostics, not legal certification. | Discussion and supplement Appendix D. | Proxy/intersectional audits, MRM boundary text. | Direct protected-attribute claims stay out of scope. |
 | Pages is a paper companion, not a submission package. | Book landing and chapter routes. | Build metadata, reading routes, bibliography map. | Submission conversion remains a later phase. |
 

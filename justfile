@@ -88,12 +88,11 @@ book:
     uv run -- quarto render book --to html
 
 book-pdf:
-    uv run python scripts/write_book_build_info.py
-    uv run -- quarto render book --to pdf
+    @echo "CRPTO.pdf is intentionally not maintained as a routine artifact. Use paper-submission-pdf for IJDS PDFs; create a curated thesis PDF later from selected sections."
 
-book-all:
+book-all: book
     uv run python scripts/write_book_build_info.py
-    uv run -- quarto render book
+    @echo "book-all currently means HTML book only; full thesis PDF is deferred until the thesis section set and APA layout are fixed."
 
 book-preview:
     uv run -- quarto preview book

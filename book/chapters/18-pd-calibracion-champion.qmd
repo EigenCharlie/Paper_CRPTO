@@ -799,9 +799,9 @@ Platt Scaling y Venn-Abers tienen rendimiento prácticamente idéntico en este d
 
 El siguiente diagrama resume la lógica de decisión para elegir un calibrador, basada en las propiedades teóricas y empíricas de cada método:
 
-```mermaid
-%%| label: fig-calibration-decision
-%%| fig-cap: "Árbol de decisión para selección de calibrador"
+```{mermaid}
+#| label: fig-calibration-decision
+#| fig-cap: "Árbol de decisión para selección de calibrador"
 flowchart TD
     A["¿Se requieren garantías<br/>formales de calibración?"] -->|Sí| VA["**Venn-Abers**<br/>Único con garantías secuenciales"]
     A -->|No| B["¿Tamaño del set<br/>de calibración m?"]

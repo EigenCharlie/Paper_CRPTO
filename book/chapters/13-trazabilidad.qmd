@@ -13,7 +13,7 @@ Esta página es el **índice maestro** del CRPTO. Cumple un rol específico que 
 | La incertidumbre conformal entra al LP robusto. | `conformal_intervals_mondrian.parquet`, `champion_portfolio_policy.json` | Conformal/model tests + policy config | El intervalo no se gráfica al final: cambia la decisión. |
 | El bound se audita sobre el funded set. | `portfolio_bound_aware_bound_eval.parquet`, `final_project_promotion.json` | `test_crpto_final_sync.py` | `V`, `Gamma_CP` y violation vienen del portafolio promovido. |
 | El champion no es un punto aislado. | `crpto_tableA18_robust_region_policy_family.csv` | Journal-package status + DVC lock | `45/45` policies pasan `alpha = 0.01`. |
-| El supplement no re-promueve otro método. | A12--A33 + status JSONs | Scope notes + smoke tests | Tail, MDCP/online, SPO+ y réplica externa son diagnósticos o comparadores. |
+| El supplement no re-promueve otro método. | A12--A34 + status JSONs | Scope notes + smoke tests | Tail, MDCP/online, SPO+, réplica externa y precio de robustez cross-dataset son diagnósticos o comparadores. |
 
 ```{python}
 #| label: p1-traceability-setup
@@ -31,7 +31,7 @@ import pandas as pd
 ### Tabla maestra: claims C1–C7
 
 ```{python}
-#| label: tbl-crpto-claim-artifact-test
+#| label: tbl-crpto-traceability-claim-artifact-test
 #| tbl-cap: "Mapa de cada claim del paper a su artefacto, script generador y test guardrail"
 
 pd.DataFrame(
@@ -80,7 +80,7 @@ pd.DataFrame(
         },
         {
             "Claim": "C7: Evidencia P1 + journal-package fortalece sin cambiar dirección",
-            "Evidencia": "A3-A11 (P1) + A12-A27 (journal) todas preservan policy oficial",
+            "Evidencia": "A3-A11 (P1) + A12-A34 (journal) todas preservan policy oficial",
             "Artefacto": "models/crpto_evidence_status.json + crpto_journal_package_status.json + crpto_multidataset_external_status.json",
             "Script": "scripts/analyze_crpto_evidence.py + scripts/build_crpto_journal_package.py + scripts/build_multidataset_external_replication.py",
             "Test": "tests/test_crpto_final_sync.py",
@@ -152,6 +152,12 @@ pd.DataFrame(
             "Fuente": "crpto_tableA18_robust_region_policy_family.csv",
         },
         {
+            "Figura": "Fig 25: price-of-robustness scaling",
+            "Path": "reports/crpto/figures/crpto_fig25_price_of_robustness_scaling.png",
+            "Script": "scripts/generate_crpto_figures.py + scripts/build_price_of_robustness_cross_dataset.py",
+            "Fuente": "crpto_tableA34_price_of_robustness_cross_dataset.csv",
+        },
+        {
             "Figura": "Fig α-Γ bound validation",
             "Path": "book/assets/figures/publication/crpto_fig_alpha_gamma_bound.png",
             "Script": "scripts/validate_alpha_gamma_bound.py",
@@ -196,6 +202,13 @@ pd.DataFrame(
         {"Tabla": "A25", "Rol": "External replication gate on Prosper/Freddie", "Generador": "build_multidataset_external_replication.py"},
         {"Tabla": "A26", "Rol": "External candidate-pool sensitivity", "Generador": "build_multidataset_external_replication.py"},
         {"Tabla": "A27", "Rol": "Freddie horizon sensitivity", "Generador": "build_multidataset_external_replication.py"},
+        {"Tabla": "A28", "Rol": "External LP exhaustiveness", "Generador": "build_multidataset_external_replication.py"},
+        {"Tabla": "A29", "Rol": "Freddie sparse Mondrian audit", "Generador": "build_multidataset_external_replication.py"},
+        {"Tabla": "A30", "Rol": "External metric intervals", "Generador": "build_multidataset_external_replication.py"},
+        {"Tabla": "A31", "Rol": "External OOT subperiod metrics", "Generador": "build_multidataset_external_replication.py"},
+        {"Tabla": "A32", "Rol": "Prosper default-definition sensitivity", "Generador": "build_multidataset_external_replication.py"},
+        {"Tabla": "A33", "Rol": "Freddie segment sensitivity", "Generador": "build_multidataset_external_replication.py"},
+        {"Tabla": "A34", "Rol": "Cross-dataset price of robustness", "Generador": "build_price_of_robustness_cross_dataset.py + generate_crpto_figures.py"},
     ]
 )
 ```
@@ -215,7 +228,14 @@ uv run python scripts/analyze_crpto_evidence.py --include-hardening
 # 4. Regenerar journal package (A12-A19 + Figuras 1, 12-15, 20)
 uv run python scripts/build_crpto_journal_package.py
 
-# 5. (Opcional) Regenerar figuras publicación (7-11)
+# 4b. Regenerar add-ons journal (A20-A34 + Figuras 16-25)
+uv run python scripts/build_tail_satisficing_challenger_audit.py
+uv run python scripts/build_tail_constrained_reoptimization.py
+uv run python scripts/build_distribution_robustness_diagnostics.py
+uv run python scripts/build_multidataset_external_replication.py
+uv run python scripts/build_price_of_robustness_cross_dataset.py
+
+# 5. (Opcional) Regenerar figuras publicación (7-25)
 uv run python scripts/generate_crpto_figures.py
 
 # 6. Validar coherencia con tests guardrail
@@ -322,7 +342,7 @@ libro.
 ::: {.callout-important}
 ## Regla de sincronización canónica
 
-Si cualquier tabla del paquete (A0–A18) o cualquier figura (7–14) contradice los valores en `models/final_project_promotion.json`, **gana siempre `final_project_promotion.json`**. Las tablas/figuras son evidencia de robustez, sensibilidad y empaque journal; nunca son una promoción nueva del champion. La regla está implementada en los tests `tests/test_crpto_final_sync.py` y se ejecuta en CI.
+Si cualquier tabla del paquete (A0–A34) o cualquier figura (7–25) contradice los valores en `models/final_project_promotion.json`, **gana siempre `final_project_promotion.json`**. Las tablas/figuras son evidencia de robustez, sensibilidad, réplica externa y empaque journal; nunca son una promoción nueva del champion. La regla está implementada en los tests `tests/test_crpto_final_sync.py` y se ejecuta en CI.
 :::
 
 ### Estado de los status JSONs canónicos
@@ -354,7 +374,7 @@ status_files = [
     },
     {
         "Path": "models/crpto_journal_package_status.json",
-        "Rol": "Estado del journal package (A12-A19 + Figuras 1, 12-15, 20)",
+        "Rol": "Estado del journal package base (A12-A19 + Figuras 1, 12-15, 20)",
         "Schema": "2026-05-04.1",
     },
     {

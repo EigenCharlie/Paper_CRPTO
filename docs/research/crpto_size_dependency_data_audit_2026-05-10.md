@@ -2,6 +2,11 @@
 
 Fecha: 2026-05-10. Render verificado: `book/_book/index.html`.
 
+Nota de mantenimiento 2026-06-06: este memo conserva el snapshot observado el
+2026-05-10. El estado activo del lockfile fue actualizado después para resolver
+Dependabot/Starlette: `mlflow`, `mlflow-skinny` y `mlflow-tracing` quedaron en
+`3.13.0`, y `starlette` quedó en `1.2.1`. Use `uv.lock` como fuente vigente.
+
 ## Tamaño Del Proyecto
 
 - Tamaño total actual: `8.8G`.

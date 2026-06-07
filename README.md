@@ -54,7 +54,7 @@ just smoke              # tests críticos rápidos
 ```powershell
 # Libro Quarto
 just book               # HTML
-just book-pdf           # PDF (LuaLaTeX)
+just book-pdf           # no-op: PDF completo diferido hasta tesis curada
 just book-preview       # live reload
 just book-clean         # borra _book/, _freeze/, .quarto/
 

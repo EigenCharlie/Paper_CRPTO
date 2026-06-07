@@ -13,7 +13,7 @@ libro independiente.
   dependencia.
 - `crpto_p1_evidence_2026-05-04.md`: evidencia P1 alrededor del champion
   congelado.
-- `crpto_journal_package_2026-05-04.md`: tablas A12--A33 y figuras journal.
+- `crpto_journal_package_2026-05-04.md`: tablas A12--A34 y figuras journal.
 - `crpto_multidataset_external_replication_2026-06-05.md`: decisión y resultados de la réplica externa Prosper/Freddie.
 - `crpto_ijds_readiness_audit_2026-06-05.md`: auditoría final de encaje IJDS,
   frente multidataset, riesgos de reviewer y stop rules para no abrir runs
