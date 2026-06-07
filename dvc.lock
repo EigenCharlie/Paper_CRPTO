@@ -49,7 +49,7 @@ stages:
       md5: 85f05f2e949d67439642114474312733
       size: 162435
   crpto.paper.export_tables:
-    cmd: python scripts/export_crpto_tables.py
+    cmd: python scripts/export_crpto_tables.py --skip-evidence
     deps:
     - path: data/processed/pipeline_summary.json
       hash: md5
@@ -61,8 +61,8 @@ stages:
       size: 8066
     - path: scripts/export_crpto_tables.py
       hash: md5
-      md5: 3549b88bd052fbcf84a623b238e8884c
-      size: 9930
+      md5: 253f64afdb1548fe508df5d1f78ae971
+      size: 10287
     outs:
     - path: reports/crpto/tables/crpto_table0_key_metrics.csv
       hash: md5
@@ -302,8 +302,8 @@ stages:
       size: 8066
     - path: scripts/analyze_crpto_evidence.py
       hash: md5
-      md5: 3bb5086de93ecce9e1d92225aaf9c2e0
-      size: 49099
+      md5: f36a137c0551853085e0b15ea28c413c
+      size: 49416
     outs:
     - path: models/crpto_evidence_status.json
       hash: md5
