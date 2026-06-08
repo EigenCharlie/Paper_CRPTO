@@ -44,7 +44,7 @@ Un abstract posible, todavía largo para paper, sería:
 > Mondrian conformal prediction intervals into robust portfolio constraints.
 > On a 276,869-loan out-of-time Lending Club evaluation, the final economic
 > policy earns `$170.5K` on a `$1M` budget while passing the exact `alpha=0.01`
-> funded-set bound (`V=0.03645`, `Gamma_CP=0.18591`, zero violation). The full
+> funded-set bound (`V=0.028875`, `Gamma_CP=0.187987`, zero violation). The full
 > promoted robust region contains `45/45` alpha01-safe policies, suggesting the
 > result is not a single-point artifact. The contribution is not higher AUC, but
 > a reproducible bridge from calibrated probabilistic learning to auditable
@@ -59,7 +59,7 @@ robusta verificable, no en otro leaderboard predictivo.
 
 | Claim | Formulación para paper | Estatus | Evidencia primaria |
 |---|---|---|---|
-| C1 | La base PD calibrada es suficientemente estable para alimentar incertidumbre conformal. | Empírico | AUC `0.7124`, Brier `0.1546`, ECE `0.0064`, tests de calibración |
+| C1 | La base PD calibrada es suficientemente estable para alimentar incertidumbre conformal. | Empírico | AUC `0.7127`, Brier `0.1546`, ECE `0.0062`, tests de calibración |
 | C2 | La capa conformal Mondrian produce cobertura útil y trazable para decisión. | Empírico-conformal | Coverage 90 `92.97%`, min group coverage `91.90%`, Winkler `1.111` |
 | C3 | El intervalo conformal se puede mapear a un conjunto de incertidumbre usado por un LP robusto. | Metodológico | Definiciones `u_i(alpha)`, `Gamma_CP`, policy modes |
 | C4 | El bound controla no-cobertura ponderada del funded set bajo supuestos distribution-free. | Teórico | `thm-conformal-feasibility`, Markov, `V <= sqrt(alpha)` |
@@ -252,7 +252,7 @@ Una versión fuerte y honesta de las contribuciones sería:
    set y separamos explícitamente el tightening condicional de la garantía
    principal.
 3. Mostramos que el enfoque produce una policy económica promovida con retorno
-   `$170.5K`, `V=0.03645`, `Gamma_CP=0.18591`, cero violación y pass exacto a
+   `$170.5K`, `V=0.028875`, `Gamma_CP=0.187987`, cero violación y pass exacto a
    `alpha=0.01`.
 4. Documentamos que la región final completa pasa el bound (`45/45` policies),
    por lo que el resultado no depende de un único punto elegido después de ver

@@ -79,7 +79,7 @@ separadas tanto en el libro como en el paper IJDS:
 |---|---|---|
 | Identidad determinística | Si el funded set cumple $\sum_i w_i u_i \leq \tau$, cualquier exceso realizado sobre $\tau$ entra por $V=\sum_iw_i\mathbf{1}\{Y_i>u_i\}$. | No necesita una garantía conformal ni prueba por distribución. |
 | Supuesto estadístico ponderado | Para convertir la identidad en bound probabilístico se asume $\mathbb{E}[V]\leq\alpha$ sobre la población ponderada por el funded set. | Split conformal marginal por sí solo no controla cualquier subportafolio adaptativo. |
-| Certificado empírico CRPTO | El champion congelado pasa exactamente: $V=0.03645$, $\Gamma_{\text{CP}}=0.18591$, `violation=0`, región robusta `45/45`. | El cierre post-selección no crea una garantía conformal universal ni prospectiva. |
+| Certificado empírico CRPTO | El champion rebaselined pasa exactamente: $V=0.028875$, $\Gamma_{\text{CP}}=0.187987$, `violation=0`, región robusta `45/45`. | El cierre post-selección no crea una garantía conformal universal ni prospectiva. |
 
 : Lectura honesta del bound: identidad, supuesto y certificado {#tbl-bound-honest-reading}
 
@@ -216,7 +216,7 @@ El certificado exacto que debe quedar visible en el cuerpo IJDS es pequeño:
 
 | $\alpha$ | $\Gamma_{\text{CP}}$ | $V(\alpha)$ | $\sqrt{\alpha}$ | `violation` | `pass` |
 |---:|---:|---:|---:|---:|:---:|
-| 0.01 | 0.18591 | 0.03645 | 0.10000 | 0.00000 | sí |
+| 0.01 | 0.187987 | 0.028875 | 0.10000 | 0.00000 | sí |
 
 : Certificado exacto alpha-safe del funded set promovido {#tbl-alpha01-certificate}
 

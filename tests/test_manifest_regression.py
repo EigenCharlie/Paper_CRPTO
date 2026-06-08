@@ -205,3 +205,7 @@ def test_champion_metrics_match_manifest(manifest: dict[str, Any]) -> None:
         assert float(return_robust) == pytest.approx(170464.5429284627, rel=1e-6), (
             f"Manifest robust_return drift: got {return_robust}"
         )
+    assert flat.get("run_tag") == "ijds-rebaseline-2026-06-07"
+    assert float(flat["alpha01_weighted_miscoverage_v"]) == pytest.approx(0.028875, abs=1e-12)
+    assert float(flat["alpha01_gamma_cp"]) == pytest.approx(0.187987, abs=1e-12)
+    assert flat.get("alpha01_exact_pass") is True

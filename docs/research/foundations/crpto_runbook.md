@@ -56,11 +56,11 @@ Do not re-run without explicit approval:
 
 The official CRPTO champion remains:
 
-- run tag: `paper-thesis-final-economic-2026-04-06`
+- run tag: `ijds-rebaseline-2026-06-07`
 - policy: `bound_aware_276k_economic_champion`
 - return: `$170,464.54`
-- `V(alpha=0.01)=0.03645`
-- `Gamma_CP(alpha=0.01)=0.18591`
+- `V(alpha=0.01)=0.028875`
+- `Gamma_CP(alpha=0.01)=0.187987`
 
 ## DVC and GitHub
 

@@ -88,6 +88,9 @@ dbt_project/.user.yml
 reports/run_logs/
 reports/notebook_images/
 reports/paper_material/
+reports/figures/**
+!reports/figures/**/
+!reports/figures/**/*.dvc
 catboost_info/
 
 # Local literature PDFs copied for reading only. Keep citations/DOIs in
@@ -115,6 +118,9 @@ Thumbs.db
 # MLflow local
 mlruns/
 mlartifacts/
+
+# Scratch runtime checkpoints are observability, not canonical deliverables.
+models/*_runtime_checkpoints/
 
 # Optuna local
 optuna.db

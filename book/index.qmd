@@ -17,9 +17,9 @@
 **Hallazgo**: el resultado clave no es un AUC aislado, sino la posibilidad de cuantificar explícitamente el trade-off entre retorno, cobertura, robustez y auditabilidad.
 :::
 
-![Las seis etapas del pipeline CRPTO --- datos y split temporal, PD calibrada, conformal Mondrian, conjunto de incertidumbre, LP robusto y política promovida con bound exacto --- anotadas con las métricas del cierre `276k` ($170,464.54, $V=0.03645$, $\Gamma_{\text{CP}}=0.18591$, región robusta `45/45`).](assets/figures/editorial/diagrama-crpto.png){#fig-crpto-overview fig-alt="Diagrama maestro del pipeline CRPTO en seis etapas desde datos hasta política promovida auditable."}
+![Las seis etapas del pipeline CRPTO --- datos y split temporal, PD calibrada, conformal Mondrian, conjunto de incertidumbre, LP robusto y política promovida con bound exacto --- anotadas con las métricas del rebaseline IJDS ($170,464.54, $V=0.028875$, $\Gamma_{\text{CP}}=0.187987$, región robusta `45/45`).](assets/figures/editorial/diagrama-crpto.png){#fig-crpto-overview fig-alt="Diagrama maestro del pipeline CRPTO en seis etapas desde datos hasta política promovida auditable."}
 
-El champion oficial es `bound_aware_276k_economic_champion` del run `paper-thesis-final-economic-2026-04-06`, con retorno `$170,464.54`, `V = 0.03645`, `Gamma_CP = 0.18591`, `alpha01_exact_pass = true` y región robusta `45/45`.
+El champion oficial es `bound_aware_276k_economic_champion` del run `ijds-rebaseline-2026-06-07`, con retorno `$170,464.54`, `V = 0.028875`, `Gamma_CP = 0.187987`, `alpha01_exact_pass = true` y región robusta `45/45`. El run `paper-thesis-final-economic-2026-04-06` queda como procedencia histórica, no como baseline operativo vigente.
 
 ## Mapa editorial
 

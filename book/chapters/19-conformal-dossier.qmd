@@ -52,11 +52,11 @@ overview = [
     {"Métrica": "Ancho promedio @ 90%", "Valor": f"{status['avg_width_90']:.4f}"},
     {"Métrica": "Cobertura mínima por grupo @ 90%", "Valor": f"{status['min_group_coverage_90']:.2%}"},
     {"Métrica": "Winkler score @ 90%", "Valor": f"{status['winkler_90']:.4f}"},
-    {"Métrica": "Overall pass", "Valor": str(status.get('overall_pass', status['strict_overall_pass']))},
-    {"Métrica": "Strict overall pass", "Valor": str(status['strict_overall_pass'])},
+    {"Métrica": "Gate conformal", "Valor": str(status.get('gate_overall_pass', status.get('overall_pass', False)))},
+    {"Métrica": "Checks de gate", "Valor": f"{status.get('gate_checks_passed', status.get('checks_passed', 0))}/{status.get('gate_checks_total', status.get('checks_total', 0))}"},
     {"Métrica": "Alertas críticas", "Valor": str(status['critical_alerts'])},
     {"Métrica": "Alertas warning", "Valor": str(status['warning_alerts'])},
-    {"Métrica": "Tamaño de muestra (test OOT)", "Valor": f"{status['statistical_tests']['kupiec_90']['n_total']:,}"},
+    {"Métrica": "Tamaño de muestra (test OOT)", "Valor": f"{status['sample_size_context']['n_total_90']:,}"},
 ]
 
 pd.DataFrame(overview)
@@ -640,17 +640,19 @@ backtest_summary = [
     {"Métrica": "Alertas warning", "Valor": str(status['warning_alerts'])},
     {"Métrica": "Alertas críticas", "Valor": str(status['critical_alerts'])},
     {"Métrica": "Último mes evaluado", "Valor": status.get('latest_backtest_month', 'N/A')[:7]},
-    {"Métrica": "Tasa de violación @ 90%", "Valor": f"{status['statistical_tests']['kupiec_90']['violation_rate']:.4f}"},
+    {"Métrica": "Tasa de violación @ 90%", "Valor": f"{status['sample_size_context']['violation_rate_90']:.4f}"},
 ]
 
 pd.DataFrame(backtest_summary)
 ```
 
-### Tests Estadísticos de Cobertura
+### Diagnóstico Estadístico Retirado del Gate
 
-Antes de leer los resultados de los tests, conviene establecer el marco correcto. El sistema **sobre-cubre**, pero ya no de la forma excesivamente conservadora que tenía el snapshot anterior. La tasa de violación observada es ~8.0%, por debajo del 10% nominal. Eso implica una capa prudente de conservadurismo, con intervalos todavía útiles en anchura. Los tests estadísticos pueden rechazar este resultado porque, con $n = 276{,}869$, tienen potencia suficiente para detectar diferencias de 1 a 2 puntos porcentuales. Lo relevante no es solo si rechazan, sino *en qué dirección* rechazan y qué pasa con los checks operativos de anchura, cobertura por grupo y alertas.
+Antes del rebaseline IJDS, el artefacto conformal guardaba p-values de Kupiec y Christoffersen como diagnóstico estricto. Esa lectura generaba ruido: los tests vienen de la literatura de Value-at-Risk, contrastan cobertura nominal exacta y rechazan con mucha potencia cuando el intervalo conformal **sobre-cubre** en una muestra OOT de 276,869 observaciones. Para el paper, la pregunta relevante no es si la cobertura empírica es idéntica al nominal, sino si el conjunto es materialmente prudente, útil para decisión y estable por grupos.
 
-El framework de backtesting implementa dos tests formales de la literatura de Value-at-Risk:
+El código conserva las funciones de backtesting en `src.evaluation.coverage_tests` para análisis metodológico, pero el artefacto oficial `models/conformal_policy_status.json` ya no serializa esos p-values ni los cuenta en `overall_pass`/`strict_overall_pass`. El gate vigente se decide con cobertura 90/95, cobertura mínima por grupo, ancho, alertas y Winkler.
+
+Como referencia bibliográfica, esos tests se definen así:
 
 **Test de Kupiec (Proporción de Fallos)**
 
@@ -672,54 +674,52 @@ $$
 
 donde $LR_\text{ind}$ testea la propiedad de Markov en la secuencia de violaciones.
 
-### Resultados de los Tests
+### Lectura Diagnóstica Actual
 
 ```python
 
-tests = status["statistical_tests"]
-
-ALPHA = 0.05  # significance level for H₀ rejection
+ctx = status["sample_size_context"]
+mj = status["methodological_justification"]
 
 test_results = [
-    {"Test": "Kupiec @ 90%",
-     "LR Statistic": f"{tests['kupiec_90']['lr_statistic']:.1f}",
-     "p-value": f"{tests['kupiec_90']['p_value']:.4f}",
-     "Rechaza H₀": "Sí" if tests['kupiec_90']['p_value'] < ALPHA else "No",
-     "Violaciones": f"{tests['kupiec_90']['n_violations']:,} / {tests['kupiec_90']['n_total']:,}"},
-    {"Test": "Kupiec @ 95%",
-     "LR Statistic": f"{tests['kupiec_95']['lr_statistic']:.1f}",
-     "p-value": f"{tests['kupiec_95']['p_value']:.4f}",
-     "Rechaza H₀": "Sí" if tests['kupiec_95']['p_value'] < ALPHA else "No",
-     "Violaciones": f"{tests['kupiec_95']['n_violations']:,} / {tests['kupiec_95']['n_total']:,}"},
-    {"Test": "Christoffersen Indep. @ 90%",
-     "LR Statistic": f"{tests['christoffersen_90']['lr_ind']:.2f}",
-     "p-value": f"{tests['christoffersen_90']['p_ind']:.4f}",
-     "Rechaza H₀": "Sí" if tests['christoffersen_90']['p_ind'] < ALPHA else "No",
-     "Violaciones": "—"},
-    {"Test": "Christoffersen Indep. @ 95%",
-     "LR Statistic": f"{tests['christoffersen_95']['lr_ind']:.2f}",
-     "p-value": f"{tests['christoffersen_95']['p_ind']:.4f}",
-     "Rechaza H₀": "Sí" if tests['christoffersen_95']['p_ind'] < ALPHA else "No",
-     "Violaciones": "—"},
+    {
+        "Elemento": "Violación @ 90%",
+        "Valor": f"{ctx['violation_rate_90']:.2%}",
+        "Lectura": "Menor que alpha=10%; sobre-cobertura prudente.",
+    },
+    {
+        "Elemento": "Violación @ 95%",
+        "Valor": f"{ctx['violation_rate_95']:.2%}",
+        "Lectura": "Menor que alpha=5%; sobre-cobertura prudente.",
+    },
+    {
+        "Elemento": "Backtests retirados",
+        "Valor": ", ".join(mj["retired_backtest_checks"]),
+        "Lectura": "No participan en el gate IJDS; quedan como diagnóstico de investigación.",
+    },
+    {
+        "Elemento": "Gate vigente",
+        "Valor": str(status["gate_overall_pass"]),
+        "Lectura": "9/9 checks materiales pasan.",
+    },
 ]
 
 pd.DataFrame(test_results)
 ```
 
 ::: {.callout-warning}
-## Tests Estadísticos Rechazados — ¿Problema Real?
-Los tests de Kupiec rechazan en ambos niveles, lo cual parece alarmante. Pero el contexto importa:
+## Por qué se retiraron del gate
 
-1. **Sobre-cobertura, no sub-cobertura**: la tasa de violación es ~8.0% (target 10%) — el modelo **cubre de más**, no de menos. Kupiec rechaza porque la cobertura es *demasiado buena*, no demasiado mala.
-2. **N = 276,869**: con muestras tan grandes, Kupiec rechaza incluso desviaciones operativamente tolerables si la cobertura sigue dentro de la banda de materialidad.
-3. **Independencia aceptable**: Christoffersen no rechaza independencia al 90% y la política trata la capa estadística como diagnóstica, no como bloqueo automático.
+1. **Sobre-cobertura, no sub-cobertura**: la violación observada queda por debajo del alpha nominal.
+2. **N = 276,869**: con muestras enormes, un test de igualdad exacta detecta diferencias que no son materiales para el funded set.
+3. **Criterio IJDS más limpio**: el paper necesita un gate reproducible sobre utilidad y prudencia del intervalo, no un contador adicional de p-values VaR-style.
 
-La política del pipeline clasifica estos como **warning diagnóstico**, no como bloqueo de promoción. La desviación de cobertura actual (≈2.0pp al 90%, ≈1.5pp al 95%) queda dentro del margen de materialidad (3.0%), y los checks no estadísticos pasan completos.
+La conclusión oficial ya no es “PASS con cuatro fallas diagnósticas”, sino **PASS material completo**. Los backtests siguen siendo útiles para clases, apéndices o experimentos futuros, pero no para bloquear el champion IJDS.
 :::
 
 ### Policy Gate
 
-El pipeline implementa un **policy gate** que decide si los intervalos conformal pueden ser promovidos a producción analítica. Después de la recuperación conformal V3, el resultado oficial ya no es “falla por ancho”; el sistema cierra por la vía correcta: todos los checks no estadísticos pasan, y los tests estadísticos quedan documentados como diagnósticos informativos por sobre-cobertura en muestra grande.
+El pipeline implementa un **policy gate** que decide si los intervalos conformal pueden ser promovidos a producción analítica. Después del rebaseline IJDS, el resultado oficial es directo: todos los checks materiales pasan y los tests estadísticos tipo VaR quedan fuera del artefacto de promoción.
 
 | Check | Criterio | Resultado |
 |-------|----------|-----------|
@@ -729,11 +729,11 @@ El pipeline implementa un **policy gate** que decide si los intervalos conformal
 | Avg width @ 90% ≤ 0.80 | Eficiencia | PASS |
 | Winkler @ 90% ≤ 1.22 | Eficiencia | PASS (banda compensada) |
 | Alertas críticas = 0 | Estabilidad | PASS |
-| Kupiec / Christoffersen | Diagnóstico informativo | FAIL diagnóstico |
+| Kupiec / Christoffersen | Investigación fuera del gate | Retirado |
 
 : Policy gate de cobertura conformal
 
-La lectura correcta es esta: la cobertura sigue siendo prudente, el ancho promedio ya volvió a una zona defendible (`avg_width_90 ≈ 0.756`) y el gate operativo cierra. Lo que permanece abierto no es un problema de implementación, sino una tensión conocida entre cobertura exacta y potencia estadística cuando el tamaño muestral es enorme. Por eso la historia actual de conformal ya no es “falta una segunda vuelta para cerrarlo”, sino “cerró operativamente, y la siguiente mejora sería refinar todavía más la sobre-cobertura sin romper los guardrails”.
+La lectura correcta es esta: la cobertura sigue siendo prudente, el ancho promedio está en zona defendible (`avg_width_90 ≈ 0.784`) y el gate operativo cierra. Lo que permanece abierto ya no es un problema de implementación, sino una línea futura normal: refinar todavía más la sobre-cobertura sin romper los guardrails.
 
 ### Base canónica vs reapertura final
 

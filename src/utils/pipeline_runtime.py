@@ -18,7 +18,7 @@ def atomic_write_text(path: str | Path, content: str, *, encoding: str = "utf-8"
     target = Path(path)
     target.parent.mkdir(parents=True, exist_ok=True)
     tmp = target.with_name(f".{target.name}.tmp-{os.getpid()}")
-    tmp.write_text(content, encoding=encoding)
+    tmp.write_text(content, encoding=encoding, newline="\n")
     tmp.replace(target)
     return target
 

@@ -8,7 +8,7 @@ assumption a sharper bound would hold -- without re-optimizing or re-promoting t
 champion.
 
 All inputs are frozen: the funded-set loan export (weights) and the frozen
-weighted miscoverage V = 0.03645. No champion stage is re-run.
+weighted miscoverage V = 0.028875. No champion search stage is re-run.
 
 Output: reports/crpto/tables/crpto_tableA21b_concentration_bounds.{csv,tex}
 """
@@ -26,7 +26,7 @@ TABLES = REPO_ROOT / "reports" / "crpto" / "tables"
 FUNDED = TABLES / "crpto_tableA7_funded_set_loans.csv"
 
 # Frozen weighted miscoverage of the promoted champion (alpha = 0.01 exact eval).
-EMPIRICAL_V = 0.03645
+EMPIRICAL_V = 0.028875
 ALPHAS = [0.01, 0.05, 0.10]
 
 

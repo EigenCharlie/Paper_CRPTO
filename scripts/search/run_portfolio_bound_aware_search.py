@@ -826,6 +826,14 @@ def _aggregate_exact_results(
     )
 
     work = shortlist.copy()
+    exact_metric_prefixes = ("alpha01_", "alpha03_", "alpha10_")
+    stale_exact_cols = [
+        col
+        for col in work.columns
+        if any(col.startswith(prefix) for prefix in exact_metric_prefixes)
+    ]
+    if stale_exact_cols:
+        work = work.drop(columns=stale_exact_cols)
     work = work.merge(alpha01, on=SEMANTIC_POLICY_FIELDS, how="left")
     work = work.merge(alpha03, on=SEMANTIC_POLICY_FIELDS, how="left")
     work = work.merge(alpha10, on=SEMANTIC_POLICY_FIELDS, how="left")
@@ -1129,6 +1137,9 @@ def main(argv: list[str] | None = None) -> int:
             "frontier_raw_path": str(output_dir / "portfolio_bound_aware_frontier_raw.parquet"),
             "frontier_path": str(output_dir / "portfolio_bound_aware_frontier.parquet"),
             "shortlist_path": str(output_dir / "portfolio_bound_aware_shortlist.parquet"),
+            "shortlist_exact_path": str(
+                output_dir / "portfolio_bound_aware_shortlist_exact.parquet"
+            ),
             "bound_eval_path": str(output_dir / "portfolio_bound_aware_bound_eval.parquet"),
             "selection_path": str(model_dir / "portfolio_bound_aware_selection.json"),
             "runtime_status_path": str(status_path),
@@ -1231,6 +1242,7 @@ def main(argv: list[str] | None = None) -> int:
             "frontier_raw_path": selection_context["frontier_raw_path"],
             "frontier_path": selection_context["frontier_path"],
             "shortlist_path": selection_context["shortlist_path"],
+            "shortlist_exact_path": selection_context["shortlist_exact_path"],
             "bound_eval_path": selection_context["bound_eval_path"],
             "runtime_status_path": selection_context["runtime_status_path"],
             "runtime_checkpoint_dir": selection_context["runtime_checkpoint_dir"],
@@ -1240,7 +1252,9 @@ def main(argv: list[str] | None = None) -> int:
         }
 
         atomic_write_parquet(
-            shortlist_eval, output_dir / "portfolio_bound_aware_shortlist.parquet", index=False
+            shortlist_eval,
+            output_dir / "portfolio_bound_aware_shortlist_exact.parquet",
+            index=False,
         )
         atomic_write_parquet(
             bound_eval, output_dir / "portfolio_bound_aware_bound_eval.parquet", index=False
@@ -1276,6 +1290,10 @@ def main(argv: list[str] | None = None) -> int:
             "Saved frontier aggregate: {}", output_dir / "portfolio_bound_aware_frontier.parquet"
         )
         logger.info("Saved shortlist: {}", output_dir / "portfolio_bound_aware_shortlist.parquet")
+        logger.info(
+            "Saved exact shortlist: {}",
+            output_dir / "portfolio_bound_aware_shortlist_exact.parquet",
+        )
         logger.info(
             "Saved bound evaluations: {}", output_dir / "portfolio_bound_aware_bound_eval.parquet"
         )

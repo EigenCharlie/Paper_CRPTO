@@ -147,7 +147,7 @@ La tabla siguiente convierte esa trazabilidad en una regla de defensa editorial:
 | Champion oficial = economic champion | `models/final_project_promotion.json`, `models/champion_portfolio_policy.json` | `tests/test_crpto_final_sync.py` |
 | Retorno oficial `$170.5K` | `final_champion.realized_total_return` | Tabla `crpto_table0_key_metrics.csv` y DVC metric `crpto.final.robust_return` |
 | `alpha01_exact_pass=true` | `final_champion.alpha01_exact_pass` | Guardrail de sync del CRPTO |
-| `V=0.03645`, `gamma_cp=0.18591`, `violation=0` | `final_champion` y bound eval `276k` | Guardrail de sync + tablas paper-facing |
+| `V=0.028875`, `gamma_cp=0.187987`, `violation=0` | `final_champion` y bound eval `276k` | Guardrail de sync + tablas paper-facing |
 | Región robusta `45/45` | `robust_region_summary` | DVC metrics `crpto.final.robust_region_*` |
 | Winner conformal `coverage_90=92.97%` | `conformal_upstream.winner_metrics` | `scripts/export_crpto_tables.py` |
 | P1 post-selección 5K--25K--276K y holdout temporal estricto | `crpto_tableA3_nested_holdout.csv`, `crpto_tableA9_strict_temporal_holdout.csv`, `crpto_evidence_status.json` | `test_crpto_p1_evidence_artifacts_exist` |

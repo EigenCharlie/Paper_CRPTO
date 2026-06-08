@@ -1030,6 +1030,7 @@ def main(
     validate_only: bool = False,
     mode: str = "search",
     replay_manifest_path: str | None = None,
+    run_tag: str | None = None,
 ) -> None:
     if sample_size is not None and int(sample_size) <= 0:
         sample_size = None
@@ -1578,7 +1579,7 @@ def main(
     )
 
     decision_cfg = config.get("decision_threshold", {})
-    resolved_run_tag = resolve_run_tag(require_explicit=True)
+    resolved_run_tag = resolve_run_tag(run_tag, require_explicit=True)
     decision_threshold_artifact = {
         "enabled": False,
         "selected_threshold": float(config.get("calibration", {}).get("default_threshold", 0.5)),
@@ -2103,6 +2104,7 @@ if __name__ == "__main__":
     parser.add_argument("--validate-only", action="store_true")
     parser.add_argument("--mode", choices=["search", "replay"], default="search")
     parser.add_argument("--replay_manifest", default=None)
+    parser.add_argument("--run-tag", default=None)
     args = parser.parse_args()
     main(
         args.config,
@@ -2130,4 +2132,5 @@ if __name__ == "__main__":
         validate_only=bool(args.validate_only),
         mode=str(args.mode),
         replay_manifest_path=args.replay_manifest,
+        run_tag=args.run_tag,
     )

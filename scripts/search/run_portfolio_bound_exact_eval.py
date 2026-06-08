@@ -35,11 +35,75 @@ from src.utils.pipeline_runtime import (  # noqa: E402
     write_runtime_status,
 )
 
+CONTEXT_PATH_KEYS = (
+    "conformal_intervals_path",
+    "frontier_raw_path",
+    "frontier_path",
+    "shortlist_path",
+    "shortlist_exact_path",
+    "bound_eval_path",
+    "selection_path",
+    "runtime_status_path",
+    "runtime_checkpoint_dir",
+    "resource_snapshot_path",
+)
+
+
+def _resolve_repo_path(raw_path: object) -> Path:
+    path_text = str(raw_path)
+    path = Path(path_text)
+    if path.is_absolute():
+        return path
+    return ROOT / path
+
+
+def _repo_relative(path: str | Path) -> str:
+    resolved = Path(path).resolve()
+    try:
+        return resolved.relative_to(ROOT).as_posix()
+    except ValueError:
+        return str(path)
+
+
+def _shortlist_exact_path(context: dict[str, object]) -> Path:
+    return Path(str(context.get("shortlist_exact_path", context["shortlist_path"])))
+
+
+def _normalize_context_paths(context: dict[str, object]) -> None:
+    for key in CONTEXT_PATH_KEYS:
+        if key in context:
+            context[key] = str(_resolve_repo_path(context[key]))
+
 
 def _eta_seconds(elapsed_sec: float, completed: int, total: int) -> float | None:
     if completed <= 0 or total <= 0 or completed >= total:
         return 0.0 if total > 0 and completed >= total else None
     return (elapsed_sec / max(completed, 1)) * max(total - completed, 0)
+
+
+def _load_completed_bound_eval(
+    *,
+    bound_eval_path: Path,
+    expected_checks: int,
+) -> pd.DataFrame | None:
+    if not bound_eval_path.exists():
+        return None
+    bound_eval = pd.read_parquet(bound_eval_path)
+    required_cols = {"alpha", "all_bounds_hold", "gamma_cp", "weighted_miscoverage_V"}
+    if len(bound_eval) != expected_checks or not required_cols.issubset(bound_eval.columns):
+        logger.warning(
+            "Ignoring incomplete bound_eval cache at {}: rows={} expected={}",
+            bound_eval_path,
+            len(bound_eval),
+            expected_checks,
+        )
+        return None
+    logger.info(
+        "Reusing completed exact bound cache: {} ({} rows)",
+        bound_eval_path,
+        len(bound_eval),
+    )
+    return bound_eval
 
 
 def _write_exact_status(
@@ -97,15 +161,21 @@ def main(argv: list[str] | None = None) -> int:
 
     context_path = Path(args.context_path).resolve()
     context = json.loads(context_path.read_text(encoding="utf-8"))
+    _normalize_context_paths(context)
     status_path = Path(str(context["runtime_status_path"]))
     checkpoint_dir = Path(str(context["runtime_checkpoint_dir"]))
     resource_snapshot_path = Path(str(context["resource_snapshot_path"]))
     shortlist_path = Path(str(context["shortlist_path"]))
+    shortlist_exact_path = _shortlist_exact_path(context)
     bound_eval_path = Path(str(context["bound_eval_path"]))
     selection_path = Path(str(context["selection_path"]))
 
     prior_status = load_runtime_status(status_path)
-    base_elapsed_sec = float(prior_status.get("elapsed_sec", 0.0))
+    base_elapsed_sec = (
+        float(prior_status.get("elapsed_sec", 0.0))
+        if prior_status.get("phase") == "frontier_complete"
+        else 0.0
+    )
     context["frontier_total_units"] = int(prior_status.get("frontier_total_units", 0))
     context["frontier_completed_units"] = int(prior_status.get("frontier_completed_units", 0))
     context["bound_total_checks"] = int(prior_status.get("bound_total_checks", 0))
@@ -114,60 +184,68 @@ def main(argv: list[str] | None = None) -> int:
     shortlist = pd.read_parquet(shortlist_path)
     random_states = [int(v) for v in context["random_states"]]
     alpha_grid = [float(v) for v in context["alpha_grid"]]
+    expected_checks = int(len(shortlist) * len(random_states) * len(alpha_grid))
+    context["bound_total_checks"] = expected_checks
 
-    aligned_by_seed = {
-        int(seed): _load_aligned_dataset(
-            conformal_intervals_path=str(context["conformal_intervals_path"]),
-            max_candidates=int(context["max_candidates"]),
-            random_state=int(seed),
-        )
-        for seed in random_states
-    }
+    bound_eval = _load_completed_bound_eval(
+        bound_eval_path=bound_eval_path,
+        expected_checks=expected_checks,
+    )
+    if bound_eval is None:
+        aligned_by_seed = {
+            int(seed): _load_aligned_dataset(
+                conformal_intervals_path=str(context["conformal_intervals_path"]),
+                max_candidates=int(context["max_candidates"]),
+                random_state=int(seed),
+            )
+            for seed in random_states
+        }
 
-    bound_rows: list[dict[str, object]] = []
-    completed_checks = 0
-    for _, row in shortlist.iterrows():
-        policy = _policy_from_row(
-            row,
-            solver_backend_override=str(context["exact_solver_backend"]),
-        )
-        candidate_payload = row.to_dict()
-        for eval_seed in random_states:
-            aligned = aligned_by_seed[int(eval_seed)]
-            for alpha in alpha_grid:
-                result = _validate_single_alpha(
-                    aligned,
-                    alpha=float(alpha),
-                    policy=policy,
-                    allocator_mode="exact",
-                    budget=float(context["budget"]),
-                    t_eval=float(context["t_eval"]),
-                )
-                bound_rows.append(
-                    {
-                        "candidate_rank": int(candidate_payload["candidate_rank"]),
-                        "eval_random_state": int(eval_seed),
-                        "frontier_solver_backend": str(context["frontier_solver_backend"]),
-                        "exact_solver_backend": str(context["exact_solver_backend"]),
-                        **candidate_payload,
-                        **result,
-                    }
-                )
-                completed_checks += 1
-                _write_exact_status(
-                    context=context,
-                    base_elapsed_sec=base_elapsed_sec,
-                    bound_completed_checks=completed_checks,
-                    phase="exact_bound_running",
-                    state="running",
-                    extra={
-                        "candidate_rank": int(candidate_payload["candidate_rank"]),
-                        "eval_random_state": int(eval_seed),
-                        "current_alpha": float(alpha),
-                    },
-                )
+        bound_rows: list[dict[str, object]] = []
+        completed_checks = 0
+        for _, row in shortlist.iterrows():
+            policy = _policy_from_row(
+                row,
+                solver_backend_override=str(context["exact_solver_backend"]),
+            )
+            candidate_payload = row.to_dict()
+            for eval_seed in random_states:
+                aligned = aligned_by_seed[int(eval_seed)]
+                for alpha in alpha_grid:
+                    result = _validate_single_alpha(
+                        aligned,
+                        alpha=float(alpha),
+                        policy=policy,
+                        allocator_mode="exact",
+                        budget=float(context["budget"]),
+                        t_eval=float(context["t_eval"]),
+                    )
+                    bound_rows.append(
+                        {
+                            "candidate_rank": int(candidate_payload["candidate_rank"]),
+                            "eval_random_state": int(eval_seed),
+                            "frontier_solver_backend": str(context["frontier_solver_backend"]),
+                            "exact_solver_backend": str(context["exact_solver_backend"]),
+                            **candidate_payload,
+                            **result,
+                        }
+                    )
+                    completed_checks += 1
+                    _write_exact_status(
+                        context=context,
+                        base_elapsed_sec=base_elapsed_sec,
+                        bound_completed_checks=completed_checks,
+                        phase="exact_bound_running",
+                        state="running",
+                        extra={
+                            "candidate_rank": int(candidate_payload["candidate_rank"]),
+                            "eval_random_state": int(eval_seed),
+                            "current_alpha": float(alpha),
+                        },
+                    )
 
-    bound_eval = pd.DataFrame(bound_rows)
+        bound_eval = pd.DataFrame(bound_rows)
+        atomic_write_parquet(bound_eval, bound_eval_path, index=False)
     shortlist_eval = _aggregate_exact_results(shortlist=shortlist, bound_eval=bound_eval)
     selected = shortlist_eval.iloc[0].copy()
     selected_policy = _policy_from_row(
@@ -179,29 +257,29 @@ def main(argv: list[str] | None = None) -> int:
         "schema_version": SCHEMA_VERSION,
         "generated_at_utc": datetime.now(tz=UTC).isoformat(),
         "run_label": str(context["run_label"]),
-        "conformal_intervals_path": str(context["conformal_intervals_path"]),
+        "conformal_intervals_path": _repo_relative(str(context["conformal_intervals_path"])),
         "search_space": context["search_space"],
         "selection_policy": context["selection_policy"],
         "selected_policy": selected_policy,
         "selected_metrics": selected.to_dict(),
         "selection_reason": _selection_reason(selected),
-        "frontier_raw_path": str(context["frontier_raw_path"]),
-        "frontier_path": str(context["frontier_path"]),
-        "shortlist_path": str(context["shortlist_path"]),
-        "bound_eval_path": str(context["bound_eval_path"]),
-        "runtime_status_path": str(context["runtime_status_path"]),
-        "runtime_checkpoint_dir": str(context["runtime_checkpoint_dir"]),
-        "resource_snapshot_path": str(context["resource_snapshot_path"]),
+        "frontier_raw_path": _repo_relative(str(context["frontier_raw_path"])),
+        "frontier_path": _repo_relative(str(context["frontier_path"])),
+        "shortlist_path": _repo_relative(str(context["shortlist_path"])),
+        "shortlist_exact_path": _repo_relative(shortlist_exact_path),
+        "bound_eval_path": _repo_relative(str(context["bound_eval_path"])),
+        "runtime_status_path": _repo_relative(str(context["runtime_status_path"])),
+        "runtime_checkpoint_dir": _repo_relative(str(context["runtime_checkpoint_dir"])),
+        "resource_snapshot_path": _repo_relative(str(context["resource_snapshot_path"])),
         "frontier_solver_backend": str(context["frontier_solver_backend"]),
         "exact_solver_backend": str(context["exact_solver_backend"]),
     }
 
-    atomic_write_parquet(shortlist_eval, shortlist_path, index=False)
-    atomic_write_parquet(bound_eval, bound_eval_path, index=False)
+    atomic_write_parquet(shortlist_eval, shortlist_exact_path, index=False)
     atomic_write_json(selection_path, payload)
 
     resource_payload = json.loads(resource_snapshot_path.read_text(encoding="utf-8"))
-    resource_payload["exact_helper_python"] = sys.executable
+    resource_payload["exact_helper_python"] = _repo_relative(sys.executable)
     resource_payload["exact_helper_end"] = _resource_snapshot()
     atomic_write_json(resource_snapshot_path, resource_payload)
 

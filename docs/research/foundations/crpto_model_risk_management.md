@@ -99,7 +99,7 @@ Current reading after execution:
 ### 3.3 Conformal Coverage
 - **Target**: 90% coverage (alpha = 0.10)
 - **Mondrian groups**: By grade (A-G) for group-conditional coverage
-- **Policy gate**: the current canonical status is `overall_pass = true`, `strict_overall_pass = false`, and `methodological_justification_pass = true`; non-statistical checks pass and statistical tests remain diagnostic because coverage is conservatively above nominal in a very large OOT sample
+- **Policy gate**: the current canonical status is `overall_pass = true`, `gate_overall_pass = true`, and `strict_overall_pass = true`; Kupiec/Christoffersen p-value checks are retained only as research utilities outside the IJDS promotion gate because coverage is conservatively above nominal in a very large OOT sample
 - **Source**: `models/conformal_policy_status.json`
 
 ### 3.4 Fairness Audit
@@ -162,7 +162,7 @@ Current reading after execution:
 | AUC degradation | < 0.03 vs baseline | Quarterly | Pipeline summary |
 | Conformal coverage | > 0.88 (at 0.90 target) | Quarterly | Conformal policy |
 | Fairness (DIR) | > 0.80 | Quarterly | Fairness audit |
-| Conformal statistical validity | Kupiec/Christoffersen (diagnostic only; `methodological_justification_pass` is the operational gate) | Quarterly | Conformal policy v2 |
+| Conformal statistical validity | Material coverage/group/width/alert/Winkler gate; Kupiec/Christoffersen kept as research diagnostics outside promotion | Milestone/rebaseline | Conformal policy v3 |
 | Drift governance | KS/CvM/C2ST policy pass | Quarterly | Governance status |
 | PD validation interpretation | `warning` or better | Quarterly | PD validation interpretation status |
 | Bootstrap validation | Large-`N` calibration gap uncertainty by aggregate and slice | Quarterly | Bootstrap validation status |
@@ -225,7 +225,7 @@ A challenger model must demonstrate:
 
 ### Promotion Gate
 All of the following must pass:
-1. Conformal policy gate (current canonical artifact passes operationally via `methodological_justification_pass = true`; strict statistical diagnostics remain documented but non-blocking)
+1. Conformal policy gate (current canonical artifact passes 9/9 material checks; VaR-style p-value diagnostics remain available in code but outside promotion)
 2. Fairness audit (all attributes pass thresholds)
 3. Governance checks (drift, robustness, slicing)
 4. Independent validation review

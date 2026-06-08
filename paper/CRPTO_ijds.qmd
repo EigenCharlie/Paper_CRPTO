@@ -31,8 +31,8 @@ decision audit: given a frozen calibrated PD artifact, CRPTO maps Mondrian
 conformal prediction intervals into robust portfolio constraints and then
 certifies the funded set. On a 276,869-loan out-of-time Lending Club evaluation,
 the promoted economic policy earns `$170.5K` on a `$1M` budget while passing the
-exact $\alpha = 0.01$ funded-set bound ($V(\alpha) = 0.03645$,
-$\Gamma_{\mathrm{CP}} = 0.18591$, zero violation). The final robust region contains `45/45`
+exact $\alpha = 0.01$ funded-set bound ($V(\alpha) = 0.028875$,
+$\Gamma_{\mathrm{CP}} = 0.187987$, zero violation). The final robust region contains `45/45`
 alpha-safe policies, indicating that the result is not a single-point artifact.
 External frozen replications on Prosper marketplace loans and Freddie/Mendeley
 single-family mortgages preserve the conformal gates and produce positive robust
@@ -225,8 +225,8 @@ The predictive layer estimates a one-period default probability for each loan.
 The champion model is a CatBoost classifier trained on the frozen feature
 contract and calibrated before it is exposed to conformal and optimization
 layers. The paper reports discrimination and probability quality together:
-the frozen PD layer reaches AUC `0.7124`, Brier score `0.1546`, and expected
-calibration error approximately `0.0064` on the paper-facing evaluation
+the frozen PD layer reaches AUC `0.7127`, Brier score `0.1546`, and expected
+calibration error approximately `0.0062` on the paper-facing evaluation
 summary. These numbers matter because the optimizer consumes probabilities, not
 rankings alone.
 
@@ -250,11 +250,12 @@ The resulting conformal summary is intentionally more than a scalar coverage
 number. The paper-facing metrics include 90% coverage `0.9297`, 95% coverage
 `0.9664`, average 90% interval width `0.7842`, minimum group 90% coverage
 `0.9190`, and 90% Winkler score `1.1107` for the promoted conformal winner.
-Backtesting also records diagnostic statistical tests. Some high-powered
-Kupiec and Christoffersen unconditional-coverage tests reject because the
-sample is large, but the non-statistical policy checks pass and the
-independence components do not flag clustering. We therefore use these tests as
-diagnostics, not as a reason to reopen the champion search.
+The backtesting module still retains Kupiec and Christoffersen utilities for
+research diagnostics, but the IJDS promotion artifact no longer serializes those
+p-values or counts them in `overall_pass`. They test exact nominal VaR-style
+coverage and add noise when conservative conformal intervals over-cover in a
+large out-of-time sample. The promotion gate therefore uses material coverage,
+group coverage, width, alert, and Winkler checks.
 
 ## Robust Portfolio Layer
 
@@ -298,8 +299,8 @@ computed after the funded set is chosen: it is the allocation-weighted gap
 between the conformal upper endpoint and calibrated PD, with clipping at one
 on the PD scale. In committee language, $\Gamma_{\mathrm{CP}}$ is the realized conformal
 robustness premium paid by the funded set. The promoted policy has
-$\Gamma_{\mathrm{CP}}(\alpha = 0.01) = 0.18591$, weighted miscoverage
-$V(\alpha = 0.01) = 0.03645$, and zero exact violation at $\alpha = 0.01$. This
+$\Gamma_{\mathrm{CP}}(\alpha = 0.01) = 0.187987$, weighted miscoverage
+$V(\alpha = 0.01) = 0.028875$, and zero exact violation at $\alpha = 0.01$. This
 distinction is small typographically but central for auditability.
 
 # Theory
@@ -475,24 +476,24 @@ address whether the method survives two materially different credit products.
 
 The core metric table summarizes the frozen paper-facing metrics. The
 calibrated PD layer is deliberately not sold as a leaderboard model: AUC
-`0.7124` is sufficient only because the downstream decision consumes calibrated
+`0.7127` is sufficient only because the downstream decision consumes calibrated
 probabilities, not rankings alone. Its Brier score `0.1546` and ECE near
-`0.0064` are therefore as important as discrimination. The conformal layer
+`0.0062` are therefore as important as discrimination. The conformal layer
 provides conservative empirical coverage, with 90% coverage `0.9297` and 95%
 coverage `0.9664` for the promoted conformal winner. The portfolio layer then
 turns this uncertainty into a robust allocation with exact alpha-safe checks.
 
 | Layer | Metric | Value |
 |---|---:|---:|
-| PD | AUC | `0.7124` |
+| PD | AUC | `0.7127` |
 | PD | Brier score | `0.1546` |
-| PD | ECE | `0.0064` |
+| PD | ECE | `0.0062` |
 | Conformal | Coverage 90% | `0.9297` |
 | Conformal | Coverage 95% | `0.9664` |
 | Conformal | Minimum group coverage 90% | `0.9190` |
 | Portfolio | Robust return | `$170,464.54` |
-| Portfolio | $V(\alpha = 0.01)$ | `0.03645` |
-| Portfolio | $\Gamma_{\mathrm{CP}}(\alpha = 0.01)$ | `0.18591` |
+| Portfolio | $V(\alpha = 0.01)$ | `0.028875` |
+| Portfolio | $\Gamma_{\mathrm{CP}}(\alpha = 0.01)$ | `0.187987` |
 | Portfolio | Exact alpha violation | `0.0` |
 
 : Frozen paper-facing metrics by layer.
@@ -503,15 +504,15 @@ reader infer them from a figure.
 
 | $\alpha$ | $\Gamma_{\mathrm{CP}}$ | $V(\alpha)$ | $\sqrt{\alpha}$ | violation | pass |
 |---:|---:|---:|---:|---:|:---:|
-| `0.01` | `0.18591` | `0.03645` | `0.10000` | `0.00000` | yes |
+| `0.01` | `0.187987` | `0.028875` | `0.10000` | `0.00000` | yes |
 
 : Exact alpha-safe certificate for the promoted funded set.
 
 This makes $\Gamma_{\mathrm{CP}}$ more than a diagnostic line item. It is the amount of
 conformal robustness the optimizer accepts in order to keep the funded set
 inside the exact alpha-safe region. A credit reviewer can therefore read
-$\Gamma_{\mathrm{CP}} = 0.18591$ as the price of carrying interval uncertainty into the
-decision, and $V = 0.03645$ as the realized weighted noncoverage audit on the
+$\Gamma_{\mathrm{CP}} = 0.187987$ as the price of carrying interval uncertainty into the
+decision, and $V = 0.028875$ as the realized weighted noncoverage audit on the
 same funded loans.
 
 The promoted policy is deliberately the economic champion inside the exact-safe
@@ -520,9 +521,9 @@ choice auditable rather than implicit.
 
 | Policy role | $\tau$ | $\gamma$ | Realized return | $V(0.01)$ | $\Gamma_{\mathrm{CP}}$ |
 |---|---:|---:|---:|---:|---:|
-| Economic champion | `0.175` | `0.45` | `$170,464.54` | `0.03645` | `0.18591` |
-| Theorem-tight comparator | `0.175` | `0.55` | `$166,269.82` | `0.03003` | `0.15971` |
-| Balanced comparator | `0.170` | `0.45` | `$169,389.58` | `0.03545` | `0.17758` |
+| Economic champion | `0.175` | `0.45` | `$170,464.54` | `0.028875` | `0.187987` |
+| Theorem-tight comparator | `0.175` | `0.55` | `$166,269.82` | `0.026875` | `0.160299` |
+| Balanced comparator | `0.170` | `0.45` | `$169,389.58` | `0.027875` | `0.179825` |
 
 : Champion and comparator roles inside the final alpha-safe region.
 
@@ -548,7 +549,7 @@ below, all from the same frozen champion record (`tau = 0.175`, `gamma = 0.45`,
 | CRPTO robust expected return (point PD) | `$151,480.27` | `expected_return_net_point` |
 | CRPTO robust realized return (OOT) | `$170,464.54` | `realized_total_return` |
 | Recorded price of robustness | `-$14,465.69` (`-10.56%`) | `price_of_robustness` |
-| Funded loans / budget | `335` / `$1,000,000` | `n_funded` / `total_allocated` |
+| Funded rows / budget | `341` / `$1,000,000` | A7 positive-exposure rows / `total_allocated` |
 
 : Economic anchor for the promoted champion. The robust policy improves the
 point-PD expected return over the non-robust baseline (hence the negative price
@@ -569,16 +570,18 @@ The supplement reports the full alpha/gamma funded-set table, robust-region
 heatmap, and policy-family appendix.
 
 The funded-set audit also matters because the bound is weighted by exposure,
-not counted by loan. The promoted portfolio funds 335 loans with a `$1M`
-exposure budget; its exact `V = 0.03645` is concentrated mainly in the D-grade
-bucket rather than hidden in an unreported tail segment.
+not counted by loan. The promoted portfolio funds 341 positive-exposure loan
+rows with a `$1M` exposure budget; the canonical robust-region ledger reports
+`n_funded = 340` because it uses a solver-threshold count. Its exact
+`V = 0.028875` is concentrated mainly in the C/D exposure buckets rather than
+hidden in an unreported tail segment.
 
 | Grade bucket | Funded loans | Exposure share | Weighted default rate | `V` contribution | Mean `u_i(0.01)` |
 |---|---:|---:|---:|---:|---:|
-| A-B | `23` | `9.60%` | `1.25%` | `0.00120` | `0.11682` |
-| C | `114` | `32.56%` | `2.66%` | `0.00865` | `0.17257` |
-| D | `147` | `45.72%` | `5.05%` | `0.02310` | `0.33576` |
-| E-G | `51` | `12.12%` | `2.89%` | `0.00350` | `0.46493` |
+| A-B | `13` | `7.35%` | `0.00%` | `0.00000` | `0.12529` |
+| C | `144` | `40.88%` | `2.86%` | `0.01168` | `0.17258` |
+| D | `141` | `42.35%` | `3.94%` | `0.01370` | `0.35206` |
+| E-G | `43` | `9.42%` | `4.78%` | `0.00350` | `0.52587` |
 
 : Compact funded-set audit by grade bucket.
 

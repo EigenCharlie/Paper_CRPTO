@@ -15,7 +15,8 @@
   "notes": [
     "Decision uses conformal intervals only; labels enter solely via the frozen realized-return diagnostic.",
     "Tail risk is the decision-time worst-case loss (pd_high-based), the ex-ante object a risk committee can constrain.",
-    "No champion search was reopened beyond the 45 frozen robust-region policies; the economic champion stays official."
+    "No champion search was reopened beyond the 45 frozen robust-region policies; the economic champion stays official.",
+    "For promoted/editorial comparator rows, V/Gamma/return metrics are overlaid from the current final_project_promotion.json rebaseline while tail-risk quantities remain from the HiGHS re-solve."
   ],
   "oce_theta": 5.0,
   "per_policy_tail_metrics": [
@@ -477,8 +478,8 @@
     },
     {
       "alpha01_exact_pass": true,
-      "alpha01_gamma_cp": 0.159714,
-      "alpha01_weighted_miscoverage_V": 0.030034,
+      "alpha01_gamma_cp": 0.160299,
+      "alpha01_weighted_miscoverage_V": 0.026875,
       "candidate_rank": 37,
       "decision_time_cvar95": 0.444926,
       "decision_time_mean_loss_rate": -0.021376,
@@ -488,7 +489,7 @@
       "paper_role": "theorem_tight_comparator",
       "policy_mode": "blended_uncertainty",
       "realized_cvar95": 0.231256,
-      "realized_total_return": 166269.822319,
+      "realized_total_return": 166269.82231927008,
       "risk_tolerance": 0.175,
       "solver_status": "TerminationCondition.optimal",
       "total_allocated": 1000000.0,
@@ -762,8 +763,8 @@
     },
     {
       "alpha01_exact_pass": true,
-      "alpha01_gamma_cp": 0.177578,
-      "alpha01_weighted_miscoverage_V": 0.03545,
+      "alpha01_gamma_cp": 0.179825,
+      "alpha01_weighted_miscoverage_V": 0.027875,
       "candidate_rank": 35,
       "decision_time_cvar95": 0.448854,
       "decision_time_mean_loss_rate": -0.008512,
@@ -773,7 +774,7 @@
       "paper_role": "balanced_comparator",
       "policy_mode": "blended_uncertainty",
       "realized_cvar95": 0.242736,
-      "realized_total_return": 169389.581012,
+      "realized_total_return": 169389.5810115051,
       "risk_tolerance": 0.17,
       "solver_status": "TerminationCondition.optimal",
       "total_allocated": 1000000.0,
@@ -819,8 +820,8 @@
     },
     {
       "alpha01_exact_pass": true,
-      "alpha01_gamma_cp": 0.18591,
-      "alpha01_weighted_miscoverage_V": 0.03645,
+      "alpha01_gamma_cp": 0.187987,
+      "alpha01_weighted_miscoverage_V": 0.028875,
       "candidate_rank": 43,
       "decision_time_cvar95": 0.448854,
       "decision_time_mean_loss_rate": -0.003001,
@@ -830,7 +831,7 @@
       "paper_role": "economic_champion",
       "policy_mode": "blended_uncertainty",
       "realized_cvar95": 0.254216,
-      "realized_total_return": 170464.542928,
+      "realized_total_return": 170464.5429284627,
       "risk_tolerance": 0.175,
       "solver_status": "TerminationCondition.optimal",
       "total_allocated": 1000000.0,
@@ -901,7 +902,7 @@
       "selected_uncertainty_aversion": 0.1
     }
   },
-  "schema_version": "2026-05-28.1",
+  "schema_version": "2026-06-07.1",
   "source_conformal_intervals": "data/processed/conformal_gap/conformal-reopen-2026-04-03-2149__resume__2026-04-05-1612__phase1__final__rank-1/conformal_intervals_mondrian.parquet",
   "source_shortlist": "data/processed/portfolio_bound_aware/rank1_alpha01_bound_aware_276k_full_2026-04-05-1734/portfolio_bound_aware_shortlist.parquet"
 }

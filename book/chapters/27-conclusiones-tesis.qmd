@@ -17,7 +17,7 @@ La tesis sostiene seis contribuciones, cada una anclada a evidencia congelada:
    nuevo modelo predictivo, sino la *composición auditable* de piezas conocidas en
    una decisión crediticia defendible.
 2. **Un certificado exacto sobre el funded set.** La política promovida pasa el
-   bound exacto a $\alpha = 0.01$ (`V = 0.03645`, `Γ_CP = 0.18591`, violación
+   bound exacto a $\alpha = 0.01$ (`V = 0.028875`, `Γ_CP = 0.187987`, violación
    cero), con una garantía distribution-free tipo Markov sobre la no-cobertura
    ponderada. El certificado es post-selección y empírico, y la tesis es explícita
    sobre ese matiz.

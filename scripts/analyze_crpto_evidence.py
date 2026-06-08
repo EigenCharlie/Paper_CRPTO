@@ -108,6 +108,14 @@ BOUND_STAGES = [
 ]
 
 
+def _bound_stage_shortlist_path(run_dir: str) -> Path:
+    run_path = DATA / "portfolio_bound_aware" / run_dir
+    exact_path = run_path / "portfolio_bound_aware_shortlist_exact.parquet"
+    if exact_path.exists():
+        return exact_path
+    return run_path / "portfolio_bound_aware_shortlist.parquet"
+
+
 def _load_json(path: Path) -> dict[str, Any]:
     return json.loads(path.read_text(encoding="utf-8"))
 
@@ -277,9 +285,7 @@ def _build_nested_holdout_table(promotion: dict[str, Any]) -> pd.DataFrame:
         selection_path = (
             MODELS / "portfolio_bound_aware" / run_dir / "portfolio_bound_aware_selection.json"
         )
-        shortlist_path = (
-            DATA / "portfolio_bound_aware" / run_dir / "portfolio_bound_aware_shortlist.parquet"
-        )
+        shortlist_path = _bound_stage_shortlist_path(run_dir)
         selection = _load_json(selection_path)
         shortlist = pd.read_parquet(shortlist_path)
         metrics = dict(selection["selected_metrics"])
@@ -846,6 +852,8 @@ def _build_finalist_exact_eval_table() -> pd.DataFrame:
     candidates["rank"] = candidates["namespace"].map(_rank_from_text)
     rows: list[dict[str, Any]] = []
     for finalist in FINALIST_INTERVALS:
+        if not finalist["intervals_path"].is_file() or not finalist["policy_path"].is_file():
+            continue
         policy = _normalise_policy(_load_json(finalist["policy_path"]))
         aligned = _load_exact_aligned_dataset(finalist["intervals_path"])
         result = _solve_exact_policy(aligned, policy)
@@ -1048,7 +1056,7 @@ def _build_markdown_dossier(status: dict[str, Any]) -> Path:
         "# paper-crpto P1 Evidence - 2026-05-04",
         "",
         "This dossier records the P1 evidence now materialized around the official",
-        "`paper-thesis-final-economic-2026-04-06` champion. It does not reopen the",
+        "`ijds-rebaseline-2026-06-07` champion. It does not reopen the",
         "champion search.",
         "",
         "## Standalone Scope - 2026-05-12",

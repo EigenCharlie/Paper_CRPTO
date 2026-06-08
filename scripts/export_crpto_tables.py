@@ -29,6 +29,8 @@ OUT = ROOT / "reports" / "crpto" / "tables"
 BOUND_AWARE_DIR = (
     DATA / "portfolio_bound_aware" / "rank1_alpha01_bound_aware_276k_full_2026-04-05-1734"
 )
+BOUND_AWARE_SHORTLIST_PATH = BOUND_AWARE_DIR / "portfolio_bound_aware_shortlist.parquet"
+BOUND_AWARE_SHORTLIST_EXACT_PATH = BOUND_AWARE_DIR / "portfolio_bound_aware_shortlist_exact.parquet"
 CONFORMAL_REOPEN_DIR = (
     DATA / "conformal_gap" / "conformal-reopen-2026-04-03-2149__resume__2026-04-05-1612"
 )
@@ -41,6 +43,14 @@ CONFORMAL_WINNER_DIR = (
 
 def _load_json(path: Path) -> dict[str, Any]:
     return json.loads(path.read_text(encoding="utf-8"))
+
+
+def _portfolio_shortlist_path() -> Path:
+    return (
+        BOUND_AWARE_SHORTLIST_EXACT_PATH
+        if BOUND_AWARE_SHORTLIST_EXACT_PATH.exists()
+        else BOUND_AWARE_SHORTLIST_PATH
+    )
 
 
 def _as_bool(value: Any) -> bool:
@@ -98,10 +108,9 @@ def _table0_key_metrics(
     rows = [
         ("run_tag", promotion["run_tag"]),
         ("champion_label", champ["label"]),
-        ("pd_auc", pipeline_summary["pd_auc"]),
-        ("pd_brier", pipeline_summary["pd_brier"]),
-        ("pd_ece_pipeline_summary", pipeline_summary["pd_ece"]),
-        ("pd_ece_dvc_metrics", dvc_metrics["pd.ece"]),
+        ("pd_auc", dvc_metrics.get("pd.auc", pipeline_summary["pd_auc"])),
+        ("pd_brier", dvc_metrics.get("pd.brier", pipeline_summary["pd_brier"])),
+        ("pd_ece", dvc_metrics.get("pd.ece", pipeline_summary["pd_ece"])),
         ("coverage_90", conformal["coverage_90"]),
         ("coverage_95", conformal["coverage_95"]),
         ("avg_width_90", conformal["avg_width_90"]),
@@ -176,8 +185,10 @@ def _table2_conformal_benchmark(promotion: dict[str, Any]) -> pd.DataFrame:
                 if is_winner
                 else row["min_group_coverage_90"],
                 "winkler_90": conformal["winkler_90"] if is_winner else pd.NA,
+                "material_gate_pass": _as_bool(
+                    row.get("gate_overall_pass", row["policy_overall_pass"])
+                ),
                 "policy_overall_pass": _as_bool(row["policy_overall_pass"]),
-                "strict_overall_pass": _as_bool(row["strict_overall_pass"]),
                 "methodological_justification_pass": _as_bool(
                     row["methodological_justification_pass"]
                 ),
@@ -268,7 +279,7 @@ def main(argv: list[str] | None = None) -> int:
     promotion = _load_json(MODELS / "final_project_promotion.json")
     pipeline_summary = _load_json(DATA / "pipeline_summary.json")
     dvc_metrics = _load_json(ROOT / "reports" / "dvc" / "metrics_summary.json")["metrics"]
-    shortlist = pd.read_parquet(BOUND_AWARE_DIR / "portfolio_bound_aware_shortlist.parquet")
+    shortlist = pd.read_parquet(_portfolio_shortlist_path())
 
     _write_table(
         "crpto_table0_key_metrics",

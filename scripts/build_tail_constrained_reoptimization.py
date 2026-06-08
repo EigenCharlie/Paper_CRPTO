@@ -21,10 +21,11 @@ What it does, concretely:
    traces the return kept as the tail budget tightens.
 
 Authoritative return / V / Gamma_CP / exact-pass values are read from the
-frozen shortlist (and agree with ``final_project_promotion.json``); the
-re-solve is used only to recover allocations for tail scoring. No frozen
-artifact is overwritten and the economic champion remains the official
-champion: the CVaR-constrained policy is reported as a journal challenger.
+frozen shortlist and, for promoted/editorial comparator roles, overlaid from
+``final_project_promotion.json``. The re-solve is used only to recover
+allocations for tail scoring. No frozen artifact is overwritten and the
+economic champion remains the official champion: the CVaR-constrained policy is
+reported as a journal challenger.
 
 Usage::
 
@@ -77,6 +78,18 @@ CVAR_TAIL = 0.95
 # Operating-point rule for the headline challenger: tightest tail cap whose
 # selected policy stays within this fraction of the economic champion return.
 RETURN_TOLERANCE_PCT = 2.0
+PROMOTION_ROLE_KEYS = {
+    "economic_champion": "final_champion",
+    "theorem_tight_comparator": "theorem_tight_comparator",
+    "balanced_comparator": "balanced_comparator",
+}
+PROMOTION_METRIC_FIELDS = (
+    "realized_total_return",
+    "alpha01_exact_pass",
+    "alpha01_weighted_miscoverage_V",
+    "alpha01_gamma_cp",
+    "alpha01_violation",
+)
 
 
 def _load_json(path: Path) -> dict[str, Any]:
@@ -111,6 +124,36 @@ def _write_table(name: str, frame: pd.DataFrame) -> list[Path]:
     logger.info("Wrote {}", csv_path.relative_to(ROOT))
     logger.info("Wrote {}", tex_path.relative_to(ROOT))
     return [csv_path, tex_path]
+
+
+def _sync_official_promotion_metrics(
+    frame: pd.DataFrame,
+    promotion: dict[str, Any],
+    *,
+    role_col: str,
+    prefix: str = "",
+) -> pd.DataFrame:
+    """Overlay official rebaseline metrics for promoted editorial roles.
+
+    The robust-region shortlist is retained as provenance, but promoted roles
+    may have updated V/Gamma values after a formal replay. Applying the promotion
+    JSON here keeps A22 aligned without mutating the frozen search artifact.
+    """
+    synced = frame.copy()
+    if role_col not in synced.columns:
+        return synced
+    for role, record_key in PROMOTION_ROLE_KEYS.items():
+        record = promotion.get(record_key, {})
+        if not isinstance(record, dict):
+            continue
+        mask = synced[role_col].astype(str).eq(role)
+        if not mask.any():
+            continue
+        for field in PROMOTION_METRIC_FIELDS:
+            target_col = f"{prefix}{field}"
+            if target_col in synced.columns and field in record:
+                synced.loc[mask, target_col] = record[field]
+    return synced
 
 
 def worst_case_loss_rate(pd_high: np.ndarray, int_rates: np.ndarray, *, lgd: float) -> np.ndarray:
@@ -309,12 +352,22 @@ def build_tail_constrained_reoptimization(max_policies: int = 0) -> dict[str, An
                 promotion=promotion,
             )
         )
-    scored = pd.DataFrame(scored_rows)
+    scored = _sync_official_promotion_metrics(
+        pd.DataFrame(scored_rows),
+        promotion,
+        role_col="paper_role",
+    )
     frontier, summary = _build_cap_frontier(scored, champion_return)
+    frontier = _sync_official_promotion_metrics(
+        frontier,
+        promotion,
+        role_col="selected_paper_role",
+        prefix="selected_",
+    )
 
     artifacts = _write_table(TABLE_A22_NAME, frontier)
     status = {
-        "schema_version": "2026-05-28.1",
+        "schema_version": "2026-06-07.1",
         "generated_at_utc": datetime.now(tz=UTC).isoformat(),
         "elapsed_sec": (datetime.now(tz=UTC) - start).total_seconds(),
         "alpha": DEFAULT_ALPHA,
@@ -343,6 +396,9 @@ def build_tail_constrained_reoptimization(max_policies: int = 0) -> dict[str, An
             "ex-ante object a risk committee can constrain.",
             "No champion search was reopened beyond the 45 frozen robust-region "
             "policies; the economic champion stays official.",
+            "For promoted/editorial comparator rows, V/Gamma/return metrics are "
+            "overlaid from the current final_project_promotion.json rebaseline "
+            "while tail-risk quantities remain from the HiGHS re-solve.",
         ],
     }
     _write_json(STATUS_PATH, status)

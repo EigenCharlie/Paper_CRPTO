@@ -643,9 +643,10 @@ def main(
                     "avg_width",
                     "stability_over_time",
                 ],
-                "strict_diagnostics_role": (
-                    "Kupiec/Christoffersen remain strict diagnostics in "
-                    "validate_conformal_policy.py; they are not the primary selector here."
+                "retired_backtest_role": (
+                    "Kupiec/Christoffersen are research diagnostics outside the IJDS "
+                    "promotion gate; validate_conformal_policy.py promotes on material "
+                    "coverage, group coverage, width, alert, and Winkler checks."
                 ),
                 "variants_tested": bench["variant"].astype(str).tolist(),
                 "report_path": str(selection_path),

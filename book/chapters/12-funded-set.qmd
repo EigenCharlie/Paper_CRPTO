@@ -5,9 +5,9 @@ page-layout: article
 
 ## Anatomía del Funded Set por Periodo y Grado {#sec-p1-funded-set-composition}
 
-El champion oficial financia 335 préstamos en el OOT 276K, con retorno realizado de $170,464.54 y `V = 0.03645` (no-cobertura ponderada bajo `α=0.01`). Esa cifra agregada esconde la pregunta operativa que un comité de riesgo va a formular primero: **¿de dónde vienen esos 335 préstamos? ¿concentra el funded set algún periodo o grado peligroso? ¿qué segmentos cargan el bound?**
+El champion oficial financia 341 filas con exposición positiva en el export loan-level del OOT 276K, con retorno realizado de $170,464.54 y `V = 0.028875` (no-cobertura ponderada bajo `α=0.01`). Esa cifra agregada esconde la pregunta operativa que un comité de riesgo va a formular primero: **¿de dónde vienen esos préstamos? ¿concentra el funded set algún periodo o grado peligroso? ¿qué segmentos cargan el bound?**
 
-El conteo de 335 es el del export loan-level exacto (`crpto_tableA7_funded_set_loans.csv`); las auditorías de re-solve con HiGHS (A20/A22) reportan ~341 préstamos sobre el **mismo** funded set porque cuentan asignaciones fraccionales cercanas al umbral de inclusión. La diferencia es de convención de conteo, no de composición.
+El conteo de 341 es el del export loan-level exacto (`crpto_tableA7_funded_set_loans.csv`) y lista cualquier exposición positiva, incluida una asignación fraccional final. La frontera canónica reporta `n_funded = 340` porque cuenta préstamos por umbral operativo del solver. La diferencia es de convención de conteo, no de composición ni de budget.
 
 Esta página descompone el funded set por periodo × grado y conecta cada celda con su contribución al bound exacto, usando los artefactos `crpto_tableA8_funded_set_composition.csv` (composición exacta) y `crpto_tableA4_segment_period_sensitivity.csv` (cobertura conformal por segmento).
 
@@ -140,7 +140,7 @@ El peor segmento por cobertura es `2018H1/B` con `coverage_90 = 90.32%`, justo e
 
 ### Por qué la composición importa para la auditoría
 
-El bound exacto del paper (`alpha01_violation = 0`, `V = 0.03645`) es un número agregado, pero un revisor que lee el paper desde el lado del comité de riesgo va a preguntar: *"¿qué pasa si los 335 préstamos están todos concentrados en un periodo o un grado?"*. Esta página deja por escrito tres respuestas:
+El bound exacto del paper (`alpha01_violation = 0`, `V = 0.028875`) es un número agregado, pero un revisor que lee el paper desde el lado del comité de riesgo va a preguntar: *"¿qué pasa si los préstamos financiados están todos concentrados en un periodo o un grado?"*. Esta página deja por escrito tres respuestas:
 
 1. **No hay concentración periodo-única**. La distribución por periodo es razonablemente plana (2018H1: ~10%, 2018H2: ~27%, 2019H1: ~30%, 2019H2: ~28%, 2020: ~5%), lo que muestra que el LP encuentra préstamos viables a través del shift COVID, no sólo en un régimen estable.
 2. **No hay concentración grado-única**. La distribución por grado tiene su moda en `D` (~50% combinado de exposición), seguido por `C` (~25%) y `B` (~15%). El LP no está disfrazando un portafolio de tarjeta amarilla con préstamos grado A.
@@ -157,7 +157,7 @@ uv run python scripts/analyze_crpto_evidence.py
 
 Artefactos:
 
-- `reports/crpto/tables/crpto_tableA7_funded_set_loans.csv` — funded set loan-level (335 préstamos individuales).
+- `reports/crpto/tables/crpto_tableA7_funded_set_loans.csv` — funded set loan-level (341 filas con exposición positiva).
 - `reports/crpto/tables/crpto_tableA8_funded_set_composition.csv` — composición agregada por periodo × grado.
 - `reports/crpto/tables/crpto_tableA4_segment_period_sensitivity.csv` — cobertura conformal por segmento sobre el OOT completo.
 - `data/processed/portfolio_bound_aware/rank1_alpha01_bound_aware_276k_full_2026-04-05-1734/portfolio_bound_aware_bound_eval.parquet` — bound exacto por policy.

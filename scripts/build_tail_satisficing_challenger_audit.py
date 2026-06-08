@@ -54,6 +54,7 @@ SHORTLIST_PATH = (
     / "rank1_alpha01_bound_aware_276k_full_2026-04-05-1734"
     / "portfolio_bound_aware_shortlist.parquet"
 )
+SHORTLIST_EXACT_PATH = SHORTLIST_PATH.with_name("portfolio_bound_aware_shortlist_exact.parquet")
 CONFORMAL_INTERVALS_PATH = (
     DATA_DIR
     / "conformal_gap"
@@ -64,6 +65,7 @@ STATUS_PATH = MODEL_DIR / "crpto_tail_satisficing_audit_status.json"
 
 TABLE_A20_NAME = "crpto_tableA20_tail_satisficing_challenger_audit"
 TABLE_A21_NAME = "crpto_tableA21_cluster_bound_tightening"
+TABLE_A20_CSV = TABLE_DIR / f"{TABLE_A20_NAME}.csv"
 DEFAULT_LGD = 0.45
 DEFAULT_ALPHA = 0.01
 
@@ -74,6 +76,10 @@ def _load_yaml(path: Path) -> dict[str, Any]:
 
 def _load_json(path: Path) -> dict[str, Any]:
     return json.loads(path.read_text(encoding="utf-8"))
+
+
+def _portfolio_shortlist_path() -> Path:
+    return SHORTLIST_EXACT_PATH if SHORTLIST_EXACT_PATH.exists() else SHORTLIST_PATH
 
 
 def _write_json(path: Path, payload: dict[str, Any]) -> None:
@@ -100,6 +106,71 @@ def _write_table(name: str, frame: pd.DataFrame) -> list[Path]:
     logger.info("Wrote {}", csv_path.relative_to(ROOT))
     logger.info("Wrote {}", tex_path.relative_to(ROOT))
     return [csv_path, tex_path]
+
+
+def _cached_a20_status(frame: pd.DataFrame) -> dict[str, Any]:
+    challenger = frame.iloc[0].to_dict()
+    champion_rank = int(
+        frame.loc[frame["paper_role"].eq("economic_champion"), "tail_satisficing_rank"].iloc[0]
+    )
+    return {
+        "n_policies_audited": int(len(frame)),
+        "champion_tail_satisficing_rank": champion_rank,
+        "selected_audit_challenger": challenger,
+        "selection_rule": (
+            "satisficing_pass desc; cvar_95_loss_rate asc; "
+            "entropic_oce_theta5 asc; realized_total_return desc"
+        ),
+        "promotion_status": "journal_audit_only_not_champion",
+        "cache_status": "reused_complete_a20_table",
+    }
+
+
+def _load_cached_a20_table(shortlist: pd.DataFrame) -> pd.DataFrame | None:
+    if not TABLE_A20_CSV.exists():
+        return None
+    cached = pd.read_csv(TABLE_A20_CSV)
+    required_cols = {
+        "tail_satisficing_rank",
+        "candidate_rank",
+        "paper_role",
+        "realized_total_return",
+        "alpha01_weighted_miscoverage_V",
+        "alpha01_gamma_cp",
+    }
+    if not required_cols.issubset(cached.columns):
+        return None
+    source_cols = [
+        "candidate_rank",
+        "realized_total_return",
+        "alpha01_weighted_miscoverage_V",
+        "alpha01_gamma_cp",
+    ]
+    merged = cached[source_cols].merge(
+        shortlist[source_cols],
+        on="candidate_rank",
+        how="inner",
+        suffixes=("_cached", "_source"),
+    )
+    if len(merged) != len(shortlist):
+        return None
+    numeric_cols = [
+        "realized_total_return",
+        "alpha01_weighted_miscoverage_V",
+        "alpha01_gamma_cp",
+    ]
+    for col in numeric_cols:
+        if not np.allclose(
+            merged[f"{col}_cached"].to_numpy(dtype=float),
+            merged[f"{col}_source"].to_numpy(dtype=float),
+            rtol=1e-10,
+            atol=1e-10,
+        ):
+            return None
+    if not cached["paper_role"].eq("economic_champion").any():
+        return None
+    logger.info("Reusing complete cached A20 tail audit table: {}", TABLE_A20_CSV)
+    return cached
 
 
 def _thresholds_from_config(config: dict[str, Any]) -> tuple[SatisficingThreshold, ...]:
@@ -269,7 +340,14 @@ def _build_a20_table() -> tuple[pd.DataFrame, dict[str, Any]]:
     optimization_config = _load_yaml(OPTIMIZATION_CONFIG_PATH)
     objective_config = _load_yaml(OBJECTIVE_CONFIG_PATH)
     thresholds = _thresholds_from_config(objective_config)
-    shortlist = pd.read_parquet(SHORTLIST_PATH).sort_values("candidate_rank").reset_index(drop=True)
+    shortlist = (
+        pd.read_parquet(_portfolio_shortlist_path())
+        .sort_values("candidate_rank")
+        .reset_index(drop=True)
+    )
+    cached = _load_cached_a20_table(shortlist)
+    if cached is not None:
+        return cached, _cached_a20_status(cached)
     loans, pd_point, pd_low, pd_high, lgd, int_rates, default_flag = _prepare_portfolio_inputs()
 
     rows: list[dict[str, Any]] = []
@@ -336,19 +414,8 @@ def _build_a20_table() -> tuple[pd.DataFrame, dict[str, Any]]:
         "audit_solver_status",
     ]
     frame = frame.loc[:, cols]
-    challenger = frame.iloc[0].to_dict()
-    status = {
-        "n_policies_audited": int(len(frame)),
-        "champion_tail_satisficing_rank": int(
-            frame.loc[frame["paper_role"].eq("economic_champion"), "tail_satisficing_rank"].iloc[0]
-        ),
-        "selected_audit_challenger": challenger,
-        "selection_rule": (
-            "satisficing_pass desc; cvar_95_loss_rate asc; "
-            "entropic_oce_theta5 asc; realized_total_return desc"
-        ),
-        "promotion_status": "journal_audit_only_not_champion",
-    }
+    status = _cached_a20_status(frame)
+    status["cache_status"] = "fresh_solve"
     return frame, status
 
 
@@ -406,7 +473,7 @@ def build_tail_satisficing_audit() -> dict[str, Any]:
         "generated_artifacts": [
             str(path.relative_to(ROOT)).replace("\\", "/") for path in artifacts
         ],
-        "source_shortlist": str(SHORTLIST_PATH.relative_to(ROOT)).replace("\\", "/"),
+        "source_shortlist": str(_portfolio_shortlist_path().relative_to(ROOT)).replace("\\", "/"),
         "source_conformal_intervals": str(CONFORMAL_INTERVALS_PATH.relative_to(ROOT)).replace(
             "\\", "/"
         ),

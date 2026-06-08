@@ -8,8 +8,8 @@ exists, and how `tests/test_manifest_regression.py` enforces it.
 
 ## TL;DR
 
-- **Schema version**: 4 (top-level key `schema_version`).
-- **Champion run tag**: `paper-thesis-final-economic-2026-04-06`.
+- **Schema version**: 5 (top-level key `schema_version`).
+- **Champion run tag**: `ijds-rebaseline-2026-06-07`.
 - **150 critical files** are hashed under `critical_hashes` (SHA256 + byte
   count).
 - **6 files are flagged as non-overwriteable** without a fresh run tag:

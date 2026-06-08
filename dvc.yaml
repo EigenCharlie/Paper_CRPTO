@@ -23,7 +23,7 @@ stages:
       - data/processed/feature_manifest_v2.parquet
       - data/processed/woe_encoders.pkl
   crpto.pd.champion:
-    cmd: python scripts/train_pd_model.py --config configs/crpto_pd_model.yaml
+    cmd: python scripts/train_pd_model.py --config configs/crpto_pd_model.yaml --run-tag ijds-rebaseline-2026-06-07
     deps:
       - data/processed/train_fe.parquet
       - data/processed/calibration_fe.parquet
@@ -40,11 +40,12 @@ stages:
       - models/pd_canonical.cbm
       - models/pd_canonical_calibrator.pkl
   crpto.conformal.intervals:
-    cmd: python scripts/generate_conformal_intervals.py --config configs/crpto_conformal_policy.yaml
+    cmd: python scripts/generate_conformal_intervals.py --config configs/crpto_conformal_policy.yaml --mode replay --replay_manifest configs/replay/ijds_rebaseline_2026_06_07.json --run-tag ijds-rebaseline-2026-06-07
     deps:
       - data/processed/test_predictions.parquet
       - scripts/generate_conformal_intervals.py
       - configs/crpto_conformal_policy.yaml
+      - configs/replay/ijds_rebaseline_2026_06_07.json
     params:
       - params.yaml:
           - conformal.alpha
@@ -53,11 +54,37 @@ stages:
           - conformal.variant_selection
     outs:
       - data/processed/conformal_intervals_mondrian.parquet
-  crpto.conformal.validation:
-    cmd: python scripts/validate_conformal_policy.py --config configs/crpto_conformal_policy.yaml
+      - data/processed/conformal_group_metrics_mondrian.parquet
+      - data/processed/conformal_mondrian_tuning_90.parquet
+      - data/processed/conformal_mondrian_tuning_90_pareto.parquet
+      - data/processed/conformal_group_coverage_floor_report.parquet
+      - data/processed/conformal_temporal_coverage_floor_report.parquet
+      - data/processed/conformal_shrinkback_report.parquet
+      - data/processed/pd_conformal_width_attribution.parquet
+      - models/conformal_results_mondrian.pkl
+      - models/pd_conformal_width_attribution_status.json
+  crpto.conformal.backtest:
+    cmd: python scripts/backtest_conformal_coverage.py --intervals-path data/processed/conformal_intervals_mondrian.parquet --output-dir data/processed
     deps:
       - data/processed/conformal_intervals_mondrian.parquet
+      - data/processed/test_fe.parquet
+      - data/processed/test.parquet
+      - scripts/backtest_conformal_coverage.py
+    outs:
+      - data/processed/conformal_backtest_monthly.parquet
+      - data/processed/conformal_backtest_monthly_grade.parquet
+      - data/processed/conformal_backtest_alerts.parquet
+      - data/processed/conformal_diagnostic_metrics.json
+  crpto.conformal.validation:
+    cmd: python scripts/validate_conformal_policy.py --config configs/crpto_conformal_policy.yaml --run-tag ijds-rebaseline-2026-06-07
+    deps:
+      - data/processed/conformal_intervals_mondrian.parquet
+      - data/processed/conformal_group_metrics_mondrian.parquet
+      - data/processed/conformal_backtest_monthly.parquet
+      - data/processed/conformal_backtest_alerts.parquet
+      - models/conformal_results_mondrian.pkl
       - scripts/validate_conformal_policy.py
+      - configs/crpto_conformal_policy.yaml
     params:
       - params.yaml:
           - conformal.coverage_targets
@@ -82,25 +109,35 @@ stages:
     outs:
       - data/processed/portfolio_allocations.parquet
   crpto.portfolio.bound_exact_eval:
-    cmd: python scripts/search/run_portfolio_bound_exact_eval.py --config configs/crpto_optimization.yaml
+    cmd: python scripts/search/run_portfolio_bound_exact_eval.py --context-path models/portfolio_bound_aware/rank1_alpha01_bound_aware_276k_full_2026-04-05-1734/portfolio_bound_aware_exact_context.json
     deps:
       - data/processed/portfolio_bound_aware/rank1_alpha01_bound_aware_276k_full_2026-04-05-1734/portfolio_bound_aware_shortlist.parquet
+      - models/portfolio_bound_aware/rank1_alpha01_bound_aware_276k_full_2026-04-05-1734/portfolio_bound_aware_exact_context.json
       - scripts/search/run_portfolio_bound_exact_eval.py
+      - src/utils/pipeline_runtime.py
     outs:
-      - data/processed/portfolio_bound_aware/rank1_alpha01_bound_aware_276k_full_2026-04-05-1734/portfolio_bound_aware_bound_eval.parquet
+      - data/processed/portfolio_bound_aware/rank1_alpha01_bound_aware_276k_full_2026-04-05-1734/portfolio_bound_aware_bound_eval.parquet:
+          persist: true
+      - data/processed/portfolio_bound_aware/rank1_alpha01_bound_aware_276k_full_2026-04-05-1734/portfolio_bound_aware_shortlist_exact.parquet
   crpto.paper.export_tables:
     cmd: python scripts/export_crpto_tables.py --skip-evidence
     deps:
       - models/final_project_promotion.json
       - data/processed/pipeline_summary.json
+      - data/processed/portfolio_bound_aware/rank1_alpha01_bound_aware_276k_full_2026-04-05-1734/portfolio_bound_aware_shortlist_exact.parquet
       - scripts/export_crpto_tables.py
     outs:
       - reports/crpto/tables/crpto_table0_key_metrics.csv
   crpto.paper.evidence:
-    cmd: python scripts/analyze_crpto_evidence.py
+    cmd: python scripts/analyze_crpto_evidence.py --include-hardening
     deps:
       - scripts/analyze_crpto_evidence.py
       - models/final_project_promotion.json
+      - data/processed/test.parquet
+      - data/processed/conformal_gap/conformal-reopen-2026-04-03-2149__resume__2026-04-05-1612/conformal_reopen_phase1_final_candidates.parquet
+      - data/processed/conformal_gap/conformal-reopen-2026-04-03-2149__resume__2026-04-05-1612__phase1__final__rank-1/conformal_intervals_mondrian.parquet
+      - models/portfolio_tradeoff/conformal-finalist-rank1_score_decile_raw_bins5_mgs100/portfolio_research_policy.json
+      - data/processed/portfolio_bound_aware/rank1_alpha01_bound_aware_276k_full_2026-04-05-1734/portfolio_bound_aware_shortlist_exact.parquet
     outs:
       - models/crpto_evidence_status.json
   crpto.paper.journal_package:
@@ -115,7 +152,7 @@ stages:
       - models/final_project_promotion.json
       - models/spo_real_training_status.json
       - data/processed/crpto_vs_spo_stability.json
-      - data/processed/portfolio_bound_aware/rank1_alpha01_bound_aware_276k_full_2026-04-05-1734/portfolio_bound_aware_shortlist.parquet
+      - data/processed/portfolio_bound_aware/rank1_alpha01_bound_aware_276k_full_2026-04-05-1734/portfolio_bound_aware_shortlist_exact.parquet
       - data/processed/portfolio_bound_aware/rank1_alpha01_bound_aware_276k_full_2026-04-05-1734/portfolio_bound_aware_bound_eval.parquet
     outs:
       - models/crpto_journal_package_status.json
@@ -132,13 +169,21 @@ stages:
       - data/processed/test.parquet
       - data/processed/test_fe.parquet
       - data/processed/conformal_gap/conformal-reopen-2026-04-03-2149__resume__2026-04-05-1612__phase1__final__rank-1/conformal_intervals_mondrian.parquet
-      - data/processed/portfolio_bound_aware/rank1_alpha01_bound_aware_276k_full_2026-04-05-1734/portfolio_bound_aware_shortlist.parquet
+      - data/processed/portfolio_bound_aware/rank1_alpha01_bound_aware_276k_full_2026-04-05-1734/portfolio_bound_aware_shortlist_exact.parquet
     outs:
       - models/crpto_tail_satisficing_audit_status.json
   crpto.paper.figures:
     cmd: python scripts/generate_crpto_figures.py --paper crpto
     deps:
       - scripts/generate_crpto_figures.py
+      - reports/crpto/tables
+      - reports/dvc/metrics_summary.json
+      - models/final_project_promotion.json
+      - models/uncertainty_baselines_status.json
+      - models/spo_real_training_status.json
+      - models/crpto_tail_satisficing_audit_status.json
+      - data/processed/alpha_sweep_pareto_both.parquet
+      - data/processed/crpto_vs_spo_stability.json
     outs:
       - reports/crpto/figures/crpto_fig7_uncertainty_baselines.png
   crpto.paper.spo_stability:

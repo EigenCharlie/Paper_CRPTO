@@ -23,7 +23,7 @@ from src.utils.mlflow_tracing import (
 
 
 def test_paper_run_tag_constant_matches_champion() -> None:
-    assert PAPER_RUN_TAG == "paper-thesis-final-economic-2026-04-06"
+    assert PAPER_RUN_TAG == "ijds-rebaseline-2026-06-07"
 
 
 def test_trace_decorator_is_transparent_when_mlflow_missing(

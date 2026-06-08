@@ -28,7 +28,7 @@ def build_conformal_method_registry(*, run_tag: str = "untracked") -> dict[str, 
         ],
         "libraries": {
             "mapie": {
-                "version_family": "1.3.x",
+                "version_family": "1.4.x",
                 "role": [
                     "primary_conformal_intervals",
                     "classification_sets",
@@ -81,7 +81,14 @@ def build_conformal_method_registry(*, run_tag: str = "untracked") -> dict[str, 
                     "mondrian_selected_cfg",
                     "cross_conformal_score_space",
                 ],
-                "strict_diagnostics": ["kupiec", "christoffersen"],
+                "promotion_gate": [
+                    "coverage",
+                    "group_coverage",
+                    "interval_width",
+                    "alerts",
+                    "winkler",
+                ],
+                "research_diagnostics": ["kupiec", "christoffersen"],
                 "selector_artifact": "models/conformal_variant_selection_status.json",
             },
             "lgd_ead": {

@@ -27,15 +27,18 @@ CRPTO does not cover:
 
 ## Frozen champion contract
 
-The official CRPTO run remains:
+The official IJDS CRPTO baseline is:
 
-- run tag: `paper-thesis-final-economic-2026-04-06`
+- run tag: `ijds-rebaseline-2026-06-07`
 - policy: `bound_aware_276k_economic_champion`
 - robust return: `$170,464.54`
-- `V(alpha=0.01)=0.03645`
-- `Gamma_CP(alpha=0.01)=0.18591`
+- `V(alpha=0.01)=0.028875`
+- `Gamma_CP(alpha=0.01)=0.187987`
 - exact pass: `true`
 - robust region: `45/45`
+
+The previous run tag `paper-thesis-final-economic-2026-04-06` is retained as
+historical provenance, not as the current manifest baseline.
 
 Do not overwrite these protected files without an explicit revalidation plan:
 

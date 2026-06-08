@@ -6,11 +6,11 @@ from pathlib import Path
 
 import pytest
 
-EXPECTED_RUN_TAG = "paper-thesis-final-economic-2026-04-06"
+EXPECTED_RUN_TAG = "ijds-rebaseline-2026-06-07"
 EXPECTED_LABEL = "bound_aware_276k_economic_champion"
 EXPECTED_RETURN = 170464.5429284627
-EXPECTED_V = 0.03645
-EXPECTED_GAMMA_CP = 0.18591
+EXPECTED_V = 0.028875
+EXPECTED_GAMMA_CP = 0.187987
 LEGACY_TOKENS = [
     "paper_" + "estrella",
     "paper-" + "estrella",
@@ -45,7 +45,7 @@ def test_crpto_champion_artifacts_agree() -> None:
     assert champion["label"] == EXPECTED_LABEL
     assert policy["run_tag"] == EXPECTED_RUN_TAG
     assert registry_portfolio["run_tag"] == EXPECTED_RUN_TAG
-    assert registry_portfolio["selection_stage"] == "paper_thesis_final_economic_v1"
+    assert registry_portfolio["selection_stage"] == "ijds_rebaseline_economic_v1"
 
     for field in ("risk_tolerance", "gamma", "uncertainty_aversion"):
         assert selected_policy[field] == pytest.approx(champion[field])

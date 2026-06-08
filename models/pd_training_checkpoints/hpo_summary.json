@@ -29,7 +29,7 @@
     "penalties_coefficient": 0.75
   },
   "hpo_trials_executed": 0,
-  "hpo_best_validation_auc": 0.7223369757443822,
+  "hpo_best_validation_auc": 0.7220014049345107,
   "seed_replay_report": {
     "enabled": false,
     "reason": "hpo_disabled",

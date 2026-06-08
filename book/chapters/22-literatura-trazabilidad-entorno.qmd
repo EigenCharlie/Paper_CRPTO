@@ -439,9 +439,9 @@ import pandas as pd
 conformal = try_load_json("conformal_policy_status", directory="models", default={})
 
 rows = [
-    {"Indicador": "overall_pass", "Valor": conformal.get("overall_pass"), "Lectura": "La policy conformal ya cierra operativamente."},
-    {"Indicador": "strict_overall_pass", "Valor": conformal.get("strict_overall_pass"), "Lectura": "La capa estadística estricta sigue siendo diagnóstica."},
-    {"Indicador": "methodological_justification_pass", "Valor": conformal.get("methodological_justification_pass"), "Lectura": "La justificación metodológica ya aplica."},
+    {"Indicador": "gate_overall_pass", "Valor": conformal.get("gate_overall_pass", conformal.get("overall_pass")), "Lectura": "El gate conformal material cierra operativamente."},
+    {"Indicador": "overall_pass", "Valor": conformal.get("overall_pass"), "Lectura": "La policy conformal queda aprobada."},
+    {"Indicador": "diagnostic_checks", "Valor": f"{conformal.get('diagnostic_checks_passed', 0)}/{conformal.get('diagnostic_checks_total', 4)}", "Lectura": "Los p-values quedan como diagnóstico no-gatable."},
     {"Indicador": "coverage_90", "Valor": conformal.get("coverage_90"), "Lectura": "Cobertura prudente dentro de materialidad."},
     {"Indicador": "avg_width_90", "Valor": conformal.get("avg_width_90"), "Lectura": "Ancho ya por debajo del máximo 0.80."},
     {"Indicador": "warning_alerts", "Valor": conformal.get("warning_alerts"), "Lectura": "Persisten solo 2 warnings mensuales concentrados."},

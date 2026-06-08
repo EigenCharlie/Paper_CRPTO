@@ -6,7 +6,7 @@ include_notebooks: false
 freeze_if_available: true
 explicit_champion_only: true
 champion:
-  run_tag: paper-thesis-final-economic-2026-04-06
+  run_tag: ijds-rebaseline-2026-06-07
   policy: bound_aware_276k_economic_champion
 paths:
   tables: reports/crpto/tables

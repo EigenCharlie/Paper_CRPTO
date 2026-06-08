@@ -28,7 +28,7 @@ La frase anterior tiene cuatro piezas:
    riesgo [1]--[5];
 2. **restricción operativa**: conecta esos intervalos con robust optimization y
    price of robustness [6]--[9];
-3. **policy económica promovida**: usa el cierre `paper-thesis-final-economic-2026-04-06`
+3. **policy económica promovida**: usa el cierre rebaselined `ijds-rebaseline-2026-06-07`
    y no reabre el champion;
 4. **cautela post-selección**: separa el teorema Markov del tightening
    condicional y de las validaciones empíricas A7--A11.
@@ -41,12 +41,12 @@ empíricos, otros son de ingeniería reproducible.
 
 | Nivel | Claim | Evidencia actual | Lo que no debe prometer |
 |---|---|---|---|
-| 1 | La PD base es suficientemente calibrada para alimentar incertidumbre | AUC `0.7124`, Brier `0.1546`, ECE `0.0064`, Venn-Abers | No afirmar que AUC es el aporte principal |
+| 1 | La PD base es suficientemente calibrada para alimentar incertidumbre | AUC `0.7127`, Brier `0.1546`, ECE `0.0062`, Venn-Abers | No afirmar que AUC es el aporte principal |
 | 2 | Los intervalos conformales tienen cobertura útil para decisión | Coverage 90 `92.97%`, min group coverage `91.90%` | No afirmar cobertura condicional perfecta |
 | 3 | El intervalo puede convertirse en conjunto de incertidumbre | Definición de `u_i(alpha)` y `Gamma_CP` | No tratar `Gamma_CP` como presupuesto ad hoc |
 | 4 | El bound controla no-cobertura ponderada del funded set | @sec-thm-feasibility y `V` | No decir que controla directamente una PD latente sin supuesto adicional |
 | 5 | Existe una región robusta completa en OOT | `45/45` policies pass alpha01 en `276k` | No decir que eso elimina toda incertidumbre post-selección |
-| 6 | El champion oficial es económico, no theorem-tight | Retorno `$170.5K`, `V=0.03645`, `gamma_cp=0.18591` | No mezclarlo con el comparador theorem-tight |
+| 6 | El champion oficial es económico, no theorem-tight | Retorno `$170.5K`, `V=0.028875`, `gamma_cp=0.187987` | No mezclarlo con el comparador theorem-tight |
 | 7 | La evidencia CRPTO fortalece el paper sin cambiar dirección | A7--A11, apéndice condicional, A25--A34 | No venderlo como validación live o universal |
 
 : Escalera editorial de claims del CRPTO {#tbl-crpto-claim-ladder}
