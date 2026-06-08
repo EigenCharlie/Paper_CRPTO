@@ -197,7 +197,10 @@ search`, y trabaja desde PowerShell en `C:\Users\carlos\Documents\Paper_CRPTO`.
 
 **Pre-commit bloquea un commit** — corre `just fmt && just smoke` para arreglar lint/format y verificar tests. Si el hook `dvc-status` falla, hay drift inesperado.
 
-**Render PDF falla** — necesitas LuaLaTeX. Instala TeX Live (`scoop install latex` o paquete oficial). Alternativa: comenta el bloque `pdf:` de `book/_quarto.yml`.
+**Render PDF falla** — los PDFs activos son los borradores IJDS
+(`just paper-submission-pdf`) y, más adelante, un PDF APA de tesis curado. El
+PDF completo del libro no se mantiene como artefacto rutinario; ver
+[`docs/THESIS_PDF_SCOPE.md`](docs/THESIS_PDF_SCOPE.md).
 
 ## Herramientas interactivas para reviewers
 
