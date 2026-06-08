@@ -1350,16 +1350,20 @@ def _crpto_fig16_tail_risk_frontier() -> None:
     role = df["paper_role"].astype(str).to_numpy()
 
     fig, ax = plt.subplots(figsize=(COL2, HEIGHT_M))
-    ax.scatter(
-        ret[~passed],
-        cvar[~passed],
-        s=45,
-        facecolors="none",
-        edgecolors=PALETTE["gray"],
-        linewidths=1.0,
-        label=f"Satisficing fail (n={int((~passed).sum())})",
-        zorder=3,
-    )
+    fail_count = int((~passed).sum())
+    pass_count = int(passed.sum())
+    total_count = int(len(passed))
+    if fail_count:
+        ax.scatter(
+            ret[~passed],
+            cvar[~passed],
+            s=45,
+            facecolors="none",
+            edgecolors=PALETTE["gray"],
+            linewidths=1.0,
+            label=f"Satisficing fail (n={fail_count})",
+            zorder=3,
+        )
     ax.scatter(
         ret[passed],
         cvar[passed],
@@ -1367,7 +1371,9 @@ def _crpto_fig16_tail_risk_frontier() -> None:
         color=PALETTE["blue"],
         edgecolors="white",
         linewidths=0.5,
-        label=f"Satisficing pass (n={int(passed.sum())})",
+        label=f"Pass satisficing screen ({pass_count}/{total_count})"
+        if fail_count == 0
+        else f"Satisficing pass (n={pass_count})",
         zorder=4,
     )
     champ = role == "economic_champion"
@@ -1404,7 +1410,7 @@ def _crpto_fig16_tail_risk_frontier() -> None:
         idx = np.where(passed)[0]
         j = int(idx[np.argmin(cvar[idx])])
         ax.annotate(
-            "lowest tail-risk\n(satisficing pass)",
+            "lowest realized CVaR\n(pass screen)",
             (ret[j], cvar[j]),
             textcoords="offset points",
             xytext=(8, 14),

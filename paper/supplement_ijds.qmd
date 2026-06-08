@@ -10,6 +10,7 @@ format:
   html:
     toc: true
     number-sections: true
+    css: ijds.css
   pdf:
     documentclass: article
     number-sections: true
@@ -164,10 +165,10 @@ future journal hardening.
 Tables A12--A34 answer likely reviewer questions that are too detailed for the
 25-page body. They are diagnostic by design, except A19 also supports the body
 framing around regret-auditability and A25--A34 support the external-replication
-defense. A20--A34 are journal-only add-ons: A20 audits a tail-satisficing
-challenger; A21 makes the dependence-aware caveat numerical; A22 turns the
-tail-risk diagnostic into an *active CVaR/OCE selection constraint* (a labeled
-challenger, not a new champion); A23--A24 stress multi-distribution coverage and
+defense. A20--A34 are journal-only add-ons: A20 audits tail-risk trade-offs
+inside the robust region; A21 makes the dependence-aware caveat numerical; A22
+turns the tail-risk diagnostic into an *active CVaR/OCE selection constraint*
+(a labeled challenger, not a new champion); A23--A24 stress multi-distribution coverage and
 online (ACI) stability on the frozen conformal intervals; A25--A34 cover the
 external economic layer by testing the same frozen recipe and adding the
 cross-dataset price-of-robustness scaling readout. Table A12 follows the standard
@@ -187,7 +188,7 @@ frozen funded set or intervals, never as a re-promoted champion.
 | A17 budget/LGD/cap sensitivity | Varies operating assumptions. | Segment caps are diagnostics, not solver constraints. |
 | A18 robust region by policy family | Summarizes alpha-safe policies by bound-aware family. | Compatible leaderboard only inside the final family. |
 | A19 regret-auditability frontier | Compares two-stage, SPO+, and CRPTO robust on regret versus risk-control checks. | Comparator framing, not a new champion selector. |
-| A20 tail-satisficing challenger audit | Re-solves the 45 robust-region policies and ranks them by satisficing pass, CVaR, OCE, and return. | Journal audit only; the top challenger is not promoted over the frozen champion. |
+| A20 tail-risk robust-region audit | Re-solves the 45 robust-region policies and ranks them by CVaR, OCE, return, and satisficing status. | Journal audit only; lower-tail policies are not promoted over the frozen champion. |
 | A21 cluster-bound tightening | Reports cluster-aware Hoeffding thresholds by period, grade, and period-grade. | Transparent caveat; not tighter than Markov for the observed exposure concentration. |
 | A22 tail-constrained re-optimization | Re-solves the 45 robust-region policies and selects the max-return policy under a decision-time (pd_high-based) CVaR cap, tracing the return-vs-CVaR frontier. | CVaR/OCE as an active selection constraint; reports a tail-constrained challenger, not a new champion. |
 | A23 multi-distribution robustness | Worst-case 90% coverage by grade and grade x vintage cell on the frozen intervals. | Read-only diagnostic; the worst fine cell motivates MDCP/group-weighted as future work. |
@@ -215,7 +216,7 @@ Home Credit was audited as a scoring/conformal source [@homeCreditDefaultRisk]
 but is not promoted because it lacks a clean `exposure + return` investment
 contract comparable to Lending Club, Prosper, or Freddie.
 
-| Dataset | Rows | Default rate | AUC | Coverage 90% | alpha = 0.01 coverage | OOT candidates | Robust LP objective |
+| Dataset | Rows | Default | AUC | Cov. 90% | Cov. alpha01 | OOT cand. | Robust LP |
 |---|---:|---:|---:|---:|---:|---:|---:|
 | Prosper final-status | `54,807` | `30.92%` | `0.7074` | `0.9205` | `0.9943` | `10,531` | `$199,419` |
 | Freddie/Mendeley FM48 | `3,173,355` | `1.45%` | `0.7839` | `0.9745` | `0.9907` | `1,396,053` | `$1,291,228` |
@@ -417,7 +418,7 @@ decision.
 
 ![CQR is retained as conformal appendix evidence, not as the promoted method.](../reports/crpto/figures/crpto_fig10_cqr_per_grade.png){#fig-supp-cqr width="90%" fig-alt="Coverage by Lending Club grade for CQR and conformal variants, used as appendix evidence rather than promoted method."}
 
-![Tail-risk versus realized return across the 45-policy robust region (Table A20). Twelve policies pass the satisficing committee; the frozen economic champion (star) deliberately trades some tail risk for return rather than minimizing CVaR, so the headline result is a defendable point inside the robust region rather than the lowest-tail corner.](../reports/crpto/figures/crpto_fig16_tail_risk_frontier.png){#fig-supp-tail-frontier width="90%" fig-alt="Scatter plot of tail risk versus realized return across 45 robust-region policies, with satisficing pass policies and frozen economic champion marked."}
+![Tail-risk versus realized return across the 45-policy robust region (Table A20). All 45 policies pass the satisficing screen; the frozen economic champion (star) deliberately accepts more realized CVaR for higher return, while the lowest-tail policy shows the available de-risking trade-off inside the robust region.](../reports/crpto/figures/crpto_fig16_tail_risk_frontier.png){#fig-supp-tail-frontier width="90%" fig-alt="Scatter plot of tail risk versus realized return across 45 robust-region policies, with all policies passing the satisficing screen and the frozen economic champion marked."}
 
 ![Tail risk of the frozen funded set under varying loss-given-default (Table A12). CVaR grows with the assumed LGD while the OCE and the mean loss rate stay milder, confirming that OCE/CVaR enter the paper as post-hoc stress summaries rather than as the optimized objective.](../reports/crpto/figures/crpto_fig17_tail_risk_lgd.png){#fig-supp-tail-lgd width="82%" fig-alt="Line chart of frozen funded-set loss rate versus LGD (0.35 to 0.60) for CVaR90, CVaR95, CVaR99, OCE and the mean; CVaR grows with LGD while OCE and the mean stay mild."}
 
@@ -427,9 +428,10 @@ decision.
 
 A19--A33 should be read as literature-aligned stress evidence. A19 places CRPTO
 against the regret-driven training tradition; A20--A22 translate tail risk and
-satisficing into challenger audits without changing the champion; and A23--A24
-show where multi-distribution and online conformal work would enter if the
-project moved from a frozen historical panel to a new protocol. A25--A34 add the
+satisficing into robust-region and tail-constrained audits without changing the
+champion; and A23--A24 show where multi-distribution and online conformal work
+would enter if the project moved from a frozen historical panel to a new
+protocol. A25--A34 add the
 external economic replication layer on Prosper and Freddie/Mendeley, including
 Freddie all-candidate exhaustiveness and negative/sparse-cell sensitivities,
 while preserving the Lending Club certificate boundary. This keeps the

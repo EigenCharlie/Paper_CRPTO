@@ -148,6 +148,31 @@ summary:focus-visible,
   line-height: 1.45;
 }
 
+#quarto-document-content .apa-figure-label {
+  display: block;
+  color: var(--crpto-muted);
+  font-weight: 700;
+}
+
+#quarto-document-content .apa-figure-title {
+  display: block;
+  color: var(--crpto-muted);
+  font-style: italic;
+  margin-top: 0.12rem;
+}
+
+#quarto-document-content .apa-figure-note,
+#quarto-document-content .figure-note {
+  color: var(--crpto-muted);
+  font-size: 0.86rem;
+  line-height: 1.45;
+  margin-top: 0.45rem;
+}
+
+#quarto-document-content .apa-note-label {
+  font-style: italic;
+}
+
 #quarto-document-content table {
   display: block;
   width: 100%;

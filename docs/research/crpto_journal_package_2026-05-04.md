@@ -76,7 +76,7 @@ and `scripts/generate_crpto_figures.py`.
 | A17 budget/LGD/cap sensitivity | Checks practical sensitivity to budget, LGD and segment caps. | Cap checks are diagnostics, not solver constraints. |
 | A18 robust region by family | Summarizes the `45/45` alpha01-safe region by `risk_tolerance x gamma`. | Bound-aware family only. |
 | A19 regret-auditability frontier | Compares two-stage, SPO+ and CRPTO robust on regret versus verifiable risk controls. | Trade-off diagnostic, not a new champion selector. |
-| A20 tail-satisficing challenger | Re-solves the 45 alpha-safe policies and ranks a CVaR/OCE/satisficing challenger. | Generated separately; audit only, no champion promotion. |
+| A20 tail-risk robust-region audit | Re-solves the 45 alpha-safe policies and ranks CVaR/OCE/return trade-offs inside the robust region. | Generated separately; audit only, no champion promotion. |
 | A21 cluster-bound tightening | Quantifies cluster-aware Hoeffding thresholds. | Transparent caveat, not tighter than Markov here. |
 | A22 tail-constrained re-optimization | Turns CVaR/OCE into an active tail constraint over the 45-policy robust region. | Tail-constrained challenger, not a new champion. |
 | A23 multi-distribution robustness | Reports worst-case coverage by grade and grade x vintage. | Diagnostic stress, not a new calibration protocol. |

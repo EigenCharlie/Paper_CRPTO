@@ -5,15 +5,15 @@
     "interpretation": "Cluster-aware Hoeffding is transparent but empirically looser than the Markov sqrt(alpha) threshold for this funded-set exposure concentration.",
     "n_rows": 6
   },
-  "elapsed_sec": 0.528519,
+  "elapsed_sec": 0.0,
   "generated_artifacts": [
     "reports/crpto/tables/crpto_tableA20_tail_satisficing_challenger_audit.csv",
     "reports/crpto/tables/crpto_tableA20_tail_satisficing_challenger_audit.tex",
     "reports/crpto/tables/crpto_tableA21_cluster_bound_tightening.csv",
     "reports/crpto/tables/crpto_tableA21_cluster_bound_tightening.tex"
   ],
-  "generated_at_utc": "2026-06-07T23:53:52.273359+00:00",
-  "schema_version": "2026-05-12.1",
+  "generated_at_utc": "2026-06-07T00:00:00+00:00",
+  "schema_version": "2026-05-12.2",
   "source_conformal_intervals": "data/processed/conformal_gap/conformal-reopen-2026-04-03-2149__resume__2026-04-05-1612__phase1__final__rank-1/conformal_intervals_mondrian.parquet",
   "source_shortlist": "data/processed/portfolio_bound_aware/rank1_alpha01_bound_aware_276k_full_2026-04-05-1734/portfolio_bound_aware_shortlist_exact.parquet",
   "tail_satisficing_audit": {
@@ -44,5 +44,6 @@
       "uncertainty_aversion": 0.1
     },
     "selection_rule": "satisficing_pass desc; cvar_95_loss_rate asc; entropic_oce_theta5 asc; realized_total_return desc"
-  }
+  },
+  "timestamp_policy": "fixed_for_bit_reproducible_manifest"
 }

@@ -1,4 +1,4 @@
-"""Build the tail-satisficing challenger audit from frozen CRPTO policies.
+"""Build the tail-risk robust-region audit from frozen CRPTO policies.
 
 This script re-solves the 45 already-shortlisted bound-aware policies with the
 Windows-safe HiGHS solver, scores each funded set with OCE/CVaR/satisficing
@@ -11,7 +11,6 @@ from __future__ import annotations
 import json
 import math
 import sys
-from datetime import UTC, datetime
 from pathlib import Path
 from typing import Any
 
@@ -68,6 +67,8 @@ TABLE_A21_NAME = "crpto_tableA21_cluster_bound_tightening"
 TABLE_A20_CSV = TABLE_DIR / f"{TABLE_A20_NAME}.csv"
 DEFAULT_LGD = 0.45
 DEFAULT_ALPHA = 0.01
+STATUS_SCHEMA_VERSION = "2026-05-12.2"
+REPRODUCIBLE_STATUS_TIMESTAMP = "2026-06-07T00:00:00+00:00"
 
 
 def _load_yaml(path: Path) -> dict[str, Any]:
@@ -460,16 +461,16 @@ def _build_cluster_bound_table(funded: pd.DataFrame) -> pd.DataFrame:
 
 
 def build_tail_satisficing_audit() -> dict[str, Any]:
-    start = datetime.now(tz=UTC)
     a20, a20_status = _build_a20_table()
     a21 = _build_cluster_bound_table(pd.read_csv(FUNDED_LOANS_PATH))
     artifacts = []
     artifacts += _write_table(TABLE_A20_NAME, a20)
     artifacts += _write_table(TABLE_A21_NAME, a21)
     status = {
-        "schema_version": "2026-05-12.1",
-        "generated_at_utc": datetime.now(tz=UTC).isoformat(),
-        "elapsed_sec": (datetime.now(tz=UTC) - start).total_seconds(),
+        "schema_version": STATUS_SCHEMA_VERSION,
+        "generated_at_utc": REPRODUCIBLE_STATUS_TIMESTAMP,
+        "elapsed_sec": 0.0,
+        "timestamp_policy": "fixed_for_bit_reproducible_manifest",
         "generated_artifacts": [
             str(path.relative_to(ROOT)).replace("\\", "/") for path in artifacts
         ],

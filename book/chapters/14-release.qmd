@@ -104,7 +104,7 @@ Manifest de uso por sección del capítulo 14.
 | A17 | Budget/LGD/cap sensitivity | No | Sí | Sí | Diagnóstico aplicado, no solver con caps nuevos. |
 | A18 | Robust region by family | Sí o appendix corto | Sí | Sí | Evidencia visual/tabular de región `45/45`. |
 | A19 | Regret-auditability frontier | Sí | Sí | Sí | SPO+ gana regret; CRPTO compra cobertura, bound exacto y región robusta. |
-| A20 | Tail-satisficing challenger audit | No | Sí | Sí | Challenger journal: 2% menos retorno por 22.6% menor CVaR 95%; no reemplaza champion. |
+| A20 | Tail-risk robust-region audit | No | Sí | Sí | Frontera journal: 2% menos retorno por 22.6% menor CVaR 95%; no reemplaza champion. |
 | A21 | Cluster-bound tightening | No | Sí | Sí | Cota dependence-aware transparente, pero no más tight que Markov. |
 | A22 | CVaR/OCE tail-constrained re-opt | No | Sí | Sí | Re-optimización con restricción de cola como constraint de selección; challenger journal, no champion. |
 | A23 | Multi-distribution robustness | No | Sí | Sí | Cobertura worst-case por grade y celda grade × vintage; motiva MDCP/group-weighted. |
@@ -140,7 +140,7 @@ Manifest de tablas para decidir cuerpo, appendix y tesis.
 | Fig 13 | `crpto_fig13_alpha_gamma_funded_set` | Sí | Sí | Sí | Une teoría y decisión. |
 | Fig 14 | `crpto_fig14_robust_region_heatmap` | Sí | Sí | Sí | Muestra región robusta, no punto aislado. |
 | Fig 15 | `crpto_fig15_regret_auditability_frontier` | Sí | Sí | Sí | Separa el claim de regret SPO+ del claim de auditabilidad CRPTO. |
-| Fig 16 | `crpto_fig16_tail_risk_frontier` | No | Sí | Sí | Muestra el frontier retorno--CVaR del challenger tail-satisficing como auditoría, no como reemplazo del champion. |
+| Fig 16 | `crpto_fig16_tail_risk_frontier` | No | Sí | Sí | Muestra el frontier retorno--CVaR dentro de la región robusta como auditoría, no como reemplazo del champion. |
 | Fig 17 | `crpto_fig17_tail_risk_lgd` | No | Sí | Sí | Sensibilidad LGD del funded set congelado; confirma que CVaR/OCE son diagnósticos de cola. |
 | Fig 18 | `crpto_fig18_tail_constrained_frontier` | No | Sí | Sí | Frontera retorno-vs-CVaR de A22; champion en la esquina de mayor retorno y mayor cola. |
 | Fig 19 | `crpto_fig19_online_coverage_aci` | No | Sí | Sí | Estabilidad conformal online (A24): cobertura por vintage y target ACI. |
@@ -262,7 +262,7 @@ del dossier está lista para ser usada como fuente de manuscrito.
 | Tablas canónicas | `uv run python scripts/export_crpto_tables.py` | A0 usa `models/final_project_promotion.json`. |
 | P1 evidence | `uv run python scripts/analyze_crpto_evidence.py --include-hardening` | A3--A11 actualizadas y status JSON coherente. |
 | Journal package | `uv run python scripts/build_crpto_journal_package.py` | Tablas journal base y status JSON actualizados. |
-| Tail-satisficing audit | `uv run python scripts/build_tail_satisficing_challenger_audit.py` | A20--A21 actualizadas. |
+| Tail-risk robust-region audit | `uv run python scripts/build_tail_satisficing_challenger_audit.py` | A20--A21 actualizadas. |
 | P2 re-opt de cola | `uv run python scripts/build_tail_constrained_reoptimization.py` | A22 y `crpto_tail_constrained_reopt_status.json` actualizados. |
 | P2 multi-distribución/online | `uv run python scripts/build_distribution_robustness_diagnostics.py` | A23--A24 y `crpto_distribution_robustness_status.json` actualizados. |
 | P2 réplica externa | `uv run python scripts/build_multidataset_external_replication.py` + `uv run python scripts/build_price_of_robustness_cross_dataset.py` | A25--A34, Fig 22--25 y `crpto_multidataset_external_status.json` actualizados. |

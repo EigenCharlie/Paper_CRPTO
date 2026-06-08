@@ -59,6 +59,8 @@ def render_pdf(chrome: Path, html_path: Path, pdf_path: Path) -> None:
         "--no-sandbox",
         "--no-pdf-header-footer",
         "--print-to-pdf-no-header",
+        "--run-all-compositor-stages-before-draw",
+        "--virtual-time-budget=10000",
         f"--print-to-pdf={pdf_path}",
         html_path.resolve().as_uri(),
     ]
