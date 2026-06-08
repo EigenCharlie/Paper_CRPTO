@@ -12,6 +12,7 @@ dvc.lock text eol=lf
 *.json text eol=lf
 *.csv text eol=lf
 *.tex text eol=lf
+*.svg text eol=lf
 
 *.parquet binary
 *.pkl binary

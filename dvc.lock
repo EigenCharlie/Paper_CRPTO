@@ -33,8 +33,8 @@ stages:
     outs:
     - path: book/_book
       hash: md5
-      md5: 639095c2cfdaea7337ae4dbc02753df6.dir
-      size: 17790910
+      md5: 7533d7c701f19ad32d798ba8e5cdc8b7.dir
+      size: 17788292
       nfiles: 115
   crpto.paper.figures:
     cmd: python scripts/generate_crpto_figures.py --paper crpto
@@ -65,8 +65,8 @@ stages:
       size: 1426
     - path: reports/crpto/tables
       hash: md5
-      md5: d816ba856d404c1ef3350a9d1d30c18e.dir
-      size: 240281
+      md5: 09efa640e2b93cf73574e64424f65aa7.dir
+      size: 240177
       nfiles: 77
     - path: reports/dvc/metrics_summary.json
       hash: md5
