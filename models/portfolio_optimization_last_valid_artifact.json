@@ -2,8 +2,8 @@
   "stage_name": "portfolio_optimization",
   "artifact_key": "portfolio_allocations",
   "artifact_path": "data\\processed\\portfolio_allocations.parquet",
-  "validated_at_utc": "2026-06-07T02:41:27.333426+00:00",
+  "validated_at_utc": "2026-06-07T22:36:27.085451+00:00",
   "solver_status": "TerminationCondition.optimal",
   "n_candidates_used": 5000,
-  "objective_value": 56733.97590136235
+  "objective_value": 66101.82798271991
 }

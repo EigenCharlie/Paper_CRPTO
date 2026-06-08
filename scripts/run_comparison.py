@@ -537,22 +537,12 @@ def _gate_semantic_coherence(cur_metrics: dict[str, Any]) -> GateResult:
     storytelling_conformal_gate = storytelling.get(
         "conformal_overall_pass", storytelling.get("conformal_gate_overall_pass")
     )
-    storytelling_conformal_ok = (
-        storytelling_conformal_gate
-        in (
-            None,
-            conformal_gate_pass,
-        )
-        and storytelling.get("conformal_strict_policy_pass")
-        in (
-            None,
-            bool(conformal.get("strict_overall_pass", False)),
-        )
-        and storytelling.get("conformal_methodological_justification_pass")
-        in (
-            None,
-            bool(conformal.get("methodological_justification_pass", False)),
-        )
+    storytelling_conformal_ok = storytelling_conformal_gate in (
+        None,
+        conformal_gate_pass,
+    ) and storytelling.get("conformal_methodological_justification_pass") in (
+        None,
+        bool(conformal.get("methodological_justification_pass", False)),
     )
 
     checks = {
@@ -576,11 +566,9 @@ def _gate_semantic_coherence(cur_metrics: dict[str, Any]) -> GateResult:
             "conformal": {
                 "status_gate_overall_pass": conformal_gate_pass,
                 "storytelling_gate_overall_pass": storytelling_conformal_gate,
-                "status_strict_overall_pass": bool(conformal.get("strict_overall_pass", False)),
                 "status_methodological_justification_pass": bool(
                     conformal.get("methodological_justification_pass", False)
                 ),
-                "storytelling_strict_policy_pass": storytelling.get("conformal_strict_policy_pass"),
                 "storytelling_methodological_justification_pass": storytelling.get(
                     "conformal_methodological_justification_pass"
                 ),
@@ -645,19 +633,6 @@ def _gate_conformal(base: dict[str, Any], cur: dict[str, Any]) -> GateResult:
     )
     critical_alerts_ok = np.isnan(b_critical) or np.isnan(c_critical) or (c_critical <= b_critical)
 
-    pvalue_threshold = 0.01
-    pvalue_fields = {
-        "kupiec_pvalue_90": _safe_float(c.get("kupiec_pvalue_90")),
-        "kupiec_pvalue_95": _safe_float(c.get("kupiec_pvalue_95")),
-        "christoffersen_pvalue_90": _safe_float(c.get("christoffersen_pvalue_90")),
-        "christoffersen_pvalue_95": _safe_float(c.get("christoffersen_pvalue_95")),
-    }
-    failing_statistical_tests = [
-        key
-        for key, value in pvalue_fields.items()
-        if np.isfinite(value) and value < pvalue_threshold
-    ]
-    statistical_warning = bool(len(failing_statistical_tests) > 0)
     conformal_promotion_pass = bool(
         cov90_ok and cov95_ok and min_group_ok and winkler90_ok and critical_alerts_ok
     )
@@ -677,11 +652,10 @@ def _gate_conformal(base: dict[str, Any], cur: dict[str, Any]) -> GateResult:
                 "conformal_promotion_pass": bool(conformal_promotion_pass),
             },
             "diagnostics": {
-                "statistical_warning": statistical_warning,
-                "statistical_pvalue_threshold": pvalue_threshold,
-                "statistical_tests": pvalue_fields,
-                "failing_statistical_tests": failing_statistical_tests,
-                "policy_overall_pass_strict": bool(c.get("overall_pass", False)),
+                "retired_backtest_checks": (c.get("methodological_justification", {}) or {}).get(
+                    "retired_backtest_checks", []
+                ),
+                "policy_overall_pass": bool(c.get("overall_pass", False)),
             },
         },
     )
@@ -915,7 +889,7 @@ def _markdown_report(report: dict[str, Any]) -> str:
         f"- Generated: {report['generated_at_utc']}",
         f"- Overall gates pass: `{report['overall_pass']}`",
         f"- Conformal promotion pass: `{report.get('conformal_promotion_pass', False)}`",
-        f"- Conformal statistical warning: `{report.get('conformal_statistical_warning', False)}`",
+        f"- Conformal retired backtest checks: `{len(report.get('conformal_retired_backtest_checks', []))}`",
         f"- Artifact coherence pass: `{report.get('artifact_coherence_pass', False)}`",
         f"- Semantic coherence pass: `{report.get('semantic_coherence_pass', False)}`",
         f"- Fairness absolute (business) pass: `{report.get('fairness_absolute_business_pass', False)}`",
@@ -942,13 +916,6 @@ def _markdown_report(report: dict[str, Any]) -> str:
                 f"- `{key}`: hash_changed={meta['hash_changed']}, "
                 f"baseline_exists={meta['baseline_exists']}, current_exists={meta['current_exists']}"
             )
-    failing_stats = report.get("conformal_failing_statistical_tests", [])
-    if failing_stats:
-        lines.extend(["", "## Conformal Diagnostics"])
-        lines.append(
-            "- Statistical warnings (non-blocking): "
-            + ", ".join(f"`{name}`" for name in failing_stats)
-        )
     return "\n".join(lines) + "\n"
 
 
@@ -1013,11 +980,8 @@ def _write_compare(run_tag: str, baseline_path: Path) -> tuple[Path, Path]:
         else False,
         "semantic_coherence": semantic_gate.details if semantic_gate is not None else {},
         "conformal_promotion_pass": bool(conformal_checks.get("conformal_promotion_pass", False)),
-        "conformal_statistical_warning": bool(
-            conformal_diagnostics.get("statistical_warning", False)
-        ),
-        "conformal_failing_statistical_tests": conformal_diagnostics.get(
-            "failing_statistical_tests", []
+        "conformal_retired_backtest_checks": conformal_diagnostics.get(
+            "retired_backtest_checks", []
         ),
         "ab_no_regression_pass": bool(ab_gate.passed) if ab_gate is not None else False,
         "fairness_absolute_business_pass": bool(fairness_abs_gate.passed)

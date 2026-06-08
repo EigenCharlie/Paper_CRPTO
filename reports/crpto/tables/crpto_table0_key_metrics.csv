@@ -1,10 +1,9 @@
 metric,value
-run_tag,paper-thesis-final-economic-2026-04-06
+run_tag,ijds-rebaseline-2026-06-07
 champion_label,bound_aware_276k_economic_champion
-pd_auc,0.712438241693818
-pd_brier,0.15463051782916892
-pd_ece_pipeline_summary,0.006379675621599359
-pd_ece_dvc_metrics,0.0062482132744862825
+pd_auc,0.7126777845551742
+pd_brier,0.1545907367602431
+pd_ece,0.006152293607422042
 coverage_90,0.9297140524941399
 coverage_95,0.9663884364085542
 avg_width_90,0.7842303100675323
@@ -14,6 +13,6 @@ robust_return,170464.5429284627
 price_of_robustness,-14465.688162534818
 price_of_robustness_pct,-10.557772959426375
 alpha01_exact_pass,True
-alpha01_weighted_miscoverage_V,0.03645
-alpha01_gamma_cp,0.18591
+alpha01_weighted_miscoverage_V,0.028875
+alpha01_gamma_cp,0.187987
 alpha01_violation,0.0

@@ -14,7 +14,7 @@ execute:
 
 # Resumen
 
-CRPTO integra prediccion de default calibrada, intervalos conformales Mondrian y optimizacion robusta de portafolio. El champion congelado `bound_aware_276k_economic_champion` obtiene retorno robusto de `$170,464.54` con `V=0.03645`, `Gamma_CP=0.18591` y exact pass en `alpha=0.01`.
+CRPTO integra prediccion de default calibrada, intervalos conformales Mondrian y optimizacion robusta de portafolio. El champion IJDS `bound_aware_276k_economic_champion` obtiene retorno robusto de `$170,464.54` con `V=0.028875`, `Gamma_CP=0.187987` y exact pass en `alpha=0.01`.
 
 # Manuscrito
 

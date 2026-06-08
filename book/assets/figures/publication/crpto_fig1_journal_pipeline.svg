@@ -159,8 +159,8 @@
 <circle cx="1674" cy="475" r="58" fill="#FFFFFF" stroke="#2F7D1E" stroke-width="4"/>
 <path d="M1649,473 L1669,497 L1708,443" fill="none" stroke="#2F7D1E" stroke-width="7" stroke-linecap="round" stroke-linejoin="round"/>
 <text x="1448" y="665" font-family="DejaVu Sans Condensed, Arial Narrow, Arial, Helvetica, sans-serif" font-size="23" font-weight="400" fill="#111111" text-anchor="start" >robust return: $170.5K</text>
-<text x="1448" y="720" font-family="DejaVu Sans Condensed, Arial Narrow, Arial, Helvetica, sans-serif" font-size="23" font-weight="400" fill="#111111" text-anchor="start" >V(α = 0.01) = 0.03645</text>
-<text x="1448" y="775" font-family="DejaVu Sans Condensed, Arial Narrow, Arial, Helvetica, sans-serif" font-size="23" font-weight="400" fill="#111111" text-anchor="start" >Γ_CP = 0.18591</text>
+<text x="1448" y="720" font-family="DejaVu Sans Condensed, Arial Narrow, Arial, Helvetica, sans-serif" font-size="23" font-weight="400" fill="#111111" text-anchor="start" >V(α = 0.01) = 0.028875</text>
+<text x="1448" y="775" font-family="DejaVu Sans Condensed, Arial Narrow, Arial, Helvetica, sans-serif" font-size="23" font-weight="400" fill="#111111" text-anchor="start" >Γ_CP = 0.187987</text>
 <text x="1448" y="830" font-family="DejaVu Sans Condensed, Arial Narrow, Arial, Helvetica, sans-serif" font-size="23" font-weight="400" fill="#111111" text-anchor="start" >exact pass; 45/45 safe policies</text>
 <line x1="34" y1="910" x2="1759" y2="910" stroke="#111111" stroke-width="2"/>
 <text x="896.0" y="960" font-family="DejaVu Sans Condensed, Arial Narrow, Arial, Helvetica, sans-serif" font-size="24" font-weight="400" fill="#111111" text-anchor="middle" >Prediction uncertainty becomes an auditable robust portfolio constraint.</text>

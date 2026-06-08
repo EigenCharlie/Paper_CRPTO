@@ -1,7 +1,7 @@
 cluster_type,n_clusters,max_cluster_exposure_share,sum_cluster_exposure_sq,alpha,delta,empirical_weighted_miscoverage_V,markov_sqrt_alpha_threshold,cluster_hoeffding_threshold,cluster_bound_tighter_than_markov,paper_role
-period,5,0.29295,0.24175488055949254,0.01,0.1,0.036449999999999996,0.1,0.5375704617085966,False,conditional caveat: transparent but not tighter than Markov when exposure is concentrated
-period,5,0.29295,0.24175488055949254,0.01,0.05,0.036449999999999996,0.1,0.6117611228640739,False,conditional caveat: transparent but not tighter than Markov when exposure is concentrated
-grade,7,0.4571860934354644,0.33378586388394105,0.01,0.1,0.036449999999999996,0.1,0.6299073940643483,False,conditional caveat: transparent but not tighter than Markov when exposure is concentrated
-grade,7,0.4571860934354644,0.33378586388394105,0.01,0.05,0.036449999999999996,0.1,0.7170831227278804,False,conditional caveat: transparent but not tighter than Markov when exposure is concentrated
-period_grade,24,0.1760110934354644,0.08992743356684525,0.01,0.1,0.036449999999999996,0.1,0.3317651068576503,False,conditional caveat: transparent but not tighter than Markov when exposure is concentrated
-period_grade,24,0.1760110934354644,0.08992743356684525,0.01,0.05,0.036449999999999996,0.1,0.37701397453917257,False,conditional caveat: transparent but not tighter than Markov when exposure is concentrated
+period,5,0.2913190233876835,0.2407418509137283,0.01,0.1,0.028875,0.1,0.5364639575382848,False,conditional caveat: transparent but not tighter than Markov when exposure is concentrated
+period,5,0.2913190233876835,0.2407418509137283,0.01,0.05,0.028875,0.1,0.6104990143111724,False,conditional caveat: transparent but not tighter than Markov when exposure is concentrated
+grade,6,0.4235309766120664,0.3571522382836301,0.01,0.1,0.028875,0.1,0.6512384189212871,False,conditional caveat: transparent but not tighter than Markov when exposure is concentrated
+grade,6,0.4235309766120664,0.3571522382836301,0.01,0.05,0.028875,0.1,0.7414138660151022,False,conditional caveat: transparent but not tighter than Markov when exposure is concentrated
+period_grade,22,0.1480309766120664,0.09141504008812656,0.01,0.1,0.028875,0.1,0.3344155580288755,False,conditional caveat: transparent but not tighter than Markov when exposure is concentrated
+period_grade,22,0.1480309766120664,0.09141504008812656,0.01,0.05,0.028875,0.1,0.38003715075667244,False,conditional caveat: transparent but not tighter than Markov when exposure is concentrated

@@ -106,23 +106,24 @@ concentration so reviewers can audit where that assumption would matter.
 
 To quantify the cost of staying distribution-free, the table below contrasts the
 Markov threshold used in the main theorem with Hoeffding and Bernstein
-tightenings, all computed on the *real* frozen funded-set weights (335 loans,
-effective sample size `n_eff = 1 / sum_i w_i^2 = 119.6` -- well below the loan
-count because exposure is concentrated). Each column reports the threshold `t`
+tightenings, all computed on the *real* rebaselined funded-set weights (341
+positive-exposure loan rows, effective sample size
+`n_eff = 1 / sum_i w_i^2 = 126.1` -- well below the loan count because exposure
+is concentrated). Each column reports the threshold `t`
 such that `P(V > t)` is controlled at the matched tail probability
 `delta = sqrt(alpha)`.
 
 | `alpha` | E[V] ≤ | Markov `t` | Hoeffding `t` (indep.) | Bernstein `t` (indep.) | empirical `V` |
 |---:|---:|---:|---:|---:|---:|
-| `0.01` | `0.01` | `0.1000` | `0.1081` | `0.0701` | `0.03645` |
-| `0.05` | `0.05` | `0.2236` | `0.1291` | `0.1069` | `0.03645` |
-| `0.10` | `0.10` | `0.3162` | `0.1694` | `0.1593` | `0.03645` |
+| `0.01` | `0.01` | `0.1000` | `0.1056` | `0.0698` | `0.028875` |
+| `0.05` | `0.05` | `0.2236` | `0.1271` | `0.1061` | `0.028875` |
+| `0.10` | `0.10` | `0.3162` | `0.1676` | `0.1582` | `0.028875` |
 
 : Concentration-bound comparison on the frozen funded set (Table A21b). Bernstein
-is the sharpest at every level (e.g. `0.0701` vs Markov `0.1000` at
+is the sharpest at every level (e.g. `0.0698` vs Markov `0.1000` at
 `alpha = 0.01`); Hoeffding helps at looser `alpha` but not at `0.01`, because with
-concentrated exposure the effective sample size is only ~120. The frozen empirical
-`V = 0.03645` sits below *all three* thresholds at every level.
+concentrated exposure the effective sample size is only ~126. The frozen empirical
+`V = 0.028875` sits below *all three* thresholds at every level.
 
 Two honest readings follow. First, the tightenings are real: a second-moment
 (Bernstein) argument would cut the worst-case threshold by roughly 30\% at
@@ -320,7 +321,7 @@ to make the audit path explicit.
 |---|---|---|---|
 | The predictive input is a frozen calibrated PD artifact, not a refreshed leaderboard model. | AUC, Brier, ECE, temporal backtesting, and calibration diagnostics. | `models/pd_canonical.cbm`, `models/pd_canonical_calibrator.pkl`, paper-facing metric tables. | `EXTRACTION_MANIFEST.json` and champion validation hashes. |
 | The conformal layer gives conservative OOT uncertainty on the PD scale. | 90% and 95% coverage, minimum group coverage, and grade/decile audits. | `data/processed/conformal_intervals_mondrian.parquet`. | Conformal validation status and smoke tests that check final metric synchronization. |
-| The promoted funded set passes the exact alpha-safe bound. | `V(alpha = 0.01) = 0.03645`, `Gamma_CP = 0.18591`, zero violation. | `models/final_project_promotion.json`, bound-evaluation parquet, Table A13. | Frozen exact-evaluation artifact and final-sync regression tests. |
+| The promoted funded set passes the exact alpha-safe bound. | `V(alpha = 0.01) = 0.028875`, `Gamma_CP = 0.187987`, zero violation. | `models/final_project_promotion.json`, bound-evaluation parquet, Table A13. | Rebaselined exact-evaluation artifact and final-sync regression tests. |
 | The result is not an isolated lucky policy. | `45/45` policies pass in the final robust region. | Table A18 and robust-region heatmap. | Protected search/evaluation split; no rerun of the champion search in paper builds. |
 | The supplement strengthens interpretation without moving the champion. | A20--A34 challenger, dependence, tail-risk, multi-distribution, online, and external-replication diagnostics. | Journal robustness tables and Figures 15--25. | Scope caveats in each table; challenger and external outputs are labeled as non-promoted diagnostics. |
 | The manuscript is reproducible at the artifact level. | Tables, figures, Quarto pages, and status JSONs regenerate from frozen inputs. | Repository code, DVC metadata, rendered book/paper outputs. | Pre-push smoke/lint hooks, DVC status checks, and manifest validation before release. |
@@ -328,17 +329,18 @@ to make the audit path explicit.
 ## Funded-Set Audit Card
 
 Table A8 is intentionally more granular than the manuscript body. For reviewers
-who need the short version, the promoted policy funds 335 loans on a `$1M`
-budget. The exposure-weighted audit below collapses the period-by-grade table
-into four grade buckets. It is a diagnostic view of the frozen funded set, not
-a new selector or a re-optimized policy.
+who need the short version, the promoted policy funds 341 positive-exposure loan
+rows on a `$1M` budget; the canonical robust-region ledger reports `n_funded =
+340` because it uses a solver-threshold count. The exposure-weighted audit below
+collapses the period-by-grade table into four grade buckets. It is a diagnostic
+view of the frozen funded set, not a new selector or a re-optimized policy.
 
 | Grade bucket | Funded loans | Exposure share | Weighted default rate | `V` contribution | Mean `u_i(0.01)` |
 |---|---:|---:|---:|---:|---:|
-| A-B | `23` | `9.60%` | `1.25%` | `0.00120` | `0.11682` |
-| C | `114` | `32.56%` | `2.66%` | `0.00865` | `0.17257` |
-| D | `147` | `45.72%` | `5.05%` | `0.02310` | `0.33576` |
-| E-G | `51` | `12.12%` | `2.89%` | `0.00350` | `0.46493` |
+| A-B | `13` | `7.35%` | `0.00%` | `0.00000` | `0.12529` |
+| C | `144` | `40.88%` | `2.86%` | `0.01168` | `0.17258` |
+| D | `141` | `42.35%` | `3.94%` | `0.01370` | `0.35206` |
+| E-G | `43` | `9.42%` | `4.78%` | `0.00350` | `0.52587` |
 
 The concentration pattern is useful for interpretation: most exposure sits in
 C/D loans, D contributes the largest share of the exact `V(alpha = 0.01)`, and

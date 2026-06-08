@@ -41,7 +41,7 @@ Términos técnicos usados en el manuscrito y el dossier extendido. Se ordenan a
 :   Gradient boosting de Yandex. Modelo PD principal del champion.
 
 **Champion (CRPTO)**
-:   Configuración final escogida para el paper. Run tag: `paper-thesis-final-economic-2026-04-06`. Política: `bound_aware_276k_economic_champion`. Retorno robusto: `$170 464,54`.
+:   Configuración final escogida para el paper. Run tag: `ijds-rebaseline-2026-06-07`. Política: `bound_aware_276k_economic_champion`. Retorno robusto: `$170 464,54`.
 
 **Conformal prediction**
 :   Marco que produce intervalos `[low, high]` con cobertura garantizada en muestras finitas, sin asumir distribución del residual. Base teórica: intercambiabilidad.
@@ -103,7 +103,7 @@ Términos técnicos usados en el manuscrito y el dossier extendido. Se ordenan a
 :   Peso de blending entre PD puntual y cota conformal en las políticas `blended_uncertainty`. `γ = 0` = punto; `γ = 1` = peor caso conformal.
 
 **Γ_CP (Gamma_CP)**
-:   Brecha conformal observada del champion: `0.18591` para `α = 0.01`. Mide la diferencia entre cobertura observada y target.
+:   Brecha conformal observada del champion: `0.187987` para `α = 0.01`. Mide la diferencia entre cobertura observada y target.
 
 **Grade**
 :   Calificación crediticia de LendingClub (`A`–`G`). Usada como variable Mondrian para conformal condicional.
@@ -190,7 +190,7 @@ Términos técnicos usados en el manuscrito y el dossier extendido. Se ordenan a
 ## V
 
 **V (alpha_weighted_miscoverage)**
-:   Métrica de miscoverage del champion. Para `α = 0.01`, vale `0.03645`. Mide la fracción ponderada de loans donde `y_true ∉ [pd_low, pd_high]`.
+:   Métrica de miscoverage del champion. Para `α = 0.01`, vale `0.028875`. Mide la fracción ponderada de loans donde `y_true ∉ [pd_low, pd_high]`.
 
 **Venn-Abers**
 :   Calibrador conformal que produce intervalos `[p₀, p₁]` con garantía de cobertura. Usado por CRPTO como calibrador del PD canónico. Wrapper en `src/models/venn_abers.py`.

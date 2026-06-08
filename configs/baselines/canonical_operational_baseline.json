@@ -1,0 +1,21 @@
+{
+  "schema_version": "2026-06-07.1",
+  "generated_at_utc": "2026-06-07T00:00:00+00:00",
+  "official_run_tag": "ijds-rebaseline-2026-06-07",
+  "previous_official_run_tag": "paper-thesis-final-economic-2026-04-06",
+  "policy": "bound_aware_276k_economic_champion",
+  "purpose": "Standalone CRPTO IJDS rebaseline registry for DVC, MLflow tags and agent-readable defaults.",
+  "champion_metrics": {
+    "realized_total_return": 170464.5429284627,
+    "alpha01_weighted_miscoverage_V": 0.028875,
+    "alpha01_gamma_cp": 0.187987,
+    "alpha01_violation": 0.0,
+    "alpha01_exact_pass": true,
+    "robust_region_unique_policies": 45,
+    "robust_region_alpha01_passers": 45
+  },
+  "notes": [
+    "This registry is local to Paper_CRPTO and does not point to the historical parent workspace.",
+    "The April 2026 tag remains historical provenance; this file names the current IJDS baseline."
+  ]
+}

@@ -1,5 +1,10 @@
 # Scientific dependency upgrade experiment - 2026-06-06
 
+> Superseded by the formal IJDS rebaseline `ijds-rebaseline-2026-06-07`.
+> This memo is retained as experiment provenance. Its `strict_overall_pass=false`,
+> `9/13`, Kupiec/Christoffersen failure language, and old bound values describe
+> the pre-rebaseline experiment, not the current promotion artifact.
+
 ## Scope
 
 This is an isolated scientific revalidation on branch

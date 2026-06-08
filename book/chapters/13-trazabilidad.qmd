@@ -38,7 +38,7 @@ pd.DataFrame(
     [
         {
             "Claim": "C1: PD calibrada estable",
-            "Evidencia": "AUC 0.7124, Brier 0.1546, ECE 0.0064",
+            "Evidencia": "AUC 0.7127, Brier 0.1546, ECE 0.0062",
             "Artefacto": "data/processed/pipeline_summary.json + reports/dvc/metrics_summary.json",
             "Script": "scripts/train_pd_model.py + src/models/calibration.py",
             "Test": "tests/test_scripts/test_train_pd_model.py + tests/test_evaluation/test_calibration_mapping.py",
@@ -181,7 +181,7 @@ pd.DataFrame(
         {"Tabla": "A4", "Rol": "Sensibilidad periodo × grade", "Generador": "analyze_crpto_evidence.py"},
         {"Tabla": "A5", "Rol": "Decision-aware conformal selector (CROMS-style)", "Generador": "analyze_crpto_evidence.py"},
         {"Tabla": "A6", "Rol": "Synthetic shift básico", "Generador": "analyze_crpto_evidence.py"},
-        {"Tabla": "A7", "Rol": "Funded-set loan-level export (335 préstamos)", "Generador": "analyze_crpto_evidence.py --include-hardening"},
+        {"Tabla": "A7", "Rol": "Funded-set loan-level export (341 filas con exposición positiva)", "Generador": "analyze_crpto_evidence.py --include-hardening"},
         {"Tabla": "A8", "Rol": "Funded-set composition por periodo × grade", "Generador": "analyze_crpto_evidence.py --include-hardening"},
         {"Tabla": "A9", "Rol": "Strict temporal holdout (2018 select / 2019-20 eval)", "Generador": "analyze_crpto_evidence.py --include-hardening"},
         {"Tabla": "A10", "Rol": "Exact eval ranks 1/2/3 conformal finalists", "Generador": "analyze_crpto_evidence.py --include-hardening"},

@@ -1715,7 +1715,7 @@ def _crpto_fig21_end_to_end_arc() -> None:
     with the frozen headline number at each stage. Title-style house figure.
     """
     stages = [
-        ("Calibrated PD", "CatBoost + Venn-Abers", "AUC 0.7124\nECE 0.0064", PALETTE["blue"]),
+        ("Calibrated PD", "CatBoost + Venn-Abers", "AUC 0.7127\nECE 0.0062", PALETTE["blue"]),
         (
             "Mondrian\nconformal",
             "Upper endpoint u(α)",
@@ -1726,7 +1726,7 @@ def _crpto_fig21_end_to_end_arc() -> None:
         (
             "Funded set\n+ certificate",
             "Exact α-safe audit",
-            "$170,464.54\nV=0.03645",
+            "$170,464.54\nV=0.028875",
             PALETTE["orange"],
         ),
         ("IFRS9 ECL\nprovision", "SICR conformal", "$875.9M\n[455.4, 1563.3]", PALETTE["red"]),

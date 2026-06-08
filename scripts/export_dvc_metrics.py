@@ -105,7 +105,10 @@ def _ifrs9_metrics() -> dict[str, float]:
 
 
 def _optimization_metrics() -> dict[str, float]:
-    pipeline = _load_pickle(ROOT / "models/pipeline_results.pkl")
+    path = ROOT / "models/pipeline_results.pkl"
+    if not path.exists():
+        return {}
+    pipeline = _load_pickle(path)
     if not isinstance(pipeline, dict):
         raise TypeError("models/pipeline_results.pkl must contain a dict")
     return {

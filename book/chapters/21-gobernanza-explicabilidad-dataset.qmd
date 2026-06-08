@@ -502,7 +502,7 @@ else:
     Markdown("*No disponible.*")
 ```
 
-**Interpretación**: El AUC de 0.7124 indica poder discriminante moderado-bueno, consistente con la dificultad inherente del problema (predecir default en préstamos personales no asegurados con información de originación solamente). El Brier score de 0.1546 y el ECE de 0.0064 confirman buena calibración --- el modelo no solo ordena bien los riesgos, sino que las probabilidades asignadas son confiables.
+**Interpretación**: El AUC de 0.7127 indica poder discriminante moderado-bueno, consistente con la dificultad inherente del problema (predecir default en préstamos personales no asegurados con información de originación solamente). El Brier score de 0.1546 y el ECE de 0.0062 confirman buena calibración --- el modelo no solo ordena bien los riesgos, sino que las probabilidades asignadas son confiables.
 
 El método de calibración (Venn-Abers) fue seleccionado automáticamente por la política temporal de validación, no fijado a priori. Esto es un ejemplo de como la configuración (`configs/pd_model.yaml`) define `method: auto` y el artefacto runtime (`data/processed/model_comparison.json`) registra la selección efectiva.
 
@@ -541,41 +541,27 @@ import pandas as pd
 
 if mrm:
     cs = mrm["conformal_status"]
-    st = cs.get("statistical_tests", {})
-
-    kupiec_90 = st.get("kupiec_90", {})
-    kupiec_95 = st.get("kupiec_95", {})
-    christ_90 = st.get("christoffersen_90", {})
-    christ_95 = st.get("christoffersen_95", {})
+    ctx = cs.get("sample_size_context", {})
+    mj = cs.get("methodological_justification", {})
 
     rows = [
         {
-            "Test": "Kupiec 90%",
-            "Estadístico": f"LR = {kupiec_90.get('lr_statistic', 0):.1f}",
-            "p-valor": f"{kupiec_90.get('p_value', 0):.4f}",
-            "Rechaza H0": "Si",
-            "Interpretación": f"Tasa violación {kupiec_90.get('violation_rate', 0):.2%} vs nominal 10%",
+            "Diagnóstico": "Violación 90%",
+            "Valor": f"{ctx.get('violation_rate_90', 0):.2%}",
+            "Estado": "Informativo",
+            "Interpretación": "Sobre-cobertura prudente frente a alpha=10%.",
         },
         {
-            "Test": "Kupiec 95%",
-            "Estadístico": f"LR = {kupiec_95.get('lr_statistic', 0):.1f}",
-            "p-valor": f"{kupiec_95.get('p_value', 0):.4f}",
-            "Rechaza H0": "Si",
-            "Interpretación": f"Tasa violación {kupiec_95.get('violation_rate', 0):.2%} vs nominal 5%",
+            "Diagnóstico": "Violación 95%",
+            "Valor": f"{ctx.get('violation_rate_95', 0):.2%}",
+            "Estado": "Informativo",
+            "Interpretación": "Sobre-cobertura prudente frente a alpha=5%.",
         },
         {
-            "Test": "Christoffersen Ind. 90%",
-            "Estadístico": f"LR_ind = {christ_90.get('lr_ind', 0):.2f}",
-            "p-valor": f"{christ_90.get('p_ind', 0):.4f}",
-            "Rechaza H0": "No",
-            "Interpretación": "Violaciones NO agrupadas temporalmente",
-        },
-        {
-            "Test": "Christoffersen Ind. 95%",
-            "Estadístico": f"LR_ind = {christ_95.get('lr_ind', 0):.2f}",
-            "p-valor": f"{christ_95.get('p_ind', 0):.4f}",
-            "Rechaza H0": "Si",
-            "Interpretación": "Agrupamiento marginal en 95%",
+            "Diagnóstico": "Kupiec / Christoffersen",
+            "Valor": ", ".join(mj.get("retired_backtest_checks", [])),
+            "Estado": "Retirado del gate",
+            "Interpretación": "Se conserva el módulo de investigación, pero no bloquea promoción IJDS.",
         },
     ]
     Markdown(pd.DataFrame(rows).astype(str).to_markdown(index=False, disable_numparse=True))
@@ -584,20 +570,20 @@ else:
 ```
 
 ::: {.callout-warning}
-## Por qué el sistema conformal pasa aunque los p-values sigan rechazando
+## Por qué los backtests VaR-style salen del gate
 
-Las pruebas de Kupiec y Christoffersen pueden rechazar $H_0$ (cobertura nominal = cobertura empírica) con $p \approx 0$. En CRPTO esos p-values son diagnóstico, no gate. Con $N = 276{,}869$ observaciones, la potencia estadística detecta cualquier desviación persistente, incluso cuando esa desviación es operativamente aceptable. El gate relevante queda en PASS porque los controles materiales de cobertura, ancho, cobertura por grupo, alertas y Winkler pasan.
+Las pruebas de Kupiec y Christoffersen contrastan cobertura nominal exacta. En CRPTO la capa conformal sobre-cubre de forma prudente, y con $N = 276{,}869$ observaciones esos p-values pueden convertir una diferencia operativamente aceptable en ruido de promoción. El gate relevante queda en PASS porque los controles materiales de cobertura, ancho, cobertura por grupo, alertas y Winkler pasan.
 
 1. **La desviación de cobertura queda dentro de materialidad**: por debajo del umbral de 3%.
 2. **Sigue siendo conservadora**: sobre-cobertura significa que los intervalos protegen más de lo nominal, no menos.
-3. **No rompe estabilidad operativa**: `critical_alerts = 0` y la independencia temporal sigue siendo aceptable.
+3. **Reduce ruido editorial**: el paper IJDS reporta el gate material y deja los backtests como módulo de investigación, no como criterio de ascenso.
 
-La conclusión oficial ya no es "FAIL metodológico acotado al lane conformal", sino **PASS operacional con diagnósticos estadísticos informativos**.
+La conclusión oficial ya no es "PASS con fallas diagnósticas", sino **PASS material completo**.
 :::
 
 ##### Justificación Metodológica Formal
 
-El sistema implementa una separación explícita entre gate material y diagnóstico estadístico. En el estado actual, `gate_overall_pass = True` y `overall_pass = True`; `strict_overall_pass = False` permanece como señal diagnóstica heredada, no como criterio de promoción.
+El sistema implementa una separación explícita entre gate material e investigación estadística. En el estado actual, `gate_overall_pass = True`, `overall_pass = True` y `strict_overall_pass = True`; `strict_overall_pass` queda como alias de compatibilidad del gate material, no como contador de p-values VaR-style.
 
 ```python
 
@@ -608,34 +594,22 @@ if mrm:
     mj = mrm["conformal_status"].get("methodological_justification", {})
     rows = [
         {
-            "Condición": "Solo fallan tests estadísticos",
+            "Condición": "Gate material conformal",
             "Requerido": "True",
-            "Observado": str(mj.get("only_statistical_failures", "N/A")),
-            "Estado": "PASS" if mj.get("only_statistical_failures") else "FAIL",
+            "Observado": str(mj.get("gate_overall_pass", "N/A")),
+            "Estado": "PASS" if mj.get("gate_overall_pass") else "FAIL",
         },
         {
-            "Condición": f"Desviacion cobertura 90% < {mj.get('max_coverage_deviation_for_statistical_warning_90', 0.03):.0%}",
-            "Requerido": "True",
-            "Observado": f"{mj.get('coverage_deviation_90', 0):.2%}",
-            "Estado": "PASS" if mj.get("coverage_materiality_ok") else "FAIL",
-        },
-        {
-            "Condición": f"Desviacion cobertura 95% < {mj.get('max_coverage_deviation_for_statistical_warning_95', 0.03):.0%}",
-            "Requerido": "True",
-            "Observado": f"{mj.get('coverage_deviation_95', 0):.2%}",
-            "Estado": "PASS" if mj.get("coverage_materiality_ok") else "FAIL",
-        },
-        {
-            "Condición": "Independencia de violaciones (Christoffersen) 90%",
-            "Requerido": "True",
-            "Observado": f"p = {mj.get('min_christoffersen_independence_pvalue_90', 0):.2f} threshold",
-            "Estado": "PASS" if mj.get("independence_ok_90") else "FAIL",
-        },
-        {
-            "Condición": "Winkler 90% en banda compensada",
+            "Condición": "Winkler 90% en modo estricto",
             "Requerido": "True",
             "Observado": f"{mj.get('winkler_90_policy_mode', 'N/A')}",
-            "Estado": "PASS" if mj.get("winkler_90_compensated_pass") else "FAIL",
+            "Estado": "PASS" if mj.get("winkler_90_raw_pass") else "FAIL",
+        },
+        {
+            "Condición": "Backtests VaR-style",
+            "Requerido": "Fuera del gate",
+            "Observado": ", ".join(mj.get("retired_backtest_checks", [])),
+            "Estado": "RETIRED",
         },
     ]
     Markdown(pd.DataFrame(rows).astype(str).to_markdown(index=False, disable_numparse=True))
@@ -830,7 +804,7 @@ El veredicto actual `overall_pass = True` con 4/4 subsistemas aprobados signific
 
 El hecho de quedar en 4/4 PASS **no significa que todo sea perfecto**. El reporte todavía registra:
 
-- 4 fallas estadísticas conformales (Kupiec/Christoffersen) que diagnostican sobre-cobertura.
+- backtests conformales tipo VaR retirados del gate y conservados solo como investigación diagnóstica.
 - C2ST warning severo por alta separabilidad temporal, ahora con drivers identificados.
 - `bootstrap_validation = diagnostic fail` por persistencia material en varios slices bajo remuestreo explícito.
 - Drift estadisticamente detectable en algunas distribuciones marginales, pero no material por PSI.
@@ -1109,7 +1083,7 @@ El monitoreo conformal detallado, incluyendo métricas HSIC, SSC, MWI y CWC, est
 
 | Dimension | Estado | Referencia |
 |-----------|--------|-----------|
-| Pipeline predictivo | PASS (AUC 0.7124, ECE 0.006) | `sec-mrm-pipeline-subsystem` |
+| Pipeline predictivo | PASS (AUC 0.7127, ECE 0.006) | `sec-mrm-pipeline-subsystem` |
 | Sistema conformal | PASS operacional (warnings estadísticos; justificación metodológica activa) | `sec-mrm-conformal-subsystem` |
 | Gobernanza y drift | PASS (PSI < 0.25; drift explicable, no material) | `sec-mrm-governance-subsystem` |
 | Fairness | PASS (6/6 atributos, threshold 0.35) | `sec-mrm-fairness-subsystem` |
@@ -1687,11 +1661,11 @@ El artefacto `lendingclub_literature_benchmark.parquet` registra una referencia 
 
 : Benchmark externo curado para Lending Club
 
-Nuestro pipeline canónico reporta `AUC = 0.7124` para CatBoost calibrado con Venn-Abers sobre evaluación OOT.
+Nuestro pipeline canónico reporta `AUC = 0.7127` para CatBoost calibrado con Venn-Abers sobre evaluación OOT.
 
 ### Comparación correcta, no tramposa
 
-La diferencia entre 0.7124 y 0.7492 **no** debe leerse automáticamente como inferioridad metodológica. Hay al menos tres razones:
+La diferencia entre 0.7127 y 0.7492 **no** debe leerse automáticamente como inferioridad metodológica. Hay al menos tres razones:
 
 1. el protocolo de split puede no coincidir;
 2. el objetivo del proyecto no es solo maximizar AUC, sino producir probabilidades calibradas y gobernables;

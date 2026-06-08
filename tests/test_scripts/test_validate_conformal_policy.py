@@ -65,7 +65,7 @@ def test_compute_mapie_mwi_score_keeps_legacy_alpha_signature(
     assert score == pytest.approx(1.20)
 
 
-def test_validate_conformal_policy_includes_statistical_checks(tmp_path) -> None:
+def test_validate_conformal_policy_includes_material_gate_checks(tmp_path) -> None:
     data_dir = tmp_path / "data" / "processed"
     model_dir = tmp_path / "models"
     data_dir.mkdir(parents=True)
@@ -120,10 +120,6 @@ def test_validate_conformal_policy_includes_statistical_checks(tmp_path) -> None
             "max_warning_alerts": 5,
             "max_winkler_90": 10.0,
             "max_winkler_95": 10.0,
-            "min_kupiec_pvalue_90": 0.0,
-            "min_kupiec_pvalue_95": 0.0,
-            "min_christoffersen_pvalue_90": 0.0,
-            "min_christoffersen_pvalue_95": 0.0,
         },
         "artifacts": {
             "conformal_results_path": str(model_dir / "conformal_results_mondrian.pkl"),
@@ -150,14 +146,15 @@ def test_validate_conformal_policy_includes_statistical_checks(tmp_path) -> None
     assert status["generated_at_utc"]
     assert status["run_tag"]
     assert "winkler_90" in status
-    assert "kupiec_pvalue_90" in status
-    assert "christoffersen_pvalue_90" in status
-    assert status["checks_total"] >= 13
-    assert "statistical_coverage" in set(checks["scope"])
+    assert "kupiec_pvalue_90" not in status
+    assert "christoffersen_pvalue_90" not in status
+    assert status["checks_total"] == 9
+    assert "statistical_coverage" not in set(checks["scope"])
     assert "lgd_ead_conformal_status" in status
-    assert "strict_overall_pass" in status
+    assert status["strict_overall_pass"] is True
+    assert status["diagnostic_checks_total"] == 0
     assert "methodological_justification_pass" in status
-    assert "failing_statistical_checks" in status
+    assert status["failing_statistical_checks"] == []
     assert "sample_size_context" in status
 
 
@@ -213,10 +210,6 @@ def test_validate_conformal_policy_falls_back_to_official_baseline_run_tag(
             "max_warning_alerts": 5,
             "max_winkler_90": 10.0,
             "max_winkler_95": 10.0,
-            "min_kupiec_pvalue_90": 0.0,
-            "min_kupiec_pvalue_95": 0.0,
-            "min_christoffersen_pvalue_90": 0.0,
-            "min_christoffersen_pvalue_95": 0.0,
         },
         "artifacts": {
             "conformal_results_path": str(model_dir / "conformal_results_mondrian.pkl"),
@@ -292,10 +285,6 @@ def test_validate_conformal_policy_supports_artifact_namespace(
             "max_warning_alerts": 5,
             "max_winkler_90": 10.0,
             "max_winkler_95": 10.0,
-            "min_kupiec_pvalue_90": 0.0,
-            "min_kupiec_pvalue_95": 0.0,
-            "min_christoffersen_pvalue_90": 0.0,
-            "min_christoffersen_pvalue_95": 0.0,
         },
         "artifacts": {},
         "output": {},
@@ -314,7 +303,7 @@ def test_validate_conformal_policy_supports_artifact_namespace(
     assert not (tmp_path / "models" / "conformal_policy_status.json").exists()
 
 
-def test_validate_conformal_policy_allows_methodological_justification_for_stats_only_failures(
+def test_validate_conformal_policy_ignores_retired_backtest_thresholds(
     tmp_path, monkeypatch: pytest.MonkeyPatch
 ) -> None:
     data_dir = tmp_path / "data" / "processed"
@@ -365,16 +354,7 @@ def test_validate_conformal_policy_allows_methodological_justification_for_stats
             "max_warning_alerts": 5,
             "max_winkler_90": 10.0,
             "max_winkler_95": 10.0,
-            "min_kupiec_pvalue_90": 0.01,
-            "min_kupiec_pvalue_95": 0.01,
-            "min_christoffersen_pvalue_90": 0.01,
-            "min_christoffersen_pvalue_95": 0.01,
-            "statistical_tests_role": "diagnostic_informational",
             "allow_methodological_justification": True,
-            "max_coverage_deviation_for_statistical_warning_90": 0.03,
-            "max_coverage_deviation_for_statistical_warning_95": 0.03,
-            "min_christoffersen_independence_pvalue_90": 0.01,
-            "min_christoffersen_independence_pvalue_95": 0.01,
         },
         "artifacts": {
             "conformal_results_path": str(model_dir / "conformal_results_mondrian.pkl"),
@@ -389,33 +369,9 @@ def test_validate_conformal_policy_allows_methodological_justification_for_stats
         },
     }
 
-    def _fake_kupiec(_violations, *, alpha=None, nominal_alpha=None):
-        return {
-            "lr_pof": 20.0,
-            "p_value": 0.0,
-            "reject_h0": True,
-            "n": 50,
-            "n_fail": 4,
-            "fail_rate": 0.08,
-            "nominal_alpha": float(alpha if alpha is not None else nominal_alpha),
-        }
-
-    def _fake_christoffersen(_violations, *, alpha=None):
-        return {
-            "lr_uc": 12.0,
-            "p_uc": 0.0,
-            "lr_ind": 0.8,
-            "p_ind": 0.45,
-            "lr_cc": 12.8,
-            "p_cc": 0.0,
-            "reject_cc": True,
-        }
-
     def _fake_winkler(_y_true, _lower, _upper, *, alpha):
         return np.full(120, 1.203 if float(alpha) == 0.10 else 1.10)
 
-    monkeypatch.setattr(policy_mod, "kupiec_pof_test", _fake_kupiec)
-    monkeypatch.setattr(policy_mod, "christoffersen_test", _fake_christoffersen)
     monkeypatch.setattr(policy_mod, "winkler_interval_score", _fake_winkler)
 
     cfg_path = tmp_path / "conformal_policy.yaml"
@@ -425,29 +381,19 @@ def test_validate_conformal_policy_allows_methodological_justification_for_stats
 
     status = json.loads((model_dir / "conformal_policy_status.json").read_text(encoding="utf-8"))
 
-    assert status["overall_pass"] is True  # diagnostic p-values do not gate promotion
+    assert status["overall_pass"] is True
     assert status["gate_overall_pass"] is True
-    assert status["strict_overall_pass"] is False
+    assert status["strict_overall_pass"] is True
     assert status["non_statistical_checks_pass"] is True
-    assert status["diagnostic_statistical_pass"] is False
+    assert status["diagnostic_statistical_pass"] is True
     assert status["methodological_justification_pass"] is True
-    assert (
-        status["methodological_justification_status"] == "diagnostic_statistical_tests_not_gating"
-    )
+    assert status["methodological_justification_status"] == "not_needed_material_gate_pass"
     assert status["gate_checks_passed"] == status["gate_checks_total"] == 9
     assert status["diagnostic_checks_passed"] == 0
-    assert status["diagnostic_checks_total"] == 4
-    assert (
-        status["methodological_justification"]["justification_role"]
-        == "diagnostic_warning_not_blocking_for_promotion"
-    )
+    assert status["diagnostic_checks_total"] == 0
+    assert "retired_backtest_checks" in status["methodological_justification"]
     assert status["failing_non_statistical_checks"] == []
-    assert set(status["failing_statistical_checks"]) == {
-        "kupiec_pvalue_90",
-        "kupiec_pvalue_95",
-        "christoffersen_pvalue_90",
-        "christoffersen_pvalue_95",
-    }
+    assert status["failing_statistical_checks"] == []
 
 
 def test_validate_conformal_policy_reports_winkler_sensitivity_without_overwriting_main_status(
@@ -515,10 +461,6 @@ def test_validate_conformal_policy_reports_winkler_sensitivity_without_overwriti
             "max_warning_alerts": 5,
             "max_winkler_90": 1.00,
             "max_winkler_95": 10.0,
-            "min_kupiec_pvalue_90": 0.0,
-            "min_kupiec_pvalue_95": 0.0,
-            "min_christoffersen_pvalue_90": 0.0,
-            "min_christoffersen_pvalue_95": 0.0,
         },
         "policy_sensitivity": {
             "max_winkler_90_values": [1.20, 1.22, 1.25],
@@ -552,7 +494,7 @@ def test_validate_conformal_policy_reports_winkler_sensitivity_without_overwriti
 
 
 def test_validate_conformal_policy_allows_compensated_winkler_band(
-    tmp_path, monkeypatch: pytest.MonkeyPatch
+    tmp_path,
 ) -> None:
     data_dir = tmp_path / "data" / "processed"
     model_dir = tmp_path / "models"
@@ -613,16 +555,7 @@ def test_validate_conformal_policy_allows_compensated_winkler_band(
             "compensated_min_group_coverage_90": 0.885,
             "compensated_max_avg_width_90": 0.80,
             "max_winkler_95": 10.0,
-            "min_kupiec_pvalue_90": 0.01,
-            "min_kupiec_pvalue_95": 0.01,
-            "min_christoffersen_pvalue_90": 0.01,
-            "min_christoffersen_pvalue_95": 0.01,
-            "statistical_tests_role": "strict_diagnostics",
             "allow_methodological_justification": True,
-            "max_coverage_deviation_for_statistical_warning_90": 0.03,
-            "max_coverage_deviation_for_statistical_warning_95": 0.03,
-            "min_christoffersen_independence_pvalue_90": 0.01,
-            "min_christoffersen_independence_pvalue_95": 0.01,
         },
         "artifacts": {
             "conformal_results_path": str(model_dir / "conformal_results_mondrian.pkl"),
@@ -637,38 +570,13 @@ def test_validate_conformal_policy_allows_compensated_winkler_band(
         },
     }
 
-    def _fake_kupiec(_violations, *, alpha=None, nominal_alpha=None):
-        return {
-            "lr_pof": 20.0,
-            "p_value": 0.0,
-            "reject_h0": True,
-            "n": 120,
-            "n_fail": 8,
-            "fail_rate": 8 / 120,
-            "nominal_alpha": float(alpha if alpha is not None else nominal_alpha),
-        }
-
-    def _fake_christoffersen(_violations, *, alpha=None):
-        return {
-            "lr_uc": 12.0,
-            "p_uc": 0.0,
-            "lr_ind": 0.8,
-            "p_ind": 0.45,
-            "lr_cc": 12.8,
-            "p_cc": 0.0,
-            "reject_cc": True,
-        }
-
-    monkeypatch.setattr(policy_mod, "kupiec_pof_test", _fake_kupiec)
-    monkeypatch.setattr(policy_mod, "christoffersen_test", _fake_christoffersen)
-
     cfg_path = tmp_path / "conformal_policy.yaml"
     cfg_path.write_text(yaml.safe_dump(cfg), encoding="utf-8")
     policy_mod.main(str(cfg_path))
 
     status = json.loads((model_dir / "conformal_policy_status.json").read_text(encoding="utf-8"))
 
-    assert status["strict_overall_pass"] is False
+    assert status["strict_overall_pass"] is True
     assert status["non_statistical_checks_pass"] is True
     assert status["methodological_justification_pass"] is True
     assert status["failing_non_statistical_checks"] == []
@@ -730,10 +638,6 @@ def test_validate_conformal_policy_sensitivity_config_overrides_policy_sensitivi
             "max_warning_alerts": 5,
             "max_winkler_90": 1.00,
             "max_winkler_95": 10.0,
-            "min_kupiec_pvalue_90": 0.0,
-            "min_kupiec_pvalue_95": 0.0,
-            "min_christoffersen_pvalue_90": 0.0,
-            "min_christoffersen_pvalue_95": 0.0,
         },
         "artifacts": {
             "conformal_results_path": str(model_dir / "conformal_results_mondrian.pkl"),

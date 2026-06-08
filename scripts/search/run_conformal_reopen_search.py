@@ -361,11 +361,7 @@ def _policy_reason_code(policy_status: dict[str, Any], acceptance_pass: bool) ->
     if acceptance_pass:
         return "accepted_policy_gate"
     if not bool(policy_status.get("overall_pass", False)):
-        if not bool(policy_status.get("strict_overall_pass", False)) and not bool(
-            policy_status.get("methodological_justification_pass", False)
-        ):
-            return "policy_overall_fail"
-        return "policy_warning_gate"
+        return "policy_overall_fail"
     return "acceptance_gate_fail"
 
 

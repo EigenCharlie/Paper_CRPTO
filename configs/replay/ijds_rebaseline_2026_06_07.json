@@ -1,0 +1,17 @@
+{
+  "schema_version": "2026-06-07.1",
+  "run_tag": "ijds-rebaseline-2026-06-07",
+  "conformal": {
+    "replay_mode": "restore_blessed_namespace",
+    "source_namespace": "conformal-reopen-2026-04-03-2149__resume__2026-04-05-1612__phase1__final__rank-1",
+    "source_role": "official_conformal_winner",
+    "partition": "score_decile_mondrian",
+    "partition_probability_source": "raw",
+    "n_score_bins": 5,
+    "fallback_mode": "grade_then_global",
+    "alpha_used_90": 0.1,
+    "alpha_used_95": 0.05,
+    "score_scale_family": "bernoulli_sqrt",
+    "min_group_size": 100
+  }
+}

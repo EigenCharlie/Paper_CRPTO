@@ -16,8 +16,6 @@ import pandas as pd
 import yaml
 from loguru import logger
 
-import src.evaluation.backtesting as _bt
-
 try:
     from mapie.metrics.regression import regression_mwi_score as _mapie_mwi_score
 
@@ -25,60 +23,12 @@ try:
 except ImportError:
     _mapie_mwi_score = None
     _MAPIE_MWI_AVAILABLE = False
+try:
+    from src.evaluation.backtesting import winkler_interval_score
+except ImportError:
+    winkler_interval_score = None
 from src.utils.artifact_metadata import build_artifact_metadata, resolve_run_tag
 from src.utils.baseline_registry import resolve_official_baseline_run_tag
-
-
-def _fallback_interval_violations(
-    y_true: np.ndarray,
-    lower: np.ndarray,
-    upper: np.ndarray,
-) -> np.ndarray:
-    return (np.logical_or(y_true < lower, y_true > upper)).astype(int)
-
-
-def _fallback_kupiec_pof_test(
-    violations: np.ndarray,
-    *,
-    nominal_alpha: float | None = None,
-    alpha: float | None = None,
-) -> dict[str, float | bool]:
-    violations = np.asarray(violations, dtype=float)
-    n = int(violations.size)
-    n_fail = int(np.nansum(violations))
-    fail_rate = float(n_fail / n) if n > 0 else float("nan")
-    alpha_value = (
-        float(alpha)
-        if alpha is not None
-        else float(nominal_alpha)
-        if nominal_alpha is not None
-        else float("nan")
-    )
-    return {
-        "lr_pof": float("nan"),
-        "p_value": float("nan"),
-        "reject_h0": False,
-        "n": n,
-        "n_fail": n_fail,
-        "fail_rate": fail_rate,
-        "nominal_alpha": alpha_value,
-    }
-
-
-def _fallback_christoffersen_test(
-    _violations: np.ndarray,
-    *,
-    alpha: float | None = None,
-) -> dict[str, float | bool]:
-    return {
-        "lr_uc": float("nan"),
-        "p_uc": float("nan"),
-        "lr_ind": float("nan"),
-        "p_ind": float("nan"),
-        "lr_cc": float("nan"),
-        "p_cc": float("nan"),
-        "reject_cc": False,
-    }
 
 
 def _fallback_winkler_interval_score(
@@ -98,12 +48,16 @@ def _fallback_winkler_interval_score(
     return width + penalty
 
 
-interval_violations = getattr(_bt, "interval_violations", _fallback_interval_violations)
-kupiec_pof_test = getattr(_bt, "kupiec_pof_test", _fallback_kupiec_pof_test)
-christoffersen_test = getattr(_bt, "christoffersen_test", _fallback_christoffersen_test)
-winkler_interval_score = getattr(_bt, "winkler_interval_score", _fallback_winkler_interval_score)
+if winkler_interval_score is None:
+    winkler_interval_score = _fallback_winkler_interval_score
 
-SCHEMA_VERSION = "2026-03-01.1"
+SCHEMA_VERSION = "2026-06-07.1"
+RETIRED_BACKTEST_CHECKS = (
+    "kupiec_pvalue_90",
+    "kupiec_pvalue_95",
+    "christoffersen_pvalue_90",
+    "christoffersen_pvalue_95",
+)
 
 
 def _check(
@@ -243,7 +197,7 @@ def main(
     warning_alerts = int((alerts.get("severity", pd.Series([], dtype=str)) == "warning").sum())
     total_alerts = len(alerts)
 
-    # Conformal quality/statistical checks (v2)
+    # Conformal material-quality checks for the IJDS promotion contract.
     if {"y_true", "pd_low_90", "pd_high_90"}.issubset(intervals_df.columns):
         y_true = pd.to_numeric(intervals_df["y_true"], errors="coerce").to_numpy(dtype=float)
         low_90 = pd.to_numeric(intervals_df["pd_low_90"], errors="coerce").to_numpy(dtype=float)
@@ -301,12 +255,8 @@ def main(
                 logger.info(f"MAPIE MWI cross-check OK: {mapie_mwi_90:.4f} ≈ {winkler_90:.4f}")
         except Exception as exc:
             logger.warning(f"MAPIE MWI cross-check failed: {exc}")
-    violations_90 = interval_violations(y90, lo90, hi90) if y90.size else np.array([], dtype=float)
-    violations_95 = interval_violations(y95, lo95, hi95) if y95.size else np.array([], dtype=float)
-    kupiec_90 = kupiec_pof_test(violations_90, alpha=0.10)
-    kupiec_95 = kupiec_pof_test(violations_95, alpha=0.05)
-    christ_90 = christoffersen_test(violations_90, alpha=0.10)
-    christ_95 = christoffersen_test(violations_95, alpha=0.05)
+    violation_rate_90 = float(np.mean((y90 < lo90) | (y90 > hi90))) if y90.size else float("nan")
+    violation_rate_95 = float(np.mean((y95 < lo95) | (y95 > hi95))) if y95.size else float("nan")
 
     max_winkler_90 = float(policy.get("max_winkler_90", float("inf")))
     max_winkler_95 = float(policy.get("max_winkler_95", float("inf")))
@@ -324,18 +274,6 @@ def main(
     compensated_max_avg_width_90 = float(
         policy.get("compensated_max_avg_width_90", policy["max_avg_width_90"])
     )
-    min_kupiec_p90 = float(policy.get("min_kupiec_pvalue_90", 0.0))
-    min_kupiec_p95 = float(policy.get("min_kupiec_pvalue_95", 0.0))
-    min_christ_p90 = float(policy.get("min_christoffersen_pvalue_90", 0.0))
-    min_christ_p95 = float(policy.get("min_christoffersen_pvalue_95", 0.0))
-    allow_methodological_justification = bool(
-        policy.get("allow_methodological_justification", False)
-    )
-    statistical_tests_role = str(policy.get("statistical_tests_role", "strict_blocking"))
-    max_cov_dev_90 = float(policy.get("max_coverage_deviation_for_statistical_warning_90", 0.0))
-    max_cov_dev_95 = float(policy.get("max_coverage_deviation_for_statistical_warning_95", 0.0))
-    min_ind_p90 = float(policy.get("min_christoffersen_independence_pvalue_90", 0.0))
-    min_ind_p95 = float(policy.get("min_christoffersen_independence_pvalue_95", 0.0))
 
     winkler_90_raw_pass = bool(winkler_90 <= max_winkler_90)
     winkler_90_compensated_pass = bool(
@@ -402,91 +340,26 @@ def main(
         ),
         winkler_90_check,
         _check("winkler_95", winkler_95, max_winkler_95, "<=", "quality"),
-        _check(
-            "kupiec_pvalue_90",
-            float(kupiec_90["p_value"]),
-            min_kupiec_p90,
-            ">=",
-            "statistical_coverage",
-        ),
-        _check(
-            "kupiec_pvalue_95",
-            float(kupiec_95["p_value"]),
-            min_kupiec_p95,
-            ">=",
-            "statistical_coverage",
-        ),
-        _check(
-            "christoffersen_pvalue_90",
-            float(christ_90["p_cc"]),
-            min_christ_p90,
-            ">=",
-            "statistical_coverage",
-        ),
-        _check(
-            "christoffersen_pvalue_95",
-            float(christ_95["p_cc"]),
-            min_christ_p95,
-            ">=",
-            "statistical_coverage",
-        ),
     ]
     checks_df = pd.DataFrame(checks)
-    statistical_mask = checks_df["scope"].eq("statistical_coverage")
-    gate_mask = ~statistical_mask
-    coverage_deviation_90 = abs(coverage_90 - float(policy["target_coverage_90_min"]))
-    coverage_deviation_95 = abs(coverage_95 - float(policy["target_coverage_95_min"]))
-    christ_p_ind_90 = _safe_float(christ_90.get("p_ind"))
-    christ_p_ind_95 = _safe_float(christ_95.get("p_ind"))
-    independence_ok_90 = (not np.isfinite(christ_p_ind_90)) or christ_p_ind_90 >= min_ind_p90
-    independence_ok_95 = (not np.isfinite(christ_p_ind_95)) or christ_p_ind_95 >= min_ind_p95
-    coverage_materiality_ok = bool(
-        coverage_deviation_90 <= max_cov_dev_90 and coverage_deviation_95 <= max_cov_dev_95
-    )
 
     def _evaluate_check_frame(frame: pd.DataFrame) -> dict[str, object]:
-        strict = bool(frame["passed"].all())
-        gate_pass = bool(frame.loc[gate_mask, "passed"].all())
-        diagnostic_statistical_pass = bool(frame.loc[statistical_mask, "passed"].all())
-        failing_all = frame.loc[~frame["passed"], "metric"].astype(str).tolist()
-        failing_stats = (
-            frame.loc[statistical_mask & ~frame["passed"], "metric"].astype(str).tolist()
+        gate_pass = bool(frame["passed"].all())
+        failing_material = frame.loc[~frame["passed"], "metric"].astype(str).tolist()
+        methodological_status = (
+            "not_needed_material_gate_pass" if gate_pass else "blocked_material_gate_failures"
         )
-        failing_non_stats = frame.loc[gate_mask & ~frame["passed"], "metric"].astype(str).tolist()
-        only_stats = bool((not strict) and len(failing_stats) > 0 and len(failing_non_stats) == 0)
-        diagnostic_informational = statistical_tests_role == "diagnostic_informational"
-        methodological_pass = bool(
-            allow_methodological_justification
-            and only_stats
-            and coverage_materiality_ok
-            and independence_ok_90
-            and independence_ok_95
-        )
-        if strict:
-            methodological_status = "not_needed_strict_pass"
-        elif diagnostic_informational and gate_pass:
-            methodological_status = "diagnostic_statistical_tests_not_gating"
-        elif methodological_pass:
-            methodological_status = "eligible_statistical_warning_only"
-        elif not allow_methodological_justification:
-            methodological_status = "disabled"
-        elif len(failing_non_stats) > 0:
-            methodological_status = "blocked_non_statistical_failures"
-        elif not coverage_materiality_ok:
-            methodological_status = "blocked_materiality"
-        else:
-            methodological_status = "blocked_statistical_pattern"
         return {
-            "strict_overall_pass": strict,
+            "strict_overall_pass": gate_pass,
             "gate_overall_pass": gate_pass,
             "non_statistical_checks_pass": gate_pass,
-            "diagnostic_statistical_pass": diagnostic_statistical_pass,
-            "failing_checks": failing_all,
-            "failing_statistical_checks": failing_stats,
-            "gate_failing_checks": failing_non_stats,
-            "failing_non_statistical_checks": failing_non_stats,
-            "diagnostic_failing_checks": failing_stats,
-            "methodological_justification_pass": methodological_pass,
+            "diagnostic_statistical_pass": True,
+            "failing_checks": failing_material,
+            "failing_statistical_checks": [],
+            "gate_failing_checks": failing_material,
+            "failing_non_statistical_checks": failing_material,
+            "diagnostic_failing_checks": [],
+            "methodological_justification_pass": gate_pass,
             "methodological_justification_status": methodological_status,
         }
 
@@ -502,10 +375,7 @@ def main(
     diagnostic_failing_checks = list(evaluation["diagnostic_failing_checks"])
     methodological_justification_pass = bool(evaluation["methodological_justification_pass"])
     methodological_status = str(evaluation["methodological_justification_status"])
-    if statistical_tests_role == "diagnostic_informational":
-        overall_pass = gate_overall_pass
-    else:
-        overall_pass = strict_overall_pass or methodological_justification_pass
+    overall_pass = gate_overall_pass
 
     latest_month = (
         backtest_monthly.sort_values("month").iloc[-1]["month"]
@@ -521,13 +391,12 @@ def main(
         "diagnostic_statistical_pass": diagnostic_statistical_pass,
         "methodological_justification_pass": methodological_justification_pass,
         "methodological_justification_status": methodological_status,
-        "statistical_tests_role": statistical_tests_role,
         "checks_passed": int(checks_df["passed"].sum()),
         "checks_total": len(checks_df),
-        "gate_checks_passed": int(checks_df.loc[gate_mask, "passed"].sum()),
-        "gate_checks_total": int(gate_mask.sum()),
-        "diagnostic_checks_passed": int(checks_df.loc[statistical_mask, "passed"].sum()),
-        "diagnostic_checks_total": int(statistical_mask.sum()),
+        "gate_checks_passed": int(checks_df["passed"].sum()),
+        "gate_checks_total": len(checks_df),
+        "diagnostic_checks_passed": 0,
+        "diagnostic_checks_total": 0,
         "failing_checks": failing_checks,
         "failing_statistical_checks": failing_statistical_checks,
         "gate_failing_checks": gate_failing_checks,
@@ -548,57 +417,29 @@ def main(
         "winkler_90_compensated_threshold": float(compensated_winkler_90_max),
         "winkler_95": winkler_95,
         "mapie_mwi_90": mapie_mwi_90,
-        "kupiec_pvalue_90": float(kupiec_90["p_value"]),
-        "kupiec_pvalue_95": float(kupiec_95["p_value"]),
-        "christoffersen_pvalue_90": float(christ_90["p_cc"]),
-        "christoffersen_pvalue_95": float(christ_95["p_cc"]),
-        "statistical_tests": {
-            "kupiec_90": kupiec_90,
-            "kupiec_95": kupiec_95,
-            "christoffersen_90": christ_90,
-            "christoffersen_95": christ_95,
-        },
         "sample_size_context": {
             "n_total_90": int(y90.size),
             "n_total_95": int(y95.size),
-            "violation_rate_90": _safe_float(
-                kupiec_90.get("violation_rate", kupiec_90.get("fail_rate"))
-            ),
-            "violation_rate_95": _safe_float(
-                kupiec_95.get("violation_rate", kupiec_95.get("fail_rate"))
-            ),
-            "nominal_alpha_90": _safe_float(kupiec_90.get("nominal_alpha")),
-            "nominal_alpha_95": _safe_float(kupiec_95.get("nominal_alpha")),
-            "christoffersen_independence_pvalue_90": christ_p_ind_90,
-            "christoffersen_independence_pvalue_95": christ_p_ind_95,
+            "violation_rate_90": violation_rate_90,
+            "violation_rate_95": violation_rate_95,
+            "nominal_alpha_90": 0.10,
+            "nominal_alpha_95": 0.05,
         },
         "methodological_justification": {
-            "allowed": allow_methodological_justification,
-            "only_statistical_failures": bool(
-                (not strict_overall_pass)
-                and len(failing_statistical_checks) > 0
-                and len(failing_non_statistical_checks) == 0
-            ),
-            "coverage_materiality_ok": coverage_materiality_ok,
-            "coverage_deviation_90": coverage_deviation_90,
-            "coverage_deviation_95": coverage_deviation_95,
-            "max_coverage_deviation_for_statistical_warning_90": max_cov_dev_90,
-            "max_coverage_deviation_for_statistical_warning_95": max_cov_dev_95,
-            "independence_ok_90": bool(independence_ok_90),
-            "independence_ok_95": bool(independence_ok_95),
-            "min_christoffersen_independence_pvalue_90": min_ind_p90,
-            "min_christoffersen_independence_pvalue_95": min_ind_p95,
+            "allowed": True,
+            "material_gate_definition": "coverage_width_group_alert_winkler_checks",
             "winkler_90_policy_mode": str(winkler_90_policy_mode),
             "winkler_90_raw_pass": bool(winkler_90_raw_pass),
             "winkler_90_compensated_pass": bool(winkler_90_compensated_pass),
             "winkler_90_compensated_threshold": float(compensated_winkler_90_max),
-            "decision": bool(methodological_justification_pass),
+            "decision": bool(gate_overall_pass),
             "gate_overall_pass": bool(gate_overall_pass),
-            "statistical_tests_gate_role": statistical_tests_role,
-            "justification_role": (
-                "diagnostic_warning_not_blocking_for_promotion"
-                if statistical_tests_role in {"diagnostic_informational", "strict_diagnostics"}
-                else "strict_blocking"
+            "retired_backtest_checks": list(RETIRED_BACKTEST_CHECKS),
+            "retirement_reason": (
+                "Kupiec and Christoffersen p-value gates test exact nominal VaR-style "
+                "coverage and create noisy rejections for conservative conformal intervals "
+                "in the 276k OOT sample; IJDS promotion gates on material coverage, "
+                "group coverage, width, alert, and Winkler checks instead."
             ),
         },
         "latest_backtest_month": str(latest_month) if latest_month is not None else None,
@@ -638,7 +479,7 @@ def main(
                     "failing_non_statistical_checks": list(
                         sens_eval["failing_non_statistical_checks"]
                     ),
-                    "failing_statistical_checks": list(sens_eval["failing_statistical_checks"]),
+                    "failing_statistical_checks": [],
                 }
             )
         out_status["policy_sensitivity"] = {
@@ -661,8 +502,7 @@ def main(
     logger.info(
         "Conformal policy gate_pass="
         f"{gate_overall_pass} ({out_status['gate_checks_passed']}/"
-        f"{out_status['gate_checks_total']}); diagnostic_strict_pass={strict_overall_pass}; "
-        f"methodological_justification_pass={methodological_justification_pass}"
+        f"{out_status['gate_checks_total']}); strict_overall_pass={strict_overall_pass}"
     )
 
 

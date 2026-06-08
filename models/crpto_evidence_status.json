@@ -9,12 +9,10 @@
   },
   "conformal_finalist_exact_eval": {
     "alpha01_pass_ranks": [
-      1,
-      2,
-      3
+      1
     ],
     "artifact": "reports/crpto/tables/crpto_tableA10_conformal_finalist_exact_bound_eval.csv",
-    "n_finalists": 3,
+    "n_finalists": 1,
     "status": "implemented"
   },
   "decision_aware_selector": {
@@ -35,25 +33,17 @@
   "funded_set_composition": {
     "artifact": "reports/crpto/tables/crpto_tableA8_funded_set_composition.csv",
     "largest_segment": "2019H2/D",
-    "largest_segment_exposure_share": 0.1760110934354644,
-    "n_segments": 24,
+    "largest_segment_exposure_share": 0.1480309766121034,
+    "n_segments": 22,
     "status": "implemented"
   },
   "funded_set_export": {
     "artifact": "reports/crpto/tables/crpto_tableA7_funded_set_loans.csv",
-    "n_funded_loans": 335,
+    "n_funded_loans": 341,
     "status": "implemented",
-    "total_funded_exposure": 1000000.0
+    "total_funded_exposure": 999999.9999997499
   },
   "generated_artifacts": [
-    "reports/crpto/tables/crpto_tableA3_nested_holdout.csv",
-    "reports/crpto/tables/crpto_tableA3_nested_holdout.tex",
-    "reports/crpto/tables/crpto_tableA4_segment_period_sensitivity.csv",
-    "reports/crpto/tables/crpto_tableA4_segment_period_sensitivity.tex",
-    "reports/crpto/tables/crpto_tableA5_decision_aware_selector.csv",
-    "reports/crpto/tables/crpto_tableA5_decision_aware_selector.tex",
-    "reports/crpto/tables/crpto_tableA6_synthetic_shift.csv",
-    "reports/crpto/tables/crpto_tableA6_synthetic_shift.tex",
     "reports/crpto/tables/crpto_tableA7_funded_set_loans.csv",
     "reports/crpto/tables/crpto_tableA7_funded_set_loans.tex",
     "reports/crpto/tables/crpto_tableA8_funded_set_composition.csv",
@@ -64,11 +54,19 @@
     "reports/crpto/tables/crpto_tableA10_conformal_finalist_exact_bound_eval.tex",
     "reports/crpto/tables/crpto_tableA11_enhanced_synthetic_shift.csv",
     "reports/crpto/tables/crpto_tableA11_enhanced_synthetic_shift.tex",
+    "reports/crpto/tables/crpto_tableA3_nested_holdout.csv",
+    "reports/crpto/tables/crpto_tableA3_nested_holdout.tex",
+    "reports/crpto/tables/crpto_tableA4_segment_period_sensitivity.csv",
+    "reports/crpto/tables/crpto_tableA4_segment_period_sensitivity.tex",
+    "reports/crpto/tables/crpto_tableA5_decision_aware_selector.csv",
+    "reports/crpto/tables/crpto_tableA5_decision_aware_selector.tex",
+    "reports/crpto/tables/crpto_tableA6_synthetic_shift.csv",
+    "reports/crpto/tables/crpto_tableA6_synthetic_shift.tex",
     "docs/research/crpto_conditional_tightening_appendix_2026-05-04.md",
     "models/crpto_evidence_status.json",
     "docs/research/crpto_p1_evidence_2026-05-04.md"
   ],
-  "generated_at_utc": "2026-06-07T19:00:56.257936+00:00",
+  "generated_at_utc": "2026-06-07T23:17:59.416442+00:00",
   "nested_holdout": {
     "final_V": 0.028875,
     "final_alpha01_exact_pass": true,
@@ -78,7 +76,7 @@
     "scope": "staged_5k_25k_276k_post_selection_confirmation",
     "strict_disjoint_split": false
   },
-  "run_tag": "paper-thesis-final-economic-2026-04-06",
+  "run_tag": "ijds-rebaseline-2026-06-07",
   "schema_version": 1,
   "segment_period": {
     "flagged_segments": 0,
@@ -95,7 +93,7 @@
     "data/processed/test.parquet"
   ],
   "strict_temporal_holdout": {
-    "all_alpha01_pass": true,
+    "all_alpha01_pass": false,
     "artifact": "reports/crpto/tables/crpto_tableA9_strict_temporal_holdout.csv",
     "status": "implemented",
     "strict_disjoint_split": true

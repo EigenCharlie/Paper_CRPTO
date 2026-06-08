@@ -7,14 +7,14 @@
 # refactor (see plan §5).
 
 paper:
-  run_tag: "paper-thesis-final-economic-2026-04-06"
+  run_tag: "ijds-rebaseline-2026-06-07"
   champion_policy: "bound_aware_276k_economic_champion"
   region_robust: "45/45"
 
 champion:
   return_robust: 170464.54
-  v_alpha_001: 0.03645
-  gamma_cp_alpha_001: 0.18591
+  v_alpha_001: 0.028875
+  gamma_cp_alpha_001: 0.187987
   alpha_exact_pass: true
 
 pd:

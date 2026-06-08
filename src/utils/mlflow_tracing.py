@@ -114,11 +114,11 @@ def trace(name: str | None = None) -> Callable[[T], T]:
 # Tag conventions
 # ---------------------------------------------------------------------------
 
-PAPER_RUN_TAG = "paper-thesis-final-economic-2026-04-06"
+PAPER_RUN_TAG = "ijds-rebaseline-2026-06-07"
 
 # Paper run tags are immutable once published. Allow only the canonical tag
 # by default; callers performing an authorised revalidation must opt in.
-_PROTECTED_PAPER_RUN_TAGS = frozenset({PAPER_RUN_TAG})
+_PROTECTED_PAPER_RUN_TAGS = frozenset({PAPER_RUN_TAG, "paper-thesis-final-economic-2026-04-06"})
 
 
 def set_paper_tags(

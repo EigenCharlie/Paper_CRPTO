@@ -657,7 +657,7 @@ def _plot_bound_claim_layers() -> list[Path]:
         },
         {
             "title": "Exact certificate",
-            "body": "V = 0.03645 < √α\nviolation = 0; 45/45 pass",
+            "body": "V = 0.028875 < √α\nviolation = 0; 45/45 pass",
             "note": "frozen audit",
             "color": "#FCE4EC",
         },

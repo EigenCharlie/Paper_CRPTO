@@ -35,11 +35,11 @@ El "champion congelado" se refiere al **pipeline de búsqueda** que produjo las 
 
 | Campo | Valor |
 | --- | --- |
-| Run tag | `paper-thesis-final-economic-2026-04-06` |
+| Run tag | `ijds-rebaseline-2026-06-07` |
 | Policy | `bound_aware_276k_economic_champion` |
 | Retorno robusto | `$170,464.54` |
-| V(α=0.01) | `0.03645` |
-| Γ_CP(α=0.01) | `0.18591` |
+| V(α=0.01) | `0.028875` |
+| Γ_CP(α=0.01) | `0.187987` |
 | Exact pass | `True` |
 | Región robusta | `45/45` |
 

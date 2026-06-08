@@ -1,0 +1,17 @@
+{
+  "selected_calibration_method": "venn_abers",
+  "validation_auc": 0.7220014049345107,
+  "oot_auc": 0.7126777845551742,
+  "brier": 0.1545907367602431,
+  "ece": 0.006152293607422043,
+  "replay": {
+    "enabled": false,
+    "reason": "hpo_disabled",
+    "rows": [],
+    "selected_trial": null,
+    "selected_params": null
+  },
+  "schema_version": "2026-03-13.1",
+  "generated_at_utc": "2026-06-07T22:28:50.181726+00:00",
+  "run_tag": "ijds-rebaseline-2026-06-07"
+}

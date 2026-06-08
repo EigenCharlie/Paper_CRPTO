@@ -1,4 +1,4 @@
-variant,namespace,partition,coverage_90,coverage_95,avg_width_90,min_group_coverage_90,winkler_90,policy_overall_pass,strict_overall_pass,methodological_justification_pass,promotion_pass
-score_decile_mondrian,conformal-reopen-2026-04-03-2149__resume__2026-04-05-1612__phase1__final__rank-1,score_decile_mondrian,0.9297140524941399,0.9663884364085542,0.7842303100675323,0.9189831313851271,1.110742432294828,True,False,True,True
+variant,namespace,partition,coverage_90,coverage_95,avg_width_90,min_group_coverage_90,winkler_90,material_gate_pass,policy_overall_pass,methodological_justification_pass,promotion_pass
+score_decile_mondrian,conformal-reopen-2026-04-03-2149__resume__2026-04-05-1612__phase1__final__rank-1,score_decile_mondrian,0.9297140524941399,0.9663884364085542,0.7842303100675323,0.9189831313851271,1.110742432294828,True,True,True,True
 grade,conformal-reopen-2026-04-03-2149__resume__2026-04-05-1612__phase1__final__rank-2,grade,0.9224326305942522,,0.753274497961607,0.8777244181751016,,False,False,False,False
 grade,conformal-reopen-2026-04-03-2149__resume__2026-04-05-1612__phase1__final__rank-3,grade,0.9224326305942522,,0.753274497961607,0.8777244181751016,,False,False,False,False

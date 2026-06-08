@@ -852,6 +852,8 @@ def _build_finalist_exact_eval_table() -> pd.DataFrame:
     candidates["rank"] = candidates["namespace"].map(_rank_from_text)
     rows: list[dict[str, Any]] = []
     for finalist in FINALIST_INTERVALS:
+        if not finalist["intervals_path"].is_file() or not finalist["policy_path"].is_file():
+            continue
         policy = _normalise_policy(_load_json(finalist["policy_path"]))
         aligned = _load_exact_aligned_dataset(finalist["intervals_path"])
         result = _solve_exact_policy(aligned, policy)
@@ -1054,7 +1056,7 @@ def _build_markdown_dossier(status: dict[str, Any]) -> Path:
         "# paper-crpto P1 Evidence - 2026-05-04",
         "",
         "This dossier records the P1 evidence now materialized around the official",
-        "`paper-thesis-final-economic-2026-04-06` champion. It does not reopen the",
+        "`ijds-rebaseline-2026-06-07` champion. It does not reopen the",
         "champion search.",
         "",
         "## Standalone Scope - 2026-05-12",

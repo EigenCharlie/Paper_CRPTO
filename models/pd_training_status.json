@@ -3,7 +3,7 @@
   "phase": "artifacts_saved",
   "state": "completed",
   "config_path": "configs/crpto_pd_model.yaml",
-  "updated_at_utc": "2026-06-07T02:21:37.689395+00:00",
+  "updated_at_utc": "2026-06-07T22:28:50.182734+00:00",
   "model_path": "models\\pd_canonical.cbm",
   "calibrator_path": "models\\pd_canonical_calibrator.pkl",
   "record_path": "models\\pd_training_record.pkl",

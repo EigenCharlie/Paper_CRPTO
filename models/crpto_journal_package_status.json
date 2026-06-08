@@ -34,7 +34,7 @@
     "reports/crpto/figures/crpto_fig15_regret_auditability_frontier.pdf",
     "docs/research/crpto_journal_package_2026-05-04.md"
   ],
-  "generated_at_utc": "2026-06-07T19:01:17.380488+00:00",
+  "generated_at_utc": "2026-06-07T23:57:47.870371+00:00",
   "notes": [
     "No champion search was reopened.",
     "Budget and cap sensitivity are diagnostics on the exported funded set.",
@@ -42,7 +42,7 @@
     "Official champion metrics remain sourced from final_project_promotion.json.",
     "A19/Fig15 compare regret against verifiable risk-control checks; they are not a new selector."
   ],
-  "run_tag": "paper-thesis-final-economic-2026-04-06",
+  "run_tag": "ijds-rebaseline-2026-06-07",
   "schema_version": 2,
   "source_artifacts": [
     "reports/crpto/tables/crpto_tableA7_funded_set_loans.csv",

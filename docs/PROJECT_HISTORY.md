@@ -24,7 +24,8 @@ configuration.
   `https://dagshub.com/EigenCharlie94/Paper_CRPTO.mlflow`.
 - The old parent DagsHub project is provenance only. It must not appear in
   active configs, templates, workflows or secrets.
-- The frozen champion remains `paper-thesis-final-economic-2026-04-06`; stages
+- The current IJDS baseline is `ijds-rebaseline-2026-06-07`. The earlier
+  `paper-thesis-final-economic-2026-04-06` run remains historical provenance; stages
   that search for the champion remain blocked unless a revalidation plan exists.
 - WSL-era absolute paths preserved inside frozen JSON status files are treated
   as provenance, not active configuration. They are left intact unless a future
