@@ -36,11 +36,11 @@ La tesis sostiene seis contribuciones, cada una anclada a evidencia congelada:
    congelada (PD calibrada → conformal Mondrian → LP robusto) preserva los gates
    conformales y produce valor LP robusto positivo en Prosper y Freddie/Mendeley,
    con un certificado all-candidate sobre `1 396 053` candidatos OOT en Freddie
-   (ver @sec-crpto-multidataset). Más allá de desactivar la objeción
-   "solo-Lending-Club", revela un patrón económico interpretable: bajo aplicación
-   congelada el precio de robustez es una prima positiva que crece con el default
-   del panel (de `+1.0%` a `+9.5%`), y es favorable solo en el champion
-   *seleccionado* de Lending Club.
+   (ver @sec-crpto-multidataset). Más allá de mostrar que la receta no es
+   meramente una idiosincrasia numérica de Lending Club, revela un patrón
+   económico interpretable: bajo aplicación congelada el precio de robustez es
+   una prima positiva que crece con el default del panel (de `+1.0%` a `+9.5%`),
+   y es favorable solo en el champion *seleccionado* de Lending Club.
 
 ## Qué quedó fuera, y por qué
 
@@ -87,9 +87,9 @@ una decisión de cartera de crédito de forma lo bastante transparente para que 
 revisor la audite. La respuesta, sobre 276 869 préstamos out-of-time, es sí: la
 incertidumbre conformal cambia el funded set, deja un certificado exacto, y lo
 hace sin sacrificar valor económico frente a la línea base no robusta. La réplica
-externa en Prosper y Freddie muestra además que esa receta no es una idiosincrasia
-de Lending Club, y que el precio de robustez es una prima acotada y medible que
-crece con el riesgo del panel. Esa combinación —decisión robusta, certificado
-auditable, evidencia externa y reproducibilidad de artefactos— es la contribución
-que la tesis lleva a un jurado y, en su forma comprimida, a un comité editorial de
-INFORMS.
+externa en Prosper y Freddie muestra además que esa receta no es meramente una
+idiosincrasia numérica de Lending Club, y que el precio de robustez es una prima
+acotada y medible que crece con el riesgo del panel. Esa combinación —decisión
+robusta, certificado auditable, evidencia externa y reproducibilidad de
+artefactos— es la contribución que la tesis lleva a un jurado y, en su forma
+comprimida, a un comité editorial de INFORMS.

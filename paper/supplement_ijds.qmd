@@ -308,9 +308,9 @@ has a favorable signed price (`-10.56%`): bound-aware search located a robust
 funded set that also wins expected return. Reporting both--a bounded positive
 premium under blind application and a favorable value under selection--is more
 defensible than claiming robustness is uniformly free or uniformly costly. The
-headline is that robustness is never economically catastrophic in these panels:
-the coverage guarantee costs at most a low-double-digit premium, and CRPTO
-measures which regime a given panel is in.
+headline is that robustness is never economically catastrophic in these frozen
+applications: the conformal robust layer costs at most a low-double-digit
+premium, and CRPTO measures which regime a given panel is in.
 
 ## Reviewer Claim Checks
 
@@ -359,7 +359,8 @@ a live stream. A25--A34 show that the same recipe clears useful gates on Prosper
 and Freddie/Mendeley, that Freddie's full candidate universe has been solved,
 that subperiod/definition/segment sensitivities are documented, and that the
 economic cost of applying the frozen recipe scales with panel risk. They
-still do not create a new exact funded-set theorem for every external portfolio.
+still do not create a new exact funded-set certificate or theorem for every
+external portfolio.
 Together, these artifacts protect the IJDS claim: the submitted result is an
 auditable post-hoc conformal robust credit-portfolio decision with an exact
 frozen Lending Club funded-set certificate and external economic replication

@@ -24,12 +24,14 @@ the submission-shaped versions are written.
   unless the submission system asks for disclosure text.
 
 Selected P2/P3-inspired diagnostics are part of the current paper/journal pack:
-regret-auditability, OCE/CVaR tail risk, robust satisficing margins, and the
-dependence-aware caveat. The tail-risk robust-region audit and cluster-bound
-table are supplement-only add-ons. The active submission still uses the frozen CRPTO
-result plus supplement evidence generated from existing artifacts; future
-online, causal, multi-distribution, multi-dataset, production, or package tracks
-remain future work.
+regret-auditability, OCE/CVaR tail risk, robust satisficing margins,
+multi-distribution diagnostics, online replay diagnostics, and external
+Prosper/Freddie economic replications. The tail-risk robust-region audit,
+cluster-bound table, and A25--A34 external package are supplement-heavy add-ons.
+The active submission still uses the frozen CRPTO result plus evidence generated
+from existing artifacts; prospective/live online validation, causal variants,
+new multi-dataset protocols beyond the frozen Prosper/Freddie replications,
+production, and package tracks remain future work.
 
 ## Render Commands
 

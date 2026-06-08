@@ -258,6 +258,7 @@ del dossier está lista para ser usada como fuente de manuscrito.
 | Venue definido | `configs/crpto_publication_targets.yaml` | IJDS primario y EJOR pivote siguen declarados. |
 | Manuscrito + supplement IJDS | `just paper-submission` | `paper/CRPTO_ijds.html` y `paper/supplement_ijds.html` renderizan sin ejecutar pipeline. |
 | PDF local de verificación | `just paper-submission-pdf` | `paper/CRPTO_ijds.pdf` y `paper/supplement_ijds.pdf` renderizan como borradores HTML-print para inspección visual; el PDF oficial usa la plantilla IJDS. |
+| PDF tesis APA | `docs/THESIS_PDF_SCOPE.md` + `just book-pdf` | El PDF completo del libro es no-op; la tesis se convertirá después en un documento APA curado con secciones seleccionadas. |
 | Alcance P2/P3 | `configs/crpto_publication_targets.yaml` + esta página | P2/journal implementado como A22--A34 sin reabrir champion; quedan en backlog el entrenamiento end-to-end, validación live/prospectiva y streaming real. |
 | Tablas canónicas | `uv run python scripts/export_crpto_tables.py` | A0 usa `models/final_project_promotion.json`. |
 | P1 evidence | `uv run python scripts/analyze_crpto_evidence.py --include-hardening` | A3--A11 actualizadas y status JSON coherente. |
