@@ -168,7 +168,7 @@ Términos técnicos usados en el manuscrito y el dossier extendido. Se ordenan a
 ## S
 
 **Satisficing (robusto)**
-:   Criterio de decisión que exige que una política *satisfaga* un conjunto de umbrales (retorno, `V`, cola) en lugar de optimizar uno solo. En CRPTO aparece como auditoría de *challenger* (A20): 12 de las 45 políticas pasan el comité de satisficing.
+:   Criterio de decisión que exige que una política *satisfaga* un conjunto de umbrales (retorno, `V`, cola) en lugar de optimizar uno solo. En CRPTO aparece como pantalla diagnóstica en A20; en la línea base IJDS, las 45 políticas de la región robusta pasan esa pantalla y la comparación útil es el trade-off retorno--CVaR.
 
 **SHAP (SHapley Additive exPlanations)**
 :   Atribución de aportes por feature al score individual. Usado en `chapters/04-resultados.qmd` para explicabilidad del champion.

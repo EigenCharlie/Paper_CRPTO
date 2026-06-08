@@ -418,8 +418,8 @@
       "hash_source": "ijds_rebaseline_2026-06-07"
     },
     "reports/crpto/tables/crpto_table1_robustness_summary.csv": {
-      "sha256": "473bd769c2a0805d4de30dd09c5e6ec68e5a6d0b3c110d57b16203b5dca0b6ed",
-      "bytes": 986,
+      "sha256": "a7863b749f7b31b0e11a70a2a2a6656db9bf8a55e7609c609787c1d36ca54ca6",
+      "bytes": 980,
       "hash_source": "ijds_rebaseline_2026-06-07"
     },
     "reports/crpto/tables/crpto_table1_robustness_summary.tex": {
@@ -448,8 +448,8 @@
       "hash_source": "ijds_rebaseline_2026-06-07"
     },
     "reports/crpto/tables/crpto_tableA11_enhanced_synthetic_shift.csv": {
-      "sha256": "3e0aff60ea9fe13a0ae2ea842ea55cb187103da63f110a78abd1a4c3b33ac9fd",
-      "bytes": 1085,
+      "sha256": "2a31a10e8e8da5a6f724f69878b5c77543a969f2412911e2b87e2d555c1a68d7",
+      "bytes": 1079,
       "hash_source": "ijds_rebaseline_2026-06-07"
     },
     "reports/crpto/tables/crpto_tableA11_enhanced_synthetic_shift.tex": {
@@ -528,8 +528,8 @@
       "hash_source": "ijds_rebaseline_2026-06-07"
     },
     "reports/crpto/tables/crpto_tableA1_benchmark_by_group.csv": {
-      "sha256": "808b923e6858cb1b8244d2d0d173836020575a062a6c33dc33517abc59ffcfe3",
-      "bytes": 1048,
+      "sha256": "d0ca94f87e5730b58b33c4b93d0f0cd6c6a428fd9496af1992b2ab1178d4f45f",
+      "bytes": 1042,
       "hash_source": "ijds_rebaseline_2026-06-07"
     },
     "reports/crpto/tables/crpto_tableA1_benchmark_by_group.tex": {
@@ -538,8 +538,8 @@
       "hash_source": "ijds_rebaseline_2026-06-07"
     },
     "reports/crpto/tables/crpto_tableA2_robustness_frontier.csv": {
-      "sha256": "e2b59e523fc1aedc19733caf7f665c500af5f71d51d047a0a7f6ec87b017fdf0",
-      "bytes": 12284,
+      "sha256": "1ee81359d9d3a5264ff01b127a276a6b80106415028d5978a73e9625708de592",
+      "bytes": 12238,
       "hash_source": "ijds_rebaseline_2026-06-07"
     },
     "reports/crpto/tables/crpto_tableA2_robustness_frontier.tex": {
@@ -548,8 +548,8 @@
       "hash_source": "ijds_rebaseline_2026-06-07"
     },
     "reports/crpto/tables/crpto_tableA3_nested_holdout.csv": {
-      "sha256": "08b5a56bbf4309c086efe63e078583d9d485f3263a6f2e0f9bcbcb1503336806",
-      "bytes": 1173,
+      "sha256": "232a8cf8f8fe8f70e13fe163349f04660079fa13fa7921fa45779231fbccbe12",
+      "bytes": 1169,
       "hash_source": "ijds_rebaseline_2026-06-07"
     },
     "reports/crpto/tables/crpto_tableA3_nested_holdout.tex": {
@@ -558,8 +558,8 @@
       "hash_source": "ijds_rebaseline_2026-06-07"
     },
     "reports/crpto/tables/crpto_tableA4_segment_period_sensitivity.csv": {
-      "sha256": "a257d2c090c2f667b0ad763bca5f10b3a3522d607bf12f82b1ac8bf2a9a48334",
-      "bytes": 4889,
+      "sha256": "2a81af867a878a1f35abb9dec9b39fd3dc26a2001a6f4f074d59a5eea44436ae",
+      "bytes": 4859,
       "hash_source": "ijds_rebaseline_2026-06-07"
     },
     "reports/crpto/tables/crpto_tableA4_segment_period_sensitivity.tex": {
@@ -578,8 +578,8 @@
       "hash_source": "ijds_rebaseline_2026-06-07"
     },
     "reports/crpto/tables/crpto_tableA6_synthetic_shift.csv": {
-      "sha256": "2833b98fd530565015bc7bffc36f5e73452fb1397284d62f22dbf052df196fe8",
-      "bytes": 1061,
+      "sha256": "b4d7da72c3cc10f5f4852870188f830412048a51b7130a5c6afb7f8d8a008545",
+      "bytes": 1055,
       "hash_source": "ijds_rebaseline_2026-06-07"
     },
     "reports/crpto/tables/crpto_tableA6_synthetic_shift.tex": {
@@ -854,8 +854,8 @@
     },
     "models/crpto_tail_satisficing_audit_status.json": {
       "hash_source": "ijds_rebaseline_2026-06-07",
-      "sha256": "5c114ac61dc4f461f064d7cd0fc7c07ef643efca3caed66bda97328910be207d",
-      "bytes": 2310
+      "sha256": "3c763430411ead322282796de2311a83bde425cdbc2207560174764cc13ff6fa",
+      "bytes": 2359
     },
     "models/crpto_tail_constrained_reopt_status.json": {
       "hash_source": "ijds_rebaseline_2026-06-07",
@@ -3227,7 +3227,7 @@
     },
     {
       "path": "reports/crpto/tables/crpto_tableA2_robustness_frontier.csv",
-      "bytes": 12224,
+      "bytes": 12238,
       "role": "generated_or_curated"
     },
     {
@@ -3237,7 +3237,7 @@
     },
     {
       "path": "reports/crpto/tables/crpto_tableA3_nested_holdout.csv",
-      "bytes": 1167,
+      "bytes": 1169,
       "role": "generated_or_curated"
     },
     {

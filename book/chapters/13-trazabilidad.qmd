@@ -194,7 +194,7 @@ pd.DataFrame(
         {"Tabla": "A17", "Rol": "Sensibilidad presupuesto, LGD, caps de concentración", "Generador": "build_crpto_journal_package.py"},
         {"Tabla": "A18", "Rol": "Región robusta por familia risk_tolerance × gamma", "Generador": "build_crpto_journal_package.py"},
         {"Tabla": "A19", "Rol": "Regret-auditability frontier", "Generador": "build_crpto_journal_package.py"},
-        {"Tabla": "A20", "Rol": "Tail-satisficing challenger audit", "Generador": "build_tail_satisficing_challenger_audit.py"},
+        {"Tabla": "A20", "Rol": "Tail-risk robust-region audit", "Generador": "build_tail_satisficing_challenger_audit.py"},
         {"Tabla": "A21", "Rol": "Cluster-bound tightening audit", "Generador": "build_tail_satisficing_challenger_audit.py"},
         {"Tabla": "A22", "Rol": "Tail-constrained CVaR/OCE reoptimization", "Generador": "build_tail_constrained_reoptimization.py"},
         {"Tabla": "A23", "Rol": "Multi-distribution coverage stress", "Generador": "build_distribution_robustness_diagnostics.py"},

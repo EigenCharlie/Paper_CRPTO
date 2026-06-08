@@ -787,7 +787,7 @@ frontier, not the lowest-tail policy.
     Policy & Realized return & $\Delta$ return & CVaR$_{95}$ & $\Delta$ CVaR \\
     \midrule
     Economic champion (frozen)          & \$170{,}464.54 & $0.0\%$   & $0.2542$ & $0.0\%$ \\
-    Top tail-satisficing challenger (A20) & \$167{,}069.48 & $-1.99\%$ & $0.1968$ & $-22.58\%$ \\
+    Lowest realized-CVaR robust-region policy (A20) & \$167{,}069.48 & $-1.99\%$ & $0.1968$ & $-22.58\%$ \\
     Tightest CVaR-capped policy (A22)   & \$160{,}978.00 & $-5.57\%$ & $0.4061$ & cap-binding \\
     \bottomrule
   \end{tabular}
@@ -818,7 +818,7 @@ sensitivity, decision-aware conformal selector checks, synthetic-shift diagnosti
 conformal finalist exact evaluation, tail-risk OCE/CVaR diagnostics, satisficing
 margins, dependency clusters, bootstrap funded-set metrics, budget/LGD/cap sensitivity,
 and robust-region summaries by policy family, plus the A19 regret-auditability frontier,
-A20 tail-satisficing challenger audit, A21 cluster-bound tightening audit, A22 CVaR/OCE
+A20 tail-risk robust-region audit, A21 cluster-bound tightening audit, A22 CVaR/OCE
 tail-constrained re-optimization, and A23--A24 multi-distribution and online (ACI)
 conformal-stability diagnostics, plus A25--A34 external economic replication,
 exhaustiveness, interval, subperiod, and sensitivity audits.

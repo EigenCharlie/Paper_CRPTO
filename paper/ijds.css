@@ -1,0 +1,20 @@
+@media screen {
+  table {
+    max-width: 100%;
+  }
+
+  th,
+  td,
+  th code,
+  td code {
+    overflow-wrap: anywhere;
+    white-space: normal;
+  }
+
+  .cell-output-display,
+  .quarto-table,
+  .table-responsive {
+    max-width: 100%;
+    overflow-x: auto;
+  }
+}

@@ -257,37 +257,37 @@ Lectura para el paper: CRPTO no promete dominar a SPO+ en regret puro. Su
 contribución es hacer visible el precio de comprar cobertura, bound exacto y
 auditabilidad del funded set.
 
-### A20. Challenger tail-satisficing
+### A20. Auditoría tail-risk de la región robusta
 
-Esta tabla re-suelve las 45 policies de la región robusta con HiGHS y las
-ordena por una regla journal-only: satisficing pass, menor CVaR 95%, menor OCE
-entrópico y mayor retorno. No promueve un nuevo champion. Sirve para responder
-la pregunta de reviewer: "si optimizaran por cola/satisficing, que policy
-apareceria?".
+Esta tabla resuelve de nuevo las 45 policies de la región robusta con HiGHS y las
+ordena por CVaR 95%, OCE entrópico, retorno y estado de *satisficing*. Como
+todas las políticas pasan la pantalla de *satisficing*, A20 ya no debe leerse
+como una promoción de challenger sino como una frontera de cola dentro de la
+región robusta. Sirve para responder la pregunta de reviewer: "¿cuánta cola se
+puede reducir sin salir del conjunto alpha-safe?".
 
 ```{python}
-#| label: tbl-crpto-journal-tail-satisficing-challenger
-#| tbl-cap: "A20. Auditoría tail-satisficing de las 45 policies alpha-safe"
+#| label: tbl-crpto-journal-tail-risk-robust-region
+#| tbl-cap: "A20. Auditoría tail-risk de las 45 policies alpha-safe"
 
 tail_challenger = read_table("crpto_tableA20_tail_satisficing_challenger_audit.csv")
-tail_challenger[
-    [
-        "tail_satisficing_rank",
-        "paper_role",
-        "realized_total_return",
-        "return_delta_vs_champion_pct",
-        "cvar_95_loss_rate",
-        "entropic_oce_theta5",
-        "satisficing_pass",
-    ]
-].head(12).round(4)
+_a20_cols = {
+    "tail_satisficing_rank": "rank",
+    "paper_role": "rol",
+    "realized_total_return": "retorno",
+    "return_delta_vs_champion_pct": "delta_ret_pct",
+    "cvar_95_loss_rate": "CVaR95",
+    "entropic_oce_theta5": "OCE",
+    "satisficing_pass": "pass",
+}
+tail_challenger[list(_a20_cols)].rename(columns=_a20_cols).head(12).round(4)
 ```
 
-Lectura: el challenger rank 1 reduce el CVaR 95% frente al economic champion con
-una pérdida de retorno cercana a 2%. Es evidencia de trade-off, no una
-correccion de la policy promovida.
+Lectura: la política de menor CVaR realizado reduce la cola frente al economic
+champion con una pérdida de retorno cercana a 2%. Es evidencia de trade-off, no
+una corrección de la policy promovida.
 
-![Frontera tail-risk vs. retorno sobre las 45 políticas de la región robusta (Tabla A20). Doce políticas pasan el comité de *satisficing*; el champion económico congelado (estrella) sacrifica algo de riesgo de cola a cambio de retorno en lugar de minimizar la CVaR, lo que muestra que el resultado es un punto defendible dentro de la región robusta y no la esquina de menor cola.](../assets/figures/publication/crpto_fig16_tail_risk_frontier.png){#fig-p1-tail-risk-frontier fig-alt="Scatter de retorno realizado (eje x) contra CVaR 95% (eje y) para las 45 políticas de la región robusta; las que pasan satisficing en azul lleno, las que fallan en círculos grises huecos, y el champion económico como estrella naranja en la zona de mayor retorno."}
+![Frontera tail-risk vs. retorno sobre las 45 políticas de la región robusta (Tabla A20). Todas las políticas pasan la pantalla de *satisficing*; el champion económico congelado (estrella) acepta más CVaR realizado a cambio de mayor retorno, mientras que la política de menor cola muestra el trade-off de reducción de cola disponible dentro de la región robusta.](../assets/figures/publication/crpto_fig16_tail_risk_frontier.png){#fig-p1-tail-risk-frontier fig-alt="Scatter de retorno realizado (eje x) contra CVaR 95% (eje y) para las 45 políticas de la región robusta; todas pasan satisficing y el champion económico aparece como estrella naranja en la zona de mayor retorno."}
 
 ### A21. Bound cluster-aware
 
@@ -348,16 +348,17 @@ tail_reopt[list(_a22_cols)].rename(columns=_a22_cols).round(4)
 
 ![Frontera eficiente retorno-vs-CVaR de A22: cada punto es la policy `alpha01`-safe de mayor retorno admisible bajo un techo de CVaR *decision-time*; el economic champion congelado (estrella) ocupa la esquina de mayor retorno y mayor cola, y el cap más estricto (diamante) marca el extremo del challenger.](../assets/figures/publication/crpto_fig18_tail_constrained_frontier.png){#fig-p1-tail-constrained-frontier fig-alt="Línea ascendente de retorno realizado (eje y, miles USD) contra techo de CVaR95 decision-time (eje x); el economic champion es una estrella en la esquina superior derecha y el cap más estricto un diamante abajo a la izquierda."}
 
-Lectura: la frontera muestra cuanto retorno se conserva al endurecer el techo de
+Lectura: la frontera muestra cuánto retorno se conserva al endurecer el techo de
 CVaR. Coherente con A20, el economic champion no es la esquina de menor cola: en
 el cierre `276k` ocupa el extremo de mayor retorno y mayor CVaR de la frontera, y
 sigue siendo la policy oficial. Al imponer un techo más estricto aparece un
-*tail-constrained challenger* que reduce la CVaR *decision-time* a cambio de un
-costo de retorno acotado (cercano al `-2%`); ese challenger coincide con el rank 1
-de satisficing de A20, lo que refuerza que la lectura de trade-off es estable
-entre criterios. Como la cota usa
-`pd_high` (peor caso conformal), es más conservadora que la CVaR realizada de
-A20, y es justamente la cantidad que un comité puede restringir *ex-ante*. El
+*tail-constrained challenger*: la esquina más estricta sacrifica más retorno
+(`-5.57%` en A22), mientras A20 muestra que, bajo CVaR realizado, hay una
+reducción de cola de `22.58%` con costo cercano a `-2%`. No son el mismo
+criterio: A22 usa
+`pd_high` (peor caso conformal) y por eso es más conservadora que la CVaR
+realizada de A20. La lectura común es que el champion maximiza retorno dentro de
+la región alpha-safe, no que minimiza cola. El
 soporte teórico para tratar CVaR/OCE como objetivo de control conformal viene de
 [@angelopoulos2026nonmonotonic] (pérdidas no monotonas), [@rockafellar2000cvar]
 (CVaR) y [@bental2007oce] (OCE). El estado reproducible queda en
@@ -580,7 +581,7 @@ freddie_segments.round(4)
 | A17 | Presupuesto, LGD y caps | Appendix journal |
 | A18 | Robust region by policy family | Cuerpo corto o appendix |
 | A19 | Regret-auditability frontier | Cuerpo corto y appendix |
-| A20 | Tail-satisficing challenger audit | Appendix journal |
+| A20 | Tail-risk robust-region audit | Appendix journal |
 | A21 | Cluster-bound tightening | Appendix teórico |
 | A22 | CVaR/OCE tail-constrained re-optimization | Appendix journal |
 | A23 | Robustez multi-distribución (grupo/celda) | Appendix journal |

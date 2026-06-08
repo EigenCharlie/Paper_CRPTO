@@ -24,8 +24,9 @@ document.addEventListener("DOMContentLoaded", () => {
       const match = text.match(/^(Figura\s+[0-9.]+):\s*(.+)$/);
       if (match) {
         const fullText = match[2];
-        // Split on first ". " to separate title from note
-        const splitIdx = fullText.indexOf(". ");
+        // Split on a sentence boundary, but do not break abbreviations such as "vs."
+        const sentenceBoundary = fullText.search(/\.\s+(?=[A-ZÁÉÍÓÚÑ])/);
+        const splitIdx = sentenceBoundary >= 0 ? sentenceBoundary : -1;
         let title, note;
         if (splitIdx > 20) {
           title = fullText.substring(0, splitIdx + 1);
@@ -38,6 +39,7 @@ document.addEventListener("DOMContentLoaded", () => {
         // Caption above: label + title only
         caption.innerHTML =
           `<span class="apa-figure-label">${match[1]}</span>` +
+          "\n" +
           `<span class="apa-figure-title">${title}</span>`;
 
         // Move caption to top of figure (above image)

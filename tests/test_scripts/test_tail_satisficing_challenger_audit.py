@@ -13,6 +13,10 @@ def test_tail_satisficing_audit_artifacts_exist() -> None:
     assert status_path.exists()
     status = json.loads(status_path.read_text(encoding="utf-8"))
 
+    assert status["schema_version"] == "2026-05-12.2"
+    assert status["generated_at_utc"] == "2026-06-07T00:00:00+00:00"
+    assert status["elapsed_sec"] == 0.0
+    assert status["timestamp_policy"] == "fixed_for_bit_reproducible_manifest"
     assert status["champion_promotion_changed"] is False
     assert status["tail_satisficing_audit"]["n_policies_audited"] == 45
     assert status["tail_satisficing_audit"]["promotion_status"] == (

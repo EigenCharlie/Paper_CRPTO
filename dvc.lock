@@ -10,8 +10,8 @@ stages:
       size: 5565
     - path: book/chapters
       hash: md5
-      md5: 17c34b60e730d327f8b4eea5ba4594f6.dir
-      size: 869520
+      md5: e5dfd3e6eaa628c2303c1eff4acdb4c4.dir
+      size: 869780
       nfiles: 34
     - path: book/index.qmd
       hash: md5
@@ -19,8 +19,8 @@ stages:
       size: 5842
     - path: book/styles.scss
       hash: md5
-      md5: 2a43791aea83d8c367d0a091aea0b80f
-      size: 13044
+      md5: 8994c372af88c0a5e40316b76171bc8d
+      size: 13548
     - path: scripts/write_book_build_info.py
       hash: md5
       md5: 43b5b0b11353e424318574b8c6643235
@@ -33,8 +33,8 @@ stages:
     outs:
     - path: book/_book
       hash: md5
-      md5: 7533d7c701f19ad32d798ba8e5cdc8b7.dir
-      size: 17788292
+      md5: e881fca841468e5b27795c6785eaddf9.dir
+      size: 17789964
       nfiles: 115
   crpto.paper.figures:
     cmd: python scripts/generate_crpto_figures.py --paper crpto
@@ -49,8 +49,8 @@ stages:
       size: 6434
     - path: models/crpto_tail_satisficing_audit_status.json
       hash: md5
-      md5: 5f6d49e9e4c542f92a91c7e92e82f286
-      size: 2310
+      md5: 8010a1a96869e3e6e7d71f1032b8c124
+      size: 2359
     - path: models/final_project_promotion.json
       hash: md5
       md5: cfa6202da28375e5a3a0c504b3e38a3c
@@ -74,8 +74,8 @@ stages:
       size: 3074
     - path: scripts/generate_crpto_figures.py
       hash: md5
-      md5: 84766f458802d62bc2834f1a1a649264
-      size: 70151
+      md5: 6aa0c3f931bb767290dadf1b6fba76ef
+      size: 70396
     outs:
     - path: reports/crpto/figures/crpto_fig7_uncertainty_baselines.png
       hash: md5
@@ -484,12 +484,12 @@ stages:
       size: 2271
     - path: scripts/build_crpto_journal_package.py
       hash: md5
-      md5: e57028889ca7d4e35b5d6ea6c87a6914
-      size: 42438
+      md5: 17c72086dac53ddde7302747eaf8f876
+      size: 42458
     outs:
     - path: models/crpto_journal_package_status.json
       hash: md5
-      md5: ae5656a5e298b7e7f7f0f0ed8d970a27
+      md5: 943d4d821151362cf4315f2375e42e71
       size: 3604
   crpto.paper.spo_stability:
     cmd: python scripts/run_crpto_vs_spo_stability.py
@@ -542,8 +542,8 @@ stages:
       size: 46107
     - path: scripts/build_tail_satisficing_challenger_audit.py
       hash: md5
-      md5: b0790e99b3b0593b62df40a2a8d08c19
-      size: 18672
+      md5: 55de3d2df57543f49bcd29934c39acf0
+      size: 18727
     - path: scripts/optimize_portfolio_tradeoff.py
       hash: md5
       md5: 450e7461b1d64924387fa55532a202e5
@@ -555,8 +555,8 @@ stages:
     outs:
     - path: models/crpto_tail_satisficing_audit_status.json
       hash: md5
-      md5: 5f6d49e9e4c542f92a91c7e92e82f286
-      size: 2310
+      md5: 8010a1a96869e3e6e7d71f1032b8c124
+      size: 2359
   crpto.conformal.backtest:
     cmd: python scripts/backtest_conformal_coverage.py --intervals-path
       data/processed/conformal_intervals_mondrian.parquet --output-dir

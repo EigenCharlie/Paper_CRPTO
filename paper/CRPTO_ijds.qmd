@@ -10,6 +10,7 @@ format:
   html:
     toc: true
     number-sections: true
+    css: ijds.css
     code-fold: true
   pdf:
     documentclass: article
@@ -611,7 +612,7 @@ candidate universe. Freddie FM48 is a collateralized mortgage panel, using the
 48-month red+green default window with provided train/OOS/OOT structure. Both
 pass the conformal gates and both return positive robust LP objectives.
 
-| Dataset | Product | Rows | Default rate | AUC | Coverage 90% | $\alpha=0.01$ coverage | OOT candidates | Robust LP objective |
+| Dataset | Product | Rows | Default | AUC | Cov. 90% | Cov. alpha01 | OOT cand. | Robust LP |
 |---|---|---:|---:|---:|---:|---:|---:|---:|
 | Prosper | Marketplace personal loans | `54,807` | `30.92%` | `0.7074` | `0.9205` | `0.9943` | `10,531` | `$199,419` |
 | Freddie FM48 | Single-family mortgages | `3,173,355` | `1.45%` | `0.7839` | `0.9745` | `0.9907` | `1,396,053` | `$1,291,228` |
@@ -737,7 +738,7 @@ certificate, so "higher regret" here is the cost of carrying conformal
 uncertainty into a different, synthetic decision, not evidence that CRPTO funds
 worse loans.
 
-![The regret-auditability frontier shows the paper's trade-off in one panel: SPO+ is the low-regret corner, while CRPTO robust is the auditable-risk-control corner with all three verifiable checks passing.](../reports/crpto/figures/crpto_fig15_regret_auditability_frontier.png){#fig-regret-auditability width="58%" fig-alt="Scatter plot comparing two-stage, SPO+, and CRPTO robust by mean decision regret and number of verifiable risk-control checks passed."}
+![The regret-auditability frontier shows the paper's trade-off in one panel: SPO+ is the low-regret corner, while CRPTO robust is the auditable-risk-control corner with all three verifiable checks passing.](../reports/crpto/figures/crpto_fig15_regret_auditability_frontier.png){#fig-regret-auditability width="72%" fig-alt="Scatter plot comparing two-stage, SPO+, and CRPTO robust by mean decision regret and number of verifiable risk-control checks passed."}
 
 CRPTO is also close in spirit to a recent line that gives distribution-free,
 finite-sample guarantees jointly on miscoverage and decision regret, and that
@@ -766,16 +767,17 @@ policies under a decision-time CVaR$_{95}$ cap (computed from the conformal uppe
 endpoints, supplement A22) traces an explicit return-versus-tail trade-off. The
 tightest admissible tail cap selects a challenger earning `$160,978` (`-5.57%`
 versus the champion) at CVaR$_{95}$ `0.406`, while the frozen economic champion
-deliberately sits at the high-return, high-tail corner. A satisficing screen
-(supplement A20) makes the same point from the committee side: the top
-tail-satisficing challenger cuts CVaR$_{95}$ by `22.58%` at a return cost of only
-`1.99%`. The champion is therefore a deliberate, auditable choice on a visible
-frontier, not the lowest-tail policy and not a hidden corner.
+deliberately sits at the high-return, high-tail corner. Supplement A20 makes the
+same point from the committee side: once all 45 alpha-safe robust-region policies
+pass the satisficing screen, the useful contrast is the lowest realized-CVaR
+policy. It cuts CVaR$_{95}$ by `22.58%` at a return cost of only `1.99%`. The
+champion is therefore a deliberate, auditable choice on a visible frontier, not
+the lowest-tail policy and not a hidden corner.
 
 | Policy | Realized return | $\Delta$ return | CVaR$_{95}$ | $\Delta$ CVaR |
 |---|---:|---:|---:|---:|
 | Economic champion (frozen) | `$170,464.54` | `0.0%` | `0.2542` | `0.0%` |
-| Top tail-satisficing challenger (A20) | `$167,069.48` | `-1.99%` | `0.1968` | `-22.58%` |
+| Lowest realized-CVaR robust-region policy (A20) | `$167,069.48` | `-1.99%` | `0.1968` | `-22.58%` |
 | Tightest CVaR-capped policy (A22) | `$160,978.00` | `-5.57%` | `0.4061` | cap-binding |
 
 : Tail-risk trade-off across the robust region. The champion maximizes return
@@ -809,8 +811,8 @@ segment-period sensitivity, decision-aware conformal selector checks,
 synthetic-shift diagnostics, conformal finalist exact evaluation, tail-risk
 OCE/CVaR diagnostics, satisficing margins, dependency clusters, bootstrap
 funded-set metrics, budget/LGD/cap sensitivity, and robust-region summaries by
-policy family, plus the A19 regret-auditability frontier, A20 tail-satisficing
-challenger audit, A21 cluster-bound tightening audit, A22 CVaR/OCE
+policy family, plus the A19 regret-auditability frontier, A20 tail-risk
+robust-region audit, A21 cluster-bound tightening audit, A22 CVaR/OCE
 tail-constrained re-optimization, and A23--A24 multi-distribution and online
 (ACI) conformal-stability diagnostics, plus A25--A34 external economic
 replication, exhaustiveness, interval, subperiod, and sensitivity audits on
