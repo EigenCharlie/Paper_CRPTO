@@ -34,7 +34,7 @@ CRPTO should be read as data science for decisions:
 | Jul 11-17 | External replication polish | Prosper/Freddie remain evidence of recipe transfer, not new exact certificates. |
 | Jul 18-24 | Figures and tables | Captions state takeaway; tables fit IJDS; figures remain readable in grayscale. |
 | Jul 25-31 | Reproducibility package | Data/code disclosure plan, commands, hashes, DVC pointers, and raw-data instructions are ready. |
-| Aug 1-5 | Official template | Body compiles in `informs4` with `dblanonrev`; page budget is <=25 excluding references/appendices. |
+| Aug 1-5 | Official template | Body compiles in `informs4` with `dblanonrev`; current local build is 23 pages including references, with final ScholarOne proof still pending. |
 | Aug 6-8 | Double-anonymous QA | Metadata, URLs, acknowledgements, local paths, and author signals are removed from reviewer-facing PDFs. |
 | Aug 9-10 | Submission freeze | `just lint`, `just smoke`, `just validate-champion`, `just paper-submission-pdf`, and visual QA pass. |
 
@@ -53,7 +53,7 @@ CRPTO should be read as data science for decisions:
 | 9 | Supplement | A3--A34 are organized as a defense layer with scope caveats. |
 | 10 | Reproducibility | Accepted-paper package has code, DVC pointers, manifest, raw-data instructions, and guardrail commands. |
 | 11 | Double anonymity | Reviewer-facing body and supplement contain no author URLs, names, local paths, or private remotes. |
-| 12 | Official IJDS template | `CRPTO_ijds_submission.tex` is synchronized with the QMD and compiled only after official files are downloaded. |
+| 12 | Official IJDS template | `CRPTO_ijds_submission.tex` is synchronized with the QMD, compiles against the official files, and is rechecked after body edits. |
 | 13 | Data/code form | Cover letter and disclosure text acknowledge IJDS accepted-paper reproducibility requirements. |
 | 14 | Acceptance-risk audit | A short list of likely reviewer objections has body or supplement responses. |
 | 15 | Freeze discipline | Protected champion/search stages are never rerun as routine paper reproduction. |
@@ -66,5 +66,5 @@ CRPTO should be read as data science for decisions:
 | Overreading exact validity | Reviewers may object if "exact" sounds like universal conformal validity. | Define exact as funded-set accounting and state weighted validity separately. |
 | External claims too strong | Prosper/Freddie are not new certificates. | Label them as economic replication and exhaustiveness audits. |
 | Regret comparator confusion | SPO+ wins regret by design. | Present regret-auditability as a frontier with different governance outputs. |
-| Template/page risk | Local HTML-print PDFs are not official. | Compile in `informs4` before submission freeze. |
+| Template/page risk | Local HTML-print PDFs are not official. | Keep the `informs4` handoff build current and recheck the ScholarOne proof before submission. |
 | Reproducibility policy | IJDS requires disclosure form at submission and archive workflow at acceptance. | Maintain `REPRODUCIBILITY_PACKAGE.md` and cover-letter language. |

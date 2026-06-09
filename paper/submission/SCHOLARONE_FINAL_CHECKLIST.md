@@ -7,11 +7,11 @@ template files have been downloaded outside Git.
 
 | File | Source | Reviewer-facing? | Status |
 |---|---|:---:|---|
-| Anonymous manuscript PDF | `CRPTO_ijds_submission.tex` compiled with `informs4` and `dblanonrev`. | Yes | Local build passes; final freeze build pending |
-| Anonymous online supplement PDF | `paper/supplement_ijds.qmd` rendered and visually checked. | Yes | TODO |
+| Anonymous manuscript PDF | `CRPTO_ijds_submission.tex` compiled with `informs4` and `dblanonrev`. | Yes | Local build and visual QA pass; final ScholarOne proof pending |
+| Anonymous online supplement PDF | `paper/supplement_ijds.qmd` rendered and visually checked. | Yes | Local render and page QA pass; final ScholarOne proof pending |
 | Separate title page | `TITLE_PAGE_DRAFT.md` converted into the ScholarOne/title-page format. | No | TODO |
 | Data and Code Disclosure Form | Official IJDS form using `DATA_CODE_DISCLOSURE_FORM_DRAFT.md`. | Editor/system | TODO |
-| Cover letter | `COVER_LETTER_AND_DISCLOSURE.md`, shortened if ScholarOne text boxes are tight. | Editor | TODO |
+| Cover letter | `COVER_LETTER_AND_DISCLOSURE.md`, shortened if ScholarOne text boxes are tight. | Editor | Draft ready; final text-box copy pending |
 | Optional reproducibility note | `REPRODUCIBILITY_PACKAGE.md` or excerpted text if requested. | Editor/system | Optional |
 
 ## Official Template Build

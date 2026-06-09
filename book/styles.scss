@@ -192,6 +192,22 @@ summary:focus-visible,
   vertical-align: top;
 }
 
+#quarto-document-content p code,
+#quarto-document-content li code,
+#quarto-document-content td code,
+#quarto-document-content th code,
+#quarto-document-content figcaption code,
+#quarto-document-content .source-note code {
+  white-space: normal;
+  overflow-wrap: anywhere;
+  word-break: break-word;
+}
+
+#quarto-document-content td,
+#quarto-document-content th {
+  line-height: 1.42;
+}
+
 @media (max-width: 760px) {
   .page-columns {
     display: block !important;

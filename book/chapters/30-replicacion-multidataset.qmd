@@ -81,6 +81,8 @@ objetivo robusto queda exactamente en `$1,291,228` y el objetivo nonrobust en
 `$1,305,409`; el óptimo robusto all-candidate financia `143` préstamos y el peor
 rank financiado es `551`. Es decir: el screening top-return no es un supuesto
 frágil, sino una pantalla dominante certificada por el solve completo.
+La palabra certificado aquí se refiere a exhaustividad computacional del LP
+externo; no es un segundo certificado exacto alpha-safe como el de Lending Club.
 
 | Dataset | Cap | Candidatos resueltos | Robust LP | Nonrobust LP | Financiados | Peor rank financiado |
 |---|---:|---:|---:|---:|---:|---:|

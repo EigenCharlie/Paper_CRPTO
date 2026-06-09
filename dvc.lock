@@ -10,8 +10,8 @@ stages:
       size: 5565
     - path: book/chapters
       hash: md5
-      md5: be106517fddb85ab6221a587cc7daa31.dir
-      size: 870030
+      md5: a566931290439361a119a7cc6c5c9716.dir
+      size: 870188
       nfiles: 34
     - path: book/index.qmd
       hash: md5
@@ -19,8 +19,8 @@ stages:
       size: 5842
     - path: book/styles.scss
       hash: md5
-      md5: 8994c372af88c0a5e40316b76171bc8d
-      size: 13548
+      md5: c33469dd1ac959650e85a423ea6fe908
+      size: 13932
     - path: scripts/write_book_build_info.py
       hash: md5
       md5: 43b5b0b11353e424318574b8c6643235
@@ -33,8 +33,8 @@ stages:
     outs:
     - path: book/_book
       hash: md5
-      md5: f47e77605177015362de742442b0bcf9.dir
-      size: 17793152
+      md5: 892282164888d3ad32d149c3c60ea66e.dir
+      size: 17795522
       nfiles: 115
   crpto.paper.figures:
     cmd: python scripts/generate_crpto_figures.py --paper crpto

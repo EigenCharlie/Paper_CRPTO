@@ -386,7 +386,8 @@ and Freddie/Mendeley, that Freddie's full candidate universe has been solved,
 that subperiod/definition/segment sensitivities are documented, and that the
 economic cost of applying the frozen recipe scales with panel risk. They
 still do not create a new exact funded-set certificate or theorem for every
-external portfolio.
+external portfolio: they verify candidate-pool exhaustiveness and economic
+viability under a frozen recipe, not a new post-selection conformal guarantee.
 Together, these artifacts protect the IJDS claim: the submitted result is an
 auditable post-hoc conformal robust credit-portfolio decision with an exact
 frozen Lending Club funded-set certificate and external economic replication
@@ -570,7 +571,7 @@ The active IJDS submission surfaces are:
 | Long companion | `book/` | Public companion after anonymity handling. |
 | Publication config | `configs/crpto_publication_targets.yaml` | Venue, template, anonymity, and pivot rules. |
 
-Before formal submission, the Quarto body should be converted into the official
-INFORMS IJDS LaTeX template with double-anonymous settings. The title page is
-submitted separately, and repository or remote-storage URLs are disclosed only
-according to the journal's data/code and double-anonymous policies.
+The active handoff body is mirrored in the official INFORMS IJDS LaTeX template
+with double-anonymous settings under `paper/submission/CRPTO_ijds_submission.tex`.
+The title page is submitted separately, and repository or remote-storage URLs are
+disclosed only according to the journal's data/code and double-anonymous policies.

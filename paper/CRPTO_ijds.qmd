@@ -675,6 +675,9 @@ honest summary is that robustness is never economically catastrophic in these
 frozen applications: under blind application the conformal robust layer costs a
 single-digit to low-double-digit premium, and under selection it can be
 favorable.
+That closes the external-replication claim at the right level: the recipe
+transfers as an economic audit protocol, while the exact funded-set certificate
+remains the Lending Club object.
 
 | Frozen application | Panel default | Price of robustness |
 |---|---:|---:|

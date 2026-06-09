@@ -152,6 +152,9 @@ deliberately surgical: CRPTO maps frozen calibrated PD artifacts into a robust
 funded set, reports the portfolio-level conformal premium $\Gamma_{\mathrm{CP}}$,
 and verifies exact alpha-safe weighted miscoverage on the promoted Lending Club
 portfolio.
+The same conformal and LP gates remain viable on two additional credit datasets,
+while the governance boundary remains explicit: paper-facing reruns consume frozen
+artifacts, whereas protected stages would change the promoted champion.
 
 Read as data science for decisions, the paper's four components are explicit:
 the data are a static Lending Club OOT panel plus Prosper/Freddie external stress
@@ -304,7 +307,7 @@ average 90\% interval width $0.7842$, minimum group 90\% coverage $0.9190$, and 
 \subsection{Robust Portfolio Layer}\label{sec:method-lp}
 
 The decision variable is the funded amount or inclusion weight for each eligible
-loan. The optimizer maximizes realized economic return under a \$1M budget and
+loan. The optimizer maximizes expected net economic return under a \$1M budget and
 policy constraints that cap portfolio risk after replacing point PD estimates with
 conformal upper endpoints. The promoted policy has $\texttt{risk\_tolerance}=0.175$,
 $\texttt{policy\_mode}=\texttt{blended\_uncertainty}$, policy parameter
@@ -628,6 +631,8 @@ Prosper uses its full 10{,}531-loan OOT economic universe. Freddie is evaluated
 on 1{,}396{,}053 OOT economic candidates; a sparse all-candidate LP returns the
 same robust objective as the large top screens, with worst funded rank 551 and
 zero funded loans outside the top-250{,}000 screen.
+This is an exhaustiveness check on the external LP solve, not a new exact
+funded-set certificate for Prosper or Freddie.
 
 \begin{figure}[t]
   \centering
@@ -897,10 +902,10 @@ selection, so the transferable claim is the bounded, measurable premium under
 blind application, not a universal free lunch; the recipe carries its own price
 tag wherever it is applied.
 
-The limits are equally important. CRPTO does not prove that Lending Club is a universal
-proxy for modern credit origination. The Prosper and Freddie/Mendeley replications
-reduce the single-dataset concern, but they are still static historical panels rather
-than live deployment evidence. The external panels also make the conditional-coverage
+The limits are equally important. CRPTO does not prove that any one public dataset
+is a universal proxy for modern credit origination. The Prosper and
+Freddie/Mendeley replications reduce the single-dataset concern, but they are still
+static historical panels rather than live deployment evidence. The external panels also make the conditional-coverage
 caveat concrete: on Freddie the all-group minimum coverage is driven by tiny sparse
 Mondrian cells, and the high-default red segment misses the strict $\alpha = 0.01$
 gate at $0.9850$; both are reported as honest sensitivity evidence rather than promoted
