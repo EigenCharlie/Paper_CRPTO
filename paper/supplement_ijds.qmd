@@ -402,10 +402,10 @@ certificate landscape that motivated the journal package.
 | Family | Certificate object | What CRPTO uses now | Future-work boundary |
 |---|---|---|---|
 | Split/Mondrian CP | Marginal or partitioned coverage of PD-scale intervals [@vovk2005; @bostrom2021; @gibbs2024]. | Upper conformal endpoint becomes the robust PD input. | Stronger conditional guarantees require new assumptions or diagnostics. |
-| Data-driven robust optimization | Feasibility against an uncertainty set [@bertsimas2004; @bertsimas2018datadriven]. | Budgeted robust portfolio with exact funded-set check. | New robust objectives or uncertainty sets would be new research lanes. |
+| Data-driven robust optimization | Feasibility against an uncertainty set [@bertsimas2004; @goldfarb2003robustportfolio; @delage2010dro; @bertsimas2018datadriven]. | Budgeted robust portfolio with exact funded-set check. | New robust objectives, DRO ambiguity sets, or portfolio-selection variants would be new research lanes. |
 | Conformal robustness control | Robustness probability or loss control in downstream decisions [@johnstone2021; @hu2026crc]. | Used as positioning language and audit inspiration. | Not re-promoted as a new CRPTO selector. |
 | CROM/CREME/CREDO | Model or decision certificates for robust optimization [@bao2025croms; @zhou2025credo; @zhou2026creme]. | Used to motivate A20--A34 challenger and replication diagnostics. | Could become a CRPTO v2 certificate, but only with a new protocol. |
-| Decision-focused learning | Regret-aware training through the optimization loss [@elmachtoub2022; @schutte2024robust]. | SPO+ is a comparator in A19. | End-to-end retraining would change the frozen predictive artifact. |
+| Decision-focused learning | Regret-aware training through the optimization loss [@elmachtoub2022; @liu2021riskbounds; @schutte2024robust]. | SPO+ is a comparator in A19. | End-to-end retraining would change the frozen predictive artifact. |
 
 ## Coverage-Validity Ladder
 
@@ -431,8 +431,11 @@ decision.
 
 | Paper family | Domain contribution | CRPTO distinction |
 |---|---|---|
+| IJDS credit-risk graph learning [@das2023creditgraph]. | Shows that richer financial data structures can improve credit-rating prediction in an IJDS setting. | CRPTO keeps prediction quality as an input and moves the contribution to auditable portfolio decision control. |
+| Cost-aware classifier calibration [@yang2025costaware]. | Shows that miscalibration has asymmetric downstream decision costs. | CRPTO uses calibrated PD and conformal upper endpoints as a governance-visible decision input. |
 | Lending Club / fintech credit scoring [@jagtiani2019altdata; @albanesi2024credit; @zheng2026twostage]. | Measures predictive and scorecard behavior on platform or fintech lending data. | Uses the PD model as an auditable input to a decision certificate. |
-| P2P investment support [@guo2016p2p; @babaei2020p2p]. | Combines borrower-level prediction with portfolio-style investment recommendation. | Adds conformal uncertainty and exact alpha-safe funded-set validation. |
+| P2P investment support [@guo2016p2p; @zhao2016p2pportfolio; @babaei2020p2p]. | Combines borrower-level prediction with portfolio-style investment recommendation. | Adds conformal uncertainty and exact alpha-safe funded-set validation. |
+| Profit scoring in P2P lending [@serrano2016profitscoring]. | Reframes loan selection around economic return rather than classification accuracy alone. | Adds a post-allocation risk certificate and robust-region evidence around the economic objective. |
 | Robust P2P credit portfolio optimization [@chi2019p2p]. | Brings data-driven robust optimization into P2P lending. | Makes the uncertainty set a conformal artifact with frozen lineage. |
 | AI/OR digital lending optimization [@aior2025lendingclub]. | Frames Lending Club funding as multi-objective OR. | Keeps risk controls and artifact governance as first-class outputs. |
 | Ordinal conformal credit scoring [@kawasumi2026ordinal]. | Applies conformal prediction to credit-score intervals. | CRPTO moves from score uncertainty to a robust portfolio decision. |
@@ -486,6 +489,7 @@ The governance boundary for the current submission is:
 | Topic | Current submission | Future work only |
 |---|---|---|
 | Fairness | Proxy/intersectional audit on available data. | Direct protected-attribute validation if legally available. |
+| Causal automated decisions | Observational credit-risk decisions are reported as predictive/prescriptive certificates only. | Experimental or causal policy evaluation would require a separate design [@fernandezloria2025observational]. |
 | Monitoring | Artifact-backed guardrails and MRM triggers. | Live production dashboard. |
 | Retraining | No automatic retraining; frozen paper champion. | New named run with drift report. |
 | Companion | Quarto + DVC/DagsHub/MLflow after anonymity decision. | Streamlit/product showcase. |
@@ -497,7 +501,10 @@ artifact-aware validation. This structure mirrors the journal's data/code
 expectation: the anonymous submission can describe a reproducible companion
 without revealing author identity, and the accepted-paper package can disclose
 the public repository, DVC pointers, raw-data instructions, and reproducibility
-workflow.
+workflow. The aim is narrower than a replication market or incentive mechanism:
+CRPTO uses reproducibility to make one decision certificate auditable, whereas
+replication-robust analytics markets study how to allocate value across
+strategic data contributors [@falconer2026replication].
 
 Minimal local checks are:
 

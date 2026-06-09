@@ -22,10 +22,17 @@
 %% =====================================================================
 \documentclass[ijds,dblanonrev]{informs4}
 
-% --- Spacing / theorem / equation conventions (INFORMS defaults) ---
-\OneAndAHalfSpacedXI
+% --- Spacing / theorem / equation conventions (IJDS template defaults) ---
+\usepackage{eqndefns-left} % flags display equations that exceed text width
+\RequirePackage{tgtermes}
+\RequirePackage{newtxtext}
+\RequirePackage{newtxmath}
+\RequirePackage{bm}
+\RequirePackage{endnotes}
+\OneAndAHalfSpacedXII
 \TheoremsNumberedThrough
 \EquationsNumberedThrough
+\ECRepeatTheorems
 \MANUSCRIPTNO{}  % left blank for initial submission
 
 % --- Math + graphics packages used by the manuscript ---
@@ -33,6 +40,13 @@
 \usepackage{booktabs}
 \usepackage{graphicx}
 \graphicspath{{../../reports/crpto/figures/}}
+\usepackage{natbib}
+\bibpunct[, ]{(}{)}{,}{a}{}{,}
+\def\bibfont{\small}
+\def\bibsep{\smallskipamount}
+\def\bibhang{24pt}
+\def\newblock{\ }
+\def\BIBand{and}
 
 \begin{document}
 
@@ -148,7 +162,7 @@ committees.
 
 \begin{figure}[t]
   \centering
-  \includegraphics[width=\textwidth]{crpto_fig1_journal_pipeline.pdf}
+  \includegraphics[width=\textwidth]{crpto_fig1_journal_pipeline.png}
   \caption{CRPTO maps frozen calibrated PD artifacts through a Mondrian conformal
   uncertainty layer into an auditable robust portfolio decision and exact
   funded-set certificate.}
@@ -169,30 +183,41 @@ business and governance partitions \citep{bostrom2021,gibbs2024,zhou2024}.
 
 The second foundation is robust optimization. Classical robust optimization frames
 uncertainty as a set against which a decision must remain feasible, with the price
-of robustness made visible as a design trade-off \citep{bertsimas2004}. Recent work
-connects conformal prediction and robust optimization more directly by using
-conformal uncertainty sets in downstream decisions
-\citep{johnstone2021,patel2024,sun2024ptc,yeh2026}. CRPTO follows this line, but its
-empirical emphasis is different: the uncertainty set is not an abstract benchmark
-instance, but a credit-risk interval artifact with DVC/MLflow-style lineage, paper
-tables, and model-risk documentation.
+of robustness made visible as a design trade-off \citep{bertsimas2004}. Robust
+portfolio selection makes that trade-off operational for allocation under
+parameter uncertainty \citep{goldfarb2003robustportfolio}, whereas
+distributionally robust optimization broadens the uncertainty object toward moment
+or ambiguity sets \citep{delage2010dro}. Recent work connects conformal prediction
+and robust optimization more directly by using conformal uncertainty sets in
+downstream decisions \citep{johnstone2021,patel2024,sun2024ptc,hu2026crc}. CRPTO
+follows this line, but its empirical emphasis is different: the uncertainty set is
+not an abstract benchmark instance, but a credit-risk interval artifact with
+DVC/MLflow-style lineage, paper tables, and model-risk documentation.
 
 The third foundation is predict-then-optimize and decision-focused learning. SPO+
 and modern decision-focused learning ask models to respect the loss surface induced
-by the downstream decision \citep{elmachtoub2022,donti2017,mandi2024}. CRPTO is
-intentionally more conservative. It does not retrain the PD model end-to-end through
-the optimizer. Instead, it asks what can be achieved when a calibrated predictive
-system is already frozen and the decision layer must remain explainable to
-credit-risk reviewers. Robust losses for decision-focused learning
-\citep{schutte2024robust} share this protective intent, but operate at training time
-rather than as a post-hoc auditable constraint.
+by the downstream decision \citep{elmachtoub2022,donti2017,mandi2024}. IJDS work on
+decision making also warns that estimating a model and choosing an action are
+different objects, even before causal claims are introduced
+\citep{fernandezloria2022causaldecision}. CRPTO is intentionally more
+conservative. It does not retrain the PD model end-to-end through the optimizer.
+Instead, it asks what can be achieved when a calibrated predictive system is
+already frozen and the decision layer must remain explainable to credit-risk
+reviewers. Robust losses for decision-focused learning \citep{schutte2024robust}
+share this protective intent, but operate at training time rather than as a
+post-hoc auditable constraint.
 
 The fourth foundation is machine learning for credit scoring, where gradient
 boosting and benchmark studies define the performance frontier on retail panels
-\citep{lessmann2015,ayari2026,boosting2025default,xia2017}. Work specific to the
-Lending Club platform spans alternative-data fintech lending
-\citep{jagtiani2019altdata}, scorecard equity \citep{albanesi2024credit}, two-stage
-learning under fragmentary data \citep{liu2026twostage}, and operations-research
+\citep{lessmann2015,ayari2026,boosting2025default,xia2017}. Recent IJDS
+credit-risk work shows how richer data structures such as firm graphs can improve
+rating prediction \citep{das2023creditgraph}, and cost-aware calibration work makes
+explicit why probability quality matters when predictions feed asymmetric
+downstream decisions \citep{yang2025costaware}. Work specific to the Lending Club
+platform spans alternative-data fintech lending \citep{jagtiani2019altdata},
+scorecard equity \citep{albanesi2024credit}, two-stage learning under fragmentary
+data \citep{zheng2026twostage}, P2P portfolio selection and profit scoring
+\citep{zhao2016p2pportfolio,serrano2016profitscoring}, and operations-research
 treatments of the same investment-decision problem CRPTO studies
 \citep{aior2025lendingclub}. CRPTO does not compete on raw ranking against this
 literature; its champion AUC is deliberately mid-range. The contribution is the
@@ -404,6 +429,7 @@ to stress both probability calibration and decision-level robustness.
   \caption{Temporal out-of-time split. The January 2018 cutoff keeps the test
   window (including the 2020 COVID regime) strictly after training and calibration.}
   \label{tab:split}
+  \resizebox{\textwidth}{!}{%
   \begin{tabular}{llrl}
     \toprule
     Split & Period & Loans & Role \\
@@ -413,6 +439,7 @@ to stress both probability calibration and decision-level robustness.
     Test (OOT)  & Jan 2018 -- Sep 2020 & 276{,}869     & Coverage, portfolio decision, exact funded-set audit. \\
     \bottomrule
   \end{tabular}
+  }%
 \end{table}
 
 The out-of-time design is deliberately adversarial: the test window spans an
@@ -550,6 +577,7 @@ the realized out-of-time return then lands higher still.
   point-PD expected return over the non-robust baseline (hence the negative price of
   robustness), and the realized OOT return exceeds the robust expectation.}
   \label{tab:econ-anchor}
+  \resizebox{\textwidth}{!}{%
   \begin{tabular}{lrl}
     \toprule
     Quantity & Value & Source field \\
@@ -561,6 +589,7 @@ the realized out-of-time return then lands higher still.
     Funded rows / budget                           & 341 / \$1{,}000{,}000 & A7 positive-exposure rows / \texttt{total\_allocated} \\
     \bottomrule
   \end{tabular}
+  }%
 \end{table}
 
 The point is therefore not that robustness must be paid for in lost return. On this
@@ -626,6 +655,7 @@ Both pass the conformal gates and both return positive robust LP objectives.
   \centering
   \caption{External economic replications using the frozen CRPTO recipe.}
   \label{tab:external-replication}
+  \resizebox{\textwidth}{!}{%
   \begin{tabular}{llrrrrrrr}
     \toprule
     Dataset & Product & Rows & Default & AUC & Cov. 90\% & Cov. 99\% & OOT cand. & Robust LP \\
@@ -634,6 +664,7 @@ Both pass the conformal gates and both return positive robust LP objectives.
     Freddie FM48 & Mortgages & 3{,}173{,}355 & 1.45\% & 0.7839 & 0.9745 & 0.9907 & 1{,}396{,}053 & \$1{,}291{,}228 \\
     \bottomrule
   \end{tabular}
+  }%
 \end{table}
 
 \begin{figure}[t]
@@ -736,6 +767,7 @@ target, an exact funded-set $\alpha=0.01$ pass, and a $45/45$ robust region.
   \caption{Regret-auditability frontier: CRPTO trades regret for verifiable risk
   controls.}
   \label{tab:regret}
+  \resizebox{\textwidth}{!}{%
   \begin{tabular}{lrrrr}
     \toprule
     Method & Mean regret & Regret $\Delta$ vs. two-stage & Realized funding value & Verifiable risk controls \\
@@ -745,6 +777,7 @@ target, an exact funded-set $\alpha=0.01$ pass, and a $45/45$ robust region.
     CRPTO robust       & $0.947429$ & $122.46\%$ higher & \$170{,}464.54 & $3/3$ \\
     \bottomrule
   \end{tabular}
+  }%
 \end{table}
 
 The regret column must be read with its protocol in mind, and the last two
@@ -798,6 +831,7 @@ frontier, not the lowest-tail policy.
   return inside the exact alpha-safe region; tighter tail control is available at a
   documented return cost.}
   \label{tab:tail}
+  \resizebox{\textwidth}{!}{%
   \begin{tabular}{lrrrr}
     \toprule
     Policy & Realized return & $\Delta$ return & CVaR$_{95}$ & $\Delta$ CVaR \\
@@ -807,6 +841,7 @@ frontier, not the lowest-tail policy.
     Tightest CVaR-capped policy (A22)   & \$160{,}978.00 & $-5.57\%$ & $0.4061$ & cap-binding \\
     \bottomrule
   \end{tabular}
+  }%
 \end{table}
 
 On distribution robustness, the worst per-grade 90\% coverage on the frozen

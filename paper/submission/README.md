@@ -49,8 +49,9 @@ private remote details.
 - Overleaf template page: <https://www.overleaf.com/latex/templates/template-for-informs-journal-on-data-science/sbthszxgycfn>
 
 Do not vendor private template downloads, reviewer forms, or authenticated
-publisher material into this repository. Keep only public links and the
-conversion notes needed to reproduce the submission package.
+publisher material into this repository. Local copies of the official template
+files can live in this directory for compilation, but they are gitignored on
+purpose.
 
 ## Official LaTeX Submission Build
 
@@ -62,37 +63,48 @@ the new journal pipeline Figure 1, the bound-claim stack, alpha-gamma,
 robust-region and regret-auditability figures, plus the core, exact-certificate,
 champion-comparator, funded-set audit and regret tables. The
 `informs2014.bst` + `../../book/references.bib` bibliography wiring is already
-present. Journal figures use the available PDF/vector exports from
-`reports/crpto/figures/` where possible. The only missing inputs are the
-publisher class/style files.
+present. Journal figures use PDF/vector exports from `reports/crpto/figures/`
+where possible; Figure 1 intentionally uses the PNG export because the vector
+PDF crop box cuts the right edge under `informs4`.
 
-> **`informs4` is not on CTAN/TeX Live.** A `tlmgr`/CTAN search returns no
-> package; the class and style are distributed only through the INFORMS author
-> portal (or the IJDS Overleaf template). The `.tex` therefore cannot be compiled
-> in this repo's TinyTeX until those files are downloaded — this is expected, not
-> a defect.
+> **`informs4` is not on CTAN/TeX Live.** The class and bibliography style are
+> distributed through the INFORMS author portal or the IJDS Overleaf template.
+> Local copies are allowed for compilation and are gitignored. Do not commit
+> `informs4.cls`, `informs2014.bst`, template PDFs, `.sty` files, or generated
+> LaTeX build artifacts.
 
-Page budget: the local Chrome-print proxy currently renders to `24` pages for
-the body and `22` pages for the online supplement. The binding page count is
-still the official INFORMS template count, not the Chrome proxy; the older
-`docs/research/crpto_ijds_page_budget_2026.md` estimate should be read as a
-pre-template planning memo. The binding task is now **polish plus official
-template pagination**, not broad compression: keep the claim surgical, captions
-assertive, and the QMD/official-template surfaces synchronized before a real
-submission build.
+Current local build state (verified 2026-06-09): TinyTeX/TeX Live 2026,
+Strawberry Perl 5.42.2.1, and the `listingsutf8` TeX package compile
+`CRPTO_ijds_submission.tex` to a 23-page official-template PDF. The only LaTeX
+log warnings left are a small `\maketitle` overfull from the `informs4`
+anonymous title block and one float-only page, both visually acceptable. The
+body is comfortably inside the IJDS 25-page initial-submission budget even
+before excluding references.
 
 To produce the official submission PDF:
 
-1. Download `informs4.cls` and `informs2014.bst` from the INFORMS author portal
-   (or Overleaf) and drop them next to `CRPTO_ijds_submission.tex`. These are
-   gitignored on purpose (`paper/submission/.gitignore`) — do not commit them.
-2. Build:
+1. Download or refresh `informs4.cls` and `informs2014.bst` from the INFORMS
+   author portal (or Overleaf) and drop them next to
+   `CRPTO_ijds_submission.tex`. These are gitignored on purpose
+   (`paper/submission/.gitignore`); do not commit them.
+2. Build manually:
 
-   ```bash
+   ```powershell
    pdflatex CRPTO_ijds_submission
    bibtex   CRPTO_ijds_submission
    pdflatex CRPTO_ijds_submission
    pdflatex CRPTO_ijds_submission
+   ```
+
+   Or use `latexmk` through the Perl script directly. The TinyTeX
+   `latexmk.exe` wrapper can fail on this Windows install, but the script path
+   is stable:
+
+   ```powershell
+   $env:Path = "C:\Strawberry\perl\bin;C:\Strawberry\perl\site\bin;C:\Strawberry\c\bin;$env:APPDATA\TinyTeX\bin\windows;$env:Path"
+   Push-Location paper/submission
+   perl "$env:APPDATA\TinyTeX\texmf-dist\scripts\latexmk\latexmk.pl" -pdf -interaction=nonstopmode -halt-on-error CRPTO_ijds_submission.tex
+   Pop-Location
    ```
 
 3. The `dblanonrev` option keeps the body anonymous; verify against the anonymity
@@ -138,7 +150,8 @@ These protocols are compatible but not interchangeable.
   ScholarOne.
 - Use `SCHOLARONE_FINAL_CHECKLIST.md` while uploading and reviewing the generated
   proof.
-- Recheck the official-template page budget after PDF pagination is available.
+- Recheck the official-template page budget if the body changes materially. The
+  current local official-template build is 23 pages.
 - Keep A3--A34 in the online supplement unless a reviewer-facing argument needs
   one compact table in the body.
 - Preserve CRPTO as the coverage/auditability method and SPO+ as the low-regret
@@ -149,26 +162,29 @@ These protocols are compatible but not interchangeable.
 - Regenerate previews with `just paper-submission` before release.
 - Run the repository gates: `just lint`, `just smoke`, `just validate-champion`.
 
-## FINAL STEP — official compile (do only when the paper is agreed closed)
+## Final Step - Official Compile
 
-This is intentionally the **last** action before upload, gated on an explicit
-decision to freeze the manuscript. Do not do it as routine polishing; the body
-is still evolving until then. `CRPTO_ijds_submission.tex` already carries the full
+This remains a final-week action before upload, gated on an explicit decision
+to freeze the manuscript. `CRPTO_ijds_submission.tex` already carries the full
 ported prose, the economic-anchor ladder, and the temporal-split and tail-risk
-tables, so the only missing inputs are the publisher class/style files.
+tables. Local publisher class/style files are available in this directory and
+gitignored; recheck the official source before final submission in case INFORMS
+updates the template.
 
 1. **Confirm closure.** The body content, numbers, and figures are final and the
    repository gates pass.
-2. **Download the official template files** (gitignored on purpose; never commit):
+2. **Refresh the official template files if needed** (gitignored on purpose;
+   never commit):
    - `informs4.cls` and `informs2014.bst` from the INFORMS author portal
      <https://pubsonline.informs.org/authorportal/latex-style-files> or the
-     IJDS Overleaf template (v2.00, 29 Apr 2025 — the latest as of 2026)
+     IJDS Overleaf template (v2.00, 29 Apr 2025, the latest checked locally)
      <https://www.overleaf.com/latex/templates/template-for-informs-journal-on-data-science/sbthszxgycfn>.
-   - Drop both next to `CRPTO_ijds_submission.tex`. The fastest path is to paste
-     the `.tex` into the Overleaf template, which already bundles both files.
+   - Drop both next to `CRPTO_ijds_submission.tex` if local copies are absent or
+     stale. The fastest fallback is to paste the `.tex` into the Overleaf
+     template, which already bundles both files.
 3. **Compile:**
 
-   ```bash
+   ```powershell
    pdflatex CRPTO_ijds_submission
    bibtex   CRPTO_ijds_submission
    pdflatex CRPTO_ijds_submission
@@ -176,8 +192,8 @@ tables, so the only missing inputs are the publisher class/style files.
    ```
 
 4. **Recount the official-template page budget** and demote body floats to the
-   supplement only if it exceeds 25 pages. The local Chrome-print body preview is
-   currently 24 pages, but this is a verification proxy, not the final venue
-   pagination.
+   supplement only if it exceeds 25 pages. The local official-template build is
+   currently 23 pages; the Chrome-print body preview is only a verification
+   proxy.
 5. **Verify anonymity** against the checklist above, then upload the body PDF and
    submit the title page separately.

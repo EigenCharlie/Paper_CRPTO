@@ -7,7 +7,7 @@ template files have been downloaded outside Git.
 
 | File | Source | Reviewer-facing? | Status |
 |---|---|:---:|---|
-| Anonymous manuscript PDF | `CRPTO_ijds_submission.tex` compiled with `informs4` and `dblanonrev`. | Yes | TODO |
+| Anonymous manuscript PDF | `CRPTO_ijds_submission.tex` compiled with `informs4` and `dblanonrev`. | Yes | Local build passes; final freeze build pending |
 | Anonymous online supplement PDF | `paper/supplement_ijds.qmd` rendered and visually checked. | Yes | TODO |
 | Separate title page | `TITLE_PAGE_DRAFT.md` converted into the ScholarOne/title-page format. | No | TODO |
 | Data and Code Disclosure Form | Official IJDS form using `DATA_CODE_DISCLOSURE_FORM_DRAFT.md`. | Editor/system | TODO |
@@ -16,8 +16,8 @@ template files have been downloaded outside Git.
 
 ## Official Template Build
 
-1. Download `informs4.cls` and `informs2014.bst` from INFORMS/Overleaf.
-2. Place them next to `CRPTO_ijds_submission.tex`.
+1. Download or refresh `informs4.cls` and `informs2014.bst` from INFORMS/Overleaf.
+2. Place them next to `CRPTO_ijds_submission.tex`; local gitignored copies are already present.
 3. Build:
 
    ```powershell
@@ -28,7 +28,7 @@ template files have been downloaded outside Git.
    ```
 
 4. Confirm body page count is at most 25 pages excluding references and
-   appendices.
+   appendices. The local official-template build is currently 23 pages total.
 
 ## Final Local Gates
 

@@ -152,41 +152,54 @@ weighted-coverage results show that those guarantees require extra structure
 The second foundation is robust optimization. Classical robust optimization
 frames uncertainty as a set against which a decision must remain feasible, with
 the price of robustness made visible as a design trade-off [@bertsimas2004].
-Data-driven robust and prescriptive-analytics work then connects predictive
-models to downstream decisions while keeping the uncertainty-to-action contract
-explicit [@bertsimas2018datadriven; @bertsimas2020prescriptive]. Recent work
-connects conformal prediction and robust optimization more directly by using
-conformal uncertainty sets in downstream decisions [@johnstone2021; @patel2024;
-@hu2026crc]. CRPTO follows this line, but its empirical
-emphasis is different: the uncertainty set is not an abstract benchmark
-instance, but a credit-risk interval artifact with DVC/MLflow-style lineage,
-paper tables, and model-risk documentation.
+Robust portfolio selection makes that trade-off operational for allocation
+under parameter uncertainty [@goldfarb2003robustportfolio], whereas
+distributionally robust optimization broadens the uncertainty object toward
+moment or ambiguity sets [@delage2010dro]. Data-driven robust and
+prescriptive-analytics work then connects predictive models to downstream
+decisions while keeping the uncertainty-to-action contract explicit
+[@bertsimas2018datadriven; @bertsimas2020prescriptive]. Recent work connects
+conformal prediction and robust optimization more directly by using conformal
+uncertainty sets in downstream decisions [@johnstone2021; @patel2024;
+@hu2026crc]. CRPTO follows this line, but its empirical emphasis is different:
+the uncertainty set is not an abstract benchmark instance, but a credit-risk
+interval artifact with DVC/MLflow-style lineage, paper tables, and model-risk
+documentation.
 
 The third foundation is predict-then-optimize and decision-focused learning.
-SPO+ and modern decision-focused learning ask models to respect the loss
-surface induced by the downstream decision [@elmachtoub2022; @donti2017;
-@mandi2024]. CRPTO is intentionally more conservative. It does not retrain the
-PD model end-to-end through the optimizer. Instead, it asks what can be achieved
-when a calibrated predictive system is already frozen and the decision layer
-must remain explainable to credit-risk reviewers. Robust losses for
-decision-focused learning [@schutte2024robust] share this protective intent, but
-operate at training time rather than as a post-hoc auditable constraint.
+IJDS work on decision making warns that estimating a model and choosing an
+action are different objects, even before causal claims are introduced
+[@fernandezloria2022causaldecision]. SPO+ and modern decision-focused learning
+ask models to respect the loss surface induced by the downstream decision
+[@elmachtoub2022; @donti2017; @mandi2024]. CRPTO is intentionally more
+conservative. It does not retrain the PD model end-to-end through the optimizer.
+Instead, it asks what can be achieved when a calibrated predictive system is
+already frozen and the decision layer must remain explainable to credit-risk
+reviewers. Robust losses for decision-focused learning [@schutte2024robust]
+share this protective intent, but operate at training time rather than as a
+post-hoc auditable constraint.
 
 The fourth foundation is machine learning and optimization for credit
 decisions. Credit-scoring benchmarks define the performance frontier on retail
-panels [@lessmann2015; @ayari2026; @xia2017]. Work on fintech lending and
-consumer-credit allocation studies platform structure, credit invisibility,
-measurement noise, and scorecard equity [@jagtiani2019altdata;
-@albanesi2024credit; @khandani2010consumer; @fuster2022predictably].
+panels [@lessmann2015; @ayari2026; @xia2017]. Recent IJDS credit-risk work
+shows how richer data structures such as firm graphs can improve rating
+prediction [@das2023creditgraph], and cost-aware calibration work makes explicit
+why probability quality matters when predictions feed asymmetric downstream
+decisions [@yang2025costaware]. Work on fintech lending and consumer-credit
+allocation studies platform structure, credit invisibility, measurement noise,
+and scorecard equity [@jagtiani2019altdata; @albanesi2024credit;
+@khandani2010consumer; @fuster2022predictably].
 In the P2P/Lending Club decision neighborhood, prior work studies
-instance-based investment support, robust credit portfolio optimization, and
-multi-objective AI/OR funding policies [@guo2016p2p; @chi2019p2p;
-@babaei2020p2p; @aior2025lendingclub]. Recent ordinal conformal credit-scoring
-work also means that the safe claim is not "no conformal prediction in credit"
-[@kawasumi2026ordinal]. CRPTO does not compete on raw ranking against this
-literature; its champion AUC is deliberately mid-range. The contribution is the
-auditable bridge from a calibrated, frozen PD model to a conformal robust
-portfolio decision, not another point on the credit-scoring leaderboard.
+instance-based investment support, P2P portfolio selection, profit scoring,
+robust credit portfolio optimization, and multi-objective AI/OR funding
+policies [@guo2016p2p; @zhao2016p2pportfolio; @serrano2016profitscoring;
+@chi2019p2p; @babaei2020p2p; @aior2025lendingclub]. Recent ordinal conformal
+credit-scoring work also means that the safe claim is not "no conformal
+prediction in credit" [@kawasumi2026ordinal]. CRPTO does not compete on raw
+ranking against this literature; its champion AUC is deliberately mid-range.
+The contribution is the auditable bridge from a calibrated, frozen PD model to a
+conformal robust portfolio decision, not another point on the credit-scoring
+leaderboard.
 
 Finally, recent work on conformal model selection for robust optimization,
 multi-distribution conformal validity, online conformal portfolio methods,
@@ -210,12 +223,13 @@ Table 1 states the novelty boundary directly. CRPTO is not first in any broad
 individual family; its claim is the combination of calibrated PD, conformal
 uncertainty, robust credit-portfolio optimization, exact funded-set validation,
 and reproducible artifact governance. The row labels aggregate the closest
-families discussed above: P2P/Lending Club OR [@guo2016p2p; @chi2019p2p;
-@babaei2020p2p; @aior2025lendingclub], conformal credit scoring
-[@kawasumi2026ordinal], conformal robust optimization [@johnstone2021;
-@patel2024; @hu2026crc], decision-focused learning [@elmachtoub2022;
-@mandi2024; @schutte2024robust], and conformal finance portfolios
-[@noguer2024portfolio; @kato2025; @liu2026portfolio].
+families discussed above: P2P/Lending Club OR [@guo2016p2p;
+@zhao2016p2pportfolio; @serrano2016profitscoring; @chi2019p2p; @babaei2020p2p;
+@aior2025lendingclub], conformal credit scoring [@kawasumi2026ordinal],
+conformal robust optimization [@johnstone2021; @patel2024; @hu2026crc],
+decision-focused learning [@elmachtoub2022; @mandi2024; @schutte2024robust],
+and conformal finance portfolios [@noguer2024portfolio; @kato2025;
+@liu2026portfolio].
 
 | Neighboring literature | What it already contributes | What CRPTO adds | Why not enough for auditable credit decisions |
 |---|---|---|---|

@@ -5,6 +5,13 @@ informs4.cls
 informs*.bst
 *.bst
 *.cls
+*.sty
+*.eps
+informs_Logo.pdf
+INFORMS-IJDS-Template.*
+Style-Instructions.pdf
+sample.bib
+Sample-Figure.*
 # LaTeX build artifacts
 *.aux
 *.bbl
