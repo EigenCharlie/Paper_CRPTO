@@ -155,7 +155,7 @@ optional/isolated.
 | File | Observation | Action |
 |---|---|---|
 | `pyproject.toml` (`spo` extra, `pyepo>=1.0`) | Too loose for the new claim. | Later tighten to `pyepo[ortools]>=1.3.7,<1.4` in a dedicated dependency PR. |
-| `src/optimization/spo_integration.py` | Verify the helper matches PyEPO 1.3 SPO+ signature `SPOPlus(pred, costs, sols, objs)` rather than the old `SPOPlus(pred, costs)`. | Deprecate or rewrite around `optDataset`. |
+| `src/optimization/spo_integration.py` | Verify the helper matches PyEPO 1.3 SPO+ signature `SPOPlus(pred, costs, sols, objs)` rather than the old `SPOPlus(pred, costs)`. | Resolved 2026-06-09: module removed as dead code (never imported); `scripts/run_spo_real.py` remains the DFL entrypoint. |
 | `scripts/run_spo_real.py` | Canonical DFL prototype entrypoint candidate; confirm it uses the correct `optDataset` tuple. | Make this the canonical DFL prototype entrypoint. |
 | `scripts/run_spo_comparison.py`, `scripts/run_crpto_vs_spo_stability.py` | Existing comparator/stability runners. | Keep as the comparator surface; add RFYL only after a real rerun. |
 | `book/chapters/09-spo-regret.qmd` | Frames SPO+ as a regret comparator, not a conformal replacement. | Add a short PyEPO 1.3 footnote only after a real rerun. |

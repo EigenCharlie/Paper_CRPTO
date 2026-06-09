@@ -8,6 +8,15 @@ adheres to a single-author, paper-driven release cadence — see
 ## [Unreleased]
 
 ### Added
+- `src/utils/script_helpers.py` — canonical JSON/YAML/table I/O helpers for
+  the publication scripts, with LF-only idempotent writers that keep
+  regenerated tables bit-exact against `EXTRACTION_MANIFEST.json` on
+  Windows (fixes a latent CRLF reproducibility bug in `just tables`).
+- `scripts/archive/` — six zero-reference one-shot scripts moved out of the
+  active tree (`build_concentration_bound_table.py`,
+  `run_crpto_notebook_suite.py`, and four `search/` helpers); roles recorded
+  with `status: archived` in `configs/pipeline_registry/script_role_registry.yaml`.
+
 - `tests/test_manifest_regression.py` — hash-regression tests against
   `EXTRACTION_MANIFEST.json` for the three protected champion files
   (`pd_canonical.cbm`, `pd_canonical_calibrator.pkl`,
@@ -28,6 +37,15 @@ adheres to a single-author, paper-driven release cadence — see
   note moved out to `LICENSE-CONTENT`.
 - `CLAUDE.md` cross-references `docs/SCOPE_AND_GOVERNANCE.md` and
   `docs/ACADEMIC_CONTEXT.md` as required reading.
+
+### Removed
+- Dead modules with no imports anywhere in the repo:
+  `src/evaluation/encoding_stability.py`, `src/evaluation/monotonicity.py`,
+  `src/evaluation/slicing_functions.py`, `src/optimization/sda.py`,
+  `src/optimization/spo_integration.py`. The frozen audit artefacts they
+  once produced (`models/encoding_stability_status.json`,
+  `models/monotonicity_audit_status.json`) remain committed and are still
+  consumed by `scripts/generate_mrm_report.py` and the book.
 
 ## [0.1.0] — 2026-05-11
 

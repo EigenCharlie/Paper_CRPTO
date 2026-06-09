@@ -174,3 +174,39 @@ scripts:
     category: publication
     pipeline_owner: publication_exports
     status: public
+  -
+    script: scripts/archive/build_concentration_bound_table.py
+    role: "exploratory concentration-bound table (not promoted)"
+    category: search
+    pipeline_owner: search_portfolio
+    status: archived
+  -
+    script: scripts/archive/run_crpto_notebook_suite.py
+    role: batch runner for exploratory notebooks
+    category: diagnostics
+    pipeline_owner: crpto_e2e
+    status: archived
+  -
+    script: scripts/archive/search/compare_conformal_portfolio_finalists.py
+    role: one-shot conformal finalist comparison during search
+    category: search
+    pipeline_owner: search_conformal
+    status: archived
+  -
+    script: scripts/archive/search/monitor_regret_auditability.py
+    role: progress monitor for the regret-auditability sandbox (closed 2026-05-28)
+    category: search
+    pipeline_owner: search_portfolio
+    status: archived
+  -
+    script: scripts/archive/search/resume_conformal_reopen_closure.py
+    role: resume helper for the 2026-04 conformal reopen closure run
+    category: search
+    pipeline_owner: search_conformal
+    status: archived
+  -
+    script: scripts/archive/search/sweep_alpha_gamma_bound_finalists.py
+    role: alpha-gamma sweep over finalists before exact eval
+    category: search
+    pipeline_owner: search_portfolio
+    status: archived

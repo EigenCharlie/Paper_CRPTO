@@ -142,7 +142,7 @@ def _try_spo_comparison(
         "status": "capability_available",
         "reason": "pyepo and torch installed; full training requires optmodel setup",
         "description": "SPO+ trains neural net with decision-focused loss (Elmachtoub & Grigas 2022)",
-        "reference_code": "src/optimization/spo_integration.py",
+        "reference_code": "scripts/run_spo_real.py (src/optimization/spo_integration.py removed 2026-06, see CHANGELOG)",
     }
 
 
