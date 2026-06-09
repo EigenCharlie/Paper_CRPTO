@@ -9,6 +9,10 @@ stages:
   crpto.data.features:
     cmd: python scripts/materialize_feature_artifacts.py --config configs/crpto_pd_model.yaml
     deps:
+      # train/test/calibration.parquet are frozen splits produced manually by
+      # src/data/prepare_dataset.py from loan_master.parquet and imported as
+      # standalone .dvc artifacts (no producing stage by design: regenerating
+      # them would invalidate every protected stage downstream).
       - data/processed/train.parquet
       - data/processed/test.parquet
       - scripts/materialize_feature_artifacts.py
@@ -42,6 +46,11 @@ stages:
   crpto.conformal.intervals:
     cmd: python scripts/generate_conformal_intervals.py --config configs/crpto_conformal_policy.yaml --mode replay --replay_manifest configs/replay/ijds_rebaseline_2026_06_07.json --run-tag ijds-rebaseline-2026-06-07
     deps:
+      # test_predictions.parquet is exported by scripts/train_pd_model.py
+      # alongside the frozen champion and tracked as a standalone .dvc
+      # artifact; it is intentionally not declared as an out of
+      # crpto.pd.champion (changing that stage requires champion-lock
+      # approval, see docs/refactor/README.md).
       - data/processed/test_predictions.parquet
       - scripts/generate_conformal_intervals.py
       - configs/crpto_conformal_policy.yaml

@@ -22,6 +22,13 @@ pd:
   catboost:
     depth: 8
     iterations: 4200
+    # KNOWN DIVERGENCE (2026-06-09): the canonical config
+    # configs/crpto_pd_model.yaml records learning_rate 0.057321202729872456
+    # (HPO local trial 56) and is what the frozen champion actually consumed;
+    # this 0.03 is stale documentation. Correcting it re-keys the protected
+    # crpto.pd.champion params block in dvc.lock, so it stays as-is until an
+    # explicit champion-lock update is approved. Contract enforced in
+    # tests/test_configs/test_params_config_sync.py.
     learning_rate: 0.03
   calibration: "auto"   # auto chooses among isotonic / platt / venn-abers
 
