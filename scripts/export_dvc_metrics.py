@@ -15,6 +15,8 @@ import pandas as pd
 from loguru import logger
 from sklearn.metrics import brier_score_loss, roc_auc_score, roc_curve
 
+from src.utils.script_helpers import load_json
+
 try:
     from sklearn.metrics import d2_brier_score
 except ImportError:  # sklearn < 1.8
@@ -31,8 +33,7 @@ def _load_pickle(path: Path) -> Any:
 
 
 def _load_json(path: Path) -> dict[str, Any]:
-    with open(path, encoding="utf-8") as f:
-        return json.load(f)
+    return load_json(path)
 
 
 def _ece(y_true: np.ndarray, y_prob: np.ndarray, n_bins: int = 15) -> float:

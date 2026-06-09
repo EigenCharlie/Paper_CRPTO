@@ -8,7 +8,6 @@ champion and does not overwrite frozen portfolio artifacts.
 
 from __future__ import annotations
 
-import json
 import math
 import sys
 from pathlib import Path
@@ -16,7 +15,6 @@ from typing import Any
 
 import numpy as np
 import pandas as pd
-import yaml
 from loguru import logger
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -37,6 +35,13 @@ from src.optimization.tail_satisficing_objective import (  # noqa: E402
     score_tail_satisficing_objective,
     weighted_cvar,
     weighted_mean,
+)
+from src.utils.script_helpers import (  # noqa: E402
+    first_existing,
+    load_json,
+    load_yaml,
+    write_json,
+    write_table,
 )
 
 TABLE_DIR = ROOT / "reports" / "crpto" / "tables"
@@ -71,42 +76,12 @@ STATUS_SCHEMA_VERSION = "2026-05-12.2"
 REPRODUCIBLE_STATUS_TIMESTAMP = "2026-06-07T00:00:00+00:00"
 
 
-def _load_yaml(path: Path) -> dict[str, Any]:
-    return yaml.safe_load(path.read_text(encoding="utf-8"))
-
-
-def _load_json(path: Path) -> dict[str, Any]:
-    return json.loads(path.read_text(encoding="utf-8"))
-
-
 def _portfolio_shortlist_path() -> Path:
-    return SHORTLIST_EXACT_PATH if SHORTLIST_EXACT_PATH.exists() else SHORTLIST_PATH
-
-
-def _write_json(path: Path, payload: dict[str, Any]) -> None:
-    path.parent.mkdir(parents=True, exist_ok=True)
-    path.write_text(
-        json.dumps(payload, indent=2, sort_keys=True) + "\n",
-        encoding="utf-8",
-        newline="",
-    )
+    return first_existing(SHORTLIST_EXACT_PATH, SHORTLIST_PATH)
 
 
 def _write_table(name: str, frame: pd.DataFrame) -> list[Path]:
-    TABLE_DIR.mkdir(parents=True, exist_ok=True)
-    csv_path = TABLE_DIR / f"{name}.csv"
-    tex_path = TABLE_DIR / f"{name}.tex"
-    csv_path.write_text(
-        frame.to_csv(index=False, lineterminator="\n"), encoding="utf-8", newline=""
-    )
-    tex_path.write_text(
-        frame.to_latex(index=False, escape=True, float_format=lambda value: f"{value:.6f}"),
-        encoding="utf-8",
-        newline="",
-    )
-    logger.info("Wrote {}", csv_path.relative_to(ROOT))
-    logger.info("Wrote {}", tex_path.relative_to(ROOT))
-    return [csv_path, tex_path]
+    return write_table(name, frame, table_dir=TABLE_DIR, root=ROOT)
 
 
 def _cached_a20_status(frame: pd.DataFrame) -> dict[str, Any]:
@@ -337,9 +312,9 @@ def _score_policy(
 
 
 def _build_a20_table() -> tuple[pd.DataFrame, dict[str, Any]]:
-    promotion = _load_json(PROMOTION_PATH)
-    optimization_config = _load_yaml(OPTIMIZATION_CONFIG_PATH)
-    objective_config = _load_yaml(OBJECTIVE_CONFIG_PATH)
+    promotion = load_json(PROMOTION_PATH)
+    optimization_config = load_yaml(OPTIMIZATION_CONFIG_PATH)
+    objective_config = load_yaml(OBJECTIVE_CONFIG_PATH)
     thresholds = _thresholds_from_config(objective_config)
     shortlist = (
         pd.read_parquet(_portfolio_shortlist_path())
@@ -492,7 +467,7 @@ def build_tail_satisficing_audit() -> dict[str, Any]:
         },
         "champion_promotion_changed": False,
     }
-    _write_json(STATUS_PATH, status)
+    write_json(STATUS_PATH, status)
     logger.info("Wrote {}", STATUS_PATH.relative_to(ROOT))
     return status
 

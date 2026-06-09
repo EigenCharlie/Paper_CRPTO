@@ -11,7 +11,6 @@ Usage:
 from __future__ import annotations
 
 import argparse
-import os
 from datetime import UTC, datetime
 from pathlib import Path
 
@@ -34,29 +33,17 @@ from src.utils.pipeline_runtime import (
     write_runtime_checkpoint,
     write_runtime_status,
 )
+from src.utils.script_helpers import artifact_path, parse_percent_series, resolve_interval_columns
 
 SCHEMA_VERSION = "2026-03-08.1"
 
 
 def _artifact_path(path_like: str | Path) -> Path:
-    path = Path(path_like)
-    root = str(os.environ.get("GPU_REPLAY_ARTIFACT_ROOT", "")).strip()
-    return (Path(root) / path) if root else path
+    return artifact_path(path_like)
 
 
 def _parse_percent_series(series: pd.Series) -> np.ndarray:
-    if pd.api.types.is_numeric_dtype(series):
-        values = pd.to_numeric(series, errors="coerce").to_numpy(dtype=float)
-    else:
-        values = (
-            series.astype(str)
-            .str.strip()
-            .str.rstrip("%")
-            .pipe(pd.to_numeric, errors="coerce")
-            .to_numpy(dtype=float)
-        )
-    values = np.nan_to_num(values, nan=12.0)
-    return values / 100.0
+    return parse_percent_series(series)
 
 
 def _load_candidates() -> pd.DataFrame:
@@ -90,10 +77,7 @@ def _resolve_output_dirs(artifact_namespace: str | None = None) -> tuple[Path, P
 
 
 def _resolve_interval_columns(intervals: pd.DataFrame) -> tuple[str, str, str]:
-    col_point = "y_pred" if "y_pred" in intervals.columns else "pd_point"
-    col_low = "pd_low_90" if "pd_low_90" in intervals.columns else "pd_low"
-    col_high = "pd_high_90" if "pd_high_90" in intervals.columns else "pd_high"
-    return col_point, col_low, col_high
+    return resolve_interval_columns(intervals)
 
 
 def _align_loans_and_intervals(

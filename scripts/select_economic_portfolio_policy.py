@@ -4,7 +4,6 @@ from __future__ import annotations
 
 import argparse
 import json
-import os
 from pathlib import Path
 
 import numpy as np
@@ -22,14 +21,9 @@ from scripts.simulate_ab_test import (
 )
 from src.evaluation.ab_testing import compare_strategies
 from src.utils.artifact_metadata import build_artifact_metadata, resolve_run_tag
+from src.utils.script_helpers import artifact_path as _artifact_path, try_load_json
 
 SCHEMA_VERSION = "2026-03-10.1"
-
-
-def _artifact_path(path_like: str | Path) -> Path:
-    path = Path(path_like)
-    root = str(os.environ.get("GPU_REPLAY_ARTIFACT_ROOT", "")).strip()
-    return (Path(root) / path) if root else path
 
 
 def _policy_key(row: pd.Series) -> tuple[object, ...]:
@@ -60,9 +54,7 @@ def _policy_from_row(row: pd.Series, source: str) -> dict[str, float | str]:
 
 
 def _load_json(path: Path) -> dict:
-    if not path.exists():
-        return {}
-    return json.loads(path.read_text(encoding="utf-8"))
+    return try_load_json(path)
 
 
 def _dedupe_candidates(rows: list[pd.Series]) -> list[pd.Series]:

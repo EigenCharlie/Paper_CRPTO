@@ -17,7 +17,6 @@ Usage:
 from __future__ import annotations
 
 import argparse
-import json
 import shutil
 from pathlib import Path
 
@@ -29,6 +28,7 @@ import pandas as pd
 from loguru import logger
 
 from src.utils.artifact_metadata import build_artifact_metadata
+from src.utils.script_helpers import load_json
 
 matplotlib.use("Agg")
 
@@ -120,7 +120,7 @@ def _save_editorial(fig: plt.Figure, name: str) -> None:
 
 
 def _load_json(path: Path) -> dict:
-    return json.loads(path.read_text(encoding="utf-8"))
+    return load_json(path)
 
 
 # ── Paper 3: Mondrian CP ──────────────────────────────────────────────────────

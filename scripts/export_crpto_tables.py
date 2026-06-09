@@ -14,12 +14,13 @@ chapter 14:
 from __future__ import annotations
 
 import argparse
-import json
 from pathlib import Path
 from typing import Any
 
 import pandas as pd
 from analyze_crpto_evidence import build_p1_evidence
+
+from src.utils.script_helpers import first_existing, load_json, write_table
 
 ROOT = Path(__file__).resolve().parents[1]
 DATA = ROOT / "data" / "processed"
@@ -39,18 +40,6 @@ CONFORMAL_WINNER_DIR = (
     / "conformal_gap"
     / "conformal-reopen-2026-04-03-2149__resume__2026-04-05-1612__phase1__final__rank-1"
 )
-
-
-def _load_json(path: Path) -> dict[str, Any]:
-    return json.loads(path.read_text(encoding="utf-8"))
-
-
-def _portfolio_shortlist_path() -> Path:
-    return (
-        BOUND_AWARE_SHORTLIST_EXACT_PATH
-        if BOUND_AWARE_SHORTLIST_EXACT_PATH.exists()
-        else BOUND_AWARE_SHORTLIST_PATH
-    )
 
 
 def _as_bool(value: Any) -> bool:
@@ -84,18 +73,7 @@ def _policy_match(row: pd.Series, policy: dict[str, Any] | None) -> bool:
 
 
 def _write_table(name: str, frame: pd.DataFrame) -> None:
-    OUT.mkdir(parents=True, exist_ok=True)
-    csv_path = OUT / f"{name}.csv"
-    tex_path = OUT / f"{name}.tex"
-    frame.to_csv(csv_path, index=False)
-    frame.to_latex(
-        tex_path,
-        index=False,
-        escape=True,
-        float_format=lambda value: f"{value:.6f}",
-    )
-    print(f"Wrote {csv_path.relative_to(ROOT).as_posix()}")
-    print(f"Wrote {tex_path.relative_to(ROOT).as_posix()}")
+    write_table(name, frame, table_dir=OUT, root=ROOT)
 
 
 def _table0_key_metrics(
@@ -276,10 +254,12 @@ def main(argv: list[str] | None = None) -> int:
     )
     args = parser.parse_args(argv)
 
-    promotion = _load_json(MODELS / "final_project_promotion.json")
-    pipeline_summary = _load_json(DATA / "pipeline_summary.json")
-    dvc_metrics = _load_json(ROOT / "reports" / "dvc" / "metrics_summary.json")["metrics"]
-    shortlist = pd.read_parquet(_portfolio_shortlist_path())
+    promotion = load_json(MODELS / "final_project_promotion.json")
+    pipeline_summary = load_json(DATA / "pipeline_summary.json")
+    dvc_metrics = load_json(ROOT / "reports" / "dvc" / "metrics_summary.json")["metrics"]
+    shortlist = pd.read_parquet(
+        first_existing(BOUND_AWARE_SHORTLIST_EXACT_PATH, BOUND_AWARE_SHORTLIST_PATH)
+    )
 
     _write_table(
         "crpto_table0_key_metrics",

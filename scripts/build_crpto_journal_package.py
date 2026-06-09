@@ -8,7 +8,6 @@ appendix material.
 
 from __future__ import annotations
 
-import json
 import shutil
 from datetime import UTC, datetime
 from pathlib import Path
@@ -23,6 +22,7 @@ from src.optimization.tail_satisficing_objective import (
     funded_loss_rate,
     weighted_cvar,
 )
+from src.utils.script_helpers import first_existing, load_json, write_json, write_table
 
 ROOT = Path(__file__).resolve().parents[1]
 TABLE_DIR = ROOT / "reports" / "crpto" / "tables"
@@ -64,42 +64,8 @@ BOOTSTRAP_DRAWS = 2000
 BOOTSTRAP_SEED = 20260504
 
 
-def _load_json(path: Path) -> dict[str, Any]:
-    return json.loads(path.read_text(encoding="utf-8"))
-
-
-def _portfolio_shortlist_path() -> Path:
-    return SHORTLIST_EXACT_PATH if SHORTLIST_EXACT_PATH.exists() else SHORTLIST_PATH
-
-
-def _write_json(path: Path, payload: dict[str, Any]) -> None:
-    path.parent.mkdir(parents=True, exist_ok=True)
-    path.write_text(
-        json.dumps(payload, indent=2, sort_keys=True) + "\n",
-        encoding="utf-8",
-        newline="",
-    )
-
-
 def _write_table(name: str, frame: pd.DataFrame) -> list[Path]:
-    TABLE_DIR.mkdir(parents=True, exist_ok=True)
-    csv_path = TABLE_DIR / f"{name}.csv"
-    tex_path = TABLE_DIR / f"{name}.tex"
-    csv_text = frame.to_csv(index=False, lineterminator="\n")
-    tex_text = frame.to_latex(
-        index=False,
-        escape=True,
-        float_format=lambda value: f"{value:.6f}",
-    )
-    for path, text in [(csv_path, csv_text), (tex_path, tex_text)]:
-        if path.exists():
-            existing = path.read_bytes().decode("utf-8")
-            if existing == text:
-                continue
-        path.write_text(text, encoding="utf-8", newline="")
-    print(f"Wrote {csv_path.relative_to(ROOT)}")
-    print(f"Wrote {tex_path.relative_to(ROOT)}")
-    return [csv_path, tex_path]
+    return write_table(name, frame, table_dir=TABLE_DIR, root=ROOT)
 
 
 def _mirror_to_book(*paths: Path) -> None:
@@ -951,12 +917,12 @@ def _write_markdown_dossier(status: dict[str, Any]) -> Path:
 
 
 def build_journal_package() -> dict[str, Any]:
-    promotion = _load_json(PROMOTION_PATH)
-    spo_status = _load_json(SPO_REAL_STATUS_PATH)
-    stability = _load_json(SPO_STABILITY_PATH)
+    promotion = load_json(PROMOTION_PATH)
+    spo_status = load_json(SPO_REAL_STATUS_PATH)
+    stability = load_json(SPO_STABILITY_PATH)
     funded = _funded_frame()
     funded_composition = pd.read_csv(FUNDED_COMPOSITION)
-    shortlist_path = _portfolio_shortlist_path()
+    shortlist_path = first_existing(SHORTLIST_EXACT_PATH, SHORTLIST_PATH)
     shortlist = pd.read_parquet(shortlist_path)
     bound_eval = pd.read_parquet(BOUND_EVAL_PATH)
 
@@ -1027,7 +993,7 @@ def build_journal_package() -> dict[str, Any]:
     dossier = _write_markdown_dossier(status)
     artifacts.append(dossier)
     status["generated_artifacts"] = _relative(artifacts)
-    _write_json(STATUS_PATH, status)
+    write_json(STATUS_PATH, status)
     print(f"Wrote {STATUS_PATH.relative_to(ROOT)}")
     return status
 

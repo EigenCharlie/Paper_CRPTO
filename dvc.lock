@@ -74,8 +74,8 @@ stages:
       size: 3074
     - path: scripts/generate_crpto_figures.py
       hash: md5
-      md5: 6aa0c3f931bb767290dadf1b6fba76ef
-      size: 70396
+      md5: 2a3e230dd1c71966e8115cc30b0af568
+      size: 70402
     outs:
     - path: reports/crpto/figures/crpto_fig7_uncertainty_baselines.png
       hash: md5
@@ -99,8 +99,8 @@ stages:
       size: 9347
     - path: scripts/export_crpto_tables.py
       hash: md5
-      md5: 2523d348b6767c8ce5308d8c1bb6cbf3
-      size: 10719
+      md5: fd2734d5b54e49cea8077c8d6fa6cc03
+      size: 10189
     outs:
     - path: reports/crpto/tables/crpto_table0_key_metrics.csv
       hash: md5
@@ -430,8 +430,8 @@ stages:
       size: 4084
     - path: scripts/analyze_crpto_evidence.py
       hash: md5
-      md5: c865dba61152fe073c54947f91252367
-      size: 49754
+      md5: 78989ff18b169811d802f1bc0336fbbd
+      size: 49165
     outs:
     - path: models/crpto_evidence_status.json
       hash: md5
@@ -484,8 +484,8 @@ stages:
       size: 2271
     - path: scripts/build_crpto_journal_package.py
       hash: md5
-      md5: 17c72086dac53ddde7302747eaf8f876
-      size: 42458
+      md5: 2348f87d25eee8c044cfc0a8c8913a27
+      size: 41419
     outs:
     - path: models/crpto_journal_package_status.json
       hash: md5
@@ -542,12 +542,12 @@ stages:
       size: 46107
     - path: scripts/build_tail_satisficing_challenger_audit.py
       hash: md5
-      md5: 55de3d2df57543f49bcd29934c39acf0
-      size: 18727
+      md5: e64ab011a526a351b89fac4756243117
+      size: 17861
     - path: scripts/optimize_portfolio_tradeoff.py
       hash: md5
-      md5: 450e7461b1d64924387fa55532a202e5
-      size: 45793
+      md5: e0ca685ea5a6b8abb221a731dc50f9d1
+      size: 45184
     - path: src/optimization/tail_satisficing_objective.py
       hash: md5
       md5: 1d0489c792b45f57a58a6b737fde5df8

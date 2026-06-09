@@ -22,7 +22,6 @@ from __future__ import annotations
 
 import argparse
 import json
-import os
 from pathlib import Path
 
 import numpy as np
@@ -35,14 +34,9 @@ from src.optimization.portfolio_model import (
     optimize_portfolio_allocation,
 )
 from src.utils.artifact_metadata import build_artifact_metadata, resolve_run_tag
+from src.utils.script_helpers import artifact_path as _artifact_path
 
 SCHEMA_VERSION = "2026-03-01.1"
-
-
-def _artifact_path(path_like: str | Path) -> Path:
-    path = Path(path_like)
-    root = str(os.environ.get("GPU_REPLAY_ARTIFACT_ROOT", "")).strip()
-    return (Path(root) / path) if root else path
 
 
 def _compute_realized_return(

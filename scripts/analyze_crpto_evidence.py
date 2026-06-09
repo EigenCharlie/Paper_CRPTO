@@ -10,7 +10,6 @@ stress checks around the official economic champion.
 from __future__ import annotations
 
 import argparse
-import json
 import math
 import re
 from datetime import UTC, datetime
@@ -19,6 +18,8 @@ from typing import Any
 
 import numpy as np
 import pandas as pd
+
+from src.utils.script_helpers import load_json, write_json, write_table
 
 ROOT = Path(__file__).resolve().parents[1]
 DATA = ROOT / "data" / "processed"
@@ -116,29 +117,8 @@ def _bound_stage_shortlist_path(run_dir: str) -> Path:
     return run_path / "portfolio_bound_aware_shortlist.parquet"
 
 
-def _load_json(path: Path) -> dict[str, Any]:
-    return json.loads(path.read_text(encoding="utf-8"))
-
-
-def _write_json(path: Path, payload: dict[str, Any]) -> None:
-    path.parent.mkdir(parents=True, exist_ok=True)
-    path.write_text(json.dumps(payload, indent=2, sort_keys=True) + "\n", encoding="utf-8")
-
-
 def _write_table(name: str, frame: pd.DataFrame) -> list[Path]:
-    OUT.mkdir(parents=True, exist_ok=True)
-    csv_path = OUT / f"{name}.csv"
-    tex_path = OUT / f"{name}.tex"
-    frame.to_csv(csv_path, index=False)
-    frame.to_latex(
-        tex_path,
-        index=False,
-        escape=True,
-        float_format=lambda value: f"{value:.6f}",
-    )
-    print(f"Wrote {_repo_path(csv_path)}")
-    print(f"Wrote {_repo_path(tex_path)}")
-    return [csv_path, tex_path]
+    return write_table(name, frame, table_dir=OUT, root=ROOT)
 
 
 def _repo_path(path: Path) -> str:
@@ -286,7 +266,7 @@ def _build_nested_holdout_table(promotion: dict[str, Any]) -> pd.DataFrame:
             MODELS / "portfolio_bound_aware" / run_dir / "portfolio_bound_aware_selection.json"
         )
         shortlist_path = _bound_stage_shortlist_path(run_dir)
-        selection = _load_json(selection_path)
+        selection = load_json(selection_path)
         shortlist = pd.read_parquet(shortlist_path)
         metrics = dict(selection["selected_metrics"])
         rows.append(
@@ -854,7 +834,7 @@ def _build_finalist_exact_eval_table() -> pd.DataFrame:
     for finalist in FINALIST_INTERVALS:
         if not finalist["intervals_path"].is_file() or not finalist["policy_path"].is_file():
             continue
-        policy = _normalise_policy(_load_json(finalist["policy_path"]))
+        policy = _normalise_policy(load_json(finalist["policy_path"]))
         aligned = _load_exact_aligned_dataset(finalist["intervals_path"])
         result = _solve_exact_policy(aligned, policy)
         candidate = candidates.loc[candidates["rank"].eq(finalist["rank"])].iloc[0]
@@ -1111,12 +1091,12 @@ def _build_markdown_dossier(status: dict[str, Any]) -> Path:
                 payload = status[key]
                 lines.append(f"- `{key}`: `{payload.get('status', 'unknown')}`.")
         lines.append("")
-    path.write_text("\n".join(lines), encoding="utf-8")
+    path.write_text("\n".join(lines), encoding="utf-8", newline="")
     return path
 
 
 def build_p1_evidence(*, include_hardening: bool = False) -> dict[str, Any]:
-    promotion = _load_json(PROMOTION_PATH)
+    promotion = load_json(PROMOTION_PATH)
     nested = _build_nested_holdout_table(promotion)
     oot = _load_joined_oot()
     segment = _build_segment_period_table(oot)
@@ -1185,12 +1165,12 @@ def build_p1_evidence(*, include_hardening: bool = False) -> dict[str, Any]:
         },
     }
     _attach_hardening_status(status, artifacts)
-    _write_json(STATUS_PATH, status)
+    write_json(STATUS_PATH, status)
     artifacts.append(STATUS_PATH)
     dossier_path = _build_markdown_dossier(status)
     artifacts.append(dossier_path)
     status["generated_artifacts"] = _relative_artifacts(artifacts)
-    _write_json(STATUS_PATH, status)
+    write_json(STATUS_PATH, status)
     _build_markdown_dossier(status)
     print(f"Wrote {_repo_path(STATUS_PATH)}")
     print(f"Wrote {_repo_path(dossier_path)}")
