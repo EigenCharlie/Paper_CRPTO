@@ -32,6 +32,13 @@ does not introduce a new Lending Club champion, protected search rerun, hidden
 selection criterion, or new claim family.
 :::
 
+The supplement is organized as a defense layer for the main manuscript rather
+than as a second paper. Appendices A--C support the statistical and economic
+claims, Appendix D records governance limits, Appendix E gives the reproduction
+path, and Appendix F maps the anonymous submission files. Tables and figures are
+included only when they either protect a body claim or prevent overreading of the
+external and robustness evidence.
+
 ::: {.callout-important}
 ## Journal Strengthening Pack
 
@@ -78,6 +85,25 @@ reported only under additional conditional-independence assumptions because the
 Lending Club evaluation is temporal and the funded set shares calibration and
 selection history. The paper therefore keeps Markov as the main claim and uses
 the tightening appendix as sensitivity evidence, not as a stronger theorem.
+
+The phrase "exact funded-set certificate" has a narrow meaning throughout the
+paper. It is an exact accounting audit on the frozen out-of-time funded set:
+given the selected allocation weights, observed outcomes, calibrated PD values,
+and conformal upper endpoints, the audit computes `V(alpha)`,
+`Gamma_CP(alpha)`, and violation directly on the funded loans. It is not a new
+distribution-free theorem for arbitrary adaptive portfolios and it is not an
+external-dataset certificate. Its statistical interpretation still requires the
+weighted funded-set validity assumption in the body; its value is that the
+promoted decision is not supported by a proxy metric, a graph, or a manually
+transcribed table.
+
+| Certificate object | Computed from | What it supports | What it does not support |
+|---|---|---|---|
+| Exact funded-set audit | Frozen Lending Club OOT funded loans, allocations, labels, `p_hat`, and `u_i(alpha)`. | `V(0.01)=0.028875`, `Gamma_CP=0.187987`, zero violation, and alpha-safe pass for the promoted policy. | Universal conditional coverage or live adaptive control. |
+| Robust-region audit | The 45 unique policies in the final bound-aware region. | The promoted policy is not isolated; every evaluated final-region policy passes alpha01. | A claim about all 276k searched policies or future searches. |
+| External exhaustiveness audit | Prosper all-candidate and Freddie capped/all-candidate LP solves. | The reported external LP values are not shortlist artifacts. | New exact funded-set certificates for Prosper or Freddie. |
+
+: Certificate taxonomy used in the paper.
 
 ## Cluster-Aware Conditional Tightening
 
@@ -467,7 +493,13 @@ The governance boundary for the current submission is:
 # Appendix E: Reproducibility
 
 The reviewer-facing reproduction path separates artifact-independent checks from
-artifact-aware validation. Minimal local checks are:
+artifact-aware validation. This structure mirrors the journal's data/code
+expectation: the anonymous submission can describe a reproducible companion
+without revealing author identity, and the accepted-paper package can disclose
+the public repository, DVC pointers, raw-data instructions, and reproducibility
+workflow.
+
+Minimal local checks are:
 
 ```powershell
 just setup-base
@@ -507,6 +539,18 @@ The following stages must not be rerun as routine reproduction steps:
 `crpto.portfolio.bound_exact_eval`. Paper-facing commands such as table,
 figure, evidence, journal-package, manuscript, supplement, and book renders are
 safe because they consume frozen inputs.
+
+The intended accepted-paper disclosure package has four tiers:
+
+| Tier | Contents | Reviewer/reader value |
+|---|---|---|
+| Code and manuscript | Python source, scripts, tests, Quarto body, supplement, and book sources. | Rebuild paper artifacts and inspect methodology. |
+| Frozen metadata | `EXTRACTION_MANIFEST.json`, DVC metadata, lockfile, status JSONs, and table/figure provenance. | Verify that claims are tied to immutable artifacts. |
+| Data access path | Raw Lending Club source instructions plus external dataset source notes; processed artifacts through the declared DVC remote when allowed. | Reproduce or audit without committing private credentials or raw CSVs to Git. |
+| Guardrails | `just smoke`, `just validate-champion`, publication target tests, and DVC status checks. | Separate safe paper reruns from protected champion/search stages. |
+
+This disclosure plan deliberately avoids local paths, secrets, private tokens,
+and author-identifying URLs in the double-anonymous packet.
 
 # Appendix F: Submission Files
 

@@ -10,12 +10,15 @@ Dear Editors,
 
 We submit "CRPTO: Conformal Robust Predict-Then-Optimize for Auditable Credit
 Portfolio Decisions" for consideration at the INFORMS Journal on Data Science.
-The paper studies credit allocation as a data-science decision pipeline rather
-than as a predictive leaderboard. Starting from a frozen calibrated probability
-of default artifact, CRPTO maps Mondrian conformal intervals into a robust
-portfolio decision, certifies the promoted funded set with an exact
-alpha-safe audit, and reports external frozen replications on Prosper and
-Freddie/Mendeley panels without reopening the Lending Club champion search.
+The paper studies credit allocation as data science for decisions rather than
+as a predictive leaderboard. Its data component is a static Lending Club
+out-of-time panel, supported by frozen Prosper and Freddie/Mendeley external
+economic replications. Its method maps a frozen calibrated probability-of-default
+artifact through Mondrian conformal intervals into a robust portfolio decision.
+Its decision object is the funded set under a budget and risk cap, and its main
+implication is an auditable model-risk surface: the promoted Lending Club policy
+earns `$170.5K` on a `$1M` budget while passing an exact empirical alpha-safe
+funded-set audit, and the robustness region contains `45/45` alpha-safe policies.
 The contribution is intended for settings where decision auditability,
 reproducibility, and model-risk governance matter as much as predictive rank.
 
@@ -23,14 +26,16 @@ reproducibility, and model-risk governance matter as much as predictive rank.
 
 The submission body and supplement are double-anonymous. During review, the
 manuscript refers to a reproducible companion package without exposing
-author-identifying URLs. After the venue permits disclosure, the companion can
-include:
+author-identifying URLs. The submission will complete the IJDS Data and Code
+Disclosure Form and acknowledge the accepted-paper reproducibility workflow.
+After the venue permits disclosure, the companion can include:
 
 - public source code and Quarto manuscript sources;
 - DVC metadata and pointers for processed artifacts and frozen model files;
 - MLflow/DagsHub lineage for the CRPTO runs, subject to credential-free access
   rules;
 - raw Lending Club source instructions rather than redistributed private data;
+- Prosper and Freddie/Mendeley source notes for the external replication layer;
 - the frozen extraction manifest and guardrail tests used to verify the
   promoted champion;
 - commands for regenerating paper tables, figures, HTML previews, and local
@@ -57,3 +62,10 @@ not only an uncertainty report, and robust optimization is not only a portfolio
 heuristic. The central object is an executable, auditable decision recipe whose
 numbers are backed by frozen artifacts, manifest regression tests, and
 submission-ready tables and figures.
+
+The highest-risk interpretive boundary is also stated explicitly in the paper:
+the Lending Club exact funded-set certificate is an exact accounting audit on
+the frozen promoted portfolio under a declared weighted-validity assumption. The
+Prosper and Freddie/Mendeley results are external economic replications and
+exhaustiveness audits, not new exact funded-set certificates or prospective live
+deployment guarantees.

@@ -22,6 +22,17 @@ the submission-shaped versions are written.
 - `submission/COVER_LETTER_AND_DISCLOSURE.md`: editor-facing cover letter and
   data/code disclosure draft; keep it out of the anonymous reviewer packet
   unless the submission system asks for disclosure text.
+- `submission/IJDS_SUBMISSION_ROADMAP_2026-08-10.md`: target-date readiness
+  plan and 15-track improvement checklist.
+- `submission/CLAIM_AUDIT_MATRIX.md`: claim-to-evidence map and reviewer
+  objection bank.
+- `submission/REPRODUCIBILITY_PACKAGE.md`: IJDS data/code disclosure and
+  accepted-paper reproducibility plan.
+- `submission/TITLE_PAGE_DRAFT.md`: non-anonymous title-page draft for
+  ScholarOne.
+- `submission/DATA_CODE_DISCLOSURE_FORM_DRAFT.md`: working text for the official
+  IJDS disclosure form.
+- `submission/SCHOLARONE_FINAL_CHECKLIST.md`: final upload/proof checklist.
 
 Selected P2/P3-inspired diagnostics are part of the current paper/journal pack:
 regret-auditability, OCE/CVaR tail risk, robust satisficing margins,
@@ -54,3 +65,5 @@ Before tagging a submission release, do a final sweep for stale numbers,
 captions, body-vs-supplement placement, and IJDS length. Keep public GitHub,
 DagsHub, and MLflow links anonymized in the manuscript unless the venue policy
 or cover-letter disclosure requires otherwise.
+Use the roadmap and claim audit matrix as the final editorial checklist before
+freezing the official `informs4` PDF.

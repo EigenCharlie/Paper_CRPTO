@@ -25,29 +25,28 @@ execute:
 
 # Abstract
 
-Credit portfolio decisions often rely on calibrated default probabilities while
-treating prediction uncertainty as a diagnostic rather than a decision input. We
-introduce Conformal Robust Predict-Then-Optimize (CRPTO) as a reusable post-hoc
-decision audit: given a frozen calibrated PD artifact, CRPTO maps Mondrian
-conformal prediction intervals into robust portfolio constraints and then
-certifies the funded set. On a 276,869-loan out-of-time Lending Club evaluation,
-the promoted economic policy earns `$170.5K` on a `$1M` budget while passing the
-exact $\alpha = 0.01$ funded-set bound ($V(\alpha) = 0.028875$,
-$\Gamma_{\mathrm{CP}} = 0.187987$, zero violation). The final robust region contains `45/45`
-alpha-safe policies, indicating that the result is not a single-point artifact.
+Credit allocation is a data-science-for-decisions problem: calibrated default
+probabilities matter only after they shape which loans are funded. We introduce
+Conformal Robust Predict-Then-Optimize (CRPTO) as a reusable post-hoc decision
+audit that maps a frozen calibrated probability-of-default artifact through
+Mondrian conformal intervals into robust portfolio constraints and an exact
+empirical funded-set audit. On a 276,869-loan out-of-time Lending Club
+evaluation, the promoted economic policy earns `$170.5K` on a `$1M` budget while
+passing the $\alpha = 0.01$ funded-set audit ($V(\alpha) = 0.028875$,
+$\Gamma_{\mathrm{CP}} = 0.187987$, zero violation). The final robust region
+contains `45/45` alpha-safe policies across the evaluated risk, uncertainty, and
+aversion grid, indicating that the result is not a single-point artifact.
 External frozen replications on Prosper marketplace loans and Freddie/Mendeley
 single-family mortgages preserve the conformal gates and produce positive robust
 LP objectives, strengthening the claim that the CRPTO recipe is not merely a
 Lending-Club numerical artifact. Across these external panels the price of
 robustness is a positive premium that grows with the panel default rate (from
-`+1.0%` to `+9.5%`), turning the replication into an economically interpretable
-result rather than a single defensive gate.
-The contribution is not another predictive leaderboard, but an auditable
-post-hoc conformal robust credit-portfolio decision pipeline that maps frozen
-calibrated PD artifacts into a robust funded set, reports an explicit
-conformal robustness premium, and verifies exact alpha-safe weighted
-miscoverage on the promoted Lending Club portfolio while documenting external
-economic replications under the same frozen recipe.
+`+1.0%` to `+9.5%`), turning replication into an economically interpretable
+stress test rather than a defensive checkmark. The contribution is an auditable
+conformal-robust credit-portfolio decision certificate: it connects real credit
+data, calibrated predictive models, robust funding decisions, and
+reproducibility governance while keeping the statistical guarantee boundary
+explicit.
 
 **Keywords:** conformal prediction; robust optimization; predict-then-optimize;
 credit risk; portfolio optimization; reproducible data science.
@@ -88,7 +87,7 @@ search whenever the manuscript or appendix changes.
 
 The empirical setting is the Lending Club retail-loan panel, with an
 out-of-time evaluation set of 276,869 loans. The promoted economic policy earns
-`$170,464.54` on a `$1M` budget, passes the exact funded-set bound at
+`$170,464.54` on a `$1M` budget, passes the exact empirical funded-set audit at
 $\alpha = 0.01$, and lies inside a robust region where `45/45` evaluated
 policies satisfy the same exact alpha-safe check. The headline result is not a
 single lucky allocation. It is a reproducible bridge from calibrated
@@ -122,6 +121,16 @@ $\Gamma_{\mathrm{CP}}$, and verifies exact alpha-safe weighted miscoverage on th
 portfolio. The same conformal and LP gates remain viable on two additional credit
 datasets, and the paper documents the governance boundary between safe
 paper-facing reruns and protected stages that would change the promoted champion.
+
+Read as data science for decisions, the paper's four components are explicit.
+The data component is a static Lending Club OOT panel, with Prosper and
+Freddie/Mendeley replications used only as frozen external stress tests. The
+model component is the CRPTO bridge from calibrated PD to Mondrian conformal
+uncertainty to robust LP. The decision component is the funded set under a
+budget and risk cap. The implication is a reproducible audit surface for model
+risk committees: the paper reports not only return, but also the conformal
+premium, exact funded-set miscoverage, region stability, and the boundary beyond
+which a new protocol would be required.
 
 ![CRPTO's central move is operational rather than decorative: frozen calibrated PD artifacts become Mondrian conformal intervals, the upper-risk signal enters a robust portfolio optimizer, and the promoted funding policy is audited against exact funded-set controls.](../reports/crpto/figures/crpto_fig1_journal_pipeline.png){#fig-crpto-pipeline width="94%" fig-alt="Four-stage CRPTO pipeline from frozen calibrated PD to Mondrian conformal intervals, robust portfolio optimization, and promoted auditable policy."}
 
@@ -317,7 +326,7 @@ does not concentrate exposure in a region whose noncoverage is worse than the
 nominal conformal level, unless such weighting is covered by a declared
 Mondrian, localized, or multi-distribution guarantee. A Markov-style argument
 then converts expected weighted miscoverage control into a finite-sample
-portfolio-level statement. The empirical exact bound check reported in this
+portfolio-level statement. The empirical exact audit reported in this
 paper is the operational validation of that statement after the frozen policy
 search, not a claim that post-selection evaluation creates a stronger conformal
 guarantee.
@@ -415,7 +424,7 @@ decision-level robustness.
 |---|---|---:|---|
 | Train | Jun 2007 -- Mar 2017 | `1,346,311` | Fit PD model and monotonic constraints. |
 | Calibration | Mar 2017 -- Dec 2017 | `237,584` | Fit Mondrian conformal quantiles (held out from training). |
-| Test (OOT) | Jan 2018 -- Sep 2020 | `276,869` | Evaluate coverage, run the portfolio decision, and audit the exact bound. |
+| Test (OOT) | Jan 2018 -- Sep 2020 | `276,869` | Evaluate coverage, run the portfolio decision, and audit the exact funded set. |
 
 : Temporal out-of-time split. The January 2018 cutoff keeps the test window
 (including the 2020 COVID regime) strictly after training and calibration, so no
@@ -499,9 +508,12 @@ turns this uncertainty into a robust allocation with exact alpha-safe checks.
 
 : Frozen paper-facing metrics by layer.
 
-The exact certificate in the body is intentionally small. It exposes the
-objects that connect the theorem to the frozen champion without making the
-reader infer them from a figure.
+The exact certificate in the body is intentionally small. Here "exact" means
+that the quantities are computed directly on the frozen OOT funded set rather
+than approximated by a surrogate table or visual proxy. The statistical reading
+still rests on the weighted funded-set validity assumption stated in the theory
+section; the certificate is the empirical audit that connects that assumption to
+the promoted decision.
 
 | $\alpha$ | $\Gamma_{\mathrm{CP}}$ | $V(\alpha)$ | $\sqrt{\alpha}$ | violation | pass |
 |---:|---:|---:|---:|---:|:---:|
@@ -564,11 +576,13 @@ a reviewer sees the baseline, the expectation, and the realized return on one
 budget instead of a single net figure that hides which way the trade-off went.
 
 The robust-region analysis is the strongest evidence that the result is not a
-single point artifact. Across the evaluated region, `45/45` unique policies
-pass the exact $\alpha = 0.01$ check. The selected policy is the economic
-champion inside that exact robust region, not merely the first feasible point.
-The supplement reports the full alpha/gamma funded-set table, robust-region
-heatmap, and policy-family appendix.
+single point artifact. Across the evaluated final region, `45/45` unique
+policies pass the exact $\alpha = 0.01$ check. The 45 policies come from the
+cross-product of five risk-tolerance values, three uncertainty-blend values, and
+three uncertainty-aversion settings within the frozen bound-aware family. The
+selected policy is the economic champion inside that exact robust region, not
+merely the first feasible point. The supplement reports the full alpha/gamma
+funded-set table, robust-region heatmap, and policy-family appendix.
 
 The funded-set audit also matters because the bound is weighted by exposure,
 not counted by loan. The promoted portfolio funds 341 positive-exposure loan
@@ -905,14 +919,13 @@ CRPTO shows that finite-sample predictive uncertainty can be carried from a
 frozen calibrated PD model into a robust, budget-constrained credit-portfolio
 decision that a reviewer can audit end to end. On the Lending Club out-of-time
 panel the promoted policy earns `$170,464.54` on a `$1M` budget while passing the
-exact $\alpha = 0.01$ funded-set bound, and it lies inside a `45/45` alpha-safe
-robust region rather than at a single lucky point. The external Prosper and
-Freddie/Mendeley replications show the recipe is not merely a Lending Club
-numerical artifact and expose an economically interpretable regularity: the
-price of robustness is a bounded premium that scales with the panel's default
-risk. The contribution is
-deliberately scoped---an auditable post-hoc bridge, not a new end-to-end learner
-or a live-deployment study---and every reported number is regenerable from frozen
-artifacts.
+exact empirical $\alpha = 0.01$ funded-set audit, and it lies inside a `45/45`
+alpha-safe robust region rather than at a single lucky point. The external
+Prosper and Freddie/Mendeley replications show the recipe is not merely a
+Lending Club numerical artifact and expose an economically interpretable
+regularity: the price of robustness is a bounded premium that scales with the
+panel's default risk. The contribution is deliberately scoped---an auditable
+post-hoc decision certificate, not a new end-to-end learner or a live-deployment
+study---and every reported number is regenerable from frozen artifacts.
 
 # References

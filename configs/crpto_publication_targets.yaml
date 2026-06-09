@@ -1,4 +1,4 @@
-version: "2026-05-12"
+version: "2026-06-09"
 project: paper-crpto
 decision_status: active
 
@@ -207,6 +207,7 @@ secondary_targets:
 
 current_decision:
   write_first_for: informs_ijds
+  target_submission_date: "2026-08-10"
   keep_second_ready_for: ejor
   do_not_write_first_for:
     - management_science

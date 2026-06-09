@@ -7,6 +7,17 @@ source of truth remains:
 - `paper/supplement_ijds.qmd` for the anonymous online supplement.
 - `paper/submission/COVER_LETTER_AND_DISCLOSURE.md` for editor-facing cover
   letter language and data/code disclosure timing.
+- `paper/submission/IJDS_SUBMISSION_ROADMAP_2026-08-10.md` for the internal
+  two-month readiness plan.
+- `paper/submission/CLAIM_AUDIT_MATRIX.md` for the claim/evidence/risk map.
+- `paper/submission/REPRODUCIBILITY_PACKAGE.md` for the IJDS data/code package
+  plan.
+- `paper/submission/TITLE_PAGE_DRAFT.md` for the separate non-anonymous title
+  page.
+- `paper/submission/DATA_CODE_DISCLOSURE_FORM_DRAFT.md` for official-form
+  answer drafting.
+- `paper/submission/SCHOLARONE_FINAL_CHECKLIST.md` for the final upload/proof
+  checklist.
 
 ## Render Commands
 
@@ -33,6 +44,8 @@ private remote details.
 
 - INFORMS author portal: <https://pubsonline.informs.org/authorportal/latex-style-files>
 - IJDS submission guidelines: <https://pubsonline.informs.org/page/ijds/submission-guidelines>
+- IJDS data/code disclosure policy: <https://pubsonline.informs.org/page/ijds/data-and-code-disclosure-policy>
+- IJDS reviewer guidelines: <https://pubsonline.informs.org/page/ijds/reviewer-guidelines>
 - Overleaf template page: <https://www.overleaf.com/latex/templates/template-for-informs-journal-on-data-science/sbthszxgycfn>
 
 Do not vendor private template downloads, reviewer forms, or authenticated
@@ -117,11 +130,20 @@ These protocols are compatible but not interchangeable.
 
 ## Final Assembly Checklist
 
+- Recheck the official IJDS sources linked above within the final submission
+  week; policies and forms can change.
+- Verify the Data and Code Disclosure Form language against
+  `REPRODUCIBILITY_PACKAGE.md` and `DATA_CODE_DISCLOSURE_FORM_DRAFT.md`.
+- Convert `TITLE_PAGE_DRAFT.md` into the separate title page requested by
+  ScholarOne.
+- Use `SCHOLARONE_FINAL_CHECKLIST.md` while uploading and reviewing the generated
+  proof.
 - Recheck the official-template page budget after PDF pagination is available.
 - Keep A3--A34 in the online supplement unless a reviewer-facing argument needs
   one compact table in the body.
 - Preserve CRPTO as the coverage/auditability method and SPO+ as the low-regret
   comparator.
+- Cross-check every headline claim against `CLAIM_AUDIT_MATRIX.md`.
 - Keep `CRPTO_ijds_submission.tex` synchronized with the QMD whenever the body
   adds or demotes a figure, table, theorem statement or major result paragraph.
 - Regenerate previews with `just paper-submission` before release.
