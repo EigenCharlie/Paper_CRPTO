@@ -74,8 +74,8 @@ stages:
       size: 3074
     - path: scripts/generate_crpto_figures.py
       hash: md5
-      md5: 2a3e230dd1c71966e8115cc30b0af568
-      size: 70402
+      md5: 0dedce6871ba0b1958687f77483f14a3
+      size: 70601
     outs:
     - path: reports/crpto/figures/crpto_fig7_uncertainty_baselines.png
       hash: md5
@@ -484,12 +484,12 @@ stages:
       size: 2271
     - path: scripts/build_crpto_journal_package.py
       hash: md5
-      md5: 2348f87d25eee8c044cfc0a8c8913a27
-      size: 41419
+      md5: 7a6ba1b71f97856e75c1aa715237a66d
+      size: 41609
     outs:
     - path: models/crpto_journal_package_status.json
       hash: md5
-      md5: 943d4d821151362cf4315f2375e42e71
+      md5: d8725123b58ecb1d8eecc65a5d78d42b
       size: 3604
   crpto.paper.spo_stability:
     cmd: python scripts/run_crpto_vs_spo_stability.py

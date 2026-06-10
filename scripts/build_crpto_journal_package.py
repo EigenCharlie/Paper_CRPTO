@@ -24,6 +24,10 @@ from src.optimization.tail_satisficing_objective import (
 )
 from src.utils.script_helpers import first_existing, load_json, write_json, write_table
 
+# TrueType (Type 42) keeps PDF text selectable/extractable and avoids Type 3
+# subset glyphs that publisher font checkers flag.
+plt.rcParams.update({"pdf.fonttype": 42, "ps.fonttype": 42})
+
 ROOT = Path(__file__).resolve().parents[1]
 TABLE_DIR = ROOT / "reports" / "crpto" / "tables"
 FIG_DIR = ROOT / "reports" / "crpto" / "figures"

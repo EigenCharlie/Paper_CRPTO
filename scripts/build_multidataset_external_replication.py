@@ -57,6 +57,10 @@ PALETTE = {
 
 plt.rcParams.update(
     {
+        # TrueType (Type 42) keeps PDF text selectable/extractable and avoids
+        # Type 3 subset glyphs that publisher font checkers flag.
+        "pdf.fonttype": 42,
+        "ps.fonttype": 42,
         "font.family": "serif",
         "font.serif": ["Times New Roman", "DejaVu Serif", "serif"],
         "font.size": 9,
