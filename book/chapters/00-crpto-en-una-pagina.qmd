@@ -16,7 +16,7 @@ se vuelve una restricción explícita de la decisión.
 
 | Capa | Qué hace | Evidencia actual |
 |---|---|---|
-| PD calibrada | Produce probabilidades auditables para el OOT de Lending Club. | AUC `0.7127`, Brier `0.1546`, ECE `0.0062`. |
+| PD calibrada | Produce probabilidades auditables para el OOT de Lending Club. | AUC `0.7139`, Brier `0.1544`, ECE `0.0070`. |
 | Conformal Mondrian | Convierte la PD puntual en intervalos sobre la escala de riesgo. | Coverage 90% `0.9297`, min-group `0.9190`. |
 | LP robusto | Usa la señal conformal superior para financiar préstamos bajo presupuesto y tolerancia de riesgo. | Budget `$1M`, `tau = 0.175`, `gamma = 0.45`. |
 | Certificado exacto | Audita el funded set promovido sobre 276,869 préstamos OOT. | Return `$170,464.54`, `V = 0.028875`, `Gamma_CP = 0.187987`, `45/45` pass. |

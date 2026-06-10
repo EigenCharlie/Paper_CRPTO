@@ -38,6 +38,28 @@ adheres to a single-author, paper-driven release cadence — see
 - `CLAUDE.md` cross-references `docs/SCOPE_AND_GOVERNANCE.md` and
   `docs/ACADEMIC_CONTEXT.md` as required reading.
 
+### Changed (april-lineage unification, 2026-06-10)
+- `models/pd_canonical.cbm` and `models/pd_canonical_calibrator.pkl` are now
+  byte-copies of the April search candidate
+  (`models/search_pd/pd-hpo-local-2026-04-03-1325`), the exact binaries that
+  produced the frozen conformal intervals and the funded-set certificate
+  (drift harness: 0.0 across all columns). The previous canonical files were
+  later retrains of the same config that never fed the paper's certificate.
+- `data/processed/test_predictions.parquet` rebuilt from that bundle via the
+  new `scripts/rebuild_test_predictions_from_frozen.py` (hard assert:
+  `pd_calibrated` equals the frozen intervals' `y_pred` exactly).
+- Paper-facing PD metrics now come from the certificate lineage:
+  AUC `0.7127 -> 0.7139`, Brier `0.1546 -> 0.1544`, ECE `0.0062 -> 0.0070`
+  (table0, paper body/tex, book chapters). The exact certificate
+  (`$170,464.54`, `V=0.028875`, `Gamma_CP=0.187987`, `45/45`) is unchanged.
+- `crpto_tableA5/A9/A10` re-frozen under the current locked stack (their
+  committed versions were generated in an unrecoverable environment);
+  `crpto_tableA7/A8` deliberately NOT regenerated — they remain the frozen
+  per-loan view of the certificate funded set (LP re-solves are degenerate).
+- `EXTRACTION_MANIFEST.json` gains an `april_lineage_unification` block and
+  14 refreshed hashes; environment-leak paths removed from
+  `models/threshold_semantics.json` and `models/mrm_report_status.json`.
+
 ### Removed
 - Dead modules with no imports anywhere in the repo:
   `src/evaluation/encoding_stability.py`, `src/evaluation/monotonicity.py`,

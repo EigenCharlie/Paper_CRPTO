@@ -73,6 +73,9 @@ dbt_project/.user.yml
 **/*.pkl
 **/*.onnx
 **/*.skops
+# Local search-run bundles (frozen candidate binaries, staging/backup copies)
+# restored from the DVC remote or sibling checkouts; never versioned in git.
+models/search_pd/
 **/gpu_samples.csv
 **/portfolio_*shortlist*.parquet
 **/portfolio_*samples*.parquet

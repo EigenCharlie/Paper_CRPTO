@@ -249,8 +249,8 @@ The predictive layer estimates a one-period default probability for each loan.
 The champion model is a CatBoost classifier trained on the frozen feature
 contract and calibrated before it is exposed to conformal and optimization
 layers. The paper reports discrimination and probability quality together:
-the frozen PD layer reaches AUC `0.7127`, Brier score `0.1546`, and expected
-calibration error approximately `0.0062` on the paper-facing evaluation
+the frozen PD layer reaches AUC `0.7139`, Brier score `0.1544`, and expected
+calibration error approximately `0.0070` on the paper-facing evaluation
 summary. These numbers matter because the optimizer consumes probabilities, not
 rankings alone.
 
@@ -522,18 +522,18 @@ address whether the method survives two materially different credit products.
 
 The core metric table summarizes the frozen paper-facing metrics. The
 calibrated PD layer is deliberately not sold as a leaderboard model: AUC
-`0.7127` is sufficient only because the downstream decision consumes calibrated
-probabilities, not rankings alone. Its Brier score `0.1546` and ECE near
-`0.0062` are therefore as important as discrimination. The conformal layer
+`0.7139` is sufficient only because the downstream decision consumes calibrated
+probabilities, not rankings alone. Its Brier score `0.1544` and ECE near
+`0.0070` are therefore as important as discrimination. The conformal layer
 provides conservative empirical coverage, with 90% coverage `0.9297` and 95%
 coverage `0.9664` for the promoted conformal winner. The portfolio layer then
 turns this uncertainty into a robust allocation with exact alpha-safe checks.
 
 | Layer | Metric | Value |
 |---|---:|---:|
-| PD | AUC | `0.7127` |
-| PD | Brier score | `0.1546` |
-| PD | ECE | `0.0062` |
+| PD | AUC | `0.7139` |
+| PD | Brier score | `0.1544` |
+| PD | ECE | `0.0070` |
 | Conformal | Coverage 90% | `0.9297` |
 | Conformal | Coverage 95% | `0.9664` |
 | Conformal | Minimum group coverage 90% | `0.9190` |

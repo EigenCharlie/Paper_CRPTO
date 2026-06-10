@@ -113,9 +113,9 @@
       "hash_source": "ijds_rebaseline_2026-06-07"
     },
     "data/processed/pipeline_summary.json": {
-      "sha256": "14f1c11ec62a21e0e29db6dc744cdde61f6fa188bf50338d2bd9f706dcff2810",
-      "bytes": 4654,
-      "hash_source": "ijds_rebaseline_2026-06-07"
+      "sha256": "f8c28f78a9a84aaa4a50125e8feeecfc8526d8e143436d5d2eac30679d261f1c",
+      "bytes": 4655,
+      "hash_source": "april-lineage-unification-2026-06-10"
     },
     "models/final_project_promotion.json": {
       "sha256": "960c238c4a5e891db36f4695f3fd4547b98a049d9024db9f0b201a7d4703a149",
@@ -133,14 +133,14 @@
       "hash_source": "ijds_rebaseline_2026-06-07"
     },
     "models/pd_canonical.cbm": {
-      "sha256": "cfb1b634ae3dedfdb7cf2f3a95f93404d826aa2f9995ff11458aa4411c43c4e7",
-      "bytes": 4231912,
-      "hash_source": "ijds_rebaseline_2026-06-07"
+      "sha256": "bfca5bb1433f163e930047d6c9e5eab3fc9b95e5417eafc87eb13b0daafc55de",
+      "bytes": 5324156,
+      "hash_source": "april-lineage-unification-2026-06-10"
     },
     "models/pd_canonical_calibrator.pkl": {
-      "sha256": "7e4cc9db8267df57f69ff1782d73eb4e2306cb2532aa1a3d80e20ac14ea23906",
+      "sha256": "23b0bad2628581e58a22fc4afb714eef5e513e0562a9c5821da33a17bc589c71",
       "bytes": 9503845,
-      "hash_source": "ijds_rebaseline_2026-06-07"
+      "hash_source": "april-lineage-unification-2026-06-10"
     },
     "models/conformal_results_mondrian.pkl": {
       "sha256": "d7b6ec8a929275af1e0c8946c77f156bbd99538bd38aefe2e1a79773c6469a58",
@@ -148,14 +148,14 @@
       "hash_source": "ijds_rebaseline_2026-06-07"
     },
     "models/crpto_evidence_status.json": {
-      "sha256": "a8a687c9c79e63f0b7268f5c4a48b4633fb8e0350e9e665e030e7c3dfc71ffdb",
-      "bytes": 4674,
-      "hash_source": "ijds_rebaseline_2026-06-07"
+      "sha256": "010cc2b67d505f90cfd74da94a0dad5c4c0101420f2fe71f5a5d0a41c6cf4a1d",
+      "bytes": 4691,
+      "hash_source": "april-lineage-unification-2026-06-10"
     },
     "models/crpto_journal_package_status.json": {
-      "sha256": "8f182824cd1bac8275610472922cd6e1fe38277e712c86916f7a5595776b833c",
+      "sha256": "1adbb9662e74c5fe1663dee986cc003c9b683e5c853c9f3857cd3caeb9777374",
       "bytes": 3604,
-      "hash_source": "ijds_rebaseline_2026-06-07"
+      "hash_source": "april-lineage-unification-2026-06-10"
     },
     "book/chapters/01-introduccion.qmd": {
       "sha256": "b94f802dd6eaf1d3c35dd1365216afda2061c623ce71137561e406afdd6af188",
@@ -408,14 +408,14 @@
       "hash_source": "ijds_rebaseline_2026-06-07"
     },
     "reports/crpto/tables/crpto_table0_key_metrics.csv": {
-      "sha256": "f56e4c9f69cc55c6eaeaea5d8ca7ab5b84089f0babd69005298494908c5f10fc",
-      "bytes": 572,
-      "hash_source": "ijds_rebaseline_2026-06-07"
+      "sha256": "6683eda498f864b7240ea9c95a93503bab3548b793fd88d83f91322eeb2e8ce8",
+      "bytes": 573,
+      "hash_source": "april-lineage-unification-2026-06-10"
     },
     "reports/crpto/tables/crpto_table0_key_metrics.tex": {
-      "sha256": "b970efc2ee087a680e81faebec8ef7c541b7cda265a5949be3209c418f08694c",
+      "sha256": "1c3d2963f26423b430049d2ed3a46d224dff9e85b3fdbf6ce9940cee5f767c9a",
       "bytes": 662,
-      "hash_source": "ijds_rebaseline_2026-06-07"
+      "hash_source": "april-lineage-unification-2026-06-10"
     },
     "reports/crpto/tables/crpto_table1_robustness_summary.csv": {
       "sha256": "a7863b749f7b31b0e11a70a2a2a6656db9bf8a55e7609c609787c1d36ca54ca6",
@@ -438,14 +438,14 @@
       "hash_source": "ijds_rebaseline_2026-06-07"
     },
     "reports/crpto/tables/crpto_tableA10_conformal_finalist_exact_bound_eval.csv": {
-      "sha256": "96e6e98e166f653f4909a040f9410fc350ba4fe4e0b30b64abb0678933982afb",
-      "bytes": 846,
-      "hash_source": "ijds_rebaseline_2026-06-07"
+      "sha256": "7899f9860bbc392422f157dbf898c597d424cd3cdc250ac1bc0fc64b02f97779",
+      "bytes": 1604,
+      "hash_source": "april-lineage-unification-2026-06-10"
     },
     "reports/crpto/tables/crpto_tableA10_conformal_finalist_exact_bound_eval.tex": {
-      "sha256": "8d486cc83ffede247a8c8f57edf1bd47dc6b1674872fb611eea4fd6b7bc33a79",
-      "bytes": 1096,
-      "hash_source": "ijds_rebaseline_2026-06-07"
+      "sha256": "0066c688b74ee57cab5d4e9fb176bf657040a986cfde1971ea5c2477aab015b6",
+      "bytes": 1989,
+      "hash_source": "april-lineage-unification-2026-06-10"
     },
     "reports/crpto/tables/crpto_tableA11_enhanced_synthetic_shift.csv": {
       "sha256": "2a31a10e8e8da5a6f724f69878b5c77543a969f2412911e2b87e2d555c1a68d7",
@@ -568,14 +568,14 @@
       "hash_source": "ijds_rebaseline_2026-06-07"
     },
     "reports/crpto/tables/crpto_tableA5_decision_aware_selector.csv": {
-      "sha256": "40d2dcd365137c361dea19923d5ac37c723cdc2bc346bff3a2ba90a965cbf5b1",
-      "bytes": 1094,
-      "hash_source": "ijds_rebaseline_2026-06-07"
+      "sha256": "7fdffc888d2de4cba84224ba95d31e9b9c6413f2859a74fe383a347379e5fc64",
+      "bytes": 1139,
+      "hash_source": "april-lineage-unification-2026-06-10"
     },
     "reports/crpto/tables/crpto_tableA5_decision_aware_selector.tex": {
-      "sha256": "6a8b5c44e0ff808d202407b5d87f16bcc8d3a6d281e74952f11b8fa688612c0f",
-      "bytes": 1268,
-      "hash_source": "ijds_rebaseline_2026-06-07"
+      "sha256": "c7993020408ce83f3553390b6fa32fafa5a6ef671f7e2165f12b0f836a42a8b2",
+      "bytes": 1298,
+      "hash_source": "april-lineage-unification-2026-06-10"
     },
     "reports/crpto/tables/crpto_tableA6_synthetic_shift.csv": {
       "sha256": "b4d7da72c3cc10f5f4852870188f830412048a51b7130a5c6afb7f8d8a008545",
@@ -608,14 +608,14 @@
       "hash_source": "ijds_rebaseline_2026-06-07"
     },
     "reports/crpto/tables/crpto_tableA9_strict_temporal_holdout.csv": {
-      "sha256": "e2e1c39372af0ebae1e92918974d996f963b59c9faa4a0388be49544ee057ae6",
-      "bytes": 728,
-      "hash_source": "ijds_rebaseline_2026-06-07"
+      "sha256": "839fd8f96467ccd79d897c13ca63d7ab2c6e3223084b46d3d4b8fd54e19cf212",
+      "bytes": 719,
+      "hash_source": "april-lineage-unification-2026-06-10"
     },
     "reports/crpto/tables/crpto_tableA9_strict_temporal_holdout.tex": {
-      "sha256": "07b820bb12c5f035e77c82bb9ac871560fc3c9d573d70c24359c5da8eb108dfa",
-      "bytes": 975,
-      "hash_source": "ijds_rebaseline_2026-06-07"
+      "sha256": "561ba33db3869f749f4b02bfb0fa1f3557688c5127252fb59888d8a3537ae29c",
+      "bytes": 974,
+      "hash_source": "april-lineage-unification-2026-06-10"
     },
     "docs/research/crpto_size_dependency_data_audit_2026-05-10.md": {
       "sha256": "d7b8ba20234e7e6266b2f62c83e0d187466c6cb675156b7f807e8524c436852a",
@@ -758,9 +758,9 @@
       "hash_source": "ijds_rebaseline_2026-06-07"
     },
     "data/processed/test_predictions.parquet": {
-      "sha256": "5f13551f60b645cae2c9740eba34117b87c029025d157b66ebd39fbf2e4bba4d",
-      "bytes": 12554263,
-      "hash_source": "ijds_rebaseline_2026-06-07"
+      "sha256": "bc36d40c1e6dddba3c71d072e69f2ccecb83e7dd5a92dc80dbd7df02d08a09b7",
+      "bytes": 12553447,
+      "hash_source": "april-lineage-unification-2026-06-10"
     },
     "data/processed/portfolio_bound_aware/rank1_alpha01_bound_aware_276k_full_2026-04-05-1734/portfolio_bound_aware_frontier.parquet": {
       "sha256": "098cf7807a99eef2dd1260b391acae49cd2935deeeb179b7d846671aaa11cd98",
@@ -4207,5 +4207,54 @@
   "journal_rebaseline": {
     "last_hash_refresh_utc": "2026-06-08T00:09:19.895613+00:00",
     "hash_refresh_note": "Refreshed after pre-commit normalized dvc.lock."
+  },
+  "april_lineage_unification": {
+    "date_utc": "2026-06-10",
+    "decision": "Unified the canonical PD identity to the April search candidate models/search_pd/pd-hpo-local-2026-04-03-1325 (the exact binary recorded in models/conformal_results_mondrian.pkl that produced the frozen conformal intervals and the exact funded-set certificate). pd_canonical.cbm and pd_canonical_calibrator.pkl are now byte-copies of that candidate bundle; test_predictions.parquet was rebuilt from it via scripts/rebuild_test_predictions_from_frozen.py with a hard assert that pd_calibrated matches the frozen intervals y_pred exactly (max diff 0.0).",
+    "paper_facing_changes": {
+      "pd_auc": {
+        "before": 0.7127,
+        "after": 0.713852
+      },
+      "pd_brier": {
+        "before": 0.1546,
+        "after": 0.154393
+      },
+      "pd_ece": {
+        "before": 0.0062,
+        "after": 0.006998
+      },
+      "certificate_unchanged": {
+        "robust_return": 170464.5429284627,
+        "alpha01_weighted_miscoverage_v": 0.028875,
+        "alpha01_gamma_cp": 0.187987,
+        "robust_region": "45/45"
+      }
+    },
+    "frozen_not_regenerated": [
+      "reports/crpto/tables/crpto_tableA7_funded_set_loans.csv",
+      "reports/crpto/tables/crpto_tableA8_funded_set_composition.csv"
+    ],
+    "refrozen_under_current_stack": [
+      "reports/crpto/tables/crpto_tableA5_decision_aware_selector.csv",
+      "reports/crpto/tables/crpto_tableA9_strict_temporal_holdout.csv",
+      "reports/crpto/tables/crpto_tableA10_conformal_finalist_exact_bound_eval.csv"
+    ],
+    "updated_hashes": [
+      "models/pd_canonical.cbm",
+      "models/pd_canonical_calibrator.pkl",
+      "data/processed/test_predictions.parquet",
+      "data/processed/pipeline_summary.json",
+      "reports/crpto/tables/crpto_table0_key_metrics.csv",
+      "reports/crpto/tables/crpto_table0_key_metrics.tex",
+      "reports/crpto/tables/crpto_tableA5_decision_aware_selector.csv",
+      "reports/crpto/tables/crpto_tableA5_decision_aware_selector.tex",
+      "reports/crpto/tables/crpto_tableA9_strict_temporal_holdout.csv",
+      "reports/crpto/tables/crpto_tableA9_strict_temporal_holdout.tex",
+      "reports/crpto/tables/crpto_tableA10_conformal_finalist_exact_bound_eval.csv",
+      "reports/crpto/tables/crpto_tableA10_conformal_finalist_exact_bound_eval.tex",
+      "models/crpto_evidence_status.json",
+      "models/crpto_journal_package_status.json"
+    ]
   }
 }

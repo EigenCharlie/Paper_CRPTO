@@ -1,8 +1,45 @@
 # Drift report — revalidación conformal MAPIE 1.x (Track B, gate B1)
 
-**Fecha**: 2026-06-09
+**Fecha**: 2026-06-09 (gate rojo) / **2026-06-10 (RESUELTO: gate VERDE)**
 **Harness**: `tests/test_models/test_conformal_mapie_drift.py` (opt-in vía
 `CRPTO_RUN_CHAMPION_DRIFT=1`)
+
+## RESOLUCIÓN 2026-06-10 — gate VERDE con drift CERO
+
+El binario de abril (`models/search_pd/pd-hpo-local-2026-04-03-1325/`,
+modelo + calibrador + baselines) fue recuperado y el harness, apuntando a la
+receta literal del pkl congelado, dio **drift 0.000e+00 en todas las
+columnas** (y_pred, endpoints 90/95, edges de bandas, cobertura por celda) y
+reprodujo exactamente los multiplicadores de piso `{score_q01: 1.05,
+score_q04: 1.02}`. La cadena conformal congelada es **bit-exact
+reproducible bajo el stack actual** (MAPIE 1.4 runtime, numpy/catboost/
+sklearn de hoy); la migración MAPIE queda revalidada de facto.
+
+Con aprobación explícita de Carlos se ejecutó la **unificación de linaje**
+(camino 1 + corrección de identidad): `models/pd_canonical.cbm` y
+`models/pd_canonical_calibrator.pkl` son ahora copias byte a byte del
+candidato de abril, y `data/processed/test_predictions.parquet` se
+reconstruyó desde ese bundle con
+`scripts/rebuild_test_predictions_from_frozen.py` (assert duro: pd_calibrated
+== y_pred congelado, diff máx 0.0). Métricas PD del paper actualizadas:
+AUC 0.7127→0.7139, Brier 0.1546→0.1544, ECE 0.0062→0.0070; el certificado
+($170,464.54, V=0.028875, Γ_CP=0.187987, 45/45) **no cambia**. Manifest:
+bloque `april_lineage_unification` + 14 hashes re-freezados.
+
+Hallazgo adicional documentado durante la unificación: la "identidad
+candidato↔canónico" **nunca existió** (el pd_canonical de abril en el
+proyecto de origen ya era un tercer re-entrenamiento, AUC 0.7124; CatBoost
+con el mismo config no es bit-reproducible entre corridas). Además, las
+tablas A7/A8 (funded set por préstamo) provienen de un re-solve LP
+degenerado y **no se regeneran**: quedan congeladas como la vista oficial
+del certificado (341 préstamos, Tabla 7 del paper). A5/A9/A10 (experimentos
+derivados de re-solve, independientes del linaje PD) se re-freezaron bajo el
+stack lockeado actual para que un revisor pueda regenerarlas.
+
+---
+
+## Registro histórico del gate rojo (2026-06-09)
+
 **Resultado del gate**: **ROJO — STOP Track B** según el criterio de
 `MAPIE_MIGRATION_PLAN.md` ("si el drift excede tolerancia, es un cambio de
 modelo, no un refactor").

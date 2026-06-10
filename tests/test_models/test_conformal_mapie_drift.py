@@ -123,8 +123,26 @@ def recomputed(frozen: dict[str, Any]) -> dict[str, Any]:
         "Frozen run applied global rebalance; harness does not model it."
     )
 
-    model, _ = _load_model()
-    calibrator = _load_calibrator(results.get("calibrator_override_path") or None)
+    # Prefer the literal frozen recipe: the results pkl records the exact
+    # model binary that produced the frozen intervals (the April search
+    # candidate). The promoted canonical model is a later retrain of the same
+    # config and is NOT bit-exact, so it only serves as a documented fallback
+    # (in which case the gate is expected to be red; see the drift report).
+    recorded_model_path = ROOT / str(results.get("model_path", ""))
+    if recorded_model_path.is_file():
+        from catboost import CatBoostClassifier
+
+        model = CatBoostClassifier()
+        model.load_model(str(recorded_model_path))
+        recorded_calibrator_path = recorded_model_path.with_name("pd_candidate_calibrator.pkl")
+        calibrator = _load_calibrator(
+            str(recorded_calibrator_path) if recorded_calibrator_path.is_file() else None
+        )
+        print(f"\nUsing frozen-recipe model: {recorded_model_path}")
+    else:
+        model, _ = _load_model()
+        calibrator = _load_calibrator(results.get("calibrator_override_path") or None)
+        print("\nFrozen-recipe model missing; falling back to canonical (gate expected RED).")
 
     cal_df = read_with_fallback(
         "data/processed/calibration_fe.parquet", "data/processed/calibration.parquet"

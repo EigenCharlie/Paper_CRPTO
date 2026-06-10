@@ -9,10 +9,12 @@
   },
   "conformal_finalist_exact_eval": {
     "alpha01_pass_ranks": [
-      1
+      1,
+      2,
+      3
     ],
     "artifact": "reports/crpto/tables/crpto_tableA10_conformal_finalist_exact_bound_eval.csv",
-    "n_finalists": 1,
+    "n_finalists": 3,
     "status": "implemented"
   },
   "decision_aware_selector": {
@@ -44,6 +46,14 @@
     "total_funded_exposure": 999999.9999997499
   },
   "generated_artifacts": [
+    "reports/crpto/tables/crpto_tableA3_nested_holdout.csv",
+    "reports/crpto/tables/crpto_tableA3_nested_holdout.tex",
+    "reports/crpto/tables/crpto_tableA4_segment_period_sensitivity.csv",
+    "reports/crpto/tables/crpto_tableA4_segment_period_sensitivity.tex",
+    "reports/crpto/tables/crpto_tableA5_decision_aware_selector.csv",
+    "reports/crpto/tables/crpto_tableA5_decision_aware_selector.tex",
+    "reports/crpto/tables/crpto_tableA6_synthetic_shift.csv",
+    "reports/crpto/tables/crpto_tableA6_synthetic_shift.tex",
     "reports/crpto/tables/crpto_tableA7_funded_set_loans.csv",
     "reports/crpto/tables/crpto_tableA7_funded_set_loans.tex",
     "reports/crpto/tables/crpto_tableA8_funded_set_composition.csv",
@@ -54,19 +64,11 @@
     "reports/crpto/tables/crpto_tableA10_conformal_finalist_exact_bound_eval.tex",
     "reports/crpto/tables/crpto_tableA11_enhanced_synthetic_shift.csv",
     "reports/crpto/tables/crpto_tableA11_enhanced_synthetic_shift.tex",
-    "reports/crpto/tables/crpto_tableA3_nested_holdout.csv",
-    "reports/crpto/tables/crpto_tableA3_nested_holdout.tex",
-    "reports/crpto/tables/crpto_tableA4_segment_period_sensitivity.csv",
-    "reports/crpto/tables/crpto_tableA4_segment_period_sensitivity.tex",
-    "reports/crpto/tables/crpto_tableA5_decision_aware_selector.csv",
-    "reports/crpto/tables/crpto_tableA5_decision_aware_selector.tex",
-    "reports/crpto/tables/crpto_tableA6_synthetic_shift.csv",
-    "reports/crpto/tables/crpto_tableA6_synthetic_shift.tex",
     "docs/research/crpto_conditional_tightening_appendix_2026-05-04.md",
     "models/crpto_evidence_status.json",
     "docs/research/crpto_p1_evidence_2026-05-04.md"
   ],
-  "generated_at_utc": "2026-06-07T23:17:59.416442+00:00",
+  "generated_at_utc": "2026-06-10T18:42:16.673904+00:00",
   "nested_holdout": {
     "final_V": 0.028875,
     "final_alpha01_exact_pass": true,
@@ -93,7 +95,7 @@
     "data/processed/test.parquet"
   ],
   "strict_temporal_holdout": {
-    "all_alpha01_pass": false,
+    "all_alpha01_pass": true,
     "artifact": "reports/crpto/tables/crpto_tableA9_strict_temporal_holdout.csv",
     "status": "implemented",
     "strict_disjoint_split": true

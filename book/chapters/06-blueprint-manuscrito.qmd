@@ -59,7 +59,7 @@ robusta verificable, no en otro leaderboard predictivo.
 
 | Claim | Formulación para paper | Estatus | Evidencia primaria |
 |---|---|---|---|
-| C1 | La base PD calibrada es suficientemente estable para alimentar incertidumbre conformal. | Empírico | AUC `0.7127`, Brier `0.1546`, ECE `0.0062`, tests de calibración |
+| C1 | La base PD calibrada es suficientemente estable para alimentar incertidumbre conformal. | Empírico | AUC `0.7139`, Brier `0.1544`, ECE `0.0070`, tests de calibración |
 | C2 | La capa conformal Mondrian produce cobertura útil y trazable para decisión. | Empírico-conformal | Coverage 90 `92.97%`, min group coverage `91.90%`, Winkler `1.111` |
 | C3 | El intervalo conformal se puede mapear a un conjunto de incertidumbre usado por un LP robusto. | Metodológico | Definiciones `u_i(alpha)`, `Gamma_CP`, policy modes |
 | C4 | El bound controla no-cobertura ponderada del funded set bajo supuestos distribution-free. | Teórico | `thm-conformal-feasibility`, Markov, `V <= sqrt(alpha)` |

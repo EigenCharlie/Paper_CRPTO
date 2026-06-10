@@ -14,5 +14,5 @@
     "n_subsystems": 4,
     "n_passing": 4
   },
-  "report_path": "/tmp/pytest-of-eigenlinux/pytest-2/test_generate_mrm_report_overa0/reports/mrm/mrm_validation_report.json"
+  "report_path": "reports/mrm/mrm_validation_report.json"
 }

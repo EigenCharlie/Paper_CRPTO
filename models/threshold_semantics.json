@@ -7,11 +7,11 @@
   "fairness_primary_threshold": 0.35,
   "decision_policy_global_threshold": 0.35,
   "source_artifacts": {
-    "fairness_status": "/tmp/pytest-of-eigenlinux/pytest-2/test_run_fairness_auto_selects0/models/fairness_audit_status.json",
-    "fairness_decision_policy": "/tmp/pytest-of-eigenlinux/pytest-2/test_run_fairness_auto_selects0/models/fairness_decision_policy.json",
-    "fairness_frontier": "/tmp/pytest-of-eigenlinux/pytest-2/test_run_fairness_auto_selects0/data/processed/fairness_threshold_frontier.parquet",
-    "decision_threshold": "models\\decision_threshold.json",
-    "decision_threshold_v2": "models\\decision_threshold_v2.json"
+    "fairness_status": "models/fairness_audit_status.json",
+    "fairness_decision_policy": "models/fairness_decision_policy.json",
+    "fairness_frontier": "data/processed/fairness_threshold_frontier.parquet",
+    "decision_threshold": "models/decision_threshold.json",
+    "decision_threshold_v2": "models/decision_threshold_v2.json"
   },
   "business_meaning": {
     "pd_internal_selected_threshold": "Threshold interno de screening/seleccion PD usado en busqueda y analisis tecnico.",

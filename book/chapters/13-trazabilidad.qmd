@@ -38,7 +38,7 @@ pd.DataFrame(
     [
         {
             "Claim": "C1: PD calibrada estable",
-            "Evidencia": "AUC 0.7127, Brier 0.1546, ECE 0.0062",
+            "Evidencia": "AUC 0.7139, Brier 0.1544, ECE 0.0070",
             "Artefacto": "data/processed/pipeline_summary.json + reports/dvc/metrics_summary.json",
             "Script": "scripts/train_pd_model.py + src/models/calibration.py",
             "Test": "tests/test_scripts/test_train_pd_model.py + tests/test_evaluation/test_calibration_mapping.py",

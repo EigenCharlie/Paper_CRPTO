@@ -41,7 +41,7 @@ empíricos, otros son de ingeniería reproducible.
 
 | Nivel | Claim | Evidencia actual | Lo que no debe prometer |
 |---|---|---|---|
-| 1 | La PD base es suficientemente calibrada para alimentar incertidumbre | AUC `0.7127`, Brier `0.1546`, ECE `0.0062`, Venn-Abers | No afirmar que AUC es el aporte principal |
+| 1 | La PD base es suficientemente calibrada para alimentar incertidumbre | AUC `0.7139`, Brier `0.1544`, ECE `0.0070`, Venn-Abers | No afirmar que AUC es el aporte principal |
 | 2 | Los intervalos conformales tienen cobertura útil para decisión | Coverage 90 `92.97%`, min group coverage `91.90%` | No afirmar cobertura condicional perfecta |
 | 3 | El intervalo puede convertirse en conjunto de incertidumbre | Definición de `u_i(alpha)` y `Gamma_CP` | No tratar `Gamma_CP` como presupuesto ad hoc |
 | 4 | El bound controla no-cobertura ponderada del funded set | @sec-thm-feasibility y `V` | No decir que controla directamente una PD latente sin supuesto adicional |

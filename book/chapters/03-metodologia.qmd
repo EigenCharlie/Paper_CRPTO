@@ -10,7 +10,7 @@ La evaluación usa el universo OOT del proyecto sobre Lending Club, con partici�
 |---|---|
 | Modelo base | CatBoost calibrado |
 | Método de calibración | Venn-Abers (MAPIE 1.3 nativo, ver @sec-p1-vennabers) |
-| AUC OOT | 0.7127 |
+| AUC OOT | 0.7139 |
 | HPO | Refinamiento local sobre challenger monotónico |
 
 : Base predictiva del experimento {#tbl-crpto-base}
@@ -79,7 +79,7 @@ El proyecto evalúa cuatro candidatos de calibración (Platt, Isotonic, Venn-Abe
 
 Venn-Abers no gana porque sea "el más sofisticado". Gana porque, para una capa conformal aguas abajo, la calibración ideal es la que **no contradice la garantía finita** y al mismo tiempo produce ECE en el rango clínico aceptable. Las otras tres alternativas son válidas como métodos de calibración estándar, pero introducen una asimetría conceptual con la capa siguiente: el conformal hereda intercambiabilidad finita; Venn-Abers también; Platt/Isotonic/Beta heredan supuestos paramétricos o asintóticos que la garantía conformal no necesita.
 
-El ECE final del champion (`0.0062`) es 10× mejor que el del modelo sin calibrar (~0.07 estimado), confirmando que el resultado operacional no es accidental — la calibración sí mejora la fidelidad probabilística por bin, no sólo el rechazo formal de tests con $n$ grande (ver `tbl-crpto-calibration-tests`).
+El ECE final del champion (`0.0070`) es unas 10× mejor que el del modelo sin calibrar (~0.07 estimado), confirmando que el resultado operacional no es accidental — la calibración sí mejora la fidelidad probabilística por bin, no sólo el rechazo formal de tests con $n$ grande (ver `tbl-crpto-calibration-tests`).
 :::
 
 La secuencia de promoción importa metodológicamente. El proyecto no saltó directo de un score PD a una policy robusta final. La historia real fue:

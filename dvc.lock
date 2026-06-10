@@ -10,8 +10,8 @@ stages:
       size: 5565
     - path: book/chapters
       hash: md5
-      md5: a4abb16ff1e3b135601bbe59d74e5223.dir
-      size: 872953
+      md5: 492e63ba30d955e9808208ccc7fd8662.dir
+      size: 872958
       nfiles: 34
     - path: book/index.qmd
       hash: md5
@@ -33,8 +33,8 @@ stages:
     outs:
     - path: book/_book
       hash: md5
-      md5: 76915a9be88c6a51fac84d080ff47ea7.dir
-      size: 17802845
+      md5: b845309df59a0fa75b66374b78e68442.dir
+      size: 17803569
       nfiles: 115
   crpto.paper.figures:
     cmd: python scripts/generate_crpto_figures.py --paper crpto
@@ -65,13 +65,13 @@ stages:
       size: 1426
     - path: reports/crpto/tables
       hash: md5
-      md5: 09efa640e2b93cf73574e64424f65aa7.dir
-      size: 240177
+      md5: a6929b0aad5507d39309975fd151e8e6.dir
+      size: 241894
       nfiles: 77
     - path: reports/dvc/metrics_summary.json
       hash: md5
-      md5: bad1d5911dd61f8b205bbe9da4502cc5
-      size: 3074
+      md5: ab97ad94bd3f1385b35b347d5e28685f
+      size: 3651
     - path: scripts/generate_crpto_figures.py
       hash: md5
       md5: 0dedce6871ba0b1958687f77483f14a3
@@ -86,8 +86,8 @@ stages:
     deps:
     - path: data/processed/pipeline_summary.json
       hash: md5
-      md5: 73e3acf8d23ad78d4ed504b56ec45776
-      size: 4654
+      md5: 2b4cce6ac6f59d36d6359fd803f47ab3
+      size: 4655
     - path:
         data/processed/portfolio_bound_aware/rank1_alpha01_bound_aware_276k_full_2026-04-05-1734/portfolio_bound_aware_shortlist_exact.parquet
       hash: md5
@@ -104,8 +104,8 @@ stages:
     outs:
     - path: reports/crpto/tables/crpto_table0_key_metrics.csv
       hash: md5
-      md5: cec11ac14bfb99142ce57f7ec3fcdaee
-      size: 572
+      md5: 8f040c7da14416873bb896a4285ecfd6
+      size: 573
   crpto.data.dataset:
     cmd: python src/data/make_dataset.py --input
       data/raw/Loan_status_2007-2020Q3.csv --output
@@ -211,11 +211,11 @@ stages:
     outs:
     - path: models/pd_canonical.cbm
       hash: md5
-      md5: 1e24e945a7ef3a1c84cd26c8e77ea004
-      size: 4231912
+      md5: 56dc9e4030e1a2c36d37322292012977
+      size: 5324156
     - path: models/pd_canonical_calibrator.pkl
       hash: md5
-      md5: 9507cdbd7cf41eb849140ddaac586aab
+      md5: e18aa7402ecf3a079ff4c2ce3d54f487
       size: 9503845
   crpto.conformal.intervals:
     cmd: python scripts/generate_conformal_intervals.py --config
@@ -233,8 +233,8 @@ stages:
       size: 581
     - path: data/processed/test_predictions.parquet
       hash: md5
-      md5: 8022f6e92a519e1a12f6fac5671c9260
-      size: 12554263
+      md5: 0fdf00a257ac88ab825556d4475f1981
+      size: 12553447
     - path: scripts/generate_conformal_intervals.py
       hash: md5
       md5: 6871ec6a1a0522e6973a31b4d8254c49
@@ -346,8 +346,8 @@ stages:
       size: 5256767
     - path: data/processed/test_predictions.parquet
       hash: md5
-      md5: 8022f6e92a519e1a12f6fac5671c9260
-      size: 12554263
+      md5: 0fdf00a257ac88ab825556d4475f1981
+      size: 12553447
     - path: scripts/optimize_portfolio.py
       hash: md5
       md5: 7ddf20e344d96939ff82fb6f0dcdccbc
@@ -435,8 +435,8 @@ stages:
     outs:
     - path: models/crpto_evidence_status.json
       hash: md5
-      md5: 2807eb7ba4cc64b92a96026e06ccb71f
-      size: 4674
+      md5: cd73d5356c0642e2f1d6538b63ccf2d2
+      size: 4691
   crpto.paper.journal_package:
     cmd: python scripts/build_crpto_journal_package.py
     deps:

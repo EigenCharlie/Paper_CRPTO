@@ -232,7 +232,7 @@ if cb_default:
     pd.DataFrame(list(metrics_default.items()), columns=["Métrica", "Valor"])
 ```
 
-Con un AUC de 0.7127, el CatBoost default ya supera sustancialmente a la LR baseline (0.683, ver `sec-lr-baseline`), demostrando que las interacciones no lineales y el procesamiento nativo de categorías aportan +0.030 AUC (+4.4% relativo). La pregunta es si la optimización de hiperparámetros y las restricciones monotónicas pueden mejorar aún más este rendimiento.
+Con un AUC de 0.7124, el CatBoost default ya supera sustancialmente a la LR baseline (0.679, ver `sec-lr-baseline`), demostrando que las interacciones no lineales y el procesamiento nativo de categorías aportan +0.034 AUC (+4.9% relativo). La pregunta es si la optimización de hiperparámetros y las restricciones monotónicas pueden mejorar aún más este rendimiento.
 
 ### Optimización con Optuna (HPO)
 
@@ -308,7 +308,7 @@ optuna_results = {
 pd.DataFrame(list(optuna_results.items()), columns=["Aspecto", "Valor"])
 ```
 
-Los trials de Optuna alcanzaron un AUC de validación de 0.7223, pero el AUC en el test OOT es 0.7127 --- una brecha de 0.0096 que indica *temporal overfitting* al set de validación. El set de validación temporal cubre un período específico (cola del período 2007--2017), mientras que el test OOT abarca 2018--2020 con condiciones macroeconómicas potencialmente diferentes. El champion actual utiliza cuatro restricciones monotónicas (`installment:1`, `annual_inc:-1`, `dti:1`, `loan_to_income:1`) seleccionadas por búsqueda exhaustiva por bloques y refinadas por HPO local, y el calibrador Venn-Abers fue promovido automáticamente por la política temporal multi-fold.
+Los trials de Optuna alcanzaron un AUC de validación de 0.7223, pero el AUC en el test OOT es 0.7139 --- una brecha de 0.0084 que indica *temporal overfitting* al set de validación. El set de validación temporal cubre un período específico (cola del período 2007--2017), mientras que el test OOT abarca 2018--2020 con condiciones macroeconómicas potencialmente diferentes. El champion actual utiliza cuatro restricciones monotónicas (`installment:1`, `annual_inc:-1`, `dti:1`, `loan_to_income:1`) seleccionadas por búsqueda exhaustiva por bloques y refinadas por HPO local, y el calibrador Venn-Abers fue promovido automáticamente por la política temporal multi-fold.
 
 #### Visualización del Proceso HPO
 
@@ -424,7 +424,7 @@ Vale la pena explicitar esta sección porque, sin ese contexto, una mejora peque
 
 ::: {.callout-warning}
 ## Ganancia marginal del HPO
-La mejora del tuning de Optuna sobre el CatBoost default es marginal en AUC OOT (aprox. 0.7127 en el rebaseline IJDS). El valor real del pipeline no reside en exprimir décimas de AUC, sino en la calibración post-hoc, las restricciones monotónicas, y la capa conformal downstream.
+La mejora del tuning de Optuna sobre el CatBoost default es marginal en AUC OOT (0.7139 vs 0.7124 del default). El valor real del pipeline no reside en exprimir décimas de AUC, sino en la calibración post-hoc, las restricciones monotónicas, y la capa conformal downstream.
 :::
 
 Tres factores explican esta convergencia:
@@ -747,10 +747,10 @@ pd.DataFrame(metrics_rows)
 
 El impacto de la calibración es dramático:
 
-- **Brier Score**: De 0.2095 a 0.1546, una reducción del 26.2%. La calibración mejora la calidad de las probabilidades sin reentrenar el modelo.
-- **ECE**: 0.0062 --- la frecuencia observada de default en cada bin de probabilidad difiere en promedio solo 0.62 puntos porcentuales de la probabilidad predicha. Esto es excelente para uso en ECL e IFRS9.
-- **D² Brier**: De -0.2217 (peor que el predictor naive) a +0.0986 (mejor que el predictor naive). La calibración transforma un modelo que, en términos de probabilidad absoluta, era **peor que predecir siempre la tasa base**, en uno que genuinamente agrega valor probabilístico.
-- **AUC**: 0.7127 sin cambio material con la calibración. La calibración no afecta la discriminación, como esperamos teóricamente.
+- **Brier Score**: De 0.2084 a 0.1544, una reducción del 25.9%. La calibración mejora la calidad de las probabilidades sin reentrenar el modelo.
+- **ECE**: 0.0070 --- la frecuencia observada de default en cada bin de probabilidad difiere en promedio solo 0.70 puntos porcentuales de la probabilidad predicha. Esto es excelente para uso en ECL e IFRS9.
+- **D² Brier**: De -0.2152 (peor que el predictor naive) a +0.0996 (mejor que el predictor naive). La calibración transforma un modelo que, en términos de probabilidad absoluta, era **peor que predecir siempre la tasa base**, en uno que genuinamente agrega valor probabilístico.
+- **AUC**: 0.7139 sin cambio material con la calibración. La calibración no afecta la discriminación, como esperamos teóricamente.
 
 ### Descomposición del Brier Score
 
@@ -766,7 +766,7 @@ donde $\bar{p}_b$ es la probabilidad media predicha en el bin $b$, $\bar{o}_b$ e
 - **RES (resolution)**: Recompensa la capacidad de distinguir grupos con diferentes tasas de default. Depende de la discriminación del modelo.
 - **UNC (uncertainty)**: Constante que depende solo de la frecuencia marginal de default.
 
-La mejora de Brier de 0.2095 a 0.1546 se debe casi enteramente a la reducción del término de **reliability** (REL), mientras que la resolución se mantiene constante --- exactamente lo que esperamos de una calibración post-hoc que no altera el ranking del modelo.
+La mejora de Brier de 0.2084 a 0.1544 se debe casi enteramente a la reducción del término de **reliability** (REL), mientras que la resolución se mantiene constante --- exactamente lo que esperamos de una calibración post-hoc que no altera el ranking del modelo.
 
 El rerun V2 dejó además dos mejoras de gobernanza que antes estaban solo parcialmente absorbidas:
 
@@ -777,7 +777,7 @@ Esa mejora importa porque permite explicar la calibración no solo con un score 
 
 ::: {.callout-tip}
 ## Interpretación práctica del ECE
-Un ECE de 0.0062 significa que, si el modelo asigna PD = 0.20 a un grupo de préstamos, la tasa real de default en ese grupo será aproximadamente 19.4% a 20.6%. Para cálculos de ECL bajo IFRS9, esta precisión es más que suficiente --- la incertidumbre en LGD y EAD típicamente domina sobre la incertidumbre en PD calibrada.
+Un ECE de 0.0070 significa que, si el modelo asigna PD = 0.20 a un grupo de préstamos, la tasa real de default en ese grupo será aproximadamente 19.3% a 20.7%. Para cálculos de ECL bajo IFRS9, esta precisión es más que suficiente --- la incertidumbre en LGD y EAD típicamente domina sobre la incertidumbre en PD calibrada.
 :::
 
 ### Por qué Venn-Abers y no Platt
@@ -887,7 +887,7 @@ Con $n = 276{,}869$, los tests de KS y Kuiper tienen poder estadístico tan alto
 
 La métrica realmente informativa en este contexto es el **length scale σ** de las diferencias acumuladas: mide la magnitud de la desviación, no solo si existe. El modelo calibrado tiene σ = 0.000743 vs σ = 0.000860 sin calibrar — una reducción del 14%. Ambos son pequeños en términos absolutos, pero el calibrado es consistentemente mejor.
 
-**Conclusión práctica**: No interpretar el rechazo del test KS como "el modelo no está calibrado". Interpretar la diferencia de σ entre calibrado y sin calibrar como evidencia de que la calibración Venn-Abers reduce la desviación sistemática, compatible con el ECE de 0.0062 observado.
+**Conclusión práctica**: No interpretar el rechazo del test KS como "el modelo no está calibrado". Interpretar la diferencia de σ entre calibrado y sin calibrar como evidencia de que la calibración Venn-Abers reduce la desviación sistemática, compatible con el ECE de 0.0070 observado.
 :::
 
 ### Evidencia Visual: Curvas de Calibración
@@ -929,14 +929,14 @@ monotonicity = load_json("monotonicity_audit_status", directory="models")
 registry = load_json("champion_registry", directory="models")
 
 models_data = [
-    {"Modelo": "Logistic Regression", "AUC": 0.683, "Gini": 0.366,
-     "Brier": 0.2313, "ECE": "N/A", "D² Brier": -0.349,
+    {"Modelo": "Logistic Regression", "AUC": 0.6789, "Gini": 0.3579,
+     "Brier": 0.2325, "ECE": "N/A", "D² Brier": -0.356,
      "Calibrado": "No", "Status": "Baseline"},
-    {"Modelo": "CatBoost (default)", "AUC": 0.7127, "Gini": 0.4254,
-     "Brier": 0.2095, "ECE": "N/A", "D² Brier": -0.222,
+    {"Modelo": "CatBoost (default)", "AUC": 0.7124, "Gini": 0.4248,
+     "Brier": 0.2115, "ECE": "N/A", "D² Brier": -0.233,
      "Calibrado": "No", "Status": "Candidato"},
-    {"Modelo": "CatBoost (monotónico)", "AUC": 0.7127, "Gini": 0.4254,
-     "Brier": 0.2095, "ECE": "N/A", "D² Brier": -0.222,
+    {"Modelo": "CatBoost (monotónico, tuned)", "AUC": 0.7139, "Gini": 0.4278,
+     "Brier": 0.2084, "ECE": "N/A", "D² Brier": -0.215,
      "Calibrado": "No", "Status": "Candidato"},
     {"Modelo": "CatBoost monotónico + Venn-Abers", "AUC": round(pipeline_summary.get("pd_auc", 0), 4),
      "Gini": round(pipeline_summary.get("pd_gini", 0), 4),
@@ -957,11 +957,11 @@ El modelo champion ya no se define solo por “máximo AUC”. La selección vig
 
 El AUC mide la capacidad del modelo para separar defaults de no-defaults. Los cuatro modelos muestran una progresión clara:
 
-- LR → CatBoost default: **+0.030 AUC** (salto principal, justifica la complejidad)
-- CatBoost default → monotónico: **AUC invariante** (las restricciones monotónicas no degradan discriminación)
-- Monotónico → calibrado: **-0.0001 AUC** (la calibración Venn-Abers preserva ranking)
+- LR → CatBoost default: **+0.034 AUC** (salto principal, justifica la complejidad)
+- CatBoost default → monotónico tuned: **+0.0015 AUC** (las restricciones monotónicas no degradan discriminación)
+- Tuned → calibrado: **-0.00004 AUC** (la calibración Venn-Abers preserva ranking)
 
-El KS (Kolmogorov-Smirnov) del modelo champion es **0.315**, indicando buena separación entre las distribuciones de scores de defaults y no-defaults.
+El KS (Kolmogorov-Smirnov) del modelo champion es **0.314**, indicando buena separación entre las distribuciones de scores de defaults y no-defaults.
 
 **2. Calibración (Brier, ECE, D² Brier)**
 
@@ -969,9 +969,9 @@ La calibración es donde la diferencia entre modelos raw y calibrados es más dr
 
 | Métrica | CatBoost raw | CatBoost calibrado | Mejora |
 |---------|-------------|-------------------|--------|
-| Brier | 0.2095 | 0.1546 | -26.2% |
-| ECE | N/A (no medido) | 0.0062 | Excelente |
-| D² Brier | -0.222 | +0.099 | De peor a mejor que naive |
+| Brier | 0.2084 | 0.1544 | -25.9% |
+| ECE | N/A (no medido) | 0.0070 | Excelente |
+| D² Brier | -0.215 | +0.100 | De peor a mejor que naive |
 
 : Impacto de la calibración sobre métricas de Brier
 

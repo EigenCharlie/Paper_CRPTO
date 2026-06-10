@@ -7,8 +7,8 @@ El pipeline base sobre el champion monotónico confirmatorio sigue aportando la 
 
 | Indicador | Valor |
 |---|---:|
-| AUC OOT | 0.7127 |
-| ECE | 0.0062 |
+| AUC OOT | 0.7139 |
+| ECE | 0.0070 |
 | Cobertura conformal 90% | 92.97% |
 | Cobertura conformal 95% | 96.64% |
 | Ancho medio 90% | 0.7842 |
@@ -32,7 +32,7 @@ El paper documenta formalmente la calibración del modelo base mediante los test
 ::: {.callout-note}
 ## Rechazo formal vs calibración práctica
 
-A $n = 276{,}869$, cualquier desviación microscópica de calibración perfecta produce un rechazo formal. El indicador operativamente relevante es el ECE = 0.0062 (menos de 1 punto porcentual de error medio de calibración), que confirma calibración práctica excelente. Los p-values de la tabla deben leerse en clave relativa: la calibración Venn-Abers mejora la fidelidad probabilística entre 6× y 60,000× según el test, aunque ningún modelo logra calibración perfecta a esta escala muestral.
+A $n = 276{,}869$, cualquier desviación microscópica de calibración perfecta produce un rechazo formal. El indicador operativamente relevante es el ECE = 0.0070 (menos de 1 punto porcentual de error medio de calibración), que confirma calibración práctica excelente. Los p-values de la tabla deben leerse en clave relativa: la calibración Venn-Abers mejora la fidelidad probabilística entre 6× y 60,000× según el test, aunque ningún modelo logra calibración perfecta a esta escala muestral.
 :::
 
 ::: {.callout-important}

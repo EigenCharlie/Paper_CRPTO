@@ -12,6 +12,14 @@ be read as evidence around the frozen champion rather than a new search.
 
 ## Generated artifacts
 
+- `reports/crpto/tables/crpto_tableA3_nested_holdout.csv`
+- `reports/crpto/tables/crpto_tableA3_nested_holdout.tex`
+- `reports/crpto/tables/crpto_tableA4_segment_period_sensitivity.csv`
+- `reports/crpto/tables/crpto_tableA4_segment_period_sensitivity.tex`
+- `reports/crpto/tables/crpto_tableA5_decision_aware_selector.csv`
+- `reports/crpto/tables/crpto_tableA5_decision_aware_selector.tex`
+- `reports/crpto/tables/crpto_tableA6_synthetic_shift.csv`
+- `reports/crpto/tables/crpto_tableA6_synthetic_shift.tex`
 - `reports/crpto/tables/crpto_tableA7_funded_set_loans.csv`
 - `reports/crpto/tables/crpto_tableA7_funded_set_loans.tex`
 - `reports/crpto/tables/crpto_tableA8_funded_set_composition.csv`
@@ -22,14 +30,6 @@ be read as evidence around the frozen champion rather than a new search.
 - `reports/crpto/tables/crpto_tableA10_conformal_finalist_exact_bound_eval.tex`
 - `reports/crpto/tables/crpto_tableA11_enhanced_synthetic_shift.csv`
 - `reports/crpto/tables/crpto_tableA11_enhanced_synthetic_shift.tex`
-- `reports/crpto/tables/crpto_tableA3_nested_holdout.csv`
-- `reports/crpto/tables/crpto_tableA3_nested_holdout.tex`
-- `reports/crpto/tables/crpto_tableA4_segment_period_sensitivity.csv`
-- `reports/crpto/tables/crpto_tableA4_segment_period_sensitivity.tex`
-- `reports/crpto/tables/crpto_tableA5_decision_aware_selector.csv`
-- `reports/crpto/tables/crpto_tableA5_decision_aware_selector.tex`
-- `reports/crpto/tables/crpto_tableA6_synthetic_shift.csv`
-- `reports/crpto/tables/crpto_tableA6_synthetic_shift.tex`
 - `docs/research/crpto_conditional_tightening_appendix_2026-05-04.md`
 - `models/crpto_evidence_status.json`
 - `docs/research/crpto_p1_evidence_2026-05-04.md`
