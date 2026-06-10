@@ -340,7 +340,8 @@ does not concentrate exposure in a region whose noncoverage is worse than the
 nominal conformal level, unless such weighting is covered by a declared
 Mondrian, localized, or multi-distribution guarantee. A Markov-style argument
 then converts expected weighted miscoverage control into a finite-sample
-portfolio-level statement. The empirical exact audit reported in this
+portfolio-level statement; both steps are stated formally as Assumption 1 and
+Theorem 1 below. The empirical exact audit reported in this
 paper is the operational validation of that statement after the frozen policy
 search, not a claim that post-selection evaluation creates a stronger conformal
 guarantee.
@@ -387,40 +388,61 @@ new protocol.
 
 : Coverage-validity ladder used in the paper claims.
 
-The bound is therefore read as three linked objects. First, the deterministic
-identity says that if the funded set satisfies `sum_i w_i u_i <= tau`, realized
-risk can exceed $\tau$ only through the weighted noncoverage term $V(\alpha)$.
-Second, the statistical step assumes weighted funded-set validity,
-$E[V(\alpha)] \leq \alpha$, rather than pretending that marginal split conformal
-alone controls every adaptive subportfolio. Third, the frozen empirical
-certificate verifies the promoted decision exactly on the 276,869-loan OOT
-evaluation.
+The bound is therefore read as three linked objects: a deterministic
+accounting identity, an explicitly stated statistical assumption, and the
+frozen empirical certificate that verifies the promoted decision exactly on
+the 276,869-loan OOT evaluation. We now state the first two formally.
 
-The proof sketch is short because the hard part is not algebra; it is stating
-the weighting assumption honestly. For a fixed promoted allocation evaluated
-after the OOT labels are held out, let `Z_i(alpha) = 1{Y_i > u_i(alpha)}` and
-`w_i = x_i a_i / sum_j x_j a_j` for the funded set. If the robust constraint
-keeps `sum_i w_i u_i(alpha) <= tau`, then the realized weighted risk can exceed
-$\tau$ only through loans whose outcomes lie above their conformal endpoint:
+**Setup.** Fix the promoted allocation $x$, chosen without access to OOT
+labels, with exposures $a_i > 0$ and funded-set weights
+$w_i = x_i a_i / \sum_j x_j a_j$, so that $w_i \geq 0$ and $\sum_i w_i = 1$.
+For each funded loan let $Y_i \in [0, 1]$ be the realized outcome on the PD
+scale, $u_i(\alpha) \in [0, 1]$ its upper conformal endpoint, and
+$Z_i(\alpha) = \mathbf{1}\{Y_i > u_i(\alpha)\}$ the miscoverage indicator.
+The weighted funded-set miscoverage is
+$V(\alpha) = \sum_i w_i Z_i(\alpha)$.
+
+**Assumption 1 (weighted funded-set validity).**
+$E[V(\alpha)] \leq \alpha$ under the funded-set weights $w$. This holds, for
+example, when the weights are measurable with respect to a declared Mondrian
+partition whose cells each carry split-conformal coverage, and it is the
+explicit price of evaluating a selected portfolio rather than a single
+population: marginal split conformal alone does not control every adaptive
+subportfolio, so the assumption is stated, audited empirically after the
+frozen selection, and never silently upgraded to a guarantee.
+
+**Theorem 1 (distribution-free funded-set risk bound).**
+Suppose the robust constraint holds at the chosen allocation,
+$\sum_i w_i u_i(\alpha) \leq \tau$. Then:
+
+(i) *(deterministic)* $\;\sum_i w_i Y_i \leq \tau + V(\alpha)$ always;
+
+(ii) *(statistical)* under Assumption 1, for every $t > 0$,
+$P(V(\alpha) \geq t) \leq \alpha / t$, and in particular
 
 $$
-\sum_i w_i Y_i \leq \tau + \sum_i w_i Z_i(\alpha)
-  = \tau + V(\alpha).
+P\!\left(\sum_i w_i Y_i \;\geq\; \tau + \sqrt{\alpha}\right)
+  \;\leq\; \sqrt{\alpha}.
 $$
 
-Under weighted funded-set validity, $E[V(\alpha)] \leq \alpha$; Markov then gives
-$P(V(\alpha) \geq t) \leq \alpha / t$. Setting $t = \sqrt{\alpha}$ yields the displayed
-distribution-free portfolio statement. The choice $t = \sqrt{\alpha}$ is made for
-interpretability, not optimality: it places the threshold one order of magnitude
-in $\sqrt{\alpha}$ units above the nominal level and gives the clean reading
-"miscoverage exceeds $\sqrt{\alpha}$ with probability at most $\sqrt{\alpha}$." It
-is deliberately the weakest defensible argument: Markov uses only the first
-moment, so any second-moment or bounded-difference control (Chebyshev, Hoeffding,
-or Bernstein) tightens it whenever the additional independence-across-clusters
-assumption holds. We keep those tightenings in the online supplement (A21) rather
-than in the body, because the contribution here is the auditable decision
-construction, not the sharpest possible tail bound. The exact certificate in this
-paper is the empirical audit of the frozen selected policy, not a stronger
+*Proof sketch.* Since $Y_i \leq u_i(\alpha) + Z_i(\alpha)$ for every loan,
+part (i) follows by taking the $w$-weighted sum and applying the constraint.
+Part (ii) is Markov's inequality applied to the nonnegative variable
+$V(\alpha)$ with $E[V(\alpha)] \leq \alpha$, combined with (i). The full
+proof is in Online Supplement Appendix A. $\square$
+
+**Remark 1 (why $t = \sqrt{\alpha}$, and why Markov).**
+The choice $t = \sqrt{\alpha}$ is made for interpretability, not optimality:
+it gives the clean reading "miscoverage exceeds $\sqrt{\alpha}$ with
+probability at most $\sqrt{\alpha}$" (for $\alpha = 0.01$, a $0.10$ excess
+with probability at most $0.10$). Markov is deliberately the weakest
+defensible argument: it uses only the first moment, so any second-moment or
+bounded-difference control (Chebyshev, Hoeffding, or Bernstein) tightens it
+whenever the additional independence-across-clusters assumption holds. We
+keep those tightenings in the online supplement (A21) rather than in the
+body, because the contribution here is the auditable decision construction,
+not the sharpest possible tail bound. The exact certificate in this paper is
+the empirical audit of the frozen selected policy, not a stronger
 post-selection conformal theorem.
 
 # Experimental Design

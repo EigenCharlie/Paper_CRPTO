@@ -80,6 +80,69 @@ automatically controls every adaptively selected subportfolio. A Markov-style
 argument then gives the main conservative portfolio bound used in the exact
 alpha-safe check.
 
+## Proof of Theorem 1
+
+The body states the result as Theorem 1 under Assumption 1 (weighted
+funded-set validity). We record the full argument here.
+
+**Setting.** The allocation $x$ is fixed before OOT labels are revealed.
+Funded-set weights satisfy $w_i \geq 0$ and $\sum_i w_i = 1$. Outcomes and
+endpoints live on the PD scale, $Y_i \in [0,1]$ and $u_i(\alpha) \in [0,1]$,
+with miscoverage indicators $Z_i(\alpha) = \mathbf{1}\{Y_i > u_i(\alpha)\}$
+and $V(\alpha) = \sum_i w_i Z_i(\alpha)$. The robust constraint holds at the
+allocation: $\sum_i w_i u_i(\alpha) \leq \tau$.
+
+**Step 1 (pointwise domination).** For every funded loan,
+
+$$
+Y_i \;\leq\; u_i(\alpha) + Z_i(\alpha).
+$$
+
+If $Z_i(\alpha) = 0$ then $Y_i \leq u_i(\alpha)$ by definition of the
+indicator. If $Z_i(\alpha) = 1$ then $Y_i \leq 1 \leq u_i(\alpha) + 1$
+because $u_i(\alpha) \geq 0$. Both cases give the displayed inequality.
+
+**Step 2 (deterministic identity, Theorem 1(i)).** Taking the $w$-weighted
+sum of Step 1 and applying the robust constraint,
+
+$$
+\sum_i w_i Y_i
+  \;\leq\; \sum_i w_i u_i(\alpha) + \sum_i w_i Z_i(\alpha)
+  \;\leq\; \tau + V(\alpha).
+$$
+
+This step uses no probability: it is portfolio accounting, valid for every
+realization, and it is exactly the identity verified by the frozen exact
+funded-set audit.
+
+**Step 3 (Markov, Theorem 1(ii)).** $V(\alpha)$ is a nonnegative random
+variable, and Assumption 1 gives $E[V(\alpha)] \leq \alpha$. Markov's
+inequality yields, for every $t > 0$,
+
+$$
+P\bigl(V(\alpha) \geq t\bigr) \;\leq\; \frac{E[V(\alpha)]}{t}
+  \;\leq\; \frac{\alpha}{t}.
+$$
+
+**Step 4 (combination).** By Step 2, the event
+$\{\sum_i w_i Y_i \geq \tau + t\}$ implies $\{V(\alpha) \geq t\}$, so
+
+$$
+P\!\left(\sum_i w_i Y_i \geq \tau + t\right) \;\leq\; \frac{\alpha}{t},
+$$
+
+and the choice $t = \sqrt{\alpha}$ gives the body statement:
+miscoverage budget $\sqrt{\alpha}$ exceeded with probability at most
+$\sqrt{\alpha}$. $\blacksquare$
+
+Two boundaries are worth restating. First, Assumption 1 is where the
+adaptive-selection risk lives: Markov is applied to a quantity whose mean
+control is assumed under the funded-set weights, not derived from marginal
+split conformal alone; the empirical exact audit is the after-the-fact check
+of that assumption on the frozen selection. Second, the bound is
+deliberately first-moment only; the cluster-aware tightenings below sharpen
+it strictly under additional cross-cluster independence assumptions.
+
 Hoeffding/Bernstein-style tightenings are deliberately secondary. They are
 reported only under additional conditional-independence assumptions because the
 Lending Club evaluation is temporal and the funded set shares calibration and
