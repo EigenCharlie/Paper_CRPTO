@@ -5,6 +5,16 @@ page-layout: article
 
 ## Manifest de Extracción Paper / Journal / Tesis {#sec-p1-extraction-release-manifest}
 
+::: {.callout-note}
+## Alcance: repositorio editorial, no deployment
+
+Este capítulo organiza contenidos y checklists de release editorial. Las
+superficies interactivas que menciona (Streamlit, dashboards) son diseño
+diferido, **no software implementado ni en producción**: el proyecto no tiene
+servicio vivo, SLAs ni monitoreo post-despliegue, y nada de este capítulo es
+condición del paper actual.
+:::
+
 Esta página fija una regla práctica para usar el dossier largo del CRPTO sin cambiar su dirección. El capítulo 14 no reemplaza el manuscrito:
 es el repositorio editorial donde se conserva todo lo útil para mantener
 sincronizados el paper corto, el online supplement y la tesis/libro.

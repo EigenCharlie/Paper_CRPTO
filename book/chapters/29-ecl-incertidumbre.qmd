@@ -1,5 +1,15 @@
 # ECL bajo incertidumbre conformal {#sec-crpto-ecl}
 
+::: {.callout-warning}
+## Alcance: teaser del segundo paper
+
+Este capítulo es material exploratorio orientado a un segundo paper (ECL/IFRS9
+bajo incertidumbre conformal). **No forma parte de los claims del manuscrito
+CRPTO enviado a IJDS**: la provisión ECL mostrada es evidencia narrativa
+derivada de artefactos congelados, no una política contractual ni un resultado
+del paper.
+:::
+
 Los capítulos anteriores llevan la incertidumbre conformal desde la PD calibrada
 hasta la decisión de portafolio. Este capítulo cierra el arco económico hasta su
 destino regulatorio natural: la **provisión por pérdida esperada** (Expected

@@ -1,5 +1,14 @@
 # Apéndices Regulatorios y Future Work {#sec-crpto-regulatory-future-work}
 
+::: {.callout-warning}
+## Alcance: material exploratorio, no claims del manuscrito
+
+Este capítulo es material exploratorio orientado a un segundo paper
+(extensiones IFRS9/SICR y future work). **No forma parte de los claims del
+manuscrito CRPTO enviado a IJDS** ni de su supplement; ninguna cifra de aquí
+participa del certificado exacto, la región robusta ni las tablas A del paper.
+:::
+
 Este capítulo guarda material útil para journal, appendix o respuesta a reviewers, pero lo separa explícitamente del champion CRPTO. La regla es simple: estas piezas explican conexiones y extensiones; no cambian la policy oficial `bound_aware_276k_economic_champion` ni los artefactos canónicos de CRPTO.
 
 ### Regla de separación: diagnóstico seguro vs método nuevo

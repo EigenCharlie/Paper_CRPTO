@@ -5,6 +5,21 @@ proyecto. No repite resultados: traza cómo el mismo cuerpo de evidencia se lee 
 tres resoluciones distintas, y deja un mapa claim → capítulo para que un jurado,
 un reviewer o el propio autor encuentre en segundos dónde vive cada afirmación.
 
+## Cómo leer el cierre de tesis {#sec-crpto-sintesis-cierre}
+
+Los cinco capítulos del cierre no se solapan: cada uno responde una pregunta
+distinta y remite a los demás en lugar de repetirlos.
+
+| Capítulo | Pregunta que responde | Qué NO contiene |
+|---|---|---|
+| [Síntesis](26-sintesis-tesis.qmd) (este) | ¿Cómo se conectan paper, libro y defensa? | Resultados nuevos. |
+| [Conclusiones](27-conclusiones-tesis.qmd) | ¿Qué se contribuyó, qué quedó fuera por diseño y qué abre? | Repetición de tablas; evalúa la tesis como un todo. |
+| [Resultados auxiliares](28-resultados-auxiliares.qmd) | ¿Qué evidencia congelada fortalece la tesis pero no cabe en el paper? | Nada que reemplace al champion o reabra la búsqueda. |
+| [ECL e incertidumbre](29-ecl-incertidumbre.qmd) | ¿Qué consecuencia tendría la cadena en provisiones? (teaser del segundo paper) | Claims del manuscrito IJDS. |
+| [Replicación multidataset](30-replicacion-multidataset.qmd) | ¿La receta transfiere fuera de Lending Club? | Certificados exactos nuevos o re-promoción del champion. |
+
+: Mapa de lectura del cierre (capítulos 26--30).
+
 ## Las tres superficies de CRPTO
 
 El proyecto produce un único resultado congelado y lo expone a tres niveles de
