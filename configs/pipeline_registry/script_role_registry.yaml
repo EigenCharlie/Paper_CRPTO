@@ -175,6 +175,12 @@ scripts:
     pipeline_owner: publication_exports
     status: public
   -
+    script: scripts/rebuild_test_predictions_from_frozen.py
+    role: "rebuild canonical test predictions from a frozen PD bundle (certificate-lineage unification tool)"
+    category: governance
+    pipeline_owner: crpto_core_canonical
+    status: core
+  -
     script: scripts/archive/build_concentration_bound_table.py
     role: "exploratory concentration-bound table (not promoted)"
     category: search
