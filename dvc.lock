@@ -70,8 +70,8 @@ stages:
       nfiles: 77
     - path: reports/dvc/metrics_summary.json
       hash: md5
-      md5: ab97ad94bd3f1385b35b347d5e28685f
-      size: 3651
+      md5: 371476ca068943e6a14f58ab77972144
+      size: 3573
     - path: scripts/generate_crpto_figures.py
       hash: md5
       md5: 0dedce6871ba0b1958687f77483f14a3
