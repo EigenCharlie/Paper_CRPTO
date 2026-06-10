@@ -364,7 +364,9 @@ The formal portfolio statement assumes weighted funded-set validity: the optimiz
 allocation does not concentrate exposure in a region whose noncoverage is worse than
 the nominal conformal level, unless such weighting is covered by a declared Mondrian,
 localized, or multi-distribution guarantee. A Markov-style argument then converts
-expected weighted miscoverage control into a finite-sample portfolio-level statement.
+expected weighted miscoverage control into a finite-sample portfolio-level statement;
+both steps are stated formally as Assumption~\ref{asm:weighted-validity} and
+Theorem~\ref{thm:funded-set-bound} below.
 The empirical exact audit reported in this paper is the operational validation
 of that statement after the frozen policy search, not a claim that post-selection
 evaluation creates a stronger conformal guarantee.
@@ -378,35 +380,62 @@ evaluation creates a stronger conformal guarantee.
   \label{fig:bound-stack}
 \end{figure}
 
-The bound is read as three linked objects. First, the deterministic identity says
-that if the funded set satisfies $\sum_i w_i u_i(\alpha)\le \tau$, realized risk
-can exceed $\tau$ only through the weighted noncoverage term $V(\alpha)$. Second,
-the statistical step assumes weighted funded-set validity,
-$\mathbb{E}[V(\alpha)]\le\alpha$, rather than pretending that marginal split
-conformal alone controls every adaptive subportfolio. Third, the frozen empirical
-certificate verifies the promoted decision exactly on the 276{,}869-loan OOT
-evaluation.
+The bound is read as three linked objects: a deterministic accounting identity,
+an explicitly stated statistical assumption, and the frozen empirical certificate
+that verifies the promoted decision exactly on the 276{,}869-loan OOT evaluation.
+We now state the first two formally. Fix the promoted allocation $x$, chosen
+without access to OOT labels, with exposures $a_i>0$ and funded-set weights
+$w_i=x_i a_i/\sum_j x_j a_j$, so that $w_i\ge 0$ and $\sum_i w_i=1$. For each
+funded loan let $Y_i\in[0,1]$ be the realized outcome on the PD scale,
+$u_i(\alpha)\in[0,1]$ its upper conformal endpoint, and
+$Z_i(\alpha)=\mathbf{1}\{Y_i>u_i(\alpha)\}$ the miscoverage indicator. The
+weighted funded-set miscoverage is $V(\alpha)=\sum_i w_i Z_i(\alpha)$.
 
-For a fixed promoted allocation evaluated after the OOT labels are held out, let
-$Z_i(\alpha)=\mathbf{1}\{Y_i>u_i(\alpha)\}$ and
-$w_i=x_i a_i/\sum_j x_j a_j$ for the funded set. If the robust constraint keeps
-$\sum_i w_i u_i(\alpha)\le\tau$, then
+\begin{assumption}[Weighted funded-set validity]\label{asm:weighted-validity}
+$\mathbb{E}[V(\alpha)]\le\alpha$ under the funded-set weights $w$.
+\end{assumption}
+
+Assumption~\ref{asm:weighted-validity} holds, for example, when the weights are
+measurable with respect to a declared Mondrian partition whose cells each carry
+split-conformal coverage, and it is the explicit price of evaluating a selected
+portfolio rather than a single population: marginal split conformal alone does
+not control every adaptive subportfolio, so the assumption is stated, audited
+empirically after the frozen selection, and never silently upgraded to a
+guarantee.
+
+\begin{theorem}[Distribution-free funded-set risk bound]\label{thm:funded-set-bound}
+Suppose the robust constraint holds at the chosen allocation,
+$\sum_i w_i u_i(\alpha)\le\tau$. Then
+(i) deterministically, $\sum_i w_i Y_i \le \tau + V(\alpha)$; and
+(ii) under Assumption~\ref{asm:weighted-validity}, for every $t>0$,
+$\mathbb{P}(V(\alpha)\ge t)\le\alpha/t$, and in particular
 \[
-\sum_i w_iY_i \le \tau+\sum_i w_iZ_i(\alpha)=\tau+V(\alpha).
+\mathbb{P}\Bigl(\textstyle\sum_i w_i Y_i \;\ge\; \tau+\sqrt{\alpha}\Bigr)
+  \;\le\; \sqrt{\alpha}.
 \]
-Under weighted funded-set validity, $\mathbb{E}[V(\alpha)]\le\alpha$; Markov then
-gives $\mathbb{P}(V(\alpha)\ge t)\le\alpha/t$. Setting $t=\sqrt{\alpha}$ yields
-the displayed distribution-free portfolio statement. The choice $t=\sqrt{\alpha}$
-is made for interpretability, not optimality: it places the threshold one
-$\sqrt{\alpha}$ unit above the nominal level and reads cleanly as ``miscoverage
-exceeds $\sqrt{\alpha}$ with probability at most $\sqrt{\alpha}$.'' Markov uses
-only the first moment, so it is deliberately the weakest defensible argument; any
-second-moment or bounded-difference control (Chebyshev, Hoeffding, or Bernstein)
-tightens it whenever the additional independence-across-clusters assumption holds.
-Those tightenings are kept in the online supplement (A21) rather than the body,
-because the contribution is the auditable decision construction, not the sharpest
-tail bound. The exact certificate in this paper is the empirical audit of the
-frozen selected policy, not a stronger post-selection conformal theorem.
+\end{theorem}
+
+\proof{Proof sketch.}
+Since $Y_i\le u_i(\alpha)+Z_i(\alpha)$ for every loan, part~(i) follows by
+taking the $w$-weighted sum and applying the constraint. Part~(ii) is Markov's
+inequality applied to the nonnegative variable $V(\alpha)$ with
+$\mathbb{E}[V(\alpha)]\le\alpha$, combined with~(i). The full proof is in
+Online Supplement Appendix~A. \Halmos
+\endproof
+
+\begin{remark}[Why $t=\sqrt{\alpha}$, and why Markov]\label{rem:sqrt-alpha}
+The choice $t=\sqrt{\alpha}$ is made for interpretability, not optimality: it
+reads cleanly as ``miscoverage exceeds $\sqrt{\alpha}$ with probability at most
+$\sqrt{\alpha}$'' (for $\alpha=0.01$, a $0.10$ excess with probability at most
+$0.10$). Markov is deliberately the weakest defensible argument: it uses only
+the first moment, so any second-moment or bounded-difference control
+(Chebyshev, Hoeffding, or Bernstein) tightens it whenever the additional
+independence-across-clusters assumption holds. Those tightenings are kept in
+the online supplement (A21) rather than the body, because the contribution is
+the auditable decision construction, not the sharpest tail bound. The exact
+certificate in this paper is the empirical audit of the frozen selected
+policy, not a stronger post-selection conformal theorem.
+\end{remark}
 
 This theory is intentionally not presented as a universal dependence-free tightening
 for all adaptive credit policies. The Lending Club evaluation is temporal, and
