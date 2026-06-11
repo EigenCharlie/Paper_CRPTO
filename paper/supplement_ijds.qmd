@@ -227,6 +227,13 @@ Bernstein/Freedman give `t = 0.0852` under the weaker weighted-validity variance
 proxy; the stronger individual-alpha variance mode is sharper but requires an
 assumption we do not assert in the theorem.
 
+Bennett is the closest match to the finite funded-set calculation because it was
+designed for independent, non-identically distributed summands using only the
+variance of the sum and component bounds. Freedman is included only as the
+martingale analogue of Bernstein: it would become relevant under a pre-declared
+sequential validation protocol with bounded increments and a conditional-variance
+process, which is stronger than the frozen replay used here.
+
 Two honest readings follow. First, the tightenings are real: a second-moment or
 one-sided variance argument can cut the worst-case threshold by roughly
 15--35\% at `alpha = 0.01`. Second, they are not free: they require loan-level

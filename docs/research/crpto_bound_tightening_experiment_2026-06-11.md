@@ -50,3 +50,32 @@ Experimental branch result. This audit reads frozen funded-set weights only; it 
 | cluster_independence_period       | conditional_loose       |           0.536464 | Cluster Hoeffding threshold at delta=0.10 is 0.5365; max cluster exposure is 0.2913, so this is not tighter than Markov's 0.1000 threshold. |
 | cluster_independence_grade        | conditional_loose       |           0.651238 | Cluster Hoeffding threshold at delta=0.10 is 0.6512; max cluster exposure is 0.4235, so this is not tighter than Markov's 0.1000 threshold. |
 | cluster_independence_period_grade | conditional_loose       |           0.334416 | Cluster Hoeffding threshold at delta=0.10 is 0.3344; max cluster exposure is 0.1480, so this is not tighter than Markov's 0.1000 threshold. |
+
+## Paper-Read Audit
+
+The local paper folder now includes Bennett (1962), Hoeffding (1963), Freedman
+(1975), and Fuk--Nagaev (1971). Their roles for the IJDS draft are different:
+
+- Bennett (1962) is directly relevant to A21c. Its assumptions match the
+  conditional finite-sample calculation: independent, not necessarily identical
+  summands, with only the variance of the sum plus component means and bounds.
+  This supports keeping Bennett as an appendix sensitivity bound, especially for
+  the frozen weighted Bernoulli miscoverage sum.
+- Hoeffding (1963) supports the bounded-sum benchmark used in A21/A21b. It is
+  weaker than Markov at `alpha=0.01` for the actual exposure concentration, but
+  useful as a transparent negative benchmark.
+- Freedman (1975) justifies the martingale analogue of Bernstein only under a
+  prospective filtration with bounded increments and a conditional-variance
+  process. It belongs in the supplement as a conditional comparison, not as a
+  claim about the current frozen replay.
+- Fuk--Nagaev (1971) is not promoted in the paper. Its inequalities are designed
+  for independent sums with tail-probability and truncated-moment terms, useful
+  when summands are unbounded or heavy-tailed. CRPTO's A21 variable is a bounded
+  weighted sum of Bernoulli miscoverage indicators, so Bennett/Hoeffding/Freedman
+  are more direct. Fuk--Nagaev may become relevant only for a future unbounded
+  LGD or realized-loss extension.
+
+Paper integration decision: cite Bennett and Freedman in A21c, keep Hoeffding
+and Boucheron--Lugosi--Massart as concentration references, and leave
+Fuk--Nagaev out of the manuscript to avoid a citation that does not support the
+current bounded-indicator claim.
