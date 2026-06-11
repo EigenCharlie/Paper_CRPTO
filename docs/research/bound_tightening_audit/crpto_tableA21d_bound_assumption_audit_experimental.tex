@@ -1,0 +1,20 @@
+\begin{tabular}{llrl}
+\toprule
+assumption & status & diagnostic\_value & interpretation \\
+\midrule
+nonnegative\_normalized\_weights & pass & 1.000000 & Funded-set weights are non-negative and normalized. \\
+bounded\_miss\_indicators & pass & 1.000000 & miscovered\_alpha01 is binary, so V is a bounded weighted sum. \\
+effective\_sample\_size & concentrated & 126.066083 & n\_eff is far below the funded loan count, so iid-style concentration does not get to use the headline OOT sample size. \\
+loan\_independence & not\_verified & NaN & Defaults and conformal misses can share calibration history and macro period shocks; loan-level concentration bounds are appendix-only. \\
+post\_selection\_uniformity & not\_supported\_by\_markov & 45.000000 & A naive union Markov statement over the 45 final policies is vacuous at alpha01; the exact robust-region audit remains empirical evidence. \\
+sequential\_martingale\_protocol & not\_available & NaN & Azuma/Freedman need a prospective filtration or online validation design; the current A24 replay is diagnostic, not a live guarantee. \\
+chebyshev\_two\_sided & drop\_from\_table & NaN & Two-sided Chebyshev is dominated by Cantelli for the one-sided exceedance probability used in A21. \\
+azuma\_hoeffding\_martingale & drop\_from\_table & NaN & Azuma gives the same numerical threshold as Hoeffding here while adding a sequential validation protocol assumption. \\
+chernoff\_mgf & drop\_from\_table & NaN & Chernoff is sharp, but it requires independent misses with each individual miss probability bounded by alpha. \\
+union\_markov\_45\_policy\_region & drop\_from\_table & 45.000000 & A naive union Markov statement over the 45 final policies is vacuous at the paper alphas. \\
+empirical\_bernstein\_or\_bootstrap & diagnostic\_only & NaN & Empirical-Bernstein or bootstrap intervals would use observed OOT labels; useful for sensitivity, not for the distribution-free theorem. \\
+cluster\_independence\_period & conditional\_loose & 0.536464 & Cluster Hoeffding threshold at delta=0.10 is 0.5365; max cluster exposure is 0.2913, so this is not tighter than Markov's 0.1000 threshold. \\
+cluster\_independence\_grade & conditional\_loose & 0.651238 & Cluster Hoeffding threshold at delta=0.10 is 0.6512; max cluster exposure is 0.4235, so this is not tighter than Markov's 0.1000 threshold. \\
+cluster\_independence\_period\_grade & conditional\_loose & 0.334416 & Cluster Hoeffding threshold at delta=0.10 is 0.3344; max cluster exposure is 0.1480, so this is not tighter than Markov's 0.1000 threshold. \\
+\bottomrule
+\end{tabular}

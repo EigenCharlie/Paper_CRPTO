@@ -1,0 +1,41 @@
+alpha,delta,bound,variance_mode,threshold_t,empirical_V_alpha01,margin_vs_empirical_V,tighter_than_markov,empirical_V_below_threshold,paper_role
+0.01,0.1,cantelli_one_sided,strong_individual_validity,0.03671911841700631,0.028875000000007218,0.007844118416999096,True,True,conditional variance diagnostic; sharper one-sided Chebyshev
+0.01,0.1,bennett,strong_individual_validity,0.04894523515948999,0.028875000000007218,0.02007023515948277,True,True,conditional independence/variance tightening; appendix-only
+0.01,0.1,cantelli_one_sided,weak_weighted_validity,0.06612486080161614,0.028875000000007218,0.03724986080160893,True,True,conditional variance diagnostic; sharper one-sided Chebyshev
+0.01,0.1,bernstein,strong_individual_validity,0.06983234702482426,0.028875000000007218,0.04095734702481704,True,True,conditional independence/variance tightening; appendix-only
+0.01,0.1,freedman_martingale,strong_individual_validity,0.06983234702482426,0.028875000000007218,0.04095734702481704,True,True,martingale analogue of Bernstein; needs a sealed sequential protocol
+0.01,0.1,bennett,weak_weighted_validity,0.07223113225071706,0.028875000000007218,0.04335613225070985,True,True,conditional independence/variance tightening; appendix-only
+0.01,0.1,bernstein,weak_weighted_validity,0.08516935997197075,0.028875000000007218,0.05629435997196354,True,True,conditional independence/variance tightening; appendix-only
+0.01,0.1,freedman_martingale,weak_weighted_validity,0.08516935997197075,0.028875000000007218,0.05629435997196354,True,True,martingale analogue of Bernstein; needs a sealed sequential protocol
+0.01,0.1,markov,none,0.09999999999999999,0.028875000000007218,0.07112499999999278,False,True,main distribution-free claim; only first moment needed
+0.01,0.1,hoeffding,loan_independence,0.10556386729216258,0.028875000000007218,0.07668886729215536,False,True,conditional bounded-difference diagnostic
+0.03,0.17320508075688773,cantelli_one_sided,strong_individual_validity,0.06370389423459714,0.028875000000007218,0.03482889423458993,True,True,conditional variance diagnostic; sharper one-sided Chebyshev
+0.03,0.17320508075688773,bennett,strong_individual_validity,0.07558083265225993,0.028875000000007218,0.04670583265225271,True,True,conditional independence/variance tightening; appendix-only
+0.03,0.17320508075688773,bernstein,strong_individual_validity,0.08585069603225817,0.028875000000007218,0.05697569603225096,True,True,conditional independence/variance tightening; appendix-only
+0.03,0.17320508075688773,freedman_martingale,strong_individual_validity,0.08585069603225817,0.028875000000007218,0.05697569603225096,True,True,martingale analogue of Bernstein; needs a sealed sequential protocol
+0.03,0.17320508075688773,cantelli_one_sided,weak_weighted_validity,0.10079673598756035,0.028875000000007218,0.07192173598755314,True,True,conditional variance diagnostic; sharper one-sided Chebyshev
+0.03,0.17320508075688773,bennett,weak_weighted_validity,0.10879705436939043,0.028875000000007218,0.07992205436938321,True,True,conditional independence/variance tightening; appendix-only
+0.03,0.17320508075688773,hoeffding,loan_independence,0.11338950220977291,0.028875000000007218,0.0845145022097657,True,True,conditional bounded-difference diagnostic
+0.03,0.17320508075688773,bernstein,weak_weighted_validity,0.11448842470504272,0.028875000000007218,0.08561342470503551,True,True,conditional independence/variance tightening; appendix-only
+0.03,0.17320508075688773,freedman_martingale,weak_weighted_validity,0.11448842470504272,0.028875000000007218,0.08561342470503551,True,True,martingale analogue of Bernstein; needs a sealed sequential protocol
+0.03,0.17320508075688773,markov,none,0.17320508075688773,0.028875000000007218,0.1443300807568805,False,True,main distribution-free claim; only first moment needed
+0.05,0.22360679774997896,cantelli_one_sided,strong_individual_validity,0.08710942569059568,0.028875000000007218,0.05823442569058847,True,True,conditional variance diagnostic; sharper one-sided Chebyshev
+0.05,0.22360679774997896,bennett,strong_individual_validity,0.09932002901426772,0.028875000000007218,0.0704450290142605,True,True,conditional independence/variance tightening; appendix-only
+0.05,0.22360679774997896,bernstein,strong_individual_validity,0.10612143445843009,0.028875000000007218,0.07724643445842287,True,True,conditional independence/variance tightening; appendix-only
+0.05,0.22360679774997896,freedman_martingale,strong_individual_validity,0.10612143445843009,0.028875000000007218,0.07724643445842287,True,True,martingale analogue of Bernstein; needs a sealed sequential protocol
+0.05,0.22360679774997896,hoeffding,loan_independence,0.12707656887180302,0.028875000000007218,0.0982015688717958,True,True,conditional bounded-difference diagnostic
+0.05,0.22360679774997896,cantelli_one_sided,weak_weighted_validity,0.12795022720461297,0.028875000000007218,0.09907522720460575,True,True,conditional variance diagnostic; sharper one-sided Chebyshev
+0.05,0.22360679774997896,bennett,weak_weighted_validity,0.13831826683965617,0.028875000000007218,0.10944326683964896,True,True,conditional independence/variance tightening; appendix-only
+0.05,0.22360679774997896,bernstein,weak_weighted_validity,0.14195940375105448,0.028875000000007218,0.11308440375104727,True,True,conditional independence/variance tightening; appendix-only
+0.05,0.22360679774997896,freedman_martingale,weak_weighted_validity,0.14195940375105448,0.028875000000007218,0.11308440375104727,True,True,martingale analogue of Bernstein; needs a sealed sequential protocol
+0.05,0.22360679774997896,markov,none,0.223606797749979,0.028875000000007218,0.19473179774997176,False,True,main distribution-free claim; only first moment needed
+0.1,0.31622776601683794,cantelli_one_sided,strong_individual_validity,0.14141489843989055,0.028875000000007218,0.11253989843988334,True,True,conditional variance diagnostic; sharper one-sided Chebyshev
+0.1,0.31622776601683794,bennett,strong_individual_validity,0.15470968466559049,0.028875000000007218,0.12583468466558326,True,True,conditional independence/variance tightening; appendix-only
+0.1,0.31622776601683794,bernstein,strong_individual_validity,0.15823021015605543,0.028875000000007218,0.1293552101560482,True,True,conditional independence/variance tightening; appendix-only
+0.1,0.31622776601683794,freedman_martingale,strong_individual_validity,0.15823021015605543,0.028875000000007218,0.1293552101560482,True,True,martingale analogue of Bernstein; needs a sealed sequential protocol
+0.1,0.31622776601683794,hoeffding,loan_independence,0.16757385859869947,0.028875000000007218,0.13869885859869224,True,True,conditional bounded-difference diagnostic
+0.1,0.31622776601683794,cantelli_one_sided,weak_weighted_validity,0.18699409066477574,0.028875000000007218,0.1581190906647685,True,True,conditional variance diagnostic; sharper one-sided Chebyshev
+0.1,0.31622776601683794,bennett,weak_weighted_validity,0.20238284767581538,0.028875000000007218,0.17350784767580815,True,True,conditional independence/variance tightening; appendix-only
+0.1,0.31622776601683794,bernstein,weak_weighted_validity,0.2042032156609526,0.028875000000007218,0.17532821566094536,True,True,conditional independence/variance tightening; appendix-only
+0.1,0.31622776601683794,freedman_martingale,weak_weighted_validity,0.2042032156609526,0.028875000000007218,0.17532821566094536,True,True,martingale analogue of Bernstein; needs a sealed sequential protocol
+0.1,0.31622776601683794,markov,none,0.31622776601683794,0.028875000000007218,0.28735276601683074,False,True,main distribution-free claim; only first moment needed
