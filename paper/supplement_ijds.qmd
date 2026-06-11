@@ -122,7 +122,7 @@ funded-set audit.
 **Step 3 (Markov, Theorem 1(ii)).** $V(\alpha)$ is a nonnegative random
 variable under the stated draw, and Assumption 1 gives
 $E[V(\alpha)] \leq \alpha$. Markov's
-inequality yields, for every $t > 0$,
+inequality yields, for every $t > 0$ [@ghosh2002],
 
 $$
 P\bigl(V(\alpha) \geq t\bigr) \;\leq\; \frac{E[V(\alpha)]}{t}
@@ -187,6 +187,7 @@ dependent. If, after conditioning on the calibration sample and fixed funded
 allocation, the cluster aggregates are independent or conditionally
 independent across `g`, then the weighted noncoverage sum admits a
 cluster-level concentration bound. A Hoeffding-style version is
+[@hoeffding1963; @boucheron2013concentration]:
 
 ```text
 P(V - E[V] >= t) <= exp(-2 t^2 / sum_g W_g^2),
@@ -220,10 +221,11 @@ concentrated exposure the effective sample size is only ~126. The frozen empiric
 `V = 0.028875` sits below *all three* thresholds at every level.
 
 Table A21c extends the same audit to one-sided Cantelli, Bennett and Freedman
-variants. At `alpha = 0.01`, weak-variance Cantelli gives `t = 0.0661`, Bennett
-gives `t = 0.0722`, and Bernstein/Freedman give `t = 0.0852` under the weaker
-weighted-validity variance proxy; the stronger individual-alpha variance mode is
-sharper but requires an assumption we do not assert in the theorem.
+variants [@cantelli1929; @bennett1962; @freedman1975]. At `alpha = 0.01`,
+weak-variance Cantelli gives `t = 0.0661`, Bennett gives `t = 0.0722`, and
+Bernstein/Freedman give `t = 0.0852` under the weaker weighted-validity variance
+proxy; the stronger individual-alpha variance mode is sharper but requires an
+assumption we do not assert in the theorem.
 
 Two honest readings follow. First, the tightenings are real: a second-moment or
 one-sided variance argument can cut the worst-case threshold by roughly
