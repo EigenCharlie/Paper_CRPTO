@@ -429,8 +429,8 @@ $\mathbb{P}(V(\alpha)\ge t)\le\alpha/t$, and in particular
 Since $Y_i\le u_i(\alpha)+Z_i(\alpha)$ for every loan, part~(i) follows by
 taking the $w$-weighted sum and applying the constraint. Part~(ii) is Markov's
 inequality applied to the nonnegative variable $V(\alpha)$ with
-$\mathbb{E}[V(\alpha)]\le\alpha$, combined with~(i). The full proof is in
-Online Supplement Appendix~A. \Halmos
+$\mathbb{E}[V(\alpha)]\le\alpha$ \citep{ghosh2002}, combined with~(i). The
+full proof is in Online Supplement Appendix~A. \Halmos
 \endproof
 
 \begin{remark}[Why $t=\sqrt{\alpha}$, and why Markov]\label{rem:sqrt-alpha}
@@ -440,7 +440,8 @@ $\sqrt{\alpha}$'' (for $\alpha=0.01$, a $0.10$ excess with probability at most
 $0.10$). Markov is deliberately the weakest defensible argument: it uses only
 the first moment, so any second-moment or bounded-difference control
 (Chebyshev, Hoeffding, or Bernstein) tightens it whenever the additional
-independence-across-clusters assumption holds. Those tightenings are kept in
+independence-across-clusters assumption holds
+\citep{hoeffding1963,boucheron2013concentration}. Those tightenings are kept in
 the online supplement (A21) rather than the body, because the contribution is
 the auditable decision construction, not the sharpest tail bound. The exact
 certificate in this paper is the empirical audit of the frozen selected
@@ -453,7 +454,7 @@ temporal dependence is handled empirically through strict out-of-time splits, te
 backtesting, and robustness appendices. The online supplement adds a cluster-aware
 conditional proposition: dependence may be arbitrary inside period or grade clusters,
 but sharper Hoeffding/Bernstein-style bounds require independence or conditional
-independence across those clusters. Markov therefore remains the main
+independence across those clusters \citep{hoeffding1963,boucheron2013concentration}. Markov therefore remains the main
 distribution-free claim, while the dependence-aware material is a transparent journal
 caveat rather than an overstated theorem.
 

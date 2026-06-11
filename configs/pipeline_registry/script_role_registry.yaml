@@ -181,6 +181,12 @@ scripts:
     pipeline_owner: crpto_core_canonical
     status: core
   -
+    script: scripts/build_bound_tightening_audit.py
+    role: "experimental A21c/A21d bound-tightening menu over frozen funded-set weights"
+    category: diagnostics
+    pipeline_owner: publication_exports
+    status: paper
+  -
     script: scripts/archive/build_concentration_bound_table.py
     role: "exploratory concentration-bound table (not promoted)"
     category: search
