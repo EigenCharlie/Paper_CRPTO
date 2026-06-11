@@ -1721,11 +1721,14 @@ def _dossier_pd_reliability() -> None:
 def _crpto_fig21_end_to_end_arc() -> None:
     """Fig 21 — end-to-end CRPTO arc: PD -> conformal -> robust LP -> funded set -> ECL.
 
-    Hand-laid flow diagram (no data dependency) summarizing the full thesis arc
-    with the frozen headline number at each stage. Title-style house figure.
+    Hand-laid flow diagram summarizing the full thesis arc with the frozen
+    headline number at each stage. PD metrics come from the canonical
+    pipeline summary so the panel always matches the certificate lineage.
     """
+    summary = load_json(DATA_DIR / "pipeline_summary.json")
+    pd_label = f"AUC {summary['pd_auc']:.4f}\nECE {summary['pd_ece']:.4f}"
     stages = [
-        ("Calibrated PD", "CatBoost + Venn-Abers", "AUC 0.7127\nECE 0.0062", PALETTE["blue"]),
+        ("Calibrated PD", "CatBoost + Venn-Abers", pd_label, PALETTE["blue"]),
         (
             "Mondrian\nconformal",
             "Upper endpoint u(α)",

@@ -439,7 +439,7 @@ Tres factores explican esta convergencia:
 
 cb_calibrated = next((m for m in models if m["model"] == "CatBoost (tuned + calibrated)"), None)
 final_metrics = comparison.get("final_test_metrics", {})
-ece = final_metrics.get("ece", 0.006)
+ece = final_metrics.get("ece", 0.007)
 
 gain_analysis = []
 
@@ -883,7 +883,7 @@ pd.DataFrame(rows)
 ::: {.callout-warning}
 ## Por qué ambos modelos "rechazan" — y por qué eso no invalida el resultado
 
-Con $n = 276{,}869$, los tests de KS y Kuiper tienen poder estadístico tan alto que **detectan cualquier desviación**, por mínima que sea, de la calibración perfecta. Un ECE de 0.006 (excelente para uso operativo) aún produce un p-value < 0.001 simplemente porque la muestra es enorme.
+Con $n = 276{,}869$, los tests de KS y Kuiper tienen poder estadístico tan alto que **detectan cualquier desviación**, por mínima que sea, de la calibración perfecta. Un ECE de 0.007 (excelente para uso operativo) aún produce un p-value < 0.001 simplemente porque la muestra es enorme.
 
 La métrica realmente informativa en este contexto es el **length scale σ** de las diferencias acumuladas: mide la magnitud de la desviación, no solo si existe. El modelo calibrado tiene σ = 0.000743 vs σ = 0.000860 sin calibrar — una reducción del 14%. Ambos son pequeños en términos absolutos, pero el calibrado es consistentemente mejor.
 
@@ -975,7 +975,7 @@ La calibración es donde la diferencia entre modelos raw y calibrados es más dr
 
 : Impacto de la calibración sobre métricas de Brier
 
-Un ECE de 0.0062 significa que las probabilidades predichas están, en promedio, muy cerca de las frecuencias de default observadas. Para IFRS9, fairness, staging y policy de portafolio, esta calidad probabilística importa más que una mejora marginal de ranking aislada.
+Un ECE de 0.0070 significa que las probabilidades predichas están, en promedio, muy cerca de las frecuencias de default observadas. Para IFRS9, fairness, staging y policy de portafolio, esta calidad probabilística importa más que una mejora marginal de ranking aislada.
 
 ::: {.column-page}
 ![Curvas ROC de los modelos PD principales evaluados en el proyecto.](../assets/figures/editorial/pd_roc_curve.png){fig-alt="Curvas ROC comparativas de los modelos PD principales, usadas para contrastar discriminación en el conjunto OOT."}
@@ -1137,18 +1137,18 @@ Eso cambia el tono de esta sección. Ya no se trata solo de “qué modelo tuvo 
 
 ### Posicionamiento en la Literatura
 
-El AUC del champion (`0.7127`) se sitúa en el rango competitivo para modelos de ML sobre el dataset de Lending Club:
+El AUC del champion (`0.7139`) se sitúa en el rango competitivo para modelos de ML sobre el dataset de Lending Club:
 
 | Estudio | Mejor modelo | AUC reportado |
 |---------|-------------|--------------|
 | @lessmann2015 | Random Forest | 0.69--0.71 |
 | @ayari2026 | CatBoost | 0.71--0.73 |
 | @xia2017 | XGBoost + stacking | 0.72--0.74 |
-| **Este proyecto** | CatBoost + Venn-Abers | **0.7127** |
+| **Este proyecto** | CatBoost + Venn-Abers | **0.7139** |
 
 : Comparación con literatura publicada sobre Lending Club
 
-Nuestro AUC está en el centro del rango publicado. Estudios que reportan AUC > 0.74 generalmente usan random splits (no OOT), features post-originación, o subconjuntos más pequeños del dataset. Con split temporal estricto y contrato champion de 42 features anti-leakage sobre un universo FE mucho más amplio, `0.7127` es un resultado competitivo y honesto.
+Nuestro AUC está en el centro del rango publicado. Estudios que reportan AUC > 0.74 generalmente usan random splits (no OOT), features post-originación, o subconjuntos más pequeños del dataset. Con split temporal estricto y contrato champion de 42 features anti-leakage sobre un universo FE mucho más amplio, `0.7139` es un resultado competitivo y honesto.
 
 ### Evidencia Visual: Curvas ROC
 
@@ -1158,5 +1158,5 @@ La `fig-roc-curves-comparison` muestra las curvas ROC de todos los modelos evalu
 
 ::: {.callout-tip}
 ## Más allá del AUC
-La contribución de este proyecto no es obtener el AUC más alto posible --- es construir un pipeline end-to-end que transforma el AUC `0.7127` en **decisiones óptimas** de portafolio con **protección contra incertidumbre garantizada**. El modelo PD es un componente, no el producto final. Un modelo con AUC 0.75 pero sin intervalos conformales ni optimización robusta produce peores decisiones que un modelo con AUC 0.71 integrado en el pipeline completo.
+La contribución de este proyecto no es obtener el AUC más alto posible --- es construir un pipeline end-to-end que transforma el AUC `0.7139` en **decisiones óptimas** de portafolio con **protección contra incertidumbre garantizada**. El modelo PD es un componente, no el producto final. Un modelo con AUC 0.75 pero sin intervalos conformales ni optimización robusta produce peores decisiones que un modelo con AUC 0.71 integrado en el pipeline completo.
 :::

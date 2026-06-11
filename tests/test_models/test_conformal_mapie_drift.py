@@ -15,17 +15,19 @@ It does NOT rerun any protected DVC stage and writes nothing; it is a pure
 in-memory recomputation. Marked ``slow`` because it scores ~514k rows with
 the champion CatBoost model twice (calibration + test).
 
-GATE STATUS (2026-06-09): RED, by a known cause documented in
-``docs/refactor/drift_report_mapie_2026-06.md``. The frozen intervals were
-produced by the April search candidate
-(``models/search_pd/pd-hpo-local-2026-04-03-1325/pd_candidate_model.cbm``,
-recorded in the frozen results pkl and not present in the local checkout),
-while ``models/pd_canonical.cbm`` is the June ``ijds-rebaseline-2026-06-07``
-retrain of the same config — similar (corr 0.9917) but not bit-exact. The
-drift is therefore upstream of the conformal layer and unrelated to MAPIE.
-Because the gate is expected to fail until the April binary is restored or a
-new run-tag re-promotes the chain, the harness only runs when explicitly
-requested::
+GATE STATUS (2026-06-10): GREEN — RESOLVED with zero drift. The April
+search candidate (``models/search_pd/pd-hpo-local-2026-04-03-1325``, the
+exact ``model_path`` recorded in the frozen results pkl) was restored and
+the canonical PD identity was unified to it (see the april-lineage
+unification entry in ``EXTRACTION_MANIFEST.json`` and
+``docs/refactor/drift_report_mapie_2026-06.md``). The harness now
+reproduces every frozen column exactly (max abs diff 0.0) and re-learns
+the identical floor multipliers. A RED result on this gate from now on
+means something moved the frozen binaries or the conformal code path —
+treat it as a stop-the-line signal, not a known condition.
+
+The harness stays opt-in because it scores ~514k rows (slow), not because
+it is expected to fail::
 
     CRPTO_RUN_CHAMPION_DRIFT=1 uv run pytest \
         tests/test_models/test_conformal_mapie_drift.py -q -s
@@ -46,8 +48,9 @@ ROOT = Path(__file__).resolve().parents[2]
 
 if os.getenv("CRPTO_RUN_CHAMPION_DRIFT", "").lower() not in {"1", "true", "yes"}:
     pytest.skip(
-        "Champion drift harness is opt-in (set CRPTO_RUN_CHAMPION_DRIFT=1). "
-        "Known-red gate: see docs/refactor/drift_report_mapie_2026-06.md.",
+        "Champion drift harness is opt-in (set CRPTO_RUN_CHAMPION_DRIFT=1): "
+        "it scores ~514k rows. Gate is GREEN since the 2026-06-10 "
+        "april-lineage unification; RED now means real drift.",
         allow_module_level=True,
     )
 

@@ -163,7 +163,7 @@ $$
 \text{ECE} = \sum_{b=1}^{B} \frac{|B_b|}{n} \left| \text{acc}(B_b) - \text{conf}(B_b) \right|
 $$
 
-Un ECE < 0.01 indica calibración excelente. Nuestro modelo calibrado con Venn-Abers logra ECE = 0.006.
+Un ECE < 0.01 indica calibración excelente. Nuestro modelo calibrado con Venn-Abers logra ECE = 0.007.
 
 **D² Brier**: Análogo al R² para el Brier Score, mide la mejora relativa del modelo sobre un predictor naive (frecuencia marginal).
 

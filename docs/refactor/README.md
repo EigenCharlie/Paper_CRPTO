@@ -25,12 +25,11 @@ Smaller deferred items without a dedicated plan file:
   files and re-keying `crpto.pd.champion` in `dvc.lock` — champion-lock
   approval required. Until then the data flow is documented in comments
   inside `dvc.yaml`.
-- **params.yaml unification** (2026-06-09): `params.yaml` is a documentary
-  mirror with one known stale value (`pd.catboost.learning_rate: 0.03` vs
-  the canonical `0.0573…` in `configs/crpto_pd_model.yaml` that the frozen
-  champion actually consumed). Correcting it re-keys the protected
-  `crpto.pd.champion` params block in `dvc.lock`, so it waits for the same
-  champion-lock approval. Contract enforced by
+- **params.yaml unification** (2026-06-09; mirror fixed 2026-06-10): the
+  stale `pd.catboost.learning_rate: 0.03` mirror was corrected to the
+  canonical `0.0573…` during the april-lineage unification (the champion
+  lock was being re-keyed anyway). The structural unification of
+  `params.yaml` into `configs/` remains deferred. Contract enforced by
   `tests/test_configs/test_params_config_sync.py`.
 
 Pick a plan up only when:

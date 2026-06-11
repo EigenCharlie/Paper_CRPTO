@@ -74,7 +74,7 @@
 <text x="245" y="377.5" transform="rotate(-90 245 377.5)" font-family="DejaVu Sans Condensed, Arial Narrow, Arial, Helvetica, sans-serif" font-size="18" fill="#111111" text-anchor="middle">default rate</text>
 <text x="65" y="690" font-family="DejaVu Sans Condensed, Arial Narrow, Arial, Helvetica, sans-serif" font-size="24" font-weight="400" fill="#111111" text-anchor="start" >Lending Club OOT: n = 276,869</text>
 <text x="65" y="745" font-family="DejaVu Sans Condensed, Arial Narrow, Arial, Helvetica, sans-serif" font-size="24" font-weight="400" fill="#111111" text-anchor="start" >CatBoost + Venn-Abers</text>
-<text x="65" y="800" font-family="DejaVu Sans Condensed, Arial Narrow, Arial, Helvetica, sans-serif" font-size="24" font-weight="400" fill="#111111" text-anchor="start" >AUC 0.712, ECE 0.006</text>
+<text x="65" y="800" font-family="DejaVu Sans Condensed, Arial Narrow, Arial, Helvetica, sans-serif" font-size="24" font-weight="400" fill="#111111" text-anchor="start" >AUC 0.714, ECE 0.007</text>
 <line x1="545" y1="245" x2="545" y2="520" stroke="#111111" stroke-width="1.4"/>
 <line x1="545" y1="520" x2="825" y2="520" stroke="#111111" stroke-width="1.4"/>
 <line x1="538" y1="520.0" x2="545" y2="520.0" stroke="#111111" stroke-width="1"/>

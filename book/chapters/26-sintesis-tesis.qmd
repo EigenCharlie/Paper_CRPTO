@@ -70,7 +70,7 @@ orientado a objeciones; esta tabla está orientada a navegación.
 
 | Claim | Dónde se demuestra | Límite declarado |
 |---|---|---|
-| La PD calibrada congelada es apta para decisión (no para liderar ranking). | [PD/calibración](18-pd-calibracion-champion.qmd), [resultados](04-resultados.qmd) | AUC medio (`0.7127`); el valor está en la calibración, no en discriminación. |
+| La PD calibrada congelada es apta para decisión (no para liderar ranking). | [PD/calibración](18-pd-calibracion-champion.qmd), [resultados](04-resultados.qmd) | AUC medio (`0.7139`); el valor está en la calibración, no en discriminación. |
 | Mondrian da cobertura grupo-condicional útil, no solo marginal. | [conformal dossier](19-conformal-dossier.qmd), [ablación](08-ablacion-mondrian.qmd) | No es cobertura condicional exacta por perfil; es por partición declarada. |
 | El intervalo conformal mejora la decisión, no la decora. | [fundamentos conformal](16-fundamentos-conformal-optimizacion.qmd) | Evidencia externa (RCT) más el certificado propio; no es prueba causal sobre comités reales. |
 | El LP robusto convierte la señal conformal en un funded set. | [metodología](03-metodologia.qmd), [portafolio](20-portafolio-policy.qmd) | Uniperiodo, presupuesto fijo `$1M`, panel histórico estático. |

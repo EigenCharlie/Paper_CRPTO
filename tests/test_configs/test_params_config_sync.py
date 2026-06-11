@@ -25,14 +25,6 @@ import yaml
 
 ROOT = Path(__file__).resolve().parents[2]
 
-# Divergences that are documented and deliberately left in place because
-# fixing them would re-key the params block of a protected DVC stage in
-# dvc.lock (explicit champion-lock approval required; see params.yaml).
-# Maps params.yaml dotted key -> (stale params.yaml value, canonical config value).
-KNOWN_DIVERGENCES: dict[str, tuple[Any, Any]] = {
-    "pd.catboost.learning_rate": (0.03, 0.057321202729872456),
-}
-
 
 def _load_yaml(path: Path) -> dict[str, Any]:
     return yaml.safe_load(path.read_text(encoding="utf-8"))
@@ -72,33 +64,8 @@ def test_pd_params_mirror_pd_config(params: dict[str, Any], pd_config: dict[str,
     assert params["pd"]["model"] == pd_config["model"]["type"]
     assert mirrored["depth"] == model_params["depth"]
     assert mirrored["iterations"] == model_params["iterations"]
+    assert mirrored["learning_rate"] == pytest.approx(model_params["learning_rate"], rel=1e-12)
     assert params["pd"]["calibration"] == pd_config["calibration"]["method"]
-
-
-def test_pd_learning_rate_known_divergence_is_pinned(
-    params: dict[str, Any], pd_config: dict[str, Any]
-) -> None:
-    """The learning_rate mirror is stale by design (protected-stage cache key).
-
-    Either the divergence stays exactly as documented, or it has been
-    resolved and both sides match. Any third state is silent drift.
-    """
-    stale, canonical = KNOWN_DIVERGENCES["pd.catboost.learning_rate"]
-    params_value = params["pd"]["catboost"]["learning_rate"]
-    config_value = pd_config["model"]["params"]["learning_rate"]
-    assert config_value == pytest.approx(canonical, rel=1e-12), (
-        "configs/crpto_pd_model.yaml learning_rate moved; the frozen champion "
-        "was trained with the canonical value. Do not edit without a "
-        "revalidation plan."
-    )
-    resolved = params_value == pytest.approx(config_value, rel=1e-12)
-    still_stale = params_value == pytest.approx(stale, rel=1e-12)
-    assert resolved or still_stale, (
-        f"params.yaml pd.catboost.learning_rate={params_value} matches neither "
-        f"the documented stale mirror ({stale}) nor the canonical config value "
-        f"({canonical}). Update KNOWN_DIVERGENCES only with an approved "
-        "champion-lock change."
-    )
 
 
 def test_conformal_coverage_targets_mirror_policy_config(

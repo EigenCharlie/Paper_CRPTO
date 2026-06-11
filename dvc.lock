@@ -10,7 +10,7 @@ stages:
       size: 5565
     - path: book/chapters
       hash: md5
-      md5: 492e63ba30d955e9808208ccc7fd8662.dir
+      md5: 7366d49a6d2a0921cf13ba5a5115af25.dir
       size: 872958
       nfiles: 34
     - path: book/index.qmd
@@ -33,8 +33,8 @@ stages:
     outs:
     - path: book/_book
       hash: md5
-      md5: b845309df59a0fa75b66374b78e68442.dir
-      size: 17803569
+      md5: 66ccc1876a696ec8574c3562c013e71a.dir
+      size: 17805160
       nfiles: 115
   crpto.paper.figures:
     cmd: python scripts/generate_crpto_figures.py --paper crpto
@@ -74,8 +74,8 @@ stages:
       size: 3573
     - path: scripts/generate_crpto_figures.py
       hash: md5
-      md5: 0dedce6871ba0b1958687f77483f14a3
-      size: 70601
+      md5: 7cc109b11982735c83f25f05326397a3
+      size: 70782
     outs:
     - path: reports/crpto/figures/crpto_fig7_uncertainty_baselines.png
       hash: md5
@@ -206,7 +206,7 @@ stages:
         pd.catboost:
           depth: 8
           iterations: 4200
-          learning_rate: 0.03
+          learning_rate: 0.057321202729872456
         pd.model: catboost
     outs:
     - path: models/pd_canonical.cbm
@@ -464,15 +464,15 @@ stages:
       size: 2411
     - path: reports/crpto/figures/crpto_fig1_journal_pipeline.pdf
       hash: md5
-      md5: 93cfb768a86f09d0daacff2a372df716
-      size: 61186
+      md5: e31b1f5826e4254136a182290c6fd22a
+      size: 61290
     - path: reports/crpto/figures/crpto_fig1_journal_pipeline.png
       hash: md5
-      md5: 535e91bf8e09ce2960ed6b90d3e129cb
-      size: 132161
+      md5: e1b938528c917832ffe5e081d044bcc0
+      size: 131911
     - path: reports/crpto/figures/crpto_fig1_journal_pipeline.svg
       hash: md5
-      md5: aad188d66cdf045cbebb91642feda3f6
+      md5: 83c886b550ea81b5850fa95929ddf8ac
       size: 19701
     - path: reports/crpto/tables/crpto_tableA7_funded_set_loans.csv
       hash: md5

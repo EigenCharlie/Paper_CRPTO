@@ -502,7 +502,7 @@ else:
     Markdown("*No disponible.*")
 ```
 
-**Interpretación**: El AUC de 0.7127 indica poder discriminante moderado-bueno, consistente con la dificultad inherente del problema (predecir default en préstamos personales no asegurados con información de originación solamente). El Brier score de 0.1546 y el ECE de 0.0062 confirman buena calibración --- el modelo no solo ordena bien los riesgos, sino que las probabilidades asignadas son confiables.
+**Interpretación**: El AUC de 0.7139 indica poder discriminante moderado-bueno, consistente con la dificultad inherente del problema (predecir default en préstamos personales no asegurados con información de originación solamente). El Brier score de 0.1544 y el ECE de 0.0070 confirman buena calibración --- el modelo no solo ordena bien los riesgos, sino que las probabilidades asignadas son confiables.
 
 El método de calibración (Venn-Abers) fue seleccionado automáticamente por la política temporal de validación, no fijado a priori. Esto es un ejemplo de como la configuración (`configs/pd_model.yaml`) define `method: auto` y el artefacto runtime (`data/processed/model_comparison.json`) registra la selección efectiva.
 
@@ -1083,7 +1083,7 @@ El monitoreo conformal detallado, incluyendo métricas HSIC, SSC, MWI y CWC, est
 
 | Dimension | Estado | Referencia |
 |-----------|--------|-----------|
-| Pipeline predictivo | PASS (AUC 0.7127, ECE 0.006) | `sec-mrm-pipeline-subsystem` |
+| Pipeline predictivo | PASS (AUC 0.7139, ECE 0.007) | `sec-mrm-pipeline-subsystem` |
 | Sistema conformal | PASS operacional (warnings estadísticos; justificación metodológica activa) | `sec-mrm-conformal-subsystem` |
 | Gobernanza y drift | PASS (PSI < 0.25; drift explicable, no material) | `sec-mrm-governance-subsystem` |
 | Fairness | PASS (6/6 atributos, threshold 0.35) | `sec-mrm-fairness-subsystem` |
@@ -1661,11 +1661,11 @@ El artefacto `lendingclub_literature_benchmark.parquet` registra una referencia 
 
 : Benchmark externo curado para Lending Club
 
-Nuestro pipeline canónico reporta `AUC = 0.7127` para CatBoost calibrado con Venn-Abers sobre evaluación OOT.
+Nuestro pipeline canónico reporta `AUC = 0.7139` para CatBoost calibrado con Venn-Abers sobre evaluación OOT.
 
 ### Comparación correcta, no tramposa
 
-La diferencia entre 0.7127 y 0.7492 **no** debe leerse automáticamente como inferioridad metodológica. Hay al menos tres razones:
+La diferencia entre 0.7139 y 0.7492 **no** debe leerse automáticamente como inferioridad metodológica. Hay al menos tres razones:
 
 1. el protocolo de split puede no coincidir;
 2. el objetivo del proyecto no es solo maximizar AUC, sino producir probabilidades calibradas y gobernables;
