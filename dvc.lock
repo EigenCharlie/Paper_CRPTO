@@ -86,8 +86,8 @@ stages:
     deps:
     - path: data/processed/pipeline_summary.json
       hash: md5
-      md5: 2b4cce6ac6f59d36d6359fd803f47ab3
-      size: 4655
+      md5: 364ea3f664f85560fc3e230c3bee9794
+      size: 4656
     - path:
         data/processed/portfolio_bound_aware/rank1_alpha01_bound_aware_276k_full_2026-04-05-1734/portfolio_bound_aware_shortlist_exact.parquet
       hash: md5

@@ -598,6 +598,25 @@ uv run pytest tests/test_publication_targets.py -q
 uv run dvc status --no-updates
 ```
 
+The strongest check is the certificate drift harness: it recomputes the
+promoted Mondrian conformal intervals from the frozen PD binaries and the
+recorded recipe (partition edges, calibration-split seed, score scaling,
+floor multipliers) and asserts exact agreement with the published artifact
+(zero maximum absolute difference per loan and per Mondrian cell under the
+locked dependency stack). It is opt-in because it scores the full
+calibration and OOT panels:
+
+```powershell
+$env:CRPTO_RUN_CHAMPION_DRIFT = "1"
+uv run pytest tests/test_models/test_conformal_mapie_drift.py -q
+```
+
+The companion tool `scripts/rebuild_test_predictions_from_frozen.py`
+regenerates the canonical test-prediction surface from the same frozen
+bundle and refuses to write unless the calibrated scores match the frozen
+intervals exactly, which keeps the predictive and decision lineages
+permanently tied together.
+
 Artifact-aware validation additionally requires credentials for the DVC remote:
 
 ```powershell

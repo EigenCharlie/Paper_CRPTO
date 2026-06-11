@@ -128,9 +128,10 @@ def recomputed(frozen: dict[str, Any]) -> dict[str, Any]:
 
     # Prefer the literal frozen recipe: the results pkl records the exact
     # model binary that produced the frozen intervals (the April search
-    # candidate). The promoted canonical model is a later retrain of the same
-    # config and is NOT bit-exact, so it only serves as a documented fallback
-    # (in which case the gate is expected to be red; see the drift report).
+    # candidate). Since the 2026-06-10 april-lineage unification the
+    # canonical pd_canonical.cbm is a byte-copy of that candidate, so the
+    # fallback path is equivalent — it exists for partial checkouts where
+    # the search bundle was not restored locally.
     recorded_model_path = ROOT / str(results.get("model_path", ""))
     if recorded_model_path.is_file():
         from catboost import CatBoostClassifier
@@ -145,7 +146,11 @@ def recomputed(frozen: dict[str, Any]) -> dict[str, Any]:
     else:
         model, _ = _load_model()
         calibrator = _load_calibrator(results.get("calibrator_override_path") or None)
-        print("\nFrozen-recipe model missing; falling back to canonical (gate expected RED).")
+        print(
+            "\nFrozen-recipe bundle not in local checkout; using canonical "
+            "binaries (byte-equal to the candidate since the april-lineage "
+            "unification — the gate must still be GREEN)."
+        )
 
     cal_df = read_with_fallback(
         "data/processed/calibration_fe.parquet", "data/processed/calibration.parquet"

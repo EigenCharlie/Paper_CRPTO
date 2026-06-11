@@ -885,6 +885,20 @@ validation plan. The external-replication summaries are stored locally under
 Figures 22--25 by `scripts/build_multidataset_external_replication.py`, so the
 submission does not depend on exploratory paths or browser sessions.
 
+The certificate chain itself carries a stronger, verified property: an
+opt-in drift harness recomputes the promoted Mondrian conformal intervals
+from the frozen PD binaries and the recorded recipe (partition edges,
+calibration split seed, score scaling, floor multipliers) and reproduces
+every published interval endpoint and per-cell coverage *exactly* (maximum
+absolute difference zero under the locked dependency stack), including
+re-learning identical group floor multipliers from the calibration holdout.
+The boundary is stated as honestly as the rest of the paper: gradient-boosted
+retraining is not bit-reproducible across runs, which is precisely why the
+predictive layer is distributed as a frozen binary artifact with manifest
+hashes rather than as a "retrain it yourself" recipe, and why the
+prediction-to-decision chain — the part the paper's claims rest on — is the
+part the harness certifies end to end.
+
 For double-anonymous review, this manuscript omits author-identifying URLs and
 uses neutral language around repository ownership. The data/code companion can
 be disclosed in the cover letter, supplement, or post-review artifact bundle

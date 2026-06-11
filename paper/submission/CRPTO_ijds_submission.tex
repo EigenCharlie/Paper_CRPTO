@@ -488,7 +488,14 @@ summaries, and Quarto outputs from the frozen artifacts. Validation reruns are a
 only when they consume frozen choices and produce a drift report against the recorded
 champion. This separation is central to the paper's reproducibility claim: the
 manuscript can evolve without quietly reopening the 276k-policy search that selected
-the promoted result.
+the promoted result. The certificate chain carries a stronger, verified property: a
+drift harness recomputes the promoted Mondrian intervals from the frozen PD binaries
+and the recorded recipe and reproduces every published endpoint and per-cell coverage
+exactly (maximum absolute difference zero under the locked dependency stack),
+including re-learning identical group floor multipliers. Gradient-boosted retraining
+is not bit-reproducible across runs, which is why the predictive layer ships as a
+frozen, hash-verified binary and why the prediction-to-decision chain---the part the
+claims rest on---is the part the harness certifies end to end.
 
 All primary artifacts are represented as files with explicit ownership: model
 binaries, calibration objects, conformal intervals, portfolio allocations, tables,

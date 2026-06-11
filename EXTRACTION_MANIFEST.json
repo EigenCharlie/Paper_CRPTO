@@ -113,8 +113,8 @@
       "hash_source": "ijds_rebaseline_2026-06-07"
     },
     "data/processed/pipeline_summary.json": {
-      "sha256": "f8c28f78a9a84aaa4a50125e8feeecfc8526d8e143436d5d2eac30679d261f1c",
-      "bytes": 4655,
+      "sha256": "9e84fa244431519b003348065e04f4d5b499b7c893b5fd265f0bf9248d674238",
+      "bytes": 4656,
       "hash_source": "april-lineage-unification-2026-06-10"
     },
     "models/final_project_promotion.json": {
@@ -4241,20 +4241,20 @@
       "reports/crpto/tables/crpto_tableA10_conformal_finalist_exact_bound_eval.csv"
     ],
     "updated_hashes": [
+      "data/processed/pipeline_summary.json",
+      "data/processed/test_predictions.parquet",
+      "models/crpto_evidence_status.json",
+      "models/crpto_journal_package_status.json",
       "models/pd_canonical.cbm",
       "models/pd_canonical_calibrator.pkl",
-      "data/processed/test_predictions.parquet",
-      "data/processed/pipeline_summary.json",
       "reports/crpto/tables/crpto_table0_key_metrics.csv",
       "reports/crpto/tables/crpto_table0_key_metrics.tex",
+      "reports/crpto/tables/crpto_tableA10_conformal_finalist_exact_bound_eval.csv",
+      "reports/crpto/tables/crpto_tableA10_conformal_finalist_exact_bound_eval.tex",
       "reports/crpto/tables/crpto_tableA5_decision_aware_selector.csv",
       "reports/crpto/tables/crpto_tableA5_decision_aware_selector.tex",
       "reports/crpto/tables/crpto_tableA9_strict_temporal_holdout.csv",
-      "reports/crpto/tables/crpto_tableA9_strict_temporal_holdout.tex",
-      "reports/crpto/tables/crpto_tableA10_conformal_finalist_exact_bound_eval.csv",
-      "reports/crpto/tables/crpto_tableA10_conformal_finalist_exact_bound_eval.tex",
-      "models/crpto_evidence_status.json",
-      "models/crpto_journal_package_status.json"
+      "reports/crpto/tables/crpto_tableA9_strict_temporal_holdout.tex"
     ]
   }
 }
