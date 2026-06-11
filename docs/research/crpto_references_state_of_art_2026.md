@@ -89,7 +89,7 @@ future work.
 | F1 | PD for lifetime credit loss for IFRS 9 using ML competing risks | Bárcena Saavedra et al. | 2024 | Expert Sys. w/ Applications | `barcena2024` |
 | F2 | Defining and comparing SICR-events under IFRS 9 | — | 2025 | Annals of OR | `sicr2025` |
 | F3 | Approaches for modelling term-structure of default risk under IFRS 9 | Botha & Verster | 2026 | IJDSA | `botha2026` |
-| F4 | Practical Credit Risk and Capital Modeling | Bellini et al. | 2024 | Springer | `bellini2024` |
+| F4 | Practical Credit Risk and Capital Modeling, and Validation | Chen | 2024 | Springer | `chen2024creditrisk` |
 | F5 | Random survival forests and Cox regression in LGD estimation | Ptak-Chmielewska & Kopciuszewski | 2024 | J. Credit Risk | `ptakchmielewska2024survival` |
 | F8 | Financial Risk Assessment Model (CP + Cox PH) | — | 2025 | Preprints.org | `financialriskcp2025` |
 | F6 | ECB IFRS 9 overlays and model improvements for novel risks | ECB | 2024 | ECB Banking Supervision | `ecb2024` |

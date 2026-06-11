@@ -16,7 +16,8 @@ double-anonymous review, the manuscript describes a reproducible companion
 package without exposing author-identifying URLs. If accepted, the author will
 release a public reproducibility package containing source code, manuscript
 sources, paper table/figure generation commands, frozen artifact metadata,
-manifest hashes, and instructions for obtaining or reconstructing the raw data.
+manifest hashes, an executable drift harness for the prediction-to-decision
+certificate chain, and instructions for obtaining or reconstructing the raw data.
 
 ## Data Sources
 
@@ -49,6 +50,9 @@ The accepted-paper package should include or point to:
 - Paper figures under `reports/crpto/figures/`.
 - DVC metadata and remote-access instructions for large processed/model
   artifacts when allowed.
+- The opt-in drift harness that recomputes conformal intervals and certificate
+  summaries from frozen PD artifacts and checks zero endpoint drift under the
+  locked dependency stack.
 
 ## Reproducibility Commands
 

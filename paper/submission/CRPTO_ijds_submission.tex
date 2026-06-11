@@ -83,8 +83,9 @@ rate (from $+1.0\%$ to $+9.5\%$), turning replication into an economically
 interpretable stress test rather than a defensive checkmark. The contribution is
 an auditable conformal-robust credit-portfolio decision certificate: it connects
 real credit data, calibrated predictive models, robust funding decisions, and
-reproducibility governance while keeping the statistical guarantee boundary
-explicit.%
+a drift harness that certifies the prediction-to-decision certificate chain
+regenerates bit-exactly from frozen artifacts, while keeping the statistical
+guarantee boundary explicit.%
 }
 
 \KEYWORDS{conformal prediction; robust optimization; predict-then-optimize;
@@ -99,7 +100,7 @@ Credit allocation is a predict-then-decide problem. A lender first estimates a
 probability of default (PD), then chooses which loans to fund under a budget and
 risk appetite. The modeling literature has become very good at the first step:
 calibration, discrimination, and backtesting are now standard ingredients of
-credit-risk model validation \citep{lessmann2015,bellini2024}. The second step is
+credit-risk model validation \citep{lessmann2015,chen2024creditrisk}. The second step is
 less settled. Once a calibrated PD enters an optimizer, uncertainty is often
 treated as a reporting diagnostic rather than as a constraint that can change the
 funded set.
@@ -298,7 +299,13 @@ partitions remain the natural governance baseline.
 The resulting conformal summary is intentionally more than a scalar coverage number.
 The paper-facing metrics include 90\% coverage $0.9297$, 95\% coverage $0.9664$,
 average 90\% interval width $0.7842$, minimum group 90\% coverage $0.9190$, and 90\%
-  Winkler score $1.1107$ for the promoted conformal winner. The backtesting module
+  Winkler score $1.1107$ for the promoted conformal winner. Because the outcome is
+  binary and intervals live on the clipped PD scale, raw width is not a standalone
+  utility claim. Its decision role is relative: upper endpoints rank loans by
+  protected downside risk, the funded-set audit shows mean upper endpoints rising
+  from $0.12529$ in A--B to $0.52587$ in E--G, and the promotion gate uses Winkler
+  score, funded-set miscoverage, and $\Gamma_{\mathrm{CP}}$ rather than treating
+  narrowness as the objective. The backtesting module
   retains Kupiec and Christoffersen utilities for research diagnostics, but the IJDS
   promotion artifact no longer serializes those p-values or counts them in
   \texttt{overall\_pass}. They test exact nominal VaR-style coverage and add noise
@@ -390,9 +397,12 @@ funded loan let $Y_i\in[0,1]$ be the realized outcome on the PD scale,
 $u_i(\alpha)\in[0,1]$ its upper conformal endpoint, and
 $Z_i(\alpha)=\mathbf{1}\{Y_i>u_i(\alpha)\}$ the miscoverage indicator. The
 weighted funded-set miscoverage is $V(\alpha)=\sum_i w_i Z_i(\alpha)$.
+Probabilities and expectations below are taken over the exchangeable
+calibration/test draw, conditional on the frozen recipe, declared partitions,
+and allocation rule.
 
 \begin{assumption}[Weighted funded-set validity]\label{asm:weighted-validity}
-$\mathbb{E}[V(\alpha)]\le\alpha$ under the funded-set weights $w$.
+$\mathbb{E}[V(\alpha)]\le\alpha$ under the funded-set weights $w$ for that draw.
 \end{assumption}
 
 Assumption~\ref{asm:weighted-validity} holds, for example, when the weights are
@@ -461,7 +471,10 @@ to stress both probability calibration and decision-level robustness.
 \begin{table}[t]
   \centering
   \caption{Temporal out-of-time split. The January 2018 cutoff keeps the test
-  window (including the 2020 COVID regime) strictly after training and calibration.}
+  window (including the 2020 COVID regime) strictly after training and calibration.
+  Monthly vintage labels are shown for readability; split assignment is
+  row-disjoint in code, so the shared March 2017 label marks the internal cutoff
+  rather than duplicated loans.}
   \label{tab:split}
   \resizebox{\textwidth}{!}{%
   \begin{tabular}{llrl}
@@ -769,7 +782,9 @@ out-of-time splits, temporal backtesting, and a strict distinction between
 calibration, test, and paper-facing outputs. The paper does not claim that a Lending
 Club static panel substitutes for future originations after the retail platform
 closed. It claims that within the available historical panel, the promoted policy
-survives the documented temporal validation design.
+survives the documented temporal validation design. The strict temporal holdout
+in supplement A9 reports both temporal slices passing the exact check, strengthening
+that validation claim without reopening the champion.
 
 The second concern is whether conformal uncertainty is doing decision work or only
 adding conservative decoration. The answer is visible in the portfolio frontier.
@@ -888,9 +903,11 @@ frontier, not the lowest-tail policy.
 \end{table}
 
 On distribution robustness, the worst per-grade 90\% coverage on the frozen
-intervals is grade E at $0.9004$, still above the $0.90$ target, with marginal
-coverage at $0.9293$ (supplement A23). No grade falls below target, so the
-conservative marginal coverage is not hiding a failing segment; the thinnest
+intervals is grade E at $0.9004$, still above the $0.90$ target. Supplement A23
+reports marginal coverage $0.9293$ on its multi-distribution evaluation slice,
+while the promoted artifact summary in Table~\ref{tab:core} reports $0.9297$;
+these are distinct cuts through the same frozen interval artifact. No grade falls
+below target, so the conservative marginal coverage is not hiding a failing segment; the thinnest
 grade$\times$vintage cells are where a future group-weighted or multi-distribution
 recalibration would matter, marked as future work rather than a present guarantee.
 
@@ -901,9 +918,10 @@ conversation. The committee can pick a risk cap $\tau$, inspect how a policy
 parameter $\gamma$ changes the funded set, read $\Gamma_{\mathrm{CP}}$ as the
 conformal robustness premium paid by that funded set, and compare $V(\alpha)$
 with the stated bound tolerance. The method therefore supports a practical
-question: whether the observed economic return is worth the explicit price of
-robustness. If the committee wants lower regret, the SPO+ corner is visible; if
-it wants stronger validity language, the validity ladder states the new
+question: whether the realized economic return justifies the signed price of
+robustness, which on this evaluation is favorable rather than a cost. If the
+committee wants lower regret, the SPO+ corner is visible; if it wants stronger
+validity language, the validity ladder states the new
 calibration protocol that would be required. That separation is the managerial
 value of the paper.
 

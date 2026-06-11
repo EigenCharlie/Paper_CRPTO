@@ -82,7 +82,7 @@ May 2026 update: the CRPTO audit re-read the 17 local PDFs in the ignored `Paper
 | F2 | Defining and comparing SICR-events under IFRS 9 | — | 2025 | Annals of Operations Research | [Springer](https://link.springer.com/article/10.1007/s10479-025-06546-3) |
 | F3 | Improving Credit Risk Assessment: Insights from IFRS 9 | — | 2025 | MDPI Risks | [MDPI](https://www.mdpi.com/2227-9091/13/2/38) |
 | F4 | Approaches for modelling term-structure of default risk under IFRS 9 | Botha & Verster | 2026 | Int. J. Data Science & Analytics | [arXiv](https://arxiv.org/abs/2501.04975) |
-| F5 | Practical Credit Risk and Capital Modeling | Bellini et al. | 2024 | Springer | [Springer](https://link.springer.com/book/10.1007/978-3-031-52419-7) |
+| F5 | Practical Credit Risk and Capital Modeling, and Validation | Chen | 2024 | Springer | [Springer](https://link.springer.com/book/10.1007/978-3-031-52542-1) |
 | F6 | Financial Risk Assessment Model (CP + Cox PH) | — | 2025 | Preprints.org | [Preprint](https://www.preprints.org/manuscript/202601.1407/v1/download) |
 | F7 | Random survival forests and Cox regression in LGD estimation | Ptak-Chmielewska & Kopciuszewski | 2024 | Journal of Credit Risk | [DOI](https://doi.org/10.21314/JCR.2024.3656) |
 | F8 | ECB IFRS 9 overlays and model improvements for novel risks | ECB | 2024 | ECB Banking Supervision | [ECB](https://www.bankingsupervision.europa.eu/ecb/pub/pdf/ssm.IFRS9novelrisks_202407~5e0eb30b5c.en.pdf) |

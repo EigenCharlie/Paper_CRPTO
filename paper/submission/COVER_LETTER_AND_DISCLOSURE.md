@@ -19,6 +19,8 @@ Its decision object is the funded set under a budget and risk cap, and its main
 implication is an auditable model-risk surface: the promoted Lending Club policy
 earns `$170.5K` on a `$1M` budget while passing an exact empirical alpha-safe
 funded-set audit, and the robustness region contains `45/45` alpha-safe policies.
+An opt-in drift harness verifies that the prediction-to-decision certificate
+chain regenerates bit-exactly from the frozen artifacts under the locked stack.
 The contribution is intended for settings where decision auditability,
 reproducibility, and model-risk governance matter as much as predictive rank.
 
@@ -38,6 +40,8 @@ After the venue permits disclosure, the companion can include:
 - Prosper and Freddie/Mendeley source notes for the external replication layer;
 - the frozen extraction manifest and guardrail tests used to verify the
   promoted champion;
+- the drift harness that recomputes the conformal interval and certificate
+  chain from frozen PD artifacts with zero endpoint drift under the locked stack;
 - commands for regenerating paper tables, figures, HTML previews, and local
   IJDS PDF verification drafts.
 

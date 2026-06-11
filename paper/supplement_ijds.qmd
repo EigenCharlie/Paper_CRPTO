@@ -74,11 +74,13 @@ the optional tightening arguments.
 For a fixed allocation, conformal coverage controls the expected interval miss
 indicator under the stated exchangeability design. CRPTO converts loan-level
 misses into the funded-set quantity `V(alpha)` using normalized exposure
-weights. The portfolio-level theorem assumes weighted funded-set validity,
-`E[V(alpha)] <= alpha`, rather than claiming that marginal split conformal
-automatically controls every adaptively selected subportfolio. A Markov-style
-argument then gives the main conservative portfolio bound used in the exact
-alpha-safe check.
+weights. The expectation in Assumption 1 is over the exchangeable
+calibration/test draw, conditional on the frozen recipe, declared partitions,
+and allocation rule. The portfolio-level theorem assumes weighted funded-set
+validity, `E[V(alpha)] <= alpha`, rather than claiming that marginal split
+conformal automatically controls every adaptively selected subportfolio. A
+Markov-style argument then gives the main conservative portfolio bound used in
+the exact alpha-safe check.
 
 ## Proof of Theorem 1
 
@@ -90,7 +92,9 @@ Funded-set weights satisfy $w_i \geq 0$ and $\sum_i w_i = 1$. Outcomes and
 endpoints live on the PD scale, $Y_i \in [0,1]$ and $u_i(\alpha) \in [0,1]$,
 with miscoverage indicators $Z_i(\alpha) = \mathbf{1}\{Y_i > u_i(\alpha)\}$
 and $V(\alpha) = \sum_i w_i Z_i(\alpha)$. The robust constraint holds at the
-allocation: $\sum_i w_i u_i(\alpha) \leq \tau$.
+allocation: $\sum_i w_i u_i(\alpha) \leq \tau$. Probabilities and expectations
+are over the exchangeable calibration/test draw conditional on the frozen
+recipe, partitions, and allocation rule.
 
 **Step 1 (pointwise domination).** For every funded loan,
 
@@ -116,7 +120,8 @@ realization, and it is exactly the identity verified by the frozen exact
 funded-set audit.
 
 **Step 3 (Markov, Theorem 1(ii)).** $V(\alpha)$ is a nonnegative random
-variable, and Assumption 1 gives $E[V(\alpha)] \leq \alpha$. Markov's
+variable under the stated draw, and Assumption 1 gives
+$E[V(\alpha)] \leq \alpha$. Markov's
 inequality yields, for every $t > 0$,
 
 $$
