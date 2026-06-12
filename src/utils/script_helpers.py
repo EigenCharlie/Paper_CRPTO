@@ -23,6 +23,7 @@ behind a drift gate.
 from __future__ import annotations
 
 import json
+import math
 import os
 from pathlib import Path
 from typing import Any
@@ -135,3 +136,49 @@ def resolve_interval_columns(intervals: pd.DataFrame) -> tuple[str, str, str]:
     col_low = "pd_low_90" if "pd_low_90" in intervals.columns else "pd_low"
     col_high = "pd_high_90" if "pd_high_90" in intervals.columns else "pd_high"
     return col_point, col_low, col_high
+
+
+# Full policy identity used by the promotion artifacts; scripts that compare
+# against partial metric dicts pass a narrower field tuple instead.
+POLICY_MATCH_FIELDS = (
+    "risk_tolerance",
+    "policy_mode",
+    "gamma",
+    "delta_cap_quantile",
+    "tail_focus_quantile",
+    "uncertainty_aversion",
+    "min_budget_utilization",
+    "pd_cap_slack_penalty",
+)
+
+
+def policy_matches(
+    row: Any,
+    policy: dict[str, Any],
+    fields: tuple[str, ...] = POLICY_MATCH_FIELDS,
+    *,
+    atol: float = 1e-9,
+) -> bool:
+    """Return True when ``row`` and ``policy`` agree on every policy field.
+
+    ``row`` may be a pandas Series or a plain mapping. String fields compare
+    by string equality; numeric fields by absolute tolerance. A field missing
+    on either side, or a non-coercible numeric value, is a mismatch.
+    """
+    for field in fields:
+        if field not in row or field not in policy:
+            return False
+        left = row[field]
+        right = policy[field]
+        if isinstance(right, str):
+            if str(left) != right:
+                return False
+            continue
+        try:
+            left_f = float(left)
+            right_f = float(right)
+        except (TypeError, ValueError):
+            return False
+        if math.isnan(left_f) or math.isnan(right_f) or abs(left_f - right_f) > atol:
+            return False
+    return True

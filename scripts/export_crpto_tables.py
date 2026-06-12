@@ -20,7 +20,7 @@ from typing import Any
 import pandas as pd
 from analyze_crpto_evidence import build_p1_evidence
 
-from src.utils.script_helpers import first_existing, load_json, write_table
+from src.utils.script_helpers import first_existing, load_json, policy_matches, write_table
 
 ROOT = Path(__file__).resolve().parents[1]
 DATA = ROOT / "data" / "processed"
@@ -47,29 +47,7 @@ def _as_bool(value: Any) -> bool:
 
 
 def _policy_match(row: pd.Series, policy: dict[str, Any] | None) -> bool:
-    if not policy:
-        return False
-    fields = [
-        "risk_tolerance",
-        "policy_mode",
-        "gamma",
-        "delta_cap_quantile",
-        "tail_focus_quantile",
-        "uncertainty_aversion",
-        "min_budget_utilization",
-        "pd_cap_slack_penalty",
-    ]
-    for field in fields:
-        if field not in row or field not in policy:
-            return False
-        left = row[field]
-        right = policy[field]
-        if isinstance(right, str):
-            if str(left) != right:
-                return False
-        elif abs(float(left) - float(right)) > 1e-9:
-            return False
-    return True
+    return bool(policy) and policy_matches(row, policy)
 
 
 def _write_table(name: str, frame: pd.DataFrame) -> None:

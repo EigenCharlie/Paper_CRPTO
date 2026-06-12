@@ -40,6 +40,7 @@ from src.utils.script_helpers import (  # noqa: E402
     first_existing,
     load_json,
     load_yaml,
+    policy_matches,
     write_json,
     write_table,
 )
@@ -164,19 +165,7 @@ def _thresholds_from_config(config: dict[str, Any]) -> tuple[SatisficingThreshol
 
 
 def _policy_matches(row: pd.Series, policy: dict[str, Any]) -> bool:
-    fields = [
-        "risk_tolerance",
-        "gamma",
-        "delta_cap_quantile",
-        "tail_focus_quantile",
-        "uncertainty_aversion",
-        "min_budget_utilization",
-        "pd_cap_slack_penalty",
-    ]
-    for field in fields:
-        if abs(float(row[field]) - float(policy[field])) > 1e-9:
-            return False
-    return str(row["policy_mode"]) == str(policy["policy_mode"])
+    return policy_matches(row, policy)
 
 
 def _policy_role(row: pd.Series, promotion: dict[str, Any]) -> str:
