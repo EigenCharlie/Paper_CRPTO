@@ -140,12 +140,27 @@ def _threshold_rows(funded: pd.DataFrame) -> tuple[pd.DataFrame, dict[str, float
                     }
                 )
 
+        # Agnostic mode: only the theorem's own assumption E[V] <= alpha, no
+        # independence or correlation structure. The sharp variance bound is
+        # then Var(V) <= alpha(1 - alpha) (attained by V ~ Bernoulli(alpha)),
+        # under which one-sided Cantelli is WORSE than Markov — the cleanest
+        # quantitative defense of keeping Markov as the body claim.
+        agnostic_variance = alpha * (1.0 - alpha)
+        cantelli_agnostic = alpha + math.sqrt(agnostic_variance * (1.0 - delta) / delta)
+
         base_rows = [
             (
                 "markov",
                 "none",
                 markov_threshold,
                 "main distribution-free claim; only first moment needed",
+            ),
+            (
+                "cantelli_one_sided",
+                "agnostic_theorem_assumption_only",
+                cantelli_agnostic,
+                "sharp variance under E[V]<=alpha alone; worse than Markov, so no "
+                "second-moment tightening exists without extra assumptions",
             ),
             (
                 "hoeffding",
@@ -323,9 +338,14 @@ def _write_report(
     lines = [
         "# CRPTO Bound Tightening Experiment - 2026-06-11",
         "",
-        "Experimental branch result. This audit reads frozen funded-set weights only; "
-        "it does not re-run DVC stages, does not search policies, and does not promote "
-        "a new Lending Club champion.",
+        "Merged into `main` (2026-06-11) and cited by Online Supplement Appendix A. "
+        "This audit reads frozen funded-set weights only; it does not re-run DVC "
+        "stages, does not search policies, and does not promote a new Lending Club "
+        "champion. The A21c/A21d tables live under "
+        "`docs/research/bound_tightening_audit/`, deliberately outside the "
+        "`EXTRACTION_MANIFEST` sweep area: git versioning plus "
+        "`tests/test_scripts/test_build_bound_tightening_audit.py` guarantee their "
+        "integrity by re-deriving them deterministically from the frozen A7 weights.",
         "",
         "## Fixed Funded-Set Diagnostics",
         "",
