@@ -55,6 +55,11 @@ PALETTE = {
     "light_gray": "#DDDDDD",
 }
 
+
+def _rel(path: Path) -> str:
+    return path.relative_to(ROOT).as_posix()
+
+
 plt.rcParams.update(
     {
         # TrueType (Type 42) keeps PDF text selectable/extractable and avoids
@@ -318,7 +323,7 @@ def _plot_external_replication(table: pd.DataFrame) -> list[Path]:
         [i + 0.18 for i in x],
         table["alpha01_coverage"],
         width=0.34,
-        label=r"$\alpha=0.01$ coverage",
+        label="alpha 0.01 coverage",
         color=[PALETTE["green"], PALETTE["purple"]],
     )
     ax.axhline(0.90, color=PALETTE["red"], linestyle="--", linewidth=1.0, label="90% target")
@@ -552,7 +557,7 @@ def build_multidataset_external_replication() -> dict[str, Any]:
     status = {
         "generated_at_utc": datetime.now(tz=UTC).isoformat(),
         "duration_seconds": (datetime.now(tz=UTC) - start).total_seconds(),
-        "source_dir": str(SOURCE_DIR.relative_to(ROOT)),
+        "source_dir": _rel(SOURCE_DIR),
         "home_credit_policy": "discarded_from_main_claim_archived_only",
         "home_credit_archive_metrics": {
             "rows_total": int(home_credit["rows_total"]),
@@ -588,7 +593,7 @@ def build_multidataset_external_replication() -> dict[str, Any]:
         "freddie_top_screen_stable_through_candidates": "all",
         "prosper_default_definition_sensitivity": prosper_default.to_dict(orient="records"),
         "freddie_segment_sensitivity": freddie_segment.to_dict(orient="records"),
-        "outputs": [str(path.relative_to(ROOT)) for path in outputs],
+        "outputs": [_rel(path) for path in outputs],
     }
     STATUS_PATH.write_text(
         json.dumps(status, indent=2, sort_keys=True) + "\n",

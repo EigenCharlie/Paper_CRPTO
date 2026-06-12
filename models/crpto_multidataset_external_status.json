@@ -1,5 +1,5 @@
 {
-  "duration_seconds": 6.22904,
+  "duration_seconds": 2.425473,
   "external_replications": [
     {
       "alpha01_coverage": 0.9943090202029784,
@@ -98,7 +98,7 @@
   ],
   "freddie_selected_variant": "freddie_fm48_both",
   "freddie_top_screen_stable_through_candidates": "all",
-  "generated_at_utc": "2026-06-05T20:48:29.576573+00:00",
+  "generated_at_utc": "2026-06-12T02:36:42.836669+00:00",
   "home_credit_archive_metrics": {
     "alpha01_coverage": 0.9922389871661464,
     "auc_roc": 0.7520619425836951,

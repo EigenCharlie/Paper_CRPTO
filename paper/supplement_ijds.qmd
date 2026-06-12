@@ -227,6 +227,17 @@ Bernstein/Freedman give `t = 0.0852` under the weaker weighted-validity variance
 proxy; the stronger individual-alpha variance mode is sharper but requires an
 assumption we do not assert in the theorem.
 
+The menu also includes the row that justifies the body's choice. Under the
+theorem's own assumption alone -- `E[V(alpha)] <= alpha` with no independence
+or correlation structure -- the sharp variance bound is
+`Var(V) <= alpha(1 - alpha)` (attained by a Bernoulli miscoverage profile),
+and one-sided Cantelli then yields `t = 0.3085` at `alpha = 0.01`: *worse*
+than Markov's `0.1000`. No second-moment tightening exists without assumptions
+beyond Assumption 1, so Markov is not a conservative placeholder in the body;
+it is the optimal first-moment statement for the guarantee the paper actually
+asserts. Every sharper row in the menu prices a specific additional
+assumption, and the empirical `V = 0.028875` clears all of them anyway.
+
 Bennett is the closest match to the finite funded-set calculation because it was
 designed for independent, non-identically distributed summands using only the
 variance of the sum and component bounds. Freedman is included only as the
