@@ -10,6 +10,7 @@ import argparse
 import json
 import pickle
 import shutil
+from dataclasses import dataclass
 from pathlib import Path
 from typing import Any
 
@@ -54,6 +55,29 @@ from src.utils.replay_manifest import load_replay_manifest, manifest_section
 
 TARGET_COL = "default_flag"
 GROUP_COL = "grade"
+
+
+@dataclass(frozen=True)
+class ConformalInputs:
+    """Loaded conformal inputs at the model/scoring boundary."""
+
+    model: CatBoostClassifier
+    model_path: Path
+    calibrator: Any | None
+    cal_df: pd.DataFrame
+    test_df: pd.DataFrame
+    features: list[str]
+    categorical: list[str]
+    X_cal: pd.DataFrame
+    y_cal: pd.Series
+    X_test: pd.DataFrame
+    y_test: pd.Series
+    group_cal_base: pd.Series
+    group_test_base: pd.Series
+    y_prob_cal_raw: np.ndarray
+    y_prob_test_raw: np.ndarray
+    y_prob_calibrated: np.ndarray
+    y_prob_test_calibrated: np.ndarray
 
 
 def _resolve_artifact_paths(namespace: str | None = None) -> dict[str, Path]:
@@ -310,6 +334,96 @@ def _subset_calibration_frame(
     return cal_df.tail(n_keep).reset_index(drop=True)
 
 
+def _load_conformal_inputs(
+    *,
+    calibration_fraction: float,
+    calibrator_override_path: str | None,
+) -> ConformalInputs:
+    """Load model, data, features and probability scores for conformal generation."""
+    model, model_path = _load_model()
+    calibrator = _load_calibrator(calibrator_override_path)
+    cal_df = read_with_fallback(
+        "data/processed/calibration_fe.parquet", "data/processed/calibration.parquet"
+    )
+    cal_df = _subset_calibration_frame(cal_df, calibration_fraction=calibration_fraction)
+    test_df = read_with_fallback("data/processed/test_fe.parquet", "data/processed/test.parquet")
+    if TARGET_COL not in cal_df.columns or TARGET_COL not in test_df.columns:
+        raise KeyError(f"Missing target column '{TARGET_COL}' in calibration/test data.")
+    if GROUP_COL not in cal_df.columns or GROUP_COL not in test_df.columns:
+        raise KeyError(f"Missing group column '{GROUP_COL}' in calibration/test data.")
+
+    features, categorical = _resolve_features(model, cal_df, test_df)
+    X_cal = _build_feature_matrix(cal_df, features, categorical)
+    X_test = _build_feature_matrix(test_df, features, categorical)
+    y_cal = cal_df[TARGET_COL].astype(float)
+    y_test = test_df[TARGET_COL].astype(float)
+    group_cal_base = cal_df[GROUP_COL].fillna("UNKNOWN").astype(str)
+    group_test_base = test_df[GROUP_COL].fillna("UNKNOWN").astype(str)
+    y_prob_cal_raw = model.predict_proba(X_cal)[:, 1]
+    y_prob_test_raw = model.predict_proba(X_test)[:, 1]
+    y_prob_calibrated = (
+        apply_probability_calibrator(calibrator, y_prob_cal_raw)
+        if calibrator is not None
+        else np.asarray(y_prob_cal_raw, dtype=float)
+    )
+    y_prob_test_calibrated = (
+        apply_probability_calibrator(calibrator, y_prob_test_raw)
+        if calibrator is not None
+        else np.asarray(y_prob_test_raw, dtype=float)
+    )
+    return ConformalInputs(
+        model=model,
+        model_path=model_path,
+        calibrator=calibrator,
+        cal_df=cal_df,
+        test_df=test_df,
+        features=features,
+        categorical=categorical,
+        X_cal=X_cal,
+        y_cal=y_cal,
+        X_test=X_test,
+        y_test=y_test,
+        group_cal_base=group_cal_base,
+        group_test_base=group_test_base,
+        y_prob_cal_raw=y_prob_cal_raw,
+        y_prob_test_raw=y_prob_test_raw,
+        y_prob_calibrated=y_prob_calibrated,
+        y_prob_test_calibrated=y_prob_test_calibrated,
+    )
+
+
+def _parse_float_tuple(raw: str) -> tuple[float, ...]:
+    values = [float(token.strip()) for token in str(raw).split(",") if token.strip()]
+    if not values:
+        raise ValueError("Expected at least one float value.")
+    return tuple(values)
+
+
+def _parse_int_tuple(raw: str) -> tuple[int, ...]:
+    values = [int(token.strip()) for token in str(raw).split(",") if token.strip()]
+    if not values:
+        raise ValueError("Expected at least one integer value.")
+    return tuple(values)
+
+
+def _parse_bool_tuple(raw: str) -> tuple[bool, ...]:
+    values = [
+        token.strip().lower() in {"1", "true", "yes", "y"}
+        for token in str(raw).split(",")
+        if token.strip()
+    ]
+    if not values:
+        raise ValueError("Expected at least one boolean value.")
+    return tuple(values)
+
+
+def _parse_str_tuple(raw: str) -> tuple[str, ...]:
+    values = tuple(token.strip() for token in str(raw).split(",") if token.strip())
+    if not values:
+        raise ValueError("Expected at least one string value.")
+    return values
+
+
 def main(
     alpha_target_90: float = 0.10,
     alpha_95: float = 0.05,
@@ -362,38 +476,25 @@ def main(
         _restore_replay_namespace(source_namespace, run_tag=run_tag)
         return
 
-    # Load artifacts and data.
-    model, model_path = _load_model()
-    calibrator = _load_calibrator(calibrator_override_path)
-    cal_df = read_with_fallback(
-        "data/processed/calibration_fe.parquet", "data/processed/calibration.parquet"
+    inputs = _load_conformal_inputs(
+        calibration_fraction=calibration_fraction,
+        calibrator_override_path=calibrator_override_path,
     )
-    cal_df = _subset_calibration_frame(cal_df, calibration_fraction=calibration_fraction)
-    test_df = read_with_fallback("data/processed/test_fe.parquet", "data/processed/test.parquet")
-    if TARGET_COL not in cal_df.columns or TARGET_COL not in test_df.columns:
-        raise KeyError(f"Missing target column '{TARGET_COL}' in calibration/test data.")
-    if GROUP_COL not in cal_df.columns or GROUP_COL not in test_df.columns:
-        raise KeyError(f"Missing group column '{GROUP_COL}' in calibration/test data.")
-
-    features, categorical = _resolve_features(model, cal_df, test_df)
-    X_cal = _build_feature_matrix(cal_df, features, categorical)
-    y_cal = cal_df[TARGET_COL].astype(float)
-    X_test = _build_feature_matrix(test_df, features, categorical)
-    y_test = test_df[TARGET_COL].astype(float)
-    group_cal_base = cal_df[GROUP_COL].fillna("UNKNOWN").astype(str)
-    group_test_base = test_df[GROUP_COL].fillna("UNKNOWN").astype(str)
-    y_prob_cal_raw = model.predict_proba(X_cal)[:, 1]
-    y_prob_test_raw = model.predict_proba(X_test)[:, 1]
-    y_prob_calibrated = (
-        apply_probability_calibrator(calibrator, y_prob_cal_raw)
-        if calibrator is not None
-        else np.asarray(y_prob_cal_raw, dtype=float)
-    )
-    y_prob_test_calibrated = (
-        apply_probability_calibrator(calibrator, y_prob_test_raw)
-        if calibrator is not None
-        else np.asarray(y_prob_test_raw, dtype=float)
-    )
+    model = inputs.model
+    model_path = inputs.model_path
+    calibrator = inputs.calibrator
+    cal_df = inputs.cal_df
+    test_df = inputs.test_df
+    X_cal = inputs.X_cal
+    y_cal = inputs.y_cal
+    X_test = inputs.X_test
+    y_test = inputs.y_test
+    group_cal_base = inputs.group_cal_base
+    group_test_base = inputs.group_test_base
+    y_prob_cal_raw = inputs.y_prob_cal_raw
+    y_prob_test_raw = inputs.y_prob_test_raw
+    y_prob_calibrated = inputs.y_prob_calibrated
+    y_prob_test_calibrated = inputs.y_prob_test_calibrated
     idx_cal_fit, idx_cal_tune = split_calibration_for_tuning(
         y_cal=y_cal,
         group_cal=group_cal_base,
@@ -1295,19 +1396,6 @@ def main(
 
 
 if __name__ == "__main__":
-
-    def _parse_float_tuple(raw: str) -> tuple[float, ...]:
-        values = [float(token.strip()) for token in str(raw).split(",") if token.strip()]
-        if not values:
-            raise ValueError("Expected at least one float value.")
-        return tuple(values)
-
-    def _parse_int_tuple(raw: str) -> tuple[int, ...]:
-        values = [int(token.strip()) for token in str(raw).split(",") if token.strip()]
-        if not values:
-            raise ValueError("Expected at least one integer value.")
-        return tuple(values)
-
     parser = argparse.ArgumentParser()
     parser.add_argument(
         "--config",
@@ -1386,27 +1474,15 @@ if __name__ == "__main__":
             if args.partition_candidates is not None
             else None
         ),
-        partition_probability_sources=tuple(
-            token.strip()
-            for token in str(args.partition_probability_sources).split(",")
-            if token.strip()
-        ),
+        partition_probability_sources=_parse_str_tuple(args.partition_probability_sources),
         n_score_bins_candidates=_parse_int_tuple(args.n_score_bins_candidates),
-        fallback_modes=tuple(
-            token.strip() for token in str(args.fallback_modes).split(",") if token.strip()
-        ),
-        score_scale_families=tuple(
-            token.strip() for token in str(args.score_scale_families).split(",") if token.strip()
-        ),
+        fallback_modes=_parse_str_tuple(args.fallback_modes),
+        score_scale_families=_parse_str_tuple(args.score_scale_families),
         calibration_fraction=args.calibration_fraction,
         evaluation_scope=args.evaluation_scope,
         artifact_namespace=args.artifact_namespace,
         calibrator_override_path=args.calibrator_override_path,
-        scaled_scores_options=tuple(
-            token.strip().lower() in {"1", "true", "yes", "y"}
-            for token in str(args.scaled_scores_options).split(",")
-            if token.strip()
-        ),
+        scaled_scores_options=_parse_bool_tuple(args.scaled_scores_options),
         mode=str(args.mode),
         replay_manifest_path=args.replay_manifest,
         run_tag=args.run_tag,

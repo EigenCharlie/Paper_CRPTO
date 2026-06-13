@@ -11,6 +11,7 @@ import json
 import os
 import pickle
 import shutil
+from dataclasses import dataclass
 from pathlib import Path
 from typing import Any
 
@@ -51,6 +52,18 @@ from src.utils.pipeline_runtime import atomic_write_json
 from src.utils.replay_manifest import load_replay_manifest, manifest_section
 from src.utils.threshold_semantics import write_threshold_semantics
 from src.utils.visualization import plot_murphy_diagram
+
+
+@dataclass(frozen=True)
+class ResolvedFeatureSets:
+    """Feature contract resolved for PD training across all splits."""
+
+    feature_source: str
+    feature_config_path: str | Path
+    catboost_features: list[str]
+    logreg_features: list[str]
+    categorical_features: list[str]
+    stable_core_meta: dict[str, Any]
 
 
 def load_config(config_path: str) -> dict[str, Any]:
@@ -118,6 +131,101 @@ def validate_pd_config(config: dict[str, Any], *, config_path: str) -> dict[str,
         "feature_config_path", "data/processed/feature_config.pkl"
     )
     return normalized
+
+
+def _apply_cli_overrides(
+    config: dict[str, Any],
+    *,
+    training_regime_mode: str | None = None,
+    recent_window_quarters: int | None = None,
+    half_life_quarters: int | None = None,
+    stable_core_enabled: bool | None = None,
+    hpo_n_trials: int | None = None,
+    hpo_enabled: bool | None = None,
+    challenger_enabled: bool | None = None,
+    walk_forward_enabled: bool | None = None,
+    seed_replay_enabled: bool | None = None,
+    catboost_iterations: int | None = None,
+) -> dict[str, Any]:
+    """Return a config copy with command-line overrides applied."""
+    updated = dict(config)
+
+    regime_cfg = dict(updated.get("training_regime", {}) or {})
+    if training_regime_mode is not None:
+        regime_cfg["mode"] = str(training_regime_mode)
+    if recent_window_quarters is not None:
+        regime_cfg["recent_window_quarters"] = int(recent_window_quarters)
+    if half_life_quarters is not None:
+        regime_cfg["half_life_quarters"] = int(half_life_quarters)
+    updated["training_regime"] = regime_cfg
+
+    stable_core_cfg = dict(updated.get("stable_core", {}) or {})
+    if stable_core_enabled is not None:
+        stable_core_cfg["enabled"] = bool(stable_core_enabled)
+    updated["stable_core"] = stable_core_cfg
+
+    hpo_cfg = dict(updated.get("hpo", {}) or {})
+    if hpo_n_trials is not None:
+        hpo_cfg["n_trials"] = int(hpo_n_trials)
+    if hpo_enabled is not None:
+        hpo_cfg["enabled"] = bool(hpo_enabled)
+    updated["hpo"] = hpo_cfg
+
+    challenger_cfg = dict(updated.get("challenger_pipeline", {}) or {})
+    if challenger_enabled is not None:
+        challenger_cfg["enabled"] = bool(challenger_enabled)
+    updated["challenger_pipeline"] = challenger_cfg
+
+    validation_cfg = dict(updated.get("validation", {}) or {})
+    walk_cfg = dict(validation_cfg.get("walk_forward", {}) or {})
+    if walk_forward_enabled is not None:
+        walk_cfg["enabled"] = bool(walk_forward_enabled)
+    validation_cfg["walk_forward"] = walk_cfg
+    seed_cfg = dict(validation_cfg.get("seed_replay", {}) or {})
+    if seed_replay_enabled is not None:
+        seed_cfg["enabled"] = bool(seed_replay_enabled)
+    validation_cfg["seed_replay"] = seed_cfg
+    updated["validation"] = validation_cfg
+
+    model_cfg = dict(updated.get("model", {}) or {})
+    model_params = dict(model_cfg.get("params", {}) or {})
+    if catboost_iterations is not None:
+        model_params["iterations"] = int(catboost_iterations)
+    model_cfg["params"] = model_params
+    updated["model"] = model_cfg
+
+    return updated
+
+
+def _apply_pd_replay_manifest(config: dict[str, Any], replay_cfg: dict[str, Any]) -> dict[str, Any]:
+    """Force deterministic PD replay settings from a frozen manifest section."""
+    if not replay_cfg:
+        raise ValueError("Replay mode requires a PD section in the replay manifest.")
+    fixed_params = dict(replay_cfg.get("selected_params") or {})
+    if not fixed_params:
+        raise ValueError("Replay manifest missing pd.selected_params.")
+
+    updated = dict(config)
+    hpo_cfg = dict(updated.get("hpo", {}) or {})
+    hpo_cfg["enabled"] = False
+    updated["hpo"] = hpo_cfg
+
+    validation_cfg = dict(updated.get("validation", {}) or {})
+    seed_cfg = dict(validation_cfg.get("seed_replay", {}) or {})
+    seed_cfg["enabled"] = False
+    validation_cfg["seed_replay"] = seed_cfg
+    updated["validation"] = validation_cfg
+
+    challenger_cfg = dict(updated.get("challenger_pipeline", {}) or {})
+    challenger_cfg["enabled"] = False
+    updated["challenger_pipeline"] = challenger_cfg
+
+    model_cfg = dict(updated.get("model", {}) or {})
+    merged_params = dict(model_cfg.get("params", {}) or {})
+    merged_params.update(fixed_params)
+    model_cfg["params"] = merged_params
+    updated["model"] = model_cfg
+    return updated
 
 
 def _write_json(path: str | Path, payload: dict[str, Any]) -> None:
@@ -300,6 +408,69 @@ def _apply_stable_core(
             "excluded_features": excluded,
             "feature_count_after_filter": len(filtered_features),
         },
+    )
+
+
+def _resolve_training_features(
+    *,
+    config: dict[str, Any],
+    train: pd.DataFrame,
+    cal: pd.DataFrame,
+    test: pd.DataFrame,
+    run_mode: str,
+    replay_cfg: dict[str, Any],
+) -> ResolvedFeatureSets:
+    feature_src_cfg = dict(config.get("feature_source", {}) or {})
+    feature_mode = str(feature_src_cfg.get("mode", "auto"))
+    feature_config_path = feature_src_cfg.get(
+        "feature_config_path", "data/processed/feature_config.pkl"
+    )
+
+    feature_sets = resolve_feature_sets(
+        train,
+        feature_source=feature_mode,
+        feature_config_path=feature_config_path,
+    )
+    catboost_features = list(feature_sets["catboost_features"])
+    logreg_features = list(feature_sets["logreg_features"])
+    categorical_features = list(feature_sets["categorical_features"])
+
+    if run_mode == "replay":
+        replay_features = [str(x) for x in replay_cfg.get("feature_names", [])]
+        replay_categorical = [str(x) for x in replay_cfg.get("categorical_features", [])]
+        if replay_features:
+            catboost_features = replay_features
+            categorical_features = replay_categorical
+
+    catboost_features = [
+        c
+        for c in catboost_features
+        if c in train.columns and c in cal.columns and c in test.columns
+    ]
+    logreg_features = [
+        c for c in logreg_features if c in train.columns and c in cal.columns and c in test.columns
+    ]
+    categorical_features = [c for c in categorical_features if c in catboost_features]
+
+    catboost_features, categorical_features, stable_core_meta = _apply_stable_core(
+        catboost_features,
+        categorical_features,
+        {} if run_mode == "replay" else (config.get("stable_core", {}) or {}),
+    )
+    logreg_features = [c for c in logreg_features if c in catboost_features]
+
+    if not catboost_features:
+        raise ValueError("No CatBoost features resolved across train/cal/test splits.")
+    if not logreg_features:
+        raise ValueError("No Logistic Regression features resolved across train/cal/test splits.")
+
+    return ResolvedFeatureSets(
+        feature_source=str(feature_sets.get("feature_source", feature_mode)),
+        feature_config_path=feature_config_path,
+        catboost_features=catboost_features,
+        logreg_features=logreg_features,
+        categorical_features=categorical_features,
+        stable_core_meta=stable_core_meta,
     )
 
 
@@ -1043,62 +1214,23 @@ def main(
     config = validate_pd_config(load_config(config_path), config_path=config_path)
     run_mode = str(mode or "search").strip().lower() or "search"
     replay_cfg = manifest_section(load_replay_manifest(replay_manifest_path), "pd")
-    regime_cfg = dict(config.get("training_regime", {}) or {})
-    if training_regime_mode is not None:
-        regime_cfg["mode"] = str(training_regime_mode)
-    if recent_window_quarters is not None:
-        regime_cfg["recent_window_quarters"] = int(recent_window_quarters)
-    if half_life_quarters is not None:
-        regime_cfg["half_life_quarters"] = int(half_life_quarters)
-    config["training_regime"] = regime_cfg
-
-    stable_core_cfg = dict(config.get("stable_core", {}) or {})
-    if stable_core_enabled is not None:
-        stable_core_cfg["enabled"] = bool(stable_core_enabled)
-    config["stable_core"] = stable_core_cfg
-
-    hpo_cfg = dict(config.get("hpo", {}) or {})
-    if hpo_n_trials is not None:
-        hpo_cfg["n_trials"] = int(hpo_n_trials)
-    if hpo_enabled is not None:
-        hpo_cfg["enabled"] = bool(hpo_enabled)
-    config["hpo"] = hpo_cfg
-
-    challenger_cfg = dict(config.get("challenger_pipeline", {}) or {})
-    if challenger_enabled is not None:
-        challenger_cfg["enabled"] = bool(challenger_enabled)
-    config["challenger_pipeline"] = challenger_cfg
-
-    validation_cfg = dict(config.get("validation", {}) or {})
-    walk_cfg = dict(validation_cfg.get("walk_forward", {}) or {})
-    if walk_forward_enabled is not None:
-        walk_cfg["enabled"] = bool(walk_forward_enabled)
-    validation_cfg["walk_forward"] = walk_cfg
-    seed_cfg = dict(validation_cfg.get("seed_replay", {}) or {})
-    if seed_replay_enabled is not None:
-        seed_cfg["enabled"] = bool(seed_replay_enabled)
-    validation_cfg["seed_replay"] = seed_cfg
-    config["validation"] = validation_cfg
-
-    model_cfg = dict(config.get("model", {}) or {})
-    model_params = dict(model_cfg.get("params", {}) or {})
-    if catboost_iterations is not None:
-        model_params["iterations"] = int(catboost_iterations)
-    model_cfg["params"] = model_params
-    config["model"] = model_cfg
+    config = _apply_cli_overrides(
+        config,
+        training_regime_mode=training_regime_mode,
+        recent_window_quarters=recent_window_quarters,
+        half_life_quarters=half_life_quarters,
+        stable_core_enabled=stable_core_enabled,
+        hpo_n_trials=hpo_n_trials,
+        hpo_enabled=hpo_enabled,
+        challenger_enabled=challenger_enabled,
+        walk_forward_enabled=walk_forward_enabled,
+        seed_replay_enabled=seed_replay_enabled,
+        catboost_iterations=catboost_iterations,
+    )
 
     if run_mode == "replay":
-        if not replay_cfg:
-            raise ValueError("Replay mode requires a PD section in the replay manifest.")
-        fixed_params = dict(replay_cfg.get("selected_params") or {})
-        if not fixed_params:
-            raise ValueError("Replay manifest missing pd.selected_params.")
-        config["hpo"]["enabled"] = False
-        config["validation"]["seed_replay"]["enabled"] = False
-        config["challenger_pipeline"]["enabled"] = False
-        merged_params = dict(config["model"].get("params", {}) or {})
-        merged_params.update(fixed_params)
-        config["model"]["params"] = merged_params
+        config = _apply_pd_replay_manifest(config, replay_cfg)
+    regime_cfg = dict(config.get("training_regime", {}) or {})
 
     status_path = _artifact_path(
         config["output"].get("status_path", "models/pd_training_status.json")
@@ -1166,65 +1298,29 @@ def main(
         if sample_size < len(cal):
             cal = cal.sample(n=sample_size, random_state=42).reset_index(drop=True)
 
-    feature_src_cfg = config.get("feature_source", {})
-    feature_mode = feature_src_cfg.get("mode", "auto")
-    feature_config_path = feature_src_cfg.get(
-        "feature_config_path", "data/processed/feature_config.pkl"
+    resolved_features = _resolve_training_features(
+        config=config,
+        train=train,
+        cal=cal,
+        test=test,
+        run_mode=run_mode,
+        replay_cfg=replay_cfg,
     )
-
-    feature_sets = resolve_feature_sets(
-        train,
-        feature_source=feature_mode,
-        feature_config_path=feature_config_path,
-    )
-
-    catboost_features = feature_sets["catboost_features"]
-    logreg_features = feature_sets["logreg_features"]
-    categorical_features = feature_sets["categorical_features"]
-
-    if run_mode == "replay":
-        replay_features = [str(x) for x in replay_cfg.get("feature_names", [])]
-        replay_categorical = [str(x) for x in replay_cfg.get("categorical_features", [])]
-        if replay_features:
-            catboost_features = replay_features
-            categorical_features = replay_categorical
-
-    # enforce availability in all splits
-    catboost_features = [
-        c
-        for c in catboost_features
-        if c in train.columns and c in cal.columns and c in test.columns
-    ]
-    logreg_features = [
-        c for c in logreg_features if c in train.columns and c in cal.columns and c in test.columns
-    ]
-    categorical_features = [c for c in categorical_features if c in catboost_features]
-
-    catboost_features, categorical_features, stable_core_meta = _apply_stable_core(
-        catboost_features,
-        categorical_features,
-        {} if run_mode == "replay" else (config.get("stable_core", {}) or {}),
-    )
-    logreg_features = [c for c in logreg_features if c in catboost_features]
-
-    if not catboost_features:
-        raise ValueError("No CatBoost features resolved across train/cal/test splits.")
-    if not logreg_features:
-        raise ValueError("No Logistic Regression features resolved across train/cal/test splits.")
+    catboost_features = resolved_features.catboost_features
+    logreg_features = resolved_features.logreg_features
+    categorical_features = resolved_features.categorical_features
+    stable_core_meta = resolved_features.stable_core_meta
 
     logger.info(
-        "Feature source={} | catboost_features={} | logreg_features={} | categorical={}".format(
-            feature_sets.get("feature_source", feature_mode),
-            len(catboost_features),
-            len(logreg_features),
-            len(categorical_features),
-        )
+        f"Feature source={resolved_features.feature_source} | "
+        f"catboost_features={len(catboost_features)} | "
+        f"logreg_features={len(logreg_features)} | categorical={len(categorical_features)}"
     )
     _write_checkpoint(
         checkpoint_dir,
         "feature_resolution",
         {
-            "feature_source": feature_sets.get("feature_source", feature_mode),
+            "feature_source": resolved_features.feature_source,
             "catboost_features": catboost_features,
             "logreg_features": logreg_features,
             "categorical_features": categorical_features,
@@ -1976,8 +2072,8 @@ def main(
         "best_model": "CatBoost (tuned + calibrated)",
         "best_calibration": _human_calibration_name(selected_cal_method),
         "calibration_selection_report": cal_selection_report,
-        "feature_source": feature_sets.get("feature_source", feature_mode),
-        "feature_config_path": str(feature_config_path),
+        "feature_source": resolved_features.feature_source,
+        "feature_config_path": str(resolved_features.feature_config_path),
         "training_regime": regime_meta,
         "stable_core": stable_core_meta,
         "validation_scheme": val_cfg.get("scheme", "temporal_train_val_cal_test"),
