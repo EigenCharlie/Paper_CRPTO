@@ -119,6 +119,7 @@ class PredictionOutputModel(pa.DataFrameModel):
     pd_high: pa.typing.Series[float] = pa.Field(ge=0.0, le=1.0)
 
     @pa.dataframe_check
+    @classmethod
     def low_le_point_le_high(cls, df: pd.DataFrame) -> bool:
         return bool(((df["pd_low"] <= df["pd_point"]) & (df["pd_point"] <= df["pd_high"])).all())
 
@@ -137,6 +138,7 @@ class ConformalOutputModel(pa.DataFrameModel):
     width_90: pa.typing.Series[float] = pa.Field(ge=0.0)
 
     @pa.dataframe_check
+    @classmethod
     def low_le_high(cls, df: pd.DataFrame) -> bool:
         return bool((df["pd_low_90"] <= df["pd_high_90"]).all())
 

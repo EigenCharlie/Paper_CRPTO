@@ -383,7 +383,7 @@ En términos de negocio, esto evita tratar todos los defaults como si fueran igu
 
 ### Tres Datasets Analíticos
 
-A partir del dataset limpio, `src/data/build_datasets.py` construye tres datasets analíticos especializados:
+A partir del dataset limpio, la cadena de preparación temporal y catálogo semántico materializa tres datasets analíticos especializados:
 
 ```python
 
@@ -444,7 +444,7 @@ Cada transición deja inputs y outputs explícitos. Eso ayuda a auditar qué pro
 |---|---|---|---|
 | `make_dataset` | `src/data/make_dataset.py` | `lending_club_cleaned.parquet` | ¿Ya tenemos una versión limpia y defendible del dataset crudo? |
 | `prepare_dataset` | `src/data/prepare_dataset.py` | `train/calibration/test` | ¿La evaluación respeta el tiempo y separa calibración del test? |
-| `build_datasets` | `src/data/build_datasets.py` | `loan_master`, `time_series`, `ead_dataset` | ¿Cada módulo downstream recibe el insumo correcto? |
+| `semantic data products` | `src/data/prepare_dataset.py`, dbt y artefactos DVC | `loan_master`, `time_series`, `ead_dataset` | ¿Cada módulo downstream recibe el insumo correcto sin depender de scripts huérfanos? |
 | `dbt + Feast` | Staging semántico y catálogo de features | Vistas y features declaradas | ¿Dónde vive la definición estable de una feature? |
 | `DVC lock + artifacts` | Repositorio y storage remoto | Huellas de versión | ¿Qué run produjo exactamente el artefacto citado en el libro? |
 

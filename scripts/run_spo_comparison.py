@@ -17,6 +17,7 @@ import json
 import sys
 from datetime import UTC, datetime
 from pathlib import Path
+from typing import Any
 
 import numpy as np
 import pandas as pd
@@ -50,7 +51,7 @@ def _load_canonical_artifacts() -> tuple[pd.DataFrame, pd.DataFrame, pd.DataFram
 def _compute_two_stage_regret(
     y_true: np.ndarray,
     y_pred_point: np.ndarray,
-) -> dict[str, float]:
+) -> dict[str, Any]:
     """Compute proxy decision regret for two-stage (point estimate) approach.
 
     Uses a simplified regret metric: mean absolute difference between
@@ -81,7 +82,7 @@ def _compute_robust_regret(
     y_true: np.ndarray,
     y_pred_point: np.ndarray,
     y_pred_high: np.ndarray,
-) -> dict[str, float]:
+) -> dict[str, Any]:
     """Compute proxy decision regret for robust conformal approach.
 
     The robust approach uses pd_high as worst-case, which is more conservative.
@@ -210,6 +211,8 @@ def main() -> int:
     robust = _compute_robust_regret(y_true, y_pred_point, y_pred_high)
     spo = _try_spo_comparison(y_true, y_pred_point)
     economics = _compute_portfolio_economics(robustness)
+    two_stage_rank_regret = float(two_stage["rank_regret"])
+    robust_rank_regret = float(robust["rank_regret"])
 
     # Build output
     output = {
@@ -224,11 +227,11 @@ def main() -> int:
         "spo_plus": spo,
         "portfolio_economics": economics,
         "summary": {
-            "two_stage_rank_regret": two_stage["rank_regret"],
-            "robust_rank_regret": robust["rank_regret"],
+            "two_stage_rank_regret": two_stage_rank_regret,
+            "robust_rank_regret": robust_rank_regret,
             "robust_vs_two_stage_pct": float(
-                (two_stage["rank_regret"] - robust["rank_regret"])
-                / max(two_stage["rank_regret"], 1e-9)
+                (two_stage_rank_regret - robust_rank_regret)
+                / max(two_stage_rank_regret, 1e-9)
                 * 100
             ),
         },

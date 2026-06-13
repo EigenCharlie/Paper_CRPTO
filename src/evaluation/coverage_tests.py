@@ -7,6 +7,8 @@ Includes:
 
 from __future__ import annotations
 
+from typing import Any
+
 import numpy as np
 from loguru import logger
 from scipy import stats
@@ -16,7 +18,7 @@ def kupiec_pof_test(
     violations: np.ndarray,
     alpha: float,
     confidence: float = 0.95,
-) -> dict[str, float | bool]:
+) -> dict[str, Any]:
     """Kupiec (1995) Proportion of Failures test for unconditional coverage.
 
     Tests H0: the true violation rate equals the nominal rate alpha.
@@ -86,7 +88,7 @@ def christoffersen_test(
     violations: np.ndarray,
     alpha: float,
     confidence: float = 0.95,
-) -> dict[str, float | bool]:
+) -> dict[str, Any]:
     """Christoffersen (1998) conditional coverage test.
 
     Combines the Kupiec unconditional coverage test with a test for

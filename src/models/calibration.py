@@ -6,7 +6,7 @@ Canonical calibrator is selected at training time via temporal multi-metric vali
 
 from __future__ import annotations
 
-from typing import Any
+from typing import Any, cast
 
 import numpy as np
 import pandas as pd
@@ -27,7 +27,7 @@ class LogitShiftCalibrator:
         scores_arr = np.clip(np.asarray(scores, dtype=float), 1e-6, 1.0 - 1e-6)
         logits = np.log(scores_arr / (1.0 - scores_arr))
         shifted = 1.0 / (1.0 + np.exp(-(logits + self.delta)))
-        return np.clip(np.asarray(shifted, dtype=float), 0.0, 1.0)
+        return cast(np.ndarray, np.clip(np.asarray(shifted, dtype=float), 0.0, 1.0))
 
     def predict(self, scores: np.ndarray) -> np.ndarray:
         return self.transform(scores)
@@ -65,7 +65,7 @@ def calibrate_isotonic(
 
 
 def calibrate_platt(
-    model,
+    model: Any,
     X_cal: pd.DataFrame,
     y_cal: pd.Series,
 ) -> LogisticRegression:

@@ -23,6 +23,7 @@ from __future__ import annotations
 import argparse
 import json
 from pathlib import Path
+from typing import Any, cast
 
 import numpy as np
 import pandas as pd
@@ -87,9 +88,9 @@ def _resolve_robust_policy(
     policy_selector: str = "promotion_first",
     summary_path: str = "data/processed/portfolio_robustness_summary.parquet",
     champion_policy_path: str = "models/champion_portfolio_policy.json",
-) -> dict[str, float | str]:
+) -> dict[str, Any]:
     """Resolve robust strategy parameters from tradeoff summary, with fallback defaults."""
-    default = {
+    default: dict[str, Any] = {
         "source": "fallback_default",
         "risk_tolerance": float(max_portfolio_pd),
         "uncertainty_aversion": 0.0,
@@ -131,7 +132,7 @@ def _resolve_robust_policy(
                     selected = payload.get("selected_policy", {})
             else:
                 selected = {}
-            policy = {
+            policy: dict[str, Any] = {
                 "source": f"champion_policy_artifact::{policy_selector}",
                 "risk_tolerance": float(selected.get("risk_tolerance", max_portfolio_pd)),
                 "uncertainty_aversion": float(selected.get("uncertainty_aversion", 0.0)),
@@ -389,7 +390,7 @@ def _apply_decision_scenario(
 def _build_common_inputs(
     test_df: pd.DataFrame,
     intervals: pd.DataFrame,
-) -> tuple[dict[str, object], np.ndarray, np.ndarray, np.ndarray, np.ndarray]:
+) -> tuple[dict[str, Any], np.ndarray, np.ndarray, np.ndarray, np.ndarray]:
     n = min(len(test_df), len(intervals))
     pd_col = next(
         (c for c in ["pd_calibrated", "y_pred"] if c in intervals.columns), intervals.columns[0]
@@ -430,18 +431,18 @@ def _build_common_inputs(
 
 def _run_strategy(
     *,
-    common: dict[str, object],
+    common: dict[str, Any],
     robust: bool,
     total_budget: float,
     max_portfolio_pd: float,
     solver_backend: str,
-    robust_policy: dict[str, float | str] | None = None,
+    robust_policy: dict[str, Any] | None = None,
 ) -> tuple[dict, np.ndarray]:
-    pd_point = np.asarray(common["pd_point"], dtype=float)  # type: ignore[index]
-    pd_high = np.asarray(common["pd_high"], dtype=float)  # type: ignore[index]
+    pd_point = np.asarray(common["pd_point"], dtype=float)
+    pd_high = np.asarray(common["pd_high"], dtype=float)
     if robust:
         policy = robust_policy or {}
-        loans = common["loans"]  # type: ignore[index]
+        loans = cast(pd.DataFrame, common["loans"])
         segment_labels: np.ndarray | None = None
         if str(policy.get("policy_mode", "hard_worst_case")) in {
             "segment_tail_blended_uncertainty",
@@ -649,11 +650,11 @@ def main(
             max_portfolio_pd=float(effective_max_portfolio_pd),
             top_k=int(actual_ab_top_k),
         )
-        chosen_policy = None
-        chosen_sol = None
-        returns_b = None
-        metrics_b = None
-        no_regression_result = None
+        chosen_policy: dict[str, Any] | None = None
+        chosen_sol: dict[str, Any] | None = None
+        returns_b: np.ndarray | None = None
+        metrics_b: dict[str, float | int] | None = None
+        no_regression_result: dict[str, Any] | None = None
         for idx, candidate in enumerate(search_candidates, start=1):
             sol_candidate, _ = _run_strategy(
                 common=common,
@@ -695,7 +696,7 @@ def main(
                     "tolerance_total_return": tolerance_total_return,
                     "tolerance_pct_of_control": float(no_regression_tolerance_pct),
                     "passed": True,
-                    "selected_from_search_rank": idx,
+                    "selected_from_search_rank": float(idx),
                 }
                 logger.info(
                     "actual_ab_guarded selected robust policy at rank {}: gamma={} lambda={}",
@@ -746,6 +747,10 @@ def main(
                 "fallback_nonrobust": True,
             }
         robust_policy = chosen_policy
+        assert chosen_sol is not None
+        assert returns_b is not None
+        assert metrics_b is not None
+        assert no_regression_result is not None
         sol_b = chosen_sol
     else:
         sol_b, _ = _run_strategy(
@@ -778,7 +783,10 @@ def main(
         returns_a, returns_b, method="bootstrap", n_boot=n_boot, seed=seed
     )
 
-    summary = ab_summary(metrics_a, metrics_b)
+    summary = ab_summary(
+        {key: float(value) for key, value in metrics_a.items()},
+        {key: float(value) for key, value in metrics_b.items()},
+    )
 
     # Save results
     results_df = pd.DataFrame(
@@ -805,7 +813,7 @@ def main(
     summary_out.parent.mkdir(parents=True, exist_ok=True)
     summary.to_parquet(summary_out, index=False)
 
-    status = {
+    status: dict[str, Any] = {
         "strategy_a": "non_robust",
         "strategy_b": "robust_selected_for_champion",
         "comparison": comparison,

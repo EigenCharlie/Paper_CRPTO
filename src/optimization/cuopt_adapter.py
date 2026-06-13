@@ -16,9 +16,9 @@ from loguru import logger
 from scipy.sparse import csr_matrix
 
 
-def _require_cuopt():
+def _require_cuopt() -> Any:
     try:
-        from cuopt import linear_programming as lp_api
+        from cuopt import linear_programming as lp_api  # type: ignore[import-not-found]
     except Exception as exc:  # pragma: no cover - exercised in RAPIDS env only
         raise RuntimeError(
             "solver_backend='cuopt' requested but native cuOpt Python API is not available."

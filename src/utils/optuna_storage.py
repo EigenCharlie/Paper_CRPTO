@@ -101,11 +101,11 @@ def _make_journal_storage(journal_path: Path, *, study_name: str) -> optuna.stor
     # ``JournalFileOpenLock`` (open-with-O_EXCL) when available.
     try:
         from optuna.storages import JournalStorage
-        from optuna.storages.journal import JournalFileBackend  # type: ignore[import-not-found]
+        from optuna.storages.journal import JournalFileBackend
     except ImportError:
         try:
             # Optuna <4 fallback (legacy import path)
-            from optuna.storages import (  # type: ignore[attr-defined,no-redef]
+            from optuna.storages import (
                 JournalFileStorage as JournalFileBackend,
                 JournalStorage,
             )
@@ -115,7 +115,7 @@ def _make_journal_storage(journal_path: Path, *, study_name: str) -> optuna.stor
 
     lock_obj: object | None = None
     try:
-        from optuna.storages.journal import JournalFileOpenLock  # type: ignore[import-not-found]
+        from optuna.storages.journal import JournalFileOpenLock
 
         lock_obj = JournalFileOpenLock(str(journal_path))
     except ImportError:

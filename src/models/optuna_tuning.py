@@ -251,6 +251,10 @@ def train_catboost_tuned_optuna(
             return False
         for key, left_value in left.items():
             right_value = right.get(key)
+            if right_value is None:
+                if left_value is not None:
+                    return False
+                continue
             try:
                 if abs(float(left_value) - float(right_value)) > 1e-12:
                     return False
@@ -414,6 +418,8 @@ def train_catboost_tuned_optuna(
                 violations.append(floor - float(attrs.get("validation_auc", float("-inf"))))
             return violations
 
+    sampler_obj: optuna.samplers.BaseSampler
+    pruner_obj: optuna.pruners.BasePruner
     if sampler == "tpe":
         sampler_obj = optuna.samplers.TPESampler(
             seed=42,

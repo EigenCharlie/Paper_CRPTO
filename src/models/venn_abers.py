@@ -43,6 +43,8 @@ Future work, if and when the calibrator is re-trained:
 
 from __future__ import annotations
 
+from typing import Any, cast
+
 import numpy as np
 
 
@@ -54,7 +56,7 @@ class VennAbersScoreCalibrator:
     """
 
     def __init__(self) -> None:
-        self._wrapped = None
+        self._wrapped: Any = None
         self._is_fitted = False
 
     @staticmethod
@@ -87,7 +89,7 @@ class VennAbersScoreCalibrator:
 
     def predict(self, y_prob_raw: np.ndarray) -> np.ndarray:
         low, high = self._predict_bounds(y_prob_raw)
-        return np.clip((low + high) / 2.0, 0.0, 1.0)
+        return cast(np.ndarray, np.clip((low + high) / 2.0, 0.0, 1.0))
 
     def predict_proba(self, y_prob_raw: np.ndarray) -> np.ndarray:
         p1 = self.predict(y_prob_raw)

@@ -61,10 +61,12 @@ adheres to a single-author, paper-driven release cadence — see
   `models/threshold_semantics.json` and `models/mrm_report_status.json`.
 
 ### Removed (R0 cleanup, 2026-06-12)
-- Second dead-code pass, verified zero references across src/scripts/tests/
-  book/docs/notebooks: `src/data/build_datasets.py`, `src/utils/mlflow_utils.py`,
-  `src/models/conformal_registry.py`, and `src/models/_mapie_compat.py`
-  (created during the drift-gate work but never adopted by any call site).
+- Second dead-code pass, verified zero live imports/call sites across
+  `src/`, `scripts/`, `tests/` and configs: `src/data/build_datasets.py`,
+  `src/utils/mlflow_utils.py`, `src/models/conformal_registry.py`, and
+  `src/models/_mapie_compat.py` (created during the drift-gate work but
+  never adopted by any active pipeline call site). Historical provenance
+  references remain only where explicitly marked as such.
 - `_policy_match`/`_policy_matches` consolidated from three scripts into
   `src/utils/script_helpers.policy_matches` with parametrizable field tuples;
   regenerated tables remained bit-exact.

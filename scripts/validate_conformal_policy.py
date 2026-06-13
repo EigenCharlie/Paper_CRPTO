@@ -9,7 +9,9 @@ from __future__ import annotations
 import argparse
 import json
 import pickle
+from collections.abc import Mapping
 from pathlib import Path
+from typing import Any, cast
 
 import numpy as np
 import pandas as pd
@@ -23,10 +25,6 @@ try:
 except ImportError:
     _mapie_mwi_score = None
     _MAPIE_MWI_AVAILABLE = False
-try:
-    from src.evaluation.backtesting import winkler_interval_score
-except ImportError:
-    winkler_interval_score = None
 from src.utils.artifact_metadata import build_artifact_metadata, resolve_run_tag
 from src.utils.baseline_registry import resolve_official_baseline_run_tag
 
@@ -48,8 +46,15 @@ def _fallback_winkler_interval_score(
     return width + penalty
 
 
-if winkler_interval_score is None:
-    winkler_interval_score = _fallback_winkler_interval_score
+_imported_winkler_interval_score: Any
+try:
+    from src.evaluation.backtesting import (
+        winkler_interval_score as _imported_winkler_interval_score,
+    )
+except ImportError:
+    _imported_winkler_interval_score = _fallback_winkler_interval_score
+
+winkler_interval_score: Any = _imported_winkler_interval_score
 
 SCHEMA_VERSION = "2026-06-07.1"
 RETIRED_BACKTEST_CHECKS = (
@@ -81,7 +86,9 @@ def _check(
 
 def _safe_float(value: object, default: float = float("nan")) -> float:
     try:
-        return float(value)
+        if isinstance(value, int | float | str):
+            return float(value)
+        return default
     except (TypeError, ValueError):
         return default
 
@@ -117,23 +124,17 @@ def _apply_artifact_namespace(
     data_dir = Path("data/processed/conformal_gap") / ns
     models_dir = Path("models/conformal_gap") / ns
     updated = dict(cfg)
-    updated["artifacts"] = dict(updated.get("artifacts", {}) or {})
-    updated["output"] = dict(updated.get("output", {}) or {})
-    updated["artifacts"]["conformal_results_path"] = str(
-        models_dir / "conformal_results_mondrian.pkl"
-    )
-    updated["artifacts"]["group_metrics_path"] = str(
-        data_dir / "conformal_group_metrics_mondrian.parquet"
-    )
-    updated["artifacts"]["backtest_monthly_path"] = str(
-        data_dir / "conformal_backtest_monthly.parquet"
-    )
-    updated["artifacts"]["backtest_alerts_path"] = str(
-        data_dir / "conformal_backtest_alerts.parquet"
-    )
-    updated["artifacts"]["intervals_path"] = str(data_dir / "conformal_intervals_mondrian.parquet")
-    updated["output"]["policy_status_json"] = str(models_dir / "conformal_policy_status.json")
-    updated["output"]["policy_checks_parquet"] = str(data_dir / "conformal_policy_checks.parquet")
+    artifacts = dict(cast(Mapping[str, Any], updated.get("artifacts", {}) or {}))
+    output = dict(cast(Mapping[str, Any], updated.get("output", {}) or {}))
+    artifacts["conformal_results_path"] = str(models_dir / "conformal_results_mondrian.pkl")
+    artifacts["group_metrics_path"] = str(data_dir / "conformal_group_metrics_mondrian.parquet")
+    artifacts["backtest_monthly_path"] = str(data_dir / "conformal_backtest_monthly.parquet")
+    artifacts["backtest_alerts_path"] = str(data_dir / "conformal_backtest_alerts.parquet")
+    artifacts["intervals_path"] = str(data_dir / "conformal_intervals_mondrian.parquet")
+    output["policy_status_json"] = str(models_dir / "conformal_policy_status.json")
+    output["policy_checks_parquet"] = str(data_dir / "conformal_policy_checks.parquet")
+    updated["artifacts"] = artifacts
+    updated["output"] = output
     return updated
 
 
@@ -143,12 +144,14 @@ def main(
     sensitivity_config_path: str | None = None,
     artifact_namespace: str | None = None,
 ) -> None:
-    with open(config_path, encoding="utf-8") as f:
-        cfg = yaml.safe_load(f)
+    with open(config_path, encoding="utf-8") as config_handle:
+        cfg_raw = yaml.safe_load(config_handle) or {}
+    cfg = dict(cast(Mapping[str, Any], cfg_raw))
 
     if sensitivity_config_path is not None:
-        with open(sensitivity_config_path, encoding="utf-8") as f:
-            sens_cfg = yaml.safe_load(f)
+        with open(sensitivity_config_path, encoding="utf-8") as sensitivity_handle:
+            sens_raw = yaml.safe_load(sensitivity_handle) or {}
+        sens_cfg = dict(cast(Mapping[str, Any], sens_raw))
         if "policy_sensitivity" in sens_cfg:
             cfg["policy_sensitivity"] = sens_cfg["policy_sensitivity"]
             logger.info(
@@ -158,17 +161,17 @@ def main(
 
     cfg = _apply_artifact_namespace(cfg, artifact_namespace)
 
-    policy = cfg["policy"]
-    artifacts = cfg["artifacts"]
-    output = cfg["output"]
+    policy = dict(cast(Mapping[str, Any], cfg["policy"]))
+    artifacts = dict(cast(Mapping[str, Any], cfg["artifacts"]))
+    output = dict(cast(Mapping[str, Any], cfg["output"]))
     resolved_run_tag = resolve_run_tag(
         run_tag,
         fallback_candidates=[resolve_official_baseline_run_tag()],
         require_explicit=True,
     )
 
-    with open(artifacts["conformal_results_path"], "rb") as f:
-        results = pickle.load(f)
+    with open(artifacts["conformal_results_path"], "rb") as results_handle:
+        results = cast(dict[str, Any], pickle.load(results_handle))
     group_metrics = pd.read_parquet(artifacts["group_metrics_path"])
     backtest_monthly = pd.read_parquet(artifacts["backtest_monthly_path"])
     alerts_path = Path(artifacts["backtest_alerts_path"])
@@ -343,7 +346,7 @@ def main(
     ]
     checks_df = pd.DataFrame(checks)
 
-    def _evaluate_check_frame(frame: pd.DataFrame) -> dict[str, object]:
+    def _evaluate_check_frame(frame: pd.DataFrame) -> dict[str, Any]:
         gate_pass = bool(frame["passed"].all())
         failing_material = frame.loc[~frame["passed"], "metric"].astype(str).tolist()
         methodological_status = (
@@ -455,7 +458,7 @@ def main(
         ),
     }
 
-    sensitivity_cfg = cfg.get("policy_sensitivity", {}) or {}
+    sensitivity_cfg = dict(cast(Mapping[str, Any], cfg.get("policy_sensitivity", {}) or {}))
     max_winkler_values = [
         float(x) for x in sensitivity_cfg.get("max_winkler_90_values", []) or [] if x is not None
     ]

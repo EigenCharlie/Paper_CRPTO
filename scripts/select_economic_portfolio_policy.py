@@ -5,6 +5,7 @@ from __future__ import annotations
 import argparse
 import json
 from pathlib import Path
+from typing import Any
 
 import numpy as np
 import pandas as pd
@@ -39,7 +40,7 @@ def _policy_key(row: pd.Series) -> tuple[object, ...]:
     )
 
 
-def _policy_from_row(row: pd.Series, source: str) -> dict[str, float | str]:
+def _policy_from_row(row: pd.Series, source: str) -> dict[str, Any]:
     return {
         "source": source,
         "risk_tolerance": float(row["risk_tolerance"]),
@@ -53,7 +54,7 @@ def _policy_from_row(row: pd.Series, source: str) -> dict[str, float | str]:
     }
 
 
-def _load_json(path: Path) -> dict:
+def _load_json(path: Path) -> dict[str, Any]:
     return try_load_json(path)
 
 
@@ -166,8 +167,8 @@ def _control_metrics_by_risk(
     risk_values: list[float],
     total_budget: float,
     solver_backend: str,
-) -> dict[float, dict[str, object]]:
-    controls: dict[float, dict[str, object]] = {}
+) -> dict[float, dict[str, Any]]:
+    controls: dict[float, dict[str, Any]] = {}
     for risk_tol in sorted({float(x) for x in risk_values}):
         sol, _ = _run_strategy(
             common=common,
@@ -190,9 +191,7 @@ def _control_metrics_by_risk(
             "metrics": metrics,
             "allocation": alloc,
             "worst_case_pd": float(
-                np.sum(
-                    alloc * loan_amnt * np.asarray(common["pd_high"], dtype=float)  # type: ignore[index]
-                )
+                np.sum(alloc * loan_amnt * np.asarray(common["pd_high"], dtype=float))
                 / (float(sol["total_allocated"]) + 1e-6)
             ),
         }
@@ -266,7 +265,7 @@ def main(
     if not candidate_rows:
         raise ValueError("No eligible canonical candidates found in frontier")
 
-    evaluated: list[dict[str, object]] = []
+    evaluated: list[dict[str, Any]] = []
     for row in candidate_rows:
         policy = _policy_from_row(row, source="economic_actual_ab_v1")
         risk_tol = float(policy["risk_tolerance"])

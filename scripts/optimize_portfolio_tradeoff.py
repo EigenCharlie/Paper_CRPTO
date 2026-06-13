@@ -699,7 +699,9 @@ def main(
                 realized_total_return = float(robust_run["realized_total_return"])
                 ab_diff_total_return = float(realized_total_return - baseline_realized)
                 ab_pass = bool(ab_diff_total_return >= -(abs(baseline_realized) * 0.05))
-                funded_ratio = float(robust_run["n_funded"] / max(float(baseline["n_funded"]), 1.0))
+                funded_ratio = float(
+                    float(robust_run["n_funded"]) / max(float(baseline["n_funded"]), 1.0)
+                )
                 worst_case_pd_reduction_bps = float(
                     (float(baseline["worst_case_pd"]) - float(robust_run["worst_case_pd"])) * 1e4
                 )
