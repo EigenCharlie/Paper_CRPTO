@@ -80,6 +80,18 @@ class ConformalInputs:
     y_prob_test_calibrated: np.ndarray
 
 
+@dataclass(frozen=True)
+class ConformalTuningGrid:
+    """Normalized candidate grid for Mondrian conformal tuning."""
+
+    partition_candidates: tuple[str, ...]
+    partition_probability_sources: tuple[str, ...]
+    n_score_bins_candidates: tuple[int, ...]
+    fallback_modes: tuple[str, ...]
+    score_scale_families: tuple[str, ...]
+    scaled_scores_options: tuple[bool, ...]
+
+
 def _resolve_artifact_paths(namespace: str | None = None) -> dict[str, Path]:
     if namespace:
         ns = str(namespace).strip().replace("/", "_")
@@ -392,6 +404,56 @@ def _load_conformal_inputs(
     )
 
 
+def _resolve_tuning_grid(
+    *,
+    partition: str,
+    partition_candidates: tuple[str, ...] | None,
+    partition_probability_sources: tuple[str, ...],
+    n_score_bins_candidates: tuple[int, ...],
+    fallback_modes: tuple[str, ...],
+    score_scale_families: tuple[str, ...],
+    scaled_scores_options: tuple[bool, ...],
+) -> ConformalTuningGrid:
+    """Normalize and de-duplicate Mondrian tuning candidates."""
+    resolved_partitions = tuple(
+        dict.fromkeys(
+            [
+                str(token).strip()
+                for token in (partition_candidates or (partition,))
+                if str(token).strip()
+            ]
+        )
+    ) or (str(partition).strip() or "grade",)
+    resolved_probability_sources = tuple(
+        dict.fromkeys(
+            str(source).strip().lower()
+            for source in partition_probability_sources
+            if str(source).strip()
+        )
+    ) or ("raw",)
+    resolved_score_bins = tuple(int(x) for x in n_score_bins_candidates if int(x) > 0) or (10,)
+    resolved_fallback_modes = tuple(
+        dict.fromkeys(
+            str(mode_name).strip().lower() for mode_name in fallback_modes if str(mode_name).strip()
+        )
+    ) or ("grade_then_global",)
+    resolved_score_families = tuple(
+        dict.fromkeys(
+            str(scale_name).strip().lower()
+            for scale_name in score_scale_families
+            if str(scale_name).strip()
+        )
+    ) or ("none",)
+    return ConformalTuningGrid(
+        partition_candidates=resolved_partitions,
+        partition_probability_sources=resolved_probability_sources,
+        n_score_bins_candidates=resolved_score_bins,
+        fallback_modes=resolved_fallback_modes,
+        score_scale_families=resolved_score_families,
+        scaled_scores_options=tuple(bool(x) for x in scaled_scores_options),
+    )
+
+
 def _parse_float_tuple(raw: str) -> tuple[float, ...]:
     values = [float(token.strip()) for token in str(raw).split(",") if token.strip()]
     if not values:
@@ -548,35 +610,21 @@ def main(
     evaluation_scope_key = str(evaluation_scope or "test").strip().lower() or "test"
     if evaluation_scope_key not in {"test", "holdout"}:
         raise ValueError(f"Unsupported evaluation_scope: {evaluation_scope}")
-    partition_candidates = tuple(
-        dict.fromkeys(
-            [
-                str(token).strip()
-                for token in (partition_candidates or (partition,))
-                if str(token).strip()
-            ]
-        )
-    ) or (str(partition).strip() or "grade",)
-    partition_probability_sources = tuple(
-        dict.fromkeys(
-            str(source).strip().lower()
-            for source in partition_probability_sources
-            if str(source).strip()
-        )
-    ) or ("raw",)
-    n_score_bins_candidates = tuple(int(x) for x in n_score_bins_candidates if int(x) > 0) or (10,)
-    fallback_modes = tuple(
-        dict.fromkeys(
-            str(mode_name).strip().lower() for mode_name in fallback_modes if str(mode_name).strip()
-        )
-    ) or ("grade_then_global",)
-    score_scale_families = tuple(
-        dict.fromkeys(
-            str(scale_name).strip().lower()
-            for scale_name in score_scale_families
-            if str(scale_name).strip()
-        )
-    ) or ("none",)
+    tuning_grid = _resolve_tuning_grid(
+        partition=partition,
+        partition_candidates=partition_candidates,
+        partition_probability_sources=partition_probability_sources,
+        n_score_bins_candidates=n_score_bins_candidates,
+        fallback_modes=fallback_modes,
+        score_scale_families=score_scale_families,
+        scaled_scores_options=scaled_scores_options,
+    )
+    partition_candidates = tuning_grid.partition_candidates
+    partition_probability_sources = tuning_grid.partition_probability_sources
+    n_score_bins_candidates = tuning_grid.n_score_bins_candidates
+    fallback_modes = tuning_grid.fallback_modes
+    score_scale_families = tuning_grid.score_scale_families
+    scaled_scores_options = tuning_grid.scaled_scores_options
     tuning_rows: list[dict[str, Any]] = []
 
     # Tune 90% interval config across candidate Mondrian partitions.
@@ -593,7 +641,7 @@ def main(
             for n_score_bins in n_score_bins_candidates:
                 for fallback_mode in fallback_modes:
                     for alpha_used in alpha_candidates_90:
-                        for scaled_scores in tuple(bool(x) for x in scaled_scores_options):
+                        for scaled_scores in scaled_scores_options:
                             for score_scale_family in score_scale_families:
                                 for min_group_size in min_group_sizes:
                                     group_cal_fit, group_tune, partition_meta_candidate = (
