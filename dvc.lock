@@ -196,8 +196,8 @@ stages:
       size: 208450868
     - path: scripts/train_pd_model.py
       hash: md5
-      md5: d573cb6153c2cb8100a422b5562e70a7
-      size: 92292
+      md5: 50482620ef36d6d483e7579471a9097d
+      size: 92416
     params:
       params.yaml:
         champion.return_robust: 170464.54

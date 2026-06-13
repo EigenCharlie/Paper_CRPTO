@@ -979,6 +979,81 @@ def _select_calibration_method(
     return str(selected["method"]), report
 
 
+def _failed_calibration_report(method: str, exc: Exception) -> dict[str, Any]:
+    return {
+        "method": str(method),
+        "folds_used": 0,
+        "mean_brier": float("inf"),
+        "mean_log_loss": float("inf"),
+        "mean_ece": float("inf"),
+        "mean_auc_drop": float("inf"),
+        "brier_variance": float("inf"),
+        "ece_variance": float("inf"),
+        "stability": float("inf"),
+        "degradation_rate": 1.0,
+        "error": str(exc),
+        "folds": [],
+    }
+
+
+def _select_calibration_from_backtest(
+    *,
+    run_mode: str,
+    replay_cfg: dict[str, Any],
+    cal_cfg: dict[str, Any],
+    y_cal: np.ndarray,
+    y_prob_tuned_cal: np.ndarray,
+    cal_splits: list[tuple[np.ndarray, np.ndarray]],
+    auc_drop_limit: float = 0.0015,
+) -> tuple[str, dict[str, Any], list[dict[str, Any]]]:
+    """Select the PD probability calibrator from replay metadata or fold backtests."""
+    y_cal_arr = np.asarray(y_cal, dtype=float)
+    if run_mode == "replay":
+        selected_method = str(replay_cfg.get("selected_calibration_method", "venn_abers"))
+        try:
+            cal_reports = [
+                _evaluate_calibration_method(
+                    selected_method,
+                    y_cal_arr,
+                    y_prob_tuned_cal,
+                    cal_splits,
+                )
+            ]
+        except Exception as exc:
+            cal_reports = [_failed_calibration_report(selected_method, exc)]
+        selection_report = {
+            "selected_method": selected_method,
+            "selection_reason": "frozen_replay_manifest",
+            "auc_drop_limit": float(auc_drop_limit),
+            "candidates": cal_reports,
+            "feasible_candidates": [
+                row for row in cal_reports if row.get("method") == selected_method
+            ],
+        }
+        return selected_method, selection_report, cal_reports
+
+    cal_candidates = cal_cfg.get("candidates", ["platt", "isotonic", "venn_abers"])
+    cal_reports = []
+    for method in cal_candidates:
+        try:
+            cal_reports.append(
+                _evaluate_calibration_method(
+                    str(method),
+                    y_cal_arr,
+                    y_prob_tuned_cal,
+                    cal_splits,
+                )
+            )
+        except Exception as exc:
+            cal_reports.append(_failed_calibration_report(str(method), exc))
+
+    selected_method, selection_report = _select_calibration_method(
+        cal_reports,
+        auc_drop_limit=auc_drop_limit,
+    )
+    return selected_method, selection_report, cal_reports
+
+
 def _human_calibration_name(method: str) -> str:
     if method == "platt":
         return "Platt Sigmoid"
@@ -1689,77 +1764,15 @@ def main(
     # Robust calibration policy selection via temporal folds on calibration set
     cal_splits = _build_calibration_backtest_splits(cal, n_folds=4, date_col="issue_d")
     cal_cfg = config.get("calibration", {})
-    cal_candidates = cal_cfg.get("candidates", ["platt", "isotonic", "venn_abers"])
-    cal_reports: list[dict[str, Any]] = []
-    if run_mode == "replay":
-        selected_cal_method = str(replay_cfg.get("selected_calibration_method", "venn_abers"))
-        try:
-            cal_reports.append(
-                _evaluate_calibration_method(
-                    selected_cal_method,
-                    y_cal.to_numpy(),
-                    y_prob_tuned_cal,
-                    cal_splits,
-                )
-            )
-        except Exception as exc:
-            cal_reports.append(
-                {
-                    "method": selected_cal_method,
-                    "folds_used": 0,
-                    "mean_brier": float("inf"),
-                    "mean_log_loss": float("inf"),
-                    "mean_ece": float("inf"),
-                    "mean_auc_drop": float("inf"),
-                    "brier_variance": float("inf"),
-                    "ece_variance": float("inf"),
-                    "stability": float("inf"),
-                    "degradation_rate": 1.0,
-                    "error": str(exc),
-                    "folds": [],
-                }
-            )
-        cal_selection_report = {
-            "selected_method": selected_cal_method,
-            "selection_reason": "frozen_replay_manifest",
-            "auc_drop_limit": 0.0015,
-            "candidates": cal_reports,
-            "feasible_candidates": [
-                row for row in cal_reports if row.get("method") == selected_cal_method
-            ],
-        }
-    else:
-        for method in cal_candidates:
-            try:
-                cal_reports.append(
-                    _evaluate_calibration_method(
-                        str(method),
-                        y_cal.to_numpy(),
-                        y_prob_tuned_cal,
-                        cal_splits,
-                    )
-                )
-            except Exception as exc:
-                cal_reports.append(
-                    {
-                        "method": str(method),
-                        "folds_used": 0,
-                        "mean_brier": float("inf"),
-                        "mean_log_loss": float("inf"),
-                        "mean_ece": float("inf"),
-                        "mean_auc_drop": float("inf"),
-                        "brier_variance": float("inf"),
-                        "ece_variance": float("inf"),
-                        "stability": float("inf"),
-                        "degradation_rate": 1.0,
-                        "error": str(exc),
-                        "folds": [],
-                    }
-                )
-        selected_cal_method, cal_selection_report = _select_calibration_method(
-            cal_reports,
-            auc_drop_limit=0.0015,
-        )
+    selected_cal_method, cal_selection_report, cal_reports = _select_calibration_from_backtest(
+        run_mode=run_mode,
+        replay_cfg=replay_cfg,
+        cal_cfg=cal_cfg,
+        y_cal=y_cal.to_numpy(),
+        y_prob_tuned_cal=y_prob_tuned_cal,
+        cal_splits=cal_splits,
+        auc_drop_limit=0.0015,
+    )
     _write_checkpoint(
         checkpoint_dir,
         "calibration_selection",
