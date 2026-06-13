@@ -168,7 +168,7 @@ def test_resolve_training_features_filters_splits_and_disables_stable_core_in_re
 
     resolved = pd_train._resolve_training_features(
         config={
-            "feature_source": {"mode": "auto", "feature_config_path": "feature_config.pkl"},
+            "feature_source": {"mode": "auto", "feature_config_path": "feature_config.yml"},
             "stable_core": {"enabled": True, "exclude_features": ["rev_utilization"]},
         },
         train=train,
@@ -186,7 +186,7 @@ def test_resolve_training_features_filters_splits_and_disables_stable_core_in_re
 
     replay = pd_train._resolve_training_features(
         config={
-            "feature_source": {"mode": "auto", "feature_config_path": "feature_config.pkl"},
+            "feature_source": {"mode": "auto", "feature_config_path": "feature_config.yml"},
             "stable_core": {"enabled": True, "exclude_features": ["rev_utilization"]},
         },
         train=train,

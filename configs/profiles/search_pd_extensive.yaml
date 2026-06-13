@@ -14,7 +14,7 @@ runtime:
     - CPU parallelism is increased to 4 workers x 5 threads with RAM gating.
 model:
   base_config: configs/crpto_pd_model.yaml
-  feature_config_source: data/processed/feature_config.pkl
+  feature_config_source: data/processed/feature_config.yml
   feature_profiles:
     core_stable:
       groups: [CATBOOST_FEATURES]

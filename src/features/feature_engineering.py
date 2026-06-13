@@ -788,7 +788,6 @@ def save_feature_artifacts(
     atomic_write_parquet(calibration_df, out_dir / "calibration_fe.parquet", index=False)
     atomic_write_parquet(test_df, out_dir / "test_fe.parquet", index=False)
 
-    atomic_write_pickle(out_dir / "feature_config.pkl", feature_config)
     atomic_write_pickle(out_dir / "woe_encoders.pkl", woe_encoders)
 
     manifest = build_feature_manifest(

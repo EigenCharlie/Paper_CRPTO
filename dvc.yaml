@@ -27,8 +27,8 @@ stages:
       - data/processed/train_fe.parquet
       - data/processed/test_fe.parquet
       - data/processed/calibration_fe.parquet
-      - data/processed/feature_config.pkl
       - data/processed/feature_config.yml
+      - data/processed/feature_config.parquet
       - data/processed/feature_manifest_v2.json
       - data/processed/feature_manifest_v2.parquet
       - data/processed/woe_encoders.pkl

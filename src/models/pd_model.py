@@ -39,8 +39,8 @@ def get_available_features(df: pd.DataFrame) -> list[str]:
 def load_feature_config(feature_config_path: str | Path) -> dict[str, Any]:
     """Load persisted feature config artifact if available.
 
-    The YAML companion is preferred when it exists; the legacy pickle remains
-    the fallback for frozen champion artifacts.
+    YAML is the live pipeline contract. The legacy pickle can still be forced
+    through ``src.features.feature_config_io`` for old artifact audits.
     """
     path = Path(feature_config_path)
     yaml_path = path if path.suffix.lower() in {".yml", ".yaml"} else path.with_suffix(".yml")
@@ -66,7 +66,7 @@ def load_feature_config(feature_config_path: str | Path) -> dict[str, Any]:
 def resolve_feature_sets(
     df: pd.DataFrame,
     feature_source: str = "auto",
-    feature_config_path: str | Path = "data/processed/feature_config.pkl",
+    feature_config_path: str | Path = "data/processed/feature_config.yml",
 ) -> dict[str, Any]:
     """Resolve feature sets from feature_config first, with legacy fallback."""
     cfg = load_feature_config(feature_config_path)

@@ -7,7 +7,7 @@
   "generated_at_utc": "2026-06-08T00:09:19.895613+00:00",
   "summary": {
     "file_count_excluding_runtime_outputs": 652,
-    "total_bytes_excluding_runtime_outputs": 3050531190,
+    "total_bytes_excluding_runtime_outputs": 3050534136,
     "total_bytes_on_disk_including_runtime_and_dvc_cache": 11596168023,
     "observed_du_human_after_final_pass": "11G",
     "runtime_outputs_excluded": [
@@ -717,20 +717,15 @@
       "bytes": 2699,
       "hash_source": "ijds_rebaseline_2026-06-07"
     },
-    "data/processed/feature_config.pkl": {
-      "sha256": "2aa01b25f43a13a56b08af6e4f1673a9c9f0b196594b0c042d66a6bb491a2166",
-      "bytes": 3580,
-      "hash_source": "ijds_rebaseline_2026-06-07"
-    },
     "data/processed/feature_config.yml": {
       "sha256": "8ec74ba811a08e1bc5e044c0c8c1919de79069593464552eb3bc8f3c9b1915b5",
       "bytes": 9557,
       "hash_source": "ijds_rebaseline_2026-06-07"
     },
     "data/processed/feature_manifest_v2.json": {
-      "sha256": "2c308b3deb3b7799b5a950308dab1e3393d69034489ec1b144e6348a47c2a1d3",
-      "bytes": 58241,
-      "hash_source": "ijds_rebaseline_2026-06-07"
+      "sha256": "dae3eea61e1e949bab595f328b49d166c042b499ab4d3b724f847221dd129071",
+      "bytes": 56108,
+      "hash_source": "feature_config_pickle_retirement_2026-06-13"
     },
     "data/processed/feature_manifest_v2.parquet": {
       "sha256": "aaef6965c88d440fd4f651c45bf760711b35ec413b995ea98193d2bf4fcc2974",
@@ -891,6 +886,11 @@
       "hash_source": "ijds_rebaseline_2026-06-07",
       "sha256": "c5301b5da5b4f55afa594e7c92bc0eef177928bf0ab8e6de64d402141ad96298",
       "bytes": 50067
+    },
+    "data/processed/feature_config.parquet": {
+      "sha256": "be6a6e1ca5a2064c009616261aaf0a7664ac286b5513ad42f48b59bd15012462",
+      "bytes": 6526,
+      "hash_source": "feature_config_pickle_retirement_2026-06-13"
     }
   },
   "validation_results": {
@@ -2013,11 +2013,6 @@
     {
       "path": "data/processed/fairness_threshold_frontier.parquet",
       "bytes": 7159,
-      "role": "generated_or_curated"
-    },
-    {
-      "path": "data/processed/feature_config.pkl",
-      "bytes": 3580,
       "role": "generated_or_curated"
     },
     {
@@ -4163,6 +4158,11 @@
     {
       "path": "uv.lock",
       "bytes": 606174,
+      "role": "generated_or_curated"
+    },
+    {
+      "path": "data/processed/feature_config.parquet",
+      "bytes": 6526,
       "role": "generated_or_curated"
     }
   ],

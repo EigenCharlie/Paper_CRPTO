@@ -31,6 +31,7 @@ import yaml
 ROOT = Path(__file__).resolve().parents[2]
 sys.path.insert(0, str(ROOT))
 
+from src.features.feature_config_io import load_feature_config  # noqa: E402
 from src.utils.pipeline_runtime import atomic_write_json  # noqa: E402
 
 
@@ -189,7 +190,7 @@ FEATURE_PROFILES: dict[str, dict[str, Any]] = {
         "stable_core_enabled": False,
     },
     "full_challenger": {
-        "description": "All materialized challenger features from feature_config.pkl.",
+        "description": "All materialized challenger features from feature_config.yml.",
         "groups": ["CHALLENGER_FEATURE_POOL_V2"],
         "stable_core_enabled": False,
     },
@@ -427,12 +428,12 @@ def _ordered_unique(values: Iterable[str]) -> list[str]:
 
 
 def _load_feature_config() -> dict[str, Any]:
-    path = ROOT / "data" / "processed" / "feature_config.pkl"
-    with path.open("rb") as fh:
-        payload = pickle.load(fh)
-    if not isinstance(payload, dict):
-        raise TypeError(f"Feature config must be a dict: {path}")
-    return payload
+    return load_feature_config(
+        yaml_path=ROOT / "data" / "processed" / "feature_config.yml",
+        parquet_path=ROOT / "data" / "processed" / "feature_config.parquet",
+        pickle_path=ROOT / "data" / "processed" / "feature_config.pkl",
+        prefer="auto",
+    )
 
 
 def _features_from_profile(base_config: Mapping[str, Any], profile_name: str) -> list[str]:
