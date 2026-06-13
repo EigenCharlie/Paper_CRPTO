@@ -128,6 +128,12 @@ dbt-build:
 validate-champion:
     uv run pytest tests/test_manifest_regression.py -q
 
+drift-gate:
+    $env:CRPTO_RUN_CHAMPION_DRIFT = "1"; uv run pytest tests/test_models/test_conformal_mapie_drift.py -q -s
+
+bound-audit:
+    uv run pytest tests/test_scripts/test_build_bound_tightening_audit.py tests/test_scripts/test_run_portfolio_bound_aware_search.py tests/test_scripts/test_run_portfolio_bound_exact_eval.py -q
+
 mrm-card:
     uv run python -c "print('use /crpto-mrm-card via Claude Code or write the script')"
 

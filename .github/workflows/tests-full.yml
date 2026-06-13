@@ -55,6 +55,14 @@ jobs:
       - name: Manifest regression (hash check vs frozen champion)
         run: uv run pytest tests/test_manifest_regression.py -v
 
+      - name: Champion drift gate
+        env:
+          CRPTO_RUN_CHAMPION_DRIFT: "1"
+        run: |
+          mkdir -p reports/ci
+          uv run pytest tests/test_models/test_conformal_mapie_drift.py -q -s \
+            | tee reports/ci/champion-drift-gate.txt
+
       - name: Full author tests
         run: |
           uv run pytest \
@@ -74,5 +82,6 @@ jobs:
           path: |
             coverage.xml
             .pytest_cache/
+            reports/ci/champion-drift-gate.txt
           retention-days: 7
           if-no-files-found: ignore
