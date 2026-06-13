@@ -49,6 +49,60 @@ def resolve_optuna_study_name(
     return base_name if base_name.endswith(suffix) else f"{base_name}{suffix}"
 
 
+def _build_optuna_sampler_pruner(
+    optuna_module: Any,
+    *,
+    sampler: str,
+    pruner: str,
+    n_startup_trials: int,
+    multivariate_tpe: bool,
+    group_tpe: bool,
+    constant_liar: bool,
+    pruner_n_startup_trials: int,
+    pruner_n_warmup_steps: int,
+    constraints_func: Any | None = None,
+) -> tuple[Any, Any]:
+    use_multivariate = bool(multivariate_tpe)
+    use_group_tpe = bool(group_tpe and use_multivariate)
+
+    if sampler == "tpe":
+        sampler_obj = optuna_module.samplers.TPESampler(
+            seed=42,
+            n_startup_trials=max(10, int(n_startup_trials)),
+            multivariate=use_multivariate,
+            group=use_group_tpe,
+            constant_liar=bool(constant_liar),
+            constraints_func=constraints_func,
+        )
+    elif sampler == "random":
+        sampler_obj = optuna_module.samplers.RandomSampler(seed=42)
+    else:
+        sampler_obj = optuna_module.samplers.TPESampler(
+            seed=42,
+            n_startup_trials=max(10, int(n_startup_trials)),
+            multivariate=use_multivariate,
+            group=use_group_tpe,
+            constant_liar=bool(constant_liar),
+        )
+
+    if pruner == "median":
+        pruner_obj = optuna_module.pruners.MedianPruner(
+            n_startup_trials=max(5, int(pruner_n_startup_trials)),
+            n_warmup_steps=max(1, int(pruner_n_warmup_steps)),
+            interval_steps=25,
+        )
+    elif pruner == "none":
+        pruner_obj = optuna_module.pruners.NopPruner()
+    else:
+        pruner_obj = optuna_module.pruners.MedianPruner(
+            n_startup_trials=max(5, int(pruner_n_startup_trials)),
+            n_warmup_steps=max(1, int(pruner_n_warmup_steps)),
+            interval_steps=25,
+        )
+
+    return sampler_obj, pruner_obj
+
+
 def train_catboost_tuned_optuna(
     X_train: pd.DataFrame,
     y_train: pd.Series,
@@ -418,42 +472,18 @@ def train_catboost_tuned_optuna(
                 violations.append(floor - float(attrs.get("validation_auc", float("-inf"))))
             return violations
 
-    sampler_obj: optuna.samplers.BaseSampler
-    pruner_obj: optuna.pruners.BasePruner
-    if sampler == "tpe":
-        sampler_obj = optuna.samplers.TPESampler(
-            seed=42,
-            n_startup_trials=max(10, int(n_startup_trials)),
-            multivariate=use_multivariate,
-            group=use_group_tpe,
-            constant_liar=bool(constant_liar),
-            constraints_func=constraints_func,
-        )
-    elif sampler == "random":
-        sampler_obj = optuna.samplers.RandomSampler(seed=42)
-    else:
-        sampler_obj = optuna.samplers.TPESampler(
-            seed=42,
-            n_startup_trials=max(10, int(n_startup_trials)),
-            multivariate=use_multivariate,
-            group=use_group_tpe,
-            constant_liar=bool(constant_liar),
-        )
-
-    if pruner == "median":
-        pruner_obj = optuna.pruners.MedianPruner(
-            n_startup_trials=max(5, int(pruner_n_startup_trials)),
-            n_warmup_steps=max(1, int(pruner_n_warmup_steps)),
-            interval_steps=25,
-        )
-    elif pruner == "none":
-        pruner_obj = optuna.pruners.NopPruner()
-    else:
-        pruner_obj = optuna.pruners.MedianPruner(
-            n_startup_trials=max(5, int(pruner_n_startup_trials)),
-            n_warmup_steps=max(1, int(pruner_n_warmup_steps)),
-            interval_steps=25,
-        )
+    sampler_obj, pruner_obj = _build_optuna_sampler_pruner(
+        optuna,
+        sampler=sampler,
+        pruner=pruner,
+        n_startup_trials=n_startup_trials,
+        multivariate_tpe=use_multivariate,
+        group_tpe=use_group_tpe,
+        constant_liar=constant_liar,
+        pruner_n_startup_trials=pruner_n_startup_trials,
+        pruner_n_warmup_steps=pruner_n_warmup_steps,
+        constraints_func=constraints_func,
+    )
 
     train_pool = Pool(X_train, y_train, cat_features=cat_features, weight=sample_weight)
     val_pool = Pool(X_val, y_val, cat_features=cat_features, weight=eval_sample_weight)
