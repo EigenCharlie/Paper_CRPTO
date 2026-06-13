@@ -2,7 +2,9 @@ from __future__ import annotations
 
 import pytest
 
+import scripts.generate_conformal_intervals as conformal_script
 from scripts.generate_conformal_intervals import (
+    _build_tuning_split,
     _parse_bool_tuple,
     _parse_float_tuple,
     _parse_int_tuple,
@@ -72,3 +74,74 @@ def test_resolve_tuning_grid_uses_current_defaults_for_empty_inputs() -> None:
     assert grid.fallback_modes == ("grade_then_global",)
     assert grid.score_scale_families == ("none",)
     assert grid.scaled_scores_options == ()
+
+
+def test_build_tuning_split_materializes_fit_and_holdout(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    def fake_split_calibration_for_tuning(**kwargs):
+        return conformal_script.np.array([0, 2]), conformal_script.np.array([1, 3])
+
+    monkeypatch.setattr(
+        conformal_script,
+        "split_calibration_for_tuning",
+        fake_split_calibration_for_tuning,
+    )
+    cal_df = conformal_script.pd.DataFrame(
+        {
+            "issue_d": ["2020-01-01", "2020-02-01", "2020-03-01", "bad-date"],
+            "feature": [10, 20, 30, 40],
+        }
+    )
+    test_df = conformal_script.pd.DataFrame({"issue_d": ["2021-01-01", "not-a-date"]})
+    x_cal = conformal_script.pd.DataFrame({"feature": [10, 20, 30, 40]})
+    y_cal = conformal_script.pd.Series([0.0, 1.0, 0.0, 1.0])
+    group_cal = conformal_script.pd.Series(["A", "B", "A", "C"])
+    y_prob_raw = conformal_script.np.array([0.1, 0.2, 0.3, 0.4])
+
+    split = _build_tuning_split(
+        cal_df=cal_df,
+        test_df=test_df,
+        X_cal=x_cal,
+        y_cal=y_cal,
+        group_cal_base=group_cal,
+        y_prob_cal_raw=y_prob_raw,
+        tuning_holdout_ratio=0.5,
+        tuning_random_state=7,
+    )
+
+    assert split.idx_cal_fit.tolist() == [0, 2]
+    assert split.idx_cal_tune.tolist() == [1, 3]
+    assert split.X_cal_fit["feature"].tolist() == [10, 30]
+    assert split.X_tune["feature"].tolist() == [20, 40]
+    assert split.y_cal_fit.tolist() == [0.0, 0.0]
+    assert split.y_tune.tolist() == [1.0, 1.0]
+    assert split.y_prob_cal_fit.tolist() == [0.1, 0.3]
+    assert split.y_prob_cal_tune.tolist() == [0.2, 0.4]
+    assert split.group_cal_fit_base.tolist() == ["A", "A"]
+    assert split.group_tune_base.tolist() == ["B", "C"]
+    assert split.issue_tune.isna().tolist() == [False, True]
+    assert split.issue_test.isna().tolist() == [False, True]
+
+
+def test_build_tuning_split_rejects_empty_holdout(monkeypatch: pytest.MonkeyPatch) -> None:
+    def fake_split_calibration_for_tuning(**kwargs):
+        return conformal_script.np.array([0, 1]), conformal_script.np.array([], dtype=int)
+
+    monkeypatch.setattr(
+        conformal_script,
+        "split_calibration_for_tuning",
+        fake_split_calibration_for_tuning,
+    )
+
+    with pytest.raises(ValueError, match="holdout split is empty"):
+        _build_tuning_split(
+            cal_df=conformal_script.pd.DataFrame({"feature": [1, 2]}),
+            test_df=conformal_script.pd.DataFrame({"feature": [3]}),
+            X_cal=conformal_script.pd.DataFrame({"feature": [1, 2]}),
+            y_cal=conformal_script.pd.Series([0.0, 1.0]),
+            group_cal_base=conformal_script.pd.Series(["A", "B"]),
+            y_prob_cal_raw=conformal_script.np.array([0.1, 0.2]),
+            tuning_holdout_ratio=0.5,
+            tuning_random_state=7,
+        )
