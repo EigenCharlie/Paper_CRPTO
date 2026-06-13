@@ -9,6 +9,7 @@ from scripts.train_pd_model import (
     _apply_pd_replay_manifest,
     _load_training_splits,
     _normalize_sample_size,
+    _prepare_training_inputs,
     _sample_training_splits,
 )
 
@@ -193,3 +194,53 @@ def test_normalize_sample_size_treats_non_positive_as_full_data(
 
 def test_normalize_sample_size_keeps_positive_integer() -> None:
     assert _normalize_sample_size(50) == 50
+
+
+def test_prepare_training_inputs_builds_model_ready_frames() -> None:
+    train = pd_train.pd.DataFrame(
+        {
+            "issue_d": pd_train.pd.date_range("2018-01-01", periods=10, freq="MS"),
+            "default_flag": [0, 1] * 5,
+            "score": [0.1, 0.2, None, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0],
+            "grade": ["A", "B", None, "C", "A", "B", "C", "A", "B", "C"],
+            "_recency_weight": [1.0 + i for i in range(10)],
+        }
+    )
+    cal = pd_train.pd.DataFrame(
+        {
+            "issue_d": pd_train.pd.date_range("2019-01-01", periods=2, freq="MS"),
+            "default_flag": [0, 1],
+            "score": [0.3, 0.4],
+            "grade": ["A", "C"],
+        }
+    )
+    test = pd_train.pd.DataFrame(
+        {
+            "issue_d": pd_train.pd.date_range("2020-01-01", periods=2, freq="MS"),
+            "default_flag": [1, 0],
+            "score": [None, 0.9],
+            "grade": ["B", None],
+        }
+    )
+
+    prepared = _prepare_training_inputs(
+        train,
+        cal,
+        test,
+        catboost_features=["score", "grade"],
+        categorical_features=["grade"],
+        logreg_features=["score"],
+        val_fraction=0.2,
+    )
+
+    assert len(prepared.train_fit) == 8
+    assert len(prepared.train_val) == 2
+    assert prepared.train_fit_weights.tolist() == [1.0 + i for i in range(8)]
+    assert prepared.train_val_weights.tolist() == [9.0, 10.0]
+    assert pd_train.pd.api.types.is_integer_dtype(prepared.y_train_fit)
+    assert prepared.y_cal.tolist() == [0, 1]
+    assert prepared.y_test.tolist() == [1, 0]
+    assert prepared.x_train_fit_cb.columns.tolist() == ["score", "grade"]
+    assert prepared.x_test_cb["grade"].tolist() == ["B", "UNKNOWN"]
+    assert prepared.x_test_lr.isna().sum().sum() == 0
+    assert prepared.lr_fill["score"] == prepared.x_train_fit_lr["score"].median()
