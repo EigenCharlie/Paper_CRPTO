@@ -237,8 +237,8 @@ stages:
       size: 12553447
     - path: scripts/generate_conformal_intervals.py
       hash: md5
-      md5: 7b0b683248279870e7e794900df90d20
-      size: 69771
+      md5: e5e12cc1392c2227a874f49403ed213b
+      size: 71336
     params:
       params.yaml:
         conformal.alpha: 0.01
