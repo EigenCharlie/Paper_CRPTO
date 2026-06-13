@@ -1,8 +1,13 @@
 from __future__ import annotations
 
+import numpy as np
 import pandas as pd
 
-from scripts.optimize_portfolio_tradeoff import _build_policy_grid, _select_champion_policy
+from scripts.optimize_portfolio_tradeoff import (
+    _build_policy_grid,
+    _prepare_tradeoff_inputs,
+    _select_champion_policy,
+)
 
 
 def test_build_policy_grid_preserves_tradeoff_frontier_contract() -> None:
@@ -22,6 +27,50 @@ def test_build_policy_grid_preserves_tradeoff_frontier_contract() -> None:
     assert all(0.0 <= gamma <= 1.0 for _, gamma, _, _ in grid)
     assert {delta_cap for _, _, delta_cap, _ in grid} == {0.50, 0.75, 0.90, 1.0}
     assert {tail_focus for _, _, _, tail_focus in grid} == {0.75, 0.90, 0.95, 1.0}
+
+
+def test_prepare_tradeoff_inputs_resolves_modern_interval_columns() -> None:
+    loans = pd.DataFrame(
+        {
+            "int_rate": ["10.5%", "8.0%", None],
+            "default_flag": [0, 1, None],
+        }
+    )
+    intervals = pd.DataFrame(
+        {
+            "y_pred": [0.10, 0.20, 0.30],
+            "pd_low_90": [0.05, 0.10, 0.20],
+            "pd_high_90": [0.15, 0.30, 0.40],
+        }
+    )
+
+    prepared = _prepare_tradeoff_inputs(loans, intervals)
+
+    np.testing.assert_allclose(prepared.pd_point, [0.10, 0.20, 0.30])
+    np.testing.assert_allclose(prepared.pd_low, [0.05, 0.10, 0.20])
+    np.testing.assert_allclose(prepared.pd_high, [0.15, 0.30, 0.40])
+    np.testing.assert_allclose(prepared.lgd, [0.45, 0.45, 0.45])
+    np.testing.assert_allclose(prepared.int_rates, [0.105, 0.08, 0.12])
+    np.testing.assert_array_equal(prepared.default_flag, [0, 1, 0])
+
+
+def test_prepare_tradeoff_inputs_uses_defaults_for_optional_loan_columns() -> None:
+    loans = pd.DataFrame({"loan_amnt": [1000.0, 2000.0]})
+    intervals = pd.DataFrame(
+        {
+            "pd_point": [0.11, 0.22],
+            "pd_low": [0.01, 0.02],
+            "pd_high": [0.31, 0.42],
+        }
+    )
+
+    prepared = _prepare_tradeoff_inputs(loans, intervals)
+
+    np.testing.assert_allclose(prepared.pd_point, [0.11, 0.22])
+    np.testing.assert_allclose(prepared.pd_low, [0.01, 0.02])
+    np.testing.assert_allclose(prepared.pd_high, [0.31, 0.42])
+    np.testing.assert_allclose(prepared.int_rates, [0.12, 0.12])
+    np.testing.assert_array_equal(prepared.default_flag, [0, 0])
 
 
 def test_select_champion_policy_exposes_dual_selectors() -> None:
