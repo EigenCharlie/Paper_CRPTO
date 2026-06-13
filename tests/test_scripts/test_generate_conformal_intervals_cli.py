@@ -10,6 +10,7 @@ from scripts.generate_conformal_intervals import (
     _parse_int_tuple,
     _parse_str_tuple,
     _resolve_tuning_grid,
+    _select_best_tuning_config,
 )
 
 
@@ -145,3 +146,83 @@ def test_build_tuning_split_rejects_empty_holdout(monkeypatch: pytest.MonkeyPatc
             tuning_holdout_ratio=0.5,
             tuning_random_state=7,
         )
+
+
+def test_select_best_tuning_config_materializes_promoted_config() -> None:
+    rows = [
+        {
+            "partition": "grade",
+            "partition_probability_source": "raw",
+            "n_score_bins": 10,
+            "fallback_mode": "grade_then_global",
+            "alpha_used_90": 0.10,
+            "scaled_scores": False,
+            "score_scale_family": "none",
+            "min_group_size": 200,
+            "empirical_coverage": 0.902,
+            "target_coverage": 0.9,
+            "coverage_gap": 0.002,
+            "avg_interval_width": 0.40,
+            "median_interval_width": 0.38,
+            "min_group_coverage": 0.901,
+            "max_group_coverage": 0.93,
+            "std_group_coverage": 0.01,
+            "winkler_90": 0.30,
+            "max_monthly_gap": 0.02,
+            "stability_over_time": 0.98,
+        },
+        {
+            "partition": "score_bin",
+            "partition_probability_source": "calibrated",
+            "n_score_bins": 5,
+            "fallback_mode": "global",
+            "alpha_used_90": 0.09,
+            "scaled_scores": True,
+            "score_scale_family": "bernoulli_sqrt",
+            "min_group_size": 500,
+            "empirical_coverage": 0.922,
+            "target_coverage": 0.9,
+            "coverage_gap": 0.022,
+            "avg_interval_width": 0.35,
+            "median_interval_width": 0.34,
+            "min_group_coverage": 0.912,
+            "max_group_coverage": 0.94,
+            "std_group_coverage": 0.01,
+            "winkler_90": 0.20,
+            "max_monthly_gap": 0.01,
+            "stability_over_time": 0.99,
+        },
+    ]
+
+    selection = _select_best_tuning_config(
+        rows,
+        partition_candidates=("grade", "score_bin"),
+        alpha_target_90=0.10,
+        min_group_coverage_target=0.90,
+        group_coverage_floor_target_90=0.92,
+        coverage_guardband_90=0.015,
+        min_group_guardband_90=0.0,
+        max_width_budget_90=0.80,
+        target_coverage_90=0.90,
+    )
+
+    assert {"is_pareto", "global_ok", "group_ok", "width_ok"}.issubset(selection.tuning_df.columns)
+    assert selection.selection_tier == "strong_global+strong_group+width"
+    assert selection.best_cfg == {
+        "partition": "score_bin",
+        "partition_candidates": ["grade", "score_bin"],
+        "partition_probability_source": "calibrated",
+        "n_score_bins": 5,
+        "fallback_mode": "global",
+        "alpha_target_90": 0.10,
+        "alpha_used_90": 0.09,
+        "scaled_scores": True,
+        "score_scale_family": "bernoulli_sqrt",
+        "min_group_size": 500,
+        "min_group_coverage_target": 0.90,
+        "group_coverage_floor_target_90": 0.92,
+        "coverage_guardband_90": 0.015,
+        "min_group_guardband_90": 0.0,
+        "max_width_budget_90": 0.80,
+        "selection_tier": "strong_global+strong_group+width",
+    }

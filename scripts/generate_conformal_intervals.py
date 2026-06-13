@@ -111,6 +111,16 @@ class ConformalTuningSplit:
     issue_test: pd.Series
 
 
+@dataclass(frozen=True)
+class ConformalTuningSelection:
+    """Selected 90% conformal tuning configuration and ranked table."""
+
+    tuning_df: pd.DataFrame
+    best_row: pd.Series
+    selection_tier: str
+    best_cfg: dict[str, Any]
+
+
 def _resolve_artifact_paths(namespace: str | None = None) -> dict[str, Path]:
     if namespace:
         ns = str(namespace).strip().replace("/", "_")
@@ -523,6 +533,65 @@ def _build_tuning_split(
     )
 
 
+def _select_best_tuning_config(
+    tuning_rows: list[dict[str, Any]],
+    *,
+    partition_candidates: tuple[str, ...],
+    alpha_target_90: float,
+    min_group_coverage_target: float,
+    group_coverage_floor_target_90: float,
+    coverage_guardband_90: float,
+    min_group_guardband_90: float,
+    max_width_budget_90: float | None,
+    target_coverage_90: float,
+) -> ConformalTuningSelection:
+    """Rank tuning rows and materialize the promoted 90% conformal config."""
+    tuning_df = pd.DataFrame(tuning_rows)
+    tuning_df["is_pareto"] = mark_pareto_front(tuning_df)
+    tuning_df["global_ok"] = tuning_df["empirical_coverage"] >= target_coverage_90
+    tuning_df["group_ok"] = tuning_df["min_group_coverage"] >= min_group_coverage_target
+    if max_width_budget_90 is None:
+        tuning_df["width_ok"] = True
+    else:
+        tuning_df["width_ok"] = tuning_df["avg_interval_width"] <= max_width_budget_90
+    tuning_df = tuning_df.sort_values(
+        by=["empirical_coverage", "min_group_coverage", "winkler_90", "avg_interval_width"],
+        ascending=[False, False, True, True],
+    )
+    best_row, selection_tier = choose_best_tuning_row(
+        tuning_df,
+        target_coverage=target_coverage_90,
+        min_group_coverage_target=min_group_coverage_target,
+        max_width_budget=max_width_budget_90,
+        coverage_guardband=coverage_guardband_90,
+        min_group_guardband=min_group_guardband_90,
+    )
+    best_cfg: dict[str, Any] = {
+        "partition": str(best_row.get("partition", partition_candidates[0])),
+        "partition_candidates": list(partition_candidates),
+        "partition_probability_source": str(best_row.get("partition_probability_source", "raw")),
+        "n_score_bins": int(best_row.get("n_score_bins", 10)),
+        "fallback_mode": str(best_row.get("fallback_mode", "grade_then_global")),
+        "alpha_target_90": float(alpha_target_90),
+        "alpha_used_90": float(best_row["alpha_used_90"]),
+        "scaled_scores": bool(best_row["scaled_scores"]),
+        "score_scale_family": str(best_row.get("score_scale_family", "none")),
+        "min_group_size": int(best_row["min_group_size"]),
+        "min_group_coverage_target": float(min_group_coverage_target),
+        "group_coverage_floor_target_90": float(group_coverage_floor_target_90),
+        "coverage_guardband_90": float(coverage_guardband_90),
+        "min_group_guardband_90": float(min_group_guardband_90),
+        "max_width_budget_90": None if max_width_budget_90 is None else float(max_width_budget_90),
+        "selection_tier": selection_tier,
+    }
+    return ConformalTuningSelection(
+        tuning_df=tuning_df,
+        best_row=best_row,
+        selection_tier=selection_tier,
+        best_cfg=best_cfg,
+    )
+
+
 def _parse_float_tuple(raw: str) -> tuple[float, ...]:
     values = [float(token.strip()) for token in str(raw).split(",") if token.strip()]
     if not values:
@@ -809,44 +878,21 @@ def main(
                                         }
                                     )
 
-    tuning_df = pd.DataFrame(tuning_rows)
-    tuning_df["is_pareto"] = mark_pareto_front(tuning_df)
-    tuning_df["global_ok"] = tuning_df["empirical_coverage"] >= target_coverage_90
-    tuning_df["group_ok"] = tuning_df["min_group_coverage"] >= min_group_coverage_target
-    if max_width_budget_90 is None:
-        tuning_df["width_ok"] = True
-    else:
-        tuning_df["width_ok"] = tuning_df["avg_interval_width"] <= max_width_budget_90
-    tuning_df = tuning_df.sort_values(
-        by=["empirical_coverage", "min_group_coverage", "winkler_90", "avg_interval_width"],
-        ascending=[False, False, True, True],
-    )
-    best_row, selection_tier = choose_best_tuning_row(
-        tuning_df,
-        target_coverage=target_coverage_90,
+    tuning_selection = _select_best_tuning_config(
+        tuning_rows,
+        partition_candidates=partition_candidates,
+        alpha_target_90=alpha_target_90,
         min_group_coverage_target=min_group_coverage_target,
-        max_width_budget=max_width_budget_90,
-        coverage_guardband=coverage_guardband_90,
-        min_group_guardband=min_group_guardband_90,
+        group_coverage_floor_target_90=group_coverage_floor_target_90,
+        coverage_guardband_90=coverage_guardband_90,
+        min_group_guardband_90=min_group_guardband_90,
+        max_width_budget_90=max_width_budget_90,
+        target_coverage_90=target_coverage_90,
     )
-    best_cfg: dict[str, Any] = {
-        "partition": str(best_row.get("partition", partition_candidates[0])),
-        "partition_candidates": list(partition_candidates),
-        "partition_probability_source": str(best_row.get("partition_probability_source", "raw")),
-        "n_score_bins": int(best_row.get("n_score_bins", 10)),
-        "fallback_mode": str(best_row.get("fallback_mode", "grade_then_global")),
-        "alpha_target_90": float(alpha_target_90),
-        "alpha_used_90": float(best_row["alpha_used_90"]),
-        "scaled_scores": bool(best_row["scaled_scores"]),
-        "score_scale_family": str(best_row.get("score_scale_family", "none")),
-        "min_group_size": int(best_row["min_group_size"]),
-        "min_group_coverage_target": float(min_group_coverage_target),
-        "group_coverage_floor_target_90": float(group_coverage_floor_target_90),
-        "coverage_guardband_90": float(coverage_guardband_90),
-        "min_group_guardband_90": float(min_group_guardband_90),
-        "max_width_budget_90": None if max_width_budget_90 is None else float(max_width_budget_90),
-        "selection_tier": selection_tier,
-    }
+    tuning_df = tuning_selection.tuning_df
+    best_row = tuning_selection.best_row
+    selection_tier = tuning_selection.selection_tier
+    best_cfg = tuning_selection.best_cfg
     logger.info(
         "Best 90% tuning config: "
         f"partition={best_cfg['partition']}, "
