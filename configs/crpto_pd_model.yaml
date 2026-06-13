@@ -33,7 +33,7 @@ model:
 
 feature_source:
   mode: feature_config
-  feature_config_path: data/processed/feature_config.pkl
+  feature_config_path: data/processed/feature_config.yml
 
 hpo:
   enabled: false

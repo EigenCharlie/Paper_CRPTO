@@ -1,10 +1,4 @@
-"""Round-trip tests for ``src.features.feature_config_io``.
-
-The frozen pipeline still writes ``data/processed/feature_config.pkl``;
-this module adds a YAML companion path that downstream code can adopt
-gradually. The tests verify equivalence between the two formats and the
-auto fallback behaviour.
-"""
+"""Round-trip tests for ``src.features.feature_config_io``."""
 
 from __future__ import annotations
 
@@ -46,20 +40,20 @@ def test_load_prefers_yaml_over_pickle(tmp_path: Path) -> None:
     assert loaded["NUMERIC_FEATURES"] == ["from_yaml"]
 
 
-def test_load_falls_back_to_pickle_when_yaml_absent(tmp_path: Path) -> None:
+def test_load_auto_falls_back_to_pickle_when_yaml_absent(tmp_path: Path) -> None:
     pkl_target = tmp_path / "data" / "processed" / "feature_config.pkl"
     pkl_target.parent.mkdir(parents=True, exist_ok=True)
     joblib.dump({"NUMERIC_FEATURES": ["from_pickle"]}, pkl_target)
-    loaded = load_feature_config(repo_root=tmp_path)
+    loaded = load_feature_config(repo_root=tmp_path, prefer="auto")
     assert loaded["NUMERIC_FEATURES"] == ["from_pickle"]
 
 
-def test_load_prefer_yaml_falls_back_to_pickle(tmp_path: Path) -> None:
+def test_load_prefer_yaml_does_not_fall_back_to_pickle(tmp_path: Path) -> None:
     pkl_target = tmp_path / "data" / "processed" / "feature_config.pkl"
     pkl_target.parent.mkdir(parents=True, exist_ok=True)
     joblib.dump({"NUMERIC_FEATURES": ["from_pickle"]}, pkl_target)
-    loaded = load_feature_config(repo_root=tmp_path, prefer="yaml")
-    assert loaded["NUMERIC_FEATURES"] == ["from_pickle"]
+    with pytest.raises(FileNotFoundError):
+        load_feature_config(repo_root=tmp_path, prefer="yaml")
 
 
 def test_load_prefer_yaml_raises_when_missing(tmp_path: Path) -> None:
@@ -79,6 +73,16 @@ def test_pickle_to_yaml_round_trip(tmp_path: Path) -> None:
     pickle_to_yaml(pickle_path=pkl, yaml_path=yml)
     loaded = yaml.safe_load(yml.read_text(encoding="utf-8"))
     assert loaded == SAMPLE_CONFIG
+
+
+def test_save_with_parquet_round_trip(tmp_path: Path) -> None:
+    save_feature_config(SAMPLE_CONFIG, repo_root=tmp_path, also_parquet=True)
+    yml = tmp_path / "data" / "processed" / "feature_config.yml"
+    parquet = tmp_path / "data" / "processed" / "feature_config.parquet"
+
+    assert yml.is_file()
+    assert parquet.is_file()
+    assert load_feature_config(repo_root=tmp_path, prefer="parquet") == SAMPLE_CONFIG
 
 
 def test_save_also_pickle_writes_both(tmp_path: Path) -> None:
@@ -102,8 +106,7 @@ def test_save_rejects_unknown_prefer_value(tmp_path: Path) -> None:
 
 @pytest.mark.integration
 def test_champion_pickle_yaml_round_trip(tmp_path: Path) -> None:
-    """If the frozen ``feature_config.pkl`` is on disk, the YAML companion
-    we generate should round-trip to the same Python dict."""
+    """Legacy pickle audits can still round-trip to YAML when a pickle exists."""
     if not DEFAULT_PICKLE_PATH.is_file():
         pytest.skip(f"{DEFAULT_PICKLE_PATH} not available locally.")
     original = joblib.load(DEFAULT_PICKLE_PATH)

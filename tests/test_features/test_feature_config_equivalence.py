@@ -1,4 +1,4 @@
-"""Equivalence tests for the frozen feature_config pickle and YAML views."""
+"""Equivalence tests for feature_config representations."""
 
 from __future__ import annotations
 
@@ -8,7 +8,7 @@ from typing import Any
 import pytest
 
 from src.features.feature_config_io import (
-    DEFAULT_PICKLE_PATH,
+    DEFAULT_PARQUET_PATH,
     DEFAULT_YAML_PATH,
     load_feature_config,
 )
@@ -42,24 +42,24 @@ def _skip_if_missing(path: Path) -> None:
 
 
 @pytest.mark.integration
-def test_frozen_feature_config_pickle_yaml_equivalence() -> None:
-    """The champion YAML companion must preserve the pickle feature contract."""
-    _skip_if_missing(DEFAULT_PICKLE_PATH)
+def test_frozen_feature_config_yaml_parquet_equivalence() -> None:
+    """The champion Parquet table must preserve the YAML feature contract."""
     _skip_if_missing(DEFAULT_YAML_PATH)
+    _skip_if_missing(DEFAULT_PARQUET_PATH)
 
-    pickle_cfg = load_feature_config(prefer="pickle")
     yaml_cfg = load_feature_config(prefer="yaml")
+    parquet_cfg = load_feature_config(prefer="parquet")
 
-    assert set(yaml_cfg) == set(pickle_cfg)
+    assert set(parquet_cfg) == set(yaml_cfg)
     for key in CORE_EQUIVALENCE_KEYS:
-        assert yaml_cfg[key] == pickle_cfg[key]
+        assert parquet_cfg[key] == yaml_cfg[key]
 
     for key in OPTIONAL_EQUIVALENCE_KEYS:
-        if key in pickle_cfg or key in yaml_cfg:
-            assert yaml_cfg.get(key) == pickle_cfg.get(key)
+        if key in yaml_cfg or key in parquet_cfg:
+            assert parquet_cfg.get(key) == yaml_cfg.get(key)
 
 
-def test_yaml_first_loader_preserves_explicit_pickle_escape_hatch(tmp_path: Path) -> None:
+def test_loader_preserves_explicit_pickle_escape_hatch(tmp_path: Path) -> None:
     """Consumers can still force the legacy pickle when auditing format drift."""
     pkl = tmp_path / "feature_config.pkl"
     yml = tmp_path / "feature_config.yml"

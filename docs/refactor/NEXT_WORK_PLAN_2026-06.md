@@ -59,9 +59,41 @@ los PRs #52--#67 y el estado actual de `main`.
   `selection_slice_2018` con `V=0.030475`, coverage `0.9550`, pass `True`; y
   `confirmation_slice_2019_2020` con `V=0.082100`, coverage `0.9259`, pass
   `True`.
-- **C3/C4 siguen calendar/remote-gated.** No se fuerza `dvc push` el
-  2026-06-13 ni se ejecuta freeze ScholarOne fuera de la ventana Jul 25--Ago
-  10.
+- **Estado en PR #68:** C3/C4 seguían calendar/remote-gated. En la corrida
+  run-tag aprobada de esta sesión, C3 se ejecutó; C4 sigue prohibido.
+
+## Ejecución Codex (2026-06-13, run-tag aprobado)
+
+Carlos autorizó completar lo pendiente excepto freeze/submission. En la rama
+`codex/run-tag-approved-cleanup-2026-06` se cerró **A2 fase 4**:
+
+- `crpto.data.features` se re-materializó una vez para retirar
+  `data/processed/feature_config.pkl` y producir
+  `data/processed/feature_config.yml` + `data/processed/feature_config.parquet`.
+- `feature_config.yml` conservó su SHA256 exacto; los Parquets de features y
+  `feature_manifest_v2.parquet` también conservaron sus hashes DVC.
+- `feature_manifest_v2.json` cambió sólo como serialización JSON generada por
+  el stage; se registró en `EXTRACTION_MANIFEST.json` junto con el nuevo
+  `feature_config.parquet`.
+- Los consumidores vivos (`configs/crpto_pd_model.yaml`, `pd_model.py`,
+  `train_pd_model.py`, `generate_conformal_intervals.py`) apuntan a YAML. El
+  loader mantiene `prefer="pickle"` sólo como escape hatch explícito para
+  auditoría legacy.
+- `crpto.pd.champion` y `crpto.conformal.intervals` **no se re-ejecutaron**:
+  sólo se re-keyearon sus deps con `dvc commit -f` después de confirmar
+  `just drift-gate` con diff `0.000e+00`.
+- Hallazgo adicional ejecutado: el sandbox histórico de regret-auditability
+  dejó de leer el pickle directo y usa el helper YAML/Parquet (`prefer="auto"`)
+  si alguien lo corre en rama.
+
+Resultado local: `just validate-champion`, `just drift-gate`,
+`just dvc-status` y los tests focales de feature-config quedaron verdes.
+
+**C3 ejecutado en la misma sesión:** primero
+`uv run dvc push -j 1 data/processed/loan_master.parquet` respondió
+`Everything is up to date`; luego `uv run dvc push -j 2` completó
+correctamente y subió `1 file` (el nuevo artefacto faltante en el remote tras
+A2 fase 4).
 
 ---
 
@@ -76,7 +108,7 @@ archivos) y la suite completa. Veredicto por lane:
 | Lane | Calidad | Nota |
 | --- | --- | --- |
 | **A1** conformal split | Excelente | Fachada `conformal/__init__.py` re-exporta todo; `conformal_adapters.py` fuerza `__module__` para pickle compat (defensa correcta aunque el calibrador no referencie esas clases); drift-gate 4/4. |
-| **A2** feature_config YAML | Buena | `prefer="yaml"` con fallback pickle; test de equivalencia pkl↔yml; pkl intacto. |
+| **A2** feature_config YAML | Buena | `prefer="yaml"` con fallback pickle; test de equivalencia pkl↔yml; pkl intacto en PR #68. **Superado por A2 fase 4:** el pkl ya fue retirado en la corrida run-tag aprobada. |
 | **B1** DVC DAG | Correcto + **gap reparado** | metadata-only, hashes intactos. Ver abajo. |
 | **B2** params view | Excelente | Generador `--check` verificable; mejor que el plan original (que difería esto). |
 
@@ -162,7 +194,7 @@ Cada cambio que regenere artefactos se hace **en rama** y se evalúa contra:
 
 ## QUÉ HACER AHORA — instrucciones para Codex (2026-06-13, run-tag aprobado)
 
-El refactor de código (A1, A2 fases 1-3, B1, B2) está **cerrado y verificado**.
+El refactor de código (A1, A2 fases 1-4, B1, B2) está **cerrado y verificado**.
 Con la aprobación de run-tag, esto es lo que puedes hacer ya, ordenado por
 seguridad. **Todo en rama; cada paso se mantiene solo si queda bien hecho.**
 
@@ -176,18 +208,15 @@ seguridad. **Todo en rama; cada paso se mantiene solo si queda bien hecho.**
    números contra artefactos (`test_lineage_consistency`).
 
 **Permitido con run-tag (regenera artefactos congelados; ver "cómo revertir"):**
-4. **A2 fase 4** — completar la migración feature_config: dejar de escribir el
-   pkl, regenerar `crpto.data.features` para producir solo YAML/Parquet,
-   actualizar el manifest. Detalle en la sección A2 de abajo.
-5. **Re-run validado de la cadena** — ahora que el DAG está completo (B1), se
+4. **Re-run validado de la cadena** — ahora que el DAG está completo (B1), se
    puede `dvc repro` de `crpto.data.splits → features → champion → conformal`
    en rama para confirmar reproducibilidad (o documentar el drift esperado y
    decidir si se promueve a run-tag nuevo).
-6. Cualquier mejora que requiera re-entrenar/re-derivar, **siempre que el
+5. Cualquier mejora que requiera re-entrenar/re-derivar, **siempre que el
    linaje quede coherente de punta a punta en una sola corrida**.
 
 **Prohibido hasta nueva orden:**
-7. **Freeze de submission y submission misma** (Lane C4). Queda tiempo; no se
+6. **Freeze de submission y submission misma** (Lane C4). Queda tiempo; no se
    congela ni se envía todavía.
 
 **Antes de cualquier commit**, correr el gate universal del final. Si tocaste
@@ -285,44 +314,29 @@ defensa y deja el último módulo grande de `src/` bajo strict mypy.
 
 ### A2. `feature_config.pkl` → Parquet/YAML (retirar el pickle)
 
-**Estado 2026-06-13:** fases 1--3 ejecutadas. **Fase 4 DESBLOQUEADA** por la
-aprobación de run-tag (ya no espera permiso caso por caso). Ver "qué hacer"
-abajo, fase 4.
+**Estado 2026-06-13:** fases 1--4 ejecutadas. `feature_config.pkl` fue retirado
+del DAG vivo y del manifest; `feature_config.yml` + `feature_config.parquet`
+son ahora el contrato activo.
 
-**Estado actual (verificado):** el dual-write **ya existe parcialmente**.
-`src/features/feature_config_io.py` lee YAML con fallback a pickle
-(`prefer="auto"`), `materialize_feature_artifacts.py` escribe ambos
-(`feature_config.pkl` + `feature_config.yml`), y los consumidores
+**Estado actual (verificado):** `src/features/feature_config_io.py` lee YAML
+estricto por defecto, puede leer Parquet explícitamente, y conserva pickle sólo
+como escape hatch de auditoría legacy. `materialize_feature_artifacts.py`
+escribe YAML/Parquet y ya no escribe pkl. Los consumidores vivos
 (`feature_engineering.py`, `pd_model.py`, `generate_conformal_intervals.py`,
-`train_pd_model.py`) ya pasan por `load_feature_config`. Falta el **paso de
-retiro**: hacer que la lectura prefiera YAML/Parquet por defecto y eventualmente
-dejar de escribir el pkl.
+`train_pd_model.py`) pasan por `load_feature_config` y apuntan a YAML.
 
 **Qué hacer (fases, según `FEATURE_CONFIG_PARQUET_PLAN.md`):**
-1. Confirmar equivalencia campo-a-campo pkl↔yml en el champion congelado con
-   un test nuevo `tests/test_features/test_feature_config_equivalence.py`
-   (cargar ambos vía `load_feature_config(prefer="pickle")` y
-   `prefer="yaml")`, asertar igualdad de `CATBOOST_FEATURES`,
-   `CATEGORICAL_FEATURES`, `LOGREG_FEATURES`, binning, monotone constraints).
-2. Cambiar el `prefer` por defecto de los consumidores a `"yaml"` con
-   fallback pickle.
-3. **Drift-gate VERDE** (el champion debe seguir entrenando/replay-eando
-   idéntico al leer YAML en vez de pkl).
-4. **Fase 4 (ahora ejecutable con run-tag):** retirar el pkl. Como
-   `feature_config.pkl` está en `EXTRACTION_MANIFEST.json`, el retiro implica:
-   (a) dejar de escribirlo en `materialize_feature_artifacts.py`; (b)
-   regenerar `crpto.data.features` para que produzca solo YAML/Parquet; (c)
-   re-derivar la cadena downstream coherentemente o confirmar que el champion
-   sigue leyendo idéntico desde YAML (drift-gate); (d) actualizar el manifest
-   (quitar el pkl, añadir el Parquet/YAML con su hash). **Hacer en rama y
-   validar coherencia completa antes de mergear.** Si el champion entrena/
-   replay-ea idéntico desde YAML (lo esperado, dado que el contenido es el
-   mismo), el drift-gate sigue verde y NO es un cambio de modelo — es retiro
-   limpio de un formato redundante.
+1. Cerrado: equivalencia pkl↔yml en PR #68 y equivalencia YAML↔Parquet en la
+   fase 4.
+2. Cerrado: consumidores vivos leen YAML por defecto.
+3. Cerrado: `just drift-gate` verde con diff bit-exacto `0.000e+00`.
+4. Cerrado: `feature_config.pkl` salió de `dvc.yaml`, `dvc.lock`,
+   `EXTRACTION_MANIFEST.json` y del checkout local; `feature_config.parquet`
+   quedó registrado con hash propio.
 
-**Criterio de aceptación:** consumidores leen YAML por defecto; equivalencia
-testeada; drift-gate verde (fases 1-3) o coherencia de linaje completa (fase 4);
-manifest consistente con lo que queda en disco.
+**Criterio de aceptación:** cumplido. Consumidores leen YAML por defecto,
+equivalencia YAML/Parquet testeada, drift-gate verde, manifest consistente con
+lo que queda en disco.
 
 **Riesgo:** Medio. Toca la ruta de features que alimenta el champion. El
 drift-gate es el juez. Rama dedicada. **Requiere `dvc commit` con patch
@@ -396,11 +410,11 @@ temporales pasan el exact check** (antes el de confirmación fallaba). La §7
 número actual en `crpto_tableA9_strict_temporal_holdout.csv` antes de redactar.
 
 ### C3. Reproducibility package + `dvc push` (Jul 25–31)
-`dvc push` al remote DagsHub estaba bloqueado por mantenimiento del servidor
-(objeto `.dir` corrupto del lado remoto + 405s). Reintentar cuando DagsHub
-salga de mantenimiento: `uv run dvc push -j 1 data/processed/loan_master.parquet`
-primero (el objeto problemático), luego `uv run dvc push -j 2`. El cover
-letter ya puede citar el drift harness por nombre como evidencia ejecutable.
+**Estado 2026-06-13:** ejecutado. El push focal a
+`data/processed/loan_master.parquet` confirmó que el objeto grande ya estaba
+sincronizado; `uv run dvc push -j 2` terminó OK y subió `1 file`.
+El cover letter ya puede citar el drift harness por nombre como evidencia
+ejecutable.
 
 ### C4. Freeze de submission — **PROHIBIDO hasta nueva orden** (no es Ago 6-10)
 QA doble-anonimato (`SCHOLARONE_FINAL_CHECKLIST.md`), recompilación final
@@ -449,12 +463,10 @@ nueva, reabrir con justificación.
 
 ## Secuencia recomendada
 
-1. **Cerrado y verificado (2026-06-13):** A1, A2 fases 1--3, B1, B2.
-2. **Ejecutable ya, en rama, con run-tag aprobado:** A2 fase 4 (retiro del pkl),
-   mejoras editoriales del paper/libro, cualquier re-derivación coherente. Ver
-   "QUÉ HACER AHORA".
+1. **Cerrado y verificado (2026-06-13):** A1, A2 fases 1--4, B1, B2.
+2. **Ejecutable ya, en rama, con run-tag aprobado:** mejoras editoriales del
+   paper/libro y cualquier re-derivación coherente. Ver "QUÉ HACER AHORA".
 3. **Prohibido hasta nueva orden:** freeze de submission y submission (C4).
-4. **Lo demás de C (C3 `dvc push`):** cuando DagsHub salga de mantenimiento.
 
 ## Gate universal (correr tras cada PR; obligatorio antes de mergear)
 

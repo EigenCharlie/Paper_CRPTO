@@ -85,11 +85,9 @@ def test_journal_strengthening_pack_classifies_current_and_backlog_items() -> No
 
     body = Path("paper/CRPTO_ijds.qmd").read_text(encoding="utf-8")
     supplement = Path("paper/supplement_ijds.qmd").read_text(encoding="utf-8")
-    closure = Path("docs/research/crpto_submission_closure_2026-05-12.md").read_text(
-        encoding="utf-8"
-    )
+    paper_readme = Path("paper/README.md").read_text(encoding="utf-8")
 
-    for text in (body, supplement, closure):
+    for text in (body, supplement, paper_readme):
         assert "regret-auditability" in text.lower()
         assert "OCE/CVaR" in text
         assert "satisficing" in text.lower()

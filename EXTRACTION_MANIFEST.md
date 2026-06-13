@@ -10,7 +10,7 @@ exists, and how `tests/test_manifest_regression.py` enforces it.
 
 - **Schema version**: 5 (top-level key `schema_version`).
 - **Champion run tag**: `ijds-rebaseline-2026-06-07`.
-- **150 critical files** are hashed under `critical_hashes` (SHA256 + byte
+- **170 critical files** are hashed under `critical_hashes` (SHA256 + byte
   count).
 - **6 files are flagged as non-overwriteable** without a fresh run tag:
   - `models/pd_canonical.cbm`
@@ -22,6 +22,9 @@ exists, and how `tests/test_manifest_regression.py` enforces it.
 - **Regenerable from frozen inputs** (allowed to drift):
   - `models/crpto_evidence_status.json`
   - `models/crpto_journal_package_status.json`
+- **Feature contract**: `data/processed/feature_config.yml` plus
+  `data/processed/feature_config.parquet`; the legacy
+  `feature_config.pkl` was retired in the 2026-06-13 run-tag-approved cleanup.
 - **Source code, the Quarto book, CI files** are intentionally **not**
   bit-frozen — they evolve as documentation and tooling improve.
 

@@ -270,12 +270,12 @@ def _resolve_features(
         return model_features, categorical
 
     # Fallback path if model metadata is unavailable.
-    feature_cfg_path = Path("data/processed/feature_config.pkl")
+    feature_cfg_path = Path("data/processed/feature_config.yml")
     feature_cfg: dict[str, Any] = {}
     try:
         feature_cfg = load_feature_config_artifact(
-            pickle_path=feature_cfg_path,
-            yaml_path=feature_cfg_path.with_suffix(".yml"),
+            pickle_path=feature_cfg_path.with_suffix(".pkl"),
+            yaml_path=feature_cfg_path,
             prefer="yaml",
         )
     except (FileNotFoundError, TypeError) as exc:

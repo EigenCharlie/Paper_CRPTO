@@ -80,6 +80,18 @@ conformal_output_schema = pa.DataFrameSchema(
     strict=False,
 )
 
+feature_config_table_schema = pa.DataFrameSchema(
+    columns={
+        "section": pa.Column(str, nullable=False),
+        "kind": pa.Column(str, pa.Check.isin(["list", "dict", "scalar"]), nullable=False),
+        "ordinal": pa.Column(int, pa.Check.greater_than_or_equal_to(0), nullable=False),
+        "key": pa.Column(str, nullable=True),
+        "value_json": pa.Column(str, nullable=False),
+    },
+    coerce=True,
+    strict=True,
+)
+
 
 def validate_conformal_output(df: pd.DataFrame) -> pd.DataFrame:
     """Validate conformal intervals DataFrame."""
@@ -99,6 +111,11 @@ def validate_time_series(df: pd.DataFrame) -> pd.DataFrame:
 def validate_predictions(df: pd.DataFrame) -> pd.DataFrame:
     """Validate prediction output DataFrame."""
     return prediction_schema.validate(df)
+
+
+def validate_feature_config_table(df: pd.DataFrame) -> pd.DataFrame:
+    """Validate the long-form feature configuration table."""
+    return feature_config_table_schema.validate(df)
 
 
 # ---------------------------------------------------------------------------

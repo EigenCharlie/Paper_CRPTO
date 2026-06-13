@@ -47,7 +47,7 @@
 **Data Leakage Prevention**: Post-loan variables removed in `src/data/make_dataset.py`:
 total_pymnt, total_rec_*, recoveries, collection_recovery_fee, out_prncp*, last_pymnt_*, settlement_*, hardship_*, funded_amnt*.
 
-**Feature Engineering**: The rerun V2 introduced a canonical feature producer that materializes `train_fe`, `calibration_fe`, `test_fe`, `feature_config.pkl`, `woe_encoders.pkl`, and `feature_manifest_v2`. The official champion now freezes a **42-feature contract**, while the broader FE universe retains additional bureau, ratio, missingness-flag, and challenger-only variables. Schema enforced by Pandera (`src/features/schemas.py`).
+**Feature Engineering**: The rerun V2 introduced a canonical feature producer that materializes `train_fe`, `calibration_fe`, `test_fe`, `feature_config.yml`, `feature_config.parquet`, `woe_encoders.pkl`, and `feature_manifest_v2`. The official champion now freezes a **42-feature contract**, while the broader FE universe retains additional bureau, ratio, missingness-flag, and challenger-only variables. Schema enforced by Pandera (`src/features/schemas.py`).
 
 ### 2.2 Methodology
 

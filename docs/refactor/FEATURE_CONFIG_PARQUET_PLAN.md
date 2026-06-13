@@ -1,19 +1,17 @@
 # `feature_config.pkl` → Parquet + schema migration plan
 
-**Status**: YAML dual-write and YAML-first reader migration are executed as of
-2026-06-13. The pipeline still preserves `feature_config.pkl`, but
-`src/features/feature_config_io.py` reads YAML by default with pickle fallback,
-and the main PD/conformal consumers use that path explicitly. The full
-Parquet/dataclass replacement and pkl retirement remain deferred because they
-cascade through `crpto.data.features` and downstream manifest/champion locks.
+**Status**: Executed as of 2026-06-13. The live pipeline now writes
+`data/processed/feature_config.yml` plus
+`data/processed/feature_config.parquet`, and no longer writes or tracks
+`feature_config.pkl`. The downstream champion/conformal stages were re-keyed
+without re-running CatBoost; `just drift-gate` stayed bit-exact.
 
 ## Context
 
-`data/processed/feature_config.pkl` is a Python pickle produced by
-`scripts/materialize_feature_artifacts.py` and consumed by every script
-that needs the feature encoding (WoE bins, monotone constraints, dtype
-hints, training feature order). Pickles have well-known portability and
-security drawbacks:
+`data/processed/feature_config.pkl` used to be a Python pickle produced by
+`scripts/materialize_feature_artifacts.py` and consumed by scripts that need
+the feature contract (feature order, categorical features, challenger pools
+and IV scores). Pickles have well-known portability and security drawbacks:
 
 - The class types and module paths are baked in. Any rename in `src/features`
   breaks deserialisation.
@@ -23,13 +21,13 @@ security drawbacks:
 
 ## Target representation
 
-Two artefacts replacing the single pickle:
+Two artefacts replaced the single pickle:
 
-1. **`data/processed/feature_config.parquet`** — the data tables that today
-   live inside the pickle (binning rules, woe values, monotone constraint
-   vectors). Schema declared via Pandera.
-2. **`configs/feature_config.yml`** — the small scalar metadata (feature
-   order, target column, calibration choice, training seed).
+1. **`data/processed/feature_config.yml`** — the canonical human-readable
+   mapping used by live consumers.
+2. **`data/processed/feature_config.parquet`** — a long-form table with
+   columns `section`, `kind`, `ordinal`, `key`, `value_json`, validated by a
+   Pandera schema for reviewers and MRM inspection.
 
 A loader helper:
 
@@ -38,13 +36,14 @@ A loader helper:
 def load_feature_config(
     repo_root: Path | None = None,
 ) -> FeatureConfig:
-    """Read Parquet + YAML and reconstruct the FeatureConfig dataclass."""
+    """Read YAML, Parquet, or an explicit legacy pickle audit path."""
 ```
 
-`FeatureConfig` becomes a `@dataclass(frozen=True)` instead of an arbitrary
-pickled object — easier to type-check, diff in PRs, and serialise.
+The project kept the existing `dict[str, Any]` API because all live consumers
+already expect dictionaries and the object contains no fitted transformers.
+That is simpler than introducing a dataclass solely for this academic repo.
 
-## Why it was not executed in the bootstrap
+## Execution notes
 
 `scripts/materialize_feature_artifacts.py` is a stage in `dvc.yaml`:
 
@@ -57,16 +56,17 @@ crpto.data.features:
     - data/processed/calibration_fe.parquet
 ```
 
-Changing the output format triggers a re-run of every downstream stage,
-including `crpto.pd.champion` and `crpto.conformal.intervals` — exactly the
-stages on the deny-list. Migrating without re-runs requires writing the new
-format alongside the legacy `.pkl` for one cycle.
+Changing the output format required one re-run of `crpto.data.features`. The
+feature Parquets remained byte-identical, `feature_config.yml` kept its
+existing SHA256, and only `feature_config.parquet` plus the JSON serialization
+of `feature_manifest_v2.json` changed. The champion and conformal stages were
+not reproduced; their DVC dep hashes were accepted with `dvc commit -f` after
+`just drift-gate` showed zero numerical drift.
 
 ## Acceptance criteria
 
-1. **Dual-write phase.** `materialize_feature_artifacts.py` writes BOTH
-   `.pkl` (legacy) and `.parquet` + `.yml` (new) on every run for one
-   release cycle. Consumers keep reading the pickle.
+1. **Dual-write phase.** Completed before phase 4: YAML was written next to
+   the pickle and consumers moved to YAML-first loading.
 
 2. **Reader migration.** Each consumer adds a fallback:
 
@@ -77,27 +77,24 @@ format alongside the legacy `.pkl` for one cycle.
        cfg = joblib.load("data/processed/feature_config.pkl")
    ```
 
-   Switch the preferred path to Parquet+YAML.
+   Completed. Live consumers now point at `feature_config.yml`; explicit
+   `prefer="pickle"` remains only for legacy audits.
 
-3. **Round-trip test.** Pickled config and Parquet+YAML config must be
-   semantically identical on the existing champion. Compare via
-   `dataclass.asdict()` on the deserialised objects.
+3. **Round-trip test.** Completed. Tests cover YAML/Parquet equivalence on the
+   current frozen contract and retain a small explicit-pickle escape hatch.
 
-4. **Drop the pickle.** Once all consumers have moved, remove the
-   `.pkl` write and the fallback branch. New champion run-tag captures the
-   change.
+4. **Drop the pickle.** Completed. `feature_config.pkl` is no longer a DVC out,
+   no longer in `EXTRACTION_MANIFEST.json`, and is absent from the local
+   `data/processed` checkout after `dvc checkout`.
 
 ## Risks
 
-- Schema gaps: some legacy pickles store scikit-learn objects (encoders,
-  fitted transformers). Parquet cannot serialise those directly. Two
-  options: keep them inside a small companion `.joblib` blob inside
-  `data/processed/` (only the fitted estimators), or refit them on demand.
-- Determinism: the order of WoE bins iterates over a Python `dict` in the
-  legacy code. Confirm that the Parquet variant preserves the iteration
-  order or wraps it explicitly.
+- Historical search scripts may still write pickle snapshots inside their
+  external experiment bundles. That is separate from the live CRPTO feature
+  contract and remains outside the frozen champion DAG.
+- The Parquet table stores JSON values with explicit `ordinal` fields so list
+  order is stable.
 
 ## Timing
 
-Schedule together with the MAPIE migration and the conformal split — all
-three sit in the same "freshen the champion" window.
+Completed in the 2026-06-13 run-tag-approved cleanup window.

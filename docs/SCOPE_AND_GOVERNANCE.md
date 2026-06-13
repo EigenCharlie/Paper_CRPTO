@@ -88,8 +88,9 @@ high-risk lanes are:
 - `CONFORMAL_REFACTOR_PLAN.md`: script-level extraction is underway, but
   class/module modularization must preserve pickled calibrator compatibility
   or create a new run tag.
-- `FEATURE_CONFIG_PARQUET_PLAN.md`: changing `feature_config.pkl` affects the
-  data/features contract and requires downstream validation.
+- `FEATURE_CONFIG_PARQUET_PLAN.md`: the live feature contract is now
+  YAML/Parquet; changing it affects the data/features contract and requires
+  downstream validation.
 
 ## Public GitHub rules
 

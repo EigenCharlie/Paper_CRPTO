@@ -158,7 +158,7 @@ def validate_pd_config(config: dict[str, Any], *, config_path: str) -> dict[str,
 
     normalized["feature_source"].setdefault("mode", "auto")
     normalized["feature_source"].setdefault(
-        "feature_config_path", "data/processed/feature_config.pkl"
+        "feature_config_path", "data/processed/feature_config.yml"
     )
     return normalized
 
@@ -484,7 +484,7 @@ def _resolve_training_features(
     feature_src_cfg = dict(config.get("feature_source", {}) or {})
     feature_mode = str(feature_src_cfg.get("mode", "auto"))
     feature_config_path = feature_src_cfg.get(
-        "feature_config_path", "data/processed/feature_config.pkl"
+        "feature_config_path", "data/processed/feature_config.yml"
     )
 
     feature_sets = resolve_feature_sets(

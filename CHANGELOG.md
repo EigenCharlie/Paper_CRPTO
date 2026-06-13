@@ -7,6 +7,16 @@ adheres to a single-author, paper-driven release cadence — see
 
 ## [Unreleased]
 
+### Changed (feature-config pickle retirement, 2026-06-13)
+- Retired `data/processed/feature_config.pkl` from the live DVC DAG and
+  `EXTRACTION_MANIFEST.json`; the feature contract is now
+  `feature_config.yml` plus Pandera-validated `feature_config.parquet`.
+- Re-materialized `crpto.data.features` once, re-keyed downstream
+  champion/conformal stage deps without re-running CatBoost, and confirmed
+  `just drift-gate` remains bit-exact.
+- `uv run dvc push -j 2` completed after the cleanup and pushed the one new
+  DVC object needed by the remote.
+
 ### Removed (docs cleanup, 2026-06-13)
 - Retired 27 dated, single-shot research records under `docs/research/`
   (audits, backlogs, closures, checklists, dependency/upgrade reports whose
