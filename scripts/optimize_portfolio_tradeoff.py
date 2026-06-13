@@ -11,6 +11,7 @@ Usage:
 from __future__ import annotations
 
 import argparse
+from dataclasses import dataclass
 from datetime import UTC, datetime
 from pathlib import Path
 
@@ -37,6 +38,16 @@ from src.utils.script_helpers import artifact_path, parse_percent_series, resolv
 
 SCHEMA_VERSION = "2026-03-08.1"
 PolicyGridEntry = tuple[str, float, float, float]
+
+
+@dataclass(frozen=True)
+class TradeoffPreparedInputs:
+    pd_point: np.ndarray
+    pd_low: np.ndarray
+    pd_high: np.ndarray
+    lgd: np.ndarray
+    int_rates: np.ndarray
+    default_flag: np.ndarray
 
 
 def _artifact_path(path_like: str | Path) -> Path:
@@ -263,6 +274,31 @@ def _build_policy_grid() -> list[PolicyGridEntry]:
         ("segment_relative_tail_blended_uncertainty", 0.10, 1.0, 0.90),
         ("segment_relative_tail_blended_uncertainty", 0.20, 1.0, 0.90),
     ]
+
+
+def _prepare_tradeoff_inputs(
+    loans: pd.DataFrame, intervals: pd.DataFrame
+) -> TradeoffPreparedInputs:
+    n = len(loans)
+    col_point, col_low, col_high = _resolve_interval_columns(intervals)
+    int_rates = (
+        _parse_percent_series(loans["int_rate"])
+        if "int_rate" in loans.columns
+        else np.full(n, 0.12)
+    )
+    default_flag = (
+        pd.to_numeric(loans["default_flag"], errors="coerce").fillna(0).to_numpy(dtype=int)
+        if "default_flag" in loans.columns
+        else np.zeros(n, dtype=int)
+    )
+    return TradeoffPreparedInputs(
+        pd_point=intervals[col_point].to_numpy(dtype=float),
+        pd_low=intervals[col_low].to_numpy(dtype=float),
+        pd_high=intervals[col_high].to_numpy(dtype=float),
+        lgd=np.full(n, 0.45, dtype=float),
+        int_rates=int_rates,
+        default_flag=default_flag,
+    )
 
 
 def _solve_single(
@@ -599,21 +635,13 @@ def main(
         },
     )
 
-    col_point, col_low, col_high = _resolve_interval_columns(ints)
-    pd_point = ints[col_point].to_numpy(dtype=float)
-    pd_low = ints[col_low].to_numpy(dtype=float)
-    pd_high = ints[col_high].to_numpy(dtype=float)
-    lgd = np.full(n, 0.45, dtype=float)
-    int_rates = (
-        _parse_percent_series(loans["int_rate"])
-        if "int_rate" in loans.columns
-        else np.full(n, 0.12)
-    )
-    default_flag = (
-        pd.to_numeric(loans["default_flag"], errors="coerce").fillna(0).to_numpy(dtype=int)
-        if "default_flag" in loans.columns
-        else np.zeros(n, dtype=int)
-    )
+    prepared_inputs = _prepare_tradeoff_inputs(loans, ints)
+    pd_point = prepared_inputs.pd_point
+    pd_low = prepared_inputs.pd_low
+    pd_high = prepared_inputs.pd_high
+    lgd = prepared_inputs.lgd
+    int_rates = prepared_inputs.int_rates
+    default_flag = prepared_inputs.default_flag
     policy_grid = _build_policy_grid()
 
     rows: list[dict[str, float | int | str]] = []
