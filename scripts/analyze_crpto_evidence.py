@@ -19,7 +19,7 @@ from typing import Any
 import numpy as np
 import pandas as pd
 
-from src.utils.script_helpers import load_json, write_json, write_table
+from src.utils.script_helpers import load_json, policy_matches, write_json, write_table
 
 ROOT = Path(__file__).resolve().parents[1]
 DATA = ROOT / "data" / "processed"
@@ -148,21 +148,10 @@ def _safe_float(value: Any) -> float | None:
 
 
 def _policy_matches(row: dict[str, Any], policy: dict[str, Any]) -> bool:
-    fields = ("risk_tolerance", "policy_mode", "gamma", "uncertainty_aversion")
-    for field in fields:
-        if field not in row or field not in policy:
-            return False
-        left = row[field]
-        right = policy[field]
-        if isinstance(right, str):
-            if str(left) != right:
-                return False
-            continue
-        left_float = _safe_float(left)
-        right_float = _safe_float(right)
-        if left_float is None or right_float is None or abs(left_float - right_float) > 1e-9:
-            return False
-    return True
+    # The evidence metrics dict only carries the four headline policy fields.
+    return policy_matches(
+        row, policy, fields=("risk_tolerance", "policy_mode", "gamma", "uncertainty_aversion")
+    )
 
 
 def _weighted_average(values: pd.Series, weights: pd.Series) -> float:

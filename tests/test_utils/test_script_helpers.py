@@ -15,6 +15,7 @@ from src.utils.script_helpers import (
     load_json,
     load_yaml,
     parse_percent_series,
+    policy_matches,
     resolve_interval_columns,
     try_load_json,
     write_json,
@@ -99,3 +100,41 @@ def test_resolve_interval_columns_variants() -> None:
     assert resolve_interval_columns(modern) == ("y_pred", "pd_low_90", "pd_high_90")
     legacy = pd.DataFrame(columns=["pd_point", "pd_low", "pd_high"])
     assert resolve_interval_columns(legacy) == ("pd_point", "pd_low", "pd_high")
+
+
+def test_policy_matches_full_fields() -> None:
+    policy = {
+        "risk_tolerance": 0.175,
+        "policy_mode": "blended_uncertainty",
+        "gamma": 0.45,
+        "delta_cap_quantile": 1.0,
+        "tail_focus_quantile": 1.0,
+        "uncertainty_aversion": 0.1,
+        "min_budget_utilization": 0.5,
+        "pd_cap_slack_penalty": 0.0,
+    }
+    row = pd.Series(dict(policy))
+    assert policy_matches(row, policy)
+    # within tolerance
+    near = pd.Series({**policy, "gamma": 0.45 + 5e-10})
+    assert policy_matches(near, policy)
+    # numeric mismatch
+    off = pd.Series({**policy, "risk_tolerance": 0.17})
+    assert not policy_matches(off, policy)
+    # string mismatch
+    mode = pd.Series({**policy, "policy_mode": "hard_worst_case"})
+    assert not policy_matches(mode, policy)
+    # missing field on the row side
+    partial = pd.Series({k: v for k, v in policy.items() if k != "gamma"})
+    assert not policy_matches(partial, policy)
+    # non-coercible numeric
+    bad = pd.Series({**policy, "gamma": None})
+    assert not policy_matches(bad, policy)
+
+
+def test_policy_matches_narrow_fields() -> None:
+    policy = {"risk_tolerance": 0.175, "policy_mode": "blended_uncertainty", "gamma": 0.45}
+    row = {"risk_tolerance": 0.175, "policy_mode": "blended_uncertainty", "gamma": 0.45}
+    fields = ("risk_tolerance", "policy_mode", "gamma")
+    assert policy_matches(row, policy, fields=fields)
+    assert not policy_matches(row, {**policy, "gamma": 0.55}, fields=fields)
