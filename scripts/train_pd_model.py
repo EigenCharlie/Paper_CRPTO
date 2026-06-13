@@ -75,6 +75,27 @@ class TrainingSplits:
     test: pd.DataFrame
 
 
+@dataclass(frozen=True)
+class PreparedTrainingInputs:
+    """Matrices and targets used by the PD training/calibration steps."""
+
+    train_fit: pd.DataFrame
+    train_val: pd.DataFrame
+    train_fit_weights: np.ndarray | None
+    train_val_weights: np.ndarray | None
+    y_train_fit: pd.Series
+    y_val: pd.Series
+    y_cal: pd.Series
+    y_test: pd.Series
+    x_train_fit_cb: pd.DataFrame
+    x_val_cb: pd.DataFrame
+    x_cal_cb: pd.DataFrame
+    x_test_cb: pd.DataFrame
+    x_train_fit_lr: pd.DataFrame
+    x_test_lr: pd.DataFrame
+    lr_fill: pd.Series
+
+
 def load_config(config_path: str) -> dict[str, Any]:
     with open(config_path, encoding="utf-8") as f:
         return yaml.safe_load(f)
@@ -553,6 +574,55 @@ def _prepare_logreg_frame(
         fill_values = out.median(numeric_only=True).fillna(0.0)
     out = out.fillna(fill_values).fillna(0.0)
     return out, fill_values
+
+
+def _prepare_training_inputs(
+    train: pd.DataFrame,
+    cal: pd.DataFrame,
+    test: pd.DataFrame,
+    *,
+    catboost_features: list[str],
+    categorical_features: list[str],
+    logreg_features: list[str],
+    val_fraction: float,
+) -> PreparedTrainingInputs:
+    """Build the model-ready PD training, calibration and test matrices."""
+    train_fit, train_val = temporal_train_val_split(
+        train, val_fraction=val_fraction, date_col="issue_d"
+    )
+    train_fit_weights = _training_weights(train_fit)
+    train_val_weights = _training_weights(train_val)
+
+    y_train_fit = train_fit[TARGET].astype(int)
+    y_val = train_val[TARGET].astype(int)
+    y_cal = cal[TARGET].astype(int)
+    y_test = test[TARGET].astype(int)
+
+    x_train_fit_cb = _prepare_catboost_frame(train_fit, catboost_features, categorical_features)
+    x_val_cb = _prepare_catboost_frame(train_val, catboost_features, categorical_features)
+    x_cal_cb = _prepare_catboost_frame(cal, catboost_features, categorical_features)
+    x_test_cb = _prepare_catboost_frame(test, catboost_features, categorical_features)
+
+    x_train_fit_lr, lr_fill = _prepare_logreg_frame(train_fit, logreg_features)
+    x_test_lr, _ = _prepare_logreg_frame(test, logreg_features, fill_values=lr_fill)
+
+    return PreparedTrainingInputs(
+        train_fit=train_fit,
+        train_val=train_val,
+        train_fit_weights=train_fit_weights,
+        train_val_weights=train_val_weights,
+        y_train_fit=y_train_fit,
+        y_val=y_val,
+        y_cal=y_cal,
+        y_test=y_test,
+        x_train_fit_cb=x_train_fit_cb,
+        x_val_cb=x_val_cb,
+        x_cal_cb=x_cal_cb,
+        x_test_cb=x_test_cb,
+        x_train_fit_lr=x_train_fit_lr,
+        x_test_lr=x_test_lr,
+        lr_fill=lr_fill,
+    )
 
 
 def _safe_auc(y_true: np.ndarray, y_prob: np.ndarray) -> float | None:
@@ -1376,24 +1446,29 @@ def main(
     walk_cfg = val_cfg.get("walk_forward", {})
     seed_replay_cfg = val_cfg.get("seed_replay", {})
     val_fraction = float(val_cfg.get("val_from_tail_fraction_of_train", 0.15))
-    train_fit, train_val = temporal_train_val_split(
-        train, val_fraction=val_fraction, date_col="issue_d"
+    prepared_inputs = _prepare_training_inputs(
+        train,
+        cal,
+        test,
+        catboost_features=catboost_features,
+        categorical_features=categorical_features,
+        logreg_features=logreg_features,
+        val_fraction=val_fraction,
     )
-    train_fit_weights = _training_weights(train_fit)
-    train_val_weights = _training_weights(train_val)
-
-    y_train_fit = train_fit[TARGET].astype(int)
-    y_val = train_val[TARGET].astype(int)
-    y_cal = cal[TARGET].astype(int)
-    y_test = test[TARGET].astype(int)
-
-    X_train_fit_cb = _prepare_catboost_frame(train_fit, catboost_features, categorical_features)
-    X_val_cb = _prepare_catboost_frame(train_val, catboost_features, categorical_features)
-    X_cal_cb = _prepare_catboost_frame(cal, catboost_features, categorical_features)
-    X_test_cb = _prepare_catboost_frame(test, catboost_features, categorical_features)
-
-    X_train_fit_lr, lr_fill = _prepare_logreg_frame(train_fit, logreg_features)
-    X_test_lr, _ = _prepare_logreg_frame(test, logreg_features, fill_values=lr_fill)
+    train_val = prepared_inputs.train_val
+    train_fit_weights = prepared_inputs.train_fit_weights
+    train_val_weights = prepared_inputs.train_val_weights
+    y_train_fit = prepared_inputs.y_train_fit
+    y_val = prepared_inputs.y_val
+    y_cal = prepared_inputs.y_cal
+    y_test = prepared_inputs.y_test
+    X_train_fit_cb = prepared_inputs.x_train_fit_cb
+    X_val_cb = prepared_inputs.x_val_cb
+    X_cal_cb = prepared_inputs.x_cal_cb
+    X_test_cb = prepared_inputs.x_test_cb
+    X_train_fit_lr = prepared_inputs.x_train_fit_lr
+    X_test_lr = prepared_inputs.x_test_lr
+    lr_fill = prepared_inputs.lr_fill
 
     # Baseline LR
     lr_model, lr_metrics = train_baseline(
