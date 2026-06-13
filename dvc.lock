@@ -546,8 +546,8 @@ stages:
       size: 17517
     - path: scripts/optimize_portfolio_tradeoff.py
       hash: md5
-      md5: 9b216ade9ddebba200e5d6aa4eae51b5
-      size: 45229
+      md5: ea91de4774579dce20671a9a78e7c2d2
+      size: 45401
     - path: src/optimization/tail_satisficing_objective.py
       hash: md5
       md5: 678eceb6c32e24db4d6c16e5abefb4d9
