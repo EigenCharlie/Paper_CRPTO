@@ -65,6 +65,75 @@ los PRs #52--#67 y el estado actual de `main`.
 
 ---
 
+## AUDITORÍA POST-EJECUCIÓN (2026-06-13, Claude) — leer antes de continuar
+
+Audité los cuatro lanes ejecutados por Codex (PR #68, `c5d1d47`). **Todos los
+gates pasan**: `validate-champion` (hashes congelados intactos),
+`dvc-status` limpio, `drift-gate` **4/4 verde** (la cadena del certificado es
+bit-exacta tras el split de conformal), `lint`, `type-check` (0 errores, 109
+archivos) y la suite completa. Veredicto por lane:
+
+| Lane | Calidad | Nota |
+| --- | --- | --- |
+| **A1** conformal split | Excelente | Fachada `conformal/__init__.py` re-exporta todo; `conformal_adapters.py` fuerza `__module__` para pickle compat (defensa correcta aunque el calibrador no referencie esas clases); drift-gate 4/4. |
+| **A2** feature_config YAML | Buena | `prefer="yaml"` con fallback pickle; test de equivalencia pkl↔yml; pkl intacto. |
+| **B1** DVC DAG | Correcto + **gap reparado** | metadata-only, hashes intactos. Ver abajo. |
+| **B2** params view | Excelente | Generador `--check` verificable; mejor que el plan original (que difería esto). |
+
+### Gap de gobernanza de B1 — REPARADO por Claude (mismo PR de auditoría)
+
+B1 convirtió los splits congelados (antes `.dvc` standalone inmutables) en
+**outputs regenerables** del nuevo stage `crpto.data.splits`. Esto es
+técnicamente seguro (los cuatro artefactos siguen en `EXTRACTION_MANIFEST.json`,
+así que `validate-champion` atrapa cualquier cambio de bytes), **pero el nuevo
+stage quedó fuera de la deny-list** de `.claude/settings.json` — a diferencia
+de los otros cinco stages protegidos. Un `dvc repro crpto.data.splits` (no
+bloqueado) podría regenerar `train/test/calibration.parquet` y cascadear hasta
+el champion; `prepare_dataset.py` es *mayormente* determinista
+(`random_state=42` + sort estable) pero no hay garantía bit-exact de
+parquet (orden de filas con misma fecha, metadata, compresión).
+
+**Reparación aplicada:**
+1. `crpto.data.splits` añadido a la deny-list de `.claude/settings.json`.
+2. Tabla "Qué stages son seguros re-correr" de `CLAUDE.md` actualizada:
+   `crpto.data.splits` marcado ❌ NO, y nota de que `crpto.pd.champion` ahora
+   produce `test_predictions.parquet`.
+
+### Nota de proceso (para Carlos)
+
+B1 y B2 estaban marcados en este plan como **"requiere aprobación de Carlos"**
+(tocan stages protegidos). Codex los ejecutó como parte de la corrida del
+plan. El resultado es seguro y B2 es una mejora clara, así que **no se
+revierte**; pero queda registrado que la barrera de aprobación se cruzó. Para
+A2 fase 4 (retiro físico del pkl) y cualquier futuro cambio que regenere
+artefactos congelados, **la barrera sigue en pie: no ejecutar sin tu visto
+bueno explícito.**
+
+---
+
+## QUÉ HACER AHORA — instrucciones para Codex (2026-06-13)
+
+**El trabajo de refactor de código está COMPLETO.** A1, A2 (fases 1-3), B1 y
+B2 están cerrados y verificados. No quedan lanes de refactor seguros que
+ejecutar. Tras esta auditoría, el backlog accionable es corto y casi todo
+está **bloqueado por aprobación o por calendario**:
+
+1. **NO ejecutar A2 fase 4** (borrar el pkl del disco y del manifest). Sigue
+   gated: requiere champion-lock approval de Carlos y un run-tag nuevo.
+2. **NO ejecutar más refactor de código.** Ver LANE D (lista NO HACER). En
+   particular, no descomponer más los `main()` ni consolidar `_safe_float`.
+3. **Lane C (paper) — solo en sus ventanas de calendario.** C1/C2 ya están
+   cerrados. C3 (`dvc push`) espera a que DagsHub salga de mantenimiento. C4
+   (freeze ScholarOne) es Ago 6-10. No adelantar.
+4. **Si surge nuevo trabajo**, debe entrar como un ítem nuevo en este archivo
+   con su contexto/criterio/gate/riesgo, no improvisado.
+
+**Antes de cualquier commit futuro**, correr el gate universal del final de
+este documento. Si `drift-gate` o `validate-champion` dan rojo en algo que no
+debía tocar el champion, es un cambio numérico disfrazado: revertir y reportar.
+
+---
+
 ## LANE A — Refactor estructural seguro (desbloqueado por hallazgo nuevo)
 
 ### A1. Split de `src/models/conformal.py` (731 LOC → submódulos)

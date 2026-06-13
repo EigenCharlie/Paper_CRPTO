@@ -45,6 +45,7 @@
       "Bash(C:/Users/carlos/anaconda3/Scripts/uv.exe:*)"
     ],
     "deny": [
+      "Bash(dvc repro crpto.data.splits*)",
       "Bash(dvc repro crpto.pd.champion*)",
       "Bash(dvc repro crpto.conformal.intervals*)",
       "Bash(dvc repro crpto.conformal.validation*)",

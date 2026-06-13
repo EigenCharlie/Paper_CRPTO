@@ -191,8 +191,9 @@ El archivo `.env` está en `.gitignore`. Nunca commitear tokens.
 | Stage DVC | ¿Seguro? | Notas |
 | --- | --- | --- |
 | `crpto.data.dataset` | ⚠️ Lento (1.7 GB) | Determinista; no rompe champion pero re-corre todo downstream. |
-| `crpto.data.features` | ⚠️ | Igual. |
-| `crpto.pd.champion` | ❌ NO | Rompe `pd_canonical.cbm`. |
+| `crpto.data.splits` | ❌ NO | Regenera `train/test/calibration.parquet` (congelados en el manifest). En la deny-list: un `dvc repro` aquí cascada hasta el champion. |
+| `crpto.data.features` | ⚠️ | No rompe champion pero re-corre todo downstream; ahora depende de `calibration.parquet`. |
+| `crpto.pd.champion` | ❌ NO | Rompe `pd_canonical.cbm`. Ahora también produce `test_predictions.parquet` como out. |
 | `crpto.conformal.intervals` | ❌ NO | Rompe intervalos congelados. |
 | `crpto.conformal.validation` | ❌ NO | Rompe `conformal_policy_status.json`. |
 | `crpto.portfolio.optimization` | ❌ NO | Rompe `portfolio_allocations.parquet`. |
