@@ -2,7 +2,26 @@ from __future__ import annotations
 
 import pandas as pd
 
-from scripts.optimize_portfolio_tradeoff import _select_champion_policy
+from scripts.optimize_portfolio_tradeoff import _build_policy_grid, _select_champion_policy
+
+
+def test_build_policy_grid_preserves_tradeoff_frontier_contract() -> None:
+    grid = _build_policy_grid()
+
+    assert len(grid) == 63
+    assert len(grid) == len(set(grid))
+    assert grid[0] == ("hard_worst_case", 1.0, 1.0, 1.0)
+    assert {mode for mode, _, _, _ in grid} == {
+        "hard_worst_case",
+        "blended_uncertainty",
+        "capped_blended_uncertainty",
+        "tail_blended_uncertainty",
+        "segment_tail_blended_uncertainty",
+        "segment_relative_tail_blended_uncertainty",
+    }
+    assert all(0.0 <= gamma <= 1.0 for _, gamma, _, _ in grid)
+    assert {delta_cap for _, _, delta_cap, _ in grid} == {0.50, 0.75, 0.90, 1.0}
+    assert {tail_focus for _, _, _, tail_focus in grid} == {0.75, 0.90, 0.95, 1.0}
 
 
 def test_select_champion_policy_exposes_dual_selectors() -> None:

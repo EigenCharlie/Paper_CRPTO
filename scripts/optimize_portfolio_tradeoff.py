@@ -36,6 +36,7 @@ from src.utils.pipeline_runtime import (
 from src.utils.script_helpers import artifact_path, parse_percent_series, resolve_interval_columns
 
 SCHEMA_VERSION = "2026-03-08.1"
+PolicyGridEntry = tuple[str, float, float, float]
 
 
 def _artifact_path(path_like: str | Path) -> Path:
@@ -193,6 +194,75 @@ def _resolve_grid_profile(
     }
     raw_risk, raw_averse = profiles.get(grid_profile, profiles["custom"])
     return _parse_float_grid(raw_risk), _parse_float_grid(raw_averse)
+
+
+def _build_policy_grid() -> list[PolicyGridEntry]:
+    """Return the robustness policy grid used by the trade-off frontier."""
+    return [
+        ("hard_worst_case", 1.0, 1.0, 1.0),
+        ("blended_uncertainty", 0.0, 1.0, 1.0),
+        ("blended_uncertainty", 0.05, 1.0, 1.0),
+        ("blended_uncertainty", 0.10, 1.0, 1.0),
+        ("blended_uncertainty", 0.15, 1.0, 1.0),
+        ("blended_uncertainty", 0.20, 1.0, 1.0),
+        ("blended_uncertainty", 0.25, 1.0, 1.0),
+        ("blended_uncertainty", 0.35, 1.0, 1.0),
+        ("blended_uncertainty", 0.50, 1.0, 1.0),
+        ("capped_blended_uncertainty", 0.05, 0.50, 1.0),
+        ("capped_blended_uncertainty", 0.10, 0.50, 1.0),
+        ("capped_blended_uncertainty", 0.15, 0.50, 1.0),
+        ("capped_blended_uncertainty", 0.20, 0.50, 1.0),
+        ("capped_blended_uncertainty", 0.25, 0.50, 1.0),
+        ("capped_blended_uncertainty", 0.35, 0.50, 1.0),
+        ("capped_blended_uncertainty", 0.50, 0.50, 1.0),
+        ("capped_blended_uncertainty", 0.05, 0.75, 1.0),
+        ("capped_blended_uncertainty", 0.10, 0.75, 1.0),
+        ("capped_blended_uncertainty", 0.15, 0.75, 1.0),
+        ("capped_blended_uncertainty", 0.20, 0.75, 1.0),
+        ("capped_blended_uncertainty", 0.25, 0.75, 1.0),
+        ("capped_blended_uncertainty", 0.35, 0.75, 1.0),
+        ("capped_blended_uncertainty", 0.50, 0.75, 1.0),
+        ("capped_blended_uncertainty", 0.05, 0.90, 1.0),
+        ("capped_blended_uncertainty", 0.10, 0.90, 1.0),
+        ("capped_blended_uncertainty", 0.15, 0.90, 1.0),
+        ("capped_blended_uncertainty", 0.20, 0.90, 1.0),
+        ("capped_blended_uncertainty", 0.25, 0.90, 1.0),
+        ("capped_blended_uncertainty", 0.35, 0.90, 1.0),
+        ("capped_blended_uncertainty", 0.50, 0.90, 1.0),
+        ("capped_blended_uncertainty", 0.05, 1.00, 1.0),
+        ("capped_blended_uncertainty", 0.10, 1.00, 1.0),
+        ("capped_blended_uncertainty", 0.15, 1.00, 1.0),
+        ("capped_blended_uncertainty", 0.20, 1.00, 1.0),
+        ("capped_blended_uncertainty", 0.25, 1.00, 1.0),
+        ("capped_blended_uncertainty", 0.35, 1.00, 1.0),
+        ("capped_blended_uncertainty", 0.50, 1.00, 1.0),
+        ("tail_blended_uncertainty", 0.10, 1.0, 0.75),
+        ("tail_blended_uncertainty", 0.20, 1.0, 0.75),
+        ("tail_blended_uncertainty", 0.35, 1.0, 0.75),
+        ("tail_blended_uncertainty", 0.50, 1.0, 0.75),
+        ("tail_blended_uncertainty", 0.10, 1.0, 0.90),
+        ("tail_blended_uncertainty", 0.20, 1.0, 0.90),
+        ("tail_blended_uncertainty", 0.35, 1.0, 0.90),
+        ("tail_blended_uncertainty", 0.50, 1.0, 0.90),
+        ("tail_blended_uncertainty", 0.10, 1.0, 0.95),
+        ("tail_blended_uncertainty", 0.20, 1.0, 0.95),
+        ("tail_blended_uncertainty", 0.35, 1.0, 0.95),
+        ("tail_blended_uncertainty", 0.50, 1.0, 0.95),
+        ("segment_tail_blended_uncertainty", 0.05, 1.0, 0.75),
+        ("segment_tail_blended_uncertainty", 0.10, 1.0, 0.75),
+        ("segment_tail_blended_uncertainty", 0.20, 1.0, 0.75),
+        ("segment_tail_blended_uncertainty", 0.35, 1.0, 0.75),
+        ("segment_tail_blended_uncertainty", 0.05, 1.0, 0.90),
+        ("segment_tail_blended_uncertainty", 0.10, 1.0, 0.90),
+        ("segment_tail_blended_uncertainty", 0.20, 1.0, 0.90),
+        ("segment_tail_blended_uncertainty", 0.35, 1.0, 0.90),
+        ("segment_relative_tail_blended_uncertainty", 0.05, 1.0, 0.75),
+        ("segment_relative_tail_blended_uncertainty", 0.10, 1.0, 0.75),
+        ("segment_relative_tail_blended_uncertainty", 0.20, 1.0, 0.75),
+        ("segment_relative_tail_blended_uncertainty", 0.05, 1.0, 0.90),
+        ("segment_relative_tail_blended_uncertainty", 0.10, 1.0, 0.90),
+        ("segment_relative_tail_blended_uncertainty", 0.20, 1.0, 0.90),
+    ]
 
 
 def _solve_single(
@@ -544,71 +614,7 @@ def main(
         if "default_flag" in loans.columns
         else np.zeros(n, dtype=int)
     )
-    policy_grid: list[tuple[str, float, float, float]] = [
-        ("hard_worst_case", 1.0, 1.0, 1.0),
-        ("blended_uncertainty", 0.0, 1.0, 1.0),
-        ("blended_uncertainty", 0.05, 1.0, 1.0),
-        ("blended_uncertainty", 0.10, 1.0, 1.0),
-        ("blended_uncertainty", 0.15, 1.0, 1.0),
-        ("blended_uncertainty", 0.20, 1.0, 1.0),
-        ("blended_uncertainty", 0.25, 1.0, 1.0),
-        ("blended_uncertainty", 0.35, 1.0, 1.0),
-        ("blended_uncertainty", 0.50, 1.0, 1.0),
-        ("capped_blended_uncertainty", 0.05, 0.50, 1.0),
-        ("capped_blended_uncertainty", 0.10, 0.50, 1.0),
-        ("capped_blended_uncertainty", 0.15, 0.50, 1.0),
-        ("capped_blended_uncertainty", 0.20, 0.50, 1.0),
-        ("capped_blended_uncertainty", 0.25, 0.50, 1.0),
-        ("capped_blended_uncertainty", 0.35, 0.50, 1.0),
-        ("capped_blended_uncertainty", 0.50, 0.50, 1.0),
-        ("capped_blended_uncertainty", 0.05, 0.75, 1.0),
-        ("capped_blended_uncertainty", 0.10, 0.75, 1.0),
-        ("capped_blended_uncertainty", 0.15, 0.75, 1.0),
-        ("capped_blended_uncertainty", 0.20, 0.75, 1.0),
-        ("capped_blended_uncertainty", 0.25, 0.75, 1.0),
-        ("capped_blended_uncertainty", 0.35, 0.75, 1.0),
-        ("capped_blended_uncertainty", 0.50, 0.75, 1.0),
-        ("capped_blended_uncertainty", 0.05, 0.90, 1.0),
-        ("capped_blended_uncertainty", 0.10, 0.90, 1.0),
-        ("capped_blended_uncertainty", 0.15, 0.90, 1.0),
-        ("capped_blended_uncertainty", 0.20, 0.90, 1.0),
-        ("capped_blended_uncertainty", 0.25, 0.90, 1.0),
-        ("capped_blended_uncertainty", 0.35, 0.90, 1.0),
-        ("capped_blended_uncertainty", 0.50, 0.90, 1.0),
-        ("capped_blended_uncertainty", 0.05, 1.00, 1.0),
-        ("capped_blended_uncertainty", 0.10, 1.00, 1.0),
-        ("capped_blended_uncertainty", 0.15, 1.00, 1.0),
-        ("capped_blended_uncertainty", 0.20, 1.00, 1.0),
-        ("capped_blended_uncertainty", 0.25, 1.00, 1.0),
-        ("capped_blended_uncertainty", 0.35, 1.00, 1.0),
-        ("capped_blended_uncertainty", 0.50, 1.00, 1.0),
-        ("tail_blended_uncertainty", 0.10, 1.0, 0.75),
-        ("tail_blended_uncertainty", 0.20, 1.0, 0.75),
-        ("tail_blended_uncertainty", 0.35, 1.0, 0.75),
-        ("tail_blended_uncertainty", 0.50, 1.0, 0.75),
-        ("tail_blended_uncertainty", 0.10, 1.0, 0.90),
-        ("tail_blended_uncertainty", 0.20, 1.0, 0.90),
-        ("tail_blended_uncertainty", 0.35, 1.0, 0.90),
-        ("tail_blended_uncertainty", 0.50, 1.0, 0.90),
-        ("tail_blended_uncertainty", 0.10, 1.0, 0.95),
-        ("tail_blended_uncertainty", 0.20, 1.0, 0.95),
-        ("tail_blended_uncertainty", 0.35, 1.0, 0.95),
-        ("tail_blended_uncertainty", 0.50, 1.0, 0.95),
-        ("segment_tail_blended_uncertainty", 0.05, 1.0, 0.75),
-        ("segment_tail_blended_uncertainty", 0.10, 1.0, 0.75),
-        ("segment_tail_blended_uncertainty", 0.20, 1.0, 0.75),
-        ("segment_tail_blended_uncertainty", 0.35, 1.0, 0.75),
-        ("segment_tail_blended_uncertainty", 0.05, 1.0, 0.90),
-        ("segment_tail_blended_uncertainty", 0.10, 1.0, 0.90),
-        ("segment_tail_blended_uncertainty", 0.20, 1.0, 0.90),
-        ("segment_tail_blended_uncertainty", 0.35, 1.0, 0.90),
-        ("segment_relative_tail_blended_uncertainty", 0.05, 1.0, 0.75),
-        ("segment_relative_tail_blended_uncertainty", 0.10, 1.0, 0.75),
-        ("segment_relative_tail_blended_uncertainty", 0.20, 1.0, 0.75),
-        ("segment_relative_tail_blended_uncertainty", 0.05, 1.0, 0.90),
-        ("segment_relative_tail_blended_uncertainty", 0.10, 1.0, 0.90),
-        ("segment_relative_tail_blended_uncertainty", 0.20, 1.0, 0.90),
-    ]
+    policy_grid = _build_policy_grid()
 
     rows: list[dict[str, float | int | str]] = []
     summary_rows: list[dict[str, float | int | str]] = []
