@@ -4,9 +4,7 @@
 > (`paper1_bound_improvement_intake_2026-05-21`). **Documentation only.** Records
 > the PD/conformal challenger package from the external regret-auditability
 > sandbox and the gates a bound-improvement lane must pass. The frozen champion is
-> not replaced. See
-> [crpto_regret_auditability_sandbox_closure_2026-05-28](crpto_regret_auditability_sandbox_closure_2026-05-28.md)
-> for the final closure.
+> not replaced; the regret-auditability lane was closed with append/park.
 
 External artifact root: an external experiments volume outside this repository.
 

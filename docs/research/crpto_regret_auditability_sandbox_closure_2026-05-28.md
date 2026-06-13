@@ -4,10 +4,8 @@
 > (`paper1_regret_auditability_sandbox_closure_2026-05-28`). **Documentation
 > only.** This is the closure record of the broader regret-auditability search:
 > the frozen champion (`paper-thesis-final-economic-2026-04-06`) is **not**
-> replaced. Continues
-> [regret_auditability_feature_search_plan_2026-05-13](regret_auditability_feature_search_plan_2026-05-13.md)
-> and
-> [regret_auditability_sandbox_dependency_report_2026-05-12](regret_auditability_sandbox_dependency_report_2026-05-12.md).
+> replaced. (The earlier feature-search plan and sandbox dependency report were
+> retired in the 2026-06-13 docs cleanup; this closure is the surviving record.)
 
 ## Purpose
 
