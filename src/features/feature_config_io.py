@@ -8,8 +8,8 @@ backwards-compatibility with downstream stages.
 
 This module exposes a **non-destructive** loader/writer pair that:
 
-* reads the canonical YAML view when it exists,
-* falls back to the legacy pickle when it does not,
+* reads the canonical YAML view by default,
+* falls back to the legacy pickle when YAML is not available,
 * never deletes the pickle on disk (writers operate on the YAML companion only
   unless ``also_pickle=True`` is passed explicitly).
 
@@ -36,7 +36,7 @@ def load_feature_config(
     repo_root: Path | str | None = None,
     pickle_path: Path | str | None = None,
     yaml_path: Path | str | None = None,
-    prefer: str = "auto",
+    prefer: str = "yaml",
 ) -> dict[str, Any]:
     """Load the feature configuration dictionary.
 
@@ -44,8 +44,9 @@ def load_feature_config(
         repo_root: If provided, resolve relative paths against this directory.
         pickle_path: Override for the legacy pickle location.
         yaml_path: Override for the YAML companion location.
-        prefer: ``"yaml"`` (read YAML or raise), ``"pickle"`` (read pickle or
-            raise), or ``"auto"`` (try YAML first, then pickle).
+        prefer: ``"yaml"`` (read YAML with pickle fallback), ``"pickle"``
+            (read pickle or raise), or ``"auto"`` (legacy alias for YAML-first
+            fallback).
 
     Returns:
         The same ``dict`` structure used by the rest of the pipeline.
@@ -55,7 +56,9 @@ def load_feature_config(
     yml = _resolve(root, yaml_path, DEFAULT_YAML_PATH)
 
     if prefer == "yaml":
-        return _load_yaml(yml)
+        if yml.is_file():
+            return _load_yaml(yml)
+        return _load_pickle(pkl)
     if prefer == "pickle":
         return _load_pickle(pkl)
     if prefer != "auto":

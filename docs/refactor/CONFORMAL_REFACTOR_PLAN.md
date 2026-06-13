@@ -1,9 +1,9 @@
 # Refactor plan — `src/models/conformal.py`
 
-**Status**: First slice executed (diagnostics functions extracted). The full
-module split is **UNBLOCKED** as of 2026-06-13 — see the pickle finding
-below. Tracked for execution in
-[`NEXT_WORK_PLAN_2026-06.md`](NEXT_WORK_PLAN_2026-06.md) lane A1.
+**Status**: Executed 2026-06-13. `src.models.conformal` is now a package
+facade with focused submodules for scores, PD intervals, classification and
+regression. The legacy public import path and pickle module path remain
+stable.
 
 > **2026-06-13 finding (supersedes the "needs a calibrator re-pickle window"
 > caveat).** The frozen calibrator `models/pd_canonical_calibrator.pkl` does
@@ -18,9 +18,17 @@ below. Tracked for execution in
 
 ## What is done
 
+- Full split executed:
+  - `src/models/conformal/__init__.py` re-exports the public API.
+  - `src/models/conformal/_scores.py` owns score quantiles/scaling.
+  - `src/models/conformal/pd_intervals.py` owns PD intervals and Venn-Abers.
+  - `src/models/conformal/classification.py` owns sets, partitions and
+    score-space cross conformal.
+  - `src/models/conformal/regression.py` owns regression/residual intervals.
 - `validate_coverage` and `summarize_prediction_sets` moved to
   `src/models/conformal_diagnostics.py` (pure data summaries, no pickled
-  state). `conformal.py` re-exports them so legacy imports keep working.
+  state). `src.models.conformal` re-exports them so legacy imports keep
+  working.
 - `tests/test_models/test_calibrator_pickle_compat.py` added. Any future
   refactor that mutates `__module__` for the pickled classes will fail
   this test, forcing explicit pickle compat shims.
@@ -31,9 +39,8 @@ below. Tracked for execution in
 
 ## What remains
 
-The big-ticket move — splitting the three classes plus the 12 regression /
-classification / Mondrian functions into focused submodules — is still
-deferred.
+No conformal split work remains. Future conformal changes should be tied to a
+new methodological reason, not module-size cleanup.
 
 ## Context
 

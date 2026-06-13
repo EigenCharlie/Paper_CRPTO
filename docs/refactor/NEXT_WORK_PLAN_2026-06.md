@@ -25,11 +25,52 @@ editorial del paper en ventanas de calendario, (d) un puñado de
 simplificaciones de bajo valor que se documentan como **NO HACER** para
 evitar churn inútil.
 
+## Ejecución Codex (2026-06-13)
+
+Este plan fue ejecutado en la rama
+`codex/implement-next-work-lanes-2026-06` después de revisar la gobernanza,
+los PRs #52--#67 y el estado actual de `main`.
+
+- **A1 cerrado.** `src.models.conformal` pasó de archivo monolítico a paquete
+  con fachada pública y submódulos `_scores.py`, `pd_intervals.py`,
+  `classification.py` y `regression.py`. Los imports legacy siguen siendo
+  `from src.models.conformal import ...`, `conformal_adapters.py` conserva el
+  `__module__ = "src.models.conformal"` y los módulos nuevos entraron a mypy
+  strict.
+- **A2 fases 1--3 cerradas.** `load_feature_config(prefer="yaml")` lee YAML
+  con fallback pickle, los consumidores PD/conformal usan YAML-first de forma
+  explícita, y `tests/test_features/test_feature_config_equivalence.py`
+  compara el pkl/yml congelado. El pkl no se borra ni sale del manifest.
+- **B1 cerrado como metadata-only.** Los splits quedaron bajo un stage DVC
+  explícito `crpto.data.splits`, `calibration.parquet` quedó declarado como
+  dep real de `crpto.data.features`, y `test_predictions.parquet` pasó a ser
+  out de `crpto.pd.champion`. Se eliminaron los `.dvc` standalone
+  correspondientes y se hizo `dvc commit -f` sobre artefactos existentes; no
+  se ejecutó `dvc repro` ni se regeneró ningún artefacto protegido.
+- **B2 cerrado como contrato generado.** `scripts/build_params_view.py` y
+  `just params-check` reconstruyen la vista `params.yaml` desde configs y
+  `models/final_project_promotion.json`; el test
+  `tests/test_configs/test_params_view_generator.py` evita volver a un espejo
+  manual silenciosamente stale.
+- **C1/C2 ya estaban cerrados en el paper.** `paper/CRPTO_ijds.qmd` y
+  `paper/submission/CRPTO_ijds_submission.tex` ya contienen la lectura de
+  Markov óptimo bajo Assumption 1 sola y la frase de A9 donde ambos slices
+  temporales pasan el exact check. La tabla vigente reporta
+  `selection_slice_2018` con `V=0.030475`, coverage `0.9550`, pass `True`; y
+  `confirmation_slice_2019_2020` con `V=0.082100`, coverage `0.9259`, pass
+  `True`.
+- **C3/C4 siguen calendar/remote-gated.** No se fuerza `dvc push` el
+  2026-06-13 ni se ejecuta freeze ScholarOne fuera de la ventana Jul 25--Ago
+  10.
+
 ---
 
 ## LANE A — Refactor estructural seguro (desbloqueado por hallazgo nuevo)
 
 ### A1. Split de `src/models/conformal.py` (731 LOC → submódulos)
+
+**Estado 2026-06-13:** ejecutado. La fachada ahora es el paquete
+`src/models/conformal/__init__.py`; `src/models/conformal.py` fue retirado.
 
 **HALLAZGO QUE DESBLOQUEA ESTE LANE (2026-06-13):** el plan
 `CONFORMAL_REFACTOR_PLAN.md` asumía que el calibrador congelado
@@ -91,6 +132,9 @@ defensa y deja el último módulo grande de `src/` bajo strict mypy.
 
 ### A2. `feature_config.pkl` → Parquet/YAML (retirar el pickle)
 
+**Estado 2026-06-13:** fases 1--3 ejecutadas. Fase 4 (retiro físico del pkl y
+del manifest) sigue pendiente de un run-tag/champion-lock nuevo.
+
 **Estado actual (verificado):** el dual-write **ya existe parcialmente**.
 `src/features/feature_config_io.py` lee YAML con fallback a pickle
 (`prefer="auto"`), `materialize_feature_artifacts.py` escribe ambos
@@ -128,26 +172,31 @@ de datos (Bandit B301, portabilidad, inspeccionabilidad para reviewers MRM).
 
 ---
 
-## LANE B — Gaps de gobernanza del DAG (requieren champion-lock approval)
+## LANE B — Gaps de gobernanza del DAG
 
-> **No ejecutar sin que Carlos apruebe explícitamente.** Estos cambian
-> `dvc.lock` de stages protegidos. Documentados en
-> `docs/refactor/README.md` → "Smaller deferred items".
+> Ejecutado el 2026-06-13 como cambio metadata-only: `dvc commit -f` aceptó
+> artefactos existentes y `uv run dvc status --no-updates` quedó limpio. No se
+> ejecutó ningún stage protegido.
 
 ### B1. Promover splits y `test_predictions.parquet` a stage outputs
 `data/processed/{train,test,calibration}.parquet` (producidos por
 `src/data/prepare_dataset.py`) y `test_predictions.parquet` (exportado por
 `train_pd_model.py`) son artefactos `.dvc` standalone, no outputs de stage.
-Promoverlos a `outs` de `crpto.pd.champion` cierra el DAG pero re-keya el
-stage protegido. **Acción:** solo con aprobación; usar `dvc commit` con patch
-mínimo, verificar `validate-champion` y `drift-gate` antes/después.
+La implementación correcta fue:
+
+- `crpto.data.splits` produce `train.parquet`, `test.parquet` y
+  `calibration.parquet` desde `loan_master.parquet`.
+- `crpto.data.features` declara los tres splits como deps.
+- `crpto.pd.champion` declara `test_predictions.parquet` como out.
+- Los `.dvc` standalone de esos cuatro artefactos se retiraron.
 
 ### B2. Unificación estructural de `params.yaml`
 `params.yaml` es espejo documental de `configs/crpto_*.yaml` (el valor stale
 de learning_rate ya se corrigió). La unificación real (generar `params.yaml`
 desde configs o viceversa) elimina el riesgo de desincronización pero toca
-las `params:` deps de stages protegidos. **Acción:** solo con aprobación.
-El contrato actual lo protege `tests/test_configs/test_params_config_sync.py`.
+las `params:` deps de stages protegidos. El cierre ejecutado fue un generador
+no destructivo: `scripts/build_params_view.py --check` reconstruye el YAML
+desde configs/promotion y falla si el tracked `params.yaml` queda stale.
 
 ---
 
@@ -160,6 +209,10 @@ figuras Type 0, bibliografía completa, números de un solo linaje verificado
 al bit. Lo que queda es editorial puro:
 
 ### C1. Capitalizar el resultado del bound agnóstico en el body (opcional)
+
+**Estado 2026-06-13:** ya cerrado en `paper/CRPTO_ijds.qmd` y
+`paper/submission/CRPTO_ijds_submission.tex`.
+
 El Remark 1 dice que los tightenings existen "whenever the additional
 assumption holds". El supplement A21c ahora prueba lo **inverso y más fuerte**:
 bajo Assumption 1 sola, ningún tightening de segundo momento mejora Markov
@@ -171,6 +224,10 @@ Re-sync QMD↔TEX y recompilar (`just paper-ijds`, `latexmk`). Ventana: Jul 3–
 (theorem audit).
 
 ### C2. Narrativa A9 (claim hardening, Jun 17–24)
+
+**Estado 2026-06-13:** ya cerrado y verificado contra
+`reports/crpto/tables/crpto_tableA9_strict_temporal_holdout.csv`.
+
 Tras la unificación de linaje, la tabla A9 muestra que **ambos slices
 temporales pasan el exact check** (antes el de confirmación fallaba). La §7
 (Robustness) puede fortalecer la frase de validación temporal. Verificar el
@@ -225,12 +282,11 @@ Estas son trampas que parecen mejoras pero no lo son. **No las ejecutes.**
 
 ## Secuencia recomendada
 
-1. **Ahora (seguro, sin aprobación):** A1 (conformal split — desbloqueado),
-   luego A2 fases 1–3 (feature_config lectura YAML). Cada uno en su rama/PR
-   con drift-gate como juez.
-2. **Editorial en ventanas:** C1–C4 según el roadmap del paper.
-3. **Solo con aprobación de Carlos:** B1, B2, A2 fase 4 (retiro del pkl).
-   Estos esperan a un run-tag nuevo o champion-lock explícito.
+1. **Cerrado 2026-06-13:** A1, A2 fases 1--3, B1 y B2.
+2. **Sigue pendiente por calendario/remote:** C3 y C4 según el roadmap del
+   paper.
+3. **Solo con run-tag/champion-lock nuevo:** A2 fase 4 (retiro del pkl del
+   disco y de `EXTRACTION_MANIFEST.json`).
 
 ## Gate universal (correr tras cada PR de las lanes A/B)
 

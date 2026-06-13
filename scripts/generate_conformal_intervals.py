@@ -276,7 +276,7 @@ def _resolve_features(
         feature_cfg = load_feature_config_artifact(
             pickle_path=feature_cfg_path,
             yaml_path=feature_cfg_path.with_suffix(".yml"),
-            prefer="auto",
+            prefer="yaml",
         )
     except (FileNotFoundError, TypeError) as exc:
         logger.warning(f"Unable to load fallback feature_config from {feature_cfg_path}: {exc}")
