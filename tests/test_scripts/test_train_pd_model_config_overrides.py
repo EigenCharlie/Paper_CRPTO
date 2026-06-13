@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import numpy as np
 import pytest
 
 import scripts.train_pd_model as pd_train
@@ -11,6 +12,7 @@ from scripts.train_pd_model import (
     _normalize_sample_size,
     _prepare_training_inputs,
     _sample_training_splits,
+    _select_calibration_from_backtest,
 )
 
 
@@ -79,6 +81,73 @@ def test_apply_pd_replay_manifest_forces_replay_without_dropping_base_params() -
 def test_apply_pd_replay_manifest_requires_selected_params() -> None:
     with pytest.raises(ValueError, match="selected_params"):
         _apply_pd_replay_manifest(_base_config(), {"selected_params": {}})
+
+
+def test_select_calibration_from_backtest_uses_search_candidates(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    calls: list[str] = []
+
+    def fake_evaluate(
+        method: str,
+        y_true: np.ndarray,
+        y_prob_raw: np.ndarray,
+        splits: list[tuple[np.ndarray, np.ndarray]],
+    ) -> dict[str, object]:
+        calls.append(method)
+        return {
+            "method": method,
+            "folds_used": 1,
+            "mean_brier": 0.1 if method == "isotonic" else 0.2,
+            "mean_log_loss": 0.3,
+            "mean_ece": 0.01,
+            "mean_auc_drop": 0.0,
+            "brier_variance": 0.0,
+            "ece_variance": 0.0,
+            "stability": 0.0,
+            "degradation_rate": 0.0,
+            "folds": [{"n": len(y_true), "p": len(y_prob_raw), "splits": len(splits)}],
+        }
+
+    monkeypatch.setattr(pd_train, "_evaluate_calibration_method", fake_evaluate)
+
+    selected, report, reports = _select_calibration_from_backtest(
+        run_mode="search",
+        replay_cfg={},
+        cal_cfg={"candidates": ["platt", "isotonic"]},
+        y_cal=np.array([0.0, 1.0, 0.0, 1.0]),
+        y_prob_tuned_cal=np.array([0.2, 0.8, 0.3, 0.7]),
+        cal_splits=[(np.array([0, 1]), np.array([2, 3]))],
+    )
+
+    assert calls == ["platt", "isotonic"]
+    assert selected == "isotonic"
+    assert report["selection_reason"] == "feasible_multi_metric"
+    assert [row["method"] for row in reports] == ["platt", "isotonic"]
+
+
+def test_select_calibration_from_backtest_keeps_replay_method_on_diagnostic_failure(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    def fake_evaluate(*args, **kwargs):
+        raise RuntimeError("diagnostic fold failed")
+
+    monkeypatch.setattr(pd_train, "_evaluate_calibration_method", fake_evaluate)
+
+    selected, report, reports = _select_calibration_from_backtest(
+        run_mode="replay",
+        replay_cfg={"selected_calibration_method": "venn_abers"},
+        cal_cfg={"candidates": ["platt", "isotonic"]},
+        y_cal=np.array([0.0, 1.0]),
+        y_prob_tuned_cal=np.array([0.25, 0.75]),
+        cal_splits=[],
+    )
+
+    assert selected == "venn_abers"
+    assert report["selection_reason"] == "frozen_replay_manifest"
+    assert report["feasible_candidates"] == reports
+    assert reports[0]["method"] == "venn_abers"
+    assert reports[0]["error"] == "diagnostic fold failed"
 
 
 def test_resolve_training_features_filters_splits_and_disables_stable_core_in_replay(
