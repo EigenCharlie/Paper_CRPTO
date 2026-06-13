@@ -1,9 +1,20 @@
 # Refactor plan — `src/models/conformal.py`
 
-**Status**: First slice executed (diagnostics functions extracted). Class
-extraction (`ProbabilityRegressor`, `PrefitClassifierAdapter`,
-`PrefitCalibratedClassifierAdapter`) still pending — needs a calibrator
-re-pickle window.
+**Status**: First slice executed (diagnostics functions extracted). The full
+module split is **UNBLOCKED** as of 2026-06-13 — see the pickle finding
+below. Tracked for execution in
+[`NEXT_WORK_PLAN_2026-06.md`](NEXT_WORK_PLAN_2026-06.md) lane A1.
+
+> **2026-06-13 finding (supersedes the "needs a calibrator re-pickle window"
+> caveat).** The frozen calibrator `models/pd_canonical_calibrator.pkl` does
+> **not** reference any class from `conformal.py`. Inspected with
+> `pickletools` and by loading it: its object graph contains only
+> `src.models.venn_abers.VennAbersScoreCalibrator` and the upstream
+> `venn_abers.venn_abers.VennAbers`. Therefore splitting `conformal.py` is
+> pickle-safe; the only invariant is to keep `src/models/venn_abers.py`'s
+> module path stable (there is no reason to move it). Verify with:
+> `uv run python -c "import pickle,pathlib; o=pickle.loads(pathlib.Path('models/pd_canonical_calibrator.pkl').read_bytes()); print(type(o).__module__)"`
+> → `src.models.venn_abers`. Acceptance gate is `just drift-gate` (green).
 
 ## What is done
 

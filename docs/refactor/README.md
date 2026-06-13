@@ -3,6 +3,12 @@
 Refactor plans, drift reports and execution memory for code paths that touch
 the frozen paper pipeline.
 
+> **Start here for what's next:**
+> [`NEXT_WORK_PLAN_2026-06.md`](NEXT_WORK_PLAN_2026-06.md) — the consolidated,
+> prioritized backlog after R0–R5 (PRs #52–#66). Lanes A (safe structural
+> refactor, now unblocked), B (DAG governance, needs approval), C (paper
+> editorial windows) and D (explicit NO-DO list to avoid churn).
+
 Each plan documents:
 
 1. Why the change is desirable.
