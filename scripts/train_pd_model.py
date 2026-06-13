@@ -66,6 +66,15 @@ class ResolvedFeatureSets:
     stable_core_meta: dict[str, Any]
 
 
+@dataclass(frozen=True)
+class TrainingSplits:
+    """PD train/calibration/test frames loaded at the feature boundary."""
+
+    train: pd.DataFrame
+    cal: pd.DataFrame
+    test: pd.DataFrame
+
+
 def load_config(config_path: str) -> dict[str, Any]:
     with open(config_path, encoding="utf-8") as f:
         return yaml.safe_load(f)
@@ -339,6 +348,37 @@ def _normalize_percent_columns(df: pd.DataFrame) -> pd.DataFrame:
             out["term"].astype(str).str.extract(r"(\d+)")[0].pipe(pd.to_numeric, errors="coerce")
         )
     return out
+
+
+def _normalize_sample_size(sample_size: int | None) -> int | None:
+    """Convert non-positive sample requests to the full-data sentinel."""
+    if sample_size is not None and int(sample_size) <= 0:
+        return None
+    return None if sample_size is None else int(sample_size)
+
+
+def _load_training_splits(data_cfg: dict[str, Any]) -> TrainingSplits:
+    """Load and normalize the PD train/calibration/test splits."""
+    train = _normalize_percent_columns(read_split_with_fe_fallback(data_cfg["train_path"]))
+    test = _normalize_percent_columns(read_split_with_fe_fallback(data_cfg["test_path"]))
+    cal = _normalize_percent_columns(read_split_with_fe_fallback(data_cfg["calibration_path"]))
+    return TrainingSplits(train=train, cal=cal, test=test)
+
+
+def _sample_frame(df: pd.DataFrame, sample_size: int | None) -> pd.DataFrame:
+    if sample_size is None or sample_size >= len(df):
+        return df
+    return df.sample(n=sample_size, random_state=42).reset_index(drop=True)
+
+
+def _sample_training_splits(splits: TrainingSplits, sample_size: int | None) -> TrainingSplits:
+    """Return deterministically sampled splits for smoke-sized PD runs."""
+    normalized_sample_size = _normalize_sample_size(sample_size)
+    return TrainingSplits(
+        train=_sample_frame(splits.train, normalized_sample_size),
+        cal=_sample_frame(splits.cal, normalized_sample_size),
+        test=_sample_frame(splits.test, normalized_sample_size),
+    )
 
 
 def _issue_quarter(series: pd.Series) -> pd.Series:
@@ -1209,8 +1249,7 @@ def main(
     replay_manifest_path: str | None = None,
     run_tag: str | None = None,
 ) -> None:
-    if sample_size is not None and int(sample_size) <= 0:
-        sample_size = None
+    sample_size = _normalize_sample_size(sample_size)
     config = validate_pd_config(load_config(config_path), config_path=config_path)
     run_mode = str(mode or "search").strip().lower() or "search"
     replay_cfg = manifest_section(load_replay_manifest(replay_manifest_path), "pd")
@@ -1271,11 +1310,10 @@ def main(
 
     logger.info(f"Config loaded from {config_path}")
 
-    train = _normalize_percent_columns(read_split_with_fe_fallback(config["data"]["train_path"]))
-    test = _normalize_percent_columns(read_split_with_fe_fallback(config["data"]["test_path"]))
-    cal = _normalize_percent_columns(
-        read_split_with_fe_fallback(config["data"]["calibration_path"])
-    )
+    splits = _load_training_splits(config["data"])
+    train = splits.train
+    cal = splits.cal
+    test = splits.test
     _write_training_status(
         status_path,
         phase="data_loaded",
@@ -1290,13 +1328,10 @@ def main(
 
     train, regime_meta = _apply_training_regime(train, regime_cfg, date_col="issue_d")
 
-    if sample_size is not None:
-        if sample_size < len(train):
-            train = train.sample(n=sample_size, random_state=42).reset_index(drop=True)
-        if sample_size < len(test):
-            test = test.sample(n=sample_size, random_state=42).reset_index(drop=True)
-        if sample_size < len(cal):
-            cal = cal.sample(n=sample_size, random_state=42).reset_index(drop=True)
+    splits = _sample_training_splits(TrainingSplits(train=train, cal=cal, test=test), sample_size)
+    train = splits.train
+    cal = splits.cal
+    test = splits.test
 
     resolved_features = _resolve_training_features(
         config=config,
