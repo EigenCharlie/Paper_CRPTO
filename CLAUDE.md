@@ -90,8 +90,10 @@ just book-preview           # quarto preview book (live reload)
 just smoke                  # pytest tests/test_crpto_final_sync.py tests/test_quarto_book_guardrails.py
 just test                   # pytest completo
 just lint                   # ruff check + format check
-just type-check             # mypy src scripts
+just type-check             # mypy src scripts (limpio: 0 errores)
 just validate-champion      # verifica hashes vs EXTRACTION_MANIFEST.json
+just drift-gate             # recomputa la cadena del certificado y exige diff bit-exacto (CRPTO_RUN_CHAMPION_DRIFT=1)
+just bound-audit            # re-deriva el menú de bounds A21 + búsquedas bound-aware
 
 # Paper outputs (re-genera artefactos pero NO toca el champion)
 just tables                 # python scripts/export_crpto_tables.py
@@ -182,6 +184,7 @@ El archivo `.env` está en `.gitignore`. Nunca commitear tokens.
 9. **`uv run`** para invocar herramientas Python (`pytest`, `quarto`, `dbt`, `dvc`, `mlflow`, `optuna`).
 10. **Repo público**: `https://github.com/EigenCharlie/Paper_CRPTO`. No subir secretos ni artefactos pesados; usar DVC remote para datos/modelos.
 11. **Branch de trabajo**: para código/refactors usa rama y PR. Hotfixes de docs/CI en `main` solo si el usuario lo pide explícitamente.
+12. **Drift-gate tras tocar la capa conformal/PD.** Cualquier refactor de `src/models/conformal*.py`, `src/models/optuna_tuning.py`, `scripts/generate_conformal_intervals.py` o `scripts/train_pd_model.py` debe pasar `just drift-gate` (diff bit-exacto vs la cadena del certificado). Un ROJO significa cambio numérico, no refactor: parar y preguntar. Es la red de seguridad que permitió descomponer los `main()` sin tocar el certificado.
 
 ## Qué stages son seguros re-correr
 
