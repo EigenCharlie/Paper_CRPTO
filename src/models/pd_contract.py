@@ -12,7 +12,7 @@ import json
 import os
 from datetime import UTC, datetime
 from pathlib import Path
-from typing import Any
+from typing import Any, cast
 
 import pandas as pd
 from catboost import CatBoostClassifier
@@ -45,8 +45,8 @@ def resolve_model_path() -> Path:
         Path("models/pd_catboost.cbm"),
         Path("models/pd_catboost_tuned.cbm"),
     ]
-    candidates = [candidate for candidate in candidates if candidate is not None]
-    path = next((p for p in candidates if p.exists()), None)
+    existing: list[Path] = [candidate for candidate in candidates if candidate is not None]
+    path = next((p for p in existing if p.exists()), None)
     if path is None:
         raise FileNotFoundError("No PD model artifact found in models/.")
     return path
@@ -61,8 +61,8 @@ def resolve_calibrator_path() -> Path | None:
         CANONICAL_CALIBRATOR_PATH,
         Path("models/pd_calibrator.pkl"),
     ]
-    candidates = [candidate for candidate in candidates if candidate is not None]
-    return next((p for p in candidates if p.exists()), None)
+    existing: list[Path] = [candidate for candidate in candidates if candidate is not None]
+    return next((p for p in existing if p.exists()), None)
 
 
 def load_contract(path: Path = CONTRACT_PATH) -> dict[str, Any] | None:
@@ -70,7 +70,7 @@ def load_contract(path: Path = CONTRACT_PATH) -> dict[str, Any] | None:
     if not path.exists():
         return None
     with open(path, encoding="utf-8") as f:
-        return json.load(f)
+        return cast(dict[str, Any], json.load(f))
 
 
 def build_contract_payload(

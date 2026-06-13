@@ -63,7 +63,7 @@ def resolve_feature_sets(
     df: pd.DataFrame,
     feature_source: str = "auto",
     feature_config_path: str | Path = "data/processed/feature_config.pkl",
-) -> dict[str, list[str]]:
+) -> dict[str, Any]:
     """Resolve feature sets from feature_config first, with legacy fallback."""
     cfg = load_feature_config(feature_config_path)
     use_cfg = feature_source == "feature_config" or (feature_source == "auto" and bool(cfg))
@@ -120,7 +120,7 @@ def train_baseline(
     y_test: pd.Series,
     sample_weight: np.ndarray | None = None,
     **kwargs: Any,
-) -> tuple[LogisticRegression, dict[str, float]]:
+) -> tuple[LogisticRegression, dict[str, Any]]:
     """Train logistic regression baseline."""
     model = LogisticRegression(
         C=1.0,
@@ -132,7 +132,7 @@ def train_baseline(
     model.fit(X_train, y_train, sample_weight=sample_weight)
     y_prob = model.predict_proba(X_test)[:, 1]
     auc = roc_auc_score(y_test, y_prob)
-    metrics = {"auc_roc": float(auc), "model_type": "logistic_regression"}
+    metrics: dict[str, Any] = {"auc_roc": float(auc), "model_type": "logistic_regression"}
     logger.info(f"Baseline LR — AUC: {auc:.4f}")
     return model, metrics
 
@@ -250,7 +250,7 @@ def train_catboost(
     y_test: pd.Series,
     cat_features: list[str] | None = None,
     params: dict[str, Any] | None = None,
-) -> tuple[CatBoostClassifier, dict[str, float]]:
+) -> tuple[CatBoostClassifier, dict[str, Any]]:
     """Backward-compatible CatBoost train helper (uses same set for val/test)."""
     model, metrics = train_catboost_default(
         X_train,
@@ -290,10 +290,10 @@ def tune_catboost_optuna(
     )
     best_params = metrics.get("best_params", {})
     logger.info(f"Best params (wrapper): {best_params}")
-    return best_params
+    return dict(best_params) if isinstance(best_params, dict) else {}
 
 
-def __getattr__(name: str):
+def __getattr__(name: str) -> Any:
     """Lazy re-export for train_catboost_tuned_optuna (avoids circular import)."""
     if name == "train_catboost_tuned_optuna":
         from src.models.optuna_tuning import train_catboost_tuned_optuna

@@ -8,6 +8,7 @@ files instead of hardcoding family semantics inside the compatibility launcher.
 from __future__ import annotations
 
 from pathlib import Path
+from typing import Any
 
 import yaml
 
@@ -36,7 +37,7 @@ FAMILY_DEFAULTS = {
 }
 
 
-def _load_yaml(path: Path) -> dict[str, object]:
+def _load_yaml(path: Path) -> dict[str, Any]:
     if not path.exists():
         return {}
     try:
@@ -60,7 +61,7 @@ def legacy_family_alias(name: str | None) -> str | None:
     return raw if raw in LEGACY_PIPELINE_ALIASES else None
 
 
-def load_pipeline_definition(name: str | None) -> dict[str, object]:
+def load_pipeline_definition(name: str | None) -> dict[str, Any]:
     family = resolve_pipeline_family(name)
     payload = _load_yaml(PIPELINE_CONFIG_DIR / f"{family}.yaml")
     if not payload:
@@ -96,7 +97,7 @@ def default_profile_for_family(name: str | None, sampling_profile: str | None = 
     return str(sampling_profile or "").strip() or "search_pd_default"
 
 
-def load_profile_config(profile_name: str | None) -> dict[str, object]:
+def load_profile_config(profile_name: str | None) -> dict[str, Any]:
     name = str(profile_name or "").strip()
     if not name:
         return {}
@@ -110,7 +111,7 @@ def build_pipeline_contract(
     sampling_profile: str,
     writes_canonical_artifacts_arg: bool | None,
     upstream_canonical_run_tag: str | None,
-) -> dict[str, object]:
+) -> dict[str, Any]:
     requested_family = str(pipeline_family).strip().lower() or "crpto_e2e"
     family = resolve_pipeline_family(requested_family)
     pipeline_def = load_pipeline_definition(family)

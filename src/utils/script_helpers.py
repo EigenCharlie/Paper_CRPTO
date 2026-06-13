@@ -26,7 +26,7 @@ import json
 import math
 import os
 from pathlib import Path
-from typing import Any
+from typing import Any, cast
 
 import numpy as np
 import pandas as pd
@@ -37,7 +37,7 @@ REPO_ROOT = Path(__file__).resolve().parents[2]
 
 def load_json(path: Path) -> dict[str, Any]:
     """Load a UTF-8 JSON file into a dict."""
-    return json.loads(path.read_text(encoding="utf-8"))
+    return cast(dict[str, Any], json.loads(path.read_text(encoding="utf-8")))
 
 
 def try_load_json(path: Path) -> dict[str, Any]:
@@ -49,7 +49,7 @@ def try_load_json(path: Path) -> dict[str, Any]:
 
 def load_yaml(path: Path) -> dict[str, Any]:
     """Load a UTF-8 YAML file into a dict."""
-    return yaml.safe_load(path.read_text(encoding="utf-8"))
+    return cast(dict[str, Any], yaml.safe_load(path.read_text(encoding="utf-8")))
 
 
 def write_json(path: Path, payload: dict[str, Any]) -> None:
@@ -127,7 +127,7 @@ def parse_percent_series(series: pd.Series, *, nan_percent: float = 12.0) -> np.
             .to_numpy(dtype=float)
         )
     values = np.nan_to_num(values, nan=nan_percent)
-    return values / 100.0
+    return cast(np.ndarray, values / 100.0)
 
 
 def resolve_interval_columns(intervals: pd.DataFrame) -> tuple[str, str, str]:

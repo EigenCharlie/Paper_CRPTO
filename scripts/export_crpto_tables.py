@@ -18,7 +18,7 @@ from pathlib import Path
 from typing import Any
 
 import pandas as pd
-from analyze_crpto_evidence import build_p1_evidence
+from analyze_crpto_evidence import build_p1_evidence  # type: ignore[import-not-found]
 
 from src.utils.script_helpers import first_existing, load_json, policy_matches, write_table
 
@@ -47,7 +47,7 @@ def _as_bool(value: Any) -> bool:
 
 
 def _policy_match(row: pd.Series, policy: dict[str, Any] | None) -> bool:
-    return bool(policy) and policy_matches(row, policy)
+    return policy is not None and policy_matches(row, policy)
 
 
 def _write_table(name: str, frame: pd.DataFrame) -> None:

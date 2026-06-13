@@ -538,7 +538,7 @@ def _resource_snapshot(artifact_root: Path) -> dict[str, Any]:
         "logical_cpu_count": int(os.cpu_count() or 0),
     }
     try:
-        import psutil  # type: ignore[import-untyped]
+        import psutil
 
         vm = psutil.virtual_memory()
         payload.update(
@@ -671,6 +671,8 @@ def _same_trial_params(left: Mapping[str, Any], right: Mapping[str, Any]) -> boo
         return False
     for key, left_value in left.items():
         right_value = right.get(key)
+        if right_value is None:
+            return False
         try:
             if abs(float(left_value) - float(right_value)) > 1e-12:
                 return False

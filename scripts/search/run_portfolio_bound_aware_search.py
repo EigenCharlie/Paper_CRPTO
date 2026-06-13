@@ -9,7 +9,7 @@ import os
 import subprocess
 import sys
 import time
-from collections.abc import Mapping
+from collections.abc import Callable, Mapping
 from datetime import UTC, datetime
 from pathlib import Path
 from typing import Any
@@ -361,7 +361,7 @@ def _policy_grid_size(
     delta_cap_quantiles: list[float],
     tail_focus_quantiles: list[float],
     aversion_values: list[float],
-    budget_profiles: list[dict[str, float]],
+    budget_profiles: list[dict[str, Any]],
     policy_modes: list[str] | None = None,
 ) -> int:
     policy_grid = _targeted_policy_grid(
@@ -388,7 +388,7 @@ def _build_frontier_for_seed(
     solver_backend: str,
     cuopt_presolve: int | None,
     policy_modes: list[str] | None,
-    progress_hook: callable,
+    progress_hook: Callable[[int, dict[str, Any]], None],
 ) -> pd.DataFrame:
     with open(config_path, encoding="utf-8") as handle:
         config = yaml.safe_load(handle)
@@ -941,7 +941,7 @@ def main(argv: list[str] | None = None) -> int:
     exact_python_executable = str(args.exact_python_executable).strip()
     exact_helper_script = Path(str(args.exact_helper_script)).resolve()
 
-    budget_profiles: list[dict[str, float]] = []
+    budget_profiles: list[dict[str, Any]] = []
     for token in [
         part.strip().lower() for part in str(args.budget_profiles).split(",") if part.strip()
     ]:

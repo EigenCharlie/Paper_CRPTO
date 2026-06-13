@@ -266,14 +266,31 @@ module = [
 ]
 ignore_missing_imports = true
 
-# Strict mode for the new, fully-annotated modules. Legacy code stays under the
+# Strict mode for the fully-annotated modules. Legacy code stays under the
 # global laxer config. Promote modules to this list once they pass cleanly.
+# Pending promotions: src.models.conformal and src.models.conformal_adapters
+# join when the R2 conformal split lands.
 [[tool.mypy.overrides]]
 module = [
     "src.optimization.policy",
+    "src.optimization.cuopt_adapter",
+    "src.optimization.portfolio_model",
+    "src.optimization.robust_opt",
+    "src.optimization.tail_satisficing_objective",
+    "src.models.calibration",
+    "src.models.conformal_artifacts",
+    "src.models.conformal_diagnostics",
+    "src.models.conformal_tuning",
+    "src.models.optuna_tuning",
+    "src.models.pd_contract",
+    "src.models.pd_model",
+    "src.models.pd_pipeline",
+    "src.models.venn_abers",
     "src.utils.pipeline_state",
+    "src.utils.pipeline_topology",
     "src.utils.mlflow_tracing",
     "src.utils.optuna_storage",
+    "src.utils.script_helpers",
 ]
 disallow_untyped_defs = true
 disallow_incomplete_defs = true

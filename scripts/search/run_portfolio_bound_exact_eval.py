@@ -8,6 +8,7 @@ import sys
 import time
 from datetime import UTC, datetime
 from pathlib import Path
+from typing import Any
 
 import pandas as pd
 from loguru import logger
@@ -106,6 +107,14 @@ def _load_completed_bound_eval(
     return bound_eval
 
 
+def _as_float(value: Any) -> float:
+    return float(value)
+
+
+def _as_int(value: Any) -> int:
+    return int(value)
+
+
 def _write_exact_status(
     *,
     context: dict[str, object],
@@ -115,10 +124,10 @@ def _write_exact_status(
     phase: str,
     extra: dict[str, object] | None = None,
 ) -> dict[str, object]:
-    started = float(context["helper_started_monotonic"])
-    frontier_total = int(context["frontier_total_units"])
-    frontier_completed = int(context["frontier_completed_units"])
-    bound_total = int(context["bound_total_checks"])
+    started = _as_float(context["helper_started_monotonic"])
+    frontier_total = _as_int(context["frontier_total_units"])
+    frontier_completed = _as_int(context["frontier_completed_units"])
+    bound_total = _as_int(context["bound_total_checks"])
     elapsed_sec = base_elapsed_sec + (time.monotonic() - started)
     global_total = frontier_total + bound_total
     global_completed = frontier_completed + bound_completed_checks

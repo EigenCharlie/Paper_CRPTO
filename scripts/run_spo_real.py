@@ -22,6 +22,7 @@ import json
 import pickle
 import time
 from pathlib import Path
+from typing import Any
 
 import numpy as np
 import pandas as pd
@@ -180,7 +181,7 @@ def _load_pd_artifacts() -> tuple | None:
 
 def _predict_calibrated_costs(
     df: pd.DataFrame,
-    model: object,
+    model: Any,
     calibrator: object,
     feature_names: list[str],
     cat_feats: list[str],
@@ -221,6 +222,8 @@ def _prep_features(
     X_arr = X.values.astype(np.float32)
     if mu is None:
         mu = X_arr.mean(axis=0)
+        sigma = X_arr.std(axis=0) + 1e-8
+    if sigma is None:
         sigma = X_arr.std(axis=0) + 1e-8
     return ((X_arr - mu) / sigma).astype(np.float32), mu, sigma
 
@@ -564,7 +567,7 @@ def main() -> int:
 
     # ── Aggregate across seeds ───────────────────────────────────────────────
     pooled: dict[str, np.ndarray] = {k: np.concatenate(v) for k, v in all_regrets.items()}
-    agg: dict[str, dict[str, float]] = {}
+    agg: dict[str, dict[str, Any]] = {}
     for method, arr in pooled.items():
         agg[method] = {
             "mean_regret": float(arr.mean()),

@@ -1656,7 +1656,7 @@ def build_curated_visual_rows(caption_rows: list[dict[str, object]]) -> list[dic
         (
             str(row["relative_path"]),
             str(row["caption_type"]),
-            int(row["caption_index"]),
+            int(str(row["caption_index"])),
         ): row
         for row in caption_rows
         if str(row.get("caption_index", "")).isdigit()
@@ -1668,7 +1668,7 @@ def build_curated_visual_rows(caption_rows: list[dict[str, object]]) -> list[dic
         key = (
             str(spec["relative_path"]),
             str(spec["caption_type"]),
-            int(spec["caption_index"]),
+            int(str(spec["caption_index"])),
         )
         caption = lookup.get(key)
         if caption is None:

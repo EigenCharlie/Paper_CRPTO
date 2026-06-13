@@ -4,7 +4,7 @@ from __future__ import annotations
 
 from collections.abc import Mapping, Sequence
 from dataclasses import dataclass
-from typing import Any, Literal
+from typing import Any, Literal, cast
 
 import numpy as np
 
@@ -241,7 +241,7 @@ def funded_loss_rate(
     int_rate_array = _coerce_values(int_rates, default_array)
     if np.any((default_array < 0) | (default_array > 1)):
         raise ValueError("default_flag values must be in [0, 1]")
-    return default_array * float(lgd) - (1.0 - default_array) * int_rate_array
+    return cast(np.ndarray, default_array * float(lgd) - (1.0 - default_array) * int_rate_array)
 
 
 def _coerce_values(

@@ -66,9 +66,9 @@ def artifact_descriptor(path_like: str | Path) -> dict[str, Any]:
     if not path.is_absolute():
         path = ROOT / path
     rel = (
-        str(path.relative_to(ROOT))
+        path.relative_to(ROOT).as_posix()
         if path.is_absolute() and ROOT in path.parents
-        else str(path_like)
+        else Path(path_like).as_posix()
     )
     return {
         "path": rel,

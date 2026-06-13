@@ -23,7 +23,9 @@ Artifacts of record:
 
 ## What Was Implemented
 
-- Enriched internal-only monthly vintage contract in `src/data/build_datasets.py`
+- Enriched internal-only monthly vintage contract in the legacy data-product
+  builder later retired during the R0 cleanup; current CRPTO keeps this as
+  research provenance, not as an active pipeline dependency.
 - Parallel targets:
   - `raw_rate`
   - `logit_rate`

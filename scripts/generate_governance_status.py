@@ -225,6 +225,24 @@ def _safe_mean(series: pd.Series) -> float:
     return float(series.mean())
 
 
+def _safe_float_value(value: Any, default: float = 0.0) -> float:
+    try:
+        return float(value)
+    except (TypeError, ValueError):
+        return default
+
+
+def _safe_int_value(value: Any, default: int = 0) -> int:
+    try:
+        return int(value)
+    except (TypeError, ValueError):
+        return default
+
+
+def _safe_list_value(value: Any) -> list[Any]:
+    return list(value) if isinstance(value, list | tuple) else []
+
+
 def _resolve_primary_threshold() -> float:
     semantics = load_threshold_semantics()
     if semantics:
@@ -464,10 +482,10 @@ def main(config_path: str = "configs/mrm_policy.yaml", run_tag: str | None = Non
     mean_psi = _safe_mean(drift_df["psi"]) if n_features else 0.0
     min_ks_pvalue = float(drift_df["ks_pvalue"].min()) if n_features else 1.0
     min_cvm_pvalue = float(drift_df["cvm_pvalue"].min()) if n_features else 1.0
-    c2st_auc = float(c2st["c2st_auc"])
+    c2st_auc = _safe_float_value(c2st["c2st_auc"])
     c2st_materiality = str(c2st.get("materiality", "none"))
-    c2st_effective_driver_count = int(c2st.get("effective_driver_count", 0))
-    c2st_top_drivers = list(c2st.get("top_drivers", []) or [])
+    c2st_effective_driver_count = _safe_int_value(c2st.get("effective_driver_count", 0))
+    c2st_top_drivers = _safe_list_value(c2st.get("top_drivers", []))
     performance_report = _score_and_performance_report(
         train_df,
         test_df,
@@ -610,7 +628,7 @@ def main(config_path: str = "configs/mrm_policy.yaml", run_tag: str | None = Non
             "cvm_breaches": cvm_breaches,
             "feature_breach_ratio": feature_breach_ratio,
             "distribution_warning_ratio": distribution_warning_ratio,
-            "c2st_rows_used": int(c2st.get("n_rows", 0)),
+            "c2st_rows_used": _safe_int_value(c2st.get("n_rows", 0)),
             "c2st_materiality": c2st_materiality,
             "c2st_effective_driver_count": c2st_effective_driver_count,
             **performance_report,
@@ -625,7 +643,7 @@ def main(config_path: str = "configs/mrm_policy.yaml", run_tag: str | None = Non
             if not explanation_drift.empty
             else 0.0,
             "fairness_overall_pass": fairness_pass,
-            "fairness_primary_threshold": float(
+            "fairness_primary_threshold": _safe_float_value(
                 fairness_status.get(
                     "primary_threshold", fairness_status.get("prediction_threshold", 0.5)
                 )
@@ -654,7 +672,7 @@ def main(config_path: str = "configs/mrm_policy.yaml", run_tag: str | None = Non
         },
         "top_drift_features": top_breaches,
         "top_explanation_breaches": top_explanation_breaches,
-        "primary_threshold": float(
+        "primary_threshold": _safe_float_value(
             fairness_status.get(
                 "primary_threshold", fairness_status.get("prediction_threshold", 0.5)
             )

@@ -12,6 +12,7 @@ from __future__ import annotations
 
 import pickle
 from pathlib import Path
+from typing import Any
 
 import pandas as pd
 from loguru import logger
@@ -23,7 +24,7 @@ MODEL_DIR = Path("models")
 
 def _persist_pipeline_results() -> None:
     """Build a pipeline summary artifact from canonical outputs."""
-    results: dict[str, float | int | dict[str, int]] = {
+    results: dict[str, Any] = {
         "batch_size": 0,
         "pd_mean": 0.0,
         "pd_auc": 0.0,

@@ -9,7 +9,7 @@ Supports multiple uncertainty policies for PD constraints:
 
 from __future__ import annotations
 
-from typing import Any
+from typing import Any, cast
 
 import numpy as np
 import pandas as pd
@@ -59,13 +59,16 @@ def compute_effective_pd(
         return high
     if mode is PolicyMode.BLENDED_UNCERTAINTY:
         weight = float(np.clip(gamma, 0.0, 1.0))
-        return np.clip(point + weight * np.clip(high - point, 0.0, 1.0), 0.0, 1.0)
+        return cast(
+            np.ndarray,
+            np.clip(point + weight * np.clip(high - point, 0.0, 1.0), 0.0, 1.0),
+        )
     if mode is PolicyMode.CAPPED_BLENDED_UNCERTAINTY:
         weight = float(np.clip(gamma, 0.0, 1.0))
         delta = np.clip(high - point, 0.0, 1.0)
         q = 1.0 if delta_cap_quantile is None else float(np.clip(delta_cap_quantile, 0.0, 1.0))
         delta_cap = float(np.quantile(delta, q)) if len(delta) else 0.0
-        return np.clip(point + weight * np.minimum(delta, delta_cap), 0.0, 1.0)
+        return cast(np.ndarray, np.clip(point + weight * np.minimum(delta, delta_cap), 0.0, 1.0))
     if mode is PolicyMode.TAIL_BLENDED_UNCERTAINTY:
         weight = float(np.clip(gamma, 0.0, 1.0))
         delta = np.clip(high - point, 0.0, 1.0)
@@ -186,7 +189,7 @@ def build_portfolio_model(
         # Slack in weighted-PD units to avoid degenerate zero-investment solutions.
         model.pd_cap_slack = pyo.Var(domain=pyo.NonNegativeReals)
 
-    def objective_rule(m):
+    def objective_rule(m: Any) -> Any:
         base = sum(
             m.x[i]
             * m.loan_amnt[i]
@@ -203,7 +206,7 @@ def build_portfolio_model(
 
     model.obj = pyo.Objective(rule=objective_rule, sense=pyo.maximize)
 
-    def budget_rule(m):
+    def budget_rule(m: Any) -> Any:
         return sum(m.x[i] * m.loan_amnt[i] for i in m.I) <= total_budget
 
     model.budget = pyo.Constraint(rule=budget_rule)
@@ -211,14 +214,14 @@ def build_portfolio_model(
     min_budget_utilization = float(np.clip(min_budget_utilization, 0.0, 1.0))
     if min_budget_utilization > 0:
 
-        def min_budget_rule(m):
+        def min_budget_rule(m: Any) -> Any:
             return (
                 sum(m.x[i] * m.loan_amnt[i] for i in m.I) >= min_budget_utilization * total_budget
             )
 
         model.min_budget = pyo.Constraint(rule=min_budget_rule)
 
-    def pd_cap_rule(m):
+    def pd_cap_rule(m: Any) -> Any:
         total_exposure = sum(m.x[i] * m.loan_amnt[i] for i in m.I) + 1e-6
         weighted_pd = sum(m.x[i] * m.loan_amnt[i] * m.pd_worst[i] for i in m.I)
         rhs = max_portfolio_pd * total_exposure
@@ -234,7 +237,7 @@ def build_portfolio_model(
         for p_idx, purpose in enumerate(purposes):
             mask = [i for i in range(n) if loan_purpose[i] == purpose]
 
-            def concentration_rule(m, _idx=None, _mask=mask):
+            def concentration_rule(m: Any, _idx: Any = None, _mask: list[int] = mask) -> Any:
                 total = sum(m.x[i] * m.loan_amnt[i] for i in m.I) + 1e-6
                 sector = sum(m.x[i] * m.loan_amnt[i] for i in _mask)
                 return sector <= max_concentration * total
@@ -394,19 +397,19 @@ def build_binary_model(
     model.loan_amnt = pyo.Param(model.I, initialize=dict(enumerate(loans["loan_amnt"].values)))
     model.x = pyo.Var(model.I, domain=pyo.Binary)
 
-    def objective_rule(m):
+    def objective_rule(m: Any) -> Any:
         return sum(
             m.x[i] * m.loan_amnt[i] * (m.int_rate[i] - m.pd_point[i] * m.lgd[i]) for i in m.I
         )
 
     model.obj = pyo.Objective(rule=objective_rule, sense=pyo.maximize)
 
-    def budget_rule(m):
+    def budget_rule(m: Any) -> Any:
         return sum(m.x[i] * m.loan_amnt[i] for i in m.I) <= total_budget
 
     model.budget = pyo.Constraint(rule=budget_rule)
 
-    def pd_cap_rule(m):
+    def pd_cap_rule(m: Any) -> Any:
         total = sum(m.x[i] * m.loan_amnt[i] for i in m.I) + 1e-6
         weighted = sum(m.x[i] * m.loan_amnt[i] * m.pd_high[i] for i in m.I)
         return weighted <= max_portfolio_pd * total

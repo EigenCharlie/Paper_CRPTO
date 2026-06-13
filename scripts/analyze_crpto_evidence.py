@@ -51,7 +51,7 @@ HARDENING_TABLES = {
     "enhanced_shift": OUT / "crpto_tableA11_enhanced_synthetic_shift.csv",
 }
 THEORY_APPENDIX_PATH = DOCS_OUT / "crpto_conditional_tightening_appendix_2026-05-04.md"
-FINALIST_INTERVALS = [
+FINALIST_INTERVALS: list[dict[str, Any]] = [
     {
         "rank": 1,
         "label": "rank1_score_decile_mondrian",
@@ -87,7 +87,7 @@ FINALIST_INTERVALS = [
     },
 ]
 
-BOUND_STAGES = [
+BOUND_STAGES: list[dict[str, Any]] = [
     {
         "stage": "bound_aware_5k",
         "role": "screening",

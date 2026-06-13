@@ -18,6 +18,7 @@ from __future__ import annotations
 import json
 import pickle
 from pathlib import Path
+from typing import Any, cast
 
 import numpy as np
 import pandas as pd
@@ -54,16 +55,16 @@ def _load_model_and_data() -> tuple:
     model.load_model(str(model_path))
     logger.info("Loaded CatBoost classifier from {}", model_path)
 
-    with open(contract_path) as f:
-        contract = json.load(f)
+    with open(contract_path, encoding="utf-8") as contract_handle:
+        contract = cast(dict[str, Any], json.load(contract_handle))
     feature_cols: list[str] = contract["feature_names"]
 
     # Load calibrator (optional)
     cal_pkl = Path("models/pd_canonical_calibrator.pkl")
     calibrator = None
     if cal_pkl.exists():
-        with open(cal_pkl, "rb") as f:
-            calibrator = pickle.load(f)
+        with open(cal_pkl, "rb") as calibrator_handle:
+            calibrator = pickle.load(calibrator_handle)
         logger.info("Loaded calibrator from {}", cal_pkl)
 
     # Load data

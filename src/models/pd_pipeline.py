@@ -9,7 +9,7 @@ and model serialization via joblib/pickle.
 
 from __future__ import annotations
 
-from typing import Any
+from typing import Any, cast
 
 import numpy as np
 import pandas as pd
@@ -80,10 +80,10 @@ class CatBoostSklearnAdapter(BaseEstimator, ClassifierMixin):
         return self
 
     def predict_proba(self, X: pd.DataFrame) -> np.ndarray:
-        return self.model_.predict_proba(X)
+        return cast(np.ndarray, self.model_.predict_proba(X))
 
     def predict(self, X: pd.DataFrame) -> np.ndarray:
-        return self.model_.predict(X)
+        return cast(np.ndarray, self.model_.predict(X))
 
 
 class CalibratedPDPipeline(BaseEstimator, ClassifierMixin):
@@ -136,7 +136,7 @@ class CalibratedPDPipeline(BaseEstimator, ClassifierMixin):
 
     def predict_proba(self, X: pd.DataFrame) -> np.ndarray:
         """Raw predict_proba (uncalibrated)."""
-        return self._pipeline.predict_proba(X)
+        return cast(np.ndarray, self._pipeline.predict_proba(X))
 
     def predict_pd(self, X: pd.DataFrame) -> np.ndarray:
         """Return calibrated PD estimates."""
@@ -145,11 +145,11 @@ class CalibratedPDPipeline(BaseEstimator, ClassifierMixin):
             from src.models.conformal import apply_probability_calibrator
 
             return apply_probability_calibrator(self.calibrator, raw)
-        return raw
+        return cast(np.ndarray, raw)
 
     def predict(self, X: pd.DataFrame) -> np.ndarray:
         """Binary prediction at default threshold."""
-        return self._pipeline.predict(X)
+        return cast(np.ndarray, self._pipeline.predict(X))
 
     @classmethod
     def from_artifacts(

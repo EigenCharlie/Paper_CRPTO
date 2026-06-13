@@ -26,6 +26,7 @@ import shutil
 import time
 from collections import OrderedDict
 from pathlib import Path
+from typing import Any
 
 import matplotlib
 import matplotlib.pyplot as plt
@@ -447,7 +448,7 @@ def main() -> int:
         )
 
     # ── 6. Aggregate into detail DataFrame ──────────────────────────────────
-    rows = []
+    rows: list[dict[str, Any]] = []
     for period_name in PERIODS:
         mask = period_masks[period_name]
         n_loans = int(mask.sum())
@@ -496,42 +497,51 @@ def main() -> int:
     logger.info("Saved: {}", detail_path)
 
     # ── 7. Summary JSON ─────────────────────────────────────────────────────
-    coverages_90 = [r["coverage_90"] for r in rows if r["coverage_90"] is not None]
+    coverages_90 = [float(r["coverage_90"]) for r in rows if r["coverage_90"] is not None]
     spo_improvements = [
-        r["spo_improvement_pct"] for r in rows if r["spo_improvement_pct"] is not None
+        float(r["spo_improvement_pct"]) for r in rows if r["spo_improvement_pct"] is not None
     ]
 
-    per_period_json = {}
+    per_period_json: dict[str, Any] = {}
     for r in rows:
-        regrets = per_period_regrets[r["period"]]
-        per_period_json[r["period"]] = {
-            "n_loans": r["n_loans"],
-            "default_rate": round(r["default_rate"], 4),
+        period = str(r["period"])
+        regrets = per_period_regrets[period]
+        per_period_json[period] = {
+            "n_loans": int(r["n_loans"]),
+            "default_rate": round(float(r["default_rate"]), 4),
             "regret": {
                 "two_stage": {
-                    "mean": round(r["two_stage_mean_regret"], 6),
-                    "std": round(r["two_stage_std_regret"], 6),
+                    "mean": round(float(r["two_stage_mean_regret"]), 6),
+                    "std": round(float(r["two_stage_std_regret"]), 6),
                     "per_seed": regrets["two_stage"],
                 },
                 "spo_plus": {
-                    "mean": round(r["spo_plus_mean_regret"], 6),
-                    "std": round(r["spo_plus_std_regret"], 6),
+                    "mean": round(float(r["spo_plus_mean_regret"]), 6),
+                    "std": round(float(r["spo_plus_std_regret"]), 6),
                     "per_seed": regrets["spo_plus"],
                 },
                 "conformal_robust": {
-                    "mean": round(r["conformal_robust_mean_regret"], 6),
-                    "std": round(r["conformal_robust_std_regret"], 6),
+                    "mean": round(float(r["conformal_robust_mean_regret"]), 6),
+                    "std": round(float(r["conformal_robust_std_regret"]), 6),
                     "per_seed": regrets["conformal_robust"],
                 },
             },
             "spo_improvement_vs_ts_pct": (
-                round(r["spo_improvement_pct"], 2) if r["spo_improvement_pct"] is not None else None
+                round(float(r["spo_improvement_pct"]), 2)
+                if r["spo_improvement_pct"] is not None
+                else None
             ),
-            "coverage_90": round(r["coverage_90"], 4) if r["coverage_90"] is not None else None,
-            "coverage_95": round(r["coverage_95"], 4) if r["coverage_95"] is not None else None,
-            "avg_width_90": round(r["avg_width_90"], 4) if r["avg_width_90"] is not None else None,
+            "coverage_90": (
+                round(float(r["coverage_90"]), 4) if r["coverage_90"] is not None else None
+            ),
+            "coverage_95": (
+                round(float(r["coverage_95"]), 4) if r["coverage_95"] is not None else None
+            ),
+            "avg_width_90": (
+                round(float(r["avg_width_90"]), 4) if r["avg_width_90"] is not None else None
+            ),
             "min_grade_coverage_90": (
-                round(r["min_grade_coverage_90"], 4)
+                round(float(r["min_grade_coverage_90"]), 4)
                 if r["min_grade_coverage_90"] is not None
                 else None
             ),

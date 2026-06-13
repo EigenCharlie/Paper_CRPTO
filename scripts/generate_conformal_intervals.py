@@ -216,12 +216,8 @@ def _resolve_features(
     except (FileNotFoundError, TypeError) as exc:
         logger.warning(f"Unable to load fallback feature_config from {feature_cfg_path}: {exc}")
 
-    if isinstance(feature_cfg, dict):
-        catboost_features = feature_cfg.get("CATBOOST_FEATURES", [])
-        categorical = feature_cfg.get("CATEGORICAL_FEATURES", [])
-    else:
-        catboost_features = []
-        categorical = []
+    catboost_features = feature_cfg.get("CATBOOST_FEATURES", [])
+    categorical = feature_cfg.get("CATEGORICAL_FEATURES", [])
 
     features = [c for c in catboost_features if c in cal_df.columns and c in test_df.columns]
     if not features:
@@ -621,7 +617,7 @@ def main(
         coverage_guardband=coverage_guardband_90,
         min_group_guardband=min_group_guardband_90,
     )
-    best_cfg = {
+    best_cfg: dict[str, Any] = {
         "partition": str(best_row.get("partition", partition_candidates[0])),
         "partition_candidates": list(partition_candidates),
         "partition_probability_source": str(best_row.get("partition_probability_source", "raw")),

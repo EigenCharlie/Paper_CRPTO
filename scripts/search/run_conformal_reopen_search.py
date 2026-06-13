@@ -141,12 +141,13 @@ class _temporary_env:
 
 def _normalize_design_row(row: dict[str, Any] | pd.Series) -> dict[str, Any]:
     raw = dict(row)
+    alpha90 = raw.get("alpha_used_90", raw.get("selected_alpha_used", 0.10))
     return {
         "partition": str(raw["partition"]),
         "partition_probability_source": str(raw.get("partition_probability_source", "raw")),
         "n_score_bins": int(float(raw.get("n_score_bins", 10))),
         "fallback_mode": str(raw.get("fallback_mode", "grade_then_global")),
-        "alpha_used_90": float(raw.get("alpha_used_90", raw.get("selected_alpha_used", 0.10))),
+        "alpha_used_90": float(0.10 if alpha90 is None else alpha90),
         "alpha_used_95": float(raw.get("alpha_used_95", 0.05)),
         "score_scale_family": str(raw.get("score_scale_family", "none")),
         "min_group_size": int(float(raw.get("min_group_size", 100))),

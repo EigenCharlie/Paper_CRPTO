@@ -244,7 +244,7 @@ def _paper3_fig2_grade_coverage_heatmap() -> None:
     pivot = pivot.reindex(sorted(pivot.columns), axis=1)
 
     fig, ax = plt.subplots(figsize=(COL2, HEIGHT_M))
-    cmap = plt.cm.RdYlGn
+    cmap = plt.get_cmap("RdYlGn")
     im = ax.imshow(pivot.values, cmap=cmap, vmin=0.70, vmax=1.00, aspect="auto")
 
     ax.set_xticks(range(len(pivot.columns)))

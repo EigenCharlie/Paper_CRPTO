@@ -10,7 +10,7 @@ under the 400-line guideline. Contains:
 
 from __future__ import annotations
 
-from typing import Any
+from typing import Any, cast
 
 import numpy as np
 import pandas as pd
@@ -359,7 +359,7 @@ def enforce_segment_coverage_floor(
     min_segment_size = max(1, int(min_segment_size))
 
     def _mask_for(segment: str) -> np.ndarray:
-        return seg == segment
+        return cast(np.ndarray, seg == segment)
 
     def _segment_cov(intervals: np.ndarray, segment: str) -> float:
         mask = _mask_for(segment)
@@ -667,7 +667,7 @@ def shrink_group_multipliers(
             trial_intervals = _apply_all(trial_group, temporal_factors_cur)
             trial_metrics = _metrics(trial_intervals)
             accepted = _constraints_ok(trial_metrics)
-            candidate = {
+            candidate: dict[str, Any] = {
                 "scope": "group",
                 "key": key,
                 "factor": next_factor,

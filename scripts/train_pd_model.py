@@ -464,7 +464,7 @@ def _select_decision_threshold(
             groups_eval=groups_dict,
             thr=float(thr),
         )
-        row = {
+        row: dict[str, Any] = {
             "threshold": float(thr),
             "overall_pass": bool(primary["overall_pass"]),
             "pass_ratio": float(primary["pass_ratio"]),
@@ -893,7 +893,11 @@ def _replay_top_optuna_trials(
         report["reason"] = "no_complete_trials"
         return report
 
-    top = sorted(complete, key=lambda t: float(t.value), reverse=True)[: max(1, int(top_k_trials))]
+    top = sorted(
+        complete,
+        key=lambda t: float(t.value if t.value is not None else float("-inf")),
+        reverse=True,
+    )[: max(1, int(top_k_trials))]
     rows: list[dict[str, Any]] = []
     for trial in top:
         fairness_pass_attr = trial.user_attrs.get("fairness_pass")
@@ -929,7 +933,9 @@ def _replay_top_optuna_trials(
                     "validation_brier": float(brier_score_loss(y_val, y_val_prob)),
                     "validation_ece": float(expected_calibration_error(y_val, y_val_prob)),
                     "best_iteration": int(metrics.get("best_iteration", 0)),
-                    "trial_best_value": float(trial.value),
+                    "trial_best_value": float(
+                        trial.value if trial.value is not None else float("nan")
+                    ),
                     "fairness_pass": fairness_pass_attr,
                     "conformal_pass": conformal_pass_attr,
                     "governance_pass": governance_pass_attr,
@@ -1712,7 +1718,10 @@ def main(
         # Save cumulative differences parquet for figure generation
         if "_cum_diff_calibrated" in statistical_cal_tests:
             k_idx = np.arange(len(y_test_arr)) / len(y_test_arr)
-            sigma_val = float(statistical_cal_tests.get("_sigma", 0.0))
+            sigma_raw = statistical_cal_tests.get("_sigma", 0.0)
+            sigma_val = (
+                float(sigma_raw) if isinstance(sigma_raw, str | int | float | np.number) else 0.0
+            )
             cum_diff_df = pd.DataFrame(
                 {
                     "k": k_idx,
@@ -1775,10 +1784,11 @@ def main(
             },
             title="Murphy Diagram: Raw vs Calibrated PD Forecasts",
         )
-        ax.figure.tight_layout()
+        fig: Any = ax.get_figure()
+        fig.tight_layout()
         murphy_diagram_path.parent.mkdir(parents=True, exist_ok=True)
-        ax.figure.savefig(murphy_diagram_path, dpi=180, bbox_inches="tight")
-        plt.close(ax.figure)
+        fig.savefig(murphy_diagram_path, dpi=180, bbox_inches="tight")
+        plt.close(fig)
         logger.info("Saved Murphy diagram to {}", murphy_diagram_path)
     except Exception as exc:
         logger.warning("Murphy diagram export skipped: {}", exc)
@@ -1810,8 +1820,8 @@ def main(
 
     cal_path = _artifact_path(config["output"].get("conformal_path", "models/pd_calibrator.pkl"))
     cal_path.parent.mkdir(parents=True, exist_ok=True)
-    with open(cal_path, "wb") as f:
-        pickle.dump(calibrator, f)
+    with open(cal_path, "wb") as cal_handle:
+        pickle.dump(calibrator, cal_handle)
 
     decision_threshold_path = _artifact_path(
         decision_cfg.get("output_path", "models/decision_threshold.json")
@@ -1848,14 +1858,14 @@ def main(
         config["output"].get("logreg_model_path", "models/pd_logreg_baseline.pkl")
     )
     logreg_model_path.parent.mkdir(parents=True, exist_ok=True)
-    with open(logreg_model_path, "wb") as f:
+    with open(logreg_model_path, "wb") as logreg_handle:
         pickle.dump(
             {
                 "model": lr_model,
                 "feature_names": list(logreg_features),
                 "fill_values": lr_fill.to_dict(),
             },
-            f,
+            logreg_handle,
         )
 
     # Canonical artifacts for downstream loading.
@@ -2008,8 +2018,8 @@ def main(
         config["output"].get("training_record_path", "models/pd_training_record.pkl")
     )
     record_path.parent.mkdir(parents=True, exist_ok=True)
-    with open(record_path, "wb") as f:
-        pickle.dump(training_record, f)
+    with open(record_path, "wb") as record_handle:
+        pickle.dump(training_record, record_handle)
     if seed_replay_report:
         seed_replay_status_path = _artifact_path(
             config["output"].get("seed_replay_status_path", "models/pd_hpo_seed_replay_status.json")

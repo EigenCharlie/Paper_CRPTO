@@ -12,6 +12,8 @@ Metrics:
 
 from __future__ import annotations
 
+from typing import Any
+
 import numpy as np
 import pandas as pd
 from loguru import logger
@@ -22,7 +24,7 @@ _EPS = np.finfo(float).eps
 def demographic_parity_difference(
     y_pred: np.ndarray,
     groups: np.ndarray,
-) -> dict[str, float | str | dict]:
+) -> dict[str, Any]:
     """Compute max gap in positive prediction rate across groups.
 
     Args:
@@ -58,7 +60,7 @@ def equalized_odds_gap(
     y_true: np.ndarray,
     y_pred: np.ndarray,
     groups: np.ndarray,
-) -> dict[str, float | dict]:
+) -> dict[str, Any]:
     """Compute max gap in TPR and FPR across groups.
 
     Args:
@@ -109,7 +111,7 @@ def equalized_odds_gap(
 def disparate_impact_ratio(
     y_pred: np.ndarray,
     groups: np.ndarray,
-) -> dict[str, float | str]:
+) -> dict[str, Any]:
     """Compute min(rate_i / rate_j) for all ordered group pairs.
 
     The 4/5ths rule (DIR >= 0.80) is a common regulatory threshold.
