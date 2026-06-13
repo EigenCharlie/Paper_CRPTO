@@ -133,6 +133,10 @@ stages:
       hash: md5
       md5: 084e6a7df1f95b5f696d072eafa32a1d
       size: 4082
+    - path: data/processed/calibration.parquet
+      hash: md5
+      md5: 530b6dbf1e5a561995f142023b8c355b
+      size: 27931750
     - path: data/processed/test.parquet
       hash: md5
       md5: 16bf66b611311120d8b55768f88fe7c4
@@ -209,6 +213,10 @@ stages:
           learning_rate: 0.057321202729872456
         pd.model: catboost
     outs:
+    - path: data/processed/test_predictions.parquet
+      hash: md5
+      md5: 0fdf00a257ac88ab825556d4475f1981
+      size: 12553447
     - path: models/pd_canonical.cbm
       hash: md5
       md5: 56dc9e4030e1a2c36d37322292012977
@@ -237,7 +245,7 @@ stages:
       size: 12553447
     - path: scripts/generate_conformal_intervals.py
       hash: md5
-      md5: e5e12cc1392c2227a874f49403ed213b
+      md5: bca301ad3ae71bb9bb2bbd5b2a540ff3
       size: 71336
     params:
       params.yaml:
@@ -595,3 +603,30 @@ stages:
       hash: md5
       md5: eea09f072730292237bfe297d50ca47a
       size: 397
+  crpto.data.splits:
+    cmd: python src/data/prepare_dataset.py --input
+      data/processed/loan_master.parquet --output data/processed --cutoff
+      2018-01-01
+    deps:
+    - path: data/processed/loan_master.parquet
+      hash: md5
+      md5: 01b5a7d50f9cd9dd81474e54db096a2c.dir
+      size: 203291457
+      nfiles: 1
+    - path: src/data/prepare_dataset.py
+      hash: md5
+      md5: e1281e74163743ad95f34d3437572b8c
+      size: 3946
+    outs:
+    - path: data/processed/calibration.parquet
+      hash: md5
+      md5: 530b6dbf1e5a561995f142023b8c355b
+      size: 27931750
+    - path: data/processed/test.parquet
+      hash: md5
+      md5: 16bf66b611311120d8b55768f88fe7c4
+      size: 32441172
+    - path: data/processed/train.parquet
+      hash: md5
+      md5: 88d8fbcb58640f47d4c02e2ff66bcb90
+      size: 142993295

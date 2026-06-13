@@ -4,10 +4,10 @@ Refactor plans, drift reports and execution memory for code paths that touch
 the frozen paper pipeline.
 
 > **Start here for what's next:**
-> [`NEXT_WORK_PLAN_2026-06.md`](NEXT_WORK_PLAN_2026-06.md) — the consolidated,
-> prioritized backlog after R0–R5 (PRs #52–#66). Lanes A (safe structural
-> refactor, now unblocked), B (DAG governance, needs approval), C (paper
-> editorial windows) and D (explicit NO-DO list to avoid churn).
+> [`NEXT_WORK_PLAN_2026-06.md`](NEXT_WORK_PLAN_2026-06.md) — the consolidated
+> backlog after R0–R5 (PRs #52–#66) and the 2026-06-13 Codex execution memory.
+> Lanes A/B are closed as code/DVC metadata changes; C3/C4 remain calendar and
+> remote gated; D is the explicit NO-DO list to avoid churn.
 
 Each plan documents:
 
@@ -18,9 +18,9 @@ Each plan documents:
 
 | Plan | Touches the champion? | Current status |
 | --- | --- | --- |
-| [`CONFORMAL_REFACTOR_PLAN.md`](CONFORMAL_REFACTOR_PLAN.md) | Yes (calibrator pickle) | Partially executed for pure diagnostics and script-level extraction; class/module split remains deferred. |
+| [`CONFORMAL_REFACTOR_PLAN.md`](CONFORMAL_REFACTOR_PLAN.md) | Yes (calibrator pickle) | Full public split executed 2026-06-13; `src.models.conformal` is now a package facade with strict-typed submodules. |
 | [`MAPIE_MIGRATION_PLAN.md`](MAPIE_MIGRATION_PLAN.md) | Yes (intervals parquet) | Runtime is already MAPIE 1.x and the drift report is green; protected reruns still require explicit approval. |
-| [`FEATURE_CONFIG_PARQUET_PLAN.md`](FEATURE_CONFIG_PARQUET_PLAN.md) | Yes (downstream stages) | YAML dual-write/read path exists; full Parquet/dataclass replacement remains deferred. |
+| [`FEATURE_CONFIG_PARQUET_PLAN.md`](FEATURE_CONFIG_PARQUET_PLAN.md) | Yes (downstream stages) | YAML-first reader migration and pkl/yml equivalence test executed 2026-06-13; pkl removal remains deferred. |
 
 Executed lanes now in `main`:
 
@@ -37,23 +37,16 @@ Executed lanes now in `main`:
   selection, trade-off grid/input preparation and PD calibration selection.
   These were code-only refactors; tracked DVC dependency hashes were re-keyed
   without re-running protected stages.
+- **2026-06-13 A/B closure**: conformal module split, YAML-first
+  `feature_config` reader, explicit DVC split stage, `test_predictions` as
+  `crpto.pd.champion` out, and executable `params.yaml` sync checker. No
+  protected DVC stage was reproduced.
 
-Smaller deferred items without a dedicated plan file:
+Remaining deferred item without a dedicated plan file:
 
-- **DAG completeness** (2026-06-09): `data/processed/{train,test,calibration}.parquet`
-  (produced manually by `src/data/prepare_dataset.py`) and
-  `data/processed/test_predictions.parquet` (exported by
-  `scripts/train_pd_model.py`) are standalone `.dvc` artifacts, not stage
-  outputs. Promoting them to stage outs requires removing the `.dvc`
-  files and re-keying `crpto.pd.champion` in `dvc.lock`; champion-lock
-  approval required. Until then the data flow is documented in comments
-  inside `dvc.yaml`.
-- **params.yaml unification** (2026-06-09; mirror fixed 2026-06-10): the
-  stale `pd.catboost.learning_rate: 0.03` mirror was corrected to the
-  canonical `0.0573...` during the april-lineage unification (the champion
-  lock was being re-keyed anyway). The structural unification of
-  `params.yaml` into `configs/` remains deferred. Contract enforced by
-  `tests/test_configs/test_params_config_sync.py`.
+- **Feature-config pkl retirement**: `feature_config.pkl` remains frozen in
+  `EXTRACTION_MANIFEST.json`. Removing it from disk/manifest waits for a new
+  run-tag or explicit champion-lock window.
 
 Pick a plan up only when:
 

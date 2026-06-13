@@ -48,11 +48,15 @@ def load_feature_config(feature_config_path: str | Path) -> dict[str, Any]:
         return {}
     try:
         if path.suffix.lower() in {".yml", ".yaml"}:
-            return load_feature_config_artifact(yaml_path=path, prefer="yaml")
+            return load_feature_config_artifact(
+                pickle_path=path.with_suffix(".pkl"),
+                yaml_path=path,
+                prefer="yaml",
+            )
         return load_feature_config_artifact(
             pickle_path=path,
             yaml_path=yaml_path,
-            prefer="auto",
+            prefer="yaml",
         )
     except (FileNotFoundError, TypeError) as exc:
         logger.warning(f"Unable to load feature_config from {path}: {exc}")

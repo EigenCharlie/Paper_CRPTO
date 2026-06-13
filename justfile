@@ -140,6 +140,9 @@ mrm-card:
 pipeline-state:
     uv run python -c "from src.utils.pipeline_state import load_pipeline_state; import json; s = load_pipeline_state(); print(json.dumps({'missing': s.missing, 'namespaces': list(s.state.keys())}, indent=2))"
 
+params-check:
+    uv run python scripts/build_params_view.py --check
+
 # --- Optuna Dashboard ---------------------------------------------------
 
 # Local HPO dashboard. Defaults to the journal file used by make_study(); pass

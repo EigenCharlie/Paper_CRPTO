@@ -268,8 +268,7 @@ ignore_missing_imports = true
 
 # Strict mode for the fully-annotated modules. Legacy code stays under the
 # global laxer config. Promote modules to this list once they pass cleanly.
-# Pending promotions: src.models.conformal and src.models.conformal_adapters
-# join when the R2 conformal split lands.
+# Modules in this list have been made fully typed enough for strict checks.
 [[tool.mypy.overrides]]
 module = [
     "src.optimization.policy",
@@ -278,6 +277,12 @@ module = [
     "src.optimization.robust_opt",
     "src.optimization.tail_satisficing_objective",
     "src.models.calibration",
+    "src.models.conformal",
+    "src.models.conformal._scores",
+    "src.models.conformal.classification",
+    "src.models.conformal.pd_intervals",
+    "src.models.conformal.regression",
+    "src.models.conformal_adapters",
     "src.models.conformal_artifacts",
     "src.models.conformal_diagnostics",
     "src.models.conformal_tuning",

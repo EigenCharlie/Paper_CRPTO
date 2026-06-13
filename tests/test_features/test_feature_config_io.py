@@ -54,6 +54,14 @@ def test_load_falls_back_to_pickle_when_yaml_absent(tmp_path: Path) -> None:
     assert loaded["NUMERIC_FEATURES"] == ["from_pickle"]
 
 
+def test_load_prefer_yaml_falls_back_to_pickle(tmp_path: Path) -> None:
+    pkl_target = tmp_path / "data" / "processed" / "feature_config.pkl"
+    pkl_target.parent.mkdir(parents=True, exist_ok=True)
+    joblib.dump({"NUMERIC_FEATURES": ["from_pickle"]}, pkl_target)
+    loaded = load_feature_config(repo_root=tmp_path, prefer="yaml")
+    assert loaded["NUMERIC_FEATURES"] == ["from_pickle"]
+
+
 def test_load_prefer_yaml_raises_when_missing(tmp_path: Path) -> None:
     with pytest.raises(FileNotFoundError):
         load_feature_config(repo_root=tmp_path, prefer="yaml")
