@@ -92,6 +92,25 @@ class ConformalTuningGrid:
     scaled_scores_options: tuple[bool, ...]
 
 
+@dataclass(frozen=True)
+class ConformalTuningSplit:
+    """Leakage-free calibration split used to tune conformal candidates."""
+
+    idx_cal_fit: np.ndarray
+    idx_cal_tune: np.ndarray
+    X_cal_fit: pd.DataFrame
+    y_cal_fit: pd.Series
+    X_tune: pd.DataFrame
+    y_tune: pd.Series
+    y_prob_cal_fit: np.ndarray
+    y_prob_cal_tune: np.ndarray
+    group_cal_fit_base: pd.Series
+    group_tune_base: pd.Series
+    issue_cal: pd.Series
+    issue_tune: pd.Series
+    issue_test: pd.Series
+
+
 def _resolve_artifact_paths(namespace: str | None = None) -> dict[str, Path]:
     if namespace:
         ns = str(namespace).strip().replace("/", "_")
@@ -454,6 +473,56 @@ def _resolve_tuning_grid(
     )
 
 
+def _build_tuning_split(
+    *,
+    cal_df: pd.DataFrame,
+    test_df: pd.DataFrame,
+    X_cal: pd.DataFrame,
+    y_cal: pd.Series,
+    group_cal_base: pd.Series,
+    y_prob_cal_raw: np.ndarray,
+    tuning_holdout_ratio: float,
+    tuning_random_state: int,
+) -> ConformalTuningSplit:
+    """Create the leakage-free calibration fit/holdout split for tuning."""
+    idx_cal_fit, idx_cal_tune = split_calibration_for_tuning(
+        y_cal=y_cal,
+        group_cal=group_cal_base,
+        issue_dates=cal_df.get("issue_d"),
+        holdout_ratio=tuning_holdout_ratio,
+        random_state=tuning_random_state,
+    )
+    if len(idx_cal_tune) == 0:
+        raise ValueError("Calibration holdout split is empty; cannot run leakage-free tuning.")
+
+    issue_cal = (
+        pd.to_datetime(cal_df.get("issue_d"), errors="coerce")
+        if "issue_d" in cal_df.columns
+        else pd.Series(pd.NaT, index=cal_df.index, dtype="datetime64[ns]")
+    )
+    issue_test = (
+        pd.to_datetime(test_df.get("issue_d"), errors="coerce")
+        if "issue_d" in test_df.columns
+        else pd.Series(pd.NaT, index=test_df.index, dtype="datetime64[ns]")
+    ).reset_index(drop=True)
+
+    return ConformalTuningSplit(
+        idx_cal_fit=idx_cal_fit,
+        idx_cal_tune=idx_cal_tune,
+        X_cal_fit=X_cal.iloc[idx_cal_fit].reset_index(drop=True),
+        y_cal_fit=y_cal.iloc[idx_cal_fit].reset_index(drop=True),
+        X_tune=X_cal.iloc[idx_cal_tune].reset_index(drop=True),
+        y_tune=y_cal.iloc[idx_cal_tune].reset_index(drop=True),
+        y_prob_cal_fit=y_prob_cal_raw[idx_cal_fit],
+        y_prob_cal_tune=y_prob_cal_raw[idx_cal_tune],
+        group_cal_fit_base=group_cal_base.iloc[idx_cal_fit].reset_index(drop=True),
+        group_tune_base=group_cal_base.iloc[idx_cal_tune].reset_index(drop=True),
+        issue_cal=issue_cal,
+        issue_tune=issue_cal.iloc[idx_cal_tune].reset_index(drop=True),
+        issue_test=issue_test,
+    )
+
+
 def _parse_float_tuple(raw: str) -> tuple[float, ...]:
     values = [float(token.strip()) for token in str(raw).split(",") if token.strip()]
     if not values:
@@ -557,35 +626,29 @@ def main(
     y_prob_test_raw = inputs.y_prob_test_raw
     y_prob_calibrated = inputs.y_prob_calibrated
     y_prob_test_calibrated = inputs.y_prob_test_calibrated
-    idx_cal_fit, idx_cal_tune = split_calibration_for_tuning(
+    tuning_split = _build_tuning_split(
+        cal_df=cal_df,
+        test_df=test_df,
+        X_cal=X_cal,
         y_cal=y_cal,
-        group_cal=group_cal_base,
-        issue_dates=cal_df.get("issue_d"),
-        holdout_ratio=tuning_holdout_ratio,
-        random_state=tuning_random_state,
+        group_cal_base=group_cal_base,
+        y_prob_cal_raw=y_prob_cal_raw,
+        tuning_holdout_ratio=tuning_holdout_ratio,
+        tuning_random_state=tuning_random_state,
     )
-    if len(idx_cal_tune) == 0:
-        raise ValueError("Calibration holdout split is empty; cannot run leakage-free tuning.")
-
-    X_cal_fit = X_cal.iloc[idx_cal_fit].reset_index(drop=True)
-    y_cal_fit = y_cal.iloc[idx_cal_fit].reset_index(drop=True)
-    X_tune = X_cal.iloc[idx_cal_tune].reset_index(drop=True)
-    y_tune = y_cal.iloc[idx_cal_tune].reset_index(drop=True)
-    y_prob_cal_fit = y_prob_cal_raw[idx_cal_fit]
-    y_prob_cal_tune = y_prob_cal_raw[idx_cal_tune]
-    group_cal_fit_base = group_cal_base.iloc[idx_cal_fit].reset_index(drop=True)
-    group_tune_base = group_cal_base.iloc[idx_cal_tune].reset_index(drop=True)
-    issue_cal = (
-        pd.to_datetime(cal_df.get("issue_d"), errors="coerce")
-        if "issue_d" in cal_df.columns
-        else pd.Series(pd.NaT, index=cal_df.index, dtype="datetime64[ns]")
-    )
-    issue_tune = issue_cal.iloc[idx_cal_tune].reset_index(drop=True)
-    issue_test = (
-        pd.to_datetime(test_df.get("issue_d"), errors="coerce")
-        if "issue_d" in test_df.columns
-        else pd.Series(pd.NaT, index=test_df.index, dtype="datetime64[ns]")
-    ).reset_index(drop=True)
+    idx_cal_fit = tuning_split.idx_cal_fit
+    idx_cal_tune = tuning_split.idx_cal_tune
+    X_cal_fit = tuning_split.X_cal_fit
+    y_cal_fit = tuning_split.y_cal_fit
+    X_tune = tuning_split.X_tune
+    y_tune = tuning_split.y_tune
+    y_prob_cal_fit = tuning_split.y_prob_cal_fit
+    y_prob_cal_tune = tuning_split.y_prob_cal_tune
+    group_cal_fit_base = tuning_split.group_cal_fit_base
+    group_tune_base = tuning_split.group_tune_base
+    issue_cal = tuning_split.issue_cal
+    issue_tune = tuning_split.issue_tune
+    issue_test = tuning_split.issue_test
     logger.info(
         "Calibration split for conformal tuning: "
         f"fit={len(X_cal_fit):,}, holdout={len(X_tune):,}, "
