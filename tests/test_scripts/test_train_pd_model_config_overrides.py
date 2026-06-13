@@ -3,7 +3,14 @@ from __future__ import annotations
 import pytest
 
 import scripts.train_pd_model as pd_train
-from scripts.train_pd_model import _apply_cli_overrides, _apply_pd_replay_manifest
+from scripts.train_pd_model import (
+    TrainingSplits,
+    _apply_cli_overrides,
+    _apply_pd_replay_manifest,
+    _load_training_splits,
+    _normalize_sample_size,
+    _sample_training_splits,
+)
 
 
 def _base_config() -> dict[str, object]:
@@ -126,3 +133,63 @@ def test_resolve_training_features_filters_splits_and_disables_stable_core_in_re
     assert replay.logreg_features == ["a", "rev_utilization"]
     assert replay.categorical_features == ["rev_utilization"]
     assert replay.stable_core_meta == {"enabled": False, "excluded_features": []}
+
+
+def test_load_training_splits_uses_config_paths_and_normalizes(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    calls: list[str] = []
+
+    def fake_read_split(path: str) -> pd_train.pd.DataFrame:
+        calls.append(path)
+        return pd_train.pd.DataFrame({"source": [path]})
+
+    def fake_normalize(df: pd_train.pd.DataFrame) -> pd_train.pd.DataFrame:
+        out = df.copy()
+        out["normalized"] = True
+        return out
+
+    monkeypatch.setattr(pd_train, "read_split_with_fe_fallback", fake_read_split)
+    monkeypatch.setattr(pd_train, "_normalize_percent_columns", fake_normalize)
+
+    splits = _load_training_splits(
+        {
+            "train_path": "train.parquet",
+            "test_path": "test.parquet",
+            "calibration_path": "calibration.parquet",
+        }
+    )
+
+    assert calls == ["train.parquet", "test.parquet", "calibration.parquet"]
+    assert splits.train.to_dict(orient="records") == [
+        {"source": "train.parquet", "normalized": True}
+    ]
+    assert splits.test.to_dict(orient="records") == [{"source": "test.parquet", "normalized": True}]
+    assert splits.cal.to_dict(orient="records") == [
+        {"source": "calibration.parquet", "normalized": True}
+    ]
+
+
+def test_sample_training_splits_is_deterministic_and_keeps_small_splits() -> None:
+    train = pd_train.pd.DataFrame({"row": range(10)})
+    cal = pd_train.pd.DataFrame({"row": range(10, 20)})
+    test = pd_train.pd.DataFrame({"row": [100, 101]})
+
+    sampled = _sample_training_splits(TrainingSplits(train=train, cal=cal, test=test), 3)
+
+    assert sampled.train["row"].tolist() == train.sample(n=3, random_state=42)["row"].tolist()
+    assert sampled.cal["row"].tolist() == cal.sample(n=3, random_state=42)["row"].tolist()
+    assert sampled.test.equals(test)
+    assert sampled.train.index.tolist() == [0, 1, 2]
+    assert sampled.cal.index.tolist() == [0, 1, 2]
+
+
+@pytest.mark.parametrize("raw_sample_size", [None, 0, -5])
+def test_normalize_sample_size_treats_non_positive_as_full_data(
+    raw_sample_size: int | None,
+) -> None:
+    assert _normalize_sample_size(raw_sample_size) is None
+
+
+def test_normalize_sample_size_keeps_positive_integer() -> None:
+    assert _normalize_sample_size(50) == 50
