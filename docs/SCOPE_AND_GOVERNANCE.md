@@ -82,10 +82,12 @@ Not safe on `main`:
 The files in `docs/refactor/` are plans, not approvals to execute. The current
 high-risk lanes are:
 
-- `MAPIE_MIGRATION_PLAN.md`: code is MAPIE 1.x-compatible, but the champion
-  conformal artifact still needs drift validation before protected stages run.
-- `CONFORMAL_REFACTOR_PLAN.md`: modularization must preserve pickled
-  calibrator compatibility or create a new run tag.
+- `MAPIE_MIGRATION_PLAN.md`: code is MAPIE 1.x-compatible and the June 2026
+  drift report is green under the current stack. Protected conformal stage
+  reruns still require explicit approval.
+- `CONFORMAL_REFACTOR_PLAN.md`: script-level extraction is underway, but
+  class/module modularization must preserve pickled calibrator compatibility
+  or create a new run tag.
 - `FEATURE_CONFIG_PARQUET_PLAN.md`: changing `feature_config.pkl` affects the
   data/features contract and requires downstream validation.
 
