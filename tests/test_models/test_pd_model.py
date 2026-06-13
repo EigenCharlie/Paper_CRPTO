@@ -2,6 +2,7 @@
 
 import joblib
 import numpy as np
+import optuna
 import pandas as pd
 import pytest
 import yaml
@@ -12,7 +13,11 @@ from src.models.calibration import (
     evaluate_calibration,
     expected_calibration_error,
 )
-from src.models.optuna_tuning import SEARCH_SPACE_VERSION, resolve_optuna_study_name
+from src.models.optuna_tuning import (
+    SEARCH_SPACE_VERSION,
+    _build_optuna_sampler_pruner,
+    resolve_optuna_study_name,
+)
 from src.models.pd_model import (
     get_available_features,
     resolve_feature_sets,
@@ -76,6 +81,40 @@ def test_get_available_features_filters_correctly():
     assert "loan_amnt" in result
     assert "annual_inc" in result
     assert "fake_col" not in result
+
+
+def test_build_optuna_sampler_pruner_tpe_median() -> None:
+    sampler, pruner = _build_optuna_sampler_pruner(
+        optuna,
+        sampler="tpe",
+        pruner="median",
+        n_startup_trials=3,
+        multivariate_tpe=False,
+        group_tpe=False,
+        constant_liar=False,
+        pruner_n_startup_trials=2,
+        pruner_n_warmup_steps=0,
+    )
+
+    assert isinstance(sampler, optuna.samplers.TPESampler)
+    assert isinstance(pruner, optuna.pruners.MedianPruner)
+
+
+def test_build_optuna_sampler_pruner_random_no_pruning() -> None:
+    sampler, pruner = _build_optuna_sampler_pruner(
+        optuna,
+        sampler="random",
+        pruner="none",
+        n_startup_trials=40,
+        multivariate_tpe=False,
+        group_tpe=True,
+        constant_liar=False,
+        pruner_n_startup_trials=20,
+        pruner_n_warmup_steps=50,
+    )
+
+    assert isinstance(sampler, optuna.samplers.RandomSampler)
+    assert isinstance(pruner, optuna.pruners.NopPruner)
 
 
 def test_get_available_features_empty_df():
