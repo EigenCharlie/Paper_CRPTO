@@ -193,6 +193,10 @@ def test_catboost_tuned_and_default_predictions_differ(catboost_dataset):
         sampler="tpe",
         pruner="median",
         timeout_minutes=0,
+        multivariate_tpe=False,
+        group_tpe=False,
+        warn_independent_sampling=False,
+        use_pruning_callback=False,
     )
 
     y_default = cb_default.predict_proba(X_test)[:, 1]
@@ -245,6 +249,10 @@ def test_local_refine_best_params_are_materialized_for_catboost():
         sampler="tpe",
         pruner="median",
         timeout_minutes=0,
+        multivariate_tpe=False,
+        group_tpe=False,
+        warn_independent_sampling=False,
+        use_pruning_callback=False,
         search_space_mode="local_refine",
         local_refine_space={
             "enqueue_base_trial": False,

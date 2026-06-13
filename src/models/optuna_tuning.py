@@ -427,7 +427,6 @@ def train_catboost_tuned_optuna(
             multivariate=use_multivariate,
             group=use_group_tpe,
             constant_liar=bool(constant_liar),
-            warn_independent_sampling=bool(warn_independent_sampling),
             constraints_func=constraints_func,
         )
     elif sampler == "random":
@@ -439,7 +438,6 @@ def train_catboost_tuned_optuna(
             multivariate=use_multivariate,
             group=use_group_tpe,
             constant_liar=bool(constant_liar),
-            warn_independent_sampling=bool(warn_independent_sampling),
         )
 
     if pruner == "median":
@@ -520,7 +518,7 @@ def train_catboost_tuned_optuna(
         callbacks: list[Any] = []
         if use_pruning_callback:
             try:
-                from optuna.integration import CatBoostPruningCallback
+                from optuna_integration.catboost import CatBoostPruningCallback
 
                 pruning_callback = CatBoostPruningCallback(trial, "AUC")
                 callbacks = [pruning_callback]
