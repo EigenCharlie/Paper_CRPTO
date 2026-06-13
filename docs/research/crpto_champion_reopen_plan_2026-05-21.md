@@ -3,9 +3,8 @@
 > Ported from the CRPTO research archive
 > (`paper1_champion_reopen_plan_2026-05-21`). **Documentation only.** Records the
 > governed reopen sequence and non-negotiable gates. The frozen champion is not
-> reopened by porting this plan; superseded in outcome by
-> [crpto_regret_auditability_sandbox_closure_2026-05-28](crpto_regret_auditability_sandbox_closure_2026-05-28.md)
-> (closure: append/park, no replacement). Any real reopen must not contradict
+> reopened by porting this plan; the regret-auditability lane was closed with
+> append/park (no replacement). Any real reopen must not contradict
 > `models/final_project_promotion.json`.
 
 ## Objective

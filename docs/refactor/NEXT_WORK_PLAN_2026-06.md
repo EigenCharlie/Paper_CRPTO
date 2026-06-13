@@ -101,36 +101,120 @@ parquet (orden de filas con misma fecha, metadata, compresión).
 
 ### Nota de proceso (para Carlos)
 
-B1 y B2 estaban marcados en este plan como **"requiere aprobación de Carlos"**
-(tocan stages protegidos). Codex los ejecutó como parte de la corrida del
-plan. El resultado es seguro y B2 es una mejora clara, así que **no se
-revierte**; pero queda registrado que la barrera de aprobación se cruzó. Para
-A2 fase 4 (retiro físico del pkl) y cualquier futuro cambio que regenere
-artefactos congelados, **la barrera sigue en pie: no ejecutar sin tu visto
-bueno explícito.**
+B1 y B2 estaban marcados originalmente como "requiere aprobación de Carlos".
+Codex los ejecutó como parte de la corrida del plan; el resultado es seguro y
+B2 es una mejora clara, así que no se revierten. **Con la actualización de
+autorización de abajo (2026-06-13), esta clase de trabajo ya no necesita pedir
+permiso caso por caso.**
 
 ---
 
-## QUÉ HACER AHORA — instrucciones para Codex (2026-06-13)
+## AUTORIZACIÓN Y FILOSOFÍA DE TRABAJO (2026-06-13) — leer y respetar
 
-**El trabajo de refactor de código está COMPLETO.** A1, A2 (fases 1-3), B1 y
-B2 están cerrados y verificados. No quedan lanes de refactor seguros que
-ejecutar. Tras esta auditoría, el backlog accionable es corto y casi todo
-está **bloqueado por aprobación o por calendario**:
+Carlos otorgó **aprobación de run-tag** a Claude y a Codex. Esto cambia el
+alcance: **ya se pueden regenerar artefactos congelados** (re-correr stages
+protegidos, crear un run-tag nuevo, completar A2 fase 4). La filosofía es
+explícita:
 
-1. **NO ejecutar A2 fase 4** (borrar el pkl del disco y del manifest). Sigue
-   gated: requiere champion-lock approval de Carlos y un run-tag nuevo.
-2. **NO ejecutar más refactor de código.** Ver LANE D (lista NO HACER). En
-   particular, no descomponer más los `main()` ni consolidar `_safe_float`.
-3. **Lane C (paper) — solo en sus ventanas de calendario.** C1/C2 ya están
-   cerrados. C3 (`dvc push`) espera a que DagsHub salga de mantenimiento. C4
-   (freeze ScholarOne) es Ago 6-10. No adelantar.
-4. **Si surge nuevo trabajo**, debe entrar como un ítem nuevo en este archivo
-   con su contexto/criterio/gate/riesgo, no improvisado.
+> "Todo se trabaja bajo ramas. Una vez se implementa y valida todo, se decide
+> si se mantiene o se revierte. Los pasos se dejan una vez está claro que
+> quedaron bien hechos; si no, se revierten. La idea siempre ha sido mejorar
+> el paper al máximo (y si indirectamente mejora el libro Quarto, adelante).
+> **Lo único que NO se hace todavía: freeze ni submission** — queda tiempo y
+> seguiremos mejorando cosas con los pasos bien hechos."
 
-**Antes de cualquier commit futuro**, correr el gate universal del final de
-este documento. Si `drift-gate` o `validate-champion` dan rojo en algo que no
-debía tocar el champion, es un cambio numérico disfrazado: revertir y reportar.
+### Por qué un run-tag requería aprobación (y por qué ahora la tienes)
+
+Una rama de git versiona **código**. Pero los artefactos pesados del champion
+(`pd_canonical.cbm`, los intervalos conformales, `test_predictions.parquet`)
+viven en **DVC**, no en git, y sus bytes exactos están congelados en
+`EXTRACTION_MANIFEST.json`. Regenerarlos (un "run-tag") es especial porque:
+
+1. **CatBoost no es bit-reproducible entre corridas** (lo descubrimos: tres
+   entrenamientos del mismo config dieron AUC 0.7124/0.7127/0.7139). Un re-run
+   produce un modelo *distinto al byte*, aunque el config sea idéntico.
+2. **El certificado del paper depende de esos bytes exactos.** $170,464.54,
+   V=0.028875, Γ_CP=0.187987 salen de un funded set calculado sobre *esos*
+   intervalos. Si el modelo cambia, los números del paper cambian, y habría
+   que actualizar el manifest, las tablas, las figuras y el texto.
+3. Por eso no es "revertible con `git revert`": toca artefactos DVC + la
+   identidad numérica del paper. La aprobación = autorización para mover esa
+   identidad de forma controlada, con un run-tag nuevo y todo re-derivado
+   coherentemente.
+
+### El contrato de "bien hecho vs. revertir"
+
+Cada cambio que regenere artefactos se hace **en rama** y se evalúa contra:
+
+- **`just drift-gate`** — recomputa la cadena del certificado desde los
+  binarios y exige diff bit-exacto. Si el run-tag es intencional (modelo
+  nuevo), este gate dará rojo *por diseño*; entonces el criterio pasa a:
+- **Coherencia total del nuevo linaje**: el nuevo modelo → nuevos intervalos →
+  nuevo certificado → manifest actualizado → tablas/figuras/paper actualizados,
+  todo de una sola corrida, sin mezclar linajes (el error que arreglamos en
+  junio). El test `tests/test_configs/test_lineage_consistency.py` y
+  `validate-champion` deben quedar verdes contra el **nuevo** estado.
+- **Mejora demostrable**: el run-tag solo se mantiene si mejora algo medible
+  (mejor calibración, narrativa más limpia, deuda eliminada). Si no mejora o
+  empeora un número del paper sin contrapartida, **se revierte**.
+
+---
+
+## QUÉ HACER AHORA — instrucciones para Codex (2026-06-13, run-tag aprobado)
+
+El refactor de código (A1, A2 fases 1-3, B1, B2) está **cerrado y verificado**.
+Con la aprobación de run-tag, esto es lo que puedes hacer ya, ordenado por
+seguridad. **Todo en rama; cada paso se mantiene solo si queda bien hecho.**
+
+**Permitido y seguro (reversible con `git revert` + `dvc checkout`):**
+1. Cualquier refactor de código adicional que respete LANE D (la lista
+   NO-HACER sigue vigente: no descomponer más los `main()`, no consolidar
+   `_safe_float`, no tocar los search scripts). Gate: `drift-gate` verde.
+2. Regenerar tablas/figuras/evidencia del paper (stages `crpto.paper.*`, no
+   protegidos). Mejoras editoriales del paper y, si aplica, del libro Quarto.
+3. Mejoras de bibliografía, narrativa, claims, supplement — siempre verificando
+   números contra artefactos (`test_lineage_consistency`).
+
+**Permitido con run-tag (regenera artefactos congelados; ver "cómo revertir"):**
+4. **A2 fase 4** — completar la migración feature_config: dejar de escribir el
+   pkl, regenerar `crpto.data.features` para producir solo YAML/Parquet,
+   actualizar el manifest. Detalle en la sección A2 de abajo.
+5. **Re-run validado de la cadena** — ahora que el DAG está completo (B1), se
+   puede `dvc repro` de `crpto.data.splits → features → champion → conformal`
+   en rama para confirmar reproducibilidad (o documentar el drift esperado y
+   decidir si se promueve a run-tag nuevo).
+6. Cualquier mejora que requiera re-entrenar/re-derivar, **siempre que el
+   linaje quede coherente de punta a punta en una sola corrida**.
+
+**Prohibido hasta nueva orden:**
+7. **Freeze de submission y submission misma** (Lane C4). Queda tiempo; no se
+   congela ni se envía todavía.
+
+**Antes de cualquier commit**, correr el gate universal del final. Si tocaste
+artefactos congelados con intención de run-tag, el drift-gate rojo es esperado
+— entonces aplica el contrato "bien hecho vs. revertir" de arriba.
+
+---
+
+## CÓMO REVERTIR SI UN RE-RUN SALE MAL
+
+El estado *known-good* es `main` con el run-tag congelado
+`ijds-rebaseline-2026-06-07` (manifest actual). Si un run-tag nuevo sale mal o
+no se quiere mantener:
+
+1. **Si está solo en rama (no mergeado):** `git checkout main` descarta el
+   código; `dvc checkout` restaura los artefactos del cache al estado de
+   `dvc.lock` de main. Fin — el champion vuelve intacto.
+2. **Si el cache local se ensució:** `git checkout main && dvc checkout`;
+   si algún artefacto no está en cache, `dvc pull` lo trae del remote (que
+   conserva los bytes congelados de `ijds-rebaseline-2026-06-07`).
+3. **Punto de no retorno:** solo si se mergea a main **y** se hace `dvc push`
+   del nuevo run-tag sobreescribiendo el remote. Por eso: **no hacer `dvc push`
+   de un run-tag nuevo hasta que esté validado y aprobado para mantenerse.**
+   El remote es el último respaldo del linaje de abril/junio.
+
+Regla práctica: trabaja el run-tag en rama, valida coherencia completa, y solo
+entonces decide mergear + push. Mientras viva en rama, es 100% reversible.
 
 ---
 
@@ -201,8 +285,9 @@ defensa y deja el último módulo grande de `src/` bajo strict mypy.
 
 ### A2. `feature_config.pkl` → Parquet/YAML (retirar el pickle)
 
-**Estado 2026-06-13:** fases 1--3 ejecutadas. Fase 4 (retiro físico del pkl y
-del manifest) sigue pendiente de un run-tag/champion-lock nuevo.
+**Estado 2026-06-13:** fases 1--3 ejecutadas. **Fase 4 DESBLOQUEADA** por la
+aprobación de run-tag (ya no espera permiso caso por caso). Ver "qué hacer"
+abajo, fase 4.
 
 **Estado actual (verificado):** el dual-write **ya existe parcialmente**.
 `src/features/feature_config_io.py` lee YAML con fallback a pickle
@@ -223,13 +308,21 @@ dejar de escribir el pkl.
    fallback pickle.
 3. **Drift-gate VERDE** (el champion debe seguir entrenando/replay-eando
    idéntico al leer YAML en vez de pkl).
-4. **NO borrar el pkl todavía**: `feature_config.pkl` está en
-   `EXTRACTION_MANIFEST.json` (es artefacto congelado). Retirarlo del
-   manifest y del disco requiere champion-lock approval y un run-tag nuevo.
-   Dejar la fase 4 documentada como pendiente de aprobación.
+4. **Fase 4 (ahora ejecutable con run-tag):** retirar el pkl. Como
+   `feature_config.pkl` está en `EXTRACTION_MANIFEST.json`, el retiro implica:
+   (a) dejar de escribirlo en `materialize_feature_artifacts.py`; (b)
+   regenerar `crpto.data.features` para que produzca solo YAML/Parquet; (c)
+   re-derivar la cadena downstream coherentemente o confirmar que el champion
+   sigue leyendo idéntico desde YAML (drift-gate); (d) actualizar el manifest
+   (quitar el pkl, añadir el Parquet/YAML con su hash). **Hacer en rama y
+   validar coherencia completa antes de mergear.** Si el champion entrena/
+   replay-ea idéntico desde YAML (lo esperado, dado que el contenido es el
+   mismo), el drift-gate sigue verde y NO es un cambio de modelo — es retiro
+   limpio de un formato redundante.
 
 **Criterio de aceptación:** consumidores leen YAML por defecto; equivalencia
-testeada; drift-gate verde; pkl intacto en disco y manifest.
+testeada; drift-gate verde (fases 1-3) o coherencia de linaje completa (fase 4);
+manifest consistente con lo que queda en disco.
 
 **Riesgo:** Medio. Toca la ruta de features que alimenta el champion. El
 drift-gate es el juez. Rama dedicada. **Requiere `dvc commit` con patch
@@ -309,15 +402,20 @@ salga de mantenimiento: `uv run dvc push -j 1 data/processed/loan_master.parquet
 primero (el objeto problemático), luego `uv run dvc push -j 2`. El cover
 letter ya puede citar el drift harness por nombre como evidencia ejecutable.
 
-### C4. Freeze de submission (Ago 6–10)
+### C4. Freeze de submission — **PROHIBIDO hasta nueva orden** (no es Ago 6-10)
 QA doble-anonimato (`SCHOLARONE_FINAL_CHECKLIST.md`), recompilación final
-`informs4`, conteo de páginas ≤25, metadata sin autor.
+`informs4`, conteo de páginas ≤25, metadata sin autor. **No ejecutar.** Carlos
+fue explícito: queda tiempo y se seguirá mejorando; el freeze/submission es lo
+único vedado por ahora. Todo lo demás del paper (mejorar narrativa, claims,
+supplement, libro Quarto) **sí** se puede trabajar.
 
 ---
 
-## LANE D — NO HACER (documentado para evitar churn inútil)
+## LANE D — NO HACER (no aporta, o cuesta más de lo que vale)
 
-Estas son trampas que parecen mejoras pero no lo son. **No las ejecutes.**
+Distinto de lo PROHIBIDO (freeze/submission): esto simplemente **no mejora el
+proyecto**, así que no gastes ciclos en ello. Si más adelante hay una razón
+nueva, reabrir con justificación.
 
 1. **Consolidar `_safe_float`** (aparece en 4 scripts). Verifiqué las 4
    implementaciones: **tienen semántica distinta** —
@@ -325,19 +423,19 @@ Estas son trampas que parecen mejoras pero no lo son. **No las ejecutes.**
    `generate_governance_status._safe_float_value` usa default 0.0;
    `run_comparison` y `validate_conformal_policy` usan default `nan` con
    except distinto. NO son duplicación real; consolidarlas cambiaría
-   comportamiento y 2 son deps de stages protegidos. **Dejarlas como están.**
+   comportamiento. Sin valor.
 
 2. **Descomponer más los `main()` de 917/925 LOC** en
    `train_pd_model.py` / `generate_conformal_intervals.py`. Lo que queda es
-   el **núcleo numérico irreducible** del pipeline congelado (las ~8 fases
-   de cómputo conformal/PD). R1 ya extrajo todo lo seguro (config/replay,
-   splits, tuning selection). Más extracción ahí es bajo valor (se lee como
-   receta top-down) y riesgo no-cero sobre el certificado. **Parar aquí.**
+   el **núcleo numérico irreducible** del pipeline. R1 ya extrajo todo lo
+   estructural (config/replay, splits, tuning selection). Más extracción ahí
+   es bajo valor (se lee como receta top-down) — y aunque ahora se puede
+   validar con drift-gate, el retorno de mantenibilidad es marginal. Solo
+   hacerlo si una mejora concreta lo exige.
 
 3. **Simplificar la duplicación interna de `_build_optuna_sampler_pruner`**
    (los branches `else` duplican `tpe`/`median`). Es código del path de
-   entrenamiento del champion; el valor es estético y el riesgo es perturbar
-   un futuro re-train. **No vale la pena.**
+   entrenamiento; el valor es estético. Bajo valor.
 
 4. **Reescribir los search scripts** (`run_regret_auditability_sandbox.py`
    2342 LOC, etc.). Son evidencia histórica congelada con tests, no código
@@ -351,13 +449,14 @@ Estas son trampas que parecen mejoras pero no lo son. **No las ejecutes.**
 
 ## Secuencia recomendada
 
-1. **Cerrado 2026-06-13:** A1, A2 fases 1--3, B1 y B2.
-2. **Sigue pendiente por calendario/remote:** C3 y C4 según el roadmap del
-   paper.
-3. **Solo con run-tag/champion-lock nuevo:** A2 fase 4 (retiro del pkl del
-   disco y de `EXTRACTION_MANIFEST.json`).
+1. **Cerrado y verificado (2026-06-13):** A1, A2 fases 1--3, B1, B2.
+2. **Ejecutable ya, en rama, con run-tag aprobado:** A2 fase 4 (retiro del pkl),
+   mejoras editoriales del paper/libro, cualquier re-derivación coherente. Ver
+   "QUÉ HACER AHORA".
+3. **Prohibido hasta nueva orden:** freeze de submission y submission (C4).
+4. **Lo demás de C (C3 `dvc push`):** cuando DagsHub salga de mantenimiento.
 
-## Gate universal (correr tras cada PR de las lanes A/B)
+## Gate universal (correr tras cada PR; obligatorio antes de mergear)
 
 ```powershell
 just lint

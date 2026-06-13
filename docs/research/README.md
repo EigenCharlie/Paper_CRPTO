@@ -1,75 +1,53 @@
-# paper-crpto Research Dossier
+# paper-crpto — Research Dossier
 
-Dossier curado para el paper-crpto: evidencia CRPTO, paquete journal,
-auditoria, backlog, expansion Quarto, appendix teorico y reglas de diseno del
-libro independiente.
+Notas de investigación y registros que aún tienen valor de consulta para el
+paper y la tesis. Las auditorías, backlogs y checklists puntuales fechados de
+mayo-junio 2026 se retiraron el 2026-06-13 (su conocimiento ya está aplicado
+en el paper, el código y el manifest; ver `CHANGELOG.md`). Lo que queda es lo
+perenne y lo que el código lee/escribe.
 
-## Documentos principales
+## Registros activos (referenciados por el código o el paper)
 
-- `crpto_audit_2026-05-04.md`: auditoria de champion, literatura y cambios
-  paper-facing migrados desde el dossier historico CRPTO.
-- `crpto_backlog_2026-05-04.md`: backlog operativo con P0/P1/P2/P3 y el
-  journal strengthening pack de regret-auditability, OCE/CVaR, satisficing y
-  dependencia.
-- `crpto_p1_evidence_2026-05-04.md`: evidencia P1 alrededor del champion
-  congelado.
-- `crpto_journal_package_2026-05-04.md`: tablas A12--A34 y figuras journal.
-- `crpto_multidataset_external_replication_2026-06-05.md`: decisión y resultados de la réplica externa Prosper/Freddie.
-- `crpto_ijds_readiness_audit_2026-06-05.md`: auditoría final de encaje IJDS,
-  frente multidataset, riesgos de reviewer y stop rules para no abrir runs
-  innecesarios antes de la submission.
-- `crpto_tail_satisficing_audit_status.json` / A20--A21: audit journal
-  adicional para challenger tail-satisficing y bound cluster-aware.
-- `crpto_quarto_expansion_2026-05-04.md`: expansion del libro y reglas de
-  compresion paper/journal.
-- `crpto_conditional_tightening_appendix_2026-05-04.md`: lemma condicional de
-  Hoeffding/Bernstein y caveats de dependencia.
-- `crpto_quarto_design_practices_2026-05-12.md`: practicas de render,
-  navegacion y diseno retenidas del libro grande para GitHub Pages.
-- `crpto_publication_strategy_2026-05-12.md`: decision de venue, plantilla,
-  anonimato, pivotes y salida IJDS/EJOR.
-- `crpto_submission_closure_2026-05-12.md`: cierre operativo del submission
-  IJDS; separa el pack incluido de los P2/P3 metodologicos que siguen como
-  future work y lista los gates finales.
-- `papers_tesis_deep_audit_2026-06-06.md`: auditoria exhaustiva de los 61 PDFs
-  en `Papers_tesis/`, con matriz fuente, indice de captions y curaduria de
-  visual sinks en `reports/crpto/literature/`; reemplaza la lectura parcial de
-  mayo para claims, appendix, tesis y agenda extendida.
-- `crpto_extended_evidence_cards_2026-06-06.md`: evidence cards autocontenidas
-  para PyEPO/DFL, FICO proxy vs champion, IFRS9/SICR prudential absorption y
-  CRC/LTT--CROMS-lite governance; la superficie canonica vive en
-  `reports/crpto/extended/` y solo alimenta tesis, appendix o respuestas a
-  reviewers sin reabrir el champion.
+- `crpto_p1_evidence_2026-05-04.md` — evidencia P1 alrededor del champion
+  congelado (escrito por `scripts/analyze_crpto_evidence.py`).
+- `crpto_journal_package_2026-05-04.md` — tablas A12–A34 y figuras journal
+  (escrito por `scripts/build_crpto_journal_package.py`).
+- `crpto_extended_evidence_cards_2026-06-06.md` — fichas de evidencia extendida
+  (PyEPO/DFL, FICO proxy, IFRS9/SICR, CRC/CROMS-lite); superficie canónica en
+  `reports/crpto/extended/`.
+- `crpto_conditional_tightening_appendix_2026-05-04.md` — lemma condicional
+  Hoeffding/Bernstein y caveats de dependencia (material del supplement).
+- `crpto_bound_tightening_experiment_2026-06-11.md` — registro del menú de
+  bounds A21 (Cantelli/Bennett/Bernstein + la fila agnóstica que prueba Markov
+  óptimo). Generado por `scripts/build_bound_tightening_audit.py`.
+- `ijds_rebaseline_2026-06-07.md` — registro del run-tag congelado vigente
+  (`ijds-rebaseline-2026-06-07`).
 
-## Material historico consolidado (2026-05-18 -- 2026-05-28)
+## Registros de gobernanza (decisiones; no se re-ejecutan sin permiso)
 
-Gobernanza y resultados de busqueda (documentacion historica; el champion sigue
-congelado):
+- `crpto_champion_reopen_plan_2026-05-21.md` — secuencia gobernada de reopen
+  del champion y sus gates innegociables (documentación, no acción).
+- `crpto_bound_improvement_intake_2026-05-21.md` — paquete de challengers
+  PD/conformal del sandbox externo y sus gates.
+- `crpto_champion_tournament_protocol_2026-05-25.md` — contrato anti-cherry-pick
+  y gates del torneo de champion.
+- `crpto_publication_strategy_2026-05-12.md` — decisión de venue, plantilla,
+  anonimato y salida IJDS/EJOR.
+- `crpto_pyepo_dfl_intake_2026-05-26.md` — PyEPO 1.3.7 y cierre del comparador
+  DFL/SPO+ aislado.
 
-- `crpto_regret_auditability_sandbox_closure_2026-05-28.md`: cierre del sandbox
-  ampliado; 3 challengers PD evaluados y descartados; registro de negativos.
-- `crpto_champion_tournament_protocol_2026-05-25.md`: contrato anti-cherry-pick
-  y gates del torneo de champion (protocolo, no re-ejecucion).
-- `crpto_champion_reopen_plan_2026-05-21.md`: secuencia gobernada de reapertura
-  y gates no negociables.
-- `crpto_bound_improvement_intake_2026-05-21.md`: paquete PD/conformal challenger
-  y frentes de mejora del bound (agenda).
-- `crpto_pyepo_dfl_intake_2026-05-26.md`: PyEPO 1.3.7 desbloquea y cierra el
-  comparador DFL/SPO+ aislado; CRPTO conserva solo el rerun pareado como
-  apendice de comparacion.
-- `crpto_source_intake_register_2026-05-29.md`: registro final de CSVs
-  importados, exclusiones, señales de búsqueda futura y regla de no reapertura
-  del champion.
-- `crpto_mini_book_expansion_audit_2026-05-21.md`: trazabilidad de los controles
-  editoriales fundidos en capitulos del libro.
-- `crpto_book_audit_2026-05-21.md`: checklist de QA de render y frontera de
-  anonimizacion del alias heredado -> CRPTO.
+## `foundations/` — referencia técnica perenne
 
-Fundamentos / literatura (en `foundations/`):
+Material de fundamento que puede volver a consultarse para la tesis: conformal
+prediction (research, quick reference, comparación de librerías), calibración,
+MRM, literatura de portfolio selection, state-of-the-art, decisiones de
+arquitectura (`crpto_decision_changes_and_learnings.md`), topología del
+pipeline, runbook e integraciones.
 
-- `crpto_conformal_bound_foundations_2026-05-19.md`: linea Angelopoulos/Bates/
-  Barber (CRC/LTT) como fundamento conformal moderno.
-- `crpto_state_of_art_review_2026-05-18.md`: revision SOTA y posicionamiento
-  IJDS, con parche de bibliografia.
-- `crpto_metrics_triage_2026-05-18.md`: triage del binder de metricas
-  (Wuthrich, Albanesi-Vamossy) para CRPTO y agenda.
+## `future_work/` — backlog del segundo paper
+
+Memos de extensión (incertidumbre temporal vNext, conformal de clasificación,
+validation hardening) que no forman parte de los claims del manuscrito IJDS.
+
+> Para el **estado de refactors y el trabajo pendiente**, ver
+> [`../refactor/NEXT_WORK_PLAN_2026-06.md`](../refactor/NEXT_WORK_PLAN_2026-06.md).

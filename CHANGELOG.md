@@ -7,6 +7,16 @@ adheres to a single-author, paper-driven release cadence — see
 
 ## [Unreleased]
 
+### Removed (docs cleanup, 2026-06-13)
+- Retired 27 dated, single-shot research records under `docs/research/`
+  (audits, backlogs, closures, checklists, dependency/upgrade reports whose
+  conclusions are already applied in the paper, the code and the manifest).
+  Kept: foundations/ (perennial technical reference), future_work/, governance
+  records, the run-tag register, and the records the code reads/writes
+  (`crpto_p1_evidence`, `crpto_journal_package`, `crpto_bound_tightening_experiment`,
+  the deep-audit and regret-closure that the Quarto book cites). `docs/research/README.md`
+  rewritten as a minimal index.
+
 ### Added
 - `src/utils/script_helpers.py` — canonical JSON/YAML/table I/O helpers for
   the publication scripts, with LF-only idempotent writers that keep
