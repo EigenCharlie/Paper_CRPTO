@@ -194,9 +194,9 @@ DVC/MLflow-style lineage, paper tables, and model-risk documentation.
 The third foundation is predict-then-optimize and decision-focused learning. SPO+
 and modern decision-focused learning ask models to respect the loss surface induced
 by the downstream decision \citep{elmachtoub2022,donti2017,mandi2024}. IJDS work on
-decision making also warns that estimating a model and choosing an action are
-different objects, even before causal claims are introduced
-\citep{fernandezloria2022causaldecision}. CRPTO is intentionally more
+causal decision making sharpens the same warning: once an estimate feeds an
+action, the relevant target can become the assignment rule rather than only the
+intermediate effect-size estimate \citep{fernandezloria2022causaldecision}. CRPTO is intentionally more
 conservative. It does not retrain the PD model end-to-end through the optimizer.
 Instead, it asks what can be achieved when a calibrated predictive system is
 already frozen and the decision layer must remain explainable to credit-risk
