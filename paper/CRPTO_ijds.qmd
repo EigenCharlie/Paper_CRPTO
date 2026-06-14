@@ -446,11 +446,12 @@ The choice $t = \sqrt{\alpha}$ is made for interpretability, not optimality:
 it gives the clean reading "miscoverage exceeds $\sqrt{\alpha}$ with
 probability at most $\sqrt{\alpha}$" (for $\alpha = 0.01$, a $0.10$ excess
 with probability at most $0.10$). Markov is deliberately the weakest
-defensible argument: it uses only the first moment. The supplement also
-reports the inverse check: under Assumption 1 alone, the sharp
-second-moment Cantelli threshold is worse than Markov, so useful
-Hoeffding/Bernstein-style tightenings require additional independence,
-variance, or martingale structure [@hoeffding1963; @boucheron2013concentration].
+defensible argument: it uses only the first moment. Supplement
+Proposition A.1 proves the inverse is sharp: under Assumption 1 alone the
+best second-moment (Cantelli) threshold is *worse* than Markov, so Markov
+is optimal for the stated guarantee and useful Hoeffding/Bernstein-style
+tightenings require additional independence, variance, or martingale
+structure [@hoeffding1963; @boucheron2013concentration].
 We
 keep those tightenings in the online supplement (A21) rather than in the
 body, because the contribution here is the auditable decision construction,
