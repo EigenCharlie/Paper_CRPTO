@@ -67,8 +67,11 @@ the optional tightening arguments.
 | `x_i` | Funding decision or allocation weight. |
 | `a_i` | Loan amount or exposure. |
 | `w_i` | Normalized funded-set weight, `x_i a_i / sum_j x_j a_j`. |
-| `gamma` | Robust-policy tuning parameter in the optimization rule. |
+| `gamma` | Robust-policy blend parameter in the optimization rule, `gamma in [0,1]`. |
+| `p_tilde_i(alpha,gamma)` | Blended PD used by the optimizer, `p_hat_i + gamma (u_i - p_hat_i)`. |
+| `tau` | Risk-tolerance cap the optimizer applies to the blended PD, `sum_i w_i p_tilde_i <= tau`. |
 | `Gamma_CP` | Portfolio-level conformal risk metric after allocation: `sum_i w_i (u_i - p_hat_i)`, with clipping at one on the PD scale. |
+| `B_u(alpha)` | Weighted upper-endpoint budget of the funded set, `sum_i w_i u_i(alpha)`; equals `tau + (1-gamma) Gamma_CP` when the cap binds. |
 | `V(alpha)` | Weighted funded-set miscoverage quantity. |
 
 For a fixed allocation, conformal coverage controls the expected interval miss
@@ -91,10 +94,14 @@ funded-set validity). We record the full argument here.
 Funded-set weights satisfy $w_i \geq 0$ and $\sum_i w_i = 1$. Outcomes and
 endpoints live on the PD scale, $Y_i \in [0,1]$ and $u_i(\alpha) \in [0,1]$,
 with miscoverage indicators $Z_i(\alpha) = \mathbf{1}\{Y_i > u_i(\alpha)\}$
-and $V(\alpha) = \sum_i w_i Z_i(\alpha)$. The robust constraint holds at the
-allocation: $\sum_i w_i u_i(\alpha) \leq \tau$. Probabilities and expectations
-are over the exchangeable calibration/test draw conditional on the frozen
-recipe, partitions, and allocation rule.
+and $V(\alpha) = \sum_i w_i Z_i(\alpha)$. Write
+$B_u(\alpha) = \sum_i w_i u_i(\alpha)$ for the weighted upper-endpoint budget of
+the funded set. The robust layer caps the $\gamma$-blended PD,
+$\sum_i w_i \tilde p_i(\alpha,\gamma) \leq \tau$ with
+$\tilde p_i = \hat p_i + \gamma(u_i(\alpha) - \hat p_i)$; the deterministic
+identity below does not use this cap and holds for any allocation. Probabilities
+and expectations are over the exchangeable calibration/test draw conditional on
+the frozen recipe, partitions, and allocation rule.
 
 **Step 1 (pointwise domination).** For every funded loan,
 
@@ -107,17 +114,17 @@ indicator. If $Z_i(\alpha) = 1$ then $Y_i \leq 1 \leq u_i(\alpha) + 1$
 because $u_i(\alpha) \geq 0$. Both cases give the displayed inequality.
 
 **Step 2 (deterministic identity, Theorem 1(i)).** Taking the $w$-weighted
-sum of Step 1 and applying the robust constraint,
+sum of Step 1,
 
 $$
 \sum_i w_i Y_i
   \;\leq\; \sum_i w_i u_i(\alpha) + \sum_i w_i Z_i(\alpha)
-  \;\leq\; \tau + V(\alpha).
+  \;=\; B_u(\alpha) + V(\alpha).
 $$
 
-This step uses no probability: it is portfolio accounting, valid for every
-realization, and it is exactly the identity verified by the frozen exact
-funded-set audit.
+This step uses no probability and no optimality: it is portfolio accounting,
+valid for every realization, and it is exactly the identity verified by the
+frozen exact funded-set audit.
 
 **Step 3 (Markov, Theorem 1(ii)).** $V(\alpha)$ is a nonnegative random
 variable under the stated draw, and Assumption 1 gives
@@ -130,15 +137,35 @@ P\bigl(V(\alpha) \geq t\bigr) \;\leq\; \frac{E[V(\alpha)]}{t}
 $$
 
 **Step 4 (combination).** By Step 2, the event
-$\{\sum_i w_i Y_i \geq \tau + t\}$ implies $\{V(\alpha) \geq t\}$, so
+$\{\sum_i w_i Y_i \geq B_u(\alpha) + t\}$ implies $\{V(\alpha) \geq t\}$, so
 
 $$
-P\!\left(\sum_i w_i Y_i \geq \tau + t\right) \;\leq\; \frac{\alpha}{t},
+P\!\left(\sum_i w_i Y_i \geq B_u(\alpha) + t\right) \;\leq\; \frac{\alpha}{t},
 $$
 
 and the choice $t = \sqrt{\alpha}$ gives the body statement:
-miscoverage budget $\sqrt{\alpha}$ exceeded with probability at most
-$\sqrt{\alpha}$. $\blacksquare$
+the endpoint budget $B_u(\alpha)$ is exceeded by more than $\sqrt{\alpha}$ with
+probability at most $\sqrt{\alpha}$. $\blacksquare$
+
+**Policy-term decomposition.** The optimizer constrains the $\gamma$-blended PD,
+not $B_u(\alpha)$ itself. Since
+$\sum_i w_i \tilde p_i(\alpha,\gamma) = \sum_i w_i \hat p_i + \gamma\,\Gamma_{\mathrm{CP}}(\alpha)$
+and $B_u(\alpha) = \sum_i w_i \hat p_i + \Gamma_{\mathrm{CP}}(\alpha)$, with
+$\Gamma_{\mathrm{CP}}(\alpha) = \sum_i w_i\bigl(u_i(\alpha) - \hat p_i\bigr)$,
+
+$$
+B_u(\alpha) = \sum_i w_i \tilde p_i(\alpha,\gamma) + (1-\gamma)\,\Gamma_{\mathrm{CP}}(\alpha)
+  \;\leq\; \tau + (1-\gamma)\,\Gamma_{\mathrm{CP}}(\alpha),
+$$
+
+with equality when the cap binds. The promoted policy binds at $\tau = 0.175$
+with $\gamma = 0.45$ and $\Gamma_{\mathrm{CP}}(0.01) = 0.187987$, so
+$B_u(0.01) = 0.278393$ and the deterministic bound reads
+$\sum_i w_i Y_i \leq 0.278393 + V(0.01) = 0.307268$ against a realized
+$\sum_i w_i Y_i = 0.032875$. The slack $(1-\gamma)\,\Gamma_{\mathrm{CP}}(\alpha)$ is
+the part of the conformal premium the optimizer does not internalize at
+$\gamma < 1$; setting $\gamma = 1$ recovers the tight endpoint cap
+$B_u(\alpha) \leq \tau$.
 
 These steps leave a clean split. Theorem 1 proves the operational bound under
 Assumption 1. Proposition A.1 below shows that Markov is the sharp

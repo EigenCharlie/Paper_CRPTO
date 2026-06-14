@@ -80,10 +80,11 @@ the conformal gates and produce positive robust LP objectives, so the result is
 not confined to the Lending Club panel.
 Across these external panels the price of robustness grows with the panel default
 rate (from $+1.0\%$ to $+9.5\%$). The contribution is a conformal-robust
-credit-portfolio decision certificate: it connects real credit data, calibrated
-predictive models, robust funding decisions, and a drift harness that regenerates
-the prediction-to-decision chain bit-exactly from frozen artifacts while keeping
-the statistical guarantee boundary explicit.%
+credit-portfolio decision certificate with a distribution-free funded-set risk
+bound: it connects real credit data, calibrated predictive models, robust funding
+decisions, and a drift harness that regenerates the prediction-to-decision chain
+bit-exactly from frozen artifacts while keeping the statistical guarantee boundary
+explicit.%
 }
 
 \KEYWORDS{conformal prediction; robust optimization; predict-then-optimize;
@@ -133,15 +134,21 @@ satisfy the same exact alpha-safe check. The headline result is not a single luc
 allocation. It is a reproducible bridge from calibrated probabilistic learning to
 robust, auditable credit portfolio choice.
 
-The paper makes four contributions. First, it gives a CRPTO construction for
+The paper makes five contributions. First, it gives a CRPTO construction for
 credit portfolios: frozen calibrated PD, Mondrian conformal uncertainty, and
-robust budgeted optimization as a post-hoc decision audit. Second, it locates
-that construction relative to data-driven robust optimization, P2P lending
-portfolio models, conformal credit scoring, and decision-focused learning.
-Third, it provides an artifact-backed empirical study where every table and
-figure is generated from frozen outputs rather than manually transcribed
-summaries. Fourth, it adds external economic replications on Prosper and
-Freddie/Mendeley, separating the methodological claim from one P2P panel. The
+robust budgeted optimization as a post-hoc decision audit. Second, it proves a
+distribution-free funded-set risk bound (Theorem~\ref{thm:funded-set-bound})
+that splits realized portfolio loss into the conformal upper-endpoint budget
+$B_u(\alpha)=\tau+(1-\gamma)\,\Gamma_{\mathrm{CP}}(\alpha)$ and the weighted
+miscoverage $V(\alpha)$, with supplement propositions showing that Markov is
+optimal under the stated assumption (A.1) and locating the cluster structure
+that would tighten it (A.2). Third, it locates that construction relative to
+data-driven robust optimization, P2P lending portfolio models, conformal credit
+scoring, and decision-focused learning. Fourth, it provides an artifact-backed
+empirical study where every table and figure is generated from frozen outputs
+rather than manually transcribed summaries. Fifth, it adds external economic
+replications on Prosper and Freddie/Mendeley, separating the methodological
+claim from one P2P panel. The
 key claim is narrow: CRPTO maps frozen calibrated PD artifacts into a robust
 funded set, reports the portfolio-level conformal premium $\Gamma_{\mathrm{CP}}$,
 and verifies exact alpha-safe weighted miscoverage on the promoted Lending Club
@@ -406,24 +413,42 @@ empirically after the frozen selection, and never silently upgraded to a
 guarantee.
 
 \begin{theorem}[Distribution-free funded-set risk bound]\label{thm:funded-set-bound}
-Suppose the robust constraint holds at the chosen allocation,
-$\sum_i w_i u_i(\alpha)\le\tau$. Then
-(i) deterministically, $\sum_i w_i Y_i \le \tau + V(\alpha)$; and
+Let $B_u(\alpha)=\sum_i w_i u_i(\alpha)$ be the weighted conformal
+upper-endpoint budget of the funded set. Then
+(i) deterministically, $\sum_i w_i Y_i \le B_u(\alpha) + V(\alpha)$; and
 (ii) under Assumption~\ref{asm:weighted-validity}, for every $t>0$,
 $\mathbb{P}(V(\alpha)\ge t)\le\alpha/t$, and in particular
 \[
-\mathbb{P}\Bigl(\textstyle\sum_i w_i Y_i \;\ge\; \tau+\sqrt{\alpha}\Bigr)
+\mathbb{P}\Bigl(\textstyle\sum_i w_i Y_i \;\ge\; B_u(\alpha)+\sqrt{\alpha}\Bigr)
   \;\le\; \sqrt{\alpha}.
 \]
 \end{theorem}
 
 \proof{Proof sketch.}
 Since $Y_i\le u_i(\alpha)+Z_i(\alpha)$ for every loan, part~(i) follows by
-taking the $w$-weighted sum and applying the constraint. Part~(ii) is Markov's
-inequality applied to the nonnegative variable $V(\alpha)$ with
-$\mathbb{E}[V(\alpha)]\le\alpha$ \citep{ghosh2002}, combined with~(i). The
-full proof is in Online Supplement Appendix~A. \Halmos
+taking the $w$-weighted sum; it is portfolio accounting and needs no
+probability. Part~(ii) is Markov's inequality applied to the nonnegative
+variable $V(\alpha)$ with $\mathbb{E}[V(\alpha)]\le\alpha$ \citep{ghosh2002},
+combined with~(i). The full proof is in Online Supplement Appendix~A. \Halmos
 \endproof
+
+\begin{remark}[The optimizer's cap versus the endpoint budget]\label{rem:endpoint-budget}
+The robust layer does not constrain $B_u(\alpha)$ directly; it caps the
+$\gamma$-blended PD, $\sum_i w_i \tilde p_i(\alpha,\gamma)\le\tau$, with
+$\tilde p_i=\hat p_i+\gamma(u_i(\alpha)-\hat p_i)$ and $\gamma\in[0,1]$. Because
+$\Gamma_{\mathrm{CP}}(\alpha)=\sum_i w_i(u_i(\alpha)-\hat p_i)$, the endpoint
+budget decomposes exactly as
+\[
+B_u(\alpha)=\sum_i w_i \tilde p_i(\alpha,\gamma)+(1-\gamma)\,\Gamma_{\mathrm{CP}}(\alpha)
+  \;\le\; \tau+(1-\gamma)\,\Gamma_{\mathrm{CP}}(\alpha),
+\]
+with equality when the cap binds. The term $(1-\gamma)\,\Gamma_{\mathrm{CP}}(\alpha)$
+is the conformal robustness premium the optimizer leaves un-internalized at
+$\gamma<1$. For the promoted policy ($\tau=0.175$, $\gamma=0.45$, binding cap),
+$B_u(0.01)=0.175+0.55\,(0.187987)=0.278393$, so the deterministic bound is
+$\sum_i w_i Y_i\le 0.278393+V(0.01)=0.307268$, well above the realized weighted
+default rate $0.032875$.
+\end{remark}
 
 \begin{remark}[Why $t=\sqrt{\alpha}$, and why Markov]\label{rem:sqrt-alpha}
 The choice $t=\sqrt{\alpha}$ is made for interpretability, not optimality: it
