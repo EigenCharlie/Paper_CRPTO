@@ -73,9 +73,9 @@ PDF crop box cuts the right edge under `informs4`.
 > `informs4.cls`, `informs2014.bst`, template PDFs, `.sty` files, or generated
 > LaTeX build artifacts.
 
-Current local build state (verified 2026-06-09): TinyTeX/TeX Live 2026,
+Current local build state (verified 2026-06-14): TinyTeX/TeX Live 2026,
 Strawberry Perl 5.42.2.1, and the `listingsutf8` TeX package compile
-`CRPTO_ijds_submission.tex` to a 23-page official-template PDF. The only LaTeX
+`CRPTO_ijds_submission.tex` to a 24-page official-template PDF. The only LaTeX
 log warnings left are a small `\maketitle` overfull from the `informs4`
 anonymous title block and one float-only page, both visually acceptable. The
 body is comfortably inside the IJDS 25-page initial-submission budget even
@@ -151,7 +151,7 @@ These protocols are compatible but not interchangeable.
 - Use `SCHOLARONE_FINAL_CHECKLIST.md` while uploading and reviewing the generated
   proof.
 - Recheck the official-template page budget if the body changes materially. The
-  current local official-template build is 23 pages.
+  current local official-template build is 24 pages.
 - Keep A3--A34 in the online supplement unless a reviewer-facing argument needs
   one compact table in the body.
 - Preserve CRPTO as the coverage/auditability method and SPO+ as the low-regret
@@ -193,7 +193,7 @@ updates the template.
 
 4. **Recount the official-template page budget** and demote body floats to the
    supplement only if it exceeds 25 pages. The local official-template build is
-   currently 23 pages; the Chrome-print body preview is only a verification
+   currently 24 pages; the Chrome-print body preview is only a verification
    proxy.
 5. **Verify anonymity** against the checklist above, then upload the body PDF and
    submit the title page separately.

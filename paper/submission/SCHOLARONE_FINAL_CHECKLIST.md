@@ -28,7 +28,7 @@ template files have been downloaded outside Git.
    ```
 
 4. Confirm body page count is at most 25 pages excluding references and
-   appendices. The local official-template build is currently 23 pages total.
+   appendices. The local official-template build is currently 24 pages total.
 
 ## Final Local Gates
 
