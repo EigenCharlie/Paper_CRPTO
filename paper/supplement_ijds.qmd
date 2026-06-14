@@ -175,28 +175,62 @@ transcribed table.
 
 ## Cluster-Aware Conditional Tightening
 
-Let clusters `g = 1, ..., G` represent period, grade, or period-grade cells, and
-let
+Let clusters $g = 1,\ldots,G$ represent period, grade, or period-grade cells,
+and define
 
-```text
-Z_g = sum_{i in g} w_i 1{Y_i > u_i(alpha)}.
-```
+$$
+Z_g(\alpha)=\sum_{i\in g} w_i\mathbf{1}\{Y_i>u_i(\alpha)\},\qquad
+W_g=\sum_{i\in g}w_i .
+$$
 
 Within each cluster, defaults and conformal misses may be arbitrarily
-dependent. If, after conditioning on the calibration sample and fixed funded
-allocation, the cluster aggregates are independent or conditionally
-independent across `g`, then the weighted noncoverage sum admits a
-cluster-level concentration bound. A Hoeffding-style version is
-[@hoeffding1963; @boucheron2013concentration]:
+dependent. The useful structure, if one is willing to assert it, is
+cross-cluster independence after conditioning on the calibration sample and the
+fixed funded allocation.
 
-```text
-P(V - E[V] >= t) <= exp(-2 t^2 / sum_g W_g^2),
-```
+**Proposition A.2 (cluster-aware Hoeffding under cross-cluster independence).**
+Let $\mathcal F$ contain the calibration sample, the frozen conformal recipe,
+the declared cluster partition, and the selected funded allocation. Suppose
+that, conditional on $\mathcal F$, the cluster aggregates
+$Z_1(\alpha),\ldots,Z_G(\alpha)$ are independent, satisfy
+$0\le Z_g(\alpha)\le W_g$, and obey conditional weighted validity
+$\sum_g E[Z_g(\alpha)\mid\mathcal F]\le\alpha$ (for example, it is sufficient
+that $E[Z_g(\alpha)\mid\mathcal F]\le\alpha W_g$ for every cluster). Then, for
+every $\delta\in(0,1)$,
 
-where `W_g = sum_{i in g} w_i` is the cluster exposure share. This proposition
-does not replace the main Markov bound because the cross-cluster assumption is
-additional. Table A14 reports the relevant exposure and miscoverage
-concentration so reviewers can audit where that assumption would matter.
+$$
+P\!\left(
+  V(\alpha)\ge
+  \alpha + \sqrt{\frac{1}{2}\left(\sum_g W_g^2\right)\log\frac{1}{\delta}}
+  \;\middle|\;\mathcal F
+\right)\le\delta .
+$$
+
+*Proof.* Let $\mu=\sum_g E[Z_g(\alpha)\mid\mathcal F]\le\alpha$ and
+$S_2=\sum_g W_g^2$. Hoeffding's inequality for independent bounded summands
+gives
+
+$$
+P\{V(\alpha)-\mu\ge s\mid\mathcal F\}\le \exp(-2s^2/S_2).
+$$
+
+Taking $s=\sqrt{S_2\log(1/\delta)/2}$ and using $\mu\le\alpha$ gives the
+displayed bound. Integrating over $\mathcal F$ gives the same unconditional
+statement. $\blacksquare$
+
+Proposition A.2 is therefore the natural complement to Proposition A.1. Under
+Assumption 1 alone, A.1 shows why Markov is the sharp distribution-free claim;
+under an explicit cross-cluster structure, A.2 shows exactly when a
+Hoeffding-style tightening becomes available [@hoeffding1963;
+@boucheron2013concentration]. At the paper level $\alpha=0.01$ with matched
+tail probability $\delta=\sqrt{\alpha}=0.10$, the cluster-aware threshold is
+tighter than Markov only if $\sum_g W_g^2<0.0070$. The frozen funded set is much
+more concentrated: period, grade, and period-grade partitions have
+$\sum_g W_g^2=0.2407$, $0.3572$, and $0.0914$, respectively, so the corresponding
+thresholds are `0.5365`, `0.6512`, and `0.3344`, all looser than Markov's
+`0.1000`. This proposition does not replace the main theorem; it names the
+extra structure a reviewer would have to accept and makes the empirical
+concentration cost transparent in A21.
 
 ### How much does the distribution-free bound leave on the table?
 
