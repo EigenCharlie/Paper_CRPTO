@@ -304,13 +304,11 @@ average 90\% interval width $0.7842$, minimum group 90\% coverage $0.9190$, and 
   protected downside risk, the funded-set audit shows mean upper endpoints rising
   from $0.12529$ in A--B to $0.52587$ in E--G, and the promotion gate uses Winkler
   score, funded-set miscoverage, and $\Gamma_{\mathrm{CP}}$ rather than treating
-  narrowness as the objective. The backtesting module
-  retains Kupiec and Christoffersen utilities for research diagnostics, but the IJDS
-  promotion artifact no longer serializes those p-values or counts them in
-  \texttt{overall\_pass}. They test exact nominal VaR-style coverage and add noise
-  when conservative conformal intervals over-cover in a large out-of-time sample.
-  The promotion gate therefore uses material coverage, group coverage, width, alert,
-  and Winkler checks.
+  narrowness as the objective. The full gate also scores
+  material coverage, group coverage, interval width, and alert rate, but not
+  exact-nominal-coverage backtests: conformal intervals over-cover by design, so
+  testing for exact nominal coverage would penalize the safety margin the method is
+  meant to provide on a large out-of-time sample.
 
 \subsection{Robust Portfolio Layer}\label{sec:method-lp}
 
