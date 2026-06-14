@@ -154,6 +154,28 @@ pendientes editoriales derivados de esa auditoría:
 No se ejecutó freeze ni submission. No se tocaron stages protegidos ni
 artefactos congelados del champion.
 
+## Hallazgo post-merge (2026-06-14, Dependabot torch)
+
+GitHub reportó el alert Dependabot #13 sobre `torch` en `uv.lock`
+(`GHSA-rrmf-rvhw-rf47`, CVE-2025-3000: `torch.jit.script`). La revisión local
+dejó este estado:
+
+- `torch` vive en el extra opcional `spo` y también llega vía `pyepo`; no es
+  parte del champion, conformal, portfolio LP ni paper-export.
+- El advisory no publica versión parcheada (`first_patched_version = null`,
+  rango vulnerable `<= 2.12.0`), así que no hay upgrade que cierre el alert.
+- `rg` no encuentra uso de `torch.jit`, `jit.script` ni TorchScript en
+  `scripts/`, `src/`, `tests/`, `docs/`, `book/` o `configs/`.
+- Intento de cerrar el alert como riesgo tolerado falló por permisos del PAT
+  (`403 Resource not accessible by personal access token`).
+
+**Acción vigente:** no tocar dependencias ni lockfile por este alert hasta que
+PyTorch publique versión fija o hasta que TorchScript entre en un code path
+real. Si aparece una versión parcheada, abrir PR pequeño que actualice
+`torch`/`uv.lock`, corra `just setup --extra spo` o equivalente local, y
+verifique los tests SPO (`tests/test_scripts/test_run_spo_real.py`) más los
+gates universales.
+
 ---
 
 ## AUDITORÍA POST-EJECUCIÓN (2026-06-13, Claude) — leer antes de continuar
