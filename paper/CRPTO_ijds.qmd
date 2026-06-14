@@ -158,9 +158,10 @@ interval artifact with DVC/MLflow-style lineage, paper tables, and model-risk
 documentation.
 
 The third foundation is predict-then-optimize and decision-focused learning.
-IJDS work on decision making warns that estimating a model and choosing an
-action are different objects, even before causal claims are introduced
-[@fernandezloria2022causaldecision]. SPO+ and modern decision-focused learning
+IJDS work on causal decision making sharpens the same warning: once an estimate
+feeds an action, the relevant target can become the assignment rule rather than
+only the intermediate effect-size estimate [@fernandezloria2022causaldecision].
+SPO+ and modern decision-focused learning
 ask models to respect the loss surface induced by the downstream decision
 [@elmachtoub2022; @donti2017; @mandi2024]. CRPTO is intentionally more
 conservative. It does not retrain the PD model end-to-end through the optimizer.

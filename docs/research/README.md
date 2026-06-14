@@ -22,6 +22,8 @@ perenne y lo que el código lee/escribe.
   óptimo). Generado por `scripts/build_bound_tightening_audit.py`.
 - `ijds_rebaseline_2026-06-07.md` — registro del run-tag congelado vigente
   (`ijds-rebaseline-2026-06-07`).
+- `literature_reference_audit_2026-06-14.md` — auditoría de evidencia local de
+  lectura para las referencias citadas en el cuerpo IJDS.
 
 ## Registros de gobernanza (decisiones; no se re-ejecutan sin permiso)
 
@@ -35,6 +37,13 @@ perenne y lo que el código lee/escribe.
   anonimato y salida IJDS/EJOR.
 - `crpto_pyepo_dfl_intake_2026-05-26.md` — PyEPO 1.3.7 y cierre del comparador
   DFL/SPO+ aislado.
+
+## `literature/` — notas de lectura versionadas
+
+Notas curadas sobre fuentes específicas. Los PDFs de literatura se mantienen en
+`Papers_tesis/`, que está ignorado por Git, para no commitear material con
+copyright. En `docs/research/literature/` deben quedar solo notas, hashes,
+decisiones editoriales y trazabilidad de uso.
 
 ## `foundations/` — referencia técnica perenne
 
