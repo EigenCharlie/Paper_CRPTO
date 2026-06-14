@@ -709,6 +709,10 @@ def _plot_alpha_gamma_funded_set(bound_eval: pd.DataFrame, promotion: dict[str, 
         data["alpha"],
         data["gamma_cp"],
         marker="o",
+        markerfacecolor="white",
+        markeredgewidth=1.2,
+        linestyle="-",
+        linewidth=2.0,
         label=r"$\Gamma_{\mathrm{CP}}$",
         color="#0B5CAD",
     )
@@ -716,6 +720,10 @@ def _plot_alpha_gamma_funded_set(bound_eval: pd.DataFrame, promotion: dict[str, 
         data["alpha"],
         data["weighted_miscoverage_V"],
         marker="s",
+        markerfacecolor="white",
+        markeredgewidth=1.2,
+        linestyle="-.",
+        linewidth=2.0,
         label=r"$V(\alpha)$",
         color="#B00020",
     )
@@ -723,6 +731,11 @@ def _plot_alpha_gamma_funded_set(bound_eval: pd.DataFrame, promotion: dict[str, 
         data["alpha"],
         data["sqrt_alpha"],
         linestyle="--",
+        marker="D",
+        markersize=4.8,
+        markerfacecolor="white",
+        markeredgewidth=1.0,
+        linewidth=1.8,
         label=r"$\sqrt{\alpha}$",
         color="#616161",
     )
@@ -744,8 +757,17 @@ def _plot_alpha_gamma_funded_set(bound_eval: pd.DataFrame, promotion: dict[str, 
     ax1.grid(alpha=0.25)
     ax1.legend(loc="best", frameon=False)
 
-    ax2.plot(data["alpha"], data["n_funded"], marker="^", color="#2E7D32", linewidth=2.0)
-    ax2.fill_between(data["alpha"], data["n_funded"], alpha=0.14, color="#2E7D32")
+    ax2.plot(
+        data["alpha"],
+        data["n_funded"],
+        marker="^",
+        markerfacecolor="white",
+        markeredgewidth=1.2,
+        linestyle="-.",
+        color="#263238",
+        linewidth=2.0,
+    )
+    ax2.fill_between(data["alpha"], data["n_funded"], alpha=0.12, color="#78909C")
     ax2.axvline(0.01, color="#263238", linestyle=":", linewidth=1.1)
     ax2.set_xlabel(r"Conformal level $\alpha$")
     ax2.set_ylabel("Funded loans")
@@ -776,7 +798,8 @@ def _plot_robust_region_heatmap(shortlist: pd.DataFrame, promotion: dict[str, An
         aggfunc="max",
     ).sort_index(ascending=False)
     fig, ax = plt.subplots(figsize=(8.4, 5.4))
-    im = ax.imshow(pivot.to_numpy(), cmap="viridis", aspect="auto")
+    cmap = plt.get_cmap("Greys")
+    im = ax.imshow(pivot.to_numpy(), cmap=cmap, aspect="auto")
     ax.set_xticks(np.arange(len(pivot.columns)))
     ax.set_xticklabels([f"{x:.2f}" for x in pivot.columns])
     ax.set_yticks(np.arange(len(pivot.index)))
@@ -788,7 +811,18 @@ def _plot_robust_region_heatmap(shortlist: pd.DataFrame, promotion: dict[str, An
         for j in range(pivot.shape[1]):
             value = pivot.iloc[i, j]
             if pd.notna(value):
-                ax.text(j, i, f"{value / 1000:.0f}K", ha="center", va="center", color="white")
+                rgba = cmap(im.norm(float(value)))
+                luminance = (0.2126 * rgba[0]) + (0.7152 * rgba[1]) + (0.0722 * rgba[2])
+                text_color = "white" if luminance < 0.45 else "#111111"
+                ax.text(
+                    j,
+                    i,
+                    f"{value / 1000:.0f}K",
+                    ha="center",
+                    va="center",
+                    color=text_color,
+                    fontweight="bold",
+                )
     champion = promotion["final_champion"]
     champion_gamma = float(champion["gamma"])
     champion_tau = float(champion["risk_tolerance"])
@@ -800,9 +834,9 @@ def _plot_robust_region_heatmap(shortlist: pd.DataFrame, promotion: dict[str, An
             row,
             marker="*",
             s=360,
-            color="#FDD835",
-            edgecolor="#263238",
-            linewidth=1.1,
+            color="white",
+            edgecolor="#111111",
+            linewidth=1.4,
             zorder=4,
         )
         ax.annotate(

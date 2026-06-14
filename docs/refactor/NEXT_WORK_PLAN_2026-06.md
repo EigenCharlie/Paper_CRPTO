@@ -95,6 +95,36 @@ Resultado local: `just validate-champion`, `just drift-gate`,
 correctamente y subió `1 file` (el nuevo artefacto faltante en el remote tras
 A2 fase 4).
 
+## Ejecución Claude/Codex (2026-06-14, paper polish sin freeze)
+
+Claude cerró en PR #72 la **Proposición A.1**: bajo Assumption 1 sola,
+Markov es el statement correcto y ningún argumento de segundo momento agnóstico
+mejora el umbral del body. Codex tomó el siguiente paso natural de la nota de
+Claude:
+
+- **A.2 cluster-aware formalizada en el supplement.** La sección A21 ahora
+  contiene una Proposición A.2 con prueba Hoeffding condicional: si los
+  agregados de clusters son independientes tras fijar calibración, partición y
+  allocation, entonces el bound depende de `sum_g W_g^2`. También cuantifica el
+  umbral de tightening (`sum_g W_g^2 < 0.0070` para `alpha=0.01`,
+  `delta=0.10`) y muestra por qué los clusters observados no aprietan Markov
+  (`0.2407`, `0.3572`, `0.0914`). Body y TEX quedaron sincronizados: A.1/A.2
+  se leen como frontera explícita entre "sin estructura" y "con estructura".
+- **Figuras 13/14 listas para B/N.** `scripts/build_crpto_journal_package.py`
+  ya no depende solo del color: Fig. 13 usa estilos de línea y marcadores
+  redundantes; Fig. 14 usa colormap secuencial de grises, texto dinámico
+  negro/blanco según luminancia y champion marker con contorno. Se regeneraron
+  los PNG/PDF en `reports/crpto/figures/` y
+  `book/assets/figures/publication/`; las vistas convertidas a escala de grises
+  fueron inspeccionadas y siguen legibles.
+- **Reproducibility capitalizado.** La sección de reproducibilidad del QMD y el
+  TEX de submission mencionan que el champion feature contract vive como
+  YAML/Parquet en vez de pickle opaco; solo modelo y calibrador permanecen como
+  binarios.
+
+No se ejecutó freeze ni submission. No se reabrió búsqueda, HPO, champion,
+intervalos conformal, validación conformal ni optimización portfolio.
+
 ---
 
 ## AUDITORÍA POST-EJECUCIÓN (2026-06-13, Claude) — leer antes de continuar
