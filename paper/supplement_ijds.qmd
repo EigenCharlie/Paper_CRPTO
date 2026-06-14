@@ -167,6 +167,16 @@ the part of the conformal premium the optimizer does not internalize at
 $\gamma < 1$; setting $\gamma = 1$ recovers the tight endpoint cap
 $B_u(\alpha) \leq \tau$.
 
+On the promoted draw the realized weighted miscoverage is $V(0.01) = 0.028875$,
+which *exceeds* the nominal $\alpha = 0.01$: the funded set under-covers relative
+to the marginal conformal level (unweighted funded coverage $0.9501$), as expected
+for an adaptively selected subportfolio. The deterministic identity needs no
+assumption and holds with wide margin; the probabilistic guarantee is therefore
+read at the Markov level $V \leq \sqrt{\alpha} = 0.10$, which the realized $V$
+clears, not at the nominal $\alpha$. This is why Assumption 1 is presented as a
+modeling premise audited after selection, not as a property the single frozen
+draw establishes.
+
 These steps leave a clean split. Theorem 1 proves the operational bound under
 Assumption 1. Proposition A.1 below shows that Markov is the sharp
 first-moment statement when no additional structure is asserted. Proposition

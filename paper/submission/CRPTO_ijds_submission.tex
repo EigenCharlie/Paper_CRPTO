@@ -293,7 +293,11 @@ forms prediction intervals on the PD scale and records the upper endpoint
 $u_i(\alpha)$. Operationally, CRPTO evaluates Mondrian partitions rather than a
 single global interval. The promoted uncertainty artifact uses a score-decile-based
 Mondrian partition selected by out-of-time interval quality, while grade-based
-partitions remain the natural governance baseline.
+partitions remain the natural governance baseline. The score-decile choice keeps
+each cell well populated even at the tight $\alpha=0.01$, where a per-cell $99\%$
+upper endpoint needs on the order of $100$ calibration points; finer grade-period
+partitions are sparser, and the supplement flags where small cells weaken coverage
+(notably the external Freddie panel).
 
 The resulting conformal summary is more than a scalar coverage number.
 The paper-facing metrics include 90\% coverage $0.9297$, 95\% coverage $0.9664$,
@@ -364,16 +368,19 @@ fixed allocation evaluated on exchangeable calibration/test data, conformal cove
 controls the expected rate at which outcomes fall outside the constructed uncertainty
 intervals. When funded-set weights are non-negative and normalized, this yields a
 weighted miscoverage quantity $V(\alpha)$ that can be monitored after the decision.
-The formal portfolio statement assumes weighted funded-set validity: the optimizer's
-allocation does not concentrate exposure in a region whose noncoverage is worse than
-the nominal conformal level, unless such weighting is covered by a declared Mondrian,
-localized, or multi-distribution guarantee. A Markov-style argument then converts
-expected weighted miscoverage control into a finite-sample portfolio-level statement;
-both steps are stated formally as Assumption~\ref{asm:weighted-validity} and
-Theorem~\ref{thm:funded-set-bound} below.
-The empirical exact audit reported in this paper is the operational validation
-of that statement after the frozen policy search, not a claim that post-selection
-evaluation creates a stronger conformal guarantee.
+Two statements are kept separate. The deterministic portfolio identity
+(Theorem~\ref{thm:funded-set-bound}(i)) holds for any allocation and needs no
+distributional assumption; it is the accounting the exact certificate verifies. The
+probabilistic statement (Theorem~\ref{thm:funded-set-bound}(ii)) is a Markov argument
+that requires weighted funded-set validity, $\mathbb{E}[V(\alpha)]\le\alpha$, stated as
+Assumption~\ref{asm:weighted-validity}. This is a modeling assumption, not a property
+the single frozen draw establishes: on the promoted funded set the realized weighted
+miscoverage is $V(0.01)=0.028875$, \emph{above} the nominal $\alpha=0.01$, the expected
+price of evaluating an adaptively selected subportfolio rather than a fresh population.
+What the paper certifies is therefore the exact accounting together with the safety
+level $V\le\sqrt{\alpha}$ that Markov delivers, not a claim that the funded set attains
+nominal $\alpha$-coverage or that post-selection evaluation creates a stronger
+conformal guarantee.
 
 \begin{figure}[t]
   \centering
@@ -402,13 +409,15 @@ and allocation rule.
 $\mathbb{E}[V(\alpha)]\le\alpha$ under the funded-set weights $w$ for that draw.
 \end{assumption}
 
-Assumption~\ref{asm:weighted-validity} holds, for example, when the weights are
-measurable with respect to a declared Mondrian partition whose cells each carry
-split-conformal coverage, and it is the explicit price of evaluating a selected
-portfolio rather than a single population: marginal split conformal alone does
-not control every adaptive subportfolio, so the assumption is stated, audited
-empirically after the frozen selection, and never silently upgraded to a
-guarantee.
+Assumption~\ref{asm:weighted-validity} is the explicit price of evaluating a selected
+portfolio rather than a single population, and it does not follow from marginal split
+conformal. The funded-set weights $w_i\propto x_i a_i$ are chosen by the optimizer and
+depend on the conformal endpoints $u_i(\alpha)$, so they are not measurable with respect
+to the Mondrian partition and inherit no per-cell coverage guarantee. The assumption is
+therefore stated, audited empirically after the frozen selection, and never silently
+upgraded to a guarantee---and the audit does not find it slack: the realized
+$V(0.01)=0.028875$ exceeds $\alpha=0.01$, so the operative safety level is the weaker
+$V\le\sqrt{\alpha}$.
 
 \begin{theorem}[Distribution-free funded-set risk bound]\label{thm:funded-set-bound}
 Let $B_u(\alpha)=\sum_i w_i u_i(\alpha)$ be the weighted conformal
@@ -568,10 +577,13 @@ every external portfolio.
 
 Table~\ref{tab:core} summarizes the paper-facing metrics. The calibrated PD
 layer is not a leaderboard model, but it is stable enough for decision use: AUC
-  $0.7139$, Brier score $0.1544$, and ECE near $0.0070$. The conformal layer provides
-conservative empirical coverage, with 90\% coverage $0.9297$ and 95\% coverage
-$0.9664$ for the promoted conformal winner. The portfolio layer then turns this
-uncertainty into a robust allocation with exact alpha-safe checks.
+  $0.7139$, Brier score $0.1544$, and ECE near $0.0070$. The conformal layer over-covers
+marginally at the reported levels (90\% coverage $0.9297$, 95\% coverage $0.9664$).
+On the funded set at the tighter $\alpha=0.01$, however, coverage is below nominal:
+$95.01\%$ unweighted and $97.11\%$ exposure-weighted (weighted miscoverage
+$V=0.028875$ versus the nominal $1\%$), the adaptive-selection penalty made explicit
+in the theory section. The portfolio layer turns this uncertainty into a robust
+allocation whose exact certificate is the $V\le\sqrt{\alpha}$ check.
 
 \begin{table}[t]
   \centering
@@ -587,6 +599,7 @@ uncertainty into a robust allocation with exact alpha-safe checks.
     Conformal & Coverage 90\%                & $0.9297$ \\
     Conformal & Coverage 95\%                & $0.9664$ \\
     Conformal & Minimum group coverage 90\%  & $0.9190$ \\
+    Conformal & Funded-set coverage ($\alpha=0.01$, nominal $0.99$) & $0.9501$ \\
     Portfolio & Robust return                & \$170{,}464.54 \\
     Portfolio & $V(\alpha=0.01)$             & $0.028875$ \\
     Portfolio & $\Gamma_{\mathrm{CP}}(\alpha=0.01)$ & $0.187987$ \\
@@ -595,16 +608,21 @@ uncertainty into a robust allocation with exact alpha-safe checks.
   \end{tabular}
 \end{table}
 
-The exact certificate in the body is a narrow claim. Here ``exact'' means
-that the quantities are computed directly on the frozen OOT funded set rather than
-approximated by a surrogate table or visual proxy. The statistical reading still
-rests on the weighted funded-set validity assumption stated in the theory section;
-the certificate is the empirical audit that connects that assumption to the
-promoted decision.
+The exact certificate is an accounting claim. Here ``exact'' means the quantities
+are computed directly on the frozen OOT funded set rather than approximated by a
+surrogate table or visual proxy, and the deterministic part requires no distributional
+assumption. The certificate's pass is the Markov safety check $V(\alpha)\le\sqrt{\alpha}$
+together with zero deterministic violation ($\sum_i w_i Y_i\le B_u(\alpha)$); it is
+\emph{not} a claim of nominal $\alpha$-coverage, which the funded set does not attain
+($V=0.028875>\alpha=0.01$). The miscoverage is also concentrated: $V(\alpha)$ is nearly
+flat across the conformal level (Figure~\ref{fig:alpha-gamma}), so the residual risk
+sits in a few deep-tail defaults that no reasonable $\alpha$ recovers, which is why $V$
+stays above $\alpha$ and the safety level is read at $\sqrt{\alpha}$.
 
 \begin{table}[t]
   \centering
-  \caption{Exact alpha-safe certificate for the promoted funded set.}
+  \caption{Exact certificate for the promoted funded set. A pass denotes
+  $V\le\sqrt{\alpha}$ with zero deterministic violation, not nominal $\alpha$-coverage.}
   \label{tab:exact-certificate}
   \begin{tabular}{rrrrr}
     \toprule
@@ -765,13 +783,15 @@ Prosper or Freddie.
 The external layer also surfaces a result a single-dataset champion cannot show.
 The signed price of robustness---using the same convention as the Lending Club
 field, $(\mathrm{nonrobust}-\mathrm{robust})/\mathrm{nonrobust}$---is a
-\emph{positive} premium under frozen application, and it grows with the panel
-default rate (Table~\ref{tab:price-of-robustness}, Figure~\ref{fig:price-scaling}). Within Freddie, the
-high-default red segment pays more than green; across datasets,
-Prosper's $30.92\%$ default panel pays the largest premium. The reading is
-economic, not incidental: higher default risk widens the conformal intervals, so
-the robust worst case discounts more return, and discrimination (AUC) does not
-order the premium on its own. On the \emph{selected} Lending Club champion the
+\emph{positive} premium under frozen application, and across the cases we can
+evaluate it increases with the panel default rate (Table~\ref{tab:price-of-robustness},
+Figure~\ref{fig:price-scaling}). Within Freddie, the high-default red segment pays more
+than green; across datasets, Prosper's $30.92\%$ default panel pays the largest premium.
+This is a pattern across two datasets---three Freddie default-window segments plus
+Prosper---not a scaling law: it is consistent with the mechanism (higher default risk
+widens the conformal intervals, so the robust worst case discounts more return, and
+discrimination (AUC) does not order the premium on its own), but four points cannot
+establish a general law. On the \emph{selected} Lending Club champion the
 signed price is favorable ($-10.56\%$), because the bound-aware search found a
 robust funded set that also wins expected return. The measured summary is more
 modest: in these applications, the conformal robust layer is economically
