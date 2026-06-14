@@ -125,6 +125,35 @@ Claude:
 No se ejecutó freeze ni submission. No se reabrió búsqueda, HPO, champion,
 intervalos conformal, validación conformal ni optimización portfolio.
 
+## Ejecución Codex (2026-06-14, puente teórico y QA visual)
+
+Claude dejó el commit `efb56d1` como reparación posterior a PR #73: el
+supplement ahora presenta A.1 antes de A.2, de modo que la proposición de
+optimalidad de Markov precede al tightening cluster-aware. Codex cerró los
+pendientes editoriales derivados de esa auditoría:
+
+- **Puente teórico en body y TEX.** Theorem 1, Proposition A.1 y Proposition
+  A.2 ahora se leen como tríptico: garantía principal bajo weighted funded-set
+  validity, optimalidad first-moment sin estructura adicional y sensibilidad
+  cluster-aware bajo independencia cross-cluster explícita.
+- **Defensa de temporalidad en A.2.** El supplement explica por qué la
+  partición period-grade es la defensa más razonable para un panel temporal:
+  separa cohortes de calendario mientras condiciona por grado; period-only
+  ignora mezcla de riesgo y grade-only cruza dependencia temporal.
+- **Menos repetición y menos "AI slop".** Se comprimió el menú de bounds para
+  que la frase "tightening requiere assumptions adicionales" aparezca como
+  pricing de supuestos, no como eco defensivo. Abstract, introducción,
+  contribuciones, resultados y conclusión quedaron más naturales y con el
+  claim estrecho: certificado conformal-robust post-hoc, no nuevo learner ni
+  live deployment.
+- **QA visual de submission.** Se regeneró `paper-submission`, se recompiló el
+  PDF IJDS y se inspeccionaron páginas clave en navegador local mediante vistas
+  PNG; en particular Fig. 13 y Fig. 14 siguen legibles en escala de grises, con
+  labels y colorbar distinguibles.
+
+No se ejecutó freeze ni submission. No se tocaron stages protegidos ni
+artefactos congelados del champion.
+
 ---
 
 ## AUDITORÍA POST-EJECUCIÓN (2026-06-13, Claude) — leer antes de continuar
