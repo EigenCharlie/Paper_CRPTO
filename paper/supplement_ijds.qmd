@@ -225,7 +225,11 @@ such that `P(V > t)` is controlled at the matched tail probability
 is the sharpest at every level (e.g. `0.0698` vs Markov `0.1000` at
 `alpha = 0.01`); Hoeffding helps at looser `alpha` but not at `0.01`, because with
 concentrated exposure the effective sample size is only ~126. The frozen empirical
-`V = 0.028875` sits below *all three* thresholds at every level.
+`V = 0.028875` sits below *all three* thresholds at every level. These thresholds
+are computed under Assumption 1 (`E[V] <= alpha`, the second column); because the
+realized `V` exceeds `alpha = 0.01`, they are read as sensitivity references
+conditional on that assumption rather than as validated tail bounds, consistent
+with the coverage discussion in the body.
 
 Table A21c extends the same audit to one-sided Cantelli, Bennett and Freedman
 variants [@cantelli1929; @bennett1962; @freedman1975]. At `alpha = 0.01`,
@@ -398,7 +402,7 @@ frozen funded set or intervals, never as a re-promoted champion.
 | A19 regret-auditability frontier | Compares two-stage, SPO+, and CRPTO robust on regret versus risk-control checks. | Comparator framing, not a new champion selector. |
 | A20 tail-risk robust-region audit | Re-solves the 45 robust-region policies and ranks them by CVaR, OCE, return, and satisficing status. | Journal audit only; lower-tail policies are not promoted over the frozen champion. |
 | A21 cluster-bound tightening | Reports cluster-aware Hoeffding thresholds by period, grade, and period-grade. | Transparent caveat; not tighter than Markov for the observed exposure concentration. |
-| A22 tail-constrained re-optimization | Re-solves the 45 robust-region policies and selects the max-return policy under a decision-time (pd_high-based) CVaR cap, tracing the return-vs-CVaR frontier. | CVaR/OCE as an active selection constraint; reports a tail-constrained challenger, not a new champion. |
+| A22 tail-constrained re-optimization | Re-solves the 45 robust-region policies and selects the max-return policy under a decision-time CVaR cap computed from the conformal upper endpoints, tracing the return-vs-CVaR frontier. | CVaR/OCE as an active selection constraint; reports a tail-constrained challenger, not a new champion. |
 | A23 multi-distribution robustness | Worst-case 90% coverage by grade and grade x vintage cell on the frozen intervals. | Read-only diagnostic; the worst fine cell motivates MDCP/group-weighted as future work. |
 | A24 online conformal stability | Per-vintage and cumulative coverage plus the Gibbs-Candes ACI target trajectory over the OOT vintage sequence. | Static-OOT online-control diagnostic, not a streaming validation. |
 | A25 external replication gate | Applies the frozen CRPTO scoring/conformal/LP recipe to Prosper final-status loans and Freddie/Mendeley FM48. | External economic replication; not a Lending Club champion rerun and not a new exact theorem. |
@@ -491,8 +495,11 @@ not perfect conditional validity in every sparse mortgage cell.
 A34 turns the external layer into a positive economic finding rather than a
 defensive gate. Using the same signed convention as the Lending Club champion
 field, $(\text{nonrobust}-\text{robust})/\text{nonrobust}$, the price of
-robustness is a *positive* premium on every frozen external application and it
-increases monotonically with the panel default rate.
+robustness is a *positive* premium on every frozen external application and
+increases with the panel default rate across the cases evaluated. This is a
+pattern across two datasets (three Freddie default-window segments plus Prosper),
+not a scaling law: four points are consistent with the mechanism but cannot
+establish a general relationship.
 
 | Frozen application | Panel default rate | AUC | Price of robustness |
 |---|---:|---:|---:|
@@ -530,17 +537,16 @@ to make the audit path explicit.
 |---|---|---|---|
 | The predictive input is a frozen calibrated PD artifact, not a refreshed leaderboard model. | AUC, Brier, ECE, temporal backtesting, and calibration diagnostics. | `models/pd_canonical.cbm`, `models/pd_canonical_calibrator.pkl`, paper-facing metric tables. | `EXTRACTION_MANIFEST.json` and champion validation hashes. |
 | The conformal layer gives conservative OOT uncertainty on the PD scale. | 90% and 95% coverage, minimum group coverage, and grade/decile audits. | `data/processed/conformal_intervals_mondrian.parquet`. | Conformal validation status and smoke tests that check final metric synchronization. |
-| The promoted funded set passes the exact alpha-safe bound. | `V(alpha = 0.01) = 0.028875`, `Gamma_CP = 0.187987`, zero violation. | `models/final_project_promotion.json`, bound-evaluation parquet, Table A13. | Rebaselined exact-evaluation artifact and final-sync regression tests. |
+| The promoted funded set passes the exact safety bound `V <= sqrt(alpha)` (not nominal alpha-coverage). | `V(alpha = 0.01) = 0.028875` (above alpha), `Gamma_CP = 0.187987`, zero violation. | `models/final_project_promotion.json`, bound-evaluation parquet, Table A13. | Rebaselined exact-evaluation artifact and final-sync regression tests. |
 | The result is not an isolated lucky policy. | `45/45` policies pass in the final robust region. | Table A18 and robust-region heatmap. | Protected search/evaluation split; no rerun of the champion search in paper builds. |
 | The supplement strengthens interpretation without moving the champion. | A20--A34 challenger, dependence, tail-risk, multi-distribution, online, and external-replication diagnostics. | Journal robustness tables and Figures 15--25. | Scope caveats in each table; challenger and external outputs are labeled as non-promoted diagnostics. |
-| The manuscript is reproducible at the artifact level. | Tables, figures, Quarto pages, and status JSONs regenerate from frozen inputs. | Repository code, DVC metadata, rendered book/paper outputs. | Pre-push smoke/lint hooks, DVC status checks, and manifest validation before release. |
+| The manuscript is reproducible at the artifact level. | Tables, figures, Quarto pages, and status reports regenerate from frozen inputs. | Repository code, DVC metadata, rendered book/paper outputs. | Pre-push smoke/lint hooks, DVC status checks, and manifest validation before release. |
 
 ## Funded-Set Audit Card
 
 Table A8 is intentionally more granular than the manuscript body. For reviewers
 who need the short version, the promoted policy funds 341 positive-exposure loan
-rows on a `$1M` budget; the canonical robust-region ledger reports `n_funded =
-340` because it uses a solver-threshold count. The exposure-weighted audit below
+rows on a `$1M` budget. The exposure-weighted audit below
 collapses the period-by-grade table into four grade buckets. It is a diagnostic
 view of the frozen funded set, not a new selector or a re-optimized policy.
 
@@ -754,7 +760,7 @@ The intended accepted-paper disclosure package has four tiers:
 | Tier | Contents | Reviewer/reader value |
 |---|---|---|
 | Code and manuscript | Python source, scripts, tests, Quarto body, supplement, and book sources. | Rebuild paper artifacts and inspect methodology. |
-| Frozen metadata | `EXTRACTION_MANIFEST.json`, DVC metadata, lockfile, status JSONs, and table/figure provenance. | Verify that claims are tied to immutable artifacts. |
+| Frozen metadata | `EXTRACTION_MANIFEST.json`, DVC metadata, lockfile, status reports, and table/figure provenance. | Verify that claims are tied to immutable artifacts. |
 | Data access path | Raw Lending Club source instructions plus external dataset source notes; processed artifacts through the declared DVC remote when allowed. | Reproduce or audit without committing private credentials or raw CSVs to Git. |
 | Guardrails | `just smoke`, `just validate-champion`, publication target tests, and DVC status checks. | Separate safe paper reruns from protected champion/search stages. |
 
