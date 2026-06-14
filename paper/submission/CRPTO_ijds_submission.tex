@@ -307,10 +307,10 @@ average 90\% interval width $0.7842$, minimum group 90\% coverage $0.9190$, and 
 
 \subsection{Robust Portfolio Layer}\label{sec:method-lp}
 
-The decision variable is the funded amount or inclusion weight for each eligible
-loan. The optimizer maximizes expected net economic return under a \$1M budget and
-policy constraints that cap portfolio risk after replacing point PD estimates with
-conformal upper endpoints. The promoted policy has $\texttt{risk\_tolerance}=0.175$,
+The decision variable $x_i$ is the allocation fraction for each eligible loan;
+$x_i a_i$ is the funded exposure. The optimizer maximizes expected net economic
+return under a \$1M budget and policy constraints that cap portfolio risk after
+replacing point PD estimates with conformal upper endpoints. The promoted policy has $\texttt{risk\_tolerance}=0.175$,
 $\texttt{policy\_mode}=\texttt{blended\_uncertainty}$, policy parameter
 $\gamma=0.45$, and $\texttt{uncertainty\_aversion}=0.1$.
 

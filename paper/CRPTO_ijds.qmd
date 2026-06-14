@@ -280,29 +280,37 @@ group coverage, width, alert, and Winkler checks.
 
 ## Robust Portfolio Layer
 
-The decision variable is the funded amount or inclusion weight for each
-eligible loan. The optimizer maximizes expected net economic return under a
-`$1M` budget and policy constraints that cap portfolio risk after replacing
-point PD estimates with conformal upper endpoints. The promoted policy has
+The decision variable $x_i$ is the allocation fraction for each eligible loan;
+$x_i a_i$ is the funded exposure. The optimizer maximizes expected net
+economic return under a `$1M` budget and policy constraints that cap portfolio
+risk after replacing point PD estimates with conformal upper endpoints. The
+promoted policy has
 `risk_tolerance = 0.175`, `policy_mode = blended_uncertainty`, policy parameter
 `gamma = 0.45`, and `uncertainty_aversion = 0.1`.
 
 Schematically, the robust decision layer solves a budgeted allocation problem
 of the form
 
-```text
-maximize_x     sum_i x_i a_i (c_i - p_tilde_i(alpha, gamma) * L)
-subject to     sum_i x_i a_i <= B,
-               sum_i x_i a_i p_tilde_i(alpha, gamma)
-                    <= tau sum_i x_i a_i,
-               0 <= x_i <= xbar_i,
-```
+$$
+\begin{aligned}
+\max_x\quad & \sum_i x_i a_i \left(c_i - \tilde p_i(\alpha,\gamma)\,L\right) \\
+\text{s.t.}\quad & \sum_i x_i a_i \le B,\\
+& \sum_i x_i a_i \tilde p_i(\alpha,\gamma)
+   \le \tau \sum_i x_i a_i,\\
+& 0 \le x_i \le \bar x_i,
+\end{aligned}
+$$
 
 where `a_i` is exposure, `c_i` is the loan coupon (interest rate), `L` is the
 loss-given-default (`L = 0.45` in the frozen evaluation), $\tau$ is the
 risk-tolerance cap, and
-`p_tilde_i(alpha, gamma) = p_hat_i + gamma (u_i(alpha) - p_hat_i)` on the PD
-scale, clipped to the feasible probability range. The objective is the *expected*
+
+$$
+\tilde p_i(\alpha,\gamma)
+= \hat p_i + \gamma\left(u_i(\alpha)-\hat p_i\right)
+$$
+
+on the PD scale, clipped to the feasible probability range. The objective is the *expected*
 net return `c_i - p_tilde_i * L`; the headline `$170,464.54` is the
 *realized* return of the same funded set, scored post hoc on observed defaults
 (a funded loan earns `c_i * a_i` if it survives and loses `L * a_i` if it
