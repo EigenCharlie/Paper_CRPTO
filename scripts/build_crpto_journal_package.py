@@ -16,6 +16,7 @@ from typing import Any
 import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
+from matplotlib.patches import Rectangle
 
 from src.optimization.tail_satisficing_objective import (
     entropic_oce,
@@ -829,31 +830,45 @@ def _plot_robust_region_heatmap(shortlist: pd.DataFrame, promotion: dict[str, An
     if not pivot.empty:
         col = int(np.argmin(np.abs(pivot.columns.to_numpy(dtype=float) - champion_gamma)))
         row = int(np.argmin(np.abs(pivot.index.to_numpy(dtype=float) - champion_tau)))
+        # Outline the champion cell and move the star into its corner so the
+        # centered return value stays legible. White reads against the dark
+        # (highest-return) cell where the champion sits.
+        ax.add_patch(
+            Rectangle(
+                (col - 0.5, row - 0.5),
+                1.0,
+                1.0,
+                fill=False,
+                edgecolor="white",
+                linewidth=2.6,
+                zorder=4,
+            )
+        )
         ax.scatter(
-            col,
-            row,
+            col - 0.32,
+            row - 0.32,
             marker="*",
-            s=360,
+            s=170,
             color="white",
             edgecolor="#111111",
-            linewidth=1.4,
-            zorder=4,
+            linewidth=1.1,
+            zorder=5,
         )
         ax.annotate(
             "economic\nchampion",
             (col, row),
-            xytext=(10, -24),
+            xytext=(14, -26),
             textcoords="offset points",
             color="#263238",
             fontsize=8.5,
             fontweight="bold",
             bbox={
-                "boxstyle": "round,pad=0.18",
+                "boxstyle": "round,pad=0.2",
                 "facecolor": "white",
-                "edgecolor": "none",
-                "alpha": 0.82,
+                "edgecolor": "#555555",
+                "alpha": 0.92,
             },
-            zorder=5,
+            zorder=6,
         )
     cbar = fig.colorbar(im, ax=ax)
     cbar.set_label("Realized return")

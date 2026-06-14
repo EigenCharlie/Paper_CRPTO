@@ -41,10 +41,11 @@ single-family mortgages preserve the conformal gates and produce positive robust
 LP objectives, so the result is not confined to the Lending Club panel.
 Across these external panels the price of robustness is a positive premium that
 grows with the panel default rate (from `+1.0%` to `+9.5%`). The contribution is
-a conformal-robust credit-portfolio decision certificate: it connects real
-credit data, calibrated predictive models, robust funding decisions, and a drift
-harness that regenerates the prediction-to-decision chain bit-exactly from
-frozen artifacts while keeping the statistical guarantee boundary explicit.
+a conformal-robust credit-portfolio decision certificate with a distribution-free
+funded-set risk bound: it connects real credit data, calibrated predictive
+models, robust funding decisions, and a drift harness that regenerates the
+prediction-to-decision chain bit-exactly from frozen artifacts while keeping the
+statistical guarantee boundary explicit.
 
 **Keywords:** conformal prediction; robust optimization; predict-then-optimize;
 credit risk; portfolio optimization; reproducible data science.
@@ -97,15 +98,21 @@ out-of-sample and out-of-time splits. These replications are not new champions;
 they test whether the same PD-to-conformal-to-LP recipe remains economically
 usable on different credit products.
 
-The paper makes four contributions. First, it gives a CRPTO construction for
+The paper makes five contributions. First, it gives a CRPTO construction for
 credit portfolios: frozen calibrated PD, Mondrian conformal uncertainty, and
-robust budgeted optimization as a post-hoc decision audit. Second, it locates
-that construction relative to data-driven robust optimization, P2P lending
-portfolio models, conformal credit scoring, and decision-focused learning.
-Third, it provides an artifact-backed empirical study where every table and
-figure is generated from frozen outputs rather than manually transcribed
-summaries. Fourth, it adds external economic replications on Prosper and
-Freddie/Mendeley, separating the methodological claim from one P2P panel. The
+robust budgeted optimization as a post-hoc decision audit. Second, it proves a
+distribution-free funded-set risk bound (Theorem 1) that splits realized
+portfolio loss into the conformal upper-endpoint budget
+$B_u(\alpha) = \tau + (1-\gamma)\,\Gamma_{\mathrm{CP}}(\alpha)$ and the weighted
+miscoverage $V(\alpha)$, with supplement propositions showing that Markov is
+optimal under the stated assumption (A.1) and locating the cluster structure
+that would tighten it (A.2). Third, it locates that construction relative to
+data-driven robust optimization, P2P lending portfolio models, conformal credit
+scoring, and decision-focused learning. Fourth, it provides an artifact-backed
+empirical study where every table and figure is generated from frozen outputs
+rather than manually transcribed summaries. Fifth, it adds external economic
+replications on Prosper and Freddie/Mendeley, separating the methodological
+claim from one P2P panel. The
 key claim is narrow: CRPTO maps frozen calibrated PD artifacts into a robust
 funded set, reports the portfolio-level conformal premium
 $\Gamma_{\mathrm{CP}}$, and verifies exact alpha-safe weighted miscoverage on the
@@ -163,7 +170,7 @@ feeds an action, the relevant target can become the assignment rule rather than
 only the intermediate effect-size estimate [@fernandezloria2022causaldecision].
 SPO+ and modern decision-focused learning
 ask models to respect the loss surface induced by the downstream decision
-[@elmachtoub2022; @donti2017; @mandi2024]. CRPTO is intentionally more
+[@elmachtoub2022; @donti2017; @mandi2024]. CRPTO is more
 conservative. It does not retrain the PD model end-to-end through the optimizer.
 Instead, it asks what can be achieved when a calibrated predictive system is
 already frozen and the decision layer must remain explainable to credit-risk
@@ -188,7 +195,7 @@ policies [@guo2016p2p; @zhao2016p2pportfolio; @serrano2016profitscoring;
 @chi2019p2p; @babaei2020p2p; @aior2025lendingclub]. Recent ordinal conformal
 credit-scoring work also means that the safe claim is not "no conformal
 prediction in credit" [@kawasumi2026ordinal]. CRPTO does not compete on raw
-ranking against this literature; its champion AUC is deliberately mid-range.
+ranking against this literature; its champion AUC is mid-range.
 The contribution is the auditable bridge from a calibrated, frozen PD model to a
 conformal robust portfolio decision, not another point on the credit-scoring
 leaderboard.
@@ -262,7 +269,7 @@ single global interval. The promoted uncertainty artifact uses a
 score-decile-based Mondrian partition selected by out-of-time interval quality,
 while grade-based partitions remain the natural governance baseline.
 
-The resulting conformal summary is intentionally more than a scalar coverage
+The resulting conformal summary is more than a scalar coverage
 number. The paper-facing metrics include 90% coverage `0.9297`, 95% coverage
 `0.9664`, average 90% interval width `0.7842`, minimum group 90% coverage
 `0.9190`, and 90% Winkler score `1.1107` for the promoted conformal winner.
@@ -414,24 +421,42 @@ subportfolio, so the assumption is stated, audited empirically after the frozen
 selection, and never silently upgraded to a guarantee.
 
 **Theorem 1 (distribution-free funded-set risk bound).**
-Suppose the robust constraint holds at the chosen allocation,
-$\sum_i w_i u_i(\alpha) \leq \tau$. Then:
+Let $B_u(\alpha) = \sum_i w_i u_i(\alpha)$ be the weighted conformal
+upper-endpoint budget of the funded set. Then:
 
-(i) *(deterministic)* $\;\sum_i w_i Y_i \leq \tau + V(\alpha)$ always;
+(i) *(deterministic)* $\;\sum_i w_i Y_i \leq B_u(\alpha) + V(\alpha)$ always;
 
 (ii) *(statistical)* under Assumption 1, for every $t > 0$,
 $P(V(\alpha) \geq t) \leq \alpha / t$, and in particular
 
 $$
-P\!\left(\sum_i w_i Y_i \;\geq\; \tau + \sqrt{\alpha}\right)
+P\!\left(\sum_i w_i Y_i \;\geq\; B_u(\alpha) + \sqrt{\alpha}\right)
   \;\leq\; \sqrt{\alpha}.
 $$
 
 *Proof sketch.* Since $Y_i \leq u_i(\alpha) + Z_i(\alpha)$ for every loan,
-part (i) follows by taking the $w$-weighted sum and applying the constraint.
-Part (ii) is Markov's inequality applied to the nonnegative variable
-$V(\alpha)$ with $E[V(\alpha)] \leq \alpha$ [@ghosh2002], combined with (i).
-The full proof is in Online Supplement Appendix A. $\square$
+part (i) follows by taking the $w$-weighted sum; it is portfolio accounting and
+needs no probability. Part (ii) is Markov's inequality applied to the
+nonnegative variable $V(\alpha)$ with $E[V(\alpha)] \leq \alpha$ [@ghosh2002],
+combined with (i). The full proof is in Online Supplement Appendix A. $\square$
+
+**The optimizer's cap versus the endpoint budget.** The robust layer
+does not constrain $B_u(\alpha)$ directly; it caps the $\gamma$-blended PD,
+$\sum_i w_i \tilde p_i(\alpha,\gamma) \leq \tau$, with
+$\tilde p_i = \hat p_i + \gamma(u_i(\alpha) - \hat p_i)$ and $\gamma \in [0,1]$.
+Because $\Gamma_{\mathrm{CP}}(\alpha) = \sum_i w_i(u_i(\alpha) - \hat p_i)$, the
+endpoint budget decomposes exactly as
+$$
+B_u(\alpha) = \sum_i w_i \tilde p_i(\alpha,\gamma) + (1-\gamma)\,\Gamma_{\mathrm{CP}}(\alpha)
+  \;\leq\; \tau + (1-\gamma)\,\Gamma_{\mathrm{CP}}(\alpha),
+$$
+with equality when the risk cap binds. The term
+$(1-\gamma)\,\Gamma_{\mathrm{CP}}(\alpha)$ is the conformal robustness premium the
+optimizer leaves un-internalized at $\gamma < 1$. For the promoted policy
+($\tau = 0.175$, $\gamma = 0.45$, binding cap),
+$B_u(0.01) = 0.175 + 0.55\,(0.187987) = 0.278393$, so the deterministic bound is
+$\sum_i w_i Y_i \leq 0.278393 + V(0.01) = 0.307268$, well above the realized
+weighted default rate $0.032875$.
 
 **Remark 1 (why $t = \sqrt{\alpha}$, and why Markov).**
 The choice $t = \sqrt{\alpha}$ is made for interpretability, not optimality:
@@ -485,7 +510,7 @@ future information leaks into the funded-set decision. The displayed periods are
 monthly vintage labels; split assignment is row-disjoint in code, so the shared
 March 2017 label marks the internal cutoff rather than duplicated loans.
 
-The out-of-time design is deliberately adversarial to the method: the test window
+The out-of-time design is adversarial to the method: the test window
 spans an expansion (2018--2019) and a regime break (2020 COVID), so coverage and
 the funded-set certificate are measured under a documented distribution shift
 rather than on a random split that would let the model see the future.
@@ -518,7 +543,7 @@ the IJDS body focused while preserving the audit trail that reviewers need.
 
 ## Multi-Dataset External Replication Protocol
 
-The external-replication layer is deliberately narrower than a new benchmark
+The external-replication layer is narrower than a new benchmark
 campaign. We reuse the frozen CRPTO recipe--CatBoost PD, calibration,
 train-only WOE/IV feature screening, Mondrian conformal intervals, and the same
 bound-aware robust LP--on two credit datasets with economic fields. Prosper
@@ -540,7 +565,7 @@ address whether the method survives two materially different credit products.
 # Results
 
 The core metric table summarizes the frozen paper-facing metrics. The
-calibrated PD layer is deliberately not sold as a leaderboard model: AUC
+calibrated PD layer is not sold as a leaderboard model: AUC
 `0.7139` is sufficient only because the downstream decision consumes calibrated
 probabilities, not rankings alone. Its Brier score `0.1544` and ECE near
 `0.0070` are therefore as important as discrimination. The conformal layer
@@ -563,7 +588,7 @@ turns this uncertainty into a robust allocation with exact alpha-safe checks.
 
 : Frozen paper-facing metrics by layer.
 
-The exact certificate in the body is intentionally small. Here "exact" means
+The exact certificate in the body is a narrow claim. Here "exact" means
 that the quantities are computed directly on the frozen OOT funded set rather
 than approximated by a surrogate table or visual proxy. The statistical reading
 still rests on the weighted funded-set validity assumption stated in the theory
@@ -583,7 +608,7 @@ $\Gamma_{\mathrm{CP}} = 0.187987$ as the price of carrying interval uncertainty 
 decision, and $V = 0.028875$ as the realized weighted noncoverage audit on the
 same funded loans.
 
-The promoted policy is deliberately the economic champion inside the exact-safe
+The promoted policy is the economic champion inside the exact-safe
 region, not the tightest certificate available. The next table makes that
 choice auditable rather than implicit.
 
@@ -797,7 +822,7 @@ columns prevent a one-dimensional reading. Mean regret comes from a separate
 decision-regret experiment (A19/PyEPO) run on small synthetic optimization
 instances (50 items, budget 15, five seeds), which scores each method on a
 normalized decision-loss scale rather than on the `$1M` funded portfolio. That
-experiment is intentionally not the same object as the funded-set economics: it
+experiment is not the same object as the funded-set economics: it
 isolates training-time decision quality, so SPO+ is the low-regret method by
 construction because it is trained to minimize exactly that loss. The
 favorable price of robustness reported above and the higher CRPTO regret here
@@ -840,7 +865,7 @@ policies under a decision-time CVaR$_{95}$ cap (computed from the conformal uppe
 endpoints, supplement A22) traces an explicit return-versus-tail trade-off. The
 tightest admissible tail cap selects a challenger earning `$160,978` (`-5.57%`
 versus the champion) at CVaR$_{95}$ `0.406`, while the frozen economic champion
-deliberately sits at the high-return, high-tail corner. Supplement A20 makes the
+sits at the high-return, high-tail corner. Supplement A20 makes the
 same point from the committee side: once all 45 alpha-safe robust-region policies
 pass the satisficing screen, the useful contrast is the lowest realized-CVaR
 policy. It cuts CVaR$_{95}$ by `22.58%` at a return cost of only `1.99%`. The
@@ -917,7 +942,7 @@ calibration split seed, score scaling, floor multipliers) and reproduces
 every published interval endpoint and per-cell coverage *exactly* (maximum
 absolute difference zero under the locked dependency stack), including
 re-learning identical group floor multipliers from the calibration holdout.
-The boundary is stated as honestly as the rest of the paper: gradient-boosted
+The boundary is concrete: gradient-boosted
 retraining is not bit-reproducible across runs, which is precisely why the
 predictive layer is distributed as a frozen binary artifact with manifest
 hashes rather than as a "retrain it yourself" recipe, and why the
@@ -953,7 +978,7 @@ not a fixed toll but a panel-specific premium that the method measures rather
 than assumes. For a risk committee this turns the governance question from "can
 we afford robustness?" into "how large is the coverage premium on this book?",
 which CRPTO answers with a bounded figure per panel. It also tempers the
-contribution honestly. The favorable Lending Club value reflects champion
+contribution. The favorable Lending Club value reflects champion
 selection, so the transferable claim is the bounded, measurable premium under
 blind application, not a universal free lunch; the recipe carries its own price
 tag wherever it is applied.
@@ -972,7 +997,7 @@ conformal guarantee is marginal or partitioned by the chosen Mondrian design,
 not exact conditional coverage for every borrower profile. The external panels
 make this concrete: on Freddie the all-group minimum coverage is driven by tiny
 sparse Mondrian cells, and the high-default red segment misses the strict
-$\alpha = 0.01$ gate at `0.9850`; both are reported as honest sensitivity
+$\alpha = 0.01$ gate at `0.9850`; both are reported as sensitivity
 evidence rather than promoted as conditional guarantees. Finally, this is not
 an online deployment study: there are no new post-2020 Lending Club retail
 originations, no live monitoring loop, and no end-to-end utility-directed

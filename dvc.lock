@@ -492,8 +492,8 @@ stages:
       size: 2271
     - path: scripts/build_crpto_journal_package.py
       hash: md5
-      md5: e4b53b9a0a8a6580fc0a532725177255
-      size: 42507
+      md5: 2b75b74c8ab4f7f051c0f550d72b5e5a
+      size: 43045
     outs:
     - path: models/crpto_journal_package_status.json
       hash: md5
