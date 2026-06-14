@@ -140,19 +140,14 @@ and the choice $t = \sqrt{\alpha}$ gives the body statement:
 miscoverage budget $\sqrt{\alpha}$ exceeded with probability at most
 $\sqrt{\alpha}$. $\blacksquare$
 
-Two boundaries are worth restating. First, Assumption 1 is where the
-adaptive-selection risk lives: Markov is applied to a quantity whose mean
-control is assumed under the funded-set weights, not derived from marginal
-split conformal alone; the empirical exact audit is the after-the-fact check
-of that assumption on the frozen selection. Second, the bound is
-deliberately first-moment only; the cluster-aware tightenings below sharpen
-it strictly under additional cross-cluster independence assumptions.
-
-Hoeffding/Bernstein-style tightenings are deliberately secondary. They are
-reported only under additional conditional-independence assumptions because the
-Lending Club evaluation is temporal and the funded set shares calibration and
-selection history. The paper therefore keeps Markov as the main claim and uses
-the tightening appendix as sensitivity evidence, not as a stronger theorem.
+These steps leave a clean split. Theorem 1 proves the operational bound under
+Assumption 1. Proposition A.1 below shows that Markov is the sharp
+first-moment statement when no additional structure is asserted. Proposition
+A.2 asks the next natural question: if the funded set is grouped by period,
+grade, or period-grade, and dependence is allowed inside each group, what would
+independence across groups buy? That cross-cluster assumption is plausible only
+as an additional sensitivity condition, not as a theorem premise quietly added
+to the body.
 
 The phrase "exact funded-set certificate" has a narrow meaning throughout the
 paper. It is an exact accounting audit on the frozen out-of-time funded set:
@@ -173,66 +168,7 @@ transcribed table.
 
 : Certificate taxonomy used in the paper.
 
-## Cluster-Aware Conditional Tightening
-
-Let clusters $g = 1,\ldots,G$ represent period, grade, or period-grade cells,
-and define
-
-$$
-Z_g(\alpha)=\sum_{i\in g} w_i\mathbf{1}\{Y_i>u_i(\alpha)\},\qquad
-W_g=\sum_{i\in g}w_i .
-$$
-
-Within each cluster, defaults and conformal misses may be arbitrarily
-dependent. The useful structure, if one is willing to assert it, is
-cross-cluster independence after conditioning on the calibration sample and the
-fixed funded allocation.
-
-**Proposition A.2 (cluster-aware Hoeffding under cross-cluster independence).**
-Let $\mathcal F$ contain the calibration sample, the frozen conformal recipe,
-the declared cluster partition, and the selected funded allocation. Suppose
-that, conditional on $\mathcal F$, the cluster aggregates
-$Z_1(\alpha),\ldots,Z_G(\alpha)$ are independent, satisfy
-$0\le Z_g(\alpha)\le W_g$, and obey conditional weighted validity
-$\sum_g E[Z_g(\alpha)\mid\mathcal F]\le\alpha$ (for example, it is sufficient
-that $E[Z_g(\alpha)\mid\mathcal F]\le\alpha W_g$ for every cluster). Then, for
-every $\delta\in(0,1)$,
-
-$$
-P\!\left(
-  V(\alpha)\ge
-  \alpha + \sqrt{\frac{1}{2}\left(\sum_g W_g^2\right)\log\frac{1}{\delta}}
-  \;\middle|\;\mathcal F
-\right)\le\delta .
-$$
-
-*Proof.* Let $\mu=\sum_g E[Z_g(\alpha)\mid\mathcal F]\le\alpha$ and
-$S_2=\sum_g W_g^2$. Hoeffding's inequality for independent bounded summands
-gives
-
-$$
-P\{V(\alpha)-\mu\ge s\mid\mathcal F\}\le \exp(-2s^2/S_2).
-$$
-
-Taking $s=\sqrt{S_2\log(1/\delta)/2}$ and using $\mu\le\alpha$ gives the
-displayed bound. Integrating over $\mathcal F$ gives the same unconditional
-statement. $\blacksquare$
-
-Proposition A.2 is therefore the natural complement to Proposition A.1. Under
-Assumption 1 alone, A.1 shows why Markov is the sharp distribution-free claim;
-under an explicit cross-cluster structure, A.2 shows exactly when a
-Hoeffding-style tightening becomes available [@hoeffding1963;
-@boucheron2013concentration]. At the paper level $\alpha=0.01$ with matched
-tail probability $\delta=\sqrt{\alpha}=0.10$, the cluster-aware threshold is
-tighter than Markov only if $\sum_g W_g^2<0.0070$. The frozen funded set is much
-more concentrated: period, grade, and period-grade partitions have
-$\sum_g W_g^2=0.2407$, $0.3572$, and $0.0914$, respectively, so the corresponding
-thresholds are `0.5365`, `0.6512`, and `0.3344`, all looser than Markov's
-`0.1000`. This proposition does not replace the main theorem; it names the
-extra structure a reviewer would have to accept and makes the empirical
-concentration cost transparent in A21.
-
-### How much does the distribution-free bound leave on the table?
+## Sharpness of the Distribution-Free Bound
 
 To quantify the cost of staying distribution-free, the table below contrasts the
 Markov threshold used in the main theorem with concentration tightenings computed
@@ -290,28 +226,87 @@ asserts. Every sharper row in the menu prices a specific additional assumption
 (loan independence, conditional variance, or a martingale protocol), and the
 empirical `V = 0.028875` clears all of them anyway.
 
-Bennett is the closest match to the finite funded-set calculation because it was
-designed for independent, non-identically distributed summands using only the
-variance of the sum and component bounds. Freedman is included only as the
+Bennett is the closest match to the finite funded-set calculation because it
+was designed for independent, non-identically distributed summands using only
+the variance of the sum and component bounds. Freedman is included only as the
 martingale analogue of Bernstein: it would become relevant under a pre-declared
-sequential validation protocol with bounded increments and a conditional-variance
-process, which is stronger than the frozen replay used here.
+sequential validation protocol with bounded increments and a
+conditional-variance process, which is stronger than the frozen replay used
+here.
 
-Two honest readings follow. First, the tightenings are real: a second-moment or
-one-sided variance argument can cut the worst-case threshold by roughly
-15--35\% at `alpha = 0.01`. Second, they are not free: they require loan-level
-independence, a sealed martingale protocol, or variance control stronger than
-weighted funded-set validity alone. We therefore keep Markov as the stated
-guarantee and report these tables only as sensitivity bounds -- they show what
-sharper concentration *would* deliver under assumptions we decline to assert, not
-a tighter claim about the promoted policy. Chebyshev is omitted because
-one-sided Cantelli dominates it for this event; Azuma is omitted because it
-duplicates Hoeffding numerically while adding a sequential protocol assumption;
-Chernoff is omitted because its sharp threshold requires individual miss
-probabilities bounded by `alpha`; and a naive union-Markov correction over the 45
-final robust-region policies is vacuous at the paper alphas. The tables are
-regenerated by `scripts/build_concentration_bound_table.py` and
+The table's role is assumption pricing. The sharper rows show what a reviewer
+would gain by accepting independence, variance, or martingale structure; they
+are not promoted because the body theorem asserts only Assumption 1. Chebyshev
+is omitted because one-sided Cantelli dominates it for this event; Azuma is
+omitted because it duplicates Hoeffding numerically while adding a sequential
+protocol assumption; Chernoff is omitted because its sharp threshold requires
+individual miss probabilities bounded by `alpha`; and a naive union-Markov
+correction over the 45 final robust-region policies is vacuous at the paper
+alphas. The tables are regenerated by
+`scripts/build_concentration_bound_table.py` and
 `scripts/build_bound_tightening_audit.py` from frozen funded-set weights.
+
+## Cluster-Aware Conditional Tightening
+
+Let clusters $g = 1,\ldots,G$ represent period, grade, or period-grade cells,
+and define
+
+$$
+Z_g(\alpha)=\sum_{i\in g} w_i\mathbf{1}\{Y_i>u_i(\alpha)\},\qquad
+W_g=\sum_{i\in g}w_i .
+$$
+
+Within each cluster, defaults and conformal misses may be arbitrarily
+dependent. The useful structure, if one is willing to assert it, is
+cross-cluster independence after conditioning on the calibration sample and the
+fixed funded allocation. Among the three reported partitions, period-grade is
+the most defensible compromise for a temporal credit panel: it separates
+calendar cohorts while conditioning on risk grade. Period alone ignores grade
+mix, and grade alone cuts across calendar dependence.
+
+**Proposition A.2 (cluster-aware Hoeffding under cross-cluster independence).**
+Let $\mathcal F$ contain the calibration sample, the frozen conformal recipe,
+the declared cluster partition, and the selected funded allocation. Suppose
+that, conditional on $\mathcal F$, the cluster aggregates
+$Z_1(\alpha),\ldots,Z_G(\alpha)$ are independent, satisfy
+$0\le Z_g(\alpha)\le W_g$, and obey conditional weighted validity
+$\sum_g E[Z_g(\alpha)\mid\mathcal F]\le\alpha$ (for example, it is sufficient
+that $E[Z_g(\alpha)\mid\mathcal F]\le\alpha W_g$ for every cluster). Then, for
+every $\delta\in(0,1)$,
+
+$$
+P\!\left(
+  V(\alpha)\ge
+  \alpha + \sqrt{\frac{1}{2}\left(\sum_g W_g^2\right)\log\frac{1}{\delta}}
+  \;\middle|\;\mathcal F
+\right)\le\delta .
+$$
+
+*Proof.* Let $\mu=\sum_g E[Z_g(\alpha)\mid\mathcal F]\le\alpha$ and
+$S_2=\sum_g W_g^2$. Hoeffding's inequality for independent bounded summands
+gives
+
+$$
+P\{V(\alpha)-\mu\ge s\mid\mathcal F\}\le \exp(-2s^2/S_2).
+$$
+
+Taking $s=\sqrt{S_2\log(1/\delta)/2}$ and using $\mu\le\alpha$ gives the
+displayed bound. Integrating over $\mathcal F$ gives the same unconditional
+statement. $\blacksquare$
+
+Proposition A.2 is therefore the natural complement to Proposition A.1. Under
+Assumption 1 alone, A.1 shows why Markov is the sharp distribution-free claim;
+under an explicit cross-cluster structure, A.2 shows exactly when a
+Hoeffding-style tightening becomes available [@hoeffding1963;
+@boucheron2013concentration]. At the paper level $\alpha=0.01$ with matched
+tail probability $\delta=\sqrt{\alpha}=0.10$, the cluster-aware threshold is
+tighter than Markov only if $\sum_g W_g^2<0.0070$. The frozen funded set is much
+more concentrated: period, grade, and period-grade partitions have
+$\sum_g W_g^2=0.2407$, $0.3572$, and $0.0914$, respectively, so the corresponding
+thresholds are `0.5365`, `0.6512`, and `0.3344`, all looser than Markov's
+`0.1000`. This proposition does not replace the main theorem; it names the
+extra structure a reviewer would have to accept and makes the empirical
+concentration cost transparent in A21.
 
 # Appendix B: P1 Evidence
 
@@ -476,17 +471,17 @@ The source CSV is
 ![A34 price-of-robustness scaling: under frozen application the premium is positive and increases with the panel default rate, while the selected Lending Club champion (`-10.56%`) is a favorable reference below zero.](../reports/crpto/figures/crpto_fig25_price_of_robustness_scaling.png){#fig-supp-price-scaling width="82%" fig-alt="Line chart on a log-scale x-axis showing the price of robustness rising from +1.00 percent to +9.46 percent as the panel default rate increases, with Lending Club at -10.56 percent as a reference line."}
 
 Two readings matter. First, the premium tracks irreducible default risk, not
-discrimination: the `green` and `red` Freddie segments have nearly identical AUC
-but different premiums, while their default rates differ by roughly a factor of
-five. Higher default risk widens the conformal intervals, so the robust worst
-case discounts more economic return. Second, the *selected* Lending Club champion
+discrimination: the green and red Freddie segments have nearly identical AUC but
+different premiums, while their default rates differ by roughly a factor of five.
+Higher default risk widens the conformal intervals, so the robust worst case
+discounts more economic return. Second, the *selected* Lending Club champion
 has a favorable signed price (`-10.56%`): bound-aware search located a robust
 funded set that also wins expected return. Reporting both--a bounded positive
 premium under blind application and a favorable value under selection--is more
 defensible than claiming robustness is uniformly free or uniformly costly. The
-headline is that robustness is never economically catastrophic in these frozen
-applications: the conformal robust layer costs at most a low-double-digit
-premium, and CRPTO measures which regime a given panel is in.
+measured headline is narrower: in these frozen applications, the conformal
+robust layer costs at most a low-double-digit premium, and CRPTO measures which
+regime a given panel is in.
 
 ## Reviewer Claim Checks
 

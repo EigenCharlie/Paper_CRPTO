@@ -66,26 +66,24 @@ Portfolio Decisions}
 \ABSTRACT{%
 Credit allocation is a data-science-for-decisions problem: calibrated default
 probabilities matter only after they shape which loans are funded. We introduce
-Conformal Robust Predict-Then-Optimize (CRPTO) as a reusable post-hoc decision
-audit that maps a frozen calibrated probability-of-default artifact through
-Mondrian conformal intervals into robust portfolio constraints and an exact
-empirical funded-set audit. On a 276{,}869-loan out-of-time Lending Club
+Conformal Robust Predict-Then-Optimize (CRPTO), a post-hoc bridge that maps a
+frozen calibrated probability-of-default artifact through Mondrian conformal
+intervals into robust portfolio constraints and an empirical funded-set audit.
+On a 276{,}869-loan out-of-time Lending Club
 evaluation, the promoted economic policy earns \$170.5K on a \$1M budget while
 passing the $\alpha=0.01$ funded-set audit
 ($V(\alpha)=0.028875$, $\Gamma_{\mathrm{CP}}=0.187987$, zero violation). The final
 robust region contains $45/45$ alpha-safe policies across the evaluated risk,
 uncertainty, and aversion grid, indicating that the result is not a single-point
 artifact. External frozen replications on Prosper and Freddie/Mendeley preserve
-the conformal gates and produce positive robust LP objectives, strengthening the
-claim that the CRPTO recipe is not merely a Lending-Club numerical artifact.
+the conformal gates and produce positive robust LP objectives, so the result is
+not confined to the Lending Club panel.
 Across these external panels the price of robustness grows with the panel default
-rate (from $+1.0\%$ to $+9.5\%$), turning replication into an economically
-interpretable stress test rather than a defensive checkmark. The contribution is
-an auditable conformal-robust credit-portfolio decision certificate: it connects
-real credit data, calibrated predictive models, robust funding decisions, and
-a drift harness that certifies the prediction-to-decision certificate chain
-regenerates bit-exactly from frozen artifacts, while keeping the statistical
-guarantee boundary explicit.%
+rate (from $+1.0\%$ to $+9.5\%$). The contribution is a conformal-robust
+credit-portfolio decision certificate: it connects real credit data, calibrated
+predictive models, robust funding decisions, and a drift harness that regenerates
+the prediction-to-decision chain bit-exactly from frozen artifacts while keeping
+the statistical guarantee boundary explicit.%
 }
 
 \KEYWORDS{conformal prediction; robust optimization; predict-then-optimize;
@@ -112,20 +110,20 @@ can pass every risk check while destroying economic value. The scientific questi
 in this paper is therefore not whether one can build a slightly better credit
 classifier. It is whether finite-sample predictive uncertainty can be carried into
 a robust portfolio decision in a way that is transparent enough for a reviewer to
-audit. This framing is not merely rhetorical: in a pre-registered randomized
-trial, conformal prediction sets have been shown to measurably improve human
-decision making relative to fixed-size sets with the same coverage
-\citep{cresswell2024}, which is exactly the committee-facing setting CRPTO targets.
+audit. This has practical stakes. In a pre-registered randomized trial,
+conformal prediction sets improved human decision making relative to fixed-size
+sets with the same coverage \citep{cresswell2024}. CRPTO takes that
+committee-facing idea into a credit portfolio setting, where the uncertainty
+summary must change a funding decision or it is just another report.
 
 CRPTO answers this question with a post-hoc, reproducible pipeline. It starts from
 a calibrated CatBoost PD model, constructs Mondrian conformal intervals over
 PD-scale predictions, and maps the upper conformal endpoint into robust portfolio
-constraints. The procedure is deliberately modular: the predictive model,
-conformal layer, optimization policy, and paper artifacts each have separate
-contracts. This modularity is a feature rather than an engineering accident. It
-lets the paper ask whether a frozen prediction system can be converted into a
-defendable decision system without reopening hyperparameter search whenever the
-manuscript or appendix changes.
+constraints. The pipeline is modular by design: the predictive model, conformal
+layer, optimization policy, and paper artifacts each have separate contracts.
+That separation lets the paper ask whether a frozen prediction system can be
+converted into a defendable decision system without reopening hyperparameter
+search whenever the manuscript or appendix changes.
 
 The empirical setting is the Lending Club retail-loan panel, with an out-of-time
 evaluation set of 276{,}869 loans. The promoted economic policy earns
@@ -135,28 +133,22 @@ satisfy the same exact alpha-safe check. The headline result is not a single luc
 allocation. It is a reproducible bridge from calibrated probabilistic learning to
 robust, auditable credit portfolio choice.
 
-The paper makes four contributions. First, it gives a reusable CRPTO construction
-for credit portfolios: frozen calibrated PD, Mondrian conformal uncertainty, and
-robust budgeted optimization as a post-hoc decision audit. Second, it positions
-that construction against the nearest decision literature: data-driven robust
-optimization, P2P lending portfolio models, conformal credit scoring, and
-decision-focused learning. The novelty claim is therefore specific, not
-leaderboard-oriented: CRPTO is an auditable conformal robust credit-portfolio
-decision built from frozen calibrated PD artifacts. Third, it provides an
-artifact-backed empirical study where every paper table and figure is generated
-from frozen outputs rather than manually transcribed summaries. Fourth, it adds
-external economic replications on Prosper and Freddie/Mendeley that separate the
-methodological claim from one P2P panel and reveal an economically interpretable
-pattern: under blind frozen application the price of robustness is a positive
-premium that grows with the panel default rate, while it is favorable only on the
-selected Lending Club champion. The key claim is
-deliberately surgical: CRPTO maps frozen calibrated PD artifacts into a robust
+The paper makes four contributions. First, it gives a CRPTO construction for
+credit portfolios: frozen calibrated PD, Mondrian conformal uncertainty, and
+robust budgeted optimization as a post-hoc decision audit. Second, it locates
+that construction relative to data-driven robust optimization, P2P lending
+portfolio models, conformal credit scoring, and decision-focused learning.
+Third, it provides an artifact-backed empirical study where every table and
+figure is generated from frozen outputs rather than manually transcribed
+summaries. Fourth, it adds external economic replications on Prosper and
+Freddie/Mendeley, separating the methodological claim from one P2P panel. The
+key claim is narrow: CRPTO maps frozen calibrated PD artifacts into a robust
 funded set, reports the portfolio-level conformal premium $\Gamma_{\mathrm{CP}}$,
 and verifies exact alpha-safe weighted miscoverage on the promoted Lending Club
-portfolio.
-The same conformal and LP gates remain viable on two additional credit datasets,
-while the governance boundary remains explicit: paper-facing reruns consume frozen
-artifacts, whereas protected stages would change the promoted champion.
+portfolio. The same conformal and LP gates remain viable on two additional
+credit datasets, while the governance boundary remains explicit: paper-facing
+reruns consume frozen artifacts, whereas protected stages would change the
+promoted champion.
 
 Read as data science for decisions, the paper's four components are explicit:
 the data are a static Lending Club OOT panel plus Prosper/Freddie external stress
@@ -449,15 +441,19 @@ certificate in this paper is the empirical audit of the frozen selected policy,
 not a stronger post-selection conformal theorem.
 \end{remark}
 
-This theory is intentionally not presented as a universal dependence-free tightening
-for all adaptive credit policies. The Lending Club evaluation is temporal, and
-temporal dependence is handled empirically through strict out-of-time splits, temporal
-backtesting, and robustness appendices. The online supplement adds a cluster-aware
-conditional proposition: dependence may be arbitrary inside period or grade clusters,
-but sharper Hoeffding/Bernstein-style bounds require independence or conditional
-independence across those clusters \citep{hoeffding1963,boucheron2013concentration}. Markov therefore remains the main
-distribution-free claim, while the dependence-aware material is a transparent journal
-caveat rather than an overstated theorem.
+The theorem and the two supplement propositions should be read as one small
+triptych. Theorem~\ref{thm:funded-set-bound} gives the paper's guarantee once
+weighted funded-set validity is accepted. Supplement Proposition~A.1 shows
+that, without additional structure, Markov is not a placeholder for a missing
+second-moment bound; it is the sharp first-moment statement. Supplement
+Proposition~A.2 then asks what extra structure would buy a tighter threshold.
+In this temporal credit panel the defensible version is cross-period or
+period-grade independence after the frozen recipe and allocation are fixed:
+within a period, grade, or period-grade cell, defaults and interval misses may
+remain dependent. The observed funded set is too exposure concentrated for that
+cluster argument to tighten the headline bound, which is why the body keeps
+Markov and the supplement reports the cluster calculation as a sensitivity
+check.
 
 % =====================================================================
 \section{Experimental Design}\label{sec:design}
@@ -649,20 +645,19 @@ the realized out-of-time return then lands higher still.
   }%
 \end{table}
 
-The point is therefore not that robustness must be paid for in lost return. On this
-evaluation the conformal robust funded set is economically competitive with---in fact
-ahead of---the non-robust baseline while additionally carrying the exact alpha-safe
-certificate. The value of reporting the ledger is auditability: a reviewer sees the
-baseline, the expectation, and the realized return on one budget instead of a single
-net figure that hides which way the trade-off went.
+On this evaluation, robustness is not a toll paid in lost return. The conformal
+robust funded set is ahead of the non-robust baseline under point-PD valuation and
+still carries the exact alpha-safe certificate. The ledger matters because it shows
+the direction of the trade-off: baseline expectation, robust expectation, and
+realized OOT return are all reported on the same \$1M budget.
 
-The robust-region analysis is the strongest evidence that the result is not a single
-point artifact. Across the evaluated final region, $45/45$ unique policies pass the
-exact $\alpha=0.01$ check. The 45 policies come from the cross-product of five
-risk-tolerance values, three uncertainty-blend values, and three
+The robust-region analysis asks whether that result depends on one lucky
+hyperparameter setting. Across the evaluated final region, $45/45$ unique policies
+pass the exact $\alpha=0.01$ check. The 45 policies come from the cross-product of
+five risk-tolerance values, three uncertainty-blend values, and three
 uncertainty-aversion settings within the frozen bound-aware family. The selected
-policy is the economic champion inside that exact robust region, not merely the
-first feasible point. The supplement reports the full alpha/gamma funded-set table,
+policy is the economic champion inside that exact robust region, not the first
+feasible point. The supplement reports the full alpha/gamma funded-set table,
 robust-region heatmap, and policy-family appendix.
 
 \begin{table}[t]
@@ -705,9 +700,10 @@ funded-set certificate for Prosper or Freddie.
 
 \subsection{Multi-Dataset External Economic Replication}
 
-The strongest reviewer objection after the Lending Club audit is generalization.
-Table~\ref{tab:external-replication} answers that objection without changing the
-champion: the same frozen recipe is applied to two external credit products.
+The natural generalization question after the Lending Club audit is whether the
+recipe still works outside the champion panel. Table~\ref{tab:external-replication}
+answers that question without changing the champion: the same frozen recipe is
+applied to two external credit products.
 Both pass the conformal gates and both return positive robust LP objectives.
 
 \begin{table}[t]
@@ -739,16 +735,16 @@ The signed price of robustness---using the same convention as the Lending Club
 field, $(\mathrm{nonrobust}-\mathrm{robust})/\mathrm{nonrobust}$---is a
 \emph{positive} premium under frozen application, and it grows with the panel
 default rate (Table~\ref{tab:price-of-robustness}, Figure~\ref{fig:price-scaling}). Within Freddie, the
-high-default \texttt{red} segment pays more than \texttt{green}; across datasets,
+high-default red segment pays more than green; across datasets,
 Prosper's $30.92\%$ default panel pays the largest premium. The reading is
 economic, not incidental: higher default risk widens the conformal intervals, so
 the robust worst case discounts more return, and discrimination (AUC) does not
 order the premium on its own. On the \emph{selected} Lending Club champion the
 signed price is favorable ($-10.56\%$), because the bound-aware search found a
-robust funded set that also wins expected return. The honest summary is that
-robustness is never economically catastrophic in these frozen applications: under
-blind application the conformal robust layer costs a single-digit to
-low-double-digit premium, and under selection it can be favorable.
+robust funded set that also wins expected return. The measured summary is more
+modest: in these frozen applications, the conformal robust layer is economically
+bounded. Under blind application it costs a single-digit to low-double-digit
+premium; under selection it can be favorable.
 
 \begin{table}[t]
   \centering
@@ -851,9 +847,9 @@ and the higher CRPTO regret here are not in tension---they are two different
 measurements (a real \$1M funded set versus a synthetic regret benchmark). The
 right-hand columns report what the credit decision actually delivers: only CRPTO
 produces a budgeted funded set with a certified realized return (\$170{,}464.54 on
-the \$1M budget) and the three verifiable risk controls. ``Higher regret'' is
-therefore the cost of carrying conformal uncertainty into a different, synthetic
-decision, not evidence that CRPTO funds worse loans.
+the \$1M budget) and the three verifiable risk controls. The regret comparison is
+therefore about the synthetic benchmark task, not the quality of the funded loans
+in the \$1M credit portfolio.
 
 \begin{figure}[t]
   \centering
@@ -991,12 +987,12 @@ that a reviewer can audit end to end. On the Lending Club out-of-time panel the
 promoted policy earns \$170{,}464.54 on a \$1M budget while passing the exact
 empirical $\alpha=0.01$ funded-set audit, and it lies inside a $45/45$
 alpha-safe robust region rather than at a single lucky point. The external
-Prosper and Freddie/Mendeley replications show the recipe is not merely a Lending
-Club numerical artifact and expose an economically interpretable regularity: the
-price of robustness is a bounded premium that scales with the panel's default
-risk. The contribution is deliberately scoped---an auditable post-hoc decision
-certificate, not a new end-to-end learner or a live-deployment study---and every
-reported number is regenerable from frozen artifacts.
+Prosper and Freddie/Mendeley replications show that the recipe travels beyond the
+Lending Club panel and expose an economically interpretable regularity: the price
+of robustness is a bounded premium that scales with the panel's default risk. The
+contribution is scoped as an auditable post-hoc decision certificate, not a new
+end-to-end learner or a live-deployment study, and every reported number is
+regenerable from frozen artifacts.
 
 % Reproducibility/companion disclosure is kept for the cover letter / non-anonymous
 % version, not the double-anonymous body.
