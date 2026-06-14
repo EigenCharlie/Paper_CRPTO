@@ -248,7 +248,7 @@ The predictive layer estimates a one-period default probability for each loan.
 The champion model is a CatBoost classifier trained on the frozen feature
 contract and calibrated before it is exposed to conformal and optimization
 layers. The paper reports discrimination and probability quality together:
-the frozen PD layer reaches AUC `0.7139`, Brier score `0.1544`, and expected
+the PD layer reaches AUC `0.7139`, Brier score `0.1544`, and expected
 calibration error approximately `0.0070` on the paper-facing evaluation
 summary. These numbers matter because the optimizer consumes probabilities, not
 rankings alone.
@@ -518,7 +518,7 @@ rather than on a random split that would let the model see the future.
 The design distinguishes three kinds of computation. Predictive and conformal
 searches choose models, calibration, partitions, and policy families. Those
 searches are frozen for this manuscript. Paper-facing reruns regenerate tables,
-figures, evidence summaries, and Quarto outputs from the frozen artifacts.
+figures, evidence summaries, and Quarto outputs from those artifacts.
 Validation reruns are allowed only when they consume frozen choices and produce
 a drift report against the recorded champion. This separation is central to
 the paper's reproducibility claim: the manuscript can evolve without quietly
@@ -564,7 +564,7 @@ address whether the method survives two materially different credit products.
 
 # Results
 
-The core metric table summarizes the frozen paper-facing metrics. The
+The core metric table summarizes the paper-facing metrics. The
 calibrated PD layer is not sold as a leaderboard model: AUC
 `0.7139` is sufficient only because the downstream decision consumes calibrated
 probabilities, not rankings alone. Its Brier score `0.1544` and ECE near
@@ -657,11 +657,18 @@ expectation, and realized OOT return are all reported on the same `$1M` budget.
 The robust-region analysis asks whether that result depends on one lucky
 hyperparameter setting. Across the evaluated final region, `45/45` unique
 policies pass the exact $\alpha = 0.01$ check. The 45 policies come from the
-cross-product of five risk-tolerance values, three uncertainty-blend values, and
-three uncertainty-aversion settings within the frozen bound-aware family. The
-selected policy is the economic champion inside that exact robust region, not
-the first feasible point. The supplement reports the full alpha/gamma funded-set
-table, robust-region heatmap, and policy-family appendix.
+cross-product of five risk-tolerance values, three uncertainty-blend ($\gamma$)
+values, and three uncertainty-aversion settings within the bound-aware family.
+Figure @fig-alpha-gamma traces how the conformal level $\alpha$ drives the
+funded-set quantities $V(\alpha)$ and $\Gamma_{\mathrm{CP}}$, and
+Figure @fig-robust-region maps realized return over the
+risk-tolerance $\times\,\gamma$ grid: the economic champion is the highest-return
+cell (top-left, $\tau = 0.175$, $\gamma = 0.45$), and moving right to a larger
+$\gamma$ trades return for a tighter endpoint budget
+$B_u(\alpha) = \tau + (1-\gamma)\Gamma_{\mathrm{CP}}$ (the $\gamma = 0.55$
+theorem-tight comparator above). The selected policy is the economic champion
+inside that exact robust region, not the first feasible point or the tightest
+bound. The supplement adds the policy-family appendix.
 
 The funded-set audit also matters because the bound is weighted by exposure,
 not counted by loan. The promoted portfolio funds 341 positive-exposure loan
@@ -737,25 +744,25 @@ widens the conformal intervals, so the robust worst case discounts more return,
 and discrimination (AUC) does not order the premium on its own. On the *selected*
 Lending Club champion the signed price is favorable (`-10.56%`), because the
 bound-aware search found a robust funded set that also wins expected return. The
-measured summary is more modest: in these frozen applications, the conformal
+measured summary is more modest: in these applications, the conformal
 robust layer is economically bounded. Under blind application it costs a
 single-digit to low-double-digit premium; under selection it can be favorable.
 That closes the external-replication claim at the right level: the recipe
 transfers as an economic audit protocol, while the exact funded-set certificate
 remains the Lending Club object.
 
-| Frozen application | Panel default | Price of robustness |
+| Application | Panel default | Price of robustness |
 |---|---:|---:|
 | Freddie FM48 (green) | `0.58%` | `+1.00%` |
 | Freddie FM48 (combined) | `1.45%` | `+1.09%` |
 | Freddie FM48 (red) | `2.97%` | `+2.37%` |
 | Prosper final-status | `30.92%` | `+9.46%` |
 
-: Price of robustness by frozen application, ordered by panel default rate, from
+: Price of robustness by application, ordered by panel default rate, from
 `crpto_tableA34_price_of_robustness_cross_dataset.csv`. The selected Lending Club
 champion is `-10.56%` (favorable under selection, not blind application). {#tbl-price-of-robustness}
 
-![The price of robustness scales with panel default risk: the frozen external applications form a positive, monotone series, while the selected Lending Club champion sits below zero as a favorable reference.](../reports/crpto/figures/crpto_fig25_price_of_robustness_scaling.png){#fig-price-scaling width="78%" fig-alt="Line chart on a log-scale default-rate axis: the price of robustness rises from +1.00 percent to +9.46 percent across frozen applications, with Lending Club at -10.56 percent drawn as a reference line below zero."}
+![The price of robustness scales with panel default risk: the external applications form a positive, monotone series, while the selected Lending Club champion sits below zero as a favorable reference.](../reports/crpto/figures/crpto_fig25_price_of_robustness_scaling.png){#fig-price-scaling width="78%" fig-alt="Line chart on a log-scale default-rate axis: the price of robustness rises from +1.00 percent to +9.46 percent across applications, with Lending Club at -10.56 percent drawn as a reference line below zero."}
 
 # Robustness and Comparators
 
@@ -886,7 +893,7 @@ The second question is distribution robustness across grades. On the frozen
 intervals, the worst per-grade 90% coverage is grade E at `0.9004`, still above
 the `0.90` target. Supplement A23 reports marginal coverage `0.9293` on its
 multi-distribution evaluation slice, while the promoted artifact summary in
-Table 3 reports `0.9297`; these are distinct cuts through the same frozen
+Table 3 reports `0.9297`; these are distinct cuts through the same
 interval artifact. No grade falls below target, so the conservative marginal
 coverage is not hiding a
 failing segment; the thinnest grade$\times$vintage cells are where a future
@@ -955,7 +962,7 @@ be disclosed in the cover letter, supplement, or post-review artifact bundle
 according to the venue policy. At acceptance, the reproducibility package is
 designed to include public code, Quarto sources, DVC pointers for processed
 artifacts and model files, raw Lending Club source instructions rather than
-secrets or redistributed credentials, the frozen extraction manifest, and the
+secrets or redistributed credentials, the extraction manifest, and the
 commands used to regenerate paper tables, figures, and rendered manuscript
 surfaces. The important reproducibility property is that the manuscript does
 not depend on hidden spreadsheet edits: the reported numbers come from

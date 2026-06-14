@@ -274,7 +274,7 @@ funded-set validation, and reproducible artifact governance.
 The predictive layer estimates a one-period default probability for each loan. The
 champion model is a CatBoost classifier trained on the frozen feature contract and
 calibrated before it is exposed to conformal and optimization layers. The paper
-reports discrimination and probability quality together: the frozen PD layer reaches
+reports discrimination and probability quality together: the PD layer reaches
   AUC $0.7139$, Brier score $0.1544$, and expected calibration error approximately
   $0.0070$ on the paper-facing evaluation summary. These numbers matter because the
 optimizer consumes probabilities, not rankings alone.
@@ -520,7 +520,7 @@ than on a random split that would let the model see the future.
 The design distinguishes three kinds of computation. Predictive and conformal searches
 choose models, calibration, partitions, and policy families. Those searches are frozen
 for this manuscript. Paper-facing reruns regenerate tables, figures, evidence
-summaries, and Quarto outputs from the frozen artifacts. Validation reruns are allowed
+summaries, and Quarto outputs from those artifacts. Validation reruns are allowed
 only when they consume frozen choices and produce a drift report against the recorded
 champion. This separation is central to the paper's reproducibility claim: the
 manuscript can evolve without quietly reopening the 276k-policy search that selected
@@ -568,7 +568,7 @@ every external portfolio.
 % =====================================================================
 \section{Results}\label{sec:results}
 
-Table~\ref{tab:core} summarizes the frozen paper-facing metrics. The calibrated PD
+Table~\ref{tab:core} summarizes the paper-facing metrics. The calibrated PD
 layer is not a leaderboard model, but it is stable enough for decision use: AUC
   $0.7139$, Brier score $0.1544$, and ECE near $0.0070$. The conformal layer provides
 conservative empirical coverage, with 90\% coverage $0.9297$ and 95\% coverage
@@ -679,11 +679,18 @@ realized OOT return are all reported on the same \$1M budget.
 The robust-region analysis asks whether that result depends on one lucky
 hyperparameter setting. Across the evaluated final region, $45/45$ unique policies
 pass the exact $\alpha=0.01$ check. The 45 policies come from the cross-product of
-five risk-tolerance values, three uncertainty-blend values, and three
-uncertainty-aversion settings within the frozen bound-aware family. The selected
-policy is the economic champion inside that exact robust region, not the first
-feasible point. The supplement reports the full alpha/gamma funded-set table,
-robust-region heatmap, and policy-family appendix.
+five risk-tolerance values, three uncertainty-blend ($\gamma$) values, and three
+uncertainty-aversion settings within the bound-aware family.
+Figure~\ref{fig:alpha-gamma} traces how the conformal level $\alpha$ drives the
+funded-set quantities $V(\alpha)$ and $\Gamma_{\mathrm{CP}}$, and
+Figure~\ref{fig:robust-region} maps realized return over the
+risk-tolerance\,$\times\,\gamma$ grid. The heatmap shows the design choice inside the
+region directly: the economic champion is the highest-return cell (top-left,
+$\tau=0.175$, $\gamma=0.45$), and moving right to a larger $\gamma$ trades return for
+a tighter endpoint budget $B_u(\alpha)=\tau+(1-\gamma)\Gamma_{\mathrm{CP}}$---the
+$\gamma=0.55$ theorem-tight comparator of Table~\ref{tab:champion-comparators}. The
+selected policy is the economic champion inside that exact robust region, not the
+first feasible point or the tightest bound.
 
 \begin{table}[t]
   \centering
@@ -701,14 +708,7 @@ robust-region heatmap, and policy-family appendix.
   \end{tabular}
 \end{table}
 
-Prosper uses its full 10{,}531-loan OOT economic universe. Freddie is evaluated
-on 1{,}396{,}053 OOT economic candidates; a sparse all-candidate LP returns the
-same robust objective as the large top screens, with worst funded rank 551 and
-zero funded loans outside the top-250{,}000 screen.
-This is an exhaustiveness check on the external LP solve, not a new exact
-funded-set certificate for Prosper or Freddie.
-
-\begin{figure}[t]
+\begin{figure}[ht]
   \centering
   \includegraphics[width=0.88\textwidth]{crpto_fig13_alpha_gamma_funded_set.pdf}
   \caption{Alpha connects the conformal layer to funded-set quantities and
@@ -716,13 +716,17 @@ funded-set certificate for Prosper or Freddie.
   \label{fig:alpha-gamma}
 \end{figure}
 
-\begin{figure}[t]
+\begin{figure}[ht]
   \centering
   \includegraphics[width=0.9\textwidth]{crpto_fig14_robust_region_heatmap.pdf}
-  \caption{The final evaluated robust region has $45/45$ alpha-safe policies.}
+  \caption{Robust region: realized return over the risk-tolerance\,$\times\,\gamma$
+  grid. The economic champion is the highest-return cell (top-left); larger $\gamma$
+  trades return for a tighter endpoint budget. All $45/45$ policies are
+  alpha-safe.}
   \label{fig:robust-region}
 \end{figure}
 
+\FloatBarrier
 \subsection{Multi-Dataset External Economic Replication}
 
 The natural generalization question after the Lending Club audit is whether the
@@ -747,7 +751,14 @@ Both pass the conformal gates and both return positive robust LP objectives.
   }%
 \end{table}
 
-\begin{figure}[t]
+Prosper uses its full 10{,}531-loan OOT economic universe. Freddie is evaluated
+on 1{,}396{,}053 OOT economic candidates; a sparse all-candidate LP returns the
+same robust objective as the large top screens, with worst funded rank 551 and
+zero funded loans outside the top-250{,}000 screen. This is an exhaustiveness
+check on the external LP solve, not a new exact funded-set certificate for
+Prosper or Freddie.
+
+\begin{figure}[ht]
   \centering
   \includegraphics[width=0.94\textwidth]{crpto_fig22_external_replication.pdf}
   \caption{External CRPTO replications preserve conformal gates and positive
@@ -767,19 +778,19 @@ the robust worst case discounts more return, and discrimination (AUC) does not
 order the premium on its own. On the \emph{selected} Lending Club champion the
 signed price is favorable ($-10.56\%$), because the bound-aware search found a
 robust funded set that also wins expected return. The measured summary is more
-modest: in these frozen applications, the conformal robust layer is economically
+modest: in these applications, the conformal robust layer is economically
 bounded. Under blind application it costs a single-digit to low-double-digit
 premium; under selection it can be favorable.
 
 \begin{table}[t]
   \centering
-  \caption{Price of robustness by frozen application, ordered by panel default
+  \caption{Price of robustness by application, ordered by panel default
   rate. The selected Lending Club champion is $-10.56\%$ (favorable under
   selection, not blind application).}
   \label{tab:price-of-robustness}
   \begin{tabular}{lrr}
     \toprule
-    Frozen application & Panel default & Price of robustness \\
+    Application & Panel default & Price of robustness \\
     \midrule
     Freddie FM48 (green)    & 0.58\%  & $+1.00\%$ \\
     Freddie FM48 (combined) & 1.45\%  & $+1.09\%$ \\
@@ -930,7 +941,7 @@ On distribution robustness, the worst per-grade 90\% coverage on the frozen
 intervals is grade E at $0.9004$, still above the $0.90$ target. Supplement A23
 reports marginal coverage $0.9293$ on its multi-distribution evaluation slice,
 while the promoted artifact summary in Table~\ref{tab:core} reports $0.9297$;
-these are distinct cuts through the same frozen interval artifact. No grade falls
+these are distinct cuts through the same interval artifact. No grade falls
 below target, so the conservative marginal coverage is not hiding a failing segment; the thinnest
 grade$\times$vintage cells are where a future group-weighted or multi-distribution
 recalibration would matter, marked as future work rather than a present guarantee.
