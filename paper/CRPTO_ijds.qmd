@@ -524,7 +524,7 @@ reopening the 276k-policy search that selected the promoted result.
 
 All primary artifacts are represented as files with explicit ownership: model
 binaries, calibration objects, conformal intervals, portfolio allocations,
-tables, figures, and status JSON files. The anonymous submission describes the
+tables, figures, and status reports. The anonymous submission describes the
 bundle without revealing author identity. Repository and remote-storage URLs
 will be disclosed according to the journal's double-anonymous and
 data/code-disclosure policy.
@@ -624,23 +624,23 @@ cost, while the balanced comparator shows that a nearby lower-$\tau$ alternative
 has similar economics.
 
 It is worth anchoring the robustness cost in dollars rather than asserting it.
-The frozen `price_of_robustness` field is defined as the non-robust baseline's
+The price of robustness is defined as the non-robust baseline's
 expected return minus the robust policy's expected return, both valued under
 point PDs on the same `$1M` budget. For the champion it is `-$14,465.69`
 (`-10.56%`); the negative sign is meaningful. Under the point-PD
 valuation the robust policy is not more conservative on paper than the non-robust
 baseline -- it is `$14,465.69` richer -- and the realized out-of-time return then
 lands higher still. The committee-facing reading is the three-number ladder
-below, all from the same frozen champion record (`tau = 0.175`, `gamma = 0.45`,
-`alpha = 0.01`).
+below, all for the same promoted policy ($\tau = 0.175$, $\gamma = 0.45$,
+$\alpha = 0.01$).
 
-| Quantity | Value | Source field |
-|---|---:|---|
-| Non-robust baseline expected return (point PD) | `$137,014.58` | `price_of_robustness` ledger base |
-| CRPTO robust expected return (point PD) | `$151,480.27` | `expected_return_net_point` |
-| CRPTO robust realized return (OOT) | `$170,464.54` | `realized_total_return` |
-| Recorded price of robustness | `-$14,465.69` (`-10.56%`) | `price_of_robustness` |
-| Funded rows / budget | `341` / `$1,000,000` | A7 positive-exposure rows / `total_allocated` |
+| Quantity | Value |
+|---|---:|
+| Non-robust baseline expected return (point PD) | `$137,014.58` |
+| CRPTO robust expected return (point PD) | `$151,480.27` |
+| CRPTO robust realized return (OOT) | `$170,464.54` |
+| Price of robustness | `-$14,465.69` (`-10.56%`) |
+| Funded rows / budget | `341` / `$1,000,000` |
 
 : Economic anchor for the promoted champion. The robust policy improves the
 point-PD expected return over the non-robust baseline (hence the negative price
@@ -670,8 +670,7 @@ bound. The supplement adds the policy-family appendix.
 
 The funded-set audit also matters because the bound is weighted by exposure,
 not counted by loan. The promoted portfolio funds 341 positive-exposure loan
-rows with a `$1M` exposure budget; the canonical robust-region ledger reports
-`n_funded = 340` because it uses a solver-threshold count. Its exact
+rows under the `$1M` budget, and its exact
 `V = 0.028875` is concentrated mainly in the C/D exposure buckets rather than
 hidden in an unreported tail segment.
 
@@ -927,11 +926,10 @@ Prosper and Freddie/Mendeley.
 # Reproducibility and Companion
 
 The project is built as an executable research bundle. Source code, Quarto
-manuscript files, tests, DVC metadata, the YAML/Parquet champion feature
-contract, tables, figures, and status reports are versioned together. The
-feature contract is no longer an opaque preprocessing pickle; only the model
-and calibrator remain binary artifacts. Heavy data and model artifacts are
-stored outside Git and verified through manifest hashes. The paper-facing
+manuscript files, tests, DVC metadata, the YAML/Parquet feature contract,
+tables, figures, and status reports are versioned together; only the model and
+calibrator are binary artifacts. Heavy data and model artifacts are stored
+outside Git and verified through manifest hashes. The paper-facing
 commands regenerate tables,
 figures, evidence summaries, and HTML/PDF manuscript surfaces from frozen
 inputs; protected champion stages are not rerun without an explicit drift

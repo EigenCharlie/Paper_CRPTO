@@ -533,8 +533,8 @@ claims rest on---is the part the harness certifies end to end.
 
 All primary artifacts are represented as files with explicit ownership: model
 binaries, calibration objects, conformal intervals, portfolio allocations, a
-YAML/Parquet champion feature contract rather than an opaque preprocessing pickle,
-tables, figures, and status JSON files. The anonymous submission describes the bundle without
+YAML/Parquet feature contract, tables, figures, and status reports. The anonymous
+submission describes the bundle without
 revealing author identity. Repository and remote-storage URLs will be disclosed
 according to the journal's double-anonymous and data/code-disclosure policy.
 
@@ -640,9 +640,8 @@ while the balanced comparator shows that a nearby lower-$\tau$ alternative has
 similar economics.
 
 It is worth anchoring the robustness cost in dollars rather than asserting it. The
-frozen \texttt{price\_of\_robustness} field is the non-robust baseline's expected
-return minus the robust policy's expected return, both valued under point PDs on the
-same \$1M budget. For the champion it is $-\$14{,}465.69$ ($-10.56\%$); the negative
+price of robustness is the non-robust baseline's expected return minus the robust
+policy's expected return, both valued under point PDs on the same \$1M budget. For the champion it is $-\$14{,}465.69$ ($-10.56\%$); the negative
 sign is meaningful. Under the point-PD valuation the robust policy is not more
 conservative on paper than the non-robust baseline---it is \$14{,}465.69 richer---and
 the realized out-of-time return then lands higher still.
@@ -653,19 +652,17 @@ the realized out-of-time return then lands higher still.
   point-PD expected return over the non-robust baseline (hence the negative price of
   robustness), and the realized OOT return exceeds the robust expectation.}
   \label{tab:econ-anchor}
-  \resizebox{\textwidth}{!}{%
-  \begin{tabular}{lrl}
+  \begin{tabular}{lr}
     \toprule
-    Quantity & Value & Source field \\
+    Quantity & Value \\
     \midrule
-    Non-robust baseline expected return (point PD) & \$137{,}014.58 & \texttt{price\_of\_robustness} ledger base \\
-    CRPTO robust expected return (point PD)        & \$151{,}480.27 & \texttt{expected\_return\_net\_point} \\
-    CRPTO robust realized return (OOT)             & \$170{,}464.54 & \texttt{realized\_total\_return} \\
-    Recorded price of robustness                   & $-\$14{,}465.69$ ($-10.56\%$) & \texttt{price\_of\_robustness} \\
-    Funded rows / budget                           & 341 / \$1{,}000{,}000 & A7 positive-exposure rows / \texttt{total\_allocated} \\
+    Non-robust baseline expected return (point PD) & \$137{,}014.58 \\
+    CRPTO robust expected return (point PD)        & \$151{,}480.27 \\
+    CRPTO robust realized return (OOT)             & \$170{,}464.54 \\
+    Price of robustness                            & $-\$14{,}465.69$ ($-10.56\%$) \\
+    Funded rows / budget                           & 341 / \$1{,}000{,}000 \\
     \bottomrule
   \end{tabular}
-  }%
 \end{table}
 
 On this evaluation, robustness is not a toll paid in lost return. The conformal
