@@ -227,16 +227,34 @@ Bernstein/Freedman give `t = 0.0852` under the weaker weighted-validity variance
 proxy; the stronger individual-alpha variance mode is sharper but requires an
 assumption we do not assert in the theorem.
 
-The menu also includes the row that justifies the body's choice. Under the
-theorem's own assumption alone -- `E[V(alpha)] <= alpha` with no independence
-or correlation structure -- the sharp variance bound is
-`Var(V) <= alpha(1 - alpha)` (attained by a Bernoulli miscoverage profile),
-and one-sided Cantelli then yields `t = 0.3085` at `alpha = 0.01`: *worse*
-than Markov's `0.1000`. No second-moment tightening exists without assumptions
-beyond Assumption 1, so Markov is not a conservative placeholder in the body;
-it is the optimal first-moment statement for the guarantee the paper actually
-asserts. Every sharper row in the menu prices a specific additional
-assumption, and the empirical `V = 0.028875` clears all of them anyway.
+The menu also contains the row that justifies the body's choice, which we
+state as a formal optimality result rather than a stylistic preference.
+
+**Proposition A.1 (Markov-optimality under Assumption 1 alone).**
+Let $V(\alpha) \in [0,1]$ satisfy only Assumption 1, $E[V(\alpha)] \le \alpha$,
+with no further independence, correlation, or variance structure. Then for the
+one-sided deviation event $\{V(\alpha) \ge t\}$ at the interpretability level
+$\delta = \sqrt{\alpha}$, Markov's threshold $t_{\mathrm M} = \sqrt{\alpha}$
+cannot be improved by any second-moment argument: the variance compatible with
+Assumption 1 is at most $\sigma^2 \le \alpha(1-\alpha)$ (attained by a
+Bernoulli$(\alpha)$ miscoverage profile), and the sharp one-sided Chebyshev
+(Cantelli) threshold under that worst-case variance is
+$t_{\mathrm C} = \alpha + 3\sigma = \alpha + 3\sqrt{\alpha(1-\alpha)} > \sqrt{\alpha}$
+for $\alpha \le 0.01$ (numerically $t_{\mathrm C}=0.3085 > 0.1000 = t_{\mathrm M}$).
+
+*Proof.* Cantelli gives $P(V \ge E[V] + k) \le \sigma^2/(\sigma^2 + k^2)$.
+Setting the right side to $\delta = \sqrt{\alpha}$ and $E[V] = \alpha$ yields
+$k = \sigma\sqrt{(1-\delta)/\delta}$, so
+$t_{\mathrm C} = \alpha + \sigma\sqrt{(1-\sqrt\alpha)/\sqrt\alpha}$. At
+$\alpha = 0.01$ this is $\sigma\sqrt{9} = 3\sigma$ above $\alpha$, i.e.
+$0.01 + 3(0.0995) = 0.3085$, which exceeds $t_{\mathrm M}=\sqrt{0.01}=0.1$.
+$\blacksquare$
+
+The reading is that Markov is **not** a conservative placeholder in the body;
+it is the optimal first-moment statement for the guarantee Theorem 1 actually
+asserts. Every sharper row in the menu prices a specific additional assumption
+(loan independence, conditional variance, or a martingale protocol), and the
+empirical `V = 0.028875` clears all of them anyway.
 
 Bennett is the closest match to the finite funded-set calculation because it was
 designed for independent, non-identically distributed summands using only the
