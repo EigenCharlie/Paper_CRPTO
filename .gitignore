@@ -140,3 +140,5 @@ htmlcov/
 # Hypothesis
 .hypothesis/
 .tmp_*/
+models/experiments/
+configs/experiments/
