@@ -629,10 +629,15 @@ same funded loans.
 The miscoverage is concentrated rather than diffuse. As Figure @fig-alpha-gamma
 shows, $V(\alpha)$ is nearly flat across the conformal level: the loans that miss
 at a loose $\alpha$ still miss at the tight $\alpha = 0.01$, so widening the
-intervals barely changes coverage. The residual risk sits in a few deep-tail
-defaults whose realized outcome exceeds any reasonable conformal endpoint, which
-is why $V$ stays above $\alpha$ and the operative safety level is read at
-$\sqrt{\alpha}$ rather than $\alpha$.
+intervals barely changes coverage. The reason is concrete on this binary
+outcome: a non-default never misses ($y_i = 0 \leq u_i$), and a default misses
+unless its endpoint reached the PD ceiling $u_i = 1$, so $V = 0.028875$ is the
+funded weighted default rate ($0.032875$) net of the two of nineteen funded
+defaults the endpoint capped at one. Driving $V$ down to the nominal
+$\alpha = 0.01$ would require capping most funded defaults at $u_i = 1$, which
+would void $\Gamma_{\mathrm{CP}}$ and the economics. This is why $V$ exceeds
+$\alpha$ -- the base default rate of a return-seeking funded set is well above
+$1\%$ -- and why the operative safety level is read at $\sqrt{\alpha}$.
 
 The under-coverage is also not an artifact of the calibration draw. With
 $n_{\mathrm{cal}} = 237{,}584$ calibration loans (and thousands per score-decile
