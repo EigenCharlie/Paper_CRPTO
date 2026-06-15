@@ -175,7 +175,14 @@ assumption and holds with wide margin; the probabilistic guarantee is therefore
 read at the Markov level $V \leq \sqrt{\alpha} = 0.10$, which the realized $V$
 clears, not at the nominal $\alpha$. This is why Assumption 1 is presented as a
 modeling premise audited after selection, not as a property the single frozen
-draw establishes.
+draw establishes. The under-coverage is structural, not a calibration-draw
+artifact: with $n_{\mathrm{cal}} = 237{,}584$ calibration loans, the split-conformal
+conditional-coverage result [@vovk2005; @angelopoulos2023] makes the marginal
+coverage Beta-distributed about $1 - \alpha$ with standard deviation
+$\sqrt{\alpha(1-\alpha)/n_{\mathrm{cal}}} \approx 0.0002$ at $\alpha = 0.01$, so the
+endpoints (hence $\Gamma_{\mathrm{CP}}$ and $B_u$) are essentially invariant to the
+calibration draw and the residual $V$ variability is the test-side sampling that
+Table A16 bootstraps (effective size $\approx 126$).
 
 These steps leave a clean split. Theorem 1 proves the operational bound under
 Assumption 1. Proposition A.1 below shows that Markov is the sharp
