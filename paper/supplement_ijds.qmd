@@ -209,7 +209,7 @@ transcribed table.
 
 To quantify the cost of staying distribution-free, the table below contrasts the
 Markov threshold used in the main theorem with concentration tightenings computed
-on the *real* rebaselined funded-set weights (341 positive-exposure loan rows,
+on the *actual* funded-set weights (341 positive-exposure loan rows,
 effective sample size `n_eff = 1 / sum_i w_i^2 = 126.1` -- well below the loan
 count because exposure is concentrated). Each column reports the threshold `t`
 such that `P(V > t)` is controlled at the matched tail probability
@@ -536,11 +536,11 @@ to make the audit path explicit.
 | Claim | Evidence | Artifact | Test or guardrail |
 |---|---|---|---|
 | The predictive input is a frozen calibrated PD artifact, not a refreshed leaderboard model. | AUC, Brier, ECE, temporal backtesting, and calibration diagnostics. | `models/pd_canonical.cbm`, `models/pd_canonical_calibrator.pkl`, paper-facing metric tables. | `EXTRACTION_MANIFEST.json` and champion validation hashes. |
-| The conformal layer gives conservative OOT uncertainty on the PD scale. | 90% and 95% coverage, minimum group coverage, and grade/decile audits. | `data/processed/conformal_intervals_mondrian.parquet`. | Conformal validation status and smoke tests that check final metric synchronization. |
-| The promoted funded set passes the exact safety bound `V <= sqrt(alpha)` (not nominal alpha-coverage). | `V(alpha = 0.01) = 0.028875` (above alpha), `Gamma_CP = 0.187987`, zero violation. | `models/final_project_promotion.json`, bound-evaluation parquet, Table A13. | Rebaselined exact-evaluation artifact and final-sync regression tests. |
+| The conformal layer gives conservative OOT uncertainty on the PD scale. | 90% and 95% coverage, minimum group coverage, and grade/decile audits. | `data/processed/conformal_intervals_mondrian.parquet`. | Conformal validation status and regression tests that check metric consistency across surfaces. |
+| The promoted funded set passes the exact safety bound `V <= sqrt(alpha)` (not nominal alpha-coverage). | `V(alpha = 0.01) = 0.028875` (above alpha), `Gamma_CP = 0.187987`, zero violation. | `models/final_project_promotion.json`, bound-evaluation parquet, Table A13. | Exact-evaluation artifact and regression tests. |
 | The result is not an isolated lucky policy. | `45/45` policies pass in the final robust region. | Table A18 and robust-region heatmap. | Protected search/evaluation split; no rerun of the champion search in paper builds. |
 | The supplement strengthens interpretation without moving the champion. | A20--A34 challenger, dependence, tail-risk, multi-distribution, online, and external-replication diagnostics. | Journal robustness tables and Figures 15--25. | Scope caveats in each table; challenger and external outputs are labeled as non-promoted diagnostics. |
-| The manuscript is reproducible at the artifact level. | Tables, figures, Quarto pages, and status reports regenerate from frozen inputs. | Repository code, DVC metadata, rendered book/paper outputs. | Pre-push smoke/lint hooks, DVC status checks, and manifest validation before release. |
+| The manuscript is reproducible at the artifact level. | Tables, figures, Quarto pages, and status reports regenerate from frozen inputs. | Repository code, DVC metadata, rendered book/paper outputs. | Pre-push test and lint hooks, DVC status checks, and manifest validation before release. |
 
 ## Funded-Set Audit Card
 
@@ -671,7 +671,8 @@ The MRM material documents intended use, out-of-scope use, model assumptions,
 calibration and conformal diagnostics, challenger criteria, artifact lineage,
 and escalation triggers. In the CRPTO setting, a retraining trigger is not an
 automatic production process. It is a research governance event that would
-require a new run tag and a fresh drift report against the frozen champion.
+require a new, separately tagged training run and a fresh drift check against the
+frozen champion.
 
 The governance boundary for the current submission is:
 
