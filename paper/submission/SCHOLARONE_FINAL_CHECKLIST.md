@@ -9,8 +9,8 @@ template files have been downloaded outside Git.
 |---|---|:---:|---|
 | Anonymous manuscript PDF | `CRPTO_ijds_submission.tex` compiled with `informs4` and `dblanonrev`. | Yes | Local build and visual QA pass; final ScholarOne proof pending |
 | Anonymous online supplement PDF | `paper/supplement_ijds.qmd` rendered and visually checked. | Yes | Local render and page QA pass; final ScholarOne proof pending |
-| Separate title page | `TITLE_PAGE_DRAFT.md` converted into the ScholarOne/title-page format. | No | TODO |
-| Data and Code Disclosure Form | Official IJDS form using `DATA_CODE_DISCLOSURE_FORM_DRAFT.md`. | Editor/system | TODO |
+| Separate title page | `TITLE_PAGE_DRAFT.md` converted into the ScholarOne/title-page format. | No | Pending ScholarOne copy |
+| Data and Code Disclosure Form | Official IJDS form using `DATA_CODE_DISCLOSURE_FORM_DRAFT.md`. | Editor/system | Pending official form entry |
 | Cover letter | `COVER_LETTER_AND_DISCLOSURE.md`, shortened if ScholarOne text boxes are tight. | Editor | Draft ready; final text-box copy pending |
 | Optional reproducibility note | `REPRODUCIBILITY_PACKAGE.md` or excerpted text if requested. | Editor/system | Optional |
 
@@ -28,7 +28,9 @@ template files have been downloaded outside Git.
    ```
 
 4. Confirm body page count is at most 25 pages excluding references and
-   appendices. The local official-template build is currently 24 pages total.
+   appendices. The local official-template build is currently 26 pages total;
+   Section 9 starts on page 23 and references begin lower on that same page.
+   Recount after every official rebuild.
 
 ## Final Local Gates
 

@@ -413,7 +413,7 @@ frozen funded set or intervals, never as a re-promoted champion.
 | A23 multi-distribution robustness | Worst-case 90% coverage by grade and grade x vintage cell on the frozen intervals. | Read-only diagnostic; the worst fine cell motivates MDCP/group-weighted as future work. |
 | A24 online conformal stability | Per-vintage and cumulative coverage plus the Gibbs-Candes ACI target trajectory over the OOT vintage sequence. | Static-OOT online-control diagnostic, not a streaming validation. |
 | A25 external replication gate | Applies the frozen CRPTO scoring/conformal/LP recipe to Prosper final-status loans and Freddie/Mendeley FM48. | External economic replication; not a Lending Club champion rerun and not a new exact theorem. |
-| A26 external candidate sensitivity | Checks whether the robust LP objective is stable as the OOT candidate pool grows. | Candidate-pool audit; confirms the reported objectives are not a tiny shortlist artifact. |
+| A26 external candidate sensitivity | Checks whether the robust LP objective is stable as the OOT candidate pool grows. | Candidate-pool audit; supports the claim that reported objectives are not a tiny shortlist artifact. |
 | A27 Freddie horizon sensitivity | Audits Freddie/Mendeley default windows and red/green groups before selecting FM48 for the external table. | Dataset-selection audit; FM48 is promoted because it clears both coverage gates and keeps positive robust LP value. |
 | A28 external LP exhaustiveness | Solves Prosper all-candidate LP and Freddie caps `500k`, `1M`, and `all`. | Exhaustiveness certificate; the Freddie all-candidate optimum matches the screened optimum. |
 | A29 Freddie sparse Mondrian audit | Splits Freddie coverage by all groups, eligible groups, and sparse fallback groups. | Documents sparse cells; does not claim perfect conditional coverage in every tiny group. |
@@ -421,7 +421,7 @@ frozen funded set or intervals, never as a re-promoted champion.
 | A31 external OOT subperiod metrics | Breaks Prosper by OOT year and Freddie by OOT quarter. | Subperiod audit; Freddie 2015Q4 alpha coverage is just below 99%. |
 | A32 Prosper default-definition sensitivity | Repeats Prosper under main, defaulted-only, and chargedoff-only labels. | Default semantics audit; all three variants pass the global gates. |
 | A33 Freddie segment sensitivity | Repeats Freddie FM48 for red, green, and combined groups. | Segment audit; green and combined pass alpha01, red remains a documented caveat. |
-| A34 cross-dataset price of robustness | Orders the frozen external applications (Freddie green/combined/red and Prosper) by panel default rate and reports the signed price of robustness. | Positive premium under blind application that grows with panel default risk; the favorable Lending Club value is the selected-champion contrast. |
+| A34 cross-dataset price of robustness | Orders the frozen external applications (Freddie green/combined/red and Prosper) by panel default rate and reports the signed price of robustness. | Positive premium under blind application, ordered by panel default risk across four frozen external applications; the favorable Lending Club value is the selected-champion contrast. |
 
 ## External Multi-Dataset Replication
 
@@ -547,6 +547,7 @@ to make the audit path explicit.
 | The promoted funded set passes the exact safety bound `V <= sqrt(alpha)` (not nominal alpha-coverage). | `V(alpha = 0.01) = 0.028875` (above alpha), `Gamma_CP = 0.187987`, zero violation. | `models/final_project_promotion.json`, bound-evaluation parquet, Table A13. | Exact-evaluation artifact and regression tests. |
 | The result is not an isolated lucky policy. | `45/45` policies pass in the final robust region. | Table A18 and robust-region heatmap. | Protected search/evaluation split; no rerun of the champion search in paper builds. |
 | The supplement strengthens interpretation without moving the champion. | A20--A34 challenger, dependence, tail-risk, multi-distribution, online, and external-replication diagnostics. | Journal robustness tables and Figures 15--25. | Scope caveats in each table; challenger and external outputs are labeled as non-promoted diagnostics. |
+| The frozen PD binary is a faithful paper artifact. | E3/E4 T1 diagnostics show negligible seed-level discrimination movement and stable expanding-window validation. | `docs/refactor/SENSITIVITY_RUN_DESIGN_2026-06.md` and Appendix E summary. | Non-promoted diagnostics only; they do not replace the champion or become routine reproduction steps. |
 | The manuscript is reproducible at the artifact level. | Tables, figures, Quarto pages, and status reports regenerate from frozen inputs. | Repository code, DVC metadata, rendered book/paper outputs. | Pre-push test and lint hooks, DVC status checks, and manifest validation before release. |
 
 ## Funded-Set Audit Card
@@ -595,7 +596,8 @@ correct on the frozen OOT vintages, but it is still a replay, not evidence from
 a live stream. A25--A34 show that the same recipe clears useful gates on Prosper
 and Freddie/Mendeley, that Freddie's full candidate universe has been solved,
 that subperiod/definition/segment sensitivities are documented, and that the
-economic cost of applying the frozen recipe scales with panel risk. They
+economic cost of applying the frozen recipe is ordered by panel risk across the
+four frozen external applications. They
 still do not create a new exact funded-set certificate or theorem for every
 external portfolio: they verify candidate-pool exhaustiveness and economic
 viability under a frozen recipe, not a new post-selection conformal guarantee.
@@ -662,7 +664,7 @@ decision.
 
 ![Tail-risk versus realized return across the 45-policy robust region (Table A20). All 45 policies pass the satisficing screen; the frozen economic champion (star) deliberately accepts more realized CVaR for higher return, while the lowest-tail policy shows the available de-risking trade-off inside the robust region.](../reports/crpto/figures/crpto_fig16_tail_risk_frontier.png){#fig-supp-tail-frontier width="90%" fig-alt="Scatter plot of tail risk versus realized return across 45 robust-region policies, with all policies passing the satisficing screen and the frozen economic champion marked."}
 
-![Tail risk of the frozen funded set under varying loss-given-default (Table A12). CVaR grows with the assumed LGD while the OCE and the mean loss rate stay milder, confirming that OCE/CVaR enter the paper as post-hoc stress summaries rather than as the optimized objective.](../reports/crpto/figures/crpto_fig17_tail_risk_lgd.png){#fig-supp-tail-lgd width="82%" fig-alt="Line chart of frozen funded-set loss rate versus LGD (0.35 to 0.60) for CVaR90, CVaR95, CVaR99, OCE and the mean; CVaR grows with LGD while OCE and the mean stay mild."}
+![Tail risk of the frozen funded set under varying loss-given-default (Table A12). CVaR grows with the assumed LGD while the OCE and the mean loss rate stay milder, showing that OCE/CVaR enter the paper as post-hoc stress summaries rather than as the optimized objective.](../reports/crpto/figures/crpto_fig17_tail_risk_lgd.png){#fig-supp-tail-lgd width="82%" fig-alt="Line chart of frozen funded-set loss rate versus LGD (0.35 to 0.60) for CVaR90, CVaR95, CVaR99, OCE and the mean; CVaR grows with LGD while OCE and the mean stay mild."}
 
 ![A22 return-vs-CVaR frontier: each point is the highest-return alpha01-safe policy admissible under a decision-time CVaR cap; the frozen economic champion sits at the high-return, high-CVaR corner and stays official, while the tightest tail cap marks the challenger end.](../reports/crpto/figures/crpto_fig18_tail_constrained_frontier.png){#fig-supp-tail-constrained width="88%" fig-alt="Upward line of realized return versus decision-time CVaR95 cap; economic champion as a star at the top-right, tightest tail cap as a diamond at the bottom-left."}
 
@@ -705,7 +707,7 @@ The governance boundary for the current submission is:
 | Causal automated decisions | Observational credit-risk decisions are reported as predictive/prescriptive certificates only. | Experimental or causal policy evaluation would require a separate design [@fernandezloria2025observational]. |
 | Monitoring | Artifact-backed guardrails and MRM triggers. | Live production dashboard. |
 | Retraining | No automatic retraining; frozen paper champion. | New named run with drift report. |
-| Companion | Quarto + DVC/DagsHub/MLflow after anonymity decision. | Streamlit/product showcase. |
+| Companion | Quarto + DVC-backed artifact lineage after anonymity decision. | Streamlit/product showcase. |
 
 # Appendix E: Reproducibility
 
@@ -719,17 +721,19 @@ CRPTO uses reproducibility to make one decision certificate auditable, whereas
 replication-robust analytics markets study how to allocate value across
 strategic data contributors [@falconer2026replication].
 
-**PD stability diagnostics.** Two run-tag diagnostics (`ijds-sensitivity-2026-06-14`,
-run in isolation and separate from the frozen champion) support distributing a frozen
-PD binary rather than a "retrain it yourself" recipe. Retraining the champion
+**PD stability diagnostics.** Two isolated run-tag diagnostics
+(`ijds-sensitivity-2026-06-14`, separate from the frozen champion) support
+distributing a frozen PD binary rather than a "retrain it yourself" recipe.
+Retraining the champion
 configuration across three random seeds moves out-of-time AUC within a `0.0006` band,
 with Brier stable to `+/- 0.0001` and ECE near `0.006`: the CatBoost
 non-reproducibility is negligible at the discrimination level, so the frozen binary is
 a faithful representative and the bit-exact certified chain is the right reproducibility
 object. An expanding-window temporal walk-forward keeps internal validation AUC in
 `[0.717, 0.733]`, dipping in the most recent window toward the harder post-2018
-out-of-time regime. Both confirm stability rather than overturning the headline, and
-are reported as diagnostics, not a new champion.
+out-of-time regime. Both support the stability interpretation rather than overturning
+the headline, and are reported as non-promoted T1 diagnostics, not a new champion and
+not routine reproduction steps.
 
 Minimal local checks are:
 
@@ -781,7 +785,7 @@ permanently tied together.
 Artifact-aware validation additionally requires credentials for the DVC remote:
 
 ```powershell
-uv run dvc status -c -r dagshub
+uv run dvc status -c -r <configured-remote>
 ```
 
 The following stages must not be rerun as routine reproduction steps:

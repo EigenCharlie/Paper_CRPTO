@@ -73,13 +73,15 @@ PDF crop box cuts the right edge under `informs4`.
 > `informs4.cls`, `informs2014.bst`, template PDFs, `.sty` files, or generated
 > LaTeX build artifacts.
 
-Current local build state (verified 2026-06-14): TinyTeX/TeX Live 2026,
+Current local build state (verified 2026-06-15): TinyTeX/TeX Live 2026,
 Strawberry Perl 5.42.2.1, and the `listingsutf8` TeX package compile
-`CRPTO_ijds_submission.tex` to a 24-page official-template PDF. The only LaTeX
-log warnings left are a small `\maketitle` overfull from the `informs4`
-anonymous title block and one float-only page, both visually acceptable. The
-body is comfortably inside the IJDS 25-page initial-submission budget even
-before excluding references.
+`CRPTO_ijds_submission.tex` to a 26-page official-template PDF. The auxiliary
+file places Section 9 (Conclusion) on page 23, and the references begin lower on
+that same page, so the body remains inside the IJDS 25-page initial-submission
+budget when references are excluded. The only LaTeX log warnings left are a
+small `\maketitle` overfull from the `informs4`
+anonymous title block and underfull paragraph warnings, both visually acceptable
+unless the final ScholarOne proof shows a layout issue.
 
 To produce the official submission PDF:
 
@@ -151,7 +153,9 @@ These protocols are compatible but not interchangeable.
 - Use `SCHOLARONE_FINAL_CHECKLIST.md` while uploading and reviewing the generated
   proof.
 - Recheck the official-template page budget if the body changes materially. The
-  current local official-template build is 24 pages.
+  current local official-template build is 26 pages total; Section 9 starts on
+  page 23 and references begin lower on that same page, keeping the body within
+  the 25-page limit when references are excluded.
 - Keep A3--A34 in the online supplement unless a reviewer-facing argument needs
   one compact table in the body.
 - Preserve CRPTO as the coverage/auditability method and SPO+ as the low-regret
@@ -159,7 +163,7 @@ These protocols are compatible but not interchangeable.
 - Cross-check every headline claim against `CLAIM_AUDIT_MATRIX.md`.
 - Keep `CRPTO_ijds_submission.tex` synchronized with the QMD whenever the body
   adds or demotes a figure, table, theorem statement or major result paragraph.
-- Regenerate previews with `just paper-submission` before release.
+- Regenerate previews with `just paper-submission-pdf` before release.
 - Run the repository gates: `just lint`, `just smoke`, `just validate-champion`.
 
 ## Final Step - Official Compile
@@ -192,8 +196,9 @@ updates the template.
    ```
 
 4. **Recount the official-template page budget** and demote body floats to the
-   supplement only if it exceeds 25 pages. The local official-template build is
-   currently 24 pages; the Chrome-print body preview is only a verification
-   proxy.
+   supplement only if the body exceeds 25 pages excluding references. The local
+   official-template build is currently 26 pages total; Section 9 starts on page
+   23 and references begin lower on that same page. The Chrome-print body preview
+   is only a verification proxy.
 5. **Verify anonymity** against the checklist above, then upload the body PDF and
    submit the title page separately.

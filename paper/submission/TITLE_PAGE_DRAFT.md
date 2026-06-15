@@ -14,30 +14,30 @@ Carlos Alfredo Vergara Rojas
 
 ## Affiliation
 
-TODO: Add current institutional affiliation exactly as it should appear in the
-submission system.
+Not listed in this repository. Complete in ScholarOne before upload, using the
+current institutional affiliation exactly as it should appear in the submission
+system.
 
 ## Corresponding Author
 
 Carlos Alfredo Vergara Rojas
 
-Email: TODO
+Email: cavr94@gmail.com
 
-ORCID: TODO
+ORCID: Not listed in this repository; complete in ScholarOne if applicable.
 
 ## Acknowledgements
 
-TODO: Add only if needed. Keep acknowledgements out of the anonymous manuscript
-and supplement.
+None for the initial double-anonymous submission. Any acknowledgements should
+remain outside the anonymous manuscript and supplement.
 
 ## Funding
 
-TODO: State funding source or "The author received no specific funding for this
-work."
+The author received no specific funding for this work.
 
 ## Conflicts of Interest
 
-TODO: State conflicts or "The author declares no conflicts of interest."
+The author declares no conflicts of interest.
 
 ## Data and Code Disclosure Summary
 

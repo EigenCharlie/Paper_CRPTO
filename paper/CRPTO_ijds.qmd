@@ -37,15 +37,16 @@ $\Gamma_{\mathrm{CP}} = 0.187987$, zero violation). The final robust region
 contains `45/45` alpha-safe policies across the evaluated risk, uncertainty, and
 aversion grid, indicating that the result is not a single-point artifact.
 External frozen replications on Prosper marketplace loans and Freddie/Mendeley
-single-family mortgages preserve the conformal gates and produce positive robust
-LP objectives, so the result is not confined to the Lending Club panel.
-Across these external panels the price of robustness is a positive premium that
-grows with the panel default rate (from `+1.0%` to `+9.5%`). The contribution is
-a conformal-robust credit-portfolio decision certificate with a distribution-free
-funded-set risk bound: it connects real credit data, calibrated predictive
-models, robust funding decisions, and a drift harness that regenerates the
-prediction-to-decision chain bit-exactly from frozen artifacts while keeping the
-statistical guarantee boundary explicit.
+single-family mortgages preserve the predeclared global conformal gates and
+produce positive robust LP objectives, so the result is not confined to the
+Lending Club panel. Across the four frozen external applications, the price of
+robustness forms a positive premium series ordered by panel default rate (from
+`+1.0%` to `+9.5%`). The contribution is a conformal-robust
+credit-portfolio decision certificate with a
+distribution-free Markov bound under weighted funded-set validity: it connects
+real credit data, calibrated predictive models, robust funding decisions, and a
+drift harness that regenerates the prediction-to-decision chain bit-exactly from
+frozen artifacts while keeping the statistical guarantee boundary explicit.
 
 **Keywords:** conformal prediction; robust optimization; predict-then-optimize;
 credit risk; portfolio optimization; reproducible data science.
@@ -90,8 +91,9 @@ out-of-time evaluation set of 276,869 loans. The promoted economic policy earns
 $\alpha = 0.01$, and lies inside a robust region where `45/45` evaluated
 policies satisfy the same exact alpha-safe check. The headline result is not a
 single lucky allocation. It is a reproducible bridge from calibrated
-probabilistic learning to robust, auditable credit portfolio choice. To address
-the natural "single dataset" concern without reopening the Lending Club
+probabilistic learning to robust, auditable credit portfolio choice.
+
+To address the natural "single dataset" concern without reopening the Lending Club
 champion, we also freeze two external economic replications: Prosper final-status
 marketplace loans and a Freddie/Mendeley single-family mortgage panel with
 out-of-sample and out-of-time splits. These replications are not new champions;
@@ -101,8 +103,8 @@ usable on different credit products.
 The paper makes five contributions. First, it gives a CRPTO construction for
 credit portfolios: frozen calibrated PD, Mondrian conformal uncertainty, and
 robust budgeted optimization as a post-hoc decision audit. Second, it proves a
-distribution-free funded-set risk bound (Theorem 1) that splits realized
-portfolio loss into the conformal upper-endpoint budget
+distribution-free Markov bound under weighted funded-set validity (Theorem 1)
+that splits realized portfolio loss into the conformal upper-endpoint budget
 $B_u(\alpha) = \tau + (1-\gamma)\,\Gamma_{\mathrm{CP}}(\alpha)$ and the weighted
 miscoverage $V(\alpha)$, with supplement propositions showing that Markov is
 optimal under the stated assumption (A.1) and locating the cluster structure
@@ -112,8 +114,8 @@ scoring, and decision-focused learning. Fourth, it provides an artifact-backed
 empirical study where every table and figure is generated from frozen outputs
 rather than manually transcribed summaries. Fifth, it adds external economic
 replications on Prosper and Freddie/Mendeley, separating the methodological
-claim from one P2P panel. The
-key claim is narrow: CRPTO maps frozen calibrated PD artifacts into a robust
+claim from one P2P panel. The key claim is narrow: CRPTO maps frozen calibrated
+PD artifacts into a robust
 funded set, reports the portfolio-level conformal premium
 $\Gamma_{\mathrm{CP}}$, and verifies exact alpha-safe weighted miscoverage on the
 promoted Lending Club portfolio. The same conformal and LP gates remain viable
@@ -161,7 +163,7 @@ conformal prediction and robust optimization more directly by using conformal
 uncertainty sets in downstream decisions [@johnstone2021; @patel2024;
 @hu2026crc]. CRPTO follows this line, but its empirical emphasis is different:
 the uncertainty set is not an abstract benchmark instance, but a credit-risk
-interval artifact with DVC/MLflow-style lineage, paper tables, and model-risk
+interval artifact with DVC-backed lineage, paper tables, and model-risk
 documentation.
 
 The third foundation is predict-then-optimize and decision-focused learning.
@@ -429,7 +431,7 @@ selection, and never silently upgraded to a guarantee — and the audit does not
 find it slack: the realized $V(0.01) = 0.028875$ exceeds $\alpha = 0.01$, so the
 operative safety level is the weaker $V \leq \sqrt{\alpha}$.
 
-**Theorem 1 (distribution-free funded-set risk bound).**
+**Theorem 1 (distribution-free Markov bound under weighted funded-set validity).**
 Let $B_u(\alpha) = \sum_i w_i u_i(\alpha)$ be the weighted conformal
 upper-endpoint budget of the funded set. Then:
 
@@ -775,13 +777,13 @@ worst funded loan has rank `551`, with zero funded loans outside the top-250,000
 screen. The supplement reports this as an exhaustiveness certificate rather than
 as an unverified shortlist caveat.
 
-![External CRPTO replications preserve the conformal gates and produce positive robust LP value on two materially different credit products.](../reports/crpto/figures/crpto_fig22_external_replication.png){#fig-external-replication width="94%" fig-alt="Two-panel external replication figure. The left panel shows 90 percent and alpha 0.01 coverage for Prosper and Freddie FM48 above target lines; the right panel shows positive robust LP objective values and OOT candidate counts."}
+![External CRPTO replications preserve the predeclared global conformal gates and produce positive robust LP value on two materially different credit products.](../reports/crpto/figures/crpto_fig22_external_replication.png){#fig-external-replication width="94%" fig-alt="Two-panel external replication figure. The left panel shows 90 percent and alpha 0.01 coverage for Prosper and Freddie FM48 above target lines; the right panel shows positive robust LP objective values and OOT candidate counts."}
 
 The external layer also surfaces a result a single-dataset champion cannot show.
 The signed price of robustness--using the same convention as the Lending Club
 field, $(\text{nonrobust}-\text{robust})/\text{nonrobust}$--is a *positive*
-premium under frozen application, and across the cases we can evaluate it
-increases with the panel default rate (Table @tbl-price-of-robustness,
+premium under frozen application, and across the four frozen external
+applications it is ordered by panel default rate (Table @tbl-price-of-robustness,
 Figure @fig-price-scaling). Within Freddie, the high-default red segment pays
 more than green; across datasets, Prosper's `30.92%` default panel pays the
 largest premium. This is a pattern across two datasets -- three Freddie
@@ -809,7 +811,7 @@ remains the Lending Club object.
 `crpto_tableA34_price_of_robustness_cross_dataset.csv`. The selected Lending Club
 champion is `-10.56%` (favorable under selection, not blind application). {#tbl-price-of-robustness}
 
-![The price of robustness scales with panel default risk: the external applications form a positive, monotone series, while the selected Lending Club champion sits below zero as a favorable reference.](../reports/crpto/figures/crpto_fig25_price_of_robustness_scaling.png){#fig-price-scaling width="78%" fig-alt="Line chart on a log-scale default-rate axis: the price of robustness rises from +1.00 percent to +9.46 percent across applications, with Lending Club at -10.56 percent drawn as a reference line below zero."}
+![Across the four frozen external applications, the price of robustness is ordered by panel default risk; the selected Lending Club champion sits below zero as a favorable reference.](../reports/crpto/figures/crpto_fig25_price_of_robustness_scaling.png){#fig-price-scaling width="78%" fig-alt="Line chart on a log-scale default-rate axis: the price of robustness rises from +1.00 percent to +9.46 percent across applications, with Lending Club at -10.56 percent drawn as a reference line below zero."}
 
 # Robustness and Comparators
 
@@ -1025,8 +1027,8 @@ finite-sample conformal layer, and make the optimizer pay attention to the
 upper end of plausible default risk.
 
 The external replications also change how to read the price of robustness. The
-cross-dataset pattern reported above (it increases with panel default risk
-rather than discrimination) matters less as a number than as a reframing: robustness is
+cross-dataset pattern reported above (it is ordered by panel default risk
+rather than discrimination across the four frozen applications) matters less as a number than as a reframing: robustness is
 not a fixed toll but a panel-specific premium that the method measures rather
 than assumes. For a risk committee this turns the governance question from "can
 we afford robustness?" into "how large is the coverage premium on this book?",
@@ -1079,8 +1081,8 @@ exact empirical $\alpha = 0.01$ funded-set audit, and it lies inside a `45/45`
 alpha-safe robust region rather than at a single lucky point. The external
 Prosper and Freddie/Mendeley replications show that the recipe travels beyond
 the Lending Club panel and expose an economically interpretable regularity: the
-price of robustness is a bounded premium that scales with the panel's default
-risk. The contribution is scoped as an auditable post-hoc decision certificate,
+price of robustness is a bounded premium ordered by panel default risk across
+the frozen external applications. The contribution is scoped as an auditable post-hoc decision certificate,
 not a new end-to-end learner or a live-deployment study, and every reported
 number is regenerable from frozen artifacts.
 
