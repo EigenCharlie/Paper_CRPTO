@@ -634,6 +634,20 @@ defaults whose realized outcome exceeds any reasonable conformal endpoint, which
 is why $V$ stays above $\alpha$ and the operative safety level is read at
 $\sqrt{\alpha}$ rather than $\alpha$.
 
+The under-coverage is also not an artifact of the calibration draw. With
+$n_{\mathrm{cal}} = 237{,}584$ calibration loans (and thousands per score-decile
+cell), the split-conformal conditional-coverage result makes the marginal
+coverage Beta-distributed about $1 - \alpha$ with standard deviation
+$\sqrt{\alpha(1-\alpha)/n_{\mathrm{cal}}} \approx 0.0002$ at $\alpha = 0.01$ -- a
+$\pm 0.04$ percentage-point band around the nominal $99\%$
+[@vovk2005; @angelopoulos2023]. The endpoints $u_i(\alpha)$, and with them
+$\Gamma_{\mathrm{CP}}$ and the budget $B_u$, are therefore essentially invariant
+to which loans calibrate; the variability that remains in $V$ is test-side -- the
+funded loans and their realized outcomes, effective size $\approx 126$ -- which
+the bootstrap audit in the supplement (A16) quantifies. The funded-set
+under-coverage is a structural selection effect, not a calibration-partition
+artifact.
+
 The promoted policy is the economic champion inside the exact-safe
 region, not the tightest certificate available. The next table makes that
 choice auditable rather than implicit.
