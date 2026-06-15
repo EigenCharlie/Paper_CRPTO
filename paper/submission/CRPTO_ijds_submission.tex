@@ -614,10 +614,14 @@ surrogate table or visual proxy, and the deterministic part requires no distribu
 assumption. The certificate's pass is the Markov safety check $V(\alpha)\le\sqrt{\alpha}$
 together with zero deterministic violation ($\sum_i w_i Y_i\le B_u(\alpha)$); it is
 \emph{not} a claim of nominal $\alpha$-coverage, which the funded set does not attain
-($V=0.028875>\alpha=0.01$). The miscoverage is also concentrated: $V(\alpha)$ is nearly
-flat across the conformal level (Figure~\ref{fig:alpha-gamma}), so the residual risk
-sits in a few deep-tail defaults that no reasonable $\alpha$ recovers, which is why $V$
-stays above $\alpha$ and the safety level is read at $\sqrt{\alpha}$. It is also not a
+($V=0.028875>\alpha=0.01$). On this binary outcome $V$ has a concrete reading: a
+non-default never misses ($y_i=0\le u_i$) and a default misses unless its endpoint
+reached the PD ceiling $u_i=1$, so $V=0.028875$ is the funded weighted default rate
+($0.032875$) net of the two of nineteen funded defaults the endpoint capped at one.
+Driving $V$ to the nominal $\alpha=0.01$ would require capping most funded defaults at
+$u_i=1$, voiding $\Gamma_{\mathrm{CP}}$ and the economics; this is why $V$ exceeds
+$\alpha$ (a return-seeking funded set has a base default rate well above $1\%$) and the
+safety level is read at $\sqrt{\alpha}$. It is also not a
 calibration-draw artifact: with $n_{\mathrm{cal}}=237{,}584$ calibration loans, the
 split-conformal conditional-coverage result makes the marginal coverage Beta-distributed
 about $1-\alpha$ with standard deviation $\sqrt{\alpha(1-\alpha)/n_{\mathrm{cal}}}\approx

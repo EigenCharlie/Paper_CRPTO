@@ -568,6 +568,22 @@ The concentration pattern is useful for interpretation: most exposure sits in
 C/D loans, D contributes the largest share of the exact `V(alpha = 0.01)`, and
 the high-risk E-G tail is visible but not the hidden driver of the certificate.
 
+On a binary default outcome the metric has an exact reading worth stating. A
+non-default cannot miss (`y_i = 0 <= u_i`), so `V` counts only funded defaults,
+and a funded default misses unless its conformal endpoint reached the PD ceiling
+`u_i = 1`. Of the 19 funded defaults, the `alpha = 0.01` endpoint capped 2 at
+`u_i = 1` (weight `0.004`) and left 17 uncapped (weight `0.028875 = V`);
+equivalently, `V` is the funded weighted default rate (`0.032875`) minus the
+endpoint-capped defaults. The conformal layer's role at the tight `alpha` is
+precisely to inflate the worst endpoints toward one, and `V` measures the
+residual default mass the endpoints did not absorb. This is why `V` tracks the
+funded default rate and exceeds `alpha = 0.01` -- a return-seeking funded set has
+a base default rate well above `1%` -- and why no reweighting of the calibration
+(group-weighted, localized, or multi-distribution) can drive `V` to the nominal
+`alpha` without capping most funded defaults at `u_i = 1`, which would void
+`Gamma_CP` and the economics. The honest guarantee is therefore the
+`sqrt(alpha)` level, with the deterministic identity holding exactly.
+
 ## Why A21--A34 Do Not Strengthen the Main Claim
 
 A21--A34 are designed to make the paper harder to over-read. A21 shows that a

@@ -156,3 +156,34 @@ drift reporting.
   [lo, hi], matching the analytical band").
 - E5/E6/E7 -> supplement ablation/sweep tables that pre-empt method-choice and sparse-cell questions.
 - E3/E4 -> temporal-fold and seed-stability tables (reproducibility/robustness appendix).
+
+---
+
+## 7. Execution log — 2026-06-14
+
+**E1 / E6 resolved analytically from the frozen funded-set artifact (`crpto_tableA7_funded_set_loans.csv`), no protected-stage rerun, no reimplementation risk.**
+
+Sanity: `V(0.01)=0.028875` and `Gamma_CP(0.01)=0.187987` reproduce exactly from A7.
+
+Key finding (binary-outcome reading of `V`): of 341 funded loans, 19 defaulted. A
+non-default cannot miss (`y=0 <= u`); a default misses unless its endpoint reached
+`u=1`. The `alpha=0.01` endpoint capped 2 of 19 defaults at `u=1` (weight 0.004) and
+left 17 uncapped (weight 0.028875 = `V`). So `V` = funded weighted default rate
+(0.032875) minus endpoint-capped defaults.
+
+Consequence for **E1**: no calibration reweighting (group-weighted / localized / MDCP)
+can drive `V` to nominal `alpha=0.01` without capping most funded defaults at `u=1`,
+which voids `Gamma_CP` and the economics. The `sqrt(alpha)` level is the honest
+guarantee. This is a *negative* result for E1 but a stronger, more honest paper
+statement than a re-run would have produced. **Added to the body and supplement.**
+
+Consequence for **E6**: the stored `pd_high_90/95` are two-sided intervals, not
+one-sided endpoints, so a faithful per-`alpha` one-sided curve would need a conformal
+refit; the binary-outcome reading above already explains the flat-`V` behaviour
+without it. Not pursued (reimplementation risk > marginal value).
+
+**E2 / E5 / E7** (calibration bootstrap, partition ablation, calibration size) would
+each confirm the same structural conclusion via a conformal refit; given E1's
+analytical result they are demoted to optional. **E3 / E4** (T1, PD retrain) remain the
+only experiments that could add genuinely new information (temporal-fold and seed
+stability) and still require explicit per-run approval + drift management.
