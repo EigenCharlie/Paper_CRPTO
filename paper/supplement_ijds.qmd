@@ -719,6 +719,18 @@ CRPTO uses reproducibility to make one decision certificate auditable, whereas
 replication-robust analytics markets study how to allocate value across
 strategic data contributors [@falconer2026replication].
 
+**PD stability diagnostics.** Two run-tag diagnostics (`ijds-sensitivity-2026-06-14`,
+run in isolation and separate from the frozen champion) support distributing a frozen
+PD binary rather than a "retrain it yourself" recipe. Retraining the champion
+configuration across three random seeds moves out-of-time AUC within a `0.0006` band,
+with Brier stable to `+/- 0.0001` and ECE near `0.006`: the CatBoost
+non-reproducibility is negligible at the discrimination level, so the frozen binary is
+a faithful representative and the bit-exact certified chain is the right reproducibility
+object. An expanding-window temporal walk-forward keeps internal validation AUC in
+`[0.717, 0.733]`, dipping in the most recent window toward the harder post-2018
+out-of-time regime. Both confirm stability rather than overturning the headline, and
+are reported as diagnostics, not a new champion.
+
 Minimal local checks are:
 
 ```powershell

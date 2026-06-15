@@ -187,3 +187,42 @@ each confirm the same structural conclusion via a conformal refit; given E1's
 analytical result they are demoted to optional. **E3 / E4** (T1, PD retrain) remain the
 only experiments that could add genuinely new information (temporal-fold and seed
 stability) and still require explicit per-run approval + drift management.
+
+## 8. Execution log — E3/E4 run (2026-06-15)
+
+Ran under run tag `ijds-sensitivity-2026-06-14`, fully isolated output paths
+(`models/experiments/ijds-sensitivity-2026-06-14/`), ~12-13 min per full PD training.
+Three frozen artefacts leaked to default paths (decision_threshold.json,
+decision_threshold_v2.json, pd_model_contract.json — git-tracked) plus
+`data/processed/test_predictions.parquet` (DVC out); all restored via
+`git restore` + `dvc checkout`. **Post-restore: validate-champion 8/8, drift-gate
+4/4, dvc status clean — champion intact.**
+
+**E4 — PD seed stability** (champion config, varying `model.params.random_seed`):
+
+| seed | OOT AUC | Brier | ECE |
+|---|---:|---:|---:|
+| 42 | 0.71268 | 0.15459 | 0.00615 |
+| 52 | 0.71227 | 0.15465 | 0.00583 |
+| 62 | 0.71210 | 0.15470 | 0.00597 |
+
+AUC spread 0.00058 (<0.001); Brier 0.1546 +/- 0.0001. The CatBoost non-reproducibility
+across seeds is negligible — confirms that distributing a frozen binary loses no
+discrimination and that the bit-exact certified chain is the right reproducibility object.
+
+**E3 — walk-forward temporal validation** (expanding windows, 80k eval each):
+
+| window | fit rows | validation AUC | best_iter |
+|---|---:|---:|---:|
+| 1 | 200,000 | 0.7332 | 499 |
+| 2 | 372,850 | 0.7330 | 491 |
+| 3 | 545,700 | 0.7173 | 621 |
+
+Internal validation AUC stays in [0.717, 0.733]; the dip in the most recent window
+foreshadows the harder post-2018 OOT regime (the OOT test AUC of 0.7127 is lower still,
+consistent with the deliberately adversarial out-of-time design).
+
+**Verdict:** both confirm stability rather than overturning anything. E4 added to the
+supplement reproducibility appendix; E3 noted as temporal-stability evidence. No body
+change (page budget; lineage offset 0.712 vs headline 0.7139 kept out of the body to
+avoid conflation). T1 experiments are now complete; no further protected runs planned.
