@@ -31,7 +31,8 @@ The current IJDS paper-facing CRPTO body point is the promoted pool93
 finite-grid frontier closure:
 
 - run tag: `champion-reopen-2026-06-19__pool93__ijds-claim-bound-terminal`
-- body/default policy family: `blended_uncertainty`
+- body/default policy mode: `capped_blended_uncertainty` (family
+  `claim_micro_ext_body_cap345`, selected from the consolidated frontier)
 - robust return: `$184,832.48`
 - `V(alpha=0.01)=0.035350`
 - `Gamma_CP(alpha=0.01)=0.162616`
