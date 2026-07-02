@@ -891,6 +891,66 @@
       "sha256": "be6a6e1ca5a2064c009616261aaf0a7664ac286b5513ad42f48b59bd15012462",
       "bytes": 6526,
       "hash_source": "feature_config_pickle_retirement_2026-06-13"
+    },
+    "reports/crpto/tables/crpto_tableA35_pool93_ijds_frontier.csv": {
+      "sha256": "fbaf05312426058a6b7691f696198666ee289374305a3867dd84f589bddb0132",
+      "bytes": 2264,
+      "hash_source": "pool93_ijds_promotion_2026-07-02"
+    },
+    "reports/crpto/tables/crpto_tableA36_pool93_body_funded_grade_audit.csv": {
+      "sha256": "9d02382c22c7bd58fdbb287de43d0ca09714bae1753b4d30eb1609cb1502740f",
+      "bytes": 529,
+      "hash_source": "pool93_ijds_promotion_2026-07-02"
+    },
+    "reports/crpto/tables/crpto_tableA37_pool93_body_tail_risk.csv": {
+      "sha256": "7aef3c85473d0b4d5317e7ccd0d0f627c8a6a039d39314a7cf8ca8b802ee7734",
+      "bytes": 1283,
+      "hash_source": "pool93_ijds_promotion_2026-07-02"
+    },
+    "reports/crpto/tables/crpto_tableA38_pool93_body_cluster_bound_audit.csv": {
+      "sha256": "d35116d725b139698fd12fd11c9a4b64273170b2d43acfd970761a868b971cef",
+      "bytes": 832,
+      "hash_source": "pool93_ijds_promotion_2026-07-02"
+    },
+    "reports/crpto/tables/crpto_tableA39_pool93_body_bootstrap_metrics.csv": {
+      "sha256": "239bb9fb8caec8f8879a21b67c8df3aceab400929ca0e5456d520c501325099e",
+      "bytes": 1697,
+      "hash_source": "pool93_ijds_promotion_2026-07-02"
+    },
+    "reports/crpto/tables/crpto_tableA35_pool93_ijds_frontier.tex": {
+      "sha256": "37b4c4d0d2da6f4dbcae55031c07905a12875776463eecae6cab086dc5e8d6f9",
+      "bytes": 956,
+      "hash_source": "pool93_ijds_promotion_2026-07-02"
+    },
+    "reports/crpto/tables/crpto_tableA36_pool93_body_funded_grade_audit.tex": {
+      "sha256": "20ab4514684f1d2d2cb888be022385d0db771d9fd78b4c87ebff19958e96ad9d",
+      "bytes": 359,
+      "hash_source": "pool93_ijds_promotion_2026-07-02"
+    },
+    "reports/crpto/tables/crpto_tableA37_pool93_body_tail_risk.tex": {
+      "sha256": "20c8772f3ec74a30d64491a895b8cebf8e6a00a18be04eedbe5209cf4ecf14e1",
+      "bytes": 1426,
+      "hash_source": "pool93_ijds_promotion_2026-07-02"
+    },
+    "reports/crpto/tables/crpto_tableA38_pool93_body_cluster_bound_audit.tex": {
+      "sha256": "bb52c1b4d45426a77684c05d98aa032913e1423f7d7fbdb1d2e434f9acf7a9d9",
+      "bytes": 972,
+      "hash_source": "pool93_ijds_promotion_2026-07-02"
+    },
+    "reports/crpto/tables/crpto_tableA39_pool93_body_bootstrap_metrics.tex": {
+      "sha256": "caedb63aadfc3484c203e4db817b193cf50597c3b25949398637cfa22b08e287",
+      "bytes": 1851,
+      "hash_source": "pool93_ijds_promotion_2026-07-02"
+    },
+    "models/experiments/champion_reopen/champion-reopen-2026-06-19__pool93__ijds-claim-bound-terminal/portfolio/pool93_ijds_claim_governance.json": {
+      "sha256": "9a6f566c7d6df96f99cd9ba6192a4d5f154243bfb6a626a195507c39cf0df910",
+      "bytes": 12411,
+      "hash_source": "pool93_ijds_promotion_2026-07-02"
+    },
+    "models/experiments/champion_reopen/champion-reopen-2026-06-19__pool93__ijds-claim-consolidated-definitive/portfolio/pool93_ijds_consolidated_governance.json": {
+      "sha256": "e686f8b0f76c8b3a63351b97ea3761f55fb8921a1c23b051e59904163e8a79de",
+      "bytes": 7996,
+      "hash_source": "pool93_ijds_promotion_2026-07-02"
     }
   },
   "validation_results": {
@@ -4255,6 +4315,68 @@
       "reports/crpto/tables/crpto_tableA5_decision_aware_selector.tex",
       "reports/crpto/tables/crpto_tableA9_strict_temporal_holdout.csv",
       "reports/crpto/tables/crpto_tableA9_strict_temporal_holdout.tex"
+    ]
+  },
+  "pool93_ijds_promotion": {
+    "promoted_at_utc": "2026-07-02T06:05:17.323703+00:00",
+    "note": "Pool93 finite-grid body claim promoted for the IJDS paper. The champion_metrics block above remains the frozen ijds-rebaseline-2026-06-07 upstream chain (PD champion, Mondrian conformal intervals, bound-aware 276k search); pool93 is a deterministic policy-grid re-evaluation over the same frozen conformal intervals and does not regenerate any upstream artifact.",
+    "terminal_run_tag": "champion-reopen-2026-06-19__pool93__ijds-claim-bound-terminal",
+    "consolidated_run_tags": [
+      "champion-reopen-2026-06-19__pool93__ijds-claim-expanded-refine",
+      "champion-reopen-2026-06-19__pool93__ijds-claim-micro-refine",
+      "champion-reopen-2026-06-19__pool93__ijds-claim-micro-ext",
+      "champion-reopen-2026-06-19__pool93__ijds-claim-bound-closure",
+      "champion-reopen-2026-06-19__pool93__ijds-claim-bound-floor-closure",
+      "champion-reopen-2026-06-19__pool93__ijds-claim-bound-terminal"
+    ],
+    "paper_body_point": {
+      "role": "body/default balanced return-bound point",
+      "run_tag": "champion-reopen-2026-06-19__pool93__ijds-claim-micro-ext",
+      "policy_family": "claim_micro_ext_body_cap345",
+      "policy_mode": "capped_blended_uncertainty",
+      "risk_tolerance": 0.1715,
+      "gamma": 0.5475,
+      "delta_cap_quantile": 0.975,
+      "uncertainty_aversion": 0.05,
+      "realized_total_return": 184832.475845,
+      "return_floor_surplus": 14367.935845,
+      "alpha01_gamma_cp": 0.162616,
+      "alpha01_weighted_miscoverage_V": 0.03535,
+      "endpoint_budget_upper_alpha01": 0.24508374,
+      "markov_cap_alpha01": 0.34508374,
+      "alpha_grid_pass": "8/8",
+      "n_funded_mean": 320.5,
+      "declared_return_floor": 170464.54,
+      "bootstrap_return_interval_p025_p975": [
+        167963.197412619,
+        198650.46734276
+      ]
+    },
+    "frontier_counts": {
+      "raw_rows": 51678,
+      "deduped_semantic_policies": 50010,
+      "duplicate_rows_removed": 1668,
+      "eligible_all_alpha_return_floor_policies": 27508,
+      "nonpass_or_below_floor_policies": 22502
+    },
+    "terminal_counts": {
+      "n_policies": 37068,
+      "n_all_alpha_passers": 37068,
+      "n_all_alpha_passers_above_return_floor": 14814
+    },
+    "protected_artifacts": [
+      "reports/crpto/tables/crpto_tableA35_pool93_ijds_frontier.csv",
+      "reports/crpto/tables/crpto_tableA36_pool93_body_funded_grade_audit.csv",
+      "reports/crpto/tables/crpto_tableA37_pool93_body_tail_risk.csv",
+      "reports/crpto/tables/crpto_tableA38_pool93_body_cluster_bound_audit.csv",
+      "reports/crpto/tables/crpto_tableA39_pool93_body_bootstrap_metrics.csv",
+      "reports/crpto/tables/crpto_tableA35_pool93_ijds_frontier.tex",
+      "reports/crpto/tables/crpto_tableA36_pool93_body_funded_grade_audit.tex",
+      "reports/crpto/tables/crpto_tableA37_pool93_body_tail_risk.tex",
+      "reports/crpto/tables/crpto_tableA38_pool93_body_cluster_bound_audit.tex",
+      "reports/crpto/tables/crpto_tableA39_pool93_body_bootstrap_metrics.tex",
+      "models/experiments/champion_reopen/champion-reopen-2026-06-19__pool93__ijds-claim-bound-terminal/portfolio/pool93_ijds_claim_governance.json",
+      "models/experiments/champion_reopen/champion-reopen-2026-06-19__pool93__ijds-claim-consolidated-definitive/portfolio/pool93_ijds_consolidated_governance.json"
     ]
   }
 }
