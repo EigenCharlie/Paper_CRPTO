@@ -7,6 +7,8 @@ page-layout: article
 
 Esta página es el **índice maestro** del CRPTO. Cumple un rol específico que ningún chapter narrativo cumple: dar a un revisor (académico, regulatorio o interno) la capacidad de tomar cualquier claim del paper, encontrar el artefacto exacto que lo soporta, identificar el script generador y verificar el guardrail que mantiene la coherencia. Es el contrato de trazabilidad operativa del proyecto.
 
+Nota dual-tag (post-promoción pool93, 2026-07-02): los claims C1--C7 de esta página trazan la **cadena upstream congelada** (rebaseline `ijds-rebaseline-2026-06-07`, retorno `$170,464.54`, hoy floor declarado). El body claim del paper IJDS es el punto pool93 (`$184,832.48`, `8/8` alpha grid), anclado en `pool93_ijds_consolidated_governance.json` y las tablas A35--A39, con guardrail `tests/test_pool93_body_claim_sync.py`.
+
 | Claim del paper | Artefacto que lo ancla | Guardrail que lo protege | Lectura rápida |
 |---|---|---|---|
 | La PD es insumo calibrado, no contribución principal. | `models/pd_canonical.*`, `crpto_table0_key_metrics.csv` | Manifest + final-sync tests | La base predictiva es estable y trazable. |

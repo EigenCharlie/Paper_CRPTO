@@ -2,6 +2,8 @@
 
 Los resultados del CRPTO deben leerse como una prueba de viabilidad del marco, no como un torneo aislado de AUC. La evidencia relevante está en la interacción entre incertidumbre y decisión.
 
+Nota dual-tag (post-promoción pool93, 2026-07-02): este capítulo documenta la **cadena upstream congelada** (rebaseline `ijds-rebaseline-2026-06-07`, retorno `$170,464.54`), que hoy actúa como floor declarado. El body claim del paper IJDS es el punto pool93 (`$184,832.48`, `V=0.035350`, `Γ_CP=0.162616`, Markov cap `0.345084`, `8/8` alpha grid) sobre los mismos intervalos conformal congelados; ver tablas A35--A39 y `tests/test_pool93_body_claim_sync.py`.
+
 ### Base predictiva e incertidumbre
 El pipeline base sobre el champion monotónico confirmatorio sigue aportando la base regulatoria y probabilística del sistema:
 
