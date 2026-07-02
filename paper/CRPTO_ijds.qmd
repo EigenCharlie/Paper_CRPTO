@@ -165,10 +165,16 @@ decisions while keeping the uncertainty-to-action contract explicit
 [@bertsimas2018datadriven; @bertsimas2020prescriptive]. Recent work connects
 conformal prediction and robust optimization more directly by using conformal
 uncertainty sets in downstream decisions [@johnstone2021; @patel2024;
-@hu2026crc]. CRPTO follows this line, but its empirical emphasis is different:
-the uncertainty set is not an abstract benchmark instance, but a credit-risk
-interval artifact with DVC-backed lineage, paper tables, and model-risk
-documentation.
+@hu2026crc]. That line certifies the uncertainty set *before* the decision:
+coverage of the conformal region is the guarantee, and the downstream decision
+inherits it. CRPTO follows this line but audits the other side of the decision
+as well: after the optimizer selects a funded set, the realized weighted
+miscoverage $V(\alpha)$ and the deterministic budget identity of Theorem 1 are
+evaluated exactly on that funded set, so the certificate concerns the
+allocation actually purchased rather than the input set alone. Its empirical
+emphasis also differs: the uncertainty set is not an abstract benchmark
+instance, but a credit-risk interval artifact with DVC-backed lineage, paper
+tables, and model-risk documentation.
 
 The third foundation is predict-then-optimize and decision-focused learning.
 IJDS work on causal decision making sharpens the same warning: once an estimate
@@ -641,6 +647,18 @@ alpha grid and exceed the declared return floor. The terminal endpoint search
 alone evaluates 37,068 policies and 296,544 exact alpha checks, with
 37,068/37,068 policies passing all eight alpha levels.
 
+The provenance of the frontier deserves one explicit sentence, because two
+certified numbers coexist in the project's governance record. The declared
+return floor `$170,464.54` is itself the realized return of the previously
+certified bound-aware allocation on the same frozen chain, retained as the
+frozen upstream baseline; the pool93 frontier is a deterministic re-evaluation
+of a pre-declared finite policy grid over the *same* frozen PD artifacts and
+Mondrian conformal intervals, so no upstream artifact (model, calibrator, or
+interval) was regenerated when the body point moved from the floor to
+`$184,832.48`. The earlier certificate is not discarded: it becomes the floor
+that every eligible frontier policy must beat, which is why the frontier is
+reported with the floor surplus rather than as a replacement champion.
+
 | Policy role | Source | Realized return | $V(0.01)$ | $\Gamma_{\mathrm{CP}}$ | Markov cap | Pass |
 |---|---|---:|---:|---:|---:|:---:|
 | Minimum Markov-cap endpoint | terminal | `$170,467.27` | `0.031875` | `0.095719` | `0.273036` | `8/8` |
@@ -925,6 +943,14 @@ validation plan. The external-replication summaries are stored locally under
 `reports/crpto/multidataset/source/` and regenerated into Tables A25--A34 and
 Figures 22--25 by `scripts/build_multidataset_external_replication.py`, so the
 submission does not depend on exploratory paths or browser sessions.
+
+Governance keeps the two certified results distinguishable. The frozen
+upstream promotion record continues to describe the bound-aware baseline whose
+realized return defines the declared return floor, while the pool93 governance
+sidecars are the authoritative machine-readable source for the body point and
+its frontier; guardrail tests assert that every body-claim number printed in
+this manuscript and the supplement matches those sidecar artifacts, so the two
+records cannot silently diverge.
 
 The certificate chain itself carries a stronger, verified property: an
 opt-in drift harness recomputes the promoted Mondrian conformal intervals

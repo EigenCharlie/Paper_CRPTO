@@ -227,7 +227,12 @@ transcribed table.
 ## Pool93 Finite-Grid Frontier Closure (A35)
 
 The pool93 closure replaces single-policy reporting with a declared finite-grid
-frontier. The consolidated artifact deduplicates 51,678 raw rows into 50,010
+frontier. The declared return floor `$170,464.54` is the realized return of the
+previously certified bound-aware allocation on the frozen upstream chain; the
+frontier re-evaluates a pre-declared finite policy grid deterministically over
+the *same* frozen PD artifacts and Mondrian conformal intervals, so promoting
+the body point regenerates no upstream artifact. The consolidated artifact
+deduplicates 51,678 raw rows into 50,010
 semantic policies; 27,508 policies both pass the declared alpha grid and exceed
 the return floor. The terminal endpoint run evaluates 37,068 policies and
 296,544 exact alpha checks, with 37,068/37,068 all-alpha passers. The alpha grid
