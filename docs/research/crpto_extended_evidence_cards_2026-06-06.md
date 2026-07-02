@@ -9,7 +9,8 @@ workspace, and not as a promotion protocol.
 
 The rule is deliberately conservative:
 
-1. CRPTO keeps the frozen IJDS champion and the current funded-set claim.
+1. CRPTO keeps the promoted pool93 IJDS body point and the current funded-set
+   claim.
 2. Evidence cards can strengthen thesis chapters, appendix language, reviewer
    defenses and future-work gates.
 3. Evidence cards do not reopen the champion, add heavy solver dependencies, or
@@ -18,6 +19,24 @@ The rule is deliberately conservative:
    artifact sink and stop rule inside this repository.
 
 Canonical tables live in `reports/crpto/extended/`.
+
+## Post-Pool93 IJDS Closure
+
+After the pool93 closure, the IJDS manuscript should not import the full
+sequential-decision laboratory as a second center of gravity. The paper-facing
+surface is now:
+
+- **Body:** pool93 A35 return-bound frontier, exact funded-set certificate and
+  Theorem 1 under weighted funded-set validity.
+- **Supplement:** A19 regret-auditability comparator, A20--A24 robustness and
+  source diagnostics, and A35--A39 selected-allocation pool93 audits.
+- **Submission package:** claim matrix and reproduction notes that preserve the
+  A19 SPO+ numbering rule and the A35--A39 pool93 closure.
+- **Thesis / extended evidence:** the full DFL, FICO-proxy, IFRS9/SICR,
+  CRC/CROMS-lite and source-governance material below.
+
+This means the extended cards remain useful, but none of them replaces A35--A39
+or adds a hidden promotion criterion.
 
 ## Card Register
 
@@ -161,7 +180,7 @@ Canonical tables:
 | surface | action |
 |---|---|
 | IJDS body | No change. The body remains CRPTO: calibrated PD, conformal uncertainty, robust policy and funded-set certificate. |
-| IJDS supplement | Only compact comparator/limitation language if needed. |
+| IJDS supplement | Already carries the compact comparator/limitation language through A19--A39. |
 | Quarto CRPTO book | Add these cards to the controlled appendix and thesis/future-work map. |
 | Master's thesis | Use the full evidence-card register to show breadth, maturity, negative results and stop rules. |
 | Future experiments | Reopen only from `reports/crpto/extended/crpto_extended_future_experiment_gate_register_2026-05-19.csv`. |

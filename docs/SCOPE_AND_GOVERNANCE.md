@@ -27,7 +27,23 @@ CRPTO does not cover:
 
 ## Frozen champion contract
 
-The official IJDS CRPTO baseline is:
+The current IJDS paper-facing CRPTO body point is the promoted pool93
+finite-grid frontier closure:
+
+- run tag: `champion-reopen-2026-06-19__pool93__ijds-claim-bound-terminal`
+- body/default policy family: `blended_uncertainty`
+- robust return: `$184,832.48`
+- `V(alpha=0.01)=0.035350`
+- `Gamma_CP(alpha=0.01)=0.162616`
+- Markov cap at `alpha=0.01`: `0.345084`
+- exact alpha violation: `0.0`
+- declared alpha-grid pass: `8/8`
+- main paper-facing artifacts: A35 finite-grid frontier, A36 funded-set grade
+  audit, A37 selected-allocation tail-risk repricing, A38 cluster-bound audit,
+  and A39 fixed-allocation bootstrap diagnostic.
+
+The previous IJDS rebaseline is retained as historical provenance, not as the
+active body claim:
 
 - run tag: `ijds-rebaseline-2026-06-07`
 - policy: `bound_aware_276k_economic_champion`
@@ -37,7 +53,7 @@ The official IJDS CRPTO baseline is:
 - exact pass: `true`
 - robust region: `45/45`
 
-The previous run tag `paper-thesis-final-economic-2026-04-06` is retained as
+The older run tag `paper-thesis-final-economic-2026-04-06` is retained as
 historical provenance, not as the current manifest baseline.
 
 Do not overwrite these protected files without an explicit revalidation plan:
@@ -48,6 +64,13 @@ Do not overwrite these protected files without an explicit revalidation plan:
 - `models/conformal_policy_status.json`
 - `data/processed/conformal_intervals_mondrian.parquet`
 - `data/processed/portfolio_bound_aware/rank1_alpha01_bound_aware_276k_full_2026-04-05-1734/`
+- `reports/crpto/tables/crpto_tableA35_pool93_ijds_frontier.csv`
+- `reports/crpto/tables/crpto_tableA36_pool93_body_funded_grade_audit.csv`
+- `reports/crpto/tables/crpto_tableA37_pool93_body_tail_risk.csv`
+- `reports/crpto/tables/crpto_tableA38_pool93_body_cluster_bound_audit.csv`
+- `reports/crpto/tables/crpto_tableA39_pool93_body_bootstrap_metrics.csv`
+- `models/experiments/champion_reopen/champion-reopen-2026-06-19__pool93__ijds-claim-consolidated-definitive/portfolio/pool93_ijds_consolidated_governance.json`
+- `models/experiments/champion_reopen/champion-reopen-2026-06-19__pool93__ijds-claim-bound-terminal/portfolio/pool93_ijds_claim_governance.json`
 - `EXTRACTION_MANIFEST.json`
 
 ## Safe work

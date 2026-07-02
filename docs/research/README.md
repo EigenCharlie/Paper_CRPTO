@@ -20,8 +20,15 @@ perenne y lo que el código lee/escribe.
 - `crpto_bound_tightening_experiment_2026-06-11.md` — registro del menú de
   bounds A21 (Cantelli/Bennett/Bernstein + la fila agnóstica que prueba Markov
   óptimo). Generado por `scripts/build_bound_tightening_audit.py`.
-- `ijds_rebaseline_2026-06-07.md` — registro del run-tag congelado vigente
-  (`ijds-rebaseline-2026-06-07`).
+- `pool93_tail_risk_closeout_2026-07-02.md` — cierre A37--A39 para la
+  asignacion pool93 seleccionada: tail-risk repricing, cluster-bound y
+  bootstrap fijo.
+- `paper4_crpto_crosswalk_2026-07-02.md` — decision autocontenida sobre que
+  evidencia extendida entra al paper IJDS, que queda en supplement y que queda
+  en tesis/future work.
+- `ijds_rebaseline_2026-06-07.md` — registro historico del rebaseline previo
+  (`ijds-rebaseline-2026-06-07`), retenido como provenance despues del cierre
+  pool93.
 - `literature_reference_audit_2026-06-14.md` — auditoría de evidencia local de
   lectura para las referencias citadas en el cuerpo IJDS.
 
