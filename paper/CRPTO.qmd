@@ -42,8 +42,24 @@ La version larga y sus apendices estan en `book/`.
 
 # Artefactos principales
 
+Esquema dual-tag: el body claim del paper vive en los sidecars pool93; la
+cadena upstream congelada (rebaseline 2026-06-07) define el return floor
+declarado. `crpto_table0_key_metrics.csv` y `final_project_promotion.json`
+documentan esa cadena historica, no el body point.
+
+Body claim pool93 (autoritativos):
+
+- `models/experiments/champion_reopen/champion-reopen-2026-06-19__pool93__ijds-claim-consolidated-definitive/portfolio/pool93_ijds_consolidated_governance.json`
+- `models/experiments/champion_reopen/champion-reopen-2026-06-19__pool93__ijds-claim-bound-terminal/portfolio/pool93_ijds_claim_governance.json`
+- `reports/crpto/tables/crpto_tableA35_pool93_ijds_frontier.csv` (y A36--A39)
+
+Cadena upstream congelada (historica, return floor):
+
 - `models/final_project_promotion.json`
 - `models/champion_portfolio_policy.json`
 - `reports/crpto/tables/crpto_table0_key_metrics.csv`
+
+Figuras de entrada:
+
 - `reports/crpto/figures/crpto_fig1_journal_pipeline.png`
 - `reports/crpto/figures/crpto_fig12_crpto_conceptual_pipeline.png`
