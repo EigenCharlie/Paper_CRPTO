@@ -1,0 +1,296 @@
+{
+  "generated_at_utc": "2026-07-02T05:15:13.351490+00:00",
+  "run_tag": "champion-reopen-2026-06-19__pool93__ijds-claim-bound-terminal",
+  "source_paths": {
+    "leaderboard": "/mnt/c/Users/carlos/Documents/Paper_CRPTO/data/processed/experiments/champion_reopen/champion-reopen-2026-06-19__pool93__ijds-claim-bound-terminal/portfolio/pool93_ijds_local_refinement_leaderboard.parquet",
+    "bound_eval": "/mnt/c/Users/carlos/Documents/Paper_CRPTO/data/processed/experiments/champion_reopen/champion-reopen-2026-06-19__pool93__ijds-claim-bound-terminal/portfolio/pool93_ijds_local_refinement_bound_eval.parquet",
+    "manifest": "/mnt/c/Users/carlos/Documents/Paper_CRPTO/models/experiments/champion_reopen/champion-reopen-2026-06-19__pool93__ijds-claim-bound-terminal/portfolio/pool93_ijds_local_refinement_manifest.json",
+    "status": "/mnt/c/Users/carlos/Documents/Paper_CRPTO/models/experiments/champion_reopen/champion-reopen-2026-06-19__pool93__ijds-claim-bound-terminal/portfolio/runtime_status.json"
+  },
+  "runtime_status": {
+    "stage_name": "pool93_ijds_local_refinement",
+    "phase": "selection_complete",
+    "state": "completed",
+    "updated_at_utc": "2026-07-02T05:11:13.314893+00:00",
+    "run_tag": "champion-reopen-2026-06-19__pool93__ijds-claim-bound-terminal",
+    "total_checks": 296544,
+    "completed_checks": 296544,
+    "completed_checks_at_start": 171225,
+    "completed_checks_this_run": 125319,
+    "pct_complete": 1.0,
+    "elapsed_sec": 105457.919905855,
+    "eta_sec": 0.0,
+    "n_policies": 37068,
+    "n_all_alpha_passers": 37068,
+    "n_all_alpha_passers_above_return_floor": 14814,
+    "claim_summary_path": "/mnt/c/Users/carlos/Documents/Paper_CRPTO/models/experiments/champion_reopen/champion-reopen-2026-06-19__pool93__ijds-claim-bound-terminal/portfolio/pool93_ijds_local_refinement_claim_summary.json",
+    "leaderboard_path": "/mnt/c/Users/carlos/Documents/Paper_CRPTO/data/processed/experiments/champion_reopen/champion-reopen-2026-06-19__pool93__ijds-claim-bound-terminal/portfolio/pool93_ijds_local_refinement_leaderboard.parquet"
+  },
+  "claim_summary": {
+    "schema_version": "2026-04-05.2",
+    "generated_at_utc": "2026-07-02T05:15:13.342632+00:00",
+    "declared_return_floor": 170464.54,
+    "finite_grid_policy": {
+      "alpha_grid": [
+        0.01,
+        0.03,
+        0.05,
+        0.07,
+        0.1,
+        0.12,
+        0.15,
+        0.2
+      ],
+      "alpha_grid_size": 8,
+      "alpha_grid_semantics": "finite_predeclared_grid; all-alpha pass counts only the listed levels and is not a universal alpha or conditional-coverage guarantee",
+      "region_semantics": "finite_policy_grid; candidate denominators describe evaluated policies, not a continuous robust region"
+    },
+    "claim_selection_protocol": {
+      "body_default": "balanced_return_bound_claim",
+      "frontier_endpoints": [
+        "max_return_claim",
+        "best_gamma_cp_return_floor_claim",
+        "best_weighted_miscoverage_return_floor_claim"
+      ],
+      "required_filters": [
+        "alpha01_exact_pass",
+        "all_alpha_pass over the finite alpha_grid",
+        "return_floor_surplus >= 0 for declared-return-floor claims"
+      ],
+      "balanced_score": "0.40 * normalized return surplus + 0.40 * normalized inverse alpha01 Markov loss cap + 0.20 * normalized inverse weighted_miscoverage_V among all-alpha above-return-floor candidates",
+      "promotion_caveat": "Realized-return maxima are frontier endpoints; paper promotion should prefer a declared return-bound lens unless the manuscript explicitly frames the point as an economic endpoint."
+    },
+    "n_policies": 37068,
+    "n_all_alpha_passers": 37068,
+    "n_all_alpha_passers_above_return_floor": 14814,
+    "max_return_claim": {
+      "claim_rank": 1,
+      "local_candidate_id": 1,
+      "local_family": "anchor_policy",
+      "anchor_rank": 96,
+      "source_reason": "source_exact_max_return",
+      "risk_tolerance": 0.16,
+      "policy_mode": "segment_relative_tail_blended_uncertainty",
+      "gamma": 0.45,
+      "delta_cap_quantile": 1.0,
+      "tail_focus_quantile": 1.0,
+      "uncertainty_aversion": 0.1,
+      "alpha01_realized_total_return": 213593.775,
+      "return_floor_surplus": 43129.234999999986,
+      "alpha01_gamma_cp": 0.467906,
+      "alpha01_weighted_miscoverage_V": 0.0851,
+      "alpha01_endpoint_budget_upper": 0.4173483,
+      "alpha01_markov_loss_cap": 0.5173483,
+      "alpha01_weighted_pd_true": 0.0851,
+      "alpha01_empirical_coverage_funded": 0.906,
+      "alpha_exact_pass_count": 8,
+      "alpha_exact_check_count": 8,
+      "alpha_mean_gamma_cp": 0.4287065,
+      "alpha_mean_weighted_miscoverage_V": 0.085575,
+      "n_funded_mean": 232.125,
+      "allocator_backends": "highspy"
+    },
+    "best_gamma_cp_return_floor_claim": {
+      "claim_rank": 14767,
+      "local_candidate_id": 10660,
+      "local_family": "claim_bound_terminal_ultra_low_cap",
+      "anchor_rank": 219,
+      "source_reason": "terminal_cap_threshold_search",
+      "risk_tolerance": 0.16825,
+      "policy_mode": "blended_uncertainty",
+      "gamma": 0.95,
+      "delta_cap_quantile": 1.0,
+      "tail_focus_quantile": 1.0,
+      "uncertainty_aversion": 0.6,
+      "alpha01_realized_total_return": 170467.268819,
+      "return_floor_surplus": 2.7288189999817405,
+      "alpha01_gamma_cp": 0.095719,
+      "alpha01_weighted_miscoverage_V": 0.031875,
+      "alpha01_endpoint_budget_upper": 0.17303595000000002,
+      "alpha01_markov_loss_cap": 0.27303595,
+      "alpha01_weighted_pd_true": 0.031875,
+      "alpha01_empirical_coverage_funded": 0.9484,
+      "alpha_exact_pass_count": 8,
+      "alpha_exact_check_count": 8,
+      "alpha_mean_gamma_cp": 0.09490475,
+      "alpha_mean_weighted_miscoverage_V": 0.034375,
+      "n_funded_mean": 311.125,
+      "allocator_backends": "highspy"
+    },
+    "best_weighted_miscoverage_return_floor_claim": {
+      "claim_rank": 9529,
+      "local_candidate_id": 5503,
+      "local_family": "claim_bound_terminal_ultra_low_cap",
+      "anchor_rank": 219,
+      "source_reason": "terminal_cap_threshold_search",
+      "risk_tolerance": 0.1675,
+      "policy_mode": "blended_uncertainty",
+      "gamma": 0.925,
+      "delta_cap_quantile": 1.0,
+      "tail_focus_quantile": 1.0,
+      "uncertainty_aversion": 0.6,
+      "alpha01_realized_total_return": 171006.195983,
+      "return_floor_surplus": 541.6559830000042,
+      "alpha01_gamma_cp": 0.09719,
+      "alpha01_weighted_miscoverage_V": 0.031875,
+      "alpha01_endpoint_budget_upper": 0.17478925,
+      "alpha01_markov_loss_cap": 0.27478925,
+      "alpha01_weighted_pd_true": 0.031875,
+      "alpha01_empirical_coverage_funded": 0.9484,
+      "alpha_exact_pass_count": 8,
+      "alpha_exact_check_count": 8,
+      "alpha_mean_gamma_cp": 0.096433,
+      "alpha_mean_weighted_miscoverage_V": 0.034875,
+      "n_funded_mean": 311.125,
+      "allocator_backends": "highspy"
+    },
+    "balanced_return_bound_claim": {
+      "claim_rank": 9530,
+      "local_candidate_id": 5504,
+      "local_family": "claim_bound_terminal_ultra_low_cap",
+      "anchor_rank": 219,
+      "source_reason": "terminal_cap_threshold_search",
+      "risk_tolerance": 0.1675,
+      "policy_mode": "capped_blended_uncertainty",
+      "gamma": 0.925,
+      "delta_cap_quantile": 0.95,
+      "tail_focus_quantile": 1.0,
+      "uncertainty_aversion": 0.6,
+      "alpha01_realized_total_return": 171006.195983,
+      "return_floor_surplus": 541.6559830000042,
+      "alpha01_gamma_cp": 0.09719,
+      "alpha01_weighted_miscoverage_V": 0.031875,
+      "alpha01_endpoint_budget_upper": 0.17478925,
+      "alpha01_markov_loss_cap": 0.27478925,
+      "alpha01_weighted_pd_true": 0.031875,
+      "alpha01_empirical_coverage_funded": 0.9484,
+      "alpha_exact_pass_count": 8,
+      "alpha_exact_check_count": 8,
+      "alpha_mean_gamma_cp": 0.096433,
+      "alpha_mean_weighted_miscoverage_V": 0.034875,
+      "return_score": 0.012556358804968686,
+      "bound_score": 0.992823531024936,
+      "v_score": 1.0,
+      "ijds_balanced_score": 0.6021519559319619,
+      "n_funded_mean": 311.125,
+      "allocator_backends": "highspy"
+    },
+    "by_family": {
+      "anchor_policy": {
+        "n_policies": 3,
+        "n_all_alpha_passers": 3,
+        "all_alpha_pass_rate": 1.0,
+        "best_return": 213593.775,
+        "min_gamma_cp_above_return_floor": 0.204627,
+        "min_v_above_return_floor": 0.04455
+      },
+      "claim_bound_terminal_return_recovery": {
+        "n_policies": 12792,
+        "n_all_alpha_passers": 12792,
+        "all_alpha_pass_rate": 1.0,
+        "best_return": 173314.040806,
+        "min_gamma_cp_above_return_floor": 0.101206,
+        "min_v_above_return_floor": 0.033875
+      },
+      "claim_bound_terminal_ultra_low_cap": {
+        "n_policies": 24273,
+        "n_all_alpha_passers": 24273,
+        "all_alpha_pass_rate": 1.0,
+        "best_return": 172200.060624,
+        "min_gamma_cp_above_return_floor": 0.095719,
+        "min_v_above_return_floor": 0.031875
+      }
+    },
+    "by_alpha": {
+      "0.01": {
+        "n_checks": 37068,
+        "pass_rate": 1.0,
+        "max_violation": 0.0,
+        "mean_gamma_cp": 0.10158380125714903,
+        "mean_weighted_miscoverage_V": 0.034114049206863055
+      },
+      "0.03": {
+        "n_checks": 37068,
+        "pass_rate": 1.0,
+        "max_violation": 0.0,
+        "mean_gamma_cp": 0.10151179648214094,
+        "mean_weighted_miscoverage_V": 0.0342320325887558
+      },
+      "0.05": {
+        "n_checks": 37068,
+        "pass_rate": 1.0,
+        "max_violation": 0.0,
+        "mean_gamma_cp": 0.10115224592640552,
+        "mean_weighted_miscoverage_V": 0.034459640093881506
+      },
+      "0.07": {
+        "n_checks": 37068,
+        "pass_rate": 1.0,
+        "max_violation": 0.0,
+        "mean_gamma_cp": 0.10043813947340025,
+        "mean_weighted_miscoverage_V": 0.03518292554224668
+      },
+      "0.1": {
+        "n_checks": 37068,
+        "pass_rate": 1.0,
+        "max_violation": 0.0,
+        "mean_gamma_cp": 0.10014187004963851,
+        "mean_weighted_miscoverage_V": 0.03562576518830258
+      },
+      "0.12": {
+        "n_checks": 37068,
+        "pass_rate": 1.0,
+        "max_violation": 0.0,
+        "mean_gamma_cp": 0.09999034876443294,
+        "mean_weighted_miscoverage_V": 0.03595859204704866
+      },
+      "0.15": {
+        "n_checks": 37068,
+        "pass_rate": 1.0,
+        "max_violation": 0.0,
+        "mean_gamma_cp": 0.09999204799287796,
+        "mean_weighted_miscoverage_V": 0.036054244928239984
+      },
+      "0.2": {
+        "n_checks": 37068,
+        "pass_rate": 1.0,
+        "max_violation": 0.0,
+        "mean_gamma_cp": 0.10004157372936225,
+        "mean_weighted_miscoverage_V": 0.036254592478687814
+      }
+    },
+    "interpretation": {
+      "max_return_claim": "Use when the paper emphasizes certified economic return.",
+      "best_gamma_cp_return_floor_claim": "Use when the paper emphasizes a tighter conformal robustness budget while preserving the declared return floor.",
+      "best_weighted_miscoverage_return_floor_claim": "Use when the paper emphasizes lower realized weighted miscoverage while preserving the declared return floor.",
+      "balanced_return_bound_claim": "Use as the default IJDS narrative if return and bound should be presented as a frontier rather than a single leaderboard point."
+    }
+  },
+  "claim_hierarchy": {
+    "status": "final",
+    "paper_body_candidate": "balanced_return_bound_claim",
+    "appendix_frontier_candidates": [
+      "max_return_claim",
+      "best_gamma_cp_return_floor_claim",
+      "best_weighted_miscoverage_return_floor_claim"
+    ],
+    "do_not_claim": [
+      "universal alpha robustness beyond the finite alpha grid",
+      "continuous-region robustness beyond evaluated policies",
+      "nominal funded-set alpha coverage when V(alpha) exceeds alpha",
+      "prospective live-selection validity from retrospective OOT selection"
+    ],
+    "promotion_gate": [
+      "run state completed",
+      "selected claim passes all alpha levels in finite_grid_policy.alpha_grid",
+      "zero violation at alpha=0.01",
+      "nonnegative return_floor_surplus for declared-return-floor claims",
+      "manuscript labels max-return point as an economic frontier endpoint if it is used"
+    ],
+    "current_counts": {
+      "n_policies": 37068,
+      "n_all_alpha_passers": 37068,
+      "n_all_alpha_passers_above_return_floor": 14814
+    }
+  }
+}
