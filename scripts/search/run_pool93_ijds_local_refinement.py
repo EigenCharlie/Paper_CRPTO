@@ -58,14 +58,12 @@ STAGE_NAME = "pool93_ijds_local_refinement"
 DECLARED_RETURN_FLOOR = 170464.54
 DEFAULT_ALPHA_GRID = [0.01, 0.03, 0.05, 0.07, 0.10, 0.12, 0.15, 0.20]
 DEFAULT_SOURCE_BOUND_EVAL = (
-    ROOT
-    / "data/processed/experiments/champion_reopen/"
+    ROOT / "data/processed/experiments/champion_reopen/"
     "champion-reopen-2026-06-19__hpo-wave1__pool93__portfolio-stage1-fast1-claim-26-06/"
     "portfolio/portfolio_bound_aware_bound_eval_highspy.parquet"
 )
 DEFAULT_SOURCE_SELECTION = (
-    ROOT
-    / "models/experiments/champion_reopen/"
+    ROOT / "models/experiments/champion_reopen/"
     "champion-reopen-2026-06-19__hpo-wave1__pool93__portfolio-stage1-fast1-claim-26-06/"
     "portfolio/portfolio_bound_aware_selection_highspy.json"
 )
@@ -113,7 +111,9 @@ def _coerce_int_grid(raw: str | None, fallback: list[int]) -> list[int]:
     return values or list(fallback)
 
 
-def _round_grid(values: list[float], *, lo: float | None = None, hi: float | None = None) -> list[float]:
+def _round_grid(
+    values: list[float], *, lo: float | None = None, hi: float | None = None
+) -> list[float]:
     clean: set[float] = set()
     for value in values:
         v = float(value)
@@ -714,10 +714,36 @@ def _generate_candidate_grid(
         gamma_offsets = [-0.05, -0.025, -0.01, 0.0, 0.01, 0.025, 0.05]
         aversions = [0.05, 0.075, 0.10, 0.125, 0.15]
         if profile == "expanded":
-            risk_offsets = [-0.006, -0.004, -0.003, -0.002, -0.001, 0.0, 0.001, 0.002, 0.003, 0.004, 0.006]
-            gamma_offsets = [-0.075, -0.05, -0.035, -0.025, -0.01, 0.0, 0.01, 0.025, 0.035, 0.05, 0.075]
+            risk_offsets = [
+                -0.006,
+                -0.004,
+                -0.003,
+                -0.002,
+                -0.001,
+                0.0,
+                0.001,
+                0.002,
+                0.003,
+                0.004,
+                0.006,
+            ]
+            gamma_offsets = [
+                -0.075,
+                -0.05,
+                -0.035,
+                -0.025,
+                -0.01,
+                0.0,
+                0.01,
+                0.025,
+                0.035,
+                0.05,
+                0.075,
+            ]
             aversions = [0.025, 0.05, 0.075, 0.10, 0.125, 0.15, 0.20]
-        risks = _round_grid([float(base.risk_tolerance) + x for x in risk_offsets], lo=0.12, hi=0.22)
+        risks = _round_grid(
+            [float(base.risk_tolerance) + x for x in risk_offsets], lo=0.12, hi=0.22
+        )
         gammas = _round_grid([float(base.gamma) + x for x in gamma_offsets], lo=0.0, hi=1.0)
 
         for risk, gamma, aversion in product(risks, gammas, aversions):
@@ -997,7 +1023,9 @@ def _exact_policy_alpha(
         "bound_b_t_eval": float(t_eval),
         "bound_b_is_vacuous": bool(min(1.0, alpha / max(t_eval, 1e-8)) >= 1.0),
         "bound_c_V_leq_sqrt_alpha": bool(sqrt_alpha + 1e-8 >= weighted_miscoverage_v),
-        "all_bounds_hold": bool((violation <= alpha + 1e-8) and (sqrt_alpha + 1e-8 >= weighted_miscoverage_v)),
+        "all_bounds_hold": bool(
+            (violation <= alpha + 1e-8) and (sqrt_alpha + 1e-8 >= weighted_miscoverage_v)
+        ),
         "allocator_mode": "exact",
         "solver_status": str(solution.get("solver_status", "unknown")),
         "allocator_solver_backend": str(solution.get("solver_backend", policy["solver_backend"])),
@@ -1025,7 +1053,10 @@ def _aggregate_leaderboard(candidates: pd.DataFrame, bound_eval: pd.DataFrame) -
         exact_expected_return_net_point_mean=("expected_return_net_point", "mean"),
         n_funded_mean=("n_funded", "mean"),
         total_allocated_mean=("total_allocated", "mean"),
-        allocator_backends=("allocator_solver_backend", lambda s: ",".join(sorted(set(map(str, s))))),
+        allocator_backends=(
+            "allocator_solver_backend",
+            lambda s: ",".join(sorted(set(map(str, s)))),
+        ),
     ).reset_index()
     alpha01 = (
         bound_eval[np.isclose(bound_eval["alpha"], 0.01)]
@@ -1047,10 +1078,9 @@ def _aggregate_leaderboard(candidates: pd.DataFrame, bound_eval: pd.DataFrame) -
     for col in ["alpha01_exact_pass"]:
         if col in work:
             work[col] = work[col].fillna(False).infer_objects(copy=False).astype(bool)
-    work["all_alpha_pass"] = (
-        work["alpha_exact_pass_count"].fillna(0)
-        >= work["alpha_exact_check_count"].fillna(1)
-    )
+    work["all_alpha_pass"] = work["alpha_exact_pass_count"].fillna(0) >= work[
+        "alpha_exact_check_count"
+    ].fillna(1)
     work["return_floor_surplus"] = (
         work["alpha01_realized_total_return"].fillna(float("-inf")) - DECLARED_RETURN_FLOOR
     )
@@ -1088,10 +1118,9 @@ def _claim_summary(
         gamma = pd.to_numeric(leaderboard["gamma"], errors="coerce")
         leaderboard["alpha01_endpoint_budget_upper"] = risk + (1.0 - gamma) * alpha01_gamma
     if "alpha01_markov_loss_cap" not in leaderboard.columns:
-        leaderboard["alpha01_markov_loss_cap"] = (
-            pd.to_numeric(leaderboard["alpha01_endpoint_budget_upper"], errors="coerce")
-            + float(np.sqrt(0.01))
-        )
+        leaderboard["alpha01_markov_loss_cap"] = pd.to_numeric(
+            leaderboard["alpha01_endpoint_budget_upper"], errors="coerce"
+        ) + float(np.sqrt(0.01))
     eligible = leaderboard[
         leaderboard["alpha01_exact_pass"].fillna(False).astype(bool)
         & leaderboard["all_alpha_pass"].fillna(False).astype(bool)
@@ -1143,7 +1172,11 @@ def _claim_summary(
             "n_funded_mean",
             "allocator_backends",
         ]
-        return {field: row[field].item() if hasattr(row[field], "item") else row[field] for field in fields if field in row.index}
+        return {
+            field: row[field].item() if hasattr(row[field], "item") else row[field]
+            for field in fields
+            if field in row.index
+        }
 
     max_return = row_payload(eligible.sort_values("alpha01_realized_total_return", ascending=False))
     best_gamma = row_payload(
@@ -1179,7 +1212,9 @@ def _claim_summary(
             + 0.20 * balanced["v_score"]
         )
     balanced_claim = row_payload(
-        balanced.sort_values("ijds_balanced_score", ascending=False) if not balanced.empty else balanced
+        balanced.sort_values("ijds_balanced_score", ascending=False)
+        if not balanced.empty
+        else balanced
     )
 
     by_family: dict[str, Any] = {}

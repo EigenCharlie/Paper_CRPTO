@@ -74,10 +74,9 @@ def build_priority_context(
         axis=1,
         champion_return=float(champion_return),
     )
-    prioritized["exact_priority_return_surplus"] = (
-        pd.to_numeric(prioritized["realized_total_return"], errors="coerce").fillna(0.0)
-        - float(champion_return)
-    )
+    prioritized["exact_priority_return_surplus"] = pd.to_numeric(
+        prioritized["realized_total_return"], errors="coerce"
+    ).fillna(0.0) - float(champion_return)
     prioritized = prioritized.sort_values(
         by=[
             "exact_priority_tier",
@@ -89,9 +88,7 @@ def build_priority_context(
     ).reset_index(drop=True)
     prioritized["exact_priority_order"] = np.arange(1, len(prioritized) + 1)
 
-    priority_shortlist_path = shortlist_path.with_name(
-        shortlist_path.stem + "_priority.parquet"
-    )
+    priority_shortlist_path = shortlist_path.with_name(shortlist_path.stem + "_priority.parquet")
     prioritized.to_parquet(priority_shortlist_path, index=False)
 
     requested_random_states = list(context.get("exact_random_states", context["random_states"]))

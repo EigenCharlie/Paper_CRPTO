@@ -289,9 +289,7 @@ def _cuopt_method(raw: Any) -> str | None:
         "barrier": "Barrier",
     }
     if token not in aliases:
-        raise ValueError(
-            "--cuopt-method must be one of concurrent, pdlp, dual_simplex, barrier."
-        )
+        raise ValueError("--cuopt-method must be one of concurrent, pdlp, dual_simplex, barrier.")
     return aliases[token]
 
 
@@ -332,8 +330,7 @@ def _extra_cuopt_parameters(raw_items: list[str] | None) -> dict[str, Any]:
             raise ValueError(f"--cuopt-extra-parameter expects name=value, got {raw!r}.")
         name, value = str(raw).split("=", 1)
         key = name.strip().replace("-", "_").lower()
-        if key.startswith("cuopt_"):
-            key = key[len("cuopt_") :]
+        key = key.removeprefix("cuopt_")
         params[key] = value.strip()
     return params
 
@@ -1094,10 +1091,9 @@ def _region_summary(shortlist_eval: pd.DataFrame, bound_eval: pd.DataFrame) -> d
                 "all_alpha_pass_rate": 0.0,
             }
         alpha01_pass = frame["alpha01_exact_pass"].fillna(False).astype(bool)
-        all_alpha_pass = (
-            frame["alpha_exact_pass_count"].fillna(0)
-            >= frame["alpha_exact_check_count"].fillna(1)
-        )
+        all_alpha_pass = frame["alpha_exact_pass_count"].fillna(0) >= frame[
+            "alpha_exact_check_count"
+        ].fillna(1)
         promotable = frame.loc[alpha01_pass].copy()
         return {
             "n_policies": int(len(frame)),
@@ -1454,9 +1450,7 @@ def main(argv: list[str] | None = None) -> int:
         bound_total_checks = int(len(shortlist) * len(alpha_grid) * len(exact_random_states))
         shortlist_extra = {
             "shortlist_size": len(shortlist),
-            "shortlist_buckets": shortlist["shortlist_bucket"]
-            .value_counts(dropna=False)
-            .to_dict(),
+            "shortlist_buckets": shortlist["shortlist_bucket"].value_counts(dropna=False).to_dict(),
         }
         if not args.frontier_only:
             tracker.set_bound_total(bound_total_checks, extra=shortlist_extra)
@@ -1522,9 +1516,7 @@ def main(argv: list[str] | None = None) -> int:
                 output_dir / "portfolio_bound_aware_shortlist_exact.parquet"
             ),
             "bound_eval_path": str(output_dir / "portfolio_bound_aware_bound_eval.parquet"),
-            "region_summary_path": str(
-                model_dir / "portfolio_bound_aware_region_summary.json"
-            ),
+            "region_summary_path": str(model_dir / "portfolio_bound_aware_region_summary.json"),
             "selection_path": str(model_dir / "portfolio_bound_aware_selection.json"),
             "runtime_status_path": str(status_path),
             "runtime_checkpoint_dir": str(checkpoint_dir),

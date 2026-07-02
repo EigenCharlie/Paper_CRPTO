@@ -3,12 +3,12 @@
 from __future__ import annotations
 
 import argparse
-from concurrent.futures import ThreadPoolExecutor, as_completed
 import json
 import os
 import pickle
 import subprocess
 import sys
+from concurrent.futures import ThreadPoolExecutor, as_completed
 from datetime import UTC, datetime
 from pathlib import Path
 from typing import Any
@@ -579,7 +579,9 @@ def _fit_calibrator(
         for metric_name in ("brier_score", "log_loss", "ece", "adaptive_ece"):
             if metric_name in raw_metrics and metric_name in metrics:
                 metrics[f"raw_{metric_name}"] = float(raw_metrics[metric_name])
-                metrics[f"phi_{metric_name}"] = float(raw_metrics[metric_name] - metrics[metric_name])
+                metrics[f"phi_{metric_name}"] = float(
+                    raw_metrics[metric_name] - metrics[metric_name]
+                )
         metrics["validation_holdout_ratio"] = float(validation_holdout_ratio)
         metrics["validation_random_state"] = float(validation_random_state)
         metrics["validation_n_fit"] = float(len(idx_fit))
@@ -1142,12 +1144,8 @@ def _run_phase2_search(
                     ),
                     "calibrator_brier": float(calibration_metrics.get("brier_score", float("inf"))),
                     "calibrator_log_loss": float(calibration_metrics.get("log_loss", float("inf"))),
-                    "calibrator_phi_brier": float(
-                        calibration_metrics.get("phi_brier_score", 0.0)
-                    ),
-                    "calibrator_phi_log_loss": float(
-                        calibration_metrics.get("phi_log_loss", 0.0)
-                    ),
+                    "calibrator_phi_brier": float(calibration_metrics.get("phi_brier_score", 0.0)),
+                    "calibrator_phi_log_loss": float(calibration_metrics.get("phi_log_loss", 0.0)),
                 }
             )
 

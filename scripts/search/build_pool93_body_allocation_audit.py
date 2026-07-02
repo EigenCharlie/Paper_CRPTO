@@ -31,10 +31,7 @@ from scripts.validate_alpha_gamma_bound import (  # noqa: E402
 )
 from src.optimization.portfolio_model import optimize_portfolio_allocation  # noqa: E402
 
-
-DEFAULT_CONSOLIDATED_TAG = (
-    "champion-reopen-2026-06-19__pool93__ijds-claim-consolidated-definitive"
-)
+DEFAULT_CONSOLIDATED_TAG = "champion-reopen-2026-06-19__pool93__ijds-claim-consolidated-definitive"
 DEFAULT_BODY_ROLE = "body/default balanced return-bound point"
 
 
@@ -66,11 +63,9 @@ def _load_role_row(frontier_path: Path, role: str) -> dict[str, Any]:
 
 def _policy_from_row(row: dict[str, Any]) -> dict[str, Any]:
     semantic = row.get("semantic_policy_key")
-    policy: dict[str, Any]
-    if isinstance(semantic, str) and semantic.strip():
-        policy = json.loads(semantic)
-    else:
-        policy = {}
+    policy: dict[str, Any] = (
+        json.loads(semantic) if isinstance(semantic, str) and semantic.strip() else {}
+    )
     for key in [
         "risk_tolerance",
         "policy_mode",
@@ -107,14 +102,7 @@ def _format_tex_table(summary: pd.DataFrame) -> str:
     ]
     for row in summary.itertuples(index=False):
         lines.append(
-            "{} & {:,.0f} & {:.2%} & {:.2%} & {:.5f} & {:.5f} \\\\".format(
-                row.grade_bucket,
-                row.funded_rows,
-                row.exposure_share,
-                row.default_rate,
-                row.v_contribution,
-                row.mean_pd_high_alpha01,
-            )
+            f"{row.grade_bucket} & {row.funded_rows:,.0f} & {row.exposure_share:.2%} & {row.default_rate:.2%} & {row.v_contribution:.5f} & {row.mean_pd_high_alpha01:.5f} \\\\"
         )
     lines.extend(["\\bottomrule", "\\end{tabular}", ""])
     return "\n".join(lines)
@@ -213,7 +201,9 @@ def build_audit(
     funded_df["effective_pd"] = effective_pd[funded]
     funded_df["miscoverage_alpha01"] = miscoverage[funded]
     funded_df["realized_return"] = realized_return[funded]
-    funded_df["grade_bucket"] = _grade_bucket(funded_df["grade"]) if "grade" in funded_df else "unknown"
+    funded_df["grade_bucket"] = (
+        _grade_bucket(funded_df["grade"]) if "grade" in funded_df else "unknown"
+    )
     funded_df["source_row_position"] = funded_idx
 
     summary = (
@@ -230,7 +220,9 @@ def build_audit(
         .reset_index()
     )
     summary["exposure_share"] = summary["exposure"] / max(total_allocated, 1e-6)
-    order = pd.Categorical(summary["grade_bucket"], ["A-B", "C", "D", "E-G", "unknown"], ordered=True)
+    order = pd.Categorical(
+        summary["grade_bucket"], ["A-B", "C", "D", "E-G", "unknown"], ordered=True
+    )
     summary = summary.assign(_order=order).sort_values("_order").drop(columns="_order")
 
     output_dir.mkdir(parents=True, exist_ok=True)
@@ -304,7 +296,9 @@ def main(argv: list[str] | None = None) -> int:
     parser.add_argument("--report-table-dir", default=str(ROOT / "reports/crpto/tables"))
     args = parser.parse_args(argv)
 
-    frontier_path = Path(args.frontier) if args.frontier else _default_frontier_path(args.consolidated_tag)
+    frontier_path = (
+        Path(args.frontier) if args.frontier else _default_frontier_path(args.consolidated_tag)
+    )
     output_dir = (
         Path(args.output_dir)
         if args.output_dir

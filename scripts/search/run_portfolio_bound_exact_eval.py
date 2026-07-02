@@ -122,12 +122,13 @@ def _load_partial_bound_eval(*, bound_eval_path: Path) -> pd.DataFrame:
     required_cols = {"candidate_rank", "eval_random_state", "alpha", "all_bounds_hold"}
     if bound_eval.empty or not required_cols.issubset(bound_eval.columns):
         return pd.DataFrame()
-    if "allocator_solver_backend" not in bound_eval.columns and "solver_status" in bound_eval.columns:
+    if (
+        "allocator_solver_backend" not in bound_eval.columns
+        and "solver_status" in bound_eval.columns
+    ):
         status = bound_eval["solver_status"].astype(str)
         bound_eval["allocator_solver_backend"] = status.map(
-            lambda value: "highspy_fallback_highs_sparse"
-            if value == "optimal"
-            else "highspy"
+            lambda value: "highspy_fallback_highs_sparse" if value == "optimal" else "highspy"
         )
     if "allocator_native_solver_error" not in bound_eval.columns:
         bound_eval["allocator_native_solver_error"] = ""

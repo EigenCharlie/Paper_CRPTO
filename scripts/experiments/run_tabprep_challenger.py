@@ -489,7 +489,9 @@ def _model_params(
         params["monotone_constraints"] = f"({constraints})"
     feature_weights = params.get("feature_weights")
     if isinstance(feature_weights, dict):
-        weights_by_feature = {str(feature): float(weight) for feature, weight in feature_weights.items()}
+        weights_by_feature = {
+            str(feature): float(weight) for feature, weight in feature_weights.items()
+        }
         if any(feature in weights_by_feature for feature in model_features):
             params["feature_weights"] = [
                 weights_by_feature.get(str(feature), 1.0) for feature in model_features

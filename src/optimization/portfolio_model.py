@@ -474,7 +474,9 @@ def solve_portfolio_highspy_native(
     try:
         import highspy  # type: ignore[import-not-found]
     except Exception as exc:  # pragma: no cover - optional runtime dependency
-        raise RuntimeError("solver_backend='highspy' requested but highspy is unavailable.") from exc
+        raise RuntimeError(
+            "solver_backend='highspy' requested but highspy is unavailable."
+        ) from exc
 
     n = len(loans)
     if n == 0:
@@ -581,8 +583,10 @@ def solve_portfolio_highspy_native(
     }
     for name, value in options.items():
         status = solver.setOptionValue(name, value)
-        if status != highspy.HighsStatus.kOk and name == "threads" and hasattr(
-            solver, "resetGlobalScheduler"
+        if (
+            status != highspy.HighsStatus.kOk
+            and name == "threads"
+            and hasattr(solver, "resetGlobalScheduler")
         ):
             solver.resetGlobalScheduler(True)
             status = solver.setOptionValue(name, value)

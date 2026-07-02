@@ -59,19 +59,19 @@ def test_highs_sparse_respects_portfolio_constraints() -> None:
 
 def test_highs_sparse_matches_pyomo_highs_objective_on_toy_lp() -> None:
     loans, pd_point, pd_low, pd_high, lgd, int_rates = _toy_loans()
-    kwargs = dict(
-        loans=loans,
-        pd_point=pd_point,
-        pd_low=pd_low,
-        pd_high=pd_high,
-        lgd=lgd,
-        int_rates=int_rates,
-        total_budget=3500,
-        max_concentration=0.60,
-        max_portfolio_pd=0.11,
-        robust=True,
-        pd_constraint_override=pd_high,
-    )
+    kwargs = {
+        "loans": loans,
+        "pd_point": pd_point,
+        "pd_low": pd_low,
+        "pd_high": pd_high,
+        "lgd": lgd,
+        "int_rates": int_rates,
+        "total_budget": 3500,
+        "max_concentration": 0.60,
+        "max_portfolio_pd": 0.11,
+        "robust": True,
+        "pd_constraint_override": pd_high,
+    }
 
     sparse = optimize_portfolio_allocation(**kwargs, solver_backend="highs_sparse")
     pyomo = optimize_portfolio_allocation(**kwargs, solver_backend="highs_pyomo")
@@ -83,19 +83,19 @@ def test_highs_sparse_matches_pyomo_highs_objective_on_toy_lp() -> None:
 def test_highspy_matches_sparse_highs_objective_on_toy_lp() -> None:
     pytest.importorskip("highspy")
     loans, pd_point, pd_low, pd_high, lgd, int_rates = _toy_loans()
-    kwargs = dict(
-        loans=loans,
-        pd_point=pd_point,
-        pd_low=pd_low,
-        pd_high=pd_high,
-        lgd=lgd,
-        int_rates=int_rates,
-        total_budget=3500,
-        max_concentration=0.60,
-        max_portfolio_pd=0.11,
-        robust=True,
-        pd_constraint_override=pd_high,
-    )
+    kwargs = {
+        "loans": loans,
+        "pd_point": pd_point,
+        "pd_low": pd_low,
+        "pd_high": pd_high,
+        "lgd": lgd,
+        "int_rates": int_rates,
+        "total_budget": 3500,
+        "max_concentration": 0.60,
+        "max_portfolio_pd": 0.11,
+        "robust": True,
+        "pd_constraint_override": pd_high,
+    }
 
     native = optimize_portfolio_allocation(**kwargs, solver_backend="highspy")
     sparse = optimize_portfolio_allocation(**kwargs, solver_backend="highs_sparse")

@@ -1,11 +1,11 @@
 from __future__ import annotations
 
-from scripts.experiments.run_champion_reopen import _build_commands
 from scripts.experiments.run_champion_claim_max_downstream import (
     _is_paper_facing_case,
     _portfolio_command,
     _select_downstream_candidates,
 )
+from scripts.experiments.run_champion_reopen import _build_commands
 
 
 def _config() -> dict[str, object]:

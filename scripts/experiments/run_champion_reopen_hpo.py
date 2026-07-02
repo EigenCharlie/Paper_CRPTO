@@ -345,12 +345,15 @@ def main() -> None:
 
     results: list[dict[str, Any]] = []
     for case_name, feature_set in case_features.items():
-        status_path = _case_dir(
-            Path(config["output"]["model_dir"]),
-            run_tag=run_tag,
-            case_name=case_name,
-            seed=seed,
-        ) / "hpo_training_status.json"
+        status_path = (
+            _case_dir(
+                Path(config["output"]["model_dir"]),
+                run_tag=run_tag,
+                case_name=case_name,
+                seed=seed,
+            )
+            / "hpo_training_status.json"
+        )
         if args.resume and status_path.exists():
             logger.info("Skipping {} because status exists: {}", case_name, status_path)
             results.append(json.loads(status_path.read_text(encoding="utf-8")))
@@ -836,7 +839,9 @@ def _run_hpo_case(
     atomic_write_parquet(predictions, prediction_path)
     if not fairness.empty:
         atomic_write_parquet(fairness, report_dir / "fairness_report.parquet")
-    atomic_write_parquet(_feature_importance_frame(model), report_dir / "feature_importance.parquet")
+    atomic_write_parquet(
+        _feature_importance_frame(model), report_dir / "feature_importance.parquet"
+    )
 
     candidate_run_tag = _candidate_run_tag(run_tag=run_tag, case_name=case_name, seed=seed)
     search_pd_dir = Path("models/search_pd") / candidate_run_tag

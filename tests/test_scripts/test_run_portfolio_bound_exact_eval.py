@@ -3,8 +3,8 @@ from __future__ import annotations
 import pandas as pd
 import pytest
 
-from scripts.search.build_portfolio_exact_priority_context import build_priority_context
 import scripts.search.run_portfolio_bound_exact_eval as exact_eval
+from scripts.search.build_portfolio_exact_priority_context import build_priority_context
 from scripts.search.run_portfolio_bound_exact_eval import (
     ROOT,
     _context_exact_threads,

@@ -49,7 +49,9 @@ def main() -> None:
         json.dumps(selection, indent=2, ensure_ascii=False) + "\n",
         encoding="utf-8",
     )
-    pd.DataFrame(selection["ranked_cases"]).to_csv(output_dir / "seed_replay_ranked_cases.csv", index=False)
+    pd.DataFrame(selection["ranked_cases"]).to_csv(
+        output_dir / "seed_replay_ranked_cases.csv", index=False
+    )
     print(f"Wrote finalist selection: {output_dir / 'seed_replay_finalists.json'}")
     print("selected:", ", ".join(row["case_name"] for row in selection["selected_finalists"]))
 
@@ -65,10 +67,14 @@ def select_finalists(
     champion = dict(config["champion_reopen"]["pd_promotion_gates"])
     replay_cases = list(config["champion_reopen"]["seed_replay_cases"])
     replay_seeds = list(
-        config["champion_reopen"].get("seed_replay_seeds", config.get("seeds", [42, 52, 62, 72, 82]))
+        config["champion_reopen"].get(
+            "seed_replay_seeds", config.get("seeds", [42, 52, 62, 72, 82])
+        )
     )
     expected_seeds = [42, *[int(seed) for seed in replay_seeds if int(seed) != 42]]
-    rows, missing = _load_seed_rows(report_root=report_root, run_tag=run_tag, cases=replay_cases, seeds=expected_seeds)
+    rows, missing = _load_seed_rows(
+        report_root=report_root, run_tag=run_tag, cases=replay_cases, seeds=expected_seeds
+    )
     if require_complete and missing:
         raise SystemExit("Missing seed summaries: " + ", ".join(missing))
     ranked = _rank_cases(rows, champion=champion, expected_seed_count=len(expected_seeds))
@@ -106,7 +112,11 @@ def _load_seed_rows(
         / "selected_feature_experiment_summary.json"
     )
     if feature_summary.exists():
-        rows.extend(_rows_from_summary(feature_summary, allowed_cases=set(cases), source_stage="feature_search"))
+        rows.extend(
+            _rows_from_summary(
+                feature_summary, allowed_cases=set(cases), source_stage="feature_search"
+            )
+        )
     else:
         missing.append(str(feature_summary))
     for seed in seeds:
@@ -120,13 +130,17 @@ def _load_seed_rows(
             / "selected_feature_experiment_summary.json"
         )
         if summary.exists():
-            rows.extend(_rows_from_summary(summary, allowed_cases=set(cases), source_stage="seed_replay"))
+            rows.extend(
+                _rows_from_summary(summary, allowed_cases=set(cases), source_stage="seed_replay")
+            )
         else:
             missing.append(str(summary))
     return rows, missing
 
 
-def _rows_from_summary(path: Path, *, allowed_cases: set[str], source_stage: str) -> list[dict[str, Any]]:
+def _rows_from_summary(
+    path: Path, *, allowed_cases: set[str], source_stage: str
+) -> list[dict[str, Any]]:
     payload = json.loads(path.read_text(encoding="utf-8"))
     rows: list[dict[str, Any]] = []
     for item in payload.get("results", []):

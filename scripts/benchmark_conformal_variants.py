@@ -306,14 +306,15 @@ def main(
         base_groups_cal_variant: pd.Series | None = None,
         calibration_fraction: float | None = None,
     ) -> None:
-        X_cal_use = X_cal if X_cal_variant is None else X_cal_variant
         y_cal_use = y_cal if y_cal_variant is None else y_cal_variant
         y_prob_cal_use = (
             prob_cal_lookup[partition_probability_source]
             if y_prob_cal_variant is None
             else y_prob_cal_variant
         )
-        y_interval_cal_pred = y_prob_calibrated if y_prob_cal_variant is None else y_prob_cal_variant
+        y_interval_cal_pred = (
+            y_prob_calibrated if y_prob_cal_variant is None else y_prob_cal_variant
+        )
         base_groups_cal_use = (
             group_cal if base_groups_cal_variant is None else base_groups_cal_variant
         )
@@ -670,7 +671,9 @@ def main(
                     "coverage, group coverage, width, alert, and Winkler checks."
                 ),
                 "local_diagnostics_mode": (
-                    "all_variants" if collect_local_diagnostics else "selected_config_plus_sensitivity"
+                    "all_variants"
+                    if collect_local_diagnostics
+                    else "selected_config_plus_sensitivity"
                 ),
                 "variants_tested": bench["variant"].astype(str).tolist(),
                 "report_path": str(selection_path),

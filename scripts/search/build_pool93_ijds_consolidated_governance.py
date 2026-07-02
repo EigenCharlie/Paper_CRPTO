@@ -9,19 +9,12 @@ from pathlib import Path
 from typing import Any
 
 ROOT = Path(__file__).resolve().parents[2]
-DEFAULT_CONSOLIDATED_TAG = (
-    "champion-reopen-2026-06-19__pool93__ijds-claim-consolidated-definitive"
-)
+DEFAULT_CONSOLIDATED_TAG = "champion-reopen-2026-06-19__pool93__ijds-claim-consolidated-definitive"
 DEFAULT_BODY_ROLE = "body/default balanced return-bound point"
 
 
 def _default_paths(consolidated_tag: str) -> tuple[Path, Path]:
-    portfolio_dir = (
-        ROOT
-        / "models/experiments/champion_reopen"
-        / consolidated_tag
-        / "portfolio"
-    )
+    portfolio_dir = ROOT / "models/experiments/champion_reopen" / consolidated_tag / "portfolio"
     return (
         portfolio_dir / "pool93_ijds_consolidated_frontier.json",
         portfolio_dir / "pool93_ijds_consolidated_governance.json",

@@ -173,7 +173,9 @@ def build_consolidated_frontier(run_tags: list[str], caps: list[float]) -> dict[
 
     body = _body_candidate(eligible, markov_cap=DEFAULT_BODY_MARKOV_CAP)
     rows: list[dict[str, Any]] = []
-    _append_row(rows, eligible.sort_values("alpha01_markov_loss_cap").iloc[0], "minimum Markov-cap endpoint")
+    _append_row(
+        rows, eligible.sort_values("alpha01_markov_loss_cap").iloc[0], "minimum Markov-cap endpoint"
+    )
     _append_row(rows, body, "body/default balanced return-bound point")
     _append_row(
         rows,
@@ -207,8 +209,7 @@ def build_consolidated_frontier(run_tags: list[str], caps: list[float]) -> dict[
                 "all_alpha_pass_rate": round(
                     float(
                         (
-                            run_df["alpha_exact_pass_count"]
-                            == run_df["alpha_exact_check_count"]
+                            run_df["alpha_exact_pass_count"] == run_df["alpha_exact_check_count"]
                         ).mean()
                     ),
                     9,

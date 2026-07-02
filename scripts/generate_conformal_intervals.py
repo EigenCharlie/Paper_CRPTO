@@ -813,14 +813,11 @@ def main(
         calibration_fraction=calibration_fraction,
         calibrator_override_path=calibrator_override_path,
     )
-    model = inputs.model
     model_path = inputs.model_path
-    calibrator = inputs.calibrator
     cal_df = inputs.cal_df
     test_df = inputs.test_df
     X_cal = inputs.X_cal
     y_cal = inputs.y_cal
-    X_test = inputs.X_test
     y_test = inputs.y_test
     group_cal_base = inputs.group_cal_base
     group_test_base = inputs.group_test_base
@@ -990,17 +987,19 @@ def main(
                                             min_group_size=min_group_size,
                                         )
                                     )
-                                    y_pred, y_int, _diag = create_pd_intervals_mondrian_from_predictions(
-                                        y_cal_pred=interval_fit_pred,
-                                        y_test_pred=interval_tune_pred,
-                                        y_cal=y_cal_fit,
-                                        group_cal=group_cal_fit,
-                                        group_test=group_tune,
-                                        alpha=alpha_used,
-                                        min_group_size=min_group_size,
-                                        scaled_scores=scaled_scores,
-                                        score_scale_family=score_scale_family,
-                                        log_summary=False,
+                                    y_pred, y_int, _diag = (
+                                        create_pd_intervals_mondrian_from_predictions(
+                                            y_cal_pred=interval_fit_pred,
+                                            y_test_pred=interval_tune_pred,
+                                            y_cal=y_cal_fit,
+                                            group_cal=group_cal_fit,
+                                            group_test=group_tune,
+                                            alpha=alpha_used,
+                                            min_group_size=min_group_size,
+                                            scaled_scores=scaled_scores,
+                                            score_scale_family=score_scale_family,
+                                            log_summary=False,
+                                        )
                                     )
 
                                     metrics = validate_coverage(
@@ -1097,7 +1096,9 @@ def main(
                                                 "latest_n_score_bins": int(n_score_bins),
                                                 "latest_fallback_mode": str(fallback_mode),
                                                 "latest_alpha_used_90": float(alpha_used),
-                                                "latest_score_scale_family": str(score_scale_family),
+                                                "latest_score_scale_family": str(
+                                                    score_scale_family
+                                                ),
                                                 "latest_min_group_size": int(min_group_size),
                                             },
                                         )

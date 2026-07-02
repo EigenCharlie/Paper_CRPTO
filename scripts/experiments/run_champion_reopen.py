@@ -50,8 +50,12 @@ def parse_args() -> argparse.Namespace:
         choices=["plan", "smoke", "feature_search", "seed_replay", "calibration", "all"],
         default="plan",
     )
-    parser.add_argument("--execute", action="store_true", help="Run commands after writing manifest.")
-    parser.add_argument("--resume", action="store_true", help="Skip commands whose expected output exists.")
+    parser.add_argument(
+        "--execute", action="store_true", help="Run commands after writing manifest."
+    )
+    parser.add_argument(
+        "--resume", action="store_true", help="Skip commands whose expected output exists."
+    )
     parser.add_argument(
         "--sample-rows",
         type=int,
@@ -214,7 +218,9 @@ def _build_commands(
             )
         ]
     if stage == "seed_replay":
-        seed_replay_seeds = config["champion_reopen"].get("seed_replay_seeds", config.get("seeds", [42, 52, 62, 72, 82]))
+        seed_replay_seeds = config["champion_reopen"].get(
+            "seed_replay_seeds", config.get("seeds", [42, 52, 62, 72, 82])
+        )
         return [
             _feature_selection_command(
                 config=config,

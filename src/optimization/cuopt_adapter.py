@@ -7,11 +7,11 @@ the canonical portfolio optimization path.
 
 from __future__ import annotations
 
-from contextlib import suppress
 import importlib
 import os
-from pathlib import Path
 import time
+from contextlib import suppress
+from pathlib import Path
 from typing import Any
 
 import numpy as np
@@ -41,8 +41,7 @@ def _extract_primal_solution(solution: Any, n_vars: int) -> np.ndarray:
 
 def _normalize_parameter_name(raw: str) -> str:
     name = str(raw).strip().replace("-", "_").lower()
-    if name.startswith("cuopt_"):
-        name = name[len("cuopt_") :]
+    name = name.removeprefix("cuopt_")
     return name
 
 

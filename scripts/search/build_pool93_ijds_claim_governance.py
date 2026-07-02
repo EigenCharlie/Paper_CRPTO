@@ -20,7 +20,6 @@ from scripts.search.run_pool93_ijds_local_refinement import (  # noqa: E402
 )
 from src.utils.pipeline_runtime import atomic_write_json  # noqa: E402
 
-
 DEFAULT_RUN_TAG = "champion-reopen-2026-06-19__pool93__ijds-local-refine-stage1"
 PAPER_FACING_KEY_RENAMES = {
     "champion_return_reference": "declared_return_floor",

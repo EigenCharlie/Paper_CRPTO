@@ -388,7 +388,11 @@ def _resolve_catboost_features(
     columns: Sequence[str],
 ) -> list[str]:
     available = set(columns)
-    return [str(feature) for feature in feature_config.get("CATBOOST_FEATURES", []) if feature in available]
+    return [
+        str(feature)
+        for feature in feature_config.get("CATBOOST_FEATURES", [])
+        if feature in available
+    ]
 
 
 def _resolve_woe_features(
@@ -487,10 +491,7 @@ def _rank_pool_features(
         categorical_features=categorical_features,
     )
     selector_norm = _minmax_by_feature(
-        {
-            feature: max(0.0, float(selector_scores.get(feature, 0.0)))
-            for feature in pool
-        }
+        {feature: max(0.0, float(selector_scores.get(feature, 0.0))) for feature in pool}
     )
     fallback_norm = _minmax_by_feature(
         {row["feature"]: float(row["fallback_score"]) for row in fallback}
@@ -601,12 +602,14 @@ def _encode_categorical_from_fit(
 ) -> pd.Series:
     global_mean = float(y_fit.mean())
     key_fit = fit.astype("string").fillna("__MISSING__")
-    grouped = pd.DataFrame({"key": key_fit, "target": y_fit.astype(float)}).groupby("key")[
-        "target"
-    ].agg(["mean", "count"])
-    smoothed = (
-        grouped["mean"] * grouped["count"] + global_mean * float(smoothing)
-    ) / (grouped["count"] + float(smoothing))
+    grouped = (
+        pd.DataFrame({"key": key_fit, "target": y_fit.astype(float)})
+        .groupby("key")["target"]
+        .agg(["mean", "count"])
+    )
+    smoothed = (grouped["mean"] * grouped["count"] + global_mean * float(smoothing)) / (
+        grouped["count"] + float(smoothing)
+    )
     key_val = val.astype("string").fillna("__MISSING__")
     return key_val.map(smoothed.to_dict()).fillna(global_mean).astype(float)
 
@@ -647,7 +650,9 @@ def _information_value(series: pd.Series, y_true: pd.Series, *, categorical: boo
         if int(numeric.nunique(dropna=True)) < 2:
             return 0.0
         try:
-            bins = pd.qcut(numeric.rank(method="first"), q=min(10, numeric.nunique()), duplicates="drop")
+            bins = pd.qcut(
+                numeric.rank(method="first"), q=min(10, numeric.nunique()), duplicates="drop"
+            )
         except ValueError:
             return 0.0
         bins = bins.astype("string").fillna("__MISSING__")

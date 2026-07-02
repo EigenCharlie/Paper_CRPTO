@@ -373,9 +373,7 @@ def _validate_single_alpha(
         "all_bounds_hold": bool((violation <= alpha + 1e-8) and (sqrt_alpha + 1e-8 >= V)),
         "allocator_mode": mode,
         "solver_status": str(alloc_meta.get("solver_status", "unknown")),
-        "allocator_solver_backend": str(
-            alloc_meta.get("solver_backend", policy["solver_backend"])
-        ),
+        "allocator_solver_backend": str(alloc_meta.get("solver_backend", policy["solver_backend"])),
         "allocator_native_solver_error": str(alloc_meta.get("native_solver_error", "")),
         "total_allocated": round(float(alloc_meta.get("total_allocated", 0.0)), 2),
         "pd_cap_slack": round(float(alloc_meta.get("pd_cap_slack", 0.0)), 6),

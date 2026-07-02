@@ -242,7 +242,9 @@ def _run_logged(
 
 
 def _conformal_status_path(conformal_run_tag: str) -> Path:
-    return REPO_ROOT / "models" / "conformal_gap" / conformal_run_tag / "conformal_reopen_status.json"
+    return (
+        REPO_ROOT / "models" / "conformal_gap" / conformal_run_tag / "conformal_reopen_status.json"
+    )
 
 
 def _conformal_intervals_for_status(status: dict[str, Any]) -> Path:
@@ -343,9 +345,7 @@ def _portfolio_command(
     if bool(execution.get("frontier_only", False)):
         command.append("--frontier-only")
     if str(execution.get("exact_python_executable", "")).strip():
-        command.extend(
-            ["--exact-python-executable", str(execution["exact_python_executable"])]
-        )
+        command.extend(["--exact-python-executable", str(execution["exact_python_executable"])])
     cuopt_flag_map = {
         "presolve": "--cuopt-presolve",
         "method": "--cuopt-method",
@@ -465,7 +465,9 @@ def main() -> int:
         status_path,
         {
             "stage_name": "champion_claim_max_downstream",
-            "state": "completed" if args.dry_run and selected else ("running" if selected else "blocked"),
+            "state": "completed"
+            if args.dry_run and selected
+            else ("running" if selected else "blocked"),
             "phase": "selected_pd_candidates",
             "hpo_run_tag": hpo_run_tag,
             "run_tag": run_tag,
