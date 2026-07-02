@@ -42,7 +42,7 @@ def test_smoke_commands_are_sampled_and_checkpointed() -> None:
     assert "--sample-rows" in command.command
     assert "1000" in command.command
     assert command.expected_output.endswith("selected_feature_experiment_summary.json")
-    assert "reports/run_logs/champion_reopen" in command.log_path
+    assert "reports/run_logs/champion_reopen" in command.log_path.replace("\\", "/")
 
 
 def test_seed_replay_uses_fixed_tabprep_seed_for_catboost_seed_stability() -> None:

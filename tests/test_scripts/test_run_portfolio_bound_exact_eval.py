@@ -161,7 +161,7 @@ def test_priority_context_orders_claim_candidates_and_dedupes_full_universe_seed
   "exact_max_candidates": 0,
   "selection_policy": {}
 }
-""".replace("__SHORTLIST__", str(shortlist_path)),
+""".replace("__SHORTLIST__", shortlist_path.as_posix()),
         encoding="utf-8",
     )
 
