@@ -30,6 +30,12 @@ def load_key_metrics() -> dict[str, str]:
 
 
 def test_crpto_champion_artifacts_agree() -> None:
+    """Validate the historical frozen rebaseline chain (two-tag scheme).
+
+    Under the pool93 promotion this run tag remains the frozen upstream
+    chain and declared return floor; the paper body claim is guarded by
+    tests/test_pool93_body_claim_sync.py.
+    """
     assert Path("data/processed/final_project_summary.parquet.dvc").exists()
     promotion = load_json("models/final_project_promotion.json")
     policy = load_json("models/champion_portfolio_policy.json")
@@ -92,6 +98,11 @@ def test_crpto_tables_and_figures_exist() -> None:
         "reports/crpto/tables/crpto_tableA22_tail_constrained_reoptimization.csv",
         "reports/crpto/tables/crpto_tableA23_multidistribution_robustness.csv",
         "reports/crpto/tables/crpto_tableA24_online_conformal_stability.csv",
+        "reports/crpto/tables/crpto_tableA35_pool93_ijds_frontier.csv",
+        "reports/crpto/tables/crpto_tableA36_pool93_body_funded_grade_audit.csv",
+        "reports/crpto/tables/crpto_tableA37_pool93_body_tail_risk.csv",
+        "reports/crpto/tables/crpto_tableA38_pool93_body_cluster_bound_audit.csv",
+        "reports/crpto/tables/crpto_tableA39_pool93_body_bootstrap_metrics.csv",
         "reports/crpto/figures/crpto_fig1_journal_pipeline.png",
         "reports/crpto/figures/crpto_fig1_journal_pipeline.pdf",
         "reports/crpto/figures/crpto_fig1_journal_pipeline.svg",

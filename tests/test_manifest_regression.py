@@ -44,6 +44,12 @@ PROTECTED_CHAMPION_FILES = (
     "models/conformal_policy_status.json",
     "models/champion_portfolio_policy.json",
     "models/champion_registry.json",
+    "models/experiments/champion_reopen/"
+    "champion-reopen-2026-06-19__pool93__ijds-claim-bound-terminal/"
+    "portfolio/pool93_ijds_claim_governance.json",
+    "models/experiments/champion_reopen/"
+    "champion-reopen-2026-06-19__pool93__ijds-claim-consolidated-definitive/"
+    "portfolio/pool93_ijds_consolidated_governance.json",
 )
 
 
