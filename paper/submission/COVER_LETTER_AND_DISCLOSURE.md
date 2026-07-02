@@ -16,9 +16,11 @@ out-of-time panel, supported by frozen Prosper and Freddie/Mendeley external
 economic replications. Its method maps a frozen calibrated probability-of-default
 artifact through Mondrian conformal intervals into a robust portfolio decision.
 Its decision object is the funded set under a budget and risk cap, and its main
-implication is an auditable model-risk surface: the promoted Lending Club policy
-earns `$170.5K` on a `$1M` budget while passing an exact empirical alpha-safe
-funded-set audit, and the robustness region contains `45/45` alpha-safe policies.
+implication is an auditable model-risk surface: the promoted Lending Club body
+point earns `$184.8K` on a `$1M` budget while passing an exact empirical
+alpha-grid funded-set audit, and the declared pool93 finite-grid frontier
+contains 50,010 deduplicated semantic policies with 27,508 all-alpha
+above-floor policies.
 An opt-in drift harness verifies that the prediction-to-decision certificate
 chain regenerates bit-exactly from the frozen artifacts under the locked stack.
 The contribution is intended for settings where decision auditability,
@@ -39,7 +41,7 @@ After the venue permits disclosure, the companion can include:
 - raw Lending Club source instructions rather than redistributed private data;
 - Prosper and Freddie/Mendeley source notes for the external replication layer;
 - the frozen extraction manifest and guardrail tests used to verify the
-  promoted champion;
+  promoted frontier;
 - the drift harness that recomputes the conformal interval and certificate
   chain from frozen PD artifacts with zero endpoint drift under the locked stack;
 - commands for regenerating paper tables, figures, HTML previews, and local

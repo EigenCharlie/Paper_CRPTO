@@ -1,0 +1,11 @@
+role,source_run,candidate_id,policy_family,risk_tolerance,policy_mode,gamma,uncertainty_aversion,realized_return,return_floor_surplus,Gamma_CP_alpha01,V_alpha01,endpoint_budget_upper_alpha01,Markov_cap_alpha01,alpha_grid_pass,n_funded_mean
+Minimum Markov-cap endpoint,bound_terminal,10661,claim_bound_terminal_ultra_low_cap,0.16825,capped_blended_uncertainty,0.95,0.6,170467.268819,2.728819,0.095719,0.031875,0.173035950,0.273035950,8/8,311.125
+Low-cap balanced endpoint,bound_terminal,5504,claim_bound_terminal_ultra_low_cap,0.16750,capped_blended_uncertainty,0.925,0.6,171006.195983,541.655983,0.097190,0.031875,0.174789250,0.274789250,8/8,311.125
+Highest return under cap <= 0.30,bound_terminal,36412,claim_bound_terminal_return_recovery,0.17150,blended_uncertainty,0.80,0.5,173314.040806,2849.500806,0.115400,0.035875,0.194580000,0.294580000,8/8,310.875
+Highest return under cap <= 0.32,micro_ext,2021,claim_micro_ext_bound_tight,0.17050,capped_blended_uncertainty,0.645,0.2375,179436.119445,8971.579445,0.139182,0.035875,0.219909610,0.319909610,8/8,310.125
+Highest return under cap <= 0.345,micro_ext,512,claim_micro_ext_body_cap345,0.17225,capped_blended_uncertainty,0.5525,0.0375,184800.413581,14335.873581,0.162562,0.035350,0.244996495,0.344996495,8/8,321.000
+Body/default balanced point,micro_ext,131,claim_micro_ext_body_cap345,0.17150,capped_blended_uncertainty,0.5475,0.05,184832.475845,14367.935845,0.162616,0.035350,0.245083740,0.345083740,8/8,320.500
+Highest return under cap <= 0.36,micro_ext,3212,claim_micro_ext_cap036_return,0.17575,capped_blended_uncertainty,0.525,0.075,186050.727749,15586.187749,0.174600,0.037750,0.258685000,0.358685000,8/8,318.750
+Highest return under cap <= 0.45,expanded,979,bound_efficient_local,0.18500,blended_uncertainty,0.35,0.15,198693.277519,28228.737519,0.252323,0.045600,0.349009950,0.449009950,8/8,310.875
+Highest return under cap <= 0.50,micro,2840,claim_micro_economic_endpoint,0.15825,tail_blended_uncertainty,0.50,0.125,222558.702500,52094.162500,0.459089,0.071075,0.387794500,0.487794500,8/8,238.375
+Max-return economic endpoint,micro_ext,4041,claim_micro_ext_economic_endpoint,0.156875,tail_blended_uncertainty,0.445,0.1375,223458.135875,52993.595875,0.457438,0.069575,0.410753090,0.510753090,8/8,239.625

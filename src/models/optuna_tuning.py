@@ -160,6 +160,27 @@ def train_catboost_tuned_optuna(
         local_refine_space["grow_policy"] = ["SymmetricTree"]
     constraints_policy = dict(constraints_policy or {})
     enqueue_trials = list(enqueue_trials or [])
+    feature_order = [str(col) for col in X_train.columns]
+
+    def _align_feature_vector(raw: Any, *, default: float) -> list[float] | Any:
+        if not isinstance(raw, dict):
+            return raw
+        raw_by_feature = {str(feature): float(value) for feature, value in raw.items()}
+        return [float(raw_by_feature.get(feature, default)) for feature in feature_order]
+
+    def _normalize_feature_penalty_params(params: dict[str, Any]) -> dict[str, Any]:
+        normalized = dict(params)
+        if "feature_weights" in normalized:
+            normalized["feature_weights"] = _align_feature_vector(
+                normalized["feature_weights"],
+                default=1.0,
+            )
+        if "first_feature_use_penalties" in normalized:
+            normalized["first_feature_use_penalties"] = _align_feature_vector(
+                normalized["first_feature_use_penalties"],
+                default=0.0,
+            )
+        return normalized
 
     incumbent_metrics: dict[str, float] = {}
 
@@ -446,7 +467,7 @@ def train_catboost_tuned_optuna(
                 )
             )
         _apply_local_feature_priors(trial, params)
-        return params
+        return _normalize_feature_penalty_params(params)
 
     use_multivariate = bool(multivariate_tpe)
     use_group_tpe = bool(group_tpe and use_multivariate)
@@ -543,6 +564,7 @@ def train_catboost_tuned_optuna(
                 params.pop("bagging_temperature", None)
                 params["subsample"] = trial.suggest_float("subsample", 0.5, 0.95)
 
+        params = _normalize_feature_penalty_params(params)
         model = CatBoostClassifier(**params)
         pruning_callback = None
         callbacks: list[Any] = []
@@ -617,19 +639,33 @@ def train_catboost_tuned_optuna(
                 engine_kwargs = None
             if hb_interval > 0 or hb_grace > 0:
                 try:
+                    heartbeat_cb = None
                     failed_cb = None
                     if int(retry_failed_trials) > 0:
-                        failed_cb = optuna.storages.RetryFailedTrialCallback(
-                            max_retry=int(retry_failed_trials)
+                        retry_factory = getattr(
+                            optuna.storages,
+                            "RetryHeartbeatStaleTrialCallback",
+                            None,
                         )
-                        retry_callback = failed_cb
-                    storage_obj = optuna.storages.RDBStorage(
-                        url=storage_text,
-                        engine_kwargs=engine_kwargs,
-                        heartbeat_interval=hb_interval or None,
-                        grace_period=hb_grace or None,
-                        failed_trial_callback=failed_cb,
-                    )
+                        if retry_factory is not None:
+                            heartbeat_cb = retry_factory(max_retry=int(retry_failed_trials))
+                            retry_callback = heartbeat_cb
+                        else:  # pragma: no cover - compatibility with older Optuna.
+                            failed_cb = optuna.storages.RetryFailedTrialCallback(
+                                max_retry=int(retry_failed_trials)
+                            )
+                            retry_callback = failed_cb
+                    storage_kwargs: dict[str, Any] = {
+                        "url": storage_text,
+                        "engine_kwargs": engine_kwargs,
+                        "heartbeat_interval": hb_interval or None,
+                        "grace_period": hb_grace or None,
+                    }
+                    if heartbeat_cb is not None:
+                        storage_kwargs["heartbeat_stale_trial_callback"] = heartbeat_cb
+                    elif failed_cb is not None:
+                        storage_kwargs["failed_trial_callback"] = failed_cb
+                    storage_obj = optuna.storages.RDBStorage(**storage_kwargs)
                 except Exception as exc:
                     logger.warning(
                         "Optuna RDBStorage heartbeat/retry setup failed; falling back to storage "
@@ -717,9 +753,31 @@ def train_catboost_tuned_optuna(
         )
     gc.collect()
 
-    best_params = _materialize_study_params(study.best_params)
+    complete_trials = [
+        trial
+        for trial in study.trials
+        if trial.state == optuna.trial.TrialState.COMPLETE and trial.value is not None
+    ]
+    if not complete_trials:
+        raise ValueError("Optuna study has no COMPLETE trials available for model selection.")
+    constrained_best_trial = True
+    try:
+        selected_trial = study.best_trial
+    except ValueError as exc:
+        selected_trial = max(complete_trials, key=lambda trial: float(trial.value))
+        constrained_best_trial = False
+        logger.warning(
+            "Optuna study has no feasible trial under constraints; using best COMPLETE trial "
+            "by validation AUC as fallback. reason={}",
+            exc,
+        )
+    selected_params = dict(selected_trial.params)
+    selected_value = float(selected_trial.value)
+
+    best_params = _materialize_study_params(selected_params)
     best_params["verbose"] = 100
-    selection_model = CatBoostClassifier(**best_params)
+    catboost_best_params = _normalize_feature_penalty_params(best_params)
+    selection_model = CatBoostClassifier(**catboost_best_params)
     selection_model.fit(train_pool, eval_set=val_pool, use_best_model=True)
     y_val_prob = selection_model.predict_proba(X_val)[:, 1]
     val_auc = roc_auc_score(y_val, y_val_prob)
@@ -737,7 +795,9 @@ def train_catboost_tuned_optuna(
                 ]
             )
         full_pool = Pool(full_X, full_y, cat_features=cat_features, weight=full_weight)
-        refit_params = {k: v for k, v in best_params.items() if k != "early_stopping_rounds"}
+        refit_params = {
+            k: v for k, v in catboost_best_params.items() if k != "early_stopping_rounds"
+        }
         if best_iteration > 0:
             refit_params["iterations"] = best_iteration + 1
         best_model = CatBoostClassifier(**refit_params)
@@ -748,10 +808,12 @@ def train_catboost_tuned_optuna(
     metrics: dict[str, Any] = {
         "validation_auc": float(val_auc),
         "best_iteration": best_iteration,
-        "best_params": study.best_params,
+        "best_params": selected_params,
         "best_params_resolved": best_params,
         "hpo_trials_executed": len(study.trials),
-        "hpo_best_validation_auc": float(study.best_value),
+        "hpo_best_validation_auc": selected_value,
+        "hpo_selected_trial_number": int(selected_trial.number),
+        "hpo_selected_trial_constrained_feasible": bool(constrained_best_trial),
         "study_name_resolved": study.study_name,
         "refit_full_train": bool(refit_full_train),
         "model_type": "catboost_tuned",
@@ -765,7 +827,7 @@ def train_catboost_tuned_optuna(
 
     logger.info(
         "CatBoost tuned — val_AUC: "
-        f"{val_auc:.4f}, best_trial_val_AUC: {study.best_value:.4f}, "
+        f"{val_auc:.4f}, best_trial_val_AUC: {selected_value:.4f}, "
         f"trials={len(study.trials)}, multivariate_tpe={use_multivariate}, group_tpe={use_group_tpe}"
     )
     return best_model, metrics

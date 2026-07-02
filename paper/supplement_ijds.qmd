@@ -26,10 +26,11 @@ execute:
 ## Scope
 
 This online supplement supports the IJDS submission body. It collects proof
-details, robustness and external-replication tables A3--A34, reproducibility
+details, robustness and external-replication tables A3--A36, reproducibility
 commands, model-risk material, fairness diagnostics, and artifact lineage. It
-does not introduce a new Lending Club champion, protected search rerun, hidden
-selection criterion, or new claim family.
+does not introduce a hidden selection criterion or unreported claim family:
+A35 is the declared pool93 finite-grid frontier consumed by the body, and A36
+is the regenerated pool93 funded-set grade audit for the selected body point.
 :::
 
 The supplement is organized as a defense layer for the main manuscript rather
@@ -158,18 +159,20 @@ B_u(\alpha) = \sum_i w_i \tilde p_i(\alpha,\gamma) + (1-\gamma)\,\Gamma_{\mathrm
   \;\leq\; \tau + (1-\gamma)\,\Gamma_{\mathrm{CP}}(\alpha),
 $$
 
-with equality when the cap binds. The promoted policy binds at $\tau = 0.175$
-with $\gamma = 0.45$ and $\Gamma_{\mathrm{CP}}(0.01) = 0.187987$, so
-$B_u(0.01) = 0.278393$ and the deterministic bound reads
-$\sum_i w_i Y_i \leq 0.278393 + V(0.01) = 0.307268$ against a realized
-$\sum_i w_i Y_i = 0.032875$. The slack $(1-\gamma)\,\Gamma_{\mathrm{CP}}(\alpha)$ is
+with equality when the cap binds. The selected pool93 body point binds at
+$\tau = 0.1715$ with $\gamma = 0.5475$ and
+$\Gamma_{\mathrm{CP}}(0.01) = 0.162616$, so
+$B_u(0.01) \leq 0.245084$ and the deterministic bound reads
+$\sum_i w_i Y_i \leq 0.245084 + V(0.01) = 0.280434$. The exact audit reports
+zero deterministic violation. The slack $(1-\gamma)\,\Gamma_{\mathrm{CP}}(\alpha)$ is
 the part of the conformal premium the optimizer does not internalize at
 $\gamma < 1$; setting $\gamma = 1$ recovers the tight endpoint cap
 $B_u(\alpha) \leq \tau$.
 
-On the promoted draw the realized weighted miscoverage is $V(0.01) = 0.028875$,
+On the promoted draw the realized weighted miscoverage is $V(0.01) = 0.035350$,
 which *exceeds* the nominal $\alpha = 0.01$: the funded set under-covers relative
-to the marginal conformal level (unweighted funded coverage $0.9501$), as expected
+to the marginal conformal level (unweighted funded coverage `0.9427` at
+alpha01 for the body point), as expected
 for an adaptively selected subportfolio. The deterministic identity needs no
 assumption and holds with wide margin; the probabilistic guarantee is therefore
 read at the Markov level $V \leq \sqrt{\alpha} = 0.10$, which the realized $V$
@@ -181,8 +184,11 @@ conditional-coverage result [@vovk2005; @angelopoulos2023] makes the marginal
 coverage Beta-distributed about $1 - \alpha$ with standard deviation
 $\sqrt{\alpha(1-\alpha)/n_{\mathrm{cal}}} \approx 0.0002$ at $\alpha = 0.01$, so the
 endpoints (hence $\Gamma_{\mathrm{CP}}$ and $B_u$) are essentially invariant to the
-calibration draw and the residual $V$ variability is the test-side sampling that
-Table A16 bootstraps (effective size $\approx 126$).
+calibration draw and the residual $V$ variability is test-side and
+portfolio-selection driven. A36 regenerates the row-level funded-set grade audit
+from the promoted pool93 allocation; tail-specific concentration and bootstrap
+diagnostics remain future diagnostics unless regenerated under the same body
+policy.
 
 These steps leave a clean split. Theorem 1 proves the operational bound under
 Assumption 1. Proposition A.1 below shows that Markov is the sharp
@@ -206,37 +212,45 @@ transcribed table.
 
 | Certificate object | Computed from | What it supports | What it does not support |
 |---|---|---|---|
-| Exact funded-set audit | Frozen Lending Club OOT funded loans, allocations, labels, `p_hat`, and `u_i(alpha)`. | `V(0.01)=0.028875`, `Gamma_CP=0.187987`, zero violation, and alpha-safe pass for the promoted policy. | Universal conditional coverage or live adaptive control. |
-| Robust-region audit | The 45 unique policies in the final bound-aware region. | The promoted policy is not isolated; every evaluated final-region policy passes alpha01. | A claim about all 276k searched policies or future searches. |
+| Exact funded-set audit | Frozen Lending Club OOT funded loans, allocations, labels, `p_hat`, and `u_i(alpha)`. | Body point `V(0.01)=0.035350`, `Gamma_CP=0.162616`, Markov cap `0.345084`, zero violation, and `8/8` alpha-grid pass. | Universal conditional coverage or live adaptive control. |
+| Pool93 finite-grid frontier | 51,678 raw rows consolidated into 50,010 deduplicated semantic policies. | 27,508 all-alpha above-floor policies; terminal endpoint search `37,068/37,068` all-alpha passers. | A claim about all continuous policy values or future searches. |
 | External exhaustiveness audit | Prosper all-candidate and Freddie capped/all-candidate LP solves. | The reported external LP values are not shortlist artifacts. | New exact funded-set certificates for Prosper or Freddie. |
 
 : Certificate taxonomy used in the paper.
 
+## Pool93 Finite-Grid Frontier Closure (A35)
+
+The pool93 closure replaces single-policy reporting with a declared finite-grid
+frontier. The consolidated artifact deduplicates 51,678 raw rows into 50,010
+semantic policies; 27,508 policies both pass the declared alpha grid and exceed
+the return floor. The terminal endpoint run evaluates 37,068 policies and
+296,544 exact alpha checks, with 37,068/37,068 all-alpha passers. The alpha grid
+is fixed at
+`{0.01, 0.03, 0.05, 0.07, 0.10, 0.12, 0.15, 0.20}`.
+
+| Role | Return | Gamma_CP | V | Markov cap | Alpha pass |
+|---|---:|---:|---:|---:|:---:|
+| Minimum Markov-cap endpoint | `$170,467.27` | `0.095719` | `0.031875` | `0.273036` | `8/8` |
+| Low-cap balanced endpoint | `$171,006.20` | `0.097190` | `0.031875` | `0.274789` | `8/8` |
+| Highest return under cap <= `0.30` | `$173,314.04` | `0.115400` | `0.035875` | `0.294580` | `8/8` |
+| Strict cap <= `0.345` body proxy | `$184,800.41` | `0.162562` | `0.035350` | `0.344996` | `8/8` |
+| Body/default balanced point | `$184,832.48` | `0.162616` | `0.035350` | `0.345084` | `8/8` |
+| Highest return under cap <= `0.36` | `$186,050.73` | `0.174600` | `0.037750` | `0.358685` | `8/8` |
+| Max-return economic endpoint | `$223,458.14` | `0.457438` | `0.069575` | `0.510753` | `8/8` |
+
+: Pool93 finite-grid return-bound frontier (A35). Source artifact:
+`reports/crpto/tables/crpto_tableA35_pool93_ijds_frontier.csv`.
+
 ## Sharpness of the Distribution-Free Bound
 
-To quantify the cost of staying distribution-free, the table below contrasts the
-Markov threshold used in the main theorem with concentration tightenings computed
-on the *actual* funded-set weights (341 positive-exposure loan rows,
-effective sample size `n_eff = 1 / sum_i w_i^2 = 126.1` -- well below the loan
-count because exposure is concentrated). Each column reports the threshold `t`
-such that `P(V > t)` is controlled at the matched tail probability
-`delta = sqrt(alpha)`.
-
-| `alpha` | E[V] <= | Markov `t` | Hoeffding `t` (indep.) | Bernstein `t` (indep.) | empirical `V` |
-|---:|---:|---:|---:|---:|---:|
-| `0.01` | `0.01` | `0.1000` | `0.1056` | `0.0698` | `0.028875` |
-| `0.05` | `0.05` | `0.2236` | `0.1271` | `0.1061` | `0.028875` |
-| `0.10` | `0.10` | `0.3162` | `0.1676` | `0.1582` | `0.028875` |
-
-: Concentration-bound comparison on the frozen funded set (Table A21b). Bernstein
-is the sharpest at every level (e.g. `0.0698` vs Markov `0.1000` at
-`alpha = 0.01`); Hoeffding helps at looser `alpha` but not at `0.01`, because with
-concentrated exposure the effective sample size is only ~126. The frozen empirical
-`V = 0.028875` sits below *all three* thresholds at every level. These thresholds
-are computed under Assumption 1 (`E[V] <= alpha`, the second column); because the
-realized `V` exceeds `alpha = 0.01`, they are read as sensitivity references
-conditional on that assumption rather than as validated tail bounds, consistent
-with the coverage discussion in the body.
+The body keeps Markov as the headline because it is the distribution-free
+first-moment statement under Assumption 1. Earlier concentration tables remain
+useful as a diagnostic recipe, but they depend on the funded-loan exposure
+weights of the selected allocation. After pool93 promotion, the paper-facing
+certificate is therefore A35 plus the exact funded-set audit; any sharper
+Hoeffding, Bernstein, Bennett, or cluster-aware tightening should be regenerated
+from the promoted pool93 row-level allocation before being cited as a
+pool93-specific bound.
 
 Table A21c extends the same audit to one-sided Cantelli, Bennett and Freedman
 variants [@cantelli1929; @bennett1962; @freedman1975]. At `alpha = 0.01`,
@@ -272,7 +286,8 @@ The reading is that Markov is **not** a conservative placeholder in the body;
 it is the optimal first-moment statement for the guarantee Theorem 1 actually
 asserts. Every sharper row in the menu prices a specific additional assumption
 (loan independence, conditional variance, or a martingale protocol), and the
-empirical `V = 0.028875` clears all of them anyway.
+promoted pool93 body point clears the stated Markov check with
+`V = 0.035350 <= 0.100000`.
 
 Bennett is the closest match to the finite funded-set calculation because it
 was designed for independent, non-identically distributed summands using only
@@ -289,8 +304,8 @@ is omitted because one-sided Cantelli dominates it for this event; Azuma is
 omitted because it duplicates Hoeffding numerically while adding a sequential
 protocol assumption; Chernoff is omitted because its sharp threshold requires
 individual miss probabilities bounded by `alpha`; and a naive union-Markov
-correction over the 45 final robust-region policies is vacuous at the paper
-alphas. The tables are regenerated by
+correction over the finite policy frontier is vacuous at the paper alphas. The
+tables are regenerated by
 `scripts/build_concentration_bound_table.py` and
 `scripts/build_bound_tightening_audit.py` from frozen funded-set weights.
 
@@ -374,23 +389,26 @@ post-selection audit evidence.
 | A10 finalist exact bound evaluation | Shows exact alpha checks for conformal finalists. | Defends rank-1 selection. |
 | A11 enhanced synthetic shift | Extends stress around the promoted policy. | Robustness appendix. |
 
-These tables support the current claim that the promoted economic champion is
-not a fragile single-point artifact. They do not turn the current paper into a
-new prospective selection protocol. A fully pre-declared prospective protocol is
+These tables support the current claim that the promoted decision is not a
+fragile single-point artifact. They do not turn the current paper into a new
+prospective selection protocol. A fully pre-declared prospective protocol is
 future journal hardening.
 
 # Appendix C: Journal Robustness Package
 
-Tables A12--A34 answer likely reviewer questions that are too detailed for the
-25-page body. They are diagnostic by design, except A19 also supports the body
-framing around regret-auditability and A25--A34 support the external-replication
-defense. A20--A34 are journal-only add-ons: A20 audits tail-risk trade-offs
-inside the robust region; A21 makes the dependence-aware caveat numerical; A22
-turns the tail-risk diagnostic into an *active CVaR/OCE selection constraint*
-(a labeled challenger, not a new champion); A23--A24 stress multi-distribution coverage and
-online (ACI) stability on the frozen conformal intervals; A25--A34 cover the
-external economic layer by testing the same frozen recipe and adding the
-cross-dataset price-of-robustness scaling readout. Table A12 follows the standard
+Tables A12--A36 answer likely reviewer questions that are too detailed for the
+25-page body. A35 is the active pool93 frontier consumed by the body, and A36 is
+the pool93 body-point funded-set grade audit. A12--A34
+are diagnostic by design, except A19 also supports the body framing around
+regret-auditability and A25--A34 support the external-replication defense.
+A20--A34 are journal-only add-ons: A20 audits tail-risk trade-offs as a
+diagnostic package; A21 makes the dependence-aware caveat numerical; A22 turns
+the tail-risk diagnostic into an *active CVaR/OCE selection constraint* (a
+labeled challenger, not a new promoted policy); A23--A24 stress
+multi-distribution coverage and online (ACI) stability on the frozen conformal
+intervals; A25--A34 cover the external economic layer by testing the same frozen
+recipe and adding the cross-dataset price-of-robustness scaling readout. Table
+A12 follows the standard
 definitions of Conditional
 Value-at-Risk [@rockafellar2000cvar] and the Optimized Certainty Equivalent
 [@bental2007oce], and the non-monotonic risk-control framing behind A22 follows
@@ -400,19 +418,20 @@ frozen funded set or intervals, never as a re-promoted champion.
 | Table | Role | Scope caveat |
 |---|---|---|
 | A12 tail-risk OCE/CVaR diagnostics | Reprices the funded set under tail-risk summaries. | Diagnostic only; OCE/CVaR is not the optimized objective. |
-| A13 satisficing margins | Expresses return, `V`, `Gamma_CP`, violation, and robust-region pass as margins. | Thresholds are explanatory, not a new policy selector. |
+| A13 satisficing margins | Expresses return, `V`, `Gamma_CP`, violation, and frontier pass as margins. | Thresholds are explanatory, not a new policy selector. |
 | A14 dependency cluster diagnostics | Documents period/grade concentration for the tightening caveat. | Does not prove independence. |
 | A15 leave-one-period stress | Reweights the funded set by leaving periods out. | Descriptive stress, not re-optimization. |
 | A16 bootstrap funded-set metrics | Adds empirical intervals for return, defaults, `V`, and misses. | Bootstrap interval, not conformal guarantee. |
 | A17 budget/LGD/cap sensitivity | Varies operating assumptions. | Segment caps are diagnostics, not solver constraints. |
-| A18 robust region by policy family | Summarizes alpha-safe policies by bound-aware family. | Compatible leaderboard only inside the final family. |
+| A18 policy-family robustness surface | Summarizes alpha-safe policies by bound-aware family. | Compatible leaderboard only inside the final family; A35 is the promoted pool93 surface. |
 | A19 regret-auditability frontier | Compares two-stage, SPO+, and CRPTO robust on regret versus risk-control checks. | Comparator framing, not a new champion selector. |
-| A20 tail-risk robust-region audit | Re-solves the 45 robust-region policies and ranks them by CVaR, OCE, return, and satisficing status. | Journal audit only; lower-tail policies are not promoted over the frozen champion. |
+| A20 tail-risk diagnostic audit | Ranks tail-risk alternatives by CVaR, OCE, return, and satisficing status. | Journal diagnostic only; regenerate from pool93 row-level allocation before citing as pool93-specific. |
 | A21 cluster-bound tightening | Reports cluster-aware Hoeffding thresholds by period, grade, and period-grade. | Transparent caveat; not tighter than Markov for the observed exposure concentration. |
-| A22 tail-constrained re-optimization | Re-solves the 45 robust-region policies and selects the max-return policy under a decision-time CVaR cap computed from the conformal upper endpoints, tracing the return-vs-CVaR frontier. | CVaR/OCE as an active selection constraint; reports a tail-constrained challenger, not a new champion. |
+| A22 tail-constrained re-optimization | Selects the max-return policy under a decision-time CVaR cap computed from conformal upper endpoints, tracing the return-vs-CVaR frontier. | CVaR/OCE as an active selection constraint; reports a tail-constrained challenger, not a new promoted policy. |
 | A23 multi-distribution robustness | Worst-case 90% coverage by grade and grade x vintage cell on the frozen intervals. | Read-only diagnostic; the worst fine cell motivates MDCP/group-weighted as future work. |
 | A24 online conformal stability | Per-vintage and cumulative coverage plus the Gibbs-Candes ACI target trajectory over the OOT vintage sequence. | Static-OOT online-control diagnostic, not a streaming validation. |
 | A25 external replication gate | Applies the frozen CRPTO scoring/conformal/LP recipe to Prosper final-status loans and Freddie/Mendeley FM48. | External economic replication; not a Lending Club champion rerun and not a new exact theorem. |
+| A36 pool93 funded-set grade audit | Regenerates the selected body allocation at `alpha = 0.01` and summarizes funded exposure by grade bucket. | Composition evidence for the promoted body point, not a fairness or protected-class audit. |
 | A26 external candidate sensitivity | Checks whether the robust LP objective is stable as the OOT candidate pool grows. | Candidate-pool audit; supports the claim that reported objectives are not a tiny shortlist artifact. |
 | A27 Freddie horizon sensitivity | Audits Freddie/Mendeley default windows and red/green groups before selecting FM48 for the external table. | Dataset-selection audit; FM48 is promoted because it clears both coverage gates and keeps positive robust LP value. |
 | A28 external LP exhaustiveness | Solves Prosper all-candidate LP and Freddie caps `500k`, `1M`, and `all`. | Exhaustiveness certificate; the Freddie all-candidate optimum matches the screened optimum. |
@@ -421,12 +440,12 @@ frozen funded set or intervals, never as a re-promoted champion.
 | A31 external OOT subperiod metrics | Breaks Prosper by OOT year and Freddie by OOT quarter. | Subperiod audit; Freddie 2015Q4 alpha coverage is just below 99%. |
 | A32 Prosper default-definition sensitivity | Repeats Prosper under main, defaulted-only, and chargedoff-only labels. | Default semantics audit; all three variants pass the global gates. |
 | A33 Freddie segment sensitivity | Repeats Freddie FM48 for red, green, and combined groups. | Segment audit; green and combined pass alpha01, red remains a documented caveat. |
-| A34 cross-dataset price of robustness | Orders the frozen external applications (Freddie green/combined/red and Prosper) by panel default rate and reports the signed price of robustness. | Positive premium under blind application, ordered by panel default risk across four frozen external applications; the favorable Lending Club value is the selected-champion contrast. |
+| A34 cross-dataset price of robustness | Orders the frozen external applications (Freddie green/combined/red and Prosper) by panel default rate and reports the signed price of robustness. | Positive premium under blind external application, ordered by panel default risk across four frozen external applications. |
 
 ## External Multi-Dataset Replication
 
 The external layer addresses the most natural single-dataset criticism without
-changing the official Lending Club champion. Prosper final-status loans provide a
+changing the Lending Club frontier claim. Prosper final-status loans provide a
 second P2P-style consumer-credit panel with direct investment fields
 [@prosperLoanData]. Freddie/Mendeley FM48 provides a mortgage-credit panel built
 from Freddie Mac loan-level performance data with train/OOS/OOT splits and
@@ -478,7 +497,7 @@ replication. FM24 and FM36 are informative but miss one of the promoted gates;
 FM60 keeps high 90% coverage but falls short at alpha = 0.01. FM48 is the only
 Freddie horizon that clears the two conformal gates while preserving positive
 economic robust value. This is a dataset-level selection audit, not a new search
-over the Lending Club champion.
+over the Lending Club frontier.
 
 A29--A33 record the extended multidataset audit layer. The most important caveat
 is Freddie's sparse Mondrian behavior: across all `29` Freddie groups, tiny
@@ -500,9 +519,9 @@ not perfect conditional validity in every sparse mortgage cell.
 ## Cross-Dataset Price of Robustness
 
 A34 turns the external layer into a positive economic finding rather than a
-defensive gate. Using the same signed convention as the Lending Club champion
-field, $(\text{nonrobust}-\text{robust})/\text{nonrobust}$, the price of
-robustness is a *positive* premium on every frozen external application and
+defensive gate. Using the signed convention
+$(\text{nonrobust}-\text{robust})/\text{nonrobust}$, the price of robustness is a
+*positive* premium on every frozen external application and
 increases with the panel default rate across the cases evaluated. This is a
 pattern across two datasets (three Freddie default-window segments plus Prosper),
 not a scaling law: four points are consistent with the mechanism but cannot
@@ -519,20 +538,17 @@ establish a general relationship.
 The source CSV is
 `reports/crpto/tables/crpto_tableA34_price_of_robustness_cross_dataset.csv`.
 
-![A34 price-of-robustness scaling: under frozen application the premium is positive and increases with the panel default rate, while the selected Lending Club champion (`-10.56%`) is a favorable reference below zero.](../reports/crpto/figures/crpto_fig25_price_of_robustness_scaling.png){#fig-supp-price-scaling width="82%" fig-alt="Line chart on a log-scale x-axis showing the price of robustness rising from +1.00 percent to +9.46 percent as the panel default rate increases, with Lending Club at -10.56 percent as a reference line."}
+![A34 price-of-robustness scaling: under frozen external application the premium is positive and increases with the panel default rate.](../reports/crpto/figures/crpto_fig25_price_of_robustness_scaling.png){#fig-supp-price-scaling width="82%" fig-alt="Line chart on a log-scale x-axis showing the external price of robustness rising from +1.00 percent to +9.46 percent as the panel default rate increases."}
 
 Two readings matter. First, the premium tracks irreducible default risk, not
 discrimination: the green and red Freddie segments have nearly identical AUC but
 different premiums, while their default rates differ by roughly a factor of five.
 Higher default risk widens the conformal intervals, so the robust worst case
-discounts more economic return. Second, the *selected* Lending Club champion
-has a favorable signed price (`-10.56%`): bound-aware search located a robust
-funded set that also wins expected return. Reporting both--a bounded positive
-premium under blind application and a favorable value under selection--is more
-defensible than claiming robustness is uniformly free or uniformly costly. The
-measured headline is narrower: in these frozen applications, the conformal
-robust layer costs at most a low-double-digit premium, and CRPTO measures which
-regime a given panel is in.
+discounts more economic return. Second, the Lending Club body claim is not read
+through this external price table; it is read through the exact A35
+return-bound frontier. The measured headline is therefore narrow: in these
+frozen external applications, the conformal robust layer costs at most a
+low-double-digit premium, and CRPTO measures which regime a given panel is in.
 
 ## Reviewer Claim Checks
 
@@ -544,40 +560,48 @@ to make the audit path explicit.
 |---|---|---|---|
 | The predictive input is a frozen calibrated PD artifact, not a refreshed leaderboard model. | AUC, Brier, ECE, temporal backtesting, and calibration diagnostics. | `models/pd_canonical.cbm`, `models/pd_canonical_calibrator.pkl`, paper-facing metric tables. | `EXTRACTION_MANIFEST.json` and champion validation hashes. |
 | The conformal layer gives conservative OOT uncertainty on the PD scale. | 90% and 95% coverage, minimum group coverage, and grade/decile audits. | `data/processed/conformal_intervals_mondrian.parquet`. | Conformal validation status and regression tests that check metric consistency across surfaces. |
-| The promoted funded set passes the exact safety bound `V <= sqrt(alpha)` (not nominal alpha-coverage). | `V(alpha = 0.01) = 0.028875` (above alpha), `Gamma_CP = 0.187987`, zero violation. | `models/final_project_promotion.json`, bound-evaluation parquet, Table A13. | Exact-evaluation artifact and regression tests. |
-| The result is not an isolated lucky policy. | `45/45` policies pass in the final robust region. | Table A18 and robust-region heatmap. | Protected search/evaluation split; no rerun of the champion search in paper builds. |
-| The supplement strengthens interpretation without moving the champion. | A20--A34 challenger, dependence, tail-risk, multi-distribution, online, and external-replication diagnostics. | Journal robustness tables and Figures 15--25. | Scope caveats in each table; challenger and external outputs are labeled as non-promoted diagnostics. |
+| The promoted funded set passes the exact safety bound `V <= sqrt(alpha)` (not nominal alpha-coverage). | Body point `V(alpha = 0.01) = 0.035350` (above alpha), `Gamma_CP = 0.162616`, Markov cap `0.345084`, zero violation, `8/8` alpha pass. | A35, A36, pool93 exact bound-evaluation parquet, consolidated frontier/governance JSON. | Exact-evaluation artifact and regression tests. |
+| The result is not an isolated lucky policy. | Pool93 consolidated frontier has 50,010 deduplicated semantic policies and 27,508 all-alpha above-floor policies; terminal endpoint search has 37,068/37,068 all-alpha passers. | Table A35 and pool93 governance sidecars. | Protected search/evaluation split; no continuous-region claim. |
+| The supplement strengthens interpretation without moving the body claim. | A20--A34 challenger, dependence, tail-risk, multi-distribution, online, and external-replication diagnostics; A35 is the active pool93 frontier; A36 is the body funded-set grade audit. | Journal robustness tables, Figures 15--25, A35, and A36. | Scope caveats in each table; tail-specific CVaR/OCE diagnostics remain diagnostic unless regenerated from the promoted pool93 allocation. |
 | The frozen PD binary is a faithful paper artifact. | E3/E4 T1 diagnostics show negligible seed-level discrimination movement and stable expanding-window validation. | `docs/refactor/SENSITIVITY_RUN_DESIGN_2026-06.md` and Appendix E summary. | Non-promoted diagnostics only; they do not replace the champion or become routine reproduction steps. |
 | The manuscript is reproducible at the artifact level. | Tables, figures, Quarto pages, and status reports regenerate from frozen inputs. | Repository code, DVC metadata, rendered book/paper outputs. | Pre-push test and lint hooks, DVC status checks, and manifest validation before release. |
 
-## Funded-Set Audit Card
+## Funded-Set Audit Card Status
 
-Table A8 is intentionally more granular than the manuscript body. For reviewers
-who need the short version, the promoted policy funds 341 positive-exposure loan
-rows on a `$1M` budget. The exposure-weighted audit below
-collapses the period-by-grade table into four grade buckets. It is a diagnostic
-view of the frozen funded set, not a new selector or a re-optimized policy.
+The promoted pool93 body point has an exact aggregate funded-set audit at
+`alpha = 0.01`:
 
-| Grade bucket | Funded loans | Exposure share | Weighted default rate | `V` contribution | Mean `u_i(0.01)` |
+| Quantity | Value |
+|---|---:|
+| Funded rows at alpha01 | `314` |
+| Allocated budget | `$1,000,000` |
+| Realized return | `$184,832.48` |
+| Weighted true default/loss proxy | `0.035350` |
+| Weighted miscoverage `V` | `0.035350` |
+| Funded empirical coverage | `0.9427` |
+| `Gamma_CP` | `0.162616` |
+| Endpoint budget upper | `0.245084` |
+| Markov cap | `0.345084` |
+| Exact violation | `0.000000` |
+
+A36 regenerates the row-level funded-set audit from the selected pool93 body
+allocation and closes the composition card for the live manuscript claim. The
+source artifact is
+`reports/crpto/tables/crpto_tableA36_pool93_body_funded_grade_audit.csv`.
+
+| Grade bucket | Funded rows | Exposure share | Default rate | $V$ contribution | Mean $u_i(0.01)$ |
 |---|---:|---:|---:|---:|---:|
-| A-B | `13` | `7.35%` | `0.00%` | `0.00000` | `0.12529` |
-| C | `144` | `40.88%` | `2.86%` | `0.01168` | `0.17258` |
-| D | `141` | `42.35%` | `3.94%` | `0.01370` | `0.35206` |
-| E-G | `43` | `9.42%` | `4.78%` | `0.00350` | `0.52587` |
-
-The concentration pattern is useful for interpretation: most exposure sits in
-C/D loans, D contributes the largest share of the exact `V(alpha = 0.01)`, and
-the high-risk E-G tail is visible but not the hidden driver of the certificate.
+| A-B | `2` | `0.51%` | `0.00%` | `0.00000` | `0.11070` |
+| C | `85` | `28.71%` | `3.53%` | `0.00495` | `0.14456` |
+| D | `174` | `59.43%` | `7.47%` | `0.02690` | `0.26042` |
+| E-G | `53` | `11.35%` | `3.77%` | `0.00350` | `0.34866` |
 
 On a binary default outcome the metric has an exact reading worth stating. A
-non-default cannot miss (`y_i = 0 <= u_i`), so `V` counts only funded defaults,
-and a funded default misses unless its conformal endpoint reached the PD ceiling
-`u_i = 1`. Of the 19 funded defaults, the `alpha = 0.01` endpoint capped 2 at
-`u_i = 1` (weight `0.004`) and left 17 uncapped (weight `0.028875 = V`);
-equivalently, `V` is the funded weighted default rate (`0.032875`) minus the
-endpoint-capped defaults. The conformal layer's role at the tight `alpha` is
-precisely to inflate the worst endpoints toward one, and `V` measures the
-residual default mass the endpoints did not absorb. This is why `V` tracks the
+non-default cannot miss (`y_i = 0 <= u_i`), so `V` counts only funded defaults
+whose conformal endpoint does not reach the PD ceiling `u_i = 1`. The conformal
+layer's role at the tight `alpha` is to inflate the worst endpoints toward one,
+and `V` measures the residual default mass the endpoints did not absorb. This is
+why `V` tracks the
 funded default rate and exceeds `alpha = 0.01` -- a return-seeking funded set has
 a base default rate well above `1%` -- and why no reweighting of the calibration
 (group-weighted, localized, or multi-distribution) can drive `V` to the nominal
@@ -649,7 +673,7 @@ decision.
 | Cost-aware classifier calibration [@yang2025costaware]. | Shows that miscalibration has asymmetric downstream decision costs. | CRPTO uses calibrated PD and conformal upper endpoints as a governance-visible decision input. |
 | Lending Club / fintech credit scoring [@jagtiani2019altdata; @albanesi2024credit; @zheng2026twostage]. | Measures predictive and scorecard behavior on platform or fintech lending data. | Uses the PD model as an auditable input to a decision certificate. |
 | P2P investment support [@guo2016p2p; @zhao2016p2pportfolio; @babaei2020p2p]. | Combines borrower-level prediction with portfolio-style investment recommendation. | Adds conformal uncertainty and exact alpha-safe funded-set validation. |
-| Profit scoring in P2P lending [@serrano2016profitscoring]. | Reframes loan selection around economic return rather than classification accuracy alone. | Adds a post-allocation risk certificate and robust-region evidence around the economic objective. |
+| Profit scoring in P2P lending [@serrano2016profitscoring]. | Reframes loan selection around economic return rather than classification accuracy alone. | Adds a post-allocation risk certificate and finite-grid frontier evidence around the economic objective. |
 | Robust P2P credit portfolio optimization [@chi2019p2p]. | Brings data-driven robust optimization into P2P lending. | Makes the uncertainty set a conformal artifact with frozen lineage. |
 | AI/OR digital lending optimization [@aior2025lendingclub]. | Frames Lending Club funding as multi-objective OR. | Keeps risk controls and artifact governance as first-class outputs. |
 | Ordinal conformal credit scoring [@kawasumi2026ordinal]. | Applies conformal prediction to credit-score intervals. | CRPTO moves from score uncertainty to a robust portfolio decision. |
@@ -662,18 +686,18 @@ decision.
 
 ![CQR is retained as conformal appendix evidence, not as the promoted method.](../reports/crpto/figures/crpto_fig10_cqr_per_grade.png){#fig-supp-cqr width="90%" fig-alt="Coverage by Lending Club grade for CQR and conformal variants, used as appendix evidence rather than promoted method."}
 
-![Tail-risk versus realized return across the 45-policy robust region (Table A20). All 45 policies pass the satisficing screen; the frozen economic champion (star) deliberately accepts more realized CVaR for higher return, while the lowest-tail policy shows the available de-risking trade-off inside the robust region.](../reports/crpto/figures/crpto_fig16_tail_risk_frontier.png){#fig-supp-tail-frontier width="90%" fig-alt="Scatter plot of tail risk versus realized return across 45 robust-region policies, with all policies passing the satisficing screen and the frozen economic champion marked."}
+![Tail-risk versus realized return in the diagnostic A20 policy surface. This figure illustrates the CRPTO tail-risk audit pattern; it should be regenerated from the promoted pool93 row-level allocation before being cited as a pool93-specific tail frontier.](../reports/crpto/figures/crpto_fig16_tail_risk_frontier.png){#fig-supp-tail-frontier width="90%" fig-alt="Scatter plot of tail risk versus realized return across a diagnostic policy surface, with lower-tail and higher-return policies marked."}
 
 ![Tail risk of the frozen funded set under varying loss-given-default (Table A12). CVaR grows with the assumed LGD while the OCE and the mean loss rate stay milder, showing that OCE/CVaR enter the paper as post-hoc stress summaries rather than as the optimized objective.](../reports/crpto/figures/crpto_fig17_tail_risk_lgd.png){#fig-supp-tail-lgd width="82%" fig-alt="Line chart of frozen funded-set loss rate versus LGD (0.35 to 0.60) for CVaR90, CVaR95, CVaR99, OCE and the mean; CVaR grows with LGD while OCE and the mean stay mild."}
 
-![A22 return-vs-CVaR frontier: each point is the highest-return alpha01-safe policy admissible under a decision-time CVaR cap; the frozen economic champion sits at the high-return, high-CVaR corner and stays official, while the tightest tail cap marks the challenger end.](../reports/crpto/figures/crpto_fig18_tail_constrained_frontier.png){#fig-supp-tail-constrained width="88%" fig-alt="Upward line of realized return versus decision-time CVaR95 cap; economic champion as a star at the top-right, tightest tail cap as a diamond at the bottom-left."}
+![A22 return-vs-CVaR frontier: each point is the highest-return alpha01-safe policy admissible under a decision-time CVaR cap in the diagnostic tail package. The plot shows how a tail-constrained challenger would be documented; it is not the active pool93 selector.](../reports/crpto/figures/crpto_fig18_tail_constrained_frontier.png){#fig-supp-tail-constrained width="88%" fig-alt="Upward line of realized return versus decision-time CVaR95 cap, with a high-return point and tightest tail cap marked."}
 
 ![A24 online conformal stability: per-vintage and cumulative coverage stay above the 90% target across the eleven OOT vintages while the Gibbs-Candes ACI target alpha_t barely drifts, indicating an online controller would have little to correct on this static OOT.](../reports/crpto/figures/crpto_fig19_online_coverage_aci.png){#fig-supp-online-aci width="88%" fig-alt="Per-vintage and cumulative coverage lines above a 90% target line across eleven OOT quarters, with the ACI target alpha_t on a secondary axis rising slightly from 0.10 to 0.12."}
 
 A19--A33 should be read as literature-aligned stress evidence. A19 places CRPTO
 against the regret-driven training tradition; A20--A22 translate tail risk and
-satisficing into robust-region and tail-constrained audits without changing the
-champion; and A23--A24 show where multi-distribution and online conformal work
+satisficing into finite-grid and tail-constrained audits without changing the
+pool93 body claim; and A23--A24 show where multi-distribution and online conformal work
 would enter if the project moved from a frozen historical panel to a new
 protocol. A25--A34 add the
 external economic replication layer on Prosper and Freddie/Mendeley, including
@@ -814,7 +838,7 @@ The active IJDS submission surfaces are:
 | Surface | Source | Role |
 |---|---|---|
 | Anonymous body | `paper/CRPTO_ijds.qmd` | 25-page IJDS-style manuscript source. |
-| Online supplement | `paper/supplement_ijds.qmd` | Proofs, A3--A34, MRM/fairness, reproducibility. |
+| Online supplement | `paper/supplement_ijds.qmd` | Proofs, A3--A36, MRM/fairness, reproducibility. |
 | Long companion | `book/` | Public companion after anonymity handling. |
 | Publication config | `configs/crpto_publication_targets.yaml` | Venue, template, anonymity, and pivot rules. |
 

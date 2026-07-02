@@ -12,6 +12,8 @@ import pytest
 
 from src.models.calibration import (
     LogitShiftCalibrator,
+    QuadraticLogitCalibrator,
+    TemperatureScalingCalibrator,
     calibrate_isotonic,
     evaluate_calibration,
     expected_calibration_error,
@@ -126,4 +128,27 @@ class TestLogitShiftCalibrator:
         calibrator = LogitShiftCalibrator(delta=-0.25)
         scores = np.array([0.05, 0.2, 0.5, 0.8], dtype=float)
         restored = pickle.loads(pickle.dumps(calibrator))
+        np.testing.assert_allclose(calibrator.predict(scores), restored.predict(scores))
+
+
+class TestExperimentalScoreCalibrators:
+    def test_temperature_scaling_predicts_bounded_probabilities(self):
+        y_true = np.array([0, 0, 0, 1, 1, 1])
+        raw = np.array([0.05, 0.15, 0.35, 0.55, 0.75, 0.95])
+        calibrator = TemperatureScalingCalibrator().fit(raw, y_true)
+
+        preds = calibrator.predict(np.linspace(0.01, 0.99, 20))
+
+        assert calibrator.temperature > 0.0
+        assert np.all(preds >= 0.0)
+        assert np.all(preds <= 1.0)
+
+    def test_quadratic_logit_pickle_round_trip_preserves_outputs(self):
+        y_true = np.array([0, 0, 0, 1, 1, 1, 1, 0])
+        raw = np.array([0.04, 0.12, 0.28, 0.48, 0.62, 0.78, 0.92, 0.22])
+        calibrator = QuadraticLogitCalibrator().fit(raw, y_true)
+        scores = np.linspace(0.05, 0.95, 10)
+
+        restored = pickle.loads(pickle.dumps(calibrator))
+
         np.testing.assert_allclose(calibrator.predict(scores), restored.predict(scores))

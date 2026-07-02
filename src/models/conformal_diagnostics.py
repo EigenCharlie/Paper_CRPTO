@@ -26,6 +26,7 @@ def validate_coverage(
     y_true: np.ndarray,
     y_intervals: np.ndarray,
     alpha: float,
+    log_summary: bool = True,
 ) -> dict[str, float]:
     """Validate empirical coverage of a conformal interval set against its target.
 
@@ -33,6 +34,8 @@ def validate_coverage(
         y_true: observed labels.
         y_intervals: ``(n, 2)`` array of ``[low, high]`` per observation.
         alpha: miscoverage rate. Target coverage is ``1 - alpha``.
+        log_summary: emit a one-line diagnostic summary. Large grid searches
+            set this to ``False`` to avoid logging becoming the bottleneck.
 
     Returns:
         Dict with empirical_coverage, target_coverage, coverage_gap,
@@ -50,7 +53,8 @@ def validate_coverage(
         "avg_interval_width": float((high - low).mean()),
         "median_interval_width": float(np.median(high - low)),
     }
-    logger.info(f"Coverage validation: empirical={covered:.4f} vs target={target:.4f}")
+    if log_summary:
+        logger.info(f"Coverage validation: empirical={covered:.4f} vs target={target:.4f}")
     return metrics
 
 

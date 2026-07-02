@@ -86,12 +86,58 @@ def create_pd_intervals_mondrian(
     calibrator: Any | None = None,
     scaled_scores: bool = False,
     score_scale_family: str = "none",
+    log_summary: bool = True,
 ) -> tuple[np.ndarray, np.ndarray, dict[str, Any]]:
     """Create group-conditional split-conformal PD intervals."""
     y_cal_pred_raw = classifier.predict_proba(X_cal)[:, 1]
     y_test_pred_raw = classifier.predict_proba(X_test)[:, 1]
     y_cal_pred = apply_probability_calibrator(calibrator, y_cal_pred_raw)
     y_test_pred = apply_probability_calibrator(calibrator, y_test_pred_raw)
+
+    return create_pd_intervals_mondrian_from_predictions(
+        y_cal_pred=y_cal_pred,
+        y_test_pred=y_test_pred,
+        y_cal=y_cal,
+        group_cal=group_cal,
+        group_test=group_test,
+        alpha=alpha,
+        min_group_size=min_group_size,
+        scaled_scores=scaled_scores,
+        score_scale_family=score_scale_family,
+        log_summary=log_summary,
+    )
+
+
+def create_pd_intervals_mondrian_from_predictions(
+    *,
+    y_cal_pred: np.ndarray,
+    y_test_pred: np.ndarray,
+    y_cal: pd.Series | np.ndarray,
+    group_cal: pd.Series | np.ndarray,
+    group_test: pd.Series | np.ndarray,
+    alpha: float = 0.1,
+    min_group_size: int = 500,
+    scaled_scores: bool = False,
+    score_scale_family: str = "none",
+    log_summary: bool = True,
+) -> tuple[np.ndarray, np.ndarray, dict[str, Any]]:
+    """Create group-conditional PD intervals from precomputed probabilities.
+
+    The conformal reopen search evaluates many interval designs against the same
+    model scores. This helper preserves the exact interval math used by
+    ``create_pd_intervals_mondrian`` while avoiding repeated classifier
+    inference inside each grid cell.
+    """
+    y_cal_pred = np.clip(np.asarray(y_cal_pred, dtype=float).reshape(-1), 0.0, 1.0)
+    y_test_pred = np.clip(np.asarray(y_test_pred, dtype=float).reshape(-1), 0.0, 1.0)
+    if len(y_cal_pred) != len(y_cal):
+        raise ValueError(
+            f"Calibration prediction length mismatch: pred={len(y_cal_pred)}, y={len(y_cal)}"
+        )
+    if len(y_test_pred) != len(group_test):
+        raise ValueError(
+            f"Test prediction length mismatch: pred={len(y_test_pred)}, groups={len(group_test)}"
+        )
 
     y_cal_arr = np.asarray(y_cal, dtype=float)
     g_cal = pd.Series(group_cal).fillna("UNKNOWN").astype(str).to_numpy()
@@ -140,11 +186,12 @@ def create_pd_intervals_mondrian(
         "avg_width": float((high - low).mean()),
         "median_width": float(np.median(high - low)),
     }
-    logger.info(
-        "Conformal PD intervals (mondrian): "
-        f"groups={len(all_groups)}, avg_width={diagnostics['avg_width']:.4f}, "
-        f"fallback_groups={len(fallback_groups)}"
-    )
+    if log_summary:
+        logger.info(
+            "Conformal PD intervals (mondrian): "
+            f"groups={len(all_groups)}, avg_width={diagnostics['avg_width']:.4f}, "
+            f"fallback_groups={len(fallback_groups)}"
+        )
     return y_test_pred, y_intervals, diagnostics
 
 

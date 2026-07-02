@@ -36,13 +36,14 @@ the submission-shaped versions are written.
 
 Selected P2/P3-inspired diagnostics are part of the current paper/journal pack:
 regret-auditability, OCE/CVaR tail risk, robust satisficing margins,
-multi-distribution diagnostics, online replay diagnostics, and external
-Prosper/Freddie economic replications. The tail-risk robust-region audit,
-cluster-bound table, and A25--A34 external package are supplement-heavy add-ons.
-The active submission still uses the frozen CRPTO result plus evidence generated
-from existing artifacts; prospective/live online validation, causal variants,
-new multi-dataset protocols beyond the frozen Prosper/Freddie replications,
-production, and package tracks remain future work.
+multi-distribution diagnostics, online replay diagnostics, the pool93 A35
+finite-grid frontier, the A36 funded-set grade audit, and external
+Prosper/Freddie economic replications. Tail-risk row-level repricing remains a
+supplement-heavy diagnostic unless regenerated from the promoted pool93
+allocation. Prospective
+live online validation, causal variants, new multi-dataset protocols beyond the
+frozen Prosper/Freddie replications, production, and package tracks remain
+future work.
 
 ## Render Commands
 

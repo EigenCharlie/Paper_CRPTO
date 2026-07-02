@@ -86,6 +86,7 @@ models/search_pd/
 !models/champion_*.json
 !models/conformal_method_registry.json
 !models/conformal_gap_summary.json
+models/conformal_gap/
 models/feature_artifacts_last_valid_artifact.json
 models/feature_artifacts_runtime_status.json
 
@@ -93,6 +94,7 @@ models/feature_artifacts_runtime_status.json
 reports/run_logs/
 reports/notebook_images/
 reports/paper_material/
+reports/crpto/experiments/
 reports/figures/**
 !reports/figures/**/
 !reports/figures/**/*.dvc
@@ -142,3 +144,9 @@ htmlcov/
 .tmp_*/
 models/experiments/
 configs/experiments/
+!configs/experiments/
+configs/experiments/*
+!configs/experiments/tabprep_*.yaml
+!configs/experiments/tabpfn_*.yaml
+!configs/experiments/champion_reopen*.yaml
+!configs/experiments/champion_reopen*.txt

@@ -655,6 +655,14 @@ def _fit_calibrator_from_scores(
         from src.models.calibration import calibrate_beta
 
         return calibrate_beta(y_true, y_prob_raw)
+    if method == "temperature":
+        from src.models.calibration import TemperatureScalingCalibrator
+
+        return TemperatureScalingCalibrator().fit(y_prob_raw, y_true)
+    if method == "quadratic_logit":
+        from src.models.calibration import QuadraticLogitCalibrator
+
+        return QuadraticLogitCalibrator().fit(y_prob_raw, y_true)
     raise ValueError(f"Unsupported calibration method: {method}")
 
 
@@ -1063,6 +1071,10 @@ def _human_calibration_name(method: str) -> str:
         return "Venn-Abers"
     if method == "beta":
         return "Beta Calibration"
+    if method == "temperature":
+        return "Temperature Scaling"
+    if method == "quadratic_logit":
+        return "Quadratic Logit"
     return method
 
 

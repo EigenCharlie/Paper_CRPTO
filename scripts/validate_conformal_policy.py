@@ -1,7 +1,7 @@
 """Validate conformal artifacts against explicit acceptance policy.
 
 Usage:
-    uv run python scripts/validate_conformal_policy.py --config configs/conformal_policy.yaml
+    uv run python scripts/validate_conformal_policy.py --config configs/crpto_conformal_policy.yaml
 """
 
 from __future__ import annotations
@@ -27,6 +27,8 @@ except ImportError:
     _MAPIE_MWI_AVAILABLE = False
 from src.utils.artifact_metadata import build_artifact_metadata, resolve_run_tag
 from src.utils.baseline_registry import resolve_official_baseline_run_tag
+
+DEFAULT_POLICY_CONFIG = "configs/crpto_conformal_policy.yaml"
 
 
 def _fallback_winkler_interval_score(
@@ -139,7 +141,7 @@ def _apply_artifact_namespace(
 
 
 def main(
-    config_path: str = "configs/conformal_policy.yaml",
+    config_path: str = DEFAULT_POLICY_CONFIG,
     run_tag: str | None = None,
     sensitivity_config_path: str | None = None,
     artifact_namespace: str | None = None,
@@ -511,7 +513,7 @@ def main(
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
-    parser.add_argument("--config", default="configs/conformal_policy.yaml")
+    parser.add_argument("--config", default=DEFAULT_POLICY_CONFIG)
     parser.add_argument("--run-tag", default=None)
     parser.add_argument(
         "--sensitivity-config",

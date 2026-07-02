@@ -1,0 +1,90 @@
+run_tag: tabprep-challenger-2026-06-16
+seeds: [42, 52, 62]
+sample_rows: 0
+
+data:
+  train_path: data/processed/train_fe.parquet
+  calibration_path: data/processed/calibration_fe.parquet
+  test_path: data/processed/test_fe.parquet
+  feature_config_path: data/processed/feature_config.yml
+
+validation:
+  scheme: temporal_train_val_cal_test
+  val_fraction: 0.15
+  date_col: issue_d
+
+tabprep:
+  variants: [safe_500, balanced_1500, full_3000]
+  persist_transformed: false
+  suspicious_auc_threshold: 0.90
+  extra_blacklist:
+    - id
+    - url
+    - loan_status
+    - emp_title
+    - title
+    - zip_code
+    - addr_state
+    - next_pymnt_d
+    - pymnt_plan
+    - application_type
+    - verification_status_joint
+  monotonic_constraints:
+    installment: 1
+    annual_inc: -1
+    dti: 1
+    loan_to_income: 1
+
+model:
+  type: catboost
+  params:
+    iterations: 4200
+    learning_rate: 0.057321202729872456
+    depth: 8
+    l2_leaf_reg: 119.37272987133554
+    min_data_in_leaf: 135
+    rsm: 0.5716653769355704
+    random_strength: 1.3208942645900998e-07
+    border_count: 254
+    bootstrap_type: MVS
+    subsample: 0.678878683066026
+    loss_function: Logloss
+    auto_class_weights: Balanced
+    eval_metric: AUC
+    has_time: true
+    allow_writing_files: false
+    random_seed: 42
+    early_stopping_rounds: 150
+    grow_policy: SymmetricTree
+    leaf_estimation_iterations: 5
+    monotone_constraints: installment:1,annual_inc:-1,dti:1,loan_to_income:1
+    feature_weights:
+      loan_to_income: 1.3
+      annual_inc: 1.2
+      dti: 1.2
+      installment: 1.0
+    penalties_coefficient: 0.75
+
+calibration:
+  method: auto
+  candidates: [platt, isotonic, venn_abers]
+
+evaluation:
+  fairness_threshold: 0.50
+  fairness_columns:
+    - grade
+    - sub_grade
+    - term
+    - purpose
+    - home_ownership
+
+output:
+  data_dir: data/processed/experiments/tabprep
+  model_dir: models/experiments/tabprep
+  report_dir: reports/crpto/experiments/tabprep
+
+downstream:
+  enabled: false
+  requires_explicit_approval: true
+  conformal_config_path: configs/experiments/tabprep_conformal_policy.yaml
+  optimization_config_path: configs/experiments/tabprep_optimization.yaml

@@ -246,6 +246,7 @@ def _compute_exact_weights(
     effective_pd: np.ndarray,
     policy: dict[str, Any],
     budget: float,
+    threads: int = DEFAULT_THREADS,
 ) -> tuple[np.ndarray, dict[str, Any]]:
     int_rates = (
         _parse_percent_series(loans["int_rate"])
@@ -269,7 +270,7 @@ def _compute_exact_weights(
         pd_cap_slack_penalty=float(policy["pd_cap_slack_penalty"]),
         pd_constraint_override=effective_pd,
         time_limit=DEFAULT_TIME_LIMIT,
-        threads=DEFAULT_THREADS,
+        threads=max(1, int(threads)),
         solver_backend=str(policy["solver_backend"]),
     )
     loan_amounts = (
@@ -277,13 +278,18 @@ def _compute_exact_weights(
         if "loan_amnt" in loans.columns
         else np.ones(len(loans), dtype=float)
     )
-    alloc = np.array(
-        [float(solution["allocation"].get(i, 0.0)) for i in range(len(loans))], dtype=float
-    )
+    if "allocation_vector" in solution:
+        alloc = np.asarray(solution["allocation_vector"], dtype=float)
+    else:
+        alloc = np.array(
+            [float(solution["allocation"].get(i, 0.0)) for i in range(len(loans))], dtype=float
+        )
     total_allocated = float(np.sum(alloc * loan_amounts))
     weights = (alloc * loan_amounts) / max(total_allocated, 1e-6)
     return weights, {
         "solver_status": str(solution.get("solver_status", "unknown")),
+        "solver_backend": str(solution.get("solver_backend", policy["solver_backend"])),
+        "native_solver_error": str(solution.get("native_solver_error", "")),
         "total_allocated": total_allocated,
         "n_funded": int(solution.get("n_funded", int(np.sum(weights > 1e-8)))),
         "weighted_pd_constraint_used": float(np.sum(weights * effective_pd)),
@@ -301,6 +307,7 @@ def _validate_single_alpha(
     allocator_mode: str,
     budget: float,
     t_eval: float,
+    threads: int = DEFAULT_THREADS,
 ) -> dict[str, Any]:
     pd_point, pd_low, pd_high = _compute_intervals_at_alpha(aligned, alpha)
     y_true = (
@@ -319,6 +326,7 @@ def _validate_single_alpha(
             effective_pd=effective_pd,
             policy=policy,
             budget=budget,
+            threads=max(1, int(threads)),
         )
     elif mode == "proxy":
         weights, alloc_meta = _compute_proxy_weights(
@@ -365,6 +373,10 @@ def _validate_single_alpha(
         "all_bounds_hold": bool((violation <= alpha + 1e-8) and (sqrt_alpha + 1e-8 >= V)),
         "allocator_mode": mode,
         "solver_status": str(alloc_meta.get("solver_status", "unknown")),
+        "allocator_solver_backend": str(
+            alloc_meta.get("solver_backend", policy["solver_backend"])
+        ),
+        "allocator_native_solver_error": str(alloc_meta.get("native_solver_error", "")),
         "total_allocated": round(float(alloc_meta.get("total_allocated", 0.0)), 2),
         "pd_cap_slack": round(float(alloc_meta.get("pd_cap_slack", 0.0)), 6),
     }

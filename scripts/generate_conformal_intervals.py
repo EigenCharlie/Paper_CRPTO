@@ -10,7 +10,9 @@ import argparse
 import json
 import pickle
 import shutil
+import time
 from dataclasses import dataclass
+from datetime import UTC, datetime
 from pathlib import Path
 from typing import Any
 
@@ -25,7 +27,7 @@ from src.models.conformal import (
     apply_probability_calibrator,
     build_mondrian_partition_labels,
     conditional_coverage_by_group,
-    create_pd_intervals_mondrian,
+    create_pd_intervals_mondrian_from_predictions,
     validate_coverage,
 )
 from src.models.conformal_tuning import (
@@ -55,6 +57,33 @@ from src.utils.replay_manifest import load_replay_manifest, manifest_section
 
 TARGET_COL = "default_flag"
 GROUP_COL = "grade"
+
+
+def _utc_now() -> str:
+    return datetime.now(tz=UTC).isoformat()
+
+
+def _upstream_contract_path() -> Path | None:
+    import os
+
+    run_tag = str(os.environ.get("UPSTREAM_CANONICAL_RUN_TAG", "") or "").strip()
+    if not run_tag:
+        return None
+    path = Path("models/search_pd") / run_tag / "pd_model_contract.json"
+    return path if path.exists() else None
+
+
+def _load_active_contract() -> dict[str, Any] | None:
+    upstream = _upstream_contract_path()
+    if upstream is not None:
+        contract = load_contract(upstream)
+        if isinstance(contract, dict):
+            contract["_contract_path"] = str(upstream)
+            return contract
+    contract = load_contract(CONTRACT_PATH)
+    if isinstance(contract, dict):
+        contract["_contract_path"] = str(CONTRACT_PATH)
+    return contract
 
 
 @dataclass(frozen=True)
@@ -179,6 +208,41 @@ def _restore_replay_namespace(source_namespace: str, *, run_tag: str | None = No
     logger.info("Restored blessed conformal artifacts from namespace {}", source_namespace)
 
 
+def _write_tuning_runtime_status(
+    status_path: Path,
+    *,
+    artifact_namespace: str | None,
+    phase: str,
+    completed: int,
+    total: int,
+    started_monotonic: float,
+    extra: dict[str, Any] | None = None,
+) -> None:
+    elapsed = float(time.perf_counter() - started_monotonic)
+    eta = None
+    if completed > 0 and total > 0 and completed < total:
+        eta = float((elapsed / completed) * (total - completed))
+    elif total > 0 and completed >= total:
+        eta = 0.0
+    payload: dict[str, Any] = {
+        "schema_version": "2026-06-24.1",
+        "generated_at_utc": _utc_now(),
+        "artifact_namespace": artifact_namespace,
+        "phase": phase,
+        "completed_candidates": int(completed),
+        "total_candidates": int(total),
+        "pct_complete": float(completed / max(total, 1)),
+        "elapsed_sec": elapsed,
+        "eta_sec": eta,
+    }
+    if extra:
+        payload.update(extra)
+    status_path.parent.mkdir(parents=True, exist_ok=True)
+    tmp = status_path.with_suffix(status_path.suffix + ".tmp")
+    tmp.write_text(json.dumps(payload, indent=2, ensure_ascii=False) + "\n", encoding="utf-8")
+    tmp.replace(status_path)
+
+
 def _stage_metrics(
     *,
     dataset_scope: str,
@@ -248,7 +312,7 @@ def _resolve_features(
     test_df: pd.DataFrame,
 ) -> tuple[list[str], list[str]]:
     """Resolve feature list, preferring explicit contract then model metadata."""
-    contract = load_contract(CONTRACT_PATH)
+    contract = _load_active_contract()
     if isinstance(contract, dict):
         contract_features = contract.get("feature_names", [])
         contract_categorical = contract.get("categorical_features", [])
@@ -256,7 +320,7 @@ def _resolve_features(
             categorical = [c for c in contract_categorical if c in contract_features]
             logger.info(
                 f"Using {len(contract_features)} contract features ({len(categorical)} categorical) "
-                f"from {CONTRACT_PATH}"
+                f"from {contract.get('_contract_path', CONTRACT_PATH)}"
             )
             return list(contract_features), categorical
 
@@ -317,6 +381,54 @@ def _build_feature_matrix(
         else:
             X[col] = pd.to_numeric(X[col], errors="coerce")
     return X
+
+
+def _load_contract_matrix(
+    *,
+    contract: dict[str, Any] | None,
+    split_name: str,
+    reference_frame: pd.DataFrame,
+    features: list[str],
+    categorical: list[str],
+) -> pd.DataFrame | None:
+    if not isinstance(contract, dict):
+        return None
+    paths = contract.get("model_matrix_paths")
+    if not isinstance(paths, dict):
+        return None
+    raw_path = paths.get(split_name)
+    if not raw_path:
+        return None
+    path = Path(str(raw_path))
+    if not path.exists():
+        raise FileNotFoundError(f"Contract model matrix not found for {split_name}: {path}")
+    matrix = pd.read_parquet(path)
+    if len(matrix) != len(reference_frame):
+        if "id" in matrix.columns and "id" in reference_frame.columns:
+            indexed = matrix.set_index("id", drop=False)
+            wanted = reference_frame["id"].tolist()
+            missing_ids = [value for value in wanted if value not in indexed.index]
+            if missing_ids:
+                raise KeyError(
+                    f"Contract model matrix {path} missing {len(missing_ids)} ids; "
+                    f"first missing={missing_ids[:5]}"
+                )
+            matrix = indexed.loc[wanted].reset_index(drop=True)
+        elif len(matrix) > len(reference_frame):
+            matrix = matrix.tail(len(reference_frame)).reset_index(drop=True)
+        else:
+            raise ValueError(
+                f"Contract model matrix row count mismatch for {split_name}: "
+                f"matrix={len(matrix)}, reference={len(reference_frame)}"
+            )
+    missing = [feature for feature in features if feature not in matrix.columns]
+    if missing:
+        raise KeyError(
+            f"Contract model matrix {path} missing {len(missing)} features; "
+            f"first missing={missing[:5]}"
+        )
+    logger.info("Using prebuilt {} model matrix from {}", split_name, path)
+    return _build_feature_matrix(matrix, features, categorical)
 
 
 def _scale_intervals_around_prediction(
@@ -393,9 +505,30 @@ def _load_conformal_inputs(
     if GROUP_COL not in cal_df.columns or GROUP_COL not in test_df.columns:
         raise KeyError(f"Missing group column '{GROUP_COL}' in calibration/test data.")
 
+    contract = _load_active_contract()
     features, categorical = _resolve_features(model, cal_df, test_df)
-    X_cal = _build_feature_matrix(cal_df, features, categorical)
-    X_test = _build_feature_matrix(test_df, features, categorical)
+    X_cal = _load_contract_matrix(
+        contract=contract,
+        split_name="calibration",
+        reference_frame=cal_df,
+        features=features,
+        categorical=categorical,
+    )
+    X_test = _load_contract_matrix(
+        contract=contract,
+        split_name="test",
+        reference_frame=test_df,
+        features=features,
+        categorical=categorical,
+    )
+    if X_cal is None:
+        X_cal = _build_feature_matrix(cal_df, features, categorical)
+    if X_test is None:
+        X_test = _build_feature_matrix(test_df, features, categorical)
+    if len(X_cal) != len(cal_df) or len(X_test) != len(test_df):
+        raise ValueError(
+            "Contract model matrix row counts must match calibration/test split row counts."
+        )
     y_cal = cal_df[TARGET_COL].astype(float)
     y_test = test_df[TARGET_COL].astype(float)
     group_cal_base = cal_df[GROUP_COL].fillna("UNKNOWN").astype(str)
@@ -758,11 +891,82 @@ def main(
     score_scale_families = tuning_grid.score_scale_families
     scaled_scores_options = tuning_grid.scaled_scores_options
     tuning_rows: list[dict[str, Any]] = []
+    tuning_total_candidates = (
+        len(partition_candidates)
+        * len(partition_probability_sources)
+        * len(n_score_bins_candidates)
+        * len(fallback_modes)
+        * len(alpha_candidates_90)
+        * len(scaled_scores_options)
+        * len(score_scale_families)
+        * len(min_group_sizes)
+    )
+    tuning_completed_candidates = 0
+    tuning_started = time.perf_counter()
+    tuning_status_path = (
+        _resolve_artifact_paths(artifact_namespace)["models_dir"]
+        / "conformal_tuning_runtime_status.json"
+    )
+    _write_tuning_runtime_status(
+        tuning_status_path,
+        artifact_namespace=artifact_namespace,
+        phase="tuning_running",
+        completed=0,
+        total=tuning_total_candidates,
+        started_monotonic=tuning_started,
+    )
 
     # Tune 90% interval config across candidate Mondrian partitions.
     prob_fit_lookup = {"raw": y_prob_cal_fit, "calibrated": y_prob_calibrated[idx_cal_fit]}
     prob_tune_lookup = {"raw": y_prob_cal_tune, "calibrated": y_prob_calibrated[idx_cal_tune]}
     prob_test_lookup = {"raw": y_prob_test_raw, "calibrated": y_prob_test_calibrated}
+    interval_fit_pred = y_prob_calibrated[idx_cal_fit]
+    interval_tune_pred = y_prob_calibrated[idx_cal_tune]
+    interval_test_pred = y_prob_test_calibrated
+    partition_cache: dict[
+        tuple[str, str, int, str, int, str],
+        tuple[pd.Series, pd.Series, dict[str, Any]],
+    ] = {}
+
+    def _cached_partition_labels(
+        *,
+        eval_scope: str,
+        partition_candidate: str,
+        partition_probability_source: str,
+        n_score_bins: int,
+        fallback_mode: str,
+        min_group_size: int,
+    ) -> tuple[pd.Series, pd.Series, dict[str, Any]]:
+        key = (
+            str(eval_scope),
+            str(partition_candidate),
+            str(partition_probability_source),
+            int(n_score_bins),
+            str(fallback_mode),
+            int(min_group_size),
+        )
+        if key in partition_cache:
+            return partition_cache[key]
+        if eval_scope == "test":
+            y_prob_eval = prob_test_lookup[partition_probability_source]
+            base_groups_eval = group_test_base
+        elif eval_scope == "tune":
+            y_prob_eval = prob_tune_lookup[partition_probability_source]
+            base_groups_eval = group_tune_base
+        else:
+            raise ValueError(f"Unsupported cached partition eval_scope: {eval_scope}")
+        payload = build_mondrian_partition_labels(
+            y_prob_cal=prob_fit_lookup[partition_probability_source],
+            y_prob_eval=y_prob_eval,
+            partition=partition_candidate,
+            base_groups_cal=group_cal_fit_base,
+            base_groups_eval=base_groups_eval,
+            n_score_bins=n_score_bins,
+            min_group_size=min_group_size,
+            fallback_mode=fallback_mode,
+        )
+        partition_cache[key] = payload
+        return payload
 
     for partition_candidate in partition_candidates:
         for partition_probability_source in partition_probability_sources:
@@ -777,37 +981,33 @@ def main(
                             for score_scale_family in score_scale_families:
                                 for min_group_size in min_group_sizes:
                                     group_cal_fit, group_tune, partition_meta_candidate = (
-                                        build_mondrian_partition_labels(
-                                            y_prob_cal=prob_fit_lookup[
-                                                partition_probability_source
-                                            ],
-                                            y_prob_eval=prob_tune_lookup[
-                                                partition_probability_source
-                                            ],
-                                            partition=partition_candidate,
-                                            base_groups_cal=group_cal_fit_base,
-                                            base_groups_eval=group_tune_base,
+                                        _cached_partition_labels(
+                                            eval_scope="tune",
+                                            partition_candidate=partition_candidate,
+                                            partition_probability_source=partition_probability_source,
                                             n_score_bins=n_score_bins,
-                                            min_group_size=min_group_size,
                                             fallback_mode=fallback_mode,
+                                            min_group_size=min_group_size,
                                         )
                                     )
-                                    y_pred, y_int, _diag = create_pd_intervals_mondrian(
-                                        classifier=model,
-                                        X_cal=X_cal_fit,
+                                    y_pred, y_int, _diag = create_pd_intervals_mondrian_from_predictions(
+                                        y_cal_pred=interval_fit_pred,
+                                        y_test_pred=interval_tune_pred,
                                         y_cal=y_cal_fit,
-                                        X_test=X_tune,
                                         group_cal=group_cal_fit,
                                         group_test=group_tune,
                                         alpha=alpha_used,
                                         min_group_size=min_group_size,
-                                        calibrator=calibrator,
                                         scaled_scores=scaled_scores,
                                         score_scale_family=score_scale_family,
+                                        log_summary=False,
                                     )
 
                                     metrics = validate_coverage(
-                                        y_tune.to_numpy(dtype=float), y_int, alpha_target_90
+                                        y_tune.to_numpy(dtype=float),
+                                        y_int,
+                                        alpha_target_90,
+                                        log_summary=False,
                                     )
                                     g_metrics = conditional_coverage_by_group(
                                         y_tune.to_numpy(dtype=float), y_int, group_tune
@@ -877,6 +1077,39 @@ def main(
                                             ),
                                         }
                                     )
+                                    tuning_completed_candidates += 1
+                                    if (
+                                        tuning_completed_candidates % 1000 == 0
+                                        or tuning_completed_candidates == tuning_total_candidates
+                                    ):
+                                        _write_tuning_runtime_status(
+                                            tuning_status_path,
+                                            artifact_namespace=artifact_namespace,
+                                            phase="tuning_running",
+                                            completed=tuning_completed_candidates,
+                                            total=tuning_total_candidates,
+                                            started_monotonic=tuning_started,
+                                            extra={
+                                                "latest_partition": str(partition_candidate),
+                                                "latest_partition_probability_source": str(
+                                                    partition_probability_source
+                                                ),
+                                                "latest_n_score_bins": int(n_score_bins),
+                                                "latest_fallback_mode": str(fallback_mode),
+                                                "latest_alpha_used_90": float(alpha_used),
+                                                "latest_score_scale_family": str(score_scale_family),
+                                                "latest_min_group_size": int(min_group_size),
+                                            },
+                                        )
+
+    _write_tuning_runtime_status(
+        tuning_status_path,
+        artifact_namespace=artifact_namespace,
+        phase="tuning_complete",
+        completed=tuning_completed_candidates,
+        total=tuning_total_candidates,
+        started_monotonic=tuning_started,
+    )
 
     tuning_selection = _select_best_tuning_config(
         tuning_rows,
@@ -907,41 +1140,32 @@ def main(
         f"tier={selection_tier}"
     )
 
-    best_prob_fit = prob_fit_lookup[best_cfg["partition_probability_source"]]
-    best_prob_tune = prob_tune_lookup[best_cfg["partition_probability_source"]]
-    best_prob_test = prob_test_lookup[best_cfg["partition_probability_source"]]
-    group_cal_fit, group_test, partition_meta = build_mondrian_partition_labels(
-        y_prob_cal=best_prob_fit,
-        y_prob_eval=best_prob_test,
-        partition=best_cfg["partition"],
-        base_groups_cal=group_cal_fit_base,
-        base_groups_eval=group_test_base,
+    group_cal_fit, group_test, partition_meta = _cached_partition_labels(
+        eval_scope="test",
+        partition_candidate=best_cfg["partition"],
+        partition_probability_source=best_cfg["partition_probability_source"],
         n_score_bins=best_cfg["n_score_bins"],
-        min_group_size=best_cfg["min_group_size"],
         fallback_mode=best_cfg["fallback_mode"],
+        min_group_size=best_cfg["min_group_size"],
     )
-    group_cal_fit_holdout, group_tune, _ = build_mondrian_partition_labels(
-        y_prob_cal=best_prob_fit,
-        y_prob_eval=best_prob_tune,
-        partition=best_cfg["partition"],
-        base_groups_cal=group_cal_fit_base,
-        base_groups_eval=group_tune_base,
+    group_cal_fit_holdout, group_tune, _ = _cached_partition_labels(
+        eval_scope="tune",
+        partition_candidate=best_cfg["partition"],
+        partition_probability_source=best_cfg["partition_probability_source"],
         n_score_bins=best_cfg["n_score_bins"],
-        min_group_size=best_cfg["min_group_size"],
         fallback_mode=best_cfg["fallback_mode"],
+        min_group_size=best_cfg["min_group_size"],
     )
 
     # Final 90% intervals with tuned config.
-    y_pred_90, y_int_90, diag_90 = create_pd_intervals_mondrian(
-        classifier=model,
-        X_cal=X_cal_fit,
+    y_pred_90, y_int_90, diag_90 = create_pd_intervals_mondrian_from_predictions(
+        y_cal_pred=interval_fit_pred,
+        y_test_pred=interval_test_pred if evaluation_scope_key == "test" else interval_tune_pred,
         y_cal=y_cal_fit,
-        X_test=X_test if evaluation_scope_key == "test" else X_tune,
         group_cal=group_cal_fit,
         group_test=group_test if evaluation_scope_key == "test" else group_tune,
         alpha=best_cfg["alpha_used_90"],
         min_group_size=best_cfg["min_group_size"],
-        calibrator=calibrator,
         scaled_scores=best_cfg["scaled_scores"],
         score_scale_family=best_cfg["score_scale_family"],
     )
@@ -966,18 +1190,17 @@ def main(
         )
     ]
     # Learn group multipliers on calibration holdout only (no test-label adaptation).
-    y_pred_tune, y_int_tune, _diag_tune = create_pd_intervals_mondrian(
-        classifier=model,
-        X_cal=X_cal_fit,
+    y_pred_tune, y_int_tune, _diag_tune = create_pd_intervals_mondrian_from_predictions(
+        y_cal_pred=interval_fit_pred,
+        y_test_pred=interval_tune_pred,
         y_cal=y_cal_fit,
-        X_test=X_tune,
         group_cal=group_cal_fit_holdout,
         group_test=group_tune,
         alpha=best_cfg["alpha_used_90"],
         min_group_size=best_cfg["min_group_size"],
-        calibrator=calibrator,
         scaled_scores=best_cfg["scaled_scores"],
         score_scale_family=best_cfg["score_scale_family"],
+        log_summary=False,
     )
     tune_metrics_90_before = validate_coverage(
         y_tune.to_numpy(dtype=float), y_int_tune, alpha_target_90
@@ -1315,23 +1538,25 @@ def main(
     if alpha_candidates_95:
         best_score_95: tuple[float, float] | None = None
         for alpha_candidate_95 in alpha_candidates_95:
-            _y_pred_95_tune, y_int_95_tune, _diag_95_tune = create_pd_intervals_mondrian(
-                classifier=model,
-                X_cal=X_cal_fit,
-                y_cal=y_cal_fit,
-                X_test=X_tune,
-                group_cal=group_cal_fit_holdout,
-                group_test=group_tune,
-                alpha=float(alpha_candidate_95),
-                min_group_size=best_cfg["min_group_size"],
-                calibrator=calibrator,
-                scaled_scores=best_cfg["scaled_scores"],
-                score_scale_family=best_cfg["score_scale_family"],
+            _y_pred_95_tune, y_int_95_tune, _diag_95_tune = (
+                create_pd_intervals_mondrian_from_predictions(
+                    y_cal_pred=interval_fit_pred,
+                    y_test_pred=interval_tune_pred,
+                    y_cal=y_cal_fit,
+                    group_cal=group_cal_fit_holdout,
+                    group_test=group_tune,
+                    alpha=float(alpha_candidate_95),
+                    min_group_size=best_cfg["min_group_size"],
+                    scaled_scores=best_cfg["scaled_scores"],
+                    score_scale_family=best_cfg["score_scale_family"],
+                    log_summary=False,
+                )
             )
             metrics_95_tune = validate_coverage(
                 y_tune.to_numpy(dtype=float),
                 y_int_95_tune,
                 alpha=float(alpha_candidate_95),
+                log_summary=False,
             )
             score_95 = (
                 abs(float(metrics_95_tune["coverage_gap"])),
@@ -1342,16 +1567,14 @@ def main(
                 best_alpha_95 = float(alpha_candidate_95)
 
     # 95% intervals using same structure settings for consistency.
-    y_pred_95, y_int_95, diag_95 = create_pd_intervals_mondrian(
-        classifier=model,
-        X_cal=X_cal_fit,
+    y_pred_95, y_int_95, diag_95 = create_pd_intervals_mondrian_from_predictions(
+        y_cal_pred=interval_fit_pred,
+        y_test_pred=interval_test_pred if evaluation_scope_key == "test" else interval_tune_pred,
         y_cal=y_cal_fit,
-        X_test=X_test if evaluation_scope_key == "test" else X_tune,
         group_cal=group_cal_fit,
         group_test=group_test if evaluation_scope_key == "test" else group_tune,
         alpha=best_alpha_95,
         min_group_size=best_cfg["min_group_size"],
-        calibrator=calibrator,
         scaled_scores=best_cfg["scaled_scores"],
         score_scale_family=best_cfg["score_scale_family"],
     )

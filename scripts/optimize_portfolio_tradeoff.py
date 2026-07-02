@@ -14,6 +14,7 @@ import argparse
 from dataclasses import dataclass
 from datetime import UTC, datetime
 from pathlib import Path
+from typing import Any
 
 import numpy as np
 import pandas as pd
@@ -325,6 +326,7 @@ def _solve_single(
     tail_focus_quantile: float = 1.0,
     random_seed: int | None = None,
     cuopt_presolve: int | None = 1,
+    cuopt_parameters: dict[str, Any] | None = None,
 ) -> tuple[dict[str, float | int | str], np.ndarray]:
     segment_labels: np.ndarray | None = None
     if policy_mode in {
@@ -376,6 +378,7 @@ def _solve_single(
         solver_backend=solver_backend,
         random_seed=random_seed,
         cuopt_presolve=cuopt_presolve,
+        cuopt_parameters=cuopt_parameters,
     )
 
     n = len(loans)

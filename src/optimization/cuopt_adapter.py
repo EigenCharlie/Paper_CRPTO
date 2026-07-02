@@ -8,6 +8,10 @@ the canonical portfolio optimization path.
 from __future__ import annotations
 
 from contextlib import suppress
+import importlib
+import os
+from pathlib import Path
+import time
 from typing import Any
 
 import numpy as np
@@ -35,6 +39,77 @@ def _extract_primal_solution(solution: Any, n_vars: int) -> np.ndarray:
     return values
 
 
+def _normalize_parameter_name(raw: str) -> str:
+    name = str(raw).strip().replace("-", "_").lower()
+    if name.startswith("cuopt_"):
+        name = name[len("cuopt_") :]
+    return name
+
+
+def _coerce_setting_value(raw: Any) -> Any:
+    if isinstance(raw, str):
+        value = raw.strip()
+        if value.lower() in {"true", "false"}:
+            return value.lower() == "true"
+        if value.lower() in {"none", "null", ""}:
+            return None
+        with suppress(ValueError):
+            return int(value)
+        with suppress(ValueError):
+            return float(value)
+        return value
+    return raw
+
+
+def _resolve_cuopt_setting_value(name: str, value: Any) -> Any:
+    """Resolve cuOpt enum-like values when the installed Python API exposes them."""
+    if not isinstance(value, str):
+        return value
+    token = value.strip()
+    if not token:
+        return value
+    enum_specs = {
+        "method": (
+            "SolverMethod",
+            {
+                "concurrent": "Concurrent",
+                "pdlp": "PDLP",
+                "dual simplex": "DualSimplex",
+                "dual_simplex": "DualSimplex",
+                "dualsimplex": "DualSimplex",
+                "barrier": "Barrier",
+            },
+        ),
+        "pdlp_solver_mode": (
+            "PDLPSolverMode",
+            {
+                "stable1": "Stable1",
+                "stable2": "Stable2",
+                "stable3": "Stable3",
+                "methodical1": "Methodical1",
+                "fast1": "Fast1",
+            },
+        ),
+    }
+    if name not in enum_specs:
+        return value
+    enum_name, aliases = enum_specs[name]
+    try:
+        lp_module = importlib.import_module("cuopt.linear_programming")
+        enum_cls = getattr(lp_module, enum_name)
+        attr = aliases[token.lower().replace("-", "_")]
+        return getattr(enum_cls, attr)
+    except Exception:
+        return value
+
+
+def _unique_cuopt_log_file(log_dir: str | Path, *, random_seed: int | None) -> str:
+    target = Path(log_dir)
+    target.mkdir(parents=True, exist_ok=True)
+    seed_token = "none" if random_seed is None else str(int(random_seed))
+    return str(target / f"cuopt_seed-{seed_token}_pid-{os.getpid()}_{time.time_ns()}.log")
+
+
 def solve_portfolio_cuopt_native(
     *,
     loans: pd.DataFrame,
@@ -53,6 +128,7 @@ def solve_portfolio_cuopt_native(
     time_limit: int = 300,
     random_seed: int | None = None,
     presolve: int | None = 1,
+    cuopt_parameters: dict[str, Any] | None = None,
 ) -> dict[str, Any]:
     """Solve the portfolio LP natively with cuOpt."""
     lp_api = _require_cuopt()
@@ -141,15 +217,43 @@ def solve_portfolio_cuopt_native(
     dm.set_variable_upper_bounds(var_ub)
 
     settings = lp_api.SolverSettings()
-    with suppress(Exception):
-        settings.set_parameter("log_to_console", False)
-    settings.set_parameter("time_limit", int(time_limit))
+    requested_parameters = {
+        _normalize_parameter_name(k): _coerce_setting_value(v)
+        for k, v in dict(cuopt_parameters or {}).items()
+    }
+    log_dir = requested_parameters.pop("log_dir", None)
+    if log_dir and not requested_parameters.get("log_file"):
+        requested_parameters["log_file"] = _unique_cuopt_log_file(
+            str(log_dir), random_seed=random_seed
+        )
+
+    applied_parameters: dict[str, Any] = {
+        "log_to_console": bool(requested_parameters.pop("log_to_console", False)),
+        "time_limit": int(time_limit),
+    }
     if random_seed is not None:
-        with suppress(Exception):
-            settings.set_parameter("random_seed", int(random_seed))
+        applied_parameters["random_seed"] = int(random_seed)
     if presolve is not None:
-        with suppress(Exception):
-            settings.set_parameter("presolve", int(presolve))
+        applied_parameters["presolve"] = int(presolve)
+    for name, value in requested_parameters.items():
+        if value is not None:
+            applied_parameters[name] = value
+    rejected_parameters: dict[str, str] = {}
+    critical_parameters = {
+        "time_limit",
+        "method",
+        "pdlp_solver_mode",
+        "pdlp_precision",
+        "num_cpu_threads",
+        "presolve",
+    }
+    for name, value in applied_parameters.items():
+        try:
+            settings.set_parameter(name, _resolve_cuopt_setting_value(name, value))
+        except Exception as exc:
+            rejected_parameters[name] = str(exc)
+            if name in critical_parameters:
+                raise
 
     solution = lp_api.Solve(dm, settings)
     termination_reason = str(solution.get_termination_reason())
@@ -183,4 +287,9 @@ def solve_portfolio_cuopt_native(
         "solver_status": termination_reason,
         "solver_backend": "cuopt",
         "pd_cap_slack": pd_cap_slack,
+        "cuopt_parameters": applied_parameters,
+        "cuopt_method": applied_parameters.get("method", "default"),
+        "cuopt_pdlp_solver_mode": applied_parameters.get("pdlp_solver_mode", "default"),
+        "cuopt_log_file": applied_parameters.get("log_file", ""),
+        "cuopt_rejected_parameters": rejected_parameters,
     }

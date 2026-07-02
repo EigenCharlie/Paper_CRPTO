@@ -22,6 +22,7 @@ from src.models.conformal.pd_intervals import (
     conditional_coverage_by_group,
     create_pd_intervals,
     create_pd_intervals_mondrian,
+    create_pd_intervals_mondrian_from_predictions,
     create_pd_intervals_venn_abers,
 )
 from src.models.conformal.regression import (
@@ -53,6 +54,7 @@ __all__ = [
     "create_cross_conformal_score_intervals",
     "create_pd_intervals",
     "create_pd_intervals_mondrian",
+    "create_pd_intervals_mondrian_from_predictions",
     "create_pd_intervals_venn_abers",
     "create_regression_intervals",
     "create_residual_intervals",

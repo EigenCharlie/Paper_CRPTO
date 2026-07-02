@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import argparse
+from concurrent.futures import ThreadPoolExecutor, as_completed
 import json
 import os
 import pickle
@@ -20,12 +21,15 @@ from scripts.generate_conformal_intervals import (
     _resolve_features,
 )
 from src.models.calibration import (
+    QuadraticLogitCalibrator,
+    TemperatureScalingCalibrator,
     calibrate_beta,
     calibrate_isotonic,
     calibrate_platt,
     evaluate_calibration,
 )
 from src.models.conformal import apply_probability_calibrator
+from src.models.conformal_tuning import split_calibration_for_tuning
 from src.models.venn_abers import VennAbersScoreCalibrator
 from src.utils.pipeline_topology import load_profile_config
 
@@ -118,6 +122,8 @@ def _reopen_artifact_paths(run_tag: str) -> dict[str, Path]:
         "phase1_final_candidates": data_dir / "conformal_reopen_phase1_final_candidates.parquet",
         "phase2_search": data_dir / "conformal_reopen_phase2_search.parquet",
         "status": models_dir / "conformal_reopen_status.json",
+        "phase1_progress": models_dir / "conformal_reopen_phase1_progress.json",
+        "phase2_progress": models_dir / "conformal_reopen_phase2_progress.json",
     }
 
 
@@ -298,11 +304,225 @@ def _benchmark_row_to_design(row: dict[str, Any] | pd.Series) -> dict[str, Any]:
     )
 
 
+def _phase1_inner_artifacts_complete(namespace: str) -> bool:
+    paths = _resolve_run_paths(namespace)
+    return bool(paths["tuning"].exists() and paths["results"].exists())
+
+
+def _phase1_inner_result(
+    *,
+    namespace: str,
+    calibration_fraction: float,
+    holdout_ratio: float,
+    random_state: int,
+    reused_existing: bool,
+) -> tuple[pd.DataFrame, dict[str, Any]]:
+    tuning_df = pd.read_parquet(_resolve_run_paths(namespace)["tuning"])
+    tuning_df["calibration_fraction"] = float(calibration_fraction)
+    tuning_df["holdout_ratio"] = float(holdout_ratio)
+    tuning_df["random_state"] = int(random_state)
+    tuning_df["artifact_namespace"] = namespace
+    result_payload = _load_pickle(_resolve_run_paths(namespace)["results"])
+    run_summary = {
+        "artifact_namespace": namespace,
+        "calibration_fraction": float(calibration_fraction),
+        "holdout_ratio": float(holdout_ratio),
+        "random_state": int(random_state),
+        "reused_existing": bool(reused_existing),
+        "metrics_90": result_payload.get("metrics_90", {}),
+        "tuning_90_best": result_payload.get("tuning_90_best", {}),
+        "alpha_used_95": result_payload.get("alpha_used_95"),
+    }
+    return tuning_df, run_summary
+
+
+def _write_phase1_progress(
+    *,
+    path: Path,
+    run_tag: str,
+    upstream_run_tag: str,
+    total: int,
+    completed: list[dict[str, Any]],
+    running: list[str],
+    failed: list[dict[str, Any]],
+    workers: int,
+) -> None:
+    _write_json(
+        path,
+        {
+            "schema_version": "2026-06-22.1",
+            "generated_at_utc": _utc_now(),
+            "run_tag": run_tag,
+            "upstream_canonical_run_tag": upstream_run_tag,
+            "phase": "phase1_inner_search",
+            "workers": int(workers),
+            "total_inner_runs": int(total),
+            "completed_inner_runs": len(completed),
+            "running_inner_runs": list(running),
+            "failed_inner_runs": failed,
+            "completed": completed,
+        },
+    )
+
+
+def _write_phase2_progress(
+    *,
+    path: Path,
+    run_tag: str,
+    upstream_run_tag: str,
+    total_design_runs: int,
+    completed: list[dict[str, Any]],
+    running: list[dict[str, Any]],
+    skipped: list[dict[str, Any]],
+    failed: list[dict[str, Any]],
+    design_source: str,
+) -> None:
+    _write_json(
+        path,
+        {
+            "schema_version": "2026-06-24.1",
+            "generated_at_utc": _utc_now(),
+            "run_tag": run_tag,
+            "upstream_canonical_run_tag": upstream_run_tag,
+            "phase": "phase2_calibrator_design_search",
+            "design_source": design_source,
+            "total_design_runs": int(total_design_runs),
+            "completed_design_runs": len(completed),
+            "running": running,
+            "skipped": skipped,
+            "failed": failed,
+            "completed": completed,
+        },
+    )
+
+
+def _phase1_inner_specs(
+    *,
+    run_tag: str,
+    calibration_fractions: list[float],
+    tuning_holdout_ratios: list[float],
+    inner_random_states: list[int],
+) -> list[dict[str, Any]]:
+    specs: list[dict[str, Any]] = []
+    for calibration_fraction in calibration_fractions:
+        for holdout_ratio in tuning_holdout_ratios:
+            for random_state in inner_random_states:
+                namespace = _namespace(
+                    run_tag,
+                    "phase1",
+                    f"calfrac-{float(calibration_fraction):.2f}",
+                    f"holdout-{float(holdout_ratio):.2f}",
+                    f"seed-{int(random_state)}",
+                )
+                specs.append(
+                    {
+                        "namespace": namespace,
+                        "calibration_fraction": float(calibration_fraction),
+                        "holdout_ratio": float(holdout_ratio),
+                        "random_state": int(random_state),
+                    }
+                )
+    return specs
+
+
+def _run_phase1_inner_spec(
+    *,
+    spec: dict[str, Any],
+    env: dict[str, str],
+    alpha_candidates_90: list[float],
+    alpha_candidates_95: list[float],
+    partition_candidates: list[str],
+    partition_probability_sources: list[str],
+    n_score_bins_candidates: list[int],
+    fallback_modes: list[str],
+    min_group_sizes: list[int],
+    score_scale_families: list[str],
+    resume_completed: bool,
+) -> tuple[pd.DataFrame, dict[str, Any]]:
+    namespace = str(spec["namespace"])
+    calibration_fraction = float(spec["calibration_fraction"])
+    holdout_ratio = float(spec["holdout_ratio"])
+    random_state = int(spec["random_state"])
+    if resume_completed and _phase1_inner_artifacts_complete(namespace):
+        return _phase1_inner_result(
+            namespace=namespace,
+            calibration_fraction=calibration_fraction,
+            holdout_ratio=holdout_ratio,
+            random_state=random_state,
+            reused_existing=True,
+        )
+    _run_python(
+        "scripts/generate_conformal_intervals.py",
+        [
+            "--artifact_namespace",
+            namespace,
+            "--evaluation_scope",
+            "holdout",
+            "--alpha_candidates_90",
+            ",".join(str(x) for x in alpha_candidates_90),
+            "--alpha_candidates_95",
+            ",".join(str(x) for x in alpha_candidates_95),
+            "--partition_candidates",
+            ",".join(str(x) for x in partition_candidates),
+            "--partition_probability_sources",
+            ",".join(str(x) for x in partition_probability_sources),
+            "--n_score_bins_candidates",
+            ",".join(str(int(x)) for x in n_score_bins_candidates),
+            "--fallback_modes",
+            ",".join(str(x) for x in fallback_modes),
+            "--min_group_sizes",
+            ",".join(str(int(x)) for x in min_group_sizes),
+            "--score_scale_families",
+            ",".join(str(x) for x in score_scale_families),
+            "--calibration_fraction",
+            str(calibration_fraction),
+            "--tuning_holdout_ratio",
+            str(holdout_ratio),
+            "--tuning_random_state",
+            str(random_state),
+        ],
+        env,
+    )
+    return _phase1_inner_result(
+        namespace=namespace,
+        calibration_fraction=calibration_fraction,
+        holdout_ratio=holdout_ratio,
+        random_state=random_state,
+        reused_existing=False,
+    )
+
+
+def _fit_probability_calibrator(
+    *,
+    method_key: str,
+    model: Any,
+    X_fit: pd.DataFrame,
+    y_fit: pd.Series,
+    y_prob_fit_raw: Any,
+) -> Any:
+    y_fit_arr = y_fit.to_numpy(dtype=int)
+    if method_key == "venn_abers":
+        return VennAbersScoreCalibrator().fit(y_prob_fit_raw, y_fit_arr)
+    if method_key == "isotonic":
+        return calibrate_isotonic(y_fit_arr, y_prob_fit_raw)
+    if method_key == "platt":
+        return calibrate_platt(model, X_fit, y_fit)
+    if method_key == "beta":
+        return calibrate_beta(y_fit_arr, y_prob_fit_raw)
+    if method_key == "temperature":
+        return TemperatureScalingCalibrator().fit(y_prob_fit_raw, y_fit_arr)
+    if method_key == "quadratic_logit":
+        return QuadraticLogitCalibrator().fit(y_prob_fit_raw, y_fit_arr)
+    raise ValueError(f"Unsupported calibrator method: {method_key}")
+
+
 def _fit_calibrator(
     *,
     method: str,
     output_path: Path,
     upstream_run_tag: str,
+    validation_holdout_ratio: float = 0.20,
+    validation_random_state: int = 42,
 ) -> tuple[str, dict[str, float]]:
     env = os.environ.copy()
     env["UPSTREAM_CANONICAL_RUN_TAG"] = upstream_run_tag
@@ -312,31 +532,58 @@ def _fit_calibrator(
         test_df = pd.read_parquet(REPO_ROOT / "data" / "processed" / "test_fe.parquet")
         features, categorical = _resolve_features(model, cal_df, test_df)
         X_cal = _build_feature_matrix(cal_df, features, categorical)
-        X_test = _build_feature_matrix(test_df, features, categorical)
-        y_cal = cal_df["default_flag"].astype(int)
-        y_test = test_df["default_flag"].astype(int).to_numpy(dtype=int)
+        y_cal = cal_df["default_flag"].astype(int).reset_index(drop=True)
+        group_cal = cal_df.get("grade", pd.Series(["UNKNOWN"] * len(cal_df))).reset_index(drop=True)
         y_prob_cal_raw = model.predict_proba(X_cal)[:, 1]
-        y_prob_test_raw = model.predict_proba(X_test)[:, 1]
+        idx_fit, idx_eval = split_calibration_for_tuning(
+            y_cal=y_cal,
+            group_cal=group_cal,
+            issue_dates=cal_df.get("issue_d"),
+            holdout_ratio=float(validation_holdout_ratio),
+            random_state=int(validation_random_state),
+        )
+        X_cal_fit = X_cal.iloc[idx_fit].reset_index(drop=True)
+        y_cal_fit = y_cal.iloc[idx_fit].reset_index(drop=True)
+        y_prob_cal_fit_raw = y_prob_cal_raw[idx_fit]
+        y_eval = y_cal.iloc[idx_eval].to_numpy(dtype=int)
+        y_prob_eval_raw = y_prob_cal_raw[idx_eval]
 
         method_key = str(method).strip().lower()
-        if method_key == "venn_abers":
-            calibrator = VennAbersScoreCalibrator().fit(y_prob_cal_raw, y_cal.to_numpy(dtype=int))
-        elif method_key == "isotonic":
-            calibrator = calibrate_isotonic(y_cal.to_numpy(dtype=int), y_prob_cal_raw)
-        elif method_key in {"platt", "logit"}:
-            calibrator = calibrate_platt(model, X_cal, y_cal)
+        if method_key in {"platt", "logit"}:
             method_key = "platt"
-        elif method_key == "beta":
-            calibrator = calibrate_beta(y_cal.to_numpy(dtype=int), y_prob_cal_raw)
-        else:
-            raise ValueError(f"Unsupported calibrator method: {method}")
+        elif method_key in {"quadratic_logit", "quadratic"}:
+            method_key = "quadratic_logit"
+
+        validation_calibrator = _fit_probability_calibrator(
+            method_key=method_key,
+            model=model,
+            X_fit=X_cal_fit,
+            y_fit=y_cal_fit,
+            y_prob_fit_raw=y_prob_cal_fit_raw,
+        )
+        final_calibrator = _fit_probability_calibrator(
+            method_key=method_key,
+            model=model,
+            X_fit=X_cal,
+            y_fit=y_cal,
+            y_prob_fit_raw=y_prob_cal_raw,
+        )
 
         output_path.parent.mkdir(parents=True, exist_ok=True)
         with open(output_path, "wb") as handle:
-            pickle.dump(calibrator, handle)
+            pickle.dump(final_calibrator, handle)
 
-        calibrated_test = apply_probability_calibrator(calibrator, y_prob_test_raw)
-        metrics = evaluate_calibration(y_test, calibrated_test, name=method_key)
+        calibrated_eval = apply_probability_calibrator(validation_calibrator, y_prob_eval_raw)
+        metrics = evaluate_calibration(y_eval, calibrated_eval, name=f"{method_key}_cal_holdout")
+        raw_metrics = evaluate_calibration(y_eval, y_prob_eval_raw, name=f"{method_key}_raw")
+        for metric_name in ("brier_score", "log_loss", "ece", "adaptive_ece"):
+            if metric_name in raw_metrics and metric_name in metrics:
+                metrics[f"raw_{metric_name}"] = float(raw_metrics[metric_name])
+                metrics[f"phi_{metric_name}"] = float(raw_metrics[metric_name] - metrics[metric_name])
+        metrics["validation_holdout_ratio"] = float(validation_holdout_ratio)
+        metrics["validation_random_state"] = float(validation_random_state)
+        metrics["validation_n_fit"] = float(len(idx_fit))
+        metrics["validation_n_eval"] = float(len(idx_eval))
         return method_key, {k: float(v) for k, v in metrics.items()}
 
 
@@ -364,6 +611,38 @@ def _policy_reason_code(policy_status: dict[str, Any], acceptance_pass: bool) ->
     if not bool(policy_status.get("overall_pass", False)):
         return "policy_overall_fail"
     return "acceptance_gate_fail"
+
+
+def _phase2_should_replace_phase1(
+    *,
+    phase1_policy: dict[str, Any],
+    phase2_policy: dict[str, Any],
+    validation_cfg: dict[str, Any],
+) -> tuple[bool, str]:
+    """Use phase2 as final only when it is a genuine decision improvement."""
+    phase1_pass = _acceptance_pass(phase1_policy, validation_cfg)
+    phase2_pass = _acceptance_pass(phase2_policy, validation_cfg)
+    if not phase2_pass:
+        return False, "phase2_acceptance_gate_fail"
+    if not phase1_pass:
+        return True, "phase1_failed_phase2_passed"
+
+    phase1_width = float(phase1_policy.get("avg_width_90", 10.0))
+    phase2_width = float(phase2_policy.get("avg_width_90", 10.0))
+    phase1_gap = abs(float(phase1_policy.get("coverage_90", 0.0)) - 0.90)
+    phase2_gap = abs(float(phase2_policy.get("coverage_90", 0.0)) - 0.90)
+    phase1_group = float(phase1_policy.get("min_group_coverage_90", 0.0))
+    phase2_group = float(phase2_policy.get("min_group_coverage_90", 0.0))
+
+    # Keep phase2 conservative: it may replace a passing phase1 only when it is
+    # no worse on the claim-facing interval diagnostics, within tiny numerical
+    # tolerance for coverage/group metrics.
+    width_ok = phase2_width <= phase1_width + 1e-9
+    coverage_ok = phase2_gap <= phase1_gap + 0.0025
+    group_ok = phase2_group + 0.0025 >= phase1_group
+    if width_ok and coverage_ok and group_ok:
+        return True, "phase2_nondominated_vs_phase1"
+    return False, "phase1_retained_phase2_not_nondominated"
 
 
 def _run_set_prediction_sidecar(
@@ -459,13 +738,22 @@ def _run_phase1_oot_candidate(
         str(int(design["min_group_size"])),
         "--calibration_size_fractions",
         ",".join(str(float(x)) for x in calibration_fractions),
+        "--policy_config_path",
+        "configs/crpto_conformal_policy.yaml",
     ]
     if calibrator_override_path:
         benchmark_args.extend(["--calibrator_override_path", str(calibrator_override_path)])
     _run_python("scripts/benchmark_conformal_variants.py", benchmark_args, env)
     _run_python(
         "scripts/validate_conformal_experiment.py",
-        ["--namespace", namespace, "--run-tag", run_tag],
+        [
+            "--namespace",
+            namespace,
+            "--run-tag",
+            run_tag,
+            "--base-config",
+            "configs/crpto_conformal_policy.yaml",
+        ],
         env,
     )
     _run_set_prediction_sidecar(
@@ -486,6 +774,25 @@ def _run_phase1_oot_candidate(
         "set_status": set_status,
         "selection_status": selection_status,
     }
+
+
+def _phase2_top_designs(
+    *,
+    aggregated: pd.DataFrame,
+    phase1_candidates_frame: pd.DataFrame | None,
+    top_k: int,
+) -> tuple[pd.DataFrame, str]:
+    """Prefer OOT-confirmed phase-1 designs for phase-2 calibration search."""
+    if phase1_candidates_frame is not None and not phase1_candidates_frame.empty:
+        top = _dedupe_designs(phase1_candidates_frame).head(int(top_k))
+        if not top.empty:
+            top["phase2_design_source"] = "phase1_oot_confirmed"
+            return top, "phase1_oot_confirmed"
+
+    top = _dedupe_designs(aggregated).head(int(top_k))
+    if not top.empty:
+        top["phase2_design_source"] = "phase1_inner_aggregate"
+    return top, "phase1_inner_aggregate"
 
 
 def _phase1_candidates_frame(
@@ -612,6 +919,7 @@ def _run_phase2_search(
     upstream_run_tag: str,
     env: dict[str, str],
     aggregated: pd.DataFrame,
+    phase1_candidates_frame: pd.DataFrame | None,
     alpha_candidates_95: list[float],
     tuning_holdout_ratios: list[float],
     inner_random_states: list[int],
@@ -629,7 +937,31 @@ def _run_phase2_search(
     models_dir = paths["models_dir"]
     calibrator_dir = models_dir / "phase2_calibrators"
     calibrator_rows: list[dict[str, Any]] = []
-    top_designs = _dedupe_designs(aggregated).head(int(phase2_cfg.get("top_k_designs", 3)))
+    top_designs, design_source = _phase2_top_designs(
+        aggregated=aggregated,
+        phase1_candidates_frame=phase1_candidates_frame,
+        top_k=int(phase2_cfg.get("top_k_designs", 3)),
+    )
+    phase2_methods = [
+        str(method).strip().lower()
+        for method in phase2_cfg.get("calibrators", ["venn_abers", "isotonic", "platt", "beta"])
+        if str(method).strip()
+    ]
+    phase2_completed: list[dict[str, Any]] = []
+    phase2_skipped: list[dict[str, Any]] = []
+    phase2_failed: list[dict[str, Any]] = []
+    total_design_runs = len(phase2_methods) * len(top_designs)
+    _write_phase2_progress(
+        path=paths["phase2_progress"],
+        run_tag=run_tag,
+        upstream_run_tag=upstream_run_tag,
+        total_design_runs=total_design_runs,
+        completed=phase2_completed,
+        running=[],
+        skipped=phase2_skipped,
+        failed=phase2_failed,
+        design_source=design_source,
+    )
     baseline_metrics: dict[str, float] | None = None
     baseline_path = calibrator_dir / "venn_abers.pkl"
     try:
@@ -642,21 +974,76 @@ def _run_phase2_search(
         baseline_metrics = None
 
     max_metric_degradation = dict(phase2_cfg.get("max_metric_degradation", {}) or {})
-    for method_name in phase2_cfg.get("calibrators", ["venn_abers", "isotonic", "platt", "beta"]):
-        calibrator_path = calibrator_dir / f"{str(method_name).strip().lower()}.pkl"
-        resolved_method, calibration_metrics = _fit_calibrator(
-            method=str(method_name),
-            output_path=calibrator_path,
+    for method_name in phase2_methods:
+        calibrator_path = calibrator_dir / f"{method_name}.pkl"
+        _write_phase2_progress(
+            path=paths["phase2_progress"],
+            run_tag=run_tag,
             upstream_run_tag=upstream_run_tag,
+            total_design_runs=total_design_runs,
+            completed=phase2_completed,
+            running=[{"stage": "fit_calibrator", "calibrator_method": method_name}],
+            skipped=phase2_skipped,
+            failed=phase2_failed,
+            design_source=design_source,
         )
+        try:
+            resolved_method, calibration_metrics = _fit_calibrator(
+                method=method_name,
+                output_path=calibrator_path,
+                upstream_run_tag=upstream_run_tag,
+            )
+        except Exception as exc:
+            phase2_failed.append(
+                {
+                    "stage": "fit_calibrator",
+                    "calibrator_method": method_name,
+                    "error": repr(exc),
+                }
+            )
+            _write_phase2_progress(
+                path=paths["phase2_progress"],
+                run_tag=run_tag,
+                upstream_run_tag=upstream_run_tag,
+                total_design_runs=total_design_runs,
+                completed=phase2_completed,
+                running=[],
+                skipped=phase2_skipped,
+                failed=phase2_failed,
+                design_source=design_source,
+            )
+            raise
         if baseline_metrics is not None:
             metric_blocked = any(
                 float(calibration_metrics.get(metric_name, float("inf")))
                 > float(baseline_metrics.get(metric_name, 0.0))
                 + float(max_metric_degradation.get(metric_name, 0.0))
-                for metric_name in baseline_metrics
+                for metric_name in max_metric_degradation
             )
             if metric_blocked:
+                phase2_skipped.append(
+                    {
+                        "stage": "calibrator_gate",
+                        "calibrator_method": resolved_method,
+                        "reason": "metric_degradation_gate",
+                        "calibration_metrics": {
+                            key: float(value)
+                            for key, value in calibration_metrics.items()
+                            if isinstance(value, int | float)
+                        },
+                    }
+                )
+                _write_phase2_progress(
+                    path=paths["phase2_progress"],
+                    run_tag=run_tag,
+                    upstream_run_tag=upstream_run_tag,
+                    total_design_runs=total_design_runs,
+                    completed=phase2_completed,
+                    running=[],
+                    skipped=phase2_skipped,
+                    failed=phase2_failed,
+                    design_source=design_source,
+                )
                 continue
 
         for design in top_designs.to_dict(orient="records"):
@@ -667,43 +1054,122 @@ def _run_phase2_search(
                 resolved_method,
                 f"rank-{int(design.get('selection_rank', 1))}",
             )
-            _run_python(
-                "scripts/generate_conformal_intervals.py",
-                [
-                    "--artifact_namespace",
-                    namespace,
-                    "--evaluation_scope",
-                    "holdout",
-                    "--calibrator_override_path",
-                    str(calibrator_path),
-                    "--tuning_holdout_ratio",
-                    str(float(tuning_holdout_ratios[0])),
-                    "--tuning_random_state",
-                    str(int(inner_random_states[0])),
-                    "--alpha_candidates_95",
-                    ",".join(str(x) for x in alpha_candidates_95),
-                    *_design_args(design_norm),
-                ],
-                env,
+            running_entry = {
+                "stage": "generate_intervals",
+                "artifact_namespace": namespace,
+                "calibrator_method": resolved_method,
+                "selection_rank": int(design.get("selection_rank", 1)),
+            }
+            _write_phase2_progress(
+                path=paths["phase2_progress"],
+                run_tag=run_tag,
+                upstream_run_tag=upstream_run_tag,
+                total_design_runs=total_design_runs,
+                completed=phase2_completed,
+                running=[running_entry],
+                skipped=phase2_skipped,
+                failed=phase2_failed,
+                design_source=design_source,
             )
+            try:
+                _run_python(
+                    "scripts/generate_conformal_intervals.py",
+                    [
+                        "--artifact_namespace",
+                        namespace,
+                        "--evaluation_scope",
+                        "holdout",
+                        "--calibrator_override_path",
+                        str(calibrator_path),
+                        "--tuning_holdout_ratio",
+                        str(float(tuning_holdout_ratios[0])),
+                        "--tuning_random_state",
+                        str(int(inner_random_states[0])),
+                        "--alpha_candidates_95",
+                        ",".join(str(x) for x in alpha_candidates_95),
+                        *_design_args(design_norm),
+                    ],
+                    env,
+                )
+            except Exception as exc:
+                phase2_failed.append({**running_entry, "error": repr(exc)})
+                _write_phase2_progress(
+                    path=paths["phase2_progress"],
+                    run_tag=run_tag,
+                    upstream_run_tag=upstream_run_tag,
+                    total_design_runs=total_design_runs,
+                    completed=phase2_completed,
+                    running=[],
+                    skipped=phase2_skipped,
+                    failed=phase2_failed,
+                    design_source=design_source,
+                )
+                raise
             payload = _load_pickle(_resolve_run_paths(namespace)["results"])
             metrics_90 = dict(payload.get("metrics_90", {}) or {})
+            phase2_completed.append(
+                {
+                    "artifact_namespace": namespace,
+                    "calibrator_method": resolved_method,
+                    "selection_rank": int(design.get("selection_rank", 1)),
+                    "coverage_90": float(metrics_90.get("empirical_coverage", 0.0)),
+                    "avg_width_90": float(metrics_90.get("avg_interval_width", 1.0)),
+                }
+            )
+            _write_phase2_progress(
+                path=paths["phase2_progress"],
+                run_tag=run_tag,
+                upstream_run_tag=upstream_run_tag,
+                total_design_runs=total_design_runs,
+                completed=phase2_completed,
+                running=[],
+                skipped=phase2_skipped,
+                failed=phase2_failed,
+                design_source=design_source,
+            )
             calibrator_rows.append(
                 {
                     "artifact_namespace": namespace,
                     "calibrator_method": resolved_method,
+                    "phase2_design_source": design_source,
                     "selection_rank": int(design.get("selection_rank", 1)),
                     **design_norm,
                     "holdout_coverage": float(metrics_90.get("empirical_coverage", 0.0)),
                     "holdout_width": float(metrics_90.get("avg_interval_width", 1.0)),
                     "calibrator_ece": float(calibration_metrics.get("ece", float("inf"))),
+                    "calibrator_adaptive_ece": float(
+                        calibration_metrics.get("adaptive_ece", float("inf"))
+                    ),
                     "calibrator_brier": float(calibration_metrics.get("brier_score", float("inf"))),
                     "calibrator_log_loss": float(calibration_metrics.get("log_loss", float("inf"))),
+                    "calibrator_phi_brier": float(
+                        calibration_metrics.get("phi_brier_score", 0.0)
+                    ),
+                    "calibrator_phi_log_loss": float(
+                        calibration_metrics.get("phi_log_loss", 0.0)
+                    ),
                 }
             )
 
     phase2_df = pd.DataFrame(calibrator_rows)
     if phase2_df.empty:
+        phase2_df = pd.DataFrame(
+            columns=[
+                "artifact_namespace",
+                "calibrator_method",
+                "phase2_design_source",
+                "selection_rank",
+                "holdout_coverage",
+                "holdout_width",
+                "calibrator_ece",
+                "calibrator_adaptive_ece",
+                "calibrator_brier",
+                "calibrator_log_loss",
+                "calibrator_phi_brier",
+                "calibrator_phi_log_loss",
+            ]
+        )
+        phase2_df.to_parquet(paths["phase2_search"], index=False)
         return (
             "policy_review_candidate",
             {},
@@ -712,6 +1178,7 @@ def _run_phase2_search(
                 "search_path": str(paths["phase2_search"]),
                 "best_candidate": {},
                 "status": "no_noninferior_calibrator_candidate",
+                "phase2_design_source": design_source,
             },
         )
 
@@ -721,10 +1188,12 @@ def _run_phase2_search(
             "coverage_gap_abs",
             "holdout_width",
             "calibrator_ece",
+            "calibrator_adaptive_ece",
             "calibrator_brier",
+            "calibrator_phi_brier",
             "selection_rank",
         ],
-        ascending=[True, True, True, True, True],
+        ascending=[True, True, True, True, True, False, True],
     ).reset_index(drop=True)
     phase2_df.to_parquet(paths["phase2_search"], index=False)
     phase2_best = phase2_df.iloc[0].to_dict()
@@ -814,6 +1283,22 @@ def main(argv: list[str] | None = None) -> int:
     parser.add_argument("--upstream-canonical-run-tag", default="pd-hpo-local-2026-04-03-1325")
     parser.add_argument("--phase1-only", action="store_true")
     parser.add_argument("--resume-from-run-tag", default=None)
+    parser.add_argument(
+        "--phase1-workers",
+        type=int,
+        default=None,
+        help="Parallel workers for independent phase-1 inner conformal runs.",
+    )
+    parser.add_argument(
+        "--no-resume-completed-inner",
+        action="store_true",
+        help="Recompute phase-1 inner namespaces even when tuning/results already exist.",
+    )
+    parser.add_argument(
+        "--force-phase2",
+        action="store_true",
+        help="Evaluate phase-2 calibrator tournament even when phase-1 already passes.",
+    )
     args = parser.parse_args(argv)
 
     run_tag = str(args.run_tag).strip()
@@ -850,6 +1335,10 @@ def main(argv: list[str] | None = None) -> int:
     tuning_holdout_ratios = cfg.get("tuning_holdout_ratios", [0.20, 0.30])
     inner_random_states = cfg.get("inner_random_states", [42, 314, 2026])
     top_k_inner = int(validation_cfg.get("top_k_inner", 3))
+    configured_workers = int(cfg.get("parallel_workers", 1) or 1)
+    phase1_workers = int(args.phase1_workers or configured_workers or 1)
+    phase1_workers = max(1, phase1_workers)
+    resume_completed_inner = not bool(args.no_resume_completed_inner)
 
     resume_meta: dict[str, Any] | None = None
     inner_runs: list[dict[str, Any]] = []
@@ -872,65 +1361,144 @@ def main(argv: list[str] | None = None) -> int:
         )
     else:
         inner_frames: list[pd.DataFrame] = []
-        for calibration_fraction in calibration_fractions:
-            for holdout_ratio in tuning_holdout_ratios:
-                for random_state in inner_random_states:
-                    namespace = _namespace(
-                        run_tag,
-                        "phase1",
-                        f"calfrac-{float(calibration_fraction):.2f}",
-                        f"holdout-{float(holdout_ratio):.2f}",
-                        f"seed-{int(random_state)}",
+        specs = _phase1_inner_specs(
+            run_tag=run_tag,
+            calibration_fractions=calibration_fractions,
+            tuning_holdout_ratios=tuning_holdout_ratios,
+            inner_random_states=inner_random_states,
+        )
+        completed_runs: list[dict[str, Any]] = []
+        failed_runs: list[dict[str, Any]] = []
+        running: set[str] = set()
+        progress_path = output_paths["phase1_progress"]
+        _write_phase1_progress(
+            path=progress_path,
+            run_tag=run_tag,
+            upstream_run_tag=upstream_run_tag,
+            total=len(specs),
+            completed=completed_runs,
+            running=[],
+            failed=failed_runs,
+            workers=phase1_workers,
+        )
+
+        if phase1_workers == 1:
+            for spec in specs:
+                running = {str(spec["namespace"])}
+                _write_phase1_progress(
+                    path=progress_path,
+                    run_tag=run_tag,
+                    upstream_run_tag=upstream_run_tag,
+                    total=len(specs),
+                    completed=completed_runs,
+                    running=sorted(running),
+                    failed=failed_runs,
+                    workers=phase1_workers,
+                )
+                tuning_df, run_summary = _run_phase1_inner_spec(
+                    spec=spec,
+                    env=env,
+                    alpha_candidates_90=alpha_candidates_90,
+                    alpha_candidates_95=alpha_candidates_95,
+                    partition_candidates=partition_candidates,
+                    partition_probability_sources=partition_probability_sources,
+                    n_score_bins_candidates=n_score_bins_candidates,
+                    fallback_modes=fallback_modes,
+                    min_group_sizes=min_group_sizes,
+                    score_scale_families=score_scale_families,
+                    resume_completed=resume_completed_inner,
+                )
+                inner_frames.append(tuning_df)
+                inner_runs.append(run_summary)
+                completed_runs.append(
+                    {
+                        "artifact_namespace": run_summary["artifact_namespace"],
+                        "reused_existing": bool(run_summary.get("reused_existing", False)),
+                    }
+                )
+                running = set()
+                _write_phase1_progress(
+                    path=progress_path,
+                    run_tag=run_tag,
+                    upstream_run_tag=upstream_run_tag,
+                    total=len(specs),
+                    completed=completed_runs,
+                    running=[],
+                    failed=failed_runs,
+                    workers=phase1_workers,
+                )
+        else:
+            with ThreadPoolExecutor(max_workers=phase1_workers) as executor:
+                future_to_spec = {}
+                for spec in specs:
+                    namespace = str(spec["namespace"])
+                    running.add(namespace)
+                    future = executor.submit(
+                        _run_phase1_inner_spec,
+                        spec=spec,
+                        env=env,
+                        alpha_candidates_90=alpha_candidates_90,
+                        alpha_candidates_95=alpha_candidates_95,
+                        partition_candidates=partition_candidates,
+                        partition_probability_sources=partition_probability_sources,
+                        n_score_bins_candidates=n_score_bins_candidates,
+                        fallback_modes=fallback_modes,
+                        min_group_sizes=min_group_sizes,
+                        score_scale_families=score_scale_families,
+                        resume_completed=resume_completed_inner,
                     )
-                    _run_python(
-                        "scripts/generate_conformal_intervals.py",
-                        [
-                            "--artifact_namespace",
-                            namespace,
-                            "--evaluation_scope",
-                            "holdout",
-                            "--alpha_candidates_90",
-                            ",".join(str(x) for x in alpha_candidates_90),
-                            "--alpha_candidates_95",
-                            ",".join(str(x) for x in alpha_candidates_95),
-                            "--partition_candidates",
-                            ",".join(str(x) for x in partition_candidates),
-                            "--partition_probability_sources",
-                            ",".join(str(x) for x in partition_probability_sources),
-                            "--n_score_bins_candidates",
-                            ",".join(str(int(x)) for x in n_score_bins_candidates),
-                            "--fallback_modes",
-                            ",".join(str(x) for x in fallback_modes),
-                            "--min_group_sizes",
-                            ",".join(str(int(x)) for x in min_group_sizes),
-                            "--score_scale_families",
-                            ",".join(str(x) for x in score_scale_families),
-                            "--calibration_fraction",
-                            str(float(calibration_fraction)),
-                            "--tuning_holdout_ratio",
-                            str(float(holdout_ratio)),
-                            "--tuning_random_state",
-                            str(int(random_state)),
-                        ],
-                        env,
+                    future_to_spec[future] = spec
+                    _write_phase1_progress(
+                        path=progress_path,
+                        run_tag=run_tag,
+                        upstream_run_tag=upstream_run_tag,
+                        total=len(specs),
+                        completed=completed_runs,
+                        running=sorted(running),
+                        failed=failed_runs,
+                        workers=phase1_workers,
                     )
-                    tuning_df = pd.read_parquet(_resolve_run_paths(namespace)["tuning"])
-                    tuning_df["calibration_fraction"] = float(calibration_fraction)
-                    tuning_df["holdout_ratio"] = float(holdout_ratio)
-                    tuning_df["random_state"] = int(random_state)
-                    tuning_df["artifact_namespace"] = namespace
+                for future in as_completed(future_to_spec):
+                    spec = future_to_spec[future]
+                    namespace = str(spec["namespace"])
+                    running.discard(namespace)
+                    try:
+                        tuning_df, run_summary = future.result()
+                    except Exception as exc:
+                        failed_runs.append(
+                            {
+                                "artifact_namespace": namespace,
+                                "error": repr(exc),
+                            }
+                        )
+                        _write_phase1_progress(
+                            path=progress_path,
+                            run_tag=run_tag,
+                            upstream_run_tag=upstream_run_tag,
+                            total=len(specs),
+                            completed=completed_runs,
+                            running=sorted(running),
+                            failed=failed_runs,
+                            workers=phase1_workers,
+                        )
+                        raise
                     inner_frames.append(tuning_df)
-                    result_payload = _load_pickle(_resolve_run_paths(namespace)["results"])
-                    inner_runs.append(
+                    inner_runs.append(run_summary)
+                    completed_runs.append(
                         {
-                            "artifact_namespace": namespace,
-                            "calibration_fraction": float(calibration_fraction),
-                            "holdout_ratio": float(holdout_ratio),
-                            "random_state": int(random_state),
-                            "metrics_90": result_payload.get("metrics_90", {}),
-                            "tuning_90_best": result_payload.get("tuning_90_best", {}),
-                            "alpha_used_95": result_payload.get("alpha_used_95"),
+                            "artifact_namespace": run_summary["artifact_namespace"],
+                            "reused_existing": bool(run_summary.get("reused_existing", False)),
                         }
+                    )
+                    _write_phase1_progress(
+                        path=progress_path,
+                        run_tag=run_tag,
+                        upstream_run_tag=upstream_run_tag,
+                        total=len(specs),
+                        completed=completed_runs,
+                        running=sorted(running),
+                        failed=failed_runs,
+                        workers=phase1_workers,
                     )
 
         inner_df = pd.concat(inner_frames, ignore_index=True)
@@ -984,16 +1552,31 @@ def main(argv: list[str] | None = None) -> int:
     )
     phase2_summary: dict[str, Any] | None = None
 
+    phase2_always_evaluate = bool(phase2_cfg.get("always_evaluate", False)) or bool(
+        args.force_phase2
+    )
+    phase2_run_reason = (
+        "forced"
+        if bool(args.force_phase2)
+        else "always_evaluate"
+        if phase2_always_evaluate
+        else "phase1_acceptance_fail"
+    )
+    phase1_policy = dict(final_policy)
+    phase1_sets = dict(final_sets)
+    phase1_decision = str(final_decision)
+    phase1_namespace = str(final_namespace)
     if (
-        (not _acceptance_pass(final_policy, validation_cfg))
+        (phase2_always_evaluate or (not _acceptance_pass(final_policy, validation_cfg)))
         and (not bool(args.phase1_only))
         and bool(phase2_cfg.get("enabled", True))
     ):
-        final_decision, final_policy, final_sets, phase2_summary = _run_phase2_search(
+        phase2_decision, phase2_policy, phase2_sets, phase2_summary = _run_phase2_search(
             run_tag=run_tag,
             upstream_run_tag=upstream_run_tag,
             env=env,
             aggregated=aggregated,
+            phase1_candidates_frame=phase1_df,
             alpha_candidates_95=alpha_candidates_95,
             tuning_holdout_ratios=tuning_holdout_ratios,
             inner_random_states=inner_random_states,
@@ -1007,8 +1590,33 @@ def main(argv: list[str] | None = None) -> int:
             sidecar_cfg=sidecar_cfg,
             validation_cfg=validation_cfg,
         )
-        if phase2_summary and phase2_summary.get("final_namespace"):
-            final_namespace = str(phase2_summary["final_namespace"])
+        phase2_applied, phase2_apply_reason = _phase2_should_replace_phase1(
+            phase1_policy=phase1_policy,
+            phase2_policy=phase2_policy,
+            validation_cfg=validation_cfg,
+        )
+        if phase2_summary is not None:
+            phase2_summary = {
+                **phase2_summary,
+                "run_reason": phase2_run_reason,
+                "always_evaluate": bool(phase2_always_evaluate),
+                "applied_to_final": bool(phase2_applied),
+                "apply_reason": phase2_apply_reason,
+                "phase1_namespace": phase1_namespace,
+                "phase1_decision": phase1_decision,
+                "phase2_decision": phase2_decision,
+            }
+        if phase2_applied:
+            final_decision = phase2_decision
+            final_policy = phase2_policy
+            final_sets = phase2_sets
+            if phase2_summary and phase2_summary.get("final_namespace"):
+                final_namespace = str(phase2_summary["final_namespace"])
+        elif _acceptance_pass(phase1_policy, validation_cfg):
+            final_decision = phase1_decision
+            final_policy = phase1_policy
+            final_sets = phase1_sets
+            final_namespace = phase1_namespace
 
     _write_consolidated_status(
         run_tag=run_tag,

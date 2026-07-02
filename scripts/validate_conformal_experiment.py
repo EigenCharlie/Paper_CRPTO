@@ -17,6 +17,8 @@ from loguru import logger
 from scripts.backtest_conformal_coverage import main as backtest_main
 from scripts.validate_conformal_policy import main as validate_main
 
+DEFAULT_POLICY_CONFIG = "configs/crpto_conformal_policy.yaml"
+
 
 def _build_paths(namespace: str) -> dict[str, Path]:
     ns = str(namespace).strip().replace("/", "_")
@@ -40,7 +42,7 @@ def main(
     *,
     namespace: str,
     run_tag: str | None = None,
-    base_config_path: str = "configs/conformal_policy.yaml",
+    base_config_path: str = DEFAULT_POLICY_CONFIG,
 ) -> None:
     paths = _build_paths(namespace)
     missing = [
@@ -83,6 +85,6 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     parser.add_argument("--namespace", required=True)
     parser.add_argument("--run-tag", default=None)
-    parser.add_argument("--base-config", default="configs/conformal_policy.yaml")
+    parser.add_argument("--base-config", default=DEFAULT_POLICY_CONFIG)
     args = parser.parse_args()
     main(namespace=args.namespace, run_tag=args.run_tag, base_config_path=args.base_config)

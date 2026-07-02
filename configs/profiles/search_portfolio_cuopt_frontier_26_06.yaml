@@ -1,0 +1,61 @@
+schema_version: "2026-06-22.1"
+profile_name: search_portfolio_cuopt_frontier_26_06
+description: >
+  GPU frontier-only bound-aware portfolio search for CRPTO champion reopening.
+  This profile uses cuOpt 26.06-style LP settings to explore a broad
+  return-bound frontier, but defers exact bound reranking to the HiGHS
+  evidence lane before any paper-facing promotion.
+writes_canonical_artifacts: false
+runtime:
+  workers: 1
+  reserve_logical_cpus: 8
+  min_available_ram_gb: 10
+execution:
+  solver_backend: cuopt
+  exact_solver_backend: highs
+  frontier_only: true
+candidate_policy_families:
+  - blended_uncertainty
+  - capped_blended_uncertainty
+  - tail_blended_uncertainty
+  - segment_tail_blended_uncertainty
+  - segment_relative_tail_blended_uncertainty
+frontier:
+  proxy_candidates_per_conformal_finalist: 100000
+  exact_rerank_top_k: 1200
+  bucket_return_k: 240
+  bucket_proxy_k: 240
+  bucket_family_k: 120
+  bucket_region_k: 240
+grids:
+  risk_grid: "0.08,0.09,0.10,0.11,0.12,0.13,0.14,0.15,0.155,0.16,0.165,0.17,0.175,0.18,0.19,0.20,0.21,0.22,0.23,0.24,0.25"
+  gamma_grid: "0,0.05,0.10,0.15,0.20,0.25,0.30,0.35,0.40,0.425,0.45,0.475,0.50,0.525,0.55,0.575,0.60,0.65,0.70,0.80,0.90,1.0"
+  aversion_grid: "0,0.01,0.02,0.05,0.10,0.25,0.50,0.75"
+  delta_cap_grid: "0.50,0.60,0.75,0.85,0.90,0.95,1.0"
+  tail_focus_grid: "0.50,0.60,0.75,0.85,0.90,0.95,1.0"
+  alpha_grid: "0.005,0.01,0.02,0.03,0.05,0.075,0.10,0.15,0.20"
+  random_states: "42,52,62,72,82"
+incumbent_region:
+  risk_neighbors: "0.145,0.15,0.155,0.16,0.165,0.17,0.175,0.18,0.185"
+  gamma_neighbors: "0.375,0.40,0.425,0.45,0.475,0.50,0.525,0.55,0.575,0.60"
+  policy_modes: "blended_uncertainty,capped_blended_uncertainty,tail_blended_uncertainty,segment_tail_blended_uncertainty,segment_relative_tail_blended_uncertainty"
+cuopt:
+  method: Concurrent
+  presolve: 2
+  pdlp_precision: mixed
+  pdlp_solver_mode: Stable3
+  crossover: false
+  first_primal_feasible: false
+  infeasibility_detection: false
+  dual_postsolve: false
+  num_cpu_threads: 2
+  log_to_console: false
+  log_dir: auto
+selection_objectives:
+  - frontier_return
+  - frontier_bound_proxy
+  - incumbent_region_coverage
+  - exact_context_for_higs_rerank
+claim_targets:
+  exploration_only: true
+  promotion_gate: "HiGHS exact rerank over frozen cuOpt frontier shortlist"

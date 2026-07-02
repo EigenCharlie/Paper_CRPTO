@@ -57,7 +57,7 @@ diagnóstico ---, satisficing margins, robustez multi-distribución (A23),
 estabilidad conformal online (A24), réplica externa Prosper/Freddie (A25--A34)
 y caveat/proposición dependence-aware.
 También entran el champion CRPTO congelado, la región robusta, el paquete
-A3--A34 y la reproducibilidad Quarto/DVC/DagsHub/MLflow. Si una idea requiere
+A3--A36 y la reproducibilidad Quarto/DVC/DagsHub/MLflow. Si una idea requiere
 entrenamiento end-to-end, validación prospectiva/live, reabrir la búsqueda del
 champion o producción viva, queda en backlog y no bloquea este submission.
 :::
@@ -221,7 +221,7 @@ La decisión activa de publicación es:
 | Rol | Venue | Plantilla / salida | Regla |
 |---|---|---|---|
 | Primario | INFORMS Journal on Data Science | IJDS LaTeX oficial; `paper/CRPTO_ijds.qmd` como fuente de escritura | Cuerpo anonimo de 25 páginas + online supplement |
-| Suplemento primario | IJDS online supplement | `paper/supplement_ijds.qmd` | A3--A34, pruebas, reproducibilidad, MRM y fairness |
+| Suplemento primario | IJDS online supplement | `paper/supplement_ijds.qmd` | A3--A36, pruebas, reproducibilidad, MRM y fairness |
 | Pivote | European Journal of Operational Research | Elsevier `elsarticle` cuando se active el pivote | Único respaldo, solo si el paper lee más como OR aplicada |
 
 Decisión de venue, plantilla y salida actual.
@@ -300,7 +300,7 @@ vuelva a entrar en loops de expansión.
 | Acción | Qué clasifica aquí |
 |---|---|
 | **Promover** | Material que fortalece el claim CRPTO central; evidencia que ya tiene artefacto, tabla y test; fuentes independientes que aclaran métricas, gobernanza o límites. |
-| **Apéndice** | Robustez A3--A34; fairness proxy y MRM; tail-risk OCE/CVaR; CROMS-lite como selector de finalists, no entrenamiento end-to-end; réplica externa estática. |
+| **Apéndice** | Robustez A3--A36; fairness proxy y MRM; tail-risk OCE/CVaR; CROMS-lite como selector de finalists, no entrenamiento end-to-end; réplica externa estática. |
 | **Park** | Online conformal live; MDCP/multi-source conformal formal; OCE/CVaR como nuevo objetivo; DFL/SPO+ como reemplazo del champion; dataset externo adicional si no está disponible y versionado. |
 | **Archivar** | Material de intake externo no académico como evidencia pública directa; capturas o materiales privados/no redistribuibles; rutas con nombres personales en paquetes anonimizados. |
 

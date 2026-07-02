@@ -32,13 +32,14 @@ from src.models.conformal import (
     conditional_coverage_by_group,
     create_cross_conformal_score_intervals,
     create_pd_intervals,
-    create_pd_intervals_mondrian,
+    create_pd_intervals_mondrian_from_predictions,
     validate_coverage,
 )
 from src.utils.io_utils import read_with_fallback
 
 TARGET_COL = "default_flag"
 GROUP_COL = "grade"
+DEFAULT_POLICY_CONFIG = "configs/crpto_conformal_policy.yaml"
 
 
 def _summarize_variant(
@@ -48,7 +49,7 @@ def _summarize_variant(
     groups: pd.Series,
     alpha: float,
 ) -> tuple[dict[str, Any], pd.DataFrame]:
-    metrics = validate_coverage(y_true, y_intervals, alpha=alpha)
+    metrics = validate_coverage(y_true, y_intervals, alpha=alpha, log_summary=False)
     by_group = conditional_coverage_by_group(y_true, y_intervals, groups)
     widths = y_intervals[:, 1] - y_intervals[:, 0]
     winkler_90 = float(
@@ -136,7 +137,7 @@ def _summarize_temporal_stability(
     return stability, monthly
 
 
-def _load_policy_config(path: str = "configs/conformal_policy.yaml") -> dict[str, Any]:
+def _load_policy_config(path: str = DEFAULT_POLICY_CONFIG) -> dict[str, Any]:
     with open(path, encoding="utf-8") as f:
         return yaml.safe_load(f) or {}
 
@@ -228,8 +229,10 @@ def main(
     min_group_sizes: tuple[int, ...] | None = None,
     artifact_namespace: str | None = None,
     calibrator_override_path: str | None = None,
+    policy_config_path: str = DEFAULT_POLICY_CONFIG,
+    collect_local_diagnostics: bool = False,
 ) -> None:
-    policy = _load_policy_config().get("policy", {}) or {}
+    policy = _load_policy_config(policy_config_path).get("policy", {}) or {}
     model, _ = _load_model()
     calibrator = _load_calibrator(calibrator_override_path)
     cal_df = read_with_fallback(
@@ -277,6 +280,10 @@ def main(
     ) or (int(min_group_size_default),)
     prob_cal_lookup = {"raw": y_prob_cal_raw, "calibrated": y_prob_calibrated}
     prob_test_lookup = {"raw": y_prob_test_raw, "calibrated": y_prob_test_calibrated}
+    partition_cache: dict[
+        tuple[str, str, int, str, int, float, int],
+        tuple[pd.Series, pd.Series, dict[str, Any]],
+    ] = {}
 
     rows: list[dict[str, Any]] = []
     by_group_rows: list[pd.DataFrame] = []
@@ -306,30 +313,43 @@ def main(
             if y_prob_cal_variant is None
             else y_prob_cal_variant
         )
+        y_interval_cal_pred = y_prob_calibrated if y_prob_cal_variant is None else y_prob_cal_variant
         base_groups_cal_use = (
             group_cal if base_groups_cal_variant is None else base_groups_cal_variant
         )
-        group_cal_part, group_test_part, partition_meta = build_mondrian_partition_labels(
-            y_prob_cal=y_prob_cal_use,
-            y_prob_eval=prob_test_lookup[partition_probability_source],
-            partition=partition,
-            base_groups_cal=base_groups_cal_use.iloc[: len(y_cal_use)].reset_index(drop=True),
-            base_groups_eval=group_test,
-            n_score_bins=n_score_bins,
-            min_group_size=min_group_size,
-            fallback_mode=fallback_mode,
+        cache_key = (
+            str(partition),
+            str(partition_probability_source),
+            int(n_score_bins),
+            str(fallback_mode),
+            int(min_group_size),
+            float(calibration_fraction or 1.0),
+            int(len(y_cal_use)),
         )
-        _y_pred, y_int, _ = create_pd_intervals_mondrian(
-            classifier=model,
-            X_cal=X_cal_use,
+        if cache_key in partition_cache:
+            group_cal_part, group_test_part, partition_meta = partition_cache[cache_key]
+        else:
+            group_cal_part, group_test_part, partition_meta = build_mondrian_partition_labels(
+                y_prob_cal=y_prob_cal_use,
+                y_prob_eval=prob_test_lookup[partition_probability_source],
+                partition=partition,
+                base_groups_cal=base_groups_cal_use.iloc[: len(y_cal_use)].reset_index(drop=True),
+                base_groups_eval=group_test,
+                n_score_bins=n_score_bins,
+                min_group_size=min_group_size,
+                fallback_mode=fallback_mode,
+            )
+            partition_cache[cache_key] = (group_cal_part, group_test_part, partition_meta)
+        _y_pred, y_int, _ = create_pd_intervals_mondrian_from_predictions(
+            y_cal_pred=y_interval_cal_pred,
+            y_test_pred=y_prob_test_calibrated,
             y_cal=y_cal_use,
-            X_test=X_test,
             group_cal=group_cal_part,
             group_test=group_test_part,
             alpha=alpha_used,
             min_group_size=min_group_size,
-            calibrator=calibrator,
             score_scale_family=score_scale_family,
+            log_summary=False,
         )
         row, by_group = _summarize_variant(name, y_test, y_int, group_test_part, alpha)
         temporal_meta, temporal_monthly = _summarize_temporal_stability(
@@ -350,23 +370,24 @@ def main(
         by_group_rows.append(by_group)
         temporal_rows.append(temporal_monthly)
 
-        local_diag = pd.DataFrame(
-            {
-                "record_type": "local_partition_summary",
-                "variant": name,
-                "partition": row["partition"],
-                "group": pd.Series(group_test_part).astype(str),
-                "y_true": y_test,
-                "low": y_int[:, 0],
-                "high": y_int[:, 1],
-            }
-        )
-        local_diag["covered"] = (
-            (local_diag["y_true"] >= local_diag["low"])
-            & (local_diag["y_true"] <= local_diag["high"])
-        ).astype(float)
-        local_diag["width"] = local_diag["high"] - local_diag["low"]
-        local_rows.append(local_diag)
+        if collect_local_diagnostics:
+            local_diag = pd.DataFrame(
+                {
+                    "record_type": "local_partition_summary",
+                    "variant": name,
+                    "partition": row["partition"],
+                    "group": pd.Series(group_test_part).astype(str),
+                    "y_true": y_test,
+                    "low": y_int[:, 0],
+                    "high": y_int[:, 1],
+                }
+            )
+            local_diag["covered"] = (
+                (local_diag["y_true"] >= local_diag["low"])
+                & (local_diag["y_true"] <= local_diag["high"])
+            ).astype(float)
+            local_diag["width"] = local_diag["high"] - local_diag["low"]
+            local_rows.append(local_diag)
 
     _y_pred_global, y_int_global = create_pd_intervals(
         classifier=model,
@@ -500,19 +521,18 @@ def main(
                     min_group_size=min_group_sizes[0],
                     fallback_mode=fallback_modes[0],
                 )
-                _y_pred_sub, y_int_sub, _ = create_pd_intervals_mondrian(
-                    classifier=model,
-                    X_cal=X_cal_sub,
+                _y_pred_sub, y_int_sub, _ = create_pd_intervals_mondrian_from_predictions(
+                    y_cal_pred=y_prob_cal_sub_calibrated,
+                    y_test_pred=y_prob_test_calibrated,
                     y_cal=y_cal_sub,
-                    X_test=X_test,
                     group_cal=group_cal_part,
                     group_test=group_test_part,
                     alpha=alpha,
                     min_group_size=min_group_sizes[0],
-                    calibrator=calibrator,
                     score_scale_family=score_scale_families[0],
+                    log_summary=False,
                 )
-                metrics = validate_coverage(y_test, y_int_sub, alpha=alpha)
+                metrics = validate_coverage(y_test, y_int_sub, alpha=alpha, log_summary=False)
                 by_group_sub = conditional_coverage_by_group(y_test, y_int_sub, group_test_part)
                 stability_sub, _ = _summarize_temporal_stability(
                     partition, y_test, y_int_sub, issue_test
@@ -632,6 +652,7 @@ def main(
                 "generated_at_utc": datetime.now(tz=UTC).isoformat(),
                 "artifact_namespace": artifact_namespace or "",
                 "calibrator_override_path": str(calibrator_override_path or ""),
+                "policy_config_path": str(policy_config_path),
                 "selected_variant": str(selected.get("variant", "")),
                 "selection_rank": int(selected.get("selection_rank", 1)),
                 "promotion_pass": bool(selected.get("promotion_pass", False)),
@@ -647,6 +668,9 @@ def main(
                     "Kupiec/Christoffersen are research diagnostics outside the IJDS "
                     "promotion gate; validate_conformal_policy.py promotes on material "
                     "coverage, group coverage, width, alert, and Winkler checks."
+                ),
+                "local_diagnostics_mode": (
+                    "all_variants" if collect_local_diagnostics else "selected_config_plus_sensitivity"
                 ),
                 "variants_tested": bench["variant"].astype(str).tolist(),
                 "report_path": str(selection_path),
@@ -712,6 +736,16 @@ if __name__ == "__main__":
     parser.add_argument("--min_group_sizes", default=None)
     parser.add_argument("--artifact_namespace", default=None)
     parser.add_argument("--calibrator_override_path", default=None)
+    parser.add_argument("--policy_config_path", default=DEFAULT_POLICY_CONFIG)
+    parser.add_argument(
+        "--collect_local_diagnostics",
+        action="store_true",
+        help=(
+            "Persist row-level local diagnostics for every benchmark variant. "
+            "Disabled by default because exhaustive searches can create tens of "
+            "millions of diagnostic rows."
+        ),
+    )
     args = parser.parse_args()
     calibration_size_fractions = tuple(
         float(x.strip()) for x in str(args.calibration_size_fractions).split(",") if x.strip()
@@ -737,4 +771,6 @@ if __name__ == "__main__":
         ),
         artifact_namespace=args.artifact_namespace,
         calibrator_override_path=args.calibrator_override_path,
+        policy_config_path=args.policy_config_path,
+        collect_local_diagnostics=bool(args.collect_local_diagnostics),
     )

@@ -103,7 +103,7 @@ Términos técnicos usados en el manuscrito y el dossier extendido. Se ordenan a
 :   Peso de blending entre PD puntual y cota conformal en las políticas `blended_uncertainty`. `γ = 0` = punto; `γ = 1` = peor caso conformal.
 
 **Γ_CP (Gamma_CP)**
-:   Brecha conformal observada del champion: `0.187987` para `α = 0.01`. Mide la diferencia entre cobertura observada y target.
+:   Brecha conformal observada del punto pool93 body/default: `0.162616` para `α = 0.01`. Mide la diferencia ponderada entre el endpoint conformal superior y la PD puntual del funded set.
 
 **Grade**
 :   Calificación crediticia de LendingClub (`A`–`G`). Usada como variable Mondrian para conformal condicional.
@@ -157,10 +157,10 @@ Términos técnicos usados en el manuscrito y el dossier extendido. Se ordenan a
 ## R
 
 **Región robusta**
-:   Conjunto de políticas vecinas del champion que también pasan el test `α_exact_pass = True`. CRPTO reporta `45/45` para `α = 0.01`.
+:   Superficie finita de políticas evaluadas alrededor del punto promovido. En el cierre pool93 A35, CRPTO reporta 50,010 políticas semánticas deduplicadas y 27,508 políticas all-alpha above-floor.
 
 **Retorno robusto**
-:   Retorno realizado del portafolio bajo el peor escenario conformal. Para el champion: `$170 464,54`.
+:   Retorno realizado del portafolio promovido bajo auditoría OOT. Para el punto pool93 body/default: `$184,832.48`.
 
 **RAPS (Regularized Adaptive Prediction Sets)**
 :   Variante de APS con regularización para reducir el tamaño promedio del set. Comparado en `chapters/08-ablacion-mondrian.qmd`.
@@ -168,7 +168,7 @@ Términos técnicos usados en el manuscrito y el dossier extendido. Se ordenan a
 ## S
 
 **Satisficing (robusto)**
-:   Criterio de decisión que exige que una política *satisfaga* un conjunto de umbrales (retorno, `V`, cola) en lugar de optimizar uno solo. En CRPTO aparece como pantalla diagnóstica en A20; en la línea base IJDS, las 45 políticas de la región robusta pasan esa pantalla y la comparación útil es el trade-off retorno--CVaR.
+:   Criterio de decisión que exige que una política *satisfaga* un conjunto de umbrales (retorno, `V`, cola) en lugar de optimizar uno solo. En CRPTO aparece como pantalla diagnóstica en A20; en el cierre IJDS pool93, la comparación principal es la frontera retorno--bound A35.
 
 **SHAP (SHapley Additive exPlanations)**
 :   Atribución de aportes por feature al score individual. Usado en `chapters/04-resultados.qmd` para explicabilidad del champion.
@@ -190,7 +190,7 @@ Términos técnicos usados en el manuscrito y el dossier extendido. Se ordenan a
 ## V
 
 **V (alpha_weighted_miscoverage)**
-:   Métrica de miscoverage del champion. Para `α = 0.01`, vale `0.028875`. Mide la fracción ponderada de loans donde `y_true ∉ [pd_low, pd_high]`.
+:   Métrica de miscoverage del punto pool93 body/default. Para `α = 0.01`, vale `0.035350`. Mide la fracción ponderada de loans donde `y_true ∉ [pd_low, pd_high]`.
 
 **Venn-Abers**
 :   Calibrador conformal que produce intervalos `[p₀, p₁]` con garantía de cobertura. Usado por CRPTO como calibrador del PD canónico. Wrapper en `src/models/venn_abers.py`.

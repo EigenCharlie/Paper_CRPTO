@@ -14,6 +14,7 @@ from datetime import UTC, datetime
 from pathlib import Path
 from typing import Any
 
+import numpy as np
 import pandas as pd
 import yaml
 from loguru import logger
@@ -31,6 +32,7 @@ from scripts.optimize_portfolio_tradeoff import (  # noqa: E402
 )
 from scripts.run_gpu_replay import _GpuSampler  # noqa: E402
 from scripts.validate_alpha_gamma_bound import (  # noqa: E402
+    DEFAULT_THREADS,
     _load_aligned_dataset,
     _validate_single_alpha,
 )
@@ -56,6 +58,16 @@ SEMANTIC_POLICY_FIELDS = [
     "pd_cap_slack_penalty",
     "solver_backend",
 ]
+
+
+def _env_int(name: str, fallback: int) -> int:
+    raw = os.environ.get(name)
+    if raw is None:
+        return int(fallback)
+    try:
+        return int(raw)
+    except ValueError:
+        return int(fallback)
 
 
 def _coerce_csv(raw: str | None) -> list[float]:
@@ -221,17 +233,172 @@ def _validate_cuopt_runtime() -> dict[str, Any]:
     payload: dict[str, Any] = {
         "validated_at_utc": datetime.now(tz=UTC).isoformat(),
         "python": sys.executable,
-        "expected_release": "26.02",
+        "expected_release": "26.02_or_newer_26.x",
     }
     for module_name in modules:
         module = importlib.import_module(module_name)
         payload[module_name] = getattr(module, "__version__", "ok")
     cuopt_version = str(payload.get("cuopt", ""))
-    if not cuopt_version.startswith("26.02"):
+    parts = cuopt_version.replace("-", ".").split(".")
+    try:
+        major = int(parts[0])
+        minor = int(parts[1])
+    except (IndexError, ValueError) as exc:
+        raise RuntimeError(f"Unable to parse cuOpt version {cuopt_version!r}.") from exc
+    if not (major == 26 and minor >= 2):
         raise RuntimeError(
-            f"cuOpt 26.02 is required for GPU bound-aware search; found {cuopt_version!r}."
+            f"cuOpt 26.02+ within release 26.x is required for GPU bound-aware search; "
+            f"found {cuopt_version!r}."
         )
     return payload
+
+
+def _blank(raw: Any) -> bool:
+    return str(raw).strip() == ""
+
+
+def _optional_int(raw: Any, *, name: str) -> int | None:
+    if _blank(raw):
+        return None
+    try:
+        return int(str(raw).strip())
+    except ValueError as exc:
+        raise ValueError(f"{name} must be an integer, got {raw!r}.") from exc
+
+
+def _optional_bool(raw: Any, *, name: str) -> bool | None:
+    if _blank(raw):
+        return None
+    token = str(raw).strip().lower()
+    if token in {"1", "true", "yes", "y", "on"}:
+        return True
+    if token in {"0", "false", "no", "n", "off"}:
+        return False
+    raise ValueError(f"{name} must be true/false or 1/0, got {raw!r}.")
+
+
+def _cuopt_method(raw: Any) -> str | None:
+    if _blank(raw):
+        return None
+    token = str(raw).strip().lower().replace("-", "_").replace(" ", "_")
+    aliases = {
+        "concurrent": "Concurrent",
+        "pdlp": "PDLP",
+        "dual_simplex": "Dual Simplex",
+        "dualsimplex": "Dual Simplex",
+        "barrier": "Barrier",
+    }
+    if token not in aliases:
+        raise ValueError(
+            "--cuopt-method must be one of concurrent, pdlp, dual_simplex, barrier."
+        )
+    return aliases[token]
+
+
+def _cuopt_pdlp_mode(raw: Any) -> str | None:
+    if _blank(raw):
+        return None
+    token = str(raw).strip().lower().replace("-", "_").replace(" ", "_")
+    aliases = {
+        "stable3": "Stable3",
+        "methodical1": "Methodical1",
+        "fast1": "Fast1",
+    }
+    if token not in aliases:
+        raise ValueError("--cuopt-pdlp-solver-mode must be stable3, methodical1, or fast1.")
+    return aliases[token]
+
+
+def _cuopt_pdlp_precision(raw: Any) -> int | None:
+    if _blank(raw):
+        return None
+    token = str(raw).strip().lower()
+    aliases = {"default": -1, "single": 0, "double": 1, "mixed": 2}
+    if token in aliases:
+        return aliases[token]
+    try:
+        value = int(token)
+    except ValueError as exc:
+        raise ValueError("--cuopt-pdlp-precision must be default/single/double/mixed.") from exc
+    if value not in {-1, 0, 1, 2}:
+        raise ValueError("--cuopt-pdlp-precision integer value must be one of -1,0,1,2.")
+    return value
+
+
+def _extra_cuopt_parameters(raw_items: list[str] | None) -> dict[str, Any]:
+    params: dict[str, Any] = {}
+    for raw in raw_items or []:
+        if "=" not in str(raw):
+            raise ValueError(f"--cuopt-extra-parameter expects name=value, got {raw!r}.")
+        name, value = str(raw).split("=", 1)
+        key = name.strip().replace("-", "_").lower()
+        if key.startswith("cuopt_"):
+            key = key[len("cuopt_") :]
+        params[key] = value.strip()
+    return params
+
+
+def _cuopt_parameter_overrides(args: argparse.Namespace, *, model_dir: Path) -> dict[str, Any]:
+    params = _extra_cuopt_parameters(getattr(args, "cuopt_extra_parameter", None))
+    simple_values: dict[str, Any] = {
+        "method": _cuopt_method(args.cuopt_method),
+        "pdlp_solver_mode": _cuopt_pdlp_mode(args.cuopt_pdlp_solver_mode),
+        "pdlp_precision": _cuopt_pdlp_precision(args.cuopt_pdlp_precision),
+        "crossover": _optional_bool(args.cuopt_crossover, name="--cuopt-crossover"),
+        "first_primal_feasible": _optional_bool(
+            args.cuopt_first_primal_feasible,
+            name="--cuopt-first-primal-feasible",
+        ),
+        "save_best_primal_solution": _optional_bool(
+            args.cuopt_save_best_primal_solution,
+            name="--cuopt-save-best-primal-solution",
+        ),
+        "infeasibility_detection": _optional_bool(
+            args.cuopt_infeasibility_detection,
+            name="--cuopt-infeasibility-detection",
+        ),
+        "strict_infeasibility": _optional_bool(
+            args.cuopt_strict_infeasibility,
+            name="--cuopt-strict-infeasibility",
+        ),
+        "per_constraint_residual": _optional_bool(
+            args.cuopt_per_constraint_residual,
+            name="--cuopt-per-constraint-residual",
+        ),
+        "dual_postsolve": _optional_bool(
+            args.cuopt_dual_postsolve,
+            name="--cuopt-dual-postsolve",
+        ),
+        "cudss_deterministic": _optional_bool(
+            args.cuopt_cudss_deterministic,
+            name="--cuopt-cudss-deterministic",
+        ),
+        "eliminate_dense_columns": _optional_bool(
+            args.cuopt_eliminate_dense_columns,
+            name="--cuopt-eliminate-dense-columns",
+        ),
+        "log_to_console": _optional_bool(args.cuopt_log_to_console, name="--cuopt-log-to-console"),
+        "iteration_limit": _optional_int(
+            args.cuopt_iteration_limit,
+            name="--cuopt-iteration-limit",
+        ),
+        "num_cpu_threads": _optional_int(
+            args.cuopt_num_cpu_threads,
+            name="--cuopt-num-cpu-threads",
+        ),
+        "dualize": _optional_int(args.cuopt_dualize, name="--cuopt-dualize"),
+        "folding": _optional_int(args.cuopt_folding, name="--cuopt-folding"),
+        "augmented": _optional_int(args.cuopt_augmented, name="--cuopt-augmented"),
+        "ordering": _optional_int(args.cuopt_ordering, name="--cuopt-ordering"),
+        "num_gpus": _optional_int(args.cuopt_num_gpus, name="--cuopt-num-gpus"),
+    }
+    for key, value in simple_values.items():
+        if value is not None:
+            params[key] = value
+    log_dir = str(args.cuopt_log_dir).strip()
+    if log_dir:
+        params["log_dir"] = str(model_dir / "cuopt_logs") if log_dir == "auto" else log_dir
+    return params
 
 
 class _ProgressTracker:
@@ -336,6 +503,14 @@ class _ProgressTracker:
         payload = self._payload(phase="selection_complete", state="completed", extra=extra)
         self.checkpoint("selection_complete", payload)
 
+    def frontier_only_complete(self, *, extra: dict[str, Any] | None = None) -> None:
+        payload = self._payload(phase="frontier_only_complete", state="completed", extra=extra)
+        self.checkpoint("frontier_only_complete", payload)
+
+    def fail(self, *, phase: str, extra: dict[str, Any] | None = None) -> None:
+        payload = self._payload(phase=phase, state="failed", extra=extra)
+        self.checkpoint("failed", payload)
+
 
 def _load_incumbent_policy(path: str | Path | None) -> dict[str, Any]:
     target = Path(path) if path is not None else DEFAULT_INCUMBENT_POLICY_PATH
@@ -387,6 +562,7 @@ def _build_frontier_for_seed(
     random_state: int,
     solver_backend: str,
     cuopt_presolve: int | None,
+    cuopt_parameters: dict[str, Any] | None,
     policy_modes: list[str] | None,
     progress_hook: Callable[[int, dict[str, Any]], None],
 ) -> pd.DataFrame:
@@ -463,6 +639,7 @@ def _build_frontier_for_seed(
             solver_backend=solver_backend,
             random_seed=int(random_state),
             cuopt_presolve=cuopt_presolve,
+            cuopt_parameters=cuopt_parameters,
         )
         completed += 1
         progress_hook(
@@ -503,6 +680,7 @@ def _build_frontier_for_seed(
                         tail_focus_quantile=float(tail_focus_quantile),
                         random_seed=int(random_state),
                         cuopt_presolve=cuopt_presolve,
+                        cuopt_parameters=cuopt_parameters,
                     )
                     completed += 1
                     progress_hook(
@@ -570,6 +748,33 @@ def _aggregate_frontier(frontier_raw: pd.DataFrame) -> pd.DataFrame:
     return frontier.reset_index(drop=True)
 
 
+def _aggregate_alpha_grid_results(bound_eval: pd.DataFrame) -> pd.DataFrame:
+    """Summarize exact bound checks across every evaluated alpha level."""
+    if bound_eval.empty:
+        return pd.DataFrame(columns=[*SEMANTIC_POLICY_FIELDS, "alpha_exact_pass_count"])
+    grouped = bound_eval.groupby(SEMANTIC_POLICY_FIELDS, dropna=False)
+    out = grouped.agg(
+        alpha_exact_pass_count=("all_bounds_hold", "sum"),
+        alpha_exact_check_count=("all_bounds_hold", "size"),
+        alpha_exact_pass_rate=("all_bounds_hold", "mean"),
+        alpha_max_violation=("violation", "max"),
+        alpha_mean_gamma_cp=("gamma_cp", "mean"),
+        alpha_mean_weighted_miscoverage_V=("weighted_miscoverage_V", "mean"),
+        alpha_mean_weighted_pd_true=("weighted_pd_true", "mean"),
+        alpha_mean_empirical_coverage_funded=("empirical_coverage_funded", "mean"),
+    ).reset_index()
+    pass_min_alpha = (
+        bound_eval.loc[bound_eval["all_bounds_hold"].fillna(False)]
+        .groupby(SEMANTIC_POLICY_FIELDS, dropna=False)["alpha"]
+        .min()
+        .rename("alpha_min_passed")
+        .reset_index()
+    )
+    out = out.merge(pass_min_alpha, on=SEMANTIC_POLICY_FIELDS, how="left")
+    out["alpha_min_passed"] = out["alpha_min_passed"].where(out["alpha_min_passed"].notna(), np.nan)
+    return out
+
+
 def _apply_rank(
     df: pd.DataFrame, *, by: list[str], ascending: list[bool], rank_col: str
 ) -> pd.DataFrame:
@@ -585,7 +790,7 @@ def _rank_frontier(frontier: pd.DataFrame) -> pd.DataFrame:
     return_rank = _apply_rank(
         work,
         by=["ab_pass_all", "realized_total_return", "price_of_robustness"],
-        ascending=[False, False, False],
+        ascending=[False, False, True],
         rank_col="return_first_rank",
     )
     proxy_rank = _apply_rank(
@@ -599,7 +804,7 @@ def _rank_frontier(frontier: pd.DataFrame) -> pd.DataFrame:
             "realized_total_return",
             "price_of_robustness",
         ],
-        ascending=[False, True, True, True, True, False, False],
+        ascending=[False, True, True, True, True, False, True],
         rank_col="bound_proxy_rank",
     )
     work = work.merge(return_rank, on="semantic_policy_key", how="left")
@@ -837,23 +1042,115 @@ def _aggregate_exact_results(
     work = work.merge(alpha01, on=SEMANTIC_POLICY_FIELDS, how="left")
     work = work.merge(alpha03, on=SEMANTIC_POLICY_FIELDS, how="left")
     work = work.merge(alpha10, on=SEMANTIC_POLICY_FIELDS, how="left")
+    alpha_grid_summary = _aggregate_alpha_grid_results(bound_eval)
+    work = work.merge(alpha_grid_summary, on=SEMANTIC_POLICY_FIELDS, how="left")
     bool_cols = ["alpha01_exact_pass", "alpha03_exact_pass", "alpha10_exact_pass"]
     for col in bool_cols:
         work[col] = work[col].where(work[col].notna(), False).astype(bool)
+    numeric_defaults = {
+        "alpha_exact_pass_count": 0,
+        "alpha_exact_check_count": 0,
+        "alpha_exact_pass_rate": 0.0,
+        "alpha_max_violation": float("inf"),
+        "alpha_mean_gamma_cp": float("inf"),
+        "alpha_mean_weighted_miscoverage_V": float("inf"),
+        "alpha_mean_weighted_pd_true": float("inf"),
+        "alpha_mean_empirical_coverage_funded": 0.0,
+    }
+    for col, default in numeric_defaults.items():
+        if col not in work.columns:
+            work[col] = default
+        work[col] = work[col].fillna(default)
     work = work.sort_values(
         by=[
             "alpha01_exact_pass",
             "alpha03_exact_pass",
+            "alpha_exact_pass_count",
+            "alpha_exact_pass_rate",
             "ab_pass_all",
             "realized_total_return",
-            "price_of_robustness",
             "alpha01_weighted_miscoverage_V",
             "alpha01_gamma_cp",
+            "price_of_robustness",
         ],
-        ascending=[False, False, False, False, False, True, True],
+        ascending=[False, False, False, False, False, False, True, True, True],
         kind="mergesort",
     )
     return work.reset_index(drop=True)
+
+
+def _region_summary(shortlist_eval: pd.DataFrame, bound_eval: pd.DataFrame) -> dict[str, Any]:
+    """Describe robust policy regions for paper-facing claim selection."""
+    if shortlist_eval.empty:
+        return {}
+
+    def _bucket_payload(frame: pd.DataFrame) -> dict[str, Any]:
+        if frame.empty:
+            return {
+                "n_policies": 0,
+                "n_alpha01_passers": 0,
+                "alpha01_pass_rate": 0.0,
+                "n_all_alpha_passers": 0,
+                "all_alpha_pass_rate": 0.0,
+            }
+        alpha01_pass = frame["alpha01_exact_pass"].fillna(False).astype(bool)
+        all_alpha_pass = (
+            frame["alpha_exact_pass_count"].fillna(0)
+            >= frame["alpha_exact_check_count"].fillna(1)
+        )
+        promotable = frame.loc[alpha01_pass].copy()
+        return {
+            "n_policies": int(len(frame)),
+            "n_alpha01_passers": int(alpha01_pass.sum()),
+            "alpha01_pass_rate": float(alpha01_pass.mean()),
+            "n_all_alpha_passers": int(all_alpha_pass.sum()),
+            "all_alpha_pass_rate": float(all_alpha_pass.mean()),
+            "best_return_alpha01": (
+                float(promotable["realized_total_return"].max()) if not promotable.empty else None
+            ),
+            "min_gamma_cp_alpha01": (
+                float(promotable["alpha01_gamma_cp"].min()) if not promotable.empty else None
+            ),
+            "min_weighted_miscoverage_V_alpha01": (
+                float(promotable["alpha01_weighted_miscoverage_V"].min())
+                if not promotable.empty
+                else None
+            ),
+            "min_price_of_robustness_alpha01": (
+                float(promotable["price_of_robustness"].min()) if not promotable.empty else None
+            ),
+        }
+
+    bucket_rows: dict[str, Any] = {}
+    if "shortlist_bucket" in shortlist_eval.columns:
+        for bucket, frame in shortlist_eval.groupby("shortlist_bucket", dropna=False):
+            bucket_rows[str(bucket)] = _bucket_payload(frame)
+
+    exact_alpha_summary = {}
+    if not bound_eval.empty:
+        for alpha, frame in bound_eval.groupby("alpha", dropna=False):
+            exact_alpha_summary[str(float(alpha))] = {
+                "n_checks": int(len(frame)),
+                "pass_rate": float(frame["all_bounds_hold"].fillna(False).mean()),
+                "max_violation": float(frame["violation"].max()),
+                "mean_gamma_cp": float(frame["gamma_cp"].mean()),
+                "mean_weighted_miscoverage_V": float(frame["weighted_miscoverage_V"].mean()),
+            }
+
+    return {
+        "schema_version": SCHEMA_VERSION,
+        "generated_at_utc": datetime.now(tz=UTC).isoformat(),
+        "overall_exact_shortlist": _bucket_payload(shortlist_eval),
+        "by_shortlist_bucket": bucket_rows,
+        "by_alpha": exact_alpha_summary,
+        "claim_lenses": {
+            "same_region_higher_return": "maximize realized_total_return among alpha01 passers",
+            "same_region_better_bound": "minimize alpha01_gamma_cp and alpha01_weighted_miscoverage_V among alpha01 passers",
+            "wider_region_zero_violations": "maximize n_alpha01_passers and alpha01_pass_rate",
+            "clean_region_for_paper": "prefer forced_incumbent_neighbors and incumbent_region buckets when they pass",
+            "return_bound_frontier": "retain exact shortlist, not only the selected policy",
+        },
+    }
 
 
 def _selection_reason(row: pd.Series) -> str:
@@ -884,13 +1181,69 @@ def main(argv: list[str] | None = None) -> int:
     parser.add_argument("--bucket-region-k", type=int, default=20)
     parser.add_argument("--alpha-grid", default="0.01,0.03,0.10")
     parser.add_argument("--max-candidates", type=int, default=5000)
+    parser.add_argument(
+        "--exact-max-candidates",
+        type=int,
+        default=None,
+        help=(
+            "Candidate universe for exact rerank. Use 0 for the full universe. "
+            "Defaults to --max-candidates."
+        ),
+    )
     parser.add_argument("--random-state", type=int, default=42)
     parser.add_argument("--random-states", default="")
+    parser.add_argument(
+        "--exact-random-states",
+        default="",
+        help=(
+            "Comma-separated seeds for exact rerank. Defaults to --random-states, "
+            "allowing a cheap proxy frontier and a stronger exact certificate."
+        ),
+    )
+    parser.add_argument(
+        "--exact-checkpoint-every",
+        type=int,
+        default=100,
+        help="Write partial exact bound cache every N checks.",
+    )
+    parser.add_argument(
+        "--exact-threads",
+        type=int,
+        default=_env_int("EXACT_THREADS", DEFAULT_THREADS),
+        help="Thread budget for exact HiGHS reranking when it runs in this process.",
+    )
     parser.add_argument("--solver-backend", choices=["highs", "cuopt"], default="highs")
     parser.add_argument("--exact-solver-backend", choices=["highs", "cuopt"], default="highs")
     parser.add_argument("--exact-python-executable", default="")
     parser.add_argument("--exact-helper-script", default=str(DEFAULT_EXACT_HELPER_SCRIPT))
+    parser.add_argument(
+        "--frontier-only",
+        action="store_true",
+        help="Write frontier, shortlist, and exact context, then defer exact bound reranking.",
+    )
     parser.add_argument("--cuopt-presolve", type=int, default=1)
+    parser.add_argument("--cuopt-method", default="")
+    parser.add_argument("--cuopt-pdlp-solver-mode", default="")
+    parser.add_argument("--cuopt-pdlp-precision", default="")
+    parser.add_argument("--cuopt-crossover", default="")
+    parser.add_argument("--cuopt-first-primal-feasible", default="")
+    parser.add_argument("--cuopt-save-best-primal-solution", default="")
+    parser.add_argument("--cuopt-infeasibility-detection", default="")
+    parser.add_argument("--cuopt-strict-infeasibility", default="")
+    parser.add_argument("--cuopt-per-constraint-residual", default="")
+    parser.add_argument("--cuopt-dual-postsolve", default="")
+    parser.add_argument("--cuopt-dualize", default="")
+    parser.add_argument("--cuopt-folding", default="")
+    parser.add_argument("--cuopt-augmented", default="")
+    parser.add_argument("--cuopt-ordering", default="")
+    parser.add_argument("--cuopt-cudss-deterministic", default="")
+    parser.add_argument("--cuopt-eliminate-dense-columns", default="")
+    parser.add_argument("--cuopt-iteration-limit", default="")
+    parser.add_argument("--cuopt-num-cpu-threads", default="")
+    parser.add_argument("--cuopt-num-gpus", default="")
+    parser.add_argument("--cuopt-log-to-console", default="false")
+    parser.add_argument("--cuopt-log-dir", default="")
+    parser.add_argument("--cuopt-extra-parameter", action="append", default=[])
     parser.add_argument("--policy-modes", default="")
     parser.add_argument(
         "--incumbent-policy-path",
@@ -932,6 +1285,16 @@ def main(argv: list[str] | None = None) -> int:
     tail_focus_quantiles = _coerce_csv(args.tail_focus_grid)
     alpha_grid = _coerce_csv(args.alpha_grid)
     random_states = _coerce_int_csv(args.random_states, fallback=int(args.random_state))
+    exact_random_states = (
+        _coerce_int_csv(args.exact_random_states, fallback=int(args.random_state))
+        if str(args.exact_random_states).strip()
+        else list(random_states)
+    )
+    exact_max_candidates = (
+        int(args.exact_max_candidates)
+        if args.exact_max_candidates is not None
+        else int(args.max_candidates)
+    )
     incumbent_risk_neighbors = _coerce_csv(args.incumbent_risk_neighbors)
     incumbent_gamma_neighbors = _coerce_csv(args.incumbent_gamma_neighbors)
     incumbent_policy_modes = [
@@ -969,6 +1332,11 @@ def main(argv: list[str] | None = None) -> int:
         or str(args.exact_solver_backend).strip().lower() == "cuopt"
     ):
         backend_validation = _validate_cuopt_runtime()
+    cuopt_parameters = (
+        _cuopt_parameter_overrides(args, model_dir=model_dir)
+        if str(args.solver_backend).strip().lower() == "cuopt"
+        else {}
+    )
 
     policy_grid_count = _policy_grid_size(
         gamma_values=gamma_values,
@@ -990,6 +1358,7 @@ def main(argv: list[str] | None = None) -> int:
         "run_label": run_label,
         "solver_backend": str(args.solver_backend),
         "exact_solver_backend": str(args.exact_solver_backend),
+        "cuopt_parameters": cuopt_parameters,
         "start": _resource_snapshot(),
         "backend_validation": backend_validation,
     }
@@ -1006,6 +1375,11 @@ def main(argv: list[str] | None = None) -> int:
                 "budget_profiles": budget_profiles,
                 "alpha_grid": alpha_grid,
                 "max_candidates": int(args.max_candidates),
+                "exact_max_candidates": int(exact_max_candidates),
+                "exact_random_states": exact_random_states,
+                "exact_checkpoint_every": int(args.exact_checkpoint_every),
+                "exact_threads": int(args.exact_threads),
+                "cuopt_parameters": cuopt_parameters,
             },
         }
     )
@@ -1043,6 +1417,7 @@ def main(argv: list[str] | None = None) -> int:
                 cuopt_presolve=int(args.cuopt_presolve)
                 if str(args.solver_backend) == "cuopt"
                 else None,
+                cuopt_parameters=cuopt_parameters,
                 policy_modes=policy_modes,
                 progress_hook=_progress_hook,
             )
@@ -1076,16 +1451,15 @@ def main(argv: list[str] | None = None) -> int:
             budget_profiles=budget_profiles,
             solver_backend=str(args.solver_backend),
         )
-        bound_total_checks = int(len(shortlist) * len(alpha_grid) * len(random_states))
-        tracker.set_bound_total(
-            bound_total_checks,
-            extra={
-                "shortlist_size": len(shortlist),
-                "shortlist_buckets": shortlist["shortlist_bucket"]
-                .value_counts(dropna=False)
-                .to_dict(),
-            },
-        )
+        bound_total_checks = int(len(shortlist) * len(alpha_grid) * len(exact_random_states))
+        shortlist_extra = {
+            "shortlist_size": len(shortlist),
+            "shortlist_buckets": shortlist["shortlist_bucket"]
+            .value_counts(dropna=False)
+            .to_dict(),
+        }
+        if not args.frontier_only:
+            tracker.set_bound_total(bound_total_checks, extra=shortlist_extra)
 
         atomic_write_parquet(
             frontier_raw, output_dir / "portfolio_bound_aware_frontier_raw.parquet", index=False
@@ -1111,8 +1485,13 @@ def main(argv: list[str] | None = None) -> int:
                 "budget_profiles": budget_profiles,
                 "alpha_grid": alpha_grid,
                 "max_candidates": int(args.max_candidates),
+                "exact_max_candidates": int(exact_max_candidates),
                 "random_states": random_states,
+                "exact_random_states": exact_random_states,
+                "exact_checkpoint_every": int(args.exact_checkpoint_every),
+                "exact_threads": int(args.exact_threads),
                 "policy_modes": policy_modes,
+                "cuopt_parameters": cuopt_parameters,
                 "bucket_return_k": int(args.bucket_return_k),
                 "bucket_proxy_k": int(args.bucket_proxy_k),
                 "bucket_family_k": int(args.bucket_family_k),
@@ -1127,11 +1506,13 @@ def main(argv: list[str] | None = None) -> int:
                 "rank_order": [
                     "alpha01_exact_pass(desc)",
                     "alpha03_exact_pass(desc)",
+                    "alpha_exact_pass_count(desc)",
+                    "alpha_exact_pass_rate(desc)",
                     "ab_pass_all(desc)",
                     "realized_total_return(desc)",
-                    "price_of_robustness(desc)",
                     "alpha01_weighted_miscoverage_V(asc)",
                     "alpha01_gamma_cp(asc)",
+                    "price_of_robustness(asc)",
                 ],
             },
             "frontier_raw_path": str(output_dir / "portfolio_bound_aware_frontier_raw.parquet"),
@@ -1141,6 +1522,9 @@ def main(argv: list[str] | None = None) -> int:
                 output_dir / "portfolio_bound_aware_shortlist_exact.parquet"
             ),
             "bound_eval_path": str(output_dir / "portfolio_bound_aware_bound_eval.parquet"),
+            "region_summary_path": str(
+                model_dir / "portfolio_bound_aware_region_summary.json"
+            ),
             "selection_path": str(model_dir / "portfolio_bound_aware_selection.json"),
             "runtime_status_path": str(status_path),
             "runtime_checkpoint_dir": str(checkpoint_dir),
@@ -1150,11 +1534,30 @@ def main(argv: list[str] | None = None) -> int:
             "budget": float(args.budget),
             "t_eval": float(args.t_eval),
             "max_candidates": int(args.max_candidates),
+            "exact_max_candidates": int(exact_max_candidates),
             "random_states": random_states,
+            "exact_random_states": exact_random_states,
+            "exact_checkpoint_every": int(args.exact_checkpoint_every),
+            "exact_threads": int(args.exact_threads),
             "alpha_grid": alpha_grid,
         }
         exact_context_path = model_dir / "portfolio_bound_aware_exact_context.json"
         atomic_write_json(exact_context_path, selection_context)
+
+        if args.frontier_only:
+            resource_payload["end"] = _resource_snapshot()
+            atomic_write_json(resource_path, resource_payload)
+            tracker.frontier_only_complete(
+                extra={
+                    **shortlist_extra,
+                    "frontier_only": True,
+                    "deferred_bound_total_checks": bound_total_checks,
+                    "exact_context_path": str(exact_context_path),
+                    "frontier_path": str(output_dir / "portfolio_bound_aware_frontier.parquet"),
+                    "shortlist_path": str(output_dir / "portfolio_bound_aware_shortlist.parquet"),
+                }
+            )
+            return 0
 
         if exact_python_executable:
             current_python = Path(sys.executable)
@@ -1178,10 +1581,10 @@ def main(argv: list[str] | None = None) -> int:
         aligned_by_seed = {
             int(seed): _load_aligned_dataset(
                 conformal_intervals_path=args.conformal_intervals_path,
-                max_candidates=int(args.max_candidates),
+                max_candidates=int(exact_max_candidates),
                 random_state=int(seed),
             )
-            for seed in random_states
+            for seed in exact_random_states
         }
         bound_rows: list[dict[str, Any]] = []
         completed_checks = 0
@@ -1191,7 +1594,7 @@ def main(argv: list[str] | None = None) -> int:
                 solver_backend_override=str(args.exact_solver_backend),
             )
             candidate_payload = row.to_dict()
-            for eval_seed in random_states:
+            for eval_seed in exact_random_states:
                 aligned = aligned_by_seed[int(eval_seed)]
                 for alpha in alpha_grid:
                     result = _validate_single_alpha(
@@ -1201,6 +1604,7 @@ def main(argv: list[str] | None = None) -> int:
                         allocator_mode="exact",
                         budget=float(args.budget),
                         t_eval=float(args.t_eval),
+                        threads=int(args.exact_threads),
                     )
                     bound_rows.append(
                         {
@@ -1219,11 +1623,13 @@ def main(argv: list[str] | None = None) -> int:
                             "candidate_rank": int(candidate_payload["candidate_rank"]),
                             "eval_random_state": int(eval_seed),
                             "current_alpha": float(alpha),
+                            "exact_threads": int(args.exact_threads),
                         },
                     )
 
         bound_eval = pd.DataFrame(bound_rows)
         shortlist_eval = _aggregate_exact_results(shortlist=shortlist, bound_eval=bound_eval)
+        region_payload = _region_summary(shortlist_eval, bound_eval)
         selected = shortlist_eval.iloc[0].copy()
         selected_policy = _policy_from_row(
             selected,
@@ -1244,11 +1650,14 @@ def main(argv: list[str] | None = None) -> int:
             "shortlist_path": selection_context["shortlist_path"],
             "shortlist_exact_path": selection_context["shortlist_exact_path"],
             "bound_eval_path": selection_context["bound_eval_path"],
+            "region_summary_path": selection_context["region_summary_path"],
+            "robust_region_summary": region_payload,
             "runtime_status_path": selection_context["runtime_status_path"],
             "runtime_checkpoint_dir": selection_context["runtime_checkpoint_dir"],
             "resource_snapshot_path": selection_context["resource_snapshot_path"],
             "frontier_solver_backend": str(args.solver_backend),
             "exact_solver_backend": str(args.exact_solver_backend),
+            "exact_threads": int(args.exact_threads),
         }
 
         atomic_write_parquet(
@@ -1259,6 +1668,7 @@ def main(argv: list[str] | None = None) -> int:
         atomic_write_parquet(
             bound_eval, output_dir / "portfolio_bound_aware_bound_eval.parquet", index=False
         )
+        atomic_write_json(model_dir / "portfolio_bound_aware_region_summary.json", region_payload)
         atomic_write_json(model_dir / "portfolio_bound_aware_selection.json", payload)
 
         if gpu_sampler is not None:
@@ -1301,6 +1711,21 @@ def main(argv: list[str] | None = None) -> int:
             "Saved selection payload: {}", model_dir / "portfolio_bound_aware_selection.json"
         )
         return 0
+    except Exception as exc:
+        error_payload = {
+            "error_type": type(exc).__name__,
+            "error": str(exc),
+            "frontier_completed_units": int(tracker.frontier_completed_units),
+            "frontier_total_units": int(tracker.frontier_total_units),
+            "bound_completed_checks": int(tracker.bound_completed_checks),
+            "bound_total_checks": int(tracker.bound_total_checks),
+        }
+        resource_payload["error"] = error_payload
+        resource_payload["end"] = _resource_snapshot()
+        atomic_write_json(resource_path, resource_payload)
+        tracker.fail(phase="failed", extra=error_payload)
+        logger.exception("Focused bound-aware portfolio search failed.")
+        raise
     finally:
         if gpu_sampler is not None:
             try:

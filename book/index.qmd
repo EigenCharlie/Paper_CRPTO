@@ -17,9 +17,18 @@
 **Hallazgo**: el resultado clave no es un AUC aislado, sino la posibilidad de cuantificar explícitamente el trade-off entre retorno, cobertura, robustez y auditabilidad.
 :::
 
-![Las seis etapas del pipeline CRPTO --- datos y split temporal, PD calibrada, conformal Mondrian, conjunto de incertidumbre, LP robusto y política promovida con bound exacto --- anotadas con las métricas del rebaseline IJDS ($170,464.54, $V=0.028875$, $\Gamma_{\text{CP}}=0.187987$, región robusta `45/45`).](assets/figures/editorial/diagrama-crpto.png){#fig-crpto-overview fig-alt="Diagrama maestro del pipeline CRPTO en seis etapas desde datos hasta política promovida auditable."}
+![Las seis etapas del pipeline CRPTO --- datos y split temporal, PD calibrada, conformal Mondrian, conjunto de incertidumbre, LP robusto y política promovida con bound exacto --- anotadas con métricas del cierre IJDS pool93: retorno $184,832.48, $V=0.035350$, $\Gamma_{\text{CP}}=0.162616$ y frontera finita A35/A36.](assets/figures/editorial/diagrama-crpto.png){#fig-crpto-overview fig-alt="Diagrama maestro del pipeline CRPTO en seis etapas desde datos hasta política promovida auditable."}
 
-El champion oficial es `bound_aware_276k_economic_champion` del run `ijds-rebaseline-2026-06-07`, con retorno `$170,464.54`, `V = 0.028875`, `Gamma_CP = 0.187987`, `alpha01_exact_pass = true` y región robusta `45/45`. El run `paper-thesis-final-economic-2026-04-06` queda como procedencia histórica, no como baseline operativo vigente.
+La superficie IJDS activa promueve el punto pool93 body/default: retorno
+`$184,832.48`, `V = 0.035350`, `Gamma_CP = 0.162616`, Markov cap `0.345084`,
+`alpha_grid_pass = 8/8` y frontera finita A35/A36. Los cierres anteriores quedan
+como procedencia histórica, no como baseline operativo vigente.
+
+::: {.callout-warning}
+Algunos capítulos largos de tesis conservan análisis históricos del champion
+anterior para trazabilidad. La fuente paper-facing actual es
+`paper/CRPTO_ijds.qmd`, su suplemento y las tablas A35/A36.
+:::
 
 ## Mapa editorial
 
@@ -31,8 +40,8 @@ superconjunto académico.
 
 | Superficie | Qué defiende | Evidencia visible |
 |---|---|---|
-| Paper IJDS | El claim estrecho: una PD calibrada congelada puede convertirse en una decisión robusta y auditable mediante conformal prediction. | Teoría mínima, Figura 1, exact funded-set certificate, región robusta `45/45`, frontera regret-auditability y réplica externa compacta. |
-| Online supplement | Que el resultado no es frágil ni cherry-picked. | A3--A34, ablations, stress tests, MRM/fairness, funded-set audit, SPO+, tail risk, diagnósticos multi-distribución/online y Prosper/Freddie. |
+| Paper IJDS | El claim estrecho: una PD calibrada congelada puede convertirse en una decisión robusta y auditable mediante conformal prediction. | Teoría mínima, Figura 1, exact funded-set certificate, frontera finita A35/A36, frontera regret-auditability y réplica externa compacta. |
+| Online supplement | Que el resultado no es frágil ni cherry-picked. | A3--A36, ablations, stress tests, MRM/fairness, funded-set audit, SPO+, tail risk, diagnósticos multi-distribución/online y Prosper/Freddie. |
 | Tesis | El superconjunto académico y operativo del paper. | Fundamentos, arquitectura reproducible, gobernanza, trazabilidad, réplica multidataset, bibliografía extendida y future work controlado. |
 | Reproducibilidad | Que las cifras vienen de artefactos versionados, no de edición manual. | DVC, manifests, tablas/figuras regenerables, tests de sincronía y guardrails de champion congelado. |
 

@@ -45,8 +45,8 @@ empíricos, otros son de ingeniería reproducible.
 | 2 | Los intervalos conformales tienen cobertura útil para decisión | Coverage 90 `92.97%`, min group coverage `91.90%` | No afirmar cobertura condicional perfecta |
 | 3 | El intervalo puede convertirse en conjunto de incertidumbre | Definición de `u_i(alpha)` y `Gamma_CP` | No tratar `Gamma_CP` como presupuesto ad hoc |
 | 4 | El bound controla no-cobertura ponderada del funded set | @sec-thm-feasibility y `V` | No decir que controla directamente una PD latente sin supuesto adicional |
-| 5 | Existe una región robusta completa en OOT | `45/45` policies pass alpha01 en `276k` | No decir que eso elimina toda incertidumbre post-selección |
-| 6 | El champion oficial es económico, no theorem-tight | Retorno `$170.5K`, `V=0.028875`, `gamma_cp=0.187987` | No mezclarlo con el comparador theorem-tight |
+| 5 | Existe una frontera finita robusta en OOT | A35: 50,010 políticas semánticas; 27,508 all-alpha above-floor policies | No decir que eso elimina toda incertidumbre post-selección ni que certifica una región continua |
+| 6 | El punto oficial es pool93 body/default, no el endpoint económico extremo | Retorno `$184.8K`, `V=0.035350`, `gamma_cp=0.162616`, Markov cap `0.345084`, pass `8/8` | No mezclarlo con el max-return endpoint de `$223K` ni con el punto de cap mínimo |
 | 7 | La evidencia CRPTO fortalece el paper sin cambiar dirección | A7--A11, apéndice condicional, A25--A34 | No venderlo como validación live o universal |
 
 : Escalera editorial de claims del CRPTO {#tbl-crpto-claim-ladder}
@@ -89,7 +89,7 @@ precio puede medirse [6]. Los trabajos conformal robust optimization muestran
 que los conjuntos conformales pueden alimentar problemas de optimización [7],
 [8]. Predict-then-Calibrate es especialmente cercano porque separa predicción y
 calibración para LP contextuales robustos [9]. Nuestra diferencia práctica es el
-aterrizaje: crédito minorista, funded set ponderado, región robusta exacta y
+aterrizaje: crédito minorista, funded set ponderado, región finita exacta y
 artefactos reproducibles.
 
 La literatura más reciente marca hacia dónde crecería una versión futura:
@@ -186,7 +186,7 @@ improvisar: si llega una objeción nueva, primero se busca aquí.
 | "Lending Club no es banco regulado." | Se presenta como dataset público de originación, no como validación contractual bancaria. | `docs/ACADEMIC_CONTEXT.md`; limitaciones del cuerpo. |
 | "Fair lending no está probado." | No se hace claim legal; solo proxy governance y source/fairness boundary. | Cap. 10; `models/fairness_audit_status.json`. |
 | "IFRS9/SICR parece otro paper." | En IJDS entra como implicación/limitación; la tesis puede expandirlo. | Cap. 23 (señal SICR conformal). |
-| "El resultado podría ser un punto aislado." | La región robusta muestra `45/45` políticas alpha01-safe. | `crpto_tableA18`; Fig 14; @sec-crpto-results. |
+| "El resultado podría ser un punto aislado." | La frontera A35 muestra 50,010 políticas semánticas y 27,508 políticas all-alpha above-floor. | `crpto_tableA35_pool93_ijds_frontier.csv`; @sec-crpto-results. |
 | "¿La validación PD se está tratando como clasificación?" | No. CRPTO separa risk differentiation, risk quantification, calibración y valor económico antes de optimizar portafolio. | Tabla 0; cap. 02; `crpto_metrics_triage_2026-05-18.md`. |
 | "¿El backtesting multi-periodo es confiable por defecto?" | No se sobrepromete: las pruebas multi-periodo dependen del estimador, tamaño efectivo y autocorrelación; quedan como caveat o appendix controlado. | Cap. 07 (A14--A15); `crpto_metrics_triage_2026-05-18.md`. |
 | "¿Usar ML en IRB implica perder auditabilidad?" | No. ML queda como soporte selectivo para imputación, factores, residuos o challengers; el champion no se reabre sin gate reproducible. | Cap. 13 (freeze policy); `crpto_metrics_triage_2026-05-18.md`. |
@@ -202,7 +202,7 @@ improvisar: si llega una objeción nueva, primero se busca aquí.
 |---|---|---|
 | Diagrama CRPTO | Figura 1 | Explica el método en una sola vista |
 | Escalera alpha -> `Gamma_CP` -> funded set | Teoría / método | Une conformal y robust optimization |
-| Tabla de champion y región `45/45` | Resultados principales | Demuestra cierre exacto del claim |
+| Tabla A35/A36 | Resultados principales | Demuestra frontera finita y audit de composición del funded set |
 | Holdout temporal estricto CRPTO | Appendix o robustness checks | Responde post-selección |
 | Funded-set composition | Appendix | Útil para reviewers de crédito y riesgo |
 | A10 exact finalists | Appendix | Defiende el selector conformal |
@@ -226,7 +226,7 @@ paper-grade generadas desde artefactos congelados.
 | Figura CRPTO limpia | Figura 1 IJDS | `crpto_fig1_journal_pipeline.png` |
 | Figura pila del bound | Puente visual entre endpoint conformal, identidad, supuesto y certificado | `crpto_fig20_bound_claim_layers.png` |
 | Figura alpha -> `Gamma_CP` -> funded set | Puente teoría-método | `crpto_fig13_alpha_gamma_funded_set.png` |
-| Heatmap región robusta | Evidencia visual `45/45` | `crpto_fig14_robust_region_heatmap.png` |
+| Frontera pool93 A35 | Evidencia tabular de no-aislamiento | `crpto_tableA35_pool93_ijds_frontier.csv` |
 | A12--A34 | Robustness appendix journal | `scripts/build_crpto_journal_package.py`; `scripts/build_tail_satisficing_challenger_audit.py`; `scripts/build_tail_constrained_reoptimization.py`; `scripts/build_distribution_robustness_diagnostics.py`; `scripts/build_multidataset_external_replication.py`; `scripts/build_price_of_robustness_cross_dataset.py` |
 | A22--A24 (re-opt de cola, multi-distribución y online) | Cierre P2 sin reabrir champion | `scripts/build_tail_constrained_reoptimization.py`; `scripts/build_distribution_robustness_diagnostics.py` |
 | A25--A34 (Prosper/Freddie) | Réplica externa sin reabrir Lending Club | `scripts/build_multidataset_external_replication.py`; `scripts/build_price_of_robustness_cross_dataset.py` |

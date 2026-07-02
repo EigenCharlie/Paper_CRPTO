@@ -14,6 +14,7 @@ from src.models.conformal import (
     create_classification_sets_mondrian,
     create_cross_conformal_score_intervals,
     create_pd_intervals_mondrian,
+    create_pd_intervals_mondrian_from_predictions,
     summarize_prediction_sets,
     validate_coverage,
 )
@@ -372,6 +373,48 @@ def test_create_pd_intervals_mondrian_supports_score_scale_family():
     assert y_pred.shape == (24,)
     assert y_intervals.shape == (24, 2)
     assert diagnostics["score_scale_family"] == "bernoulli_sqrt_clipped_0.02"
+
+
+def test_pd_intervals_mondrian_precomputed_predictions_match_classifier_route():
+    clf = FakeClassifier()
+    x_cal = pd.DataFrame({"a": np.arange(8)})
+    x_test = pd.DataFrame({"a": np.arange(4)})
+    y_cal = pd.Series([0.0, 1.0, 0.0, 1.0, 0.0, 1.0, 0.0, 1.0])
+    group_cal = pd.Series(["A", "A", "B", "B", "B", "C", "C", "C"])
+    group_test = pd.Series(["A", "B", "C", "D"])
+
+    y_pred_old, y_intervals_old, diagnostics_old = create_pd_intervals_mondrian(
+        classifier=clf,
+        X_cal=x_cal,
+        y_cal=y_cal,
+        X_test=x_test,
+        group_cal=group_cal,
+        group_test=group_test,
+        alpha=0.20,
+        min_group_size=2,
+        scaled_scores=True,
+        score_scale_family="bernoulli_sqrt",
+        log_summary=False,
+    )
+    y_prob_cal = clf.predict_proba(x_cal)[:, 1]
+    y_prob_test = clf.predict_proba(x_test)[:, 1]
+    y_pred_new, y_intervals_new, diagnostics_new = create_pd_intervals_mondrian_from_predictions(
+        y_cal_pred=y_prob_cal,
+        y_test_pred=y_prob_test,
+        y_cal=y_cal,
+        group_cal=group_cal,
+        group_test=group_test,
+        alpha=0.20,
+        min_group_size=2,
+        scaled_scores=True,
+        score_scale_family="bernoulli_sqrt",
+        log_summary=False,
+    )
+
+    np.testing.assert_allclose(y_pred_new, y_pred_old)
+    np.testing.assert_allclose(y_intervals_new, y_intervals_old)
+    assert diagnostics_new["fallback_groups"] == diagnostics_old["fallback_groups"]
+    assert diagnostics_new["group_cal_counts"] == diagnostics_old["group_cal_counts"]
 
 
 def test_cross_conformal_score_intervals_output_shape():

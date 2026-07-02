@@ -9,12 +9,15 @@ Supports multiple uncertainty policies for PD constraints:
 
 from __future__ import annotations
 
+import os
 from typing import Any, cast
 
 import numpy as np
 import pandas as pd
 import pyomo.environ as pyo
 from loguru import logger
+from scipy.optimize import linprog
+from scipy.sparse import csc_matrix, csr_matrix, hstack
 
 from src.optimization.policy import PolicyMode, resolve_policy_mode
 
@@ -306,6 +309,338 @@ def solve_portfolio(
     return solution
 
 
+def solve_portfolio_highs_sparse(
+    *,
+    loans: pd.DataFrame,
+    pd_point: np.ndarray,
+    pd_low: np.ndarray,
+    pd_high: np.ndarray,
+    lgd: np.ndarray,
+    int_rates: np.ndarray,
+    total_budget: float = 1_000_000,
+    max_concentration: float = 0.25,
+    max_portfolio_pd: float = 0.10,
+    robust: bool = True,
+    uncertainty_aversion: float = 0.0,
+    min_budget_utilization: float = 0.0,
+    pd_cap_slack_penalty: float = 0.0,
+    pd_constraint_override: np.ndarray | None = None,
+    time_limit: int = 300,
+    threads: int = 4,
+) -> dict[str, Any]:
+    """Solve the continuous portfolio LP through SciPy's sparse HiGHS interface.
+
+    This matches :func:`build_portfolio_model` algebraically but bypasses Pyomo
+    model construction. The CRPTO exact rerank solves thousands of very similar
+    large LPs, so avoiding per-check symbolic model creation is material.
+    """
+    n = len(loans)
+    if n == 0:
+        raise ValueError("Cannot solve empty portfolio.")
+
+    loan_amounts = (
+        pd.to_numeric(loans["loan_amnt"], errors="coerce").fillna(1.0).to_numpy(dtype=float)
+        if "loan_amnt" in loans.columns
+        else np.ones(n, dtype=float)
+    )
+    point = np.asarray(pd_point, dtype=float)
+    high = np.asarray(pd_high, dtype=float)
+    lgd_arr = np.asarray(lgd, dtype=float)
+    rates = np.asarray(int_rates, dtype=float)
+    pd_constraint = (
+        np.asarray(pd_constraint_override, dtype=float)
+        if pd_constraint_override is not None
+        else (high if robust else point)
+    )
+    pd_uncertainty = np.clip(high - point, 0.0, 1.0)
+
+    objective = loan_amounts * (
+        rates - point * lgd_arr - float(uncertainty_aversion) * pd_uncertainty * lgd_arr
+    )
+    use_pd_slack = float(pd_cap_slack_penalty) > 0.0
+
+    rows: list[np.ndarray] = []
+    rhs: list[float] = []
+
+    rows.append(loan_amounts.astype(float))
+    rhs.append(float(total_budget))
+
+    min_budget_utilization = float(np.clip(min_budget_utilization, 0.0, 1.0))
+    if min_budget_utilization > 0:
+        rows.append((-loan_amounts).astype(float))
+        rhs.append(float(-min_budget_utilization * total_budget))
+
+    pd_cap_row_idx = len(rows)
+    rows.append((loan_amounts * (pd_constraint - float(max_portfolio_pd))).astype(float))
+    rhs.append(0.0)
+
+    if "purpose" in loans.columns:
+        purposes = loans["purpose"].fillna("unknown").astype(str)
+        for purpose in purposes.unique():
+            mask = (purposes == purpose).to_numpy(dtype=float)
+            rows.append((loan_amounts * (mask - float(max_concentration))).astype(float))
+            rhs.append(0.0)
+
+    A_ub = csr_matrix(np.vstack(rows).astype(float))
+    c = -objective.astype(float)
+    bounds: list[tuple[float, float | None]] = [(0.0, 1.0)] * n
+    if use_pd_slack:
+        slack_col = np.zeros((A_ub.shape[0], 1), dtype=float)
+        slack_col[pd_cap_row_idx, 0] = -1.0
+        A_ub = hstack([A_ub, csr_matrix(slack_col)], format="csr")
+        c = np.concatenate([c, np.array([float(pd_cap_slack_penalty)], dtype=float)])
+        bounds.append((0.0, float(total_budget)))
+
+    options: dict[str, Any] = {
+        "time_limit": float(time_limit),
+        "presolve": True,
+        "disp": False,
+    }
+    _ = threads  # SciPy's HiGHS wrapper does not expose a documented threads option.
+    result = linprog(
+        c,
+        A_ub=A_ub,
+        b_ub=np.asarray(rhs, dtype=float),
+        bounds=bounds,
+        method="highs",
+        options=options,
+    )
+    if not bool(result.success) or result.x is None:
+        raise RuntimeError(
+            "SciPy HiGHS did not solve portfolio LP to optimality: "
+            f"status={result.status}, message={result.message}"
+        )
+
+    primal = np.asarray(result.x, dtype=float)
+    alloc = np.clip(primal[:n], 0.0, 1.0)
+    pd_cap_slack = float(primal[-1]) if use_pd_slack else 0.0
+    total_allocated = float(np.sum(alloc * loan_amounts))
+    obj_value = float(np.sum(alloc * objective) - float(pd_cap_slack_penalty) * pd_cap_slack)
+    n_funded = int(np.sum(alloc > 0.01))
+    allocation = {i: float(value) for i, value in enumerate(alloc) if value > 1e-12}
+    solver_status = "optimal" if bool(result.success) else str(result.message)
+
+    logger.info(
+        "Portfolio solved (highs_sparse): obj={:,.2f}, funded={}/{}, allocated={:,.0f}, "
+        "pd_cap_slack={:.4f}, status={}",
+        obj_value,
+        n_funded,
+        n,
+        total_allocated,
+        pd_cap_slack,
+        solver_status,
+    )
+    return {
+        "allocation": allocation,
+        "allocation_vector": alloc,
+        "objective_value": obj_value,
+        "n_funded": n_funded,
+        "total_allocated": total_allocated,
+        "solver_status": solver_status,
+        "solver_backend": "highs_sparse",
+        "pd_cap_slack": pd_cap_slack,
+        "highs_status": int(result.status),
+        "highs_message": str(result.message),
+        "highs_iterations": int(getattr(result, "nit", 0) or 0),
+    }
+
+
+def solve_portfolio_highspy_native(
+    *,
+    loans: pd.DataFrame,
+    pd_point: np.ndarray,
+    pd_low: np.ndarray,
+    pd_high: np.ndarray,
+    lgd: np.ndarray,
+    int_rates: np.ndarray,
+    total_budget: float = 1_000_000,
+    max_concentration: float = 0.25,
+    max_portfolio_pd: float = 0.10,
+    robust: bool = True,
+    uncertainty_aversion: float = 0.0,
+    min_budget_utilization: float = 0.0,
+    pd_cap_slack_penalty: float = 0.0,
+    pd_constraint_override: np.ndarray | None = None,
+    time_limit: int = 300,
+    threads: int = 4,
+) -> dict[str, Any]:
+    """Solve the continuous portfolio LP through the native highspy API.
+
+    ``scipy.optimize.linprog(method="highs")`` is reliable and already avoids
+    Pyomo's symbolic-model overhead, but it only exposes a small documented
+    subset of HiGHS controls. The native binding lets the exact rerank set
+    HiGHS' own thread/parallel options while preserving the same LP algebra.
+    """
+    try:
+        import highspy  # type: ignore[import-not-found]
+    except Exception as exc:  # pragma: no cover - optional runtime dependency
+        raise RuntimeError("solver_backend='highspy' requested but highspy is unavailable.") from exc
+
+    n = len(loans)
+    if n == 0:
+        raise ValueError("Cannot solve empty portfolio.")
+
+    loan_amounts = (
+        pd.to_numeric(loans["loan_amnt"], errors="coerce").fillna(1.0).to_numpy(dtype=float)
+        if "loan_amnt" in loans.columns
+        else np.ones(n, dtype=float)
+    )
+    point = np.asarray(pd_point, dtype=float)
+    high = np.asarray(pd_high, dtype=float)
+    lgd_arr = np.asarray(lgd, dtype=float)
+    rates = np.asarray(int_rates, dtype=float)
+    pd_constraint = (
+        np.asarray(pd_constraint_override, dtype=float)
+        if pd_constraint_override is not None
+        else (high if robust else point)
+    )
+    pd_uncertainty = np.clip(high - point, 0.0, 1.0)
+
+    objective = loan_amounts * (
+        rates - point * lgd_arr - float(uncertainty_aversion) * pd_uncertainty * lgd_arr
+    )
+    use_pd_slack = float(pd_cap_slack_penalty) > 0.0
+
+    rows: list[np.ndarray] = []
+    rhs: list[float] = []
+
+    rows.append(loan_amounts.astype(float))
+    rhs.append(float(total_budget))
+
+    min_budget_utilization = float(np.clip(min_budget_utilization, 0.0, 1.0))
+    if min_budget_utilization > 0:
+        rows.append((-loan_amounts).astype(float))
+        rhs.append(float(-min_budget_utilization * total_budget))
+
+    pd_cap_row_idx = len(rows)
+    rows.append((loan_amounts * (pd_constraint - float(max_portfolio_pd))).astype(float))
+    rhs.append(0.0)
+
+    if "purpose" in loans.columns:
+        purposes = loans["purpose"].fillna("unknown").astype(str)
+        for purpose in purposes.unique():
+            mask = (purposes == purpose).to_numpy(dtype=float)
+            rows.append((loan_amounts * (mask - float(max_concentration))).astype(float))
+            rhs.append(0.0)
+
+    A_ub: csc_matrix = csr_matrix(np.vstack(rows).astype(float)).tocsc()
+    col_cost = objective.astype(np.double)
+    col_lower = np.zeros(n + int(use_pd_slack), dtype=np.double)
+    col_upper = np.ones(n + int(use_pd_slack), dtype=np.double)
+    if use_pd_slack:
+        slack_col = np.zeros((A_ub.shape[0], 1), dtype=float)
+        slack_col[pd_cap_row_idx, 0] = -1.0
+        A_ub = hstack([A_ub, csc_matrix(slack_col)], format="csc")
+        col_cost = np.concatenate(
+            [col_cost, np.array([-float(pd_cap_slack_penalty)], dtype=np.double)]
+        )
+        col_upper[-1] = float(total_budget)
+
+    inf = highspy.kHighsInf
+    lp = highspy.HighsLp()
+    lp.num_col_ = int(A_ub.shape[1])
+    lp.num_row_ = int(A_ub.shape[0])
+    lp.col_cost_ = col_cost
+    lp.col_lower_ = col_lower
+    lp.col_upper_ = col_upper
+    lp.row_lower_ = np.full(A_ub.shape[0], -inf, dtype=np.double)
+    lp.row_upper_ = np.asarray(rhs, dtype=np.double)
+    lp.sense_ = highspy.ObjSense.kMaximize
+    lp.a_matrix_.format_ = highspy.MatrixFormat.kColwise
+    lp.a_matrix_.num_col_ = int(A_ub.shape[1])
+    lp.a_matrix_.num_row_ = int(A_ub.shape[0])
+    lp.a_matrix_.start_ = A_ub.indptr.astype(np.int32)
+    lp.a_matrix_.index_ = A_ub.indices.astype(np.int32)
+    lp.a_matrix_.value_ = A_ub.data.astype(np.double)
+
+    def _env_str(name: str, default: str) -> str:
+        return str(os.environ.get(name, default)).strip() or default
+
+    def _env_int(name: str, default: int) -> int:
+        raw = os.environ.get(name)
+        if raw is None or not str(raw).strip():
+            return int(default)
+        try:
+            return int(raw)
+        except ValueError:
+            logger.warning("Ignoring invalid {}={!r}; using {}", name, raw, default)
+            return int(default)
+
+    solver = highspy.Highs()
+    if _env_int("HIGHS_RESET_GLOBAL_SCHEDULER", 1) and hasattr(solver, "resetGlobalScheduler"):
+        solver.resetGlobalScheduler(True)
+    options: dict[str, object] = {
+        "output_flag": False,
+        "log_to_console": False,
+        "time_limit": float(time_limit),
+        "presolve": _env_str("HIGHS_PRESOLVE", "on"),
+        "threads": max(1, int(threads)),
+        "parallel": _env_str("HIGHS_PARALLEL", "choose"),
+        "solver": _env_str("HIGHS_SOLVER", "choose"),
+        "simplex_strategy": _env_int("HIGHS_SIMPLEX_STRATEGY", 0),
+    }
+    for name, value in options.items():
+        status = solver.setOptionValue(name, value)
+        if status != highspy.HighsStatus.kOk and name == "threads" and hasattr(
+            solver, "resetGlobalScheduler"
+        ):
+            solver.resetGlobalScheduler(True)
+            status = solver.setOptionValue(name, value)
+        if status != highspy.HighsStatus.kOk:
+            logger.warning("HiGHS rejected option {}={!r}: {}", name, value, status)
+
+    status = solver.passModel(lp)
+    if status != highspy.HighsStatus.kOk:
+        raise RuntimeError(f"highspy failed to accept portfolio LP: {status}")
+    run_status = solver.run()
+    if run_status == highspy.HighsStatus.kError:
+        raise RuntimeError(f"highspy failed while solving portfolio LP: {run_status}")
+
+    model_status = solver.getModelStatus()
+    status_text = str(solver.modelStatusToString(model_status))
+    if "Optimal" not in status_text:
+        raise RuntimeError(
+            "highspy did not solve portfolio LP to optimality: "
+            f"run_status={run_status}, model_status={status_text}"
+        )
+
+    solution = solver.getSolution()
+    primal = np.asarray(solution.col_value, dtype=float)
+    if len(primal) < n:
+        raise RuntimeError(f"highspy primal solution has length {len(primal)}; expected >= {n}.")
+    alloc = np.clip(primal[:n], 0.0, 1.0)
+    pd_cap_slack = float(primal[-1]) if use_pd_slack else 0.0
+    total_allocated = float(np.sum(alloc * loan_amounts))
+    obj_value = float(np.sum(alloc * objective) - float(pd_cap_slack_penalty) * pd_cap_slack)
+    n_funded = int(np.sum(alloc > 0.01))
+    allocation = {i: float(value) for i, value in enumerate(alloc) if value > 1e-12}
+    info = solver.getInfo()
+
+    logger.info(
+        "Portfolio solved (highspy): obj={:,.2f}, funded={}/{}, allocated={:,.0f}, "
+        "pd_cap_slack={:.4f}, status={}",
+        obj_value,
+        n_funded,
+        n,
+        total_allocated,
+        pd_cap_slack,
+        status_text,
+    )
+    return {
+        "allocation": allocation,
+        "allocation_vector": alloc,
+        "objective_value": obj_value,
+        "n_funded": n_funded,
+        "total_allocated": total_allocated,
+        "solver_status": status_text,
+        "solver_backend": "highspy",
+        "pd_cap_slack": pd_cap_slack,
+        "highs_model_status": status_text,
+        "highs_simplex_iterations": int(getattr(info, "simplex_iteration_count", 0) or 0),
+        "highs_ipm_iterations": int(getattr(info, "ipm_iteration_count", 0) or 0),
+    }
+
+
 def optimize_portfolio_allocation(
     *,
     loans: pd.DataFrame,
@@ -327,9 +662,81 @@ def optimize_portfolio_allocation(
     solver_backend: str = "highs",
     random_seed: int | None = None,
     cuopt_presolve: int | None = 1,
+    cuopt_parameters: dict[str, Any] | None = None,
 ) -> dict[str, Any]:
     """Unified portfolio solve entrypoint for CPU and native cuOpt backends."""
     backend = solver_backend.strip().lower()
+    if backend in {"highs", "highs_sparse", "scipy_highs"}:
+        return solve_portfolio_highs_sparse(
+            loans=loans,
+            pd_point=pd_point,
+            pd_low=pd_low,
+            pd_high=pd_high,
+            lgd=lgd,
+            int_rates=int_rates,
+            total_budget=total_budget,
+            max_concentration=max_concentration,
+            max_portfolio_pd=max_portfolio_pd,
+            robust=robust,
+            uncertainty_aversion=uncertainty_aversion,
+            min_budget_utilization=min_budget_utilization,
+            pd_cap_slack_penalty=pd_cap_slack_penalty,
+            pd_constraint_override=pd_constraint_override,
+            time_limit=time_limit,
+            threads=threads,
+        )
+    if backend in {"highspy", "highs_native", "native_highs"}:
+        try:
+            return solve_portfolio_highspy_native(
+                loans=loans,
+                pd_point=pd_point,
+                pd_low=pd_low,
+                pd_high=pd_high,
+                lgd=lgd,
+                int_rates=int_rates,
+                total_budget=total_budget,
+                max_concentration=max_concentration,
+                max_portfolio_pd=max_portfolio_pd,
+                robust=robust,
+                uncertainty_aversion=uncertainty_aversion,
+                min_budget_utilization=min_budget_utilization,
+                pd_cap_slack_penalty=pd_cap_slack_penalty,
+                pd_constraint_override=pd_constraint_override,
+                time_limit=time_limit,
+                threads=threads,
+            )
+        except RuntimeError as exc:
+            if str(os.environ.get("HIGHS_NATIVE_FALLBACK_SCIPY", "1")).strip() in {
+                "0",
+                "false",
+                "False",
+            }:
+                raise
+            logger.warning(
+                "Native highspy solve failed; falling back to SciPy HiGHS sparse exact solve: {}",
+                exc,
+            )
+            result = solve_portfolio_highs_sparse(
+                loans=loans,
+                pd_point=pd_point,
+                pd_low=pd_low,
+                pd_high=pd_high,
+                lgd=lgd,
+                int_rates=int_rates,
+                total_budget=total_budget,
+                max_concentration=max_concentration,
+                max_portfolio_pd=max_portfolio_pd,
+                robust=robust,
+                uncertainty_aversion=uncertainty_aversion,
+                min_budget_utilization=min_budget_utilization,
+                pd_cap_slack_penalty=pd_cap_slack_penalty,
+                pd_constraint_override=pd_constraint_override,
+                time_limit=time_limit,
+                threads=threads,
+            )
+            result["solver_backend"] = "highspy_fallback_highs_sparse"
+            result["native_solver_error"] = str(exc)
+            return result
     if backend == "cuopt":
         from src.optimization.cuopt_adapter import solve_portfolio_cuopt_native
 
@@ -350,6 +757,13 @@ def optimize_portfolio_allocation(
             time_limit=time_limit,
             random_seed=random_seed,
             presolve=cuopt_presolve,
+            cuopt_parameters=cuopt_parameters,
+        )
+
+    if backend not in {"highs_pyomo", "pyomo_highs"}:
+        raise ValueError(
+            f"Unsupported solver_backend={solver_backend!r}. "
+            "Use 'highs', 'highs_sparse', 'highspy', 'highs_pyomo', or 'cuopt'."
         )
 
     model = build_portfolio_model(
@@ -372,7 +786,7 @@ def optimize_portfolio_allocation(
         model,
         time_limit=time_limit,
         threads=threads,
-        solver_backend=backend,
+        solver_backend="highs",
     )
 
 

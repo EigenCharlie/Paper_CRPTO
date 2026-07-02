@@ -45,15 +45,15 @@ CRPTO should be read as data science for decisions:
 | 1 | Central methodological claim | Abstract, introduction, and conclusion describe CRPTO as an auditable conformal-robust decision certificate. |
 | 2 | IJDS fit | The body visibly contains data, method, decision, and implication components. |
 | 3 | Exact-certificate language | "Exact" is defined as funded-set accounting on frozen OOT outputs, with statistical assumptions stated separately. |
-| 4 | Robust region | `45/45` is explained as the final evaluated robust region, not all candidate policies. |
+| 4 | Finite-grid frontier | A35 is explained as the final evaluated pool93 finite-grid frontier, not all candidate policies or a continuous region. |
 | 5 | External datasets | Prosper/Freddie are frozen external economic replications, not new Lending Club champions. |
 | 6 | Related work | The closest-work boundary distinguishes CRPTO from P2P OR, conformal credit scoring, conformal RO, DFL, and financial portfolios. |
 | 7 | Figures | Main figures have single-sentence takeaways, readable axes, grayscale-safe contrast, and no unnecessary decorative elements. |
 | 8 | Tables | Body tables are compact reviewer evidence; voluminous diagnostics stay in the supplement. |
-| 9 | Supplement | A3--A34 are organized as a defense layer with scope caveats. |
+| 9 | Supplement | A3--A36 are organized as a defense layer with scope caveats. |
 | 10 | Reproducibility | Accepted-paper package has code, DVC pointers, manifest, raw-data instructions, and guardrail commands. |
 | 11 | Double anonymity | Reviewer-facing body and supplement contain no author URLs, names, local paths, or private remotes. |
-| 12 | Official IJDS template | `CRPTO_ijds_submission.tex` is synchronized with the QMD, compiles against the official files, and is rechecked after body edits. |
+| 12 | Official IJDS template | `CRPTO_ijds_submission.tex` is regenerated from the pool93 A35 QMD, compiles against the official files, and is rechecked after body edits. |
 | 13 | Data/code form | Cover letter and disclosure text acknowledge IJDS accepted-paper reproducibility requirements. |
 | 14 | Acceptance-risk audit | A short list of likely reviewer objections has body or supplement responses. |
 | 15 | Freeze discipline | Protected champion/search stages are never rerun as routine paper reproduction. |
