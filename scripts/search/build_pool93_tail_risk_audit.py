@@ -42,15 +42,16 @@ DEFAULT_BODY_AUDIT_PATH = (
     / DEFAULT_TAG
     / "portfolio/pool93_body_allocation_alpha01_audit.json"
 )
-DEFAULT_OUTPUT_DIR = (
-    ROOT / "models/experiments/champion_reopen" / DEFAULT_TAG / "portfolio"
-)
+DEFAULT_OUTPUT_DIR = ROOT / "models/experiments/champion_reopen" / DEFAULT_TAG / "portfolio"
 DEFAULT_TABLE_DIR = ROOT / "reports/crpto/tables"
 
 TABLE_A37_NAME = "crpto_tableA37_pool93_body_tail_risk"
 TABLE_A38_NAME = "crpto_tableA38_pool93_body_cluster_bound_audit"
+TABLE_A39_NAME = "crpto_tableA39_pool93_body_bootstrap_metrics"
 OCE_THETA = 5.0
 CVAR_LEVELS = (0.90, 0.95, 0.99)
+BOOTSTRAP_DRAWS = 5000
+BOOTSTRAP_SEED = 20260702
 
 
 def _read_json(path: Path) -> dict[str, Any]:
@@ -104,9 +105,7 @@ def _prepare_allocation(funded: pd.DataFrame) -> pd.DataFrame:
     if total_exposure <= 0.0:
         raise ValueError("funded exposure must be positive")
     prepared["funded_weight"] = prepared["funded_exposure"] / total_exposure
-    prepared["default_flag"] = pd.to_numeric(
-        prepared["default_flag"], errors="coerce"
-    ).fillna(0.0)
+    prepared["default_flag"] = pd.to_numeric(prepared["default_flag"], errors="coerce").fillna(0.0)
     prepared["miscoverage_alpha01"] = pd.to_numeric(
         prepared["miscoverage_alpha01"], errors="coerce"
     ).fillna(0.0)
@@ -119,9 +118,7 @@ def _prepare_allocation(funded: pd.DataFrame) -> pd.DataFrame:
     prepared["int_rate_decimal"] = _parse_percent_series(prepared["int_rate"])
     if "grade_bucket" not in prepared.columns:
         grade = prepared.get("grade", pd.Series("unknown", index=prepared.index))
-        prepared["grade_bucket"] = (
-            grade.fillna("unknown").astype(str).str.upper().str[:1]
-        )
+        prepared["grade_bucket"] = grade.fillna("unknown").astype(str).str.upper().str[:1]
     prepared["issue_period"] = _issue_period(prepared)
     return prepared
 
@@ -177,8 +174,7 @@ def build_tail_risk_table(
             "total_allocated": total_exposure,
             "weighted_default_rate": float(np.sum(weights * default_flag)),
             "mean_realized_loss_rate": weighted_mean(realized_loss, exposure),
-            "funded_set_repriced_return": -weighted_mean(realized_loss, exposure)
-            * total_exposure,
+            "funded_set_repriced_return": -weighted_mean(realized_loss, exposure) * total_exposure,
             "decision_time_mean_loss_rate": weighted_mean(decision_loss, exposure),
             "decision_time_oce_theta5": entropic_oce(decision_loss, exposure, theta=OCE_THETA),
             "realized_oce_theta5": entropic_oce(realized_loss, exposure, theta=OCE_THETA),
@@ -210,9 +206,7 @@ def build_tail_risk_table(
                         )
                     ),
                 ),
-                "endpoint_budget_upper_alpha01": policy.get(
-                    "endpoint_budget_upper", np.nan
-                ),
+                "endpoint_budget_upper_alpha01": policy.get("endpoint_budget_upper", np.nan),
                 "markov_cap_alpha01": policy.get("markov_cap", np.nan),
                 "funded_empirical_coverage": policy.get(
                     "empirical_coverage_funded",
@@ -279,6 +273,85 @@ def build_cluster_bound_table(
     return pd.DataFrame(rows)
 
 
+def _pool93_metric_snapshot(
+    frame: pd.DataFrame,
+    *,
+    total_exposure: float,
+    lgd: float,
+) -> dict[str, float]:
+    weights = frame["funded_exposure"].to_numpy(dtype=float)
+    weights = weights / max(float(weights.sum()), 1e-12)
+    exposure = weights * float(total_exposure)
+    default_flag = frame["default_flag"].to_numpy(dtype=float)
+    miscoverage = frame["miscoverage_alpha01"].to_numpy(dtype=float)
+    int_rates = frame["int_rate_decimal"].to_numpy(dtype=float)
+    pd_point = frame["pd_point_alpha01"].to_numpy(dtype=float)
+    pd_high = frame["pd_high_alpha01"].to_numpy(dtype=float)
+    realized_loss = funded_loss_rate(default_flag, int_rates, lgd=float(lgd))
+    decision_loss = pd_high * float(lgd) - (1.0 - pd_high) * int_rates
+    gamma_cp = float(np.sum(weights * np.clip(pd_high - pd_point, 0.0, 1.0)))
+    return {
+        "funded_set_repriced_return_lgd45": -weighted_mean(realized_loss, exposure)
+        * float(total_exposure),
+        "weighted_default_rate": float(np.sum(weights * default_flag)),
+        "weighted_miscoverage_V": float(np.sum(weights * miscoverage)),
+        "alpha01_gamma_cp": gamma_cp,
+        "realized_cvar95_loss_rate": weighted_cvar(realized_loss, exposure, tail=0.95),
+        "decision_time_cvar95_loss_rate": weighted_cvar(decision_loss, exposure, tail=0.95),
+        "realized_oce_theta5": entropic_oce(realized_loss, exposure, theta=OCE_THETA),
+        "n_default_loans": float(np.sum(default_flag)),
+        "n_miscovered_loans": float(np.sum(miscoverage)),
+    }
+
+
+def build_bootstrap_table(
+    funded: pd.DataFrame,
+    *,
+    body_audit: dict[str, Any],
+    n_draws: int,
+    seed: int,
+    lgd: float,
+) -> pd.DataFrame:
+    prepared = _prepare_allocation(funded)
+    total_exposure = float(prepared["funded_exposure"].sum())
+    observed = _pool93_metric_snapshot(prepared, total_exposure=total_exposure, lgd=lgd)
+    policy = _policy_metrics(body_audit)
+    if "realized_return" in policy:
+        observed["funded_set_repriced_return_lgd45"] = policy["realized_return"]
+    if "V" in policy:
+        observed["weighted_miscoverage_V"] = policy["V"]
+    if "Gamma_CP" in policy:
+        observed["alpha01_gamma_cp"] = policy["Gamma_CP"]
+
+    rng = np.random.default_rng(int(seed))
+    n_rows = len(prepared)
+    draws: list[dict[str, float]] = []
+    for _ in range(int(n_draws)):
+        sample_index = rng.integers(0, n_rows, size=n_rows)
+        sample = prepared.iloc[sample_index].reset_index(drop=True)
+        draws.append(_pool93_metric_snapshot(sample, total_exposure=total_exposure, lgd=lgd))
+
+    draw_frame = pd.DataFrame(draws)
+    rows: list[dict[str, Any]] = []
+    note = "Funded-loan contribution bootstrap; solver input uncertainty is not resampled."
+    for metric in draw_frame.columns:
+        values = draw_frame[metric]
+        rows.append(
+            {
+                "metric": metric,
+                "observed": float(observed[metric]),
+                "boot_mean": float(values.mean()),
+                "boot_p025": float(values.quantile(0.025)),
+                "boot_p50": float(values.quantile(0.50)),
+                "boot_p975": float(values.quantile(0.975)),
+                "n_draws": int(n_draws),
+                "seed": int(seed),
+                "note": note,
+            }
+        )
+    return pd.DataFrame(rows)
+
+
 def build_outputs(
     *,
     allocation_path: Path,
@@ -288,6 +361,8 @@ def build_outputs(
     lgds: tuple[float, ...],
     alpha: float,
     delta: float,
+    bootstrap_draws: int,
+    bootstrap_seed: int,
 ) -> dict[str, Any]:
     funded = _load_allocation(allocation_path)
     body_audit = _read_json(body_audit_path)
@@ -295,9 +370,17 @@ def build_outputs(
     cluster_table = build_cluster_bound_table(
         funded, body_audit=body_audit, alpha=alpha, delta=delta
     )
+    bootstrap_table = build_bootstrap_table(
+        funded,
+        body_audit=body_audit,
+        n_draws=bootstrap_draws,
+        seed=bootstrap_seed,
+        lgd=0.45,
+    )
     outputs = {
         "tail_risk": _write_table(table_dir, TABLE_A37_NAME, tail_table),
         "cluster_bound": _write_table(table_dir, TABLE_A38_NAME, cluster_table),
+        "bootstrap": _write_table(table_dir, TABLE_A39_NAME, bootstrap_table),
     }
     payload = {
         "generated_at_utc": datetime.now(tz=UTC).isoformat(),
@@ -306,6 +389,8 @@ def build_outputs(
         "alpha": float(alpha),
         "delta": float(delta),
         "lgds": list(lgds),
+        "bootstrap_draws": int(bootstrap_draws),
+        "bootstrap_seed": int(bootstrap_seed),
         "tables": outputs,
         "headline": {
             "baseline_lgd_return": float(
@@ -319,9 +404,7 @@ def build_outputs(
             if tail_table["lgd"].eq(0.45).any()
             else float(tail_table["realized_cvar95_loss_rate"].iloc[0]),
             "baseline_lgd_decision_time_cvar95": float(
-                tail_table.loc[
-                    tail_table["lgd"].eq(0.45), "decision_time_cvar95_loss_rate"
-                ].iloc[0]
+                tail_table.loc[tail_table["lgd"].eq(0.45), "decision_time_cvar95_loss_rate"].iloc[0]
             )
             if tail_table["lgd"].eq(0.45).any()
             else float(tail_table["decision_time_cvar95_loss_rate"].iloc[0]),
@@ -331,6 +414,18 @@ def build_outputs(
             "markov_threshold": float(np.sqrt(alpha)),
             "any_cluster_tighter_than_markov": bool(
                 cluster_table["cluster_bound_tighter_than_markov"].any()
+            ),
+            "bootstrap_return_lgd45_p025": float(
+                bootstrap_table.loc[
+                    bootstrap_table["metric"].eq("funded_set_repriced_return_lgd45"),
+                    "boot_p025",
+                ].iloc[0]
+            ),
+            "bootstrap_return_lgd45_p975": float(
+                bootstrap_table.loc[
+                    bootstrap_table["metric"].eq("funded_set_repriced_return_lgd45"),
+                    "boot_p975",
+                ].iloc[0]
             ),
         },
     }
@@ -361,6 +456,8 @@ def main(argv: list[str] | None = None) -> int:
     parser.add_argument("--lgds", default="0.35,0.45,0.60")
     parser.add_argument("--alpha", type=float, default=0.01)
     parser.add_argument("--delta", type=float, default=0.10)
+    parser.add_argument("--bootstrap-draws", type=int, default=BOOTSTRAP_DRAWS)
+    parser.add_argument("--bootstrap-seed", type=int, default=BOOTSTRAP_SEED)
     args = parser.parse_args(argv)
 
     payload = build_outputs(
@@ -371,6 +468,8 @@ def main(argv: list[str] | None = None) -> int:
         lgds=_parse_lgds(str(args.lgds)),
         alpha=float(args.alpha),
         delta=float(args.delta),
+        bootstrap_draws=int(args.bootstrap_draws),
+        bootstrap_seed=int(args.bootstrap_seed),
     )
     print(json.dumps(payload["headline"], indent=2, sort_keys=True))
     return 0

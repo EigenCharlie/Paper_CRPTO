@@ -26,13 +26,13 @@ execute:
 ## Scope
 
 This online supplement supports the IJDS submission body. It collects proof
-details, robustness and external-replication tables A3--A38, reproducibility
+details, robustness and external-replication tables A3--A39, reproducibility
 commands, model-risk material, fairness diagnostics, and artifact lineage. It
 does not introduce a hidden selection criterion or unreported claim family:
 A35 is the declared pool93 finite-grid frontier consumed by the body, A36
 is the regenerated pool93 funded-set grade audit for the selected body point,
-and A37--A38 add pool93-specific tail-risk and cluster-bound repricing from the
-same selected allocation.
+and A37--A39 add pool93-specific tail-risk, cluster-bound, and fixed-allocation
+bootstrap diagnostics from the same selected allocation.
 :::
 
 The supplement is organized as a defense layer for the main manuscript rather
@@ -191,8 +191,10 @@ portfolio-selection driven. A36 regenerates the row-level funded-set grade audit
 from the promoted pool93 allocation. A37 reprices the same selected allocation
 under LGD-sensitive CVaR/OCE tail summaries, and A38 recomputes the
 concentration-sensitive cluster-bound thresholds from the selected funded
-weights. Bootstrap resampling under the final pool93 allocation remains a future
-diagnostic, not a blocker for the submitted claim.
+weights. A39 bootstraps funded-loan contributions under the fixed final pool93
+allocation. This is an empirical interval diagnostic, not a conformal guarantee,
+and it does not resample solver inputs, the PD model, calibration data, or the
+policy search.
 
 These steps leave a clean split. Theorem 1 proves the operational bound under
 Assumption 1. Proposition A.1 below shows that Markov is the sharp
@@ -252,7 +254,8 @@ first-moment statement under Assumption 1. Earlier concentration tables remain
 useful as a diagnostic recipe, but they depend on the funded-loan exposure
 weights of the selected allocation. After pool93 promotion, the paper-facing
 certificate is therefore A35 plus the exact funded-set audit, with A38 providing
-the regenerated pool93 cluster-bound sensitivity. A38 confirms that the
+the regenerated pool93 cluster-bound sensitivity and A39 closing the
+fixed-allocation bootstrap diagnostic. A38 confirms that the
 period-grade partition has the smallest cluster-aware Hoeffding threshold among
 the reported partitions, but it is still looser than Markov at the paper
 threshold. The body therefore keeps the first-moment Markov statement rather
@@ -402,10 +405,11 @@ future journal hardening.
 
 # Appendix C: Journal Robustness Package
 
-Tables A12--A38 answer likely reviewer questions that are too detailed for the
+Tables A12--A39 answer likely reviewer questions that are too detailed for the
 25-page body. A35 is the active pool93 frontier consumed by the body, A36 is
 the pool93 body-point funded-set grade audit, A37 is the pool93 body-point
-tail-risk repricing, and A38 is the pool93 body-point cluster-bound audit. A12--A34
+tail-risk repricing, A38 is the pool93 body-point cluster-bound audit, and A39
+is the pool93 body-point fixed-allocation bootstrap audit. A12--A34
 are diagnostic by design, except A19 also supports the body framing around
 regret-auditability and A25--A34 support the external-replication defense.
 A20--A34 are journal-only add-ons: A20 audits tail-risk trade-offs as a
@@ -451,6 +455,7 @@ frozen funded set or intervals, never as a re-promoted champion.
 | A36 pool93 funded-set grade audit | Regenerates the selected body allocation at `alpha = 0.01` and summarizes funded exposure by grade bucket. | Composition evidence for the promoted body point, not a fairness or protected-class audit. |
 | A37 pool93 body tail-risk repricing | Reprices the selected body allocation under LGD alternatives, CVaR, OCE, and decision-time tail loss. | Diagnostic risk profile of the selected point; OCE/CVaR is not the optimized objective. |
 | A38 pool93 body cluster-bound audit | Recomputes period, grade, period-grade, and score-vintage concentration thresholds from selected funded weights. | Sensitivity under extra cross-cluster assumptions; Markov remains the body-level bound. |
+| A39 pool93 fixed-allocation bootstrap audit | Bootstraps funded-loan contributions under the selected body allocation. | Empirical contribution interval only; solver inputs, model, calibration, and policy search are not resampled. |
 
 ## External Multi-Dataset Replication
 
@@ -572,7 +577,7 @@ to make the audit path explicit.
 | The conformal layer gives conservative OOT uncertainty on the PD scale. | 90% and 95% coverage, minimum group coverage, and grade/decile audits. | `data/processed/conformal_intervals_mondrian.parquet`. | Conformal validation status and regression tests that check metric consistency across surfaces. |
 | The promoted funded set passes the exact safety bound `V <= sqrt(alpha)` (not nominal alpha-coverage). | Body point `V(alpha = 0.01) = 0.035350` (above alpha), `Gamma_CP = 0.162616`, Markov cap `0.345084`, zero violation, `8/8` alpha pass. | A35, A36, pool93 exact bound-evaluation parquet, consolidated frontier/governance JSON. | Exact-evaluation artifact and regression tests. |
 | The result is not an isolated lucky policy. | Pool93 consolidated frontier has 50,010 deduplicated semantic policies and 27,508 all-alpha above-floor policies; terminal endpoint search has 37,068/37,068 all-alpha passers. | Table A35 and pool93 governance sidecars. | Protected search/evaluation split; no continuous-region claim. |
-| The supplement strengthens interpretation without moving the body claim. | A20--A34 challenger, dependence, tail-risk, multi-distribution, online, and external-replication diagnostics; A35 is the active pool93 frontier; A36--A38 are selected-allocation pool93 audits. | Journal robustness tables, Figures 15--25, A35--A38. | Scope caveats in each table; A37/A38 are pool93 risk-profile audits, not hidden champion selectors. |
+| The supplement strengthens interpretation without moving the body claim. | A20--A34 challenger, dependence, tail-risk, multi-distribution, online, and external-replication diagnostics; A35 is the active pool93 frontier; A36--A39 are selected-allocation pool93 audits. | Journal robustness tables, Figures 15--25, A35--A39. | Scope caveats in each table; A37--A39 are pool93 risk-profile audits, not hidden champion selectors. |
 | The frozen PD binary is a faithful paper artifact. | E3/E4 T1 diagnostics show negligible seed-level discrimination movement and stable expanding-window validation. | `docs/refactor/SENSITIVITY_RUN_DESIGN_2026-06.md` and Appendix E summary. | Non-promoted diagnostics only; they do not replace the champion or become routine reproduction steps. |
 | The manuscript is reproducible at the artifact level. | Tables, figures, Quarto pages, and status reports regenerate from frozen inputs. | Repository code, DVC metadata, rendered book/paper outputs. | Pre-push test and lint hooks, DVC status checks, and manifest validation before release. |
 
@@ -654,6 +659,23 @@ concentrated funded set or extra assumptions not asserted by the body.
 
 : A38. Pool93 body-point cluster-bound audit from
 `reports/crpto/tables/crpto_tableA38_pool93_body_cluster_bound_audit.csv`.
+
+A39 closes the final bootstrap diagnostic under the selected pool93 allocation.
+It resamples funded-loan contributions for the fixed body point (`5,000` draws,
+seed `20260702`). The interval is deliberately narrower in scope than a new
+statistical guarantee: it does not resample solver inputs, the PD model,
+calibration data, conformal intervals, or the finite policy search.
+
+| Metric | Observed | Bootstrap mean | 2.5% | Median | 97.5% |
+|---|---:|---:|---:|---:|---:|
+| Return, LGD `0.45` | `$184,832.48` | `$184,623.11` | `$167,963.20` | `$185,098.41` | `$198,650.47` |
+| Weighted default / `V` | `0.035350` | `0.035404` | `0.018157` | `0.034601` | `0.057193` |
+| `Gamma_CP` | `0.162616` | `0.162317` | `0.137160` | `0.161384` | `0.193092` |
+| Realized CVaR95 | `0.276211` | `0.270721` | `0.068928` | `0.266983` | `0.450000` |
+| Decision-time CVaR95 | `0.218140` | `0.217210` | `0.205148` | `0.217709` | `0.226318` |
+
+: A39. Pool93 fixed-allocation funded-loan contribution bootstrap from
+`reports/crpto/tables/crpto_tableA39_pool93_body_bootstrap_metrics.csv`.
 
 ## Why A21--A34 Do Not Strengthen the Main Claim
 
@@ -740,11 +762,11 @@ decision.
 
 ![A24 online conformal stability: per-vintage and cumulative coverage stay above the 90% target across the eleven OOT vintages while the Gibbs-Candes ACI target alpha_t barely drifts, indicating an online controller would have little to correct on this static OOT.](../reports/crpto/figures/crpto_fig19_online_coverage_aci.png){#fig-supp-online-aci width="88%" fig-alt="Per-vintage and cumulative coverage lines above a 90% target line across eleven OOT quarters, with the ACI target alpha_t on a secondary axis rising slightly from 0.10 to 0.12."}
 
-A19--A38 should be read as literature-aligned stress evidence. A19 places CRPTO
+A19--A39 should be read as literature-aligned stress evidence. A19 places CRPTO
 against the regret-driven training tradition; A20--A22 translate tail risk and
 satisficing into finite-grid and tail-constrained audits without changing the
-pool93 body claim; A37--A38 regenerate the selected pool93 allocation's
-tail-risk and concentration profile; and A23--A24 show where multi-distribution and online conformal work
+pool93 body claim; A37--A39 regenerate the selected pool93 allocation's
+tail-risk, concentration, and fixed-allocation bootstrap profile; and A23--A24 show where multi-distribution and online conformal work
 would enter if the project moved from a frozen historical panel to a new
 protocol. A25--A34 add the
 external economic replication layer on Prosper and Freddie/Mendeley, including
@@ -885,7 +907,7 @@ The active IJDS submission surfaces are:
 | Surface | Source | Role |
 |---|---|---|
 | Anonymous body | `paper/CRPTO_ijds.qmd` | 25-page IJDS-style manuscript source. |
-| Online supplement | `paper/supplement_ijds.qmd` | Proofs, A3--A38, MRM/fairness, reproducibility. |
+| Online supplement | `paper/supplement_ijds.qmd` | Proofs, A3--A39, MRM/fairness, reproducibility. |
 | Long companion | `book/` | Public companion after anonymity handling. |
 | Publication config | `configs/crpto_publication_targets.yaml` | Venue, template, anonymity, and pivot rules. |
 

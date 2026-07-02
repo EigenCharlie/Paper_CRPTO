@@ -1,0 +1,10 @@
+metric,observed,boot_mean,boot_p025,boot_p50,boot_p975,n_draws,seed,note
+funded_set_repriced_return_lgd45,184832.475845000,184623.107367510,167963.197412619,185098.407722518,198650.467342760,5000,20260702,Funded-loan contribution bootstrap; solver input uncertainty is not resampled.
+weighted_default_rate,0.035350000,0.035404043,0.018157042,0.034600697,0.057192910,5000,20260702,Funded-loan contribution bootstrap; solver input uncertainty is not resampled.
+weighted_miscoverage_V,0.035350000,0.035404043,0.018157042,0.034600697,0.057192910,5000,20260702,Funded-loan contribution bootstrap; solver input uncertainty is not resampled.
+alpha01_gamma_cp,0.162616000,0.162317077,0.137160129,0.161384326,0.193092203,5000,20260702,Funded-loan contribution bootstrap; solver input uncertainty is not resampled.
+realized_cvar95_loss_rate,0.276211021,0.270721300,0.068928006,0.266983299,0.450000000,5000,20260702,Funded-loan contribution bootstrap; solver input uncertainty is not resampled.
+decision_time_cvar95_loss_rate,0.218139529,0.217209962,0.205147902,0.217709194,0.226317764,5000,20260702,Funded-loan contribution bootstrap; solver input uncertainty is not resampled.
+realized_oce_theta5,-0.075978110,-0.077493905,-0.127765309,-0.077982267,-0.024348774,5000,20260702,Funded-loan contribution bootstrap; solver input uncertainty is not resampled.
+n_default_loans,18.000000000,17.909200000,10.000000000,18.000000000,26.000000000,5000,20260702,Funded-loan contribution bootstrap; solver input uncertainty is not resampled.
+n_miscovered_loans,18.000000000,17.909200000,10.000000000,18.000000000,26.000000000,5000,20260702,Funded-loan contribution bootstrap; solver input uncertainty is not resampled.

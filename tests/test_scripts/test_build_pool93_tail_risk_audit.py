@@ -7,6 +7,7 @@ from scripts.search.build_pool93_tail_risk_audit import (
     DEFAULT_BODY_AUDIT_PATH,
     _load_allocation,
     _read_json,
+    build_bootstrap_table,
     build_cluster_bound_table,
     build_tail_risk_table,
 )
@@ -42,3 +43,27 @@ def test_pool93_cluster_bounds_remain_looser_than_markov() -> None:
     period_grade = table.loc[table["cluster_type"].eq("period_grade")].iloc[0]
     assert period_grade["cluster_hoeffding_threshold"] == pytest.approx(0.281247, rel=1e-6)
     assert period_grade["sum_cluster_exposure_sq"] > period_grade["sum_w2_tightening_threshold"]
+
+
+def test_pool93_bootstrap_table_is_fixed_allocation_diagnostic() -> None:
+    funded, body_audit = _pool93_inputs()
+    table = build_bootstrap_table(
+        funded,
+        body_audit=body_audit,
+        n_draws=5000,
+        seed=20260702,
+        lgd=0.45,
+    )
+    metrics = {row["metric"]: row for row in table.to_dict(orient="records")}
+    return_row = metrics["funded_set_repriced_return_lgd45"]
+    v_row = metrics["weighted_miscoverage_V"]
+    gamma_row = metrics["alpha01_gamma_cp"]
+
+    assert return_row["observed"] == pytest.approx(184_832.475845, rel=1e-9)
+    assert return_row["boot_p025"] == pytest.approx(167_963.197413, rel=1e-9)
+    assert return_row["boot_p975"] == pytest.approx(198_650.467343, rel=1e-9)
+    assert v_row["observed"] == pytest.approx(0.03535, abs=1e-12)
+    assert v_row["boot_p975"] < 0.1
+    assert gamma_row["boot_p975"] < 0.2
+    assert table["note"].nunique() == 1
+    assert "solver input uncertainty is not resampled" in str(table["note"].iloc[0])

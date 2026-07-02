@@ -57,11 +57,11 @@ purpose.
 
 `CRPTO_ijds_submission.tex` is the official-template handoff draft in the
 INFORMS class (`\documentclass[ijds,dblanonrev]{informs4}`). The source of
-truth remains `paper/CRPTO_ijds.qmd`; after the 2026-07-02 pool93 A35--A38
+truth remains `paper/CRPTO_ijds.qmd`; after the 2026-07-02 pool93 A35--A39
 update, the `.tex` must be regenerated before any ScholarOne freeze. The synchronized
 submission surface should carry the central IJDS body: title, abstract,
 keywords, core sections, the journal pipeline Figure 1, the bound-claim stack,
-the A35 finite-grid frontier, the A36--A38 selected-allocation audits in the
+the A35 finite-grid frontier, the A36--A39 selected-allocation audits in the
 supplement, the regret-auditability comparison, plus the core, exact-certificate,
 funded-set audit and regret tables. The
 `informs2014.bst` + `../../book/references.bib` bibliography wiring is already
@@ -158,7 +158,7 @@ These protocols are compatible but not interchangeable.
   current local official-template build is 26 pages total; Section 9 starts on
   page 23 and references begin lower on that same page, keeping the body within
   the 25-page limit when references are excluded.
-- Keep A3--A38 in the online supplement unless a reviewer-facing argument needs
+- Keep A3--A39 in the online supplement unless a reviewer-facing argument needs
   one compact table in the body.
 - Preserve CRPTO as the coverage/auditability method and SPO+ as the low-regret
   comparator.

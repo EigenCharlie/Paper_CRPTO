@@ -1112,9 +1112,11 @@ Manuscript claim hierarchy:
 3. Append in the supplement: the full cap frontier, including 0.30, 0.345,
    0.36, 0.45, 0.50, and max-return endpoints.
 4. Closed on 2026-07-02 for the submitted pool93 claim: grade composition
-   (A36), tail-risk repricing (A37), and concentration/cluster-bound sensitivity
-   (A38) now come from the promoted pool93 allocation. Bootstrap under the final
-   allocation remains a future diagnostic, not a blocker for the IJDS body claim.
+   (A36), tail-risk repricing (A37), concentration/cluster-bound sensitivity
+   (A38), and fixed-allocation bootstrap metrics (A39) now come from the
+   promoted pool93 allocation. A39 bootstraps funded-loan contributions only; it
+   does not resample solver inputs, the PD model, calibration data, conformal
+   intervals, or policy search.
 
 Final stop decision:
 

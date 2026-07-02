@@ -19,8 +19,9 @@ optimizacion robusta de portafolio. La superficie IJDS activa promueve el punto
 pool93 body/default: retorno robusto `$184,832.48`, `V=0.035350`,
 `Gamma_CP=0.162616`, Markov cap `0.345084`, zero violation y pass `8/8` sobre
 la grilla alpha declarada. La frontera A35 y el audit de composicion A36 son los
-artefactos paper-facing principales para el cierre pool93; A37/A38 agregan la
-repricing de tail-risk y el audit cluster-bound de la asignacion seleccionada.
+artefactos paper-facing principales para el cierre pool93; A37--A39 agregan la
+repricing de tail-risk, el audit cluster-bound y el bootstrap de contribuciones
+de la asignacion seleccionada.
 
 # Manuscrito
 
@@ -34,7 +35,7 @@ Los borradores de trabajo son:
 
 - `CRPTO_ijds.qmd`: cuerpo anonimo IJDS, conceptualmente limitado a 25 paginas
   excluyendo referencias y appendix.
-- `supplement_ijds.qmd`: online supplement IJDS con A3--A38, robustez,
+- `supplement_ijds.qmd`: online supplement IJDS con A3--A39, robustez,
   reproducibilidad, MRM y fairness.
 
 La version larga y sus apendices estan en `book/`.
