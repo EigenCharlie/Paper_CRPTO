@@ -26,11 +26,13 @@ execute:
 ## Scope
 
 This online supplement supports the IJDS submission body. It collects proof
-details, robustness and external-replication tables A3--A36, reproducibility
+details, robustness and external-replication tables A3--A38, reproducibility
 commands, model-risk material, fairness diagnostics, and artifact lineage. It
 does not introduce a hidden selection criterion or unreported claim family:
-A35 is the declared pool93 finite-grid frontier consumed by the body, and A36
-is the regenerated pool93 funded-set grade audit for the selected body point.
+A35 is the declared pool93 finite-grid frontier consumed by the body, A36
+is the regenerated pool93 funded-set grade audit for the selected body point,
+and A37--A38 add pool93-specific tail-risk and cluster-bound repricing from the
+same selected allocation.
 :::
 
 The supplement is organized as a defense layer for the main manuscript rather
@@ -186,9 +188,11 @@ $\sqrt{\alpha(1-\alpha)/n_{\mathrm{cal}}} \approx 0.0002$ at $\alpha = 0.01$, so
 endpoints (hence $\Gamma_{\mathrm{CP}}$ and $B_u$) are essentially invariant to the
 calibration draw and the residual $V$ variability is test-side and
 portfolio-selection driven. A36 regenerates the row-level funded-set grade audit
-from the promoted pool93 allocation; tail-specific concentration and bootstrap
-diagnostics remain future diagnostics unless regenerated under the same body
-policy.
+from the promoted pool93 allocation. A37 reprices the same selected allocation
+under LGD-sensitive CVaR/OCE tail summaries, and A38 recomputes the
+concentration-sensitive cluster-bound thresholds from the selected funded
+weights. Bootstrap resampling under the final pool93 allocation remains a future
+diagnostic, not a blocker for the submitted claim.
 
 These steps leave a clean split. Theorem 1 proves the operational bound under
 Assumption 1. Proposition A.1 below shows that Markov is the sharp
@@ -247,10 +251,12 @@ The body keeps Markov as the headline because it is the distribution-free
 first-moment statement under Assumption 1. Earlier concentration tables remain
 useful as a diagnostic recipe, but they depend on the funded-loan exposure
 weights of the selected allocation. After pool93 promotion, the paper-facing
-certificate is therefore A35 plus the exact funded-set audit; any sharper
-Hoeffding, Bernstein, Bennett, or cluster-aware tightening should be regenerated
-from the promoted pool93 row-level allocation before being cited as a
-pool93-specific bound.
+certificate is therefore A35 plus the exact funded-set audit, with A38 providing
+the regenerated pool93 cluster-bound sensitivity. A38 confirms that the
+period-grade partition has the smallest cluster-aware Hoeffding threshold among
+the reported partitions, but it is still looser than Markov at the paper
+threshold. The body therefore keeps the first-moment Markov statement rather
+than adding unverified cross-cluster independence to the theorem.
 
 Table A21c extends the same audit to one-sided Cantelli, Bennett and Freedman
 variants [@cantelli1929; @bennett1962; @freedman1975]. At `alpha = 0.01`,
@@ -396,9 +402,10 @@ future journal hardening.
 
 # Appendix C: Journal Robustness Package
 
-Tables A12--A36 answer likely reviewer questions that are too detailed for the
-25-page body. A35 is the active pool93 frontier consumed by the body, and A36 is
-the pool93 body-point funded-set grade audit. A12--A34
+Tables A12--A38 answer likely reviewer questions that are too detailed for the
+25-page body. A35 is the active pool93 frontier consumed by the body, A36 is
+the pool93 body-point funded-set grade audit, A37 is the pool93 body-point
+tail-risk repricing, and A38 is the pool93 body-point cluster-bound audit. A12--A34
 are diagnostic by design, except A19 also supports the body framing around
 regret-auditability and A25--A34 support the external-replication defense.
 A20--A34 are journal-only add-ons: A20 audits tail-risk trade-offs as a
@@ -425,13 +432,12 @@ frozen funded set or intervals, never as a re-promoted champion.
 | A17 budget/LGD/cap sensitivity | Varies operating assumptions. | Segment caps are diagnostics, not solver constraints. |
 | A18 policy-family robustness surface | Summarizes alpha-safe policies by bound-aware family. | Compatible leaderboard only inside the final family; A35 is the promoted pool93 surface. |
 | A19 regret-auditability frontier | Compares two-stage, SPO+, and CRPTO robust on regret versus risk-control checks. | Comparator framing, not a new champion selector. |
-| A20 tail-risk diagnostic audit | Ranks tail-risk alternatives by CVaR, OCE, return, and satisficing status. | Journal diagnostic only; regenerate from pool93 row-level allocation before citing as pool93-specific. |
+| A20 tail-risk diagnostic audit | Ranks tail-risk alternatives by CVaR, OCE, return, and satisficing status on the legacy diagnostic surface. | Journal diagnostic machinery; A37 is the selected-allocation pool93 tail repricing. |
 | A21 cluster-bound tightening | Reports cluster-aware Hoeffding thresholds by period, grade, and period-grade. | Transparent caveat; not tighter than Markov for the observed exposure concentration. |
 | A22 tail-constrained re-optimization | Selects the max-return policy under a decision-time CVaR cap computed from conformal upper endpoints, tracing the return-vs-CVaR frontier. | CVaR/OCE as an active selection constraint; reports a tail-constrained challenger, not a new promoted policy. |
 | A23 multi-distribution robustness | Worst-case 90% coverage by grade and grade x vintage cell on the frozen intervals. | Read-only diagnostic; the worst fine cell motivates MDCP/group-weighted as future work. |
 | A24 online conformal stability | Per-vintage and cumulative coverage plus the Gibbs-Candes ACI target trajectory over the OOT vintage sequence. | Static-OOT online-control diagnostic, not a streaming validation. |
 | A25 external replication gate | Applies the frozen CRPTO scoring/conformal/LP recipe to Prosper final-status loans and Freddie/Mendeley FM48. | External economic replication; not a Lending Club champion rerun and not a new exact theorem. |
-| A36 pool93 funded-set grade audit | Regenerates the selected body allocation at `alpha = 0.01` and summarizes funded exposure by grade bucket. | Composition evidence for the promoted body point, not a fairness or protected-class audit. |
 | A26 external candidate sensitivity | Checks whether the robust LP objective is stable as the OOT candidate pool grows. | Candidate-pool audit; supports the claim that reported objectives are not a tiny shortlist artifact. |
 | A27 Freddie horizon sensitivity | Audits Freddie/Mendeley default windows and red/green groups before selecting FM48 for the external table. | Dataset-selection audit; FM48 is promoted because it clears both coverage gates and keeps positive robust LP value. |
 | A28 external LP exhaustiveness | Solves Prosper all-candidate LP and Freddie caps `500k`, `1M`, and `all`. | Exhaustiveness certificate; the Freddie all-candidate optimum matches the screened optimum. |
@@ -441,6 +447,10 @@ frozen funded set or intervals, never as a re-promoted champion.
 | A32 Prosper default-definition sensitivity | Repeats Prosper under main, defaulted-only, and chargedoff-only labels. | Default semantics audit; all three variants pass the global gates. |
 | A33 Freddie segment sensitivity | Repeats Freddie FM48 for red, green, and combined groups. | Segment audit; green and combined pass alpha01, red remains a documented caveat. |
 | A34 cross-dataset price of robustness | Orders the frozen external applications (Freddie green/combined/red and Prosper) by panel default rate and reports the signed price of robustness. | Positive premium under blind external application, ordered by panel default risk across four frozen external applications. |
+| A35 pool93 finite-grid frontier | Declares the promoted return-bound frontier and selected body point. | Exact finite-grid policy surface, not a continuous-region optimum. |
+| A36 pool93 funded-set grade audit | Regenerates the selected body allocation at `alpha = 0.01` and summarizes funded exposure by grade bucket. | Composition evidence for the promoted body point, not a fairness or protected-class audit. |
+| A37 pool93 body tail-risk repricing | Reprices the selected body allocation under LGD alternatives, CVaR, OCE, and decision-time tail loss. | Diagnostic risk profile of the selected point; OCE/CVaR is not the optimized objective. |
+| A38 pool93 body cluster-bound audit | Recomputes period, grade, period-grade, and score-vintage concentration thresholds from selected funded weights. | Sensitivity under extra cross-cluster assumptions; Markov remains the body-level bound. |
 
 ## External Multi-Dataset Replication
 
@@ -562,7 +572,7 @@ to make the audit path explicit.
 | The conformal layer gives conservative OOT uncertainty on the PD scale. | 90% and 95% coverage, minimum group coverage, and grade/decile audits. | `data/processed/conformal_intervals_mondrian.parquet`. | Conformal validation status and regression tests that check metric consistency across surfaces. |
 | The promoted funded set passes the exact safety bound `V <= sqrt(alpha)` (not nominal alpha-coverage). | Body point `V(alpha = 0.01) = 0.035350` (above alpha), `Gamma_CP = 0.162616`, Markov cap `0.345084`, zero violation, `8/8` alpha pass. | A35, A36, pool93 exact bound-evaluation parquet, consolidated frontier/governance JSON. | Exact-evaluation artifact and regression tests. |
 | The result is not an isolated lucky policy. | Pool93 consolidated frontier has 50,010 deduplicated semantic policies and 27,508 all-alpha above-floor policies; terminal endpoint search has 37,068/37,068 all-alpha passers. | Table A35 and pool93 governance sidecars. | Protected search/evaluation split; no continuous-region claim. |
-| The supplement strengthens interpretation without moving the body claim. | A20--A34 challenger, dependence, tail-risk, multi-distribution, online, and external-replication diagnostics; A35 is the active pool93 frontier; A36 is the body funded-set grade audit. | Journal robustness tables, Figures 15--25, A35, and A36. | Scope caveats in each table; tail-specific CVaR/OCE diagnostics remain diagnostic unless regenerated from the promoted pool93 allocation. |
+| The supplement strengthens interpretation without moving the body claim. | A20--A34 challenger, dependence, tail-risk, multi-distribution, online, and external-replication diagnostics; A35 is the active pool93 frontier; A36--A38 are selected-allocation pool93 audits. | Journal robustness tables, Figures 15--25, A35--A38. | Scope caveats in each table; A37/A38 are pool93 risk-profile audits, not hidden champion selectors. |
 | The frozen PD binary is a faithful paper artifact. | E3/E4 T1 diagnostics show negligible seed-level discrimination movement and stable expanding-window validation. | `docs/refactor/SENSITIVITY_RUN_DESIGN_2026-06.md` and Appendix E summary. | Non-promoted diagnostics only; they do not replace the champion or become routine reproduction steps. |
 | The manuscript is reproducible at the artifact level. | Tables, figures, Quarto pages, and status reports regenerate from frozen inputs. | Repository code, DVC metadata, rendered book/paper outputs. | Pre-push test and lint hooks, DVC status checks, and manifest validation before release. |
 
@@ -608,6 +618,42 @@ a base default rate well above `1%` -- and why no reweighting of the calibration
 `alpha` without capping most funded defaults at `u_i = 1`, which would void
 `Gamma_CP` and the economics. The honest guarantee is therefore the
 `sqrt(alpha)` level, with the deterministic identity holding exactly.
+
+A37 closes the tail-risk repricing caveat for the promoted pool93 allocation.
+At the baseline `LGD = 0.45`, the selected body point has realized return
+`$184,832.48`, weighted default rate `0.035350`, realized CVaR95 loss rate
+`0.276211`, and decision-time CVaR95 loss rate `0.218140`. Under the reported
+LGD sensitivity grid, repriced return ranges from `$188,367.48` at `LGD = 0.35`
+to `$179,529.98` at `LGD = 0.60`. These quantities profile the selected
+policy's tail exposure; they do not change the body selector, which is still
+the finite-grid return-bound point in A35.
+
+| LGD | Repriced return | Realized CVaR95 | Decision-time CVaR95 | OCE theta5 realized | Markov cap |
+|---:|---:|---:|---:|---:|---:|
+| `0.35` | `$188,367.48` | `0.205511` | `0.149497` | `-0.118852` | `0.345084` |
+| `0.45` | `$184,832.48` | `0.276211` | `0.218140` | `-0.075978` | `0.345084` |
+| `0.60` | `$179,529.98` | `0.382261` | `0.321104` | `0.011384` | `0.345084` |
+
+: A37. Pool93 body-point tail-risk repricing from
+`reports/crpto/tables/crpto_tableA37_pool93_body_tail_risk.csv`.
+
+A38 closes the corresponding cluster-bound caveat. At `alpha = 0.01` and
+`delta = 0.10`, Markov's body threshold is `0.100000`. The tightest regenerated
+cluster-aware Hoeffding threshold is period-grade at `0.281247`; period
+(`0.395502`), score-vintage (`0.348546`), and grade bucket (`0.728588`) are also
+looser than Markov. The empirical result supports the theorem boundary rather
+than weakening it: sharper concentration language would require a less
+concentrated funded set or extra assumptions not asserted by the body.
+
+| Cluster partition | Clusters | Max exposure share | Sum exposure squared | Hoeffding threshold | Tighter than Markov |
+|---|---:|---:|---:|---:|:---:|
+| period | `11` | `0.185295` | `0.129083` | `0.395502` | `False` |
+| grade bucket | `4` | `0.594275` | `0.448512` | `0.728588` | `False` |
+| period-grade | `27` | `0.119550` | `0.063907` | `0.281247` | `False` |
+| score-vintage | `20` | `0.165295` | `0.099552` | `0.348546` | `False` |
+
+: A38. Pool93 body-point cluster-bound audit from
+`reports/crpto/tables/crpto_tableA38_pool93_body_cluster_bound_audit.csv`.
 
 ## Why A21--A34 Do Not Strengthen the Main Claim
 
@@ -686,7 +732,7 @@ decision.
 
 ![CQR is retained as conformal appendix evidence, not as the promoted method.](../reports/crpto/figures/crpto_fig10_cqr_per_grade.png){#fig-supp-cqr width="90%" fig-alt="Coverage by Lending Club grade for CQR and conformal variants, used as appendix evidence rather than promoted method."}
 
-![Tail-risk versus realized return in the diagnostic A20 policy surface. This figure illustrates the CRPTO tail-risk audit pattern; it should be regenerated from the promoted pool93 row-level allocation before being cited as a pool93-specific tail frontier.](../reports/crpto/figures/crpto_fig16_tail_risk_frontier.png){#fig-supp-tail-frontier width="90%" fig-alt="Scatter plot of tail risk versus realized return across a diagnostic policy surface, with lower-tail and higher-return policies marked."}
+![Tail-risk versus realized return in the diagnostic A20 policy surface. This figure illustrates the CRPTO tail-risk audit pattern on the legacy diagnostic surface; A37 is the pool93-specific selected-allocation tail repricing.](../reports/crpto/figures/crpto_fig16_tail_risk_frontier.png){#fig-supp-tail-frontier width="90%" fig-alt="Scatter plot of tail risk versus realized return across a diagnostic policy surface, with lower-tail and higher-return policies marked."}
 
 ![Tail risk of the frozen funded set under varying loss-given-default (Table A12). CVaR grows with the assumed LGD while the OCE and the mean loss rate stay milder, showing that OCE/CVaR enter the paper as post-hoc stress summaries rather than as the optimized objective.](../reports/crpto/figures/crpto_fig17_tail_risk_lgd.png){#fig-supp-tail-lgd width="82%" fig-alt="Line chart of frozen funded-set loss rate versus LGD (0.35 to 0.60) for CVaR90, CVaR95, CVaR99, OCE and the mean; CVaR grows with LGD while OCE and the mean stay mild."}
 
@@ -694,10 +740,11 @@ decision.
 
 ![A24 online conformal stability: per-vintage and cumulative coverage stay above the 90% target across the eleven OOT vintages while the Gibbs-Candes ACI target alpha_t barely drifts, indicating an online controller would have little to correct on this static OOT.](../reports/crpto/figures/crpto_fig19_online_coverage_aci.png){#fig-supp-online-aci width="88%" fig-alt="Per-vintage and cumulative coverage lines above a 90% target line across eleven OOT quarters, with the ACI target alpha_t on a secondary axis rising slightly from 0.10 to 0.12."}
 
-A19--A33 should be read as literature-aligned stress evidence. A19 places CRPTO
+A19--A38 should be read as literature-aligned stress evidence. A19 places CRPTO
 against the regret-driven training tradition; A20--A22 translate tail risk and
 satisficing into finite-grid and tail-constrained audits without changing the
-pool93 body claim; and A23--A24 show where multi-distribution and online conformal work
+pool93 body claim; A37--A38 regenerate the selected pool93 allocation's
+tail-risk and concentration profile; and A23--A24 show where multi-distribution and online conformal work
 would enter if the project moved from a frozen historical panel to a new
 protocol. A25--A34 add the
 external economic replication layer on Prosper and Freddie/Mendeley, including
@@ -838,7 +885,7 @@ The active IJDS submission surfaces are:
 | Surface | Source | Role |
 |---|---|---|
 | Anonymous body | `paper/CRPTO_ijds.qmd` | 25-page IJDS-style manuscript source. |
-| Online supplement | `paper/supplement_ijds.qmd` | Proofs, A3--A36, MRM/fairness, reproducibility. |
+| Online supplement | `paper/supplement_ijds.qmd` | Proofs, A3--A38, MRM/fairness, reproducibility. |
 | Long companion | `book/` | Public companion after anonymity handling. |
 | Publication config | `configs/crpto_publication_targets.yaml` | Venue, template, anonymity, and pivot rules. |
 

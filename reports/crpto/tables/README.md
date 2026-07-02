@@ -2,7 +2,7 @@
 
 This directory holds the CSV/TeX exports consumed by the IJDS paper, the online
 supplement, and the Quarto book. The paper-facing canon is **`crpto_table0`**
-(key metrics) plus the journal appendix package **`A3`–`A36`**. Every one of
+(key metrics) plus the journal appendix package **`A3`–`A38`**. Every one of
 those is cited in the paper, the supplement, or a book chapter (see
 `book/chapters/07-apendice-robustez.qmd` and `30-replicacion-multidataset.qmd`).
 
@@ -17,6 +17,8 @@ those is cited in the paper, the supplement, or a book chapter (see
 | `A25`–`A34` | External multidataset replication (Prosper/Freddie) and cross-dataset price of robustness. |
 | `A35` | Pool93 IJDS finite-grid return-bound frontier and final claim endpoints. |
 | `A36` | Pool93 body-point funded-set grade audit regenerated from the selected allocation. |
+| `A37` | Pool93 body-point tail-risk repricing regenerated from the selected allocation. |
+| `A38` | Pool93 body-point cluster-bound audit regenerated from the selected allocation. |
 
 ## Legacy / superseded (retained for provenance, not paper-facing)
 

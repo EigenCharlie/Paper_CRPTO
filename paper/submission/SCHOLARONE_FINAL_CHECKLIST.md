@@ -7,7 +7,7 @@ template files have been downloaded outside Git.
 
 | File | Source | Reviewer-facing? | Status |
 |---|---|:---:|---|
-| Anonymous manuscript PDF | `CRPTO_ijds_submission.tex` compiled with `informs4` and `dblanonrev`. | Yes | Source synchronized with pool93 A35/A36; final official-template proof pending |
+| Anonymous manuscript PDF | `CRPTO_ijds_submission.tex` compiled with `informs4` and `dblanonrev`. | Yes | Source synchronized with pool93 A35--A38; final official-template proof pending |
 | Anonymous online supplement PDF | `paper/supplement_ijds.qmd` rendered and visually checked. | Yes | Local render and page QA pass; final ScholarOne proof pending |
 | Separate title page | `TITLE_PAGE_DRAFT.md` converted into the ScholarOne/title-page format. | No | Pending ScholarOne copy |
 | Data and Code Disclosure Form | Official IJDS form using `DATA_CODE_DISCLOSURE_FORM_DRAFT.md`. | Editor/system | Pending official form entry |
@@ -17,7 +17,7 @@ template files have been downloaded outside Git.
 ## Official Template Build
 
 1. Download or refresh `informs4.cls` and `informs2014.bst` from INFORMS/Overleaf.
-2. Regenerate/synchronize `CRPTO_ijds_submission.tex` from the pool93 A35/A36 QMD source.
+2. Regenerate/synchronize `CRPTO_ijds_submission.tex` from the pool93 A35--A38 QMD source.
 3. Place the template files next to `CRPTO_ijds_submission.tex`; local gitignored copies are already present.
 4. Build:
 

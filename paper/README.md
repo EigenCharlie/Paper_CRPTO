@@ -37,10 +37,10 @@ the submission-shaped versions are written.
 Selected P2/P3-inspired diagnostics are part of the current paper/journal pack:
 regret-auditability, OCE/CVaR tail risk, robust satisficing margins,
 multi-distribution diagnostics, online replay diagnostics, the pool93 A35
-finite-grid frontier, the A36 funded-set grade audit, and external
-Prosper/Freddie economic replications. Tail-risk row-level repricing remains a
-supplement-heavy diagnostic unless regenerated from the promoted pool93
-allocation. Prospective
+finite-grid frontier, the A36 funded-set grade audit, the A37/A38 selected
+pool93 tail-risk and cluster-bound audits, and external Prosper/Freddie economic
+replications. Tail-risk row-level repricing is supplement evidence for the
+selected pool93 allocation, not a hidden promotion criterion. Prospective
 live online validation, causal variants, new multi-dataset protocols beyond the
 frozen Prosper/Freddie replications, production, and package tracks remain
 future work.

@@ -1111,10 +1111,10 @@ Manuscript claim hierarchy:
    an above-floor policy with Markov cap 0.2730.
 3. Append in the supplement: the full cap frontier, including 0.30, 0.345,
    0.36, 0.45, 0.50, and max-return endpoints.
-4. Park until regenerated: grade composition, tail-risk, bootstrap, and
-   concentration tables that depend on funded-loan row-level exports. They are
-   still useful diagnostics, but they should not be cited as pool93-specific
-   unless regenerated from the promoted pool93 allocation.
+4. Closed on 2026-07-02 for the submitted pool93 claim: grade composition
+   (A36), tail-risk repricing (A37), and concentration/cluster-bound sensitivity
+   (A38) now come from the promoted pool93 allocation. Bootstrap under the final
+   allocation remains a future diagnostic, not a blocker for the IJDS body claim.
 
 Final stop decision:
 

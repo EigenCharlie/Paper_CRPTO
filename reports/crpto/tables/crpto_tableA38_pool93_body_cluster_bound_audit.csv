@@ -1,0 +1,5 @@
+cluster_type,n_clusters,max_cluster_exposure_share,sum_cluster_exposure_sq,alpha,delta,empirical_weighted_miscoverage_V,markov_threshold,cluster_hoeffding_threshold,sum_w2_tightening_threshold,cluster_bound_tighter_than_markov,paper_role
+period,11,0.185294809,0.129082544,0.010000000,0.100000000,0.035350000,0.100000000,0.395501973,0.007035571,False,pool93_body_cluster_sensitivity
+grade_bucket,4,0.594275000,0.448511801,0.010000000,0.100000000,0.035350000,0.100000000,0.728587708,0.007035571,False,pool93_body_cluster_sensitivity
+period_grade,27,0.119550000,0.063906500,0.010000000,0.100000000,0.035350000,0.100000000,0.281247261,0.007035571,False,pool93_body_cluster_sensitivity
+score_vintage,20,0.165294809,0.099551934,0.010000000,0.100000000,0.035350000,0.100000000,0.348546008,0.007035571,False,pool93_body_cluster_sensitivity

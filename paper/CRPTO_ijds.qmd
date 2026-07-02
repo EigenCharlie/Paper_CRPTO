@@ -551,11 +551,12 @@ data/code-disclosure policy.
 The body-supplement split is fixed before submission. The body keeps the CRPTO
 pipeline, the alpha-to-portfolio link, the pool93 finite-grid frontier, and the
 core metrics, plus the compact regret-auditability frontier. The online
-supplement carries A3--A36, the conformal finalist ablation, funded-set loan
+supplement carries A3--A38, the conformal finalist ablation, funded-set loan
 audit, tail-risk diagnostics, satisficing margins, dependence diagnostics, the CVaR/OCE
-tail-constrained re-optimization (A22) and the multi-distribution (A23) and
+tail-constrained re-optimization (A22), the multi-distribution (A23) and
 online ACI-stability (A24) diagnostics, the external economic replication
-tables (A25--A34), MRM/fairness material, and reproduction commands. This keeps
+tables (A25--A34), the promoted-pool93 frontier and funded-set audits
+(A35--A38), MRM/fairness material, and reproduction commands. This keeps
 the IJDS body focused while preserving the audit trail that reviewers need.
 
 ## Multi-Dataset External Replication Protocol
@@ -769,8 +770,9 @@ already chosen a point-PD allocation.
 The supplement also carries the reviewer-facing robustness checks: nested
 holdout, strict temporal holdout, exact evaluation of conformal finalists,
 uncertainty-set baselines, and the pool93 A35 finite-grid frontier. Diagnostics
-that depend on funded-loan row-level composition or tail-risk repricing are
-labeled as diagnostic unless regenerated from the promoted pool93 allocation.
+that depend on the selected funded-loan composition are split explicitly:
+A36--A38 are regenerated from the promoted pool93 allocation, while legacy
+tail-frontier tables remain diagnostic machinery rather than body selectors.
 
 The third concern is whether a decision-focused or SPO+ model would be a
 stronger baseline. CRPTO treats SPO+ as an important comparator, but not as the
@@ -851,15 +853,19 @@ the evaluation is sliced by grade? The pool93 promotion answers the first
 question at the return-bound level in Table A35: lower Markov caps are available
 at lower return, while the selected body point sits on the declared frontier.
 A36 regenerates the funded-set grade audit from the selected pool93 allocation.
-CVaR/OCE tail repricing is retained in the online supplement as diagnostic
-machinery and should be regenerated from the promoted pool93 row-level
-allocation before it is used as a pool93-specific tail claim.
+A37 then reprices the same selected allocation under LGD-sensitive CVaR/OCE
+tail summaries, and A38 recomputes the cluster-bound concentration audit from
+the same funded weights. The body claim remains the return-bound certificate;
+tail-risk rows are used to explain the selected point's risk profile, not to
+introduce a hidden CVaR/OCE champion criterion.
 
 | Diagnostic family | Current role | Claim boundary |
 |---|---|---|
 | A35 return-bound frontier | Promoted pool93 evidence. | Exact finite-grid policy surface, not a continuous optimum. |
 | A36 funded-set grade audit | Pool93 body-point composition evidence. | Grade buckets are business diagnostics, not protected-class fairness evidence. |
-| A20--A22 CVaR/OCE tail-risk package | Shows how CRPTO exposes return-tail trade-offs. | Diagnostic until regenerated from the selected pool93 allocation. |
+| A37 pool93 tail-risk repricing | Reprices the selected body allocation under LGD, CVaR, and OCE summaries. | Diagnostic risk profile of the selected point, not an optimized tail-risk objective. |
+| A38 pool93 cluster-bound audit | Recomputes concentration-sensitive Hoeffding thresholds from selected funded weights. | Sensitivity under extra cross-cluster assumptions; Markov remains the body theorem. |
+| A20--A22 legacy CVaR/OCE package | Shows how CRPTO exposes return-tail trade-offs on the earlier diagnostic surface. | Historical diagnostic machinery, not the promoted pool93 selector. |
 | A23--A24 distribution/online coverage checks | Stress the frozen interval artifact across grades and time. | Coverage diagnostics, not universal conditional coverage. |
 
 : Tail-risk and distribution-robustness scope after pool93 promotion.
@@ -899,7 +905,8 @@ tail-risk diagnostic audit, A21 cluster-bound tightening audit, A22 CVaR/OCE
 tail-constrained re-optimization, and A23--A24 multi-distribution and online
 (ACI) conformal-stability diagnostics, plus A25--A34 external economic
 replication, exhaustiveness, interval, subperiod, and sensitivity audits on
-Prosper and Freddie/Mendeley.
+Prosper and Freddie/Mendeley, and A35--A38 promoted-pool93 frontier,
+composition, tail-risk, and concentration audits.
 
 # Reproducibility and Companion
 
