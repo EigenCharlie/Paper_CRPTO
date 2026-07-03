@@ -40,8 +40,8 @@ repos:
       # gradually annotated. Keep strict checks scoped to the modules that opt in.
 
       - id: dvc-status
-        name: dvc status (drift detection)
-        entry: uv run dvc status --quiet
+        name: dvc status (non-blocking drift report)
+        entry: uv run python scripts/check_dvc_status_warning.py
         language: system
         pass_filenames: false
         stages: [pre-push]

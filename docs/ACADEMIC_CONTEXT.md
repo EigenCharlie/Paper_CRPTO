@@ -100,7 +100,8 @@ reproducibility:
 1. **Pin every dependency** in `uv.lock` and bump floors only when the
    lockfile already moved.
 2. **DVC for data + model artifacts**; never commit binaries to Git.
-3. **Pre-commit hooks** (ruff, nbstripout, dvc status, smoke tests).
+3. **Pre-commit hooks** (ruff, nbstripout, non-blocking DVC drift report,
+   smoke tests).
 4. **Pre-push hooks** that run the artifact-independent test suite.
 5. **MAPIE / Pandera / Optuna / MLflow** kept on the same major version as
    `uv.lock` (no silent surprises).
