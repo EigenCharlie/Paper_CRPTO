@@ -1,5 +1,11 @@
 # paper-crpto Publication Strategy - 2026-05-12
 
+> Historical note, 2026-07-04: this memo predates the pool93 promotion. Use
+> `docs/research/active_claims_2026-07-04.md` and
+> `docs/SCOPE_AND_GOVERNANCE.md` for active paper-facing metrics. Mentions of
+> `45/45` and the earlier champion are retained as venue-strategy provenance,
+> not as the current IJDS headline.
+
 ## Decision
 
 Write the first submission for **INFORMS Journal on Data Science (IJDS)** and
@@ -46,7 +52,8 @@ EJOR is the strongest second target if the paper reads more as operational
 research than data science. Its scope is explicitly about both OR methodology
 and decision-making practice. CRPTO can fit as an innovative OR application or
 theory/methodology paper if we emphasize conformal uncertainty sets, robust
-portfolio decisions, price of robustness and the `45/45` robust region.
+portfolio decisions, price of robustness and the active finite-grid pool93
+return-bound frontier.
 
 Source:
 
@@ -59,7 +66,7 @@ The first paper draft should be written as:
 
 - title: `CRPTO: Conformal Robust Predict-Then-Optimize for Auditable Credit Portfolio Decisions`;
 - body: 25-page IJDS-style manuscript;
-- supplement: A3--A34, proofs, extended tables, reproducibility,
+- supplement: A3--A39, proofs, extended tables, reproducibility,
   MRM/fairness and external replication;
 - review mode: anonymous by default;
 - companion: GitHub/DVC/DagsHub/MLflow after the anonymity policy is handled.
@@ -71,8 +78,8 @@ The short paper should keep only the strongest body material:
 - Mondrian conformal layer;
 - robust portfolio formulation;
 - Markov bound and conditional tightening caveat;
-- champion metrics;
-- robust region `45/45`;
+- pool93 body metrics and A35 finite-grid frontier;
+- A36--A39 selected-allocation audits;
 - regret-auditability frontier with one concise SPO+/DFL comparison;
 - data/code reproducibility statement.
 
@@ -80,26 +87,28 @@ Everything else lives in the supplement or book.
 
 ## Submission Scope Lock
 
-The current paper is still centered on the frozen CRPTO champion, but P2/P3 are
-no longer treated as a blanket exclusion. The journal strengthening pack enters
-when it uses frozen artifacts and does not change the promoted policy: OCE/CVaR
-as a diagnostic, satisficing as margin evidence, regret-auditability as the
+The current paper is centered on the promoted pool93 finite-grid body claim,
+with the frozen upstream CRPTO chain retained as provenance and the declared
+return floor. P2/P3 ideas are no longer treated as a blanket exclusion when
+they use frozen artifacts and do not change the promoted policy: OCE/CVaR as a
+diagnostic, satisficing as margin evidence, regret-auditability as the
 SPO+/CRPTO comparator, and dependence-aware theory as a caveated supplement
 proposition.
 
 In scope for the current paper:
 
-- frozen CRPTO post-hoc champion;
+- promoted pool93 finite-grid return-bound frontier;
+- frozen upstream CRPTO chain as provenance and return floor;
 - calibrated PD -> Mondrian conformal intervals -> robust portfolio decision;
-- exact alpha-safe funded-set validation and `45/45` robust region;
-- A3--A34 as supplement evidence;
+- exact alpha-safe funded-set validation and A35 finite-grid frontier;
+- A3--A39 as supplement evidence;
 - regret-auditability frontier in the body;
 - OCE/CVaR tail-risk diagnostics and robust satisficing margins in the
   supplement;
 - cluster-aware dependence caveat/proposition with Markov retained as the main
   distribution-free bound;
 - external economic replication on Prosper and Freddie/Mendeley as A25--A34,
-  without reopening the Lending Club champion;
+  without reopening the Lending Club body claim;
 - reproducibility via Quarto, DVC, DagsHub/MLflow and guardrail tests.
 
 Out of scope for the current paper:

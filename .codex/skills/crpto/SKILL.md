@@ -11,10 +11,11 @@ Before structural work, read these files in order:
 
 1. `docs/ACADEMIC_CONTEXT.md`
 2. `docs/SCOPE_AND_GOVERNANCE.md`
-3. `CONTRIBUTING.md`
-4. `EXTRACTION_MANIFEST.md`
-5. `configs/crpto_publication_targets.yaml`
-6. `docs/research/crpto_backlog_2026-05-04.md`
+3. `docs/research/active_claims_2026-07-04.md`
+4. `CONTRIBUTING.md`
+5. `EXTRACTION_MANIFEST.md`
+6. `configs/crpto_publication_targets.yaml`
+7. `docs/research/README.md`
 
 Use the local project context over generic habits. This is a single-author,
 static-dataset, no-production academic repo. Keep code simple, functional, and
@@ -29,15 +30,42 @@ close to the existing style.
 
 ## Champion Rules
 
-The frozen champion is the paper result:
+The current IJDS paper-facing body claim is the promoted pool93 finite-grid
+frontier closure. It is a deterministic policy-grid re-evaluation over the
+frozen upstream PD/calibration/conformal artifacts, not a retraining run.
 
-- Run tag: `paper-thesis-final-economic-2026-04-06`
+- Terminal run tag:
+  `champion-reopen-2026-06-19__pool93__ijds-claim-bound-terminal`
+- Body point source run:
+  `champion-reopen-2026-06-19__pool93__ijds-claim-micro-ext`
+- Policy family: `claim_micro_ext_body_cap345`
+- Policy mode: `capped_blended_uncertainty`
+- Robust return: `$184,832.48`
+- Return-floor surplus: `$14,367.94`
+- `V(alpha=0.01)`: `0.035350`
+- `Gamma_CP(alpha=0.01)`: `0.162616`
+- Endpoint budget upper at `alpha=0.01`: `0.24508374`
+- Markov cap at `alpha=0.01`: `0.34508374`
+- Exact alpha violation: `0.0`
+- Declared alpha-grid pass: `8/8`
+- Consolidated frontier: `50,010` deduplicated semantic policies, `27,508`
+  eligible all-alpha above-floor policies.
+- Terminal exact search: `37,068/37,068` all-alpha passers and `296,544`
+  completed exact candidate-alpha checks.
+
+The frozen upstream baseline remains retained for provenance and as the
+declared return floor:
+
+- Run tag: `ijds-rebaseline-2026-06-07`
 - Policy: `bound_aware_276k_economic_champion`
 - Robust return: `$170,464.54`
-- `V(alpha=0.01)`: `0.03645`
-- `Gamma_CP(alpha=0.01)`: `0.18591`
+- `V(alpha=0.01)`: `0.028875`
+- `Gamma_CP(alpha=0.01)`: `0.187987`
 - Exact pass: `True`
-- Robust region: `45/45`
+- Former robust region: `45/45`
+
+The older run tag `paper-thesis-final-economic-2026-04-06` is historical
+provenance only. Do not use it as the active body claim.
 
 Never overwrite these frozen artifacts unless the user explicitly asks for a
 champion rebuild:
@@ -48,6 +76,13 @@ champion rebuild:
 - `models/conformal_policy_status.json`
 - `data/processed/conformal_intervals_mondrian.parquet`
 - `data/processed/portfolio_bound_aware/rank1_alpha01_bound_aware_276k_full_2026-04-05-1734/`
+- `reports/crpto/tables/crpto_tableA35_pool93_ijds_frontier.csv`
+- `reports/crpto/tables/crpto_tableA36_pool93_body_funded_grade_audit.csv`
+- `reports/crpto/tables/crpto_tableA37_pool93_body_tail_risk.csv`
+- `reports/crpto/tables/crpto_tableA38_pool93_body_cluster_bound_audit.csv`
+- `reports/crpto/tables/crpto_tableA39_pool93_body_bootstrap_metrics.csv`
+- `models/experiments/champion_reopen/champion-reopen-2026-06-19__pool93__ijds-claim-consolidated-definitive/portfolio/pool93_ijds_consolidated_governance.json`
+- `models/experiments/champion_reopen/champion-reopen-2026-06-19__pool93__ijds-claim-bound-terminal/portfolio/pool93_ijds_claim_governance.json`
 - `EXTRACTION_MANIFEST.json`
 
 Protected DVC stages:
@@ -73,24 +108,27 @@ If the user says a change may touch the champion, isolate the work:
 
 ## Current Journal Scope
 
-The active paper scope is the journal strengthening pack:
+The active paper scope is the IJDS pool93 certificate plus bounded diagnostics:
 
 - A19/Fig15: regret-auditability frontier in the main narrative.
-- A12: OCE/CVaR tail-risk diagnostic, not a replacement champion objective.
-- A13: robust satisficing margins for committee/OR framing.
-- A14: dependence-aware caveat or supplement proposition, with cluster
-  diagnostics as evidence rather than proof of independence.
-- A20: tail-satisficing challenger audit over the 45 existing alpha-safe
-  policies. It is a journal-only comparator and must not promote a new champion.
-- A21: cluster-bound tightening table. Use it to make the dependence-aware
-  caveat mathematically transparent, while saying plainly that it is not tighter
-  than Markov under the current exposure concentration.
-- Multi-dataset credit replication remains journal backlog and does not block
-  the current submission.
+- A35: promoted pool93 finite-grid return-bound frontier.
+- A36: funded-set grade composition audit for the selected pool93 allocation.
+- A37: pool93 selected-allocation LGD/CVaR/OCE tail-risk repricing.
+- A38: pool93 selected-allocation cluster-bound sensitivity; Markov remains
+  the body theorem because the cluster thresholds are not tighter here.
+- A39: fixed-allocation bootstrap diagnostic; it does not resample model,
+  solver, conformal intervals or policy search.
+- A20--A22: legacy tail-risk/OCE/CVaR diagnostic package retained in the
+  supplement, not as the promoted pool93 selector.
+- A23--A24: multi-distribution/online coverage diagnostics, not universal
+  conditional-coverage claims.
+- A25--A34: Prosper/Freddie external economic replication, not new Lending Club
+  champions.
 
-Do not re-run champion search, HPO, or protected portfolio stages to support
-this pack. Use existing artifacts unless the user explicitly asks for a new
-champion experiment.
+Do not re-run champion search, HPO, conformal interval generation or protected
+portfolio stages to support this pack. Use existing artifacts unless the user
+explicitly asks for a new isolated experiment with a claim target, evidence
+gate, artifact sink and stop rule.
 
 ## Objective Experiments
 
@@ -101,17 +139,20 @@ scoring layer. The default rule is:
   artifacts.
 - It may generate new diagnostic tables, figures, configs, tests, and docs.
 - It must not replace the champion objective, rank-1 policy, or frozen outputs.
-- A tail-satisficing challenger audit may re-solve the 45 existing shortlist
-  policies under a new paper/audit stage if outputs are new and the status marks
-  `champion_promotion_changed=false`.
+- A tail-satisficing challenger audit may read or re-score frozen allocations
+  under a new paper/audit stage if outputs are new and the status marks
+  `champion_promotion_changed=false`. It must not replace the A35 pool93 body
+  selector without a new promotion protocol.
 - If used for a new search, store results under a new experiment path and make
-  the comparison explicit against the frozen champion.
+  the comparison explicit against the active pool93 body claim and the frozen
+  upstream rebaseline.
 
 ## Submission Closeout
 
 For the current submission, keep these gates visible:
 
-- Consolidate A19/Fig15, A20/A21, paper/supplement, docs, and `dvc.lock`.
+- Consolidate A19/Fig15, A20--A39, paper/supplement, docs, manifest hashes and
+  `dvc.lock`.
 - Sweep the manuscript for stale numbers, captions, body-vs-appendix placement,
   and IJDS length.
 - Convert the final `.qmd` into the official IJDS LaTeX template when the PDF
@@ -128,10 +169,9 @@ Use focused checks while editing, then close with the strongest feasible set:
 
 ```powershell
 uv run python scripts/build_crpto_journal_package.py
-uv run python scripts/build_tail_satisficing_challenger_audit.py
 uv run pytest tests/test_publication_targets.py -q
 uv run pytest tests/test_scripts/test_build_crpto_journal_package.py -q
-uv run pytest tests/test_scripts/test_tail_satisficing_challenger_audit.py -q
+uv run pytest tests/test_pool93_body_claim_sync.py -q
 just smoke
 just lint
 just validate-champion

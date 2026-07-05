@@ -8,6 +8,10 @@ perenne y lo que el código lee/escribe.
 
 ## Registros activos (referenciados por el código o el paper)
 
+- `active_claims_2026-07-04.md` — source-of-truth operativo del claim IJDS
+  activo: dual-tag governance, punto pool93, semántica de grilla finita,
+  denominadores de frontera y stop rules para no reabrir búsquedas sin un
+  claim que pueda cambiar.
 - `crpto_p1_evidence_2026-05-04.md` — evidencia P1 alrededor del champion
   congelado (escrito por `scripts/analyze_crpto_evidence.py`).
 - `crpto_journal_package_2026-05-04.md` — tablas A12–A34 y figuras journal
@@ -39,9 +43,9 @@ perenne y lo que el código lee/escribe.
 - `crpto_bound_improvement_intake_2026-05-21.md` — paquete de challengers
   PD/conformal del sandbox externo y sus gates.
 - `crpto_champion_tournament_protocol_2026-05-25.md` — contrato anti-cherry-pick
-  y gates del torneo de champion.
+  y gates del torneo de champion; histórico después de la promoción pool93.
 - `crpto_publication_strategy_2026-05-12.md` — decisión de venue, plantilla,
-  anonimato y salida IJDS/EJOR.
+  anonimato y salida IJDS/EJOR; algunas referencias a `45/45` son históricas.
 - `crpto_pyepo_dfl_intake_2026-05-26.md` — PyEPO 1.3.7 y cierre del comparador
   DFL/SPO+ aislado.
 

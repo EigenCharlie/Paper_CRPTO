@@ -1,5 +1,11 @@
 ## Guía Editorial, Claims y Referencias {#sec-crpto-editorial-guide}
 
+> Nota histórica, 2026-07-04: esta guía fue escrita antes del cierre pool93.
+> La fuente activa de métricas y límites de claim es
+> `docs/research/active_claims_2026-07-04.md`. Las referencias a
+> `paper-thesis-final-economic-2026-04-06`, `45/45` o A7--A11 se mantienen como
+> provenance editorial; el cuerpo IJDS actual usa el punto pool93 y A35--A39.
+
 Esta página existe porque el libro cumple una función distinta al paper. El
 paper final debe ser breve, selectivo y persuasivo; el libro puede ser más
 generoso: explica por qué se tomó cada decisión, qué evidencia sostiene cada
@@ -26,8 +32,8 @@ La frase anterior tiene cuatro piezas:
    riesgo [1]--[5];
 2. **restricción operativa**: conecta esos intervalos con robust optimization y
    price of robustness [6]--[9];
-3. **policy económica promovida**: usa el cierre `paper-thesis-final-economic-2026-04-06`
-   y no reabre el champion;
+3. **policy económica promovida**: usa el cierre pool93 documentado en A35--A39
+   y no reabre la cadena upstream congelada;
 4. **cautela post-selección**: separa el teorema Markov del tightening
    condicional y de las validaciones empíricas A7--A11.
 
@@ -43,9 +49,9 @@ empíricos, otros son de ingeniería reproducible.
 | 2 | Los intervalos conformales tienen cobertura útil para decisión | coverage 90 `92.97%`, min group coverage `91.90%` | no afirmar cobertura condicional perfecta |
 | 3 | El intervalo puede convertirse en conjunto de incertidumbre | definición de `u_i(alpha)` y `Gamma_CP` | no tratar `Gamma_CP` como presupuesto ad hoc |
 | 4 | El bound controla no-cobertura ponderada del funded set | `thm-conformal-feasibility` y `V` | no decir que controla directamente una PD latente sin supuesto adicional |
-| 5 | Existe una región robusta finita en OOT | `45/45` policies pass alpha01 en la grilla final declarada sobre `276k` | no decir que eso elimina toda incertidumbre post-selección ni que certifica una región continua |
-| 6 | El champion oficial es económico, no theorem-tight | retorno `$170.5K`, `V=0.028875`, `Gamma_CP=0.187987` | no mezclarlo con el comparador theorem-tight |
-| 7 | La evidencia CRPTO fortalece el paper sin cambiar dirección | A7--A11, apéndice condicional, A25--A34 | no venderlo como validación live o universal |
+| 5 | Existe una frontera robusta finita en OOT | A35: `50,010` políticas semánticas deduplicadas y `27,508` elegibles all-alpha sobre piso; terminal `37,068/37,068` all-alpha passers | no decir que eso certifica una región continua ni un óptimo global |
+| 6 | El body point pool93 es económico, no theorem-tight | retorno `$184.8K`, `V=0.035350`, `Gamma_CP=0.162616`, Markov cap `0.345084` | no mezclarlo con el endpoint mínimo-cap ni con el max-return endpoint |
+| 7 | La evidencia CRPTO fortalece el paper sin cambiar dirección | A35--A39, apéndice condicional, A25--A34 | no venderlo como validación live o universal |
 
 : Escalera editorial de claims del CRPTO {#tbl-crpto-claim-ladder}
 
@@ -159,7 +165,7 @@ prospectiva con protocolo sellado.
 |---|---|---|
 | Diagrama CRPTO | Figura 1 | explica el método en una sola vista |
 | Escalera alpha -> `Gamma_CP` -> funded set | Teoría / método | une conformal y robust optimization |
-| Tabla de champion y región `45/45` | Resultados principales | demuestra cierre exacto del claim sobre la grilla finita declarada |
+| A35 pool93 finite-grid frontier | Resultados principales | demuestra cierre exacto del claim sobre la grilla finita declarada |
 | P1 strict temporal holdout | Appendix o robustness checks | responde post-selección |
 | Funded-set composition | Appendix | útil para reviewers de crédito y riesgo |
 | A10 exact finalists | Appendix | defiende el selector conformal |
@@ -182,7 +188,7 @@ paper-grade, incluida la nueva Figura 1 IJDS, generadas o publicadas desde artef
 | Blueprint del manuscrito | estructura paper-ready y mapa claim -> artifact -> test -> location | `14g-manuscript-blueprint.qmd` |
 | Figura CRPTO limpia | Figura 1 IJDS | `crpto_fig1_journal_pipeline.png` |
 | Figura alpha -> `Gamma_CP` -> funded set | puente teoria-metodo | `crpto_fig13_alpha_gamma_funded_set.png` |
-| Heatmap region robusta | evidencia visual `45/45` | `crpto_fig14_robust_region_heatmap.png` |
+| A35 frontier y A36--A39 pool93 | evidencia visual/tabular del cierre pool93 | `reports/crpto/tables/crpto_tableA35_pool93_ijds_frontier.csv`; `reports/crpto/tables/crpto_tableA36_pool93_body_funded_grade_audit.csv`; `reports/crpto/tables/crpto_tableA37_pool93_body_tail_risk.csv`; `reports/crpto/tables/crpto_tableA38_pool93_body_cluster_bound_audit.csv`; `reports/crpto/tables/crpto_tableA39_pool93_body_bootstrap_metrics.csv` |
 | A12--A34 | robustness appendix journal | `scripts/build_crpto_journal_package.py`; `scripts/build_tail_satisficing_challenger_audit.py`; `scripts/build_tail_constrained_reoptimization.py`; `scripts/build_distribution_robustness_diagnostics.py`; `scripts/build_multidataset_external_replication.py`; `scripts/build_price_of_robustness_cross_dataset.py` |
 | A25--A34 | réplica externa Prosper/Freddie | `models/crpto_multidataset_external_status.json` |
 | Status del paquete | trazabilidad y fuente canonica | `models/crpto_journal_package_status.json`; `models/crpto_multidataset_external_status.json` |

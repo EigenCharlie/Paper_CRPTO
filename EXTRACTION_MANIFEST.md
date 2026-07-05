@@ -9,9 +9,15 @@ exists, and how `tests/test_manifest_regression.py` enforces it.
 ## TL;DR
 
 - **Schema version**: 5 (top-level key `schema_version`).
-- **Champion run tag**: `ijds-rebaseline-2026-06-07`.
-- **170 critical files** are hashed under `critical_hashes` (SHA256 + byte
+- **Dual-tag governance**:
+  - frozen upstream baseline: `ijds-rebaseline-2026-06-07`;
+  - active IJDS body claim: pool93 finite-grid frontier closure
+    `champion-reopen-2026-06-19__pool93__ijds-claim-bound-terminal`.
+- **182 critical files** are hashed under `critical_hashes` (SHA256 + byte
   count).
+- **Pool93 body claim**: return `$184,832.48`, `V(alpha=0.01)=0.035350`,
+  `Gamma_CP(alpha=0.01)=0.162616`, Markov cap `0.345084`, exact alpha
+  violation `0.0`, declared alpha-grid pass `8/8`.
 - **6 files are flagged as non-overwriteable** without a fresh run tag:
   - `models/pd_canonical.cbm`
   - `models/pd_canonical_calibrator.pkl`
@@ -39,7 +45,8 @@ exists, and how `tests/test_manifest_regression.py` enforces it.
 | `destination` | Absolute path where the standalone repo was materialised. |
 | `generated_at_utc` | When the manifest was produced. |
 | `summary` | Free-text human description of the extraction scope. |
-| `champion_metrics` | The headline numbers that define the paper contribution (robust return, V, Γ_CP, etc.). |
+| `champion_metrics` | Frozen upstream baseline numbers retained as provenance and as the declared return floor. |
+| `pool93_ijds_promotion` | Active IJDS body-claim metadata for the pool93 finite-grid frontier closure. |
 | `critical_hashes` | Map `relative_path → {sha256, bytes, hash_source}` for every file the paper depends on. |
 | `validation_results` | Output of the extraction-time guardrail tests. |
 | `files` | Inventory of files copied/created during extraction. |
@@ -70,8 +77,8 @@ be regenerated) or accidental (and should be reverted).
 Regenerating means re-running the extraction tooling under a new
 `schema_version`. The legitimate triggers are:
 
-1. A new paper run tag — the champion has been re-validated against
-   fresh model artefacts.
+1. A new paper run tag — the champion/body claim has been re-validated against
+   fresh or newly promoted artefacts.
 2. A revalidated refactor under one of the plans in `docs/refactor/`
    that produces bit-different but functionally equivalent outputs.
 3. A schema migration of the manifest itself (e.g. switching the hash

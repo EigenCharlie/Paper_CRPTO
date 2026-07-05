@@ -1,5 +1,11 @@
 # CRPTO / IJDS Champion Tournament Protocol - 2026-05-25
 
+> Historical note, 2026-07-04: this protocol is retained as the anti-cherry-pick
+> design that motivated the pool93 reopen. The active body claim is now the
+> pool93 finite-grid frontier recorded in
+> `docs/research/active_claims_2026-07-04.md`. The frozen champion numbers below
+> are historical gates, not the current IJDS headline.
+
 > Ported from the CRPTO research archive
 > (`paper1_crpto_ijds_champion_tournament_protocol_2026-05-25`). **Documentation
 > only.** Defines the governed, anti-cherry-pick tournament that *would* govern
@@ -18,9 +24,10 @@ The search may replace the frozen economic champion only if a predeclared
 candidate wins the complete downstream trade-off. Better AUC alone, better return
 alone, or better bound alone is not sufficient.
 
-Frozen champion: return `170464.5429284627`, `V` `0.03645`, `Gamma_CP` `0.18591`,
-violation `0`, funded coverage `0.9433`, policy `blended_uncertainty` (risk
-`0.175`, gamma `0.45`, uncertainty aversion `0.1`), region `45/45`.
+Historical frozen champion gate: return `170464.5429284627`, `V` `0.03645`,
+`Gamma_CP` `0.18591`, violation `0`, funded coverage `0.9433`, policy
+`blended_uncertainty` (risk `0.175`, gamma `0.45`, uncertainty aversion `0.1`),
+region `45/45`.
 
 ## What This Is Testing
 
@@ -103,12 +110,15 @@ or a future protocol.
 - **Portfolio gate.** alpha01 exact pass true; violation zero; realized return
   competitive; `V`, `Gamma_CP`, funded coverage and composition defensible;
   survives medium/full confirmation, not only 25k/50k probes.
-- **Champion replacement gate.** Full-universe exact alpha01 pass true; violation
-  `0`; return at least `170464.5429284627` (preferably with margin); `V <=
-  0.03645` or a clearly superior `Gamma_CP`/coverage trade-off without materially
-  worsening `V`; `Gamma_CP <= 0.18591` or a clearly superior bound trade-off;
-  funded coverage comparable or better; nested/prospective confirmation passes;
-  the negative-results registry proves the winner was not cherry-picked.
+- **Historical champion replacement gate.** This was the pre-pool93 gate:
+  full-universe exact alpha01 pass true; violation `0`; return at least
+  `170464.5429284627` (preferably with margin); `V <= 0.03645` or a clearly
+  superior `Gamma_CP`/coverage trade-off without materially worsening `V`;
+  `Gamma_CP <= 0.18591` or a clearly superior bound trade-off; funded coverage
+  comparable or better; nested/prospective confirmation passes; the
+  negative-results registry proves the winner was not cherry-picked. After the
+  pool93 promotion, new work should use `active_claims_2026-07-04.md` as the
+  live reopen gate.
 
 ## IJDS Evidence Packet If A New Champion Wins
 
