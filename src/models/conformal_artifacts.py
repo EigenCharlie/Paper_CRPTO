@@ -11,7 +11,6 @@ CANONICAL_INTERVALS_PATH = Path("data/processed/conformal_intervals_mondrian.par
 
 
 def resolve_intervals_path(
-    allow_legacy_fallback: bool = False,
     override_path: str | Path | None = None,
 ) -> tuple[Path, bool]:
     """Resolve conformal intervals artifact path.
@@ -36,18 +35,10 @@ def resolve_intervals_path(
 
 
 def load_conformal_intervals(
-    allow_legacy_fallback: bool = False,
     override_path: str | Path | None = None,
 ) -> tuple[pd.DataFrame, Path, bool]:
     """Load conformal interval artifact and return dataframe + selected path metadata."""
-    if allow_legacy_fallback:
-        logger.warning(
-            "allow_legacy_fallback=True is deprecated; only canonical conformal artifact is supported."
-        )
-    path, is_legacy = resolve_intervals_path(
-        allow_legacy_fallback=allow_legacy_fallback,
-        override_path=override_path,
-    )
+    path, is_legacy = resolve_intervals_path(override_path=override_path)
     if override_path is not None:
         logger.info(f"Using conformal intervals override artifact: {path}")
     else:

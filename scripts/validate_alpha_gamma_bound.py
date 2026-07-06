@@ -91,7 +91,6 @@ def _load_aligned_dataset(
 ) -> pd.DataFrame:
     candidates = _load_candidates().reset_index(drop=True)
     intervals, path, is_legacy = load_conformal_intervals(
-        allow_legacy_fallback=False,
         override_path=conformal_intervals_path,
     )
     logger.info(

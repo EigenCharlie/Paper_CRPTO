@@ -525,7 +525,6 @@ def _load_exact_aligned_dataset(intervals_path: Path) -> pd.DataFrame:
 
     candidates = _load_candidates().reset_index(drop=True)
     intervals, _, _ = load_conformal_intervals(
-        allow_legacy_fallback=False,
         override_path=str(intervals_path),
     )
     loans, ints = _align_loans_and_intervals(
