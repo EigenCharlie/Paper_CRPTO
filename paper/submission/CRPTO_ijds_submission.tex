@@ -69,10 +69,10 @@ Portfolio Decisions}
 Credit allocation is a data-science-for-decisions problem: calibrated default
 probabilities matter only after they shape which loans are funded. We introduce
 Conformal Robust Predict-Then-Optimize (CRPTO), a post-hoc bridge that maps a
-frozen calibrated probability-of-default artifact through Mondrian conformal
+frozen calibrated probability-of-default model through Mondrian conformal
 intervals into robust portfolio constraints and an empirical funded-set audit.
-On a 276{,}869-loan out-of-time Lending Club evaluation, the selected pool93
-body point earns \$184.8K on a \$1M budget while passing the declared
+On a 276{,}869-loan out-of-time Lending Club evaluation, the selected policy
+earns \$184.8K on a \$1M budget while passing the declared
 eight-level alpha grid ($V(0.01)=0.035350$,
 $\Gamma_{\mathrm{CP}}=0.162616$, Markov cap $0.345084$, zero violation). The
 same exact frontier exposes conservative and economic endpoints, making the
@@ -84,8 +84,8 @@ price of robustness forms a positive premium series ordered by panel default
 rate. The contribution is a
 conformal-robust credit-portfolio decision certificate with a distribution-free
 Markov bound under weighted funded-set validity: it connects real credit data,
-calibrated predictive models, robust funding decisions, and a drift harness that
-regenerates the prediction-to-decision chain bit-exactly from frozen artifacts
+calibrated predictive models, robust funding decisions, and a validation harness
+that rebuilds the prediction-to-decision chain from frozen inputs
 while keeping the statistical guarantee boundary explicit.%
 }
 
@@ -123,7 +123,7 @@ CRPTO answers this question with a post-hoc, reproducible pipeline. It starts fr
 a calibrated CatBoost PD model, constructs Mondrian conformal intervals over
 PD-scale predictions, and maps the upper conformal endpoint into robust portfolio
 constraints. The pipeline is modular by design: the predictive model, conformal
-layer, optimization policy, and paper artifacts each have separate contracts.
+layer, optimization policy, and paper outputs each have separate contracts.
 That separation lets the paper ask whether a frozen prediction system can be
 converted into a defendable decision system without reopening hyperparameter
 search whenever the manuscript or appendix changes.
@@ -132,7 +132,7 @@ The empirical setting is the Lending Club retail-loan panel, with an out-of-time
 evaluation set of 276{,}869 loans. The consolidated frontier contains 50{,}010
 deduplicated semantic policies, of which 27{,}508 pass every declared alpha
 level and exceed the return floor. From that declared finite frontier, the
-selected pool93 body point is the highest-return policy that passes the eight
+selected policy is the highest-return point that passes the eight
 alpha levels under the declared $0.345$ Markov cap; it is neither a continuous
 global optimum nor the economic endpoint. The selected point earns \$184.8K on
 a \$1M budget and passes the exact empirical funded-set audit at
@@ -159,19 +159,19 @@ miscoverage $V(\alpha)$, with supplement propositions showing that Markov is
 optimal under the stated assumption (A.1) and locating the cluster structure
 that would tighten it (A.2). Third, it locates that construction relative to
 data-driven robust optimization, P2P lending portfolio models, conformal credit
-scoring, and decision-focused learning. Fourth, it provides an artifact-backed
+scoring, and decision-focused learning. Fourth, it provides an evidence-backed
 empirical study where every table and figure is generated from frozen outputs
 rather than manually transcribed summaries. Fifth, it uses a three-level
 evidence ladder: the Lending Club funded set carries the certificate, Prosper
 and Freddie/Mendeley test recipe transfer as external economic replications,
 and the tail, dependence, online, and robustness appendices stay diagnostic.
 The key claim is narrow: CRPTO maps frozen calibrated
-PD artifacts into a robust funded set, reports the portfolio-level conformal
+PD models into a robust funded set, reports the portfolio-level conformal
 premium $\Gamma_{\mathrm{CP}}$, and verifies exact alpha-safe weighted
 miscoverage on the promoted Lending Club portfolio and its surrounding finite-grid
 frontier. The same conformal and LP gates remain viable on two additional
-credit datasets, while the paper keeps the governance boundary between safe
-paper-facing reruns and protected champion-changing stages visible.
+credit datasets, while the paper keeps the boundary between paper revision and
+new model-search evidence visible.
 
 Read as data science for decisions, the paper's four components are explicit:
 the data are a static Lending Club OOT panel plus Prosper/Freddie external stress
@@ -183,7 +183,7 @@ committees.
 \begin{figure}[t]
   \centering
   \includegraphics[width=\textwidth]{crpto_fig1_journal_pipeline.png}
-  \caption{CRPTO maps frozen calibrated PD artifacts through a Mondrian conformal
+  \caption{CRPTO maps frozen calibrated PD models through a Mondrian conformal
   uncertainty layer into an auditable robust portfolio decision and exact
   funded-set certificate.}
   \label{fig:pipeline}
@@ -219,8 +219,8 @@ Theorem~\ref{thm:funded-set-bound}
 are evaluated exactly on that funded set, so the certificate concerns the
 allocation actually purchased rather than the input set alone. Its empirical
 emphasis also differs: the uncertainty set is
-not an abstract benchmark instance, but a credit-risk interval artifact with
-DVC-backed lineage, paper tables, and model-risk documentation.
+not an abstract benchmark instance, but a credit-risk interval model with
+auditable lineage, paper tables, and model-risk documentation.
 
 The third foundation is predict-then-optimize and decision-focused learning. SPO+
 and modern decision-focused learning ask models to respect the loss surface induced
@@ -257,7 +257,7 @@ multi-distribution conformal validity, online conformal portfolio methods,
 end-to-end conformal risk training, and conformal satisficing
 \citep{bao2025croms,yang2026multidistribution,liu2026portfolio,yeh2025training,zhao2025robust}
 motivates the journal-strengthening package in this paper. We use those ideas where
-they can be evaluated from frozen CRPTO artifacts: OCE/CVaR
+they can be evaluated from the frozen CRPTO evidence: OCE/CVaR
 \citep{rockafellar2000cvar,bental2007oce} appears as a tail-risk diagnostic, robust
 satisficing appears as committee-style margin evidence, and SPO+ motivates the
 regret-auditability frontier. The method-changing variants---optimized OCE/CVaR
@@ -270,7 +270,7 @@ criteria.
 
 CRPTO is not first in any broad individual family; its claim is the combination of
 calibrated PD, conformal uncertainty, robust credit-portfolio optimization, exact
-funded-set validation, and reproducible artifact governance.
+funded-set validation, and reproducible governance.
 
 \begin{table}[h]
   \centering
@@ -283,18 +283,18 @@ funded-set validation, and reproducible artifact governance.
     \midrule
     P2P/Lending Club OR & Robust or multi-objective funding models. & Conformal PD uncertainty plus exact funded-set validation. & Leaves a gap between prediction uncertainty and a post-allocation certificate. \\
     Conformal credit scoring & Intervals for score uncertainty. & A downstream robust portfolio decision. & Does not audit a budgeted funded set or economic policy. \\
-    Conformal robust optimization & Conformal sets in robust decisions. & Frozen credit-risk lineage, PD governance and funded-set certificate. & Not credit-specific enough for PD artifact governance. \\
-    Decision-focused learning & Regret-aligned training. & Post-hoc governance for existing calibrated PD models. & Does not certify risk controls after a frozen artifact. \\
+    Conformal robust optimization & Conformal sets in robust decisions. & Frozen credit-risk lineage, PD governance and funded-set certificate. & Not credit-specific enough for PD lineage. \\
+    Decision-focused learning & Regret-aligned training. & Post-hoc governance for existing calibrated PD models. & Does not certify risk controls after a frozen PD model. \\
     Conformal finance portfolios & Financial portfolio applications. & Retail-credit payoffs, default risk and model-risk documentation. & Market-return portfolios face different payoffs and controls. \\
     \bottomrule
   \end{tabular}
 \end{table}
 
 The novelty is the closed loop, not any single row of the table: a frozen calibrated
-credit artifact becomes conformal upper endpoints, those endpoints enter a robust
+credit model becomes conformal upper endpoints, those endpoints enter a robust
 funded-set decision, and the purchased allocation is audited after the decision with
 file-backed governance. None of the neighboring lines jointly supplies that
-frozen-artifact-to-funded-set certificate for a credit portfolio.
+frozen-model-to-funded-set certificate for a credit portfolio.
 
 % =====================================================================
 \section{Method}\label{sec:method}
@@ -313,7 +313,7 @@ Calibration is treated as a contract. The downstream layers do not receive a
 free-form classifier; they receive a calibrated PD vector, feature metadata, and a
 model contract that fixes feature order and categorical handling. This prevents a
 common reproducibility failure in applied predict-then-optimize studies: a table can
-change because a preprocessing artifact drifted, even though the optimization code
+change because a preprocessing file changed, even though the optimization code
 did not change.
 
 \subsection{Mondrian Conformal Layer}\label{sec:method-cp}
@@ -321,7 +321,7 @@ did not change.
 For each loan $i$, let $\hat{p}_i$ denote the calibrated PD. The conformal layer
 forms prediction intervals on the PD scale and records the upper endpoint
 $u_i(\alpha)$. Operationally, CRPTO evaluates Mondrian partitions rather than a
-single global interval. The promoted uncertainty artifact uses a score-decile-based
+single global interval. The selected uncertainty layer uses a score-decile-based
 Mondrian partition selected by out-of-time interval quality, while grade-based
 partitions remain the natural governance baseline. The score-decile choice keeps
 each cell well populated even at the tight $\alpha=0.01$, where a per-cell $99\%$
@@ -560,30 +560,23 @@ expansion (2018--2019) and a regime break (2020 COVID), so coverage and the
 funded-set certificate are measured under a documented distribution shift rather
 than on a random split that would let the model see the future.
 
-The design distinguishes three kinds of computation. Predictive and conformal searches
-choose models, calibration, partitions, and policy families. Those searches are frozen
-for this manuscript. Paper-facing reruns regenerate tables, figures, evidence
-summaries, and Quarto outputs from those artifacts. Validation reruns are allowed
-only when they consume frozen choices and produce a drift report against the recorded
-champion. This separation is central to the paper's reproducibility claim: the
-manuscript can evolve without quietly reopening the 276k-policy search that selected
-the promoted result. The certificate chain carries a stronger, verified property: a
-drift harness recomputes the promoted Mondrian intervals from the frozen PD binaries
-and the recorded recipe and reproduces every published endpoint and per-cell coverage
-exactly (maximum absolute difference zero under the locked dependency stack),
-including re-learning identical group floor multipliers. Gradient-boosted retraining
-is not bit-reproducible across runs, which is why the predictive layer ships as a
-frozen, hash-verified binary and why the prediction-to-decision chain---the part the
-claims rest on---is the part the harness certifies end to end. Governance keeps the
-two certified results distinguishable: the frozen upstream promotion record continues
-to describe the bound-aware baseline whose realized return defines the declared
-return floor, while the pool93 governance sidecars are the authoritative
-machine-readable source for the body point and its frontier; an automated
-claim-sync guardrail asserts that every body-claim number printed in the
-manuscript and supplement matches those sidecar artifacts, so the two records
-cannot silently diverge.
+The design distinguishes three kinds of computation. Predictive and conformal
+searches choose models, calibration, partitions, and policy families. Those
+searches are frozen for this manuscript. Paper-facing reruns regenerate tables,
+figures, evidence summaries, and manuscript surfaces from frozen inputs. This
+separation is central to the reproducibility claim: the manuscript can evolve
+without quietly reopening the policy search that selected the promoted result.
+Governance keeps the two certified results distinguishable: the frozen upstream
+record defines the declared return floor, while the selected-policy governance
+files define the body point and its frontier. Automated claim-sync tests assert
+that every body-claim number printed in the manuscript and supplement matches
+those files. A validation harness additionally rebuilds the promoted conformal
+intervals from the frozen PD binaries and recorded recipe and verifies the
+published endpoints and coverage summaries. Gradient-boosted retraining is not
+presented as the routine reproduction target across machines; retraining would
+be a new research run, not the routine reproduction path for this submission.
 
-All primary artifacts are represented as files with explicit ownership: model
+All primary evidence objects are represented as files with explicit ownership: model
 binaries, calibration objects, conformal intervals, portfolio allocations, a
 YAML/Parquet feature contract, tables, figures, and status reports. The anonymous
 submission describes the bundle without
@@ -591,13 +584,13 @@ revealing author identity. Repository and remote-storage URLs will be disclosed
 according to the journal's double-anonymous and data/code-disclosure policy.
 
 The body-supplement split is fixed before submission. The body keeps the CRPTO
-pipeline, the alpha-to-portfolio link, the pool93 finite-grid frontier, and the
+pipeline, the alpha-to-portfolio link, the finite-grid frontier, and the
 core metrics, plus the compact regret-auditability frontier. The online supplement carries
 A3--A39, the conformal finalist ablation, funded-set loan audit, tail-risk
 diagnostics, satisficing margins, dependence diagnostics, the CVaR/OCE
 tail-constrained re-optimization (A22), the multi-distribution (A23) and online
 ACI-stability (A24) diagnostics, the multi-dataset external economic replication
-tables (A25--A34), the promoted-pool93 frontier and funded-set audits
+tables (A25--A34), the selected-policy frontier and funded-set audits
 (A35--A39), MRM/fairness material, and reproduction commands. This keeps the
 IJDS body focused while preserving the audit trail that reviewers need.
 
@@ -626,7 +619,7 @@ alone. Its Brier score $0.1544$ and ECE near $0.0070$ are therefore as important
 as discrimination. The conformal layer over-covers marginally at the reported
 levels (90\% coverage $0.9297$, 95\% coverage $0.9664$ for the conformal winner).
 The portfolio layer then turns this uncertainty into an exact finite-grid
-return-bound frontier. The selected pool93 body point passes the
+return-bound frontier. The selected policy passes the
 $V\le\sqrt{\alpha}$ certificate at the tightest reported level while keeping zero
 deterministic violation.
 
@@ -684,7 +677,7 @@ Markov cap $0.345084$ as the conservative theorem-facing risk cap.
 \end{table}
 
 The central empirical object is now a return-bound frontier rather than a single
-winner. The consolidated pool93 artifact deduplicates 51{,}678 raw rows into
+winner. The consolidated frontier surface deduplicates 51{,}678 raw rows into
 50{,}010 semantic policies; 27{,}508 policies both pass every level in the
 declared alpha grid and exceed the declared return floor. The terminal endpoint
 search alone evaluates 37{,}068 policies and 296{,}544 exact alpha checks, with
@@ -694,9 +687,9 @@ The provenance of the frontier deserves one explicit sentence, because two
 certified numbers coexist in the project's governance record. The declared
 return floor \$170{,}464.54 is itself the realized return of the previously
 certified bound-aware allocation on the same frozen chain, retained as the
-frozen upstream baseline; the pool93 frontier is a deterministic re-evaluation
-of a pre-declared finite policy grid over the \emph{same} frozen PD artifacts
-and Mondrian conformal intervals, so no upstream artifact (model, calibrator,
+frozen upstream baseline; the declared frontier is a deterministic re-evaluation
+of a pre-declared finite policy grid over the \emph{same} frozen PD model
+and Mondrian conformal intervals, so no upstream object (model, calibrator,
 or interval) was regenerated when the body point moved from the floor to
 \$184.8K. The earlier certificate is not discarded: it becomes the floor
 that every eligible frontier policy must beat, which is why the frontier is
@@ -733,10 +726,10 @@ point; it is the balanced point selected by the declared return-bound lens. The
 endpoint at Markov cap $0.273036$ shows how conservative the certified frontier
 can become while preserving the return floor, and the \$223.5K endpoint shows
 the economic return available when the committee accepts a looser cap. The
-supplement reports the full A35 table and the artifact paths.
+supplement reports the full frontier table and traceability details.
 
 The funded-set under-coverage remains structural rather than a calibration-draw
-artifact. With $n_{\mathrm{cal}}=237{,}584$ calibration loans, the split-conformal
+effect. With $n_{\mathrm{cal}}=237{,}584$ calibration loans, the split-conformal
 conditional-coverage result makes marginal coverage highly stable around the
 nominal level \citep{vovk2005,angelopoulos2023}. The residual funded-set $V$ is a
 test-side, portfolio-selection quantity. That is why the paper reads the safety
@@ -754,9 +747,9 @@ return together instead of promoting a standalone coverage number.
     Reviewer concern & Body answer & Primary evidence \\
     \midrule
     ``This is only a classifier.'' & The claim is decision auditability, not AUC leadership. & Exact funded-set certificate and A35 frontier. \\
-    ``CP + RO already exists.'' & CRPTO instantiates the idea for frozen credit PD artifacts, funded-set governance, and Lending Club payoffs. & Closest-work boundary and bound claim stack. \\
+    ``CP + RO already exists.'' & CRPTO instantiates the idea for frozen credit PD models, funded-set governance, and Lending Club payoffs. & Closest-work boundary and bound claim stack. \\
     ``Adaptive selection breaks coverage.'' & The theorem states weighted funded-set validity as an assumption and then audits the frozen selection exactly. & Assumption map, validity ladder, and A23 diagnostics. \\
-    ``The champion is cherry-picked.'' & The promoted point is selected from a consolidated finite frontier with 50{,}010 deduplicated semantic policies and 27{,}508 eligible all-alpha above-floor policies. & A35 frontier table and governance sidecars. \\
+    ``The selected policy is cherry-picked.'' & The selected point comes from a consolidated finite frontier with 50{,}010 deduplicated semantic policies and 27{,}508 eligible all-alpha above-floor policies. & Frontier table and governance files. \\
     \bottomrule
   \end{tabular}
   }%
@@ -871,22 +864,22 @@ allocation.
 
 The supplement also carries the reviewer-facing robustness checks: nested holdout,
 strict temporal holdout, exact evaluation of conformal finalists, uncertainty-set
-baselines, and the pool93 A35 finite-grid frontier. Diagnostics that depend on
-the selected funded-loan composition are split explicitly: A36--A39 are regenerated
-from the promoted pool93 allocation, while legacy tail-frontier tables remain
+baselines, and the selected-policy finite-grid frontier. Diagnostics that depend on
+the selected funded-loan composition are split explicitly: selected-allocation checks
+stay diagnostic, while legacy tail-frontier tables remain
 diagnostic machinery rather than body selectors.
 
 The third concern is whether a decision-focused or SPO+ model would be a stronger
 baseline. CRPTO treats SPO+ as an important comparator, but not as the same governance
 object. Decision-focused training can reduce regret relative to an optimization loss,
-while CRPTO prioritizes calibrated uncertainty, artifact traceability, and exact
+while CRPTO prioritizes calibrated uncertainty, traceable risk controls, and exact
 funded-set checks. The manuscript therefore does not claim to dominate SPO+ on every
 regret metric; it claims a different auditability/economic trade-off.
 
 \subsection{Regret-Auditability Frontier}\label{sec:regret}
 
 The SPO+ comparator makes the trade-off sharp. In the committed A19/Figure~\ref{fig:regret}
-artifact, SPO+ reduces mean regret from $0.425896$ to $0.216837$, a $49.09\%$
+results, SPO+ reduces mean regret from $0.425896$ to $0.216837$, a $49.09\%$
 improvement over the two-stage baseline (Wilcoxon $p=1.39\times10^{-164}$). A later
 PyEPO 1.3.7 paired rerun independently reports the same conclusion under a slightly
 different protocol ($0.358073$ to $0.184366$, $48.51\%$; Wilcoxon
@@ -947,42 +940,40 @@ frontier in Figure~\ref{fig:regret}: it calibrates a robustness level against a
 cost--risk preference for an abstract optimization family. CRPTO is the
 complementary, applied object: it does not propose a new frontier estimator, but
 instantiates one corner of that frontier on a frozen, production-style
-  credit-risk artifact, with a named conformal robustness premium
-  $\Gamma_{\mathrm{CP}}$, an exact funded-set certificate, finite-grid portfolio
-  frontier, and model-risk lineage that a credit committee can inspect.
+credit-risk model, with a named conformal robustness premium
+$\Gamma_{\mathrm{CP}}$, an exact funded-set certificate, finite-grid portfolio
+frontier, and model-risk lineage that a credit committee can inspect.
 
 \FloatBarrier
 \subsection{Tail Risk and Distribution Robustness}\label{sec:tail-dist}
 
 Two reviewer questions deserve a body-level answer: what does the selected policy
 give up on the tail, and does its coverage hold once the evaluation is sliced by
-grade? The current manuscript answers the first question at the return-bound
-level in Table~\ref{tab:pool93-frontier}: lower Markov caps are available at a
-documented return cost, while higher-return endpoints require looser caps. A36
-regenerates the funded-set grade audit from the selected pool93 allocation. A37
-then reprices the same selected allocation under LGD-sensitive CVaR/OCE tail
-summaries, and A38 recomputes the cluster-bound concentration audit from the same
-funded weights. A39 adds fixed-allocation bootstrap intervals for the funded-loan
-contribution metrics. The body claim remains the return-bound certificate; these
-tail-risk and bootstrap rows are used to explain the selected point's risk profile,
-not to introduce a hidden CVaR/OCE or bootstrap champion criterion.
+grade? The return-bound frontier answers the first question directly: lower
+Markov caps are available at lower return, while the selected policy sits on the
+declared frontier. The supplement then checks the funded-grade mix,
+selected-allocation tail repricing, dependence sensitivity, and fixed-allocation
+bootstrap interval. These rows explain the selected policy's risk profile; they
+do not add a hidden CVaR/OCE or bootstrap selector.
 
 \begin{table}[t]
   \centering
-  \caption{Tail-risk and distribution-robustness scope after pool93 promotion.}
+  \caption{Tail-risk and distribution-robustness checks for the selected decision.}
   \label{tab:tail-scope}
-  \resizebox{\textwidth}{!}{%
-  \begin{tabular}{lll}
+  {%
+  \small
+  \setlength{\tabcolsep}{4pt}
+  \renewcommand{\arraystretch}{1.18}
+  \begin{tabular}{@{}>{\raggedright\arraybackslash}p{0.26\textwidth}>{\raggedright\arraybackslash}p{0.36\textwidth}>{\raggedright\arraybackslash}p{0.30\textwidth}@{}}
     \toprule
-    Evidence family & Current use & Boundary \\
+    Reviewer question & Body answer & Boundary \\
     \midrule
-    A35 return-bound frontier & Promoted pool93 evidence. & Exact finite-grid policy surface, not a continuous optimum. \\
-    A36 funded-set grade audit & Pool93 body-point composition evidence. & Grade buckets are business diagnostics, not protected-class fairness evidence. \\
-    A37 pool93 tail-risk repricing & Reprices the selected body allocation under LGD, CVaR, and OCE summaries. & Diagnostic risk profile of the selected point, not an optimized tail-risk objective. \\
-    A38 pool93 cluster-bound audit & Recomputes concentration-sensitive Hoeffding thresholds from selected funded weights. & Sensitivity under extra cross-cluster assumptions; Markov remains the body theorem. \\
-    A39 pool93 bootstrap audit & Bootstraps funded-loan contributions under the fixed selected allocation. & Empirical contribution interval; solver/model/input uncertainty is not resampled. \\
-    A20--A22 legacy CVaR/OCE package & Shows how CRPTO exposes return-tail trade-offs on the earlier diagnostic surface. & Historical diagnostic machinery, not the promoted pool93 selector. \\
-    A23--A24 distribution/online coverage checks & Stress the frozen interval artifact across grades and time. & Coverage diagnostics, not universal conditional coverage. \\
+    Is the point only high-return? & The frontier shows safer lower-return choices and higher-return looser-cap choices. & Finite grid, not a continuous optimum. \\
+    What loans does it fund? & The supplement reports funded exposure by grade. & Business mix, not protected-class fairness certification. \\
+    What happens in the tail? & The selected allocation is repriced under LGD and tail summaries. & Risk profile only; tail risk is not the selector. \\
+    Does dependence change the bound? & Cluster sensitivity recomputes tighter assumptions. & Sensitivity only; Markov remains the body theorem. \\
+    Is the return estimate fragile? & A fixed-allocation bootstrap reports contribution intervals. & Does not resample the model, solver, or search. \\
+    Does coverage survive slices? & Grade, distribution, and online-style checks stress the frozen intervals. & Diagnostics, not universal conditional or live coverage. \\
     \bottomrule
   \end{tabular}
   }%
@@ -991,15 +982,15 @@ not to introduce a hidden CVaR/OCE or bootstrap champion criterion.
 On distribution robustness, the worst per-grade 90\% coverage on the frozen
 intervals is grade E at $0.9004$, still above the $0.90$ target. Supplement A23
 reports marginal coverage $0.9293$ on its multi-distribution evaluation slice,
-while the promoted artifact summary in Table~\ref{tab:core} reports $0.9297$;
-these are distinct cuts through the same interval artifact. No grade falls
+while the promoted interval summary in Table~\ref{tab:core} reports $0.9297$;
+these are distinct cuts through the same intervals. No grade falls
 below target, so the conservative marginal coverage is not hiding a failing segment; the thinnest
 grade$\times$vintage cells are where a future group-weighted or multi-distribution
 recalibration would matter, marked as future work rather than a present guarantee.
 
 \subsection{Managerial Implication}\label{sec:managerial}
 
-For a credit-risk committee, CRPTO turns a modeling artifact into a decision
+For a credit-risk committee, CRPTO turns a model into a decision
 conversation. The committee can pick a risk cap $\tau$, inspect how a policy
 parameter $\gamma$ changes the funded set, read $\Gamma_{\mathrm{CP}}$ as the
 conformal robustness premium paid by that funded set, and compare $V(\alpha)$
@@ -1020,7 +1011,7 @@ regret-auditability frontier, A20 tail-risk diagnostic audit, A21 cluster-bound
 tightening audit, A22 CVaR/OCE tail-constrained re-optimization, and A23--A24
 multi-distribution and online (ACI) conformal-stability diagnostics, plus
 A25--A34 external economic replication, exhaustiveness, interval, subperiod,
-and sensitivity audits on Prosper and Freddie/Mendeley, and A35--A39 promoted-pool93
+and sensitivity audits on Prosper and Freddie/Mendeley, and A35--A39 selected-policy
 frontier, composition, tail-risk, concentration, and bootstrap audits.
 
 % =====================================================================
@@ -1068,8 +1059,8 @@ auditable post-hoc predict-then-optimize contribution.
 
 Can finite predictive uncertainty change a funding decision in a way a reviewer
 can audit? CRPTO's answer is yes, provided the statistical boundary is stated
-and the decision artifact is frozen. On the Lending Club out-of-time panel the
-selected pool93 body point earns \$184{,}832.48 on a \$1M budget while passing
+and the decision record is frozen. On the Lending Club out-of-time panel the
+selected policy earns \$184{,}832.48 on a \$1M budget while passing
 the exact empirical $\alpha=0.01$ funded-set audit, and it lies on a declared
 finite-grid return-bound frontier with 50{,}010 deduplicated semantic policies
 and 27{,}508 all-alpha above-floor policies rather than at a single lucky point.
@@ -1080,7 +1071,7 @@ of robustness is a bounded premium ordered by panel default risk across the
 frozen external applications. The
 contribution is scoped as an auditable post-hoc decision certificate, not a new
 end-to-end learner or a live-deployment study, and every reported number is
-regenerable from frozen artifacts.
+regenerable from frozen evidence.
 
 % Reproducibility/companion disclosure is kept for the cover letter / non-anonymous
 % version, not the double-anonymous body.

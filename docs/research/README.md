@@ -35,6 +35,10 @@ perenne y lo que el código lee/escribe.
   pool93.
 - `literature_reference_audit_2026-06-14.md` — auditoría de evidencia local de
   lectura para las referencias citadas en el cuerpo IJDS.
+- `ijds_simplification_cleanup_audit_2026-07-06.md` — decisión reader-facing
+  sobre qué lenguaje técnico queda en el body, qué pasa al supplement/package,
+  limpieza local de peso y frontera entre refactor estricto y nueva corrida
+  tolerante.
 
 ## Registros de gobernanza (decisiones; no se re-ejecutan sin permiso)
 
