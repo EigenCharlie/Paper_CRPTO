@@ -3,10 +3,11 @@
 Auditoría de consistencia de claims, parsimonia de código, skills, docs y plan
 editorial del paper, de cara a la submission IJDS (target interno 2026-08-10).
 Método: tres pasadas de exploración paralelas (código, claims, tooling/docs)
-más verificación directa de fuentes. Las fases F1 y F2 se ejecutaron y
-committearon el mismo 2026-07-05 (sección 7); las fases F3–F5 quedan
-pendientes con instrucciones de handoff completas (sección 8) para poder
-continuarlas en cualquier sesión sin el contexto de la sesión original.
+más verificación directa de fuentes. Corrección post-auditoría: al retomar,
+F1/F2 estaban en el working tree pero no committeadas. Codex movió ese trabajo
+a `codex/crpto-full-audit-closeout` y cerró F1–F5 con commits separados; P3 se
+auditó como no-op por falta de una rama muerta segura en
+`scripts/generate_conformal_intervals.py`.
 
 Alcance acordado con Carlos: el refactor incluye la capa protegida validando
 con `just drift-gate`; la fuente editorial del paper es `paper/CRPTO_ijds.qmd`
@@ -20,7 +21,7 @@ con `just drift-gate`; la fuente editorial del paper es `paper/CRPTO_ijds.qmd`
 | `AGENTS.md` | Estaba stale (rebaseline como champion activo) | RESUELTO en F1: reducido a puntero |
 | PDFs de submission | `supplement_ijds.pdf` stale (15-jun); PDF oficial sin garantía de frescura | RESUELTO en F1: recompilados y verificados |
 | Skills `.claude/skills/` | No cargaban (formato plano) | RESUELTO en F1: migradas + 2 nuevas |
-| Código | Sano; sin AI slop; F4 redujo helpers duplicados y retiró una lane muerta | Pendiente: F5 |
+| Código | Sano; sin AI slop; F4 redujo helpers duplicados y F5 cerró el lane protegido seguro | Resuelto en F4/F5 |
 | Docs | Memos cerrados mezclados con vigentes; la mayoría pinneados por referencias | Parcial en F2 (ver 7.2) |
 | justfile / DVC / CI / pre-commit / configs | Coherentes, sin huérfanos | Sin acción necesaria |
 | Escritura del paper | Sin slop de buzzwords; el riesgo real es densidad/repetición | F3 ejecutada |
@@ -57,7 +58,7 @@ en F1) empaqueta ese gate más el cotejo por grep de esta tabla.
 ## 3. Backlog de refactor (parsimonia)
 
 Cadena protegida (todo cambio pasa `just drift-gate` bit-exacto):
-`scripts/train_pd_model.py` (2,377 líneas), `scripts/generate_conformal_intervals.py`
+`scripts/train_pd_model.py` (2,341 líneas), `scripts/generate_conformal_intervals.py`
 (1,870), `scripts/optimize_portfolio.py`, `scripts/validate_conformal_policy.py`,
 `scripts/search/run_portfolio_bound_exact_eval.py`, `src/models/conformal/*`,
 `src/models/optuna_tuning.py`, `src/models/conformal_tuning.py`,
@@ -67,7 +68,7 @@ lane protegido aunque el cambio parezca trivial.
 
 No se encontró AI slop en código (sin emojis en logs, sin bloques comentados,
 sin retry/defensive code de producción). SPO/PyEPO es comparador externo real,
-no código vestigial. El detalle de S1–S5 y P1–P3 está en la sección 8 (handoff).
+no código vestigial. El detalle ejecutado de S1–S5 y P0–P3 está en la sección 8.
 
 ## 4. Skills
 
@@ -122,11 +123,11 @@ Si en la ronda post-submission se edita el libro, ese es el momento de mover
 estos memos junto con sus citas. Mientras tanto son la superficie de
 provenance que el libro enlaza — moverlos rompería más de lo que limpia.
 
-## 6. Plan editorial del paper (F3, pendiente)
+## 6. Plan editorial del paper (F3 cerrada)
 
 La prosa no tiene slop de buzzwords y los boundaries de claims son
-disciplinados. El problema editorial real es densidad y repetición. Los cinco
-puntos, con detalle de ejecución en la sección 8.3:
+disciplinados. El problema editorial real era densidad y repetición. Los cinco
+puntos se cerraron en F3; el detalle de ejecución está en la sección 8.3:
 
 1. Abstract: ~230 palabras con 10+ números; dejar los canónicos y mover
    denominadores de frontera al cuerpo.
@@ -146,8 +147,8 @@ validity); (4) evidencia — frontera finita pool93 con certificado exacto;
 (5) transferencia — Prosper/Freddie como replicación de receta, no
 certificados nuevos; (6) gobernanza — cadena bit-exacta y guardrail tests.
 
-Los dos únicos riesgos de lectura que encontró la auditoría, y que F3 debe
-cerrar sin debilitar nada más:
+Los dos únicos riesgos de lectura que encontró la auditoría, y que F3 cerró sin
+debilitar nada más:
 
 1. Un reviewer puede leer el body point como cherry-picking o confundirlo con
    el endpoint económico de $223K — por eso el punto 3 (regla de selección
@@ -197,19 +198,18 @@ Reducción de alcance documentada: de ~15 candidatos originales, 12 quedaron
 KEEP por la red de referencias (tabla en sección 5). Esto no es deuda: es la
 constatación de que el repo usa los memos como superficie de citas.
 
-## 8. Handoff detallado de las fases pendientes
+## 8. Registro detallado de fases ejecutadas
 
-### 8.1 Cómo retomar en un chat nuevo
+### 8.1 Cómo auditar o retomar trabajo futuro
 
 1. Leer `CLAUDE.md`, este memo (secciones 5–8) y
    `docs/research/active_claims_2026-07-04.md`. Con eso alcanza; no hace falta
    reconstruir la auditoría ni releer los reportes de exploración.
-2. Confirmar con Carlos qué fase se ejecuta. No mezclar fases en un commit:
-   F3 es prosa, F4 es código no protegido, F5 es código protegido.
-3. Nada de lo pendiente requiere re-correr stages DVC protegidos. Si una
-   tarea parece requerirlo, está mal planteada: parar y preguntar.
-4. Código/refactor va en rama + PR (regla 11 de `CLAUDE.md`); F3 puede ir en
-   `main` solo si Carlos lo pide explícitamente.
+2. Para trabajo nuevo, no mezclar superficies en un commit: prosa, código no
+   protegido y código protegido siguen lanes separados.
+3. Nada de este cierre requirió re-correr stages DVC protegidos. Si una tarea
+   futura parece requerirlo, está mal planteada: parar y preguntar.
+4. Código/refactor va en rama + PR (regla 11 de `CLAUDE.md`).
 5. Commitear con hooks activos (nunca `--no-verify`); los hooks de pre-push
    corren smoke + validate-champion.
 
@@ -274,7 +274,7 @@ Trampas conocidas de F3:
 - El supplement se edita en `paper/supplement_ijds.qmd`; su PDF es HTML-print
   (`just paper-ijds-supplement-pdf`), no LaTeX.
 
-### 7.3 F3/F4 — Cierre Codex 2026-07-05
+### 7.3 F3/F4/F5 — Cierre Codex 2026-07-05
 
 Estado real de Git al retomar: F1/F2 estaban en el working tree, no
 committeadas, pese a que este memo decía "committeadas". Codex movió el trabajo
@@ -314,12 +314,32 @@ F4 ejecutada:
 
 Gates F4: `just lint`, `just test-fast` y `just validate-champion` en verde.
 
+F5 ejecutada/auditada:
+
+- Baseline previo: `just validate-champion` y `just drift-gate` en verde.
+- P0: eliminado `allow_legacy_fallback` de
+  `src/models/conformal_artifacts.py`, sus call-sites y test.
+- P1: `scripts/optimize_portfolio.py` y `scripts/train_pd_model.py` adoptan el
+  `artifact_path` compartido. `generate_conformal_intervals.py` y
+  `validate_conformal_policy.py` no tenían helper local equivalente que migrar.
+  `_write_json` en `train_pd_model.py` se conservó porque envuelve
+  `atomic_write_json`, no el writer LF-idempotente de publicación.
+- P2: retirados los dataclasses privados single-use de `train_pd_model.py`
+  (`ResolvedFeatureSets`, `TrainingSplits`, `PreparedTrainingInputs`) y
+  reemplazados por tuplas desempaquetadas en el mismo flujo.
+- P3: auditado sin cambio. `fallback_modes`, `evaluation_scope`,
+  `shrinkback_enabled`, `global_rebalance_enabled`, fuentes de probabilidad y
+  familias de escala están vivos por CLI/perfiles/tests/reopen; no se encontró
+  rama muerta segura para remover sin cambiar superficie operacional.
+
+Gates F5: `just drift-gate` verde con diff cero tras P0, P1/portfolio,
+P1/PD y P2; checks enfocados de Ruff/py_compile en verde.
+
 ### 8.4 F4 — Refactor lane seguro (cerrada 2026-07-05)
 
 Estado: ejecutada por Codex con alcance conservador. No quedan acciones F4
 seguras pendientes; los hallazgos S2/S5 se convierten en KEEP por uso vivo. La
-deduplicación restante cae en scripts protegidos/de búsqueda y se deja para F5
-o para un lane posterior con drift-gate.
+deduplicación protegida segura se cerró después en F5/P1.
 
 - **S1 — script_helpers en scripts no congelados**: ejecutado para scripts
   paper-facing no protegidos. Validación: `just tables`, `just figures`,
@@ -332,7 +352,7 @@ o para un lane posterior con drift-gate.
   encontró uso vivo en `portfolio_model.py`, perfiles `cuopt` y scripts.
 - **S4 movido al lane protegido**: quitar `allow_legacy_fallback` de
   `src/models/conformal_artifacts.py` matchea `conformal*.py` (regla 12), así
-  que exige drift-gate aunque sea trivial. Va como P0 de F5.
+  que exigía drift-gate aunque fuera trivial. Cerrado después como P0 de F5.
 
 Decisión considerada y rechazada: deduplicar `book/_helpers/` contra
 `script_helpers` — el aislamiento del libro vale más que ~40 líneas.
@@ -344,22 +364,27 @@ precisamente por eso. Si `git diff` muestra cambios de contenido tras
 `just tables && just figures`, el refactor rompió algo: revertir y revisar,
 no re-hashear.
 
-### 8.5 F5 — Refactor lane protegido (ejecutar lejos del freeze de agosto)
+### 8.5 F5 — Refactor lane protegido (cerrada 2026-07-05)
 
-Precondiciones: working tree limpio, `just validate-champion` verde, y una
-corrida baseline de `just drift-gate` en verde ANTES de tocar nada (re-puntúa
-~514k filas dos veces; tarda). Protocolo: **un cambio -> un `just drift-gate`
-verde -> un commit**. ROJO significa cambio numérico, no refactor: `git reset
---hard` al commit anterior y parar (regla 12 de `CLAUDE.md`).
+Estado: cerrada por Codex en `codex/crpto-full-audit-closeout` siguiendo el
+protocolo **un cambio -> un `just drift-gate` verde -> un commit**. Cada corrida
+de `drift-gate` reportó diff cero en `y_pred`, intervalos PD, score-band edges,
+coberturas por celda y floor multipliers.
 
-- **P0**: eliminar `allow_legacy_fallback` (deprecado) de
-  `src/models/conformal_artifacts.py` y sus call-sites.
-- **P1**: adoptar `script_helpers` en los 4 scripts congelados
-  (`train_pd_model.py`, `generate_conformal_intervals.py`,
-  `optimize_portfolio.py`, `validate_conformal_policy.py`), uno por commit.
-- **P2**: inlinear los dataclasses single-use de `train_pd_model.py`
-  (`ResolvedFeatureSets`, `TrainingSplits`, `PreparedTrainingInputs`).
-- **P3**: limpiar ramas muertas de `generate_conformal_intervals.py`.
+- **P0**: ejecutado. Se eliminó `allow_legacy_fallback` (deprecado) de
+  `src/models/conformal_artifacts.py`, call-sites y test.
+- **P1**: ejecutado donde había helper real que migrar. `optimize_portfolio.py`
+  y `train_pd_model.py` usan `src.utils.script_helpers.artifact_path`;
+  `generate_conformal_intervals.py` y `validate_conformal_policy.py` no tenían
+  `_artifact_path`/writer/loader local equivalente. El wrapper `_write_json` de
+  `train_pd_model.py` permanece por semántica atómica (`atomic_write_json`).
+- **P2**: ejecutado. Los dataclasses privados single-use de `train_pd_model.py`
+  (`ResolvedFeatureSets`, `TrainingSplits`, `PreparedTrainingInputs`) fueron
+  sustituidos por tuplas privadas y desempaquetado inmediato.
+- **P3**: auditado sin cambio. No se encontró rama muerta segura en
+  `generate_conformal_intervals.py`: los modos/fallbacks sospechosos están
+  conectados a CLI, perfiles, tests o reopen search; removerlos sería cambio de
+  superficie, no limpieza mecánica.
 
 Límites duros: no mover/renombrar clases que el calibrator pickle referencia
 (compatibilidad documentada en `CONFORMAL_REFACTOR_PLAN.md` y
@@ -367,9 +392,7 @@ Límites duros: no mover/renombrar clases que el calibrator pickle referencia
 `EXTRACTION_MANIFEST.json`; si un cambio pide re-keying de DVC, es señal de
 alcance excedido: parar y pedir permiso explícito.
 
-Recomendaciones operativas: hacer F5 en rama dedicada; correr el drift-gate
-baseline al inicio de la sesión (es lento) y encadenar P0→P3 solo si cada
-gate sale verde; presupuestar una corrida de drift-gate por commit. Si el
-tiempo no alcanza, partir F5 en varias sesiones es mejor que saltarse gates.
-El precedente de que este protocolo funciona: la extracción de helpers de los
-`main()` (lane R1) se hizo exactamente así y el certificado quedó bit-exacto.
+Nota operativa para futuros lanes protegidos: mantener el mismo protocolo de
+drift-gate por commit. Si un cambio pide re-keying de DVC o toca
+`EXTRACTION_MANIFEST.json`, es alcance excedido: parar y pedir permiso
+explícito.
