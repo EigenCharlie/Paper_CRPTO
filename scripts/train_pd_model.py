@@ -8,7 +8,6 @@ from __future__ import annotations
 
 import argparse
 import json
-import os
 import pickle
 import shutil
 from dataclasses import dataclass
@@ -50,6 +49,7 @@ from src.utils.artifact_metadata import build_artifact_metadata, resolve_run_tag
 from src.utils.io_utils import read_split_with_fe_fallback
 from src.utils.pipeline_runtime import atomic_write_json
 from src.utils.replay_manifest import load_replay_manifest, manifest_section
+from src.utils.script_helpers import artifact_path as _artifact_path
 from src.utils.threshold_semantics import write_threshold_semantics
 from src.utils.visualization import plot_murphy_diagram
 
@@ -337,19 +337,6 @@ def _validate_replay_expectations(
             )
     if violations:
         raise ValueError("Replay metric validation failed: " + "; ".join(violations))
-
-
-def _gpu_replay_artifact_root() -> Path | None:
-    raw = str(os.environ.get("GPU_REPLAY_ARTIFACT_ROOT", "")).strip()
-    return Path(raw) if raw else None
-
-
-def _artifact_path(path_like: str | Path) -> Path:
-    path = Path(path_like)
-    root = _gpu_replay_artifact_root()
-    if root is None:
-        return path
-    return root / path
 
 
 def _normalize_percent_columns(df: pd.DataFrame) -> pd.DataFrame:
