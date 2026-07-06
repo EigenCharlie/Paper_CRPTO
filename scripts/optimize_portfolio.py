@@ -7,7 +7,6 @@ Usage:
 from __future__ import annotations
 
 import argparse
-import os
 from pathlib import Path
 
 import numpy as np
@@ -25,12 +24,7 @@ from src.utils.pipeline_runtime import (
     write_runtime_checkpoint,
     write_runtime_status,
 )
-
-
-def _artifact_path(path_like: str | Path) -> Path:
-    path = Path(path_like)
-    root = str(os.environ.get("GPU_REPLAY_ARTIFACT_ROOT", "")).strip()
-    return (Path(root) / path) if root else path
+from src.utils.script_helpers import artifact_path
 
 
 def _parse_percent_series(series: pd.Series) -> np.ndarray:
@@ -207,8 +201,8 @@ def main(
     logger.info(f"Scenarios:\n{scenarios}")
 
     # Persist artifacts for downstream reporting.
-    model_dir = _artifact_path("models")
-    data_dir = _artifact_path("data/processed")
+    model_dir = artifact_path("models")
+    data_dir = artifact_path("data/processed")
     model_dir.mkdir(parents=True, exist_ok=True)
     data_dir.mkdir(parents=True, exist_ok=True)
 
