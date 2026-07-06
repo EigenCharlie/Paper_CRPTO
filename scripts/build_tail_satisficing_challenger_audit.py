@@ -81,10 +81,6 @@ def _portfolio_shortlist_path() -> Path:
     return first_existing(SHORTLIST_EXACT_PATH, SHORTLIST_PATH)
 
 
-def _write_table(name: str, frame: pd.DataFrame) -> list[Path]:
-    return write_table(name, frame, table_dir=TABLE_DIR, root=ROOT)
-
-
 def _cached_a20_status(frame: pd.DataFrame) -> dict[str, Any]:
     challenger = frame.iloc[0].to_dict()
     champion_rank = int(
@@ -428,8 +424,8 @@ def build_tail_satisficing_audit() -> dict[str, Any]:
     a20, a20_status = _build_a20_table()
     a21 = _build_cluster_bound_table(pd.read_csv(FUNDED_LOANS_PATH))
     artifacts = []
-    artifacts += _write_table(TABLE_A20_NAME, a20)
-    artifacts += _write_table(TABLE_A21_NAME, a21)
+    artifacts += write_table(TABLE_A20_NAME, a20, table_dir=TABLE_DIR, root=ROOT)
+    artifacts += write_table(TABLE_A21_NAME, a21, table_dir=TABLE_DIR, root=ROOT)
     status = {
         "schema_version": STATUS_SCHEMA_VERSION,
         "generated_at_utc": REPRODUCIBLE_STATUS_TIMESTAMP,

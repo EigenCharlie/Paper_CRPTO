@@ -117,10 +117,6 @@ def _bound_stage_shortlist_path(run_dir: str) -> Path:
     return run_path / "portfolio_bound_aware_shortlist.parquet"
 
 
-def _write_table(name: str, frame: pd.DataFrame) -> list[Path]:
-    return write_table(name, frame, table_dir=OUT, root=ROOT)
-
-
 def _repo_path(path: Path) -> str:
     """Return a stable repository-relative path for published artifacts."""
     return path.relative_to(ROOT).as_posix()
@@ -932,14 +928,24 @@ def build_p1_hardening_tables(promotion: dict[str, Any], oot: pd.DataFrame) -> l
     enhanced_shift = _build_enhanced_synthetic_shift_table(oot)
 
     artifacts: list[Path] = []
-    artifacts += _write_table("crpto_tableA7_funded_set_loans", funded_loans)
-    artifacts += _write_table("crpto_tableA8_funded_set_composition", funded_composition)
-    artifacts += _write_table("crpto_tableA9_strict_temporal_holdout", strict_holdout)
-    artifacts += _write_table(
+    artifacts += write_table(
+        "crpto_tableA7_funded_set_loans", funded_loans, table_dir=OUT, root=ROOT
+    )
+    artifacts += write_table(
+        "crpto_tableA8_funded_set_composition", funded_composition, table_dir=OUT, root=ROOT
+    )
+    artifacts += write_table(
+        "crpto_tableA9_strict_temporal_holdout", strict_holdout, table_dir=OUT, root=ROOT
+    )
+    artifacts += write_table(
         "crpto_tableA10_conformal_finalist_exact_bound_eval",
         finalist_exact,
+        table_dir=OUT,
+        root=ROOT,
     )
-    artifacts += _write_table("crpto_tableA11_enhanced_synthetic_shift", enhanced_shift)
+    artifacts += write_table(
+        "crpto_tableA11_enhanced_synthetic_shift", enhanced_shift, table_dir=OUT, root=ROOT
+    )
     return artifacts
 
 
@@ -1096,10 +1102,14 @@ def build_p1_evidence(*, include_hardening: bool = False) -> dict[str, Any]:
         artifacts += build_p1_hardening_tables(promotion, oot)
 
     selector = _build_decision_aware_selector_table(promotion)
-    artifacts += _write_table("crpto_tableA3_nested_holdout", nested)
-    artifacts += _write_table("crpto_tableA4_segment_period_sensitivity", segment)
-    artifacts += _write_table("crpto_tableA5_decision_aware_selector", selector)
-    artifacts += _write_table("crpto_tableA6_synthetic_shift", synthetic)
+    artifacts += write_table("crpto_tableA3_nested_holdout", nested, table_dir=OUT, root=ROOT)
+    artifacts += write_table(
+        "crpto_tableA4_segment_period_sensitivity", segment, table_dir=OUT, root=ROOT
+    )
+    artifacts += write_table(
+        "crpto_tableA5_decision_aware_selector", selector, table_dir=OUT, root=ROOT
+    )
+    artifacts += write_table("crpto_tableA6_synthetic_shift", synthetic, table_dir=OUT, root=ROOT)
 
     final_nested = nested.loc[nested["stage"].eq("bound_aware_276k")].iloc[0]
     selected_selector = selector.loc[selector["decision_aware_selected"]].iloc[0]

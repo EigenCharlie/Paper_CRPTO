@@ -69,10 +69,6 @@ BOOTSTRAP_DRAWS = 2000
 BOOTSTRAP_SEED = 20260504
 
 
-def _write_table(name: str, frame: pd.DataFrame) -> list[Path]:
-    return write_table(name, frame, table_dir=TABLE_DIR, root=ROOT)
-
-
 def _mirror_to_book(*paths: Path) -> None:
     """Copy generated figures into the book's publication assets directory."""
     BOOK_FIG_DIR.mkdir(parents=True, exist_ok=True)
@@ -980,33 +976,55 @@ def build_journal_package() -> dict[str, Any]:
     bound_eval = pd.read_parquet(BOUND_EVAL_PATH)
 
     artifacts: list[Path] = []
-    artifacts += _write_table("crpto_tableA12_tail_risk_oce_cvar", _build_tail_risk_table(funded))
-    artifacts += _write_table(
+    artifacts += write_table(
+        "crpto_tableA12_tail_risk_oce_cvar",
+        _build_tail_risk_table(funded),
+        table_dir=TABLE_DIR,
+        root=ROOT,
+    )
+    artifacts += write_table(
         "crpto_tableA13_satisficing_margins",
         _build_satisficing_table(promotion),
+        table_dir=TABLE_DIR,
+        root=ROOT,
     )
-    artifacts += _write_table(
+    artifacts += write_table(
         "crpto_tableA14_dependency_cluster_diagnostics",
         _build_dependency_table(funded),
+        table_dir=TABLE_DIR,
+        root=ROOT,
     )
-    artifacts += _write_table(
+    artifacts += write_table(
         "crpto_tableA15_leave_one_period_stress",
         _build_period_stress_table(funded),
+        table_dir=TABLE_DIR,
+        root=ROOT,
     )
-    artifacts += _write_table(
+    artifacts += write_table(
         "crpto_tableA16_bootstrap_funded_set_metrics",
         _build_bootstrap_table(funded),
+        table_dir=TABLE_DIR,
+        root=ROOT,
     )
-    artifacts += _write_table(
+    artifacts += write_table(
         "crpto_tableA17_budget_cap_lgd_sensitivity",
         _build_budget_cap_lgd_table(funded, funded_composition),
+        table_dir=TABLE_DIR,
+        root=ROOT,
     )
-    artifacts += _write_table(
+    artifacts += write_table(
         "crpto_tableA18_robust_region_policy_family",
         _build_robust_region_table(shortlist),
+        table_dir=TABLE_DIR,
+        root=ROOT,
     )
     regret_frontier = _build_regret_auditability_frontier(spo_status, stability, promotion)
-    artifacts += _write_table("crpto_tableA19_regret_auditability_frontier", regret_frontier)
+    artifacts += write_table(
+        "crpto_tableA19_regret_auditability_frontier",
+        regret_frontier,
+        table_dir=TABLE_DIR,
+        root=ROOT,
+    )
     artifacts += _publish_journal_pipeline_assets()
     artifacts += _plot_conceptual_pipeline()
     artifacts += _plot_bound_claim_layers()

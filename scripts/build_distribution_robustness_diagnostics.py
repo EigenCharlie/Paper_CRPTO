@@ -27,7 +27,6 @@ Usage::
 
 from __future__ import annotations
 
-import json
 from datetime import UTC, datetime
 from pathlib import Path
 from typing import Any
@@ -35,6 +34,8 @@ from typing import Any
 import numpy as np
 import pandas as pd
 from loguru import logger
+
+from src.utils.script_helpers import write_json, write_table
 
 ROOT = Path(__file__).resolve().parents[1]
 TABLE_DIR = ROOT / "reports" / "crpto" / "tables"
@@ -49,30 +50,6 @@ TARGET_COVERAGE = 0.90
 TARGET_ALPHA = 1.0 - TARGET_COVERAGE
 ACI_STEP = 0.05  # Gibbs-Candes learning rate gamma.
 EPS = 1e-9
-
-
-def _write_table(name: str, frame: pd.DataFrame) -> list[Path]:
-    TABLE_DIR.mkdir(parents=True, exist_ok=True)
-    csv_path = TABLE_DIR / f"{name}.csv"
-    tex_path = TABLE_DIR / f"{name}.tex"
-    csv_path.write_text(
-        frame.to_csv(index=False, lineterminator="\n"), encoding="utf-8", newline=""
-    )
-    tex_path.write_text(
-        frame.to_latex(index=False, escape=True, float_format=lambda value: f"{value:.4f}"),
-        encoding="utf-8",
-        newline="",
-    )
-    logger.info("Wrote {}", csv_path.relative_to(ROOT))
-    logger.info("Wrote {}", tex_path.relative_to(ROOT))
-    return [csv_path, tex_path]
-
-
-def _write_json(path: Path, payload: dict[str, Any]) -> None:
-    path.parent.mkdir(parents=True, exist_ok=True)
-    path.write_text(
-        json.dumps(payload, indent=2, sort_keys=True) + "\n", encoding="utf-8", newline=""
-    )
 
 
 def _load_intervals() -> pd.DataFrame:
@@ -221,7 +198,9 @@ def build_distribution_robustness_diagnostics() -> dict[str, Any]:
     df = _load_intervals()
     a23, a23_summary = _build_a23(df)
     a24, a24_summary = _build_a24(df)
-    artifacts = _write_table(TABLE_A23_NAME, a23) + _write_table(TABLE_A24_NAME, a24)
+    artifacts = write_table(
+        TABLE_A23_NAME, a23, table_dir=TABLE_DIR, root=ROOT, float_precision=4
+    ) + write_table(TABLE_A24_NAME, a24, table_dir=TABLE_DIR, root=ROOT, float_precision=4)
     status = {
         "schema_version": "2026-05-28.1",
         "generated_at_utc": datetime.now(tz=UTC).isoformat(),
@@ -238,7 +217,7 @@ def build_distribution_robustness_diagnostics() -> dict[str, Any]:
             "A24 is a static-OOT online-control diagnostic, not streaming validation.",
         ],
     }
-    _write_json(STATUS_PATH, status)
+    write_json(STATUS_PATH, status)
     logger.info("Wrote {}", STATUS_PATH.relative_to(ROOT))
     logger.info(
         "A23 worst grade={} cov={:.4f}; worst cell={} cov={:.4f}",
