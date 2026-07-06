@@ -246,7 +246,7 @@ El documento rector es `docs/SCOPE_AND_GOVERNANCE.md`. En corto:
 - **DuckDB MCP** — queries directas a `data/processed/crpto.duckdb`.
 - **GitHub MCP** — repo `EigenCharlie/Paper_CRPTO`.
 
-## Skills custom del proyecto (`.claude/skills/`)
+## Skills custom del proyecto (`.claude/skills/<nombre>/SKILL.md`)
 
 - `/crpto-render` — render del libro + QA visual con Playwright.
 - `/crpto-stage` — `dvc repro` de un stage aislado, con dry-run.
@@ -254,6 +254,8 @@ El documento rector es `docs/SCOPE_AND_GOVERNANCE.md`. En corto:
 - `/crpto-paper-export` — pipeline completo de salida journal.
 - `/crpto-validate-champion` — verifica hashes vs `EXTRACTION_MANIFEST.json`.
 - `/crpto-mrm-card` — actualiza model cards en `reports/mrm/`.
+- `/crpto-claim-sync` — gate de sincronía de claims paper/gobernanza; obligatorio tras editar paper o supplement.
+- `/crpto-submission-freeze` — checklist ejecutable del freeze de submission IJDS (gates, PDFs, anonimato, páginas).
 
 ## Plan vigente
 

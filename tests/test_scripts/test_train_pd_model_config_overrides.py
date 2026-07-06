@@ -5,7 +5,6 @@ import pytest
 
 import scripts.train_pd_model as pd_train
 from scripts.train_pd_model import (
-    TrainingSplits,
     _apply_cli_overrides,
     _apply_pd_replay_manifest,
     _load_training_splits,
@@ -166,7 +165,14 @@ def test_resolve_training_features_filters_splits_and_disables_stable_core_in_re
     cal = pd_train.pd.DataFrame({"a": [1], "b": ["x"], "rev_utilization": [0.2]})
     test = pd_train.pd.DataFrame({"a": [1], "b": ["x"], "rev_utilization": [0.2]})
 
-    resolved = pd_train._resolve_training_features(
+    (
+        feature_source,
+        feature_config_path,
+        catboost_features,
+        logreg_features,
+        categorical_features,
+        stable_core_meta,
+    ) = pd_train._resolve_training_features(
         config={
             "feature_source": {"mode": "auto", "feature_config_path": "feature_config.yml"},
             "stable_core": {"enabled": True, "exclude_features": ["rev_utilization"]},
@@ -178,13 +184,21 @@ def test_resolve_training_features_filters_splits_and_disables_stable_core_in_re
         replay_cfg={},
     )
 
-    assert resolved.feature_source == "fixture"
-    assert resolved.catboost_features == ["a", "b"]
-    assert resolved.logreg_features == ["a", "b"]
-    assert resolved.categorical_features == ["b"]
-    assert resolved.stable_core_meta["enabled"] is True
+    assert feature_source == "fixture"
+    assert feature_config_path == "feature_config.yml"
+    assert catboost_features == ["a", "b"]
+    assert logreg_features == ["a", "b"]
+    assert categorical_features == ["b"]
+    assert stable_core_meta["enabled"] is True
 
-    replay = pd_train._resolve_training_features(
+    (
+        _replay_feature_source,
+        _replay_feature_config_path,
+        replay_catboost_features,
+        replay_logreg_features,
+        replay_categorical_features,
+        replay_stable_core_meta,
+    ) = pd_train._resolve_training_features(
         config={
             "feature_source": {"mode": "auto", "feature_config_path": "feature_config.yml"},
             "stable_core": {"enabled": True, "exclude_features": ["rev_utilization"]},
@@ -199,10 +213,10 @@ def test_resolve_training_features_filters_splits_and_disables_stable_core_in_re
         },
     )
 
-    assert replay.catboost_features == ["a", "rev_utilization"]
-    assert replay.logreg_features == ["a", "rev_utilization"]
-    assert replay.categorical_features == ["rev_utilization"]
-    assert replay.stable_core_meta == {"enabled": False, "excluded_features": []}
+    assert replay_catboost_features == ["a", "rev_utilization"]
+    assert replay_logreg_features == ["a", "rev_utilization"]
+    assert replay_categorical_features == ["rev_utilization"]
+    assert replay_stable_core_meta == {"enabled": False, "excluded_features": []}
 
 
 def test_load_training_splits_uses_config_paths_and_normalizes(
@@ -222,7 +236,7 @@ def test_load_training_splits_uses_config_paths_and_normalizes(
     monkeypatch.setattr(pd_train, "read_split_with_fe_fallback", fake_read_split)
     monkeypatch.setattr(pd_train, "_normalize_percent_columns", fake_normalize)
 
-    splits = _load_training_splits(
+    train_split, cal_split, test_split = _load_training_splits(
         {
             "train_path": "train.parquet",
             "test_path": "test.parquet",
@@ -231,11 +245,11 @@ def test_load_training_splits_uses_config_paths_and_normalizes(
     )
 
     assert calls == ["train.parquet", "test.parquet", "calibration.parquet"]
-    assert splits.train.to_dict(orient="records") == [
+    assert train_split.to_dict(orient="records") == [
         {"source": "train.parquet", "normalized": True}
     ]
-    assert splits.test.to_dict(orient="records") == [{"source": "test.parquet", "normalized": True}]
-    assert splits.cal.to_dict(orient="records") == [
+    assert test_split.to_dict(orient="records") == [{"source": "test.parquet", "normalized": True}]
+    assert cal_split.to_dict(orient="records") == [
         {"source": "calibration.parquet", "normalized": True}
     ]
 
@@ -245,13 +259,13 @@ def test_sample_training_splits_is_deterministic_and_keeps_small_splits() -> Non
     cal = pd_train.pd.DataFrame({"row": range(10, 20)})
     test = pd_train.pd.DataFrame({"row": [100, 101]})
 
-    sampled = _sample_training_splits(TrainingSplits(train=train, cal=cal, test=test), 3)
+    sampled_train, sampled_cal, sampled_test = _sample_training_splits((train, cal, test), 3)
 
-    assert sampled.train["row"].tolist() == train.sample(n=3, random_state=42)["row"].tolist()
-    assert sampled.cal["row"].tolist() == cal.sample(n=3, random_state=42)["row"].tolist()
-    assert sampled.test.equals(test)
-    assert sampled.train.index.tolist() == [0, 1, 2]
-    assert sampled.cal.index.tolist() == [0, 1, 2]
+    assert sampled_train["row"].tolist() == train.sample(n=3, random_state=42)["row"].tolist()
+    assert sampled_cal["row"].tolist() == cal.sample(n=3, random_state=42)["row"].tolist()
+    assert sampled_test.equals(test)
+    assert sampled_train.index.tolist() == [0, 1, 2]
+    assert sampled_cal.index.tolist() == [0, 1, 2]
 
 
 @pytest.mark.parametrize("raw_sample_size", [None, 0, -5])
@@ -292,7 +306,22 @@ def test_prepare_training_inputs_builds_model_ready_frames() -> None:
         }
     )
 
-    prepared = _prepare_training_inputs(
+    (
+        train_val,
+        train_fit_weights,
+        train_val_weights,
+        y_train_fit,
+        _y_val,
+        y_cal,
+        y_test,
+        x_train_fit_cb,
+        _x_val_cb,
+        _x_cal_cb,
+        x_test_cb,
+        x_train_fit_lr,
+        x_test_lr,
+        lr_fill,
+    ) = _prepare_training_inputs(
         train,
         cal,
         test,
@@ -302,14 +331,14 @@ def test_prepare_training_inputs_builds_model_ready_frames() -> None:
         val_fraction=0.2,
     )
 
-    assert len(prepared.train_fit) == 8
-    assert len(prepared.train_val) == 2
-    assert prepared.train_fit_weights.tolist() == [1.0 + i for i in range(8)]
-    assert prepared.train_val_weights.tolist() == [9.0, 10.0]
-    assert pd_train.pd.api.types.is_integer_dtype(prepared.y_train_fit)
-    assert prepared.y_cal.tolist() == [0, 1]
-    assert prepared.y_test.tolist() == [1, 0]
-    assert prepared.x_train_fit_cb.columns.tolist() == ["score", "grade"]
-    assert prepared.x_test_cb["grade"].tolist() == ["B", "UNKNOWN"]
-    assert prepared.x_test_lr.isna().sum().sum() == 0
-    assert prepared.lr_fill["score"] == prepared.x_train_fit_lr["score"].median()
+    assert len(x_train_fit_cb) == 8
+    assert len(train_val) == 2
+    assert train_fit_weights.tolist() == [1.0 + i for i in range(8)]
+    assert train_val_weights.tolist() == [9.0, 10.0]
+    assert pd_train.pd.api.types.is_integer_dtype(y_train_fit)
+    assert y_cal.tolist() == [0, 1]
+    assert y_test.tolist() == [1, 0]
+    assert x_train_fit_cb.columns.tolist() == ["score", "grade"]
+    assert x_test_cb["grade"].tolist() == ["B", "UNKNOWN"]
+    assert x_test_lr.isna().sum().sum() == 0
+    assert lr_fill["score"] == x_train_fit_lr["score"].median()

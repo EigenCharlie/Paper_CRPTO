@@ -67,7 +67,6 @@ def _load_candidates() -> pd.DataFrame:
 
 def _load_intervals(conformal_intervals_path: str | None = None) -> pd.DataFrame:
     intervals, path, is_legacy = load_conformal_intervals(
-        allow_legacy_fallback=False,
         override_path=conformal_intervals_path,
     )
     logger.info(

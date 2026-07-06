@@ -75,15 +75,14 @@ PDF crop box cuts the right edge under `informs4`.
 > `informs4.cls`, `informs2014.bst`, template PDFs, `.sty` files, or generated
 > LaTeX build artifacts.
 
-Current local build state (verified 2026-06-15): TinyTeX/TeX Live 2026,
-Strawberry Perl 5.42.2.1, and the `listingsutf8` TeX package compile
-`CRPTO_ijds_submission.tex` to a 26-page official-template PDF. The auxiliary
-file places Section 9 (Conclusion) on page 23, and the references begin lower on
-that same page, so the body remains inside the IJDS 25-page initial-submission
-budget when references are excluded. The only LaTeX log warnings left are a
-small `\maketitle` overfull from the `informs4`
-anonymous title block and underfull paragraph warnings, both visually acceptable
-unless the final ScholarOne proof shows a layout issue.
+Current local build state (verified 2026-07-06): TinyTeX/TeX Live 2026 and the
+`listingsutf8` TeX package compile `CRPTO_ijds_submission.tex` to a 26-page
+official-template PDF. Section 9 (Conclusion) and References both start on page
+22, so the body remains inside the IJDS 25-page initial-submission budget when
+references are excluded. The only LaTeX log warnings left are a small
+`\maketitle` overfull from the `informs4` anonymous title block and font-size /
+underfull paragraph warnings, visually acceptable unless the final ScholarOne
+proof shows a layout issue.
 
 To produce the official submission PDF:
 
@@ -91,24 +90,20 @@ To produce the official submission PDF:
    author portal (or Overleaf) and drop them next to
    `CRPTO_ijds_submission.tex`. These are gitignored on purpose
    (`paper/submission/.gitignore`); do not commit them.
-2. Build manually:
+2. Build with `latexmk` when the local TinyTeX wrapper works:
 
    ```powershell
-   pdflatex CRPTO_ijds_submission
-   bibtex   CRPTO_ijds_submission
-   pdflatex CRPTO_ijds_submission
-   pdflatex CRPTO_ijds_submission
+   latexmk -pdf -gg -interaction=nonstopmode CRPTO_ijds_submission.tex
    ```
 
-   Or use `latexmk` through the Perl script directly. The TinyTeX
-   `latexmk.exe` wrapper can fail on this Windows install, but the script path
-   is stable:
+   If PowerShell/TinyTeX fails with `runscript.tlu`/`nil`, use the proven
+   fallback:
 
    ```powershell
-   $env:Path = "C:\Strawberry\perl\bin;C:\Strawberry\perl\site\bin;C:\Strawberry\c\bin;$env:APPDATA\TinyTeX\bin\windows;$env:Path"
-   Push-Location paper/submission
-   perl "$env:APPDATA\TinyTeX\texmf-dist\scripts\latexmk\latexmk.pl" -pdf -interaction=nonstopmode -halt-on-error CRPTO_ijds_submission.tex
-   Pop-Location
+   pdflatex -interaction=nonstopmode -halt-on-error CRPTO_ijds_submission.tex
+   bibtex CRPTO_ijds_submission
+   pdflatex -interaction=nonstopmode -halt-on-error CRPTO_ijds_submission.tex
+   pdflatex -interaction=nonstopmode -halt-on-error CRPTO_ijds_submission.tex
    ```
 
 3. The `dblanonrev` option keeps the body anonymous; verify against the anonymity
@@ -155,9 +150,9 @@ These protocols are compatible but not interchangeable.
 - Use `SCHOLARONE_FINAL_CHECKLIST.md` while uploading and reviewing the generated
   proof.
 - Recheck the official-template page budget if the body changes materially. The
-  current local official-template build is 26 pages total; Section 9 starts on
-  page 23 and references begin lower on that same page, keeping the body within
-  the 25-page limit when references are excluded.
+  current local official-template build is 26 pages total; Section 9 and
+  References start on page 22, keeping the body within the 25-page limit when
+  references are excluded.
 - Keep A3--A39 in the online supplement unless a reviewer-facing argument needs
   one compact table in the body.
 - Preserve CRPTO as the coverage/auditability method and SPO+ as the low-regret
@@ -191,16 +186,22 @@ updates the template.
 3. **Compile:**
 
    ```powershell
-   pdflatex CRPTO_ijds_submission
-   bibtex   CRPTO_ijds_submission
-   pdflatex CRPTO_ijds_submission
-   pdflatex CRPTO_ijds_submission
+   latexmk -pdf -gg -interaction=nonstopmode CRPTO_ijds_submission.tex
+   ```
+
+   Use the documented `pdflatex -> bibtex -> pdflatex -> pdflatex` fallback if
+   the local TinyTeX wrapper fails.
+
+   ```powershell
+   pdflatex -interaction=nonstopmode -halt-on-error CRPTO_ijds_submission.tex
+   bibtex CRPTO_ijds_submission
+   pdflatex -interaction=nonstopmode -halt-on-error CRPTO_ijds_submission.tex
+   pdflatex -interaction=nonstopmode -halt-on-error CRPTO_ijds_submission.tex
    ```
 
 4. **Recount the official-template page budget** and demote body floats to the
    supplement only if the body exceeds 25 pages excluding references. The local
-   official-template build is currently 26 pages total; Section 9 starts on page
-   23 and references begin lower on that same page. The Chrome-print body preview
-   is only a verification proxy.
+   official-template build is currently 26 pages total; Section 9 and References
+   start on page 22. The Chrome-print body preview is only a verification proxy.
 5. **Verify anonymity** against the checklist above, then upload the body PDF and
    submit the title page separately.

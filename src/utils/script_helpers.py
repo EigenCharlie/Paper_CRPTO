@@ -68,6 +68,7 @@ def write_table(
     *,
     table_dir: Path,
     root: Path = REPO_ROOT,
+    float_precision: int = 6,
 ) -> list[Path]:
     """Write a publication table as ``<name>.csv`` and ``<name>.tex``.
 
@@ -82,7 +83,7 @@ def write_table(
     tex_text = frame.to_latex(
         index=False,
         escape=True,
-        float_format=lambda value: f"{value:.6f}",
+        float_format=lambda value: f"{value:.{float_precision}f}",
     )
     for path, text in [(csv_path, csv_text), (tex_path, tex_text)]:
         if path.exists() and path.read_bytes().decode("utf-8") == text:

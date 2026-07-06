@@ -36,7 +36,6 @@ Usage::
 from __future__ import annotations
 
 import argparse
-import json
 import sys
 from datetime import UTC, datetime
 from pathlib import Path
@@ -44,7 +43,6 @@ from typing import Any
 
 import numpy as np
 import pandas as pd
-import yaml
 from loguru import logger
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -67,6 +65,7 @@ from src.optimization.tail_satisficing_objective import (  # noqa: E402
     weighted_cvar,
     weighted_mean,
 )
+from src.utils.script_helpers import load_json, load_yaml, write_json, write_table  # noqa: E402
 
 TABLE_DIR = ROOT / "reports" / "crpto" / "tables"
 MODEL_DIR = ROOT / "models"
@@ -90,40 +89,6 @@ PROMOTION_METRIC_FIELDS = (
     "alpha01_gamma_cp",
     "alpha01_violation",
 )
-
-
-def _load_json(path: Path) -> dict[str, Any]:
-    return json.loads(path.read_text(encoding="utf-8"))
-
-
-def _load_yaml(path: Path) -> dict[str, Any]:
-    return yaml.safe_load(path.read_text(encoding="utf-8"))
-
-
-def _write_json(path: Path, payload: dict[str, Any]) -> None:
-    path.parent.mkdir(parents=True, exist_ok=True)
-    path.write_text(
-        json.dumps(payload, indent=2, sort_keys=True) + "\n",
-        encoding="utf-8",
-        newline="",
-    )
-
-
-def _write_table(name: str, frame: pd.DataFrame) -> list[Path]:
-    TABLE_DIR.mkdir(parents=True, exist_ok=True)
-    csv_path = TABLE_DIR / f"{name}.csv"
-    tex_path = TABLE_DIR / f"{name}.tex"
-    csv_path.write_text(
-        frame.to_csv(index=False, lineterminator="\n"), encoding="utf-8", newline=""
-    )
-    tex_path.write_text(
-        frame.to_latex(index=False, escape=True, float_format=lambda value: f"{value:.6f}"),
-        encoding="utf-8",
-        newline="",
-    )
-    logger.info("Wrote {}", csv_path.relative_to(ROOT))
-    logger.info("Wrote {}", tex_path.relative_to(ROOT))
-    return [csv_path, tex_path]
 
 
 def _sync_official_promotion_metrics(
@@ -316,8 +281,8 @@ def _build_cap_frontier(
 
 def build_tail_constrained_reoptimization(max_policies: int = 0) -> dict[str, Any]:
     start = datetime.now(tz=UTC)
-    promotion = _load_json(PROMOTION_PATH)
-    optimization_config = _load_yaml(OPTIMIZATION_CONFIG_PATH)
+    promotion = load_json(PROMOTION_PATH)
+    optimization_config = load_yaml(OPTIMIZATION_CONFIG_PATH)
     shortlist = pd.read_parquet(SHORTLIST_PATH).sort_values("candidate_rank").reset_index(drop=True)
     if max_policies and max_policies > 0:
         # Dev mode: keep the champion + comparators + a spread of the region.
@@ -365,7 +330,7 @@ def build_tail_constrained_reoptimization(max_policies: int = 0) -> dict[str, An
         prefix="selected_",
     )
 
-    artifacts = _write_table(TABLE_A22_NAME, frontier)
+    artifacts = write_table(TABLE_A22_NAME, frontier, table_dir=TABLE_DIR, root=ROOT)
     status = {
         "schema_version": "2026-06-07.1",
         "generated_at_utc": datetime.now(tz=UTC).isoformat(),
@@ -401,7 +366,7 @@ def build_tail_constrained_reoptimization(max_policies: int = 0) -> dict[str, An
             "while tail-risk quantities remain from the HiGHS re-solve.",
         ],
     }
-    _write_json(STATUS_PATH, status)
+    write_json(STATUS_PATH, status)
     logger.info("Wrote {}", STATUS_PATH.relative_to(ROOT))
     logger.info(
         "Tail-constrained challenger: candidate_rank={} return_delta={:.2f}% cvar95={:.4f}",

@@ -8,10 +8,8 @@ from __future__ import annotations
 
 import argparse
 import json
-import os
 import pickle
 import shutil
-from dataclasses import dataclass
 from pathlib import Path
 from typing import Any
 
@@ -50,50 +48,28 @@ from src.utils.artifact_metadata import build_artifact_metadata, resolve_run_tag
 from src.utils.io_utils import read_split_with_fe_fallback
 from src.utils.pipeline_runtime import atomic_write_json
 from src.utils.replay_manifest import load_replay_manifest, manifest_section
+from src.utils.script_helpers import artifact_path as _artifact_path
 from src.utils.threshold_semantics import write_threshold_semantics
 from src.utils.visualization import plot_murphy_diagram
 
-
-@dataclass(frozen=True)
-class ResolvedFeatureSets:
-    """Feature contract resolved for PD training across all splits."""
-
-    feature_source: str
-    feature_config_path: str | Path
-    catboost_features: list[str]
-    logreg_features: list[str]
-    categorical_features: list[str]
-    stable_core_meta: dict[str, Any]
-
-
-@dataclass(frozen=True)
-class TrainingSplits:
-    """PD train/calibration/test frames loaded at the feature boundary."""
-
-    train: pd.DataFrame
-    cal: pd.DataFrame
-    test: pd.DataFrame
-
-
-@dataclass(frozen=True)
-class PreparedTrainingInputs:
-    """Matrices and targets used by the PD training/calibration steps."""
-
-    train_fit: pd.DataFrame
-    train_val: pd.DataFrame
-    train_fit_weights: np.ndarray | None
-    train_val_weights: np.ndarray | None
-    y_train_fit: pd.Series
-    y_val: pd.Series
-    y_cal: pd.Series
-    y_test: pd.Series
-    x_train_fit_cb: pd.DataFrame
-    x_val_cb: pd.DataFrame
-    x_cal_cb: pd.DataFrame
-    x_test_cb: pd.DataFrame
-    x_train_fit_lr: pd.DataFrame
-    x_test_lr: pd.DataFrame
-    lr_fill: pd.Series
+TrainingSplitFrames = tuple[pd.DataFrame, pd.DataFrame, pd.DataFrame]
+ResolvedFeatureTuple = tuple[str, str | Path, list[str], list[str], list[str], dict[str, Any]]
+PreparedTrainingTuple = tuple[
+    pd.DataFrame,
+    np.ndarray | None,
+    np.ndarray | None,
+    pd.Series,
+    pd.Series,
+    pd.Series,
+    pd.Series,
+    pd.DataFrame,
+    pd.DataFrame,
+    pd.DataFrame,
+    pd.DataFrame,
+    pd.DataFrame,
+    pd.DataFrame,
+    pd.Series,
+]
 
 
 def load_config(config_path: str) -> dict[str, Any]:
@@ -339,19 +315,6 @@ def _validate_replay_expectations(
         raise ValueError("Replay metric validation failed: " + "; ".join(violations))
 
 
-def _gpu_replay_artifact_root() -> Path | None:
-    raw = str(os.environ.get("GPU_REPLAY_ARTIFACT_ROOT", "")).strip()
-    return Path(raw) if raw else None
-
-
-def _artifact_path(path_like: str | Path) -> Path:
-    path = Path(path_like)
-    root = _gpu_replay_artifact_root()
-    if root is None:
-        return path
-    return root / path
-
-
 def _normalize_percent_columns(df: pd.DataFrame) -> pd.DataFrame:
     """Normalize known percent-like string columns when present."""
     out = df.copy()
@@ -378,12 +341,12 @@ def _normalize_sample_size(sample_size: int | None) -> int | None:
     return None if sample_size is None else int(sample_size)
 
 
-def _load_training_splits(data_cfg: dict[str, Any]) -> TrainingSplits:
+def _load_training_splits(data_cfg: dict[str, Any]) -> TrainingSplitFrames:
     """Load and normalize the PD train/calibration/test splits."""
     train = _normalize_percent_columns(read_split_with_fe_fallback(data_cfg["train_path"]))
     test = _normalize_percent_columns(read_split_with_fe_fallback(data_cfg["test_path"]))
     cal = _normalize_percent_columns(read_split_with_fe_fallback(data_cfg["calibration_path"]))
-    return TrainingSplits(train=train, cal=cal, test=test)
+    return train, cal, test
 
 
 def _sample_frame(df: pd.DataFrame, sample_size: int | None) -> pd.DataFrame:
@@ -392,13 +355,17 @@ def _sample_frame(df: pd.DataFrame, sample_size: int | None) -> pd.DataFrame:
     return df.sample(n=sample_size, random_state=42).reset_index(drop=True)
 
 
-def _sample_training_splits(splits: TrainingSplits, sample_size: int | None) -> TrainingSplits:
+def _sample_training_splits(
+    splits: TrainingSplitFrames,
+    sample_size: int | None,
+) -> TrainingSplitFrames:
     """Return deterministically sampled splits for smoke-sized PD runs."""
     normalized_sample_size = _normalize_sample_size(sample_size)
-    return TrainingSplits(
-        train=_sample_frame(splits.train, normalized_sample_size),
-        cal=_sample_frame(splits.cal, normalized_sample_size),
-        test=_sample_frame(splits.test, normalized_sample_size),
+    train, cal, test = splits
+    return (
+        _sample_frame(train, normalized_sample_size),
+        _sample_frame(cal, normalized_sample_size),
+        _sample_frame(test, normalized_sample_size),
     )
 
 
@@ -480,7 +447,7 @@ def _resolve_training_features(
     test: pd.DataFrame,
     run_mode: str,
     replay_cfg: dict[str, Any],
-) -> ResolvedFeatureSets:
+) -> ResolvedFeatureTuple:
     feature_src_cfg = dict(config.get("feature_source", {}) or {})
     feature_mode = str(feature_src_cfg.get("mode", "auto"))
     feature_config_path = feature_src_cfg.get(
@@ -525,13 +492,13 @@ def _resolve_training_features(
     if not logreg_features:
         raise ValueError("No Logistic Regression features resolved across train/cal/test splits.")
 
-    return ResolvedFeatureSets(
-        feature_source=str(feature_sets.get("feature_source", feature_mode)),
-        feature_config_path=feature_config_path,
-        catboost_features=catboost_features,
-        logreg_features=logreg_features,
-        categorical_features=categorical_features,
-        stable_core_meta=stable_core_meta,
+    return (
+        str(feature_sets.get("feature_source", feature_mode)),
+        feature_config_path,
+        catboost_features,
+        logreg_features,
+        categorical_features,
+        stable_core_meta,
     )
 
 
@@ -585,7 +552,7 @@ def _prepare_training_inputs(
     categorical_features: list[str],
     logreg_features: list[str],
     val_fraction: float,
-) -> PreparedTrainingInputs:
+) -> PreparedTrainingTuple:
     """Build the model-ready PD training, calibration and test matrices."""
     train_fit, train_val = temporal_train_val_split(
         train, val_fraction=val_fraction, date_col="issue_d"
@@ -606,22 +573,21 @@ def _prepare_training_inputs(
     x_train_fit_lr, lr_fill = _prepare_logreg_frame(train_fit, logreg_features)
     x_test_lr, _ = _prepare_logreg_frame(test, logreg_features, fill_values=lr_fill)
 
-    return PreparedTrainingInputs(
-        train_fit=train_fit,
-        train_val=train_val,
-        train_fit_weights=train_fit_weights,
-        train_val_weights=train_val_weights,
-        y_train_fit=y_train_fit,
-        y_val=y_val,
-        y_cal=y_cal,
-        y_test=y_test,
-        x_train_fit_cb=x_train_fit_cb,
-        x_val_cb=x_val_cb,
-        x_cal_cb=x_cal_cb,
-        x_test_cb=x_test_cb,
-        x_train_fit_lr=x_train_fit_lr,
-        x_test_lr=x_test_lr,
-        lr_fill=lr_fill,
+    return (
+        train_val,
+        train_fit_weights,
+        train_val_weights,
+        y_train_fit,
+        y_val,
+        y_cal,
+        y_test,
+        x_train_fit_cb,
+        x_val_cb,
+        x_cal_cb,
+        x_test_cb,
+        x_train_fit_lr,
+        x_test_lr,
+        lr_fill,
     )
 
 
@@ -1467,10 +1433,7 @@ def main(
 
     logger.info(f"Config loaded from {config_path}")
 
-    splits = _load_training_splits(config["data"])
-    train = splits.train
-    cal = splits.cal
-    test = splits.test
+    train, cal, test = _load_training_splits(config["data"])
     _write_training_status(
         status_path,
         phase="data_loaded",
@@ -1485,12 +1448,16 @@ def main(
 
     train, regime_meta = _apply_training_regime(train, regime_cfg, date_col="issue_d")
 
-    splits = _sample_training_splits(TrainingSplits(train=train, cal=cal, test=test), sample_size)
-    train = splits.train
-    cal = splits.cal
-    test = splits.test
+    train, cal, test = _sample_training_splits((train, cal, test), sample_size)
 
-    resolved_features = _resolve_training_features(
+    (
+        feature_source,
+        feature_config_path,
+        catboost_features,
+        logreg_features,
+        categorical_features,
+        stable_core_meta,
+    ) = _resolve_training_features(
         config=config,
         train=train,
         cal=cal,
@@ -1498,13 +1465,9 @@ def main(
         run_mode=run_mode,
         replay_cfg=replay_cfg,
     )
-    catboost_features = resolved_features.catboost_features
-    logreg_features = resolved_features.logreg_features
-    categorical_features = resolved_features.categorical_features
-    stable_core_meta = resolved_features.stable_core_meta
 
     logger.info(
-        f"Feature source={resolved_features.feature_source} | "
+        f"Feature source={feature_source} | "
         f"catboost_features={len(catboost_features)} | "
         f"logreg_features={len(logreg_features)} | categorical={len(categorical_features)}"
     )
@@ -1512,7 +1475,7 @@ def main(
         checkpoint_dir,
         "feature_resolution",
         {
-            "feature_source": resolved_features.feature_source,
+            "feature_source": feature_source,
             "catboost_features": catboost_features,
             "logreg_features": logreg_features,
             "categorical_features": categorical_features,
@@ -1533,7 +1496,22 @@ def main(
     walk_cfg = val_cfg.get("walk_forward", {})
     seed_replay_cfg = val_cfg.get("seed_replay", {})
     val_fraction = float(val_cfg.get("val_from_tail_fraction_of_train", 0.15))
-    prepared_inputs = _prepare_training_inputs(
+    (
+        train_val,
+        train_fit_weights,
+        train_val_weights,
+        y_train_fit,
+        y_val,
+        y_cal,
+        y_test,
+        X_train_fit_cb,
+        X_val_cb,
+        X_cal_cb,
+        X_test_cb,
+        X_train_fit_lr,
+        X_test_lr,
+        lr_fill,
+    ) = _prepare_training_inputs(
         train,
         cal,
         test,
@@ -1542,20 +1520,6 @@ def main(
         logreg_features=logreg_features,
         val_fraction=val_fraction,
     )
-    train_val = prepared_inputs.train_val
-    train_fit_weights = prepared_inputs.train_fit_weights
-    train_val_weights = prepared_inputs.train_val_weights
-    y_train_fit = prepared_inputs.y_train_fit
-    y_val = prepared_inputs.y_val
-    y_cal = prepared_inputs.y_cal
-    y_test = prepared_inputs.y_test
-    X_train_fit_cb = prepared_inputs.x_train_fit_cb
-    X_val_cb = prepared_inputs.x_val_cb
-    X_cal_cb = prepared_inputs.x_cal_cb
-    X_test_cb = prepared_inputs.x_test_cb
-    X_train_fit_lr = prepared_inputs.x_train_fit_lr
-    X_test_lr = prepared_inputs.x_test_lr
-    lr_fill = prepared_inputs.lr_fill
 
     # Baseline LR
     lr_model, lr_metrics = train_baseline(
@@ -2207,8 +2171,8 @@ def main(
         "best_model": "CatBoost (tuned + calibrated)",
         "best_calibration": _human_calibration_name(selected_cal_method),
         "calibration_selection_report": cal_selection_report,
-        "feature_source": resolved_features.feature_source,
-        "feature_config_path": str(resolved_features.feature_config_path),
+        "feature_source": feature_source,
+        "feature_config_path": str(feature_config_path),
         "training_regime": regime_meta,
         "stable_core": stable_core_meta,
         "validation_scheme": val_cfg.get("scheme", "temporal_train_val_cal_test"),

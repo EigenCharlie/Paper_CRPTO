@@ -38,7 +38,9 @@ After the venue permits disclosure, the companion can include:
 - DVC metadata and pointers for processed artifacts and frozen model files;
 - MLflow/DagsHub lineage for the CRPTO runs, subject to credential-free access
   rules;
-- raw Lending Club source instructions rather than redistributed private data;
+- raw-data source instructions from `RAW_DATA_SOURCE_NOTES.md` rather than
+  redistributed raw CSVs when source terms or file size make rehosting
+  inappropriate;
 - Prosper and Freddie/Mendeley source notes for the external replication layer;
 - the frozen extraction manifest and guardrail tests used to verify the
   promoted frontier;
@@ -49,6 +51,12 @@ After the venue permits disclosure, the companion can include:
 
 No secrets, tokens, private DVC credentials, or local machine paths should be
 included in the reviewer packet.
+
+If ScholarOne asks for the disclosure option in prose, the intended answer is:
+code and manuscript sources are releasable after anonymity is lifted; raw data
+are public-source or source-controlled and therefore disclosed through source
+instructions plus DVC pointers/processed artifacts when the journal workflow and
+source terms permit.
 
 ## Double-Anonymous Handling
 

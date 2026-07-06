@@ -1,4 +1,5 @@
 ---
+name: crpto-smoke
 description: Smoke tests del proyecto - pytest crítico + dbt parse + dbt test. Rápido (~30s).
 ---
 

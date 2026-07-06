@@ -11,7 +11,6 @@ Usage:
 
 from __future__ import annotations
 
-import json
 import shutil
 from datetime import UTC, datetime
 from pathlib import Path
@@ -22,6 +21,8 @@ import matplotlib.pyplot as plt
 import matplotlib.ticker as mticker
 import pandas as pd
 from loguru import logger
+
+from src.utils.script_helpers import write_json, write_table
 
 matplotlib.use("Agg")
 
@@ -93,25 +94,6 @@ def _read_source(name: str) -> pd.DataFrame:
     if not path.exists():
         raise FileNotFoundError(f"Missing curated multidataset source: {path}")
     return pd.read_csv(path)
-
-
-def _write_table(name: str, frame: pd.DataFrame) -> list[Path]:
-    TABLE_DIR.mkdir(parents=True, exist_ok=True)
-    csv_path = TABLE_DIR / f"{name}.csv"
-    tex_path = TABLE_DIR / f"{name}.tex"
-    csv_path.write_text(
-        frame.to_csv(index=False, lineterminator="\n"),
-        encoding="utf-8",
-        newline="",
-    )
-    tex_path.write_text(
-        frame.to_latex(index=False, escape=True, float_format=lambda value: f"{value:.4f}"),
-        encoding="utf-8",
-        newline="",
-    )
-    logger.info("Wrote {}", csv_path.relative_to(ROOT))
-    logger.info("Wrote {}", tex_path.relative_to(ROOT))
-    return [csv_path, tex_path]
 
 
 def _save_figure(fig: plt.Figure, name: str) -> list[Path]:
@@ -449,7 +431,7 @@ def _plot_freddie_all_candidate_certificate(lp: pd.DataFrame) -> list[Path]:
     ax.set_yscale("log")
     ax.set_ylim(300, float(all_row["available_candidates"]) * 3.0)
     ax.set_ylabel("Count / rank (log scale)")
-    ax.set_title("All-candidate certificate")
+    ax.set_title("All-candidate audit")
     for bar in bars:
         value = bar.get_height()
         ax.annotate(
@@ -487,11 +469,11 @@ def _write_source_log() -> Path:
                 "",
                 "## Editorial Decision",
                 "",
-                "Prosper final-status loans and Freddie FM48 both are promoted as external economic replications. Home Credit is discarded from the IJDS main claim because it lacks a clean investment-return and exposure contract comparable to Lending Club, Prosper, and Freddie.",
+                "Prosper final-status loans and Freddie FM48 are reported as external economic replications. Home Credit is discarded from the IJDS main claim because it lacks a clean investment-return and exposure contract comparable to Lending Club, Prosper, and Freddie.",
                 "",
                 "## Extended Audit Layer",
                 "",
-                "A28 solves the Freddie FM48 LP on the full OOT candidate universe and certifies that the all-candidate optimum funds only loans inside the top-return screen. A29 isolates sparse Mondrian groups. A30--A33 report confidence intervals, OOT subperiods, Prosper default-definition sensitivity, and Freddie red/green segment sensitivity.",
+                "A28 solves the Freddie FM48 LP on the full OOT candidate universe and documents that the all-candidate optimum funds only loans inside the top-return screen. A29 isolates sparse Mondrian groups. A30--A33 report confidence intervals, OOT subperiods, Prosper default-definition sensitivity, and Freddie red/green segment sensitivity.",
                 "",
             ]
         ),
@@ -539,15 +521,33 @@ def build_multidataset_external_replication() -> dict[str, Any]:
     freddie_segment = _build_freddie_segment_table(freddie_segment_source)
 
     outputs: list[Path] = []
-    outputs.extend(_write_table(TABLE_A25, external_gate))
-    outputs.extend(_write_table(TABLE_A26, candidate))
-    outputs.extend(_write_table(TABLE_A27, freddie_horizon))
-    outputs.extend(_write_table(TABLE_A28, lp_exhaustiveness))
-    outputs.extend(_write_table(TABLE_A29, mondrian_sparse))
-    outputs.extend(_write_table(TABLE_A30, metric_intervals))
-    outputs.extend(_write_table(TABLE_A31, subperiods))
-    outputs.extend(_write_table(TABLE_A32, prosper_default))
-    outputs.extend(_write_table(TABLE_A33, freddie_segment))
+    outputs.extend(
+        write_table(TABLE_A25, external_gate, table_dir=TABLE_DIR, root=ROOT, float_precision=4)
+    )
+    outputs.extend(
+        write_table(TABLE_A26, candidate, table_dir=TABLE_DIR, root=ROOT, float_precision=4)
+    )
+    outputs.extend(
+        write_table(TABLE_A27, freddie_horizon, table_dir=TABLE_DIR, root=ROOT, float_precision=4)
+    )
+    outputs.extend(
+        write_table(TABLE_A28, lp_exhaustiveness, table_dir=TABLE_DIR, root=ROOT, float_precision=4)
+    )
+    outputs.extend(
+        write_table(TABLE_A29, mondrian_sparse, table_dir=TABLE_DIR, root=ROOT, float_precision=4)
+    )
+    outputs.extend(
+        write_table(TABLE_A30, metric_intervals, table_dir=TABLE_DIR, root=ROOT, float_precision=4)
+    )
+    outputs.extend(
+        write_table(TABLE_A31, subperiods, table_dir=TABLE_DIR, root=ROOT, float_precision=4)
+    )
+    outputs.extend(
+        write_table(TABLE_A32, prosper_default, table_dir=TABLE_DIR, root=ROOT, float_precision=4)
+    )
+    outputs.extend(
+        write_table(TABLE_A33, freddie_segment, table_dir=TABLE_DIR, root=ROOT, float_precision=4)
+    )
     outputs.extend(_plot_external_replication(external_gate))
     outputs.extend(_plot_candidate_sensitivity(candidate))
     outputs.extend(_plot_freddie_all_candidate_certificate(lp_exhaustiveness))
@@ -595,11 +595,7 @@ def build_multidataset_external_replication() -> dict[str, Any]:
         "freddie_segment_sensitivity": freddie_segment.to_dict(orient="records"),
         "outputs": [_rel(path) for path in outputs],
     }
-    STATUS_PATH.write_text(
-        json.dumps(status, indent=2, sort_keys=True) + "\n",
-        encoding="utf-8",
-        newline="\n",
-    )
+    write_json(STATUS_PATH, status)
     logger.info("Wrote {}", STATUS_PATH.relative_to(ROOT))
     return status
 

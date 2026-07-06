@@ -449,7 +449,7 @@ frozen funded set or intervals, never as a re-promoted champion.
 | A25 external replication gate | Applies the frozen CRPTO scoring/conformal/LP recipe to Prosper final-status loans and Freddie/Mendeley FM48. | External economic replication; not a Lending Club champion rerun and not a new exact theorem. |
 | A26 external candidate sensitivity | Checks whether the robust LP objective is stable as the OOT candidate pool grows. | Candidate-pool audit; supports the claim that reported objectives are not a tiny shortlist artifact. |
 | A27 Freddie horizon sensitivity | Audits Freddie/Mendeley default windows and red/green groups before selecting FM48 for the external table. | Dataset-selection audit; FM48 is promoted because it clears both coverage gates and keeps positive robust LP value. |
-| A28 external LP exhaustiveness | Solves Prosper all-candidate LP and Freddie caps `500k`, `1M`, and `all`. | Exhaustiveness certificate; the Freddie all-candidate optimum matches the screened optimum. |
+| A28 external LP exhaustiveness | Solves Prosper all-candidate LP and Freddie caps `500k`, `1M`, and `all`. | Exhaustiveness audit; the Freddie all-candidate optimum matches the screened optimum. |
 | A29 Freddie sparse Mondrian audit | Splits Freddie coverage by all groups, eligible groups, and sparse fallback groups. | Documents sparse cells; does not claim perfect conditional coverage in every tiny group. |
 | A30 external metric intervals | Adds uncertainty intervals for AUC, coverage, alpha coverage, and robust objective. | Bootstrap for funded-loan contribution only; it does not resample solver inputs. |
 | A31 external OOT subperiod metrics | Breaks Prosper by OOT year and Freddie by OOT quarter. | Subperiod audit; Freddie 2015Q4 alpha coverage is just below 99%. |
@@ -479,7 +479,7 @@ contract comparable to Lending Club, Prosper, or Freddie.
 | Prosper final-status | `54,807` | `30.92%` | `0.7074` | `0.9205` | `0.9943` | `10,531` | `$199,419` |
 | Freddie/Mendeley FM48 | `3,173,355` | `1.45%` | `0.7839` | `0.9745` | `0.9907` | `1,396,053` | `$1,291,228` |
 
-: A25. External replication gate on the two promoted economic datasets. The
+: A25. External replication gate on the two reported economic datasets. The
 source CSV is `reports/crpto/tables/crpto_tableA25_external_replication_gate.csv`.
 
 ![A25 external replication gate: Prosper and Freddie/Mendeley both clear the
@@ -496,10 +496,10 @@ removes the remaining shortlist concern by solving Freddie on `500,000`,
 objectives are identical across those three solves.
 
 ![A26 external candidate-pool sensitivity: robust LP value stabilizes for the
-reported Prosper and Freddie promoted runs, and Freddie random pools improve
+reported Prosper and Freddie external applications, and Freddie random pools improve
 with candidate cap without overtaking the top-return screen.](../reports/crpto/figures/crpto_fig23_external_candidate_sensitivity.png){#fig-supp-external-candidate-sensitivity width="88%" fig-alt="Line chart of robust LP objective by candidate cap and sampling mode for Prosper and Freddie external replications."}
 
-![A28 Freddie all-candidate certificate: the full `1,396,053`-candidate LP gives the same objective as the large top screens, and the all-candidate optimum funds only loans with rank at most `551`.](../reports/crpto/figures/crpto_fig24_freddie_all_candidate_certificate.png){#fig-supp-freddie-all-candidate width="88%" fig-alt="Two-panel Freddie FM48 certificate showing unchanged robust and nonrobust objectives across 500k, 1M, and all candidates, plus a log-scale comparison of all OOT candidates and worst funded rank."}
+![A28 Freddie all-candidate audit: the full `1,396,053`-candidate LP gives the same objective as the large top screens, and the all-candidate optimum funds only loans with rank at most `551`.](../reports/crpto/figures/crpto_fig24_freddie_all_candidate_certificate.png){#fig-supp-freddie-all-candidate width="88%" fig-alt="Two-panel Freddie FM48 audit showing unchanged robust and nonrobust objectives across 500k, 1M, and all candidates, plus a log-scale comparison of all OOT candidates and worst funded rank."}
 
 | Dataset | Candidate cap | Candidates solved | Robust LP objective | Nonrobust LP objective | Funded loans | Worst funded rank |
 |---|---:|---:|---:|---:|---:|---:|

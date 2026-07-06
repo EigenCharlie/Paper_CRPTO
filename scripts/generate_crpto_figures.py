@@ -123,10 +123,6 @@ def _save_editorial(fig: plt.Figure, name: str) -> None:
     plt.close(fig)
 
 
-def _load_json(path: Path) -> dict:
-    return load_json(path)
-
-
 # ── Paper 3: Mondrian CP ──────────────────────────────────────────────────────
 
 METHOD_LABELS = {
@@ -477,7 +473,7 @@ def _paper2_fig5_ecl_alpha_sensitivity() -> None:
 
 def _paper2_fig6_bma_vs_cp() -> None:
     """Fig 6 — BMA vs Conformal Mondrian: coverage / width / min-group comparison."""
-    status = _load_json(MODELS_DIR / "bma_comparison_status.json")
+    status = load_json(MODELS_DIR / "bma_comparison_status.json")
     # Actual structure: status["results"]["equal"]["overall_bma_coverage", ...]
     res = status.get("results", {}).get("equal", status.get("results", {}))
 
@@ -547,7 +543,7 @@ def _paper2_fig6_bma_vs_cp() -> None:
 
 def _crpto_fig7_uncertainty_baselines() -> None:
     """Fig 7 — 4 uncertainty set methods: coverage / width / min-group bar chart."""
-    status = _load_json(MODELS_DIR / "uncertainty_baselines_status.json")
+    status = load_json(MODELS_DIR / "uncertainty_baselines_status.json")
 
     results = status.get("results", {})
     methods_order = ["conformal_mondrian", "bootstrap", "parametric_gaussian", "ellipsoidal_grade"]
@@ -701,7 +697,7 @@ def _crpto_fig8_alpha_pareto() -> None:
 
 def _crpto_fig9_spo_regret() -> None:
     """Fig 9 — SPO+ decision regret comparison (bar + violin from per-seed data)."""
-    status = _load_json(MODELS_DIR / "spo_real_training_status.json")
+    status = load_json(MODELS_DIR / "spo_real_training_status.json")
     results = status.get("results", {})
 
     # Structure: results.{two_stage, spo_plus, conformal_robust}.{mean_regret, std_regret, per_seed_means}
@@ -788,7 +784,7 @@ def _crpto_fig9_spo_regret() -> None:
 
 def _crpto_fig10_cqr_comparison() -> None:
     """Fig 10 — CQR vs Mondrian per-grade coverage comparison."""
-    status = _load_json(MODELS_DIR / "cqr_comparison_status.json")
+    status = load_json(MODELS_DIR / "cqr_comparison_status.json")
     per_group = status.get("per_group_coverage", {})
 
     methods_to_plot = {
@@ -1836,7 +1832,7 @@ def _crpto_fig25_price_of_robustness_scaling() -> None:
     reference line (it is a single selected point, not part of the default-rate
     series). Data: models/crpto_multidataset_external_status.json.
     """
-    status = _load_json(MODELS_DIR / "crpto_multidataset_external_status.json")
+    status = load_json(MODELS_DIR / "crpto_multidataset_external_status.json")
     seg_label = {
         "green": "Freddie green",
         "both": "Freddie combined",

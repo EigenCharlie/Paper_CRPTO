@@ -1,4 +1,5 @@
 ---
+name: crpto-stage
 description: Ejecuta un stage DVC aislado con dry-run primero. Bloquea stages que tocan el champion congelado.
 ---
 
@@ -44,4 +45,5 @@ Ejecuta un stage DVC específico con seguridad.
 ## Notas
 
 - Trabaja siempre desde el root del repo.
+- Costo: `crpto.data.dataset` procesa 1.7 GB y los stages PD/search re-puntúan ~514k filas — de minutos a horas. Reportar la estimación antes de ejecutar.
 - Si el stage falla, no intentar arreglar automáticamente — reportar al usuario.

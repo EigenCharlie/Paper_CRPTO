@@ -12,8 +12,8 @@ It intentionally does not contain credentials, browser-session references, or pa
 
 ## Editorial Decision
 
-Prosper final-status loans and Freddie FM48 both are promoted as external economic replications. Home Credit is discarded from the IJDS main claim because it lacks a clean investment-return and exposure contract comparable to Lending Club, Prosper, and Freddie.
+Prosper final-status loans and Freddie FM48 are reported as external economic replications. Home Credit is discarded from the IJDS main claim because it lacks a clean investment-return and exposure contract comparable to Lending Club, Prosper, and Freddie.
 
 ## Extended Audit Layer
 
-A28 solves the Freddie FM48 LP on the full OOT candidate universe and certifies that the all-candidate optimum funds only loans inside the top-return screen. A29 isolates sparse Mondrian groups. A30--A33 report confidence intervals, OOT subperiods, Prosper default-definition sensitivity, and Freddie red/green segment sensitivity.
+A28 solves the Freddie FM48 LP on the full OOT candidate universe and documents that the all-candidate optimum funds only loans inside the top-return screen. A29 isolates sparse Mondrian groups. A30--A33 report confidence intervals, OOT subperiods, Prosper default-definition sensitivity, and Freddie red/green segment sensitivity.

@@ -7,7 +7,7 @@ template files have been downloaded outside Git.
 
 | File | Source | Reviewer-facing? | Status |
 |---|---|:---:|---|
-| Anonymous manuscript PDF | `CRPTO_ijds_submission.tex` compiled with `informs4` and `dblanonrev`. | Yes | Source synchronized with pool93 A35--A39 and the dual-tag provenance passages (2026-07-02; 26-page compile, Conclusion on p. 22); final official-template proof pending |
+| Anonymous manuscript PDF | `CRPTO_ijds_submission.tex` compiled with `informs4` and `dblanonrev`. | Yes | Source synchronized with pool93 A35--A39 and the dual-tag provenance passages; local official-template build verified 2026-07-06 (26 pages total; conclusion and references start on p. 22); final ScholarOne proof pending |
 | Anonymous online supplement PDF | `paper/supplement_ijds.qmd` rendered and visually checked. | Yes | Local render and page QA pass; final ScholarOne proof pending |
 | Separate title page | `TITLE_PAGE_DRAFT.md` converted into the ScholarOne/title-page format. | No | Pending ScholarOne copy |
 | Data and Code Disclosure Form | Official IJDS form using `DATA_CODE_DISCLOSURE_FORM_DRAFT.md`. | Editor/system | Pending official form entry |
@@ -19,19 +19,27 @@ template files have been downloaded outside Git.
 1. Download or refresh `informs4.cls` and `informs2014.bst` from INFORMS/Overleaf.
 2. Regenerate/synchronize `CRPTO_ijds_submission.tex` from the pool93 A35--A39 QMD source.
 3. Place the template files next to `CRPTO_ijds_submission.tex`; local gitignored copies are already present.
-4. Build:
+4. Build with `latexmk` when the local TinyTeX wrapper works:
 
    ```powershell
-   pdflatex CRPTO_ijds_submission
+   latexmk -pdf -gg -interaction=nonstopmode CRPTO_ijds_submission.tex
+   ```
+
+   If PowerShell/TinyTeX fails with `runscript.tlu`/`nil`, use the proven
+   fallback:
+
+   ```powershell
+   pdflatex -interaction=nonstopmode -halt-on-error CRPTO_ijds_submission.tex
    bibtex CRPTO_ijds_submission
-   pdflatex CRPTO_ijds_submission
-   pdflatex CRPTO_ijds_submission
+   pdflatex -interaction=nonstopmode -halt-on-error CRPTO_ijds_submission.tex
+   pdflatex -interaction=nonstopmode -halt-on-error CRPTO_ijds_submission.tex
    ```
 
 5. Confirm body page count is at most 25 pages excluding references and
-   appendices. The local official-template build is currently 26 pages total;
-   Section 9 starts on page 23 and references begin lower on that same page.
-   Recount after every official rebuild.
+   appendices. The local official-template build verified on 2026-07-06 is 26
+   pages total; Section 9 (Conclusion) and References both start on page 22, so
+   the manuscript remains comfortably inside the IJDS page budget when
+   references are excluded. Recount after every official rebuild.
 
 ## Final Local Gates
 

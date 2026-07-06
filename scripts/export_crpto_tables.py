@@ -50,10 +50,6 @@ def _policy_match(row: pd.Series, policy: dict[str, Any] | None) -> bool:
     return policy is not None and policy_matches(row, policy)
 
 
-def _write_table(name: str, frame: pd.DataFrame) -> None:
-    write_table(name, frame, table_dir=OUT, root=ROOT)
-
-
 def _table0_key_metrics(
     promotion: dict[str, Any],
     pipeline_summary: dict[str, Any],
@@ -239,17 +235,36 @@ def main(argv: list[str] | None = None) -> int:
         first_existing(BOUND_AWARE_SHORTLIST_EXACT_PATH, BOUND_AWARE_SHORTLIST_PATH)
     )
 
-    _write_table(
+    write_table(
         "crpto_table0_key_metrics",
         _table0_key_metrics(promotion, pipeline_summary, dvc_metrics),
+        table_dir=OUT,
+        root=ROOT,
     )
-    _write_table(
+    write_table(
         "crpto_table1_robustness_summary",
         _table1_robustness_summary(shortlist, promotion),
+        table_dir=OUT,
+        root=ROOT,
     )
-    _write_table("crpto_table2_conformal_variant_benchmark", _table2_conformal_benchmark(promotion))
-    _write_table("crpto_tableA1_benchmark_by_group", _table_a1_group_benchmark())
-    _write_table("crpto_tableA2_robustness_frontier", _table_a2_frontier(shortlist, promotion))
+    write_table(
+        "crpto_table2_conformal_variant_benchmark",
+        _table2_conformal_benchmark(promotion),
+        table_dir=OUT,
+        root=ROOT,
+    )
+    write_table(
+        "crpto_tableA1_benchmark_by_group",
+        _table_a1_group_benchmark(),
+        table_dir=OUT,
+        root=ROOT,
+    )
+    write_table(
+        "crpto_tableA2_robustness_frontier",
+        _table_a2_frontier(shortlist, promotion),
+        table_dir=OUT,
+        root=ROOT,
+    )
     if not args.skip_evidence:
         build_p1_evidence()
     return 0

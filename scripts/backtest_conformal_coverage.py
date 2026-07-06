@@ -45,7 +45,7 @@ def _load_intervals(intervals_path: str | None = None) -> pd.DataFrame:
         logger.info(f"Loaded intervals: {path} ({len(df):,} rows, legacy=False)")
         return df
 
-    df, path, is_legacy = load_conformal_intervals(allow_legacy_fallback=False)
+    df, path, is_legacy = load_conformal_intervals()
     logger.info(f"Loaded intervals: {path} ({len(df):,} rows, legacy={is_legacy})")
     return df
 

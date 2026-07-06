@@ -30,20 +30,18 @@ probabilities matter only after they shape which loans are funded. We introduce
 Conformal Robust Predict-Then-Optimize (CRPTO), a post-hoc bridge that maps a
 frozen calibrated probability-of-default artifact through Mondrian conformal
 intervals into robust portfolio constraints and an empirical funded-set audit.
-On a 276,869-loan out-of-time Lending Club evaluation, the final pool93 frontier
-contains 50,010 deduplicated semantic policies, with 27,508 policies both
-all-alpha safe and above the declared return floor. The selected body point
-earns `$184.8K` on a `$1M` budget while passing the declared eight-level alpha
-grid ($V(0.01)=0.035350$, $\Gamma_{\mathrm{CP}}=0.162616$, Markov cap
-`0.345084`, zero violation). The same exact frontier exposes a conservative
-above-floor endpoint with Markov cap `0.273036` and an economic endpoint above
-`$223K`, making the return-bound trade-off visible rather than implicit.
+On a 276,869-loan out-of-time Lending Club evaluation, the selected pool93 body
+point earns `$184.8K` on a `$1M` budget while passing the declared eight-level
+alpha grid ($V(0.01)=0.035350$, $\Gamma_{\mathrm{CP}}=0.162616$, Markov cap
+`0.345084`, zero violation). The same exact frontier exposes conservative and
+economic endpoints, making the return-bound trade-off visible rather than
+implicit.
 External frozen replications on Prosper marketplace loans and Freddie/Mendeley
 single-family mortgages preserve the predeclared global conformal gates and
 produce positive robust LP objectives, so the result is not confined to the
 Lending Club panel. Across the four frozen external applications, the price of
-robustness forms a positive premium series ordered by panel default rate (from
-`+1.0%` to `+9.5%`). The contribution is a conformal-robust
+robustness forms a positive premium series ordered by panel default rate. The
+contribution is a conformal-robust
 credit-portfolio decision certificate with a
 distribution-free Markov bound under weighted funded-set validity: it connects
 real credit data, calibrated predictive models, robust funding decisions, and a
@@ -88,13 +86,17 @@ system can be converted into a defendable decision system without reopening
 hyperparameter search whenever the manuscript or appendix changes.
 
 The empirical setting is the Lending Club retail-loan panel, with an
-out-of-time evaluation set of 276,869 loans. The promoted body point earns
-`$184,832.48` on a `$1M` budget, passes the exact empirical funded-set audit at
-$\alpha = 0.01$, and sits on a consolidated finite policy-grid frontier with
-50,010 deduplicated semantic policies. The headline result is not a single
-lucky allocation. It is a reproducible bridge from calibrated probabilistic
-learning to robust, auditable credit portfolio choice, with the return-bound
-frontier reported rather than hidden behind one selected point.
+out-of-time evaluation set of 276,869 loans. The consolidated frontier contains
+50,010 deduplicated semantic policies, of which 27,508 pass every declared
+alpha level and exceed the return floor. From that declared finite frontier,
+the promoted body point is the highest-return policy that passes the eight
+alpha levels under the declared `0.345` Markov cap; it is neither a continuous
+global optimum nor the economic endpoint. The selected point earns `$184.8K`
+on a `$1M` budget and passes the exact empirical funded-set audit at
+$\alpha = 0.01$. The headline result is not a single lucky allocation. It is a
+reproducible bridge from calibrated probabilistic learning to robust, auditable
+credit portfolio choice, with the return-bound frontier reported rather than
+hidden behind one selected point.
 
 To address the natural "single dataset" concern without reopening the Lending Club
 champion, we also freeze two external economic replications: Prosper final-status
@@ -334,8 +336,8 @@ $$
 $$
 
 on the PD scale, clipped to the feasible probability range. The objective is the *expected*
-net return `c_i - p_tilde_i * L`; the headline `$184,832.48` is the
-*realized* return of the same funded set, scored post hoc on observed defaults
+net return `c_i - p_tilde_i * L`; the headline realized return is the
+post-hoc accounting of the same funded set on observed defaults
 (a funded loan earns `c_i * a_i` if it survives and loses `L * a_i` if it
 defaults). Separating the optimized expectation from the realized accounting is
 deliberate: the optimizer never sees outcomes, so the realized figure is an
@@ -655,7 +657,7 @@ frozen upstream baseline; the pool93 frontier is a deterministic re-evaluation
 of a pre-declared finite policy grid over the *same* frozen PD artifacts and
 Mondrian conformal intervals, so no upstream artifact (model, calibrator, or
 interval) was regenerated when the body point moved from the floor to
-`$184,832.48`. The earlier certificate is not discarded: it becomes the floor
+`$184.8K`. The earlier certificate is not discarded: it becomes the floor
 that every eligible frontier policy must beat, which is why the frontier is
 reported with the floor surplus rather than as a replacement champion.
 
@@ -728,7 +730,7 @@ uses its full `10,531`-loan OOT economic universe. Freddie is evaluated on
 `1,396,053` OOT economic candidates. A sparse all-candidate LP solves the full
 Freddie universe and returns the same robust objective as the top screens; the
 worst funded loan has rank `551`, with zero funded loans outside the top-250,000
-screen. The supplement reports this as an exhaustiveness certificate rather than
+screen. The supplement reports this as an exhaustiveness audit rather than
 as an unverified shortlist caveat.
 
 ![External CRPTO replications preserve the predeclared global conformal gates and produce positive robust LP value on two materially different credit products.](../reports/crpto/figures/crpto_fig22_external_replication.png){#fig-external-replication width="94%" fig-alt="Two-panel external replication figure. The left panel shows 90 percent and alpha 0.01 coverage for Prosper and Freddie FM48 above target lines; the right panel shows positive robust LP objective values and OOT candidate counts."}
@@ -823,7 +825,7 @@ trade-off explicit rather than burying it in a single score.
 |---|---:|---:|---:|---:|
 | Two-stage baseline | `0.425896` | `0.0%` | not certified | `0/3` |
 | SPO+ | `0.216837` | `49.09% lower` | not certified | `0/3` |
-| CRPTO robust | `0.947429` | `122.46% higher` | `$184,832.48` | `3/3` |
+| CRPTO robust | `0.947429` | `122.46% higher` | `$184.8K` | `3/3` |
 
 : Regret-auditability frontier by method.
 
@@ -839,7 +841,7 @@ favorable price of robustness reported above and the higher CRPTO regret here
 are therefore not in tension; they are two different measurements (a real
 `$1M` funded set versus a synthetic regret benchmark). The right-hand columns
 report what the credit decision actually delivers: only CRPTO produces a
-budgeted funded set with a certified realized return (`$184,832.48` on the
+budgeted funded set with a certified realized return (`$184.8K` on the
 `$1M` budget) and the three verifiable risk controls (exact $\alpha$-safe pass,
 weighted-miscoverage audit, and finite-grid return-bound frontier). The two regret-trained
 comparators optimize a loss surface but do not emit an auditable funded-set
@@ -949,7 +951,8 @@ upstream promotion record continues to describe the bound-aware baseline whose
 realized return defines the declared return floor, while the pool93 governance
 sidecars are the authoritative machine-readable source for the body point and
 its frontier; guardrail tests assert that every body-claim number printed in
-this manuscript and the supplement matches those sidecar artifacts, so the two
+this manuscript and the supplement matches those sidecar artifacts. The
+paper-facing gate includes `tests/test_pool93_body_claim_sync.py`, so the two
 records cannot silently diverge.
 
 The certificate chain itself carries a stronger, verified property: an

@@ -2,9 +2,9 @@
 
 IJDS requires the Data and Code Disclosure Form at submission and expects
 accepted computational papers to upload data/code and complete the journal's
-reproducibility workflow. CRPTO can satisfy this without exposing secrets,
-private credentials, local paths, or author-identifying repository URLs during
-double-anonymous review.
+reproducibility workflow unless an exemption applies. CRPTO can satisfy this
+without exposing secrets, private credentials, local paths, or
+author-identifying repository URLs during double-anonymous review.
 
 Official policy: <https://pubsonline.informs.org/page/ijds/data-and-code-disclosure-policy>
 
@@ -24,7 +24,7 @@ Official policy: <https://pubsonline.informs.org/page/ijds/data-and-code-disclos
 | Manuscript | `paper/CRPTO_ijds.qmd`, `paper/supplement_ijds.qmd`, `paper/submission/`. | Reproduce body, supplement, and submission surfaces. |
 | Frozen evidence | `EXTRACTION_MANIFEST.json`, `models/*.json`, `reports/crpto/tables/`, `reports/crpto/figures/`. | Tie claims to immutable metrics and rendered evidence. |
 | Data pointers | `.dvc/`, `dvc.yaml`, `dvc.lock`, DVC remote notes. | Retrieve or verify processed artifacts outside Git. |
-| Raw-data instructions | Lending Club, Prosper, Freddie/Mendeley source notes. | Let readers reconstruct inputs without committing raw CSVs or credentials. |
+| Raw-data instructions | `RAW_DATA_SOURCE_NOTES.md`. | Let readers reconstruct inputs without committing raw CSVs or credentials. |
 | Guardrails | `just smoke`, `just validate-champion`, publication target tests, DVC status. | Confirm reproducibility without rerunning protected search stages. |
 
 ## Accepted-Paper Reproduction Commands
@@ -39,6 +39,24 @@ just evidence
 just journal-package
 just paper-submission
 just paper-submission-pdf
+```
+
+Official IJDS-template PDF build, after `paper/submission/CRPTO_ijds_submission.tex`
+is synchronized:
+
+```powershell
+cd paper/submission
+latexmk -pdf -gg -interaction=nonstopmode CRPTO_ijds_submission.tex
+```
+
+PowerShell/TinyTeX fallback proven in the local Codex environment:
+
+```powershell
+cd paper/submission
+pdflatex -interaction=nonstopmode -halt-on-error CRPTO_ijds_submission.tex
+bibtex CRPTO_ijds_submission
+pdflatex -interaction=nonstopmode -halt-on-error CRPTO_ijds_submission.tex
+pdflatex -interaction=nonstopmode -halt-on-error CRPTO_ijds_submission.tex
 ```
 
 Artifact-aware DVC verification, when credentials or public artifact access are
@@ -79,6 +97,19 @@ Anonymity note: the governance JSONs embed absolute local paths in their
 `source_paths`/`runtime_status` blocks. Copies shipped inside any
 review-stage or accepted-paper archive must be path-sanitized (or the fields
 dropped); the in-repo originals stay hash-frozen.
+
+## Hash and DVC Boundary
+
+- `EXTRACTION_MANIFEST.json` is the source of truth for protected artifact
+  hashes; `just validate-champion` runs the manifest regression tests.
+- DVC metadata (`dvc.yaml`, `dvc.lock`, `.dvc/`) records large data/model
+  dependencies and outputs without placing raw CSVs, processed parquet files, or
+  model binaries in Git.
+- The accepted-paper archive may include processed/model artifacts directly only
+  if the journal workflow and source-data terms permit it. Otherwise it should
+  include DVC pointers, source acquisition notes, and the commands above.
+- Review-stage archives must sanitize author-local paths and repository remotes
+  if they are sent before anonymity is lifted.
 
 ## Non-Rerunnable Stages
 
