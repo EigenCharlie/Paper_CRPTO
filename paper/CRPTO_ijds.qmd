@@ -730,7 +730,7 @@ uses its full `10,531`-loan OOT economic universe. Freddie is evaluated on
 `1,396,053` OOT economic candidates. A sparse all-candidate LP solves the full
 Freddie universe and returns the same robust objective as the top screens; the
 worst funded loan has rank `551`, with zero funded loans outside the top-250,000
-screen. The supplement reports this as an exhaustiveness certificate rather than
+screen. The supplement reports this as an exhaustiveness audit rather than
 as an unverified shortlist caveat.
 
 ![External CRPTO replications preserve the predeclared global conformal gates and produce positive robust LP value on two materially different credit products.](../reports/crpto/figures/crpto_fig22_external_replication.png){#fig-external-replication width="94%" fig-alt="Two-panel external replication figure. The left panel shows 90 percent and alpha 0.01 coverage for Prosper and Freddie FM48 above target lines; the right panel shows positive robust LP objective values and OOT candidate counts."}

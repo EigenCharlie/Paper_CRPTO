@@ -8,6 +8,22 @@ supporting text.
 Official policy:
 <https://pubsonline.informs.org/page/ijds/data-and-code-disclosure-policy>
 
+## Suggested Official Form Position
+
+Use the official IJDS form, not this draft, for ScholarOne. The closest current
+position is:
+
+- **Code:** releasable after anonymity is lifted, including `src/`, `scripts/`,
+  tests, Quarto sources, `pyproject.toml`, `uv.lock`, `justfile`, DVC metadata,
+  and manuscript sources.
+- **Data:** partially releasable. Derived tables, figures, status JSONs,
+  manifest hashes, and DVC pointers can be shared. Raw Lending Club, Prosper,
+  Freddie/Mendeley and Home Credit files should be obtained from their source
+  pages or shared only through a journal-approved mechanism if source terms and
+  file sizes permit.
+- **Review-stage access:** anonymized archive or controlled access if editors
+  request verification before acceptance.
+
 ## Short Disclosure Statement
 
 The paper is computational and relies on public-source credit-risk datasets,
@@ -23,9 +39,9 @@ certificate chain, and instructions for obtaining or reconstructing the raw data
 
 | Data source | Role in paper | Disclosure plan |
 |---|---|---|
-| Lending Club retail-loan data | Main static credit-risk panel and promoted funded-set certificate. | Provide source/acquisition instructions, schema notes, cleaning pipeline, DVC pointers or processed artifacts when redistribution is allowed. |
-| Prosper loan data | Frozen external marketplace-loan economic replication. | Provide source notes and generated summary artifacts; do not claim a new exact certificate. |
-| Freddie/Mendeley mortgage panel | Frozen external mortgage-credit economic replication. | Provide source notes and generated summary artifacts; do not claim a new exact certificate. |
+| Lending Club retail-loan data | Main static credit-risk panel and promoted funded-set certificate. | Use `RAW_DATA_SOURCE_NOTES.md`; provide source/acquisition instructions, schema notes, cleaning pipeline, DVC pointers or processed artifacts when redistribution is allowed. |
+| Prosper loan data | Frozen external marketplace-loan economic replication. | Use `RAW_DATA_SOURCE_NOTES.md`; provide source notes and generated summary artifacts; do not claim a new exact certificate. |
+| Freddie/Mendeley mortgage panel | Frozen external mortgage-credit economic replication. | Use `RAW_DATA_SOURCE_NOTES.md`; provide source notes and generated summary artifacts; do not claim a new exact certificate. |
 | Home Credit | Audited but not promoted because it lacks the required economic exposure/return contract. | Mention only as archived/non-promoted source context if needed. |
 
 ## Code Availability

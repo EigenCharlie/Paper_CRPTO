@@ -11,10 +11,12 @@
 %% portal or Overleaf and drop them next to this file, then build:
 %%   https://pubsonline.informs.org/authorportal/latex-style-files
 %%   https://www.overleaf.com/latex/templates/template-for-informs-journal-on-data-science/sbthszxgycfn
-%%   pdflatex CRPTO_ijds_submission
-%%   bibtex   CRPTO_ijds_submission
-%%   pdflatex CRPTO_ijds_submission
-%%   pdflatex CRPTO_ijds_submission
+%%   latexmk -pdf -gg -interaction=nonstopmode CRPTO_ijds_submission.tex
+%% If the local TinyTeX wrapper fails with runscript.tlu/nil, use:
+%%   pdflatex -interaction=nonstopmode -halt-on-error CRPTO_ijds_submission.tex
+%%   bibtex CRPTO_ijds_submission
+%%   pdflatex -interaction=nonstopmode -halt-on-error CRPTO_ijds_submission.tex
+%%   pdflatex -interaction=nonstopmode -halt-on-error CRPTO_ijds_submission.tex
 %%
 %% `dblanonrev` keeps the manuscript anonymous (IJDS uses double-anonymous
 %% review for submissions on/after 2025-01-01). Do NOT add author names,
@@ -778,7 +780,7 @@ Prosper uses its full 10{,}531-loan OOT economic universe. Freddie is evaluated
 on 1{,}396{,}053 OOT economic candidates; a sparse all-candidate LP returns the
 same robust objective as the large top screens, with worst funded rank 551 and
 zero funded loans outside the top-250{,}000 screen. This is an exhaustiveness
-check on the external LP solve, not a new exact funded-set certificate for
+audit on the external LP solve, not a new exact funded-set certificate for
 Prosper or Freddie.
 
 \begin{figure}[ht]

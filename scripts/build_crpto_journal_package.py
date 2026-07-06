@@ -944,7 +944,7 @@ def _write_markdown_dossier(status: dict[str, Any]) -> Path:
         "| A25 external replication gate | Reports Prosper and Freddie/Mendeley scoring, conformal and LP gates. | External replication evidence, not a new theorem. |",
         "| A26 external candidate sensitivity | Audits robust LP stability as the candidate pool grows. | Candidate-pool stress only. |",
         "| A27 Freddie horizon sensitivity | Audits the Freddie default-window choice before promoting FM48. | Dataset-level selection audit only. |",
-        "| A28 external LP exhaustiveness | Solves Prosper all-candidate and Freddie 500k/1M/all candidate LPs. | Exhaustiveness certificate, not a new theorem. |",
+        "| A28 external LP exhaustiveness | Solves Prosper all-candidate and Freddie 500k/1M/all candidate LPs. | Exhaustiveness audit, not a new theorem. |",
         "| A29 Freddie sparse Mondrian audit | Splits Freddie coverage by all, eligible and sparse groups. | Sparse-cell caveat only. |",
         "| A30 external metric intervals | Adds intervals for external AUC, coverage, alpha coverage and robust objective. | Bootstrap uncertainty, not conformal validity. |",
         "| A31 external OOT subperiod metrics | Breaks external metrics by OOT year or quarter. | Subperiod audit only. |",

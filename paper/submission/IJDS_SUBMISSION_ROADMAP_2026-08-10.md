@@ -34,7 +34,7 @@ CRPTO should be read as data science for decisions:
 | Jul 11-17 | External replication polish | Prosper/Freddie remain evidence of recipe transfer, not new exact certificates. |
 | Jul 18-24 | Figures and tables | Captions state takeaway; tables fit IJDS; figures remain readable in grayscale. |
 | Jul 25-31 | Reproducibility package | Data/code disclosure plan, commands, hashes, DVC pointers, and raw-data instructions are ready. |
-| Aug 1-5 | Official template | Body compiles in `informs4` with `dblanonrev`; current local build is 26 pages total, Section 9 starts on page 23, and references begin lower on that same page, so the body remains within the 25-page limit when references are excluded. Final ScholarOne proof still pending. |
+| Aug 1-5 | Official template | Body compiles in `informs4` with `dblanonrev`; current local build is 26 pages total, Section 9 and References start on page 22, so the body remains within the 25-page limit when references are excluded. Final ScholarOne proof still pending. |
 | Aug 6-8 | Double-anonymous QA | Metadata, URLs, acknowledgements, local paths, and author signals are removed from reviewer-facing PDFs. |
 | Aug 9-10 | Submission freeze | `just lint`, `just smoke`, `just validate-champion`, `just paper-submission-pdf`, and visual QA pass. |
 

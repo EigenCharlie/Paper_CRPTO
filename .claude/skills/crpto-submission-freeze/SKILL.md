@@ -32,6 +32,22 @@ GO/NO-GO por sección; cualquier NO-GO bloquea el freeze.
    Verificar en el log `Output written on CRPTO_ijds_submission.pdf`; el
    "up-to-date" sin runs de pdflatex NO cuenta como rebuild.
 
+   Si `latexmk` falla en PowerShell por el wrapper de TinyTeX
+   (`runscript.tlu` con valor `nil`), usar el fallback probado:
+
+   ```powershell
+   cd paper/submission
+   pdflatex -interaction=nonstopmode -halt-on-error CRPTO_ijds_submission.tex
+   bibtex CRPTO_ijds_submission
+   pdflatex -interaction=nonstopmode -halt-on-error CRPTO_ijds_submission.tex
+   pdflatex -interaction=nonstopmode -halt-on-error CRPTO_ijds_submission.tex
+   ```
+
+   El fallback cuenta como rebuild oficial si produce
+   `CRPTO_ijds_submission.pdf` desde el `.tex` sincronizado y el log muestra
+   `Output written`. Reparación opcional del wrapper TinyTeX:
+   `tlmgr update --self --all`.
+
 4. **Límite de páginas**: el body debe quedar en <= 25 páginas excluyendo
    referencias (política IJDS). Verificar el total y en qué página empieza la
    bibliografía:

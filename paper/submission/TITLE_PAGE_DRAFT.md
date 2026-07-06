@@ -8,6 +8,11 @@ only as the separate title page requested by ScholarOne/INFORMS.
 CRPTO: Conformal Robust Predict-Then-Optimize for Auditable Credit Portfolio
 Decisions
 
+## Keywords
+
+conformal prediction; robust optimization; credit risk; predict-then-optimize;
+portfolio decisions; reproducibility; model risk governance
+
 ## Author
 
 Carlos Alfredo Vergara Rojas
@@ -45,7 +50,7 @@ The manuscript includes numerical and computational work. The author will
 complete the IJDS Data and Code Disclosure Form at submission and, if the paper
 is accepted, provide the code, manuscript sources, reproducibility commands,
 artifact metadata, and data-access instructions described in
-`REPRODUCIBILITY_PACKAGE.md`.
+`REPRODUCIBILITY_PACKAGE.md` and `RAW_DATA_SOURCE_NOTES.md`.
 
 ## Double-Anonymous Handling
 
