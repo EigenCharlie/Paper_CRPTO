@@ -1,4 +1,5 @@
 ---
+name: crpto-paper-export
 description: Pipeline completo de salida journal-ready - tablas, figuras, libro Quarto, journal package.
 ---
 

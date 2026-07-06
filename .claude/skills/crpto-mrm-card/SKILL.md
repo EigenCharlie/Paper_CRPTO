@@ -1,4 +1,5 @@
 ---
+name: crpto-mrm-card
 description: Actualiza o regenera la model card (skops) del champion en reports/mrm/. Lee del champion congelado.
 ---
 
@@ -54,4 +55,4 @@ Genera la model card del champion CRPTO para gobernanza MRM (Model Risk Manageme
 
 - La card sustituye `reports/mrm/model_card_crpto_champion.md` existente si lo hay.
 - NO modifica el modelo, solo lee.
-- Si `skops` no está instalado: `uv add skops` (pero ya debería estar en deps).
+- Pre-check antes de empezar: `uv run python -c "import skops"`. Si falla, `uv add skops`.

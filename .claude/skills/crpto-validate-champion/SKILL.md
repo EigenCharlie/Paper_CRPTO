@@ -1,4 +1,5 @@
 ---
+name: crpto-validate-champion
 description: Verifica que los artefactos del champion no han cambiado vs EXTRACTION_MANIFEST.json (hashes SHA256).
 ---
 

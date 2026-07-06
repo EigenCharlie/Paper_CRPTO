@@ -27,9 +27,9 @@ perenne y lo que el código lee/escribe.
 - `pool93_tail_risk_closeout_2026-07-02.md` — cierre A37--A39 para la
   asignacion pool93 seleccionada: tail-risk repricing, cluster-bound y
   bootstrap fijo.
-- `paper4_crpto_crosswalk_2026-07-02.md` — decision autocontenida sobre que
-  evidencia extendida entra al paper IJDS, que queda en supplement y que queda
-  en tesis/future work.
+- `archive/paper4_crpto_crosswalk_2026-07-02.md` — decision autocontenida sobre
+  que evidencia extendida entra al paper IJDS, que queda en supplement y que
+  queda en tesis/future work (archivada tras aplicarse).
 - `ijds_rebaseline_2026-06-07.md` — registro historico del rebaseline previo
   (`ijds-rebaseline-2026-06-07`), retenido como provenance despues del cierre
   pool93.
@@ -69,5 +69,8 @@ pipeline, runbook e integraciones.
 Memos de extensión (incertidumbre temporal vNext, conformal de clasificación,
 validation hardening) que no forman parte de los claims del manuscrito IJDS.
 
-> Para el **estado de refactors y el trabajo pendiente**, ver
-> [`../refactor/NEXT_WORK_PLAN_2026-06.md`](../refactor/NEXT_WORK_PLAN_2026-06.md).
+> Para el **estado de refactors**, ver [`../refactor/README.md`](../refactor/README.md);
+> el backlog consolidado 2026-06 quedó ejecutado y archivado en
+> [`../refactor/archive/NEXT_WORK_PLAN_2026-06.md`](../refactor/archive/NEXT_WORK_PLAN_2026-06.md).
+> El trabajo estructural pendiente vive en
+> [`crpto_full_audit_2026-07-05.md`](crpto_full_audit_2026-07-05.md) (fases F3–F5).

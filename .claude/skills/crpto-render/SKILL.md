@@ -1,4 +1,5 @@
 ---
+name: crpto-render
 description: Renderiza el libro Quarto a HTML, abre el resultado y opcionalmente captura screenshots para QA visual.
 ---
 
@@ -44,4 +45,4 @@ Renderiza el libro CRPTO y valida el resultado.
 
 - NO usa `QUARTO_PYTHON=.venv/bin/python` (es path Linux y rompe en Windows). `uv run --` resuelve el Python del venv cross-platform.
 - Si Quarto no está en PATH: reportar al usuario y abortar. No intentar instalar Quarto desde aquí.
-- Si hay errores de chunk Python, sugerir limpiar `book/_freeze/` y re-correr.
+- Si hay errores de chunk Python, correr `just book-clean` (purga `book/_book`, `book/_freeze`, `book/.quarto`) y re-renderizar.

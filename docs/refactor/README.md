@@ -3,13 +3,11 @@
 Refactor plans, drift reports and execution memory for code paths that touch
 the frozen paper pipeline.
 
-> **Start here for what's next:**
-> [`NEXT_WORK_PLAN_2026-06.md`](NEXT_WORK_PLAN_2026-06.md) — the consolidated
-> backlog after R0–R5 (PRs #52–#66) and the 2026-06-13 Codex execution memory.
-> Lanes A/B are closed as code/DVC metadata changes; A2 phase 4 retired the
-> feature-config pickle under the approved run-tag window; C4 remains
-> prohibited until freeze/submission, and D is the explicit NO-DO list to
-> avoid churn.
+> The consolidated 2026-06 backlog was executed and archived:
+> [`archive/NEXT_WORK_PLAN_2026-06.md`](archive/NEXT_WORK_PLAN_2026-06.md).
+> Pending structural work now lives in
+> [`docs/research/crpto_full_audit_2026-07-05.md`](../research/crpto_full_audit_2026-07-05.md)
+> (fases F3–F5) until approved.
 
 Each plan documents:
 
@@ -22,7 +20,7 @@ Each plan documents:
 | --- | --- | --- |
 | [`CONFORMAL_REFACTOR_PLAN.md`](CONFORMAL_REFACTOR_PLAN.md) | Yes (calibrator pickle) | Full public split executed 2026-06-13; `src.models.conformal` is now a package facade with strict-typed submodules. |
 | [`MAPIE_MIGRATION_PLAN.md`](MAPIE_MIGRATION_PLAN.md) | Yes (intervals parquet) | Runtime is already MAPIE 1.x and the drift report is green; protected reruns still require explicit approval. |
-| [`FEATURE_CONFIG_PARQUET_PLAN.md`](FEATURE_CONFIG_PARQUET_PLAN.md) | Yes (downstream stages) | YAML/Parquet migration executed 2026-06-13; `feature_config.pkl` retired from the live DVC DAG and manifest. |
+| [`archive/FEATURE_CONFIG_PARQUET_PLAN.md`](archive/FEATURE_CONFIG_PARQUET_PLAN.md) | Yes (downstream stages) | Executed 2026-06-13 and archived; `feature_config.pkl` retired from the live DVC DAG and manifest. |
 
 Executed lanes now in `main`:
 
