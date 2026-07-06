@@ -72,5 +72,6 @@ validation hardening) que no forman parte de los claims del manuscrito IJDS.
 > Para el **estado de refactors**, ver [`../refactor/README.md`](../refactor/README.md);
 > el backlog consolidado 2026-06 quedó ejecutado y archivado en
 > [`../refactor/archive/NEXT_WORK_PLAN_2026-06.md`](../refactor/archive/NEXT_WORK_PLAN_2026-06.md).
-> El trabajo estructural pendiente vive en
-> [`crpto_full_audit_2026-07-05.md`](crpto_full_audit_2026-07-05.md) (fases F3–F5).
+> Las fases F1–F5 de la auditoría 2026-07-05 están cerradas; el registro de
+> ejecución y el backlog post-submission viven en
+> [`crpto_full_audit_2026-07-05.md`](crpto_full_audit_2026-07-05.md).
