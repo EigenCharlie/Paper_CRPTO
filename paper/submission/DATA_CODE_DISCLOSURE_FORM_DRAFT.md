@@ -13,9 +13,9 @@ Official policy:
 Use the official IJDS form, not this draft, for ScholarOne. The closest current
 position is:
 
-- **Code:** releasable after anonymity is lifted, including `src/`, `scripts/`,
-  tests, Quarto sources, `pyproject.toml`, `uv.lock`, `justfile`, DVC metadata,
-  and manuscript sources.
+- **Code:** released at acceptance, including `src/`, `scripts/`, tests, Quarto
+  sources, `pyproject.toml`, `uv.lock`, `justfile`, DVC metadata, and
+  manuscript sources.
 - **Data:** partially releasable. Derived tables, figures, status JSONs,
   manifest hashes, and DVC pointers can be shared. Raw Lending Club, Prosper,
   Freddie/Mendeley and Home Credit files should be obtained from their source
@@ -29,7 +29,7 @@ position is:
 The paper is computational and relies on public-source credit-risk datasets,
 derived processed artifacts, frozen model outputs, and reproducible code. During
 double-anonymous review, the manuscript describes a reproducible companion
-package without exposing author-identifying URLs. If accepted, the author will
+package without exposing author-identifying URLs. At acceptance, the author will
 release a public reproducibility package containing source code, manuscript
 sources, paper table/figure generation commands, frozen artifact metadata,
 manifest hashes, an executable drift harness for the prediction-to-decision

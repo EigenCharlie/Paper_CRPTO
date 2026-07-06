@@ -60,7 +60,9 @@ production monitoring, and package extraction remain future work only.
 
 The body states the CRPTO guarantee in operational terms. This appendix fixes
 notation and records the exact boundary between the distribution-free claim and
-the optional tightening arguments.
+the optional tightening arguments. The proof depends on Assumption 1 (weighted
+funded-set validity) as a modeling premise for the selected allocation; Appendix
+A does not turn the selected funded set into a universal conformal guarantee.
 
 | Symbol | Meaning |
 |---|---|
@@ -76,6 +78,9 @@ the optional tightening arguments.
 | `Gamma_CP` | Portfolio-level conformal risk metric after allocation: `sum_i w_i (u_i - p_hat_i)`, with clipping at one on the PD scale. |
 | `B_u(alpha)` | Weighted upper-endpoint budget of the funded set, `sum_i w_i u_i(alpha)`; equals `tau + (1-gamma) Gamma_CP` when the cap binds. |
 | `V(alpha)` | Weighted funded-set miscoverage quantity. |
+
+Prose writes the conformal premium as $\Gamma_{\mathrm{CP}}$; tables sometimes
+use the artifact label `Gamma_CP` so regenerated CSV headers remain traceable.
 
 For a fixed allocation, conformal coverage controls the expected interval miss
 indicator under the stated exchangeability design. CRPTO converts loan-level
@@ -387,9 +392,10 @@ concentration cost transparent in A21.
 
 # Appendix B: P1 Evidence
 
-The P1 package strengthens the frozen champion without reopening search. Tables
-A3--A11 are generated from frozen or derived artifacts and should be read as
-post-selection audit evidence.
+The first evidence block asks whether the selected policy is a fragile point
+estimate. Tables A3--A11 are generated from frozen or derived artifacts and
+should be read as post-selection audit evidence rather than as a new selection
+protocol.
 
 | Table | Role | Current-paper use |
 |---|---|---|
@@ -411,12 +417,17 @@ future journal hardening.
 # Appendix C: Journal Robustness Package
 
 Tables A12--A39 answer likely reviewer questions that are too detailed for the
-25-page body. A35 is the active pool93 frontier consumed by the body, A36 is
-the pool93 body-point funded-set grade audit, A37 is the pool93 body-point
-tail-risk repricing, A38 is the pool93 body-point cluster-bound audit, and A39
-is the pool93 body-point fixed-allocation bootstrap audit. A12--A34
-are diagnostic by design, except A19 also supports the body framing around
-regret-auditability and A25--A34 support the external-replication defense.
+25-page body. The block structure is deliberate: A12--A18 report tail, margin
+and policy-family diagnostics; A19 isolates regret-auditability; A20--A24 stress
+tail, dependence, multi-distribution and online interpretations; A25--A34 test
+external recipe transfer; and A35--A39 close the promoted pool93 frontier,
+composition, tail, concentration and uncertainty profile. A35 is the active
+pool93 frontier consumed by the body, A36 is the pool93 body-point funded-set
+grade audit, A37 is the pool93 body-point tail-risk repricing, A38 is the
+pool93 body-point cluster-bound audit, and A39 is the pool93 body-point
+fixed-allocation bootstrap audit. A12--A34 are diagnostic by design, except A19
+also supports the body framing around regret-auditability and A25--A34 support
+the external-replication defense.
 A20--A34 are journal-only add-ons: A20 audits tail-risk trade-offs as a
 diagnostic package; A21 makes the dependence-aware caveat numerical; A22 turns
 the tail-risk diagnostic into an *active CVaR/OCE selection constraint* (a
@@ -482,8 +493,8 @@ contract comparable to Lending Club, Prosper, or Freddie.
 : A25. External replication gate on the two reported economic datasets. The
 source CSV is `reports/crpto/tables/crpto_tableA25_external_replication_gate.csv`.
 
-![A25 external replication gate: Prosper and Freddie/Mendeley both clear the
-global conformal and alpha = 0.01 coverage checks, with positive robust LP
+![A25 answers whether the recipe travels beyond Lending Club: Prosper and
+Freddie/Mendeley both clear the global conformal and alpha = 0.01 coverage checks, with positive robust LP
 objectives.](../reports/crpto/figures/crpto_fig22_external_replication.png){#fig-supp-external-replication width="88%" fig-alt="Bar chart comparing Prosper final-status and Freddie FM48 on coverage 90 percent, alpha 0.01 coverage, AUC and robust LP objective."}
 
 Table A26 checks whether the reported external robust objectives depend on an
@@ -495,11 +506,11 @@ removes the remaining shortlist concern by solving Freddie on `500,000`,
 `1,000,000`, and all `1,396,053` OOT candidates; the robust and nonrobust
 objectives are identical across those three solves.
 
-![A26 external candidate-pool sensitivity: robust LP value stabilizes for the
+![A26 answers the shortlist concern: robust LP value stabilizes for the
 reported Prosper and Freddie external applications, and Freddie random pools improve
 with candidate cap without overtaking the top-return screen.](../reports/crpto/figures/crpto_fig23_external_candidate_sensitivity.png){#fig-supp-external-candidate-sensitivity width="88%" fig-alt="Line chart of robust LP objective by candidate cap and sampling mode for Prosper and Freddie external replications."}
 
-![A28 Freddie all-candidate audit: the full `1,396,053`-candidate LP gives the same objective as the large top screens, and the all-candidate optimum funds only loans with rank at most `551`.](../reports/crpto/figures/crpto_fig24_freddie_all_candidate_certificate.png){#fig-supp-freddie-all-candidate width="88%" fig-alt="Two-panel Freddie FM48 audit showing unchanged robust and nonrobust objectives across 500k, 1M, and all candidates, plus a log-scale comparison of all OOT candidates and worst funded rank."}
+![A28 answers the remaining Freddie cap concern: the full `1,396,053`-candidate LP gives the same objective as the large top screens, and the all-candidate optimum funds only loans with rank at most `551`.](../reports/crpto/figures/crpto_fig24_freddie_all_candidate_certificate.png){#fig-supp-freddie-all-candidate width="88%" fig-alt="Two-panel Freddie FM48 audit showing unchanged robust and nonrobust objectives across 500k, 1M, and all candidates, plus a log-scale comparison of all OOT candidates and worst funded rank."}
 
 | Dataset | Candidate cap | Candidates solved | Robust LP objective | Nonrobust LP objective | Funded loans | Worst funded rank |
 |---|---:|---:|---:|---:|---:|---:|
@@ -558,7 +569,7 @@ establish a general relationship.
 The source CSV is
 `reports/crpto/tables/crpto_tableA34_price_of_robustness_cross_dataset.csv`.
 
-![A34 price-of-robustness scaling: under frozen external application the premium is positive and increases with the panel default rate.](../reports/crpto/figures/crpto_fig25_price_of_robustness_scaling.png){#fig-supp-price-scaling width="82%" fig-alt="Line chart on a log-scale x-axis showing the external price of robustness rising from +1.00 percent to +9.46 percent as the panel default rate increases."}
+![A34 answers whether robustness has a stable interpretation outside Lending Club: under frozen external application the premium is positive and increases with the panel default rate.](../reports/crpto/figures/crpto_fig25_price_of_robustness_scaling.png){#fig-supp-price-scaling width="82%" fig-alt="Line chart on a log-scale x-axis showing the external price of robustness rising from +1.00 percent to +9.46 percent as the panel default rate increases."}
 
 Two readings matter. First, the premium tracks irreducible default risk, not
 discrimination: the green and red Freddie segments have nearly identical AUC but
@@ -751,21 +762,21 @@ decision.
 | AI/OR digital lending optimization [@aior2025lendingclub]. | Frames Lending Club funding as multi-objective OR. | Keeps risk controls and artifact governance as first-class outputs. |
 | Ordinal conformal credit scoring [@kawasumi2026ordinal]. | Applies conformal prediction to credit-score intervals. | CRPTO moves from score uncertainty to a robust portfolio decision. |
 
-![Uncertainty baselines remain supplement evidence; they justify why conformal robust sets are used without replacing the champion.](../reports/crpto/figures/crpto_fig7_uncertainty_baselines.png){#fig-supp-uncertainty-baselines width="90%" fig-alt="Three-panel comparison of uncertainty set methods by empirical coverage, mean interval width, and minimum grade coverage."}
+![A reviewer may ask whether another uncertainty baseline dominates; Figure 7 keeps those alternatives as supplement evidence and shows why conformal robust sets remain the promoted input without replacing the champion.](../reports/crpto/figures/crpto_fig7_uncertainty_baselines.png){#fig-supp-uncertainty-baselines width="90%" fig-alt="Three-panel comparison of uncertainty set methods by empirical coverage, mean interval width, and minimum grade coverage."}
 
-![SPO+ is retained as an auditability/regret comparator, not as a replacement champion.](../reports/crpto/figures/crpto_fig9_spo_regret.png){#fig-supp-spo width="90%" fig-alt="Decision regret comparison of two-stage, SPO+, and conformal robust methods, with SPO+ showing lower regret."}
+![A reviewer may ask whether regret training should replace CRPTO; Figure 9 keeps SPO+ as the low-regret comparator, not as a replacement champion.](../reports/crpto/figures/crpto_fig9_spo_regret.png){#fig-supp-spo width="90%" fig-alt="Decision regret comparison of two-stage, SPO+, and conformal robust methods, with SPO+ showing lower regret."}
 
-![A19 materializes the regret-auditability frontier: SPO+ is the low-regret corner, while CRPTO robust is the auditable-risk-control corner.](../reports/crpto/figures/crpto_fig15_regret_auditability_frontier.png){#fig-supp-regret-auditability width="82%" fig-alt="Scatter plot of regret versus verifiable risk controls, positioning SPO+ as low-regret and CRPTO robust as high-auditability."}
+![A19 answers the regret objection by materializing the frontier: SPO+ is the low-regret corner, while CRPTO robust is the auditable-risk-control corner.](../reports/crpto/figures/crpto_fig15_regret_auditability_frontier.png){#fig-supp-regret-auditability width="82%" fig-alt="Scatter plot of regret versus verifiable risk controls, positioning SPO+ as low-regret and CRPTO robust as high-auditability."}
 
 ![CQR is retained as conformal appendix evidence, not as the promoted method.](../reports/crpto/figures/crpto_fig10_cqr_per_grade.png){#fig-supp-cqr width="90%" fig-alt="Coverage by Lending Club grade for CQR and conformal variants, used as appendix evidence rather than promoted method."}
 
-![Tail-risk versus realized return in the diagnostic A20 policy surface. This figure illustrates the CRPTO tail-risk audit pattern on the legacy diagnostic surface; A37 is the pool93-specific selected-allocation tail repricing.](../reports/crpto/figures/crpto_fig16_tail_risk_frontier.png){#fig-supp-tail-frontier width="90%" fig-alt="Scatter plot of tail risk versus realized return across a diagnostic policy surface, with lower-tail and higher-return policies marked."}
+![A20 answers whether a lower-tail policy was available: the diagnostic surface exposes the return/tail trade-off, while A37 remains the pool93-specific selected-allocation repricing.](../reports/crpto/figures/crpto_fig16_tail_risk_frontier.png){#fig-supp-tail-frontier width="90%" fig-alt="Scatter plot of tail risk versus realized return across a diagnostic policy surface, with lower-tail and higher-return policies marked."}
 
-![Tail risk of the frozen funded set under varying loss-given-default (Table A12). CVaR grows with the assumed LGD while the OCE and the mean loss rate stay milder, showing that OCE/CVaR enter the paper as post-hoc stress summaries rather than as the optimized objective.](../reports/crpto/figures/crpto_fig17_tail_risk_lgd.png){#fig-supp-tail-lgd width="82%" fig-alt="Line chart of frozen funded-set loss rate versus LGD (0.35 to 0.60) for CVaR90, CVaR95, CVaR99, OCE and the mean; CVaR grows with LGD while OCE and the mean stay mild."}
+![A12 answers how sensitive the frozen funded set is to LGD: CVaR grows with the assumption while OCE and mean loss stay milder, so OCE/CVaR enter as post-hoc stress summaries rather than as the optimized objective.](../reports/crpto/figures/crpto_fig17_tail_risk_lgd.png){#fig-supp-tail-lgd width="82%" fig-alt="Line chart of frozen funded-set loss rate versus LGD (0.35 to 0.60) for CVaR90, CVaR95, CVaR99, OCE and the mean; CVaR grows with LGD while OCE and the mean stay mild."}
 
-![A22 return-vs-CVaR frontier: each point is the highest-return alpha01-safe policy admissible under a decision-time CVaR cap in the diagnostic tail package. The plot shows how a tail-constrained challenger would be documented; it is not the active pool93 selector.](../reports/crpto/figures/crpto_fig18_tail_constrained_frontier.png){#fig-supp-tail-constrained width="88%" fig-alt="Upward line of realized return versus decision-time CVaR95 cap, with a high-return point and tightest tail cap marked."}
+![A22 answers how a tail-constrained challenger would be documented: each point is the highest-return alpha01-safe policy admissible under a decision-time CVaR cap, but the active selector remains the pool93 return-bound point.](../reports/crpto/figures/crpto_fig18_tail_constrained_frontier.png){#fig-supp-tail-constrained width="88%" fig-alt="Upward line of realized return versus decision-time CVaR95 cap, with a high-return point and tightest tail cap marked."}
 
-![A24 online conformal stability: per-vintage and cumulative coverage stay above the 90% target across the eleven OOT vintages while the Gibbs-Candes ACI target alpha_t barely drifts, indicating an online controller would have little to correct on this static OOT.](../reports/crpto/figures/crpto_fig19_online_coverage_aci.png){#fig-supp-online-aci width="88%" fig-alt="Per-vintage and cumulative coverage lines above a 90% target line across eleven OOT quarters, with the ACI target alpha_t on a secondary axis rising slightly from 0.10 to 0.12."}
+![A24 answers the online-control objection on the frozen panel: per-vintage and cumulative coverage stay above the 90% target while the Gibbs-Candes ACI target alpha_t barely drifts, so live control remains future protocol.](../reports/crpto/figures/crpto_fig19_online_coverage_aci.png){#fig-supp-online-aci width="88%" fig-alt="Per-vintage and cumulative coverage lines above a 90% target line across eleven OOT quarters, with the ACI target alpha_t on a secondary axis rising slightly from 0.10 to 0.12."}
 
 A19--A39 should be read as literature-aligned stress evidence. A19 places CRPTO
 against the regret-driven training tradition; A20--A22 translate tail risk and
@@ -805,7 +816,7 @@ The governance boundary for the current submission is:
 | Causal automated decisions | Observational credit-risk decisions are reported as predictive/prescriptive certificates only. | Experimental or causal policy evaluation would require a separate design [@fernandezloria2025observational]. |
 | Monitoring | Artifact-backed guardrails and MRM triggers. | Live production dashboard. |
 | Retraining | No automatic retraining; frozen paper champion. | New named run with drift report. |
-| Companion | Quarto + DVC-backed artifact lineage after anonymity decision. | Streamlit/product showcase. |
+| Companion | Quarto + DVC-backed artifact lineage after journal policy allows disclosure. | Streamlit/product showcase. |
 
 # Appendix E: Reproducibility
 
@@ -913,10 +924,27 @@ The active IJDS submission surfaces are:
 |---|---|---|
 | Anonymous body | `paper/CRPTO_ijds.qmd` | 25-page IJDS-style manuscript source. |
 | Online supplement | `paper/supplement_ijds.qmd` | Proofs, A3--A39, MRM/fairness, reproducibility. |
-| Long companion | `book/` | Public companion after anonymity handling. |
+| Long companion | `book/` | Public companion after acceptance or journal-approved disclosure. |
 | Publication config | `configs/crpto_publication_targets.yaml` | Venue, template, anonymity, and pivot rules. |
 
 The active handoff body is mirrored in the official INFORMS IJDS LaTeX template
 with double-anonymous settings under `paper/submission/CRPTO_ijds_submission.tex`.
 The title page is submitted separately, and repository or remote-storage URLs are
 disclosed only according to the journal's data/code and double-anonymous policies.
+
+# Appendix G: Body Claim Crosswalk
+
+This crosswalk turns the supplement into a map rather than a long appendix. Each
+row links a body-level claim to the appendix evidence that defends it and to the
+boundary that prevents overclaiming.
+
+| Body claim | Body location | Supplement defense | Boundary |
+|---|---|---|---|
+| CRPTO is a decision method, not a classifier leaderboard. | Abstract, Introduction, Closest Work. | Appendix B A3--A11, Appendix C A19, Figure 1 in the body. | Prediction quality is an input; the certified object is the funded-set decision. |
+| The theorem is a Markov bound under weighted funded-set validity. | Theory. | Appendix A proof, Proposition A.1 sharpness, Proposition A.2 cluster sensitivity. | Assumption 1 is a modeling premise, not a universal conformal guarantee. |
+| The promoted Lending Club point is exactly auditable. | Results, exact certificate table. | Appendix C A35--A39, funded-set audit card, governance sidecars. | Exact means file-backed accounting on the frozen selected allocation. |
+| The selected point is not a lucky singleton. | Pool93 frontier table. | A35 finite-grid frontier plus terminal and consolidated governance denominators. | Finite declared grid, not continuous global optimality. |
+| External credit panels support recipe transfer. | Multi-dataset replication protocol and results. | A25--A34 external replication, exhaustiveness, intervals, subperiod and segment sensitivity. | External evidence is economic replication, not new exact certificates. |
+| Regret and auditability are different outputs. | Regret-auditability section. | A19 and Figure 15. | SPO+ owns the synthetic regret corner; CRPTO owns the audited funded-set corner. |
+| Tail and concentration evidence interpret the selected point. | Tail risk and distribution robustness. | A20--A24 and A37--A39. | Tail-risk, bootstrap and online/multi-distribution rows are diagnostics, not hidden selectors. |
+| Reproducibility is artifact-backed. | Reproducibility and companion. | Appendix E commands, drift harness, DVC/manifest boundary. | Routine reproduction excludes protected champion/search stages. |

@@ -109,7 +109,30 @@ dropped); the in-repo originals stay hash-frozen.
   if the journal workflow and source-data terms permit it. Otherwise it should
   include DVC pointers, source acquisition notes, and the commands above.
 - Review-stage archives must sanitize author-local paths and repository remotes
-  if they are sent before anonymity is lifted.
+  if they are sent before acceptance.
+
+## Review-Stage DVC Sanitization Checklist
+
+Before sending any reviewer-facing archive or editor-requested verification
+bundle, inspect and sanitize:
+
+- `.dvc/config`: remove or replace the configured `dagshub` remote name,
+  endpoint URL, account/repository slug, and any credential-dependent remote
+  settings.
+- `dvc.lock`: keep stage dependency/output hashes, but inspect text fields for
+  author-local paths or non-anonymous remote references before packaging.
+- Governance JSONs under `models/experiments/champion_reopen/`: drop or redact
+  `source_paths`, `runtime_status`, and any absolute `C:\Users\...` values in
+  the copy sent for review. Do not edit the in-repo originals because their
+  hashes are frozen.
+- Submission docs: keep source instructions and DVC-style validation language,
+  but avoid public GitHub, DagsHub, MLflow, personal, affiliation, or local
+  machine URLs until the journal workflow allows disclosure.
+
+If the DVC remote is unavailable during acceptance checks, the contingency is to
+provide journal-approved processed artifacts or model files, plus
+`EXTRACTION_MANIFEST.json`, `dvc.lock`, raw-data acquisition notes, and the
+paper-export commands above so reviewers can verify the paper-facing surfaces.
 
 ## Non-Rerunnable Stages
 

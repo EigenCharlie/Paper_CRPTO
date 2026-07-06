@@ -110,7 +110,12 @@ dvc-dag:
 
 # Regenerates downstream paper artefacts only (does NOT touch champion stages).
 dvc-paper:
-    uv run dvc repro crpto.paper.export_tables crpto.paper.evidence crpto.paper.journal_package crpto.paper.figures crpto.book.render
+    uv run dvc repro --single-item crpto.paper.export_tables
+    uv run dvc repro --single-item crpto.paper.evidence
+    uv run dvc repro --single-item crpto.paper.journal_package
+    uv run dvc repro --single-item crpto.paper.tail_satisficing_audit
+    uv run dvc repro --single-item crpto.paper.figures
+    uv run dvc repro --single-item crpto.book.render
 
 # --- dbt -----------------------------------------------------------------
 

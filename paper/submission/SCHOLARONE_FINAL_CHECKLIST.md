@@ -70,6 +70,10 @@ just paper-submission-pdf
 
 ScholarOne generates a proof after upload. Before final submission:
 
+- **Go/no-go gate:** the ScholarOne-generated proof must be visually checked
+  before final submission. Broken proof, missing figures, wrong file order,
+  title-page leakage, or anonymous-body identity leakage means **NO-GO**:
+  retract, repair locally, regenerate, and upload again.
 - Open the generated proof, not only the local PDF.
 - Recheck title, abstract, keywords, file order, supplement designation, and
   Data/Code Disclosure fields.

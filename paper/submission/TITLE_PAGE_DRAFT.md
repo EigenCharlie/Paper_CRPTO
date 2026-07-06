@@ -1,7 +1,10 @@
 # IJDS Title Page Draft
 
-This file is **not** part of the double-anonymous reviewer packet. Upload it
-only as the separate title page requested by ScholarOne/INFORMS.
+**Do not include this file in the anonymous reviewer packet.** It contains
+author identity and contact fields by design and belongs only in the separate
+ScholarOne/INFORMS title-page surface.
+
+Upload it only as the separate title page requested by ScholarOne/INFORMS.
 
 ## Manuscript Title
 

@@ -36,12 +36,11 @@ alpha grid ($V(0.01)=0.035350$, $\Gamma_{\mathrm{CP}}=0.162616$, Markov cap
 `0.345084`, zero violation). The same exact frontier exposes conservative and
 economic endpoints, making the return-bound trade-off visible rather than
 implicit.
-External frozen replications on Prosper marketplace loans and Freddie/Mendeley
-single-family mortgages preserve the predeclared global conformal gates and
-produce positive robust LP objectives, so the result is not confined to the
-Lending Club panel. Across the four frozen external applications, the price of
-robustness forms a positive premium series ordered by panel default rate. The
-contribution is a conformal-robust
+Frozen external credit replications preserve the predeclared global conformal
+gates and produce positive robust LP objectives, so the result is not confined
+to the Lending Club panel. Across the four frozen external applications, the
+price of robustness forms a positive premium series ordered by panel default
+rate. The contribution is a conformal-robust
 credit-portfolio decision certificate with a
 distribution-free Markov bound under weighted funded-set validity: it connects
 real credit data, calibrated predictive models, robust funding decisions, and a
@@ -117,10 +116,11 @@ that would tighten it (A.2). Third, it locates that construction relative to
 data-driven robust optimization, P2P lending portfolio models, conformal credit
 scoring, and decision-focused learning. Fourth, it provides an artifact-backed
 empirical study where every table and figure is generated from frozen outputs
-rather than manually transcribed summaries. Fifth, it adds external economic
-replications on Prosper and Freddie/Mendeley, separating the methodological
-claim from one P2P panel. The key claim is narrow: CRPTO maps frozen calibrated
-PD artifacts into a robust
+rather than manually transcribed summaries. Fifth, it uses a three-level
+evidence ladder: the Lending Club funded set carries the certificate, Prosper
+and Freddie/Mendeley test recipe transfer as external economic replications,
+and the tail, dependence, online, and robustness appendices stay diagnostic.
+The key claim is narrow: CRPTO maps frozen calibrated PD artifacts into a robust
 funded set, reports the portfolio-level conformal premium
 $\Gamma_{\mathrm{CP}}$, and verifies exact alpha-safe weighted miscoverage on the
 promoted Lending Club portfolio and its surrounding finite-grid frontier. The
@@ -253,6 +253,13 @@ and conformal finance portfolios [@noguer2024portfolio; @kato2025;
 | Conformal finance portfolios | Portfolio use cases for financial markets. | Retail credit payoffs, default risk, funded-set checks, and model-risk documentation. | Market-return portfolios have different payoffs and governance obligations than binary default-driven credit funding. |
 
 : Closest work boundary for CRPTO.
+
+The novelty is the closed loop, not any single row of the table: a frozen
+calibrated credit artifact becomes conformal upper endpoints, those endpoints
+enter a robust funded-set decision, and the purchased allocation is audited
+after the decision with file-backed governance. None of the neighboring lines
+jointly supplies that frozen-artifact-to-funded-set certificate for a credit
+portfolio.
 
 # Method
 
@@ -433,13 +440,15 @@ recipe, declared partitions, and allocation rule.
 
 **Assumption 1 (weighted funded-set validity).**
 $E[V(\alpha)] \leq \alpha$ under the funded-set weights $w$ for that draw. This
-is the explicit price of evaluating a selected portfolio rather than a single
-population, and it does not follow from marginal split conformal. The
+means the expected weighted miss rate on the funded dollars is no larger than
+the nominal conformal level. It is the explicit price of evaluating a selected
+portfolio rather than a single population, and it does not follow from marginal
+split conformal. The
 funded-set weights $w_i \propto x_i a_i$ are chosen by the optimizer and depend
 on the conformal endpoints $u_i(\alpha)$, so they are not measurable with
 respect to the Mondrian partition and inherit no per-cell coverage guarantee.
 The assumption is therefore stated, audited empirically after the frozen
-selection, and never silently upgraded to a guarantee — and the audit does not
+selection, and never silently upgraded to a guarantee -- and the audit does not
 find it slack: the realized $V(0.01) = 0.035350$ exceeds $\alpha = 0.01$, so the
 operative safety level is the weaker $V \leq \sqrt{\alpha}$.
 
@@ -671,9 +680,10 @@ reported with the floor surplus rather than as a replacement champion.
 | Highest return under cap <= `0.36` | micro-ext | `$186,050.73` | `0.037750` | `0.174600` | `0.358685` | `8/8` |
 | Max-return economic endpoint | micro-ext | `$223,458.14` | `0.069575` | `0.457438` | `0.510753` | `8/8` |
 
-: Pool93 finite-grid return-bound frontier. Roles are selected from the
-consolidated exact frontier; they are finite-grid points, not continuous
-optima.
+: Pool93 finite-grid return-bound frontier. `terminal` rows come from the
+conservative endpoint sweep; `micro-ext` rows come from the body-cap local
+extension around the selected point. All rows are finite-grid points, not
+continuous optima.
 
 The table gives the manuscript its decision geometry. The body/default point is
 not the highest-return point and not the tightest-bound point; it is the
@@ -827,7 +837,8 @@ trade-off explicit rather than burying it in a single score.
 | SPO+ | `0.216837` | `49.09% lower` | not certified | `0/3` |
 | CRPTO robust | `0.947429` | `122.46% higher` | `$184.8K` | `3/3` |
 
-: Regret-auditability frontier by method.
+: Regret-auditability frontier. Regret is the A19/PyEPO synthetic
+decision-loss scale, not realized dollar return on the `$1M` funded portfolio.
 
 The regret column must be read with its protocol in mind, and the last two
 columns prevent a one-dimensional reading. Mean regret comes from a separate
@@ -950,10 +961,9 @@ Governance keeps the two certified results distinguishable. The frozen
 upstream promotion record continues to describe the bound-aware baseline whose
 realized return defines the declared return floor, while the pool93 governance
 sidecars are the authoritative machine-readable source for the body point and
-its frontier; guardrail tests assert that every body-claim number printed in
-this manuscript and the supplement matches those sidecar artifacts. The
-paper-facing gate includes `tests/test_pool93_body_claim_sync.py`, so the two
-records cannot silently diverge.
+its frontier; an automated claim-sync guardrail asserts that every body-claim
+number printed in this manuscript and the supplement matches those sidecar
+artifacts, so the two records cannot silently diverge.
 
 The certificate chain itself carries a stronger, verified property: an
 opt-in drift harness recomputes the promoted Mondrian conformal intervals
@@ -966,7 +976,7 @@ The boundary is concrete: gradient-boosted
 retraining is not bit-reproducible across runs, which is precisely why the
 predictive layer is distributed as a frozen binary artifact with manifest
 hashes rather than as a "retrain it yourself" recipe, and why the
-prediction-to-decision chain — the part the paper's claims rest on — is the
+prediction-to-decision chain -- the part the paper's claims rest on -- is the
 part the harness certifies end to end.
 
 For double-anonymous review, this manuscript omits author-identifying URLs and
@@ -991,17 +1001,13 @@ middle path: keep the predictive model auditable, quantify uncertainty with a
 finite-sample conformal layer, and make the optimizer pay attention to the
 upper end of plausible default risk.
 
-The external replications also change how to read the price of robustness. The
-cross-dataset pattern reported above (it is ordered by panel default risk
-rather than discrimination across the four frozen applications) matters less as a number than as a reframing: robustness is
-not a fixed toll but a panel-specific premium that the method measures rather
-than assumes. For a risk committee this turns the governance question from "can
-we afford robustness?" into "how large is the coverage premium on this book?",
-which CRPTO answers with a bounded figure per panel. It also tempers the
-contribution. The favorable Lending Club value reflects champion
-selection, so the transferable claim is the bounded, measurable premium under
-blind application, not a universal free lunch; the recipe carries its own price
-tag wherever it is applied.
+The external replications also change how to read the price of robustness.
+Across the frozen external applications, the premium is ordered by panel default
+risk rather than by discrimination. That pattern reframes robustness as a
+panel-specific premium to be measured, not a fixed toll to be assumed. It also
+tempers the contribution: the favorable Lending Club value reflects champion
+selection, so the transferable claim is bounded measurement under blind
+application, not a universal free lunch.
 
 The limits are equally important. CRPTO does not prove that any one public
 dataset is a universal proxy for modern credit origination, even after the
@@ -1038,14 +1044,13 @@ frozen CRPTO result as an auditable post-hoc predict-then-optimize contribution.
 
 # Conclusion
 
-CRPTO shows that finite-sample predictive uncertainty can be carried from a
-frozen calibrated PD model into a robust, budget-constrained credit-portfolio
-decision that a reviewer can audit end to end. On the Lending Club out-of-time
-panel the selected pool93 body point earns `$184,832.48` on a `$1M` budget while
-passing the exact empirical $\alpha = 0.01$ funded-set audit, and it lies on a
-declared finite-grid return-bound frontier with 50,010 deduplicated semantic
-policies and 27,508 all-alpha above-floor policies rather than at a single lucky
-point. The external
+Can finite predictive uncertainty change a funding decision in a way a reviewer
+can audit? CRPTO's answer is yes, provided the statistical boundary is stated
+and the decision artifact is frozen. On the Lending Club out-of-time panel the
+selected pool93 body point earns `$184,832.48` on a `$1M` budget while passing
+the exact empirical $\alpha = 0.01$ funded-set audit, and it lies on a declared
+finite-grid return-bound frontier with 50,010 deduplicated semantic policies and
+27,508 all-alpha above-floor policies rather than at a single lucky point. The external
 Prosper and Freddie/Mendeley replications show that the recipe travels beyond
 the Lending Club panel and expose an economically interpretable regularity: the
 price of robustness is a bounded premium ordered by panel default risk across

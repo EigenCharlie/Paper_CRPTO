@@ -15,6 +15,18 @@ Last checked for the submission package: 2026-07-06 UTC.
 | Freddie/Mendeley processed mortgage windows | Processed FM24/FM36/FM48/FM60 windows used for the external replication audit. | Mendeley dataset page used by the paper: <https://data.mendeley.com/datasets/bzr2rxttvz/3>. | Provide the exact window definition used in the scripts and the generated A25-A34 artifacts. |
 | Home Credit Default Risk | Audited but not promoted. | Kaggle competition data page: <https://www.kaggle.com/competitions/home-credit-default-risk/data>. | Mention only as archived context: it lacks the clean `exposure + return` investment contract required for the external economic claim. |
 
+## Source Permanence Caveat
+
+The raw Lending Club retail-loan file is a historical public-source dataset, not
+a source with an active issuer-maintained permanence guarantee for this paper.
+Lending Club ended retail-loan originations after the 2020 window used here, and
+the `Loan_status_2007-2020Q3.csv` copies available through Kaggle/Figshare-style
+mirrors are community or repository mirrors rather than journal-controlled
+archives. The reproducibility package should therefore avoid depending on a
+single raw-data URL. It should disclose source pages, schema/cleaning code, DVC
+pointers or processed artifacts where source terms permit, and manifest hashes
+that let a reviewer verify the exact paper-facing artifact chain.
+
 ## Rebuild Boundary
 
 The accepted-paper package should let a reader rebuild or audit the manuscript

@@ -53,8 +53,8 @@ No secrets, tokens, private DVC credentials, or local machine paths should be
 included in the reviewer packet.
 
 If ScholarOne asks for the disclosure option in prose, the intended answer is:
-code and manuscript sources are releasable after anonymity is lifted; raw data
-are public-source or source-controlled and therefore disclosed through source
+code and manuscript sources will be released at acceptance; raw data are
+public-source or source-controlled and therefore disclosed through source
 instructions plus DVC pointers/processed artifacts when the journal workflow and
 source terms permit.
 
