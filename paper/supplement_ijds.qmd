@@ -729,6 +729,22 @@ certificate landscape that motivated the journal package.
 | CROM/CREME/CREDO | Model or decision certificates for robust optimization [@bao2025croms; @zhou2025credo; @zhou2026creme]. | Used to motivate A20--A34 challenger and replication diagnostics. | Could become a CRPTO v2 certificate, but only with a new protocol. |
 | Decision-focused learning | Regret-aware training through the optimization loss [@elmachtoub2022; @liu2021riskbounds; @schutte2024robust]. | SPO+ is a comparator in A19. | End-to-end retraining would change the frozen predictive model. |
 
+## Scientific Upgrade Map
+
+Several natural extensions are strong paper ideas, but only some can be used in
+the current submission without becoming new claims. The distinction below is the
+operating rule for revision: use frozen diagnostics to sharpen the boundary,
+and reserve promoted claims for separately tagged evidence.
+
+| Upgrade | Paper improvement available now | Why it is not promoted now | Evidence required for promotion |
+|---|---|---|---|
+| Tail-aware selector | Use A20--A22 and A37 to show the selected decision's tail profile and the available return-tail trade-off. | The body selector is return-bound, not CVaR/OCE. | Predeclare CVaR/OCE objective or constraint, rerun the finite policy search under a new tag, and exact-audit the selected funded set. |
+| Prospective/nested selection | Use A3, A9, A35, and the declared finite-grid denominators to answer post-selection concerns. | The current frontier is a frozen retrospective audit, not a fully prospective clinical-trial-style protocol. | Freeze all selectors before a final untouched evaluation panel or a new dataset, then report the search/evaluation split as the main design. |
+| Multi-distribution validity | Use A23 to show where grade, vintage, and fine-cell coverage remain strong or thin. | The intervals were not calibrated by a multi-source or group-weighted objective. | Fit a new conformal layer targeting multi-distribution or group-weighted coverage, then repeat the funded-set audit. |
+| Online validity | Use A24 as an OOT vintage replay that documents whether ACI would have needed large corrections. | A replay over historical vintages is not a live sequential guarantee. | Run or simulate a predeclared sequential protocol with online alpha updates and decision-time logging. |
+| Decision-focused conformal learner | Use A19 to state the regret-auditability trade-off: SPO+ owns low regret, CRPTO owns auditable funded-set controls. | The PD model is frozen and not trained through the optimizer. | Train an end-to-end learner, calibrate its decision uncertainty, and require the same funded-set certificate as CRPTO. |
+| Causal decision layer | Use the discussion to note that observational credit panels support predictive/prescriptive certificates only. | No randomized or quasi-experimental assignment design is present. | Define a causal estimand, identification strategy, and policy-evaluation protocol before promotion. |
+
 ## Coverage-Validity Ladder
 
 The table below records the validity ladder used to interpret A23--A33. The

@@ -534,7 +534,7 @@ required by split conformal: held out from training and used only to fit the
 conformal quantiles. The final evaluation set contains 276{,}869 loans, large enough
 to stress both probability calibration and decision-level robustness.
 
-\begin{table}[t]
+\begin{table}[h!]
   \centering
   \caption{Temporal out-of-time split. The January 2018 cutoff keeps the test
   window (including the 2020 COVID regime) strictly after training and calibration.
@@ -1044,15 +1044,43 @@ as conditional guarantees. CRPTO does not claim legal fairness certification,
 because the public data lack direct protected attributes. It does not assert that
 robust conformal policies dominate all decision-focused learners on regret.
 
-The next research directions are clear and are now separated into two groups. The
-current paper includes the safe journal-strengthening package: OCE/CVaR as a tail-risk
-audit, satisficing as margin evidence, SPO+ as the low-regret corner of the
-regret-auditability frontier, and dependence as a formal caveat. The future backlog
-remains larger: optimized OCE/CVaR objectives, online conformal methods,
-multi-distribution conformal validity, causal variants, and prospective/live
-multi-dataset validation all require new protocols, data, or proofs. Those directions
-are valuable, but they are not blockers for submitting the frozen CRPTO result as an
-auditable post-hoc predict-then-optimize contribution.
+The next research directions are clear and are now separated into paper
+improvements versus new CRPTO protocols. The current paper includes the safe
+journal-strengthening package: OCE/CVaR as a tail-risk audit, satisficing as
+margin evidence, SPO+ as the low-regret corner of the regret-auditability
+frontier, and dependence as a formal caveat. The larger scientific upgrades are
+useful in the present manuscript only when they sharpen this boundary.
+Table~\ref{tab:upgrade-map} states that boundary directly.
+
+\begin{table}[t]
+  \centering
+  \caption{Scientific upgrade map for the current CRPTO paper.}
+  \label{tab:upgrade-map}
+  {%
+  \small
+  \setlength{\tabcolsep}{4pt}
+  \renewcommand{\arraystretch}{1.12}
+  \begin{tabular}{@{}>{\raggedright\arraybackslash}p{0.22\textwidth}>{\raggedright\arraybackslash}p{0.36\textwidth}>{\raggedright\arraybackslash}p{0.34\textwidth}@{}}
+    \toprule
+    Upgrade path & What the current paper can claim & What would require a new result \\
+    \midrule
+    Tail-aware selection & A20--A22 and A37 show the tail trade-off and selected-allocation tail profile. & A predeclared CVaR/OCE selector with its own exact funded-set audit. \\
+    Prospective selection & Nested holdout and the finite declared grid reduce post-selection ambiguity. & A fully prospective search/evaluation split after all policy rules are frozen. \\
+    Multi-distribution or online validity & A23--A24 diagnose grade, distribution, and vintage stress on frozen intervals. & A new calibration protocol that targets group-weighted, multi-source, or live sequential validity. \\
+    Decision-focused conformal learning & A19 shows SPO+ as the low-regret comparator and CRPTO as the auditable corner. & An end-to-end learner that jointly optimizes decision loss and emits a conformal funded-set certificate. \\
+    \bottomrule
+  \end{tabular}
+  }%
+\end{table}
+
+Optimized OCE/CVaR objectives, online conformal methods, multi-distribution
+conformal validity, utility-directed or decision-theoretic conformal variants
+\citep{cortesgomez2025utility,lekeufack2023cdt}, causal variants, broader
+asset-class panels, and prospective multi-period origination studies are all
+valuable. They become stronger paper claims only with new protocols, data, or
+proofs. In the current submission, their role is to make the frozen CRPTO
+contribution easier to locate: an auditable post-hoc predict-then-optimize
+certificate, not a universal decision-learning framework.
 
 % =====================================================================
 \section{Conclusion}\label{sec:conclusion}

@@ -39,6 +39,9 @@ perenne y lo que el código lee/escribe.
   sobre qué lenguaje técnico queda en el body, qué pasa al supplement/package,
   limpieza local de peso y frontera entre refactor estricto y nueva corrida
   tolerante.
+- `ijds_scientific_upgrade_audit_2026-07-07.md` — separación entre mejoras de
+  paper que pueden entrar con evidencia congelada y extensiones que requieren
+  un nuevo resultado CRPTO v2.
 
 ## Registros de gobernanza (decisiones; no se re-ejecutan sin permiso)
 

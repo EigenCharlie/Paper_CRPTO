@@ -1013,18 +1013,31 @@ an online deployment study: there are no new post-2020 Lending Club retail
 originations, no live monitoring loop, and no end-to-end utility-directed
 conformal learner replacing the frozen PD model.
 
-The next research directions are clear and are now separated into two groups.
-The current paper includes the safe journal-strengthening package: OCE/CVaR as
-a tail-risk audit, satisficing as margin evidence, SPO+ as the low-regret corner
-of the regret-auditability frontier, and dependence as a formal caveat. The
-future backlog remains larger: optimized OCE/CVaR objectives, online conformal
-methods, multi-distribution conformal validity, utility-directed or
-decision-theoretic conformal variants [@cortesgomez2025utility;
-@lekeufack2023cdt], causal variants, broader asset-class panels, and
-prospective multi-period origination studies all require new protocols, data, or
-proofs.
-Those directions are valuable, but they are not blockers for presenting the
-frozen CRPTO result as an auditable post-hoc predict-then-optimize contribution.
+The next research directions are clear and are now separated into paper
+improvements versus new CRPTO protocols. The current paper includes the safe
+journal-strengthening package: OCE/CVaR as a tail-risk audit, satisficing as
+margin evidence, SPO+ as the low-regret corner of the regret-auditability
+frontier, and dependence as a formal caveat. The larger scientific upgrades are
+useful in the present manuscript only when they sharpen this boundary. Table
+@tbl-upgrade-map states that boundary directly.
+
+| Upgrade path | What the current paper can claim | What would require a new result |
+|---|---|---|
+| Tail-aware selection | A20--A22 and A37 show the tail trade-off and selected-allocation tail profile. | A predeclared CVaR/OCE selector with its own exact funded-set audit. |
+| Prospective selection | Nested holdout and the finite declared grid reduce post-selection ambiguity. | A fully prospective search/evaluation split after all policy rules are frozen. |
+| Multi-distribution or online validity | A23--A24 diagnose grade, distribution, and vintage stress on frozen intervals. | A new calibration protocol that targets group-weighted, multi-source, or live sequential validity. |
+| Decision-focused conformal learning | A19 shows SPO+ as the low-regret comparator and CRPTO as the auditable corner. | An end-to-end learner that jointly optimizes decision loss and emits a conformal funded-set certificate. |
+
+: Scientific upgrade map for the current CRPTO paper. {#tbl-upgrade-map}
+
+Optimized OCE/CVaR objectives, online conformal methods, multi-distribution
+conformal validity, utility-directed or decision-theoretic conformal variants
+[@cortesgomez2025utility; @lekeufack2023cdt], causal variants, broader
+asset-class panels, and prospective multi-period origination studies are all
+valuable. They become stronger paper claims only with new protocols, data, or
+proofs. In the current submission, their role is to make the frozen CRPTO
+contribution easier to locate: an auditable post-hoc predict-then-optimize
+certificate, not a universal decision-learning framework.
 
 # Conclusion
 

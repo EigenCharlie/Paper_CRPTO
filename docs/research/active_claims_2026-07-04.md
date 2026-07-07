@@ -8,7 +8,7 @@ Those notes remain useful as provenance, not as active operating instructions.
 ## Active Body Claim
 
 CRPTO is an auditable conformal-robust credit-portfolio decision certificate:
-a frozen calibrated PD artifact feeds Mondrian conformal upper endpoints, an
+a frozen calibrated PD model feeds Mondrian conformal upper endpoints, an
 exact finite policy-grid portfolio search exposes a return-bound frontier, and
 the selected funded set is audited on the full OOT universe.
 
@@ -36,8 +36,8 @@ Current body/default point:
   `$167,963.20`--`$198,650.47`
 
 Do not describe this as a newly retrained champion. The active pool93 claim is a
-deterministic policy-grid re-evaluation over the same frozen upstream PD,
-calibrator and conformal interval artifacts.
+deterministic policy-grid re-evaluation over the same frozen upstream PD model,
+calibrator and conformal interval outputs.
 
 ## Active Evidence
 
@@ -56,8 +56,8 @@ The declared alpha grid is:
 `A = {0.01, 0.03, 0.05, 0.07, 0.10, 0.12, 0.15, 0.20}`.
 
 Therefore, the maximum possible alpha-grid pass for a single policy under the
-current artifact is `8/8`. A different maximum would require a new, explicitly
-declared alpha grid and regenerated exact validation artifacts.
+current evidence bundle is `8/8`. A different maximum would require a new,
+explicitly declared alpha grid and regenerated exact validation outputs.
 
 For the terminal endpoint run:
 
@@ -73,7 +73,7 @@ For the consolidated frontier:
 
 - raw rows: `51,678`
 - duplicate semantic rows removed: `1,668`
-- maximum deduplicated semantic policies in this consolidated artifact:
+- maximum deduplicated semantic policies in this consolidated evidence file:
   `50,010`
 - eligible all-alpha above-floor policies: `27,508/50,010`
 - nonpass or below-floor policies: `22,502/50,010`
@@ -92,18 +92,23 @@ trade-off frontier, and separate the selected body point from endpoints.
 
 Recommended body wording:
 
-> The selected pool93 body point is chosen from a declared finite policy-grid
-> frontier. The consolidated frontier contains 50,010 deduplicated semantic
-> policies, of which 27,508 both pass every declared alpha level and exceed the
-> return floor. The terminal exact endpoint search evaluates 37,068 policies
-> across eight alpha levels, for 296,544 candidate-alpha checks, and all terminal
-> policies pass the all-alpha audit. These counts certify the declared finite
-> search surface; they are not a continuous global-optimality claim.
+> The selected policy is chosen from a declared finite policy-grid frontier. The
+> consolidated frontier contains 50,010 deduplicated semantic policies, of which
+> 27,508 both pass every declared alpha level and exceed the return floor. The
+> terminal exact endpoint search evaluates 37,068 policies across eight alpha
+> levels, for 296,544 candidate-alpha checks, and all terminal policies pass the
+> all-alpha audit. These counts certify the declared finite search surface; they
+> are not a continuous global-optimality claim.
+
+Use `pool93` only for run tags, file names, governance JSONs, and internal
+provenance. The body manuscript should say selected policy, selected decision,
+or declared finite-grid frontier unless the run label is needed to disambiguate
+an evidence source.
 
 Report the screenshot numbers with explicit denominators:
 
 - `alpha_grid_pass = 8/8`: one selected policy passed all eight declared alpha
-  levels. The current maximum is eight because the alpha artifact has eight
+  levels. The current maximum is eight because the alpha grid has eight
   levels.
 - `50,010` semantic policies: the maximum deduplicated policy denominator in
   the current consolidated frontier. It equals `51,678` raw rows minus `1,668`
