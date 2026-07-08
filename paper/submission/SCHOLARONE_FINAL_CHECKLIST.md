@@ -7,36 +7,45 @@ template files have been downloaded outside Git.
 
 | File | Source | Reviewer-facing? | Status |
 |---|---|:---:|---|
-| Anonymous manuscript PDF | `CRPTO_ijds_submission.tex` compiled with `informs4` and `dblanonrev`. | Yes | Source synchronized with pool93 A35--A39 and the dual-tag provenance passages; local official-template build verified 2026-07-06 (26 pages total; conclusion and references start on p. 22); final ScholarOne proof pending |
-| Anonymous online supplement PDF | `paper/supplement_ijds.qmd` rendered and visually checked. | Yes | Local render and page QA pass; final ScholarOne proof pending |
-| Separate title page | `TITLE_PAGE_DRAFT.md` converted into the ScholarOne/title-page format. | No | Pending ScholarOne copy |
-| Data and Code Disclosure Form | Official IJDS form using `DATA_CODE_DISCLOSURE_FORM_DRAFT.md`. | Editor/system | Pending official form entry |
-| Cover letter | `COVER_LETTER_AND_DISCLOSURE.md`, shortened if ScholarOne text boxes are tight. | Editor | Draft ready; final text-box copy pending |
+| Anonymous manuscript PDF | `CRPTO_ijds_submission.tex` compiled with `informs4` and `dblanonrev`. | Yes | Local file ready. Official-template build verified 2026-07-07 (26 pages total; `.blg` warnings 0; `.log` has no undefined citations/references; source/metadata anonymity checks clean). Final ScholarOne proof remains a system-side gate. |
+| Anonymous online supplement PDF | `paper/supplement_ijds.qmd` rendered and visually checked. | Yes | Local render and representative page QA verified 2026-07-07; source/metadata anonymity checks clean; final ScholarOne proof pending |
+| Separate title page | `TITLE_PAGE_DRAFT.md` converted into the ScholarOne/title-page format. | No | Draft ready for separate upload/copy; complete affiliation and ORCID in ScholarOne if applicable. |
+| Data and Code Disclosure Form | Official IJDS form using `DATA_CODE_DISCLOSURE_FORM_DRAFT.md`. | Editor/system | Draft language ready; official ScholarOne form entry remains manual. |
+| Cover letter | `COVER_LETTER_AND_DISCLOSURE.md`, shortened if ScholarOne text boxes are tight. | Editor | Draft ready; final paste/proof inside ScholarOne remains manual. |
 | Optional reproducibility note | `REPRODUCIBILITY_PACKAGE.md` or excerpted text if requested. | Editor/system | Optional |
 
 ## Official Template Build
 
 1. Download or refresh `informs4.cls` and `informs2014.bst` from INFORMS/Overleaf.
-2. Regenerate/synchronize `CRPTO_ijds_submission.tex` from the pool93 A35--A39 QMD source.
+2. Synchronize `CRPTO_ijds_submission.tex` manually from the pool93 A35--A39
+   QMD source while preserving the official-template compaction.
 3. Place the template files next to `CRPTO_ijds_submission.tex`; local gitignored copies are already present.
-4. Build with `latexmk` when the local TinyTeX wrapper works:
+4. Build with `latexmk`. In Codex/PowerShell sessions where `WINDIR` is absent,
+   initialize it first:
 
    ```powershell
+   if (-not $env:WINDIR) { $env:WINDIR = $env:SystemRoot }
    latexmk -pdf -gg -interaction=nonstopmode CRPTO_ijds_submission.tex
    ```
 
-   If PowerShell/TinyTeX fails with `runscript.tlu`/`nil`, use the proven
-   fallback:
+   If LaTeX reports a support-file mismatch after a TeX Live update, run
+   `fmtutil-sys --byfmt pdflatex` once with the same `WINDIR` initialization.
+   If PowerShell/TinyTeX still fails, use the proven fallback:
 
    ```powershell
+   if (-not $env:WINDIR) { $env:WINDIR = $env:SystemRoot }
    pdflatex -interaction=nonstopmode -halt-on-error CRPTO_ijds_submission.tex
    bibtex CRPTO_ijds_submission
    pdflatex -interaction=nonstopmode -halt-on-error CRPTO_ijds_submission.tex
    pdflatex -interaction=nonstopmode -halt-on-error CRPTO_ijds_submission.tex
    ```
 
+   The three `pdflatex` passes are intentional: the first creates `.aux`,
+   BibTeX creates `.bbl`, the second imports bibliography and cross-reference
+   data, and the third stabilizes references and pagination.
+
 5. Confirm body page count is at most 25 pages excluding references and
-   appendices. The local official-template build verified on 2026-07-06 is 26
+   appendices. The local official-template build verified on 2026-07-07 is 26
    pages total; Section 9 (Conclusion) and References both start on page 22, so
    the manuscript remains comfortably inside the IJDS page budget when
    references are excluded. Recount after every official rebuild.
@@ -51,6 +60,28 @@ uv run pytest tests/test_publication_targets.py -q
 uv run dvc status --no-updates
 just paper-submission-pdf
 ```
+
+Last local closeout on 2026-07-07: `just lint`, `just smoke`,
+`just validate-champion`, `uv run pytest tests/test_publication_targets.py -q`,
+`uv run pytest tests/test_pool93_body_claim_sync.py -q`,
+`just paper-submission-pdf`, and `latexmk -pdf -gg -interaction=nonstopmode
+CRPTO_ijds_submission.tex` passed. Representative PDF pages were rendered
+locally for body/supplement/submission visual QA.
+
+`uv run dvc status --no-updates` is intentionally treated as a pipeline-state
+report, not a submission blocker. On 2026-07-07 it reported modified deps/outs
+for protected and paper/book stages from earlier code/book work, while
+`just validate-champion` remained green. Do not resolve that status by
+rerunning protected stages during ScholarOne closeout; open a separate pipeline
+debt task after submission if needed.
+
+## QMD-vs-TeX Freeze Rule
+
+`paper/CRPTO_ijds.qmd` remains the long-form narrative source. The official
+`CRPTO_ijds_submission.tex` is a manually compacted INFORMS-template handoff
+surface. After freeze, port substantive claim edits from QMD to TeX deliberately
+and recompile; do not regenerate the `.tex` mechanically unless you are prepared
+to redo the page-budget and visual QA.
 
 ## Anonymous PDF QA
 

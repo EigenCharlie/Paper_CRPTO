@@ -53,7 +53,7 @@ CRPTO should be read as data science for decisions:
 | 9 | Supplement | A3--A39 are organized as a defense layer with scope caveats. |
 | 10 | Reproducibility | Accepted-paper package has code, DVC pointers, manifest, raw-data instructions, and guardrail commands. |
 | 11 | Double anonymity | Reviewer-facing body and supplement contain no author URLs, names, local paths, or private remotes. |
-| 12 | Official IJDS template | `CRPTO_ijds_submission.tex` is regenerated from the pool93 A35--A39 QMD source, compiles against the official files, and is rechecked after body edits. |
+| 12 | Official IJDS template | `CRPTO_ijds_submission.tex` is manually synchronized from the pool93 A35--A39 QMD source, keeps the official-template compaction, compiles against the official files, and is rechecked after body edits. |
 | 13 | Data/code form | Cover letter and disclosure text acknowledge IJDS accepted-paper reproducibility requirements. |
 | 14 | Acceptance-risk audit | A short list of likely reviewer objections has body or supplement responses. |
 | 15 | Freeze discipline | Protected champion/search stages are never rerun as routine paper reproduction. |

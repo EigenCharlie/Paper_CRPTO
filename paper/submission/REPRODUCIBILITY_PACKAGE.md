@@ -46,6 +46,7 @@ is synchronized:
 
 ```powershell
 cd paper/submission
+if (-not $env:WINDIR) { $env:WINDIR = $env:SystemRoot }
 latexmk -pdf -gg -interaction=nonstopmode CRPTO_ijds_submission.tex
 ```
 
@@ -53,11 +54,20 @@ PowerShell/TinyTeX fallback proven in the local Codex environment:
 
 ```powershell
 cd paper/submission
+if (-not $env:WINDIR) { $env:WINDIR = $env:SystemRoot }
 pdflatex -interaction=nonstopmode -halt-on-error CRPTO_ijds_submission.tex
 bibtex CRPTO_ijds_submission
 pdflatex -interaction=nonstopmode -halt-on-error CRPTO_ijds_submission.tex
 pdflatex -interaction=nonstopmode -halt-on-error CRPTO_ijds_submission.tex
 ```
+
+The repeated `pdflatex` calls are the standard LaTeX/BibTeX convergence loop:
+first `.aux`, then BibTeX `.bbl`, then citation/cross-reference import, then
+final pagination/reference stabilization. As of 2026-07-07, the local Codex
+PowerShell environment needed `WINDIR` initialized from `SystemRoot` before
+TinyTeX wrappers such as `latexmk` and `fmtutil-sys` would run; after
+`tlmgr update --self --all`, `fmtutil-sys --byfmt pdflatex` also refreshed the
+LaTeX format to match the updated support files.
 
 Artifact-aware DVC verification, when credentials or public artifact access are
 available:

@@ -43,6 +43,11 @@ perenne y lo que el código lee/escribe.
   paper que pueden entrar con evidencia congelada y extensiones que requieren
   un nuevo resultado CRPTO v2.
 
+- `ijds_corpus_claims_improvement_plan_2026-07-07.md` - analisis con
+  `academic-pdf-intake` del paper, supplement, submission PDF y corpus
+  `Papers_tesis`; sus recomendaciones editoriales IJDS quedaron aplicadas y se
+  conserva como trazabilidad, no como backlog abierto.
+
 ## Registros de gobernanza (decisiones; no se re-ejecutan sin permiso)
 
 - `crpto_champion_reopen_plan_2026-05-21.md` — secuencia gobernada de reopen

@@ -33,3 +33,52 @@ overclaiming.
 | "The intervals are too wide to use." | Raw width is expected on a binary PD-scale interval; the paper evaluates whether upper endpoints rank downside risk and produce a funded set that passes Winkler, funded-set miscoverage, and exact alpha-safe checks. |
 | "SPO+ has lower regret." | Correct; the paper reports a frontier where SPO+ buys regret and CRPTO buys verifiable risk controls; the pool93 frontier updates the funding certificate, not the SPO+ regret experiment. |
 | "Why not live validation?" | Lending Club retail originations ended in 2020; prospective live validation is future protocol, not hidden current evidence. |
+
+## Response-Ready Reviewer Paragraphs
+
+**Why not SPO+ as the main method?** SPO+ is the right comparator for
+training-time decision regret, and the manuscript reports that comparison
+directly. The point of CRPTO is different: it asks what can be certified after a
+calibrated PD model is frozen and the decision layer must remain auditable. On
+the A19 regret scale SPO+ owns the low-regret corner; CRPTO owns the funded-set
+risk-control corner with a dollar-valued allocation, conformal premium,
+finite-grid denominator, and exact post-allocation audit.
+
+**Why not CVaR/OCE as the selector?** CVaR and OCE are useful tail-risk
+diagnostics, but making either one the promoted selector would define a new
+objective and require a new predeclared search/audit protocol. The current
+submission deliberately promotes the finite-grid return-bound point and then
+reprices that selected allocation under LGD, CVaR, OCE, cluster, and bootstrap
+stress checks. This keeps tail risk visible without turning a diagnostic table
+into a hidden promotion criterion.
+
+**Is the selected point cherry-picked?** The selected policy is not a singleton
+chosen after looking at one lucky allocation. It sits on a declared finite-grid
+frontier: 50,010 deduplicated semantic policies are reported, 27,508 both pass
+all declared alpha levels and exceed the return floor, and the terminal endpoint
+search completes 296,544 exact policy-alpha checks. The body/default point and
+the strict `<=0.345` neighboring point are separated explicitly to avoid
+rounding-based overclaiming.
+
+**What happens under dependence?** The body theorem uses the weakest
+distribution-free Markov step under the stated weighted funded-set validity
+assumption and does not require loan-level independence. The supplement prices
+stronger assumptions through cluster-aware sensitivity tables; those rows show
+what a reviewer would gain by accepting additional structure, but none becomes
+the body guarantee. Dependence therefore appears as an assumption boundary, not
+as an unstated theorem condition.
+
+**Is this a live-production guarantee?** No. Lending Club retail originations
+ended in 2020, and the manuscript is explicit that the evidence is a frozen
+historical decision certificate, not a prospective control system. The
+contribution is reproducible prediction-to-decision governance on the available
+out-of-time panel; online conformal control, prospective validation, and live
+monitoring are future protocols.
+
+**What can be reproduced under double-anonymous review?** During anonymous
+review, the manuscript and supplement describe the companion package without
+author-identifying repository URLs. The reproducible object is the
+prediction-to-decision chain from frozen PD artifacts and conformal intervals to
+tables, figures, exact checks, and manifest validation. Protected searches and
+retraining are intentionally excluded from routine reproduction because they
+would change the submitted certificate rather than verify it.

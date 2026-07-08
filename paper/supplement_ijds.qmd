@@ -42,6 +42,16 @@ path, and Appendix F maps the anonymous submission files. Tables and figures are
 included only when they either protect a body claim or prevent overreading of the
 external and robustness evidence.
 
+| Reader question | Where to go | What to remember |
+|---|---|---|
+| What is the theorem? | Appendix A | Markov under weighted funded-set validity is the body claim; stronger assumptions stay explicit. |
+| Is the selected policy a singleton? | Appendix C, A35 | The frontier is finite-grid and exact, with denominators reported. |
+| What does the selected policy fund? | Appendix C, A36--A39 | Composition, tail, concentration, and bootstrap are selected-allocation diagnostics. |
+| Does the recipe travel? | Appendix C, A25--A34 | Prosper and Freddie/Mendeley are external economic recipe-transfer checks. |
+| What can be reproduced? | Appendix E | Routine reproduction rebuilds paper surfaces from frozen evidence and excludes protected searches. |
+
+: How to read the online supplement.
+
 ::: {.callout-important}
 ## Journal Strengthening Pack
 
@@ -441,6 +451,16 @@ Value-at-Risk [@rockafellar2000cvar] and the Optimized Certainty Equivalent
 [@bental2007oce], and the non-monotonic risk-control framing behind A22 follows
 [@angelopoulos2026nonmonotonic]; all are reported as post-hoc summaries of the
 frozen funded set or intervals, never as a re-promoted champion.
+
+| Evidence block | Paper status | Why it is here |
+|---|---|---|
+| A35 finite-grid frontier | Promoted body evidence | It is the active return-bound decision surface. |
+| A36--A39 selected-policy audits | Support evidence | They describe the selected allocation without changing the selector. |
+| A19 regret-auditability | Support evidence | It answers the SPO+/DFL baseline objection. |
+| A25--A34 external recipe transfer | Support evidence | It answers the single-dataset objection without new certificates. |
+| A20--A24 tail/source/online diagnostics | Diagnostic evidence | They price assumptions and future-work lanes without promoting new guarantees. |
+
+: Promoted, support, and diagnostic evidence hierarchy.
 
 | Table | Role | Scope caveat |
 |---|---|---|

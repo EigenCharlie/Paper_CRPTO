@@ -75,3 +75,24 @@ The weaker area is not the main claim; it is citation hygiene. Several classical
 or recent references are being used as positioning anchors without a local note
 proving close reading. They can stay for now, but they deserve a targeted
 pre-freeze source check rather than another broad literature expansion.
+
+## 2026-07-07 targeted pre-freeze spot-check
+
+The pre-freeze spot-check resolved the highest-risk citation-only items that
+support the IJDS body and supplement theory/positioning language:
+
+| Key | Source checked | Result |
+|---|---|---|
+| `ghosh2002` | Taylor & Francis DOI landing page, `10.1198/000313002119`. | Metadata matches BibTeX; appropriate for Markov-related probability-inequality language. |
+| `hoeffding1963` | Taylor & Francis DOI landing page, `10.1080/01621459.1963.10500830`. | Metadata matches BibTeX; appropriate for bounded-sum tightening language when independence is stated. |
+| `boucheron2013concentration` | Oxford Academic book page / DOI `10.1093/acprof:oso/9780199535255.001.0001`. | Metadata matches BibTeX; appropriate as a modern concentration reference. |
+| `goldfarb2003robustportfolio` | INFORMS PubsOnLine DOI landing page, `10.1287/moor.28.1.1.14260`. | Metadata matches BibTeX; appropriate for robust portfolio selection under parameter uncertainty. |
+| `delage2010dro` | INFORMS PubsOnLine DOI landing page, `10.1287/opre.1090.0741`. | Metadata matches BibTeX; appropriate for DRO/moment-uncertainty positioning. |
+| `zhao2016p2pportfolio` | ACM/KDD DOI landing page, `10.1145/2939672.2939861`. | Title updated in BibTeX to include the subtitle "A Multi-Objective Perspective"; appropriate for P2P portfolio-selection positioning. |
+| `serrano2016profitscoring` | ScienceDirect DOI landing page, `10.1016/j.dss.2016.06.014`. | Author accents corrected in BibTeX; appropriate for P2P profit-scoring positioning. |
+| `falconer2026replication` | INFORMS/IJDS DOI landing page, `10.1287/ijds.2025.0075`. | Metadata matches BibTeX; appropriate for the replication-robust IJDS precedent. |
+
+No broad literature expansion is recommended before submission. Remaining
+recent-credit references (`das2023creditgraph`, `yang2025costaware`,
+`boosting2025default`, `zheng2026twostage`) are lower-risk positioning anchors;
+verify only if their exact body sentences become more specific.
