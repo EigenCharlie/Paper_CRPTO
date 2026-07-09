@@ -46,11 +46,13 @@ def test_journal_strengthening_pack_classifies_current_and_backlog_items() -> No
     backlog = pack["backlog_not_blocking"]
 
     assert "no longer a blanket exclusion" in boundary
-    assert "future work" in boundary
+    assert "outside the submitted claim" in boundary
+    assert "not acceptance criteria" in boundary
     assert set(included) == {
         "regret_auditability_frontier",
         "tail_risk_oce_cvar_diagnostic",
         "pool93_frontier_and_selected_allocation",
+        "matched_point_pd_baseline",
         "robust_satisficing_margins",
         "dependence_aware_bound",
         "tail_satisficing_challenger_audit",
@@ -63,6 +65,7 @@ def test_journal_strengthening_pack_classifies_current_and_backlog_items() -> No
     assert included["pool93_frontier_and_selected_allocation"]["status"] == (
         "include_body_and_supplement"
     )
+    assert included["matched_point_pd_baseline"]["status"] == ("include_body_and_supplement")
     assert included["robust_satisficing_margins"]["status"] == ("include_supplement_or_short_body")
     assert included["dependence_aware_bound"]["status"] == "include_theory_appendix_or_caveat"
     assert included["tail_satisficing_challenger_audit"]["status"] == "include_supplement"
@@ -76,6 +79,7 @@ def test_journal_strengthening_pack_classifies_current_and_backlog_items() -> No
     assert "reports/crpto/tables/crpto_tableA39_pool93_body_bootstrap_metrics.csv" in (
         pool93_artifacts
     )
+    assert "reports/crpto/tables/crpto_tableA40_pool93_point_baseline.csv" in (pool93_artifacts)
     for artifact in pool93_artifacts:
         assert Path(artifact).exists(), artifact
     multidataset_artifacts = included["multidataset_external_replication"]["artifacts"]

@@ -18,8 +18,8 @@ from pathlib import Path
 from typing import Any
 
 import pandas as pd
-from analyze_crpto_evidence import build_p1_evidence  # type: ignore[import-not-found]
 
+from scripts.analyze_crpto_evidence import build_p1_evidence
 from src.utils.script_helpers import first_existing, load_json, policy_matches, write_table
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -76,7 +76,7 @@ def _table0_key_metrics(
         ("alpha01_gamma_cp", champ["alpha01_gamma_cp"]),
         ("alpha01_violation", champ["alpha01_violation"]),
     ]
-    return pd.DataFrame(rows, columns=["metric", "value"])
+    return pd.DataFrame([{"metric": metric, "value": value} for metric, value in rows])
 
 
 def _table1_robustness_summary(

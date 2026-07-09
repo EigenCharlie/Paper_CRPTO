@@ -75,27 +75,28 @@ Portfolio Decisions}
 }
 
 \ABSTRACT{%
-Credit allocation is a data-science-for-decisions problem: calibrated default
-probabilities matter only after they shape which loans are funded under a budget
-and risk appetite. We introduce Conformal Robust Predict-Then-Optimize (CRPTO),
-a post-hoc bridge that maps a frozen calibrated probability-of-default model
-through Mondrian conformal intervals into robust portfolio constraints and an
-empirical funded-set audit. On a 276{,}869-loan out-of-time Lending Club
-evaluation, the selected policy earns \$184.8K on a \$1M budget while passing
-the declared eight-level alpha grid ($V(0.01)=0.035350$,
-$\Gamma_{\mathrm{CP}}=0.162616$, Markov cap $0.345084$, zero violation). The
-consolidated finite frontier contains 50{,}010 deduplicated semantic policies,
-of which 27{,}508 both pass all declared alpha levels and exceed the return
-floor, making the return-bound trade-off visible rather than implicit. Frozen
-Prosper and Freddie/Mendeley applications test recipe transfer and preserve the
-predeclared global conformal gates with positive robust LP objectives. The
-insight is that uncertainty should be reported as a decision frontier, not as a
-post-hoc calibration table. The contribution is a conformal-robust
-credit-portfolio decision certificate with a distribution-free Markov bound
-under weighted funded-set validity: it connects real credit data, calibrated
-predictive models, robust funding decisions, and a validation harness that
-rebuilds the prediction-to-decision chain from frozen inputs while keeping the
-statistical guarantee boundary explicit.%
+Credit allocation is a data-science-for-decisions problem: default probabilities
+matter only after they shape which loans are funded under a budget and risk
+appetite. We introduce Conformal Robust Predict-Then-Optimize (CRPTO), a
+post-hoc decision certificate that maps a frozen calibrated probability-of-default
+model through Mondrian conformal intervals into robust portfolio constraints and
+an empirical funded-set audit. A policy-aware decomposition separates the
+conformal premium internalized by the optimizer from the residual premium needed
+to recover the exact upper-endpoint budget. On a 276{,}869-loan out-of-time
+Lending Club evaluation, the selected policy earns \$184.8K on a \$1M budget
+while passing the declared eight-level alpha grid ($V(0.01)=0.035350$,
+$\Gamma_{\mathrm{CP}}=0.162616$, exact Markov loss threshold $0.345084$, zero
+realized risk-tolerance excess). Against a matched point-PD two-stage LP with the
+same candidates, budget, concentration cap, and risk tolerance, CRPTO gives up
+$5.87\%$ of realized return while reducing the weighted default rate by $8.305$
+percentage points and the loss threshold by $43.55$ percentage points. The
+consolidated frontier contains 50{,}010 deduplicated policies, of which 27{,}508
+pass all declared alpha levels and exceed the return floor. Frozen Prosper and
+Freddie/Mendeley applications preserve the predeclared global conformal gates
+with positive robust LP objectives. CRPTO therefore makes predictive uncertainty
+decision-useful as an auditable return--risk frontier, with a distribution-free
+Markov bound under weighted funded-set validity and an explicit separation
+between deterministic accounting and its statistical assumption.%
 }
 
 \KEYWORDS{conformal prediction; robust optimization; predict-then-optimize;
@@ -106,14 +107,17 @@ credit risk; portfolio optimization; reproducible data science}
 % =====================================================================
 \section{Introduction}\label{sec:intro}
 
-Credit allocation is a predict-then-decide problem. A lender first estimates a
-probability of default (PD), then chooses which loans to fund under a budget and
-risk appetite. The modeling literature has become very good at the first step:
-calibration, discrimination, and backtesting are now standard ingredients of
-credit-risk model validation \citep{lessmann2015,chen2024creditrisk}. The second step is
-less settled. Once a calibrated PD enters an optimizer, uncertainty is often
-treated as a reporting diagnostic rather than as a constraint that can change the
-funded set.
+Credit allocation is a contextual optimization problem in credit form. A lender
+first estimates a probability of default (PD), then chooses which loans to fund
+under a budget and risk appetite. This places the paper in the broader
+prescriptive-analytics literature on decision making under uncertainty
+\citep{sadana2025contextual}. The credit-risk literature has become very good at
+the first step: calibration, discrimination, and backtesting are now standard
+ingredients of model validation \citep{lessmann2015,chen2024creditrisk}. Recent
+credit-scoring work also evaluates uncertainty through economic metrics. The
+second step is less settled. Once a calibrated PD enters an optimizer,
+uncertainty is often treated as a reporting diagnostic rather than as a
+constraint that can change the funded set.
 
 That separation is uncomfortable in auditable credit decisions. A portfolio policy
 can have a reasonable average PD and still concentrate probability mass in loans
@@ -122,9 +126,11 @@ can pass every risk check while destroying economic value. The scientific questi
 in this paper is therefore not whether one can build a slightly better credit
 classifier. It is whether finite-sample predictive uncertainty can be carried into
 a robust portfolio decision in a way that is transparent enough for a reviewer to
-audit. This has practical stakes. In a pre-registered randomized trial,
-conformal prediction sets improved human decision making relative to fixed-size
-sets with the same coverage \citep{cresswell2024}. CRPTO takes that
+audit. This has practical stakes, but it is not automatic: conformal sets must be
+tied to a downstream action and objective to become decision-useful. In a
+pre-registered randomized trial, conformal prediction sets improved human
+decision making relative to fixed-size sets with the same coverage
+\citep{cresswell2024}. CRPTO takes that
 committee-facing idea into a credit portfolio setting, where the uncertainty
 summary must change a funding decision or it is just another report.
 
@@ -142,7 +148,7 @@ evaluation set of 276{,}869 loans. The consolidated frontier contains 50{,}010
 deduplicated semantic policies, of which 27{,}508 pass every declared alpha
 level and exceed the return floor. From that declared finite frontier, the
 selected policy is the body/default balanced point at the approximately
-$0.345$ return-bound lens, with Markov cap $0.345084$; it is neither a continuous
+$0.345$ return-bound lens, with exact Markov loss threshold $0.345084$; it is neither a continuous
 global optimum nor the economic endpoint. The selected point earns \$184.8K on
 a \$1M budget and passes the exact empirical funded-set audit at
 $\alpha=0.01$. The headline result is not a single lucky allocation. It is a
@@ -157,30 +163,26 @@ panel with out-of-sample and out-of-time splits. These replications are not new
 champions; they test whether the same PD-to-conformal-to-LP recipe remains
 economically usable on different credit products.
 
-The paper makes five contributions. First, it gives a CRPTO construction for
-credit portfolios: frozen calibrated PD, Mondrian conformal uncertainty, and
-robust budgeted optimization as a post-hoc decision audit. Second, it proves a
+The paper makes four contributions. First, it gives a CRPTO construction for
+credit portfolios: frozen calibrated PD, Mondrian conformal uncertainty, robust
+budgeted optimization, and an exact post-allocation audit. Second, it proves a
 distribution-free Markov bound under weighted funded-set validity
 (Theorem~\ref{thm:funded-set-bound})
-that splits realized portfolio loss into the conformal upper-endpoint budget
-$B_u(\alpha)=\tau+(1-\gamma)\,\Gamma_{\mathrm{CP}}(\alpha)$ and the weighted
-miscoverage $V(\alpha)$, with supplement propositions showing that Markov is
-optimal under the stated assumption (A.1) and locating the cluster structure
-that would tighten it (A.2). Third, it locates that construction relative to
-data-driven robust optimization, P2P lending portfolio models, conformal credit
-scoring, and decision-focused learning. Fourth, it provides an evidence-backed
-empirical study where every table and figure is generated from frozen outputs
-rather than manually transcribed summaries. Fifth, it uses a three-level
-evidence ladder: the Lending Club funded set carries the certificate, Prosper
-and Freddie/Mendeley test recipe transfer as external economic replications,
-and the tail, dependence, online, and robustness appendices stay diagnostic.
-The key claim is narrow: CRPTO maps frozen calibrated
-PD models into a robust funded set, reports the portfolio-level conformal
-premium $\Gamma_{\mathrm{CP}}$, and verifies exact alpha-safe weighted
-miscoverage on the promoted Lending Club portfolio and its surrounding finite-grid
-frontier. The same conformal and LP gates remain viable on two additional
-credit datasets, while the paper keeps the boundary between paper revision and
-new model-search evidence visible.
+and introduces a policy-aware decomposition
+$\Gamma_{\mathrm{CP}}=\Gamma_{\mathrm{int}}+\Gamma_{\mathrm{res}}$ that recovers
+the exact upper-endpoint budget for linear, capped, and tail-focused policies.
+Supplement propositions show that Markov is optimal under the stated first-moment
+assumption (A.1) and locate the cluster structure that would tighten it (A.2).
+Third, it reports the selected Lending Club decision as part of a declared
+finite-grid return-bound frontier and compares it with a matched point-PD
+allocation; all rows and exact alpha checks are generated from frozen evidence.
+Fourth, it packages the result as a reproducible IJDS decision artifact, with
+tables, figures, governance files, and claim-sync checks designed to keep the
+statistical boundary visible. The key claim is narrow: CRPTO maps a frozen
+calibrated PD model into a robust funded set, reports the portfolio-level
+conformal premium and its internalized/residual components, and audits the
+promoted Lending Club allocation and its finite-grid frontier exactly. Adjacent methods enter the manuscript only to locate and
+stress-test this single claim, not to create additional acceptance criteria.
 
 Read as data science for decisions, the paper's four components are explicit:
 the data are a static Lending Club OOT panel plus Prosper/Freddie external stress
@@ -210,15 +212,16 @@ without trusting a fully parametric posterior. Mondrian and group-conditional
 variants are especially natural in credit because risk grades are already used as
 business and governance partitions \citep{bostrom2021,gibbs2024,zhou2024}.
 
-The second foundation is robust optimization. Classical robust optimization frames
-uncertainty as a set against which a decision must remain feasible, with the price
-of robustness made visible as a design trade-off \citep{bertsimas2004}. Robust
-portfolio selection makes that trade-off operational for allocation under
-parameter uncertainty \citep{goldfarb2003robustportfolio}, whereas
-distributionally robust optimization broadens the uncertainty object toward moment
-or ambiguity sets \citep{delage2010dro}. Recent work connects conformal prediction
-and robust optimization more directly by using conformal uncertainty sets in
-downstream decisions \citep{johnstone2021,patel2024,sun2024ptc,hu2026crc}. That
+The second foundation is robust optimization and contextual optimization.
+Classical robust optimization frames uncertainty as a set against which a decision
+must remain feasible, with the price of robustness made visible as a design
+trade-off \citep{bertsimas2004}. Robust portfolio selection makes that trade-off
+operational for allocation under parameter uncertainty
+\citep{goldfarb2003robustportfolio}, whereas distributionally robust optimization
+broadens the uncertainty object toward moment or ambiguity sets
+\citep{delage2010dro}. Recent work connects conformal prediction and robust
+optimization more directly by using conformal uncertainty sets in downstream
+decisions \citep{johnstone2021,patel2024,sun2024ptc,hu2026crc}. That
 line certifies the uncertainty set \emph{before} the decision: coverage of the
 conformal region is the guarantee, and the downstream decision inherits it.
 CRPTO follows this line but audits the other side of the decision as well:
@@ -250,7 +253,10 @@ panels \citep{lessmann2015,ayari2026,boosting2025default,xia2017}. Recent IJDS
 credit-risk work shows how richer data structures such as firm graphs can improve
 rating prediction \citep{das2023creditgraph}, and cost-aware calibration work makes
 explicit why probability quality matters when predictions feed asymmetric
-downstream decisions \citep{yang2025costaware}. IJDS decision papers also sharpen
+downstream decisions \citep{yang2025costaware}. Recent EJOR credit-scoring work
+similarly moves from discrimination to economic uncertainty, evaluating uncertainty
+through profit and rejection objectives.
+IJDS decision papers also sharpen
 the distinction between an accurate intermediate estimate and an effective
 automated decision
 \citep{fernandezloria2022causaldecision,fernandezloria2025observational}, while
@@ -271,13 +277,14 @@ Finally, recent work on conformal model selection for robust optimization,
 multi-distribution conformal validity, online conformal portfolio methods,
 end-to-end conformal risk training, and conformal satisficing
 \citep{bao2025croms,yang2026multidistribution,liu2026portfolio,yeh2025training,zhao2025robust}
-motivates the journal-strengthening package in this paper. We use those ideas where
+fixes the boundary around the single IJDS claim. We use those ideas where
 they can be evaluated from the frozen CRPTO evidence: OCE/CVaR
 \citep{rockafellar2000cvar,bental2007oce} appears as a tail-risk diagnostic, robust
 satisficing appears as committee-style margin evidence, and SPO+ motivates the
 regret-auditability frontier. The method-changing variants---optimized OCE/CVaR
-objectives, online or multi-dataset protocols, causal layers, and hybrid
-decision-focused training---remain future work rather than hidden acceptance
+objectives, non-exchangeable recalibration, formal post-selection conformal-set
+selection, online or multi-dataset protocols, causal layers, and hybrid
+decision-focused training---are outside the submitted claim rather than hidden acceptance
 criteria.
 
 \FloatBarrier
@@ -363,29 +370,35 @@ average 90\% interval width $0.7842$, minimum group 90\% coverage $0.9190$, and 
 
 The decision variable $x_i$ is the allocation fraction for each eligible loan;
 $x_i a_i$ is the funded exposure. The optimizer maximizes expected net economic
-return under a \$1M budget and policy constraints that cap portfolio risk after
-replacing point PD estimates with conformal upper endpoints. The selected body
-point has $\texttt{risk\_tolerance}=0.1715$,
-$\texttt{policy\_mode}=\texttt{capped\_blended\_uncertainty}$, policy parameter
+return under a \$1M budget and policy constraints that replace point PD with a
+declared effective decision score $q_i(\alpha;\theta)$. Every frontier policy
+satisfies $\hat p_i\le q_i(\alpha;\theta)\le u_i(\alpha)$; $\theta$ identifies a
+linear, capped, or tail-focused blend. The selected body point has
+$\texttt{risk\_tolerance}=0.1715$,
+$\texttt{policy\_mode}=\texttt{capped\_blended\_uncertainty}$,
 $\gamma=0.5475$, and $\texttt{uncertainty\_aversion}=0.05$.
 
 Schematically, the robust decision layer solves
 \[
 \begin{aligned}
-\max_x\quad & \sum_i x_i a_i \left(c_i - \tilde p_i(\alpha,\gamma)\,L\right) \\
+\max_x\quad & \sum_i x_i a_i \left(c_i - q_i(\alpha;\theta)\,L\right) \\
 \text{s.t.}\quad & \sum_i x_i a_i \le B,\\
-& \sum_i x_i a_i \tilde p_i(\alpha,\gamma)
+& \sum_i x_i a_i q_i(\alpha;\theta)
    \le \tau \sum_i x_i a_i,\\
 & 0 \le x_i \le \bar x_i,
 \end{aligned}
 \]
 where $a_i$ is exposure, $c_i$ is the loan coupon, $L$ is the loss-given-default
-($L=0.45$ in the frozen evaluation), $\tau$ is the risk-tolerance cap, and
+($L=0.45$ in the frozen evaluation), and $\tau$ is the risk-tolerance cap. The
+linear policy member is
 \[
-\tilde p_i(\alpha,\gamma)=\hat p_i+\gamma\left(u_i(\alpha)-\hat p_i\right)
+q_i(\alpha;\gamma)=\hat p_i+\gamma\left(u_i(\alpha)-\hat p_i\right).
 \]
-on the PD scale, clipped to the feasible probability range. The objective is the
-\emph{expected} net return $c_i-\tilde p_i L$; the headline realized return is
+Capped and tail-focused members transform that score while remaining between
+the point PD and upper endpoint. For the selected allocation, the cap is inactive
+on all 314 funded rows, so its effective score equals the linear expression; this
+is audited rather than assumed for other policies. The objective is the
+\emph{expected} net return $c_i-q_iL$; the headline realized return is
 the post-hoc accounting of the same funded set on observed
 defaults (a funded loan earns $c_i a_i$ if it survives and loses $L a_i$ if it
 defaults). Separating the optimized expectation from the realized accounting is
@@ -395,17 +408,21 @@ operational filters and caps live in the frozen policy configuration; the
 manuscript displays the core statistical-to-decision contract because that is
 the reusable CRPTO pattern.
 
-Two quantities are kept separate throughout the paper. The lowercase $\gamma$ is a
-policy parameter controlling how the optimizer blends uncertainty in the portfolio
-rule. $\Gamma_{\mathrm{CP}}$, by contrast, is a portfolio-level conformal metric
-computed after the funded set is chosen:
+The lowercase $\gamma$ is a policy parameter; the uppercase quantities are
+post-allocation funded-set metrics:
 \[
-\Gamma_{\mathrm{CP}}(\alpha)=\sum_i w_i\left(u_i(\alpha)-\hat p_i\right)_+.
+\begin{aligned}
+\Gamma_{\mathrm{CP}}(\alpha)&=\sum_iw_i(u_i-\hat p_i),\\
+\Gamma_{\mathrm{int}}(\alpha)&=\sum_iw_i(q_i-\hat p_i),\\
+\Gamma_{\mathrm{res}}(\alpha)&=\sum_iw_i(u_i-q_i).
+\end{aligned}
 \]
-The selected body point has
-  $\Gamma_{\mathrm{CP}}(\alpha=0.01)=0.162616$, weighted miscoverage
-  $V(\alpha=0.01)=0.035350$, and zero exact violation at $\alpha=0.01$. This distinction
-is small typographically but central for auditability.
+Thus $\Gamma_{\mathrm{CP}}=\Gamma_{\mathrm{int}}+\Gamma_{\mathrm{res}}$. At
+$\alpha=0.01$, the selected point has $\Gamma_{\mathrm{CP}}=0.162616$,
+$\Gamma_{\mathrm{int}}=0.089032$, $\Gamma_{\mathrm{res}}=0.073584$, and
+$V=0.035350$. Its weighted realized default rate is also $0.035350$, below
+$\tau=0.1715$, so realized risk-tolerance excess is zero. This is an empirical
+audit result, not a violation metric for the deterministic identity below.
 
 % =====================================================================
 \section{Theory}\label{sec:theory}
@@ -427,7 +444,9 @@ price of evaluating an adaptively selected subportfolio rather than a fresh popu
 What the paper certifies is therefore the exact accounting together with the safety
 level $V\le\sqrt{\alpha}$ that Markov delivers, not a claim that the funded set attains
 nominal $\alpha$-coverage or that post-selection evaluation creates a stronger
-conformal guarantee.
+conformal guarantee. This boundary also covers conformal-set selection: choosing
+the most attractive set or policy after seeing multiple valid candidates is
+itself a statistical operation that needs its own protocol.
 
 \begin{figure}[t]
   \centering
@@ -489,23 +508,25 @@ combined with~(i). The full proof is in Online Supplement Appendix~A. \Halmos
 \endproof
 
 \begin{remark}[The optimizer's cap versus the endpoint budget]\label{rem:endpoint-budget}
-The robust layer does not constrain $B_u(\alpha)$ directly; it caps the
-$\gamma$-blended PD, $\sum_i w_i \tilde p_i(\alpha,\gamma)\le\tau$, with
-$\tilde p_i=\hat p_i+\gamma(u_i(\alpha)-\hat p_i)$ and $\gamma\in[0,1]$. Because
-$\Gamma_{\mathrm{CP}}(\alpha)=\sum_i w_i(u_i(\alpha)-\hat p_i)$, the endpoint
-budget decomposes exactly as
+The robust layer constrains the policy-specific effective score, not
+$B_u(\alpha)$ directly: $\sum_iw_iq_i(\alpha;\theta)\le\tau+s$, where $s\ge0$
+is recorded solver cap slack. The policy-aware decomposition gives
 \[
-B_u(\alpha)=\sum_i w_i \tilde p_i(\alpha,\gamma)+(1-\gamma)\,\Gamma_{\mathrm{CP}}(\alpha)
-  \;\le\; \tau+(1-\gamma)\,\Gamma_{\mathrm{CP}}(\alpha),
+B_u(\alpha)=\sum_iw_iq_i(\alpha;\theta)+\Gamma_{\mathrm{res}}(\alpha)
+  \;\le\;\tau+s+\Gamma_{\mathrm{res}}(\alpha).
 \]
-with equality when the cap binds. The term $(1-\gamma)\,\Gamma_{\mathrm{CP}}(\alpha)$
-is the conformal robustness premium the optimizer leaves un-internalized at
-$\gamma<1$. For the selected body point ($\tau=0.1715$, $\gamma=0.5475$, binding cap),
-$B_u(0.01)\le 0.1715+0.4525\,(0.162616)=0.245084$, so the deterministic
-accounting bound reads
-$\sum_i w_i Y_i\le 0.245084+V(0.01)=0.280434$. The exact audit reports zero
-deterministic violation; the conservative Markov cap for the same point is
-$0.345084$.
+For a pure linear blend only,
+$\Gamma_{\mathrm{res}}=(1-\gamma)\Gamma_{\mathrm{CP}}$. The selected capped
+policy has no active row-level cap on its funded set, its effective-score cap
+binds with $s=0$, and therefore $B_u(0.01)=0.1715+0.073584=0.245084$. The
+deterministic identity gives
+$\sum_iw_iY_i\le0.245084+V(0.01)=0.280434$, while the observed left-hand side is
+$0.035350$. The exact Markov loss threshold is
+$T_{0.01}=B_u(0.01)+\sqrt{0.01}=0.345084$; under
+Assumption~\ref{asm:weighted-validity},
+$\mathbb{P}(\sum_iw_iY_i\ge T_{0.01})\le0.10$. It is a probabilistic event
+threshold, not a deterministic risk cap. This policy-aware form is essential for
+capped and tail-focused frontier points, where the linear shortcut need not hold.
 \end{remark}
 
 \begin{remark}[Why $t=\sqrt{\alpha}$, and why Markov]\label{rem:sqrt-alpha}
@@ -601,12 +622,12 @@ according to the journal's double-anonymous and data/code-disclosure policy.
 The body-supplement split is fixed before submission. The body keeps the CRPTO
 pipeline, the alpha-to-portfolio link, the finite-grid frontier, and the
 core metrics, plus the compact regret-auditability frontier. The online supplement carries
-A3--A39, the conformal finalist ablation, funded-set loan audit, tail-risk
+A3--A40, the conformal finalist ablation, funded-set loan audit, tail-risk
 diagnostics, satisficing margins, dependence diagnostics, the CVaR/OCE
 tail-constrained re-optimization (A22), the multi-distribution (A23) and online
 ACI-stability (A24) diagnostics, the multi-dataset external economic replication
 tables (A25--A34), the selected-policy frontier and funded-set audits
-(A35--A39), MRM/fairness material, and reproduction commands. This keeps the
+(A35--A40), MRM/fairness material, and reproduction commands. This keeps the
 IJDS body focused while preserving the audit trail that reviewers need.
 
 \subsection{Multi-Dataset External Replication Protocol}
@@ -635,13 +656,13 @@ as discrimination. The conformal layer over-covers marginally at the reported
 levels (90\% coverage $0.9297$, 95\% coverage $0.9664$ for the conformal winner).
 The portfolio layer then turns this uncertainty into an exact finite-grid
 return-bound frontier. The selected policy passes the
-$V\le\sqrt{\alpha}$ certificate at the tightest reported level while keeping zero
-deterministic violation.
+$V\le\sqrt{\alpha}$ certificate at the tightest reported level and has zero
+realized risk-tolerance excess.
 
-The results are ordered around three reviewer questions: what certificate the
-selected policy carries, where that policy sits on the finite-grid frontier, and
-whether the same recipe transfers to other credit panels without changing the
-Lending Club champion.
+The results are ordered around four reviewer questions: what certificate the
+selected policy carries, where it sits on the finite-grid frontier, what it buys
+relative to a matched point-PD LP, and whether the same recipe transfers to other
+credit panels without changing the Lending Club champion.
 
 \begin{table}[t]
   \centering
@@ -658,10 +679,13 @@ Lending Club champion.
     Conformal & Coverage 95\%                & $0.9664$ \\
     Conformal & Minimum group coverage 90\%  & $0.9190$ \\
     Portfolio & Body-point robust return     & \$184{,}832.48 \\
+    Portfolio & Weighted realized default    & $0.035350$ \\
     Portfolio & $V(\alpha=0.01)$             & $0.035350$ \\
     Portfolio & $\Gamma_{\mathrm{CP}}(\alpha=0.01)$ & $0.162616$ \\
-    Portfolio & Markov cap at $\alpha=0.01$  & $0.345084$ \\
-    Portfolio & Exact alpha violation        & $0.0$ \\
+    Portfolio & $\Gamma_{\mathrm{res}}(\alpha=0.01)$ & $0.073584$ \\
+    Portfolio & Endpoint budget $B_u(0.01)$  & $0.245084$ \\
+    Portfolio & Exact Markov loss threshold  & $0.345084$ \\
+    Portfolio & Realized risk-tolerance excess & $0.0$ \\
     Portfolio & Declared alpha-grid pass     & $8/8$ \\
     \bottomrule
   \end{tabular}
@@ -669,31 +693,36 @@ Lending Club champion.
 
 The exact certificate is an accounting claim. Here ``exact'' means the quantities
 are computed directly on the frozen OOT funded set rather than approximated by a
-surrogate table or visual proxy, and the deterministic part requires no distributional
-assumption. The certificate's pass is the Markov safety check $V(\alpha)\le\sqrt{\alpha}$
-together with zero deterministic violation ($\sum_i w_i Y_i\le B_u(\alpha)$); it is
-\emph{not} a claim of nominal $\alpha$-coverage, which the funded set does not attain
-($V=0.035350>\alpha=0.01$).
+surrogate table or visual proxy, and the deterministic identity requires no
+distributional assumption. The declared empirical pass combines
+$V(\alpha)\le\sqrt{\alpha}$ with realized risk-tolerance excess no larger than
+$\alpha$; for the selected point that excess is zero. This screen is \emph{not}
+a claim of nominal $\alpha$-coverage, which the funded set does not attain
+($V=0.035350>\alpha=0.01$), and the excess criterion is not a new probabilistic
+theorem.
 
 This makes $\Gamma_{\mathrm{CP}}$ more than a diagnostic line item. It is the
-amount of conformal robustness the optimizer accepts in order to keep the funded
-set inside the $\sqrt{\alpha}$-safe region. A credit reviewer can therefore read
-$\Gamma_{\mathrm{CP}}=0.162616$ as the conformal premium carried by the selected
-body point, $V=0.035350$ as the realized weighted noncoverage audit, and the
-Markov cap $0.345084$ as the conservative theorem-facing risk cap.
+amount of conformal robustness carried by the funded set. A reviewer can read
+$\Gamma_{\mathrm{CP}}=0.162616$ as the total premium,
+$\Gamma_{\mathrm{res}}=0.073584$ as the part not internalized by the decision
+score, $V=0.035350$ as realized weighted noncoverage, and $0.345084$ as the loss
+level whose exceedance probability is bounded by $0.10$ under
+Assumption~\ref{asm:weighted-validity}.
 
 \begin{table}[t]
   \centering
-  \caption{Exact certificate for the promoted funded set. A pass denotes
-  $V\le\sqrt{\alpha}$ with zero deterministic violation, not nominal $\alpha$-coverage.}
+  \caption{Exact certificate for the promoted funded set. The Markov column is
+  the exact event threshold $B_u+\sqrt{\alpha}$, not a deterministic cap.}
   \label{tab:exact-certificate}
-  \begin{tabular}{rrrrrr}
+  \resizebox{\textwidth}{!}{%
+  \begin{tabular}{rrrrrrrr}
     \toprule
-    $\alpha$ & $\Gamma_{\mathrm{CP}}$ & $V(\alpha)$ & $\sqrt{\alpha}$ & Markov cap & Violation \\
+    $\alpha$ & $\Gamma_{\mathrm{CP}}$ & $\Gamma_{\mathrm{res}}$ & $V(\alpha)$ & $B_u$ & Markov threshold & Risk excess & Pass \\
     \midrule
-    $0.01$ & $0.162616$ & $0.035350$ & $0.10000$ & $0.345084$ & $0.00000$ \\
+    $0.01$ & $0.162616$ & $0.073584$ & $0.035350$ & $0.245084$ & $0.345084$ & $0.00000$ & yes \\
     \bottomrule
   \end{tabular}
+  }%
 \end{table}
 
 The central empirical object is now a return-bound frontier rather than a single
@@ -717,24 +746,23 @@ reported with the floor surplus rather than as a replacement champion.
 
 \begin{table}[t]
   \centering
-  \caption{Pool93 finite-grid return-bound frontier. \texttt{terminal} rows come from
-  the conservative endpoint sweep; \texttt{micro-ext} rows come from the body-cap local
-  extension around the selected point. All rows are finite-grid points, not continuous
-  optima.}
+  \caption{Pool93 finite-grid return-bound frontier. Each threshold uses the exact
+  funded-set endpoint budget. \texttt{terminal}, \texttt{bound-closure}, and
+  \texttt{micro-ext} denote frozen finite grids, not continuous optima.}
   \label{tab:pool93-frontier}
   \resizebox{\textwidth}{!}{%
   \begin{tabular}{llrrrrr}
     \toprule
     Policy role & Source & Realized return & $V(0.01)$ &
-    $\Gamma_{\mathrm{CP}}$ & Markov cap & Pass \\
+    $\Gamma_{\mathrm{CP}}$ & Markov threshold & Pass \\
     \midrule
-    Minimum Markov-cap endpoint & terminal & \$170{,}467.27 & $0.031875$ & $0.095719$ & $0.273036$ & $8/8$ \\
-    Low-cap balanced endpoint & terminal & \$171{,}006.20 & $0.031875$ & $0.097190$ & $0.274789$ & $8/8$ \\
-    Highest return under cap $\le 0.30$ & terminal & \$173{,}314.04 & $0.035875$ & $0.115400$ & $0.294580$ & $8/8$ \\
-    Highest return under cap $\le 0.345$ & micro-ext & \$184{,}800.41 & $0.035350$ & $0.162562$ & $0.344996$ & $8/8$ \\
+    Minimum Markov-threshold endpoint & terminal & \$170{,}467.27 & $0.031875$ & $0.095719$ & $0.273036$ & $8/8$ \\
+    Low-threshold balanced endpoint & terminal & \$171{,}006.20 & $0.031875$ & $0.097190$ & $0.274789$ & $8/8$ \\
+    Highest return under threshold $\le 0.30$ & bound-closure & \$174{,}552.51 & $0.035875$ & $0.120988$ & $0.299997$ & $8/8$ \\
+    Highest return under threshold $\le 0.345$ & micro-ext & \$184{,}800.41 & $0.035350$ & $0.162562$ & $0.344997$ & $8/8$ \\
     Body/default balanced point & micro-ext & \$184{,}832.48 & $0.035350$ & $0.162616$ & $0.345084$ & $8/8$ \\
-    Highest return under cap $\le 0.36$ & micro-ext & \$186{,}050.73 & $0.037750$ & $0.174600$ & $0.358685$ & $8/8$ \\
-    Max-return economic endpoint & micro-ext & \$223{,}458.14 & $0.069575$ & $0.457438$ & $0.510753$ & $8/8$ \\
+    Highest return under threshold $\le 0.36$ & micro-ext & \$186{,}050.73 & $0.037750$ & $0.174600$ & $0.358685$ & $8/8$ \\
+    Max-return economic endpoint & micro-ext & \$223{,}458.14 & $0.069575$ & $0.457438$ & $0.697056$ & $8/8$ \\
     \bottomrule
   \end{tabular}
   }%
@@ -744,12 +772,47 @@ Table~\ref{tab:pool93-frontier} gives the manuscript its decision geometry. The
 body/default point is not the highest-return point and not the tightest-bound
 point; it is the balanced point selected by the declared return-bound lens. The
 strict $\le 0.345$ row is reported separately because it is a different finite
-policy: it earns \$184{,}800.41 with Markov cap $0.344996$, whereas the
-body/default row earns \$184{,}832.48 with Markov cap $0.345084$. The endpoint
-at Markov cap $0.273036$ shows how conservative the certified frontier can
-become while preserving the return floor, and the \$223.5K endpoint shows the
-economic return available when the committee accepts a looser cap. The supplement
-reports the full frontier table and traceability details.
+policy: it earns \$184{,}800.41 at threshold $0.344997$, whereas the
+body/default row earns \$184{,}832.48 at threshold $0.345084$. The endpoint at
+$0.273036$ shows how conservative the frontier can become while preserving the
+return floor, and the \$223.5K tail-focused endpoint requires a threshold of
+$0.697056$. Its residual premium cannot be recovered with the linear
+$(1-\gamma)\Gamma_{\mathrm{CP}}$ shortcut. The supplement reports the full
+policy-aware frontier and traceability details.
+
+\subsection{Matched Point-PD Baseline}\label{sec:point-baseline}
+
+To isolate what the conformal decision layer buys, we solve a matched two-stage
+LP on the same 276{,}869 candidates with the same \$1M budget, concentration cap,
+$\tau=0.1715$, LGD, solver, and operating constraints. The only change is that
+the baseline uses calibrated point PD in both its objective and risk constraint.
+Neither optimizer sees OOT outcomes; defaults enter only in the frozen post-hoc
+audit.
+
+\begin{table}[t]
+  \centering
+  \caption{Matched point-PD baseline on the frozen Lending Club OOT panel.}
+  \label{tab:point-baseline}
+  \resizebox{\textwidth}{!}{%
+  \begin{tabular}{lrrrrrr}
+    \toprule
+    Policy & Realized return & Funded & Weighted default / $V$ &
+    $\Gamma_{\mathrm{CP}}$ & $B_u$ & Markov threshold \\
+    \midrule
+    Point-PD two-stage LP & \$196{,}369.14 & 225 & $0.118400$ & $0.526736$ & $0.680579$ & $0.780579$ \\
+    Selected CRPTO & \$184{,}832.48 & 314 & $0.035350$ & $0.162616$ & $0.245084$ & $0.345084$ \\
+    \bottomrule
+  \end{tabular}
+  }%
+\end{table}
+
+CRPTO gives up \$11{,}536.66, or $5.875\%$, of the baseline's realized return.
+In exchange, weighted default/miscoverage falls by $0.08305$ and the exact
+Markov loss threshold falls by $0.435495$. Both allocations have zero realized
+risk-tolerance excess because their default rates remain below $\tau$, but the
+point-PD allocation fails the tightest Markov safety screen
+($0.1184>\sqrt{0.01}=0.10$). This is a frozen OOT return--auditability trade-off,
+not causal evidence or universal dominance. Full fields are in Supplement A40.
 
 The funded-set under-coverage remains structural rather than a calibration-draw
 effect. With $n_{\mathrm{cal}}=237{,}584$ calibration loans, the split-conformal
@@ -757,20 +820,24 @@ conditional-coverage result makes marginal coverage highly stable around the
 nominal level \citep{vovk2005,angelopoulos2023}. The residual funded-set $V$ is a
 test-side, portfolio-selection quantity. That is why the paper reads the safety
 level at $\sqrt{\alpha}$ under Assumption~\ref{asm:weighted-validity}, and why
-the frontier reports $V$, $\Gamma_{\mathrm{CP}}$, endpoint budget, Markov cap, and
+  the frontier reports $V$, $\Gamma_{\mathrm{CP}}$, residual premium, endpoint budget, exact Markov threshold, and
 return together instead of promoting a standalone coverage number.
 
 \begin{table}[t]
   \centering
   \caption{Reviewer claim checks in the main manuscript.}
   \label{tab:reviewer-checks}
-  \resizebox{\textwidth}{!}{%
-  \begin{tabular}{lll}
+  {%
+  \small
+  \setlength{\tabcolsep}{4pt}
+  \renewcommand{\arraystretch}{1.12}
+  \begin{tabular}{@{}>{\raggedright\arraybackslash}p{0.20\textwidth}>{\raggedright\arraybackslash}p{0.47\textwidth}>{\raggedright\arraybackslash}p{0.25\textwidth}@{}}
     \toprule
     Reviewer concern & Body answer & Primary evidence \\
     \midrule
     ``This is only a classifier.'' & The claim is decision auditability, not AUC leadership. & Exact funded-set certificate and A35 frontier. \\
     ``CP + RO already exists.'' & CRPTO instantiates the idea for frozen credit PD models, funded-set governance, and Lending Club payoffs. & Closest-work boundary and bound claim stack. \\
+    ``There is no matched baseline.'' & A40 holds candidates and operating constraints fixed and quantifies a $5.875\%$ return cost. & Table~\ref{tab:point-baseline} and A40 audit. \\
     ``Adaptive selection breaks coverage.'' & The theorem states weighted funded-set validity as an assumption and then audits the frozen selection exactly. & Assumption map, validity ladder, and A23 diagnostics. \\
     ``The selected policy is cherry-picked.'' & The selected point comes from a consolidated finite frontier with 50{,}010 deduplicated semantic policies and 27{,}508 eligible all-alpha above-floor policies. & Frontier table and governance files. \\
     \bottomrule
@@ -819,50 +886,15 @@ Prosper or Freddie.
 \end{figure}
 
 \FloatBarrier
-The external layer also surfaces a result a single-dataset champion cannot show.
-The signed price of robustness---using the same convention as the Lending Club
-field, $(\mathrm{nonrobust}-\mathrm{robust})/\mathrm{nonrobust}$---is a
-\emph{positive} premium under frozen application, and across the four frozen
-external applications it is ordered by panel default rate (Table~\ref{tab:price-of-robustness},
-Figure~\ref{fig:price-scaling}). Within Freddie, the high-default red segment pays more
-than green; across datasets, Prosper's $30.92\%$ default panel pays the largest premium.
-This is a pattern across two datasets---three Freddie default-window segments plus
-Prosper---not a scaling law: it is consistent with the mechanism (higher default risk
-widens the conformal intervals, so the robust worst case discounts more return, and
-discrimination (AUC) does not order the premium on its own), but four points cannot
-establish a general law. On the \emph{selected} Lending Club champion the
-signed price is favorable ($-10.56\%$), because the bound-aware search found a
-robust funded set that also wins expected return. The measured summary is more
-modest: in these applications, the conformal robust layer is economically
-bounded. Under blind application it costs a single-digit to low-double-digit
-premium; under selection it can be favorable.
-
-\begin{table}[t]
-  \centering
-  \caption{Price of robustness by application, ordered by panel default
-  rate. The selected Lending Club champion is $-10.56\%$ (favorable under
-  selection, not blind application).}
-  \label{tab:price-of-robustness}
-  \begin{tabular}{lrr}
-    \toprule
-    Application & Panel default & Price of robustness \\
-    \midrule
-    Freddie FM48 (green)    & 0.58\%  & $+1.00\%$ \\
-    Freddie FM48 (combined) & 1.45\%  & $+1.09\%$ \\
-    Freddie FM48 (red)      & 2.97\%  & $+2.37\%$ \\
-    Prosper final-status    & 30.92\% & $+9.46\%$ \\
-    \bottomrule
-  \end{tabular}
-\end{table}
-
-\begin{figure}[t]
-  \centering
-  \includegraphics[width=0.78\textwidth]{crpto_fig25_price_of_robustness_scaling.pdf}
-  \caption{Across the four frozen external applications, the price of robustness
-  is ordered by panel default risk; the selected Lending Club champion sits
-  below zero as a favorable reference.}
-  \label{fig:price-scaling}
-\end{figure}
+The external layer adds a secondary economic pattern. Across Prosper and three
+Freddie default-window applications, the signed robust premium ranges from
+$+1.00\%$ to $+9.46\%$ and is ordered by panel default rate. Four applications
+cannot establish a scaling law, so A34 and its companion figure remain in the
+online supplement as mechanism-consistent diagnostics rather than a body claim.
+The matched Lending Club comparison is instead A40 above, whose point-PD
+baseline holds the candidate universe and operating constraints fixed. The
+external recipe therefore transfers as an economic audit protocol, while the
+exact funded-set certificate remains the Lending Club object.
 
 % =====================================================================
 \FloatBarrier
@@ -881,7 +913,7 @@ The second concern is whether conformal uncertainty is doing decision work or on
 adding conservative decoration. The answer is visible in the portfolio frontier.
 Policies are evaluated by return, exact alpha pass/fail, weighted miscoverage, and
 $\Gamma_{\mathrm{CP}}$; the promoted point is the body/default balanced policy on
-that finite-grid frontier, while the strict $\le 0.345$ cap policy is reported
+that finite-grid frontier, while the strict $\le 0.345$ threshold policy is reported
 separately. This differs from a workflow where conformal intervals are plotted
 after the optimizer has already chosen a point-PD allocation.
 
@@ -944,7 +976,7 @@ columns prevent a one-dimensional reading. Mean regret comes from a separate
 decision-regret experiment (A19/PyEPO) run on small synthetic optimization
 instances (50 items, budget 15, five seeds), scoring each method on a normalized
 decision-loss scale rather than on the \$1M funded portfolio; on that scale SPO+
-is the low-regret method by construction. The favorable price of robustness above
+is the low-regret method by construction. The external price-of-robustness diagnostic in the supplement
 and the higher CRPTO regret here are not in tension---they are two different
 measurements (a real \$1M funded set versus a synthetic regret benchmark). The
 right-hand columns report what the credit decision actually delivers: only CRPTO
@@ -979,7 +1011,7 @@ frontier, and model-risk lineage that a credit committee can inspect.
 Two reviewer questions deserve a body-level answer: what does the selected policy
 give up on the tail, and does its coverage hold once the evaluation is sliced by
 grade? The return-bound frontier answers the first question directly: lower
-Markov caps are available at lower return, while the selected policy sits on the
+Markov loss thresholds are available at lower return, while the selected policy sits on the
 declared frontier. The supplement then checks the funded-grade mix,
 selected-allocation tail repricing, dependence sensitivity, and fixed-allocation
 bootstrap interval. These rows explain the selected policy's risk profile; they
@@ -997,7 +1029,7 @@ do not add a hidden CVaR/OCE or bootstrap selector.
     \toprule
     Reviewer question & Body answer & Boundary \\
     \midrule
-    Is the point only high-return? & The frontier shows safer lower-return choices and higher-return looser-cap choices. & Finite grid, not a continuous optimum. \\
+    Is the point only high-return? & The frontier shows safer lower-return choices and higher-return looser-threshold choices. & Finite grid, not a continuous optimum. \\
     What loans does it fund? & The supplement reports funded exposure by grade. & Business mix, not protected-class fairness certification. \\
     What happens in the tail? & The selected allocation is repriced under LGD and tail summaries. & Risk profile only; tail risk is not the selector. \\
     Does dependence change the bound? & Cluster sensitivity recomputes tighter assumptions. & Sensitivity only; Markov remains the body theorem. \\
@@ -1014,18 +1046,21 @@ reports marginal coverage $0.9293$ on its multi-distribution evaluation slice,
 while the promoted interval summary in Table~\ref{tab:core} reports $0.9297$;
 these are distinct cuts through the same intervals. No grade falls
 below target, so the conservative marginal coverage is not hiding a failing segment; the thinnest
-grade$\times$vintage cells are where a future group-weighted or multi-distribution
-recalibration would matter, marked as future work rather than a present guarantee.
+grade$\times$vintage cells identify where a group-weighted or multi-distribution
+recalibration would require a separately tagged protocol, so they are not
+promoted as a present guarantee.
 
 \subsection{Managerial Implication}\label{sec:managerial}
 
 For a credit-risk committee, CRPTO turns a model into a decision
 conversation. The committee can pick a risk cap $\tau$, inspect how a policy
-parameter $\gamma$ changes the funded set, read $\Gamma_{\mathrm{CP}}$ as the
-conformal robustness premium paid by that funded set, and compare $V(\alpha)$
-with the stated bound tolerance. The method therefore supports a practical
-question: whether the realized economic return justifies the signed price of
-robustness, which on this evaluation is favorable rather than a cost. If the
+parameter $\gamma$ changes the funded set, separate the total conformal premium
+into internalized and residual components, and compare $V(\alpha)$ with the
+stated bound tolerance. On this evaluation the matched choice is concrete:
+accept $5.875\%$ less realized return than the point-PD LP in exchange for
+$8.305$ percentage points less weighted default/miscoverage and a $43.55$
+percentage point lower Markov loss threshold. The method supports a practical
+trade-off rather than promising a free robustness premium. If the
 committee wants lower regret, the SPO+ corner is visible; if it wants stronger
 validity language, the validity ladder states the new
 calibration protocol that would be required. That separation is the managerial
@@ -1041,7 +1076,8 @@ tightening audit, A22 CVaR/OCE tail-constrained re-optimization, and A23--A24
 multi-distribution and online (ACI) conformal-stability diagnostics, plus
 A25--A34 external economic replication, exhaustiveness, interval, subperiod,
 and sensitivity audits on Prosper and Freddie/Mendeley, and A35--A39 selected-policy
-frontier, composition, tail-risk, concentration, and bootstrap audits.
+frontier, composition, tail-risk, concentration, and bootstrap audits, plus A40
+matched point-PD comparison.
 
 % =====================================================================
 \section{Discussion}\label{sec:discussion}
@@ -1054,13 +1090,20 @@ keep the predictive model auditable, quantify uncertainty with a finite-sample
 conformal layer, and make the optimizer pay attention to the upper end of plausible
 default risk.
 
+The policy-aware decomposition is more than a notation change. A linear blend
+can recover its residual endpoint premium from $\gamma$ alone, but capped and
+tail-focused policies cannot. Computing $\Gamma_{\mathrm{res}}$ from funded rows
+makes every frontier point comparable on the same exact endpoint scale and
+prevents a nonlinear tail policy from appearing safer because of a shortcut.
+
 The external replications also change how to read the price of robustness. Across
 the frozen external applications, the premium is ordered by panel default risk
 rather than by discrimination. That pattern reframes robustness as a
 panel-specific premium to be measured, not a fixed toll to be assumed. It also
-tempers the contribution: the favorable Lending Club value reflects champion
-selection, so the transferable claim is bounded measurement under blind
-application, not a universal free lunch.
+tempers the contribution: the matched Lending Club audit observes a $5.875\%$
+return cost, while external applications report different premiums under their
+frozen contracts. The transferable claim is reproducible measurement of a
+return--risk trade-off, not a universal free lunch.
 
 The limits are equally important. CRPTO does not prove that any one public dataset
 is a universal proxy for modern credit origination. The Prosper and
@@ -1073,17 +1116,16 @@ as conditional guarantees. CRPTO does not claim legal fairness certification,
 because the public data lack direct protected attributes. It does not assert that
 robust conformal policies dominate all decision-focused learners on regret.
 
-The next research directions are clear and are now separated into paper
-improvements versus new CRPTO protocols. The current paper includes the safe
-journal-strengthening package: OCE/CVaR as a tail-risk audit, satisficing as
+The manuscript is deliberately written as one IJDS paper rather than a bundle of
+method variants. Adjacent methods enter only when they make the submitted
+certificate easier to evaluate: OCE/CVaR as a tail-risk audit, satisficing as
 margin evidence, SPO+ as the low-regret corner of the regret-auditability
-frontier, and dependence as a formal caveat. The larger scientific upgrades are
-useful in the present manuscript only when they sharpen this boundary.
-Table~\ref{tab:upgrade-map} states that boundary directly.
+frontier, and dependence as a formal caveat. Table~\ref{tab:upgrade-map} states
+that single-submission boundary directly.
 
 \begin{table}[t]
   \centering
-  \caption{Scientific upgrade map for the current CRPTO paper.}
+  \caption{Single-submission boundary map for the current CRPTO paper.}
   \label{tab:upgrade-map}
   {%
   \small
@@ -1091,12 +1133,12 @@ Table~\ref{tab:upgrade-map} states that boundary directly.
   \renewcommand{\arraystretch}{1.12}
   \begin{tabular}{@{}>{\raggedright\arraybackslash}p{0.22\textwidth}>{\raggedright\arraybackslash}p{0.36\textwidth}>{\raggedright\arraybackslash}p{0.34\textwidth}@{}}
     \toprule
-    Upgrade path & What the current paper can claim & What would require a new result \\
+    Adjacent path & What this paper uses & Boundary for the submitted claim \\
     \midrule
-    Tail-aware selection & A20--A22 and A37 show the tail trade-off and selected-allocation tail profile. & A predeclared CVaR/OCE selector with its own exact funded-set audit. \\
-    Prospective selection & Nested holdout and the finite declared grid reduce post-selection ambiguity. & A fully prospective search/evaluation split after all policy rules are frozen. \\
-    Multi-distribution or online validity & A23--A24 diagnose grade, distribution, and vintage stress on frozen intervals. & A new calibration protocol that targets group-weighted, multi-source, or live sequential validity. \\
-    Decision-focused conformal learning & A19 shows SPO+ as the low-regret comparator and CRPTO as the auditable corner. & An end-to-end learner that jointly optimizes decision loss and emits a conformal funded-set certificate. \\
+    Tail-aware selection & A20--A22 and A37 show the selected decision's tail profile and available return-tail trade-off. & The promoted selector remains the declared return-bound finite frontier. \\
+    Prospective selection & Nested holdout and the finite declared grid reduce post-selection ambiguity. & The paper does not claim a fully prospective selection/evaluation trial. \\
+    Multi-distribution or online validity & A23--A24 diagnose grade, distribution, and vintage stress on frozen intervals. & The conformal layer is not recalibrated for multi-source or live sequential validity. \\
+    Decision-focused conformal learning & A19 shows SPO+ as the low-regret comparator and CRPTO as the auditable corner. & The PD model remains frozen; no end-to-end learner is promoted. \\
     \bottomrule
   \end{tabular}
   }%
@@ -1106,10 +1148,10 @@ Optimized OCE/CVaR objectives, online conformal methods, multi-distribution
 conformal validity, utility-directed or decision-theoretic conformal variants
 \citep{cortesgomez2025utility,lekeufack2023cdt}, causal variants, broader
 asset-class panels, and prospective multi-period origination studies are all
-valuable. They become stronger paper claims only with new protocols, data, or
-proofs. In the current submission, their role is to make the frozen CRPTO
+valuable comparators. In this submission, their role is to make the frozen CRPTO
 contribution easier to locate: an auditable post-hoc predict-then-optimize
-certificate, not a universal decision-learning framework.
+certificate, not a universal decision-learning framework and not a collection of
+additional promoted methods.
 
 % =====================================================================
 \section{Conclusion}\label{sec:conclusion}
@@ -1121,14 +1163,14 @@ selected policy earns \$184{,}832.48 on a \$1M budget while passing
 the exact empirical $\alpha=0.01$ funded-set audit, and it lies on a declared
 finite-grid return-bound frontier with 50{,}010 deduplicated semantic policies
 and 27{,}508 all-alpha above-floor policies rather than at a single lucky point.
-The external
-Prosper and Freddie/Mendeley replications show that the recipe travels beyond the
-Lending Club panel and expose an economically interpretable regularity: the price
-of robustness is a bounded premium ordered by panel default risk across the
-frozen external applications. The
-contribution is scoped as an auditable post-hoc decision certificate, not a new
-end-to-end learner or a live-deployment study, and every reported number is
-regenerable from frozen evidence.
+A matched point-PD LP shows the price explicitly: $5.875\%$ less realized return
+for $8.305$ percentage points less weighted default/miscoverage and a $43.55$
+percentage point lower exact Markov loss threshold. The policy-aware residual
+premium makes the certificate valid across the linear, capped, and tail-focused
+frontier, while Prosper and Freddie/Mendeley show that the recipe can be audited
+on other credit products. The contribution is one auditable post-hoc decision
+certificate, not a new end-to-end learner, live-deployment study, or portfolio
+of additional methods; every reported number is regenerable from frozen evidence.
 
 % Reproducibility/companion disclosure is kept for the cover letter / non-anonymous
 % version, not the double-anonymous body.

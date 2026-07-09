@@ -1,4 +1,4 @@
-# CRPTO Active Claim Registry - 2026-07-04
+# CRPTO Active Claim Registry - 2026-07-09
 
 This registry is the current source of truth for paper-facing CRPTO claims. It
 supersedes older research notes that centered the `45/45` local region or the
@@ -16,6 +16,8 @@ Current body/default point:
 
 - terminal run tag:
   `champion-reopen-2026-06-19__pool93__ijds-claim-bound-terminal`
+- active certificate-semantics tag:
+  `champion-reopen-2026-06-19__pool93__ijds-certificate-semantics-v2`
 - body point source run:
   `champion-reopen-2026-06-19__pool93__ijds-claim-micro-ext`
 - policy family: `claim_micro_ext_body_cap345`
@@ -28,9 +30,11 @@ Current body/default point:
 - return-floor surplus: `$14,367.94`
 - `V(alpha=0.01)`: `0.035350`
 - `Gamma_CP(alpha=0.01)`: `0.162616`
-- endpoint budget upper at `alpha=0.01`: `0.24508374`
-- Markov cap at `alpha=0.01`: `0.34508374`
-- exact alpha violation: `0.0`
+- `Gamma_internalized(alpha=0.01)`: `0.089032`
+- `Gamma_residual(alpha=0.01)`: `0.073584`
+- exact endpoint budget at `alpha=0.01`: `0.245083866` (`0.245084` paper rounding)
+- exact Markov loss threshold at `alpha=0.01`: `0.345083866` (`0.345084` paper rounding)
+- realized risk-tolerance excess: `0.0`
 - declared alpha-grid pass: `8/8`
 - fixed-allocation bootstrap return interval:
   `$167,963.20`--`$198,650.47`
@@ -44,8 +48,9 @@ calibrator and conformal interval outputs.
 | Claim | Decision | Destination | Evidence | Stop Rule |
 |---|---|---|---|---|
 | CRPTO is a decision certificate, not a classifier leaderboard. | Promote | body | `paper/CRPTO_ijds.qmd`, Figure 1, exact certificate table, A35 | Do not reopen unless the decision certificate changes. |
-| The pool93 body point is selected from a finite exact return-bound frontier. | Promote | body + A35 | `crpto_tableA35_pool93_ijds_frontier.csv`, consolidated governance JSON | Do not run more portfolio search unless a new result can lower cap at same return or materially lift return under the declared cap. |
+| The pool93 body point is selected from a finite exact return-bound frontier. | Promote | body + A35 | `crpto_tableA35_pool93_ijds_frontier.csv`, certificate-semantics-v2 frontier/governance JSON | Do not run more portfolio search unless a new result can lower the exact threshold at the same return or materially lift return under the declared threshold. |
 | The selected allocation has inspectable business composition and tail profile. | Append | supplement A36--A39 | A36 grade audit, A37 LGD/CVaR/OCE repricing, A38 cluster-bound audit, A39 bootstrap | Diagnostics only; do not use as hidden selector. |
+| The conformal decision has a matched point-PD baseline. | Promote | body + supplement A40 | A40 table and `pool93_point_pd_baseline_audit.json` | Treat as one frozen OOT trade-off; do not claim causal or universal dominance. |
 | The former `45/45` rebaseline remains provenance and return floor. | Archive/Append | provenance/supplement | `EXTRACTION_MANIFEST.json`, `ijds_rebaseline_2026-06-07.md` | Do not use as active headline except to explain the declared floor. |
 | External Prosper/Freddie runs support recipe transfer. | Append | body short paragraph + supplement A25--A34 | external replication tables and figures | Do not promote as new Lending Club certificates. |
 
@@ -78,10 +83,18 @@ For the consolidated frontier:
 - eligible all-alpha above-floor policies: `27,508/50,010`
 - nonpass or below-floor policies: `22,502/50,010`
 
+The v2 policy-aware rehydration uses the stored exact endpoint budget instead of
+the linear-only residual shortcut. It changes neither denominator nor the body
+selection, but changes 10,423 policy thresholds materially. Of these, 2,866
+tail/segment-tail policies were understated; the maximum understatement was
+`0.241324`, and 716 policies formerly labeled at or below `0.50` exceed `0.50`
+on the exact endpoint scale. The max-return endpoint is therefore `0.697056`,
+not the retired linear-shortcut value.
+
 These denominators are finite-grid denominators, not continuous optimality
-claims. If future work adds new policy families, gamma values, alpha levels or
-solvers, the denominators can grow under a new run tag; they must not be mixed
-with the current frozen denominators.
+claims. If a later, separately tagged run adds new policy families, gamma
+values, alpha levels or solvers, the denominators can grow under that run tag;
+they must not be mixed with the current frozen denominators.
 
 ## How To Present The Denominators
 
@@ -130,6 +143,27 @@ Do not present these as:
 - a live-production coverage guarantee after adaptive policy selection;
 - evidence that more policies are always better.
 
+## Baseline Semantics Boundary
+
+The frozen Lending Club field `price_of_robustness=-10.56%` is historical
+provenance, not an active IJDS claim. Its stored `nonrobust` solve inherited an
+endpoint constraint and therefore was not a point-PD comparator. A40 replaces
+that field with a matched two-stage LP at the selected policy's `tau=0.1715`,
+holding 276,869 candidates, budget, concentration, LGD, solver, and operating
+constraints fixed. The point-PD allocation earns `$196,369.14`; selected CRPTO
+earns `$184,832.48`, a cost of `$11,536.66` (`5.875%`). CRPTO reduces weighted
+default/miscoverage by `0.08305` and the exact Markov threshold by `0.435495`.
+See `pool93_certificate_semantics_v2_2026-07-09.md`.
+
+This correction does not alter the selected pool93 allocation, its realized
+return, `V`, `Gamma_CP`, exact Markov threshold, zero realized risk-tolerance
+excess, alpha-grid pass, or finite-grid denominators. The active Lending Club
+comparison is A40, interpreted jointly with the A35 exact return--bound
+frontier. Frozen Table 0/Table 1/A2 fields remain untouched for
+manifest provenance and must not be cited as evidence of robust dominance over
+a point estimate. Historical A/B proxy flags that inherited that comparator are
+also non-promoted.
+
 The IJDS framing should emphasize data + methodology + decision + implication:
 the finite-grid frontier is the decision object, the exact checks are the
 auditable computation, and the endpoints expose the price of robustness.
@@ -142,6 +176,14 @@ it is the weakest defensible assumption for the current selected allocation.
 A38 reports cluster-aware thresholds as sensitivity; none is tighter than
 Markov for the observed exposure concentration.
 
+Every paper-facing policy now uses the policy-aware decomposition
+`Gamma_CP = Gamma_internalized + Gamma_residual`, with exact endpoint budget
+`B_u = sum(w*q) + Gamma_residual`. The shortcut
+`Gamma_residual = (1-gamma) * Gamma_CP` is valid only for a pure linear blend.
+It remains numerically valid for the selected capped policy because its row-level
+cap is inactive on all 314 funded rows, but it must not be applied to tail or
+segment-tail policies.
+
 Do not claim:
 
 - universal conditional coverage;
@@ -150,15 +192,28 @@ Do not claim:
 - a CVaR/OCE/bootstrap-selected champion;
 - that `8/8` is an external standard rather than the declared grid.
 
+Literature-informed boundary added after the 2026-07-08 corpus scan:
+
+- Contextual optimization and credit-scoring uncertainty papers support the
+  framing of CRPTO as prediction-to-decision data science, but they do not
+  change the certificate object.
+- Non-exchangeable conformal risk control, valid selection among conformal sets,
+  inverse/decision-calibrated robustness, and learned decision-aware conformal
+  sets are outside the submitted claim unless rerun under a new tag with an
+  explicit selection/calibration design.
+- The current finite-grid frontier is strong audit evidence for the declared
+  frozen surface; it is not a stability-based or independent-recalibration
+  theorem for selecting among many conformal sets.
+
 ## Reopen Gate
 
 A new search is justified only if it can plausibly change one of these claims:
 
-1. same or higher return with materially lower Markov cap or `Gamma_CP`;
-2. much higher return under the same declared cap;
+1. same or higher return with materially lower exact Markov threshold or `Gamma_CP`;
+2. much higher return under the same declared threshold;
 3. a denser predeclared alpha grid that materially strengthens the certificate;
 4. a nested/prospective evaluation design that reduces post-selection risk;
 5. a reviewer-requested diagnostic that closes a specific objection.
 
-Otherwise, append the idea to future work and keep the current pool93 frontier
-closed.
+Otherwise, append the idea to research notes after submission and keep the
+current pool93 frontier closed.

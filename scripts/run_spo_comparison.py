@@ -13,6 +13,7 @@ This script consumes canonical artifacts and produces
 from __future__ import annotations
 
 import argparse
+import importlib
 import json
 import sys
 from datetime import UTC, datetime
@@ -117,8 +118,8 @@ def _try_spo_comparison(
 ) -> dict[str, object] | None:
     """Attempt SPO+ comparison if pyepo and torch are available."""
     try:
-        import torch  # noqa: F401
-        from pyepo.func import SPOPlus  # noqa: F401
+        importlib.import_module("torch")
+        importlib.import_module("pyepo.func")
 
         logger.info("PyEPO and torch available. SPO+ comparison enabled.")
     except ImportError:

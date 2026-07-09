@@ -41,14 +41,17 @@ intervalos conformal congelados; **no regenera ningún artefacto upstream**.
 
 | Campo | Valor |
 | --- | --- |
-| Run tag | `champion-reopen-2026-06-19__pool93__ijds-claim-bound-terminal` |
+| Certificate tag | `champion-reopen-2026-06-19__pool93__ijds-certificate-semantics-v2` |
+| Source policy run | `champion-reopen-2026-06-19__pool93__ijds-claim-micro-ext` |
 | Policy mode | `capped_blended_uncertainty` (familia `claim_micro_ext_body_cap345`) |
 | Retorno robusto | `$184,832.48` |
 | V(α=0.01) | `0.035350` |
 | Γ_CP(α=0.01) | `0.162616` |
-| Markov cap (α=0.01) | `0.345084` |
-| Alpha grid | `8/8`, violación exacta `0.0` |
-| Evidencia | A35–A39 + JSONs de gobernanza pool93 |
+| Γ_int / Γ_res (α=0.01) | `0.089032 / 0.073584` |
+| Endpoint / Markov threshold (α=0.01) | `0.245084 / 0.345084` |
+| Alpha grid | `8/8`, exceso realizado sobre τ `0.0` |
+| Baseline A40 | costo de retorno `5.875%`; reducción default/V `8.305` pp |
+| Evidencia | A35–A40 + JSONs de gobernanza/certificado pool93 |
 
 **Cadena upstream congelada (histórica; su retorno es el return floor declarado del pool93):**
 
@@ -70,9 +73,11 @@ Artefactos congelados cuyos hashes están en `EXTRACTION_MANIFEST.json` y **no s
 - `models/conformal_policy_status.json`
 - `data/processed/conformal_intervals_mondrian.parquet`
 - `data/processed/portfolio_bound_aware/rank1_alpha01_bound_aware_276k_full_2026-04-05-1734/`
-- `reports/crpto/tables/crpto_tableA35..A39_pool93_*.csv/.tex` (evidencia pool93)
+- `reports/crpto/tables/crpto_tableA35..A40_pool93_*.csv/.tex` (evidencia pool93)
 - `models/experiments/champion_reopen/...__pool93__ijds-claim-bound-terminal/portfolio/pool93_ijds_claim_governance.json`
-- `models/experiments/champion_reopen/...__pool93__ijds-claim-consolidated-definitive/portfolio/pool93_ijds_consolidated_governance.json`
+- `models/experiments/champion_reopen/...__pool93__ijds-certificate-semantics-v2/portfolio/pool93_ijds_consolidated_frontier.json`
+- `models/experiments/champion_reopen/...__pool93__ijds-certificate-semantics-v2/portfolio/pool93_ijds_consolidated_governance.json`
+- `models/experiments/champion_reopen/...__pool93__ijds-certificate-semantics-v2/portfolio/pool93_point_pd_baseline_audit.json`
 - `EXTRACTION_MANIFEST.json`
 
 La sincronía del body claim con el paper la vigila `tests/test_pool93_body_claim_sync.py`.

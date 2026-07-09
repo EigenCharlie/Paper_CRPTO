@@ -34,11 +34,13 @@ def cohort_analysis(
     for cohort, group in df.groupby(cohort_col):
         if len(group) < 50:
             continue
-        metrics = classification_metrics(
-            group[y_true_col].values,
-            group[y_prob_col].values,
+        metrics: dict[str, object] = dict(
+            classification_metrics(
+                group[y_true_col].values,
+                group[y_prob_col].values,
+            )
         )
-        metrics["cohort"] = cohort
+        metrics["cohort"] = str(cohort)
         metrics["n_loans"] = len(group)
         metrics["default_rate"] = group[y_true_col].mean()
         results.append(metrics)
@@ -502,19 +504,19 @@ def drift_monitoring_report(
 
     if not rows:
         return pd.DataFrame(
-            columns=[
-                "feature",
-                "train_n",
-                "test_n",
-                "psi",
-                "ks_statistic",
-                "ks_pvalue",
-                "cvm_statistic",
-                "cvm_pvalue",
-                "pass_psi",
-                "pass_ks",
-                "pass_cvm",
-            ]
+            {
+                "feature": pd.Series(dtype="object"),
+                "train_n": pd.Series(dtype="int64"),
+                "test_n": pd.Series(dtype="int64"),
+                "psi": pd.Series(dtype="float64"),
+                "ks_statistic": pd.Series(dtype="float64"),
+                "ks_pvalue": pd.Series(dtype="float64"),
+                "cvm_statistic": pd.Series(dtype="float64"),
+                "cvm_pvalue": pd.Series(dtype="float64"),
+                "pass_psi": pd.Series(dtype="bool"),
+                "pass_ks": pd.Series(dtype="bool"),
+                "pass_cvm": pd.Series(dtype="bool"),
+            }
         )
     out = pd.DataFrame(rows).sort_values("psi", ascending=False).reset_index(drop=True)
     return out
@@ -566,8 +568,8 @@ def filter_high_psi_features(
         )
 
     psi_table = pd.DataFrame(psi_records).sort_values("psi", ascending=False).reset_index(drop=True)
-    stable = [r["feature"] for r in psi_records if r["stable"]]
-    drifted = [r["feature"] for r in psi_records if not r["stable"]]
+    stable = [str(r["feature"]) for r in psi_records if r["stable"]]
+    drifted = [str(r["feature"]) for r in psi_records if not r["stable"]]
 
     if drifted:
         logger.warning(

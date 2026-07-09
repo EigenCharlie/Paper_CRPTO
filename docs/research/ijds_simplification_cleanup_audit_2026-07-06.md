@@ -1,5 +1,10 @@
 # IJDS simplification and cleanup audit - 2026-07-06
 
+> Certificate metrics in this historical cleanup memo were superseded on
+> 2026-07-09 by `pool93_certificate_semantics_v2_2026-07-09.md`. The cleanup
+> decisions remain valid; the active paper uses the policy-aware A35 frontier
+> and matched point-PD baseline A40.
+
 Scope: body manuscript, IJDS submission `.tex`, online supplement, code
 refactor posture, and local repository weight. This memo follows the
 2026-07-05 full audit but focuses on reader-facing parsimony: remove technical
@@ -89,8 +94,8 @@ Recommended new-run shape if Carlos chooses that route:
 2. Write outputs under a new experiment path; do not overwrite the current
    frozen A35--A39 or model/conformal artifacts.
 3. Compare against the current selected policy on: return, `V(0.01)`,
-   `Gamma_CP`, Markov cap, exact violation, table/page simplicity, and code path
-   length.
+   `Gamma_CP`, `Gamma_res`, exact loss threshold, realized risk-tolerance
+   excess, table/page simplicity, and code-path length.
 4. Promote only if the paper becomes materially simpler or the result is
    materially easier to defend. A few basis points of metric loss may be fine,
    but only if the new claim is easier to explain.

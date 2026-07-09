@@ -294,10 +294,10 @@ def build_tail_constrained_reoptimization(max_policies: int = 0) -> dict[str, An
     champion_return = float(promotion["final_champion"]["realized_total_return"])
 
     scored_rows: list[dict[str, Any]] = []
-    for idx, row in shortlist.iterrows():
+    for position, row in enumerate((row for _, row in shortlist.iterrows()), start=1):
         logger.info(
             "Re-solving policy {}/{} (candidate_rank={}, mode={}, gamma={})",
-            idx + 1,
+            position,
             len(shortlist),
             row["candidate_rank"],
             row["policy_mode"],

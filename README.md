@@ -4,19 +4,26 @@ Pipeline de investigación y libro Quarto que acompañan el paper **CRPTO**, una
 
 > CRPTO opera como repositorio standalone: GitHub, DVC y MLflow apuntan a recursos propios del paper. La historia de extracción y aprendizajes queda documentada en [`docs/PROJECT_HISTORY.md`](docs/PROJECT_HISTORY.md).
 
-## Champion congelado
+## Claim IJDS activo
 
 | Campo | Valor |
 | --- | --- |
-| Run tag | `ijds-rebaseline-2026-06-07` |
-| Policy | `bound_aware_276k_economic_champion` |
-| Retorno robusto | **$170,464.54** |
-| `V(α=0.01)` | `0.028875` |
-| `Γ_CP(α=0.01)` | `0.187987` |
-| `α=0.01 exact pass` | `True` |
-| Región robusta | `45/45` |
+| Certificate tag | `champion-reopen-2026-06-19__pool93__ijds-certificate-semantics-v2` |
+| Policy family | `claim_micro_ext_body_cap345` |
+| Policy mode | `capped_blended_uncertainty` |
+| Retorno robusto | **$184,832.48** |
+| `V(α=0.01)` | `0.035350` |
+| `Γ_CP(α=0.01)` | `0.162616` |
+| `Γ_int / Γ_res` (`α=0.01`) | `0.089032 / 0.073584` |
+| Endpoint / Markov threshold | `0.245084 / 0.345084` |
+| Alpha-grid pass | `8/8` |
+| Frontera consolidada | `50,010` políticas semánticas; `27,508` elegibles sobre el return floor |
+| Baseline A40 | costo de retorno `5.875%`; reducción default/V `8.305` pp |
 
 Hashes SHA256 de los artefactos críticos están en [`EXTRACTION_MANIFEST.json`](EXTRACTION_MANIFEST.json). Verifica con `just validate-champion` o el skill `/crpto-validate-champion`.
+El rebaseline `ijds-rebaseline-2026-06-07` se conserva como upstream congelado
+y return floor histórico (`$170,464.54`, `45/45`), no como el claim activo del
+manuscrito IJDS.
 
 ## Requisitos del sistema
 
@@ -67,8 +74,13 @@ just figures            # solo PNGs/PDFs
 just lint               # ruff check + format check
 just fmt                # ruff fix + format
 just type-check         # mypy src scripts
+just type-advisory      # ty sobre ruta activa IJDS, no bloqueante
+just type-advisory-full # ty sobre src/scripts completos, deuda opcional/historica
+just api-docs-core      # pdoc local para modulos core, salida ignorada
+just hooks-check        # valida hooks con pre-commit y prek
 just smoke              # tests críticos rápidos
 just test               # suite completa
+just submission-check   # cierre IJDS: claims, lint, type, smoke, champion y PDF oficial
 
 # DVC
 just dvc-status         # drift detection
@@ -146,7 +158,7 @@ just paper-submission
 │   └── apa.csl              # estilo APA 7
 ├── crpto/                   # paquete público mínimo (`import crpto`)
 ├── src/                     # módulos fuente históricos (data, features, models, optimization, evaluation, utils)
-├── scripts/                 # 40+ entry points
+├── scripts/                 # entry points; ver scripts/README.md para rutas IJDS vs históricas
 ├── tests/                   # 26 archivos pytest (markers slow / integration)
 ├── configs/                 # YAML (pd_model, conformal, optimization, fairness, mrm)
 ├── dbt_project/             # 3 staging + 3 marts sobre crpto.duckdb

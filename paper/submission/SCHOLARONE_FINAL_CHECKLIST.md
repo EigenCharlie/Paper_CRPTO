@@ -17,7 +17,7 @@ template files have been downloaded outside Git.
 ## Official Template Build
 
 1. Download or refresh `informs4.cls` and `informs2014.bst` from INFORMS/Overleaf.
-2. Synchronize `CRPTO_ijds_submission.tex` manually from the pool93 A35--A39
+2. Synchronize `CRPTO_ijds_submission.tex` manually from the pool93 A35--A40
    QMD source while preserving the official-template compaction.
 3. Place the template files next to `CRPTO_ijds_submission.tex`; local gitignored copies are already present.
 4. Build with `latexmk`. In Codex/PowerShell sessions where `WINDIR` is absent,

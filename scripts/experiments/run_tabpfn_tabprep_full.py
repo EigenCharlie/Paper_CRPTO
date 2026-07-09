@@ -8,6 +8,7 @@ from __future__ import annotations
 
 import argparse
 import gc
+import importlib
 import json
 import os
 import sys
@@ -184,9 +185,8 @@ def main() -> None:
     del train, generated_train
     gc.collect()
 
-    from tabpfn import TabPFNClassifier
-
-    clf = TabPFNClassifier(
+    tabpfn_classifier = _tabpfn_classifier_class()
+    clf = tabpfn_classifier(
         n_estimators=int(config["tabpfn"]["n_estimators"]),
         categorical_features_indices=categorical_indices,
         device=str(config["tabpfn"]["device"]),
@@ -292,10 +292,10 @@ def _load_config(path: Path) -> dict[str, Any]:
 def _check_tabpfn_access(config: Mapping[str, Any]) -> None:
     """Fail before loading CRPTO data if TabPFN-3 weights are not accessible."""
     from sklearn.datasets import make_classification
-    from tabpfn import TabPFNClassifier
 
+    tabpfn_classifier = _tabpfn_classifier_class()
     x, y = make_classification(n_samples=80, n_features=8, random_state=42)
-    clf = TabPFNClassifier(
+    clf = tabpfn_classifier(
         n_estimators=1,
         device=str(config["tabpfn"]["device"]),
         ignore_pretraining_limits=True,
@@ -317,12 +317,27 @@ def _check_tabpfn_access(config: Mapping[str, Any]) -> None:
         ) from exc
 
 
+def _tabpfn_classifier_class() -> Any:
+    """Return the optional TabPFN classifier class with a readable error."""
+    try:
+        module = importlib.import_module("tabpfn")
+    except ImportError as exc:
+        raise RuntimeError(
+            "TabPFN + TabPrep is an isolated challenger and requires the optional "
+            "TabPFN package plus PriorLabs model access. Install/authorize TabPFN "
+            "before running this experiment."
+        ) from exc
+    return module.TabPFNClassifier
+
+
 def _preflight_dataset_limits(*, config: Mapping[str, Any], force: bool) -> None:
     """Check full-data shape against public TabPFN-3 limits."""
     parquet_file = pq.ParquetFile(config["data"]["train_path"])
     train_rows = int(parquet_file.metadata.num_rows)
     schema_columns = list(parquet_file.schema_arrow.names)
-    schema_frame = pd.DataFrame(columns=schema_columns)
+    schema_frame = pd.DataFrame(
+        {str(column): pd.Series(dtype="object") for column in schema_columns}
+    )
     feature_config = load_feature_config(
         yaml_path=Path(config["data"]["feature_config_path"]),
         prefer="yaml",

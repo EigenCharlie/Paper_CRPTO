@@ -30,18 +30,22 @@ CRPTO does not cover:
 The current IJDS paper-facing CRPTO body point is the promoted pool93
 finite-grid frontier closure:
 
-- run tag: `champion-reopen-2026-06-19__pool93__ijds-claim-bound-terminal`
+- certificate tag: `champion-reopen-2026-06-19__pool93__ijds-certificate-semantics-v2`
+- source policy run: `champion-reopen-2026-06-19__pool93__ijds-claim-micro-ext`
 - body/default policy mode: `capped_blended_uncertainty` (family
   `claim_micro_ext_body_cap345`, selected from the consolidated frontier)
 - robust return: `$184,832.48`
 - `V(alpha=0.01)=0.035350`
 - `Gamma_CP(alpha=0.01)=0.162616`
-- Markov cap at `alpha=0.01`: `0.345084`
-- exact alpha violation: `0.0`
+- `Gamma_internalized(alpha=0.01)=0.089032`
+- `Gamma_residual(alpha=0.01)=0.073584`
+- exact endpoint budget at `alpha=0.01`: `0.245084`
+- exact Markov loss threshold at `alpha=0.01`: `0.345084`
+- realized risk-tolerance excess: `0.0`
 - declared alpha-grid pass: `8/8`
 - main paper-facing artifacts: A35 finite-grid frontier, A36 funded-set grade
   audit, A37 selected-allocation tail-risk repricing, A38 cluster-bound audit,
-  and A39 fixed-allocation bootstrap diagnostic.
+  A39 fixed-allocation bootstrap diagnostic, and A40 matched point-PD audit.
 
 The previous IJDS rebaseline is retained as historical provenance, not as the
 active body claim:
@@ -70,7 +74,10 @@ Do not overwrite these protected files without an explicit revalidation plan:
 - `reports/crpto/tables/crpto_tableA37_pool93_body_tail_risk.csv`
 - `reports/crpto/tables/crpto_tableA38_pool93_body_cluster_bound_audit.csv`
 - `reports/crpto/tables/crpto_tableA39_pool93_body_bootstrap_metrics.csv`
-- `models/experiments/champion_reopen/champion-reopen-2026-06-19__pool93__ijds-claim-consolidated-definitive/portfolio/pool93_ijds_consolidated_governance.json`
+- `reports/crpto/tables/crpto_tableA40_pool93_point_baseline.csv`
+- `models/experiments/champion_reopen/champion-reopen-2026-06-19__pool93__ijds-certificate-semantics-v2/portfolio/pool93_ijds_consolidated_frontier.json`
+- `models/experiments/champion_reopen/champion-reopen-2026-06-19__pool93__ijds-certificate-semantics-v2/portfolio/pool93_ijds_consolidated_governance.json`
+- `models/experiments/champion_reopen/champion-reopen-2026-06-19__pool93__ijds-certificate-semantics-v2/portfolio/pool93_point_pd_baseline_audit.json`
 - `models/experiments/champion_reopen/champion-reopen-2026-06-19__pool93__ijds-claim-bound-terminal/portfolio/pool93_ijds_claim_governance.json`
 - `EXTRACTION_MANIFEST.json`
 

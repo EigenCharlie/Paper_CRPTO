@@ -1,5 +1,11 @@
 # IJDS Corpus, Claims, and Improvement Plan - 2026-07-07
 
+> **Superseded metric vocabulary (2026-07-09).** This memo is retained as the
+> corpus-reading and editorial decision trail. Its old "Markov cap" and
+> preliminary frontier language must not be used as current evidence. The
+> policy-aware A35 correction and matched A40 baseline in
+> `pool93_certificate_semantics_v2_2026-07-09.md` are authoritative.
+
 Scope: analyze the current CRPTO body paper, official IJDS submission PDF/source,
 online supplement, frozen metrics/artifacts, and the local `Papers_tesis` corpus
 using the global `academic-pdf-intake` skill outputs.

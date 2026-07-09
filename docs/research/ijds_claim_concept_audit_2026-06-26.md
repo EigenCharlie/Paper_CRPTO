@@ -1,5 +1,10 @@
 # IJDS Claim Concept Audit: Alpha Grid, Robust Region, Bound, and Exact Frontier
 
+> **Historical only.** This pre-closeout analysis uses the former linear
+> certificate shortcut. Current claims and corrected endpoint thresholds live
+> in `active_claims_2026-07-04.md` and
+> `pool93_certificate_semantics_v2_2026-07-09.md`.
+
 Date: 2026-06-26
 
 This memo audits the concepts that are easy to take for granted in the CRPTO

@@ -22,9 +22,11 @@ import yaml
 from loguru import logger
 
 from src.models.conformal_artifacts import load_conformal_intervals
+from src.optimization.input_alignment import align_candidate_intervals
 from src.optimization.portfolio_model import (
     compute_effective_pd,
     optimize_portfolio_allocation,
+    solution_allocation_vector,
 )
 from src.utils.artifact_metadata import resolve_run_tag
 from src.utils.pipeline_runtime import (
@@ -99,69 +101,27 @@ def _align_loans_and_intervals(
     random_state: int,
 ) -> tuple[pd.DataFrame, pd.DataFrame]:
     """Align candidate loans with interval rows by id where possible."""
-    max_candidates_norm = None if int(max_candidates) <= 0 else int(max_candidates)
-    if "id" in candidates.columns and "id" in intervals.columns:
-        cand = candidates.copy()
-        ints = intervals.copy()
-        cand["_id_join"] = cand["id"].astype(str)
-        ints["_id_join"] = ints["id"].astype(str)
-        ints = ints.drop_duplicates(subset="_id_join", keep="first")
-        merged = cand.merge(ints, on="_id_join", how="inner", suffixes=("", "_int"))
-        if merged.empty:
-            raise ValueError("ID-based merge between candidates and intervals returned zero rows.")
-
-        n = len(merged) if max_candidates_norm is None else min(len(merged), max_candidates_norm)
-        if len(merged) > n:
-            idx = np.random.default_rng(random_state).choice(
-                np.arange(len(merged)), size=n, replace=False
-            )
-            idx = np.sort(idx)
-            merged = merged.iloc[idx].reset_index(drop=True)
-        else:
-            merged = merged.reset_index(drop=True)
-
-        loans = merged[candidates.columns].copy()
-        interval_cols = [c for c in intervals.columns if c in merged.columns]
-        ints_aligned = merged[interval_cols].copy()
-        logger.info(
-            f"Aligned tradeoff candidates and intervals by id: n={len(loans):,} "
-            f"(candidate_rows={len(candidates):,}, interval_rows={len(intervals):,})"
-        )
-        return loans, ints_aligned
-
-    if "_row_number" in intervals.columns:
-        cand = candidates.copy()
-        ints = intervals.copy()
-        cand["_row_number"] = np.arange(len(cand))
-        merged = cand.merge(ints, on="_row_number", how="inner", suffixes=("", "_int"))
-        assert len(merged) == len(cand), (
-            f"_row_number merge size mismatch: {len(merged)} != {len(cand)}"
-        )
-        n = len(merged) if max_candidates_norm is None else min(len(merged), max_candidates_norm)
-        if len(merged) > n:
-            idx = np.random.default_rng(random_state).choice(
-                np.arange(len(merged)), size=n, replace=False
-            )
-            merged = merged.iloc[np.sort(idx)].reset_index(drop=True)
-        else:
-            merged = merged.reset_index(drop=True)
-        loans = merged[candidates.columns].copy()
-        interval_cols = [c for c in intervals.columns if c in merged.columns]
-        ints_aligned = merged[interval_cols].copy()
-        logger.info(f"Aligned tradeoff candidates and intervals by _row_number: n={len(loans):,}")
-        return loans, ints_aligned
-
-    logger.warning(
-        "Conformal interval artifact has no id or _row_number alignment key; using positional fallback in tradeoff analysis."
+    aligned = align_candidate_intervals(
+        candidates,
+        intervals,
+        max_candidates=max_candidates,
+        random_state=random_state,
     )
-    n = min(len(candidates), len(intervals))
-    if max_candidates_norm is not None:
-        n = min(n, max_candidates_norm)
-    idx = np.random.default_rng(random_state).choice(np.arange(n), size=n, replace=False)
-    idx = np.sort(idx)
-    loans = candidates.iloc[idx].reset_index(drop=True).copy()
-    ints_aligned = intervals.iloc[idx].reset_index(drop=True).copy()
-    return loans, ints_aligned
+    if aligned.mode == "position":
+        logger.warning(
+            "Conformal interval artifact has no id or _row_number alignment key; "
+            "using reproducible positional sampling in tradeoff analysis."
+        )
+    logger.info(
+        "Aligned tradeoff candidates and intervals by {}: n={:,} "
+        "(alignable_rows={:,}, candidate_rows={:,}, interval_rows={:,})",
+        aligned.mode,
+        aligned.selected_rows,
+        aligned.available_rows,
+        len(candidates),
+        len(intervals),
+    )
+    return aligned.candidates, aligned.intervals
 
 
 def _write_candidate_universe(loans: pd.DataFrame, *, path: str, run_tag: str) -> None:
@@ -327,8 +287,12 @@ def _solve_single(
     cuopt_presolve: int | None = 1,
     cuopt_parameters: dict[str, Any] | None = None,
 ) -> tuple[dict[str, float | int | str], np.ndarray]:
+    effective_policy_mode = str(policy_mode) if robust else "point_estimate"
+    effective_gamma = float(gamma) if robust else 0.0
+    effective_delta_cap = float(delta_cap_quantile) if robust else 1.0
+    effective_tail_focus = float(tail_focus_quantile) if robust else 1.0
     segment_labels: np.ndarray | None = None
-    if policy_mode in {
+    if effective_policy_mode in {
         "segment_tail_blended_uncertainty",
         "segment_relative_tail_blended_uncertainty",
     }:
@@ -351,10 +315,10 @@ def _solve_single(
     pd_constraint = compute_effective_pd(
         pd_point=pd_point,
         pd_high=pd_high,
-        policy_mode=policy_mode,
-        gamma=gamma,
-        delta_cap_quantile=delta_cap_quantile,
-        tail_focus_quantile=tail_focus_quantile,
+        policy_mode=effective_policy_mode,
+        gamma=effective_gamma,
+        delta_cap_quantile=effective_delta_cap,
+        tail_focus_quantile=effective_tail_focus,
         segment_labels=segment_labels,
     )
     solution = optimize_portfolio_allocation(
@@ -381,7 +345,7 @@ def _solve_single(
     )
 
     n = len(loans)
-    allocation = np.array([solution["allocation"][i] for i in range(n)], dtype=float)
+    allocation = solution_allocation_vector(solution, n)
     loan_amounts = (
         loans["loan_amnt"].to_numpy(dtype=float)
         if "loan_amnt" in loans.columns
@@ -394,7 +358,7 @@ def _solve_single(
     expected_return = float(np.sum(allocation * loan_amounts * int_rates))
     economic_return = expected_return - expected_loss
     realized_total_return = _compute_realized_total_return(
-        solution["allocation"],
+        allocation,
         loan_amounts,
         int_rates,
         default_flag if default_flag is not None else np.zeros(n, dtype=int),
@@ -410,10 +374,10 @@ def _solve_single(
     return {
         "solver_status": str(solution["solver_status"]),
         "solver_backend": str(solver_backend),
-        "policy_mode": str(policy_mode),
-        "gamma": float(gamma),
-        "delta_cap_quantile": float(delta_cap_quantile),
-        "tail_focus_quantile": float(tail_focus_quantile),
+        "policy_mode": effective_policy_mode,
+        "gamma": effective_gamma,
+        "delta_cap_quantile": effective_delta_cap,
+        "tail_focus_quantile": effective_tail_focus,
         "objective_value": float(solution["objective_value"]),
         "n_funded": int(solution["n_funded"]),
         "total_allocated": total_allocated,
@@ -430,23 +394,16 @@ def _solve_single(
 
 
 def _compute_realized_total_return(
-    allocation: dict[int, float],
+    allocation: np.ndarray,
     loan_amounts: np.ndarray,
     int_rates: np.ndarray,
     default_flag: np.ndarray,
     *,
     lgd: float = 0.45,
 ) -> float:
-    total = 0.0
-    for i in range(len(loan_amounts)):
-        alloc = float(allocation.get(i, 0.0))
-        if alloc <= 0.01:
-            continue
-        if int(default_flag[i]) == 1:
-            total += alloc * float(loan_amounts[i]) * (-lgd)
-        else:
-            total += alloc * float(loan_amounts[i]) * float(int_rates[i])
-    return float(total)
+    funded = allocation > 0.01
+    realized_rate = np.where(default_flag.astype(int) == 1, -float(lgd), int_rates)
+    return float(np.sum(allocation[funded] * loan_amounts[funded] * realized_rate[funded]))
 
 
 def _allocation_similarity(a: np.ndarray, b: np.ndarray) -> float:

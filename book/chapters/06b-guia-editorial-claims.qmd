@@ -46,7 +46,7 @@ empíricos, otros son de ingeniería reproducible.
 | 3 | El intervalo puede convertirse en conjunto de incertidumbre | Definición de `u_i(alpha)` y `Gamma_CP` | No tratar `Gamma_CP` como presupuesto ad hoc |
 | 4 | El bound controla no-cobertura ponderada del funded set | @sec-thm-feasibility y `V` | No decir que controla directamente una PD latente sin supuesto adicional |
 | 5 | Existe una frontera finita robusta en OOT | A35: 50,010 políticas semánticas; 27,508 all-alpha above-floor policies | No decir que eso elimina toda incertidumbre post-selección ni que certifica una región continua |
-| 6 | El punto oficial es pool93 body/default, no el endpoint económico extremo | Retorno `$184.8K`, `V=0.035350`, `gamma_cp=0.162616`, Markov cap `0.345084`, pass `8/8` | No mezclarlo con el max-return endpoint de `$223K` ni con el punto de cap mínimo |
+| 6 | El punto oficial es pool93 body/default, no el endpoint económico extremo | Retorno `$184.8K`, `V=0.035350`, `gamma_cp=0.162616`, `gamma_res=0.073584`, umbral Markov `0.345084`, pass `8/8` | No mezclarlo con el max-return endpoint de `$223K` ni con el punto de threshold mínimo |
 | 7 | La evidencia CRPTO fortalece el paper sin cambiar dirección | A7--A11, apéndice condicional, A25--A34 | No venderlo como validación live o universal |
 
 : Escalera editorial de claims del CRPTO {#tbl-crpto-claim-ladder}
@@ -128,7 +128,7 @@ checkpoint MRM/fair-lending sin convertirlo en un claim legal.
 | `V` | No-cobertura ponderada del funded set | Cuánto default realizado quedó fuera de la cota |
 | `violation` | Exceso de riesgo ponderado sobre `tau` | Incumplimiento del límite de portafolio |
 | `alpha01_exact_pass` | Check exacto de bound en OOT | Semáforo para promoción paper-facing |
-| `price_of_robustness` | Retorno esperado baseline no-robusta menos robusta (con signo; `-$14,465.69` en el champion) | Costo/beneficio económico de la robustez, auditable |
+| `price_of_robustness` | A40 empareja candidatos y restricciones: costo realizado `5.875%`, reducción default/V `8.305` pp y reducción de threshold `43.55` pp | Costo económico de la robustez, solo con comparadores semánticamente equivalentes |
 
 : Diccionario operativo del CRPTO {#tbl-crpto-operational-dictionary}
 
@@ -202,7 +202,7 @@ improvisar: si llega una objeción nueva, primero se busca aquí.
 |---|---|---|
 | Diagrama CRPTO | Figura 1 | Explica el método en una sola vista |
 | Escalera alpha -> `Gamma_CP` -> funded set | Teoría / método | Une conformal y robust optimization |
-| Tabla A35/A36 | Resultados principales | Demuestra frontera finita y audit de composición del funded set |
+| Tablas A35/A40 | Resultados principales | Demuestran frontera finita y trade-off contra point-PD emparejado |
 | Holdout temporal estricto CRPTO | Appendix o robustness checks | Responde post-selección |
 | Funded-set composition | Appendix | Útil para reviewers de crédito y riesgo |
 | A10 exact finalists | Appendix | Defiende el selector conformal |

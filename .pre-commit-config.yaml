@@ -47,15 +47,15 @@ repos:
         stages: [pre-push]
 
       - id: pytest-smoke
-        name: pytest smoke (final-sync + quarto guardrails)
-        entry: uv run pytest tests/test_crpto_final_sync.py tests/test_quarto_book_guardrails.py -q
+        name: just smoke (publication guardrails)
+        entry: just smoke
         language: system
         pass_filenames: false
         stages: [pre-push]
 
       - id: validate-champion
         name: validate champion artefacts
-        entry: uv run python -c "import json; from pathlib import Path; m=json.loads(Path('EXTRACTION_MANIFEST.json').read_text()); print('manifest OK, keys:', len(m))"
+        entry: just validate-champion
         language: system
         pass_filenames: false
         stages: [pre-push]

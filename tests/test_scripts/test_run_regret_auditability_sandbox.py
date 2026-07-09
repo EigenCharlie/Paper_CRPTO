@@ -6,9 +6,15 @@ from pathlib import Path
 import pytest
 import yaml
 
+import scripts.search.run_regret_auditability_sandbox as sandbox
 from scripts.search.run_regret_auditability_sandbox import (
     FEATURE_PROFILES,
     MONOTONIC_POLICIES,
+    PORTFOLIO_ALPHA_GRID,
+    PhaseCommand,
+    _pd_validation_policy,
+    _pending_commands_for_group,
+    _phase_command_groups,
     _rank_pd_candidate_rows,
     assert_safe_output_path,
     build_phase_commands,
@@ -117,6 +123,69 @@ def test_resume_manifest_loading_roundtrip(tmp_path: Path) -> None:
     assert load_resume_manifest(tmp_path / "missing.json") == {}
 
 
+def _command(name: str, phase: str, output: Path) -> PhaseCommand:
+    return PhaseCommand(
+        name=name,
+        phase=phase,
+        command=["python", "-c", "pass"],
+        outputs=[str(output)],
+        checkpoint=str(output),
+        env={},
+        max_workers=1,
+        cpu_threads=1,
+    )
+
+
+def test_phase_command_groups_keep_consecutive_phase_batches(tmp_path: Path) -> None:
+    commands = [
+        _command("a", "pd-smoke", tmp_path / "a"),
+        _command("b", "pd-smoke", tmp_path / "b"),
+        _command("c", "conformal", tmp_path / "c"),
+        _command("d", "pd-smoke", tmp_path / "d"),
+    ]
+
+    groups = _phase_command_groups(commands)
+
+    assert [[command.name for command in group] for group in groups] == [["a", "b"], ["c"], ["d"]]
+
+
+def test_pending_commands_skip_completed_outputs_on_resume(
+    tmp_path: Path,
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    completed_output = tmp_path / "done.txt"
+    completed_output.write_text("ok", encoding="utf-8")
+    pending_output = tmp_path / "todo.txt"
+    monkeypatch.setattr(sandbox, "_log_command_to_mlflow", lambda **_: None)
+
+    pending, skipped = _pending_commands_for_group(
+        artifact_root=tmp_path,
+        log_path=tmp_path / "command_log.csv",
+        group=[
+            _command("done", "pd-smoke", completed_output),
+            _command("todo", "pd-smoke", pending_output),
+        ],
+        resume=True,
+    )
+
+    assert skipped == 1
+    assert [command.name for command in pending] == ["todo"]
+    assert "skipped_completed" in (tmp_path / "command_log.csv").read_text(encoding="utf-8")
+
+
+def test_pd_validation_policy_scales_by_phase() -> None:
+    smoke_replay, smoke_walk_forward = _pd_validation_policy("pd-smoke")
+    broad_replay, broad_walk_forward = _pd_validation_policy("pd-broad")
+    refine_replay, refine_walk_forward = _pd_validation_policy("pd-refine")
+
+    assert smoke_replay["top_k_trials"] == 1
+    assert smoke_walk_forward is False
+    assert broad_replay["seeds"] == [42, 52, 62]
+    assert broad_walk_forward is True
+    assert refine_replay["top_k_trials"] == 30
+    assert refine_walk_forward is True
+
+
 def test_pd_candidate_ranking_prefers_auc_then_calibration() -> None:
     ranked = _rank_pd_candidate_rows(
         [
@@ -172,6 +241,9 @@ def test_build_portfolio_command_uses_external_output_dirs(tmp_path: Path) -> No
     command = commands[0]
     assert "--output-dir" in command.command
     assert "--model-dir" in command.command
+    alpha_grid_index = command.command.index("--alpha-grid") + 1
+    assert command.command[alpha_grid_index] == PORTFOLIO_ALPHA_GRID
+    assert PORTFOLIO_ALPHA_GRID == "0.01,0.03,0.05,0.07,0.10,0.12,0.15,0.20"
     assert all(str(tmp_path) in output for output in command.outputs)
 
 

@@ -10,6 +10,7 @@ import argparse
 import json
 import pickle
 import shutil
+from collections.abc import Mapping
 from pathlib import Path
 from typing import Any
 
@@ -70,6 +71,58 @@ PreparedTrainingTuple = tuple[
     pd.DataFrame,
     pd.Series,
 ]
+REQUIRED_CONFIG_SECTIONS = ("output", "feature_source", "data", "hpo", "validation")
+REQUIRED_DATA_KEYS = ("train_path", "test_path", "calibration_path")
+OPTIONAL_MAPPING_SECTIONS = (
+    "output",
+    "feature_source",
+    "data",
+    "hpo",
+    "validation",
+    "model",
+    "conformal",
+    "calibration",
+)
+OUTPUT_DEFAULTS = {
+    "model_path": "models/pd_canonical.cbm",
+    "default_model_path": "models/pd_catboost_default.cbm",
+    "tuned_model_path": "models/pd_canonical.cbm",
+    "conformal_path": "models/pd_canonical_calibrator.pkl",
+    "status_path": "models/pd_training_status.json",
+    "checkpoint_dir": "models/pd_training_checkpoints",
+    "brier_decomposition_path": "data/processed/brier_score_decomposition.json",
+    "murphy_diagram_path": "reports/figures/calibration/murphy_diagram.png",
+    "canonical_model_path": str(CANONICAL_MODEL_PATH),
+    "canonical_calibrator_path": str(CANONICAL_CALIBRATOR_PATH),
+    "contract_path": str(CONTRACT_PATH),
+    "logreg_model_path": "models/pd_logreg_baseline.pkl",
+    "training_record_path": "models/pd_training_record.pkl",
+    "seed_replay_status_path": "models/pd_hpo_seed_replay_status.json",
+    "test_predictions_path": "data/processed/test_predictions.parquet",
+    "shap_dir": "reports/figures/shap",
+    "threshold_semantics_path": "models/threshold_semantics.json",
+}
+
+
+def _metric_float(metrics: Mapping[str, Any], key: str, default: float = 0.0) -> float:
+    value = metrics.get(key, default)
+    if value is None or isinstance(value, Mapping):
+        return float(default)
+    return float(value)
+
+
+def _metric_int(metrics: Mapping[str, Any], key: str, default: int = 0) -> int:
+    value = metrics.get(key, default)
+    if value is None or isinstance(value, Mapping):
+        return int(default)
+    return int(value)
+
+
+def _metric_mapping(
+    metrics: Mapping[str, Any], key: str, default: Mapping[str, Any]
+) -> dict[str, Any]:
+    value = metrics.get(key, default)
+    return dict(value) if isinstance(value, Mapping) else dict(default)
 
 
 def load_config(config_path: str) -> dict[str, Any]:
@@ -77,66 +130,115 @@ def load_config(config_path: str) -> dict[str, Any]:
         return yaml.safe_load(f)
 
 
+def _missing_mapping_keys(config: Mapping[str, Any], keys: tuple[str, ...]) -> list[str]:
+    return [key for key in keys if key not in config]
+
+
+def _missing_required_data_keys(config: Mapping[str, Any]) -> list[str]:
+    data_cfg = config.get("data", {}) or {}
+    return [key for key in REQUIRED_DATA_KEYS if not str(data_cfg.get(key, "")).strip()]
+
+
+def _normalize_config_sections(config: Mapping[str, Any]) -> dict[str, Any]:
+    normalized = dict(config)
+    for section in OPTIONAL_MAPPING_SECTIONS:
+        normalized[section] = dict(config.get(section, {}) or {})
+    return normalized
+
+
+def _apply_pd_config_defaults(config: dict[str, Any]) -> dict[str, Any]:
+    normalized = dict(config)
+    output_cfg = dict(normalized.get("output", {}) or {})
+    for key, value in OUTPUT_DEFAULTS.items():
+        output_cfg.setdefault(key, value)
+    normalized["output"] = output_cfg
+    feature_source_cfg = dict(normalized.get("feature_source", {}) or {})
+    feature_source_cfg.setdefault("mode", "auto")
+    feature_source_cfg.setdefault("feature_config_path", "data/processed/feature_config.yml")
+    normalized["feature_source"] = feature_source_cfg
+    return normalized
+
+
 def validate_pd_config(config: dict[str, Any], *, config_path: str) -> dict[str, Any]:
     """Fail fast on missing PD config sections and required keys."""
     if not isinstance(config, dict):
         raise ValueError(f"PD config must be a mapping: {config_path}")
 
-    required_sections = ("output", "feature_source", "data", "hpo", "validation")
-    missing_sections = [section for section in required_sections if section not in config]
+    missing_sections = _missing_mapping_keys(config, REQUIRED_CONFIG_SECTIONS)
     if missing_sections:
         raise ValueError(
             f"PD config {config_path} missing required sections: {', '.join(missing_sections)}"
         )
 
-    required_data_keys = ("train_path", "test_path", "calibration_path")
-    missing_data_keys = [
-        key
-        for key in required_data_keys
-        if not str((config.get("data", {}) or {}).get(key, "")).strip()
-    ]
+    missing_data_keys = _missing_required_data_keys(config)
     if missing_data_keys:
         raise ValueError(
             f"PD config {config_path} missing required data keys: {', '.join(missing_data_keys)}"
         )
 
-    normalized = dict(config)
-    normalized["output"] = dict(config.get("output", {}) or {})
-    normalized["feature_source"] = dict(config.get("feature_source", {}) or {})
-    normalized["data"] = dict(config.get("data", {}) or {})
-    normalized["hpo"] = dict(config.get("hpo", {}) or {})
-    normalized["validation"] = dict(config.get("validation", {}) or {})
-    normalized["model"] = dict(config.get("model", {}) or {})
-    normalized["conformal"] = dict(config.get("conformal", {}) or {})
-    normalized["calibration"] = dict(config.get("calibration", {}) or {})
+    return _apply_pd_config_defaults(_normalize_config_sections(config))
 
-    output_defaults = {
-        "model_path": "models/pd_canonical.cbm",
-        "default_model_path": "models/pd_catboost_default.cbm",
-        "tuned_model_path": "models/pd_canonical.cbm",
-        "conformal_path": "models/pd_canonical_calibrator.pkl",
-        "status_path": "models/pd_training_status.json",
-        "checkpoint_dir": "models/pd_training_checkpoints",
-        "brier_decomposition_path": "data/processed/brier_score_decomposition.json",
-        "murphy_diagram_path": "reports/figures/calibration/murphy_diagram.png",
-        "canonical_model_path": str(CANONICAL_MODEL_PATH),
-        "canonical_calibrator_path": str(CANONICAL_CALIBRATOR_PATH),
-        "contract_path": str(CONTRACT_PATH),
-        "logreg_model_path": "models/pd_logreg_baseline.pkl",
-        "training_record_path": "models/pd_training_record.pkl",
-        "seed_replay_status_path": "models/pd_hpo_seed_replay_status.json",
-        "test_predictions_path": "data/processed/test_predictions.parquet",
-        "shap_dir": "reports/figures/shap",
-        "threshold_semantics_path": "models/threshold_semantics.json",
-    }
-    for key, value in output_defaults.items():
-        normalized["output"].setdefault(key, value)
 
-    normalized["feature_source"].setdefault("mode", "auto")
-    normalized["feature_source"].setdefault(
-        "feature_config_path", "data/processed/feature_config.yml"
-    )
-    return normalized
+def _override_training_regime(
+    config: Mapping[str, Any],
+    *,
+    training_regime_mode: str | None,
+    recent_window_quarters: int | None,
+    half_life_quarters: int | None,
+) -> dict[str, Any]:
+    regime_cfg = dict(config.get("training_regime", {}) or {})
+    if training_regime_mode is not None:
+        regime_cfg["mode"] = str(training_regime_mode)
+    if recent_window_quarters is not None:
+        regime_cfg["recent_window_quarters"] = int(recent_window_quarters)
+    if half_life_quarters is not None:
+        regime_cfg["half_life_quarters"] = int(half_life_quarters)
+    return regime_cfg
+
+
+def _override_hpo_config(
+    config: Mapping[str, Any],
+    *,
+    hpo_n_trials: int | None,
+    hpo_enabled: bool | None,
+) -> dict[str, Any]:
+    hpo_cfg = dict(config.get("hpo", {}) or {})
+    if hpo_n_trials is not None:
+        hpo_cfg["n_trials"] = int(hpo_n_trials)
+    if hpo_enabled is not None:
+        hpo_cfg["enabled"] = bool(hpo_enabled)
+    return hpo_cfg
+
+
+def _override_validation_config(
+    config: Mapping[str, Any],
+    *,
+    walk_forward_enabled: bool | None,
+    seed_replay_enabled: bool | None,
+) -> dict[str, Any]:
+    validation_cfg = dict(config.get("validation", {}) or {})
+    walk_cfg = dict(validation_cfg.get("walk_forward", {}) or {})
+    if walk_forward_enabled is not None:
+        walk_cfg["enabled"] = bool(walk_forward_enabled)
+    validation_cfg["walk_forward"] = walk_cfg
+    seed_cfg = dict(validation_cfg.get("seed_replay", {}) or {})
+    if seed_replay_enabled is not None:
+        seed_cfg["enabled"] = bool(seed_replay_enabled)
+    validation_cfg["seed_replay"] = seed_cfg
+    return validation_cfg
+
+
+def _override_model_config(
+    config: Mapping[str, Any],
+    *,
+    catboost_iterations: int | None,
+) -> dict[str, Any]:
+    model_cfg = dict(config.get("model", {}) or {})
+    model_params = dict(model_cfg.get("params", {}) or {})
+    if catboost_iterations is not None:
+        model_params["iterations"] = int(catboost_iterations)
+    model_cfg["params"] = model_params
+    return model_cfg
 
 
 def _apply_cli_overrides(
@@ -155,50 +257,35 @@ def _apply_cli_overrides(
 ) -> dict[str, Any]:
     """Return a config copy with command-line overrides applied."""
     updated = dict(config)
-
-    regime_cfg = dict(updated.get("training_regime", {}) or {})
-    if training_regime_mode is not None:
-        regime_cfg["mode"] = str(training_regime_mode)
-    if recent_window_quarters is not None:
-        regime_cfg["recent_window_quarters"] = int(recent_window_quarters)
-    if half_life_quarters is not None:
-        regime_cfg["half_life_quarters"] = int(half_life_quarters)
-    updated["training_regime"] = regime_cfg
+    updated["training_regime"] = _override_training_regime(
+        updated,
+        training_regime_mode=training_regime_mode,
+        recent_window_quarters=recent_window_quarters,
+        half_life_quarters=half_life_quarters,
+    )
 
     stable_core_cfg = dict(updated.get("stable_core", {}) or {})
     if stable_core_enabled is not None:
         stable_core_cfg["enabled"] = bool(stable_core_enabled)
     updated["stable_core"] = stable_core_cfg
 
-    hpo_cfg = dict(updated.get("hpo", {}) or {})
-    if hpo_n_trials is not None:
-        hpo_cfg["n_trials"] = int(hpo_n_trials)
-    if hpo_enabled is not None:
-        hpo_cfg["enabled"] = bool(hpo_enabled)
-    updated["hpo"] = hpo_cfg
+    updated["hpo"] = _override_hpo_config(
+        updated,
+        hpo_n_trials=hpo_n_trials,
+        hpo_enabled=hpo_enabled,
+    )
 
     challenger_cfg = dict(updated.get("challenger_pipeline", {}) or {})
     if challenger_enabled is not None:
         challenger_cfg["enabled"] = bool(challenger_enabled)
     updated["challenger_pipeline"] = challenger_cfg
 
-    validation_cfg = dict(updated.get("validation", {}) or {})
-    walk_cfg = dict(validation_cfg.get("walk_forward", {}) or {})
-    if walk_forward_enabled is not None:
-        walk_cfg["enabled"] = bool(walk_forward_enabled)
-    validation_cfg["walk_forward"] = walk_cfg
-    seed_cfg = dict(validation_cfg.get("seed_replay", {}) or {})
-    if seed_replay_enabled is not None:
-        seed_cfg["enabled"] = bool(seed_replay_enabled)
-    validation_cfg["seed_replay"] = seed_cfg
-    updated["validation"] = validation_cfg
-
-    model_cfg = dict(updated.get("model", {}) or {})
-    model_params = dict(model_cfg.get("params", {}) or {})
-    if catboost_iterations is not None:
-        model_params["iterations"] = int(catboost_iterations)
-    model_cfg["params"] = model_params
-    updated["model"] = model_cfg
+    updated["validation"] = _override_validation_config(
+        updated,
+        walk_forward_enabled=walk_forward_enabled,
+        seed_replay_enabled=seed_replay_enabled,
+    )
+    updated["model"] = _override_model_config(updated, catboost_iterations=catboost_iterations)
 
     return updated
 
@@ -278,22 +365,24 @@ def _metric_with_aliases(payload: dict[str, Any], *keys: str) -> float | None:
     return None
 
 
-def _validate_replay_expectations(
-    *,
-    replay_cfg: dict[str, Any],
-    final_test_metrics: dict[str, Any],
-    feature_names: list[str],
-    config_path: str,
-) -> None:
-    expected = dict(replay_cfg.get("expectations") or {})
-    tolerances = dict(replay_cfg.get("tolerances") or {})
+def _validate_replay_feature_order(replay_cfg: Mapping[str, Any], feature_names: list[str]) -> None:
     expected_features = [str(x) for x in replay_cfg.get("feature_names", [])]
     if expected_features and list(feature_names) != expected_features:
         raise ValueError("Replay feature order mismatch against frozen manifest.")
+
+
+def _validate_replay_config_path(replay_cfg: Mapping[str, Any], config_path: str) -> None:
     manifest_config_path = str(replay_cfg.get("config_path", "")).strip()
     if manifest_config_path and manifest_config_path != str(config_path):
         raise ValueError("Replay config_path does not match frozen manifest.")
 
+
+def _replay_metric_violations(
+    *,
+    expected: dict[str, Any],
+    tolerances: dict[str, Any],
+    observed_metrics: dict[str, Any],
+) -> list[str]:
     aliases = {
         "auc_roc": ("auc_roc",),
         "brier_score": ("brier_score",),
@@ -304,13 +393,32 @@ def _validate_replay_expectations(
     for name, key_aliases in aliases.items():
         expected_value = _metric_with_aliases(expected, name, *key_aliases)
         tolerance = _metric_with_aliases(tolerances, name, *key_aliases)
-        observed = _metric_with_aliases(final_test_metrics, name, *key_aliases)
+        observed = _metric_with_aliases(observed_metrics, name, *key_aliases)
         if expected_value is None or tolerance is None or observed is None:
             continue
         if abs(observed - expected_value) > tolerance:
             violations.append(
                 f"{name}: observed={observed:.6f} expected={expected_value:.6f} tol={tolerance:.6f}"
             )
+    return violations
+
+
+def _validate_replay_expectations(
+    *,
+    replay_cfg: dict[str, Any],
+    final_test_metrics: dict[str, Any],
+    feature_names: list[str],
+    config_path: str,
+) -> None:
+    expected = dict(replay_cfg.get("expectations") or {})
+    tolerances = dict(replay_cfg.get("tolerances") or {})
+    _validate_replay_feature_order(replay_cfg, feature_names)
+    _validate_replay_config_path(replay_cfg, config_path)
+    violations = _replay_metric_violations(
+        expected=expected,
+        tolerances=tolerances,
+        observed_metrics=final_test_metrics,
+    )
     if violations:
         raise ValueError("Replay metric validation failed: " + "; ".join(violations))
 
@@ -439,6 +547,61 @@ def _apply_stable_core(
     )
 
 
+def _feature_source_config(config: dict[str, Any]) -> tuple[str, str | Path]:
+    feature_src_cfg = dict(config.get("feature_source", {}) or {})
+    feature_mode = str(feature_src_cfg.get("mode", "auto"))
+    feature_config_path = feature_src_cfg.get(
+        "feature_config_path", "data/processed/feature_config.yml"
+    )
+    return feature_mode, feature_config_path
+
+
+def _resolved_feature_lists(
+    feature_sets: Mapping[str, Any],
+) -> tuple[list[str], list[str], list[str]]:
+    return (
+        [str(x) for x in feature_sets["catboost_features"]],
+        [str(x) for x in feature_sets["logreg_features"]],
+        [str(x) for x in feature_sets["categorical_features"]],
+    )
+
+
+def _apply_replay_feature_override(
+    *,
+    catboost_features: list[str],
+    categorical_features: list[str],
+    run_mode: str,
+    replay_cfg: dict[str, Any],
+) -> tuple[list[str], list[str]]:
+    if run_mode != "replay":
+        return catboost_features, categorical_features
+    replay_features = [str(x) for x in replay_cfg.get("feature_names", [])]
+    if not replay_features:
+        return catboost_features, categorical_features
+    replay_categorical = [str(x) for x in replay_cfg.get("categorical_features", [])]
+    return replay_features, replay_categorical
+
+
+def _features_in_all_splits(
+    features: list[str],
+    train: pd.DataFrame,
+    cal: pd.DataFrame,
+    test: pd.DataFrame,
+) -> list[str]:
+    return [c for c in features if c in train.columns and c in cal.columns and c in test.columns]
+
+
+def _validate_resolved_training_features(
+    *,
+    catboost_features: list[str],
+    logreg_features: list[str],
+) -> None:
+    if not catboost_features:
+        raise ValueError("No CatBoost features resolved across train/cal/test splits.")
+    if not logreg_features:
+        raise ValueError("No Logistic Regression features resolved across train/cal/test splits.")
+
+
 def _resolve_training_features(
     *,
     config: dict[str, Any],
@@ -448,36 +611,21 @@ def _resolve_training_features(
     run_mode: str,
     replay_cfg: dict[str, Any],
 ) -> ResolvedFeatureTuple:
-    feature_src_cfg = dict(config.get("feature_source", {}) or {})
-    feature_mode = str(feature_src_cfg.get("mode", "auto"))
-    feature_config_path = feature_src_cfg.get(
-        "feature_config_path", "data/processed/feature_config.yml"
-    )
-
+    feature_mode, feature_config_path = _feature_source_config(config)
     feature_sets = resolve_feature_sets(
         train,
         feature_source=feature_mode,
         feature_config_path=feature_config_path,
     )
-    catboost_features = list(feature_sets["catboost_features"])
-    logreg_features = list(feature_sets["logreg_features"])
-    categorical_features = list(feature_sets["categorical_features"])
-
-    if run_mode == "replay":
-        replay_features = [str(x) for x in replay_cfg.get("feature_names", [])]
-        replay_categorical = [str(x) for x in replay_cfg.get("categorical_features", [])]
-        if replay_features:
-            catboost_features = replay_features
-            categorical_features = replay_categorical
-
-    catboost_features = [
-        c
-        for c in catboost_features
-        if c in train.columns and c in cal.columns and c in test.columns
-    ]
-    logreg_features = [
-        c for c in logreg_features if c in train.columns and c in cal.columns and c in test.columns
-    ]
+    catboost_features, logreg_features, categorical_features = _resolved_feature_lists(feature_sets)
+    catboost_features, categorical_features = _apply_replay_feature_override(
+        catboost_features=catboost_features,
+        categorical_features=categorical_features,
+        run_mode=run_mode,
+        replay_cfg=replay_cfg,
+    )
+    catboost_features = _features_in_all_splits(catboost_features, train, cal, test)
+    logreg_features = _features_in_all_splits(logreg_features, train, cal, test)
     categorical_features = [c for c in categorical_features if c in catboost_features]
 
     catboost_features, categorical_features, stable_core_meta = _apply_stable_core(
@@ -486,11 +634,10 @@ def _resolve_training_features(
         {} if run_mode == "replay" else (config.get("stable_core", {}) or {}),
     )
     logreg_features = [c for c in logreg_features if c in catboost_features]
-
-    if not catboost_features:
-        raise ValueError("No CatBoost features resolved across train/cal/test splits.")
-    if not logreg_features:
-        raise ValueError("No Logistic Regression features resolved across train/cal/test splits.")
+    _validate_resolved_training_features(
+        catboost_features=catboost_features,
+        logreg_features=logreg_features,
+    )
 
     return (
         str(feature_sets.get("feature_source", feature_mode)),
@@ -797,6 +944,132 @@ def _select_decision_threshold(
     }
 
 
+def _decision_threshold_metadata(run_tag: str) -> dict[str, Any]:
+    return build_artifact_metadata(
+        schema_version="2026-03-01.1",
+        run_tag=run_tag,
+        require_explicit=True,
+    )
+
+
+def _fallback_decision_threshold_artifact(
+    *,
+    config: dict[str, Any],
+    run_tag: str,
+) -> dict[str, Any]:
+    return {
+        "enabled": False,
+        "selected_threshold": float(config.get("calibration", {}).get("default_threshold", 0.5)),
+        "source": "fallback_default",
+        **_decision_threshold_metadata(run_tag),
+    }
+
+
+def _replay_decision_threshold_artifact(
+    *,
+    replay_cfg: dict[str, Any],
+    run_tag: str,
+) -> dict[str, Any]:
+    artifact = dict(replay_cfg["decision_threshold_artifact"])
+    artifact.update(_decision_threshold_metadata(run_tag))
+    artifact["source"] = "frozen_replay_manifest"
+    return artifact
+
+
+def _load_fairness_threshold_policy(fairness_policy_path: str) -> tuple[dict[str, Any], list[Any]]:
+    with open(fairness_policy_path, encoding="utf-8") as f:
+        fairness_cfg = yaml.safe_load(f) or {}
+    return dict(fairness_cfg.get("policy", {}) or {}), list(
+        fairness_cfg.get("attributes", []) or []
+    )
+
+
+def _threshold_grid(decision_cfg: dict[str, Any]) -> np.ndarray:
+    threshold_min = float(decision_cfg.get("min_threshold", 0.05))
+    threshold_max = float(decision_cfg.get("max_threshold", 0.95))
+    threshold_step = float(decision_cfg.get("step", 0.01))
+    return np.arange(threshold_min, threshold_max + (threshold_step / 2.0), threshold_step)
+
+
+def _search_decision_threshold_artifact(
+    *,
+    decision_cfg: dict[str, Any],
+    train_val: pd.DataFrame,
+    cal: pd.DataFrame,
+    y_val: pd.Series,
+    y_prob_final_val: np.ndarray,
+    y_cal: pd.Series,
+    y_prob_tuned_cal: np.ndarray,
+    selected_cal_method: str,
+    run_tag: str,
+) -> dict[str, Any]:
+    fairness_policy_path = str(
+        decision_cfg.get("fairness_policy_path", "configs/fairness_policy.yaml")
+    )
+    fairness_policy, fairness_attrs = _load_fairness_threshold_policy(fairness_policy_path)
+    fallback_threshold = float(fairness_policy.get("prediction_threshold", 0.5))
+    threshold_result = _select_decision_threshold(
+        y_true=y_val.to_numpy(),
+        y_prob=y_prob_final_val,
+        policy={
+            "dpd_threshold": float(fairness_policy.get("dpd_threshold", 0.10)),
+            "eo_gap_threshold": float(fairness_policy.get("eo_gap_threshold", 0.10)),
+            "dir_threshold": float(fairness_policy.get("dir_threshold", 0.80)),
+        },
+        groups_dict=_build_fairness_groups_for_threshold(train_val, fairness_attrs),
+        thresholds=_threshold_grid(decision_cfg),
+        fallback_threshold=fallback_threshold,
+        y_true_secondary=y_cal.to_numpy(),
+        y_prob_secondary=y_prob_tuned_cal,
+        groups_dict_secondary=_build_fairness_groups_for_threshold(cal, fairness_attrs),
+    )
+    return {
+        "enabled": True,
+        "selected_threshold": float(threshold_result["selected_threshold"]),
+        "fallback_threshold": fallback_threshold,
+        "selection_metrics": threshold_result["selection_metrics"],
+        "search_summary": threshold_result["search_summary"],
+        "source": "validation_fairness_search",
+        "fairness_policy_path": fairness_policy_path,
+        "validation_rows": len(train_val),
+        "secondary_validation_rows": len(cal),
+        "calibration_method": selected_cal_method,
+        **_decision_threshold_metadata(run_tag),
+    }
+
+
+def _resolve_decision_threshold_artifact(
+    *,
+    config: dict[str, Any],
+    run_mode: str,
+    replay_cfg: dict[str, Any],
+    decision_cfg: dict[str, Any],
+    train_val: pd.DataFrame,
+    cal: pd.DataFrame,
+    y_val: pd.Series,
+    y_prob_final_val: np.ndarray,
+    y_cal: pd.Series,
+    y_prob_tuned_cal: np.ndarray,
+    selected_cal_method: str,
+    run_tag: str,
+) -> dict[str, Any]:
+    if run_mode == "replay" and replay_cfg.get("decision_threshold_artifact"):
+        return _replay_decision_threshold_artifact(replay_cfg=replay_cfg, run_tag=run_tag)
+    if bool(decision_cfg.get("enabled", True)):
+        return _search_decision_threshold_artifact(
+            decision_cfg=decision_cfg,
+            train_val=train_val,
+            cal=cal,
+            y_val=y_val,
+            y_prob_final_val=y_prob_final_val,
+            y_cal=y_cal,
+            y_prob_tuned_cal=y_prob_tuned_cal,
+            selected_cal_method=selected_cal_method,
+            run_tag=run_tag,
+        )
+    return _fallback_decision_threshold_artifact(config=config, run_tag=run_tag)
+
+
 def _build_calibration_backtest_splits(
     cal_df: pd.DataFrame,
     n_folds: int = 4,
@@ -829,73 +1102,68 @@ def _build_calibration_backtest_splits(
     return splits
 
 
-def _evaluate_calibration_method(
+def _empty_calibration_method_report(method: str) -> dict[str, Any]:
+    return {
+        "method": method,
+        "folds_used": 0,
+        "mean_brier": float("inf"),
+        "mean_log_loss": float("inf"),
+        "mean_ece": float("inf"),
+        "mean_auc_drop": float("inf"),
+        "brier_variance": float("inf"),
+        "ece_variance": float("inf"),
+        "stability": float("inf"),
+        "degradation_rate": 1.0,
+        "folds": [],
+    }
+
+
+def _evaluate_calibration_fold(
+    *,
     method: str,
+    fold_id: int,
+    idx_fit: np.ndarray,
+    idx_eval: np.ndarray,
     y_true: np.ndarray,
     y_prob_raw: np.ndarray,
-    splits: list[tuple[np.ndarray, np.ndarray]],
-) -> dict[str, Any]:
-    """Backtest calibrator over temporal folds using multi-metric summary."""
-    fold_rows: list[dict[str, Any]] = []
+) -> dict[str, Any] | None:
+    y_fit = y_true[idx_fit]
+    y_eval = y_true[idx_eval]
+    p_fit = y_prob_raw[idx_fit]
+    p_eval = y_prob_raw[idx_eval]
+    if len(np.unique(y_fit)) < 2 or len(np.unique(y_eval)) < 2:
+        return None
 
-    for fold_id, (idx_fit, idx_eval) in enumerate(splits, start=1):
-        y_fit = y_true[idx_fit]
-        y_eval = y_true[idx_eval]
-        p_fit = y_prob_raw[idx_fit]
-        p_eval = y_prob_raw[idx_eval]
+    calibrator = _fit_calibrator_from_scores(method, y_fit, p_fit)
+    p_eval_cal = _apply_calibrator(calibrator, p_eval)
+    raw_auc = _safe_auc(y_eval, p_eval)
+    cal_auc = _safe_auc(y_eval, p_eval_cal)
+    auc_drop = 0.0 if raw_auc is None or cal_auc is None else float(raw_auc - cal_auc)
+    brier_raw = float(brier_score_loss(y_eval, p_eval))
+    brier_cal = float(brier_score_loss(y_eval, p_eval_cal))
+    return {
+        "fold": fold_id,
+        "n_fit": len(idx_fit),
+        "n_eval": len(idx_eval),
+        "raw_auc": None if raw_auc is None else float(raw_auc),
+        "cal_auc": None if cal_auc is None else float(cal_auc),
+        "auc_drop": float(auc_drop),
+        "brier": brier_cal,
+        "brier_raw": brier_raw,
+        "brier_degraded": brier_cal > brier_raw,
+        "log_loss": float(log_loss(y_eval, p_eval_cal)),
+        "ece": float(expected_calibration_error(y_eval, p_eval_cal)),
+    }
 
-        if len(np.unique(y_fit)) < 2 or len(np.unique(y_eval)) < 2:
-            continue
 
-        calibrator = _fit_calibrator_from_scores(method, y_fit, p_fit)
-        p_eval_cal = _apply_calibrator(calibrator, p_eval)
-
-        raw_auc = _safe_auc(y_eval, p_eval)
-        cal_auc = _safe_auc(y_eval, p_eval_cal)
-        auc_drop = 0.0
-        if raw_auc is not None and cal_auc is not None:
-            auc_drop = float(raw_auc - cal_auc)
-
-        brier_raw = float(brier_score_loss(y_eval, p_eval))
-        brier_cal = float(brier_score_loss(y_eval, p_eval_cal))
-
-        fold_rows.append(
-            {
-                "fold": fold_id,
-                "n_fit": len(idx_fit),
-                "n_eval": len(idx_eval),
-                "raw_auc": None if raw_auc is None else float(raw_auc),
-                "cal_auc": None if cal_auc is None else float(cal_auc),
-                "auc_drop": float(auc_drop),
-                "brier": brier_cal,
-                "brier_raw": brier_raw,
-                "brier_degraded": brier_cal > brier_raw,
-                "log_loss": float(log_loss(y_eval, p_eval_cal)),
-                "ece": float(expected_calibration_error(y_eval, p_eval_cal)),
-            }
-        )
-
+def _summarize_calibration_folds(method: str, fold_rows: list[dict[str, Any]]) -> dict[str, Any]:
     if not fold_rows:
-        return {
-            "method": method,
-            "folds_used": 0,
-            "mean_brier": float("inf"),
-            "mean_log_loss": float("inf"),
-            "mean_ece": float("inf"),
-            "mean_auc_drop": float("inf"),
-            "brier_variance": float("inf"),
-            "ece_variance": float("inf"),
-            "stability": float("inf"),
-            "degradation_rate": 1.0,
-            "folds": [],
-        }
-
-    briers = np.array([r["brier"] for r in fold_rows], dtype=float)
-    log_losses = np.array([r["log_loss"] for r in fold_rows], dtype=float)
-    eces = np.array([r["ece"] for r in fold_rows], dtype=float)
-    auc_drops = np.array([r["auc_drop"] for r in fold_rows], dtype=float)
-    n_degraded = sum(1 for r in fold_rows if r.get("brier_degraded", False))
-
+        return _empty_calibration_method_report(method)
+    briers = np.array([row["brier"] for row in fold_rows], dtype=float)
+    log_losses = np.array([row["log_loss"] for row in fold_rows], dtype=float)
+    eces = np.array([row["ece"] for row in fold_rows], dtype=float)
+    auc_drops = np.array([row["auc_drop"] for row in fold_rows], dtype=float)
+    n_degraded = sum(1 for row in fold_rows if row.get("brier_degraded", False))
     return {
         "method": method,
         "folds_used": len(fold_rows),
@@ -909,6 +1177,121 @@ def _evaluate_calibration_method(
         "degradation_rate": float(n_degraded / len(fold_rows)),
         "folds": fold_rows,
     }
+
+
+def _write_calibration_cumulative_diffs(
+    statistical_cal_tests: dict[str, object],
+    *,
+    n_rows: int,
+) -> None:
+    if "_cum_diff_calibrated" not in statistical_cal_tests:
+        return
+    k_idx = np.arange(n_rows) / n_rows
+    sigma_raw = statistical_cal_tests.get("_sigma", 0.0)
+    sigma_val = float(sigma_raw) if isinstance(sigma_raw, str | int | float | np.number) else 0.0
+    cum_diff_df = pd.DataFrame(
+        {
+            "k": k_idx,
+            "cum_diff_calibrated": statistical_cal_tests.pop("_cum_diff_calibrated"),
+            "cum_diff_uncalibrated": statistical_cal_tests.pop(
+                "_cum_diff_uncalibrated",
+                [float("nan")] * len(k_idx),
+            ),
+            "sigma_upper": sigma_val * 2,
+            "sigma_lower": -sigma_val * 2,
+        }
+    )
+    cum_diff_path = _artifact_path("data/processed/calibration_cumulative_diffs.parquet")
+    cum_diff_path.parent.mkdir(parents=True, exist_ok=True)
+    cum_diff_df.to_parquet(cum_diff_path, index=False)
+    logger.info(f"Saved calibration cumulative diffs: {cum_diff_path}")
+    statistical_cal_tests.pop("_sigma", None)
+
+
+def _write_statistical_calibration_json(statistical_cal_tests: dict[str, object]) -> None:
+    stat_cal_path = _artifact_path("data/processed/statistical_calibration_tests.json")
+    stat_cal_path.parent.mkdir(parents=True, exist_ok=True)
+    stat_cal_path.write_text(
+        json.dumps(statistical_cal_tests, indent=2, default=str),
+        encoding="utf-8",
+    )
+    logger.info(f"Saved statistical calibration tests: {stat_cal_path}")
+
+
+def _run_statistical_calibration_tests(
+    *,
+    y_test: pd.Series,
+    y_prob_final: np.ndarray,
+    y_prob_tuned_test: np.ndarray,
+) -> None:
+    try:
+        from mapie.metrics.calibration import (
+            cumulative_differences,
+            kolmogorov_smirnov_p_value,
+            kuiper_p_value,
+            length_scale,
+            spiegelhalter_p_value,
+        )
+
+        y_test_arr = y_test.values.astype(float)
+        statistical_cal_tests: dict[str, object] = {}
+        for tag, probs in [("calibrated", y_prob_final), ("uncalibrated", y_prob_tuned_test)]:
+            try:
+                ks_p = float(kolmogorov_smirnov_p_value(y_test_arr, probs))
+                ku_p = float(kuiper_p_value(y_test_arr, probs))
+                sp_p = float(spiegelhalter_p_value(y_test_arr, probs))
+                cum_diff = cumulative_differences(y_test_arr, probs)
+                sigma = float(length_scale(probs))
+                statistical_cal_tests[tag] = {
+                    "ks_pvalue": ks_p,
+                    "kuiper_pvalue": ku_p,
+                    "spiegelhalter_pvalue": sp_p,
+                    "length_scale_sigma": sigma,
+                    "n": len(y_test_arr),
+                }
+                logger.info(
+                    f"Calibration tests [{tag}]: KS_p={ks_p:.4f} "
+                    f"Kuiper_p={ku_p:.4f} Spiegelhalter_p={sp_p:.4f}"
+                )
+                if tag == "calibrated":
+                    statistical_cal_tests["_cum_diff_calibrated"] = cum_diff.tolist()
+                    statistical_cal_tests["_sigma"] = sigma
+                elif tag == "uncalibrated":
+                    statistical_cal_tests["_cum_diff_uncalibrated"] = cum_diff.tolist()
+            except Exception as exc_inner:
+                logger.warning(f"Statistical calibration tests [{tag}] failed: {exc_inner}")
+                statistical_cal_tests[tag] = {"error": str(exc_inner)}
+
+        _write_calibration_cumulative_diffs(statistical_cal_tests, n_rows=len(y_test_arr))
+        _write_statistical_calibration_json(statistical_cal_tests)
+    except ImportError:
+        logger.warning(
+            "mapie.metrics.calibration not available - statistical calibration tests skipped."
+        )
+    except Exception as exc:
+        logger.warning(f"Statistical calibration tests block failed: {exc}")
+
+
+def _evaluate_calibration_method(
+    method: str,
+    y_true: np.ndarray,
+    y_prob_raw: np.ndarray,
+    splits: list[tuple[np.ndarray, np.ndarray]],
+) -> dict[str, Any]:
+    """Backtest calibrator over temporal folds using multi-metric summary."""
+    fold_rows: list[dict[str, Any]] = []
+    for fold_id, (idx_fit, idx_eval) in enumerate(splits, start=1):
+        fold_row = _evaluate_calibration_fold(
+            method=method,
+            fold_id=fold_id,
+            idx_fit=idx_fit,
+            idx_eval=idx_eval,
+            y_true=y_true,
+            y_prob_raw=y_prob_raw,
+        )
+        if fold_row is not None:
+            fold_rows.append(fold_row)
+    return _summarize_calibration_folds(method, fold_rows)
 
 
 def _select_calibration_method(
@@ -1177,6 +1560,306 @@ def _evaluate_walk_forward_auc(
     }
 
 
+def _walk_forward_disabled_report(walk_cfg: Mapping[str, Any]) -> dict[str, Any]:
+    return {
+        "enabled": False,
+        "reason": "disabled_in_config",
+        "n_windows_requested": int(walk_cfg.get("n_windows", 0)),
+        "n_windows_used": 0,
+        "folds": [],
+    }
+
+
+def _evaluate_walk_forward_stage(
+    *,
+    enabled: bool,
+    walk_cfg: Mapping[str, Any],
+    train: pd.DataFrame,
+    catboost_features: list[str],
+    categorical_features: list[str],
+    model_params: Mapping[str, Any],
+) -> dict[str, Any]:
+    if not enabled:
+        return _walk_forward_disabled_report(walk_cfg)
+    max_rows = int(walk_cfg.get("max_rows", 0))
+    return _evaluate_walk_forward_auc(
+        train,
+        features=catboost_features,
+        categorical_features=categorical_features,
+        target=TARGET,
+        params=dict(model_params),
+        n_windows=int(walk_cfg.get("n_windows", 3)),
+        min_train_rows=int(walk_cfg.get("min_train_rows", 200_000)),
+        window_rows=int(walk_cfg.get("window_rows", 80_000)),
+        date_col=str(walk_cfg.get("date_col", "issue_d")),
+        max_rows=None if max_rows <= 0 else max_rows,
+    )
+
+
+def _export_shap_feature_importance(
+    *,
+    cb_tuned_model: Any,
+    X_test_cb: pd.DataFrame,
+    categorical_features: list[str],
+    catboost_features: list[str],
+    shap_dir: Path,
+) -> dict[str, Any]:
+    shap_artifact: dict[str, Any] = {"exported": False}
+    try:
+        from catboost import Pool as _SHAPPool
+
+        shap_pool = _SHAPPool(X_test_cb, cat_features=categorical_features)
+        shap_raw = cb_tuned_model.get_feature_importance(type="ShapValues", data=shap_pool)
+        # ShapValues returns (n_samples, n_features + 1); last col = expected value.
+        shap_values = shap_raw[:, :-1]
+        shap_expected = float(shap_raw[0, -1])
+
+        mean_abs_shap = np.abs(shap_values).mean(axis=0)
+        shap_importance = sorted(
+            zip(catboost_features, mean_abs_shap.tolist(), strict=False),
+            key=lambda x: x[1],
+            reverse=True,
+        )
+        shap_dir.mkdir(parents=True, exist_ok=True)
+
+        np.savez_compressed(
+            str(shap_dir / "shap_values_test.npz"),
+            shap_values=shap_values,
+            expected_value=np.array([shap_expected]),
+            feature_names=np.array(catboost_features),
+        )
+
+        top_n = min(20, len(shap_importance))
+        shap_summary = {
+            "expected_value": shap_expected,
+            "n_samples": int(shap_values.shape[0]),
+            "n_features": int(shap_values.shape[1]),
+            "top_features": [
+                {"feature": f, "mean_abs_shap": round(v, 6)} for f, v in shap_importance[:top_n]
+            ],
+        }
+        shap_summary_path = shap_dir / "shap_feature_importance.json"
+        shap_summary_path.write_text(json.dumps(shap_summary, indent=2), encoding="utf-8")
+        shap_artifact = {"exported": True, "n_features": top_n, "path": str(shap_dir)}
+        logger.info(
+            "SHAP export: top feature={} (|SHAP|={:.4f}), saved to {}",
+            shap_importance[0][0],
+            shap_importance[0][1],
+            shap_dir,
+        )
+    except Exception as exc:
+        logger.warning("SHAP feature importance export skipped: {}", exc)
+        shap_artifact["error"] = str(exc)
+    return shap_artifact
+
+
+def _base_replay_report(reason: str = "not_run") -> dict[str, Any]:
+    return {
+        "enabled": False,
+        "reason": reason,
+        "rows": [],
+        "selected_trial": None,
+        "selected_params": None,
+    }
+
+
+def _load_optuna_study_for_replay(hpo_cfg: dict[str, Any]) -> tuple[Any | None, str | None]:
+    storage = hpo_cfg.get("study_storage")
+    study_name = resolve_optuna_study_name(hpo_cfg.get("study_name"))
+    if not storage or not study_name:
+        return None, "missing_study_storage_or_name"
+    try:
+        import optuna
+    except Exception:
+        return None, "optuna_unavailable"
+    try:
+        return optuna.load_study(study_name=str(study_name), storage=str(storage)), None
+    except Exception as exc:
+        return None, f"study_load_failed: {exc}"
+
+
+def _top_complete_trials(study: Any, top_k_trials: int) -> list[Any]:
+    complete = [t for t in study.trials if t.state.name == "COMPLETE" and t.value is not None]
+    return sorted(
+        complete,
+        key=lambda t: float(t.value if t.value is not None else float("-inf")),
+        reverse=True,
+    )[: max(1, int(top_k_trials))]
+
+
+def _trial_gate_attrs(trial: Any) -> tuple[Any, Any, Any, bool, bool | None]:
+    fairness_pass_attr = trial.user_attrs.get("fairness_pass")
+    conformal_pass_attr = trial.user_attrs.get("conformal_pass")
+    governance_pass_attr = trial.user_attrs.get("governance_pass")
+    gate_attrs_present = all(
+        key in trial.user_attrs for key in ("fairness_pass", "conformal_pass", "governance_pass")
+    )
+    gate_all_pass = (
+        bool(fairness_pass_attr and conformal_pass_attr and governance_pass_attr)
+        if gate_attrs_present
+        else None
+    )
+    return (
+        fairness_pass_attr,
+        conformal_pass_attr,
+        governance_pass_attr,
+        bool(gate_attrs_present),
+        gate_all_pass,
+    )
+
+
+def _replay_trial_seed_row(
+    *,
+    trial: Any,
+    seed: int,
+    base_params: dict[str, Any],
+    X_train_fit_cb: pd.DataFrame,
+    y_train_fit: pd.Series,
+    X_val_cb: pd.DataFrame,
+    y_val: pd.Series,
+    cat_features: list[str],
+    sample_weight: np.ndarray | None,
+    eval_sample_weight: np.ndarray | None,
+) -> dict[str, Any]:
+    (
+        fairness_pass_attr,
+        conformal_pass_attr,
+        governance_pass_attr,
+        gate_attrs_present,
+        gate_all_pass,
+    ) = _trial_gate_attrs(trial)
+    params = {**base_params, **trial.params, "random_seed": int(seed)}
+    model, metrics = train_catboost_default(
+        X_train_fit_cb,
+        y_train_fit,
+        X_val_cb,
+        y_val,
+        cat_features=cat_features,
+        params=params,
+        sample_weight=sample_weight,
+        eval_sample_weight=eval_sample_weight,
+    )
+    y_val_prob = model.predict_proba(X_val_cb)[:, 1]
+    y_val_array = y_val.to_numpy(dtype=int)
+    return {
+        "trial_number": int(trial.number),
+        "seed": int(seed),
+        "validation_auc": _metric_float(metrics, "validation_auc"),
+        "validation_brier": float(brier_score_loss(y_val_array, y_val_prob)),
+        "validation_ece": float(expected_calibration_error(y_val_array, y_val_prob)),
+        "best_iteration": _metric_int(metrics, "best_iteration"),
+        "trial_best_value": float(trial.value if trial.value is not None else float("nan")),
+        "fairness_pass": fairness_pass_attr,
+        "conformal_pass": conformal_pass_attr,
+        "governance_pass": governance_pass_attr,
+        "gate_attrs_present": gate_attrs_present,
+        "gate_all_pass": gate_all_pass,
+        "params": trial.params,
+    }
+
+
+def _replay_rows_for_trials(
+    *,
+    top_trials: list[Any],
+    seeds: list[int],
+    base_params: dict[str, Any],
+    X_train_fit_cb: pd.DataFrame,
+    y_train_fit: pd.Series,
+    X_val_cb: pd.DataFrame,
+    y_val: pd.Series,
+    cat_features: list[str],
+    sample_weight: np.ndarray | None,
+    eval_sample_weight: np.ndarray | None,
+) -> list[dict[str, Any]]:
+    rows: list[dict[str, Any]] = []
+    for trial in top_trials:
+        for seed in seeds:
+            rows.append(
+                _replay_trial_seed_row(
+                    trial=trial,
+                    seed=seed,
+                    base_params=base_params,
+                    X_train_fit_cb=X_train_fit_cb,
+                    y_train_fit=y_train_fit,
+                    X_val_cb=X_val_cb,
+                    y_val=y_val,
+                    cat_features=cat_features,
+                    sample_weight=sample_weight,
+                    eval_sample_weight=eval_sample_weight,
+                )
+            )
+    return rows
+
+
+def _gate_tier(gate_all_pass_summary: bool | None, prioritize_gate_pass: bool) -> int:
+    if not prioritize_gate_pass:
+        return 1
+    if gate_all_pass_summary is True:
+        return 0
+    if gate_all_pass_summary is None:
+        return 1
+    return 2
+
+
+def _trial_summary_row(
+    trial_number: Any,
+    grp: pd.DataFrame,
+    *,
+    prioritize_gate_pass: bool,
+) -> dict[str, Any]:
+    gate_present = bool(grp["gate_attrs_present"].fillna(False).any())
+    gate_values = grp["gate_all_pass"].dropna().astype(bool)
+    gate_all_pass_summary = None if gate_values.empty else bool(gate_values.all())
+    return {
+        "trial_number": int(str(trial_number)),
+        "median_validation_auc": float(grp["validation_auc"].median()),
+        "mean_validation_auc": float(grp["validation_auc"].mean()),
+        "std_validation_auc": float(grp["validation_auc"].std(ddof=0)),
+        "mean_validation_brier": float(grp["validation_brier"].mean()),
+        "mean_validation_ece": float(grp["validation_ece"].mean()),
+        "gate_attrs_present": gate_present,
+        "gate_all_pass": gate_all_pass_summary,
+        "gate_tier": int(_gate_tier(gate_all_pass_summary, prioritize_gate_pass)),
+    }
+
+
+def _summarize_replayed_trials(
+    rows: list[dict[str, Any]],
+    *,
+    prioritize_gate_pass: bool,
+) -> pd.DataFrame:
+    replay_df = pd.DataFrame(rows)
+    summary_rows = [
+        _trial_summary_row(
+            trial_number,
+            grp,
+            prioritize_gate_pass=prioritize_gate_pass,
+        )
+        for trial_number, grp in replay_df.groupby("trial_number", observed=True)
+    ]
+    return pd.DataFrame(summary_rows).sort_values(
+        [
+            "gate_tier",
+            "mean_validation_ece",
+            "median_validation_auc",
+            "mean_validation_brier",
+        ],
+        ascending=[True, True, False, True],
+    )
+
+
+def _replay_selection_policy(prioritize_gate_pass: bool) -> dict[str, Any]:
+    return {
+        "prioritize_gate_pass": bool(prioritize_gate_pass),
+        "rank_order": [
+            "gate_tier(pass->unknown->fail)",
+            "mean_validation_ece(asc)",
+            "median_validation_auc(desc)",
+            "mean_validation_brier(asc)",
+        ],
+    }
+
+
 def _replay_top_optuna_trials(
     *,
     hpo_cfg: dict[str, Any],
@@ -1193,138 +1876,40 @@ def _replay_top_optuna_trials(
     eval_sample_weight: np.ndarray | None = None,
 ) -> dict[str, Any]:
     """Replay top Optuna trials across multiple seeds for robustness."""
-    report: dict[str, Any] = {
-        "enabled": False,
-        "reason": "not_run",
-        "rows": [],
-        "selected_trial": None,
-        "selected_params": None,
-    }
+    report = _base_replay_report()
     if not bool(hpo_cfg.get("enabled", True)):
         report["reason"] = "hpo_disabled"
         return report
 
-    storage = hpo_cfg.get("study_storage")
-    study_name = resolve_optuna_study_name(hpo_cfg.get("study_name"))
-    if not storage or not study_name:
-        report["reason"] = "missing_study_storage_or_name"
+    study, reason = _load_optuna_study_for_replay(hpo_cfg)
+    if study is None:
+        report["reason"] = reason or "study_load_failed"
         return report
 
-    try:
-        import optuna
-    except Exception:
-        report["reason"] = "optuna_unavailable"
-        return report
-
-    try:
-        study = optuna.load_study(study_name=str(study_name), storage=str(storage))
-    except Exception as exc:
-        report["reason"] = f"study_load_failed: {exc}"
-        return report
-
-    complete = [t for t in study.trials if t.state.name == "COMPLETE" and t.value is not None]
-    if not complete:
+    top = _top_complete_trials(study, top_k_trials)
+    if not top:
         report["reason"] = "no_complete_trials"
         return report
 
-    top = sorted(
-        complete,
-        key=lambda t: float(t.value if t.value is not None else float("-inf")),
-        reverse=True,
-    )[: max(1, int(top_k_trials))]
-    rows: list[dict[str, Any]] = []
-    for trial in top:
-        fairness_pass_attr = trial.user_attrs.get("fairness_pass")
-        conformal_pass_attr = trial.user_attrs.get("conformal_pass")
-        governance_pass_attr = trial.user_attrs.get("governance_pass")
-        gate_attrs_present = all(
-            key in trial.user_attrs
-            for key in ("fairness_pass", "conformal_pass", "governance_pass")
-        )
-        gate_all_pass = (
-            bool(fairness_pass_attr and conformal_pass_attr and governance_pass_attr)
-            if gate_attrs_present
-            else None
-        )
-        for seed in seeds:
-            params = {**base_params, **trial.params, "random_seed": int(seed)}
-            model, metrics = train_catboost_default(
-                X_train_fit_cb,
-                y_train_fit,
-                X_val_cb,
-                y_val,
-                cat_features=cat_features,
-                params=params,
-                sample_weight=sample_weight,
-                eval_sample_weight=eval_sample_weight,
-            )
-            y_val_prob = model.predict_proba(X_val_cb)[:, 1]
-            rows.append(
-                {
-                    "trial_number": int(trial.number),
-                    "seed": int(seed),
-                    "validation_auc": float(metrics.get("validation_auc", 0.0)),
-                    "validation_brier": float(brier_score_loss(y_val, y_val_prob)),
-                    "validation_ece": float(expected_calibration_error(y_val, y_val_prob)),
-                    "best_iteration": int(metrics.get("best_iteration", 0)),
-                    "trial_best_value": float(
-                        trial.value if trial.value is not None else float("nan")
-                    ),
-                    "fairness_pass": fairness_pass_attr,
-                    "conformal_pass": conformal_pass_attr,
-                    "governance_pass": governance_pass_attr,
-                    "gate_attrs_present": bool(gate_attrs_present),
-                    "gate_all_pass": gate_all_pass,
-                    "params": trial.params,
-                }
-            )
-
+    rows = _replay_rows_for_trials(
+        top_trials=top,
+        seeds=seeds,
+        base_params=base_params,
+        X_train_fit_cb=X_train_fit_cb,
+        y_train_fit=y_train_fit,
+        X_val_cb=X_val_cb,
+        y_val=y_val,
+        cat_features=cat_features,
+        sample_weight=sample_weight,
+        eval_sample_weight=eval_sample_weight,
+    )
     if not rows:
         report["reason"] = "no_replay_rows"
         return report
 
-    replay_df = pd.DataFrame(rows)
-
-    summary_rows: list[dict[str, Any]] = []
-    for trial_number, grp in replay_df.groupby("trial_number", observed=True):
-        gate_present = bool(grp["gate_attrs_present"].fillna(False).any())
-        gate_values = grp["gate_all_pass"].dropna().astype(bool)
-        if gate_values.empty:
-            gate_all_pass_summary: bool | None = None
-        else:
-            gate_all_pass_summary = bool(gate_values.all())
-
-        if not prioritize_gate_pass:
-            gate_tier = 1
-        elif gate_all_pass_summary is True:
-            gate_tier = 0
-        elif gate_all_pass_summary is None:
-            gate_tier = 1
-        else:
-            gate_tier = 2
-
-        summary_rows.append(
-            {
-                "trial_number": int(trial_number),
-                "median_validation_auc": float(grp["validation_auc"].median()),
-                "mean_validation_auc": float(grp["validation_auc"].mean()),
-                "std_validation_auc": float(grp["validation_auc"].std(ddof=0)),
-                "mean_validation_brier": float(grp["validation_brier"].mean()),
-                "mean_validation_ece": float(grp["validation_ece"].mean()),
-                "gate_attrs_present": gate_present,
-                "gate_all_pass": gate_all_pass_summary,
-                "gate_tier": int(gate_tier),
-            }
-        )
-
-    grouped = pd.DataFrame(summary_rows).sort_values(
-        [
-            "gate_tier",
-            "mean_validation_ece",
-            "median_validation_auc",
-            "mean_validation_brier",
-        ],
-        ascending=[True, True, False, True],
+    grouped = _summarize_replayed_trials(
+        rows,
+        prioritize_gate_pass=prioritize_gate_pass,
     )
     selected_trial = int(grouped.iloc[0]["trial_number"])
     selected_trial_obj = next(t for t in top if int(t.number) == selected_trial)
@@ -1336,15 +1921,7 @@ def _replay_top_optuna_trials(
             "reason": "ok",
             "top_k_trials": len(top),
             "seeds": [int(s) for s in seeds],
-            "selection_policy": {
-                "prioritize_gate_pass": bool(prioritize_gate_pass),
-                "rank_order": [
-                    "gate_tier(pass->unknown->fail)",
-                    "mean_validation_ece(asc)",
-                    "median_validation_auc(desc)",
-                    "mean_validation_brier(asc)",
-                ],
-            },
+            "selection_policy": _replay_selection_policy(prioritize_gate_pass),
             "rows": rows,
             "summary_by_trial": grouped.to_dict(orient="records"),
             "selected_trial": selected_trial,
@@ -1352,6 +1929,267 @@ def _replay_top_optuna_trials(
         }
     )
     return report
+
+
+def _initial_seed_replay_report(reason: str = "disabled_in_config") -> dict[str, Any]:
+    return {
+        "enabled": False,
+        "reason": reason,
+        "rows": [],
+        "selected_trial": None,
+        "selected_params": None,
+    }
+
+
+def _train_replay_manifest_catboost(
+    *,
+    replay_cfg: dict[str, Any],
+    X_train_fit_cb: pd.DataFrame,
+    y_train_fit: pd.Series,
+    X_val_cb: pd.DataFrame,
+    y_val: pd.Series,
+    X_test_cb: pd.DataFrame,
+    y_test: pd.Series,
+    categorical_features: list[str],
+    train_fit_weights: np.ndarray | None,
+    train_val_weights: np.ndarray | None,
+) -> tuple[Any, dict[str, Any], dict[str, Any]]:
+    replay_params = dict(replay_cfg.get("selected_params") or {})
+    model, metrics = train_catboost_default(
+        X_train_fit_cb,
+        y_train_fit,
+        X_val_cb,
+        y_val,
+        X_test=X_test_cb,
+        y_test=y_test,
+        cat_features=categorical_features,
+        params=replay_params,
+        sample_weight=train_fit_weights,
+        eval_sample_weight=train_val_weights,
+    )
+    metrics["hpo_trials_executed"] = 0
+    metrics["hpo_best_validation_auc"] = float(metrics["validation_auc"])
+    metrics["best_params"] = replay_params
+    metrics["model_type"] = "catboost_replay_manifest"
+    seed_replay_report = _initial_seed_replay_report("replay_manifest")
+    seed_replay_report["selected_params"] = replay_params
+    return model, metrics, seed_replay_report
+
+
+def _train_default_as_tuned_catboost(
+    *,
+    model_params: dict[str, Any],
+    X_train_fit_cb: pd.DataFrame,
+    y_train_fit: pd.Series,
+    X_val_cb: pd.DataFrame,
+    y_val: pd.Series,
+    X_test_cb: pd.DataFrame,
+    y_test: pd.Series,
+    categorical_features: list[str],
+    train_fit_weights: np.ndarray | None,
+    train_val_weights: np.ndarray | None,
+) -> tuple[Any, dict[str, Any], dict[str, Any]]:
+    model, metrics = train_catboost_default(
+        X_train_fit_cb,
+        y_train_fit,
+        X_val_cb,
+        y_val,
+        X_test=X_test_cb,
+        y_test=y_test,
+        cat_features=categorical_features,
+        params=model_params,
+        sample_weight=train_fit_weights,
+        eval_sample_weight=train_val_weights,
+    )
+    metrics["hpo_trials_executed"] = 0
+    metrics["hpo_best_validation_auc"] = float(metrics["validation_auc"])
+    metrics["best_params"] = model_params
+    return model, metrics, _initial_seed_replay_report("hpo_disabled")
+
+
+def _maybe_apply_seed_replay_selection(
+    *,
+    seed_replay_report: dict[str, Any],
+    current_metrics: dict[str, Any],
+    current_model: Any,
+    X_train_fit_cb: pd.DataFrame,
+    y_train_fit: pd.Series,
+    X_val_cb: pd.DataFrame,
+    y_val: pd.Series,
+    X_test_cb: pd.DataFrame,
+    y_test: pd.Series,
+    categorical_features: list[str],
+    train_fit_weights: np.ndarray | None,
+    train_val_weights: np.ndarray | None,
+) -> tuple[Any, dict[str, Any]]:
+    if not seed_replay_report.get("enabled") or not seed_replay_report.get("selected_params"):
+        return current_model, current_metrics
+    selected_params = dict(seed_replay_report["selected_params"])
+    replay_model, replay_metrics = train_catboost_default(
+        X_train_fit_cb,
+        y_train_fit,
+        X_val_cb,
+        y_val,
+        X_test=X_test_cb,
+        y_test=y_test,
+        cat_features=categorical_features,
+        params=selected_params,
+        sample_weight=train_fit_weights,
+        eval_sample_weight=train_val_weights,
+    )
+    return replay_model, {
+        **current_metrics,
+        **replay_metrics,
+        "model_type": "catboost_tuned_seed_replay_selected",
+        "best_params": selected_params,
+        "seed_replay_selected_trial": seed_replay_report.get("selected_trial"),
+        "seed_replay_enabled": True,
+    }
+
+
+def _train_hpo_catboost(
+    *,
+    hpo_cfg: dict[str, Any],
+    seed_replay_cfg: dict[str, Any],
+    model_params: dict[str, Any],
+    X_train_fit_cb: pd.DataFrame,
+    y_train_fit: pd.Series,
+    X_val_cb: pd.DataFrame,
+    y_val: pd.Series,
+    X_test_cb: pd.DataFrame,
+    y_test: pd.Series,
+    categorical_features: list[str],
+    train_fit_weights: np.ndarray | None,
+    train_val_weights: np.ndarray | None,
+) -> tuple[Any, dict[str, Any], dict[str, Any]]:
+    model, metrics = train_catboost_tuned_optuna(
+        X_train_fit_cb,
+        y_train_fit,
+        X_val_cb,
+        y_val,
+        X_test=X_test_cb,
+        y_test=y_test,
+        cat_features=categorical_features,
+        base_params=model_params,
+        n_trials=int(hpo_cfg.get("n_trials", 100)),
+        sampler=str(hpo_cfg.get("sampler", "tpe")),
+        pruner=str(hpo_cfg.get("pruner", "median")),
+        timeout_minutes=int(hpo_cfg.get("timeout_minutes", 0)),
+        n_startup_trials=int(hpo_cfg.get("n_startup_trials", 40)),
+        multivariate_tpe=bool(hpo_cfg.get("multivariate_tpe", True)),
+        group_tpe=bool(hpo_cfg.get("group_tpe", True)),
+        warn_independent_sampling=bool(hpo_cfg.get("warn_independent_sampling", True)),
+        constant_liar=bool(hpo_cfg.get("constant_liar", False)),
+        pruner_n_startup_trials=int(hpo_cfg.get("pruner_n_startup_trials", 20)),
+        pruner_n_warmup_steps=int(hpo_cfg.get("pruner_n_warmup_steps", 50)),
+        use_pruning_callback=bool(hpo_cfg.get("use_pruning_callback", True)),
+        study_storage=hpo_cfg.get("study_storage"),
+        study_name=hpo_cfg.get("study_name"),
+        load_if_exists=bool(hpo_cfg.get("load_if_exists", True)),
+        refit_full_train=bool(hpo_cfg.get("refit_full_train", True)),
+        gc_after_trial=bool(hpo_cfg.get("gc_after_trial", True)),
+        storage_heartbeat_interval=int(hpo_cfg.get("storage_heartbeat_interval", 0)),
+        storage_grace_period=int(hpo_cfg.get("storage_grace_period", 0)),
+        sqlite_timeout_seconds=int(hpo_cfg.get("sqlite_timeout_seconds", 60)),
+        retry_failed_trials=int(hpo_cfg.get("retry_failed_trials", 0)),
+        n_jobs=int(hpo_cfg.get("n_jobs", 1)),
+        sample_weight=train_fit_weights,
+        eval_sample_weight=train_val_weights,
+        search_space_mode=str(hpo_cfg.get("search_space_mode", "global")),
+        local_refine_space=dict(hpo_cfg.get("local_refine", {}) or {}),
+        constraints_policy=dict(hpo_cfg.get("constraints_policy", {}) or {}),
+        search_space_version=str(hpo_cfg.get("search_space_version", "cb_space_v2")),
+    )
+    seed_replay_report = _initial_seed_replay_report()
+    if bool(seed_replay_cfg.get("enabled", True)):
+        seed_replay_report = _replay_top_optuna_trials(
+            hpo_cfg=hpo_cfg,
+            base_params=model_params,
+            X_train_fit_cb=X_train_fit_cb,
+            y_train_fit=y_train_fit,
+            X_val_cb=X_val_cb,
+            y_val=y_val,
+            cat_features=categorical_features,
+            seeds=[int(seed) for seed in seed_replay_cfg.get("seeds", [42, 52, 62])],
+            top_k_trials=int(seed_replay_cfg.get("top_k_trials", 3)),
+            prioritize_gate_pass=bool(seed_replay_cfg.get("prioritize_gate_pass", True)),
+            sample_weight=train_fit_weights,
+            eval_sample_weight=train_val_weights,
+        )
+        model, metrics = _maybe_apply_seed_replay_selection(
+            seed_replay_report=seed_replay_report,
+            current_metrics=metrics,
+            current_model=model,
+            X_train_fit_cb=X_train_fit_cb,
+            y_train_fit=y_train_fit,
+            X_val_cb=X_val_cb,
+            y_val=y_val,
+            X_test_cb=X_test_cb,
+            y_test=y_test,
+            categorical_features=categorical_features,
+            train_fit_weights=train_fit_weights,
+            train_val_weights=train_val_weights,
+        )
+    return model, metrics, seed_replay_report
+
+
+def _train_tuned_catboost_stage(
+    *,
+    run_mode: str,
+    replay_cfg: dict[str, Any],
+    hpo_cfg: dict[str, Any],
+    seed_replay_cfg: dict[str, Any],
+    model_params: dict[str, Any],
+    X_train_fit_cb: pd.DataFrame,
+    y_train_fit: pd.Series,
+    X_val_cb: pd.DataFrame,
+    y_val: pd.Series,
+    X_test_cb: pd.DataFrame,
+    y_test: pd.Series,
+    categorical_features: list[str],
+    train_fit_weights: np.ndarray | None,
+    train_val_weights: np.ndarray | None,
+) -> tuple[Any, dict[str, Any], dict[str, Any]]:
+    if run_mode == "replay":
+        return _train_replay_manifest_catboost(
+            replay_cfg=replay_cfg,
+            X_train_fit_cb=X_train_fit_cb,
+            y_train_fit=y_train_fit,
+            X_val_cb=X_val_cb,
+            y_val=y_val,
+            X_test_cb=X_test_cb,
+            y_test=y_test,
+            categorical_features=categorical_features,
+            train_fit_weights=train_fit_weights,
+            train_val_weights=train_val_weights,
+        )
+    if bool(hpo_cfg.get("enabled", True)):
+        return _train_hpo_catboost(
+            hpo_cfg=hpo_cfg,
+            seed_replay_cfg=seed_replay_cfg,
+            model_params=model_params,
+            X_train_fit_cb=X_train_fit_cb,
+            y_train_fit=y_train_fit,
+            X_val_cb=X_val_cb,
+            y_val=y_val,
+            X_test_cb=X_test_cb,
+            y_test=y_test,
+            categorical_features=categorical_features,
+            train_fit_weights=train_fit_weights,
+            train_val_weights=train_val_weights,
+        )
+    return _train_default_as_tuned_catboost(
+        model_params=model_params,
+        X_train_fit_cb=X_train_fit_cb,
+        y_train_fit=y_train_fit,
+        X_val_cb=X_val_cb,
+        y_val=y_val,
+        X_test_cb=X_test_cb,
+        y_test=y_test,
+        categorical_features=categorical_features,
+        train_fit_weights=train_fit_weights,
+        train_val_weights=train_val_weights,
+    )
 
 
 def main(
@@ -1560,138 +2398,29 @@ def main(
 
     # CatBoost tuned (Optuna)
     hpo_cfg = config.get("hpo", {})
-    seed_replay_report: dict[str, Any] = {
-        "enabled": False,
-        "reason": "disabled_in_config",
-        "rows": [],
-        "selected_trial": None,
-        "selected_params": None,
-    }
-    if run_mode == "replay":
-        replay_params = dict(replay_cfg.get("selected_params") or {})
-        cb_tuned_model, cb_tuned_metrics = train_catboost_default(
-            X_train_fit_cb,
-            y_train_fit,
-            X_val_cb,
-            y_val,
-            X_test=X_test_cb,
-            y_test=y_test,
-            cat_features=categorical_features,
-            params=replay_params,
-            sample_weight=train_fit_weights,
-            eval_sample_weight=train_val_weights,
-        )
-        cb_tuned_metrics["hpo_trials_executed"] = 0
-        cb_tuned_metrics["hpo_best_validation_auc"] = float(cb_tuned_metrics["validation_auc"])
-        cb_tuned_metrics["best_params"] = replay_params
-        cb_tuned_metrics["model_type"] = "catboost_replay_manifest"
-        seed_replay_report["reason"] = "replay_manifest"
-        seed_replay_report["selected_params"] = replay_params
-    elif bool(hpo_cfg.get("enabled", True)):
-        cb_tuned_model, cb_tuned_metrics = train_catboost_tuned_optuna(
-            X_train_fit_cb,
-            y_train_fit,
-            X_val_cb,
-            y_val,
-            X_test=X_test_cb,
-            y_test=y_test,
-            cat_features=categorical_features,
-            base_params=config["model"].get("params", {}),
-            n_trials=int(hpo_cfg.get("n_trials", 100)),
-            sampler=str(hpo_cfg.get("sampler", "tpe")),
-            pruner=str(hpo_cfg.get("pruner", "median")),
-            timeout_minutes=int(hpo_cfg.get("timeout_minutes", 0)),
-            n_startup_trials=int(hpo_cfg.get("n_startup_trials", 40)),
-            multivariate_tpe=bool(hpo_cfg.get("multivariate_tpe", True)),
-            group_tpe=bool(hpo_cfg.get("group_tpe", True)),
-            warn_independent_sampling=bool(hpo_cfg.get("warn_independent_sampling", True)),
-            constant_liar=bool(hpo_cfg.get("constant_liar", False)),
-            pruner_n_startup_trials=int(hpo_cfg.get("pruner_n_startup_trials", 20)),
-            pruner_n_warmup_steps=int(hpo_cfg.get("pruner_n_warmup_steps", 50)),
-            use_pruning_callback=bool(hpo_cfg.get("use_pruning_callback", True)),
-            study_storage=hpo_cfg.get("study_storage", None),
-            study_name=hpo_cfg.get("study_name", None),
-            load_if_exists=bool(hpo_cfg.get("load_if_exists", True)),
-            refit_full_train=bool(hpo_cfg.get("refit_full_train", True)),
-            gc_after_trial=bool(hpo_cfg.get("gc_after_trial", True)),
-            storage_heartbeat_interval=int(hpo_cfg.get("storage_heartbeat_interval", 0)),
-            storage_grace_period=int(hpo_cfg.get("storage_grace_period", 0)),
-            sqlite_timeout_seconds=int(hpo_cfg.get("sqlite_timeout_seconds", 60)),
-            retry_failed_trials=int(hpo_cfg.get("retry_failed_trials", 0)),
-            n_jobs=int(hpo_cfg.get("n_jobs", 1)),
-            sample_weight=train_fit_weights,
-            eval_sample_weight=train_val_weights,
-            search_space_mode=str(hpo_cfg.get("search_space_mode", "global")),
-            local_refine_space=dict(hpo_cfg.get("local_refine", {}) or {}),
-            constraints_policy=dict(hpo_cfg.get("constraints_policy", {}) or {}),
-            search_space_version=str(hpo_cfg.get("search_space_version", "cb_space_v2")),
-        )
-
-        if bool(seed_replay_cfg.get("enabled", True)):
-            seeds = seed_replay_cfg.get("seeds", [42, 52, 62])
-            seeds = [int(s) for s in seeds]
-            prioritize_gate_pass = bool(seed_replay_cfg.get("prioritize_gate_pass", True))
-            seed_replay_report = _replay_top_optuna_trials(
-                hpo_cfg=hpo_cfg,
-                base_params=config["model"].get("params", {}),
-                X_train_fit_cb=X_train_fit_cb,
-                y_train_fit=y_train_fit,
-                X_val_cb=X_val_cb,
-                y_val=y_val,
-                cat_features=categorical_features,
-                seeds=seeds,
-                top_k_trials=int(seed_replay_cfg.get("top_k_trials", 3)),
-                prioritize_gate_pass=prioritize_gate_pass,
-                sample_weight=train_fit_weights,
-                eval_sample_weight=train_val_weights,
-            )
-            if seed_replay_report.get("enabled") and seed_replay_report.get("selected_params"):
-                selected_params = dict(seed_replay_report["selected_params"])
-                replay_model, replay_metrics = train_catboost_default(
-                    X_train_fit_cb,
-                    y_train_fit,
-                    X_val_cb,
-                    y_val,
-                    X_test=X_test_cb,
-                    y_test=y_test,
-                    cat_features=categorical_features,
-                    params=selected_params,
-                    sample_weight=train_fit_weights,
-                    eval_sample_weight=train_val_weights,
-                )
-                cb_tuned_metrics = {
-                    **cb_tuned_metrics,
-                    **replay_metrics,
-                    "model_type": "catboost_tuned_seed_replay_selected",
-                    "best_params": selected_params,
-                    "seed_replay_selected_trial": seed_replay_report.get("selected_trial"),
-                    "seed_replay_enabled": True,
-                }
-                cb_tuned_model = replay_model
-    else:
-        cb_tuned_model, cb_tuned_metrics = train_catboost_default(
-            X_train_fit_cb,
-            y_train_fit,
-            X_val_cb,
-            y_val,
-            X_test=X_test_cb,
-            y_test=y_test,
-            cat_features=categorical_features,
-            params=config["model"].get("params", {}),
-            sample_weight=train_fit_weights,
-            eval_sample_weight=train_val_weights,
-        )
-        cb_tuned_metrics["hpo_trials_executed"] = 0
-        cb_tuned_metrics["hpo_best_validation_auc"] = float(cb_tuned_metrics["validation_auc"])
-        cb_tuned_metrics["best_params"] = config["model"].get("params", {})
-        seed_replay_report["reason"] = "hpo_disabled"
+    cb_tuned_model, cb_tuned_metrics, seed_replay_report = _train_tuned_catboost_stage(
+        run_mode=run_mode,
+        replay_cfg=replay_cfg,
+        hpo_cfg=hpo_cfg,
+        seed_replay_cfg=seed_replay_cfg,
+        model_params=dict(config["model"].get("params", {})),
+        X_train_fit_cb=X_train_fit_cb,
+        y_train_fit=y_train_fit,
+        X_val_cb=X_val_cb,
+        y_val=y_val,
+        X_test_cb=X_test_cb,
+        y_test=y_test,
+        categorical_features=categorical_features,
+        train_fit_weights=train_fit_weights,
+        train_val_weights=train_val_weights,
+    )
     _write_checkpoint(
         checkpoint_dir,
         "hpo_summary",
         {
-            "best_params": cb_tuned_metrics.get("best_params", {}),
-            "hpo_trials_executed": int(cb_tuned_metrics.get("hpo_trials_executed", 0)),
-            "hpo_best_validation_auc": float(cb_tuned_metrics.get("hpo_best_validation_auc", 0.0)),
+            "best_params": _metric_mapping(cb_tuned_metrics, "best_params", {}),
+            "hpo_trials_executed": _metric_int(cb_tuned_metrics, "hpo_trials_executed"),
+            "hpo_best_validation_auc": _metric_float(cb_tuned_metrics, "hpo_best_validation_auc"),
             "seed_replay_report": seed_replay_report,
         },
     )
@@ -1701,35 +2430,23 @@ def main(
         state="running",
         config_path=config_path,
         extra={
-            "validation_auc": float(cb_tuned_metrics.get("hpo_best_validation_auc", 0.0)),
-            "best_iteration": int(cb_tuned_metrics.get("best_iteration", 0)),
+            "validation_auc": _metric_float(cb_tuned_metrics, "hpo_best_validation_auc"),
+            "best_iteration": _metric_int(cb_tuned_metrics, "best_iteration"),
         },
     )
 
-    walk_forward_report: dict[str, Any]
-    if bool(walk_cfg.get("enabled", True)):
-        walk_forward_report = _evaluate_walk_forward_auc(
-            train,
-            features=catboost_features,
-            categorical_features=categorical_features,
-            target=TARGET,
-            params=dict(cb_tuned_metrics.get("best_params", config["model"].get("params", {}))),
-            n_windows=int(walk_cfg.get("n_windows", 3)),
-            min_train_rows=int(walk_cfg.get("min_train_rows", 200_000)),
-            window_rows=int(walk_cfg.get("window_rows", 80_000)),
-            date_col=str(walk_cfg.get("date_col", "issue_d")),
-            max_rows=(
-                None if int(walk_cfg.get("max_rows", 0)) <= 0 else int(walk_cfg.get("max_rows", 0))
-            ),
-        )
-    else:
-        walk_forward_report = {
-            "enabled": False,
-            "reason": "disabled_in_config",
-            "n_windows_requested": int(walk_cfg.get("n_windows", 0)),
-            "n_windows_used": 0,
-            "folds": [],
-        }
+    walk_forward_report = _evaluate_walk_forward_stage(
+        enabled=bool(walk_cfg.get("enabled", True)),
+        walk_cfg=walk_cfg,
+        train=train,
+        catboost_features=catboost_features,
+        categorical_features=categorical_features,
+        model_params=_metric_mapping(
+            cb_tuned_metrics,
+            "best_params",
+            dict(config["model"].get("params", {})),
+        ),
+    )
 
     # Raw probabilities
     y_prob_default_test = cb_default_model.predict_proba(X_test_cb)[:, 1]
@@ -1781,75 +2498,20 @@ def main(
 
     decision_cfg = config.get("decision_threshold", {})
     resolved_run_tag = resolve_run_tag(run_tag, require_explicit=True)
-    decision_threshold_artifact = {
-        "enabled": False,
-        "selected_threshold": float(config.get("calibration", {}).get("default_threshold", 0.5)),
-        "source": "fallback_default",
-        **build_artifact_metadata(
-            schema_version="2026-03-01.1",
-            run_tag=resolved_run_tag,
-            require_explicit=True,
-        ),
-    }
-    if run_mode == "replay" and replay_cfg.get("decision_threshold_artifact"):
-        decision_threshold_artifact = dict(replay_cfg["decision_threshold_artifact"])
-        decision_threshold_artifact.update(
-            build_artifact_metadata(
-                schema_version="2026-03-01.1",
-                run_tag=resolved_run_tag,
-                require_explicit=True,
-            )
-        )
-        decision_threshold_artifact["source"] = "frozen_replay_manifest"
-    elif bool(decision_cfg.get("enabled", True)):
-        fairness_policy_path = str(
-            decision_cfg.get("fairness_policy_path", "configs/fairness_policy.yaml")
-        )
-        with open(fairness_policy_path, encoding="utf-8") as f:
-            fairness_cfg = yaml.safe_load(f) or {}
-        fairness_policy = fairness_cfg.get("policy", {})
-        fairness_attrs = fairness_cfg.get("attributes", [])
-        groups_for_threshold = _build_fairness_groups_for_threshold(train_val, fairness_attrs)
-        groups_for_threshold_cal = _build_fairness_groups_for_threshold(cal, fairness_attrs)
-
-        thr_min = float(decision_cfg.get("min_threshold", 0.05))
-        thr_max = float(decision_cfg.get("max_threshold", 0.95))
-        thr_step = float(decision_cfg.get("step", 0.01))
-        thresholds = np.arange(thr_min, thr_max + (thr_step / 2.0), thr_step)
-        fallback_threshold = float(fairness_policy.get("prediction_threshold", 0.5))
-        threshold_result = _select_decision_threshold(
-            y_true=y_val.to_numpy(),
-            y_prob=y_prob_final_val,
-            policy={
-                "dpd_threshold": float(fairness_policy.get("dpd_threshold", 0.10)),
-                "eo_gap_threshold": float(fairness_policy.get("eo_gap_threshold", 0.10)),
-                "dir_threshold": float(fairness_policy.get("dir_threshold", 0.80)),
-            },
-            groups_dict=groups_for_threshold,
-            thresholds=np.asarray(thresholds, dtype=float),
-            fallback_threshold=fallback_threshold,
-            y_true_secondary=y_cal.to_numpy(),
-            y_prob_secondary=y_prob_tuned_cal,
-            groups_dict_secondary=groups_for_threshold_cal,
-        )
-
-        decision_threshold_artifact = {
-            "enabled": True,
-            "selected_threshold": float(threshold_result["selected_threshold"]),
-            "fallback_threshold": fallback_threshold,
-            "selection_metrics": threshold_result["selection_metrics"],
-            "search_summary": threshold_result["search_summary"],
-            "source": "validation_fairness_search",
-            "fairness_policy_path": fairness_policy_path,
-            "validation_rows": len(train_val),
-            "secondary_validation_rows": len(cal),
-            "calibration_method": selected_cal_method,
-            **build_artifact_metadata(
-                schema_version="2026-03-01.1",
-                run_tag=resolved_run_tag,
-                require_explicit=True,
-            ),
-        }
+    decision_threshold_artifact = _resolve_decision_threshold_artifact(
+        config=config,
+        run_mode=run_mode,
+        replay_cfg=replay_cfg,
+        decision_cfg=decision_cfg,
+        train_val=train_val,
+        cal=cal,
+        y_val=y_val,
+        y_prob_final_val=y_prob_final_val,
+        y_cal=y_cal,
+        y_prob_tuned_cal=y_prob_tuned_cal,
+        selected_cal_method=selected_cal_method,
+        run_tag=resolved_run_tag,
+    )
 
     # Conformal (keeps calibration split isolated from model training)
     alpha = 1.0 - float(config["conformal"].get("confidence_level", 0.9))
@@ -1870,83 +2532,11 @@ def main(
 
     # Statistical calibration hypothesis tests (MAPIE)
     # Tests H0: scores are well-calibrated. High p-value → well calibrated.
-    statistical_cal_tests: dict[str, object] = {}
-    try:
-        from mapie.metrics.calibration import (
-            cumulative_differences,
-            kolmogorov_smirnov_p_value,
-            kuiper_p_value,
-            length_scale,
-            spiegelhalter_p_value,
-        )
-
-        y_test_arr = y_test.values.astype(float)
-        # Calibrated (champion) vs uncalibrated
-        for tag, probs in [("calibrated", y_prob_final), ("uncalibrated", y_prob_tuned_test)]:
-            try:
-                ks_p = float(kolmogorov_smirnov_p_value(y_test_arr, probs))
-                ku_p = float(kuiper_p_value(y_test_arr, probs))
-                sp_p = float(spiegelhalter_p_value(y_test_arr, probs))
-                cum_diff = cumulative_differences(y_test_arr, probs)
-                sigma = float(length_scale(probs))
-                statistical_cal_tests[tag] = {
-                    "ks_pvalue": ks_p,
-                    "kuiper_pvalue": ku_p,
-                    "spiegelhalter_pvalue": sp_p,
-                    "length_scale_sigma": sigma,
-                    "n": len(y_test_arr),
-                }
-                logger.info(
-                    f"Calibration tests [{tag}]: KS_p={ks_p:.4f} "
-                    f"Kuiper_p={ku_p:.4f} Spiegelhalter_p={sp_p:.4f}"
-                )
-                # Save cumulative differences for the figure (calibrated only)
-                if tag == "calibrated":
-                    statistical_cal_tests["_cum_diff_calibrated"] = cum_diff.tolist()
-                    statistical_cal_tests["_sigma"] = sigma
-                elif tag == "uncalibrated":
-                    statistical_cal_tests["_cum_diff_uncalibrated"] = cum_diff.tolist()
-            except Exception as exc_inner:
-                logger.warning(f"Statistical calibration tests [{tag}] failed: {exc_inner}")
-                statistical_cal_tests[tag] = {"error": str(exc_inner)}
-
-        # Save cumulative differences parquet for figure generation
-        if "_cum_diff_calibrated" in statistical_cal_tests:
-            k_idx = np.arange(len(y_test_arr)) / len(y_test_arr)
-            sigma_raw = statistical_cal_tests.get("_sigma", 0.0)
-            sigma_val = (
-                float(sigma_raw) if isinstance(sigma_raw, str | int | float | np.number) else 0.0
-            )
-            cum_diff_df = pd.DataFrame(
-                {
-                    "k": k_idx,
-                    "cum_diff_calibrated": statistical_cal_tests.pop("_cum_diff_calibrated"),
-                    "cum_diff_uncalibrated": statistical_cal_tests.pop(
-                        "_cum_diff_uncalibrated",
-                        [float("nan")] * len(k_idx),
-                    ),
-                    "sigma_upper": sigma_val * 2,
-                    "sigma_lower": -sigma_val * 2,
-                }
-            )
-            cum_diff_path = _artifact_path("data/processed/calibration_cumulative_diffs.parquet")
-            cum_diff_path.parent.mkdir(parents=True, exist_ok=True)
-            cum_diff_df.to_parquet(cum_diff_path, index=False)
-            logger.info(f"Saved calibration cumulative diffs: {cum_diff_path}")
-            statistical_cal_tests.pop("_sigma", None)
-
-        stat_cal_path = _artifact_path("data/processed/statistical_calibration_tests.json")
-        stat_cal_path.parent.mkdir(parents=True, exist_ok=True)
-        stat_cal_path.write_text(
-            json.dumps(statistical_cal_tests, indent=2, default=str), encoding="utf-8"
-        )
-        logger.info(f"Saved statistical calibration tests: {stat_cal_path}")
-    except ImportError:
-        logger.warning(
-            "mapie.metrics.calibration not available — statistical calibration tests skipped."
-        )
-    except Exception as exc:
-        logger.warning(f"Statistical calibration tests block failed: {exc}")
+    _run_statistical_calibration_tests(
+        y_test=y_test,
+        y_prob_final=y_prob_final,
+        y_prob_tuned_test=y_prob_tuned_test,
+    )
 
     brier_decomposition_path = _artifact_path(
         config["output"].get(
@@ -2095,55 +2685,13 @@ def main(
     save_contract(contract_payload, contract_path)
 
     # ── SHAP feature importance export (CatBoost native) ──
-    shap_artifact: dict[str, Any] = {"exported": False}
-    try:
-        from catboost import Pool as _SHAPPool
-
-        shap_pool = _SHAPPool(X_test_cb, cat_features=categorical_features)
-        shap_raw = cb_tuned_model.get_feature_importance(type="ShapValues", data=shap_pool)
-        # ShapValues returns (n_samples, n_features + 1); last col = expected value
-        shap_values = shap_raw[:, :-1]
-        shap_expected = float(shap_raw[0, -1])
-
-        mean_abs_shap = np.abs(shap_values).mean(axis=0)
-        shap_importance = sorted(
-            zip(catboost_features, mean_abs_shap.tolist(), strict=False),
-            key=lambda x: x[1],
-            reverse=True,
-        )
-        shap_dir = _artifact_path(config["output"].get("shap_dir", "reports/figures/shap"))
-        shap_dir.mkdir(parents=True, exist_ok=True)
-
-        # Save raw SHAP values (compressed)
-        np.savez_compressed(
-            str(shap_dir / "shap_values_test.npz"),
-            shap_values=shap_values,
-            expected_value=np.array([shap_expected]),
-            feature_names=np.array(catboost_features),
-        )
-
-        # Save top-N importance as JSON for Streamlit/governance
-        top_n = min(20, len(shap_importance))
-        shap_summary = {
-            "expected_value": shap_expected,
-            "n_samples": int(shap_values.shape[0]),
-            "n_features": int(shap_values.shape[1]),
-            "top_features": [
-                {"feature": f, "mean_abs_shap": round(v, 6)} for f, v in shap_importance[:top_n]
-            ],
-        }
-        shap_summary_path = shap_dir / "shap_feature_importance.json"
-        shap_summary_path.write_text(json.dumps(shap_summary, indent=2), encoding="utf-8")
-        shap_artifact = {"exported": True, "n_features": top_n, "path": str(shap_dir)}
-        logger.info(
-            "SHAP export: top feature={} (|SHAP|={:.4f}), saved to {}",
-            shap_importance[0][0],
-            shap_importance[0][1],
-            shap_dir,
-        )
-    except Exception as exc:
-        logger.warning("SHAP feature importance export skipped: {}", exc)
-        shap_artifact["error"] = str(exc)
+    shap_artifact = _export_shap_feature_importance(
+        cb_tuned_model=cb_tuned_model,
+        X_test_cb=X_test_cb,
+        categorical_features=categorical_features,
+        catboost_features=catboost_features,
+        shap_dir=_artifact_path(config["output"].get("shap_dir", "reports/figures/shap")),
+    )
 
     # Persist test predictions for downstream contracts.
     test_predictions_path = _artifact_path(
@@ -2189,10 +2737,10 @@ def main(
                 strict=False,
             )
         },
-        "optuna_best_auc": float(cb_tuned_metrics.get("auc_roc", 0.0)),
-        "optuna_best_params": cb_tuned_metrics.get("best_params", {}),
-        "hpo_trials_executed": int(cb_tuned_metrics.get("hpo_trials_executed", 0)),
-        "hpo_best_validation_auc": float(cb_tuned_metrics.get("hpo_best_validation_auc", 0.0)),
+        "optuna_best_auc": _metric_float(cb_tuned_metrics, "auc_roc"),
+        "optuna_best_params": _metric_mapping(cb_tuned_metrics, "best_params", {}),
+        "hpo_trials_executed": _metric_int(cb_tuned_metrics, "hpo_trials_executed"),
+        "hpo_best_validation_auc": _metric_float(cb_tuned_metrics, "hpo_best_validation_auc"),
         "walk_forward_report": walk_forward_report,
         "seed_replay_report": seed_replay_report,
         "decision_threshold": decision_threshold_artifact,
@@ -2221,10 +2769,10 @@ def main(
         )
         seed_replay_status = {
             "selected_calibration_method": selected_cal_method,
-            "validation_auc": float(cb_tuned_metrics.get("hpo_best_validation_auc", 0.0)),
-            "oot_auc": float(final_test_metrics.get("auc_roc", 0.0)),
-            "brier": float(final_test_metrics.get("brier_score", 0.0)),
-            "ece": float(final_test_metrics.get("ece", 0.0)),
+            "validation_auc": _metric_float(cb_tuned_metrics, "hpo_best_validation_auc"),
+            "oot_auc": _metric_float(final_test_metrics, "auc_roc"),
+            "brier": _metric_float(final_test_metrics, "brier_score"),
+            "ece": _metric_float(final_test_metrics, "ece"),
             "replay": seed_replay_report,
             **build_artifact_metadata(
                 schema_version="2026-03-13.1",

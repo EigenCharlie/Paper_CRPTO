@@ -17,11 +17,12 @@ execute:
 CRPTO integra prediccion de default calibrada, intervalos conformales Mondrian y
 optimizacion robusta de portafolio. La superficie IJDS activa promueve el punto
 pool93 body/default: retorno robusto `$184,832.48`, `V=0.035350`,
-`Gamma_CP=0.162616`, Markov cap `0.345084`, zero violation y pass `8/8` sobre
+`Gamma_CP=0.162616`, `Gamma_res=0.073584`, endpoint `0.245084`, umbral Markov
+`0.345084`, exceso realizado sobre `tau` igual a cero y pass `8/8` sobre
 la grilla alpha declarada. La frontera A35 y el audit de composicion A36 son los
 artefactos paper-facing principales para el cierre pool93; A37--A39 agregan la
 repricing de tail-risk, el audit cluster-bound y el bootstrap de contribuciones
-de la asignacion seleccionada.
+de la asignacion seleccionada; A40 agrega la baseline point-PD emparejada.
 
 # Manuscrito
 
@@ -35,7 +36,7 @@ Los borradores de trabajo son:
 
 - `CRPTO_ijds.qmd`: cuerpo anonimo IJDS, conceptualmente limitado a 25 paginas
   excluyendo referencias y appendix.
-- `supplement_ijds.qmd`: online supplement IJDS con A3--A39, robustez,
+- `supplement_ijds.qmd`: online supplement IJDS con A3--A40, robustez,
   reproducibilidad, MRM y fairness.
 
 La version larga y sus apendices estan en `book/`.
@@ -49,9 +50,9 @@ documentan esa cadena historica, no el body point.
 
 Body claim pool93 (autoritativos):
 
-- `models/experiments/champion_reopen/champion-reopen-2026-06-19__pool93__ijds-claim-consolidated-definitive/portfolio/pool93_ijds_consolidated_governance.json`
+- `models/experiments/champion_reopen/champion-reopen-2026-06-19__pool93__ijds-certificate-semantics-v2/portfolio/pool93_ijds_consolidated_governance.json`
 - `models/experiments/champion_reopen/champion-reopen-2026-06-19__pool93__ijds-claim-bound-terminal/portfolio/pool93_ijds_claim_governance.json`
-- `reports/crpto/tables/crpto_tableA35_pool93_ijds_frontier.csv` (y A36--A39)
+- `reports/crpto/tables/crpto_tableA35_pool93_ijds_frontier.csv` (y A36--A40)
 
 Cadena upstream congelada (historica, return floor):
 

@@ -1,4 +1,4 @@
-version: "2026-07-04"
+version: "2026-07-09"
 project: paper-crpto
 decision_status: active
 
@@ -38,7 +38,7 @@ primary_target:
     include:
       - "Pool93 finite-grid return-bound frontier as the active IJDS body claim."
       - "Frozen upstream PD/calibration/conformal chain retained as provenance and return floor."
-      - "A3--A39 as supplement/appendix evidence generated from frozen artifacts."
+      - "A3--A40 as supplement/appendix evidence generated from frozen artifacts."
       - "Regret-auditability frontier as the body-level SPO+/CRPTO trade-off."
       - "OCE/CVaR and robust satisficing as diagnostics, not new selectors."
       - "Cluster-aware dependence caveat/proposition in the theory supplement."
@@ -70,19 +70,30 @@ journal_strengthening_pack:
       requires_new_run: false
     pool93_frontier_and_selected_allocation:
       status: include_body_and_supplement
-      role: "Active IJDS return-bound certificate: A35 frontier in the body, A36--A39 selected-allocation audits in the supplement."
+      role: "Active IJDS policy-aware certificate: A35 exact frontier in the body, A36--A39 selected-allocation audits, and A40 matched point-PD audit."
       artifacts:
         - reports/crpto/tables/crpto_tableA35_pool93_ijds_frontier.csv
         - reports/crpto/tables/crpto_tableA36_pool93_body_funded_grade_audit.csv
         - reports/crpto/tables/crpto_tableA37_pool93_body_tail_risk.csv
         - reports/crpto/tables/crpto_tableA38_pool93_body_cluster_bound_audit.csv
         - reports/crpto/tables/crpto_tableA39_pool93_body_bootstrap_metrics.csv
+        - reports/crpto/tables/crpto_tableA40_pool93_point_baseline.csv
         - models/experiments/champion_reopen/champion-reopen-2026-06-19__pool93__ijds-claim-bound-terminal/portfolio/pool93_ijds_claim_governance.json
-        - models/experiments/champion_reopen/champion-reopen-2026-06-19__pool93__ijds-claim-consolidated-definitive/portfolio/pool93_ijds_consolidated_governance.json
+        - models/experiments/champion_reopen/champion-reopen-2026-06-19__pool93__ijds-certificate-semantics-v2/portfolio/pool93_ijds_consolidated_frontier.json
+        - models/experiments/champion_reopen/champion-reopen-2026-06-19__pool93__ijds-certificate-semantics-v2/portfolio/pool93_ijds_consolidated_governance.json
+        - models/experiments/champion_reopen/champion-reopen-2026-06-19__pool93__ijds-certificate-semantics-v2/portfolio/pool93_point_pd_baseline_audit.json
+      requires_new_run: false
+    matched_point_pd_baseline:
+      status: include_body_and_supplement
+      role: "A40 matched Lending Club baseline: same candidates and operating constraints, point PD as the only decision-semantic change."
+      artifacts:
+        - reports/crpto/tables/crpto_tableA40_pool93_point_baseline.csv
+        - reports/crpto/tables/crpto_tableA40_pool93_point_baseline.tex
+        - models/experiments/champion_reopen/champion-reopen-2026-06-19__pool93__ijds-certificate-semantics-v2/portfolio/pool93_point_pd_baseline_audit.json
       requires_new_run: false
     robust_satisficing_margins:
       status: include_supplement_or_short_body
-      role: "OR/committee margins for return, V, Gamma_CP, zero violation and robust-region pass."
+      role: "OR/committee margins for return, V, Gamma_CP, realized risk-tolerance excess and robust-region pass."
       artifacts:
         - reports/crpto/tables/crpto_tableA13_satisficing_margins.csv
       requires_new_run: false
@@ -228,4 +239,4 @@ current_decision:
     - operations_research
     - informs_ijoo
   reason: "CRPTO currently has the strongest fit as reproducible decision-focused data science with OR substance."
-  p2_p3_boundary: "P2/P3 are no longer a blanket exclusion: the journal strengthening pack enters as diagnostics, framing and theory caveat; method-changing extensions remain future work and are not acceptance criteria."
+  p2_p3_boundary: "P2/P3 are no longer a blanket exclusion: the journal strengthening pack enters as diagnostics, framing and theory caveat; method-changing extensions remain outside the submitted claim and are not acceptance criteria."

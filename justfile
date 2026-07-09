@@ -32,9 +32,30 @@ fmt:
 type-check:
     uv run mypy src scripts
 
+# Fast type checker from Astral. Daily active-scope use remains advisory while
+# ty matures; the clean full scope is blocking in the final submission gate.
+type-advisory:
+    @uv run python scripts/run_ty_advisory.py --scope active
+
+type-advisory-full:
+    @uv run python scripts/run_ty_advisory.py --scope full --fail-on-diagnostics --output reports/ci/ty-advisory-full.txt
+
+complexity-report:
+    uvx radon cc src scripts -s -n D
+
+api-docs-core:
+    uv run --with pdoc pdoc src.optimization.portfolio_model src.models.calibration src.evaluation.backtesting src.evaluation.fairness --docformat google --output-directory reports/api-docs --no-browser
+
+hooks-check:
+    uv run pre-commit validate-config
+    uvx prek validate-config .pre-commit-config.yaml
+
 # Fast smoke: paper-final guardrails + Quarto book guardrails
 smoke:
-    uv run pytest tests/test_crpto_final_sync.py tests/test_quarto_book_guardrails.py -q
+    uv run pytest tests/test_crpto_final_sync.py tests/test_quarto_book_guardrails.py tests/test_publication_integrity.py -q
+
+publication-integrity:
+    uv run python scripts/check_publication_integrity.py
 
 test:
     uv run pytest -q
@@ -68,6 +89,13 @@ paper-ijds-supplement:
 
 # Render the current submission-shaped manuscript surfaces.
 paper-submission: paper-ijds paper-ijds-supplement
+
+# Compile and scan the official INFORMS/IJDS LaTeX handoff draft.
+paper-submission-official:
+    @uv run python scripts/compile_ijds_submission.py
+
+# Final local IJDS gate before freezing or uploading.
+submission-check: publication-integrity lint type-check type-advisory-full smoke validate-champion paper-submission paper-submission-official
 
 # IJDS-oriented manuscript body (local HTML-print PDF verification draft).
 paper-ijds-pdf:

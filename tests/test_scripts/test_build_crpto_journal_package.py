@@ -2,11 +2,31 @@ from __future__ import annotations
 
 import subprocess
 import sys
+import time
 from collections.abc import Iterator
 from contextlib import contextmanager
 from pathlib import Path
 
 import pytest
+
+
+def _restore_payload(path: Path, payload: bytes | None) -> None:
+    for attempt in range(5):
+        try:
+            if payload is None:
+                path.unlink(missing_ok=True)
+                return
+
+            path.parent.mkdir(parents=True, exist_ok=True)
+            tmp = path.with_name(f".{path.name}.restore.{attempt}.tmp")
+            tmp.write_bytes(payload)
+            tmp.replace(path)
+            return
+        except OSError:
+            tmp.unlink(missing_ok=True) if "tmp" in locals() else None
+            if attempt == 4:
+                raise
+            time.sleep(0.2 * (attempt + 1))
 
 
 @contextmanager
@@ -16,11 +36,7 @@ def _preserve_files(paths: list[Path]) -> Iterator[None]:
         yield
     finally:
         for path, payload in snapshots.items():
-            if payload is None:
-                path.unlink(missing_ok=True)
-            else:
-                path.parent.mkdir(parents=True, exist_ok=True)
-                path.write_bytes(payload)
+            _restore_payload(path, payload)
 
 
 def test_build_crpto_journal_package_script_runs() -> None:

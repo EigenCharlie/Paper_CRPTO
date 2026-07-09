@@ -39,3 +39,42 @@ def test_interpret_model_shift_detects_mixed_shift() -> None:
 
     assert out["shift_type"] == "mixed_shift"
     assert out["governance_posture"] == "candidate_gate"
+
+
+def test_interpret_model_shift_detects_predictive_degradation_without_structural_shift() -> None:
+    out = interpret_model_shift(
+        c2st_auc=0.50,
+        c2st_materiality="none",
+        score_psi=0.02,
+        auc_delta=0.08,
+        brier_increase=0.001,
+        calibration_gap_delta=0.001,
+        distribution_warning_ratio=0.0,
+        score_psi_max=0.15,
+        auc_delta_max=0.05,
+        brier_increase_max=0.02,
+        calibration_gap_delta_max=0.02,
+    )
+
+    assert out["shift_type"] == "predictive_degradation"
+    assert out["governance_posture"] == "candidate_gate"
+    assert "Operational metrics dominate" in str(out["pvalue_interpretation"])
+
+
+def test_interpret_model_shift_keeps_stable_cases_on_monitor_posture() -> None:
+    out = interpret_model_shift(
+        c2st_auc=0.50,
+        c2st_materiality="none",
+        score_psi=0.01,
+        auc_delta=0.0,
+        brier_increase=0.0,
+        calibration_gap_delta=0.0,
+        distribution_warning_ratio=0.0,
+        score_psi_max=0.15,
+        auc_delta_max=0.05,
+        brier_increase_max=0.02,
+        calibration_gap_delta_max=0.02,
+    )
+
+    assert out["shift_type"] == "stable"
+    assert out["governance_posture"] == "monitor"

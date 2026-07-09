@@ -1,5 +1,9 @@
 from __future__ import annotations
 
+import json
+import sys
+import types
+
 import numpy as np
 import pytest
 
@@ -7,11 +11,14 @@ import scripts.train_pd_model as pd_train
 from scripts.train_pd_model import (
     _apply_cli_overrides,
     _apply_pd_replay_manifest,
+    _gate_tier,
     _load_training_splits,
     _normalize_sample_size,
     _prepare_training_inputs,
+    _replay_selection_policy,
     _sample_training_splits,
     _select_calibration_from_backtest,
+    _summarize_replayed_trials,
 )
 
 
@@ -219,6 +226,45 @@ def test_resolve_training_features_filters_splits_and_disables_stable_core_in_re
     assert replay_stable_core_meta == {"enabled": False, "excluded_features": []}
 
 
+def test_replay_trial_summary_prioritizes_gate_then_ece_then_auc() -> None:
+    rows = [
+        {
+            "trial_number": 1,
+            "validation_auc": 0.80,
+            "validation_brier": 0.20,
+            "validation_ece": 0.05,
+            "gate_attrs_present": True,
+            "gate_all_pass": False,
+        },
+        {
+            "trial_number": 2,
+            "validation_auc": 0.79,
+            "validation_brier": 0.21,
+            "validation_ece": 0.06,
+            "gate_attrs_present": True,
+            "gate_all_pass": True,
+        },
+        {
+            "trial_number": 3,
+            "validation_auc": 0.90,
+            "validation_brier": 0.19,
+            "validation_ece": 0.01,
+            "gate_attrs_present": False,
+            "gate_all_pass": None,
+        },
+    ]
+
+    summary = _summarize_replayed_trials(rows, prioritize_gate_pass=True)
+
+    assert summary["trial_number"].tolist() == [2, 3, 1]
+    assert summary["gate_tier"].tolist() == [0, 1, 2]
+    assert _gate_tier(True, prioritize_gate_pass=True) == 0
+    assert _gate_tier(None, prioritize_gate_pass=True) == 1
+    assert _gate_tier(False, prioritize_gate_pass=True) == 2
+    assert _gate_tier(False, prioritize_gate_pass=False) == 1
+    assert _replay_selection_policy(True)["rank_order"][0] == "gate_tier(pass->unknown->fail)"
+
+
 def test_load_training_splits_uses_config_paths_and_normalizes(
     monkeypatch: pytest.MonkeyPatch,
 ) -> None:
@@ -342,3 +388,102 @@ def test_prepare_training_inputs_builds_model_ready_frames() -> None:
     assert x_test_cb["grade"].tolist() == ["B", "UNKNOWN"]
     assert x_test_lr.isna().sum().sum() == 0
     assert lr_fill["score"] == x_train_fit_lr["score"].median()
+
+
+def test_evaluate_walk_forward_stage_reports_disabled_without_training(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    def fail_if_called(*args, **kwargs):
+        raise AssertionError("walk-forward evaluator should not run when disabled")
+
+    monkeypatch.setattr(pd_train, "_evaluate_walk_forward_auc", fail_if_called)
+
+    report = pd_train._evaluate_walk_forward_stage(
+        enabled=False,
+        walk_cfg={"n_windows": 5},
+        train=pd_train.pd.DataFrame(),
+        catboost_features=[],
+        categorical_features=[],
+        model_params={},
+    )
+
+    assert report == {
+        "enabled": False,
+        "reason": "disabled_in_config",
+        "n_windows_requested": 5,
+        "n_windows_used": 0,
+        "folds": [],
+    }
+
+
+def test_evaluate_walk_forward_stage_normalizes_config(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    captured: dict[str, object] = {}
+
+    def fake_evaluate(train_df: pd_train.pd.DataFrame, **kwargs):
+        captured["train_rows"] = len(train_df)
+        captured.update(kwargs)
+        return {"enabled": True, "n_windows_used": 1}
+
+    monkeypatch.setattr(pd_train, "_evaluate_walk_forward_auc", fake_evaluate)
+
+    report = pd_train._evaluate_walk_forward_stage(
+        enabled=True,
+        walk_cfg={
+            "n_windows": "4",
+            "min_train_rows": "12",
+            "window_rows": "6",
+            "date_col": "issue_d",
+            "max_rows": "0",
+        },
+        train=pd_train.pd.DataFrame({"x": [1, 2]}),
+        catboost_features=["x"],
+        categorical_features=[],
+        model_params={"depth": 4},
+    )
+
+    assert report == {"enabled": True, "n_windows_used": 1}
+    assert captured["features"] == ["x"]
+    assert captured["target"] == pd_train.TARGET
+    assert captured["params"] == {"depth": 4}
+    assert captured["n_windows"] == 4
+    assert captured["min_train_rows"] == 12
+    assert captured["window_rows"] == 6
+    assert captured["max_rows"] is None
+
+
+def test_export_shap_feature_importance_writes_summary(
+    tmp_path,
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    fake_catboost = types.ModuleType("catboost")
+
+    class FakePool:
+        def __init__(self, frame, cat_features):
+            self.frame = frame
+            self.cat_features = cat_features
+
+    fake_catboost.Pool = FakePool
+    monkeypatch.setitem(sys.modules, "catboost", fake_catboost)
+
+    class FakeModel:
+        def get_feature_importance(self, *, type: str, data: FakePool):
+            assert type == "ShapValues"
+            assert data.cat_features == ["grade"]
+            return np.array([[0.1, 0.4, 0.5], [0.3, -0.2, 0.5]])
+
+    shap_dir = tmp_path / "shap"
+    result = pd_train._export_shap_feature_importance(
+        cb_tuned_model=FakeModel(),
+        X_test_cb=pd_train.pd.DataFrame({"score": [1.0, 2.0], "grade": ["A", "B"]}),
+        categorical_features=["grade"],
+        catboost_features=["score", "grade"],
+        shap_dir=shap_dir,
+    )
+
+    summary = json.loads((shap_dir / "shap_feature_importance.json").read_text(encoding="utf-8"))
+    assert result == {"exported": True, "n_features": 2, "path": str(shap_dir)}
+    assert (shap_dir / "shap_values_test.npz").exists()
+    assert summary["expected_value"] == 0.5
+    assert summary["top_features"][0]["feature"] == "grade"

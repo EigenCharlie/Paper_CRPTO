@@ -17,6 +17,7 @@ from src.utils.script_helpers import (
     parse_percent_series,
     policy_matches,
     resolve_interval_columns,
+    resolve_repo_artifact_path,
     try_load_json,
     write_json,
     write_table,
@@ -75,6 +76,23 @@ def test_artifact_path_without_env(monkeypatch: pytest.MonkeyPatch) -> None:
 def test_artifact_path_with_env(monkeypatch: pytest.MonkeyPatch, tmp_path: Path) -> None:
     monkeypatch.setenv("GPU_REPLAY_ARTIFACT_ROOT", str(tmp_path))
     assert artifact_path("models/x.json") == tmp_path / "models/x.json"
+
+
+def test_resolve_repo_artifact_path_maps_wsl_manifest_path(tmp_path: Path) -> None:
+    root = tmp_path / "Paper_CRPTO"
+    expected = root / "data" / "processed" / "intervals.parquet"
+
+    resolved = resolve_repo_artifact_path(
+        "/mnt/c/Users/carlos/Documents/Paper_CRPTO/data/processed/intervals.parquet",
+        root=root,
+    )
+
+    assert resolved == expected
+
+
+def test_resolve_repo_artifact_path_anchors_relative_path(tmp_path: Path) -> None:
+    root = tmp_path / "repo"
+    assert resolve_repo_artifact_path("models/a.json", root=root) == root / "models" / "a.json"
 
 
 def test_first_existing_prefers_existing(tmp_path: Path) -> None:

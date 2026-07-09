@@ -188,7 +188,7 @@ def _run_cqr(
 
     # MAPIE CQR: pass list [alpha/2, 1-alpha/2, 0.5] in that order
     cqr = ConformalizedQuantileRegressor(
-        estimator=[qreg_lo, qreg_hi, qreg_mid],
+        estimator=cast(Any, [qreg_lo, qreg_hi, qreg_mid]),
         confidence_level=1.0 - alpha,
         prefit=True,
     )

@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import json
 
+import numpy as np
 import pandas as pd
 import pytest
 import yaml
@@ -184,3 +185,57 @@ def test_run_fairness_auto_selects_threshold_and_writes_decision_policy(tmp_path
     assert status["prediction_threshold_source"] == "decision_policy_artifact_auto_selected"
     assert status["decision_policy"]["path"].endswith("fairness_decision_policy.json")
     assert decision_policy["global_threshold"] in [0.35, 0.4, 0.45, 0.5]
+
+
+def test_shap_helpers_detect_categorical_columns_and_fill_missing_values() -> None:
+    class DummyModel:
+        def __init__(self) -> None:
+            self.feature_names_ = ["grade", "purpose", "rate"]
+
+        def get_cat_feature_indices(self) -> list[int]:
+            return [0]
+
+    frame = pd.DataFrame(
+        {
+            "grade": ["A", None, "B"],
+            "purpose": ["debt", "car", None],
+            "rate": [0.1, np.nan, 0.3],
+        }
+    )
+
+    cat_names = fairness_mod._catboost_cat_feature_names(DummyModel(), frame)
+    prepared = fairness_mod._prepare_catboost_shap_frame(frame, cat_names)
+
+    assert cat_names == ["grade", "purpose"]
+    assert prepared.loc[1, "grade"] == "missing"
+    assert prepared.loc[2, "purpose"] == "missing"
+    assert prepared.loc[1, "rate"] == 0.0
+
+
+def test_shap_attribute_result_reports_group_drivers_and_pairwise_diffs() -> None:
+    shap_matrix = np.vstack(
+        [
+            np.tile([3.0, 1.0, 0.5], (10, 1)),
+            np.tile([1.0, 4.0, 0.5], (10, 1)),
+        ]
+    )
+    sample_idx = np.arange(20)
+    groups = {
+        "home_ownership": np.array(["A"] * 10 + ["B"] * 10),
+        "home_ownership__x__grade": np.array(["skip"] * 20),
+    }
+
+    results = fairness_mod._shap_attribute_results(
+        groups,
+        sample_idx=sample_idx,
+        shap_matrix=shap_matrix,
+        feature_names=["dti", "income", "grade"],
+    )
+
+    assert len(results) == 1
+    result = results[0]
+    assert result["attribute"] == "home_ownership"
+    assert result["groups_analyzed"] == ["A", "B"]
+    assert result["top5_per_group"]["A"][0]["feature"] == "dti"
+    assert result["top5_per_group"]["B"][0]["feature"] == "income"
+    assert result["pairwise_feature_diffs"][0]["top_driving_features"][0]["feature"] == "income"

@@ -16,6 +16,7 @@ import subprocess
 from collections import Counter
 from dataclasses import dataclass, field
 from pathlib import Path
+from typing import Any
 
 DEFAULT_SOURCE_DIR = Path("Papers_tesis")
 DEFAULT_AUDIT_PATH = Path("docs/research/papers_tesis_deep_audit_2026-06-06.md")
@@ -59,8 +60,8 @@ class Review:
     tags: tuple[str, ...] = field(default_factory=tuple)
 
 
-def r(**kwargs: object) -> Review:
-    return Review(**kwargs)  # type: ignore[arg-type]
+def r(**kwargs: Any) -> Review:
+    return Review(**kwargs)
 
 
 REVIEWS: dict[str, Review] = {
@@ -1772,6 +1773,225 @@ def markdown_table(
     return "\n".join([header, divider, *body])
 
 
+def _counter_rows(counter: Counter[str], key_field: str) -> list[dict[str, object]]:
+    return [{key_field: key, "n": value} for key, value in sorted(counter.items())]
+
+
+def _section(title: str, *body: str) -> list[str]:
+    return ["", f"## {title}", "", *body]
+
+
+def _decision_groups(rows: list[dict[str, object]]) -> dict[str, list[dict[str, object]]]:
+    return {
+        "promote": [row for row in rows if str(row["decision"]).startswith("promote")],
+        "crpto_appendix": [
+            row
+            for row in rows
+            if str(row["decision"]).startswith(("append_crpto", "append_comparator", "append_tail"))
+        ],
+        "extended": [
+            row
+            for row in rows
+            if "extended" in str(row["decision"]) or "mixed_diagnostic" in str(row["decision"])
+        ],
+        "future": [
+            row
+            for row in rows
+            if "future" in str(row["decision"]) or "candidate" in str(row["decision"])
+        ],
+        "experiments": [
+            row for row in rows if str(row["action_required"]).startswith("experiment_")
+        ],
+    }
+
+
+def _inventory_sections(rows: list[dict[str, object]]) -> list[str]:
+    folder_counts = Counter(str(row["folder"]) for row in rows)
+    decision_counts = Counter(str(row["decision"]) for row in rows)
+    action_counts = Counter(str(row["action_required"]) for row in rows)
+    domain_counts = Counter(str(row["primary_domain"]) for row in rows)
+    return [
+        *_section(
+            "Inventario",
+            markdown_table(
+                [
+                    {"folder": folder, "pdfs": count}
+                    for folder, count in sorted(folder_counts.items())
+                ],
+                ["folder", "pdfs"],
+            ),
+        ),
+        *_section(
+            "Decisiones por destino editorial",
+            markdown_table(_counter_rows(decision_counts, "decision"), ["decision", "n"]),
+        ),
+        *_section(
+            "Acciones requeridas",
+            markdown_table(
+                _counter_rows(action_counts, "action_required"), ["action_required", "n"]
+            ),
+        ),
+        *_section(
+            "Familias conceptuales",
+            markdown_table(_counter_rows(domain_counts, "primary_domain"), ["primary_domain", "n"]),
+        ),
+    ]
+
+
+def _paper_crpto_sections(groups: dict[str, list[dict[str, object]]]) -> list[str]:
+    return [
+        *_section(
+            "Lectura integrada para Paper CRPTO",
+            "El cuerpo de Paper CRPTO debe quedarse en cuatro pilares: conformal risk/control, robust optimization, conformal robust optimization / predict-then-calibrate y contexto Lending Club/DFL como comparador. Las fuentes promovidas al cuerpo son:",
+            "",
+            markdown_table(
+                groups["promote"],
+                ["relative_path", "bib_key", "core_concepts", "crpto_value", "limitations"],
+            ),
+            "",
+            "Las fuentes de appendix o comparador CRPTO deben apoyar selectivamente el selector, SPO+/DFL, CVaR/OCE, CQR y limites de claim:",
+            "",
+            markdown_table(
+                groups["crpto_appendix"],
+                ["relative_path", "bib_key", "decision", "crpto_value", "figures_tables_useful"],
+            ),
+        ),
+        *_section(
+            "Lectura integrada para agenda extendida CRPTO/tesis",
+            "La agenda extendida CRPTO/tesis es el destino correcto para fuentes que fortalecen governance, source/shift robustness, fairness proxy, IFRS9/SICR proxy, DFL ampliado y data-quality/equity. Estas fuentes no reabren el champion CRPTO:",
+            "",
+            markdown_table(
+                groups["extended"],
+                ["relative_path", "decision", "extended_lab_value", "evidence_gate", "stop_rule"],
+            ),
+        ),
+        *_section(
+            "Experimentos evidence-gated",
+            "Esta seccion lista los experimentos ya ejecutados o pendientes bajo regla evidence-gated. Cada fila exige claim target, evidence gate, artifact sink y stop rule; un resultado positivo no cambia el champion CRPTO sin gate editorial separado.",
+            "",
+            markdown_table(
+                groups["experiments"],
+                [
+                    "relative_path",
+                    "action_required",
+                    "implementation_or_experiment",
+                    "evidence_gate",
+                    "artifact_sink",
+                    "stop_rule",
+                ],
+            ),
+        ),
+    ]
+
+
+def _visual_and_matrix_sections(
+    rows: list[dict[str, object]],
+    groups: dict[str, list[dict[str, object]]],
+    curated_visual_rows: list[dict[str, object]],
+) -> list[str]:
+    return [
+        *_section(
+            "Curaduria de figuras/tablas",
+            "El indice de captions no autoriza reproducir figuras ajenas ni convierte resultados externos en evidencia del proyecto. La curaduria siguiente solo define que visuales pueden inspirar tablas, esquemas propios, appendices o respuestas a reviewers.",
+            "",
+            markdown_table(
+                curated_visual_rows,
+                [
+                    "relative_path",
+                    "caption_type",
+                    "caption_index",
+                    "editorial_sink",
+                    "why_useful",
+                    "claim_boundary",
+                ],
+            ),
+        ),
+        *_section(
+            "Future work y stop rules",
+            markdown_table(
+                groups["future"],
+                ["relative_path", "decision", "crpto_value", "extended_lab_value", "stop_rule"],
+            ),
+        ),
+        *_section(
+            "Matriz paper-by-paper",
+            "La tabla siguiente es deliberadamente densa. Cada fila resume concepto, claim, metodo/evidencia, conclusion, figuras/tablas utiles, limitacion y destino editorial. Para auditoria operativa usar el CSV completo.",
+            "",
+            markdown_table(
+                rows,
+                [
+                    "relative_path",
+                    "title",
+                    "status",
+                    "core_concepts",
+                    "key_claims",
+                    "conclusions",
+                    "figures_tables_useful",
+                    "limitations",
+                    "decision",
+                    "action_required",
+                ],
+            ),
+        ),
+    ]
+
+
+def _bibliography_and_closeout_sections(rows: list[dict[str, object]]) -> list[str]:
+    bib_counts = Counter(str(row["bib_status"]) for row in rows)
+    return [
+        *_section(
+            "Control bibliografico",
+            "Regla aplicada: `book/references.bib` se modifica solo cuando una fuente queda citada o se prepara explicitamente para texto Quarto de Paper CRPTO/agenda extendida CRPTO/tesis. Las fuentes `needs_bib_if_cited` permanecen en la matriz sin inflar la bibliografia.",
+            "",
+            markdown_table(_counter_rows(bib_counts, "bib_status"), ["bib_status", "n"]),
+        ),
+        *_section(
+            "Fronteras que permanecen falsas",
+            "- CRPTO no reclama legal fair lending con atributos protegidos directos.",
+            "- CRPTO no implementa IFRS9 contractual.",
+            "- agenda extendida CRPTO/tesis no reclama CATE policy value.",
+            "- agenda extendida CRPTO/tesis no reclama online deployment.",
+            "- agenda extendida CRPTO/tesis no reclama Bellman/DLA exacto.",
+            "- SPO+/DFL puede ganar regret, pero no reemplaza la garantia/auditabilidad CRPTO.",
+        ),
+        *_section(
+            "Cierre",
+            "La auditoria agrega valor como integracion bibliografica y de claims. No crea un nuevo champion, no exige nuevas corridas y no transforma fuentes future-work en evidencia empirica del paper actual.",
+        ),
+    ]
+
+
+def _audit_lines(
+    rows: list[dict[str, object]],
+    matrix_path: Path,
+    caption_path: Path,
+    curated_visual_path: Path,
+    curated_visual_rows: list[dict[str, object]],
+) -> list[str]:
+    groups = _decision_groups(rows)
+    lines = [
+        "# Papers_tesis Deep Audit - 2026-06-06",
+        "",
+        "## Resumen ejecutivo",
+        "",
+        f"Esta auditoria cubre `61` PDFs locales en `{DEFAULT_SOURCE_DIR}` y fue generada para el corte `{REPORT_DATE}` con `scripts/build_papers_tesis_deep_audit.py`.",
+        "",
+        "La decision central no cambia: **Paper CRPTO conserva el champion oficial** y la literatura nueva se usa para reforzar teoria, related work, appendices y limites de claim. La agenda extendida CRPTO/tesis absorbe el material que si pertenece al laboratorio vivo: source/shift conformal, utility-directed conformal, tail risk, DFL, IFRS9 proxy, data/noise/equity y governance.",
+        "",
+        "Artefactos generados:",
+        "",
+        f"- Matriz fuente: `{matrix_path}`",
+        f"- Indice compacto de captions: `{caption_path}`",
+        f"- Curaduria de visual sinks: `{curated_visual_path}`",
+    ]
+    lines.extend(_inventory_sections(rows))
+    lines.extend(_paper_crpto_sections(groups))
+    lines.extend(_visual_and_matrix_sections(rows, groups, curated_visual_rows))
+    lines.extend(_bibliography_and_closeout_sections(rows))
+    lines.append("")
+    return lines
+
+
 def write_audit(
     path: Path,
     rows: list[dict[str, object]],
@@ -1781,182 +2001,7 @@ def write_audit(
     curated_visual_rows: list[dict[str, object]],
 ) -> None:
     path.parent.mkdir(parents=True, exist_ok=True)
-    folder_counts = Counter(str(row["folder"]) for row in rows)
-    decision_counts = Counter(str(row["decision"]) for row in rows)
-    action_counts = Counter(str(row["action_required"]) for row in rows)
-    domain_counts = Counter(str(row["primary_domain"]) for row in rows)
-
-    promote = [row for row in rows if str(row["decision"]).startswith("promote")]
-    crpto_appendix = [
-        row
-        for row in rows
-        if str(row["decision"]).startswith(("append_crpto", "append_comparator", "append_tail"))
-    ]
-    extended = [
-        row
-        for row in rows
-        if "extended" in str(row["decision"]) or "mixed_diagnostic" in str(row["decision"])
-    ]
-    future = [
-        row
-        for row in rows
-        if "future" in str(row["decision"]) or "candidate" in str(row["decision"])
-    ]
-
-    lines = [
-        "# Papers_tesis Deep Audit - 2026-06-06",
-        "",
-        "## Resumen ejecutivo",
-        "",
-        f"Esta auditoría cubre `61` PDFs locales en `{DEFAULT_SOURCE_DIR}` y fue generada para el corte `{REPORT_DATE}` con `scripts/build_papers_tesis_deep_audit.py`.",
-        "",
-        "La decisión central no cambia: **Paper CRPTO conserva el champion oficial** y la literatura nueva se usa para reforzar teoría, related work, appendices y límites de claim. La agenda extendida CRPTO/tesis absorbe el material que sí pertenece al laboratorio vivo: source/shift conformal, utility-directed conformal, tail risk, DFL, IFRS9 proxy, data/noise/equity y governance.",
-        "",
-        "Artefactos generados:",
-        "",
-        f"- Matriz fuente: `{matrix_path}`",
-        f"- Índice compacto de captions: `{caption_path}`",
-        f"- Curaduría de visual sinks: `{curated_visual_path}`",
-        "",
-        "## Inventario",
-        "",
-        markdown_table(
-            [{"folder": folder, "pdfs": count} for folder, count in sorted(folder_counts.items())],
-            ["folder", "pdfs"],
-        ),
-        "",
-        "## Decisiones por destino editorial",
-        "",
-        markdown_table(
-            [{"decision": key, "n": value} for key, value in sorted(decision_counts.items())],
-            ["decision", "n"],
-        ),
-        "",
-        "## Acciones requeridas",
-        "",
-        markdown_table(
-            [{"action_required": key, "n": value} for key, value in sorted(action_counts.items())],
-            ["action_required", "n"],
-        ),
-        "",
-        "## Familias conceptuales",
-        "",
-        markdown_table(
-            [{"primary_domain": key, "n": value} for key, value in sorted(domain_counts.items())],
-            ["primary_domain", "n"],
-        ),
-        "",
-        "## Lectura integrada para Paper CRPTO",
-        "",
-        "El cuerpo de Paper CRPTO debe quedarse en cuatro pilares: conformal risk/control, robust optimization, conformal robust optimization / predict-then-calibrate y contexto Lending Club/DFL como comparador. Las fuentes promovidas al cuerpo son:",
-        "",
-        markdown_table(
-            promote, ["relative_path", "bib_key", "core_concepts", "crpto_value", "limitations"]
-        ),
-        "",
-        "Las fuentes de appendix o comparador CRPTO deben apoyar selectivamente el selector, SPO+/DFL, CVaR/OCE, CQR y límites de claim:",
-        "",
-        markdown_table(
-            crpto_appendix,
-            ["relative_path", "bib_key", "decision", "crpto_value", "figures_tables_useful"],
-        ),
-        "",
-        "## Lectura integrada para agenda extendida CRPTO/tesis",
-        "",
-        "La agenda extendida CRPTO/tesis es el destino correcto para fuentes que fortalecen governance, source/shift robustness, fairness proxy, IFRS9/SICR proxy, DFL ampliado y data-quality/equity. Estas fuentes no reabren el champion CRPTO:",
-        "",
-        markdown_table(
-            extended,
-            ["relative_path", "decision", "extended_lab_value", "evidence_gate", "stop_rule"],
-        ),
-        "",
-        "## Experimentos evidence-gated",
-        "",
-        "Esta sección lista los experimentos ya ejecutados o pendientes bajo regla evidence-gated. Cada fila exige claim target, evidence gate, artifact sink y stop rule; un resultado positivo no cambia el champion CRPTO sin gate editorial separado.",
-        "",
-        markdown_table(
-            [row for row in rows if str(row["action_required"]).startswith("experiment_")],
-            [
-                "relative_path",
-                "action_required",
-                "implementation_or_experiment",
-                "evidence_gate",
-                "artifact_sink",
-                "stop_rule",
-            ],
-        ),
-        "",
-        "## Curaduría de figuras/tablas",
-        "",
-        "El índice de captions no autoriza reproducir figuras ajenas ni convierte resultados externos en evidencia del proyecto. La curaduría siguiente solo define qué visuales pueden inspirar tablas, esquemas propios, appendices o respuestas a reviewers.",
-        "",
-        markdown_table(
-            curated_visual_rows,
-            [
-                "relative_path",
-                "caption_type",
-                "caption_index",
-                "editorial_sink",
-                "why_useful",
-                "claim_boundary",
-            ],
-        ),
-        "",
-        "## Future work y stop rules",
-        "",
-        markdown_table(
-            future, ["relative_path", "decision", "crpto_value", "extended_lab_value", "stop_rule"]
-        ),
-        "",
-        "## Matriz paper-by-paper",
-        "",
-        "La tabla siguiente es deliberadamente densa. Cada fila resume concepto, claim, método/evidencia, conclusión, figuras/tablas útiles, limitación y destino editorial. Para auditoría operativa usar el CSV completo.",
-        "",
-        markdown_table(
-            rows,
-            [
-                "relative_path",
-                "title",
-                "status",
-                "core_concepts",
-                "key_claims",
-                "conclusions",
-                "figures_tables_useful",
-                "limitations",
-                "decision",
-                "action_required",
-            ],
-        ),
-        "",
-        "## Control bibliográfico",
-        "",
-        "Regla aplicada: `book/references.bib` se modifica solo cuando una fuente queda citada o se prepara explícitamente para texto Quarto de Paper CRPTO/agenda extendida CRPTO/tesis. Las fuentes `needs_bib_if_cited` permanecen en la matriz sin inflar la bibliografía.",
-        "",
-        markdown_table(
-            [
-                {
-                    "bib_status": key,
-                    "n": value,
-                }
-                for key, value in sorted(Counter(str(row["bib_status"]) for row in rows).items())
-            ],
-            ["bib_status", "n"],
-        ),
-        "",
-        "## Fronteras que permanecen falsas",
-        "",
-        "- CRPTO no reclama legal fair lending con atributos protegidos directos.",
-        "- CRPTO no implementa IFRS9 contractual.",
-        "- agenda extendida CRPTO/tesis no reclama CATE policy value.",
-        "- agenda extendida CRPTO/tesis no reclama online deployment.",
-        "- agenda extendida CRPTO/tesis no reclama Bellman/DLA exacto.",
-        "- SPO+/DFL puede ganar regret, pero no reemplaza la garantía/auditabilidad CRPTO.",
-        "",
-        "## Cierre",
-        "",
-        "La auditoría agrega valor como integración bibliográfica y de claims. No crea un nuevo champion, no exige nuevas corridas y no transforma fuentes future-work en evidencia empírica del paper actual.",
-        "",
-    ]
+    lines = _audit_lines(rows, matrix_path, caption_path, curated_visual_path, curated_visual_rows)
     path.write_text("\n".join(lines), encoding="utf-8")
 
 

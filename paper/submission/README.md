@@ -60,11 +60,12 @@ INFORMS class (`\documentclass[ijds,dblanonrev]{informs4}`). The narrative
 source remains `paper/CRPTO_ijds.qmd`, but the official `.tex` is now a
 manually compacted IJDS-template surface. After freeze, do **not** regenerate it
 mechanically from QMD; port substantive claim changes deliberately, then rebuild
-and recheck the 26-page official PDF. The synchronized submission surface should
+and recheck the official-template PDF. The synchronized submission surface should
 carry the central IJDS body: title, abstract,
 keywords, core sections, the journal pipeline Figure 1, the bound-claim stack,
-the A35 finite-grid frontier, the A36--A39 selected-allocation audits in the
-supplement, the regret-auditability comparison, plus the core, exact-certificate,
+the A35 policy-aware finite-grid frontier, the A36--A39 selected-allocation
+audits and A40 matched point-PD baseline in the supplement, the
+regret-auditability comparison, plus the core, exact-certificate,
 funded-set audit and regret tables. The
 `informs2014.bst` + `../../book/references.bib` bibliography wiring is already
 present. Journal figures use PDF/vector exports from `reports/crpto/figures/`
@@ -77,11 +78,11 @@ PDF crop box cuts the right edge under `informs4`.
 > `informs4.cls`, `informs2014.bst`, template PDFs, `.sty` files, or generated
 > LaTeX build artifacts.
 
-Current local build state (verified 2026-07-07): TinyTeX/TeX Live 2026,
+Current local build state (verified 2026-07-09): TinyTeX/TeX Live 2026,
 `pdflatex`, `bibtex`, and the `listingsutf8` TeX package compile
-`CRPTO_ijds_submission.tex` to a 26-page official-template PDF. Section 9
-(Conclusion) and References both start on page 22, so the body remains inside
-the IJDS 25-page initial-submission budget when references are excluded. The
+`CRPTO_ijds_submission.tex` to a 28-page official-template PDF. References
+start on page 24, so the body remains inside the IJDS 25-page
+initial-submission budget when references are excluded. The
 only LaTeX log warnings left are a small `\maketitle` overfull from the
 `informs4` anonymous title block and font-size / underfull paragraph warnings,
 visually acceptable unless the final ScholarOne proof shows a layout issue.
@@ -175,10 +176,10 @@ These protocols are compatible but not interchangeable.
 - Use `SCHOLARONE_FINAL_CHECKLIST.md` while uploading and reviewing the generated
   proof.
 - Recheck the official-template page budget if the body changes materially. The
-  current local official-template build is 26 pages total; Section 9 and
-  References start on page 22, keeping the body within the 25-page limit when
-  references are excluded.
-- Keep A3--A39 in the online supplement unless a reviewer-facing argument needs
+  current local official-template build is 28 pages total; References start on
+  page 24, keeping the body within the 25-page limit when references are
+  excluded.
+- Keep A3--A40 in the online supplement unless a reviewer-facing argument needs
   one compact table in the body.
 - Preserve CRPTO as the coverage/auditability method and SPO+ as the low-regret
   comparator.
@@ -233,7 +234,7 @@ updates the template.
 
 4. **Recount the official-template page budget** and demote body floats to the
    supplement only if the body exceeds 25 pages excluding references. The local
-   official-template build is currently 26 pages total; Section 9 and References
-   start on page 22. The Chrome-print body preview is only a verification proxy.
+   official-template build is currently 28 pages total; References start on
+   page 24. The Chrome-print body preview is only a verification proxy.
 5. **Verify anonymity** against the checklist above, then upload the body PDF and
    submit the title page separately.

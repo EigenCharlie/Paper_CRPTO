@@ -1,7 +1,7 @@
 """Drift guard for the promoted pool93 IJDS body claim.
 
 The paper body point (A35 "Body/default balanced point") lives in the pool93
-governance sidecars and the A35-A39 tables, all generated outside the DVC DAG
+governance sidecars and the A35-A40 tables, all generated outside the DVC DAG
 by the champion-reopen experiment scripts. The IJDS manuscript embeds those
 numbers as hand-written prose/Markdown, so a regenerated CSV or a retyped
 figure can silently desync the submission from its evidence. These tests lock
@@ -27,6 +27,7 @@ TABLES = REPO / "reports" / "crpto" / "tables"
 
 PAPER = REPO / "paper" / "CRPTO_ijds.qmd"
 SUPPLEMENT = REPO / "paper" / "supplement_ijds.qmd"
+SUBMISSION = REPO / "paper" / "submission" / "CRPTO_ijds_submission.tex"
 
 TERMINAL_GOVERNANCE = (
     REPO
@@ -42,10 +43,11 @@ CONSOLIDATED_GOVERNANCE = (
     / "models"
     / "experiments"
     / "champion_reopen"
-    / "champion-reopen-2026-06-19__pool93__ijds-claim-consolidated-definitive"
+    / "champion-reopen-2026-06-19__pool93__ijds-certificate-semantics-v2"
     / "portfolio"
     / "pool93_ijds_consolidated_governance.json"
 )
+POINT_BASELINE_AUDIT = CONSOLIDATED_GOVERNANCE.with_name("pool93_point_pd_baseline_audit.json")
 PROMOTION = REPO / "models" / "final_project_promotion.json"
 MANIFEST = REPO / "EXTRACTION_MANIFEST.json"
 
@@ -55,6 +57,7 @@ POOL93_TABLE_STEMS = (
     "crpto_tableA37_pool93_body_tail_risk",
     "crpto_tableA38_pool93_body_cluster_bound_audit",
     "crpto_tableA39_pool93_body_bootstrap_metrics",
+    "crpto_tableA40_pool93_point_baseline",
 )
 
 TERMINAL_RUN_TAG = "champion-reopen-2026-06-19__pool93__ijds-claim-bound-terminal"
@@ -63,9 +66,11 @@ REBASELINE_RUN_TAG = "ijds-rebaseline-2026-06-07"
 EXPECTED_BODY = {
     "return": 184832.475845,
     "Gamma_CP": 0.162616,
+    "Gamma_internalized": 0.089032,
+    "Gamma_residual": 0.073584,
     "V": 0.03535,
-    "Markov_cap": 0.34508374,
-    "endpoint_budget_upper": 0.24508374,
+    "Markov_threshold": 0.345084,
+    "endpoint_budget": 0.245084,
     "risk_tolerance": 0.1715,
     "gamma": 0.5475,
     "uncertainty_aversion": 0.05,
@@ -105,6 +110,10 @@ def _text(path: Path) -> str:
     return path.read_text(encoding="utf-8")
 
 
+def _normalized_manuscript_text(path: Path) -> str:
+    return _text(path).replace("{,}", ",").replace(r"\$", "$")
+
+
 def _body_row_a35() -> dict[str, str]:
     rows = _read_rows("crpto_tableA35_pool93_ijds_frontier.csv")
     matches = [r for r in rows if r["role"] == "Body/default balanced point"]
@@ -118,11 +127,13 @@ def test_pool93_claim_governance_matches_expected_body_point() -> None:
     body = consolidated["selected_candidates"]["paper_body"]
     assert body["return"] == pytest.approx(EXPECTED_BODY["return"], abs=1e-6)
     assert body["Gamma_CP"] == pytest.approx(EXPECTED_BODY["Gamma_CP"], abs=1e-9)
-    assert body["V"] == pytest.approx(EXPECTED_BODY["V"], abs=1e-9)
-    assert body["Markov_cap"] == pytest.approx(EXPECTED_BODY["Markov_cap"], abs=1e-9)
-    assert body["endpoint_budget_upper"] == pytest.approx(
-        EXPECTED_BODY["endpoint_budget_upper"], abs=1e-9
+    assert body["Gamma_internalized"] == pytest.approx(
+        EXPECTED_BODY["Gamma_internalized"], abs=1e-9
     )
+    assert body["Gamma_residual"] == pytest.approx(EXPECTED_BODY["Gamma_residual"], abs=1e-9)
+    assert body["V"] == pytest.approx(EXPECTED_BODY["V"], abs=1e-9)
+    assert body["Markov_threshold"] == pytest.approx(EXPECTED_BODY["Markov_threshold"], abs=1e-9)
+    assert body["endpoint_budget"] == pytest.approx(EXPECTED_BODY["endpoint_budget"], abs=1e-9)
     assert body["risk_tolerance"] == EXPECTED_BODY["risk_tolerance"]
     assert body["gamma"] == EXPECTED_BODY["gamma"]
     assert body["uncertainty_aversion"] == EXPECTED_BODY["uncertainty_aversion"]
@@ -138,7 +149,10 @@ def test_pool93_claim_governance_matches_expected_body_point() -> None:
     assert float(row["realized_return"]) == pytest.approx(body["return"], abs=1e-6)
     assert float(row["Gamma_CP_alpha01"]) == pytest.approx(body["Gamma_CP"], abs=1e-9)
     assert float(row["V_alpha01"]) == pytest.approx(body["V"], abs=1e-9)
-    assert float(row["Markov_cap_alpha01"]) == pytest.approx(body["Markov_cap"], abs=1e-9)
+    assert float(row["Gamma_residual_alpha01"]) == pytest.approx(body["Gamma_residual"], abs=1e-9)
+    assert float(row["Markov_threshold_alpha01"]) == pytest.approx(
+        body["Markov_threshold"], abs=1e-9
+    )
     assert row["alpha_grid_pass"] == body["alpha_pass"]
 
 
@@ -156,7 +170,7 @@ def test_pool93_consolidated_governance_frontier_counts() -> None:
 
 
 def test_pool93_tables_exist() -> None:
-    """A35-A39 evidence tables exist in both CSV and TEX form."""
+    """A35-A40 evidence tables exist in both CSV and TEX form."""
     missing = [
         f"{stem}.{ext}"
         for stem in POOL93_TABLE_STEMS
@@ -169,13 +183,14 @@ def test_pool93_tables_exist() -> None:
 def test_pool93_paper_anchors_match_csvs() -> None:
     """Body-claim numbers printed in the paper surfaces derive from A35/A39."""
     row = _body_row_a35()
-    budget = float(row["endpoint_budget_upper_alpha01"])
+    budget = float(row["endpoint_budget_alpha01"])
     deterministic_bound = budget + float(row["V_alpha01"])
     paper_anchors = [
         f"${float(row['realized_return']):,.2f}",
         f"{float(row['V_alpha01']):.6f}",
         f"{float(row['Gamma_CP_alpha01']):.6f}",
-        f"{float(row['Markov_cap_alpha01']):.6f}",
+        f"{float(row['Gamma_residual_alpha01']):.6f}",
+        f"{float(row['Markov_threshold_alpha01']):.6f}",
         f"{budget:.6f}",
         f"{deterministic_bound:.6f}",
     ]
@@ -195,7 +210,35 @@ def test_pool93_paper_anchors_match_csvs() -> None:
     missing.extend(
         f"{a} missing in {SUPPLEMENT.name}" for a in supplement_anchors if a not in supplement_text
     )
+    submission_text = _normalized_manuscript_text(SUBMISSION)
+    missing.extend(
+        f"{a} missing in {SUBMISSION.name}" for a in paper_anchors if a not in submission_text
+    )
     assert not missing, "pool93 body-claim drift:\n" + "\n".join(missing)
+
+
+def test_pool93_matched_point_baseline_agrees_across_surfaces() -> None:
+    """A40 audit, table, body, supplement, and submission share one contrast."""
+    audit = _load_json(POINT_BASELINE_AUDIT)
+    table = {row["policy"]: row for row in _read_rows("crpto_tableA40_pool93_point_baseline.csv")}
+    point = audit["point_pd_baseline"]
+    selected = audit["selected_crpto"]
+    contrasts = audit["contrasts"]
+
+    assert float(table["Point-PD two-stage LP"]["realized_return"]) == pytest.approx(
+        point["realized_return"], abs=1e-6
+    )
+    assert float(table["Selected CRPTO"]["realized_return"]) == pytest.approx(
+        selected["realized_return"], abs=1e-6
+    )
+    assert contrasts["realized_return_cost_pct"] == pytest.approx(5.8749883793)
+    assert contrasts["weighted_default_rate_reduction"] == pytest.approx(0.08305)
+    assert contrasts["markov_threshold_reduction"] == pytest.approx(0.4354954304)
+
+    anchors = ("196,369.14", "5.875", "8.305", "43.55")
+    for surface in (PAPER, SUPPLEMENT, SUBMISSION):
+        text = _normalized_manuscript_text(surface)
+        assert all(anchor in text for anchor in anchors), surface
 
 
 def test_pool93_two_tag_scheme_is_coherent() -> None:
@@ -224,7 +267,12 @@ def test_pool93_manifest_block_agrees() -> None:
     assert point["realized_total_return"] == pytest.approx(body["return"], abs=1e-6)
     assert point["alpha01_gamma_cp"] == pytest.approx(body["Gamma_CP"], abs=1e-9)
     assert point["alpha01_weighted_miscoverage_V"] == pytest.approx(body["V"], abs=1e-9)
-    assert point["markov_cap_alpha01"] == pytest.approx(body["Markov_cap"], abs=1e-9)
+    assert point["alpha01_gamma_internalized"] == pytest.approx(
+        body["Gamma_internalized"], abs=1e-9
+    )
+    assert point["alpha01_gamma_residual"] == pytest.approx(body["Gamma_residual"], abs=1e-9)
+    assert point["endpoint_budget_alpha01"] == pytest.approx(body["endpoint_budget"], abs=1e-9)
+    assert point["markov_threshold_alpha01"] == pytest.approx(body["Markov_threshold"], abs=1e-9)
     assert point["declared_return_floor"] == EXPECTED_FLOOR
     assert (
         block["frontier_counts"]["deduped_semantic_policies"]

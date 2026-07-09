@@ -797,7 +797,8 @@ def save_feature_artifacts(
         feature_config=feature_config,
     )
     atomic_write_parquet(manifest, out_dir / "feature_manifest_v2.parquet", index=False)
-    atomic_write_text(
-        out_dir / "feature_manifest_v2.json", manifest.to_json(orient="records", indent=2)
-    )
+    manifest_json = manifest.to_json(orient="records", indent=2)
+    if manifest_json is None:
+        raise RuntimeError("pandas returned no feature manifest JSON payload")
+    atomic_write_text(out_dir / "feature_manifest_v2.json", manifest_json)
     logger.info("Saved canonical feature artifacts to {}", out_dir)

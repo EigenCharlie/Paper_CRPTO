@@ -310,6 +310,15 @@ class GateResult:
     details: dict[str, Any]
 
 
+@dataclass
+class StatusMetadataObservation:
+    row: dict[str, Any]
+    run_tag: str | None
+    generated_at: datetime | None
+    missing_metadata: bool
+    mismatched_run_tag: bool
+
+
 def _load_fairness_policy_contract(config_path: Path = FAIRNESS_POLICY_PATH) -> dict[str, Any]:
     """Return fairness business threshold contract from policy config."""
     if not config_path.exists():
@@ -358,9 +367,7 @@ def _parse_iso_datetime(value: Any) -> datetime | None:
         return None
 
 
-def _collect_status_metadata(
-    cur_metrics: dict[str, Any], *, expected_run_tag: str
-) -> dict[str, Any]:
+def _status_metadata_sources(cur_metrics: dict[str, Any]) -> dict[str, Any]:
     sources = {
         "reports/dvc/metrics_summary.json": cur_metrics.get("dvc_metrics_meta", {}),
         "data/processed/pipeline_summary.json": cur_metrics.get("pipeline_summary", {}),
@@ -379,80 +386,140 @@ def _collect_status_metadata(
     for artifact_name, payload in optional_sources.items():
         if isinstance(payload, dict) and payload:
             sources[artifact_name] = payload
-    rows: list[dict[str, Any]] = []
-    run_tags: list[str] = []
-    generated_times: list[datetime] = []
-    missing_metadata_artifacts: list[str] = []
-    mismatched_run_tag_artifacts: list[str] = []
+    return sources
 
-    for artifact_name, payload in sources.items():
-        payload = payload if isinstance(payload, dict) else {}
-        schema_version = payload.get("schema_version")
-        generated_at_utc = payload.get("generated_at_utc")
-        run_tag = payload.get("run_tag")
-        missing_fields = [
-            key
-            for key, value in {
-                "schema_version": schema_version,
-                "generated_at_utc": generated_at_utc,
-                "run_tag": run_tag,
-            }.items()
-            if value in (None, "", [])
-        ]
-        parsed_dt = _parse_iso_datetime(generated_at_utc)
-        if run_tag not in (None, "", []):
-            run_tags.append(str(run_tag))
-        if parsed_dt is not None:
-            generated_times.append(parsed_dt)
-        if missing_fields:
-            missing_metadata_artifacts.append(artifact_name)
-        if run_tag not in (None, "", []) and str(run_tag) != expected_run_tag:
-            mismatched_run_tag_artifacts.append(artifact_name)
-        rows.append(
-            {
-                "artifact": artifact_name,
-                "schema_version": schema_version,
-                "generated_at_utc": generated_at_utc,
-                "run_tag": run_tag,
-                "missing_metadata_fields": missing_fields,
-            }
-        )
 
+def _missing_status_fields(
+    *,
+    schema_version: Any,
+    generated_at_utc: Any,
+    run_tag: Any,
+) -> list[str]:
+    return [
+        key
+        for key, value in {
+            "schema_version": schema_version,
+            "generated_at_utc": generated_at_utc,
+            "run_tag": run_tag,
+        }.items()
+        if value in (None, "", [])
+    ]
+
+
+def _status_metadata_observation(
+    artifact_name: str,
+    payload: Any,
+    *,
+    expected_run_tag: str,
+) -> StatusMetadataObservation:
+    payload = payload if isinstance(payload, dict) else {}
+    schema_version = payload.get("schema_version")
+    generated_at_utc = payload.get("generated_at_utc")
+    run_tag = payload.get("run_tag")
+    missing_fields = _missing_status_fields(
+        schema_version=schema_version,
+        generated_at_utc=generated_at_utc,
+        run_tag=run_tag,
+    )
+    run_tag_text = None if run_tag in (None, "", []) else str(run_tag)
+    return StatusMetadataObservation(
+        row={
+            "artifact": artifact_name,
+            "schema_version": schema_version,
+            "generated_at_utc": generated_at_utc,
+            "run_tag": run_tag,
+            "missing_metadata_fields": missing_fields,
+        },
+        run_tag=run_tag_text,
+        generated_at=_parse_iso_datetime(generated_at_utc),
+        missing_metadata=bool(missing_fields),
+        mismatched_run_tag=run_tag_text is not None and run_tag_text != expected_run_tag,
+    )
+
+
+def _timestamp_skew_seconds(generated_times: list[datetime]) -> float | None:
+    if len(generated_times) < 2:
+        return None
+    return float((max(generated_times) - min(generated_times)).total_seconds())
+
+
+def _run_tag_coherence(
+    *,
+    run_tags: list[str],
+    mismatched_artifacts: list[str],
+    expected_run_tag: str,
+) -> dict[str, Any]:
     unique_run_tags = sorted(set(run_tags))
     run_tag_consistent = len(unique_run_tags) == 1
     run_tag_matches_expected = run_tag_consistent and unique_run_tags == [expected_run_tag]
-    timestamp_skew_seconds = None
-    if len(generated_times) >= 2:
-        timestamp_skew_seconds = float(
-            (max(generated_times) - min(generated_times)).total_seconds()
+    non_causal_mismatches = [
+        artifact for artifact in mismatched_artifacts if artifact not in _CAUSAL_INSIGHTS_ARTIFACTS
+    ]
+    causal_only_mismatch = bool(mismatched_artifacts) and len(non_causal_mismatches) == 0
+    return {
+        "run_tags_observed": unique_run_tags,
+        "run_tag_consistent": run_tag_consistent,
+        "run_tag_matches_expected": run_tag_matches_expected,
+        "run_tag_matches_expected_operational": run_tag_matches_expected or causal_only_mismatch,
+        "causal_only_mismatch": causal_only_mismatch,
+        "non_causal_mismatched_run_tag_artifacts": non_causal_mismatches,
+    }
+
+
+def _collect_status_metadata(
+    cur_metrics: dict[str, Any], *, expected_run_tag: str
+) -> dict[str, Any]:
+    observations = [
+        _status_metadata_observation(
+            artifact_name,
+            payload,
+            expected_run_tag=expected_run_tag,
         )
+        for artifact_name, payload in _status_metadata_sources(cur_metrics).items()
+    ]
+    rows = [observation.row for observation in observations]
+    run_tags = [
+        observation.run_tag for observation in observations if observation.run_tag is not None
+    ]
+    generated_times = [
+        observation.generated_at
+        for observation in observations
+        if observation.generated_at is not None
+    ]
+    missing_metadata_artifacts = [
+        str(observation.row["artifact"])
+        for observation in observations
+        if observation.missing_metadata
+    ]
+    mismatched_run_tag_artifacts = [
+        str(observation.row["artifact"])
+        for observation in observations
+        if observation.mismatched_run_tag
+    ]
+
+    tag_coherence = _run_tag_coherence(
+        run_tags=run_tags,
+        mismatched_artifacts=mismatched_run_tag_artifacts,
+        expected_run_tag=expected_run_tag,
+    )
+    timestamp_skew_seconds = _timestamp_skew_seconds(generated_times)
     timestamp_coherent = timestamp_skew_seconds is None or timestamp_skew_seconds <= float(
         COHERENCE_TIMESTAMP_MAX_SKEW_SECONDS
     )
     all_have_metadata = len(missing_metadata_artifacts) == 0
-
-    # Allow mismatches that are exclusively causal/CATE insights_only artifacts —
-    # these are documented as not-regenerated in every run by design.
-    non_causal_mismatches = [
-        a for a in mismatched_run_tag_artifacts if a not in _CAUSAL_INSIGHTS_ARTIFACTS
-    ]
-    causal_only_mismatch = bool(mismatched_run_tag_artifacts) and len(non_causal_mismatches) == 0
-    run_tag_matches_expected_operational = run_tag_matches_expected or causal_only_mismatch
-
-    passed = bool(all_have_metadata and run_tag_matches_expected_operational and timestamp_coherent)
+    passed = bool(
+        all_have_metadata
+        and tag_coherence["run_tag_matches_expected_operational"]
+        and timestamp_coherent
+    )
 
     return {
         "expected_run_tag": expected_run_tag,
         "critical_artifacts": rows,
         "all_have_metadata": all_have_metadata,
         "missing_metadata_artifacts": missing_metadata_artifacts,
-        "run_tags_observed": unique_run_tags,
-        "run_tag_consistent": run_tag_consistent,
-        "run_tag_matches_expected": run_tag_matches_expected,
-        "run_tag_matches_expected_operational": run_tag_matches_expected_operational,
-        "causal_only_mismatch": causal_only_mismatch,
+        **tag_coherence,
         "mismatched_run_tag_artifacts": mismatched_run_tag_artifacts,
-        "non_causal_mismatched_run_tag_artifacts": non_causal_mismatches,
         "timestamp_skew_seconds": timestamp_skew_seconds,
         "timestamp_coherent": bool(timestamp_coherent),
         "timestamp_max_skew_seconds": int(COHERENCE_TIMESTAMP_MAX_SKEW_SECONDS),
@@ -661,43 +728,104 @@ def _gate_conformal(base: dict[str, Any], cur: dict[str, Any]) -> GateResult:
     )
 
 
+def _ab_total_returns(status: dict[str, Any]) -> tuple[float, float]:
+    return (
+        _safe_float((status.get("metrics_a") or {}).get("total_return")),
+        _safe_float((status.get("metrics_b") or {}).get("total_return")),
+    )
+
+
+def _ab_current_no_regression(
+    status: dict[str, Any],
+    control_return: float,
+    robust_return: float,
+) -> tuple[bool, float, float, dict[str, Any]]:
+    no_reg = (
+        status.get("no_regression", {}) if isinstance(status.get("no_regression"), dict) else {}
+    )
+    cross_gate = (
+        status.get("cross_scenario_gate", {})
+        if isinstance(status.get("cross_scenario_gate"), dict)
+        else {}
+    )
+    diff = _safe_float(
+        no_reg.get("diff_total_return"),
+        default=(
+            robust_return - control_return
+            if np.isfinite(control_return) and np.isfinite(robust_return)
+            else float("nan")
+        ),
+    )
+    tolerance = _safe_float(
+        no_reg.get("tolerance_total_return"),
+        default=(abs(control_return) * 0.05 if np.isfinite(control_return) else float("nan")),
+    )
+    passed = (
+        bool(no_reg.get("passed"))
+        if "passed" in no_reg
+        else (np.isnan(diff) or np.isnan(tolerance) or (diff >= -tolerance))
+    )
+    if str(status.get("decision_scenario", "")).strip() == "selective_ambiguity_defer" and bool(
+        cross_gate.get("passed", False)
+    ):
+        passed = True
+    return bool(passed), float(diff), float(tolerance), cross_gate
+
+
+def _ab_baseline_checks(
+    *,
+    baseline_control_return: float,
+    baseline_robust_return: float,
+    current_control_return: float,
+    current_robust_return: float,
+    current_diff: float,
+) -> tuple[dict[str, bool], float]:
+    baseline_diff = (
+        baseline_robust_return - baseline_control_return
+        if np.isfinite(baseline_control_return) and np.isfinite(baseline_robust_return)
+        else float("nan")
+    )
+    baseline_tol = (
+        abs(baseline_control_return) * 0.05
+        if np.isfinite(baseline_control_return)
+        else float("nan")
+    )
+    return (
+        {
+            "control_vs_baseline_ok": bool(
+                np.isnan(baseline_control_return)
+                or np.isnan(current_control_return)
+                or (current_control_return >= baseline_control_return - baseline_tol)
+            ),
+            "robust_vs_baseline_ok": bool(
+                np.isnan(baseline_robust_return)
+                or np.isnan(current_robust_return)
+                or (current_robust_return >= baseline_robust_return - baseline_tol)
+            ),
+            "gap_vs_baseline_ok": bool(
+                np.isnan(baseline_diff)
+                or np.isnan(current_diff)
+                or (current_diff >= baseline_diff - baseline_tol)
+            ),
+        },
+        float(baseline_diff),
+    )
+
+
 def _gate_ab_no_regression(base: dict[str, Any], cur: dict[str, Any]) -> GateResult:
     b = base.get("ab_simulation_status", {})
     c = cur.get("ab_simulation_status", {})
 
-    b_a = _safe_float((b.get("metrics_a") or {}).get("total_return"))
-    b_b = _safe_float((b.get("metrics_b") or {}).get("total_return"))
-    c_a = _safe_float((c.get("metrics_a") or {}).get("total_return"))
-    c_b = _safe_float((c.get("metrics_b") or {}).get("total_return"))
-
-    no_reg = c.get("no_regression", {}) if isinstance(c.get("no_regression"), dict) else {}
-    cross_gate = (
-        c.get("cross_scenario_gate", {}) if isinstance(c.get("cross_scenario_gate"), dict) else {}
+    b_a, b_b = _ab_total_returns(b)
+    c_a, c_b = _ab_total_returns(c)
+    self_no_reg_ok, c_diff, c_tol, cross_gate = _ab_current_no_regression(c, c_a, c_b)
+    baseline_checks, b_diff = _ab_baseline_checks(
+        baseline_control_return=b_a,
+        baseline_robust_return=b_b,
+        current_control_return=c_a,
+        current_robust_return=c_b,
+        current_diff=c_diff,
     )
-    c_diff = _safe_float(
-        no_reg.get("diff_total_return"),
-        default=(c_b - c_a if np.isfinite(c_a) and np.isfinite(c_b) else float("nan")),
-    )
-    c_tol = _safe_float(
-        no_reg.get("tolerance_total_return"),
-        default=(abs(c_a) * 0.05 if np.isfinite(c_a) else float("nan")),
-    )
-
-    self_no_reg_ok = (
-        bool(no_reg.get("passed"))
-        if "passed" in no_reg
-        else (np.isnan(c_diff) or np.isnan(c_tol) or (c_diff >= -c_tol))
-    )
-    if str(c.get("decision_scenario", "")).strip() == "selective_ambiguity_defer" and bool(
-        cross_gate.get("passed", False)
-    ):
-        self_no_reg_ok = True
-
-    b_diff = b_b - b_a if np.isfinite(b_a) and np.isfinite(b_b) else float("nan")
-    baseline_tol = abs(b_a) * 0.05 if np.isfinite(b_a) else float("nan")
-    control_vs_baseline_ok = np.isnan(b_a) or np.isnan(c_a) or (c_a >= b_a - baseline_tol)
-    robust_vs_baseline_ok = np.isnan(b_b) or np.isnan(c_b) or (c_b >= b_b - baseline_tol)
-    gap_vs_baseline_ok = np.isnan(b_diff) or np.isnan(c_diff) or (c_diff >= b_diff - baseline_tol)
 
     passed = bool(self_no_reg_ok)
 
@@ -709,14 +837,12 @@ def _gate_ab_no_regression(base: dict[str, Any], cur: dict[str, Any]) -> GateRes
             "checks": {
                 "self_no_regression_ok": bool(self_no_reg_ok),
                 "cross_scenario_gate_ok": bool(cross_gate.get("passed", False)),
-                "control_vs_baseline_ok": bool(control_vs_baseline_ok),
-                "robust_vs_baseline_ok": bool(robust_vs_baseline_ok),
-                "gap_vs_baseline_ok": bool(gap_vs_baseline_ok),
+                **baseline_checks,
             },
             "warnings": {
-                "control_vs_baseline_warning": bool(not control_vs_baseline_ok),
-                "robust_vs_baseline_warning": bool(not robust_vs_baseline_ok),
-                "gap_vs_baseline_warning": bool(not gap_vs_baseline_ok),
+                "control_vs_baseline_warning": bool(not baseline_checks["control_vs_baseline_ok"]),
+                "robust_vs_baseline_warning": bool(not baseline_checks["robust_vs_baseline_ok"]),
+                "gap_vs_baseline_warning": bool(not baseline_checks["gap_vs_baseline_ok"]),
             },
             "current": {
                 "control_total_return": c_a,
@@ -930,81 +1056,104 @@ def _write_snapshot(run_tag: str) -> Path:
     return path
 
 
-def _write_compare(run_tag: str, baseline_path: Path) -> tuple[Path, Path]:
-    baseline_path = baseline_path.expanduser().resolve()
-    baseline = json.loads(baseline_path.read_text(encoding="utf-8"))
-    current = _snapshot_payload(run_tag)
-    gate_results = [
-        _gate_artifact_coherence(current["metrics"], run_tag),
-        _gate_semantic_coherence(current["metrics"]),
-        _gate_pd(baseline["metrics"], current["metrics"]),
-        _gate_conformal(baseline["metrics"], current["metrics"]),
-        _gate_ab_no_regression(baseline["metrics"], current["metrics"]),
-        _gate_fairness(baseline["metrics"], current["metrics"]),
-        _gate_fairness_absolute_business(baseline["metrics"], current["metrics"]),
-        _gate_survival(baseline["metrics"], current["metrics"]),
-        _gate_exports(current),
+def _comparison_gate_results(
+    *,
+    baseline_metrics: dict[str, Any],
+    current_metrics: dict[str, Any],
+    current_snapshot: dict[str, Any],
+    run_tag: str,
+) -> list[GateResult]:
+    return [
+        _gate_artifact_coherence(current_metrics, run_tag),
+        _gate_semantic_coherence(current_metrics),
+        _gate_pd(baseline_metrics, current_metrics),
+        _gate_conformal(baseline_metrics, current_metrics),
+        _gate_ab_no_regression(baseline_metrics, current_metrics),
+        _gate_fairness(baseline_metrics, current_metrics),
+        _gate_fairness_absolute_business(baseline_metrics, current_metrics),
+        _gate_survival(baseline_metrics, current_metrics),
+        _gate_exports(current_snapshot),
     ]
-    conformal_gate = next((g for g in gate_results if g.name == "conformal_policy"), None)
-    ab_gate = next((g for g in gate_results if g.name == "ab_no_regression"), None)
-    coherence_gate = next((g for g in gate_results if g.name == "artifact_coherence"), None)
-    semantic_gate = next((g for g in gate_results if g.name == "semantic_coherence"), None)
-    conformal_details = conformal_gate.details if conformal_gate is not None else {}
-    ab_details = ab_gate.details if ab_gate is not None else {}
-    fairness_abs_gate = next(
-        (g for g in gate_results if g.name == "fairness_absolute_business"), None
-    )
-    conformal_checks = conformal_details.get("checks", {})
+
+
+def _gate_lookup(gate_results: list[GateResult]) -> dict[str, GateResult]:
+    return {gate.name: gate for gate in gate_results}
+
+
+def _gate_pass(gates: dict[str, GateResult], name: str) -> bool:
+    gate = gates.get(name)
+    return bool(gate.passed) if gate is not None else False
+
+
+def _gate_details(gates: dict[str, GateResult], name: str) -> dict[str, Any]:
+    gate = gates.get(name)
+    return gate.details if gate is not None else {}
+
+
+def _comparison_gate_fields(gate_results: list[GateResult]) -> dict[str, Any]:
+    gates = _gate_lookup(gate_results)
+    conformal_details = _gate_details(gates, "conformal_policy")
     conformal_diagnostics = conformal_details.get("diagnostics", {})
-    ab_diagnostics = ab_details.get("diagnostics", {})
-    coherence_details = coherence_gate.details if coherence_gate is not None else {}
-    try:
-        baseline_path_out = str(baseline_path.relative_to(ROOT))
-    except ValueError:
-        baseline_path_out = str(baseline_path)
-    report = {
-        "schema_version": SCHEMA_VERSION,
-        "run_tag": run_tag,
-        "generated_at_utc": datetime.now(tz=UTC).isoformat(),
-        "baseline_path": baseline_path_out,
-        "overall_pass": bool(all(g.passed for g in gate_results)),
+    ab_diagnostics = _gate_details(gates, "ab_no_regression").get("diagnostics", {})
+    return {
+        "overall_pass": bool(all(gate.passed for gate in gate_results)),
         "operational_overall_pass": bool(
-            all(g.passed for g in gate_results if g.name in _OPERATIONAL_GATE_NAMES)
+            all(gate.passed for gate in gate_results if gate.name in _OPERATIONAL_GATE_NAMES)
         ),
-        "artifact_coherence_pass": bool(coherence_gate.passed)
-        if coherence_gate is not None
-        else False,
-        "artifact_coherence": coherence_details,
-        "semantic_coherence_pass": bool(semantic_gate.passed)
-        if semantic_gate is not None
-        else False,
-        "semantic_coherence": semantic_gate.details if semantic_gate is not None else {},
-        "conformal_promotion_pass": bool(conformal_checks.get("conformal_promotion_pass", False)),
+        "artifact_coherence_pass": _gate_pass(gates, "artifact_coherence"),
+        "artifact_coherence": _gate_details(gates, "artifact_coherence"),
+        "semantic_coherence_pass": _gate_pass(gates, "semantic_coherence"),
+        "semantic_coherence": _gate_details(gates, "semantic_coherence"),
+        "conformal_promotion_pass": bool(
+            conformal_details.get("checks", {}).get("conformal_promotion_pass", False)
+        ),
         "conformal_retired_backtest_checks": conformal_diagnostics.get(
             "retired_backtest_checks", []
         ),
-        "ab_no_regression_pass": bool(ab_gate.passed) if ab_gate is not None else False,
-        "fairness_absolute_business_pass": bool(fairness_abs_gate.passed)
-        if fairness_abs_gate is not None
-        else False,
+        "ab_no_regression_pass": _gate_pass(gates, "ab_no_regression"),
+        "fairness_absolute_business_pass": _gate_pass(gates, "fairness_absolute_business"),
         "ab_gate_mode": str(ab_diagnostics.get("gate_mode", "no_regression")),
         "ab_significant": bool(ab_diagnostics.get("significant", False)),
         "ab_significance_role": str(ab_diagnostics.get("significance_role", "diagnostic")),
+    }
+
+
+def _comparison_quality_contract() -> dict[str, Any]:
+    return {
+        "conformal_checks_required": 13,
+        "ab_gate_mode": "no_regression",
+        "ab_significance_role": "diagnostic",
+        "fairness_gates": ["fairness_relative", "fairness_absolute_business"],
+        "fairness_policy_path": _path_for_report(FAIRNESS_POLICY_PATH),
+        "artifact_coherence_required": True,
+        "semantic_coherence_required": True,
+        "required_status_metadata": ["schema_version", "generated_at_utc", "run_tag"],
+    }
+
+
+def _comparison_report(
+    *,
+    run_tag: str,
+    baseline_path: Path,
+    baseline: dict[str, Any],
+    current: dict[str, Any],
+    gate_results: list[GateResult],
+) -> dict[str, Any]:
+    return {
+        "schema_version": SCHEMA_VERSION,
+        "run_tag": run_tag,
+        "generated_at_utc": datetime.now(tz=UTC).isoformat(),
+        "baseline_path": _path_for_report(baseline_path),
+        **_comparison_gate_fields(gate_results),
         "gates": [{"name": g.name, "passed": g.passed, "details": g.details} for g in gate_results],
         "artifact_changes": _compare_artifacts(baseline, current),
         "baseline_head": baseline.get("git", {}).get("head", ""),
         "current_head": current.get("git", {}).get("head", ""),
-        "quality_contract": {
-            "conformal_checks_required": 13,
-            "ab_gate_mode": "no_regression",
-            "ab_significance_role": "diagnostic",
-            "fairness_gates": ["fairness_relative", "fairness_absolute_business"],
-            "fairness_policy_path": _path_for_report(FAIRNESS_POLICY_PATH),
-            "artifact_coherence_required": True,
-            "semantic_coherence_required": True,
-            "required_status_metadata": ["schema_version", "generated_at_utc", "run_tag"],
-        },
+        "quality_contract": _comparison_quality_contract(),
     }
+
+
+def _write_comparison_files(run_tag: str, report: dict[str, Any]) -> tuple[Path, Path]:
     out_dir = OUT_ROOT / run_tag
     out_dir.mkdir(parents=True, exist_ok=True)
     json_path = out_dir / "comparison.json"
@@ -1017,6 +1166,26 @@ def _write_compare(run_tag: str, baseline_path: Path) -> tuple[Path, Path]:
     print(f"[compare] Comparison JSON: {json_path.relative_to(ROOT)}")
     print(f"[compare] Comparison MD:   {md_path.relative_to(ROOT)}")
     return json_path, md_path
+
+
+def _write_compare(run_tag: str, baseline_path: Path) -> tuple[Path, Path]:
+    baseline_path = baseline_path.expanduser().resolve()
+    baseline = json.loads(baseline_path.read_text(encoding="utf-8"))
+    current = _snapshot_payload(run_tag)
+    gate_results = _comparison_gate_results(
+        baseline_metrics=baseline["metrics"],
+        current_metrics=current["metrics"],
+        current_snapshot=current,
+        run_tag=run_tag,
+    )
+    report = _comparison_report(
+        run_tag=run_tag,
+        baseline_path=baseline_path,
+        baseline=baseline,
+        current=current,
+        gate_results=gate_results,
+    )
+    return _write_comparison_files(run_tag, report)
 
 
 def main() -> None:

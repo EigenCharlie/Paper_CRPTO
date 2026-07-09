@@ -36,6 +36,8 @@ frozen upstream PD/calibration/conformal artifacts, not a retraining run.
 
 - Terminal run tag:
   `champion-reopen-2026-06-19__pool93__ijds-claim-bound-terminal`
+- Active certificate tag:
+  `champion-reopen-2026-06-19__pool93__ijds-certificate-semantics-v2`
 - Body point source run:
   `champion-reopen-2026-06-19__pool93__ijds-claim-micro-ext`
 - Policy family: `claim_micro_ext_body_cap345`
@@ -44,14 +46,18 @@ frozen upstream PD/calibration/conformal artifacts, not a retraining run.
 - Return-floor surplus: `$14,367.94`
 - `V(alpha=0.01)`: `0.035350`
 - `Gamma_CP(alpha=0.01)`: `0.162616`
-- Endpoint budget upper at `alpha=0.01`: `0.24508374`
-- Markov cap at `alpha=0.01`: `0.34508374`
-- Exact alpha violation: `0.0`
+- `Gamma_internalized(alpha=0.01)`: `0.089032`
+- `Gamma_residual(alpha=0.01)`: `0.073584`
+- Exact endpoint budget at `alpha=0.01`: `0.245083866`
+- Exact Markov loss threshold at `alpha=0.01`: `0.345083866`
+- Realized risk-tolerance excess: `0.0`
 - Declared alpha-grid pass: `8/8`
 - Consolidated frontier: `50,010` deduplicated semantic policies, `27,508`
   eligible all-alpha above-floor policies.
 - Terminal exact search: `37,068/37,068` all-alpha passers and `296,544`
   completed exact candidate-alpha checks.
+- Matched A40 point-PD baseline: `5.875%` realized-return cost, `0.08305`
+  weighted default/miscoverage reduction, and `0.435495` threshold reduction.
 
 The frozen upstream baseline remains retained for provenance and as the
 declared return floor:
@@ -81,7 +87,10 @@ champion rebuild:
 - `reports/crpto/tables/crpto_tableA37_pool93_body_tail_risk.csv`
 - `reports/crpto/tables/crpto_tableA38_pool93_body_cluster_bound_audit.csv`
 - `reports/crpto/tables/crpto_tableA39_pool93_body_bootstrap_metrics.csv`
-- `models/experiments/champion_reopen/champion-reopen-2026-06-19__pool93__ijds-claim-consolidated-definitive/portfolio/pool93_ijds_consolidated_governance.json`
+- `reports/crpto/tables/crpto_tableA40_pool93_point_baseline.csv`
+- `models/experiments/champion_reopen/champion-reopen-2026-06-19__pool93__ijds-certificate-semantics-v2/portfolio/pool93_ijds_consolidated_frontier.json`
+- `models/experiments/champion_reopen/champion-reopen-2026-06-19__pool93__ijds-certificate-semantics-v2/portfolio/pool93_ijds_consolidated_governance.json`
+- `models/experiments/champion_reopen/champion-reopen-2026-06-19__pool93__ijds-certificate-semantics-v2/portfolio/pool93_point_pd_baseline_audit.json`
 - `models/experiments/champion_reopen/champion-reopen-2026-06-19__pool93__ijds-claim-bound-terminal/portfolio/pool93_ijds_claim_governance.json`
 - `EXTRACTION_MANIFEST.json`
 
@@ -118,6 +127,8 @@ The active paper scope is the IJDS pool93 certificate plus bounded diagnostics:
   the body theorem because the cluster thresholds are not tighter here.
 - A39: fixed-allocation bootstrap diagnostic; it does not resample model,
   solver, conformal intervals or policy search.
+- A40: matched point-PD baseline with candidates and operating constraints fixed;
+  one frozen OOT trade-off, not a causal or universal-dominance claim.
 - A20--A22: legacy tail-risk/OCE/CVaR diagnostic package retained in the
   supplement, not as the promoted pool93 selector.
 - A23--A24: multi-distribution/online coverage diagnostics, not universal
@@ -151,7 +162,7 @@ scoring layer. The default rule is:
 
 For the current submission, keep these gates visible:
 
-- Consolidate A19/Fig15, A20--A39, paper/supplement, docs, manifest hashes and
+- Consolidate A19/Fig15, A20--A40, paper/supplement, docs, manifest hashes and
   `dvc.lock`.
 - Sweep the manuscript for stale numbers, captions, body-vs-appendix placement,
   and IJDS length.

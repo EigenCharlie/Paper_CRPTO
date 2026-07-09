@@ -40,13 +40,20 @@ perenne y lo que el código lee/escribe.
   limpieza local de peso y frontera entre refactor estricto y nueva corrida
   tolerante.
 - `ijds_scientific_upgrade_audit_2026-07-07.md` — separación entre mejoras de
-  paper que pueden entrar con evidencia congelada y extensiones que requieren
-  un nuevo resultado CRPTO v2.
+  paper que pueden entrar con evidencia congelada y extensiones que quedan
+  fuera del claim enviado salvo un nuevo protocolo etiquetado.
 
 - `ijds_corpus_claims_improvement_plan_2026-07-07.md` - analisis con
   `academic-pdf-intake` del paper, supplement, submission PDF y corpus
   `Papers_tesis`; sus recomendaciones editoriales IJDS quedaron aplicadas y se
   conserva como trazabilidad, no como backlog abierto.
+- `ijds_literature_expansion_scan_2026-07-08.md` - scan de literatura externa y
+  local para nuevas referencias IJDS: contextual optimization, incertidumbre de
+  credit scoring, conformal no-exchangeable, post-selection y comparadores
+  decision-calibrated 2026.
+- `pool93_certificate_semantics_v2_2026-07-09.md` - auditoría consolidada de la
+  descomposición policy-aware, corrección exacta de la frontera A35 y baseline
+  point-PD emparejada A40; reemplaza el memo preliminar de baseline.
 
 ## Registros de gobernanza (decisiones; no se re-ejecutan sin permiso)
 

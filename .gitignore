@@ -92,6 +92,8 @@ models/feature_artifacts_runtime_status.json
 
 # Reports (large generated outputs)
 reports/run_logs/
+reports/api-docs/
+reports/ci/
 reports/notebook_images/
 reports/paper_material/
 reports/crpto/experiments/
@@ -149,6 +151,9 @@ models/experiments/**
 !models/experiments/champion_reopen/champion-reopen-2026-06-19__pool93__ijds-claim-bound-terminal/portfolio/pool93_ijds_claim_governance.json
 !models/experiments/champion_reopen/champion-reopen-2026-06-19__pool93__ijds-claim-consolidated-definitive/portfolio/pool93_ijds_consolidated_governance.json
 !models/experiments/champion_reopen/champion-reopen-2026-06-19__pool93__ijds-claim-consolidated-definitive/portfolio/pool93_ijds_consolidated_frontier.json
+!models/experiments/champion_reopen/champion-reopen-2026-06-19__pool93__ijds-certificate-semantics-v2/portfolio/pool93_ijds_consolidated_frontier.json
+!models/experiments/champion_reopen/champion-reopen-2026-06-19__pool93__ijds-certificate-semantics-v2/portfolio/pool93_ijds_consolidated_governance.json
+!models/experiments/champion_reopen/champion-reopen-2026-06-19__pool93__ijds-certificate-semantics-v2/portfolio/pool93_point_pd_baseline_audit.json
 configs/experiments/
 !configs/experiments/
 configs/experiments/*

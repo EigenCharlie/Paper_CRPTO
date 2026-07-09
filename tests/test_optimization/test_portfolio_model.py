@@ -5,7 +5,10 @@ import pandas as pd
 import pytest
 
 import src.optimization.portfolio_model as portfolio_model
-from src.optimization.portfolio_model import optimize_portfolio_allocation
+from src.optimization.portfolio_model import (
+    optimize_portfolio_allocation,
+    solution_allocation_vector,
+)
 
 
 def _toy_loans() -> tuple[pd.DataFrame, np.ndarray, np.ndarray, np.ndarray, np.ndarray, np.ndarray]:
@@ -26,6 +29,36 @@ def _toy_loans() -> tuple[pd.DataFrame, np.ndarray, np.ndarray, np.ndarray, np.n
 def _weighted(values: np.ndarray, allocation: np.ndarray, amounts: np.ndarray) -> float:
     exposure = float(np.sum(allocation * amounts))
     return float(np.sum(allocation * amounts * values) / exposure)
+
+
+def test_solution_allocation_vector_normalizes_dense_and_sparse_payloads() -> None:
+    dense = solution_allocation_vector(
+        {"allocation_vector": np.array([0.25, 0.0, 1.0])},
+        3,
+    )
+    sparse = solution_allocation_vector({"allocation": {0: 0.25, 2: 1.0}}, 3)
+
+    np.testing.assert_allclose(dense, [0.25, 0.0, 1.0])
+    np.testing.assert_allclose(sparse, dense)
+
+
+@pytest.mark.parametrize(
+    ("solution", "n_items", "error", "match"),
+    [
+        ({"allocation_vector": [0.5, 0.5]}, 3, ValueError, "shape mismatch"),
+        ({"allocation": {0: float("nan")}}, 1, ValueError, "non-finite"),
+        ({}, 1, TypeError, "allocation_vector"),
+        ({"allocation": {}}, -1, ValueError, "nonnegative"),
+    ],
+)
+def test_solution_allocation_vector_rejects_invalid_payloads(
+    solution: dict[str, object],
+    n_items: int,
+    error: type[Exception],
+    match: str,
+) -> None:
+    with pytest.raises(error, match=match):
+        solution_allocation_vector(solution, n_items)
 
 
 def test_highs_sparse_respects_portfolio_constraints() -> None:
@@ -78,6 +111,32 @@ def test_highs_sparse_matches_pyomo_highs_objective_on_toy_lp() -> None:
 
     assert sparse["objective_value"] == pytest.approx(pyomo["objective_value"], rel=1e-6)
     assert sparse["total_allocated"] == pytest.approx(pyomo["total_allocated"], rel=1e-6)
+
+
+def test_highs_sparse_matches_pyomo_when_pd_slack_is_enabled() -> None:
+    loans, pd_point, pd_low, pd_high, lgd, int_rates = _toy_loans()
+    kwargs = {
+        "loans": loans,
+        "pd_point": pd_point,
+        "pd_low": pd_low,
+        "pd_high": pd_high,
+        "lgd": lgd,
+        "int_rates": int_rates,
+        "total_budget": 3500,
+        "max_concentration": 0.75,
+        "max_portfolio_pd": 0.03,
+        "robust": True,
+        "min_budget_utilization": 0.80,
+        "pd_cap_slack_penalty": 0.01,
+        "pd_constraint_override": pd_high,
+    }
+
+    sparse = optimize_portfolio_allocation(**kwargs, solver_backend="highs_sparse")
+    pyomo = optimize_portfolio_allocation(**kwargs, solver_backend="highs_pyomo")
+
+    assert sparse["objective_value"] == pytest.approx(pyomo["objective_value"], rel=1e-6)
+    assert sparse["total_allocated"] == pytest.approx(pyomo["total_allocated"], rel=1e-6)
+    assert float(sparse["pd_cap_slack"]) == pytest.approx(float(pyomo["pd_cap_slack"]), rel=1e-6)
 
 
 def test_highspy_matches_sparse_highs_objective_on_toy_lp() -> None:

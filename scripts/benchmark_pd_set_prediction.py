@@ -5,6 +5,7 @@ from __future__ import annotations
 import argparse
 import json
 import os
+from dataclasses import dataclass
 from datetime import UTC, datetime
 from pathlib import Path
 from typing import Any
@@ -31,6 +32,46 @@ from src.utils.io_utils import read_with_fallback
 
 TARGET_COL = "default_flag"
 GROUP_COL = "grade"
+
+
+@dataclass(frozen=True)
+class SetBenchmarkData:
+    model: Any
+    calibrator: Any | None
+    calibrator_name: str
+    cal_df: pd.DataFrame
+    test_df: pd.DataFrame
+    features: list[str]
+    categorical: list[str]
+    X_cal: pd.DataFrame
+    y_cal: pd.Series
+    X_test: pd.DataFrame
+    y_test: pd.Series
+    group_cal: pd.Series
+    group_test: pd.Series
+    prob_cal_lookup: dict[str, np.ndarray]
+    prob_test_lookup: dict[str, np.ndarray]
+
+
+@dataclass(frozen=True)
+class SetBenchmarkSettings:
+    alpha: float
+    methods: tuple[str, ...]
+    partitions: tuple[str, ...]
+    partition_probability_source: str
+    n_score_bins: int
+    min_group_size: int
+    requested_fallback_mode: str
+    effective_fallback_mode: str
+    calibration_size_fractions: tuple[float, ...]
+
+
+@dataclass(frozen=True)
+class VariantPrediction:
+    method: str
+    partition: str
+    y_pred: np.ndarray
+    y_sets: np.ndarray
 
 
 def _build_output_paths(namespace: str | None = None) -> dict[str, Path]:
@@ -122,6 +163,97 @@ def _normalize_sidecar_fallback_mode(fallback_mode: str) -> str:
     return "grade_then_global"
 
 
+def _unique_csv_values(values: tuple[str, ...], fallback: tuple[str, ...]) -> tuple[str, ...]:
+    cleaned = tuple(dict.fromkeys(str(x).strip() for x in values if str(x).strip()))
+    return cleaned or fallback
+
+
+def _valid_calibration_fractions(values: tuple[float, ...]) -> tuple[float, ...]:
+    return tuple(float(x) for x in values if 0 < float(x) <= 1)
+
+
+def _calibrator_name(calibrator: Any | None, calibrator_override_path: str | None) -> str:
+    if calibrator_override_path:
+        return Path(str(calibrator_override_path)).stem
+    if calibrator is not None:
+        return type(calibrator).__name__
+    return "raw"
+
+
+def _load_set_benchmark_data(calibrator_override_path: str | None) -> SetBenchmarkData:
+    model, _ = _load_model()
+    calibrator = _load_calibrator(calibrator_override_path)
+    cal_df = read_with_fallback(
+        "data/processed/calibration_fe.parquet", "data/processed/calibration.parquet"
+    )
+    test_df = read_with_fallback("data/processed/test_fe.parquet", "data/processed/test.parquet")
+    features, categorical = _resolve_features(model, cal_df, test_df)
+    X_cal = _build_feature_matrix(cal_df, features, categorical)
+    y_cal = cal_df[TARGET_COL].astype(int).reset_index(drop=True)
+    X_test = _build_feature_matrix(test_df, features, categorical)
+    y_test = test_df[TARGET_COL].astype(int).reset_index(drop=True)
+    group_cal = cal_df[GROUP_COL].fillna("UNKNOWN").astype(str).reset_index(drop=True)
+    group_test = test_df[GROUP_COL].fillna("UNKNOWN").astype(str).reset_index(drop=True)
+    y_prob_cal_raw = model.predict_proba(X_cal)[:, 1]
+    y_prob_test_raw = model.predict_proba(X_test)[:, 1]
+    y_prob_calibrated = (
+        apply_probability_calibrator(calibrator, y_prob_cal_raw)
+        if calibrator is not None
+        else np.asarray(y_prob_cal_raw, dtype=float)
+    )
+    y_prob_test_calibrated = (
+        apply_probability_calibrator(calibrator, y_prob_test_raw)
+        if calibrator is not None
+        else np.asarray(y_prob_test_raw, dtype=float)
+    )
+    return SetBenchmarkData(
+        model=model,
+        calibrator=calibrator,
+        calibrator_name=_calibrator_name(calibrator, calibrator_override_path),
+        cal_df=cal_df,
+        test_df=test_df,
+        features=features,
+        categorical=categorical,
+        X_cal=X_cal,
+        y_cal=y_cal,
+        X_test=X_test,
+        y_test=y_test,
+        group_cal=group_cal,
+        group_test=group_test,
+        prob_cal_lookup={"raw": y_prob_cal_raw, "calibrated": y_prob_calibrated},
+        prob_test_lookup={"raw": y_prob_test_raw, "calibrated": y_prob_test_calibrated},
+    )
+
+
+def _set_benchmark_settings(
+    *,
+    alpha: float,
+    method: str,
+    methods: tuple[str, ...] | None,
+    partitions: tuple[str, ...],
+    partition_probability_source: str,
+    n_score_bins: int,
+    min_group_size: int,
+    fallback_mode: str,
+    calibration_size_fractions: tuple[float, ...],
+    prob_cal_lookup: dict[str, np.ndarray],
+) -> SetBenchmarkSettings:
+    source = str(partition_probability_source).strip().lower() or "raw"
+    if source not in prob_cal_lookup:
+        raise ValueError(f"Unsupported partition_probability_source: {source}")
+    return SetBenchmarkSettings(
+        alpha=float(alpha),
+        methods=_unique_csv_values(methods or (method,), ("lac",)),
+        partitions=_unique_csv_values(partitions, ("global",)),
+        partition_probability_source=source,
+        n_score_bins=int(n_score_bins),
+        min_group_size=int(min_group_size),
+        requested_fallback_mode=str(fallback_mode),
+        effective_fallback_mode=_normalize_sidecar_fallback_mode(fallback_mode),
+        calibration_size_fractions=_valid_calibration_fractions(calibration_size_fractions),
+    )
+
+
 def _make_cases(
     *,
     y_true: pd.Series,
@@ -164,6 +296,365 @@ def _make_cases(
     return cases
 
 
+def _is_global_partition(partition: str) -> bool:
+    return str(partition).strip().lower() == "global"
+
+
+def _predict_variant(
+    *,
+    data: SetBenchmarkData,
+    settings: SetBenchmarkSettings,
+    method_name: str,
+    partition_name: str,
+    X_cal: pd.DataFrame,
+    y_cal: pd.Series,
+    group_cal: pd.Series,
+    y_prob_cal: np.ndarray,
+) -> VariantPrediction:
+    if _is_global_partition(partition_name):
+        y_pred, y_sets = create_classification_sets(
+            classifier=data.model,
+            X_cal=X_cal,
+            y_cal=y_cal,
+            X_test=data.X_test,
+            alpha=settings.alpha,
+            method=method_name,
+            calibrator=data.calibrator,
+        )
+        return VariantPrediction(
+            method=str(method_name),
+            partition=str(partition_name),
+            y_pred=y_pred,
+            y_sets=y_sets,
+        )
+
+    group_cal_part, group_test_part, partition_meta = build_mondrian_partition_labels(
+        y_prob_cal=y_prob_cal,
+        y_prob_eval=data.prob_test_lookup[settings.partition_probability_source],
+        partition=partition_name,
+        base_groups_cal=group_cal,
+        base_groups_eval=data.group_test,
+        n_score_bins=settings.n_score_bins,
+        min_group_size=settings.min_group_size,
+        fallback_mode=settings.effective_fallback_mode,
+    )
+    y_pred, y_sets, _ = create_classification_sets_mondrian(
+        classifier=data.model,
+        X_cal=X_cal,
+        y_cal=y_cal,
+        X_test=data.X_test,
+        group_cal=group_cal_part,
+        group_test=group_test_part,
+        alpha=settings.alpha,
+        method=method_name,
+        min_group_size=settings.min_group_size,
+        calibrator=data.calibrator,
+    )
+    return VariantPrediction(
+        method=str(method_name),
+        partition=str(partition_meta.get("partition", partition_name)),
+        y_pred=y_pred,
+        y_sets=y_sets,
+    )
+
+
+def _benchmark_row(
+    *,
+    data: SetBenchmarkData,
+    settings: SetBenchmarkSettings,
+    prediction: VariantPrediction,
+) -> dict[str, Any]:
+    summary = summarize_prediction_sets(
+        data.y_test.to_numpy(), prediction.y_pred, prediction.y_sets
+    )
+    return {
+        "method": prediction.method,
+        "partition": prediction.partition,
+        "partition_probability_source": settings.partition_probability_source,
+        "calibrator": data.calibrator_name,
+        "alpha": settings.alpha,
+        **{k: float(v) for k, v in summary.items()},
+    }
+
+
+def _subsample_calibration_data(
+    *,
+    data: SetBenchmarkData,
+    calibration_fraction: float,
+) -> tuple[pd.DataFrame, pd.DataFrame, pd.Series, pd.Series, np.ndarray, np.ndarray]:
+    cal_df_sub = _subset_calibration_frame(data.cal_df, calibration_fraction=calibration_fraction)
+    X_cal_sub = _build_feature_matrix(cal_df_sub, data.features, data.categorical)
+    y_cal_sub = cal_df_sub[TARGET_COL].astype(int).reset_index(drop=True)
+    group_cal_sub = cal_df_sub[GROUP_COL].fillna("UNKNOWN").astype(str).reset_index(drop=True)
+    y_prob_cal_sub_raw = data.model.predict_proba(X_cal_sub)[:, 1]
+    y_prob_cal_sub_calibrated = (
+        apply_probability_calibrator(data.calibrator, y_prob_cal_sub_raw)
+        if data.calibrator is not None
+        else np.asarray(y_prob_cal_sub_raw, dtype=float)
+    )
+    return (
+        cal_df_sub,
+        X_cal_sub,
+        y_cal_sub,
+        group_cal_sub,
+        y_prob_cal_sub_raw,
+        y_prob_cal_sub_calibrated,
+    )
+
+
+def _sensitivity_row(
+    *,
+    data: SetBenchmarkData,
+    settings: SetBenchmarkSettings,
+    method_name: str,
+    partition_name: str,
+    calibration_fraction: float,
+) -> dict[str, Any]:
+    _cal_df_sub, X_cal_sub, y_cal_sub, group_cal_sub, y_prob_raw, y_prob_calibrated = (
+        _subsample_calibration_data(data=data, calibration_fraction=calibration_fraction)
+    )
+    y_prob_cal = y_prob_raw if settings.partition_probability_source == "raw" else y_prob_calibrated
+    prediction = _predict_variant(
+        data=data,
+        settings=settings,
+        method_name=method_name,
+        partition_name=partition_name,
+        X_cal=X_cal_sub,
+        y_cal=y_cal_sub,
+        group_cal=group_cal_sub,
+        y_prob_cal=y_prob_cal,
+    )
+    summary_sub = summarize_prediction_sets(
+        data.y_test.to_numpy(), prediction.y_pred, prediction.y_sets
+    )
+    return {
+        "method": str(method_name),
+        "partition": str(prediction.partition),
+        "partition_probability_source": settings.partition_probability_source,
+        "calibrator": data.calibrator_name,
+        "calibration_fraction": float(calibration_fraction),
+        "n_calibration_rows": int(len(X_cal_sub)),
+        "set_coverage": float(summary_sub["set_coverage"]),
+        "singleton_rate": float(summary_sub["singleton_rate"]),
+        "ambiguity_rate": float(summary_sub["ambiguity_rate"]),
+        "empty_set_rate": float(summary_sub["empty_set_rate"]),
+        "default_rate_ambiguous": float(summary_sub["default_rate_ambiguous"]),
+    }
+
+
+def _sensitivity_rows_for_variant(
+    *,
+    data: SetBenchmarkData,
+    settings: SetBenchmarkSettings,
+    method_name: str,
+    partition_name: str,
+) -> list[dict[str, Any]]:
+    return [
+        _sensitivity_row(
+            data=data,
+            settings=settings,
+            method_name=method_name,
+            partition_name=partition_name,
+            calibration_fraction=float(frac),
+        )
+        for frac in settings.calibration_size_fractions
+    ]
+
+
+def _run_benchmark_matrix(
+    *,
+    data: SetBenchmarkData,
+    settings: SetBenchmarkSettings,
+) -> tuple[
+    pd.DataFrame,
+    dict[tuple[str, str], pd.DataFrame],
+    dict[tuple[str, str], list[dict[str, Any]]],
+]:
+    benchmark_rows: list[dict[str, Any]] = []
+    cases_by_variant: dict[tuple[str, str], pd.DataFrame] = {}
+    sensitivity_by_variant: dict[tuple[str, str], list[dict[str, Any]]] = {}
+
+    for method_name in settings.methods:
+        for partition_name in settings.partitions:
+            prediction = _predict_variant(
+                data=data,
+                settings=settings,
+                method_name=method_name,
+                partition_name=partition_name,
+                X_cal=data.X_cal,
+                y_cal=data.y_cal,
+                group_cal=data.group_cal,
+                y_prob_cal=data.prob_cal_lookup[settings.partition_probability_source],
+            )
+            benchmark_rows.append(
+                _benchmark_row(data=data, settings=settings, prediction=prediction)
+            )
+            key = (prediction.method, prediction.partition)
+            cases_by_variant[key] = _make_cases(
+                y_true=data.y_test,
+                y_pred=prediction.y_pred,
+                y_sets=prediction.y_sets,
+                test_df=data.test_df,
+                method=prediction.method,
+                partition=prediction.partition,
+                partition_probability_source=settings.partition_probability_source,
+                calibrator_name=data.calibrator_name,
+            )
+            sensitivity_by_variant[key] = _sensitivity_rows_for_variant(
+                data=data,
+                settings=settings,
+                method_name=method_name,
+                partition_name=prediction.partition,
+            )
+
+    benchmark_df = pd.DataFrame(benchmark_rows)
+    if benchmark_df.empty:
+        raise RuntimeError("No set-prediction variants were benchmarked.")
+    return (
+        benchmark_df.sort_values(
+            by=["set_coverage", "singleton_rate", "ambiguity_rate", "empty_set_rate"],
+            ascending=[False, False, True, True],
+        ).reset_index(drop=True),
+        cases_by_variant,
+        sensitivity_by_variant,
+    )
+
+
+def _slice_reports(cases: pd.DataFrame) -> pd.DataFrame:
+    slice_reports = []
+    for col in ("grade", "term", "issue_quarter"):
+        if col in cases.columns:
+            report = _slice_summary(cases, col)
+            if not report.empty:
+                slice_reports.append(report)
+    return pd.concat(slice_reports, ignore_index=True) if slice_reports else pd.DataFrame()
+
+
+def _grade_slices(by_slice: pd.DataFrame) -> list[dict[str, Any]]:
+    if by_slice.empty or "slice_name" not in by_slice.columns:
+        return []
+    return by_slice.loc[by_slice["slice_name"] == "grade"].to_dict(orient="records")
+
+
+def _slice_records(by_slice: pd.DataFrame, slice_name: str) -> list[dict[str, Any]]:
+    if by_slice.empty or "slice_name" not in by_slice.columns:
+        return []
+    return by_slice.loc[by_slice["slice_name"] == slice_name].to_dict(orient="records")
+
+
+def _promotion_gate(summary: dict[str, Any], grade_slices: list[dict[str, Any]]) -> dict[str, Any]:
+    gate_coverage = float(summary.get("set_coverage", 0))
+    gate_grade_a_singleton = 0.0
+    gate_grades_above_40 = 0
+    for gs in grade_slices:
+        singleton_rate = float(gs.get("singleton_rate", 0))
+        if str(gs.get("slice_value", "")) == "A":
+            gate_grade_a_singleton = singleton_rate
+        if singleton_rate > 0.40:
+            gate_grades_above_40 += 1
+    gate_pass = bool(
+        gate_coverage >= 0.85 and gate_grade_a_singleton >= 0.80 and gate_grades_above_40 >= 3
+    )
+    return {
+        "coverage": gate_coverage,
+        "min_coverage": 0.85,
+        "grade_a_singleton_rate": gate_grade_a_singleton,
+        "min_grade_a_singleton": 0.80,
+        "grades_with_singleton_above_40pct": gate_grades_above_40,
+        "min_grades_above_40pct": 3,
+        "pass": gate_pass,
+    }
+
+
+def _selected_summary(cases: pd.DataFrame) -> dict[str, float]:
+    return {
+        k: float(v)
+        for k, v in summarize_prediction_sets(
+            cases["y_true"].to_numpy(dtype=int),
+            cases["y_pred_label"].to_numpy(dtype=int),
+            cases[["set_contains_0", "set_contains_1"]].to_numpy(dtype=int),
+        ).items()
+    }
+
+
+def _status_payload(
+    *,
+    settings: SetBenchmarkSettings,
+    selected: pd.Series,
+    summary: dict[str, float],
+    gate: dict[str, Any],
+    by_slice: pd.DataFrame,
+    benchmark_df: pd.DataFrame,
+    outputs: dict[str, Path],
+    artifact_namespace: str | None,
+) -> dict[str, Any]:
+    gate_pass = bool(gate["pass"])
+    promotion_status = "promoted_guardrail" if gate_pass else "research_sidecar"
+    return {
+        "schema_version": "2026-04-03.1",
+        "generated_at_utc": datetime.now(tz=UTC).isoformat(),
+        "run_tag": os.environ.get("PIPELINE_RUN_TAG", "untracked"),
+        "artifact_namespace": artifact_namespace or "",
+        "status": promotion_status,
+        "promoted": gate_pass,
+        "method": str(selected["method"]),
+        "selected_method": str(selected["method"]),
+        "selected_partition": str(selected["partition"]),
+        "selected_partition_probability_source": str(selected["partition_probability_source"]),
+        "selected_calibrator": str(selected["calibrator"]),
+        "requested_fallback_mode": settings.requested_fallback_mode,
+        "effective_fallback_mode": settings.effective_fallback_mode,
+        "alpha": settings.alpha,
+        "confidence_level": float(1.0 - settings.alpha),
+        "summary": summary,
+        "promotion_gate": gate,
+        "artifact_path": str(outputs["cases"]),
+        "by_slice_path": str(outputs["by_slice"]),
+        "calibration_size_sensitivity_path": str(outputs["sensitivity"]),
+        "benchmark_matrix_path": str(outputs["benchmark"]),
+        "slice_metrics": {
+            "grade": _grade_slices(by_slice),
+            "term": _slice_records(by_slice, "term"),
+            "issue_quarter": _slice_records(by_slice, "issue_quarter"),
+        },
+        "benchmark_matrix": benchmark_df.to_dict(orient="records"),
+        "decision_use_case": {
+            "probability_first": True,
+            "set_first": False,
+            "recommended_guardrail": "selective_ambiguity_defer",
+        },
+        "promotion_rationale": (
+            f"Binary conformal sets selected via {selected['method']} + {selected['partition']} "
+            f"with set coverage {gate['coverage']:.1%} and ambiguity {summary['ambiguity_rate']:.1%}."
+        ),
+        "promotion_note": (
+            "Binary set prediction remains a sidecar triage/abstention signal; it does not replace "
+            "the interval-first conformal stack."
+        ),
+    }
+
+
+def _write_outputs(
+    *,
+    outputs: dict[str, Path],
+    cases: pd.DataFrame,
+    by_slice: pd.DataFrame,
+    sensitivity_df: pd.DataFrame,
+    benchmark_df: pd.DataFrame,
+    status: dict[str, Any],
+) -> None:
+    cases.to_parquet(outputs["cases"], index=False)
+    if not by_slice.empty:
+        by_slice.to_parquet(outputs["by_slice"], index=False)
+    sensitivity_df.to_parquet(outputs["sensitivity"], index=False)
+    benchmark_df.to_parquet(outputs["benchmark"], index=False)
+    outputs["status"].write_text(
+        json.dumps(status, indent=2, ensure_ascii=False) + "\n", encoding="utf-8"
+    )
+    logger.info("Saved PD set prediction cases: {}", outputs["cases"])
+    logger.info("Saved PD set prediction status: {}", outputs["status"])
+
+
 def main(
     alpha: float = 0.10,
     method: str = "lac",
@@ -177,300 +668,49 @@ def main(
     artifact_namespace: str | None = None,
     calibrator_override_path: str | None = None,
 ) -> None:
-    method_list = tuple(dict.fromkeys(methods or (method,))) or ("lac",)
-    partition_list = tuple(dict.fromkeys(partitions)) or ("global",)
-    effective_fallback_mode = _normalize_sidecar_fallback_mode(fallback_mode)
-
-    model, _ = _load_model()
-    calibrator = _load_calibrator(calibrator_override_path)
-    calibrator_name = (
-        Path(str(calibrator_override_path)).stem
-        if calibrator_override_path
-        else type(calibrator).__name__
-        if calibrator is not None
-        else "raw"
+    data = _load_set_benchmark_data(calibrator_override_path)
+    settings = _set_benchmark_settings(
+        alpha=alpha,
+        method=method,
+        methods=methods,
+        partitions=partitions,
+        partition_probability_source=partition_probability_source,
+        n_score_bins=n_score_bins,
+        min_group_size=min_group_size,
+        fallback_mode=fallback_mode,
+        calibration_size_fractions=calibration_size_fractions,
+        prob_cal_lookup=data.prob_cal_lookup,
     )
-    cal_df = read_with_fallback(
-        "data/processed/calibration_fe.parquet", "data/processed/calibration.parquet"
+    benchmark_df, cases_by_variant, sensitivity_by_variant = _run_benchmark_matrix(
+        data=data,
+        settings=settings,
     )
-    test_df = read_with_fallback("data/processed/test_fe.parquet", "data/processed/test.parquet")
-
-    features, categorical = _resolve_features(model, cal_df, test_df)
-    X_cal = _build_feature_matrix(cal_df, features, categorical)
-    y_cal = cal_df[TARGET_COL].astype(int).reset_index(drop=True)
-    X_test = _build_feature_matrix(test_df, features, categorical)
-    y_test = test_df[TARGET_COL].astype(int).reset_index(drop=True)
-    group_cal = cal_df[GROUP_COL].fillna("UNKNOWN").astype(str).reset_index(drop=True)
-    group_test = test_df[GROUP_COL].fillna("UNKNOWN").astype(str).reset_index(drop=True)
-    y_prob_cal_raw = model.predict_proba(X_cal)[:, 1]
-    y_prob_test_raw = model.predict_proba(X_test)[:, 1]
-    y_prob_calibrated = (
-        apply_probability_calibrator(calibrator, y_prob_cal_raw)
-        if calibrator is not None
-        else np.asarray(y_prob_cal_raw, dtype=float)
-    )
-    y_prob_test_calibrated = (
-        apply_probability_calibrator(calibrator, y_prob_test_raw)
-        if calibrator is not None
-        else np.asarray(y_prob_test_raw, dtype=float)
-    )
-    prob_cal_lookup = {"raw": y_prob_cal_raw, "calibrated": y_prob_calibrated}
-    prob_test_lookup = {"raw": y_prob_test_raw, "calibrated": y_prob_test_calibrated}
-    partition_probability_source = str(partition_probability_source).strip().lower() or "raw"
-    if partition_probability_source not in prob_cal_lookup:
-        raise ValueError(
-            f"Unsupported partition_probability_source: {partition_probability_source}"
-        )
-
-    benchmark_rows: list[dict[str, Any]] = []
-    cases_by_variant: dict[tuple[str, str], pd.DataFrame] = {}
-    sensitivity_by_variant: dict[tuple[str, str], list[dict[str, Any]]] = {}
-
-    for method_name in method_list:
-        for partition_name in partition_list:
-            if str(partition_name).strip().lower() == "global":
-                y_pred, y_sets = create_classification_sets(
-                    classifier=model,
-                    X_cal=X_cal,
-                    y_cal=y_cal,
-                    X_test=X_test,
-                    alpha=alpha,
-                    method=method_name,
-                    calibrator=calibrator,
-                )
-            else:
-                group_cal_part, group_test_part, partition_meta = build_mondrian_partition_labels(
-                    y_prob_cal=prob_cal_lookup[partition_probability_source],
-                    y_prob_eval=prob_test_lookup[partition_probability_source],
-                    partition=partition_name,
-                    base_groups_cal=group_cal,
-                    base_groups_eval=group_test,
-                    n_score_bins=n_score_bins,
-                    min_group_size=min_group_size,
-                    fallback_mode=effective_fallback_mode,
-                )
-                y_pred, y_sets, _ = create_classification_sets_mondrian(
-                    classifier=model,
-                    X_cal=X_cal,
-                    y_cal=y_cal,
-                    X_test=X_test,
-                    group_cal=group_cal_part,
-                    group_test=group_test_part,
-                    alpha=alpha,
-                    method=method_name,
-                    min_group_size=min_group_size,
-                    calibrator=calibrator,
-                )
-                partition_name = str(partition_meta.get("partition", partition_name))
-
-            summary = summarize_prediction_sets(y_test.to_numpy(), y_pred, y_sets)
-            benchmark_rows.append(
-                {
-                    "method": str(method_name),
-                    "partition": str(partition_name),
-                    "partition_probability_source": str(partition_probability_source),
-                    "calibrator": str(calibrator_name),
-                    "alpha": float(alpha),
-                    **{k: float(v) for k, v in summary.items()},
-                }
-            )
-            cases_by_variant[(str(method_name), str(partition_name))] = _make_cases(
-                y_true=y_test,
-                y_pred=y_pred,
-                y_sets=y_sets,
-                test_df=test_df,
-                method=str(method_name),
-                partition=str(partition_name),
-                partition_probability_source=str(partition_probability_source),
-                calibrator_name=str(calibrator_name),
-            )
-
-            sensitivity_rows: list[dict[str, Any]] = []
-            for frac in calibration_size_fractions:
-                frac_float = float(frac)
-                if frac_float <= 0 or frac_float > 1:
-                    continue
-                cal_df_sub = _subset_calibration_frame(cal_df, calibration_fraction=frac_float)
-                X_cal_sub = _build_feature_matrix(cal_df_sub, features, categorical)
-                y_cal_sub = cal_df_sub[TARGET_COL].astype(int).reset_index(drop=True)
-                group_cal_sub = (
-                    cal_df_sub[GROUP_COL].fillna("UNKNOWN").astype(str).reset_index(drop=True)
-                )
-                y_prob_cal_sub_raw = model.predict_proba(X_cal_sub)[:, 1]
-                y_prob_cal_sub_calibrated = (
-                    apply_probability_calibrator(calibrator, y_prob_cal_sub_raw)
-                    if calibrator is not None
-                    else np.asarray(y_prob_cal_sub_raw, dtype=float)
-                )
-                y_prob_cal_sub = (
-                    y_prob_cal_sub_raw
-                    if partition_probability_source == "raw"
-                    else y_prob_cal_sub_calibrated
-                )
-                if str(partition_name).strip().lower() == "global":
-                    y_pred_sub, y_sets_sub = create_classification_sets(
-                        classifier=model,
-                        X_cal=X_cal_sub,
-                        y_cal=y_cal_sub,
-                        X_test=X_test,
-                        alpha=alpha,
-                        method=method_name,
-                        calibrator=calibrator,
-                    )
-                else:
-                    group_cal_part, group_test_part, _ = build_mondrian_partition_labels(
-                        y_prob_cal=y_prob_cal_sub,
-                        y_prob_eval=prob_test_lookup[partition_probability_source],
-                        partition=partition_name,
-                        base_groups_cal=group_cal_sub,
-                        base_groups_eval=group_test,
-                        n_score_bins=n_score_bins,
-                        min_group_size=min_group_size,
-                        fallback_mode=effective_fallback_mode,
-                    )
-                    y_pred_sub, y_sets_sub, _ = create_classification_sets_mondrian(
-                        classifier=model,
-                        X_cal=X_cal_sub,
-                        y_cal=y_cal_sub,
-                        X_test=X_test,
-                        group_cal=group_cal_part,
-                        group_test=group_test_part,
-                        alpha=alpha,
-                        method=method_name,
-                        min_group_size=min_group_size,
-                        calibrator=calibrator,
-                    )
-                summary_sub = summarize_prediction_sets(y_test.to_numpy(), y_pred_sub, y_sets_sub)
-                sensitivity_rows.append(
-                    {
-                        "method": str(method_name),
-                        "partition": str(partition_name),
-                        "partition_probability_source": str(partition_probability_source),
-                        "calibrator": str(calibrator_name),
-                        "calibration_fraction": frac_float,
-                        "n_calibration_rows": int(len(X_cal_sub)),
-                        "set_coverage": float(summary_sub["set_coverage"]),
-                        "singleton_rate": float(summary_sub["singleton_rate"]),
-                        "ambiguity_rate": float(summary_sub["ambiguity_rate"]),
-                        "empty_set_rate": float(summary_sub["empty_set_rate"]),
-                        "default_rate_ambiguous": float(summary_sub["default_rate_ambiguous"]),
-                    }
-                )
-            sensitivity_by_variant[(str(method_name), str(partition_name))] = sensitivity_rows
-
-    benchmark_df = pd.DataFrame(benchmark_rows)
-    if benchmark_df.empty:
-        raise RuntimeError("No set-prediction variants were benchmarked.")
-    benchmark_df = benchmark_df.sort_values(
-        by=["set_coverage", "singleton_rate", "ambiguity_rate", "empty_set_rate"],
-        ascending=[False, False, True, True],
-    ).reset_index(drop=True)
     selected = benchmark_df.iloc[0]
     selected_key = (str(selected["method"]), str(selected["partition"]))
     cases = cases_by_variant[selected_key]
-
-    slice_reports = []
-    for col in ("grade", "term", "issue_quarter"):
-        if col in cases.columns:
-            report = _slice_summary(cases, col)
-            if not report.empty:
-                slice_reports.append(report)
-    by_slice = pd.concat(slice_reports, ignore_index=True) if slice_reports else pd.DataFrame()
+    by_slice = _slice_reports(cases)
     sensitivity_df = pd.DataFrame(sensitivity_by_variant[selected_key])
-
-    summary = summarize_prediction_sets(
-        cases["y_true"].to_numpy(dtype=int),
-        cases["y_pred_label"].to_numpy(dtype=int),
-        cases[["set_contains_0", "set_contains_1"]].to_numpy(dtype=int),
-    )
-    grade_slices = (
-        by_slice.loc[by_slice["slice_name"] == "grade"].to_dict(orient="records")
-        if not by_slice.empty and "slice_name" in by_slice.columns
-        else []
-    )
-    gate_coverage = float(summary.get("set_coverage", 0))
-    gate_grade_a_singleton = 0.0
-    gate_grades_above_40 = 0
-    for gs in grade_slices:
-        sr = float(gs.get("singleton_rate", 0))
-        if str(gs.get("slice_value", "")) == "A":
-            gate_grade_a_singleton = sr
-        if sr > 0.40:
-            gate_grades_above_40 += 1
-
-    gate_pass = (
-        gate_coverage >= 0.85 and gate_grade_a_singleton >= 0.80 and gate_grades_above_40 >= 3
-    )
-    promotion_status = "promoted_guardrail" if gate_pass else "research_sidecar"
-
+    summary = _selected_summary(cases)
+    gate = _promotion_gate(summary, _grade_slices(by_slice))
     outputs = _build_output_paths(artifact_namespace)
-    cases.to_parquet(outputs["cases"], index=False)
-    if not by_slice.empty:
-        by_slice.to_parquet(outputs["by_slice"], index=False)
-    sensitivity_df.to_parquet(outputs["sensitivity"], index=False)
-    benchmark_df.to_parquet(outputs["benchmark"], index=False)
-
-    status = {
-        "schema_version": "2026-04-03.1",
-        "generated_at_utc": datetime.now(tz=UTC).isoformat(),
-        "run_tag": os.environ.get("PIPELINE_RUN_TAG", "untracked"),
-        "artifact_namespace": artifact_namespace or "",
-        "status": promotion_status,
-        "promoted": gate_pass,
-        "method": str(selected["method"]),
-        "selected_method": str(selected["method"]),
-        "selected_partition": str(selected["partition"]),
-        "selected_partition_probability_source": str(selected["partition_probability_source"]),
-        "selected_calibrator": str(selected["calibrator"]),
-        "requested_fallback_mode": str(fallback_mode),
-        "effective_fallback_mode": str(effective_fallback_mode),
-        "alpha": float(alpha),
-        "confidence_level": float(1.0 - alpha),
-        "summary": {k: float(v) for k, v in summary.items()},
-        "promotion_gate": {
-            "coverage": gate_coverage,
-            "min_coverage": 0.85,
-            "grade_a_singleton_rate": gate_grade_a_singleton,
-            "min_grade_a_singleton": 0.80,
-            "grades_with_singleton_above_40pct": gate_grades_above_40,
-            "min_grades_above_40pct": 3,
-            "pass": gate_pass,
-        },
-        "artifact_path": str(outputs["cases"]),
-        "by_slice_path": str(outputs["by_slice"]),
-        "calibration_size_sensitivity_path": str(outputs["sensitivity"]),
-        "benchmark_matrix_path": str(outputs["benchmark"]),
-        "slice_metrics": {
-            "grade": grade_slices,
-            "term": by_slice.loc[by_slice["slice_name"] == "term"].to_dict(orient="records")
-            if not by_slice.empty and "slice_name" in by_slice.columns
-            else [],
-            "issue_quarter": by_slice.loc[by_slice["slice_name"] == "issue_quarter"].to_dict(
-                orient="records"
-            )
-            if not by_slice.empty and "slice_name" in by_slice.columns
-            else [],
-        },
-        "benchmark_matrix": benchmark_df.to_dict(orient="records"),
-        "decision_use_case": {
-            "probability_first": True,
-            "set_first": False,
-            "recommended_guardrail": "selective_ambiguity_defer",
-        },
-        "promotion_rationale": (
-            f"Binary conformal sets selected via {selected['method']} + {selected['partition']} "
-            f"with set coverage {gate_coverage:.1%} and ambiguity {summary['ambiguity_rate']:.1%}."
-        ),
-        "promotion_note": (
-            "Binary set prediction remains a sidecar triage/abstention signal; it does not replace "
-            "the interval-first conformal stack."
-        ),
-    }
-    outputs["status"].write_text(
-        json.dumps(status, indent=2, ensure_ascii=False) + "\n", encoding="utf-8"
+    status = _status_payload(
+        settings=settings,
+        selected=selected,
+        summary=summary,
+        gate=gate,
+        by_slice=by_slice,
+        benchmark_df=benchmark_df,
+        outputs=outputs,
+        artifact_namespace=artifact_namespace,
     )
-    logger.info("Saved PD set prediction cases: {}", outputs["cases"])
-    logger.info("Saved PD set prediction status: {}", outputs["status"])
+    _write_outputs(
+        outputs=outputs,
+        cases=cases,
+        by_slice=by_slice,
+        sensitivity_df=sensitivity_df,
+        benchmark_df=benchmark_df,
+        status=status,
+    )
 
 
 if __name__ == "__main__":

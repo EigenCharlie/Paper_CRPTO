@@ -159,6 +159,43 @@ def test_every_policy_produces_pd_in_unit_interval(mode: PolicyMode) -> None:
     assert np.all((out >= 0.0) & (out <= 1.0))
 
 
+def test_segment_tail_blended_uses_segment_cutoffs_when_segments_are_large() -> None:
+    point = np.full(6, 0.10)
+    high = point + np.array([0.01, 0.04, 0.07, 0.02, 0.06, 0.10])
+    labels = np.array(["A", "A", "A", "B", "B", "B"])
+
+    out = compute_effective_pd(
+        point,
+        high,
+        policy_mode=PolicyMode.SEGMENT_TAIL_BLENDED_UNCERTAINTY,
+        gamma=0.5,
+        tail_focus_quantile=0.5,
+        segment_labels=labels,
+        min_segment_size=3,
+    )
+
+    expected_delta = np.array([0.00, 0.04, 0.07, 0.00, 0.06, 0.10])
+    assert np.allclose(out, point + 0.5 * expected_delta)
+
+
+def test_segment_relative_tail_blended_ranks_by_relative_width() -> None:
+    point = np.array([0.10, 0.20, 0.10, 0.20])
+    high = np.array([0.12, 0.26, 0.15, 0.22])
+    labels = np.array(["A", "A", "B", "B"])
+
+    out = compute_effective_pd(
+        point,
+        high,
+        policy_mode=PolicyMode.SEGMENT_RELATIVE_TAIL_BLENDED_UNCERTAINTY,
+        gamma=1.0,
+        tail_focus_quantile=0.5,
+        segment_labels=labels,
+        min_segment_size=1,
+    )
+
+    assert np.allclose(out, np.array([0.10, 0.26, 0.15, 0.20]))
+
+
 def test_legacy_string_aliases_still_work() -> None:
     """Backward compatibility: passing a legacy string must equal passing the enum."""
     rng = np.random.default_rng(seed=7)

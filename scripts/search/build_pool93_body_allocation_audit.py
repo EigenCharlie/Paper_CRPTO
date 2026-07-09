@@ -29,7 +29,14 @@ from scripts.validate_alpha_gamma_bound import (  # noqa: E402
     _compute_intervals_at_alpha,
     _load_aligned_dataset,
 )
-from src.optimization.portfolio_model import optimize_portfolio_allocation  # noqa: E402
+from src.optimization.certificate_semantics import (  # noqa: E402
+    compute_funded_certificate_metrics,
+)
+from src.optimization.portfolio_model import (  # noqa: E402
+    optimize_portfolio_allocation,
+    solution_allocation_vector,
+)
+from src.utils.script_helpers import resolve_repo_artifact_path  # noqa: E402
 
 DEFAULT_CONSOLIDATED_TAG = "champion-reopen-2026-06-19__pool93__ijds-claim-consolidated-definitive"
 DEFAULT_BODY_ROLE = "body/default balanced return-bound point"
@@ -86,11 +93,17 @@ def _policy_from_row(row: dict[str, Any]) -> dict[str, Any]:
 
 def _grade_bucket(series: pd.Series) -> pd.Series:
     grade = series.fillna("unknown").astype(str).str.upper().str[:1]
-    return np.select(
-        [grade.isin(["A", "B"]), grade.eq("C"), grade.eq("D"), grade.isin(["E", "F", "G"])],
+    buckets = np.select(
+        [
+            grade.isin(["A", "B"]),
+            grade.eq("C"),
+            grade.eq("D"),
+            grade.isin(["E", "F", "G"]),
+        ],
         ["A-B", "C", "D", "E-G"],
         default="unknown",
     )
+    return pd.Series(buckets, index=series.index, name="grade_bucket")
 
 
 def _format_tex_table(summary: pd.DataFrame) -> str:
@@ -100,9 +113,11 @@ def _format_tex_table(summary: pd.DataFrame) -> str:
         "Grade bucket & Funded rows & Exposure share & Default rate & $V$ contribution & Mean $u_i(0.01)$ \\\\",
         "\\midrule",
     ]
-    for row in summary.itertuples(index=False):
+    for row in summary.to_dict("records"):
         lines.append(
-            f"{row.grade_bucket} & {row.funded_rows:,.0f} & {row.exposure_share:.2%} & {row.default_rate:.2%} & {row.v_contribution:.5f} & {row.mean_pd_high_alpha01:.5f} \\\\"
+            f"{row['grade_bucket']} & {row['funded_rows']:,.0f} & "
+            f"{row['exposure_share']:.2%} & {row['default_rate']:.2%} & "
+            f"{row['v_contribution']:.5f} & {row['mean_pd_high_alpha01']:.5f} \\\\"
         )
     lines.extend(["\\bottomrule", "\\end{tabular}", ""])
     return "\n".join(lines)
@@ -124,7 +139,9 @@ def build_audit(
         policy["solver_backend"] = solver_backend
 
     manifest = json.loads(_manifest_path(str(row["run_tag"])).read_text(encoding="utf-8"))
-    conformal_intervals_path = str(manifest["conformal_intervals_path"])
+    conformal_intervals_path = str(
+        resolve_repo_artifact_path(manifest["conformal_intervals_path"], root=ROOT)
+    )
     aligned = _load_aligned_dataset(
         conformal_intervals_path=conformal_intervals_path,
         max_candidates=int(manifest.get("max_candidates", 0) or 0),
@@ -172,19 +189,23 @@ def build_audit(
         threads=max(1, int(threads)),
         solver_backend=str(policy["solver_backend"]),
     )
-    if "allocation_vector" in solution:
-        alloc = np.asarray(solution["allocation_vector"], dtype=float)
-    else:
-        alloc = np.array(
-            [float(solution["allocation"].get(i, 0.0)) for i in range(len(aligned))],
-            dtype=float,
-        )
+    alloc = solution_allocation_vector(solution, len(aligned))
 
     exposure = alloc * loan_amounts
     total_allocated = float(exposure.sum())
     weights = exposure / max(total_allocated, 1e-6)
     funded = alloc > 0.01
     miscoverage = (y_true > pd_high).astype(float)
+    certificate = compute_funded_certificate_metrics(
+        weights,
+        outcomes=y_true,
+        pd_point=pd_point,
+        pd_high=pd_high,
+        pd_effective=effective_pd,
+        alpha=alpha,
+        risk_tolerance=float(policy["risk_tolerance"]),
+        pd_cap_slack=float(solution.get("pd_cap_slack", 0.0)),
+    )
     realized_return = np.where(
         funded & (default_flag.astype(int) == 1),
         exposure * (-DEFAULT_LGD),
@@ -255,23 +276,17 @@ def build_audit(
             "n_funded": int(funded.sum()),
             "total_allocated": round(total_allocated, 6),
             "realized_return": round(float(realized_return.sum()), 6),
-            "Gamma_CP": round(float(np.sum(weights * np.clip(pd_high - pd_point, 0.0, 1.0))), 6),
-            "V": round(float(np.sum(weights * miscoverage)), 6),
-            "weighted_pd_true": round(float(np.sum(weights * y_true)), 6),
-            "endpoint_budget_upper": round(
-                float(policy["risk_tolerance"])
-                + (1.0 - float(policy["gamma"]))
-                * float(np.sum(weights * np.clip(pd_high - pd_point, 0.0, 1.0))),
-                9,
-            ),
-            "markov_cap": round(
-                float(policy["risk_tolerance"])
-                + (1.0 - float(policy["gamma"]))
-                * float(np.sum(weights * np.clip(pd_high - pd_point, 0.0, 1.0)))
-                + float(np.sqrt(alpha)),
-                9,
-            ),
-            "empirical_coverage_funded": round(float(1.0 - miscoverage[funded].mean()), 6),
+            "Gamma_CP": round(certificate.gamma_cp, 6),
+            "Gamma_internalized": round(certificate.gamma_internalized, 6),
+            "Gamma_residual": round(certificate.gamma_residual, 6),
+            "V": round(certificate.weighted_miscoverage, 6),
+            "weighted_coverage_funded": round(certificate.weighted_coverage, 6),
+            "weighted_pd_true": round(certificate.weighted_outcome, 6),
+            "endpoint_budget": round(certificate.endpoint_budget, 9),
+            "endpoint_budget_upper": round(certificate.endpoint_budget_upper, 9),
+            "markov_loss_threshold": round(certificate.markov_loss_threshold, 9),
+            "markov_cap": round(certificate.markov_loss_cap, 9),
+            "empirical_coverage_funded": round(certificate.empirical_coverage_funded, 6),
         },
         "outputs": {
             "funded_rows": str(funded_path),

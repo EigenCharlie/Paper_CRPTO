@@ -102,7 +102,8 @@ def trace(name: str | None = None) -> Callable[[T], T]:
         if not _HAS_MLFLOW or not hasattr(mlflow, "trace"):
             return fn
         try:  # pragma: no cover — depends on installed MLflow version.
-            wrapped = mlflow.trace(name=name or fn.__name__)(fn)
+            span_name = name or getattr(fn, "__name__", "trace")
+            wrapped = mlflow.trace(name=span_name)(fn)
             return cast(T, wrapped)
         except Exception:
             return fn

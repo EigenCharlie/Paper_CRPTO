@@ -11,7 +11,7 @@ from __future__ import annotations
 import math
 import sys
 from pathlib import Path
-from typing import Any
+from typing import Any, cast
 
 import numpy as np
 import pandas as pd
@@ -29,6 +29,7 @@ from scripts.optimize_portfolio_tradeoff import (  # noqa: E402
     _solve_single,
 )
 from src.optimization.tail_satisficing_objective import (  # noqa: E402
+    SatisficingSense,
     SatisficingThreshold,
     entropic_oce,
     funded_loss_rate,
@@ -150,11 +151,16 @@ def _thresholds_from_config(config: dict[str, Any]) -> tuple[SatisficingThreshol
     raw = config.get("satisficing_thresholds", {})
     thresholds: list[SatisficingThreshold] = []
     for metric, spec in raw.items():
+        sense = str(spec["sense"])
+        if sense not in {"min", "max", "equals"}:
+            raise ValueError(f"Unsupported satisficing threshold sense: {sense!r}")
         thresholds.append(
             SatisficingThreshold(
                 metric=str(metric),
-                sense=str(spec["sense"]),  # type: ignore[arg-type]
-                threshold=spec["threshold"],
+                sense=cast(SatisficingSense, sense),
+                threshold=float(spec["threshold"])
+                if not isinstance(spec["threshold"], bool)
+                else spec["threshold"],
             )
         )
     return tuple(thresholds)
@@ -312,10 +318,10 @@ def _build_a20_table() -> tuple[pd.DataFrame, dict[str, Any]]:
     loans, pd_point, pd_low, pd_high, lgd, int_rates, default_flag = _prepare_portfolio_inputs()
 
     rows: list[dict[str, Any]] = []
-    for idx, row in shortlist.iterrows():
+    for position, row in enumerate((row for _, row in shortlist.iterrows()), start=1):
         logger.info(
             "Auditing policy {}/{} (candidate_rank={})",
-            idx + 1,
+            position,
             len(shortlist),
             row["candidate_rank"],
         )

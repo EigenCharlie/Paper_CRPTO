@@ -24,7 +24,7 @@ from concurrent.futures import FIRST_COMPLETED, Future, ThreadPoolExecutor, wait
 from dataclasses import asdict, dataclass
 from datetime import UTC, datetime
 from pathlib import Path
-from typing import Any
+from typing import Any, cast
 
 import yaml
 
@@ -32,6 +32,9 @@ ROOT = Path(__file__).resolve().parents[2]
 sys.path.insert(0, str(ROOT))
 
 from src.features.feature_config_io import load_feature_config  # noqa: E402
+from src.optimization.certificate_semantics import (  # noqa: E402
+    IJDS_DECLARED_ALPHA_GRID_CSV,
+)
 from src.utils.pipeline_runtime import atomic_write_json  # noqa: E402
 
 
@@ -83,6 +86,10 @@ PORTFOLIO_CAP_TAIL_GRID = _env_str(
     "0.60,0.75,0.90,1.0",
 )
 PORTFOLIO_RANDOM_STATES = _env_str("CRPTO_SANDBOX_PORTFOLIO_RANDOM_STATES", "42,52,62")
+PORTFOLIO_ALPHA_GRID = _env_str(
+    "CRPTO_SANDBOX_PORTFOLIO_ALPHA_GRID",
+    IJDS_DECLARED_ALPHA_GRID_CSV,
+)
 PORTFOLIO_MAX_CANDIDATES = _env_int("CRPTO_SANDBOX_PORTFOLIO_MAX_CANDIDATES", 100000)
 PORTFOLIO_SHORTLIST_TOP_K = _env_int("CRPTO_SANDBOX_PORTFOLIO_SHORTLIST_TOP_K", 1000)
 
@@ -736,45 +743,37 @@ def _pd_warm_start_candidates(
     for index, row in enumerate(selected[:5], start=1):
         if not isinstance(row, Mapping):
             continue
+        best_params = row.get("best_params")
         _append_warm_start_candidate(
             rows,
             source=f"{previous_phase}:top_{index}:{row.get('lane_id', 'unknown')}",
-            params=row.get("best_params"),
+            params=cast(Mapping[str, Any], best_params)
+            if isinstance(best_params, Mapping)
+            else None,
             include_iterations=include_iterations,
         )
     return rows
 
 
-def write_pd_config_snapshot(
+def _apply_pd_feature_profile_config(
     *,
-    artifact_root: Path,
-    run_tag: str,
-    feature_profile_name: str,
-    policy_name: str,
-    phase: str,
-    n_trials: int,
-    cpu_threads: int,
-    base_params_override: Mapping[str, Any] | None = None,
-) -> Path:
-    """Write an external PD config snapshot for one feature/policy lane and phase."""
-    config = _load_yaml(CHAMPION_PD_CONFIG_PATH)
-    feature_profile_path = _write_feature_profile_snapshot(
-        artifact_root=artifact_root,
-        profile_name=feature_profile_name,
-    )
-    policy = _monotonic_policy_for_feature_profile(
-        policy_name=policy_name,
-        feature_profile_name=feature_profile_name,
-        feature_profile_path=feature_profile_path,
-    )
-    lane = _lane_id(feature_profile_name, policy_name)
-    phase_root = artifact_root / "pd" / feature_profile_name / policy_name / phase
-    profile = FEATURE_PROFILES[feature_profile_name]
-
+    config: dict[str, Any],
+    feature_profile_path: Path,
+    profile: Mapping[str, Any],
+) -> None:
     config["feature_source"] = dict(config.get("feature_source", {}) or {})
     config["feature_source"]["feature_config_path"] = str(feature_profile_path)
     config["stable_core"] = dict(config.get("stable_core", {}) or {})
     config["stable_core"]["enabled"] = bool(profile.get("stable_core_enabled", False))
+
+
+def _apply_pd_model_params(
+    *,
+    config: dict[str, Any],
+    policy: Mapping[str, int],
+    cpu_threads: int,
+    base_params_override: Mapping[str, Any] | None,
+) -> None:
     config["model"] = dict(config.get("model", {}) or {})
     config["model"]["params"] = dict(config["model"].get("params", {}) or {})
     if base_params_override:
@@ -797,9 +796,24 @@ def write_pd_config_snapshot(
             "monotone_constraints": _format_monotone_constraints(policy),
         }
     )
+
+
+def _apply_venn_abers_calibration(config: dict[str, Any]) -> None:
     config["calibration"] = dict(config.get("calibration", {}) or {})
     config["calibration"]["method"] = "venn_abers"
     config["calibration"]["candidates"] = ["venn_abers"]
+
+
+def _apply_pd_hpo_config(
+    *,
+    config: dict[str, Any],
+    artifact_root: Path,
+    phase_root: Path,
+    run_tag: str,
+    phase: str,
+    lane: str,
+    n_trials: int,
+) -> list[dict[str, Any]]:
     config["hpo"] = dict(config.get("hpo", {}) or {})
     config["hpo"].update(
         {
@@ -847,27 +861,34 @@ def write_pd_config_snapshot(
             "bootstrap_type": ["MVS", "Bernoulli"],
             "grow_policy": ["SymmetricTree"],
         }
-    config["validation"] = dict(config.get("validation", {}) or {})
+    return warm_start
+
+
+def _pd_validation_policy(phase: str) -> tuple[dict[str, Any], bool]:
     if phase == "pd-smoke":
-        seed_replay = {"enabled": True, "top_k_trials": 1, "seeds": [42]}
-        walk_forward_enabled = False
-    elif phase == "pd-broad":
-        seed_replay = {"enabled": True, "top_k_trials": 10, "seeds": [42, 52, 62]}
-        walk_forward_enabled = True
-    else:
-        seed_replay = {
-            "enabled": True,
-            "top_k_trials": 30,
-            "seeds": [42, 52, 62, 72, 82],
-        }
-        walk_forward_enabled = True
+        return {"enabled": True, "top_k_trials": 1, "seeds": [42]}, False
+    if phase == "pd-broad":
+        return {"enabled": True, "top_k_trials": 10, "seeds": [42, 52, 62]}, True
+    return {
+        "enabled": True,
+        "top_k_trials": 30,
+        "seeds": [42, 52, 62, 72, 82],
+    }, True
+
+
+def _apply_pd_validation_config(*, config: dict[str, Any], phase: str) -> None:
+    seed_replay, walk_forward_enabled = _pd_validation_policy(phase)
+    config["validation"] = dict(config.get("validation", {}) or {})
     config["validation"]["seed_replay"] = {
         **seed_replay,
         "prioritize_gate_pass": True,
     }
     config["validation"]["walk_forward"] = dict(config["validation"].get("walk_forward", {}) or {})
     config["validation"]["walk_forward"]["enabled"] = walk_forward_enabled
-    config["output"] = {
+
+
+def _pd_output_paths(phase_root: Path) -> dict[str, Any]:
+    return {
         "model_path": str(phase_root / "models" / "pd_model.cbm"),
         "default_model_path": str(phase_root / "models" / "pd_default.cbm"),
         "tuned_model_path": str(phase_root / "models" / "pd_tuned.cbm"),
@@ -887,6 +908,9 @@ def write_pd_config_snapshot(
         "shap_dir": str(phase_root / "reports" / "shap"),
         "write_legacy_model_copy": False,
     }
+
+
+def _apply_pd_decision_threshold_config(*, config: dict[str, Any], phase_root: Path) -> None:
     config["decision_threshold"] = dict(config.get("decision_threshold", {}) or {})
     config["decision_threshold"]["enabled"] = False
     config["decision_threshold"]["fairness_policy_path"] = ""
@@ -896,6 +920,20 @@ def write_pd_config_snapshot(
     config["decision_threshold"]["output_path_v2"] = str(
         phase_root / "models" / "decision_threshold_v2.json"
     )
+
+
+def _apply_pd_sandbox_metadata(
+    *,
+    config: dict[str, Any],
+    run_tag: str,
+    phase: str,
+    feature_profile_name: str,
+    policy_name: str,
+    lane: str,
+    policy: Mapping[str, int],
+    base_params_override: Mapping[str, Any] | None,
+    warm_start: list[dict[str, Any]],
+) -> None:
     config["sandbox_search"] = {
         "run_tag": run_tag,
         "phase": phase,
@@ -913,6 +951,69 @@ def write_pd_config_snapshot(
         "skip_diagnostic_exports": True,
         "skip_shap_export": True,
     }
+
+
+def write_pd_config_snapshot(
+    *,
+    artifact_root: Path,
+    run_tag: str,
+    feature_profile_name: str,
+    policy_name: str,
+    phase: str,
+    n_trials: int,
+    cpu_threads: int,
+    base_params_override: Mapping[str, Any] | None = None,
+) -> Path:
+    """Write an external PD config snapshot for one feature/policy lane and phase."""
+    config = _load_yaml(CHAMPION_PD_CONFIG_PATH)
+    feature_profile_path = _write_feature_profile_snapshot(
+        artifact_root=artifact_root,
+        profile_name=feature_profile_name,
+    )
+    policy = _monotonic_policy_for_feature_profile(
+        policy_name=policy_name,
+        feature_profile_name=feature_profile_name,
+        feature_profile_path=feature_profile_path,
+    )
+    lane = _lane_id(feature_profile_name, policy_name)
+    phase_root = artifact_root / "pd" / feature_profile_name / policy_name / phase
+    profile = FEATURE_PROFILES[feature_profile_name]
+
+    _apply_pd_feature_profile_config(
+        config=config,
+        feature_profile_path=feature_profile_path,
+        profile=profile,
+    )
+    _apply_pd_model_params(
+        config=config,
+        policy=policy,
+        cpu_threads=cpu_threads,
+        base_params_override=base_params_override,
+    )
+    _apply_venn_abers_calibration(config)
+    warm_start = _apply_pd_hpo_config(
+        config=config,
+        artifact_root=artifact_root,
+        phase_root=phase_root,
+        run_tag=run_tag,
+        phase=phase,
+        lane=lane,
+        n_trials=n_trials,
+    )
+    _apply_pd_validation_config(config=config, phase=phase)
+    config["output"] = _pd_output_paths(phase_root)
+    _apply_pd_decision_threshold_config(config=config, phase_root=phase_root)
+    _apply_pd_sandbox_metadata(
+        config=config,
+        run_tag=run_tag,
+        phase=phase,
+        feature_profile_name=feature_profile_name,
+        policy_name=policy_name,
+        lane=lane,
+        policy=policy,
+        base_params_override=base_params_override,
+        warm_start=warm_start,
+    )
     target = artifact_root / "configs" / f"pd_{lane}_{phase}.yaml"
     assert_safe_output_paths(
         value for value in config["output"].values() if isinstance(value, (str, Path))
@@ -1360,6 +1461,427 @@ def _resolve_pd_candidate_for_conformal(artifact_root: Path, artifact_name: str)
     return canonical[artifact_name]
 
 
+def _sandbox_base_env(artifact_root: Path, safe_tag: str) -> dict[str, str]:
+    return {
+        "CRPTO_RUN_TAG": safe_tag,
+        "PIPELINE_RUN_TAG": safe_tag,
+        "RUN_TAG": safe_tag,
+        "CRPTO_OFFICIAL_RUN_TAG": safe_tag,
+        "GPU_REPLAY_ARTIFACT_ROOT": str(artifact_root),
+        "CRPTO_SANDBOX_ARTIFACT_ROOT": str(artifact_root),
+    }
+
+
+def _phase_resources(
+    phase: str,
+    *,
+    max_workers: int,
+    cpu_threads: int,
+) -> tuple[int, int]:
+    workers = int(max_workers) if int(max_workers) > 0 else _default_workers_for_phase(phase)
+    threads = int(cpu_threads) if int(cpu_threads) > 0 else _default_threads_for_phase(phase)
+    return workers, threads
+
+
+def _pd_incumbent_command(
+    *,
+    artifact_root: Path,
+    safe_tag: str,
+    phase: str,
+    phase_workers: int,
+    phase_threads: int,
+    base_env: Mapping[str, str],
+) -> PhaseCommand:
+    config_path = write_pd_incumbent_config_snapshot(
+        artifact_root=artifact_root,
+        run_tag=safe_tag,
+        phase=phase,
+        cpu_threads=phase_threads,
+    )
+    output_root = artifact_root / "pd_baselines" / "champion" / phase
+    outputs = [
+        output_root / "models" / "pd_model.cbm",
+        output_root / "models" / "pd_training_status.json",
+        output_root / "models" / "pd_training_record.pkl",
+    ]
+    command_name = f"{phase}_incumbent__frozen_champion"
+    stdout_log, stderr_log = _command_log_files(artifact_root, phase, command_name)
+    return PhaseCommand(
+        name=command_name,
+        phase=phase,
+        command=[
+            sys.executable,
+            str(ROOT / "scripts" / "train_pd_model.py"),
+            "--config",
+            str(config_path),
+            "--hpo_enabled",
+            "false",
+            "--hpo_n_trials",
+            "0",
+            "--walk_forward_enabled",
+            "true" if phase != "pd-smoke" else "false",
+            "--seed_replay_enabled",
+            "false",
+        ],
+        outputs=[str(path) for path in outputs],
+        checkpoint=str(output_root / "models" / "pd_training_checkpoints"),
+        env=_command_env(base_env, phase_threads=phase_threads),
+        max_workers=phase_workers,
+        cpu_threads=phase_threads,
+        feature_profile="incumbent",
+        monotonic_policy="canonical_4",
+        lane_id="incumbent__frozen_champion",
+        stdout_log=str(stdout_log),
+        stderr_log=str(stderr_log),
+    )
+
+
+def _pd_lane_command(
+    *,
+    artifact_root: Path,
+    safe_tag: str,
+    phase: str,
+    phase_workers: int,
+    phase_threads: int,
+    base_env: Mapping[str, str],
+    feature_profile_name: str,
+    policy_name: str,
+    n_trials: int,
+) -> PhaseCommand:
+    lane = _lane_id(feature_profile_name, policy_name)
+    base_params = _previous_best_params_for_lane(
+        artifact_root=artifact_root,
+        phase=phase,
+        lane_id=lane,
+    )
+    config_path = write_pd_config_snapshot(
+        artifact_root=artifact_root,
+        run_tag=safe_tag,
+        feature_profile_name=feature_profile_name,
+        policy_name=policy_name,
+        phase=phase,
+        n_trials=n_trials,
+        cpu_threads=phase_threads,
+        base_params_override=base_params,
+    )
+    output_root = artifact_root / "pd" / feature_profile_name / policy_name / phase
+    remaining_trials = _pd_remaining_trials(
+        phase_root=output_root,
+        run_tag=safe_tag,
+        lane_id=lane,
+        phase=phase,
+        target_trials=n_trials,
+    )
+    outputs = [
+        output_root / "models" / "pd_model.cbm",
+        output_root / "models" / "pd_training_status.json",
+        output_root / "models" / "pd_hpo_seed_replay_status.json",
+    ]
+    command_name = f"{phase}_{lane}"
+    stdout_log, stderr_log = _command_log_files(artifact_root, phase, command_name)
+    return PhaseCommand(
+        name=command_name,
+        phase=phase,
+        command=[
+            sys.executable,
+            str(ROOT / "scripts" / "train_pd_model.py"),
+            "--config",
+            str(config_path),
+            "--hpo_enabled",
+            "true",
+            "--hpo_n_trials",
+            str(remaining_trials),
+            "--walk_forward_enabled",
+            "true" if phase != "pd-smoke" else "false",
+            "--seed_replay_enabled",
+            "true",
+        ],
+        outputs=[str(path) for path in outputs],
+        checkpoint=str(output_root / "models" / "pd_training_checkpoints"),
+        env=_command_env(base_env, phase_threads=phase_threads),
+        max_workers=phase_workers,
+        cpu_threads=phase_threads,
+        feature_profile=feature_profile_name,
+        monotonic_policy=policy_name,
+        lane_id=lane,
+        stdout_log=str(stdout_log),
+        stderr_log=str(stderr_log),
+    )
+
+
+def _build_pd_phase_commands(
+    *,
+    artifact_root: Path,
+    safe_tag: str,
+    phase: str,
+    phase_workers: int,
+    phase_threads: int,
+    base_env: Mapping[str, str],
+) -> list[PhaseCommand]:
+    commands = [
+        _pd_incumbent_command(
+            artifact_root=artifact_root,
+            safe_tag=safe_tag,
+            phase=phase,
+            phase_workers=phase_workers,
+            phase_threads=phase_threads,
+            base_env=base_env,
+        )
+    ]
+    n_trials = _pd_trials_for_phase(phase)
+    commands.extend(
+        _pd_lane_command(
+            artifact_root=artifact_root,
+            safe_tag=safe_tag,
+            phase=phase,
+            phase_workers=phase_workers,
+            phase_threads=phase_threads,
+            base_env=base_env,
+            feature_profile_name=feature_profile_name,
+            policy_name=policy_name,
+            n_trials=n_trials,
+        )
+        for feature_profile_name, policy_name in _selected_pd_lanes(artifact_root, phase)
+    )
+    return commands
+
+
+def _build_conformal_phase_command(
+    *,
+    artifact_root: Path,
+    safe_tag: str,
+    phase_workers: int,
+    phase_threads: int,
+    base_env: Mapping[str, str],
+) -> PhaseCommand:
+    phase = "conformal"
+    conformal_root = artifact_root / phase / safe_tag
+    pd_model_path = _resolve_pd_candidate_for_conformal(
+        artifact_root,
+        "pd_shadow_canonical.cbm",
+    )
+    pd_calibrator_path = _resolve_pd_candidate_for_conformal(
+        artifact_root,
+        "pd_shadow_calibrator.pkl",
+    )
+    outputs = [
+        conformal_root / "data" / "conformal_intervals_mondrian.parquet",
+        conformal_root / "models" / "conformal_results_mondrian.pkl",
+        conformal_root / "models" / "pd_conformal_width_attribution_status.json",
+    ]
+    command_name = "conformal_extensive_grid"
+    stdout_log, stderr_log = _command_log_files(artifact_root, phase, command_name)
+    return PhaseCommand(
+        name=command_name,
+        phase=phase,
+        command=[
+            sys.executable,
+            str(ROOT / "scripts" / "generate_conformal_intervals.py"),
+            "--artifact_namespace",
+            safe_tag,
+            "--artifact_root",
+            str(artifact_root / phase),
+            "--model_override_path",
+            str(pd_model_path),
+            "--alpha_candidates_90",
+            "0.05,0.075,0.09,0.095,0.10,0.105,0.11,0.125,0.15,0.20",
+            "--alpha_candidates_95",
+            "0.025,0.04,0.045,0.05,0.055,0.06,0.075",
+            "--partition_candidates",
+            "grade,score_decile_mondrian,grade_x_scoreband_mondrian",
+            "--n_score_bins_candidates",
+            "5,10,15,20,30",
+            "--min_group_sizes",
+            "100,150,250,500,1000,2000",
+            "--score_scale_families",
+            "none,bernoulli_sqrt,bernoulli_sqrt_clipped_0.02,bernoulli_sqrt_clipped_0.05",
+            "--calibrator_override_path",
+            str(pd_calibrator_path),
+        ],
+        outputs=[str(path) for path in outputs],
+        checkpoint=str(conformal_root / "checkpoints"),
+        env=_command_env(base_env, phase_threads=phase_threads),
+        max_workers=phase_workers,
+        cpu_threads=phase_threads,
+        stdout_log=str(stdout_log),
+        stderr_log=str(stderr_log),
+    )
+
+
+def _build_portfolio_phase_command(
+    *,
+    artifact_root: Path,
+    safe_tag: str,
+    phase_workers: int,
+    phase_threads: int,
+    base_env: Mapping[str, str],
+) -> PhaseCommand:
+    phase = "portfolio"
+    portfolio_root = artifact_root / phase / safe_tag
+    conformal_path = (
+        artifact_root / "conformal" / safe_tag / "data" / "conformal_intervals_mondrian.parquet"
+    )
+    outputs = [
+        portfolio_root / "data" / "portfolio_bound_aware_frontier.parquet",
+        portfolio_root / "data" / "portfolio_bound_aware_bound_eval.parquet",
+        portfolio_root / "models" / "portfolio_bound_aware_selection.json",
+    ]
+    command_name = "portfolio_extensive_frontier"
+    stdout_log, stderr_log = _command_log_files(artifact_root, phase, command_name)
+    return PhaseCommand(
+        name=command_name,
+        phase=phase,
+        command=[
+            sys.executable,
+            str(ROOT / "scripts" / "search" / "run_portfolio_bound_aware_search.py"),
+            "--config",
+            str(ROOT / "configs" / "crpto_optimization.yaml"),
+            "--conformal-intervals-path",
+            str(conformal_path),
+            "--run-label",
+            safe_tag,
+            "--output-dir",
+            str(portfolio_root / "data"),
+            "--model-dir",
+            str(portfolio_root / "models"),
+            "--incumbent-policy-path",
+            str(CHAMPION_PORTFOLIO_POLICY_PATH),
+            "--incumbent-risk-neighbors",
+            "0.155,0.16,0.165,0.17,0.175,0.18",
+            "--incumbent-gamma-neighbors",
+            "0.425,0.45,0.475,0.50,0.525,0.55,0.575",
+            "--incumbent-policy-modes",
+            "blended_uncertainty,capped_blended_uncertainty,tail_blended_uncertainty,segment_tail_blended_uncertainty,segment_relative_tail_blended_uncertainty",
+            "--risk-grid",
+            PORTFOLIO_RISK_GRID,
+            "--gamma-grid",
+            PORTFOLIO_GAMMA_GRID,
+            "--aversion-grid",
+            PORTFOLIO_AVERSION_GRID,
+            "--delta-cap-grid",
+            PORTFOLIO_CAP_TAIL_GRID,
+            "--tail-focus-grid",
+            PORTFOLIO_CAP_TAIL_GRID,
+            "--policy-modes",
+            "blended_uncertainty,capped_blended_uncertainty,tail_blended_uncertainty,segment_tail_blended_uncertainty,segment_relative_tail_blended_uncertainty",
+            "--alpha-grid",
+            PORTFOLIO_ALPHA_GRID,
+            "--max-candidates",
+            str(PORTFOLIO_MAX_CANDIDATES),
+            "--shortlist-top-k",
+            str(PORTFOLIO_SHORTLIST_TOP_K),
+            "--random-states",
+            PORTFOLIO_RANDOM_STATES,
+            "--solver-backend",
+            "highs",
+            "--exact-solver-backend",
+            "highs",
+        ],
+        outputs=[str(path) for path in outputs],
+        checkpoint=str(portfolio_root / "models" / "portfolio_bound_aware_runtime_checkpoints"),
+        env=_command_env(base_env, phase_threads=phase_threads),
+        max_workers=phase_workers,
+        cpu_threads=phase_threads,
+        stdout_log=str(stdout_log),
+        stderr_log=str(stderr_log),
+    )
+
+
+def _build_metrics_phase_command(
+    *,
+    artifact_root: Path,
+    safe_tag: str,
+    base_env: Mapping[str, str],
+) -> PhaseCommand:
+    phase = "metrics"
+    metrics_path = artifact_root / phase / "frontier_metrics_manifest.json"
+    command_name = "metrics_manifest"
+    stdout_log, stderr_log = _command_log_files(artifact_root, phase, command_name)
+    return PhaseCommand(
+        name=command_name,
+        phase=phase,
+        command=[
+            sys.executable,
+            str(Path(__file__).resolve()),
+            "--run-tag",
+            safe_tag,
+            "--artifact-root",
+            str(artifact_root),
+            "--phase",
+            "plan",
+            "--resume",
+        ],
+        outputs=[str(metrics_path)],
+        checkpoint=str(artifact_root / phase),
+        env=_command_env(base_env, phase_threads=1),
+        max_workers=1,
+        cpu_threads=1,
+        stdout_log=str(stdout_log),
+        stderr_log=str(stderr_log),
+    )
+
+
+def _commands_for_phase(
+    *,
+    artifact_root: Path,
+    safe_tag: str,
+    phase: str,
+    phase_workers: int,
+    phase_threads: int,
+    base_env: Mapping[str, str],
+) -> list[PhaseCommand]:
+    if phase in PD_PHASES:
+        return _build_pd_phase_commands(
+            artifact_root=artifact_root,
+            safe_tag=safe_tag,
+            phase=phase,
+            phase_workers=phase_workers,
+            phase_threads=phase_threads,
+            base_env=base_env,
+        )
+    if phase == "conformal":
+        return [
+            _build_conformal_phase_command(
+                artifact_root=artifact_root,
+                safe_tag=safe_tag,
+                phase_workers=phase_workers,
+                phase_threads=phase_threads,
+                base_env=base_env,
+            )
+        ]
+    if phase == "portfolio":
+        return [
+            _build_portfolio_phase_command(
+                artifact_root=artifact_root,
+                safe_tag=safe_tag,
+                phase_workers=phase_workers,
+                phase_threads=phase_threads,
+                base_env=base_env,
+            )
+        ]
+    if phase == "metrics":
+        return [
+            _build_metrics_phase_command(
+                artifact_root=artifact_root,
+                safe_tag=safe_tag,
+                base_env=base_env,
+            )
+        ]
+    if phase in {"plan", "deps"}:
+        return []
+    raise ValueError(f"Unknown sandbox phase: {phase}")
+
+
+def _validate_phase_command_paths(commands: Iterable[PhaseCommand]) -> None:
+    for command in commands:
+        assert_safe_output_paths(command.outputs)
+        assert_safe_output_path(command.checkpoint)
+        if command.stdout_log:
+            assert_safe_output_path(command.stdout_log)
+        if command.stderr_log:
+            assert_safe_output_path(command.stderr_log)
+
+
 def build_phase_commands(
     *,
     artifact_root: Path,
@@ -1371,330 +1893,30 @@ def build_phase_commands(
     """Build commands for the requested sandbox phase."""
     safe_tag = sanitize_tag(run_tag)
     artifact_root = artifact_root.resolve()
-    commands: list[PhaseCommand] = []
-    base_env = {
-        "CRPTO_RUN_TAG": safe_tag,
-        "PIPELINE_RUN_TAG": safe_tag,
-        "RUN_TAG": safe_tag,
-        "CRPTO_OFFICIAL_RUN_TAG": safe_tag,
-        "GPU_REPLAY_ARTIFACT_ROOT": str(artifact_root),
-        "CRPTO_SANDBOX_ARTIFACT_ROOT": str(artifact_root),
-    }
+    base_env = _sandbox_base_env(artifact_root, safe_tag)
     selected_phases = (
         ["pd-smoke", "pd-broad", "pd-refine", "conformal", "portfolio", "metrics"]
         if phase == "all"
         else [phase]
     )
+    commands: list[PhaseCommand] = []
     for selected_phase in selected_phases:
-        phase_workers = (
-            int(max_workers) if int(max_workers) > 0 else _default_workers_for_phase(selected_phase)
+        phase_workers, phase_threads = _phase_resources(
+            selected_phase,
+            max_workers=max_workers,
+            cpu_threads=cpu_threads,
         )
-        phase_threads = (
-            int(cpu_threads) if int(cpu_threads) > 0 else _default_threads_for_phase(selected_phase)
-        )
-        if selected_phase in PD_PHASES:
-            incumbent_config_path = write_pd_incumbent_config_snapshot(
+        commands.extend(
+            _commands_for_phase(
                 artifact_root=artifact_root,
-                run_tag=safe_tag,
+                safe_tag=safe_tag,
                 phase=selected_phase,
-                cpu_threads=phase_threads,
+                phase_workers=phase_workers,
+                phase_threads=phase_threads,
+                base_env=base_env,
             )
-            incumbent_root = artifact_root / "pd_baselines" / "champion" / selected_phase
-            incumbent_outputs = [
-                incumbent_root / "models" / "pd_model.cbm",
-                incumbent_root / "models" / "pd_training_status.json",
-                incumbent_root / "models" / "pd_training_record.pkl",
-            ]
-            incumbent_command_name = f"{selected_phase}_incumbent__frozen_champion"
-            incumbent_stdout_log, incumbent_stderr_log = _command_log_files(
-                artifact_root,
-                selected_phase,
-                incumbent_command_name,
-            )
-            commands.append(
-                PhaseCommand(
-                    name=incumbent_command_name,
-                    phase=selected_phase,
-                    command=[
-                        sys.executable,
-                        str(ROOT / "scripts" / "train_pd_model.py"),
-                        "--config",
-                        str(incumbent_config_path),
-                        "--hpo_enabled",
-                        "false",
-                        "--hpo_n_trials",
-                        "0",
-                        "--walk_forward_enabled",
-                        "true" if selected_phase != "pd-smoke" else "false",
-                        "--seed_replay_enabled",
-                        "false",
-                    ],
-                    outputs=[str(path) for path in incumbent_outputs],
-                    checkpoint=str(incumbent_root / "models" / "pd_training_checkpoints"),
-                    env=_command_env(base_env, phase_threads=phase_threads),
-                    max_workers=phase_workers,
-                    cpu_threads=phase_threads,
-                    feature_profile="incumbent",
-                    monotonic_policy="canonical_4",
-                    lane_id="incumbent__frozen_champion",
-                    stdout_log=str(incumbent_stdout_log),
-                    stderr_log=str(incumbent_stderr_log),
-                )
-            )
-            n_trials = _pd_trials_for_phase(selected_phase)
-            for feature_profile_name, policy_name in _selected_pd_lanes(
-                artifact_root,
-                selected_phase,
-            ):
-                lane = _lane_id(feature_profile_name, policy_name)
-                base_params = _previous_best_params_for_lane(
-                    artifact_root=artifact_root,
-                    phase=selected_phase,
-                    lane_id=lane,
-                )
-                config_path = write_pd_config_snapshot(
-                    artifact_root=artifact_root,
-                    run_tag=safe_tag,
-                    feature_profile_name=feature_profile_name,
-                    policy_name=policy_name,
-                    phase=selected_phase,
-                    n_trials=n_trials,
-                    cpu_threads=phase_threads,
-                    base_params_override=base_params,
-                )
-                output_root = (
-                    artifact_root / "pd" / feature_profile_name / policy_name / selected_phase
-                )
-                remaining_trials = _pd_remaining_trials(
-                    phase_root=output_root,
-                    run_tag=safe_tag,
-                    lane_id=lane,
-                    phase=selected_phase,
-                    target_trials=n_trials,
-                )
-                outputs = [
-                    output_root / "models" / "pd_model.cbm",
-                    output_root / "models" / "pd_training_status.json",
-                    output_root / "models" / "pd_hpo_seed_replay_status.json",
-                ]
-                command_name = f"{selected_phase}_{lane}"
-                stdout_log, stderr_log = _command_log_files(
-                    artifact_root,
-                    selected_phase,
-                    command_name,
-                )
-                commands.append(
-                    PhaseCommand(
-                        name=command_name,
-                        phase=selected_phase,
-                        command=[
-                            sys.executable,
-                            str(ROOT / "scripts" / "train_pd_model.py"),
-                            "--config",
-                            str(config_path),
-                            "--hpo_enabled",
-                            "true",
-                            "--hpo_n_trials",
-                            str(remaining_trials),
-                            "--walk_forward_enabled",
-                            "true" if selected_phase != "pd-smoke" else "false",
-                            "--seed_replay_enabled",
-                            "true",
-                        ],
-                        outputs=[str(path) for path in outputs],
-                        checkpoint=str(output_root / "models" / "pd_training_checkpoints"),
-                        env=_command_env(base_env, phase_threads=phase_threads),
-                        max_workers=phase_workers,
-                        cpu_threads=phase_threads,
-                        feature_profile=feature_profile_name,
-                        monotonic_policy=policy_name,
-                        lane_id=lane,
-                        stdout_log=str(stdout_log),
-                        stderr_log=str(stderr_log),
-                    )
-                )
-        elif selected_phase == "conformal":
-            conformal_root = artifact_root / "conformal" / safe_tag
-            pd_model_path = _resolve_pd_candidate_for_conformal(
-                artifact_root,
-                "pd_shadow_canonical.cbm",
-            )
-            pd_calibrator_path = _resolve_pd_candidate_for_conformal(
-                artifact_root,
-                "pd_shadow_calibrator.pkl",
-            )
-            outputs = [
-                conformal_root / "data" / "conformal_intervals_mondrian.parquet",
-                conformal_root / "models" / "conformal_results_mondrian.pkl",
-                conformal_root / "models" / "pd_conformal_width_attribution_status.json",
-            ]
-            command_name = "conformal_extensive_grid"
-            stdout_log, stderr_log = _command_log_files(
-                artifact_root,
-                selected_phase,
-                command_name,
-            )
-            commands.append(
-                PhaseCommand(
-                    name=command_name,
-                    phase=selected_phase,
-                    command=[
-                        sys.executable,
-                        str(ROOT / "scripts" / "generate_conformal_intervals.py"),
-                        "--artifact_namespace",
-                        safe_tag,
-                        "--artifact_root",
-                        str(artifact_root / "conformal"),
-                        "--model_override_path",
-                        str(pd_model_path),
-                        "--alpha_candidates_90",
-                        "0.05,0.075,0.09,0.095,0.10,0.105,0.11,0.125,0.15,0.20",
-                        "--alpha_candidates_95",
-                        "0.025,0.04,0.045,0.05,0.055,0.06,0.075",
-                        "--partition_candidates",
-                        "grade,score_decile_mondrian,grade_x_scoreband_mondrian",
-                        "--n_score_bins_candidates",
-                        "5,10,15,20,30",
-                        "--min_group_sizes",
-                        "100,150,250,500,1000,2000",
-                        "--score_scale_families",
-                        "none,bernoulli_sqrt,bernoulli_sqrt_clipped_0.02,bernoulli_sqrt_clipped_0.05",
-                        "--calibrator_override_path",
-                        str(pd_calibrator_path),
-                    ],
-                    outputs=[str(path) for path in outputs],
-                    checkpoint=str(conformal_root / "checkpoints"),
-                    env=_command_env(base_env, phase_threads=phase_threads),
-                    max_workers=phase_workers,
-                    cpu_threads=phase_threads,
-                    stdout_log=str(stdout_log),
-                    stderr_log=str(stderr_log),
-                )
-            )
-        elif selected_phase == "portfolio":
-            portfolio_root = artifact_root / "portfolio" / safe_tag
-            conformal_path = (
-                artifact_root
-                / "conformal"
-                / safe_tag
-                / "data"
-                / "conformal_intervals_mondrian.parquet"
-            )
-            outputs = [
-                portfolio_root / "data" / "portfolio_bound_aware_frontier.parquet",
-                portfolio_root / "data" / "portfolio_bound_aware_bound_eval.parquet",
-                portfolio_root / "models" / "portfolio_bound_aware_selection.json",
-            ]
-            command_name = "portfolio_extensive_frontier"
-            stdout_log, stderr_log = _command_log_files(
-                artifact_root,
-                selected_phase,
-                command_name,
-            )
-            commands.append(
-                PhaseCommand(
-                    name=command_name,
-                    phase=selected_phase,
-                    command=[
-                        sys.executable,
-                        str(ROOT / "scripts" / "search" / "run_portfolio_bound_aware_search.py"),
-                        "--config",
-                        str(ROOT / "configs" / "crpto_optimization.yaml"),
-                        "--conformal-intervals-path",
-                        str(conformal_path),
-                        "--run-label",
-                        safe_tag,
-                        "--output-dir",
-                        str(portfolio_root / "data"),
-                        "--model-dir",
-                        str(portfolio_root / "models"),
-                        "--incumbent-policy-path",
-                        str(CHAMPION_PORTFOLIO_POLICY_PATH),
-                        "--incumbent-risk-neighbors",
-                        "0.155,0.16,0.165,0.17,0.175,0.18",
-                        "--incumbent-gamma-neighbors",
-                        "0.425,0.45,0.475,0.50,0.525,0.55,0.575",
-                        "--incumbent-policy-modes",
-                        "blended_uncertainty,capped_blended_uncertainty,tail_blended_uncertainty,segment_tail_blended_uncertainty,segment_relative_tail_blended_uncertainty",
-                        "--risk-grid",
-                        PORTFOLIO_RISK_GRID,
-                        "--gamma-grid",
-                        PORTFOLIO_GAMMA_GRID,
-                        "--aversion-grid",
-                        PORTFOLIO_AVERSION_GRID,
-                        "--delta-cap-grid",
-                        PORTFOLIO_CAP_TAIL_GRID,
-                        "--tail-focus-grid",
-                        PORTFOLIO_CAP_TAIL_GRID,
-                        "--policy-modes",
-                        "blended_uncertainty,capped_blended_uncertainty,tail_blended_uncertainty,segment_tail_blended_uncertainty,segment_relative_tail_blended_uncertainty",
-                        "--alpha-grid",
-                        "0.01,0.02,0.03,0.05,0.10,0.15,0.20",
-                        "--max-candidates",
-                        str(PORTFOLIO_MAX_CANDIDATES),
-                        "--shortlist-top-k",
-                        str(PORTFOLIO_SHORTLIST_TOP_K),
-                        "--random-states",
-                        PORTFOLIO_RANDOM_STATES,
-                        "--solver-backend",
-                        "highs",
-                        "--exact-solver-backend",
-                        "highs",
-                    ],
-                    outputs=[str(path) for path in outputs],
-                    checkpoint=str(
-                        portfolio_root / "models" / "portfolio_bound_aware_runtime_checkpoints"
-                    ),
-                    env=_command_env(base_env, phase_threads=phase_threads),
-                    max_workers=phase_workers,
-                    cpu_threads=phase_threads,
-                    stdout_log=str(stdout_log),
-                    stderr_log=str(stderr_log),
-                )
-            )
-        elif selected_phase == "metrics":
-            metrics_path = artifact_root / "metrics" / "frontier_metrics_manifest.json"
-            command_name = "metrics_manifest"
-            stdout_log, stderr_log = _command_log_files(
-                artifact_root,
-                selected_phase,
-                command_name,
-            )
-            commands.append(
-                PhaseCommand(
-                    name=command_name,
-                    phase=selected_phase,
-                    command=[
-                        sys.executable,
-                        str(Path(__file__).resolve()),
-                        "--run-tag",
-                        safe_tag,
-                        "--artifact-root",
-                        str(artifact_root),
-                        "--phase",
-                        "plan",
-                        "--resume",
-                    ],
-                    outputs=[str(metrics_path)],
-                    checkpoint=str(artifact_root / "metrics"),
-                    env=_command_env(base_env, phase_threads=1),
-                    max_workers=1,
-                    cpu_threads=1,
-                    stdout_log=str(stdout_log),
-                    stderr_log=str(stderr_log),
-                )
-            )
-        elif selected_phase in {"plan", "deps"}:
-            continue
-        else:
-            raise ValueError(f"Unknown sandbox phase: {selected_phase}")
-    for command in commands:
-        assert_safe_output_paths(command.outputs)
-        assert_safe_output_path(command.checkpoint)
-        if command.stdout_log:
-            assert_safe_output_path(command.stdout_log)
-        if command.stderr_log:
-            assert_safe_output_path(command.stderr_log)
+        )
+    _validate_phase_command_paths(commands)
     return commands
 
 
@@ -2052,6 +2274,160 @@ def _run_one_command(command: PhaseCommand) -> tuple[PhaseCommand, int]:
     return command, returncode
 
 
+def _phase_command_groups(commands: Sequence[PhaseCommand]) -> list[list[PhaseCommand]]:
+    phase_groups: list[list[PhaseCommand]] = []
+    for command in commands:
+        if not phase_groups or phase_groups[-1][0].phase != command.phase:
+            phase_groups.append([command])
+        else:
+            phase_groups[-1].append(command)
+    return phase_groups
+
+
+def _log_skipped_completed(
+    *,
+    artifact_root: Path,
+    log_path: Path,
+    command: PhaseCommand,
+) -> None:
+    _append_command_log(
+        log_path,
+        {
+            "captured_at_utc": utc_now_iso(),
+            "phase": command.phase,
+            "name": command.name,
+            "state": "skipped_completed",
+            "returncode": 0,
+            "checkpoint": command.checkpoint,
+            "stdout_log": command.stdout_log,
+            "stderr_log": command.stderr_log,
+        },
+    )
+    _log_command_to_mlflow(
+        artifact_root=artifact_root,
+        command=command,
+        state="skipped_completed",
+        returncode=0,
+    )
+
+
+def _pending_commands_for_group(
+    *,
+    artifact_root: Path,
+    log_path: Path,
+    group: list[PhaseCommand],
+    resume: bool,
+) -> tuple[deque[PhaseCommand], int]:
+    pending: deque[PhaseCommand] = deque()
+    skipped = 0
+    for command in group:
+        if resume and _completed_outputs(command):
+            _log_skipped_completed(
+                artifact_root=artifact_root,
+                log_path=log_path,
+                command=command,
+            )
+            skipped += 1
+            continue
+        pending.append(command)
+    return pending, skipped
+
+
+def _start_available_commands(
+    *,
+    artifact_root: Path,
+    log_path: Path,
+    pending: deque[PhaseCommand],
+    running: dict[Future[tuple[PhaseCommand, int]], PhaseCommand],
+    executor: ThreadPoolExecutor,
+    worker_limit: int,
+) -> Path | None:
+    last_checkpoint: Path | None = None
+    while pending and len(running) < worker_limit and _resource_allows_launch(artifact_root):
+        command = pending.popleft()
+        last_checkpoint = Path(command.checkpoint)
+        future = executor.submit(_run_one_command, command)
+        running[future] = command
+        _append_command_log(
+            log_path,
+            {
+                "captured_at_utc": utc_now_iso(),
+                "phase": command.phase,
+                "name": command.name,
+                "state": "started",
+                "returncode": "",
+                "checkpoint": command.checkpoint,
+                "stdout_log": command.stdout_log,
+                "stderr_log": command.stderr_log,
+            },
+        )
+    return last_checkpoint
+
+
+def _record_finished_command(
+    *,
+    artifact_root: Path,
+    log_path: Path,
+    finished_command: PhaseCommand,
+    returncode: int,
+    failed_commands: list[PhaseCommand],
+) -> None:
+    state = "complete" if returncode == 0 else "failed"
+    _append_command_log(
+        log_path,
+        {
+            "captured_at_utc": utc_now_iso(),
+            "phase": finished_command.phase,
+            "name": finished_command.name,
+            "state": state,
+            "returncode": returncode,
+            "checkpoint": finished_command.checkpoint,
+            "stdout_log": finished_command.stdout_log,
+            "stderr_log": finished_command.stderr_log,
+        },
+    )
+    _log_command_to_mlflow(
+        artifact_root=artifact_root,
+        command=finished_command,
+        state=state,
+        returncode=returncode,
+    )
+    if returncode != 0 and finished_command.phase in PD_PHASES:
+        failed_commands.append(finished_command)
+    elif returncode != 0:
+        raise RuntimeError(
+            f"Sandbox command failed ({finished_command.name}) with return code {returncode}"
+        )
+
+
+def _select_phase_winners_if_needed(
+    *,
+    artifact_root: Path,
+    group: list[PhaseCommand],
+    failed_commands: list[PhaseCommand],
+    completed: int,
+    total_commands: int,
+) -> None:
+    if not group or group[0].phase not in PD_PHASES:
+        return
+    selection_path = _select_pd_phase_winners(artifact_root, group[0].phase)
+    if selection_path is None:
+        failed_names = ", ".join(command.name for command in failed_commands[:10])
+        raise RuntimeError(
+            "No successful PD candidates available after phase "
+            f"{group[0].phase}. Failed lanes: {failed_names}"
+        )
+    _write_heartbeat(
+        artifact_root=artifact_root,
+        phase=group[0].phase,
+        completed_units=completed,
+        total_units=total_commands,
+        current_best_metric=None,
+        last_checkpoint_path=selection_path,
+        state="selected_with_failures" if failed_commands else "selected",
+    )
+
+
 def _run_commands(
     *,
     artifact_root: Path,
@@ -2060,69 +2436,32 @@ def _run_commands(
 ) -> None:
     log_path = artifact_root / "command_log.csv"
     completed = 0
-
-    phase_groups: list[list[PhaseCommand]] = []
-    for command in commands:
-        if not phase_groups or phase_groups[-1][0].phase != command.phase:
-            phase_groups.append([command])
-        else:
-            phase_groups[-1].append(command)
+    phase_groups = _phase_command_groups(commands)
 
     for group in phase_groups:
-        pending: deque[PhaseCommand] = deque()
-        for command in group:
-            if resume and _completed_outputs(command):
-                _append_command_log(
-                    log_path,
-                    {
-                        "captured_at_utc": utc_now_iso(),
-                        "phase": command.phase,
-                        "name": command.name,
-                        "state": "skipped_completed",
-                        "returncode": 0,
-                        "checkpoint": command.checkpoint,
-                        "stdout_log": command.stdout_log,
-                        "stderr_log": command.stderr_log,
-                    },
-                )
-                _log_command_to_mlflow(
-                    artifact_root=artifact_root,
-                    command=command,
-                    state="skipped_completed",
-                    returncode=0,
-                )
-                completed += 1
-                continue
-            pending.append(command)
-
+        pending, skipped = _pending_commands_for_group(
+            artifact_root=artifact_root,
+            log_path=log_path,
+            group=group,
+            resume=resume,
+        )
+        completed += skipped
         worker_limit = max(1, max((command.max_workers for command in group), default=1))
         running: dict[Future[tuple[PhaseCommand, int]], PhaseCommand] = {}
         failed_commands: list[PhaseCommand] = []
         last_checkpoint: Path | None = None
         with ThreadPoolExecutor(max_workers=worker_limit) as executor:
             while pending or running:
-                while (
-                    pending
-                    and len(running) < worker_limit
-                    and _resource_allows_launch(artifact_root)
-                ):
-                    command = pending.popleft()
-                    last_checkpoint = Path(command.checkpoint)
-                    future = executor.submit(_run_one_command, command)
-                    running[future] = command
-                    _append_command_log(
-                        log_path,
-                        {
-                            "captured_at_utc": utc_now_iso(),
-                            "phase": command.phase,
-                            "name": command.name,
-                            "state": "started",
-                            "returncode": "",
-                            "checkpoint": command.checkpoint,
-                            "stdout_log": command.stdout_log,
-                            "stderr_log": command.stderr_log,
-                        },
-                    )
+                next_checkpoint = _start_available_commands(
+                    artifact_root=artifact_root,
+                    log_path=log_path,
+                    pending=pending,
+                    running=running,
+                    executor=executor,
+                    worker_limit=worker_limit,
+                )
+                if next_checkpoint is not None:
+                    last_checkpoint = next_checkpoint
                 _write_heartbeat(
                     artifact_root=artifact_root,
                     phase=group[0].phase if group else "waiting_for_ram",
@@ -2141,51 +2480,23 @@ def _run_commands(
                     return_when=FIRST_COMPLETED,
                 )
                 for future in done:
-                    command = running.pop(future)
+                    running.pop(future)
                     finished_command, returncode = future.result()
                     completed += 1
-                    _append_command_log(
-                        log_path,
-                        {
-                            "captured_at_utc": utc_now_iso(),
-                            "phase": finished_command.phase,
-                            "name": finished_command.name,
-                            "state": "complete" if returncode == 0 else "failed",
-                            "returncode": returncode,
-                            "checkpoint": finished_command.checkpoint,
-                            "stdout_log": finished_command.stdout_log,
-                            "stderr_log": finished_command.stderr_log,
-                        },
-                    )
-                    _log_command_to_mlflow(
+                    _record_finished_command(
                         artifact_root=artifact_root,
-                        command=finished_command,
-                        state="complete" if returncode == 0 else "failed",
+                        log_path=log_path,
+                        finished_command=finished_command,
                         returncode=returncode,
+                        failed_commands=failed_commands,
                     )
-                    if returncode != 0 and finished_command.phase in PD_PHASES:
-                        failed_commands.append(finished_command)
-                    elif returncode != 0:
-                        raise RuntimeError(
-                            f"Sandbox command failed ({command.name}) with return code {returncode}"
-                        )
-        if group and group[0].phase in PD_PHASES:
-            selection_path = _select_pd_phase_winners(artifact_root, group[0].phase)
-            if selection_path is None:
-                failed_names = ", ".join(command.name for command in failed_commands[:10])
-                raise RuntimeError(
-                    "No successful PD candidates available after phase "
-                    f"{group[0].phase}. Failed lanes: {failed_names}"
-                )
-            _write_heartbeat(
-                artifact_root=artifact_root,
-                phase=group[0].phase,
-                completed_units=completed,
-                total_units=len(commands),
-                current_best_metric=None,
-                last_checkpoint_path=selection_path,
-                state="selected_with_failures" if failed_commands else "selected",
-            )
+        _select_phase_winners_if_needed(
+            artifact_root=artifact_root,
+            group=group,
+            failed_commands=failed_commands,
+            completed=completed,
+            total_commands=len(commands),
+        )
     _write_heartbeat(
         artifact_root=artifact_root,
         phase=commands[-1].phase if commands else "plan",

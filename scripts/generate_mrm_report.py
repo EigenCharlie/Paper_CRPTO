@@ -145,20 +145,18 @@ def _build_skops_sidecar(
             card.add_metrics(
                 section="Validation",
                 description="Pipeline-level subsystem gates consumed by MRM.",
-                metrics={
-                    "pipeline_overall_pass": bool(
-                        statuses.get("pipeline", {}).get("overall_pass", False)
-                    ),
-                    "conformal_overall_pass": bool(
-                        statuses.get("conformal", {}).get("overall_pass", False)
-                    ),
-                    "governance_overall_pass": bool(
-                        statuses.get("governance", {}).get("overall_pass", False)
-                    ),
-                    "fairness_overall_pass": bool(
-                        statuses.get("fairness", {}).get("overall_pass", False)
-                    ),
-                },
+                pipeline_overall_pass=int(
+                    bool(statuses.get("pipeline", {}).get("overall_pass", False))
+                ),
+                conformal_overall_pass=int(
+                    bool(statuses.get("conformal", {}).get("overall_pass", False))
+                ),
+                governance_overall_pass=int(
+                    bool(statuses.get("governance", {}).get("overall_pass", False))
+                ),
+                fairness_overall_pass=int(
+                    bool(statuses.get("fairness", {}).get("overall_pass", False))
+                ),
             )
             card.add_hyperparams()
             model_card_md = card.render()

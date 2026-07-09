@@ -19,6 +19,7 @@ import multiprocessing as mp
 import sys
 import time
 from concurrent.futures import FIRST_COMPLETED, ProcessPoolExecutor, wait
+from dataclasses import dataclass
 from datetime import UTC, datetime
 from itertools import product
 from pathlib import Path
@@ -46,7 +47,15 @@ from scripts.validate_alpha_gamma_bound import (  # noqa: E402
     _compute_intervals_at_alpha,
     _load_aligned_dataset,
 )
-from src.optimization.portfolio_model import optimize_portfolio_allocation  # noqa: E402
+from src.optimization.certificate_semantics import (  # noqa: E402
+    IJDS_DECLARED_ALPHA_GRID,
+    add_policy_aware_bound_columns,
+    compute_funded_certificate_metrics,
+)
+from src.optimization.portfolio_model import (  # noqa: E402
+    optimize_portfolio_allocation,
+    solution_allocation_vector,
+)
 from src.utils.pipeline_runtime import (  # noqa: E402
     atomic_write_json,
     atomic_write_parquet,
@@ -56,7 +65,57 @@ from src.utils.pipeline_runtime import (  # noqa: E402
 
 STAGE_NAME = "pool93_ijds_local_refinement"
 DECLARED_RETURN_FLOOR = 170464.54
-DEFAULT_ALPHA_GRID = [0.01, 0.03, 0.05, 0.07, 0.10, 0.12, 0.15, 0.20]
+DEFAULT_ALPHA_GRID = list(IJDS_DECLARED_ALPHA_GRID)
+VALID_PROFILES = {
+    "stage1",
+    "expanded",
+    "claim_expanded",
+    "claim_micro",
+    "claim_micro_ext",
+    "claim_bound_closure",
+    "claim_bound_floor_closure",
+    "claim_bound_terminal",
+}
+ANCHOR_REASONS = (
+    (96, "source_exact_max_return"),
+    (219, "source_low_gamma_cp_return_floor"),
+    (223, "source_low_weighted_miscoverage_high_return"),
+)
+CLAIM_ROW_FIELDS = (
+    "claim_rank",
+    "local_candidate_id",
+    "local_family",
+    "anchor_rank",
+    "source_reason",
+    "risk_tolerance",
+    "policy_mode",
+    "gamma",
+    "delta_cap_quantile",
+    "tail_focus_quantile",
+    "uncertainty_aversion",
+    "alpha01_realized_total_return",
+    "return_floor_surplus",
+    "alpha01_gamma_cp",
+    "alpha01_gamma_internalized",
+    "alpha01_gamma_residual",
+    "alpha01_weighted_miscoverage_V",
+    "alpha01_endpoint_budget",
+    "alpha01_endpoint_budget_upper",
+    "alpha01_markov_loss_threshold",
+    "alpha01_markov_loss_cap",
+    "alpha01_weighted_pd_true",
+    "alpha01_empirical_coverage_funded",
+    "alpha_exact_pass_count",
+    "alpha_exact_check_count",
+    "alpha_mean_gamma_cp",
+    "alpha_mean_weighted_miscoverage_V",
+    "return_score",
+    "bound_score",
+    "v_score",
+    "ijds_balanced_score",
+    "n_funded_mean",
+    "allocator_backends",
+)
 DEFAULT_SOURCE_BOUND_EVAL = (
     ROOT / "data/processed/experiments/champion_reopen/"
     "champion-reopen-2026-06-19__hpo-wave1__pool93__portfolio-stage1-fast1-claim-26-06/"
@@ -67,6 +126,20 @@ DEFAULT_SOURCE_SELECTION = (
     "champion-reopen-2026-06-19__hpo-wave1__pool93__portfolio-stage1-fast1-claim-26-06/"
     "portfolio/portfolio_bound_aware_selection_highspy.json"
 )
+
+
+@dataclass(frozen=True)
+class Pool93Paths:
+    output_dir: Path
+    model_dir: Path
+    checkpoint_dir: Path
+    status_path: Path
+    candidates_path: Path
+    bound_eval_path: Path
+    leaderboard_path: Path
+    claim_summary_path: Path
+    manifest_path: Path
+
 
 _WORKER_ALIGNED: pd.DataFrame | None = None
 
@@ -185,49 +258,40 @@ def _add_candidate(
     seen.add(key)
 
 
-def _generate_candidate_grid(
-    anchors: pd.DataFrame,
+def _candidate_frame(rows: list[dict[str, Any]]) -> pd.DataFrame:
+    candidates = pd.DataFrame(rows).reset_index(drop=True)
+    candidates.insert(0, "local_candidate_id", np.arange(1, len(candidates) + 1, dtype=int))
+    return candidates
+
+
+def _anchor_policy(
+    anchor_by_rank: dict[int, dict[str, Any]],
+    rank: int,
     *,
-    profile: str,
     solver_backend: str,
-) -> pd.DataFrame:
-    profile = str(profile).strip().lower()
-    valid_profiles = {
-        "stage1",
-        "expanded",
-        "claim_expanded",
-        "claim_micro",
-        "claim_micro_ext",
-        "claim_bound_closure",
-        "claim_bound_floor_closure",
-        "claim_bound_terminal",
-    }
-    if profile not in valid_profiles:
-        raise ValueError(f"profile must be one of {sorted(valid_profiles)}")
+) -> dict[str, Any]:
+    row = anchor_by_rank[rank]
+    return _policy_base(
+        risk_tolerance=float(row["risk_tolerance"]),
+        policy_mode=str(row["policy_mode"]),
+        gamma=float(row["gamma"]),
+        uncertainty_aversion=float(row["uncertainty_aversion"]),
+        delta_cap_quantile=float(row["delta_cap_quantile"]),
+        tail_focus_quantile=float(row["tail_focus_quantile"]),
+        min_budget_utilization=float(row["min_budget_utilization"]),
+        pd_cap_slack_penalty=float(row["pd_cap_slack_penalty"]),
+        solver_backend=solver_backend,
+    )
 
-    anchor_by_rank = {int(row.candidate_rank): row for row in anchors.itertuples(index=False)}
-    rows: list[dict[str, Any]] = []
-    seen: set[str] = set()
 
-    def anchor_policy(rank: int) -> dict[str, Any]:
-        row = anchor_by_rank[rank]
-        return _policy_base(
-            risk_tolerance=float(row.risk_tolerance),
-            policy_mode=str(row.policy_mode),
-            gamma=float(row.gamma),
-            uncertainty_aversion=float(row.uncertainty_aversion),
-            delta_cap_quantile=float(row.delta_cap_quantile),
-            tail_focus_quantile=float(row.tail_focus_quantile),
-            min_budget_utilization=float(row.min_budget_utilization),
-            pd_cap_slack_penalty=float(row.pd_cap_slack_penalty),
-            solver_backend=solver_backend,
-        )
-
-    for rank, reason in [
-        (96, "source_exact_max_return"),
-        (219, "source_low_gamma_cp_return_floor"),
-        (223, "source_low_weighted_miscoverage_high_return"),
-    ]:
+def _add_anchor_candidates(
+    rows: list[dict[str, Any]],
+    seen: set[str],
+    *,
+    anchor_by_rank: dict[int, dict[str, Any]],
+    solver_backend: str,
+) -> None:
+    for rank, reason in ANCHOR_REASONS:
         if rank in anchor_by_rank:
             _add_candidate(
                 rows,
@@ -235,682 +299,463 @@ def _generate_candidate_grid(
                 family="anchor_policy",
                 anchor_rank=rank,
                 source_reason=reason,
-                policy=anchor_policy(rank),
+                policy=_anchor_policy(anchor_by_rank, rank, solver_backend=solver_backend),
             )
 
-    if profile == "claim_micro":
-        # Final IJDS micro-refinement around the completed expanded frontier:
-        # - candidate 1206: tightest Markov cap above the declared return floor,
-        # - candidate 1665/1667: body/default low-V return-bound point,
-        # - candidate 1922: highest return under Markov cap <= 0.36,
-        # - candidate 2777/2857: economic endpoint.
-        # The grid is intentionally local and paper-facing, not a new generic
-        # champion search.
-        body_risks = _round_grid(
-            [0.1715 + 0.00025 * idx for idx in range(5)],
-            lo=0.14,
-            hi=0.24,
-        )
-        body_gammas = _round_grid(
-            [0.545 + 0.005 * idx for idx in range(7)],
-            lo=0.0,
-            hi=1.0,
-        )
-        body_aversions = [0.0, 0.0125, 0.025, 0.0375, 0.05, 0.0625, 0.075, 0.10]
-        for risk, gamma, aversion, mode in product(
-            body_risks,
-            body_gammas,
-            body_aversions,
-            ["blended_uncertainty", "capped_blended_uncertainty"],
-        ):
-            delta_values = [1.0] if mode == "blended_uncertainty" else [0.95, 1.0]
-            for delta_cap in delta_values:
-                _add_candidate(
-                    rows,
-                    seen,
-                    family="claim_micro_body_low_v",
-                    anchor_rank=219,
-                    source_reason="candidate1665_1667_body_default_micro",
-                    policy=_policy_base(
-                        risk_tolerance=risk,
-                        policy_mode=mode,
-                        gamma=gamma,
-                        uncertainty_aversion=aversion,
-                        delta_cap_quantile=delta_cap,
-                        solver_backend=solver_backend,
-                    ),
-                )
 
-        tight_risks = _round_grid(
-            [0.1700 + 0.00025 * idx for idx in range(5)],
-            lo=0.14,
-            hi=0.24,
-        )
-        tight_gammas = _round_grid(
-            [0.575 + 0.005 * idx for idx in range(6)],
-            lo=0.0,
-            hi=1.0,
-        )
-        tight_aversions = [0.15, 0.1625, 0.175, 0.1875, 0.20, 0.225]
-        for risk, gamma, aversion, mode in product(
-            tight_risks,
-            tight_gammas,
-            tight_aversions,
-            ["blended_uncertainty", "capped_blended_uncertainty"],
-        ):
-            delta_values = [1.0] if mode == "blended_uncertainty" else [0.95, 1.0]
-            for delta_cap in delta_values:
-                _add_candidate(
-                    rows,
-                    seen,
-                    family="claim_micro_bound_tight",
-                    anchor_rank=219,
-                    source_reason="candidate1206_tight_cap_micro",
-                    policy=_policy_base(
-                        risk_tolerance=risk,
-                        policy_mode=mode,
-                        gamma=gamma,
-                        uncertainty_aversion=aversion,
-                        delta_cap_quantile=delta_cap,
-                        solver_backend=solver_backend,
-                    ),
-                )
+def _capped_delta_values(mode: str, capped_values: tuple[float, ...]) -> tuple[float, ...]:
+    return (1.0,) if mode == "blended_uncertainty" else capped_values
 
-        high_return_risks = _round_grid(
-            [0.1725 + 0.00025 * idx for idx in range(7)],
-            lo=0.14,
-            hi=0.24,
-        )
-        high_return_gammas = _round_grid(
-            [0.500 + 0.005 * idx for idx in range(6)],
-            lo=0.0,
-            hi=1.0,
-        )
-        high_return_aversions = [0.05, 0.0625, 0.075, 0.0875, 0.10]
-        for risk, gamma, aversion, mode in product(
-            high_return_risks,
-            high_return_gammas,
-            high_return_aversions,
-            ["blended_uncertainty", "capped_blended_uncertainty"],
-        ):
-            delta_values = [1.0] if mode == "blended_uncertainty" else [0.95, 1.0]
-            for delta_cap in delta_values:
-                _add_candidate(
-                    rows,
-                    seen,
-                    family="claim_micro_high_return_cap036",
-                    anchor_rank=219,
-                    source_reason="candidate1922_return_cap036_micro",
-                    policy=_policy_base(
-                        risk_tolerance=risk,
-                        policy_mode=mode,
-                        gamma=gamma,
-                        uncertainty_aversion=aversion,
-                        delta_cap_quantile=delta_cap,
-                        solver_backend=solver_backend,
-                    ),
-                )
 
-        econ_risks = _round_grid(
-            [0.1565 + 0.00025 * idx for idx in range(9)],
-            lo=0.12,
-            hi=0.22,
-        )
-        econ_gammas = _round_grid(
-            [0.44 + 0.005 * idx for idx in range(13)],
-            lo=0.0,
-            hi=1.0,
-        )
-        econ_aversions = [0.1125, 0.125, 0.1375, 0.15]
-        for risk, gamma, aversion, tail_focus in product(
-            econ_risks,
-            econ_gammas,
-            econ_aversions,
-            [0.95, 1.0],
-        ):
+def _add_blended_grid(
+    rows: list[dict[str, Any]],
+    seen: set[str],
+    *,
+    family: str,
+    anchor_rank: int,
+    source_reason: str,
+    risks: list[float],
+    gammas: list[float],
+    aversions: list[float],
+    solver_backend: str,
+    capped_delta_values: tuple[float, ...] = (0.95, 1.0),
+) -> None:
+    for risk, gamma, aversion, mode in product(
+        risks,
+        gammas,
+        aversions,
+        ["blended_uncertainty", "capped_blended_uncertainty"],
+    ):
+        for delta_cap in _capped_delta_values(str(mode), capped_delta_values):
             _add_candidate(
                 rows,
                 seen,
-                family="claim_micro_economic_endpoint",
-                anchor_rank=96,
-                source_reason="candidate2777_2857_economic_endpoint_micro",
+                family=family,
+                anchor_rank=anchor_rank,
+                source_reason=source_reason,
                 policy=_policy_base(
                     risk_tolerance=risk,
-                    policy_mode="tail_blended_uncertainty",
+                    policy_mode=str(mode),
                     gamma=gamma,
                     uncertainty_aversion=aversion,
-                    tail_focus_quantile=tail_focus,
+                    delta_cap_quantile=delta_cap,
                     solver_backend=solver_backend,
                 ),
             )
 
-        candidates = pd.DataFrame(rows).reset_index(drop=True)
-        candidates.insert(0, "local_candidate_id", range(1, len(candidates) + 1))
-        return candidates
 
-    if profile == "claim_micro_ext":
-        # Surgical extensions from the completed claim_micro frontier. These
-        # neighborhoods target only exposed claim boundaries, not a fresh broad
-        # portfolio search:
-        # - body/cap<=0.345 polish around candidates 37/205,
-        # - bound-tight endpoint around candidate 949,
-        # - cap<=0.36 return endpoint around candidate 1975,
-        # - economic endpoint around candidate 2122.
-        body_risks = _round_grid(
-            [0.17125 + 0.000125 * idx for idx in range(11)],
-            lo=0.14,
-            hi=0.24,
+def _add_tail_grid(
+    rows: list[dict[str, Any]],
+    seen: set[str],
+    *,
+    family: str,
+    anchor_rank: int,
+    source_reason: str,
+    risks: list[float],
+    gammas: list[float],
+    aversions: list[float],
+    tail_focus_values: list[float],
+    solver_backend: str,
+) -> None:
+    for risk, gamma, aversion, tail_focus in product(
+        risks,
+        gammas,
+        aversions,
+        tail_focus_values,
+    ):
+        _add_candidate(
+            rows,
+            seen,
+            family=family,
+            anchor_rank=anchor_rank,
+            source_reason=source_reason,
+            policy=_policy_base(
+                risk_tolerance=risk,
+                policy_mode="tail_blended_uncertainty",
+                gamma=gamma,
+                uncertainty_aversion=aversion,
+                tail_focus_quantile=tail_focus,
+                solver_backend=solver_backend,
+            ),
         )
-        body_gammas = _round_grid(
-            [0.5475, 0.55, 0.5525, 0.555, 0.5575],
-            lo=0.0,
-            hi=1.0,
-        )
-        body_aversions = [0.025, 0.0375, 0.05, 0.0625]
-        for risk, gamma, aversion, mode in product(
-            body_risks,
-            body_gammas,
-            body_aversions,
-            ["blended_uncertainty", "capped_blended_uncertainty"],
-        ):
-            delta_values = [1.0] if mode == "blended_uncertainty" else [0.975, 1.0]
-            for delta_cap in delta_values:
-                _add_candidate(
-                    rows,
-                    seen,
-                    family="claim_micro_ext_body_cap345",
-                    anchor_rank=219,
-                    source_reason="candidate37_205_body_cap345_extension",
-                    policy=_policy_base(
-                        risk_tolerance=risk,
-                        policy_mode=mode,
-                        gamma=gamma,
-                        uncertainty_aversion=aversion,
-                        delta_cap_quantile=delta_cap,
-                        solver_backend=solver_backend,
-                    ),
-                )
 
-        tight_risks = _round_grid(
-            [0.1690 + 0.00025 * idx for idx in range(8)],
-            lo=0.14,
-            hi=0.24,
-        )
-        tight_gammas = _round_grid(
-            [0.600 + 0.005 * idx for idx in range(11)],
-            lo=0.0,
-            hi=1.0,
-        )
-        tight_aversions = [0.2125, 0.225, 0.2375, 0.25, 0.2625, 0.275]
-        for risk, gamma, aversion, mode in product(
-            tight_risks,
-            tight_gammas,
-            tight_aversions,
-            ["blended_uncertainty", "capped_blended_uncertainty"],
-        ):
-            delta_values = [1.0] if mode == "blended_uncertainty" else [0.95, 1.0]
-            for delta_cap in delta_values:
-                _add_candidate(
-                    rows,
-                    seen,
-                    family="claim_micro_ext_bound_tight",
-                    anchor_rank=219,
-                    source_reason="candidate949_bound_tight_extension",
-                    policy=_policy_base(
-                        risk_tolerance=risk,
-                        policy_mode=mode,
-                        gamma=gamma,
-                        uncertainty_aversion=aversion,
-                        delta_cap_quantile=delta_cap,
-                        solver_backend=solver_backend,
-                    ),
-                )
 
-        cap036_risks = _round_grid(
-            [0.17375 + 0.00025 * idx for idx in range(10)],
-            lo=0.14,
-            hi=0.24,
-        )
-        cap036_gammas = _round_grid(
-            [0.505 + 0.0025 * idx for idx in range(9)],
-            lo=0.0,
-            hi=1.0,
-        )
-        cap036_aversions = [0.0625, 0.075, 0.0875, 0.10]
-        for risk, gamma, aversion, mode in product(
-            cap036_risks,
-            cap036_gammas,
-            cap036_aversions,
-            ["blended_uncertainty", "capped_blended_uncertainty"],
-        ):
-            delta_values = [1.0] if mode == "blended_uncertainty" else [0.95, 1.0]
-            for delta_cap in delta_values:
-                _add_candidate(
-                    rows,
-                    seen,
-                    family="claim_micro_ext_cap036_return",
-                    anchor_rank=219,
-                    source_reason="candidate1975_cap036_return_extension",
-                    policy=_policy_base(
-                        risk_tolerance=risk,
-                        policy_mode=mode,
-                        gamma=gamma,
-                        uncertainty_aversion=aversion,
-                        delta_cap_quantile=delta_cap,
-                        solver_backend=solver_backend,
-                    ),
-                )
+def _append_claim_micro_candidates(
+    rows: list[dict[str, Any]], seen: set[str], *, solver_backend: str
+) -> None:
+    _add_blended_grid(
+        rows,
+        seen,
+        family="claim_micro_body_low_v",
+        anchor_rank=219,
+        source_reason="candidate1665_1667_body_default_micro",
+        risks=_round_grid([0.1715 + 0.00025 * idx for idx in range(5)], lo=0.14, hi=0.24),
+        gammas=_round_grid([0.545 + 0.005 * idx for idx in range(7)], lo=0.0, hi=1.0),
+        aversions=[0.0, 0.0125, 0.025, 0.0375, 0.05, 0.0625, 0.075, 0.10],
+        capped_delta_values=(0.95, 1.0),
+        solver_backend=solver_backend,
+    )
+    _add_blended_grid(
+        rows,
+        seen,
+        family="claim_micro_bound_tight",
+        anchor_rank=219,
+        source_reason="candidate1206_tight_cap_micro",
+        risks=_round_grid([0.1700 + 0.00025 * idx for idx in range(5)], lo=0.14, hi=0.24),
+        gammas=_round_grid([0.575 + 0.005 * idx for idx in range(6)], lo=0.0, hi=1.0),
+        aversions=[0.15, 0.1625, 0.175, 0.1875, 0.20, 0.225],
+        capped_delta_values=(0.95, 1.0),
+        solver_backend=solver_backend,
+    )
+    _add_blended_grid(
+        rows,
+        seen,
+        family="claim_micro_high_return_cap036",
+        anchor_rank=219,
+        source_reason="candidate1922_return_cap036_micro",
+        risks=_round_grid([0.1725 + 0.00025 * idx for idx in range(7)], lo=0.14, hi=0.24),
+        gammas=_round_grid([0.500 + 0.005 * idx for idx in range(6)], lo=0.0, hi=1.0),
+        aversions=[0.05, 0.0625, 0.075, 0.0875, 0.10],
+        capped_delta_values=(0.95, 1.0),
+        solver_backend=solver_backend,
+    )
+    _add_tail_grid(
+        rows,
+        seen,
+        family="claim_micro_economic_endpoint",
+        anchor_rank=96,
+        source_reason="candidate2777_2857_economic_endpoint_micro",
+        risks=_round_grid([0.1565 + 0.00025 * idx for idx in range(9)], lo=0.12, hi=0.22),
+        gammas=_round_grid([0.44 + 0.005 * idx for idx in range(13)], lo=0.0, hi=1.0),
+        aversions=[0.1125, 0.125, 0.1375, 0.15],
+        tail_focus_values=[0.95, 1.0],
+        solver_backend=solver_backend,
+    )
 
-        econ_risks = _round_grid(
-            [0.15625 + 0.000125 * idx for idx in range(9)],
-            lo=0.12,
-            hi=0.22,
-        )
-        econ_gammas = _round_grid(
-            [0.400 + 0.005 * idx for idx in range(10)],
-            lo=0.0,
-            hi=1.0,
-        )
-        econ_aversions = [0.125, 0.1375, 0.15]
-        for risk, gamma, aversion, tail_focus in product(
-            econ_risks,
-            econ_gammas,
-            econ_aversions,
-            [0.90, 0.925, 0.95, 1.0],
-        ):
-            _add_candidate(
-                rows,
-                seen,
-                family="claim_micro_ext_economic_endpoint",
-                anchor_rank=96,
-                source_reason="candidate2122_economic_endpoint_extension",
-                policy=_policy_base(
-                    risk_tolerance=risk,
-                    policy_mode="tail_blended_uncertainty",
-                    gamma=gamma,
-                    uncertainty_aversion=aversion,
-                    tail_focus_quantile=tail_focus,
-                    solver_backend=solver_backend,
-                ),
-            )
 
-        candidates = pd.DataFrame(rows).reset_index(drop=True)
-        candidates.insert(0, "local_candidate_id", range(1, len(candidates) + 1))
-        return candidates
+def _append_claim_micro_ext_candidates(
+    rows: list[dict[str, Any]], seen: set[str], *, solver_backend: str
+) -> None:
+    _add_blended_grid(
+        rows,
+        seen,
+        family="claim_micro_ext_body_cap345",
+        anchor_rank=219,
+        source_reason="candidate37_205_body_cap345_extension",
+        risks=_round_grid([0.17125 + 0.000125 * idx for idx in range(11)], lo=0.14, hi=0.24),
+        gammas=_round_grid([0.5475, 0.55, 0.5525, 0.555, 0.5575], lo=0.0, hi=1.0),
+        aversions=[0.025, 0.0375, 0.05, 0.0625],
+        capped_delta_values=(0.975, 1.0),
+        solver_backend=solver_backend,
+    )
+    _add_blended_grid(
+        rows,
+        seen,
+        family="claim_micro_ext_bound_tight",
+        anchor_rank=219,
+        source_reason="candidate949_bound_tight_extension",
+        risks=_round_grid([0.1690 + 0.00025 * idx for idx in range(8)], lo=0.14, hi=0.24),
+        gammas=_round_grid([0.600 + 0.005 * idx for idx in range(11)], lo=0.0, hi=1.0),
+        aversions=[0.2125, 0.225, 0.2375, 0.25, 0.2625, 0.275],
+        capped_delta_values=(0.95, 1.0),
+        solver_backend=solver_backend,
+    )
+    _add_blended_grid(
+        rows,
+        seen,
+        family="claim_micro_ext_cap036_return",
+        anchor_rank=219,
+        source_reason="candidate1975_cap036_return_extension",
+        risks=_round_grid([0.17375 + 0.00025 * idx for idx in range(10)], lo=0.14, hi=0.24),
+        gammas=_round_grid([0.505 + 0.0025 * idx for idx in range(9)], lo=0.0, hi=1.0),
+        aversions=[0.0625, 0.075, 0.0875, 0.10],
+        capped_delta_values=(0.95, 1.0),
+        solver_backend=solver_backend,
+    )
+    _add_tail_grid(
+        rows,
+        seen,
+        family="claim_micro_ext_economic_endpoint",
+        anchor_rank=96,
+        source_reason="candidate2122_economic_endpoint_extension",
+        risks=_round_grid([0.15625 + 0.000125 * idx for idx in range(9)], lo=0.12, hi=0.22),
+        gammas=_round_grid([0.400 + 0.005 * idx for idx in range(10)], lo=0.0, hi=1.0),
+        aversions=[0.125, 0.1375, 0.15],
+        tail_focus_values=[0.90, 0.925, 0.95, 1.0],
+        solver_backend=solver_backend,
+    )
 
+
+def _append_bound_closure_candidates(
+    rows: list[dict[str, Any]],
+    seen: set[str],
+    *,
+    profile: str,
+    solver_backend: str,
+) -> None:
     if profile == "claim_bound_closure":
-        # Final IJDS bound-endpoint closure. The completed claim_micro_ext run
-        # found a monotone-looking cap reduction up to gamma=0.65, while
-        # uncertainty_aversion was already mostly saturated. This tiny extension
-        # tests only whether the lower-bound endpoint can move; it is not a new
-        # body-policy or economic-endpoint search.
-        closure_risks = _round_grid(
-            [0.1685 + 0.00025 * idx for idx in range(10)],
-            lo=0.14,
-            hi=0.24,
+        _add_blended_grid(
+            rows,
+            seen,
+            family="claim_bound_closure_low_cap",
+            anchor_rank=219,
+            source_reason="micro_ext_min_markov_cap_endpoint_closure",
+            risks=_round_grid([0.1685 + 0.00025 * idx for idx in range(10)], lo=0.14, hi=0.24),
+            gammas=_round_grid([0.65 + 0.01 * idx for idx in range(11)], lo=0.0, hi=1.0),
+            aversions=[0.25, 0.275, 0.30, 0.325, 0.35],
+            capped_delta_values=(0.95, 1.0),
+            solver_backend=solver_backend,
         )
-        closure_gammas = _round_grid(
-            [0.65 + 0.01 * idx for idx in range(11)],
-            lo=0.0,
-            hi=1.0,
-        )
-        closure_aversions = [0.25, 0.275, 0.30, 0.325, 0.35]
-        for risk, gamma, aversion, mode in product(
-            closure_risks,
-            closure_gammas,
-            closure_aversions,
-            ["blended_uncertainty", "capped_blended_uncertainty"],
-        ):
-            delta_values = [1.0] if mode == "blended_uncertainty" else [0.95, 1.0]
-            for delta_cap in delta_values:
-                _add_candidate(
-                    rows,
-                    seen,
-                    family="claim_bound_closure_low_cap",
-                    anchor_rank=219,
-                    source_reason="micro_ext_min_markov_cap_endpoint_closure",
-                    policy=_policy_base(
-                        risk_tolerance=risk,
-                        policy_mode=mode,
-                        gamma=gamma,
-                        uncertainty_aversion=aversion,
-                        delta_cap_quantile=delta_cap,
-                        solver_backend=solver_backend,
-                    ),
-                )
-
-        candidates = pd.DataFrame(rows).reset_index(drop=True)
-        candidates.insert(0, "local_candidate_id", range(1, len(candidates) + 1))
-        return candidates
-
+        return
     if profile == "claim_bound_floor_closure":
-        # Last bounded IJDS endpoint check: the completed bound closure lowered
-        # the Markov cap to 0.298369 at the grid boundary (low tau, high gamma,
-        # high aversion) while still preserving a positive return-floor surplus.
-        # This profile tests whether the appendix/theory endpoint can cross the
-        # cleaner cap<0.29 threshold; it should not be used to replace the paper
-        # body/default policy.
-        floor_risks = _round_grid(
-            [0.16775 + 0.000125 * idx for idx in range(13)],
-            lo=0.14,
-            hi=0.24,
+        _add_blended_grid(
+            rows,
+            seen,
+            family="claim_bound_floor_closure_low_cap",
+            anchor_rank=219,
+            source_reason="bound_closure_cap029_floor_threshold",
+            risks=_round_grid([0.16775 + 0.000125 * idx for idx in range(13)], lo=0.14, hi=0.24),
+            gammas=_round_grid([0.75 + 0.01 * idx for idx in range(10)], lo=0.0, hi=1.0),
+            aversions=[0.325, 0.35, 0.375, 0.40, 0.425, 0.45],
+            capped_delta_values=(0.95, 1.0),
+            solver_backend=solver_backend,
         )
-        floor_gammas = _round_grid(
-            [0.75 + 0.01 * idx for idx in range(10)],
-            lo=0.0,
-            hi=1.0,
+
+
+def _append_bound_terminal_candidates(
+    rows: list[dict[str, Any]], seen: set[str], *, solver_backend: str
+) -> None:
+    _add_blended_grid(
+        rows,
+        seen,
+        family="claim_bound_terminal_ultra_low_cap",
+        anchor_rank=219,
+        source_reason="terminal_cap_threshold_search",
+        risks=_round_grid([0.16675 + 0.000125 * idx for idx in range(29)], lo=0.14, hi=0.24),
+        gammas=_round_grid([0.84 + 0.005 * idx for idx in range(31)], lo=0.0, hi=1.0),
+        aversions=[0.40, 0.425, 0.45, 0.475, 0.50, 0.55, 0.60, 0.65, 0.70],
+        capped_delta_values=(0.95, 1.0),
+        solver_backend=solver_backend,
+    )
+    _add_blended_grid(
+        rows,
+        seen,
+        family="claim_bound_terminal_return_recovery",
+        anchor_rank=219,
+        source_reason="terminal_best_return_under_low_cap",
+        risks=_round_grid([0.1680 + 0.000125 * idx for idx in range(29)], lo=0.14, hi=0.24),
+        gammas=_round_grid([0.80 + 0.005 * idx for idx in range(25)], lo=0.0, hi=1.0),
+        aversions=[0.35, 0.375, 0.40, 0.425, 0.45, 0.475, 0.50, 0.55, 0.60],
+        capped_delta_values=(0.95, 1.0),
+        solver_backend=solver_backend,
+    )
+
+
+def _append_max_return_neighborhood(
+    rows: list[dict[str, Any]],
+    seen: set[str],
+    *,
+    anchor_by_rank: dict[int, dict[str, Any]],
+    profile: str,
+    solver_backend: str,
+) -> None:
+    if 96 not in anchor_by_rank:
+        return
+    base = anchor_by_rank[96]
+    risk_offsets = [-0.004, -0.002, -0.001, 0.0, 0.001, 0.002, 0.004]
+    gamma_offsets = [-0.05, -0.025, -0.01, 0.0, 0.01, 0.025, 0.05]
+    aversions = [0.05, 0.075, 0.10, 0.125, 0.15]
+    if profile == "expanded":
+        risk_offsets = [
+            -0.006,
+            -0.004,
+            -0.003,
+            -0.002,
+            -0.001,
+            0.0,
+            0.001,
+            0.002,
+            0.003,
+            0.004,
+            0.006,
+        ]
+        gamma_offsets = [-0.075, -0.05, -0.035, -0.025, -0.01, 0.0, 0.01, 0.025, 0.035, 0.05, 0.075]
+        aversions = [0.025, 0.05, 0.075, 0.10, 0.125, 0.15, 0.20]
+    risks = _round_grid([float(base["risk_tolerance"]) + x for x in risk_offsets], lo=0.12, hi=0.22)
+    gammas = _round_grid([float(base["gamma"]) + x for x in gamma_offsets], lo=0.0, hi=1.0)
+
+    for risk, gamma, aversion in product(risks, gammas, aversions):
+        _add_candidate(
+            rows,
+            seen,
+            family="max_return_segment_relative_local",
+            anchor_rank=96,
+            source_reason="rank96_local_dense",
+            policy=_policy_base(
+                risk_tolerance=risk,
+                policy_mode="segment_relative_tail_blended_uncertainty",
+                gamma=gamma,
+                uncertainty_aversion=aversion,
+                solver_backend=solver_backend,
+            ),
         )
-        floor_aversions = [0.325, 0.35, 0.375, 0.40, 0.425, 0.45]
-        for risk, gamma, aversion, mode in product(
-            floor_risks,
-            floor_gammas,
-            floor_aversions,
-            ["blended_uncertainty", "capped_blended_uncertainty"],
-        ):
-            delta_values = [1.0] if mode == "blended_uncertainty" else [0.95, 1.0]
-            for delta_cap in delta_values:
-                _add_candidate(
-                    rows,
-                    seen,
-                    family="claim_bound_floor_closure_low_cap",
-                    anchor_rank=219,
-                    source_reason="bound_closure_cap029_floor_threshold",
-                    policy=_policy_base(
-                        risk_tolerance=risk,
-                        policy_mode=mode,
-                        gamma=gamma,
-                        uncertainty_aversion=aversion,
-                        delta_cap_quantile=delta_cap,
-                        solver_backend=solver_backend,
-                    ),
-                )
 
-        candidates = pd.DataFrame(rows).reset_index(drop=True)
-        candidates.insert(0, "local_candidate_id", range(1, len(candidates) + 1))
-        return candidates
+    _add_tail_grid(
+        rows,
+        seen,
+        family="max_return_tail_local",
+        anchor_rank=96,
+        source_reason="rank96_tail_sensitivity",
+        risks=risks[1:-1] if len(risks) > 2 else risks,
+        gammas=gammas[1:-1] if len(gammas) > 2 else gammas,
+        aversions=[0.075, 0.10, 0.125] if profile == "stage1" else aversions,
+        tail_focus_values=[0.95, 1.0] if profile == "stage1" else [0.90, 0.95, 1.0],
+        solver_backend=solver_backend,
+    )
 
-    if profile == "claim_bound_terminal":
-        # Terminal IJDS endpoint search. This is intentionally wider than the
-        # prior closures, but still only targets the final bound-tight endpoint:
-        # cap<0.285/0.280/0.275 if feasible, with positive return-floor surplus.
-        # It should not be used to replace the body/default or economic endpoint.
-        ultra_risks = _round_grid(
-            [0.16675 + 0.000125 * idx for idx in range(29)],
-            lo=0.14,
-            hi=0.24,
-        )
-        ultra_gammas = _round_grid(
-            [0.84 + 0.005 * idx for idx in range(31)],
-            lo=0.0,
-            hi=1.0,
-        )
-        ultra_aversions = [0.40, 0.425, 0.45, 0.475, 0.50, 0.55, 0.60, 0.65, 0.70]
-        for risk, gamma, aversion, mode in product(
-            ultra_risks,
-            ultra_gammas,
-            ultra_aversions,
-            ["blended_uncertainty", "capped_blended_uncertainty"],
-        ):
-            delta_values = [1.0] if mode == "blended_uncertainty" else [0.95, 1.0]
-            for delta_cap in delta_values:
-                _add_candidate(
-                    rows,
-                    seen,
-                    family="claim_bound_terminal_ultra_low_cap",
-                    anchor_rank=219,
-                    source_reason="terminal_cap_threshold_search",
-                    policy=_policy_base(
-                        risk_tolerance=risk,
-                        policy_mode=mode,
-                        gamma=gamma,
-                        uncertainty_aversion=aversion,
-                        delta_cap_quantile=delta_cap,
-                        solver_backend=solver_backend,
-                    ),
-                )
 
-        recovery_risks = _round_grid(
-            [0.1680 + 0.000125 * idx for idx in range(29)],
-            lo=0.14,
-            hi=0.24,
-        )
-        recovery_gammas = _round_grid(
-            [0.80 + 0.005 * idx for idx in range(25)],
-            lo=0.0,
-            hi=1.0,
-        )
-        recovery_aversions = [0.35, 0.375, 0.40, 0.425, 0.45, 0.475, 0.50, 0.55, 0.60]
-        for risk, gamma, aversion, mode in product(
-            recovery_risks,
-            recovery_gammas,
-            recovery_aversions,
-            ["blended_uncertainty", "capped_blended_uncertainty"],
-        ):
-            delta_values = [1.0] if mode == "blended_uncertainty" else [0.95, 1.0]
-            for delta_cap in delta_values:
-                _add_candidate(
-                    rows,
-                    seen,
-                    family="claim_bound_terminal_return_recovery",
-                    anchor_rank=219,
-                    source_reason="terminal_best_return_under_low_cap",
-                    policy=_policy_base(
-                        risk_tolerance=risk,
-                        policy_mode=mode,
-                        gamma=gamma,
-                        uncertainty_aversion=aversion,
-                        delta_cap_quantile=delta_cap,
-                        solver_backend=solver_backend,
-                    ),
-                )
-
-        candidates = pd.DataFrame(rows).reset_index(drop=True)
-        candidates.insert(0, "local_candidate_id", range(1, len(candidates) + 1))
-        return candidates
-
-    if 96 in anchor_by_rank:
-        base = anchor_by_rank[96]
-        risk_offsets = [-0.004, -0.002, -0.001, 0.0, 0.001, 0.002, 0.004]
-        gamma_offsets = [-0.05, -0.025, -0.01, 0.0, 0.01, 0.025, 0.05]
-        aversions = [0.05, 0.075, 0.10, 0.125, 0.15]
-        if profile == "expanded":
-            risk_offsets = [
-                -0.006,
-                -0.004,
-                -0.003,
-                -0.002,
-                -0.001,
-                0.0,
-                0.001,
-                0.002,
-                0.003,
-                0.004,
-                0.006,
-            ]
-            gamma_offsets = [
-                -0.075,
-                -0.05,
-                -0.035,
-                -0.025,
-                -0.01,
-                0.0,
-                0.01,
-                0.025,
-                0.035,
-                0.05,
-                0.075,
-            ]
-            aversions = [0.025, 0.05, 0.075, 0.10, 0.125, 0.15, 0.20]
-        risks = _round_grid(
-            [float(base.risk_tolerance) + x for x in risk_offsets], lo=0.12, hi=0.22
-        )
-        gammas = _round_grid([float(base.gamma) + x for x in gamma_offsets], lo=0.0, hi=1.0)
-
-        for risk, gamma, aversion in product(risks, gammas, aversions):
-            _add_candidate(
-                rows,
-                seen,
-                family="max_return_segment_relative_local",
-                anchor_rank=96,
-                source_reason="rank96_local_dense",
-                policy=_policy_base(
-                    risk_tolerance=risk,
-                    policy_mode="segment_relative_tail_blended_uncertainty",
-                    gamma=gamma,
-                    uncertainty_aversion=aversion,
-                    solver_backend=solver_backend,
-                ),
-            )
-
-        tail_risks = risks[1:-1] if len(risks) > 2 else risks
-        tail_gammas = gammas[1:-1] if len(gammas) > 2 else gammas
-        tail_focus_values = [0.95, 1.0] if profile == "stage1" else [0.90, 0.95, 1.0]
-        tail_aversions = [0.075, 0.10, 0.125] if profile == "stage1" else aversions
-        for risk, gamma, aversion, tail_focus in product(
-            tail_risks, tail_gammas, tail_aversions, tail_focus_values
-        ):
-            _add_candidate(
-                rows,
-                seen,
-                family="max_return_tail_local",
-                anchor_rank=96,
-                source_reason="rank96_tail_sensitivity",
-                policy=_policy_base(
-                    risk_tolerance=risk,
-                    policy_mode="tail_blended_uncertainty",
-                    gamma=gamma,
-                    uncertainty_aversion=aversion,
-                    tail_focus_quantile=tail_focus,
-                    solver_backend=solver_backend,
-                ),
-            )
-
-    bound_risk_centers = []
-    bound_gamma_centers = []
+def _append_bound_neighborhood(
+    rows: list[dict[str, Any]],
+    seen: set[str],
+    *,
+    anchor_by_rank: dict[int, dict[str, Any]],
+    profile: str,
+    solver_backend: str,
+) -> None:
+    risk_centers = []
+    gamma_centers = []
     for rank in (219, 223):
         if rank in anchor_by_rank:
             row = anchor_by_rank[rank]
-            bound_risk_centers.append(float(row.risk_tolerance))
-            bound_gamma_centers.append(float(row.gamma))
-    if bound_risk_centers:
-        risk_offsets = [-0.0075, -0.005, -0.0025, 0.0, 0.0025, 0.005]
-        gamma_offsets = [-0.05, -0.025, 0.0, 0.025, 0.05]
-        aversions = [0.05, 0.075, 0.10, 0.125, 0.15]
-        if profile == "expanded":
-            risk_offsets = [-0.01, -0.0075, -0.005, -0.0025, 0.0, 0.0025, 0.005, 0.0075, 0.01]
-            gamma_offsets = [-0.075, -0.05, -0.025, -0.01, 0.0, 0.01, 0.025, 0.05, 0.075]
-            aversions = [0.025, 0.05, 0.075, 0.10, 0.125, 0.15, 0.20]
-        risks = _round_grid(
-            [center + offset for center in bound_risk_centers for offset in risk_offsets],
-            lo=0.14,
-            hi=0.24,
-        )
-        gammas = _round_grid(
-            [center + offset for center in bound_gamma_centers for offset in gamma_offsets],
-            lo=0.0,
-            hi=1.0,
-        )
-        for risk, gamma, aversion, mode in product(
-            risks,
-            gammas,
-            aversions,
-            ["blended_uncertainty", "capped_blended_uncertainty"],
-        ):
-            delta_values = [1.0]
-            if mode == "capped_blended_uncertainty" and profile == "expanded":
-                delta_values = [0.90, 1.0]
-            for delta_cap in delta_values:
-                _add_candidate(
-                    rows,
-                    seen,
-                    family="bound_efficient_local",
-                    anchor_rank=219 if abs(gamma - 0.45) <= abs(gamma - 0.40) else 223,
-                    source_reason="rank219_rank223_bound_frontier",
-                    policy=_policy_base(
-                        risk_tolerance=risk,
-                        policy_mode=mode,
-                        gamma=gamma,
-                        uncertainty_aversion=aversion,
-                        delta_cap_quantile=delta_cap,
-                        solver_backend=solver_backend,
-                    ),
-                )
-
-    if profile == "claim_expanded":
-        # Densify only the claim-bearing neighborhoods discovered by stage1:
-        # the low-cap return-bound ridge around local candidates 462/466 and
-        # the economic frontier endpoint around local candidate 264.
-        bound_risks = _round_grid(
-            [0.1705 + 0.0005 * idx for idx in range(10)] + [0.1750],
-            lo=0.14,
-            hi=0.24,
-        )
-        bound_gammas = _round_grid(
-            [0.49, 0.50, 0.51, 0.52, 0.535, 0.55, 0.575],
-            lo=0.0,
-            hi=1.0,
-        )
-        bound_aversions = [0.05, 0.075, 0.10, 0.1125, 0.125, 0.1375, 0.15, 0.175]
-        for risk, gamma, aversion, mode in product(
-            bound_risks,
-            bound_gammas,
-            bound_aversions,
-            ["blended_uncertainty", "capped_blended_uncertainty"],
-        ):
-            delta_values = [1.0] if mode == "blended_uncertainty" else [0.95, 1.0]
-            for delta_cap in delta_values:
-                _add_candidate(
-                    rows,
-                    seen,
-                    family="bound_claim_refined_local",
-                    anchor_rank=219,
-                    source_reason="candidate462_466_return_bound_ridge",
-                    policy=_policy_base(
-                        risk_tolerance=risk,
-                        policy_mode=mode,
-                        gamma=gamma,
-                        uncertainty_aversion=aversion,
-                        delta_cap_quantile=delta_cap,
-                        solver_backend=solver_backend,
-                    ),
-                )
-
-        return_risks = _round_grid(
-            [0.1560 + 0.0005 * idx for idx in range(9)],
-            lo=0.12,
-            hi=0.22,
-        )
-        return_gammas = _round_grid(
-            [0.44, 0.45, 0.46, 0.47, 0.475, 0.485, 0.495],
-            lo=0.0,
-            hi=1.0,
-        )
-        return_aversions = [0.10, 0.1125, 0.125, 0.1375, 0.15]
-        for risk, gamma, aversion, tail_focus in product(
-            return_risks,
-            return_gammas,
-            return_aversions,
-            [0.95, 1.0],
-        ):
+            risk_centers.append(float(row["risk_tolerance"]))
+            gamma_centers.append(float(row["gamma"]))
+    if not risk_centers:
+        return
+    risk_offsets = [-0.0075, -0.005, -0.0025, 0.0, 0.0025, 0.005]
+    gamma_offsets = [-0.05, -0.025, 0.0, 0.025, 0.05]
+    aversions = [0.05, 0.075, 0.10, 0.125, 0.15]
+    capped_delta_values: tuple[float, ...] = (1.0,)
+    if profile == "expanded":
+        risk_offsets = [-0.01, -0.0075, -0.005, -0.0025, 0.0, 0.0025, 0.005, 0.0075, 0.01]
+        gamma_offsets = [-0.075, -0.05, -0.025, -0.01, 0.0, 0.01, 0.025, 0.05, 0.075]
+        aversions = [0.025, 0.05, 0.075, 0.10, 0.125, 0.15, 0.20]
+        capped_delta_values = (0.90, 1.0)
+    risks = _round_grid(
+        [center + offset for center in risk_centers for offset in risk_offsets], lo=0.14, hi=0.24
+    )
+    gammas = _round_grid(
+        [center + offset for center in gamma_centers for offset in gamma_offsets], lo=0.0, hi=1.0
+    )
+    for risk, gamma, aversion, mode in product(
+        risks,
+        gammas,
+        aversions,
+        ["blended_uncertainty", "capped_blended_uncertainty"],
+    ):
+        for delta_cap in _capped_delta_values(str(mode), capped_delta_values):
             _add_candidate(
                 rows,
                 seen,
-                family="max_return_claim_refined_local",
-                anchor_rank=96,
-                source_reason="candidate264_economic_frontier_endpoint",
+                family="bound_efficient_local",
+                anchor_rank=219 if abs(gamma - 0.45) <= abs(gamma - 0.40) else 223,
+                source_reason="rank219_rank223_bound_frontier",
                 policy=_policy_base(
                     risk_tolerance=risk,
-                    policy_mode="tail_blended_uncertainty",
+                    policy_mode=str(mode),
                     gamma=gamma,
                     uncertainty_aversion=aversion,
-                    tail_focus_quantile=tail_focus,
+                    delta_cap_quantile=delta_cap,
                     solver_backend=solver_backend,
                 ),
             )
 
-    candidates = pd.DataFrame(rows).reset_index(drop=True)
-    candidates.insert(0, "local_candidate_id", range(1, len(candidates) + 1))
-    return candidates
+
+def _append_claim_expanded_candidates(
+    rows: list[dict[str, Any]], seen: set[str], *, solver_backend: str
+) -> None:
+    _add_blended_grid(
+        rows,
+        seen,
+        family="bound_claim_refined_local",
+        anchor_rank=219,
+        source_reason="candidate462_466_return_bound_ridge",
+        risks=_round_grid(
+            [0.1705 + 0.0005 * idx for idx in range(10)] + [0.1750], lo=0.14, hi=0.24
+        ),
+        gammas=_round_grid([0.49, 0.50, 0.51, 0.52, 0.535, 0.55, 0.575], lo=0.0, hi=1.0),
+        aversions=[0.05, 0.075, 0.10, 0.1125, 0.125, 0.1375, 0.15, 0.175],
+        capped_delta_values=(0.95, 1.0),
+        solver_backend=solver_backend,
+    )
+    _add_tail_grid(
+        rows,
+        seen,
+        family="max_return_claim_refined_local",
+        anchor_rank=96,
+        source_reason="candidate264_economic_frontier_endpoint",
+        risks=_round_grid([0.1560 + 0.0005 * idx for idx in range(9)], lo=0.12, hi=0.22),
+        gammas=_round_grid([0.44, 0.45, 0.46, 0.47, 0.475, 0.485, 0.495], lo=0.0, hi=1.0),
+        aversions=[0.10, 0.1125, 0.125, 0.1375, 0.15],
+        tail_focus_values=[0.95, 1.0],
+        solver_backend=solver_backend,
+    )
+
+
+def _generate_candidate_grid(
+    anchors: pd.DataFrame,
+    *,
+    profile: str,
+    solver_backend: str,
+) -> pd.DataFrame:
+    profile = str(profile).strip().lower()
+    if profile not in VALID_PROFILES:
+        raise ValueError(f"profile must be one of {sorted(VALID_PROFILES)}")
+
+    anchor_by_rank = {int(row["candidate_rank"]): row for row in anchors.to_dict(orient="records")}
+    rows: list[dict[str, Any]] = []
+    seen: set[str] = set()
+    _add_anchor_candidates(
+        rows,
+        seen,
+        anchor_by_rank=anchor_by_rank,
+        solver_backend=solver_backend,
+    )
+
+    if profile == "claim_micro":
+        _append_claim_micro_candidates(rows, seen, solver_backend=solver_backend)
+        return _candidate_frame(rows)
+    if profile == "claim_micro_ext":
+        _append_claim_micro_ext_candidates(rows, seen, solver_backend=solver_backend)
+        return _candidate_frame(rows)
+    if profile in {"claim_bound_closure", "claim_bound_floor_closure"}:
+        _append_bound_closure_candidates(
+            rows,
+            seen,
+            profile=profile,
+            solver_backend=solver_backend,
+        )
+        return _candidate_frame(rows)
+    if profile == "claim_bound_terminal":
+        _append_bound_terminal_candidates(rows, seen, solver_backend=solver_backend)
+        return _candidate_frame(rows)
+
+    _append_max_return_neighborhood(
+        rows,
+        seen,
+        anchor_by_rank=anchor_by_rank,
+        profile=profile,
+        solver_backend=solver_backend,
+    )
+    _append_bound_neighborhood(
+        rows,
+        seen,
+        anchor_by_rank=anchor_by_rank,
+        profile=profile,
+        solver_backend=solver_backend,
+    )
+    if profile == "claim_expanded":
+        _append_claim_expanded_candidates(rows, seen, solver_backend=solver_backend)
+    return _candidate_frame(rows)
 
 
 def _exact_policy_alpha(
@@ -964,21 +809,19 @@ def _exact_policy_alpha(
         threads=max(1, int(threads)),
         solver_backend=str(policy["solver_backend"]),
     )
-    if "allocation_vector" in solution:
-        alloc = np.asarray(solution["allocation_vector"], dtype=float)
-    else:
-        alloc = np.array(
-            [float(solution["allocation"].get(i, 0.0)) for i in range(len(aligned))],
-            dtype=float,
-        )
+    alloc = solution_allocation_vector(solution, len(aligned))
     total_allocated = float(np.sum(alloc * loan_amounts))
     weights = (alloc * loan_amounts) / max(total_allocated, 1e-6)
-    funded_mask = weights > 1e-8
-    miscoverage = (y_true > pd_high).astype(float)
-    weighted_miscoverage_v = float(np.sum(weights * miscoverage))
-    weighted_pd_true = float(np.sum(weights * y_true))
-    violation = max(0.0, weighted_pd_true - float(policy["risk_tolerance"]))
-    sqrt_alpha = float(np.sqrt(alpha))
+    certificate = compute_funded_certificate_metrics(
+        weights,
+        outcomes=y_true,
+        pd_point=pd_point,
+        pd_high=pd_high,
+        pd_effective=effective_pd,
+        alpha=alpha,
+        risk_tolerance=float(policy["risk_tolerance"]),
+        pd_cap_slack=float(solution.get("pd_cap_slack", 0.0)),
+    )
     realized_total_return = float(
         np.sum(
             np.where(
@@ -992,11 +835,16 @@ def _exact_policy_alpha(
     expected_loss_point = float(np.sum(alloc * loan_amounts * pd_point * lgd))
     expected_return_net_point = expected_return_gross - expected_loss_point
     pd_cap_slack = float(solution.get("pd_cap_slack", 0.0))
+    risk_excess = round(certificate.realized_risk_tolerance_excess, 6)
+    empirical_risk_screen = bool(certificate.realized_risk_tolerance_excess <= alpha + 1e-8)
+    markov_screen = bool(certificate.sqrt_alpha + 1e-8 >= certificate.weighted_miscoverage)
 
     return {
         "alpha": float(alpha),
         "confidence": float(1.0 - alpha),
-        "gamma_cp": round(float(np.sum(weights * np.clip(pd_high - pd_point, 0.0, 1.0))), 6),
+        "gamma_cp": round(certificate.gamma_cp, 6),
+        "gamma_internalized": round(certificate.gamma_internalized, 6),
+        "gamma_residual": round(certificate.gamma_residual, 6),
         "n_funded": int(solution.get("n_funded", int(np.sum(alloc > 0.01)))),
         "total_allocated": round(total_allocated, 2),
         "objective_value": round(float(solution.get("objective_value", 0.0)), 6),
@@ -1004,28 +852,32 @@ def _exact_policy_alpha(
         "expected_loss_point": round(expected_loss_point, 6),
         "expected_return_net_point": round(expected_return_net_point, 6),
         "realized_total_return": round(realized_total_return, 6),
-        "weighted_pd_true": round(weighted_pd_true, 6),
-        "weighted_pd_constraint_used": round(float(np.sum(weights * effective_pd)), 6),
-        "weighted_pd_high": round(float(np.sum(weights * pd_high)), 6),
-        "weighted_pd_point": round(float(np.sum(weights * pd_point)), 6),
-        "worst_case_pd": round(float(np.sum(weights * pd_high)), 6),
-        "point_pd": round(float(np.sum(weights * pd_point)), 6),
+        "weighted_pd_true": round(certificate.weighted_outcome, 6),
+        "weighted_pd_constraint_used": round(certificate.weighted_pd_effective, 6),
+        "weighted_pd_high": round(certificate.endpoint_budget, 6),
+        "weighted_pd_point": round(certificate.weighted_pd_point, 6),
+        "worst_case_pd": round(certificate.endpoint_budget, 6),
+        "point_pd": round(certificate.weighted_pd_point, 6),
+        "endpoint_budget": round(certificate.endpoint_budget, 9),
+        "endpoint_budget_upper": round(certificate.endpoint_budget_upper, 9),
+        "markov_loss_threshold": round(certificate.markov_loss_threshold, 9),
+        "markov_loss_cap": round(certificate.markov_loss_cap, 9),
         "tau": float(policy["risk_tolerance"]),
-        "violation": round(violation, 6),
-        "weighted_miscoverage_V": round(weighted_miscoverage_v, 6),
-        "sqrt_alpha": round(sqrt_alpha, 6),
-        "empirical_coverage_funded": round(
-            float(1.0 - miscoverage[funded_mask].mean()) if funded_mask.any() else float("nan"),
-            4,
-        ),
-        "bound_a_expected_violation_leq_alpha": bool(violation <= alpha + 1e-8),
+        "realized_risk_tolerance_excess": risk_excess,
+        "violation": risk_excess,
+        "weighted_miscoverage_V": round(certificate.weighted_miscoverage, 6),
+        "weighted_coverage_funded": round(certificate.weighted_coverage, 6),
+        "sqrt_alpha": round(certificate.sqrt_alpha, 6),
+        "empirical_coverage_funded": round(certificate.empirical_coverage_funded, 4),
+        "empirical_risk_excess_leq_alpha": empirical_risk_screen,
+        "bound_a_expected_violation_leq_alpha": empirical_risk_screen,
         "bound_b_prob_violation_gt_t": round(float(min(1.0, alpha / max(t_eval, 1e-8))), 4),
         "bound_b_t_eval": float(t_eval),
         "bound_b_is_vacuous": bool(min(1.0, alpha / max(t_eval, 1e-8)) >= 1.0),
-        "bound_c_V_leq_sqrt_alpha": bool(sqrt_alpha + 1e-8 >= weighted_miscoverage_v),
-        "all_bounds_hold": bool(
-            (violation <= alpha + 1e-8) and (sqrt_alpha + 1e-8 >= weighted_miscoverage_v)
-        ),
+        "markov_miscoverage_screen_pass": markov_screen,
+        "bound_c_V_leq_sqrt_alpha": markov_screen,
+        "certificate_screen_pass": empirical_risk_screen and markov_screen,
+        "all_bounds_hold": empirical_risk_screen and markov_screen,
         "allocator_mode": "exact",
         "solver_status": str(solution.get("solver_status", "unknown")),
         "allocator_solver_backend": str(solution.get("solver_backend", policy["solver_backend"])),
@@ -1037,12 +889,17 @@ def _exact_policy_alpha(
 def _aggregate_leaderboard(candidates: pd.DataFrame, bound_eval: pd.DataFrame) -> pd.DataFrame:
     if bound_eval.empty:
         return candidates.copy()
+    bound_eval = add_policy_aware_bound_columns(bound_eval)
     grouped = bound_eval.groupby("local_candidate_id", dropna=False)
     agg = grouped.agg(
         alpha_exact_pass_count=("all_bounds_hold", "sum"),
         alpha_exact_check_count=("all_bounds_hold", "size"),
         alpha_exact_pass_rate=("all_bounds_hold", "mean"),
-        alpha_max_violation=("violation", "max"),
+        alpha_max_realized_risk_tolerance_excess=(
+            "realized_risk_tolerance_excess",
+            "max",
+        ),
+        alpha_max_violation=("realized_risk_tolerance_excess", "max"),
         alpha_mean_gamma_cp=("gamma_cp", "mean"),
         alpha_mean_weighted_miscoverage_V=("weighted_miscoverage_V", "mean"),
         alpha_mean_weighted_pd_true=("weighted_pd_true", "mean"),
@@ -1065,9 +922,22 @@ def _aggregate_leaderboard(candidates: pd.DataFrame, bound_eval: pd.DataFrame) -
             alpha01_exact_pass=("all_bounds_hold", "all"),
             alpha01_realized_total_return=("realized_total_return", "mean"),
             alpha01_gamma_cp=("gamma_cp", "mean"),
+            alpha01_gamma_internalized=("gamma_internalized", "mean"),
+            alpha01_gamma_residual=("gamma_residual", "mean"),
             alpha01_weighted_miscoverage_V=("weighted_miscoverage_V", "mean"),
-            alpha01_violation=("violation", "max"),
+            alpha01_realized_risk_tolerance_excess=(
+                "realized_risk_tolerance_excess",
+                "max",
+            ),
+            alpha01_violation=("realized_risk_tolerance_excess", "max"),
             alpha01_weighted_pd_true=("weighted_pd_true", "mean"),
+            alpha01_weighted_pd_constraint_used=("weighted_pd_constraint_used", "mean"),
+            alpha01_weighted_pd_high=("weighted_pd_high", "mean"),
+            alpha01_weighted_pd_point=("weighted_pd_point", "mean"),
+            alpha01_endpoint_budget=("endpoint_budget", "mean"),
+            alpha01_endpoint_budget_upper=("endpoint_budget_upper", "mean"),
+            alpha01_markov_loss_threshold=("markov_loss_threshold", "mean"),
+            alpha01_markov_loss_cap=("markov_loss_cap", "mean"),
             alpha01_empirical_coverage_funded=("empirical_coverage_funded", "mean"),
             alpha01_n_funded=("n_funded", "mean"),
         )
@@ -1084,11 +954,6 @@ def _aggregate_leaderboard(candidates: pd.DataFrame, bound_eval: pd.DataFrame) -
     work["return_floor_surplus"] = (
         work["alpha01_realized_total_return"].fillna(float("-inf")) - DECLARED_RETURN_FLOOR
     )
-    alpha01_gamma = pd.to_numeric(work["alpha01_gamma_cp"], errors="coerce")
-    risk = pd.to_numeric(work["risk_tolerance"], errors="coerce")
-    gamma = pd.to_numeric(work["gamma"], errors="coerce")
-    work["alpha01_endpoint_budget_upper"] = risk + (1.0 - gamma) * alpha01_gamma
-    work["alpha01_markov_loss_cap"] = work["alpha01_endpoint_budget_upper"] + float(np.sqrt(0.01))
     work = work.sort_values(
         by=[
             "alpha01_exact_pass",
@@ -1101,178 +966,171 @@ def _aggregate_leaderboard(candidates: pd.DataFrame, bound_eval: pd.DataFrame) -
         ascending=[False, False, False, False, True, True],
         kind="mergesort",
     ).reset_index(drop=True)
-    work.insert(0, "claim_rank", range(1, len(work) + 1))
+    work.insert(0, "claim_rank", np.arange(1, len(work) + 1, dtype=int))
     return work
 
 
-def _claim_summary(
-    leaderboard: pd.DataFrame,
-    bound_eval: pd.DataFrame,
-    *,
-    alpha_grid: list[float] | None = None,
-) -> dict[str, Any]:
-    leaderboard = leaderboard.copy()
-    if "alpha01_endpoint_budget_upper" not in leaderboard.columns:
-        alpha01_gamma = pd.to_numeric(leaderboard["alpha01_gamma_cp"], errors="coerce")
-        risk = pd.to_numeric(leaderboard["risk_tolerance"], errors="coerce")
-        gamma = pd.to_numeric(leaderboard["gamma"], errors="coerce")
-        leaderboard["alpha01_endpoint_budget_upper"] = risk + (1.0 - gamma) * alpha01_gamma
-    if "alpha01_markov_loss_cap" not in leaderboard.columns:
-        leaderboard["alpha01_markov_loss_cap"] = pd.to_numeric(
-            leaderboard["alpha01_endpoint_budget_upper"], errors="coerce"
-        ) + float(np.sqrt(0.01))
-    eligible = leaderboard[
-        leaderboard["alpha01_exact_pass"].fillna(False).astype(bool)
-        & leaderboard["all_alpha_pass"].fillna(False).astype(bool)
-    ].copy()
-    if "return_floor_surplus" not in leaderboard.columns:
-        if "champion_return_surplus" in leaderboard.columns:
-            leaderboard["return_floor_surplus"] = leaderboard["champion_return_surplus"]
+def _ensure_claim_summary_columns(leaderboard: pd.DataFrame) -> pd.DataFrame:
+    work = leaderboard.copy()
+    if "alpha01_endpoint_budget" not in work.columns and "alpha01_weighted_pd_high" in work.columns:
+        work["alpha01_endpoint_budget"] = pd.to_numeric(
+            work["alpha01_weighted_pd_high"], errors="coerce"
+        )
+    if "alpha01_endpoint_budget_upper" not in work.columns:
+        if {
+            "alpha01_weighted_pd_high",
+            "alpha01_weighted_pd_constraint_used",
+        }.issubset(work.columns):
+            residual = pd.to_numeric(
+                work["alpha01_weighted_pd_high"], errors="coerce"
+            ) - pd.to_numeric(work["alpha01_weighted_pd_constraint_used"], errors="coerce")
+            work["alpha01_gamma_residual"] = residual.clip(lower=0.0)
+            work["alpha01_endpoint_budget_upper"] = pd.to_numeric(
+                work["risk_tolerance"], errors="coerce"
+            ) + residual.clip(lower=0.0)
         else:
-            leaderboard["return_floor_surplus"] = (
-                leaderboard["alpha01_realized_total_return"].fillna(float("-inf"))
-                - DECLARED_RETURN_FLOOR
+            alpha01_gamma = pd.to_numeric(work["alpha01_gamma_cp"], errors="coerce")
+            risk = pd.to_numeric(work["risk_tolerance"], errors="coerce")
+            gamma = pd.to_numeric(work["gamma"], errors="coerce")
+            work["alpha01_endpoint_budget_upper"] = risk + (1.0 - gamma) * alpha01_gamma
+    if "alpha01_markov_loss_threshold" not in work.columns and "alpha01_endpoint_budget" in work:
+        work["alpha01_markov_loss_threshold"] = pd.to_numeric(
+            work["alpha01_endpoint_budget"], errors="coerce"
+        ) + float(np.sqrt(0.01))
+    if "alpha01_markov_loss_cap" not in work.columns:
+        work["alpha01_markov_loss_cap"] = pd.to_numeric(
+            work["alpha01_endpoint_budget_upper"], errors="coerce"
+        ) + float(np.sqrt(0.01))
+    if "return_floor_surplus" not in work.columns:
+        if "champion_return_surplus" in work.columns:
+            work["return_floor_surplus"] = work["champion_return_surplus"]
+        else:
+            work["return_floor_surplus"] = (
+                work["alpha01_realized_total_return"].fillna(float("-inf")) - DECLARED_RETURN_FLOOR
             )
-    above_return_floor = eligible[
-        eligible["alpha01_realized_total_return"] >= DECLARED_RETURN_FLOOR
+    return work
+
+
+def _all_alpha_eligible(frame: pd.DataFrame) -> pd.DataFrame:
+    return frame[
+        frame["alpha01_exact_pass"].fillna(False).astype(bool)
+        & frame["all_alpha_pass"].fillna(False).astype(bool)
     ].copy()
 
-    def row_payload(frame: pd.DataFrame) -> dict[str, Any] | None:
-        if frame.empty:
-            return None
-        row = frame.iloc[0]
-        fields = [
-            "claim_rank",
-            "local_candidate_id",
-            "local_family",
-            "anchor_rank",
-            "source_reason",
-            "risk_tolerance",
-            "policy_mode",
-            "gamma",
-            "delta_cap_quantile",
-            "tail_focus_quantile",
-            "uncertainty_aversion",
-            "alpha01_realized_total_return",
-            "return_floor_surplus",
-            "alpha01_gamma_cp",
-            "alpha01_weighted_miscoverage_V",
-            "alpha01_endpoint_budget_upper",
-            "alpha01_markov_loss_cap",
-            "alpha01_weighted_pd_true",
-            "alpha01_empirical_coverage_funded",
-            "alpha_exact_pass_count",
-            "alpha_exact_check_count",
-            "alpha_mean_gamma_cp",
-            "alpha_mean_weighted_miscoverage_V",
-            "return_score",
-            "bound_score",
-            "v_score",
-            "ijds_balanced_score",
-            "n_funded_mean",
-            "allocator_backends",
-        ]
-        return {
-            field: row[field].item() if hasattr(row[field], "item") else row[field]
-            for field in fields
-            if field in row.index
-        }
 
-    max_return = row_payload(eligible.sort_values("alpha01_realized_total_return", ascending=False))
-    best_gamma = row_payload(
-        above_return_floor.sort_values(
-            ["alpha01_gamma_cp", "alpha01_realized_total_return"],
-            ascending=[True, False],
-        )
-    )
-    best_v = row_payload(
-        above_return_floor.sort_values(
-            ["alpha01_weighted_miscoverage_V", "alpha01_realized_total_return"],
-            ascending=[True, False],
-        )
-    )
+def _row_payload(frame: pd.DataFrame) -> dict[str, Any] | None:
+    if frame.empty:
+        return None
+    row = frame.iloc[0]
+    return {
+        field: row[field].item() if hasattr(row[field], "item") else row[field]
+        for field in CLAIM_ROW_FIELDS
+        if field in row.index
+    }
+
+
+def _add_normalized_score(
+    frame: pd.DataFrame,
+    *,
+    source: str,
+    target: str,
+    higher_better: bool,
+) -> None:
+    vals = pd.to_numeric(frame[source], errors="coerce")
+    lo, hi = float(vals.min()), float(vals.max())
+    if hi <= lo:
+        frame[target] = 1.0
+    elif higher_better:
+        frame[target] = (vals - lo) / (hi - lo)
+    else:
+        frame[target] = (hi - vals) / (hi - lo)
+
+
+def _balanced_claim_candidates(above_return_floor: pd.DataFrame) -> pd.DataFrame:
     balanced = above_return_floor.copy()
-    if not balanced.empty:
-        for source, target, higher_better in [
-            ("alpha01_realized_total_return", "return_score", True),
-            ("alpha01_markov_loss_cap", "bound_score", False),
-            ("alpha01_weighted_miscoverage_V", "v_score", False),
-        ]:
-            vals = pd.to_numeric(balanced[source], errors="coerce")
-            lo, hi = float(vals.min()), float(vals.max())
-            if hi <= lo:
-                balanced[target] = 1.0
-            elif higher_better:
-                balanced[target] = (vals - lo) / (hi - lo)
-            else:
-                balanced[target] = (hi - vals) / (hi - lo)
-        balanced["ijds_balanced_score"] = (
-            0.40 * balanced["return_score"]
-            + 0.40 * balanced["bound_score"]
-            + 0.20 * balanced["v_score"]
+    if balanced.empty:
+        return balanced
+    for source, target, higher_better in [
+        ("alpha01_realized_total_return", "return_score", True),
+        ("alpha01_markov_loss_cap", "bound_score", False),
+        ("alpha01_weighted_miscoverage_V", "v_score", False),
+    ]:
+        _add_normalized_score(
+            balanced,
+            source=source,
+            target=target,
+            higher_better=higher_better,
         )
-    balanced_claim = row_payload(
-        balanced.sort_values("ijds_balanced_score", ascending=False)
-        if not balanced.empty
-        else balanced
+    balanced["ijds_balanced_score"] = (
+        0.40 * balanced["return_score"]
+        + 0.40 * balanced["bound_score"]
+        + 0.20 * balanced["v_score"]
     )
+    return balanced
 
+
+def _family_claim_summary(leaderboard: pd.DataFrame) -> dict[str, Any]:
     by_family: dict[str, Any] = {}
-    if not leaderboard.empty:
-        for family, frame in leaderboard.groupby("local_family", dropna=False):
-            fam_eligible = frame[
-                frame["alpha01_exact_pass"].fillna(False).astype(bool)
-                & frame["all_alpha_pass"].fillna(False).astype(bool)
-            ]
-            by_family[str(family)] = {
-                "n_policies": int(len(frame)),
-                "n_all_alpha_passers": int(len(fam_eligible)),
-                "all_alpha_pass_rate": float(len(fam_eligible) / max(len(frame), 1)),
-                "best_return": float(fam_eligible["alpha01_realized_total_return"].max())
-                if not fam_eligible.empty
-                else None,
-                "min_gamma_cp_above_return_floor": float(
-                    fam_eligible.loc[
-                        fam_eligible["alpha01_realized_total_return"] >= DECLARED_RETURN_FLOOR,
-                        "alpha01_gamma_cp",
-                    ].min()
-                )
-                if not fam_eligible[
-                    fam_eligible["alpha01_realized_total_return"] >= DECLARED_RETURN_FLOOR
-                ].empty
-                else None,
-                "min_v_above_return_floor": float(
-                    fam_eligible.loc[
-                        fam_eligible["alpha01_realized_total_return"] >= DECLARED_RETURN_FLOOR,
-                        "alpha01_weighted_miscoverage_V",
-                    ].min()
-                )
-                if not fam_eligible[
-                    fam_eligible["alpha01_realized_total_return"] >= DECLARED_RETURN_FLOOR
-                ].empty
-                else None,
-            }
+    if leaderboard.empty:
+        return by_family
+    for family, frame in leaderboard.groupby("local_family", dropna=False):
+        fam_eligible = _all_alpha_eligible(frame)
+        fam_above_floor = fam_eligible[
+            fam_eligible["alpha01_realized_total_return"] >= DECLARED_RETURN_FLOOR
+        ]
+        by_family[str(family)] = {
+            "n_policies": int(len(frame)),
+            "n_all_alpha_passers": int(len(fam_eligible)),
+            "all_alpha_pass_rate": float(len(fam_eligible) / max(len(frame), 1)),
+            "best_return": float(fam_eligible["alpha01_realized_total_return"].max())
+            if not fam_eligible.empty
+            else None,
+            "min_gamma_cp_above_return_floor": float(fam_above_floor["alpha01_gamma_cp"].min())
+            if not fam_above_floor.empty
+            else None,
+            "min_v_above_return_floor": float(
+                fam_above_floor["alpha01_weighted_miscoverage_V"].min()
+            )
+            if not fam_above_floor.empty
+            else None,
+        }
+    return by_family
 
+
+def _alpha_claim_summary(bound_eval: pd.DataFrame) -> dict[str, Any]:
     by_alpha: dict[str, Any] = {}
-    if not bound_eval.empty:
-        for alpha, frame in bound_eval.groupby("alpha", dropna=False):
-            by_alpha[str(float(alpha))] = {
-                "n_checks": int(len(frame)),
-                "pass_rate": float(frame["all_bounds_hold"].fillna(False).mean()),
-                "max_violation": float(frame["violation"].max()),
-                "mean_gamma_cp": float(frame["gamma_cp"].mean()),
-                "mean_weighted_miscoverage_V": float(frame["weighted_miscoverage_V"].mean()),
-            }
-
-    alpha_values = (
-        [float(value) for value in alpha_grid]
-        if alpha_grid is not None
-        else sorted(float(value) for value in bound_eval["alpha"].dropna().unique())
-        if "alpha" in bound_eval
-        else list(DEFAULT_ALPHA_GRID)
+    if bound_eval.empty:
+        return by_alpha
+    risk_excess_column = (
+        "realized_risk_tolerance_excess"
+        if "realized_risk_tolerance_excess" in bound_eval.columns
+        else "violation"
     )
-    alpha_values = sorted(dict.fromkeys(alpha_values))
-    finite_grid_policy = {
+    for alpha, frame in bound_eval.groupby("alpha", dropna=False):
+        alpha_value = float(str(alpha))
+        by_alpha[str(alpha_value)] = {
+            "n_checks": int(len(frame)),
+            "pass_rate": float(frame["all_bounds_hold"].fillna(False).mean()),
+            "max_realized_risk_tolerance_excess": float(frame[risk_excess_column].max()),
+            "max_violation": float(frame[risk_excess_column].max()),
+            "mean_gamma_cp": float(frame["gamma_cp"].mean()),
+            "mean_weighted_miscoverage_V": float(frame["weighted_miscoverage_V"].mean()),
+        }
+    return by_alpha
+
+
+def _claim_alpha_values(bound_eval: pd.DataFrame, alpha_grid: list[float] | None) -> list[float]:
+    if alpha_grid is not None:
+        values = [float(value) for value in alpha_grid]
+    elif "alpha" in bound_eval:
+        values = sorted(float(value) for value in bound_eval["alpha"].dropna().unique())
+    else:
+        values = list(DEFAULT_ALPHA_GRID)
+    return sorted(dict.fromkeys(values))
+
+
+def _finite_grid_policy(alpha_values: list[float]) -> dict[str, Any]:
+    return {
         "alpha_grid": alpha_values,
         "alpha_grid_size": int(len(alpha_values)),
         "alpha_grid_semantics": (
@@ -1284,7 +1142,10 @@ def _claim_summary(
             "not a continuous robust region"
         ),
     }
-    claim_selection_protocol = {
+
+
+def _claim_selection_protocol() -> dict[str, Any]:
+    return {
         "body_default": "balanced_return_bound_claim",
         "frontier_endpoints": [
             "max_return_claim",
@@ -1308,12 +1169,48 @@ def _claim_summary(
         ),
     }
 
+
+def _claim_summary(
+    leaderboard: pd.DataFrame,
+    bound_eval: pd.DataFrame,
+    *,
+    alpha_grid: list[float] | None = None,
+) -> dict[str, Any]:
+    leaderboard = _ensure_claim_summary_columns(leaderboard)
+    eligible = _all_alpha_eligible(leaderboard)
+    above_return_floor = eligible[
+        eligible["alpha01_realized_total_return"] >= DECLARED_RETURN_FLOOR
+    ].copy()
+
+    max_return = _row_payload(
+        eligible.sort_values("alpha01_realized_total_return", ascending=False)
+    )
+    best_gamma = _row_payload(
+        above_return_floor.sort_values(
+            ["alpha01_gamma_cp", "alpha01_realized_total_return"],
+            ascending=[True, False],
+        )
+    )
+    best_v = _row_payload(
+        above_return_floor.sort_values(
+            ["alpha01_weighted_miscoverage_V", "alpha01_realized_total_return"],
+            ascending=[True, False],
+        )
+    )
+    balanced = _balanced_claim_candidates(above_return_floor)
+    balanced_claim = _row_payload(
+        balanced.sort_values("ijds_balanced_score", ascending=False)
+        if not balanced.empty
+        else balanced
+    )
+    alpha_values = _claim_alpha_values(bound_eval, alpha_grid)
+
     return {
         "schema_version": SCHEMA_VERSION,
         "generated_at_utc": datetime.now(tz=UTC).isoformat(),
         "declared_return_floor": DECLARED_RETURN_FLOOR,
-        "finite_grid_policy": finite_grid_policy,
-        "claim_selection_protocol": claim_selection_protocol,
+        "finite_grid_policy": _finite_grid_policy(alpha_values),
+        "claim_selection_protocol": _claim_selection_protocol(),
         "n_policies": int(len(leaderboard)),
         "n_all_alpha_passers": int(len(eligible)),
         "n_all_alpha_passers_above_return_floor": int(len(above_return_floor)),
@@ -1321,8 +1218,8 @@ def _claim_summary(
         "best_gamma_cp_return_floor_claim": best_gamma,
         "best_weighted_miscoverage_return_floor_claim": best_v,
         "balanced_return_bound_claim": balanced_claim,
-        "by_family": by_family,
-        "by_alpha": by_alpha,
+        "by_family": _family_claim_summary(leaderboard),
+        "by_alpha": _alpha_claim_summary(bound_eval),
         "interpretation": {
             "max_return_claim": "Use when the paper emphasizes certified economic return.",
             "best_gamma_cp_return_floor_claim": "Use when the paper emphasizes a tighter conformal robustness budget while preserving the declared return floor.",
@@ -1373,7 +1270,7 @@ def _write_status(
     )
 
 
-def main(argv: list[str] | None = None) -> int:
+def _build_parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser()
     parser.add_argument("--run-tag", default="pool93_ijds_local_refine_stage1")
     parser.add_argument(
@@ -1419,9 +1316,10 @@ def main(argv: list[str] | None = None) -> int:
         default=0,
         help="Debug/smoke option: keep only the first N generated policies when positive.",
     )
-    args = parser.parse_args(argv)
+    return parser
 
-    run_tag = str(args.run_tag).strip().replace("/", "_")
+
+def _resolve_paths(args: argparse.Namespace, *, run_tag: str) -> Pool93Paths:
     output_dir = (
         Path(args.output_dir)
         if str(args.output_dir).strip()
@@ -1432,44 +1330,81 @@ def main(argv: list[str] | None = None) -> int:
         if str(args.model_dir).strip()
         else ROOT / "models/experiments/champion_reopen" / run_tag / "portfolio"
     )
-    output_dir.mkdir(parents=True, exist_ok=True)
-    model_dir.mkdir(parents=True, exist_ok=True)
-    checkpoint_dir = model_dir / "runtime_checkpoints"
-    checkpoint_dir.mkdir(parents=True, exist_ok=True)
-
-    status_path = model_dir / "runtime_status.json"
-    candidates_path = output_dir / "pool93_ijds_local_refinement_candidates.parquet"
-    bound_eval_path = output_dir / "pool93_ijds_local_refinement_bound_eval.parquet"
-    leaderboard_path = output_dir / "pool93_ijds_local_refinement_leaderboard.parquet"
-    claim_summary_path = model_dir / "pool93_ijds_local_refinement_claim_summary.json"
-    manifest_path = model_dir / "pool93_ijds_local_refinement_manifest.json"
-
-    source_bound_eval = Path(args.source_bound_eval)
-    source_selection = Path(args.source_selection)
-    source_selection_payload = json.loads(source_selection.read_text(encoding="utf-8"))
-    conformal_intervals_path = str(args.conformal_intervals_path).strip() or str(
-        ROOT / source_selection_payload["conformal_intervals_path"]
+    return Pool93Paths(
+        output_dir=output_dir,
+        model_dir=model_dir,
+        checkpoint_dir=model_dir / "runtime_checkpoints",
+        status_path=model_dir / "runtime_status.json",
+        candidates_path=output_dir / "pool93_ijds_local_refinement_candidates.parquet",
+        bound_eval_path=output_dir / "pool93_ijds_local_refinement_bound_eval.parquet",
+        leaderboard_path=output_dir / "pool93_ijds_local_refinement_leaderboard.parquet",
+        claim_summary_path=model_dir / "pool93_ijds_local_refinement_claim_summary.json",
+        manifest_path=model_dir / "pool93_ijds_local_refinement_manifest.json",
     )
-    alpha_grid = _coerce_float_grid(args.alpha_grid, DEFAULT_ALPHA_GRID)
-    anchor_ranks = _coerce_int_grid(args.anchor_ranks, [96, 219, 223])
 
-    if candidates_path.exists():
-        candidates = pd.read_parquet(candidates_path)
-        logger.info("Reusing candidate manifest: {} rows from {}", len(candidates), candidates_path)
-    else:
-        anchors = _source_anchor_rows(source_bound_eval, anchor_ranks)
-        candidates = _generate_candidate_grid(
-            anchors,
-            profile=str(args.profile),
-            solver_backend=str(args.solver_backend),
+
+def _ensure_pool93_dirs(paths: Pool93Paths) -> None:
+    paths.output_dir.mkdir(parents=True, exist_ok=True)
+    paths.model_dir.mkdir(parents=True, exist_ok=True)
+    paths.checkpoint_dir.mkdir(parents=True, exist_ok=True)
+
+
+def _conformal_intervals_from_selection(
+    *,
+    explicit_path: str,
+    source_selection: Path,
+) -> str:
+    if str(explicit_path).strip():
+        return str(explicit_path).strip()
+    source_selection_payload = json.loads(source_selection.read_text(encoding="utf-8"))
+    return str(ROOT / source_selection_payload["conformal_intervals_path"])
+
+
+def _load_or_generate_candidates(
+    *,
+    args: argparse.Namespace,
+    paths: Pool93Paths,
+    source_bound_eval: Path,
+    anchor_ranks: list[int],
+) -> pd.DataFrame:
+    if paths.candidates_path.exists():
+        candidates = pd.read_parquet(paths.candidates_path)
+        logger.info(
+            "Reusing candidate manifest: {} rows from {}",
+            len(candidates),
+            paths.candidates_path,
         )
-        if int(args.candidate_limit) > 0:
-            candidates = candidates.head(int(args.candidate_limit)).copy().reset_index(drop=True)
-            candidates["local_candidate_id"] = range(1, len(candidates) + 1)
-        atomic_write_parquet(candidates, candidates_path, index=False)
-        logger.info("Wrote candidate manifest: {} policies to {}", len(candidates), candidates_path)
+        return candidates
+    anchors = _source_anchor_rows(source_bound_eval, anchor_ranks)
+    candidates = _generate_candidate_grid(
+        anchors,
+        profile=str(args.profile),
+        solver_backend=str(args.solver_backend),
+    )
+    if int(args.candidate_limit) > 0:
+        candidates = candidates.head(int(args.candidate_limit)).copy().reset_index(drop=True)
+        candidates["local_candidate_id"] = np.arange(1, len(candidates) + 1, dtype=int)
+    atomic_write_parquet(candidates, paths.candidates_path, index=False)
+    logger.info(
+        "Wrote candidate manifest: {} policies to {}",
+        len(candidates),
+        paths.candidates_path,
+    )
+    return candidates
 
-    manifest = {
+
+def _manifest_payload(
+    *,
+    args: argparse.Namespace,
+    paths: Pool93Paths,
+    run_tag: str,
+    source_bound_eval: Path,
+    source_selection: Path,
+    conformal_intervals_path: str,
+    anchor_ranks: list[int],
+    alpha_grid: list[float],
+) -> dict[str, Any]:
+    return {
         "schema_version": SCHEMA_VERSION,
         "generated_at_utc": datetime.now(tz=UTC).isoformat(),
         "run_tag": run_tag,
@@ -1487,28 +1422,192 @@ def main(argv: list[str] | None = None) -> int:
         "random_state": int(args.random_state),
         "checkpoint_every": int(args.checkpoint_every),
         "parallel_workers": int(args.parallel_workers),
-        "candidates_path": str(candidates_path),
-        "bound_eval_path": str(bound_eval_path),
-        "leaderboard_path": str(leaderboard_path),
-        "claim_summary_path": str(claim_summary_path),
+        "candidates_path": str(paths.candidates_path),
+        "bound_eval_path": str(paths.bound_eval_path),
+        "leaderboard_path": str(paths.leaderboard_path),
+        "claim_summary_path": str(paths.claim_summary_path),
     }
-    atomic_write_json(manifest_path, manifest)
 
+
+def _load_partial_bound_eval(path: Path) -> tuple[pd.DataFrame, set[tuple[int, float]]]:
     partial = pd.DataFrame()
-    if bound_eval_path.exists():
-        partial = pd.read_parquet(bound_eval_path)
+    if path.exists():
+        partial = pd.read_parquet(path)
         if not partial.empty:
             partial = partial.drop_duplicates(
                 ["local_candidate_id", "alpha"],
                 keep="last",
             ).reset_index(drop=True)
             logger.info("Resuming local refinement from {} rows", len(partial))
-    completed_keys = set()
-    if not partial.empty:
-        completed_keys = {
-            (int(row.local_candidate_id), float(row.alpha))
-            for row in partial.itertuples(index=False)
-        }
+    completed_keys = {
+        (int(row["local_candidate_id"]), float(row["alpha"]))
+        for row in partial.to_dict(orient="records")
+    }
+    return partial, completed_keys
+
+
+def _pending_refinement_tasks(
+    *,
+    candidates: pd.DataFrame,
+    alpha_grid: list[float],
+    completed_keys: set[tuple[int, float]],
+) -> list[tuple[dict[str, Any], float]]:
+    return [
+        (candidate, float(alpha))
+        for candidate in candidates.to_dict(orient="records")
+        for alpha in alpha_grid
+        if (int(candidate["local_candidate_id"]), float(alpha)) not in completed_keys
+    ]
+
+
+def _persist_refinement_progress(
+    *,
+    paths: Pool93Paths,
+    candidates: pd.DataFrame,
+    rows: list[dict[str, Any]],
+    alpha_grid: list[float],
+) -> None:
+    bound_eval = pd.DataFrame(rows)
+    atomic_write_parquet(bound_eval, paths.bound_eval_path, index=False)
+    leaderboard = _aggregate_leaderboard(candidates, bound_eval)
+    atomic_write_parquet(leaderboard, paths.leaderboard_path, index=False)
+    atomic_write_json(
+        paths.claim_summary_path,
+        _claim_summary(leaderboard, bound_eval, alpha_grid=alpha_grid),
+    )
+
+
+def _run_serial_refinement(
+    *,
+    pending_tasks: list[tuple[dict[str, Any], float]],
+    aligned: pd.DataFrame,
+    budget: float,
+    t_eval: float,
+    exact_threads: int,
+    record_result: Any,
+) -> None:
+    for candidate, alpha in pending_tasks:
+        policy = {field: candidate[field] for field in SEMANTIC_POLICY_FIELDS}
+        result = _exact_policy_alpha(
+            aligned,
+            policy=policy,
+            alpha=float(alpha),
+            budget=float(budget),
+            t_eval=float(t_eval),
+            threads=int(exact_threads),
+        )
+        record_result(candidate, alpha, result)
+
+
+def _run_parallel_refinement(
+    *,
+    pending_tasks: list[tuple[dict[str, Any], float]],
+    aligned: pd.DataFrame,
+    parallel_workers: int,
+    budget: float,
+    t_eval: float,
+    exact_threads: int,
+    persist_progress: Any,
+    record_result: Any,
+) -> None:
+    logger.info(
+        "Running exact refinement with {} parallel workers and {} solver thread(s) per worker",
+        parallel_workers,
+        int(exact_threads),
+    )
+    mp_context = mp.get_context("fork") if sys.platform != "win32" else None
+    max_in_flight = max(parallel_workers, parallel_workers * 2)
+    next_task_idx = 0
+    futures: dict[Any, tuple[dict[str, Any], float]] = {}
+    with ProcessPoolExecutor(
+        max_workers=parallel_workers,
+        mp_context=mp_context,
+        initializer=_init_exact_worker,
+        initargs=(aligned,),
+    ) as executor:
+        while next_task_idx < len(pending_tasks) or futures:
+            while next_task_idx < len(pending_tasks) and len(futures) < max_in_flight:
+                candidate, alpha = pending_tasks[next_task_idx]
+                future = executor.submit(
+                    _exact_policy_alpha_task,
+                    candidate,
+                    alpha,
+                    float(budget),
+                    float(t_eval),
+                    int(exact_threads),
+                )
+                futures[future] = (candidate, alpha)
+                next_task_idx += 1
+            done, _ = wait(futures, return_when=FIRST_COMPLETED)
+            for future in done:
+                candidate, alpha = futures.pop(future)
+                try:
+                    result = future.result()
+                except Exception:
+                    persist_progress()
+                    raise
+                result_only = {
+                    key: value
+                    for key, value in result.items()
+                    if key not in candidate or key in {"alpha", "confidence"}
+                }
+                record_result(candidate, alpha, result_only)
+
+
+def _write_final_outputs(
+    *,
+    paths: Pool93Paths,
+    candidates: pd.DataFrame,
+    rows: list[dict[str, Any]],
+    alpha_grid: list[float],
+) -> tuple[pd.DataFrame, dict[str, Any]]:
+    bound_eval = pd.DataFrame(rows)
+    atomic_write_parquet(bound_eval, paths.bound_eval_path, index=False)
+    leaderboard = _aggregate_leaderboard(candidates, bound_eval)
+    atomic_write_parquet(leaderboard, paths.leaderboard_path, index=False)
+    claim_summary = _claim_summary(leaderboard, bound_eval, alpha_grid=alpha_grid)
+    atomic_write_json(paths.claim_summary_path, claim_summary)
+    return leaderboard, claim_summary
+
+
+def main(argv: list[str] | None = None) -> int:
+    parser = _build_parser()
+    args = parser.parse_args(argv)
+
+    run_tag = str(args.run_tag).strip().replace("/", "_")
+    paths = _resolve_paths(args, run_tag=run_tag)
+    _ensure_pool93_dirs(paths)
+
+    source_bound_eval = Path(args.source_bound_eval)
+    source_selection = Path(args.source_selection)
+    conformal_intervals_path = _conformal_intervals_from_selection(
+        explicit_path=args.conformal_intervals_path,
+        source_selection=source_selection,
+    )
+    alpha_grid = _coerce_float_grid(args.alpha_grid, DEFAULT_ALPHA_GRID)
+    anchor_ranks = _coerce_int_grid(args.anchor_ranks, [96, 219, 223])
+
+    candidates = _load_or_generate_candidates(
+        args=args,
+        paths=paths,
+        source_bound_eval=source_bound_eval,
+        anchor_ranks=anchor_ranks,
+    )
+    atomic_write_json(
+        paths.manifest_path,
+        _manifest_payload(
+            args=args,
+            paths=paths,
+            run_tag=run_tag,
+            source_bound_eval=source_bound_eval,
+            source_selection=source_selection,
+            conformal_intervals_path=conformal_intervals_path,
+            anchor_ranks=anchor_ranks,
+            alpha_grid=alpha_grid,
+        ),
+    )
+
+    partial, completed_keys = _load_partial_bound_eval(paths.bound_eval_path)
     rows: list[dict[str, Any]] = partial.to_dict(orient="records") if not partial.empty else []
 
     total_checks = int(len(candidates) * len(alpha_grid))
@@ -1516,7 +1615,7 @@ def main(argv: list[str] | None = None) -> int:
     initial_completed = int(len(completed_keys))
     _write_status(
         run_tag=run_tag,
-        status_path=status_path,
+        status_path=paths.status_path,
         start_monotonic=start,
         completed=len(completed_keys),
         total=total_checks,
@@ -1532,15 +1631,14 @@ def main(argv: list[str] | None = None) -> int:
         random_state=int(args.random_state),
     )
     logger.info("Loaded aligned full universe: {} rows", len(aligned))
+    completed = len(completed_keys)
 
     def persist_progress() -> None:
-        bound_eval = pd.DataFrame(rows)
-        atomic_write_parquet(bound_eval, bound_eval_path, index=False)
-        leaderboard = _aggregate_leaderboard(candidates, bound_eval)
-        atomic_write_parquet(leaderboard, leaderboard_path, index=False)
-        atomic_write_json(
-            claim_summary_path,
-            _claim_summary(leaderboard, bound_eval, alpha_grid=alpha_grid),
+        _persist_refinement_progress(
+            paths=paths,
+            candidates=candidates,
+            rows=rows,
+            alpha_grid=alpha_grid,
         )
 
     def record_result(candidate: dict[str, Any], alpha: float, result: dict[str, Any]) -> None:
@@ -1554,7 +1652,7 @@ def main(argv: list[str] | None = None) -> int:
         completed_keys.add((int(candidate["local_candidate_id"]), float(alpha)))
         _write_status(
             run_tag=run_tag,
-            status_path=status_path,
+            status_path=paths.status_path,
             start_monotonic=start,
             completed=completed,
             total=total_checks,
@@ -1574,81 +1672,44 @@ def main(argv: list[str] | None = None) -> int:
         if completed % max(1, int(args.checkpoint_every)) == 0:
             persist_progress()
 
-    completed = len(completed_keys)
-    pending_tasks: list[tuple[dict[str, Any], float]] = []
-    for candidate in candidates.to_dict(orient="records"):
-        for alpha in alpha_grid:
-            key = (int(candidate["local_candidate_id"]), float(alpha))
-            if key not in completed_keys:
-                pending_tasks.append((candidate, float(alpha)))
+    pending_tasks = _pending_refinement_tasks(
+        candidates=candidates,
+        alpha_grid=alpha_grid,
+        completed_keys=completed_keys,
+    )
 
     parallel_workers = max(1, int(args.parallel_workers))
     if parallel_workers <= 1:
-        for candidate, alpha in pending_tasks:
-            policy = {field: candidate[field] for field in SEMANTIC_POLICY_FIELDS}
-            result = _exact_policy_alpha(
-                aligned,
-                policy=policy,
-                alpha=float(alpha),
-                budget=float(args.budget),
-                t_eval=float(args.t_eval),
-                threads=int(args.exact_threads),
-            )
-            record_result(candidate, alpha, result)
-    else:
-        logger.info(
-            "Running exact refinement with {} parallel workers and {} solver thread(s) per worker",
-            parallel_workers,
-            int(args.exact_threads),
+        _run_serial_refinement(
+            pending_tasks=pending_tasks,
+            aligned=aligned,
+            budget=float(args.budget),
+            t_eval=float(args.t_eval),
+            exact_threads=int(args.exact_threads),
+            record_result=record_result,
         )
-        mp_context = mp.get_context("fork") if sys.platform != "win32" else None
-        max_in_flight = max(parallel_workers, parallel_workers * 2)
-        next_task_idx = 0
-        futures: dict[Any, tuple[dict[str, Any], float]] = {}
-        with ProcessPoolExecutor(
-            max_workers=parallel_workers,
-            mp_context=mp_context,
-            initializer=_init_exact_worker,
-            initargs=(aligned,),
-        ) as executor:
-            while next_task_idx < len(pending_tasks) or futures:
-                while next_task_idx < len(pending_tasks) and len(futures) < max_in_flight:
-                    candidate, alpha = pending_tasks[next_task_idx]
-                    future = executor.submit(
-                        _exact_policy_alpha_task,
-                        candidate,
-                        alpha,
-                        float(args.budget),
-                        float(args.t_eval),
-                        int(args.exact_threads),
-                    )
-                    futures[future] = (candidate, alpha)
-                    next_task_idx += 1
-                done, _ = wait(futures, return_when=FIRST_COMPLETED)
-                for future in done:
-                    candidate, alpha = futures.pop(future)
-                    try:
-                        result = future.result()
-                    except Exception:
-                        persist_progress()
-                        raise
-                    result_only = {
-                        key: value
-                        for key, value in result.items()
-                        if key not in candidate or key in {"alpha", "confidence"}
-                    }
-                    record_result(candidate, alpha, result_only)
+    else:
+        _run_parallel_refinement(
+            pending_tasks=pending_tasks,
+            aligned=aligned,
+            parallel_workers=parallel_workers,
+            budget=float(args.budget),
+            t_eval=float(args.t_eval),
+            exact_threads=int(args.exact_threads),
+            persist_progress=persist_progress,
+            record_result=record_result,
+        )
 
-    bound_eval = pd.DataFrame(rows)
-    atomic_write_parquet(bound_eval, bound_eval_path, index=False)
-    leaderboard = _aggregate_leaderboard(candidates, bound_eval)
-    atomic_write_parquet(leaderboard, leaderboard_path, index=False)
-    claim_summary = _claim_summary(leaderboard, bound_eval, alpha_grid=alpha_grid)
-    atomic_write_json(claim_summary_path, claim_summary)
+    leaderboard, claim_summary = _write_final_outputs(
+        paths=paths,
+        candidates=candidates,
+        rows=rows,
+        alpha_grid=alpha_grid,
+    )
 
     _write_status(
         run_tag=run_tag,
-        status_path=status_path,
+        status_path=paths.status_path,
         start_monotonic=start,
         completed=total_checks,
         total=total_checks,
@@ -1661,8 +1722,8 @@ def main(argv: list[str] | None = None) -> int:
             "n_all_alpha_passers_above_return_floor": int(
                 claim_summary["n_all_alpha_passers_above_return_floor"]
             ),
-            "claim_summary_path": str(claim_summary_path),
-            "leaderboard_path": str(leaderboard_path),
+            "claim_summary_path": str(paths.claim_summary_path),
+            "leaderboard_path": str(paths.leaderboard_path),
         },
     )
     write_runtime_checkpoint(
@@ -1671,12 +1732,12 @@ def main(argv: list[str] | None = None) -> int:
         {
             "run_tag": run_tag,
             "completed_at_utc": datetime.now(tz=UTC).isoformat(),
-            "claim_summary_path": str(claim_summary_path),
-            "leaderboard_path": str(leaderboard_path),
+            "claim_summary_path": str(paths.claim_summary_path),
+            "leaderboard_path": str(paths.leaderboard_path),
         },
-        checkpoint_dir=checkpoint_dir,
+        checkpoint_dir=paths.checkpoint_dir,
     )
-    logger.info("Local IJDS refinement complete: {}", claim_summary_path)
+    logger.info("Local IJDS refinement complete: {}", paths.claim_summary_path)
     return 0
 
 

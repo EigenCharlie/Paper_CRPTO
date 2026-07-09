@@ -140,13 +140,14 @@ condicional sería excesiva.
 | A32 Prosper default sensitivity | Main, `Defaulted` only y `Chargedoff` only pasan 90% y alpha01, todos con LP robusto positivo. | La definición de default no decide por sí sola el claim Prosper. |
 | A33 Freddie red/green | `both` y `green` pasan alpha01; `red` falla alpha01 (`0.9850`) aunque mantiene coverage90 y LP positivo. | FM48 combinado es el claim promovido; red queda como sensibilidad honesta. |
 
-## El precio de robustez crece con el riesgo del panel
+## El precio de robustez en las aplicaciones externas
 
-La réplica externa no solo confirma que los gates se sostienen: revela un patrón
-económico que un champion de un solo dataset no podía mostrar. El campo
-`price_of_robustness_pct` --definido con el mismo signo que en Lending Club, como
+La réplica externa no solo confirma que los gates se sostienen: muestra un patrón
+económico que un solo dataset no podía revelar. El campo
+`price_of_robustness_pct` --definido como
 `(no-robusto − robusto) / no-robusto`-- es **positivo** en las aplicaciones
-congeladas externas y **crece monótonamente con la tasa de default del panel**.
+congeladas externas y queda ordenado por la tasa de default del panel en los
+cuatro casos observados.
 
 | Aplicación congelada | Default del panel | AUC | Precio de robustez |
 |---|---:|---:|---:|
@@ -159,7 +160,7 @@ congeladas externas y **crece monótonamente con la tasa de default del panel**.
 Todas usan la misma receta sin búsqueda de champion. Fuente:
 `crpto_tableA34_price_of_robustness_cross_dataset.csv`.
 
-![El precio de robustez crece con la tasa de default del panel: las aplicaciones congeladas (Freddie green/combinado/red, Prosper) forman una serie positiva y monótona, mientras el champion seleccionado de Lending Club queda como referencia favorable por debajo de cero.](../assets/figures/publication/crpto_fig25_price_of_robustness_scaling.png){#fig-book-price-scaling width="85%" fig-alt="Gráfico de líneas en eje x logarítmico: el precio de robustez sube de +1.00% a +9.46% al crecer la tasa de default del panel; Lending Club aparece como línea de referencia en -10.56%."}
+![En las cuatro aplicaciones externas congeladas, el precio de robustez es positivo y queda ordenado por la tasa de default del panel.](../assets/figures/publication/crpto_fig25_price_of_robustness_scaling.png){#fig-book-price-scaling width="85%" fig-alt="Gráfico de líneas en eje x logarítmico: el precio de robustez aumenta de +1.00% a +9.46% entre cuatro aplicaciones externas congeladas ordenadas por tasa de default."}
 
 La lectura tiene base teórica limpia: más riesgo de default ensancha los
 intervalos conformales, así que el peor caso robusto descuenta más retorno y la
@@ -169,18 +170,18 @@ prima por comprar la garantía de cobertura sube. Dentro de Freddie, el segmento
 sí sola --`green` y `red` tienen AUC casi idéntico pero distinta prima--: lo que
 manda es el riesgo irreducible del panel.
 
-Lending Club es la excepción informativa: su precio de robustez es **favorable**
-(`−10.56%`), pero ese número proviene del champion *seleccionado* por la búsqueda
-bound-aware, no de una aplicación ciega de la receta. La selección encontró
-precisamente un funded set robusto que además gana en retorno esperado. Reportar
-ambas cosas --la prima positiva acotada bajo aplicación congelada y el caso
-favorable bajo selección-- es más honesto y más fuerte que afirmar que la robustez
-es siempre gratis o siempre cara.
+Lending Club no entra en esa serie. El campo histórico `−10.56%` comparaba la
+policy robusta contra una baseline rotulada `nonrobust` que todavía heredaba una
+restricción de endpoint conformal. La auditoría point-PD corregida en
+`tau=0.1715` es A40: CRPTO cede `5.875%` de retorno realizado y reduce `8.305`
+puntos de default/V frente al control. No se mezcla con las cuatro aplicaciones
+externas porque usa otro contrato. El claim activo de Lending Club se apoya en
+la frontera policy-aware A35 y la baseline emparejada A40.
 
-El mensaje editorial es directo: **la robustez nunca es económicamente
-catastrófica**. Bajo aplicación congelada la prima se queda en un dígito a
-dígito-bajo-doble, y bajo selección puede volverse favorable. CRPTO mide en qué
-régimen está cada panel en vez de asumir un costo fijo de robustez.
+El mensaje editorial defendible es más acotado: **en las cuatro aplicaciones
+externas congeladas, la prima observada va de un dígito a bajo-doble-dígito**.
+Cuatro puntos ordenados son compatibles con el mecanismo, pero no demuestran una
+ley general ni que la robustez sea siempre barata.
 
 ## Qué mejora en el paper
 
@@ -192,9 +193,9 @@ la receta conserva gates conformales y valor LP positivo en Prosper y Freddie".
 Ese matiz mejora tres claims:
 
 1. El método no parece depender de una idiosincrasia de Lending Club.
-2. El precio de robustez deja de ser un número aislado de Lending Club y se
-   vuelve un patrón interpretable: una prima positiva acotada que crece con el
-   riesgo del panel, comparable entre un P2P de consumo y un panel hipotecario.
+2. El precio de robustez se vuelve un patrón externo interpretable: una prima
+   positiva acotada y ordenada por riesgo en los cuatro paneles observados,
+   comparable entre un P2P de consumo y un panel hipotecario.
 3. Home Credit se descarta por criterio económico explícito, no por conveniencia
    de resultados.
 

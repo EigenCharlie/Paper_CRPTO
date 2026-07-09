@@ -1,5 +1,5 @@
 {
-  "schema_version": 5,
+  "schema_version": 6,
   "project_name": "CRPTO",
   "source_project": "local source repository; read-only during extraction; absolute source path intentionally omitted in final package",
   "source_project_note": "Formal IJDS rebaseline computed in the standalone Paper_CRPTO repository; the parent WSL project is provenance only.",
@@ -893,9 +893,9 @@
       "hash_source": "feature_config_pickle_retirement_2026-06-13"
     },
     "reports/crpto/tables/crpto_tableA35_pool93_ijds_frontier.csv": {
-      "sha256": "fbaf05312426058a6b7691f696198666ee289374305a3867dd84f589bddb0132",
-      "bytes": 2264,
-      "hash_source": "pool93_ijds_promotion_2026-07-02"
+      "sha256": "819b2927856ffcc4b6993aa0f9e35839a562803cd7685ddb3013390e64659a44",
+      "bytes": 2334,
+      "hash_source": "pool93_certificate_semantics_v2_2026-07-09"
     },
     "reports/crpto/tables/crpto_tableA36_pool93_body_funded_grade_audit.csv": {
       "sha256": "9d02382c22c7bd58fdbb287de43d0ca09714bae1753b4d30eb1609cb1502740f",
@@ -918,9 +918,9 @@
       "hash_source": "pool93_ijds_promotion_2026-07-02"
     },
     "reports/crpto/tables/crpto_tableA35_pool93_ijds_frontier.tex": {
-      "sha256": "37b4c4d0d2da6f4dbcae55031c07905a12875776463eecae6cab086dc5e8d6f9",
-      "bytes": 956,
-      "hash_source": "pool93_ijds_promotion_2026-07-02"
+      "sha256": "b951567302b3547573d1fbf569ef1ede3e15f8b2e1484b5d2a13399eff4eedf9",
+      "bytes": 1233,
+      "hash_source": "pool93_certificate_semantics_v2_2026-07-09"
     },
     "reports/crpto/tables/crpto_tableA36_pool93_body_funded_grade_audit.tex": {
       "sha256": "20ab4514684f1d2d2cb888be022385d0db771d9fd78b4c87ebff19958e96ad9d",
@@ -951,6 +951,31 @@
       "sha256": "e686f8b0f76c8b3a63351b97ea3761f55fb8921a1c23b051e59904163e8a79de",
       "bytes": 7996,
       "hash_source": "pool93_ijds_promotion_2026-07-02"
+    },
+    "reports/crpto/tables/crpto_tableA40_pool93_point_baseline.csv": {
+      "sha256": "25a9420250f275ccf927d23de6a2a5cbfc46bf411552f99fb684fc2cc21ddafe",
+      "bytes": 492,
+      "hash_source": "pool93_certificate_semantics_v2_2026-07-09"
+    },
+    "reports/crpto/tables/crpto_tableA40_pool93_point_baseline.tex": {
+      "sha256": "4ab75f6f6c106947d4be50d568f390e7c53bf47f01117cfdf04bfbcc9bd1f4de",
+      "bytes": 328,
+      "hash_source": "pool93_certificate_semantics_v2_2026-07-09"
+    },
+    "models/experiments/champion_reopen/champion-reopen-2026-06-19__pool93__ijds-certificate-semantics-v2/portfolio/pool93_ijds_consolidated_frontier.json": {
+      "sha256": "5d3f82559ae60e450af9e30644fe08cb728f0fe39b0fa7b05b50dc29668be6ed",
+      "bytes": 15290,
+      "hash_source": "pool93_certificate_semantics_v2_2026-07-09"
+    },
+    "models/experiments/champion_reopen/champion-reopen-2026-06-19__pool93__ijds-certificate-semantics-v2/portfolio/pool93_ijds_consolidated_governance.json": {
+      "sha256": "b698e4269b2dfbd028840a432bc3b926cc7f6dd9ec63b8550c392b38dc445c48",
+      "bytes": 9823,
+      "hash_source": "pool93_certificate_semantics_v2_2026-07-09"
+    },
+    "models/experiments/champion_reopen/champion-reopen-2026-06-19__pool93__ijds-certificate-semantics-v2/portfolio/pool93_point_pd_baseline_audit.json": {
+      "sha256": "bd1dfd75fdc5a13334ab71040de1750eabda05898660e93c8ab1723e8dbaa597",
+      "bytes": 3810,
+      "hash_source": "pool93_certificate_semantics_v2_2026-07-09"
     }
   },
   "validation_results": {
@@ -4318,9 +4343,10 @@
     ]
   },
   "pool93_ijds_promotion": {
-    "promoted_at_utc": "2026-07-02T06:05:17.323703+00:00",
-    "note": "Pool93 finite-grid body claim promoted for the IJDS paper. The champion_metrics block above remains the frozen ijds-rebaseline-2026-06-07 upstream chain (PD champion, Mondrian conformal intervals, bound-aware 276k search); pool93 is a deterministic policy-grid re-evaluation over the same frozen conformal intervals and does not regenerate any upstream artifact.",
+    "promoted_at_utc": "2026-07-09T23:10:36+00:00",
+    "note": "Pool93 policy-aware certificate semantics v2 promoted for the IJDS paper. The selected allocation, upstream PD/calibration/conformal chain, alpha grid and finite-grid denominators are unchanged. Exact endpoint budgets are rehydrated from existing evaluations; A40 adds a matched point-PD baseline without rerunning protected stages.",
     "terminal_run_tag": "champion-reopen-2026-06-19__pool93__ijds-claim-bound-terminal",
+    "certificate_semantics_run_tag": "champion-reopen-2026-06-19__pool93__ijds-certificate-semantics-v2",
     "consolidated_run_tags": [
       "champion-reopen-2026-06-19__pool93__ijds-claim-expanded-refine",
       "champion-reopen-2026-06-19__pool93__ijds-claim-micro-refine",
@@ -4341,10 +4367,16 @@
       "realized_total_return": 184832.475845,
       "return_floor_surplus": 14367.935845,
       "alpha01_gamma_cp": 0.162616,
+      "alpha01_gamma_internalized": 0.089032,
+      "alpha01_gamma_residual": 0.073584,
       "alpha01_weighted_miscoverage_V": 0.03535,
-      "endpoint_budget_upper_alpha01": 0.24508374,
-      "markov_cap_alpha01": 0.34508374,
+      "alpha01_realized_risk_tolerance_excess": 0.0,
+      "endpoint_budget_alpha01": 0.245084,
+      "endpoint_budget_upper_alpha01": 0.245084,
+      "markov_threshold_alpha01": 0.345084,
+      "markov_cap_alpha01": 0.345084,
       "alpha_grid_pass": "8/8",
+      "alpha01_n_funded": 314,
       "n_funded_mean": 320.5,
       "declared_return_floor": 170464.54,
       "bootstrap_return_interval_p025_p975": [
@@ -4364,19 +4396,49 @@
       "n_all_alpha_passers": 37068,
       "n_all_alpha_passers_above_return_floor": 14814
     },
+    "certificate_semantics_audit": {
+      "status": "corrected_from_existing_exact_bound_evaluations",
+      "body_selection_unchanged": true,
+      "materially_changed_policies": 10423,
+      "materially_understated_policies": 2866,
+      "maximum_legacy_understatement": 0.2413235,
+      "legacy_under_0_50_excluded_by_exact_threshold": 716,
+      "affected_policy_modes": [
+        "segment_relative_tail_blended_uncertainty",
+        "tail_blended_uncertainty"
+      ]
+    },
+    "matched_point_pd_baseline": {
+      "candidate_universe": 276869,
+      "budget": 1000000.0,
+      "risk_tolerance": 0.1715,
+      "point_pd_realized_return": 196369.14000000004,
+      "selected_crpto_realized_return": 184832.47584455396,
+      "realized_return_cost": 11536.66415544608,
+      "realized_return_cost_pct": 5.874988379256577,
+      "weighted_default_rate_reduction": 0.08305000000000001,
+      "weighted_miscoverage_reduction": 0.08305000000000001,
+      "markov_threshold_reduction": 0.4354954303914803,
+      "claim_boundary": "Frozen OOT matched-policy audit; no causal, prospective or universal dominance claim."
+    },
     "protected_artifacts": [
       "reports/crpto/tables/crpto_tableA35_pool93_ijds_frontier.csv",
       "reports/crpto/tables/crpto_tableA36_pool93_body_funded_grade_audit.csv",
       "reports/crpto/tables/crpto_tableA37_pool93_body_tail_risk.csv",
       "reports/crpto/tables/crpto_tableA38_pool93_body_cluster_bound_audit.csv",
       "reports/crpto/tables/crpto_tableA39_pool93_body_bootstrap_metrics.csv",
+      "reports/crpto/tables/crpto_tableA40_pool93_point_baseline.csv",
       "reports/crpto/tables/crpto_tableA35_pool93_ijds_frontier.tex",
       "reports/crpto/tables/crpto_tableA36_pool93_body_funded_grade_audit.tex",
       "reports/crpto/tables/crpto_tableA37_pool93_body_tail_risk.tex",
       "reports/crpto/tables/crpto_tableA38_pool93_body_cluster_bound_audit.tex",
       "reports/crpto/tables/crpto_tableA39_pool93_body_bootstrap_metrics.tex",
+      "reports/crpto/tables/crpto_tableA40_pool93_point_baseline.tex",
       "models/experiments/champion_reopen/champion-reopen-2026-06-19__pool93__ijds-claim-bound-terminal/portfolio/pool93_ijds_claim_governance.json",
-      "models/experiments/champion_reopen/champion-reopen-2026-06-19__pool93__ijds-claim-consolidated-definitive/portfolio/pool93_ijds_consolidated_governance.json"
+      "models/experiments/champion_reopen/champion-reopen-2026-06-19__pool93__ijds-claim-consolidated-definitive/portfolio/pool93_ijds_consolidated_governance.json",
+      "models/experiments/champion_reopen/champion-reopen-2026-06-19__pool93__ijds-certificate-semantics-v2/portfolio/pool93_ijds_consolidated_frontier.json",
+      "models/experiments/champion_reopen/champion-reopen-2026-06-19__pool93__ijds-certificate-semantics-v2/portfolio/pool93_ijds_consolidated_governance.json",
+      "models/experiments/champion_reopen/champion-reopen-2026-06-19__pool93__ijds-certificate-semantics-v2/portfolio/pool93_point_pd_baseline_audit.json"
     ]
   }
 }

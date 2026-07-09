@@ -21,10 +21,12 @@ Usage:
 from __future__ import annotations
 
 import argparse
+import importlib
 import json
 import shutil
 import time
 from collections import OrderedDict
+from numbers import Real
 from pathlib import Path
 from typing import Any
 
@@ -34,25 +36,31 @@ import numpy as np
 import pandas as pd
 from loguru import logger
 
-from scripts.run_spo_real import (
-    LGD,
-    NUMERIC_FEATURES,
-    RANDOM_SEED,
-    CreditPortfolioLP,
-    _compute_regret,
-    _compute_true_optima,
-    _index_costs,
-    _load_pd_artifacts,
-    _predict_calibrated_costs,
-    _prep_features,
-    _sample_instances,
-    _train_spo,
-)
 from src.utils.artifact_metadata import build_artifact_metadata, resolve_run_tag
 
 matplotlib.use("Agg")
 
 SCHEMA_VERSION = "2026-03-22.1"
+LGD = 0.40
+RANDOM_SEED = 42
+
+NUMERIC_FEATURES = [
+    "loan_amnt",
+    "int_rate",
+    "annual_inc",
+    "dti",
+    "fico_range_low",
+    "open_acc",
+    "revol_bal",
+    "revol_util",
+    "total_acc",
+    "installment",
+    "emp_length",
+    "pub_rec",
+    "delinq_2yrs",
+    "inq_last_6mths",
+    "mths_since_last_delinq",
+]
 
 REPO_ROOT = Path(__file__).resolve().parents[1]
 DATA_DIR = REPO_ROOT / "data" / "processed"
@@ -108,7 +116,29 @@ plt.rcParams.update(
 )
 
 
+def _require_optional_module(module_name: str) -> Any:
+    """Import an optional SPO dependency with an explicit experiment-level error."""
+    try:
+        return importlib.import_module(module_name)
+    except ImportError as exc:
+        raise RuntimeError(
+            "SPO stability is an optional experiment. Install the `spo` extras "
+            f"before running this script; missing module: {module_name}."
+        ) from exc
+
+
 # ── Period assignment ────────────────────────────────────────────────────────
+
+
+def _load_spo_real_module() -> Any:
+    """Load SPO helpers lazily so this module remains importable without PyEPO."""
+    try:
+        return importlib.import_module("scripts.run_spo_real")
+    except RuntimeError as exc:
+        raise RuntimeError(
+            "SPO stability is an optional experiment. Install the `spo` extras "
+            "before running this script."
+        ) from exc
 
 
 def _assign_periods(issue_d: pd.Series) -> pd.Series:
@@ -158,6 +188,219 @@ def _evaluate_period_coverage(ci_slice: pd.DataFrame) -> dict:
 
 
 # ── Figure generation ────────────────────────────────────────────────────────
+
+
+def _available_numeric_features(train: pd.DataFrame, test: pd.DataFrame) -> list[str]:
+    return [
+        feature
+        for feature in NUMERIC_FEATURES
+        if feature in train.columns and feature in test.columns
+    ]
+
+
+def _period_masks(test_periods: pd.Series) -> dict[str, np.ndarray]:
+    return {name: (test_periods.values == name) for name in PERIODS}
+
+
+def _period_default_rate(test: pd.DataFrame, mask: np.ndarray) -> float:
+    n_loans = int(mask.sum())
+    return float(test.loc[mask, "default_flag"].mean()) if n_loans > 0 else 0.0
+
+
+def _init_period_regrets() -> dict[str, dict[str, list[float]]]:
+    return {name: {"two_stage": [], "spo_plus": [], "conformal_robust": []} for name in PERIODS}
+
+
+def _period_sample_seed(seed: int, period_name: str) -> int:
+    """Stable per-period seed; avoids Python's process-randomized hash()."""
+    period_offset = list(PERIODS).index(period_name) + 1
+    return int(seed + period_offset * 100_000)
+
+
+def _period_test_instance_count(n_period: int, n_items: int) -> int:
+    return max(min(80, n_period // n_items), 5)
+
+
+def _valid_regret_values(values: list[float]) -> list[float]:
+    return [value for value in values if not np.isnan(value)]
+
+
+def _mean_std(values: list[float]) -> tuple[float, float]:
+    valid = _valid_regret_values(values)
+    if not valid:
+        return float("nan"), float("nan")
+    return float(np.mean(valid)), float(np.std(valid))
+
+
+def _spo_improvement_pct(two_stage_mean: float, spo_mean: float, has_values: bool) -> float | None:
+    if not has_values:
+        return None
+    return (two_stage_mean - spo_mean) / (abs(two_stage_mean) + 1e-9) * 100
+
+
+def _coverage_by_period(
+    ci: pd.DataFrame,
+    period_masks: dict[str, np.ndarray],
+) -> dict[str, dict[str, Any]]:
+    period_coverage: dict[str, dict[str, Any]] = {}
+    for period_name, mask in period_masks.items():
+        ci_slice = ci.loc[mask]
+        if len(ci_slice) == 0:
+            continue
+        period_coverage[period_name] = _evaluate_period_coverage(ci_slice)
+        logger.info(
+            "  {} coverage: 90%={:.2%} width={:.4f} min_grade={:.2%}",
+            period_name,
+            period_coverage[period_name]["coverage_90"],
+            period_coverage[period_name]["avg_width_90"],
+            period_coverage[period_name].get("min_grade_coverage_90", 0) or 0,
+        )
+    return period_coverage
+
+
+def _detail_rows(
+    *,
+    test: pd.DataFrame,
+    period_masks: dict[str, np.ndarray],
+    per_period_regrets: dict[str, dict[str, list[float]]],
+    period_coverage: dict[str, dict[str, Any]],
+) -> list[dict[str, Any]]:
+    rows: list[dict[str, Any]] = []
+    for period_name in PERIODS:
+        mask = period_masks[period_name]
+        n_loans = int(mask.sum())
+        regrets = per_period_regrets[period_name]
+        cov = period_coverage.get(period_name, {})
+
+        ts_mean, ts_std = _mean_std(regrets["two_stage"])
+        spo_mean, spo_std = _mean_std(regrets["spo_plus"])
+        cr_mean, cr_std = _mean_std(regrets["conformal_robust"])
+        has_spo_comparison = bool(
+            _valid_regret_values(regrets["two_stage"]) and _valid_regret_values(regrets["spo_plus"])
+        )
+
+        rows.append(
+            {
+                "period": period_name,
+                "n_loans": n_loans,
+                "default_rate": _period_default_rate(test, mask),
+                "two_stage_mean_regret": ts_mean,
+                "two_stage_std_regret": ts_std,
+                "spo_plus_mean_regret": spo_mean,
+                "spo_plus_std_regret": spo_std,
+                "conformal_robust_mean_regret": cr_mean,
+                "conformal_robust_std_regret": cr_std,
+                "spo_improvement_pct": _spo_improvement_pct(
+                    ts_mean,
+                    spo_mean,
+                    has_spo_comparison,
+                ),
+                "coverage_90": cov.get("coverage_90"),
+                "coverage_95": cov.get("coverage_95"),
+                "avg_width_90": cov.get("avg_width_90"),
+                "min_grade_coverage_90": cov.get("min_grade_coverage_90"),
+            }
+        )
+    return rows
+
+
+def _round_optional(value: object, digits: int) -> float | None:
+    if isinstance(value, Real):
+        return round(float(value), digits)
+    return None
+
+
+def _period_summary_row(
+    row: dict[str, Any],
+    regrets: dict[str, list[float]],
+) -> dict[str, Any]:
+    return {
+        "n_loans": int(row["n_loans"]),
+        "default_rate": round(float(row["default_rate"]), 4),
+        "regret": {
+            "two_stage": {
+                "mean": round(float(row["two_stage_mean_regret"]), 6),
+                "std": round(float(row["two_stage_std_regret"]), 6),
+                "per_seed": regrets["two_stage"],
+            },
+            "spo_plus": {
+                "mean": round(float(row["spo_plus_mean_regret"]), 6),
+                "std": round(float(row["spo_plus_std_regret"]), 6),
+                "per_seed": regrets["spo_plus"],
+            },
+            "conformal_robust": {
+                "mean": round(float(row["conformal_robust_mean_regret"]), 6),
+                "std": round(float(row["conformal_robust_std_regret"]), 6),
+                "per_seed": regrets["conformal_robust"],
+            },
+        },
+        "spo_improvement_vs_ts_pct": _round_optional(row["spo_improvement_pct"], 2),
+        "coverage_90": _round_optional(row["coverage_90"], 4),
+        "coverage_95": _round_optional(row["coverage_95"], 4),
+        "avg_width_90": _round_optional(row["avg_width_90"], 4),
+        "min_grade_coverage_90": _round_optional(row["min_grade_coverage_90"], 4),
+    }
+
+
+def _per_period_json(
+    rows: list[dict[str, Any]],
+    per_period_regrets: dict[str, dict[str, list[float]]],
+) -> dict[str, Any]:
+    return {
+        str(row["period"]): _period_summary_row(
+            row,
+            per_period_regrets[str(row["period"])],
+        )
+        for row in rows
+    }
+
+
+def _non_null_float_values(rows: list[dict[str, Any]], key: str) -> list[float]:
+    return [float(row[key]) for row in rows if row[key] is not None]
+
+
+def _stability_summary(rows: list[dict[str, Any]]) -> dict[str, Any]:
+    coverages_90 = _non_null_float_values(rows, "coverage_90")
+    spo_improvements = _non_null_float_values(rows, "spo_improvement_pct")
+    return {
+        "coverage_always_above_target": all(c >= 0.90 for c in coverages_90),
+        "coverage_range": [round(min(coverages_90), 4), round(max(coverages_90), 4)],
+        "spo_improvement_range_pct": (
+            [round(min(spo_improvements), 2), round(max(spo_improvements), 2)]
+            if spo_improvements
+            else None
+        ),
+    }
+
+
+def _summary_payload(
+    *,
+    run_tag: str,
+    args: argparse.Namespace,
+    n_features: int,
+    feature_names: list[str],
+    rows: list[dict[str, Any]],
+    per_period_regrets: dict[str, dict[str, list[float]]],
+    total_time: float,
+) -> dict[str, Any]:
+    return {
+        **build_artifact_metadata(
+            schema_version=SCHEMA_VERSION, run_tag=run_tag, allow_untracked=True
+        ),
+        "config": {
+            "n_items": args.n_items,
+            "budget": args.budget,
+            "n_train_instances": args.n_train,
+            "epochs": args.epochs,
+            "n_seeds": args.seeds,
+            "n_features": n_features,
+            "feature_names": feature_names,
+            "lgd": LGD,
+        },
+        "per_period": _per_period_json(rows, per_period_regrets),
+        "stability_summary": _stability_summary(rows),
+        "train_time_seconds": round(total_time, 1),
+    }
 
 
 def _generate_stability_figure(detail_df: pd.DataFrame, out_dir: Path) -> None:
@@ -277,6 +520,17 @@ def main() -> int:
     )
 
     # ── 1. Load data ────────────────────────────────────────────────────────
+    spo_real = _load_spo_real_module()
+    CreditPortfolioLP = spo_real.CreditPortfolioLP
+    _compute_regret = spo_real._compute_regret
+    _compute_true_optima = spo_real._compute_true_optima
+    _index_costs = spo_real._index_costs
+    _load_pd_artifacts = spo_real._load_pd_artifacts
+    _predict_calibrated_costs = spo_real._predict_calibrated_costs
+    _prep_features = spo_real._prep_features
+    _sample_instances = spo_real._sample_instances
+    _train_spo = spo_real._train_spo
+
     train = pd.read_parquet(DATA_DIR / "train_fe.parquet")
     test = pd.read_parquet(DATA_DIR / "test_fe.parquet")
     ci = pd.read_parquet(DATA_DIR / "conformal_intervals_mondrian.parquet")
@@ -293,9 +547,7 @@ def main() -> int:
     logger.info("Period counts: {}", period_counts)
 
     # ── 2. Prepare features and costs ───────────────────────────────────────
-    _tr_cols = train.columns
-    _te_cols = test.columns
-    avail = [f for f in NUMERIC_FEATURES if f in _tr_cols and f in _te_cols]
+    avail = _available_numeric_features(train, test)
     n_features = len(avail)
     logger.info("Using {} features: {}", n_features, avail)
 
@@ -329,19 +581,15 @@ def main() -> int:
     c_robust_te_all = (pd_high * LGD - int_rate_te).astype(np.float32)
 
     # ── 3. Build period masks ───────────────────────────────────────────────
-    period_masks = {}
-    for name in PERIODS:
-        mask = test_periods.values == name
-        period_masks[name] = mask
+    period_masks = _period_masks(test_periods)
+    for name, mask in period_masks.items():
         n_loans = int(mask.sum())
-        default_rate = float(test.loc[mask, "default_flag"].mean()) if n_loans > 0 else 0.0
+        default_rate = _period_default_rate(test, mask)
         logger.info("  {} : {:,} loans, default rate {:.2%}", name, n_loans, default_rate)
 
     # ── 4. Multi-seed × multi-period evaluation ─────────────────────────────
     # Structure: per_period[period][method] = list of per-seed mean regrets
-    per_period_regrets: dict[str, dict[str, list[float]]] = {
-        name: {"two_stage": [], "spo_plus": [], "conformal_robust": []} for name in PERIODS
-    }
+    per_period_regrets = _init_period_regrets()
 
     t_total = time.time()
 
@@ -379,9 +627,7 @@ def main() -> int:
                     per_period_regrets[period_name][method].append(float("nan"))
                 continue
 
-            n_test_period = min(80, n_period // args.n_items)
-            if n_test_period < 5:
-                n_test_period = 5
+            n_test_period = _period_test_instance_count(n_period, args.n_items)
 
             # Slice arrays to this period
             period_idx = np.where(mask)[0]
@@ -391,7 +637,7 @@ def main() -> int:
             c_robust_period = c_robust_te_all[period_idx]
 
             # Sample test instances within this period
-            rng_period = np.random.RandomState(seed + hash(period_name) % (2**31))
+            rng_period = np.random.RandomState(_period_sample_seed(seed, period_name))
             X_inst, c_inst, idx_inst = _sample_instances(
                 X_period, c_period, args.n_items, n_test_period, rng_period
             )
@@ -399,8 +645,7 @@ def main() -> int:
             c_robust_inst = _index_costs(c_robust_period, idx_inst)
 
             # SPO+ predictions
-            import torch
-
+            torch = _require_optional_module("torch")
             n_input = args.n_items * n_features
             X_flat = X_inst.reshape(n_test_period, n_input)
             with torch.no_grad():
@@ -433,63 +678,15 @@ def main() -> int:
     logger.info("All seeds done in {:.1f}s", total_time)
 
     # ── 5. Conformal coverage per period (deterministic, no seed) ───────────
-    period_coverage: dict[str, dict] = {}
-    for period_name, mask in period_masks.items():
-        ci_slice = ci.loc[mask]
-        if len(ci_slice) == 0:
-            continue
-        period_coverage[period_name] = _evaluate_period_coverage(ci_slice)
-        logger.info(
-            "  {} coverage: 90%={:.2%} width={:.4f} min_grade={:.2%}",
-            period_name,
-            period_coverage[period_name]["coverage_90"],
-            period_coverage[period_name]["avg_width_90"],
-            period_coverage[period_name].get("min_grade_coverage_90", 0) or 0,
-        )
+    period_coverage = _coverage_by_period(ci, period_masks)
 
     # ── 6. Aggregate into detail DataFrame ──────────────────────────────────
-    rows: list[dict[str, Any]] = []
-    for period_name in PERIODS:
-        mask = period_masks[period_name]
-        n_loans = int(mask.sum())
-        default_rate = float(test.loc[mask, "default_flag"].mean()) if n_loans > 0 else 0.0
-
-        regrets = per_period_regrets[period_name]
-        cov = period_coverage.get(period_name, {})
-
-        ts_vals = [v for v in regrets["two_stage"] if not np.isnan(v)]
-        spo_vals = [v for v in regrets["spo_plus"] if not np.isnan(v)]
-        cr_vals = [v for v in regrets["conformal_robust"] if not np.isnan(v)]
-
-        ts_mean = float(np.mean(ts_vals)) if ts_vals else float("nan")
-        spo_mean = float(np.mean(spo_vals)) if spo_vals else float("nan")
-        cr_mean = float(np.mean(cr_vals)) if cr_vals else float("nan")
-        ts_std = float(np.std(ts_vals)) if ts_vals else float("nan")
-        spo_std = float(np.std(spo_vals)) if spo_vals else float("nan")
-        cr_std = float(np.std(cr_vals)) if cr_vals else float("nan")
-
-        spo_improvement = (
-            ((ts_mean - spo_mean) / (abs(ts_mean) + 1e-9) * 100) if ts_vals and spo_vals else None
-        )
-
-        rows.append(
-            {
-                "period": period_name,
-                "n_loans": n_loans,
-                "default_rate": default_rate,
-                "two_stage_mean_regret": ts_mean,
-                "two_stage_std_regret": ts_std,
-                "spo_plus_mean_regret": spo_mean,
-                "spo_plus_std_regret": spo_std,
-                "conformal_robust_mean_regret": cr_mean,
-                "conformal_robust_std_regret": cr_std,
-                "spo_improvement_pct": spo_improvement,
-                "coverage_90": cov.get("coverage_90"),
-                "coverage_95": cov.get("coverage_95"),
-                "avg_width_90": cov.get("avg_width_90"),
-                "min_grade_coverage_90": cov.get("min_grade_coverage_90"),
-            }
-        )
+    rows = _detail_rows(
+        test=test,
+        period_masks=period_masks,
+        per_period_regrets=per_period_regrets,
+        period_coverage=period_coverage,
+    )
 
     detail_df = pd.DataFrame(rows)
     detail_path = DATA_DIR / "crpto_vs_spo_stability_detail.parquet"
@@ -497,82 +694,15 @@ def main() -> int:
     logger.info("Saved: {}", detail_path)
 
     # ── 7. Summary JSON ─────────────────────────────────────────────────────
-    coverages_90 = [float(r["coverage_90"]) for r in rows if r["coverage_90"] is not None]
-    spo_improvements = [
-        float(r["spo_improvement_pct"]) for r in rows if r["spo_improvement_pct"] is not None
-    ]
-
-    per_period_json: dict[str, Any] = {}
-    for r in rows:
-        period = str(r["period"])
-        regrets = per_period_regrets[period]
-        per_period_json[period] = {
-            "n_loans": int(r["n_loans"]),
-            "default_rate": round(float(r["default_rate"]), 4),
-            "regret": {
-                "two_stage": {
-                    "mean": round(float(r["two_stage_mean_regret"]), 6),
-                    "std": round(float(r["two_stage_std_regret"]), 6),
-                    "per_seed": regrets["two_stage"],
-                },
-                "spo_plus": {
-                    "mean": round(float(r["spo_plus_mean_regret"]), 6),
-                    "std": round(float(r["spo_plus_std_regret"]), 6),
-                    "per_seed": regrets["spo_plus"],
-                },
-                "conformal_robust": {
-                    "mean": round(float(r["conformal_robust_mean_regret"]), 6),
-                    "std": round(float(r["conformal_robust_std_regret"]), 6),
-                    "per_seed": regrets["conformal_robust"],
-                },
-            },
-            "spo_improvement_vs_ts_pct": (
-                round(float(r["spo_improvement_pct"]), 2)
-                if r["spo_improvement_pct"] is not None
-                else None
-            ),
-            "coverage_90": (
-                round(float(r["coverage_90"]), 4) if r["coverage_90"] is not None else None
-            ),
-            "coverage_95": (
-                round(float(r["coverage_95"]), 4) if r["coverage_95"] is not None else None
-            ),
-            "avg_width_90": (
-                round(float(r["avg_width_90"]), 4) if r["avg_width_90"] is not None else None
-            ),
-            "min_grade_coverage_90": (
-                round(float(r["min_grade_coverage_90"]), 4)
-                if r["min_grade_coverage_90"] is not None
-                else None
-            ),
-        }
-
-    summary = {
-        **build_artifact_metadata(
-            schema_version=SCHEMA_VERSION, run_tag=run_tag, allow_untracked=True
-        ),
-        "config": {
-            "n_items": args.n_items,
-            "budget": args.budget,
-            "n_train_instances": args.n_train,
-            "epochs": args.epochs,
-            "n_seeds": args.seeds,
-            "n_features": n_features,
-            "feature_names": avail,
-            "lgd": LGD,
-        },
-        "per_period": per_period_json,
-        "stability_summary": {
-            "coverage_always_above_target": all(c >= 0.90 for c in coverages_90),
-            "coverage_range": [round(min(coverages_90), 4), round(max(coverages_90), 4)],
-            "spo_improvement_range_pct": (
-                [round(min(spo_improvements), 2), round(max(spo_improvements), 2)]
-                if spo_improvements
-                else None
-            ),
-        },
-        "train_time_seconds": round(total_time, 1),
-    }
+    summary = _summary_payload(
+        run_tag=run_tag,
+        args=args,
+        n_features=n_features,
+        feature_names=avail,
+        rows=rows,
+        per_period_regrets=per_period_regrets,
+        total_time=total_time,
+    )
 
     json_path = DATA_DIR / "crpto_vs_spo_stability.json"
     with open(json_path, "w") as f:

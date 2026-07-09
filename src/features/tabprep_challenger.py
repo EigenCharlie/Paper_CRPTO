@@ -14,7 +14,7 @@ import hashlib
 import itertools
 from collections.abc import Iterable, Mapping, Sequence
 from dataclasses import dataclass, field
-from typing import Any
+from typing import Any, cast
 
 import numpy as np
 import pandas as pd
@@ -486,14 +486,14 @@ class TabPrepChallengerTransformer:
 
         triple_candidates: list[FeatureSpec] = []
         triple_base = numeric[: min(20, len(numeric))]
-        for sources in itertools.combinations(triple_base, 3):
+        for triple_sources in itertools.combinations(triple_base, 3):
             for operation in ("product3", "sum3", "ratio_sum"):
-                name = _make_feature_name("tp_ar", operation, sources)
+                name = _make_feature_name("tp_ar", operation, triple_sources)
                 spec = FeatureSpec(
                     name=name,
                     generator="arithmetic",
                     operation=operation,
-                    source_features=sources,
+                    source_features=triple_sources,
                     score=0.0,
                     selected_rank=0,
                 )
@@ -953,6 +953,7 @@ def _fit_groupby_state(
     if operation == "pct_rank":
         state.global_quantiles = _quantile_grid(values)
         for group, group_values in tmp.groupby("group", observed=True)["value"]:
+            group_values = cast(pd.Series, group_values)
             if len(group_values) >= int(min_support):
                 state.group_quantiles[str(group)] = _quantile_grid(group_values)
     return state

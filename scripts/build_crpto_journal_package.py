@@ -156,15 +156,17 @@ def _build_tail_risk_table(funded: pd.DataFrame) -> pd.DataFrame:
             index=funded.index,
         )
         theta = 5.0
-        oce = round(float(entropic_oce(loss_rate, weights, theta=theta, stable=False)), 17)
+        loss_values = loss_rate.to_numpy(dtype=float)
+        weight_values = weights.to_numpy(dtype=float)
+        oce = round(float(entropic_oce(loss_values, weight_values, theta=theta, stable=False)), 17)
         rows.append(
             {
                 "lgd": float(lgd),
-                "mean_loss_rate": float(np.sum(weights * loss_rate)),
+                "mean_loss_rate": float(np.sum(weight_values * loss_values)),
                 "entropic_oce_theta5": oce,
-                "cvar_90_loss_rate": weighted_cvar(loss_rate, weights, tail=0.90),
-                "cvar_95_loss_rate": weighted_cvar(loss_rate, weights, tail=0.95),
-                "cvar_99_loss_rate": weighted_cvar(loss_rate, weights, tail=0.99),
+                "cvar_90_loss_rate": weighted_cvar(loss_values, weight_values, tail=0.90),
+                "cvar_95_loss_rate": weighted_cvar(loss_values, weight_values, tail=0.95),
+                "cvar_99_loss_rate": weighted_cvar(loss_values, weight_values, tail=0.99),
                 "funded_set_repriced_return": _return_from_frame(
                     funded,
                     weights,

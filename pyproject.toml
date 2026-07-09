@@ -263,8 +263,21 @@ module = [
     "mlflow.*",
     "duckdb.*",
     "loguru.*",
+    "torch",
+    "torch.*",
+    "tabpfn",
+    "tabpfn.*",
 ]
 ignore_missing_imports = true
+
+[[tool.mypy.overrides]]
+module = [
+    "scripts.run_spo_comparison",
+    "scripts.run_spo_real",
+    "scripts.run_crpto_vs_spo_stability",
+    "scripts.experiments.run_tabpfn_tabprep_full",
+]
+disable_error_code = ["import-not-found"]
 
 # Strict mode for the fully-annotated modules. Legacy code stays under the
 # global laxer config. Promote modules to this list once they pass cleanly.

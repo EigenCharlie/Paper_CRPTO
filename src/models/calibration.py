@@ -29,7 +29,8 @@ class LogitShiftCalibrator:
         scores_arr = np.clip(np.asarray(scores, dtype=float), 1e-6, 1.0 - 1e-6)
         logits = np.log(scores_arr / (1.0 - scores_arr))
         shifted = 1.0 / (1.0 + np.exp(-(logits + self.delta)))
-        return cast(np.ndarray, np.clip(np.asarray(shifted, dtype=float), 0.0, 1.0))
+        clipped: np.ndarray = np.clip(np.asarray(shifted, dtype=float), 0.0, 1.0)
+        return clipped
 
     def predict(self, scores: np.ndarray) -> np.ndarray:
         return self.transform(scores)
@@ -51,11 +52,12 @@ class TemperatureScalingCalibrator:
     @staticmethod
     def _logit(scores: np.ndarray) -> np.ndarray:
         clipped = np.clip(np.asarray(scores, dtype=float).reshape(-1), 1e-6, 1.0 - 1e-6)
-        return np.log(clipped / (1.0 - clipped))
+        logits: np.ndarray = np.log(clipped / (1.0 - clipped))
+        return logits
 
     @staticmethod
     def _sigmoid(logits: np.ndarray) -> np.ndarray:
-        return 1.0 / (1.0 + np.exp(-logits))
+        return cast(np.ndarray, 1.0 / (1.0 + np.exp(-logits)))
 
     def fit(self, y_prob_raw: np.ndarray, y_true: np.ndarray) -> TemperatureScalingCalibrator:
         logits = self._logit(y_prob_raw)
@@ -76,10 +78,8 @@ class TemperatureScalingCalibrator:
         if not self._is_fitted:
             raise RuntimeError("TemperatureScalingCalibrator is not fitted.")
         logits = self._logit(y_prob_raw)
-        return cast(
-            np.ndarray,
-            np.clip(self._sigmoid(logits / max(self.temperature, 1e-3)), 0.0, 1.0),
-        )
+        clipped: np.ndarray = np.clip(self._sigmoid(logits / max(self.temperature, 1e-3)), 0.0, 1.0)
+        return clipped
 
 
 class QuadraticLogitCalibrator:
@@ -130,7 +130,11 @@ def adaptive_calibration_error(y_true: np.ndarray, y_prob: np.ndarray, n_bins: i
     order = np.argsort(p_arr, kind="mergesort")
     y_sorted = y_arr[order]
     p_sorted = p_arr[order]
-    bins = [chunk for chunk in np.array_split(np.arange(len(y_sorted)), max(1, int(n_bins))) if len(chunk)]
+    bins = [
+        chunk
+        for chunk in np.array_split(np.arange(len(y_sorted)), max(1, int(n_bins)))
+        if len(chunk)
+    ]
     ace = 0.0
     for idx in bins:
         bin_acc = float(y_sorted[idx].mean())

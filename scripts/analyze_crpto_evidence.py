@@ -14,7 +14,7 @@ import math
 import re
 from datetime import UTC, datetime
 from pathlib import Path
-from typing import Any
+from typing import Any, cast
 
 import numpy as np
 import pandas as pd
@@ -426,7 +426,8 @@ def _build_segment_period_table(oot: pd.DataFrame) -> pd.DataFrame:
     rows: list[dict[str, Any]] = []
     total_loan_amount = float(oot["loan_weight"].sum())
     grouped = oot.groupby(["period", "original_grade"], dropna=False, observed=True)
-    for (period, grade), group in grouped:
+    for key, group in grouped:
+        period, grade = cast(tuple[object, object], key)
         row = {
             "period": str(period),
             "original_grade": str(grade),
@@ -626,7 +627,11 @@ def _solve_exact_policy(
     alpha: float = 0.01,
     budget: float = 1_000_000.0,
 ) -> dict[str, Any]:
-    from src.optimization.portfolio_model import compute_effective_pd, optimize_portfolio_allocation
+    from src.optimization.portfolio_model import (
+        compute_effective_pd,
+        optimize_portfolio_allocation,
+        solution_allocation_vector,
+    )
 
     pd_point, pd_low, pd_high = _interval_arrays_at_alpha(aligned, alpha)
     effective_pd = compute_effective_pd(
@@ -670,10 +675,7 @@ def _solve_exact_policy(
         threads=4,
         solver_backend=str(policy["solver_backend"]),
     )
-    allocation = np.array(
-        [float(solution["allocation"].get(i, 0.0)) for i in range(len(aligned))],
-        dtype=float,
-    )
+    allocation = solution_allocation_vector(solution, len(aligned))
     total_allocated = float(np.sum(allocation * loan_amounts))
     weights = (allocation * loan_amounts) / max(total_allocated, 1e-6)
     funded_mask = weights > 1e-8

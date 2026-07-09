@@ -2,6 +2,10 @@
 
 Date: 2026-07-02
 
+Certificate terminology was synchronized on 2026-07-09 with the policy-aware
+A35 audit. A37--A39 values remain valid for the fixed selected allocation;
+`0.345084` is now called the exact loss threshold, not a generic cap.
+
 This memo closes the post-promotion caveat that tail-risk, cluster-bound, and
 bootstrap diagnostics should not be cited as pool93-specific unless regenerated
 from the selected pool93 funded allocation.
@@ -28,14 +32,15 @@ At baseline `LGD = 0.45`, the selected body allocation has:
 - weighted default rate / `V`: `0.035350`
 - realized CVaR95 loss rate: `0.276211`
 - decision-time CVaR95 loss rate: `0.218140`
-- Markov cap: `0.345084`
+- exact loss threshold at `alpha = 0.01`: `0.345084`
 
 Across the LGD grid, repriced return ranges from `$188,367.48` at `LGD = 0.35`
 to `$179,529.98` at `LGD = 0.60`.
 
 ## A38 Cluster-Bound Repricing
 
-At `alpha = 0.01` and `delta = 0.10`, Markov's body threshold is `0.100000`.
+At `alpha = 0.01` and `delta = 0.10`, the distribution-free Markov increment
+is `sqrt(alpha) = 0.100000`.
 The regenerated cluster-aware Hoeffding thresholds are:
 
 - period: `0.395502`
@@ -43,9 +48,10 @@ The regenerated cluster-aware Hoeffding thresholds are:
 - period-grade: `0.281247`
 - score-vintage: `0.348546`
 
-None is tighter than Markov. This supports the manuscript's theory boundary:
-Markov remains the body-level distribution-free statement, while cluster-aware
-tightening is shown as an assumption-priced sensitivity.
+None is tighter than the distribution-free Markov step. This supports the
+manuscript's theory boundary: the policy-aware certificate remains the
+body-level distribution-free statement, while cluster-aware tightening is
+shown as an assumption-priced sensitivity.
 
 ## A39 Fixed-Allocation Bootstrap
 
@@ -73,6 +79,6 @@ search.
 A37--A39 are selected-allocation risk-profile audits. They do not change the
 pool93 body selector, do not make CVaR/OCE the optimized objective, and do not
 turn bootstrap intervals into a conformal guarantee. The paper-facing claim
-remains the finite-grid return-bound certificate in A35 plus the exact funded-set
-audit; A37--A39 close reviewer questions about the selected point's tail,
+remains the finite-grid policy-aware decision certificate in A35 plus the exact
+funded-set audit; A37--A39 close reviewer questions about the selected point's tail,
 concentration, and empirical contribution profile.

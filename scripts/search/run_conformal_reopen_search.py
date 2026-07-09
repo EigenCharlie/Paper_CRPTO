@@ -9,6 +9,7 @@ import pickle
 import subprocess
 import sys
 from concurrent.futures import ThreadPoolExecutor, as_completed
+from dataclasses import dataclass
 from datetime import UTC, datetime
 from pathlib import Path
 from typing import Any
@@ -32,6 +33,57 @@ from src.models.conformal import apply_probability_calibrator
 from src.models.conformal_tuning import split_calibration_for_tuning
 from src.models.venn_abers import VennAbersScoreCalibrator
 from src.utils.pipeline_topology import load_profile_config
+
+
+@dataclass(frozen=True)
+class Phase1Result:
+    shortlist: pd.DataFrame
+    aggregated: pd.DataFrame
+    inner_runs: list[dict[str, Any]]
+    aggregate_path: str
+    inner_search_path: str
+    inner_search_winner: dict[str, Any]
+    resume_meta: dict[str, Any] | None = None
+
+
+@dataclass(frozen=True)
+class Phase1ConfirmationResult:
+    candidates: list[dict[str, Any]]
+    frame: pd.DataFrame
+    best_namespace: str
+    final_policy: dict[str, Any]
+    final_sets: dict[str, Any]
+    final_decision: str
+    final_namespace: str
+
+
+@dataclass(frozen=True)
+class PromotionResult:
+    final_policy: dict[str, Any]
+    final_sets: dict[str, Any]
+    final_decision: str
+    final_namespace: str
+    phase2_summary: dict[str, Any] | None
+
+
+@dataclass
+class Phase2SearchState:
+    paths: dict[str, Path]
+    run_tag: str
+    upstream_run_tag: str
+    total_design_runs: int
+    design_source: str
+    completed: list[dict[str, Any]]
+    skipped: list[dict[str, Any]]
+    failed: list[dict[str, Any]]
+
+
+@dataclass(frozen=True)
+class Phase2CalibratorFit:
+    method: str
+    path: Path
+    metrics: dict[str, float]
+
 
 REPO_ROOT = Path(__file__).resolve().parents[2]
 
@@ -915,6 +967,301 @@ def _build_resume_shortlist(
     return shortlist, resume_meta
 
 
+def _phase2_methods(phase2_cfg: dict[str, Any]) -> list[str]:
+    return [
+        str(method).strip().lower()
+        for method in phase2_cfg.get("calibrators", ["venn_abers", "isotonic", "platt", "beta"])
+        if str(method).strip()
+    ]
+
+
+def _write_phase2_state_progress(
+    state: Phase2SearchState,
+    running: list[dict[str, Any]],
+) -> None:
+    _write_phase2_progress(
+        path=state.paths["phase2_progress"],
+        run_tag=state.run_tag,
+        upstream_run_tag=state.upstream_run_tag,
+        total_design_runs=state.total_design_runs,
+        completed=state.completed,
+        running=running,
+        skipped=state.skipped,
+        failed=state.failed,
+        design_source=state.design_source,
+    )
+
+
+def _phase2_baseline_metrics(
+    *,
+    calibrator_dir: Path,
+    upstream_run_tag: str,
+) -> dict[str, float] | None:
+    baseline_path = calibrator_dir / "venn_abers.pkl"
+    try:
+        _resolved, baseline_metrics = _fit_calibrator(
+            method="venn_abers",
+            output_path=baseline_path,
+            upstream_run_tag=upstream_run_tag,
+        )
+    except Exception:
+        return None
+    return baseline_metrics
+
+
+def _numeric_metric_payload(metrics: dict[str, float]) -> dict[str, float]:
+    return {key: float(value) for key, value in metrics.items() if isinstance(value, int | float)}
+
+
+def _phase2_metric_blocked(
+    *,
+    calibration_metrics: dict[str, float],
+    baseline_metrics: dict[str, float] | None,
+    max_metric_degradation: dict[str, Any],
+) -> bool:
+    if baseline_metrics is None:
+        return False
+    return any(
+        float(calibration_metrics.get(metric_name, float("inf")))
+        > float(baseline_metrics.get(metric_name, 0.0))
+        + float(max_metric_degradation.get(metric_name, 0.0))
+        for metric_name in max_metric_degradation
+    )
+
+
+def _fit_phase2_calibrator_or_skip(
+    *,
+    method_name: str,
+    calibrator_dir: Path,
+    state: Phase2SearchState,
+    baseline_metrics: dict[str, float] | None,
+    max_metric_degradation: dict[str, Any],
+) -> Phase2CalibratorFit | None:
+    calibrator_path = calibrator_dir / f"{method_name}.pkl"
+    _write_phase2_state_progress(
+        state,
+        running=[{"stage": "fit_calibrator", "calibrator_method": method_name}],
+    )
+    try:
+        resolved_method, calibration_metrics = _fit_calibrator(
+            method=method_name,
+            output_path=calibrator_path,
+            upstream_run_tag=state.upstream_run_tag,
+        )
+    except Exception as exc:
+        state.failed.append(
+            {
+                "stage": "fit_calibrator",
+                "calibrator_method": method_name,
+                "error": repr(exc),
+            }
+        )
+        _write_phase2_state_progress(state, running=[])
+        raise
+
+    if _phase2_metric_blocked(
+        calibration_metrics=calibration_metrics,
+        baseline_metrics=baseline_metrics,
+        max_metric_degradation=max_metric_degradation,
+    ):
+        state.skipped.append(
+            {
+                "stage": "calibrator_gate",
+                "calibrator_method": resolved_method,
+                "reason": "metric_degradation_gate",
+                "calibration_metrics": _numeric_metric_payload(calibration_metrics),
+            }
+        )
+        _write_phase2_state_progress(state, running=[])
+        return None
+
+    return Phase2CalibratorFit(
+        method=resolved_method,
+        path=calibrator_path,
+        metrics=calibration_metrics,
+    )
+
+
+def _phase2_candidate_namespace(
+    *,
+    run_tag: str,
+    calibrator_method: str,
+    design: dict[str, Any],
+) -> str:
+    return _namespace(
+        run_tag,
+        "phase2",
+        calibrator_method,
+        f"rank-{int(design.get('selection_rank', 1))}",
+    )
+
+
+def _run_phase2_holdout_candidate(
+    *,
+    state: Phase2SearchState,
+    env: dict[str, str],
+    calibrator_fit: Phase2CalibratorFit,
+    design: dict[str, Any],
+    alpha_candidates_95: list[float],
+    tuning_holdout_ratios: list[float],
+    inner_random_states: list[int],
+) -> dict[str, Any]:
+    design_norm = _normalize_design_row(design)
+    selection_rank = int(design.get("selection_rank", 1))
+    namespace = _phase2_candidate_namespace(
+        run_tag=state.run_tag,
+        calibrator_method=calibrator_fit.method,
+        design=design,
+    )
+    running_entry = {
+        "stage": "generate_intervals",
+        "artifact_namespace": namespace,
+        "calibrator_method": calibrator_fit.method,
+        "selection_rank": selection_rank,
+    }
+    _write_phase2_state_progress(state, running=[running_entry])
+    try:
+        _run_python(
+            "scripts/generate_conformal_intervals.py",
+            [
+                "--artifact_namespace",
+                namespace,
+                "--evaluation_scope",
+                "holdout",
+                "--calibrator_override_path",
+                str(calibrator_fit.path),
+                "--tuning_holdout_ratio",
+                str(float(tuning_holdout_ratios[0])),
+                "--tuning_random_state",
+                str(int(inner_random_states[0])),
+                "--alpha_candidates_95",
+                ",".join(str(x) for x in alpha_candidates_95),
+                *_design_args(design_norm),
+            ],
+            env,
+        )
+    except Exception as exc:
+        state.failed.append({**running_entry, "error": repr(exc)})
+        _write_phase2_state_progress(state, running=[])
+        raise
+
+    payload = _load_pickle(_resolve_run_paths(namespace)["results"])
+    metrics_90 = dict(payload.get("metrics_90", {}) or {})
+    state.completed.append(
+        {
+            "artifact_namespace": namespace,
+            "calibrator_method": calibrator_fit.method,
+            "selection_rank": selection_rank,
+            "coverage_90": float(metrics_90.get("empirical_coverage", 0.0)),
+            "avg_width_90": float(metrics_90.get("avg_interval_width", 1.0)),
+        }
+    )
+    _write_phase2_state_progress(state, running=[])
+    return {
+        "artifact_namespace": namespace,
+        "calibrator_method": calibrator_fit.method,
+        "phase2_design_source": state.design_source,
+        "selection_rank": selection_rank,
+        **design_norm,
+        "holdout_coverage": float(metrics_90.get("empirical_coverage", 0.0)),
+        "holdout_width": float(metrics_90.get("avg_interval_width", 1.0)),
+        "calibrator_ece": float(calibrator_fit.metrics.get("ece", float("inf"))),
+        "calibrator_adaptive_ece": float(calibrator_fit.metrics.get("adaptive_ece", float("inf"))),
+        "calibrator_brier": float(calibrator_fit.metrics.get("brier_score", float("inf"))),
+        "calibrator_log_loss": float(calibrator_fit.metrics.get("log_loss", float("inf"))),
+        "calibrator_phi_brier": float(calibrator_fit.metrics.get("phi_brier_score", 0.0)),
+        "calibrator_phi_log_loss": float(calibrator_fit.metrics.get("phi_log_loss", 0.0)),
+    }
+
+
+def _empty_phase2_frame() -> pd.DataFrame:
+    return pd.DataFrame(
+        {
+            "artifact_namespace": pd.Series(dtype="object"),
+            "calibrator_method": pd.Series(dtype="object"),
+            "phase2_design_source": pd.Series(dtype="object"),
+            "selection_rank": pd.Series(dtype="int64"),
+            "holdout_coverage": pd.Series(dtype="float64"),
+            "holdout_width": pd.Series(dtype="float64"),
+            "calibrator_ece": pd.Series(dtype="float64"),
+            "calibrator_adaptive_ece": pd.Series(dtype="float64"),
+            "calibrator_brier": pd.Series(dtype="float64"),
+            "calibrator_log_loss": pd.Series(dtype="float64"),
+            "calibrator_phi_brier": pd.Series(dtype="float64"),
+            "calibrator_phi_log_loss": pd.Series(dtype="float64"),
+        }
+    )
+
+
+def _rank_phase2_candidates(phase2_df: pd.DataFrame) -> pd.DataFrame:
+    ranked = phase2_df.copy()
+    ranked["coverage_gap_abs"] = (ranked["holdout_coverage"] - 0.90).abs()
+    return ranked.sort_values(
+        by=[
+            "coverage_gap_abs",
+            "holdout_width",
+            "calibrator_ece",
+            "calibrator_adaptive_ece",
+            "calibrator_brier",
+            "calibrator_phi_brier",
+            "selection_rank",
+        ],
+        ascending=[True, True, True, True, True, False, True],
+    ).reset_index(drop=True)
+
+
+def _phase2_no_candidate_result(
+    *,
+    paths: dict[str, Path],
+    design_source: str,
+) -> tuple[str, dict[str, Any], dict[str, Any], dict[str, Any]]:
+    return (
+        "policy_review_candidate",
+        {},
+        {},
+        {
+            "search_path": str(paths["phase2_search"]),
+            "best_candidate": {},
+            "status": "no_noninferior_calibrator_candidate",
+            "phase2_design_source": design_source,
+        },
+    )
+
+
+def _run_phase2_final_candidate(
+    *,
+    run_tag: str,
+    env: dict[str, str],
+    calibrator_dir: Path,
+    phase2_best: dict[str, Any],
+    alpha_candidates_95: list[float],
+    partition_candidates: list[str],
+    partition_probability_sources: list[str],
+    n_score_bins_candidates: list[int],
+    fallback_modes: list[str],
+    score_scale_families: list[str],
+    calibration_fractions: list[float],
+    sidecar_cfg: dict[str, Any],
+) -> dict[str, Any]:
+    phase2_calibrator_path = calibrator_dir / f"{phase2_best['calibrator_method']}.pkl"
+    return _run_phase1_oot_candidate(
+        run_tag=run_tag,
+        rank=1,
+        design=phase2_best,
+        env=env,
+        alpha_candidates_95=alpha_candidates_95,
+        partition_candidates=partition_candidates,
+        partition_probability_sources=partition_probability_sources,
+        n_score_bins_candidates=n_score_bins_candidates,
+        fallback_modes=fallback_modes,
+        score_scale_families=score_scale_families,
+        calibration_fractions=calibration_fractions,
+        sidecar_cfg=sidecar_cfg,
+        calibrator_override_path=str(phase2_calibrator_path),
+        phase_prefix="phase2",
+    )
+
+
 def _run_phase2_search(
     *,
     run_tag: str,
@@ -938,270 +1285,72 @@ def _run_phase2_search(
     paths = _reopen_artifact_paths(run_tag)
     models_dir = paths["models_dir"]
     calibrator_dir = models_dir / "phase2_calibrators"
-    calibrator_rows: list[dict[str, Any]] = []
     top_designs, design_source = _phase2_top_designs(
         aggregated=aggregated,
         phase1_candidates_frame=phase1_candidates_frame,
         top_k=int(phase2_cfg.get("top_k_designs", 3)),
     )
-    phase2_methods = [
-        str(method).strip().lower()
-        for method in phase2_cfg.get("calibrators", ["venn_abers", "isotonic", "platt", "beta"])
-        if str(method).strip()
-    ]
-    phase2_completed: list[dict[str, Any]] = []
-    phase2_skipped: list[dict[str, Any]] = []
-    phase2_failed: list[dict[str, Any]] = []
+    phase2_methods = _phase2_methods(phase2_cfg)
     total_design_runs = len(phase2_methods) * len(top_designs)
-    _write_phase2_progress(
-        path=paths["phase2_progress"],
+    state = Phase2SearchState(
+        paths=paths,
         run_tag=run_tag,
         upstream_run_tag=upstream_run_tag,
         total_design_runs=total_design_runs,
-        completed=phase2_completed,
-        running=[],
-        skipped=phase2_skipped,
-        failed=phase2_failed,
         design_source=design_source,
+        completed=[],
+        skipped=[],
+        failed=[],
     )
-    baseline_metrics: dict[str, float] | None = None
-    baseline_path = calibrator_dir / "venn_abers.pkl"
-    try:
-        _resolved, baseline_metrics = _fit_calibrator(
-            method="venn_abers",
-            output_path=baseline_path,
-            upstream_run_tag=upstream_run_tag,
-        )
-    except Exception:
-        baseline_metrics = None
+    _write_phase2_state_progress(state, running=[])
+    baseline_metrics = _phase2_baseline_metrics(
+        calibrator_dir=calibrator_dir,
+        upstream_run_tag=upstream_run_tag,
+    )
 
     max_metric_degradation = dict(phase2_cfg.get("max_metric_degradation", {}) or {})
+    calibrator_rows: list[dict[str, Any]] = []
     for method_name in phase2_methods:
-        calibrator_path = calibrator_dir / f"{method_name}.pkl"
-        _write_phase2_progress(
-            path=paths["phase2_progress"],
-            run_tag=run_tag,
-            upstream_run_tag=upstream_run_tag,
-            total_design_runs=total_design_runs,
-            completed=phase2_completed,
-            running=[{"stage": "fit_calibrator", "calibrator_method": method_name}],
-            skipped=phase2_skipped,
-            failed=phase2_failed,
-            design_source=design_source,
+        calibrator_fit = _fit_phase2_calibrator_or_skip(
+            method_name=method_name,
+            calibrator_dir=calibrator_dir,
+            state=state,
+            baseline_metrics=baseline_metrics,
+            max_metric_degradation=max_metric_degradation,
         )
-        try:
-            resolved_method, calibration_metrics = _fit_calibrator(
-                method=method_name,
-                output_path=calibrator_path,
-                upstream_run_tag=upstream_run_tag,
-            )
-        except Exception as exc:
-            phase2_failed.append(
-                {
-                    "stage": "fit_calibrator",
-                    "calibrator_method": method_name,
-                    "error": repr(exc),
-                }
-            )
-            _write_phase2_progress(
-                path=paths["phase2_progress"],
-                run_tag=run_tag,
-                upstream_run_tag=upstream_run_tag,
-                total_design_runs=total_design_runs,
-                completed=phase2_completed,
-                running=[],
-                skipped=phase2_skipped,
-                failed=phase2_failed,
-                design_source=design_source,
-            )
-            raise
-        if baseline_metrics is not None:
-            metric_blocked = any(
-                float(calibration_metrics.get(metric_name, float("inf")))
-                > float(baseline_metrics.get(metric_name, 0.0))
-                + float(max_metric_degradation.get(metric_name, 0.0))
-                for metric_name in max_metric_degradation
-            )
-            if metric_blocked:
-                phase2_skipped.append(
-                    {
-                        "stage": "calibrator_gate",
-                        "calibrator_method": resolved_method,
-                        "reason": "metric_degradation_gate",
-                        "calibration_metrics": {
-                            key: float(value)
-                            for key, value in calibration_metrics.items()
-                            if isinstance(value, int | float)
-                        },
-                    }
-                )
-                _write_phase2_progress(
-                    path=paths["phase2_progress"],
-                    run_tag=run_tag,
-                    upstream_run_tag=upstream_run_tag,
-                    total_design_runs=total_design_runs,
-                    completed=phase2_completed,
-                    running=[],
-                    skipped=phase2_skipped,
-                    failed=phase2_failed,
-                    design_source=design_source,
-                )
-                continue
+        if calibrator_fit is None:
+            continue
 
         for design in top_designs.to_dict(orient="records"):
-            design_norm = _normalize_design_row(design)
-            namespace = _namespace(
-                run_tag,
-                "phase2",
-                resolved_method,
-                f"rank-{int(design.get('selection_rank', 1))}",
-            )
-            running_entry = {
-                "stage": "generate_intervals",
-                "artifact_namespace": namespace,
-                "calibrator_method": resolved_method,
-                "selection_rank": int(design.get("selection_rank", 1)),
-            }
-            _write_phase2_progress(
-                path=paths["phase2_progress"],
-                run_tag=run_tag,
-                upstream_run_tag=upstream_run_tag,
-                total_design_runs=total_design_runs,
-                completed=phase2_completed,
-                running=[running_entry],
-                skipped=phase2_skipped,
-                failed=phase2_failed,
-                design_source=design_source,
-            )
-            try:
-                _run_python(
-                    "scripts/generate_conformal_intervals.py",
-                    [
-                        "--artifact_namespace",
-                        namespace,
-                        "--evaluation_scope",
-                        "holdout",
-                        "--calibrator_override_path",
-                        str(calibrator_path),
-                        "--tuning_holdout_ratio",
-                        str(float(tuning_holdout_ratios[0])),
-                        "--tuning_random_state",
-                        str(int(inner_random_states[0])),
-                        "--alpha_candidates_95",
-                        ",".join(str(x) for x in alpha_candidates_95),
-                        *_design_args(design_norm),
-                    ],
-                    env,
-                )
-            except Exception as exc:
-                phase2_failed.append({**running_entry, "error": repr(exc)})
-                _write_phase2_progress(
-                    path=paths["phase2_progress"],
-                    run_tag=run_tag,
-                    upstream_run_tag=upstream_run_tag,
-                    total_design_runs=total_design_runs,
-                    completed=phase2_completed,
-                    running=[],
-                    skipped=phase2_skipped,
-                    failed=phase2_failed,
-                    design_source=design_source,
-                )
-                raise
-            payload = _load_pickle(_resolve_run_paths(namespace)["results"])
-            metrics_90 = dict(payload.get("metrics_90", {}) or {})
-            phase2_completed.append(
-                {
-                    "artifact_namespace": namespace,
-                    "calibrator_method": resolved_method,
-                    "selection_rank": int(design.get("selection_rank", 1)),
-                    "coverage_90": float(metrics_90.get("empirical_coverage", 0.0)),
-                    "avg_width_90": float(metrics_90.get("avg_interval_width", 1.0)),
-                }
-            )
-            _write_phase2_progress(
-                path=paths["phase2_progress"],
-                run_tag=run_tag,
-                upstream_run_tag=upstream_run_tag,
-                total_design_runs=total_design_runs,
-                completed=phase2_completed,
-                running=[],
-                skipped=phase2_skipped,
-                failed=phase2_failed,
-                design_source=design_source,
-            )
             calibrator_rows.append(
-                {
-                    "artifact_namespace": namespace,
-                    "calibrator_method": resolved_method,
-                    "phase2_design_source": design_source,
-                    "selection_rank": int(design.get("selection_rank", 1)),
-                    **design_norm,
-                    "holdout_coverage": float(metrics_90.get("empirical_coverage", 0.0)),
-                    "holdout_width": float(metrics_90.get("avg_interval_width", 1.0)),
-                    "calibrator_ece": float(calibration_metrics.get("ece", float("inf"))),
-                    "calibrator_adaptive_ece": float(
-                        calibration_metrics.get("adaptive_ece", float("inf"))
-                    ),
-                    "calibrator_brier": float(calibration_metrics.get("brier_score", float("inf"))),
-                    "calibrator_log_loss": float(calibration_metrics.get("log_loss", float("inf"))),
-                    "calibrator_phi_brier": float(calibration_metrics.get("phi_brier_score", 0.0)),
-                    "calibrator_phi_log_loss": float(calibration_metrics.get("phi_log_loss", 0.0)),
-                }
+                _run_phase2_holdout_candidate(
+                    state=state,
+                    env=env,
+                    calibrator_fit=calibrator_fit,
+                    design=design,
+                    alpha_candidates_95=alpha_candidates_95,
+                    tuning_holdout_ratios=tuning_holdout_ratios,
+                    inner_random_states=inner_random_states,
+                )
             )
 
     phase2_df = pd.DataFrame(calibrator_rows)
     if phase2_df.empty:
-        phase2_df = pd.DataFrame(
-            columns=[
-                "artifact_namespace",
-                "calibrator_method",
-                "phase2_design_source",
-                "selection_rank",
-                "holdout_coverage",
-                "holdout_width",
-                "calibrator_ece",
-                "calibrator_adaptive_ece",
-                "calibrator_brier",
-                "calibrator_log_loss",
-                "calibrator_phi_brier",
-                "calibrator_phi_log_loss",
-            ]
-        )
+        phase2_df = _empty_phase2_frame()
         phase2_df.to_parquet(paths["phase2_search"], index=False)
-        return (
-            "policy_review_candidate",
-            {},
-            {},
-            {
-                "search_path": str(paths["phase2_search"]),
-                "best_candidate": {},
-                "status": "no_noninferior_calibrator_candidate",
-                "phase2_design_source": design_source,
-            },
+        return _phase2_no_candidate_result(
+            paths=paths,
+            design_source=design_source,
         )
 
-    phase2_df["coverage_gap_abs"] = (phase2_df["holdout_coverage"] - 0.90).abs()
-    phase2_df = phase2_df.sort_values(
-        by=[
-            "coverage_gap_abs",
-            "holdout_width",
-            "calibrator_ece",
-            "calibrator_adaptive_ece",
-            "calibrator_brier",
-            "calibrator_phi_brier",
-            "selection_rank",
-        ],
-        ascending=[True, True, True, True, True, False, True],
-    ).reset_index(drop=True)
+    phase2_df = _rank_phase2_candidates(phase2_df)
     phase2_df.to_parquet(paths["phase2_search"], index=False)
     phase2_best = phase2_df.iloc[0].to_dict()
-    _namespace(run_tag, "phase2", "final")
-    phase2_calibrator_path = calibrator_dir / f"{phase2_best['calibrator_method']}.pkl"
-    final_candidate = _run_phase1_oot_candidate(
+    final_candidate = _run_phase2_final_candidate(
         run_tag=run_tag,
-        rank=1,
-        design=phase2_best,
         env=env,
+        calibrator_dir=calibrator_dir,
+        phase2_best=phase2_best,
         alpha_candidates_95=alpha_candidates_95,
         partition_candidates=partition_candidates,
         partition_probability_sources=partition_probability_sources,
@@ -1210,8 +1359,6 @@ def _run_phase2_search(
         score_scale_families=score_scale_families,
         calibration_fractions=calibration_fractions,
         sidecar_cfg=sidecar_cfg,
-        calibrator_override_path=str(phase2_calibrator_path),
-        phase_prefix="phase2",
     )
     final_policy = dict(final_candidate["policy_status"])
     final_sets = dict(final_candidate["set_status"])
@@ -1274,7 +1421,7 @@ def _write_consolidated_status(
     _write_json(_reopen_artifact_paths(run_tag)["status"], status)
 
 
-def main(argv: list[str] | None = None) -> int:
+def _build_parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser()
     parser.add_argument("--run-tag", default=_default_run_tag())
     parser.add_argument("--pipeline-profile", default="search_conformal_reopen_exhaustive")
@@ -1297,6 +1444,391 @@ def main(argv: list[str] | None = None) -> int:
         action="store_true",
         help="Evaluate phase-2 calibrator tournament even when phase-1 already passes.",
     )
+    return parser
+
+
+def _phase1_from_resume(
+    *,
+    resume_from_run_tag: str,
+    top_k_inner: int,
+    output_paths: dict[str, Path],
+) -> Phase1Result:
+    source_paths = _reopen_artifact_paths(resume_from_run_tag)
+    if not source_paths["inner_aggregate"].exists():
+        raise FileNotFoundError(
+            f"Resume source missing aggregate artifact: {source_paths['inner_aggregate']}"
+        )
+    shortlist, resume_meta = _build_resume_shortlist(
+        source_run_tag=resume_from_run_tag,
+        top_k_inner=top_k_inner,
+    )
+    shortlist.to_parquet(output_paths["phase1_shortlist"], index=False)
+    aggregated = pd.read_parquet(source_paths["inner_aggregate"])
+    return Phase1Result(
+        shortlist=shortlist,
+        aggregated=aggregated,
+        inner_runs=[],
+        aggregate_path=str(source_paths["inner_aggregate"]),
+        inner_search_path=str(source_paths["inner_search"]),
+        inner_search_winner=_normalize_design_row(aggregated.iloc[0].to_dict())
+        if not aggregated.empty
+        else {},
+        resume_meta=resume_meta,
+    )
+
+
+def _run_phase1_inner_search(
+    *,
+    run_tag: str,
+    upstream_run_tag: str,
+    env: dict[str, str],
+    output_paths: dict[str, Path],
+    phase1_workers: int,
+    top_k_inner: int,
+    alpha_candidates_90: list[float],
+    alpha_candidates_95: list[float],
+    partition_candidates: list[str],
+    partition_probability_sources: list[str],
+    n_score_bins_candidates: list[int],
+    min_group_sizes: list[int],
+    fallback_modes: list[str],
+    score_scale_families: list[str],
+    calibration_fractions: list[float],
+    tuning_holdout_ratios: list[float],
+    inner_random_states: list[int],
+    resume_completed_inner: bool,
+) -> Phase1Result:
+    inner_frames: list[pd.DataFrame] = []
+    inner_runs: list[dict[str, Any]] = []
+    specs = _phase1_inner_specs(
+        run_tag=run_tag,
+        calibration_fractions=calibration_fractions,
+        tuning_holdout_ratios=tuning_holdout_ratios,
+        inner_random_states=inner_random_states,
+    )
+    completed_runs: list[dict[str, Any]] = []
+    failed_runs: list[dict[str, Any]] = []
+    running: set[str] = set()
+    progress_path = output_paths["phase1_progress"]
+    _write_phase1_progress(
+        path=progress_path,
+        run_tag=run_tag,
+        upstream_run_tag=upstream_run_tag,
+        total=len(specs),
+        completed=completed_runs,
+        running=[],
+        failed=failed_runs,
+        workers=phase1_workers,
+    )
+
+    def record_success(tuning_df: pd.DataFrame, run_summary: dict[str, Any]) -> None:
+        inner_frames.append(tuning_df)
+        inner_runs.append(run_summary)
+        completed_runs.append(
+            {
+                "artifact_namespace": run_summary["artifact_namespace"],
+                "reused_existing": bool(run_summary.get("reused_existing", False)),
+            }
+        )
+
+    if phase1_workers == 1:
+        for spec in specs:
+            running = {str(spec["namespace"])}
+            _write_phase1_progress(
+                path=progress_path,
+                run_tag=run_tag,
+                upstream_run_tag=upstream_run_tag,
+                total=len(specs),
+                completed=completed_runs,
+                running=sorted(running),
+                failed=failed_runs,
+                workers=phase1_workers,
+            )
+            tuning_df, run_summary = _run_phase1_inner_spec(
+                spec=spec,
+                env=env,
+                alpha_candidates_90=alpha_candidates_90,
+                alpha_candidates_95=alpha_candidates_95,
+                partition_candidates=partition_candidates,
+                partition_probability_sources=partition_probability_sources,
+                n_score_bins_candidates=n_score_bins_candidates,
+                fallback_modes=fallback_modes,
+                min_group_sizes=min_group_sizes,
+                score_scale_families=score_scale_families,
+                resume_completed=resume_completed_inner,
+            )
+            record_success(tuning_df, run_summary)
+            running = set()
+            _write_phase1_progress(
+                path=progress_path,
+                run_tag=run_tag,
+                upstream_run_tag=upstream_run_tag,
+                total=len(specs),
+                completed=completed_runs,
+                running=[],
+                failed=failed_runs,
+                workers=phase1_workers,
+            )
+    else:
+        with ThreadPoolExecutor(max_workers=phase1_workers) as executor:
+            future_to_spec = {}
+            for spec in specs:
+                namespace = str(spec["namespace"])
+                running.add(namespace)
+                future = executor.submit(
+                    _run_phase1_inner_spec,
+                    spec=spec,
+                    env=env,
+                    alpha_candidates_90=alpha_candidates_90,
+                    alpha_candidates_95=alpha_candidates_95,
+                    partition_candidates=partition_candidates,
+                    partition_probability_sources=partition_probability_sources,
+                    n_score_bins_candidates=n_score_bins_candidates,
+                    fallback_modes=fallback_modes,
+                    min_group_sizes=min_group_sizes,
+                    score_scale_families=score_scale_families,
+                    resume_completed=resume_completed_inner,
+                )
+                future_to_spec[future] = spec
+                _write_phase1_progress(
+                    path=progress_path,
+                    run_tag=run_tag,
+                    upstream_run_tag=upstream_run_tag,
+                    total=len(specs),
+                    completed=completed_runs,
+                    running=sorted(running),
+                    failed=failed_runs,
+                    workers=phase1_workers,
+                )
+            for future in as_completed(future_to_spec):
+                spec = future_to_spec[future]
+                namespace = str(spec["namespace"])
+                running.discard(namespace)
+                try:
+                    tuning_df, run_summary = future.result()
+                except Exception as exc:
+                    failed_runs.append(
+                        {
+                            "artifact_namespace": namespace,
+                            "error": repr(exc),
+                        }
+                    )
+                    _write_phase1_progress(
+                        path=progress_path,
+                        run_tag=run_tag,
+                        upstream_run_tag=upstream_run_tag,
+                        total=len(specs),
+                        completed=completed_runs,
+                        running=sorted(running),
+                        failed=failed_runs,
+                        workers=phase1_workers,
+                    )
+                    raise
+                record_success(tuning_df, run_summary)
+                _write_phase1_progress(
+                    path=progress_path,
+                    run_tag=run_tag,
+                    upstream_run_tag=upstream_run_tag,
+                    total=len(specs),
+                    completed=completed_runs,
+                    running=sorted(running),
+                    failed=failed_runs,
+                    workers=phase1_workers,
+                )
+
+    inner_df = pd.concat(inner_frames, ignore_index=True)
+    inner_df.to_parquet(output_paths["inner_search"], index=False)
+    aggregated = _aggregate_inner_search(inner_df)
+    aggregated.to_parquet(output_paths["inner_aggregate"], index=False)
+    shortlist = _dedupe_designs(aggregated, top_k_inner)
+    shortlist.to_parquet(output_paths["phase1_shortlist"], index=False)
+    return Phase1Result(
+        shortlist=shortlist,
+        aggregated=aggregated,
+        inner_runs=inner_runs,
+        aggregate_path=str(output_paths["inner_aggregate"]),
+        inner_search_path=str(output_paths["inner_search"]),
+        inner_search_winner=_normalize_design_row(aggregated.iloc[0].to_dict())
+        if not aggregated.empty
+        else {},
+    )
+
+
+def _run_phase1_oot_confirmation(
+    *,
+    run_tag: str,
+    env: dict[str, str],
+    shortlist: pd.DataFrame,
+    output_paths: dict[str, Path],
+    alpha_candidates_95: list[float],
+    partition_candidates: list[str],
+    partition_probability_sources: list[str],
+    n_score_bins_candidates: list[int],
+    fallback_modes: list[str],
+    score_scale_families: list[str],
+    calibration_fractions: list[float],
+    sidecar_cfg: dict[str, Any],
+    validation_cfg: dict[str, Any],
+) -> Phase1ConfirmationResult:
+    if shortlist.empty:
+        raise RuntimeError("No phase1 shortlist candidates available for OOT confirmation.")
+
+    phase1_candidates: list[dict[str, Any]] = []
+    for rank, design in enumerate(shortlist.to_dict(orient="records"), start=1):
+        phase1_candidates.append(
+            _run_phase1_oot_candidate(
+                run_tag=run_tag,
+                rank=rank,
+                design=design,
+                env=env,
+                alpha_candidates_95=alpha_candidates_95,
+                partition_candidates=partition_candidates,
+                partition_probability_sources=partition_probability_sources,
+                n_score_bins_candidates=n_score_bins_candidates,
+                fallback_modes=fallback_modes,
+                score_scale_families=score_scale_families,
+                calibration_fractions=calibration_fractions,
+                sidecar_cfg=sidecar_cfg,
+            )
+        )
+
+    phase1_df = _phase1_candidates_frame(phase1_candidates, validation_cfg)
+    phase1_df.to_parquet(output_paths["phase1_final_candidates"], index=False)
+
+    best_phase1_ns = str(phase1_df.iloc[0]["namespace"])
+    best_phase1 = next(
+        candidate for candidate in phase1_candidates if candidate["namespace"] == best_phase1_ns
+    )
+    final_policy = dict(best_phase1["policy_status"])
+    final_sets = dict(best_phase1["set_status"])
+    final_decision = (
+        "promotable_for_followup"
+        if _acceptance_pass(final_policy, validation_cfg)
+        else "keep_current_canonical"
+    )
+    return Phase1ConfirmationResult(
+        candidates=phase1_candidates,
+        frame=phase1_df,
+        best_namespace=best_phase1_ns,
+        final_policy=final_policy,
+        final_sets=final_sets,
+        final_decision=final_decision,
+        final_namespace=str(best_phase1["namespace"]),
+    )
+
+
+def _phase2_run_reason(*, force_phase2: bool, phase2_always_evaluate: bool) -> str:
+    if force_phase2:
+        return "forced"
+    if phase2_always_evaluate:
+        return "always_evaluate"
+    return "phase1_acceptance_fail"
+
+
+def _maybe_apply_phase2(
+    *,
+    run_tag: str,
+    upstream_run_tag: str,
+    env: dict[str, str],
+    aggregated: pd.DataFrame,
+    phase1: Phase1ConfirmationResult,
+    phase1_only: bool,
+    force_phase2: bool,
+    alpha_candidates_95: list[float],
+    tuning_holdout_ratios: list[float],
+    inner_random_states: list[int],
+    partition_candidates: list[str],
+    partition_probability_sources: list[str],
+    n_score_bins_candidates: list[int],
+    fallback_modes: list[str],
+    score_scale_families: list[str],
+    calibration_fractions: list[float],
+    phase2_cfg: dict[str, Any],
+    sidecar_cfg: dict[str, Any],
+    validation_cfg: dict[str, Any],
+) -> PromotionResult:
+    final_policy = dict(phase1.final_policy)
+    final_sets = dict(phase1.final_sets)
+    final_decision = str(phase1.final_decision)
+    final_namespace = str(phase1.final_namespace)
+    phase2_summary: dict[str, Any] | None = None
+
+    phase2_always_evaluate = bool(phase2_cfg.get("always_evaluate", False)) or bool(force_phase2)
+    should_run_phase2 = (
+        (phase2_always_evaluate or (not _acceptance_pass(final_policy, validation_cfg)))
+        and (not phase1_only)
+        and bool(phase2_cfg.get("enabled", True))
+    )
+    if not should_run_phase2:
+        return PromotionResult(
+            final_policy=final_policy,
+            final_sets=final_sets,
+            final_decision=final_decision,
+            final_namespace=final_namespace,
+            phase2_summary=phase2_summary,
+        )
+
+    phase2_decision, phase2_policy, phase2_sets, phase2_summary = _run_phase2_search(
+        run_tag=run_tag,
+        upstream_run_tag=upstream_run_tag,
+        env=env,
+        aggregated=aggregated,
+        phase1_candidates_frame=phase1.frame,
+        alpha_candidates_95=alpha_candidates_95,
+        tuning_holdout_ratios=tuning_holdout_ratios,
+        inner_random_states=inner_random_states,
+        partition_candidates=partition_candidates,
+        partition_probability_sources=partition_probability_sources,
+        n_score_bins_candidates=n_score_bins_candidates,
+        fallback_modes=fallback_modes,
+        score_scale_families=score_scale_families,
+        calibration_fractions=calibration_fractions,
+        phase2_cfg=phase2_cfg,
+        sidecar_cfg=sidecar_cfg,
+        validation_cfg=validation_cfg,
+    )
+    phase2_applied, phase2_apply_reason = _phase2_should_replace_phase1(
+        phase1_policy=phase1.final_policy,
+        phase2_policy=phase2_policy,
+        validation_cfg=validation_cfg,
+    )
+    if phase2_summary is not None:
+        phase2_summary = {
+            **phase2_summary,
+            "run_reason": _phase2_run_reason(
+                force_phase2=force_phase2,
+                phase2_always_evaluate=phase2_always_evaluate,
+            ),
+            "always_evaluate": bool(phase2_always_evaluate),
+            "applied_to_final": bool(phase2_applied),
+            "apply_reason": phase2_apply_reason,
+            "phase1_namespace": phase1.final_namespace,
+            "phase1_decision": phase1.final_decision,
+            "phase2_decision": phase2_decision,
+        }
+    if phase2_applied:
+        final_decision = phase2_decision
+        final_policy = phase2_policy
+        final_sets = phase2_sets
+        if phase2_summary and phase2_summary.get("final_namespace"):
+            final_namespace = str(phase2_summary["final_namespace"])
+    elif _acceptance_pass(phase1.final_policy, validation_cfg):
+        final_decision = phase1.final_decision
+        final_policy = dict(phase1.final_policy)
+        final_sets = dict(phase1.final_sets)
+        final_namespace = phase1.final_namespace
+
+    return PromotionResult(
+        final_policy=final_policy,
+        final_sets=final_sets,
+        final_decision=final_decision,
+        final_namespace=final_namespace,
+        phase2_summary=phase2_summary,
+    )
+
+
+def main(argv: list[str] | None = None) -> int:
+    parser = _build_parser()
     args = parser.parse_args(argv)
 
     run_tag = str(args.run_tag).strip()
@@ -1338,302 +1870,91 @@ def main(argv: list[str] | None = None) -> int:
     phase1_workers = max(1, phase1_workers)
     resume_completed_inner = not bool(args.no_resume_completed_inner)
 
-    resume_meta: dict[str, Any] | None = None
-    inner_runs: list[dict[str, Any]] = []
     if resume_from_run_tag:
-        source_paths = _reopen_artifact_paths(resume_from_run_tag)
-        if not source_paths["inner_aggregate"].exists():
-            raise FileNotFoundError(
-                f"Resume source missing aggregate artifact: {source_paths['inner_aggregate']}"
-            )
-        shortlist, resume_meta = _build_resume_shortlist(
-            source_run_tag=resume_from_run_tag,
+        phase1_result = _phase1_from_resume(
+            resume_from_run_tag=resume_from_run_tag,
             top_k_inner=top_k_inner,
-        )
-        shortlist.to_parquet(output_paths["phase1_shortlist"], index=False)
-        aggregate_path = str(source_paths["inner_aggregate"])
-        inner_search_path = str(source_paths["inner_search"])
-        aggregated = pd.read_parquet(source_paths["inner_aggregate"])
-        inner_search_winner = (
-            _normalize_design_row(aggregated.iloc[0].to_dict()) if not aggregated.empty else {}
+            output_paths=output_paths,
         )
     else:
-        inner_frames: list[pd.DataFrame] = []
-        specs = _phase1_inner_specs(
-            run_tag=run_tag,
-            calibration_fractions=calibration_fractions,
-            tuning_holdout_ratios=tuning_holdout_ratios,
-            inner_random_states=inner_random_states,
-        )
-        completed_runs: list[dict[str, Any]] = []
-        failed_runs: list[dict[str, Any]] = []
-        running: set[str] = set()
-        progress_path = output_paths["phase1_progress"]
-        _write_phase1_progress(
-            path=progress_path,
-            run_tag=run_tag,
-            upstream_run_tag=upstream_run_tag,
-            total=len(specs),
-            completed=completed_runs,
-            running=[],
-            failed=failed_runs,
-            workers=phase1_workers,
-        )
-
-        if phase1_workers == 1:
-            for spec in specs:
-                running = {str(spec["namespace"])}
-                _write_phase1_progress(
-                    path=progress_path,
-                    run_tag=run_tag,
-                    upstream_run_tag=upstream_run_tag,
-                    total=len(specs),
-                    completed=completed_runs,
-                    running=sorted(running),
-                    failed=failed_runs,
-                    workers=phase1_workers,
-                )
-                tuning_df, run_summary = _run_phase1_inner_spec(
-                    spec=spec,
-                    env=env,
-                    alpha_candidates_90=alpha_candidates_90,
-                    alpha_candidates_95=alpha_candidates_95,
-                    partition_candidates=partition_candidates,
-                    partition_probability_sources=partition_probability_sources,
-                    n_score_bins_candidates=n_score_bins_candidates,
-                    fallback_modes=fallback_modes,
-                    min_group_sizes=min_group_sizes,
-                    score_scale_families=score_scale_families,
-                    resume_completed=resume_completed_inner,
-                )
-                inner_frames.append(tuning_df)
-                inner_runs.append(run_summary)
-                completed_runs.append(
-                    {
-                        "artifact_namespace": run_summary["artifact_namespace"],
-                        "reused_existing": bool(run_summary.get("reused_existing", False)),
-                    }
-                )
-                running = set()
-                _write_phase1_progress(
-                    path=progress_path,
-                    run_tag=run_tag,
-                    upstream_run_tag=upstream_run_tag,
-                    total=len(specs),
-                    completed=completed_runs,
-                    running=[],
-                    failed=failed_runs,
-                    workers=phase1_workers,
-                )
-        else:
-            with ThreadPoolExecutor(max_workers=phase1_workers) as executor:
-                future_to_spec = {}
-                for spec in specs:
-                    namespace = str(spec["namespace"])
-                    running.add(namespace)
-                    future = executor.submit(
-                        _run_phase1_inner_spec,
-                        spec=spec,
-                        env=env,
-                        alpha_candidates_90=alpha_candidates_90,
-                        alpha_candidates_95=alpha_candidates_95,
-                        partition_candidates=partition_candidates,
-                        partition_probability_sources=partition_probability_sources,
-                        n_score_bins_candidates=n_score_bins_candidates,
-                        fallback_modes=fallback_modes,
-                        min_group_sizes=min_group_sizes,
-                        score_scale_families=score_scale_families,
-                        resume_completed=resume_completed_inner,
-                    )
-                    future_to_spec[future] = spec
-                    _write_phase1_progress(
-                        path=progress_path,
-                        run_tag=run_tag,
-                        upstream_run_tag=upstream_run_tag,
-                        total=len(specs),
-                        completed=completed_runs,
-                        running=sorted(running),
-                        failed=failed_runs,
-                        workers=phase1_workers,
-                    )
-                for future in as_completed(future_to_spec):
-                    spec = future_to_spec[future]
-                    namespace = str(spec["namespace"])
-                    running.discard(namespace)
-                    try:
-                        tuning_df, run_summary = future.result()
-                    except Exception as exc:
-                        failed_runs.append(
-                            {
-                                "artifact_namespace": namespace,
-                                "error": repr(exc),
-                            }
-                        )
-                        _write_phase1_progress(
-                            path=progress_path,
-                            run_tag=run_tag,
-                            upstream_run_tag=upstream_run_tag,
-                            total=len(specs),
-                            completed=completed_runs,
-                            running=sorted(running),
-                            failed=failed_runs,
-                            workers=phase1_workers,
-                        )
-                        raise
-                    inner_frames.append(tuning_df)
-                    inner_runs.append(run_summary)
-                    completed_runs.append(
-                        {
-                            "artifact_namespace": run_summary["artifact_namespace"],
-                            "reused_existing": bool(run_summary.get("reused_existing", False)),
-                        }
-                    )
-                    _write_phase1_progress(
-                        path=progress_path,
-                        run_tag=run_tag,
-                        upstream_run_tag=upstream_run_tag,
-                        total=len(specs),
-                        completed=completed_runs,
-                        running=sorted(running),
-                        failed=failed_runs,
-                        workers=phase1_workers,
-                    )
-
-        inner_df = pd.concat(inner_frames, ignore_index=True)
-        inner_df.to_parquet(output_paths["inner_search"], index=False)
-        aggregated = _aggregate_inner_search(inner_df)
-        aggregated.to_parquet(output_paths["inner_aggregate"], index=False)
-        shortlist = _dedupe_designs(aggregated, top_k_inner)
-        shortlist.to_parquet(output_paths["phase1_shortlist"], index=False)
-        aggregate_path = str(output_paths["inner_aggregate"])
-        inner_search_path = str(output_paths["inner_search"])
-        inner_search_winner = (
-            _normalize_design_row(aggregated.iloc[0].to_dict()) if not aggregated.empty else {}
-        )
-
-    if shortlist.empty:
-        raise RuntimeError("No phase1 shortlist candidates available for OOT confirmation.")
-
-    phase1_candidates: list[dict[str, Any]] = []
-    for rank, design in enumerate(shortlist.to_dict(orient="records"), start=1):
-        phase1_candidates.append(
-            _run_phase1_oot_candidate(
-                run_tag=run_tag,
-                rank=rank,
-                design=design,
-                env=env,
-                alpha_candidates_95=alpha_candidates_95,
-                partition_candidates=partition_candidates,
-                partition_probability_sources=partition_probability_sources,
-                n_score_bins_candidates=n_score_bins_candidates,
-                fallback_modes=fallback_modes,
-                score_scale_families=score_scale_families,
-                calibration_fractions=calibration_fractions,
-                sidecar_cfg=sidecar_cfg,
-            )
-        )
-
-    phase1_df = _phase1_candidates_frame(phase1_candidates, validation_cfg)
-    phase1_df.to_parquet(output_paths["phase1_final_candidates"], index=False)
-
-    best_phase1_ns = str(phase1_df.iloc[0]["namespace"])
-    best_phase1 = next(
-        candidate for candidate in phase1_candidates if candidate["namespace"] == best_phase1_ns
-    )
-    final_namespace = best_phase1["namespace"]
-    final_policy = dict(best_phase1["policy_status"])
-    final_sets = dict(best_phase1["set_status"])
-    final_decision = (
-        "promotable_for_followup"
-        if _acceptance_pass(final_policy, validation_cfg)
-        else "keep_current_canonical"
-    )
-    phase2_summary: dict[str, Any] | None = None
-
-    phase2_always_evaluate = bool(phase2_cfg.get("always_evaluate", False)) or bool(
-        args.force_phase2
-    )
-    phase2_run_reason = (
-        "forced"
-        if bool(args.force_phase2)
-        else "always_evaluate"
-        if phase2_always_evaluate
-        else "phase1_acceptance_fail"
-    )
-    phase1_policy = dict(final_policy)
-    phase1_sets = dict(final_sets)
-    phase1_decision = str(final_decision)
-    phase1_namespace = str(final_namespace)
-    if (
-        (phase2_always_evaluate or (not _acceptance_pass(final_policy, validation_cfg)))
-        and (not bool(args.phase1_only))
-        and bool(phase2_cfg.get("enabled", True))
-    ):
-        phase2_decision, phase2_policy, phase2_sets, phase2_summary = _run_phase2_search(
+        phase1_result = _run_phase1_inner_search(
             run_tag=run_tag,
             upstream_run_tag=upstream_run_tag,
             env=env,
-            aggregated=aggregated,
-            phase1_candidates_frame=phase1_df,
+            output_paths=output_paths,
+            phase1_workers=phase1_workers,
+            top_k_inner=top_k_inner,
+            alpha_candidates_90=alpha_candidates_90,
             alpha_candidates_95=alpha_candidates_95,
-            tuning_holdout_ratios=tuning_holdout_ratios,
-            inner_random_states=inner_random_states,
             partition_candidates=partition_candidates,
             partition_probability_sources=partition_probability_sources,
             n_score_bins_candidates=n_score_bins_candidates,
+            min_group_sizes=min_group_sizes,
             fallback_modes=fallback_modes,
             score_scale_families=score_scale_families,
             calibration_fractions=calibration_fractions,
-            phase2_cfg=phase2_cfg,
-            sidecar_cfg=sidecar_cfg,
-            validation_cfg=validation_cfg,
+            tuning_holdout_ratios=tuning_holdout_ratios,
+            inner_random_states=inner_random_states,
+            resume_completed_inner=resume_completed_inner,
         )
-        phase2_applied, phase2_apply_reason = _phase2_should_replace_phase1(
-            phase1_policy=phase1_policy,
-            phase2_policy=phase2_policy,
-            validation_cfg=validation_cfg,
-        )
-        if phase2_summary is not None:
-            phase2_summary = {
-                **phase2_summary,
-                "run_reason": phase2_run_reason,
-                "always_evaluate": bool(phase2_always_evaluate),
-                "applied_to_final": bool(phase2_applied),
-                "apply_reason": phase2_apply_reason,
-                "phase1_namespace": phase1_namespace,
-                "phase1_decision": phase1_decision,
-                "phase2_decision": phase2_decision,
-            }
-        if phase2_applied:
-            final_decision = phase2_decision
-            final_policy = phase2_policy
-            final_sets = phase2_sets
-            if phase2_summary and phase2_summary.get("final_namespace"):
-                final_namespace = str(phase2_summary["final_namespace"])
-        elif _acceptance_pass(phase1_policy, validation_cfg):
-            final_decision = phase1_decision
-            final_policy = phase1_policy
-            final_sets = phase1_sets
-            final_namespace = phase1_namespace
+    shortlist = phase1_result.shortlist
+    aggregated = phase1_result.aggregated
+
+    phase1_confirmation = _run_phase1_oot_confirmation(
+        run_tag=run_tag,
+        env=env,
+        shortlist=shortlist,
+        output_paths=output_paths,
+        alpha_candidates_95=alpha_candidates_95,
+        partition_candidates=partition_candidates,
+        partition_probability_sources=partition_probability_sources,
+        n_score_bins_candidates=n_score_bins_candidates,
+        fallback_modes=fallback_modes,
+        score_scale_families=score_scale_families,
+        calibration_fractions=calibration_fractions,
+        sidecar_cfg=sidecar_cfg,
+        validation_cfg=validation_cfg,
+    )
+    final_result = _maybe_apply_phase2(
+        run_tag=run_tag,
+        upstream_run_tag=upstream_run_tag,
+        env=env,
+        aggregated=aggregated,
+        phase1=phase1_confirmation,
+        phase1_only=bool(args.phase1_only),
+        force_phase2=bool(args.force_phase2),
+        alpha_candidates_95=alpha_candidates_95,
+        tuning_holdout_ratios=tuning_holdout_ratios,
+        inner_random_states=inner_random_states,
+        partition_candidates=partition_candidates,
+        partition_probability_sources=partition_probability_sources,
+        n_score_bins_candidates=n_score_bins_candidates,
+        fallback_modes=fallback_modes,
+        score_scale_families=score_scale_families,
+        calibration_fractions=calibration_fractions,
+        phase2_cfg=phase2_cfg,
+        sidecar_cfg=sidecar_cfg,
+        validation_cfg=validation_cfg,
+    )
 
     _write_consolidated_status(
         run_tag=run_tag,
         upstream_run_tag=upstream_run_tag,
         pipeline_profile=str(args.pipeline_profile),
         mode=mode,
-        inner_search_path=inner_search_path,
-        aggregate_path=aggregate_path,
+        inner_search_path=phase1_result.inner_search_path,
+        aggregate_path=phase1_result.aggregate_path,
         shortlist_path=str(output_paths["phase1_shortlist"]),
         phase1_final_path=str(output_paths["phase1_final_candidates"]),
-        inner_search_runs=inner_runs,
-        inner_search_winner=inner_search_winner,
-        best_phase1_namespace=best_phase1_ns,
-        final_policy=final_policy,
-        final_sets=final_sets,
-        final_decision=final_decision,
-        final_namespace=final_namespace,
-        phase2_summary=phase2_summary,
-        resume_meta=resume_meta,
+        inner_search_runs=phase1_result.inner_runs,
+        inner_search_winner=phase1_result.inner_search_winner,
+        best_phase1_namespace=phase1_confirmation.best_namespace,
+        final_policy=final_result.final_policy,
+        final_sets=final_result.final_sets,
+        final_decision=final_result.final_decision,
+        final_namespace=final_result.final_namespace,
+        phase2_summary=final_result.phase2_summary,
+        resume_meta=phase1_result.resume_meta,
     )
     return 0
 

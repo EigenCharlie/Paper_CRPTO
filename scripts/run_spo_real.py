@@ -18,6 +18,7 @@ Usage:
 from __future__ import annotations
 
 import argparse
+import importlib
 import json
 import pickle
 import time
@@ -26,12 +27,8 @@ from typing import Any
 
 import numpy as np
 import pandas as pd
-import pyepo
-import torch
-import torch.nn as nn
 from loguru import logger
 from ortools.linear_solver import pywraplp
-from pyepo.model.opt import optModel
 from scipy import stats
 
 from src.models.conformal import apply_probability_calibrator
@@ -40,6 +37,23 @@ from src.utils.artifact_metadata import build_artifact_metadata, resolve_run_tag
 SCHEMA_VERSION = "2026-03-17.2"
 LGD = 0.40
 RANDOM_SEED = 42
+
+
+def _require_optional_module(module_name: str) -> Any:
+    """Import an optional SPO dependency with an explicit experiment-level error."""
+    try:
+        return importlib.import_module(module_name)
+    except ImportError as exc:
+        raise RuntimeError(
+            "SPO+ is an optional experiment. Install the `spo` extras before "
+            f"running this script; missing module: {module_name}."
+        ) from exc
+
+
+pyepo: Any = _require_optional_module("pyepo")
+torch: Any = _require_optional_module("torch")
+nn: Any = _require_optional_module("torch.nn")
+OptModelBase: Any = _require_optional_module("pyepo.model.opt").optModel
 
 NUMERIC_FEATURES = [
     "loan_amnt",
@@ -63,7 +77,7 @@ NUMERIC_FEATURES = [
 # ── 1. Portfolio LP optModel ────────────────────────────────────────────────
 
 
-class CreditPortfolioLP(optModel):
+class CreditPortfolioLP(OptModelBase):
     """Portfolio selection LP: select exactly `budget` of `n_items` loans to minimize
     expected loss  c^T x = sum(x_i * (PD_i * LGD - r_i)).
 
@@ -87,7 +101,7 @@ class CreditPortfolioLP(optModel):
             ct.SetCoefficient(x[i], 1.0)
         return solver, x
 
-    def setObj(self, c: np.ndarray | torch.Tensor) -> None:
+    def setObj(self, c: np.ndarray | Any) -> None:
         if isinstance(c, torch.Tensor):
             c = c.detach().cpu().numpy()
         c = np.asarray(c, dtype=float)
@@ -139,7 +153,7 @@ class PDPredictorMLP(nn.Module):
             nn.Linear(32, 1),
         )
 
-    def forward(self, x: torch.Tensor) -> torch.Tensor:
+    def forward(self, x: Any) -> Any:
         B = x.shape[0]
         # (B, n_items * n_features) → (B * n_items, n_features)
         x_per_loan = x.view(B * self.n_items, self.n_features)
@@ -345,9 +359,9 @@ def _train_spo(
         X_inst_train: (n_inst, n_items, n_features) — instance features.
         c_inst_train: (n_inst, n_items) — true costs per instance.
     """
-    from pyepo.data.dataset import optDataset
-    from pyepo.func import SPOPlus
-    from torch.utils.data import DataLoader
+    optDataset = _require_optional_module("pyepo.data.dataset").optDataset
+    SPOPlus = _require_optional_module("pyepo.func").SPOPlus
+    DataLoader = _require_optional_module("torch.utils.data").DataLoader
 
     n_input = n_items * n_features
     X_flat = X_inst_train.reshape(len(X_inst_train), n_input)
