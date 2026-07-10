@@ -60,6 +60,28 @@ def _submission_env() -> dict[str, str]:
     return env
 
 
+def _windows_latexmk_script(latexmk_executable: str | Path) -> Path | None:
+    """Locate ``latexmk.pl`` beside a TeX Live/TinyTeX Windows wrapper."""
+    executable = Path(latexmk_executable).resolve()
+    for root in executable.parents:
+        script = root / "texmf-dist" / "scripts" / "latexmk" / "latexmk.pl"
+        if script.is_file():
+            return script
+    return None
+
+
+def _latexmk_command() -> list[str] | None:
+    """Return a working latexmk launcher, bypassing fragile TinyTeX wrappers."""
+    executable = shutil.which("latexmk")
+    if executable is None:
+        return None
+    if os.name == "nt" and (perl := shutil.which("perl")) is not None:
+        script = _windows_latexmk_script(executable)
+        if script is not None:
+            return [perl, str(script)]
+    return [executable]
+
+
 def _manual_pdflatex_bibtex(cwd: Path, env: dict[str, str], transcript: Path) -> int:
     sequence = [
         ["pdflatex", "-interaction=nonstopmode", "-halt-on-error", TEX_NAME],
@@ -84,13 +106,14 @@ def compile_submission(*, prefer_manual: bool = False) -> int:
     transcript = REPORT_DIR / "ijds-latex-build.txt"
     if transcript.exists():
         transcript.unlink()
-    if prefer_manual or shutil.which("latexmk") is None:
-        if shutil.which("latexmk") is None:
+    latexmk_command = _latexmk_command()
+    if prefer_manual or latexmk_command is None:
+        if latexmk_command is None:
             logger.warning("latexmk unavailable; using manual pdflatex/BibTeX fallback.")
         return _manual_pdflatex_bibtex(SUBMISSION_DIR, env, transcript)
 
     latexmk_code = _run(
-        ["latexmk", "-pdf", "-gg", "-interaction=nonstopmode", TEX_NAME],
+        [*latexmk_command, "-pdf", "-gg", "-interaction=nonstopmode", TEX_NAME],
         cwd=SUBMISSION_DIR,
         env=env,
         transcript=transcript,

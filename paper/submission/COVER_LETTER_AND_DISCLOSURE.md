@@ -15,10 +15,14 @@ with an exactly replayed 90% Mondrian conformal endpoint. The resulting
 midpoint score, `q=(p+u)/2`, constrains a `$1M` portfolio while point PD remains
 in the expected-return objective.
 
-The final policy is selected from nine round-number candidates on a temporal
-calibration holdout. Its ranking artifact contains no OOT default,
-realized-return, or miscoverage fields. On 276,869 out-of-time Lending Club
-loans, the fixed policy earns `$179,327.59`, with weighted default `0.039375`.
+The final policy is selected from nine round-number candidates on November
+2017 using a deterministic endpoint cap. Outcomes are stored separately from
+its 12-column ranking frame, which contains no assumption-conditional
+statistics. An outcome-free
+December replay selects the same rule; opening outcomes afterward reveals
+miscoverage `0.124925`, so the paper explicitly does not infer selected-set
+validity from policy stability. On 276,869 out-of-time Lending Club loans, the
+fixed policy earns `$179,327.59`, with weighted default `0.039375`.
 A matched point-PD allocation earns `$196,369.14` with weighted default
 `0.118400`. The paper reports both the `8.678%` return cost and the `7.9025`
 percentage-point default reduction, together with temporal periods in which
@@ -27,7 +31,7 @@ auditable retrospective return-risk guardrail, not as a universal winner or
 prospective deployment guarantee.
 
 The submission contributes an explicit prediction-to-decision contract, an
-exact conformal replay, an inspectable calibration selector, matched economic
+exact conformal replay, a temporally separated selector/audit, matched economic
 comparisons, and a file-backed reproducibility package. These features align
 with IJDS's emphasis on data, innovative methodology, decision relevance, and
 reproducible evidence.

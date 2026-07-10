@@ -8,7 +8,7 @@ longer evidence for the manuscript's main claim.
 ## Active Decision
 
 - Run tag:
-  `champion-reopen-2026-06-19__pool93__ijds-calibration-selected-simple90-v6`
+  `champion-reopen-2026-06-19__pool93__ijds-calibration-selected-endpoint28-v7`
 - Conformal target: `alpha = 0.10`; frozen conservative alpha used by the
   recipe: `0.095`.
 - Partition: five score-quantile Mondrian cells on calibrated PD (the frozen
@@ -21,17 +21,23 @@ longer evidence for the manuscript's main claim.
 
 The policy is selected from nine round-number candidates:
 `tau in {0.15, 0.17, 0.19}` crossed with
-`gamma in {0.25, 0.50, 0.75}`. The final tagged selector uses the temporal
-calibration holdout only, requires full budget use, enforces the effective-PD
-cap and `B_u + sqrt(0.10) <= 0.60`, and maximizes expected point-PD objective.
-Five of nine candidates are eligible; the selected policy is
-`tau = 0.17, gamma = 0.50`.
+`gamma in {0.25, 0.50, 0.75}`. The final tagged selector uses November 2017,
+requires full budget use, enforces the effective-PD cap and deterministic
+`B_u <= 0.28`, and maximizes expected point-PD objective. Five of nine
+candidates are eligible; the selected policy is `tau = 0.17, gamma = 0.50`.
+The selected row remains optimal for endpoint caps in
+`[0.259036, 0.290491)`.
 
 The conformal recipe uses `142,550` calibration-fit rows. Policy selection is
-performed on a later `35,638`-row calibration holdout covering November and
-December 2017. The policy-ranking artifact contains no defaults, realized
-returns, miscoverage, or other outcome-derived selector columns. Conformal
-endpoints themselves use calibration labels, as required.
+performed on `14,943` November rows. Outcomes are stored separately from the
+12-column selector frame, which contains no defaults, realized returns,
+miscoverage, or assumption-conditional fields. An outcome-free replay on
+`20,695` December rows independently selects the same policy. Outcomes joined
+afterward give weighted default `0.145650`, weighted
+miscoverage `0.124925`, endpoint budget `0.262082`, and accounting bound
+`0.387007`. This audit is diagnostic evidence that stable policy selection is
+not selected-set coverage validity. Conformal endpoints themselves use
+calibration labels, as required.
 
 ## Full OOT Result
 
@@ -55,10 +61,11 @@ September 2020:
 | Observed accounting bound `B_u + V` | `0.294926` |
 | Markov event threshold `B_u + sqrt(alpha)` | `0.574279` |
 
-The fixed-allocation bootstrap return interval is
-`$162,706.17`--`$193,924.74` (`5,000` draws). It resamples funded-loan
-contributions only; it does not resample the model, conformal recipe, selector,
-or optimizer.
+The primary fixed-allocation bootstrap return interval is
+`$163,421.14`--`$193,551.65` (`5,000` draws over `31` origination-month
+clusters). A funded-loan sensitivity gives
+`$162,706.17`--`$193,924.74`. Neither resamples the model, conformal recipe,
+selector, or optimizer.
 
 ## Matched Baseline
 
@@ -120,10 +127,11 @@ The active evidence bundle is:
 
 - `models/experiments/champion_reopen/<run_tag>/portfolio/ijds_policy_governance.json`
 - A35: exact alpha replay and saturation audit.
-- A36: nine-policy calibration selector.
+- A36: November selector, endpoint-cap stability interval, December replay,
+  and independent decision audit.
 - A37: full-OOT and temporal fixed-policy evaluation.
 - A38: selected funded-set grade composition.
-- A39: fixed-allocation bootstrap.
+- A39: fixed-allocation month-cluster bootstrap plus funded-loan sensitivity.
 - A40: selected, more-conservative, and matched point-PD comparison.
 
 The manuscript must say explicitly that earlier project development inspected
@@ -150,7 +158,7 @@ tables, and `EXTRACTION_MANIFEST.json` remain untouched.
 
 Reopen the active method only for one of four reasons:
 
-1. a calibration-only rule materially improves return at the same `0.60`
+1. a calibration-only rule materially improves return at the same `B_u<=0.28`
    screen;
 2. a simpler rule matches the selected policy within prespecified tolerances;
 3. a valid selected-set or prospective protocol materially strengthens the

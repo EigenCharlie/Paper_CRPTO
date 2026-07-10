@@ -19,7 +19,7 @@ Use only after the scientific content and official PDFs are frozen.
 just paper-submission-official
 ```
 
-The wrapper tries `latexmk` and falls back to the verified
+The wrapper uses the direct `latexmk.pl` payload on Windows and falls back to the verified
 `pdflatex -> bibtex -> pdflatex -> pdflatex` loop. Accept only when:
 
 - `.blg` has zero warnings;

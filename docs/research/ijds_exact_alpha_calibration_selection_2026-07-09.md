@@ -23,7 +23,7 @@ and `93.54%` of upper endpoints equal one.
 ## Final policy protocol
 
 The final run is
-`champion-reopen-2026-06-19__pool93__ijds-calibration-selected-simple90-v6`.
+`champion-reopen-2026-06-19__pool93__ijds-calibration-selected-endpoint28-v7`.
 It uses the exactly replayed 90% interval recipe and a nine-policy round-number
 grid:
 
@@ -34,12 +34,20 @@ grid:
 - point-PD expected net return in the objective;
 - conformal `q` only in the portfolio-risk constraint.
 
-The policy-ranking code reads no default, realized-return, or miscoverage
-columns. It requires at least 99.9% budget use, feasibility of the effective-PD
-cap, and `B_u + sqrt(0.10) <= 0.60` on the calibration holdout. Five candidates
-are eligible. Maximizing expected point-PD objective selects
-`tau = 0.17, gamma = 0.50`, the interpretable midpoint
-`q = (p+u)/2`.
+The loader keeps outcomes physically separate from the 12-column policy frame,
+which has no default, realized-return, miscoverage, or assumption-conditional
+quantity. It requires
+at least 99.9% budget use, feasibility of the effective-PD cap, and
+`B_u <= 0.28` on November 2017. Five candidates are eligible. Maximizing
+expected point-PD objective selects `tau = 0.17, gamma = 0.50`, the
+interpretable midpoint `q = (p+u)/2`. The selected row is invariant for caps in
+`[0.259036, 0.290491)`.
+
+An outcome-free December replay selects the same policy. Outcomes are opened
+only afterward: weighted default is `0.145650`, weighted miscoverage is
+`0.124925`, and endpoint budget is `0.262082`. This independent audit is not a
+coverage theorem; it is direct evidence that policy stability does not imply
+selected-set conformal validity.
 
 ## What was learned from the challengers
 
@@ -55,6 +63,30 @@ are eligible. Maximizing expected point-PD objective selects
   rate and endpoint audit are substantially worse. It also beats CRPTO in some
   temporal slices, so no universal dominance claim is supportable.
 
+## Endpoint-screen v7 promotion
+
+The v6 selector used `B_u + sqrt(0.10) <= 0.60`. Because alpha was fixed, that
+screen was algebraically an endpoint cap but was described with the same
+Markov expression whose interpretation requires weighted funded-set validity.
+The v7 challenger removes that coupling:
+
+- selection uses the round deterministic cap `B_u<=0.28`;
+- November selects and December replays the same nine-row grid;
+- the winner is unchanged for caps in `[0.259036, 0.290491)`;
+- the loader separates outcomes from a 12-column selector frame with no
+  statistical-bound columns;
+- the OOT loader aligns candidates directly to exact-alpha rows by unique ID,
+  removing a private script import and redundant intermediate alignment;
+- v6 and v7 produce identical 845 funded comparator rows, IDs, allocations,
+  exposures, interval values, and full/temporal metrics (`max abs diff = 0`);
+- A39 now treats 31 origination months as the primary resampling units and
+  retains funded-loan resampling as a sensitivity.
+
+No protected DVC stage was rerun because the challenger changes only policy
+selection semantics, panel alignment, and downstream evidence. The exact-alpha
+artifact and every manifest-protected upstream byte remain the comparison
+baseline.
+
 ## Interpretation
 
 The scientific upgrade is not a larger search. It is a smaller and auditable
@@ -63,7 +95,6 @@ of point-PD economics from conformal feasibility, and a policy selector whose
 inputs can be inspected for outcome leakage. This is the active IJDS narrative.
 
 The historical OOT panel was inspected during earlier project development.
-Accordingly, v6 is described as a retrospective lockbox replay with an
-OOT-outcome-column-free final selector conditional on the frozen conformal
-recipe, not as a pristine prospective holdout or
-preregistered trial.
+Accordingly, v7 is described as a retrospective lockbox replay with an
+outcome-free, assumption-free final selector conditional on the frozen
+conformal recipe, not as a pristine prospective holdout or preregistered trial.

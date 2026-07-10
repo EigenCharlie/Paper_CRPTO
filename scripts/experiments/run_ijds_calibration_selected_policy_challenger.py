@@ -40,6 +40,7 @@ from src.optimization.policy_selection import (  # noqa: E402
     FORBIDDEN_POLICY_SELECTION_COLUMNS,
     LinearPolicyCandidate,
     build_linear_policy_grid,
+    endpoint_cap_stability,
     select_policy_result_ex_ante,
 )
 from src.utils.script_helpers import (  # noqa: E402
@@ -49,9 +50,23 @@ from src.utils.script_helpers import (  # noqa: E402
 )
 
 DEFAULT_CONFIG = (
-    ROOT / "configs/experiments/champion_reopen_ijds_calibration_selected_simple90_v6.yaml"
+    ROOT / "configs/experiments/champion_reopen_ijds_calibration_selected_endpoint28_v7.yaml"
 )
 FORBIDDEN_SELECTOR_COLUMNS = FORBIDDEN_POLICY_SELECTION_COLUMNS
+SELECTOR_INPUT_COLUMNS = (
+    "id",
+    "loan_amnt",
+    "purpose",
+    "grade",
+    "term",
+    "verification_status",
+    "issue_d",
+    "_pd_point",
+    "_pd_low",
+    "_pd_high",
+    "_loan_amount",
+    "_int_rate",
+)
 
 
 def _load_config(path: Path) -> dict[str, Any]:
@@ -77,9 +92,27 @@ def _experiment_paths(run_tag: str) -> tuple[Path, Path]:
     return data_dir, model_dir
 
 
+def _endpoint_budget_cap(config: dict[str, Any]) -> float:
+    design = config["design"]
+    if "endpoint_budget_cap" in design:
+        return float(design["endpoint_budget_cap"])
+    if "markov_threshold_cap" in design:
+        return float(design["markov_threshold_cap"]) - float(np.sqrt(design["alpha"]))
+    raise KeyError("Experiment design requires endpoint_budget_cap.")
+
+
+def _selector_input_frame(frame: pd.DataFrame) -> pd.DataFrame:
+    """Expose only columns required to solve the outcome-free policy grid."""
+    required = {"loan_amnt", "purpose", "_pd_point", "_pd_low", "_pd_high", "_int_rate"}
+    missing = sorted(required.difference(frame.columns))
+    if missing:
+        raise KeyError(f"Calibration selector input is missing columns: {missing}")
+    return frame.loc[:, [column for column in SELECTOR_INPUT_COLUMNS if column in frame]].copy()
+
+
 def _load_calibration_selection_panel(
     config: dict[str, Any],
-) -> tuple[pd.DataFrame, FrozenConformalRecipe, dict[str, Any]]:
+) -> tuple[pd.DataFrame, pd.Series, FrozenConformalRecipe, dict[str, Any]]:
     source = config["source"]
     design = config["design"]
     os.environ["UPSTREAM_CANONICAL_RUN_TAG"] = str(source["upstream_canonical_run_tag"])
@@ -122,17 +155,21 @@ def _load_calibration_selection_panel(
     panel["_pd_high"] = intervals.high
     panel["_loan_amount"] = pd.to_numeric(panel["loan_amnt"], errors="coerce").fillna(1.0)
     panel["_int_rate"] = parse_percent_series(panel["int_rate"])
+    outcomes = pd.Series(split.y_tune.to_numpy(dtype=float), name="_outcome")
+    months = pd.to_datetime(panel["issue_d"], errors="raise").dt.to_period("M").astype(str)
+    panel = _selector_input_frame(panel)
+    panel["_month"] = months.to_numpy(dtype=str)
     metadata = {
         "conformal_results_path": str(results_path.relative_to(ROOT)),
         "calibration_fit_rows": int(len(split.idx_cal_fit)),
-        "calibration_selection_rows": int(len(split.idx_cal_tune)),
-        "calibration_selection_start": str(pd.to_datetime(split.issue_tune).min().date()),
-        "calibration_selection_end": str(pd.to_datetime(split.issue_tune).max().date()),
+        "calibration_holdout_rows": int(len(split.idx_cal_tune)),
+        "calibration_holdout_start": str(pd.to_datetime(split.issue_tune).min().date()),
+        "calibration_holdout_end": str(pd.to_datetime(split.issue_tune).max().date()),
         "target_alpha": intervals.target_alpha,
         "used_alpha": intervals.used_alpha,
         "partition": recipe.partition,
     }
-    return panel, recipe, metadata
+    return panel, outcomes, recipe, metadata
 
 
 def _measure_ex_ante_solution(
@@ -178,13 +215,14 @@ def _run_calibration_grid(
     config: dict[str, Any],
     output_path: Path,
 ) -> pd.DataFrame:
+    selector_panel = _selector_input_frame(panel)
     rows: list[dict[str, Any]] = []
     for candidate in candidates:
         logger.info("Calibration selector evaluating {}", candidate.candidate_id)
-        result = solve_candidate(panel, candidate, config=config)
+        result = solve_candidate(selector_panel, candidate, config=config)
         rows.append(
             _measure_ex_ante_solution(
-                panel,
+                selector_panel,
                 candidate,
                 result,
                 alpha=float(config["design"]["alpha"]),
@@ -213,6 +251,24 @@ def _match_candidate(
     return matches[0]
 
 
+def _comparison_policies(
+    selected: LinearPolicyCandidate,
+    incumbent: LinearPolicyCandidate,
+) -> tuple[tuple[str, LinearPolicyCandidate, bool], ...]:
+    point = LinearPolicyCandidate(
+        candidate_id="point-pd",
+        risk_tolerance=selected.risk_tolerance,
+        gamma=0.0,
+        uncertainty_aversion=0.0,
+        policy_mode="point_estimate",
+    )
+    return (
+        ("calibration_selected", selected, True),
+        ("incumbent_linear", incumbent, True),
+        ("point_pd_matched_tau", point, False),
+    )
+
+
 def _evaluate_fixed_policies(
     panel: pd.DataFrame,
     selected: LinearPolicyCandidate,
@@ -229,18 +285,7 @@ def _evaluate_fixed_policies(
             if period == "full_oot"
             else panel.loc[panel["_period"].astype(str).eq(period)].reset_index(drop=True)
         )
-        point = LinearPolicyCandidate(
-            candidate_id="point-pd",
-            risk_tolerance=selected.risk_tolerance,
-            gamma=0.0,
-            uncertainty_aversion=0.0,
-            policy_mode="point_estimate",
-        )
-        for role, candidate, robust in (
-            ("calibration_selected", selected, True),
-            ("incumbent_linear", incumbent, True),
-            ("point_pd_matched_tau", point, False),
-        ):
+        for role, candidate, robust in _comparison_policies(selected, incumbent):
             record, result = evaluate_candidate(
                 frame,
                 candidate,
@@ -259,6 +304,28 @@ def _evaluate_fixed_policies(
                     )
                 )
     return pd.DataFrame(rows), pd.concat(allocation_frames, ignore_index=True)
+
+
+def _evaluate_calibration_audit(
+    panel: pd.DataFrame,
+    selected: LinearPolicyCandidate,
+    incumbent: LinearPolicyCandidate,
+    *,
+    config: dict[str, Any],
+    period: str,
+) -> pd.DataFrame:
+    rows: list[dict[str, Any]] = []
+    frame = panel.reset_index(drop=True)
+    for role, candidate, robust in _comparison_policies(selected, incumbent):
+        record, _result = evaluate_candidate(
+            frame,
+            candidate,
+            config=config,
+            robust=robust,
+            period=period,
+        )
+        rows.append({"role": role, **record})
+    return pd.DataFrame(rows)
 
 
 def _funded_allocation_frame(
@@ -357,7 +424,38 @@ def run(config_path: Path) -> dict[str, Any]:
     config = _load_config(config_path)
     run_tag = str(config["run_tag"])
     data_dir, model_dir = _experiment_paths(run_tag)
-    calibration_panel, recipe, calibration_metadata = _load_calibration_selection_panel(config)
+    calibration_holdout, calibration_outcomes, recipe, calibration_metadata = (
+        _load_calibration_selection_panel(config)
+    )
+    design = config["design"]
+    selection_period = str(design.get("selection_period", "")).strip()
+    audit_period = str(design.get("audit_period", "")).strip()
+    selection_mask = (
+        calibration_holdout["_month"].eq(selection_period)
+        if selection_period
+        else pd.Series(True, index=calibration_holdout.index)
+    )
+    selection_panel = calibration_holdout.loc[selection_mask].reset_index(drop=True).copy()
+    if selection_panel.empty:
+        raise ValueError(f"Calibration selection period has no rows: {selection_period!r}")
+    audit_mask = (
+        calibration_holdout["_month"].eq(audit_period)
+        if audit_period
+        else pd.Series(False, index=calibration_holdout.index)
+    )
+    audit_panel = calibration_holdout.loc[audit_mask].reset_index(drop=True).copy()
+    if audit_period and audit_panel.empty:
+        raise ValueError(f"Calibration audit period has no rows: {audit_period!r}")
+    audit_outcomes = calibration_outcomes.loc[audit_mask.to_numpy()].reset_index(drop=True)
+    calibration_metadata.update(
+        {
+            "selection_period": selection_period or "full_calibration_holdout",
+            "selection_rows": int(len(selection_panel)),
+            "audit_period": audit_period or None,
+            "audit_rows": int(len(audit_panel)),
+            "outcomes_isolated_until_post_selection_audit": True,
+        }
+    )
     grid_config = config["policy_grid"]
     candidates = build_linear_policy_grid(
         risk_tolerances=[float(value) for value in grid_config["risk_tolerances"]],
@@ -365,20 +463,59 @@ def run(config_path: Path) -> dict[str, Any]:
         uncertainty_aversions=[float(value) for value in grid_config["uncertainty_aversions"]],
     )
     selection_results = _run_calibration_grid(
-        calibration_panel,
+        selection_panel,
         candidates,
         config=config,
         output_path=data_dir / "calibration_policy_selection_grid.parquet",
     )
+    endpoint_cap = _endpoint_budget_cap(config)
     selected_row, selection_audit = select_policy_result_ex_ante(
         selection_results,
-        markov_threshold_cap=float(config["design"]["markov_threshold_cap"]),
-        budget=float(config["design"]["budget"]),
-        min_budget_utilization=float(config["design"]["selection_min_budget_utilization"]),
+        endpoint_budget_cap=endpoint_cap,
+        budget=float(design["budget"]),
+        min_budget_utilization=float(design["selection_min_budget_utilization"]),
     )
     candidate_lookup = {candidate.candidate_id: candidate for candidate in candidates}
     selected = candidate_lookup[str(selected_row["candidate_id"])]
     incumbent = _match_candidate(candidates, config["incumbent_policy"])
+    cap_stability = endpoint_cap_stability(
+        selection_results,
+        selected_candidate_id=selected.candidate_id,
+        endpoint_budget_cap=endpoint_cap,
+        budget=float(design["budget"]),
+        min_budget_utilization=float(design["selection_min_budget_utilization"]),
+    )
+
+    audit_grid_path: Path | None = None
+    audit_evaluation_path: Path | None = None
+    audit_selected_id: str | None = None
+    audit_evaluation = pd.DataFrame()
+    if not audit_panel.empty:
+        audit_grid_path = data_dir / "calibration_policy_audit_grid.parquet"
+        audit_results = _run_calibration_grid(
+            audit_panel,
+            candidates,
+            config=config,
+            output_path=audit_grid_path,
+        )
+        audit_selected_row, _audit_selection = select_policy_result_ex_ante(
+            audit_results,
+            endpoint_budget_cap=endpoint_cap,
+            budget=float(design["budget"]),
+            min_budget_utilization=float(design["selection_min_budget_utilization"]),
+        )
+        audit_selected_id = str(audit_selected_row["candidate_id"])
+        audited_decisions = audit_panel.assign(_outcome=audit_outcomes.to_numpy(dtype=float))
+        audit_evaluation = _evaluate_calibration_audit(
+            audited_decisions,
+            selected,
+            incumbent,
+            config=config,
+            period=audit_period,
+        )
+        audit_evaluation_path = data_dir / "calibration_policy_holdout_audit.csv"
+        audit_evaluation.to_csv(audit_evaluation_path, index=False)
+
     oot_panel = load_policy_panel(config)
     evaluation, allocations = _evaluate_fixed_policies(
         oot_panel,
@@ -406,16 +543,36 @@ def run(config_path: Path) -> dict[str, Any]:
             "reference_used_alpha": recipe.reference_used_alpha,
         },
         "grid_size": int(len(candidates)),
+        "selector_input_columns": list(_selector_input_frame(selection_panel).columns),
         "selector_columns": list(selection_results.columns),
         "selector_forbidden_columns_present": sorted(
             FORBIDDEN_SELECTOR_COLUMNS.intersection(selection_results.columns)
         ),
         "selection_audit": selection_audit,
+        "endpoint_cap_stability": cap_stability,
+        "calibration_audit": {
+            "period": audit_period or None,
+            "outcome_free_selected_candidate_id": audit_selected_id,
+            "same_policy_selected": bool(audit_selected_id == selected.candidate_id),
+            "grid_path": (
+                None if audit_grid_path is None else str(audit_grid_path.relative_to(ROOT))
+            ),
+            "evaluation_path": (
+                None
+                if audit_evaluation_path is None
+                else str(audit_evaluation_path.relative_to(ROOT))
+            ),
+            "policy_evaluations": audit_evaluation.to_dict(orient="records"),
+            "claim_boundary": (
+                "Independent post-selection decision audit; not a selected-set coverage theorem."
+            ),
+        },
         "selected_policy": selected.to_record(),
         "selected_calibration_metrics": selected_row.to_dict(),
         "incumbent_policy": incumbent.to_record(),
         "evaluation_path": str(evaluation_path.relative_to(ROOT)),
         "allocation_path": str(allocation_path.relative_to(ROOT)),
+        "oot_alignment": dict(oot_panel.attrs),
         "contrasts": _contrast_payload(evaluation),
         "claim_boundary": str(config["claim_boundary"]),
     }

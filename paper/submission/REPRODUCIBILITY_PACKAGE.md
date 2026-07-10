@@ -19,7 +19,7 @@ local paths, or author identity during double-anonymous review.
 |---|---|---|
 | Environment | `pyproject.toml`, `uv.lock`, `justfile`. | Recreate the Windows-first toolchain. |
 | Method source | `src/models/conformal_alpha_grid.py`, `src/optimization/`, active experiment scripts. | Replay exact intervals and solve declared policies. |
-| Active config | `configs/experiments/champion_reopen_ijds_calibration_selected_simple90_v6.yaml`. | Fix alpha, 3x3 grid, selector, and solver settings. |
+| Active config | `configs/experiments/champion_reopen_ijds_calibration_selected_endpoint28_v7.yaml`. | Fix alpha, split 3x3 selector/audit, endpoint cap, and solver settings. |
 | Active evidence | A35--A40 CSV/TeX files and `ijds_policy_governance.json`. | Tie every paper claim to generated evidence. |
 | Manuscript | body QMD, supplement QMD, official TeX. | Reproduce reviewer-facing surfaces. |
 | Data pointers | `dvc.yaml`, `dvc.lock`, `.dvc/`, raw-data notes. | Retrieve large artifacts where terms permit. |
@@ -31,13 +31,15 @@ local paths, or author identity during double-anonymous review.
 |---|---|
 | Exact alpha grid | `data/processed/experiments/champion_reopen/<exact-run>/conformal/exact_alpha_grid.parquet` |
 | Calibration selector | `data/processed/experiments/champion_reopen/<active-run>/portfolio/calibration_policy_selection_grid.parquet` |
+| Calibration audit grid | `data/processed/experiments/champion_reopen/<active-run>/portfolio/calibration_policy_audit_grid.parquet` |
+| Calibration decision audit | `data/processed/experiments/champion_reopen/<active-run>/portfolio/calibration_policy_holdout_audit.csv` |
 | OOT evaluation | `data/processed/experiments/champion_reopen/<active-run>/portfolio/calibration_selected_policy_oot_evaluation.csv` |
 | Funded rows | `data/processed/experiments/champion_reopen/<active-run>/portfolio/calibration_selected_policy_full_oot_allocations.parquet` |
 | Governance | `models/experiments/champion_reopen/<active-run>/portfolio/ijds_policy_governance.json` |
 | Paper tables | `reports/crpto/tables/crpto_tableA35...A40_*` |
 
 Active run:
-`champion-reopen-2026-06-19__pool93__ijds-calibration-selected-simple90-v6`.
+`champion-reopen-2026-06-19__pool93__ijds-calibration-selected-endpoint28-v7`.
 
 Exact-alpha run:
 `champion-reopen-2026-06-19__pool93__ijds-exact-alpha-grid-v1`.
@@ -66,9 +68,10 @@ Full isolated methodology replay:
 just ijds-active-replay
 ```
 
-The full replay recomputes the exact alpha grid, solves the nine calibration
-policies, evaluates the frozen selected policy, and rebuilds A35--A40. It writes
-only to versioned experiment paths and does not overwrite the frozen PD model,
+The full replay recomputes the exact alpha grid, solves the nine policies on
+November and December, opens December outcomes only for the independent audit,
+evaluates the frozen selected policy, and rebuilds A35--A40. It writes only to
+versioned experiment paths and does not overwrite the frozen PD model,
 calibrator, historical intervals, or manifest.
 
 Official-template compilation is automated by:

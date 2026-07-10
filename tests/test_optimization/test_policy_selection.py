@@ -5,6 +5,7 @@ import pytest
 
 from src.optimization.policy_selection import (
     build_linear_policy_grid,
+    endpoint_cap_stability,
     select_policy_result_ex_ante,
     temporal_period_labels,
 )
@@ -16,7 +17,7 @@ def _selection_results() -> pd.DataFrame:
             "candidate_id": ["linear-001", "linear-002", "linear-003"],
             "solver_status": ["Optimal", "Optimal", "Optimal"],
             "expected_objective": [120.0, 110.0, 100.0],
-            "markov_loss_threshold": [0.70, 0.58, 0.50],
+            "endpoint_budget": [0.40, 0.27, 0.20],
             "weighted_pd_effective": [0.17, 0.17, 0.17],
             "risk_tolerance": [0.17, 0.17, 0.17],
             "total_allocated": [1_000.0, 1_000.0, 1_000.0],
@@ -40,23 +41,24 @@ def test_round_grid_is_deterministic() -> None:
 def test_selector_uses_expected_objective_inside_screen() -> None:
     selected, audit = select_policy_result_ex_ante(
         _selection_results(),
-        markov_threshold_cap=0.60,
+        endpoint_budget_cap=0.28,
         budget=1_000.0,
     )
 
     assert selected["candidate_id"] == "linear-002"
     assert audit["n_eligible"] == 2
     assert audit["outcome_columns_used"] == 0
+    assert audit["statistical_assumption_columns_used"] == 0
 
 
 def test_selector_does_not_accept_suboptimal_status() -> None:
     results = _selection_results()
     results.loc[0, "solver_status"] = "Suboptimal"
-    results.loc[0, "markov_loss_threshold"] = 0.50
+    results.loc[0, "endpoint_budget"] = 0.20
 
     selected, _ = select_policy_result_ex_ante(
         results,
-        markov_threshold_cap=0.60,
+        endpoint_budget_cap=0.28,
         budget=1_000.0,
     )
 
@@ -69,7 +71,7 @@ def test_selector_rejects_duplicate_candidates() -> None:
     with pytest.raises(ValueError, match="duplicate candidate_id"):
         select_policy_result_ex_ante(
             results,
-            markov_threshold_cap=0.60,
+            endpoint_budget_cap=0.28,
             budget=1_000.0,
         )
 
@@ -80,7 +82,7 @@ def test_selector_rejects_outcome_derived_columns() -> None:
     with pytest.raises(ValueError, match="outcome-derived"):
         select_policy_result_ex_ante(
             results,
-            markov_threshold_cap=0.60,
+            endpoint_budget_cap=0.28,
             budget=1_000.0,
         )
 
@@ -89,10 +91,31 @@ def test_selector_rejects_invalid_budget_utilization() -> None:
     with pytest.raises(ValueError, match="min_budget_utilization"):
         select_policy_result_ex_ante(
             _selection_results(),
-            markov_threshold_cap=0.60,
+            endpoint_budget_cap=0.28,
             budget=1_000.0,
             min_budget_utilization=1.01,
         )
+
+
+def test_endpoint_cap_stability_finds_next_higher_objective_boundary() -> None:
+    results = _selection_results()
+    selected, _ = select_policy_result_ex_ante(
+        results,
+        endpoint_budget_cap=0.28,
+        budget=1_000.0,
+    )
+
+    stability = endpoint_cap_stability(
+        results,
+        selected_candidate_id=str(selected["candidate_id"]),
+        endpoint_budget_cap=0.28,
+        budget=1_000.0,
+    )
+
+    assert stability["cap_lower_inclusive"] == pytest.approx(0.27)
+    assert stability["cap_upper_exclusive"] == pytest.approx(0.40)
+    assert stability["margin_to_lower_boundary"] == pytest.approx(0.01)
+    assert stability["margin_to_upper_boundary"] == pytest.approx(0.12)
 
 
 def test_temporal_labels_pool_late_years() -> None:

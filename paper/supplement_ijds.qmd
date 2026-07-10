@@ -1,5 +1,5 @@
 ---
-title: "Online Supplement for CRPTO: A Calibration-Selected Conformal Guardrail for Auditable Credit Portfolio Decisions"
+title: "Online Supplement for CRPTO: A Calibration-Selected Conformal Guardrail for Credit Portfolios"
 author: "Anonymous"
 date: today
 lang: en
@@ -37,7 +37,7 @@ policy.
 | A36 | All nine calibration selector cells. | No OOT outcome-derived ranking columns. |
 | A37 | Full-OOT and fixed-policy temporal evaluation. | Retrospective stress evidence, not prospective performance. |
 | A38 | Funded exposure and outcomes by letter grade. | Business composition, not legal fair-lending certification. |
-| A39 | Fixed-allocation funded-loan bootstrap. | Does not resample model, conformal recipe, selector, or solver. |
+| A39 | Fixed-allocation month-cluster bootstrap plus loan-level sensitivity. | Does not resample model, conformal recipe, selector, or solver. |
 | A40 | Selected, more-conservative, and matched point-PD decisions. | Retrospective contrasts, not causal effects or universal dominance. |
 
 The active governance file is
@@ -181,8 +181,7 @@ selected-set validity would require a dedicated protocol
 | no | `0.15` | `0.1425` | `0.886098` | `0.646176` | `0.863562` | `0.863101` | `0.334859` |
 | no | `0.20` | `0.1900` | `0.849380` | `0.636585` | `0.829376` | `0.828007` | `0.244668` |
 
-: A35 exact alpha sensitivity. Source:
-`reports/crpto/tables/crpto_tableA35_exact_alpha_grid.csv`.
+: A35 exact alpha sensitivity. Source: `crpto_tableA35_exact_alpha_grid.csv`.
 
 The 99% row is nearly saturated and is not the active policy level. Rows other
 than 90% apply the same frozen widening recipe as sensitivity; they are not
@@ -190,24 +189,30 @@ separately tuned conformal winners.
 
 ## A36. Calibration Policy Selector
 
-| Selected | Eligible | Candidate | $\tau$ | $\gamma$ | Expected objective | Endpoint | Threshold |
-|:---:|:---:|---|---:|---:|---:|---:|---:|
-| yes | yes | `linear-005` | `0.17` | `0.50` | `$110,346.16` | `0.261047` | `0.577275` |
-| no | yes | `linear-009` | `0.19` | `0.75` | `$107,122.88` | `0.228340` | `0.544567` |
-| no | yes | `linear-002` | `0.15` | `0.50` | `$106,866.89` | `0.226670` | `0.542897` |
-| no | yes | `linear-006` | `0.17` | `0.75` | `$104,272.78` | `0.203468` | `0.519696` |
-| no | yes | `linear-003` | `0.15` | `0.75` | `$101,108.78` | `0.177940` | `0.494167` |
-| no | no | `linear-007` | `0.19` | `0.25` | `$126,123.20` | `0.446819` | `0.763046` |
-| no | no | `linear-004` | `0.17` | `0.25` | `$121,761.88` | `0.392607` | `0.708835` |
-| no | no | `linear-001` | `0.15` | `0.25` | `$117,071.33` | `0.341219` | `0.657447` |
-| no | no | `linear-008` | `0.19` | `0.50` | `$113,591.27` | `0.294789` | `0.611017` |
+| Nov. status | Candidate | $\tau$ | $\gamma$ | Nov. objective | Nov. $B_u$ | Dec. $B_u$ |
+|---|---|---:|---:|---:|---:|---:|
+| **Selected** | `linear-005` | `0.17` | `0.50` | `$99,387.12` | `0.259036` | `0.262082` |
+| Eligible | `linear-009` | `0.19` | `0.75` | `$96,446.16` | `0.226723` | `0.228577` |
+| Eligible | `linear-002` | `0.15` | `0.50` | `$95,995.22` | `0.226088` | `0.227695` |
+| Eligible | `linear-006` | `0.17` | `0.75` | `$93,760.13` | `0.202259` | `0.203504` |
+| Eligible | `linear-003` | `0.15` | `0.75` | `$90,893.16` | `0.177614` | `0.178203` |
+| Ineligible | `linear-007` | `0.19` | `0.25` | `$113,986.45` | `0.422203` | `0.446378` |
+| Ineligible | `linear-004` | `0.17` | `0.25` | `$109,885.56` | `0.375105` | `0.396751` |
+| Ineligible | `linear-001` | `0.15` | `0.25` | `$105,398.23` | `0.328413` | `0.343502` |
+| Ineligible | `linear-008` | `0.19` | `0.50` | `$102,671.87` | `0.290491` | `0.294861` |
 
-: A36 complete selector. Source:
-`reports/crpto/tables/crpto_tableA36_calibration_policy_selector.csv`.
+: A36 complete selector. Source: `crpto_tableA36_calibration_policy_selector.csv`.
 
-The selector uses `35,638` temporal calibration-holdout rows. Its output schema
-contains zero forbidden outcome-derived fields. The selected row is the highest
-expected-objective eligible candidate, not the highest objective overall.
+The selector uses `14,943` November rows and the deterministic screen
+$B_u\le0.28$. The loader keeps outcomes separate from its 12-column input
+frame, which contains no outcome or assumption-conditional quantity. The
+selected row remains optimal for caps in
+`[0.259036, 0.290491)`. Replaying the same outcome-free rule on `20,695`
+December rows selects the same policy. Only then are December outcomes opened:
+the midpoint funds 193 loans, returns `$53,313.05`, has weighted default
+`0.145650`, weighted miscoverage `0.124925`, and endpoint `0.262082`. The
+miscoverage miss is direct evidence that selector stability is not selected-set
+coverage validity.
 
 ## A37. Temporal Fixed-Policy Evaluation
 
@@ -228,7 +233,7 @@ expected-objective eligible candidate, not the highest objective overall.
 | 2020+ | Point PD | `$218,629.14` | `0.016900` | `0.000000` | `0.861425` | `1.177653` |
 
 : A37 selected temporal rows and matched point-PD rows. Source:
-`reports/crpto/tables/crpto_tableA37_calibration_selected_temporal_evaluation.csv`.
+`crpto_tableA37_calibration_selected_temporal_evaluation.csv`.
 
 Each temporal policy receives a fresh `$1M` budget. The table is intentionally
 unfavorable to a universal-dominance reading: point PD is much stronger in
@@ -246,7 +251,7 @@ unfavorable to a universal-dominance reading: point PD is much stronger in
 | G | `2` | `0.0020` | `0.000000` | `0.000000` | `0.146801` | `0.573401` | `1.000000` | `$616.30` |
 
 : A38 selected funded-set composition. Source:
-`reports/crpto/tables/crpto_tableA38_calibration_selected_grade_audit.csv`.
+`crpto_tableA38_calibration_selected_grade_audit.csv`.
 
 The table uses letter grade recovered from `sub_grade`; the aligned conformal
 group is stored separately. This prevents the score-quantile partition labels
@@ -254,31 +259,39 @@ from being misreported as credit grades.
 
 ## A39. Fixed-Allocation Bootstrap
 
-| Metric | Observed | Bootstrap mean | 2.5% | Median | 97.5% |
-|---|---:|---:|---:|---:|---:|
-| Realized return | `$179,327.59` | `$179,075.48` | `$162,706.17` | `$179,416.99` | `$193,924.74` |
-| Weighted default | `0.039375` | `0.039638` | `0.020869` | `0.039043` | `0.061742` |
-| Weighted miscoverage | `0.036875` | `0.037203` | `0.019358` | `0.036715` | `0.058812` |
-| $\Gamma_{\mathrm{CP}}$ | `0.176102` | `0.176026` | `0.137159` | `0.174808` | `0.224308` |
-| Endpoint budget | `0.258051` | `0.257942` | `0.217308` | `0.256762` | `0.308571` |
+| Resampling unit | Metric | Observed | 2.5% | 97.5% |
+|---|---|---:|---:|---:|
+| Month clusters | Realized return | `$179,327.59` | `$163,421.14` | `$193,551.65` |
+| Month clusters | Weighted default | `0.039375` | `0.020517` | `0.062622` |
+| Month clusters | Weighted miscoverage | `0.036875` | `0.018338` | `0.060084` |
+| Month clusters | $\Gamma_{\mathrm{CP}}$ | `0.176102` | `0.132145` | `0.230815` |
+| Month clusters | Endpoint budget | `0.258051` | `0.211996` | `0.314870` |
+| Funded loans | Realized return | `$179,327.59` | `$162,706.17` | `$193,924.74` |
+| Funded loans | Weighted default | `0.039375` | `0.020869` | `0.061742` |
+| Funded loans | Weighted miscoverage | `0.036875` | `0.019358` | `0.058812` |
+| Funded loans | $\Gamma_{\mathrm{CP}}$ | `0.176102` | `0.137159` | `0.224308` |
+| Funded loans | Endpoint budget | `0.258051` | `0.217308` | `0.308571` |
 
-: A39, 5,000 resamples with seed `20260709`. Source:
-`reports/crpto/tables/crpto_tableA39_calibration_selected_bootstrap.csv`.
+: A39, 5,000 fixed-allocation resamples per scheme with seed `20260709`.
+Month clusters are primary; funded-loan resampling is an independence
+sensitivity. Source: `crpto_tableA39_calibration_selected_bootstrap.csv`. The
+CSV also records bootstrap means and medians.
 
 ## A40. Matched Decision Audit
 
-| Policy | Expected objective | Realized return | Default | Miscoverage | Endpoint | Threshold |
+| Policy | Expected objective | Realized return | Default | Miscoverage | Endpoint | Cond. threshold |
 |---|---:|---:|---:|---:|---:|---:|
 | Selected 50/50 CRPTO | `$168,271.56` | `$179,327.59` | `0.039375` | `0.036875` | `0.258051` | `0.574279` |
 | More-conservative 75% blend | `$160,690.13` | `$172,939.50` | `0.035875` | `0.035875` | `0.200396` | `0.516624` |
 | Point-PD matched-$\tau$ | `$214,019.15` | `$196,369.14` | `0.118400` | `0.041900` | `0.921317` | `1.237545` |
 
 : A40 matched full-OOT audit. Source:
-`reports/crpto/tables/crpto_tableA40_calibration_selected_point_baseline.csv`.
+`crpto_tableA40_calibration_selected_point_baseline.csv`.
 
 Selected CRPTO pays `$17,041.55` (`8.678%`) relative to point PD. It reduces
 weighted default by `7.9025` percentage points, weighted miscoverage by
-`0.5025` percentage points, and the threshold by `66.3266` percentage points.
+`0.5025` percentage points, and the conditional threshold by `66.3266`
+percentage points.
 Its exact active funded-set quantities are
 $\Gamma_{\mathrm{CP}}=0.176102$,
 $\Gamma_{\mathrm{res}}=0.088051$,
@@ -349,7 +362,7 @@ historical intervals, and manifest are never overwritten.
 | Paper tables | `reports/crpto/tables/crpto_tableA35...A40_*` |
 
 The active run is
-`champion-reopen-2026-06-19__pool93__ijds-calibration-selected-simple90-v6`.
+`champion-reopen-2026-06-19__pool93__ijds-calibration-selected-endpoint28-v7`.
 The exact-alpha run is
 `champion-reopen-2026-06-19__pool93__ijds-exact-alpha-grid-v1`.
 
@@ -371,12 +384,13 @@ claim evolve without rewriting or silently reinterpreting frozen provenance.
 | Claim | Direct evidence | What is not claimed |
 |---|---|---|
 | Exact 90% replay | Reference endpoints match to `6.67e-16`; A35. | Independent tuning of every alpha sensitivity row. |
-| OOT-outcome-column-free policy ranking, conditional on the frozen recipe | A36 schema and selector audit. | A label-free conformal recipe, historically untouched OOT corpus, or preregistration. |
+| Outcome-free, assumption-free policy ranking, conditional on the frozen recipe | A36 physically separated outcomes, deterministic endpoint cap, cap-stability interval, and December replay. | A label-free conformal recipe, historically untouched OOT corpus, or preregistration. |
+| Independent calibration decision audit | December reselects the midpoint before outcomes are opened; default `0.145650`, miscoverage `0.124925`. | Selected-set conformal validity or a prospective deployment guarantee. |
 | Full-OOT return-risk trade-off | A37 and A40. | Causal effect or universal dominance. |
 | Funded-set accounting | Proposition A.1 and exact row-level allocation. | Nominal selected-set conformal coverage. |
 | Conditional Markov sensitivity | Corollary A.1 under weighted validity. | Deterministic risk cap or sharp tail guarantee. |
 | Composition transparency | A38 letter-grade reconciliation. | Legal fair-lending certification. |
-| Contribution stability | A39 fixed-allocation bootstrap. | Full pipeline uncertainty or model-selection confidence interval. |
+| Contribution stability | A39 month-cluster bootstrap with funded-loan sensitivity. | Full pipeline uncertainty or model-selection confidence interval. |
 | Reproducibility | Commands, run tags, hashes, and sync tests. | Cross-machine bit-identical model retraining. |
 
 The active result is intentionally narrow. Optimized OCE/CVaR, online or

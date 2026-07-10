@@ -12,7 +12,6 @@ import pandas as pd
 ROOT = Path(__file__).resolve().parents[2]
 sys.path.insert(0, str(ROOT))
 
-from scripts.validate_alpha_gamma_bound import _load_aligned_dataset  # noqa: E402
 from src.models.conformal_alpha_grid import alpha_interval_columns  # noqa: E402
 from src.optimization.certificate_semantics import (  # noqa: E402
     compute_funded_certificate_metrics,
@@ -30,26 +29,26 @@ from src.utils.script_helpers import parse_percent_series, resolve_repo_artifact
 
 
 def load_policy_panel(config: dict[str, Any], *, root: Path = ROOT) -> pd.DataFrame:
-    """Load aligned loans and the exact interval columns declared by config."""
+    """Load candidates and exact-alpha intervals under a strict ID contract."""
     source = config["source"]
     design = config["design"]
     execution = config["execution"]
-    interval_path = resolve_repo_artifact_path(source["conformal_intervals_path"], root=root)
-    aligned = _load_aligned_dataset(
-        conformal_intervals_path=str(interval_path),
-        max_candidates=0,
-        random_state=int(execution.get("random_seed", 42)),
-    )
+    candidate_value = str(source.get("candidate_path", "data/processed/test_fe.parquet"))
+    candidate_path = resolve_repo_artifact_path(candidate_value, root=root)
     exact_grid_value = str(source.get("exact_alpha_grid_path", "")).strip()
     if not exact_grid_value:
         raise ValueError("Active IJDS policy evaluation requires exact_alpha_grid_path.")
     exact_grid_path = resolve_repo_artifact_path(exact_grid_value, root=root)
     exact_alignment = align_candidate_intervals(
-        aligned,
+        pd.read_parquet(candidate_path),
         pd.read_parquet(exact_grid_path),
         max_candidates=0,
         random_state=int(execution.get("random_seed", 42)),
     )
+    if exact_alignment.mode != "id":
+        raise RuntimeError(
+            "Active IJDS policy evaluation requires one-to-one candidate/exact-grid ID alignment."
+        )
     panel = exact_alignment.candidates.copy()
     exact = exact_alignment.intervals
     low_column, high_column = alpha_interval_columns(float(design["alpha"]))
@@ -61,14 +60,27 @@ def load_policy_panel(config: dict[str, Any], *, root: Path = ROOT) -> pd.DataFr
     panel["_pd_point"] = exact["y_pred"].to_numpy(dtype=float)
     panel["_pd_low"] = exact[low_column].to_numpy(dtype=float)
     panel["_pd_high"] = exact[high_column].to_numpy(dtype=float)
-    panel["_outcome"] = pd.to_numeric(panel["y_true"], errors="raise").astype(float)
+    exact_outcome = pd.to_numeric(exact["y_true"], errors="raise").to_numpy(dtype=float)
+    if "default_flag" in panel.columns:
+        candidate_outcome = pd.to_numeric(panel["default_flag"], errors="raise").to_numpy(
+            dtype=float
+        )
+        if not np.array_equal(candidate_outcome, exact_outcome):
+            raise ValueError("Candidate default_flag does not match exact-grid y_true by ID.")
+    panel["_outcome"] = exact_outcome
     panel["_loan_amount"] = pd.to_numeric(panel["loan_amnt"], errors="coerce").fillna(1.0)
     panel["_int_rate"] = parse_percent_series(panel["int_rate"])
     panel["_period"] = temporal_period_labels(
         panel["issue_d"],
         combine_years_from=int(design["combine_years_from"]),
     )
-    panel.attrs["exact_alpha_grid_path"] = str(exact_grid_path)
+    panel.attrs.update(
+        {
+            "candidate_path": str(candidate_path),
+            "exact_alpha_grid_path": str(exact_grid_path),
+            "alignment_mode": exact_alignment.mode,
+        }
+    )
     return panel
 
 

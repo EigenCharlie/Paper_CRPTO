@@ -11,7 +11,7 @@ import pytest
 
 REPO = Path(__file__).resolve().parents[1]
 TABLES = REPO / "reports/crpto/tables"
-RUN_TAG = "champion-reopen-2026-06-19__pool93__ijds-calibration-selected-simple90-v6"
+RUN_TAG = "champion-reopen-2026-06-19__pool93__ijds-calibration-selected-endpoint28-v7"
 GOVERNANCE = (
     REPO / "models/experiments/champion_reopen" / RUN_TAG / "portfolio/ijds_policy_governance.json"
 )
@@ -63,8 +63,26 @@ def test_active_governance_locks_simple_policy_and_selector() -> None:
     assert selector["n_total"] == 9
     assert selector["n_eligible"] == 5
     assert selector["outcome_columns_used"] == 0
+    assert selector["statistical_assumption_columns_used"] == 0
+    assert selector["endpoint_budget_cap"] == pytest.approx(0.28)
     assert selector["selector_forbidden_columns_present"] == []
     assert selector["calibration_metadata"]["target_alpha"] == pytest.approx(0.10)
+    assert selector["calibration_metadata"]["selection_period"] == "2017-11"
+    assert selector["calibration_metadata"]["selection_rows"] == 14943
+    assert selector["calibration_metadata"]["audit_period"] == "2017-12"
+    assert selector["calibration_metadata"]["audit_rows"] == 20695
+    assert selector["calibration_metadata"]["outcomes_isolated_until_post_selection_audit"] is True
+    assert "_outcome" not in selector["selector_input_columns"]
+    assert selector["endpoint_cap_stability"]["cap_lower_inclusive"] == pytest.approx(
+        0.25903604939435104
+    )
+    assert selector["endpoint_cap_stability"]["cap_upper_exclusive"] == pytest.approx(
+        0.29049078888716334
+    )
+    assert selector["calibration_audit"]["same_policy_selected"] is True
+    assert selector["calibration_audit"]["selected_policy"][
+        "weighted_miscoverage"
+    ] == pytest.approx(0.124925)
     assert payload["exact_alpha_reference_replay"]["pass"] is True
 
 
@@ -117,6 +135,9 @@ def test_active_manuscript_surfaces_share_numeric_anchors() -> None:
         f"{contrast['realized_return']:,.2f}",
         f"{100 * contrast['selected_return_cost_pct']:.3f}",
         f"{100 * contrast['selected_default_reduction']:.4f}",
+        "0.28",
+        "0.124925",
+        "$163,421.14",
     )
     for surface in SURFACES:
         text = _surface_text(surface)

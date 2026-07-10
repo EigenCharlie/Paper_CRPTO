@@ -47,15 +47,15 @@ stable repository contract.
 2. `src/optimization/policy_evaluation.py` uses point PD in the economic
    objective and an effective PD only in the risk constraint.
 3. `src/optimization/policy_selection.py` defines the nine-cell round-number
-   grid and rejects selectors containing outcome-derived columns.
-4. `scripts/experiments/ijds_policy_support.py` owns shared alignment, solving,
-   and evaluation for the active challengers.
+   grid, deterministic endpoint screen, and cap-stability interval.
+4. `scripts/experiments/ijds_policy_support.py` aligns candidate and exact-alpha
+   rows directly by ID and owns shared solving/evaluation.
 5. `scripts/build_ijds_calibration_selected_evidence.py` materializes A35-A40
    from versioned experiment outputs. Manuscript rendering does not solve or
    retune portfolios.
 
 The active run is
-`champion-reopen-2026-06-19__pool93__ijds-calibration-selected-simple90-v6`.
+`champion-reopen-2026-06-19__pool93__ijds-calibration-selected-endpoint28-v7`.
 The exact-alpha run is
 `champion-reopen-2026-06-19__pool93__ijds-exact-alpha-grid-v1`.
 
@@ -64,7 +64,11 @@ The exact-alpha run is
 - One active policy family: `q=(p+u)/2`, `tau=0.17`, `gamma=0.50`.
 - Point PD remains the economic objective; uncertainty is a feasibility
   guardrail.
-- One deterministic 3x3 calibration selector, with an outcome-column denylist.
+- One deterministic 3x3 November selector, with outcomes isolated from a
+  12-column input frame, `B_u<=0.28`, and an outcome-free December replay.
+- One independent December decision audit that records the funded-set coverage
+  miss instead of converting it into an unsupported guarantee.
+- Month-cluster bootstrap is primary; loan-level resampling is a sensitivity.
 - One A35-A40 active evidence bundle.
 - One body, one supplement, and one official submission TeX source.
 - No nested temporal selector, effective-PD objective branch, active cap/tail
@@ -94,9 +98,10 @@ interval grids and solves experiment portfolios.
 
 ## Compilation contract
 
-The official source first attempts `latexmk`. On the current Windows TinyTeX
-installation its `runscript.tlu` wrapper may fail, so the documented robust
-fallback is:
+The official build uses `latexmk`. On Windows it resolves TinyTeX's
+`latexmk.pl` and launches it with Perl, bypassing the defective
+`runscript.tlu` executable wrapper. If that payload is unavailable or fails,
+the robust fallback is:
 
 ```text
 pdflatex -> bibtex -> pdflatex -> pdflatex

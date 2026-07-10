@@ -35,10 +35,11 @@ the submission-shaped versions are written.
 - `submission/SCHOLARONE_FINAL_CHECKLIST.md`: final upload/proof checklist.
 
 The active paper has one method: exact 90% conformal replay, the midpoint
-guardrail `q=(p+u)/2`, `tau=0.17`, and a nine-cell calibration selector. A35 is
-the exact-alpha audit, A36 is the selector, A37 is temporal evaluation, A38 is
-letter-grade composition, A39 is the fixed-allocation bootstrap, and A40 is the
-matched point-PD comparison. OCE/CVaR, SPO+, satisficing, online-style checks,
+guardrail `q=(p+u)/2`, `tau=0.17`, and a nine-cell November selector under
+`B_u<=0.28`. A35 is the exact-alpha audit, A36 is the split selector/December
+audit, A37 is temporal evaluation, A38 is letter-grade composition, A39 is the
+month-cluster bootstrap with loan-level sensitivity, and A40 is the matched
+point-PD comparison. OCE/CVaR, SPO+, satisficing, online-style checks,
 and Prosper/Freddie replications remain supplement diagnostics; they do not
 select or redefine the midpoint policy. Prospective validation, causal variants,
 live recalibration, production, and package tracks remain outside the claim.

@@ -36,7 +36,8 @@ primary_target:
     - "Freeze a release tag and reproducibility bundle after anonymity decision."
   current_paper_scope:
     include:
-      - "Exact 90% conformal replay plus a calibration-selected 3x3 linear policy grid as the active IJDS body claim."
+      - "Exact 90% conformal replay plus a November-selected 3x3 linear policy grid under deterministic endpoint cap B_u<=0.28."
+      - "Outcome-free December selector replay and independent decision audit showing that policy stability is not selected-set coverage validity."
       - "One interpretable policy, q=(p+u)/2 with tau=0.17, and a matched point-PD comparator."
       - "Frozen upstream PD/calibration/conformal chain and historical pool93 frontier retained only as provenance."
       - "A3--A34 as supporting diagnostics and A35--A40 as the active exact-alpha/selector/evaluation bundle."
@@ -70,7 +71,7 @@ journal_strengthening_pack:
       requires_new_run: false
     exact_alpha_calibration_selected_policy:
       status: include_body_and_supplement
-      role: "Active IJDS evidence: exact alpha replay, nine-policy calibration selector, temporal/funded-set audits, bootstrap, and matched comparisons."
+      role: "Active IJDS evidence: exact alpha replay, split nine-policy selector/audit, temporal/funded-set audits, month-cluster bootstrap, and matched comparisons."
       artifacts:
         - reports/crpto/tables/crpto_tableA35_exact_alpha_grid.csv
         - reports/crpto/tables/crpto_tableA36_calibration_policy_selector.csv
@@ -78,7 +79,7 @@ journal_strengthening_pack:
         - reports/crpto/tables/crpto_tableA38_calibration_selected_grade_audit.csv
         - reports/crpto/tables/crpto_tableA39_calibration_selected_bootstrap.csv
         - reports/crpto/tables/crpto_tableA40_calibration_selected_point_baseline.csv
-        - models/experiments/champion_reopen/champion-reopen-2026-06-19__pool93__ijds-calibration-selected-simple90-v6/portfolio/ijds_policy_governance.json
+        - models/experiments/champion_reopen/champion-reopen-2026-06-19__pool93__ijds-calibration-selected-endpoint28-v7/portfolio/ijds_policy_governance.json
       requires_new_run: false
     matched_point_pd_baseline:
       status: include_body_and_supplement
@@ -86,7 +87,7 @@ journal_strengthening_pack:
       artifacts:
         - reports/crpto/tables/crpto_tableA40_calibration_selected_point_baseline.csv
         - reports/crpto/tables/crpto_tableA40_calibration_selected_point_baseline.tex
-        - models/experiments/champion_reopen/champion-reopen-2026-06-19__pool93__ijds-calibration-selected-simple90-v6/portfolio/ijds_policy_governance.json
+        - models/experiments/champion_reopen/champion-reopen-2026-06-19__pool93__ijds-calibration-selected-endpoint28-v7/portfolio/ijds_policy_governance.json
       requires_new_run: false
     robust_satisficing_margins:
       status: include_supplement_or_short_body

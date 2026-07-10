@@ -19,14 +19,17 @@ assumptions.
 ## Active IJDS Policy
 
 - Run tag:
-  `champion-reopen-2026-06-19__pool93__ijds-calibration-selected-simple90-v6`
+  `champion-reopen-2026-06-19__pool93__ijds-calibration-selected-endpoint28-v7`
 - Exact conformal replay: target `alpha=0.10`, frozen used alpha `0.095`.
 - Decision score: `q=(p+u)/2`.
 - Risk tolerance: `tau=0.17`.
 - Objective: point-PD expected net return; conformal `q` is the risk guardrail.
-- Selector: nine round-number policies on the temporal calibration holdout;
-  five satisfy full budget, effective-PD, and `0.60` threshold screens; no
-  outcome-derived selector columns.
+- Selector: nine round-number policies on November 2017; five satisfy full
+  budget, effective-PD, and deterministic `B_u<=0.28` screens. Outcomes are
+  stored separately from the 12-column selector frame.
+- Audit: an outcome-free December replay selects the same policy; opening
+  outcomes afterward gives weighted default `0.145650` and miscoverage
+  `0.124925`, so stability is not reported as selected-set validity.
 - Full OOT: 276,869 candidates, 308 funded, `$179,327.59` realized return,
   `0.039375` weighted default, `0.036875` weighted miscoverage.
 - `Gamma_CP=0.176102`, `Gamma_residual=0.088051`, endpoint `0.258051`.

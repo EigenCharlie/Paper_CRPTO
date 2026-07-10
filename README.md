@@ -8,15 +8,16 @@ Pipeline de investigación y libro Quarto que acompañan el paper **CRPTO**, una
 
 | Campo | Valor |
 | --- | --- |
-| Run tag | `champion-reopen-2026-06-19__pool93__ijds-calibration-selected-simple90-v6` |
+| Run tag | `champion-reopen-2026-06-19__pool93__ijds-calibration-selected-endpoint28-v7` |
 | Conformal | replay exacto al `90%` (`alpha=0.10`, used `0.095`) |
 | Política | `q=(p+u)/2`, `tau=0.17`; PD puntual en el objetivo y `q` en el guardrail |
-| Selector | grilla redonda `3x3` en calibración; `5/9` elegibles; sin outcomes OOT |
+| Selector | grilla `3x3` en noviembre; cap determinista `B_u<=0.28`; misma política en auditoría de diciembre |
 | Retorno realizado | **$179,327.59** |
 | Default / miscoverage ponderados | `0.039375 / 0.036875` |
 | `Gamma_CP / Gamma_residual` | `0.176102 / 0.088051` |
 | Endpoint / contabilidad observada / umbral condicional | `0.258051 / 0.294926 / 0.574279` |
 | Baseline A40 | `$196,369.14`; costo de retorno `8.678%`; reducción de default `7.9025` pp |
+| Auditoría pre-OOT | diciembre: default `0.145650`, miscoverage `0.124925`; estabilidad no implica cobertura seleccionada |
 
 Hashes SHA256 de los artefactos críticos están en [`EXTRACTION_MANIFEST.json`](EXTRACTION_MANIFEST.json). Verifica con `just validate-champion` o el skill `/crpto-validate-champion`.
 El rebaseline y la frontera pool93 anterior se conservan como procedencia

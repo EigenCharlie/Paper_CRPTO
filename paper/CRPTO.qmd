@@ -17,8 +17,9 @@ execute:
 CRPTO convierte una PD calibrada en una decision de portafolio auditable. La
 version IJDS activa reproduce exactamente el endpoint conformal al 90%, usa la
 regla simple `q=(p+u)/2` con `tau=0.17`, y selecciona esa politica dentro de una
-grilla redonda `3x3` usando el holdout temporal de calibracion. El ranking final
-no lee outcomes OOT.
+grilla `3x3` en noviembre bajo `B_u<=0.28`. Un replay outcome-free en diciembre
+elige la misma politica; al abrir outcomes, la miscoverage `0.124925` muestra
+que estabilidad de seleccion no equivale a cobertura del funded set.
 
 En 276,869 prestamos OOT, la politica financia 308 prestamos y obtiene
 `$179,327.59` sobre `$1M`, con default ponderado `0.039375`, miscoverage
@@ -38,10 +39,10 @@ los periodos donde point-PD domina; no afirma superioridad universal.
 # Evidencia activa
 
 - A35: replay exacto y saturacion por alpha.
-- A36: selector de calibracion de nueve politicas.
+- A36: selector de noviembre, estabilidad del cap y auditoria de diciembre.
 - A37: evaluacion OOT total y temporal.
 - A38: composicion por grado de credito.
-- A39: bootstrap de asignacion fija.
+- A39: bootstrap por mes de originacion y sensibilidad por prestamo.
 - A40: politica seleccionada, blend conservador y baseline point-PD.
 
 La gobernanza vive en

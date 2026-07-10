@@ -15,6 +15,7 @@ def _allocations() -> pd.DataFrame:
     return pd.DataFrame(
         {
             "role": ["calibration_selected", "calibration_selected", "point_pd_matched_tau"],
+            "issue_d": ["2020-01-01", "2020-02-01", "2020-01-01"],
             "grade": ["A", "B", "A"],
             "funded_exposure": [100.0, 100.0, 200.0],
             "funded_weight": [0.5, 0.5, 1.0],
@@ -84,7 +85,10 @@ def test_bootstrap_is_deterministic_and_uses_official_observed_values() -> None:
     second = build_bootstrap_table(_allocations(), _evaluation(), n_draws=100, seed=7)
 
     pd.testing.assert_frame_equal(first, second)
-    observed = first.set_index("metric")["observed"]
+    assert set(first["bootstrap_unit"]) == {"origination_month", "funded_loan"}
+    observed = first.loc[first["bootstrap_unit"].eq("origination_month")].set_index("metric")[
+        "observed"
+    ]
     assert observed["realized_return"] == -35.0
     assert observed["Gamma_CP"] == 0.35
 

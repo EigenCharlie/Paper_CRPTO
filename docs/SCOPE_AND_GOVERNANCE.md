@@ -30,21 +30,24 @@ CRPTO does not cover:
 The current IJDS body point is the simple calibration-selected 90% guardrail:
 
 - run tag:
-  `champion-reopen-2026-06-19__pool93__ijds-calibration-selected-simple90-v6`
+  `champion-reopen-2026-06-19__pool93__ijds-calibration-selected-endpoint28-v7`
 - exact conformal replay: target `alpha=0.10`, frozen used alpha `0.095`;
 - policy: `q=(p+u)/2`, `tau=0.17`, with point PD in the economic objective
   and conformal `q` in the risk constraint;
-- selector: nine round-number policies on the temporal calibration holdout,
-  five eligible under the `0.60` endpoint-plus-Markov screen, no
-  outcome-derived selector columns;
+- selector: nine round-number policies on November 2017, five eligible under
+  deterministic full-budget, effective-PD, and `B_u<=0.28` screens; no outcome
+  or assumption-conditional selector columns;
+- independent audit: the outcome-free December replay selects the same policy;
+  after outcomes are opened, weighted default is `0.145650` and miscoverage is
+  `0.124925`, explicitly ruling out a selected-set validity claim;
 - realized return: `$179,327.59`;
 - weighted default and miscoverage: `0.039375` and `0.036875`;
 - `Gamma_CP=0.176102`, `Gamma_residual=0.088051`;
 - endpoint budget `0.258051`; assumption-conditional Markov threshold
   `0.574279`;
-- paper artifacts: A35 exact-alpha audit, A36 calibration selector, A37
-  temporal evaluation, A38 grade audit, A39 bootstrap, and A40 matched
-  comparisons.
+- paper artifacts: A35 exact-alpha audit, A36 split selector/audit, A37
+  temporal evaluation, A38 grade audit, A39 month-cluster bootstrap with
+  loan-level sensitivity, and A40 matched comparisons.
 
 The selector is outcome-free with respect to OOT policy ranking, but earlier
 project development inspected the static OOT corpus. The paper must describe

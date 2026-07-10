@@ -85,7 +85,7 @@ ijds-exact-alpha:
     uv run python scripts/experiments/run_ijds_exact_alpha_grid_challenger.py --config configs/experiments/champion_reopen_ijds_exact_alpha_grid_v1.yaml
 
 ijds-policy-challenger:
-    uv run python scripts/experiments/run_ijds_calibration_selected_policy_challenger.py --config configs/experiments/champion_reopen_ijds_calibration_selected_simple90_v6.yaml
+    uv run python scripts/experiments/run_ijds_calibration_selected_policy_challenger.py --config configs/experiments/champion_reopen_ijds_calibration_selected_endpoint28_v7.yaml
 
 ijds-active-replay: ijds-exact-alpha ijds-policy-challenger ijds-evidence
 

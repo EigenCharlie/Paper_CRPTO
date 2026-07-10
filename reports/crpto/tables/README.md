@@ -15,12 +15,12 @@ those is cited in the paper, the supplement, or a book chapter (see
 | `A12`–`A21`, `A21b` | Tail risk, satisficing, dependence, regret-auditability, cluster/concentration bounds. |
 | `A22`–`A24` | Tail-constrained re-opt, multi-distribution, online ACI diagnostics. |
 | `A25`–`A34` | External multidataset replication (Prosper/Freddie) and cross-dataset price of robustness. |
-| `A35` | Pool93 IJDS finite-grid return-bound frontier and final claim endpoints. |
-| `A36` | Pool93 body-point funded-set grade audit regenerated from the selected allocation. |
-| `A37` | Pool93 body-point tail-risk repricing regenerated from the selected allocation. |
-| `A38` | Pool93 body-point cluster-bound audit regenerated from the selected allocation. |
-| `A39` | Pool93 body-point fixed-allocation bootstrap metrics regenerated from the selected allocation. |
-| `A40` | Matched point-PD baseline on the same candidate universe and operating constraints. |
+| `A35` | Active exact-alpha replay, coverage, width, and endpoint-saturation audit. |
+| `A36` | Active November selector, endpoint-cap stability, and December outcome-free replay. |
+| `A37` | Active full-OOT and temporal fixed-policy evaluation. |
+| `A38` | Active selected funded-set letter-grade composition. |
+| `A39` | Active month-cluster bootstrap with funded-loan sensitivity. |
+| `A40` | Active selected, conservative, and matched point-PD decision comparison. |
 
 ## Legacy / superseded (retained for provenance, not paper-facing)
 
@@ -31,9 +31,10 @@ Do not cite them in new prose; prefer the active set above.
 The frozen Lending Club `price_of_robustness=-10.56%` fields in table 0, table
 1 and A2 are retained only for provenance. Their historical "nonrobust"
 baseline inherited a conformal endpoint constraint and was not a point-PD
-comparator. The active IJDS claim uses A35's policy-aware frontier together with
-the matched A40 decision audit; see
-`docs/research/pool93_certificate_semantics_v2_2026-07-09.md`.
+comparator. Protected historical pool93 exports retain their explicit
+`*_pool93_*` filenames; they are provenance, not the active A35--A40 bundle.
+See `docs/research/active_claims_2026-07-04.md` for the active contract and
+`docs/research/pool93_certificate_semantics_v2_2026-07-09.md` for history.
 
 - `crpto_table1_robustness_summary`
 - `crpto_table2_conformal_variant_benchmark`

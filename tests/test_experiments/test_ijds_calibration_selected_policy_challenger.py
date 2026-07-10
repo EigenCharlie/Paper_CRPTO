@@ -7,6 +7,7 @@ from scripts.experiments.run_ijds_calibration_selected_policy_challenger import 
     FORBIDDEN_SELECTOR_COLUMNS,
     _funded_allocation_frame,
     _measure_ex_ante_solution,
+    _selector_input_frame,
 )
 from src.optimization.policy import PolicyMode
 from src.optimization.policy_evaluation import PolicyAllocationResult
@@ -46,6 +47,30 @@ def test_ex_ante_measurement_contains_no_outcome_fields() -> None:
     assert not FORBIDDEN_SELECTOR_COLUMNS.intersection(record)
     assert record["expected_objective"] == 10.0
     assert record["weighted_pd_effective"] == 0.275
+
+
+def test_selector_input_frame_drops_all_outcomes() -> None:
+    frame = pd.DataFrame(
+        {
+            "id": ["a"],
+            "loan_amnt": [100.0],
+            "purpose": ["credit_card"],
+            "issue_d": ["2017-11-01"],
+            "default_flag": [1],
+            "y_true": [1],
+            "loan_status": ["Charged Off"],
+            "_outcome": [1.0],
+            "_pd_point": [0.1],
+            "_pd_low": [0.0],
+            "_pd_high": [0.3],
+            "_loan_amount": [100.0],
+            "_int_rate": [0.2],
+        }
+    )
+
+    selector = _selector_input_frame(frame)
+
+    assert not {"default_flag", "y_true", "loan_status", "_outcome"}.intersection(selector.columns)
 
 
 def test_funded_allocation_frame_reconciles_exposure_and_return() -> None:

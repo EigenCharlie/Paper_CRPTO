@@ -53,7 +53,7 @@ SURFACES = (
             *COMMON_CLAIM_TOKENS,
             "claim ijds activo",
             "q=(p+u)/2",
-            "grilla redonda 3x3",
+            "cap determinista",
         ),
         forbidden=("## champion congelado",),
     ),

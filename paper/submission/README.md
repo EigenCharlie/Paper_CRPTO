@@ -11,9 +11,12 @@ submission materials. The synchronized scientific sources are:
 - `paper/submission/REPRODUCIBILITY_PACKAGE.md`: data/code package plan.
 
 The active manuscript has one policy: exact 90% conformal replay,
-`q=(p+u)/2`, `tau=0.17`, and a nine-cell calibration selector. A35--A40 are the
-active evidence bundle. Keep body, supplement, TeX, and governance numerically
-aligned with `tests/test_ijds_active_claim_sync.py`.
+`q=(p+u)/2`, `tau=0.17`, and a nine-cell November selector under
+`B_u<=0.28`. An outcome-free December replay and post-selection audit are part
+of A36; the audit deliberately records that stable policy identity does not
+imply selected-set coverage. A35--A40 are the active evidence bundle. Keep
+body, supplement, TeX, and governance numerically aligned with
+`tests/test_ijds_active_claim_sync.py`.
 
 ## Preview
 
@@ -48,9 +51,10 @@ if (-not $env:WINDIR) { $env:WINDIR = $env:SystemRoot }
 latexmk -pdf -gg -interaction=nonstopmode CRPTO_ijds_submission.tex
 ```
 
-`latexmk` is preferred because it automates convergence. Some Windows TinyTeX
-installations fail in the wrapper even when `pdflatex`, BibTeX, and TeX Live are
-healthy. The robust fallback is:
+`latexmk` is preferred because it automates convergence. The repository build
+resolves TinyTeX's `latexmk.pl` and launches it with Perl on Windows, bypassing
+the defective `runscript.tlu` executable wrapper. If that payload is unavailable
+or fails, the robust fallback is:
 
 ```text
 pdflatex -> bibtex -> pdflatex -> pdflatex
@@ -78,7 +82,8 @@ if (-not $env:WINDIR) { $env:WINDIR = $env:SystemRoot }
 fmtutil-sys --byfmt pdflatex
 ```
 
-The repository wrapper runs `latexmk` first and falls back automatically:
+The repository wrapper runs the working `latexmk` payload first and falls back
+automatically:
 
 ```powershell
 just paper-submission-official

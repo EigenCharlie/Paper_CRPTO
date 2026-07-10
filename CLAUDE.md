@@ -41,22 +41,24 @@ tag aislado; **no regenera ni sobreescribe ningún artefacto upstream**.
 
 | Campo | Valor |
 | --- | --- |
-| Run tag | `champion-reopen-2026-06-19__pool93__ijds-calibration-selected-simple90-v6` |
+| Run tag | `champion-reopen-2026-06-19__pool93__ijds-calibration-selected-endpoint28-v7` |
 | Conformal | exact replay at target `alpha=0.10` (frozen used alpha `0.095`) |
 | Policy | `q=(p+u)/2`, `tau=0.17`, point-PD economic objective |
-| Selector | 9 round-number policies on the temporal calibration holdout; 5 eligible; no outcome-derived selector columns |
+| Selector | 9 policies on Nov 2017; deterministic `B_u<=0.28`; 5 eligible; same policy in outcome-free Dec replay |
 | Realized return | `$179,327.59` on a `$1M` budget |
 | Weighted default / miscoverage | `0.039375 / 0.036875` |
 | Gamma_CP / Gamma_residual | `0.176102 / 0.088051` |
 | Endpoint / Markov threshold | `0.258051 / 0.574279` |
 | Matched point-PD A40 | return cost `8.678%`; default reduction `7.9025` pp; threshold reduction `66.3266` pp |
-| Evidence | exact alpha A35 + calibration selector A36 + temporal/funded-set/baseline A37--A40 |
+| Evidence | exact alpha A35 + split selector/audit A36 + temporal/funded-set/baseline A37--A40 |
 
 The exact policy-facing quantities come from
 `models/experiments/champion_reopen/<run_tag>/portfolio/ijds_policy_governance.json`.
-The primary claim is the simple calibration-selected guardrail and its exact
-funded-set audit. Markov remains an assumption-conditional sensitivity, not the
-headline novelty.
+The primary claim is the simple calibration-selected guardrail, deterministic
+endpoint screen, independent December audit, and exact funded-set accounting.
+December miscoverage `0.124925` documents that stable selection is not
+selected-set validity. Markov remains an assumption-conditional sensitivity,
+not a selector or headline novelty.
 
 **Cadena upstream congelada (histórica; su retorno es el return floor declarado del pool93):**
 

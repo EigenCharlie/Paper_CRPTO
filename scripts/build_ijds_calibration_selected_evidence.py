@@ -17,7 +17,7 @@ sys.path.insert(0, str(ROOT))
 from src.optimization.policy_selection import policy_eligibility_mask  # noqa: E402
 from src.utils.script_helpers import load_json, write_json, write_table  # noqa: E402
 
-RUN_TAG = "champion-reopen-2026-06-19__pool93__ijds-calibration-selected-simple90-v6"
+RUN_TAG = "champion-reopen-2026-06-19__pool93__ijds-calibration-selected-endpoint28-v7"
 EXACT_ALPHA_TAG = "champion-reopen-2026-06-19__pool93__ijds-exact-alpha-grid-v1"
 MODEL_DIR = ROOT / "models/experiments/champion_reopen" / RUN_TAG / "portfolio"
 DATA_DIR = ROOT / "data/processed/experiments/champion_reopen" / RUN_TAG / "portfolio"
@@ -60,21 +60,58 @@ def build_alpha_table(summary: dict[str, Any]) -> pd.DataFrame:
     ]
 
 
-def build_selector_table(grid: pd.DataFrame, summary: dict[str, Any]) -> pd.DataFrame:
+def build_selector_table(
+    grid: pd.DataFrame,
+    audit_grid: pd.DataFrame,
+    summary: dict[str, Any],
+) -> pd.DataFrame:
     selected_id = str(summary["selected_policy"]["candidate_id"])
-    cap = float(summary["design"]["markov_threshold_cap"])
+    audit_selected_id = str(summary["calibration_audit"]["outcome_free_selected_candidate_id"])
+    cap = float(summary["design"]["endpoint_budget_cap"])
     output = grid.copy()
     output["eligible"] = policy_eligibility_mask(
         output,
-        markov_threshold_cap=cap,
+        endpoint_budget_cap=cap,
         budget=float(summary["design"]["budget"]),
         min_budget_utilization=float(summary["design"]["selection_min_budget_utilization"]),
     )
     output["selected"] = output["candidate_id"].astype(str).eq(selected_id)
+    audit = audit_grid.copy()
+    audit["audit_eligible"] = policy_eligibility_mask(
+        audit,
+        endpoint_budget_cap=cap,
+        budget=float(summary["design"]["budget"]),
+        min_budget_utilization=float(summary["design"]["selection_min_budget_utilization"]),
+    )
+    audit["audit_selected"] = audit["candidate_id"].astype(str).eq(audit_selected_id)
+    audit = audit.rename(
+        columns={
+            "expected_objective": "audit_expected_objective",
+            "n_funded": "audit_n_funded",
+            "endpoint_budget": "audit_endpoint_budget",
+        }
+    )
+    output = output.merge(
+        audit[
+            [
+                "candidate_id",
+                "audit_selected",
+                "audit_eligible",
+                "audit_expected_objective",
+                "audit_n_funded",
+                "audit_endpoint_budget",
+            ]
+        ],
+        on="candidate_id",
+        how="left",
+        validate="one_to_one",
+    )
     return output[
         [
             "selected",
             "eligible",
+            "audit_selected",
+            "audit_eligible",
             "candidate_id",
             "risk_tolerance",
             "gamma",
@@ -83,7 +120,9 @@ def build_selector_table(grid: pd.DataFrame, summary: dict[str, Any]) -> pd.Data
             "weighted_pd_point",
             "weighted_pd_effective",
             "endpoint_budget",
-            "markov_loss_threshold",
+            "audit_expected_objective",
+            "audit_n_funded",
+            "audit_endpoint_budget",
         ]
     ].sort_values(
         ["selected", "eligible", "expected_objective"],
@@ -159,6 +198,34 @@ def _bootstrap_snapshot(
     }
 
 
+def _bootstrap_summary_rows(
+    draw_frame: pd.DataFrame,
+    observed: dict[str, float],
+    *,
+    bootstrap_unit: str,
+    n_units: int,
+    n_draws: int,
+    seed: int,
+    note: str,
+) -> list[dict[str, Any]]:
+    return [
+        {
+            "bootstrap_unit": bootstrap_unit,
+            "metric": metric,
+            "observed": observed[metric],
+            "boot_mean": float(draw_frame[metric].mean()),
+            "boot_p025": float(draw_frame[metric].quantile(0.025)),
+            "boot_p50": float(draw_frame[metric].quantile(0.50)),
+            "boot_p975": float(draw_frame[metric].quantile(0.975)),
+            "n_units": n_units,
+            "n_draws": n_draws,
+            "seed": seed,
+            "note": note,
+        }
+        for metric in draw_frame.columns
+    ]
+
+
 def build_bootstrap_table(
     allocations: pd.DataFrame,
     evaluation: pd.DataFrame,
@@ -196,10 +263,10 @@ def build_bootstrap_table(
             "Funded allocations do not reconcile to the full-OOT evaluation: "
             + ", ".join(mismatches)
         )
-    rng = np.random.default_rng(seed)
-    draws = [
+    loan_rng = np.random.default_rng(seed)
+    loan_draws = [
         _bootstrap_snapshot(
-            selected.iloc[rng.integers(0, len(selected), size=len(selected))].reset_index(
+            selected.iloc[loan_rng.integers(0, len(selected), size=len(selected))].reset_index(
                 drop=True
             ),
             total_exposure=total_exposure,
@@ -207,24 +274,53 @@ def build_bootstrap_table(
         )
         for _ in range(n_draws)
     ]
-    draw_frame = pd.DataFrame(draws)
-    note = "Fixed funded-loan contribution bootstrap; model, intervals, selector, and solver are not resampled."
-    return pd.DataFrame(
-        [
-            {
-                "metric": metric,
-                "observed": observed[metric],
-                "boot_mean": float(draw_frame[metric].mean()),
-                "boot_p025": float(draw_frame[metric].quantile(0.025)),
-                "boot_p50": float(draw_frame[metric].quantile(0.50)),
-                "boot_p975": float(draw_frame[metric].quantile(0.975)),
-                "n_draws": n_draws,
-                "seed": seed,
-                "note": note,
-            }
-            for metric in draw_frame.columns
-        ]
+    issue_month = pd.to_datetime(selected["issue_d"], errors="raise").dt.to_period("M")
+    month_groups = [
+        selected.loc[issue_month.eq(month)].reset_index(drop=True)
+        for month in sorted(issue_month.unique())
+    ]
+    month_rng = np.random.default_rng(seed)
+    month_draws = [
+        _bootstrap_snapshot(
+            pd.concat(
+                [
+                    month_groups[index]
+                    for index in month_rng.integers(0, len(month_groups), len(month_groups))
+                ],
+                ignore_index=True,
+            ),
+            total_exposure=total_exposure,
+            lgd=lgd,
+        )
+        for _ in range(n_draws)
+    ]
+    rows = _bootstrap_summary_rows(
+        pd.DataFrame(month_draws),
+        observed,
+        bootstrap_unit="origination_month",
+        n_units=len(month_groups),
+        n_draws=n_draws,
+        seed=seed,
+        note=(
+            "Fixed-allocation origination-month cluster bootstrap, renormalized to the "
+            "$1M budget; model, intervals, selector, and solver are not resampled."
+        ),
     )
+    rows.extend(
+        _bootstrap_summary_rows(
+            pd.DataFrame(loan_draws),
+            observed,
+            bootstrap_unit="funded_loan",
+            n_units=len(selected),
+            n_draws=n_draws,
+            seed=seed,
+            note=(
+                "Fixed funded-loan contribution bootstrap; model, intervals, selector, "
+                "and solver are not resampled."
+            ),
+        )
+    )
+    return pd.DataFrame(rows)
 
 
 def build_baseline_table(evaluation: pd.DataFrame) -> pd.DataFrame:
@@ -260,6 +356,35 @@ def build_baseline_table(evaluation: pd.DataFrame) -> pd.DataFrame:
     ]
 
 
+def _compact_calibration_audit(summary: dict[str, Any]) -> dict[str, Any]:
+    audit = summary["calibration_audit"]
+    rows = {str(row["role"]): row for row in audit["policy_evaluations"]}
+
+    def _policy(role: str) -> dict[str, Any]:
+        row = rows[role]
+        return {
+            "n_funded": int(row["n_funded"]),
+            "realized_return": float(row["realized_return"]),
+            "weighted_default_rate": float(row["weighted_outcome"]),
+            "weighted_miscoverage": float(row["weighted_miscoverage"]),
+            "endpoint_budget": float(row["endpoint_budget"]),
+            "observed_accounting_bound": float(
+                row["endpoint_budget"] + row["weighted_miscoverage"]
+            ),
+        }
+
+    return {
+        "period": audit["period"],
+        "n_candidates": int(summary["calibration_metadata"]["audit_rows"]),
+        "outcome_free_selected_candidate_id": audit["outcome_free_selected_candidate_id"],
+        "same_policy_selected": bool(audit["same_policy_selected"]),
+        "selected_policy": _policy("calibration_selected"),
+        "more_conservative_policy": _policy("incumbent_linear"),
+        "matched_point_pd": _policy("point_pd_matched_tau"),
+        "claim_boundary": audit["claim_boundary"],
+    }
+
+
 def build_governance(
     summary: dict[str, Any],
     exact_summary: dict[str, Any],
@@ -273,9 +398,12 @@ def build_governance(
     point = evaluation.loc[
         evaluation["period"].eq("full_oot") & evaluation["role"].eq("point_pd_matched_tau")
     ].iloc[0]
-    return_boot = bootstrap.loc[bootstrap["metric"].eq("realized_return")].iloc[0]
+    return_boot = bootstrap.loc[
+        bootstrap["metric"].eq("realized_return")
+        & bootstrap["bootstrap_unit"].eq("origination_month")
+    ].iloc[0]
     return {
-        "schema_version": "2026-07-09.6",
+        "schema_version": "2026-07-09.7",
         "generated_at_utc": summary["generated_at_utc"],
         "run_tag": RUN_TAG,
         "status": "active_ijds_policy",
@@ -283,6 +411,9 @@ def build_governance(
             **summary["selection_audit"],
             "calibration_metadata": summary["calibration_metadata"],
             "selector_forbidden_columns_present": summary["selector_forbidden_columns_present"],
+            "selector_input_columns": summary["selector_input_columns"],
+            "endpoint_cap_stability": summary["endpoint_cap_stability"],
+            "calibration_audit": _compact_calibration_audit(summary),
         },
         "selected_policy": summary["selected_policy"],
         "full_oot": {
@@ -323,8 +454,10 @@ def build_governance(
             ),
         },
         "bootstrap_return_interval": {
+            "bootstrap_unit": "origination_month",
             "p025": float(return_boot["boot_p025"]),
             "p975": float(return_boot["boot_p975"]),
+            "n_units": int(return_boot["n_units"]),
             "n_draws": int(return_boot["n_draws"]),
         },
         "exact_alpha_reference_replay": exact_summary["reference_replay"],
@@ -349,13 +482,14 @@ def run(*, bootstrap_draws: int, bootstrap_seed: int) -> dict[str, Any]:
     summary = load_json(MODEL_DIR / "calibration_selected_policy_summary.json")
     exact_summary = load_json(EXACT_MODEL_DIR / "exact_alpha_grid_summary.json")
     grid = pd.read_parquet(DATA_DIR / "calibration_policy_selection_grid.parquet")
+    audit_grid = pd.read_parquet(DATA_DIR / "calibration_policy_audit_grid.parquet")
     evaluation = pd.read_csv(DATA_DIR / "calibration_selected_policy_oot_evaluation.csv")
     allocations = pd.read_parquet(
         DATA_DIR / "calibration_selected_policy_full_oot_allocations.parquet"
     )
     tables = {
         "alpha": build_alpha_table(exact_summary),
-        "selector": build_selector_table(grid, summary),
+        "selector": build_selector_table(grid, audit_grid, summary),
         "temporal": build_temporal_table(evaluation),
         "grade": build_grade_table(allocations),
         "bootstrap": build_bootstrap_table(
