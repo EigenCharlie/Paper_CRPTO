@@ -94,6 +94,21 @@ The contrast is retrospective and noncausal. The active empirical claim is a
 default--payoff trade-off plus a selected-set coverage failure, not economic
 dominance.
 
+## Development-to-OOT Reversal
+
+On the six 2012H2 policy-development months, guardrail minus the
+development-selected point policy is:
+
+- expected payoff: `-$72,701.67`;
+- realized payoff: `+$50,260.10`;
+- weighted default: `-0.063802`;
+- weighted miscoverage: `-0.007358`.
+
+In the locked primary window, realized payoff and miscoverage reverse while the
+default benefit remains. This reversal is active evidence that development
+success does not transport. It is not a hypothesis test over six independent
+months and cannot be used to reopen the policy grid.
+
 ## Mechanism
 
 - The guardrail places 61.1338% of primary capital in conformal score group 0;
@@ -137,8 +152,8 @@ certificate.
   `models/experiments/champion_reopen/<run>/execution_receipt.json`.
 - Summary SHA-256:
   `a9c3b3738b26096703fdd2d1b1e852f72b1516157317c65a92e1bb0abdfd693b`.
-- Publication outputs: `crpto_ijds_ms_table1`--`table3`, S1--S7, and
-  `crpto_ijds_ms_fig1`--`fig3`.
+- Publication outputs: `crpto_ijds_ms_table1`--`table4`, S1--S7, and
+  `crpto_ijds_ms_fig0`--`fig3`.
 - DVC pointers track both the versioned processed-data directory and the
   versioned model/results directory.
 

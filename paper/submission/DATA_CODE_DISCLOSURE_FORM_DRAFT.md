@@ -41,7 +41,7 @@ terms permit.
 | Lending Club 2007--2020Q3 snapshot | Main 540,121-row status-independent universe | Source instructions, schema, expected size/hash; raw file excluded from Git |
 | Versioned processed experiment directory | Candidate panels, predictions, monthly allocations and audits | DVC pointer and remote/archive |
 | Versioned model/results directory | Model, calibrator, conformal recipe, summary and receipt | DVC pointer and remote/archive |
-| Publication evidence | Tables 1--3, S1--S7, figures 1--3, evidence JSON | Git/reproducibility archive |
+| Publication evidence | Four compact main-table exports, S1--S7, four figures, 30-output evidence JSON | Git/reproducibility archive |
 
 Prosper, Freddie/Mendeley, Home Credit, and historical A1--A40 artifacts are
 not evidence for the active manuscript. They need not be part of the minimal

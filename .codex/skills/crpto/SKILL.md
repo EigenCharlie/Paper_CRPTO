@@ -75,8 +75,8 @@ It validates:
 - `execution_receipt.json`;
 - protocol tag and commit;
 - every versioned data/model artifact hash;
-- tables `crpto_ijds_ms_table1`--`table3` and S1--S7; and
-- figures `crpto_ijds_ms_fig1`--`fig3`.
+- tables `crpto_ijds_ms_table1`--`table4` and S1--S7; and
+- figures `crpto_ijds_ms_fig0`--`fig3`.
 
 Large active run directories are tracked by exact DVC pointers under
 `data/processed/experiments/champion_reopen/` and

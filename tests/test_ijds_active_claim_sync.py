@@ -192,6 +192,27 @@ def test_primary_contrast_is_sharp_sign_robust_and_noncausal() -> None:
     assert matched["causal_interpretation"] == "False"
 
 
+def test_development_success_reverses_out_of_time() -> None:
+    evidence = _json(EVIDENCE)
+    rows = _rows("crpto_ijds_ms_table4_development_to_oot")
+    development = next(row for row in rows if row["block"] == "policy_development_2012H2")
+    primary = next(row for row in rows if row["block"].startswith("locked_primary"))
+    headline = evidence["headline"]["development_to_oot"]
+
+    assert headline[0]["block"] == development["block"]
+    assert headline[1]["block"] == primary["block"]
+    assert float(development["expected_payoff_difference"]) == pytest.approx(-72701.673353)
+    assert float(development["realized_payoff_difference_lower"]) == pytest.approx(50260.10081)
+    assert float(development["weighted_default_difference_lower"]) == pytest.approx(-0.063802154704)
+    assert float(development["weighted_miscoverage_difference_lower"]) == pytest.approx(
+        -0.007358371111
+    )
+    assert float(primary["realized_payoff_difference_upper"]) < 0.0
+    assert float(primary["expected_payoff_difference"]) == pytest.approx(-240977.778623)
+    assert float(primary["weighted_default_difference_upper"]) < 0.0
+    assert float(primary["weighted_miscoverage_difference_lower"]) > 0.0
+
+
 def test_evidence_manifest_hashes_every_publication_output() -> None:
     evidence = _json(EVIDENCE)
     paths = {item["path"] for item in evidence["outputs"]}
@@ -199,6 +220,7 @@ def test_evidence_manifest_hashes_every_publication_output() -> None:
         "reports/crpto/tables/crpto_ijds_ms_table1_protocol.csv",
         "reports/crpto/tables/crpto_ijds_ms_table2_primary_policy.csv",
         "reports/crpto/tables/crpto_ijds_ms_table3_primary_contrast.csv",
+        "reports/crpto/tables/crpto_ijds_ms_table4_development_to_oot.csv",
         *{
             f"reports/crpto/tables/crpto_ijds_ms_tableS{i}_{suffix}.csv"
             for i, suffix in (
@@ -211,6 +233,7 @@ def test_evidence_manifest_hashes_every_publication_output() -> None:
                 (7, "monthly_contrast"),
             )
         },
+        "reports/crpto/figures/crpto_ijds_ms_fig0_pipeline.pdf",
         "reports/crpto/figures/crpto_ijds_ms_fig1_timeline.pdf",
         "reports/crpto/figures/crpto_ijds_ms_fig2_monthly.pdf",
         "reports/crpto/figures/crpto_ijds_ms_fig3_transport.pdf",
@@ -232,17 +255,79 @@ def test_active_manuscript_surfaces_share_numeric_and_narrative_anchors() -> Non
         "0.046275",
         "0.008822",
         "0.029850",
+        "$50,260.10",
+        "$72,701.67",
         "$58,040",
         "$322,703.79",
         "0.611338",
         "within-group",
         "standardized payoff",
         "latent",
+        "development-to-oot",
     )
     for surface in SURFACES:
         text = _normalize(surface.read_text(encoding="utf-8"))
         missing = [_normalize(anchor) for anchor in anchors if _normalize(anchor) not in text]
         assert not missing, f"{surface.name} missing active anchors: {missing}"
+
+
+def test_body_sources_retain_recovered_ijds_argument() -> None:
+    anchors = (
+        "closest-work boundary",
+        "identification and theory",
+        "development success does not transport",
+        "managerial audit card",
+    )
+    for surface in (SURFACES[0], SURFACES[2]):
+        text = _normalize(surface.read_text(encoding="utf-8"))
+        missing = [_normalize(anchor) for anchor in anchors if _normalize(anchor) not in text]
+        assert not missing, f"{surface.name} missing recovered argument: {missing}"
+
+
+def test_body_and_official_share_section_architecture() -> None:
+    sections = (
+        "Introduction",
+        "Related Work",
+        "Data and Locked Evaluation Design",
+        "Method",
+        "Identification and Theory",
+        "Results",
+        "Discussion",
+        "Limitations",
+        "Reproducibility",
+        "Conclusion",
+    )
+    body = SURFACES[0].read_text(encoding="utf-8")
+    official = SURFACES[2].read_text(encoding="utf-8")
+    assert "# Abstract {.unnumbered}" in body
+    body_matches = [
+        re.search(rf"(?m)^# {re.escape(section)}(?:\s|$)", body) for section in sections
+    ]
+    assert all(match is not None for match in body_matches)
+    body_positions = [match.start() for match in body_matches if match is not None]
+    official_positions = [official.index(rf"\section{{{section}}}") for section in sections]
+    assert body_positions == sorted(body_positions)
+    assert official_positions == sorted(official_positions)
+
+
+def test_body_and_official_share_citations_and_display_counts() -> None:
+    body = SURFACES[0].read_text(encoding="utf-8")
+    official = SURFACES[2].read_text(encoding="utf-8")
+    body_citations = {
+        key
+        for key in re.findall(r"@([A-Za-z0-9_:-]+)", body)
+        if not key.startswith(("fig-", "tbl-", "eq-", "sec-"))
+    }
+    official_citations: set[str] = set()
+    for group in re.findall(r"\\cite\w*\{([^}]+)\}", official):
+        official_citations.update(key.strip() for key in group.split(","))
+
+    assert body_citations == official_citations
+    assert len(body_citations) == 41
+    assert body.count("{#tbl-") == 10
+    assert body.count("{#fig-") == 4
+    assert official.count(r"\begin{table}") == 10
+    assert official.count(r"\begin{figure}") == 4
 
 
 def test_compact_v7_headlines_cannot_reenter_active_surfaces() -> None:

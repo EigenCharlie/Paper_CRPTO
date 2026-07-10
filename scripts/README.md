@@ -11,7 +11,8 @@ Use these for the active submission workflow:
 - `check_publication_integrity.py` - checks that paper, supplement, README and
   official-template docs agree on the active maturity-safe IJDS claim.
 - `build_ijds_maturity_safe_evidence.py` - validates the clean tagged v2 run
-  and regenerates tables 1--3/S1--S7 plus figures 1--3.
+  and regenerates main tables 1--4, S1--S7, and figures 0--3 (30 hashed
+  publication outputs).
 - `experiments/run_ijds_maturity_safe_challenger.py` - performs the expensive
   locked methodology replay into a fresh immutable experiment path.
 - `build_ijds_calibration_selected_evidence.py` and the older IJDS challenger

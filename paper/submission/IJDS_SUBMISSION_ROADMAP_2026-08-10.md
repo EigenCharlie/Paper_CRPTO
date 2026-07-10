@@ -25,6 +25,8 @@ week.
 - Added sharp single-policy and union-based pairwise bounds.
 - Added the binary miscoverage identity and exact selection-transport
   decomposition.
+- Recovered the closest-work boundary, three exact propositions, the locked
+  development-to-OOT reversal, and a seven-question managerial audit card.
 - Executed the final protocol from a clean tagged commit and DVC-tracked both
   active run directories.
 - Rebuilt body, supplement, official TeX, cover letter, disclosures, claim
@@ -36,7 +38,7 @@ week.
 | Window | Deliverable | Exit condition |
 |---|---|---|
 | Jul 10--14 | Numerical and code closeout | Evidence idempotent; full tests, lint, mypy, ty and protected-manifest gate green |
-| Jul 14--18 | PDF QA | Body, supplement and 16-page official PDF inspected page by page; no overflow or identity leak |
+| Jul 14--18 | PDF QA | Body 21 pages, supplement 17 pages, and official PDF 21 pages inspected page by page; no overflow or identity leak |
 | Jul 18--24 | Clean-clone capsule | DVC pull and active evidence rebuild succeed from a fresh clone |
 | Jul 25--31 | Independent cold review | Read only PDFs; reconcile every number, caption, citation and limitation |
 | Aug 1--8 | Editor package | Title page, cover letter, disclosure form and sanitized archive finalized |

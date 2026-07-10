@@ -197,6 +197,52 @@ def _primary_policy_table(summary: dict[str, Any]) -> pd.DataFrame:
     return primary.sort_values("order", kind="mergesort")[columns].reset_index(drop=True)
 
 
+def _development_to_oot_table(summary: dict[str, Any]) -> pd.DataFrame:
+    selection = summary["selection"]
+    guard = next(
+        row
+        for row in selection["guardrail_grid"]
+        if row["candidate_id"] == selection["selected_guardrail"]["candidate_id"]
+    )
+    point = next(
+        row
+        for row in selection["point_grid"]
+        if row["candidate_id"] == selection["development_selected_point_pd"]["candidate_id"]
+    )
+    primary = next(
+        row
+        for row in summary["monthly_evaluation"]["primary_retrospective_contrasts"]
+        if row["policy_b"] == "development_selected_point_pd"
+    )
+    development = {
+        "block": "policy_development_2012H2",
+        "months": int(guard["months"]),
+        "expected_payoff_difference": guard["expected_objective"] - point["expected_objective"],
+        "realized_payoff_difference_lower": guard["realized_payoff"] - point["realized_payoff"],
+        "realized_payoff_difference_upper": guard["realized_payoff"] - point["realized_payoff"],
+        "weighted_default_difference_lower": guard["weighted_default"] - point["weighted_default"],
+        "weighted_default_difference_upper": guard["weighted_default"] - point["weighted_default"],
+        "weighted_miscoverage_difference_lower": guard["weighted_miscoverage"]
+        - point["weighted_miscoverage"],
+        "weighted_miscoverage_difference_upper": guard["weighted_miscoverage"]
+        - point["weighted_miscoverage"],
+        "outcome_status": "resolved_exact",
+    }
+    locked_primary = {
+        "block": "locked_primary_2016-04_to_2017-06",
+        "months": int(summary["row_counts"]["primary_oot_months"]),
+        "expected_payoff_difference": primary["expected_objective_difference"],
+        "realized_payoff_difference_lower": primary["realized_payoff_difference_lower"],
+        "realized_payoff_difference_upper": primary["realized_payoff_difference_upper"],
+        "weighted_default_difference_lower": primary["weighted_default_difference_lower"],
+        "weighted_default_difference_upper": primary["weighted_default_difference_upper"],
+        "weighted_miscoverage_difference_lower": primary["weighted_miscoverage_difference_lower"],
+        "weighted_miscoverage_difference_upper": primary["weighted_miscoverage_difference_upper"],
+        "outcome_status": "sharp_unresolved_outcome_bounds",
+    }
+    return pd.DataFrame([development, locked_primary])
+
+
 def _contrast_tables(
     summary: dict[str, Any],
     allocations: pd.DataFrame,
@@ -323,6 +369,57 @@ def _save_figure(figure: plt.Figure, stem: str) -> list[Path]:
         paths.append(path)
     plt.close(figure)
     return paths
+
+
+def _pipeline_figure() -> plt.Figure:
+    figure, axis = plt.subplots(figsize=(10.2, 2.25))
+    axis.set_xlim(0.0, 10.2)
+    axis.set_ylim(0.0, 2.25)
+    axis.axis("off")
+    boxes = (
+        (1.0, "Decision-time menu\nIssue date + terms\nStatus independent", "#4C78A8"),
+        (3.05, "Frozen prediction stack\nPD + Platt + Mondrian\nFrozen by June 2012", "#72B7B2"),
+        (5.1, "Policy development\nNine guardrails\nSelect once in 2012H2", "#F2CF5B"),
+        (7.15, "Monthly allocation\nFresh $1M budget\nOutcomes isolated", "#B279A2"),
+        (9.2, "Post-decision audit\nSharp bounds + contrasts\nSelection transport", "#E45756"),
+    )
+    for index, (x, label, color) in enumerate(boxes):
+        axis.text(
+            x,
+            1.30,
+            label,
+            ha="center",
+            va="center",
+            fontsize=9,
+            linespacing=1.35,
+            bbox={
+                "boxstyle": "round,pad=0.55",
+                "facecolor": color,
+                "edgecolor": "white",
+                "linewidth": 1.2,
+                "alpha": 0.95,
+            },
+            color="black" if color == "#F2CF5B" else "white",
+        )
+        if index < len(boxes) - 1:
+            end_offset = 1.02 if index == len(boxes) - 2 else 0.78
+            axis.annotate(
+                "",
+                xy=(boxes[index + 1][0] - end_offset, 1.30),
+                xytext=(x + 0.78, 1.30),
+                arrowprops={"arrowstyle": "->", "color": "#333333", "lw": 1.2},
+            )
+    axis.text(
+        5.1,
+        0.22,
+        "Labels are unavailable to the optimizer and enter only after each allocation is fixed.",
+        ha="center",
+        va="center",
+        fontsize=9.5,
+        color="#333333",
+    )
+    figure.tight_layout(pad=0.2)
+    return figure
 
 
 def _timeline_figure() -> plt.Figure:
@@ -460,6 +557,7 @@ def build(*, verify_raw: bool = False) -> Path:
 
     protocol = _protocol_table(summary, split_inventory)
     primary = _primary_policy_table(summary)
+    development_to_oot = _development_to_oot_table(summary)
     contrasts, monthly_contrasts = _contrast_tables(summary, allocations)
     coverage = _coverage_table(summary)
     selection = _selection_table(summary)
@@ -486,6 +584,7 @@ def build(*, verify_raw: bool = False) -> Path:
         "crpto_ijds_ms_table1_protocol": protocol,
         "crpto_ijds_ms_table2_primary_policy": primary,
         "crpto_ijds_ms_table3_primary_contrast": contrasts,
+        "crpto_ijds_ms_table4_development_to_oot": development_to_oot,
         "crpto_ijds_ms_tableS1_selection_grid": selection,
         "crpto_ijds_ms_tableS2_coverage": coverage,
         "crpto_ijds_ms_tableS3_monthly_primary": primary_monthly,
@@ -496,12 +595,13 @@ def build(*, verify_raw: bool = False) -> Path:
     }
     for stem, frame in tables.items():
         outputs.extend(_write_table(frame, stem))
+    outputs.extend(_save_figure(_pipeline_figure(), "crpto_ijds_ms_fig0_pipeline"))
     outputs.extend(_save_figure(_timeline_figure(), "crpto_ijds_ms_fig1_timeline"))
     outputs.extend(_save_figure(_monthly_figure(primary_monthly), "crpto_ijds_ms_fig2_monthly"))
     outputs.extend(_save_figure(_transport_figure(transport), "crpto_ijds_ms_fig3_transport"))
 
     manifest = {
-        "schema_version": "2026-07-10.1",
+        "schema_version": "2026-07-10.2",
         "status": "active_maturity_safe_ijds_evidence",
         "run_tag": RUN_TAG,
         "protocol_tag": PROTOCOL_TAG,
@@ -517,6 +617,7 @@ def build(*, verify_raw: bool = False) -> Path:
                 "primary_oot_all_candidate_pooled"
             ]["all_candidate_coverage_upper"],
             "primary_contrasts": summary["monthly_evaluation"]["primary_retrospective_contrasts"],
+            "development_to_oot": development_to_oot.to_dict(orient="records"),
         },
         "outputs": [_output_descriptor(path) for path in sorted(outputs)],
     }

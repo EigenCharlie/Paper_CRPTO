@@ -45,6 +45,18 @@ def test_transport_mechanism_values_are_visible_in_supplement() -> None:
         assert f"{float(selected[field]):.6f}" in supplement
 
 
+def test_development_to_oot_reversal_is_visible_in_body_and_supplement() -> None:
+    rows = _rows("crpto_ijds_ms_table4_development_to_oot.csv")
+    development = next(row for row in rows if row["block"] == "policy_development_2012H2")
+    realized = f"{float(development['realized_payoff_difference_lower']):,.2f}"
+    expected = f"{abs(float(development['expected_payoff_difference'])):,.2f}"
+    for path in (PAPER, SUPPLEMENT):
+        text = path.read_text(encoding="utf-8").lower()
+        assert realized in text
+        assert expected in text
+        assert "development-to-oot" in text
+
+
 def test_extension_is_reported_as_bounded_stress_not_active_promotion() -> None:
     rows = _rows("crpto_ijds_ms_tableS6_extension.csv")
     guard = next(row for row in rows if row["policy_label"] == "selected_conformal_guardrail")

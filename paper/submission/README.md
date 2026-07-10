@@ -38,6 +38,11 @@ class and `dblanonrev` option.
 
 Recheck these sources during submission week. Local publisher class/style files
 support compilation and remain outside the project's scientific evidence.
+They are intentionally ignored by Git. A fresh clone must place
+`informs4.cls`, `informs2014.bst`, `eqndefns-left.sty`, and `informs_Logo.pdf`
+in this directory after downloading the current INFORMS style package. The
+compile wrapper checks this prerequisite and lists any missing asset before
+invoking LaTeX.
 
 ## Official Build
 
@@ -76,8 +81,10 @@ Accept the official PDF only when:
 - page-by-page inspection finds no clipping, overlap, blank content, or
   missing glyphs.
 
-Current verified build (2026-07-10): 16 pages total and citation/reference
-clean. Recount and repeat visual QA after every substantive TeX edit.
+Current verified build (2026-07-10): 21 pages total, with references beginning
+on page 18, and citation/reference clean. The writing previews are 21 body
+pages and 17 supplement pages. All three PDFs were inspected page by page.
+Recount and repeat visual QA after every substantive TeX edit.
 
 ## Anonymity
 

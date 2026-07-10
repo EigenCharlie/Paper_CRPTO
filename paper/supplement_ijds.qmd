@@ -33,6 +33,7 @@ baselines are frozen before the April 2016--June 2017 primary evaluation.
 
 | Evidence | Contents | Claim boundary |
 |---|---|---|
+| Generated M1--M4 | Protocol, primary policy, primary contrast, and development-to-OOT reversal | Compact exports underlying Main Tables 2, 7, 8, and 6, respectively; full schemas remain in S1--S7 |
 | S1 | Full 2012H2 guardrail and point-PD selection grids | Development selection only; no 2016--2017 outcome enters |
 | S2 | Conformal fit, primary OOT, and extension coverage | Binary-outcome coverage, not latent-PD confidence or selected-set validity |
 | S3 | Every monthly policy solve and bounded outcome metric | Separate $1$M decision in every month; no pooled future menu |
@@ -43,9 +44,27 @@ baselines are frozen before the April 2016--June 2017 primary evaluation.
 
 The paper-facing source is
 `reports/crpto/ijds_maturity_safe_evidence.json`. It validates the immutable run
-summary and execution receipt before writing S1--S7 and the three manuscript
-figures. The historical compact-v7 A35--A40 bundle remains immutable provenance
-but is not evidence for any active claim.
+summary and execution receipt before writing four compact main-table exports,
+S1--S7, and four manuscript figures. The historical compact-v7 A35--A40 bundle remains immutable
+provenance but is not evidence for any active claim.
+
+The supplement is a defense layer, not a second paper. The reader map below
+separates protocol, statistical construction, decision design, identification,
+empirical mechanism, reproducibility, and historical provenance.
+
+| Reader question | Primary location | Short answer |
+|---|---|---|
+| Was the candidate universe observable at decision time? | Appendix A | Yes; membership is status independent and unresolved outcomes remain |
+| What exactly is conformal? | Appendix B | A split-Mondrian interval for binary snapshot default, not latent PD |
+| How is the portfolio chosen? | Appendix C | One 2012H2-selected linear guardrail, then fresh monthly LPs |
+| Which statements are exact? | Appendix D | Binary geometry, sharp additive bounds, and a telescoping transport identity |
+| What drives the result? | Appendix E | Group composition lowers default; within-group selection breaks coverage |
+| What happens near the observation boundary? | Appendix F | Bounds widen enough to prevent a directional extension claim |
+| Can the package be replayed? | Appendix G | Yes with DVC credentials, immutable pointers, hashes, and gates |
+| Why are older results excluded? | Appendix H | Their population, timing, payoff, or decision object differs |
+| What remains unresolved? | Appendix I | Construct, temporal, decision, external, and inferential limitations |
+
+: Reader map for the online supplement.
 
 # Appendix A: Data, Outcome Observability, and Chronology
 
@@ -270,6 +289,11 @@ development-selected point baseline ($\tau=0.15$) and the matched baseline
 ($\tau=0.17$) generate the same primary allocations. Reporting both verifies
 that the comparison is not an artifact of matching $\tau$.
 
+Relative to that point policy, the selected guardrail's development realized
+payoff was +$50,260.10 despite a model-expected difference of -$72,701.67.
+Main Table 6 shows that the payoff and miscoverage directions reverse in the
+locked primary window, while the lower-default direction remains sign-robust.
+
 # Appendix D: Exact Identities and Sharp Bounds
 
 ## D.1 Binary miscoverage identity
@@ -330,6 +354,12 @@ bound. Subtracting policy A's marginal lower bound from policy B's marginal
 upper bound would let the same loan default in one policy and repay in the
 other, producing a wider and generally unattainable interval. The code uses the
 union formulation for payoff, default, and miscoverage contrasts.
+
+**Corollary S2.1 (paired common-outcome sharpness).** If each unresolved loan
+has one binary outcome shared by both policies, applying Proposition S2 to the
+signed exposure difference attains the sharp lower and upper policy contrasts.
+The corollary is descriptive of the two allocations on the observed menus; it
+does not identify a causal effect of funding.
 
 ## D.4 Selection-transport identity
 
@@ -519,10 +549,11 @@ including deterministic PDF metadata for the figures.
 The active builder produces:
 
 - `crpto_ijds_ms_table1_protocol` and `table2_primary_policy`;
-- `crpto_ijds_ms_table3_primary_contrast`;
+- `crpto_ijds_ms_table3_primary_contrast` and
+  `table4_development_to_oot`;
 - `crpto_ijds_ms_tableS1_selection_grid` through `tableS7_monthly_contrast`;
-- `crpto_ijds_ms_fig1_timeline`, `fig2_monthly`, and `fig3_transport` in PNG
-  and PDF; and
+- `crpto_ijds_ms_fig0_pipeline`, `fig1_timeline`, `fig2_monthly`, and
+  `fig3_transport` in PNG and PDF; and
 - `reports/crpto/ijds_maturity_safe_evidence.json`, which hashes every output.
 
 CSV files are the numerical interface. TeX files are machine-readable raw
@@ -587,6 +618,7 @@ present results.
 | Status-independent 540,121-row universe and monthly chronology | S0, protocol config, source inventory | Prospective deployment or complete event-time observation |
 | Exact 90% split-Mondrian recipe on 2012H1 | S2, frozen group quantiles | Latent-PD confidence intervals or 90% OOT coverage |
 | Selected $\tau=0.17,\gamma=0.25$ on 2012H2 | S1 | Selection-valid conformal inference |
+| Development success reverses OOT for payoff and miscoverage | Main Table 6 and S7 | A formal generalization test or a retuned policy |
 | Guardrail lowers primary default | S7 bound [-0.046275, -0.020093] | Causal default reduction or universal dominance |
 | Guardrail lowers primary payoff | S7 bound [-$322,703.79, -$58,040.34] | Cash-flow loss, IRR, or welfare effect |
 | Guardrail worsens funded miscoverage | S7 bound [0.008822, 0.029850] | Impossibility for every conformal optimization method |
@@ -596,6 +628,19 @@ present results.
 | Exact reproducibility of the tagged run | receipt, hashes, DVC, tests | Reproducibility of external raw-data hosting forever |
 
 # Appendix I: Limitations Checklist
+
+The active limitations can also be organized as threats to validity.
+
+| Threat family | Concrete risk | Active response | Residual limitation |
+|---|---|---|---|
+| Construct | Snapshot status and standardized payoff simplify loan economics | Exact labels and payoff algebra are declared | No timing, prepayment, recovery, fees, or discounting |
+| Internal | Future status, labels, or menus could leak into a retrospective decision | Status-independent inclusion, six temporal blocks, outcome-isolated solver | Code-locked history is not a pristine prospective trial |
+| Statistical | Exchangeability and coverage deteriorate over time | Report candidate bounds, saturation, and monthly diagnostics | No 90% OOT or selected-set validity |
+| Decision | Optimization reweights observations adaptively | Matched menus, sharp contrasts, and transport decomposition | No causal or welfare ranking |
+| External | One discontinued platform and 36-month contracts | State the application boundary and preserve full provenance | No live, cross-platform, or fair-lending conclusion |
+| Reproducibility | Heavy artifacts and remote data may disappear | DVC pointers, hashes, receipt, clean-clone gate | Remote access still requires credentials and source availability |
+
+: Threats to validity and their active controls.
 
 The manuscript and supplement must continue to state all of the following:
 

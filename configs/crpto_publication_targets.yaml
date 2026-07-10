@@ -49,6 +49,7 @@ active_scientific_contract:
     - reports/crpto/tables/crpto_ijds_ms_table1_protocol.csv
     - reports/crpto/tables/crpto_ijds_ms_table2_primary_policy.csv
     - reports/crpto/tables/crpto_ijds_ms_table3_primary_contrast.csv
+    - reports/crpto/tables/crpto_ijds_ms_table4_development_to_oot.csv
     - reports/crpto/tables/crpto_ijds_ms_tableS1_selection_grid.csv
     - reports/crpto/tables/crpto_ijds_ms_tableS2_coverage.csv
     - reports/crpto/tables/crpto_ijds_ms_tableS3_monthly_primary.csv
@@ -57,6 +58,7 @@ active_scientific_contract:
     - reports/crpto/tables/crpto_ijds_ms_tableS6_extension.csv
     - reports/crpto/tables/crpto_ijds_ms_tableS7_monthly_contrast.csv
     - reports/crpto/figures/crpto_ijds_ms_fig1_timeline.pdf
+    - reports/crpto/figures/crpto_ijds_ms_fig0_pipeline.pdf
     - reports/crpto/figures/crpto_ijds_ms_fig2_monthly.pdf
     - reports/crpto/figures/crpto_ijds_ms_fig3_transport.pdf
 

@@ -1,5 +1,5 @@
 {
-  "schema_version": "2026-07-10.1",
+  "schema_version": "2026-07-10.2",
   "status": "active_maturity_safe_ijds_evidence",
   "run_tag": "champion-reopen-2026-07-10__maturity-safe-locked-bounded-h1h2-v2",
   "protocol_tag": "protocol/ijds-maturity-safe-locked-bounded-h1h2-2026-07-10-v2",
@@ -75,9 +75,45 @@
         "miscoverage_direction_sign_robust": true,
         "causal_interpretation": false
       }
+    ],
+    "development_to_oot": [
+      {
+        "block": "policy_development_2012H2",
+        "months": 6,
+        "expected_payoff_difference": -72701.67335314059,
+        "realized_payoff_difference_lower": 50260.10081012396,
+        "realized_payoff_difference_upper": 50260.10081012396,
+        "weighted_default_difference_lower": -0.0638021547037051,
+        "weighted_default_difference_upper": -0.0638021547037051,
+        "weighted_miscoverage_difference_lower": -0.007358371110674056,
+        "weighted_miscoverage_difference_upper": -0.007358371110674056,
+        "outcome_status": "resolved_exact"
+      },
+      {
+        "block": "locked_primary_2016-04_to_2017-06",
+        "months": 15,
+        "expected_payoff_difference": -240977.7786228247,
+        "realized_payoff_difference_lower": -322703.7874780131,
+        "realized_payoff_difference_upper": -58040.33924711874,
+        "weighted_default_difference_lower": -0.046274834615204194,
+        "weighted_default_difference_upper": -0.02009309459512156,
+        "weighted_miscoverage_difference_lower": 0.00882183205146247,
+        "weighted_miscoverage_difference_upper": 0.029850238738211774,
+        "outcome_status": "sharp_unresolved_outcome_bounds"
+      }
     ]
   },
   "outputs": [
+    {
+      "path": "reports/crpto/figures/crpto_ijds_ms_fig0_pipeline.pdf",
+      "bytes": 15639,
+      "sha256": "d193f507287e188650b3ae8dc165bf34af75eb637c2c781079b71eab2c8c2a2c"
+    },
+    {
+      "path": "reports/crpto/figures/crpto_ijds_ms_fig0_pipeline.png",
+      "bytes": 97248,
+      "sha256": "ac83cd21b6b08c959e375ba9b9b6a4fd12221d494bca4b73f6383df9c0ca3fe1"
+    },
     {
       "path": "reports/crpto/figures/crpto_ijds_ms_fig1_timeline.pdf",
       "bytes": 15050,
@@ -137,6 +173,16 @@
       "path": "reports/crpto/tables/crpto_ijds_ms_table3_primary_contrast.tex",
       "bytes": 1395,
       "sha256": "f17dd00790744bedf09629196cbf55431ad8c3334c3b83f5c0c13530ac1623df"
+    },
+    {
+      "path": "reports/crpto/tables/crpto_ijds_ms_table4_development_to_oot.csv",
+      "bytes": 657,
+      "sha256": "ad63d78318ecf8ae3fb15b4970e560335069ba02b33e8f167d21adcd68d33fe7"
+    },
+    {
+      "path": "reports/crpto/tables/crpto_ijds_ms_table4_development_to_oot.tex",
+      "bytes": 705,
+      "sha256": "5b6255d7ae8b3692d7c199ae9cd8411b654283395fa2f476f607703e24aab419"
     },
     {
       "path": "reports/crpto/tables/crpto_ijds_ms_tableS1_selection_grid.csv",

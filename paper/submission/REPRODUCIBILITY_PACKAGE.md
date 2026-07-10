@@ -18,7 +18,7 @@ Official policy: <https://pubsonline.informs.org/page/ijds/data-and-code-disclos
 | Protocol | locked v2 YAML and protocol memo | Fix dates, estimands, model, policy grid, payoff and bounds |
 | Method | maturity-safe data/model/evaluation modules and runner | Reproduce the tagged experiment |
 | Active run | two DVC pointers plus remote/archive objects | Recover processed panels, model, allocations, summary and receipt |
-| Evidence | builder, tables 1--3/S1--S7, figures 1--3, manifest | Reproduce every manuscript number and graphic |
+| Evidence | builder, four compact main-table exports, S1--S7, four figures, 30-output manifest | Reproduce every manuscript number and graphic |
 | Manuscript | QMD body, QMD supplement, official TeX, bibliography | Reproduce reviewer-facing PDFs |
 | Guardrails | claim sync, integrity, unit/integration tests | Detect numerical, narrative, and historical drift |
 
@@ -75,6 +75,11 @@ summary and receipt only after all outputs complete. Replaying the active run
 does not require or permit a protected historical `dvc repro`.
 
 ## Official PDF Build
+
+Download the current official style package from the INFORMS author portal and
+place `informs4.cls`, `informs2014.bst`, `eqndefns-left.sty`, and
+`informs_Logo.pdf` in `paper/submission`. These publisher assets are external
+build prerequisites and are intentionally ignored by Git.
 
 ```powershell
 just paper-submission-official

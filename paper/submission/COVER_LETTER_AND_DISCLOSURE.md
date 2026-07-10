@@ -29,13 +29,19 @@ standardized realized payoff by $58,040--$322,704 and increases funded-set
 miscoverage by 0.88--2.99 percentage points. An exact transport identity shows
 why: the default advantage comes from shifting capital toward the lowest score
 stratum, while adaptive selection within strata drives the coverage failure.
+The locked temporal comparison is itself informative: the guardrail led its
+development point policy by $50,260 in realized standardized payoff even
+though expected payoff was already $72,702 lower; primary payoff and
+miscoverage then reverse direction without any retuning.
 
 The contribution is therefore a maturity-safe audit of prediction-to-decision
 validity, not a claim that marginal conformal coverage is a selected-set
 guarantee. The paper aligns the optimized and evaluated payoff, retains
 unresolved outcomes with sharp pairwise bounds, exposes temporal reversals, and
 distinguishes binary-outcome coverage from confidence about latent PD. This
-combination of data design, methodology, decision analysis, and practical
+boundary is formalized through binary-interval geometry, sharp additive and
+paired bounds, and an exact selection-transport identity. This combination of
+data design, methodology, decision analysis, and practical
 implication fits IJDS's focus on rigorous data science for decisions.
 
 The experiment was executed from a clean tagged commit. Its versioned data and

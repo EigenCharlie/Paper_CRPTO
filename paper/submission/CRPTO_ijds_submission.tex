@@ -148,6 +148,23 @@ it documents a practically relevant negative result: marginal Mondrian
 coverage and a conservative conformal score can change the portfolio, but
 neither implies selected-set validity or economic dominance.
 
+Figure~\ref{fig:pipeline} summarizes the active research object. Candidate
+construction, prediction, policy development, allocation, and outcome
+evaluation are separate contracts. Labels are unavailable to the optimizer and
+are joined only after each monthly allocation is fixed. That separation is more
+than software organization: it makes otherwise informal timing and
+observability claims inspectable.
+
+\begin{figure}[t]
+\FIGURE
+{\includegraphics[width=\textwidth]{crpto_ijds_ms_fig0_pipeline.pdf}}
+{Maturity-safe CRPTO pipeline. A status-independent monthly menu enters a
+prediction stack frozen by June 2012; one guardrail is selected on 2012H2,
+applied to later monthly allocations without outcomes, and evaluated afterward
+with sharp bounds and a selection-transport audit.\label{fig:pipeline}}
+{}
+\end{figure}
+
 This is a code-locked retrospective temporal audit, not a prospective trial or
 a causal estimate. Its purpose is to identify what the conformal layer changes,
 what it does not guarantee, and which evidence a decision-focused data-science
@@ -223,7 +240,88 @@ payoff is deliberately simpler. It isolates the decision effect of PD and
 conformal uncertainty, but it is not an internal rate of return, discounted
 cash-flow estimate, or substitute for survival analysis.
 
+\subsection{Closest-Work Boundary and IJDS Fit}
+
+CRPTO lies between several mature literatures, so its contribution cannot be
+that any one ingredient is new. Classical and data-driven robust optimization
+make the price of protection explicit
+\citep{bertsimas2004,bertsimas2018datadriven,goldfarb2003robustportfolio}.
+P2P lending research already combines credit scores, returns, and portfolio
+constraints \citep{guo2016p2p,zhao2016p2pportfolio,chi2019p2p,babaei2020p2p}.
+Conformal robust optimization carries coverage-backed sets into downstream
+decisions \citep{johnstone2021,patel2024,hu2026crc}, while valid-selection and
+decision-calibration methods directly target the inferential break caused by
+choosing a set or action
+\citep{hegazy2025valid_selection_conformal_sets,zhou2026creme,
+stratigakos2026decision_calibrated_sets}.
+
+The active CRPTO role is narrower: it audits what happens when a conventional,
+frozen credit score receives a simple conformal upper-score constraint. It does
+not retrain through the optimizer, calibrate a selected-set loss, or claim a
+new uncertainty-set theorem. Its additions are a maturity-safe credit decision
+protocol, coherent economic comparison, sharp treatment of unresolved
+outcomes, and a decomposition of how coverage changes between candidates and
+funded exposure.
+
+\begin{table}[t]
+\TABLE
+{Closest-work boundary for the active CRPTO contribution.
+\label{tab:closest-work}}
+{\scriptsize
+\begin{tabularx}{\textwidth}{p{0.24\textwidth}XX}
+\toprule
+Literature family & Established contribution & Active CRPTO boundary \\
+\midrule
+Credit scoring and cost-aware calibration & Probability quality and richer
+predictive structure & Treats calibrated PD as an input; no AUC-leadership
+claim \\
+P2P and robust credit portfolios & Economic loan selection under risk and
+uncertainty & Adds binary conformal geometry, outcome isolation, and funded-set
+audit \\
+Conformal robust/contextual optimization & Coverage-backed uncertainty sets in
+optimization & Studies a frozen credit LP empirically; no inherited
+selected-set validity \\
+Valid selection and decision-risk calibration & Procedures that control
+selection or operational loss & Provides a diagnostic counterexample and
+transport mechanism, not a substitute theorem \\
+Decision-focused learning & Training predictions against downstream loss &
+Preserves the predictor for governance and audits a post-hoc decision layer \\
+\bottomrule
+\end{tabularx}}{}
+\end{table}
+
+This positioning also matches IJDS's data-models-decisions-implications
+sequence. Fernandez-Loria and Provost motivate the distinction between an
+intermediate estimate and the action it induces, Yang and Bi make downstream
+cost central to calibration, Das et al. establish the credit-modeling
+precedent, and Wiberg et al. frame the AI--OR interface. CRPTO's IJDS-facing
+object is the audited allocation and the insight learned from its failure
+modes, not the conformal interval in isolation.
+
 \section{Data and Locked Evaluation Design}\label{sec:data}
+
+\subsection{Decision Unit, Target, and Estimand}
+
+The decision unit is an issue month. For month $t$, candidate set
+$\mathcal I_t$ contains only loans observable in that month, and each policy
+maps the same menu into dollar exposures with a fresh \$1 million budget. This
+differs from ranking the full archive once: no April 2016 decision can fund a
+May 2016 loan, and no capital is carried across months. Equal monthly budgets
+make the pooled exposure-weighted metric equivalent to the average of the 15
+monthly dollar-weighted metrics.
+
+The observed target is snapshot default at September 2020. The policy
+estimands are historical guardrail-minus-point differences in standardized
+payoff, exposure-weighted default, and exposure-weighted interval miscoverage
+over the same menus. They answer what the two fixed rules would have selected
+and experienced in this archive. They are not treatment effects: funding does
+not cause the recorded status, rejected-loan outcomes are unavailable, and no
+behavioral response to a deployment is modeled.
+
+There are three distinct populations: candidate rows to which predictive
+coverage refers, listed loan amounts that define available exposure, and
+optimizer-selected funded dollars that define the decision result. Treating
+them as interchangeable would erase the mechanism the paper measures.
 
 \subsection{Status-Independent Loan Universe}
 
@@ -293,6 +391,36 @@ predeclared guard found unresolved primary outcomes and persisted only a
 protocol freeze. Version 2 changed only the handling of those missing outcomes
 to sharp bounds; dates, model, policy grid, payoff, constraints, baselines, and
 interpretation remained fixed.
+
+\subsection{Identification Safeguards}
+
+The design addresses five common retrospective failure modes directly. Each
+safeguard removes one source of look-ahead or estimand drift, while the final
+column records what still cannot be inferred.
+
+\begin{table}[t]
+\TABLE
+{Identification safeguards and residual boundaries.
+\label{tab:safeguards}}
+{\scriptsize
+\begin{tabularx}{\textwidth}{p{0.24\textwidth}XX}
+\toprule
+Design hazard & Active safeguard & Remaining boundary \\
+\midrule
+Future-status inclusion & Membership uses issue date, term, and origination
+fields; unresolved rows remain & Snapshot outcomes remain administratively
+censored \\
+Later-label contamination & PD, Platt, conformal fit, and policy development
+occupy separate pre-2013 blocks & Temporal exchangeability is not restored \\
+Pooled future originations & Fifteen separate monthly menus and budgets & The
+exercise remains retrospective \\
+Payoff mismatch & Expected and realized payoff are one coherent pair & The pair
+is not cash-flow return or welfare \\
+Marginal coverage read as decision validity & Candidate, exposure, group-mix,
+and funded metrics are separate & No selected-set conformal guarantee follows \\
+\bottomrule
+\end{tabularx}}{}
+\end{table}
 
 \section{Method}\label{sec:method}
 
@@ -389,13 +517,41 @@ are frozen. Every primary and extension month receives its own candidate menu
 and fresh budget. No endpoint cap, future-menu pooling, or evaluation-period
 reselection is used.
 
+\section{Identification and Theory}\label{sec:theory}
+
+The theoretical contribution is intentionally algebraic. It characterizes the
+binary interval, identifies what can be learned with unresolved outcomes, and
+separates population coverage from optimizer selection. None of the statements
+assumes funded-set conformal validity.
+
+\subsection{Binary Interval Geometry}
+
+\textbf{Proposition 1 (binary miscoverage).} For $Y\in\{0,1\}$ and any
+interval $[\ell,u]\subseteq[0,1]$, miscoverage is exactly the sum of the two
+disjoint events in Equation~\eqref{eq:binary-miss}. Thus $u=1$ covers every
+realized default, whereas any default with $u<1$ is missed. The proof is a
+two-case enumeration given in Online Supplement Proposition S1.
+
+This result explains why interval coverage and a conservative upper-score
+ranking need not move together. Endpoint saturation can improve coverage while
+providing little ordering information; a narrow low-risk interval can rank
+well but miss its rare defaults.
+
 \subsection{Sharp Bounds for Unresolved Outcomes}
 
 For an unresolved loan, $Y_i$ may be either zero or one. Default therefore lies
 in $[0,1]$, payoff in $[-\lambda,r_i]$, and miscoverage in the two attainable
-values implied by Equation~\eqref{eq:binary-miss}. Because each aggregate is
-additive after an allocation is fixed, choosing the lower or upper attainable
-contribution for each unresolved loan gives a sharp bound.
+values implied by Equation~\eqref{eq:binary-miss}.
+
+\textbf{Proposition 2 (sharp additive bounds).} Let $U$ index unrestricted
+unresolved outcomes and write an additive fixed-allocation metric as
+$T(Y)=C+\sum_{i\in U}g_i(Y_i)$. Then
+\begin{equation}\label{eq:sharp-bounds}
+T_L=C+\sum_{i\in U}\min_{y\in\{0,1\}}g_i(y),\qquad
+T_U=C+\sum_{i\in U}\max_{y\in\{0,1\}}g_i(y)
+\end{equation}
+are jointly attainable and hence sharp. This is partial identification under
+unrestricted binary completion, not a sampling confidence interval.
 
 Policy contrasts require more care. CRPTO and point PD often fund different
 loans, so subtracting two marginal intervals is generally not sharp. We form
@@ -410,6 +566,9 @@ Let $M_{row}$ be the unweighted candidate metric, $M_{exp}$ its loan-amount
 weighted value, $M_{mix}$ the value obtained by combining candidate
 within-group rates with the funded portfolio's conformal-group shares, and
 $M_{fund}$ the actual funded exposure-weighted value. For reference $a$,
+
+\textbf{Proposition 3 (selection transport).} The funded departure from $a$
+decomposes exactly as
 \begin{equation}\label{eq:transport}
 \begin{aligned}
 M_{fund}-a={}&(M_{row}-a)+(M_{exp}-M_{row})\\
@@ -417,10 +576,32 @@ M_{fund}-a={}&(M_{row}-a)+(M_{exp}-M_{row})\\
 \end{aligned}
 \end{equation}
 The terms are population departure from the reference, exposure weighting,
-group-composition shift, and within-group optimizer selection. The identity is
-exact by telescoping. With unresolved outcomes we evaluate it under lower and
-upper extremal completions. The funded endpoints are sharp bounds; intermediate
-terms describe each completion and are not component-wise confidence intervals.
+group-composition shift, and within-group optimizer selection. With unresolved
+outcomes we evaluate the identity under lower and upper extremal completions.
+The funded endpoints are sharp bounds; intermediate terms describe each
+completion and are not component-wise confidence intervals.
+
+\begin{table}[t]
+\TABLE
+{Identification ladder for the paper's exact claims.
+\label{tab:identification}}
+{\scriptsize
+\begin{tabularx}{\textwidth}{>{\raggedright\arraybackslash}p{0.15\textwidth}>{\raggedright\arraybackslash}X>{\raggedright\arraybackslash}X>{\raggedright\arraybackslash}X}
+\toprule
+Object & Exact statement & Evidence & Does not imply \\
+\midrule
+Binary interval & Miscoverage depends on whether zero or one lies outside the
+interval & S1 and saturation & Confidence interval for latent PD \\
+Fixed allocation & Unresolved additive metrics attain
+Equation~\eqref{eq:sharp-bounds} & S2, S3, S6 & Sampling uncertainty or MAR
+identification \\
+Paired policies & A common unresolved outcome is optimized once over the
+funded union & S7 & Causal policy effect \\
+Candidate-to-funded transport & Population, amount, group mix, and selection
+telescope exactly & S4 and S5 & Selected-set validity or regularization theorem \\
+\bottomrule
+\end{tabularx}}{}
+\end{table}
 
 \section{Results}\label{sec:results}
 
@@ -455,12 +636,43 @@ calibration deteriorate. The conformal result should therefore be read as
 empirical temporal evidence, not as a failed theorem under maintained
 exchangeability.
 
+\subsection{Development Success Does Not Transport}
+
+The selected guardrail looked favorable on its six development months. Its
+realized payoff exceeded the development-selected point policy by
+\$50{,}260.10, while default and miscoverage were lower by 0.063802 and
+0.007358. Yet its model-expected payoff was already \$72{,}701.67 lower. In the
+locked primary window, the realized-payoff and miscoverage directions reverse,
+while the default advantage remains.
+
+\begin{table}[t]
+\TABLE
+{Development-to-OOT transport of the selected policy. Development values are
+exact; primary values are sharp unresolved-outcome bounds.
+\label{tab:development-transport}}
+{\footnotesize
+\begin{tabular}{lrr}
+\toprule
+Guardrail minus point PD & Development, 2012H2 & Locked primary, 2016--2017 \\
+\midrule
+Expected payoff & -\$72{,}701.67 & -\$240{,}977.78 \\
+Realized payoff & +\$50{,}260.10 & [-\$322{,}703.79, -\$58{,}040.34] \\
+Weighted default & -0.063802 & [-0.046275, -0.020093] \\
+Weighted miscoverage & -0.007358 & [0.008822, 0.029850] \\
+\bottomrule
+\end{tabular}}{}
+\end{table}
+
+This is not a formal generalization test from six independent observations. It
+is a locked temporal reversal. It shows why selecting on mature development
+outcomes and then reporting the same period would have produced the wrong
+economic and coverage conclusion. No alternative $\tau$, $\gamma$, payoff, or
+date window is chosen after observing the reversal.
+
 \subsection{The Guardrail Lowers Default but Also Lowers Payoff}
 
-On 2012H2 development data, the selected guardrail realizes \$581{,}408.64 on
-\$6 million of monthly capital, versus \$531{,}148.54 for point PD. That
-advantage does not transport. Across the 15 locked primary months, each policy
-allocates \$15 million. The guardrail's expected standardized payoff is
+Across the 15 locked primary months, each policy allocates \$15 million. The
+guardrail's expected standardized payoff is
 \$2{,}383{,}112, compared with \$2{,}624{,}090 for point PD. Its realized
 payoff is bounded by $[-\$2{,}389.90,\ \$168{,}250.04]$, whereas point PD is
 bounded by $[\$177{,}108.53,\ \$369{,}495.74]$. Marginal intervals overlap,
@@ -595,7 +807,23 @@ caused primarily by the guardrail's move toward low-score groups. It is caused
 by adaptive selection within those groups, combined with binary interval
 geometry and temporal drift.
 
-\section{Discussion and Implications}\label{sec:discussion}
+\subsection{A Pareto Trade-off, Not a Ranking Winner}
+
+On the three reported decision outcomes, the policies are Pareto-incomparable.
+The conformal guardrail has lower funded default. Point PD has higher expected
+and realized standardized payoff and lower funded-set miscoverage. Calling
+either policy the winner would insert an unstated preference over default,
+payoff, and predictive reliability.
+
+The data identify the historical trade-off but not the committee's utility for
+it. A decision maker may accept the guardrail when a 2.01--4.63
+percentage-point default reduction is worth the bounded payoff loss. A decision
+maker who values payoff or selected-set coverage more strongly should prefer
+the point policy or use a method that calibrates the operational loss directly.
+CRPTO supplies the audit surface for that choice; it does not estimate welfare
+weights or claim that the chosen blend is optimal outside its development rule.
+
+\section{Discussion}\label{sec:discussion}
 
 \subsection{What the Conformal Guardrail Actually Does}
 
@@ -617,7 +845,7 @@ such as \emph{robust} must name the quantity and perturbation it protects
 describes a transparent uncertainty-sensitive constraint, not distributional
 robustness or a theorem under adaptive selection.
 
-\subsection{Lessons for Decision-Focused Data Science}
+\subsection{Implications for Decision-Focused Data Science}
 
 Three design lessons generalize beyond credit. First, candidate construction
 is part of the decision rule. Excluding rows because their outcomes are
@@ -647,7 +875,45 @@ composition. The upper-score guardrail may be useful when reducing default is
 worth a transparent economic cost. The current experiment does not identify
 that preference or establish that the trade is optimal.
 
-\section{Limitations and Reproducibility}\label{sec:limitations}
+\subsection{Managerial Audit Card}
+
+For a model-risk or credit committee, the paper can be reduced to seven
+questions. The answers deliberately combine positive controls with failed
+validity claims.
+
+\begin{table}[t]
+\TABLE
+{Decision audit card for the active CRPTO policy.
+\label{tab:audit-card}}
+{\scriptsize
+\begin{tabularx}{\textwidth}{p{0.31\textwidth}Xp{0.23\textwidth}}
+\toprule
+Committee question & Evidence & Current answer \\
+\midrule
+Could the menu exist at decision time? & Status-independent inclusion and
+monthly menus & Yes for recorded origination fields \\
+Were choices made before primary outcomes? & Six pre-2013 blocks and 40-month
+gap & Yes in the active protocol \\
+Does 90\% coverage transport OOT? & Candidate coverage
+$[0.854923,0.879692]$ & No \\
+Does the guardrail lower funded default? & Sharp paired bound
+$[-0.046275,-0.020093]$ & Yes retrospectively \\
+Is the default reduction economically free? & Payoff bound
+$[-\$322{,}703.79,-\$58{,}040.34]$ & No \\
+Does the funded set gain coverage? & Miscoverage bound
+$[0.008822,0.029850]$ & No; it is worse \\
+Is unchanged deployment supported? & Monthly reversals, drift, censored
+extension & No; a new calibration protocol is needed \\
+\bottomrule
+\end{tabularx}}{}
+\end{table}
+
+The card clarifies where a simple post-hoc guardrail is useful. It can expose a
+default-payoff frontier without replacing a governed score. It cannot replace
+selection-valid prediction, nonexchangeable calibration, cash-flow modeling,
+or live monitoring when those are the actual policy requirements.
+
+\section{Limitations}\label{sec:limitations}
 
 The study has seven main limitations. First, Lending Club is one historical
 platform whose retail originations ended in 2020; the design cannot establish
@@ -664,6 +930,8 @@ audit. Earlier project work inspected overlapping historical periods, so the
 evidence must not be called a pristine lockbox or preregistered prospective
 test.
 
+\section{Reproducibility}\label{sec:reproducibility}
+
 The successful experiment is the tagged maturity-safe bounded protocol v2 at
 source commit \texttt{78a64fe}. The online supplement records the full run,
 protocol, DVC, and SHA-256 identifiers without forcing long machine IDs into
@@ -675,9 +943,10 @@ manifest were neither executed nor overwritten.
 
 The evidence builder validates the protocol tag and commit, summary and receipt
 hashes, every versioned artifact, and optionally the raw-file hash. It then
-regenerates the seven publication tables and three figures used here. Two
-consecutive builds are byte-identical. Claim-sync tests compare the JSON
-source, CSV tables, anonymous QMD body, supplement, and official IJDS TeX. The
+regenerates eleven publication-table exports---four compact main exports and
+S1--S7---and four figures. Two consecutive builds are byte-identical.
+Claim-sync tests compare the JSON source, CSV tables, anonymous QMD body,
+supplement, and official IJDS TeX. The
 online supplement gives exact commands, schemas, proofs, and the
 historical-artifact boundary. Author-identifying repository links are withheld
 from this double-anonymous manuscript and can be supplied to the editor under

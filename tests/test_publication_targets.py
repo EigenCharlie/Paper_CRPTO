@@ -55,7 +55,7 @@ def test_active_contract_is_small_complete_and_numerically_locked() -> None:
     assert active["headline"]["payoff_difference"] == pytest.approx([-322703.79, -58040.34])
     assert active["headline"]["default_difference"] == pytest.approx([-0.046275, -0.020093])
     assert active["headline"]["miscoverage_difference"] == pytest.approx([0.008822, 0.029850])
-    assert len(active["required_artifacts"]) == 13
+    assert len(active["required_artifacts"]) == 15
     for artifact in active["required_artifacts"]:
         assert Path(artifact).is_file(), artifact
 

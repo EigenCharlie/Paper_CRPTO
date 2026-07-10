@@ -31,6 +31,9 @@ both Quarto renders, and the official TeX compile.
   Portfolio Selection" on all surfaces.
 - Active universe is 540,121; no resolved-status filter is implied.
 - Active policy is `q=0.75p+0.25u`, `tau=0.17`.
+- Development guardrail-minus-point realized payoff is `+$50,260.10`, while
+  model-expected payoff is `-$72,701.67`; both directions reverse or remain
+  adverse in locked OOT as stated in Main Table 6.
 - Primary candidate coverage is `[0.854923, 0.879692]`.
 - Guardrail-minus-point payoff is `[-$322,703.79, -$58,040.34]`.
 - Guardrail-minus-point default is `[-0.046275, -0.020093]`.
@@ -38,6 +41,8 @@ both Quarto renders, and the official TeX compile.
 - Standardized payoff is never called realized investor return or IRR.
 - No selected-set, causal, prospective, Markov, or fair-lending claim appears.
 - Compact-v7 headline values and A35--A40 are historical only.
+- The closest-work table, three propositions, development-to-OOT reversal, and
+  managerial audit card appear on both body sources with the same boundaries.
 
 ## Official Build QA
 
@@ -51,8 +56,10 @@ The wrapper uses `latexmk` and falls back to the intentional
 - PDF metadata and visible content are anonymous; and
 - page images show no clipping, overlap, blank content, or missing glyphs.
 
-Current local build (2026-07-10): 16 pages total and citation/reference clean.
-Recount and repeat visual QA after every substantive TeX edit.
+Current local build (2026-07-10): 21 official pages, references from page 18,
+and citation/reference clean. The body and supplement previews are 21 and 17
+pages. Four figures and ten main tables are present and readable. Recount and
+repeat visual QA after every substantive TeX edit.
 
 ## Anonymous Packet
 

@@ -1,6 +1,11 @@
 from __future__ import annotations
 
-from scripts.compile_ijds_submission import LatexScan, _windows_latexmk_script
+from scripts.compile_ijds_submission import (
+    OFFICIAL_TEMPLATE_FILES,
+    LatexScan,
+    _missing_template_files,
+    _windows_latexmk_script,
+)
 
 
 def test_latex_scan_ok_property_flags_clean_build() -> None:
@@ -23,3 +28,10 @@ def test_windows_latexmk_script_finds_tinytex_payload(tmp_path) -> None:
     script.touch()
 
     assert _windows_latexmk_script(wrapper) == script
+
+
+def test_missing_template_files_reports_only_absent_assets(tmp_path) -> None:
+    for name in OFFICIAL_TEMPLATE_FILES[:2]:
+        (tmp_path / name).touch()
+
+    assert _missing_template_files(tmp_path) == OFFICIAL_TEMPLATE_FILES[2:]

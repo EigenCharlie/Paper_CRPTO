@@ -18,6 +18,13 @@ SUBMISSION_DIR = ROOT / "paper" / "submission"
 REPORT_DIR = ROOT / "reports" / "ci"
 TEX_NAME = "CRPTO_ijds_submission.tex"
 JOB_NAME = "CRPTO_ijds_submission"
+OFFICIAL_TEMPLATE_FILES = (
+    "informs4.cls",
+    "informs2014.bst",
+    "eqndefns-left.sty",
+    "informs_Logo.pdf",
+)
+INFORMS_STYLE_URL = "https://pubsonline.informs.org/authorportal/latex-style-files"
 
 
 @dataclass(frozen=True)
@@ -96,10 +103,25 @@ def _manual_pdflatex_bibtex(cwd: Path, env: dict[str, str], transcript: Path) ->
     return 0
 
 
+def _missing_template_files(directory: Path) -> tuple[str, ...]:
+    """Return official publisher assets absent from a submission directory."""
+    return tuple(name for name in OFFICIAL_TEMPLATE_FILES if not (directory / name).is_file())
+
+
 def compile_submission(*, prefer_manual: bool = False) -> int:
     """Compile the official submission with latexmk, falling back to manual passes."""
     if not (SUBMISSION_DIR / TEX_NAME).is_file():
         logger.error("Missing {}", (SUBMISSION_DIR / TEX_NAME).relative_to(ROOT))
+        return 2
+    missing = _missing_template_files(SUBMISSION_DIR)
+    if missing:
+        logger.error(
+            "Missing official INFORMS LaTeX assets: {}. Download the current style package "
+            "from {} and place these files in paper/submission; they are intentionally "
+            "ignored by Git.",
+            ", ".join(missing),
+            INFORMS_STYLE_URL,
+        )
         return 2
 
     env = _submission_env()
