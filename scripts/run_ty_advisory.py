@@ -1,4 +1,4 @@
-"""Run ty as a fast, non-blocking advisory checker for CRPTO."""
+"""Run pinned ty as an advisory or blocking checker for CRPTO."""
 
 from __future__ import annotations
 
@@ -23,6 +23,11 @@ ACTIVE_EXCLUDED_FILES = {
     "scripts/train_pd_model.py",
     "src/optimization/cuopt_adapter.py",
 }
+ACTIVE_EXPERIMENT_FILES = {
+    "scripts/experiments/ijds_policy_support.py",
+    "scripts/experiments/run_ijds_calibration_selected_policy_challenger.py",
+    "scripts/experiments/run_ijds_exact_alpha_grid_challenger.py",
+}
 SUMMARY_RE = re.compile(r"^Found \d+ diagnostics", flags=re.MULTILINE)
 
 
@@ -38,7 +43,9 @@ def iter_python_files(*, scope: str) -> list[str]:
             rel = _relative_posix(path)
             parts = rel.split("/")
             if scope == "active":
-                if parts[:2] in (["scripts", "archive"], ["scripts", "experiments"]):
+                if parts[:2] == ["scripts", "archive"]:
+                    continue
+                if parts[:2] == ["scripts", "experiments"] and rel not in (ACTIVE_EXPERIMENT_FILES):
                     continue
                 if parts[:2] == ["scripts", "search"] and path.name.startswith("run_"):
                     continue

@@ -26,6 +26,7 @@ from src.models.conformal_artifacts import load_conformal_intervals  # noqa: E40
 from src.optimization.certificate_semantics import (  # noqa: E402
     compute_funded_certificate_metrics,
 )
+from src.optimization.policy import policy_segment_labels  # noqa: E402
 from src.optimization.portfolio_model import (  # noqa: E402
     compute_effective_pd,
     optimize_portfolio_allocation,
@@ -120,30 +121,6 @@ def _load_aligned_dataset(
     return aligned
 
 
-def _policy_segment_labels(loans: pd.DataFrame, policy_mode: str) -> np.ndarray | None:
-    if str(policy_mode).strip().lower() not in {
-        "segment_tail_blended_uncertainty",
-        "segment_relative_tail_blended_uncertainty",
-    }:
-        return None
-    grade = (
-        loans["grade"].fillna("unknown").astype(str)
-        if "grade" in loans.columns
-        else pd.Series(["unknown"] * len(loans))
-    )
-    term = (
-        loans["term"].fillna("unknown").astype(str)
-        if "term" in loans.columns
-        else pd.Series(["unknown"] * len(loans))
-    )
-    verification = (
-        loans["verification_status"].fillna("unknown").astype(str)
-        if "verification_status" in loans.columns
-        else pd.Series(["unknown"] * len(loans))
-    )
-    return (grade + "|" + term + "|" + verification).to_numpy(dtype=object)
-
-
 def _compute_intervals_at_alpha(
     frame: pd.DataFrame,
     alpha: float,
@@ -183,7 +160,7 @@ def _compute_effective_pd_vector(
         gamma=float(policy["gamma"]),
         delta_cap_quantile=float(policy["delta_cap_quantile"]),
         tail_focus_quantile=float(policy["tail_focus_quantile"]),
-        segment_labels=_policy_segment_labels(loans, str(policy["policy_mode"])),
+        segment_labels=policy_segment_labels(loans, str(policy["policy_mode"])),
     )
 
 

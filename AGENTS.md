@@ -10,8 +10,8 @@ Lectura obligatoria, en este orden:
 1. [`CLAUDE.md`](CLAUDE.md) — reglas de operación, champion congelado
    (esquema dual-tag pool93), stages prohibidos, comandos y convenciones.
 2. [`docs/research/active_claims_2026-07-04.md`](docs/research/active_claims_2026-07-04.md)
-   — registro vigente de claims del paper (body point pool93, denominadores
-   finite-grid, reopen gate).
+   — registro vigente de claims del paper (replay exacto al 90%, selector de
+   calibración 3x3, política lineal 50/50 y reopen gate).
 3. [`.codex/skills/crpto/SKILL.md`](.codex/skills/crpto/SKILL.md) — skill de
    Codex con el detalle operativo del certificado y sus artefactos.
 

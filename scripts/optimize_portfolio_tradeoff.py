@@ -23,11 +23,7 @@ from loguru import logger
 
 from src.models.conformal_artifacts import load_conformal_intervals
 from src.optimization.input_alignment import align_candidate_intervals
-from src.optimization.portfolio_model import (
-    compute_effective_pd,
-    optimize_portfolio_allocation,
-    solution_allocation_vector,
-)
+from src.optimization.policy_evaluation import solve_policy_allocation
 from src.utils.artifact_metadata import resolve_run_tag
 from src.utils.pipeline_runtime import (
     atomic_write_json,
@@ -287,41 +283,7 @@ def _solve_single(
     cuopt_presolve: int | None = 1,
     cuopt_parameters: dict[str, Any] | None = None,
 ) -> tuple[dict[str, float | int | str], np.ndarray]:
-    effective_policy_mode = str(policy_mode) if robust else "point_estimate"
-    effective_gamma = float(gamma) if robust else 0.0
-    effective_delta_cap = float(delta_cap_quantile) if robust else 1.0
-    effective_tail_focus = float(tail_focus_quantile) if robust else 1.0
-    segment_labels: np.ndarray | None = None
-    if effective_policy_mode in {
-        "segment_tail_blended_uncertainty",
-        "segment_relative_tail_blended_uncertainty",
-    }:
-        grade = (
-            loans["grade"].fillna("unknown").astype(str)
-            if "grade" in loans.columns
-            else pd.Series(["unknown"] * len(loans))
-        )
-        term = (
-            loans["term"].fillna("unknown").astype(str)
-            if "term" in loans.columns
-            else pd.Series(["unknown"] * len(loans))
-        )
-        verification = (
-            loans["verification_status"].fillna("unknown").astype(str)
-            if "verification_status" in loans.columns
-            else pd.Series(["unknown"] * len(loans))
-        )
-        segment_labels = (grade + "|" + term + "|" + verification).to_numpy(dtype=object)
-    pd_constraint = compute_effective_pd(
-        pd_point=pd_point,
-        pd_high=pd_high,
-        policy_mode=effective_policy_mode,
-        gamma=effective_gamma,
-        delta_cap_quantile=effective_delta_cap,
-        tail_focus_quantile=effective_tail_focus,
-        segment_labels=segment_labels,
-    )
-    solution = optimize_portfolio_allocation(
+    result = solve_policy_allocation(
         loans=loans,
         pd_point=pd_point,
         pd_low=pd_low,
@@ -330,12 +292,15 @@ def _solve_single(
         int_rates=int_rates,
         total_budget=total_budget,
         max_concentration=max_concentration,
-        max_portfolio_pd=risk_tolerance,
+        risk_tolerance=risk_tolerance,
         robust=robust,
         uncertainty_aversion=uncertainty_aversion,
         min_budget_utilization=min_budget_utilization,
         pd_cap_slack_penalty=pd_cap_slack_penalty,
-        pd_constraint_override=pd_constraint,
+        policy_mode=policy_mode,
+        gamma=gamma,
+        delta_cap_quantile=delta_cap_quantile,
+        tail_focus_quantile=tail_focus_quantile,
         time_limit=time_limit,
         threads=threads,
         solver_backend=solver_backend,
@@ -343,9 +308,9 @@ def _solve_single(
         cuopt_presolve=cuopt_presolve,
         cuopt_parameters=cuopt_parameters,
     )
-
+    solution = result.solution
     n = len(loans)
-    allocation = solution_allocation_vector(solution, n)
+    allocation = result.allocation
     loan_amounts = (
         loans["loan_amnt"].to_numpy(dtype=float)
         if "loan_amnt" in loans.columns
@@ -374,10 +339,10 @@ def _solve_single(
     return {
         "solver_status": str(solution["solver_status"]),
         "solver_backend": str(solver_backend),
-        "policy_mode": effective_policy_mode,
-        "gamma": effective_gamma,
-        "delta_cap_quantile": effective_delta_cap,
-        "tail_focus_quantile": effective_tail_focus,
+        "policy_mode": result.policy_mode.value,
+        "gamma": result.gamma,
+        "delta_cap_quantile": result.delta_cap_quantile,
+        "tail_focus_quantile": result.tail_focus_quantile,
         "objective_value": float(solution["objective_value"]),
         "n_funded": int(solution["n_funded"]),
         "total_allocated": total_allocated,

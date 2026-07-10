@@ -44,7 +44,7 @@ complexity-report:
     uvx radon cc src scripts -s -n D
 
 api-docs-core:
-    uv run --with pdoc pdoc src.optimization.portfolio_model src.models.calibration src.evaluation.backtesting src.evaluation.fairness --docformat google --output-directory reports/api-docs --no-browser
+    uv run --with pdoc pdoc src.optimization.portfolio_model src.optimization.policy_evaluation src.optimization.policy_selection src.models.conformal_alpha_grid src.models.calibration src.evaluation.backtesting src.evaluation.fairness --docformat google --output-directory reports/api-docs --no-browser
 
 hooks-check:
     uv run pre-commit validate-config
@@ -77,7 +77,19 @@ evidence:
 journal-package:
     uv run python scripts/build_crpto_journal_package.py
 
-paper-export: tables figures evidence journal-package book
+ijds-evidence:
+    uv run python scripts/build_ijds_calibration_selected_evidence.py
+
+# Explicit methodology replays. These write only to versioned experiment paths.
+ijds-exact-alpha:
+    uv run python scripts/experiments/run_ijds_exact_alpha_grid_challenger.py --config configs/experiments/champion_reopen_ijds_exact_alpha_grid_v1.yaml
+
+ijds-policy-challenger:
+    uv run python scripts/experiments/run_ijds_calibration_selected_policy_challenger.py --config configs/experiments/champion_reopen_ijds_calibration_selected_simple90_v6.yaml
+
+ijds-active-replay: ijds-exact-alpha ijds-policy-challenger ijds-evidence
+
+paper-export: tables figures evidence journal-package ijds-evidence book
 
 # IJDS-oriented manuscript body (HTML writing preview).
 paper-ijds:
@@ -95,7 +107,7 @@ paper-submission-official:
     @uv run python scripts/compile_ijds_submission.py
 
 # Final local IJDS gate before freezing or uploading.
-submission-check: publication-integrity lint type-check type-advisory-full smoke validate-champion paper-submission paper-submission-official
+submission-check: ijds-evidence publication-integrity lint type-check type-advisory-full test validate-champion paper-submission paper-submission-official
 
 # IJDS-oriented manuscript body (local HTML-print PDF verification draft).
 paper-ijds-pdf:

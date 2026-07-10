@@ -1,0 +1,6 @@
+metric,observed,boot_mean,boot_p025,boot_p50,boot_p975,n_draws,seed,note
+realized_return,179327.5851322598,179075.4838443055,162706.17200230644,179416.98769601624,193924.73990027257,5000,20260709,"Fixed funded-loan contribution bootstrap; model, intervals, selector, and solver are not resampled."
+weighted_default_rate,0.039375,0.03963778218343555,0.020869102395698755,0.039043420065914713,0.0617419907402632,5000,20260709,"Fixed funded-loan contribution bootstrap; model, intervals, selector, and solver are not resampled."
+weighted_miscoverage,0.036875,0.03720263786105997,0.019357859801356386,0.03671487666893709,0.058812406466411934,5000,20260709,"Fixed funded-loan contribution bootstrap; model, intervals, selector, and solver are not resampled."
+Gamma_CP,0.1761021788469351,0.17602573881357803,0.13715911012280738,0.17480824046170865,0.2243084301758857,5000,20260709,"Fixed funded-loan contribution bootstrap; model, intervals, selector, and solver are not resampled."
+endpoint_budget,0.2580510894234676,0.25794196914296347,0.21730801774100114,0.2567618086877488,0.30857101650304447,5000,20260709,"Fixed funded-loan contribution bootstrap; model, intervals, selector, and solver are not resampled."

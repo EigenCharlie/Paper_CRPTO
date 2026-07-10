@@ -25,30 +25,33 @@ CRPTO does not cover:
 - New model-training research unless it is explicitly isolated from the frozen
   champion or run under a new tag.
 
-## Frozen champion contract
+## Active paper contract
 
-The current IJDS paper-facing CRPTO body point is the promoted pool93
-finite-grid frontier closure:
+The current IJDS body point is the simple calibration-selected 90% guardrail:
 
-- certificate tag: `champion-reopen-2026-06-19__pool93__ijds-certificate-semantics-v2`
-- source policy run: `champion-reopen-2026-06-19__pool93__ijds-claim-micro-ext`
-- body/default policy mode: `capped_blended_uncertainty` (family
-  `claim_micro_ext_body_cap345`, selected from the consolidated frontier)
-- robust return: `$184,832.48`
-- `V(alpha=0.01)=0.035350`
-- `Gamma_CP(alpha=0.01)=0.162616`
-- `Gamma_internalized(alpha=0.01)=0.089032`
-- `Gamma_residual(alpha=0.01)=0.073584`
-- exact endpoint budget at `alpha=0.01`: `0.245084`
-- exact Markov loss threshold at `alpha=0.01`: `0.345084`
-- realized risk-tolerance excess: `0.0`
-- declared alpha-grid pass: `8/8`
-- main paper-facing artifacts: A35 finite-grid frontier, A36 funded-set grade
-  audit, A37 selected-allocation tail-risk repricing, A38 cluster-bound audit,
-  A39 fixed-allocation bootstrap diagnostic, and A40 matched point-PD audit.
+- run tag:
+  `champion-reopen-2026-06-19__pool93__ijds-calibration-selected-simple90-v6`
+- exact conformal replay: target `alpha=0.10`, frozen used alpha `0.095`;
+- policy: `q=(p+u)/2`, `tau=0.17`, with point PD in the economic objective
+  and conformal `q` in the risk constraint;
+- selector: nine round-number policies on the temporal calibration holdout,
+  five eligible under the `0.60` endpoint-plus-Markov screen, no
+  outcome-derived selector columns;
+- realized return: `$179,327.59`;
+- weighted default and miscoverage: `0.039375` and `0.036875`;
+- `Gamma_CP=0.176102`, `Gamma_residual=0.088051`;
+- endpoint budget `0.258051`; assumption-conditional Markov threshold
+  `0.574279`;
+- paper artifacts: A35 exact-alpha audit, A36 calibration selector, A37
+  temporal evaluation, A38 grade audit, A39 bootstrap, and A40 matched
+  comparisons.
 
-The previous IJDS rebaseline is retained as historical provenance, not as the
-active body claim:
+The selector is outcome-free with respect to OOT policy ranking, but earlier
+project development inspected the static OOT corpus. The paper must describe
+the result as a retrospective lockbox replay, not a pristine prospective trial.
+
+The previous IJDS rebaseline and pool93 frontier are retained as historical
+provenance, not as active body claims:
 
 - run tag: `ijds-rebaseline-2026-06-07`
 - policy: `bound_aware_276k_economic_champion`

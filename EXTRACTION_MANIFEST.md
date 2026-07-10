@@ -9,13 +9,13 @@ exists, and how `tests/test_manifest_regression.py` enforces it.
 ## TL;DR
 
 - **Schema version**: 6 (top-level key `schema_version`).
-- **Dual-tag governance**:
-  - frozen upstream baseline: `ijds-rebaseline-2026-06-07`;
-  - active IJDS certificate semantics:
-    `champion-reopen-2026-06-19__pool93__ijds-certificate-semantics-v2`.
+- **Manifest scope**: frozen upstream baseline plus the historical pool93
+  promotion recorded at extraction time. The current IJDS manuscript policy is
+  newer and is governed separately by
+  `docs/research/active_claims_2026-07-04.md`.
 - **187 critical files** are hashed under `critical_hashes` (SHA256 + byte
   count).
-- **Pool93 body claim**: return `$184,832.48`, `V(alpha=0.01)=0.035350`,
+- **Historical pool93 claim**: return `$184,832.48`, `V(alpha=0.01)=0.035350`,
   `Gamma_CP=0.162616`, `Gamma_res=0.073584`, endpoint `0.245084`, exact
   Markov loss threshold `0.345084`, realized risk-tolerance excess `0.0`, and
   declared alpha-grid pass `8/8`.
@@ -50,7 +50,7 @@ exists, and how `tests/test_manifest_regression.py` enforces it.
 | `generated_at_utc` | When the manifest was produced. |
 | `summary` | Free-text human description of the extraction scope. |
 | `champion_metrics` | Frozen upstream baseline numbers retained as provenance and as the declared return floor. |
-| `pool93_ijds_promotion` | Active IJDS metadata for the policy-aware frontier, semantic audit, selected body point, and A40 matched baseline. |
+| `pool93_ijds_promotion` | Historical IJDS metadata frozen at extraction time; retained as provenance, not the current manuscript claim. |
 | `critical_hashes` | Map `relative_path → {sha256, bytes, hash_source}` for every file the paper depends on. |
 | `validation_results` | Output of the extraction-time guardrail tests. |
 | `files` | Inventory of files copied/created during extraction. |

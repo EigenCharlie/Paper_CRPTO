@@ -21,7 +21,7 @@ Each plan documents:
 | [`CONFORMAL_REFACTOR_PLAN.md`](CONFORMAL_REFACTOR_PLAN.md) | Yes (calibrator pickle) | Full public split executed 2026-06-13; `src.models.conformal` is now a package facade with strict-typed submodules. |
 | [`MAPIE_MIGRATION_PLAN.md`](MAPIE_MIGRATION_PLAN.md) | Yes (intervals parquet) | Runtime is already MAPIE 1.x and the drift report is green; protected reruns still require explicit approval. |
 | [`archive/FEATURE_CONFIG_PARQUET_PLAN.md`](archive/FEATURE_CONFIG_PARQUET_PLAN.md) | Yes (downstream stages) | Executed 2026-06-13 and archived; `feature_config.pkl` retired from the live DVC DAG and manifest. |
-| [`ijds_tooling_refactor_lab_2026-07-08.md`](ijds_tooling_refactor_lab_2026-07-08.md) | No (tooling/refactor only) | Active and full `ty` advisory scopes are clean; `pyrefly` is experimental; `pdoc`/`prek` are optional local helpers before IJDS submission. |
+| [`ijds_tooling_decisions_2026-07-09.md`](ijds_tooling_decisions_2026-07-09.md) | No (tooling/refactor only) | Final live contract: `uv`, Ruff, mypy, `ty`, pytest, `just`, DVC and hook validation; Pyrefly and Commitizen are not adopted. |
 
 Executed lanes now in `main`:
 

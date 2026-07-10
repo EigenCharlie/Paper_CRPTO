@@ -9,11 +9,18 @@ arrays generated on the fly so the suite stays fast.
 from __future__ import annotations
 
 import numpy as np
+import pandas as pd
 import pytest
 from hypothesis import HealthCheck, given, settings, strategies as st
 from hypothesis.extra.numpy import arrays
 
-from src.optimization.policy import PolicyMode, all_policy_modes, resolve_policy_mode
+from src.optimization.policy import (
+    PolicyMode,
+    all_policy_modes,
+    policy_segment_labels,
+    policy_uses_segment_labels,
+    resolve_policy_mode,
+)
 from src.optimization.portfolio_model import compute_effective_pd
 
 # ---------------------------------------------------------------------------
@@ -62,6 +69,31 @@ def test_resolve_policy_mode_passes_through_enum() -> None:
 def test_resolve_policy_mode_defaults_for_none_or_empty() -> None:
     assert resolve_policy_mode(None) is PolicyMode.HARD_WORST_CASE
     assert resolve_policy_mode("") is PolicyMode.HARD_WORST_CASE
+
+
+def test_only_segment_policies_request_segment_labels() -> None:
+    assert policy_uses_segment_labels(PolicyMode.SEGMENT_TAIL_BLENDED_UNCERTAINTY)
+    assert policy_uses_segment_labels(PolicyMode.SEGMENT_RELATIVE_TAIL_BLENDED_UNCERTAINTY)
+    assert not policy_uses_segment_labels(PolicyMode.BLENDED_UNCERTAINTY)
+
+
+def test_policy_segment_labels_use_one_canonical_fallback_contract() -> None:
+    loans = pd.DataFrame(
+        {
+            "original_grade": ["A", None],
+            "term": [36, 60],
+        }
+    )
+
+    labels = policy_segment_labels(
+        loans,
+        PolicyMode.SEGMENT_TAIL_BLENDED_UNCERTAINTY,
+        grade_column="original_grade",
+    )
+
+    assert labels is not None
+    assert labels.tolist() == ["A|36|unknown", "unknown|60|unknown"]
+    assert policy_segment_labels(loans, PolicyMode.BLENDED_UNCERTAINTY) is None
 
 
 # ---------------------------------------------------------------------------

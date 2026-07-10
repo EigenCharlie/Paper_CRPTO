@@ -11,7 +11,9 @@ def test_active_ty_scope_excludes_archived_optional_and_protected_paths() -> Non
     assert "scripts/run_spo_real.py" not in files
     assert "src/optimization/cuopt_adapter.py" not in files
     assert all(not path.startswith("scripts/archive/") for path in files)
-    assert all(not path.startswith("scripts/experiments/") for path in files)
+    assert "scripts/experiments/ijds_policy_support.py" in files
+    assert "scripts/experiments/run_ijds_calibration_selected_policy_challenger.py" in files
+    assert "scripts/experiments/run_ijds_exact_alpha_grid_challenger.py" in files
     assert all(
         not (path.startswith("scripts/search/run_") and path.endswith(".py")) for path in files
     )
@@ -21,7 +23,10 @@ def test_active_ty_scope_keeps_live_ijds_helpers() -> None:
     files = set(iter_python_files(scope="active"))
 
     assert "scripts/compile_ijds_submission.py" in files
+    assert "scripts/build_ijds_calibration_selected_evidence.py" in files
     assert "scripts/search/build_pool93_body_allocation_audit.py" in files
+    assert "src/models/conformal_alpha_grid.py" in files
+    assert "src/optimization/policy_selection.py" in files
     assert "src/optimization/portfolio_model.py" in files
 
 

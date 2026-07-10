@@ -1,70 +1,65 @@
 # IJDS Submission Roadmap - Target 2026-08-10
 
-This roadmap keeps the CRPTO submission work aligned with INFORMS Journal on
-Data Science rather than with a generic machine-learning or operations-research
-paper. The target date is August 10, 2026. IJDS regular submissions are rolling;
-the date is an internal quality gate, not an external deadline.
+The date is an internal quality gate; IJDS submissions are rolling.
 
-Official sources to recheck before freezing:
+Official sources to recheck in the submission week:
 
-- Submission guidelines: <https://pubsonline.informs.org/page/ijds/submission-guidelines>
-- Data and Code Disclosure Policy: <https://pubsonline.informs.org/page/ijds/data-and-code-disclosure-policy>
-- Reviewer guidelines: <https://pubsonline.informs.org/page/ijds/reviewer-guidelines>
-- LaTeX style files: <https://pubsonline.informs.org/authorportal/latex-style-files>
+- <https://pubsonline.informs.org/page/ijds/submission-guidelines>
+- <https://pubsonline.informs.org/page/ijds/data-and-code-disclosure-policy>
+- <https://pubsonline.informs.org/page/ijds/reviewer-guidelines>
+- <https://pubsonline.informs.org/authorportal/latex-style-files>
 
 ## Submission Thesis
 
-CRPTO should be read as data science for decisions:
-
-| IJDS component | CRPTO surface |
+| IJDS dimension | CRPTO answer |
 |---|---|
-| Data | Static Lending Club OOT panel, plus Prosper and Freddie/Mendeley frozen external stress tests. |
-| Models/algorithms | Calibrated PD, Mondrian conformal intervals, robust LP, exact funded-set audit. |
-| Decision relevance | Funding a credit portfolio under budget, risk tolerance, and uncertainty. |
-| Implications | Model-risk governance, reproducible auditability, robust-price interpretation, and limits of external transfer. |
+| Data | Temporal Lending Club panel with a calibration development block and OOT evaluation. |
+| Method | Exact 90% conformal replay and one midpoint portfolio guardrail. |
+| Decision | Allocate `$1M` under capital, concentration, and effective-PD constraints. |
+| Evidence | Nine-cell calibration selector, matched point-PD decision, temporal reversals, and funded-set audit. |
+| Implication | An inspectable price of uncertainty, including cases where the static guardrail should be rejected. |
 
-## Work Plan
+## Completed Scientific Refactor
 
-| Window | Goal | Required output |
+- Retired approximate cross-alpha headline values.
+- Replayed conformal quantiles exactly at every sensitivity alpha.
+- Selected the conventional 90% reference level; documented endpoint
+  saturation at tighter levels.
+- Replaced nonlinear/tail policy families with `q=(p+u)/2`.
+- Separated point-PD economics from conformal feasibility.
+- Reduced policy selection to a round-number `3x3` calibration grid.
+- Added schema guards against outcome-derived selector columns.
+- Added matched point-PD and 75% blend comparators.
+- Promoted temporal reversals and limitations to the body.
+- Rebuilt A35--A40 and active claim-sync tests.
+
+## Remaining Submission Work
+
+| Window | Deliverable | Exit condition |
 |---|---|---|
-| Jun 9-16 | Editorial contract | Body and supplement explicitly state data-model-decision-implication logic. |
-| Jun 17-24 | Claim hardening | Every headline number maps to an artifact and a non-overclaim boundary. |
-| Jun 25-Jul 2 | Related-work pressure test | Closest-work table reads as a novelty boundary, not a literature survey. |
-| Jul 3-10 | Method and theorem audit | Exact funded-set certificate, weighted-validity assumption, and post-selection boundary are unambiguous. |
-| Jul 11-17 | External replication polish | Prosper/Freddie remain evidence of recipe transfer, not new exact certificates. |
-| Jul 18-24 | Figures and tables | Captions state takeaway; tables fit IJDS; figures remain readable in grayscale. |
-| Jul 25-31 | Reproducibility package | Data/code disclosure plan, commands, hashes, DVC pointers, and raw-data instructions are ready. |
-| Aug 1-5 | Official template | Body compiles in `informs4` with `dblanonrev`; current local build is 26 pages total, Section 9 and References start on page 22, so the body remains within the 25-page limit when references are excluded. Final ScholarOne proof still pending. |
-| Aug 6-8 | Double-anonymous QA | Metadata, URLs, acknowledgements, local paths, and author signals are removed from reviewer-facing PDFs. |
-| Aug 9-10 | Submission freeze | `just lint`, `just smoke`, `just validate-champion`, `just paper-submission-pdf`, and visual QA pass. |
+| Jul 9--12 | Code and claim gates | Ruff, mypy, ty, focused tests, smoke, manifest, and drift gate green. |
+| Jul 12--18 | PDF editorial QA | Official body and supplement render; no undefined citations; body within 25-page rule; visual QA complete. |
+| Jul 18--24 | Reproducibility archive | Sanitized commands, source notes, run tags, hashes, and A35--A40 bundle staged. |
+| Jul 25--31 | Anonymous package | Body, supplement, title page, cover letter, and disclosure form separated correctly. |
+| Aug 1--8 | Cold review | Read only the generated PDFs; fix clarity, table, and citation defects. |
+| Aug 9--10 | ScholarOne freeze | Upload, inspect ScholarOne proof, and submit only after go/no-go checklist. |
 
-## The 15 Improvement Tracks
+## Acceptance Risks
 
-| # | Track | Done definition |
-|---:|---|---|
-| 1 | Central methodological claim | Abstract, introduction, and conclusion describe CRPTO as an auditable conformal-robust decision certificate. |
-| 2 | IJDS fit | The body visibly contains data, method, decision, and implication components. |
-| 3 | Exact-certificate language | "Exact" is defined as funded-set accounting on frozen OOT outputs, with statistical assumptions stated separately. |
-| 4 | Finite-grid frontier | A35 is explained as the final evaluated pool93 finite-grid frontier, not all candidate policies or a continuous region. |
-| 5 | External datasets | Prosper/Freddie are frozen external economic replications, not new Lending Club champions. |
-| 6 | Related work | The closest-work boundary distinguishes CRPTO from P2P OR, conformal credit scoring, conformal RO, DFL, and financial portfolios. |
-| 7 | Figures | Main figures have single-sentence takeaways, readable axes, grayscale-safe contrast, and no unnecessary decorative elements. |
-| 8 | Tables | Body tables are compact reviewer evidence; voluminous diagnostics stay in the supplement. |
-| 9 | Supplement | A3--A40 are organized as a defense layer with scope caveats. |
-| 10 | Reproducibility | Accepted-paper package has code, DVC pointers, manifest, raw-data instructions, and guardrail commands. |
-| 11 | Double anonymity | Reviewer-facing body and supplement contain no author URLs, names, local paths, or private remotes. |
-| 12 | Official IJDS template | `CRPTO_ijds_submission.tex` is manually synchronized from the pool93 A35--A40 QMD source, keeps the official-template compaction, compiles against the official files, and is rechecked after body edits. |
-| 13 | Data/code form | Cover letter and disclosure text acknowledge IJDS accepted-paper reproducibility requirements. |
-| 14 | Acceptance-risk audit | A short list of likely reviewer objections has body or supplement responses. |
-| 15 | Freeze discipline | Protected champion/search stages are never rerun as routine paper reproduction. |
+| Risk | Mitigation in current draft |
+|---|---|
+| Applied pipeline rather than method | One explicit objective/constraint contract and exact selector protocol. |
+| Broad binary conformal intervals | A35 reports width and endpoint saturation; no 99% headline. |
+| Adaptive funded-set validity | Deterministic accounting is separated from assumption-conditional Markov language. |
+| Historical OOT reuse | "Retrospective lockbox replay" stated in abstract, design, limitations, supplement, and cover letter. |
+| Baseline cherry-picking | Same candidates, budget, concentration, LGD, solver, and `tau`; temporal failures are shown. |
+| Too many methods | A1--A34 demoted to diagnostics; A35--A40 support one midpoint policy. |
+| Reproducibility mistaken for novelty | Decision method and managerial trade-off lead; tooling supports auditability. |
+| Page and template risk | Official `informs4` build and visual QA are blocking gates. |
 
-## Current Acceptance Risks
+## Freeze Rule
 
-| Risk | Why it matters | Mitigation |
-|---|---|---|
-| Perceived as applied pipeline | IJDS needs methodological data science, not just a case study. | Keep the decision-certificate framing central. |
-| Overreading exact validity | Reviewers may object if "exact" sounds like universal conformal validity. | Define exact as funded-set accounting and state weighted validity separately. |
-| External claims too strong | Prosper/Freddie are not new certificates. | Label them as economic replication and exhaustiveness audits. |
-| Regret comparator confusion | SPO+ wins regret by design. | Present regret-auditability as a frontier with different governance outputs. |
-| Template/page risk | Local HTML-print PDFs are not official. | Keep the `informs4` handoff build current and recheck the ScholarOne proof before submission. |
-| Reproducibility policy | IJDS requires disclosure form at submission and archive workflow at acceptance. | Maintain `REPRODUCIBILITY_PACKAGE.md` and cover-letter language. |
+After the scientific and PDF gates pass, do not reopen the policy for marginal
+OOT gains. Reopen only for a concrete reviewer request, a simpler calibration-
+only rule that matches the active result, or a formally stronger prospective or
+selection-valid protocol.

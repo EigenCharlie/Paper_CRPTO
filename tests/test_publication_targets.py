@@ -51,7 +51,7 @@ def test_journal_strengthening_pack_classifies_current_and_backlog_items() -> No
     assert set(included) == {
         "regret_auditability_frontier",
         "tail_risk_oce_cvar_diagnostic",
-        "pool93_frontier_and_selected_allocation",
+        "exact_alpha_calibration_selected_policy",
         "matched_point_pd_baseline",
         "robust_satisficing_margins",
         "dependence_aware_bound",
@@ -62,7 +62,7 @@ def test_journal_strengthening_pack_classifies_current_and_backlog_items() -> No
     }
     assert included["regret_auditability_frontier"]["status"] == "include_body"
     assert included["tail_risk_oce_cvar_diagnostic"]["status"] == "include_supplement"
-    assert included["pool93_frontier_and_selected_allocation"]["status"] == (
+    assert included["exact_alpha_calibration_selected_policy"]["status"] == (
         "include_body_and_supplement"
     )
     assert included["matched_point_pd_baseline"]["status"] == ("include_body_and_supplement")
@@ -74,13 +74,15 @@ def test_journal_strengthening_pack_classifies_current_and_backlog_items() -> No
     assert included["multidataset_external_replication"]["status"] == (
         "include_supplement_or_short_body"
     )
-    pool93_artifacts = included["pool93_frontier_and_selected_allocation"]["artifacts"]
-    assert "reports/crpto/tables/crpto_tableA35_pool93_ijds_frontier.csv" in pool93_artifacts
-    assert "reports/crpto/tables/crpto_tableA39_pool93_body_bootstrap_metrics.csv" in (
-        pool93_artifacts
+    active_artifacts = included["exact_alpha_calibration_selected_policy"]["artifacts"]
+    assert "reports/crpto/tables/crpto_tableA35_exact_alpha_grid.csv" in active_artifacts
+    assert "reports/crpto/tables/crpto_tableA39_calibration_selected_bootstrap.csv" in (
+        active_artifacts
     )
-    assert "reports/crpto/tables/crpto_tableA40_pool93_point_baseline.csv" in (pool93_artifacts)
-    for artifact in pool93_artifacts:
+    assert "reports/crpto/tables/crpto_tableA40_calibration_selected_point_baseline.csv" in (
+        active_artifacts
+    )
+    for artifact in active_artifacts:
         assert Path(artifact).exists(), artifact
     multidataset_artifacts = included["multidataset_external_replication"]["artifacts"]
     assert "reports/crpto/tables/crpto_tableA28_external_lp_exhaustiveness.csv" in (
@@ -103,7 +105,9 @@ def test_journal_strengthening_pack_classifies_current_and_backlog_items() -> No
     paper_readme = Path("paper/README.md").read_text(encoding="utf-8")
 
     for text in (body, supplement, paper_readme):
-        assert "regret-auditability" in text.lower()
-        assert "OCE/CVaR" in text
-        assert "satisficing" in text.lower()
-        assert "multi-dataset" in text.lower()
+        assert "midpoint" in text.lower()
+        assert "calibration" in text.lower()
+        assert "point-PD" in text
+
+    for diagnostic in ("OCE/CVaR", "SPO+", "Prosper"):
+        assert diagnostic in supplement

@@ -8,22 +8,19 @@ Pipeline de investigación y libro Quarto que acompañan el paper **CRPTO**, una
 
 | Campo | Valor |
 | --- | --- |
-| Certificate tag | `champion-reopen-2026-06-19__pool93__ijds-certificate-semantics-v2` |
-| Policy family | `claim_micro_ext_body_cap345` |
-| Policy mode | `capped_blended_uncertainty` |
-| Retorno robusto | **$184,832.48** |
-| `V(α=0.01)` | `0.035350` |
-| `Γ_CP(α=0.01)` | `0.162616` |
-| `Γ_int / Γ_res` (`α=0.01`) | `0.089032 / 0.073584` |
-| Endpoint / Markov threshold | `0.245084 / 0.345084` |
-| Alpha-grid pass | `8/8` |
-| Frontera consolidada | `50,010` políticas semánticas; `27,508` elegibles sobre el return floor |
-| Baseline A40 | costo de retorno `5.875%`; reducción default/V `8.305` pp |
+| Run tag | `champion-reopen-2026-06-19__pool93__ijds-calibration-selected-simple90-v6` |
+| Conformal | replay exacto al `90%` (`alpha=0.10`, used `0.095`) |
+| Política | `q=(p+u)/2`, `tau=0.17`; PD puntual en el objetivo y `q` en el guardrail |
+| Selector | grilla redonda `3x3` en calibración; `5/9` elegibles; sin outcomes OOT |
+| Retorno realizado | **$179,327.59** |
+| Default / miscoverage ponderados | `0.039375 / 0.036875` |
+| `Gamma_CP / Gamma_residual` | `0.176102 / 0.088051` |
+| Endpoint / contabilidad observada / umbral condicional | `0.258051 / 0.294926 / 0.574279` |
+| Baseline A40 | `$196,369.14`; costo de retorno `8.678%`; reducción de default `7.9025` pp |
 
 Hashes SHA256 de los artefactos críticos están en [`EXTRACTION_MANIFEST.json`](EXTRACTION_MANIFEST.json). Verifica con `just validate-champion` o el skill `/crpto-validate-champion`.
-El rebaseline `ijds-rebaseline-2026-06-07` se conserva como upstream congelado
-y return floor histórico (`$170,464.54`, `45/45`), no como el claim activo del
-manuscrito IJDS.
+El rebaseline y la frontera pool93 anterior se conservan como procedencia
+congelada, no como claims activos del manuscrito IJDS.
 
 ## Requisitos del sistema
 
@@ -67,6 +64,7 @@ just book-clean         # borra _book/, _freeze/, .quarto/
 
 # Pipeline de paper (no toca el champion)
 just paper-export       # tablas + figuras + evidence + journal + libro
+just ijds-evidence      # A35--A40 y gobernanza de la política IJDS activa
 just tables             # solo CSVs
 just figures            # solo PNGs/PDFs
 
@@ -75,12 +73,12 @@ just lint               # ruff check + format check
 just fmt                # ruff fix + format
 just type-check         # mypy src scripts
 just type-advisory      # ty sobre ruta activa IJDS, no bloqueante
-just type-advisory-full # ty sobre src/scripts completos, deuda opcional/historica
+just type-advisory-full # ty sobre src/scripts completos; bloquea el cierre IJDS
 just api-docs-core      # pdoc local para modulos core, salida ignorada
 just hooks-check        # valida hooks con pre-commit y prek
 just smoke              # tests críticos rápidos
 just test               # suite completa
-just submission-check   # cierre IJDS: claims, lint, type, smoke, champion y PDF oficial
+just submission-check   # cierre IJDS: claims, lint, type, suite completa, champion y PDF oficial
 
 # DVC
 just dvc-status         # drift detection

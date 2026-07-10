@@ -9,7 +9,13 @@ purpose.
 Use these for the active submission workflow:
 
 - `check_publication_integrity.py` - checks that paper, supplement, README and
-  official-template docs agree on the active pool93 IJDS claim.
+  official-template docs agree on the active midpoint IJDS claim.
+- `build_ijds_calibration_selected_evidence.py` - regenerates active A35--A40
+  and governance from the exact-alpha and selected-policy outputs.
+- `experiments/run_ijds_exact_alpha_grid_challenger.py` - exact replay into an
+  isolated experiment path.
+- `experiments/run_ijds_calibration_selected_policy_challenger.py` - solves the
+  declared 3x3 calibration grid and fixed OOT evaluations.
 - `compile_ijds_submission.py` - compiles the official INFORMS/IJDS LaTeX
   handoff and scans `.log`/`.blg` for unresolved citations or references.
 - `run_ty_advisory.py` - runs pinned `ty` in a focused advisory scope for daily
@@ -29,6 +35,7 @@ just smoke
 just type-advisory
 just hooks-check
 just complexity-report
+just ijds-evidence
 just paper-submission
 just paper-submission-official
 just submission-check
@@ -50,8 +57,9 @@ post-submission cleanup lane justifies touching them.
 
 ## Protected or historical search paths
 
-The large scripts under `scripts/search/` and `scripts/experiments/` are mostly
-historical or governed research surfaces. Do not run HPO, conformal interval
+The large scripts under `scripts/search/` and most `scripts/experiments/` are
+historical or governed research surfaces. The three active IJDS experiment
+modules listed above are the narrow exception. Do not run HPO, conformal interval
 generation, champion search, or protected portfolio search unless the work has
 a fresh run tag, artifact sink, and drift/revalidation plan.
 
@@ -64,8 +72,8 @@ TabPFN, SPO+/PyEPO/Torch and cuOpt remain optional experiment stacks. The
 scripts that need them use explicit optional imports so the base IJDS
 environment stays light and full-tree type checks still remain useful.
 
-The active paper should cite the frozen pool93 finite-grid certificate, not a
-new ad hoc rerun from these entry points.
+The active paper should cite A35--A40 and `ijds_policy_governance.json`, not an
+ad hoc rerun or the historical policy frontier.
 
 ## Refactor priority
 

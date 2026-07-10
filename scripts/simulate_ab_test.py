@@ -30,10 +30,7 @@ import pandas as pd
 from loguru import logger
 
 from src.evaluation.ab_testing import ab_summary, compare_strategies
-from src.optimization.portfolio_model import (
-    compute_effective_pd,
-    optimize_portfolio_allocation,
-)
+from src.optimization.policy_evaluation import solve_policy_allocation
 from src.utils.artifact_metadata import build_artifact_metadata, resolve_run_tag
 from src.utils.script_helpers import artifact_path as _artifact_path
 
@@ -510,60 +507,27 @@ def _run_strategy(
     robust_policy: dict[str, Any] | None = None,
 ) -> tuple[dict, np.ndarray]:
     pd_point = np.asarray(common["pd_point"], dtype=float)
-    pd_high = np.asarray(common["pd_high"], dtype=float)
-    if robust:
-        policy = robust_policy or {}
-        loans = cast(pd.DataFrame, common["loans"])
-        segment_labels: np.ndarray | None = None
-        if str(policy.get("policy_mode", "hard_worst_case")) in {
-            "segment_tail_blended_uncertainty",
-            "segment_relative_tail_blended_uncertainty",
-        }:
-            grade = (
-                loans["grade"].fillna("unknown").astype(str)
-                if "grade" in loans.columns
-                else pd.Series(["unknown"] * len(loans))
-            )
-            term = (
-                loans["term"].fillna("unknown").astype(str)
-                if "term" in loans.columns
-                else pd.Series(["unknown"] * len(loans))
-            )
-            verification = (
-                loans["verification_status"].fillna("unknown").astype(str)
-                if "verification_status" in loans.columns
-                else pd.Series(["unknown"] * len(loans))
-            )
-            segment_labels = (grade + "|" + term + "|" + verification).to_numpy(dtype=object)
-        effective_pd = compute_effective_pd(
-            pd_point=pd_point,
-            pd_high=pd_high,
-            policy_mode=str(policy.get("policy_mode", "hard_worst_case")),
-            gamma=float(policy.get("gamma", 1.0)),
-            delta_cap_quantile=float(policy.get("delta_cap_quantile", 1.0)),
-            tail_focus_quantile=float(policy.get("tail_focus_quantile", 1.0)),
-            segment_labels=segment_labels,
-        )
-        solution = optimize_portfolio_allocation(
-            robust=True,
-            uncertainty_aversion=float(policy.get("uncertainty_aversion", 0.0)),
-            min_budget_utilization=float(policy.get("min_budget_utilization", 0.0)),
-            pd_cap_slack_penalty=float(policy.get("pd_cap_slack_penalty", 0.0)),
-            pd_constraint_override=effective_pd,
-            total_budget=total_budget,
-            max_portfolio_pd=max_portfolio_pd,
-            solver_backend=solver_backend,
-            **common,
-        )
-    else:
-        solution = optimize_portfolio_allocation(
-            robust=False,
-            total_budget=total_budget,
-            max_portfolio_pd=max_portfolio_pd,
-            solver_backend=solver_backend,
-            **common,
-        )
-    return solution, pd_point
+    policy = robust_policy or {}
+    result = solve_policy_allocation(
+        loans=cast(pd.DataFrame, common["loans"]),
+        pd_point=pd_point,
+        pd_low=np.asarray(common["pd_low"], dtype=float),
+        pd_high=np.asarray(common["pd_high"], dtype=float),
+        lgd=np.asarray(common["lgd"], dtype=float),
+        int_rates=np.asarray(common["int_rates"], dtype=float),
+        total_budget=total_budget,
+        risk_tolerance=max_portfolio_pd,
+        robust=robust,
+        uncertainty_aversion=float(policy.get("uncertainty_aversion", 0.0)),
+        min_budget_utilization=float(policy.get("min_budget_utilization", 0.0)),
+        pd_cap_slack_penalty=float(policy.get("pd_cap_slack_penalty", 0.0)),
+        policy_mode=str(policy.get("policy_mode", "hard_worst_case")),
+        gamma=float(policy.get("gamma", 1.0)),
+        delta_cap_quantile=float(policy.get("delta_cap_quantile", 1.0)),
+        tail_focus_quantile=float(policy.get("tail_focus_quantile", 1.0)),
+        solver_backend=solver_backend,
+    )
+    return result.solution, result.effective_pd
 
 
 def _candidate_metrics(

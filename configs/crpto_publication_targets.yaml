@@ -36,11 +36,12 @@ primary_target:
     - "Freeze a release tag and reproducibility bundle after anonymity decision."
   current_paper_scope:
     include:
-      - "Pool93 finite-grid return-bound frontier as the active IJDS body claim."
-      - "Frozen upstream PD/calibration/conformal chain retained as provenance and return floor."
-      - "A3--A40 as supplement/appendix evidence generated from frozen artifacts."
+      - "Exact 90% conformal replay plus a calibration-selected 3x3 linear policy grid as the active IJDS body claim."
+      - "One interpretable policy, q=(p+u)/2 with tau=0.17, and a matched point-PD comparator."
+      - "Frozen upstream PD/calibration/conformal chain and historical pool93 frontier retained only as provenance."
+      - "A3--A34 as supporting diagnostics and A35--A40 as the active exact-alpha/selector/evaluation bundle."
       - "Regret-auditability frontier as the body-level SPO+/CRPTO trade-off."
-      - "OCE/CVaR and robust satisficing as diagnostics, not new selectors."
+      - "OCE/CVaR, robust satisficing, external replications, and SPO+ as diagnostics or comparators, not additional CRPTO methods."
       - "Cluster-aware dependence caveat/proposition in the theory supplement."
       - "Prosper/Freddie external economic replication without reopening the Lending Club champion."
       - "Quarto/DVC/DagsHub/MLflow companion after anonymity handling."
@@ -62,34 +63,30 @@ journal_strengthening_pack:
       requires_new_run: false
     tail_risk_oce_cvar_diagnostic:
       status: include_supplement
-      role: "Tail-risk audit of legacy diagnostic surfaces plus A37 selected pool93 allocation repricing under LGD alternatives."
+      role: "Legacy OCE/CVaR sensitivity retained in the supplement; it does not select or redefine the active linear policy."
       artifacts:
         - reports/crpto/tables/crpto_tableA12_tail_risk_oce_cvar.csv
         - reports/crpto/tables/crpto_tableA20_tail_satisficing_challenger_audit.csv
-        - reports/crpto/tables/crpto_tableA37_pool93_body_tail_risk.csv
       requires_new_run: false
-    pool93_frontier_and_selected_allocation:
+    exact_alpha_calibration_selected_policy:
       status: include_body_and_supplement
-      role: "Active IJDS policy-aware certificate: A35 exact frontier in the body, A36--A39 selected-allocation audits, and A40 matched point-PD audit."
+      role: "Active IJDS evidence: exact alpha replay, nine-policy calibration selector, temporal/funded-set audits, bootstrap, and matched comparisons."
       artifacts:
-        - reports/crpto/tables/crpto_tableA35_pool93_ijds_frontier.csv
-        - reports/crpto/tables/crpto_tableA36_pool93_body_funded_grade_audit.csv
-        - reports/crpto/tables/crpto_tableA37_pool93_body_tail_risk.csv
-        - reports/crpto/tables/crpto_tableA38_pool93_body_cluster_bound_audit.csv
-        - reports/crpto/tables/crpto_tableA39_pool93_body_bootstrap_metrics.csv
-        - reports/crpto/tables/crpto_tableA40_pool93_point_baseline.csv
-        - models/experiments/champion_reopen/champion-reopen-2026-06-19__pool93__ijds-claim-bound-terminal/portfolio/pool93_ijds_claim_governance.json
-        - models/experiments/champion_reopen/champion-reopen-2026-06-19__pool93__ijds-certificate-semantics-v2/portfolio/pool93_ijds_consolidated_frontier.json
-        - models/experiments/champion_reopen/champion-reopen-2026-06-19__pool93__ijds-certificate-semantics-v2/portfolio/pool93_ijds_consolidated_governance.json
-        - models/experiments/champion_reopen/champion-reopen-2026-06-19__pool93__ijds-certificate-semantics-v2/portfolio/pool93_point_pd_baseline_audit.json
+        - reports/crpto/tables/crpto_tableA35_exact_alpha_grid.csv
+        - reports/crpto/tables/crpto_tableA36_calibration_policy_selector.csv
+        - reports/crpto/tables/crpto_tableA37_calibration_selected_temporal_evaluation.csv
+        - reports/crpto/tables/crpto_tableA38_calibration_selected_grade_audit.csv
+        - reports/crpto/tables/crpto_tableA39_calibration_selected_bootstrap.csv
+        - reports/crpto/tables/crpto_tableA40_calibration_selected_point_baseline.csv
+        - models/experiments/champion_reopen/champion-reopen-2026-06-19__pool93__ijds-calibration-selected-simple90-v6/portfolio/ijds_policy_governance.json
       requires_new_run: false
     matched_point_pd_baseline:
       status: include_body_and_supplement
-      role: "A40 matched Lending Club baseline: same candidates and operating constraints, point PD as the only decision-semantic change."
+      role: "A40 matched Lending Club baseline: same candidates, tau=0.17 and operating constraints; point PD replaces the conformal guardrail."
       artifacts:
-        - reports/crpto/tables/crpto_tableA40_pool93_point_baseline.csv
-        - reports/crpto/tables/crpto_tableA40_pool93_point_baseline.tex
-        - models/experiments/champion_reopen/champion-reopen-2026-06-19__pool93__ijds-certificate-semantics-v2/portfolio/pool93_point_pd_baseline_audit.json
+        - reports/crpto/tables/crpto_tableA40_calibration_selected_point_baseline.csv
+        - reports/crpto/tables/crpto_tableA40_calibration_selected_point_baseline.tex
+        - models/experiments/champion_reopen/champion-reopen-2026-06-19__pool93__ijds-calibration-selected-simple90-v6/portfolio/ijds_policy_governance.json
       requires_new_run: false
     robust_satisficing_margins:
       status: include_supplement_or_short_body
@@ -107,7 +104,7 @@ journal_strengthening_pack:
       requires_new_run: false
     tail_satisficing_challenger_audit:
       status: include_supplement
-      role: "Journal-only legacy audit that ranks tail-satisficing alternatives without promoting them over the pool93 body point."
+      role: "Journal-only legacy audit; it is not a selector for the active 50/50 linear policy."
       artifacts:
         - reports/crpto/tables/crpto_tableA20_tail_satisficing_challenger_audit.csv
         - models/crpto_tail_satisficing_audit_status.json

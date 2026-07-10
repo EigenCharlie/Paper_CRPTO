@@ -22,40 +22,28 @@ class SurfaceCheck:
 
 
 COMMON_CLAIM_TOKENS = (
-    "$184832.48",
-    "0.035350",
-    "0.162616",
-    "0.073584",
-    "0.245084",
-    "50010",
-    "27508",
-    "8/8",
-)
-
-MAIN_SURFACE_REQUIRED = (
-    *COMMON_CLAIM_TOKENS,
-    "0.345084",
-    "0.697056",
+    "$179327.59",
+    "0.039375",
+    "0.036875",
+    "0.176102",
+    "0.088051",
+    "0.258051",
+    "0.294926",
+    "0.574279",
     "196369.14",
-    "5.875%",
-    "8.305",
-    "43.55",
-    "decision certificate",
-    "single-submission boundary",
+    "8.678%",
+    "7.9025",
 )
 
 ACTIVE_SURFACE_FORBIDDEN = (
-    "five contributions",
+    "four contributions",
     "crpto v2",
-    "future work rather than",
-    "signed price is favorable",
-    "wins expected return",
     "-10.56%",
     "markov cap",
-    "0.510753",
-    "173314.04",
-    "zero deterministic violation",
-    "zero exact violation",
+    "0.345084",
+    "50010",
+    "27508",
+    "capped_blended_uncertainty",
 )
 
 SURFACES = (
@@ -63,120 +51,96 @@ SURFACES = (
         path=REPO / "README.md",
         required=(
             *COMMON_CLAIM_TOKENS,
-            "0.345084",
             "claim ijds activo",
-            "upstream congelado",
-            "no como el claim activo",
+            "q=(p+u)/2",
+            "grilla redonda 3x3",
         ),
         forbidden=("## champion congelado",),
     ),
     SurfaceCheck(
-        path=REPO / "paper" / "submission" / "README.md",
+        path=REPO / "paper/submission/README.md",
         required=(
-            "28-page official-template pdf",
             "pdflatex -> bibtex -> pdflatex -> pdflatex",
             "latexmk",
-            "body remains inside the ijds 25-page",
-        ),
-        forbidden=(
-            "26-page official pdf",
-            "26 pages total",
-            "27-page official-template pdf",
-            "27 pages total",
-        ),
-    ),
-    SurfaceCheck(
-        path=REPO / "paper" / "CRPTO_ijds.qmd",
-        required=(
-            *MAIN_SURFACE_REQUIRED,
-            "the paper makes four contributions",
-            "one auditable post-hoc decision certificate",
-            "matched point-pd baseline",
+            "official-template",
         ),
         forbidden=ACTIVE_SURFACE_FORBIDDEN,
     ),
     SurfaceCheck(
-        path=REPO / "paper" / "submission" / "CRPTO_ijds_submission.tex",
+        path=REPO / "paper/CRPTO_ijds.qmd",
         required=(
-            *MAIN_SURFACE_REQUIRED,
-            "the paper makes four contributions",
-            "one auditable post-hoc decision certificate",
-            "matched point-pd baseline",
+            *COMMON_CLAIM_TOKENS,
+            "the paper makes three contributions",
+            "retrospective lockbox replay",
+            "matched point-pd",
+            "q_i=(p_i+u_i)/2",
         ),
         forbidden=ACTIVE_SURFACE_FORBIDDEN,
     ),
     SurfaceCheck(
-        path=REPO / "paper" / "supplement_ijds.qmd",
+        path=REPO / "paper/submission/CRPTO_ijds_submission.tex",
         required=(
             *COMMON_CLAIM_TOKENS,
-            "decision certificate",
-            "single-submission boundary",
-            "outside the submitted claim",
-            "10423",
-            "2866",
-            "matched point-pd decision audit (a40)",
+            "the paper makes three contributions",
+            "retrospective lockbox replay",
+            "matched point-pd",
         ),
-        forbidden=("crpto v2", "future work only", "markov cap", "0.510753"),
+        forbidden=ACTIVE_SURFACE_FORBIDDEN,
     ),
     SurfaceCheck(
-        path=REPO / "paper" / "submission" / "CLAIM_AUDIT_MATRIX.md",
-        required=(
-            "exclude the historical lending club -10.56% field",
-            "a40 reports a matched lending club cost of 5.875%",
-            "gamma_cp = gamma_int + gamma_res",
-        ),
-        forbidden=("lending club price -10.56%", "+27.03%", "markov cap"),
-    ),
-    SurfaceCheck(
-        path=REPO / "book" / "chapters" / "30-replicacion-multidataset.qmd",
-        required=(
-            "lending club no entra en esa serie",
-            "la auditoría point-pd corregida en tau=0.1715 es a40",
-            "frontera policy-aware a35",
-            "5.875%",
-        ),
-        forbidden=(
-            "lending club es la excepción informativa",
-            "la robustez nunca es económicamente catastrófica",
-            "+27.03%",
-        ),
-    ),
-    SurfaceCheck(
-        path=REPO / "scripts" / "generate_crpto_figures.py",
-        required=("stored nonrobust baseline was not a point-only comparator",),
-        forbidden=("lc_price", "sits below zero", "robustness adds value"),
-    ),
-    SurfaceCheck(
-        path=REPO / "docs" / "research" / "active_claims_2026-07-04.md",
+        path=REPO / "paper/supplement_ijds.qmd",
         required=(
             *COMMON_CLAIM_TOKENS,
-            "0.345083866",
-            "decision certificate",
-            "outside the submitted claim",
-            "baseline semantics boundary",
-            "point-pd allocation earns $196369.14",
-            "maximum understatement was 0.241324",
+            "a35. exact alpha replay",
+            "a36. calibration policy selector",
+            "a40. matched decision audit",
+            "retrospective lockbox replay",
         ),
-        forbidden=("crpto v2", "future protocols", "markov cap", "+27.03%"),
+        forbidden=ACTIVE_SURFACE_FORBIDDEN,
     ),
     SurfaceCheck(
-        path=REPO / "configs" / "crpto_publication_targets.yaml",
-        required=("outside the submitted claim", "not acceptance criteria"),
-        forbidden=("future work and are not acceptance criteria", "crpto v2"),
+        path=REPO / "paper/submission/CLAIM_AUDIT_MATRIX.md",
+        required=(
+            "calibration-selected midpoint",
+            "a40",
+            "8.678%",
+            "7.9025",
+        ),
+        forbidden=ACTIVE_SURFACE_FORBIDDEN,
+    ),
+    SurfaceCheck(
+        path=REPO / "docs/research/active_claims_2026-07-04.md",
+        required=(
+            *COMMON_CLAIM_TOKENS,
+            "nine round-number candidates",
+            "retrospective lockbox replay",
+            "retired headline claims",
+        ),
+        forbidden=("crpto v2", "markov cap", "+27.03%"),
+    ),
+    SurfaceCheck(
+        path=REPO / "configs/crpto_publication_targets.yaml",
+        required=(
+            "exact 90% conformal replay",
+            "q=(p+u)/2",
+            "outside the submitted claim",
+            "not acceptance criteria",
+        ),
+        forbidden=("crpto v2",),
     ),
 )
 
 
 def _normalize(text: str) -> str:
-    """Normalize Markdown/LaTeX enough for robust manuscript-token checks."""
+    """Normalize Markdown and LaTeX enough for robust token checks."""
     lowered = text.lower()
     replacements = {
-        "\\$": "$",
+        r"\$": "$",
         "{,}": ",",
-        "\\_": "_",
-        "\\mathrm": "",
-        "\\gamma": "gamma",
-        "\\alpha": "alpha",
+        r"\_": "_",
+        r"\mathrm": "",
+        r"\gamma": "gamma",
+        r"\alpha": "alpha",
         "\\": "",
         "{": "",
         "}": "",

@@ -4,7 +4,6 @@ import numpy as np
 import pandas as pd
 import pytest
 
-import scripts.optimize_portfolio_tradeoff as tradeoff_module
 from scripts.optimize_portfolio import _align_candidates_and_intervals
 from scripts.optimize_portfolio_tradeoff import (
     _align_loans_and_intervals,
@@ -13,6 +12,7 @@ from scripts.optimize_portfolio_tradeoff import (
     _select_champion_policy,
     _solve_single,
 )
+from src.optimization import policy_evaluation
 
 
 def test_portfolio_alignment_wrappers_share_strict_id_contract() -> None:
@@ -72,7 +72,7 @@ def test_nonrobust_solve_uses_point_pd_contract(monkeypatch: pytest.MonkeyPatch)
         }
 
     monkeypatch.setattr(
-        tradeoff_module,
+        policy_evaluation,
         "optimize_portfolio_allocation",
         _fake_optimize_portfolio_allocation,
     )

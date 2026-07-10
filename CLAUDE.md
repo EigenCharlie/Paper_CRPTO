@@ -33,25 +33,30 @@ El "champion congelado" se refiere al **pipeline de búsqueda** que produjo las 
 
 ## Champion congelado — NO RE-CORRER
 
-Esquema dual-tag (detalle en `docs/SCOPE_AND_GOVERNANCE.md`). Pool93 es una
-re-evaluación determinista de una grilla finita de políticas sobre los mismos
-intervalos conformal congelados; **no regenera ningún artefacto upstream**.
+El modelo PD, calibrador, intervalos y bundle pool93 del manifest permanecen
+congelados. El body IJDS usa un replay exacto y una política nueva bajo un run
+tag aislado; **no regenera ni sobreescribe ningún artefacto upstream**.
 
-**Body claim del paper IJDS (pool93, activo):**
+**Body claim del paper IJDS (activo):**
 
 | Campo | Valor |
 | --- | --- |
-| Certificate tag | `champion-reopen-2026-06-19__pool93__ijds-certificate-semantics-v2` |
-| Source policy run | `champion-reopen-2026-06-19__pool93__ijds-claim-micro-ext` |
-| Policy mode | `capped_blended_uncertainty` (familia `claim_micro_ext_body_cap345`) |
-| Retorno robusto | `$184,832.48` |
-| V(α=0.01) | `0.035350` |
-| Γ_CP(α=0.01) | `0.162616` |
-| Γ_int / Γ_res (α=0.01) | `0.089032 / 0.073584` |
-| Endpoint / Markov threshold (α=0.01) | `0.245084 / 0.345084` |
-| Alpha grid | `8/8`, exceso realizado sobre τ `0.0` |
-| Baseline A40 | costo de retorno `5.875%`; reducción default/V `8.305` pp |
-| Evidencia | A35–A40 + JSONs de gobernanza/certificado pool93 |
+| Run tag | `champion-reopen-2026-06-19__pool93__ijds-calibration-selected-simple90-v6` |
+| Conformal | exact replay at target `alpha=0.10` (frozen used alpha `0.095`) |
+| Policy | `q=(p+u)/2`, `tau=0.17`, point-PD economic objective |
+| Selector | 9 round-number policies on the temporal calibration holdout; 5 eligible; no outcome-derived selector columns |
+| Realized return | `$179,327.59` on a `$1M` budget |
+| Weighted default / miscoverage | `0.039375 / 0.036875` |
+| Gamma_CP / Gamma_residual | `0.176102 / 0.088051` |
+| Endpoint / Markov threshold | `0.258051 / 0.574279` |
+| Matched point-PD A40 | return cost `8.678%`; default reduction `7.9025` pp; threshold reduction `66.3266` pp |
+| Evidence | exact alpha A35 + calibration selector A36 + temporal/funded-set/baseline A37--A40 |
+
+The exact policy-facing quantities come from
+`models/experiments/champion_reopen/<run_tag>/portfolio/ijds_policy_governance.json`.
+The primary claim is the simple calibration-selected guardrail and its exact
+funded-set audit. Markov remains an assumption-conditional sensitivity, not the
+headline novelty.
 
 **Cadena upstream congelada (histórica; su retorno es el return floor declarado del pool93):**
 
@@ -65,7 +70,8 @@ intervalos conformal congelados; **no regenera ningún artefacto upstream**.
 | Exact pass | `True` |
 | Región robusta | `45/45` |
 
-Artefactos congelados cuyos hashes están en `EXTRACTION_MANIFEST.json` y **no se tocan** sin permiso:
+Artefactos históricos congelados cuyos hashes están en
+`EXTRACTION_MANIFEST.json` y **no se tocan** sin permiso:
 
 - `models/pd_canonical.cbm`
 - `models/pd_canonical_calibrator.pkl`
@@ -80,7 +86,9 @@ Artefactos congelados cuyos hashes están en `EXTRACTION_MANIFEST.json` y **no s
 - `models/experiments/champion_reopen/...__pool93__ijds-certificate-semantics-v2/portfolio/pool93_point_pd_baseline_audit.json`
 - `EXTRACTION_MANIFEST.json`
 
-La sincronía del body claim con el paper la vigila `tests/test_pool93_body_claim_sync.py`.
+La sincronía del body claim activo con el paper la vigila
+`tests/test_ijds_active_claim_sync.py`. `tests/test_pool93_body_claim_sync.py`
+queda limitado a la integridad de procedencia histórica.
 
 Stages DVC que regeneran estos artefactos (`crpto.pd.champion`, `crpto.conformal.intervals`, `crpto.conformal.validation`, `crpto.portfolio.optimization`, `crpto.portfolio.bound_exact_eval`) **no se ejecutan** sin permiso. Validar con `crpto-validate-champion` antes de cualquier merge.
 
