@@ -268,6 +268,99 @@ def coverage_and_default_transport_decomposition(
     return result
 
 
+def coverage_and_default_transport_bounds(
+    candidates_with_outcomes: pd.DataFrame,
+    funded_allocations: pd.DataFrame,
+    *,
+    alpha: float,
+) -> pd.DataFrame:
+    """Return transport identities under sharp lower and upper completions.
+
+    The funded endpoint in each row is a sharp aggregate bound. Intermediate
+    decomposition terms describe the corresponding extremal completion; they
+    are not asserted to be component-wise confidence bounds.
+    """
+    candidate_y = pd.to_numeric(
+        candidates_with_outcomes["snapshot_default"], errors="coerce"
+    ).to_numpy(dtype=float)
+    funded_y = pd.to_numeric(funded_allocations["snapshot_default"], errors="coerce").to_numpy(
+        dtype=float
+    )
+    candidate_miss_low, candidate_miss_high = binary_miscoverage_bounds(
+        candidate_y,
+        candidates_with_outcomes["conformal_lower"].to_numpy(dtype=float),
+        candidates_with_outcomes["conformal_upper"].to_numpy(dtype=float),
+    )
+    funded_miss_low, funded_miss_high = binary_miscoverage_bounds(
+        funded_y,
+        funded_allocations["conformal_lower"].to_numpy(dtype=float),
+        funded_allocations["conformal_upper"].to_numpy(dtype=float),
+    )
+    candidate_default_low = np.nan_to_num(candidate_y, nan=0.0)
+    candidate_default_high = np.where(np.isfinite(candidate_y), candidate_y, 1.0)
+    funded_default_low = np.nan_to_num(funded_y, nan=0.0)
+    funded_default_high = np.where(np.isfinite(funded_y), funded_y, 1.0)
+    candidate_exposure = candidates_with_outcomes["loan_amnt"].to_numpy(dtype=float)
+    candidate_groups = candidates_with_outcomes["conformal_group"].to_numpy(dtype=int)
+    funded_exposure = funded_allocations["exposure"].to_numpy(dtype=float)
+    funded_groups = funded_allocations["conformal_group"].to_numpy(dtype=int)
+
+    records: list[dict[str, float | str | bool]] = []
+    scenarios = (
+        (
+            "binary_miscoverage",
+            "lower",
+            candidate_miss_low,
+            funded_miss_low,
+            float(alpha),
+        ),
+        (
+            "binary_miscoverage",
+            "upper",
+            candidate_miss_high,
+            funded_miss_high,
+            float(alpha),
+        ),
+        (
+            "snapshot_default",
+            "lower",
+            candidate_default_low,
+            funded_default_low,
+            None,
+        ),
+        (
+            "snapshot_default",
+            "upper",
+            candidate_default_high,
+            funded_default_high,
+            None,
+        ),
+    )
+    for metric, completion, candidate_values, funded_values, reference in scenarios:
+        record = metric_transport_decomposition(
+            metric_name=metric,
+            candidate_values=candidate_values,
+            candidate_exposure=candidate_exposure,
+            candidate_groups=candidate_groups,
+            funded_values=funded_values,
+            funded_exposure=funded_exposure,
+            funded_groups=funded_groups,
+            reference=reference,
+        )
+        records.append(
+            {
+                **record,
+                "completion": completion,
+                "funded_endpoint_is_sharp_bound": True,
+                "components_are_completion_specific": True,
+            }
+        )
+    result = pd.DataFrame(records)
+    if bool((result["identity_residual"].abs() > 1e-12).any()):
+        raise AssertionError("Bounded transport decomposition identity did not reconcile.")
+    return result
+
+
 def weighted_group_shares(
     groups: Sequence[int],
     exposure: Sequence[float],

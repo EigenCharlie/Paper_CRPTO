@@ -9,7 +9,11 @@ import pytest
 
 from scripts.experiments import run_ijds_maturity_safe_challenger as challenger
 from src.evaluation import maturity_safe_portfolio as portfolio
-from src.evaluation.coverage_transport import coverage_and_default_transport_decomposition
+from src.evaluation.coverage_transport import (
+    coverage_and_default_transport_bounds,
+    coverage_and_default_transport_decomposition,
+)
+from src.evaluation.policy_contrast_bounds import sharp_policy_contrast_bounds
 from src.models.binary_conformal_guardrail import BinaryOutcomeConformalRecipe
 from src.optimization.policy import PolicyMode
 from src.optimization.policy_selection import LinearPolicyCandidate
@@ -46,6 +50,10 @@ def test_predeclared_config_locks_scientific_design() -> None:
     assert config["policy"]["risk_tolerances"] == [0.15, 0.17, 0.19]
     assert config["policy"]["gammas"] == [0.25, 0.5, 0.75]
     assert config["conformal"]["estimand"] == "binary_outcome_prediction_interval"
+    assert config["design"]["unresolved_outcome_handling"] == (
+        "sharp_binary_bounds_in_all_evaluation_blocks"
+    )
+    assert "sign-robust" in config["analysis"]["positive_claim_rule"]
 
 
 def test_snapshot_target_includes_policy_variants_and_keeps_unresolved() -> None:
@@ -370,6 +378,64 @@ def test_transport_decomposition_reconciles_exactly() -> None:
         + miss["within_group_selection"]
     )
     assert reconstructed == pytest.approx(miss["total_minus_reference"])
+
+
+def test_bounded_transport_retains_unresolved_and_reconciles_both_completions() -> None:
+    candidates = pd.DataFrame(
+        {
+            "id": ["a", "b", "c"],
+            "loan_amnt": [100.0, 200.0, 300.0],
+            "conformal_group": [0, 0, 1],
+            "conformal_lower": [0.0, 0.0, 0.2],
+            "conformal_upper": [0.2, 0.6, 0.8],
+            "snapshot_default": [0.0, np.nan, 1.0],
+        }
+    )
+    funded = candidates.copy()
+    funded["exposure"] = [400.0, 300.0, 300.0]
+
+    decomposition = coverage_and_default_transport_bounds(candidates, funded, alpha=0.1)
+
+    assert set(decomposition["completion"]) == {"lower", "upper"}
+    assert len(decomposition) == 4
+    assert np.allclose(decomposition["identity_residual"], 0.0, atol=1e-12)
+    defaults = decomposition.loc[decomposition["metric"].eq("snapshot_default")]
+    assert (
+        defaults.loc[defaults["completion"].eq("lower"), "funded_exposure_weighted"].iloc[0]
+        < defaults.loc[defaults["completion"].eq("upper"), "funded_exposure_weighted"].iloc[0]
+    )
+
+
+def test_pairwise_policy_contrast_bounds_use_exposure_differences() -> None:
+    allocations = pd.DataFrame(
+        {
+            "id": ["a", "b", "a"],
+            "role": ["primary_oot"] * 3,
+            "policy_label": ["guard", "guard", "point"],
+            "exposure": [50.0, 50.0, 100.0],
+            "contractual_rate": [0.10, 0.10, 0.10],
+            "conformal_lower": [0.0, 0.0, 0.0],
+            "conformal_upper": [0.2, 0.4, 0.2],
+            "snapshot_default": [0.0, np.nan, 0.0],
+            "expected_payoff_contribution": [4.0, 3.0, 8.0],
+        }
+    )
+
+    bounds = sharp_policy_contrast_bounds(
+        allocations,
+        policy_a="guard",
+        policy_b="point",
+        role="primary_oot",
+        lgd=0.45,
+    )
+
+    assert bounds["expected_objective_difference"] == pytest.approx(-1.0)
+    assert bounds["realized_payoff_difference_lower"] == pytest.approx(-27.5)
+    assert bounds["realized_payoff_difference_upper"] == pytest.approx(0.0)
+    assert bounds["weighted_default_difference_lower"] == pytest.approx(0.0)
+    assert bounds["weighted_default_difference_upper"] == pytest.approx(0.5)
+    assert bounds["weighted_miscoverage_difference_lower"] == pytest.approx(0.0)
+    assert bounds["weighted_miscoverage_difference_upper"] == pytest.approx(0.5)
 
 
 def test_development_selector_uses_realized_payoff_and_deterministic_ties(

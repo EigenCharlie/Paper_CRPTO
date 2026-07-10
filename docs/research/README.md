@@ -20,6 +20,9 @@ read these files in order:
 4. `ijds_maturity_safe_locked_protocol_2026-07-10.md` - preregistered dates,
    methods, comparators, metrics, interpretation rules, and required Git tag
    for the confirmatory reconstruction.
+5. `ijds_maturity_safe_locked_bounded_protocol_v2_2026-07-10.md` - narrowly
+   scoped observability amendment after v1 stopped on unresolved primary rows;
+   no dates, policies, objectives, or comparators changed.
 
 `active_claims_2026-07-04.md` now names the historical compact-v7 claim. It is
 retained because code and tests still replay that artifact, not because its

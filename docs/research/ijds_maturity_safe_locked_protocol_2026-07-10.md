@@ -106,3 +106,12 @@ result is a mechanism finding, not a failed implementation.
 The run writes only fresh children of the allowlisted experiment roots. It does
 not invoke protected DVC stages, alter `EXTRACTION_MANIFEST.json`, overwrite
 the frozen champion, or promote an artifact automatically.
+
+## Execution record
+
+The tagged v1 execution halted before writing a result summary because at
+least one status-independent primary candidate remained unresolved at the
+2020-09-30 snapshot. No realized contrast was printed or persisted. The run
+directory contains only its pre-future `protocol_freeze.json` and is retained
+unchanged. The bounded v2 amendment is registered separately; it changes no
+date, model, policy, comparator, objective, or metric.

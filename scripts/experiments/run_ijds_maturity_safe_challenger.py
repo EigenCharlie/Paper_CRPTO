@@ -41,7 +41,7 @@ from src.data.outcome_observability import (  # noqa: E402
 from src.evaluation.coverage_transport import (  # noqa: E402
     binary_miscoverage_bounds,
     build_temporal_conformal_audit,
-    coverage_and_default_transport_decomposition,
+    coverage_and_default_transport_bounds,
 )
 from src.evaluation.maturity_safe_portfolio import (  # noqa: E402
     aggregate_monthly_evaluation,
@@ -52,6 +52,7 @@ from src.evaluation.maturity_safe_portfolio import (  # noqa: E402
     select_policy_on_development,
     solve_coherent_policy,
 )
+from src.evaluation.policy_contrast_bounds import sharp_policy_contrast_bounds  # noqa: E402
 from src.evaluation.standardized_credit_payoff import (  # noqa: E402
     PAYOFF_ID,
     expected_standardized_payoff_rate,
@@ -97,7 +98,7 @@ from src.utils.pipeline_runtime import (  # noqa: E402
 )
 
 DEFAULT_CONFIG_PATH = (
-    ROOT / "configs" / "experiments" / "ijds_maturity_safe_locked_h1h2_2026-07-10.yaml"
+    ROOT / "configs" / "experiments" / "ijds_maturity_safe_locked_bounded_h1h2_2026-07-10.yaml"
 )
 ALLOWED_DATA_ROOT = Path("data/processed/experiments/champion_reopen")
 ALLOWED_MODEL_ROOT = Path("models/experiments/champion_reopen")
@@ -106,6 +107,7 @@ IMPLEMENTATION_PATHS = (
     Path("src/data/outcome_observability.py"),
     Path("src/evaluation/coverage_transport.py"),
     Path("src/evaluation/maturity_safe_portfolio.py"),
+    Path("src/evaluation/policy_contrast_bounds.py"),
     Path("src/evaluation/standardized_credit_payoff.py"),
     Path("src/models/binary_conformal_guardrail.py"),
     Path("src/models/maturity_safe_pd.py"),
@@ -244,6 +246,7 @@ def load_config(path: Path) -> dict[str, Any]:
         "conformal",
         "payoff",
         "policy",
+        "analysis",
         "execution",
         "output",
     }
@@ -274,6 +277,10 @@ def load_config(path: Path) -> dict[str, Any]:
         raise ValueError(f"Locked temporal boundaries changed: {mismatches}")
     if int(design.get("term_months", 0)) != 36:
         raise ValueError("This protocol is locked to 36-month loans.")
+    if design.get("unresolved_outcome_handling") != (
+        "sharp_binary_bounds_in_all_evaluation_blocks"
+    ):
+        raise ValueError("All evaluation blocks must retain unresolved outcomes with bounds.")
     primary_months = pd.period_range(
         str(design["primary_oot_start_month"]),
         str(design["primary_oot_end_month"]),
@@ -397,28 +404,18 @@ def _aggregate_evaluations(evaluation: pd.DataFrame) -> pd.DataFrame:
     return pd.DataFrame(rows).sort_values(["role", "policy_label"], kind="mergesort")
 
 
-def _primary_contrasts(aggregate: pd.DataFrame) -> list[dict[str, Any]]:
-    primary = aggregate.loc[aggregate["role"].eq("primary_oot")].set_index("policy_label")
-    guard = primary.loc["selected_conformal_guardrail"]
+def _primary_contrasts(allocations: pd.DataFrame, *, lgd: float) -> list[dict[str, Any]]:
     rows: list[dict[str, Any]] = []
-    metrics = [
-        "expected_objective",
-        "realized_payoff_lower",
-        "realized_payoff_upper",
-        "weighted_default_lower",
-        "weighted_default_upper",
-        "weighted_miscoverage_lower",
-        "weighted_miscoverage_upper",
-    ]
     for baseline in ("matched_point_pd", "development_selected_point_pd"):
-        comparator = primary.loc[baseline]
-        record: dict[str, Any] = {
-            "contrast": f"selected_conformal_guardrail_minus_{baseline}",
-            "causal_interpretation": False,
-        }
-        for metric in metrics:
-            record[metric] = float(guard[metric] - comparator[metric])
-        rows.append(record)
+        rows.append(
+            sharp_policy_contrast_bounds(
+                allocations,
+                policy_a="selected_conformal_guardrail",
+                policy_b=baseline,
+                role="primary_oot",
+                lgd=lgd,
+            )
+        )
     return rows
 
 
@@ -709,8 +706,6 @@ def _evaluate_fixed_policies(
         columns="design_split"
     )
     primary_outcomes = future_outcomes.loc[future_outcomes["id"].isin(primary_candidates["id"])]
-    if bool(primary_outcomes["snapshot_default"].isna().any()):
-        raise RuntimeError("Primary OOT contains unresolved outcomes; use a bounded protocol.")
     primary_with_outcomes = primary_candidates.merge(
         primary_outcomes, on="id", how="left", validate="one_to_one"
     )
@@ -719,7 +714,7 @@ def _evaluate_fixed_policies(
         funded = allocations.loc[
             allocations["role"].eq("primary_oot") & allocations["policy_label"].eq(label)
         ]
-        transport = coverage_and_default_transport_decomposition(
+        transport = coverage_and_default_transport_bounds(
             primary_with_outcomes,
             funded,
             alpha=float(config["conformal"]["alpha"]),
@@ -925,7 +920,8 @@ def run_experiment(
         "claim_boundary": (
             "Retrospective maturity-safe temporal decision audit. The conformal object "
             "predicts a binary outcome; marginal coverage is not a selected-set guarantee. "
-            "Standardized payoff is neither cash-flow IRR nor causal return."
+            "Nullable snapshot outcomes remain in every menu and are reported with sharp "
+            "bounds. Standardized payoff is neither cash-flow IRR nor causal return."
         ),
         "protected_stages_run": [],
         "protected_artifacts_written": [],
@@ -1005,11 +1001,21 @@ def run_experiment(
         "monthly_evaluation": {
             "fresh_budget_per_policy_month": float(config["policy"]["budget"]),
             "aggregate_by_role_and_policy": evaluation.aggregate.to_dict(orient="records"),
-            "primary_retrospective_contrasts": _primary_contrasts(evaluation.aggregate),
-            "extension_uses_sharp_unresolved_bounds": True,
+            "primary_retrospective_contrasts": _primary_contrasts(
+                evaluation.allocations,
+                lgd=float(config["payoff"]["lgd"]),
+            ),
+            "all_evaluation_blocks_use_sharp_unresolved_bounds": True,
+            "positive_claim_requires_sign_robust_primary_bounds": True,
             "causal_interpretation": False,
         },
-        "selection_transport": evaluation.transport_decomposition.to_dict(orient="records"),
+        "selection_transport": {
+            "interpretation": (
+                "Funded endpoints are sharp aggregate bounds; intermediate terms are "
+                "completion-specific transport identities, not confidence bounds."
+            ),
+            "rows": evaluation.transport_decomposition.to_dict(orient="records"),
+        },
         "implementation_provenance": implementation_start,
         "artifacts": artifacts,
         "schemas": schemas,
