@@ -28,8 +28,8 @@ The wrapper uses the direct `latexmk.pl` payload on Windows and falls back to th
 - figures and tables fit;
 - PDF metadata and visible content remain anonymous.
 
-Current local build (2026-07-09): 12 pages total, with References beginning on
-page 10; citation/reference scans are clean. Recount after every substantive
+Current local build (2026-07-09): 13 pages total, with References beginning on
+page 11; citation/reference scans are clean. Recount after every substantive
 TeX edit.
 
 ## Local Gates

@@ -100,10 +100,10 @@ The official-template PDF is acceptable only when:
 - the PDF remains double-anonymous;
 - visual inspection confirms that figures, equations, and references render.
 
-Current verified build (2026-07-09): 12 pages total; References begin on page
-10, so the body is 9 pages under the template's pagination. The bibliography is
-clean, and visual inspection of all 12 rendered pages found no clipping,
-overlap, missing glyphs, or unreadable tables.
+Current verified build (2026-07-09): 13 pages total; References begin on page
+11, so the main text occupies pages 1--10 and remains well within the 25-page
+limit. The bibliography is clean, and visual inspection of all 13 pages found
+no clipping, overlap, missing glyphs, or unreadable tables.
 
 Do not keep a page-count statement in this README without rebuilding the
 current TeX. The final compile wrapper records the current count and warning

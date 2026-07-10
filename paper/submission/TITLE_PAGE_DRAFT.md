@@ -8,13 +8,12 @@ Upload it only as the separate title page requested by ScholarOne/INFORMS.
 
 ## Manuscript Title
 
-CRPTO: Conformal Robust Predict-Then-Optimize for Auditable Credit Portfolio
-Decisions
+CRPTO: A Calibration-Selected Conformal Guardrail for Credit Portfolios
 
 ## Keywords
 
-conformal prediction; robust optimization; credit risk; predict-then-optimize;
-portfolio decisions; reproducibility; model risk governance
+conformal prediction; predict-then-optimize; credit risk; portfolio
+optimization; calibration; reproducible data science
 
 ## Author
 

@@ -7,9 +7,9 @@ packet unless ScholarOne requests the corresponding disclosure text.
 
 Dear Editors,
 
-We submit "CRPTO: A Calibration-Selected Conformal Guardrail for Auditable
-Credit Portfolio Decisions" for consideration at the *INFORMS Journal on Data
-Science*. The paper treats credit allocation as data science for decisions,
+We submit "CRPTO: A Calibration-Selected Conformal Guardrail for Credit
+Portfolios" for consideration at the *INFORMS Journal on Data Science*. The
+paper treats credit allocation as data science for decisions,
 not as a credit-scoring leaderboard. A frozen calibrated PD model is combined
 with an exactly replayed 90% Mondrian conformal endpoint. The resulting
 midpoint score, `q=(p+u)/2`, constrains a `$1M` portfolio while point PD remains
@@ -18,8 +18,8 @@ in the expected-return objective.
 The final policy is selected from nine round-number candidates on November
 2017 using a deterministic endpoint cap. Outcomes are stored separately from
 its 12-column ranking frame, which contains no assumption-conditional
-statistics. An outcome-free
-December replay selects the same rule; opening outcomes afterward reveals
+statistics. An outcome-free December replay selects the same rule; opening
+outcomes afterward reveals
 miscoverage `0.124925`, so the paper explicitly does not infer selected-set
 validity from policy stability. On 276,869 out-of-time Lending Club loans, the
 fixed policy earns `$179,327.59`, with weighted default `0.039375`.
