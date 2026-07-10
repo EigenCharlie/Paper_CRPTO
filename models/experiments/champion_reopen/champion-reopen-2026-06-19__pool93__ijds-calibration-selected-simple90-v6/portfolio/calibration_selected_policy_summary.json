@@ -53,7 +53,7 @@
     "selection_rule": "maximize expected point-PD objective on the calibration holdout under a 0.60 endpoint-plus-Markov screen, the effective-PD cap, and full budget use"
   },
   "evaluation_path": "data\\processed\\experiments\\champion_reopen\\champion-reopen-2026-06-19__pool93__ijds-calibration-selected-simple90-v6\\portfolio\\calibration_selected_policy_oot_evaluation.csv",
-  "generated_at_utc": "2026-07-10T02:25:53.745446+00:00",
+  "generated_at_utc": "2026-07-10T02:32:57.168718+00:00",
   "grid_size": 9,
   "incumbent_policy": {
     "candidate_id": "linear-006",
@@ -145,5 +145,5 @@
     "effective_pd_cap_slack"
   ],
   "selector_forbidden_columns_present": [],
-  "source_commit": "17811d8fb4c5dfc0035f86ac7095088533bfec5b"
+  "source_commit": "4134a6d32156fb02d7c7a2787383f20caea315eb"
 }
