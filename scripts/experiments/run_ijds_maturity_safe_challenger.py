@@ -44,11 +44,12 @@ from src.evaluation.coverage_transport import (  # noqa: E402
     coverage_and_default_transport_bounds,
 )
 from src.evaluation.maturity_safe_portfolio import (  # noqa: E402
+    MonthlyPolicySpec,
     aggregate_monthly_evaluation,
     assert_outcome_free_decision_frame,
     build_decision_panel,
     build_outcome_panel,
-    evaluation_record_and_allocations,
+    evaluate_policy_specs_by_month,
     select_policy_on_development,
     solve_coherent_policy,
 )
@@ -195,12 +196,20 @@ class PolicyBundle:
     point_grid: pd.DataFrame
     point_monthly: pd.DataFrame
 
-    def evaluation_specs(self) -> list[tuple[LinearPolicyCandidate, bool, str]]:
+    def evaluation_specs(self) -> list[MonthlyPolicySpec]:
         """Return the three frozen policies evaluated in every future month."""
         return [
-            (self.selected_guardrail, True, "selected_conformal_guardrail"),
-            (self.matched_point, False, "matched_point_pd"),
-            (self.selected_point, False, "development_selected_point_pd"),
+            MonthlyPolicySpec(
+                self.selected_guardrail,
+                True,
+                "selected_conformal_guardrail",
+            ),
+            MonthlyPolicySpec(self.matched_point, False, "matched_point_pd"),
+            MonthlyPolicySpec(
+                self.selected_point,
+                False,
+                "development_selected_point_pd",
+            ),
         ]
 
 
@@ -234,6 +243,14 @@ def load_config(path: Path) -> dict[str, Any]:
     payload = yaml.safe_load(path.read_text(encoding="utf-8"))
     if not isinstance(payload, dict):
         raise TypeError("Experiment config must be a YAML mapping.")
+    _validate_config_sections(payload)
+    _validate_locked_design(payload)
+    _validate_locked_options(payload)
+    return cast(dict[str, Any], payload)
+
+
+def _validate_config_sections(payload: Mapping[str, Any]) -> None:
+    """Validate required top-level sections and protocol status."""
     required = {
         "protocol_status",
         "protocol_tag",
@@ -257,6 +274,10 @@ def load_config(path: Path) -> dict[str, Any]:
         raise ValueError("The experiment config is not marked as locked.")
     if str(payload["payoff"].get("id")) != PAYOFF_ID:
         raise ValueError(f"payoff.id must be {PAYOFF_ID!r}.")
+
+
+def _validate_locked_design(payload: Mapping[str, Any]) -> None:
+    """Validate the frozen temporal and observability contract."""
     design = payload["design"]
     expected_dates = {
         "conformal_fit_start": "2012-01-01",
@@ -293,6 +314,10 @@ def load_config(path: Path) -> dict[str, Any]:
     )
     if len(primary_months) != 15 or len(extension_months) != 3:
         raise ValueError("The locked evaluation must contain 15 primary and 3 extension months.")
+
+
+def _validate_locked_options(payload: Mapping[str, Any]) -> None:
+    """Reject post-lock conformal, policy, or output mutations."""
     if bool(payload["conformal"].get("learned_widening", True)) or bool(
         payload["conformal"].get("learned_floor", True)
     ):
@@ -301,7 +326,6 @@ def load_config(path: Path) -> dict[str, Any]:
         raise ValueError("The historical endpoint cap is forbidden in the locked protocol.")
     if str(payload["output"].get("immutability")) != ("hard_no_overwrite_choose_fresh_run_tag"):
         raise ValueError("Experiment outputs must use the hard no-overwrite contract.")
-    return cast(dict[str, Any], payload)
 
 
 def prepare_output_paths(
@@ -669,36 +693,27 @@ def _evaluate_fixed_policies(
     outcome_panel = pd.concat([policies.development_outcomes, future_outcomes], ignore_index=True)
     temporal_audit = build_temporal_conformal_audit(decision_panel, outcome_panel, recipe)
 
-    evaluation_rows: list[dict[str, Any]] = []
-    allocation_frames: list[pd.DataFrame] = []
     specs = policies.evaluation_specs()
+    evaluation_frames: list[pd.DataFrame] = []
+    allocation_frames: list[pd.DataFrame] = []
+    expected_rows = 0
     for role in ("primary_oot", "censored_extension"):
         role_decision = decision_panel.loc[decision_panel["design_split"].eq(role)].drop(
             columns="design_split"
         )
-        periods = sorted(pd.to_datetime(role_decision["issue_d"]).dt.to_period("M").unique())
-        for period_value in periods:
-            period = str(period_value)
-            month = role_decision.loc[
-                pd.to_datetime(role_decision["issue_d"]).dt.to_period("M").eq(period_value)
-            ].copy()
-            month_outcomes = future_outcomes.loc[future_outcomes["id"].isin(month["id"])].copy()
-            for candidate, robust, label in specs:
-                record, funded = evaluation_record_and_allocations(
-                    month,
-                    month_outcomes,
-                    candidate,
-                    config=config,
-                    robust=robust,
-                    role=role,
-                    period=period,
-                    policy_label=label,
-                )
-                evaluation_rows.append(record)
-                allocation_frames.append(funded)
-    evaluation = pd.DataFrame(evaluation_rows)
+        evaluation, funded = evaluate_policy_specs_by_month(
+            role_decision,
+            future_outcomes,
+            specs,
+            config=config,
+            role=role,
+        )
+        evaluation_frames.append(evaluation)
+        allocation_frames.append(funded)
+        expected_rows += role_decision["issue_d"].dt.to_period("M").nunique() * len(specs)
+    evaluation = pd.concat(evaluation_frames, ignore_index=True)
     allocations = pd.concat(allocation_frames, ignore_index=True)
-    if len(evaluation) != 54 or not bool(evaluation["full_budget"].all()):
+    if len(evaluation) != expected_rows or not bool(evaluation["full_budget"].all()):
         raise RuntimeError("The fixed monthly evaluation is incomplete or underfunded.")
     aggregate = _aggregate_evaluations(evaluation)
 
@@ -710,16 +725,16 @@ def _evaluate_fixed_policies(
         primary_outcomes, on="id", how="left", validate="one_to_one"
     )
     transport_frames: list[pd.DataFrame] = []
-    for _, _, label in specs:
+    for spec in specs:
         funded = allocations.loc[
-            allocations["role"].eq("primary_oot") & allocations["policy_label"].eq(label)
+            allocations["role"].eq("primary_oot") & allocations["policy_label"].eq(spec.label)
         ]
         transport = coverage_and_default_transport_bounds(
             primary_with_outcomes,
             funded,
             alpha=float(config["conformal"]["alpha"]),
         )
-        transport.insert(0, "policy_label", label)
+        transport.insert(0, "policy_label", spec.label)
         transport_frames.append(transport)
     transport_decomposition = pd.concat(transport_frames, ignore_index=True)
     group_exposure = (

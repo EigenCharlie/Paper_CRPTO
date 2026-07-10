@@ -31,6 +31,15 @@ class SolveResult:
     expected_objective: float
 
 
+@dataclass(frozen=True)
+class MonthlyPolicySpec:
+    """One frozen policy evaluated under a stable publication label."""
+
+    candidate: LinearPolicyCandidate
+    robust: bool
+    label: str
+
+
 def assert_outcome_free_decision_frame(frame: pd.DataFrame) -> None:
     """Fail if a decision frame contains an outcome or outcome-derived field."""
     normalized = {str(column).casefold() for column in frame.columns}
@@ -318,6 +327,54 @@ def aggregate_monthly_evaluation(frame: pd.DataFrame) -> dict[str, Any]:
         values = pd.to_numeric(frame[column], errors="raise").to_numpy(dtype=float)
         result[column] = float(month_weights @ values)
     return result
+
+
+def evaluate_policy_specs_by_month(
+    decision_frame: pd.DataFrame,
+    outcomes: pd.DataFrame,
+    specs: Sequence[MonthlyPolicySpec],
+    *,
+    config: Mapping[str, Any],
+    role: str,
+) -> tuple[pd.DataFrame, pd.DataFrame]:
+    """Evaluate frozen policy specs on each issue-month menu in stable order."""
+    assert_outcome_free_decision_frame(decision_frame)
+    if not specs:
+        raise ValueError("At least one monthly policy spec is required.")
+    labels = [spec.label for spec in specs]
+    if len(labels) != len(set(labels)):
+        raise ValueError("Monthly policy labels must be unique.")
+
+    periods = sorted(pd.to_datetime(decision_frame["issue_d"]).dt.to_period("M").unique())
+    records: list[dict[str, Any]] = []
+    allocations: list[pd.DataFrame] = []
+    for period_value in periods:
+        period = str(period_value)
+        month_mask = pd.to_datetime(decision_frame["issue_d"]).dt.to_period("M").eq(period_value)
+        month = decision_frame.loc[month_mask].copy()
+        month_outcomes = outcomes.loc[outcomes["id"].isin(month["id"])].copy()
+        for spec in specs:
+            record, funded = evaluation_record_and_allocations(
+                month,
+                month_outcomes,
+                spec.candidate,
+                config=config,
+                robust=spec.robust,
+                role=role,
+                period=period,
+                policy_label=spec.label,
+            )
+            records.append(record)
+            allocations.append(funded)
+
+    evaluation = pd.DataFrame(records)
+    funded = pd.concat(allocations, ignore_index=True)
+    expected_rows = len(periods) * len(specs)
+    if len(evaluation) != expected_rows:
+        raise RuntimeError(
+            f"Monthly evaluation produced {len(evaluation)} rows; expected {expected_rows}."
+        )
+    return evaluation, funded
 
 
 def select_policy_on_development(

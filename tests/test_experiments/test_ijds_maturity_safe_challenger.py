@@ -13,6 +13,7 @@ from src.evaluation.coverage_transport import (
     coverage_and_default_transport_bounds,
     coverage_and_default_transport_decomposition,
 )
+from src.evaluation.maturity_safe_portfolio import MonthlyPolicySpec
 from src.evaluation.policy_contrast_bounds import sharp_policy_contrast_bounds
 from src.models.binary_conformal_guardrail import BinaryOutcomeConformalRecipe
 from src.optimization.policy import PolicyMode
@@ -530,6 +531,74 @@ def test_monthly_aggregate_uses_fresh_budget_exposure_weights() -> None:
     assert aggregate["weighted_default_lower"] == pytest.approx(0.2)
     assert aggregate["weighted_default_upper"] == pytest.approx(1.0 / 3.0)
     assert aggregate["unresolved_candidates"] == 2
+
+
+def test_generic_monthly_evaluator_preserves_period_then_spec_order(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    decision = pd.DataFrame(
+        {
+            "id": ["a", "b"],
+            "issue_d": pd.to_datetime(["2016-04-01", "2016-05-01"]),
+        }
+    )
+    outcomes = pd.DataFrame({"id": ["a", "b"]})
+    candidates = [
+        LinearPolicyCandidate("one", 0.1, 0.0, 0.0),
+        LinearPolicyCandidate("two", 0.2, 0.0, 0.0),
+    ]
+
+    def fake_evaluate(
+        month: pd.DataFrame,
+        _outcomes: pd.DataFrame,
+        candidate: LinearPolicyCandidate,
+        **kwargs: object,
+    ) -> tuple[dict[str, object], pd.DataFrame]:
+        period = str(kwargs["period"])
+        label = str(kwargs["policy_label"])
+        return (
+            {
+                "period": period,
+                "policy_label": label,
+                "candidate_id": candidate.candidate_id,
+                "full_budget": True,
+            },
+            month.assign(
+                period=period,
+                policy_label=label,
+                exposure=1.0,
+            ),
+        )
+
+    monkeypatch.setattr(portfolio, "evaluation_record_and_allocations", fake_evaluate)
+    specs = [
+        MonthlyPolicySpec(candidates[0], False, "first"),
+        MonthlyPolicySpec(candidates[1], False, "second"),
+    ]
+    evaluation, allocations = portfolio.evaluate_policy_specs_by_month(
+        decision,
+        outcomes,
+        specs,
+        config={},
+        role="primary_oot",
+    )
+
+    assert evaluation[["period", "policy_label"]].values.tolist() == [
+        ["2016-04", "first"],
+        ["2016-04", "second"],
+        ["2016-05", "first"],
+        ["2016-05", "second"],
+    ]
+    assert len(allocations) == 4
+
+    with pytest.raises(ValueError, match="labels must be unique"):
+        portfolio.evaluate_policy_specs_by_month(
+            decision,
+            outcomes,
+            [specs[0], MonthlyPolicySpec(candidates[1], False, "first")],
+            config={},
+            role="primary_oot",
+        )
 
 
 def test_output_paths_are_contained_and_no_overwrite_is_default(tmp_path: Path) -> None:
