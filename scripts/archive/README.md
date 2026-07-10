@@ -7,7 +7,7 @@ de auditorías ya congeladas en `models/*.json` y `reports/crpto/tables/`.
 
 Política:
 
-- Un script vive aquí solo si tiene **cero referencias** en el repo
+- Un script vive aquí solo si tiene **cero consumidores ejecutables** en el repo
   (verificado contra `dvc.yaml`, `justfile`, `run_crpto_pipeline.py`,
   `tests/`, `book/`, `docs/`, `notebooks/`, `.github/` y cross-imports).
 - Los scripts cuyos outputs siguen siendo deps de DVC o cuyo rol en
@@ -24,3 +24,5 @@ Política:
 | `search/monitor_regret_auditability.py` | Monitor de progreso del sandbox de regret-auditability (cerrado 2026-05-28). |
 | `search/resume_conformal_reopen_closure.py` | Reanudación del cierre de la búsqueda conformal reopen (run 2026-04-03/05). |
 | `search/sweep_alpha_gamma_bound_finalists.py` | Sweep alpha-gamma sobre finalistas previo al exact eval. |
+| `experiments/*.sh` | Launchers y monitores WSL/tmux de búsquedas June 2026 ya cerradas; se conservan sólo como provenance. |
+| `monitor_regret_auditability.cmd` | Wrapper local roto del monitor que ya había sido archivado. |

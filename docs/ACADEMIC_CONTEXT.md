@@ -43,30 +43,28 @@ deployment that is never going to happen.
 
 ## Re-running the champion
 
-The "frozen champion" rule still holds for `dvc.yaml` stages that **search**
-for hyperparameters or policies (the 276k portfolio sweep, Optuna HPO,
-conformal alpha/group selection). The search results are the contribution
-of the paper.
+The canonical outputs are protected by destination, not only by whether a
+stage performs search. Do not run any DVC stage that writes the frozen PD,
+conformal, validation, portfolio, or exact-evaluation paths without explicit
+permission. This covers `crpto.pd.champion`, `crpto.conformal.intervals`,
+`crpto.conformal.validation`, `crpto.portfolio.optimization`, and
+`crpto.portfolio.bound_exact_eval`; Optuna HPO is likewise excluded.
 
-However, **stages that consume those frozen choices may be re-run** when
-needed (e.g. to validate a library migration with drift comparison). The
-search itself does not get re-run.
+Validation is intentionally separate from regeneration:
 
-| Stage | Search? | Re-runnable for validation? |
-| --- | --- | --- |
-| `crpto.data.dataset` | no (deterministic split) | yes |
-| `crpto.data.features` | no (fixed feature config) | yes |
-| `crpto.pd.champion` | no (hyperparams already frozen in `configs/crpto_pd_model.yaml`) | yes, with drift check |
-| `crpto.conformal.intervals` | no (alpha/groups frozen in `configs/crpto_conformal_policy.yaml`) | yes, with drift check |
-| `crpto.conformal.validation` | no | yes |
-| `crpto.portfolio.optimization` | no (policy frozen in `configs/crpto_optimization.yaml`) | yes, with drift check |
-| `crpto.portfolio.bound_exact_eval` | **YES — search of 276k policies** | **NO. The chosen rank-1 is the paper contribution.** |
-| `crpto.paper.*` | no | yes (regenerate tables/figures freely) |
-| `crpto.book.render` | no | yes |
+| Operation | Ordinary validation status |
+| --- | --- |
+| `just validate-champion` | yes; hashes protected artifacts without rewriting them |
+| `just drift-gate` | yes; recomputes in test space and compares against frozen vectors |
+| Versioned experiment replay | yes; must use a distinct run tag and contained experiment paths |
+| `crpto.paper.*` | yes; regenerates publication evidence from declared inputs |
+| `crpto.book.render` | yes; render only, with `--no-execute` |
+| Any protected `dvc repro` stage | no, unless the user explicitly authorizes a named revalidation plan |
 
-Drift check default tolerance: max abs diff `≤ 1e-6` per loan on
-`conformal_intervals_mondrian.parquet`, coverage delta `≤ 5e-4` per Mondrian
-cell, portfolio robust return delta `≤ $1.00` (~6 ppm of $170,464.54).
+The historical drift tolerances remain useful for an explicitly authorized
+migration: max absolute interval difference `≤ 1e-6`, coverage delta `≤ 5e-4`
+per Mondrian cell, and portfolio robust-return delta `≤ $1.00`. They are not
+permission to overwrite canonical artifacts.
 
 ## GitHub strategy (single-author public repo)
 

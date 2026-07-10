@@ -98,6 +98,14 @@ def test_stratified_shortlist_keeps_alpha01_incumbent_region() -> None:
     rows.append(incumbent)
     frontier = pd.DataFrame(rows)
 
+    budget_profiles: list[dict[str, object]] = [
+        {"name": "free_budget", "min_budget_utilization": 0.0, "pd_cap_slack_penalty": 0.0},
+        {
+            "name": "floored_budget",
+            "min_budget_utilization": 0.05,
+            "pd_cap_slack_penalty": 1.5,
+        },
+    ]
     shortlist = _build_stratified_shortlist(
         frontier=frontier,
         shortlist_top_k=30,
@@ -119,10 +127,7 @@ def test_stratified_shortlist_keeps_alpha01_incumbent_region() -> None:
         incumbent_risk_neighbors=[0.155, 0.16, 0.165, 0.17],
         incumbent_gamma_neighbors=[0.45, 0.5, 0.55],
         incumbent_policy_modes=["blended_uncertainty", "capped_blended_uncertainty"],
-        budget_profiles=[
-            {"name": "free_budget", "min_budget_utilization": 0.0, "pd_cap_slack_penalty": 0.0},
-            {"name": "floored_budget", "min_budget_utilization": 0.05, "pd_cap_slack_penalty": 1.5},
-        ],
+        budget_profiles=budget_profiles,
         solver_backend="highs",
     )
 

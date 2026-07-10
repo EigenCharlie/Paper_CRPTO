@@ -226,7 +226,7 @@ skip_covered = false
 # ---------------------------------------------------------------------------
 [tool.mypy]
 python_version = "3.11"
-files = ["src", "scripts"]
+files = ["src", "scripts", "tests"]
 strict_optional = true
 warn_redundant_casts = true
 warn_unused_ignores = true
@@ -285,11 +285,15 @@ disable_error_code = ["import-not-found"]
 [[tool.mypy.overrides]]
 module = [
     "src.optimization.policy",
+    "src.optimization.input_alignment",
+    "src.optimization.policy_evaluation",
+    "src.optimization.policy_selection",
     "src.optimization.cuopt_adapter",
     "src.optimization.portfolio_model",
     "src.optimization.robust_opt",
     "src.optimization.tail_satisficing_objective",
     "src.models.calibration",
+    "src.models.conformal_alpha_grid",
     "src.models.conformal",
     "src.models.conformal._scores",
     "src.models.conformal.classification",
@@ -309,6 +313,10 @@ module = [
     "src.utils.mlflow_tracing",
     "src.utils.optuna_storage",
     "src.utils.script_helpers",
+    "scripts.build_ijds_calibration_selected_evidence",
+    "scripts.experiments.ijds_policy_support",
+    "scripts.experiments.run_ijds_calibration_selected_policy_challenger",
+    "scripts.experiments.run_ijds_exact_alpha_grid_challenger",
 ]
 disallow_untyped_defs = true
 disallow_incomplete_defs = true

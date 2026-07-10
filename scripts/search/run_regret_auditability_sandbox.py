@@ -825,7 +825,6 @@ def _apply_pd_hpo_config(
             "multivariate_tpe": True,
             "group_tpe": True,
             "constant_liar": True,
-            "warn_independent_sampling": False,
             "search_space_version": "cb_space_v3_monotone_symmetric",
             "study_storage": f"sqlite:///{(phase_root / 'optuna_pd_catboost.db').as_posix()}",
             "study_name": f"pd_{run_tag}_{lane}_{phase}",

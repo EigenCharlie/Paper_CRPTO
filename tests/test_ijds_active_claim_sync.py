@@ -53,7 +53,9 @@ def test_active_governance_locks_simple_policy_and_selector() -> None:
 
     assert payload["status"] == "active_ijds_policy"
     assert payload["run_tag"] == RUN_TAG
-    assert payload["generated_at_utc"] == summary["generated_at_utc"]
+    assert "generated_at_utc" not in payload
+    assert "generated_at_utc" not in summary
+    assert "source_commit" not in summary
     assert policy["policy_mode"] == "blended_uncertainty"
     assert policy["risk_tolerance"] == pytest.approx(0.17)
     assert policy["gamma"] == pytest.approx(0.50)

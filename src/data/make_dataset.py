@@ -55,9 +55,10 @@ LEAKAGE_COLS = [
 
 LGD_SNAPSHOT_DATE = pd.Timestamp("2020-09-30")
 
-# Default-indicating statuses
+# Snapshot labels. Status variants such as "Does not meet the credit policy"
+# are normalized by pattern rather than silently discarded.
 DEFAULT_STATUSES = ["Charged Off", "Default"]
-CURRENT_STATUSES = ["Fully Paid", "Current"]
+NONDEFAULT_STATUSES = ["Fully Paid"]
 
 
 def _to_numeric_series(df: pd.DataFrame, col: str, default: float = 0.0) -> pd.Series:
@@ -72,6 +73,21 @@ def _parse_issue_dates(series: pd.Series) -> pd.Series:
     if missing.any():
         parsed.loc[missing] = pd.to_datetime(series.loc[missing], errors="coerce")
     return parsed
+
+
+def _snapshot_default_target(statuses: pd.Series) -> pd.Series:
+    """Map resolved snapshot statuses to a nullable binary target.
+
+    Unresolved loans remain missing. Their membership is an origination-time
+    fact, while their eventual outcome is not available at the snapshot.
+    """
+    normalized = statuses.fillna("").astype(str).str.strip().str.lower()
+    is_default = normalized.eq("default") | normalized.str.contains("charged off", regex=False)
+    is_nondefault = normalized.str.contains("fully paid", regex=False)
+    target = pd.Series(pd.NA, index=statuses.index, dtype="Int8", name="default_flag")
+    target.loc[is_nondefault] = 0
+    target.loc[is_default] = 1
+    return target
 
 
 def _compute_lgd(df: pd.DataFrame) -> pd.Series:
@@ -98,10 +114,16 @@ def _compute_lgd(df: pd.DataFrame) -> pd.Series:
     lgd = 1.0 - (recovered_principal / exposure)
     lgd = lgd.clip(lower=0.0, upper=1.0)
 
-    if "default_flag" in df.columns:
-        lgd = lgd.where(df["default_flag"].astype(int) == 1, 0.0)
-    lgd = lgd.fillna(1.0).clip(lower=0.0, upper=1.0)
-    return lgd.astype(float)
+    if "default_flag" not in df.columns:
+        return lgd.fillna(1.0).clip(lower=0.0, upper=1.0).astype(float)
+
+    target = pd.to_numeric(df["default_flag"], errors="coerce")
+    default_mask = target.eq(1).fillna(False)
+    nondefault_mask = target.eq(0).fillna(False)
+    result = pd.Series(pd.NA, index=df.index, dtype="Float64", name="lgd")
+    result.loc[default_mask] = lgd.loc[default_mask].fillna(1.0).clip(0.0, 1.0)
+    result.loc[nondefault_mask] = 0.0
+    return result
 
 
 def load_raw_data(filepath: str | Path) -> pd.DataFrame:
@@ -112,17 +134,31 @@ def load_raw_data(filepath: str | Path) -> pd.DataFrame:
     return df
 
 
-def initial_clean(df: pd.DataFrame) -> pd.DataFrame:
-    """Remove leakage columns and filter to resolved loans."""
-    # Filter to resolved loans only (Fully Paid or Default/Charged Off)
-    resolved_statuses = DEFAULT_STATUSES + ["Fully Paid"]
-    mask = df["loan_status"].isin(resolved_statuses)
-    df = df[mask].copy()
-    logger.info(f"Filtered to {len(df):,} resolved loans")
+def initial_clean(df: pd.DataFrame, *, legacy_resolved_only: bool = False) -> pd.DataFrame:
+    """Remove leakage columns while preserving the origination-time universe.
 
-    # Create binary target
-    df["default_flag"] = df["loan_status"].isin(DEFAULT_STATUSES).astype(int)
-    logger.info(f"Default rate: {df['default_flag'].mean():.2%}")
+    ``legacy_resolved_only`` exists solely to reproduce the frozen historical
+    lane. New research must retain unresolved rows and handle label availability
+    through a declared temporal protocol.
+    """
+    if "loan_status" not in df.columns:
+        raise KeyError("Raw Lending Club data must contain loan_status.")
+    df = df.copy()
+    df["default_flag"] = _snapshot_default_target(df["loan_status"])
+    df["outcome_observed"] = df["default_flag"].notna()
+    if legacy_resolved_only:
+        df = df.loc[df["outcome_observed"]].copy()
+        logger.warning("Applied explicit legacy resolved-only filter: {:,} rows", len(df))
+    else:
+        logger.info(
+            "Retained status-independent universe: {:,} rows ({:,} unresolved)",
+            len(df),
+            int(df["default_flag"].isna().sum()),
+        )
+
+    observed = df.loc[df["outcome_observed"], "default_flag"].astype(float)
+    if not observed.empty:
+        logger.info("Observed-outcome default rate: {:.2%}", float(observed.mean()))
 
     # Build LGD target before leakage fields are dropped.
     df["lgd"] = _compute_lgd(df)
@@ -160,11 +196,14 @@ def save_interim(df: pd.DataFrame, output_dir: str | Path) -> Path:
 
 
 def main(
-    input_path: str = "data/raw/Loan_status_2007-2020Q3.csv", output_dir: str = "data/interim/"
+    input_path: str = "data/raw/Loan_status_2007-2020Q3.csv",
+    output_dir: str = "data/interim/",
+    *,
+    legacy_resolved_only: bool = False,
 ) -> None:
     """Run full make_dataset pipeline."""
     df = load_raw_data(input_path)
-    df = initial_clean(df)
+    df = initial_clean(df, legacy_resolved_only=legacy_resolved_only)
     save_interim(df, output_dir)
 
 
@@ -174,5 +213,10 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Make dataset from raw Lending Club CSV")
     parser.add_argument("--input", default="data/raw/Loan_status_2007-2020Q3.csv")
     parser.add_argument("--output", default="data/interim/")
+    parser.add_argument(
+        "--legacy-resolved-only",
+        action="store_true",
+        help="Reproduce the frozen historical status filter; invalid for new prospective analyses.",
+    )
     args = parser.parse_args()
-    main(args.input, args.output)
+    main(args.input, args.output, legacy_resolved_only=args.legacy_resolved_only)

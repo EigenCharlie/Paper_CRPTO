@@ -9,10 +9,13 @@ Lectura obligatoria, en este orden:
 
 1. [`CLAUDE.md`](CLAUDE.md) — reglas de operación, champion congelado
    (esquema dual-tag pool93), stages prohibidos, comandos y convenciones.
-2. [`docs/research/active_claims_2026-07-04.md`](docs/research/active_claims_2026-07-04.md)
-   — registro vigente de claims del paper (replay exacto al 90%, selector de
-   calibración 3x3, política lineal 50/50 y reopen gate).
-3. [`.codex/skills/crpto/SKILL.md`](.codex/skills/crpto/SKILL.md) — skill de
+2. [`docs/research/ijds_state_of_art_audit_2026-07-10.md`](docs/research/ijds_state_of_art_audit_2026-07-10.md)
+   — auditoría científica que deja el submission v7 en NO-GO.
+3. [`docs/research/ijds_three_front_reconstruction_2026-07-10.md`](docs/research/ijds_three_front_reconstruction_2026-07-10.md)
+   — ledger de recuperación y diseño del único paper IJDS final.
+4. [`docs/research/active_claims_2026-07-04.md`](docs/research/active_claims_2026-07-04.md)
+   — registro histórico v7, conservado para replay y no como claim activo.
+5. [`.codex/skills/crpto/SKILL.md`](.codex/skills/crpto/SKILL.md) — skill de
    Codex con el detalle operativo del certificado y sus artefactos.
 
 Reglas mínimas que ningún agente puede violar (detalle en `CLAUDE.md`):

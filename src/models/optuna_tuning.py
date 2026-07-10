@@ -945,7 +945,6 @@ def train_catboost_tuned_optuna(
     n_startup_trials: int = 40,
     multivariate_tpe: bool = True,
     group_tpe: bool = True,
-    warn_independent_sampling: bool = True,
     constant_liar: bool = False,
     pruner_n_startup_trials: int = 20,
     pruner_n_warmup_steps: int = 50,

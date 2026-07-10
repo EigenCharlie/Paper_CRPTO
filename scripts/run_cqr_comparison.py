@@ -115,7 +115,6 @@ def _load_model_and_data() -> tuple:
 
 
 def _run_cqr(
-    model_cls,
     X_cal: pd.DataFrame,
     y_cal: pd.Series,
     X_test: pd.DataFrame,
@@ -298,7 +297,7 @@ def main() -> int:
     # ── Method 3: CQR ─────────────────────────────────────────────────────────
     logger.info("=== Method 3: CQR (asymmetric quantile) ===")
     try:
-        y_int_cqr, cqr_diag = _run_cqr(model, X_cal, y_cal, X_test, y_test, cat_names, ALPHA)
+        y_int_cqr, cqr_diag = _run_cqr(X_cal, y_cal, X_test, y_test, cat_names, ALPHA)
         results.append(
             _coverage_diagnostics(y_test_arr, y_int_cqr, grade_test_arr, "cqr_asymmetric")
         )

@@ -1,5 +1,16 @@
 # CLAUDE.md — Contexto para Claude Code en Paper_CRPTO
 
+## Scientific status override - 2026-07-10
+
+The compact v7 body claim documented later in this file is frozen historical
+provenance and is **NO-GO for submission**. Four design defects require a
+maturity-safe reconstruction: outcome-conditioned candidate membership,
+later-label contamination of the conformal recipe, mismatch between optimized
+and evaluated payoff, and a pooled future decision menu. Before paper-facing
+work read `docs/research/ijds_state_of_art_audit_2026-07-10.md` and
+`docs/research/ijds_three_front_reconstruction_2026-07-10.md`. Do not promote
+the current dirty maturity-safe scratch run or overwrite protected artifacts.
+
 ## Quién soy y qué es este proyecto
 
 Soy Carlos Vergara, científico de datos terminando un paper académico de tesis. **CRPTO** (Conformal Robust Predict-Then-Optimize) aplica **conformal prediction** + **optimización robusta de carteras** al dominio de **credit risk** usando datos de Lending Club. Este repositorio es standalone: GitHub, DVC y MLflow apuntan a recursos propios de CRPTO. La historia de extracción está en `docs/PROJECT_HISTORY.md`; el repositorio no debe re-correr el **pipeline de búsqueda** del champion sin permiso explícito.
@@ -22,14 +33,21 @@ Lo crítico de `ACADEMIC_CONTEXT.md`:
 - **No va a producción.** Output: paper + journal + libro Quarto + MRM dossier. Sin servicio live, sin SLAs, sin on-call.
 - **GitHub Actions minimalista.** `book-publish.yml` (Pages) y `lint.yml` corren en push; `tests-full.yml` queda manual para hitos de journal o revalidación con DVC. `test.yml`, `dbt.yml`, `book-build.yml` se retiraron porque el pre-push hook ya valida lo equivalente en local.
 
-## Re-corrida del champion: matiz importante
+## Re-corrida del champion: regla inequívoca
 
-El "champion congelado" se refiere al **pipeline de búsqueda** que produjo las decisiones del paper:
+Ningún stage DVC que escriba una ruta protegida se ejecuta sin permiso explícito,
+aunque consuma hiperparámetros ya congelados. Esto incluye
+`crpto.pd.champion`, `crpto.conformal.intervals`,
+`crpto.conformal.validation`, `crpto.portfolio.optimization` y
+`crpto.portfolio.bound_exact_eval`. Tampoco se relanza HPO Optuna sobre el
+champion. La validación ordinaria usa `just validate-champion`, `just
+drift-gate` y replays con run tags y rutas experimentales nuevas; no usa `dvc
+repro` sobre outputs canónicos. Los stages `crpto.paper.*` y el render
+`crpto.book.render` son regenerables porque sólo consumen evidencia congelada.
 
-- ❌ **Prohibido sin permiso explícito**: `crpto.portfolio.bound_exact_eval` (es la búsqueda de 276k políticas — el resultado rank-1 es la contribución del paper).
-- ❌ **Prohibido sin permiso explícito**: cualquier HPO Optuna que re-busque hiperparámetros.
-- ✅ **Permitido para validación** (drift check requerido): `crpto.pd.champion`, `crpto.conformal.intervals`, `crpto.conformal.validation`, `crpto.portfolio.optimization`. Estos usan hiperparámetros/policies ya elegidos y congelados en `configs/`. Tolerancias documentadas en `ACADEMIC_CONTEXT.md`.
-- ✅ **Libre re-corrida**: `crpto.paper.*` y `crpto.book.render`.
+Un permiso excepcional debe nombrar el stage, la rama, las rutas de salida y
+el plan de drift. Nunca se interpreta una nota histórica de “re-runnable” como
+autorización implícita.
 
 ## Champion congelado — NO RE-CORRER
 
@@ -37,7 +55,7 @@ El modelo PD, calibrador, intervalos y bundle pool93 del manifest permanecen
 congelados. El body IJDS usa un replay exacto y una política nueva bajo un run
 tag aislado; **no regenera ni sobreescribe ningún artefacto upstream**.
 
-**Body claim del paper IJDS (activo):**
+**Body claim histórico v7 (NO-GO para submission):**
 
 | Campo | Valor |
 | --- | --- |
@@ -88,7 +106,7 @@ Artefactos históricos congelados cuyos hashes están en
 - `models/experiments/champion_reopen/...__pool93__ijds-certificate-semantics-v2/portfolio/pool93_point_pd_baseline_audit.json`
 - `EXTRACTION_MANIFEST.json`
 
-La sincronía del body claim activo con el paper la vigila
+La sincronía del body claim histórico v7 con el snapshot del paper la vigila
 `tests/test_ijds_active_claim_sync.py`. `tests/test_pool93_body_claim_sync.py`
 queda limitado a la integridad de procedencia histórica.
 

@@ -6,11 +6,30 @@ mayo-junio 2026 se retiraron el 2026-06-13 (su conocimiento ya está aplicado
 en el paper, el código y el manifest; ver `CHANGELOG.md`). Lo que queda es lo
 perenne y lo que el código lee/escribe.
 
+## Current reconstruction control (2026-07-10)
+
+The current IJDS submission is **NO-GO**. Before using any paper-facing result,
+read these files in order:
+
+1. `ijds_state_of_art_audit_2026-07-10.md` - scientific red-team and the four
+   design blockers.
+2. `ijds_three_front_reconstruction_2026-07-10.md` - preservation and final
+   single-paper reconstruction decisions.
+3. `ijds_reconstruction_asset_inventory_2026-07-10.csv` - machine-readable
+   disposition of sections, claims, figures, tables, code, and scratch results.
+4. `ijds_maturity_safe_locked_protocol_2026-07-10.md` - preregistered dates,
+   methods, comparators, metrics, interpretation rules, and required Git tag
+   for the confirmatory reconstruction.
+
+`active_claims_2026-07-04.md` now names the historical compact-v7 claim. It is
+retained because code and tests still replay that artifact, not because its
+numbers are submission-ready.
+
 ## Registros activos (referenciados por el código o el paper)
 
-- `active_claims_2026-07-04.md` — source-of-truth operativo del claim IJDS
-  activo: replay conformal exacto al 90%, selector de calibración 3x3,
-  política lineal 50/50, evidencia A35--A40 y stop rules.
+- `active_claims_2026-07-04.md` — source-of-truth histórico del claim v7:
+  replay conformal exacto al 90%, selector 3x3, política lineal 50/50 y
+  evidencia A35--A40. No es evidencia activa para submission.
 - `ijds_exact_alpha_calibration_selection_2026-07-09.md` — closeout que
   documenta por qué se retiró el alpha-0.01 aproximado y cómo se eligió la
   política simple sin outcomes OOT en el selector final.

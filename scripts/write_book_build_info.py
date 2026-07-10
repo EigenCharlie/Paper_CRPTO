@@ -1,46 +1,20 @@
+"""Retired writer for volatile book build metadata.
+
+Build commit, branch, and timestamp belong in release receipts and tags.  They
+must not be written into a tracked Quarto source because doing so makes every
+render dirty and creates an unavoidable self-reference.
+"""
+
 from __future__ import annotations
 
-import subprocess
-from datetime import datetime
-from pathlib import Path
-from zoneinfo import ZoneInfo
 
-from loguru import logger
-
-ROOT = Path(__file__).resolve().parents[1]
-TARGET = ROOT / "book" / "includes" / "_build-info.qmd"
-
-
-def _git_value(*args: str, default: str) -> str:
-    result = subprocess.run(
-        ["git", *args],
-        cwd=ROOT,
-        check=False,
-        capture_output=True,
-        text=True,
+def main() -> int:
+    """Fail closed for old invocations of the removed source mutator."""
+    raise SystemExit(
+        "Dynamic book build metadata is retired. Use the release tag and "
+        "reproducibility receipt instead of modifying tracked Quarto input."
     )
-    value = result.stdout.strip()
-    return value or default
-
-
-def main() -> None:
-    commit = _git_value("rev-parse", "--short", "HEAD", default="local")
-    branch = _git_value("branch", "--show-current", default="local")
-    rendered_at = datetime.now(ZoneInfo("America/Bogota")).strftime("%Y-%m-%d")
-
-    TARGET.write_text(
-        "\n".join(
-            [
-                "::: {.build-info}",
-                f"Build: `{commit}` | Rama: `{branch}` | Actualizado: `{rendered_at}`",
-                ":::",
-                "",
-            ]
-        ),
-        encoding="utf-8",
-    )
-    logger.info("Wrote {}", TARGET)
 
 
 if __name__ == "__main__":
-    main()
+    raise SystemExit(main())

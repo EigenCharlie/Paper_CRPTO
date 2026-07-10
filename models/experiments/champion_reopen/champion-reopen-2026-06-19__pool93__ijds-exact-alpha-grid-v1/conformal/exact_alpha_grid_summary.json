@@ -197,7 +197,6 @@
   "claim_boundary": "Recomputes finite-sample Mondrian quantiles for every declared alpha while freezing the selected partition, calibration fit/holdout split, score scale, and holdout-learned widening factors. It is a retrospective OOT audit, not a post-selection or live-deployment guarantee.",
   "config_path": "configs\\experiments\\champion_reopen_ijds_exact_alpha_grid_v1.yaml",
   "config_sha256": "c2d2af0d1c0e0f83ef8612888f9b12d423063a601f04c8c51c9680e92327ef3f",
-  "generated_at_utc": "2026-07-10T02:32:16.941448+00:00",
   "grid_path": "data\\processed\\experiments\\champion_reopen\\champion-reopen-2026-06-19__pool93__ijds-exact-alpha-grid-v1\\conformal\\exact_alpha_grid.parquet",
   "grid_rows": 276869,
   "recipe": {
@@ -239,6 +238,5 @@
     "conformal_results_path": "models/conformal_gap/champion-reopen-2026-06-19__hpo-wave1__claim-max-incremental-conformal__pool93__conformal__phase1__final__rank-1/conformal_results_mondrian.pkl",
     "conformal_results_sha256": "cb8db92908739c37a11f373b9802f6b74831d8d9c26c4824dae586423d3cb07b",
     "upstream_canonical_run_tag": "champion-reopen-2026-06-19__hpo-wave1__pool93__seed42"
-  },
-  "source_commit": "4134a6d32156fb02d7c7a2787383f20caea315eb"
+  }
 }

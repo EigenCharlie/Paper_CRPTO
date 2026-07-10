@@ -25,7 +25,7 @@ from __future__ import annotations
 import json
 import math
 import os
-from pathlib import Path
+from pathlib import Path, PurePosixPath
 from typing import Any, cast
 
 import numpy as np
@@ -60,6 +60,32 @@ def write_json(path: Path, payload: dict[str, Any]) -> None:
         encoding="utf-8",
         newline="",
     )
+
+
+def ensure_contained_output_dir(base_dir: Path, *relative_parts: str) -> Path:
+    """Create an output directory only when it resolves below ``base_dir``."""
+    base = base_dir.resolve()
+    if not relative_parts or any(not str(part).strip() for part in relative_parts):
+        raise ValueError("Experiment output path requires non-blank relative parts.")
+    for part in relative_parts:
+        normalized = str(part).replace("\\", "/")
+        parsed = PurePosixPath(normalized)
+        if (
+            parsed.is_absolute()
+            or normalized in {".", ".."}
+            or "/" in normalized
+            or ":" in normalized
+        ):
+            raise ValueError(f"Experiment output part is not safely relative: {part!r}")
+    target = base.joinpath(*relative_parts).resolve()
+    try:
+        relative = target.relative_to(base)
+    except ValueError as exc:
+        raise ValueError(f"Experiment output escapes its declared root: {target}") from exc
+    if not relative.parts:
+        raise ValueError("Experiment output must be below, not equal to, its declared root.")
+    target.mkdir(parents=True, exist_ok=True)
+    return target
 
 
 def write_table(

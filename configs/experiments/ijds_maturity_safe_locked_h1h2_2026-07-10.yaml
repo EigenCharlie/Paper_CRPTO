@@ -1,0 +1,193 @@
+schema_version: "2026-07-10.2"
+protocol_status: "locked_before_primary_outcome_analysis"
+protocol_tag: "protocol/ijds-maturity-safe-locked-h1h2-2026-07-10-v1"
+run_tag: "champion-reopen-2026-07-10__maturity-safe-locked-h1h2-v1"
+
+hypothesis: >-
+  A conformal-upper-score guardrail selected only on mature 2012 development
+  cohorts can alter economically relevant portfolio composition relative to a
+  point-PD policy, while marginal binary-outcome conformal coverage need not
+  transport to the optimizer-selected funded set under temporal shift.
+
+source:
+  raw_path: "data/raw/Loan_status_2007-2020Q3.csv"
+  snapshot_date: "2020-09-30"
+  csv_chunksize: 100000
+  required_raw_columns:
+    - id
+    - loan_amnt
+    - term
+    - int_rate
+    - installment
+    - grade
+    - sub_grade
+    - emp_length
+    - home_ownership
+    - annual_inc
+    - verification_status
+    - issue_d
+    - loan_status
+    - purpose
+    - dti
+    - delinq_2yrs
+    - earliest_cr_line
+    - fico_range_low
+    - fico_range_high
+    - inq_last_6mths
+    - mths_since_last_delinq
+    - open_acc
+    - pub_rec
+    - revol_bal
+    - revol_util
+    - total_acc
+    - collections_12_mths_ex_med
+    - chargeoff_within_12_mths
+    - tax_liens
+    - pub_rec_bankruptcies
+    - mort_acc
+    - num_tl_op_past_12m
+    - acc_open_past_24mths
+
+target:
+  name: "snapshot_default"
+  positive_definition: >-
+    Normalized loan_status equals Default or contains Charged Off, including
+    Does not meet the credit policy variants.
+  negative_definition: "Normalized loan_status contains Fully Paid."
+  unresolved_definition: "Every other snapshot status; retained as a candidate."
+
+design:
+  term_months: 36
+  development_end: "2010-12-31"
+  validation_tail_fraction: 0.20
+  probability_calibration_start: "2011-01-01"
+  probability_calibration_end: "2011-12-31"
+  conformal_fit_start: "2012-01-01"
+  conformal_fit_end: "2012-06-30"
+  policy_development_start: "2012-07-01"
+  policy_development_end: "2012-12-31"
+  primary_oot_start_month: "2016-04"
+  primary_oot_end_month: "2017-06"
+  censored_extension_start_month: "2017-07"
+  censored_extension_end_month: "2017-09"
+  minimum_maturity_gap_months: 39
+  forbidden_tuning_periods: ["2016-04_to_2017-09"]
+
+model:
+  type: "CatBoostClassifier"
+  fixed_params:
+    iterations: 500
+    learning_rate: 0.04
+    depth: 6
+    l2_leaf_reg: 10.0
+    loss_function: "Logloss"
+    eval_metric: "AUC"
+    auto_class_weights: "Balanced"
+    bootstrap_type: "Bernoulli"
+    subsample: 0.80
+    random_seed: 42
+    has_time: true
+    allow_writing_files: false
+    verbose: false
+  numeric_features:
+    - loan_amnt
+    - int_rate
+    - installment
+    - annual_inc
+    - dti
+    - loan_to_income
+    - installment_burden
+    - rev_utilization
+    - revol_bal_to_income
+    - open_acc_ratio
+    - fico_score
+    - credit_age_years
+    - emp_length_num
+    - open_acc
+    - total_acc
+    - revol_bal
+    - pub_rec
+    - inq_last_6mths
+    - delinq_severity
+    - delinq_recency
+    - log_annual_inc
+    - log_revol_bal
+    - loan_to_income_sq
+    - fico_x_dti
+    - has_delinq_2yrs
+    - has_pub_rec
+    - has_bankruptcy
+    - has_recent_inq
+    - recent_chargeoff
+  categorical_features:
+    - grade
+    - sub_grade
+    - home_ownership
+    - purpose
+    - verification_status
+    - int_rate_bucket
+    - dti_bucket
+    - fico_bucket
+    - int_rate_bucket__grade
+
+probability_calibration:
+  method: "platt_on_catboost_raw_margin"
+  logistic_regression:
+    C: 1000000.0
+    solver: "lbfgs"
+    max_iter: 2000
+    random_state: 42
+
+conformal:
+  method: "exact_split_mondrian_absolute_residual"
+  estimand: "binary_outcome_prediction_interval"
+  alpha: 0.10
+  mondrian_groups: 5
+  group_definition: "calibrated_pd_quantiles_fitted_on_2012H1"
+  finite_sample_rank: "ceil((n_group + 1) * (1 - alpha))"
+  learned_widening: false
+  learned_floor: false
+
+payoff:
+  id: "coherent_standardized_binary_payoff_v1"
+  expected_formula: "(1 - p) * r - p * LGD"
+  realized_formula: "(1 - y) * r - y * LGD"
+  interpretation: >-
+    Standardized one-period payoff using the contractual annual rate; it is not
+    a cash-flow IRR, causal return estimate, or realized investor cash flow.
+  lgd: 0.45
+
+policy:
+  family: "linear_conformal_upper_score_guardrail"
+  risk_tolerances: [0.15, 0.17, 0.19]
+  gammas: [0.25, 0.50, 0.75]
+  uncertainty_aversions: [0.0]
+  endpoint_budget_cap: null
+  budget: 1000000.0
+  min_budget_utilization_solver: 1.0
+  max_concentration_by_purpose: 0.25
+  development_selection_rule: >-
+    For each candidate, solve each month from July through December 2012 with
+    a fresh budget. Among policies using the full budget in every month, select
+    the largest summed realized coherent standardized payoff; break ties by
+    summed expected payoff and then candidate_id. No 2016-2017 outcome enters.
+  baselines:
+    - "matched_point_pd_same_tau"
+    - "independently_development_selected_point_pd"
+  evaluation_rule: >-
+    Freeze the model, calibrator, conformal recipe, guardrail, and both point-PD
+    baselines before applying them separately in every 2016-2017 month.
+
+execution:
+  solver_backend: "highspy"
+  solver_time_limit_seconds: 300
+  threads: 4
+  random_seed: 42
+  allocation_tolerance: 1.0e-10
+
+output:
+  data_root: "data/processed/experiments/champion_reopen"
+  model_root: "models/experiments/champion_reopen"
+  immutability: "hard_no_overwrite_choose_fresh_run_tag"
+  deterministic_result: "maturity_safe_locked_summary.json"
+  execution_receipt: "execution_receipt.json"

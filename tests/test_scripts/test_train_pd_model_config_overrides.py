@@ -3,6 +3,7 @@ from __future__ import annotations
 import json
 import sys
 import types
+from typing import Any
 
 import numpy as np
 import pytest
@@ -227,7 +228,7 @@ def test_resolve_training_features_filters_splits_and_disables_stable_core_in_re
 
 
 def test_replay_trial_summary_prioritizes_gate_then_ece_then_auc() -> None:
-    rows = [
+    rows: list[dict[str, Any]] = [
         {
             "trial_number": 1,
             "validation_auc": 0.80,
@@ -379,6 +380,8 @@ def test_prepare_training_inputs_builds_model_ready_frames() -> None:
 
     assert len(x_train_fit_cb) == 8
     assert len(train_val) == 2
+    assert train_fit_weights is not None
+    assert train_val_weights is not None
     assert train_fit_weights.tolist() == [1.0 + i for i in range(8)]
     assert train_val_weights.tolist() == [9.0, 10.0]
     assert pd_train.pd.api.types.is_integer_dtype(y_train_fit)
@@ -464,7 +467,7 @@ def test_export_shap_feature_importance_writes_summary(
             self.frame = frame
             self.cat_features = cat_features
 
-    fake_catboost.Pool = FakePool
+    fake_catboost.__dict__["Pool"] = FakePool
     monkeypatch.setitem(sys.modules, "catboost", fake_catboost)
 
     class FakeModel:

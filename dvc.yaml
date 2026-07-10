@@ -1,6 +1,6 @@
 stages:
   crpto.data.dataset:
-    cmd: python src/data/make_dataset.py --input data/raw/Loan_status_2007-2020Q3.csv --output data/processed/loan_master.parquet
+    cmd: python src/data/make_dataset.py --input data/raw/Loan_status_2007-2020Q3.csv --output data/processed/loan_master.parquet --legacy-resolved-only
     deps:
       - data/raw/Loan_status_2007-2020Q3.csv
       - src/data/make_dataset.py
@@ -204,13 +204,12 @@ stages:
     outs:
       - data/processed/crpto_vs_spo_stability.json
   crpto.book.render:
-    cmd: uv run python scripts/write_book_build_info.py && uv run -- quarto render book --to html
+    cmd: uv run -- quarto render book --to html --no-execute
     deps:
       - book/_quarto.yml
       - book/index.qmd
       - book/chapters
       - book/styles.scss
-      - scripts/write_book_build_info.py
     params:
       - params.yaml:
           - book.freeze

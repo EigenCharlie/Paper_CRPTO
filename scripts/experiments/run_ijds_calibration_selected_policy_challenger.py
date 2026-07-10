@@ -7,9 +7,7 @@ import hashlib
 import json
 import os
 import pickle
-import subprocess
 import sys
-from datetime import UTC, datetime
 from pathlib import Path
 from typing import Any
 
@@ -44,6 +42,7 @@ from src.optimization.policy_selection import (  # noqa: E402
     select_policy_result_ex_ante,
 )
 from src.utils.script_helpers import (  # noqa: E402
+    ensure_contained_output_dir,
     parse_percent_series,
     resolve_repo_artifact_path,
     write_json,
@@ -85,10 +84,12 @@ def _load_pickle_mapping(path: Path) -> dict[str, Any]:
 
 
 def _experiment_paths(run_tag: str) -> tuple[Path, Path]:
-    data_dir = ROOT / "data/processed/experiments/champion_reopen" / run_tag / "portfolio"
-    model_dir = ROOT / "models/experiments/champion_reopen" / run_tag / "portfolio"
-    data_dir.mkdir(parents=True, exist_ok=True)
-    model_dir.mkdir(parents=True, exist_ok=True)
+    data_dir = ensure_contained_output_dir(
+        ROOT / "data/processed/experiments/champion_reopen", run_tag, "portfolio"
+    )
+    model_dir = ensure_contained_output_dir(
+        ROOT / "models/experiments/champion_reopen", run_tag, "portfolio"
+    )
     return data_dir, model_dir
 
 
@@ -409,17 +410,6 @@ def _contrast_payload(evaluation: pd.DataFrame) -> dict[str, Any]:
     return output
 
 
-def _git_commit() -> str:
-    result = subprocess.run(
-        ["git", "rev-parse", "HEAD"],
-        cwd=ROOT,
-        capture_output=True,
-        text=True,
-        check=False,
-    )
-    return result.stdout.strip() if result.returncode == 0 else "unknown"
-
-
 def run(config_path: Path) -> dict[str, Any]:
     config = _load_config(config_path)
     run_tag = str(config["run_tag"])
@@ -529,9 +519,7 @@ def run(config_path: Path) -> dict[str, Any]:
     allocations.to_parquet(allocation_path, index=False)
     payload: dict[str, Any] = {
         "schema_version": str(config["schema_version"]),
-        "generated_at_utc": datetime.now(tz=UTC).isoformat(),
         "run_tag": run_tag,
-        "source_commit": _git_commit(),
         "config_path": str(config_path.relative_to(ROOT)),
         "config_sha256": hashlib.sha256(config_path.read_bytes()).hexdigest(),
         "design": config["design"],

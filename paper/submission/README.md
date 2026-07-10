@@ -1,5 +1,10 @@
 # IJDS Submission Package
 
+> **Scientific status (2026-07-10): NO-GO.** This directory is a preserved v7
+> handoff snapshot. The build workflow remains valid, but the manuscript and
+> A35--A40 values must not be submitted or incrementally relabeled as new
+> evidence. See `../../docs/research/ijds_three_front_reconstruction_2026-07-10.md`.
+
 This directory contains the official-template handoff and editor-facing
 submission materials. The synchronized scientific sources are:
 
@@ -10,7 +15,7 @@ submission materials. The synchronized scientific sources are:
 - `paper/submission/CLAIM_AUDIT_MATRIX.md`: active claim/evidence map.
 - `paper/submission/REPRODUCIBILITY_PACKAGE.md`: data/code package plan.
 
-The active manuscript has one policy: exact 90% conformal replay,
+The historical compact-v7 manuscript has one policy: exact 90% conformal replay,
 `q=(p+u)/2`, `tau=0.17`, and a nine-cell November selector under
 `B_u<=0.28`. An outcome-free December replay and post-selection audit are part
 of A36; the audit deliberately records that stable policy identity does not

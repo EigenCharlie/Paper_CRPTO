@@ -404,7 +404,6 @@ def build_governance(
     ].iloc[0]
     return {
         "schema_version": "2026-07-09.7",
-        "generated_at_utc": summary["generated_at_utc"],
         "run_tag": RUN_TAG,
         "status": "active_ijds_policy",
         "selection_protocol": {

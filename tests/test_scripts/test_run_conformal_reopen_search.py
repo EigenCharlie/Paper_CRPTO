@@ -5,6 +5,7 @@ from pathlib import Path
 from typing import Any
 
 import pandas as pd
+import pytest
 
 from scripts.search import run_conformal_reopen_search as reopen
 from scripts.search.run_conformal_reopen_search import (
@@ -93,7 +94,7 @@ def _passing_policy(*, width: float = 0.42) -> dict[str, object]:
 
 def test_phase1_resume_result_preserves_source_paths_and_winner(
     tmp_path: Path,
-    monkeypatch: object,
+    monkeypatch: pytest.MonkeyPatch,
 ) -> None:
     aggregate = pd.DataFrame(
         [
@@ -137,7 +138,7 @@ def test_phase1_resume_result_preserves_source_paths_and_winner(
 
 def test_phase1_oot_confirmation_writes_ranked_candidate_frame(
     tmp_path: Path,
-    monkeypatch: object,
+    monkeypatch: pytest.MonkeyPatch,
 ) -> None:
     shortlist = pd.DataFrame(
         [

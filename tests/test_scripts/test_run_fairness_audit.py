@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import json
+from typing import Any, cast
 
 import numpy as np
 import pandas as pd
@@ -233,7 +234,7 @@ def test_shap_attribute_result_reports_group_drivers_and_pairwise_diffs() -> Non
     )
 
     assert len(results) == 1
-    result = results[0]
+    result = cast(dict[str, Any], results[0])
     assert result["attribute"] == "home_ownership"
     assert result["groups_analyzed"] == ["A", "B"]
     assert result["top5_per_group"]["A"][0]["feature"] == "dti"

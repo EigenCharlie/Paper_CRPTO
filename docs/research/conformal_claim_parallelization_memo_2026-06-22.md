@@ -57,7 +57,7 @@ The local sources in `Papers_tesis/paper` point to four roles for this phase:
 
 `configs/profiles/search_conformal_claim_max.yaml` sets `parallel_workers: 3`.
 
-`scripts/experiments/launch_conformal_parallel_after_current_inner.sh` waits for
+`scripts/archive/experiments/launch_conformal_parallel_after_current_inner.sh` waited for
 the current serial block to publish its first checkpoint, stops the old serial
 tmux session, and relaunches the same conformal run tag with parallel phase-1
 workers. This preserves the work already spent on the first block while

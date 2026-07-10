@@ -1,5 +1,11 @@
 # IJDS Tooling and Refactor Decisions - 2026-07-09
 
+> **Status note (2026-07-10):** the tooling choices in this document remain
+> active. The v7 methodology and run tags described below are historical and
+> NO-GO for submission after the maturity, leakage, payoff, and future-menu
+> audit. The replacement boundary is recorded in
+> `docs/research/ijds_three_front_reconstruction_2026-07-10.md`.
+
 This is the final decision record for the IJDS code and manuscript workflow.
 It replaces the iterative tooling lab from 2026-07-08, whose useful decisions
 have been implemented. Scientific history remains in `docs/research/`; this

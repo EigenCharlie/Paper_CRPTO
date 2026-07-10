@@ -1,6 +1,15 @@
-# CRPTO Active Claim Registry - 2026-07-09
+# CRPTO Historical v7 Claim Registry - 2026-07-09
 
-This file is the source of truth for IJDS-facing claims. The active result is a
+> **Scientific status override (2026-07-10): NO-GO.** This file records the
+> compact v7 claim exactly as frozen; it is no longer the source of an active
+> submission claim. The exhaustive audit found outcome-conditioned candidate
+> membership, label contamination in the conformal recipe, an incoherent
+> economic objective, and a pooled future menu. Read
+> `ijds_state_of_art_audit_2026-07-10.md` and
+> `ijds_three_front_reconstruction_2026-07-10.md` before any paper or evidence
+> work. Keep the values below for replay provenance only.
+
+This file is the source of truth for the historical v7 IJDS-facing claims. The recorded result is a
 simple, calibration-selected 90% conformal guardrail. Older pool93 frontier
 files remain immutable provenance under `EXTRACTION_MANIFEST.json`; they are no
 longer evidence for the manuscript's main claim.

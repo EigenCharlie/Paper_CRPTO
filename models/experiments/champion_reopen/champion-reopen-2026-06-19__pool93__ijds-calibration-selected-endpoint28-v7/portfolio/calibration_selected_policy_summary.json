@@ -175,7 +175,6 @@
     "selected_endpoint_budget": 0.25903604939435104
   },
   "evaluation_path": "data\\processed\\experiments\\champion_reopen\\champion-reopen-2026-06-19__pool93__ijds-calibration-selected-endpoint28-v7\\portfolio\\calibration_selected_policy_oot_evaluation.csv",
-  "generated_at_utc": "2026-07-10T04:24:39.860761+00:00",
   "grid_size": 9,
   "incumbent_policy": {
     "candidate_id": "linear-006",
@@ -286,6 +285,5 @@
     "_pd_high",
     "_loan_amount",
     "_int_rate"
-  ],
-  "source_commit": "e0daf55685988408bc68f5b65df0298174f1a516"
+  ]
 }

@@ -64,16 +64,7 @@ jobs:
             | tee reports/ci/champion-drift-gate.txt
 
       - name: Full author tests
-        run: |
-          uv run pytest \
-            tests/test_models/ \
-            tests/test_optimization/ \
-            tests/test_utils/ \
-            tests/test_features/ \
-            tests/test_crpto_final_sync.py \
-            tests/test_quarto_book_guardrails.py \
-            tests/test_publication_integrity.py \
-            -q
+        run: uv run pytest -q
 
       - name: Upload coverage if generated
         if: always()

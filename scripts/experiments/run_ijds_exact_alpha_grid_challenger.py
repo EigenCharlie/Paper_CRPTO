@@ -8,7 +8,6 @@ import os
 import pickle
 import sys
 from dataclasses import asdict
-from datetime import UTC, datetime
 from pathlib import Path
 from typing import Any
 
@@ -32,13 +31,13 @@ from src.models.conformal_alpha_grid import (  # noqa: E402
     alpha_interval_columns,
     compute_exact_alpha_intervals,
 )
-from src.utils.script_helpers import resolve_repo_artifact_path, write_json  # noqa: E402
+from src.utils.script_helpers import (  # noqa: E402
+    ensure_contained_output_dir,
+    resolve_repo_artifact_path,
+    write_json,
+)
 
 DEFAULT_CONFIG = ROOT / "configs/experiments/champion_reopen_ijds_exact_alpha_grid_v1.yaml"
-
-
-def _utc_now() -> str:
-    return datetime.now(tz=UTC).isoformat()
 
 
 def _sha256(path: Path) -> str:
@@ -57,10 +56,12 @@ def _load_config(path: Path) -> dict[str, Any]:
 
 
 def _experiment_paths(run_tag: str) -> tuple[Path, Path]:
-    data_dir = ROOT / "data/processed/experiments/champion_reopen" / run_tag / "conformal"
-    model_dir = ROOT / "models/experiments/champion_reopen" / run_tag / "conformal"
-    data_dir.mkdir(parents=True, exist_ok=True)
-    model_dir.mkdir(parents=True, exist_ok=True)
+    data_dir = ensure_contained_output_dir(
+        ROOT / "data/processed/experiments/champion_reopen", run_tag, "conformal"
+    )
+    model_dir = ensure_contained_output_dir(
+        ROOT / "models/experiments/champion_reopen", run_tag, "conformal"
+    )
     return data_dir, model_dir
 
 
@@ -241,9 +242,7 @@ def run(config_path: Path) -> dict[str, Any]:
     grid.to_parquet(grid_path, index=False)
     summary_payload: dict[str, Any] = {
         "schema_version": str(config["schema_version"]),
-        "generated_at_utc": _utc_now(),
         "run_tag": run_tag,
-        "source_commit": _git_commit(),
         "config_path": str(config_path.relative_to(ROOT)),
         "config_sha256": _sha256(config_path),
         "source": {
@@ -263,19 +262,6 @@ def run(config_path: Path) -> dict[str, Any]:
     logger.info("Wrote exact alpha grid to {}", grid_path)
     logger.info("Wrote exact alpha summary to {}", summary_path)
     return summary_payload
-
-
-def _git_commit() -> str:
-    import subprocess
-
-    result = subprocess.run(
-        ["git", "rev-parse", "HEAD"],
-        cwd=ROOT,
-        capture_output=True,
-        text=True,
-        check=False,
-    )
-    return result.stdout.strip() if result.returncode == 0 else "unknown"
 
 
 def main() -> int:

@@ -637,7 +637,7 @@ def _build_frontier_for_seed(
     gamma_values: list[float],
     delta_cap_quantiles: list[float],
     tail_focus_quantiles: list[float],
-    budget_profiles: list[dict[str, float]],
+    budget_profiles: list[dict[str, Any]],
     max_candidates: int,
     random_state: int,
     solver_backend: str,
@@ -927,7 +927,7 @@ def _build_forced_policy_keys(
     incumbent_risk_neighbors: list[float],
     incumbent_gamma_neighbors: list[float],
     incumbent_policy_modes: list[str],
-    budget_profiles: list[dict[str, float]],
+    budget_profiles: list[dict[str, Any]],
     solver_backend: str,
 ) -> set[str]:
     keys: set[str] = set()
@@ -981,7 +981,7 @@ def _build_stratified_shortlist(
     incumbent_risk_neighbors: list[float],
     incumbent_gamma_neighbors: list[float],
     incumbent_policy_modes: list[str],
-    budget_profiles: list[dict[str, float]],
+    budget_profiles: list[dict[str, Any]],
     solver_backend: str,
 ) -> pd.DataFrame:
     ranked = _rank_frontier(frontier)

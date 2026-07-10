@@ -44,7 +44,6 @@ hpo:
   n_startup_trials: 50
   multivariate_tpe: true
   group_tpe: true
-  warn_independent_sampling: false
   pruner_n_startup_trials: 25
   pruner_n_warmup_steps: 120
   use_pruning_callback: true

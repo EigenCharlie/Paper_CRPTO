@@ -30,7 +30,7 @@ fmt:
     uv run ruff format .
 
 type-check:
-    uv run mypy src scripts
+    uv run mypy src scripts tests
 
 # Fast type checker from Astral. Daily active-scope use remains advisory while
 # ty matures; the clean full scope is blocking in the final submission gate.
@@ -41,7 +41,7 @@ type-advisory-full:
     @uv run python scripts/run_ty_advisory.py --scope full --fail-on-diagnostics --output reports/ci/ty-advisory-full.txt
 
 complexity-report:
-    uvx radon cc src scripts -s -n D
+    uvx radon cc src scripts -s -n C --exclude "scripts/archive/*"
 
 api-docs-core:
     uv run --with pdoc pdoc src.optimization.portfolio_model src.optimization.policy_evaluation src.optimization.policy_selection src.models.conformal_alpha_grid src.models.calibration src.evaluation.backtesting src.evaluation.fairness --docformat google --output-directory reports/api-docs --no-browser
@@ -124,14 +124,12 @@ paper-submission-pdf: paper-submission
 # --- Quarto book ---------------------------------------------------------
 
 book:
-    uv run python scripts/write_book_build_info.py
-    uv run -- quarto render book --to html
+    uv run -- quarto render book --to html --no-execute
 
 book-pdf:
     @echo "CRPTO.pdf is intentionally not maintained as a routine artifact. Use paper-submission-pdf for IJDS PDFs; create a curated thesis PDF later from selected sections."
 
 book-all: book
-    uv run python scripts/write_book_build_info.py
     @echo "book-all currently means HTML book only; full thesis PDF is deferred until the thesis section set and APA layout are fixed."
 
 book-preview:
@@ -217,10 +215,10 @@ datasette FILE="data/processed/crpto.duckdb":
     @uv run python -c "import datasette" 2>&1 || echo "Run: uv pip install datasette datasette-duckdb"
     uv run datasette serve --plugins-dir=. -i "{{FILE}}"
 
-# --- One-shot orchestrator ----------------------------------------------
+# --- Safe one-shot release gate -----------------------------------------
 
-all:
-    uv run python scripts/run_crpto_pipeline.py
+all: submission-check
+    @echo "Safe alias complete: protected training and search stages were not executed."
 
 # --- Help ---------------------------------------------------------------
 

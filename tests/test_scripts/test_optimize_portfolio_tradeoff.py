@@ -101,7 +101,9 @@ def test_nonrobust_solve_uses_point_pd_contract(monkeypatch: pytest.MonkeyPatch)
         gamma=1.0,
     )
 
-    np.testing.assert_allclose(captured["pd_constraint_override"], pd_point)
+    pd_constraint_override = captured["pd_constraint_override"]
+    assert isinstance(pd_constraint_override, np.ndarray)
+    np.testing.assert_allclose(pd_constraint_override, pd_point)
     np.testing.assert_allclose(allocation, [0.0, 0.5])
     assert result["policy_mode"] == "point_estimate"
     assert result["gamma"] == 0.0

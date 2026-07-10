@@ -4,6 +4,12 @@ This folder contains the manuscript extraction layer for the standalone CRPTO
 paper. The Quarto book remains the full companion dossier; this folder is where
 the submission-shaped versions are written.
 
+> **Scientific status (2026-07-10): NO-GO.** The current QMD, supplement, and
+> official TeX are a frozen compact-v7 snapshot, not submission-ready sources.
+> Preserve them until the maturity-safe evidence is stable; do not update their
+> numbers piecemeal. Reconstruction decisions live in
+> `../docs/research/ijds_three_front_reconstruction_2026-07-10.md`.
+
 ## Current Venue Decision
 
 - Primary target: INFORMS Journal on Data Science.
@@ -34,7 +40,7 @@ the submission-shaped versions are written.
   IJDS disclosure form.
 - `submission/SCHOLARONE_FINAL_CHECKLIST.md`: final upload/proof checklist.
 
-The active paper has one method: exact 90% conformal replay, the midpoint
+The historical compact-v7 paper has one method: exact 90% conformal replay, the midpoint
 guardrail `q=(p+u)/2`, `tau=0.17`, and a nine-cell November selector under
 `B_u<=0.28`. A35 is the exact-alpha audit, A36 is the split selector/December
 audit, A37 is temporal evaluation, A38 is letter-grade composition, A39 is the

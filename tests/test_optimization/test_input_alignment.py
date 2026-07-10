@@ -143,10 +143,39 @@ def test_id_alignment_rejects_disjoint_universes() -> None:
     candidates = pd.DataFrame({"id": ["a", "b"]})
     intervals = pd.DataFrame({"id": ["c", "d"], "y_pred": [0.1, 0.2]})
 
-    with pytest.raises(ValueError, match="produced zero rows"):
+    with pytest.raises(ValueError, match="universes do not match exactly"):
         align_candidate_intervals(
             candidates,
             intervals,
             max_candidates=None,
             random_state=42,
         )
+
+
+def test_id_alignment_rejects_partial_overlap_by_default() -> None:
+    candidates = pd.DataFrame({"id": ["a", "b", "c"]})
+    intervals = pd.DataFrame({"id": ["a", "b", "d"], "y_pred": [0.1, 0.2, 0.3]})
+
+    with pytest.raises(ValueError, match="universes do not match exactly"):
+        align_candidate_intervals(
+            candidates,
+            intervals,
+            max_candidates=None,
+            random_state=42,
+        )
+
+
+def test_partial_overlap_requires_explicit_legacy_opt_out() -> None:
+    candidates = pd.DataFrame({"id": ["a", "b", "c"]})
+    intervals = pd.DataFrame({"id": ["a", "b", "d"], "y_pred": [0.1, 0.2, 0.3]})
+
+    aligned = align_candidate_intervals(
+        candidates,
+        intervals,
+        max_candidates=None,
+        random_state=42,
+        require_full_match=False,
+    )
+
+    assert aligned.available_rows == 2
+    assert aligned.candidates["id"].tolist() == ["a", "b"]

@@ -161,3 +161,4 @@ configs/experiments/*
 !configs/experiments/tabpfn_*.yaml
 !configs/experiments/champion_reopen*.yaml
 !configs/experiments/champion_reopen*.txt
+!configs/experiments/ijds_maturity_safe_locked_*.yaml

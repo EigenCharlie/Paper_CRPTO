@@ -117,7 +117,7 @@ def test_exact_threads_can_come_from_environment(monkeypatch) -> None:
 
 def test_shortlist_exact_path_uses_explicit_output() -> None:
     expected = ROOT / "data" / "processed" / "portfolio_bound_aware_shortlist_exact.parquet"
-    context = {
+    context: dict[str, object] = {
         "shortlist_path": str(
             ROOT / "data" / "processed" / "portfolio_bound_aware_shortlist.parquet"
         ),
@@ -151,7 +151,7 @@ def test_resume_exact_rows_filters_out_irrelevant_seeds(tmp_path) -> None:
 
 
 def test_search_space_payload_records_requested_alpha_grid() -> None:
-    context = {"search_space": {"alpha_grid": [0.01], "mode": ["capped"]}}
+    context: dict[str, object] = {"search_space": {"alpha_grid": [0.01], "mode": ["capped"]}}
 
     payload = _search_space_payload(context=context, alpha_grid=[0.01, 0.03])
 

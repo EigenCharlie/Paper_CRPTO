@@ -93,7 +93,9 @@ class TestPathResolution:
         upstream_cal.touch()
         monkeypatch.chdir(tmp_path)
         monkeypatch.setenv("UPSTREAM_CANONICAL_RUN_TAG", "run-123")
-        assert resolve_calibrator_path().resolve() == upstream_cal.resolve()
+        resolved = resolve_calibrator_path()
+        assert resolved is not None
+        assert resolved.resolve() == upstream_cal.resolve()
 
 
 # ---------------------------------------------------------------------------
@@ -111,6 +113,7 @@ class TestContractIO:
         payload = {"model_path": "models/test.cbm", "feature_names": ["a", "b"]}
         save_contract(payload, path)
         loaded = load_contract(path)
+        assert loaded is not None
         assert loaded["model_path"] == "models/test.cbm"
         assert loaded["feature_names"] == ["a", "b"]
 

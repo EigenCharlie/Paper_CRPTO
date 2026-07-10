@@ -104,6 +104,7 @@ def _align_by_key(
     mode: AlignmentMode,
     max_candidates: int | None,
     random_state: int,
+    require_full_match: bool,
 ) -> AlignedCandidateIntervals:
     used_columns = set(candidates.columns) | set(intervals.columns)
     join_column = _unused_column_name("__crpto_alignment_key", used_columns)
@@ -123,6 +124,19 @@ def _align_by_key(
         sort=False,
         validate="one_to_one",
     )
+    if require_full_match and (
+        len(merged) != len(candidate_work) or len(merged) != len(interval_work)
+    ):
+        candidate_key_set = set(candidate_keys.tolist())
+        interval_key_set = set(interval_keys.tolist())
+        candidate_only = sorted(candidate_key_set - interval_key_set, key=str)[:3]
+        interval_only = sorted(interval_key_set - candidate_key_set, key=str)[:3]
+        raise ValueError(
+            "Candidate/interval universes do not match exactly: "
+            f"candidates={len(candidate_work)}, intervals={len(interval_work)}, "
+            f"matched={len(merged)}, candidate_only_examples={candidate_only}, "
+            f"interval_only_examples={interval_only}"
+        )
     positions = _sample_positions(
         len(merged),
         max_candidates=max_candidates,
@@ -148,6 +162,7 @@ def align_candidate_intervals(
     max_candidates: int | None,
     random_state: int,
     allow_row_number: bool = True,
+    require_full_match: bool = True,
 ) -> AlignedCandidateIntervals:
     """Align and sample candidate/interval rows under a strict one-to-one contract.
 
@@ -168,6 +183,7 @@ def align_candidate_intervals(
             mode="id",
             max_candidates=max_candidates,
             random_state=random_state,
+            require_full_match=require_full_match,
         )
 
     if allow_row_number and "_row_number" in intervals.columns:
@@ -179,8 +195,14 @@ def align_candidate_intervals(
             mode="row_number",
             max_candidates=max_candidates,
             random_state=random_state,
+            require_full_match=require_full_match,
         )
 
+    if require_full_match and len(candidates) != len(intervals):
+        raise ValueError(
+            "Positional candidate/interval universes do not match exactly: "
+            f"candidates={len(candidates)}, intervals={len(intervals)}"
+        )
     available_rows = min(len(candidates), len(intervals))
     positions = _sample_positions(
         available_rows,

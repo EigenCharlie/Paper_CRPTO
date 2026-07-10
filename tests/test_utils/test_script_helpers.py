@@ -11,6 +11,7 @@ import pytest
 
 from src.utils.script_helpers import (
     artifact_path,
+    ensure_contained_output_dir,
     first_existing,
     load_json,
     load_yaml,
@@ -40,6 +41,26 @@ def test_write_json_is_lf_only_and_key_sorted(tmp_path: Path) -> None:
         raw.decode("utf-8")
         == json.dumps({"z": 1, "a": {"y": 2, "b": 3}}, indent=2, sort_keys=True) + "\n"
     )
+
+
+def test_ensure_contained_output_dir_creates_nested_target(tmp_path: Path) -> None:
+    base = tmp_path / "experiments"
+    target = ensure_contained_output_dir(base, "run-1", "portfolio")
+
+    assert target == (base / "run-1" / "portfolio").resolve()
+    assert target.is_dir()
+
+
+@pytest.mark.parametrize(
+    "part",
+    ["", "   ", ".", "../escape", "..\\escape", "nested/run", "nested\\run", "C:\\escape"],
+)
+def test_ensure_contained_output_dir_rejects_blank_absolute_or_escape(
+    tmp_path: Path,
+    part: str,
+) -> None:
+    with pytest.raises(ValueError):
+        ensure_contained_output_dir(tmp_path / "experiments", part)
 
 
 def test_try_load_json_missing_returns_empty(tmp_path: Path) -> None:

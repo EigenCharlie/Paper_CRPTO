@@ -4,19 +4,36 @@ Use this skill inside `C:\Users\carlos\Documents\Paper_CRPTO`. CRPTO is a
 single-author IJDS paper and reproducibility bundle, not a production service.
 Prefer simple code, frozen evidence, and one coherent manuscript claim.
 
+## Scientific Status Override - 2026-07-10
+
+The compact v7 manuscript and A35--A40 replay below are historical provenance,
+not an active submission claim. The current paper is NO-GO because its
+candidate universe is outcome-conditioned, later labels enter the conformal
+recipe, the optimized payoff differs from the evaluated payoff, and one pooled
+portfolio uses a future menu. Before paper work, read:
+
+1. `docs/research/ijds_state_of_art_audit_2026-07-10.md`
+2. `docs/research/ijds_three_front_reconstruction_2026-07-10.md`
+3. `docs/research/ijds_reconstruction_asset_inventory_2026-07-10.csv`
+
+Do not promote the maturity-safe scratch run. It was generated from a dirty
+tree and must be modularized and rerun under a fresh committed tag.
+
 ## Read First
 
 1. `docs/ACADEMIC_CONTEXT.md`
 2. `docs/SCOPE_AND_GOVERNANCE.md`
-3. `docs/research/active_claims_2026-07-04.md`
-4. `CONTRIBUTING.md`
-5. `EXTRACTION_MANIFEST.md`
-6. `configs/crpto_publication_targets.yaml`
+3. `docs/research/ijds_state_of_art_audit_2026-07-10.md`
+4. `docs/research/ijds_three_front_reconstruction_2026-07-10.md`
+5. `docs/research/active_claims_2026-07-04.md` (historical v7 replay)
+6. `CONTRIBUTING.md`
+7. `EXTRACTION_MANIFEST.md`
+8. `configs/crpto_publication_targets.yaml`
 
 Use Windows PowerShell and `uv run`. Do not introduce Unix-only workflow
 assumptions.
 
-## Active IJDS Policy
+## Historical v7 IJDS Policy
 
 - Run tag:
   `champion-reopen-2026-06-19__pool93__ijds-calibration-selected-endpoint28-v7`

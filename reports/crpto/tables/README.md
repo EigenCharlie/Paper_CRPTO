@@ -1,12 +1,18 @@
 # CRPTO paper-facing tables
 
+> **Scientific status override (2026-07-10):** the A3--A40 tables described
+> below are historical diagnostics/provenance until the maturity-safe design is
+> implemented and rerun from a committed tag. Do not treat the v7 A35--A40
+> bundle as active submission evidence. See
+> `docs/research/ijds_three_front_reconstruction_2026-07-10.md`.
+
 This directory holds the CSV/TeX exports consumed by the IJDS paper, the online
 supplement, and the Quarto book. The paper-facing canon is **`crpto_table0`**
 (key metrics) plus the journal appendix package **`A3`–`A40`**. Every one of
 those is cited in the paper, the supplement, or a book chapter (see
 `book/chapters/07-apendice-robustez.qmd` and `30-replicacion-multidataset.qmd`).
 
-## Active set
+## Historical paper-facing set
 
 | Range | Role |
 | --- | --- |
@@ -15,12 +21,12 @@ those is cited in the paper, the supplement, or a book chapter (see
 | `A12`–`A21`, `A21b` | Tail risk, satisficing, dependence, regret-auditability, cluster/concentration bounds. |
 | `A22`–`A24` | Tail-constrained re-opt, multi-distribution, online ACI diagnostics. |
 | `A25`–`A34` | External multidataset replication (Prosper/Freddie) and cross-dataset price of robustness. |
-| `A35` | Active exact-alpha replay, coverage, width, and endpoint-saturation audit. |
-| `A36` | Active November selector, endpoint-cap stability, and December outcome-free replay. |
-| `A37` | Active full-OOT and temporal fixed-policy evaluation. |
-| `A38` | Active selected funded-set letter-grade composition. |
-| `A39` | Active month-cluster bootstrap with funded-loan sensitivity. |
-| `A40` | Active selected, conservative, and matched point-PD decision comparison. |
+| `A35` | Historical v7 exact-alpha replay, coverage, width, and endpoint-saturation audit. |
+| `A36` | Historical v7 November selector, endpoint-cap stability, and December replay. |
+| `A37` | Historical v7 full-OOT and temporal fixed-policy evaluation. |
+| `A38` | Historical v7 selected funded-set letter-grade composition. |
+| `A39` | Historical v7 month-cluster bootstrap with funded-loan sensitivity. |
+| `A40` | Historical v7 selected, conservative, and matched point-PD comparison. |
 
 ## Legacy / superseded (retained for provenance, not paper-facing)
 
@@ -33,7 +39,7 @@ The frozen Lending Club `price_of_robustness=-10.56%` fields in table 0, table
 baseline inherited a conformal endpoint constraint and was not a point-PD
 comparator. Protected historical pool93 exports retain their explicit
 `*_pool93_*` filenames; they are provenance, not the active A35--A40 bundle.
-See `docs/research/active_claims_2026-07-04.md` for the active contract and
+See `docs/research/active_claims_2026-07-04.md` for the historical v7 contract and
 `docs/research/pool93_certificate_semantics_v2_2026-07-09.md` for history.
 
 - `crpto_table1_robustness_summary`
