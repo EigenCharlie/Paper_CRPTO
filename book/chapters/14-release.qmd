@@ -128,7 +128,10 @@ Manifest de uso por sección del capítulo 14.
 | A31 | External OOT subperiod metrics | No | Sí | Sí | Prosper por año y Freddie por quarter; registra el borde 2015Q4. |
 | A32 | Prosper default-definition sensitivity | No | Sí | Sí | Verifica que la definición de default no decide sola el claim Prosper. |
 | A33 | Freddie segment sensitivity | No | Sí | Sí | Combined/green pasan alpha01; red queda como sensibilidad honesta. |
-| A34 | Cross-dataset price of robustness | Sí o appendix corto | Sí | Sí | Muestra que el premium externo crece con default rate y que LC seleccionado queda como referencia favorable. |
+| A34 | Cross-dataset price of robustness | Sí o appendix corto | Sí | Sí | Muestra que el premium externo crece con default rate; no reutiliza el comparador histórico retirado de Lending Club. |
+| A35 | Policy-aware finite-grid frontier | Sí | Sí | Sí | Usa endpoint exacto para políticas lineales, capped y tail; no es óptimo continuo. |
+| A36--A39 | Selected-allocation audits | No | Sí | Sí | Composición, cola, concentración y bootstrap de la asignación promovida. |
+| A40 | Matched point-PD baseline | Sí | Sí | Sí | Mismos candidatos y restricciones operativas; cuantifica costo de retorno y reducción de riesgo. |
 
 Manifest de tablas para decidir cuerpo, appendix y tesis.
 :::
@@ -158,7 +161,7 @@ Manifest de tablas para decidir cuerpo, appendix y tesis.
 | Fig 22 | `crpto_fig22_external_replication` | Sí | Sí | Sí | Resume gates conformales y valor LP robusto en Prosper/Freddie. |
 | Fig 23 | `crpto_fig23_external_candidate_sensitivity` | No | Sí | Sí | Verifica que la réplica externa no depende de un pool pequeño. |
 | Fig 24 | `crpto_fig24_freddie_all_candidate_certificate` | Sí o appendix corto | Sí | Sí | Certificado all-candidate Freddie sobre `1,396,053` candidatos OOT. |
-| Fig 25 | `crpto_fig25_price_of_robustness_scaling` | Sí o appendix corto | Sí | Sí | Conecta default rate, premium de robustez y contraste con el champion LC seleccionado. |
+| Fig 25 | `crpto_fig25_price_of_robustness_scaling` | Sí o appendix corto | Sí | Sí | Conecta default rate y premium de robustez exclusivamente en las aplicaciones externas congeladas. |
 | Fig alpha-gamma | `crpto_fig_alpha_gamma_bound` | Quizá | Sí | Sí | Figura técnica del bound. |
 
 Manifest de figuras para extraer paper y appendix.

@@ -14,52 +14,47 @@ execute:
 
 # Resumen
 
-CRPTO integra prediccion de default calibrada, intervalos conformales Mondrian y
-optimizacion robusta de portafolio. La superficie IJDS activa promueve el punto
-pool93 body/default: retorno robusto `$184,832.48`, `V=0.035350`,
-`Gamma_CP=0.162616`, Markov cap `0.345084`, zero violation y pass `8/8` sobre
-la grilla alpha declarada. La frontera A35 y el audit de composicion A36 son los
-artefactos paper-facing principales para el cierre pool93; A37--A39 agregan la
-repricing de tail-risk, el audit cluster-bound y el bootstrap de contribuciones
-de la asignacion seleccionada.
+CRPTO convierte una PD calibrada en una decision de portafolio auditable. La
+version IJDS activa reproduce exactamente el endpoint conformal al 90%, usa la
+regla simple `q=(p+u)/2` con `tau=0.17`, y selecciona esa politica dentro de una
+grilla `3x3` en noviembre bajo `B_u<=0.28`. Un replay outcome-free en diciembre
+elige la misma politica; al abrir outcomes, la miscoverage `0.124925` muestra
+que estabilidad de seleccion no equivale a cobertura del funded set.
 
-# Manuscrito
+En 276,869 prestamos OOT, la politica financia 308 prestamos y obtiene
+`$179,327.59` sobre `$1M`, con default ponderado `0.039375`, miscoverage
+`0.036875` y endpoint `0.258051`. La baseline point-PD emparejada obtiene
+`$196,369.14` y default `0.118400`. El costo observado de retorno es `8.678%` y
+la reduccion de default es `7.9025` puntos porcentuales. El paper reporta tambien
+los periodos donde point-PD domina; no afirma superioridad universal.
 
-Este archivo es el punto de entrada generico del manuscrito standalone. La
-decision editorial activa esta en
-`../configs/crpto_publication_targets.yaml`: escribir primero para **INFORMS
-Journal on Data Science** y mantener **European Journal of Operational
-Research** como pivote principal.
+# Fuentes del manuscrito
 
-Los borradores de trabajo son:
+- `CRPTO_ijds.qmd`: body anonimo y fuente narrativa activa.
+- `supplement_ijds.qmd`: pruebas y evidencia A35--A40, mas diagnosticos
+  historicos A1--A34.
+- `submission/CRPTO_ijds_submission.tex`: handoff compacto bajo `informs4`.
+- `../docs/research/active_claims_2026-07-04.md`: contrato numerico vigente.
 
-- `CRPTO_ijds.qmd`: cuerpo anonimo IJDS, conceptualmente limitado a 25 paginas
-  excluyendo referencias y appendix.
-- `supplement_ijds.qmd`: online supplement IJDS con A3--A39, robustez,
-  reproducibilidad, MRM y fairness.
+# Evidencia activa
 
-La version larga y sus apendices estan en `book/`.
+- A35: replay exacto y saturacion por alpha.
+- A36: selector de noviembre, estabilidad del cap y auditoria de diciembre.
+- A37: evaluacion OOT total y temporal.
+- A38: composicion por grado de credito.
+- A39: bootstrap por mes de originacion y sensibilidad por prestamo.
+- A40: politica seleccionada, blend conservador y baseline point-PD.
 
-# Artefactos principales
+La gobernanza vive en
+`models/experiments/champion_reopen/<active-run>/portfolio/ijds_policy_governance.json`.
+Los artefactos historicos protegidos por `EXTRACTION_MANIFEST.json` permanecen
+intactos como procedencia, no como claims activos.
 
-Esquema dual-tag: el body claim del paper vive en los sidecars pool93; la
-cadena upstream congelada (rebaseline 2026-06-07) define el return floor
-declarado. `crpto_table0_key_metrics.csv` y `final_project_promotion.json`
-documentan esa cadena historica, no el body point.
+# Comandos
 
-Body claim pool93 (autoritativos):
-
-- `models/experiments/champion_reopen/champion-reopen-2026-06-19__pool93__ijds-claim-consolidated-definitive/portfolio/pool93_ijds_consolidated_governance.json`
-- `models/experiments/champion_reopen/champion-reopen-2026-06-19__pool93__ijds-claim-bound-terminal/portfolio/pool93_ijds_claim_governance.json`
-- `reports/crpto/tables/crpto_tableA35_pool93_ijds_frontier.csv` (y A36--A39)
-
-Cadena upstream congelada (historica, return floor):
-
-- `models/final_project_promotion.json`
-- `models/champion_portfolio_policy.json`
-- `reports/crpto/tables/crpto_table0_key_metrics.csv`
-
-Figuras de entrada:
-
-- `reports/crpto/figures/crpto_fig1_journal_pipeline.png`
-- `reports/crpto/figures/crpto_fig12_crpto_conceptual_pipeline.png`
+```powershell
+just ijds-evidence
+just paper-submission
+just paper-submission-official
+just submission-check
+```

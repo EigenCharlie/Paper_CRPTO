@@ -233,18 +233,18 @@ def _build_alerts(
 
     if not alerts:
         return pd.DataFrame(
-            columns=[
-                "level",
-                "month",
-                "grade",
-                "severity",
-                "n",
-                "coverage_90",
-                "coverage_95",
-                "avg_width_90",
-                "rule",
-                "recommended_action",
-            ]
+            {
+                "level": pd.Series(dtype="object"),
+                "month": pd.Series(dtype="object"),
+                "grade": pd.Series(dtype="object"),
+                "severity": pd.Series(dtype="object"),
+                "n": pd.Series(dtype="int64"),
+                "coverage_90": pd.Series(dtype="float64"),
+                "coverage_95": pd.Series(dtype="float64"),
+                "avg_width_90": pd.Series(dtype="float64"),
+                "rule": pd.Series(dtype="object"),
+                "recommended_action": pd.Series(dtype="object"),
+            }
         )
     return pd.DataFrame(alerts).sort_values(["month", "level", "grade"]).reset_index(drop=True)
 

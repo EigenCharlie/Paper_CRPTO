@@ -647,8 +647,15 @@ En la configuración del proyecto (`configs/optimization.yaml`), el parámetro `
 :::
 
 ::: {.callout-note}
-## El signo importa: en este proyecto el precio salió favorable
-La guía anterior describe el caso *típico*, donde la robustez cuesta retorno. El campo congelado `price_of_robustness` se define con signo: retorno esperado de la baseline no-robusta menos el de la policy robusta. Para el champion vale `-$14,465.69` (`-10.56%`) — **negativo** — porque el funded set conformal-robusto promovido no solo no sacrifica retorno esperado frente a la baseline, sino que lo supera (ver la instanciación empírica del Corolario 1 en @sec-crpto-results). Un PoR negativo no contradice la teoría: el corollary acota el precio *conceptual* máximo; el precio *medido* sobre este funded set resultó a favor de la prudencia.
+## El signo exige una baseline point-PD emparejada
+El campo congelado `price_of_robustness=-10.56%` queda retirado porque la
+baseline histórica etiquetada como no robusta heredaba la restricción
+`pd_high`. A40 reconstruye una baseline point-PD con los mismos 276,869
+candidatos, presupuesto, concentración, `tau=0.1715`, LGD y solver. CRPTO cede
+`5.875%` de retorno realizado, reduce default/V ponderado en `8.305` puntos
+porcentuales y baja el umbral Markov exacto en `43.55` puntos. Esta comparación
+no cambia el certificado seleccionado; aclara su costo económico contra un
+control semánticamente equivalente.
 :::
 
 La frontera de Pareto entre retorno y robustez se explora en el script `scripts/optimize_portfolio_tradeoff.py`, que genera el *tradeoff curve* variando el parámetro $\gamma$ y registrando el PoR resultante.

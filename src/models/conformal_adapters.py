@@ -29,7 +29,7 @@ from typing import Any, Self
 
 import numpy as np
 import pandas as pd
-from sklearn.base import BaseEstimator, RegressorMixin
+from sklearn.base import BaseEstimator, ClassifierMixin, RegressorMixin
 
 # Canonical module path that pickled instances must report.
 _PICKLE_MODULE = "src.models.conformal"
@@ -60,7 +60,7 @@ class ProbabilityRegressor(BaseEstimator, RegressorMixin):
         return apply_probability_calibrator(self.calibrator, raw)
 
 
-class PrefitClassifierAdapter(BaseEstimator):
+class PrefitClassifierAdapter(ClassifierMixin, BaseEstimator):
     """Small sklearn-style adapter for prefit classifiers inside MAPIE checks."""
 
     def __init__(self, classifier: Any, n_features_in: int | None = None) -> None:
@@ -80,9 +80,7 @@ class PrefitClassifierAdapter(BaseEstimator):
         if X.shape[0] != 1 or X.shape[1] != self.n_features_in_:
             return False
         numeric = X.apply(pd.to_numeric, errors="coerce")
-        return bool(
-            np.isfinite(numeric.to_numpy()).all() and np.allclose(numeric.to_numpy(), 0.0)
-        )
+        return bool(np.isfinite(numeric.to_numpy()).all() and np.allclose(numeric.to_numpy(), 0.0))
 
     def predict(self, X: Any) -> np.ndarray:
         X_df = pd.DataFrame(X) if not isinstance(X, pd.DataFrame) else X

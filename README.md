@@ -4,19 +4,24 @@ Pipeline de investigación y libro Quarto que acompañan el paper **CRPTO**, una
 
 > CRPTO opera como repositorio standalone: GitHub, DVC y MLflow apuntan a recursos propios del paper. La historia de extracción y aprendizajes queda documentada en [`docs/PROJECT_HISTORY.md`](docs/PROJECT_HISTORY.md).
 
-## Champion congelado
+## Claim IJDS activo
 
 | Campo | Valor |
 | --- | --- |
-| Run tag | `ijds-rebaseline-2026-06-07` |
-| Policy | `bound_aware_276k_economic_champion` |
-| Retorno robusto | **$170,464.54** |
-| `V(α=0.01)` | `0.028875` |
-| `Γ_CP(α=0.01)` | `0.187987` |
-| `α=0.01 exact pass` | `True` |
-| Región robusta | `45/45` |
+| Run tag | `champion-reopen-2026-06-19__pool93__ijds-calibration-selected-endpoint28-v7` |
+| Conformal | replay exacto al `90%` (`alpha=0.10`, used `0.095`) |
+| Política | `q=(p+u)/2`, `tau=0.17`; PD puntual en el objetivo y `q` en el guardrail |
+| Selector | grilla `3x3` en noviembre; cap determinista `B_u<=0.28`; misma política en auditoría de diciembre |
+| Retorno realizado | **$179,327.59** |
+| Default / miscoverage ponderados | `0.039375 / 0.036875` |
+| `Gamma_CP / Gamma_residual` | `0.176102 / 0.088051` |
+| Endpoint / contabilidad observada / umbral condicional | `0.258051 / 0.294926 / 0.574279` |
+| Baseline A40 | `$196,369.14`; costo de retorno `8.678%`; reducción de default `7.9025` pp |
+| Auditoría pre-OOT | diciembre: default `0.145650`, miscoverage `0.124925`; estabilidad no implica cobertura seleccionada |
 
 Hashes SHA256 de los artefactos críticos están en [`EXTRACTION_MANIFEST.json`](EXTRACTION_MANIFEST.json). Verifica con `just validate-champion` o el skill `/crpto-validate-champion`.
+El rebaseline y la frontera pool93 anterior se conservan como procedencia
+congelada, no como claims activos del manuscrito IJDS.
 
 ## Requisitos del sistema
 
@@ -60,6 +65,7 @@ just book-clean         # borra _book/, _freeze/, .quarto/
 
 # Pipeline de paper (no toca el champion)
 just paper-export       # tablas + figuras + evidence + journal + libro
+just ijds-evidence      # A35--A40 y gobernanza de la política IJDS activa
 just tables             # solo CSVs
 just figures            # solo PNGs/PDFs
 
@@ -67,8 +73,13 @@ just figures            # solo PNGs/PDFs
 just lint               # ruff check + format check
 just fmt                # ruff fix + format
 just type-check         # mypy src scripts
+just type-advisory      # ty sobre ruta activa IJDS, no bloqueante
+just type-advisory-full # ty sobre src/scripts completos; bloquea el cierre IJDS
+just api-docs-core      # pdoc local para modulos core, salida ignorada
+just hooks-check        # valida hooks con pre-commit y prek
 just smoke              # tests críticos rápidos
 just test               # suite completa
+just submission-check   # cierre IJDS: claims, lint, type, suite completa, champion y PDF oficial
 
 # DVC
 just dvc-status         # drift detection
@@ -146,7 +157,7 @@ just paper-submission
 │   └── apa.csl              # estilo APA 7
 ├── crpto/                   # paquete público mínimo (`import crpto`)
 ├── src/                     # módulos fuente históricos (data, features, models, optimization, evaluation, utils)
-├── scripts/                 # 40+ entry points
+├── scripts/                 # entry points; ver scripts/README.md para rutas IJDS vs históricas
 ├── tests/                   # 26 archivos pytest (markers slow / integration)
 ├── configs/                 # YAML (pd_model, conformal, optimization, fairness, mrm)
 ├── dbt_project/             # 3 staging + 3 marts sobre crpto.duckdb

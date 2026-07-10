@@ -76,6 +76,8 @@ def write_table(
     match, so frozen tables under ``reports/crpto/tables`` keep their manifest
     hashes when regenerated from unchanged inputs.
     """
+    table_dir = table_dir.resolve()
+    root = root.resolve()
     table_dir.mkdir(parents=True, exist_ok=True)
     csv_path = table_dir / f"{name}.csv"
     tex_path = table_dir / f"{name}.tex"
@@ -99,6 +101,35 @@ def artifact_path(path_like: str | Path) -> Path:
     path = Path(path_like)
     root = str(os.environ.get("GPU_REPLAY_ARTIFACT_ROOT", "")).strip()
     return (Path(root) / path) if root else path
+
+
+def resolve_repo_artifact_path(
+    path_like: str | Path,
+    *,
+    root: Path = REPO_ROOT,
+) -> Path:
+    """Resolve relative or foreign-OS paths that point inside this repository.
+
+    Experiment manifests may have been written from WSL and therefore contain
+    ``/mnt/c/.../<repo>/...`` paths. The artifact identity is repository-relative,
+    so a native Windows replay should resolve the suffix under its current root.
+    Absolute paths outside this repository are left unchanged.
+    """
+    path = Path(path_like)
+    if path.exists():
+        return path.resolve()
+
+    normalized_parts = [part for part in str(path_like).replace("\\", "/").split("/") if part]
+    root_name = root.name.casefold()
+    matching_indices = [
+        index for index, part in enumerate(normalized_parts) if part.casefold() == root_name
+    ]
+    if matching_indices:
+        suffix = normalized_parts[matching_indices[-1] + 1 :]
+        return root.joinpath(*suffix)
+    if not path.is_absolute():
+        return root / path
+    return path
 
 
 def first_existing(*paths: Path) -> Path:

@@ -5,7 +5,6 @@ from __future__ import annotations
 import argparse
 import csv
 import json
-import os
 import re
 import sqlite3
 import subprocess
@@ -28,7 +27,7 @@ def emit(text: str = "") -> None:
 
 def clear_screen() -> None:
     """Clear the Windows console."""
-    os.system("cls")
+    subprocess.run(["cmd", "/c", "cls"], check=False)
 
 
 def load_json(path: Path) -> dict[str, Any]:

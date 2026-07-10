@@ -219,9 +219,10 @@ def main() -> None:
         pool_features,
         feature_config=feature_config,
     )
-    core_features = _resolve_core_features(feature_config, train.columns)
-    catboost_features = _resolve_catboost_features(feature_config, train.columns)
-    woe_features = _resolve_woe_features(feature_config, train.columns)
+    train_columns = [str(column) for column in train.columns]
+    core_features = _resolve_core_features(feature_config, train_columns)
+    catboost_features = _resolve_catboost_features(feature_config, train_columns)
+    woe_features = _resolve_woe_features(feature_config, train_columns)
 
     train_fit, train_val = temporal_train_val_split(
         train,

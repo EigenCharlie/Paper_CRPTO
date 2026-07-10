@@ -1,0 +1,52 @@
+schema_version: "2026-07-09.7"
+run_tag: "champion-reopen-2026-06-19__pool93__ijds-calibration-selected-endpoint28-v7"
+
+source:
+  upstream_canonical_run_tag: "champion-reopen-2026-06-19__hpo-wave1__pool93__seed42"
+  conformal_results_path: "models/conformal_gap/champion-reopen-2026-06-19__hpo-wave1__claim-max-incremental-conformal__pool93__conformal__phase1__final__rank-1/conformal_results_mondrian.pkl"
+  candidate_path: "data/processed/test_fe.parquet"
+  exact_alpha_grid_path: "data/processed/experiments/champion_reopen/champion-reopen-2026-06-19__pool93__ijds-exact-alpha-grid-v1/conformal/exact_alpha_grid.parquet"
+
+design:
+  alpha: 0.10
+  budget: 1000000.0
+  max_concentration: 0.25
+  lgd: 0.45
+  period_order: ["2018H1", "2018H2", "2019H1", "2019H2", "2020+"]
+  combine_years_from: 2020
+  selection_period: "2017-11"
+  audit_period: "2017-12"
+  endpoint_budget_cap: 0.28
+  selection_min_budget_utilization: 0.999
+  selection_rule: >-
+    maximize expected point-PD objective on November 2017 under a deterministic
+    endpoint-budget cap of 0.28, the effective-PD cap, and full budget use;
+    reserve December 2017 for an outcome-free selector stability replay and a
+    post-selection decision audit
+
+policy_grid:
+  family: "simple_linear_conformal_guardrail"
+  risk_tolerances: [0.15, 0.17, 0.19]
+  gammas: [0.25, 0.50, 0.75]
+  uncertainty_aversions: [0.0]
+
+incumbent_policy:
+  risk_tolerance: 0.17
+  gamma: 0.75
+  uncertainty_aversion: 0.0
+
+execution:
+  solver_backend: "highspy"
+  time_limit: 300
+  threads: 1
+  random_seed: 42
+
+claim_boundary: >-
+  The final tagged rule selects among nine round-number policies on November
+  2017 without exposing the selector to outcomes or assumption-conditional
+  statistics. December 2017 independently replays the outcome-free selector
+  and audits the already-fixed decision. The audit is diagnostic rather than a
+  selected-set coverage theorem. Earlier development inspected the static OOT
+  corpus, so the January 2018--September 2020 evaluation remains a transparent
+  retrospective lockbox replay, not a pristine prospective trial, causal
+  estimate, or live-deployment guarantee.

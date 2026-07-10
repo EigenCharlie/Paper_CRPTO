@@ -25,26 +25,36 @@ CRPTO does not cover:
 - New model-training research unless it is explicitly isolated from the frozen
   champion or run under a new tag.
 
-## Frozen champion contract
+## Active paper contract
 
-The current IJDS paper-facing CRPTO body point is the promoted pool93
-finite-grid frontier closure:
+The current IJDS body point is the simple calibration-selected 90% guardrail:
 
-- run tag: `champion-reopen-2026-06-19__pool93__ijds-claim-bound-terminal`
-- body/default policy mode: `capped_blended_uncertainty` (family
-  `claim_micro_ext_body_cap345`, selected from the consolidated frontier)
-- robust return: `$184,832.48`
-- `V(alpha=0.01)=0.035350`
-- `Gamma_CP(alpha=0.01)=0.162616`
-- Markov cap at `alpha=0.01`: `0.345084`
-- exact alpha violation: `0.0`
-- declared alpha-grid pass: `8/8`
-- main paper-facing artifacts: A35 finite-grid frontier, A36 funded-set grade
-  audit, A37 selected-allocation tail-risk repricing, A38 cluster-bound audit,
-  and A39 fixed-allocation bootstrap diagnostic.
+- run tag:
+  `champion-reopen-2026-06-19__pool93__ijds-calibration-selected-endpoint28-v7`
+- exact conformal replay: target `alpha=0.10`, frozen used alpha `0.095`;
+- policy: `q=(p+u)/2`, `tau=0.17`, with point PD in the economic objective
+  and conformal `q` in the risk constraint;
+- selector: nine round-number policies on November 2017, five eligible under
+  deterministic full-budget, effective-PD, and `B_u<=0.28` screens; no outcome
+  or assumption-conditional selector columns;
+- independent audit: the outcome-free December replay selects the same policy;
+  after outcomes are opened, weighted default is `0.145650` and miscoverage is
+  `0.124925`, explicitly ruling out a selected-set validity claim;
+- realized return: `$179,327.59`;
+- weighted default and miscoverage: `0.039375` and `0.036875`;
+- `Gamma_CP=0.176102`, `Gamma_residual=0.088051`;
+- endpoint budget `0.258051`; assumption-conditional Markov threshold
+  `0.574279`;
+- paper artifacts: A35 exact-alpha audit, A36 split selector/audit, A37
+  temporal evaluation, A38 grade audit, A39 month-cluster bootstrap with
+  loan-level sensitivity, and A40 matched comparisons.
 
-The previous IJDS rebaseline is retained as historical provenance, not as the
-active body claim:
+The selector is outcome-free with respect to OOT policy ranking, but earlier
+project development inspected the static OOT corpus. The paper must describe
+the result as a retrospective lockbox replay, not a pristine prospective trial.
+
+The previous IJDS rebaseline and pool93 frontier are retained as historical
+provenance, not as active body claims:
 
 - run tag: `ijds-rebaseline-2026-06-07`
 - policy: `bound_aware_276k_economic_champion`
@@ -70,7 +80,10 @@ Do not overwrite these protected files without an explicit revalidation plan:
 - `reports/crpto/tables/crpto_tableA37_pool93_body_tail_risk.csv`
 - `reports/crpto/tables/crpto_tableA38_pool93_body_cluster_bound_audit.csv`
 - `reports/crpto/tables/crpto_tableA39_pool93_body_bootstrap_metrics.csv`
-- `models/experiments/champion_reopen/champion-reopen-2026-06-19__pool93__ijds-claim-consolidated-definitive/portfolio/pool93_ijds_consolidated_governance.json`
+- `reports/crpto/tables/crpto_tableA40_pool93_point_baseline.csv`
+- `models/experiments/champion_reopen/champion-reopen-2026-06-19__pool93__ijds-certificate-semantics-v2/portfolio/pool93_ijds_consolidated_frontier.json`
+- `models/experiments/champion_reopen/champion-reopen-2026-06-19__pool93__ijds-certificate-semantics-v2/portfolio/pool93_ijds_consolidated_governance.json`
+- `models/experiments/champion_reopen/champion-reopen-2026-06-19__pool93__ijds-certificate-semantics-v2/portfolio/pool93_point_pd_baseline_audit.json`
 - `models/experiments/champion_reopen/champion-reopen-2026-06-19__pool93__ijds-claim-bound-terminal/portfolio/pool93_ijds_claim_governance.json`
 - `EXTRACTION_MANIFEST.json`
 

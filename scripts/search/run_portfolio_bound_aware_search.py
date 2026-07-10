@@ -10,6 +10,7 @@ import subprocess
 import sys
 import time
 from collections.abc import Callable, Mapping
+from dataclasses import dataclass
 from datetime import UTC, datetime
 from pathlib import Path
 from typing import Any
@@ -36,6 +37,9 @@ from scripts.validate_alpha_gamma_bound import (  # noqa: E402
     _load_aligned_dataset,
     _validate_single_alpha,
 )
+from src.optimization.certificate_semantics import (  # noqa: E402
+    IJDS_DECLARED_ALPHA_GRID_CSV,
+)
 from src.utils.pipeline_runtime import (  # noqa: E402
     atomic_write_json,
     atomic_write_parquet,
@@ -60,6 +64,91 @@ SEMANTIC_POLICY_FIELDS = [
 ]
 
 
+@dataclass(frozen=True)
+class BoundAwarePaths:
+    output_dir: Path
+    model_dir: Path
+    status_path: Path
+    checkpoint_dir: Path
+    resource_path: Path
+    gpu_csv_path: Path
+    frontier_raw_path: Path
+    frontier_path: Path
+    shortlist_path: Path
+    shortlist_exact_path: Path
+    bound_eval_path: Path
+    region_summary_path: Path
+    selection_path: Path
+    exact_context_path: Path
+
+
+@dataclass(frozen=True)
+class BoundAwareGridSpec:
+    risk_values: list[float]
+    aversion_values: list[float]
+    gamma_values: list[float]
+    delta_cap_quantiles: list[float]
+    tail_focus_quantiles: list[float]
+    alpha_grid: list[float]
+    random_states: list[int]
+    exact_random_states: list[int]
+    exact_max_candidates: int
+    budget_profiles: list[dict[str, Any]]
+    policy_modes: list[str]
+    incumbent_risk_neighbors: list[float]
+    incumbent_gamma_neighbors: list[float]
+    incumbent_policy_modes: list[str]
+
+    @property
+    def policy_grid_count(self) -> int:
+        return _policy_grid_size(
+            gamma_values=self.gamma_values,
+            delta_cap_quantiles=self.delta_cap_quantiles,
+            tail_focus_quantiles=self.tail_focus_quantiles,
+            aversion_values=self.aversion_values,
+            budget_profiles=self.budget_profiles,
+            policy_modes=self.policy_modes,
+        )
+
+    @property
+    def frontier_total_units(self) -> int:
+        return int(len(self.random_states) * len(self.risk_values) * (1 + self.policy_grid_count))
+
+    def bound_total_checks(self, shortlist_size: int) -> int:
+        return int(shortlist_size * len(self.alpha_grid) * len(self.exact_random_states))
+
+
+@dataclass(frozen=True)
+class BoundAwareExecutionSpec:
+    run_label: str
+    paths: BoundAwarePaths
+    grid: BoundAwareGridSpec
+    incumbent_policy: dict[str, Any]
+    exact_python_executable: str
+    exact_helper_script: Path
+    backend_validation: dict[str, Any] | None
+    cuopt_parameters: dict[str, Any]
+
+
+@dataclass
+class BoundAwareRunContext:
+    args: argparse.Namespace
+    spec: BoundAwareExecutionSpec
+    tracker: _ProgressTracker
+    search_space: dict[str, Any]
+    resource_payload: dict[str, Any]
+
+
+@dataclass(frozen=True)
+class BoundAwareFrontierState:
+    frontier_raw: pd.DataFrame
+    frontier: pd.DataFrame
+    shortlist: pd.DataFrame
+    bound_total_checks: int
+    shortlist_extra: dict[str, Any]
+    selection_context: dict[str, Any]
+
+
 def _env_int(name: str, fallback: int) -> int:
     raw = os.environ.get(name)
     if raw is None:
@@ -81,6 +170,10 @@ def _coerce_int_csv(raw: str | None, *, fallback: int) -> list[int]:
         return [int(fallback)]
     values = [int(part.strip()) for part in str(raw).split(",") if part.strip()]
     return values or [int(fallback)]
+
+
+def _coerce_str_csv(raw: object) -> list[str]:
+    return [part.strip() for part in str(raw).split(",") if part.strip()]
 
 
 def _float_token(value: Any) -> float:
@@ -119,6 +212,23 @@ def _policy_from_row(
     }
 
 
+def _normalized_policy_mode_filter(policy_modes: list[str] | None) -> set[str]:
+    return {str(mode).strip() for mode in (policy_modes or []) if str(mode).strip()}
+
+
+def _mode_quantile_pairs(
+    *,
+    mode: str,
+    delta_cap_quantiles: list[float],
+    tail_focus_quantiles: list[float],
+) -> list[tuple[float, float]]:
+    if mode == "blended_uncertainty":
+        return [(1.0, 1.0)]
+    if mode == "capped_blended_uncertainty":
+        return [(float(delta_cap_quantile), 1.0) for delta_cap_quantile in delta_cap_quantiles]
+    return [(1.0, float(tail_focus_quantile)) for tail_focus_quantile in tail_focus_quantiles]
+
+
 def _targeted_policy_grid(
     *,
     gamma_values: list[float],
@@ -126,52 +236,25 @@ def _targeted_policy_grid(
     tail_focus_quantiles: list[float],
     policy_modes: list[str] | None = None,
 ) -> list[tuple[str, float, float, float]]:
-    allowed = {str(mode).strip() for mode in (policy_modes or []) if str(mode).strip()}
-    use_all = not allowed
-    grid: list[tuple[str, float, float, float]] = []
-    for gamma in gamma_values:
-        if use_all or "blended_uncertainty" in allowed:
-            grid.append(("blended_uncertainty", float(gamma), 1.0, 1.0))
-        if use_all or "capped_blended_uncertainty" in allowed:
-            for delta_cap_quantile in delta_cap_quantiles:
-                grid.append(
-                    (
-                        "capped_blended_uncertainty",
-                        float(gamma),
-                        float(delta_cap_quantile),
-                        1.0,
-                    )
-                )
-        if use_all or "tail_blended_uncertainty" in allowed:
-            for tail_focus_quantile in tail_focus_quantiles:
-                grid.append(
-                    (
-                        "tail_blended_uncertainty",
-                        float(gamma),
-                        1.0,
-                        float(tail_focus_quantile),
-                    )
-                )
-        if use_all or "segment_tail_blended_uncertainty" in allowed:
-            for tail_focus_quantile in tail_focus_quantiles:
-                grid.append(
-                    (
-                        "segment_tail_blended_uncertainty",
-                        float(gamma),
-                        1.0,
-                        float(tail_focus_quantile),
-                    )
-                )
-        if use_all or "segment_relative_tail_blended_uncertainty" in allowed:
-            for tail_focus_quantile in tail_focus_quantiles:
-                grid.append(
-                    (
-                        "segment_relative_tail_blended_uncertainty",
-                        float(gamma),
-                        1.0,
-                        float(tail_focus_quantile),
-                    )
-                )
+    allowed = _normalized_policy_mode_filter(policy_modes)
+    mode_order = [
+        "blended_uncertainty",
+        "capped_blended_uncertainty",
+        "tail_blended_uncertainty",
+        "segment_tail_blended_uncertainty",
+        "segment_relative_tail_blended_uncertainty",
+    ]
+    active_modes = [mode for mode in mode_order if not allowed or mode in allowed]
+    grid = [
+        (mode, float(gamma), delta_cap_quantile, tail_focus_quantile)
+        for gamma in gamma_values
+        for mode in active_modes
+        for delta_cap_quantile, tail_focus_quantile in _mode_quantile_pairs(
+            mode=mode,
+            delta_cap_quantiles=delta_cap_quantiles,
+            tail_focus_quantiles=tail_focus_quantiles,
+        )
+    ]
     return list(dict.fromkeys(grid))
 
 
@@ -748,7 +831,12 @@ def _aggregate_frontier(frontier_raw: pd.DataFrame) -> pd.DataFrame:
 def _aggregate_alpha_grid_results(bound_eval: pd.DataFrame) -> pd.DataFrame:
     """Summarize exact bound checks across every evaluated alpha level."""
     if bound_eval.empty:
-        return pd.DataFrame(columns=[*SEMANTIC_POLICY_FIELDS, "alpha_exact_pass_count"])
+        return pd.DataFrame(
+            {
+                **{field: pd.Series(dtype="object") for field in SEMANTIC_POLICY_FIELDS},
+                "alpha_exact_pass_count": pd.Series(dtype="int64"),
+            }
+        )
     grouped = bound_eval.groupby(SEMANTIC_POLICY_FIELDS, dropna=False)
     out = grouped.agg(
         alpha_exact_pass_count=("all_bounds_hold", "sum"),
@@ -1125,7 +1213,8 @@ def _region_summary(shortlist_eval: pd.DataFrame, bound_eval: pd.DataFrame) -> d
     exact_alpha_summary = {}
     if not bound_eval.empty:
         for alpha, frame in bound_eval.groupby("alpha", dropna=False):
-            exact_alpha_summary[str(float(alpha))] = {
+            alpha_value = float(str(alpha))
+            exact_alpha_summary[str(alpha_value)] = {
                 "n_checks": int(len(frame)),
                 "pass_rate": float(frame["all_bounds_hold"].fillna(False).mean()),
                 "max_violation": float(frame["violation"].max()),
@@ -1157,7 +1246,7 @@ def _selection_reason(row: pd.Series) -> str:
     return "selected_best_available_without_alpha01_pass"
 
 
-def main(argv: list[str] | None = None) -> int:
+def _build_parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser()
     parser.add_argument("--config", default="configs/crpto_optimization.yaml")
     parser.add_argument("--conformal-intervals-path", required=True)
@@ -1175,7 +1264,7 @@ def main(argv: list[str] | None = None) -> int:
     parser.add_argument("--bucket-proxy-k", type=int, default=40)
     parser.add_argument("--bucket-family-k", type=int, default=20)
     parser.add_argument("--bucket-region-k", type=int, default=20)
-    parser.add_argument("--alpha-grid", default="0.01,0.03,0.10")
+    parser.add_argument("--alpha-grid", default=IJDS_DECLARED_ALPHA_GRID_CSV)
     parser.add_argument("--max-candidates", type=int, default=5000)
     parser.add_argument(
         "--exact-max-candidates",
@@ -1253,9 +1342,14 @@ def main(argv: list[str] | None = None) -> int:
     )
     parser.add_argument("--budget", type=float, default=1_000_000.0)
     parser.add_argument("--t-eval", type=float, default=0.05)
-    args = parser.parse_args(argv)
+    return parser
 
-    run_label = str(args.run_label).strip().replace("/", "_")
+
+def _sanitize_run_label(raw: object) -> str:
+    return str(raw).strip().replace("/", "_")
+
+
+def _resolve_run_paths(args: argparse.Namespace, *, run_label: str) -> BoundAwarePaths:
     output_dir = (
         Path(str(args.output_dir)).expanduser()
         if str(args.output_dir).strip()
@@ -1266,44 +1360,33 @@ def main(argv: list[str] | None = None) -> int:
         if str(args.model_dir).strip()
         else ROOT / "models" / "portfolio_bound_aware" / run_label
     )
-    output_dir.mkdir(parents=True, exist_ok=True)
-    model_dir.mkdir(parents=True, exist_ok=True)
-
-    status_path = model_dir / f"{STAGE_NAME}_runtime_status.json"
-    checkpoint_dir = model_dir / f"{STAGE_NAME}_runtime_checkpoints"
-    resource_path = model_dir / "resource_snapshot.json"
-    gpu_csv_path = model_dir / "gpu_samples.csv"
-
-    risk_values = _coerce_csv(args.risk_grid)
-    aversion_values = _coerce_csv(args.aversion_grid)
-    gamma_values = _coerce_csv(args.gamma_grid)
-    delta_cap_quantiles = _coerce_csv(args.delta_cap_grid)
-    tail_focus_quantiles = _coerce_csv(args.tail_focus_grid)
-    alpha_grid = _coerce_csv(args.alpha_grid)
-    random_states = _coerce_int_csv(args.random_states, fallback=int(args.random_state))
-    exact_random_states = (
-        _coerce_int_csv(args.exact_random_states, fallback=int(args.random_state))
-        if str(args.exact_random_states).strip()
-        else list(random_states)
+    return BoundAwarePaths(
+        output_dir=output_dir,
+        model_dir=model_dir,
+        status_path=model_dir / f"{STAGE_NAME}_runtime_status.json",
+        checkpoint_dir=model_dir / f"{STAGE_NAME}_runtime_checkpoints",
+        resource_path=model_dir / "resource_snapshot.json",
+        gpu_csv_path=model_dir / "gpu_samples.csv",
+        frontier_raw_path=output_dir / "portfolio_bound_aware_frontier_raw.parquet",
+        frontier_path=output_dir / "portfolio_bound_aware_frontier.parquet",
+        shortlist_path=output_dir / "portfolio_bound_aware_shortlist.parquet",
+        shortlist_exact_path=output_dir / "portfolio_bound_aware_shortlist_exact.parquet",
+        bound_eval_path=output_dir / "portfolio_bound_aware_bound_eval.parquet",
+        region_summary_path=model_dir / "portfolio_bound_aware_region_summary.json",
+        selection_path=model_dir / "portfolio_bound_aware_selection.json",
+        exact_context_path=model_dir / "portfolio_bound_aware_exact_context.json",
     )
-    exact_max_candidates = (
-        int(args.exact_max_candidates)
-        if args.exact_max_candidates is not None
-        else int(args.max_candidates)
-    )
-    incumbent_risk_neighbors = _coerce_csv(args.incumbent_risk_neighbors)
-    incumbent_gamma_neighbors = _coerce_csv(args.incumbent_gamma_neighbors)
-    incumbent_policy_modes = [
-        part.strip() for part in str(args.incumbent_policy_modes).split(",") if part.strip()
-    ]
-    policy_modes = [part.strip() for part in str(args.policy_modes).split(",") if part.strip()]
-    exact_python_executable = str(args.exact_python_executable).strip()
-    exact_helper_script = Path(str(args.exact_helper_script)).resolve()
 
+
+def _ensure_run_dirs(paths: BoundAwarePaths) -> None:
+    paths.output_dir.mkdir(parents=True, exist_ok=True)
+    paths.model_dir.mkdir(parents=True, exist_ok=True)
+
+
+def _budget_profiles(raw: object) -> list[dict[str, Any]]:
     budget_profiles: list[dict[str, Any]] = []
-    for token in [
-        part.strip().lower() for part in str(args.budget_profiles).split(",") if part.strip()
-    ]:
+    tokens = [part.strip().lower() for part in str(raw).split(",") if part.strip()]
+    for token in tokens:
         if token == "free":
             budget_profiles.append(
                 {"name": "free_budget", "min_budget_utilization": 0.0, "pd_cap_slack_penalty": 0.0}
@@ -1320,413 +1403,695 @@ def main(argv: list[str] | None = None) -> int:
             raise ValueError(f"Unsupported budget profile: {token}")
     if not budget_profiles:
         raise ValueError("At least one budget profile is required")
+    return budget_profiles
 
-    incumbent_policy = _load_incumbent_policy(args.incumbent_policy_path)
-    backend_validation: dict[str, Any] | None = None
-    if (
-        str(args.solver_backend).strip().lower() == "cuopt"
-        or str(args.exact_solver_backend).strip().lower() == "cuopt"
-    ):
-        backend_validation = _validate_cuopt_runtime()
+
+def _search_space_payload(
+    *,
+    args: argparse.Namespace,
+    risk_values: list[float],
+    aversion_values: list[float],
+    gamma_values: list[float],
+    delta_cap_quantiles: list[float],
+    tail_focus_quantiles: list[float],
+    budget_profiles: list[dict[str, Any]],
+    alpha_grid: list[float],
+    random_states: list[int],
+    exact_random_states: list[int],
+    exact_max_candidates: int,
+    policy_modes: list[str],
+    cuopt_parameters: dict[str, Any],
+    incumbent_risk_neighbors: list[float],
+    incumbent_gamma_neighbors: list[float],
+    incumbent_policy_modes: list[str],
+) -> dict[str, Any]:
+    return {
+        "risk_grid": risk_values,
+        "aversion_grid": aversion_values,
+        "gamma_grid": gamma_values,
+        "delta_cap_grid": delta_cap_quantiles,
+        "tail_focus_grid": tail_focus_quantiles,
+        "budget_profiles": budget_profiles,
+        "alpha_grid": alpha_grid,
+        "max_candidates": int(args.max_candidates),
+        "exact_max_candidates": int(exact_max_candidates),
+        "random_states": random_states,
+        "exact_random_states": exact_random_states,
+        "exact_checkpoint_every": int(args.exact_checkpoint_every),
+        "exact_threads": int(args.exact_threads),
+        "policy_modes": policy_modes,
+        "cuopt_parameters": cuopt_parameters,
+        "bucket_return_k": int(args.bucket_return_k),
+        "bucket_proxy_k": int(args.bucket_proxy_k),
+        "bucket_family_k": int(args.bucket_family_k),
+        "bucket_region_k": int(args.bucket_region_k),
+        "incumbent_policy_path": str(args.incumbent_policy_path),
+        "incumbent_risk_neighbors": incumbent_risk_neighbors,
+        "incumbent_gamma_neighbors": incumbent_gamma_neighbors,
+        "incumbent_policy_modes": incumbent_policy_modes,
+    }
+
+
+def _selection_policy_payload() -> dict[str, Any]:
+    return {
+        "shortlist_strategy": "stratified_bound_first",
+        "rank_order": [
+            "alpha01_exact_pass(desc)",
+            "alpha03_exact_pass(desc)",
+            "alpha_exact_pass_count(desc)",
+            "alpha_exact_pass_rate(desc)",
+            "ab_pass_all(desc)",
+            "realized_total_return(desc)",
+            "alpha01_weighted_miscoverage_V(asc)",
+            "alpha01_gamma_cp(asc)",
+            "price_of_robustness(asc)",
+        ],
+    }
+
+
+def _selection_context_payload(
+    *,
+    args: argparse.Namespace,
+    paths: BoundAwarePaths,
+    run_label: str,
+    search_space: dict[str, Any],
+    exact_max_candidates: int,
+    random_states: list[int],
+    exact_random_states: list[int],
+    alpha_grid: list[float],
+) -> dict[str, Any]:
+    return {
+        "schema_version": SCHEMA_VERSION,
+        "generated_at_utc": datetime.now(tz=UTC).isoformat(),
+        "run_label": run_label,
+        "conformal_intervals_path": str(args.conformal_intervals_path),
+        "search_space": search_space,
+        "selection_policy": _selection_policy_payload(),
+        "frontier_raw_path": str(paths.frontier_raw_path),
+        "frontier_path": str(paths.frontier_path),
+        "shortlist_path": str(paths.shortlist_path),
+        "shortlist_exact_path": str(paths.shortlist_exact_path),
+        "bound_eval_path": str(paths.bound_eval_path),
+        "region_summary_path": str(paths.region_summary_path),
+        "selection_path": str(paths.selection_path),
+        "runtime_status_path": str(paths.status_path),
+        "runtime_checkpoint_dir": str(paths.checkpoint_dir),
+        "resource_snapshot_path": str(paths.resource_path),
+        "frontier_solver_backend": str(args.solver_backend),
+        "exact_solver_backend": str(args.exact_solver_backend),
+        "budget": float(args.budget),
+        "t_eval": float(args.t_eval),
+        "max_candidates": int(args.max_candidates),
+        "exact_max_candidates": int(exact_max_candidates),
+        "random_states": random_states,
+        "exact_random_states": exact_random_states,
+        "exact_checkpoint_every": int(args.exact_checkpoint_every),
+        "exact_threads": int(args.exact_threads),
+        "alpha_grid": alpha_grid,
+    }
+
+
+def _run_in_process_exact_bound_eval(
+    *,
+    args: argparse.Namespace,
+    shortlist: pd.DataFrame,
+    alpha_grid: list[float],
+    exact_random_states: list[int],
+    exact_max_candidates: int,
+    tracker: _ProgressTracker,
+) -> pd.DataFrame:
+    aligned_by_seed = {
+        int(seed): _load_aligned_dataset(
+            conformal_intervals_path=args.conformal_intervals_path,
+            max_candidates=int(exact_max_candidates),
+            random_state=int(seed),
+        )
+        for seed in exact_random_states
+    }
+    bound_rows: list[dict[str, Any]] = []
+    completed_checks = 0
+    for _, row in shortlist.iterrows():
+        policy = _policy_from_row(
+            row,
+            solver_backend_override=str(args.exact_solver_backend),
+        )
+        candidate_payload = row.to_dict()
+        for eval_seed in exact_random_states:
+            aligned = aligned_by_seed[int(eval_seed)]
+            for alpha in alpha_grid:
+                result = _validate_single_alpha(
+                    aligned,
+                    alpha=float(alpha),
+                    policy=policy,
+                    allocator_mode="exact",
+                    budget=float(args.budget),
+                    t_eval=float(args.t_eval),
+                    threads=int(args.exact_threads),
+                )
+                bound_rows.append(
+                    {
+                        "candidate_rank": int(candidate_payload["candidate_rank"]),
+                        "eval_random_state": int(eval_seed),
+                        "frontier_solver_backend": str(args.solver_backend),
+                        "exact_solver_backend": str(args.exact_solver_backend),
+                        **candidate_payload,
+                        **result,
+                    }
+                )
+                completed_checks += 1
+                tracker.bound_progress(
+                    completed_checks=completed_checks,
+                    extra={
+                        "candidate_rank": int(candidate_payload["candidate_rank"]),
+                        "eval_random_state": int(eval_seed),
+                        "current_alpha": float(alpha),
+                        "exact_threads": int(args.exact_threads),
+                    },
+                )
+    return pd.DataFrame(bound_rows)
+
+
+def _build_selection_payload(
+    *,
+    args: argparse.Namespace,
+    run_label: str,
+    selection_context: dict[str, Any],
+    selected: pd.Series,
+    selected_policy: dict[str, Any],
+    region_payload: dict[str, Any],
+) -> dict[str, Any]:
+    return {
+        "schema_version": SCHEMA_VERSION,
+        "generated_at_utc": datetime.now(tz=UTC).isoformat(),
+        "run_label": run_label,
+        "conformal_intervals_path": str(args.conformal_intervals_path),
+        "search_space": selection_context["search_space"],
+        "selection_policy": selection_context["selection_policy"],
+        "selected_policy": selected_policy,
+        "selected_metrics": selected.to_dict(),
+        "selection_reason": _selection_reason(selected),
+        "frontier_raw_path": selection_context["frontier_raw_path"],
+        "frontier_path": selection_context["frontier_path"],
+        "shortlist_path": selection_context["shortlist_path"],
+        "shortlist_exact_path": selection_context["shortlist_exact_path"],
+        "bound_eval_path": selection_context["bound_eval_path"],
+        "region_summary_path": selection_context["region_summary_path"],
+        "robust_region_summary": region_payload,
+        "runtime_status_path": selection_context["runtime_status_path"],
+        "runtime_checkpoint_dir": selection_context["runtime_checkpoint_dir"],
+        "resource_snapshot_path": selection_context["resource_snapshot_path"],
+        "frontier_solver_backend": str(args.solver_backend),
+        "exact_solver_backend": str(args.exact_solver_backend),
+        "exact_threads": int(args.exact_threads),
+    }
+
+
+def _write_selection_outputs(
+    *,
+    paths: BoundAwarePaths,
+    shortlist_eval: pd.DataFrame,
+    bound_eval: pd.DataFrame,
+    region_payload: dict[str, Any],
+    payload: dict[str, Any],
+) -> None:
+    atomic_write_parquet(shortlist_eval, paths.shortlist_exact_path, index=False)
+    atomic_write_parquet(bound_eval, paths.bound_eval_path, index=False)
+    atomic_write_json(paths.region_summary_path, region_payload)
+    atomic_write_json(paths.selection_path, payload)
+
+
+def _build_frontier_outputs(
+    *,
+    args: argparse.Namespace,
+    risk_values: list[float],
+    aversion_values: list[float],
+    gamma_values: list[float],
+    delta_cap_quantiles: list[float],
+    tail_focus_quantiles: list[float],
+    budget_profiles: list[dict[str, Any]],
+    random_states: list[int],
+    policy_grid_count: int,
+    policy_modes: list[str],
+    cuopt_parameters: dict[str, Any],
+    tracker: _ProgressTracker,
+) -> tuple[pd.DataFrame, pd.DataFrame]:
+    frontier_frames: list[pd.DataFrame] = []
+    frontier_completed = 0
+    for seed in random_states:
+        seed_offset = frontier_completed
+
+        def _progress_hook(
+            local_completed: int,
+            extra: dict[str, Any],
+            _offset: int = seed_offset,
+        ) -> None:
+            tracker.frontier_progress(completed_units=_offset + local_completed, extra=extra)
+
+        frontier_seed = _build_frontier_for_seed(
+            config_path=args.config,
+            conformal_intervals_path=args.conformal_intervals_path,
+            risk_values=risk_values,
+            aversion_values=aversion_values,
+            gamma_values=gamma_values,
+            delta_cap_quantiles=delta_cap_quantiles,
+            tail_focus_quantiles=tail_focus_quantiles,
+            budget_profiles=budget_profiles,
+            max_candidates=int(args.max_candidates),
+            random_state=int(seed),
+            solver_backend=str(args.solver_backend),
+            cuopt_presolve=int(args.cuopt_presolve)
+            if str(args.solver_backend) == "cuopt"
+            else None,
+            cuopt_parameters=cuopt_parameters,
+            policy_modes=policy_modes,
+            progress_hook=_progress_hook,
+        )
+        frontier_frames.append(frontier_seed)
+        frontier_completed += int(len(risk_values) * (1 + policy_grid_count))
+
+    frontier_raw = (
+        pd.concat(frontier_frames, ignore_index=True) if frontier_frames else pd.DataFrame()
+    )
+    if frontier_raw.empty:
+        raise ValueError("Frontier search produced zero candidate rows.")
+    return frontier_raw, _aggregate_frontier(frontier_raw)
+
+
+def _write_frontier_artifacts(
+    *,
+    paths: BoundAwarePaths,
+    frontier_raw: pd.DataFrame,
+    frontier: pd.DataFrame,
+    shortlist: pd.DataFrame,
+) -> None:
+    atomic_write_parquet(frontier_raw, paths.frontier_raw_path, index=False)
+    atomic_write_parquet(frontier, paths.frontier_path, index=False)
+    atomic_write_parquet(shortlist, paths.shortlist_path, index=False)
+
+
+def _complete_frontier_only(
+    *,
+    paths: BoundAwarePaths,
+    tracker: _ProgressTracker,
+    resource_payload: dict[str, Any],
+    shortlist_extra: dict[str, Any],
+    bound_total_checks: int,
+) -> None:
+    resource_payload["end"] = _resource_snapshot()
+    atomic_write_json(paths.resource_path, resource_payload)
+    tracker.frontier_only_complete(
+        extra={
+            **shortlist_extra,
+            "frontier_only": True,
+            "deferred_bound_total_checks": bound_total_checks,
+            "exact_context_path": str(paths.exact_context_path),
+            "frontier_path": str(paths.frontier_path),
+            "shortlist_path": str(paths.shortlist_path),
+        }
+    )
+
+
+def _delegate_exact_stage_if_requested(
+    *,
+    exact_python_executable: str,
+    exact_helper_script: Path,
+    paths: BoundAwarePaths,
+    resource_payload: dict[str, Any],
+) -> bool:
+    if not exact_python_executable:
+        return False
+    current_python = Path(sys.executable)
+    requested_python = Path(exact_python_executable)
+    if requested_python == current_python:
+        return False
+    cmd = [
+        str(requested_python),
+        str(exact_helper_script),
+        "--context-path",
+        str(paths.exact_context_path),
+    ]
+    logger.info("Delegating exact bound stage to external Python: {}", " ".join(cmd))
+    subprocess.run(cmd, cwd=str(ROOT), check=True)
+    resource_payload["end"] = _resource_snapshot()
+    atomic_write_json(paths.resource_path, resource_payload)
+    return True
+
+
+def _build_grid_spec(args: argparse.Namespace) -> BoundAwareGridSpec:
+    random_states = _coerce_int_csv(args.random_states, fallback=int(args.random_state))
+    exact_random_states = (
+        _coerce_int_csv(args.exact_random_states, fallback=int(args.random_state))
+        if str(args.exact_random_states).strip()
+        else list(random_states)
+    )
+    exact_max_candidates = (
+        int(args.exact_max_candidates)
+        if args.exact_max_candidates is not None
+        else int(args.max_candidates)
+    )
+    return BoundAwareGridSpec(
+        risk_values=_coerce_csv(args.risk_grid),
+        aversion_values=_coerce_csv(args.aversion_grid),
+        gamma_values=_coerce_csv(args.gamma_grid),
+        delta_cap_quantiles=_coerce_csv(args.delta_cap_grid),
+        tail_focus_quantiles=_coerce_csv(args.tail_focus_grid),
+        alpha_grid=_coerce_csv(args.alpha_grid),
+        random_states=random_states,
+        exact_random_states=exact_random_states,
+        exact_max_candidates=exact_max_candidates,
+        budget_profiles=_budget_profiles(args.budget_profiles),
+        policy_modes=_coerce_str_csv(args.policy_modes),
+        incumbent_risk_neighbors=_coerce_csv(args.incumbent_risk_neighbors),
+        incumbent_gamma_neighbors=_coerce_csv(args.incumbent_gamma_neighbors),
+        incumbent_policy_modes=_coerce_str_csv(args.incumbent_policy_modes),
+    )
+
+
+def _prepare_execution_spec(args: argparse.Namespace) -> BoundAwareExecutionSpec:
+    run_label = _sanitize_run_label(args.run_label)
+    paths = _resolve_run_paths(args, run_label=run_label)
+    _ensure_run_dirs(paths)
+    grid = _build_grid_spec(args)
+    uses_cuopt = "cuopt" in {
+        str(args.solver_backend).strip().lower(),
+        str(args.exact_solver_backend).strip().lower(),
+    }
+    backend_validation = _validate_cuopt_runtime() if uses_cuopt else None
     cuopt_parameters = (
-        _cuopt_parameter_overrides(args, model_dir=model_dir)
+        _cuopt_parameter_overrides(args, model_dir=paths.model_dir)
         if str(args.solver_backend).strip().lower() == "cuopt"
         else {}
     )
-
-    policy_grid_count = _policy_grid_size(
-        gamma_values=gamma_values,
-        delta_cap_quantiles=delta_cap_quantiles,
-        tail_focus_quantiles=tail_focus_quantiles,
-        aversion_values=aversion_values,
-        budget_profiles=budget_profiles,
-        policy_modes=policy_modes,
+    return BoundAwareExecutionSpec(
+        run_label=run_label,
+        paths=paths,
+        grid=grid,
+        incumbent_policy=_load_incumbent_policy(args.incumbent_policy_path),
+        exact_python_executable=str(args.exact_python_executable).strip(),
+        exact_helper_script=Path(str(args.exact_helper_script)).resolve(),
+        backend_validation=backend_validation,
+        cuopt_parameters=cuopt_parameters,
     )
-    frontier_total_units = int(len(random_states) * len(risk_values) * (1 + policy_grid_count))
+
+
+def _initialize_run_context(args: argparse.Namespace) -> BoundAwareRunContext:
+    spec = _prepare_execution_spec(args)
+    grid = spec.grid
     tracker = _ProgressTracker(
-        status_path=status_path,
-        checkpoint_dir=checkpoint_dir,
-        run_tag=run_label,
-        frontier_total_units=frontier_total_units,
+        status_path=spec.paths.status_path,
+        checkpoint_dir=spec.paths.checkpoint_dir,
+        run_tag=spec.run_label,
+        frontier_total_units=grid.frontier_total_units,
+    )
+    search_space = _search_space_payload(
+        args=args,
+        risk_values=grid.risk_values,
+        aversion_values=grid.aversion_values,
+        gamma_values=grid.gamma_values,
+        delta_cap_quantiles=grid.delta_cap_quantiles,
+        tail_focus_quantiles=grid.tail_focus_quantiles,
+        budget_profiles=grid.budget_profiles,
+        alpha_grid=grid.alpha_grid,
+        random_states=grid.random_states,
+        exact_random_states=grid.exact_random_states,
+        exact_max_candidates=grid.exact_max_candidates,
+        policy_modes=grid.policy_modes,
+        cuopt_parameters=spec.cuopt_parameters,
+        incumbent_risk_neighbors=grid.incumbent_risk_neighbors,
+        incumbent_gamma_neighbors=grid.incumbent_gamma_neighbors,
+        incumbent_policy_modes=grid.incumbent_policy_modes,
     )
     resource_payload = {
         "schema_version": SCHEMA_VERSION,
-        "run_label": run_label,
+        "run_label": spec.run_label,
         "solver_backend": str(args.solver_backend),
         "exact_solver_backend": str(args.exact_solver_backend),
-        "cuopt_parameters": cuopt_parameters,
+        "cuopt_parameters": spec.cuopt_parameters,
         "start": _resource_snapshot(),
-        "backend_validation": backend_validation,
+        "backend_validation": spec.backend_validation,
     }
-    atomic_write_json(resource_path, resource_payload)
+    atomic_write_json(spec.paths.resource_path, resource_payload)
     tracker.start(
         extra={
-            "random_states": random_states,
-            "search_space": {
-                "risk_grid": risk_values,
-                "aversion_grid": aversion_values,
-                "gamma_grid": gamma_values,
-                "delta_cap_grid": delta_cap_quantiles,
-                "tail_focus_grid": tail_focus_quantiles,
-                "budget_profiles": budget_profiles,
-                "alpha_grid": alpha_grid,
-                "max_candidates": int(args.max_candidates),
-                "exact_max_candidates": int(exact_max_candidates),
-                "exact_random_states": exact_random_states,
-                "exact_checkpoint_every": int(args.exact_checkpoint_every),
-                "exact_threads": int(args.exact_threads),
-                "cuopt_parameters": cuopt_parameters,
-            },
+            "random_states": grid.random_states,
+            "search_space": search_space,
+        }
+    )
+    return BoundAwareRunContext(
+        args=args,
+        spec=spec,
+        tracker=tracker,
+        search_space=search_space,
+        resource_payload=resource_payload,
+    )
+
+
+def _start_gpu_sampler(context: BoundAwareRunContext) -> _GpuSampler | None:
+    if str(context.args.solver_backend).strip().lower() == "cuopt":
+        gpu_sampler = _GpuSampler(context.spec.paths.gpu_csv_path)
+        gpu_sampler.start()
+        return gpu_sampler
+    return None
+
+
+def _build_frontier_state(context: BoundAwareRunContext) -> BoundAwareFrontierState:
+    args = context.args
+    spec = context.spec
+    grid = spec.grid
+    tracker = context.tracker
+    frontier_raw, frontier = _build_frontier_outputs(
+        args=args,
+        risk_values=grid.risk_values,
+        aversion_values=grid.aversion_values,
+        gamma_values=grid.gamma_values,
+        delta_cap_quantiles=grid.delta_cap_quantiles,
+        tail_focus_quantiles=grid.tail_focus_quantiles,
+        budget_profiles=grid.budget_profiles,
+        random_states=grid.random_states,
+        policy_grid_count=grid.policy_grid_count,
+        policy_modes=grid.policy_modes,
+        cuopt_parameters=spec.cuopt_parameters,
+        tracker=tracker,
+    )
+    tracker.frontier_complete(
+        extra={
+            "frontier_policy_count": len(frontier),
+            "frontier_raw_rows": len(frontier_raw),
+        }
+    )
+    shortlist = _build_stratified_shortlist(
+        frontier=frontier,
+        shortlist_top_k=int(args.shortlist_top_k),
+        bucket_return_k=int(args.bucket_return_k),
+        bucket_proxy_k=int(args.bucket_proxy_k),
+        bucket_family_k=int(args.bucket_family_k),
+        bucket_region_k=int(args.bucket_region_k),
+        incumbent_policy=spec.incumbent_policy,
+        incumbent_risk_neighbors=grid.incumbent_risk_neighbors,
+        incumbent_gamma_neighbors=grid.incumbent_gamma_neighbors,
+        incumbent_policy_modes=grid.incumbent_policy_modes,
+        budget_profiles=grid.budget_profiles,
+        solver_backend=str(args.solver_backend),
+    )
+    bound_total_checks = grid.bound_total_checks(len(shortlist))
+    shortlist_extra = {
+        "shortlist_size": len(shortlist),
+        "shortlist_buckets": shortlist["shortlist_bucket"].value_counts(dropna=False).to_dict(),
+    }
+    if not args.frontier_only:
+        tracker.set_bound_total(bound_total_checks, extra=shortlist_extra)
+    _write_frontier_artifacts(
+        paths=spec.paths,
+        frontier_raw=frontier_raw,
+        frontier=frontier,
+        shortlist=shortlist,
+    )
+    selection_context = _selection_context_payload(
+        args=args,
+        paths=spec.paths,
+        run_label=spec.run_label,
+        search_space=context.search_space,
+        exact_max_candidates=grid.exact_max_candidates,
+        random_states=grid.random_states,
+        exact_random_states=grid.exact_random_states,
+        alpha_grid=grid.alpha_grid,
+    )
+    atomic_write_json(spec.paths.exact_context_path, selection_context)
+    return BoundAwareFrontierState(
+        frontier_raw=frontier_raw,
+        frontier=frontier,
+        shortlist=shortlist,
+        bound_total_checks=bound_total_checks,
+        shortlist_extra=shortlist_extra,
+        selection_context=selection_context,
+    )
+
+
+def _finish_after_frontier(
+    context: BoundAwareRunContext,
+    state: BoundAwareFrontierState,
+) -> bool:
+    spec = context.spec
+    if context.args.frontier_only:
+        _complete_frontier_only(
+            paths=spec.paths,
+            tracker=context.tracker,
+            resource_payload=context.resource_payload,
+            shortlist_extra=state.shortlist_extra,
+            bound_total_checks=state.bound_total_checks,
+        )
+        return True
+    return _delegate_exact_stage_if_requested(
+        exact_python_executable=spec.exact_python_executable,
+        exact_helper_script=spec.exact_helper_script,
+        paths=spec.paths,
+        resource_payload=context.resource_payload,
+    )
+
+
+def _run_exact_selection(
+    context: BoundAwareRunContext,
+    state: BoundAwareFrontierState,
+) -> tuple[pd.Series, dict[str, Any]]:
+    args = context.args
+    spec = context.spec
+    grid = spec.grid
+    bound_eval = _run_in_process_exact_bound_eval(
+        args=args,
+        shortlist=state.shortlist,
+        alpha_grid=grid.alpha_grid,
+        exact_random_states=grid.exact_random_states,
+        exact_max_candidates=grid.exact_max_candidates,
+        tracker=context.tracker,
+    )
+    shortlist_eval = _aggregate_exact_results(shortlist=state.shortlist, bound_eval=bound_eval)
+    region_payload = _region_summary(shortlist_eval, bound_eval)
+    selected = shortlist_eval.iloc[0].copy()
+    selected_policy = _policy_from_row(
+        selected,
+        solver_backend_override=str(args.exact_solver_backend),
+    )
+    payload = _build_selection_payload(
+        args=args,
+        run_label=spec.run_label,
+        selection_context=state.selection_context,
+        selected=selected,
+        selected_policy=selected_policy,
+        region_payload=region_payload,
+    )
+    _write_selection_outputs(
+        paths=spec.paths,
+        shortlist_eval=shortlist_eval,
+        bound_eval=bound_eval,
+        region_payload=region_payload,
+        payload=payload,
+    )
+    return selected, payload
+
+
+def _complete_run(
+    context: BoundAwareRunContext,
+    *,
+    selected: pd.Series,
+    payload: dict[str, Any],
+    gpu_sampler: _GpuSampler | None,
+) -> None:
+    if gpu_sampler is not None:
+        context.resource_payload["gpu_summary"] = gpu_sampler.stop()
+    context.resource_payload["end"] = _resource_snapshot()
+    atomic_write_json(context.spec.paths.resource_path, context.resource_payload)
+    context.tracker.complete(
+        extra={
+            "selection_reason": str(payload["selection_reason"]),
+            "selected_alpha01_exact_pass": bool(selected["alpha01_exact_pass"]),
+            "selected_realized_total_return": float(selected["realized_total_return"]),
         }
     )
 
-    gpu_sampler: _GpuSampler | None = None
-    if str(args.solver_backend).strip().lower() == "cuopt":
-        gpu_sampler = _GpuSampler(gpu_csv_path)
-        gpu_sampler.start()
 
-    frontier_frames: list[pd.DataFrame] = []
-    frontier_completed = 0
-    try:
-        for seed in random_states:
-            seed_offset = frontier_completed
+def _log_completed_run(
+    paths: BoundAwarePaths,
+    *,
+    selected: pd.Series,
+) -> None:
+    logger.info(
+        "Focused bound-aware search complete: selected risk_tolerance={}, mode={}, gamma={}, q_cap={}, q_tail={}, ab_pass_all={}, alpha01_pass={}",
+        selected["risk_tolerance"],
+        selected["policy_mode"],
+        selected["gamma"],
+        selected["delta_cap_quantile"],
+        selected["tail_focus_quantile"],
+        selected["ab_pass_all"],
+        selected["alpha01_exact_pass"],
+    )
+    for label, path in (
+        ("frontier raw", paths.frontier_raw_path),
+        ("frontier aggregate", paths.frontier_path),
+        ("shortlist", paths.shortlist_path),
+        ("exact shortlist", paths.shortlist_exact_path),
+        ("bound evaluations", paths.bound_eval_path),
+        ("selection payload", paths.selection_path),
+    ):
+        logger.info("Saved {}: {}", label, path)
 
-            def _progress_hook(
-                local_completed: int,
-                extra: dict[str, Any],
-                _offset: int = seed_offset,
-            ) -> None:
-                tracker.frontier_progress(completed_units=_offset + local_completed, extra=extra)
 
-            frontier_seed = _build_frontier_for_seed(
-                config_path=args.config,
-                conformal_intervals_path=args.conformal_intervals_path,
-                risk_values=risk_values,
-                aversion_values=aversion_values,
-                gamma_values=gamma_values,
-                delta_cap_quantiles=delta_cap_quantiles,
-                tail_focus_quantiles=tail_focus_quantiles,
-                budget_profiles=budget_profiles,
-                max_candidates=int(args.max_candidates),
-                random_state=int(seed),
-                solver_backend=str(args.solver_backend),
-                cuopt_presolve=int(args.cuopt_presolve)
-                if str(args.solver_backend) == "cuopt"
-                else None,
-                cuopt_parameters=cuopt_parameters,
-                policy_modes=policy_modes,
-                progress_hook=_progress_hook,
-            )
-            frontier_frames.append(frontier_seed)
-            frontier_completed += int(len(risk_values) * (1 + policy_grid_count))
-
-        frontier_raw = (
-            pd.concat(frontier_frames, ignore_index=True) if frontier_frames else pd.DataFrame()
-        )
-        if frontier_raw.empty:
-            raise ValueError("Frontier search produced zero candidate rows.")
-        frontier = _aggregate_frontier(frontier_raw)
-        tracker.frontier_complete(
-            extra={
-                "frontier_policy_count": len(frontier),
-                "frontier_raw_rows": len(frontier_raw),
-            }
-        )
-
-        shortlist = _build_stratified_shortlist(
-            frontier=frontier,
-            shortlist_top_k=int(args.shortlist_top_k),
-            bucket_return_k=int(args.bucket_return_k),
-            bucket_proxy_k=int(args.bucket_proxy_k),
-            bucket_family_k=int(args.bucket_family_k),
-            bucket_region_k=int(args.bucket_region_k),
-            incumbent_policy=incumbent_policy,
-            incumbent_risk_neighbors=incumbent_risk_neighbors,
-            incumbent_gamma_neighbors=incumbent_gamma_neighbors,
-            incumbent_policy_modes=incumbent_policy_modes,
-            budget_profiles=budget_profiles,
-            solver_backend=str(args.solver_backend),
-        )
-        bound_total_checks = int(len(shortlist) * len(alpha_grid) * len(exact_random_states))
-        shortlist_extra = {
-            "shortlist_size": len(shortlist),
-            "shortlist_buckets": shortlist["shortlist_bucket"].value_counts(dropna=False).to_dict(),
-        }
-        if not args.frontier_only:
-            tracker.set_bound_total(bound_total_checks, extra=shortlist_extra)
-
-        atomic_write_parquet(
-            frontier_raw, output_dir / "portfolio_bound_aware_frontier_raw.parquet", index=False
-        )
-        atomic_write_parquet(
-            frontier, output_dir / "portfolio_bound_aware_frontier.parquet", index=False
-        )
-        atomic_write_parquet(
-            shortlist, output_dir / "portfolio_bound_aware_shortlist.parquet", index=False
-        )
-
-        selection_context = {
-            "schema_version": SCHEMA_VERSION,
-            "generated_at_utc": datetime.now(tz=UTC).isoformat(),
-            "run_label": run_label,
-            "conformal_intervals_path": str(args.conformal_intervals_path),
-            "search_space": {
-                "risk_grid": risk_values,
-                "aversion_grid": aversion_values,
-                "gamma_grid": gamma_values,
-                "delta_cap_grid": delta_cap_quantiles,
-                "tail_focus_grid": tail_focus_quantiles,
-                "budget_profiles": budget_profiles,
-                "alpha_grid": alpha_grid,
-                "max_candidates": int(args.max_candidates),
-                "exact_max_candidates": int(exact_max_candidates),
-                "random_states": random_states,
-                "exact_random_states": exact_random_states,
-                "exact_checkpoint_every": int(args.exact_checkpoint_every),
-                "exact_threads": int(args.exact_threads),
-                "policy_modes": policy_modes,
-                "cuopt_parameters": cuopt_parameters,
-                "bucket_return_k": int(args.bucket_return_k),
-                "bucket_proxy_k": int(args.bucket_proxy_k),
-                "bucket_family_k": int(args.bucket_family_k),
-                "bucket_region_k": int(args.bucket_region_k),
-                "incumbent_policy_path": str(args.incumbent_policy_path),
-                "incumbent_risk_neighbors": incumbent_risk_neighbors,
-                "incumbent_gamma_neighbors": incumbent_gamma_neighbors,
-                "incumbent_policy_modes": incumbent_policy_modes,
-            },
-            "selection_policy": {
-                "shortlist_strategy": "stratified_bound_first",
-                "rank_order": [
-                    "alpha01_exact_pass(desc)",
-                    "alpha03_exact_pass(desc)",
-                    "alpha_exact_pass_count(desc)",
-                    "alpha_exact_pass_rate(desc)",
-                    "ab_pass_all(desc)",
-                    "realized_total_return(desc)",
-                    "alpha01_weighted_miscoverage_V(asc)",
-                    "alpha01_gamma_cp(asc)",
-                    "price_of_robustness(asc)",
-                ],
-            },
-            "frontier_raw_path": str(output_dir / "portfolio_bound_aware_frontier_raw.parquet"),
-            "frontier_path": str(output_dir / "portfolio_bound_aware_frontier.parquet"),
-            "shortlist_path": str(output_dir / "portfolio_bound_aware_shortlist.parquet"),
-            "shortlist_exact_path": str(
-                output_dir / "portfolio_bound_aware_shortlist_exact.parquet"
-            ),
-            "bound_eval_path": str(output_dir / "portfolio_bound_aware_bound_eval.parquet"),
-            "region_summary_path": str(model_dir / "portfolio_bound_aware_region_summary.json"),
-            "selection_path": str(model_dir / "portfolio_bound_aware_selection.json"),
-            "runtime_status_path": str(status_path),
-            "runtime_checkpoint_dir": str(checkpoint_dir),
-            "resource_snapshot_path": str(resource_path),
-            "frontier_solver_backend": str(args.solver_backend),
-            "exact_solver_backend": str(args.exact_solver_backend),
-            "budget": float(args.budget),
-            "t_eval": float(args.t_eval),
-            "max_candidates": int(args.max_candidates),
-            "exact_max_candidates": int(exact_max_candidates),
-            "random_states": random_states,
-            "exact_random_states": exact_random_states,
-            "exact_checkpoint_every": int(args.exact_checkpoint_every),
-            "exact_threads": int(args.exact_threads),
-            "alpha_grid": alpha_grid,
-        }
-        exact_context_path = model_dir / "portfolio_bound_aware_exact_context.json"
-        atomic_write_json(exact_context_path, selection_context)
-
-        if args.frontier_only:
-            resource_payload["end"] = _resource_snapshot()
-            atomic_write_json(resource_path, resource_payload)
-            tracker.frontier_only_complete(
-                extra={
-                    **shortlist_extra,
-                    "frontier_only": True,
-                    "deferred_bound_total_checks": bound_total_checks,
-                    "exact_context_path": str(exact_context_path),
-                    "frontier_path": str(output_dir / "portfolio_bound_aware_frontier.parquet"),
-                    "shortlist_path": str(output_dir / "portfolio_bound_aware_shortlist.parquet"),
-                }
-            )
-            return 0
-
-        if exact_python_executable:
-            current_python = Path(sys.executable)
-            requested_python = Path(exact_python_executable)
-            if requested_python != current_python:
-                cmd = [
-                    str(requested_python),
-                    str(exact_helper_script),
-                    "--context-path",
-                    str(exact_context_path),
-                ]
-                logger.info(
-                    "Delegating exact bound stage to external Python: {}",
-                    " ".join(cmd),
-                )
-                subprocess.run(cmd, cwd=str(ROOT), check=True)
-                resource_payload["end"] = _resource_snapshot()
-                atomic_write_json(resource_path, resource_payload)
-                return 0
-
-        aligned_by_seed = {
-            int(seed): _load_aligned_dataset(
-                conformal_intervals_path=args.conformal_intervals_path,
-                max_candidates=int(exact_max_candidates),
-                random_state=int(seed),
-            )
-            for seed in exact_random_states
-        }
-        bound_rows: list[dict[str, Any]] = []
-        completed_checks = 0
-        for _, row in shortlist.iterrows():
-            policy = _policy_from_row(
-                row,
-                solver_backend_override=str(args.exact_solver_backend),
-            )
-            candidate_payload = row.to_dict()
-            for eval_seed in exact_random_states:
-                aligned = aligned_by_seed[int(eval_seed)]
-                for alpha in alpha_grid:
-                    result = _validate_single_alpha(
-                        aligned,
-                        alpha=float(alpha),
-                        policy=policy,
-                        allocator_mode="exact",
-                        budget=float(args.budget),
-                        t_eval=float(args.t_eval),
-                        threads=int(args.exact_threads),
-                    )
-                    bound_rows.append(
-                        {
-                            "candidate_rank": int(candidate_payload["candidate_rank"]),
-                            "eval_random_state": int(eval_seed),
-                            "frontier_solver_backend": str(args.solver_backend),
-                            "exact_solver_backend": str(args.exact_solver_backend),
-                            **candidate_payload,
-                            **result,
-                        }
-                    )
-                    completed_checks += 1
-                    tracker.bound_progress(
-                        completed_checks=completed_checks,
-                        extra={
-                            "candidate_rank": int(candidate_payload["candidate_rank"]),
-                            "eval_random_state": int(eval_seed),
-                            "current_alpha": float(alpha),
-                            "exact_threads": int(args.exact_threads),
-                        },
-                    )
-
-        bound_eval = pd.DataFrame(bound_rows)
-        shortlist_eval = _aggregate_exact_results(shortlist=shortlist, bound_eval=bound_eval)
-        region_payload = _region_summary(shortlist_eval, bound_eval)
-        selected = shortlist_eval.iloc[0].copy()
-        selected_policy = _policy_from_row(
-            selected,
-            solver_backend_override=str(args.exact_solver_backend),
-        )
-        payload = {
-            "schema_version": SCHEMA_VERSION,
-            "generated_at_utc": datetime.now(tz=UTC).isoformat(),
-            "run_label": run_label,
-            "conformal_intervals_path": str(args.conformal_intervals_path),
-            "search_space": selection_context["search_space"],
-            "selection_policy": selection_context["selection_policy"],
-            "selected_policy": selected_policy,
-            "selected_metrics": selected.to_dict(),
-            "selection_reason": _selection_reason(selected),
-            "frontier_raw_path": selection_context["frontier_raw_path"],
-            "frontier_path": selection_context["frontier_path"],
-            "shortlist_path": selection_context["shortlist_path"],
-            "shortlist_exact_path": selection_context["shortlist_exact_path"],
-            "bound_eval_path": selection_context["bound_eval_path"],
-            "region_summary_path": selection_context["region_summary_path"],
-            "robust_region_summary": region_payload,
-            "runtime_status_path": selection_context["runtime_status_path"],
-            "runtime_checkpoint_dir": selection_context["runtime_checkpoint_dir"],
-            "resource_snapshot_path": selection_context["resource_snapshot_path"],
-            "frontier_solver_backend": str(args.solver_backend),
-            "exact_solver_backend": str(args.exact_solver_backend),
-            "exact_threads": int(args.exact_threads),
-        }
-
-        atomic_write_parquet(
-            shortlist_eval,
-            output_dir / "portfolio_bound_aware_shortlist_exact.parquet",
-            index=False,
-        )
-        atomic_write_parquet(
-            bound_eval, output_dir / "portfolio_bound_aware_bound_eval.parquet", index=False
-        )
-        atomic_write_json(model_dir / "portfolio_bound_aware_region_summary.json", region_payload)
-        atomic_write_json(model_dir / "portfolio_bound_aware_selection.json", payload)
-
-        if gpu_sampler is not None:
-            resource_payload["gpu_summary"] = gpu_sampler.stop()
-        resource_payload["end"] = _resource_snapshot()
-        atomic_write_json(resource_path, resource_payload)
-        tracker.complete(
-            extra={
-                "selection_reason": str(payload["selection_reason"]),
-                "selected_alpha01_exact_pass": bool(selected["alpha01_exact_pass"]),
-                "selected_realized_total_return": float(selected["realized_total_return"]),
-            }
-        )
-
-        logger.info(
-            "Focused bound-aware search complete: selected risk_tolerance={}, mode={}, gamma={}, q_cap={}, q_tail={}, ab_pass_all={}, alpha01_pass={}",
-            selected["risk_tolerance"],
-            selected["policy_mode"],
-            selected["gamma"],
-            selected["delta_cap_quantile"],
-            selected["tail_focus_quantile"],
-            selected["ab_pass_all"],
-            selected["alpha01_exact_pass"],
-        )
-        logger.info(
-            "Saved frontier raw: {}", output_dir / "portfolio_bound_aware_frontier_raw.parquet"
-        )
-        logger.info(
-            "Saved frontier aggregate: {}", output_dir / "portfolio_bound_aware_frontier.parquet"
-        )
-        logger.info("Saved shortlist: {}", output_dir / "portfolio_bound_aware_shortlist.parquet")
-        logger.info(
-            "Saved exact shortlist: {}",
-            output_dir / "portfolio_bound_aware_shortlist_exact.parquet",
-        )
-        logger.info(
-            "Saved bound evaluations: {}", output_dir / "portfolio_bound_aware_bound_eval.parquet"
-        )
-        logger.info(
-            "Saved selection payload: {}", model_dir / "portfolio_bound_aware_selection.json"
-        )
+def _execute_bound_aware_search(
+    context: BoundAwareRunContext,
+    *,
+    gpu_sampler: _GpuSampler | None,
+) -> int:
+    state = _build_frontier_state(context)
+    if _finish_after_frontier(context, state):
         return 0
+    selected, payload = _run_exact_selection(context, state)
+    _complete_run(context, selected=selected, payload=payload, gpu_sampler=gpu_sampler)
+    _log_completed_run(context.spec.paths, selected=selected)
+    return 0
+
+
+def _record_run_failure(context: BoundAwareRunContext, exc: Exception) -> None:
+    tracker = context.tracker
+    error_payload = {
+        "error_type": type(exc).__name__,
+        "error": str(exc),
+        "frontier_completed_units": int(tracker.frontier_completed_units),
+        "frontier_total_units": int(tracker.frontier_total_units),
+        "bound_completed_checks": int(tracker.bound_completed_checks),
+        "bound_total_checks": int(tracker.bound_total_checks),
+    }
+    context.resource_payload["error"] = error_payload
+    context.resource_payload["end"] = _resource_snapshot()
+    atomic_write_json(context.spec.paths.resource_path, context.resource_payload)
+    tracker.fail(phase="failed", extra=error_payload)
+    logger.exception("Focused bound-aware portfolio search failed.")
+
+
+def _finalize_gpu_sampler(
+    context: BoundAwareRunContext,
+    gpu_sampler: _GpuSampler | None,
+) -> None:
+    if gpu_sampler is None or "gpu_summary" in context.resource_payload:
+        return
+    try:
+        context.resource_payload["gpu_summary"] = gpu_sampler.stop()
+        context.resource_payload["end"] = _resource_snapshot()
+        atomic_write_json(context.spec.paths.resource_path, context.resource_payload)
+    except Exception:  # pragma: no cover - best effort cleanup only
+        pass
+
+
+def main(argv: list[str] | None = None) -> int:
+    args = _build_parser().parse_args(argv)
+    context = _initialize_run_context(args)
+    gpu_sampler = _start_gpu_sampler(context)
+
+    try:
+        return _execute_bound_aware_search(context, gpu_sampler=gpu_sampler)
     except Exception as exc:
-        error_payload = {
-            "error_type": type(exc).__name__,
-            "error": str(exc),
-            "frontier_completed_units": int(tracker.frontier_completed_units),
-            "frontier_total_units": int(tracker.frontier_total_units),
-            "bound_completed_checks": int(tracker.bound_completed_checks),
-            "bound_total_checks": int(tracker.bound_total_checks),
-        }
-        resource_payload["error"] = error_payload
-        resource_payload["end"] = _resource_snapshot()
-        atomic_write_json(resource_path, resource_payload)
-        tracker.fail(phase="failed", extra=error_payload)
-        logger.exception("Focused bound-aware portfolio search failed.")
+        _record_run_failure(context, exc)
         raise
     finally:
-        if gpu_sampler is not None:
-            try:
-                if "gpu_summary" not in resource_payload:
-                    resource_payload["gpu_summary"] = gpu_sampler.stop()
-                    resource_payload["end"] = _resource_snapshot()
-                    atomic_write_json(resource_path, resource_payload)
-            except Exception:  # pragma: no cover - best effort cleanup only
-                pass
+        _finalize_gpu_sampler(context, gpu_sampler)
 
 
 if __name__ == "__main__":

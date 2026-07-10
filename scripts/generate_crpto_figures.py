@@ -19,6 +19,7 @@ from __future__ import annotations
 import argparse
 import shutil
 from pathlib import Path
+from typing import Any
 
 import matplotlib
 import matplotlib.pyplot as plt
@@ -602,6 +603,62 @@ def _crpto_fig7_uncertainty_baselines() -> None:
     _save(fig, "crpto_fig7_uncertainty_baselines")
 
 
+def _first_matching_column(df: pd.DataFrame, tokens: tuple[str, ...]) -> str | None:
+    return next((col for col in df.columns if any(token in col.lower() for token in tokens)), None)
+
+
+def _alpha_pareto_column_map(df: pd.DataFrame) -> dict[str, str | None]:
+    return {
+        "variant": _first_matching_column(df, ("variant", "method")),
+        "alpha": _first_matching_column(df, ("alpha",)),
+        "coverage": _first_matching_column(df, ("coverage",)),
+        "width": _first_matching_column(df, ("width",)),
+        "eligible": _first_matching_column(df, ("eligible", "n_eligible")),
+    }
+
+
+def _alpha_pareto_missing_columns(columns: dict[str, str | None]) -> list[str]:
+    return [key for key in ["variant", "alpha", "coverage", "width"] if not columns.get(key)]
+
+
+def _alpha_pareto_variants(df: pd.DataFrame, variant_col: str) -> list[Any]:
+    return list(df[variant_col].drop_duplicates())
+
+
+def _alpha_pareto_variant_styles(
+    variants: list[Any],
+) -> tuple[dict[Any, str], dict[Any, str]]:
+    colors = {
+        variant: PALETTE["blue"] if "mond" in str(variant).lower() else PALETTE["orange"]
+        for variant in variants
+    }
+    labels = {
+        variant: "Mondrian CP" if "mond" in str(variant).lower() else "Global Split-CP"
+        for variant in variants
+    }
+    return colors, labels
+
+
+def _alpha_pareto_subframe(
+    df: pd.DataFrame,
+    *,
+    variant_col: str,
+    alpha_col: str,
+    variant: Any,
+) -> pd.DataFrame:
+    return df[df[variant_col] == variant].sort_values(alpha_col)
+
+
+def _alpha_annotation_offset(index: int, n_rows: int) -> tuple[int, int]:
+    offset_y = 4 if index % 2 == 0 else -8
+    offset_x = 4 if index < n_rows - 1 else -24
+    return offset_x, offset_y
+
+
+def _alpha_tick_labels(values: pd.Series) -> list[str]:
+    return [str(round(float(value), 2)) for value in values]
+
+
 def _crpto_fig8_alpha_pareto() -> None:
     """Fig 8 — Alpha sweep Pareto: Mondrian vs Global (coverage × width × eligible loans)."""
     df = pd.read_parquet(DATA_DIR / "alpha_sweep_pareto_both.parquet")
@@ -610,36 +667,27 @@ def _crpto_fig8_alpha_pareto() -> None:
         logger.warning("alpha_sweep_pareto_both empty — skipping fig8")
         return
 
-    # Detect variant column
-    variant_col = next(
-        (c for c in df.columns if "variant" in c.lower() or "method" in c.lower()), None
-    )
-    alpha_col = next((c for c in df.columns if "alpha" in c.lower()), None)
-    cov_col = next((c for c in df.columns if "coverage" in c.lower()), None)
-    width_col = next((c for c in df.columns if "width" in c.lower()), None)
-    elig_col = next(
-        (c for c in df.columns if "eligible" in c.lower() or "n_eligible" in c.lower()), None
-    )
-
-    if not all([variant_col, alpha_col, cov_col, width_col]):
+    columns = _alpha_pareto_column_map(df)
+    missing = _alpha_pareto_missing_columns(columns)
+    if missing:
         logger.warning(f"alpha_sweep_pareto_both missing columns. Got: {list(df.columns)}")
         return
+    variant_col = str(columns["variant"])
+    alpha_col = str(columns["alpha"])
+    cov_col = str(columns["coverage"])
+    width_col = str(columns["width"])
+    elig_col = columns["eligible"]
 
     fig, axes = plt.subplots(1, 2, figsize=(COL2, HEIGHT_M))
 
-    variants = df[variant_col].unique() if variant_col else ["global", "mondrian"]
-    var_colors = {
-        v: PALETTE["blue"] if "mond" in str(v).lower() else PALETTE["orange"] for v in variants
-    }
-    var_labels = {
-        v: "Mondrian CP" if "mond" in str(v).lower() else "Global Split-CP" for v in variants
-    }
+    variants = _alpha_pareto_variants(df, variant_col)
+    var_colors, var_labels = _alpha_pareto_variant_styles(variants)
 
     # Left: width vs coverage scatter (Pareto)
     ax = axes[0]
     ax.axvline(0.90, color=PALETTE["red"], lw=0.8, ls="--", alpha=0.6, label="90% target")
     for var in variants:
-        sub = df[df[variant_col] == var].sort_values(alpha_col)
+        sub = _alpha_pareto_subframe(df, variant_col=variant_col, alpha_col=alpha_col, variant=var)
         ax.plot(
             sub[cov_col],
             sub[width_col],
@@ -649,8 +697,7 @@ def _crpto_fig8_alpha_pareto() -> None:
             label=var_labels[var],
         )
         for idx, (_, row) in enumerate(sub.iterrows()):
-            offset_y = 4 if idx % 2 == 0 else -8
-            offset_x = 4 if idx < len(sub) - 1 else -24
+            offset_x, offset_y = _alpha_annotation_offset(idx, len(sub))
             ax.annotate(
                 f"α={row[alpha_col]:.2f}",
                 (row[cov_col], row[width_col]),
@@ -669,9 +716,14 @@ def _crpto_fig8_alpha_pareto() -> None:
     ax2 = axes[1]
     if elig_col:
         for var in variants:
-            sub = df[df[variant_col] == var].sort_values(alpha_col)
+            sub = _alpha_pareto_subframe(
+                df,
+                variant_col=variant_col,
+                alpha_col=alpha_col,
+                variant=var,
+            )
             ax2.bar(
-                [str(round(a, 2)) for a in sub[alpha_col]],
+                _alpha_tick_labels(sub[alpha_col]),
                 sub[elig_col],
                 label=var_labels[var],
                 color=var_colors[var],
@@ -1824,13 +1876,13 @@ def _crpto_fig21_end_to_end_arc() -> None:
 
 
 def _crpto_fig25_price_of_robustness_scaling() -> None:
-    """Fig 25 — price of robustness scales with panel default rate (A34).
+    """Fig 25 — external price of robustness by panel default rate (A34).
 
     Frozen external applications (Freddie green/combined/red and Prosper) show a
-    positive premium that increases monotonically with the panel default rate.
-    The selected Lending Club champion is drawn as a contrasting favorable
-    reference line (it is a single selected point, not part of the default-rate
-    series). Data: models/crpto_multidataset_external_status.json.
+    positive premium ordered by panel default rate in the four observed cases.
+    The historical Lending Club field is intentionally excluded because its
+    stored nonrobust baseline was not a point-only comparator. Data:
+    models/crpto_multidataset_external_status.json.
     """
     status = load_json(MODELS_DIR / "crpto_multidataset_external_status.json")
     seg_label = {
@@ -1862,21 +1914,11 @@ def _crpto_fig25_price_of_robustness_scaling() -> None:
     x = np.array([p[1] for p in pts])
     y = np.array([p[2] for p in pts])
 
-    lc_price = -10.56  # selected Lending Club champion (frozen field)
-
     fig, ax = plt.subplots(figsize=(COL2, HEIGHT_M))
     ax.set_xscale("log")
     ax.set_xlim(0.4, 55)
-    ax.set_ylim(-13.5, 12.5)
+    ax.set_ylim(0.0, 11.5)
     ax.axhline(0.0, color=PALETTE["gray"], lw=1.0, ls="--", zorder=1)
-    ax.axhline(
-        lc_price,
-        color=PALETTE["orange"],
-        lw=1.4,
-        ls=":",
-        zorder=2,
-        label="Lending Club selected champion (−10.56%)",
-    )
     ax.plot(
         x,
         y,
@@ -1897,14 +1939,15 @@ def _crpto_fig25_price_of_robustness_scaling() -> None:
             color=PALETTE["green"],
             fontweight="bold",
         )
-    ax.text(0.46, 1.2, "robustness costs a premium", fontsize=6.4, color="#666", style="italic")
-    ax.text(0.46, -2.6, "robustness adds value", fontsize=6.4, color="#666", style="italic")
+    ax.text(
+        0.46, 0.45, "positive premium in all four cases", fontsize=6.4, color="#666", style="italic"
+    )
     ax.set_xticks([0.5, 1, 2, 5, 10, 30])
     ax.set_xticklabels(["0.5", "1", "2", "5", "10", "30"])
     ax.tick_params(which="minor", bottom=False)
     ax.set_xlabel("Panel default rate (%, log scale)")
     ax.set_ylabel("Price of robustness (%)")
-    ax.set_title("Price of robustness scales with panel default risk")
+    ax.set_title("External robustness premium across frozen panels")
     ax.legend(loc="lower right", fontsize=6.6)
     fig.tight_layout()
     _save(fig, "crpto_fig25_price_of_robustness_scaling")

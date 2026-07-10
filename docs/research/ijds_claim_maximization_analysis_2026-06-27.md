@@ -1,5 +1,9 @@
 # IJDS Claim Maximization Analysis - 2026-06-27
 
+> **Historical only.** This search diary predates the policy-aware certificate
+> correction. Do not reuse its cap labels or endpoint thresholds; current A35
+> and A40 evidence is registered in `pool93_certificate_semantics_v2_2026-07-09.md`.
+
 This memo evaluates the strongest IJDS-facing claims for CRPTO after the pool93
 claim-governance and local exact-refinement work. It is an internal research
 artifact, not manuscript prose.

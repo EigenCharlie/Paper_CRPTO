@@ -18,3 +18,23 @@
     overflow-x: auto;
   }
 }
+
+@media print {
+  html,
+  body,
+  main.content,
+  #quarto-appendix {
+    height: auto !important;
+    min-height: 0 !important;
+    margin-bottom: 0 !important;
+    padding-bottom: 0 !important;
+  }
+
+  #quarto-content {
+    grid-template-rows: [content-top] auto [content-bottom] 0 [page-bottom] !important;
+  }
+
+  #quarto-appendix {
+    break-after: avoid-page;
+  }
+}

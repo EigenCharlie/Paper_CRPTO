@@ -26,6 +26,31 @@ CHAMPION_AUC = 0.7138518124963467
 CHAMPION_BRIER = 0.15439302183275685
 CHAMPION_ECE = 0.006998009158194006
 
+CUOPT_FLAG_MAP = {
+    "presolve": "--cuopt-presolve",
+    "method": "--cuopt-method",
+    "pdlp_solver_mode": "--cuopt-pdlp-solver-mode",
+    "pdlp_precision": "--cuopt-pdlp-precision",
+    "crossover": "--cuopt-crossover",
+    "first_primal_feasible": "--cuopt-first-primal-feasible",
+    "save_best_primal_solution": "--cuopt-save-best-primal-solution",
+    "infeasibility_detection": "--cuopt-infeasibility-detection",
+    "strict_infeasibility": "--cuopt-strict-infeasibility",
+    "per_constraint_residual": "--cuopt-per-constraint-residual",
+    "dual_postsolve": "--cuopt-dual-postsolve",
+    "dualize": "--cuopt-dualize",
+    "folding": "--cuopt-folding",
+    "augmented": "--cuopt-augmented",
+    "ordering": "--cuopt-ordering",
+    "cudss_deterministic": "--cuopt-cudss-deterministic",
+    "eliminate_dense_columns": "--cuopt-eliminate-dense-columns",
+    "iteration_limit": "--cuopt-iteration-limit",
+    "num_cpu_threads": "--cuopt-num-cpu-threads",
+    "num_gpus": "--cuopt-num-gpus",
+    "log_to_console": "--cuopt-log-to-console",
+    "log_dir": "--cuopt-log-dir",
+}
+
 
 def _utc_now() -> str:
     return datetime.now(tz=UTC).isoformat()
@@ -259,22 +284,35 @@ def _conformal_intervals_for_status(status: dict[str, Any]) -> Path:
     )
 
 
-def _portfolio_command(
+def _profile_section(portfolio_profile: dict[str, Any], key: str) -> dict[str, Any]:
+    return dict(portfolio_profile.get(key, {}) or {})
+
+
+def _append_option(command: list[str], flag: str, value: Any) -> None:
+    if value is not None and str(value).strip():
+        command.extend([flag, str(value)])
+
+
+def _append_int_option(command: list[str], flag: str, value: Any) -> None:
+    if value is not None and str(value).strip():
+        command.extend([flag, str(int(value))])
+
+
+def _portfolio_base_command(
     *,
     portfolio_profile: dict[str, Any],
     conformal_intervals_path: Path,
     run_label: str,
     output_dir: Path,
     model_dir: Path,
+    grids: dict[str, Any],
+    frontier: dict[str, Any],
+    incumbent: dict[str, Any],
+    execution: dict[str, Any],
 ) -> list[str]:
-    grids = dict(portfolio_profile.get("grids", {}) or {})
-    frontier = dict(portfolio_profile.get("frontier", {}) or {})
-    incumbent = dict(portfolio_profile.get("incumbent_region", {}) or {})
-    execution = dict(portfolio_profile.get("execution", {}) or {})
-    cuopt = dict(portfolio_profile.get("cuopt", {}) or {})
     python_executable = str(execution.get("python_executable") or sys.executable)
     policy_modes = ",".join(str(x) for x in portfolio_profile.get("candidate_policy_families", []))
-    command = [
+    return [
         python_executable,
         "scripts/search/run_portfolio_bound_aware_search.py",
         "--config",
@@ -328,54 +366,62 @@ def _portfolio_command(
         "--exact-solver-backend",
         str(execution.get("exact_solver_backend", "highs")),
     ]
-    if frontier.get("exact_max_candidates") is not None:
-        command.extend(["--exact-max-candidates", str(int(frontier["exact_max_candidates"]))])
+
+
+def _append_frontier_options(
+    command: list[str],
+    *,
+    grids: dict[str, Any],
+    frontier: dict[str, Any],
+) -> None:
+    _append_int_option(command, "--exact-max-candidates", frontier.get("exact_max_candidates"))
     exact_random_states = frontier.get("exact_random_states", grids.get("exact_random_states"))
-    if exact_random_states is not None and str(exact_random_states).strip():
-        command.extend(["--exact-random-states", str(exact_random_states)])
-    exact_checkpoint_every = frontier.get("exact_checkpoint_every")
-    if exact_checkpoint_every is not None and str(exact_checkpoint_every).strip():
-        command.extend(["--exact-checkpoint-every", str(int(exact_checkpoint_every))])
-    exact_threads = frontier.get("exact_threads")
-    if exact_threads is not None and str(exact_threads).strip():
-        command.extend(["--exact-threads", str(int(exact_threads))])
-    budget_profiles = grids.get("budget_profiles")
-    if budget_profiles is not None and str(budget_profiles).strip():
-        command.extend(["--budget-profiles", str(budget_profiles)])
+    _append_option(command, "--exact-random-states", exact_random_states)
+    _append_int_option(command, "--exact-checkpoint-every", frontier.get("exact_checkpoint_every"))
+    _append_int_option(command, "--exact-threads", frontier.get("exact_threads"))
+    _append_option(command, "--budget-profiles", grids.get("budget_profiles"))
+
+
+def _append_execution_options(command: list[str], *, execution: dict[str, Any]) -> None:
     if bool(execution.get("frontier_only", False)):
         command.append("--frontier-only")
-    if str(execution.get("exact_python_executable", "")).strip():
-        command.extend(["--exact-python-executable", str(execution["exact_python_executable"])])
-    cuopt_flag_map = {
-        "presolve": "--cuopt-presolve",
-        "method": "--cuopt-method",
-        "pdlp_solver_mode": "--cuopt-pdlp-solver-mode",
-        "pdlp_precision": "--cuopt-pdlp-precision",
-        "crossover": "--cuopt-crossover",
-        "first_primal_feasible": "--cuopt-first-primal-feasible",
-        "save_best_primal_solution": "--cuopt-save-best-primal-solution",
-        "infeasibility_detection": "--cuopt-infeasibility-detection",
-        "strict_infeasibility": "--cuopt-strict-infeasibility",
-        "per_constraint_residual": "--cuopt-per-constraint-residual",
-        "dual_postsolve": "--cuopt-dual-postsolve",
-        "dualize": "--cuopt-dualize",
-        "folding": "--cuopt-folding",
-        "augmented": "--cuopt-augmented",
-        "ordering": "--cuopt-ordering",
-        "cudss_deterministic": "--cuopt-cudss-deterministic",
-        "eliminate_dense_columns": "--cuopt-eliminate-dense-columns",
-        "iteration_limit": "--cuopt-iteration-limit",
-        "num_cpu_threads": "--cuopt-num-cpu-threads",
-        "num_gpus": "--cuopt-num-gpus",
-        "log_to_console": "--cuopt-log-to-console",
-        "log_dir": "--cuopt-log-dir",
-    }
-    for key, flag in cuopt_flag_map.items():
-        value = cuopt.get(key)
-        if value is not None and str(value).strip() != "":
-            command.extend([flag, str(value)])
+    _append_option(command, "--exact-python-executable", execution.get("exact_python_executable"))
+
+
+def _append_cuopt_options(command: list[str], *, cuopt: dict[str, Any]) -> None:
+    for key, flag in CUOPT_FLAG_MAP.items():
+        _append_option(command, flag, cuopt.get(key))
     for key, value in dict(cuopt.get("extra_parameters", {}) or {}).items():
         command.extend(["--cuopt-extra-parameter", f"{key}={value}"])
+
+
+def _portfolio_command(
+    *,
+    portfolio_profile: dict[str, Any],
+    conformal_intervals_path: Path,
+    run_label: str,
+    output_dir: Path,
+    model_dir: Path,
+) -> list[str]:
+    grids = _profile_section(portfolio_profile, "grids")
+    frontier = _profile_section(portfolio_profile, "frontier")
+    incumbent = _profile_section(portfolio_profile, "incumbent_region")
+    execution = _profile_section(portfolio_profile, "execution")
+    cuopt = _profile_section(portfolio_profile, "cuopt")
+    command = _portfolio_base_command(
+        portfolio_profile=portfolio_profile,
+        conformal_intervals_path=conformal_intervals_path,
+        run_label=run_label,
+        output_dir=output_dir,
+        model_dir=model_dir,
+        grids=grids,
+        frontier=frontier,
+        incumbent=incumbent,
+        execution=execution,
+    )
+    _append_frontier_options(command, grids=grids, frontier=frontier)
+    _append_execution_options(command, execution=execution)
+    _append_cuopt_options(command, cuopt=cuopt)
     return command
 
 

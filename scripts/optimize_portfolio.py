@@ -15,7 +15,11 @@ import yaml
 from loguru import logger
 
 from src.models.conformal_artifacts import load_conformal_intervals
-from src.optimization.portfolio_model import optimize_portfolio_allocation
+from src.optimization.input_alignment import align_candidate_intervals
+from src.optimization.portfolio_model import (
+    optimize_portfolio_allocation,
+    solution_allocation_vector,
+)
 from src.optimization.robust_opt import scenario_analysis
 from src.utils.pipeline_runtime import (
     atomic_write_parquet,
@@ -76,55 +80,33 @@ def _align_candidates_and_intervals(
     random_state: int = 42,
 ) -> tuple[pd.DataFrame, np.ndarray, np.ndarray, np.ndarray]:
     """Align loans with PD intervals using ID when available, with legacy fallback."""
-    col_point, col_low, col_high = _resolve_interval_columns(intervals)
-    max_candidates_norm = (
-        None if max_candidates is None or int(max_candidates) <= 0 else int(max_candidates)
+    aligned = align_candidate_intervals(
+        candidates,
+        intervals,
+        max_candidates=max_candidates,
+        random_state=random_state,
     )
-    base_n = min(len(candidates), len(intervals))
-    if max_candidates_norm is not None:
-        base_n = min(base_n, max_candidates_norm)
-
-    if "id" in candidates.columns and "id" in intervals.columns:
-        cand = candidates.copy()
-        ints = intervals.copy()
-        cand["_id_join"] = cand["id"].astype(str)
-        ints["_id_join"] = ints["id"].astype(str)
-        ints = ints.drop_duplicates(subset="_id_join", keep="first")
-        merged = cand.merge(
-            ints[["_id_join", col_point, col_low, col_high]],
-            on="_id_join",
-            how="inner",
+    col_point, col_low, col_high = _resolve_interval_columns(aligned.intervals)
+    if aligned.mode == "position":
+        logger.warning(
+            "Conformal interval artifact has no id or _row_number alignment key; "
+            "using reproducible positional sampling for optimization."
         )
-        if merged.empty:
-            raise ValueError("ID-based merge between candidates and intervals returned zero rows.")
-        n = len(merged) if max_candidates_norm is None else min(len(merged), max_candidates_norm)
-        if len(merged) > n:
-            rng = np.random.default_rng(random_state)
-            idx = np.sort(rng.choice(np.arange(len(merged)), size=n, replace=False))
-            merged = merged.iloc[idx].reset_index(drop=True)
-        else:
-            merged = merged.reset_index(drop=True)
-
-        aligned_loans = merged[candidates.columns].copy()
-        pd_point = merged[col_point].to_numpy(dtype=float)
-        pd_low = merged[col_low].to_numpy(dtype=float)
-        pd_high = merged[col_high].to_numpy(dtype=float)
-        logger.info(
-            f"Aligned candidates and intervals by id: n={len(aligned_loans):,} "
-            f"(candidate_rows={len(candidates):,}, interval_rows={len(intervals):,})"
-        )
-        return aligned_loans, pd_point, pd_low, pd_high
-
-    # Legacy fallback where interval artifact has no stable key.
-    logger.warning(
-        "Conformal interval artifact has no id alignment key; using positional fallback for optimization."
+    logger.info(
+        "Aligned candidates and intervals by {}: n={:,} "
+        "(alignable_rows={:,}, candidate_rows={:,}, interval_rows={:,})",
+        aligned.mode,
+        aligned.selected_rows,
+        aligned.available_rows,
+        len(candidates),
+        len(intervals),
     )
-    aligned_loans = candidates.head(base_n).reset_index(drop=True).copy()
-    ints = intervals.head(base_n).reset_index(drop=True)
-    pd_point = ints[col_point].to_numpy(dtype=float)
-    pd_low = ints[col_low].to_numpy(dtype=float)
-    pd_high = ints[col_high].to_numpy(dtype=float)
-    return aligned_loans, pd_point, pd_low, pd_high
+    return (
+        aligned.candidates,
+        aligned.intervals[col_point].to_numpy(dtype=float),
+        aligned.intervals[col_low].to_numpy(dtype=float),
+        aligned.intervals[col_high].to_numpy(dtype=float),
+    )
 
 
 def main(
@@ -188,7 +170,7 @@ def main(
     )
     write_runtime_status(stage_name, phase="optimization_complete", state="running")
 
-    allocation = np.array([solution["allocation"][i] for i in range(n)], dtype=float)
+    allocation = solution_allocation_vector(solution, n)
     loan_amounts = (
         test_sample["loan_amnt"].to_numpy(dtype=float)
         if "loan_amnt" in test_sample.columns

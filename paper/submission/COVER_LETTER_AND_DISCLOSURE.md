@@ -1,85 +1,86 @@
 # IJDS Cover Letter and Disclosure Draft
 
-This file is for the editor-facing submission package. It is not part of the
-double-anonymous reviewer packet unless the submission system explicitly asks
-for the corresponding disclosure fields.
+Editor-facing material only. Do not include it in the double-anonymous reviewer
+packet unless ScholarOne requests the corresponding disclosure text.
 
-## Cover Letter Core Paragraph
+## Cover Letter
 
 Dear Editors,
 
-We submit "CRPTO: Conformal Robust Predict-Then-Optimize for Auditable Credit
-Portfolio Decisions" for consideration at the INFORMS Journal on Data Science.
-The paper studies credit allocation as data science for decisions rather than
-as a predictive leaderboard. Its data component is a static Lending Club
-out-of-time panel, supported by frozen Prosper and Freddie/Mendeley external
-economic replications. Its method maps a frozen calibrated probability-of-default
-artifact through Mondrian conformal intervals into a robust portfolio decision.
-Its decision object is the funded set under a budget and risk cap, and its main
-implication is an auditable model-risk surface: the promoted Lending Club body
-point earns `$184.8K` on a `$1M` budget while passing an exact empirical
-alpha-grid funded-set audit, and the declared pool93 finite-grid frontier
-contains 50,010 deduplicated semantic policies with 27,508 all-alpha
-above-floor policies.
-An opt-in drift harness verifies that the prediction-to-decision certificate
-chain regenerates bit-exactly from the frozen artifacts under the locked stack.
-The contribution is intended for settings where decision auditability,
-reproducibility, and model-risk governance matter as much as predictive rank.
+We submit "CRPTO: A Calibration-Selected Conformal Guardrail for Credit
+Portfolios" for consideration at the *INFORMS Journal on Data Science*. The
+paper treats credit allocation as data science for decisions,
+not as a credit-scoring leaderboard. A frozen calibrated PD model is combined
+with an exactly replayed 90% Mondrian conformal endpoint. The resulting
+midpoint score, `q=(p+u)/2`, constrains a `$1M` portfolio while point PD remains
+in the expected-return objective.
+
+The final policy is selected from nine round-number candidates on November
+2017 using a deterministic endpoint cap. Outcomes are stored separately from
+its 12-column ranking frame, which contains no assumption-conditional
+statistics. An outcome-free December replay selects the same rule; opening
+outcomes afterward reveals
+miscoverage `0.124925`, so the paper explicitly does not infer selected-set
+validity from policy stability. On 276,869 out-of-time Lending Club loans, the
+fixed policy earns `$179,327.59`, with weighted default `0.039375`.
+A matched point-PD allocation earns `$196,369.14` with weighted default
+`0.118400`. The paper reports both the `8.678%` return cost and the `7.9025`
+percentage-point default reduction, together with temporal periods in which
+the point-PD decision performs better. We therefore position CRPTO as an
+auditable retrospective return-risk guardrail, not as a universal winner or
+prospective deployment guarantee.
+
+The submission contributes an explicit prediction-to-decision contract, an
+exact conformal replay, a temporally separated selector/audit, matched economic
+comparisons, and a file-backed reproducibility package. These features align
+with IJDS's emphasis on data, innovative methodology, decision relevance, and
+reproducible evidence.
+
+Sincerely,
+
+[Author details supplied separately]
 
 ## Data and Code Availability
 
-The submission body and supplement are double-anonymous. During review, the
-manuscript refers to a reproducible companion package without exposing
-author-identifying URLs. The submission will complete the IJDS Data and Code
-Disclosure Form and acknowledge the accepted-paper reproducibility workflow.
-After the venue permits disclosure, the companion can include:
+The body and supplement are double-anonymous. During review they refer to a
+reproducible companion without exposing author-identifying URLs. The IJDS Data
+and Code Disclosure Form will state that, when venue policy permits, the
+companion includes:
 
-- public source code and Quarto manuscript sources;
-- DVC metadata and pointers for processed artifacts and frozen model files;
-- MLflow/DagsHub lineage for the CRPTO runs, subject to credential-free access
-  rules;
-- raw-data source instructions from `RAW_DATA_SOURCE_NOTES.md` rather than
-  redistributed raw CSVs when source terms or file size make rehosting
-  inappropriate;
-- Prosper and Freddie/Mendeley source notes for the external replication layer;
-- the frozen extraction manifest and guardrail tests used to verify the
-  promoted frontier;
-- the drift harness that recomputes the conformal interval and certificate
-  chain from frozen PD artifacts with zero endpoint drift under the locked stack;
-- commands for regenerating paper tables, figures, HTML previews, and local
-  IJDS PDF verification drafts.
+- source code, configurations, and manuscript sources;
+- A35--A40 evidence tables and active governance metadata;
+- DVC metadata and artifact pointers for large processed data and model files;
+- source instructions for Lending Club, Prosper, and Freddie/Mendeley data
+  rather than unauthorized redistribution;
+- exact-alpha and calibration-selector replay commands;
+- manifest, claim-sync, and publication-integrity tests;
+- commands for regenerating tables, previews, and the official-template PDF.
 
-No secrets, tokens, private DVC credentials, or local machine paths should be
-included in the reviewer packet.
+No secrets, tokens, private storage credentials, local usernames, or machine
+paths belong in the reviewer package.
 
-If ScholarOne asks for the disclosure option in prose, the intended answer is:
-code and manuscript sources will be released at acceptance; raw data are
-public-source or source-controlled and therefore disclosed through source
-instructions plus DVC pointers/processed artifacts when the journal workflow and
-source terms permit.
+Suggested ScholarOne prose:
 
-## Double-Anonymous Handling
+> Code, configurations, manuscript sources, and evidence-generation scripts
+> will be released under the journal's accepted-paper reproducibility process.
+> Public-source raw data are disclosed through source instructions; large or
+> license-constrained artifacts are provided through documented pointers and
+> integrity hashes where redistribution terms permit.
 
-- Upload `paper/CRPTO_ijds.pdf` as the local body preview only if the official
-  template PDF is not yet required.
-- Upload `paper/supplement_ijds.pdf` as the local supplement preview only if
-  the official workflow accepts HTML-print verification drafts.
-- Keep public repository, DagsHub, MLflow, personal site, affiliation, and
-  author-identifying acknowledgements out of reviewer-facing files.
-- Use this file or the submission system fields for disclosure timing, not the
-  anonymous manuscript body.
+## Anonymity Handling
 
-## Editorial Fit
+- Upload the `informs4` PDF built with `dblanonrev` as the manuscript.
+- Upload the anonymous supplement separately.
+- Keep the title page, affiliation, acknowledgements, repository ownership,
+  and personal URLs outside reviewer-facing files.
+- Use this file and ScholarOne fields for editor-only disclosure timing.
 
-The paper is positioned as data science for decisions: conformal prediction is
-not only an uncertainty report, and robust optimization is not only a portfolio
-heuristic. The central object is an executable, auditable decision recipe whose
-numbers are backed by frozen artifacts, manifest regression tests, and
-submission-ready tables and figures.
+## Editorial Boundary
 
-The highest-risk interpretive boundary is also stated explicitly in the paper:
-the Lending Club exact funded-set certificate is an exact accounting audit on
-the frozen promoted portfolio under a declared weighted-validity assumption. The
-Prosper and Freddie/Mendeley results are external economic replications and
-exhaustiveness audits, not new exact funded-set certificates or prospective live
-deployment guarantees.
+The final ranking code is outcome-free with respect to OOT policy selection,
+but earlier project development inspected the static OOT corpus. The manuscript
+therefore says "retrospective lockbox replay," not "preregistered" or
+"untouched holdout." Marginal/Mondrian coverage is not promoted to nominal
+validity under optimizer-selected funded weights. OCE/CVaR, SPO+, online-style
+checks, and external datasets remain diagnostics or context rather than
+additional active methods.

@@ -1,12 +1,24 @@
 from __future__ import annotations
 
 import pandas as pd
+import pytest
 
 from scripts.search.run_portfolio_bound_aware_search import (
     _aggregate_exact_results,
+    _budget_profiles,
+    _build_grid_spec,
+    _build_parser,
     _build_stratified_shortlist,
     _policy_semantic_key,
+    _resolve_run_paths,
+    _sanitize_run_label,
+    _search_space_payload,
+    _selection_context_payload,
     _targeted_policy_grid,
+)
+from src.optimization.certificate_semantics import (
+    IJDS_DECLARED_ALPHA_GRID,
+    IJDS_DECLARED_ALPHA_GRID_CSV,
 )
 
 
@@ -227,3 +239,113 @@ def test_targeted_policy_grid_includes_segment_tail_families() -> None:
         "segment_tail_blended_uncertainty",
         "segment_relative_tail_blended_uncertainty",
     }
+    assert grid == [
+        ("blended_uncertainty", 0.5, 1.0, 1.0),
+        ("capped_blended_uncertainty", 0.5, 0.75, 1.0),
+        ("tail_blended_uncertainty", 0.5, 1.0, 0.9),
+        ("segment_tail_blended_uncertainty", 0.5, 1.0, 0.9),
+        ("segment_relative_tail_blended_uncertainty", 0.5, 1.0, 0.9),
+    ]
+
+
+def test_budget_profiles_are_explicit_and_reject_unknown_tokens() -> None:
+    profiles = _budget_profiles("free,floored")
+
+    assert [profile["name"] for profile in profiles] == ["free_budget", "floored_budget"]
+    assert profiles[0]["min_budget_utilization"] == 0.0
+    assert profiles[1]["pd_cap_slack_penalty"] == 1.5
+    with pytest.raises(ValueError, match="Unsupported budget profile"):
+        _budget_profiles("free,aggressive")
+
+
+def test_bound_aware_default_uses_declared_ijds_alpha_grid() -> None:
+    args = _build_parser().parse_args(["--conformal-intervals-path", "intervals.parquet"])
+
+    assert args.alpha_grid == IJDS_DECLARED_ALPHA_GRID_CSV
+
+
+def test_grid_spec_separates_proxy_and_exact_sampling_contracts() -> None:
+    args = _build_parser().parse_args(
+        [
+            "--conformal-intervals-path",
+            "intervals.parquet",
+            "--risk-grid",
+            "0.16,0.17",
+            "--random-states",
+            "42,52",
+            "--exact-random-states",
+            "62,72,82",
+            "--max-candidates",
+            "5000",
+            "--exact-max-candidates",
+            "0",
+        ]
+    )
+
+    grid = _build_grid_spec(args)
+
+    assert grid.random_states == [42, 52]
+    assert grid.exact_random_states == [62, 72, 82]
+    assert grid.exact_max_candidates == 0
+    assert grid.alpha_grid == list(IJDS_DECLARED_ALPHA_GRID)
+    assert grid.bound_total_checks(shortlist_size=5) == 5 * 8 * 3
+    assert grid.frontier_total_units == 2 * 2 * (1 + grid.policy_grid_count)
+
+
+def test_selection_context_payload_keeps_frontier_and_exact_paths_together(tmp_path) -> None:
+    args = _build_parser().parse_args(
+        [
+            "--conformal-intervals-path",
+            str(tmp_path / "intervals.parquet"),
+            "--run-label",
+            "unit/run",
+            "--output-dir",
+            str(tmp_path / "out"),
+            "--model-dir",
+            str(tmp_path / "model"),
+            "--random-states",
+            "42,52",
+            "--exact-random-states",
+            "42",
+            "--policy-modes",
+            "blended_uncertainty",
+        ]
+    )
+    run_label = _sanitize_run_label(args.run_label)
+    paths = _resolve_run_paths(args, run_label=run_label)
+    search_space = _search_space_payload(
+        args=args,
+        risk_values=[0.16],
+        aversion_values=[0.0],
+        gamma_values=[0.5],
+        delta_cap_quantiles=[1.0],
+        tail_focus_quantiles=[1.0],
+        budget_profiles=_budget_profiles(args.budget_profiles),
+        alpha_grid=[0.01],
+        random_states=[42, 52],
+        exact_random_states=[42],
+        exact_max_candidates=0,
+        policy_modes=["blended_uncertainty"],
+        cuopt_parameters={"method": "concurrent"},
+        incumbent_risk_neighbors=[0.16],
+        incumbent_gamma_neighbors=[0.5],
+        incumbent_policy_modes=["blended_uncertainty"],
+    )
+
+    context = _selection_context_payload(
+        args=args,
+        paths=paths,
+        run_label=run_label,
+        search_space=search_space,
+        exact_max_candidates=0,
+        random_states=[42, 52],
+        exact_random_states=[42],
+        alpha_grid=[0.01],
+    )
+
+    assert run_label == "unit_run"
+    assert context["search_space"]["random_states"] == [42, 52]
+    assert context["search_space"]["exact_random_states"] == [42]
+    assert context["shortlist_path"] == str(paths.shortlist_path)
+    assert context["selection_path"] == str(paths.selection_path)
+    assert context["resource_snapshot_path"] == str(paths.resource_path)

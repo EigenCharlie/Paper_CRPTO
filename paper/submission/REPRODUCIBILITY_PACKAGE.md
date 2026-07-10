@@ -1,143 +1,111 @@
 # IJDS Reproducibility Package Plan
 
-IJDS requires the Data and Code Disclosure Form at submission and expects
-accepted computational papers to upload data/code and complete the journal's
-reproducibility workflow unless an exemption applies. CRPTO can satisfy this
-without exposing secrets, private credentials, local paths, or
-author-identifying repository URLs during double-anonymous review.
-
 Official policy: <https://pubsonline.informs.org/page/ijds/data-and-code-disclosure-policy>
+
+CRPTO can support accepted-paper reproduction without exposing credentials,
+local paths, or author identity during double-anonymous review.
 
 ## Disclosure Timing
 
-| Stage | What to disclose | What to withhold |
+| Stage | Disclose | Withhold |
 |---|---|---|
-| Initial double-anonymous submission | Neutral description of the companion package, data sources, DVC-style artifact validation, and code/data availability timing. | Public GitHub/DagsHub URLs, author identity, local paths, secrets, tokens. |
-| If editors request verification during review | An anonymized archive or controlled access bundle with source, tables, figures, tests, and non-identifying artifact metadata. | Credentials, raw private data, non-anonymized remotes. |
-| Acceptance | Public source repository, reproducibility commands, DVC pointers or downloadable processed artifacts where permitted, raw-data acquisition instructions, manifest hashes, and final rendered outputs. | Secrets and any data redistribution prohibited by source licenses. |
+| Initial submission | Neutral package description, source-data availability, and release timing. | Repository ownership, personal URLs, local paths, secrets. |
+| Editor-requested verification | Anonymized source, A35--A40, tests, and sanitized artifact metadata. | Credentials, private remotes, non-anonymous provenance. |
+| Acceptance | Public source, environment lock, data instructions, artifact pointers/hashes, and final outputs. | Secrets and data prohibited from redistribution. |
 
 ## Package Contents
 
-| Component | Files/directories | Purpose |
+| Component | Files | Purpose |
 |---|---|---|
-| Source code | `src/`, `scripts/`, `tests/`, `pyproject.toml`, `uv.lock`, `justfile`. | Rebuild tables, figures, journal package, and validation checks. |
-| Manuscript | `paper/CRPTO_ijds.qmd`, `paper/supplement_ijds.qmd`, `paper/submission/`. | Reproduce body, supplement, and submission surfaces. |
-| Frozen evidence | `EXTRACTION_MANIFEST.json`, `models/*.json`, `reports/crpto/tables/`, `reports/crpto/figures/`. | Tie claims to immutable metrics and rendered evidence. |
-| Data pointers | `.dvc/`, `dvc.yaml`, `dvc.lock`, DVC remote notes. | Retrieve or verify processed artifacts outside Git. |
-| Raw-data instructions | `RAW_DATA_SOURCE_NOTES.md`. | Let readers reconstruct inputs without committing raw CSVs or credentials. |
-| Guardrails | `just smoke`, `just validate-champion`, publication target tests, DVC status. | Confirm reproducibility without rerunning protected search stages. |
+| Environment | `pyproject.toml`, `uv.lock`, `justfile`. | Recreate the Windows-first toolchain. |
+| Method source | `src/models/conformal_alpha_grid.py`, `src/optimization/`, active experiment scripts. | Replay exact intervals and solve declared policies. |
+| Active config | `configs/experiments/champion_reopen_ijds_calibration_selected_endpoint28_v7.yaml`. | Fix alpha, split 3x3 selector/audit, endpoint cap, and solver settings. |
+| Active evidence | A35--A40 CSV/TeX files and `ijds_policy_governance.json`. | Tie every paper claim to generated evidence. |
+| Manuscript | body QMD, supplement QMD, official TeX. | Reproduce reviewer-facing surfaces. |
+| Data pointers | `dvc.yaml`, `dvc.lock`, `.dvc/`, raw-data notes. | Retrieve large artifacts where terms permit. |
+| Guardrails | active claim sync, publication integrity, manifest regression. | Detect narrative or historical artifact drift. |
 
-## Accepted-Paper Reproduction Commands
+## Active Artifact Contract
+
+| Evidence | Path |
+|---|---|
+| Exact alpha grid | `data/processed/experiments/champion_reopen/<exact-run>/conformal/exact_alpha_grid.parquet` |
+| Calibration selector | `data/processed/experiments/champion_reopen/<active-run>/portfolio/calibration_policy_selection_grid.parquet` |
+| Calibration audit grid | `data/processed/experiments/champion_reopen/<active-run>/portfolio/calibration_policy_audit_grid.parquet` |
+| Calibration decision audit | `data/processed/experiments/champion_reopen/<active-run>/portfolio/calibration_policy_holdout_audit.csv` |
+| OOT evaluation | `data/processed/experiments/champion_reopen/<active-run>/portfolio/calibration_selected_policy_oot_evaluation.csv` |
+| Funded rows | `data/processed/experiments/champion_reopen/<active-run>/portfolio/calibration_selected_policy_full_oot_allocations.parquet` |
+| Governance | `models/experiments/champion_reopen/<active-run>/portfolio/ijds_policy_governance.json` |
+| Paper tables | `reports/crpto/tables/crpto_tableA35...A40_*` |
+
+Active run:
+`champion-reopen-2026-06-19__pool93__ijds-calibration-selected-endpoint28-v7`.
+
+Exact-alpha run:
+`champion-reopen-2026-06-19__pool93__ijds-exact-alpha-grid-v1`.
+
+The active policy evidence is intentionally separate from the manifest-protected
+historical bundle. `tests/test_ijds_active_claim_sync.py` guards the submitted
+claim; `tests/test_manifest_regression.py` guards frozen provenance. The
+manifest is not rewritten to make a manuscript update look historical.
+
+## Reproduction Commands
+
+Paper-facing reproduction from frozen experiment outputs:
 
 ```powershell
 just setup-base
-just smoke
-just validate-champion
-just tables
-just figures
-just evidence
-just journal-package
+just ijds-evidence
+uv run pytest tests/test_ijds_active_claim_sync.py -q
 just paper-submission
-just paper-submission-pdf
+just paper-submission-official
+just validate-champion
 ```
 
-Official IJDS-template PDF build, after `paper/submission/CRPTO_ijds_submission.tex`
-is synchronized:
+Full isolated methodology replay:
+
+```powershell
+just ijds-active-replay
+```
+
+The full replay recomputes the exact alpha grid, solves the nine policies on
+November and December, opens December outcomes only for the independent audit,
+evaluates the frozen selected policy, and rebuilds A35--A40. It writes only to
+versioned experiment paths and does not overwrite the frozen PD model,
+calibrator, historical intervals, or manifest.
+
+Official-template compilation is automated by:
+
+```powershell
+just paper-submission-official
+```
+
+Manual Windows fallback:
 
 ```powershell
 cd paper/submission
-latexmk -pdf -gg -interaction=nonstopmode CRPTO_ijds_submission.tex
-```
-
-PowerShell/TinyTeX fallback proven in the local Codex environment:
-
-```powershell
-cd paper/submission
+if (-not $env:WINDIR) { $env:WINDIR = $env:SystemRoot }
 pdflatex -interaction=nonstopmode -halt-on-error CRPTO_ijds_submission.tex
 bibtex CRPTO_ijds_submission
 pdflatex -interaction=nonstopmode -halt-on-error CRPTO_ijds_submission.tex
 pdflatex -interaction=nonstopmode -halt-on-error CRPTO_ijds_submission.tex
 ```
 
-Artifact-aware DVC verification, when credentials or public artifact access are
-available:
+## Data and Artifact Boundary
 
-```powershell
-uv run dvc status --no-updates
-uv run dvc status -c -r dagshub
-```
+- Lending Club, Prosper, and Freddie/Mendeley raw data are distributed through
+  their original sources, not copied into Git.
+- Large processed parquet and model binaries use DVC or journal-approved
+  artifact delivery when source terms permit.
+- `EXTRACTION_MANIFEST.json` verifies the historical upstream bundle.
+- Review-stage copies of DVC/configuration metadata must remove repository
+  ownership, remote URLs, credentials, and absolute local paths.
+- If a remote is unavailable, provide journal-approved processed artifacts plus
+  hashes, schema/source notes, and the commands above.
 
-## Pool93 Body-Claim Artifacts
+## Non-Routine Stages
 
-The paper body point (A35 "Body/default balanced point") and its frontier come
-from the pool93 champion-reopen experiments, generated *outside* the DVC DAG by
-deterministic re-evaluation of a pre-declared finite policy grid over the
-frozen Mondrian conformal intervals. The package therefore includes, verbatim
-and frozen:
-
-| Artifact | Path | Role |
-|---|---|---|
-| A35 frontier | `reports/crpto/tables/crpto_tableA35_pool93_ijds_frontier.csv` (+ `.tex`) | Consolidated return-bound frontier; body point row. |
-| A36 grade audit | `reports/crpto/tables/crpto_tableA36_pool93_body_funded_grade_audit.csv` (+ `.tex`) | Funded-set grade composition of the body allocation. |
-| A37 tail risk | `reports/crpto/tables/crpto_tableA37_pool93_body_tail_risk.csv` (+ `.tex`) | LGD-grid repricing and CVaR/OCE diagnostics. |
-| A38 cluster bounds | `reports/crpto/tables/crpto_tableA38_pool93_body_cluster_bound_audit.csv` (+ `.tex`) | Cluster-aware Hoeffding sensitivity. |
-| A39 bootstrap | `reports/crpto/tables/crpto_tableA39_pool93_body_bootstrap_metrics.csv` (+ `.tex`) | 5,000-draw fixed-allocation bootstrap intervals. |
-| Terminal claim governance | `models/experiments/champion_reopen/champion-reopen-2026-06-19__pool93__ijds-claim-bound-terminal/portfolio/pool93_ijds_claim_governance.json` | Declared return floor, claim hierarchy, do-not-claim list. |
-| Consolidated governance | `models/experiments/champion_reopen/champion-reopen-2026-06-19__pool93__ijds-claim-consolidated-definitive/portfolio/pool93_ijds_consolidated_governance.json` | Authoritative body-point metrics and frontier counts. |
-
-Run tags: terminal `champion-reopen-2026-06-19__pool93__ijds-claim-bound-terminal`;
-consolidated `champion-reopen-2026-06-19__pool93__ijds-claim-consolidated-definitive`.
-Their hashes are pinned in `EXTRACTION_MANIFEST.json` and enforced by
-`tests/test_manifest_regression.py`; body-claim consistency with the manuscript
-is enforced by `tests/test_pool93_body_claim_sync.py`. These artifacts are not
-regenerated by `just tables`/`just figures` (which rebuild only the
-rebaseline-chain tables); they ship as frozen evidence.
-
-Anonymity note: the governance JSONs embed absolute local paths in their
-`source_paths`/`runtime_status` blocks. Copies shipped inside any
-review-stage or accepted-paper archive must be path-sanitized (or the fields
-dropped); the in-repo originals stay hash-frozen.
-
-## Hash and DVC Boundary
-
-- `EXTRACTION_MANIFEST.json` is the source of truth for protected artifact
-  hashes; `just validate-champion` runs the manifest regression tests.
-- DVC metadata (`dvc.yaml`, `dvc.lock`, `.dvc/`) records large data/model
-  dependencies and outputs without placing raw CSVs, processed parquet files, or
-  model binaries in Git.
-- The accepted-paper archive may include processed/model artifacts directly only
-  if the journal workflow and source-data terms permit it. Otherwise it should
-  include DVC pointers, source acquisition notes, and the commands above.
-- Review-stage archives must sanitize author-local paths and repository remotes
-  if they are sent before acceptance.
-
-## Review-Stage DVC Sanitization Checklist
-
-Before sending any reviewer-facing archive or editor-requested verification
-bundle, inspect and sanitize:
-
-- `.dvc/config`: remove or replace the configured `dagshub` remote name,
-  endpoint URL, account/repository slug, and any credential-dependent remote
-  settings.
-- `dvc.lock`: keep stage dependency/output hashes, but inspect text fields for
-  author-local paths or non-anonymous remote references before packaging.
-- Governance JSONs under `models/experiments/champion_reopen/`: drop or redact
-  `source_paths`, `runtime_status`, and any absolute `C:\Users\...` values in
-  the copy sent for review. Do not edit the in-repo originals because their
-  hashes are frozen.
-- Submission docs: keep source instructions and DVC-style validation language,
-  but avoid public GitHub, DagsHub, MLflow, personal, affiliation, or local
-  machine URLs until the journal workflow allows disclosure.
-
-If the DVC remote is unavailable during acceptance checks, the contingency is to
-provide journal-approved processed artifacts or model files, plus
-`EXTRACTION_MANIFEST.json`, `dvc.lock`, raw-data acquisition notes, and the
-paper-export commands above so reviewers can verify the paper-facing surfaces.
-
-## Non-Rerunnable Stages
-
-The following stages are not part of routine reproduction because they would
-change the frozen champion or reopen the protected search:
+The active reproduction does not run protected upstream stages:
 
 ```text
 crpto.pd.champion
@@ -147,15 +115,15 @@ crpto.portfolio.optimization
 crpto.portfolio.bound_exact_eval
 ```
 
-Paper-facing exports are safe because they consume frozen inputs. Any protected
-rerun requires a new branch, drift report, and explicit decision to create a new
-run tag.
+Those stages would retrain, rewrite frozen artifacts, or reopen historical
+search. Any such run requires a distinct tag and drift report.
 
-## Data-License Strategy
+## Acceptance Checklist
 
-The current plan is to publish code, derived tables/figures, manifest hashes,
-and instructions for obtaining the raw public datasets. Processed artifacts and
-models should be provided through DVC or a journal-approved supplement only when
-source licenses and file sizes permit. If a dataset cannot be redistributed, the
-package should include enough source instructions, schema notes, and commands for
-a reader to rebuild comparable artifacts from legally obtained data.
+1. Build in the locked `uv` environment.
+2. Rebuild A35--A40 and run active claim sync.
+3. Validate historical manifest hashes.
+4. Compile and visually inspect the official PDF and supplement.
+5. Sanitize author identity and local paths in the review archive.
+6. Publish source-data acquisition instructions and artifact hashes.
+7. Record any unavoidable platform-level numerical differences explicitly.

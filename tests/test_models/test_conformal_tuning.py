@@ -385,6 +385,65 @@ class TestShrinkGroupMultipliers:
         assert all(f <= 1.20 for f in shrunk_group_factors.values())
         assert shrunk_temporal_factors == {}
 
+    def test_temporal_factors_shrink_when_base_intervals_are_feasible(self):
+        n = 48
+        y_pred = np.full(n, 0.50)
+        y_true = np.full(n, 0.50)
+        base_intervals = np.column_stack([np.full(n, 0.45), np.full(n, 0.55)])
+        groups = np.array(["A"] * n)
+        temporal_segments = np.array(["early"] * (n // 2) + ["late"] * (n // 2))
+        issue_dates = pd.Series(pd.date_range("2024-01-01", periods=n, freq="D"))
+
+        widened, group_factors, temporal_factors, report = shrink_group_multipliers(
+            y_true=y_true,
+            y_pred=y_pred,
+            base_intervals=base_intervals,
+            groups=groups,
+            issue_dates=issue_dates,
+            group_factors=None,
+            temporal_segments=temporal_segments,
+            temporal_factors={"early": 1.20, "late": 1.20},
+            target_coverage=0.90,
+            min_group_coverage_target=0.88,
+            temporal_multiplier_grid=(1.0, 1.20),
+        )
+
+        accepted_temporal = report[
+            (report["stage"] == "accepted") & (report["factor_scope"] == "temporal")
+        ]
+
+        assert np.allclose(widened, base_intervals)
+        assert group_factors == {}
+        assert temporal_factors == {}
+        assert set(accepted_temporal["factor_key"]) == {"early", "late"}
+
+    def test_returns_initial_infeasible_report_without_shrinking(self):
+        n = 20
+        y_pred = np.full(n, 0.50)
+        y_true = np.full(n, 0.95)
+        base_intervals = np.column_stack([np.full(n, 0.45), np.full(n, 0.55)])
+        groups = np.array(["A"] * (n // 2) + ["B"] * (n // 2))
+        issue_dates = pd.Series(pd.date_range("2024-01-01", periods=n, freq="D"))
+
+        _widened, group_factors, temporal_factors, report = shrink_group_multipliers(
+            y_true=y_true,
+            y_pred=y_pred,
+            base_intervals=base_intervals,
+            groups=groups,
+            issue_dates=issue_dates,
+            group_factors={"A": 1.20},
+            temporal_segments=None,
+            temporal_factors=None,
+            target_coverage=0.90,
+            min_group_coverage_target=0.88,
+            group_multiplier_grid=(1.0, 1.20),
+        )
+
+        assert report["stage"].tolist() == ["initial", "initial_infeasible"]
+        assert report["accepted"].tolist() == [True, False]
+        assert group_factors == {"A": 1.20}
+        assert temporal_factors == {}
+
 
 # ---------------------------------------------------------------------------
 # to_python_scalar

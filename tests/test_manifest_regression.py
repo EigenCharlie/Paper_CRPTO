@@ -50,6 +50,15 @@ PROTECTED_CHAMPION_FILES = (
     "models/experiments/champion_reopen/"
     "champion-reopen-2026-06-19__pool93__ijds-claim-consolidated-definitive/"
     "portfolio/pool93_ijds_consolidated_governance.json",
+    "models/experiments/champion_reopen/"
+    "champion-reopen-2026-06-19__pool93__ijds-certificate-semantics-v2/"
+    "portfolio/pool93_ijds_consolidated_frontier.json",
+    "models/experiments/champion_reopen/"
+    "champion-reopen-2026-06-19__pool93__ijds-certificate-semantics-v2/"
+    "portfolio/pool93_ijds_consolidated_governance.json",
+    "models/experiments/champion_reopen/"
+    "champion-reopen-2026-06-19__pool93__ijds-certificate-semantics-v2/"
+    "portfolio/pool93_point_pd_baseline_audit.json",
 )
 
 

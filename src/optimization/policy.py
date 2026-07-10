@@ -10,6 +10,10 @@ into the canonical :class:`PolicyMode` value.
 from __future__ import annotations
 
 from enum import StrEnum
+from typing import cast
+
+import numpy as np
+import pandas as pd
 
 
 class PolicyMode(StrEnum):
@@ -79,3 +83,44 @@ def resolve_policy_mode(value: str | PolicyMode | None) -> PolicyMode:
 def all_policy_modes() -> tuple[PolicyMode, ...]:
     """Tuple of all canonical policy modes — useful for parametrised tests and sweeps."""
     return tuple(PolicyMode)
+
+
+_SEGMENT_POLICY_MODES = frozenset(
+    {
+        PolicyMode.SEGMENT_TAIL_BLENDED_UNCERTAINTY,
+        PolicyMode.SEGMENT_RELATIVE_TAIL_BLENDED_UNCERTAINTY,
+    }
+)
+
+
+def policy_uses_segment_labels(value: str | PolicyMode | None) -> bool:
+    """Return whether a policy requires contextual segment labels."""
+    return resolve_policy_mode(value) in _SEGMENT_POLICY_MODES
+
+
+def policy_segment_labels(
+    loans: pd.DataFrame,
+    policy_mode: str | PolicyMode | None,
+    *,
+    grade_column: str = "grade",
+) -> np.ndarray | None:
+    """Build the canonical grade/term/verification labels for segment policies.
+
+    Non-segment policies return ``None``. Missing context columns are represented
+    by ``"unknown"`` so all optimization entrypoints use the same fallback.
+    """
+    if not policy_uses_segment_labels(policy_mode):
+        return None
+
+    def _labels(column: str) -> pd.Series:
+        if column not in loans.columns:
+            return pd.Series("unknown", index=loans.index, dtype="string")
+        return loans[column].fillna("unknown").astype(str)
+
+    grade = _labels(grade_column)
+    term = _labels("term")
+    verification = _labels("verification_status")
+    return cast(
+        np.ndarray,
+        (grade + "|" + term + "|" + verification).to_numpy(dtype=object),
+    )

@@ -4,13 +4,19 @@ import pytest
 
 import scripts.generate_conformal_intervals as conformal_script
 from scripts.generate_conformal_intervals import (
+    _apply_global_rebalance,
+    _apply_learned_floor_policy,
+    _build_conformal_artifact_tables,
     _build_tuning_split,
+    _can_use_temporal_segments,
     _parse_bool_tuple,
     _parse_float_tuple,
     _parse_int_tuple,
     _parse_str_tuple,
     _resolve_tuning_grid,
+    _select_alpha_95,
     _select_best_tuning_config,
+    _tuning_total_candidates,
 )
 
 
@@ -77,6 +83,27 @@ def test_resolve_tuning_grid_uses_current_defaults_for_empty_inputs() -> None:
     assert grid.scaled_scores_options == ()
 
 
+def test_tuning_total_candidates_counts_cartesian_grid() -> None:
+    grid = _resolve_tuning_grid(
+        partition="grade",
+        partition_candidates=("grade", "score_bin"),
+        partition_probability_sources=("raw",),
+        n_score_bins_candidates=(5, 10),
+        fallback_modes=("global",),
+        score_scale_families=("none",),
+        scaled_scores_options=(True, False),
+    )
+
+    assert (
+        _tuning_total_candidates(
+            grid,
+            alpha_candidates_90=(0.10, 0.09),
+            min_group_sizes=(200, 500),
+        )
+        == 32
+    )
+
+
 def test_build_tuning_split_materializes_fit_and_holdout(
     monkeypatch: pytest.MonkeyPatch,
 ) -> None:
@@ -125,6 +152,145 @@ def test_build_tuning_split_materializes_fit_and_holdout(
     assert split.issue_test.isna().tolist() == [False, True]
 
 
+def test_apply_global_rebalance_disabled_preserves_current_metrics() -> None:
+    y_int = conformal_script.np.array([[0.1, 0.4], [0.2, 0.7]])
+    metrics = {"empirical_coverage": 0.9}
+    group_metrics = conformal_script.pd.DataFrame({"group": ["A"], "coverage": [0.9]})
+
+    result = _apply_global_rebalance(
+        enabled=False,
+        min_factor=0.75,
+        max_factor=1.05,
+        step=0.01,
+        y_int_tune_working=y_int,
+        y_pred_tune=conformal_script.np.array([0.25, 0.45]),
+        y_tune=conformal_script.pd.Series([0.0, 1.0]),
+        y_int_90=y_int,
+        y_pred_90=conformal_script.np.array([0.25, 0.45]),
+        y_eval_90=conformal_script.pd.Series([0.0, 1.0]),
+        group_tune=conformal_script.pd.Series(["A", "B"]),
+        eval_groups_90=conformal_script.pd.Series(["A", "B"]),
+        alpha_target_90=0.10,
+        target_coverage_90=0.90,
+        min_group_coverage_target=0.88,
+        metrics_90=metrics,
+        group_metrics_90=group_metrics,
+    )
+
+    assert result.y_intervals is y_int
+    assert result.metrics is metrics
+    assert result.group_metrics is group_metrics
+    assert result.factor == 1.0
+    assert result.diagnostics == {"enabled": False, "applied": False}
+
+
+def test_can_use_temporal_segments_requires_enabled_dates_and_matching_lengths() -> None:
+    issue_dates = conformal_script.pd.Series(["2020-01-01", "2020-02-01"])
+    groups = conformal_script.pd.Series(["A", "B"])
+
+    assert _can_use_temporal_segments(
+        enabled=True,
+        issue_tune=issue_dates,
+        eval_issue=issue_dates,
+        group_tune=groups,
+        eval_groups=groups,
+    )
+    assert not _can_use_temporal_segments(
+        enabled=False,
+        issue_tune=issue_dates,
+        eval_issue=issue_dates,
+        group_tune=groups,
+        eval_groups=groups,
+    )
+    assert not _can_use_temporal_segments(
+        enabled=True,
+        issue_tune=conformal_script.pd.Series([None, None]),
+        eval_issue=issue_dates,
+        group_tune=groups,
+        eval_groups=groups,
+    )
+    assert not _can_use_temporal_segments(
+        enabled=True,
+        issue_tune=issue_dates,
+        eval_issue=issue_dates,
+        group_tune=groups,
+        eval_groups=conformal_script.pd.Series(["A"]),
+    )
+
+
+def test_apply_learned_floor_policy_applies_group_temporal_and_global_factors() -> None:
+    adjusted = _apply_learned_floor_policy(
+        y_pred=conformal_script.np.array([0.5, 0.5]),
+        y_intervals=conformal_script.np.array([[0.4, 0.6], [0.4, 0.6]]),
+        groups=conformal_script.pd.Series(["A", "B"]),
+        group_multipliers={"A": 2.0},
+        temporal_segments=conformal_script.pd.Series(["A|2020Q1", "B|2020Q1"]),
+        temporal_segment_multipliers={"B|2020Q1": 3.0},
+        global_rebalance_factor=0.5,
+    )
+
+    conformal_script.np.testing.assert_allclose(
+        adjusted,
+        conformal_script.np.array([[0.4, 0.6], [0.35, 0.65]]),
+    )
+
+
+def test_build_conformal_artifact_tables_preserves_holdout_metadata() -> None:
+    tables = _build_conformal_artifact_tables(
+        y_eval_90=conformal_script.pd.Series([0.0, 1.0]),
+        y_pred_90=conformal_script.np.array([0.2, 0.8]),
+        y_int_90=conformal_script.np.array([[0.1, 0.4], [0.6, 0.9]]),
+        y_int_95=conformal_script.np.array([[0.0, 0.5], [0.5, 1.0]]),
+        eval_groups_90=conformal_script.pd.Series(["A", "B"]),
+        eval_temporal_segments=conformal_script.pd.Series(["A|2020Q1", "B|2020Q1"]),
+        evaluation_scope_key="holdout",
+        test_df=conformal_script.pd.DataFrame({"id": ["test-1"], "loan_amnt": [9000.0]}),
+        cal_df=conformal_script.pd.DataFrame(
+            {
+                "id": ["cal-0", "cal-1", "cal-2"],
+                "loan_amnt": [1000.0, 2000.0, 3000.0],
+            }
+        ),
+        idx_cal_tune=conformal_script.np.array([1, 2]),
+        group_metrics_90=conformal_script.pd.DataFrame(
+            {
+                "group": ["A", "B"],
+                "coverage": [0.9, 1.0],
+                "avg_width": [0.3, 0.3],
+                "median_width": [0.3, 0.3],
+            }
+        ),
+        group_metrics_95=conformal_script.pd.DataFrame(
+            {
+                "group": ["A", "B"],
+                "coverage": [0.95, 1.0],
+                "avg_width": [0.5, 0.5],
+                "median_width": [0.5, 0.5],
+            }
+        ),
+        coverage_floor_report=conformal_script.pd.DataFrame(
+            {
+                "group": ["A", "B"],
+                "coverage_before": [0.9, 1.0],
+                "coverage_after": [0.92, 1.0],
+                "multiplier": [1.02, 1.0],
+                "adjusted": [True, False],
+            }
+        ),
+        width_attr_rows=[{"dataset_scope": "holdout", "stage": "base_interval"}],
+    )
+
+    assert tables.intervals["_row_number"].tolist() == [0, 1]
+    assert tables.intervals["id"].tolist() == ["cal-1", "cal-2"]
+    assert tables.intervals["loan_amnt"].tolist() == [2000.0, 3000.0]
+    assert tables.intervals["temporal_segment"].tolist() == ["A|2020Q1", "B|2020Q1"]
+    assert tables.group_metrics["coverage_95"].tolist() == [0.95, 1.0]
+    assert tables.group_metrics["adjusted"].tolist() == [True, False]
+    assert tables.width_attribution.to_dict(orient="records") == [
+        {"dataset_scope": "holdout", "stage": "base_interval"}
+    ]
+
+
 def test_build_tuning_split_rejects_empty_holdout(monkeypatch: pytest.MonkeyPatch) -> None:
     def fake_split_calibration_for_tuning(**kwargs):
         return conformal_script.np.array([0, 1]), conformal_script.np.array([], dtype=int)
@@ -146,6 +312,48 @@ def test_build_tuning_split_rejects_empty_holdout(monkeypatch: pytest.MonkeyPatc
             tuning_holdout_ratio=0.5,
             tuning_random_state=7,
         )
+
+
+def test_select_alpha_95_uses_holdout_gap_then_width(monkeypatch: pytest.MonkeyPatch) -> None:
+    def fake_create_intervals(**kwargs):
+        alpha = float(kwargs["alpha"])
+        return (
+            conformal_script.np.array([0.2, 0.3]),
+            conformal_script.np.array([[0.0, alpha], [0.1, alpha + 0.1]]),
+            {},
+        )
+
+    def fake_validate_coverage(*args, **kwargs):
+        alpha = float(kwargs["alpha"])
+        return {
+            "coverage_gap": {0.04: 0.03, 0.05: 0.01, 0.06: 0.01}[alpha],
+            "avg_interval_width": {0.04: 0.20, 0.05: 0.18, 0.06: 0.16}[alpha],
+        }
+
+    monkeypatch.setattr(
+        conformal_script,
+        "create_pd_intervals_mondrian_from_predictions",
+        fake_create_intervals,
+    )
+    monkeypatch.setattr(conformal_script, "validate_coverage", fake_validate_coverage)
+
+    selected_alpha = _select_alpha_95(
+        alpha_95=0.05,
+        alpha_candidates_95=(0.04, 0.05, 0.06),
+        interval_fit_pred=conformal_script.np.array([0.1, 0.2]),
+        interval_tune_pred=conformal_script.np.array([0.2, 0.3]),
+        y_cal_fit=conformal_script.pd.Series([0.0, 1.0]),
+        y_tune=conformal_script.pd.Series([0.0, 1.0]),
+        group_cal_fit_holdout=conformal_script.pd.Series(["A", "B"]),
+        group_tune=conformal_script.pd.Series(["A", "B"]),
+        best_cfg={
+            "min_group_size": 200,
+            "scaled_scores": False,
+            "score_scale_family": "none",
+        },
+    )
+
+    assert selected_alpha == 0.06
 
 
 def test_select_best_tuning_config_materializes_promoted_config() -> None:

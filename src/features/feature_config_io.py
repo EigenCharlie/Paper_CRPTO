@@ -208,8 +208,8 @@ def _frame_to_config(frame: pd.DataFrame) -> dict[str, Any]:
             cfg[str(section)] = [json.loads(raw) for raw in group["value_json"]]
         elif kind == "dict":
             cfg[str(section)] = {
-                str(row.key): json.loads(str(row.value_json))
-                for row in group.itertuples(index=False)
+                str(row["key"]): json.loads(str(row["value_json"]))
+                for row in group.to_dict("records")
             }
         elif kind == "scalar":
             if len(group) != 1:

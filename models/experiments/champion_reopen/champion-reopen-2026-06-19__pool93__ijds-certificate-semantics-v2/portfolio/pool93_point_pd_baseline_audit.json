@@ -1,0 +1,86 @@
+{
+  "schema_version": "2026-07-09.1",
+  "generated_at_utc": "2026-07-09T22:41:29.886155+00:00",
+  "run_tag": "champion-reopen-2026-06-19__pool93__ijds-certificate-semantics-v2",
+  "comparison": "matched point-PD two-stage LP versus selected CRPTO",
+  "fixed_design": {
+    "candidate_universe": 276869,
+    "budget": 1000000.0,
+    "risk_tolerance": 0.1715,
+    "max_concentration": 0.25,
+    "alpha": 0.01
+  },
+  "point_pd_baseline": {
+    "solver_status": "Optimal",
+    "realized_return": 196369.14000000004,
+    "total_allocated": 1000000.0,
+    "expected_return_gross": 283248.8175,
+    "expected_loss_point": 69229.66551833821,
+    "expected_return_net_point": 214019.1519816618,
+    "certificate": {
+      "alpha": 0.01,
+      "risk_tolerance": 0.1715,
+      "n_funded": 225,
+      "weighted_outcome": 0.11840000000000002,
+      "weighted_miscoverage": 0.11840000000000002,
+      "weighted_coverage": 0.8815999999999999,
+      "empirical_coverage_funded": 0.8844444444444445,
+      "weighted_pd_point": 0.1538437011518627,
+      "weighted_pd_effective": 0.1538437011518627,
+      "endpoint_budget": 0.680579296391784,
+      "gamma_cp": 0.5267355952399213,
+      "gamma_internalized": 0.0,
+      "gamma_residual": 0.5267355952399213,
+      "effective_constraint_slack": 0.017656298848137325,
+      "effective_constraint_excess": 0.0,
+      "realized_risk_tolerance_excess": 0.0,
+      "sqrt_alpha": 0.1,
+      "endpoint_budget_upper": 0.6982355952399213,
+      "markov_loss_threshold": 0.780579296391784,
+      "markov_loss_cap": 0.7982355952399213
+    }
+  },
+  "selected_crpto": {
+    "solver_status": "frozen_selected_allocation",
+    "realized_return": 184832.47584455396,
+    "total_allocated": 1000000.0,
+    "expected_return_gross": 208153.285844554,
+    "expected_loss_point": 37110.41439596723,
+    "expected_return_net_point": 171042.87144858675,
+    "certificate": {
+      "alpha": 0.01,
+      "risk_tolerance": 0.1715,
+      "n_funded": 314,
+      "weighted_outcome": 0.03535,
+      "weighted_miscoverage": 0.03535,
+      "weighted_coverage": 0.96465,
+      "empirical_coverage_funded": 0.9426751592356688,
+      "weighted_pd_point": 0.08246758754659385,
+      "weighted_pd_effective": 0.1715,
+      "endpoint_budget": 0.24508386600030369,
+      "gamma_cp": 0.1626162784537099,
+      "gamma_internalized": 0.08903241245340617,
+      "gamma_residual": 0.07358386600030371,
+      "effective_constraint_slack": 0.0,
+      "effective_constraint_excess": 0.0,
+      "realized_risk_tolerance_excess": 0.0,
+      "sqrt_alpha": 0.1,
+      "endpoint_budget_upper": 0.24508386600030374,
+      "markov_loss_threshold": 0.3450838660003037,
+      "markov_loss_cap": 0.3450838660003037
+    }
+  },
+  "contrasts": {
+    "realized_return_cost": 11536.66415544608,
+    "realized_return_cost_pct": 5.874988379256577,
+    "weighted_default_rate_reduction": 0.08305000000000001,
+    "weighted_miscoverage_reduction": 0.08305000000000001,
+    "markov_threshold_reduction": 0.4354954303914803
+  },
+  "claim_boundary": "Frozen OOT matched-policy audit; it quantifies a return-risk trade-off and does not establish causal, prospective or universal dominance.",
+  "outputs": {
+    "point_funded_rows": "C:\\Users\\carlos\\Documents\\Paper_CRPTO\\data\\processed\\experiments\\champion_reopen\\champion-reopen-2026-06-19__pool93__ijds-certificate-semantics-v2\\portfolio\\pool93_point_pd_baseline_alpha01.parquet",
+    "table_csv": "C:\\Users\\carlos\\Documents\\Paper_CRPTO\\reports\\crpto\\experiments\\champion-reopen-2026-06-19__pool93__ijds-certificate-semantics-v2\\crpto_tableA40_pool93_point_baseline.csv",
+    "table_tex": "C:\\Users\\carlos\\Documents\\Paper_CRPTO\\reports\\crpto\\experiments\\champion-reopen-2026-06-19__pool93__ijds-certificate-semantics-v2\\crpto_tableA40_pool93_point_baseline.tex"
+  }
+}

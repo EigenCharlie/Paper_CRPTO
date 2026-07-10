@@ -9,9 +9,11 @@ perenne y lo que el código lee/escribe.
 ## Registros activos (referenciados por el código o el paper)
 
 - `active_claims_2026-07-04.md` — source-of-truth operativo del claim IJDS
-  activo: dual-tag governance, punto pool93, semántica de grilla finita,
-  denominadores de frontera y stop rules para no reabrir búsquedas sin un
-  claim que pueda cambiar.
+  activo: replay conformal exacto al 90%, selector de calibración 3x3,
+  política lineal 50/50, evidencia A35--A40 y stop rules.
+- `ijds_exact_alpha_calibration_selection_2026-07-09.md` — closeout que
+  documenta por qué se retiró el alpha-0.01 aproximado y cómo se eligió la
+  política simple sin outcomes OOT en el selector final.
 - `crpto_p1_evidence_2026-05-04.md` — evidencia P1 alrededor del champion
   congelado (escrito por `scripts/analyze_crpto_evidence.py`).
 - `crpto_journal_package_2026-05-04.md` — tablas A12–A34 y figuras journal
@@ -40,8 +42,19 @@ perenne y lo que el código lee/escribe.
   limpieza local de peso y frontera entre refactor estricto y nueva corrida
   tolerante.
 - `ijds_scientific_upgrade_audit_2026-07-07.md` — separación entre mejoras de
-  paper que pueden entrar con evidencia congelada y extensiones que requieren
-  un nuevo resultado CRPTO v2.
+  paper que pueden entrar con evidencia congelada y extensiones que quedan
+  fuera del claim enviado salvo un nuevo protocolo etiquetado.
+
+- `ijds_corpus_claims_improvement_plan_2026-07-07.md` - analisis con
+  `academic-pdf-intake` del paper, supplement, submission PDF y corpus
+  `Papers_tesis`; sus recomendaciones editoriales IJDS quedaron aplicadas y se
+  conserva como trazabilidad, no como backlog abierto.
+- `ijds_literature_expansion_scan_2026-07-08.md` - scan de literatura externa y
+  local para nuevas referencias IJDS: contextual optimization, incertidumbre de
+  credit scoring, conformal no-exchangeable, post-selection y comparadores
+  decision-calibrated 2026.
+- `pool93_certificate_semantics_v2_2026-07-09.md` - auditoría histórica de la
+  frontera pool93 y su baseline; conserva procedencia, no claims activos.
 
 ## Registros de gobernanza (decisiones; no se re-ejecutan sin permiso)
 

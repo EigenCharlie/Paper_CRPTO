@@ -2,7 +2,7 @@
 
 Los resultados del CRPTO deben leerse como una prueba de viabilidad del marco, no como un torneo aislado de AUC. La evidencia relevante está en la interacción entre incertidumbre y decisión.
 
-Nota dual-tag (post-promoción pool93, 2026-07-02): este capítulo documenta la **cadena upstream congelada** (rebaseline `ijds-rebaseline-2026-06-07`, retorno `$170,464.54`), que hoy actúa como floor declarado. El body claim del paper IJDS es el punto pool93 (`$184,832.48`, `V=0.035350`, `Γ_CP=0.162616`, Markov cap `0.345084`, `8/8` alpha grid) sobre los mismos intervalos conformal congelados; ver tablas A35--A39 y `tests/test_pool93_body_claim_sync.py`.
+Nota de gobernanza (actualizada 2026-07-09): este capítulo conserva la **cadena upstream congelada** (rebaseline `ijds-rebaseline-2026-06-07`, retorno `$170,464.54`) como floor declarado. El body claim IJDS es el punto pool93 (`$184,832.48`, `V=0.035350`, `Γ_CP=0.162616`, `Γ_res=0.073584`, umbral Markov `0.345084`, `8/8`) sobre los mismos intervalos; ver A35--A40 y `tests/test_pool93_body_claim_sync.py`.
 
 ### Base predictiva e incertidumbre
 El pipeline base sobre el champion monotónico confirmatorio sigue aportando la base regulatoria y probabilística del sistema:
@@ -341,19 +341,21 @@ El comparador theorem-tight sigue siendo metodológicamente valioso porque muest
 - `gamma_cp = 0.160299`
 - y retorno todavía fuerte (`$166.3K`)
 
-#### Instanciación empírica del Corolario 1 (Price of Robustness)
+#### Baseline point-PD emparejada (A40)
 
-El `cor-por` establece que $\text{PoR}(\alpha) \lesssim \Gamma_{\text{CP}}(\alpha) \cdot \overline{LGD} / \bar{r}$. Con los números del champion economic instanciamos:
+El campo congelado `price_of_robustness=-10.56%` no debe usarse: su baseline
+histórica heredaba `pd_high`. A40 resuelve un control point-PD con los mismos
+276,869 candidatos, presupuesto, concentración, `tau=0.1715`, LGD y solver que
+la decisión seleccionada. El control realiza `$196,369.14` y CRPTO
+`$184,832.48`: costo `$11,536.66` (`5.875%`). A cambio, default/V ponderado baja
+de `0.118400` a `0.035350` y el umbral Markov exacto de `0.780579` a `0.345084`.
+Esta es la comparación económica activa; no es evidencia causal ni universal.
 
-$$
-\text{PoR}_{\text{teórico}}(\alpha = 0.01) \;\lesssim\; \frac{\Gamma_{\text{CP}} \cdot \overline{LGD}}{\bar{r}} \;=\; \frac{0.187987 \cdot 0.45}{\bar{r}_{\text{funded}}}
-$$
-
-donde $\bar{r}_{\text{funded}}$ es el retorno neto promedio del funded set, y el corollary acota el precio **conceptual** de robustez (el techo de cuánto *podría* costar la prudencia conformal).
-
-El campo congelado `price_of_robustness` mide otra cosa, y conviene leer el signo con cuidado: se define como el retorno esperado (point-PD) de la baseline no-robusta menos el de la policy robusta. Para el champion vale `-$14,465.69` (`price_of_robustness_pct = -10.56%`, con la baseline no-robusta esperada de `$137,014.58` como denominador). El signo **negativo** es informativo: en esta evaluación la policy robusta no sacrifica retorno esperado frente a la baseline no-robusta —lo supera en `$14,465.69`— y el retorno realizado OOT (`$170,464.54`) queda todavía por encima de su propia esperanza point-PD (`$151,480.27`). Es decir, el funded set conformal-robusto es económicamente competitivo —de hecho superior— mientras carga además el certificado exacto a $\alpha = 0.01$. La cota teórica del corollary sigue siendo **conservadora pero no vacua** como techo conceptual; el precio empírico firmado simplemente resultó favorable aquí.
-
-El comparador theorem-tight (gamma=0.55) baja $\Gamma_{\text{CP}}$ a `0.160299` con un retorno menor (`$166,270`) y un `price_of_robustness_pct` de `-7.59%` (menos favorable, más cerca de cero que el `-10.56%` del economic champion). La frontera del corollary se instancia limpiamente: menor presupuesto conformal $\Gamma_{\text{CP}}$ → certificado más ajustado → menor retorno, con la ventaja económica firmada acercándose a cero. Las tres policies (economic, balanced, theorem-tight) ordenan esa frontera empírica dentro de la región robusta.
+El comparador theorem-tight (`gamma=0.55`) conserva su lectura válida en los
+ejes que sí fueron calculados sobre la policy robusta: baja
+$\Gamma_{\text{CP}}$ a `0.160299` con un retorno realizado menor (`$166,270`).
+La frontera defendible es retorno--bound--$\Gamma_{\text{CP}}$; los precios
+históricos relativos a la baseline retirada no se usan para ordenarla.
 
 ::: {.column-page}
 ![Comparación de decisión regret entre three-stage, SPO+ end-to-end y CRPTO (Conformal Robust). En el artefacto local de la figura, SPO+ logra 49.09% menos regret que two-stage por diseño; CRPTO paga un precio de auditabilidad mayor en regret a cambio de garantías formales de cobertura.](../assets/figures/publication/crpto_fig9_spo_regret.png){#fig-p1-spo-regret fig-alt="Comparación de regret: two-stage vs SPO+ vs CRPTO para el CRPTO."}

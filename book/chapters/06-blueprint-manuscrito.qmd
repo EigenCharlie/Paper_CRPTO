@@ -44,8 +44,8 @@ Un abstract posible, todavía largo para paper, sería:
 > Mondrian conformal prediction intervals into robust portfolio constraints.
 > On a 276,869-loan out-of-time Lending Club evaluation, the selected pool93 body
 > point earns `$184.8K` on a `$1M` budget while passing the declared eight-level
-> alpha grid (`V=0.035350`, `Gamma_CP=0.162616`, Markov cap `0.345084`, zero
-> violation). The consolidated finite policy-grid frontier contains 50,010
+> alpha grid (`V=0.035350`, `Gamma_CP=0.162616`, `Gamma_res=0.073584`, exact
+> Markov threshold `0.345084`, zero realized risk-tolerance excess). The consolidated finite policy-grid frontier contains 50,010
 > deduplicated semantic policies, with 27,508 all-alpha above-floor policies,
 > showing that the result is not a single-point artifact. The contribution is
 > not higher AUC, but a reproducible bridge from calibrated probabilistic
@@ -64,7 +64,7 @@ robusta verificable, no en otro leaderboard predictivo.
 | C2 | La capa conformal Mondrian produce cobertura útil y trazable para decisión. | Empírico-conformal | Coverage 90 `92.97%`, min group coverage `91.90%`, Winkler `1.111` |
 | C3 | El intervalo conformal se puede mapear a un conjunto de incertidumbre usado por un LP robusto. | Metodológico | Definiciones `u_i(alpha)`, `Gamma_CP`, policy modes |
 | C4 | El bound controla no-cobertura ponderada del funded set bajo supuestos distribution-free. | Teórico | `thm-conformal-feasibility`, Markov, `V <= sqrt(alpha)` |
-| C5 | La policy oficial es el punto pool93 body/default, no el endpoint de máximo retorno. | Empírico-editorial | A35/A36, retorno `$184.8K`, Markov cap `0.345084`, `alpha_grid_pass=8/8` |
+| C5 | La policy oficial es el punto pool93 body/default, no el endpoint de máximo retorno. | Empírico-editorial | A35/A40, retorno `$184.8K`, umbral Markov `0.345084`, `alpha_grid_pass=8/8` |
 | C6 | La frontera finita A35 muestra que el resultado no es un punto aislado. | Empírico | 50,010 políticas semánticas; 27,508 all-alpha above-floor policies |
 | C7 | La evidencia CRPTO y journal-package muestra robustez adicional sin cambiar la dirección del paper. | Robustez | A3--A36, Figuras 12--25 |
 
@@ -130,7 +130,7 @@ selección sugerida es:
 | Figura 1: pipeline CRPTO | Cuerpo | Explica el aporte en una sola vista IJDS | `crpto_fig1_journal_pipeline.png` |
 | Figura bound: pila de claim | Teoría | Separa endpoint conformal, identidad determinística, supuesto ponderado y certificado exacto | `crpto_fig20_bound_claim_layers.png` |
 | Figura 2: alpha -> `Gamma_CP` -> funded set | teoría/método | Une parámetro conformal y decisión | `crpto_fig13_alpha_gamma_funded_set.png` |
-| Tabla A35/A36 | Resultados | Muestra frontera finita y composición del funded set promovido | `crpto_tableA35_pool93_ijds_frontier.csv`, `crpto_tableA36_pool93_body_funded_grade_audit.csv` |
+| Tablas A35/A40 | Resultados | Muestran la frontera finita y el baseline point-PD emparejado | `crpto_tableA35_pool93_ijds_frontier.csv`, `crpto_tableA40_pool93_point_baseline.csv` |
 | Tabla 1: métricas core | Resultados | Fija PD, CP y portfolio sin mezclar familias | `crpto_table0_key_metrics.csv` |
 | Tabla 2: champion y comparadores | Resultados | Economic vs theorem-tight vs balanced | `crpto_table1_champion_policy.csv` y A13 |
 | Tabla 3: robustez P1 | Apéndice corto | Post-selección, temporal, selector, shift | A3--A11 |
@@ -141,7 +141,7 @@ Selección de figuras y tablas para el manuscrito.
 
 El paper no necesita mostrar todas las tablas en el cuerpo. El cuerpo debe
 proteger tres mensajes: la metodología, el punto pool93 promovido y la frontera
-finita A35/A36.
+finita A35 y la baseline A40.
 El appendix puede cargar la evidencia de stress y trazabilidad.
 
 ### Paquetes del online supplement (A--F)
@@ -254,8 +254,8 @@ Una versión fuerte y honesta de las contribuciones sería:
    set y separamos explícitamente el tightening condicional de la garantía
    principal.
 3. Mostramos que el enfoque produce una policy pool93 promovida con retorno
-   `$184.8K`, `V=0.035350`, `Gamma_CP=0.162616`, Markov cap `0.345084`, cero
-   violación y pass `8/8`.
+   `$184.8K`, `V=0.035350`, `Gamma_CP=0.162616`, `Gamma_res=0.073584`, umbral
+   Markov `0.345084`, exceso realizado cero y pass `8/8`.
 4. Documentamos una frontera finita consolidada con 50,010 políticas semánticas
    y 27,508 all-alpha above-floor policies, por lo que el resultado no depende
    de un único punto elegido después de ver los datos.

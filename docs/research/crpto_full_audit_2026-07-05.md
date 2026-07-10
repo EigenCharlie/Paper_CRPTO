@@ -1,5 +1,11 @@
 # Auditoría integral CRPTO — 2026-07-05
 
+> **Cierre semántico posterior (2026-07-09).** Las secciones de proceso y
+> refactor de este memo conservan valor histórico. Para métricas del
+> certificado, frontera A35 y baseline A40, prevalece
+> `pool93_certificate_semantics_v2_2026-07-09.md`; ese cierre reemplaza el
+> atajo lineal que este memo llamaba "Markov cap".
+
 Auditoría de consistencia de claims, parsimonia de código, skills, docs y plan
 editorial del paper, de cara a la submission IJDS (target interno 2026-08-10).
 Método: tres pasadas de exploración paralelas (código, claims, tooling/docs)
@@ -38,9 +44,9 @@ canónica: `docs/research/active_claims_2026-07-04.md`.
 | Retorno body point pool93 | $184,832.48 | OK en qmd, tex (`\$184{,}832.48`), A35, gobernanza |
 | V(alpha=0.01) | 0.035350 | OK en todas las fuentes |
 | Gamma_CP(alpha=0.01) | 0.162616 | OK; notación Gamma_CP vs gamma de política bien separada |
-| Markov cap (alpha=0.01) | 0.345084 | OK (A35 guarda 0.345083740; redondeo esperado) |
-| Endpoint budget upper B_u | 0.245084 = 0.1715 + 0.4525 * 0.162616 | OK en body, supplement y A35 |
-| Alpha grid | 8/8, violación exacta 0.0 | OK |
+| Umbral exacto de pérdida (alpha=0.01) | 0.345084 | OK en la A35 policy-aware corregida |
+| Endpoint budget upper B_u | 0.245084 = sum(w q) + Gamma_res | OK; en el body point la cota por fila está inactiva y el atajo lineal coincide numéricamente |
+| Alpha grid | 8/8 screen pass; exceso realizado sobre tau 0.0 | OK |
 | Return floor declarado | $170,464.54 | OK; en gobernanza y supplement, no como headline |
 | Frontera consolidada | 50,010 semánticas dedup; 27,508 all-alpha sobre floor | OK |
 | Búsqueda terminal | 37,068/37,068 passers; 296,544 checks | OK |

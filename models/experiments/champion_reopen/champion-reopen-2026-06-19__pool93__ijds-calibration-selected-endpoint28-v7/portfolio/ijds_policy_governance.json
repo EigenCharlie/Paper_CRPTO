@@ -1,0 +1,176 @@
+{
+  "bootstrap_return_interval": {
+    "bootstrap_unit": "origination_month",
+    "n_draws": 5000,
+    "n_units": 31,
+    "p025": 163421.1394838545,
+    "p975": 193551.6460089551
+  },
+  "claim_boundary": "The final tagged rule selects among nine round-number policies on November 2017 without exposing the selector to outcomes or assumption-conditional statistics. December 2017 independently replays the outcome-free selector and audits the already-fixed decision. The audit is diagnostic rather than a selected-set coverage theorem. Earlier development inspected the static OOT corpus, so the January 2018--September 2020 evaluation remains a transparent retrospective lockbox replay, not a pristine prospective trial, causal estimate, or live-deployment guarantee.",
+  "exact_alpha_reference_replay": {
+    "high_max_abs": 6.661338147750939e-16,
+    "low_max_abs": 3.3306690738754696e-16,
+    "pass": true,
+    "point_max_abs": 4.440892098500626e-16,
+    "tolerance": 1e-12
+  },
+  "full_oot": {
+    "Gamma_CP": 0.1761021788469351,
+    "Gamma_internalized": 0.0880510894234675,
+    "Gamma_residual": 0.0880510894234675,
+    "endpoint_budget": 0.2580510894234676,
+    "expected_objective": 168271.56287282018,
+    "markov_loss_threshold": 0.5742788554403055,
+    "markov_tail_probability_bound": 0.31622776601683794,
+    "n_candidates": 276869,
+    "n_funded": 308,
+    "observed_accounting_bound": 0.2949260894234676,
+    "realized_return": 179327.5851322598,
+    "total_allocated": 1000000.0,
+    "weighted_default_rate": 0.039375,
+    "weighted_miscoverage": 0.036875,
+    "weighted_pd_effective": 0.17,
+    "weighted_pd_point": 0.0819489105765324
+  },
+  "generated_at_utc": "2026-07-10T04:24:39.860761+00:00",
+  "paper_tables": {
+    "alpha": [
+      "reports/crpto/tables/crpto_tableA35_exact_alpha_grid.csv",
+      "reports/crpto/tables/crpto_tableA35_exact_alpha_grid.tex"
+    ],
+    "baseline": [
+      "reports/crpto/tables/crpto_tableA40_calibration_selected_point_baseline.csv",
+      "reports/crpto/tables/crpto_tableA40_calibration_selected_point_baseline.tex"
+    ],
+    "bootstrap": [
+      "reports/crpto/tables/crpto_tableA39_calibration_selected_bootstrap.csv",
+      "reports/crpto/tables/crpto_tableA39_calibration_selected_bootstrap.tex"
+    ],
+    "grade": [
+      "reports/crpto/tables/crpto_tableA38_calibration_selected_grade_audit.csv",
+      "reports/crpto/tables/crpto_tableA38_calibration_selected_grade_audit.tex"
+    ],
+    "selector": [
+      "reports/crpto/tables/crpto_tableA36_calibration_policy_selector.csv",
+      "reports/crpto/tables/crpto_tableA36_calibration_policy_selector.tex"
+    ],
+    "temporal": [
+      "reports/crpto/tables/crpto_tableA37_calibration_selected_temporal_evaluation.csv",
+      "reports/crpto/tables/crpto_tableA37_calibration_selected_temporal_evaluation.tex"
+    ]
+  },
+  "point_pd_contrast": {
+    "endpoint_budget": 0.9213174385285344,
+    "markov_loss_threshold": 1.2375452045453723,
+    "realized_return": 196369.14000000004,
+    "selected_default_reduction": 0.07902500000000001,
+    "selected_return_cost": 17041.554867740255,
+    "selected_return_cost_pct": 0.0867832637436832,
+    "selected_threshold_reduction": 0.6632663491050668,
+    "weighted_default_rate": 0.1184,
+    "weighted_miscoverage": 0.0419
+  },
+  "retired_active_claims": [
+    "alpha01 intervals obtained by cross-family average-width scaling",
+    "8/8 approximate alpha-grid pass as a headline certificate",
+    "50,010-policy frontier as the active selector",
+    "0.345084 Markov threshold",
+    "capped_blended_uncertainty with delta_cap_quantile=0.975",
+    "OOT-outcome-selected portfolio hyperparameters",
+    "the exploratory 25-policy gamma=0.35, threshold-cap=0.65 challenger"
+  ],
+  "run_tag": "champion-reopen-2026-06-19__pool93__ijds-calibration-selected-endpoint28-v7",
+  "schema_version": "2026-07-09.7",
+  "selected_policy": {
+    "candidate_id": "linear-005",
+    "delta_cap_quantile": 1.0,
+    "gamma": 0.5,
+    "min_budget_utilization": 0.0,
+    "pd_cap_slack_penalty": 0.0,
+    "policy_mode": "blended_uncertainty",
+    "risk_tolerance": 0.17,
+    "tail_focus_quantile": 1.0,
+    "uncertainty_aversion": 0.0
+  },
+  "selection_protocol": {
+    "calibration_audit": {
+      "claim_boundary": "Independent post-selection decision audit; not a selected-set coverage theorem.",
+      "matched_point_pd": {
+        "endpoint_budget": 0.8880705762941006,
+        "n_funded": 169,
+        "observed_accounting_bound": 0.9463705762941006,
+        "realized_return": 89732.35130590109,
+        "weighted_default_rate": 0.18565000000000004,
+        "weighted_miscoverage": 0.058300000000000005
+      },
+      "more_conservative_policy": {
+        "endpoint_budget": 0.20350382300175537,
+        "n_funded": 191,
+        "observed_accounting_bound": 0.3380288230017554,
+        "realized_return": 38379.50087450525,
+        "weighted_default_rate": 0.15525,
+        "weighted_miscoverage": 0.134525
+      },
+      "n_candidates": 20695,
+      "outcome_free_selected_candidate_id": "linear-005",
+      "period": "2017-12",
+      "same_policy_selected": true,
+      "selected_policy": {
+        "endpoint_budget": 0.2620820323280323,
+        "n_funded": 193,
+        "observed_accounting_bound": 0.3870070323280323,
+        "realized_return": 53313.04791145165,
+        "weighted_default_rate": 0.14565,
+        "weighted_miscoverage": 0.12492500000000001
+      }
+    },
+    "calibration_metadata": {
+      "audit_period": "2017-12",
+      "audit_rows": 20695,
+      "calibration_fit_rows": 142550,
+      "calibration_holdout_end": "2017-12-01",
+      "calibration_holdout_rows": 35638,
+      "calibration_holdout_start": "2017-11-01",
+      "conformal_results_path": "models\\conformal_gap\\champion-reopen-2026-06-19__hpo-wave1__claim-max-incremental-conformal__pool93__conformal__phase1__final__rank-1\\conformal_results_mondrian.pkl",
+      "outcomes_isolated_until_post_selection_audit": true,
+      "partition": "score_decile_mondrian",
+      "selection_period": "2017-11",
+      "selection_rows": 14943,
+      "target_alpha": 0.1,
+      "used_alpha": 0.095
+    },
+    "endpoint_budget_cap": 0.28,
+    "endpoint_cap_stability": {
+      "cap_lower_inclusive": 0.25903604939435104,
+      "cap_upper_exclusive": 0.29049078888716334,
+      "declared_endpoint_budget_cap": 0.28,
+      "margin_to_lower_boundary": 0.020963950605648984,
+      "margin_to_upper_boundary": 0.010490788887163316,
+      "selected_candidate_id": "linear-005",
+      "selected_endpoint_budget": 0.25903604939435104
+    },
+    "min_budget_utilization": 0.999,
+    "n_eligible": 5,
+    "n_total": 9,
+    "outcome_columns_used": 0,
+    "selected_candidate_id": "linear-005",
+    "selection_rule": "max_expected_objective_under_deterministic_endpoint_screen",
+    "selector_forbidden_columns_present": [],
+    "selector_input_columns": [
+      "id",
+      "loan_amnt",
+      "purpose",
+      "grade",
+      "term",
+      "verification_status",
+      "issue_d",
+      "_pd_point",
+      "_pd_low",
+      "_pd_high",
+      "_loan_amount",
+      "_int_rate"
+    ],
+    "statistical_assumption_columns_used": 0
+  },
+  "status": "active_ijds_policy"
+}

@@ -30,14 +30,201 @@ import pandas as pd
 from loguru import logger
 
 from src.evaluation.ab_testing import ab_summary, compare_strategies
-from src.optimization.portfolio_model import (
-    compute_effective_pd,
-    optimize_portfolio_allocation,
-)
+from src.optimization.policy_evaluation import solve_policy_allocation
 from src.utils.artifact_metadata import build_artifact_metadata, resolve_run_tag
 from src.utils.script_helpers import artifact_path as _artifact_path
 
 SCHEMA_VERSION = "2026-03-01.1"
+
+
+def _default_robust_policy(max_portfolio_pd: float) -> dict[str, Any]:
+    return {
+        "source": "fallback_default",
+        "risk_tolerance": float(max_portfolio_pd),
+        "uncertainty_aversion": 0.0,
+        "min_budget_utilization": 0.0,
+        "pd_cap_slack_penalty": 0.0,
+        "policy_mode": "hard_worst_case",
+        "gamma": 1.0,
+        "delta_cap_quantile": 1.0,
+        "tail_focus_quantile": 1.0,
+    }
+
+
+def _select_champion_policy(payload: dict[str, Any], policy_selector: str) -> dict[str, Any]:
+    if policy_selector == "robustness_aware":
+        return cast(
+            dict[str, Any],
+            payload.get("selected_policy_robustness_aware") or payload.get("selected_policy", {}),
+        )
+    if policy_selector == "balanced_robustness":
+        return cast(
+            dict[str, Any],
+            payload.get("selected_policy_balanced_robustness")
+            or payload.get("selected_policy_guardrail_robustness")
+            or payload.get("selected_policy_robustness_aware")
+            or payload.get("selected_policy", {}),
+        )
+    if policy_selector == "guardrail_robustness":
+        return cast(
+            dict[str, Any],
+            payload.get("selected_policy_guardrail_robustness")
+            or payload.get("selected_policy_balanced_robustness")
+            or payload.get("selected_policy_robustness_aware")
+            or payload.get("selected_policy", {}),
+        )
+    if policy_selector == "explicit_champion_only":
+        selected = payload.get("selected_policy", {})
+        if not selected:
+            raise ValueError("Champion policy artifact missing selected_policy")
+        return cast(dict[str, Any], selected)
+    return cast(dict[str, Any], payload.get("selected_policy", {}))
+
+
+def _policy_from_selected_champion(
+    selected: dict[str, Any],
+    *,
+    max_portfolio_pd: float,
+    policy_selector: str,
+) -> dict[str, Any]:
+    return {
+        "source": f"champion_policy_artifact::{policy_selector}",
+        "risk_tolerance": float(selected.get("risk_tolerance", max_portfolio_pd)),
+        "uncertainty_aversion": float(selected.get("uncertainty_aversion", 0.0)),
+        "min_budget_utilization": float(selected.get("min_budget_utilization", 0.0)),
+        "pd_cap_slack_penalty": float(selected.get("pd_cap_slack_penalty", 0.0)),
+        "policy_mode": str(selected.get("policy_mode", "hard_worst_case")),
+        "gamma": float(selected.get("gamma", 1.0)),
+        "delta_cap_quantile": float(selected.get("delta_cap_quantile", 1.0)),
+        "tail_focus_quantile": float(selected.get("tail_focus_quantile", 1.0)),
+    }
+
+
+def _resolve_champion_robust_policy(
+    *,
+    champion_path: Path,
+    max_portfolio_pd: float,
+    policy_selector: str,
+) -> dict[str, Any] | None:
+    if not champion_path.exists():
+        if policy_selector == "explicit_champion_only":
+            raise FileNotFoundError(f"Missing champion portfolio policy artifact: {champion_path}")
+        return None
+    try:
+        payload_raw = json.loads(champion_path.read_text(encoding="utf-8"))
+        selected = (
+            _select_champion_policy(payload_raw, policy_selector)
+            if isinstance(payload_raw, dict)
+            else {}
+        )
+        policy = _policy_from_selected_champion(
+            selected,
+            max_portfolio_pd=max_portfolio_pd,
+            policy_selector=policy_selector,
+        )
+    except Exception as exc:
+        if policy_selector == "explicit_champion_only":
+            raise
+        logger.warning(
+            f"Could not parse champion portfolio policy ({champion_path}): {exc}. "
+            "Falling back to summary-based policy."
+        )
+        return None
+    logger.info(
+        "Resolved robust policy from champion artifact: "
+        f"risk_tolerance={policy['risk_tolerance']:.4f}, "
+        f"policy_mode={policy['policy_mode']}, gamma={policy['gamma']:.2f}"
+    )
+    return policy
+
+
+def _load_robustness_summary(path: Path) -> pd.DataFrame | None:
+    if not path.exists():
+        logger.warning(f"Robustness summary not found ({path}); using fallback robust policy.")
+        return None
+    try:
+        return pd.read_parquet(path)
+    except Exception as exc:
+        logger.warning(f"Could not read robustness summary ({path}): {exc}")
+        return None
+
+
+def _valid_summary_rows(summary: pd.DataFrame, required_cols: set[str]) -> pd.DataFrame | None:
+    if summary.empty or not required_cols.issubset(set(summary.columns)):
+        missing = sorted(required_cols - set(summary.columns))
+        logger.warning(
+            "Robustness summary missing required columns or empty; "
+            f"missing={missing}. Using fallback robust policy."
+        )
+        return None
+    work = summary.copy()
+    for col in required_cols:
+        work[col] = pd.to_numeric(work[col], errors="coerce")
+    work = work.dropna(subset=list(required_cols)).reset_index(drop=True)
+    if work.empty:
+        logger.warning("No valid numeric robust summary rows; using fallback policy.")
+        return None
+    return work
+
+
+def _best_summary_policy_row(work: pd.DataFrame, target: float) -> pd.Series:
+    lower_eq = work.loc[work["risk_tolerance"] <= target + 1e-12].copy()
+    candidate_pool = lower_eq if not lower_eq.empty else work
+    candidate_pool["_distance"] = (candidate_pool["risk_tolerance"] - target).abs()
+    if "best_robust_return" not in candidate_pool.columns:
+        return candidate_pool.sort_values(by=["_distance"], ascending=[True]).iloc[0]
+    candidate_pool["best_robust_return"] = pd.to_numeric(
+        candidate_pool["best_robust_return"], errors="coerce"
+    ).fillna(float("-inf"))
+    return candidate_pool.sort_values(
+        by=["_distance", "best_robust_return"],
+        ascending=[True, False],
+    ).iloc[0]
+
+
+def _policy_from_summary_row(row: pd.Series) -> dict[str, Any]:
+    return {
+        "source": "portfolio_robustness_summary",
+        "risk_tolerance": float(row["risk_tolerance"]),
+        "uncertainty_aversion": float(row["best_robust_lambda"]),
+        "min_budget_utilization": float(row["best_robust_min_budget_utilization"]),
+        "pd_cap_slack_penalty": float(row["best_robust_pd_cap_slack_penalty"]),
+        "policy_mode": str(row.get("best_robust_policy_mode", "hard_worst_case")),
+        "gamma": float(row.get("best_robust_gamma", 1.0)),
+        "delta_cap_quantile": float(row.get("best_robust_delta_cap_quantile", 1.0)),
+    }
+
+
+def _resolve_summary_robust_policy(
+    *,
+    path: Path,
+    max_portfolio_pd: float,
+) -> dict[str, Any] | None:
+    summary = _load_robustness_summary(path)
+    if summary is None:
+        return None
+
+    required_cols = {
+        "risk_tolerance",
+        "best_robust_lambda",
+        "best_robust_min_budget_utilization",
+        "best_robust_pd_cap_slack_penalty",
+    }
+    work = _valid_summary_rows(summary, required_cols)
+    if work is None:
+        return None
+
+    policy = _policy_from_summary_row(
+        _best_summary_policy_row(work, target=float(max_portfolio_pd))
+    )
+    logger.info(
+        "Resolved robust policy from summary: "
+        f"risk_tolerance={policy['risk_tolerance']:.4f}, "
+        f"uncertainty_aversion={policy['uncertainty_aversion']:.4f}, "
+        f"min_budget_utilization={policy['min_budget_utilization']:.4f}, "
+        f"pd_cap_slack_penalty={policy['pd_cap_slack_penalty']:.4f}"
+    )
+    return policy
 
 
 def _compute_realized_return(
@@ -90,141 +277,22 @@ def _resolve_robust_policy(
     champion_policy_path: str = "models/champion_portfolio_policy.json",
 ) -> dict[str, Any]:
     """Resolve robust strategy parameters from tradeoff summary, with fallback defaults."""
-    default: dict[str, Any] = {
-        "source": "fallback_default",
-        "risk_tolerance": float(max_portfolio_pd),
-        "uncertainty_aversion": 0.0,
-        "min_budget_utilization": 0.0,
-        "pd_cap_slack_penalty": 0.0,
-        "policy_mode": "hard_worst_case",
-        "gamma": 1.0,
-        "delta_cap_quantile": 1.0,
-        "tail_focus_quantile": 1.0,
-    }
     champion_path = _artifact_path(champion_policy_path)
-    if champion_path.exists():
-        try:
-            payload = json.loads(champion_path.read_text(encoding="utf-8"))
-            if isinstance(payload, dict):
-                if policy_selector == "robustness_aware":
-                    selected = payload.get("selected_policy_robustness_aware") or payload.get(
-                        "selected_policy", {}
-                    )
-                elif policy_selector == "balanced_robustness":
-                    selected = (
-                        payload.get("selected_policy_balanced_robustness")
-                        or payload.get("selected_policy_guardrail_robustness")
-                        or payload.get("selected_policy_robustness_aware")
-                        or payload.get("selected_policy", {})
-                    )
-                elif policy_selector == "guardrail_robustness":
-                    selected = (
-                        payload.get("selected_policy_guardrail_robustness")
-                        or payload.get("selected_policy_balanced_robustness")
-                        or payload.get("selected_policy_robustness_aware")
-                        or payload.get("selected_policy", {})
-                    )
-                elif policy_selector == "explicit_champion_only":
-                    selected = payload.get("selected_policy", {})
-                    if not selected:
-                        raise ValueError("Champion policy artifact missing selected_policy")
-                else:
-                    selected = payload.get("selected_policy", {})
-            else:
-                selected = {}
-            policy: dict[str, Any] = {
-                "source": f"champion_policy_artifact::{policy_selector}",
-                "risk_tolerance": float(selected.get("risk_tolerance", max_portfolio_pd)),
-                "uncertainty_aversion": float(selected.get("uncertainty_aversion", 0.0)),
-                "min_budget_utilization": float(selected.get("min_budget_utilization", 0.0)),
-                "pd_cap_slack_penalty": float(selected.get("pd_cap_slack_penalty", 0.0)),
-                "policy_mode": str(selected.get("policy_mode", "hard_worst_case")),
-                "gamma": float(selected.get("gamma", 1.0)),
-                "delta_cap_quantile": float(selected.get("delta_cap_quantile", 1.0)),
-                "tail_focus_quantile": float(selected.get("tail_focus_quantile", 1.0)),
-            }
-            logger.info(
-                "Resolved robust policy from champion artifact: "
-                f"risk_tolerance={policy['risk_tolerance']:.4f}, "
-                f"policy_mode={policy['policy_mode']}, gamma={policy['gamma']:.2f}"
-            )
-            return policy
-        except Exception as exc:
-            if policy_selector == "explicit_champion_only":
-                raise
-            logger.warning(
-                f"Could not parse champion portfolio policy ({champion_path}): {exc}. "
-                "Falling back to summary-based policy."
-            )
-    elif policy_selector == "explicit_champion_only":
-        raise FileNotFoundError(f"Missing champion portfolio policy artifact: {champion_path}")
-
-    path = _artifact_path(summary_path)
-    if not path.exists():
-        logger.warning(f"Robustness summary not found ({path}); using fallback robust policy.")
-        return default
-
-    try:
-        summary = pd.read_parquet(path)
-    except Exception as exc:
-        logger.warning(f"Could not read robustness summary ({path}): {exc}")
-        return default
-
-    required_cols = {
-        "risk_tolerance",
-        "best_robust_lambda",
-        "best_robust_min_budget_utilization",
-        "best_robust_pd_cap_slack_penalty",
-    }
-    if summary.empty or not required_cols.issubset(set(summary.columns)):
-        missing = sorted(required_cols - set(summary.columns))
-        logger.warning(
-            "Robustness summary missing required columns or empty; "
-            f"missing={missing}. Using fallback robust policy."
-        )
-        return default
-
-    work = summary.copy()
-    for col in required_cols:
-        work[col] = pd.to_numeric(work[col], errors="coerce")
-    work = work.dropna(subset=list(required_cols)).reset_index(drop=True)
-    if work.empty:
-        logger.warning("No valid numeric robust summary rows; using fallback policy.")
-        return default
-
-    target = float(max_portfolio_pd)
-    lower_eq = work.loc[work["risk_tolerance"] <= target + 1e-12].copy()
-    candidate_pool = lower_eq if not lower_eq.empty else work
-    candidate_pool["_distance"] = (candidate_pool["risk_tolerance"] - target).abs()
-    if "best_robust_return" in candidate_pool.columns:
-        candidate_pool["best_robust_return"] = pd.to_numeric(
-            candidate_pool["best_robust_return"], errors="coerce"
-        ).fillna(float("-inf"))
-        row = candidate_pool.sort_values(
-            by=["_distance", "best_robust_return"],
-            ascending=[True, False],
-        ).iloc[0]
-    else:
-        row = candidate_pool.sort_values(by=["_distance"], ascending=[True]).iloc[0]
-
-    policy = {
-        "source": "portfolio_robustness_summary",
-        "risk_tolerance": float(row["risk_tolerance"]),
-        "uncertainty_aversion": float(row["best_robust_lambda"]),
-        "min_budget_utilization": float(row["best_robust_min_budget_utilization"]),
-        "pd_cap_slack_penalty": float(row["best_robust_pd_cap_slack_penalty"]),
-        "policy_mode": str(row.get("best_robust_policy_mode", "hard_worst_case")),
-        "gamma": float(row.get("best_robust_gamma", 1.0)),
-        "delta_cap_quantile": float(row.get("best_robust_delta_cap_quantile", 1.0)),
-    }
-    logger.info(
-        "Resolved robust policy from summary: "
-        f"risk_tolerance={policy['risk_tolerance']:.4f}, "
-        f"uncertainty_aversion={policy['uncertainty_aversion']:.4f}, "
-        f"min_budget_utilization={policy['min_budget_utilization']:.4f}, "
-        f"pd_cap_slack_penalty={policy['pd_cap_slack_penalty']:.4f}"
+    champion_policy = _resolve_champion_robust_policy(
+        champion_path=champion_path,
+        max_portfolio_pd=max_portfolio_pd,
+        policy_selector=policy_selector,
     )
-    return policy
+    if champion_policy is not None:
+        return champion_policy
+
+    summary_policy = _resolve_summary_robust_policy(
+        path=_artifact_path(summary_path),
+        max_portfolio_pd=max_portfolio_pd,
+    )
+    if summary_policy is not None:
+        return summary_policy
+    return _default_robust_policy(max_portfolio_pd)
 
 
 def _apply_candidate_universe(
@@ -439,60 +507,27 @@ def _run_strategy(
     robust_policy: dict[str, Any] | None = None,
 ) -> tuple[dict, np.ndarray]:
     pd_point = np.asarray(common["pd_point"], dtype=float)
-    pd_high = np.asarray(common["pd_high"], dtype=float)
-    if robust:
-        policy = robust_policy or {}
-        loans = cast(pd.DataFrame, common["loans"])
-        segment_labels: np.ndarray | None = None
-        if str(policy.get("policy_mode", "hard_worst_case")) in {
-            "segment_tail_blended_uncertainty",
-            "segment_relative_tail_blended_uncertainty",
-        }:
-            grade = (
-                loans["grade"].fillna("unknown").astype(str)
-                if "grade" in loans.columns
-                else pd.Series(["unknown"] * len(loans))
-            )
-            term = (
-                loans["term"].fillna("unknown").astype(str)
-                if "term" in loans.columns
-                else pd.Series(["unknown"] * len(loans))
-            )
-            verification = (
-                loans["verification_status"].fillna("unknown").astype(str)
-                if "verification_status" in loans.columns
-                else pd.Series(["unknown"] * len(loans))
-            )
-            segment_labels = (grade + "|" + term + "|" + verification).to_numpy(dtype=object)
-        effective_pd = compute_effective_pd(
-            pd_point=pd_point,
-            pd_high=pd_high,
-            policy_mode=str(policy.get("policy_mode", "hard_worst_case")),
-            gamma=float(policy.get("gamma", 1.0)),
-            delta_cap_quantile=float(policy.get("delta_cap_quantile", 1.0)),
-            tail_focus_quantile=float(policy.get("tail_focus_quantile", 1.0)),
-            segment_labels=segment_labels,
-        )
-        solution = optimize_portfolio_allocation(
-            robust=True,
-            uncertainty_aversion=float(policy.get("uncertainty_aversion", 0.0)),
-            min_budget_utilization=float(policy.get("min_budget_utilization", 0.0)),
-            pd_cap_slack_penalty=float(policy.get("pd_cap_slack_penalty", 0.0)),
-            pd_constraint_override=effective_pd,
-            total_budget=total_budget,
-            max_portfolio_pd=max_portfolio_pd,
-            solver_backend=solver_backend,
-            **common,
-        )
-    else:
-        solution = optimize_portfolio_allocation(
-            robust=False,
-            total_budget=total_budget,
-            max_portfolio_pd=max_portfolio_pd,
-            solver_backend=solver_backend,
-            **common,
-        )
-    return solution, pd_point
+    policy = robust_policy or {}
+    result = solve_policy_allocation(
+        loans=cast(pd.DataFrame, common["loans"]),
+        pd_point=pd_point,
+        pd_low=np.asarray(common["pd_low"], dtype=float),
+        pd_high=np.asarray(common["pd_high"], dtype=float),
+        lgd=np.asarray(common["lgd"], dtype=float),
+        int_rates=np.asarray(common["int_rates"], dtype=float),
+        total_budget=total_budget,
+        risk_tolerance=max_portfolio_pd,
+        robust=robust,
+        uncertainty_aversion=float(policy.get("uncertainty_aversion", 0.0)),
+        min_budget_utilization=float(policy.get("min_budget_utilization", 0.0)),
+        pd_cap_slack_penalty=float(policy.get("pd_cap_slack_penalty", 0.0)),
+        policy_mode=str(policy.get("policy_mode", "hard_worst_case")),
+        gamma=float(policy.get("gamma", 1.0)),
+        delta_cap_quantile=float(policy.get("delta_cap_quantile", 1.0)),
+        tail_focus_quantile=float(policy.get("tail_focus_quantile", 1.0)),
+        solver_backend=solver_backend,
+    )
+    return result.solution, result.effective_pd
 
 
 def _candidate_metrics(

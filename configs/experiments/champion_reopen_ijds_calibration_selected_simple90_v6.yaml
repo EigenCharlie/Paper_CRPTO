@@ -1,0 +1,45 @@
+schema_version: "2026-07-09.6"
+run_tag: "champion-reopen-2026-06-19__pool93__ijds-calibration-selected-simple90-v6"
+
+source:
+  upstream_canonical_run_tag: "champion-reopen-2026-06-19__hpo-wave1__pool93__seed42"
+  conformal_results_path: "models/conformal_gap/champion-reopen-2026-06-19__hpo-wave1__claim-max-incremental-conformal__pool93__conformal__phase1__final__rank-1/conformal_results_mondrian.pkl"
+  conformal_intervals_path: "data/processed/conformal_gap/champion-reopen-2026-06-19__hpo-wave1__claim-max-incremental-conformal__pool93__conformal__phase1__final__rank-1/conformal_intervals_mondrian.parquet"
+  exact_alpha_grid_path: "data/processed/experiments/champion_reopen/champion-reopen-2026-06-19__pool93__ijds-exact-alpha-grid-v1/conformal/exact_alpha_grid.parquet"
+
+design:
+  alpha: 0.10
+  budget: 1000000.0
+  max_concentration: 0.25
+  lgd: 0.45
+  period_order: ["2018H1", "2018H2", "2019H1", "2019H2", "2020+"]
+  combine_years_from: 2020
+  markov_threshold_cap: 0.60
+  selection_min_budget_utilization: 0.999
+  selection_rule: "maximize expected point-PD objective on the calibration holdout under a 0.60 endpoint-plus-Markov screen, the effective-PD cap, and full budget use"
+
+policy_grid:
+  family: "simple_linear_conformal_guardrail"
+  risk_tolerances: [0.15, 0.17, 0.19]
+  gammas: [0.25, 0.50, 0.75]
+  uncertainty_aversions: [0.0]
+
+incumbent_policy:
+  risk_tolerance: 0.17
+  gamma: 0.75
+  uncertainty_aversion: 0.0
+
+execution:
+  solver_backend: "highspy"
+  time_limit: 300
+  threads: 1
+  random_seed: 42
+
+claim_boundary: >-
+  The final tagged policy rule ranks nine round-number candidates on the
+  calibration development block without reading default, realized-return, or
+  other outcome-derived selector columns, and then freezes the selected policy
+  before OOT evaluation. Conformal endpoints themselves use calibration labels,
+  as required. Earlier project development inspected this static OOT corpus, so
+  the evaluation is a transparent retrospective lockbox replay rather than a
+  pristine prospective trial, causal estimate, or live-deployment guarantee.

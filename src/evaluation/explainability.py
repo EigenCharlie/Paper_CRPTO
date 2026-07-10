@@ -157,14 +157,14 @@ def pairwise_shap_redundancy(
         )
     if not rows:
         return pd.DataFrame(
-            columns=[
-                "feature_a",
-                "feature_b",
-                "shap_spearman",
-                "value_spearman",
-                "redundancy_flag",
-                "relation_type",
-            ]
+            {
+                "feature_a": pd.Series(dtype="object"),
+                "feature_b": pd.Series(dtype="object"),
+                "shap_spearman": pd.Series(dtype="float64"),
+                "value_spearman": pd.Series(dtype="float64"),
+                "redundancy_flag": pd.Series(dtype="bool"),
+                "relation_type": pd.Series(dtype="object"),
+            }
         )
     return (
         pd.DataFrame(rows)

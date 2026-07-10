@@ -18,15 +18,17 @@ import pandas as pd
 import yaml
 from loguru import logger
 
-try:
-    from mapie.metrics.regression import regression_mwi_score as _mapie_mwi_score
+from src.utils.artifact_metadata import build_artifact_metadata, resolve_run_tag
+from src.utils.baseline_registry import resolve_official_baseline_run_tag
 
+try:
+    from mapie.metrics.regression import regression_mwi_score as _imported_mapie_mwi_score
+
+    _mapie_mwi_score: Any = _imported_mapie_mwi_score
     _MAPIE_MWI_AVAILABLE = True
 except ImportError:
     _mapie_mwi_score = None
     _MAPIE_MWI_AVAILABLE = False
-from src.utils.artifact_metadata import build_artifact_metadata, resolve_run_tag
-from src.utils.baseline_registry import resolve_official_baseline_run_tag
 
 DEFAULT_POLICY_CONFIG = "configs/crpto_conformal_policy.yaml"
 
@@ -50,9 +52,9 @@ def _fallback_winkler_interval_score(
 
 _imported_winkler_interval_score: Any
 try:
-    from src.evaluation.backtesting import (
-        winkler_interval_score as _imported_winkler_interval_score,
-    )
+    from src.evaluation import backtesting as _backtesting
+
+    _imported_winkler_interval_score = _backtesting.winkler_interval_score
 except ImportError:
     _imported_winkler_interval_score = _fallback_winkler_interval_score
 
@@ -140,28 +142,238 @@ def _apply_artifact_namespace(
     return updated
 
 
-def main(
-    config_path: str = DEFAULT_POLICY_CONFIG,
-    run_tag: str | None = None,
-    sensitivity_config_path: str | None = None,
-    artifact_namespace: str | None = None,
-) -> None:
-    with open(config_path, encoding="utf-8") as config_handle:
-        cfg_raw = yaml.safe_load(config_handle) or {}
-    cfg = dict(cast(Mapping[str, Any], cfg_raw))
+def _load_yaml_dict(path: str | Path) -> dict[str, Any]:
+    with open(path, encoding="utf-8") as handle:
+        raw = yaml.safe_load(handle) or {}
+    return dict(cast(Mapping[str, Any], raw))
 
+
+def _load_policy_config(
+    *,
+    config_path: str,
+    sensitivity_config_path: str | None,
+    artifact_namespace: str | None,
+) -> dict[str, Any]:
+    cfg = _load_yaml_dict(config_path)
     if sensitivity_config_path is not None:
-        with open(sensitivity_config_path, encoding="utf-8") as sensitivity_handle:
-            sens_raw = yaml.safe_load(sensitivity_handle) or {}
-        sens_cfg = dict(cast(Mapping[str, Any], sens_raw))
+        sens_cfg = _load_yaml_dict(sensitivity_config_path)
         if "policy_sensitivity" in sens_cfg:
             cfg["policy_sensitivity"] = sens_cfg["policy_sensitivity"]
             logger.info(
                 f"Overriding policy_sensitivity from {sensitivity_config_path}: "
                 f"{cfg['policy_sensitivity']}"
             )
+    return _apply_artifact_namespace(cfg, artifact_namespace)
 
-    cfg = _apply_artifact_namespace(cfg, artifact_namespace)
+
+def _load_alerts(path: Path) -> pd.DataFrame:
+    if path.exists():
+        return pd.read_parquet(path)
+    return pd.DataFrame({"severity": pd.Series(dtype="object")})
+
+
+def _interval_arrays(
+    intervals_df: pd.DataFrame,
+    *,
+    lower_col: str,
+    upper_col: str,
+) -> tuple[np.ndarray, np.ndarray, np.ndarray]:
+    if {"y_true", lower_col, upper_col}.issubset(intervals_df.columns):
+        y_true = pd.to_numeric(intervals_df["y_true"], errors="coerce").to_numpy(dtype=float)
+        lower = pd.to_numeric(intervals_df[lower_col], errors="coerce").to_numpy(dtype=float)
+        upper = pd.to_numeric(intervals_df[upper_col], errors="coerce").to_numpy(dtype=float)
+        valid = np.isfinite(y_true) & np.isfinite(lower) & np.isfinite(upper)
+        return y_true[valid], lower[valid], upper[valid]
+    empty = np.array([], dtype=float)
+    return empty, empty, empty
+
+
+def _mean_winkler(
+    y_true: np.ndarray,
+    lower: np.ndarray,
+    upper: np.ndarray,
+    *,
+    alpha: float,
+) -> float:
+    if not y_true.size:
+        return float("inf")
+    return float(np.mean(winkler_interval_score(y_true, lower, upper, alpha=alpha)))
+
+
+def _violation_rate(y_true: np.ndarray, lower: np.ndarray, upper: np.ndarray) -> float:
+    if not y_true.size:
+        return float("nan")
+    return float(np.mean((y_true < lower) | (y_true > upper)))
+
+
+def _mapie_mwi_cross_check(
+    *,
+    y_true: np.ndarray,
+    lower: np.ndarray,
+    upper: np.ndarray,
+    winkler_score: float,
+    confidence_level: float,
+) -> float | None:
+    if not (_MAPIE_MWI_AVAILABLE and y_true.size):
+        return None
+    try:
+        mapie_score = _compute_mapie_mwi_score(
+            y_true,
+            lower,
+            upper,
+            confidence_level=confidence_level,
+        )
+        delta = abs(mapie_score - winkler_score)
+        if delta > 0.01:
+            logger.warning(
+                f"MAPIE MWI ({mapie_score:.4f}) deviates from manual Winkler "
+                f"({winkler_score:.4f}) by {delta:.4f} -- check score definition."
+            )
+        else:
+            logger.info(f"MAPIE MWI cross-check OK: {mapie_score:.4f} ~= {winkler_score:.4f}")
+        return mapie_score
+    except Exception as exc:
+        logger.warning(f"MAPIE MWI cross-check failed: {exc}")
+        return None
+
+
+def _evaluate_check_frame(frame: pd.DataFrame) -> dict[str, Any]:
+    gate_pass = bool(frame["passed"].all())
+    failing_material = frame.loc[~frame["passed"], "metric"].astype(str).tolist()
+    methodological_status = (
+        "not_needed_material_gate_pass" if gate_pass else "blocked_material_gate_failures"
+    )
+    return {
+        "strict_overall_pass": gate_pass,
+        "gate_overall_pass": gate_pass,
+        "non_statistical_checks_pass": gate_pass,
+        "diagnostic_statistical_pass": True,
+        "failing_checks": failing_material,
+        "failing_statistical_checks": [],
+        "gate_failing_checks": failing_material,
+        "failing_non_statistical_checks": failing_material,
+        "diagnostic_failing_checks": [],
+        "methodological_justification_pass": gate_pass,
+        "methodological_justification_status": methodological_status,
+    }
+
+
+def _winkler_90_check(policy: dict[str, Any], metrics: dict[str, float]) -> dict[str, object]:
+    max_winkler_90 = float(policy.get("max_winkler_90", float("inf")))
+    enable_compensated = bool(policy.get("enable_compensated_winkler_90", False))
+    compensated_threshold = float(policy.get("compensated_winkler_90_max", max_winkler_90))
+    compensated_min_coverage = float(
+        policy.get("compensated_min_coverage_90", policy["target_coverage_90_min"])
+    )
+    compensated_min_group_coverage = float(
+        policy.get("compensated_min_group_coverage_90", policy["min_group_coverage_90_min"])
+    )
+    compensated_max_avg_width = float(
+        policy.get("compensated_max_avg_width_90", policy["max_avg_width_90"])
+    )
+
+    raw_pass = bool(metrics["winkler_90"] <= max_winkler_90)
+    compensated_pass = bool(
+        enable_compensated
+        and (not raw_pass)
+        and metrics["winkler_90"] <= compensated_threshold
+        and metrics["coverage_90"] >= compensated_min_coverage
+        and metrics["min_group_coverage_90"] >= compensated_min_group_coverage
+        and metrics["avg_width_90"] <= compensated_max_avg_width
+        and metrics["critical_alerts"] <= float(policy["max_critical_alerts"])
+    )
+    policy_pass = bool(raw_pass or compensated_pass)
+    policy_mode = "strict" if raw_pass else "compensated_band" if compensated_pass else "strict"
+    check = _check("winkler_90", metrics["winkler_90"], max_winkler_90, "<=", "quality")
+    check["passed"] = bool(policy_pass)
+    check["policy_mode"] = str(policy_mode)
+    check["raw_threshold"] = float(max_winkler_90)
+    check["raw_passed"] = bool(raw_pass)
+    check["compensated_band_enabled"] = bool(enable_compensated)
+    check["compensated_threshold"] = float(compensated_threshold)
+    check["compensated_passed"] = bool(compensated_pass)
+    return check
+
+
+def _policy_checks(policy: dict[str, Any], metrics: dict[str, float]) -> list[dict[str, object]]:
+    return [
+        _check(
+            "coverage_90",
+            metrics["coverage_90"],
+            float(policy["target_coverage_90_min"]),
+            ">=",
+            "portfolio",
+        ),
+        _check(
+            "coverage_95",
+            metrics["coverage_95"],
+            float(policy["target_coverage_95_min"]),
+            ">=",
+            "portfolio",
+        ),
+        _check(
+            "min_group_coverage_90",
+            metrics["min_group_coverage_90"],
+            float(policy["min_group_coverage_90_min"]),
+            ">=",
+            "group",
+        ),
+        _check(
+            "avg_width_90",
+            metrics["avg_width_90"],
+            float(policy["max_avg_width_90"]),
+            "<=",
+            "portfolio",
+        ),
+        _check(
+            "critical_alerts",
+            metrics["critical_alerts"],
+            float(policy["max_critical_alerts"]),
+            "<=",
+            "monitoring",
+        ),
+        _check(
+            "total_alerts",
+            metrics["total_alerts"],
+            float(policy["max_total_alerts"]),
+            "<=",
+            "monitoring",
+        ),
+        _check(
+            "warning_alerts",
+            metrics["warning_alerts"],
+            float(policy["max_warning_alerts"]),
+            "<=",
+            "monitoring",
+        ),
+        _winkler_90_check(policy, metrics),
+        _check(
+            "winkler_95",
+            metrics["winkler_95"],
+            float(policy.get("max_winkler_95", float("inf"))),
+            "<=",
+            "quality",
+        ),
+    ]
+
+
+def _latest_backtest_month(backtest_monthly: pd.DataFrame) -> object | None:
+    if backtest_monthly.empty:
+        return None
+    return backtest_monthly.sort_values("month").iloc[-1]["month"]
+
+
+def main(
+    config_path: str = DEFAULT_POLICY_CONFIG,
+    run_tag: str | None = None,
+    sensitivity_config_path: str | None = None,
+    artifact_namespace: str | None = None,
+) -> None:
+    cfg = _load_policy_config(
+        config_path=config_path,
+        sensitivity_config_path=sensitivity_config_path,
+        artifact_namespace=artifact_namespace,
+    )
 
     policy = dict(cast(Mapping[str, Any], cfg["policy"]))
     artifacts = dict(cast(Mapping[str, Any], cfg["artifacts"]))
@@ -177,9 +389,7 @@ def main(
     group_metrics = pd.read_parquet(artifacts["group_metrics_path"])
     backtest_monthly = pd.read_parquet(artifacts["backtest_monthly_path"])
     alerts_path = Path(artifacts["backtest_alerts_path"])
-    alerts = (
-        pd.read_parquet(alerts_path) if alerts_path.exists() else pd.DataFrame(columns=["severity"])
-    )
+    alerts = _load_alerts(alerts_path)
     intervals_path = Path(
         artifacts.get("intervals_path", "data/processed/conformal_intervals_mondrian.parquet")
     )
@@ -202,171 +412,39 @@ def main(
     warning_alerts = int((alerts.get("severity", pd.Series([], dtype=str)) == "warning").sum())
     total_alerts = len(alerts)
 
-    # Conformal material-quality checks for the IJDS promotion contract.
-    if {"y_true", "pd_low_90", "pd_high_90"}.issubset(intervals_df.columns):
-        y_true = pd.to_numeric(intervals_df["y_true"], errors="coerce").to_numpy(dtype=float)
-        low_90 = pd.to_numeric(intervals_df["pd_low_90"], errors="coerce").to_numpy(dtype=float)
-        high_90 = pd.to_numeric(intervals_df["pd_high_90"], errors="coerce").to_numpy(dtype=float)
-        valid_90 = np.isfinite(y_true) & np.isfinite(low_90) & np.isfinite(high_90)
-        y90 = y_true[valid_90]
-        lo90 = low_90[valid_90]
-        hi90 = high_90[valid_90]
-    else:
-        y90 = np.array([], dtype=float)
-        lo90 = np.array([], dtype=float)
-        hi90 = np.array([], dtype=float)
+    y90, lo90, hi90 = _interval_arrays(intervals_df, lower_col="pd_low_90", upper_col="pd_high_90")
+    y95, lo95, hi95 = _interval_arrays(intervals_df, lower_col="pd_low_95", upper_col="pd_high_95")
+    winkler_90 = _mean_winkler(y90, lo90, hi90, alpha=0.10)
+    winkler_95 = _mean_winkler(y95, lo95, hi95, alpha=0.05)
+    mapie_mwi_90 = _mapie_mwi_cross_check(
+        y_true=y90,
+        lower=lo90,
+        upper=hi90,
+        winkler_score=winkler_90,
+        confidence_level=0.90,
+    )
+    violation_rate_90 = _violation_rate(y90, lo90, hi90)
+    violation_rate_95 = _violation_rate(y95, lo95, hi95)
 
-    if {"y_true", "pd_low_95", "pd_high_95"}.issubset(intervals_df.columns):
-        y_true_95 = pd.to_numeric(intervals_df["y_true"], errors="coerce").to_numpy(dtype=float)
-        low_95 = pd.to_numeric(intervals_df["pd_low_95"], errors="coerce").to_numpy(dtype=float)
-        high_95 = pd.to_numeric(intervals_df["pd_high_95"], errors="coerce").to_numpy(dtype=float)
-        valid_95 = np.isfinite(y_true_95) & np.isfinite(low_95) & np.isfinite(high_95)
-        y95 = y_true_95[valid_95]
-        lo95 = low_95[valid_95]
-        hi95 = high_95[valid_95]
-    else:
-        y95 = np.array([], dtype=float)
-        lo95 = np.array([], dtype=float)
-        hi95 = np.array([], dtype=float)
-
-    winkler_90 = (
-        float(np.mean(winkler_interval_score(y90, lo90, hi90, alpha=0.10)))
-        if y90.size
-        else float("inf")
-    )
-    winkler_95 = (
-        float(np.mean(winkler_interval_score(y95, lo95, hi95, alpha=0.05)))
-        if y95.size
-        else float("inf")
-    )
-
-    # Cross-check: MAPIE native regression_mwi_score (should match manual Winkler)
-    mapie_mwi_90: float | None = None
-    if _MAPIE_MWI_AVAILABLE and y90.size:
-        try:
-            mapie_mwi_90 = _compute_mapie_mwi_score(
-                y90,
-                lo90,
-                hi90,
-                confidence_level=0.90,
-            )
-            delta = abs(mapie_mwi_90 - winkler_90)
-            if delta > 0.01:
-                logger.warning(
-                    f"MAPIE MWI ({mapie_mwi_90:.4f}) deviates from manual Winkler "
-                    f"({winkler_90:.4f}) by {delta:.4f} — check score definition."
-                )
-            else:
-                logger.info(f"MAPIE MWI cross-check OK: {mapie_mwi_90:.4f} ≈ {winkler_90:.4f}")
-        except Exception as exc:
-            logger.warning(f"MAPIE MWI cross-check failed: {exc}")
-    violation_rate_90 = float(np.mean((y90 < lo90) | (y90 > hi90))) if y90.size else float("nan")
-    violation_rate_95 = float(np.mean((y95 < lo95) | (y95 > hi95))) if y95.size else float("nan")
-
-    max_winkler_90 = float(policy.get("max_winkler_90", float("inf")))
-    max_winkler_95 = float(policy.get("max_winkler_95", float("inf")))
-    enable_compensated_winkler_90 = bool(policy.get("enable_compensated_winkler_90", False))
-    compensated_winkler_90_max = float(policy.get("compensated_winkler_90_max", max_winkler_90))
-    compensated_min_coverage_90 = float(
-        policy.get("compensated_min_coverage_90", policy["target_coverage_90_min"])
-    )
-    compensated_min_group_coverage_90 = float(
-        policy.get(
-            "compensated_min_group_coverage_90",
-            policy["min_group_coverage_90_min"],
-        )
-    )
-    compensated_max_avg_width_90 = float(
-        policy.get("compensated_max_avg_width_90", policy["max_avg_width_90"])
-    )
-
-    winkler_90_raw_pass = bool(winkler_90 <= max_winkler_90)
-    winkler_90_compensated_pass = bool(
-        enable_compensated_winkler_90
-        and (not winkler_90_raw_pass)
-        and winkler_90 <= compensated_winkler_90_max
-        and coverage_90 >= compensated_min_coverage_90
-        and min_group_coverage_90 >= compensated_min_group_coverage_90
-        and avg_width_90 <= compensated_max_avg_width_90
-        and critical_alerts <= float(policy["max_critical_alerts"])
-    )
-    winkler_90_policy_pass = bool(winkler_90_raw_pass or winkler_90_compensated_pass)
-    winkler_90_policy_mode = (
-        "strict"
-        if winkler_90_raw_pass
-        else "compensated_band"
-        if winkler_90_compensated_pass
-        else "strict"
-    )
-    winkler_90_check = _check("winkler_90", winkler_90, max_winkler_90, "<=", "quality")
-    winkler_90_check["passed"] = bool(winkler_90_policy_pass)
-    winkler_90_check["policy_mode"] = str(winkler_90_policy_mode)
-    winkler_90_check["raw_threshold"] = float(max_winkler_90)
-    winkler_90_check["raw_passed"] = bool(winkler_90_raw_pass)
-    winkler_90_check["compensated_band_enabled"] = bool(enable_compensated_winkler_90)
-    winkler_90_check["compensated_threshold"] = float(compensated_winkler_90_max)
-    winkler_90_check["compensated_passed"] = bool(winkler_90_compensated_pass)
-
-    checks = [
-        _check(
-            "coverage_90", coverage_90, float(policy["target_coverage_90_min"]), ">=", "portfolio"
-        ),
-        _check(
-            "coverage_95", coverage_95, float(policy["target_coverage_95_min"]), ">=", "portfolio"
-        ),
-        _check(
-            "min_group_coverage_90",
-            min_group_coverage_90,
-            float(policy["min_group_coverage_90_min"]),
-            ">=",
-            "group",
-        ),
-        _check("avg_width_90", avg_width_90, float(policy["max_avg_width_90"]), "<=", "portfolio"),
-        _check(
-            "critical_alerts",
-            float(critical_alerts),
-            float(policy["max_critical_alerts"]),
-            "<=",
-            "monitoring",
-        ),
-        _check(
-            "total_alerts",
-            float(total_alerts),
-            float(policy["max_total_alerts"]),
-            "<=",
-            "monitoring",
-        ),
-        _check(
-            "warning_alerts",
-            float(warning_alerts),
-            float(policy["max_warning_alerts"]),
-            "<=",
-            "monitoring",
-        ),
-        winkler_90_check,
-        _check("winkler_95", winkler_95, max_winkler_95, "<=", "quality"),
-    ]
+    metrics = {
+        "coverage_90": coverage_90,
+        "coverage_95": coverage_95,
+        "avg_width_90": avg_width_90,
+        "min_group_coverage_90": min_group_coverage_90,
+        "critical_alerts": float(critical_alerts),
+        "warning_alerts": float(warning_alerts),
+        "total_alerts": float(total_alerts),
+        "winkler_90": winkler_90,
+        "winkler_95": winkler_95,
+    }
+    checks = _policy_checks(policy, metrics)
     checks_df = pd.DataFrame(checks)
-
-    def _evaluate_check_frame(frame: pd.DataFrame) -> dict[str, Any]:
-        gate_pass = bool(frame["passed"].all())
-        failing_material = frame.loc[~frame["passed"], "metric"].astype(str).tolist()
-        methodological_status = (
-            "not_needed_material_gate_pass" if gate_pass else "blocked_material_gate_failures"
-        )
-        return {
-            "strict_overall_pass": gate_pass,
-            "gate_overall_pass": gate_pass,
-            "non_statistical_checks_pass": gate_pass,
-            "diagnostic_statistical_pass": True,
-            "failing_checks": failing_material,
-            "failing_statistical_checks": [],
-            "gate_failing_checks": failing_material,
-            "failing_non_statistical_checks": failing_material,
-            "diagnostic_failing_checks": [],
-            "methodological_justification_pass": gate_pass,
-            "methodological_justification_status": methodological_status,
-        }
+    winkler_90_check = next(check for check in checks if check["metric"] == "winkler_90")
+    winkler_90_raw_pass = bool(winkler_90_check.get("raw_passed", False))
+    winkler_90_policy_pass = bool(winkler_90_check.get("passed", False))
+    winkler_90_policy_mode = str(winkler_90_check.get("policy_mode", "strict"))
+    winkler_90_compensated_pass = bool(winkler_90_check.get("compensated_passed", False))
+    compensated_winkler_90_max = _safe_float(winkler_90_check.get("compensated_threshold", np.nan))
 
     evaluation = _evaluate_check_frame(checks_df)
     strict_overall_pass = bool(evaluation["strict_overall_pass"])
@@ -382,11 +460,7 @@ def main(
     methodological_status = str(evaluation["methodological_justification_status"])
     overall_pass = gate_overall_pass
 
-    latest_month = (
-        backtest_monthly.sort_values("month").iloc[-1]["month"]
-        if not backtest_monthly.empty
-        else None
-    )
+    latest_month = _latest_backtest_month(backtest_monthly)
 
     out_status = {
         "overall_pass": overall_pass,

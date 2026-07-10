@@ -23,9 +23,14 @@ from scripts.optimize_portfolio_tradeoff import (  # noqa: E402
     _parse_percent_series,
 )
 from src.models.conformal_artifacts import load_conformal_intervals  # noqa: E402
+from src.optimization.certificate_semantics import (  # noqa: E402
+    compute_funded_certificate_metrics,
+)
+from src.optimization.policy import policy_segment_labels  # noqa: E402
 from src.optimization.portfolio_model import (  # noqa: E402
     compute_effective_pd,
     optimize_portfolio_allocation,
+    solution_allocation_vector,
 )
 
 DEFAULT_ALPHAS = [0.01, 0.03, 0.05, 0.07, 0.10, 0.12, 0.15, 0.20]
@@ -116,30 +121,6 @@ def _load_aligned_dataset(
     return aligned
 
 
-def _policy_segment_labels(loans: pd.DataFrame, policy_mode: str) -> np.ndarray | None:
-    if str(policy_mode).strip().lower() not in {
-        "segment_tail_blended_uncertainty",
-        "segment_relative_tail_blended_uncertainty",
-    }:
-        return None
-    grade = (
-        loans["grade"].fillna("unknown").astype(str)
-        if "grade" in loans.columns
-        else pd.Series(["unknown"] * len(loans))
-    )
-    term = (
-        loans["term"].fillna("unknown").astype(str)
-        if "term" in loans.columns
-        else pd.Series(["unknown"] * len(loans))
-    )
-    verification = (
-        loans["verification_status"].fillna("unknown").astype(str)
-        if "verification_status" in loans.columns
-        else pd.Series(["unknown"] * len(loans))
-    )
-    return (grade + "|" + term + "|" + verification).to_numpy(dtype=object)
-
-
 def _compute_intervals_at_alpha(
     frame: pd.DataFrame,
     alpha: float,
@@ -179,7 +160,7 @@ def _compute_effective_pd_vector(
         gamma=float(policy["gamma"]),
         delta_cap_quantile=float(policy["delta_cap_quantile"]),
         tail_focus_quantile=float(policy["tail_focus_quantile"]),
-        segment_labels=_policy_segment_labels(loans, str(policy["policy_mode"])),
+        segment_labels=policy_segment_labels(loans, str(policy["policy_mode"])),
     )
 
 
@@ -277,12 +258,7 @@ def _compute_exact_weights(
         if "loan_amnt" in loans.columns
         else np.ones(len(loans), dtype=float)
     )
-    if "allocation_vector" in solution:
-        alloc = np.asarray(solution["allocation_vector"], dtype=float)
-    else:
-        alloc = np.array(
-            [float(solution["allocation"].get(i, 0.0)) for i in range(len(loans))], dtype=float
-        )
+    alloc = solution_allocation_vector(solution, len(loans))
     total_allocated = float(np.sum(alloc * loan_amounts))
     weights = (alloc * loan_amounts) / max(total_allocated, 1e-6)
     return weights, {
@@ -339,37 +315,52 @@ def _validate_single_alpha(
     else:
         raise ValueError(f"Unsupported allocator-mode={allocator_mode!r}")
 
-    miscoverage = (y_true > pd_high).astype(float)
-    V = float(np.sum(weights * miscoverage))
-    weighted_pd_true = float(np.sum(weights * y_true))
-    violation = max(0.0, weighted_pd_true - float(policy["risk_tolerance"]))
-    funded_mask = weights > 1e-8
-    emp_coverage = (
-        float(1.0 - miscoverage[funded_mask].mean()) if funded_mask.any() else float("nan")
+    certificate = compute_funded_certificate_metrics(
+        weights,
+        outcomes=y_true,
+        pd_point=pd_point,
+        pd_high=pd_high,
+        pd_effective=effective_pd,
+        alpha=alpha,
+        risk_tolerance=float(policy["risk_tolerance"]),
+        pd_cap_slack=float(alloc_meta.get("pd_cap_slack", 0.0)),
     )
-    sqrt_alpha = float(np.sqrt(alpha))
     bound_b_value = min(1.0, alpha / max(t_eval, 1e-8))
+    risk_excess = round(certificate.realized_risk_tolerance_excess, 6)
+    empirical_risk_screen = bool(certificate.realized_risk_tolerance_excess <= alpha + 1e-8)
+    markov_screen = bool(certificate.sqrt_alpha + 1e-8 >= certificate.weighted_miscoverage)
 
     return {
         "alpha": float(alpha),
         "confidence": float(1.0 - alpha),
-        "gamma_cp": round(float(np.sum(weights * np.clip(pd_high - pd_point, 0.0, 1.0))), 6),
-        "n_funded": int(np.sum(funded_mask)),
-        "weighted_pd_true": round(weighted_pd_true, 6),
-        "weighted_pd_constraint_used": round(float(alloc_meta["weighted_pd_constraint_used"]), 6),
-        "weighted_pd_high": round(float(alloc_meta["weighted_pd_high"]), 6),
-        "weighted_pd_point": round(float(alloc_meta["weighted_pd_point"]), 6),
+        "gamma_cp": round(certificate.gamma_cp, 6),
+        "gamma_internalized": round(certificate.gamma_internalized, 6),
+        "gamma_residual": round(certificate.gamma_residual, 6),
+        "n_funded": certificate.n_funded,
+        "weighted_pd_true": round(certificate.weighted_outcome, 6),
+        "weighted_pd_constraint_used": round(certificate.weighted_pd_effective, 6),
+        "weighted_pd_high": round(certificate.endpoint_budget, 6),
+        "weighted_pd_point": round(certificate.weighted_pd_point, 6),
+        "endpoint_budget": round(certificate.endpoint_budget, 9),
+        "endpoint_budget_upper": round(certificate.endpoint_budget_upper, 9),
+        "markov_loss_threshold": round(certificate.markov_loss_threshold, 9),
+        "markov_loss_cap": round(certificate.markov_loss_cap, 9),
         "tau": float(policy["risk_tolerance"]),
-        "violation": round(violation, 6),
-        "weighted_miscoverage_V": round(V, 6),
-        "sqrt_alpha": round(sqrt_alpha, 6),
-        "empirical_coverage_funded": round(emp_coverage, 4),
-        "bound_a_expected_violation_leq_alpha": bool(violation <= alpha + 1e-8),
+        "realized_risk_tolerance_excess": risk_excess,
+        "violation": risk_excess,
+        "weighted_miscoverage_V": round(certificate.weighted_miscoverage, 6),
+        "weighted_coverage_funded": round(certificate.weighted_coverage, 6),
+        "sqrt_alpha": round(certificate.sqrt_alpha, 6),
+        "empirical_coverage_funded": round(certificate.empirical_coverage_funded, 4),
+        "empirical_risk_excess_leq_alpha": empirical_risk_screen,
+        "bound_a_expected_violation_leq_alpha": empirical_risk_screen,
         "bound_b_prob_violation_gt_t": round(bound_b_value, 4),
         "bound_b_t_eval": float(t_eval),
         "bound_b_is_vacuous": bool(bound_b_value >= 1.0),
-        "bound_c_V_leq_sqrt_alpha": bool(sqrt_alpha + 1e-8 >= V),
-        "all_bounds_hold": bool((violation <= alpha + 1e-8) and (sqrt_alpha + 1e-8 >= V)),
+        "markov_miscoverage_screen_pass": markov_screen,
+        "bound_c_V_leq_sqrt_alpha": markov_screen,
+        "certificate_screen_pass": empirical_risk_screen and markov_screen,
+        "all_bounds_hold": empirical_risk_screen and markov_screen,
         "allocator_mode": mode,
         "solver_status": str(alloc_meta.get("solver_status", "unknown")),
         "allocator_solver_backend": str(alloc_meta.get("solver_backend", policy["solver_backend"])),
@@ -404,22 +395,22 @@ def _plot_validation(results: list[dict[str, Any]], figure_prefix: Path) -> None
     ax = axes[1]
     ax.bar(
         df["alpha"],
-        df["violation"],
+        df["realized_risk_tolerance_excess"],
         width=0.012,
         color="#27ae60",
         alpha=0.7,
-        label="Violación empírica",
+        label="Realized risk-tolerance excess",
     )
     ax.plot(
         df["alpha"],
         df["alpha"],
         "r--",
         linewidth=2,
-        label=r"Cota teórica $\mathbb{E}[\mathrm{violación}] \leq \alpha$",
+        label=r"Declared empirical screen: excess $\leq \alpha$",
     )
     ax.set_xlabel(r"$\alpha$")
-    ax.set_ylabel("Violación de restricción PD")
-    ax.set_title(r"(B) Teorema 1(a): $\mathbb{E}[\mathrm{viol.}] \leq \alpha$")
+    ax.set_ylabel("Excess above risk tolerance")
+    ax.set_title("(B) Realized risk-tolerance screen")
     ax.legend(fontsize=8, loc="upper left")
     ax.grid(True, alpha=0.3)
 
@@ -451,10 +442,10 @@ def _plot_validation(results: list[dict[str, Any]], figure_prefix: Path) -> None
 def _print_summary(results: list[dict[str, Any]], allocator_mode: str) -> None:
     all_pass = all(bool(r["all_bounds_hold"]) for r in results)
     print("\n" + "=" * 96)
-    print(f"VALIDATION SUMMARY: Theorem 1 ({allocator_mode.upper()} allocator)")
+    print(f"CERTIFICATE SUMMARY ({allocator_mode.upper()} allocator)")
     print("=" * 96)
     header = (
-        f"{'α':>6} {'1-α':>6} {'Γ_CP':>8} {'Violation':>10} {'V':>8} "
+        f"{'α':>6} {'1-α':>6} {'Γ_CP':>8} {'Risk excess':>12} {'V':>8} "
         f"{'√α':>8} {'Mode':>8} {'Pass':>6}"
     )
     print(header)
@@ -463,11 +454,11 @@ def _print_summary(results: list[dict[str, Any]], allocator_mode: str) -> None:
         status = "  ✓" if r["all_bounds_hold"] else "  ✗"
         print(
             f"{r['alpha']:6.2f} {r['confidence']:6.2f} {r['gamma_cp']:8.4f} "
-            f"{r['violation']:10.6f} {r['weighted_miscoverage_V']:8.4f} "
+            f"{r['realized_risk_tolerance_excess']:10.6f} {r['weighted_miscoverage_V']:8.4f} "
             f"{r['sqrt_alpha']:8.4f} {r['allocator_mode']:>8} {status}"
         )
     print("=" * 96)
-    print(f"Result: {'ALL BOUNDS HOLD' if all_pass else 'SOME BOUNDS FAILED'}")
+    print(f"Result: {'ALL SCREENS PASS' if all_pass else 'SOME SCREENS FAILED'}")
 
 
 def main(argv: list[str] | None = None) -> None:
@@ -509,10 +500,10 @@ def main(argv: list[str] | None = None) -> None:
         results.append(result)
         status = "✓" if result["all_bounds_hold"] else "✗"
         logger.info(
-            "  α={:.2f}  Γ_CP={:.4f}  violation={:.6f}  V={:.4f}  √α={:.4f}  {}",
+            "  α={:.2f}  Γ_CP={:.4f}  risk_excess={:.6f}  V={:.4f}  √α={:.4f}  {}",
             alpha,
             result["gamma_cp"],
-            result["violation"],
+            result["realized_risk_tolerance_excess"],
             result["weighted_miscoverage_V"],
             result["sqrt_alpha"],
             status,
@@ -524,7 +515,8 @@ def main(argv: list[str] | None = None) -> None:
         or (DEFAULT_EXACT_JSON if allocator_mode == "exact" else DEFAULT_PROXY_JSON)
     )
     summary = {
-        "theorem": "Conformal Feasibility Guarantee (Theorem 1)",
+        "certificate": "Funded-set Markov accounting and empirical screens",
+        "theorem": "Distribution-free Markov bound under weighted funded-set validity",
         "paper": "CRPTO (CRPTO)",
         "allocator_mode": allocator_mode,
         "n_test_observations": len(aligned),
@@ -532,6 +524,7 @@ def main(argv: list[str] | None = None) -> None:
         "conformal_intervals_path": str(args.conformal_intervals_path or ""),
         "alphas_tested": alpha_grid,
         "all_bounds_hold": all_pass,
+        "all_certificate_screens_pass": all_pass,
         "results": results,
     }
     output_json.parent.mkdir(parents=True, exist_ok=True)

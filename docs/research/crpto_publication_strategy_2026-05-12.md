@@ -66,7 +66,7 @@ The first paper draft should be written as:
 
 - title: `CRPTO: Conformal Robust Predict-Then-Optimize for Auditable Credit Portfolio Decisions`;
 - body: 25-page IJDS-style manuscript;
-- supplement: A3--A39, proofs, extended tables, reproducibility,
+- supplement: A3--A40, proofs, extended tables, reproducibility,
   MRM/fairness and external replication;
 - review mode: anonymous by default;
 - companion: GitHub/DVC/DagsHub/MLflow after the anonymity policy is handled.
@@ -77,8 +77,8 @@ The short paper should keep only the strongest body material:
 - PD calibration summary;
 - Mondrian conformal layer;
 - robust portfolio formulation;
-- Markov bound and conditional tightening caveat;
-- pool93 body metrics and A35 finite-grid frontier;
+- policy-aware decision certificate and conditional tightening caveat;
+- pool93 body metrics, A35 finite-grid frontier and A40 matched point-PD audit;
 - A36--A39 selected-allocation audits;
 - regret-auditability frontier with one concise SPO+/DFL comparison;
 - data/code reproducibility statement.
@@ -100,13 +100,13 @@ In scope for the current paper:
 - promoted pool93 finite-grid return-bound frontier;
 - frozen upstream CRPTO chain as provenance and return floor;
 - calibrated PD -> Mondrian conformal intervals -> robust portfolio decision;
-- exact alpha-safe funded-set validation and A35 finite-grid frontier;
-- A3--A39 as supplement evidence;
+- exact funded-set validation and A35 policy-aware finite-grid frontier;
+- A3--A40 as supplement evidence;
 - regret-auditability frontier in the body;
 - OCE/CVaR tail-risk diagnostics and robust satisficing margins in the
   supplement;
-- cluster-aware dependence caveat/proposition with Markov retained as the main
-  distribution-free bound;
+- cluster-aware dependence caveat/proposition with the Markov step retained in
+  the main distribution-free decision certificate;
 - external economic replication on Prosper and Freddie/Mendeley as A25--A34,
   without reopening the Lending Club body claim;
 - reproducibility via Quarto, DVC, DagsHub/MLflow and guardrail tests.

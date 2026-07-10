@@ -45,8 +45,8 @@ def demographic_parity_difference(
 
     rates = list(group_rates.values())
     dpd = max(rates) - min(rates)
-    max_group = max(group_rates, key=group_rates.get)  # type: ignore[arg-type]
-    min_group = min(group_rates, key=group_rates.get)  # type: ignore[arg-type]
+    max_group = max(group_rates, key=lambda key: group_rates[key])
+    min_group = min(group_rates, key=lambda key: group_rates[key])
 
     return {
         "dpd": dpd,
@@ -310,18 +310,18 @@ def fairness_threshold_frontier(
             )
     if not rows:
         return pd.DataFrame(
-            columns=[
-                "attribute",
-                "threshold",
-                "is_primary_threshold",
-                "dpd",
-                "eo_gap",
-                "dir",
-                "passed_dpd",
-                "passed_eo",
-                "passed_dir",
-                "passed_all",
-            ]
+            {
+                "attribute": pd.Series(dtype="object"),
+                "threshold": pd.Series(dtype="float64"),
+                "is_primary_threshold": pd.Series(dtype="bool"),
+                "dpd": pd.Series(dtype="float64"),
+                "eo_gap": pd.Series(dtype="float64"),
+                "dir": pd.Series(dtype="float64"),
+                "passed_dpd": pd.Series(dtype="bool"),
+                "passed_eo": pd.Series(dtype="bool"),
+                "passed_dir": pd.Series(dtype="bool"),
+                "passed_all": pd.Series(dtype="bool"),
+            }
         )
     return pd.DataFrame(rows).sort_values(["attribute", "threshold"]).reset_index(drop=True)
 

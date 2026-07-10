@@ -34,20 +34,20 @@ the submission-shaped versions are written.
   IJDS disclosure form.
 - `submission/SCHOLARONE_FINAL_CHECKLIST.md`: final upload/proof checklist.
 
-Selected P2/P3-inspired diagnostics are part of the current paper/journal pack:
-regret-auditability, OCE/CVaR tail risk, robust satisficing margins,
-multi-distribution diagnostics, online replay diagnostics, the pool93 A35
-finite-grid frontier, the A36 funded-set grade audit, the A37--A39 selected
-pool93 tail-risk, cluster-bound, and bootstrap audits, and external Prosper/Freddie economic
-replications. Tail-risk row-level repricing is supplement evidence for the
-selected pool93 allocation, not a hidden promotion criterion. Prospective
-live online validation, causal variants, new multi-dataset protocols beyond the
-frozen Prosper/Freddie replications, production, and package tracks remain
-future work.
+The active paper has one method: exact 90% conformal replay, the midpoint
+guardrail `q=(p+u)/2`, `tau=0.17`, and a nine-cell November selector under
+`B_u<=0.28`. A35 is the exact-alpha audit, A36 is the split selector/December
+audit, A37 is temporal evaluation, A38 is letter-grade composition, A39 is the
+month-cluster bootstrap with loan-level sensitivity, and A40 is the matched
+point-PD comparison. OCE/CVaR, SPO+, satisficing, online-style checks,
+and Prosper/Freddie replications remain supplement diagnostics; they do not
+select or redefine the midpoint policy. Prospective validation, causal variants,
+live recalibration, production, and package tracks remain outside the claim.
 
 ## Render Commands
 
-```bash
+```powershell
+just ijds-evidence
 just paper-ijds
 just paper-ijds-supplement
 just paper-submission

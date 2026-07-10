@@ -14,11 +14,12 @@ import math
 import re
 from datetime import UTC, datetime
 from pathlib import Path
-from typing import Any
+from typing import Any, cast
 
 import numpy as np
 import pandas as pd
 
+from src.optimization.policy import policy_segment_labels
 from src.utils.script_helpers import load_json, policy_matches, write_json, write_table
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -426,7 +427,8 @@ def _build_segment_period_table(oot: pd.DataFrame) -> pd.DataFrame:
     rows: list[dict[str, Any]] = []
     total_loan_amount = float(oot["loan_weight"].sum())
     grouped = oot.groupby(["period", "original_grade"], dropna=False, observed=True)
-    for (period, grade), group in grouped:
+    for key, group in grouped:
+        period, grade = cast(tuple[object, object], key)
         row = {
             "period": str(period),
             "original_grade": str(grade),
@@ -589,23 +591,6 @@ def _interval_arrays_at_alpha(
     return pd_point, pd_low_90, pd_high_90
 
 
-def _segment_labels(frame: pd.DataFrame, policy_mode: str) -> np.ndarray | None:
-    if str(policy_mode).strip().lower() not in {
-        "segment_tail_blended_uncertainty",
-        "segment_relative_tail_blended_uncertainty",
-    }:
-        return None
-    grade = frame.get("original_grade", pd.Series(["unknown"] * len(frame))).fillna("unknown")
-    term = frame.get("term", pd.Series(["unknown"] * len(frame))).fillna("unknown")
-    verification = frame.get(
-        "verification_status",
-        pd.Series(["unknown"] * len(frame)),
-    ).fillna("unknown")
-    return (grade.astype(str) + "|" + term.astype(str) + "|" + verification.astype(str)).to_numpy(
-        dtype=object
-    )
-
-
 def _realized_return(
     allocation: np.ndarray,
     loan_amounts: np.ndarray,
@@ -626,7 +611,11 @@ def _solve_exact_policy(
     alpha: float = 0.01,
     budget: float = 1_000_000.0,
 ) -> dict[str, Any]:
-    from src.optimization.portfolio_model import compute_effective_pd, optimize_portfolio_allocation
+    from src.optimization.portfolio_model import (
+        compute_effective_pd,
+        optimize_portfolio_allocation,
+        solution_allocation_vector,
+    )
 
     pd_point, pd_low, pd_high = _interval_arrays_at_alpha(aligned, alpha)
     effective_pd = compute_effective_pd(
@@ -636,7 +625,11 @@ def _solve_exact_policy(
         gamma=float(policy["gamma"]),
         delta_cap_quantile=float(policy["delta_cap_quantile"]),
         tail_focus_quantile=float(policy["tail_focus_quantile"]),
-        segment_labels=_segment_labels(aligned, str(policy["policy_mode"])),
+        segment_labels=policy_segment_labels(
+            aligned,
+            str(policy["policy_mode"]),
+            grade_column="original_grade",
+        ),
     )
     loan_amounts = (
         pd.to_numeric(aligned["loan_amnt"], errors="coerce").fillna(1.0).to_numpy(dtype=float)
@@ -670,10 +663,7 @@ def _solve_exact_policy(
         threads=4,
         solver_backend=str(policy["solver_backend"]),
     )
-    allocation = np.array(
-        [float(solution["allocation"].get(i, 0.0)) for i in range(len(aligned))],
-        dtype=float,
-    )
+    allocation = solution_allocation_vector(solution, len(aligned))
     total_allocated = float(np.sum(allocation * loan_amounts))
     weights = (allocation * loan_amounts) / max(total_allocated, 1e-6)
     funded_mask = weights > 1e-8

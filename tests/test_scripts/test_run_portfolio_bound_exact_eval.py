@@ -10,9 +10,12 @@ from scripts.search.run_portfolio_bound_exact_eval import (
     _context_exact_threads,
     _context_max_candidates,
     _context_random_states,
+    _exact_eval_plan,
     _load_completed_bound_eval,
     _load_partial_bound_eval,
     _repo_relative,
+    _resume_exact_rows,
+    _search_space_payload,
     _shortlist_exact_path,
     _validate_alpha_grid_supported,
 )
@@ -84,6 +87,28 @@ def test_exact_context_overrides_proxy_sampling() -> None:
     assert _context_random_states(context) == [42, 52, 62]
 
 
+def test_exact_plan_dedupes_full_universe_random_states(monkeypatch) -> None:
+    monkeypatch.delenv("EXACT_THREADS", raising=False)
+    context = {
+        "alpha_grid": [0.01, 0.03],
+        "max_candidates": 100000,
+        "exact_max_candidates": 0,
+        "random_states": [42],
+        "requested_exact_random_states": "42,52,62",
+        "exact_checkpoint_every": 7,
+        "exact_threads": 3,
+    }
+
+    plan = _exact_eval_plan(context=context, shortlist_rows=5)
+
+    assert plan.requested_random_states == [42, 52, 62]
+    assert plan.random_states == [42]
+    assert plan.full_universe_seed_deduped is True
+    assert plan.expected_checks == 10
+    assert plan.exact_threads == 3
+    assert plan.checkpoint_every == 7
+
+
 def test_exact_threads_can_come_from_environment(monkeypatch) -> None:
     monkeypatch.setenv("EXACT_THREADS", "8")
 
@@ -106,6 +131,34 @@ def test_repo_relative_keeps_artifact_paths_standalone() -> None:
     path = ROOT / "models" / "portfolio_bound_aware" / "selection.json"
 
     assert _repo_relative(path) == "models/portfolio_bound_aware/selection.json"
+
+
+def test_resume_exact_rows_filters_out_irrelevant_seeds(tmp_path) -> None:
+    path = tmp_path / "bound_eval.parquet"
+    pd.DataFrame(
+        {
+            "candidate_rank": [1, 1, 2],
+            "eval_random_state": [42, 52, 42],
+            "alpha": [0.01, 0.01, 0.03],
+            "all_bounds_hold": [True, True, False],
+        }
+    ).to_parquet(path, index=False)
+
+    rows, keys = _resume_exact_rows(bound_eval_path=path, random_states=[42])
+
+    assert len(rows) == 2
+    assert keys == {(1, 42, 0.01), (2, 42, 0.03)}
+
+
+def test_search_space_payload_records_requested_alpha_grid() -> None:
+    context = {"search_space": {"alpha_grid": [0.01], "mode": ["capped"]}}
+
+    payload = _search_space_payload(context=context, alpha_grid=[0.01, 0.03])
+
+    assert payload["alpha_grid"] == [0.01, 0.03]
+    assert payload["requested_alpha_grid"] == [0.01]
+    assert payload["effective_alpha_grid"] == [0.01, 0.03]
+    assert payload["mode"] == ["capped"]
 
 
 def test_validate_alpha_grid_supported_accepts_sweep_values(tmp_path, monkeypatch) -> None:

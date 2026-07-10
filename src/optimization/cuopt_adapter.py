@@ -17,17 +17,17 @@ from typing import Any
 import numpy as np
 import pandas as pd
 from loguru import logger
-from scipy.sparse import csr_matrix
+
+from src.optimization.portfolio_model import _portfolio_lp_components, _PortfolioLpComponents
 
 
 def _require_cuopt() -> Any:
     try:
-        from cuopt import linear_programming as lp_api  # type: ignore[import-not-found]
+        return importlib.import_module("cuopt").linear_programming
     except Exception as exc:  # pragma: no cover - exercised in RAPIDS env only
         raise RuntimeError(
             "solver_backend='cuopt' requested but native cuOpt Python API is not available."
         ) from exc
-    return lp_api
 
 
 def _extract_primal_solution(solution: Any, n_vars: int) -> np.ndarray:
@@ -109,112 +109,33 @@ def _unique_cuopt_log_file(log_dir: str | Path, *, random_seed: int | None) -> s
     return str(target / f"cuopt_seed-{seed_token}_pid-{os.getpid()}_{time.time_ns()}.log")
 
 
-def solve_portfolio_cuopt_native(
-    *,
-    loans: pd.DataFrame,
-    pd_point: np.ndarray,
-    pd_high: np.ndarray,
-    lgd: np.ndarray,
-    int_rates: np.ndarray,
-    total_budget: float = 1_000_000,
-    max_concentration: float = 0.25,
-    max_portfolio_pd: float = 0.10,
-    robust: bool = True,
-    uncertainty_aversion: float = 0.0,
-    min_budget_utilization: float = 0.0,
-    pd_cap_slack_penalty: float = 0.0,
-    pd_constraint_override: np.ndarray | None = None,
-    time_limit: int = 300,
-    random_seed: int | None = None,
-    presolve: int | None = 1,
-    cuopt_parameters: dict[str, Any] | None = None,
-) -> dict[str, Any]:
-    """Solve the portfolio LP natively with cuOpt."""
-    lp_api = _require_cuopt()
-
-    n = len(loans)
-    if n == 0:
-        raise ValueError("Cannot solve empty portfolio.")
-
-    loan_amounts = (
-        loans["loan_amnt"].to_numpy(dtype=float)
-        if "loan_amnt" in loans.columns
-        else np.ones(n, dtype=float) * 10_000.0
-    )
-    point = np.asarray(pd_point, dtype=float)
-    high = np.asarray(pd_high, dtype=float)
-    lgd_arr = np.asarray(lgd, dtype=float)
-    rates = np.asarray(int_rates, dtype=float)
-    pd_constraint = (
-        np.asarray(pd_constraint_override, dtype=float)
-        if pd_constraint_override is not None
-        else (high if robust else point)
-    )
-    pd_uncertainty = np.clip(high - point, 0.0, 1.0)
-
-    use_pd_slack = float(pd_cap_slack_penalty) > 0
-    obj = loan_amounts * (rates - point * lgd_arr - uncertainty_aversion * pd_uncertainty * lgd_arr)
-
-    rows: list[np.ndarray] = []
-    rhs: list[float] = []
-    row_types: list[str] = []
-
-    # Budget cap
-    rows.append(loan_amounts.astype(float))
-    rhs.append(float(total_budget))
-    row_types.append("L")
-
-    # Optional minimum budget utilization
-    min_budget_utilization = float(np.clip(min_budget_utilization, 0.0, 1.0))
-    if min_budget_utilization > 0:
-        rows.append((-loan_amounts).astype(float))
-        rhs.append(float(-min_budget_utilization * total_budget))
-        row_types.append("L")
-
-    # Portfolio PD cap: sum(x_i * loan_i * (pd_i - max_pd)) - slack <= 0
-    pd_row = loan_amounts * (pd_constraint - float(max_portfolio_pd))
-    rows.append(pd_row.astype(float))
-    rhs.append(0.0)
-    row_types.append("L")
-
-    if "purpose" in loans.columns:
-        purposes = loans["purpose"].fillna("unknown").astype(str)
-        top_purposes = purposes.unique()
-        for purpose in top_purposes:
-            mask = (purposes == purpose).to_numpy(dtype=float)
-            row = loan_amounts * (mask - float(max_concentration))
-            rows.append(row.astype(float))
-            rhs.append(0.0)
-            row_types.append("L")
-
-    A = np.vstack(rows).astype(np.float64)
-
-    var_lb = np.zeros(n + int(use_pd_slack), dtype=np.float64)
-    var_ub = np.ones(n + int(use_pd_slack), dtype=np.float64)
-    if use_pd_slack:
-        slack_col = np.zeros((A.shape[0], 1), dtype=np.float64)
-        pd_cap_row_idx = 2 if min_budget_utilization > 0 else 1
-        slack_col[pd_cap_row_idx, 0] = -1.0
-        A = np.hstack([A, slack_col])
-        obj = np.concatenate([obj.astype(np.float64), np.array([-float(pd_cap_slack_penalty)])])
-        var_ub[-1] = float(total_budget)
-    else:
-        obj = obj.astype(np.float64)
-
-    A_csr = csr_matrix(A)
+def _cuopt_data_model(lp_api: Any, components: _PortfolioLpComponents) -> Any:
+    matrix = components.a_ub.tocsr()
     dm = lp_api.DataModel()
     dm.set_csr_constraint_matrix(
-        A_csr.data.astype(np.float64),
-        A_csr.indices.astype(np.int32),
-        A_csr.indptr.astype(np.int32),
+        matrix.data.astype(np.float64),
+        matrix.indices.astype(np.int32),
+        matrix.indptr.astype(np.int32),
     )
-    dm.set_constraint_bounds(np.asarray(rhs, dtype=np.float64))
-    dm.set_row_types(np.asarray(row_types))
-    dm.set_objective_coefficients(obj)
+    dm.set_constraint_bounds(components.rhs.astype(np.float64))
+    dm.set_row_types(np.asarray(["L"] * len(components.rhs)))
+    dm.set_objective_coefficients(components.objective_coefficients.astype(np.float64))
     dm.set_maximize(True)
-    dm.set_variable_lower_bounds(var_lb)
-    dm.set_variable_upper_bounds(var_ub)
 
+    bounds = np.asarray(components.bounds, dtype=np.float64)
+    dm.set_variable_lower_bounds(bounds[:, 0])
+    dm.set_variable_upper_bounds(bounds[:, 1])
+    return dm
+
+
+def _cuopt_solver_settings(
+    lp_api: Any,
+    *,
+    time_limit: int,
+    random_seed: int | None,
+    presolve: int | None,
+    cuopt_parameters: dict[str, Any] | None,
+) -> tuple[Any, dict[str, Any], dict[str, str]]:
     settings = lp_api.SolverSettings()
     requested_parameters = {
         _normalize_parameter_name(k): _coerce_setting_value(v)
@@ -237,6 +158,7 @@ def solve_portfolio_cuopt_native(
     for name, value in requested_parameters.items():
         if value is not None:
             applied_parameters[name] = value
+
     rejected_parameters: dict[str, str] = {}
     critical_parameters = {
         "time_limit",
@@ -253,19 +175,23 @@ def solve_portfolio_cuopt_native(
             rejected_parameters[name] = str(exc)
             if name in critical_parameters:
                 raise
+    return settings, applied_parameters, rejected_parameters
 
-    solution = lp_api.Solve(dm, settings)
-    termination_reason = str(solution.get_termination_reason())
-    if "Optimal" not in termination_reason and "Feasible" not in termination_reason:
-        raise RuntimeError(
-            f"cuOpt solve did not produce an acceptable solution: {termination_reason}"
-        )
 
-    primal = _extract_primal_solution(solution, n + int(use_pd_slack))
-    x = primal[:n]
-    pd_cap_slack = float(primal[-1]) if use_pd_slack else 0.0
-    allocation = {i: float(x[i]) for i in range(n)}
-    total_allocated = float(np.sum(x * loan_amounts))
+def _cuopt_result_payload(
+    *,
+    solution: Any,
+    primal: np.ndarray,
+    components: _PortfolioLpComponents,
+    termination_reason: str,
+    applied_parameters: dict[str, Any],
+    rejected_parameters: dict[str, str],
+) -> dict[str, Any]:
+    x = np.clip(primal[: components.n], 0.0, 1.0)
+    pd_cap_slack = float(primal[-1]) if components.use_pd_slack else 0.0
+    allocation = {i: float(x[i]) for i in range(components.n)}
+    allocation_vector = x.astype(float)
+    total_allocated = float(np.sum(x * components.loan_amounts))
     n_funded = int(np.sum(x > 0.01))
     obj_value = float(solution.get_primal_objective())
 
@@ -273,13 +199,14 @@ def solve_portfolio_cuopt_native(
         "Portfolio solved (cuopt_native): obj={:,.2f}, funded={}/{}, allocated={:,.0f}, pd_cap_slack={:.4f}",
         obj_value,
         n_funded,
-        n,
+        components.n,
         total_allocated,
         pd_cap_slack,
     )
 
     return {
         "allocation": allocation,
+        "allocation_vector": allocation_vector,
         "objective_value": obj_value,
         "n_funded": n_funded,
         "total_allocated": total_allocated,
@@ -292,3 +219,67 @@ def solve_portfolio_cuopt_native(
         "cuopt_log_file": applied_parameters.get("log_file", ""),
         "cuopt_rejected_parameters": rejected_parameters,
     }
+
+
+def solve_portfolio_cuopt_native(
+    *,
+    loans: pd.DataFrame,
+    pd_point: np.ndarray,
+    pd_high: np.ndarray,
+    lgd: np.ndarray,
+    int_rates: np.ndarray,
+    total_budget: float = 1_000_000,
+    max_concentration: float = 0.25,
+    max_portfolio_pd: float = 0.10,
+    robust: bool = True,
+    uncertainty_aversion: float = 0.0,
+    min_budget_utilization: float = 0.0,
+    pd_cap_slack_penalty: float = 0.0,
+    pd_constraint_override: np.ndarray | None = None,
+    time_limit: int = 300,
+    random_seed: int | None = None,
+    presolve: int | None = 1,
+    cuopt_parameters: dict[str, Any] | None = None,
+) -> dict[str, Any]:
+    """Solve the portfolio LP natively with cuOpt."""
+    lp_api = _require_cuopt()
+    components = _portfolio_lp_components(
+        loans=loans,
+        pd_point=pd_point,
+        pd_high=pd_high,
+        lgd=lgd,
+        int_rates=int_rates,
+        total_budget=total_budget,
+        max_concentration=max_concentration,
+        max_portfolio_pd=max_portfolio_pd,
+        robust=robust,
+        uncertainty_aversion=uncertainty_aversion,
+        min_budget_utilization=min_budget_utilization,
+        pd_cap_slack_penalty=pd_cap_slack_penalty,
+        pd_constraint_override=pd_constraint_override,
+    )
+    dm = _cuopt_data_model(lp_api, components)
+    settings, applied_parameters, rejected_parameters = _cuopt_solver_settings(
+        lp_api,
+        time_limit=time_limit,
+        random_seed=random_seed,
+        presolve=presolve,
+        cuopt_parameters=cuopt_parameters,
+    )
+
+    solution = lp_api.Solve(dm, settings)
+    termination_reason = str(solution.get_termination_reason())
+    if "Optimal" not in termination_reason and "Feasible" not in termination_reason:
+        raise RuntimeError(
+            f"cuOpt solve did not produce an acceptable solution: {termination_reason}"
+        )
+
+    primal = _extract_primal_solution(solution, components.n + int(components.use_pd_slack))
+    return _cuopt_result_payload(
+        solution=solution,
+        primal=primal,
+        components=components,
+        termination_reason=termination_reason,
+        applied_parameters=applied_parameters,
+        rejected_parameters=rejected_parameters,
+    )

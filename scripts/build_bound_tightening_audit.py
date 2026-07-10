@@ -335,7 +335,7 @@ def _write_report(
             ]
         )
     ].sort_values("threshold_t")
-    lines = [
+    lines: list[str] = [
         "# CRPTO Bound Tightening Experiment - 2026-06-11",
         "",
         "Merged into `main` (2026-06-11) and cited by Online Supplement Appendix A. "
@@ -366,26 +366,28 @@ def _write_report(
             f"`{row.margin_vs_empirical_V:.6f}` | {row.paper_role} |"
         )
 
-    lines += [
-        "",
-        "## Recommendation",
-        "",
-        "- Keep Markov as the body theorem: it is the only first-moment, "
-        "distribution-free statement compatible with the current post-selection caveat.",
-        "- Keep A21 cluster-aware Hoeffding as a dependence caveat, not a tightening: "
-        "cluster exposure is too concentrated.",
-        "- Use A21b/A21c as an appendix sensitivity table. Cantelli, Bernstein, Bennett "
-        "and Freedman show how much tightness is available if a reviewer accepts stronger "
-        "independence, variance, or martingale assumptions.",
-        "- Drop Chebyshev, Azuma, Chernoff and naive union-Markov from paper-facing tables. "
-        "They are respectively dominated, duplicative, too strong for the current "
-        "individual-alpha evidence, or vacuous after policy-region correction.",
-        "",
-        "## Assumption Audit",
-        "",
-        assumption_table.to_markdown(index=False),
-        "",
-    ]
+    lines.extend(
+        (
+            "",
+            "## Recommendation",
+            "",
+            "- Keep Markov as the body theorem: it is the only first-moment, "
+            "distribution-free statement compatible with the current post-selection caveat.",
+            "- Keep A21 cluster-aware Hoeffding as a dependence caveat, not a tightening: "
+            "cluster exposure is too concentrated.",
+            "- Use A21b/A21c as an appendix sensitivity table. Cantelli, Bernstein, Bennett "
+            "and Freedman show how much tightness is available if a reviewer accepts stronger "
+            "independence, variance, or martingale assumptions.",
+            "- Drop Chebyshev, Azuma, Chernoff and naive union-Markov from paper-facing tables. "
+            "They are respectively dominated, duplicative, too strong for the current "
+            "individual-alpha evidence, or vacuous after policy-region correction.",
+            "",
+            "## Assumption Audit",
+            "",
+            str(assumption_table.to_markdown(index=False)),
+            "",
+        )
+    )
     REPORT_PATH.parent.mkdir(parents=True, exist_ok=True)
     REPORT_PATH.write_text("\n".join(lines), encoding="utf-8", newline="")
 

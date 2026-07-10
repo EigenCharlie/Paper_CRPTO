@@ -10,6 +10,7 @@ under the 400-line guideline. Contains:
 
 from __future__ import annotations
 
+from dataclasses import dataclass
 from typing import Any, cast
 
 import numpy as np
@@ -542,6 +543,215 @@ def temporal_stability_summary(
     }
 
 
+@dataclass(frozen=True)
+class _ShrinkContext:
+    y_true: np.ndarray
+    y_pred: np.ndarray
+    base_intervals: np.ndarray
+    groups: pd.Series
+    temporal_segments: pd.Series | None
+    issue_dates: pd.Series | np.ndarray | None
+    target_coverage: float
+    min_group_coverage_target: float
+    max_monthly_gap_target: float | None
+    alpha: float
+
+
+@dataclass(frozen=True)
+class _ShrinkCandidate:
+    scope: str
+    key: str
+    factor: float
+    accepted: bool
+    intervals: np.ndarray
+    group_factors: dict[str, float]
+    temporal_factors: dict[str, float]
+    metrics: dict[str, float]
+
+
+def _active_widening_factors(factors: dict[str, float] | None) -> dict[str, float]:
+    return {str(k): float(v) for k, v in (factors or {}).items() if float(v) > 1.0}
+
+
+def _apply_shrink_factors(
+    context: _ShrinkContext,
+    group_factors: dict[str, float],
+    temporal_factors: dict[str, float],
+) -> np.ndarray:
+    intervals = context.base_intervals.copy()
+    if group_factors:
+        intervals = apply_group_multipliers(
+            context.y_pred,
+            intervals,
+            context.groups,
+            group_factors,
+        )
+    if temporal_factors and context.temporal_segments is not None:
+        intervals = apply_group_multipliers(
+            context.y_pred,
+            intervals,
+            context.temporal_segments,
+            temporal_factors,
+        )
+    return intervals
+
+
+def _shrink_metrics(context: _ShrinkContext, intervals: np.ndarray) -> dict[str, float]:
+    temporal = temporal_stability_summary(
+        context.y_true,
+        intervals,
+        context.issue_dates,
+        target_coverage=context.target_coverage,
+        freq="M",
+    )
+    return {
+        "coverage": empirical_interval_coverage(context.y_true, intervals),
+        "min_group_coverage": min_group_interval_coverage(
+            context.y_true,
+            intervals,
+            context.groups,
+        ),
+        "avg_width": average_interval_width(intervals),
+        "winkler_90": mean_winkler_score(context.y_true, intervals, alpha=context.alpha),
+        "max_monthly_gap": float(temporal["max_monthly_gap"]),
+        "stability_over_time": float(temporal["stability_over_time"]),
+    }
+
+
+def _shrink_constraints_ok(context: _ShrinkContext, metrics: dict[str, float]) -> bool:
+    if float(metrics["coverage"]) < context.target_coverage:
+        return False
+    if float(metrics["min_group_coverage"]) < context.min_group_coverage_target:
+        return False
+    return not (
+        context.max_monthly_gap_target is not None
+        and np.isfinite(context.max_monthly_gap_target)
+        and float(metrics["max_monthly_gap"]) > context.max_monthly_gap_target
+    )
+
+
+def _next_lower_factor(value: float, grid: tuple[float, ...]) -> float | None:
+    ordered = sorted({round(float(x), 6) for x in grid if float(x) <= float(value) + 1e-9})
+    current = round(float(value), 6)
+    if current not in ordered:
+        ordered.append(current)
+        ordered = sorted(set(ordered))
+    idx = ordered.index(current)
+    if idx == 0:
+        return None
+    return float(ordered[idx - 1])
+
+
+def _with_reduced_factor(
+    factors: dict[str, float],
+    key: str,
+    next_factor: float,
+) -> dict[str, float]:
+    reduced = dict(factors)
+    if next_factor <= 1.0:
+        reduced.pop(key, None)
+    else:
+        reduced[key] = float(next_factor)
+    return reduced
+
+
+def _evaluate_shrink_candidate(
+    context: _ShrinkContext,
+    *,
+    scope: str,
+    key: str,
+    factor: float,
+    group_factors: dict[str, float],
+    temporal_factors: dict[str, float],
+) -> _ShrinkCandidate:
+    intervals = _apply_shrink_factors(context, group_factors, temporal_factors)
+    metrics = _shrink_metrics(context, intervals)
+    return _ShrinkCandidate(
+        scope=scope,
+        key=key,
+        factor=float(factor),
+        accepted=_shrink_constraints_ok(context, metrics),
+        intervals=intervals,
+        group_factors=dict(group_factors),
+        temporal_factors=dict(temporal_factors),
+        metrics=metrics,
+    )
+
+
+def _build_shrink_attempts(
+    context: _ShrinkContext,
+    *,
+    scope: str,
+    group_factors: dict[str, float],
+    temporal_factors: dict[str, float],
+    multiplier_grid: tuple[float, ...],
+) -> list[_ShrinkCandidate]:
+    active_factors = group_factors if scope == "group" else temporal_factors
+    candidates: list[_ShrinkCandidate] = []
+    for key, value in list(active_factors.items()):
+        next_factor = _next_lower_factor(value, multiplier_grid)
+        if next_factor is None:
+            continue
+        trial_group = (
+            _with_reduced_factor(group_factors, key, next_factor)
+            if scope == "group"
+            else dict(group_factors)
+        )
+        trial_temporal = (
+            _with_reduced_factor(temporal_factors, key, next_factor)
+            if scope == "temporal"
+            else dict(temporal_factors)
+        )
+        candidates.append(
+            _evaluate_shrink_candidate(
+                context,
+                scope=scope,
+                key=key,
+                factor=next_factor,
+                group_factors=trial_group,
+                temporal_factors=trial_temporal,
+            )
+        )
+    return candidates
+
+
+def _shrink_candidate_is_better(
+    candidate: _ShrinkCandidate,
+    best_candidate: _ShrinkCandidate | None,
+) -> bool:
+    if not candidate.accepted:
+        return False
+    if best_candidate is None:
+        return True
+    candidate_width = float(candidate.metrics["avg_width"])
+    best_width = float(best_candidate.metrics["avg_width"])
+    if candidate_width < best_width:
+        return True
+    return bool(
+        np.isclose(candidate_width, best_width)
+        and float(candidate.metrics["winkler_90"]) < float(best_candidate.metrics["winkler_90"])
+    )
+
+
+def _shrink_report_row(
+    *,
+    stage: str,
+    factor_scope: str,
+    factor_key: str,
+    candidate_factor: float,
+    accepted: bool,
+    metrics: dict[str, float],
+) -> dict[str, Any]:
+    return {
+        "stage": stage,
+        "factor_scope": factor_scope,
+        "factor_key": factor_key,
+        "candidate_factor": candidate_factor,
+        "accepted": accepted,
+        **metrics,
+    }
+
+
 def shrink_group_multipliers(
     *,
     y_true: np.ndarray,
@@ -560,222 +770,114 @@ def shrink_group_multipliers(
     temporal_multiplier_grid: tuple[float, ...] = (1.0, 1.02, 1.05, 1.08, 1.12, 1.16, 1.20),
 ) -> tuple[np.ndarray, dict[str, float], dict[str, float], pd.DataFrame]:
     """Greedily shrink learned widening factors while preserving constraints."""
-    group_factors_cur = {
-        str(k): float(v) for k, v in (group_factors or {}).items() if float(v) > 1.0
-    }
-    temporal_factors_cur = {
-        str(k): float(v) for k, v in (temporal_factors or {}).items() if float(v) > 1.0
-    }
-    base = np.asarray(base_intervals, dtype=float)
-    y_pred_arr = np.asarray(y_pred, dtype=float)
-    y_true_arr = np.asarray(y_true, dtype=float)
-    group_series = pd.Series(groups).fillna("UNKNOWN").astype(str).reset_index(drop=True)
+    group_factors_cur = _active_widening_factors(group_factors)
+    temporal_factors_cur = _active_widening_factors(temporal_factors)
     temporal_series = (
         pd.Series(temporal_segments).fillna("UNKNOWN").astype(str).reset_index(drop=True)
         if temporal_segments is not None
         else None
     )
+    context = _ShrinkContext(
+        y_true=np.asarray(y_true, dtype=float),
+        y_pred=np.asarray(y_pred, dtype=float),
+        base_intervals=np.asarray(base_intervals, dtype=float),
+        groups=pd.Series(groups).fillna("UNKNOWN").astype(str).reset_index(drop=True),
+        temporal_segments=temporal_series,
+        issue_dates=issue_dates,
+        target_coverage=float(target_coverage),
+        min_group_coverage_target=float(min_group_coverage_target),
+        max_monthly_gap_target=max_monthly_gap_target,
+        alpha=float(alpha),
+    )
 
-    def _apply_all(
-        gf: dict[str, float],
-        tf: dict[str, float],
-    ) -> np.ndarray:
-        intervals = base.copy()
-        if gf:
-            intervals = apply_group_multipliers(y_pred_arr, intervals, group_series, gf)
-        if tf and temporal_series is not None:
-            intervals = apply_group_multipliers(y_pred_arr, intervals, temporal_series, tf)
-        return intervals
-
-    def _metrics(intervals: np.ndarray) -> dict[str, float]:
-        temporal = temporal_stability_summary(
-            y_true_arr,
-            intervals,
-            issue_dates,
-            target_coverage=float(target_coverage),
-            freq="M",
-        )
-        return {
-            "coverage": empirical_interval_coverage(y_true_arr, intervals),
-            "min_group_coverage": min_group_interval_coverage(y_true_arr, intervals, group_series),
-            "avg_width": average_interval_width(intervals),
-            "winkler_90": mean_winkler_score(y_true_arr, intervals, alpha=alpha),
-            "max_monthly_gap": float(temporal["max_monthly_gap"]),
-            "stability_over_time": float(temporal["stability_over_time"]),
-        }
-
-    def _constraints_ok(metrics: dict[str, float]) -> bool:
-        if float(metrics["coverage"]) < float(target_coverage):
-            return False
-        if float(metrics["min_group_coverage"]) < float(min_group_coverage_target):
-            return False
-        return not (
-            max_monthly_gap_target is not None
-            and np.isfinite(max_monthly_gap_target)
-            and float(metrics["max_monthly_gap"]) > float(max_monthly_gap_target)
-        )
-
-    current_intervals = _apply_all(group_factors_cur, temporal_factors_cur)
-    current_metrics = _metrics(current_intervals)
+    current_intervals = _apply_shrink_factors(
+        context,
+        group_factors_cur,
+        temporal_factors_cur,
+    )
+    current_metrics = _shrink_metrics(context, current_intervals)
     report_rows: list[dict[str, Any]] = [
-        {
-            "stage": "initial",
-            "factor_scope": "all",
-            "factor_key": "all",
-            "candidate_factor": np.nan,
-            "accepted": True,
-            **current_metrics,
-        }
+        _shrink_report_row(
+            stage="initial",
+            factor_scope="all",
+            factor_key="all",
+            candidate_factor=np.nan,
+            accepted=True,
+            metrics=current_metrics,
+        )
     ]
 
-    if not _constraints_ok(current_metrics):
+    if not _shrink_constraints_ok(context, current_metrics):
         report_rows.append(
-            {
-                "stage": "initial_infeasible",
-                "factor_scope": "all",
-                "factor_key": "all",
-                "candidate_factor": np.nan,
-                "accepted": False,
-                **current_metrics,
-            }
+            _shrink_report_row(
+                stage="initial_infeasible",
+                factor_scope="all",
+                factor_key="all",
+                candidate_factor=np.nan,
+                accepted=False,
+                metrics=current_metrics,
+            )
         )
         return current_intervals, group_factors_cur, temporal_factors_cur, pd.DataFrame(report_rows)
 
-    def _next_lower(value: float, grid: tuple[float, ...]) -> float | None:
-        ordered = sorted({round(float(x), 6) for x in grid if float(x) <= float(value) + 1e-9})
-        current = round(float(value), 6)
-        if current not in ordered:
-            ordered.append(current)
-            ordered = sorted(set(ordered))
-        idx = ordered.index(current)
-        if idx == 0:
-            return None
-        return float(ordered[idx - 1])
-
     while True:
-        best_candidate: dict[str, Any] | None = None
-
-        for key, value in list(group_factors_cur.items()):
-            next_factor = _next_lower(value, group_multiplier_grid)
-            if next_factor is None:
-                continue
-            trial_group = dict(group_factors_cur)
-            if next_factor <= 1.0:
-                trial_group.pop(key, None)
-            else:
-                trial_group[key] = next_factor
-            trial_intervals = _apply_all(trial_group, temporal_factors_cur)
-            trial_metrics = _metrics(trial_intervals)
-            accepted = _constraints_ok(trial_metrics)
-            candidate: dict[str, Any] = {
-                "scope": "group",
-                "key": key,
-                "factor": next_factor,
-                "accepted": accepted,
-                "intervals": trial_intervals,
-                "group_factors": trial_group,
-                "temporal_factors": dict(temporal_factors_cur),
-                "metrics": trial_metrics,
-            }
-            if accepted and (
-                best_candidate is None
-                or float(candidate["metrics"]["avg_width"])
-                < float(best_candidate["metrics"]["avg_width"])
-                or (
-                    np.isclose(
-                        float(candidate["metrics"]["avg_width"]),
-                        float(best_candidate["metrics"]["avg_width"]),
-                    )
-                    and float(candidate["metrics"]["winkler_90"])
-                    < float(best_candidate["metrics"]["winkler_90"])
-                )
-            ):
+        attempts = _build_shrink_attempts(
+            context,
+            scope="group",
+            group_factors=group_factors_cur,
+            temporal_factors=temporal_factors_cur,
+            multiplier_grid=group_multiplier_grid,
+        )
+        attempts.extend(
+            _build_shrink_attempts(
+                context,
+                scope="temporal",
+                group_factors=group_factors_cur,
+                temporal_factors=temporal_factors_cur,
+                multiplier_grid=temporal_multiplier_grid,
+            )
+        )
+        best_candidate: _ShrinkCandidate | None = None
+        for candidate in attempts:
+            if _shrink_candidate_is_better(candidate, best_candidate):
                 best_candidate = candidate
             report_rows.append(
-                {
-                    "stage": "attempt",
-                    "factor_scope": "group",
-                    "factor_key": key,
-                    "candidate_factor": float(next_factor),
-                    "accepted": bool(accepted),
-                    **trial_metrics,
-                }
-            )
-
-        for key, value in list(temporal_factors_cur.items()):
-            next_factor = _next_lower(value, temporal_multiplier_grid)
-            if next_factor is None:
-                continue
-            trial_temporal = dict(temporal_factors_cur)
-            if next_factor <= 1.0:
-                trial_temporal.pop(key, None)
-            else:
-                trial_temporal[key] = next_factor
-            trial_intervals = _apply_all(group_factors_cur, trial_temporal)
-            trial_metrics = _metrics(trial_intervals)
-            accepted = _constraints_ok(trial_metrics)
-            candidate = {
-                "scope": "temporal",
-                "key": key,
-                "factor": next_factor,
-                "accepted": accepted,
-                "intervals": trial_intervals,
-                "group_factors": dict(group_factors_cur),
-                "temporal_factors": trial_temporal,
-                "metrics": trial_metrics,
-            }
-            if accepted and (
-                best_candidate is None
-                or float(candidate["metrics"]["avg_width"])
-                < float(best_candidate["metrics"]["avg_width"])
-                or (
-                    np.isclose(
-                        float(candidate["metrics"]["avg_width"]),
-                        float(best_candidate["metrics"]["avg_width"]),
-                    )
-                    and float(candidate["metrics"]["winkler_90"])
-                    < float(best_candidate["metrics"]["winkler_90"])
+                _shrink_report_row(
+                    stage="attempt",
+                    factor_scope=candidate.scope,
+                    factor_key=candidate.key,
+                    candidate_factor=float(candidate.factor),
+                    accepted=bool(candidate.accepted),
+                    metrics=candidate.metrics,
                 )
-            ):
-                best_candidate = candidate
-            report_rows.append(
-                {
-                    "stage": "attempt",
-                    "factor_scope": "temporal",
-                    "factor_key": key,
-                    "candidate_factor": float(next_factor),
-                    "accepted": bool(accepted),
-                    **trial_metrics,
-                }
             )
-
         if best_candidate is None:
             break
 
-        current_intervals = np.asarray(best_candidate["intervals"], dtype=float)
-        group_factors_cur = dict(best_candidate["group_factors"])
-        temporal_factors_cur = dict(best_candidate["temporal_factors"])
-        current_metrics = dict(best_candidate["metrics"])
+        current_intervals = np.asarray(best_candidate.intervals, dtype=float)
+        group_factors_cur = dict(best_candidate.group_factors)
+        temporal_factors_cur = dict(best_candidate.temporal_factors)
+        current_metrics = dict(best_candidate.metrics)
         report_rows.append(
-            {
-                "stage": "accepted",
-                "factor_scope": str(best_candidate["scope"]),
-                "factor_key": str(best_candidate["key"]),
-                "candidate_factor": float(best_candidate["factor"]),
-                "accepted": True,
-                **current_metrics,
-            }
+            _shrink_report_row(
+                stage="accepted",
+                factor_scope=best_candidate.scope,
+                factor_key=best_candidate.key,
+                candidate_factor=float(best_candidate.factor),
+                accepted=True,
+                metrics=current_metrics,
+            )
         )
 
     report_rows.append(
-        {
-            "stage": "final",
-            "factor_scope": "all",
-            "factor_key": "all",
-            "candidate_factor": np.nan,
-            "accepted": True,
-            **current_metrics,
-        }
+        _shrink_report_row(
+            stage="final",
+            factor_scope="all",
+            factor_key="all",
+            candidate_factor=np.nan,
+            accepted=True,
+            metrics=current_metrics,
+        )
     )
     report = pd.DataFrame(report_rows)
     return current_intervals, group_factors_cur, temporal_factors_cur, report

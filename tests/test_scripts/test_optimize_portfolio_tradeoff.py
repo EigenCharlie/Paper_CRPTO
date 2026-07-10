@@ -2,12 +2,109 @@ from __future__ import annotations
 
 import numpy as np
 import pandas as pd
+import pytest
 
+from scripts.optimize_portfolio import _align_candidates_and_intervals
 from scripts.optimize_portfolio_tradeoff import (
+    _align_loans_and_intervals,
     _build_policy_grid,
     _prepare_tradeoff_inputs,
     _select_champion_policy,
+    _solve_single,
 )
+from src.optimization import policy_evaluation
+
+
+def test_portfolio_alignment_wrappers_share_strict_id_contract() -> None:
+    candidates = pd.DataFrame(
+        {
+            "id": ["b", "a", "c"],
+            "grade": ["B", "A", "C"],
+            "y_pred": [9.0, 8.0, 7.0],
+        }
+    )
+    intervals = pd.DataFrame(
+        {
+            "id": ["a", "b", "c"],
+            "grade": ["score_q01", "score_q02", "score_q03"],
+            "y_pred": [0.1, 0.2, 0.3],
+            "pd_low_90": [0.05, 0.15, 0.25],
+            "pd_high_90": [0.15, 0.25, 0.35],
+        }
+    )
+
+    tradeoff_loans, tradeoff_intervals = _align_loans_and_intervals(
+        candidates,
+        intervals,
+        max_candidates=0,
+        random_state=42,
+    )
+    optimizer_loans, pd_point, pd_low, pd_high = _align_candidates_and_intervals(
+        candidates,
+        intervals,
+        max_candidates=0,
+        random_state=42,
+    )
+
+    assert tradeoff_loans["id"].tolist() == ["b", "a", "c"]
+    assert tradeoff_intervals["grade"].tolist() == [
+        "score_q02",
+        "score_q01",
+        "score_q03",
+    ]
+    pd.testing.assert_frame_equal(tradeoff_loans, optimizer_loans)
+    np.testing.assert_allclose(pd_point, [0.2, 0.1, 0.3])
+    np.testing.assert_allclose(pd_low, [0.15, 0.05, 0.25])
+    np.testing.assert_allclose(pd_high, [0.25, 0.15, 0.35])
+
+
+def test_nonrobust_solve_uses_point_pd_contract(monkeypatch: pytest.MonkeyPatch) -> None:
+    captured: dict[str, object] = {}
+
+    def _fake_optimize_portfolio_allocation(**kwargs: object) -> dict[str, object]:
+        captured.update(kwargs)
+        return {
+            "allocation": {1: 0.5},
+            "objective_value": 10.0,
+            "n_funded": 1,
+            "pd_cap_slack": 0.0,
+            "solver_status": "optimal",
+        }
+
+    monkeypatch.setattr(
+        policy_evaluation,
+        "optimize_portfolio_allocation",
+        _fake_optimize_portfolio_allocation,
+    )
+    loans = pd.DataFrame({"loan_amnt": [1000.0, 2000.0]})
+    pd_point = np.array([0.10, 0.20])
+    pd_high = np.array([0.40, 0.50])
+
+    result, allocation = _solve_single(
+        loans=loans,
+        pd_point=pd_point,
+        pd_low=np.array([0.05, 0.10]),
+        pd_high=pd_high,
+        lgd=np.array([0.45, 0.45]),
+        int_rates=np.array([0.10, 0.12]),
+        default_flag=np.array([0, 0]),
+        total_budget=1000.0,
+        max_concentration=1.0,
+        risk_tolerance=0.25,
+        robust=False,
+        uncertainty_aversion=0.0,
+        min_budget_utilization=0.0,
+        pd_cap_slack_penalty=0.0,
+        time_limit=10,
+        threads=1,
+        policy_mode="hard_worst_case",
+        gamma=1.0,
+    )
+
+    np.testing.assert_allclose(captured["pd_constraint_override"], pd_point)
+    np.testing.assert_allclose(allocation, [0.0, 0.5])
+    assert result["policy_mode"] == "point_estimate"
+    assert result["gamma"] == 0.0
 
 
 def test_build_policy_grid_preserves_tradeoff_frontier_contract() -> None:

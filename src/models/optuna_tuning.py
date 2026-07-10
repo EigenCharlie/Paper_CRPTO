@@ -3,6 +3,8 @@
 from __future__ import annotations
 
 import gc
+from dataclasses import dataclass
+from functools import partial
 from pathlib import Path
 from typing import Any
 
@@ -17,6 +19,16 @@ from src.models.pd_model import CATEGORICAL_FEATURES, _catboost_base_params
 
 SEARCH_SPACE_VERSION = "cb_space_v2"
 _JOURNAL_STORAGE_PREFIXES = ("journal+file:", "journalfile:", "journal:")
+CategoricalChoice = None | bool | int | float | str
+
+
+@dataclass(frozen=True)
+class _SelectedModelFit:
+    model: CatBoostClassifier
+    selected_params: dict[str, Any]
+    resolved_params: dict[str, Any]
+    validation_auc: float
+    best_iteration: int
 
 
 def _is_journal_storage_url(url: str) -> bool:
@@ -31,6 +43,18 @@ def _journal_path_from_storage_url(url: str) -> str:
                 return "/" + value[3:]
             return value
     return url
+
+
+def _categorical_choices(raw: Any) -> list[CategoricalChoice]:
+    choices: list[CategoricalChoice] = []
+    for value in list(raw):
+        if value is None or isinstance(value, bool | int | float | str):
+            choices.append(value)
+        else:
+            raise TypeError(f"Unsupported Optuna categorical choice {value!r}")
+    if not choices:
+        raise ValueError("Optuna categorical choices must not be empty")
+    return choices
 
 
 def resolve_optuna_study_name(
@@ -103,6 +127,807 @@ def _build_optuna_sampler_pruner(
     return sampler_obj, pruner_obj
 
 
+def _align_feature_vector(
+    raw: Any,
+    *,
+    feature_order: list[str],
+    default: float,
+) -> list[float] | Any:
+    if not isinstance(raw, dict):
+        return raw
+    raw_by_feature = {str(feature): float(value) for feature, value in raw.items()}
+    return [float(raw_by_feature.get(feature, default)) for feature in feature_order]
+
+
+def _normalize_feature_penalty_params(
+    params: dict[str, Any],
+    *,
+    feature_order: list[str],
+) -> dict[str, Any]:
+    normalized = dict(params)
+    if "feature_weights" in normalized:
+        normalized["feature_weights"] = _align_feature_vector(
+            normalized["feature_weights"],
+            feature_order=feature_order,
+            default=1.0,
+        )
+    if "first_feature_use_penalties" in normalized:
+        normalized["first_feature_use_penalties"] = _align_feature_vector(
+            normalized["first_feature_use_penalties"],
+            feature_order=feature_order,
+            default=0.0,
+        )
+    return normalized
+
+
+def _local_choice(trial: Any, name: str, spec: Any, default: Any) -> Any:
+    if spec is None:
+        return default
+    if isinstance(spec, dict):
+        if spec.get("choices") is not None:
+            return trial.suggest_categorical(name, _categorical_choices(spec["choices"]))
+        low = spec.get("low")
+        high = spec.get("high")
+        step = spec.get("step")
+        log = bool(spec.get("log", False))
+        if low is None or high is None:
+            return default
+        if isinstance(low, int) and isinstance(high, int) and not log:
+            return trial.suggest_int(name, int(low), int(high), step=int(step or 1))
+        return trial.suggest_float(
+            name,
+            float(low),
+            float(high),
+            step=None if log else (float(step) if step is not None else None),
+            log=log,
+        )
+    if isinstance(spec, list):
+        return trial.suggest_categorical(name, _categorical_choices(spec))
+    return spec
+
+
+def _apply_local_feature_priors(
+    trial: Any,
+    params: dict[str, Any],
+    *,
+    local_refine_space: dict[str, Any],
+) -> None:
+    feature_weights_cfg = dict(local_refine_space.get("feature_weights", {}) or {})
+    if feature_weights_cfg:
+        weights: dict[str, float] = {}
+        for feature, spec in feature_weights_cfg.items():
+            value = float(_local_choice(trial, f"feature_weight__{feature}", spec, 1.0))
+            weights[str(feature)] = value
+        if any(abs(value - 1.0) > 1e-12 for value in weights.values()):
+            params["feature_weights"] = weights
+    penalties_cfg = dict(local_refine_space.get("first_feature_use_penalties", {}) or {})
+    if penalties_cfg:
+        penalties: dict[str, float] = {}
+        for feature, spec in penalties_cfg.items():
+            value = float(_local_choice(trial, f"first_use_penalty__{feature}", spec, 0.0))
+            penalties[str(feature)] = value
+        if any(abs(value) > 1e-12 for value in penalties.values()):
+            params["first_feature_use_penalties"] = penalties
+    penalties_coeff_spec = local_refine_space.get("penalties_coefficient")
+    if penalties_coeff_spec is not None:
+        params["penalties_coefficient"] = float(
+            _local_choice(trial, "penalties_coefficient", penalties_coeff_spec, 1.0)
+        )
+
+
+def _materialize_study_params(
+    sampled_params: dict[str, Any],
+    *,
+    base: dict[str, Any],
+    has_monotone_constraints: bool,
+) -> dict[str, Any]:
+    params = {**base}
+    feature_weights: dict[str, float] = {}
+    penalties: dict[str, float] = {}
+
+    for key, value in dict(sampled_params or {}).items():
+        key_str = str(key)
+        if key_str.startswith("feature_weight__"):
+            feature_name = key_str.split("__", 1)[1]
+            feature_weights[feature_name] = float(value)
+            continue
+        if key_str.startswith("first_use_penalty__"):
+            feature_name = key_str.split("__", 1)[1]
+            penalties[feature_name] = float(value)
+            continue
+        params[key_str] = value
+
+    if feature_weights and any(abs(weight - 1.0) > 1e-12 for weight in feature_weights.values()):
+        params["feature_weights"] = feature_weights
+    else:
+        params.pop("feature_weights", None)
+    if penalties and any(abs(weight) > 1e-12 for weight in penalties.values()):
+        params["first_feature_use_penalties"] = penalties
+    else:
+        params.pop("first_feature_use_penalties", None)
+
+    if str(params.get("bootstrap_type", "")).strip() == "Bayesian":
+        params.pop("subsample", None)
+    else:
+        params.pop("bagging_temperature", None)
+
+    if str(params.get("grow_policy", "")).strip() == "Lossguide":
+        params.pop("depth", None)
+    else:
+        params.pop("max_leaves", None)
+    if has_monotone_constraints:
+        params["grow_policy"] = "SymmetricTree"
+        params.pop("max_leaves", None)
+
+    if str(params.get("task_type", "")).strip().upper() == "GPU":
+        params.pop("rsm", None)
+
+    return {key: value for key, value in params.items() if value is not None}
+
+
+def _sanitize_enqueued_trial(
+    raw_params: dict[str, Any],
+    *,
+    base: dict[str, Any],
+    search_space_mode_resolved: str,
+    has_monotone_constraints: bool,
+) -> dict[str, Any]:
+    """Keep only parameters that are actually sampled by the active Optuna space."""
+    allowed = {
+        "bootstrap_type",
+        "grow_policy",
+        "learning_rate",
+        "l2_leaf_reg",
+        "min_data_in_leaf",
+        "random_strength",
+        "border_count",
+        "leaf_estimation_iterations",
+        "rsm",
+        "depth",
+        "max_leaves",
+        "subsample",
+        "bagging_temperature",
+    }
+    if search_space_mode_resolved == "local_refine":
+        allowed.add("iterations")
+    params: dict[str, Any] = {}
+    for key, value in dict(raw_params or {}).items():
+        key_str = str(key)
+        if key_str in allowed or key_str.startswith(("feature_weight__", "first_use_penalty__")):
+            params[key_str] = value
+
+    if has_monotone_constraints:
+        params["grow_policy"] = "SymmetricTree"
+        params.pop("max_leaves", None)
+    if str(params.get("grow_policy", base.get("grow_policy", "SymmetricTree"))) == "Lossguide":
+        params.pop("depth", None)
+    else:
+        params.pop("max_leaves", None)
+    if str(params.get("bootstrap_type", base.get("bootstrap_type", "MVS"))) == "Bayesian":
+        params.pop("subsample", None)
+    else:
+        params.pop("bagging_temperature", None)
+    if str(base.get("task_type", "")).strip().upper() == "GPU":
+        params.pop("rsm", None)
+    return {key: value for key, value in params.items() if value is not None}
+
+
+def _trial_params_match(left: dict[str, Any], right: dict[str, Any]) -> bool:
+    if set(left) != set(right):
+        return False
+    for key, left_value in left.items():
+        right_value = right.get(key)
+        if right_value is None:
+            if left_value is not None:
+                return False
+            continue
+        try:
+            if abs(float(left_value) - float(right_value)) > 1e-12:
+                return False
+        except (TypeError, ValueError):
+            if str(left_value) != str(right_value):
+                return False
+    return True
+
+
+def _enqueue_prior_trials(
+    study: Any,
+    *,
+    enqueue_trials: list[dict[str, Any]],
+    base: dict[str, Any],
+    search_space_mode_resolved: str,
+    has_monotone_constraints: bool,
+) -> int:
+    enqueued = 0
+    existing = [dict(trial.params) for trial in study.trials]
+    for raw_params in enqueue_trials:
+        params = _sanitize_enqueued_trial(
+            raw_params,
+            base=base,
+            search_space_mode_resolved=search_space_mode_resolved,
+            has_monotone_constraints=has_monotone_constraints,
+        )
+        if not params:
+            continue
+        if any(_trial_params_match(params, trial_params) for trial_params in existing):
+            continue
+        try:
+            study.enqueue_trial(params, skip_if_exists=True)
+        except TypeError:
+            study.enqueue_trial(params)
+        existing.append(params)
+        enqueued += 1
+    return enqueued
+
+
+def _local_refine_params(
+    trial: Any,
+    *,
+    base: dict[str, Any],
+    local_refine_space: dict[str, Any],
+    feature_order: list[str],
+    is_gpu: bool,
+) -> dict[str, Any]:
+    params = {**base}
+    fixed_params = dict(local_refine_space.get("fixed_params", {}) or {})
+    params.update(fixed_params)
+
+    params["iterations"] = int(
+        _local_choice(
+            trial,
+            "iterations",
+            local_refine_space.get("iterations"),
+            base.get("iterations", 3000),
+        )
+    )
+    params["learning_rate"] = float(
+        _local_choice(
+            trial,
+            "learning_rate",
+            local_refine_space.get("learning_rate"),
+            base.get("learning_rate", 0.03),
+        )
+    )
+    params["l2_leaf_reg"] = float(
+        _local_choice(
+            trial,
+            "l2_leaf_reg",
+            local_refine_space.get("l2_leaf_reg"),
+            base.get("l2_leaf_reg", 3.0),
+        )
+    )
+    params["min_data_in_leaf"] = int(
+        _local_choice(
+            trial,
+            "min_data_in_leaf",
+            local_refine_space.get("min_data_in_leaf"),
+            base.get("min_data_in_leaf", 64),
+        )
+    )
+    params["random_strength"] = float(
+        _local_choice(
+            trial,
+            "random_strength",
+            local_refine_space.get("random_strength"),
+            base.get("random_strength", 1e-6),
+        )
+    )
+    params["border_count"] = int(
+        _local_choice(
+            trial,
+            "border_count",
+            local_refine_space.get("border_count"),
+            base.get("border_count", 128),
+        )
+    )
+    params["leaf_estimation_iterations"] = int(
+        _local_choice(
+            trial,
+            "leaf_estimation_iterations",
+            local_refine_space.get("leaf_estimation_iterations"),
+            base.get("leaf_estimation_iterations", 3),
+        )
+    )
+    params["bootstrap_type"] = _local_choice(
+        trial,
+        "bootstrap_type",
+        local_refine_space.get("bootstrap_type"),
+        base.get("bootstrap_type", "MVS"),
+    )
+    params["grow_policy"] = _local_choice(
+        trial,
+        "grow_policy",
+        local_refine_space.get("grow_policy"),
+        base.get("grow_policy", "SymmetricTree"),
+    )
+
+    if is_gpu:
+        params.pop("rsm", None)
+    else:
+        params["rsm"] = float(
+            _local_choice(trial, "rsm", local_refine_space.get("rsm"), base.get("rsm", 1.0))
+        )
+    if str(params.get("grow_policy", "SymmetricTree")) == "Lossguide":
+        params.pop("depth", None)
+        params["max_leaves"] = int(
+            _local_choice(trial, "max_leaves", local_refine_space.get("max_leaves"), 32)
+        )
+    else:
+        params["depth"] = int(
+            _local_choice(trial, "depth", local_refine_space.get("depth"), base.get("depth", 8))
+        )
+        params.pop("max_leaves", None)
+    if str(params.get("bootstrap_type", "MVS")) == "Bayesian":
+        params.pop("subsample", None)
+        bagging_spec = local_refine_space.get("bagging_temperature", {"low": 0.0, "high": 10.0})
+        params["bagging_temperature"] = float(
+            _local_choice(
+                trial,
+                "bagging_temperature",
+                bagging_spec,
+                base.get("bagging_temperature", 1.0),
+            )
+        )
+    else:
+        params.pop("bagging_temperature", None)
+        params["subsample"] = float(
+            _local_choice(
+                trial,
+                "subsample",
+                local_refine_space.get("subsample"),
+                base.get("subsample", 0.8),
+            )
+        )
+    _apply_local_feature_priors(trial, params, local_refine_space=local_refine_space)
+    return _normalize_feature_penalty_params(params, feature_order=feature_order)
+
+
+def _global_search_params(
+    trial: Any,
+    *,
+    base: dict[str, Any],
+    has_monotone_constraints: bool,
+) -> dict[str, Any]:
+    bootstrap_type = trial.suggest_categorical("bootstrap_type", ["Bayesian", "Bernoulli", "MVS"])
+    grow_policy_choices = (
+        ["SymmetricTree"]
+        if has_monotone_constraints
+        else ["SymmetricTree", "Depthwise", "Lossguide"]
+    )
+    grow_policy = trial.suggest_categorical("grow_policy", grow_policy_choices)
+    params = {
+        **base,
+        "learning_rate": trial.suggest_float("learning_rate", 0.005, 0.20, log=True),
+        "l2_leaf_reg": trial.suggest_float("l2_leaf_reg", 0.5, 100.0, log=True),
+        "min_data_in_leaf": trial.suggest_int("min_data_in_leaf", 20, 500),
+        "random_strength": trial.suggest_float("random_strength", 1e-9, 10.0, log=True),
+        "border_count": trial.suggest_int("border_count", 64, 254),
+        "bootstrap_type": bootstrap_type,
+        "grow_policy": grow_policy,
+        "leaf_estimation_iterations": trial.suggest_int("leaf_estimation_iterations", 1, 10),
+        "random_seed": int(base.get("random_seed", 42)),
+    }
+    if str(base.get("task_type", "")).strip().upper() == "GPU":
+        params.pop("rsm", None)
+    else:
+        params["rsm"] = trial.suggest_float("rsm", 0.5, 1.0)
+    if grow_policy == "Lossguide":
+        params["max_leaves"] = trial.suggest_int("max_leaves", 16, 64)
+        params.pop("depth", None)
+    else:
+        params["depth"] = trial.suggest_int("depth", 4, 10)
+    if bootstrap_type == "Bayesian":
+        params.pop("subsample", None)
+        params["bagging_temperature"] = trial.suggest_float("bagging_temperature", 0.0, 10.0)
+    else:
+        params.pop("bagging_temperature", None)
+        params["subsample"] = trial.suggest_float("subsample", 0.5, 0.95)
+    return params
+
+
+def _constraints_violations(
+    frozen_trial: Any,
+    *,
+    incumbent_metrics: dict[str, float],
+    constraints_policy: dict[str, Any],
+) -> list[float]:
+    attrs = frozen_trial.user_attrs
+    violations: list[float] = []
+    max_brier_delta = constraints_policy.get("max_brier_delta")
+    max_ece_delta = constraints_policy.get("max_ece_delta")
+    min_auc_delta = constraints_policy.get("min_auc_delta")
+    if max_brier_delta is not None:
+        ceiling = float(incumbent_metrics.get("validation_brier", 0.0)) + float(max_brier_delta)
+        violations.append(float(attrs.get("validation_brier", float("inf"))) - ceiling)
+    if max_ece_delta is not None:
+        ceiling = float(incumbent_metrics.get("validation_ece", 0.0)) + float(max_ece_delta)
+        violations.append(float(attrs.get("validation_ece", float("inf"))) - ceiling)
+    if min_auc_delta is not None:
+        floor = float(incumbent_metrics.get("validation_auc", 0.0)) + float(min_auc_delta)
+        violations.append(floor - float(attrs.get("validation_auc", float("-inf"))))
+    return violations
+
+
+def _incumbent_validation_metrics(
+    *,
+    base: dict[str, Any],
+    train_pool: Pool,
+    val_pool: Pool,
+    X_val: pd.DataFrame,
+    y_val: pd.Series,
+) -> dict[str, float]:
+    incumbent_model = CatBoostClassifier(**base)
+    incumbent_model.fit(train_pool, eval_set=val_pool, use_best_model=True)
+    incumbent_y_val_prob = incumbent_model.predict_proba(X_val)[:, 1]
+    y_val_array = np.asarray(y_val, dtype=int)
+    return {
+        "validation_auc": float(roc_auc_score(y_val, incumbent_y_val_prob)),
+        "validation_brier": float(brier_score_loss(y_val, incumbent_y_val_prob)),
+        "validation_ece": float(expected_calibration_error(y_val_array, incumbent_y_val_prob)),
+    }
+
+
+def _catboost_pruning_callbacks(
+    trial: Any, *, use_pruning_callback: bool
+) -> tuple[Any | None, list[Any]]:
+    if not use_pruning_callback:
+        return None, []
+    try:
+        from optuna_integration.catboost import CatBoostPruningCallback
+
+        pruning_callback = CatBoostPruningCallback(trial, "AUC")
+        return pruning_callback, [pruning_callback]
+    except Exception as exc:  # pragma: no cover - optional integration path
+        if trial.number == 0:
+            logger.warning(
+                "CatBoost pruning callback unavailable; disabling pruning callback: {}", exc
+            )
+        return None, []
+
+
+def _catboost_objective(
+    trial: Any,
+    *,
+    base: dict[str, Any],
+    search_space_mode_resolved: str,
+    local_refine_space: dict[str, Any],
+    feature_order: list[str],
+    has_monotone_constraints: bool,
+    train_pool: Pool,
+    val_pool: Pool,
+    X_val: pd.DataFrame,
+    y_val: pd.Series,
+    use_pruning_callback: bool,
+) -> float:
+    is_gpu = str(base.get("task_type", "")).strip().upper() == "GPU"
+    if search_space_mode_resolved == "local_refine":
+        params = _local_refine_params(
+            trial,
+            base=base,
+            local_refine_space=local_refine_space,
+            feature_order=feature_order,
+            is_gpu=is_gpu,
+        )
+    else:
+        params = _global_search_params(
+            trial,
+            base=base,
+            has_monotone_constraints=has_monotone_constraints,
+        )
+
+    params = _normalize_feature_penalty_params(params, feature_order=feature_order)
+    model = CatBoostClassifier(**params)
+    pruning_callback, callbacks = _catboost_pruning_callbacks(
+        trial,
+        use_pruning_callback=use_pruning_callback,
+    )
+    model.fit(
+        train_pool,
+        eval_set=val_pool,
+        use_best_model=True,
+        callbacks=callbacks or None,
+    )
+
+    if pruning_callback is not None:
+        pruning_callback.check_pruned()
+
+    val_auc = model.get_best_score().get("validation", {}).get("AUC")
+    y_val_prob = model.predict_proba(X_val)[:, 1]
+    if val_auc is None:
+        val_auc = roc_auc_score(y_val, y_val_prob)
+    y_val_array = np.asarray(y_val, dtype=int)
+    trial.set_user_attr("best_iteration", int(model.get_best_iteration()))
+    trial.set_user_attr("validation_auc", float(val_auc))
+    trial.set_user_attr("validation_brier", float(brier_score_loss(y_val_array, y_val_prob)))
+    trial.set_user_attr(
+        "validation_ece",
+        float(expected_calibration_error(y_val_array, y_val_prob)),
+    )
+    return float(val_auc)
+
+
+def _create_optuna_study(
+    optuna_module: Any,
+    *,
+    sampler_obj: Any,
+    pruner_obj: Any,
+    study_storage: str | None,
+    study_name: str | None,
+    load_if_exists: bool,
+    search_space_version: str,
+    storage_heartbeat_interval: int,
+    storage_grace_period: int,
+    sqlite_timeout_seconds: int,
+    retry_failed_trials: int,
+) -> tuple[Any, Any | None]:
+    create_study_kwargs: dict[str, Any] = {
+        "direction": "maximize",
+        "sampler": sampler_obj,
+        "pruner": pruner_obj,
+    }
+    retry_callback = None
+    if not study_storage:
+        return optuna_module.create_study(**create_study_kwargs), retry_callback
+
+    storage_obj: Any = study_storage
+    hb_interval = max(0, int(storage_heartbeat_interval))
+    hb_grace = max(0, int(storage_grace_period))
+    storage_text = str(study_storage)
+    if _is_journal_storage_url(storage_text):
+        journal_path = _journal_path_from_storage_url(storage_text)
+        Path(journal_path).parent.mkdir(parents=True, exist_ok=True)
+        from src.utils.optuna_storage import _make_journal_storage
+
+        storage_obj = _make_journal_storage(
+            Path(journal_path),
+            study_name=resolve_optuna_study_name(
+                study_name,
+                search_space_version=search_space_version,
+            ),
+        )
+    else:
+        engine_kwargs = (
+            {"connect_args": {"timeout": max(1, int(sqlite_timeout_seconds))}}
+            if storage_text.startswith(("sqlite:///", "sqlite+pysqlite:///"))
+            else None
+        )
+        if hb_interval > 0 or hb_grace > 0:
+            try:
+                heartbeat_cb = None
+                failed_cb = None
+                if int(retry_failed_trials) > 0:
+                    retry_factory = getattr(
+                        optuna_module.storages,
+                        "RetryHeartbeatStaleTrialCallback",
+                        None,
+                    )
+                    if retry_factory is not None:
+                        heartbeat_cb = retry_factory(max_retry=int(retry_failed_trials))
+                        retry_callback = heartbeat_cb
+                    else:  # pragma: no cover - compatibility with older Optuna.
+                        failed_cb = optuna_module.storages.RetryFailedTrialCallback(
+                            max_retry=int(retry_failed_trials)
+                        )
+                        retry_callback = failed_cb
+                storage_kwargs: dict[str, Any] = {
+                    "url": storage_text,
+                    "engine_kwargs": engine_kwargs,
+                    "heartbeat_interval": hb_interval or None,
+                    "grace_period": hb_grace or None,
+                }
+                if heartbeat_cb is not None:
+                    storage_kwargs["heartbeat_stale_trial_callback"] = heartbeat_cb
+                elif failed_cb is not None:
+                    storage_kwargs["failed_trial_callback"] = failed_cb
+                storage_obj = optuna_module.storages.RDBStorage(**storage_kwargs)
+            except Exception as exc:
+                logger.warning(
+                    "Optuna RDBStorage heartbeat/retry setup failed; falling back to storage "
+                    "URL. reason={}",
+                    exc,
+                )
+
+    create_study_kwargs["storage"] = storage_obj
+    create_study_kwargs["study_name"] = resolve_optuna_study_name(
+        study_name,
+        search_space_version=search_space_version,
+    )
+    create_study_kwargs["load_if_exists"] = bool(load_if_exists)
+    return optuna_module.create_study(**create_study_kwargs), retry_callback
+
+
+def _local_refine_base_trial_params(base: dict[str, Any]) -> dict[str, Any]:
+    return {
+        key: value
+        for key, value in {
+            "iterations": int(base.get("iterations", 3000)),
+            "learning_rate": float(base.get("learning_rate", 0.03)),
+            "l2_leaf_reg": float(base.get("l2_leaf_reg", 3.0)),
+            "min_data_in_leaf": int(base.get("min_data_in_leaf", 64)),
+            "random_strength": float(base.get("random_strength", 1e-6)),
+            "border_count": int(base.get("border_count", 128)),
+            "leaf_estimation_iterations": int(base.get("leaf_estimation_iterations", 3)),
+            "bootstrap_type": str(base.get("bootstrap_type", "MVS")),
+            "grow_policy": str(base.get("grow_policy", "SymmetricTree")),
+            "rsm": None
+            if str(base.get("task_type", "")).strip().upper() == "GPU"
+            else float(base.get("rsm", 1.0)),
+            "depth": None
+            if str(base.get("grow_policy", "SymmetricTree")) == "Lossguide"
+            else int(base.get("depth", 8)),
+            "max_leaves": int(base.get("max_leaves", 32))
+            if str(base.get("grow_policy", "SymmetricTree")) == "Lossguide"
+            else None,
+            "subsample": None
+            if str(base.get("bootstrap_type", "MVS")) == "Bayesian"
+            else float(base.get("subsample", 0.8)),
+            "bagging_temperature": float(base.get("bagging_temperature", 1.0))
+            if str(base.get("bootstrap_type", "MVS")) == "Bayesian"
+            else None,
+        }.items()
+        if value is not None
+    }
+
+
+def _enqueue_local_refine_base_trial(
+    study: Any,
+    *,
+    base: dict[str, Any],
+    local_refine_space: dict[str, Any],
+    search_space_mode_resolved: str,
+) -> None:
+    if search_space_mode_resolved != "local_refine" or not bool(
+        local_refine_space.get("enqueue_base_trial", True)
+    ):
+        return
+    try:
+        study.enqueue_trial(_local_refine_base_trial_params(base))
+    except Exception as exc:
+        logger.warning("Optuna enqueue_trial for local_refine skipped: {}", exc)
+
+
+def _complete_trial_value(trial: Any) -> float:
+    value = trial.value
+    if value is None:
+        raise ValueError("COMPLETE Optuna trial has no objective value.")
+    return float(value)
+
+
+def _complete_trials(study: Any, optuna_module: Any) -> list[Any]:
+    return [
+        trial
+        for trial in study.trials
+        if trial.state == optuna_module.trial.TrialState.COMPLETE and trial.value is not None
+    ]
+
+
+def _selected_optuna_trial(study: Any, optuna_module: Any) -> tuple[Any, float, bool]:
+    complete_trials = _complete_trials(study, optuna_module)
+    if not complete_trials:
+        raise ValueError("Optuna study has no COMPLETE trials available for model selection.")
+    try:
+        selected_trial = study.best_trial
+        constrained_best_trial = True
+    except ValueError as exc:
+        selected_trial = max(complete_trials, key=_complete_trial_value)
+        constrained_best_trial = False
+        logger.warning(
+            "Optuna study has no feasible trial under constraints; using best COMPLETE trial "
+            "by validation AUC as fallback. reason={}",
+            exc,
+        )
+    return selected_trial, _complete_trial_value(selected_trial), constrained_best_trial
+
+
+def _run_or_reuse_study(
+    study: Any,
+    *,
+    objective: Any,
+    n_trials: int,
+    timeout_minutes: int,
+    gc_after_trial: bool,
+    n_jobs: int,
+) -> None:
+    timeout = None if timeout_minutes <= 0 else int(timeout_minutes * 60)
+    requested_trials = int(n_trials)
+    if requested_trials > 0:
+        study.optimize(
+            objective,
+            n_trials=requested_trials,
+            timeout=timeout,
+            show_progress_bar=False,
+            gc_after_trial=bool(gc_after_trial),
+            n_jobs=max(1, int(n_jobs)),
+        )
+    else:
+        complete_trials = [
+            trial
+            for trial in study.trials
+            if trial.state.name == "COMPLETE" and trial.value is not None
+        ]
+        if not complete_trials:
+            raise ValueError(
+                "n_trials=0 requested, but the Optuna study has no COMPLETE trials to reuse."
+            )
+        logger.info(
+            "Optuna reuse mode enabled (n_trials=0): skipping optimization and reusing "
+            "{} existing trials from study '{}'.",
+            len(study.trials),
+            study.study_name,
+        )
+    gc.collect()
+
+
+def _fit_selected_catboost_model(
+    *,
+    selected_trial: Any,
+    base: dict[str, Any],
+    has_monotone_constraints: bool,
+    feature_order: list[str],
+    train_pool: Pool,
+    val_pool: Pool,
+    X_train: pd.DataFrame,
+    y_train: pd.Series,
+    X_val: pd.DataFrame,
+    y_val: pd.Series,
+    cat_features: list[str],
+    sample_weight: np.ndarray | None,
+    eval_sample_weight: np.ndarray | None,
+    refit_full_train: bool,
+) -> _SelectedModelFit:
+    selected_params = dict(selected_trial.params)
+    best_params = _materialize_study_params(
+        selected_params,
+        base=base,
+        has_monotone_constraints=has_monotone_constraints,
+    )
+    best_params["verbose"] = 100
+    catboost_best_params = _normalize_feature_penalty_params(
+        best_params,
+        feature_order=feature_order,
+    )
+    selection_model = CatBoostClassifier(**catboost_best_params)
+    selection_model.fit(train_pool, eval_set=val_pool, use_best_model=True)
+    y_val_prob = selection_model.predict_proba(X_val)[:, 1]
+    val_auc = float(roc_auc_score(y_val, y_val_prob))
+    best_iteration = int(selection_model.get_best_iteration())
+
+    if not refit_full_train:
+        return _SelectedModelFit(
+            model=selection_model,
+            selected_params=selected_params,
+            resolved_params=best_params,
+            validation_auc=val_auc,
+            best_iteration=best_iteration,
+        )
+
+    full_X = pd.concat([X_train, X_val], axis=0).reset_index(drop=True)
+    full_y = pd.concat([y_train, y_val], axis=0).reset_index(drop=True)
+    full_weight = None
+    if sample_weight is not None and eval_sample_weight is not None:
+        full_weight = np.concatenate(
+            [
+                np.asarray(sample_weight, dtype=float),
+                np.asarray(eval_sample_weight, dtype=float),
+            ]
+        )
+    full_pool = Pool(full_X, full_y, cat_features=cat_features, weight=full_weight)
+    refit_params = {
+        key: value for key, value in catboost_best_params.items() if key != "early_stopping_rounds"
+    }
+    if best_iteration > 0:
+        refit_params["iterations"] = best_iteration + 1
+    best_model = CatBoostClassifier(**refit_params)
+    best_model.fit(full_pool)
+    return _SelectedModelFit(
+        model=best_model,
+        selected_params=selected_params,
+        resolved_params=best_params,
+        validation_auc=val_auc,
+        best_iteration=best_iteration,
+    )
+
+
 def train_catboost_tuned_optuna(
     X_train: pd.DataFrame,
     y_train: pd.Series,
@@ -162,336 +987,31 @@ def train_catboost_tuned_optuna(
     enqueue_trials = list(enqueue_trials or [])
     feature_order = [str(col) for col in X_train.columns]
 
-    def _align_feature_vector(raw: Any, *, default: float) -> list[float] | Any:
-        if not isinstance(raw, dict):
-            return raw
-        raw_by_feature = {str(feature): float(value) for feature, value in raw.items()}
-        return [float(raw_by_feature.get(feature, default)) for feature in feature_order]
-
-    def _normalize_feature_penalty_params(params: dict[str, Any]) -> dict[str, Any]:
-        normalized = dict(params)
-        if "feature_weights" in normalized:
-            normalized["feature_weights"] = _align_feature_vector(
-                normalized["feature_weights"],
-                default=1.0,
-            )
-        if "first_feature_use_penalties" in normalized:
-            normalized["first_feature_use_penalties"] = _align_feature_vector(
-                normalized["first_feature_use_penalties"],
-                default=0.0,
-            )
-        return normalized
-
+    train_pool = Pool(X_train, y_train, cat_features=cat_features, weight=sample_weight)
+    val_pool = Pool(X_val, y_val, cat_features=cat_features, weight=eval_sample_weight)
     incumbent_metrics: dict[str, float] = {}
-
-    def _local_choice(trial: optuna.Trial, name: str, spec: Any, default: Any) -> Any:
-        if spec is None:
-            return default
-        if isinstance(spec, dict):
-            if spec.get("choices") is not None:
-                return trial.suggest_categorical(name, list(spec["choices"]))
-            low = spec.get("low")
-            high = spec.get("high")
-            step = spec.get("step")
-            log = bool(spec.get("log", False))
-            if low is None or high is None:
-                return default
-            if isinstance(low, int) and isinstance(high, int) and not log:
-                return trial.suggest_int(name, int(low), int(high), step=int(step or 1))
-            return trial.suggest_float(
-                name,
-                float(low),
-                float(high),
-                step=None if log else (float(step) if step is not None else None),
-                log=log,
-            )
-        if isinstance(spec, list):
-            return trial.suggest_categorical(name, list(spec))
-        return spec
-
-    def _apply_local_feature_priors(trial: optuna.Trial, params: dict[str, Any]) -> None:
-        feature_weights_cfg = dict(local_refine_space.get("feature_weights", {}) or {})
-        if feature_weights_cfg:
-            weights: dict[str, float] = {}
-            for feature, spec in feature_weights_cfg.items():
-                value = float(_local_choice(trial, f"feature_weight__{feature}", spec, 1.0))
-                weights[str(feature)] = value
-            if any(abs(value - 1.0) > 1e-12 for value in weights.values()):
-                params["feature_weights"] = weights
-        penalties_cfg = dict(local_refine_space.get("first_feature_use_penalties", {}) or {})
-        if penalties_cfg:
-            penalties: dict[str, float] = {}
-            for feature, spec in penalties_cfg.items():
-                value = float(_local_choice(trial, f"first_use_penalty__{feature}", spec, 0.0))
-                penalties[str(feature)] = value
-            if any(abs(value) > 1e-12 for value in penalties.values()):
-                params["first_feature_use_penalties"] = penalties
-        penalties_coeff_spec = local_refine_space.get("penalties_coefficient")
-        if penalties_coeff_spec is not None:
-            params["penalties_coefficient"] = float(
-                _local_choice(trial, "penalties_coefficient", penalties_coeff_spec, 1.0)
-            )
-
-    def _materialize_study_params(sampled_params: dict[str, Any]) -> dict[str, Any]:
-        params = {**base}
-        feature_weights: dict[str, float] = {}
-        penalties: dict[str, float] = {}
-
-        for key, value in dict(sampled_params or {}).items():
-            key_str = str(key)
-            if key_str.startswith("feature_weight__"):
-                feature_name = key_str.split("__", 1)[1]
-                feature_weights[feature_name] = float(value)
-                continue
-            if key_str.startswith("first_use_penalty__"):
-                feature_name = key_str.split("__", 1)[1]
-                penalties[feature_name] = float(value)
-                continue
-            params[key_str] = value
-
-        if feature_weights and any(
-            abs(weight - 1.0) > 1e-12 for weight in feature_weights.values()
-        ):
-            params["feature_weights"] = feature_weights
-        else:
-            params.pop("feature_weights", None)
-        if penalties and any(abs(weight) > 1e-12 for weight in penalties.values()):
-            params["first_feature_use_penalties"] = penalties
-        else:
-            params.pop("first_feature_use_penalties", None)
-
-        if str(params.get("bootstrap_type", "")).strip() == "Bayesian":
-            params.pop("subsample", None)
-        else:
-            params.pop("bagging_temperature", None)
-
-        if str(params.get("grow_policy", "")).strip() == "Lossguide":
-            params.pop("depth", None)
-        else:
-            params.pop("max_leaves", None)
-        if has_monotone_constraints:
-            params["grow_policy"] = "SymmetricTree"
-            params.pop("max_leaves", None)
-
-        if str(params.get("task_type", "")).strip().upper() == "GPU":
-            params.pop("rsm", None)
-
-        return {key: value for key, value in params.items() if value is not None}
-
-    def _sanitize_enqueued_trial(raw_params: dict[str, Any]) -> dict[str, Any]:
-        """Keep only parameters that are actually sampled by the active Optuna space."""
-        allowed = {
-            "bootstrap_type",
-            "grow_policy",
-            "learning_rate",
-            "l2_leaf_reg",
-            "min_data_in_leaf",
-            "random_strength",
-            "border_count",
-            "leaf_estimation_iterations",
-            "rsm",
-            "depth",
-            "max_leaves",
-            "subsample",
-            "bagging_temperature",
-        }
-        if search_space_mode_resolved == "local_refine":
-            allowed.add("iterations")
-        params: dict[str, Any] = {}
-        for key, value in dict(raw_params or {}).items():
-            key_str = str(key)
-            if (
-                key_str in allowed
-                or key_str.startswith(("feature_weight__", "first_use_penalty__"))
-            ):
-                params[key_str] = value
-
-        if has_monotone_constraints:
-            params["grow_policy"] = "SymmetricTree"
-            params.pop("max_leaves", None)
-        if str(params.get("grow_policy", base.get("grow_policy", "SymmetricTree"))) == "Lossguide":
-            params.pop("depth", None)
-        else:
-            params.pop("max_leaves", None)
-        if str(params.get("bootstrap_type", base.get("bootstrap_type", "MVS"))) == "Bayesian":
-            params.pop("subsample", None)
-        else:
-            params.pop("bagging_temperature", None)
-        if str(base.get("task_type", "")).strip().upper() == "GPU":
-            params.pop("rsm", None)
-        return {key: value for key, value in params.items() if value is not None}
-
-    def _trial_params_match(left: dict[str, Any], right: dict[str, Any]) -> bool:
-        if set(left) != set(right):
-            return False
-        for key, left_value in left.items():
-            right_value = right.get(key)
-            if right_value is None:
-                if left_value is not None:
-                    return False
-                continue
-            try:
-                if abs(float(left_value) - float(right_value)) > 1e-12:
-                    return False
-            except (TypeError, ValueError):
-                if str(left_value) != str(right_value):
-                    return False
-        return True
-
-    def _enqueue_prior_trials(study: optuna.Study) -> int:
-        enqueued = 0
-        existing = [dict(trial.params) for trial in study.trials]
-        for raw_params in enqueue_trials:
-            params = _sanitize_enqueued_trial(raw_params)
-            if not params:
-                continue
-            if any(_trial_params_match(params, trial_params) for trial_params in existing):
-                continue
-            try:
-                study.enqueue_trial(params, skip_if_exists=True)
-            except TypeError:
-                study.enqueue_trial(params)
-            existing.append(params)
-            enqueued += 1
-        return enqueued
-
-    def _local_refine_params(trial: optuna.Trial, *, is_gpu: bool) -> dict[str, Any]:
-        params = {**base}
-        fixed_params = dict(local_refine_space.get("fixed_params", {}) or {})
-        params.update(fixed_params)
-
-        params["iterations"] = int(
-            _local_choice(
-                trial,
-                "iterations",
-                local_refine_space.get("iterations"),
-                base.get("iterations", 3000),
+    if constraints_policy:
+        incumbent_metrics.update(
+            _incumbent_validation_metrics(
+                base=base,
+                train_pool=train_pool,
+                val_pool=val_pool,
+                X_val=X_val,
+                y_val=y_val,
             )
         )
-        params["learning_rate"] = float(
-            _local_choice(
-                trial,
-                "learning_rate",
-                local_refine_space.get("learning_rate"),
-                base.get("learning_rate", 0.03),
-            )
-        )
-        params["l2_leaf_reg"] = float(
-            _local_choice(
-                trial,
-                "l2_leaf_reg",
-                local_refine_space.get("l2_leaf_reg"),
-                base.get("l2_leaf_reg", 3.0),
-            )
-        )
-        params["min_data_in_leaf"] = int(
-            _local_choice(
-                trial,
-                "min_data_in_leaf",
-                local_refine_space.get("min_data_in_leaf"),
-                base.get("min_data_in_leaf", 64),
-            )
-        )
-        params["random_strength"] = float(
-            _local_choice(
-                trial,
-                "random_strength",
-                local_refine_space.get("random_strength"),
-                base.get("random_strength", 1e-6),
-            )
-        )
-        params["border_count"] = int(
-            _local_choice(
-                trial,
-                "border_count",
-                local_refine_space.get("border_count"),
-                base.get("border_count", 128),
-            )
-        )
-        params["leaf_estimation_iterations"] = int(
-            _local_choice(
-                trial,
-                "leaf_estimation_iterations",
-                local_refine_space.get("leaf_estimation_iterations"),
-                base.get("leaf_estimation_iterations", 3),
-            )
-        )
-        params["bootstrap_type"] = _local_choice(
-            trial,
-            "bootstrap_type",
-            local_refine_space.get("bootstrap_type"),
-            base.get("bootstrap_type", "MVS"),
-        )
-        params["grow_policy"] = _local_choice(
-            trial,
-            "grow_policy",
-            local_refine_space.get("grow_policy"),
-            base.get("grow_policy", "SymmetricTree"),
-        )
-
-        if is_gpu:
-            params.pop("rsm", None)
-        else:
-            params["rsm"] = float(
-                _local_choice(trial, "rsm", local_refine_space.get("rsm"), base.get("rsm", 1.0))
-            )
-        if str(params.get("grow_policy", "SymmetricTree")) == "Lossguide":
-            params.pop("depth", None)
-            params["max_leaves"] = int(
-                _local_choice(trial, "max_leaves", local_refine_space.get("max_leaves"), 32)
-            )
-        else:
-            params["depth"] = int(
-                _local_choice(trial, "depth", local_refine_space.get("depth"), base.get("depth", 8))
-            )
-            params.pop("max_leaves", None)
-        if str(params.get("bootstrap_type", "MVS")) == "Bayesian":
-            params.pop("subsample", None)
-            bagging_spec = local_refine_space.get("bagging_temperature", {"low": 0.0, "high": 10.0})
-            params["bagging_temperature"] = float(
-                _local_choice(
-                    trial,
-                    "bagging_temperature",
-                    bagging_spec,
-                    base.get("bagging_temperature", 1.0),
-                )
-            )
-        else:
-            params.pop("bagging_temperature", None)
-            params["subsample"] = float(
-                _local_choice(
-                    trial,
-                    "subsample",
-                    local_refine_space.get("subsample"),
-                    base.get("subsample", 0.8),
-                )
-            )
-        _apply_local_feature_priors(trial, params)
-        return _normalize_feature_penalty_params(params)
 
     use_multivariate = bool(multivariate_tpe)
     use_group_tpe = bool(group_tpe and use_multivariate)
-    constraints_func = None
-    if constraints_policy:
-        max_brier_delta = constraints_policy.get("max_brier_delta")
-        max_ece_delta = constraints_policy.get("max_ece_delta")
-        min_auc_delta = constraints_policy.get("min_auc_delta")
-
-        def constraints_func(frozen_trial: optuna.trial.FrozenTrial) -> list[float]:
-            attrs = frozen_trial.user_attrs
-            violations: list[float] = []
-            if max_brier_delta is not None:
-                ceiling = float(incumbent_metrics.get("validation_brier", 0.0)) + float(
-                    max_brier_delta
-                )
-                violations.append(float(attrs.get("validation_brier", float("inf"))) - ceiling)
-            if max_ece_delta is not None:
-                ceiling = float(incumbent_metrics.get("validation_ece", 0.0)) + float(max_ece_delta)
-                violations.append(float(attrs.get("validation_ece", float("inf"))) - ceiling)
-            if min_auc_delta is not None:
-                floor = float(incumbent_metrics.get("validation_auc", 0.0)) + float(min_auc_delta)
-                violations.append(floor - float(attrs.get("validation_auc", float("-inf"))))
-            return violations
+    constraints_func = (
+        partial(
+            _constraints_violations,
+            incumbent_metrics=incumbent_metrics,
+            constraints_policy=constraints_policy,
+        )
+        if constraints_policy
+        else None
+    )
 
     sampler_obj, pruner_obj = _build_optuna_sampler_pruner(
         optuna,
@@ -506,310 +1026,83 @@ def train_catboost_tuned_optuna(
         constraints_func=constraints_func,
     )
 
-    train_pool = Pool(X_train, y_train, cat_features=cat_features, weight=sample_weight)
-    val_pool = Pool(X_val, y_val, cat_features=cat_features, weight=eval_sample_weight)
-    if constraints_policy:
-        incumbent_model = CatBoostClassifier(**base)
-        incumbent_model.fit(train_pool, eval_set=val_pool, use_best_model=True)
-        incumbent_y_val_prob = incumbent_model.predict_proba(X_val)[:, 1]
-        incumbent_metrics = {
-            "validation_auc": float(roc_auc_score(y_val, incumbent_y_val_prob)),
-            "validation_brier": float(brier_score_loss(y_val, incumbent_y_val_prob)),
-            "validation_ece": float(expected_calibration_error(y_val, incumbent_y_val_prob)),
-        }
+    objective = partial(
+        _catboost_objective,
+        base=base,
+        search_space_mode_resolved=search_space_mode_resolved,
+        local_refine_space=local_refine_space,
+        feature_order=feature_order,
+        has_monotone_constraints=has_monotone_constraints,
+        train_pool=train_pool,
+        val_pool=val_pool,
+        X_val=X_val,
+        y_val=y_val,
+        use_pruning_callback=use_pruning_callback,
+    )
 
-    def objective(trial: optuna.Trial) -> float:
-        is_gpu = str(base.get("task_type", "")).strip().upper() == "GPU"
-        if search_space_mode_resolved == "local_refine":
-            params = _local_refine_params(trial, is_gpu=is_gpu)
-        else:
-            bootstrap_type = trial.suggest_categorical(
-                "bootstrap_type", ["Bayesian", "Bernoulli", "MVS"]
-            )
-            grow_policy_choices = (
-                ["SymmetricTree"]
-                if has_monotone_constraints
-                else ["SymmetricTree", "Depthwise", "Lossguide"]
-            )
-            grow_policy = trial.suggest_categorical("grow_policy", grow_policy_choices)
-            params = {
-                **base,
-                "learning_rate": trial.suggest_float("learning_rate", 0.005, 0.20, log=True),
-                "l2_leaf_reg": trial.suggest_float("l2_leaf_reg", 0.5, 100.0, log=True),
-                "min_data_in_leaf": trial.suggest_int("min_data_in_leaf", 20, 500),
-                "random_strength": trial.suggest_float("random_strength", 1e-9, 10.0, log=True),
-                "border_count": trial.suggest_int("border_count", 64, 254),
-                "bootstrap_type": bootstrap_type,
-                "grow_policy": grow_policy,
-                "leaf_estimation_iterations": trial.suggest_int(
-                    "leaf_estimation_iterations", 1, 10
-                ),
-                "random_seed": int(base.get("random_seed", 42)),
-            }
-            if is_gpu:
-                params.pop("rsm", None)
-            else:
-                params["rsm"] = trial.suggest_float("rsm", 0.5, 1.0)
-            if grow_policy == "Lossguide":
-                params["max_leaves"] = trial.suggest_int("max_leaves", 16, 64)
-                params.pop("depth", None)
-            else:
-                params["depth"] = trial.suggest_int("depth", 4, 10)
-            if bootstrap_type == "Bayesian":
-                params.pop("subsample", None)
-                params["bagging_temperature"] = trial.suggest_float(
-                    "bagging_temperature", 0.0, 10.0
-                )
-            else:
-                params.pop("bagging_temperature", None)
-                params["subsample"] = trial.suggest_float("subsample", 0.5, 0.95)
-
-        params = _normalize_feature_penalty_params(params)
-        model = CatBoostClassifier(**params)
-        pruning_callback = None
-        callbacks: list[Any] = []
-        if use_pruning_callback:
-            try:
-                from optuna_integration.catboost import CatBoostPruningCallback
-
-                pruning_callback = CatBoostPruningCallback(trial, "AUC")
-                callbacks = [pruning_callback]
-            except Exception as exc:  # pragma: no cover - optional integration path
-                if trial.number == 0:
-                    logger.warning(
-                        "CatBoost pruning callback unavailable; disabling pruning callback: {}", exc
-                    )
-                pruning_callback = None
-                callbacks = []
-
-        model.fit(
-            train_pool,
-            eval_set=val_pool,
-            use_best_model=True,
-            callbacks=callbacks or None,
-        )
-
-        if pruning_callback is not None:
-            pruning_callback.check_pruned()
-
-        val_auc = model.get_best_score().get("validation", {}).get("AUC")
-        if val_auc is None:
-            y_val_prob = model.predict_proba(X_val)[:, 1]
-            val_auc = roc_auc_score(y_val, y_val_prob)
-        else:
-            y_val_prob = model.predict_proba(X_val)[:, 1]
-        val_brier = float(brier_score_loss(y_val, y_val_prob))
-        val_ece = float(expected_calibration_error(y_val, y_val_prob))
-
-        trial.set_user_attr("best_iteration", int(model.get_best_iteration()))
-        trial.set_user_attr("validation_auc", float(val_auc))
-        trial.set_user_attr("validation_brier", val_brier)
-        trial.set_user_attr("validation_ece", val_ece)
-        return float(val_auc)
-
-    create_study_kwargs: dict[str, Any] = {
-        "direction": "maximize",
-        "sampler": sampler_obj,
-        "pruner": pruner_obj,
-    }
-    retry_callback = None
-    if study_storage:
-        storage_obj: Any = study_storage
-        hb_interval = max(0, int(storage_heartbeat_interval))
-        hb_grace = max(0, int(storage_grace_period))
-        storage_text = str(study_storage)
-        if _is_journal_storage_url(storage_text):
-            journal_path = _journal_path_from_storage_url(storage_text)
-            Path(journal_path).parent.mkdir(parents=True, exist_ok=True)
-            from src.utils.optuna_storage import _make_journal_storage
-
-            storage_obj = _make_journal_storage(
-                Path(journal_path),
-                study_name=resolve_optuna_study_name(
-                    study_name,
-                    search_space_version=search_space_version,
-                ),
-            )
-        else:
-            # For long-running trials on SQLite, use a longer connection timeout and
-            # heartbeat to recover stale RUNNING trials after crashes/restarts.
-            if storage_text.startswith(("sqlite:///", "sqlite+pysqlite:///")):
-                engine_kwargs = {"connect_args": {"timeout": max(1, int(sqlite_timeout_seconds))}}
-            else:
-                engine_kwargs = None
-            if hb_interval > 0 or hb_grace > 0:
-                try:
-                    heartbeat_cb = None
-                    failed_cb = None
-                    if int(retry_failed_trials) > 0:
-                        retry_factory = getattr(
-                            optuna.storages,
-                            "RetryHeartbeatStaleTrialCallback",
-                            None,
-                        )
-                        if retry_factory is not None:
-                            heartbeat_cb = retry_factory(max_retry=int(retry_failed_trials))
-                            retry_callback = heartbeat_cb
-                        else:  # pragma: no cover - compatibility with older Optuna.
-                            failed_cb = optuna.storages.RetryFailedTrialCallback(
-                                max_retry=int(retry_failed_trials)
-                            )
-                            retry_callback = failed_cb
-                    storage_kwargs: dict[str, Any] = {
-                        "url": storage_text,
-                        "engine_kwargs": engine_kwargs,
-                        "heartbeat_interval": hb_interval or None,
-                        "grace_period": hb_grace or None,
-                    }
-                    if heartbeat_cb is not None:
-                        storage_kwargs["heartbeat_stale_trial_callback"] = heartbeat_cb
-                    elif failed_cb is not None:
-                        storage_kwargs["failed_trial_callback"] = failed_cb
-                    storage_obj = optuna.storages.RDBStorage(**storage_kwargs)
-                except Exception as exc:
-                    logger.warning(
-                        "Optuna RDBStorage heartbeat/retry setup failed; falling back to storage "
-                        "URL. reason={}",
-                        exc,
-                    )
-        create_study_kwargs["storage"] = storage_obj
-        create_study_kwargs["study_name"] = resolve_optuna_study_name(
-            study_name,
-            search_space_version=search_space_version,
-        )
-        create_study_kwargs["load_if_exists"] = bool(load_if_exists)
-
-    study = optuna.create_study(**create_study_kwargs)
-    n_enqueued_prior_trials = _enqueue_prior_trials(study)
-    if search_space_mode_resolved == "local_refine" and bool(
-        local_refine_space.get("enqueue_base_trial", True)
-    ):
-        try:
-            study.enqueue_trial(
-                {
-                    key: value
-                    for key, value in {
-                        "iterations": int(base.get("iterations", 3000)),
-                        "learning_rate": float(base.get("learning_rate", 0.03)),
-                        "l2_leaf_reg": float(base.get("l2_leaf_reg", 3.0)),
-                        "min_data_in_leaf": int(base.get("min_data_in_leaf", 64)),
-                        "random_strength": float(base.get("random_strength", 1e-6)),
-                        "border_count": int(base.get("border_count", 128)),
-                        "leaf_estimation_iterations": int(
-                            base.get("leaf_estimation_iterations", 3)
-                        ),
-                        "bootstrap_type": str(base.get("bootstrap_type", "MVS")),
-                        "grow_policy": str(base.get("grow_policy", "SymmetricTree")),
-                        "rsm": None
-                        if str(base.get("task_type", "")).strip().upper() == "GPU"
-                        else float(base.get("rsm", 1.0)),
-                        "depth": None
-                        if str(base.get("grow_policy", "SymmetricTree")) == "Lossguide"
-                        else int(base.get("depth", 8)),
-                        "max_leaves": int(base.get("max_leaves", 32))
-                        if str(base.get("grow_policy", "SymmetricTree")) == "Lossguide"
-                        else None,
-                        "subsample": None
-                        if str(base.get("bootstrap_type", "MVS")) == "Bayesian"
-                        else float(base.get("subsample", 0.8)),
-                        "bagging_temperature": float(base.get("bagging_temperature", 1.0))
-                        if str(base.get("bootstrap_type", "MVS")) == "Bayesian"
-                        else None,
-                    }.items()
-                    if value is not None
-                }
-            )
-        except Exception as exc:
-            logger.warning("Optuna enqueue_trial for local_refine skipped: {}", exc)
+    study, retry_callback = _create_optuna_study(
+        optuna,
+        sampler_obj=sampler_obj,
+        pruner_obj=pruner_obj,
+        study_storage=study_storage,
+        study_name=study_name,
+        load_if_exists=load_if_exists,
+        search_space_version=search_space_version,
+        storage_heartbeat_interval=storage_heartbeat_interval,
+        storage_grace_period=storage_grace_period,
+        sqlite_timeout_seconds=sqlite_timeout_seconds,
+        retry_failed_trials=retry_failed_trials,
+    )
+    n_enqueued_prior_trials = _enqueue_prior_trials(
+        study,
+        enqueue_trials=enqueue_trials,
+        base=base,
+        search_space_mode_resolved=search_space_mode_resolved,
+        has_monotone_constraints=has_monotone_constraints,
+    )
+    _enqueue_local_refine_base_trial(
+        study,
+        base=base,
+        local_refine_space=local_refine_space,
+        search_space_mode_resolved=search_space_mode_resolved,
+    )
     if retry_callback is not None and hasattr(optuna.storages, "fail_stale_trials"):
         try:
             optuna.storages.fail_stale_trials(study)
         except Exception as exc:
             logger.warning("Optuna stale-trial recovery skipped: {}", exc)
-    timeout = None if timeout_minutes <= 0 else int(timeout_minutes * 60)
-    requested_trials = int(n_trials)
-    if requested_trials > 0:
-        study.optimize(
-            objective,
-            n_trials=requested_trials,
-            timeout=timeout,
-            show_progress_bar=False,
-            gc_after_trial=bool(gc_after_trial),
-            n_jobs=max(1, int(n_jobs)),
-        )
-    else:
-        complete_trials = [
-            t for t in study.trials if t.state.name == "COMPLETE" and t.value is not None
-        ]
-        if not complete_trials:
-            raise ValueError(
-                "n_trials=0 requested, but the Optuna study has no COMPLETE trials to reuse."
-            )
-        logger.info(
-            "Optuna reuse mode enabled (n_trials=0): skipping optimization and reusing "
-            "{} existing trials from study '{}'.",
-            len(study.trials),
-            study.study_name,
-        )
-    gc.collect()
+    _run_or_reuse_study(
+        study,
+        objective=objective,
+        n_trials=n_trials,
+        timeout_minutes=timeout_minutes,
+        gc_after_trial=gc_after_trial,
+        n_jobs=n_jobs,
+    )
 
-    complete_trials = [
-        trial
-        for trial in study.trials
-        if trial.state == optuna.trial.TrialState.COMPLETE and trial.value is not None
-    ]
-    if not complete_trials:
-        raise ValueError("Optuna study has no COMPLETE trials available for model selection.")
-    constrained_best_trial = True
-    try:
-        selected_trial = study.best_trial
-    except ValueError as exc:
-        selected_trial = max(complete_trials, key=lambda trial: float(trial.value))
-        constrained_best_trial = False
-        logger.warning(
-            "Optuna study has no feasible trial under constraints; using best COMPLETE trial "
-            "by validation AUC as fallback. reason={}",
-            exc,
-        )
-    selected_params = dict(selected_trial.params)
-    selected_value = float(selected_trial.value)
-
-    best_params = _materialize_study_params(selected_params)
-    best_params["verbose"] = 100
-    catboost_best_params = _normalize_feature_penalty_params(best_params)
-    selection_model = CatBoostClassifier(**catboost_best_params)
-    selection_model.fit(train_pool, eval_set=val_pool, use_best_model=True)
-    y_val_prob = selection_model.predict_proba(X_val)[:, 1]
-    val_auc = roc_auc_score(y_val, y_val_prob)
-    best_iteration = int(selection_model.get_best_iteration())
-
-    if refit_full_train:
-        full_X = pd.concat([X_train, X_val], axis=0).reset_index(drop=True)
-        full_y = pd.concat([y_train, y_val], axis=0).reset_index(drop=True)
-        full_weight = None
-        if sample_weight is not None and eval_sample_weight is not None:
-            full_weight = np.concatenate(
-                [
-                    np.asarray(sample_weight, dtype=float),
-                    np.asarray(eval_sample_weight, dtype=float),
-                ]
-            )
-        full_pool = Pool(full_X, full_y, cat_features=cat_features, weight=full_weight)
-        refit_params = {
-            k: v for k, v in catboost_best_params.items() if k != "early_stopping_rounds"
-        }
-        if best_iteration > 0:
-            refit_params["iterations"] = best_iteration + 1
-        best_model = CatBoostClassifier(**refit_params)
-        best_model.fit(full_pool)
-    else:
-        best_model = selection_model
+    selected_trial, selected_value, constrained_best_trial = _selected_optuna_trial(study, optuna)
+    selected_fit = _fit_selected_catboost_model(
+        selected_trial=selected_trial,
+        base=base,
+        has_monotone_constraints=has_monotone_constraints,
+        feature_order=feature_order,
+        train_pool=train_pool,
+        val_pool=val_pool,
+        X_train=X_train,
+        y_train=y_train,
+        X_val=X_val,
+        y_val=y_val,
+        cat_features=cat_features,
+        sample_weight=sample_weight,
+        eval_sample_weight=eval_sample_weight,
+        refit_full_train=refit_full_train,
+    )
 
     metrics: dict[str, Any] = {
-        "validation_auc": float(val_auc),
-        "best_iteration": best_iteration,
-        "best_params": selected_params,
-        "best_params_resolved": best_params,
+        "validation_auc": float(selected_fit.validation_auc),
+        "best_iteration": selected_fit.best_iteration,
+        "best_params": selected_fit.selected_params,
+        "best_params_resolved": selected_fit.resolved_params,
         "hpo_trials_executed": len(study.trials),
         "hpo_best_validation_auc": selected_value,
         "hpo_selected_trial_number": int(selected_trial.number),
@@ -822,15 +1115,15 @@ def train_catboost_tuned_optuna(
         "enqueued_prior_trials": n_enqueued_prior_trials,
     }
     if X_test is not None and y_test is not None:
-        y_test_prob = best_model.predict_proba(X_test)[:, 1]
+        y_test_prob = selected_fit.model.predict_proba(X_test)[:, 1]
         metrics["auc_roc"] = float(roc_auc_score(y_test, y_test_prob))
 
     logger.info(
         "CatBoost tuned — val_AUC: "
-        f"{val_auc:.4f}, best_trial_val_AUC: {selected_value:.4f}, "
+        f"{selected_fit.validation_auc:.4f}, best_trial_val_AUC: {selected_value:.4f}, "
         f"trials={len(study.trials)}, multivariate_tpe={use_multivariate}, group_tpe={use_group_tpe}"
     )
-    return best_model, metrics
+    return selected_fit.model, metrics
 
 
 def export_hpo_visualizations(

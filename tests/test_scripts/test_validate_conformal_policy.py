@@ -65,6 +65,52 @@ def test_compute_mapie_mwi_score_keeps_legacy_alpha_signature(
     assert score == pytest.approx(1.20)
 
 
+def test_interval_arrays_filters_invalid_interval_rows() -> None:
+    intervals = pd.DataFrame(
+        {
+            "y_true": [0.1, None, 0.3, 0.4],
+            "pd_low_90": [0.0, 0.1, np.nan, 0.2],
+            "pd_high_90": [0.2, 0.3, 0.4, 0.6],
+        }
+    )
+
+    y_true, lower, upper = policy_mod._interval_arrays(
+        intervals,
+        lower_col="pd_low_90",
+        upper_col="pd_high_90",
+    )
+
+    assert list(y_true) == [0.1, 0.4]
+    assert list(lower) == [0.0, 0.2]
+    assert list(upper) == [0.2, 0.6]
+
+
+def test_winkler_90_check_allows_documented_compensated_band() -> None:
+    policy = {
+        "target_coverage_90_min": 0.90,
+        "min_group_coverage_90_min": 0.88,
+        "max_avg_width_90": 0.80,
+        "max_critical_alerts": 0,
+        "max_winkler_90": 1.00,
+        "enable_compensated_winkler_90": True,
+        "compensated_winkler_90_max": 1.20,
+    }
+    metrics = {
+        "winkler_90": 1.10,
+        "coverage_90": 0.91,
+        "min_group_coverage_90": 0.89,
+        "avg_width_90": 0.70,
+        "critical_alerts": 0.0,
+    }
+
+    check = policy_mod._winkler_90_check(policy, metrics)
+
+    assert check["passed"] is True
+    assert check["raw_passed"] is False
+    assert check["compensated_passed"] is True
+    assert check["policy_mode"] == "compensated_band"
+
+
 def test_validate_conformal_policy_includes_material_gate_checks(tmp_path) -> None:
     data_dir = tmp_path / "data" / "processed"
     model_dir = tmp_path / "models"

@@ -6,6 +6,7 @@ import argparse
 import json
 from datetime import UTC, datetime
 from pathlib import Path
+from typing import Any, cast
 
 import pandas as pd
 
@@ -79,6 +80,7 @@ def build_frontier_table(
         candidate = claim_summary.get(key, {})
         if not isinstance(candidate, dict) or "local_candidate_id" not in candidate:
             continue
+        candidate = cast(dict[str, Any], candidate)
         candidate_id = int(candidate["local_candidate_id"])
         _append_unique(
             rows,

@@ -123,6 +123,7 @@ def test_portfolio_command_separates_proxy_and_exact_sampling(tmp_path) -> None:
                 "solver_backend": "cuopt",
                 "exact_solver_backend": "highs",
                 "frontier_only": True,
+                "exact_python_executable": "python-exact",
             },
             "frontier": {
                 "proxy_candidates_per_conformal_finalist": 100000,
@@ -147,6 +148,11 @@ def test_portfolio_command_separates_proxy_and_exact_sampling(tmp_path) -> None:
                 "gamma_neighbors": "0.45",
                 "policy_modes": "blended_uncertainty",
             },
+            "cuopt": {
+                "method": "concurrent",
+                "num_gpus": 1,
+                "extra_parameters": {"tolerance": "tight"},
+            },
         },
         conformal_intervals_path=tmp_path / "intervals.parquet",
         run_label="unit",
@@ -160,4 +166,8 @@ def test_portfolio_command_separates_proxy_and_exact_sampling(tmp_path) -> None:
     assert command[command.index("--exact-checkpoint-every") + 1] == "25"
     assert command[command.index("--exact-threads") + 1] == "8"
     assert command[command.index("--budget-profiles") + 1] == "free"
+    assert command[command.index("--exact-python-executable") + 1] == "python-exact"
+    assert command[command.index("--cuopt-method") + 1] == "concurrent"
+    assert command[command.index("--cuopt-num-gpus") + 1] == "1"
+    assert "tolerance=tight" in command
     assert "--frontier-only" in command
