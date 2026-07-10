@@ -2,27 +2,34 @@ from __future__ import annotations
 
 from pathlib import Path
 
+import pytest
 import yaml
 
 
-def test_publication_target_config_points_to_existing_sources() -> None:
-    cfg = yaml.safe_load(Path("configs/crpto_publication_targets.yaml").read_text(encoding="utf-8"))
+def _config() -> dict:
+    return yaml.safe_load(
+        Path("configs/crpto_publication_targets.yaml").read_text(encoding="utf-8")
+    )
 
+
+def test_publication_target_points_to_active_sources() -> None:
+    cfg = _config()
     primary = cfg["primary_target"]
+    active = cfg["active_scientific_contract"]
+
+    assert cfg["version"] == "2026-07-10"
+    assert cfg["decision_status"] == "reconstructed_active"
     assert primary["id"] == "informs_ijds"
     assert cfg["current_decision"]["write_first_for"] == "informs_ijds"
     assert cfg["current_decision"]["keep_second_ready_for"] == "ejor"
-
-    assert Path(primary["manuscript_source"]).exists()
-    assert Path(primary["supplement_source"]).exists()
-
-    strategy = Path("docs/research/crpto_publication_strategy_2026-05-12.md")
-    assert strategy.exists()
+    for key in ("manuscript_source", "supplement_source", "official_tex_source"):
+        assert Path(primary[key]).is_file()
+    assert Path(active["claim_registry"]).is_file()
+    assert Path(active["evidence_manifest"]).is_file()
 
 
 def test_publication_target_urls_are_official_https() -> None:
-    cfg = yaml.safe_load(Path("configs/crpto_publication_targets.yaml").read_text(encoding="utf-8"))
-
+    cfg = _config()
     targets = [cfg["primary_target"], *cfg["secondary_targets"]]
     for target in targets:
         for url in target["official_urls"].values():
@@ -30,84 +37,35 @@ def test_publication_target_urls_are_official_https() -> None:
 
 
 def test_ijds_sources_are_anonymous_by_default() -> None:
-    paths = [Path("paper/CRPTO_ijds.qmd"), Path("paper/supplement_ijds.qmd")]
-    for path in paths:
+    for path in (Path("paper/CRPTO_ijds.qmd"), Path("paper/supplement_ijds.qmd")):
         text = path.read_text(encoding="utf-8")
         assert 'author: "Anonymous"' in text
         assert "Carlos Alfredo Vergara Rojas" not in text
-        assert "TODO(manuscript)" not in text
+        assert "cavr94@gmail.com" not in text
+    tex = Path("paper/submission/CRPTO_ijds_submission.tex").read_text(encoding="utf-8")
+    assert r"\documentclass[ijds,dblanonrev]{informs4}" in tex
+    assert "Carlos Alfredo Vergara Rojas" not in tex
 
 
-def test_journal_strengthening_pack_classifies_current_and_backlog_items() -> None:
-    cfg = yaml.safe_load(Path("configs/crpto_publication_targets.yaml").read_text(encoding="utf-8"))
-    boundary = cfg["current_decision"]["p2_p3_boundary"]
-    pack = cfg["journal_strengthening_pack"]
-    included = pack["include_in_current_submission"]
-    backlog = pack["backlog_not_blocking"]
+def test_active_contract_is_small_complete_and_numerically_locked() -> None:
+    active = _config()["active_scientific_contract"]
+    assert active["run_tag"].endswith("maturity-safe-locked-bounded-h1h2-v2")
+    assert active["method"]["policy"] == "q=0.75p+0.25u with tau=0.17."
+    assert active["headline"]["candidate_coverage"] == pytest.approx([0.854923, 0.879692])
+    assert active["headline"]["payoff_difference"] == pytest.approx([-322703.79, -58040.34])
+    assert active["headline"]["default_difference"] == pytest.approx([-0.046275, -0.020093])
+    assert active["headline"]["miscoverage_difference"] == pytest.approx([0.008822, 0.029850])
+    assert len(active["required_artifacts"]) == 13
+    for artifact in active["required_artifacts"]:
+        assert Path(artifact).is_file(), artifact
 
-    assert "no longer a blanket exclusion" in boundary
-    assert "outside the submitted claim" in boundary
-    assert "not acceptance criteria" in boundary
-    assert set(included) == {
-        "regret_auditability_frontier",
-        "tail_risk_oce_cvar_diagnostic",
-        "exact_alpha_calibration_selected_policy",
-        "matched_point_pd_baseline",
-        "robust_satisficing_margins",
-        "dependence_aware_bound",
-        "tail_satisficing_challenger_audit",
-        "tail_constrained_reoptimization",
-        "distribution_online_diagnostics",
-        "multidataset_external_replication",
-    }
-    assert included["regret_auditability_frontier"]["status"] == "include_body"
-    assert included["tail_risk_oce_cvar_diagnostic"]["status"] == "include_supplement"
-    assert included["exact_alpha_calibration_selected_policy"]["status"] == (
-        "include_body_and_supplement"
-    )
-    assert included["matched_point_pd_baseline"]["status"] == ("include_body_and_supplement")
-    assert included["robust_satisficing_margins"]["status"] == ("include_supplement_or_short_body")
-    assert included["dependence_aware_bound"]["status"] == "include_theory_appendix_or_caveat"
-    assert included["tail_satisficing_challenger_audit"]["status"] == "include_supplement"
-    assert included["tail_constrained_reoptimization"]["status"] == "include_supplement"
-    assert included["distribution_online_diagnostics"]["status"] == "include_supplement"
-    assert included["multidataset_external_replication"]["status"] == (
-        "include_supplement_or_short_body"
-    )
-    active_artifacts = included["exact_alpha_calibration_selected_policy"]["artifacts"]
-    assert "reports/crpto/tables/crpto_tableA35_exact_alpha_grid.csv" in active_artifacts
-    assert "reports/crpto/tables/crpto_tableA39_calibration_selected_bootstrap.csv" in (
-        active_artifacts
-    )
-    assert "reports/crpto/tables/crpto_tableA40_calibration_selected_point_baseline.csv" in (
-        active_artifacts
-    )
-    for artifact in active_artifacts:
-        assert Path(artifact).exists(), artifact
-    multidataset_artifacts = included["multidataset_external_replication"]["artifacts"]
-    assert "reports/crpto/tables/crpto_tableA28_external_lp_exhaustiveness.csv" in (
-        multidataset_artifacts
-    )
-    assert "reports/crpto/tables/crpto_tableA33_freddie_segment_sensitivity.csv" in (
-        multidataset_artifacts
-    )
-    assert "reports/crpto/figures/crpto_fig24_freddie_all_candidate_certificate.png" in (
-        multidataset_artifacts
-    )
-    for artifact in multidataset_artifacts:
-        assert Path(artifact).exists(), artifact
-    assert backlog["prospective_multidataset_validation"]["status"] == (
-        "future_protocol_not_blocker"
-    )
 
-    body = Path("paper/CRPTO_ijds.qmd").read_text(encoding="utf-8")
-    supplement = Path("paper/supplement_ijds.qmd").read_text(encoding="utf-8")
-    paper_readme = Path("paper/README.md").read_text(encoding="utf-8")
-
-    for text in (body, supplement, paper_readme):
-        assert "midpoint" in text.lower()
-        assert "calibration" in text.lower()
-        assert "point-PD" in text
-
-    for diagnostic in ("OCE/CVaR", "SPO+", "Prosper"):
-        assert diagnostic in supplement
+def test_historical_diagnostics_are_explicitly_outside_active_evidence() -> None:
+    historical = _config()["historical_boundary"]
+    assert historical["compact_v7_status"] == "frozen_no_go_provenance"
+    assert historical["diagnostics_status"] == "historical_not_active_evidence"
+    text = " ".join(historical["diagnostics"])
+    assert "A1--A24" in text
+    assert "A25--A34" in text
+    assert "A35--A40" in text
+    assert "cannot validate" in historical["rule"]

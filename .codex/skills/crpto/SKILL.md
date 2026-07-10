@@ -2,75 +2,96 @@
 
 Use this skill inside `C:\Users\carlos\Documents\Paper_CRPTO`. CRPTO is a
 single-author IJDS paper and reproducibility bundle, not a production service.
-Prefer simple code, frozen evidence, and one coherent manuscript claim.
+Prefer simple code, immutable evidence, and one coherent manuscript claim.
 
-## Scientific Status Override - 2026-07-10
+## Active Scientific Contract - 2026-07-10
 
-The compact v7 manuscript and A35--A40 replay below are historical provenance,
-not an active submission claim. The current paper is NO-GO because its
-candidate universe is outcome-conditioned, later labels enter the conformal
-recipe, the optimized payoff differs from the evaluated payoff, and one pooled
-portfolio uses a future menu. Before paper work, read:
+Read these first:
 
-1. `docs/research/ijds_state_of_art_audit_2026-07-10.md`
-2. `docs/research/ijds_three_front_reconstruction_2026-07-10.md`
-3. `docs/research/ijds_reconstruction_asset_inventory_2026-07-10.csv`
-
-Do not promote the maturity-safe scratch run. It was generated from a dirty
-tree and must be modularized and rerun under a fresh committed tag.
-
-## Read First
-
-1. `docs/ACADEMIC_CONTEXT.md`
-2. `docs/SCOPE_AND_GOVERNANCE.md`
-3. `docs/research/ijds_state_of_art_audit_2026-07-10.md`
-4. `docs/research/ijds_three_front_reconstruction_2026-07-10.md`
-5. `docs/research/active_claims_2026-07-04.md` (historical v7 replay)
+1. `docs/research/active_claims_2026-07-10.md`
+2. `docs/research/ijds_state_of_art_audit_2026-07-10.md`
+3. `docs/research/ijds_three_front_reconstruction_2026-07-10.md`
+4. `docs/ACADEMIC_CONTEXT.md`
+5. `docs/SCOPE_AND_GOVERNANCE.md`
 6. `CONTRIBUTING.md`
 7. `EXTRACTION_MANIFEST.md`
-8. `configs/crpto_publication_targets.yaml`
 
-Use Windows PowerShell and `uv run`. Do not introduce Unix-only workflow
-assumptions.
+The active paper is the clean, tagged maturity-safe bounded protocol v2:
 
-## Historical v7 IJDS Policy
+- run:
+  `champion-reopen-2026-07-10__maturity-safe-locked-bounded-h1h2-v2`;
+- protocol tag:
+  `protocol/ijds-maturity-safe-locked-bounded-h1h2-2026-07-10-v2`;
+- protocol commit: `78a64fe67a4df46c3d19b9243deb991c56fd1ff6`;
+- universe: 540,121 status-independent 36-month loans;
+- conformal object: exact 90% five-stratum interval for the binary snapshot
+  outcome, not a latent-PD confidence interval;
+- selected guardrail: `q=0.75p+0.25u`, `tau=0.17`;
+- payoff: expected `(1-p)r-p*LGD`, realized `(1-Y)r-Y*LGD`, `LGD=0.45`;
+- evaluation: 15 fresh monthly $1M decisions from 2016-04 through 2017-06;
+- unresolved outcomes: retained and reported with sharp aggregate and pairwise
+  bounds.
 
-- Run tag:
-  `champion-reopen-2026-06-19__pool93__ijds-calibration-selected-endpoint28-v7`
-- Exact conformal replay: target `alpha=0.10`, frozen used alpha `0.095`.
-- Decision score: `q=(p+u)/2`.
-- Risk tolerance: `tau=0.17`.
-- Objective: point-PD expected net return; conformal `q` is the risk guardrail.
-- Selector: nine round-number policies on November 2017; five satisfy full
-  budget, effective-PD, and deterministic `B_u<=0.28` screens. Outcomes are
-  stored separately from the 12-column selector frame.
-- Audit: an outcome-free December replay selects the same policy; opening
-  outcomes afterward gives weighted default `0.145650` and miscoverage
-  `0.124925`, so stability is not reported as selected-set validity.
-- Full OOT: 276,869 candidates, 308 funded, `$179,327.59` realized return,
-  `0.039375` weighted default, `0.036875` weighted miscoverage.
-- `Gamma_CP=0.176102`, `Gamma_residual=0.088051`, endpoint `0.258051`.
-- Markov sensitivity: threshold `0.574279` with probability bound `0.316228`
-  under weighted funded-set validity.
-- Matched point-PD: `$196,369.14`, `0.118400` weighted default, endpoint
-  `0.921317`, threshold `1.237545`.
+Primary guardrail-minus-point contrasts:
 
-The exact paper-facing source is:
+- standardized realized payoff: `[-$322,703.79, -$58,040.34]`;
+- weighted default: `[-0.046275, -0.020093]`;
+- weighted miscoverage: `[0.008822, 0.029850]`.
 
-`models/experiments/champion_reopen/<run_tag>/portfolio/ijds_policy_governance.json`
+Interpretation: the conformal constraint lowers default by shifting capital
+into low-score strata, but loses payoff and worsens selected-set coverage.
+Within-stratum optimizer selection is the main coverage transport failure.
+Do not promote economic dominance or selected-set validity.
 
-A35--A40 provide exact-alpha, selector, temporal, grade, bootstrap, and matched
-comparison evidence. The final selector does not read OOT outcomes, but prior
-project development inspected the static OOT corpus. Say "retrospective
-lockbox replay," not "preregistered," "prospective," or "untouched holdout."
+## Claim Boundaries
 
-Do not revive these as active claims: approximate alpha-0.01 scaling, `8/8`,
-the 50,010-policy frontier, `0.345084`, capped/tail-selected policies, or OOT
-outcome-selected hyperparameters.
+Always preserve these distinctions:
 
-## Frozen Provenance
+- candidate membership at decision time versus ex-post outcome resolution;
+- binary-outcome conformal intervals versus confidence intervals for latent PD;
+- marginal/Mondrian coverage versus optimizer-selected funded-set coverage;
+- coherent standardized payoff versus cash-flow return, IRR, or NPV;
+- sharp partial-identification bounds versus sampling confidence intervals;
+- exact transport identities versus formal regularization guarantees;
+- retrospective contrasts versus causal effects;
+- code-locked retrospective audit versus preregistration or a pristine
+  prospective lockbox.
 
-Never overwrite the manifest-protected upstream or historical pool93 files:
+The paper may claim only three exact theory results: binary miscoverage
+geometry, sharp additive bounds for unresolved binary outcomes, and the
+telescoping row/exposure/group/within-group transport identity. It does not
+claim a new selected-set theorem, distributional robustness, or a Markov
+certificate.
+
+## Active Evidence
+
+The paper-facing manifest is:
+
+`reports/crpto/ijds_maturity_safe_evidence.json`
+
+It validates:
+
+- `maturity_safe_locked_summary.json`;
+- `execution_receipt.json`;
+- protocol tag and commit;
+- every versioned data/model artifact hash;
+- tables `crpto_ijds_ms_table1`--`table3` and S1--S7; and
+- figures `crpto_ijds_ms_fig1`--`fig3`.
+
+Large active run directories are tracked by exact DVC pointers under
+`data/processed/experiments/champion_reopen/` and
+`models/experiments/champion_reopen/`. The builder is byte-idempotent.
+
+## Historical Boundary
+
+The compact-v7 run and A35--A40 bundle are replay provenance only. Its positive
+return claim is invalid for submission because the old design used
+outcome-conditioned membership, contaminated conformal ingredients, an
+incoherent payoff, and a pooled future menu. Earlier A1--A34 OCE/CVaR, SPO+,
+online-style, Prosper, and Freddie/Mendeley analyses remain historical
+diagnostics and cannot validate the active maturity-safe policy.
+
+Never overwrite these protected files:
 
 - `models/pd_canonical.cbm`
 - `models/pd_canonical_calibrator.pkl`
@@ -78,65 +99,53 @@ Never overwrite the manifest-protected upstream or historical pool93 files:
 - `models/conformal_policy_status.json`
 - `data/processed/conformal_intervals_mondrian.parquet`
 - `data/processed/portfolio_bound_aware/rank1_alpha01_bound_aware_276k_full_2026-04-05-1734/`
-- historical `crpto_tableA35..A40_pool93_*` files
-- historical pool93 governance JSON files
+- historical pool93 governance and A35--A40 files
 - `EXTRACTION_MANIFEST.json`
-
-New experiments must use a distinct run tag and write under
-`data/processed/experiments/champion_reopen/` and
-`models/experiments/champion_reopen/`. Never replace frozen paths.
 
 Protected DVC stages are `crpto.pd.champion`,
 `crpto.conformal.intervals`, `crpto.conformal.validation`,
 `crpto.portfolio.optimization`, and `crpto.portfolio.bound_exact_eval`.
 Experiments may read their outputs. Run a protected stage only with explicit
-permission and a drift report.
-
-## Method Boundary
-
-The submitted method has one linear policy. Capped, tail, OCE/CVaR, SPO+,
-multi-distribution, online, causal, and external-data variants are comparators
-or diagnostics, not additional CRPTO methods.
-
-Keep these distinctions explicit:
-
-- exact conformal quantile replay versus approximate width scaling;
-- point PD in the economic objective versus conformal `q` in the constraint;
-- deterministic `weighted outcome <= B_u + V` versus the
-  assumption-conditional Markov statement;
-- calibration-only final ranking versus historical OOT-aware development;
-- full-OOT averages versus temporal heterogeneity;
-- retrospective contrasts versus causal or universal dominance.
+permission naming the branch, output paths, and drift plan.
 
 ## Paper Workflow
 
-Safe paper work may regenerate active A35--A40, figures, Quarto outputs, and the
-official IJDS PDF. Keep body, supplement, submission TeX, governance JSON, and
-claim-sync tests numerically aligned.
-
-Standard closeout:
+Use Windows PowerShell and `uv run`. Ordinary paper work rebuilds evidence from
+the committed active run; it does not hide an expensive experiment rerun.
 
 ```powershell
-uv run python scripts/build_ijds_calibration_selected_evidence.py
+just ijds-evidence
 uv run pytest tests/test_ijds_active_claim_sync.py -q
+just publication-integrity
 just lint
 just type-check
 just type-advisory-full
-just smoke
+just test
 just validate-champion
 just paper-submission
 just paper-submission-official
 uv run dvc status --no-updates
 ```
 
-Run `just drift-gate` after changes to conformal or PD semantics. Do not bypass
-hooks, commit secrets, or alter `EXTRACTION_MANIFEST.json`.
+The manual official-TeX fallback is intentionally:
+
+```text
+pdflatex -> bibtex -> pdflatex -> pdflatex
+```
+
+The first LaTeX pass creates `.aux`, BibTeX creates `.bbl`, and the last two
+passes resolve then stabilize citations, references, floats, and pagination.
 
 ## Writing
 
 - Paper and code identifiers are English; project notes may be Spanish.
-- Lead with data, method, decision, and managerial implication.
-- Report the price of robustness and temporal failures as prominently as wins.
-- Treat reproducibility as evidence quality, not as the sole novelty.
-- Keep the main IJDS body within 25 pages; move proofs and diagnostics to the
-  separate supplement.
+- Lead with the default--payoff--coverage trade-off and its mechanism.
+- Report unresolved exposure and temporal failures as prominently as wins.
+- Call the outcome `snapshot default` and the objective `standardized payoff`.
+- Do not call the interval a PD interval, the result a causal effect, or the
+  protocol prospective/preregistered.
+- Keep the main official body within 25 pages; put complete grids, proofs,
+  hashes, and historical boundaries in the separate supplement.
+- Preserve one method and one paper. Future survival, decision-calibrated, or
+  selection-valid variants require a new locked protocol and are not implied
+  by the current claim.

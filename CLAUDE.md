@@ -2,14 +2,12 @@
 
 ## Scientific status override - 2026-07-10
 
-The compact v7 body claim documented later in this file is frozen historical
-provenance and is **NO-GO for submission**. Four design defects require a
-maturity-safe reconstruction: outcome-conditioned candidate membership,
-later-label contamination of the conformal recipe, mismatch between optimized
-and evaluated payoff, and a pooled future decision menu. Before paper-facing
-work read `docs/research/ijds_state_of_art_audit_2026-07-10.md` and
-`docs/research/ijds_three_front_reconstruction_2026-07-10.md`. Do not promote
-the current dirty maturity-safe scratch run or overwrite protected artifacts.
+The active IJDS paper is the clean, tagged maturity-safe bounded protocol v2.
+Its source of truth is `docs/research/active_claims_2026-07-10.md`. The compact
+v7 claim is frozen historical provenance and remains NO-GO. Before paper work,
+read the active registry, `ijds_state_of_art_audit_2026-07-10.md`, and
+`ijds_three_front_reconstruction_2026-07-10.md`. Never overwrite the active v2
+run, the historical champion, or manifest-protected artifacts.
 
 ## Quién soy y qué es este proyecto
 
@@ -52,31 +50,35 @@ autorización implícita.
 ## Champion congelado — NO RE-CORRER
 
 El modelo PD, calibrador, intervalos y bundle pool93 del manifest permanecen
-congelados. El body IJDS usa un replay exacto y una política nueva bajo un run
-tag aislado; **no regenera ni sobreescribe ningún artefacto upstream**.
+congelados como procedencia histórica. El body IJDS activo usa un experimento
+nuevo, aislado y DVC-tracked; no regenera ni sobreescribe ningún artefacto
+upstream protegido.
 
-**Body claim histórico v7 (NO-GO para submission):**
+**Body claim activo maturity-safe v2:**
 
 | Campo | Valor |
 | --- | --- |
-| Run tag | `champion-reopen-2026-06-19__pool93__ijds-calibration-selected-endpoint28-v7` |
-| Conformal | exact replay at target `alpha=0.10` (frozen used alpha `0.095`) |
-| Policy | `q=(p+u)/2`, `tau=0.17`, point-PD economic objective |
-| Selector | 9 policies on Nov 2017; deterministic `B_u<=0.28`; 5 eligible; same policy in outcome-free Dec replay |
-| Realized return | `$179,327.59` on a `$1M` budget |
-| Weighted default / miscoverage | `0.039375 / 0.036875` |
-| Gamma_CP / Gamma_residual | `0.176102 / 0.088051` |
-| Endpoint / Markov threshold | `0.258051 / 0.574279` |
-| Matched point-PD A40 | return cost `8.678%`; default reduction `7.9025` pp; threshold reduction `66.3266` pp |
-| Evidence | exact alpha A35 + split selector/audit A36 + temporal/funded-set/baseline A37--A40 |
+| Run tag | `champion-reopen-2026-07-10__maturity-safe-locked-bounded-h1h2-v2` |
+| Universo | `540,121` préstamos de 36 meses, membership independiente del status |
+| Cronología | fit/selección termina 2012; 15 decisiones mensuales 2016-04--2017-06 |
+| Conformal | intervalo binario Mondrian exacto al `90%`; no es CI de PD latente |
+| Política | `q=0.75p+0.25u`, `tau=0.17`; payoff coherente `(1-p)r-p*LGD` |
+| Cobertura candidata OOT | `[0.854923, 0.879692]` |
+| Diferencia de payoff vs point PD | `[-$322,703.79, -$58,040.34]` |
+| Diferencia de default vs point PD | `[-0.046275, -0.020093]` |
+| Diferencia de miscoverage vs point PD | `[0.008822, 0.029850]` |
+| Mecanismo | mejora de default por composición; falla de coverage por selección within-group |
+| Evidencia | `ijds_maturity_safe_evidence.json`, tablas 1--3/S1--S7 y figuras 1--3 |
 
-The exact policy-facing quantities come from
-`models/experiments/champion_reopen/<run_tag>/portfolio/ijds_policy_governance.json`.
-The primary claim is the simple calibration-selected guardrail, deterministic
-endpoint screen, independent December audit, and exact funded-set accounting.
-December miscoverage `0.124925` documents that stable selection is not
-selected-set validity. Markov remains an assumption-conditional sensitivity,
-not a selector or headline novelty.
+El claim es mixto: el guardrail reduce default, pero pierde payoff y empeora
+la cobertura del funded set. Es una auditoría temporal retrospectiva con
+bounds sharp, no un efecto causal, un guarantee selected-set, un cash-flow
+return, una prueba prospectiva ni un certificado Markov. La autoridad completa
+es `docs/research/active_claims_2026-07-10.md`.
+
+**Body claim histórico v7:** NO-GO y replay-only. Sus A35--A40, retorno
+positivo, endpoint y sensibilidades no pueden reaparecer en superficies
+editoriales activas.
 
 **Cadena upstream congelada (histórica; su retorno es el return floor declarado del pool93):**
 
@@ -106,9 +108,9 @@ Artefactos históricos congelados cuyos hashes están en
 - `models/experiments/champion_reopen/...__pool93__ijds-certificate-semantics-v2/portfolio/pool93_point_pd_baseline_audit.json`
 - `EXTRACTION_MANIFEST.json`
 
-La sincronía del body claim histórico v7 con el snapshot del paper la vigila
+La sincronía del claim maturity-safe v2 con body, supplement y TeX la vigila
 `tests/test_ijds_active_claim_sync.py`. `tests/test_pool93_body_claim_sync.py`
-queda limitado a la integridad de procedencia histórica.
+queda limitado a la integridad de procedencia histórica v7/pool93.
 
 Stages DVC que regeneran estos artefactos (`crpto.pd.champion`, `crpto.conformal.intervals`, `crpto.conformal.validation`, `crpto.portfolio.optimization`, `crpto.portfolio.bound_exact_eval`) **no se ejecutan** sin permiso. Validar con `crpto-validate-champion` antes de cualquier merge.
 

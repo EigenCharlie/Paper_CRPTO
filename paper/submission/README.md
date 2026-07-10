@@ -1,39 +1,33 @@
 # IJDS Submission Package
 
-> **Scientific status (2026-07-10): NO-GO.** This directory is a preserved v7
-> handoff snapshot. The build workflow remains valid, but the manuscript and
-> A35--A40 values must not be submitted or incrementally relabeled as new
-> evidence. See `../../docs/research/ijds_three_front_reconstruction_2026-07-10.md`.
+This directory contains the active maturity-safe IJDS handoff and editor-facing
+materials.
 
-This directory contains the official-template handoff and editor-facing
-submission materials. The synchronized scientific sources are:
+## Scientific Sources
 
-- `paper/CRPTO_ijds.qmd`: anonymous body.
-- `paper/supplement_ijds.qmd`: anonymous online supplement.
-- `paper/submission/CRPTO_ijds_submission.tex`: manually compacted
-  `informs4` handoff.
-- `paper/submission/CLAIM_AUDIT_MATRIX.md`: active claim/evidence map.
-- `paper/submission/REPRODUCIBILITY_PACKAGE.md`: data/code package plan.
+- anonymous body: `paper/CRPTO_ijds.qmd`;
+- anonymous supplement: `paper/supplement_ijds.qmd`;
+- official template: `paper/submission/CRPTO_ijds_submission.tex`;
+- claim authority: `docs/research/active_claims_2026-07-10.md`;
+- evidence authority: `reports/crpto/ijds_maturity_safe_evidence.json`.
 
-The historical compact-v7 manuscript has one policy: exact 90% conformal replay,
-`q=(p+u)/2`, `tau=0.17`, and a nine-cell November selector under
-`B_u<=0.28`. An outcome-free December replay and post-selection audit are part
-of A36; the audit deliberately records that stable policy identity does not
-imply selected-set coverage. A35--A40 are the active evidence bundle. Keep
-body, supplement, TeX, and governance numerically aligned with
-`tests/test_ijds_active_claim_sync.py`.
+The active result uses a status-independent 540,121-loan universe, exact 90%
+binary Mondrian intervals, a 2012H2-selected score
+`q=0.75p+0.25u` with `tau=0.17`, and 15 fresh monthly 2016--2017 decisions.
+Relative to point PD, the guardrail reduces default but loses standardized
+payoff and worsens funded-set miscoverage. Compact-v7 A35--A40 and earlier
+diagnostics are immutable history, not active evidence.
 
 ## Preview
 
 ```powershell
 just ijds-evidence
 just paper-submission
-just paper-submission-pdf
 ```
 
-HTML and browser-print PDFs are writing and visual-QA previews. The upload PDF
-must come from `CRPTO_ijds_submission.tex` with the official INFORMS class and
-the `dblanonrev` option.
+Quarto HTML and browser-print PDFs are writing and visual-QA previews. The
+upload PDF must come from `CRPTO_ijds_submission.tex` with the official INFORMS
+class and `dblanonrev` option.
 
 ## Official Sources
 
@@ -41,88 +35,58 @@ the `dblanonrev` option.
 - IJDS submission guidelines: <https://pubsonline.informs.org/page/ijds/submission-guidelines>
 - IJDS data/code policy: <https://pubsonline.informs.org/page/ijds/data-and-code-disclosure-policy>
 - IJDS reviewer guidelines: <https://pubsonline.informs.org/page/ijds/reviewer-guidelines>
-- IJDS Overleaf template: <https://www.overleaf.com/latex/templates/template-for-informs-journal-on-data-science/sbthszxgycfn>
 
-Local copies of `informs4.cls`, `informs2014.bst`, and related publisher files
-are used for compilation and remain gitignored. Recheck official sources during
-the final submission week.
+Recheck these sources during submission week. Local publisher class/style files
+support compilation and remain outside the project's scientific evidence.
 
 ## Official Build
 
-Run from `paper/submission`:
-
 ```powershell
-if (-not $env:WINDIR) { $env:WINDIR = $env:SystemRoot }
-latexmk -pdf -gg -interaction=nonstopmode CRPTO_ijds_submission.tex
+just paper-submission-official
 ```
 
-`latexmk` is preferred because it automates convergence. The repository build
-resolves TinyTeX's `latexmk.pl` and launches it with Perl on Windows, bypassing
-the defective `runscript.tlu` executable wrapper. If that payload is unavailable
-or fails, the robust fallback is:
+The wrapper locates TinyTeX's working `latexmk.pl` payload and launches it with
+Perl on Windows. The robust fallback is:
 
 ```text
 pdflatex -> bibtex -> pdflatex -> pdflatex
 ```
 
 ```powershell
+cd paper/submission
 pdflatex -interaction=nonstopmode -halt-on-error CRPTO_ijds_submission.tex
 bibtex CRPTO_ijds_submission
 pdflatex -interaction=nonstopmode -halt-on-error CRPTO_ijds_submission.tex
 pdflatex -interaction=nonstopmode -halt-on-error CRPTO_ijds_submission.tex
 ```
 
-The three `pdflatex` calls are intentional:
-
-1. The first pass writes `.aux`, including citation keys and unresolved labels.
-2. BibTeX reads `.aux` and writes the formatted `.bbl`.
-3. The second LaTeX pass imports `.bbl` and resolves citations and references.
-4. The final pass stabilizes labels, float positions, and pagination changed by
-   the bibliography and cross-references.
-
-After a TeX Live update, an `expl3` format mismatch can be repaired once with:
-
-```powershell
-if (-not $env:WINDIR) { $env:WINDIR = $env:SystemRoot }
-fmtutil-sys --byfmt pdflatex
-```
-
-The repository wrapper runs the working `latexmk` payload first and falls back
-automatically:
-
-```powershell
-just paper-submission-official
-```
+The three LaTeX calls are intentional. The first writes `.aux`, BibTeX reads it
+and writes `.bbl`, the second LaTeX pass resolves citations and references, and
+the final pass stabilizes labels, float positions, and pagination.
 
 ## Build Acceptance
 
-The official-template PDF is acceptable only when:
+Accept the official PDF only when:
 
-- `.blg` has no bibliography warnings;
+- `.blg` has no warnings;
 - `.log` has no undefined citations or references;
-- the body is at most 25 pages under the IJDS counting rule;
-- tables do not overflow or become unreadably small;
-- the PDF remains double-anonymous;
-- visual inspection confirms that figures, equations, and references render.
+- the initial-submission body satisfies the IJDS 25-page rule;
+- tables and figures are readable and inside margins;
+- content and metadata remain double-anonymous; and
+- page-by-page inspection finds no clipping, overlap, blank content, or
+  missing glyphs.
 
-Current verified build (2026-07-09): 13 pages total; References begin on page
-11, so the main text occupies pages 1--10 and remains well within the 25-page
-limit. The bibliography is clean, and visual inspection of all 13 pages found
-no clipping, overlap, missing glyphs, or unreadable tables.
-
-Do not keep a page-count statement in this README without rebuilding the
-current TeX. The final compile wrapper records the current count and warning
-scan.
+Current verified build (2026-07-10): 16 pages total and citation/reference
+clean. Recount and repeat visual QA after every substantive TeX edit.
 
 ## Anonymity
 
 - QMD metadata uses `author: "Anonymous"`.
 - TeX uses `\documentclass[ijds,dblanonrev]{informs4}`.
-- Author names, acknowledgements, repository ownership, personal URLs, local
-  usernames, and private remotes stay out of the reviewer packet.
-- Cover-letter and data/code language lives in
-  `COVER_LETTER_AND_DISCLOSURE.md` and related editor-facing files.
-- `TITLE_PAGE_DRAFT.md` is uploaded separately when ScholarOne requests it.
+- Author, affiliation, email, acknowledgements, repository ownership, personal
+  URLs, local paths, and private remotes stay out of reviewer-facing files.
+- Cover letter, disclosure, and title page are editor-facing files uploaded to
+  their designated ScholarOne fields.
 
 ## Final Gate
 
@@ -132,7 +96,5 @@ uv run dvc status --no-updates
 git status --short
 ```
 
-Use `SCHOLARONE_FINAL_CHECKLIST.md` for upload order and proof review. Preserve
-the active midpoint narrative; OCE/CVaR, SPO+, external replications, and other
-historical diagnostics remain supplement context rather than additional active
-methods.
+Use `SCHOLARONE_FINAL_CHECKLIST.md` for final proof review. DVC status is a
+report, not permission to rerun protected historical stages.

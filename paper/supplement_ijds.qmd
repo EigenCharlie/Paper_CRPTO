@@ -1,7 +1,7 @@
 ---
-title: "Online Supplement for CRPTO: A Calibration-Selected Conformal Guardrail for Credit Portfolios"
+title: "Online Supplement for CRPTO: When Marginal Conformal Coverage Meets Maturity-Safe Credit Portfolio Selection"
 author: "Anonymous"
-date: today
+date: "July 2026"
 lang: en
 bibliography: ../book/references.bib
 csl: ../book/apa.csl
@@ -9,393 +9,607 @@ link-citations: true
 format:
   html:
     toc: true
-    number-sections: true
+    number-sections: false
     css: ijds.css
   pdf:
     documentclass: article
-    number-sections: true
+    number-sections: false
     geometry:
-      - margin=1in
+      - margin=0.85in
 execute:
   freeze: auto
   echo: false
   warning: false
 ---
 
-# Scope and Evidence Map
+# Scope and Evidence Contract
 
-This supplement supports one active method: an exact 90% conformal replay,
-the midpoint decision score $q=(p+u)/2$, risk tolerance $\tau=0.17$, and a
-nine-cell calibration selector. A35--A40 are the active evidence bundle.
-Earlier A1--A34 analyses remain useful as model, robustness, comparison, or
-external-transfer diagnostics, but none selects or redefines the submitted
-policy.
+This supplement supports one maturity-safe CRPTO experiment and no competing
+paper narrative. The active conformal guardrail uses an exact 90% binary-outcome
+Mondrian interval, the score $q=(1-\gamma)p+\gamma u$, selected
+$\gamma=0.25$, and risk tolerance $\tau=0.17$. The model, probability
+calibrator, conformal recipe, policy, payoff, monthly protocol, and point-PD
+baselines are frozen before the April 2016--June 2017 primary evaluation.
 
-| Evidence | Role in the submission | Claim boundary |
+| Evidence | Contents | Claim boundary |
 |---|---|---|
-| A35 | Exact alpha replay, coverage, width, and endpoint saturation. | Other alpha rows are sensitivities, not additional policies. |
-| A36 | All nine calibration selector cells. | No OOT outcome-derived ranking columns. |
-| A37 | Full-OOT and fixed-policy temporal evaluation. | Retrospective stress evidence, not prospective performance. |
-| A38 | Funded exposure and outcomes by letter grade. | Business composition, not legal fair-lending certification. |
-| A39 | Fixed-allocation month-cluster bootstrap plus loan-level sensitivity. | Does not resample model, conformal recipe, selector, or solver. |
-| A40 | Selected, more-conservative, and matched point-PD decisions. | Retrospective contrasts, not causal effects or universal dominance. |
+| S1 | Full 2012H2 guardrail and point-PD selection grids | Development selection only; no 2016--2017 outcome enters |
+| S2 | Conformal fit, primary OOT, and extension coverage | Binary-outcome coverage, not latent-PD confidence or selected-set validity |
+| S3 | Every monthly policy solve and bounded outcome metric | Separate $1$M decision in every month; no pooled future menu |
+| S4 | Default and miscoverage transport identities | Exact decomposition; completion-specific components are not confidence bounds |
+| S5 | Exposure by the five frozen conformal score strata | Composition mechanism, not protected-group fairness |
+| S6 | Heavily censored July--September 2017 extension | Stress evidence only; no directional promotion claim |
+| S7 | Sharp monthly and aggregate pairwise contrasts | Retrospective contrasts, not causal effects |
 
-The active governance file is
-`models/experiments/champion_reopen/<active-run>/portfolio/ijds_policy_governance.json`.
-The final tagged ranking code does not read OOT defaults or returns. Earlier
-project development did inspect the static OOT corpus, so the evaluation is a
-retrospective lockbox replay rather than a pristine prospective trial.
+The paper-facing source is
+`reports/crpto/ijds_maturity_safe_evidence.json`. It validates the immutable run
+summary and execution receipt before writing S1--S7 and the three manuscript
+figures. The historical compact-v7 A35--A40 bundle remains immutable provenance
+but is not evidence for any active claim.
 
-# Appendix A: Exact Conformal and Accounting Details
+# Appendix A: Data, Outcome Observability, and Chronology
 
-## A.1 Frozen Recipe Replay
+## A.1 Source inventory
 
-Let $p_j$ be calibrated PD and $Y_j\in\{0,1\}$ the calibration outcome. The
-active recipe uses the scaled nonconformity score
+The source file is `data/raw/Loan_status_2007-2020Q3.csv`, a Lending Club
+research snapshot dated September 30, 2020. Its recorded size is 1,773,470,505
+bytes and its full SHA-256 is
+`5878af2a088f8ab5214c9337289fb8b5eb6c6338fd3f417b6cdc18513dc6f35f`.
+The executable inventory reads 2,925,493 rows, finds one invalid issue date,
+identifies 2,060,077 36-month loans across all dates, and retains 540,121 rows
+in the declared blocks.
 
-$$
-s_j=\frac{|Y_j-p_j|}{\sigma(p_j)},\qquad
-\sigma(p)=\sqrt{\max\{p(1-p),10^{-6}\}}.
-$$
+No final-status filter enters candidate membership. The inclusion rule is:
 
-Calibration scores are partitioned into five score-quantile Mondrian cells.
-For a cell with $n_g$ calibration rows, the finite-sample quantile level is
+1. `issue_d` parses and lies in a predeclared block;
+2. contractual `term` equals 36 months;
+3. required origination-time fields satisfy deterministic cleaning rules; and
+4. ID is unique and nonmissing.
 
-$$
-\min\left\{1,
-\frac{\lceil(n_g+1)(1-\widetilde\alpha)\rceil}{n_g}
-\right\},
-$$
+The rule does not ask whether the loan eventually defaulted, paid in full,
+remained current, or entered any other administrative status.
 
-with `higher` interpolation and frozen used alpha
-$\widetilde\alpha=0.095$ for target $\alpha=0.10$. Sparse cells fall back to
-the recorded global recipe, and frozen group/temporal factors may widen but
-never narrow an interval. For evaluation loan $i$,
+## A.2 Snapshot outcome taxonomy
 
-$$
-[\ell_i,u_i]
-=\left[
-\max\{0,p_i-\widehat q_{g(i)}\sigma(p_i)\},
-\min\{1,p_i+\widehat q_{g(i)}\sigma(p_i)\}
-\right]
-$$
+The normalized target has three observable states.
 
-before the recorded widening factors.
+| Snapshot classification | Status rule | Binary value |
+|---|---|---:|
+| Resolved default | equals `Default` or contains `Charged Off`, including credit-policy variants | 1 |
+| Resolved nondefault | contains `Fully Paid` | 0 |
+| Unresolved | every other normalized status | missing, retained |
 
-The replay reads all settings from the frozen conformal result payload. At the
-90% reference level, maximum absolute differences against the stored artifact
-are `4.44e-16` for point predictions, `3.33e-16` for lower endpoints, and
-`6.67e-16` for upper endpoints. The active claim therefore uses recomputed
-finite-sample quantiles rather than average-width scaling.
+This taxonomy is held outside the decision frame. It is a binary snapshot
+endpoint, not time to default, competing risks, lifetime PD, or cash-flow
+profit. The active design takes the simplest defensible route for a 36-month
+binary audit: choose primary cohorts with at least 39 months of contractual age
+and retain any residual unresolved state with bounds. Survival and
+competing-risk models would be required for a richer event-time estimand
+[@ausset2022censoring; @li2023online_loans].
 
-## A.2 Policy Algebra
+## A.3 Locked blocks
 
-For a generic linear blend
-$q_i=p_i+\gamma(u_i-p_i)$ and funded-exposure weights $w_i$,
-
-$$
-\Gamma_{\mathrm{CP}}=\sum_iw_i(u_i-p_i),
-$$
-
-$$
-\Gamma_{\mathrm{int}}=\gamma\Gamma_{\mathrm{CP}},\qquad
-\Gamma_{\mathrm{res}}=(1-\gamma)\Gamma_{\mathrm{CP}}.
-$$
-
-At $\gamma=0.5$, the conformal premium is split equally. The endpoint budget is
-
-$$
-B_u=\sum_iw_iu_i
-=\sum_iw_iq_i+\Gamma_{\mathrm{res}}.
-$$
-
-The optimizer constrains $\sum_iw_iq_i\le\tau$. It does not constrain $B_u$
-directly, which is why the residual premium remains visible in every audit.
-
-## A.3 Deterministic Identity
-
-**Proposition A.1 (funded-set accounting).** For any fixed allocation with
-nonnegative normalized weights, outcomes $Y_i\in[0,1]$, upper endpoints
-$u_i\in[0,1]$, and
-$Z_i=\mathbf1\{Y_i>u_i\}$,
-
-$$
-\sum_iw_iY_i\le B_u+V,
-\qquad
-B_u=\sum_iw_iu_i,
-\quad
-V=\sum_iw_iZ_i.
-$$
-
-*Proof.* If $Y_i\le u_i$, then $Y_i\le u_i+Z_i=u_i$. If $Y_i>u_i$, then
-$Z_i=1$ and $Y_i\le1\le u_i+1$. Multiply by $w_i$, sum, and use
-$w_i\ge0$. $\square$
-
-The proposition is deterministic and remains true after adaptive allocation.
-It is deliberately weak: $V$ is observed only after outcomes become available.
-
-## A.4 Assumption-Conditional Markov Corollary
-
-**Assumption A.1 (weighted funded-set validity).** For the random
-calibration/evaluation draw and frozen allocation rule,
-$\mathbb E[V]\le\alpha$.
-
-This assumption is stronger than marginal or Mondrian coverage. The optimizer
-uses $p_i$ and $u_i$ to choose $w_i$, so per-cell conformal validity does not
-automatically transfer to funded-dollar weights.
-
-**Corollary A.1.** Under Assumption A.1,
-
-$$
-\Pr(V\ge t)\le\frac{\alpha}{t},\quad t>0,
-$$
-
-and therefore
-
-$$
-\Pr\!\left(\sum_iw_iY_i\ge B_u+\sqrt\alpha\right)
-\le\sqrt\alpha.
-$$
-
-*Proof.* Apply Markov's inequality to nonnegative $V$, set
-$t=\sqrt\alpha$, and combine with Proposition A.1. $\square$
-
-At active $\alpha=0.10$, the probability bound is `0.316228`. Because this is
-loose and assumption-conditional, the paper treats it as sensitivity language,
-not as the primary contribution or a deterministic default cap. Formal
-selected-set validity would require a dedicated protocol
-[@hegazy2025valid_selection_conformal_sets].
-
-# Appendix B: Active Evidence A35--A40
-
-## A35. Exact Alpha Replay and Saturation
-
-| Selected | Target $\alpha$ | Used $\alpha$ | Coverage | Avg. width | Min partition coverage | Min grade coverage | $u=1$ rate |
-|:---:|---:|---:|---:|---:|---:|---:|---:|
-| no | `0.01` | `0.0095` | `0.996720` | `0.988215` | `0.989629` | `0.972270` | `0.935424` |
-| no | `0.03` | `0.0285` | `0.988478` | `0.969779` | `0.969799` | `0.966493` | `0.832314` |
-| no | `0.05` | `0.0475` | `0.972825` | `0.953580` | `0.950583` | `0.952575` | `0.718156` |
-| no | `0.07` | `0.0665` | `0.955271` | `0.795666` | `0.934782` | `0.938443` | `0.613550` |
-| yes | `0.10` | `0.0950` | `0.934836` | `0.788879` | `0.926310` | `0.926797` | `0.517873` |
-| no | `0.12` | `0.1140` | `0.918265` | `0.783174` | `0.906875` | `0.905738` | `0.454511` |
-| no | `0.15` | `0.1425` | `0.886098` | `0.646176` | `0.863562` | `0.863101` | `0.334859` |
-| no | `0.20` | `0.1900` | `0.849380` | `0.636585` | `0.829376` | `0.828007` | `0.244668` |
-
-: A35 exact alpha sensitivity. Source: `crpto_tableA35_exact_alpha_grid.csv`.
-
-The 99% row is nearly saturated and is not the active policy level. Rows other
-than 90% apply the same frozen widening recipe as sensitivity; they are not
-separately tuned conformal winners.
-
-## A36. Calibration Policy Selector
-
-| Nov. status | Candidate | $\tau$ | $\gamma$ | Nov. objective | Nov. $B_u$ | Dec. $B_u$ |
-|---|---|---:|---:|---:|---:|---:|
-| **Selected** | `linear-005` | `0.17` | `0.50` | `$99,387.12` | `0.259036` | `0.262082` |
-| Eligible | `linear-009` | `0.19` | `0.75` | `$96,446.16` | `0.226723` | `0.228577` |
-| Eligible | `linear-002` | `0.15` | `0.50` | `$95,995.22` | `0.226088` | `0.227695` |
-| Eligible | `linear-006` | `0.17` | `0.75` | `$93,760.13` | `0.202259` | `0.203504` |
-| Eligible | `linear-003` | `0.15` | `0.75` | `$90,893.16` | `0.177614` | `0.178203` |
-| Ineligible | `linear-007` | `0.19` | `0.25` | `$113,986.45` | `0.422203` | `0.446378` |
-| Ineligible | `linear-004` | `0.17` | `0.25` | `$109,885.56` | `0.375105` | `0.396751` |
-| Ineligible | `linear-001` | `0.15` | `0.25` | `$105,398.23` | `0.328413` | `0.343502` |
-| Ineligible | `linear-008` | `0.19` | `0.50` | `$102,671.87` | `0.290491` | `0.294861` |
-
-: A36 complete selector. Source: `crpto_tableA36_calibration_policy_selector.csv`.
-
-The selector uses `14,943` November rows and the deterministic screen
-$B_u\le0.28$. The loader keeps outcomes separate from its 12-column input
-frame, which contains no outcome or assumption-conditional quantity. The
-selected row remains optimal for caps in
-`[0.259036, 0.290491)`. Replaying the same outcome-free rule on `20,695`
-December rows selects the same policy. Only then are December outcomes opened:
-the midpoint funds 193 loans, returns `$53,313.05`, has weighted default
-`0.145650`, weighted miscoverage `0.124925`, and endpoint `0.262082`. The
-miscoverage miss is direct evidence that selector stability is not selected-set
-coverage validity.
-
-## A37. Temporal Fixed-Policy Evaluation
-
-| Period | Policy | Return | Default | Miscoverage | Endpoint | Threshold |
-|---|---|---:|---:|---:|---:|---:|
-| Full OOT | Selected 50/50 | `$179,327.59` | `0.039375` | `0.036875` | `0.258051` | `0.574279` |
-| Full OOT | Conservative 75% | `$172,939.50` | `0.035875` | `0.035875` | `0.200396` | `0.516624` |
-| Full OOT | Point PD | `$196,369.14` | `0.118400` | `0.041900` | `0.921317` | `1.237545` |
-| 2018H1 | Selected 50/50 | `$92,530.73` | `0.106703` | `0.097428` | `0.259170` | `0.575398` |
-| 2018H1 | Point PD | `$118,101.99` | `0.190825` | `0.076425` | `0.938912` | `1.255140` |
-| 2018H2 | Selected 50/50 | `$156,185.51` | `0.026725` | `0.026725` | `0.262441` | `0.578669` |
-| 2018H2 | Point PD | `$95,603.58` | `0.236728` | `0.113175` | `0.915546` | `1.231774` |
-| 2019H1 | Selected 50/50 | `$123,590.69` | `0.077325` | `0.061700` | `0.261872` | `0.578100` |
-| 2019H1 | Point PD | `$144,281.46` | `0.170275` | `0.038275` | `0.884838` | `1.201065` |
-| 2019H2 | Selected 50/50 | `$110,251.95` | `0.103250` | `0.103250` | `0.261503` | `0.577731` |
-| 2019H2 | Point PD | `$256,966.20` | `0.023775` | `0.007900` | `0.898805` | `1.215033` |
-| 2020+ | Selected 50/50 | `$99,689.54` | `0.083775` | `0.083775` | `0.264462` | `0.580690` |
-| 2020+ | Point PD | `$218,629.14` | `0.016900` | `0.000000` | `0.861425` | `1.177653` |
-
-: A37 selected temporal rows and matched point-PD rows. Source:
-`crpto_tableA37_calibration_selected_temporal_evaluation.csv`.
-
-Each temporal policy receives a fresh `$1M` budget. The table is intentionally
-unfavorable to a universal-dominance reading: point PD is much stronger in
-2019H2 and 2020+, whereas CRPTO is much stronger in 2018H2.
-
-## A38. Funded Letter-Grade Audit
-
-| Grade | Funded | Exposure share | Default | Miscoverage | Point PD | Midpoint $q$ | Endpoint | Return |
-|---|---:|---:|---:|---:|---:|---:|---:|---:|
-| B | `1` | `0.0040` | `0.000000` | `0.000000` | `0.062075` | `0.101472` | `0.140869` | `$643.20` |
-| C | `91` | `0.3136` | `0.028622` | `0.028622` | `0.067801` | `0.108598` | `0.149395` | `$47,303.75` |
-| D | `170` | `0.5868` | `0.045839` | `0.045839` | `0.088328` | `0.194926` | `0.301523` | `$109,618.08` |
-| E | `33` | `0.0806` | `0.000000` | `0.000000` | `0.085242` | `0.179551` | `0.273860` | `$19,879.71` |
-| F | `11` | `0.0130` | `0.269231` | `0.076923` | `0.110970` | `0.425687` | `0.740404` | `$1,266.55` |
-| G | `2` | `0.0020` | `0.000000` | `0.000000` | `0.146801` | `0.573401` | `1.000000` | `$616.30` |
-
-: A38 selected funded-set composition. Source:
-`crpto_tableA38_calibration_selected_grade_audit.csv`.
-
-The table uses letter grade recovered from `sub_grade`; the aligned conformal
-group is stored separately. This prevents the score-quantile partition labels
-from being misreported as credit grades.
-
-## A39. Fixed-Allocation Bootstrap
-
-| Resampling unit | Metric | Observed | 2.5% | 97.5% |
-|---|---|---:|---:|---:|
-| Month clusters | Realized return | `$179,327.59` | `$163,421.14` | `$193,551.65` |
-| Month clusters | Weighted default | `0.039375` | `0.020517` | `0.062622` |
-| Month clusters | Weighted miscoverage | `0.036875` | `0.018338` | `0.060084` |
-| Month clusters | $\Gamma_{\mathrm{CP}}$ | `0.176102` | `0.132145` | `0.230815` |
-| Month clusters | Endpoint budget | `0.258051` | `0.211996` | `0.314870` |
-| Funded loans | Realized return | `$179,327.59` | `$162,706.17` | `$193,924.74` |
-| Funded loans | Weighted default | `0.039375` | `0.020869` | `0.061742` |
-| Funded loans | Weighted miscoverage | `0.036875` | `0.019358` | `0.058812` |
-| Funded loans | $\Gamma_{\mathrm{CP}}$ | `0.176102` | `0.137159` | `0.224308` |
-| Funded loans | Endpoint budget | `0.258051` | `0.217308` | `0.308571` |
-
-: A39, 5,000 fixed-allocation resamples per scheme with seed `20260709`.
-Month clusters are primary; funded-loan resampling is an independence
-sensitivity. Source: `crpto_tableA39_calibration_selected_bootstrap.csv`. The
-CSV also records bootstrap means and medians.
-
-## A40. Matched Decision Audit
-
-| Policy | Expected objective | Realized return | Default | Miscoverage | Endpoint | Cond. threshold |
+| Block | First month | Last month | Rows | Defaults | Nondefaults | Unresolved |
 |---|---:|---:|---:|---:|---:|---:|
-| Selected 50/50 CRPTO | `$168,271.56` | `$179,327.59` | `0.039375` | `0.036875` | `0.258051` | `0.574279` |
-| More-conservative 75% blend | `$160,690.13` | `$172,939.50` | `0.035875` | `0.035875` | `0.200396` | `0.516624` |
-| Point-PD matched-$\tau$ | `$214,019.15` | `$196,369.14` | `0.118400` | `0.041900` | `0.921317` | `1.237545` |
+| PD development | 2007-06 | 2010-12 | 17,433 | 2,377 | 15,056 | 0 |
+| Probability calibration | 2011-01 | 2011-12 | 14,101 | 1,499 | 12,602 | 0 |
+| Conformal fit | 2012-01 | 2012-06 | 14,967 | 2,063 | 12,904 | 0 |
+| Policy development | 2012-07 | 2012-12 | 28,503 | 3,840 | 24,663 | 0 |
+| Primary OOT | 2016-04 | 2017-06 | 376,890 | 57,662 | 307,842 | 11,386 |
+| Censored extension | 2017-07 | 2017-09 | 88,227 | 11,867 | 47,644 | 28,716 |
 
-: A40 matched full-OOT audit. Source:
-`crpto_tableA40_calibration_selected_point_baseline.csv`.
+: S0 chronology and outcome observability. Source:
+`crpto_ijds_ms_table1_protocol.csv`.
 
-Selected CRPTO pays `$17,041.55` (`8.678%`) relative to point PD. It reduces
-weighted default by `7.9025` percentage points, weighted miscoverage by
-`0.5025` percentage points, and the conditional threshold by `66.3266`
-percentage points.
-Its exact active funded-set quantities are
-$\Gamma_{\mathrm{CP}}=0.176102$,
-$\Gamma_{\mathrm{res}}=0.088051$,
-$B_u=0.258051$,
-$B_u+V=0.294926$, and
-$B_u+\sqrt{0.10}=0.574279$.
+The PD-development block is split at August 2010 into 13,592 training and 3,841
+temporal-validation rows. The policy-development endpoint and primary start are
+separated by 40 calendar months. Every evaluation month is solved independently
+with a fresh budget; the protocol never assembles a portfolio from loans that
+were not simultaneously available.
 
-# Appendix C: Supporting Diagnostics A1--A34
+## A.4 Origination-time features
 
-A1--A34 were generated before the final simplification. They remain useful for
-reviewer questions but are not coequal methods or selectors.
+The model has 29 numeric features and 9 categorical features. Numeric features
+are loan amount, contractual rate, installment, income, DTI, loan-to-income,
+installment burden, revolving utilization, revolving balance-to-income,
+open-account ratio, FICO midpoint, credit age, encoded employment length, open
+and total accounts, revolving balance, public records, recent inquiries,
+delinquency severity and recency, log income, log revolving balance, squared
+loan-to-income, FICO-by-DTI, and four event indicators. Categorical features are
+grade, subgrade, home ownership, purpose, verification status, rate bucket, DTI
+bucket, FICO bucket, and rate-bucket-by-grade. No payment, recovery, current
+balance, final status, or post-origination field is included.
 
-| Range | Contents | Current role |
-|---|---|---|
-| A1--A2 | Predictive benchmarks and the historical robustness frontier. | Upstream model and provenance context. |
-| A3--A11 | Nested/temporal holdouts, sensitivity, synthetic shift, funded-set loan audit, and exact finalist checks. | Robustness diagnostics; no active hyperparameter selection. |
-| A12--A18 | OCE/CVaR, satisficing, dependence, leave-period-out, bootstrap, budget/LGD, and policy-family audits. | Historical mechanism checks. |
-| A19 | Synthetic regret-auditability comparison with two-stage and SPO+. | Comparator only; not the `$1M` funded portfolio. |
-| A20--A24 | Tail, concentration, multi-distribution, and online-style diagnostics. | Stress evidence; no new conformal guarantee. |
-| A25--A34 | Prosper and Freddie/Mendeley external analyses. | Static transfer evidence; not active Lending Club certificates. |
+## A.5 Decision/outcome isolation
 
-The external applications are useful because they cover marketplace personal
-loans and single-family mortgages. They use older frozen replication contracts,
-not the final nine-cell selector. They therefore support plausibility of the
-general PD-to-conformal-to-allocation workflow but cannot be quoted as direct
-replications of the active midpoint policy.
+The only frame accepted by the solver contains:
 
-Similarly, the synthetic SPO+ experiment answers a different question. It
-shows that decision-focused training reduces regret on its own synthetic
-optimization task [@elmachtoub2022], whereas the active CRPTO result evaluates
-an uncertainty-constrained real-dollar allocation. Combining those values into
-one leaderboard would be misleading.
+`id`, `issue_d`, `loan_amnt`, `purpose`, `contractual_rate`, `pd_point`,
+`conformal_lower`, `conformal_upper`, and `conformal_group`.
 
-# Appendix D: Reproducibility Protocol
+The constructor rejects exact outcome names and any column containing
+`realized`, `miscoverage`, or `outcome`. The separate outcome panel is joined by
+ID after optimization with `validate="one_to_one"`. Missing or duplicate IDs
+raise an exception. Focused tests also deliberately inject forbidden columns,
+partial joins, path traversal, and changed artifact hashes.
 
-## D.1 Active Commands
+# Appendix B: Statistical Components
 
-The paper-facing evidence is regenerated from isolated experiment outputs:
+## B.1 PD model and probability calibration
 
-```powershell
-just ijds-evidence
-uv run pytest tests/test_ijds_active_claim_sync.py -q
-just paper-submission
-just paper-submission-official
-just validate-champion
-```
+The model is a `CatBoostClassifier` with 500 iterations, learning rate 0.04,
+depth 6, L2 leaf penalty 10, balanced classes, Bernoulli bootstrap with 0.8
+subsample, random seed 42, and time-aware ordering. The fixed temporal
+validation metrics are AUC 0.702519, Brier 0.140177, and log loss 0.443053.
 
-The stronger methodology replay is explicit and writes only to versioned
-experiment paths:
+A logistic Platt map is fitted to CatBoost raw margins on 2011 data. Its
+coefficient is 0.8188195 and intercept is -1.4452025.
 
-```powershell
-just ijds-active-replay
-```
+| Evaluation block | Rows | Default | AUC | Brier | Log loss | ECE-10 |
+|---|---:|---:|---:|---:|---:|---:|
+| 2011 before Platt | 14,101 | 0.106305 | 0.678214 | 0.132582 | 0.427106 | 0.181293 |
+| 2011 after Platt | 14,101 | 0.106305 | 0.678214 | 0.091368 | 0.319284 | 0.000711 |
+| Primary OOT, resolved | 365,504 | 0.157760 | 0.641688 | 0.131126 | 0.432369 | 0.049691 |
+| Extension, resolved | 59,511 | 0.199409 | 0.653473 | 0.161340 | 0.514075 | 0.091100 |
 
-It is not part of ordinary manuscript rendering because it solves portfolios
-and recomputes exact interval grids. The frozen upstream model, calibrator,
-historical intervals, and manifest are never overwritten.
+The primary and extension metrics diagnose temporal shift. They do not tune the
+model or trigger recalibration.
 
-## D.2 Artifact Lineage
+## B.2 Exact split-Mondrian recipe
 
-| Object | Active source |
+On 2012H1, calibrated PD quintiles define five immutable strata. For score
+$p_i$ and binary target $Y_i$, the absolute residual is $|Y_i-p_i|$. In group
+$g$ with $n_g$ rows, the selected order statistic has rank
+
+$$
+k_g=\min\left\{n_g,
+\max\left[1,\left\lceil(n_g+1)(1-\alpha)\right\rceil\right]
+\right\},\qquad \alpha=0.10.
+$$
+
+The group residual quantiles are:
+
+| Score group | Rows | Finite-sample rank | Residual quantile | Fit coverage |
+|---:|---:|---:|---:|---:|
+| 0 | 2,994 | 2,696 | 0.064507 | 0.900468 |
+| 1 | 2,993 | 2,695 | 0.901480 | 0.900434 |
+| 2 | 2,993 | 2,695 | 0.877262 | 0.900434 |
+| 3 | 2,993 | 2,695 | 0.850263 | 0.900434 |
+| 4 | 2,994 | 2,696 | 0.801022 | 0.900468 |
+
+The interval is
+$[\max(0,p_i-c_{g(i)}),\min(1,p_i+c_{g(i)})]$. The strikingly smaller group-0
+quantile follows from binary residual geometry: almost all low-score
+nondefaults have small residuals, while defaults are rare and large. This
+produces a narrow interval for most group-0 rows, but any group-0 default with
+$u_i<1$ is miscovered.
+
+## B.3 Coverage with unresolved outcomes
+
+For observed $Y$, coverage is exact. For unresolved $Y\in\{0,1\}$, we compute
+whether zero and one would be covered and take the attainable minimum and
+maximum. The resulting all-candidate bounds are:
+
+| Block | Rows | Resolved | Unresolved | Coverage | Mean width | $\ell=0$ | $u=1$ |
+|---|---:|---:|---:|---:|---:|---:|---:|
+| Conformal fit 2012H1 | 14,967 | 14,967 | 0 | 0.900448 | 0.813817 | 0.991114 | 0.222757 |
+| Primary OOT | 376,890 | 365,504 | 11,386 | [0.854923, 0.879692] | 0.736564 | 0.988458 | 0.180766 |
+| Censored extension | 88,227 | 59,511 | 28,716 | [0.626804, 0.892539] | 0.729054 | 0.987986 | 0.179537 |
+
+: S2 coverage and endpoint saturation. Source:
+`crpto_ijds_ms_tableS2_coverage.csv`.
+
+# Appendix C: Portfolio Policy and Selection
+
+## C.1 Coherent standardized payoff
+
+For contractual annual rate $r_i$, snapshot default $Y_i$, calibrated PD
+$p_i$, and $\lambda=0.45$,
+
+$$
+\pi_i(Y_i)=(1-Y_i)r_i-Y_i\lambda,
+\qquad
+\mathbb E[\pi_i\mid X_i]=(1-p_i)r_i-p_i\lambda.
+$$
+
+The implementation converts Lending Club percentage-point rates to decimals
+exactly once and independently reconciles the solver objective to the dot
+product of exposure and this expected payoff within $10^{-5}$ dollars. The
+payoff is a standardized one-period contrast, not realized investor cash flow,
+IRR, or NPV. Those richer quantities require payment timing, prepayment,
+recoveries, servicing fees, and discount rates
+[@serrano2016profitscoring; @lyocsa2022profit;
+@djeundje2025dynamic_loan_portfolio_profitability].
+
+## C.2 Monthly linear program
+
+Let $z_i\in[0,1]$ be the funded fraction of listed amount $A_i$ and
+$a_i=z_iA_i$. For score
+$q_i(\gamma)=p_i+\gamma(u_i-p_i)$, each month solves
+
+$$
+\begin{aligned}
+\max_z\;&\sum_i a_i[(1-p_i)r_i-p_i\lambda]\\
+\text{s.t. }&\sum_i a_i=B,\\
+&\sum_i a_iq_i(\gamma)\le\tau B,\\
+&\sum_{i:purpose_i=k}a_i\le0.25B\quad\forall k,\\
+&0\le z_i\le1,
+\end{aligned}
+$$
+
+with $B=\$1,000,000$. HiGHS solves the continuous LP. There is no PD-cap
+slack, endpoint cap, uncertainty penalty in the objective, pooled menu, or
+post-evaluation tuning.
+
+## C.3 Development policy grid
+
+The guardrail grid crosses three round-number risk tolerances and three upper
+endpoint weights. Each row below aggregates six $1$M July--December 2012
+decisions. Every candidate uses the full budget in every month. Selection
+maximizes realized standardized payoff, then expected payoff and candidate ID.
+
+| Selected | ID | $\tau$ | $\gamma$ | Expected payoff | Realized payoff | Default | Miscoverage |
+|---|---|---:|---:|---:|---:|---:|---:|
+| yes | linear-004 | 0.17 | 0.25 | $668,966.61 | $581,408.64 | 0.091185 | 0.136112 |
+| no | linear-001 | 0.15 | 0.25 | $650,237.85 | $580,170.32 | 0.083371 | 0.132725 |
+| no | linear-008 | 0.19 | 0.50 | $623,720.52 | $577,391.48 | 0.073577 | 0.133327 |
+| no | linear-005 | 0.17 | 0.50 | $610,778.80 | $571,620.88 | 0.069046 | 0.131947 |
+| no | linear-002 | 0.15 | 0.50 | $596,958.30 | $569,200.77 | 0.063658 | 0.129679 |
+| no | linear-009 | 0.19 | 0.75 | $593,348.78 | $562,071.44 | 0.064664 | 0.131422 |
+| no | linear-003 | 0.15 | 0.75 | $571,612.19 | $556,570.99 | 0.056746 | 0.125953 |
+| no | linear-007 | 0.19 | 0.25 | $685,779.48 | $555,442.61 | 0.107346 | 0.148512 |
+| no | linear-006 | 0.17 | 0.75 | $582,833.34 | $554,522.12 | 0.062247 | 0.129005 |
+
+: S1a complete conformal guardrail selection grid. Source:
+`crpto_ijds_ms_tableS1_selection_grid.csv`.
+
+The point-PD grid sets $\gamma=0$. Its $\tau=0.15$, 0.17, and 0.19 rows are
+identical: expected payoff $741,668.28$, realized payoff $531,148.54$, default
+0.154988, and miscoverage 0.143471. The risk cap is nonbinding, so the
+development-selected point baseline ($\tau=0.15$) and the matched baseline
+($\tau=0.17$) generate the same primary allocations. Reporting both verifies
+that the comparison is not an artifact of matching $\tau$.
+
+# Appendix D: Exact Identities and Sharp Bounds
+
+## D.1 Binary miscoverage identity
+
+**Proposition S1 (binary interval geometry).** For $Y\in\{0,1\}$ and any
+$[\ell,u]\subseteq[0,1]$,
+
+$$
+\mathbf 1\{Y\notin[\ell,u]\}
+=\mathbf 1\{Y=0,\ell>0\}+\mathbf 1\{Y=1,u<1\}.
+$$
+
+*Proof.* If $Y=0$, the only way that zero lies outside the interval is
+$\ell>0$. If $Y=1$, the only way that one lies outside is $u<1$. The cases are
+disjoint and exhaust the binary support. $\square$
+
+The identity explains why coverage and a conservative upper score can move in
+opposite directions. An endpoint $u=1$ automatically covers every default but
+is maximally uninformative as a ranking score. A low-risk interval with $u<1$
+can be narrow and useful for ranking, yet every realized default in it is a
+miscoverage.
+
+## D.2 Sharp single-policy bounds
+
+**Proposition S2 (additive unresolved-outcome bounds).** Fix an allocation and
+let $U$ index unresolved binary outcomes. For an additive metric
+$T(Y)=C+\sum_{i\in U}g_i(Y_i)$, where each $Y_i\in\{0,1\}$ is otherwise
+unrestricted,
+
+$$
+T_L=C+\sum_{i\in U}\min\{g_i(0),g_i(1)\},\qquad
+T_U=C+\sum_{i\in U}\max\{g_i(0),g_i(1)\}
+$$
+
+are sharp.
+
+*Proof.* Additivity and the absence of cross-outcome restrictions allow each
+unresolved outcome to attain its minimizing or maximizing state independently.
+The componentwise choices jointly attain the two displayed endpoints.
+$\square$
+
+For default, $g_i(0)=0$ and $g_i(1)=w_i$. For payoff,
+$g_i(0)=a_ir_i$ and $g_i(1)=-a_i\lambda$. For miscoverage, the two values are
+given by Proposition S1. The bound is partial identification from the observed
+snapshot, not a sampling confidence interval.
+
+## D.3 Sharp pairwise policy contrasts
+
+For policies A and B, the same loan may receive different signed exposure
+$d_i=a_i^A-a_i^B$. The realized payoff contrast over their funded union is
+
+$$
+\Delta_\pi(Y)=\sum_i d_i[(1-Y_i)r_i-Y_i\lambda].
+$$
+
+Applying Proposition S2 once to each common $Y_i$ gives the sharp pairwise
+bound. Subtracting policy A's marginal lower bound from policy B's marginal
+upper bound would let the same loan default in one policy and repay in the
+other, producing a wider and generally unattainable interval. The code uses the
+union formulation for payoff, default, and miscoverage contrasts.
+
+## D.4 Selection-transport identity
+
+Define four weighted means of metric $m_i$:
+
+- $M_{row}$: equal weight over candidate rows;
+- $M_{exp}$: candidate loan-amount weights;
+- $M_{mix}$: candidate within-stratum rates combined with funded stratum shares;
+- $M_{fund}$: actual funded exposure weights.
+
+**Proposition S3 (transport identity).** For any reference $a$,
+
+$$
+M_{fund}-a=(M_{row}-a)+(M_{exp}-M_{row})
++(M_{mix}-M_{exp})+(M_{fund}-M_{mix}).
+$$
+
+*Proof.* Add and subtract $M_{row}$, $M_{exp}$, and $M_{mix}$. All intermediate
+terms cancel. $\square$
+
+The four terms measure population departure, exposure weighting, stratum
+composition, and within-stratum selection. For unresolved outcomes, S4 reports
+the identity under the lower and upper extremal completions. Only the funded
+endpoint is asserted to be a sharp aggregate bound; individual decomposition
+terms are conditional on the chosen completion.
+
+# Appendix E: Primary Results and Mechanism
+
+## E.1 Aggregate policy results
+
+| Policy | Months | Capital | Expected payoff | Realized payoff | Default | Miscoverage | Unresolved exposure |
+|---|---:|---:|---:|---:|---:|---:|---:|
+| Conformal guardrail | 15 | $15M | $2,383,112.23 | [-$2,389.90, $168,250.04] | [0.292775, 0.310322] | [0.294708, 0.309589] | 0.017547 |
+| Matched point PD | 15 | $15M | $2,624,090.01 | [$177,108.53, $369,495.74] | [0.326037, 0.343428] | [0.275360, 0.290265] | 0.017392 |
+| Development-selected point PD | 15 | $15M | $2,624,090.01 | [$177,108.53, $369,495.74] | [0.326037, 0.343428] | [0.275360, 0.290265] | 0.017392 |
+
+: S3 aggregate primary decisions. The complete month-by-policy file is
+`crpto_ijds_ms_tableS3_monthly_primary.csv`.
+
+The guardrail's exposure-weighted point score is 0.074979, effective score is
+0.170000, and mean upper endpoint is 0.455062. The point policy's corresponding
+values are 0.115758, 0.115758, and 0.900652. The high point-policy upper
+endpoint is not in its constraint; it is reported to expose the conformal
+geometry of the loans selected by the common economic objective.
+
+## E.2 Sharp pairwise primary contrast
+
+The two point baselines produce identical allocations, so both contrasts below
+are numerically identical. The union has 2,246 loans, including 52 unresolved
+IDs. The guardrail funds 1,561 unique loans, point PD funds 1,421, and 736
+overlap.
+
+| Guardrail minus point PD | Lower | Upper | Sign robust? |
+|---|---:|---:|---|
+| Expected objective | -$240,977.78 | -$240,977.78 | yes, worse |
+| Realized payoff | -$322,703.79 | -$58,040.34 | yes, worse |
+| Realized payoff rate | -0.021514 | -0.003869 | yes, worse |
+| Weighted default | -0.046275 | -0.020093 | yes, better |
+| Weighted miscoverage | 0.008822 | 0.029850 | yes, worse |
+
+: S7 aggregate paired contrasts. `causal_interpretation=false` is stored in
+every row.
+
+## E.3 Monthly directional audit
+
+The complete S7 file contains both guardrail-minus-matched and
+guardrail-minus-development-selected contrasts for all 15 months. Because the
+point allocations coincide, the two series coincide.
+
+| Metric | Guardrail robustly better | Guardrail robustly worse | Ambiguous |
+|---|---:|---:|---:|
+| Standardized payoff | 5 | 8 | 2 |
+| Weighted default | 12 | 2 | 1 |
+| Weighted miscoverage | 3 | 10 | 2 |
+
+This table treats lower default and lower miscoverage as better, and higher
+payoff as better. It is a sign inventory, not a multiple-testing result.
+
+## E.4 Exposure composition
+
+| Score group | Guardrail exposure | Guardrail share | Point exposure | Point share |
+|---:|---:|---:|---:|---:|
+| 0 | $9,170,062.91 | 0.611338 | $1,524,400.00 | 0.101627 |
+| 1 | $1,956,396.10 | 0.130426 | $3,485,850.00 | 0.232390 |
+| 2 | $2,399,470.12 | 0.159965 | $4,803,350.00 | 0.320223 |
+| 3 | $1,329,221.63 | 0.088615 | $3,622,375.00 | 0.241492 |
+| 4 | $144,849.26 | 0.009657 | $1,564,025.00 | 0.104268 |
+
+: S5 primary capital by the frozen conformal score strata. Source:
+`crpto_ijds_ms_tableS5_group_exposure.csv`.
+
+The guardrail's weighted contractual rate is 0.210114, versus 0.257957 for
+point PD. Its lower default is therefore not free: the risk constraint shifts
+capital away from higher-rate, higher-score loans.
+
+## E.5 Transport decomposition
+
+| Policy/metric, lower completion | Candidate row | Candidate exposure | Funded group mix | Funded | Composition term | Within-group term |
+|---|---:|---:|---:|---:|---:|---:|
+| Guardrail miscoverage | 0.120308 | 0.126272 | 0.123598 | 0.294708 | -0.002674 | 0.171111 |
+| Point-PD miscoverage | 0.120308 | 0.126272 | 0.131043 | 0.275360 | 0.004771 | 0.144317 |
+| Guardrail default | 0.152994 | 0.158333 | 0.117123 | 0.292775 | -0.041210 | 0.175652 |
+| Point-PD default | 0.152994 | 0.158333 | 0.177960 | 0.326037 | 0.019627 | 0.148077 |
+
+: S4 lower-completion transport. Source:
+`crpto_ijds_ms_tableS4_transport.csv`.
+
+Under the upper completion, guardrail default has composition -0.039310 and
+within-group selection +0.160906; point PD has +0.018632 and +0.136071.
+Guardrail miscoverage has composition +0.001394 and within-group selection
++0.156535; point PD has +0.002608 and +0.135998. Identity residuals are zero to
+floating-point precision in all rows.
+
+The mechanism is therefore stable across extremal completions. Composition
+creates the guardrail's default benefit. Within-group selection raises default
+and miscoverage for both policies and is larger under the guardrail. Marginal
+or Mondrian coverage does not control this adaptive within-group reweighting.
+
+# Appendix F: Censored Extension
+
+The July--September 2017 extension contains 88,227 candidates, of which 28,716
+are unresolved. It is intentionally not absorbed into the primary window.
+
+| Policy | Expected payoff | Realized payoff | Default | Miscoverage | Unresolved exposure |
+|---|---:|---:|---:|---:|---:|
+| Conformal guardrail | $503,053.22 | [-$273,940.55, $190,722.63] | [0.224883, 0.459808] | [0.236558, 0.454458] | 0.234925 |
+| Matched point PD | $578,010.74 | [-$253,544.25, $258,320.77] | [0.268858, 0.502833] | [0.198617, 0.388450] | 0.233975 |
+| Development-selected point PD | $578,010.74 | [-$253,544.25, $258,320.77] | [0.268858, 0.502833] | [0.198617, 0.388450] | 0.233975 |
+
+: S6 censored extension. Source: `crpto_ijds_ms_tableS6_extension.csv`.
+
+The extension's all-candidate coverage bound [0.626804, 0.892539] and roughly
+23.5% unresolved funded exposure prevent a sign-robust payoff or miscoverage
+claim. Its value is diagnostic: it shows how rapidly snapshot-based binary
+evaluation becomes weak when contractual cohorts approach the observation
+boundary.
+
+# Appendix G: Reproducibility and Artifact Lineage
+
+## G.1 Immutable identifiers
+
+| Item | Identifier |
 |---|---|
-| Exact alpha grid | `data/processed/experiments/champion_reopen/<exact-alpha-run>/conformal/exact_alpha_grid.parquet` |
-| Selector grid | `data/processed/experiments/champion_reopen/<active-run>/portfolio/calibration_policy_selection_grid.parquet` |
-| OOT evaluation | `data/processed/experiments/champion_reopen/<active-run>/portfolio/calibration_selected_policy_oot_evaluation.csv` |
-| Funded allocations | `data/processed/experiments/champion_reopen/<active-run>/portfolio/calibration_selected_policy_full_oot_allocations.parquet` |
-| Governance | `models/experiments/champion_reopen/<active-run>/portfolio/ijds_policy_governance.json` |
-| Paper tables | `reports/crpto/tables/crpto_tableA35...A40_*` |
+| Run | `champion-reopen-2026-07-10__maturity-safe-locked-bounded-h1h2-v2` |
+| Protocol tag | `protocol/ijds-maturity-safe-locked-bounded-h1h2-2026-07-10-v2` |
+| Protocol commit | `78a64fe67a4df46c3d19b9243deb991c56fd1ff6` |
+| Summary SHA-256 | `a9c3b3738b26096703fdd2d1b1e852f72b1516157317c65a92e1bb0abdfd693b` |
+| Receipt SHA-256 | `7847ba0dc68598de7960c7e78f8a11de527cc7bbf4ddd9f90421bdfa48b68f33` |
+| Processed DVC directory MD5 | `90ecc510414f698f91767f3e507733f0.dir` |
+| Model/results DVC directory MD5 | `fb6220447bb86971c9f41a44f208e885.dir` |
 
-The active run is
-`champion-reopen-2026-06-19__pool93__ijds-calibration-selected-endpoint28-v7`.
-The exact-alpha run is
-`champion-reopen-2026-06-19__pool93__ijds-exact-alpha-grid-v1`.
+The execution receipt records clean initial and final worktrees, Python
+3.11.14, CatBoost 1.2.10, and highspy 1.14.0. It hashes the deterministic
+summary and every versioned output. No protected stage was run and no
+manifest-protected artifact was written.
 
-## D.3 Claim-Sync Contract
+## G.2 Commands
 
-`tests/test_ijds_active_claim_sync.py` verifies:
+From a clone with the DVC remote configured:
 
-1. policy mode, $\tau$, $\gamma$, alpha, selector size, and forbidden columns;
-2. agreement between governance and A35/A40;
-3. presence of every A35--A40 CSV and TeX file;
-4. numeric anchors across body, supplement, and official submission TeX;
-5. absence of retired headline values from active manuscript surfaces.
+```powershell
+uv sync --extra dev
+$data = Get-ChildItem data/processed/experiments/champion_reopen/*bounded*h1h2*v2.dvc
+$model = Get-ChildItem models/experiments/champion_reopen/*bounded*h1h2*v2.dvc
+uv run dvc pull $data.FullName
+uv run dvc pull $model.FullName
+uv run python scripts/build_ijds_maturity_safe_evidence.py
+uv run pytest tests/test_ijds_active_claim_sync.py -q
+just submission-check
+```
 
-Historical manifest tests remain separate. This separation lets the submitted
-claim evolve without rewriting or silently reinterpreting frozen provenance.
+Re-executing the expensive experiment is optional and must occur in a clone
+where the immutable run path does not yet exist:
 
-# Appendix E: Limitations and Claim Crosswalk
+```powershell
+uv run python scripts/experiments/run_ijds_maturity_safe_challenger.py `
+  --config configs/experiments/ijds_maturity_safe_locked_bounded_h1h2_2026-07-10.yaml
+```
 
-| Claim | Direct evidence | What is not claimed |
+The runner refuses to overwrite an existing run tag, rejects a dirty protocol
+commit, verifies tag-to-commit identity, and writes an execution receipt only
+after all outputs are complete. The evidence builder is byte-idempotent,
+including deterministic PDF metadata for the figures.
+
+## G.3 Publication outputs
+
+The active builder produces:
+
+- `crpto_ijds_ms_table1_protocol` and `table2_primary_policy`;
+- `crpto_ijds_ms_table3_primary_contrast`;
+- `crpto_ijds_ms_tableS1_selection_grid` through `tableS7_monthly_contrast`;
+- `crpto_ijds_ms_fig1_timeline`, `fig2_monthly`, and `fig3_transport` in PNG
+  and PDF; and
+- `reports/crpto/ijds_maturity_safe_evidence.json`, which hashes every output.
+
+CSV files are the numerical interface. TeX files are machine-readable raw
+exports; the manuscript uses deliberately compact presentation tables to avoid
+shrinking wide schemas. The full JSON and allocation parquets remain in DVC.
+
+## G.4 Build and claim gates
+
+The release gate performs Ruff lint and format checks, Mypy over `src`,
+`scripts`, and tests, advisory `ty`, the full pytest suite, protected champion
+hash validation, both Quarto manuscript renders, and the official INFORMS TeX
+compile. Publication tests derive anchors from the active evidence JSON and
+forbid compact-v7 headline values on active surfaces. The historical champion
+has a separate provenance test and is never regenerated by the paper build.
+
+# Appendix H: Historical Diagnostics and Claim Boundary
+
+## H.1 Why the compact-v7 result is not active
+
+The older 2018--2020 result funded 308 loans and reported a positive realized
+return. It is retained for forensic replay only. It cannot support the active
+paper because its candidate universe was conditioned on resolved outcomes, its
+conformal recipe incorporated later labels, its optimized payoff differed from
+the evaluated payoff, and one portfolio pooled future monthly menus. No number
+from that comparison is relabeled as maturity-safe evidence.
+
+The earlier A35--A40 tables and governance files remain immutable so that the
+scientific correction is auditable. Active tests forbid their headline run tag,
+return, default, miscoverage, endpoint, and conditional tail quantities in the
+body, supplement, and official TeX.
+
+## H.2 Earlier A1--A34 analyses
+
+Earlier A1--A24 work includes PD diagnostics, calibration, optimization,
+OCE/CVaR, SPO+, dependence, and online-style experiments. A25--A34 contain
+Prosper and Freddie/Mendeley transfer studies and related sensitivity checks.
+These are older frozen replication contracts. They remain useful for project
+history, software regression, and hypothesis generation, but their populations,
+payoffs, and policy definitions differ from the active maturity-safe protocol.
+They cannot be quoted as direct replications or validations of the active
+guardrail.
+
+In particular:
+
+- OCE/CVaR and tail-constrained variants are historical diagnostics, not
+  optimized objectives in the submitted method;
+- SPO+ is decision-focused context, not a component of the active pipeline;
+- Prosper and Freddie/Mendeley are static transfer evidence, not active
+  Lending Club certificates; and
+- historical Markov-style sensitivities and endpoint budgets are not theory or
+  evidence for the current paper.
+
+This boundary keeps one paper, one method, and one claim. A new survival model,
+selection-valid conformal layer, external replication, or decision-calibrated
+loss would require a separately locked protocol; none is implied by the
+present results.
+
+## H.3 Active claim crosswalk
+
+| Active statement | Evidence | Not claimed |
 |---|---|---|
-| Exact 90% replay | Reference endpoints match to `6.67e-16`; A35. | Independent tuning of every alpha sensitivity row. |
-| Outcome-free, assumption-free policy ranking, conditional on the frozen recipe | A36 physically separated outcomes, deterministic endpoint cap, cap-stability interval, and December replay. | A label-free conformal recipe, historically untouched OOT corpus, or preregistration. |
-| Independent calibration decision audit | December reselects the midpoint before outcomes are opened; default `0.145650`, miscoverage `0.124925`. | Selected-set conformal validity or a prospective deployment guarantee. |
-| Full-OOT return-risk trade-off | A37 and A40. | Causal effect or universal dominance. |
-| Funded-set accounting | Proposition A.1 and exact row-level allocation. | Nominal selected-set conformal coverage. |
-| Conditional Markov sensitivity | Corollary A.1 under weighted validity. | Deterministic risk cap or sharp tail guarantee. |
-| Composition transparency | A38 letter-grade reconciliation. | Legal fair-lending certification. |
-| Contribution stability | A39 month-cluster bootstrap with funded-loan sensitivity. | Full pipeline uncertainty or model-selection confidence interval. |
-| Reproducibility | Commands, run tags, hashes, and sync tests. | Cross-machine bit-identical model retraining. |
+| Status-independent 540,121-row universe and monthly chronology | S0, protocol config, source inventory | Prospective deployment or complete event-time observation |
+| Exact 90% split-Mondrian recipe on 2012H1 | S2, frozen group quantiles | Latent-PD confidence intervals or 90% OOT coverage |
+| Selected $\tau=0.17,\gamma=0.25$ on 2012H2 | S1 | Selection-valid conformal inference |
+| Guardrail lowers primary default | S7 bound [-0.046275, -0.020093] | Causal default reduction or universal dominance |
+| Guardrail lowers primary payoff | S7 bound [-$322,703.79, -$58,040.34] | Cash-flow loss, IRR, or welfare effect |
+| Guardrail worsens funded miscoverage | S7 bound [0.008822, 0.029850] | Impossibility for every conformal optimization method |
+| Composition creates the default benefit | S4 and S5 | Protected-group fairness or a formal regularization theorem |
+| Within-group selection drives coverage failure | S4 and binary identity | A selected-set coverage guarantee |
+| Extension is inconclusive under censoring | S2 and S6 | A negative or positive extension finding |
+| Exact reproducibility of the tagged run | receipt, hashes, DVC, tests | Reproducibility of external raw-data hosting forever |
 
-The active result is intentionally narrow. Optimized OCE/CVaR, online or
-non-exchangeable conformal recalibration [@farinhas2024nonexchangeable_crc],
-formal valid selection among conformal sets
-[@hegazy2025valid_selection_conformal_sets], causal allocation, and live
-multi-period deployment would require new protocols and are not hidden
-acceptance criteria for this paper.
+# Appendix I: Limitations Checklist
+
+The manuscript and supplement must continue to state all of the following:
+
+1. single historical Lending Club platform;
+2. 36-month contracts only;
+3. snapshot binary target with unresolved administrative states;
+4. standardized binary payoff rather than cash-flow return or IRR;
+5. substantial temporal calibration and coverage deterioration;
+6. no selected-set conformal validity;
+7. no causal, prospective, or fair-lending interpretation;
+8. code-locked retrospective audit rather than preregistration;
+9. completion-specific transport components are not confidence bounds; and
+10. the compact-v7 and A1--A40 evidence are historical provenance only.
+
+Any future edit that removes one of these boundaries while retaining the
+headline contrasts changes the scientific claim and must fail publication
+review.

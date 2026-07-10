@@ -1,71 +1,62 @@
-"""Drift guards for the diagnostic multidataset evidence.
-
-Chapter 30 retains the detailed A25/A34 values. The submitted body and
-supplement deliberately keep only the scope boundary: these older replications
-are static transfer evidence, not active-policy certificates. Tests preserve
-both contracts without forcing retired detail back into the IJDS narrative.
-"""
+"""Sync active supplement mechanism tables to generated CSV evidence."""
 
 from __future__ import annotations
 
 import csv
 from pathlib import Path
 
-import pytest
-
 REPO = Path(__file__).resolve().parents[1]
-TABLES = REPO / "reports" / "crpto" / "tables"
-
-SUPPLEMENT = REPO / "paper" / "supplement_ijds.qmd"
-PAPER = REPO / "paper" / "CRPTO_ijds.qmd"
-BOOK_CH30 = REPO / "book" / "chapters" / "30-replicacion-multidataset.qmd"
+TABLES = REPO / "reports/crpto/tables"
+SUPPLEMENT = REPO / "paper/supplement_ijds.qmd"
+PAPER = REPO / "paper/CRPTO_ijds.qmd"
 
 
-def _read_rows(name: str) -> list[dict[str, str]]:
-    path = TABLES / name
-    if not path.is_file():
-        pytest.skip(f"{name} not present locally.")
-    with path.open(encoding="utf-8") as fh:
-        return list(csv.DictReader(fh))
+def _rows(name: str) -> list[dict[str, str]]:
+    with (TABLES / name).open(encoding="utf-8") as handle:
+        return list(csv.DictReader(handle))
 
 
-def _text(path: Path) -> str:
-    if not path.is_file():
-        pytest.skip(f"{path} not present locally.")
-    return path.read_text(encoding="utf-8")
+def test_group_exposure_values_are_visible_in_body_and_supplement() -> None:
+    rows = _rows("crpto_ijds_ms_tableS5_group_exposure.csv")
+    body = PAPER.read_text(encoding="utf-8")
+    supplement = SUPPLEMENT.read_text(encoding="utf-8").lower()
+    for policy, group in (("selected_conformal_guardrail", "0"), ("matched_point_pd", "0")):
+        row = next(
+            item
+            for item in rows
+            if item["policy_label"] == policy and item["conformal_group"] == group
+        )
+        token = f"{float(row['exposure_share']):.6f}"
+        assert token in body
+        assert token in supplement
 
 
-def test_a25_robust_objectives_match_book_and_diagnostic_status() -> None:
-    """A25 values remain in the book while IJDS surfaces retain their boundary."""
-    rows = _read_rows("crpto_tableA25_external_replication_gate.csv")
-    book = _text(BOOK_CH30)
-    missing: list[str] = []
-    for row in rows:
-        dollars = f"${round(float(row['robust_objective'])):,}"
-        if dollars not in book:
-            missing.append(f"{row['dataset']} {dollars} missing in {BOOK_CH30.name}")
-    assert not missing, "A25 robust objective drift:\n" + "\n".join(missing)
-
-    supplement = _text(SUPPLEMENT)
-    paper = _text(PAPER)
-    assert "A25--A34" in supplement
-    assert "Static transfer evidence; not active Lending Club certificates." in supplement
-    assert "Prosper" in paper and "Freddie/Mendeley" in paper
-    assert "retained as diagnostics or external context" in paper
+def test_transport_mechanism_values_are_visible_in_supplement() -> None:
+    rows = _rows("crpto_ijds_ms_tableS4_transport.csv")
+    supplement = SUPPLEMENT.read_text(encoding="utf-8")
+    selected = next(
+        row
+        for row in rows
+        if row["policy_label"] == "selected_conformal_guardrail"
+        and row["metric"] == "binary_miscoverage"
+        and row["completion"] == "lower"
+    )
+    for field in ("group_composition", "within_group_selection", "funded_exposure_weighted"):
+        assert f"{float(selected[field]):.6f}" in supplement
 
 
-def test_a34_price_of_robustness_matches_historical_book_surface() -> None:
-    """A34 signed price-of-robustness values remain traceable in chapter 30."""
-    rows = _read_rows("crpto_tableA34_price_of_robustness_cross_dataset.csv")
-    book = _text(BOOK_CH30)
-    missing: list[str] = []
-    for row in rows:
-        pct = f"+{float(row['price_of_robustness_pct']) * 100:.2f}%"
-        if pct not in book:
-            missing.append(f"{row['application']} {pct} missing in {BOOK_CH30.name}")
-    assert not missing, "A34 price-of-robustness drift:\n" + "\n".join(missing)
+def test_extension_is_reported_as_bounded_stress_not_active_promotion() -> None:
+    rows = _rows("crpto_ijds_ms_tableS6_extension.csv")
+    guard = next(row for row in rows if row["policy_label"] == "selected_conformal_guardrail")
+    supplement = SUPPLEMENT.read_text(encoding="utf-8").lower()
+    assert f"{float(guard['unresolved_exposure_share']):.6f}" in supplement
+    assert "stress evidence only" in supplement
+    assert "no directional promotion claim" in supplement
 
-    supplement = _text(SUPPLEMENT)
-    assert "older frozen replication contracts" in supplement
-    assert "cannot be quoted as direct" in supplement
-    assert "replications of the active midpoint policy" in supplement
+
+def test_historical_external_work_is_firewalled() -> None:
+    supplement = SUPPLEMENT.read_text(encoding="utf-8")
+    for token in ("OCE/CVaR", "SPO+", "Prosper", "Freddie/Mendeley", "A25--A34"):
+        assert token in supplement
+    assert "historical diagnostics" in supplement
+    assert "differ from the active maturity-safe protocol" in supplement

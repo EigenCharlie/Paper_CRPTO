@@ -1,129 +1,97 @@
-# IJDS Reproducibility Package Plan
+# IJDS Reproducibility Package
 
 Official policy: <https://pubsonline.informs.org/page/ijds/data-and-code-disclosure-policy>
 
-CRPTO can support accepted-paper reproduction without exposing credentials,
-local paths, or author identity during double-anonymous review.
+## Release Stages
 
-## Disclosure Timing
-
-| Stage | Disclose | Withhold |
+| Stage | Provide | Withhold |
 |---|---|---|
-| Initial submission | Neutral package description, source-data availability, and release timing. | Repository ownership, personal URLs, local paths, secrets. |
-| Editor-requested verification | Anonymized source, A35--A40, tests, and sanitized artifact metadata. | Credentials, private remotes, non-anonymous provenance. |
-| Acceptance | Public source, environment lock, data instructions, artifact pointers/hashes, and final outputs. | Secrets and data prohibited from redistribution. |
+| Initial submission | Neutral availability statement and anonymous PDFs | Identity, repository ownership, personal URLs, secrets |
+| Editor-requested verification | Sanitized source, active config, evidence, tests, hashes, DVC pointers | Credentials and non-anonymous remote metadata |
+| Acceptance | Public source, environment lock, data instructions, active artifacts and final outputs | Secrets and raw files prohibited from redistribution |
 
-## Package Contents
+## Minimal Active Capsule
 
 | Component | Files | Purpose |
 |---|---|---|
-| Environment | `pyproject.toml`, `uv.lock`, `justfile`. | Recreate the Windows-first toolchain. |
-| Method source | `src/models/conformal_alpha_grid.py`, `src/optimization/`, active experiment scripts. | Replay exact intervals and solve declared policies. |
-| Active config | `configs/experiments/champion_reopen_ijds_calibration_selected_endpoint28_v7.yaml`. | Fix alpha, split 3x3 selector/audit, endpoint cap, and solver settings. |
-| Active evidence | A35--A40 CSV/TeX files and `ijds_policy_governance.json`. | Tie every paper claim to generated evidence. |
-| Manuscript | body QMD, supplement QMD, official TeX. | Reproduce reviewer-facing surfaces. |
-| Data pointers | `dvc.yaml`, `dvc.lock`, `.dvc/`, raw-data notes. | Retrieve large artifacts where terms permit. |
-| Guardrails | active claim sync, publication integrity, manifest regression. | Detect narrative or historical artifact drift. |
+| Environment | `pyproject.toml`, `uv.lock`, `justfile` | Recreate Python and task tooling |
+| Protocol | locked v2 YAML and protocol memo | Fix dates, estimands, model, policy grid, payoff and bounds |
+| Method | maturity-safe data/model/evaluation modules and runner | Reproduce the tagged experiment |
+| Active run | two DVC pointers plus remote/archive objects | Recover processed panels, model, allocations, summary and receipt |
+| Evidence | builder, tables 1--3/S1--S7, figures 1--3, manifest | Reproduce every manuscript number and graphic |
+| Manuscript | QMD body, QMD supplement, official TeX, bibliography | Reproduce reviewer-facing PDFs |
+| Guardrails | claim sync, integrity, unit/integration tests | Detect numerical, narrative, and historical drift |
 
-## Active Artifact Contract
+Historical A1--A40, compact-v7, Prosper, and Freddie/Mendeley artifacts remain
+available as project provenance but are outside the minimal active capsule.
+Excluding them reduces package size and prevents a reviewer from mistaking old
+experiments for current evidence.
 
-| Evidence | Path |
+## Immutable Identifiers
+
+| Item | Value |
 |---|---|
-| Exact alpha grid | `data/processed/experiments/champion_reopen/<exact-run>/conformal/exact_alpha_grid.parquet` |
-| Calibration selector | `data/processed/experiments/champion_reopen/<active-run>/portfolio/calibration_policy_selection_grid.parquet` |
-| Calibration audit grid | `data/processed/experiments/champion_reopen/<active-run>/portfolio/calibration_policy_audit_grid.parquet` |
-| Calibration decision audit | `data/processed/experiments/champion_reopen/<active-run>/portfolio/calibration_policy_holdout_audit.csv` |
-| OOT evaluation | `data/processed/experiments/champion_reopen/<active-run>/portfolio/calibration_selected_policy_oot_evaluation.csv` |
-| Funded rows | `data/processed/experiments/champion_reopen/<active-run>/portfolio/calibration_selected_policy_full_oot_allocations.parquet` |
-| Governance | `models/experiments/champion_reopen/<active-run>/portfolio/ijds_policy_governance.json` |
-| Paper tables | `reports/crpto/tables/crpto_tableA35...A40_*` |
+| Run tag | `champion-reopen-2026-07-10__maturity-safe-locked-bounded-h1h2-v2` |
+| Protocol tag | `protocol/ijds-maturity-safe-locked-bounded-h1h2-2026-07-10-v2` |
+| Commit | `78a64fe67a4df46c3d19b9243deb991c56fd1ff6` |
+| Summary SHA-256 | `a9c3b3738b26096703fdd2d1b1e852f72b1516157317c65a92e1bb0abdfd693b` |
+| Receipt SHA-256 | `7847ba0dc68598de7960c7e78f8a11de527cc7bbf4ddd9f90421bdfa48b68f33` |
+| Processed DVC MD5 | `90ecc510414f698f91767f3e507733f0.dir` |
+| Model/results DVC MD5 | `fb6220447bb86971c9f41a44f208e885.dir` |
 
-Active run:
-`champion-reopen-2026-06-19__pool93__ijds-calibration-selected-endpoint28-v7`.
+The receipt records a clean initial and final worktree, Python 3.11.14,
+CatBoost 1.2.10, and highspy 1.14.0. The evidence builder verifies every
+artifact hash before generating publication outputs.
 
-Exact-alpha run:
-`champion-reopen-2026-06-19__pool93__ijds-exact-alpha-grid-v1`.
-
-The active policy evidence is intentionally separate from the manifest-protected
-historical bundle. `tests/test_ijds_active_claim_sync.py` guards the submitted
-claim; `tests/test_manifest_regression.py` guards frozen provenance. The
-manifest is not rewritten to make a manuscript update look historical.
-
-## Reproduction Commands
-
-Paper-facing reproduction from frozen experiment outputs:
+## Standard Reproduction
 
 ```powershell
-just setup-base
+uv sync --extra dev
+uv run dvc pull data/processed/experiments/champion_reopen/champion-reopen-2026-07-10__maturity-safe-locked-bounded-h1h2-v2.dvc
+uv run dvc pull models/experiments/champion_reopen/champion-reopen-2026-07-10__maturity-safe-locked-bounded-h1h2-v2.dvc
 just ijds-evidence
 uv run pytest tests/test_ijds_active_claim_sync.py -q
+just publication-integrity
 just paper-submission
 just paper-submission-official
 just validate-champion
 ```
 
-Full isolated methodology replay:
+`just ijds-active-replay` intentionally means evidence validation and rebuild,
+not an implicit 1.7 GB methodology rerun.
+
+## Optional Full Method Replay
+
+Only in a clean clone where the immutable run directory does not exist:
 
 ```powershell
-just ijds-active-replay
+uv run python scripts/experiments/run_ijds_maturity_safe_challenger.py `
+  --config configs/experiments/ijds_maturity_safe_locked_bounded_h1h2_2026-07-10.yaml
 ```
 
-The full replay recomputes the exact alpha grid, solves the nine policies on
-November and December, opens December outcomes only for the independent audit,
-evaluates the frozen selected policy, and rebuilds A35--A40. It writes only to
-versioned experiment paths and does not overwrite the frozen PD model,
-calibrator, historical intervals, or manifest.
+The runner verifies the protocol tag and clean commit, refuses path escape and
+overwrite, separates decisions from outcomes, and writes the deterministic
+summary and receipt only after all outputs complete. Replaying the active run
+does not require or permit a protected historical `dvc repro`.
 
-Official-template compilation is automated by:
+## Official PDF Build
 
 ```powershell
 just paper-submission-official
 ```
 
-Manual Windows fallback:
+The wrapper invokes the direct Windows `latexmk.pl` payload. Its robust fallback
+is `pdflatex -> bibtex -> pdflatex -> pdflatex`: the first LaTeX pass creates
+`.aux`, BibTeX creates `.bbl`, and two final LaTeX passes resolve then stabilize
+citations, references, floats, and pagination.
 
-```powershell
-cd paper/submission
-if (-not $env:WINDIR) { $env:WINDIR = $env:SystemRoot }
-pdflatex -interaction=nonstopmode -halt-on-error CRPTO_ijds_submission.tex
-bibtex CRPTO_ijds_submission
-pdflatex -interaction=nonstopmode -halt-on-error CRPTO_ijds_submission.tex
-pdflatex -interaction=nonstopmode -halt-on-error CRPTO_ijds_submission.tex
-```
+## Acceptance QA
 
-## Data and Artifact Boundary
-
-- Lending Club, Prosper, and Freddie/Mendeley raw data are distributed through
-  their original sources, not copied into Git.
-- Large processed parquet and model binaries use DVC or journal-approved
-  artifact delivery when source terms permit.
-- `EXTRACTION_MANIFEST.json` verifies the historical upstream bundle.
-- Review-stage copies of DVC/configuration metadata must remove repository
-  ownership, remote URLs, credentials, and absolute local paths.
-- If a remote is unavailable, provide journal-approved processed artifacts plus
-  hashes, schema/source notes, and the commands above.
-
-## Non-Routine Stages
-
-The active reproduction does not run protected upstream stages:
-
-```text
-crpto.pd.champion
-crpto.conformal.intervals
-crpto.conformal.validation
-crpto.portfolio.optimization
-crpto.portfolio.bound_exact_eval
-```
-
-Those stages would retrain, rewrite frozen artifacts, or reopen historical
-search. Any such run requires a distinct tag and drift report.
-
-## Acceptance Checklist
-
-1. Build in the locked `uv` environment.
-2. Rebuild A35--A40 and run active claim sync.
-3. Validate historical manifest hashes.
-4. Compile and visually inspect the official PDF and supplement.
-5. Sanitize author identity and local paths in the review archive.
-6. Publish source-data acquisition instructions and artifact hashes.
-7. Record any unavoidable platform-level numerical differences explicitly.
+1. Reproduce from a fresh clone and DVC pull.
+2. Confirm the evidence builder is byte-idempotent.
+3. Run the full release gate and historical manifest validation.
+4. Compile and visually inspect body, supplement, and official PDF.
+5. Confirm no reviewer-facing identity or local path leakage.
+6. Publish source-data acquisition instructions and all immutable hashes.
+7. Record any unavoidable platform-level numerical difference rather than
+   silently changing the evidence.

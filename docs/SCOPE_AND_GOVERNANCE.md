@@ -27,31 +27,30 @@ CRPTO does not cover:
 
 ## Active paper contract
 
-The current IJDS body point is the simple calibration-selected 90% guardrail:
+The current IJDS paper is the maturity-safe bounded protocol v2:
 
 - run tag:
-  `champion-reopen-2026-06-19__pool93__ijds-calibration-selected-endpoint28-v7`
-- exact conformal replay: target `alpha=0.10`, frozen used alpha `0.095`;
-- policy: `q=(p+u)/2`, `tau=0.17`, with point PD in the economic objective
-  and conformal `q` in the risk constraint;
-- selector: nine round-number policies on November 2017, five eligible under
-  deterministic full-budget, effective-PD, and `B_u<=0.28` screens; no outcome
-  or assumption-conditional selector columns;
-- independent audit: the outcome-free December replay selects the same policy;
-  after outcomes are opened, weighted default is `0.145650` and miscoverage is
-  `0.124925`, explicitly ruling out a selected-set validity claim;
-- realized return: `$179,327.59`;
-- weighted default and miscoverage: `0.039375` and `0.036875`;
-- `Gamma_CP=0.176102`, `Gamma_residual=0.088051`;
-- endpoint budget `0.258051`; assumption-conditional Markov threshold
-  `0.574279`;
-- paper artifacts: A35 exact-alpha audit, A36 split selector/audit, A37
-  temporal evaluation, A38 grade audit, A39 month-cluster bootstrap with
-  loan-level sensitivity, and A40 matched comparisons.
+  `champion-reopen-2026-07-10__maturity-safe-locked-bounded-h1h2-v2`;
+- status-independent universe of 540,121 36-month loans;
+- CatBoost/Platt fitting through 2011, exact 90% binary Mondrian conformal fit
+  on 2012H1, and policy selection on mature 2012H2 outcomes;
+- one selected guardrail, `q=0.75p+0.25u` with `tau=0.17`;
+- coherent standardized payoff `(1-p)r-p*LGD` in the objective and
+  `(1-Y)r-Y*LGD` in evaluation;
+- 15 separate monthly $1M decisions from April 2016 through June 2017;
+- unresolved outcomes retained with sharp single-policy and paired bounds;
+- guardrail-minus-point payoff `[-$322,703.79,-$58,040.34]`, default
+  `[-0.046275,-0.020093]`, and miscoverage `[0.008822,0.029850]`;
+- mechanism: between-stratum composition improves default, while
+  within-stratum selection drives the funded-set coverage failure; and
+- active publication artifacts `crpto_ijds_ms_table1`--`table3`, S1--S7, and
+  figures 1--3, governed by `ijds_maturity_safe_evidence.json`.
 
-The selector is outcome-free with respect to OOT policy ranking, but earlier
-project development inspected the static OOT corpus. The paper must describe
-the result as a retrospective lockbox replay, not a pristine prospective trial.
+The paper describes a code-locked retrospective temporal audit. It does not
+claim a prospective trial, causal effect, latent-PD confidence interval,
+selected-set conformal guarantee, cash-flow return, fair-lending certificate,
+or Markov certificate. The full authority is
+`docs/research/active_claims_2026-07-10.md`.
 
 The previous IJDS rebaseline and pool93 frontier are retained as historical
 provenance, not as active body claims:

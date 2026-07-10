@@ -9,13 +9,13 @@ purpose.
 Use these for the active submission workflow:
 
 - `check_publication_integrity.py` - checks that paper, supplement, README and
-  official-template docs agree on the active midpoint IJDS claim.
-- `build_ijds_calibration_selected_evidence.py` - regenerates active A35--A40
-  and governance from the exact-alpha and selected-policy outputs.
-- `experiments/run_ijds_exact_alpha_grid_challenger.py` - exact replay into an
-  isolated experiment path.
-- `experiments/run_ijds_calibration_selected_policy_challenger.py` - solves the
-  declared 3x3 calibration grid and fixed OOT evaluations.
+  official-template docs agree on the active maturity-safe IJDS claim.
+- `build_ijds_maturity_safe_evidence.py` - validates the clean tagged v2 run
+  and regenerates tables 1--3/S1--S7 plus figures 1--3.
+- `experiments/run_ijds_maturity_safe_challenger.py` - performs the expensive
+  locked methodology replay into a fresh immutable experiment path.
+- `build_ijds_calibration_selected_evidence.py` and the older IJDS challenger
+  scripts - compact-v7 historical replay only; never active paper evidence.
 - `compile_ijds_submission.py` - compiles the official INFORMS/IJDS LaTeX
   handoff and scans `.log`/`.blg` for unresolved citations or references.
 - `run_ty_advisory.py` - runs pinned `ty` in a focused advisory scope for daily
@@ -35,7 +35,8 @@ just smoke
 just type-advisory
 just hooks-check
 just complexity-report
-just ijds-evidence
+just ijds-evidence              # active maturity-safe evidence
+just ijds-historical-v7-evidence # historical compact-v7 provenance only
 just paper-submission
 just paper-submission-official
 just submission-check

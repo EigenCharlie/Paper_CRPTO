@@ -1,38 +1,33 @@
-"""Drift guard for the active calibration-selected IJDS policy."""
+"""Drift guards for the active maturity-safe IJDS evidence and manuscripts."""
 
 from __future__ import annotations
 
 import csv
+import hashlib
 import json
+import re
 from pathlib import Path
 from typing import Any
 
 import pytest
 
+import scripts.build_ijds_maturity_safe_evidence as evidence_builder
+
 REPO = Path(__file__).resolve().parents[1]
 TABLES = REPO / "reports/crpto/tables"
-RUN_TAG = "champion-reopen-2026-06-19__pool93__ijds-calibration-selected-endpoint28-v7"
-GOVERNANCE = (
-    REPO / "models/experiments/champion_reopen" / RUN_TAG / "portfolio/ijds_policy_governance.json"
-)
-SUMMARY = GOVERNANCE.with_name("calibration_selected_policy_summary.json")
+EVIDENCE = REPO / "reports/crpto/ijds_maturity_safe_evidence.json"
+RUN_TAG = "champion-reopen-2026-07-10__maturity-safe-locked-bounded-h1h2-v2"
+PROTOCOL_TAG = "protocol/ijds-maturity-safe-locked-bounded-h1h2-2026-07-10-v2"
+PROTOCOL_COMMIT = "78a64fe67a4df46c3d19b9243deb991c56fd1ff6"
 SURFACES = (
     REPO / "paper/CRPTO_ijds.qmd",
     REPO / "paper/supplement_ijds.qmd",
     REPO / "paper/submission/CRPTO_ijds_submission.tex",
 )
-TABLE_STEMS = (
-    "crpto_tableA35_exact_alpha_grid",
-    "crpto_tableA36_calibration_policy_selector",
-    "crpto_tableA37_calibration_selected_temporal_evaluation",
-    "crpto_tableA38_calibration_selected_grade_audit",
-    "crpto_tableA39_calibration_selected_bootstrap",
-    "crpto_tableA40_calibration_selected_point_baseline",
-)
 
 
 def _json(path: Path) -> dict[str, Any]:
-    assert path.is_file(), f"Missing active governance: {path}"
+    assert path.is_file(), f"Missing JSON evidence: {path}"
     return json.loads(path.read_text(encoding="utf-8"))
 
 
@@ -41,115 +36,229 @@ def _rows(stem: str) -> list[dict[str, str]]:
         return list(csv.DictReader(handle))
 
 
-def _surface_text(path: Path) -> str:
-    return path.read_text(encoding="utf-8").replace(r"\$", "$").replace("{,}", ",")
+def _sha256(path: Path) -> str:
+    digest = hashlib.sha256()
+    with path.open("rb") as handle:
+        for chunk in iter(lambda: handle.read(1024 * 1024), b""):
+            digest.update(chunk)
+    return digest.hexdigest()
 
 
-def test_active_governance_locks_simple_policy_and_selector() -> None:
-    payload = _json(GOVERNANCE)
-    summary = _json(SUMMARY)
-    policy = payload["selected_policy"]
-    selector = payload["selection_protocol"]
-
-    assert payload["status"] == "active_ijds_policy"
-    assert payload["run_tag"] == RUN_TAG
-    assert "generated_at_utc" not in payload
-    assert "generated_at_utc" not in summary
-    assert "source_commit" not in summary
-    assert policy["policy_mode"] == "blended_uncertainty"
-    assert policy["risk_tolerance"] == pytest.approx(0.17)
-    assert policy["gamma"] == pytest.approx(0.50)
-    assert policy["uncertainty_aversion"] == pytest.approx(0.0)
-    assert policy["min_budget_utilization"] == pytest.approx(0.0)
-    assert selector["min_budget_utilization"] == pytest.approx(0.999)
-    assert selector["n_total"] == 9
-    assert selector["n_eligible"] == 5
-    assert selector["outcome_columns_used"] == 0
-    assert selector["statistical_assumption_columns_used"] == 0
-    assert selector["endpoint_budget_cap"] == pytest.approx(0.28)
-    assert selector["selector_forbidden_columns_present"] == []
-    assert selector["calibration_metadata"]["target_alpha"] == pytest.approx(0.10)
-    assert selector["calibration_metadata"]["selection_period"] == "2017-11"
-    assert selector["calibration_metadata"]["selection_rows"] == 14943
-    assert selector["calibration_metadata"]["audit_period"] == "2017-12"
-    assert selector["calibration_metadata"]["audit_rows"] == 20695
-    assert selector["calibration_metadata"]["outcomes_isolated_until_post_selection_audit"] is True
-    assert "_outcome" not in selector["selector_input_columns"]
-    assert selector["endpoint_cap_stability"]["cap_lower_inclusive"] == pytest.approx(
-        0.25903604939435104
-    )
-    assert selector["endpoint_cap_stability"]["cap_upper_exclusive"] == pytest.approx(
-        0.29049078888716334
-    )
-    assert selector["calibration_audit"]["same_policy_selected"] is True
-    assert selector["calibration_audit"]["selected_policy"][
-        "weighted_miscoverage"
-    ] == pytest.approx(0.124925)
-    assert payload["exact_alpha_reference_replay"]["pass"] is True
+def _normalize(text: str) -> str:
+    value = text.lower()
+    replacements = {
+        r"\$": "$",
+        r"\%": "%",
+        r"\_": "_",
+        "{,}": ",",
+        "{": "",
+        "}": "",
+        "`": "",
+    }
+    for old, new in replacements.items():
+        value = value.replace(old, new)
+    return re.sub(r"\s+", " ", value)
 
 
-def test_active_tables_agree_with_governance() -> None:
-    payload = _json(GOVERNANCE)
-    full = payload["full_oot"]
-    selected = next(
+def test_default_evidence_validation_does_not_require_the_raw_snapshot(
+    tmp_path: Path,
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    summary = {
+        "status": "complete",
+        "run_tag": RUN_TAG,
+        "protocol_commit": PROTOCOL_COMMIT,
+        "artifacts": {},
+        "raw_source": {
+            "path": "data/raw/not-present.csv",
+            "bytes": 1,
+            "sha256": "not-read-by-default",
+        },
+    }
+    summary_path = tmp_path / "summary.json"
+    summary_path.write_text(json.dumps(summary), encoding="utf-8")
+    clean_git = {"commit": PROTOCOL_COMMIT, "dirty": False}
+    receipt = {
+        "initial_git": clean_git,
+        "final_git": clean_git,
+        "deterministic_summary": {
+            "bytes": summary_path.stat().st_size,
+            "sha256": _sha256(summary_path),
+        },
+    }
+    monkeypatch.setattr(evidence_builder, "ROOT", tmp_path)
+    monkeypatch.setattr(evidence_builder, "SUMMARY_PATH", summary_path)
+    monkeypatch.setattr(evidence_builder, "_verify_git_binding", lambda: None)
+
+    evidence_builder._verify_run(summary, receipt, verify_raw=False)
+
+
+def test_active_evidence_locks_clean_v2_protocol() -> None:
+    evidence = _json(EVIDENCE)
+    summary_path = REPO / evidence["summary"]["path"]
+    receipt_path = REPO / evidence["receipt"]["path"]
+    summary = _json(summary_path)
+    receipt = _json(receipt_path)
+
+    assert evidence["status"] == "active_maturity_safe_ijds_evidence"
+    assert evidence["run_tag"] == RUN_TAG
+    assert evidence["protocol_tag"] == PROTOCOL_TAG
+    assert evidence["protocol_commit"] == PROTOCOL_COMMIT
+    assert summary["status"] == "complete"
+    assert summary["run_tag"] == RUN_TAG
+    assert summary["protocol_tag"] == PROTOCOL_TAG
+    assert summary["protocol_commit"] == PROTOCOL_COMMIT
+    assert summary["protected_stages_run"] == []
+    assert summary["protected_artifacts_written"] == []
+    assert receipt["initial_git"]["dirty"] is False
+    assert receipt["final_git"]["dirty"] is False
+    assert _sha256(summary_path) == evidence["summary"]["sha256"]
+    assert _sha256(receipt_path) == evidence["receipt"]["sha256"]
+
+
+def test_active_policy_and_timing_are_not_post_oot_selected() -> None:
+    evidence = _json(EVIDENCE)
+    summary = _json(REPO / evidence["summary"]["path"])
+    selected = summary["selection"]["selected_guardrail"]
+
+    assert summary["row_counts"]["universe"] == 540121
+    assert summary["row_counts"]["primary_oot"] == 376890
+    assert summary["row_counts"]["primary_oot_months"] == 15
+    assert summary["selection"]["period"] == "2012-07_to_2012-12"
+    assert summary["selection"]["primary_or_extension_outcomes_used"] is False
+    assert summary["selection"]["endpoint_cap_used"] is False
+    assert selected["candidate_id"] == "linear-004"
+    assert selected["risk_tolerance"] == pytest.approx(0.17)
+    assert selected["gamma"] == pytest.approx(0.25)
+    assert summary["payoff"]["id"] == "coherent_standardized_binary_payoff_v1"
+    assert summary["payoff"]["lgd"] == pytest.approx(0.45)
+
+
+def test_active_tables_agree_with_summary() -> None:
+    evidence = _json(EVIDENCE)
+    summary = _json(REPO / evidence["summary"]["path"])
+    primary = summary["monthly_evaluation"]["aggregate_by_role_and_policy"]
+    guard_summary = next(
         row
-        for row in _rows("crpto_tableA40_calibration_selected_point_baseline")
-        if row["policy"] == "Calibration-selected 50/50 CRPTO"
+        for row in primary
+        if row["role"] == "primary_oot" and row["policy_label"] == "selected_conformal_guardrail"
     )
-    alpha = next(
+    point_summary = next(
         row
-        for row in _rows("crpto_tableA35_exact_alpha_grid")
-        if row["selected_for_policy"] == "True"
+        for row in primary
+        if row["role"] == "primary_oot" and row["policy_label"] == "matched_point_pd"
+    )
+    policy_rows = _rows("crpto_ijds_ms_table2_primary_policy")
+    guard_table = next(row for row in policy_rows if row["policy"] == "Conformal guardrail")
+    point_table = next(row for row in policy_rows if row["policy"] == "Point PD, matched tau")
+
+    for table_row, summary_row in ((guard_table, guard_summary), (point_table, point_summary)):
+        for field in (
+            "expected_objective",
+            "realized_payoff_lower",
+            "realized_payoff_upper",
+            "weighted_default_lower",
+            "weighted_default_upper",
+            "weighted_miscoverage_lower",
+            "weighted_miscoverage_upper",
+            "unresolved_exposure_share",
+        ):
+            assert float(table_row[field]) == pytest.approx(summary_row[field])
+
+    coverage = _rows("crpto_ijds_ms_tableS2_coverage")
+    primary_coverage = next(row for row in coverage if row["block"].startswith("primary_oot"))
+    conformal = summary["conformal"]["primary_oot_all_candidate_pooled"]
+    assert float(primary_coverage["coverage_lower"]) == pytest.approx(
+        conformal["all_candidate_coverage_lower"]
+    )
+    assert float(primary_coverage["coverage_upper"]) == pytest.approx(
+        conformal["all_candidate_coverage_upper"]
     )
 
-    assert float(selected["realized_return"]) == pytest.approx(full["realized_return"])
-    assert float(selected["weighted_outcome"]) == pytest.approx(full["weighted_default_rate"])
-    assert float(selected["weighted_miscoverage"]) == pytest.approx(full["weighted_miscoverage"])
-    assert float(selected["endpoint_budget"]) == pytest.approx(full["endpoint_budget"])
-    assert float(selected["markov_loss_threshold"]) == pytest.approx(full["markov_loss_threshold"])
-    assert float(alpha["target_alpha"]) == pytest.approx(0.10)
-    assert float(alpha["empirical_coverage"]) == pytest.approx(0.9348356081757077)
+
+def test_primary_contrast_is_sharp_sign_robust_and_noncausal() -> None:
+    rows = _rows("crpto_ijds_ms_table3_primary_contrast")
+    matched = next(row for row in rows if row["policy_b"] == "matched_point_pd")
+
+    assert float(matched["realized_payoff_difference_lower"]) == pytest.approx(-322703.787478)
+    assert float(matched["realized_payoff_difference_upper"]) == pytest.approx(-58040.339247)
+    assert float(matched["weighted_default_difference_lower"]) == pytest.approx(-0.046274834615)
+    assert float(matched["weighted_default_difference_upper"]) == pytest.approx(-0.020093094595)
+    assert float(matched["weighted_miscoverage_difference_lower"]) == pytest.approx(0.008821832051)
+    assert float(matched["weighted_miscoverage_difference_upper"]) == pytest.approx(0.029850238738)
+    assert matched["payoff_direction_sign_robust"] == "True"
+    assert matched["default_direction_sign_robust"] == "True"
+    assert matched["miscoverage_direction_sign_robust"] == "True"
+    assert matched["causal_interpretation"] == "False"
 
 
-def test_active_a35_to_a40_exist_in_csv_and_tex() -> None:
-    missing = [
-        f"{stem}.{suffix}"
-        for stem in TABLE_STEMS
-        for suffix in ("csv", "tex")
-        if not (TABLES / f"{stem}.{suffix}").is_file()
-    ]
-    assert not missing, "Missing active IJDS evidence: " + ", ".join(missing)
+def test_evidence_manifest_hashes_every_publication_output() -> None:
+    evidence = _json(EVIDENCE)
+    paths = {item["path"] for item in evidence["outputs"]}
+    required = {
+        "reports/crpto/tables/crpto_ijds_ms_table1_protocol.csv",
+        "reports/crpto/tables/crpto_ijds_ms_table2_primary_policy.csv",
+        "reports/crpto/tables/crpto_ijds_ms_table3_primary_contrast.csv",
+        *{
+            f"reports/crpto/tables/crpto_ijds_ms_tableS{i}_{suffix}.csv"
+            for i, suffix in (
+                (1, "selection_grid"),
+                (2, "coverage"),
+                (3, "monthly_primary"),
+                (4, "transport"),
+                (5, "group_exposure"),
+                (6, "extension"),
+                (7, "monthly_contrast"),
+            )
+        },
+        "reports/crpto/figures/crpto_ijds_ms_fig1_timeline.pdf",
+        "reports/crpto/figures/crpto_ijds_ms_fig2_monthly.pdf",
+        "reports/crpto/figures/crpto_ijds_ms_fig3_transport.pdf",
+    }
+    assert required <= paths
+    for item in evidence["outputs"]:
+        path = REPO / item["path"]
+        assert path.is_file(), path
+        assert path.stat().st_size == item["bytes"]
+        assert _sha256(path) == item["sha256"]
 
 
-def test_active_manuscript_surfaces_share_numeric_anchors() -> None:
-    payload = _json(GOVERNANCE)
-    full = payload["full_oot"]
-    contrast = payload["point_pd_contrast"]
+def test_active_manuscript_surfaces_share_numeric_and_narrative_anchors() -> None:
     anchors = (
-        f"${full['realized_return']:,.2f}",
-        f"{full['weighted_default_rate']:.6f}",
-        f"{full['weighted_miscoverage']:.6f}",
-        f"{full['Gamma_CP']:.6f}",
-        f"{full['Gamma_residual']:.6f}",
-        f"{full['endpoint_budget']:.6f}",
-        f"{full['observed_accounting_bound']:.6f}",
-        f"{full['markov_loss_threshold']:.6f}",
-        f"{contrast['realized_return']:,.2f}",
-        f"{100 * contrast['selected_return_cost_pct']:.3f}",
-        f"{100 * contrast['selected_default_reduction']:.4f}",
-        "0.28",
-        "0.124925",
-        "$163,421.14",
+        "540,121",
+        "0.854923",
+        "0.879692",
+        "0.020093",
+        "0.046275",
+        "0.008822",
+        "0.029850",
+        "$58,040",
+        "$322,703.79",
+        "0.611338",
+        "within-group",
+        "standardized payoff",
+        "latent",
     )
     for surface in SURFACES:
-        text = _surface_text(surface)
-        missing = [anchor for anchor in anchors if anchor not in text]
+        text = _normalize(surface.read_text(encoding="utf-8"))
+        missing = [_normalize(anchor) for anchor in anchors if _normalize(anchor) not in text]
         assert not missing, f"{surface.name} missing active anchors: {missing}"
 
 
-def test_retired_headline_numbers_do_not_appear_in_active_surfaces() -> None:
-    retired = ("0.345084", "50,010", "27,508", "capped_blended_uncertainty")
+def test_compact_v7_headlines_cannot_reenter_active_surfaces() -> None:
+    retired = (
+        "champion-reopen-2026-06-19__pool93__ijds-calibration-selected-endpoint28-v7",
+        "$179,327.59",
+        "276,869",
+        "0.039375",
+        "0.036875",
+        "0.258051",
+        "0.574279",
+        "$196,369.14",
+        "8.678%",
+        "7.9025",
+    )
     for surface in SURFACES:
-        text = _surface_text(surface)
-        present = [token for token in retired if token in text]
-        assert not present, f"{surface.name} retains retired claims: {present}"
+        text = _normalize(surface.read_text(encoding="utf-8"))
+        present = [_normalize(token) for token in retired if _normalize(token) in text]
+        assert not present, f"{surface.name} retains compact-v7 claims: {present}"

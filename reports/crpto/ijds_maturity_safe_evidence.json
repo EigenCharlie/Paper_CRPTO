@@ -1,0 +1,212 @@
+{
+  "schema_version": "2026-07-10.1",
+  "status": "active_maturity_safe_ijds_evidence",
+  "run_tag": "champion-reopen-2026-07-10__maturity-safe-locked-bounded-h1h2-v2",
+  "protocol_tag": "protocol/ijds-maturity-safe-locked-bounded-h1h2-2026-07-10-v2",
+  "protocol_commit": "78a64fe67a4df46c3d19b9243deb991c56fd1ff6",
+  "summary": {
+    "path": "models/experiments/champion_reopen/champion-reopen-2026-07-10__maturity-safe-locked-bounded-h1h2-v2/maturity_safe_locked_summary.json",
+    "bytes": 70625,
+    "sha256": "a9c3b3738b26096703fdd2d1b1e852f72b1516157317c65a92e1bb0abdfd693b"
+  },
+  "receipt": {
+    "path": "models/experiments/champion_reopen/champion-reopen-2026-07-10__maturity-safe-locked-bounded-h1h2-v2/execution_receipt.json",
+    "bytes": 1607,
+    "sha256": "7847ba0dc68598de7960c7e78f8a11de527cc7bbf4ddd9f90421bdfa48b68f33"
+  },
+  "headline": {
+    "selected_policy": {
+      "candidate_id": "linear-004",
+      "risk_tolerance": 0.17,
+      "gamma": 0.25,
+      "uncertainty_aversion": 0.0,
+      "policy_mode": "blended_uncertainty",
+      "delta_cap_quantile": 1.0,
+      "tail_focus_quantile": 1.0,
+      "min_budget_utilization": 1.0,
+      "pd_cap_slack_penalty": 0.0
+    },
+    "primary_all_candidate_coverage_lower": 0.8549231871368304,
+    "primary_all_candidate_coverage_upper": 0.8796916872296957,
+    "primary_contrasts": [
+      {
+        "contrast": "selected_conformal_guardrail_minus_matched_point_pd",
+        "role": "primary_oot",
+        "policy_a": "selected_conformal_guardrail",
+        "policy_b": "matched_point_pd",
+        "policy_a_capital": 15000000.0,
+        "policy_b_capital": 15000000.0,
+        "funded_union_loans": 2246,
+        "unresolved_union_loans": 52,
+        "expected_objective_difference": -240977.7786228247,
+        "realized_payoff_difference_lower": -322703.7874780131,
+        "realized_payoff_difference_upper": -58040.33924711874,
+        "realized_payoff_rate_difference_lower": -0.02151358583186754,
+        "realized_payoff_rate_difference_upper": -0.003869355949807916,
+        "weighted_default_difference_lower": -0.046274834615204194,
+        "weighted_default_difference_upper": -0.02009309459512156,
+        "weighted_miscoverage_difference_lower": 0.00882183205146247,
+        "weighted_miscoverage_difference_upper": 0.029850238738211774,
+        "payoff_direction_sign_robust": true,
+        "default_direction_sign_robust": true,
+        "miscoverage_direction_sign_robust": true,
+        "causal_interpretation": false
+      },
+      {
+        "contrast": "selected_conformal_guardrail_minus_development_selected_point_pd",
+        "role": "primary_oot",
+        "policy_a": "selected_conformal_guardrail",
+        "policy_b": "development_selected_point_pd",
+        "policy_a_capital": 15000000.0,
+        "policy_b_capital": 15000000.0,
+        "funded_union_loans": 2246,
+        "unresolved_union_loans": 52,
+        "expected_objective_difference": -240977.7786228247,
+        "realized_payoff_difference_lower": -322703.7874780131,
+        "realized_payoff_difference_upper": -58040.33924711874,
+        "realized_payoff_rate_difference_lower": -0.02151358583186754,
+        "realized_payoff_rate_difference_upper": -0.003869355949807916,
+        "weighted_default_difference_lower": -0.046274834615204194,
+        "weighted_default_difference_upper": -0.02009309459512156,
+        "weighted_miscoverage_difference_lower": 0.00882183205146247,
+        "weighted_miscoverage_difference_upper": 0.029850238738211774,
+        "payoff_direction_sign_robust": true,
+        "default_direction_sign_robust": true,
+        "miscoverage_direction_sign_robust": true,
+        "causal_interpretation": false
+      }
+    ]
+  },
+  "outputs": [
+    {
+      "path": "reports/crpto/figures/crpto_ijds_ms_fig1_timeline.pdf",
+      "bytes": 15050,
+      "sha256": "541a5cefa2a27dd72955948bb78b779e0ff6b11a8bc5d92f4dae7f8096d9aa5a"
+    },
+    {
+      "path": "reports/crpto/figures/crpto_ijds_ms_fig1_timeline.png",
+      "bytes": 67617,
+      "sha256": "d06ec7dada4cfa4cb4e6557f531089ceb47b19845cb295d627edc0cde34ab54f"
+    },
+    {
+      "path": "reports/crpto/figures/crpto_ijds_ms_fig2_monthly.pdf",
+      "bytes": 20990,
+      "sha256": "e03e6da4e78879d5c9b2f918547482140b3082a64204ec0bd931762b95fb8d74"
+    },
+    {
+      "path": "reports/crpto/figures/crpto_ijds_ms_fig2_monthly.png",
+      "bytes": 301494,
+      "sha256": "1d76123a7e98bf4b8dc322edb079df0fe2ed4ac4c6d9df8baf7953d6b534082f"
+    },
+    {
+      "path": "reports/crpto/figures/crpto_ijds_ms_fig3_transport.pdf",
+      "bytes": 16475,
+      "sha256": "b87d08642f64688a1016f0b367d8d69d86d4256bbe3622481d158bde26a7e2c0"
+    },
+    {
+      "path": "reports/crpto/figures/crpto_ijds_ms_fig3_transport.png",
+      "bytes": 97277,
+      "sha256": "a6eae1d7a27dc15ae537117015231bac2477cf6a86189fc0ee3899f002232ce5"
+    },
+    {
+      "path": "reports/crpto/tables/crpto_ijds_ms_table1_protocol.csv",
+      "bytes": 516,
+      "sha256": "1f26ed5d8bf4680f53e4e0725c5e0fe98b1a5869809040093fbcf2fd1da7cf75"
+    },
+    {
+      "path": "reports/crpto/tables/crpto_ijds_ms_table1_protocol.tex",
+      "bytes": 727,
+      "sha256": "f9af8cec485e43f6d4745883f0f03216d047c13fb3a95b9c6cc2a4fe2fb97336"
+    },
+    {
+      "path": "reports/crpto/tables/crpto_ijds_ms_table2_primary_policy.csv",
+      "bytes": 1133,
+      "sha256": "c7094526e34c84c0d4bf5c76148549c20cfc9f34e1e38f7b480596ba648a0360"
+    },
+    {
+      "path": "reports/crpto/tables/crpto_ijds_ms_table2_primary_policy.tex",
+      "bytes": 1090,
+      "sha256": "ac333dc5f8fecf9444254c9c4b91b94fad5a08357316b9944853ca07d452ec6e"
+    },
+    {
+      "path": "reports/crpto/tables/crpto_ijds_ms_table3_primary_contrast.csv",
+      "bytes": 1255,
+      "sha256": "9592fd5c625112802f946ffd0b0ab0a31fee80bb455ffb063260e7f4f9ed5915"
+    },
+    {
+      "path": "reports/crpto/tables/crpto_ijds_ms_table3_primary_contrast.tex",
+      "bytes": 1395,
+      "sha256": "f17dd00790744bedf09629196cbf55431ad8c3334c3b83f5c0c13530ac1623df"
+    },
+    {
+      "path": "reports/crpto/tables/crpto_ijds_ms_tableS1_selection_grid.csv",
+      "bytes": 1558,
+      "sha256": "8564eec72b975a3b10526b978e4b26ea913e0c8074b8ee1b75ccef7a7f0c9219"
+    },
+    {
+      "path": "reports/crpto/tables/crpto_ijds_ms_tableS1_selection_grid.tex",
+      "bytes": 1703,
+      "sha256": "d0c051440d1c17b83d4f92e3b47ca39cf2981246abd165b9eb6d03ba9365d38b"
+    },
+    {
+      "path": "reports/crpto/tables/crpto_ijds_ms_tableS2_coverage.csv",
+      "bytes": 545,
+      "sha256": "c29df6f2d9080a0a2e60956689882f0a0300642b21e3f98b7d561a374b41e916"
+    },
+    {
+      "path": "reports/crpto/tables/crpto_ijds_ms_tableS2_coverage.tex",
+      "bytes": 558,
+      "sha256": "9cf73a8a3fa49435a269b9dc9f57e89015fb7a6e3f3cfc614ccdbd5b7ba32198"
+    },
+    {
+      "path": "reports/crpto/tables/crpto_ijds_ms_tableS3_monthly_primary.csv",
+      "bytes": 17260,
+      "sha256": "0c218d611737afe9d409ce1828ca896690f49fbac87bc3b0de25b75d17c25ba6"
+    },
+    {
+      "path": "reports/crpto/tables/crpto_ijds_ms_tableS3_monthly_primary.tex",
+      "bytes": 21062,
+      "sha256": "d4fb832ad9accee8f63d3976421b87e7904b469c6a6b32239edff873f8bcc323"
+    },
+    {
+      "path": "reports/crpto/tables/crpto_ijds_ms_tableS4_transport.csv",
+      "bytes": 3117,
+      "sha256": "3edcbc83c967fdbacd8d6ffabd5dd646d43a96a26bccae0a222fa70a24c53039"
+    },
+    {
+      "path": "reports/crpto/tables/crpto_ijds_ms_tableS4_transport.tex",
+      "bytes": 2799,
+      "sha256": "d9812bc1a49560d16843193d4d0af7694476e33cf0f4b13705c95699ba5d73b5"
+    },
+    {
+      "path": "reports/crpto/tables/crpto_ijds_ms_tableS5_group_exposure.csv",
+      "bytes": 1101,
+      "sha256": "725c8c8638ea4f22bcf1fe99c9da0a7684917b40d1855ff8ebc4e571c19cc89d"
+    },
+    {
+      "path": "reports/crpto/tables/crpto_ijds_ms_tableS5_group_exposure.tex",
+      "bytes": 1303,
+      "sha256": "260001b53f25972d55796ce6c21194c18e29d8455c602cf37fd8b0426f7ed76a"
+    },
+    {
+      "path": "reports/crpto/tables/crpto_ijds_ms_tableS6_extension.csv",
+      "bytes": 1155,
+      "sha256": "215b0e401103f019e6c60d2be91a5df09fe3d060e28d223edf24857a5a864a21"
+    },
+    {
+      "path": "reports/crpto/tables/crpto_ijds_ms_tableS6_extension.tex",
+      "bytes": 1154,
+      "sha256": "d96a8fcc26e1d64b69076a80d2db4308fdd837c235e6402fd616ad16c5c49239"
+    },
+    {
+      "path": "reports/crpto/tables/crpto_ijds_ms_tableS7_monthly_contrast.csv",
+      "bytes": 6057,
+      "sha256": "55c16c21fbf0f55499e71ce675f7206f28d20c78296d91fea26e7f4f07623ef2"
+    },
+    {
+      "path": "reports/crpto/tables/crpto_ijds_ms_tableS7_monthly_contrast.tex",
+      "bytes": 6084,
+      "sha256": "a107718f14ba5349034c526671ab8813edb0d85ef84000a8f36c8ecdb2598cd0"
+    }
+  ]
+}

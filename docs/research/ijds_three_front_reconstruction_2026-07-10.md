@@ -1,5 +1,12 @@
 # IJDS Three-Front Reconstruction Ledger - 2026-07-10
 
+> **Reconstruction completed (2026-07-10):** the durable output of this ledger
+> is the clean tagged maturity-safe bounded protocol v2 and the manuscript
+> governed by `active_claims_2026-07-10.md`. Fronts A and B remain recovery
+> sources; their numerical claims remain historical. References below to a
+> dirty scratch challenger and a NO-GO current submission describe the state
+> at the start of reconstruction, not the active end state.
+
 ## Status and purpose
 
 This ledger freezes what is worth preserving before CRPTO performs any new

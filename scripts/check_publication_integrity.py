@@ -1,4 +1,4 @@
-"""Check active IJDS manuscript surfaces for claim and narrative drift."""
+"""Check active IJDS publication surfaces for claim and narrative drift."""
 
 from __future__ import annotations
 
@@ -14,147 +14,141 @@ REPO = Path(__file__).resolve().parents[1]
 
 @dataclass(frozen=True)
 class SurfaceCheck:
-    """Text surface and tokens that must or must not appear after normalization."""
+    """Text surface and normalized tokens that must or must not appear."""
 
     path: Path
     required: tuple[str, ...]
     forbidden: tuple[str, ...] = ()
 
 
-COMMON_CLAIM_TOKENS = (
-    "$179327.59",
-    "0.039375",
-    "0.036875",
-    "0.176102",
-    "0.088051",
-    "0.258051",
-    "0.294926",
-    "0.574279",
-    "196369.14",
-    "8.678%",
-    "7.9025",
+ACTIVE_NUMERIC_TOKENS = (
+    "540,121",
+    "0.854923",
+    "0.879692",
+    "0.020093",
+    "0.046275",
+    "0.008822",
+    "0.029850",
 )
 
-ACTIVE_SURFACE_FORBIDDEN = (
-    "four contributions",
-    "crpto v2",
-    "-10.56%",
-    "markov cap",
-    "0.345084",
-    "50010",
-    "27508",
-    "capped_blended_uncertainty",
+COMPACT_V7_TOKENS = (
+    "champion-reopen-2026-06-19__pool93__ijds-calibration-selected-endpoint28-v7",
+    "$179,327.59",
+    "276,869",
+    "0.039375",
+    "0.036875",
+    "0.258051",
+    "0.574279",
+    "$196,369.14",
+    "8.678%",
+    "7.9025",
 )
 
 SURFACES = (
     SurfaceCheck(
         path=REPO / "README.md",
         required=(
-            *COMMON_CLAIM_TOKENS,
             "claim ijds activo",
-            "q=(p+u)/2",
-            "cap determinista",
+            "maturity-safe-locked-bounded-h1h2-v2",
+            "q=0.75p+0.25u",
+            "active_claims_2026-07-10.md",
         ),
-        forbidden=("## champion congelado",),
+        forbidden=COMPACT_V7_TOKENS,
+    ),
+    SurfaceCheck(
+        path=REPO / "paper/CRPTO_ijds.qmd",
+        required=(
+            *ACTIVE_NUMERIC_TOKENS,
+            "when marginal conformal coverage meets maturity-safe credit portfolio selection",
+            "the paper makes four contributions",
+            "standardized payoff",
+            "not a confidence interval",
+            "within-group optimizer selection",
+        ),
+        forbidden=COMPACT_V7_TOKENS,
+    ),
+    SurfaceCheck(
+        path=REPO / "paper/submission/CRPTO_ijds_submission.tex",
+        required=(
+            *ACTIVE_NUMERIC_TOKENS,
+            "when marginal conformal coverage meets maturity-safe credit portfolio selection",
+            "the paper makes four contributions",
+            "standardized payoff",
+            "not a confidence interval",
+            "within-group optimizer selection",
+        ),
+        forbidden=COMPACT_V7_TOKENS,
+    ),
+    SurfaceCheck(
+        path=REPO / "paper/supplement_ijds.qmd",
+        required=(
+            *ACTIVE_NUMERIC_TOKENS,
+            "proposition s1",
+            "proposition s2",
+            "proposition s3",
+            "s1--s7",
+            "historical diagnostics",
+        ),
+        forbidden=COMPACT_V7_TOKENS,
+    ),
+    SurfaceCheck(
+        path=REPO / "paper/submission/CLAIM_AUDIT_MATRIX.md",
+        required=(
+            *ACTIVE_NUMERIC_TOKENS,
+            "status-independent",
+            "sharp partial-identification bounds",
+            "historical firewall",
+        ),
+        forbidden=COMPACT_V7_TOKENS,
+    ),
+    SurfaceCheck(
+        path=REPO / "docs/research/active_claims_2026-07-10.md",
+        required=(
+            *ACTIVE_NUMERIC_TOKENS,
+            "active experiment",
+            "selection-transport identity",
+            "historical boundary",
+        ),
+        forbidden=COMPACT_V7_TOKENS,
+    ),
+    SurfaceCheck(
+        path=REPO / "configs/crpto_publication_targets.yaml",
+        required=(
+            "reconstructed_active",
+            "maturity-safe-locked-bounded-h1h2-v2",
+            "q=0.75p+0.25u",
+            "historical_not_active_evidence",
+        ),
+        forbidden=COMPACT_V7_TOKENS,
     ),
     SurfaceCheck(
         path=REPO / "paper/submission/README.md",
         required=(
             "pdflatex -> bibtex -> pdflatex -> pdflatex",
             "latexmk",
-            "official-template",
+            "16 pages",
+            "active maturity-safe ijds handoff",
         ),
-        forbidden=ACTIVE_SURFACE_FORBIDDEN,
-    ),
-    SurfaceCheck(
-        path=REPO / "paper/CRPTO_ijds.qmd",
-        required=(
-            *COMMON_CLAIM_TOKENS,
-            "the paper makes three contributions",
-            "retrospective lockbox replay",
-            "matched point-pd",
-            "q_i=(p_i+u_i)/2",
-        ),
-        forbidden=ACTIVE_SURFACE_FORBIDDEN,
-    ),
-    SurfaceCheck(
-        path=REPO / "paper/submission/CRPTO_ijds_submission.tex",
-        required=(
-            *COMMON_CLAIM_TOKENS,
-            "the paper makes three contributions",
-            "retrospective lockbox replay",
-            "matched point-pd",
-        ),
-        forbidden=ACTIVE_SURFACE_FORBIDDEN,
-    ),
-    SurfaceCheck(
-        path=REPO / "paper/supplement_ijds.qmd",
-        required=(
-            *COMMON_CLAIM_TOKENS,
-            "a35. exact alpha replay",
-            "a36. calibration policy selector",
-            "a40. matched decision audit",
-            "retrospective lockbox replay",
-        ),
-        forbidden=ACTIVE_SURFACE_FORBIDDEN,
-    ),
-    SurfaceCheck(
-        path=REPO / "paper/submission/CLAIM_AUDIT_MATRIX.md",
-        required=(
-            "calibration-selected midpoint",
-            "a40",
-            "8.678%",
-            "7.9025",
-        ),
-        forbidden=ACTIVE_SURFACE_FORBIDDEN,
-    ),
-    SurfaceCheck(
-        path=REPO / "docs/research/active_claims_2026-07-04.md",
-        required=(
-            *COMMON_CLAIM_TOKENS,
-            "nine round-number candidates",
-            "retrospective lockbox replay",
-            "retired headline claims",
-        ),
-        forbidden=("crpto v2", "markov cap", "+27.03%"),
-    ),
-    SurfaceCheck(
-        path=REPO / "configs/crpto_publication_targets.yaml",
-        required=(
-            "exact 90% conformal replay",
-            "q=(p+u)/2",
-            "outside the submitted claim",
-            "not acceptance criteria",
-        ),
-        forbidden=("crpto v2",),
+        forbidden=COMPACT_V7_TOKENS,
     ),
 )
 
 
 def _normalize(text: str) -> str:
     """Normalize Markdown and LaTeX enough for robust token checks."""
-    lowered = text.lower()
+    value = text.lower()
     replacements = {
         r"\$": "$",
-        "{,}": ",",
+        r"\%": "%",
         r"\_": "_",
-        r"\mathrm": "",
-        r"\gamma": "gamma",
-        r"\alpha": "alpha",
-        "\\": "",
+        "{,}": ",",
         "{": "",
         "}": "",
         "`": "",
-        ",": "",
     }
     for old, new in replacements.items():
-        lowered = lowered.replace(old, new)
-    lowered = lowered.replace("\u2013", "-").replace("\u2014", "-")
-    return re.sub(r"\s+", " ", lowered)
-
-
-def _read_normalized(path: Path) -> str:
-    return _normalize(path.read_text(encoding="utf-8"))
+        value = value.replace(old, new)
+    return re.sub(r"\s+", " ", value)
 
 
 def check_publication_integrity() -> list[str]:
@@ -164,14 +158,14 @@ def check_publication_integrity() -> list[str]:
         if not surface.path.is_file():
             failures.append(f"{surface.path.relative_to(REPO)} is missing")
             continue
-        text = _read_normalized(surface.path)
-        missing = [token for token in surface.required if token not in text]
-        present_forbidden = [token for token in surface.forbidden if token in text]
+        text = _normalize(surface.path.read_text(encoding="utf-8"))
+        required = tuple(_normalize(token) for token in surface.required)
+        forbidden = tuple(_normalize(token) for token in surface.forbidden)
+        missing = [token for token in required if token not in text]
+        present = [token for token in forbidden if token in text]
         rel = surface.path.relative_to(REPO)
         failures.extend(f"{rel}: missing required token '{token}'" for token in missing)
-        failures.extend(
-            f"{rel}: forbidden token still present '{token}'" for token in present_forbidden
-        )
+        failures.extend(f"{rel}: compact-v7 token is active '{token}'" for token in present)
     return failures
 
 
@@ -182,7 +176,7 @@ def main() -> int:
         for failure in failures:
             logger.error(failure)
         return 1
-    logger.success("Active IJDS publication surfaces are claim-synchronized.")
+    logger.success("Active maturity-safe IJDS publication surfaces are synchronized.")
     return 0
 
 

@@ -8,20 +8,21 @@ Pipeline de investigación y libro Quarto que acompañan el paper **CRPTO**, una
 
 | Campo | Valor |
 | --- | --- |
-| Run tag | `champion-reopen-2026-06-19__pool93__ijds-calibration-selected-endpoint28-v7` |
-| Conformal | replay exacto al `90%` (`alpha=0.10`, used `0.095`) |
-| Política | `q=(p+u)/2`, `tau=0.17`; PD puntual en el objetivo y `q` en el guardrail |
-| Selector | grilla `3x3` en noviembre; cap determinista `B_u<=0.28`; misma política en auditoría de diciembre |
-| Retorno realizado | **$179,327.59** |
-| Default / miscoverage ponderados | `0.039375 / 0.036875` |
-| `Gamma_CP / Gamma_residual` | `0.176102 / 0.088051` |
-| Endpoint / contabilidad observada / umbral condicional | `0.258051 / 0.294926 / 0.574279` |
-| Baseline A40 | `$196,369.14`; costo de retorno `8.678%`; reducción de default `7.9025` pp |
-| Auditoría pre-OOT | diciembre: default `0.145650`, miscoverage `0.124925`; estabilidad no implica cobertura seleccionada |
+| Run tag | `champion-reopen-2026-07-10__maturity-safe-locked-bounded-h1h2-v2` |
+| Universo | `540,121` préstamos de 36 meses; membership independiente del status |
+| Cronología | fit/selección hasta 2012; 15 decisiones mensuales 2016-04--2017-06 |
+| Conformal | intervalo binario Mondrian exacto al `90%`; no es CI de PD latente |
+| Política | `q=0.75p+0.25u`, `tau=0.17`; payoff coherente `(1-p)r-p*LGD` |
+| Cobertura candidata OOT | `[0.854923, 0.879692]` |
+| Payoff guardrail menos point PD | `[-$322,703.79, -$58,040.34]` |
+| Default guardrail menos point PD | `[-0.046275, -0.020093]` |
+| Miscoverage guardrail menos point PD | `[0.008822, 0.029850]` |
+| Mecanismo | reduce default por composición entre estratos; falla coverage por selección dentro de estratos |
 
 Hashes SHA256 de los artefactos críticos están en [`EXTRACTION_MANIFEST.json`](EXTRACTION_MANIFEST.json). Verifica con `just validate-champion` o el skill `/crpto-validate-champion`.
-El rebaseline y la frontera pool93 anterior se conservan como procedencia
-congelada, no como claims activos del manuscrito IJDS.
+El compact-v7, el rebaseline y la frontera pool93 se conservan como procedencia
+congelada, no como claims activos del manuscrito IJDS. La autoridad editorial
+es [`docs/research/active_claims_2026-07-10.md`](docs/research/active_claims_2026-07-10.md).
 
 ## Requisitos del sistema
 
@@ -65,7 +66,7 @@ just book-clean         # borra _book/, _freeze/, .quarto/
 
 # Pipeline de paper (no toca el champion)
 just paper-export       # tablas + figuras + evidence + journal + libro
-just ijds-evidence      # A35--A40 y gobernanza de la política IJDS activa
+just ijds-evidence      # tablas 1--3/S1--S7 y figuras 1--3 maturity-safe
 just tables             # solo CSVs
 just figures            # solo PNGs/PDFs
 
@@ -117,8 +118,8 @@ y está explicada en
 Los borradores de extracción están en [`paper/`](paper/):
 
 - `paper/CRPTO_ijds.qmd`: cuerpo anónimo IJDS.
-- `paper/supplement_ijds.qmd`: online supplement con A3--A18, reproducibilidad,
-  MRM y fairness.
+- `paper/supplement_ijds.qmd`: online supplement con protocolo, pruebas,
+  S1--S7, reproducibilidad y frontera histórica.
 - `paper/CRPTO.qmd`: entrada genérica.
 
 Comandos rápidos:

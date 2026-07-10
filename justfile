@@ -78,6 +78,10 @@ journal-package:
     uv run python scripts/build_crpto_journal_package.py
 
 ijds-evidence:
+    uv run python scripts/build_ijds_maturity_safe_evidence.py
+
+# Historical compact-v7 evidence retained for provenance only.
+ijds-historical-v7-evidence:
     uv run python scripts/build_ijds_calibration_selected_evidence.py
 
 # Explicit methodology replays. These write only to versioned experiment paths.
@@ -87,7 +91,12 @@ ijds-exact-alpha:
 ijds-policy-challenger:
     uv run python scripts/experiments/run_ijds_calibration_selected_policy_challenger.py --config configs/experiments/champion_reopen_ijds_calibration_selected_endpoint28_v7.yaml
 
-ijds-active-replay: ijds-exact-alpha ijds-policy-challenger ijds-evidence
+ijds-historical-v7-replay: ijds-exact-alpha ijds-policy-challenger ijds-historical-v7-evidence
+
+# Active replay means validating and rebuilding paper-facing evidence from the
+# committed, tagged, immutable maturity-safe run. The expensive runner itself
+# requires a fresh run tag and is never hidden inside a release command.
+ijds-active-replay: ijds-evidence
 
 paper-export: tables figures evidence journal-package ijds-evidence book
 

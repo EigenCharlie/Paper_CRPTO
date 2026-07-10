@@ -1,70 +1,64 @@
 # IJDS Submission Roadmap - Target 2026-08-10
 
-The date is an internal quality gate; IJDS submissions are rolling.
-
-Official sources to recheck in the submission week:
-
-- <https://pubsonline.informs.org/page/ijds/submission-guidelines>
-- <https://pubsonline.informs.org/page/ijds/data-and-code-disclosure-policy>
-- <https://pubsonline.informs.org/page/ijds/reviewer-guidelines>
-- <https://pubsonline.informs.org/authorportal/latex-style-files>
+The date is an internal quality gate; IJDS submissions are rolling. Recheck
+official submission, reviewer, data/code, and LaTeX guidance during submission
+week.
 
 ## Submission Thesis
 
 | IJDS dimension | CRPTO answer |
 |---|---|
-| Data | Temporal Lending Club panel with conformal fit, November selection, December audit, and OOT evaluation. |
-| Method | Exact 90% conformal replay, deterministic endpoint cap, and one midpoint portfolio guardrail. |
-| Decision | Allocate `$1M` under capital, concentration, and effective-PD constraints. |
-| Evidence | Split nine-cell selector/audit, matched point-PD decision, temporal reversals, and month-cluster bootstrap. |
-| Implication | An inspectable price of uncertainty, including cases where the static guardrail should be rejected. |
+| Data | 540,121-loan status-independent 36-month universe with unresolved outcomes retained |
+| Method | Exact binary split-Mondrian intervals, one linear upper-score guardrail, sharp outcome bounds, and transport decomposition |
+| Decision | Fifteen separate monthly $1M credit allocations with coherent payoff and matched point-PD baselines |
+| Evidence | Default improves, payoff and funded coverage worsen, with mechanism and temporal reversals exposed |
+| Implication | Marginal conformal coverage is not a selected-decision guarantee; the guardrail acts mainly through composition |
 
-## Completed Scientific Refactor
+## Completed Reconstruction
 
-- Retired approximate cross-alpha headline values.
-- Replayed conformal quantiles exactly at every sensitivity alpha.
-- Selected the conventional 90% reference level; documented endpoint
-  saturation at tighter levels.
-- Replaced nonlinear/tail policy families with `q=(p+u)/2`.
-- Separated point-PD economics from conformal feasibility.
-- Reduced policy selection to a round-number `3x3` calibration grid.
-- Replaced the Markov-based selector screen with deterministic `B_u<=0.28` and
-  documented the exact cap-stability interval.
-- Isolated outcomes from a 12-column selector frame; November selects and an
-  outcome-free December replay checks policy identity.
-- Added the independent December decision audit, including the funded-set
-  coverage miss, and a 31-month cluster bootstrap.
-- Added matched point-PD and 75% blend comparators.
-- Promoted temporal reversals and limitations to the body.
-- Rebuilt A35--A40 and active claim-sync tests.
+- Replaced outcome-conditioned candidate membership with an issue-date/term
+  universe that retains unresolved states.
+- Removed post-period labels from model, calibration, and conformal fitting.
+- Replaced the pooled future menu with fresh monthly decisions.
+- Aligned expected and realized standardized payoff.
+- Locked the 2012H2 selector before primary evaluation.
+- Added sharp single-policy and union-based pairwise bounds.
+- Added the binary miscoverage identity and exact selection-transport
+  decomposition.
+- Executed the final protocol from a clean tagged commit and DVC-tracked both
+  active run directories.
+- Rebuilt body, supplement, official TeX, cover letter, disclosures, claim
+  matrix, publication config, and active claim registry.
+- Demoted compact-v7 A35--A40 and A1--A34 diagnostics to historical provenance.
 
 ## Remaining Submission Work
 
 | Window | Deliverable | Exit condition |
 |---|---|---|
-| Jul 9--12 | Code and claim gates | Ruff, mypy, ty, focused tests, smoke, manifest, and drift gate green. |
-| Jul 12--18 | PDF editorial QA | Official body and supplement render; no undefined citations; body within 25-page rule; visual QA complete. |
-| Jul 18--24 | Reproducibility archive | Sanitized commands, source notes, run tags, hashes, and A35--A40 bundle staged. |
-| Jul 25--31 | Anonymous package | Body, supplement, title page, cover letter, and disclosure form separated correctly. |
-| Aug 1--8 | Cold review | Read only the generated PDFs; fix clarity, table, and citation defects. |
-| Aug 9--10 | ScholarOne freeze | Upload, inspect ScholarOne proof, and submit only after go/no-go checklist. |
+| Jul 10--14 | Numerical and code closeout | Evidence idempotent; full tests, lint, mypy, ty and protected-manifest gate green |
+| Jul 14--18 | PDF QA | Body, supplement and 16-page official PDF inspected page by page; no overflow or identity leak |
+| Jul 18--24 | Clean-clone capsule | DVC pull and active evidence rebuild succeed from a fresh clone |
+| Jul 25--31 | Independent cold review | Read only PDFs; reconcile every number, caption, citation and limitation |
+| Aug 1--8 | Editor package | Title page, cover letter, disclosure form and sanitized archive finalized |
+| Aug 9--10 | ScholarOne freeze | Upload, inspect generated proof, and submit only after go/no-go checklist |
 
 ## Acceptance Risks
 
-| Risk | Mitigation in current draft |
+| Risk | Current mitigation |
 |---|---|
-| Applied pipeline rather than method | One explicit objective/constraint contract and exact selector protocol. |
-| Broad binary conformal intervals | A35 reports width and endpoint saturation; no 99% headline. |
-| Adaptive funded-set validity | December directly demonstrates the coverage miss; deterministic accounting is separated from conditional Markov language. |
-| Historical OOT reuse | "Retrospective lockbox replay" stated in abstract, design, limitations, supplement, and cover letter. |
-| Baseline cherry-picking | Same candidates, budget, concentration, LGD, solver, and `tau`; temporal failures are shown. |
-| Too many methods | A1--A34 demoted to diagnostics; A35--A40 support one midpoint policy. |
-| Reproducibility mistaken for novelty | Decision method and managerial trade-off lead; tooling supports auditability. |
-| Page and template risk | Official `informs4` build and visual QA are blocking gates. |
+| Negative result appears insufficiently novel | Lead with maturity-safe design, sharp bounds, transport mechanism, and decision-validity implication |
+| Binary intervals are broad | Report width, endpoint saturation, binary geometry, and OOT coverage failure |
+| Adaptive selection invalidates coverage | Make this the central finding; do not imply selected-set validity |
+| Standardized payoff is mistaken for return | Use the exact formula and explicit cash-flow/IRR limitation everywhere |
+| Retrospective tuning concern | State that prior work inspected history; call v2 code-locked, not preregistered or pristine |
+| Comparator cherry-picking | Report matched and independently selected point policies; allocations coincide |
+| Censoring weakens inference | Keep all rows; use sharp bounds; isolate the heavily censored extension |
+| Historical results leak back | Active sync tests forbid compact-v7 headline values on publication surfaces |
+| Tooling is mistaken for novelty | Reproducibility supports the empirical claim; it is not the headline contribution |
 
 ## Freeze Rule
 
-After the scientific and PDF gates pass, do not reopen the policy for marginal
-OOT gains. Reopen only for a concrete reviewer request, a simpler calibration-
-only rule that matches the active result, or a formally stronger prospective or
-selection-valid protocol.
+Do not retune the guardrail, model, payoff, dates, or bounds on 2016--2017
+outcomes. Reopen only for a concrete reviewer request or a separately committed
+and tagged protocol with a different estimand. A marginally better result is not
+permission to create CRPTO v2 or a second paper.

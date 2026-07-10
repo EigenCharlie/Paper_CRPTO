@@ -1,100 +1,91 @@
 # IJDS Data and Code Disclosure Form Draft
 
-This is a working draft for completing the official IJDS Data and Code
-Disclosure Form in ScholarOne. It is not the official form and should not be
-uploaded as a substitute unless the submission system asks for free-form
-supporting text.
+Use the official IJDS form in ScholarOne. This file supplies consistent draft
+language and is not a substitute for the publisher's form.
 
 Official policy:
 <https://pubsonline.informs.org/page/ijds/data-and-code-disclosure-policy>
 
-## Suggested Official Form Position
+## Proposed Disclosure Position
 
-Use the official IJDS form, not this draft, for ScholarOne. The closest current
-position is:
-
-- **Code:** released at acceptance, including `src/`, `scripts/`, tests, Quarto
-  sources, `pyproject.toml`, `uv.lock`, `justfile`, DVC metadata, and
-  manuscript sources.
-- **Data:** partially releasable. Derived tables, figures, status JSONs,
-  manifest hashes, and DVC pointers can be shared. Raw Lending Club, Prosper,
-  Freddie/Mendeley and Home Credit files should be obtained from their source
-  pages or shared only through a journal-approved mechanism if source terms and
-  file sizes permit.
-- **Review-stage access:** anonymized archive or controlled access if editors
-  request verification before acceptance.
+- **Code:** release at acceptance. Include the Python source, experiment and
+  evidence builders, tests, manuscript sources, environment lock, task runner,
+  DVC metadata, and exact reproduction commands.
+- **Derived evidence:** release at acceptance. Include publication CSV/TeX
+  tables, figures, evidence manifest, protocol config, execution receipt, and
+  artifact hashes.
+- **Large processed/model artifacts:** provide through the configured DVC
+  remote or a journal-approved archive, with immutable pointers and checksums.
+- **Raw Lending Club data:** do not place in Git. Provide source/acquisition
+  instructions, expected filename/schema, size, SHA-256, and the deterministic
+  reconstruction command, subject to the source's redistribution terms.
+- **Review-stage verification:** provide an anonymized archive or controlled
+  access if requested by the editor.
 
 ## Short Disclosure Statement
 
-The paper is computational and relies on public-source credit-risk datasets,
-derived processed artifacts, frozen model outputs, and reproducible code. During
-double-anonymous review, the manuscript describes a reproducible companion
-package without exposing author-identifying URLs. At acceptance, the author will
-release a public reproducibility package containing source code, manuscript
-sources, paper table/figure generation commands, frozen artifact metadata,
-manifest hashes, an executable drift harness for the prediction-to-decision
-certificate chain, and instructions for obtaining or reconstructing the raw data.
+This computational paper uses a public-source Lending Club research snapshot,
+versioned derived data, a tagged model/result bundle, and reproducible Python
+code. During double-anonymous review, author-identifying repository and remote
+details are withheld. At acceptance, the author will release source code,
+manuscript sources, the locked environment, publication tables and figures,
+the active protocol and execution receipt, artifact hashes, DVC pointers, and
+instructions for obtaining and reconstructing the raw data. Large files will
+be distributed through DVC or a journal-approved archive when redistribution
+terms permit.
 
-## Data Sources
+## Active Data Contract
 
-| Data source | Role in paper | Disclosure plan |
+| Component | Role | Availability plan |
 |---|---|---|
-| Lending Club retail-loan data | Main static credit-risk panel and promoted funded-set certificate. | Use `RAW_DATA_SOURCE_NOTES.md`; provide source/acquisition instructions, schema notes, cleaning pipeline, DVC pointers or processed artifacts when redistribution is allowed. |
-| Prosper loan data | Frozen external marketplace-loan economic replication. | Use `RAW_DATA_SOURCE_NOTES.md`; provide source notes and generated summary artifacts; do not claim a new exact certificate. |
-| Freddie/Mendeley mortgage panel | Frozen external mortgage-credit economic replication. | Use `RAW_DATA_SOURCE_NOTES.md`; provide source notes and generated summary artifacts; do not claim a new exact certificate. |
-| Home Credit | Audited but not promoted because it lacks the required economic exposure/return contract. | Mention only as archived/non-promoted source context if needed. |
+| Lending Club 2007--2020Q3 snapshot | Main 540,121-row status-independent universe | Source instructions, schema, expected size/hash; raw file excluded from Git |
+| Versioned processed experiment directory | Candidate panels, predictions, monthly allocations and audits | DVC pointer and remote/archive |
+| Versioned model/results directory | Model, calibrator, conformal recipe, summary and receipt | DVC pointer and remote/archive |
+| Publication evidence | Tables 1--3, S1--S7, figures 1--3, evidence JSON | Git/reproducibility archive |
 
-## Code Availability
+Prosper, Freddie/Mendeley, Home Credit, and historical A1--A40 artifacts are
+not evidence for the active manuscript. They need not be part of the minimal
+IJDS reproduction capsule unless the editor requests project-history material.
 
-The accepted-paper package should include:
+## Code Contract
 
-- Python package code under `src/`.
-- Pipeline and export scripts under `scripts/`.
-- Quarto manuscript, supplement, and book sources.
-- Tests and guardrails under `tests/`.
-- `pyproject.toml`, `uv.lock`, `justfile`, `dvc.yaml`, and `dvc.lock`.
-- Commands for regenerating tables, figures, evidence summaries, journal
-  package files, and local PDF previews.
+The accepted package should include:
 
-## Artifact Availability
+- `src/data/outcome_observability.py`;
+- `src/models/maturity_safe_pd.py` and
+  `src/models/binary_conformal_guardrail.py`;
+- `src/evaluation/standardized_credit_payoff.py`,
+  `policy_contrast_bounds.py`, `coverage_transport.py`, and
+  `maturity_safe_portfolio.py`;
+- `src/utils/isolated_experiment.py`;
+- `scripts/experiments/run_ijds_maturity_safe_challenger.py`;
+- `scripts/build_ijds_maturity_safe_evidence.py`;
+- focused and publication-sync tests;
+- `pyproject.toml`, `uv.lock`, `justfile`, and DVC metadata; and
+- body, supplement, official TeX, bibliography, and submission instructions.
 
-The accepted-paper package should include or point to:
-
-- `EXTRACTION_MANIFEST.json`.
-- Frozen JSON status files under `models/`.
-- Paper tables under `reports/crpto/tables/`.
-- Paper figures under `reports/crpto/figures/`.
-- DVC metadata and remote-access instructions for large processed/model
-  artifacts when allowed.
-- The opt-in drift harness that recomputes conformal intervals and certificate
-  summaries from frozen PD artifacts and checks zero endpoint drift under the
-  locked dependency stack.
-
-## Reproducibility Commands
+## Reproduction Commands
 
 ```powershell
-just setup-base
-just smoke
-just validate-champion
-just tables
-just figures
-just evidence
-just journal-package
+uv sync --extra dev
+uv run dvc pull data/processed/experiments/champion_reopen/champion-reopen-2026-07-10__maturity-safe-locked-bounded-h1h2-v2.dvc
+uv run dvc pull models/experiments/champion_reopen/champion-reopen-2026-07-10__maturity-safe-locked-bounded-h1h2-v2.dvc
+just ijds-evidence
+uv run pytest tests/test_ijds_active_claim_sync.py -q
 just paper-submission
-just paper-submission-pdf
+just paper-submission-official
+just validate-champion
 ```
 
-Optional artifact-aware check when DVC access is configured:
+The default reproduction rebuilds evidence from the immutable tagged run. It
+does not rerun expensive methodology or historical protected stages. A full
+experiment replay is available in a clean clone with an absent output path and
+the raw source, using the locked v2 config.
 
-```powershell
-uv run dvc status --no-updates
-uv run dvc status -c -r dagshub
-```
+## Protected Historical Boundary
 
-## Non-Routine Rerun Boundary
-
-The following stages are not routine reproduction steps because they would
-change the frozen champion or reopen protected search:
+The following stages are not routine reproduction steps because they overwrite
+the manifest-protected historical chain:
 
 ```text
 crpto.pd.champion
@@ -104,12 +95,13 @@ crpto.portfolio.optimization
 crpto.portfolio.bound_exact_eval
 ```
 
-Any protected rerun requires a new run tag and drift report.
+The active v2 experiment is separate from those paths. Neither the disclosure
+form nor a reviewer request should be interpreted as permission to regenerate
+protected outputs in place.
 
-## Double-Anonymous Review Note
+## Anonymous Review
 
-For initial review, reviewer-facing files should omit public repository URLs,
-author-identifying remote names, local paths, credentials, and acknowledgements.
-If editors request reproducibility verification during review, provide an
-anonymized archive or controlled-access bundle consistent with the journal's
-instructions.
+Remove author names, repository ownership, personal URLs, local paths,
+credentials, and non-anonymous DVC remote details from any review-stage archive.
+Keep the protocol tag, content hashes, schemas, and relative paths so the editor
+can verify integrity without learning author identity.

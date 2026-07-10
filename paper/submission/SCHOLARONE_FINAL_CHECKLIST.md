@@ -1,79 +1,73 @@
 # ScholarOne Final Checklist
 
-Use only after the scientific content and official PDFs are frozen.
+Use only after scientific content and official PDFs are frozen.
 
 ## Files
 
-| File | Reviewer-facing | Local status |
+| File | Reviewer-facing | Requirement |
 |---|:---:|---|
-| Anonymous manuscript PDF from `CRPTO_ijds_submission.tex` | Yes | Rebuild and recheck after every body edit. |
-| Anonymous supplement PDF | Yes | Render and visually inspect. |
-| Separate title page | No | Complete from `TITLE_PAGE_DRAFT.md`. |
-| Data and Code Disclosure Form | Editor/system | Finalize from the draft. |
-| Cover letter | Editor | Finalize from `COVER_LETTER_AND_DISCLOSURE.md`. |
-| Reproducibility note/archive | Editor/system | Sanitize identity, paths, and remotes. |
+| Official anonymous manuscript PDF | Yes | Built from `CRPTO_ijds_submission.tex`, citation-clean, within page limit |
+| Anonymous online supplement PDF | Yes | Correct title, complete S1--S7/proofs, visually inspected |
+| Separate title page | No | Complete affiliation, email, ORCID and declarations |
+| IJDS Data and Code Disclosure Form | Editor/system | Match package plan and raw-data terms |
+| Cover letter | Editor | Match active title, method, results and limitations |
+| Reproducibility archive/note | Editor/system | Sanitized identity, paths, remotes and credentials |
 
-## Official Build
-
-```powershell
-just paper-submission-official
-```
-
-The wrapper uses the direct `latexmk.pl` payload on Windows and falls back to the verified
-`pdflatex -> bibtex -> pdflatex -> pdflatex` loop. Accept only when:
-
-- `.blg` has zero warnings;
-- `.log` has no undefined citation/reference warnings;
-- body page count satisfies the IJDS 25-page rule;
-- figures and tables fit;
-- PDF metadata and visible content remain anonymous.
-
-Current local build (2026-07-09): 13 pages total, with References beginning on
-page 11; citation/reference scans are clean. Recount after every substantive
-TeX edit.
-
-## Local Gates
+## Full Local Gate
 
 ```powershell
-just ijds-evidence
-uv run pytest tests/test_ijds_active_claim_sync.py -q
-just publication-integrity
-just lint
-just type-check
-just type-advisory-full
-just smoke
-just validate-champion
-just paper-submission
-just paper-submission-official
+just submission-check
 uv run dvc status --no-updates
+git status --short
 ```
 
-`dvc status` is a report, not permission to rerun protected stages. Do not
-repair paper-stage drift by overwriting the frozen upstream chain.
+`submission-check` includes active evidence validation, publication integrity,
+lint, Mypy, advisory `ty`, the full pytest suite, protected champion validation,
+both Quarto renders, and the official TeX compile.
 
-## Anonymous PDF QA
+## Scientific Reconciliation
 
-- No author names, affiliations, acknowledgements, repository ownership,
-  personal URLs, local usernames, or private remotes.
-- Correct title, abstract, keywords, section order, and supplement designation.
-- References use the official INFORMS bibliography style.
-- No missing glyphs, clipped figures, overflow tables, orphan headings, or
-  unreadably small text.
-- Active numbers match A35--A40 and governance.
-- Temporal reversals and retrospective-design caveat remain visible.
-- OCE/CVaR, SPO+, and external datasets remain diagnostics, not active methods.
+- Title is "CRPTO: When Marginal Conformal Coverage Meets Maturity-Safe Credit
+  Portfolio Selection" on all surfaces.
+- Active universe is 540,121; no resolved-status filter is implied.
+- Active policy is `q=0.75p+0.25u`, `tau=0.17`.
+- Primary candidate coverage is `[0.854923, 0.879692]`.
+- Guardrail-minus-point payoff is `[-$322,703.79, -$58,040.34]`.
+- Guardrail-minus-point default is `[-0.046275, -0.020093]`.
+- Guardrail-minus-point miscoverage is `[0.008822, 0.029850]`.
+- Standardized payoff is never called realized investor return or IRR.
+- No selected-set, causal, prospective, Markov, or fair-lending claim appears.
+- Compact-v7 headline values and A35--A40 are historical only.
+
+## Official Build QA
+
+The wrapper uses `latexmk` and falls back to the intentional
+`pdflatex -> bibtex -> pdflatex -> pdflatex` sequence. Accept only when:
+
+- `.blg` has no warnings;
+- `.log` has no undefined citations or references;
+- initial-submission body satisfies the 25-page rule;
+- tables and figures remain readable and inside margins;
+- PDF metadata and visible content are anonymous; and
+- page images show no clipping, overlap, blank content, or missing glyphs.
+
+Current local build (2026-07-10): 16 pages total and citation/reference clean.
+Recount and repeat visual QA after every substantive TeX edit.
+
+## Anonymous Packet
+
+- No author, affiliation, acknowledgement, repository owner, personal URL,
+  email, local username/path, or private remote in reviewer-facing files.
+- Title page and cover letter are uploaded only to their editor-facing slots.
+- The supplement is identified as an online supplement and not concatenated
+  accidentally with the body unless ScholarOne explicitly requests it.
+- Any review-stage reproducibility bundle keeps tags and hashes but removes
+  identity and secrets.
 
 ## ScholarOne Proof Go/No-Go
 
-Open the ScholarOne-generated proof, not only the local files. Submission is
-**NO-GO** if any of these occur:
-
-- title page or author identity leaks into reviewer files;
-- body/supplement order is wrong;
-- figure, equation, table, or bibliography is missing or clipped;
-- data/code answers differ from the cover letter;
-- page count or anonymous-review option is wrong;
-- uploaded PDF differs from the locally validated build.
-
-Repair locally, rerun the gates, re-upload, and inspect the new proof before
-final submission.
+Open the ScholarOne-generated proof. Submission is NO-GO if identity leaks,
+the wrong manuscript version appears, body/supplement order is wrong, any
+figure/table/equation/reference is missing, data/code answers conflict, or the
+uploaded PDF differs from the validated local build. Repair locally, rerun the
+full gate, re-upload, and inspect the replacement proof.

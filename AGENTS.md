@@ -13,9 +13,11 @@ Lectura obligatoria, en este orden:
    — auditoría científica que deja el submission v7 en NO-GO.
 3. [`docs/research/ijds_three_front_reconstruction_2026-07-10.md`](docs/research/ijds_three_front_reconstruction_2026-07-10.md)
    — ledger de recuperación y diseño del único paper IJDS final.
-4. [`docs/research/active_claims_2026-07-04.md`](docs/research/active_claims_2026-07-04.md)
+4. [`docs/research/active_claims_2026-07-10.md`](docs/research/active_claims_2026-07-10.md)
+   - active maturity-safe v2 claims, bounds, and transport mechanism.
+5. [`docs/research/active_claims_2026-07-04.md`](docs/research/active_claims_2026-07-04.md)
    — registro histórico v7, conservado para replay y no como claim activo.
-5. [`.codex/skills/crpto/SKILL.md`](.codex/skills/crpto/SKILL.md) — skill de
+6. [`.codex/skills/crpto/SKILL.md`](.codex/skills/crpto/SKILL.md) — skill de
    Codex con el detalle operativo del certificado y sus artefactos.
 
 Reglas mínimas que ningún agente puede violar (detalle en `CLAUDE.md`):

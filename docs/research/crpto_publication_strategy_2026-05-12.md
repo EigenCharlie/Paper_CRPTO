@@ -1,10 +1,10 @@
 # paper-crpto Publication Strategy - 2026-05-12
 
-> Historical note, 2026-07-04: this memo predates the pool93 promotion. Use
-> `docs/research/active_claims_2026-07-04.md` and
-> `docs/SCOPE_AND_GOVERNANCE.md` for active paper-facing metrics. Mentions of
-> `45/45` and the earlier champion are retained as venue-strategy provenance,
-> not as the current IJDS headline.
+> Historical note, updated 2026-07-10: the IJDS-first venue decision remains
+> active, but the method/metric discussion below predates the maturity-safe
+> reconstruction. Use `docs/research/active_claims_2026-07-10.md` and
+> `docs/SCOPE_AND_GOVERNANCE.md` for current paper-facing claims. Pool93,
+> compact-v7, A35/A40, Markov, and `45/45` references are strategy provenance.
 
 ## Decision
 

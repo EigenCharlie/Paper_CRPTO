@@ -1,19 +1,20 @@
 # IJDS Title Page Draft
 
-**Do not include this file in the anonymous reviewer packet.** It contains
-author identity and contact fields by design and belongs only in the separate
-ScholarOne/INFORMS title-page surface.
+Upload separately from the double-anonymous manuscript.
 
-Upload it only as the separate title page requested by ScholarOne/INFORMS.
+## Title
 
-## Manuscript Title
+CRPTO: When Marginal Conformal Coverage Meets Maturity-Safe Credit Portfolio
+Selection
 
-CRPTO: A Calibration-Selected Conformal Guardrail for Credit Portfolios
+## Running Title
+
+Marginal Conformal Coverage and Credit Portfolio Selection
 
 ## Keywords
 
-conformal prediction; predict-then-optimize; credit risk; portfolio
-optimization; calibration; reproducible data science
+conformal prediction; predict-then-optimize; credit risk; portfolio selection;
+censoring; temporal validation; partial identification
 
 ## Author
 
@@ -21,9 +22,8 @@ Carlos Alfredo Vergara Rojas
 
 ## Affiliation
 
-Not listed in this repository. Complete in ScholarOne before upload, using the
-current institutional affiliation exactly as it should appear in the submission
-system.
+Complete in ScholarOne with the current institutional affiliation exactly as
+it should appear in the publication record.
 
 ## Corresponding Author
 
@@ -31,33 +31,20 @@ Carlos Alfredo Vergara Rojas
 
 Email: cavr94@gmail.com
 
-ORCID: Not listed in this repository; complete in ScholarOne if applicable.
+ORCID: Complete in ScholarOne if applicable.
 
-## Acknowledgements
+## Declarations
 
-None for the initial double-anonymous submission. Any acknowledgements should
-remain outside the anonymous manuscript and supplement.
+- Funding: The author received no specific funding for this work.
+- Conflicts of interest: The author declares no conflicts of interest.
+- Acknowledgements: None in the initial submission unless a non-anonymous
+  acknowledgement is required by the editor.
+- Data and code: The official IJDS disclosure form will describe the staged
+  release of source code, environment locks, DVC metadata, derived evidence,
+  and raw-data acquisition instructions.
 
-## Funding
+## Handling
 
-The author received no specific funding for this work.
-
-## Conflicts of Interest
-
-The author declares no conflicts of interest.
-
-## Data and Code Disclosure Summary
-
-The manuscript includes numerical and computational work. The author will
-complete the IJDS Data and Code Disclosure Form at submission and, if the paper
-is accepted, provide the code, manuscript sources, reproducibility commands,
-artifact metadata, and data-access instructions described in
-`REPRODUCIBILITY_PACKAGE.md` and `RAW_DATA_SOURCE_NOTES.md`.
-
-## Double-Anonymous Handling
-
-- Do not include this file in reviewer-facing materials.
-- Keep public repository, DVC, MLflow, DagsHub, personal, affiliation, and
-  acknowledgement details out of `CRPTO_ijds_submission.tex`,
-  `CRPTO_ijds.qmd`, and `supplement_ijds.qmd`.
-- Use third-person citations for any author-identifying prior work, if added.
+Do not merge this title page into the reviewer-facing PDF. Reconcile title,
+running title, keywords, author spelling, email, and declarations against the
+final ScholarOne proof before submission.
