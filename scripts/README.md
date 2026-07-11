@@ -13,8 +13,15 @@ Use these for the active submission workflow:
 - `build_ijds_maturity_safe_evidence.py` - validates the clean tagged v2 run
   and regenerates main tables 1--4, S1--S7, and figures 0--3 (30 hashed
   publication outputs).
+- `build_ijds_comparator_stringency_evidence.py` - validates the clean tagged
+  post hoc comparator audit and regenerates the baseline-alignment,
+  sensitivity, family-census, leave-one-month-out, decomposition, and
+  score-geometry evidence (38 hashed publication outputs).
 - `experiments/run_ijds_maturity_safe_challenger.py` - performs the expensive
   locked methodology replay into a fresh immutable experiment path.
+- `experiments/run_ijds_comparator_stringency_audit.py` - evaluates the frozen
+  guardrail against development-risk-matched point-PD comparators without
+  refitting the model or touching a protected stage.
 - `build_ijds_calibration_selected_evidence.py` and the older IJDS challenger
   scripts - compact-v7 historical replay only; never active paper evidence.
 - `compile_ijds_submission.py` - compiles the official INFORMS/IJDS LaTeX
@@ -36,7 +43,7 @@ just smoke
 just type-advisory
 just hooks-check
 just complexity-report
-just ijds-evidence              # active maturity-safe evidence
+just ijds-evidence              # maturity-safe base plus comparator audit
 just ijds-historical-v7-evidence # historical compact-v7 provenance only
 just paper-submission
 just paper-submission-official

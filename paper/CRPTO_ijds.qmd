@@ -1,5 +1,5 @@
 ---
-title: "CRPTO: When Marginal Conformal Coverage Meets Maturity-Safe Credit Portfolio Selection"
+title: "CRPTO: Auditing Comparator Stringency in Maturity-Safe Conformal Credit Portfolios"
 author: "Anonymous"
 date: "July 2026"
 lang: en
@@ -25,33 +25,33 @@ execute:
 
 # Abstract {.unnumbered}
 
-Marginal predictive coverage is often carried into optimization as if it
-protected the selected decision. We test that implication in consumer credit,
-where outcome maturity, temporal shift, and optimizer selection all intervene.
-Conformal Robust Predict-Then-Optimize (CRPTO) combines a calibrated
-probability of default (PD), an exact 90% Mondrian split-conformal interval for
-the binary repayment outcome, and a monthly loan-allocation linear program. We
-construct a status-independent universe of 540,121 36-month Lending Club loans,
-fit every statistical component by June 2012, select one guardrail on mature
-July--December 2012 cohorts, and freeze it across 15 monthly decisions from
-April 2016 through June 2017. Loans unresolved at the September 2020 snapshot
-remain in each menu and enter sharp binary bounds. All-candidate coverage falls
-from 0.900448 at conformal fit to [0.854923, 0.879692] out of time. Relative to
-a matched point-PD policy, the selected score
-$q_i=0.75p_i+0.25u_i$ reduces the exposure-weighted default rate by
-[0.020093, 0.046275], but lowers standardized realized payoff by
-[$58,040, $322,704] and increases funded-set miscoverage by
-[0.008822, 0.029850]. The default improvement comes from moving 61.13% of
-capital into the lowest conformal score stratum, not from improved selection
-within strata. A transport identity shows that within-stratum optimizer
-selection is instead the main source of the coverage failure. The evidence
-therefore supports a narrower conclusion than robust dominance: a conformal
-upper-score constraint can act as a coarse portfolio-composition regularizer,
-while marginal or Mondrian coverage does not control an adaptively selected
-funded set under temporal shift.
+Predict-then-optimize studies often compare a transformed uncertainty score
+with its point prediction under the same numeric risk cap. We show that this
+apparently neutral baseline choice can reverse the empirical conclusion.
+Conformal Robust Predict-Then-Optimize (CRPTO) combines calibrated probability
+of default (PD), a 90%-target Mondrian split-conformal interval using the exact
+finite-sample rank for the binary repayment outcome, and a monthly
+credit-allocation linear program. We construct
+a status-independent universe of 540,121 36-month Lending Club loans, fit all
+statistical components by June 2012, select one guardrail on six mature 2012
+cohorts, and freeze it across 15 monthly decisions from April 2016 through June
+2017. Unresolved snapshot outcomes remain in every menu and enter sharp binary
+bounds. All-candidate coverage falls from 0.900448 at conformal fit to
+[0.854923, 0.879692] out of time. At the shared cap $\tau=0.17$, the score
+$q_i=0.75p_i+0.25u_i$ appears to reduce default by [0.020093, 0.046275]. But
+$q_i\ge p_i$ nests the guardrail feasible set inside the point-PD set, whose cap
+is nonbinding. A separately tagged post hoc audit fixes the point-PD cap at the
+guardrail's mean development-funded PD, 0.068313. The conclusion reverses: the
+guardrail has lower realized standardized payoff by [$295,967, $506,587],
+higher default by [0.034431, 0.056287], and higher funded-set miscoverage by
+[0.027093, 0.046283]. These signs survive low/mean/high development matches and
+15 leave-one-month-out checks, but only seven of nine guardrails show all three
+directions. CRPTO therefore identifies a baseline-specification failure, not a
+universally superior policy: predictive coverage, score conservatism, and
+decision stringency are distinct objects and must be audited separately.
 
-**Keywords:** conformal prediction; predict-then-optimize; credit risk;
-portfolio selection; censoring; temporal validation; partial identification
+**Keywords:** conformal prediction; predict-then-optimize; baseline design;
+credit risk; portfolio selection; temporal validation; partial identification
 
 # Introduction {#sec-introduction}
 
@@ -76,8 +76,9 @@ These are estimand defects rather than presentation details.
 
 CRPTO studies the handoff from uncertainty quantification to a portfolio
 decision after repairing those defects. A temporally trained CatBoost model and
-Platt calibrator produce point PD $p_i$. An exact split-conformal recipe fitted
-within five score strata produces a binary-outcome interval $[\ell_i,u_i]$.
+Platt calibrator produce point PD $p_i$. A split-conformal recipe using the
+exact finite-sample rank within five score strata produces a binary-outcome
+interval $[\ell_i,u_i]$.
 The guardrail uses
 
 $$
@@ -91,30 +92,44 @@ $\gamma\in\{0.25,0.50,0.75\}$. One policy is selected on six mature 2012
 development months and then applied, without refitting or reselection, to each
 of 15 later monthly menus.
 
-The empirical result is mixed and informative. The conformal guardrail buys a
-sign-robust reduction in funded default, but it gives up payoff and does not
-buy funded-set coverage. In fact, its selected-set miscoverage is worse than
-the point-PD comparator. The mechanism is not a paradox. The upper-score
-constraint shifts capital toward the lowest PD stratum, which improves default
-through composition. Within each stratum, however, the optimizer still selects
-loans by expected payoff, and that adaptive reweighting dominates the coverage
-transport error.
+The comparison initially seems to reveal a default--payoff trade-off. At the
+same numeric cap, the guardrail has lower funded default, lower payoff, and
+higher funded-set miscoverage than point PD. That baseline is not decision
+neutral. Since $u_i\ge p_i$, the score satisfies $q_i\ge p_i$; using the same
+$\tau$ nests the guardrail feasible set inside a looser point-PD set. In our
+data the point cap is nonbinding in every primary month. The apparent default
+benefit therefore mixes two changes: adding conformal uncertainty and imposing
+greater effective risk stringency.
+
+We audit that confounding with a point-PD cap fixed to the selected
+guardrail's mean funded point PD over development. This diagnostic was designed
+after the parent result was known, then committed and tagged before the first
+successful persisted execution; it is post hoc falsification rather than
+confirmation. Against the aligned comparator, the default conclusion reverses
+and the guardrail is worse on realized payoff, default, and miscoverage. The
+reversal survives every locked selected-policy diagnostic, but not the
+predeclared 9-of-9 family rule. The result is therefore directionally stable
+under the locked selected-policy diagnostics and heterogeneous across the
+policy family.
 
 The paper makes four contributions.
 
 1. It provides a maturity-safe, monthly, temporally separated protocol for
-   evaluating a prediction-to-optimization policy. Candidate membership uses
-   issue date and contractual term, never final loan status, and no 2016--2017
-   outcome enters model fitting or policy selection.
-2. It aligns the optimized and evaluated quantities through the standardized
-   binary payoff $(1-Y_i)r_i-Y_i\lambda$ and retains unresolved outcomes with
-   sharp aggregate and pairwise bounds.
-3. It introduces an exact transport decomposition that separates population
-   drift, exposure weighting, conformal-group composition, and within-group
-   optimizer selection for both default and miscoverage.
-4. It documents a practically relevant negative result: marginal Mondrian
-   coverage and a conservative conformal score can change the portfolio, but
-   neither implies selected-set validity or economic dominance.
+   evaluating a prediction-to-optimization policy. Candidate membership never
+   uses final status, and no 2016--2017 outcome enters fitting or policy
+   selection.
+2. It turns baseline design into an explicit comparator-stringency audit:
+   establish the score ordering, test cap binding and slack, derive alignment
+   from development data only, and report closed threshold, month, and family
+   diagnostics. Equal numeric caps on ordered scores create nested feasible
+   sets, not equal decision stringency; the development-risk match is an
+   auditable but nonunique diagnostic.
+3. It aligns optimized and evaluated payoff, retains unresolved outcomes with
+   sharp common-outcome bounds, and decomposes population-to-funded transport
+   into drift, exposure, group composition, and within-group selection.
+4. It documents a practically relevant falsification: the selected
+   guardrail's apparent default benefit reverses after comparator alignment,
+   while marginal Mondrian coverage still fails on the funded set.
 
 @fig-pipeline summarizes the active research object. Candidate construction,
 prediction, policy development, allocation, and outcome evaluation are separate
@@ -126,9 +141,10 @@ claims inspectable.
 ![Maturity-safe CRPTO pipeline. A status-independent monthly menu enters a prediction stack frozen by June 2012; one guardrail is selected on 2012H2, applied to later monthly allocations without outcomes, and evaluated afterward with sharp bounds and a selection-transport audit.](../reports/crpto/figures/crpto_ijds_ms_fig0_pipeline.png){#fig-pipeline width=100%}
 
 This is a code-locked retrospective temporal audit, not a prospective trial or
-a causal estimate. Its purpose is to identify what the conformal layer changes,
-what it does not guarantee, and which evidence a decision-focused data-science
-claim must expose.
+a causal estimate. The parent policy is frozen; the later comparator audit is
+explicitly post hoc. The purpose is to identify what the conformal layer
+changes, what the original baseline accidentally changed with it, and which
+evidence a decision-focused data-science comparison must expose.
 
 # Related Work {#sec-related}
 
@@ -154,7 +170,11 @@ how forecast errors enter the decision [@bertsimas2020prescriptive;
 @sadana2025contextual]. CRPTO takes the modular route because the research
 question concerns governance of a frozen score, not a new credit-scoring
 leaderboard. The baseline and guardrail therefore share the model, payoff,
-budget, concentration limits, solver, and monthly candidate menus.
+budget, concentration limits, solver, and monthly candidate menus. They cannot,
+however, share a numeric risk threshold by label alone: once the score changes,
+the threshold defines a different feasible set. CRPTO treats comparator
+alignment as part of the empirical design rather than an implementation
+default.
 
 ## What conformal coverage does and does not transport
 
@@ -218,9 +238,9 @@ The active CRPTO role is narrower: it audits what happens when a conventional,
 frozen credit score receives a simple conformal upper-score constraint. It does
 not retrain through the optimizer, calibrate a selected-set loss, or claim a
 new uncertainty-set theorem. Its additions are a maturity-safe credit decision
-protocol, coherent economic comparison, sharp treatment of unresolved outcomes,
-and a decomposition of how coverage changes between candidates and funded
-exposure.
+protocol, a comparator-stringency diagnostic, coherent economic comparison,
+sharp treatment of unresolved outcomes, and a decomposition of how coverage
+changes between candidates and funded exposure.
 
 | Literature family | Established contribution | Active CRPTO boundary |
 |---|---|---|
@@ -229,6 +249,7 @@ exposure.
 | Conformal robust/contextual optimization [@johnstone2021; @patel2024; @hu2026crc] | Coverage-backed uncertainty sets in optimization | Studies a frozen credit LP empirically; no inherited selected-set validity |
 | Valid selection and decision-risk calibration [@hegazy2025valid_selection_conformal_sets; @yeh2025training; @zhou2026creme] | Procedures that control selection or operational loss | Provides a diagnostic counterexample and transport mechanism, not a substitute theorem |
 | Decision-focused learning [@donti2017; @elmachtoub2022; @mandi2024] | Training predictions against downstream loss | Preserves the predictor for governance and audits a post-hoc decision layer |
+| Baseline and ablation design | Holding the decision problem fixed while changing one ingredient | Shows that a shared numeric cap does not hold decision stringency fixed |
 
 : Closest-work boundary for the active CRPTO contribution. {#tbl-closest-work}
 
@@ -431,28 +452,74 @@ through December 2012. Among policies that invest the full budget in all six
 months, the rule chooses the highest summed realized standardized payoff, then
 expected payoff and candidate ID as deterministic tie-breakers. It selects
 $\tau=0.17$ and $\gamma=0.25$, or
-$q_i=0.75p_i+0.25u_i$. A point-PD policy is independently selected from
-$\tau\in\{0.15,0.17,0.19\}$ on the same development months. All three point
-caps yield the same allocation because the point-risk constraint is nonbinding;
-the deterministic tie-break selects $\tau=0.15$. We additionally report a
-matched point policy at $\tau=0.17$. The two point allocations remain identical
-in primary OOT.
+$q_i=0.75p_i+0.25u_i$. Its six-month payoff exceeds the runner-up by only
+$1,238.33, and it wins three of six leave-one-development-month-out folds. The
+selector is therefore frozen but fragile.
 
-The model, Platt map, conformal recipe, selected guardrail, and point baselines
-are then frozen. Every primary and extension month receives its own candidate
-menu and fresh budget. No endpoint cap, future-menu pooling, or evaluation-period
-reselection is used.
+The parent experiment independently selects point PD from
+$\tau_p\in\{0.15,0.17,0.19\}$. All three caps yield the same allocation because
+the point-risk constraint is nonbinding; the deterministic tie-break chooses
+0.15. The parent also labels $\tau_p=0.17$ as a same-threshold comparator. Those
+point allocations remain identical OOT. We retain that comparison because it
+is historically exact, but @sec-theory shows why it is not stringency matched.
+
+The comparator audit defines one primary point cap using development data
+only. Let $a^{q}_{it}$ be the selected guardrail allocation in development
+month $t$ and $B$ the monthly budget. We set
+
+$$
+\tau_p^{dev}=\frac{1}{6}\sum_{t=1}^{6}
+\frac{\sum_i a^{q}_{it}p_i}{B}=0.06831339893217318.
+$$ {#eq-development-match}
+
+The fixed threshold aligns the guardrail's mean development-funded point PD;
+it does not equate feasible sets or identify a unique causal counterfactual.
+The closed sensitivity set is the minimum, mean, and maximum monthly funded PD,
+$\{0.065032,0.068313,0.071705\}$. Each of the other eight guardrails receives
+its own development-mean point-PD comparator for a complete nine-policy census.
+No threshold or policy is selected from OOT results.
+
+The maturity-safe model, Platt map, conformal recipe, selected guardrail, and
+dates were frozen before the parent evaluation. The comparator rule was
+specified after inspecting that parent result, then committed and tagged before
+the first successful persisted execution. Every primary and extension month
+receives its own menu and fresh budget. No endpoint cap, future-menu pooling,
+refit, or evaluation-period reselection is used.
 
 # Identification and Theory {#sec-theory}
 
-The theoretical contribution is intentionally algebraic. It characterizes the
-binary interval, identifies what can be learned with unresolved outcomes, and
-separates population coverage from optimizer selection. None of the statements
-assumes funded-set conformal validity.
+The theoretical contribution is intentionally algebraic. It diagnoses
+same-threshold comparator nesting, characterizes the binary interval,
+identifies what can be learned with unresolved outcomes, and separates
+population coverage from optimizer selection. None of the statements assumes
+funded-set conformal validity or makes development matching uniquely correct.
+
+## Comparator non-invariance
+
+Let $\mathcal F_s(\tau)$ denote the allocations satisfying @eq-lp when the
+risk score is $s$. All nonrisk constraints and the objective are held fixed.
+
+**Proposition 1 (same-threshold nesting).** If $\gamma\in[0,1]$ and $u_i\ge
+p_i$ for every candidate, then $q_i(\gamma)\ge p_i$ and
+
+$$
+\mathcal F_q(\tau)\subseteq\mathcal F_p(\tau).
+$$ {#eq-feasible-nesting}
+
+Consequently, for the common expected-payoff objective,
+$V_p(\tau)\ge V_q(\tau)$. The inclusion is strict whenever some allocation
+satisfies the point-PD cap but violates the $q$ cap. The proof follows by
+multiplying $q_i\ge p_i$ by nonnegative exposure and summing; Online Supplement
+Proposition S4 gives the formal statement.
+
+This proposition makes the old expected-payoff comparison partly mechanical.
+It does not order realized payoff or default, and it does not imply that
+$\tau_p^{dev}$ is the only valid match. It says only that copying $\tau$ across
+the two scores fails to hold the feasible decision problem fixed.
 
 ## Binary interval geometry
 
-**Proposition 1 (binary miscoverage).** For $Y\in\{0,1\}$ and any interval
+**Proposition 2 (binary miscoverage).** For $Y\in\{0,1\}$ and any interval
 $[\ell,u]\subseteq[0,1]$, miscoverage is exactly the sum of the two disjoint
 events in @eq-binary-miss. Thus $u=1$ covers every realized default, whereas
 any default with $u<1$ is missed. The proof is a two-case enumeration given in
@@ -469,7 +536,7 @@ For an unresolved loan, $Y_i$ may be either 0 or 1. Default therefore lies in
 $[0,1]$, payoff in $[-\lambda,r_i]$, and miscoverage in the two attainable
 values implied by @eq-binary-miss.
 
-**Proposition 2 (sharp additive bounds).** Let $U$ index unrestricted
+**Proposition 3 (sharp additive bounds).** Let $U$ index unrestricted
 unresolved outcomes and write an additive fixed-allocation metric as
 $T(Y)=C+\sum_{i\in U}g_i(Y_i)$. Then
 
@@ -478,8 +545,9 @@ T_L=C+\sum_{i\in U}\min_{y\in\{0,1\}}g_i(y),\qquad
 T_U=C+\sum_{i\in U}\max_{y\in\{0,1\}}g_i(y)
 $$ {#eq-sharp-bounds}
 
-are jointly attainable and hence sharp. This is partial identification under
-unrestricted binary completion, not a sampling confidence interval.
+are sharp because each endpoint is attained by a joint assignment of all
+unresolved outcomes. This is partial identification under unrestricted binary
+completion, not a sampling confidence interval.
 
 Policy contrasts require more care. CRPTO and point PD often fund different
 loans, so subtracting two marginal intervals is generally not sharp. We form
@@ -495,7 +563,7 @@ weighted value, $M_{mix}$ the value obtained by combining candidate
 within-group rates with the funded portfolio's conformal-group shares, and
 $M_{fund}$ the actual funded exposure-weighted value. For reference $a$,
 
-**Proposition 3 (selection transport).** The funded departure from $a$
+**Proposition 4 (selection transport).** The funded departure from $a$
 decomposes exactly as
 
 $$
@@ -512,11 +580,12 @@ and upper extremal completions. The funded endpoints are sharp bounds; the
 intermediate terms describe each completion and are not component-wise
 confidence intervals.
 
-The three propositions support a compact identification ladder.
+The four propositions support a compact identification ladder.
 
 ::: {.keep-together}
 | Object | Exact statement | Evidence used | Does not imply |
 |---|---|---|---|
+| Comparator | At common $\tau$, $q\ge p$ nests the guardrail feasible set inside point PD | S4 and comparator audit | A unique matching rule or causal effect |
 | Binary interval | Miscoverage is determined by whether zero or one lies outside $[\ell,u]$ | S1 and endpoint saturation | Confidence interval for latent individual PD |
 | Fixed allocation | Unresolved additive metrics attain the bounds in @eq-sharp-bounds | S2, S3, S6 | Sampling uncertainty or missing-at-random identification |
 | Paired policies | A common unresolved outcome is optimized once over the funded union | S7 | Causal policy effect |
@@ -550,173 +619,203 @@ calibration deteriorate. The conformal result should therefore be read as
 empirical temporal evidence, not as a failed theorem under maintained
 exchangeability.
 
-## Development success does not transport
+## Equal thresholds are not equal baselines
 
-The selected guardrail looked favorable on its six development months. Its
-realized payoff exceeded the development-selected point policy by $50,260.10,
-while default and miscoverage were lower by 0.063802 and 0.007358. Yet its
-model-expected payoff was already $72,701.67 lower. In the locked primary
-window, the realized-payoff and miscoverage directions reverse, while the
-default advantage remains.
+The original comparison holds $\tau=0.17$ fixed while changing the score from
+$p$ to $q$. Proposition 1 predicts a nested feasible set, and the optimization
+diagnostics show that the nesting matters. The guardrail's exposure-weighted
+$q$ equals its cap in all 15 primary months. The same-threshold point policy has
+weighted PD 0.115758, leaving aggregate slack 0.054242; its monthly slack ranges
+from 0.039844 to 0.072349. The development-matched point cap is binding in all
+15 months.
 
-| Guardrail minus point PD | Policy development, 2012H2 | Locked primary, 2016-04--2017-06 |
-|---|---:|---:|
-| Expected payoff | -$72,701.67 | -$240,977.78 |
-| Realized payoff | +$50,260.10 | [-$322,703.79, -$58,040.34] |
-| Weighted default | -0.063802 | [-0.046275, -0.020093] |
-| Weighted miscoverage | -0.007358 | [0.008822, 0.029850] |
+| Policy | Constraint score | Cap | OOT weighted score | Cap slack | OOT weighted point PD |
+|---|---|---:|---:|---:|---:|
+| Conformal guardrail | $q$ | 0.170000 | 0.170000 | 0.000000 | 0.074979 |
+| Point PD, same numeric cap | $p$ | 0.170000 | 0.115758 | 0.054242 | 0.115758 |
+| Point PD, development matched | $p$ | 0.068313 | 0.068313 | 0.000000 | 0.068313 |
 
-: Development-to-OOT transport of the selected policy. Development values are exact; primary values are sharp unresolved-outcome bounds. {#tbl-development-transport}
+: Baseline alignment over the 15 primary decisions. A shared number does not imply a shared feasible set. {#tbl-baseline-alignment}
 
-This is not a formal generalization test from six independent observations.
-It is a locked temporal reversal. It shows why selecting on mature development
-outcomes and then reporting the same period would have produced the wrong
-economic and coverage conclusion. No alternative $\tau$, $\gamma$, payoff, or
-date window is chosen after observing the reversal.
+![The bars show the exposure-weighted score used by each primary policy; black markers show configured caps. The same-threshold point cap is loose, whereas the guardrail and development-matched point caps bind.](../reports/crpto/figures/crpto_ijds_cs_fig1_alignment.png){#fig-alignment width=92%}
 
-## The guardrail lowers default but also lowers payoff
+The same-threshold point policy also has model-expected payoff $240,977.78
+higher than the guardrail. That direction follows from feasible-set nesting
+and cannot, by itself, measure the price of conformal uncertainty. We therefore
+retain the comparison as a specification diagnostic, not the primary policy
+counterfactual.
 
-Across the 15 locked primary months, each policy allocates $15$ million. The
-guardrail's expected standardized payoff is $2,383,112,
-compared with $2,624,090 for point PD. Its realized payoff is bounded by
-[-$2,389.90, $168,250.04], whereas point PD is bounded by
-[$177,108.53, $369,495.74]. Marginal intervals overlap, but the paired sharp
-contrast does not.
+## Comparator alignment reverses the conclusion
+
+Across 15 months, the guardrail and development-matched point policy each
+allocate $15$ million. Their model-expected payoffs are close: $2,383,112.23
+for the guardrail and $2,374,633.05 for point PD. Outcomes tell a different
+story. The guardrail realized-payoff bound is [-$2,389.90, $168,250.04], while
+the matched point bound is [$398,134.41, $570,279.93]. Default and miscoverage
+are also lower for the matched point policy.
 
 | Policy | Expected payoff | Realized payoff bound | Default bound | Miscoverage bound | Unresolved exposure |
 |---|---:|---:|---:|---:|---:|
 | Conformal guardrail | $2,383,112 | [-$2,390, $168,250] | [0.292775, 0.310322] | [0.294708, 0.309589] | 0.017547 |
-| Point PD, matched $\tau$ | $2,624,090 | [$177,109, $369,496] | [0.326037, 0.343428] | [0.275360, 0.290265] | 0.017392 |
-| Point PD, development-selected $\tau$ | $2,624,090 | [$177,109, $369,496] | [0.326037, 0.343428] | [0.275360, 0.290265] | 0.017392 |
+| Point PD, development matched | $2,374,633 | [$398,134, $570,280] | [0.247353, 0.265026] | [0.256624, 0.274297] | 0.017673 |
+| Point PD, same numeric cap | $2,624,090 | [$177,109, $369,496] | [0.326037, 0.343428] | [0.275360, 0.290265] | 0.017392 |
 
-: Primary monthly-policy aggregates. Payoff is the standardized quantity in @eq-realized-payoff. {#tbl-primary}
+: Primary policy aggregates. Payoff is the standardized quantity in @eq-realized-payoff. {#tbl-primary}
 
-Relative to either point comparator, the guardrail's paired realized-payoff
-difference is [-$322,703.79, -$58,040.34], or [-0.021514, -0.003869] per dollar
-of capital. Its default-rate difference is [-0.046275, -0.020093], but its
-miscoverage difference is [0.008822, 0.029850]. All three signs are robust to
-the unresolved outcomes. Thus the guardrail produces a real default--payoff
-trade-off and a coverage loss, not a free robustness gain.
+The paired common-outcome bounds make the inversion explicit. Relative to the
+same-threshold baseline, the guardrail appears safer. Relative to the
+development-matched baseline, it is worse on all three realized metrics.
 
-| Guardrail minus point PD | Sharp lower | Sharp upper | Direction |
-|---|---:|---:|---|
-| Realized standardized payoff | -$322,703.79 | -$58,040.34 | guardrail worse |
-| Payoff rate | -0.021514 | -0.003869 | guardrail worse |
-| Weighted default | -0.046275 | -0.020093 | guardrail better |
-| Weighted miscoverage | 0.008822 | 0.029850 | guardrail worse |
+| Guardrail minus point PD | Same numeric cap | Development matched |
+|---|---:|---:|
+| Expected payoff | -$240,977.78 | +$8,479.18 |
+| Realized payoff | [-$322,703.79, -$58,040.34] | [-$506,587.03, -$295,967.17] |
+| Weighted default | [-0.046275, -0.020093] | [0.034431, 0.056287] |
+| Weighted miscoverage | [0.008822, 0.029850] | [0.027093, 0.046283] |
 
-: Paired primary contrasts over 2,246 union-funded loans, 52 with unresolved outcomes. These are retrospective, not causal, contrasts. {#tbl-contrast}
+: Baseline-dependent primary contrasts. Every displayed realized interval is sharp for unrestricted unresolved binary outcomes. {#tbl-primary-inversion}
 
-## The result is heterogeneous month by month
+![Sharp guardrail-minus-point contrast intervals. Orange is the loose same-threshold baseline; teal shows the closed low, mean, and high development matches.](../reports/crpto/figures/crpto_ijds_cs_fig2_selected_contrasts.png){#fig-inversion width=100%}
 
-@fig-monthly reports every primary month. The guardrail has a sign-robust
-payoff advantage in 5 months, a disadvantage in 8, and an ambiguous contrast in
-2. It has lower default in 12 months, higher default in 2, and an ambiguous
-contrast in 1. For miscoverage, it is better in only 3 months, worse in 10, and
-ambiguous in 2. Aggregation therefore does not hide a universal monthly winner.
+This is not a causal policy effect. It is a historical comparison of fixed
+rules over identical menus. Nor does the small positive expected difference
+rescue the guardrail: the model expectation and realized outcome disagree.
+The payoff decomposition attributes +$53,474.88 to expected interest and
+-$44,995.70 to expected default loss, but the resolved
+default-and-foregone-interest component of realized payoff is -$488,201.64.
+For these fixed allocations, expected payoff breaks even at
+$\lambda=0.534800$; the sharp realized-payoff upper contrast remains negative
+for every $\lambda\in[0,1]$. This LGD diagnostic does not reoptimize either
+portfolio.
 
-![Monthly policy outcomes in the locked primary window. Blue denotes the conformal guardrail and orange point PD; shaded regions show sharp unresolved-outcome bounds where the endpoints differ.](../reports/crpto/figures/crpto_ijds_ms_fig2_monthly.png){#fig-monthly width=100%}
+## Directionally stable for the selected policy, heterogeneous across the family
 
-The final primary month has the largest unresolved share and correspondingly
-wider bounds, but the aggregate payoff, default, and miscoverage signs remain
-identified. The July--September 2017 extension is different: roughly 23.5% of
-funded exposure is unresolved for both policies. Its payoff and coverage bounds
-are too wide for a directional promotion claim, so it is reported only as a
-censoring stress test.
+The selected-policy reversal is not a single-threshold accident. At the low,
+mean, and high development matches, the guardrail's payoff, default, and
+miscoverage intervals retain the same signs.
 
-## Composition explains the default improvement
+| Point-PD match | Realized payoff difference | Default difference | Miscoverage difference |
+|---|---:|---:|---:|
+| Low, 0.065032 | [-$500,320.92, -$257,011.29] | [0.035901, 0.061313] | [0.029141, 0.051886] |
+| Mean, 0.068313 | [-$506,587.03, -$295,967.17] | [0.034431, 0.056287] | [0.027093, 0.046283] |
+| High, 0.071705 | [-$521,659.19, -$319,301.84] | [0.031470, 0.052274] | [0.024173, 0.042310] |
 
-The guardrail and point policy use the same expected-payoff objective but fund
-substantially different sets. The guardrail funds 1,561 unique loans, point PD
-funds 1,421, and only 736 are shared. Its exposure-weighted point PD is 0.074979
-versus 0.115758 for point PD. This safety shift comes with a lower
-exposure-weighted contractual rate, 0.210114 versus 0.257957.
+: Closed development-threshold sensitivity for the selected guardrail. {#tbl-selected-sensitivity}
 
-The most visible change is conformal-score composition. The guardrail places
-61.13% of exposure in the lowest score stratum and only 0.97% in the highest;
-point PD places 10.16% and 10.43%, respectively. This is the sense in which the
-upper-score constraint acts as a coarse composition regularizer.
+Dropping each primary month once also preserves every aggregate direction. The
+least favorable matched-comparator margins are -$231,823.93 for the payoff
+upper endpoint, 0.029599 for the default lower endpoint, and 0.021984 for the
+miscoverage lower endpoint. Month by month, the guardrail has lower payoff in
+14 months and one ambiguous month; higher default in 14 and one ambiguous;
+and higher miscoverage in 13, lower in one, and ambiguous in one. The full
+monthly audit appears in the Online Supplement.
 
-| Score stratum | Guardrail exposure | Point-PD exposure |
-|---:|---:|---:|
-| 0, lowest calibrated PD | 0.611338 | 0.101627 |
-| 1 | 0.130426 | 0.232390 |
-| 2 | 0.159965 | 0.320223 |
-| 3 | 0.088615 | 0.241492 |
-| 4, highest calibrated PD | 0.009657 | 0.104268 |
+The result does not generalize uniformly across the nine guardrails. Each is
+paired with its own development-mean point-PD comparator, with no OOT
+reselection. Seven pairs have sign-robustly worse guardrail payoff, seven have
+worse default, and all nine have worse miscoverage. `linear-003` and
+`linear-006` have ambiguous payoff and default bounds, so the predeclared
+9-of-9 family gate fails.
 
-: Primary exposure shares by the five conformal score strata. {#tbl-groups}
+| Closed family result | Count |
+|---|---:|
+| Guardrail payoff sign-robustly worse | 7/9 |
+| Guardrail default sign-robustly worse | 7/9 |
+| Guardrail miscoverage sign-robustly worse | 9/9 |
+| All three directions jointly | 7/9 |
 
-## Within-group selection explains the coverage failure
+: Complete family census; no OOT winner is selected. {#tbl-family-census}
 
-@fig-transport applies @eq-transport under the lower outcome completion. For
-default, the guardrail's composition term is -0.041210, while point PD's is
-+0.019627. That difference accounts for the guardrail's aggregate default
-advantage. Yet the within-group selection term is +0.175652 for the guardrail
-and +0.148077 for point PD. Both policies select loans with much higher default
-than their stratum-level candidate counterfactual; the guardrail does not repair
-that behavior.
+The original guardrail selector is itself fragile. `linear-004` wins the full
+six-month development grid by $1,238.33 but only three of six
+leave-one-development-month-out folds. `linear-001` wins one fold and
+`linear-008` wins two. We report that instability and keep the selected policy
+frozen rather than promoting an OOT-inspected alternative.
 
-![Transport from candidate rows to funded exposure under the lower completion. The group-mix step explains the guardrail's lower default; the final within-group step explains most funded-set miscoverage.](../reports/crpto/figures/crpto_ijds_ms_fig3_transport.png){#fig-transport width=92%}
+## The mechanism depends on the comparator
 
-For miscoverage, the candidate-row rate is 0.120308 and the loan-amount-weighted
-rate is 0.126272. The guardrail's group mix would slightly improve it to
-0.123598, but within-group selection adds 0.171111, yielding funded
-miscoverage 0.294708. Point PD's group mix raises the rate to 0.131043 and its
-within-group term adds 0.144317, yielding 0.275360. Under the upper completion,
-the same qualitative conclusion holds. The coverage failure is therefore not
-caused primarily by the guardrail's move toward low-score groups. It is caused
-by adaptive selection within those groups, combined with binary interval
-geometry and temporal drift.
+Relative to the loose same-threshold point policy, the original composition
+story is numerically correct. The guardrail places 0.611338 of capital in the
+lowest score stratum, versus 0.101627 for point PD, and has lower default. But
+the development-matched point policy also concentrates in low point risk: its
+group-0 exposure is 0.499786. It funds 1,556 unique loans versus 1,561 for the
+guardrail, shares 1,128 IDs, and overlaps on 69.79% of capital.
 
-## A Pareto trade-off, not a ranking winner
+| Quantity, lower outcome completion | Guardrail | Development-matched point PD |
+|---|---:|---:|
+| Weighted point PD | 0.074979 | 0.068313 |
+| Weighted contractual rate | 0.210113 | 0.204369 |
+| Group-0 exposure share | 0.611338 | 0.499786 |
+| Default group-composition term | -0.041210 | -0.043475 |
+| Default within-group selection | 0.175652 | 0.132496 |
+| Miscoverage within-group selection | 0.171111 | 0.131075 |
 
-On the three reported decision outcomes, the policies are Pareto-incomparable.
-The conformal guardrail has lower funded default. Point PD has higher expected
-and realized standardized payoff and lower funded-set miscoverage. Calling
-either policy the winner would therefore insert an unstated preference over
-default, payoff, and predictive reliability.
+: Composition and selection transport after comparator alignment. {#tbl-mechanism}
 
-The data identify the historical trade-off but not the committee's utility for
-it. A decision maker may accept the guardrail when a 2.01--4.63 percentage-point
-default reduction is worth the bounded payoff loss. A decision maker who values
-payoff or selected-set coverage more strongly should prefer the point policy or
-use a method that calibrates the operational loss directly. CRPTO supplies the
-audit surface for that choice; it does not estimate the welfare weights or
-claim that the chosen blend is optimal outside its development rule.
+The aligned baseline therefore changes the mechanism interpretation. Both
+policies move capital toward low-risk groups, and point PD has a slightly more
+favorable default composition term. Under this ordered decomposition, the
+guardrail's larger within-group terms algebraically account for the remaining
+higher funded default and miscoverage after composition. The enduring result
+is not that conformal scoring uniquely regularizes composition; it is the
+descriptive candidate-to-funded coverage departure associated with
+within-group optimizer selection for both rules.
+
+## A falsification, not a new policy winner
+
+The evidence invalidates the original default-benefit narrative, but it does
+not establish universal point-PD dominance. The matched point policy is better
+on bounded realized payoff, default, and miscoverage in this archive; the
+guardrail is $8,479.18 better under the model-expected objective. Two of nine
+family pairs remain ambiguous on payoff and default. Development matching
+aligns one empirical moment, not the feasible set, and was chosen post hoc.
+
+The July--September 2017 extension is retained as a censoring stress. Roughly
+one quarter of funded exposure is unresolved, making its bounds too wide for a
+directional promotion claim. CRPTO therefore supplies an audit result: baseline
+specification can reverse a policy conclusion, and neither marginal coverage
+nor score conservatism supplies selected-set validity. It does not use that
+result to crown another policy.
 
 # Discussion {#sec-discussion}
 
 ## What the conformal guardrail actually does
 
-The evidence supports a precise operational interpretation. Blending the
-conformal upper endpoint into the risk constraint changes which score strata
-receive capital. Because higher $u_i$ values are costly under the cap, the LP
-shifts toward the lowest calibrated-PD stratum. That shift lowers realized
-default, but it also removes high-rate loans and sacrifices standardized
-payoff. Calling this behavior a composition regularizer is more accurate than
-claiming a selected-set coverage guarantee.
+The guardrail changes both the score and, under a copied threshold, the
+effective tightness of the decision. Against the loose same-threshold baseline,
+it reallocates capital toward low-score groups and lowers default. Against a
+point policy aligned on development-funded risk, point PD makes a similar
+composition shift and achieves lower realized default and miscoverage. The
+old composition-regularizer description is therefore comparator-specific, not
+an intrinsic guarantee of the conformal score.
 
-The result also separates two meanings of conservatism. The guardrail is
-conservative with respect to the score used in feasibility: $q_i\ge p_i$. It
-is not statistically conservative on the funded set, where miscoverage is
-higher than under point PD. Nor is it economically robust in a dominance sense,
-because the entire paired payoff interval favors the baseline. A strong word
-such as *robust* must name the quantity and perturbation it protects
+The result separates three meanings of conservatism. First, the guardrail is
+pointwise conservative in score because $q_i\ge p_i$. Second, a shared numeric
+cap makes it mechanically more restrictive than point PD. Third, neither fact
+implies statistical conservatism on the funded set, where miscoverage is
+higher. A strong word such as *robust* must name the quantity and perturbation
+it protects
 [@morucci2022robust_matching_uncertainty; @falconer2026replication]. Here it
 describes a transparent uncertainty-sensitive constraint, not distributional
-robustness or a theorem under adaptive selection.
+robustness, selected-set validity, or policy dominance.
 
 ## Implications for decision-focused data science
 
-Three design lessons generalize beyond credit.
+Four design lessons generalize beyond credit.
 
-First, candidate construction is part of the decision rule. Excluding rows
+First, baseline hyperparameters are part of the estimand. Holding a number
+fixed while changing the score does not hold the decision fixed. Evaluations
+should report whether each constraint binds, characterize feasible-set
+relations when possible, and include an alignment rule whose limitations are
+explicit. The development match used here is one such diagnostic, not a
+universal recipe.
+
+Second, candidate construction is part of the decision rule. Excluding rows
 because their outcomes are unavailable creates a menu that could not have
 existed at decision time. Keeping the rows and bounding their outcomes is often
 more honest than obtaining a sharper answer from a selected sample.
 
-Second, predictive validity and decision validity require different evidence.
+Third, predictive validity and decision validity require different evidence.
 Population coverage, group coverage, and selected-set coverage are distinct.
 The transport identity makes that distinction measurable by showing whether a
 failure arises from temporal drift, unit-size weights, group composition, or
@@ -724,7 +823,7 @@ within-group selection. If selected-set reliability is the desired guarantee,
 one should calibrate an operational loss or use a selection-valid construction,
 not infer it from marginal coverage.
 
-Third, the optimized payoff must be the payoff later reported. A minor-looking
+Fourth, the optimized payoff must be the payoff later reported. A minor-looking
 algebraic mismatch can reorder the portfolio. We use
 $(1-p)r-p\lambda$ because it is exactly the expectation of
 $(1-Y)r-Y\lambda$. A richer study should replace both sides together with
@@ -732,38 +831,40 @@ cash flows, prepayment, recovery, and discounting rather than relabel this
 standardized outcome as investor return.
 
 For a credit committee, the practical output is not a single headline number.
-It is a trade-off table: expected and realized payoff bounds, default bounds,
-funded-set miscoverage, unresolved exposure, temporal reversals, and portfolio
-composition. The upper-score guardrail may be useful when reducing default is
-worth a transparent economic cost. The current experiment does not identify
-that preference or establish that the trade is optimal.
+It is a comparison ladder: feasibility and cap slack, expected and realized
+payoff, default, funded-set miscoverage, unresolved exposure, selector
+stability, and family heterogeneity. Here that ladder rejects the claimed
+default benefit of the selected guardrail. It does not establish that the
+post hoc matched point policy is deployment optimal.
 
 ## Managerial audit card
 
-For a model-risk or credit committee, the paper can be reduced to seven
+For a model-risk or credit committee, the paper can be reduced to nine
 questions. The answers deliberately combine positive controls with failed
 validity claims.
 
 | Committee question | Evidence | Current answer |
 |---|---|---|
 | Could the candidate menu exist at decision time? | Status-independent inclusion and monthly menus | Yes for the recorded origination fields |
-| Were model and policy choices made before primary outcomes? | Six pre-2013 blocks and 40-month gap | Yes in the active protocol |
+| Were model and guardrail choices made before primary outcomes? | Six pre-2013 blocks and 40-month gap | Yes for the parent policy |
+| Was the comparator audit confirmatory? | Protocol timing and disclosure | No; designed after the parent result, tagged before its first successful persisted run |
 | Does 90% conformal coverage transport OOT? | Candidate coverage [0.854923, 0.879692] | No |
-| Does the guardrail lower funded default? | Sharp paired bound [-0.046275, -0.020093] | Yes retrospectively |
-| Is the default reduction economically free? | Payoff bound [-$322,703.79, -$58,040.34] | No |
-| Does the funded set gain coverage? | Miscoverage bound [0.008822, 0.029850] | No; it is worse |
+| Is point PD at the same numeric cap comparable? | Point-cap slack 0.054242 and Proposition 1 | No |
+| Does the guardrail lower default after development matching? | Sharp paired bound [0.034431, 0.056287] | No; guardrail default is higher |
+| Does it improve realized payoff or coverage? | Payoff [-$506,587.03, -$295,967.17]; miscoverage [0.027093, 0.046283] | No on either outcome |
+| Is the direction universal across the family? | Complete 3x3 census | No; all three signs hold in 7/9 pairs |
 | Is unchanged deployment supported? | Monthly reversals, drift, censored extension | No; monitoring and a new calibration protocol would be required |
 
 : Decision audit card for the active CRPTO policy. {#tbl-audit-card}
 
-The card clarifies where a simple post-hoc guardrail is useful. It can expose a
-default-payoff frontier without replacing a governed score. It cannot replace
-selection-valid prediction, nonexchangeable calibration, cash-flow modeling,
-or live monitoring when those are the actual policy requirements.
+The card clarifies the useful role of a post hoc guardrail study. It can expose
+baseline confounding and selected-set failure without replacing a governed
+score. It cannot replace selection-valid prediction, nonexchangeable
+calibration, cash-flow modeling, or live monitoring.
 
 # Limitations {#sec-limitations}
 
-The study has seven main limitations. First, Lending Club is one historical
+The study has ten main limitations. First, Lending Club is one historical
 platform whose retail originations ended in 2020; the design cannot establish
 live performance. Second, snapshot default collapses payment paths into a
 binary endpoint and leaves administrative states unresolved. Sharp bounds
@@ -771,12 +872,16 @@ avoid outcome-conditioned deletion but may be wide. Third, the standardized
 payoff omits amortization, prepayment, recoveries, fees, discounting, and
 capital costs. Fourth, the 40-month gap does not restore exchangeability; the
 observed deterioration is substantial. Fifth, neither the Mondrian recipe nor
-the LP controls coverage after adaptive within-group selection. Sixth, purpose
+the LP controls coverage after adaptive within-group selection. Sixth, the
+comparator audit is post hoc, and its development match aligns one average
+funded-PD moment rather than feasible sets. Seventh, the guardrail selector uses
+only six months and wins three of six leave-one-month-out folds. Eighth, the
+continuous allocation and fixed 25% purpose cap are modeling choices, not
+operational constraints calibrated or stress-tested here. Ninth, purpose
 concentration and score strata are not protected classes, so the analysis is
-not a fair-lending certification. Seventh, this is a retrospective code-locked
-audit. Earlier project work inspected overlapping historical periods, so the
-evidence must not be called a pristine lockbox or preregistered prospective
-test.
+not a fair-lending certification. Tenth, this is a retrospective code-locked
+audit. Earlier project work inspected overlapping historical periods, so
+neither run is a pristine lockbox or preregistered prospective test.
 
 These limitations define sensible next methods, including survival or
 competing-risk payoffs, weighted/nonexchangeable conformal calibration,
@@ -786,41 +891,37 @@ CRPTO variants.
 
 # Reproducibility {#sec-reproducibility}
 
-The successful experiment is identified by run tag
-`champion-reopen-2026-07-10__maturity-safe-locked-bounded-h1h2-v2`, protocol
-tag `protocol/ijds-maturity-safe-locked-bounded-h1h2-2026-07-10-v2`, and source
-commit `78a64fe67a4df46c3d19b9243deb991c56fd1ff6`. Its deterministic summary has
-SHA-256 `a9c3b3738b26096703fdd2d1b1e852f72b1516157317c65a92e1bb0abdfd693b`.
-The execution receipt records a clean initial and final tree, Python 3.11.14,
-CatBoost 1.2.10, and HiGHS 1.14.0. DVC pointers track the versioned processed
-panel and model/results directories; the protected historical champion and its
-manifest were neither executed nor overwritten.
+The review package separates an immutable maturity-safe parent (P1) from an
+immutable comparator audit (C1). Their execution receipts record clean initial
+and final trees, and C1 replays the P1 selected and same-threshold allocations
+exactly. Separate deterministic builders validate each summary, receipt,
+versioned artifact, and publication output. They regenerate 30 parent and 38
+comparator outputs; two consecutive comparator builds reproduce all 39 file
+hashes including the manifest. Claim-sync tests compare the numerical sources,
+anonymous body, supplement, and official IJDS TeX. The protected historical
+champion and its extraction manifest were neither executed nor overwritten.
 
-The evidence builder validates the protocol tag and commit, summary and receipt
-hashes, every versioned artifact, and optionally the 1.7 GB raw-file hash. It
-then regenerates eleven publication-table exports---four compact main exports
-and S1--S7---and four figures. Two consecutive builds are byte-identical.
-Claim-sync tests compare the JSON source,
-CSV tables, anonymous QMD body, supplement, and official IJDS TeX. The online
-supplement gives the exact commands, schemas, proofs, and historical-artifact
-boundary. Author-identifying repository links are withheld from this
-double-anonymous manuscript and can be supplied to the editor under the IJDS
+Exact run tags, commits, hashes, repository links, and remote coordinates are
+intentionally absent from reviewer-facing files because they are searchable
+author fingerprints. An editor-only crosswalk preserves them, and a
+metadata-sanitized review archive can be supplied through ScholarOne. At
+acceptance, the full code, environment lock, evidence manifests, immutable
+pointers, and data-reconstruction instructions will be released under the IJDS
 data and code policy.
 
 # Conclusion {#sec-conclusion}
 
-CRPTO tests a common but unsafe inference: that marginal conformal coverage
-continues to protect a portfolio after an optimizer selects and reweights
-loans. In a status-independent, maturity-safe, monthly credit experiment, the
-answer is no. The selected conformal upper-score guardrail reduces funded
-default by 2.01--4.63 percentage points relative to point PD, but loses
-$58,040--$322,704 of standardized payoff and increases funded-set miscoverage
-by 0.88--2.99 percentage points. Its default benefit comes from reallocating
-capital across score strata; within-stratum selection drives the coverage
-failure.
+CRPTO tests two common but unsafe inferences: that marginal conformal coverage
+protects an optimizer-selected portfolio, and that copying a numeric risk cap
+creates a fair point-prediction baseline. Both fail. Candidate coverage falls
+to [0.854923, 0.879692] OOT. At the shared cap, the guardrail appears to lower
+default by 2.01--4.63 percentage points, but the point-PD constraint is
+nonbinding. At the development-matched cap, the guardrail instead has 3.44--5.63
+percentage points more default, 2.71--4.63 points more miscoverage, and
+$295,967--$506,587 less realized standardized payoff.
 
-The contribution is not a universally superior CRPTO policy. It is an
-auditable account of where predictive uncertainty enters a decision, how
-outcome maturity and economic coherence change the evidence, and why marginal
-coverage is not a decision guarantee. That narrower claim is the one supported
-by the data.
+The contribution is not a universally superior point policy: the comparator
+audit is post hoc, development matching is not unique, and two of nine family
+pairs remain ambiguous. It is an auditable demonstration that predictive
+validity, score conservatism, and decision stringency are different objects.
+That baseline-aware negative result is the claim supported by the data.

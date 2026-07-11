@@ -9,14 +9,18 @@ Prefer simple code, immutable evidence, and one coherent manuscript claim.
 Read these first:
 
 1. `docs/research/active_claims_2026-07-10.md`
-2. `docs/research/ijds_state_of_art_audit_2026-07-10.md`
-3. `docs/research/ijds_three_front_reconstruction_2026-07-10.md`
-4. `docs/ACADEMIC_CONTEXT.md`
-5. `docs/SCOPE_AND_GOVERNANCE.md`
-6. `CONTRIBUTING.md`
-7. `EXTRACTION_MANIFEST.md`
+2. `docs/research/ijds_comparator_stringency_locked_protocol_2026-07-10.md`
+3. `docs/research/ijds_comparator_stringency_results_2026-07-10.md`
+4. `docs/research/ijds_state_of_art_audit_2026-07-10.md`
+5. `docs/research/ijds_three_front_reconstruction_2026-07-10.md`
+6. `docs/research/ijds_final_two_pass_audit_2026-07-10.md`
+7. `docs/ACADEMIC_CONTEXT.md`
+8. `docs/SCOPE_AND_GOVERNANCE.md`
+9. `CONTRIBUTING.md`
+10. `EXTRACTION_MANIFEST.md`
 
-The active paper is the clean, tagged maturity-safe bounded protocol v2:
+The active paper combines the clean, tagged maturity-safe bounded protocol v2
+with a separate post hoc comparator-stringency audit:
 
 - run:
   `champion-reopen-2026-07-10__maturity-safe-locked-bounded-h1h2-v2`;
@@ -24,24 +28,39 @@ The active paper is the clean, tagged maturity-safe bounded protocol v2:
   `protocol/ijds-maturity-safe-locked-bounded-h1h2-2026-07-10-v2`;
 - protocol commit: `78a64fe67a4df46c3d19b9243deb991c56fd1ff6`;
 - universe: 540,121 status-independent 36-month loans;
-- conformal object: exact 90% five-stratum interval for the binary snapshot
-  outcome, not a latent-PD confidence interval;
+- conformal object: 90%-target five-stratum interval using the exact
+  finite-sample rank for the binary snapshot outcome, not a latent-PD
+  confidence interval;
 - selected guardrail: `q=0.75p+0.25u`, `tau=0.17`;
 - payoff: expected `(1-p)r-p*LGD`, realized `(1-Y)r-Y*LGD`, `LGD=0.45`;
 - evaluation: 15 fresh monthly $1M decisions from 2016-04 through 2017-06;
 - unresolved outcomes: retained and reported with sharp aggregate and pairwise
   bounds.
 
-Primary guardrail-minus-point contrasts:
+Comparator audit:
 
-- standardized realized payoff: `[-$322,703.79, -$58,040.34]`;
-- weighted default: `[-0.046275, -0.020093]`;
-- weighted miscoverage: `[0.008822, 0.029850]`.
+- run:
+  `champion-reopen-2026-07-10__maturity-safe-v2-comparator-stringency-audit-v1`;
+- protocol tag:
+  `protocol/ijds-maturity-safe-v2-comparator-stringency-audit-2026-07-10-v1`;
+- protocol commit: `ca632ccfbbfaec0e6cdf482a279468665cdb62c0`;
+- status: designed after the parent result, tagged before the first successful
+  persisted execution, and therefore post hoc rather than confirmatory;
+- primary point-PD comparator: `tau=0.06831339893217318`, the selected
+  guardrail's mean development-funded point PD.
 
-Interpretation: the conformal constraint lowers default by shifting capital
-into low-score strata, but loses payoff and worsens selected-set coverage.
-Within-stratum optimizer selection is the main coverage transport failure.
-Do not promote economic dominance or selected-set validity.
+Primary guardrail-minus-development-matched-point contrasts:
+
+- standardized realized payoff: `[-$506,587.03, -$295,967.17]`;
+- weighted default: `[0.034431, 0.056287]`;
+- weighted miscoverage: `[0.027093, 0.046283]`.
+
+Interpretation: using `tau=0.17` for both scores confounds the conformal score
+with a looser point-PD feasible set and creates an apparent default benefit.
+After development-risk matching, that benefit reverses. The selected result is
+robust to the locked diagnostics, but the family direction is 7 of 9, not 9 of
+9. Do not promote confirmation, universal dominance, a unique matching rule,
+or selected-set validity.
 
 ## Claim Boundaries
 
@@ -53,21 +72,27 @@ Always preserve these distinctions:
 - coherent standardized payoff versus cash-flow return, IRR, or NPV;
 - sharp partial-identification bounds versus sampling confidence intervals;
 - exact transport identities versus formal regularization guarantees;
+- same numeric thresholds versus comparable decision stringency;
 - retrospective contrasts versus causal effects;
+- post hoc comparator falsification versus confirmatory evidence;
 - code-locked retrospective audit versus preregistration or a pristine
   prospective lockbox.
 
-The paper may claim only three exact theory results: binary miscoverage
-geometry, sharp additive bounds for unresolved binary outcomes, and the
-telescoping row/exposure/group/within-group transport identity. It does not
-claim a new selected-set theorem, distributional robustness, or a Markov
-certificate.
+The paper may claim four exact theory results: binary miscoverage geometry,
+sharp additive bounds for unresolved binary outcomes, the telescoping
+row/exposure/group/within-group transport identity, and same-threshold
+feasible-set nesting when `q>=p`. The last result diagnoses a comparator
+defect; it does not prove development matching uniquely correct. The paper
+does not claim a new selected-set theorem, distributional robustness, or a
+Markov certificate.
 
 ## Active Evidence
 
-The paper-facing manifest is:
+The paper-facing manifests are:
 
 `reports/crpto/ijds_maturity_safe_evidence.json`
+
+`reports/crpto/ijds_comparator_stringency_evidence.json`
 
 It validates:
 
@@ -77,6 +102,10 @@ It validates:
 - every versioned data/model artifact hash;
 - tables `crpto_ijds_ms_table1`--`table4` and S1--S7; and
 - figures `crpto_ijds_ms_fig0`--`fig3`.
+
+The comparator manifest additionally validates the exact parent replay,
+selected low/mean/high sensitivity, 15 leave-one-month-out checks, nine-policy
+census, payoff/LGD decomposition, and comparator tables/figures.
 
 Large active run directories are tracked by exact DVC pointers under
 `data/processed/experiments/champion_reopen/` and
@@ -116,6 +145,7 @@ the committed active run; it does not hide an expensive experiment rerun.
 ```powershell
 just ijds-evidence
 uv run pytest tests/test_ijds_active_claim_sync.py -q
+uv run pytest tests/test_ijds_comparator_evidence.py -q
 just publication-integrity
 just lint
 just type-check
@@ -139,7 +169,8 @@ passes resolve then stabilize citations, references, floats, and pagination.
 ## Writing
 
 - Paper and code identifiers are English; project notes may be Spanish.
-- Lead with the default--payoff--coverage trade-off and its mechanism.
+- Lead with comparator non-invariance, the baseline-dependent reversal, and
+  the remaining coverage-transport failure.
 - Report unresolved exposure and temporal failures as prominently as wins.
 - Call the outcome `snapshot default` and the objective `standardized payoff`.
 - Do not call the interval a PD interval, the result a causal effect, or the

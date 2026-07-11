@@ -1,7 +1,7 @@
 # IJDS Submission Package
 
-This directory contains the active maturity-safe IJDS handoff and editor-facing
-materials.
+This directory contains the active maturity-safe and comparator-aware IJDS
+handoff and editor-facing materials.
 
 ## Scientific Sources
 
@@ -9,14 +9,20 @@ materials.
 - anonymous supplement: `paper/supplement_ijds.qmd`;
 - official template: `paper/submission/CRPTO_ijds_submission.tex`;
 - claim authority: `docs/research/active_claims_2026-07-10.md`;
-- evidence authority: `reports/crpto/ijds_maturity_safe_evidence.json`.
+- parent evidence: `reports/crpto/ijds_maturity_safe_evidence.json`;
+- comparator evidence:
+  `reports/crpto/ijds_comparator_stringency_evidence.json`.
+- comparator post-run audit:
+  `docs/research/ijds_comparator_stringency_results_2026-07-10.md`.
 
 The active result uses a status-independent 540,121-loan universe, exact 90%
 binary Mondrian intervals, a 2012H2-selected score
-`q=0.75p+0.25u` with `tau=0.17`, and 15 fresh monthly 2016--2017 decisions.
-Relative to point PD, the guardrail reduces default but loses standardized
-payoff and worsens funded-set miscoverage. Compact-v7 A35--A40 and earlier
-diagnostics are immutable history, not active evidence.
+`q=0.75p+0.25u` with `tau_q=0.17`, and 15 fresh monthly 2016--2017 decisions.
+The same-threshold point baseline is loose. Against point PD aligned at
+`tau_p=0.068313`, the guardrail loses realized standardized payoff and has
+higher default and funded-set miscoverage. The comparator audit is explicitly
+post hoc and the family direction is 7/9, not 9/9. Compact-v7 A35--A40 and
+earlier diagnostics are immutable history, not active evidence.
 
 ## Preview
 
@@ -81,10 +87,25 @@ Accept the official PDF only when:
 - page-by-page inspection finds no clipping, overlap, blank content, or
   missing glyphs.
 
-Current verified build (2026-07-10): 21 pages total, with references beginning
-on page 18, and citation/reference clean. The writing previews are 21 body
-pages and 17 supplement pages. All three PDFs were inspected page by page.
-Recount and repeat visual QA after every substantive TeX edit.
+The page count recorded here must be refreshed by
+`just paper-submission-official` after every substantive TeX edit. Accept only
+the count and reference start reported by the latest clean compile and repeat
+page-by-page visual QA for all three PDFs.
+
+Latest validated build (2026-07-10):
+
+- official INFORMS manuscript: 22 pages; references begin on page 19, leaving
+  18 pre-reference pages against the 25-page initial-submission limit;
+- anonymous browser-print body preview: 22 pages;
+- anonymous browser-print supplement: 21 pages;
+- official main-body inventory: 12 tables and 4 figures;
+- title: 9 words; abstract: 269 words; keywords: 7;
+- `.blg`: no warnings; `.log`: no undefined citations or references;
+- one publisher-class `\maketitle` overfull diagnostic (17.54 pt, adjacent to
+  `informs_Logo.pdf`) and the audit-card cell underfull diagnostics were
+  visually checked and do not cross margins or hide content;
+- every page of all three PDFs was rendered to PNG and inspected for clipping,
+  overlap, blank pages, missing glyphs, and table/figure legibility.
 
 ## Anonymity
 

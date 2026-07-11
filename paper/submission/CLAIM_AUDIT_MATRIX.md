@@ -1,61 +1,66 @@
 # IJDS Claim Audit Matrix
 
-Numeric authority is `reports/crpto/ijds_maturity_safe_evidence.json` and the
-tagged v2 summary it validates. This matrix is editorial, not a second source
-of numbers.
+Numeric authority is the pair
+`reports/crpto/ijds_maturity_safe_evidence.json` and
+`reports/crpto/ijds_comparator_stringency_evidence.json`. This matrix is an
+editorial crosswalk, not a second source of numbers.
 
 | Claim | Evidence | Reviewer risk | Required wording |
 |---|---|---|---|
-| Candidate membership is status-independent. | Source inventory, protocol config, S0; 540,121 retained rows. | Contract age is mistaken for complete outcome resolution. | Membership uses issue date and term; unresolved snapshot states remain in every menu. |
-| Statistical fitting and selection precede primary evaluation. | 2007--2012 fit/select blocks; 40-month gap; Figure 2. | "Locked" is read as preregistered or historically untouched. | Code-locked retrospective temporal audit, not a pristine lockbox or prospective trial. |
-| The conformal recipe is exact at 90% on 2012H1. | S2; fit coverage `0.900448`; exact finite-sample ranks. | Exact numerical recipe is mistaken for universal validity. | Exact split-Mondrian interval for the observed binary outcome under its assumptions. |
-| The conformal object is binary-outcome coverage. | Recipe schema and binary identity. | Endpoints are called PD confidence bounds. | Not a confidence interval for latent individual PD. |
-| Primary candidate coverage deteriorates. | S2: `[0.854923, 0.879692]`; resolved `0.876313`. | A 90% OOT claim survives by habit. | State the OOT miss before any portfolio result. |
-| One small guardrail grid is selected on mature development data. | S1; nine policies on 2012H2. | Evaluation outcomes leak into tuning. | `tau=0.17`, `gamma=0.25`; no 2016--2017 outcomes or endpoint cap enter selection. |
-| Development success does not transport. | Generated M4/Main Table 6 and S1/S7: realized payoff `+$50,260.10`, expected payoff `-$72,701.67`, lower default and miscoverage on 2012H2; payoff and miscoverage reverse in primary OOT. | Six development months are treated as a formal generalization test or retained policy proof. | Locked temporal reversal; no retuning, causal interpretation, or universal transport claim. |
-| Point-PD comparisons are matched and independently selected. | S1/S3; `tau=0.17` matched and `tau=0.15` selected produce identical allocations. | Comparator is weakened by a different cap. | Report both; explain that point-risk constraints are nonbinding. |
-| Optimized and evaluated payoffs agree. | Objective reconciliation tests; payoff module. | Standardized payoff is called investor return. | Expected `(1-p)r-p*LGD`; realized `(1-Y)r-Y*LGD`; not IRR, NPV, or cash-flow return. |
-| Unresolved outcomes are not deleted. | 11,386 primary candidates; S2/S3/S7. | Bounds are interpreted as confidence intervals. | Sharp partial-identification bounds over unrestricted binary completions. |
-| Guardrail reduces primary default. | S7: `[-0.046275, -0.020093]`. | Retrospective contrast is called a causal effect. | Sign-robust retrospective difference, not causal reduction. |
-| Guardrail loses primary payoff. | S7: `[-$322,703.79, -$58,040.34]`. | Dollar value is read as realized cash-flow loss. | Standardized-payoff contrast over $15M of monthly capital. |
-| Guardrail worsens funded miscoverage. | S7: `[0.008822, 0.029850]`. | Default improvement is conflated with conformal validity. | The guardrail does not preserve or improve selected-set coverage. |
-| Results are temporally heterogeneous. | S7: payoff better/worse/ambiguous `5/8/2`; default `12/2/1`; miscoverage `3/10/2`. | Aggregate result is sold as universal. | Report monthly reversals and sign ambiguity. |
-| Default benefit is compositional. | S5; group-0 shares `0.611338` vs `0.101627`; S4 composition terms. | Empirical mechanism is overstated as a theorem. | Acts empirically as a coarse score-composition regularizer. |
-| Within-group selection drives coverage failure. | S4 lower terms `0.171111` vs `0.144317`; same qualitative upper completion. | Telescoping identity is called statistical inference. | Exact decomposition; components are completion-specific, not confidence bounds. |
-| Three propositions define the identification boundary. | Main Section 5 and Supplement S1--S3/Corollary S2.1. | Algebraic identities are sold as new selected-set or causal theorems. | Binary geometry, additive sharpness, paired common outcomes, and transport are exact only for their declared objects. |
-| Censored extension is inconclusive. | S2/S6; coverage `[0.626804,0.892539]`; about 23.5% unresolved exposure. | Extension is selectively omitted or promoted. | Report as stress evidence only, with no directional claim. |
-| Reproducibility supports evidence quality. | Tagged clean run, receipt, DVC pointers, hashes, idempotent builder, tests. | Tooling is presented as the sole novelty. | Lead with the decision-validity finding; reproducibility makes it auditable. |
+| Candidate membership is status-independent. | Parent inventory and S0; 540,121 rows. | Contract age is mistaken for complete outcome resolution. | Membership uses issue date and term; unresolved states remain in every menu. |
+| Parent fitting and guardrail selection precede primary outcomes. | 2007--2012 blocks and 40-month gap. | "Locked" is read as pristine preregistration. | Code-locked retrospective parent, not a prospective trial. |
+| Comparator audit is post hoc. | Comparator protocol, tag, commit, and receipt. | Later tagging is presented as confirmation. | Designed after the parent result; tagged before the first successful persisted execution; falsification only. |
+| The conformal recipe uses an exact finite-sample rank on 2012H1. | Fit coverage 0.900448 and finite-sample ranks. | Exact rank is mistaken for coverage equal to 90% everywhere. | 90%-target split-Mondrian interval for the observed binary outcome under its assumptions. |
+| Primary candidate coverage deteriorates. | S2: [0.854923, 0.879692]; resolved 0.876313. | A 90% OOT claim survives by habit. | State the OOT miss before portfolio results. |
+| Guardrail selection is frozen but fragile. | Nine-policy 2012H2 grid; margin $1,238.33; selector LOMO 3/6. | Six development months are sold as stable optimization. | No OOT reselection or promotion of a fold winner. |
+| Same numeric thresholds are not comparable. | Proposition 1/S4; same-threshold point slack 0.054242. | `tau=0.17` is called matched. | Same-threshold point PD is a loose secondary diagnostic. |
+| Primary point comparator uses development risk. | `tau_p=0.06831339893217318`; CS1--CS2. | Match is presented as unique or causal. | Aligns mean development-funded point PD only. |
+| Optimized and evaluated payoffs agree. | Objective reconciliation and payoff module. | Standardized payoff is called investor return. | Expected `(1-p)r-p*LGD`; realized `(1-Y)r-Y*LGD`; not IRR, NPV, or cash-flow return. |
+| Unresolved outcomes are retained. | 11,386 primary candidates and common-outcome bounds. | Bounds are interpreted as confidence intervals. | Sharp partial-identification bounds over unrestricted binary completions. |
+| Same-threshold result is baseline-dependent. | Guardrail default `[-0.046275, -0.020093]`; payoff `[-$322,703.79, -$58,040.34]`. | Apparent default benefit is treated as intrinsic. | Report only to demonstrate loose-baseline confounding. |
+| Development matching reverses default. | C2: `[0.034431, 0.056287]`. | Retrospective difference is called causal. | Guardrail default is higher in this historical matched comparison. |
+| Guardrail loses matched realized payoff. | C2: `[-$506,587.03, -$295,967.17]`. | Dollar value is read as cash-flow or welfare loss. | Standardized-payoff contrast over $15M of monthly capital. |
+| Guardrail worsens matched funded miscoverage. | C2: `[0.027093, 0.046283]`. | Comparator repair is conflated with selected-set validity. | Neither policy has a selected-set guarantee. |
+| Selected-policy signs are stable under locked diagnostics. | Low/mean/high matches and 15 primary LOMO checks. | Diagnostics are called independent hypothesis tests. | Locked directional sensitivity, not sampling inference. |
+| Family result is heterogeneous. | Complete 3x3 census: payoff 7/9, default 7/9, miscoverage 9/9. | Selected result is generalized to every policy. | The 9-of-9 family gate fails; no OOT winner. |
+| Mechanism is comparator-specific. | CS9--CS10; group-0 0.611338 versus matched 0.499786. | Old composition benefit is presented as a theorem. | Both aligned policies shift toward low risk; guardrail has larger within-group penalties. |
+| Four exact propositions define the theory boundary. | Main theory; Supplement S1--S4. | Algebra is oversold as selection-valid or causal theory. | Nesting, binary geometry, sharp bounds, and transport are exact only for declared objects. |
+| Censored extension is inconclusive. | S2/CS12; 23.4%--24.7% unresolved exposure. | Extension is omitted or promoted. | Stress evidence only; no directional claim. |
+| Reproducibility supports evidence quality. | Two clean tagged runs, receipts, DVC, hashes, idempotent builders, tests. | Tooling is presented as the novelty. | Lead with comparator non-invariance and decision-validity findings. |
 
 ## Required Headline Results
 
 - universe: `540,121`;
-- policy: `q=0.75p+0.25u`, `tau=0.17`;
-- development realized difference: `+$50,260.10`;
-- development expected difference: `-$72,701.67`;
+- guardrail: `q=0.75p+0.25u`, `tau_q=0.17`;
+- primary point comparator: `tau_p=0.06831339893217318`;
 - primary candidate coverage: `[0.854923, 0.879692]`;
-- payoff difference: `[-$322,703.79, -$58,040.34]`;
-- default difference: `[-0.046275, -0.020093]`;
-- miscoverage difference: `[0.008822, 0.029850]`;
-- guardrail group-0 exposure: `61.13%`;
-- point-PD group-0 exposure: `10.16%`.
+- matched expected-payoff difference: `+$8,479.18`;
+- matched realized-payoff difference:
+  `[-$506,587.03, -$295,967.17]`;
+- matched default difference: `[0.034431, 0.056287]`;
+- matched miscoverage difference: `[0.027093, 0.046283]`;
+- same-threshold point cap slack: `0.054242`;
+- family joint direction: `7/9`, not `9/9`;
+- selected guardrail group-0 exposure: `0.611338`;
+- development-matched point group-0 exposure: `0.499786`.
 
 ## Do Not Claim
 
+- confirmatory, preregistered, prospective, or causal comparator evidence;
 - universal economic or statistical dominance;
+- a unique or theoretically optimal matching rule;
+- a 9-of-9 family direction or OOT policy winner;
 - selected-set conformal validity;
 - a latent-PD confidence interval;
 - a distributionally robust or Markov certificate;
-- cash-flow return, IRR, or NPV;
-- a causal default or payoff effect;
-- prospective, preregistered, or historically untouched evaluation;
+- cash-flow return, IRR, NPV, or welfare;
 - legal fair-lending certification;
 - live post-2020 performance; or
-- that historical A1--A40, Prosper, or Freddie/Mendeley artifacts validate the
-  active maturity-safe policy.
+- that A1--A40, Prosper, or Freddie/Mendeley artifacts validate the active
+  paper.
 
 ## Historical Firewall
 
-The compact-v7 run and its positive-return headline are NO-GO provenance. Its
-A35--A40 outputs remain immutable for forensic replay, but none may appear as
-active evidence in the body, supplement, official TeX, cover letter, title
-page, or disclosure form.
+Compact-v7 and its positive-return headline remain NO-GO provenance. A35--A40
+stay immutable for forensic replay, but none may appear as active evidence in
+the body, supplement, official TeX, cover letter, title page, or disclosure.

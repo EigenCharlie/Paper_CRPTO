@@ -1,5 +1,5 @@
 ---
-title: "Online Supplement for CRPTO: When Marginal Conformal Coverage Meets Maturity-Safe Credit Portfolio Selection"
+title: "Online Supplement for CRPTO: Auditing Comparator Stringency in Maturity-Safe Conformal Credit Portfolios"
 author: "Anonymous"
 date: "July 2026"
 lang: en
@@ -24,29 +24,36 @@ execute:
 
 # Scope and Evidence Contract
 
-This supplement supports one maturity-safe CRPTO experiment and no competing
-paper narrative. The active conformal guardrail uses an exact 90% binary-outcome
-Mondrian interval, the score $q=(1-\gamma)p+\gamma u$, selected
-$\gamma=0.25$, and risk tolerance $\tau=0.17$. The model, probability
-calibrator, conformal recipe, policy, payoff, monthly protocol, and point-PD
-baselines are frozen before the April 2016--June 2017 primary evaluation.
+This supplement supports one CRPTO paper and two nested evidence layers. The
+maturity-safe parent fixes the data universe, model, 90%-target binary-outcome
+Mondrian interval using the exact finite-sample rank, score
+$q=(1-\gamma)p+\gamma u$, selected
+$\gamma=0.25$, risk tolerance $\tau_q=0.17$, payoff, and April 2016--June 2017
+monthly evaluation. A separate comparator audit changes none of those objects.
+It evaluates point-PD caps aligned to development-funded risk.
+
+The comparator audit was designed after the parent result was known, then
+committed and tagged before the first successful persisted execution. It is a
+post hoc falsification layer, not preregistration, confirmation, refitting, or
+OOT policy selection. That timing boundary is part of every interpretation
+below.
 
 | Evidence | Contents | Claim boundary |
 |---|---|---|
-| Generated M1--M4 | Protocol, primary policy, primary contrast, and development-to-OOT reversal | Compact exports underlying Main Tables 2, 7, 8, and 6, respectively; full schemas remain in S1--S7 |
-| S1 | Full 2012H2 guardrail and point-PD selection grids | Development selection only; no 2016--2017 outcome enters |
-| S2 | Conformal fit, primary OOT, and extension coverage | Binary-outcome coverage, not latent-PD confidence or selected-set validity |
-| S3 | Every monthly policy solve and bounded outcome metric | Separate $1$M decision in every month; no pooled future menu |
-| S4 | Default and miscoverage transport identities | Exact decomposition; completion-specific components are not confidence bounds |
-| S5 | Exposure by the five frozen conformal score strata | Composition mechanism, not protected-group fairness |
-| S6 | Heavily censored July--September 2017 extension | Stress evidence only; no directional promotion claim |
-| S7 | Sharp monthly and aggregate pairwise contrasts | Retrospective contrasts, not causal effects |
+| Parent M1--M4/S1--S7 | Chronology, coverage, selection, monthly allocations, transport, and original same-threshold contrast | Establishes the maturity-safe object; same-threshold point PD is secondary after the comparator audit |
+| Comparator C1--C3 | Baseline alignment, selected-policy inversion, and full 3x3 family census | Post hoc falsification; no confirmatory or family-wide 9-of-9 claim |
+| Comparator CS1--CS3 | Nine development matches, development aggregates, and low/mean/high selected sensitivity | Thresholds use development data only; no OOT threshold selection |
+| Comparator CS4--CS5 | Primary and selector leave-one-month-out audits | Stability diagnostics, not independent-sample inference |
+| Comparator CS6--CS8 | Payoff decomposition, LGD break-even, and score geometry | Standardized payoff and exact score algebra only |
+| Comparator CS9--CS11 | Transport, group exposure, and monthly sharp contrasts | Completion-specific mechanism and retrospective outcomes |
+| Comparator CS12 | Heavily censored July--September 2017 extension | Stress evidence only; no directional promotion claim |
 
-The paper-facing source is
-`reports/crpto/ijds_maturity_safe_evidence.json`. It validates the immutable run
-summary and execution receipt before writing four compact main-table exports,
-S1--S7, and four manuscript figures. The historical compact-v7 A35--A40 bundle remains immutable
-provenance but is not evidence for any active claim.
+Two internal evidence manifests validate each layer's protocol identity,
+summary, execution receipt, content-addressed artifacts, and generated outputs.
+Their exact names and fingerprints are omitted from the review manuscript and
+retained in the editor-only crosswalk.
+The historical compact-v7 A35--A40 bundle remains immutable provenance but is
+not evidence for an active claim.
 
 The supplement is a defense layer, not a second paper. The reader map below
 separates protocol, statistical construction, decision design, identification,
@@ -57,10 +64,10 @@ empirical mechanism, reproducibility, and historical provenance.
 | Was the candidate universe observable at decision time? | Appendix A | Yes; membership is status independent and unresolved outcomes remain |
 | What exactly is conformal? | Appendix B | A split-Mondrian interval for binary snapshot default, not latent PD |
 | How is the portfolio chosen? | Appendix C | One 2012H2-selected linear guardrail, then fresh monthly LPs |
-| Which statements are exact? | Appendix D | Binary geometry, sharp additive bounds, and a telescoping transport identity |
-| What drives the result? | Appendix E | Group composition lowers default; within-group selection breaks coverage |
+| Which statements are exact? | Appendix D | Same-threshold nesting, binary geometry, sharp bounds, and transport identity |
+| Why does the baseline conclusion reverse? | Appendix E | The old point cap is loose; development matching changes composition and within-group selection |
 | What happens near the observation boundary? | Appendix F | Bounds widen enough to prevent a directional extension claim |
-| Can the package be replayed? | Appendix G | Yes with DVC credentials, immutable pointers, hashes, and gates |
+| Can the package be replayed? | Appendix G | Yes from a metadata-sanitized review archive; exact public coordinates are withheld during double-anonymous review |
 | Why are older results excluded? | Appendix H | Their population, timing, payoff, or decision object differs |
 | What remains unresolved? | Appendix I | Construct, temporal, decision, external, and inferential limitations |
 
@@ -70,13 +77,12 @@ empirical mechanism, reproducibility, and historical provenance.
 
 ## A.1 Source inventory
 
-The source file is `data/raw/Loan_status_2007-2020Q3.csv`, a Lending Club
-research snapshot dated September 30, 2020. Its recorded size is 1,773,470,505
-bytes and its full SHA-256 is
-`5878af2a088f8ab5214c9337289fb8b5eb6c6338fd3f417b6cdc18513dc6f35f`.
-The executable inventory reads 2,925,493 rows, finds one invalid issue date,
-identifies 2,060,077 36-month loans across all dates, and retains 540,121 rows
-in the declared blocks.
+The source is a Lending Club research snapshot dated September 30, 2020. The
+editor-only and acceptance packages record its exact filename, byte count, and
+SHA-256; those searchable fingerprints are omitted during double-anonymous
+review. The executable inventory reads 2,925,493 rows, finds one invalid issue
+date, identifies 2,060,077 36-month loans across all dates, and retains 540,121
+rows in the declared blocks.
 
 No final-status filter enters candidate membership. The inclusion rule is:
 
@@ -117,8 +123,7 @@ competing-risk models would be required for a richer event-time estimand
 | Primary OOT | 2016-04 | 2017-06 | 376,890 | 57,662 | 307,842 | 11,386 |
 | Censored extension | 2017-07 | 2017-09 | 88,227 | 11,867 | 47,644 | 28,716 |
 
-: S0 chronology and outcome observability. Source:
-`crpto_ijds_ms_table1_protocol.csv`.
+: S0 chronology and outcome observability. Source: anonymous parent evidence P1.
 
 The PD-development block is split at August 2010 into 13,592 training and 3,841
 temporal-validation rows. The policy-development endpoint and primary start are
@@ -205,9 +210,9 @@ $u_i<1$ is miscovered.
 
 ## B.3 Coverage with unresolved outcomes
 
-For observed $Y$, coverage is exact. For unresolved $Y\in\{0,1\}$, we compute
-whether zero and one would be covered and take the attainable minimum and
-maximum. The resulting all-candidate bounds are:
+For observed $Y$, coverage is point identified. For unresolved
+$Y\in\{0,1\}$, we compute whether zero and one would be covered and take the
+attainable minimum and maximum. The resulting all-candidate bounds are:
 
 | Block | Rows | Resolved | Unresolved | Coverage | Mean width | $\ell=0$ | $u=1$ |
 |---|---:|---:|---:|---:|---:|---:|---:|
@@ -215,8 +220,7 @@ maximum. The resulting all-candidate bounds are:
 | Primary OOT | 376,890 | 365,504 | 11,386 | [0.854923, 0.879692] | 0.736564 | 0.988458 | 0.180766 |
 | Censored extension | 88,227 | 59,511 | 28,716 | [0.626804, 0.892539] | 0.729054 | 0.987986 | 0.179537 |
 
-: S2 coverage and endpoint saturation. Source:
-`crpto_ijds_ms_tableS2_coverage.csv`.
+: S2 coverage and endpoint saturation. Source: anonymous parent evidence P1.
 
 # Appendix C: Portfolio Policy and Selection
 
@@ -256,9 +260,10 @@ $$
 \end{aligned}
 $$
 
-with $B=\$1,000,000$. HiGHS solves the continuous LP. There is no PD-cap
-slack, endpoint cap, uncertainty penalty in the objective, pooled menu, or
-post-evaluation tuning.
+with $B=\$1,000,000$. HiGHS solves the continuous LP. There is no risk-cap
+slack variable or penalty, endpoint cap, uncertainty penalty in the objective,
+pooled menu, or post-evaluation tuning. Ordinary constraint slack is recorded
+as a diagnostic.
 
 ## C.3 Development policy grid
 
@@ -279,20 +284,45 @@ maximizes realized standardized payoff, then expected payoff and candidate ID.
 | no | linear-007 | 0.19 | 0.25 | $685,779.48 | $555,442.61 | 0.107346 | 0.148512 |
 | no | linear-006 | 0.17 | 0.75 | $582,833.34 | $554,522.12 | 0.062247 | 0.129005 |
 
-: S1a complete conformal guardrail selection grid. Source:
-`crpto_ijds_ms_tableS1_selection_grid.csv`.
+: S1a complete conformal guardrail selection grid. Source: anonymous parent
+evidence P1.
 
 The point-PD grid sets $\gamma=0$. Its $\tau=0.15$, 0.17, and 0.19 rows are
 identical: expected payoff $741,668.28$, realized payoff $531,148.54$, default
 0.154988, and miscoverage 0.143471. The risk cap is nonbinding, so the
-development-selected point baseline ($\tau=0.15$) and the matched baseline
-($\tau=0.17$) generate the same primary allocations. Reporting both verifies
-that the comparison is not an artifact of matching $\tau$.
+development-selected point row ($\tau=0.15$) and the same-numeric-threshold row
+($\tau=0.17$) generate the same primary allocations. The word *matched* is not
+used for either row in the active interpretation.
 
-Relative to that point policy, the selected guardrail's development realized
-payoff was +$50,260.10 despite a model-expected difference of -$72,701.67.
-Main Table 6 shows that the payoff and miscoverage directions reverse in the
-locked primary window, while the lower-default direction remains sign-robust.
+The selected guardrail wins the complete six-month grid by $1,238.33 over
+`linear-001`. Dropping one development month at a time selects `linear-004` in
+three folds, `linear-001` in one, and `linear-008` in two. This instability is
+reported without reopening the selected policy.
+
+## C.4 Post hoc comparator-stringency protocol
+
+Because $u_i\ge p_i$, the selected score satisfies $q_i\ge p_i$. A common
+$\tau=0.17$ therefore compares nested feasible sets. The audit fixes a point-PD
+cap from the selected guardrail's development allocations:
+
+$$
+\tau_p^{dev}=\frac{1}{6}\sum_{t=1}^{6}
+\frac{\sum_i a^q_{it}p_i}{B}=0.06831339893217318.
+$$
+
+The monthly development-funded PD values have minimum 0.06503179389092847 and
+maximum 0.07170531506384897. These three low/mean/high values form the complete
+selected-policy sensitivity set. The same calculation is applied separately to
+all nine guardrails, producing matched thresholds from 0.052009 to 0.073419.
+Every threshold is fixed before the comparator execution; none is selected on
+OOT payoff, default, or coverage.
+
+The editor-only protocol crosswalk records the exact tag and commit. It also
+records that the audit was designed after inspection of the parent result and
+tagged before the first successful persisted execution. The runner consumes
+the parent decision and outcome panels, verifies every parent hash, replays the
+selected and same-threshold allocations with zero exposure drift, and neither
+refits a model nor invokes a protected DVC stage.
 
 # Appendix D: Exact Identities and Sharp Bounds
 
@@ -332,7 +362,8 @@ are sharp.
 
 *Proof.* Additivity and the absence of cross-outcome restrictions allow each
 unresolved outcome to attain its minimizing or maximizing state independently.
-The componentwise choices jointly attain the two displayed endpoints.
+For each endpoint, the componentwise choices form one joint assignment of all
+unresolved outcomes that attains that endpoint.
 $\square$
 
 For default, $g_i(0)=0$ and $g_i(1)=w_i$. For payoff,
@@ -386,6 +417,35 @@ the identity under the lower and upper extremal completions. Only the funded
 endpoint is asserted to be a sharp aggregate bound; individual decomposition
 terms are conditional on the chosen completion.
 
+## D.5 Same-threshold comparator nesting
+
+Let $\mathcal F_s(\tau)$ be the allocations satisfying the monthly LP when the
+risk score is $s$, with the same budget, loan limits, purpose caps, and
+objective.
+
+**Proposition S4 (same-threshold feasible-set nesting).** If
+$\gamma\in[0,1]$ and $u_i\ge p_i$ for every candidate, then
+
+$$
+q_i=(1-\gamma)p_i+\gamma u_i\ge p_i,
+\qquad
+\mathcal F_q(\tau)\subseteq\mathcal F_p(\tau).
+$$
+
+For a common maximization objective, the optimal values satisfy
+$V_p(\tau)\ge V_q(\tau)$.
+
+*Proof.* Nonnegative exposure preserves the pointwise inequality, so
+$\sum_i a_i p_i\le\sum_i a_i q_i$. Any allocation satisfying the $q$ cap
+therefore satisfies the point-PD cap at the same $\tau$. All other constraints
+are identical, which proves set inclusion. Maximization over a superset cannot
+have a lower optimum. $\square$
+
+The proposition does not order realized outcomes and does not prove that the
+development-funded-PD match is unique or optimal. It establishes the narrower
+fact needed by the paper: the same numeric threshold fails to isolate the
+effect of replacing $p$ with $q$.
+
 # Appendix E: Primary Results and Mechanism
 
 ## E.1 Aggregate policy results
@@ -393,90 +453,156 @@ terms are conditional on the chosen completion.
 | Policy | Months | Capital | Expected payoff | Realized payoff | Default | Miscoverage | Unresolved exposure |
 |---|---:|---:|---:|---:|---:|---:|---:|
 | Conformal guardrail | 15 | $15M | $2,383,112.23 | [-$2,389.90, $168,250.04] | [0.292775, 0.310322] | [0.294708, 0.309589] | 0.017547 |
-| Matched point PD | 15 | $15M | $2,624,090.01 | [$177,108.53, $369,495.74] | [0.326037, 0.343428] | [0.275360, 0.290265] | 0.017392 |
-| Development-selected point PD | 15 | $15M | $2,624,090.01 | [$177,108.53, $369,495.74] | [0.326037, 0.343428] | [0.275360, 0.290265] | 0.017392 |
+| Development-matched point PD | 15 | $15M | $2,374,633.05 | [$398,134.41, $570,279.93] | [0.247353, 0.265026] | [0.256624, 0.274297] | 0.017673 |
+| Same-threshold point PD | 15 | $15M | $2,624,090.01 | [$177,108.53, $369,495.74] | [0.326037, 0.343428] | [0.275360, 0.290265] | 0.017392 |
 
-: S3 aggregate primary decisions. The complete month-by-policy file is
-`crpto_ijds_ms_tableS3_monthly_primary.csv`.
+: C1 selected primary aggregates. Source: anonymous comparator evidence C1.
 
 The guardrail's exposure-weighted point score is 0.074979, effective score is
-0.170000, and mean upper endpoint is 0.455062. The point policy's corresponding
-values are 0.115758, 0.115758, and 0.900652. The high point-policy upper
-endpoint is not in its constraint; it is reported to expose the conformal
-geometry of the loans selected by the common economic objective.
+0.170000, and mean upper endpoint is 0.455062. The same-threshold point policy's
+weighted PD is 0.115758, leaving cap slack 0.054242. The development-matched
+point policy's weighted PD equals its cap, 0.068313. The guardrail and matched
+point caps bind in all 15 months; the same-threshold point cap binds in none.
 
 ## E.2 Sharp pairwise primary contrast
 
-The two point baselines produce identical allocations, so both contrasts below
-are numerically identical. The union has 2,246 loans, including 52 unresolved
-IDs. The guardrail funds 1,561 unique loans, point PD funds 1,421, and 736
-overlap.
+The guardrail funds 1,561 unique loans. It shares 736 IDs and 48.70% of capital
+with the same-threshold point policy, but 1,128 IDs and 69.79% of capital with
+the development-matched point policy. Pairwise bounds use one common unresolved
+outcome for every loan in each funded union.
 
-| Guardrail minus point PD | Lower | Upper | Sign robust? |
-|---|---:|---:|---|
-| Expected objective | -$240,977.78 | -$240,977.78 | yes, worse |
-| Realized payoff | -$322,703.79 | -$58,040.34 | yes, worse |
-| Realized payoff rate | -0.021514 | -0.003869 | yes, worse |
-| Weighted default | -0.046275 | -0.020093 | yes, better |
-| Weighted miscoverage | 0.008822 | 0.029850 | yes, worse |
+| Guardrail minus point PD | Same numeric threshold | Development matched |
+|---|---:|---:|
+| Expected objective | -$240,977.78 | +$8,479.18 |
+| Realized payoff | [-$322,703.79, -$58,040.34] | [-$506,587.03, -$295,967.17] |
+| Realized payoff rate | [-0.021514, -0.003869] | [-0.033772, -0.019731] |
+| Weighted default | [-0.046275, -0.020093] | [0.034431, 0.056287] |
+| Weighted miscoverage | [0.008822, 0.029850] | [0.027093, 0.046283] |
 
-: S7 aggregate paired contrasts. `causal_interpretation=false` is stored in
-every row.
+: C2 baseline-dependent aggregate paired contrasts. Source: anonymous
+comparator evidence C1.
+
+The same-threshold baseline suggests lower guardrail default. The
+development-matched baseline reverses that conclusion and favors point PD on
+realized payoff, default, and miscoverage. Every contrast is retrospective and
+stores `causal_interpretation=false`.
 
 ## E.3 Monthly directional audit
 
-The complete S7 file contains both guardrail-minus-matched and
-guardrail-minus-development-selected contrasts for all 15 months. Because the
-point allocations coincide, the two series coincide.
+CS11 contains both guardrail-minus-same-threshold and
+guardrail-minus-development-matched contrasts for every primary month. Against
+the development-matched comparator:
 
 | Metric | Guardrail robustly better | Guardrail robustly worse | Ambiguous |
 |---|---:|---:|---:|
-| Standardized payoff | 5 | 8 | 2 |
-| Weighted default | 12 | 2 | 1 |
-| Weighted miscoverage | 3 | 10 | 2 |
+| Standardized payoff | 0 | 14 | 1 |
+| Weighted default | 0 | 14 | 1 |
+| Weighted miscoverage | 1 | 13 | 1 |
 
-This table treats lower default and lower miscoverage as better, and higher
-payoff as better. It is a sign inventory, not a multiple-testing result.
+This is a directional inventory, not a multiple-testing result. The aggregate
+signs also survive dropping each primary month once. Across the 15 matched
+leave-one-month-out rows, the largest payoff upper endpoint is -$231,823.93,
+the smallest default lower endpoint is 0.029599, and the smallest miscoverage
+lower endpoint is 0.021984. The complete rows are included in anonymous
+comparator evidence C1.
 
-## E.4 Exposure composition
+The selected low/mean/high development threshold set also preserves every
+direction:
 
-| Score group | Guardrail exposure | Guardrail share | Point exposure | Point share |
-|---:|---:|---:|---:|---:|
-| 0 | $9,170,062.91 | 0.611338 | $1,524,400.00 | 0.101627 |
-| 1 | $1,956,396.10 | 0.130426 | $3,485,850.00 | 0.232390 |
-| 2 | $2,399,470.12 | 0.159965 | $4,803,350.00 | 0.320223 |
-| 3 | $1,329,221.63 | 0.088615 | $3,622,375.00 | 0.241492 |
-| 4 | $144,849.26 | 0.009657 | $1,564,025.00 | 0.104268 |
+| Point-PD cap | Payoff difference | Default difference | Miscoverage difference |
+|---:|---:|---:|---:|
+| 0.065032 | [-$500,320.92, -$257,011.29] | [0.035901, 0.061313] | [0.029141, 0.051886] |
+| 0.068313 | [-$506,587.03, -$295,967.17] | [0.034431, 0.056287] | [0.027093, 0.046283] |
+| 0.071705 | [-$521,659.19, -$319,301.84] | [0.031470, 0.052274] | [0.024173, 0.042310] |
 
-: S5 primary capital by the frozen conformal score strata. Source:
-`crpto_ijds_ms_tableS5_group_exposure.csv`.
+![Monthly sharp contrasts against the development-matched point policy.](../reports/crpto/figures/crpto_ijds_cs_fig4_monthly.png){#fig-s-monthly width=100%}
 
-The guardrail's weighted contractual rate is 0.210114, versus 0.257957 for
-point PD. Its lower default is therefore not free: the risk constraint shifts
-capital away from higher-rate, higher-score loans.
+## E.4 Closed family census and selector stability
 
-## E.5 Transport decomposition
+Every guardrail receives its own development-mean-PD point comparator. The
+family table reports all nine rows and never selects an OOT winner.
+
+| Guardrail | $\tau_q$ | $\gamma$ | Matched $\tau_p$ | Payoff worse? | Default worse? | Miscoverage worse? |
+|---|---:|---:|---:|---|---|---|
+| linear-001 | 0.15 | 0.25 | 0.064179 | yes | yes | yes |
+| linear-002 | 0.15 | 0.50 | 0.055418 | yes | yes | yes |
+| linear-003 | 0.15 | 0.75 | 0.052009 | ambiguous | ambiguous | yes |
+| linear-004 | 0.17 | 0.25 | 0.068313 | yes | yes | yes |
+| linear-005 | 0.17 | 0.50 | 0.057773 | yes | yes | yes |
+| linear-006 | 0.17 | 0.75 | 0.053966 | ambiguous | ambiguous | yes |
+| linear-007 | 0.19 | 0.25 | 0.073419 | yes | yes | yes |
+| linear-008 | 0.19 | 0.50 | 0.060252 | yes | yes | yes |
+| linear-009 | 0.19 | 0.75 | 0.055498 | yes | yes | yes |
+
+: C3 complete post hoc family census. "Worse" requires the entire sharp bound to have the stated sign.
+
+![All nine guardrail-minus-own-match contrasts. Gray intervals cross zero; the locked family claim requires all nine rows.](../reports/crpto/figures/crpto_ijds_cs_fig3_family.png){#fig-s-family width=100%}
+
+Payoff and default are sign-robustly worse for seven guardrails; miscoverage is
+worse for all nine. Because only seven rows satisfy all three directions, the
+locked 9-of-9 family claim fails. The two ambiguous rows are reported, not
+removed.
+
+Selector leave-one-month-out results reinforce the distinction between a fixed
+selected-policy diagnostic and a stable family winner. The parent-selected
+`linear-004` wins three folds, `linear-001` one, and `linear-008` two. No fold
+result changes the promoted policy after the fact.
+
+## E.5 Comparator-specific composition and transport
+
+| Score group | Guardrail share | Development-matched point share | Same-threshold point share |
+|---:|---:|---:|---:|
+| 0 | 0.611338 | 0.499786 | 0.101627 |
+| 1 | 0.130426 | 0.332935 | 0.232390 |
+| 2 | 0.159965 | 0.152480 | 0.320223 |
+| 3 | 0.088615 | 0.014799 | 0.241492 |
+| 4 | 0.009657 | 0.000000 | 0.104268 |
+
+: CS10 primary capital by frozen score stratum. Source: anonymous comparator
+evidence C1.
+
+The guardrail's 0.611338 group-0 share looks unusually conservative against
+the loose same-threshold policy's 0.101627. The aligned point comparator also
+moves heavily into group 0 and has lower weighted point PD, 0.068313 versus
+0.074979. Its weighted contractual rate is 0.204369, versus 0.210113 for the
+guardrail.
 
 | Policy/metric, lower completion | Candidate row | Candidate exposure | Funded group mix | Funded | Composition term | Within-group term |
 |---|---:|---:|---:|---:|---:|---:|
 | Guardrail miscoverage | 0.120308 | 0.126272 | 0.123598 | 0.294708 | -0.002674 | 0.171111 |
-| Point-PD miscoverage | 0.120308 | 0.126272 | 0.131043 | 0.275360 | 0.004771 | 0.144317 |
+| Matched point miscoverage | 0.120308 | 0.126272 | 0.125549 | 0.256624 | -0.000723 | 0.131075 |
 | Guardrail default | 0.152994 | 0.158333 | 0.117123 | 0.292775 | -0.041210 | 0.175652 |
-| Point-PD default | 0.152994 | 0.158333 | 0.177960 | 0.326037 | 0.019627 | 0.148077 |
+| Matched point default | 0.152994 | 0.158333 | 0.114858 | 0.247353 | -0.043475 | 0.132496 |
 
-: S4 lower-completion transport. Source:
-`crpto_ijds_ms_tableS4_transport.csv`.
+: CS9 lower-completion transport. Source: anonymous comparator evidence C1.
 
 Under the upper completion, guardrail default has composition -0.039310 and
-within-group selection +0.160906; point PD has +0.018632 and +0.136071.
+within-group selection +0.160906; matched point PD has -0.041489 and +0.117790.
 Guardrail miscoverage has composition +0.001394 and within-group selection
-+0.156535; point PD has +0.002608 and +0.135998. Identity residuals are zero to
-floating-point precision in all rows.
++0.156535; matched point PD has +0.004535 and +0.118103. Every identity
+residual is zero to floating-point precision.
 
-The mechanism is therefore stable across extremal completions. Composition
-creates the guardrail's default benefit. Within-group selection raises default
-and miscoverage for both policies and is larger under the guardrail. Marginal
-or Mondrian coverage does not control this adaptive within-group reweighting.
+The original composition benefit is thus relative to a loose comparator. After
+alignment, both policies obtain favorable low-risk composition, while the
+guardrail has larger within-group default and miscoverage penalties. The
+coverage-transport failure remains, but the claim that conformal composition
+uniquely lowers default does not.
+
+## E.6 Payoff decomposition and LGD
+
+Against development-matched point PD, the guardrail's expected difference is
+$8,479.18: a +$53,474.88 expected-interest component and a -$44,995.70 expected
+default-loss component. Its realized contrast combines +$86,171.75 of
+contractual payoff, -$488,201.64 from the resolved
+default-and-foregone-interest component, and an unresolved component bounded
+by [-$104,557.15, $106,062.72]. These terms reconcile exactly to
+[-$506,587.03, -$295,967.17].
+
+For the fixed allocations, expected payoff breaks even at
+$\lambda=0.534800$. The realized lower and upper contrast lines are already
+negative at $\lambda=0$ and decrease with LGD, so neither has a break-even in
+$[0,1]$. This diagnostic does not optimize a new portfolio at each LGD; it
+isolates payoff accounting for the locked allocations.
 
 # Appendix F: Censored Extension
 
@@ -486,79 +612,58 @@ are unresolved. It is intentionally not absorbed into the primary window.
 | Policy | Expected payoff | Realized payoff | Default | Miscoverage | Unresolved exposure |
 |---|---:|---:|---:|---:|---:|
 | Conformal guardrail | $503,053.22 | [-$273,940.55, $190,722.63] | [0.224883, 0.459808] | [0.236558, 0.454458] | 0.234925 |
-| Matched point PD | $578,010.74 | [-$253,544.25, $258,320.77] | [0.268858, 0.502833] | [0.198617, 0.388450] | 0.233975 |
-| Development-selected point PD | $578,010.74 | [-$253,544.25, $258,320.77] | [0.268858, 0.502833] | [0.198617, 0.388450] | 0.233975 |
+| Development-matched point PD | $500,596.02 | [-$286,122.17, $194,666.42] | [0.217747, 0.464851] | [0.224480, 0.463059] | 0.247105 |
+| Same-threshold point PD | $578,010.74 | [-$253,544.25, $258,320.77] | [0.268858, 0.502833] | [0.198617, 0.388450] | 0.233975 |
 
-: S6 censored extension. Source: `crpto_ijds_ms_tableS6_extension.csv`.
+: CS12 censored extension. Source: anonymous comparator evidence C1.
 
 The extension's all-candidate coverage bound [0.626804, 0.892539] and roughly
-23.5% unresolved funded exposure prevent a sign-robust payoff or miscoverage
-claim. Its value is diagnostic: it shows how rapidly snapshot-based binary
-evaluation becomes weak when contractual cohorts approach the observation
-boundary.
+23.4%--24.7% unresolved funded exposure prevent a sign-robust payoff or
+miscoverage claim. Its value is diagnostic: it shows how rapidly
+snapshot-based binary evaluation becomes weak when contractual cohorts
+approach the observation boundary.
 
 # Appendix G: Reproducibility and Artifact Lineage
 
-## G.1 Immutable identifiers
+## G.1 Review-stage identifiers
 
-| Item | Identifier |
-|---|---|
-| Run | `champion-reopen-2026-07-10__maturity-safe-locked-bounded-h1h2-v2` |
-| Protocol tag | `protocol/ijds-maturity-safe-locked-bounded-h1h2-2026-07-10-v2` |
-| Protocol commit | `78a64fe67a4df46c3d19b9243deb991c56fd1ff6` |
-| Summary SHA-256 | `a9c3b3738b26096703fdd2d1b1e852f72b1516157317c65a92e1bb0abdfd693b` |
-| Receipt SHA-256 | `7847ba0dc68598de7960c7e78f8a11de527cc7bbf4ddd9f90421bdfa48b68f33` |
-| Processed DVC directory MD5 | `90ecc510414f698f91767f3e507733f0.dir` |
-| Model/results DVC directory MD5 | `fb6220447bb86971c9f41a44f208e885.dir` |
+| Layer | Anonymous label | Review-stage evidence |
+|---|---|---|
+| Maturity-safe parent | P1 | Locked protocol, deterministic summary, execution receipt, processed bundle, and model/result bundle |
+| Comparator audit | C1 | Post hoc locked protocol, deterministic summary, execution receipt, processed bundle, and model/result bundle |
 
-The execution receipt records clean initial and final worktrees, Python
-3.11.14, CatBoost 1.2.10, and highspy 1.14.0. It hashes the deterministic
-summary and every versioned output. No protected stage was run and no
-manifest-protected artifact was written.
+Both receipts record clean initial and final worktrees. C1 ran for 302.16
+seconds with Python 3.11.14, CatBoost 1.2.10, and highspy 1.14.0. It hashes the
+deterministic summary and every versioned output. No protected stage was run
+and no manifest-protected artifact was written. Exact tags, commits, hashes,
+and remote coordinates live in an editor-only crosswalk and are intentionally
+excluded from the double-anonymous supplement.
 
-## G.2 Commands
+## G.2 Reproduction sequence
 
-From a clone with the DVC remote configured:
+The metadata-sanitized review archive contains the environment lock, four
+content-addressed P1/C1 bundles, evidence builders, focused tests, and render
+tasks. A reviewer can create the locked environment, restore those bundles,
+rebuild the publication evidence, run the claim gates, and render the body and
+supplement without re-executing either expensive experiment.
 
-```powershell
-uv sync --extra dev
-$data = Get-ChildItem data/processed/experiments/champion_reopen/*bounded*h1h2*v2.dvc
-$model = Get-ChildItem models/experiments/champion_reopen/*bounded*h1h2*v2.dvc
-uv run dvc pull $data.FullName
-uv run dvc pull $model.FullName
-uv run python scripts/build_ijds_maturity_safe_evidence.py
-uv run pytest tests/test_ijds_active_claim_sync.py -q
-just submission-check
-```
-
-Re-executing the expensive experiment is optional and must occur in a clone
-where the immutable run path does not yet exist:
-
-```powershell
-uv run python scripts/experiments/run_ijds_maturity_safe_challenger.py `
-  --config configs/experiments/ijds_maturity_safe_locked_bounded_h1h2_2026-07-10.yaml
-```
-
-The runner refuses to overwrite an existing run tag, rejects a dirty protocol
-commit, verifies tag-to-commit identity, and writes an execution receipt only
-after all outputs are complete. The evidence builder is byte-idempotent,
-including deterministic PDF metadata for the figures.
+Full experimental replay is optional and requires fresh output directories.
+The runners refuse to overwrite an existing bundle, reject a dirty protocol
+state, verify protocol identity, and write execution receipts only after all
+outputs are complete. The evidence builders are byte-idempotent, including
+deterministic PDF metadata for figures. Exact commands and relative paths are
+included inside the anonymous archive rather than printed in this searchable
+supplement.
 
 ## G.3 Publication outputs
 
-The active builder produces:
-
-- `crpto_ijds_ms_table1_protocol` and `table2_primary_policy`;
-- `crpto_ijds_ms_table3_primary_contrast` and
-  `table4_development_to_oot`;
-- `crpto_ijds_ms_tableS1_selection_grid` through `tableS7_monthly_contrast`;
-- `crpto_ijds_ms_fig0_pipeline`, `fig1_timeline`, `fig2_monthly`, and
-  `fig3_transport` in PNG and PDF; and
-- `reports/crpto/ijds_maturity_safe_evidence.json`, which hashes every output.
-
-CSV files are the numerical interface. TeX files are machine-readable raw
-exports; the manuscript uses deliberately compact presentation tables to avoid
-shrinking wide schemas. The full JSON and allocation parquets remain in DVC.
+The P1 builder produces 11 tabular exports and four figures. The C1 builder
+produces 15 tabular exports and four figures, together with the failed 9-of-9
+family gate. CSV files are the numerical interface and TeX files are raw table
+exports; the manuscript uses compact presentation tables rather than shrinking
+wide schemas. Full summaries and allocation parquets remain in the
+content-addressed bundles. Two consecutive C1 builds reproduce all 39 file
+hashes exactly.
 
 ## G.4 Build and claim gates
 
@@ -566,8 +671,10 @@ The release gate performs Ruff lint and format checks, Mypy over `src`,
 `scripts`, and tests, advisory `ty`, the full pytest suite, protected champion
 hash validation, both Quarto manuscript renders, and the official INFORMS TeX
 compile. Publication tests derive anchors from the active evidence JSON and
-forbid compact-v7 headline values on active surfaces. The historical champion
-has a separate provenance test and is never regenerated by the paper build.
+forbid compact-v7 headline values on active surfaces. Separate anonymity tests
+forbid run tags, commit hashes, DVC fingerprints, repository ownership, and
+personal identifiers on reviewer-facing surfaces. The historical champion has
+a separate provenance test and is never regenerated by the paper build.
 
 # Appendix H: Historical Diagnostics and Claim Boundary
 
@@ -581,9 +688,9 @@ the evaluated payoff, and one portfolio pooled future monthly menus. No number
 from that comparison is relabeled as maturity-safe evidence.
 
 The earlier A35--A40 tables and governance files remain immutable so that the
-scientific correction is auditable. Active tests forbid their headline run tag,
-return, default, miscoverage, endpoint, and conditional tail quantities in the
-body, supplement, and official TeX.
+scientific correction is auditable. Active tests forbid their headline
+identifier, return, default, miscoverage, endpoint, and conditional tail
+quantities in the body, supplement, and official TeX.
 
 ## H.2 Earlier A1--A34 analyses
 
@@ -616,16 +723,19 @@ present results.
 | Active statement | Evidence | Not claimed |
 |---|---|---|
 | Status-independent 540,121-row universe and monthly chronology | S0, protocol config, source inventory | Prospective deployment or complete event-time observation |
-| Exact 90% split-Mondrian recipe on 2012H1 | S2, frozen group quantiles | Latent-PD confidence intervals or 90% OOT coverage |
+| 90%-target split-Mondrian recipe using exact finite-sample ranks on 2012H1 | S2, frozen group quantiles | Latent-PD confidence intervals or 90% OOT coverage |
 | Selected $\tau=0.17,\gamma=0.25$ on 2012H2 | S1 | Selection-valid conformal inference |
-| Development success reverses OOT for payoff and miscoverage | Main Table 6 and S7 | A formal generalization test or a retuned policy |
-| Guardrail lowers primary default | S7 bound [-0.046275, -0.020093] | Causal default reduction or universal dominance |
-| Guardrail lowers primary payoff | S7 bound [-$322,703.79, -$58,040.34] | Cash-flow loss, IRR, or welfare effect |
-| Guardrail worsens funded miscoverage | S7 bound [0.008822, 0.029850] | Impossibility for every conformal optimization method |
-| Composition creates the default benefit | S4 and S5 | Protected-group fairness or a formal regularization theorem |
-| Within-group selection drives coverage failure | S4 and binary identity | A selected-set coverage guarantee |
-| Extension is inconclusive under censoring | S2 and S6 | A negative or positive extension finding |
-| Exact reproducibility of the tagged run | receipt, hashes, DVC, tests | Reproducibility of external raw-data hosting forever |
+| Same $\tau$ nests the guardrail feasible set inside point PD | Proposition S4 and C1 | A unique comparator-matching theorem |
+| Same-threshold point PD is a loose secondary diagnostic | C1 cap slack 0.054242 | Equal decision stringency |
+| Development match fixes $\tau_p=0.068313$ from 2012H2 | CS1--CS2 and protocol freeze | Confirmatory or causal matching |
+| Guardrail has lower realized payoff after matching | C2 bound [-$506,587.03, -$295,967.17] | Cash-flow loss, IRR, or welfare effect |
+| Guardrail has higher matched default | C2 bound [0.034431, 0.056287] | A causal increase or universal family direction |
+| Guardrail has higher matched miscoverage | C2 bound [0.027093, 0.046283] | Impossibility for every conformal optimization method |
+| Selected inversion survives low/mean/high and 15 LOMO checks | CS3--CS4 | Independent-sample hypothesis testing |
+| Full family has all three directions in 7/9 pairs | C3 | A 9-of-9 result or OOT winner |
+| Within-group terms algebraically account for the funded coverage departure under the ordered decomposition | CS9 and binary identity | A causal mechanism or selected-set coverage guarantee |
+| Extension is inconclusive under censoring | S2 and CS12 | A negative or positive extension finding |
+| Exact reproducibility of both tagged runs | receipts, hashes, DVC, tests | Reproducibility of external raw-data hosting forever |
 
 # Appendix I: Limitations Checklist
 
@@ -634,9 +744,9 @@ The active limitations can also be organized as threats to validity.
 | Threat family | Concrete risk | Active response | Residual limitation |
 |---|---|---|---|
 | Construct | Snapshot status and standardized payoff simplify loan economics | Exact labels and payoff algebra are declared | No timing, prepayment, recovery, fees, or discounting |
-| Internal | Future status, labels, or menus could leak into a retrospective decision | Status-independent inclusion, six temporal blocks, outcome-isolated solver | Code-locked history is not a pristine prospective trial |
+| Internal | Future status, labels, menus, or comparator choices could leak into a retrospective decision | Status-independent inclusion, six temporal blocks, outcome-isolated solver, explicit post hoc audit label | Comparator audit is not confirmatory or prospective |
 | Statistical | Exchangeability and coverage deteriorate over time | Report candidate bounds, saturation, and monthly diagnostics | No 90% OOT or selected-set validity |
-| Decision | Optimization reweights observations adaptively | Matched menus, sharp contrasts, and transport decomposition | No causal or welfare ranking |
+| Decision | Optimization reweights observations and score caps change feasible sets | Binding diagnostics, development match, sharp contrasts, and transport decomposition | Match aligns one moment; continuous allocations and the fixed purpose cap are not stress-tested; no unique, causal, or welfare ranking |
 | External | One discontinued platform and 36-month contracts | State the application boundary and preserve full provenance | No live, cross-platform, or fair-lending conclusion |
 | Reproducibility | Heavy artifacts and remote data may disappear | DVC pointers, hashes, receipt, clean-clone gate | Remote access still requires credentials and source availability |
 
@@ -652,8 +762,11 @@ The manuscript and supplement must continue to state all of the following:
 6. no selected-set conformal validity;
 7. no causal, prospective, or fair-lending interpretation;
 8. code-locked retrospective audit rather than preregistration;
-9. completion-specific transport components are not confidence bounds; and
-10. the compact-v7 and A1--A40 evidence are historical provenance only.
+9. completion-specific transport components are not confidence bounds;
+10. post hoc development matching and a fragile six-month selector;
+11. continuous allocations and the fixed 25% purpose cap are not operationally
+    calibrated or stress-tested; and
+12. the compact-v7 and A1--A40 evidence are historical provenance only.
 
 Any future edit that removes one of these boundaries while retaining the
 headline contrasts changes the scientific claim and must fail publication

@@ -1,0 +1,3 @@
+baseline,expected_intercept,expected_slope,expected_break_even_lgd,realized_lower_intercept,realized_lower_slope,realized_lower_break_even_lgd,realized_upper_intercept,realized_upper_slope,realized_upper_break_even_lgd
+same_threshold_point_pd,-516234.5458627979,611681.704977719,0.8439594345585375,-458332.1759950836,301396.41892682336,,-370395.472899747,694122.5192280628,0.5336168509727442
+development_matched_point_pd,53474.87911068068,-99990.44653609033,0.5347998830206202,-126649.63406372536,-844305.3328367434,,-63559.74680868992,-516460.93262141815,

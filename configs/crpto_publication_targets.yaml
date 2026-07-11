@@ -26,41 +26,63 @@ primary_target:
 
 active_scientific_contract:
   claim_registry: docs/research/active_claims_2026-07-10.md
-  run_tag: champion-reopen-2026-07-10__maturity-safe-locked-bounded-h1h2-v2
-  protocol_tag: protocol/ijds-maturity-safe-locked-bounded-h1h2-2026-07-10-v2
-  protocol_commit: 78a64fe67a4df46c3d19b9243deb991c56fd1ff6
-  evidence_manifest: reports/crpto/ijds_maturity_safe_evidence.json
+  parent_run_tag: champion-reopen-2026-07-10__maturity-safe-locked-bounded-h1h2-v2
+  parent_protocol_tag: protocol/ijds-maturity-safe-locked-bounded-h1h2-2026-07-10-v2
+  parent_protocol_commit: 78a64fe67a4df46c3d19b9243deb991c56fd1ff6
+  parent_evidence_manifest: reports/crpto/ijds_maturity_safe_evidence.json
+  run_tag: champion-reopen-2026-07-10__maturity-safe-v2-comparator-stringency-audit-v1
+  protocol_tag: protocol/ijds-maturity-safe-v2-comparator-stringency-audit-2026-07-10-v1
+  protocol_commit: ca632ccfbbfaec0e6cdf482a279468665cdb62c0
+  evidence_manifest: reports/crpto/ijds_comparator_stringency_evidence.json
+  posthoc_diagnostic_after_parent_results: true
   method:
-    conformal: "Exact 90% split-Mondrian interval for the binary snapshot outcome."
+    conformal: >-
+      90%-target split-Mondrian interval using the exact finite-sample rank for
+      the binary snapshot outcome.
     policy: "q=0.75p+0.25u with tau=0.17."
+    comparator: >-
+      Point PD with tau=0.06831339893217318, matched to the selected
+      guardrail's mean development-funded point PD.
     payoff: "Expected (1-p)r-p*LGD and realized (1-Y)r-Y*LGD."
     evaluation: "Fifteen separate monthly decisions from 2016-04 through 2017-06."
     unresolved: "Retained with sharp binary aggregate and pairwise bounds."
   headline:
     candidate_coverage: [0.854923, 0.879692]
-    payoff_difference: [-322703.79, -58040.34]
-    default_difference: [-0.046275, -0.020093]
-    miscoverage_difference: [0.008822, 0.029850]
+    same_threshold:
+      payoff_difference: [-322703.79, -58040.34]
+      default_difference: [-0.046275, -0.020093]
+      miscoverage_difference: [0.008822, 0.029850]
+    development_matched:
+      expected_payoff_difference: 8479.18
+      payoff_difference: [-506587.03, -295967.17]
+      default_difference: [0.034431, 0.056287]
+      miscoverage_difference: [0.027093, 0.046283]
+    family_all_three_guardrail_worse: 7
+    family_pairs: 9
   mechanism: >-
-    The conformal score changes between-stratum portfolio composition and
-    lowers default, while adaptive within-stratum selection drives the funded
-    coverage failure.
+    The same-threshold comparison confounds score transformation with risk-cap
+    stringency. Once development point risk is aligned, the point policy has
+    lower realized default and miscoverage; adaptive within-stratum selection
+    remains the main coverage-transport failure for both policies.
   required_artifacts:
+    - reports/crpto/ijds_maturity_safe_evidence.json
+    - reports/crpto/ijds_comparator_stringency_evidence.json
     - reports/crpto/tables/crpto_ijds_ms_table1_protocol.csv
-    - reports/crpto/tables/crpto_ijds_ms_table2_primary_policy.csv
-    - reports/crpto/tables/crpto_ijds_ms_table3_primary_contrast.csv
-    - reports/crpto/tables/crpto_ijds_ms_table4_development_to_oot.csv
-    - reports/crpto/tables/crpto_ijds_ms_tableS1_selection_grid.csv
     - reports/crpto/tables/crpto_ijds_ms_tableS2_coverage.csv
-    - reports/crpto/tables/crpto_ijds_ms_tableS3_monthly_primary.csv
-    - reports/crpto/tables/crpto_ijds_ms_tableS4_transport.csv
-    - reports/crpto/tables/crpto_ijds_ms_tableS5_group_exposure.csv
-    - reports/crpto/tables/crpto_ijds_ms_tableS6_extension.csv
-    - reports/crpto/tables/crpto_ijds_ms_tableS7_monthly_contrast.csv
-    - reports/crpto/figures/crpto_ijds_ms_fig1_timeline.pdf
     - reports/crpto/figures/crpto_ijds_ms_fig0_pipeline.pdf
-    - reports/crpto/figures/crpto_ijds_ms_fig2_monthly.pdf
-    - reports/crpto/figures/crpto_ijds_ms_fig3_transport.pdf
+    - reports/crpto/figures/crpto_ijds_ms_fig1_timeline.pdf
+    - reports/crpto/tables/crpto_ijds_cs_table1_baseline_alignment.csv
+    - reports/crpto/tables/crpto_ijds_cs_table2_primary_inversion.csv
+    - reports/crpto/tables/crpto_ijds_cs_table3_family_census.csv
+    - reports/crpto/tables/crpto_ijds_cs_tableS3_selected_sensitivity.csv
+    - reports/crpto/tables/crpto_ijds_cs_tableS4_primary_leave_one_month_out.csv
+    - reports/crpto/tables/crpto_ijds_cs_tableS5_selector_leave_one_month_out.csv
+    - reports/crpto/tables/crpto_ijds_cs_tableS6_payoff_decomposition.csv
+    - reports/crpto/tables/crpto_ijds_cs_tableS9_transport.csv
+    - reports/crpto/figures/crpto_ijds_cs_fig1_alignment.pdf
+    - reports/crpto/figures/crpto_ijds_cs_fig2_selected_contrasts.pdf
+    - reports/crpto/figures/crpto_ijds_cs_fig3_family.pdf
+    - reports/crpto/figures/crpto_ijds_cs_fig4_monthly.pdf
 
 claim_boundaries:
   required:
@@ -70,8 +92,11 @@ claim_boundaries:
     - "Sharp bounds are partial identification, not confidence intervals."
     - "Retrospective contrasts are not causal effects."
     - "Code-locked retrospective audit, not preregistration or a prospective trial."
+    - "Comparator audit is explicitly post hoc and aligns one development risk moment."
   forbidden:
     - "Universal economic dominance."
+    - "A unique or theoretically optimal comparator-matching rule."
+    - "A 9-of-9 family direction."
     - "Selected-set conformal guarantee."
     - "Markov certificate or deterministic tail guarantee."
     - "Fair-lending certification."

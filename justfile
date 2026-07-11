@@ -79,6 +79,7 @@ journal-package:
 
 ijds-evidence:
     uv run python scripts/build_ijds_maturity_safe_evidence.py
+    uv run python scripts/build_ijds_comparator_stringency_evidence.py
 
 # Historical compact-v7 evidence retained for provenance only.
 ijds-historical-v7-evidence:

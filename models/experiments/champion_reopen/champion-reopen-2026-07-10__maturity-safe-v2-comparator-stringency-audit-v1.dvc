@@ -1,0 +1,7 @@
+outs:
+- md5: 4c1cbec15b8d60b40d5f2a05c33c66ab.dir
+  size: 159264
+  nfiles: 3
+  hash: md5
+  path:
+    champion-reopen-2026-07-10__maturity-safe-v2-comparator-stringency-audit-v1

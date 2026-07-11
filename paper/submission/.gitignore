@@ -12,6 +12,8 @@ INFORMS-IJDS-Template.*
 Style-Instructions.pdf
 sample.bib
 Sample-Figure.*
+IJDS-datadisclosureform-*.pdf
+IJDS_Reproducibility*.docx
 # LaTeX build artifacts
 *.aux
 *.bbl

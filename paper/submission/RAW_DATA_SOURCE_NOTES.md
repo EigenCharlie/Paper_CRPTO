@@ -3,7 +3,7 @@
 These notes support the IJDS Data and Code Disclosure Form and the accepted-paper
 reproducibility package. They are not part of the anonymous reviewer manuscript.
 
-Last checked for the submission package: 2026-07-06 UTC.
+Last checked for the submission package: 2026-07-10 UTC.
 
 ## Source Inventory
 
@@ -39,8 +39,9 @@ artifacts without relying on author-local paths:
    provided by the journal workflow.
 3. Verify frozen outputs with `EXTRACTION_MANIFEST.json` and
    `just validate-champion`.
-4. Rebuild safe paper surfaces with `just tables`, `just figures`,
-   `just evidence`, `just journal-package`, and `just paper-submission-pdf`.
+4. Rebuild the active paper evidence with `just ijds-evidence`, run
+   `just publication-integrity`, and render the reviewer surfaces with
+   `just paper-submission-pdf` and `just paper-submission-official`.
 
 The protected search and champion stages are not routine reproduction steps.
 They require a new run tag and explicit revalidation plan.

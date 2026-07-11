@@ -2,12 +2,17 @@
 
 ## Scientific status override - 2026-07-10
 
-The active IJDS paper is the clean, tagged maturity-safe bounded protocol v2.
-Its source of truth is `docs/research/active_claims_2026-07-10.md`. The compact
-v7 claim is frozen historical provenance and remains NO-GO. Before paper work,
-read the active registry, `ijds_state_of_art_audit_2026-07-10.md`, and
-`ijds_three_front_reconstruction_2026-07-10.md`. Never overwrite the active v2
-run, the historical champion, or manifest-protected artifacts.
+The active IJDS paper combines the clean, tagged maturity-safe bounded protocol
+v2 with the separately tagged, explicitly post hoc comparator-stringency
+audit. Its source of truth is `docs/research/active_claims_2026-07-10.md`. The
+compact v7 claim is frozen historical provenance and remains NO-GO. Before
+paper work, read the active registry, the locked comparator protocol, its
+`ijds_comparator_stringency_results_2026-07-10.md` post-run audit,
+`ijds_state_of_art_audit_2026-07-10.md`, and
+`ijds_three_front_reconstruction_2026-07-10.md`, then use
+`ijds_final_two_pass_audit_2026-07-10.md` for the final recovery disposition and
+stop rule. Never overwrite either active run, the historical champion, or
+manifest-protected artifacts.
 
 ## Quién soy y qué es este proyecto
 
@@ -54,27 +59,31 @@ congelados como procedencia histórica. El body IJDS activo usa un experimento
 nuevo, aislado y DVC-tracked; no regenera ni sobreescribe ningún artefacto
 upstream protegido.
 
-**Body claim activo maturity-safe v2:**
+**Body claim activo maturity-safe v2 + comparator audit:**
 
 | Campo | Valor |
 | --- | --- |
 | Run tag | `champion-reopen-2026-07-10__maturity-safe-locked-bounded-h1h2-v2` |
+| Comparator run | `champion-reopen-2026-07-10__maturity-safe-v2-comparator-stringency-audit-v1` |
 | Universo | `540,121` préstamos de 36 meses, membership independiente del status |
 | Cronología | fit/selección termina 2012; 15 decisiones mensuales 2016-04--2017-06 |
-| Conformal | intervalo binario Mondrian exacto al `90%`; no es CI de PD latente |
+| Conformal | intervalo binario Mondrian con target `90%` y rango finito exacto; no es CI de PD latente |
 | Política | `q=0.75p+0.25u`, `tau=0.17`; payoff coherente `(1-p)r-p*LGD` |
 | Cobertura candidata OOT | `[0.854923, 0.879692]` |
-| Diferencia de payoff vs point PD | `[-$322,703.79, -$58,040.34]` |
-| Diferencia de default vs point PD | `[-0.046275, -0.020093]` |
-| Diferencia de miscoverage vs point PD | `[0.008822, 0.029850]` |
-| Mecanismo | mejora de default por composición; falla de coverage por selección within-group |
-| Evidencia | `ijds_maturity_safe_evidence.json`, tablas 1--3/S1--S7 y figuras 1--3 |
+| Comparator point PD | `tau=0.068313`, matched al mean funded PD de 2012H2 |
+| Diferencia de payoff vs matched point PD | `[-$506,587.03, -$295,967.17]` |
+| Diferencia de default vs matched point PD | `[0.034431, 0.056287]` |
+| Diferencia de miscoverage vs matched point PD | `[0.027093, 0.046283]` |
+| Mecanismo | same numeric `tau` no iguala stringency; la ventaja de default se invierte con development matching |
+| Evidencia | manifests `ijds_maturity_safe_evidence.json` e `ijds_comparator_stringency_evidence.json` |
 
-El claim es mixto: el guardrail reduce default, pero pierde payoff y empeora
-la cobertura del funded set. Es una auditoría temporal retrospectiva con
-bounds sharp, no un efecto causal, un guarantee selected-set, un cash-flow
-return, una prueba prospectiva ni un certificado Markov. La autoridad completa
-es `docs/research/active_claims_2026-07-10.md`.
+El claim es una falsificación metodológica: el guardrail parecía reducir
+default contra point PD con el mismo `tau=0.17`, pero ese cap point era no
+vinculante. Contra el comparador alineado por riesgo de desarrollo, el
+guardrail pierde payoff realizado y empeora default y miscoverage. La auditoría
+de comparadores es post hoc, no causal, prospectiva ni confirmatoria; el censo
+familiar es 7/9, no 9/9. La autoridad completa es
+`docs/research/active_claims_2026-07-10.md`.
 
 **Body claim histórico v7:** NO-GO y replay-only. Sus A35--A40, retorno
 positivo, endpoint y sensibilidades no pueden reaparecer en superficies
@@ -108,9 +117,9 @@ Artefactos históricos congelados cuyos hashes están en
 - `models/experiments/champion_reopen/...__pool93__ijds-certificate-semantics-v2/portfolio/pool93_point_pd_baseline_audit.json`
 - `EXTRACTION_MANIFEST.json`
 
-La sincronía del claim maturity-safe v2 con body, supplement y TeX la vigila
-`tests/test_ijds_active_claim_sync.py`. `tests/test_pool93_body_claim_sync.py`
-queda limitado a la integridad de procedencia histórica v7/pool93.
+La sincronía del claim maturity-safe v2 y del comparator audit con body,
+supplement y TeX la vigilan `tests/test_ijds_active_claim_sync.py` y
+`tests/test_ijds_comparator_evidence.py`.
 
 Stages DVC que regeneran estos artefactos (`crpto.pd.champion`, `crpto.conformal.intervals`, `crpto.conformal.validation`, `crpto.portfolio.optimization`, `crpto.portfolio.bound_exact_eval`) **no se ejecutan** sin permiso. Validar con `crpto-validate-champion` antes de cualquier merge.
 

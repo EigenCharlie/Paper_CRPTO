@@ -8,21 +8,25 @@ Pipeline de investigación y libro Quarto que acompañan el paper **CRPTO**, una
 
 | Campo | Valor |
 | --- | --- |
-| Run tag | `champion-reopen-2026-07-10__maturity-safe-locked-bounded-h1h2-v2` |
+| Parent run | `champion-reopen-2026-07-10__maturity-safe-locked-bounded-h1h2-v2` |
+| Comparator audit | `champion-reopen-2026-07-10__maturity-safe-v2-comparator-stringency-audit-v1` (post hoc, tagged) |
 | Universo | `540,121` préstamos de 36 meses; membership independiente del status |
 | Cronología | fit/selección hasta 2012; 15 decisiones mensuales 2016-04--2017-06 |
-| Conformal | intervalo binario Mondrian exacto al `90%`; no es CI de PD latente |
+| Conformal | intervalo binario Mondrian con target `90%` y rango finito exacto; no es CI de PD latente |
 | Política | `q=0.75p+0.25u`, `tau=0.17`; payoff coherente `(1-p)r-p*LGD` |
 | Cobertura candidata OOT | `[0.854923, 0.879692]` |
-| Payoff guardrail menos point PD | `[-$322,703.79, -$58,040.34]` |
-| Default guardrail menos point PD | `[-0.046275, -0.020093]` |
-| Miscoverage guardrail menos point PD | `[0.008822, 0.029850]` |
-| Mecanismo | reduce default por composición entre estratos; falla coverage por selección dentro de estratos |
+| Comparador primario | point PD con `tau=0.068313`, alineado al mean funded PD de desarrollo |
+| Payoff guardrail menos point PD | `[-$506,587.03, -$295,967.17]` |
+| Default guardrail menos point PD | `[0.034431, 0.056287]` |
+| Miscoverage guardrail menos point PD | `[0.027093, 0.046283]` |
+| Mecanismo | copiar `tau=0.17` entre scores no iguala stringency; el resultado de default se invierte al alinear riesgo de desarrollo |
 
 Hashes SHA256 de los artefactos críticos están en [`EXTRACTION_MANIFEST.json`](EXTRACTION_MANIFEST.json). Verifica con `just validate-champion` o el skill `/crpto-validate-champion`.
 El compact-v7, el rebaseline y la frontera pool93 se conservan como procedencia
 congelada, no como claims activos del manuscrito IJDS. La autoridad editorial
-es [`docs/research/active_claims_2026-07-10.md`](docs/research/active_claims_2026-07-10.md).
+es [`docs/research/active_claims_2026-07-10.md`](docs/research/active_claims_2026-07-10.md);
+el cierre numérico del comparador está en
+[`docs/research/ijds_comparator_stringency_results_2026-07-10.md`](docs/research/ijds_comparator_stringency_results_2026-07-10.md).
 
 ## Requisitos del sistema
 
@@ -66,7 +70,7 @@ just book-clean         # borra _book/, _freeze/, .quarto/
 
 # Pipeline de paper (no toca el champion)
 just paper-export       # tablas + figuras + evidence + journal + libro
-just ijds-evidence      # tablas 1--3/S1--S7 y figuras 1--3 maturity-safe
+just ijds-evidence      # evidencia maturity-safe + auditoria de comparadores
 just tables             # solo CSVs
 just figures            # solo PNGs/PDFs
 

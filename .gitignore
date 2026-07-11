@@ -133,6 +133,7 @@ mlartifacts/
 
 # Scratch runtime checkpoints are observability, not canonical deliverables.
 models/*_runtime_checkpoints/
+tmp/
 
 # Optuna local
 optuna.db
@@ -157,7 +158,7 @@ models/experiments/**
 !models/experiments/champion_reopen/champion-reopen-2026-06-19__pool93__ijds-certificate-semantics-v2/portfolio/pool93_ijds_consolidated_frontier.json
 !models/experiments/champion_reopen/champion-reopen-2026-06-19__pool93__ijds-certificate-semantics-v2/portfolio/pool93_ijds_consolidated_governance.json
 !models/experiments/champion_reopen/champion-reopen-2026-06-19__pool93__ijds-certificate-semantics-v2/portfolio/pool93_point_pd_baseline_audit.json
-!models/experiments/champion_reopen/champion-reopen-2026-07-10__maturity-safe-locked-bounded-h1h2-v2.dvc
+!models/experiments/**/*.dvc
 configs/experiments/
 !configs/experiments/
 configs/experiments/*

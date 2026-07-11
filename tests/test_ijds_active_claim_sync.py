@@ -251,19 +251,18 @@ def test_active_manuscript_surfaces_share_numeric_and_narrative_anchors() -> Non
         "540,121",
         "0.854923",
         "0.879692",
-        "0.020093",
-        "0.046275",
-        "0.008822",
-        "0.029850",
-        "$50,260.10",
-        "$72,701.67",
-        "$58,040",
-        "$322,703.79",
-        "0.611338",
+        "0.068313",
+        "0.034431",
+        "0.056287",
+        "0.027093",
+        "0.046283",
+        "$295,967.17",
+        "$506,587.03",
+        "7/9",
         "within-group",
         "standardized payoff",
         "latent",
-        "development-to-oot",
+        "post hoc",
     )
     for surface in SURFACES:
         text = _normalize(surface.read_text(encoding="utf-8"))
@@ -275,7 +274,8 @@ def test_body_sources_retain_recovered_ijds_argument() -> None:
     anchors = (
         "closest-work boundary",
         "identification and theory",
-        "development success does not transport",
+        "comparator non-invariance",
+        "equal thresholds are not equal baselines",
         "managerial audit card",
     )
     for surface in (SURFACES[0], SURFACES[2]):
@@ -324,9 +324,9 @@ def test_body_and_official_share_citations_and_display_counts() -> None:
 
     assert body_citations == official_citations
     assert len(body_citations) == 41
-    assert body.count("{#tbl-") == 10
+    assert body.count("{#tbl-") == 12
     assert body.count("{#fig-") == 4
-    assert official.count(r"\begin{table}") == 10
+    assert official.count(r"\begin{table}") == 12
     assert official.count(r"\begin{figure}") == 4
 
 

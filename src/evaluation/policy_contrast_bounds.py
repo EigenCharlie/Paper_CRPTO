@@ -91,6 +91,11 @@ def sharp_policy_contrast_bounds(
         delta_exposure * -float(lgd),
         outcomes,
     )
+    payoff_rate_lower, payoff_rate_upper = _sharp_binary_sum_bounds(
+        delta_weight * rates,
+        delta_weight * -float(lgd),
+        outcomes,
+    )
     default_lower, default_upper = _sharp_binary_sum_bounds(
         np.zeros(len(union), dtype=float),
         delta_weight,
@@ -125,8 +130,8 @@ def sharp_policy_contrast_bounds(
         "expected_objective_difference": float(expected),
         "realized_payoff_difference_lower": payoff_lower,
         "realized_payoff_difference_upper": payoff_upper,
-        "realized_payoff_rate_difference_lower": payoff_lower / total_a,
-        "realized_payoff_rate_difference_upper": payoff_upper / total_a,
+        "realized_payoff_rate_difference_lower": payoff_rate_lower,
+        "realized_payoff_rate_difference_upper": payoff_rate_upper,
         "weighted_default_difference_lower": default_lower,
         "weighted_default_difference_upper": default_upper,
         "weighted_miscoverage_difference_lower": miscoverage_lower,

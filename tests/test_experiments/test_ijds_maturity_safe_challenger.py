@@ -439,6 +439,37 @@ def test_pairwise_policy_contrast_bounds_use_exposure_differences() -> None:
     assert bounds["weighted_miscoverage_difference_upper"] == pytest.approx(0.5)
 
 
+def test_pairwise_payoff_rate_contrast_normalizes_each_policy_capital() -> None:
+    allocations = pd.DataFrame(
+        {
+            "id": ["a", "b", "a"],
+            "role": ["primary_oot"] * 3,
+            "policy_label": ["guard", "guard", "point"],
+            "exposure": [50.0, 50.0, 50.0],
+            "contractual_rate": [0.10, 0.10, 0.10],
+            "conformal_lower": [0.0, 0.0, 0.0],
+            "conformal_upper": [0.2, 0.4, 0.2],
+            "snapshot_default": [0.0, np.nan, 0.0],
+            "expected_payoff_contribution": [4.0, 3.0, 4.0],
+        }
+    )
+
+    bounds = sharp_policy_contrast_bounds(
+        allocations,
+        policy_a="guard",
+        policy_b="point",
+        role="primary_oot",
+        lgd=0.45,
+    )
+
+    assert bounds["policy_a_capital"] == pytest.approx(100.0)
+    assert bounds["policy_b_capital"] == pytest.approx(50.0)
+    assert bounds["realized_payoff_difference_lower"] == pytest.approx(-22.5)
+    assert bounds["realized_payoff_difference_upper"] == pytest.approx(5.0)
+    assert bounds["realized_payoff_rate_difference_lower"] == pytest.approx(-0.275)
+    assert bounds["realized_payoff_rate_difference_upper"] == pytest.approx(0.0)
+
+
 def test_development_selector_uses_realized_payoff_and_deterministic_ties(
     monkeypatch: pytest.MonkeyPatch,
 ) -> None:

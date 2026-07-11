@@ -17,10 +17,13 @@ def _rows(name: str) -> list[dict[str, str]]:
 
 
 def test_group_exposure_values_are_visible_in_body_and_supplement() -> None:
-    rows = _rows("crpto_ijds_ms_tableS5_group_exposure.csv")
+    rows = _rows("crpto_ijds_cs_tableS10_group_exposure.csv")
     body = PAPER.read_text(encoding="utf-8")
     supplement = SUPPLEMENT.read_text(encoding="utf-8").lower()
-    for policy, group in (("selected_conformal_guardrail", "0"), ("matched_point_pd", "0")):
+    for policy, group in (
+        ("selected_conformal_guardrail", "0"),
+        ("development_matched_point_pd", "0"),
+    ):
         row = next(
             item
             for item in rows
@@ -32,7 +35,7 @@ def test_group_exposure_values_are_visible_in_body_and_supplement() -> None:
 
 
 def test_transport_mechanism_values_are_visible_in_supplement() -> None:
-    rows = _rows("crpto_ijds_ms_tableS4_transport.csv")
+    rows = _rows("crpto_ijds_cs_tableS9_transport.csv")
     supplement = SUPPLEMENT.read_text(encoding="utf-8")
     selected = next(
         row
@@ -45,20 +48,21 @@ def test_transport_mechanism_values_are_visible_in_supplement() -> None:
         assert f"{float(selected[field]):.6f}" in supplement
 
 
-def test_development_to_oot_reversal_is_visible_in_body_and_supplement() -> None:
-    rows = _rows("crpto_ijds_ms_table4_development_to_oot.csv")
-    development = next(row for row in rows if row["block"] == "policy_development_2012H2")
-    realized = f"{float(development['realized_payoff_difference_lower']):,.2f}"
-    expected = f"{abs(float(development['expected_payoff_difference'])):,.2f}"
+def test_comparator_inversion_is_visible_in_body_and_supplement() -> None:
+    rows = _rows("crpto_ijds_cs_table2_primary_inversion.csv")
+    matched = next(row for row in rows if row["baseline"] == "development_matched_point_pd")
+    realized = f"{abs(float(matched['realized_payoff_difference_lower'])):,.2f}"
+    default = f"{float(matched['weighted_default_difference_lower']):.6f}"
     for path in (PAPER, SUPPLEMENT):
         text = path.read_text(encoding="utf-8").lower()
         assert realized in text
-        assert expected in text
-        assert "development-to-oot" in text
+        assert default in text
+        assert "post hoc" in text
+        assert "development-matched" in text
 
 
 def test_extension_is_reported_as_bounded_stress_not_active_promotion() -> None:
-    rows = _rows("crpto_ijds_ms_tableS6_extension.csv")
+    rows = _rows("crpto_ijds_cs_tableS12_extension.csv")
     guard = next(row for row in rows if row["policy_label"] == "selected_conformal_guardrail")
     supplement = SUPPLEMENT.read_text(encoding="utf-8").lower()
     assert f"{float(guard['unresolved_exposure_share']):.6f}" in supplement

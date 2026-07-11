@@ -31,11 +31,13 @@
   }
 
   #quarto-content {
-    grid-template-rows: [content-top] auto [content-bottom] 0 [page-bottom] !important;
+    display: block !important;
+    grid-template-rows: none !important;
   }
 
   #quarto-appendix {
-    break-after: avoid-page;
+    break-after: auto !important;
+    page-break-after: auto !important;
   }
 
   .keep-together {

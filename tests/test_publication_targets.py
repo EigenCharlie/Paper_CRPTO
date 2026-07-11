@@ -26,6 +26,7 @@ def test_publication_target_points_to_active_sources() -> None:
         assert Path(primary[key]).is_file()
     assert Path(active["claim_registry"]).is_file()
     assert Path(active["evidence_manifest"]).is_file()
+    assert Path(active["parent_evidence_manifest"]).is_file()
 
 
 def test_publication_target_urls_are_official_https() -> None:
@@ -49,13 +50,19 @@ def test_ijds_sources_are_anonymous_by_default() -> None:
 
 def test_active_contract_is_small_complete_and_numerically_locked() -> None:
     active = _config()["active_scientific_contract"]
-    assert active["run_tag"].endswith("maturity-safe-locked-bounded-h1h2-v2")
+    assert active["parent_run_tag"].endswith("maturity-safe-locked-bounded-h1h2-v2")
+    assert active["run_tag"].endswith("comparator-stringency-audit-v1")
+    assert active["posthoc_diagnostic_after_parent_results"] is True
     assert active["method"]["policy"] == "q=0.75p+0.25u with tau=0.17."
+    assert "0.06831339893217318" in active["method"]["comparator"]
     assert active["headline"]["candidate_coverage"] == pytest.approx([0.854923, 0.879692])
-    assert active["headline"]["payoff_difference"] == pytest.approx([-322703.79, -58040.34])
-    assert active["headline"]["default_difference"] == pytest.approx([-0.046275, -0.020093])
-    assert active["headline"]["miscoverage_difference"] == pytest.approx([0.008822, 0.029850])
-    assert len(active["required_artifacts"]) == 15
+    matched = active["headline"]["development_matched"]
+    assert matched["payoff_difference"] == pytest.approx([-506587.03, -295967.17])
+    assert matched["default_difference"] == pytest.approx([0.034431, 0.056287])
+    assert matched["miscoverage_difference"] == pytest.approx([0.027093, 0.046283])
+    assert active["headline"]["family_all_three_guardrail_worse"] == 7
+    assert active["headline"]["family_pairs"] == 9
+    assert len(active["required_artifacts"]) == 18
     for artifact in active["required_artifacts"]:
         assert Path(artifact).is_file(), artifact
 

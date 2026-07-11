@@ -1,0 +1,15 @@
+role,policy_label,conformal_group,exposure,exposure_share
+primary_oot,development_matched_point_pd,0,7496791.672042562,0.4997861114695041
+primary_oot,development_matched_point_pd,1,4994028.819521233,0.3329352546347489
+primary_oot,development_matched_point_pd,2,2287193.643374832,0.1524795762249887
+primary_oot,development_matched_point_pd,3,221985.86506137345,0.0147990576707582
+primary_oot,same_threshold_point_pd,0,1524400.0,0.1016266666666666
+primary_oot,same_threshold_point_pd,1,3485850.0,0.23239
+primary_oot,same_threshold_point_pd,2,4803350.0,0.3202233333333333
+primary_oot,same_threshold_point_pd,3,3622375.0,0.2414916666666666
+primary_oot,same_threshold_point_pd,4,1564025.0,0.1042683333333333
+primary_oot,selected_conformal_guardrail,0,9170062.90867395,0.61133752724493
+primary_oot,selected_conformal_guardrail,1,1956396.0956535095,0.1304264063769006
+primary_oot,selected_conformal_guardrail,2,2399470.115263122,0.1599646743508748
+primary_oot,selected_conformal_guardrail,3,1329221.6253212793,0.0886147750214186
+primary_oot,selected_conformal_guardrail,4,144849.25508813918,0.0096566170058759

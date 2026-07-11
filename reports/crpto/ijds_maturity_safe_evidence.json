@@ -246,8 +246,8 @@
     },
     {
       "path": "reports/crpto/tables/crpto_ijds_ms_tableS7_monthly_contrast.csv",
-      "bytes": 6057,
-      "sha256": "55c16c21fbf0f55499e71ce675f7206f28d20c78296d91fea26e7f4f07623ef2"
+      "bytes": 6063,
+      "sha256": "a6cb3ad1954413a8d5b410b074081065e6e92c2f15817592a73498893f440827"
     },
     {
       "path": "reports/crpto/tables/crpto_ijds_ms_tableS7_monthly_contrast.tex",

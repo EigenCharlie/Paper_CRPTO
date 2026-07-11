@@ -1,0 +1,7 @@
+dropped_period,winner_candidate_id,winner_policy_label,winner_realized_payoff,margin_over_second,parent_selected_wins
+2012-07,linear-004,selected_conformal_guardrail,463596.1222893697,11582.470122351428,True
+2012-08,linear-001,guardrail_linear-001,522715.9573375277,9353.887973412811,False
+2012-09,linear-008,guardrail_linear-008,464818.5904592784,2282.663079928083,False
+2012-10,linear-008,guardrail_linear-008,507519.5372645901,4149.9308039442985,False
+2012-11,linear-004,selected_conformal_guardrail,504952.3288577644,6163.956926583487,True
+2012-12,linear-004,selected_conformal_guardrail,495255.4679593916,13685.41827748326,True

@@ -14,10 +14,15 @@ Lectura obligatoria, en este orden:
 3. [`docs/research/ijds_three_front_reconstruction_2026-07-10.md`](docs/research/ijds_three_front_reconstruction_2026-07-10.md)
    — ledger de recuperación y diseño del único paper IJDS final.
 4. [`docs/research/active_claims_2026-07-10.md`](docs/research/active_claims_2026-07-10.md)
-   - active maturity-safe v2 claims, bounds, and transport mechanism.
-5. [`docs/research/active_claims_2026-07-04.md`](docs/research/active_claims_2026-07-04.md)
+   - active maturity-safe v2 claims plus the post hoc comparator-stringency
+     audit, bounds, and transport mechanism.
+5. [`docs/research/ijds_comparator_stringency_locked_protocol_2026-07-10.md`](docs/research/ijds_comparator_stringency_locked_protocol_2026-07-10.md)
+   - immutable comparator design and its post hoc interpretation boundary.
+6. [`docs/research/ijds_final_two_pass_audit_2026-07-10.md`](docs/research/ijds_final_two_pass_audit_2026-07-10.md)
+   - final scientific/editorial disposition, recovery ledger, and stop rule.
+7. [`docs/research/active_claims_2026-07-04.md`](docs/research/active_claims_2026-07-04.md)
    — registro histórico v7, conservado para replay y no como claim activo.
-6. [`.codex/skills/crpto/SKILL.md`](.codex/skills/crpto/SKILL.md) — skill de
+8. [`.codex/skills/crpto/SKILL.md`](.codex/skills/crpto/SKILL.md) — skill de
    Codex con el detalle operativo del certificado y sus artefactos.
 
 Reglas mínimas que ningún agente puede violar (detalle en `CLAUDE.md`):

@@ -1,0 +1,10 @@
+candidate_id,guardrail_risk_tolerance,gamma,monthly_point_pd_min,matched_point_pd_mean,monthly_point_pd_max,guardrail_label,point_label
+linear-001,0.15,0.25,0.0611986928090719,0.0641786891574629,0.0663641251036301,guardrail_linear-001,development_matched_point_linear-001
+linear-002,0.15,0.5,0.0530818969935116,0.0554177379887751,0.0583890385227993,guardrail_linear-002,development_matched_point_linear-002
+linear-003,0.15,0.75,0.0496458858129865,0.0520092862378735,0.0535218106210786,guardrail_linear-003,development_matched_point_linear-003
+linear-004,0.17,0.25,0.0650317938909284,0.0683133989321731,0.0717053150638489,selected_conformal_guardrail,development_matched_point_pd
+linear-005,0.17,0.5,0.0553981530800752,0.0577728133475923,0.0606389477753309,guardrail_linear-005,development_matched_point_linear-005
+linear-006,0.17,0.75,0.0515836655967447,0.0539660546253174,0.0562577056461014,guardrail_linear-006,development_matched_point_linear-006
+linear-007,0.19,0.25,0.0708323242317972,0.073419042643932,0.0773113347673802,guardrail_linear-007,development_matched_point_linear-007
+linear-008,0.19,0.5,0.0574263567157372,0.0602518049341652,0.0622624599273154,guardrail_linear-008,development_matched_point_linear-008
+linear-009,0.19,0.75,0.0531379221737078,0.0554977892647574,0.057955796683223,guardrail_linear-009,development_matched_point_linear-009

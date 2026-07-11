@@ -25,12 +25,14 @@ ACTIVE_NUMERIC_TOKENS = (
     "540,121",
     "0.854923",
     "0.879692",
-    "0.020093",
-    "0.046275",
-    "0.008822",
-    "0.029850",
-    "50,260.10",
-    "72,701.67",
+    "0.068313",
+    "0.034431",
+    "0.056287",
+    "0.027093",
+    "0.046283",
+    "295,967.17",
+    "506,587.03",
+    "7/9",
 )
 
 COMPACT_V7_TOKENS = (
@@ -46,12 +48,34 @@ COMPACT_V7_TOKENS = (
     "7.9025",
 )
 
+REVIEWER_SURFACES = (
+    REPO / "paper/CRPTO_ijds.qmd",
+    REPO / "paper/supplement_ijds.qmd",
+    REPO / "paper/submission/CRPTO_ijds_submission.tex",
+    REPO / "paper/submission/ANONYMOUS_REVIEW_ARCHIVE_README.md",
+)
+
+REVIEWER_FORBIDDEN_LITERALS = (
+    "champion-reopen-",
+    "protocol/ijds",
+    "carlos alfredo vergara rojas",
+    "cavr94",
+    "eigencharlie",
+)
+
+REVIEWER_FORBIDDEN_PATTERNS = (
+    ("full Git commit", re.compile(r"\b[0-9a-f]{40}\b", re.IGNORECASE)),
+    ("SHA-256 fingerprint", re.compile(r"\b[0-9a-f]{64}\b", re.IGNORECASE)),
+    ("DVC directory fingerprint", re.compile(r"\b[0-9a-f]{32}\.dir\b", re.IGNORECASE)),
+)
+
 SURFACES = (
     SurfaceCheck(
         path=REPO / "README.md",
         required=(
             "claim ijds activo",
             "maturity-safe-locked-bounded-h1h2-v2",
+            "comparator-stringency-audit-v1",
             "q=0.75p+0.25u",
             "active_claims_2026-07-10.md",
         ),
@@ -61,14 +85,16 @@ SURFACES = (
         path=REPO / "paper/CRPTO_ijds.qmd",
         required=(
             *ACTIVE_NUMERIC_TOKENS,
-            "when marginal conformal coverage meets maturity-safe credit portfolio selection",
+            "auditing comparator stringency in maturity-safe conformal credit portfolios",
             "the paper makes four contributions",
             "standardized payoff",
             "not a confidence interval",
             "within-group optimizer selection",
             "closest-work boundary",
             "identification and theory",
-            "development success does not transport",
+            "comparator non-invariance",
+            "equal thresholds are not equal baselines",
+            "post hoc",
             "managerial audit card",
         ),
         forbidden=COMPACT_V7_TOKENS,
@@ -77,14 +103,16 @@ SURFACES = (
         path=REPO / "paper/submission/CRPTO_ijds_submission.tex",
         required=(
             *ACTIVE_NUMERIC_TOKENS,
-            "when marginal conformal coverage meets maturity-safe credit portfolio selection",
+            "auditing comparator stringency in maturity-safe conformal credit portfolios",
             "the paper makes four contributions",
             "standardized payoff",
             "not a confidence interval",
             "within-group optimizer selection",
             "closest-work boundary",
             "identification and theory",
-            "development success does not transport",
+            "comparator non-invariance",
+            "equal thresholds are not equal baselines",
+            "post hoc",
             "managerial audit card",
         ),
         forbidden=COMPACT_V7_TOKENS,
@@ -96,12 +124,13 @@ SURFACES = (
             "proposition s1",
             "proposition s2",
             "proposition s3",
-            "s1--s7",
+            "proposition s4",
+            "cs1--cs3",
             "historical diagnostics",
             "reader map",
             "corollary s2.1",
             "threats to validity",
-            "table4_development_to_oot",
+            "metadata-sanitized review archive",
         ),
         forbidden=COMPACT_V7_TOKENS,
     ),
@@ -111,6 +140,8 @@ SURFACES = (
             *ACTIVE_NUMERIC_TOKENS,
             "status-independent",
             "sharp partial-identification bounds",
+            "comparator",
+            "post hoc",
             "historical firewall",
         ),
         forbidden=COMPACT_V7_TOKENS,
@@ -119,8 +150,9 @@ SURFACES = (
         path=REPO / "docs/research/active_claims_2026-07-10.md",
         required=(
             *ACTIVE_NUMERIC_TOKENS,
-            "active experiment",
+            "evidence hierarchy",
             "selection-transport identity",
+            "comparator non-invariance",
             "historical boundary",
         ),
         forbidden=COMPACT_V7_TOKENS,
@@ -130,7 +162,9 @@ SURFACES = (
         required=(
             "reconstructed_active",
             "maturity-safe-locked-bounded-h1h2-v2",
+            "comparator-stringency-audit-v1",
             "q=0.75p+0.25u",
+            "0.06831339893217318",
             "historical_not_active_evidence",
         ),
         forbidden=COMPACT_V7_TOKENS,
@@ -140,8 +174,53 @@ SURFACES = (
         required=(
             "pdflatex -> bibtex -> pdflatex -> pdflatex",
             "latexmk",
-            "21 pages",
-            "active maturity-safe ijds handoff",
+            "active maturity-safe and comparator-aware ijds handoff",
+        ),
+        forbidden=COMPACT_V7_TOKENS,
+    ),
+    SurfaceCheck(
+        path=REPO / "paper/submission/COVER_LETTER_AND_DISCLOSURE.md",
+        required=(
+            "540,121",
+            "0.854923",
+            "0.879692",
+            "0.068313",
+            "0.034431",
+            "0.056287",
+            "0.027093",
+            "0.046283",
+            "295,967.17",
+            "506,587.03",
+            "seven of nine",
+            "before the first successful persisted execution",
+            "select option 4",
+            "openai codex",
+            "gpt-5.6 sol",
+            "accepts full responsibility",
+        ),
+        forbidden=COMPACT_V7_TOKENS,
+    ),
+    SurfaceCheck(
+        path=REPO / "paper/submission/DATA_CODE_DISCLOSURE_FORM_DRAFT.md",
+        required=(
+            "effective march 5, 2025",
+            "select option 4",
+            "legitimate access",
+            "historical consumer-credit records",
+            "reproducibility report",
+            "editor_only_reproducibility_crosswalk.md",
+        ),
+        forbidden=COMPACT_V7_TOKENS,
+    ),
+    SurfaceCheck(
+        path=REPO / "paper/submission/EDITOR_ONLY_REPRODUCIBILITY_CROSSWALK.md",
+        required=(
+            "editor-only",
+            "p1: maturity-safe parent",
+            "c1: comparator-stringency audit",
+            "protocol/ijds-maturity-safe-locked-bounded-h1h2-2026-07-10-v2",
+            "protocol/ijds-maturity-safe-v2-comparator-stringency-audit-2026-07-10-v1",
+            "neither sequence invokes or writes a manifest-protected historical stage",
         ),
         forbidden=COMPACT_V7_TOKENS,
     ),
@@ -180,6 +259,19 @@ def check_publication_integrity() -> list[str]:
         rel = surface.path.relative_to(REPO)
         failures.extend(f"{rel}: missing required token '{token}'" for token in missing)
         failures.extend(f"{rel}: compact-v7 token is active '{token}'" for token in present)
+
+    for path in REVIEWER_SURFACES:
+        if not path.is_file():
+            continue
+        raw = path.read_text(encoding="utf-8")
+        normalized = raw.lower()
+        rel = path.relative_to(REPO)
+        for token in REVIEWER_FORBIDDEN_LITERALS:
+            if token in normalized:
+                failures.append(f"{rel}: reviewer fingerprint is active '{token}'")
+        for label, pattern in REVIEWER_FORBIDDEN_PATTERNS:
+            if pattern.search(raw):
+                failures.append(f"{rel}: reviewer surface contains {label}")
     return failures
 
 
@@ -190,7 +282,7 @@ def main() -> int:
         for failure in failures:
             logger.error(failure)
         return 1
-    logger.success("Active maturity-safe IJDS publication surfaces are synchronized.")
+    logger.success("Active maturity-safe and comparator-aware IJDS surfaces are synchronized.")
     return 0
 
 
