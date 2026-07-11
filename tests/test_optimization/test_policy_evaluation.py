@@ -107,3 +107,29 @@ def test_uncertainty_aversion_keeps_point_pd_objective(monkeypatch) -> None:
     assert np.allclose(captured["pd_constraint_override"], result.effective_pd)
     assert captured["uncertainty_aversion"] == 0.05
     assert result.objective_risk_mode == "point_pd_plus_aversion"
+
+
+def test_explicit_constraint_score_bypasses_policy_score_construction(monkeypatch) -> None:
+    captured: dict[str, Any] = {}
+
+    def fake_optimize(**kwargs):
+        captured.update(kwargs)
+        return {
+            "allocation_vector": np.array([0.5, 0.75]),
+            "objective_value": 1.0,
+            "n_funded": 2,
+            "total_allocated": 200.0,
+        }
+
+    monkeypatch.setattr(policy_evaluation, "optimize_portfolio_allocation", fake_optimize)
+    override = np.array([0.42, 0.37])
+
+    result = policy_evaluation.solve_policy_allocation(
+        **_inputs(),
+        policy_mode=PolicyMode.BLENDED_UNCERTAINTY,
+        gamma=0.5,
+        pd_constraint_override=override,
+    )
+
+    np.testing.assert_array_equal(result.effective_pd, override)
+    np.testing.assert_array_equal(captured["pd_constraint_override"], override)

@@ -42,6 +42,7 @@ def solve_policy_allocation(
     max_concentration: float = 0.25,
     risk_tolerance: float = 0.10,
     robust: bool = True,
+    pd_constraint_override: np.ndarray | None = None,
     uncertainty_aversion: float = 0.0,
     min_budget_utilization: float = 0.0,
     pd_cap_slack_penalty: float = 0.0,
@@ -66,15 +67,22 @@ def solve_policy_allocation(
     effective_delta_cap = float(delta_cap_quantile) if robust else 1.0
     effective_tail_focus = float(tail_focus_quantile) if robust else 1.0
     effective_aversion = float(uncertainty_aversion) if robust else 0.0
-    effective_pd = compute_effective_pd(
-        pd_point=pd_point,
-        pd_high=pd_high,
-        policy_mode=effective_mode,
-        gamma=effective_gamma,
-        delta_cap_quantile=effective_delta_cap,
-        tail_focus_quantile=effective_tail_focus,
-        segment_labels=policy_segment_labels(loans, effective_mode),
-    )
+    if pd_constraint_override is None:
+        effective_pd = compute_effective_pd(
+            pd_point=pd_point,
+            pd_high=pd_high,
+            policy_mode=effective_mode,
+            gamma=effective_gamma,
+            delta_cap_quantile=effective_delta_cap,
+            tail_focus_quantile=effective_tail_focus,
+            segment_labels=policy_segment_labels(loans, effective_mode),
+        )
+    else:
+        effective_pd = np.asarray(pd_constraint_override, dtype=float)
+        if effective_pd.shape != np.asarray(pd_point).shape:
+            raise ValueError("pd_constraint_override must align with pd_point.")
+        if not bool(np.isfinite(effective_pd).all()):
+            raise ValueError("pd_constraint_override must contain finite values.")
     solution = optimize_portfolio_allocation(
         loans=loans,
         pd_point=pd_point,

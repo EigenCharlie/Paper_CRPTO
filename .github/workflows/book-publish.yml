@@ -1,8 +1,6 @@
 name: book-publish
 
 on:
-  push:
-    branches: [main]
   workflow_dispatch:
 
 permissions:
@@ -39,9 +37,6 @@ jobs:
         uses: quarto-dev/quarto-actions/setup@v2
         with:
           version: "1.9.35"
-
-      - name: Write build metadata
-        run: uv run python scripts/write_book_build_info.py
 
       - name: Render book (full)
         run: uv run -- quarto render book --to html --no-execute

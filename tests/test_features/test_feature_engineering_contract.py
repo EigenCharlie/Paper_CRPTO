@@ -12,10 +12,27 @@ from src.features.feature_engineering import (
     TARGET,
     build_feature_config,
     build_feature_manifest,
+    normalize_raw_columns,
 )
 
 CONTRACT_PATH = Path("models/pd_model_contract.json")
 EXPECTED_CONTRACT_OMISSIONS = {"rev_utilization", "high_util_pct"}
+
+
+def test_lending_club_credit_line_dates_use_the_declared_month_year_format() -> None:
+    normalized = normalize_raw_columns(
+        pd.DataFrame(
+            {
+                "issue_d": ["2016-04-01", "2016-05-01"],
+                "earliest_cr_line": ["Jan-1985", "Sep-2007"],
+            }
+        )
+    )
+
+    assert normalized["earliest_cr_line"].tolist() == [
+        pd.Timestamp("1985-01-01"),
+        pd.Timestamp("2007-09-01"),
+    ]
 
 
 def _load_contract() -> dict[str, object]:

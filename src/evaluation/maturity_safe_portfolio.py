@@ -13,7 +13,7 @@ from src.evaluation.coverage_transport import binary_miscoverage_bounds
 from src.evaluation.standardized_credit_payoff import (
     PAYOFF_ID,
     contractual_rate_decimal,
-    expected_standardized_payoff_rate,
+    expected_objective_coefficients,
     realized_standardized_payoff_bounds,
 )
 from src.models.maturity_safe_pd import OUTCOME_COLUMNS
@@ -115,6 +115,7 @@ def solve_coherent_policy(
     *,
     config: Mapping[str, Any],
     robust: bool,
+    effective_score_override: np.ndarray | None = None,
 ) -> SolveResult:
     """Optimize and independently reconcile ``(1-p)r-pLGD``."""
     assert_outcome_free_decision_frame(frame)
@@ -124,18 +125,21 @@ def solve_coherent_policy(
     point = frame["pd_point"].to_numpy(dtype=float)
     rates = frame["contractual_rate"].to_numpy(dtype=float)
     lgd_value = float(payoff["lgd"])
-    solver_rate_argument = (1.0 - point) * rates
+    objective_coefficients = expected_objective_coefficients(point, rates, lgd=lgd_value)
+    legacy_solver_interest_coefficients = objective_coefficients + point * lgd_value
+    requested_backend = str(execution["solver_backend"])
     result = solve_policy_allocation(
         loans=frame,
         pd_point=point,
         pd_low=frame["conformal_lower"].to_numpy(dtype=float),
         pd_high=frame["conformal_upper"].to_numpy(dtype=float),
         lgd=np.full(len(frame), lgd_value, dtype=float),
-        int_rates=solver_rate_argument,
+        int_rates=legacy_solver_interest_coefficients,
         total_budget=float(policy["budget"]),
         max_concentration=float(policy["max_concentration_by_purpose"]),
         risk_tolerance=float(candidate.risk_tolerance),
         robust=bool(robust),
+        pd_constraint_override=effective_score_override,
         uncertainty_aversion=0.0,
         min_budget_utilization=float(policy["min_budget_utilization_solver"]),
         pd_cap_slack_penalty=0.0,
@@ -145,11 +149,16 @@ def solve_coherent_policy(
         tail_focus_quantile=float(candidate.tail_focus_quantile),
         time_limit=int(execution["solver_time_limit_seconds"]),
         threads=int(execution["threads"]),
-        solver_backend=str(execution["solver_backend"]),
+        solver_backend=requested_backend,
         random_seed=int(execution["random_seed"]),
     )
+    _require_requested_solver_backend(
+        requested=requested_backend,
+        actual=str(result.solution.get("solver_backend", "unknown")),
+        strict=bool(execution.get("strict_solver_backend", False)),
+    )
     exposure = result.allocation * frame["loan_amnt"].to_numpy(dtype=float)
-    payoff_rate = expected_standardized_payoff_rate(point, rates, lgd=lgd_value)
+    payoff_rate = objective_coefficients
     reconciled = float(exposure @ payoff_rate)
     solver_objective = float(result.solution.get("objective_value", np.nan))
     if not np.isfinite(solver_objective) or not np.isclose(
@@ -168,6 +177,28 @@ def solve_coherent_policy(
         expected_payoff_rate=payoff_rate,
         expected_objective=reconciled,
     )
+
+
+def _require_requested_solver_backend(*, requested: str, actual: str, strict: bool) -> None:
+    if not strict:
+        return
+    requested_normalized = requested.strip().casefold()
+    actual_normalized = actual.strip().casefold()
+    canonical_actual = {
+        "highs": "highs_sparse",
+        "scipy_highs": "highs_sparse",
+        "highs_sparse": "highs_sparse",
+        "highspy": "highspy",
+        "highs_native": "highspy",
+        "native_highs": "highspy",
+        "highs_pyomo": "highs",
+        "pyomo_highs": "highs",
+        "cuopt": "cuopt",
+    }.get(requested_normalized, requested_normalized)
+    if actual_normalized != canonical_actual:
+        raise RuntimeError(
+            f"Strict solver backend mismatch: requested={requested!r}, actual={actual!r}."
+        )
 
 
 def outcome_free_solve_record(
@@ -202,9 +233,8 @@ def outcome_free_solve_record(
     }
 
 
-def evaluation_record_and_allocations(
+def solve_outcome_free_allocation(
     decision_frame: pd.DataFrame,
-    outcomes: pd.DataFrame,
     candidate: LinearPolicyCandidate,
     *,
     config: Mapping[str, Any],
@@ -212,12 +242,19 @@ def evaluation_record_and_allocations(
     role: str,
     period: str,
     policy_label: str,
+    effective_score_override: np.ndarray | None = None,
 ) -> tuple[dict[str, Any], pd.DataFrame]:
-    """Solve outcome-free, then join outcomes for bounded evaluation."""
+    """Solve and materialize an allocation before any outcome join."""
     assert_outcome_free_decision_frame(decision_frame)
-    solved = solve_coherent_policy(decision_frame, candidate, config=config, robust=robust)
+    solved = solve_coherent_policy(
+        decision_frame,
+        candidate,
+        config=config,
+        robust=robust,
+        effective_score_override=effective_score_override,
+    )
     tolerance = float(config["execution"]["allocation_tolerance"])
-    base_record = outcome_free_solve_record(
+    record = outcome_free_solve_record(
         decision_frame,
         candidate,
         solved,
@@ -233,6 +270,68 @@ def evaluation_record_and_allocations(
     allocation["expected_payoff_rate"] = solved.expected_payoff_rate[active]
     allocation["expected_payoff_contribution"] = (
         allocation["exposure"] * allocation["expected_payoff_rate"]
+    )
+    allocation["role"] = role
+    allocation["period"] = period
+    allocation["policy_label"] = policy_label
+    allocation["candidate_id"] = candidate.candidate_id
+    return {
+        **record,
+        "role": role,
+        "period": period,
+        "policy_label": policy_label,
+        "robust_guardrail": bool(robust),
+    }, allocation
+
+
+def evaluation_record_and_allocations(
+    decision_frame: pd.DataFrame,
+    outcomes: pd.DataFrame,
+    candidate: LinearPolicyCandidate,
+    *,
+    config: Mapping[str, Any],
+    robust: bool,
+    role: str,
+    period: str,
+    policy_label: str,
+) -> tuple[dict[str, Any], pd.DataFrame]:
+    """Solve outcome-free, then join outcomes for bounded evaluation."""
+    base_record, allocation = solve_outcome_free_allocation(
+        decision_frame,
+        candidate,
+        config=config,
+        robust=robust,
+        role=role,
+        period=period,
+        policy_label=policy_label,
+    )
+    return evaluate_frozen_allocation(base_record, allocation, outcomes, config=config)
+
+
+def evaluate_frozen_allocation(
+    base_record: Mapping[str, Any],
+    allocation: pd.DataFrame,
+    outcomes: pd.DataFrame,
+    *,
+    config: Mapping[str, Any],
+) -> tuple[dict[str, Any], pd.DataFrame]:
+    """Join outcomes to an already frozen allocation and compute sharp bounds."""
+    assert_outcome_free_decision_frame(
+        allocation.drop(
+            columns=[
+                "allocation_fraction",
+                "exposure",
+                "weight",
+                "pd_effective",
+                "expected_payoff_rate",
+                "expected_payoff_contribution",
+                "role",
+                "period",
+                "policy_label",
+                "candidate_id",
+            ],
+            errors="ignore",
+        )
     )
     joined = allocation.merge(outcomes, on="id", how="left", validate="one_to_one")
     if bool(joined["snapshot_resolution"].isna().any()):
@@ -254,16 +353,16 @@ def evaluation_record_and_allocations(
     joined["realized_payoff_upper"] = joined["exposure"] * payoff_high
     joined["miscoverage_lower"] = miss_low
     joined["miscoverage_upper"] = miss_high
-    joined["role"] = role
-    joined["period"] = period
-    joined["policy_label"] = policy_label
-    joined["candidate_id"] = candidate.candidate_id
     weights = joined["weight"].to_numpy(dtype=float)
     unresolved = ~np.isfinite(y_true)
     default_lower = np.nan_to_num(y_true, nan=0.0)
     default_upper = np.where(unresolved, 1.0, y_true)
     realized_lower = float(joined["realized_payoff_lower"].sum())
     realized_upper = float(joined["realized_payoff_upper"].sum())
+    role = str(base_record["role"])
+    period = str(base_record["period"])
+    policy_label = str(base_record["policy_label"])
+    robust = bool(base_record["robust_guardrail"])
     record = {
         **base_record,
         "role": role,

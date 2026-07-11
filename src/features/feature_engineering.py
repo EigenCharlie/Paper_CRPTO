@@ -248,7 +248,11 @@ def normalize_raw_columns(df: pd.DataFrame) -> pd.DataFrame:
     if "issue_d" in out.columns:
         out["issue_d"] = pd.to_datetime(out["issue_d"], errors="coerce")
     if "earliest_cr_line" in out.columns:
-        out["earliest_cr_line"] = pd.to_datetime(out["earliest_cr_line"], errors="coerce")
+        out["earliest_cr_line"] = pd.to_datetime(
+            out["earliest_cr_line"],
+            format="%b-%Y",
+            errors="coerce",
+        )
     if TARGET in out.columns:
         out[TARGET] = pd.to_numeric(out[TARGET], errors="coerce").fillna(0).astype(int)
     return out

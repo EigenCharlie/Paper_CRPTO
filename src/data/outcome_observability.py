@@ -53,6 +53,161 @@ def snapshot_resolution_from_status(statuses: pd.Series) -> pd.Series:
     return resolution.rename("snapshot_resolution")
 
 
+def terminal_outcome_from_status(statuses: pd.Series) -> pd.Series:
+    """Map terminal repayment statuses to the pre-freeze nullable outcome.
+
+    Charged-off status variants are defaults and fully-paid variants are
+    nondefaults. ``Default`` remains unresolved because the snapshot status
+    alone does not establish the protocol's terminal charged-off label.
+    """
+    normalized = normalize_loan_status(statuses)
+    charged_off = normalized.str.contains("charged off", regex=False)
+    fully_paid = normalized.str.contains("fully paid", regex=False)
+    if bool((charged_off & fully_paid).any()):
+        raise ValueError("A loan status cannot be both charged off and fully paid.")
+    target = pd.Series(pd.NA, index=statuses.index, dtype="Int8", name="terminal_outcome")
+    target.loc[fully_paid] = 0
+    target.loc[charged_off] = 1
+    return target
+
+
+def parse_last_payment_dates(values: pd.Series) -> pd.Series:
+    """Parse ``last_pymnt_d``, using month-end for month-granularity values."""
+    strings = values.astype("string").str.strip()
+    month_year = strings.str.fullmatch(r"[A-Za-z]{3}-\d{4}", na=False)
+    parsed = pd.to_datetime(strings, format="%b-%Y", errors="coerce")
+    fallback = parsed.isna() & strings.notna()
+    parsed.loc[fallback] = pd.to_datetime(strings.loc[fallback], format="mixed", errors="coerce")
+    parsed.loc[month_year & parsed.notna()] = parsed.loc[
+        month_year & parsed.notna()
+    ] + pd.offsets.MonthEnd(0)
+    return parsed.rename("last_pymnt_d_parsed")
+
+
+def conservative_label_available_mask(
+    statuses: pd.Series,
+    last_payment_dates: pd.Series,
+    *,
+    cutoff: str | pd.Timestamp,
+    charged_off_lag_months: int = 6,
+) -> pd.Series:
+    """Return labels conservatively observable by an explicit cutoff."""
+    if not statuses.index.equals(last_payment_dates.index):
+        raise ValueError("Status and last-payment series must have identical indices.")
+    lag_months = int(charged_off_lag_months)
+    if lag_months < 0:
+        raise ValueError("charged_off_lag_months must be nonnegative.")
+    cutoff_date = _require_timestamp(cutoff, context="label-availability cutoff")
+    outcomes = terminal_outcome_from_status(statuses)
+    payment_dates = parse_last_payment_dates(last_payment_dates)
+    available_at = payment_dates.copy()
+    charged_off = outcomes.eq(1).fillna(False)
+    available_at.loc[charged_off] = payment_dates.loc[charged_off] + pd.DateOffset(
+        months=lag_months
+    )
+    available = outcomes.notna() & available_at.notna() & available_at.le(cutoff_date)
+    return available.astype(bool).rename("label_available")
+
+
+def build_outcome_label_availability(
+    statuses: pd.Series,
+    last_payment_dates: pd.Series,
+    *,
+    cutoff: str | pd.Timestamp,
+    charged_off_lag_months: int = 6,
+) -> pd.DataFrame:
+    """Build row-level terminal outcomes and conservative availability dates."""
+    outcomes = terminal_outcome_from_status(statuses)
+    payment_dates = parse_last_payment_dates(last_payment_dates)
+    available_at = payment_dates.copy().rename("label_available_at")
+    charged_off = outcomes.eq(1).fillna(False)
+    available_at.loc[charged_off] = payment_dates.loc[charged_off] + pd.DateOffset(
+        months=int(charged_off_lag_months)
+    )
+    available = conservative_label_available_mask(
+        statuses,
+        last_payment_dates,
+        cutoff=cutoff,
+        charged_off_lag_months=charged_off_lag_months,
+    )
+    return pd.concat([outcomes, payment_dates, available_at, available], axis=1)
+
+
+def audit_outcome_label_availability(
+    frame: pd.DataFrame,
+    *,
+    cutoff: str | pd.Timestamp,
+    charged_off_lag_months: int = 6,
+    block_column: str = "design_split",
+    status_column: str = "loan_status",
+    last_payment_column: str = "last_pymnt_d",
+) -> pd.DataFrame:
+    """Report conservative outcome-label counts and retention by design block."""
+    required = {block_column, status_column, last_payment_column}
+    missing = sorted(required.difference(frame.columns))
+    if missing:
+        raise KeyError(f"Outcome-label audit is missing columns: {missing}")
+    labels = build_outcome_label_availability(
+        frame[status_column],
+        frame[last_payment_column],
+        cutoff=cutoff,
+        charged_off_lag_months=charged_off_lag_months,
+    )
+    audited = pd.DataFrame(
+        {
+            block_column: frame[block_column],
+            "terminal_outcome": labels["terminal_outcome"],
+            "label_available": labels["label_available"],
+        },
+        index=frame.index,
+    )
+    rows: list[dict[str, Any]] = []
+    for block, group in audited.groupby(block_column, dropna=False, sort=True):
+        total = int(len(group))
+        resolved = int(group["terminal_outcome"].notna().sum())
+        retained = int(group["label_available"].sum())
+        rows.append(
+            {
+                block_column: block,
+                "total_rows": total,
+                "terminal_outcome_rows": resolved,
+                "unresolved_outcome_rows": total - resolved,
+                "label_available_rows": retained,
+                "label_unavailable_rows": total - retained,
+                "retention_rate": retained / total if total else 0.0,
+            }
+        )
+    return pd.DataFrame(rows)
+
+
+def validate_minimum_label_retention(
+    audit: pd.DataFrame,
+    *,
+    minimum_retention: float,
+    block_column: str = "design_split",
+) -> None:
+    """Require every audited block to exceed the declared retention floor."""
+    threshold = float(minimum_retention)
+    if not 0.0 <= threshold < 1.0:
+        raise ValueError("minimum_retention must lie in [0, 1).")
+    required = {block_column, "retention_rate"}
+    missing = sorted(required.difference(audit.columns))
+    if missing:
+        raise KeyError(f"Retention audit is missing columns: {missing}")
+    rates = pd.to_numeric(audit["retention_rate"], errors="coerce")
+    failed = rates.isna() | rates.le(threshold)
+    if bool(failed.any()):
+        details = ", ".join(
+            f"{block}={rate:.6f}"
+            for block, rate in zip(
+                audit.loc[failed, block_column].astype(str), rates.loc[failed], strict=True
+            )
+        )
+        raise RuntimeError(
+            f"Outcome-label retention must exceed {threshold:.2%} in every block; failed: {details}"
+        )
+
+
 def parse_term_months(terms: pd.Series) -> pd.Series:
     """Extract integer term months from raw Lending Club values."""
     return pd.to_numeric(
