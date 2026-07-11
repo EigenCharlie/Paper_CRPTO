@@ -150,6 +150,20 @@ both Quarto surfaces render, and the official TeX is citation/reference clean.
 frozen prediction, interval endpoint, score-band edge, coverage cell, and floor
 multiplier.
 
+The final lockfile also closes all three high-severity Dependabot alerts visible
+at freeze: Mistune's quadratic link-text parser issue is addressed by upgrading
+3.2.1 to 3.3.3, and Soup Sieve's selector-parser denial-of-service and memory
+exhaustion issues are addressed by upgrading 2.8.3 to 2.8.4. The complete
+submission gate remains green with those versions installed.
+
+An expanded `pip-audit` scan retains one documented, non-actionable finding:
+`CVE-2025-69872` in `diskcache 5.6.3`, for which no patched version exists.
+CRPTO never imports it directly; DVC brings it through `dvc-data`, and the
+attack requires untrusted write access to the local DVC cache. The cache is
+ignored, local to the single-author workstation, and not exposed by a service,
+so the project records and accepts this residual risk until upstream provides a
+fix rather than removing DVC reproducibility.
+
 `dvc status --no-updates` still reports historical stage dependencies changed
 by earlier refactors. This is expected and intentionally unresolved: clearing
 that status would require reproducing manifest-protected stages, which this
