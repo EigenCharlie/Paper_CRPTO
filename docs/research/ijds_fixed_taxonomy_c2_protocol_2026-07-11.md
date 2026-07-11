@@ -7,10 +7,33 @@ period. P1/C1 remain immutable provenance. The new run is a retrospective,
 previously inspected archive audit; locking it limits further analyst degrees
 of freedom but does not make it preregistered, prospective, or confirmatory.
 
-Required tag: `protocol/ijds-fixed-taxonomy-c2-2026-07-11-v1`.
+Required tag: `protocol/ijds-fixed-taxonomy-c2-2026-07-11-v2`.
 
 Executable config:
 `configs/experiments/ijds_fixed_taxonomy_c2_2026-07-11.yaml`.
+
+## Locked Post-Freeze Recovery
+
+Version 1 completed all prediction, policy, comparator, and outcome-free
+allocation work and wrote `protocol_freeze.json` before any outcome join. Its
+post-freeze evaluator then exceeded two hours because it repeatedly joined
+each of 7,347 policy-month groups to the full 540,121-row outcome panel. The
+wrapper timed out and the original child was stopped after a further one-hour
+observation window. No evaluation, contrast, simulation, summary, or receipt
+artifact existed at that point, so version 1 is incomplete and is not
+publication evidence.
+
+Version 2 changes no scientific input, allocation, policy, comparator, seed,
+cap, endpoint, or stop rule. It may import only the version-1 outcome-free
+freeze at commit `4835cc18a0117a695f89f9da70a4e3af97663a27` with SHA-256
+`93690082880ef4ff1375dcd5b26d2df79f80e6ebe09a6d83b7fd99a9abb4cfae`.
+Every referenced artifact and model descriptor is rehashed before use. The
+postprocessor performs one validated many-to-one outcome join, indexes solve
+records by their complete cell key, and reconstructs diagnostic panels from
+the frozen recipes. It also corrects `n_unresolved_candidates` to count the
+declared monthly candidate menu rather than the full archive. This is an
+operational and bookkeeping correction made without inspecting policy outcome
+contrasts.
 
 ## Research Question
 

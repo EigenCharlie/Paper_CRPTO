@@ -9,6 +9,7 @@ from __future__ import annotations
 
 import argparse
 import copy
+import json
 from collections.abc import Mapping, Sequence
 from dataclasses import asdict, dataclass
 from pathlib import Path
@@ -44,7 +45,7 @@ from src.evaluation.maturity_safe_portfolio import (
     aggregate_monthly_evaluation,
     assert_outcome_free_decision_frame,
     build_decision_panel,
-    evaluate_frozen_allocation,
+    evaluate_prejoined_frozen_allocation,
     solve_outcome_free_allocation,
 )
 from src.evaluation.policy_contrast_bounds import sharp_policy_contrast_bounds
@@ -69,6 +70,7 @@ from src.utils.isolated_experiment import (
     prepare_output_paths,
     relative_artifact_descriptor,
     require_clean_tagged_head,
+    resolve_isolated_run_dir,
     resolve_repo_input,
     save_catboost_model_atomic,
 )
@@ -107,6 +109,23 @@ class AllocationBundle:
 
     records: pd.DataFrame
     allocations: pd.DataFrame
+
+
+@dataclass(frozen=True)
+class UpstreamOutcomeFreeBundle:
+    """Verified outcome-free evidence imported from an earlier locked run."""
+
+    records: pd.DataFrame
+    allocations: pd.DataFrame
+    canonical_panel: pd.DataFrame
+    fit_audit: pd.DataFrame
+    availability_audit: pd.DataFrame
+    prediction_metrics: list[dict[str, Any]]
+    diagnostic_recipes: dict[int, BinaryOutcomeConformalRecipe]
+    diagnostic_panels: dict[int, pd.DataFrame]
+    artifact_descriptors: dict[str, Any]
+    model_artifacts: dict[str, Any]
+    provenance: dict[str, Any]
 
 
 def parse_args(argv: Sequence[str] | None = None) -> argparse.Namespace:
@@ -163,7 +182,190 @@ def load_config(path: Path) -> dict[str, Any]:
         raise ValueError("Purpose-cap sensitivity grid changed.")
     frontier = payload["comparators"]["point_cap_frontier"]
     build_fixed_cap_grid(frontier["start"], frontier["stop"], frontier["step"])
+    resume = payload.get("resume_outcome_free", {})
+    if resume and resume.get("enabled") is not True:
+        raise ValueError("resume_outcome_free must be absent or explicitly enabled.")
+    if resume:
+        resume_required = {
+            "source_run_tag",
+            "source_protocol_tag",
+            "source_protocol_commit",
+            "source_freeze_sha256",
+        }
+        resume_missing = sorted(resume_required.difference(resume))
+        if resume_missing:
+            raise KeyError(f"Outcome-free resume config is missing: {resume_missing}")
     return payload
+
+
+def _recipe_from_json(path: Path) -> BinaryOutcomeConformalRecipe:
+    payload = json.loads(path.read_text(encoding="utf-8"))
+    if not isinstance(payload, dict):
+        raise TypeError(f"Conformal recipe is not a JSON mapping: {path}")
+    for field in (
+        "bin_edges",
+        "residual_quantiles",
+        "group_counts",
+        "finite_sample_ranks",
+        "raw_finite_sample_ranks",
+    ):
+        payload[field] = tuple(payload[field])
+    return BinaryOutcomeConformalRecipe(**payload)
+
+
+def _verified_artifact_path(
+    descriptor: Mapping[str, Any],
+    *,
+    repo_root: Path,
+) -> Path:
+    relative = Path(str(descriptor["path"]))
+    path = (repo_root / relative).resolve()
+    path.relative_to(repo_root.resolve())
+    if not path.is_file():
+        raise FileNotFoundError(path)
+    actual = relative_artifact_descriptor(path, repo_root=repo_root)
+    for field in ("path", "bytes", "sha256"):
+        if actual[field] != descriptor[field]:
+            raise RuntimeError(f"Upstream artifact descriptor mismatch for {path} field {field!r}.")
+    return path
+
+
+def _load_upstream_outcome_free_bundle(
+    config: Mapping[str, Any],
+    *,
+    repo_root: Path,
+    expected_availability: pd.DataFrame,
+) -> UpstreamOutcomeFreeBundle:
+    resume = config["resume_outcome_free"]
+    source_run_tag = str(resume["source_run_tag"])
+    source_model_dir = resolve_isolated_run_dir(
+        repo_root=repo_root,
+        configured_root=str(config["output"]["model_root"]),
+        allowed_relative_root=ALLOWED_MODEL_ROOT,
+        run_tag=source_run_tag,
+    )
+    freeze_path = source_model_dir / "protocol_freeze.json"
+    if not freeze_path.is_file():
+        raise FileNotFoundError(freeze_path)
+    freeze_descriptor = relative_artifact_descriptor(freeze_path, repo_root=repo_root)
+    if freeze_descriptor["sha256"] != str(resume["source_freeze_sha256"]):
+        raise RuntimeError("Upstream protocol-freeze SHA-256 does not match the locked config.")
+    freeze = json.loads(freeze_path.read_text(encoding="utf-8"))
+    expected_identity = {
+        "status": "outcome_free_allocations_frozen_before_outcome_join",
+        "run_tag": source_run_tag,
+        "protocol_tag": str(resume["source_protocol_tag"]),
+        "protocol_commit": str(resume["source_protocol_commit"]),
+    }
+    for field, expected in expected_identity.items():
+        if freeze.get(field) != expected:
+            raise RuntimeError(
+                f"Upstream protocol freeze has {field}={freeze.get(field)!r}; "
+                f"expected {expected!r}."
+            )
+    if freeze.get("outcome_columns_passed_to_policy_or_comparator") != []:
+        raise RuntimeError("Upstream freeze reports outcome leakage into policy construction.")
+
+    artifacts = freeze["outcome_free_artifacts"]
+    paths = {
+        name: _verified_artifact_path(descriptor, repo_root=repo_root)
+        for name, descriptor in artifacts.items()
+    }
+    records = pd.read_parquet(paths["records"])
+    allocations = pd.read_parquet(paths["allocations"])
+    canonical_panel = pd.read_parquet(paths["canonical_decision_panel"])
+    fit_audit = pd.read_parquet(paths["conformal_fit_audit"])
+    availability = pd.read_parquet(paths["label_availability_audit"])
+    pd.testing.assert_frame_equal(
+        availability.reset_index(drop=True),
+        expected_availability.reset_index(drop=True),
+        check_dtype=False,
+    )
+    assert_outcome_free_decision_frame(canonical_panel.drop(columns="design_split"))
+    forbidden = {"loan_status", "snapshot_default", "terminal_default", "total_pymnt"}
+    if forbidden.intersection(allocations.columns.astype(str).str.casefold()):
+        raise RuntimeError("Upstream funded allocations contain an outcome field.")
+
+    model_artifacts = freeze["model_artifacts"]
+    recipes: dict[int, BinaryOutcomeConformalRecipe] = {}
+    prediction_metrics: list[dict[str, Any]] = []
+    for seed in [int(value) for value in config["model"]["sensitivity_seeds"]]:
+        seed_artifacts = model_artifacts[str(seed)]
+        for descriptor in (
+            seed_artifacts["model"],
+            seed_artifacts["calibrator"],
+            seed_artifacts["recipe"],
+            *seed_artifacts["diagnostic_recipes"].values(),
+        ):
+            _verified_artifact_path(descriptor, repo_root=repo_root)
+        recipe_path = _verified_artifact_path(
+            seed_artifacts["recipe"],
+            repo_root=repo_root,
+        )
+        recipe = _recipe_from_json(recipe_path)
+        seed_fit = fit_audit.loc[fit_audit["seed"].eq(seed)]
+        if len(seed_fit) != sum(recipe.group_counts):
+            raise RuntimeError(f"Conformal fit rows do not reconcile for seed {seed}.")
+        prediction_metrics.append(
+            {
+                "seed": seed,
+                "source": "verified_upstream_outcome_free_freeze",
+                "conformal_fit_rows": int(len(seed_fit)),
+                "conformal_fit_coverage": float(seed_fit["covered"].mean()),
+                "fixed_taxonomy_edges": list(recipe.bin_edges),
+                "residual_group_counts": list(recipe.group_counts),
+                "residual_quantiles": list(recipe.residual_quantiles),
+                "numeric_features": list(config["model"]["numeric_features"]),
+                "categorical_features": list(config["model"]["categorical_features"]),
+            }
+        )
+        if seed == int(config["model"]["canonical_seed"]):
+            recipes = {
+                int(groups): _recipe_from_json(
+                    _verified_artifact_path(descriptor, repo_root=repo_root)
+                )
+                for groups, descriptor in seed_artifacts["diagnostic_recipes"].items()
+            }
+    if not recipes:
+        raise RuntimeError("Canonical diagnostic recipes are unavailable upstream.")
+    probability = canonical_panel["pd_point"].to_numpy(dtype=float)
+    diagnostic_panels: dict[int, pd.DataFrame] = {}
+    for groups, recipe in sorted(recipes.items()):
+        assigned, lower, upper = apply_binary_outcome_recipe(probability, recipe)
+        panel = canonical_panel.copy()
+        panel["conformal_group"] = assigned
+        panel["conformal_lower"] = lower
+        panel["conformal_upper"] = upper
+        diagnostic_panels[groups] = panel
+    canonical_groups = int(config["conformal"]["canonical_groups"])
+    canonical_rebuilt = diagnostic_panels[canonical_groups]
+    for column in ("conformal_group", "conformal_lower", "conformal_upper"):
+        np.testing.assert_allclose(
+            canonical_rebuilt[column].to_numpy(dtype=float),
+            canonical_panel[column].to_numpy(dtype=float),
+            rtol=0.0,
+            atol=0.0,
+        )
+    return UpstreamOutcomeFreeBundle(
+        records=records,
+        allocations=allocations,
+        canonical_panel=canonical_panel,
+        fit_audit=fit_audit,
+        availability_audit=availability,
+        prediction_metrics=prediction_metrics,
+        diagnostic_recipes=recipes,
+        diagnostic_panels=diagnostic_panels,
+        artifact_descriptors=dict(artifacts),
+        model_artifacts=dict(model_artifacts),
+        provenance={
+            "source_run_tag": source_run_tag,
+            "source_protocol_tag": freeze["protocol_tag"],
+            "source_protocol_commit": freeze["protocol_commit"],
+            "source_protocol_freeze": freeze_descriptor,
+            "source_implementation_provenance": freeze["implementation_provenance"],
+            "reuse_scope": "outcome_free_predictions_models_and_allocations_only",
+        },
+    )
 
 
 def _terminal_resolution(outcomes: pd.Series) -> pd.Series:
@@ -907,6 +1109,8 @@ def _outcome_panel(universe: pd.DataFrame) -> pd.DataFrame:
             "snapshot_resolution": _terminal_resolution(terminal),
             "funded_amnt": pd.to_numeric(universe["funded_amnt"], errors="raise"),
             "total_pymnt": pd.to_numeric(universe["total_pymnt"], errors="raise"),
+            "role": universe["design_split"].astype("string"),
+            "period": pd.to_datetime(universe["issue_d"]).dt.to_period("M").astype(str),
         }
     )
 
@@ -930,27 +1134,53 @@ def _evaluate_allocations(
         "comparator_rule",
         "paired_policy_id",
     ]
-    for keys, allocation in allocations.groupby(key_columns, observed=True, sort=True):
-        selector = pd.Series(True, index=records.index)
-        for column, value in zip(key_columns, keys, strict=True):
-            selector &= records[column].eq(value)
-        matches = records.loc[selector]
-        if len(matches) != 1:
-            raise RuntimeError(
-                f"Outcome-free record lookup returned {len(matches)} rows for {keys}."
-            )
-        base_record = matches.iloc[0].to_dict()
+    record_index = records.set_index(key_columns, verify_integrity=True)
+    candidate_unresolved = outcomes.groupby(["role", "period"], observed=True)[
+        "snapshot_default"
+    ].apply(lambda values: int(values.isna().sum()))
+    outcome_columns = [
+        "id",
+        "loan_status",
+        "snapshot_default",
+        "snapshot_resolution",
+        "funded_amnt",
+        "total_pymnt",
+    ]
+    joined_allocations = allocations.merge(
+        outcomes[outcome_columns],
+        on="id",
+        how="left",
+        validate="many_to_one",
+    )
+    if len(joined_allocations) != len(allocations):
+        raise RuntimeError("Shared outcome join changed the funded-allocation row count.")
+    grouped = joined_allocations.groupby(key_columns, observed=True, sort=True)
+    if grouped.ngroups != len(record_index):
+        raise RuntimeError(
+            "Outcome-free records and funded-allocation groups have different cardinality."
+        )
+    for keys, allocation in grouped:
+        base_row = record_index.loc[keys]
+        if isinstance(base_row, pd.DataFrame):
+            raise RuntimeError(f"Outcome-free record lookup is not unique for {keys}.")
+        base_record = base_row.to_dict()
+        base_record.update(dict(zip(key_columns, keys, strict=True)))
         cell = _cell_config(
             config,
             seed=int(base_record["seed"]),
             purpose_cap=float(base_record["purpose_cap"]),
             lgd=float(base_record["lgd"]),
         )
-        record, joined = evaluate_frozen_allocation(
+        role = str(base_record["role"])
+        period = str(base_record["period"])
+        unresolved_key = (role, period)
+        if unresolved_key not in candidate_unresolved.index:
+            raise RuntimeError(f"Candidate outcome count is unavailable for {unresolved_key}.")
+        record, joined = evaluate_prejoined_frozen_allocation(
             base_record,
             allocation,
-            outcomes,
             config=cell,
+            n_unresolved_candidates=int(candidate_unresolved.loc[unresolved_key]),
         )
         scaled_principal = joined["allocation_fraction"].to_numpy(dtype=float) * joined[
             "funded_amnt"
@@ -1241,8 +1471,6 @@ def run_protocol(*, config_path: Path, repo_root: Path = ROOT) -> Path:
         config,
         raw_path=raw_path,
     )
-    features, numeric_features, categorical_features = _engineer_features(universe, config)
-
     implementation = implementation_provenance(
         config_path=resolved_config,
         repo_root=root,
@@ -1273,8 +1501,31 @@ def run_protocol(*, config_path: Path, repo_root: Path = ROOT) -> Path:
     canonical_seed = int(config["model"]["canonical_seed"])
     canonical_cap = float(config["policy"]["canonical_purpose_cap"])
     canonical_lgd = float(config["payoff"]["lgd"])
+    resume_enabled = bool(config.get("resume_outcome_free", {}).get("enabled", False))
+    upstream: UpstreamOutcomeFreeBundle | None = None
+    if resume_enabled:
+        upstream = _load_upstream_outcome_free_bundle(
+            config,
+            repo_root=root,
+            expected_availability=availability_audit,
+        )
+        outcome_free_records = upstream.records
+        outcome_free_allocations = upstream.allocations
+        canonical_panel = upstream.canonical_panel
+        fit_audits = [upstream.fit_audit]
+        prediction_metrics = upstream.prediction_metrics
+        canonical_diagnostic_recipes = upstream.diagnostic_recipes
+        canonical_diagnostic_panels = upstream.diagnostic_panels
+        model_artifacts = upstream.model_artifacts
+        seeds_to_run: list[int] = []
+        features = pd.DataFrame()
+        numeric_features: list[str] = []
+        categorical_features: list[str] = []
+    else:
+        features, numeric_features, categorical_features = _engineer_features(universe, config)
+        seeds_to_run = [int(value) for value in config["model"]["sensitivity_seeds"]]
 
-    for seed in [int(value) for value in config["model"]["sensitivity_seeds"]]:
+    for seed in seeds_to_run:
         stack = _fit_prediction_stack(
             universe,
             features,
@@ -1381,8 +1632,9 @@ def run_protocol(*, config_path: Path, repo_root: Path = ROOT) -> Path:
 
     if canonical_panel is None:
         raise RuntimeError("Canonical seed was not executed.")
-    outcome_free_records = pd.concat(all_records, ignore_index=True)
-    outcome_free_allocations = pd.concat(all_allocations, ignore_index=True)
+    if upstream is None:
+        outcome_free_records = pd.concat(all_records, ignore_index=True)
+        outcome_free_allocations = pd.concat(all_allocations, ignore_index=True)
     if bool(
         outcome_free_allocations.columns.astype(str)
         .str.casefold()
@@ -1390,48 +1642,69 @@ def run_protocol(*, config_path: Path, repo_root: Path = ROOT) -> Path:
         .any()
     ):
         raise AssertionError("Outcome-free allocation artifact contains an outcome field.")
-
-    records_path = atomic_write_parquet(
-        outcome_free_records,
-        paths.data_dir / "portfolio/outcome_free_solve_records.parquet",
-    )
-    allocations_path = atomic_write_parquet(
-        outcome_free_allocations,
-        paths.data_dir / "portfolio/outcome_free_funded_allocations.parquet",
-    )
-    panel_path = atomic_write_parquet(
-        canonical_panel,
-        paths.data_dir / "prediction/canonical_decision_panel.parquet",
-    )
-    fit_path = atomic_write_parquet(
-        pd.concat(fit_audits, ignore_index=True),
-        paths.data_dir / "prediction/conformal_fit_audit.parquet",
-    )
-    availability_path = atomic_write_parquet(
-        availability_audit,
-        paths.data_dir / "data/label_availability_audit.parquet",
-    )
-    freeze = {
-        "schema_version": str(config["schema_version"]),
-        "status": "outcome_free_allocations_frozen_before_outcome_join",
-        "protocol_tag": str(config["protocol_tag"]),
-        "protocol_commit": protocol_commit,
-        "run_tag": str(config["run_tag"]),
-        "policy_selection": "none_all_nine_co_primary",
-        "outcome_columns_passed_to_policy_or_comparator": [],
-        "implementation_provenance": implementation,
-        "environment": environment_provenance(root),
-        "outcome_free_artifacts": {
+    if upstream is None:
+        records_path = atomic_write_parquet(
+            outcome_free_records,
+            paths.data_dir / "portfolio/outcome_free_solve_records.parquet",
+        )
+        allocations_path = atomic_write_parquet(
+            outcome_free_allocations,
+            paths.data_dir / "portfolio/outcome_free_funded_allocations.parquet",
+        )
+        panel_path = atomic_write_parquet(
+            canonical_panel,
+            paths.data_dir / "prediction/canonical_decision_panel.parquet",
+        )
+        fit_path = atomic_write_parquet(
+            pd.concat(fit_audits, ignore_index=True),
+            paths.data_dir / "prediction/conformal_fit_audit.parquet",
+        )
+        availability_path = atomic_write_parquet(
+            availability_audit,
+            paths.data_dir / "data/label_availability_audit.parquet",
+        )
+        outcome_free_artifacts = {
             "records": relative_artifact_descriptor(records_path, repo_root=root),
             "allocations": relative_artifact_descriptor(allocations_path, repo_root=root),
-            "canonical_decision_panel": relative_artifact_descriptor(panel_path, repo_root=root),
+            "canonical_decision_panel": relative_artifact_descriptor(
+                panel_path,
+                repo_root=root,
+            ),
             "conformal_fit_audit": relative_artifact_descriptor(fit_path, repo_root=root),
             "label_availability_audit": relative_artifact_descriptor(
                 availability_path,
                 repo_root=root,
             ),
-        },
+        }
+        freeze_status = "outcome_free_allocations_frozen_before_outcome_join"
+        upstream_provenance = None
+    else:
+        outcome_free_artifacts = upstream.artifact_descriptors
+        freeze_status = "verified_upstream_outcome_free_freeze_imported_before_outcome_join"
+        upstream_provenance = upstream.provenance
+    freeze: dict[str, Any] = {
+        "schema_version": str(config["schema_version"]),
+        "status": freeze_status,
+        "protocol_tag": str(config["protocol_tag"]),
+        "protocol_commit": protocol_commit,
+        "outcome_free_lineage": (
+            upstream.provenance
+            if upstream is not None
+            else {
+                "source_run_tag": str(config["run_tag"]),
+                "source_protocol_tag": str(config["protocol_tag"]),
+                "source_protocol_commit": protocol_commit,
+                "reuse_scope": "generated_in_current_run",
+            }
+        ),
+        "run_tag": str(config["run_tag"]),
+        "policy_selection": "none_all_nine_co_primary",
+        "outcome_columns_passed_to_policy_or_comparator": [],
+        "implementation_provenance": implementation,
+        "environment": environment_provenance(root),
+        "outcome_free_artifacts": outcome_free_artifacts,
         "model_artifacts": model_artifacts,
+        "upstream_outcome_free_provenance": upstream_provenance,
     }
     freeze_path = atomic_write_json(paths.model_dir / "protocol_freeze.json", freeze)
 
@@ -1509,6 +1782,7 @@ def run_protocol(*, config_path: Path, repo_root: Path = ROOT) -> Path:
         "run_tag": str(config["run_tag"]),
         "protocol_tag": str(config["protocol_tag"]),
         "protocol_commit": protocol_commit,
+        "outcome_free_lineage": freeze["outcome_free_lineage"],
         "claim_boundary": {
             "previously_inspected_archive": True,
             "confirmatory": False,
@@ -1563,6 +1837,7 @@ def run_protocol(*, config_path: Path, repo_root: Path = ROOT) -> Path:
         "summary": relative_artifact_descriptor(summary_path, repo_root=root),
         "environment": environment_provenance(root),
         "protocol_commit": protocol_commit,
+        "outcome_free_lineage": summary["outcome_free_lineage"],
     }
     atomic_write_json(paths.model_dir / str(config["output"]["execution_receipt"]), receipt)
     return summary_path

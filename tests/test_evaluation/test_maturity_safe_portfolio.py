@@ -133,3 +133,39 @@ def test_non_strict_backend_retains_fallback_compatibility(
     )
 
     assert solved.result.solution["solver_backend"] == "highspy_fallback_highs_sparse"
+
+
+def test_prejoined_evaluation_separates_menu_and_funded_censoring_counts() -> None:
+    joined = _decision_frame().assign(
+        allocation_fraction=[1.0, 0.5],
+        exposure=[100.0, 100.0],
+        weight=[0.5, 0.5],
+        pd_effective=[0.1, 0.25],
+        expected_payoff_rate=[0.045, 0.0375],
+        expected_payoff_contribution=[4.5, 3.75],
+        role="primary_oot",
+        period="2016-04",
+        policy_label="guardrail_linear-001",
+        candidate_id="linear-001",
+        snapshot_default=pd.Series([0, pd.NA], dtype="Int8"),
+        snapshot_resolution=pd.Series(["fully_paid", "right_censored"], dtype="string"),
+    )
+    base_record = {
+        "role": "primary_oot",
+        "period": "2016-04",
+        "policy_label": "guardrail_linear-001",
+        "robust_guardrail": True,
+        "total_allocated": 200.0,
+    }
+
+    record, evaluated = portfolio.evaluate_prejoined_frozen_allocation(
+        base_record,
+        joined,
+        config=_config(strict=True),
+        n_unresolved_candidates=7,
+    )
+
+    assert record["n_unresolved_candidates"] == 7
+    assert record["n_unresolved_positive_exposure"] == 1
+    assert record["unresolved_exposure_share"] == pytest.approx(0.5)
+    assert evaluated["realized_payoff_lower"].notna().all()

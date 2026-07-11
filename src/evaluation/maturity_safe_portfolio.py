@@ -334,6 +334,25 @@ def evaluate_frozen_allocation(
         )
     )
     joined = allocation.merge(outcomes, on="id", how="left", validate="one_to_one")
+    return evaluate_prejoined_frozen_allocation(
+        base_record,
+        joined,
+        config=config,
+        n_unresolved_candidates=int(outcomes["snapshot_default"].isna().sum()),
+    )
+
+
+def evaluate_prejoined_frozen_allocation(
+    base_record: Mapping[str, Any],
+    joined_allocation: pd.DataFrame,
+    *,
+    config: Mapping[str, Any],
+    n_unresolved_candidates: int,
+) -> tuple[dict[str, Any], pd.DataFrame]:
+    """Evaluate one frozen allocation after a validated shared outcome join."""
+    joined = joined_allocation.copy()
+    if bool(joined["id"].duplicated().any()):
+        raise RuntimeError("A frozen policy allocation contains duplicate loan IDs.")
     if bool(joined["snapshot_resolution"].isna().any()):
         raise RuntimeError("Funded allocation could not be aligned to snapshot outcomes.")
     y_true = pd.to_numeric(joined["snapshot_default"], errors="coerce").to_numpy(dtype=float)
@@ -369,7 +388,7 @@ def evaluate_frozen_allocation(
         "period": period,
         "policy_label": policy_label,
         "robust_guardrail": bool(robust),
-        "n_unresolved_candidates": int(outcomes["snapshot_default"].isna().sum()),
+        "n_unresolved_candidates": int(n_unresolved_candidates),
         "n_unresolved_positive_exposure": int(unresolved.sum()),
         "unresolved_exposure_share": float(weights @ unresolved.astype(float)),
         "realized_payoff_lower": realized_lower,

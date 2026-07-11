@@ -1,7 +1,7 @@
-schema_version: "2026-07-11.1"
+schema_version: "2026-07-11.2"
 protocol_status: "locked_retrospective_prefreeze_audit"
-protocol_tag: "protocol/ijds-fixed-taxonomy-c2-2026-07-11-v1"
-run_tag: "ijds-fixed-taxonomy-c2-2026-07-11-v1"
+protocol_tag: "protocol/ijds-fixed-taxonomy-c2-2026-07-11-v2"
+run_tag: "ijds-fixed-taxonomy-c2-2026-07-11-v2"
 
 hypothesis: >-
   A conformal-derived portfolio score can attain its target in a near
@@ -207,6 +207,13 @@ simulation:
   repetitions: 200
   sample_size: 2000
   temporal_shift_grid: [0.0, 0.05, 0.10, 0.15]
+
+resume_outcome_free:
+  enabled: true
+  source_run_tag: "ijds-fixed-taxonomy-c2-2026-07-11-v1"
+  source_protocol_tag: "protocol/ijds-fixed-taxonomy-c2-2026-07-11-v1"
+  source_protocol_commit: "4835cc18a0117a695f89f9da70a4e3af97663a27"
+  source_freeze_sha256: "93690082880ef4ff1375dcd5b26d2df79f80e6ebe09a6d83b7fd99a9abb4cfae"
 
 execution:
   solver_backend: "highspy"
