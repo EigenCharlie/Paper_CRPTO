@@ -857,7 +857,7 @@ def _write_artifacts(
         path = paths.data_dir / relative
         written[path] = frame
         if path.suffix == ".parquet":
-            atomic_write_parquet(path, frame)
+            atomic_write_parquet(frame, path)
         else:
             write_csv_atomic(frame, path)
     descriptors = [

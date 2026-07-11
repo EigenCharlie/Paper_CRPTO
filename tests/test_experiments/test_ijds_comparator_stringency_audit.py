@@ -9,6 +9,7 @@ from scripts.experiments import (
     run_ijds_comparator_stringency_audit as audit,
     run_ijds_maturity_safe_challenger as parent_runner,
 )
+from src.utils.isolated_experiment import OutputPaths
 
 
 def _synthetic_parent(config: dict[str, object]) -> audit.ParentFrames:
@@ -174,3 +175,41 @@ def test_payoff_decomposition_uses_one_common_unresolved_outcome() -> None:
     assert matched["contractual_component"] == 0.0
     assert matched["realized_difference_lower"] == pytest.approx(-27.5)
     assert matched["realized_difference_upper"] == pytest.approx(0.0)
+
+
+def test_write_artifacts_round_trips_csv_and_parquet(tmp_path: Path) -> None:
+    paths = OutputPaths(data_dir=tmp_path / "data", model_dir=tmp_path / "models")
+    paths.data_dir.mkdir()
+    paths.model_dir.mkdir()
+    protocol_freeze = paths.model_dir / "protocol_freeze.json"
+    protocol_freeze.write_text("{}\n", encoding="utf-8")
+    csv_frame = pd.DataFrame({"policy": ["guardrail"], "value": [1.25]})
+    parquet_frame = pd.DataFrame({"id": ["loan-1"], "exposure": [100.0]})
+
+    artifacts, schemas = audit._write_artifacts(
+        paths=paths,
+        repo_root=tmp_path,
+        frames={
+            "portfolio/summary.csv": csv_frame,
+            "portfolio/allocations.parquet": parquet_frame,
+        },
+        protocol_freeze=protocol_freeze,
+    )
+
+    pd.testing.assert_frame_equal(
+        pd.read_csv(paths.data_dir / "portfolio/summary.csv"),
+        csv_frame,
+    )
+    pd.testing.assert_frame_equal(
+        pd.read_parquet(paths.data_dir / "portfolio/allocations.parquet"),
+        parquet_frame,
+    )
+    assert set(artifacts) == {
+        "data/portfolio/allocations.parquet",
+        "data/portfolio/summary.csv",
+        "models/protocol_freeze.json",
+    }
+    assert set(schemas) == {
+        "data/portfolio/allocations.parquet",
+        "data/portfolio/summary.csv",
+    }

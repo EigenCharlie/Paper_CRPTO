@@ -80,3 +80,15 @@ If any condition fails, the headline stops. The project may report the complete
 heterogeneous diagnostic, but it may not change alpha, gamma, tau rules, LGD,
 payoff, months, matching definition, or promoted guardrail in search of a more
 favorable result.
+
+## Pre-execution implementation correction
+
+The first invocation of the locked runner completed the in-memory optimization
+loop but stopped before writing any scientific artifact, summary, receipt, or
+evidence manifest. The cause was a reversed argument order in the Parquet
+serialization helper. The correction changes only the call from
+`atomic_write_parquet(path, frame)` to the helper's documented
+`atomic_write_parquet(frame, path)` interface and adds a CSV/Parquet round-trip
+test. No protocol value, policy, comparator, month, outcome, metric, or decision
+rule changed. The protocol tag is recreated on the corrected implementation
+before the first successful persisted execution.
