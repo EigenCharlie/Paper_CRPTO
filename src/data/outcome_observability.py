@@ -2,7 +2,7 @@
 
 from __future__ import annotations
 
-from collections.abc import Mapping
+from collections.abc import Collection, Mapping
 from pathlib import Path
 from typing import Any
 
@@ -315,8 +315,14 @@ def load_design_universe(
     config: Mapping[str, Any],
     *,
     raw_path: Path,
+    label_required_splits: Collection[str] | None = None,
 ) -> tuple[pd.DataFrame, dict[str, Any]]:
-    """Load declared windows from raw data without filtering on loan status."""
+    """Load declared windows from raw data without filtering on loan status.
+
+    ``label_required_splits`` separates blocks that consume outcomes from
+    outcome-free decision-development menus. The legacy default preserves the
+    historical maturity-safe selector contract.
+    """
     source = config["source"]
     design = config["design"]
     required_columns = [str(value) for value in source["required_raw_columns"]]
@@ -373,12 +379,17 @@ def load_design_universe(
     frame["snapshot_resolution"] = snapshot_resolution_from_status(frame["loan_status"])
     frame = frame.sort_values(["issue_d", "id"], kind="mergesort").reset_index(drop=True)
 
-    required_splits = LABEL_REQUIRED_SPLITS | frozenset({"primary_oot", "censored_extension"})
+    required_labels = (
+        LABEL_REQUIRED_SPLITS
+        if label_required_splits is None
+        else frozenset(str(value) for value in label_required_splits)
+    )
+    required_splits = required_labels | DECISION_SPLITS
     observed_splits = set(frame["design_split"].astype(str))
     absent = sorted(required_splits.difference(observed_splits))
     if absent:
         raise RuntimeError(f"Declared design blocks are empty: {absent}")
-    label_rows = frame["design_split"].isin(LABEL_REQUIRED_SPLITS)
+    label_rows = frame["design_split"].isin(required_labels)
     unresolved = int(frame.loc[label_rows, "snapshot_default"].isna().sum())
     if unresolved:
         raise RuntimeError(f"Label-required blocks contain {unresolved} unresolved rows.")
@@ -408,6 +419,7 @@ def load_design_universe(
             "split_inventory": split_inventory.to_dict(orient="records"),
             "status_inventory": status_inventory.to_dict(orient="records"),
             "membership_uses_loan_status": False,
+            "label_required_splits": sorted(required_labels),
         }
     )
     return frame, counters

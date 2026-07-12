@@ -9,11 +9,27 @@ from src.evaluation.comparator_audit import (
     build_fixed_cap_grid,
     comparator_multiverse_envelope,
     contemporaneous_point_cap_target,
+    development_supported_cap_range,
     exact_match_diagnostics,
     require_affine_score_cap_equivalence,
     translate_affine_score_cap,
     weighted_funded_point_risk,
 )
+
+
+def test_development_supported_cap_range_rounds_outward_and_clips() -> None:
+    result = development_supported_cap_range(
+        [0.0531, 0.0683, 0.07342],
+        step=0.0025,
+        lower_limit=0.05,
+        upper_limit=0.12,
+    )
+
+    assert result.lower == pytest.approx(0.0525)
+    assert result.upper == pytest.approx(0.075)
+    assert result.target_minimum == pytest.approx(0.0531)
+    assert result.target_maximum == pytest.approx(0.07342)
+    assert result.target_count == 3
 
 
 def test_weighted_point_risk_and_match_reconcile_exactly() -> None:

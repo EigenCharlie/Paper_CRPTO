@@ -37,10 +37,12 @@ from src.evaluation.comparator_audit import (
     build_fixed_cap_grid,
     comparator_multiverse_envelope,
     contemporaneous_point_cap_target,
+    development_supported_cap_range,
     exact_match_diagnostics,
 )
 from src.evaluation.comparator_transport_simulation import simulate_from_config
 from src.evaluation.coverage_transport import build_temporal_conformal_audit
+from src.evaluation.ijds_design_sensitivity import build_label_lag_coverage_sensitivity
 from src.evaluation.maturity_safe_portfolio import (
     aggregate_monthly_evaluation,
     assert_outcome_free_decision_frame,
@@ -135,11 +137,37 @@ def parse_args(argv: Sequence[str] | None = None) -> argparse.Namespace:
     return parser.parse_args(argv)
 
 
-def load_config(path: Path) -> dict[str, Any]:
-    """Load and validate the locked pre-freeze protocol."""
-    payload = yaml.safe_load(path.read_text(encoding="utf-8"))
+def _deep_merge_config(base: dict[str, Any], override: Mapping[str, Any]) -> dict[str, Any]:
+    """Merge a small protocol override without duplicating the locked base YAML."""
+    merged = copy.deepcopy(base)
+    for key, value in override.items():
+        if value is None:
+            merged.pop(str(key), None)
+        elif isinstance(value, Mapping) and isinstance(merged.get(key), dict):
+            merged[str(key)] = _deep_merge_config(merged[str(key)], value)
+        else:
+            merged[str(key)] = copy.deepcopy(value)
+    return merged
+
+
+def _load_config_payload(path: Path, *, seen: frozenset[Path] = frozenset()) -> dict[str, Any]:
+    resolved = path.resolve()
+    if resolved in seen:
+        raise ValueError(f"Protocol config inheritance cycle at {resolved}.")
+    payload = yaml.safe_load(resolved.read_text(encoding="utf-8"))
     if not isinstance(payload, dict):
         raise TypeError("Protocol config must be a YAML mapping.")
+    extends = payload.pop("extends", None)
+    if extends is None:
+        return payload
+    base_path = (resolved.parent / str(extends)).resolve()
+    base = _load_config_payload(base_path, seen=seen | {resolved})
+    return _deep_merge_config(base, payload)
+
+
+def load_config(path: Path) -> dict[str, Any]:
+    """Load and validate the locked pre-freeze protocol."""
+    payload = _load_config_payload(path)
     required = {
         "schema_version",
         "protocol_status",
@@ -162,7 +190,11 @@ def load_config(path: Path) -> dict[str, Any]:
     missing = sorted(required.difference(payload))
     if missing:
         raise KeyError(f"Protocol config is missing sections: {missing}")
-    if payload["protocol_status"] != "locked_retrospective_prefreeze_audit":
+    allowed_statuses = {
+        "locked_retrospective_prefreeze_audit",
+        "locked_retrospective_design_sensitivity",
+    }
+    if payload["protocol_status"] not in allowed_statuses:
         raise ValueError("Unexpected protocol status.")
     if payload["design"].get("historical_archive_previously_inspected") is not True:
         raise ValueError("The inspected-archive disclosure must remain true.")
@@ -174,6 +206,11 @@ def load_config(path: Path) -> dict[str, Any]:
         raise ValueError("Comparator selection from outcomes is forbidden.")
     if payload["simulation"].get("enabled") is not True:
         raise ValueError("The locked mechanism simulation must remain enabled.")
+    sensitivity = payload.get("design_sensitivity", {})
+    if sensitivity:
+        lags = [int(value) for value in sensitivity.get("charged_off_lag_months", [])]
+        if lags != [0, 3, 6, 12]:
+            raise ValueError("Label-lag sensitivity must remain the closed 0/3/6/12 grid.")
     seeds = [int(value) for value in payload["model"]["sensitivity_seeds"]]
     if seeds != [40, 41, 42, 43, 44]:
         raise ValueError("Seed sensitivity must remain the closed 40--44 set.")
@@ -380,7 +417,11 @@ def _prepare_universe(
     *,
     raw_path: Path,
 ) -> tuple[pd.DataFrame, dict[str, Any], pd.DataFrame]:
-    universe, source_inventory = load_design_universe(config, raw_path=raw_path)
+    universe, source_inventory = load_design_universe(
+        config,
+        raw_path=raw_path,
+        label_required_splits=LABEL_FIT_SPLITS,
+    )
     label_info = build_outcome_label_availability(
         universe["loan_status"],
         universe["last_pymnt_d"],
@@ -453,6 +494,35 @@ def _prediction_metrics(labels: np.ndarray, probabilities: np.ndarray) -> dict[s
         np.sum(grouped["n"].to_numpy() * np.abs(grouped["p"] - grouped["y"])) / len(audit)
     )
     return metrics
+
+
+def _temporal_prediction_metrics(
+    decision_panel: pd.DataFrame,
+    outcomes: pd.DataFrame,
+) -> list[dict[str, Any]]:
+    """Evaluate canonical point-PD diagnostics after the outcome-free freeze."""
+    joined = decision_panel[["id", "design_split", "pd_point"]].merge(
+        outcomes[["id", "snapshot_default"]],
+        on="id",
+        how="left",
+        validate="one_to_one",
+    )
+    rows: list[dict[str, Any]] = []
+    for role, frame in joined.groupby("design_split", sort=True):
+        resolved = frame["snapshot_default"].notna()
+        labels = frame.loc[resolved, "snapshot_default"].astype(int).to_numpy(dtype=int)
+        probabilities = frame.loc[resolved, "pd_point"].to_numpy(dtype=float)
+        metrics = _prediction_metrics(labels, probabilities)
+        rows.append(
+            {
+                "role": str(role),
+                "candidate_rows": int(len(frame)),
+                "resolved_rows": int(resolved.sum()),
+                "unresolved_rows": int((~resolved).sum()),
+                **metrics,
+            }
+        )
+    return rows
 
 
 def _fit_prediction_stack(
@@ -1382,7 +1452,11 @@ def _paired_contrasts(
 
 
 def _canonical_envelopes(
-    contrasts: pd.DataFrame, config: Mapping[str, Any]
+    contrasts: pd.DataFrame,
+    config: Mapping[str, Any],
+    *,
+    supported_cap_lower: float,
+    supported_cap_upper: float,
 ) -> list[dict[str, Any]]:
     canonical_seed = int(config["model"]["canonical_seed"])
     canonical_cap = float(config["policy"]["canonical_purpose_cap"])
@@ -1408,21 +1482,36 @@ def _canonical_envelopes(
             "weighted_miscoverage_difference_upper",
         ),
     }
+    core_rules = {"c0_same_numeric_cap", "c1_development_fixed", "c2_contemporaneous"}
+    supported = canonical.loc[
+        canonical["comparator_rule"].isin({"c1_development_fixed", "c2_contemporaneous"})
+        | (
+            canonical["comparator_rule"].eq("point_cap_frontier")
+            & canonical["frontier_cap"].between(supported_cap_lower, supported_cap_upper)
+        )
+    ]
+    scopes = {
+        "core_rules": canonical.loc[canonical["comparator_rule"].isin(core_rules)],
+        "development_supported": supported,
+        "broad_stress": canonical,
+    }
     rows: list[dict[str, Any]] = []
-    for policy_id, policy_frame in canonical.groupby("paired_policy_id", sort=True):
-        for metric, (lower, upper) in metric_columns.items():
-            envelope = comparator_multiverse_envelope(
-                policy_frame,
-                lower_column=lower,
-                upper_column=upper,
-            )
-            rows.append(
-                {
-                    "paired_policy_id": policy_id,
-                    "metric": metric,
-                    **asdict(envelope),
-                }
-            )
+    for scope, scope_frame in scopes.items():
+        for policy_id, policy_frame in scope_frame.groupby("paired_policy_id", sort=True):
+            for metric, (lower, upper) in metric_columns.items():
+                envelope = comparator_multiverse_envelope(
+                    policy_frame,
+                    lower_column=lower,
+                    upper_column=upper,
+                )
+                rows.append(
+                    {
+                        "scope": scope,
+                        "paired_policy_id": policy_id,
+                        "metric": metric,
+                        **asdict(envelope),
+                    }
+                )
     return rows
 
 
@@ -1480,6 +1569,7 @@ def run_protocol(*, config_path: Path, repo_root: Path = ROOT) -> Path:
             Path("src/models/binary_conformal_guardrail.py"),
             Path("src/models/maturity_safe_pd.py"),
             Path("src/evaluation/maturity_safe_portfolio.py"),
+            Path("src/evaluation/ijds_design_sensitivity.py"),
             Path("src/evaluation/comparator_audit.py"),
             Path("src/evaluation/comparator_transport_simulation.py"),
             Path("src/evaluation/policy_contrast_bounds.py"),
@@ -1487,6 +1577,7 @@ def run_protocol(*, config_path: Path, repo_root: Path = ROOT) -> Path:
             Path("src/evaluation/cashflow_payoff.py"),
             Path("src/optimization/policy_evaluation.py"),
             Path("src/optimization/portfolio_model.py"),
+            *[Path(value) for value in config.get("protocol_lineage_files", [])],
         ],
     )
 
@@ -1498,6 +1589,7 @@ def run_protocol(*, config_path: Path, repo_root: Path = ROOT) -> Path:
     canonical_panel: pd.DataFrame | None = None
     canonical_diagnostic_recipes: dict[int, BinaryOutcomeConformalRecipe] = {}
     canonical_diagnostic_panels: dict[int, pd.DataFrame] = {}
+    canonical_stack: PredictionStack | None = None
     canonical_seed = int(config["model"]["canonical_seed"])
     canonical_cap = float(config["policy"]["canonical_purpose_cap"])
     canonical_lgd = float(config["payoff"]["lgd"])
@@ -1538,6 +1630,7 @@ def run_protocol(*, config_path: Path, repo_root: Path = ROOT) -> Path:
         prediction_metrics.append(stack.metrics)
         fit_audits.append(stack.fit_audit)
         if seed == canonical_seed:
+            canonical_stack = stack
             canonical_panel = stack.decision_panel.copy()
             canonical_diagnostic_recipes = dict(stack.diagnostic_recipes)
             canonical_diagnostic_panels = {
@@ -1709,6 +1802,7 @@ def run_protocol(*, config_path: Path, repo_root: Path = ROOT) -> Path:
     freeze_path = atomic_write_json(paths.model_dir / "protocol_freeze.json", freeze)
 
     outcomes = _outcome_panel(universe)
+    temporal_prediction = _temporal_prediction_metrics(canonical_panel, outcomes)
     evaluated, joined_allocations = _evaluate_allocations(
         outcome_free_records,
         outcome_free_allocations,
@@ -1729,6 +1823,26 @@ def run_protocol(*, config_path: Path, repo_root: Path = ROOT) -> Path:
         coverage.insert(0, "taxonomy_groups", int(groups))
         coverage_frames.append(coverage)
     temporal_coverage = pd.concat(coverage_frames, ignore_index=True)
+    lag_sensitivity_path: Path | None = None
+    sensitivity_config = config.get("design_sensitivity", {})
+    if sensitivity_config:
+        if canonical_stack is None or features.empty:
+            raise RuntimeError("Design sensitivity requires a freshly fitted canonical stack.")
+        lag_sensitivity = build_label_lag_coverage_sensitivity(
+            universe=universe,
+            features=features,
+            model=canonical_stack.model,
+            calibrator=canonical_stack.calibrator,
+            fixed_edges=canonical_stack.recipe.bin_edges,
+            decision_panel=canonical_panel,
+            outcomes=outcomes,
+            config=config,
+            lag_months=sensitivity_config["charged_off_lag_months"],
+        )
+        lag_sensitivity_path = atomic_write_parquet(
+            lag_sensitivity,
+            paths.data_dir / "evaluation/label_lag_coverage_sensitivity.parquet",
+        )
     simulation_results, simulation_summary = simulate_from_config(config)
     evaluated_path = atomic_write_parquet(
         evaluated,
@@ -1776,6 +1890,21 @@ def run_protocol(*, config_path: Path, repo_root: Path = ROOT) -> Path:
         ),
         "policies": int(len(canonical_contrasts)),
     }
+    development_allocations = outcome_free_allocations.loc[
+        outcome_free_allocations["seed"].eq(canonical_seed)
+        & outcome_free_allocations["purpose_cap"].eq(canonical_cap)
+        & outcome_free_allocations["lgd"].eq(canonical_lgd)
+        & outcome_free_allocations["role"].eq("policy_development")
+        & outcome_free_allocations["comparator_rule"].eq("guardrail")
+    ]
+    development_targets = _development_fixed_targets(development_allocations)
+    broad_frontier = config["comparators"]["point_cap_frontier"]
+    supported_range = development_supported_cap_range(
+        list(development_targets.values()),
+        step=float(broad_frontier["step"]),
+        lower_limit=float(broad_frontier["start"]),
+        upper_limit=float(broad_frontier["stop"]),
+    )
     summary = {
         "schema_version": str(config["schema_version"]),
         "status": "complete_retrospective_prefreeze_audit",
@@ -1794,6 +1923,7 @@ def run_protocol(*, config_path: Path, repo_root: Path = ROOT) -> Path:
         "source_inventory": source_inventory,
         "label_availability": availability_audit.to_dict(orient="records"),
         "prediction": prediction_metrics,
+        "canonical_temporal_prediction": temporal_prediction,
         "simulation": {
             "scope": "synthetic_mechanism_interpretation_only",
             "lending_club_validation": False,
@@ -1803,7 +1933,13 @@ def run_protocol(*, config_path: Path, repo_root: Path = ROOT) -> Path:
             ],
         },
         "canonical_c2_direction_counts": direction_counts,
-        "canonical_comparator_envelopes": _canonical_envelopes(contrasts, config),
+        "development_supported_point_cap_range": asdict(supported_range),
+        "canonical_comparator_envelopes": _canonical_envelopes(
+            contrasts,
+            config,
+            supported_cap_lower=supported_range.lower,
+            supported_cap_upper=supported_range.upper,
+        ),
         "artifacts": {
             "protocol_freeze": relative_artifact_descriptor(freeze_path, repo_root=root),
             "monthly_evaluation": relative_artifact_descriptor(evaluated_path, repo_root=root),
@@ -1829,6 +1965,10 @@ def run_protocol(*, config_path: Path, repo_root: Path = ROOT) -> Path:
         "protected_stages_run": [],
         "protected_artifacts_written": [],
     }
+    if lag_sensitivity_path is not None:
+        summary["artifacts"]["label_lag_coverage_sensitivity"] = relative_artifact_descriptor(
+            lag_sensitivity_path, repo_root=root
+        )
     summary_path = atomic_write_json(
         paths.model_dir / str(config["output"]["deterministic_summary"]),
         summary,

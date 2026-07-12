@@ -257,6 +257,7 @@ def solve_portfolio_cuopt_native(
         min_budget_utilization=min_budget_utilization,
         pd_cap_slack_penalty=pd_cap_slack_penalty,
         pd_constraint_override=pd_constraint_override,
+        objective_rate_override=None,
     )
     dm = _cuopt_data_model(lp_api, components)
     settings, applied_parameters, rejected_parameters = _cuopt_solver_settings(

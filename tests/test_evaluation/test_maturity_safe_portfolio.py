@@ -58,16 +58,17 @@ def _candidate() -> LinearPolicyCandidate:
 def _fake_solver(actual_backend: str, captured: dict[str, np.ndarray]):
     def solve(**kwargs: object) -> SimpleNamespace:
         point = np.asarray(kwargs["pd_point"], dtype=float)
-        legacy_interest = np.asarray(kwargs["int_rates"], dtype=float)
-        lgd = np.asarray(kwargs["lgd"], dtype=float)
+        contractual_rates = np.asarray(kwargs["int_rates"], dtype=float)
+        objective_rates = np.asarray(kwargs["objective_rate_override"], dtype=float)
         allocation = np.array([1.0, 0.5])
         exposure = allocation * _decision_frame()["loan_amnt"].to_numpy(dtype=float)
-        captured["int_rates"] = legacy_interest
+        captured["int_rates"] = contractual_rates
+        captured["objective_rate_override"] = objective_rates
         return SimpleNamespace(
             solution={
                 "solver_status": "Optimal",
                 "solver_backend": actual_backend,
-                "objective_value": float(exposure @ (legacy_interest - point * lgd)),
+                "objective_value": float(exposure @ objective_rates),
             },
             allocation=allocation,
             effective_pd=point,
@@ -81,7 +82,7 @@ def _fake_solver(actual_backend: str, captured: dict[str, np.ndarray]):
     return solve
 
 
-def test_coherent_objective_uses_legacy_solver_argument_compatibly(
+def test_coherent_objective_is_passed_explicitly_to_solver(
     monkeypatch: pytest.MonkeyPatch,
 ) -> None:
     captured: dict[str, np.ndarray] = {}
@@ -94,7 +95,11 @@ def test_coherent_objective_uses_legacy_solver_argument_compatibly(
         robust=True,
     )
 
-    np.testing.assert_allclose(captured["int_rates"], np.array([0.09, 0.15]))
+    np.testing.assert_allclose(captured["int_rates"], np.array([0.10, 0.20]))
+    np.testing.assert_allclose(
+        captured["objective_rate_override"],
+        np.array([0.045, 0.0375]),
+    )
     np.testing.assert_allclose(solved.expected_payoff_rate, np.array([0.045, 0.0375]))
 
 

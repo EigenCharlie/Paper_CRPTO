@@ -21,6 +21,21 @@ def test_protocol_removes_champion_selection_and_locks_closed_sensitivities() ->
     assert len(protocol._policy_candidates(config)) == 9
 
 
+def test_temporal_v3_inherits_base_without_resuming_v1() -> None:
+    path = protocol.ROOT / (
+        "configs/experiments/ijds_fixed_taxonomy_c2_temporal_v3_2026-07-12.yaml"
+    )
+
+    config = protocol.load_config(path)
+
+    assert config["protocol_status"] == "locked_retrospective_design_sensitivity"
+    assert config["design"]["conformal_fit_start"] == "2012-07-01"
+    assert config["design"]["conformal_fit_end"] == "2013-01-31"
+    assert config["design_sensitivity"]["charged_off_lag_months"] == [0, 3, 6, 12]
+    assert "resume_outcome_free" not in config
+    assert config["policy"]["outcome_based_selection"] is False
+
+
 def test_terminal_resolution_keeps_nonterminal_rows_right_censored() -> None:
     outcome = pd.Series([0, 1, pd.NA], dtype="Int8")
 

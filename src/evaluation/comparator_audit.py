@@ -3,7 +3,7 @@
 from __future__ import annotations
 
 from dataclasses import dataclass
-from decimal import ROUND_HALF_EVEN, Decimal
+from decimal import ROUND_CEILING, ROUND_FLOOR, ROUND_HALF_EVEN, Decimal
 from typing import Literal
 
 import numpy as np
@@ -63,6 +63,18 @@ class ComparatorEnvelope:
     record_count: int
     lower_record_index: object
     upper_record_index: object
+
+
+@dataclass(frozen=True)
+class DevelopmentSupportedCapRange:
+    """Point-cap range derived only from outcome-free development targets."""
+
+    lower: float
+    upper: float
+    step: float
+    target_minimum: float
+    target_maximum: float
+    target_count: int
 
 
 def _one_dimensional_finite(values: object, *, name: str) -> np.ndarray:
@@ -321,4 +333,42 @@ def build_fixed_cap_grid(
     return np.asarray(
         [float(start_decimal + index * step_decimal) for index in range(interval_count + 1)],
         dtype=float,
+    )
+
+
+def development_supported_cap_range(
+    targets: object,
+    *,
+    step: float,
+    lower_limit: float,
+    upper_limit: float,
+) -> DevelopmentSupportedCapRange:
+    """Round development-only funded-risk targets outward onto a fixed grid."""
+    values = _one_dimensional_finite(targets, name="targets")
+    if bool(np.any((values < 0.0) | (values > 1.0))):
+        raise ValueError("targets must lie in [0, 1].")
+    step_decimal = Decimal(str(float(step)))
+    lower_decimal = Decimal(str(float(lower_limit)))
+    upper_decimal = Decimal(str(float(upper_limit)))
+    if step_decimal <= 0:
+        raise ValueError("step must be positive.")
+    if upper_decimal < lower_decimal:
+        raise ValueError("upper_limit must be at least lower_limit.")
+    minimum = Decimal(str(float(values.min())))
+    maximum = Decimal(str(float(values.max())))
+    rounded_lower = (minimum / step_decimal).to_integral_value(rounding=ROUND_FLOOR) * step_decimal
+    rounded_upper = (maximum / step_decimal).to_integral_value(
+        rounding=ROUND_CEILING
+    ) * step_decimal
+    clipped_lower = max(lower_decimal, rounded_lower)
+    clipped_upper = min(upper_decimal, rounded_upper)
+    if clipped_lower > clipped_upper:
+        raise ValueError("Development targets do not overlap the declared broad frontier.")
+    return DevelopmentSupportedCapRange(
+        lower=float(clipped_lower),
+        upper=float(clipped_upper),
+        step=float(step_decimal),
+        target_minimum=float(minimum),
+        target_maximum=float(maximum),
+        target_count=int(values.size),
     )

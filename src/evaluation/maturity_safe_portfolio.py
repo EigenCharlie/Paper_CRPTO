@@ -126,7 +126,6 @@ def solve_coherent_policy(
     rates = frame["contractual_rate"].to_numpy(dtype=float)
     lgd_value = float(payoff["lgd"])
     objective_coefficients = expected_objective_coefficients(point, rates, lgd=lgd_value)
-    legacy_solver_interest_coefficients = objective_coefficients + point * lgd_value
     requested_backend = str(execution["solver_backend"])
     result = solve_policy_allocation(
         loans=frame,
@@ -134,7 +133,8 @@ def solve_coherent_policy(
         pd_low=frame["conformal_lower"].to_numpy(dtype=float),
         pd_high=frame["conformal_upper"].to_numpy(dtype=float),
         lgd=np.full(len(frame), lgd_value, dtype=float),
-        int_rates=legacy_solver_interest_coefficients,
+        int_rates=rates,
+        objective_rate_override=objective_coefficients,
         total_budget=float(policy["budget"]),
         max_concentration=float(policy["max_concentration_by_purpose"]),
         risk_tolerance=float(candidate.risk_tolerance),
