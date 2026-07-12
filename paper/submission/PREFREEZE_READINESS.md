@@ -8,14 +8,14 @@ policy.
 
 - one active scientific contract and one evidence manifest;
 - outcome-free V1 freeze, reconciled V2 evaluation, and isolated V3 timing run;
-- six local DVC pointers;
+- six DVC pointers synchronized to the remote and verified from a clean clone;
 - canonical QMD body and generated INFORMS TeX;
 - separate anonymous supplement;
 - current cover letter, title page, disclosure draft, crosswalk, and checklist;
 - deterministic evidence and TeX builders;
-- official PDF within the 25-page pre-reference limit.
-- pre-V3 clean-clone reproduction of the locked environment and early run. A
-  six-pointer clean-clone replay remains required before submission freeze.
+- official PDF within the 25-page pre-reference limit;
+- six-pointer clean-clone reproduction of the locked environment, active
+  evidence, generated TeX, and official 28-page PDF.
 
 ## Work Allowed Before Freeze
 

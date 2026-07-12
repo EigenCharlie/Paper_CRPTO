@@ -53,11 +53,12 @@ The maintainer-only `just submission-check` additionally runs
 download that separate historical champion to reproduce V1/V2/V3 or the paper;
 maintainers must run the strict gate before freeze.
 
-This sequence was verified from the current pre-freeze commit in a fresh local
-clone before V3: `uv` installed 335 locked packages and DVC materialized the
-four early-run directories. The six-pointer V3 capsule must receive a fresh-
-clone replay before submission freeze; no earlier replay statement is extended
-to V3 by assumption.
+This sequence was verified on July 12, 2026, from the current pre-freeze branch
+in a fresh local clone. `uv` installed 325 locked packages; DVC fetched 92
+objects and materialized 103 files across all six V1/V2/V3 pointers; the
+41-test active contract passed; and the official citation-clean PDF rebuilt at
+28 pages. Rebuilding the evidence and TeX left the clean clone without a
+tracked diff.
 
 `just ijds-active-replay` validates the active evidence and rebuilds
 publication outputs. It intentionally does not hide an expensive methodology
