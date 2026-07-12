@@ -107,6 +107,19 @@ ijds-active-check: ijds-evidence publication-integrity
 # paper-facing evidence. The expensive policy solve is never hidden here.
 ijds-active-replay: ijds-active-check
 
+# V4 is intentionally two-phase. There is no combined target: the outcome-free
+# artifacts must be inspected and hashed before archive outcomes are joined.
+ijds-v4-freeze:
+    uv run python scripts/experiments/run_ijds_binary_geometry_frontier_v4.py freeze
+
+ijds-v4-evaluate:
+    uv run python scripts/experiments/run_ijds_binary_geometry_frontier_v4.py evaluate
+
+ijds-v4-code-check:
+    uv run pytest tests/test_ijds_audit_core.py -q
+    uv run ruff check src/ijds_audit scripts/experiments/run_ijds_binary_geometry_frontier_v4.py tests/test_ijds_audit_core.py
+    uv run mypy src/ijds_audit scripts/experiments/run_ijds_binary_geometry_frontier_v4.py tests/test_ijds_audit_core.py
+
 ijds-pull:
     uv run python scripts/manage_ijds_dvc_capsule.py pull
 
