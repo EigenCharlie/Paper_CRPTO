@@ -1,0 +1,18 @@
+extends: "ijds_binary_geometry_frontier_v4_2026-07-12.yaml"
+
+schema_version: "2026-07-12.3"
+protocol_tag: "protocol/ijds-binary-geometry-frontier-v4-2026-07-12-v2"
+run_tag: "ijds-binary-geometry-frontier-v4-2026-07-12-v2"
+
+protocol_lineage_files:
+  - "configs/experiments/ijds_fixed_taxonomy_c2_2026-07-11.yaml"
+  - "docs/research/ijds_fixed_taxonomy_c2_protocol_errata_2026-07-12.md"
+  - "configs/experiments/ijds_binary_geometry_frontier_v4_2026-07-12.yaml"
+  - "docs/research/ijds_binary_geometry_frontier_v4_protocol_2026-07-12.md"
+  - "docs/research/ijds_binary_geometry_frontier_v4_v2_recovery_2026-07-12.md"
+
+resume_outcome_free:
+  source_run_tag: "ijds-binary-geometry-frontier-v4-2026-07-12-v1"
+  source_protocol_tag: "protocol/ijds-binary-geometry-frontier-v4-2026-07-12-v1"
+  source_protocol_commit: "2f8a7606e4eb65aa3ae3701fb3af8d9a51c953cd"
+  source_freeze_sha256: "c2b3dc2d18c9fed80708682d5a0369c80c89643e2d28024418522d954ebe667c"

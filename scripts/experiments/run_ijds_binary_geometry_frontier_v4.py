@@ -9,7 +9,7 @@ from pathlib import Path
 from src.ijds_audit.protocol import evaluate_frozen, freeze_outcome_free
 
 ROOT = Path(__file__).resolve().parents[2]
-DEFAULT_CONFIG = ROOT / "configs/experiments/ijds_binary_geometry_frontier_v4_2026-07-12.yaml"
+DEFAULT_CONFIG = ROOT / "configs/experiments/ijds_binary_geometry_frontier_v4_2026-07-12_v2.yaml"
 
 
 def parse_args(argv: Sequence[str] | None = None) -> argparse.Namespace:

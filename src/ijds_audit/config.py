@@ -111,5 +111,19 @@ def load_v4_config(path: Path) -> dict[str, Any]:
         raise ValueError("The broad frontier support must be a nonempty subset of [0, 1].")
     if config["learner_control"].get("portfolio_optimization") is not False:
         raise ValueError("The logistic learner is coverage-only.")
+    resume = config.get("resume_outcome_free")
+    if resume:
+        required_resume = {
+            "source_run_tag",
+            "source_protocol_tag",
+            "source_protocol_commit",
+            "source_freeze_sha256",
+        }
+        missing_resume = sorted(required_resume.difference(resume))
+        if missing_resume:
+            raise KeyError(f"Outcome-free import is missing fields: {missing_resume}.")
+        digest = str(resume["source_freeze_sha256"])
+        if len(digest) != 64 or any(character not in "0123456789abcdef" for character in digest):
+            raise ValueError("Imported freeze SHA-256 must be lowercase hexadecimal.")
     _validate_windows(config)
     return config

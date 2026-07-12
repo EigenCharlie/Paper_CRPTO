@@ -210,6 +210,63 @@ def freeze_outcome_free(
     resolved_config = resolve_repo_input(config_path, repo_root=root)
     config = load_v4_config(resolved_config)
     protocol_commit = require_clean_tagged_head(root, str(config["protocol_tag"]))
+    resume = config.get("resume_outcome_free")
+    if resume:
+        source_model_dir = resolve_isolated_run_dir(
+            repo_root=root,
+            configured_root=str(config["output"]["model_root"]),
+            allowed_relative_root=ALLOWED_MODEL_ROOT,
+            run_tag=str(resume["source_run_tag"]),
+        )
+        source_freeze_path = source_model_dir / "protocol_freeze.json"
+        if not source_freeze_path.is_file():
+            raise FileNotFoundError(source_freeze_path)
+        source_descriptor = relative_artifact_descriptor(source_freeze_path, repo_root=root)
+        if source_descriptor["sha256"] != str(resume["source_freeze_sha256"]):
+            raise RuntimeError("Imported outcome-free freeze SHA-256 mismatch.")
+        source_freeze = json.loads(source_freeze_path.read_text(encoding="utf-8"))
+        source_expected = {
+            "status": "outcome_free_allocations_frozen_before_archive_outcome_join",
+            "run_tag": str(resume["source_run_tag"]),
+            "protocol_tag": str(resume["source_protocol_tag"]),
+            "protocol_commit": str(resume["source_protocol_commit"]),
+        }
+        for field, value in source_expected.items():
+            if source_freeze.get(field) != value:
+                raise RuntimeError(f"Imported outcome-free freeze mismatch for {field}.")
+        if source_freeze.get("outcome_columns_passed_to_policy_or_comparator") != []:
+            raise RuntimeError("Imported freeze reports outcome leakage.")
+        _artifact_paths(source_freeze, repo_root=root)
+        paths = prepare_output_paths(
+            config,
+            repo_root=root,
+            allowed_data_root=ALLOWED_DATA_ROOT,
+            allowed_model_root=ALLOWED_MODEL_ROOT,
+        )
+        imported = {
+            "schema_version": str(config["schema_version"]),
+            "status": "verified_outcome_free_freeze_imported_before_archive_outcome_join",
+            "run_tag": str(config["run_tag"]),
+            "protocol_tag": str(config["protocol_tag"]),
+            "protocol_commit": protocol_commit,
+            "source_inventory": source_freeze["source_inventory"],
+            "learner_metrics": source_freeze["learner_metrics"],
+            "outcome_columns_passed_to_policy_or_comparator": [],
+            "policy_selection": "none_all_nine_co_primary",
+            "window_selection": "none_all_eight_co_primary",
+            "implementation_provenance": _implementation(resolved_config, root),
+            "environment": environment_provenance(root),
+            "outcome_free_artifacts": source_freeze["outcome_free_artifacts"],
+            "model_artifacts": source_freeze["model_artifacts"],
+            "outcome_free_lineage": {
+                "source_protocol_freeze": source_descriptor,
+                **source_expected,
+                "reuse_scope": "verified_outcome_free_v4_v1_artifacts_only",
+            },
+            "protected_stages_run": [],
+            "protected_artifacts_written": [],
+        }
+        return atomic_write_json(paths.model_dir / "protocol_freeze.json", imported)
     paths = prepare_output_paths(
         config,
         repo_root=root,
@@ -349,7 +406,16 @@ def _frontier_for_window(
             "conformal_group": assigned,
         }
     )
-    expanded = shared.merge(endpoints, on="id", how="left", validate="many_to_one")
+    placeholders = [
+        "conformal_lower",
+        "conformal_upper",
+        "conformal_group",
+        "learner",
+        "taxonomy_groups",
+    ]
+    expanded = shared.drop(columns=placeholders, errors="ignore").merge(
+        endpoints, on="id", how="left", validate="many_to_one"
+    )
     if bool(expanded["conformal_lower"].isna().any()):
         raise RuntimeError(f"Shared frontier could not be aligned to window {window_id}.")
     expanded["window_id"] = str(window_id)
@@ -387,8 +453,13 @@ def evaluate_frozen(
     if summary_path.exists() or (data_dir / "evaluation").exists():
         raise FileExistsError("V4 evaluation already exists; experiment outputs are immutable.")
     freeze = json.loads(freeze_path.read_text(encoding="utf-8"))
+    expected_status = (
+        "verified_outcome_free_freeze_imported_before_archive_outcome_join"
+        if config.get("resume_outcome_free")
+        else "outcome_free_allocations_frozen_before_archive_outcome_join"
+    )
     expected = {
-        "status": "outcome_free_allocations_frozen_before_archive_outcome_join",
+        "status": expected_status,
         "run_tag": str(config["run_tag"]),
         "protocol_tag": str(config["protocol_tag"]),
         "protocol_commit": protocol_commit,

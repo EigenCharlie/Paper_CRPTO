@@ -24,7 +24,9 @@ from src.ijds_audit.portfolio import (
     solve_point_portfolio,
     verify_c2_dominance,
 )
+from src.ijds_audit.protocol import _frontier_for_window
 from src.ijds_audit.simulation import run_factorial_simulation
+from src.models.binary_conformal_guardrail import fit_binary_outcome_recipe
 from src.optimization.portfolio_model import solve_portfolio_highspy_native
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -36,6 +38,12 @@ def test_v4_config_is_closed_and_complete() -> None:
     )
     assert len(config["residual_specification"]["windows"]) == 8
     assert config["design"]["policy_development_start"] == "2013-02-01"
+
+    recovery = load_v4_config(
+        ROOT / "configs/experiments/ijds_binary_geometry_frontier_v4_2026-07-12_v2.yaml"
+    )
+    assert recovery["run_tag"].endswith("-v2")
+    assert recovery["resume_outcome_free"]["source_run_tag"].endswith("-v1")
 
 
 def test_binary_set_codes_and_summary() -> None:
@@ -177,3 +185,32 @@ def test_factorial_simulation_smoke() -> None:
     assert len(repetitions) == 3
     assert len(summary) == 1
     assert np.isfinite(repetitions["point_minus_guardrail_objective"]).all()
+
+
+def test_shared_frontier_replaces_placeholder_endpoints() -> None:
+    scores = pd.DataFrame(
+        {
+            "id": pd.Series(["a", "b", "c", "d"], dtype="string"),
+            "design_split": ["primary_oot"] * 4,
+            "pd_catboost_platt": [0.1, 0.2, 0.3, 0.4],
+        }
+    )
+    recipe = fit_binary_outcome_recipe(
+        np.array([0.1, 0.2, 0.3, 0.4]),
+        np.array([0, 0, 1, 1]),
+        alpha=0.1,
+        n_groups=1,
+        bin_edges=(0.0, 1.0),
+    )
+    shared = pd.DataFrame(
+        {
+            "id": pd.Series(["a", "c"], dtype="string"),
+            "conformal_lower": [np.nan, np.nan],
+            "conformal_upper": [np.nan, np.nan],
+            "conformal_group": [np.nan, np.nan],
+        }
+    )
+    expanded = _frontier_for_window(shared, scores, recipe, window_id="window")
+    assert {"conformal_lower", "conformal_upper", "conformal_group"}.issubset(expanded)
+    assert not any(column.endswith(("_x", "_y")) for column in expanded.columns)
+    assert expanded["conformal_lower"].notna().all()
