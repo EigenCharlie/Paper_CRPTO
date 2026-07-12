@@ -19,8 +19,9 @@ Minimum rules:
   `crpto.conformal.validation`, `crpto.portfolio.optimization`, or
   `crpto.portfolio.bound_exact_eval` without explicit permission.
 - Do not modify `EXTRACTION_MANIFEST.json` or artifacts protected by it.
-- Validate with `just validate-champion`; PD/conformal refactors also require
-  `just drift-gate`.
+- Validate ordinary work with `just validate-champion`; `submission-check`
+  invokes `just validate-champion-strict` so missing protected artifacts fail.
+  PD/conformal refactors also require `just drift-gate`.
 - Use `uv run` and Windows-first commands. Never commit secrets.
 - No selected policy, winner, universal guardrail direction, causal effect, or
   selected-set conformal claim is active.

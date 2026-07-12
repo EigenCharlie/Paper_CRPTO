@@ -81,8 +81,9 @@ archive contains 540,121 status-independent 36-month Lending Club loans
 and 15 primary monthly decisions from April 2016 through June 2017.
 Conformal-fit coverage is 0.900388, but five-stratum all-candidate
 coverage falls to {[}0.854714, 0.879647{]} out of time; the upper bound
-remains below 0.90 for taxonomies with 1, 2, 5, or 10 fixed strata. We
-then evaluate all nine prespecified guardrails against a finite
+remains below 0.90 for taxonomies with 1, 2, 5, or 10 fixed strata.
+After the prespecified superiority gate fails, an explicitly
+retrospective audit evaluates all nine guardrails against a finite
 comparator multiverse. Copying the same numeric cap makes the guardrail
 look safer in all nine default comparisons. Matching each monthly
 point-PD comparator to the guardrail's funded point-PD moment, to
@@ -504,14 +505,12 @@ after its last payment. The retained shares are 99.765\%, 99.830\%, and
 fitting. Missing dates and labels that arrive after the cutoff are
 excluded from fitting, not from the candidate universe.
 
-The outcome-free protocol was committed and tagged before policy
-outcomes were evaluated. Its V1 run wrote predictions, models, 7,347
-policy-month solve records, 718,925 funded rows, and a cryptographic
-freeze before any outcome join. A quadratic postprocessor timed out. V2
-changed no scientific input or allocation; it rehashes the V1 freeze,
-performs one validated many-to-one join, and records the lineage in a
-new receipt. This execution history is an operational correction, not a
-second empirical specification.
+The outcome-free V1 protocol froze predictions, models, 7,347
+policy-month solves, and 718,925 funded rows before any outcome join.
+Its row-wise evaluator timed out only after that freeze. A hash-linked
+V2 evaluator reused those outcome-free objects and performed one
+vectorized join; it changed computation, not scientific inputs or
+allocations. Online Supplement Appendix G records the complete lineage.
 
 \subsection{Identification safeguards}\label{identification-safeguards}
 
@@ -869,12 +868,13 @@ taxonomy}\label{temporal-coverage-failure-is-robust-to-the-fixed-taxonomy}
 
 The seed-42 conformal fit block attains coverage 0.900388. We then
 freeze the score boundaries using 2011 point predictions and estimate
-group residual quantiles using only labels observable by the end of
-2012H1. In the primary 2016-04--2017-06 block, the prespecified
-five-group taxonomy yields resolved-row coverage 0.876312 and an
-all-candidate sharp bound of {[}0.854714, 0.879647{]}. Because the upper
-endpoint is below 0.90, unresolved labels cannot restore the nominal
-target. This failure occurs on the candidate menu before optimization.
+group residual quantiles on 2012H1-issued loans whose labels are
+observable by the March 31, 2016 information cutoff. In the primary
+2016-04--2017-06 block, the prespecified five-group taxonomy yields
+resolved-row coverage 0.876312 and an all-candidate sharp bound of
+{[}0.854714, 0.879647{]}. Because the upper endpoint is below 0.90,
+unresolved labels cannot restore the nominal target. This failure occurs
+on the candidate menu before optimization.
 
 The conclusion does not depend on choosing five score strata. The upper
 all-candidate coverage endpoint is below 0.90 under pooled, two-group,
@@ -1083,9 +1083,9 @@ stringency changes.}
 heterogeneity}\label{operational-constraints-and-seeds-preserve-heterogeneity}
 
 Purpose concentration is not a cosmetic addition. At caps 0.20, 0.25,
-and 0.30, the purpose constraint binds in every guardrail-month for
-every seed and policy; at cap 1.00 it is removed. Across five seeds,
-nine policies, and the four caps, the 180 C2 comparisons remain
+and 0.30, the purpose constraint binds in all 2,025 guardrail-month
+cells across seeds and policies; at cap 1.00 it is removed. Across five
+seeds, nine policies, and the four caps, the 180 C2 comparisons remain
 heterogeneous. Payoff is negative in 59, positive in 37, and
 indeterminate in 84. Default is negative in 50, positive in 33, and
 indeterminate in 97. Miscoverage is negative in 33, positive in 64, and
@@ -1150,10 +1150,10 @@ The five-group score can differ from point PD through three channels: a
 group residual quantile, clipping at one, and the resulting optimization
 response. Two frozen-score ablations separate them. Removing clipping
 while retaining group penalties changes total allocation by only 0.2\%
-or less in the simulation and by modest amounts in the archive.
-Replacing group penalties by one pooled penalty changes allocation by
-about 5\% in the simulation and by USD 4,700--46,600 of the USD 15
-million canonical budget across policies.
+or less in the simulation and by USD 4,685--46,609 of the USD 15 million
+archive allocation. Replacing those group penalties by one pooled affine
+penalty changes USD 9.849--21.352 million across policies; in the
+simulation, the corresponding mean allocation distance is about 5\%.
 
 The pooled affine placebo is especially informative. Proposition 1
 predicts that a positive affine transformation with its translated cap
@@ -1197,8 +1197,9 @@ distance.}
 
 \end{figure}%
 
-\subsection{The decision gate favors an audit paper, not a superiority
-paper}\label{the-decision-gate-favors-an-audit-paper-not-a-superiority-paper}
+\subsection{The decision gate stops superiority and motivates a
+post-result
+audit}\label{the-decision-gate-stops-superiority-and-motivates-a-post-result-audit}
 
 The protocol required a conclusion to survive the declared policy
 family, unresolved-outcome bounds, comparator rules, point-cap frontier,
@@ -1207,12 +1208,18 @@ universal. It does not. All 27 comparator-multiverse envelopes are
 indeterminate, and none of the three outcome directions is uniform over
 the 180 C2 seed-cap cells. No policy is selected or promoted.
 
-One conclusion does survive: temporal candidate coverage is below 90\%
-under all four fixed taxonomies. A second is methodological: portfolio
+The literal stop rule said to stop the IJDS submission if neither 9-of-9
+result survived. It therefore terminates the prespecified superiority
+submission. The present negative audit framing was formulated after
+observing that stop; it is a retrospective secondary interpretation, not
+a prespecified fallback or a confirmatory success. It retains every
+declared policy and sensitivity rather than selecting a favorable cell.
+
+Within that explicitly post-result scope, temporal candidate coverage
+remains below 90\% under all four fixed taxonomies, and portfolio
 conclusions are not invariant to comparator stringency or binding
-operational constraints. These results support an audit narrative for
-IJDS. They do not support the earlier superiority narrative, causal
-policy effects, prospective validity, or selected-set guarantees.
+operational constraints. These findings do not support superiority,
+causal effects, prospective validity, or selected-set guarantees.
 
 \section{Discussion}\label{sec-discussion}
 
@@ -1315,7 +1322,7 @@ Could the menu exist at decision time? & Status-independent inclusion
 and field-level availability audit & Yes for recorded origination
 fields \\
 Are score strata and residuals fixed without future labels? & 2011 score
-boundaries; labels observable by 2012H1 & Yes \\
+boundaries; 2012H1 loans labeled by the 2016 cutoff & Yes \\
 Was an OOT policy selected after outcomes? & All nine policies are
 co-primary & No \\
 Does 90\% coverage transport? & Four primary bounds, highest upper
@@ -1369,16 +1376,11 @@ or additional CRPTO versions in this paper.
 
 \section{Reproducibility}\label{sec-reproducibility}
 
-The review package separates the outcome-free freeze from outcome
-evaluation. The first run persisted the canonical panel, five PD models,
-four fixed taxonomies, 7,347 optimization records, and 718,925 funded
-allocation rows. A performance defect in the original evaluator
-prevented completion; the second run verifies every frozen descriptor
-and hash, reuses only predictions, models, and allocations, then
-performs one vectorized outcome join. It produces 7,347 monthly
-evaluations, 515 aggregates, 504 paired contrasts, 594 coverage rows,
-and 800 simulation repetitions. Both phases have immutable protocol
-records and execution receipts.
+The review package separates the outcome-free V1 freeze from the
+hash-linked V2 outcome evaluation described in Section 3. V2 verifies
+every imported descriptor before its single vectorized join. Online
+Supplement Appendix G reports the phase-specific cardinalities and the
+frozen receipt distinction.
 
 The evidence builder validates source cardinalities, full-budget
 allocations, the HiGHS solver, exact C2 matches, and artifact hashes
@@ -1407,15 +1409,11 @@ largest upper endpoint across four taxonomies is 0.881942. The second
 fails across the declared comparator multiverse: all 27 policy-metric
 envelopes contain zero.
 
-The contribution is not a new winning credit policy. It is a
-reproducible decision-audit design that fixes information boundaries,
-retains censored candidates, evaluates a complete policy family, matches
-a funded risk moment without outcomes, varies operational constraints,
-and reports sharp bounds. Temporal coverage failure is robust in this
-archive; portfolio direction is not. That distinction is the claim the
-evidence can defend.
-
-\ACKNOWLEDGMENT{The authors thank the anonymous reviewers and editors.}
+The contribution is a reproducible decision-audit design, not a winning
+credit policy. It fixes information boundaries, retains censored
+candidates, reports the complete policy family, matches risk without
+outcomes, varies operational constraints, and uses sharp bounds. In this
+archive temporal coverage failure is robust; portfolio direction is not.
 
 \bibliographystyle{informs2014}
 \bibliography{../../book/references}

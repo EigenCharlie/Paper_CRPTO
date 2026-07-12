@@ -31,6 +31,7 @@ ACTIVE_NUMERIC_TOKENS = (
     "1 of 9",
     "8 of 9",
     "180",
+    "2,025",
     "27",
 )
 
@@ -61,12 +62,16 @@ REVIEWER_SURFACES = (
     REPO / "paper/supplement_ijds.qmd",
     REPO / "paper/submission/CRPTO_ijds_submission.tex",
     REPO / "paper/submission/ANONYMOUS_REVIEW_ARCHIVE_README.md",
+    REPO / "paper/submission/TITLE_PAGE_DRAFT.md",
+    REPO / "paper/submission/COVER_LETTER_AND_DISCLOSURE.md",
 )
 
 ACTIVE_EDITORIAL_SURFACES = (
     REPO / "README.md",
     REPO / "CLAUDE.md",
     REPO / "AGENTS.md",
+    REPO / "docs/SCOPE_AND_GOVERNANCE.md",
+    REPO / "docs/refactor/ijds_tooling_decisions_2026-07-09.md",
     REPO / "docs/research/active_claims_2026-07-11.md",
     REPO / "paper/CRPTO_ijds.qmd",
     REPO / "paper/supplement_ijds.qmd",
@@ -95,6 +100,7 @@ SURFACES = (
             "finite comparator multiverse",
             "standardized payoff",
             "not a prospective trial",
+            "present negative audit framing was formulated after observing that stop",
             "managerial audit card",
         ),
         RETIRED_HEADLINE_TOKENS + COMPACT_V7_TOKENS,
@@ -106,6 +112,11 @@ SURFACES = (
             *ACTIVE_NUMERIC_TOKENS,
             "all nine policies are co-primary",
             "two-phase execution",
+            "audit interpretation in the paper was developed after observing that failure",
+            "proposition s1",
+            "499,845",
+            "500,019",
+            "9.849--21.352 million",
             "active claim boundary",
         ),
         RETIRED_HEADLINE_TOKENS + COMPACT_V7_TOKENS,
@@ -117,6 +128,7 @@ SURFACES = (
             *ACTIVE_NUMERIC_TOKENS,
             "generated from paper/crpto_ijds.qmd",
             "finite comparator multiverse",
+            "present negative audit framing was formulated after observing that stop",
         ),
         RETIRED_HEADLINE_TOKENS + COMPACT_V7_TOKENS,
     ),
@@ -151,6 +163,7 @@ SURFACES = (
             "0.879647",
             "27",
             "180",
+            "present negative audit framing was developed after observing the stop",
             "openai codex",
             "accepts full responsibility",
         ),
@@ -162,7 +175,7 @@ SURFACES = (
             "single editorial source",
             "build_ijds_submission_tex.py",
             "pdflatex -> bibtex -> pdflatex -> pdflatex",
-            "28 pages",
+            "27 pages",
         ),
         RETIRED_HEADLINE_TOKENS,
     ),
@@ -174,6 +187,7 @@ SURFACES = (
             "ijds-fixed-taxonomy-c2-2026-07-11-v2",
             "0.854714",
             "0.879647",
+            "post_result_audit_framing: true",
             "git_history_only",
         ),
         RETIRED_HEADLINE_TOKENS,
@@ -187,6 +201,7 @@ REVIEWER_FORBIDDEN_LITERALS = (
     "cavr94",
     "eigencharlie",
     "c:\\users\\",
+    "the authors thank the anonymous reviewers and editors",
 )
 
 REVIEWER_FORBIDDEN_PATTERNS = (
@@ -273,6 +288,10 @@ def _check_evidence_decision() -> list[str]:
         evidence = json.loads(evidence_path.read_text(encoding="utf-8"))
         if evidence["decision"]["policy_winner_allowed"] is not False:
             failures.append("active evidence unexpectedly allows a policy winner")
+        if evidence["decision"].get("post_result_audit_framing") is not True:
+            failures.append("active evidence no longer discloses post-result audit framing")
+        if evidence["decision"].get("prespecified_negative_fallback") is not False:
+            failures.append("active evidence misstates the audit as a prespecified fallback")
         if evidence["headline"]["comparator_multiverse_envelopes_indeterminate"] != 27:
             failures.append("active evidence no longer has 27 indeterminate envelopes")
     else:

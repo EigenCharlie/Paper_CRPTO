@@ -18,7 +18,8 @@ portfolio selection; temporal transport; partial identification
 
 ## Author
 
-Carlos Alfredo Vergara Rojas
+**Author input required in the private ScholarOne copy.** Do not place author
+identity in this tracked template.
 
 ## Affiliation
 
@@ -28,11 +29,9 @@ profile or thesis record.
 
 ## Corresponding Author
 
-Carlos Alfredo Vergara Rojas
-
-Email: cavr94@gmail.com
-
-ORCID: **Author input required if one exists; otherwise state "None."**
+**Author input required in the private ScholarOne copy:** full name, current
+email, postal address if requested, and ORCID. The submitting author must
+provide an ORCID under the current IJDS instructions.
 
 ## Declarations
 
@@ -51,6 +50,7 @@ ORCID: **Author input required if one exists; otherwise state "None."**
 
 ## Handling
 
-Do not merge this title page into the reviewer-facing PDF. Reconcile title,
-running title, keywords, author spelling, email, and declarations against the
-final ScholarOne proof before submission.
+Create `TITLE_PAGE_PRIVATE.md` locally for the completed upload; that filename
+is ignored by Git. Do not merge the private title page into the reviewer-facing
+PDF. Reconcile title, running title, keywords, author spelling, email, ORCID,
+and declarations against the final ScholarOne proof before submission.

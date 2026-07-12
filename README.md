@@ -21,7 +21,7 @@ Pipeline de investigación y libro Quarto que acompañan el paper **CRPTO**, una
 | Multiverso | `27/27` envelopes policy-by-metric cruzan cero |
 | Claim | falla temporal de cobertura estable; resultados de portafolio no invariantes al comparador ni a constraints vinculantes |
 
-Hashes SHA256 de los artefactos críticos están en [`EXTRACTION_MANIFEST.json`](EXTRACTION_MANIFEST.json). Verifica con `just validate-champion` o el skill `/crpto-validate-champion`.
+Hashes SHA256 de los artefactos críticos están en [`EXTRACTION_MANIFEST.json`](EXTRACTION_MANIFEST.json). Verifica trabajo ordinario con `just validate-champion`; antes del freeze usa `just validate-champion-strict`, que también falla si falta un artefacto.
 Los estudios selected-policy, compact-v7, pool93 y A1--A40 se conservan como
 procedencia en Git/DVC, no como claims activos. La autoridad editorial es
 [`docs/research/active_claims_2026-07-11.md`](docs/research/active_claims_2026-07-11.md)

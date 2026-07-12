@@ -108,6 +108,8 @@ def test_active_headline_is_exact_and_does_not_promote_a_winner() -> None:
     assert decision["selected_set_validity_allowed"] is False
     assert decision["current_superiority_submission_go"] is False
     assert decision["ijds_audit_narrative_go"] is True
+    assert decision["post_result_audit_framing"] is True
+    assert decision["prespecified_negative_fallback"] is False
 
 
 def test_direction_and_sensitivity_tables_match_headline() -> None:
@@ -134,6 +136,51 @@ def test_direction_and_sensitivity_tables_match_headline() -> None:
     assert len(sensitivity) == 180
     assert {int(row["seed"]) for row in sensitivity} == {40, 41, 42, 43, 44}
     assert {float(row["purpose_cap"]) for row in sensitivity} == {0.2, 0.25, 0.3, 1.0}
+
+
+def test_multiverse_binding_and_endpoint_diagnostics_are_derived() -> None:
+    evidence = _json(EVIDENCE)
+
+    envelopes = evidence["canonical_comparator_envelopes"]
+    assert len(envelopes) == 27
+    assert {row["paired_policy_id"] for row in envelopes} == {
+        f"linear-{index:03d}" for index in range(1, 10)
+    }
+    assert {row["metric"] for row in envelopes} == {
+        "realized_payoff",
+        "terminal_default",
+        "funded_miscoverage",
+    }
+    assert {row["sign"] for row in envelopes} == {"indeterminate"}
+    assert {int(row["record_count"]) for row in envelopes} == {32}
+
+    binding = evidence["purpose_cap_binding"]
+    assert binding["guardrail_months"] == 2025
+    assert binding["binding_guardrail_months"] == 2025
+    assert binding["all_bind"] is True
+    assert binding["maximum_absolute_cap_residual"] < 2e-16
+
+    inventory = evidence["endpoint_inventory"]
+    assert inventory["terminal_endpoint"]["resolved_rows"] == 499845
+    assert inventory["terminal_endpoint"]["unresolved_rows"] == 40276
+    assert inventory["frozen_status_diagnostic"] == {
+        "resolved_rows": 500019,
+        "unresolved_rows": 40102,
+    }
+    assert inventory["literal_default_rows_reclassified_unresolved"] == 174
+
+
+def test_archive_ablation_distances_reconcile_to_frozen_allocations() -> None:
+    rows = _rows("crpto_ijds_ft_tableS4_group_ablation")
+    clipping = [float(row["clipped_vs_unclipped_allocation_l1"]) for row in rows]
+    taxonomy = [float(row["unclipped_group_vs_pooled_allocation_l1"]) for row in rows]
+    affine = [float(row["pooled_affine_vs_point_allocation_l1"]) for row in rows]
+
+    assert min(clipping) == pytest.approx(4684.843282767612)
+    assert max(clipping) == pytest.approx(46609.497902620766)
+    assert min(taxonomy) == pytest.approx(9849022.183609739)
+    assert max(taxonomy) == pytest.approx(21351895.344954066)
+    assert max(affine) == pytest.approx(0.0, abs=1e-12)
 
 
 def test_coverage_table_contains_all_fixed_taxonomies_and_unresolved_rows() -> None:
@@ -170,6 +217,7 @@ def test_manuscript_surfaces_share_active_claims_and_retire_p1_c1_headlines() ->
         "1 of 9",
         "8 of 9",
         "180",
+        "2,025",
         "27",
         "standardized payoff",
         "selected-set",
@@ -187,6 +235,19 @@ def test_manuscript_surfaces_share_active_claims_and_retire_p1_c1_headlines() ->
         text = _normalize(surface.read_text(encoding="utf-8"))
         assert not [token for token in active if _normalize(token) not in text], surface
         assert not [token for token in retired if _normalize(token) in text], surface
+
+
+def test_manuscript_discloses_post_result_pivot_and_correct_label_cutoff() -> None:
+    body = _normalize((REPO / "paper/CRPTO_ijds.qmd").read_text(encoding="utf-8"))
+    supplement = _normalize((REPO / "paper/supplement_ijds.qmd").read_text(encoding="utf-8"))
+
+    assert "present negative audit framing was formulated after observing that stop" in body
+    assert "2012h1-issued loans whose labels are observable by the march 31, 2016" in body
+    assert "labels observable by the end of 2012h1" not in body
+    assert "audit interpretation in the paper was developed after observing that failure" in (
+        supplement
+    )
+    assert "proposition s1 (binary interval geometry)" in supplement
 
 
 def test_body_and_generated_tex_share_architecture_citations_and_displays() -> None:

@@ -29,14 +29,34 @@ materials remain recoverable from Git/DVC but are excluded from the capsule.
 ## Standard Reproduction
 
 ```powershell
-uv sync --extra dev
+uv sync --frozen --extra dev --extra search --extra spo
 uv run dvc pull data/processed/experiments/ijds_prefreeze/ijds-fixed-taxonomy-c2-2026-07-11-v1.dvc
 uv run dvc pull models/experiments/ijds_prefreeze/ijds-fixed-taxonomy-c2-2026-07-11-v1.dvc
 uv run dvc pull data/processed/experiments/ijds_prefreeze/ijds-fixed-taxonomy-c2-2026-07-11-v2.dvc
 uv run dvc pull models/experiments/ijds_prefreeze/ijds-fixed-taxonomy-c2-2026-07-11-v2.dvc
 just ijds-evidence
-just submission-check
+just publication-integrity
+just paper-submission
+just paper-submission-official
 ```
+
+The DVC pull requires a machine-local `.dvc/config.local` or equivalent S3
+credentials; credentials are never committed. The official PDF additionally
+requires the current INFORMS style kit (`informs4.cls`, `informs2014.bst`,
+`eqndefns-left.sty`, and `informs_Logo.pdf`) in `paper/submission`; these
+publisher files are intentionally ignored by Git.
+
+The maintainer-only `just submission-check` additionally runs
+`validate-champion-strict`, which requires every historical artifact in
+`EXTRACTION_MANIFEST.json` to be present. An active-capsule reviewer need not
+download that separate historical champion to reproduce V1/V2 or the paper;
+maintainers must run the strict gate before freeze.
+
+This sequence was verified from the current pre-freeze commit in a fresh local
+clone: `uv` installed 335 locked packages, DVC fetched 51 files into the four
+active directories, the evidence build left the Git tree unchanged, and the
+official PDF compiled citation-clean at 27 pages. Repeat the exercise at
+submission freeze because the commit and publisher kit may change before then.
 
 `just ijds-active-replay` validates the active evidence and rebuilds
 publication outputs. It intentionally does not hide an expensive methodology

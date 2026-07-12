@@ -30,17 +30,23 @@ check rather than permission to upload.
   miscoverage higher `8/9`.
 - All `27/27` finite comparator envelopes are indeterminate.
 - The 180 seed-purpose cells are reported without selecting a favorable cell.
+- All 2,025 sub-100% guardrail-month purpose caps are derived as binding.
+- The terminal endpoint inventory is 499,845 resolved/40,276 unresolved; the
+  distinct 500,019/40,102 receipt diagnostic is not used for claims.
+- The superiority stop rule failed; the negative audit is labeled as a
+  post-result retrospective interpretation, not a prespecified fallback.
 - Standardized payoff is never called IRR, NPV, welfare, or investor return.
 - No selected-set, causal, prospective, confirmatory, Markov, deployment, or
   fair-lending claim appears.
 
 ## Official Build QA
 
-- official PDF: 28 pages;
+- official PDF: 27 pages;
 - references start on page 25; 24 pre-reference pages;
 - 8 main tables and 4 main figures;
-- 278-word abstract and 7 keywords;
+- 280-word abstract and 7 keywords;
 - no BibTeX warnings or undefined references/citations;
+- all four INFORMS style assets match the tracked SHA-256 manifest;
 - the known 17.54 pt publisher-class title diagnostic is visually within page;
 - every page is rendered and checked after the final build.
 
@@ -62,6 +68,15 @@ and official compilation. It does not run protected DVC stages.
   URL, local path, exact tag/hash, or private remote appears in reviewer files.
 - Title page, cover letter, disclosure form, and exact crosswalk are uploaded
   only in editor/system slots.
+- The completed title page is created locally as `TITLE_PAGE_PRIVATE.md` from
+  the tracked anonymous template and is never committed.
+- The completed cover letter is created locally as `COVER_LETTER_PRIVATE.md`
+  from the tracked anonymous template and is never committed.
+- Search the exact title before upload and record any public repository or
+  preprint discoverability. The [INFORMS peer-review
+  policy](https://pubsonline.informs.org/authorportal/peer-review) notes that
+  complete anonymity may be impossible for posted preprints; reviewer files
+  still must contain no repository link or author identifier.
 - Supplement is designated as a separate online supplement.
 - ScholarOne-generated proof is opened and compared with the validated local
   PDFs before submission.

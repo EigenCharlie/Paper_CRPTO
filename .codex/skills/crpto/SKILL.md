@@ -73,6 +73,7 @@ just type-check
 just type-advisory-full
 just test
 just validate-champion
+just validate-champion-strict
 just drift-gate
 just paper-submission
 just paper-submission-tex

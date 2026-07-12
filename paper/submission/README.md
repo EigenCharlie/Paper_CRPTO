@@ -43,6 +43,9 @@ just paper-submission-official
 ```
 
 `build_ijds_submission_tex.py --check` fails when the generated TeX is stale.
+`informs_style_assets.json` pins the reviewed INFORMS class, bibliography,
+equation, and logo files by byte count and SHA-256; the compiler rejects a
+missing or different style kit until the manifest is explicitly reviewed.
 The official compiler first attempts `latexmk`; the current TinyTeX Windows
 wrapper may fail in `runscript.tlu`, in which case the documented fallback is:
 
@@ -58,15 +61,15 @@ floats, and pagination.
 
 Validated July 11, 2026:
 
-- official INFORMS manuscript: **28 pages**;
+- official INFORMS manuscript: **27 pages**;
 - references begin on page 25, so the pre-reference body is 24 pages;
 - main manuscript: 8 tables and 4 figures;
-- title: 10 words; abstract: 278 words; keywords: 7;
+- title: 10 words; abstract: 280 words; keywords: 7;
 - `.blg`: no warnings;
 - `.log`: no undefined citations, labels, or convergence request;
 - one publisher-class `\maketitle` overfull diagnostic (17.54 pt) is visually
   inside the page and originates beside the template notice/logo;
-- all 28 pages were rendered and visually inspected; figures, tables, headers,
+- all 27 pages were rendered and visually inspected; figures, tables, headers,
   footers, and references are legible with no clipping or overlap.
 
 The page count is deliberately near, but below, the 25-page pre-reference
@@ -79,7 +82,7 @@ limit. Recount and repeat visual QA after substantive edits.
 - pre-reference body is no more than 25 pages;
 - tables and figures remain near first mention and inside margins;
 - body and supplement contain no identifying metadata;
-- the 278-word abstract stays below 300 words;
+- the 280-word abstract stays below 300 words;
 - no retired selected-policy or compact-v7 headline returns; and
 - page-by-page visual inspection finds no clipping, overlap, blank page, or
   missing glyph.

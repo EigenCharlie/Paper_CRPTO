@@ -3,6 +3,8 @@
 from __future__ import annotations
 
 import argparse
+import hashlib
+import json
 import os
 import re
 import shutil
@@ -26,6 +28,7 @@ OFFICIAL_TEMPLATE_FILES = (
     "eqndefns-left.sty",
     "informs_Logo.pdf",
 )
+STYLE_MANIFEST = SUBMISSION_DIR / "informs_style_assets.json"
 INFORMS_STYLE_URL = "https://pubsonline.informs.org/authorportal/latex-style-files"
 
 
@@ -110,6 +113,31 @@ def _missing_template_files(directory: Path) -> tuple[str, ...]:
     return tuple(name for name in OFFICIAL_TEMPLATE_FILES if not (directory / name).is_file())
 
 
+def _file_sha256(path: Path) -> str:
+    digest = hashlib.sha256()
+    with path.open("rb") as handle:
+        for block in iter(lambda: handle.read(1024 * 1024), b""):
+            digest.update(block)
+    return digest.hexdigest()
+
+
+def _template_asset_drift(directory: Path) -> tuple[str, ...]:
+    """Return publisher assets that differ from the reviewed style-kit manifest."""
+    payload = json.loads((directory / STYLE_MANIFEST.name).read_text(encoding="utf-8"))
+    assets = payload.get("assets")
+    if not isinstance(assets, dict) or set(assets) != set(OFFICIAL_TEMPLATE_FILES):
+        return ("style manifest inventory",)
+    drift: list[str] = []
+    for name in OFFICIAL_TEMPLATE_FILES:
+        path = directory / name
+        expected = assets[name]
+        if path.stat().st_size != int(expected["bytes"]) or _file_sha256(path) != str(
+            expected["sha256"]
+        ):
+            drift.append(name)
+    return tuple(drift)
+
+
 def compile_submission(*, prefer_manual: bool = False) -> int:
     """Compile the official submission with latexmk, falling back to manual passes."""
     render_submission_tex()
@@ -123,6 +151,18 @@ def compile_submission(*, prefer_manual: bool = False) -> int:
             "from {} and place these files in paper/submission; they are intentionally "
             "ignored by Git.",
             ", ".join(missing),
+            INFORMS_STYLE_URL,
+        )
+        return 2
+    if not STYLE_MANIFEST.is_file():
+        logger.error("Missing tracked INFORMS style manifest: {}", STYLE_MANIFEST.relative_to(ROOT))
+        return 2
+    drift = _template_asset_drift(SUBMISSION_DIR)
+    if drift:
+        logger.error(
+            "INFORMS style assets differ from the reviewed manifest: {}. Re-download "
+            "from {} or explicitly review and update informs_style_assets.json.",
+            ", ".join(drift),
             INFORMS_STYLE_URL,
         )
         return 2

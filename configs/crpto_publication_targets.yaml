@@ -35,6 +35,8 @@ active_scientific_contract:
   protocol_commit: a88839dfe14875fca2c02c43725291bc49d98611
   evidence_manifest: reports/crpto/ijds_fixed_taxonomy_c2_evidence.json
   previously_inspected_retrospective_archive: true
+  post_result_audit_framing: true
+  prespecified_negative_fallback: false
   method:
     conformal: >-
       Five score strata fixed from 2011 calibrated scores, followed by exact
@@ -58,14 +60,23 @@ active_scientific_contract:
       miscoverage_higher: 8
       policy_pairs: 9
     seed_purpose_cells: 180
+    binding_guardrail_month_cells: 2025
     multiverse_indeterminate_envelopes: 27
     multiverse_total_envelopes: 27
+    terminal_endpoint_inventory:
+      resolved: 499845
+      unresolved: 40276
+    frozen_status_diagnostic:
+      resolved: 500019
+      unresolved: 40102
     universal_policy_direction_allowed: false
   mechanism: >-
     Fixed-taxonomy coverage fails under temporal transport. Same-cap C0 makes
     the guardrail appear uniformly safer, while exact funded-PD matching and
     the point-cap frontier remove every universal direction. Binding purpose
-    constraints interact materially with the score and comparator.
+    constraints interact materially with the score and comparator. Clipping
+    changes USD 4,685--46,609 of allocation, while replacing group penalties
+    with a pooled affine penalty changes USD 9.849--21.352 million.
   required_artifacts:
     - reports/crpto/ijds_fixed_taxonomy_c2_evidence.json
     - reports/crpto/tables/crpto_ijds_ft_table1_policy_grid.csv
@@ -99,6 +110,7 @@ claim_boundaries:
     - "Code-locked retrospective audit, not preregistration or a prospective trial."
     - "C2 is an outcome-free adaptive audit comparator, not a deployable fixed rule."
     - "The archive was previously inspected; the protocol is not confirmatory."
+    - "The superiority stop rule failed; the audit framing is a post-result secondary interpretation."
   forbidden:
     - "Universal economic dominance."
     - "A unique or theoretically optimal comparator-matching rule."

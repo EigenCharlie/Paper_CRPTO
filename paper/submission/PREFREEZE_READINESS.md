@@ -14,6 +14,8 @@ policy.
 - current cover letter, title page, disclosure draft, crosswalk, and checklist;
 - deterministic evidence and TeX builders;
 - official PDF within the 25-page pre-reference limit.
+- clean-clone reproduction of the locked environment, four DVC pulls,
+  evidence rebuild, publication-integrity gate, and official PDF build.
 
 ## Work Allowed Before Freeze
 
@@ -21,7 +23,7 @@ policy.
 - add tests, diagnostics, and reproducibility checks;
 - modernize dependencies after a clean compatibility run;
 - simplify active code while preserving exact frozen artifacts;
-- prepare a clean-clone reproduction and sanitized review archive;
+- prepare the final sanitized review archive;
 - improve figure accessibility and grayscale legibility;
 - resolve reviewer-style objections using existing evidence or a separately
   declared new experiment with fresh paths.
@@ -46,6 +48,7 @@ uv run dvc status --no-updates
 git status --short
 ```
 
-Then reproduce from a clean clone, inspect all PDFs page by page, update the QA
-record, create the final immutable tag, and prepare the ScholarOne proof. The
-freeze is complete only after the user explicitly approves it.
+Then repeat the clean-clone reproduction as a release check, inspect all PDFs
+page by page, update the QA record, create the final immutable tag, and prepare
+the ScholarOne proof. The freeze is complete only after the user explicitly
+approves it.

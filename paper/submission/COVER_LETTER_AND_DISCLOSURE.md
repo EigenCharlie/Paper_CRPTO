@@ -1,6 +1,8 @@
 # IJDS Cover Letter and Editor Disclosures
 
-Editor-facing material only. Do not place this file in the anonymous packet.
+Editor-facing template only. At freeze, create `COVER_LETTER_PRIVATE.md`
+locally, insert the author identity, and upload it only to the editor-facing
+ScholarOne slot. The private filename is ignored by Git.
 
 ## Cover Letter Draft
 
@@ -25,9 +27,11 @@ Conformal-fit coverage is 0.900388, but five-stratum all-candidate coverage is
 ten-group taxonomies. This temporal failure occurs before portfolio selection.
 
 The decision audit then evaluates all nine prespecified guardrails. A copied
-numeric cap makes every guardrail appear to improve default relative to point
-PD, as predicted by feasible-set nesting. An outcome-free comparator instead
-matches each monthly funded point-PD moment to numerical error below 4.17e-17.
+numeric cap uses a weaker point-PD feasible set and makes every guardrail appear
+to improve realized default. Nesting predicts the feasible-set and expected-
+objective ordering, not that realized default result. An outcome-free
+comparator instead matches each monthly funded point-PD moment to numerical
+error below 4.17e-17.
 Under that alignment, payoff is lower for 7 of 9 guardrails, default is higher
 for only 1 of 9, and funded-set miscoverage is higher for 8 of 9; the remaining
 sharp intervals cross zero. Across 180 seed-concentration cells, robust signs
@@ -41,6 +45,12 @@ constraints. The empirical conclusion is deliberately negative: temporal
 coverage failure is robust in this archive, whereas portfolio direction is
 not invariant to the defensible comparison rule. This data-models-decisions-
 implications chain fits IJDS's focus on rigorous data science for decisions.
+
+The locked protocol required the superiority submission to stop if neither
+declared 9-of-9 result survived. That gate failed. The present negative audit
+framing was developed after observing the stop and is submitted as an
+explicitly retrospective secondary interpretation, not as a prespecified
+fallback or confirmatory success.
 
 The archive was inspected during earlier project iterations. The current code
 and outcome-free allocation protocol were locked before the complete
@@ -64,14 +74,14 @@ Thank you for your consideration.
 
 Sincerely,
 
-Carlos Alfredo Vergara Rojas
+**Author name required in the private ScholarOne copy.**
 
 ## Required Editor-Only Statements
 
 - **Originality:** The manuscript is original and is not under simultaneous
   review elsewhere.
-- **Authorship:** Carlos Alfredo Vergara Rojas is the sole author and accepts
-  responsibility for the work.
+- **Authorship:** The sole author accepts responsibility for the work. Insert
+  the full legal name only in the private ScholarOne copy.
 - **Funding:** No specific funding supported this work.
 - **Conflicts:** The author declares no conflicts of interest.
 - **Data/code:** Use the response selected in the current official IJDS form.

@@ -128,10 +128,10 @@ Stages DVC que regeneran estos artefactos (`crpto.pd.champion`, `crpto.conformal
 ## Stack técnico (resumen)
 
 - **Python** 3.11 con `uv` (no pip, no poetry). `uv.exe` típicamente en `C:\Users\carlos\anaconda3\Scripts\uv.exe`.
-- **ML**: CatBoost 1.2.x (PD), MAPIE 1.4 (conformal), Optuna 4 (HPO), fairlearn 0.13, scikit-learn 1.8, Venn-Abers 1.5.
-- **Optimización**: Pyomo 6.10 + HiGHS 1.14 (LP/MILP), OR-Tools 9.10, PyEPO 1.1 (SPO+, opcional).
-- **Data**: pandas 2.3, numpy 2.4, pyarrow 23, duckdb 1.5, pandera 0.31.
-- **Pipeline**: DVC 3.67 (con remote S3), dbt-duckdb 1.10, MLflow 3.12, DagsHub 0.7.
+- **ML**: CatBoost 1.2.x (PD), MAPIE 1.4 (conformal), Optuna 4 (HPO), fairlearn 0.14, scikit-learn 1.9, Venn-Abers 1.5.
+- **Optimización**: Pyomo 6.10 + HiGHS 1.15 (LP/MILP), OR-Tools 9.10, PyEPO 1.1 (SPO+, opcional).
+- **Data**: pandas 2.3, numpy 2.4, pyarrow 24, duckdb 1.5, pandera 0.32.
+- **Pipeline**: DVC 3.67 (con remote S3), dbt-duckdb 1.10, MLflow 3.14, DagsHub 0.7.
 - **Docs**: Quarto 1.9+ (libro de 24 capítulos en español, HTML + PDF).
 - **Tooling**: ruff 0.15, pytest 9, pre-commit 4, jupytext 1.19.
 
@@ -162,6 +162,7 @@ just test                   # pytest completo
 just lint                   # ruff check + format check
 just type-check             # mypy src scripts (limpio: 0 errores)
 just validate-champion      # verifica hashes vs EXTRACTION_MANIFEST.json
+just validate-champion-strict # además falla si cualquier artefacto protegido falta
 just drift-gate             # recomputa la cadena del certificado y exige diff bit-exacto (CRPTO_RUN_CHAMPION_DRIFT=1)
 just bound-audit            # re-deriva el menú de bounds A21 + búsquedas bound-aware
 

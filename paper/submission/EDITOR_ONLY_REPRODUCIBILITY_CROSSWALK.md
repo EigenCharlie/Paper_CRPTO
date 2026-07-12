@@ -50,15 +50,18 @@ surface that maps those neutral labels to exact identifiers.
 ## Reproduction Sequence
 
 ```powershell
-uv sync --extra dev
+uv sync --frozen --extra dev --extra search --extra spo
 uv run dvc pull data/processed/experiments/ijds_prefreeze/ijds-fixed-taxonomy-c2-2026-07-11-v1.dvc
 uv run dvc pull models/experiments/ijds_prefreeze/ijds-fixed-taxonomy-c2-2026-07-11-v1.dvc
 uv run dvc pull data/processed/experiments/ijds_prefreeze/ijds-fixed-taxonomy-c2-2026-07-11-v2.dvc
 uv run dvc pull models/experiments/ijds_prefreeze/ijds-fixed-taxonomy-c2-2026-07-11-v2.dvc
 just ijds-evidence
-just submission-check
+just publication-integrity
+just paper-submission-official
 ```
 
 Neither sequence invokes or writes a manifest-protected historical stage.
 `EXTRACTION_MANIFEST.json` is not modified. Full methodology replay, if an
 editor requests it, must use a new run tag and fresh output paths.
+The maintainer separately runs `just submission-check`, whose strict champion
+gate requires every historical manifest artifact to be present.

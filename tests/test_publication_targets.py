@@ -44,7 +44,16 @@ def test_ijds_sources_are_anonymous_by_default() -> None:
         assert "cavr94@gmail.com" not in text
     tex = Path("paper/submission/CRPTO_ijds_submission.tex").read_text(encoding="utf-8")
     assert r"\documentclass[ijds,dblanonrev]{informs4}" in tex
+    assert r"\ACKNOWLEDGMENT" not in tex
     assert "Carlos Alfredo Vergara Rojas" not in tex
+    title_template = Path("paper/submission/TITLE_PAGE_DRAFT.md").read_text(encoding="utf-8")
+    assert "Carlos Alfredo Vergara Rojas" not in title_template
+    assert "cavr94@gmail.com" not in title_template
+    cover_template = Path("paper/submission/COVER_LETTER_AND_DISCLOSURE.md").read_text(
+        encoding="utf-8"
+    )
+    assert "Carlos Alfredo Vergara Rojas" not in cover_template
+    assert "cavr94@gmail.com" not in cover_template
 
 
 def test_active_contract_is_small_complete_and_numerically_locked() -> None:
@@ -52,6 +61,8 @@ def test_active_contract_is_small_complete_and_numerically_locked() -> None:
     assert active["outcome_free_run_tag"].endswith("2026-07-11-v1")
     assert active["run_tag"].endswith("2026-07-11-v2")
     assert active["previously_inspected_retrospective_archive"] is True
+    assert active["post_result_audit_framing"] is True
+    assert active["prespecified_negative_fallback"] is False
     assert "all nine" in active["method"]["policies"].lower()
     assert "c2 matches" in active["method"]["comparator"].lower()
     assert active["headline"]["candidate_coverage"] == pytest.approx([0.854714, 0.879647])
@@ -62,6 +73,11 @@ def test_active_contract_is_small_complete_and_numerically_locked() -> None:
         "policy_pairs": 9,
     }
     assert active["headline"]["seed_purpose_cells"] == 180
+    assert active["headline"]["binding_guardrail_month_cells"] == 2025
+    assert active["headline"]["terminal_endpoint_inventory"] == {
+        "resolved": 499845,
+        "unresolved": 40276,
+    }
     assert active["headline"]["multiverse_indeterminate_envelopes"] == 27
     assert active["headline"]["multiverse_total_envelopes"] == 27
     assert active["headline"]["universal_policy_direction_allowed"] is False

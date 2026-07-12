@@ -1,131 +1,134 @@
-# IJDS Tooling and Refactor Decisions - 2026-07-09
+# IJDS Tooling and Refactor Decisions
 
-> **Status note (2026-07-11):** the tooling choices remain active. Scientific
-> claims are governed only by `docs/research/active_claims_2026-07-11.md`;
-> methodology and run references below are historical.
-
-This is the final decision record for the IJDS code and manuscript workflow.
-It replaces the iterative tooling lab from 2026-07-08, whose useful decisions
-have been implemented. Scientific history remains in `docs/research/`; this
-file describes only the live engineering contract.
+This is the live engineering contract for the IJDS paper. Scientific claims
+are governed only by `docs/research/active_claims_2026-07-11.md`; historical
+selected-policy designs remain available in Git history, not in this workflow.
 
 ## Objective
 
-Keep one auditable route from frozen upstream artifacts to the submitted
-claim. Prefer small, explicit modules and named commands over additional
-frameworks, parallel implementations, or hidden manuscript-time computation.
+Maintain one auditable route from immutable V1/V2 experiment artifacts to the
+submitted evidence and manuscript. Prefer explicit modules and named commands
+over parallel implementations, hidden manuscript-time computation, or new
+frameworks that do not improve scientific validity.
 
-## Adopted tools
+## Adopted Tools
 
 | Tool | Role | Decision |
 |---|---|---|
-| `uv` | Python environment, lockfile, commands | Sole Python package/runtime interface. |
+| `uv` | Python environment, lockfile, commands | Sole Python package/runtime interface; use `--frozen` for reproduction. |
 | Ruff | lint and formatting | Sole linter and formatter. |
-| mypy | stable gradual type gate | Required by `just type-check`. |
-| ty | fast independent type audit | Active and full scopes; full scope blocks submission closeout. |
-| pytest | behavioral and claim-sync tests | Required for focused, smoke, and full suites. |
-| just | named local workflow | Sole human-facing command menu. |
-| DVC | frozen artifact lineage | Keep for scientific provenance; never use it as a general task runner. |
-| pre-commit + prek | hook compatibility and fast config validation | Keep both checks; do not create a second hook policy. |
-| pdoc | optional local API browsing | Ephemeral via `uv run --with pdoc`; no project dependency. |
+| mypy | stable gradual type gate | Required over `src`, `scripts`, and `tests`. |
+| ty | independent type audit | Full scope blocks new diagnostics; seven exact V1 diagnostics are frozen by path, line, and code. |
+| pytest | behavior and claim synchronization | Focused, smoke, and full suites. |
+| just | human-facing command menu | Sole task runner and Windows-first entry point. |
+| DVC | immutable experiment lineage | Four active V1/V2 pointers; never a substitute for protocol declarations. |
+| pre-commit + prek | local hook compatibility | One shared hook policy, not two sets of checks. |
+| pdoc | optional API browsing | Ephemeral only; no project dependency or publication artifact. |
 
-`ty` complements rather than replaces mypy. The active scope includes the
-exact-alpha replay and calibration-selected policy modules. Its full clean
-scope is useful as an independent submission check, while mypy remains the
-stable repository contract.
+`ty` complements mypy. It may ignore only the seven diagnostics in
+protocol-frozen V1 sources that are enumerated by
+`scripts/run_ty_advisory.py`; any new diagnostic remains blocking. The current
+locked environment has one accepted audit finding: DVC's transitive
+`diskcache 5.6.3` is affected by `CVE-2025-69872`, with no fixed release. Its
+local-write threat model and mitigations are recorded in
+`docs/security/DEPENDABOT_TRIAGE_2026-07-02.md`.
 
-## Rejected additions
+## Rejected Additions
 
 | Tool | Decision | Reason |
 |---|---|---|
-| Pyrefly | Do not adopt | It duplicated type checking and produced substantially more migration noise than actionable signal. |
-| Commitizen | Do not adopt | Commit-message automation does not improve scientific validity or the one-author release flow. |
-| Permanent pdoc dependency | Do not adopt | Generated API pages are useful locally but are not a publication artifact. |
-| A second task runner | Do not adopt | `just` already exposes the complete Windows-first workflow. |
-| Automatic semantic versioning | Do not adopt | Run tags, Git commits, and evidence hashes are the relevant scientific identifiers. |
+| Pyrefly | Do not adopt | Duplicates two type checkers and adds migration noise without improving the evidence contract. |
+| Commitizen | Do not adopt | Commit-message automation does not improve a single-author scientific release. |
+| Permanent pdoc dependency | Do not adopt | Local API browsing is useful, generated API pages are not part of the paper. |
+| A second task runner | Do not adopt | `just` already exposes the complete workflow. |
+| Automatic semantic versioning | Do not adopt | Run tags, commits, DVC hashes, and evidence hashes are the scientific identifiers. |
 
-## Live methodology path
+## Active Methodology Path
 
-1. `src/models/conformal_alpha_grid.py` exactly replays the frozen 90%
-   intervals and reports the alpha sensitivity.
-2. `src/optimization/policy_evaluation.py` uses point PD in the economic
-   objective and an effective PD only in the risk constraint.
-3. `src/optimization/policy_selection.py` defines the nine-cell round-number
-   grid, deterministic endpoint screen, and cap-stability interval.
-4. `scripts/experiments/ijds_policy_support.py` aligns candidate and exact-alpha
-   rows directly by ID and owns shared solving/evaluation.
-5. `scripts/build_ijds_calibration_selected_evidence.py` materializes A35-A40
-   from versioned experiment outputs. Manuscript rendering does not solve or
-   retune portfolios.
+1. `src/data/outcome_observability.py` defines label availability and keeps
+   outcome fields outside allocation inputs.
+2. `src/models/binary_conformal_guardrail.py` constructs the fixed score
+   taxonomies and binary residual intervals.
+3. `src/evaluation/maturity_safe_portfolio.py` defines coherent standardized
+   payoff and sharp common-outcome bounds.
+4. `src/evaluation/comparator_audit.py` implements C0, C1, exact C2, the
+   point-cap frontier, and direction envelopes.
+5. `src/evaluation/comparator_transport_simulation.py` isolates temporal
+   transport, comparator matching, clipping, and taxonomy mechanisms.
+6. `scripts/experiments/run_ijds_fixed_taxonomy_c2.py` created the immutable
+   outcome-free V1 allocation capsule; its locked resume branch verifies V1
+   hashes and performs the vectorized V2 outcome join without changing
+   allocations.
+7. `scripts/build_ijds_fixed_taxonomy_c2_evidence.py` validates both capsules
+   and generates every paper-facing table, figure, and manifest entry.
 
-The active run is
-`champion-reopen-2026-06-19__pool93__ijds-calibration-selected-endpoint28-v7`.
-The exact-alpha run is
-`champion-reopen-2026-06-19__pool93__ijds-exact-alpha-grid-v1`.
+The active tags are `ijds-fixed-taxonomy-c2-2026-07-11-v1` and
+`ijds-fixed-taxonomy-c2-2026-07-11-v2`. Neither may be overwritten. A new
+scientific result requires a new declared protocol, run tag, and output path.
 
-## Deliberate simplifications
+## Deliberate Simplifications
 
-- One active policy family: `q=(p+u)/2`, `tau=0.17`, `gamma=0.50`.
-- Point PD remains the economic objective; uncertainty is a feasibility
-  guardrail.
-- One deterministic 3x3 November selector, with outcomes isolated from a
-  12-column input frame, `B_u<=0.28`, and an outcome-free December replay.
-- One independent December decision audit that records the funded-set coverage
-  miss instead of converting it into an unsupported guarantee.
-- Month-cluster bootstrap is primary; loan-level resampling is a sensitivity.
-- One A35-A40 active evidence bundle.
-- One body, one supplement, and one official submission TeX source.
-- No nested temporal selector, effective-PD objective branch, active cap/tail
-  variants, or manuscript-time optimizer.
-- Historical A1-A34 tables remain diagnostics and provenance, not competing
-  active claims.
+- Four taxonomies fixed before OOT; the five-group recipe is canonical but not
+  selected by OOT performance.
+- Nine guardrails are co-primary; there is no policy selector or winner.
+- Point PD remains the economic objective; the conformal score appears only in
+  the risk constraint.
+- C0 is a same-cap nesting control, C1 is a fixed development comparator, and
+  C2 exactly matches the funded point-PD moment for each guardrail-month.
+- A finite 29-cap frontier tests comparator dependence without claiming
+  invariance over every conceivable baseline.
+- Unresolved outcomes receive sharp common-outcome bounds rather than
+  complete-case deletion or a missing-at-random assumption.
+- One evidence builder produces 41 table/figure files plus one manifest.
+- One QMD body generates the official TeX; the supplement remains a separate
+  anonymous source.
+- Compact-v7, P1/C1, pool93, Prosper/Freddie, Markov, and A1--A40 are not
+  active fallbacks.
 
-## Named commands
+## Named Commands
 
 ```powershell
 just ijds-evidence
 just ijds-active-replay
+just publication-integrity
 just lint
 just type-check
 just type-advisory-full
-just smoke
-just validate-champion
-just drift-gate
 just test
+just validate-champion
+just validate-champion-strict
+just drift-gate
+just paper-submission-pdf
+just paper-submission-official
 just submission-check
 ```
 
-`just submission-check` is the ordinary release gate and includes the full
-pytest suite. `just
-ijds-active-replay` is intentionally separate because it recomputes exact
-interval grids and solves experiment portfolios.
+`just ijds-active-replay` validates V1/V2 and rebuilds publication evidence; it
+does not rerun the expensive allocation protocol. `just submission-check` is
+the complete ordinary pre-freeze gate. Protected historical DVC stages are
+never hidden behind either command.
 
-## Compilation contract
+## Compilation Contract
 
-The official build uses `latexmk`. On Windows it resolves TinyTeX's
-`latexmk.pl` and launches it with Perl, bypassing the defective
-`runscript.tlu` executable wrapper. If that payload is unavailable or fails,
-the robust fallback is:
+The official build generates TeX from `paper/CRPTO_ijds.qmd` and invokes the
+TinyTeX `latexmk.pl` payload through Perl. If that payload is unavailable, the
+robust fallback is:
 
 ```text
 pdflatex -> bibtex -> pdflatex -> pdflatex
 ```
 
-The first pass writes citation keys to `.aux`, BibTeX writes `.bbl`, and the
-last two passes stabilize citations, cross-references, and pagination. This is
-one compilation workflow, not three independent builds.
+The first pass writes `.aux`, BibTeX writes `.bbl`, and the final two passes
+resolve citations, cross-references, floats, and pagination. This is one
+compilation workflow, not three independent builds.
 
-## Drift policy
+## Drift Policy
 
-Experimental drift is allowed only under a new run tag. Promotion requires:
+Experimental drift is allowed only under a new run tag. Promotion requires a
+scientific reason, an outcome-free protocol, new paths, complete reporting,
+claim-sync tests, `just validate-champion`, and `just drift-gate` whenever PD
+or conformal code changes. Light drift is not itself a benefit.
 
-- no writes to manifest-listed or protected champion artifacts;
-- an explicit scientific reason and comparator;
-- claim-sync and publication-integrity tests;
-- `just validate-champion`;
-- `just drift-gate` when PD or conformal paths change;
-- regenerated tables and a visually inspected PDF.
-
-Light drift is not itself a benefit. A challenger is promoted only when it
-improves the submitted method or its defensibility enough to justify the extra
-surface area. Otherwise it is removed from the live path.
+Protocol-frozen V1 hotspots are not refactored merely to lower complexity or
+silence a type checker. A refactor that changes their source hash requires a
+new full run and must offer methodological value commensurate with that cost.

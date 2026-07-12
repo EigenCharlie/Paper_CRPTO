@@ -1,5 +1,5 @@
 {
-  "schema_version": "2026-07-11.2",
+  "schema_version": "2026-07-11.3",
   "status": "complete_reconciled_paper_evidence",
   "run_tag": "ijds-fixed-taxonomy-c2-2026-07-11-v2",
   "protocol_tag": "protocol/ijds-fixed-taxonomy-c2-2026-07-11-v2",
@@ -133,6 +133,8 @@
     "selected_set_validity_allowed": false,
     "current_superiority_submission_go": false,
     "ijds_audit_narrative_go": true,
+    "post_result_audit_framing": true,
+    "prespecified_negative_fallback": false,
     "audit_thesis": "Temporal coverage failure is robust, but portfolio conclusions are not invariant to comparator stringency or binding operational constraints."
   },
   "canonical_c2": [
@@ -272,6 +274,224 @@
       "miscoverage_direction": "positive"
     }
   ],
+  "canonical_comparator_envelopes": [
+    {
+      "paired_policy_id": "linear-001",
+      "metric": "realized_payoff",
+      "lower": -318710.59596572246,
+      "upper": 371593.3379634104,
+      "sign": "indeterminate",
+      "record_count": 32
+    },
+    {
+      "paired_policy_id": "linear-001",
+      "metric": "terminal_default",
+      "lower": -0.07117754647507099,
+      "upper": 0.07327029261695177,
+      "sign": "indeterminate",
+      "record_count": 32
+    },
+    {
+      "paired_policy_id": "linear-001",
+      "metric": "funded_miscoverage",
+      "lower": -0.032452558540770234,
+      "upper": 0.06545324222390232,
+      "sign": "indeterminate",
+      "record_count": 32
+    },
+    {
+      "paired_policy_id": "linear-002",
+      "metric": "realized_payoff",
+      "lower": -317824.65342340164,
+      "upper": 401811.1794718312,
+      "sign": "indeterminate",
+      "record_count": 32
+    },
+    {
+      "paired_policy_id": "linear-002",
+      "metric": "terminal_default",
+      "lower": -0.08996445882862733,
+      "upper": 0.057467726535389396,
+      "sign": "indeterminate",
+      "record_count": 32
+    },
+    {
+      "paired_policy_id": "linear-002",
+      "metric": "funded_miscoverage",
+      "lower": -0.04248200095517077,
+      "upper": 0.05802147941482908,
+      "sign": "indeterminate",
+      "record_count": 32
+    },
+    {
+      "paired_policy_id": "linear-003",
+      "metric": "realized_payoff",
+      "lower": -344149.9930099327,
+      "upper": 381587.83988530014,
+      "sign": "indeterminate",
+      "record_count": 32
+    },
+    {
+      "paired_policy_id": "linear-003",
+      "metric": "terminal_default",
+      "lower": -0.09469841508586027,
+      "upper": 0.053400436944823104,
+      "sign": "indeterminate",
+      "record_count": 32
+    },
+    {
+      "paired_policy_id": "linear-003",
+      "metric": "funded_miscoverage",
+      "lower": -0.039150450342319065,
+      "upper": 0.06135303002768079,
+      "sign": "indeterminate",
+      "record_count": 32
+    },
+    {
+      "paired_policy_id": "linear-004",
+      "metric": "realized_payoff",
+      "lower": -425267.64499263355,
+      "upper": 230026.14290259927,
+      "sign": "indeterminate",
+      "record_count": 32
+    },
+    {
+      "paired_policy_id": "linear-004",
+      "metric": "terminal_default",
+      "lower": -0.0507313123486951,
+      "upper": 0.09035587301532162,
+      "sign": "indeterminate",
+      "record_count": 32
+    },
+    {
+      "paired_policy_id": "linear-004",
+      "metric": "funded_miscoverage",
+      "lower": -0.019960828736883457,
+      "upper": 0.07458431829978306,
+      "sign": "indeterminate",
+      "record_count": 32
+    },
+    {
+      "paired_policy_id": "linear-005",
+      "metric": "realized_payoff",
+      "lower": -357820.4277479609,
+      "upper": 350283.86397531,
+      "sign": "indeterminate",
+      "record_count": 32
+    },
+    {
+      "paired_policy_id": "linear-005",
+      "metric": "terminal_default",
+      "lower": -0.0805091356527741,
+      "upper": 0.06574640935053198,
+      "sign": "indeterminate",
+      "record_count": 32
+    },
+    {
+      "paired_policy_id": "linear-005",
+      "metric": "funded_miscoverage",
+      "lower": -0.03378395951967312,
+      "upper": 0.0655428804896161,
+      "sign": "indeterminate",
+      "record_count": 32
+    },
+    {
+      "paired_policy_id": "linear-006",
+      "metric": "realized_payoff",
+      "lower": -347032.49894420814,
+      "upper": 374333.08212500834,
+      "sign": "indeterminate",
+      "record_count": 32
+    },
+    {
+      "paired_policy_id": "linear-006",
+      "metric": "terminal_default",
+      "lower": -0.09040092447822287,
+      "upper": 0.05722024244091059,
+      "sign": "indeterminate",
+      "record_count": 32
+    },
+    {
+      "paired_policy_id": "linear-006",
+      "metric": "funded_miscoverage",
+      "lower": -0.03897988697467902,
+      "upper": 0.061523593395320826,
+      "sign": "indeterminate",
+      "record_count": 32
+    },
+    {
+      "paired_policy_id": "linear-007",
+      "metric": "realized_payoff",
+      "lower": -451514.07070042624,
+      "upper": 165293.0396948065,
+      "sign": "indeterminate",
+      "record_count": 32
+    },
+    {
+      "paired_policy_id": "linear-007",
+      "metric": "terminal_default",
+      "lower": -0.0383408140499487,
+      "upper": 0.09883137131406801,
+      "sign": "indeterminate",
+      "record_count": 32
+    },
+    {
+      "paired_policy_id": "linear-007",
+      "metric": "funded_miscoverage",
+      "lower": -0.01446749278231462,
+      "upper": 0.07736265425435189,
+      "sign": "indeterminate",
+      "record_count": 32
+    },
+    {
+      "paired_policy_id": "linear-008",
+      "metric": "realized_payoff",
+      "lower": -366248.0430960924,
+      "upper": 336611.11479914037,
+      "sign": "indeterminate",
+      "record_count": 32
+    },
+    {
+      "paired_policy_id": "linear-008",
+      "metric": "terminal_default",
+      "lower": -0.07465662676167784,
+      "upper": 0.07105055860233887,
+      "sign": "indeterminate",
+      "record_count": 32
+    },
+    {
+      "paired_policy_id": "linear-008",
+      "metric": "funded_miscoverage",
+      "lower": -0.031830371804217314,
+      "upper": 0.06694810856578252,
+      "sign": "indeterminate",
+      "record_count": 32
+    },
+    {
+      "paired_policy_id": "linear-009",
+      "metric": "realized_payoff",
+      "lower": -365785.4933954074,
+      "upper": 353850.3394998255,
+      "sign": "indeterminate",
+      "record_count": 32
+    },
+    {
+      "paired_policy_id": "linear-009",
+      "metric": "terminal_default",
+      "lower": -0.08509056434523815,
+      "upper": 0.06234162101877857,
+      "sign": "indeterminate",
+      "record_count": 32
+    },
+    {
+      "paired_policy_id": "linear-009",
+      "metric": "funded_miscoverage",
+      "lower": -0.03616659717804456,
+      "upper": 0.06433688319195528,
+      "sign": "indeterminate",
+      "record_count": 32
+    }
+  ],
   "direction_summary": [
     {
       "comparator_rule": "c0_same_numeric_cap",
@@ -328,6 +548,111 @@
       "miscoverage_negative": 0,
       "miscoverage_positive": 0,
       "miscoverage_indeterminate": 9
+    }
+  ],
+  "purpose_cap_binding": {
+    "guardrail_months": 2025,
+    "binding_guardrail_months": 2025,
+    "all_bind": true,
+    "maximum_absolute_cap_residual": 1.1102230246251565e-16
+  },
+  "endpoint_inventory": {
+    "terminal_endpoint": {
+      "resolved_rows": 499845,
+      "unresolved_rows": 40276,
+      "by_split": {
+        "conformal_fit": {
+          "rows": 14967,
+          "resolved_rows": 14967,
+          "unresolved_rows": 0
+        },
+        "pd_development": {
+          "rows": 17433,
+          "resolved_rows": 17433,
+          "unresolved_rows": 0
+        },
+        "probability_calibration": {
+          "rows": 14101,
+          "resolved_rows": 14101,
+          "unresolved_rows": 0
+        },
+        "censored_extension": {
+          "rows": 88227,
+          "resolved_rows": 59502,
+          "unresolved_rows": 28725
+        },
+        "policy_development": {
+          "rows": 28503,
+          "resolved_rows": 28503,
+          "unresolved_rows": 0
+        },
+        "primary_oot": {
+          "rows": 376890,
+          "resolved_rows": 365339,
+          "unresolved_rows": 11551
+        }
+      }
+    },
+    "frozen_status_diagnostic": {
+      "resolved_rows": 500019,
+      "unresolved_rows": 40102
+    },
+    "literal_default_rows_reclassified_unresolved": 174
+  },
+  "mechanism_allocation_distances": [
+    {
+      "paired_policy_id": "linear-001",
+      "clipped_vs_unclipped_allocation_l1": 4684.843282767612,
+      "unclipped_group_vs_pooled_allocation_l1": 14414846.854082568,
+      "pooled_affine_vs_point_allocation_l1": 0.0
+    },
+    {
+      "paired_policy_id": "linear-002",
+      "clipped_vs_unclipped_allocation_l1": 17511.670991244664,
+      "unclipped_group_vs_pooled_allocation_l1": 19428826.54021529,
+      "pooled_affine_vs_point_allocation_l1": 0.0
+    },
+    {
+      "paired_policy_id": "linear-003",
+      "clipped_vs_unclipped_allocation_l1": 7207.991089804878,
+      "unclipped_group_vs_pooled_allocation_l1": 21351895.344954066,
+      "pooled_affine_vs_point_allocation_l1": 0.0
+    },
+    {
+      "paired_policy_id": "linear-004",
+      "clipped_vs_unclipped_allocation_l1": 6432.092759499191,
+      "unclipped_group_vs_pooled_allocation_l1": 12122389.050553748,
+      "pooled_affine_vs_point_allocation_l1": 0.0
+    },
+    {
+      "paired_policy_id": "linear-005",
+      "clipped_vs_unclipped_allocation_l1": 22854.449912923486,
+      "unclipped_group_vs_pooled_allocation_l1": 18143741.545391638,
+      "pooled_affine_vs_point_allocation_l1": 0.0
+    },
+    {
+      "paired_policy_id": "linear-006",
+      "clipped_vs_unclipped_allocation_l1": 15706.866601832877,
+      "unclipped_group_vs_pooled_allocation_l1": 20456040.39563741,
+      "pooled_affine_vs_point_allocation_l1": 0.0
+    },
+    {
+      "paired_policy_id": "linear-007",
+      "clipped_vs_unclipped_allocation_l1": 12177.796684322897,
+      "unclipped_group_vs_pooled_allocation_l1": 9849022.183609739,
+      "pooled_affine_vs_point_allocation_l1": 0.0
+    },
+    {
+      "paired_policy_id": "linear-008",
+      "clipped_vs_unclipped_allocation_l1": 46609.497902620766,
+      "unclipped_group_vs_pooled_allocation_l1": 16855487.85753031,
+      "pooled_affine_vs_point_allocation_l1": 0.0
+    },
+    {
+      "paired_policy_id": "linear-009",
+      "clipped_vs_unclipped_allocation_l1": 28243.911599480005,
+      "unclipped_group_vs_pooled_allocation_l1": 19562974.613704905,
+      "pooled_affine_vs_point_allocation_l1": 0.0
     }
   ],
   "source_artifacts": {
@@ -480,18 +805,18 @@
     },
     "reports/crpto/tables/crpto_ijds_ft_tableS4_group_ablation.csv": {
       "path": "reports/crpto/tables/crpto_ijds_ft_tableS4_group_ablation.csv",
-      "bytes": 1683,
-      "sha256": "7ce8b73eba757aa36f4efe8290f6406c16588efde03503ad5037147a08b655fd"
+      "bytes": 2166,
+      "sha256": "ef205b4c22ffbede23c93f3a41f68fae7d57cc9f3bafd63ca828993321c2b277"
     },
     "reports/crpto/tables/crpto_ijds_ft_tableS4_group_ablation.tex": {
       "path": "reports/crpto/tables/crpto_ijds_ft_tableS4_group_ablation.tex",
-      "bytes": 1306,
-      "sha256": "623786c649db4a4fa9a130c5e37cbe5a4c71ff856b65bbd1a612840aa75a84c2"
+      "bytes": 1833,
+      "sha256": "772310906e9f46aa32c2e21c0c4fc5741d79bc6b0018ac01863f8e32aadb5832"
     },
     "reports/crpto/tables/crpto_ijds_ft_tableS4_group_ablation.md": {
       "path": "reports/crpto/tables/crpto_ijds_ft_tableS4_group_ablation.md",
-      "bytes": 3355,
-      "sha256": "a423fca906fbda9b6bfb2f2a016f70a03ceee053cc402a034ecf83f7f32f954f"
+      "bytes": 4719,
+      "sha256": "69b8a23a605112fabef0be145e4797ccf99c59c4cbb44969066d13668c0303e3"
     },
     "reports/crpto/tables/crpto_ijds_ft_tableS5_policy_levels.csv": {
       "path": "reports/crpto/tables/crpto_ijds_ft_tableS5_policy_levels.csv",

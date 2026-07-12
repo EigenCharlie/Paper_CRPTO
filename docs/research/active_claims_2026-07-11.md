@@ -15,6 +15,10 @@ conformal guardrail or a point-PD policy is universally superior.
 - The empirical headline is a falsification: temporal coverage failure is
   stable, but portfolio conclusions are not invariant to the comparator or to
   binding background constraints.
+- Protocol stop rule 8 terminated the prespecified superiority submission.
+  The negative audit framing was formulated after observing that stop and is
+  an explicitly retrospective secondary interpretation, not a prespecified
+  fallback or confirmatory success.
 
 The archive was inspected before this protocol. The tag limits subsequent
 analyst degrees of freedom but does not make the analysis preregistered,
@@ -60,6 +64,10 @@ prospective, or confirmatory.
 - Endpoint at the September 2020 administrative snapshot: Fully Paid is 0,
   Charged Off is 1, and exact Default plus every nonterminal status is right
   censored.
+- The terminal endpoint has 499,845 resolved and 40,276 unresolved rows. A
+  frozen operational-status diagnostic in the V2 receipt reports
+  500,019/40,102 because it counted 174 literal Default rows as resolved; no
+  coverage or policy contrast uses that diagnostic.
 - Label retention by the information cutoff is 99.765% for PD development,
   99.830% for probability calibration, and 99.873% for conformal fitting.
 - Candidate membership never uses loan status. Outcomes are physically absent
@@ -181,8 +189,8 @@ to a policy property.
 - Payoff directions: 59 negative, 37 positive, 84 indeterminate.
 - Default directions: 50 negative, 33 positive, 97 indeterminate.
 - Miscoverage directions: 33 negative, 64 positive, 83 indeterminate.
-- Every 20%, 25%, and 30% purpose cap binds in every guardrail
-  policy-month-seed cell; the no-cap diagnostic does not bind.
+- Every 20%, 25%, and 30% purpose cap binds in all 2,025 guardrail
+  policy-month-seed cells; the no-cap diagnostic does not bind.
 - Therefore background operational constraints interact materially with the
   score and comparator. The canonical 25% cap is not a neutral detail.
 - The point-cap frontier changes direction around the range in which the
@@ -190,8 +198,10 @@ to a policy property.
   usually looks worse; above roughly 0.0825 it usually looks better. This is
   direct evidence that the baseline can manufacture a directional claim.
 - The unclipped group-residual ablation nearly reproduces the clipped
-  guardrail contrasts. Allocation L1 differences are only $4,685--$46,609 over
-  $15M, depending on policy.
+  guardrail contrasts. Allocation L1 differences are only USD 4,685--46,609
+  over USD 15 million, depending on policy.
+- Replacing the unclipped group penalties with one pooled affine penalty
+  changes USD 9.849--21.352 million of allocation across policies.
 - A pooled residual penalty is affine in point PD and reproduces its translated
   point allocation exactly. The nontrivial mechanism is coarse score-stratum
   penalization, not an affine uncertainty surcharge.

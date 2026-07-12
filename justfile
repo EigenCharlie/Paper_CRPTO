@@ -124,7 +124,7 @@ paper-submission-official: paper-submission-tex
     @uv run python scripts/compile_ijds_submission.py
 
 # Final local IJDS gate before freezing or uploading.
-submission-check: ijds-evidence publication-integrity lint type-check type-advisory-full test validate-champion paper-submission paper-submission-official
+submission-check: ijds-evidence publication-integrity lint type-check type-advisory-full test validate-champion-strict paper-submission paper-submission-official
 
 # IJDS-oriented manuscript body (local HTML-print PDF verification draft).
 paper-ijds-pdf:
@@ -187,6 +187,11 @@ dbt-build:
 
 validate-champion:
     uv run pytest tests/test_manifest_regression.py -q
+
+# Submission closeout requires every manifest-listed artifact to be present;
+# the ordinary target remains useful in partial development checkouts.
+validate-champion-strict:
+    $env:CRPTO_REQUIRE_DVC_ARTIFACTS = "1"; uv run pytest tests/test_manifest_regression.py -q
 
 drift-gate:
     $env:CRPTO_RUN_CHAMPION_DRIFT = "1"; uv run pytest tests/test_models/test_conformal_mapie_drift.py -q -s

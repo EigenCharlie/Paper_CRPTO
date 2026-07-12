@@ -38,7 +38,7 @@ artifacts without relying on author-local paths:
    processed/model artifacts through the declared DVC remote if access is
    provided by the journal workflow.
 3. Verify frozen outputs with `EXTRACTION_MANIFEST.json` and
-   `just validate-champion`.
+   `just validate-champion-strict` before submission freeze.
 4. Rebuild the active paper evidence with `just ijds-evidence`, run
    `just publication-integrity`, and render the reviewer surfaces with
    `just paper-submission-pdf` and `just paper-submission-official`.

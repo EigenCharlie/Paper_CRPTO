@@ -39,8 +39,8 @@ just paper-submission-tex
 just paper-submission-official
 ```
 
-The validated official PDF has 28 pages, with references beginning on page 25
-(24 pre-reference pages), 8 main tables, and 4 figures. The abstract has 278
+The validated official PDF has 27 pages, with references beginning on page 25
+(24 pre-reference pages), 8 main tables, and 4 figures. The abstract has 280
 words and the keyword list has 7 entries.
 
 ## Closeout

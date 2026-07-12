@@ -30,6 +30,7 @@ MODEL_ROOT = ROOT / "models/experiments/ijds_prefreeze" / RUN_TAG
 SUMMARY_PATH = MODEL_ROOT / "fixed_taxonomy_c2_summary.json"
 RECEIPT_PATH = MODEL_ROOT / "execution_receipt.json"
 SOURCE_RECORDS_PATH = SOURCE_DATA_ROOT / "portfolio/outcome_free_solve_records.parquet"
+SOURCE_ALLOCATIONS_PATH = SOURCE_DATA_ROOT / "portfolio/outcome_free_funded_allocations.parquet"
 TABLE_ROOT = ROOT / "reports/crpto/tables"
 FIGURE_ROOT = ROOT / "reports/crpto/figures"
 MANIFEST_PATH = ROOT / "reports/crpto/ijds_fixed_taxonomy_c2_evidence.json"
@@ -141,6 +142,10 @@ def _read_inputs(summary: dict[str, Any]) -> dict[str, pd.DataFrame]:
     if records_path != SOURCE_RECORDS_PATH.resolve():
         raise RuntimeError("Source freeze points to an unexpected solve-record artifact.")
     frames["records"] = pd.read_parquet(records_path)
+    allocations_path = _verify_descriptor(source_freeze["outcome_free_artifacts"]["allocations"])
+    if allocations_path != SOURCE_ALLOCATIONS_PATH.resolve():
+        raise RuntimeError("Source freeze points to an unexpected allocation artifact.")
+    frames["allocations"] = pd.read_parquet(allocations_path)
     return frames
 
 
@@ -149,6 +154,172 @@ def _direction(lower: pd.Series, upper: pd.Series) -> pd.Series:
     result.loc[upper < 0.0] = "negative"
     result.loc[lower > 0.0] = "positive"
     return result
+
+
+def _direction_scalar(lower: float, upper: float) -> str:
+    if upper < 0.0:
+        return "negative"
+    if lower > 0.0:
+        return "positive"
+    return "indeterminate"
+
+
+def _comparator_envelopes(contrasts: pd.DataFrame) -> pd.DataFrame:
+    """Derive finite-multiverse signs from every canonical comparator record."""
+    canonical = _canonical_contrasts(contrasts)
+    canonical = canonical.loc[
+        canonical["comparator_rule"].isin([*COMPARATOR_ORDER, "point_cap_frontier"])
+    ]
+    metric_columns = {
+        "realized_payoff": (
+            "realized_payoff_difference_lower",
+            "realized_payoff_difference_upper",
+        ),
+        "terminal_default": (
+            "weighted_default_difference_lower",
+            "weighted_default_difference_upper",
+        ),
+        "funded_miscoverage": (
+            "weighted_miscoverage_difference_lower",
+            "weighted_miscoverage_difference_upper",
+        ),
+    }
+    rows: list[dict[str, Any]] = []
+    for policy in POLICY_ORDER:
+        group = canonical.loc[canonical["paired_policy_id"].eq(policy)]
+        if len(group) != 32:
+            raise RuntimeError(f"Expected 32 multiverse records for {policy}, got {len(group)}.")
+        for metric, (lower_column, upper_column) in metric_columns.items():
+            lower = float(group[lower_column].min())
+            upper = float(group[upper_column].max())
+            rows.append(
+                {
+                    "paired_policy_id": policy,
+                    "metric": metric,
+                    "lower": lower,
+                    "upper": upper,
+                    "sign": _direction_scalar(lower, upper),
+                    "record_count": int(len(group)),
+                }
+            )
+    return pd.DataFrame(rows)
+
+
+def _allocation_distances(allocations: pd.DataFrame) -> pd.DataFrame:
+    """Recompute canonical score-ablation L1 distances from frozen exposures."""
+    rules = (
+        "guardrail",
+        "ablation_group_penalty",
+        "ablation_pooled_affine",
+        "ablation_pooled_point",
+    )
+    frame = allocations.loc[
+        allocations["seed"].eq(42)
+        & np.isclose(allocations["purpose_cap"], 0.25)
+        & np.isclose(allocations["lgd"], 0.45)
+        & allocations["role"].eq("primary_oot")
+        & allocations["paired_policy_id"].isin(POLICY_ORDER)
+        & allocations["comparator_rule"].isin(rules),
+        ["paired_policy_id", "comparator_rule", "period", "id", "exposure"],
+    ]
+    exposure = (
+        frame.groupby(
+            ["paired_policy_id", "period", "id", "comparator_rule"],
+            observed=True,
+        )["exposure"]
+        .sum()
+        .unstack("comparator_rule", fill_value=0.0)
+        .reindex(columns=rules, fill_value=0.0)
+    )
+    distances = pd.DataFrame(index=exposure.index)
+    distances["clipped_vs_unclipped_allocation_l1"] = (
+        exposure["guardrail"] - exposure["ablation_group_penalty"]
+    ).abs()
+    distances["unclipped_group_vs_pooled_allocation_l1"] = (
+        exposure["ablation_group_penalty"] - exposure["ablation_pooled_affine"]
+    ).abs()
+    distances["pooled_affine_vs_point_allocation_l1"] = (
+        exposure["ablation_pooled_affine"] - exposure["ablation_pooled_point"]
+    ).abs()
+    result = distances.groupby(level="paired_policy_id", observed=True).sum().reset_index()
+    if result["paired_policy_id"].tolist() != POLICY_ORDER:
+        raise RuntimeError("Allocation ablations do not cover the complete policy family.")
+    if float(result["pooled_affine_vs_point_allocation_l1"].max()) > 1e-8:
+        raise RuntimeError("The pooled affine placebo no longer reproduces point PD.")
+    return result
+
+
+def _purpose_cap_binding(allocations: pd.DataFrame) -> dict[str, Any]:
+    """Derive binding purpose-cap counts from frozen guardrail allocations."""
+    keys = ["seed", "purpose_cap", "paired_policy_id", "period"]
+    frame = allocations.loc[
+        allocations["comparator_rule"].eq("guardrail")
+        & allocations["role"].eq("primary_oot")
+        & allocations["paired_policy_id"].isin(POLICY_ORDER)
+        & allocations["purpose_cap"].lt(1.0)
+        & np.isclose(allocations["lgd"], 0.45),
+        [*keys, "purpose", "exposure"],
+    ]
+    purpose_exposure = frame.groupby([*keys, "purpose"], observed=True)["exposure"].sum()
+    total_exposure = purpose_exposure.groupby(level=keys, observed=True).sum()
+    max_share = (purpose_exposure / total_exposure).groupby(level=keys, observed=True).max()
+    caps = max_share.index.get_level_values("purpose_cap").to_numpy(dtype=float)
+    binding = np.isclose(max_share.to_numpy(dtype=float), caps, atol=1e-10, rtol=0.0)
+    expected_groups = 5 * 3 * len(POLICY_ORDER) * 15
+    if len(max_share) != expected_groups:
+        raise RuntimeError(
+            f"Purpose-cap audit expected {expected_groups} guardrail-months, got {len(max_share)}."
+        )
+    return {
+        "guardrail_months": int(len(max_share)),
+        "binding_guardrail_months": int(binding.sum()),
+        "all_bind": bool(binding.all()),
+        "maximum_absolute_cap_residual": float(np.abs(max_share.to_numpy() - caps).max()),
+    }
+
+
+def _endpoint_inventory(coverage: pd.DataFrame, summary: dict[str, Any]) -> dict[str, Any]:
+    """Reconcile the terminal endpoint with the frozen status diagnostic."""
+    by_split: dict[str, dict[str, int]] = {}
+    for item in summary["label_availability"]:
+        by_split[str(item["design_split"])] = {
+            "rows": int(item["total_rows"]),
+            "resolved_rows": int(item["terminal_outcome_rows"]),
+            "unresolved_rows": int(item["unresolved_outcome_rows"]),
+        }
+    pooled = coverage.loc[
+        coverage["taxonomy_groups"].eq(5)
+        & coverage["conformal_group"].eq("ALL")
+        & coverage["period"].str.contains("_to_"),
+        ["design_split", "rows", "resolved_rows", "unresolved_rows"],
+    ]
+    for item in pooled.to_dict(orient="records"):
+        by_split[str(item["design_split"])] = {
+            "rows": int(item["rows"]),
+            "resolved_rows": int(item["resolved_rows"]),
+            "unresolved_rows": int(item["unresolved_rows"]),
+        }
+    terminal_resolved = sum(item["resolved_rows"] for item in by_split.values())
+    terminal_unresolved = sum(item["unresolved_rows"] for item in by_split.values())
+    status_resolved = int(summary["source_inventory"]["resolved_rows"])
+    status_unresolved = int(summary["source_inventory"]["unresolved_rows"])
+    reclassified = status_resolved - terminal_resolved
+    if terminal_resolved + terminal_unresolved != int(summary["source_inventory"]["retained_rows"]):
+        raise RuntimeError("Terminal endpoint inventory does not reconcile to retained rows.")
+    if reclassified <= 0 or terminal_unresolved - status_unresolved != reclassified:
+        raise RuntimeError("Status and terminal endpoint diagnostics no longer reconcile.")
+    return {
+        "terminal_endpoint": {
+            "resolved_rows": terminal_resolved,
+            "unresolved_rows": terminal_unresolved,
+            "by_split": by_split,
+        },
+        "frozen_status_diagnostic": {
+            "resolved_rows": status_resolved,
+            "unresolved_rows": status_unresolved,
+        },
+        "literal_default_rows_reclassified_unresolved": reclassified,
+    }
 
 
 def _validate_frames(frames: dict[str, pd.DataFrame], summary: dict[str, Any]) -> None:
@@ -179,9 +350,28 @@ def _validate_frames(frames: dict[str, pd.DataFrame], summary: dict[str, Any]) -
     }
     if recomputed != summary["canonical_c2_direction_counts"]:
         raise RuntimeError("Canonical C2 direction counts do not reconcile.")
-    envelope_signs = {item["sign"] for item in summary["canonical_comparator_envelopes"]}
-    if envelope_signs != {"indeterminate"}:
+    envelopes = _comparator_envelopes(frames["contrasts"])
+    envelope_signs = set(envelopes["sign"])
+    if envelope_signs != {"indeterminate"} or len(envelopes) != 27:
         raise RuntimeError("Comparator multiverse unexpectedly admits a universal sign.")
+    frozen_envelopes = pd.DataFrame(summary["canonical_comparator_envelopes"])
+    reconciled = envelopes.merge(
+        frozen_envelopes,
+        on=["paired_policy_id", "metric"],
+        suffixes=("_derived", "_frozen"),
+        validate="one_to_one",
+    )
+    if len(reconciled) != 27 or not (
+        np.allclose(reconciled["lower_derived"], reconciled["lower_frozen"], atol=1e-12)
+        and np.allclose(reconciled["upper_derived"], reconciled["upper_frozen"], atol=1e-12)
+        and reconciled["sign_derived"].equals(reconciled["sign_frozen"])
+    ):
+        raise RuntimeError("Derived comparator envelopes do not match the frozen summary.")
+    _allocation_distances(frames["allocations"])
+    binding = _purpose_cap_binding(frames["allocations"])
+    if not binding["all_bind"]:
+        raise RuntimeError("At least one sub-100% purpose cap is no longer binding.")
+    _endpoint_inventory(frames["coverage"], summary)
 
 
 def _write_table(frame: pd.DataFrame, stem: str) -> list[Path]:
@@ -307,7 +497,7 @@ def _canonical_comparator_table(contrasts: pd.DataFrame) -> pd.DataFrame:
     ].reset_index(drop=True)
 
 
-def _direction_summary(comparator_table: pd.DataFrame) -> pd.DataFrame:
+def _direction_summary(comparator_table: pd.DataFrame, envelopes: pd.DataFrame) -> pd.DataFrame:
     rows: list[dict[str, Any]] = []
     for rule in COMPARATOR_ORDER:
         group = comparator_table.loc[comparator_table["comparator_rule"].eq(rule)]
@@ -321,22 +511,20 @@ def _direction_summary(comparator_table: pd.DataFrame) -> pd.DataFrame:
             for direction in ("negative", "positive", "indeterminate"):
                 row[f"{metric}_{direction}"] = int(counts.get(direction, 0))
         rows.append(row)
-    rows.append(
-        {
-            "comparator_rule": "finite_multiverse_envelope",
-            "comparator": "Envelope over C0, C1, C2, and 29 point caps",
-            "policy_pairs": 9,
-            "payoff_negative": 0,
-            "payoff_positive": 0,
-            "payoff_indeterminate": 9,
-            "default_negative": 0,
-            "default_positive": 0,
-            "default_indeterminate": 9,
-            "miscoverage_negative": 0,
-            "miscoverage_positive": 0,
-            "miscoverage_indeterminate": 9,
-        }
-    )
+    envelope_row: dict[str, Any] = {
+        "comparator_rule": "finite_multiverse_envelope",
+        "comparator": "Envelope over C0, C1, C2, and 29 point caps",
+        "policy_pairs": int(envelopes["paired_policy_id"].nunique()),
+    }
+    for output_name, metric_name in (
+        ("payoff", "realized_payoff"),
+        ("default", "terminal_default"),
+        ("miscoverage", "funded_miscoverage"),
+    ):
+        counts = envelopes.loc[envelopes["metric"].eq(metric_name), "sign"].value_counts()
+        for direction in ("negative", "positive", "indeterminate"):
+            envelope_row[f"{output_name}_{direction}"] = int(counts.get(direction, 0))
+    rows.append(envelope_row)
     return pd.DataFrame(rows)
 
 
@@ -431,7 +619,7 @@ def _lgd_table(contrasts: pd.DataFrame) -> pd.DataFrame:
     return frame[columns].sort_values(["lgd", "paired_policy_id"], kind="mergesort")
 
 
-def _ablation_table(contrasts: pd.DataFrame) -> pd.DataFrame:
+def _ablation_table(contrasts: pd.DataFrame, allocations: pd.DataFrame) -> pd.DataFrame:
     frame = _canonical_contrasts(contrasts)
     columns = [
         "paired_policy_id",
@@ -443,8 +631,14 @@ def _ablation_table(contrasts: pd.DataFrame) -> pd.DataFrame:
         "weighted_miscoverage_difference_upper",
         "undiscounted_snapshot_cash_yield_difference",
     ]
-    return frame.loc[frame["comparator_rule"].eq("ablation_group_c2"), columns].sort_values(
-        "paired_policy_id", kind="mergesort"
+    contrasts_table = frame.loc[frame["comparator_rule"].eq("ablation_group_c2"), columns]
+    return contrasts_table.merge(
+        _allocation_distances(allocations),
+        on="paired_policy_id",
+        validate="one_to_one",
+    ).sort_values(
+        "paired_policy_id",
+        kind="mergesort",
     )
 
 
@@ -621,14 +815,17 @@ def build_evidence() -> Path:
     policy_grid = _policy_grid(frames["records"])
     coverage = _coverage_table(frames["coverage"])
     comparator = _canonical_comparator_table(frames["contrasts"])
-    directions = _direction_summary(comparator)
+    envelopes = _comparator_envelopes(frames["contrasts"])
+    directions = _direction_summary(comparator, envelopes)
     sensitivity = _sensitivity_table(frames["contrasts"])
     frontier = _frontier_table(frames["contrasts"])
     lgd = _lgd_table(frames["contrasts"])
-    ablation = _ablation_table(frames["contrasts"])
+    ablation = _ablation_table(frames["contrasts"], frames["allocations"])
     levels = _aggregate_levels(frames["aggregate"])
     simulation = frames["simulation_summary"].copy()
     availability = pd.DataFrame(summary["label_availability"])
+    purpose_binding = _purpose_cap_binding(frames["allocations"])
+    endpoint_inventory = _endpoint_inventory(frames["coverage"], summary)
 
     outputs: list[Path] = []
     outputs += _write_table(policy_grid, "crpto_ijds_ft_table1_policy_grid")
@@ -658,8 +855,14 @@ def build_evidence() -> Path:
         metric: sensitivity[f"{metric}_direction"].value_counts().to_dict()
         for metric in ("payoff", "default", "miscoverage")
     }
+    canonical_counts = {
+        "payoff_worse": int(canonical_c2["payoff_direction"].eq("negative").sum()),
+        "default_higher": int(canonical_c2["default_direction"].eq("positive").sum()),
+        "miscoverage_higher": int(canonical_c2["miscoverage_direction"].eq("positive").sum()),
+        "policies": int(len(canonical_c2)),
+    }
     evidence = {
-        "schema_version": "2026-07-11.2",
+        "schema_version": "2026-07-11.3",
         "status": "complete_reconciled_paper_evidence",
         "run_tag": RUN_TAG,
         "protocol_tag": PROTOCOL_TAG,
@@ -676,21 +879,16 @@ def build_evidence() -> Path:
                 float(primary_coverage["all_candidate_coverage_lower"]),
                 float(primary_coverage["all_candidate_coverage_upper"]),
             ],
-            "canonical_c2_direction_counts": summary["canonical_c2_direction_counts"],
+            "canonical_c2_direction_counts": canonical_counts,
             "seed_cap_c2_direction_counts": sensitivity_counts,
             "comparator_multiverse_envelopes_indeterminate": int(
-                sum(
-                    item["sign"] == "indeterminate"
-                    for item in summary["canonical_comparator_envelopes"]
-                )
+                envelopes["sign"].eq("indeterminate").sum()
             ),
-            "comparator_multiverse_envelopes_total": int(
-                len(summary["canonical_comparator_envelopes"])
-            ),
+            "comparator_multiverse_envelopes_total": int(len(envelopes)),
             "c2_max_funded_pd_match_residual": float(
                 pd.to_numeric(frames["records"]["c2_match_residual"], errors="coerce").abs().max()
             ),
-            "purpose_caps_below_one_bind_every_guardrail_month": True,
+            "purpose_caps_below_one_bind_every_guardrail_month": purpose_binding["all_bind"],
         },
         "decision": {
             "universal_guardrail_direction_allowed": False,
@@ -698,13 +896,26 @@ def build_evidence() -> Path:
             "selected_set_validity_allowed": False,
             "current_superiority_submission_go": False,
             "ijds_audit_narrative_go": True,
+            "post_result_audit_framing": True,
+            "prespecified_negative_fallback": False,
             "audit_thesis": (
                 "Temporal coverage failure is robust, but portfolio conclusions are not "
                 "invariant to comparator stringency or binding operational constraints."
             ),
         },
         "canonical_c2": canonical_c2.to_dict(orient="records"),
+        "canonical_comparator_envelopes": envelopes.to_dict(orient="records"),
         "direction_summary": directions.to_dict(orient="records"),
+        "purpose_cap_binding": purpose_binding,
+        "endpoint_inventory": endpoint_inventory,
+        "mechanism_allocation_distances": ablation[
+            [
+                "paired_policy_id",
+                "clipped_vs_unclipped_allocation_l1",
+                "unclipped_group_vs_pooled_allocation_l1",
+                "pooled_affine_vs_point_allocation_l1",
+            ]
+        ].to_dict(orient="records"),
         "source_artifacts": summary["artifacts"],
         "publication_artifacts": {
             path.resolve().relative_to(ROOT).as_posix(): _descriptor(path) for path in outputs

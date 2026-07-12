@@ -27,22 +27,25 @@ CRPTO does not cover:
 
 ## Active paper contract
 
-The current IJDS paper is the maturity-safe bounded protocol v2:
+The current IJDS paper is the fixed-taxonomy comparator-multiverse audit:
 
-- run tag:
-  `champion-reopen-2026-07-10__maturity-safe-locked-bounded-h1h2-v2`;
+- outcome-free run `ijds-fixed-taxonomy-c2-2026-07-11-v1` and hash-linked
+  evaluation run `ijds-fixed-taxonomy-c2-2026-07-11-v2`;
 - status-independent universe of 540,121 36-month loans;
-- CatBoost/Platt fitting through 2011, exact 90% binary Mondrian conformal fit
-  on 2012H1, and policy selection on mature 2012H2 outcomes;
-- one selected guardrail, `q=0.75p+0.25u` with `tau=0.17`;
+- CatBoost/Platt fitting before conformal residual estimation on
+  availability-safe 2012H1 loans, with score taxonomies fixed before OOT;
+- four declared taxonomies and all nine guardrails reported as co-primary;
 - coherent standardized payoff `(1-p)r-p*LGD` in the objective and
   `(1-Y)r-Y*LGD` in evaluation;
-- 15 separate monthly $1M decisions from April 2016 through June 2017;
-- unresolved outcomes retained with sharp single-policy and paired bounds;
-- guardrail-minus-point payoff `[-$322,703.79,-$58,040.34]`, default
-  `[-0.046275,-0.020093]`, and miscoverage `[0.008822,0.029850]`;
-- mechanism: between-stratum composition improves default, while
-  within-stratum selection drives the funded-set coverage failure; and
+- 15 separate monthly USD 1 million decisions from April 2016 through June
+  2017;
+- unresolved outcomes retained with sharp paired common-outcome bounds;
+- candidate-level OOT coverage bound `[0.854714,0.879647]` for the canonical
+  five-group taxonomy;
+- exact C2 funded-point-PD matching with payoff lower for 7/9 guardrails,
+  default higher for 1/9, and miscoverage higher for 8/9;
+- all 27 policy-metric envelopes over the declared comparator multiverse
+  contain zero, so no policy or universal direction is promoted; and
 - active publication artifacts `crpto_ijds_ft_*`, governed by
   `ijds_fixed_taxonomy_c2_evidence.json`.
 
@@ -52,8 +55,8 @@ selected-set conformal guarantee, cash-flow return, fair-lending certificate,
 or Markov certificate. The full authority is
 `docs/research/active_claims_2026-07-11.md`.
 
-The previous IJDS rebaseline and pool93 frontier are retained as historical
-provenance, not as active body claims:
+Maturity-safe P1/C1, compact-v7, the previous IJDS rebaseline, and the pool93
+frontier are retained as historical provenance, not as active body claims:
 
 - run tag: `ijds-rebaseline-2026-06-07`
 - policy: `bound_aware_276k_economic_champion`

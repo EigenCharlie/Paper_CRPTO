@@ -62,8 +62,8 @@ GitHub refreshes the dependency graph.
   nonservice research repository keeps `.dvc/cache` local and ignored and does
   not grant untrusted writers access to it, so the residual risk is accepted
   until DVC removes the dependency or a patched `diskcache` is published.
-- The residual scan is reproducible with
-  `uv run --with pip-audit pip-audit --progress-spinner off`; use
+- The residual scan is reproducible on Windows with
+  `uvx --from pip-audit pip-audit --path .venv\Lib\site-packages`; use
   `--ignore-vuln CVE-2025-69872` only after reviewing the threat-model note
   above, not to conceal a newly actionable finding.
 - This triage intentionally avoids changing paper claims, model artifacts, or

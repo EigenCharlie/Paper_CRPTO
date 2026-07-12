@@ -221,6 +221,7 @@ comparison of uncertainty methods.
 
 ## D.3 Binary miscoverage
 
+**Proposition S1 (binary interval geometry).**
 For $Y_i\in\{0,1\}$,
 
 $$
@@ -263,10 +264,12 @@ one side of zero. This identifies signs over the declared set only.
 
 : S4 guardrail-minus-point direction counts. `?` means the sharp interval contains zero. {#tbl-s-direction-census}
 
-C0 makes every guardrail appear to improve payoff and default because it is a
-weaker feasible set. Under exact C2 matching, payoff is lower for 7 of 9
-guardrails, default is higher for 1 of 9, and miscoverage is higher for 8 of 9;
-the other intervals cross zero. No direction is universal. Across C0,
+C0 uses a weaker point-PD constraint. Nesting orders the optimized expected
+objective, not realized payoff or default; the uniform C0 realized directions
+are empirical and must not be attributed to the nesting result. Under exact C2
+matching, payoff is lower for 7 of 9 guardrails, default is higher for 1 of 9,
+and miscoverage is higher for 8 of 9; the other intervals cross zero. No
+direction is universal. Across C0,
 C1, C2, and the point-cap frontier, all 27 policy-by-metric envelopes contain
 zero.
 
@@ -302,8 +305,8 @@ cannot stand in for comparator identification.
 
 ## E.4 Seeds and purpose caps
 
-Purpose caps 0.20, 0.25, and 0.30 bind in every guardrail-month, seed, and
-policy; cap 1.00 removes that constraint. Across 180 C2 cells:
+Purpose caps 0.20, 0.25, and 0.30 bind in all 2,025 guardrail-month cells;
+cap 1.00 removes that constraint. Across 180 C2 cells:
 
 | Metric | Negative | Positive | Indeterminate |
 |---|---:|---:|---:|
@@ -331,11 +334,13 @@ claims are therefore restricted to the explicitly defined endpoint.
 
 The five-group score contains fixed stratum penalties and clipping at one.
 Removing clipping while retaining the penalties makes comparatively small
-allocation changes. Replacing group penalties with one pooled affine penalty
-changes USD 4,700--46,600 of the USD 15 million canonical allocation, depending on
-policy. The pooled score with its translated cap reproduces point PD exactly.
-The material channel is the interaction of stratum-specific penalties with
-binding constraints, not the conformal label itself.
+allocation changes: USD 4,685--46,609 across policies. Replacing group
+penalties with one pooled affine penalty changes USD 9.849--21.352 million of
+the USD 15 million canonical allocation. The pooled score with its translated
+cap reproduces point PD exactly. These distances are recomputed from the
+frozen exposure vectors. The material channel is the interaction of
+stratum-specific penalties with binding constraints, not the conformal label
+itself.
 
 ## F.2 Simulation design and result
 
@@ -383,6 +388,14 @@ supplement, official IJDS TeX, and generated evidence; runs unit, typing, lint,
 champion-integrity, and numerical-drift gates; compiles PDFs; and inspects their
 rendered pages.
 
+The frozen run summary also retains an operational status diagnostic that
+classified the literal status `Default` as resolved: 500,019 resolved and
+40,102 unresolved rows. The terminal endpoint used by every coverage and
+contrast calculation conservatively reclassifies those 174 rows as
+unresolved, yielding 499,845 resolved and 40,276 unresolved. The evidence
+builder now derives and asserts both inventories so the receipt distinction
+cannot be mistaken for an endpoint change.
+
 The protected historical champion and extraction manifest are separate legacy
 objects. Neither is executed or overwritten by this audit.
 
@@ -416,3 +429,8 @@ caps simplify operations; and earlier archive inspection prevents a pristine
 confirmatory interpretation. The paper's defensible result is correspondingly
 narrow: temporal coverage failure is robust here, while portfolio direction is
 not invariant to comparator stringency or binding operational constraints.
+
+The original stop rule terminated the superiority submission when neither
+9-of-9 condition survived. The audit interpretation in the paper was developed
+after observing that failure. It is therefore an explicitly retrospective
+secondary analysis, not a prespecified rescue criterion.
