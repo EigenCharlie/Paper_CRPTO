@@ -98,9 +98,14 @@ ijds-policy-challenger:
 
 ijds-historical-v7-replay: ijds-exact-alpha ijds-policy-challenger ijds-historical-v7-evidence
 
+# Active-capsule gate: rebuild paper-facing evidence and test only dependencies
+# declared by the four fixed-taxonomy V1/V2 DVC pointers.
+ijds-active-check: ijds-evidence publication-integrity
+    uv run pytest -q tests/test_ijds_anonymity.py tests/test_ijds_active_claim_sync.py tests/test_publication_targets.py tests/test_publication_integrity.py tests/test_submission_preview_layout.py tests/test_supplement_table_sync.py tests/test_scripts/test_compile_ijds_submission.py tests/test_experiments/test_ijds_fixed_taxonomy_c2.py
+
 # Active replay validates both fixed-taxonomy tags and rebuilds only the
 # paper-facing evidence. The expensive policy solve is never hidden here.
-ijds-active-replay: ijds-evidence
+ijds-active-replay: ijds-active-check
 
 paper-export: tables figures evidence journal-package ijds-evidence book
 

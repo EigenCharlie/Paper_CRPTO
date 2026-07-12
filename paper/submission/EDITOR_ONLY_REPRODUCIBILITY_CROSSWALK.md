@@ -55,8 +55,7 @@ uv run dvc pull data/processed/experiments/ijds_prefreeze/ijds-fixed-taxonomy-c2
 uv run dvc pull models/experiments/ijds_prefreeze/ijds-fixed-taxonomy-c2-2026-07-11-v1.dvc
 uv run dvc pull data/processed/experiments/ijds_prefreeze/ijds-fixed-taxonomy-c2-2026-07-11-v2.dvc
 uv run dvc pull models/experiments/ijds_prefreeze/ijds-fixed-taxonomy-c2-2026-07-11-v2.dvc
-just ijds-evidence
-just publication-integrity
+just ijds-active-check
 just paper-submission-official
 ```
 
@@ -65,3 +64,5 @@ Neither sequence invokes or writes a manifest-protected historical stage.
 editor requests it, must use a new run tag and fresh output paths.
 The maintainer separately runs `just submission-check`, whose strict champion
 gate requires every historical manifest artifact to be present.
+Historical P1/C1 tests likewise require their own DVC pointers; they are not
+dependencies of the four-pointer active capsule or its claims.

@@ -14,8 +14,9 @@ policy.
 - current cover letter, title page, disclosure draft, crosswalk, and checklist;
 - deterministic evidence and TeX builders;
 - official PDF within the 25-page pre-reference limit.
-- clean-clone reproduction of the locked environment, four DVC pulls,
-  evidence rebuild, publication-integrity gate, and official PDF build.
+- clean-clone reproduction of the locked environment, 52 files from four DVC
+  pointers, active scientific/publication tests, evidence rebuild, and the
+  official PDF build.
 
 ## Work Allowed Before Freeze
 
