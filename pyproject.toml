@@ -282,6 +282,8 @@ disable_error_code = ["import-not-found"]
 # Strict mode for the fully-annotated modules. Legacy code stays under the
 # global laxer config. Promote modules to this list once they pass cleanly.
 # Modules in this list have been made fully typed enough for strict checks.
+# Three V1 scientific sources remain under the global typed-body gate because
+# adding NumPy return casts would change their protocol-frozen source hashes.
 [[tool.mypy.overrides]]
 module = [
     "src.optimization.policy",
@@ -308,12 +310,21 @@ module = [
     "src.models.pd_model",
     "src.models.pd_pipeline",
     "src.models.venn_abers",
+    "src.models.binary_conformal_guardrail",
+    "src.data.outcome_observability",
+    "src.evaluation.comparator_audit",
+    "src.evaluation.comparator_transport_simulation",
+    "src.evaluation.maturity_safe_portfolio",
     "src.utils.pipeline_state",
     "src.utils.pipeline_topology",
     "src.utils.mlflow_tracing",
     "src.utils.optuna_storage",
     "src.utils.script_helpers",
     "scripts.build_ijds_calibration_selected_evidence",
+    "scripts.build_ijds_fixed_taxonomy_c2_evidence",
+    "scripts.build_ijds_submission_tex",
+    "scripts.check_publication_integrity",
+    "scripts.compile_ijds_submission",
     "scripts.experiments.ijds_policy_support",
     "scripts.experiments.run_ijds_calibration_selected_policy_challenger",
     "scripts.experiments.run_ijds_exact_alpha_grid_challenger",

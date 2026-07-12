@@ -1,66 +1,51 @@
 # IJDS Claim Audit Matrix
 
-Numeric authority is the pair
-`reports/crpto/ijds_maturity_safe_evidence.json` and
-`reports/crpto/ijds_comparator_stringency_evidence.json`. This matrix is an
-editorial crosswalk, not a second source of numbers.
+Numeric authority is `reports/crpto/ijds_fixed_taxonomy_c2_evidence.json`.
+This matrix controls wording; it is not an independent source of results.
 
-| Claim | Evidence | Reviewer risk | Required wording |
+| Claim | Evidence | Required wording | Forbidden inference |
 |---|---|---|---|
-| Candidate membership is status-independent. | Parent inventory and S0; 540,121 rows. | Contract age is mistaken for complete outcome resolution. | Membership uses issue date and term; unresolved states remain in every menu. |
-| Parent fitting and guardrail selection precede primary outcomes. | 2007--2012 blocks and 40-month gap. | "Locked" is read as pristine preregistration. | Code-locked retrospective parent, not a prospective trial. |
-| Comparator audit is post hoc. | Comparator protocol, tag, commit, and receipt. | Later tagging is presented as confirmation. | Designed after the parent result; tagged before the first successful persisted execution; falsification only. |
-| The conformal recipe uses an exact finite-sample rank on 2012H1. | Fit coverage 0.900448 and finite-sample ranks. | Exact rank is mistaken for coverage equal to 90% everywhere. | 90%-target split-Mondrian interval for the observed binary outcome under its assumptions. |
-| Primary candidate coverage deteriorates. | S2: [0.854923, 0.879692]; resolved 0.876313. | A 90% OOT claim survives by habit. | State the OOT miss before portfolio results. |
-| Guardrail selection is frozen but fragile. | Nine-policy 2012H2 grid; margin $1,238.33; selector LOMO 3/6. | Six development months are sold as stable optimization. | No OOT reselection or promotion of a fold winner. |
-| Same numeric thresholds are not comparable. | Proposition 1/S4; same-threshold point slack 0.054242. | `tau=0.17` is called matched. | Same-threshold point PD is a loose secondary diagnostic. |
-| Primary point comparator uses development risk. | `tau_p=0.06831339893217318`; CS1--CS2. | Match is presented as unique or causal. | Aligns mean development-funded point PD only. |
-| Optimized and evaluated payoffs agree. | Objective reconciliation and payoff module. | Standardized payoff is called investor return. | Expected `(1-p)r-p*LGD`; realized `(1-Y)r-Y*LGD`; not IRR, NPV, or cash-flow return. |
-| Unresolved outcomes are retained. | 11,386 primary candidates and common-outcome bounds. | Bounds are interpreted as confidence intervals. | Sharp partial-identification bounds over unrestricted binary completions. |
-| Same-threshold result is baseline-dependent. | Guardrail default `[-0.046275, -0.020093]`; payoff `[-$322,703.79, -$58,040.34]`. | Apparent default benefit is treated as intrinsic. | Report only to demonstrate loose-baseline confounding. |
-| Development matching reverses default. | C2: `[0.034431, 0.056287]`. | Retrospective difference is called causal. | Guardrail default is higher in this historical matched comparison. |
-| Guardrail loses matched realized payoff. | C2: `[-$506,587.03, -$295,967.17]`. | Dollar value is read as cash-flow or welfare loss. | Standardized-payoff contrast over $15M of monthly capital. |
-| Guardrail worsens matched funded miscoverage. | C2: `[0.027093, 0.046283]`. | Comparator repair is conflated with selected-set validity. | Neither policy has a selected-set guarantee. |
-| Selected-policy signs are stable under locked diagnostics. | Low/mean/high matches and 15 primary LOMO checks. | Diagnostics are called independent hypothesis tests. | Locked directional sensitivity, not sampling inference. |
-| Family result is heterogeneous. | Complete 3x3 census: payoff 7/9, default 7/9, miscoverage 9/9. | Selected result is generalized to every policy. | The 9-of-9 family gate fails; no OOT winner. |
-| Mechanism is comparator-specific. | CS9--CS10; group-0 0.611338 versus matched 0.499786. | Old composition benefit is presented as a theorem. | Both aligned policies shift toward low risk; guardrail has larger within-group penalties. |
-| Four exact propositions define the theory boundary. | Main theory; Supplement S1--S4. | Algebra is oversold as selection-valid or causal theory. | Nesting, binary geometry, sharp bounds, and transport are exact only for declared objects. |
-| Censored extension is inconclusive. | S2/CS12; 23.4%--24.7% unresolved exposure. | Extension is omitted or promoted. | Stress evidence only; no directional claim. |
-| Reproducibility supports evidence quality. | Two clean tagged runs, receipts, DVC, hashes, idempotent builders, tests. | Tooling is presented as the novelty. | Lead with comparator non-invariance and decision-validity findings. |
+| Candidate membership is status independent | 540,121 rows across six blocks | Membership uses issue date, term, and origination fields; unresolved rows remain | A resolved-only cohort |
+| Fitting labels respect availability | Retention 0.997648, 0.998298, 0.998731 | Labels must be observable by the March 31, 2016 cutoff | Contract age guarantees resolution |
+| Taxonomy precedes residual calibration | 2011 score edges; 2012H1 residual ranks | Fixed score taxonomy with availability-safe residual calibration | Adaptive OOT grouping |
+| No policy is selected | All nine tau-gamma policies are co-primary | Complete policy-family census | A champion or representative winner |
+| Fit coverage meets target | Seed-42 coverage 0.900388 | Empirical fit-block coverage | Exact 0.90 coverage in every block |
+| OOT coverage misses target | Five-group all-candidate [0.854714, 0.879647] | Temporal candidate coverage failure | General invalidity of conformal prediction |
+| Coverage failure survives taxonomy choice | Highest OOT upper endpoint 0.881942 across 1/2/5/10 groups | Robust to the four fixed taxonomies tested | Robust to all conformal recipes |
+| Same cap is not neutral | C0 payoff positive 9/9; default negative 9/9 | Positive control for feasible-set nesting | Incremental value of conformal uncertainty |
+| C2 moment matching is exact | Maximum residual below 4.17e-17 | Matches funded point-PD moment only | Equal feasible sets or unique counterfactual |
+| C2 results are heterogeneous | Payoff worse 7/9; default higher 1/9; miscoverage higher 8/9 | Report counts and indeterminate intervals | Universal benefit or harm |
+| Comparator direction is unidentified | 27/27 finite multiverse envelopes contain zero | No invariant sign over the declared comparators | Invariance over every possible baseline |
+| Operational constraints matter | 180 seed-purpose cells with mixed signs | Complete sensitivity, no selected cell | Stable deployment recommendation |
+| Unresolved outcomes are retained | 11,551 primary and 28,725 extension rows | Sharp unrestricted-binary partial-identification bounds | Confidence intervals or missing-at-random identification |
+| Payoff is coherent but stylized | Expected `(1-p)r-p*LGD`; realized `(1-Y)r-Y*LGD` | Standardized payoff | IRR, NPV, welfare, or full cash-flow return |
+| Simulation supports mechanisms | 800 repetitions over four shifts | Controlled mechanism check | Structural model of Lending Club |
+| Study is reproducible | V1 outcome-free freeze, V2 vectorized evaluation, 41 generated files | Code-locked retrospective audit of a previously inspected archive | Preregistration, prospective confirmation, or causal evidence |
 
 ## Required Headline Results
 
 - universe: `540,121`;
-- guardrail: `q=0.75p+0.25u`, `tau_q=0.17`;
-- primary point comparator: `tau_p=0.06831339893217318`;
-- primary candidate coverage: `[0.854923, 0.879692]`;
-- matched expected-payoff difference: `+$8,479.18`;
-- matched realized-payoff difference:
-  `[-$506,587.03, -$295,967.17]`;
-- matched default difference: `[0.034431, 0.056287]`;
-- matched miscoverage difference: `[0.027093, 0.046283]`;
-- same-threshold point cap slack: `0.054242`;
-- family joint direction: `7/9`, not `9/9`;
-- selected guardrail group-0 exposure: `0.611338`;
-- development-matched point group-0 exposure: `0.499786`.
+- conformal-fit coverage: `0.900388`;
+- canonical primary coverage: `[0.854714, 0.879647]`;
+- canonical C2 counts: payoff worse `7/9`, default higher `1/9`,
+  miscoverage higher `8/9`;
+- seed-purpose census: `180` cells;
+- finite comparator envelopes: `27/27` indeterminate;
+- exact C2 matching residual: below `4.17e-17`;
+- purpose caps 0.20, 0.25, and 0.30 bind in every guardrail-month.
 
 ## Do Not Claim
 
-- confirmatory, preregistered, prospective, or causal comparator evidence;
+- a selected policy, winner, or deployment recommendation;
 - universal economic or statistical dominance;
-- a unique or theoretically optimal matching rule;
-- a 9-of-9 family direction or OOT policy winner;
+- comparator-invariant direction beyond the declared finite set;
 - selected-set conformal validity;
 - a latent-PD confidence interval;
-- a distributionally robust or Markov certificate;
+- causal, prospective, confirmatory, or preregistered evidence;
+- a Markov or deterministic tail certificate;
 - cash-flow return, IRR, NPV, or welfare;
-- legal fair-lending certification;
-- live post-2020 performance; or
-- that A1--A40, Prosper, or Freddie/Mendeley artifacts validate the active
-  paper.
+- legal fair-lending certification; or
+- live post-2020 performance.
 
-## Historical Firewall
-
-Compact-v7 and its positive-return headline remain NO-GO provenance. A35--A40
-stay immutable for forensic replay, but none may appear as active evidence in
-the body, supplement, official TeX, cover letter, title page, or disclosure.
+Historical compact-v7, pool93, selected-policy, Prosper, Freddie, and A1--A40
+materials are recoverable from Git/DVC but are not part of the active capsule.

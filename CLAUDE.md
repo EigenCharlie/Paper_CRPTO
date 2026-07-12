@@ -1,18 +1,20 @@
 # CLAUDE.md — Contexto para Claude Code en Paper_CRPTO
 
-## Scientific status override - 2026-07-10
+## Scientific status override - 2026-07-11
 
-The active IJDS paper combines the clean, tagged maturity-safe bounded protocol
-v2 with the separately tagged, explicitly post hoc comparator-stringency
-audit. Its source of truth is `docs/research/active_claims_2026-07-10.md`. The
-compact v7 claim is frozen historical provenance and remains NO-GO. Before
-paper work, read the active registry, the locked comparator protocol, its
-`ijds_comparator_stringency_results_2026-07-10.md` post-run audit,
-`ijds_state_of_art_audit_2026-07-10.md`, and
-`ijds_three_front_reconstruction_2026-07-10.md`, then use
-`ijds_final_two_pass_audit_2026-07-10.md` for the final recovery disposition and
-stop rule. Never overwrite either active run, the historical champion, or
-manifest-protected artifacts.
+The only active IJDS source of truth is
+`docs/research/active_claims_2026-07-11.md`. The paper is a fixed-taxonomy,
+comparator-multiverse audit. It does not select a policy and does not claim a
+universal guardrail direction. The outcome-free V1 freeze is imported by the
+clean tagged V2 evaluator through exact SHA-256 lineage; the only active
+paper-facing manifest is
+`reports/crpto/ijds_fixed_taxonomy_c2_evidence.json`.
+
+The superiority submission is NO-GO. The IJDS audit narrative is GO: temporal
+coverage failure is stable, while decision conclusions depend on comparator
+stringency and binding operational constraints. Selected-policy studies,
+compact-v7, pool93, Prosper/Freddie, and A1--A40 are historical provenance only. Never overwrite
+the V1/V2 audit runs, the historical champion, or manifest-protected artifacts.
 
 ## Quién soy y qué es este proyecto
 
@@ -59,31 +61,29 @@ congelados como procedencia histórica. El body IJDS activo usa un experimento
 nuevo, aislado y DVC-tracked; no regenera ni sobreescribe ningún artefacto
 upstream protegido.
 
-**Body claim activo maturity-safe v2 + comparator audit:**
+**Body claim activo - fixed-taxonomy comparator multiverse:**
 
 | Campo | Valor |
 | --- | --- |
-| Run tag | `champion-reopen-2026-07-10__maturity-safe-locked-bounded-h1h2-v2` |
-| Comparator run | `champion-reopen-2026-07-10__maturity-safe-v2-comparator-stringency-audit-v1` |
-| Universo | `540,121` préstamos de 36 meses, membership independiente del status |
-| Cronología | fit/selección termina 2012; 15 decisiones mensuales 2016-04--2017-06 |
-| Conformal | intervalo binario Mondrian con target `90%` y rango finito exacto; no es CI de PD latente |
-| Política | `q=0.75p+0.25u`, `tau=0.17`; payoff coherente `(1-p)r-p*LGD` |
-| Cobertura candidata OOT | `[0.854923, 0.879692]` |
-| Comparator point PD | `tau=0.068313`, matched al mean funded PD de 2012H2 |
-| Diferencia de payoff vs matched point PD | `[-$506,587.03, -$295,967.17]` |
-| Diferencia de default vs matched point PD | `[0.034431, 0.056287]` |
-| Diferencia de miscoverage vs matched point PD | `[0.027093, 0.046283]` |
-| Mecanismo | same numeric `tau` no iguala stringency; la ventaja de default se invierte con development matching |
-| Evidencia | manifests `ijds_maturity_safe_evidence.json` e `ijds_comparator_stringency_evidence.json` |
+| Outcome-free run | `ijds-fixed-taxonomy-c2-2026-07-11-v1` |
+| Reconciled run | `ijds-fixed-taxonomy-c2-2026-07-11-v2` |
+| Universo | `540,121` prestamos de 36 meses; membership independiente del status |
+| Cronologia | fit termina 2012H1; 15 decisiones mensuales 2016-04--2017-06 |
+| Conformal | bordes de score fijos en 2011 y residuos 2012H1; no es CI de PD latente |
+| Politicas | nueve guardrails co-primarios; sin selector ni winner |
+| Cobertura candidata OOT | `[0.854714, 0.879647]` para cinco strata |
+| Comparator primario | C2 contemporaneo, matched al funded point-PD de cada guardrail/mes |
+| C2 payoff | guardrail peor en `7/9`; `2/9` indeterminado |
+| C2 default | guardrail mayor en `1/9`; `8/9` indeterminado |
+| C2 miscoverage | guardrail mayor en `8/9`; `1/9` indeterminado |
+| Multiverse | `27/27` envelopes policy-by-metric cruzan cero |
+| Evidencia | `reports/crpto/ijds_fixed_taxonomy_c2_evidence.json` |
 
-El claim es una falsificación metodológica: el guardrail parecía reducir
-default contra point PD con el mismo `tau=0.17`, pero ese cap point era no
-vinculante. Contra el comparador alineado por riesgo de desarrollo, el
-guardrail pierde payoff realizado y empeora default y miscoverage. La auditoría
-de comparadores es post hoc, no causal, prospectiva ni confirmatoria; el censo
-familiar es 7/9, no 9/9. La autoridad completa es
-`docs/research/active_claims_2026-07-10.md`.
+El claim activo es una falsificacion metodologica: la falla temporal de
+cobertura es estable, pero el signo de los resultados de portafolio depende
+del comparador y de restricciones operacionales vinculantes. No existe un
+winner ni una direccion universal. La autoridad completa es
+`docs/research/active_claims_2026-07-11.md`.
 
 **Body claim histórico v7:** NO-GO y replay-only. Sus A35--A40, retorno
 positivo, endpoint y sensibilidades no pueden reaparecer en superficies
@@ -117,9 +117,11 @@ Artefactos históricos congelados cuyos hashes están en
 - `models/experiments/champion_reopen/...__pool93__ijds-certificate-semantics-v2/portfolio/pool93_point_pd_baseline_audit.json`
 - `EXTRACTION_MANIFEST.json`
 
-La sincronía del claim maturity-safe v2 y del comparator audit con body,
-supplement y TeX la vigilan `tests/test_ijds_active_claim_sync.py` y
-`tests/test_ijds_comparator_evidence.py`.
+La sincronia del claim activo con body, supplement y TeX la vigilan el builder
+`scripts/build_ijds_fixed_taxonomy_c2_evidence.py`, el manifest activo y
+`scripts/check_publication_integrity.py`. El TeX oficial es generado desde
+`paper/CRPTO_ijds.qmd` por `scripts/build_ijds_submission_tex.py`; no se edita
+manualmente.
 
 Stages DVC que regeneran estos artefactos (`crpto.pd.champion`, `crpto.conformal.intervals`, `crpto.conformal.validation`, `crpto.portfolio.optimization`, `crpto.portfolio.bound_exact_eval`) **no se ejecutan** sin permiso. Validar con `crpto-validate-champion` antes de cualquier merge.
 

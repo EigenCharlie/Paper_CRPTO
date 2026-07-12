@@ -16,8 +16,7 @@ por convertir incertidumbre conformal en una decisión de portafolio auditable**
 El venue está decidido: el manuscrito se escribe para **INFORMS Journal on Data
 Science (IJDS)**, cuyo encaje es directo --- data science reproducible al
 servicio de una decisión de crédito --- y queda versionado en
-`configs/crpto_publication_targets.yaml` y desarrollado en
-`docs/research/crpto_publication_strategy_2026-05-12.md`. Lo que IJDS pide ya
+`configs/crpto_publication_targets.yaml`. Lo que IJDS pide ya
 existe en el proyecto: pipeline reproducible (DVC/DagsHub/MLflow, companion
 Quarto, cadena PD -> CP -> LP), tablas y figuras regenerables, y una
 contribución de decisión auditable. El cuerpo activo ya vive en

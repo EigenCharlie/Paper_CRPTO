@@ -17,16 +17,11 @@ from src.optimization.certificate_semantics import (
 ROOT = Path(__file__).resolve().parents[2]
 
 
-def test_ijds_alpha_grid_matches_profile_and_claim_registry() -> None:
+def test_historical_ijds_alpha_grid_matches_its_profile() -> None:
     profile_path = ROOT / "configs" / "profiles" / "search_portfolio_pool93_stage1_claim_26_06.yaml"
     profile = yaml.safe_load(profile_path.read_text(encoding="utf-8"))
-    claims = (ROOT / "docs" / "research" / "active_claims_2026-07-04.md").read_text(
-        encoding="utf-8"
-    )
-    claim_grid = ", ".join(f"{alpha:.2f}" for alpha in IJDS_DECLARED_ALPHA_GRID)
-
     assert profile["grids"]["alpha_grid"] == IJDS_DECLARED_ALPHA_GRID_CSV
-    assert f"`A = {{{claim_grid}}}`" in claims
+    assert IJDS_DECLARED_ALPHA_GRID == (0.01, 0.03, 0.05, 0.07, 0.10, 0.12, 0.15, 0.20)
 
 
 def test_linear_blend_certificate_decomposition() -> None:

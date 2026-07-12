@@ -1,0 +1,10 @@
+paired_policy_id,risk_tolerance,gamma
+linear-001,0.15,0.25
+linear-002,0.15,0.5
+linear-003,0.15,0.75
+linear-004,0.17,0.25
+linear-005,0.17,0.5
+linear-006,0.17,0.75
+linear-007,0.19,0.25
+linear-008,0.19,0.5
+linear-009,0.19,0.75

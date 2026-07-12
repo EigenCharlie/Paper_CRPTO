@@ -1,0 +1,582 @@
+{
+  "schema_version": "2026-07-11.2",
+  "status": "complete_reconciled_paper_evidence",
+  "run_tag": "ijds-fixed-taxonomy-c2-2026-07-11-v2",
+  "protocol_tag": "protocol/ijds-fixed-taxonomy-c2-2026-07-11-v2",
+  "protocol_commit": "a88839dfe14875fca2c02c43725291bc49d98611",
+  "outcome_free_source": {
+    "source_run_tag": "ijds-fixed-taxonomy-c2-2026-07-11-v1",
+    "source_protocol_tag": "protocol/ijds-fixed-taxonomy-c2-2026-07-11-v1",
+    "source_protocol_commit": "4835cc18a0117a695f89f9da70a4e3af97663a27",
+    "source_protocol_freeze": {
+      "path": "models/experiments/ijds_prefreeze/ijds-fixed-taxonomy-c2-2026-07-11-v1/protocol_freeze.json",
+      "bytes": 15288,
+      "sha256": "93690082880ef4ff1375dcd5b26d2df79f80e6ebe09a6d83b7fd99a9abb4cfae"
+    },
+    "source_implementation_provenance": {
+      "source_files": {
+        "configs/experiments/ijds_fixed_taxonomy_c2_2026-07-11.yaml": {
+          "path": "configs/experiments/ijds_fixed_taxonomy_c2_2026-07-11.yaml",
+          "bytes": 6215,
+          "sha256": "c07660dbf0a0a74e1ad9903c1cfdcb9701621b3c244ad434682fdff8514c82db"
+        },
+        "scripts/experiments/run_ijds_fixed_taxonomy_c2.py": {
+          "path": "scripts/experiments/run_ijds_fixed_taxonomy_c2.py",
+          "bytes": 64836,
+          "sha256": "85f17fc8a893196434c9e3c7e45917233bc87b0298c01af122d014e20e21a732"
+        },
+        "src/data/outcome_observability.py": {
+          "path": "src/data/outcome_observability.py",
+          "bytes": 20950,
+          "sha256": "0e7776147a01a6835b0400fed018dec81963a308003a719c58f6c39d23c12c80"
+        },
+        "src/models/binary_conformal_guardrail.py": {
+          "path": "src/models/binary_conformal_guardrail.py",
+          "bytes": 6284,
+          "sha256": "407c553ca1f7f1cf3da55105d3cd262e956e2417b3981cbe2757e0ab849a2a88"
+        },
+        "src/models/maturity_safe_pd.py": {
+          "path": "src/models/maturity_safe_pd.py",
+          "bytes": 4875,
+          "sha256": "699f082f0e403369a933b8e2631eed73be19196a8bf9392b4cb7761e0990ad27"
+        },
+        "src/evaluation/maturity_safe_portfolio.py": {
+          "path": "src/evaluation/maturity_safe_portfolio.py",
+          "bytes": 21671,
+          "sha256": "bbc1b8dbfb4fe91ddfe812ffe1b9d3567d1499a92f69f41b9810c49623b005e2"
+        },
+        "src/evaluation/comparator_audit.py": {
+          "path": "src/evaluation/comparator_audit.py",
+          "bytes": 11739,
+          "sha256": "e38b80fb493e5d1087398c9be029df651ae124ba03983580486362c9fe17ef78"
+        },
+        "src/evaluation/comparator_transport_simulation.py": {
+          "path": "src/evaluation/comparator_transport_simulation.py",
+          "bytes": 16384,
+          "sha256": "25a2bd4acc2a8c5e0f31e640f75bc664dc4ec83e4aca654ecb65560c071473da"
+        },
+        "src/evaluation/policy_contrast_bounds.py": {
+          "path": "src/evaluation/policy_contrast_bounds.py",
+          "bytes": 5514,
+          "sha256": "e0ad4a8895b430223ce6d7ab6b068f25247606333d363a621f269e9c60015b42"
+        },
+        "src/evaluation/standardized_credit_payoff.py": {
+          "path": "src/evaluation/standardized_credit_payoff.py",
+          "bytes": 3589,
+          "sha256": "5993fd9f5899a08090cd26ddb9120618e8ae77d0200944be7c41479652fef98c"
+        },
+        "src/evaluation/cashflow_payoff.py": {
+          "path": "src/evaluation/cashflow_payoff.py",
+          "bytes": 2421,
+          "sha256": "fc4bdacac852bdf509b7e99eac46833496e79cc1e68c9301380ad02a80b77868"
+        },
+        "src/optimization/policy_evaluation.py": {
+          "path": "src/optimization/policy_evaluation.py",
+          "bytes": 4178,
+          "sha256": "c25056b2b4a7f409d7d239e2f99957c0cc0a143150f4261bbde9a604db1c84b4"
+        },
+        "src/optimization/portfolio_model.py": {
+          "path": "src/optimization/portfolio_model.py",
+          "bytes": 36442,
+          "sha256": "0e53dad28e3555ec6c94266a25c73da5615a0229f9f480c6cb002f94204d6894"
+        }
+      },
+      "hash_algorithm": "sha256"
+    },
+    "reuse_scope": "outcome_free_predictions_models_and_allocations_only"
+  },
+  "claim_boundary": {
+    "previously_inspected_archive": true,
+    "confirmatory": false,
+    "prospective": false,
+    "causal": false,
+    "selected_set_validity": false,
+    "all_nine_policies_primary": true
+  },
+  "headline": {
+    "conformal_fit_coverage_seed_42": 0.9003880117741504,
+    "primary_all_candidate_coverage": [
+      0.8547135769057285,
+      0.8796465812305978
+    ],
+    "canonical_c2_direction_counts": {
+      "payoff_worse": 7,
+      "default_higher": 1,
+      "miscoverage_higher": 8,
+      "policies": 9
+    },
+    "seed_cap_c2_direction_counts": {
+      "payoff": {
+        "indeterminate": 84,
+        "negative": 59,
+        "positive": 37
+      },
+      "default": {
+        "indeterminate": 97,
+        "negative": 50,
+        "positive": 33
+      },
+      "miscoverage": {
+        "indeterminate": 83,
+        "positive": 64,
+        "negative": 33
+      }
+    },
+    "comparator_multiverse_envelopes_indeterminate": 27,
+    "comparator_multiverse_envelopes_total": 27,
+    "c2_max_funded_pd_match_residual": 4.163336342344337e-17,
+    "purpose_caps_below_one_bind_every_guardrail_month": true
+  },
+  "decision": {
+    "universal_guardrail_direction_allowed": false,
+    "policy_winner_allowed": false,
+    "selected_set_validity_allowed": false,
+    "current_superiority_submission_go": false,
+    "ijds_audit_narrative_go": true,
+    "audit_thesis": "Temporal coverage failure is robust, but portfolio conclusions are not invariant to comparator stringency or binding operational constraints."
+  },
+  "canonical_c2": [
+    {
+      "paired_policy_id": "linear-001",
+      "comparator_rule": "c2_contemporaneous",
+      "comparator": "C2: contemporaneous funded-PD match",
+      "realized_payoff_difference_lower": -7379.684954467528,
+      "realized_payoff_difference_upper": 89593.94357943264,
+      "weighted_default_difference_lower": -0.009345582406563115,
+      "weighted_default_difference_upper": 0.0003467379881095863,
+      "weighted_miscoverage_difference_lower": -0.0017304274889925666,
+      "weighted_miscoverage_difference_upper": 0.006761892905680135,
+      "undiscounted_snapshot_cash_yield_difference": 0.0015905933587840246,
+      "payoff_direction": "indeterminate",
+      "default_direction": "indeterminate",
+      "miscoverage_direction": "indeterminate"
+    },
+    {
+      "paired_policy_id": "linear-002",
+      "comparator_rule": "c2_contemporaneous",
+      "comparator": "C2: contemporaneous funded-PD match",
+      "realized_payoff_difference_lower": -170958.0506816462,
+      "realized_payoff_difference_upper": -23355.645278734082,
+      "weighted_default_difference_lower": -0.0016769603556563324,
+      "weighted_default_difference_upper": 0.013084381733902884,
+      "weighted_miscoverage_difference_lower": 0.007470194538271021,
+      "weighted_miscoverage_difference_upper": 0.02064486996116357,
+      "undiscounted_snapshot_cash_yield_difference": -0.004716107435517855,
+      "payoff_direction": "negative",
+      "default_direction": "indeterminate",
+      "miscoverage_direction": "positive"
+    },
+    {
+      "paired_policy_id": "linear-003",
+      "comparator_rule": "c2_contemporaneous",
+      "comparator": "C2: contemporaneous funded-PD match",
+      "realized_payoff_difference_lower": -195811.88184517133,
+      "realized_payoff_difference_upper": -26690.686845171324,
+      "weighted_default_difference_lower": -0.0021584886029494196,
+      "weighted_default_difference_upper": 0.01508651139705058,
+      "weighted_miscoverage_difference_lower": 0.01210367712875568,
+      "weighted_miscoverage_difference_upper": 0.027095343795422347,
+      "undiscounted_snapshot_cash_yield_difference": -0.006467524823130753,
+      "payoff_direction": "negative",
+      "default_direction": "indeterminate",
+      "miscoverage_direction": "positive"
+    },
+    {
+      "paired_policy_id": "linear-004",
+      "comparator_rule": "c2_contemporaneous",
+      "comparator": "C2: contemporaneous funded-PD match",
+      "realized_payoff_difference_lower": -45995.41979403753,
+      "realized_payoff_difference_upper": 7034.364639026142,
+      "weighted_default_difference_lower": -0.0015181158115019997,
+      "weighted_default_difference_upper": 0.003815942541720797,
+      "weighted_miscoverage_difference_lower": 0.001486924645727316,
+      "weighted_miscoverage_difference_upper": 0.005620982998950114,
+      "undiscounted_snapshot_cash_yield_difference": 0.005680310888014434,
+      "payoff_direction": "indeterminate",
+      "default_direction": "indeterminate",
+      "miscoverage_direction": "positive"
+    },
+    {
+      "paired_policy_id": "linear-005",
+      "comparator_rule": "c2_contemporaneous",
+      "comparator": "C2: contemporaneous funded-PD match",
+      "realized_payoff_difference_lower": -135905.18562966606,
+      "realized_payoff_difference_upper": -6936.449301627916,
+      "weighted_default_difference_lower": -0.0031702467880402024,
+      "weighted_default_difference_upper": 0.009673112851249166,
+      "weighted_miscoverage_difference_lower": 0.006988479034400092,
+      "weighted_miscoverage_difference_upper": 0.018245172007022793,
+      "undiscounted_snapshot_cash_yield_difference": -0.005609262380946493,
+      "payoff_direction": "negative",
+      "default_direction": "indeterminate",
+      "miscoverage_direction": "positive"
+    },
+    {
+      "paired_policy_id": "linear-006",
+      "comparator_rule": "c2_contemporaneous",
+      "comparator": "C2: contemporaneous funded-PD match",
+      "realized_payoff_difference_lower": -182723.41445994013,
+      "realized_payoff_difference_upper": -30426.929933036823,
+      "weighted_default_difference_lower": -0.0011389612644556926,
+      "weighted_default_difference_upper": 0.014268016844768722,
+      "weighted_miscoverage_difference_lower": 0.011468052089149555,
+      "weighted_miscoverage_difference_upper": 0.025099381976590555,
+      "undiscounted_snapshot_cash_yield_difference": -0.00693587761403109,
+      "payoff_direction": "negative",
+      "default_direction": "indeterminate",
+      "miscoverage_direction": "positive"
+    },
+    {
+      "paired_policy_id": "linear-007",
+      "comparator_rule": "c2_contemporaneous",
+      "comparator": "C2: contemporaneous funded-PD match",
+      "realized_payoff_difference_lower": -43302.66153504162,
+      "realized_payoff_difference_upper": -3211.23403504162,
+      "weighted_default_difference_lower": -0.0008452451667670859,
+      "weighted_default_difference_upper": 0.0030080881665662494,
+      "weighted_miscoverage_difference_lower": 3.319136982313578e-05,
+      "weighted_miscoverage_difference_upper": 0.00310152470315647,
+      "undiscounted_snapshot_cash_yield_difference": 0.0005103002290421724,
+      "payoff_direction": "negative",
+      "default_direction": "indeterminate",
+      "miscoverage_direction": "positive"
+    },
+    {
+      "paired_policy_id": "linear-008",
+      "comparator_rule": "c2_contemporaneous",
+      "comparator": "C2: contemporaneous funded-PD match",
+      "realized_payoff_difference_lower": -157069.75348556685,
+      "realized_payoff_difference_upper": -25322.43860323287,
+      "weighted_default_difference_lower": -0.0005188772361298466,
+      "weighted_default_difference_upper": 0.012567045371529268,
+      "weighted_miscoverage_difference_lower": 0.007330023613209583,
+      "weighted_miscoverage_difference_upper": 0.01882927955420203,
+      "undiscounted_snapshot_cash_yield_difference": -0.005092064824513194,
+      "payoff_direction": "negative",
+      "default_direction": "indeterminate",
+      "miscoverage_direction": "positive"
+    },
+    {
+      "paired_policy_id": "linear-009",
+      "comparator_rule": "c2_contemporaneous",
+      "comparator": "C2: contemporaneous funded-PD match",
+      "realized_payoff_difference_lower": -218918.9543599012,
+      "realized_payoff_difference_upper": -74357.55685990123,
+      "weighted_default_difference_lower": 0.0028877932856407086,
+      "weighted_default_difference_upper": 0.017311126618974042,
+      "weighted_miscoverage_difference_lower": 0.013609654496699496,
+      "weighted_miscoverage_difference_upper": 0.026446321163366163,
+      "undiscounted_snapshot_cash_yield_difference": -0.008361375481858481,
+      "payoff_direction": "negative",
+      "default_direction": "positive",
+      "miscoverage_direction": "positive"
+    }
+  ],
+  "direction_summary": [
+    {
+      "comparator_rule": "c0_same_numeric_cap",
+      "comparator": "C0: same numeric cap",
+      "policy_pairs": 9,
+      "payoff_negative": 0,
+      "payoff_positive": 9,
+      "payoff_indeterminate": 0,
+      "default_negative": 9,
+      "default_positive": 0,
+      "default_indeterminate": 0,
+      "miscoverage_negative": 8,
+      "miscoverage_positive": 0,
+      "miscoverage_indeterminate": 1
+    },
+    {
+      "comparator_rule": "c1_development_fixed",
+      "comparator": "C1: fixed development cap",
+      "policy_pairs": 9,
+      "payoff_negative": 5,
+      "payoff_positive": 2,
+      "payoff_indeterminate": 2,
+      "default_negative": 2,
+      "default_positive": 2,
+      "default_indeterminate": 5,
+      "miscoverage_negative": 1,
+      "miscoverage_positive": 7,
+      "miscoverage_indeterminate": 1
+    },
+    {
+      "comparator_rule": "c2_contemporaneous",
+      "comparator": "C2: contemporaneous funded-PD match",
+      "policy_pairs": 9,
+      "payoff_negative": 7,
+      "payoff_positive": 0,
+      "payoff_indeterminate": 2,
+      "default_negative": 0,
+      "default_positive": 1,
+      "default_indeterminate": 8,
+      "miscoverage_negative": 0,
+      "miscoverage_positive": 8,
+      "miscoverage_indeterminate": 1
+    },
+    {
+      "comparator_rule": "finite_multiverse_envelope",
+      "comparator": "Envelope over C0, C1, C2, and 29 point caps",
+      "policy_pairs": 9,
+      "payoff_negative": 0,
+      "payoff_positive": 0,
+      "payoff_indeterminate": 9,
+      "default_negative": 0,
+      "default_positive": 0,
+      "default_indeterminate": 9,
+      "miscoverage_negative": 0,
+      "miscoverage_positive": 0,
+      "miscoverage_indeterminate": 9
+    }
+  ],
+  "source_artifacts": {
+    "protocol_freeze": {
+      "path": "models/experiments/ijds_prefreeze/ijds-fixed-taxonomy-c2-2026-07-11-v2/protocol_freeze.json",
+      "bytes": 22925,
+      "sha256": "f6489dd0d90bb7e8128ba4084ee8124024afa764ab097295db87ee87c6e0d40e"
+    },
+    "monthly_evaluation": {
+      "path": "data/processed/experiments/ijds_prefreeze/ijds-fixed-taxonomy-c2-2026-07-11-v2/evaluation/monthly_evaluation.parquet",
+      "bytes": 829351,
+      "sha256": "39864e63b5f0c86d35a50ad9c9a59447f8cb9b7874469983252ccc752688d8a6"
+    },
+    "funded_allocations_with_outcomes": {
+      "path": "data/processed/experiments/ijds_prefreeze/ijds-fixed-taxonomy-c2-2026-07-11-v2/evaluation/funded_allocations_with_outcomes.parquet",
+      "bytes": 15010943,
+      "sha256": "7022a91cb381c80269354c7002b46623bc1309f2586841a223e023e2cc07faeb"
+    },
+    "aggregate_evaluation": {
+      "path": "data/processed/experiments/ijds_prefreeze/ijds-fixed-taxonomy-c2-2026-07-11-v2/evaluation/aggregate_evaluation.parquet",
+      "bytes": 67577,
+      "sha256": "86ba70d74578672e57e80f33af0922ddfa9a0284f77c4969aae37632f768fd16"
+    },
+    "paired_sharp_contrasts": {
+      "path": "data/processed/experiments/ijds_prefreeze/ijds-fixed-taxonomy-c2-2026-07-11-v2/evaluation/paired_sharp_contrasts.parquet",
+      "bytes": 71669,
+      "sha256": "fb47ac7e0d778f0f31ebced82536d725a6c0502e6537aaef1fb2034943b23467"
+    },
+    "temporal_candidate_coverage": {
+      "path": "data/processed/experiments/ijds_prefreeze/ijds-fixed-taxonomy-c2-2026-07-11-v2/evaluation/temporal_candidate_coverage.parquet",
+      "bytes": 63745,
+      "sha256": "26a52c214749f0b0236773d5255c1d07855a54a6aca08de8f41570eefb859189"
+    },
+    "comparator_transport_simulation": {
+      "path": "data/processed/experiments/ijds_prefreeze/ijds-fixed-taxonomy-c2-2026-07-11-v2/simulation/comparator_transport_repetitions.parquet",
+      "bytes": 157186,
+      "sha256": "c0a9533c4f495fd9b1fe593b23d1f2a56929e3b39dbb52fe4bbafcb2956b0b76"
+    },
+    "comparator_transport_simulation_summary": {
+      "path": "data/processed/experiments/ijds_prefreeze/ijds-fixed-taxonomy-c2-2026-07-11-v2/simulation/comparator_transport_summary.parquet",
+      "bytes": 8560,
+      "sha256": "ea19f41168e5e0d418760d674539ff4112efdc69697a20dec24b6bcf919473e5"
+    }
+  },
+  "publication_artifacts": {
+    "reports/crpto/tables/crpto_ijds_ft_table1_policy_grid.csv": {
+      "path": "reports/crpto/tables/crpto_ijds_ft_table1_policy_grid.csv",
+      "bytes": 224,
+      "sha256": "e76804d35caddd5589a607854e6c06b98dffcda3bca6f9baa08d9edb16ebf62f"
+    },
+    "reports/crpto/tables/crpto_ijds_ft_table1_policy_grid.tex": {
+      "path": "reports/crpto/tables/crpto_ijds_ft_table1_policy_grid.tex",
+      "bytes": 437,
+      "sha256": "236cf579cd0b5a12389b5812e435fa6d6fcc75c99771c86c7b807178505bfbc2"
+    },
+    "reports/crpto/tables/crpto_ijds_ft_table1_policy_grid.md": {
+      "path": "reports/crpto/tables/crpto_ijds_ft_table1_policy_grid.md",
+      "bytes": 583,
+      "sha256": "3a9f0a62a0f32b3a317e39e914020c0ecdd7fde601ae5e34439cdead3ba9b57a"
+    },
+    "reports/crpto/tables/crpto_ijds_ft_table2_coverage.csv": {
+      "path": "reports/crpto/tables/crpto_ijds_ft_table2_coverage.csv",
+      "bytes": 1773,
+      "sha256": "0853e6e5ab2cfd307cdd98cc6015a6dc9c4ba24d78317fa456a2530e75e716b3"
+    },
+    "reports/crpto/tables/crpto_ijds_ft_table2_coverage.tex": {
+      "path": "reports/crpto/tables/crpto_ijds_ft_table2_coverage.tex",
+      "bytes": 1544,
+      "sha256": "d0a8a4d044829a4cd80dcfb83ef990395f08f17db6c7f548f7b1ce2b7d5600c8"
+    },
+    "reports/crpto/tables/crpto_ijds_ft_table2_coverage.md": {
+      "path": "reports/crpto/tables/crpto_ijds_ft_table2_coverage.md",
+      "bytes": 3374,
+      "sha256": "579f02b691aec5c8a29374715ca243626d108d4ac2c302c0a5a2375430d727f5"
+    },
+    "reports/crpto/tables/crpto_ijds_ft_table3_comparator_contrasts.csv": {
+      "path": "reports/crpto/tables/crpto_ijds_ft_table3_comparator_contrasts.csv",
+      "bytes": 6677,
+      "sha256": "262632e7705f6981bc37e57da9e43e66ba9a5775d862308505cd10500250c971"
+    },
+    "reports/crpto/tables/crpto_ijds_ft_table3_comparator_contrasts.tex": {
+      "path": "reports/crpto/tables/crpto_ijds_ft_table3_comparator_contrasts.tex",
+      "bytes": 5708,
+      "sha256": "bd12e953a36ee36f1d7e7b9523220a3f13d445bbd416971e37052da808fdd1fa"
+    },
+    "reports/crpto/tables/crpto_ijds_ft_table3_comparator_contrasts.md": {
+      "path": "reports/crpto/tables/crpto_ijds_ft_table3_comparator_contrasts.md",
+      "bytes": 12615,
+      "sha256": "05d33bc5553f56e6e6130e97f3e99e74d7cc9667383a032214721d75dbbd6cfc"
+    },
+    "reports/crpto/tables/crpto_ijds_ft_table4_direction_summary.csv": {
+      "path": "reports/crpto/tables/crpto_ijds_ft_table4_direction_summary.csv",
+      "bytes": 513,
+      "sha256": "e4c7f0621a4c64d285fc91dd33dc59007c08644ebea1fd62ddd1014c986e6a7e"
+    },
+    "reports/crpto/tables/crpto_ijds_ft_table4_direction_summary.tex": {
+      "path": "reports/crpto/tables/crpto_ijds_ft_table4_direction_summary.tex",
+      "bytes": 729,
+      "sha256": "b136c28e3b0512f10b28f5593af89b9e79d7b2c726ebb86f2fc6d838e15d6bfe"
+    },
+    "reports/crpto/tables/crpto_ijds_ft_table4_direction_summary.md": {
+      "path": "reports/crpto/tables/crpto_ijds_ft_table4_direction_summary.md",
+      "bytes": 1842,
+      "sha256": "eed73870dbdfb774519a9b81d609b24a6aab0e8d3087a6b17d32d084ff724519"
+    },
+    "reports/crpto/tables/crpto_ijds_ft_tableS1_seed_cap_sensitivity.csv": {
+      "path": "reports/crpto/tables/crpto_ijds_ft_tableS1_seed_cap_sensitivity.csv",
+      "bytes": 31986,
+      "sha256": "418f096b2631cb98a08ed12709a20d15402e058ed69e13ee9b49c39fef3f0665"
+    },
+    "reports/crpto/tables/crpto_ijds_ft_tableS1_seed_cap_sensitivity.tex": {
+      "path": "reports/crpto/tables/crpto_ijds_ft_tableS1_seed_cap_sensitivity.tex",
+      "bytes": 26934,
+      "sha256": "1876ffdac05fc712c0951c27b69cb64554ca1f73861552bb6f59afc29f692b1d"
+    },
+    "reports/crpto/tables/crpto_ijds_ft_tableS1_seed_cap_sensitivity.md": {
+      "path": "reports/crpto/tables/crpto_ijds_ft_tableS1_seed_cap_sensitivity.md",
+      "bytes": 42042,
+      "sha256": "f244f67afa0744859602a368d2ed9635b5a95ebed38dbd983dba40d80fd18b12"
+    },
+    "reports/crpto/tables/crpto_ijds_ft_tableS2_point_cap_frontier.csv": {
+      "path": "reports/crpto/tables/crpto_ijds_ft_tableS2_point_cap_frontier.csv",
+      "bytes": 959,
+      "sha256": "c85916c8adcb60bab11f2ef997b05e9760455323f96feb4d5965ad908cb41c2d"
+    },
+    "reports/crpto/tables/crpto_ijds_ft_tableS2_point_cap_frontier.tex": {
+      "path": "reports/crpto/tables/crpto_ijds_ft_tableS2_point_cap_frontier.tex",
+      "bytes": 1815,
+      "sha256": "a9e5018ab49c81f108407fc52c96a634a62f49769a1d3ef18c6c63bd9cc6dab2"
+    },
+    "reports/crpto/tables/crpto_ijds_ft_tableS2_point_cap_frontier.md": {
+      "path": "reports/crpto/tables/crpto_ijds_ft_tableS2_point_cap_frontier.md",
+      "bytes": 7626,
+      "sha256": "af71121e6c3a0f64628cbf4307ebc493d9eade0e0920e9fdeddf8bf99f924112"
+    },
+    "reports/crpto/tables/crpto_ijds_ft_tableS3_lgd.csv": {
+      "path": "reports/crpto/tables/crpto_ijds_ft_tableS3_lgd.csv",
+      "bytes": 4011,
+      "sha256": "c96e62eda049ed5a3f19785e4d9d43454444c219e4406100dddf928402758423"
+    },
+    "reports/crpto/tables/crpto_ijds_ft_tableS3_lgd.tex": {
+      "path": "reports/crpto/tables/crpto_ijds_ft_tableS3_lgd.tex",
+      "bytes": 3094,
+      "sha256": "f4572b1267bdb21e9eb43e282442b584438b3813976928ecf4a7f49adc65a864"
+    },
+    "reports/crpto/tables/crpto_ijds_ft_tableS3_lgd.md": {
+      "path": "reports/crpto/tables/crpto_ijds_ft_tableS3_lgd.md",
+      "bytes": 7772,
+      "sha256": "7a051ffb23561aa32ee55c2a865c45ddb5ecc233cacab7151d08ac8ecedd41ad"
+    },
+    "reports/crpto/tables/crpto_ijds_ft_tableS4_group_ablation.csv": {
+      "path": "reports/crpto/tables/crpto_ijds_ft_tableS4_group_ablation.csv",
+      "bytes": 1683,
+      "sha256": "7ce8b73eba757aa36f4efe8290f6406c16588efde03503ad5037147a08b655fd"
+    },
+    "reports/crpto/tables/crpto_ijds_ft_tableS4_group_ablation.tex": {
+      "path": "reports/crpto/tables/crpto_ijds_ft_tableS4_group_ablation.tex",
+      "bytes": 1306,
+      "sha256": "623786c649db4a4fa9a130c5e37cbe5a4c71ff856b65bbd1a612840aa75a84c2"
+    },
+    "reports/crpto/tables/crpto_ijds_ft_tableS4_group_ablation.md": {
+      "path": "reports/crpto/tables/crpto_ijds_ft_tableS4_group_ablation.md",
+      "bytes": 3355,
+      "sha256": "a423fca906fbda9b6bfb2f2a016f70a03ceee053cc402a034ecf83f7f32f954f"
+    },
+    "reports/crpto/tables/crpto_ijds_ft_tableS5_policy_levels.csv": {
+      "path": "reports/crpto/tables/crpto_ijds_ft_tableS5_policy_levels.csv",
+      "bytes": 3836,
+      "sha256": "468e5be1552f92a3356f0810fc5dbbcb047a93eda4ee81a251c22aa52a23de93"
+    },
+    "reports/crpto/tables/crpto_ijds_ft_tableS5_policy_levels.tex": {
+      "path": "reports/crpto/tables/crpto_ijds_ft_tableS5_policy_levels.tex",
+      "bytes": 3003,
+      "sha256": "b5092c5ef0a7be31cf3987a4fc053302d44c11670b8cc1d7d93fd7c3ef0841cd"
+    },
+    "reports/crpto/tables/crpto_ijds_ft_tableS5_policy_levels.md": {
+      "path": "reports/crpto/tables/crpto_ijds_ft_tableS5_policy_levels.md",
+      "bytes": 6040,
+      "sha256": "6072278d16b1d3b2b5eda82591f2547e1b14b18cf59c2ac81cfb49101556cb13"
+    },
+    "reports/crpto/tables/crpto_ijds_ft_tableS6_simulation.csv": {
+      "path": "reports/crpto/tables/crpto_ijds_ft_tableS6_simulation.csv",
+      "bytes": 10784,
+      "sha256": "103683eee125bce49925f440de1ab9674575e63b97a168ae96ddeeaeaa5b2cac"
+    },
+    "reports/crpto/tables/crpto_ijds_ft_tableS6_simulation.tex": {
+      "path": "reports/crpto/tables/crpto_ijds_ft_tableS6_simulation.tex",
+      "bytes": 9641,
+      "sha256": "52a7febbab59c82d98cc93922dffd758880a5a1aa7a88074683f679676e0c52f"
+    },
+    "reports/crpto/tables/crpto_ijds_ft_tableS6_simulation.md": {
+      "path": "reports/crpto/tables/crpto_ijds_ft_tableS6_simulation.md",
+      "bytes": 13090,
+      "sha256": "a9fb960f021092c2d2129e725cf53a03e499e9f15dde485ca2de49ced79b5f2f"
+    },
+    "reports/crpto/tables/crpto_ijds_ft_tableS7_label_availability.csv": {
+      "path": "reports/crpto/tables/crpto_ijds_ft_tableS7_label_availability.csv",
+      "bytes": 308,
+      "sha256": "c3b478012cb45a14cc03df4aeb5d2af52e2ff6def76ec56da7820c56e9675b0b"
+    },
+    "reports/crpto/tables/crpto_ijds_ft_tableS7_label_availability.tex": {
+      "path": "reports/crpto/tables/crpto_ijds_ft_tableS7_label_availability.tex",
+      "bytes": 421,
+      "sha256": "1bb54060d5f5ef681a1871cdd818cce0837c89b7ee42269ffd9931d9795c6403"
+    },
+    "reports/crpto/tables/crpto_ijds_ft_tableS7_label_availability.md": {
+      "path": "reports/crpto/tables/crpto_ijds_ft_tableS7_label_availability.md",
+      "bytes": 840,
+      "sha256": "38966fc53de4a910410029303a19a1aa1e1ebbde2146e9b5edf8bea4c586cb63"
+    },
+    "reports/crpto/figures/crpto_ijds_ft_fig1_coverage.png": {
+      "path": "reports/crpto/figures/crpto_ijds_ft_fig1_coverage.png",
+      "bytes": 51186,
+      "sha256": "bfb302afe592710d9d8deb850102149ecf14de0b21196aa7f286385a44ed01da"
+    },
+    "reports/crpto/figures/crpto_ijds_ft_fig1_coverage.pdf": {
+      "path": "reports/crpto/figures/crpto_ijds_ft_fig1_coverage.pdf",
+      "bytes": 15062,
+      "sha256": "a5e32f62196fea5e02a5efe66429ecb1d6a2d1e732796874c58cdc7103212daa"
+    },
+    "reports/crpto/figures/crpto_ijds_ft_fig2_comparators.png": {
+      "path": "reports/crpto/figures/crpto_ijds_ft_fig2_comparators.png",
+      "bytes": 112046,
+      "sha256": "4b3e9bd3776cf30d508bcc5aec254e8de503318ac09d07e569b722b4a2240a3a"
+    },
+    "reports/crpto/figures/crpto_ijds_ft_fig2_comparators.pdf": {
+      "path": "reports/crpto/figures/crpto_ijds_ft_fig2_comparators.pdf",
+      "bytes": 29519,
+      "sha256": "58285bd2c16ed400f15e853dfbd8f9ea7c5d3508fc149b891cd0239b2643e1d8"
+    },
+    "reports/crpto/figures/crpto_ijds_ft_fig3_frontier.png": {
+      "path": "reports/crpto/figures/crpto_ijds_ft_fig3_frontier.png",
+      "bytes": 86049,
+      "sha256": "09e2bbd76c5046dbf243807db4e2e31fffe4755d609e46a0b989dd954725de20"
+    },
+    "reports/crpto/figures/crpto_ijds_ft_fig3_frontier.pdf": {
+      "path": "reports/crpto/figures/crpto_ijds_ft_fig3_frontier.pdf",
+      "bytes": 21227,
+      "sha256": "9362992316ebc79d80e916cef77936e79a3cf51b509435afd5ea3f86f53b6f13"
+    },
+    "reports/crpto/figures/crpto_ijds_ft_fig4_simulation.png": {
+      "path": "reports/crpto/figures/crpto_ijds_ft_fig4_simulation.png",
+      "bytes": 76921,
+      "sha256": "3c7a550d05e92856fefb4169f1db636a4e134a9c7ff19d2ca2d50b311ce51543"
+    },
+    "reports/crpto/figures/crpto_ijds_ft_fig4_simulation.pdf": {
+      "path": "reports/crpto/figures/crpto_ijds_ft_fig4_simulation.pdf",
+      "bytes": 15074,
+      "sha256": "fcdda48bf0ebe708a166506cd5aced039c1139c8b119bbdebb8ad9bd8b07791c"
+    }
+  }
+}

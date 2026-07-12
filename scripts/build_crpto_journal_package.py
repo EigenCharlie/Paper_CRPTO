@@ -810,7 +810,10 @@ def _plot_robust_region_heatmap(shortlist: pd.DataFrame, promotion: dict[str, An
         for j in range(pivot.shape[1]):
             value = pivot.iloc[i, j]
             if pd.notna(value):
-                rgba = cmap(im.norm(float(value)))
+                rgba = np.asarray(
+                    cmap(im.norm(np.asarray([float(value)], dtype=float))),
+                    dtype=float,
+                ).reshape(-1, 4)[0]
                 luminance = (0.2126 * rgba[0]) + (0.7152 * rgba[1]) + (0.0722 * rgba[2])
                 text_color = "white" if luminance < 0.45 else "#111111"
                 ax.text(

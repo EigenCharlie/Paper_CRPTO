@@ -1,114 +1,78 @@
 # IJDS Reproducibility Package Plan
 
-Editor-facing operational material. Do not include this file in the
-double-anonymous reviewer packet. Use
-`ANONYMOUS_REVIEW_ARCHIVE_README.md` for the sanitized review-stage contract
-and `EDITOR_ONLY_REPRODUCIBILITY_CROSSWALK.md` for exact immutable identifiers.
-
-Official policy: <https://pubsonline.informs.org/page/ijds/data-and-code-disclosure-policy>
+Editor-facing operations. The current IJDS policy requires the disclosure form
+at submission and data/code plus a reproducibility workflow at acceptance.
 
 ## Release Stages
 
 | Stage | Provide | Withhold |
 |---|---|---|
-| Initial submission | Neutral availability statement and anonymous PDFs | Identity, repository ownership, personal URLs, secrets |
-| Editor-requested verification | Metadata-sanitized archive labeled P1/C1, evidence, tests, and archive-local hashes | Git history, public-repository links, exact public-searchable run identifiers, credentials, and remote metadata |
-| Acceptance | Public source, environment lock, data instructions, active artifacts and final outputs | Secrets and raw files prohibited from redistribution |
+| Initial submission | Anonymous manuscript, supplement, title page, disclosure form | Public identity inside reviewer files, secrets, remote metadata |
+| Editor-requested verification | Sanitized active capsule and archive-local checksums | Git history, public-searchable identifiers, credentials |
+| Acceptance | Source, lock, data instructions, active artifacts, final outputs | Secrets and files prohibited from redistribution |
 
 ## Minimal Active Capsule
 
-| Component | Files | Purpose |
+| Component | Contents | Purpose |
 |---|---|---|
-| Environment | `pyproject.toml`, `uv.lock`, `justfile` | Recreate Python and task tooling |
-| Protocol | locked parent and comparator YAML/memos | Fix dates, estimands, policy, matching rule, payoff, bounds, and post hoc boundary |
-| Method | maturity-safe modules plus parent/comparator runners | Reproduce both tagged experiments |
-| Active runs | four DVC pointers plus remote/archive objects | Recover parent and comparator panels, allocations, summaries, and receipts |
-| Evidence | two builders, parent M/S bundle, comparator C/CS bundle, two manifests | Reproduce every manuscript number and graphic |
-| Manuscript | QMD body, QMD supplement, official TeX, bibliography | Reproduce reviewer-facing PDFs |
-| Guardrails | claim sync, integrity, unit/integration tests | Detect numerical, narrative, and historical drift |
+| Environment | `pyproject.toml`, `uv.lock`, `justfile` | Recreate tooling |
+| Protocol | fixed-taxonomy V1/V2 YAML and protocol memo | Fix timing, policies, comparators, payoffs, bounds |
+| Method | active data/model/evaluation/optimization modules and runner | Reproduce the study |
+| Active runs | four DVC pointers | Recover freeze and evaluation bundles |
+| Evidence | one builder, 11 table families, 4 figures, manifest | Reproduce every paper-facing result |
+| Manuscript | canonical QMD, generated INFORMS TeX, supplement, bibliography | Reproduce PDFs |
+| Gates | scientific tests, claim sync, lint, typing, anonymity, visual QA | Detect drift |
 
-Historical A1--A40, compact-v7, Prosper, and Freddie/Mendeley artifacts remain
-available as project provenance but are outside the minimal active capsule.
-Excluding them reduces package size and prevents a reviewer from mistaking old
-experiments for current evidence.
+Historical selected-policy, compact-v7, pool93, Prosper/Freddie, and A1--A40
+materials remain recoverable from Git/DVC but are excluded from the capsule.
 
-## Identifier Boundary
-
-The manuscript calls the parent layer P1 and the comparator layer C1. Exact
-run tags, protocol tags, commits, summary and receipt hashes, and DVC object
-fingerprints live only in `EDITOR_ONLY_REPRODUCIBILITY_CROSSWALK.md`. This
-separation preserves a complete audit trail without placing public-searchable
-fingerprints in reviewer-facing material.
-
-Both execution receipts record clean initial and final worktrees. The C1
-receipt records Python 3.11.14, CatBoost 1.2.10, highspy 1.14.0, and a
-302.16-second runtime. Both builders verify artifact hashes before producing
-publication outputs.
-
-## Standard Editor/Acceptance Reproduction
+## Standard Reproduction
 
 ```powershell
 uv sync --extra dev
-uv run dvc pull data/processed/experiments/champion_reopen/champion-reopen-2026-07-10__maturity-safe-locked-bounded-h1h2-v2.dvc
-uv run dvc pull models/experiments/champion_reopen/champion-reopen-2026-07-10__maturity-safe-locked-bounded-h1h2-v2.dvc
-uv run dvc pull data/processed/experiments/champion_reopen/champion-reopen-2026-07-10__maturity-safe-v2-comparator-stringency-audit-v1.dvc
-uv run dvc pull models/experiments/champion_reopen/champion-reopen-2026-07-10__maturity-safe-v2-comparator-stringency-audit-v1.dvc
+uv run dvc pull data/processed/experiments/ijds_prefreeze/ijds-fixed-taxonomy-c2-2026-07-11-v1.dvc
+uv run dvc pull models/experiments/ijds_prefreeze/ijds-fixed-taxonomy-c2-2026-07-11-v1.dvc
+uv run dvc pull data/processed/experiments/ijds_prefreeze/ijds-fixed-taxonomy-c2-2026-07-11-v2.dvc
+uv run dvc pull models/experiments/ijds_prefreeze/ijds-fixed-taxonomy-c2-2026-07-11-v2.dvc
 just ijds-evidence
-uv run pytest tests/test_ijds_active_claim_sync.py tests/test_ijds_comparator_evidence.py -q
-just publication-integrity
-just paper-submission
-just paper-submission-official
-just validate-champion
+just submission-check
 ```
 
-`just ijds-active-replay` intentionally means evidence validation and rebuild,
-not an implicit 1.7 GB methodology rerun.
+`just ijds-active-replay` validates the active evidence and rebuilds
+publication outputs. It intentionally does not hide an expensive methodology
+rerun.
 
-## Optional Full Method Replay
+## Full Replay Boundary
 
-Only in a clean clone where the immutable run directory does not exist:
-
-```powershell
-uv run python scripts/experiments/run_ijds_maturity_safe_challenger.py `
-  --config configs/experiments/ijds_maturity_safe_locked_bounded_h1h2_2026-07-10.yaml
-
-uv run python scripts/experiments/run_ijds_comparator_stringency_audit.py `
-  --config configs/experiments/ijds_maturity_safe_locked_comparator_stringency_2026-07-10.yaml
-```
-
-Both runners verify protocol tags and clean commits, refuse path escape and
-overwrite, and write receipts only after outputs complete. The comparator
-verifies and replays parent artifacts before evaluating fixed policies. Neither
-replay requires or permits a protected historical `dvc repro`.
+The outcome-free V1 archive is immutable and its evaluator is intentionally
+marked incomplete. V2 verifies and resumes its frozen scientific objects. A
+new full replay may be run only in a clean clone with a new run tag and fresh
+paths; it must not overwrite V1/V2 or invoke protected DVC stages. Its results
+cannot silently replace the paper contract.
 
 ## Official PDF Build
 
-Download the current official style package from the INFORMS author portal and
-place `informs4.cls`, `informs2014.bst`, `eqndefns-left.sty`, and
-`informs_Logo.pdf` in `paper/submission`. These publisher assets are external
-build prerequisites and are intentionally ignored by Git.
+The INFORMS TeX is generated from `paper/CRPTO_ijds.qmd`:
 
 ```powershell
+just paper-submission-tex
 just paper-submission-official
 ```
 
-The wrapper invokes the direct Windows `latexmk.pl` payload. Its robust fallback
-is `pdflatex -> bibtex -> pdflatex -> pdflatex`: the first LaTeX pass creates
-`.aux`, BibTeX creates `.bbl`, and two final LaTeX passes resolve then stabilize
+The compiler attempts `latexmk` and uses the robust Windows fallback
+`pdflatex -> bibtex -> pdflatex -> pdflatex`. The first LaTeX pass writes
+`.aux`, BibTeX writes `.bbl`, and the final two passes resolve and stabilize
 citations, references, floats, and pagination.
 
 ## Acceptance QA
 
 1. Reproduce from a fresh clone and DVC pull.
-2. Confirm the evidence builder is byte-idempotent.
-3. Run the full release gate and historical manifest validation.
+2. Confirm the evidence builder and QMD-to-TeX builder are byte-idempotent.
+3. Run the full gate and protected champion validation without reproducing its stages.
 4. Compile and visually inspect body, supplement, and official PDF.
-5. Confirm no reviewer-facing identity or local path leakage.
-6. Publish source-data acquisition instructions and all immutable hashes.
-7. Record any unavoidable platform-level numerical difference rather than
-   silently changing the evidence.
+5. Confirm reviewer-facing identity and path sanitization.
+6. Publish acquisition instructions, data dictionary, environment, and hashes.
+7. Document any platform-level numerical difference rather than changing evidence.
 
-The initial ScholarOne upload does not require a public repository or the full
-method replay. IJDS requires the disclosure form at submission and the full
-reproducibility workflow at acceptance; an editor-requested review archive is
-prepared under the anonymous contract rather than by exposing this repository.
+The exact immutable identifiers live only in
+`EDITOR_ONLY_REPRODUCIBILITY_CROSSWALK.md`.

@@ -1,17 +1,48 @@
 # ScholarOne Final Checklist
 
-Use only after scientific content and official PDFs are frozen.
+Use only after an explicit submission freeze. Until then, this is a readiness
+check rather than permission to upload.
 
 ## Files
 
 | File | Reviewer-facing | Requirement |
 |---|:---:|---|
-| Official anonymous manuscript PDF | Yes | Built from `CRPTO_ijds_submission.tex`, citation-clean, within page limit |
-| Anonymous online supplement PDF | Yes | Correct title, parent S1--S7, comparator CS1--CS12, proofs, visually inspected |
-| Separate title page | No | Complete affiliation, email, ORCID and declarations |
-| IJDS Data and Code Disclosure Form | Editor/system | Match package plan and raw-data terms |
-| Cover letter | Editor | Match active title, method, results and limitations |
-| Reproducibility archive/note | Editor/system | Sanitized identity, paths, remotes and credentials |
+| Official anonymous manuscript PDF | Yes | Generated from QMD through the INFORMS template |
+| Anonymous online supplement PDF | Yes | Current protocol, proofs, full sensitivities, limitations |
+| Separate title page | No | Author, affiliation, email, ORCID, declarations |
+| Data and Code Disclosure Form | Editor/system | Current official form; Option 4 explanation reconciled |
+| Cover letter | Editor | Current title, results, retrospective boundary |
+| Reproducibility note/archive | Editor/system | Sanitized or exact identifiers according to audience |
+
+## Scientific Reconciliation
+
+- Title is "CRPTO: Auditing Temporal Transport and Comparator Choice in
+  Conformal Portfolios" on every surface.
+- Universe is `540,121`; membership never depends on final status.
+- Taxonomy uses 2011 scores and residual calibration uses availability-safe
+  2012H1 labels.
+- All nine policies are co-primary; no selected policy or OOT winner appears.
+- Fit coverage is `0.900388`.
+- Canonical OOT coverage is `[0.854714, 0.879647]`; all four taxonomy upper
+  endpoints are below 0.90.
+- C2 matches funded point PD to residual below `4.17e-17`.
+- Canonical C2 counts are payoff worse `7/9`, default higher `1/9`, and
+  miscoverage higher `8/9`.
+- All `27/27` finite comparator envelopes are indeterminate.
+- The 180 seed-purpose cells are reported without selecting a favorable cell.
+- Standardized payoff is never called IRR, NPV, welfare, or investor return.
+- No selected-set, causal, prospective, confirmatory, Markov, deployment, or
+  fair-lending claim appears.
+
+## Official Build QA
+
+- official PDF: 28 pages;
+- references start on page 25; 24 pre-reference pages;
+- 8 main tables and 4 main figures;
+- 278-word abstract and 7 keywords;
+- no BibTeX warnings or undefined references/citations;
+- the known 17.54 pt publisher-class title diagnostic is visually within page;
+- every page is rendered and checked after the final build.
 
 ## Full Local Gate
 
@@ -21,72 +52,20 @@ uv run dvc status --no-updates
 git status --short
 ```
 
-`submission-check` includes active evidence validation, publication integrity,
-lint, Mypy, advisory `ty`, the full pytest suite, protected champion validation,
-both Quarto renders, and the official TeX compile.
-
-## Scientific Reconciliation
-
-- Title is "CRPTO: Auditing Comparator Stringency in Maturity-Safe Conformal
-  Credit Portfolios" on all surfaces.
-- Active universe is 540,121; no resolved-status filter is implied.
-- Active policy is `q=0.75p+0.25u`, `tau_q=0.17`.
-- Primary point comparator is `tau_p=0.06831339893217318`, aligned to mean
-  development-funded point PD.
-- Primary candidate coverage is `[0.854923, 0.879692]`.
-- Guardrail-minus-matched-point payoff is
-  `[-$506,587.03, -$295,967.17]`.
-- Guardrail-minus-matched-point default is `[0.034431, 0.056287]`.
-- Guardrail-minus-matched-point miscoverage is `[0.027093, 0.046283]`.
-- Same-threshold point cap slack is `0.054242`; that comparison is secondary.
-- Selected low/mean/high and 15 LOMO signs pass; family joint direction is
-  `7/9`, not `9/9`.
-- Standardized payoff is never called realized investor return or IRR.
-- Comparator audit is explicitly post hoc; no confirmatory, selected-set,
-  causal, prospective, Markov, or fair-lending claim appears.
-- Compact-v7 headline values and A35--A40 are historical only.
-- The closest-work table, four propositions, comparator inversion, family
-  boundary, and managerial audit card agree across body sources.
-
-## Official Build QA
-
-The wrapper uses `latexmk` and falls back to the intentional
-`pdflatex -> bibtex -> pdflatex -> pdflatex` sequence. Accept only when:
-
-- `.blg` has no warnings;
-- `.log` has no undefined citations or references;
-- initial-submission body satisfies the 25-page rule;
-- tables and figures remain readable and inside margins;
-- PDF metadata and visible content are anonymous; and
-- page images show no clipping, overlap, blank content, or missing glyphs.
-
-Record the latest official/body/supplement page counts and reference start only
-after the final clean compile. Four main figures and twelve main tables must be
-present and readable. Recount and repeat visual QA after every substantive TeX
-edit.
-
-Latest local QA record (2026-07-10): official `22` pages, references start on
-page `19` (`18` pre-reference pages), body preview `22` pages, supplement `21`
-pages, `12` main tables and `4` main figures. The title has `9` words, the
-abstract `269`, and the keyword list `7` entries. All pages were rendered and
-inspected. The only overfull diagnostic is generated by the publisher class at
-`\maketitle` beside its logo; it is visually inside the page. Underfull
-audit-card cells are also legible.
+`submission-check` validates evidence, QMD-to-TeX sync, publication integrity,
+lint, Mypy, `ty`, full pytest, the protected champion, both Quarto surfaces,
+and official compilation. It does not run protected DVC stages.
 
 ## Anonymous Packet
 
-- No author, affiliation, acknowledgement, repository owner, personal URL,
-  email, local username/path, or private remote in reviewer-facing files.
-- Title page and cover letter are uploaded only to their editor-facing slots.
-- The supplement is identified as an online supplement and not concatenated
-  accidentally with the body unless ScholarOne explicitly requests it.
-- Any review-stage reproducibility bundle keeps tags and hashes but removes
-  identity and secrets.
+- No author, affiliation, email, acknowledgement, repository owner, personal
+  URL, local path, exact tag/hash, or private remote appears in reviewer files.
+- Title page, cover letter, disclosure form, and exact crosswalk are uploaded
+  only in editor/system slots.
+- Supplement is designated as a separate online supplement.
+- ScholarOne-generated proof is opened and compared with the validated local
+  PDFs before submission.
 
-## ScholarOne Proof Go/No-Go
-
-Open the ScholarOne-generated proof. Submission is NO-GO if identity leaks,
-the wrong manuscript version appears, body/supplement order is wrong, any
-figure/table/equation/reference is missing, data/code answers conflict, or the
-uploaded PDF differs from the validated local build. Repair locally, rerun the
-full gate, re-upload, and inspect the replacement proof.
+Submission is NO-GO if identity leaks, a retired result appears, files are in
+the wrong order, a figure/table/equation/reference is missing, the disclosure
+conflicts with the package, or the proof differs from the validated build.

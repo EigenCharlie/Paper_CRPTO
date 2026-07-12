@@ -43,15 +43,14 @@ The current IJDS paper is the maturity-safe bounded protocol v2:
   `[-0.046275,-0.020093]`, and miscoverage `[0.008822,0.029850]`;
 - mechanism: between-stratum composition improves default, while
   within-stratum selection drives the funded-set coverage failure; and
-- active publication artifacts `crpto_ijds_ms_table1`--`table4`, S1--S7, and
-  `crpto_ijds_ms_fig0`--`fig3`, governed by
-  `ijds_maturity_safe_evidence.json`.
+- active publication artifacts `crpto_ijds_ft_*`, governed by
+  `ijds_fixed_taxonomy_c2_evidence.json`.
 
 The paper describes a code-locked retrospective temporal audit. It does not
 claim a prospective trial, causal effect, latent-PD confidence interval,
 selected-set conformal guarantee, cash-flow return, fair-lending certificate,
 or Markov certificate. The full authority is
-`docs/research/active_claims_2026-07-10.md`.
+`docs/research/active_claims_2026-07-11.md`.
 
 The previous IJDS rebaseline and pool93 frontier are retained as historical
 provenance, not as active body claims:

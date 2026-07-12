@@ -8,25 +8,25 @@ Pipeline de investigación y libro Quarto que acompañan el paper **CRPTO**, una
 
 | Campo | Valor |
 | --- | --- |
-| Parent run | `champion-reopen-2026-07-10__maturity-safe-locked-bounded-h1h2-v2` |
-| Comparator audit | `champion-reopen-2026-07-10__maturity-safe-v2-comparator-stringency-audit-v1` (post hoc, tagged) |
+| Outcome-free run | `ijds-fixed-taxonomy-c2-2026-07-11-v1` |
+| Reconciled run | `ijds-fixed-taxonomy-c2-2026-07-11-v2` |
 | Universo | `540,121` préstamos de 36 meses; membership independiente del status |
-| Cronología | fit/selección hasta 2012; 15 decisiones mensuales 2016-04--2017-06 |
-| Conformal | intervalo binario Mondrian con target `90%` y rango finito exacto; no es CI de PD latente |
-| Política | `q=0.75p+0.25u`, `tau=0.17`; payoff coherente `(1-p)r-p*LGD` |
-| Cobertura candidata OOT | `[0.854923, 0.879692]` |
-| Comparador primario | point PD con `tau=0.068313`, alineado al mean funded PD de desarrollo |
-| Payoff guardrail menos point PD | `[-$506,587.03, -$295,967.17]` |
-| Default guardrail menos point PD | `[0.034431, 0.056287]` |
-| Miscoverage guardrail menos point PD | `[0.027093, 0.046283]` |
-| Mecanismo | copiar `tau=0.17` entre scores no iguala stringency; el resultado de default se invierte al alinear riesgo de desarrollo |
+| Cronología | fit termina en 2012H1; 15 decisiones mensuales 2016-04--2017-06 |
+| Conformal | taxonomía fija con scores 2011 y residuos 2012H1; no es CI de PD latente |
+| Políticas | nueve guardrails co-primarios; sin selector ni winner |
+| Cobertura candidata OOT | `[0.854714, 0.879647]` para cinco strata |
+| Comparador primario | C2 contemporáneo, matched al funded point-PD de cada guardrail/mes |
+| Resultado C2 | payoff peor `7/9`, default mayor `1/9`, miscoverage mayor `8/9` |
+| Sensibilidad | las 180 celdas seed-cap contienen signos robustos opuestos |
+| Multiverso | `27/27` envelopes policy-by-metric cruzan cero |
+| Claim | falla temporal de cobertura estable; resultados de portafolio no invariantes al comparador ni a constraints vinculantes |
 
 Hashes SHA256 de los artefactos críticos están en [`EXTRACTION_MANIFEST.json`](EXTRACTION_MANIFEST.json). Verifica con `just validate-champion` o el skill `/crpto-validate-champion`.
-El compact-v7, el rebaseline y la frontera pool93 se conservan como procedencia
-congelada, no como claims activos del manuscrito IJDS. La autoridad editorial
-es [`docs/research/active_claims_2026-07-10.md`](docs/research/active_claims_2026-07-10.md);
-el cierre numérico del comparador está en
-[`docs/research/ijds_comparator_stringency_results_2026-07-10.md`](docs/research/ijds_comparator_stringency_results_2026-07-10.md).
+Los estudios selected-policy, compact-v7, pool93 y A1--A40 se conservan como
+procedencia en Git/DVC, no como claims activos. La autoridad editorial es
+[`docs/research/active_claims_2026-07-11.md`](docs/research/active_claims_2026-07-11.md)
+y el único manifest paper-facing es
+[`reports/crpto/ijds_fixed_taxonomy_c2_evidence.json`](reports/crpto/ijds_fixed_taxonomy_c2_evidence.json).
 
 ## Requisitos del sistema
 
@@ -70,7 +70,8 @@ just book-clean         # borra _book/, _freeze/, .quarto/
 
 # Pipeline de paper (no toca el champion)
 just paper-export       # tablas + figuras + evidence + journal + libro
-just ijds-evidence      # evidencia maturity-safe + auditoria de comparadores
+just ijds-evidence      # evidencia fixed-taxonomy + multiverso de comparadores
+just paper-submission-tex # genera TeX INFORMS desde el QMD canonico
 just tables             # solo CSVs
 just figures            # solo PNGs/PDFs
 
@@ -111,13 +112,9 @@ es sin una rama de revalidación y drift report.
 
 ## Estrategia de publicación
 
-La decisión editorial activa es escribir primero para **INFORMS Journal on Data
-Science** y mantener **European Journal of Operational Research** como pivote
-principal si el manuscrito termina leyendo más como OR aplicada que como data
-science reproducible. La decisión vive en
-[`configs/crpto_publication_targets.yaml`](configs/crpto_publication_targets.yaml)
-y está explicada en
-[`docs/research/crpto_publication_strategy_2026-05-12.md`](docs/research/crpto_publication_strategy_2026-05-12.md).
+La decisión editorial activa es escribir para **INFORMS Journal on Data
+Science**. El contrato vigente, sus límites y los enlaces oficiales viven en
+[`configs/crpto_publication_targets.yaml`](configs/crpto_publication_targets.yaml).
 
 Los borradores de extracción están en [`paper/`](paper/):
 

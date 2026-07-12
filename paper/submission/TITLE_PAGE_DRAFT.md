@@ -4,17 +4,17 @@ Upload separately from the double-anonymous manuscript.
 
 ## Title
 
-CRPTO: Auditing Comparator Stringency in Maturity-Safe Conformal Credit
+CRPTO: Auditing Temporal Transport and Comparator Choice in Conformal
 Portfolios
 
 ## Running Title
 
-Comparator Stringency in Conformal Credit Portfolios
+Temporal Transport and Comparator Choice
 
 ## Keywords
 
-conformal prediction; predict-then-optimize; baseline design; credit risk;
-portfolio selection; temporal validation; partial identification
+conformal prediction; predict-then-optimize; comparator design; credit risk;
+portfolio selection; temporal transport; partial identification
 
 ## Author
 

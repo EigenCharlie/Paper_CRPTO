@@ -1,11 +1,9 @@
 # Auditoría del estado del arte y del encaje IJDS de CRPTO
 
-> **Implementation outcome (2026-07-10):** this audit diagnoses the compact-v7
-> manuscript, not the reconstructed active paper. Its four blocking defects
-> were repaired in the clean tagged maturity-safe bounded protocol v2. The
-> active claim and evidence are now governed by
-> `active_claims_2026-07-10.md`; compact-v7 remains NO-GO provenance. Preserve
-> this document as the rationale for the reconstruction.
+> **Current boundary (2026-07-11):** this is a literature and historical
+> diagnosis, not a claim registry. The active fixed-taxonomy comparator audit
+> is governed by `active_claims_2026-07-11.md`; earlier variants remain Git-only
+> provenance.
 
 **Fecha de auditoría:** 2026-07-10
 **Corte de literatura:** inclusivo hasta 2026-07-09

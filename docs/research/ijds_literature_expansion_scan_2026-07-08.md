@@ -4,8 +4,8 @@
 
 This note records an external and local literature scan for the IJDS version of
 CRPTO. It is designed as an editorial input, not as a request to reopen the
-frozen champion. The active certificate remains the pool93 finite-grid decision
-certificate documented in `docs/research/active_claims_2026-07-04.md`.
+frozen champion. Its original pool93 framing is historical; the active paper
+contract is `docs/research/active_claims_2026-07-11.md`.
 
 Operational guardrails:
 

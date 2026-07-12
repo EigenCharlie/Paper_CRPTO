@@ -13,6 +13,8 @@ from pathlib import Path
 
 from loguru import logger
 
+from scripts.build_ijds_submission_tex import render_submission_tex
+
 ROOT = Path(__file__).resolve().parents[1]
 SUBMISSION_DIR = ROOT / "paper" / "submission"
 REPORT_DIR = ROOT / "reports" / "ci"
@@ -110,6 +112,7 @@ def _missing_template_files(directory: Path) -> tuple[str, ...]:
 
 def compile_submission(*, prefer_manual: bool = False) -> int:
     """Compile the official submission with latexmk, falling back to manual passes."""
+    render_submission_tex()
     if not (SUBMISSION_DIR / TEX_NAME).is_file():
         logger.error("Missing {}", (SUBMISSION_DIR / TEX_NAME).relative_to(ROOT))
         return 2

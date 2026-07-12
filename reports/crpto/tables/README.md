@@ -1,10 +1,9 @@
 # CRPTO paper-facing tables
 
-> **Scientific status override (2026-07-10):** the A3--A40 tables described
-> below are historical diagnostics/provenance until the maturity-safe design is
-> implemented and rerun from a committed tag. Do not treat the v7 A35--A40
-> bundle as active submission evidence. See
-> `docs/research/ijds_three_front_reconstruction_2026-07-10.md`.
+> **Scientific status override (2026-07-11):** the A3--A40 tables described
+> below are historical diagnostics/provenance. Active submission evidence uses
+> only the `crpto_ijds_ft_*` family governed by
+> `docs/research/active_claims_2026-07-11.md`.
 
 This directory holds the CSV/TeX exports consumed by the IJDS paper, the online
 supplement, and the Quarto book. The paper-facing canon is **`crpto_table0`**
@@ -39,8 +38,7 @@ The frozen Lending Club `price_of_robustness=-10.56%` fields in table 0, table
 baseline inherited a conformal endpoint constraint and was not a point-PD
 comparator. Protected historical pool93 exports retain their explicit
 `*_pool93_*` filenames; they are provenance, not the active A35--A40 bundle.
-See `docs/research/active_claims_2026-07-04.md` for the historical v7 contract and
-`docs/research/pool93_certificate_semantics_v2_2026-07-09.md` for history.
+The retired v7 and pool93 contracts remain recoverable from Git history.
 
 - `crpto_table1_robustness_summary`
 - `crpto_table2_conformal_variant_benchmark`

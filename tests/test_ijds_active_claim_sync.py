@@ -1,4 +1,4 @@
-"""Drift guards for the active maturity-safe IJDS evidence and manuscripts."""
+"""Drift guards for the active fixed-taxonomy IJDS evidence and manuscripts."""
 
 from __future__ import annotations
 
@@ -11,14 +11,16 @@ from typing import Any
 
 import pytest
 
-import scripts.build_ijds_maturity_safe_evidence as evidence_builder
+from scripts.build_ijds_submission_tex import render_submission_tex
 
 REPO = Path(__file__).resolve().parents[1]
 TABLES = REPO / "reports/crpto/tables"
-EVIDENCE = REPO / "reports/crpto/ijds_maturity_safe_evidence.json"
-RUN_TAG = "champion-reopen-2026-07-10__maturity-safe-locked-bounded-h1h2-v2"
-PROTOCOL_TAG = "protocol/ijds-maturity-safe-locked-bounded-h1h2-2026-07-10-v2"
-PROTOCOL_COMMIT = "78a64fe67a4df46c3d19b9243deb991c56fd1ff6"
+EVIDENCE = REPO / "reports/crpto/ijds_fixed_taxonomy_c2_evidence.json"
+OUTCOME_FREE_RUN = "ijds-fixed-taxonomy-c2-2026-07-11-v1"
+EVALUATION_RUN = "ijds-fixed-taxonomy-c2-2026-07-11-v2"
+OUTCOME_FREE_COMMIT = "4835cc18a0117a695f89f9da70a4e3af97663a27"
+EVALUATION_COMMIT = "a88839dfe14875fca2c02c43725291bc49d98611"
+OUTCOME_FREE_FREEZE = "93690082880ef4ff1375dcd5b26d2df79f80e6ebe09a6d83b7fd99a9abb4cfae"
 SURFACES = (
     REPO / "paper/CRPTO_ijds.qmd",
     REPO / "paper/supplement_ijds.qmd",
@@ -46,245 +48,150 @@ def _sha256(path: Path) -> str:
 
 def _normalize(text: str) -> str:
     value = text.lower()
-    replacements = {
+    for old, new in {
         r"\$": "$",
         r"\%": "%",
         r"\_": "_",
         "{,}": ",",
+        "{[}": "[",
+        "{]}": "]",
         "{": "",
         "}": "",
         "`": "",
-    }
-    for old, new in replacements.items():
+    }.items():
         value = value.replace(old, new)
     return re.sub(r"\s+", " ", value)
 
 
-def test_default_evidence_validation_does_not_require_the_raw_snapshot(
-    tmp_path: Path,
-    monkeypatch: pytest.MonkeyPatch,
-) -> None:
-    summary = {
-        "status": "complete",
-        "run_tag": RUN_TAG,
-        "protocol_commit": PROTOCOL_COMMIT,
-        "artifacts": {},
-        "raw_source": {
-            "path": "data/raw/not-present.csv",
-            "bytes": 1,
-            "sha256": "not-read-by-default",
-        },
+def test_active_evidence_locks_v1_outcome_free_lineage_and_v2_evaluation() -> None:
+    evidence = _json(EVIDENCE)
+    source = evidence["outcome_free_source"]
+
+    assert evidence["status"] == "complete_reconciled_paper_evidence"
+    assert evidence["run_tag"] == EVALUATION_RUN
+    assert evidence["protocol_commit"] == EVALUATION_COMMIT
+    assert source["source_run_tag"] == OUTCOME_FREE_RUN
+    assert source["source_protocol_commit"] == OUTCOME_FREE_COMMIT
+    assert source["source_protocol_freeze"]["sha256"] == OUTCOME_FREE_FREEZE
+    assert source["reuse_scope"] == "outcome_free_predictions_models_and_allocations_only"
+    assert evidence["claim_boundary"] == {
+        "previously_inspected_archive": True,
+        "confirmatory": False,
+        "prospective": False,
+        "causal": False,
+        "selected_set_validity": False,
+        "all_nine_policies_primary": True,
     }
-    summary_path = tmp_path / "summary.json"
-    summary_path.write_text(json.dumps(summary), encoding="utf-8")
-    clean_git = {"commit": PROTOCOL_COMMIT, "dirty": False}
-    receipt = {
-        "initial_git": clean_git,
-        "final_git": clean_git,
-        "deterministic_summary": {
-            "bytes": summary_path.stat().st_size,
-            "sha256": _sha256(summary_path),
-        },
+
+
+def test_active_headline_is_exact_and_does_not_promote_a_winner() -> None:
+    evidence = _json(EVIDENCE)
+    headline = evidence["headline"]
+    decision = evidence["decision"]
+
+    assert headline["conformal_fit_coverage_seed_42"] == pytest.approx(0.9003880117741504)
+    assert headline["primary_all_candidate_coverage"] == pytest.approx(
+        [0.8547135769057285, 0.8796465812305978]
+    )
+    assert headline["canonical_c2_direction_counts"] == {
+        "payoff_worse": 7,
+        "default_higher": 1,
+        "miscoverage_higher": 8,
+        "policies": 9,
     }
-    monkeypatch.setattr(evidence_builder, "ROOT", tmp_path)
-    monkeypatch.setattr(evidence_builder, "SUMMARY_PATH", summary_path)
-    monkeypatch.setattr(evidence_builder, "_verify_git_binding", lambda: None)
-
-    evidence_builder._verify_run(summary, receipt, verify_raw=False)
-
-
-def test_active_evidence_locks_clean_v2_protocol() -> None:
-    evidence = _json(EVIDENCE)
-    summary_path = REPO / evidence["summary"]["path"]
-    receipt_path = REPO / evidence["receipt"]["path"]
-    summary = _json(summary_path)
-    receipt = _json(receipt_path)
-
-    assert evidence["status"] == "active_maturity_safe_ijds_evidence"
-    assert evidence["run_tag"] == RUN_TAG
-    assert evidence["protocol_tag"] == PROTOCOL_TAG
-    assert evidence["protocol_commit"] == PROTOCOL_COMMIT
-    assert summary["status"] == "complete"
-    assert summary["run_tag"] == RUN_TAG
-    assert summary["protocol_tag"] == PROTOCOL_TAG
-    assert summary["protocol_commit"] == PROTOCOL_COMMIT
-    assert summary["protected_stages_run"] == []
-    assert summary["protected_artifacts_written"] == []
-    assert receipt["initial_git"]["dirty"] is False
-    assert receipt["final_git"]["dirty"] is False
-    assert _sha256(summary_path) == evidence["summary"]["sha256"]
-    assert _sha256(receipt_path) == evidence["receipt"]["sha256"]
+    assert headline["comparator_multiverse_envelopes_indeterminate"] == 27
+    assert headline["comparator_multiverse_envelopes_total"] == 27
+    assert headline["c2_max_funded_pd_match_residual"] < 5e-17
+    assert headline["purpose_caps_below_one_bind_every_guardrail_month"] is True
+    assert decision["universal_guardrail_direction_allowed"] is False
+    assert decision["policy_winner_allowed"] is False
+    assert decision["selected_set_validity_allowed"] is False
+    assert decision["current_superiority_submission_go"] is False
+    assert decision["ijds_audit_narrative_go"] is True
 
 
-def test_active_policy_and_timing_are_not_post_oot_selected() -> None:
-    evidence = _json(EVIDENCE)
-    summary = _json(REPO / evidence["summary"]["path"])
-    selected = summary["selection"]["selected_guardrail"]
-
-    assert summary["row_counts"]["universe"] == 540121
-    assert summary["row_counts"]["primary_oot"] == 376890
-    assert summary["row_counts"]["primary_oot_months"] == 15
-    assert summary["selection"]["period"] == "2012-07_to_2012-12"
-    assert summary["selection"]["primary_or_extension_outcomes_used"] is False
-    assert summary["selection"]["endpoint_cap_used"] is False
-    assert selected["candidate_id"] == "linear-004"
-    assert selected["risk_tolerance"] == pytest.approx(0.17)
-    assert selected["gamma"] == pytest.approx(0.25)
-    assert summary["payoff"]["id"] == "coherent_standardized_binary_payoff_v1"
-    assert summary["payoff"]["lgd"] == pytest.approx(0.45)
-
-
-def test_active_tables_agree_with_summary() -> None:
-    evidence = _json(EVIDENCE)
-    summary = _json(REPO / evidence["summary"]["path"])
-    primary = summary["monthly_evaluation"]["aggregate_by_role_and_policy"]
-    guard_summary = next(
-        row
-        for row in primary
-        if row["role"] == "primary_oot" and row["policy_label"] == "selected_conformal_guardrail"
-    )
-    point_summary = next(
-        row
-        for row in primary
-        if row["role"] == "primary_oot" and row["policy_label"] == "matched_point_pd"
-    )
-    policy_rows = _rows("crpto_ijds_ms_table2_primary_policy")
-    guard_table = next(row for row in policy_rows if row["policy"] == "Conformal guardrail")
-    point_table = next(row for row in policy_rows if row["policy"] == "Point PD, matched tau")
-
-    for table_row, summary_row in ((guard_table, guard_summary), (point_table, point_summary)):
-        for field in (
-            "expected_objective",
-            "realized_payoff_lower",
-            "realized_payoff_upper",
-            "weighted_default_lower",
-            "weighted_default_upper",
-            "weighted_miscoverage_lower",
-            "weighted_miscoverage_upper",
-            "unresolved_exposure_share",
-        ):
-            assert float(table_row[field]) == pytest.approx(summary_row[field])
-
-    coverage = _rows("crpto_ijds_ms_tableS2_coverage")
-    primary_coverage = next(row for row in coverage if row["block"].startswith("primary_oot"))
-    conformal = summary["conformal"]["primary_oot_all_candidate_pooled"]
-    assert float(primary_coverage["coverage_lower"]) == pytest.approx(
-        conformal["all_candidate_coverage_lower"]
-    )
-    assert float(primary_coverage["coverage_upper"]) == pytest.approx(
-        conformal["all_candidate_coverage_upper"]
-    )
-
-
-def test_primary_contrast_is_sharp_sign_robust_and_noncausal() -> None:
-    rows = _rows("crpto_ijds_ms_table3_primary_contrast")
-    matched = next(row for row in rows if row["policy_b"] == "matched_point_pd")
-
-    assert float(matched["realized_payoff_difference_lower"]) == pytest.approx(-322703.787478)
-    assert float(matched["realized_payoff_difference_upper"]) == pytest.approx(-58040.339247)
-    assert float(matched["weighted_default_difference_lower"]) == pytest.approx(-0.046274834615)
-    assert float(matched["weighted_default_difference_upper"]) == pytest.approx(-0.020093094595)
-    assert float(matched["weighted_miscoverage_difference_lower"]) == pytest.approx(0.008821832051)
-    assert float(matched["weighted_miscoverage_difference_upper"]) == pytest.approx(0.029850238738)
-    assert matched["payoff_direction_sign_robust"] == "True"
-    assert matched["default_direction_sign_robust"] == "True"
-    assert matched["miscoverage_direction_sign_robust"] == "True"
-    assert matched["causal_interpretation"] == "False"
-
-
-def test_development_success_reverses_out_of_time() -> None:
-    evidence = _json(EVIDENCE)
-    rows = _rows("crpto_ijds_ms_table4_development_to_oot")
-    development = next(row for row in rows if row["block"] == "policy_development_2012H2")
-    primary = next(row for row in rows if row["block"].startswith("locked_primary"))
-    headline = evidence["headline"]["development_to_oot"]
-
-    assert headline[0]["block"] == development["block"]
-    assert headline[1]["block"] == primary["block"]
-    assert float(development["expected_payoff_difference"]) == pytest.approx(-72701.673353)
-    assert float(development["realized_payoff_difference_lower"]) == pytest.approx(50260.10081)
-    assert float(development["weighted_default_difference_lower"]) == pytest.approx(-0.063802154704)
-    assert float(development["weighted_miscoverage_difference_lower"]) == pytest.approx(
-        -0.007358371111
-    )
-    assert float(primary["realized_payoff_difference_upper"]) < 0.0
-    assert float(primary["expected_payoff_difference"]) == pytest.approx(-240977.778623)
-    assert float(primary["weighted_default_difference_upper"]) < 0.0
-    assert float(primary["weighted_miscoverage_difference_lower"]) > 0.0
-
-
-def test_evidence_manifest_hashes_every_publication_output() -> None:
-    evidence = _json(EVIDENCE)
-    paths = {item["path"] for item in evidence["outputs"]}
-    required = {
-        "reports/crpto/tables/crpto_ijds_ms_table1_protocol.csv",
-        "reports/crpto/tables/crpto_ijds_ms_table2_primary_policy.csv",
-        "reports/crpto/tables/crpto_ijds_ms_table3_primary_contrast.csv",
-        "reports/crpto/tables/crpto_ijds_ms_table4_development_to_oot.csv",
-        *{
-            f"reports/crpto/tables/crpto_ijds_ms_tableS{i}_{suffix}.csv"
-            for i, suffix in (
-                (1, "selection_grid"),
-                (2, "coverage"),
-                (3, "monthly_primary"),
-                (4, "transport"),
-                (5, "group_exposure"),
-                (6, "extension"),
-                (7, "monthly_contrast"),
-            )
-        },
-        "reports/crpto/figures/crpto_ijds_ms_fig0_pipeline.pdf",
-        "reports/crpto/figures/crpto_ijds_ms_fig1_timeline.pdf",
-        "reports/crpto/figures/crpto_ijds_ms_fig2_monthly.pdf",
-        "reports/crpto/figures/crpto_ijds_ms_fig3_transport.pdf",
+def test_direction_and_sensitivity_tables_match_headline() -> None:
+    directions = {
+        row["comparator_rule"]: row for row in _rows("crpto_ijds_ft_table4_direction_summary")
     }
-    assert required <= paths
-    for item in evidence["outputs"]:
-        path = REPO / item["path"]
+    c0 = directions["c0_same_numeric_cap"]
+    c2 = directions["c2_contemporaneous"]
+    envelope = directions["finite_multiverse_envelope"]
+
+    assert (int(c0["payoff_positive"]), int(c0["default_negative"])) == (9, 9)
+    assert (
+        int(c2["payoff_negative"]),
+        int(c2["default_positive"]),
+        int(c2["miscoverage_positive"]),
+    ) == (7, 1, 8)
+    assert (
+        int(envelope["payoff_indeterminate"]),
+        int(envelope["default_indeterminate"]),
+        int(envelope["miscoverage_indeterminate"]),
+    ) == (9, 9, 9)
+
+    sensitivity = _rows("crpto_ijds_ft_tableS1_seed_cap_sensitivity")
+    assert len(sensitivity) == 180
+    assert {int(row["seed"]) for row in sensitivity} == {40, 41, 42, 43, 44}
+    assert {float(row["purpose_cap"]) for row in sensitivity} == {0.2, 0.25, 0.3, 1.0}
+
+
+def test_coverage_table_contains_all_fixed_taxonomies_and_unresolved_rows() -> None:
+    coverage = _rows("crpto_ijds_ft_table2_coverage")
+    primary = [row for row in coverage if row["design_split"] == "primary_oot"]
+
+    assert {int(row["taxonomy_groups"]) for row in primary} == {1, 2, 5, 10}
+    assert {int(row["rows"]) for row in primary} == {376890}
+    assert {int(row["unresolved_rows"]) for row in primary} == {11551}
+    assert max(float(row["all_candidate_coverage_upper"]) for row in primary) == pytest.approx(
+        0.88194221650349
+    )
+
+
+def test_evidence_manifest_hashes_all_publication_outputs() -> None:
+    evidence = _json(EVIDENCE)
+    outputs = evidence["publication_artifacts"]
+
+    assert len(outputs) == 41
+    for relative, descriptor in outputs.items():
+        path = REPO / relative
         assert path.is_file(), path
-        assert path.stat().st_size == item["bytes"]
-        assert _sha256(path) == item["sha256"]
+        assert path.stat().st_size == descriptor["bytes"]
+        assert _sha256(path) == descriptor["sha256"]
 
 
-def test_active_manuscript_surfaces_share_numeric_and_narrative_anchors() -> None:
-    anchors = (
+def test_manuscript_surfaces_share_active_claims_and_retire_p1_c1_headlines() -> None:
+    active = (
         "540,121",
+        "0.900388",
+        "0.854714",
+        "0.879647",
+        "7 of 9",
+        "1 of 9",
+        "8 of 9",
+        "180",
+        "27",
+        "standardized payoff",
+        "selected-set",
+        "not a prospective",
+    )
+    retired = (
         "0.854923",
         "0.879692",
         "0.068313",
-        "0.034431",
-        "0.056287",
-        "0.027093",
-        "0.046283",
-        "$295,967.17",
-        "$506,587.03",
-        "7/9",
-        "within-group",
-        "standardized payoff",
-        "latent",
-        "post hoc",
+        "295,967.17",
+        "506,587.03",
+        "selected guardrail",
     )
     for surface in SURFACES:
         text = _normalize(surface.read_text(encoding="utf-8"))
-        missing = [_normalize(anchor) for anchor in anchors if _normalize(anchor) not in text]
-        assert not missing, f"{surface.name} missing active anchors: {missing}"
+        assert not [token for token in active if _normalize(token) not in text], surface
+        assert not [token for token in retired if _normalize(token) in text], surface
 
 
-def test_body_sources_retain_recovered_ijds_argument() -> None:
-    anchors = (
-        "closest-work boundary",
-        "identification and theory",
-        "comparator non-invariance",
-        "equal thresholds are not equal baselines",
-        "managerial audit card",
-    )
-    for surface in (SURFACES[0], SURFACES[2]):
-        text = _normalize(surface.read_text(encoding="utf-8"))
-        missing = [_normalize(anchor) for anchor in anchors if _normalize(anchor) not in text]
-        assert not missing, f"{surface.name} missing recovered argument: {missing}"
-
-
-def test_body_and_official_share_section_architecture() -> None:
+def test_body_and_generated_tex_share_architecture_citations_and_displays() -> None:
+    body = SURFACES[0].read_text(encoding="utf-8")
+    official = SURFACES[2].read_text(encoding="utf-8")
     sections = (
         "Introduction",
         "Related Work",
@@ -297,53 +204,27 @@ def test_body_and_official_share_section_architecture() -> None:
         "Reproducibility",
         "Conclusion",
     )
-    body = SURFACES[0].read_text(encoding="utf-8")
-    official = SURFACES[2].read_text(encoding="utf-8")
-    assert "# Abstract {.unnumbered}" in body
-    body_matches = [
-        re.search(rf"(?m)^# {re.escape(section)}(?:\s|$)", body) for section in sections
-    ]
-    assert all(match is not None for match in body_matches)
-    body_positions = [match.start() for match in body_matches if match is not None]
-    official_positions = [official.index(rf"\section{{{section}}}") for section in sections]
+
+    body_positions = [body.index(f"# {section}") for section in sections]
+    tex_positions = [official.index(rf"\section{{{section}}}") for section in sections]
     assert body_positions == sorted(body_positions)
-    assert official_positions == sorted(official_positions)
+    assert tex_positions == sorted(tex_positions)
+    assert "abstract: |" in body
+    assert r"\ABSTRACT{" in official
 
-
-def test_body_and_official_share_citations_and_display_counts() -> None:
-    body = SURFACES[0].read_text(encoding="utf-8")
-    official = SURFACES[2].read_text(encoding="utf-8")
     body_citations = {
         key
         for key in re.findall(r"@([A-Za-z0-9_:-]+)", body)
         if not key.startswith(("fig-", "tbl-", "eq-", "sec-"))
     }
-    official_citations: set[str] = set()
+    tex_citations: set[str] = set()
     for group in re.findall(r"\\cite\w*\{([^}]+)\}", official):
-        official_citations.update(key.strip() for key in group.split(","))
-
-    assert body_citations == official_citations
+        tex_citations.update(key.strip() for key in group.split(","))
+    assert body_citations == tex_citations
     assert len(body_citations) == 41
-    assert body.count("{#tbl-") == 12
-    assert body.count("{#fig-") == 4
-    assert official.count(r"\begin{table}") == 12
-    assert official.count(r"\begin{figure}") == 4
+    assert body.count("{#tbl-") == official.count(r"\begin{longtable}") == 8
+    assert body.count("{#fig-") == official.count(r"\begin{figure}") == 4
 
 
-def test_compact_v7_headlines_cannot_reenter_active_surfaces() -> None:
-    retired = (
-        "champion-reopen-2026-06-19__pool93__ijds-calibration-selected-endpoint28-v7",
-        "$179,327.59",
-        "276,869",
-        "0.039375",
-        "0.036875",
-        "0.258051",
-        "0.574279",
-        "$196,369.14",
-        "8.678%",
-        "7.9025",
-    )
-    for surface in SURFACES:
-        text = _normalize(surface.read_text(encoding="utf-8"))
-        present = [_normalize(token) for token in retired if _normalize(token) in text]
-        assert not present, f"{surface.name} retains compact-v7 claims: {present}"
+def test_official_tex_is_deterministically_generated_from_qmd() -> None:
+    assert render_submission_tex(check=True)

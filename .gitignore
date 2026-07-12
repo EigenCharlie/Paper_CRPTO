@@ -57,6 +57,8 @@ data/processed/**/*
 !data/processed/experiments/
 !data/processed/experiments/champion_reopen/
 !data/processed/experiments/champion_reopen/champion-reopen-2026-07-10__maturity-safe-locked-bounded-h1h2-v2.dvc
+!data/processed/experiments/ijds_prefreeze/
+!data/processed/experiments/ijds_prefreeze/*.dvc
 
 # DVC cache, locks, tmp (only `.dvc/config` and `dvc.yaml`/`dvc.lock` belong in git)
 .dvc/cache/

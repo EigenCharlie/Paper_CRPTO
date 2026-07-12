@@ -78,6 +78,10 @@ journal-package:
     uv run python scripts/build_crpto_journal_package.py
 
 ijds-evidence:
+    uv run python scripts/build_ijds_fixed_taxonomy_c2_evidence.py
+
+# Historical P1/C1 evidence remains reproducible but is not paper-facing.
+ijds-historical-p1-c1-evidence:
     uv run python scripts/build_ijds_maturity_safe_evidence.py
     uv run python scripts/build_ijds_comparator_stringency_evidence.py
 
@@ -94,9 +98,8 @@ ijds-policy-challenger:
 
 ijds-historical-v7-replay: ijds-exact-alpha ijds-policy-challenger ijds-historical-v7-evidence
 
-# Active replay means validating and rebuilding paper-facing evidence from the
-# committed, tagged, immutable maturity-safe run. The expensive runner itself
-# requires a fresh run tag and is never hidden inside a release command.
+# Active replay validates both fixed-taxonomy tags and rebuilds only the
+# paper-facing evidence. The expensive policy solve is never hidden here.
 ijds-active-replay: ijds-evidence
 
 paper-export: tables figures evidence journal-package ijds-evidence book
@@ -112,8 +115,12 @@ paper-ijds-supplement:
 # Render the current submission-shaped manuscript surfaces.
 paper-submission: paper-ijds paper-ijds-supplement
 
+# Generate the official INFORMS TeX from the canonical QMD source.
+paper-submission-tex:
+    uv run python scripts/build_ijds_submission_tex.py
+
 # Compile and scan the official INFORMS/IJDS LaTeX handoff draft.
-paper-submission-official:
+paper-submission-official: paper-submission-tex
     @uv run python scripts/compile_ijds_submission.py
 
 # Final local IJDS gate before freezing or uploading.

@@ -1,14 +1,15 @@
-"""Sync active supplement mechanism tables to generated CSV evidence."""
+"""Sync hand-authored supplement summaries to active fixed-taxonomy evidence."""
 
 from __future__ import annotations
 
 import csv
 from pathlib import Path
 
+import pytest
+
 REPO = Path(__file__).resolve().parents[1]
 TABLES = REPO / "reports/crpto/tables"
 SUPPLEMENT = REPO / "paper/supplement_ijds.qmd"
-PAPER = REPO / "paper/CRPTO_ijds.qmd"
 
 
 def _rows(name: str) -> list[dict[str, str]]:
@@ -16,63 +17,78 @@ def _rows(name: str) -> list[dict[str, str]]:
         return list(csv.DictReader(handle))
 
 
-def test_group_exposure_values_are_visible_in_body_and_supplement() -> None:
-    rows = _rows("crpto_ijds_cs_tableS10_group_exposure.csv")
-    body = PAPER.read_text(encoding="utf-8")
-    supplement = SUPPLEMENT.read_text(encoding="utf-8").lower()
-    for policy, group in (
-        ("selected_conformal_guardrail", "0"),
-        ("development_matched_point_pd", "0"),
-    ):
-        row = next(
-            item
-            for item in rows
-            if item["policy_label"] == policy and item["conformal_group"] == group
+def test_primary_taxonomy_coverage_is_visible_in_supplement() -> None:
+    rows = _rows("crpto_ijds_ft_table2_coverage.csv")
+    primary = [row for row in rows if row["design_split"] == "primary_oot"]
+    supplement = SUPPLEMENT.read_text(encoding="utf-8")
+
+    assert {int(row["taxonomy_groups"]) for row in primary} == {1, 2, 5, 10}
+    for row in primary:
+        lower = f"{float(row['all_candidate_coverage_lower']):.6f}"
+        upper = f"{float(row['all_candidate_coverage_upper']):.6f}"
+        assert lower in supplement
+        assert upper in supplement
+
+
+def test_canonical_c2_policy_bounds_are_visible_in_supplement() -> None:
+    rows = _rows("crpto_ijds_ft_table3_comparator_contrasts.csv")
+    canonical = [row for row in rows if row["comparator_rule"] == "c2_contemporaneous"]
+    supplement = SUPPLEMENT.read_text(encoding="utf-8")
+
+    assert len(canonical) == 9
+    for row in canonical:
+        assert row["paired_policy_id"] in supplement
+        payoff_lower = f"{abs(float(row['realized_payoff_difference_lower'])):,.0f}"
+        miscoverage_upper = f"{float(row['weighted_miscoverage_difference_upper']):.6f}"
+        assert payoff_lower in supplement
+        assert miscoverage_upper in supplement
+
+
+def test_seed_cap_census_is_visible_in_supplement() -> None:
+    rows = _rows("crpto_ijds_ft_tableS1_seed_cap_sensitivity.csv")
+    supplement = SUPPLEMENT.read_text(encoding="utf-8")
+
+    assert len(rows) == 180
+    for metric, directions in {
+        "payoff": (59, 37, 84),
+        "default": (50, 33, 97),
+        "miscoverage": (33, 64, 83),
+    }.items():
+        counts = tuple(
+            sum(row[f"{metric}_direction"] == direction for row in rows)
+            for direction in ("negative", "positive", "indeterminate")
         )
-        token = f"{float(row['exposure_share']):.6f}"
-        assert token in body
-        assert token in supplement
+        assert counts == directions
+        for count in counts:
+            assert f"| {count} |" in supplement
 
 
-def test_transport_mechanism_values_are_visible_in_supplement() -> None:
-    rows = _rows("crpto_ijds_cs_tableS9_transport.csv")
+def test_simulation_transport_means_are_visible_in_supplement() -> None:
+    rows = _rows("crpto_ijds_ft_tableS6_simulation.csv")
     supplement = SUPPLEMENT.read_text(encoding="utf-8")
-    selected = next(
-        row
-        for row in rows
-        if row["policy_label"] == "selected_conformal_guardrail"
-        and row["metric"] == "binary_miscoverage"
-        and row["completion"] == "lower"
-    )
-    for field in ("group_composition", "within_group_selection", "funded_exposure_weighted"):
-        assert f"{float(selected[field]):.6f}" in supplement
+
+    for shift in (0.0, 0.05, 0.10, 0.15):
+        shifted = [row for row in rows if float(row["temporal_shift"]) == pytest.approx(shift)]
+        metrics = {row["metric"]: float(row["mean"]) for row in shifted}
+        for metric in (
+            "calibration_coverage",
+            "transported_coverage",
+            "upper_endpoint_saturation",
+            "taxonomy_allocation_l1",
+            "guard_minus_same_cap_default",
+            "guard_minus_matched_default",
+        ):
+            assert f"{metrics[metric]:.6f}" in supplement
 
 
-def test_comparator_inversion_is_visible_in_body_and_supplement() -> None:
-    rows = _rows("crpto_ijds_cs_table2_primary_inversion.csv")
-    matched = next(row for row in rows if row["baseline"] == "development_matched_point_pd")
-    realized = f"{abs(float(matched['realized_payoff_difference_lower'])):,.2f}"
-    default = f"{float(matched['weighted_default_difference_lower']):.6f}"
-    for path in (PAPER, SUPPLEMENT):
-        text = path.read_text(encoding="utf-8").lower()
-        assert realized in text
-        assert default in text
-        assert "post hoc" in text
-        assert "development-matched" in text
-
-
-def test_extension_is_reported_as_bounded_stress_not_active_promotion() -> None:
-    rows = _rows("crpto_ijds_cs_tableS12_extension.csv")
-    guard = next(row for row in rows if row["policy_label"] == "selected_conformal_guardrail")
+def test_historical_policy_results_are_absent_from_supplement() -> None:
     supplement = SUPPLEMENT.read_text(encoding="utf-8").lower()
-    assert f"{float(guard['unresolved_exposure_share']):.6f}" in supplement
-    assert "stress evidence only" in supplement
-    assert "no directional promotion claim" in supplement
-
-
-def test_historical_external_work_is_firewalled() -> None:
-    supplement = SUPPLEMENT.read_text(encoding="utf-8")
-    for token in ("OCE/CVaR", "SPO+", "Prosper", "Freddie/Mendeley", "A25--A34"):
-        assert token in supplement
-    assert "historical diagnostics" in supplement
-    assert "differ from the active maturity-safe protocol" in supplement
+    for token in (
+        "0.854923",
+        "0.879692",
+        "0.068313",
+        "506,587.03",
+        "295,967.17",
+        "selected guardrail",
+    ):
+        assert token not in supplement

@@ -5,9 +5,9 @@ the frozen paper pipeline.
 
 > The consolidated 2026-06 backlog was executed and archived:
 > [`archive/NEXT_WORK_PLAN_2026-06.md`](archive/NEXT_WORK_PLAN_2026-06.md).
-> The 2026-07-05 audit lanes (F1–F5) are closed; see
-> [`docs/research/crpto_full_audit_2026-07-05.md`](../research/crpto_full_audit_2026-07-05.md)
-> for the execution record and the post-submission backlog.
+> The current scientific and engineering contract is summarized in
+> [`docs/research/active_claims_2026-07-11.md`](../research/active_claims_2026-07-11.md)
+> and [`.codex/skills/crpto/SKILL.md`](../../.codex/skills/crpto/SKILL.md).
 
 Each plan documents:
 
