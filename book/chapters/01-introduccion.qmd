@@ -2,7 +2,7 @@
 
 La mayoría de los pipelines de crédito siguen una receta implícita: predecir una PD puntual y optimizar decisiones como si esa predicción fuera exacta. El problema es conocido y profundo: pequeñas desviaciones de calibración o cambios de régimen pueden inducir políticas frágiles, justo en la capa donde se asigna capital.
 
-Este paper propone una respuesta operativa y científicamente defendible: usar intervalos conformales como conjuntos de incertidumbre para optimización robusta de portafolio. El foco no es "otro modelo de scoring", sino un puente explícito entre *uncertainty quantification* y *predict-then-optimize* que denominamos **Conformal Robust Predict-then-Optimize** (CRPTO). La industria suele colapsar predicciones en valores esperados para la optimización; nosotros resolvemos esto inyectando los intervalos de Conformal Prediction directamente como conjuntos de incertidumbre del optimizador.
+Este paper estudia cómo auditar un intervalo conformal cuando su endpoint entra en un optimizador de portafolio. El foco no es "otro modelo de scoring", sino el contrato entre *uncertainty quantification*, comparadores y *predict-then-optimize*, que denominamos **Conformal Risk-Aware Predict-then-Optimize** (CRPTO). El intervalo aporta un score de decisión auditable; no hereda automáticamente cobertura temporal, validez sobre el conjunto financiado ni una garantía de robustez del portafolio.
 
 ### Contexto en la literatura {#sec-crpto-lit-context}
 
@@ -55,7 +55,7 @@ El paper actual es fuerte como **CRPTO post-hoc auditable**: toma una PD calibra
 
 ### Contribuciones del paper
 
-1. Formaliza el enfoque **Conformal Robust Predict-then-Optimize** (CRPTO), estableciendo un puente directo entre la garantía de cobertura/riesgo conformal y el presupuesto de robustez de [@bertsimas2004] para selección de portafolio crediticio.
+1. Formaliza el enfoque **Conformal Risk-Aware Predict-then-Optimize** (CRPTO), separando cobertura candidata, geometría score-cap, comparadores y resultados financiados en la selección de portafolio crediticio.
 2. Compara CRPTO contra baselines alternativos de incertidumbre (bootstrap, BMA) y contra decision-focused learning (SPO+), con métricas que abarcan cobertura, anchura, regret económico y auditabilidad regulatoria.
 3. Cuantifica la frontera entre cobertura, ancho y retorno económico bajo una misma trazabilidad experimental, proporcionando una herramienta operativa para gestores de portafolio.
 4. Demuestra que la ventaja competitiva de CRPTO frente a SPO+ no es el regret (donde SPO+ es superior por diseño) sino la **trazabilidad**: cobertura verificable por grupo, auditabilidad ante SR 11-7, y respuesta automática ante cambios de régimen vía ensanchamiento natural de intervalos.

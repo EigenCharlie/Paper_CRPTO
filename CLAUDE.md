@@ -1,24 +1,26 @@
 # CLAUDE.md — Contexto para Claude Code en Paper_CRPTO
 
-## Scientific status override - 2026-07-11
+## Scientific status override - 2026-07-12
 
 The only active IJDS source of truth is
-`docs/research/active_claims_2026-07-11.md`. The paper is a fixed-taxonomy,
-comparator-multiverse audit. It does not select a policy and does not claim a
-universal guardrail direction. The outcome-free V1 freeze is imported by the
-clean tagged V2 evaluator through exact SHA-256 lineage; the only active
-paper-facing manifest is
+`docs/research/active_claims_2026-07-12.md`. The paper is a fixed-taxonomy,
+comparator-multiverse and temporal-design audit. It does not select a policy or
+residual window and does not claim a universal guardrail direction. The
+outcome-free V1 freeze is imported by the clean tagged V2 evaluator through
+exact SHA-256 lineage. The isolated V3 run co-reports a later residual window
+without result-based promotion; the only active paper-facing manifest is
 `reports/crpto/ijds_fixed_taxonomy_c2_evidence.json`.
 
 The superiority submission is NO-GO. The IJDS audit narrative is GO: temporal
-coverage failure is stable, while decision conclusions depend on comparator
-stringency and binding operational constraints. Selected-policy studies,
+candidate-coverage failure survives declared timing checks, while decision
+conclusions depend on residual timing, comparator stringency, and binding
+operational constraints. Selected-policy studies,
 compact-v7, pool93, Prosper/Freddie, and A1--A40 are historical provenance only. Never overwrite
-the V1/V2 audit runs, the historical champion, or manifest-protected artifacts.
+the V1/V2/V3 audit runs, the historical champion, or manifest-protected artifacts.
 
 ## Quién soy y qué es este proyecto
 
-Soy Carlos Vergara, científico de datos terminando un paper académico de tesis. **CRPTO** (Conformal Robust Predict-Then-Optimize) aplica **conformal prediction** + **optimización robusta de carteras** al dominio de **credit risk** usando datos de Lending Club. Este repositorio es standalone: GitHub, DVC y MLflow apuntan a recursos propios de CRPTO. La historia de extracción está en `docs/PROJECT_HISTORY.md`; el repositorio no debe re-correr el **pipeline de búsqueda** del champion sin permiso explícito.
+Soy Carlos Vergara, científico de datos terminando un paper académico de tesis. **CRPTO** (Conformal Risk-Aware Predict-Then-Optimize en el paper activo) aplica **conformal prediction** + **optimización de carteras** al dominio de **credit risk** usando datos de Lending Club. Este repositorio es standalone: GitHub, DVC y MLflow apuntan a recursos propios de CRPTO. La historia de extracción está en `docs/PROJECT_HISTORY.md`; el repositorio no debe re-correr el **pipeline de búsqueda** del champion sin permiso explícito.
 
 **Prefiero código simple y funcional. Sin sobre-ingeniería, sin abstracciones prematuras, sin refactors gratuitos.**
 
@@ -67,23 +69,25 @@ upstream protegido.
 | --- | --- |
 | Outcome-free run | `ijds-fixed-taxonomy-c2-2026-07-11-v1` |
 | Reconciled run | `ijds-fixed-taxonomy-c2-2026-07-11-v2` |
-| Universo | `540,121` prestamos de 36 meses; membership independiente del status |
-| Cronologia | fit termina 2012H1; 15 decisiones mensuales 2016-04--2017-06 |
-| Conformal | bordes de score fijos en 2011 y residuos 2012H1; no es CI de PD latente |
+| Temporal sensitivity | `ijds-fixed-taxonomy-c2-temporal-v3-2026-07-12-v1` |
+| Universo OOT comun | `465,117` prestamos de 36 meses; membership independiente del status |
+| Cronologia | residuos early 2012H1 y late 2012H2--2013M1; 15 decisiones 2016-04--2017-06 |
+| Conformal | bordes de score fijos en 2011; clipped residual interval, no CI de PD latente |
 | Politicas | nueve guardrails co-primarios; sin selector ni winner |
-| Cobertura candidata OOT | `[0.854714, 0.879647]` para cinco strata |
-| Comparator primario | C2 contemporaneo, matched al funded point-PD de cada guardrail/mes |
-| C2 payoff | guardrail peor en `7/9`; `2/9` indeterminado |
-| C2 default | guardrail mayor en `1/9`; `8/9` indeterminado |
-| C2 miscoverage | guardrail mayor en `8/9`; `1/9` indeterminado |
-| Multiverse | `27/27` envelopes policy-by-metric cruzan cero |
+| Cobertura candidata OOT | early `[0.854714, 0.879647]`; late `[0.845072, 0.870973]` |
+| Comparator C2 | matched al funded point score de cada guardrail/mes; no causal |
+| C2 payoff | early `7/9` lower; late `5/9` lower; no headline universal |
+| C2 default | `1/9` higher y `8/9` indeterminado en ambas ventanas |
+| C2 miscoverage | `8/9` higher y `1/9` indeterminado en ambas ventanas |
+| Comparator scopes | `27/27` cruzan cero en core, development-supported y broad |
 | Evidencia | `reports/crpto/ijds_fixed_taxonomy_c2_evidence.json` |
 
 El claim activo es una falsificacion metodologica: la falla temporal de
-cobertura es estable, pero el signo de los resultados de portafolio depende
-del comparador y de restricciones operacionales vinculantes. No existe un
-winner ni una direccion universal. La autoridad completa es
-`docs/research/active_claims_2026-07-11.md`.
+cobertura sobrevive los checks declarados, pero el signo de los resultados de
+portafolio depende del timing residual, el comparador y restricciones
+operacionales vinculantes. No existe un winner ni una direccion universal. La
+autoridad completa es
+`docs/research/active_claims_2026-07-12.md`.
 
 **Body claim histórico v7:** NO-GO y replay-only. Sus A35--A40, retorno
 positivo, endpoint y sensibilidades no pueden reaparecer en superficies

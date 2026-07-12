@@ -11,17 +11,18 @@ edited directly.
 - TeX generator: `scripts/build_ijds_submission_tex.py`;
 - INFORMS Pandoc template: `paper/submission/informs-pandoc-template.tex`;
 - generated official TeX: `paper/submission/CRPTO_ijds_submission.tex`;
-- claim authority: `docs/research/active_claims_2026-07-11.md`;
+- claim authority: `docs/research/active_claims_2026-07-12.md`;
 - evidence: `reports/crpto/ijds_fixed_taxonomy_c2_evidence.json`.
 
-The active study uses 540,121 status-independent loans, four fixed conformal
-taxonomies, all nine co-primary policies, C0/C1/C2 plus a 29-cap frontier,
-sharp unresolved-outcome bounds, 180 seed-purpose cells, and 800 simulation
-repetitions. It reports no policy winner.
+The active study uses a common 465,117-loan OOT panel, two locked residual
+windows, four fixed conformal taxonomies, all nine co-primary policies, three
+comparator scopes, sharp unresolved-outcome bounds, two 180-cell seed-purpose
+censuses, and 800 controlled-simulation repetitions. It reports no policy or
+timing-window winner.
 
 ## Current IJDS Requirements
 
-Official pages rechecked July 11, 2026:
+Official pages rechecked July 12, 2026:
 
 - [submission guidelines](https://pubsonline.informs.org/page/ijds/submission-guidelines);
 - [data/code policy](https://pubsonline.informs.org/page/ijds/data-and-code-disclosure-policy);
@@ -59,17 +60,17 @@ floats, and pagination.
 
 ## Current QA Record
 
-Validated July 11, 2026:
+Validated July 12, 2026:
 
-- official INFORMS manuscript: **27 pages**;
+- official INFORMS manuscript: **28 pages**;
 - references begin on page 25, so the pre-reference body is 24 pages;
-- main manuscript: 8 tables and 4 figures;
-- title: 10 words; abstract: 280 words; keywords: 7;
+- main manuscript: 7 tables and 3 figures;
+- title: 10 words; abstract: 260 words; keywords: 7;
 - `.blg`: no warnings;
 - `.log`: no undefined citations, labels, or convergence request;
 - one publisher-class `\maketitle` overfull diagnostic (17.54 pt) is visually
   inside the page and originates beside the template notice/logo;
-- all 27 pages were rendered and visually inspected; figures, tables, headers,
+- all 28 pages were rendered and visually inspected; figures, tables, headers,
   footers, and references are legible with no clipping or overlap.
 
 The page count is deliberately near, but below, the 25-page pre-reference
@@ -82,7 +83,7 @@ limit. Recount and repeat visual QA after substantive edits.
 - pre-reference body is no more than 25 pages;
 - tables and figures remain near first mention and inside margins;
 - body and supplement contain no identifying metadata;
-- the 280-word abstract stays below 300 words;
+- the 260-word abstract stays below 300 words;
 - no retired selected-policy or compact-v7 headline returns; and
 - page-by-page visual inspection finds no clipping, overlap, blank page, or
   missing glyph.

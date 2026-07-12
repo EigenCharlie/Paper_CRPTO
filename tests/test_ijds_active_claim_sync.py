@@ -199,26 +199,116 @@ def test_evidence_manifest_hashes_all_publication_outputs() -> None:
     evidence = _json(EVIDENCE)
     outputs = evidence["publication_artifacts"]
 
-    assert len(outputs) == 41
+    assert len(outputs) == 62
     for relative, descriptor in outputs.items():
         path = REPO / relative
         assert path.is_file(), path
         assert path.stat().st_size == descriptor["bytes"]
         assert _sha256(path) == descriptor["sha256"]
 
+    provenance = evidence["build_provenance"]
+    assert provenance["hash_algorithm"] == "sha256"
+    assert set(provenance["source_files"]) == {
+        "evidence_builder",
+        "temporal_evidence_module",
+        "environment_lock",
+    }
+    for descriptor in provenance["source_files"].values():
+        path = REPO / descriptor["path"]
+        assert path.stat().st_size == descriptor["bytes"]
+        assert _sha256(path) == descriptor["sha256"]
+
+
+def test_temporal_design_sensitivity_is_locked_and_does_not_select_a_window() -> None:
+    temporal = _json(EVIDENCE)["temporal_design_sensitivity"]
+
+    assert temporal["status"] == "complete_locked_design_sensitivity"
+    assert temporal["run_tag"] == "ijds-fixed-taxonomy-c2-temporal-v3-2026-07-12-v1"
+    assert temporal["protocol_commit"] == "c5ceab737ab3cda8aed7d3c1fd24a506418cfa35"
+    assert temporal["no_result_based_promotion"] is True
+    assert temporal["development_supported_point_cap_range"] == pytest.approx(
+        {
+            "lower": 0.06,
+            "upper": 0.0825,
+            "step": 0.0025,
+            "target_minimum": 0.0600396539710651,
+            "target_maximum": 0.0814989466504543,
+            "target_count": 9,
+        }
+    )
+
+    equivalence = temporal["code_path_equivalence"]
+    assert equivalence["point_predictions"] == {
+        "common_oot_rows": 465117,
+        "maximum_absolute_pd_point_difference": 0.0,
+        "exact": True,
+    }
+    assert equivalence["point_policy_allocations"]["canonical_point_policy_cells"] == 570
+    assert equivalence["point_policy_allocations"]["maximum_absolute_exposure_difference"] == 0.0
+    assert equivalence["point_policy_allocations"]["total_allocation_l1_difference"] == 0.0
+    assert equivalence["point_policy_allocations"]["exact"] is True
+
+
+def test_temporal_tables_capture_window_lag_and_comparator_sensitivity() -> None:
+    windows = _rows("crpto_ijds_ft_tableS8_temporal_windows")
+    five_group = {row["window_id"]: row for row in windows if int(row["taxonomy_groups"]) == 5}
+    assert set(five_group) == {"early_2012h1", "late_2012h2_2013m1"}
+    assert float(five_group["early_2012h1"]["all_candidate_coverage_lower"]) == pytest.approx(
+        0.8547135769057285
+    )
+    assert float(five_group["late_2012h2_2013m1"]["all_candidate_coverage_upper"]) == (
+        pytest.approx(0.8709729628676759)
+    )
+    assert max(float(row["all_candidate_coverage_upper"]) for row in windows) < 0.90
+
+    lags = _rows("crpto_ijds_ft_tableS9_label_lags")
+    assert {int(row["charged_off_lag_months"]) for row in lags} == {0, 3, 6, 12}
+    assert max(float(row["all_candidate_coverage_upper"]) for row in lags) < 0.90
+
+    directions = _rows("crpto_ijds_ft_tableS10_timing_directions")
+    assert len(directions) == 18
+    payoff = {
+        row["window_id"]: row
+        for row in directions
+        if row["metric"] == "realized_payoff" and row["comparator_rule"] == "c2_contemporaneous"
+    }
+    assert int(payoff["early_2012h1"]["negative"]) == 7
+    assert int(payoff["late_2012h2_2013m1"]["negative"]) == 5
+
+    scopes = _rows("crpto_ijds_ft_tableS11_comparator_scopes")
+    assert len(scopes) == 9
+    assert {row["scope"] for row in scopes} == {
+        "core_rules",
+        "development_supported",
+        "broad_stress",
+    }
+    assert {int(row["indeterminate"]) for row in scopes} == {9}
+
+    late_c2 = _rows("crpto_ijds_ft_tableS13_late_c2_contrasts")
+    scope_envelopes = _rows("crpto_ijds_ft_tableS14_comparator_scope_envelopes")
+    assert len(late_c2) == 9
+    assert len(scope_envelopes) == 81
+    assert {row["sign"] for row in scope_envelopes} == {"indeterminate"}
+
 
 def test_manuscript_surfaces_share_active_claims_and_retire_p1_c1_headlines() -> None:
     active = (
-        "540,121",
+        "465,117",
         "0.900388",
+        "0.900174",
         "0.854714",
         "0.879647",
+        "0.845072",
+        "0.870973",
         "7 of 9",
-        "1 of 9",
-        "8 of 9",
+        "5 of 9",
         "180",
         "2,025",
         "27",
+        "0.0600",
+        "0.0825",
+        "81",
+        "62",
         "standardized payoff",
         "selected-set",
         "not a prospective",
@@ -242,12 +332,18 @@ def test_manuscript_discloses_post_result_pivot_and_correct_label_cutoff() -> No
     supplement = _normalize((REPO / "paper/supplement_ijds.qmd").read_text(encoding="utf-8"))
 
     assert "present negative audit framing was formulated after observing that stop" in body
-    assert "2012h1-issued loans whose labels are observable by the march 31, 2016" in body
+    assert "information cutoff of march 31, 2016" in body
+    assert "the reference recipe uses 2012h1" in body
+    assert "the timing sensitivity uses july 2012--january 2013" in body
     assert "labels observable by the end of 2012h1" not in body
     assert "audit interpretation in the paper was developed after observing that failure" in (
         supplement
     )
-    assert "proposition s1 (binary interval geometry)" in supplement
+    assert "identity s1 (binary interval geometry)" in supplement
+    for surface in (body, supplement):
+        assert "represented by its convex hull" not in surface
+        assert "calibrated probability of default" not in surface
+    assert "nor the convex hull of a discrete prediction set" in supplement
 
 
 def test_body_and_generated_tex_share_architecture_citations_and_displays() -> None:
@@ -258,7 +354,7 @@ def test_body_and_generated_tex_share_architecture_citations_and_displays() -> N
         "Related Work",
         "Data and Locked Evaluation Design",
         "Method",
-        "Identification and Theory",
+        "Audit Theory and Estimands",
         "Results",
         "Discussion",
         "Limitations",
@@ -283,8 +379,8 @@ def test_body_and_generated_tex_share_architecture_citations_and_displays() -> N
         tex_citations.update(key.strip() for key in group.split(","))
     assert body_citations == tex_citations
     assert len(body_citations) == 41
-    assert body.count("{#tbl-") == official.count(r"\begin{longtable}") == 8
-    assert body.count("{#fig-") == official.count(r"\begin{figure}") == 4
+    assert body.count("{#tbl-") == official.count(r"\begin{longtable}") == 7
+    assert body.count("{#fig-") == official.count(r"\begin{figure}") == 3
 
 
 def test_official_tex_is_deterministically_generated_from_qmd() -> None:

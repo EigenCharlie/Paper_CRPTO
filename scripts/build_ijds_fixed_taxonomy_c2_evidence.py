@@ -15,6 +15,7 @@ import pandas as pd
 matplotlib.use("Agg")
 import matplotlib.pyplot as plt
 
+from src.evaluation.ijds_temporal_evidence import build_temporal_evidence
 from src.utils.pipeline_runtime import atomic_write_json, atomic_write_text
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -31,6 +32,7 @@ SUMMARY_PATH = MODEL_ROOT / "fixed_taxonomy_c2_summary.json"
 RECEIPT_PATH = MODEL_ROOT / "execution_receipt.json"
 SOURCE_RECORDS_PATH = SOURCE_DATA_ROOT / "portfolio/outcome_free_solve_records.parquet"
 SOURCE_ALLOCATIONS_PATH = SOURCE_DATA_ROOT / "portfolio/outcome_free_funded_allocations.parquet"
+SOURCE_DECISION_PANEL_PATH = SOURCE_DATA_ROOT / "prediction/canonical_decision_panel.parquet"
 TABLE_ROOT = ROOT / "reports/crpto/tables"
 FIGURE_ROOT = ROOT / "reports/crpto/figures"
 MANIFEST_PATH = ROOT / "reports/crpto/ijds_fixed_taxonomy_c2_evidence.json"
@@ -146,6 +148,12 @@ def _read_inputs(summary: dict[str, Any]) -> dict[str, pd.DataFrame]:
     if allocations_path != SOURCE_ALLOCATIONS_PATH.resolve():
         raise RuntimeError("Source freeze points to an unexpected allocation artifact.")
     frames["allocations"] = pd.read_parquet(allocations_path)
+    decision_panel_path = _verify_descriptor(
+        source_freeze["outcome_free_artifacts"]["canonical_decision_panel"]
+    )
+    if decision_panel_path != SOURCE_DECISION_PANEL_PATH.resolve():
+        raise RuntimeError("Source freeze points to an unexpected decision-panel artifact.")
+    frames["decision_panel"] = pd.read_parquet(decision_panel_path)
     return frames
 
 
@@ -667,28 +675,35 @@ def _aggregate_levels(aggregate: pd.DataFrame) -> pd.DataFrame:
 
 
 def _plot_coverage(table: pd.DataFrame) -> plt.Figure:
-    primary = table.loc[table["design_split"].eq("primary_oot")].sort_values("taxonomy_groups")
-    x = np.arange(len(primary))
-    lower = primary["all_candidate_coverage_lower"].to_numpy(dtype=float)
-    upper = primary["all_candidate_coverage_upper"].to_numpy(dtype=float)
-    midpoint = (lower + upper) / 2.0
+    x = np.arange(4, dtype=float)
     figure, axis = plt.subplots(figsize=(7.2, 3.8))
-    axis.errorbar(
-        x,
-        midpoint,
-        yerr=np.vstack((midpoint - lower, upper - midpoint)),
-        fmt="o",
-        color="#1f6f8b",
-        ecolor="#1f6f8b",
-        capsize=5,
-        linewidth=2,
-        label="Primary OOT sharp coverage interval",
+    styles = (
+        ("early_2012h1", "2012H1 residual window", -0.08, "o", "#1f6f8b"),
+        ("late_2012h2_2013m1", "2012H2--2013M1 residual window", 0.08, "s", "#b35c2e"),
     )
+    for window_id, label, offset, marker, color in styles:
+        window = table.loc[table["window_id"].eq(window_id)].sort_values("taxonomy_groups")
+        if len(window) != 4:
+            raise RuntimeError(f"Expected four taxonomy rows for {window_id}.")
+        lower = window["all_candidate_coverage_lower"].to_numpy(dtype=float)
+        upper = window["all_candidate_coverage_upper"].to_numpy(dtype=float)
+        midpoint = (lower + upper) / 2.0
+        axis.errorbar(
+            x + offset,
+            midpoint,
+            yerr=np.vstack((midpoint - lower, upper - midpoint)),
+            fmt=marker,
+            color=color,
+            ecolor=color,
+            capsize=4,
+            linewidth=1.8,
+            label=label,
+        )
     axis.axhline(0.90, color="#b33a3a", linestyle="--", linewidth=1.5, label="90% target")
-    axis.set_xticks(x, primary["taxonomy_groups"].astype(int).astype(str))
+    axis.set_xticks(x, ["1", "2", "5", "10"])
     axis.set_xlabel("Fixed score strata")
     axis.set_ylabel("Coverage")
-    axis.set_ylim(0.84, 0.91)
+    axis.set_ylim(0.835, 0.905)
     axis.grid(axis="y", alpha=0.25)
     axis.legend(frameon=False, loc="lower right")
     figure.tight_layout()
@@ -826,6 +841,14 @@ def build_evidence() -> Path:
     availability = pd.DataFrame(summary["label_availability"])
     purpose_binding = _purpose_cap_binding(frames["allocations"])
     endpoint_inventory = _endpoint_inventory(frames["coverage"], summary)
+    temporal = build_temporal_evidence(
+        root=ROOT,
+        reference_summary=summary,
+        reference_coverage=frames["coverage"],
+        reference_contrasts=frames["contrasts"],
+        reference_allocations=frames["allocations"],
+        reference_decision_panel=frames["decision_panel"],
+    )
 
     outputs: list[Path] = []
     outputs += _write_table(policy_grid, "crpto_ijds_ft_table1_policy_grid")
@@ -839,7 +862,12 @@ def build_evidence() -> Path:
     outputs += _write_table(levels, "crpto_ijds_ft_tableS5_policy_levels")
     outputs += _write_table(simulation, "crpto_ijds_ft_tableS6_simulation")
     outputs += _write_table(availability, "crpto_ijds_ft_tableS7_label_availability")
-    outputs += _save_figure(_plot_coverage(coverage), "crpto_ijds_ft_fig1_coverage")
+    for stem, table in temporal.tables.items():
+        outputs += _write_table(table, stem)
+    outputs += _save_figure(
+        _plot_coverage(temporal.tables["crpto_ijds_ft_tableS8_temporal_windows"]),
+        "crpto_ijds_ft_fig1_coverage",
+    )
     outputs += _save_figure(_plot_comparators(comparator), "crpto_ijds_ft_fig2_comparators")
     outputs += _save_figure(_plot_frontier(frontier), "crpto_ijds_ft_fig3_frontier")
     outputs += _save_figure(
@@ -862,7 +890,7 @@ def build_evidence() -> Path:
         "policies": int(len(canonical_c2)),
     }
     evidence = {
-        "schema_version": "2026-07-11.3",
+        "schema_version": "2026-07-12.1",
         "status": "complete_reconciled_paper_evidence",
         "run_tag": RUN_TAG,
         "protocol_tag": PROTOCOL_TAG,
@@ -908,6 +936,25 @@ def build_evidence() -> Path:
         "direction_summary": directions.to_dict(orient="records"),
         "purpose_cap_binding": purpose_binding,
         "endpoint_inventory": endpoint_inventory,
+        "temporal_design_sensitivity": temporal.payload,
+        "build_provenance": {
+            "hash_algorithm": "sha256",
+            "source_files": {
+                "evidence_builder": _descriptor(Path(__file__)),
+                "temporal_evidence_module": _descriptor(
+                    ROOT / "src/evaluation/ijds_temporal_evidence.py"
+                ),
+                "environment_lock": _descriptor(ROOT / "uv.lock"),
+            },
+            "protocol_commits": {
+                "early_evaluation": PROTOCOL_COMMIT,
+                "late_temporal_sensitivity": temporal.payload["protocol_commit"],
+            },
+            "note": (
+                "Source hashes, rather than the containing publication commit, avoid a "
+                "self-referential manifest."
+            ),
+        },
         "mechanism_allocation_distances": ablation[
             [
                 "paired_policy_id",

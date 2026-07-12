@@ -1,6 +1,6 @@
-# CRPTO — Conformal Robust Predict-Then-Optimize
+# CRPTO — Conformal Risk-Aware Predict-Then-Optimize
 
-Pipeline de investigación y libro Quarto que acompañan el paper **CRPTO**, una metodología que integra *conformal prediction* con *optimización robusta de carteras* aplicada a riesgo de crédito (datos de Lending Club, 2007–2020).
+Pipeline de investigación y libro Quarto que acompañan el paper **CRPTO**, una metodología de auditoría que integra *conformal prediction* con optimización de carteras aplicada a riesgo de crédito (datos de Lending Club, 2007–2020).
 
 > CRPTO opera como repositorio standalone: GitHub, DVC y MLflow apuntan a recursos propios del paper. La historia de extracción y aprendizajes queda documentada en [`docs/PROJECT_HISTORY.md`](docs/PROJECT_HISTORY.md).
 
@@ -10,21 +10,22 @@ Pipeline de investigación y libro Quarto que acompañan el paper **CRPTO**, una
 | --- | --- |
 | Outcome-free run | `ijds-fixed-taxonomy-c2-2026-07-11-v1` |
 | Reconciled run | `ijds-fixed-taxonomy-c2-2026-07-11-v2` |
-| Universo | `540,121` préstamos de 36 meses; membership independiente del status |
-| Cronología | fit termina en 2012H1; 15 decisiones mensuales 2016-04--2017-06 |
-| Conformal | taxonomía fija con scores 2011 y residuos 2012H1; no es CI de PD latente |
+| Temporal sensitivity | `ijds-fixed-taxonomy-c2-temporal-v3-2026-07-12-v1` |
+| Universo OOT común | `465,117` préstamos de 36 meses; membership independiente del status |
+| Cronología | residuos early 2012H1 y late 2012H2--2013M1; 15 decisiones 2016-04--2017-06 |
+| Conformal | taxonomía fija con scores 2011 y dos ventanas de residuos; no es CI de PD latente |
 | Políticas | nueve guardrails co-primarios; sin selector ni winner |
-| Cobertura candidata OOT | `[0.854714, 0.879647]` para cinco strata |
-| Comparador primario | C2 contemporáneo, matched al funded point-PD de cada guardrail/mes |
-| Resultado C2 | payoff peor `7/9`, default mayor `1/9`, miscoverage mayor `8/9` |
-| Sensibilidad | las 180 celdas seed-cap contienen signos robustos opuestos |
-| Multiverso | `27/27` envelopes policy-by-metric cruzan cero |
-| Claim | falla temporal de cobertura estable; resultados de portafolio no invariantes al comparador ni a constraints vinculantes |
+| Cobertura candidata OOT | early `[0.854714, 0.879647]`; late `[0.845072, 0.870973]` |
+| Comparador C2 | matched al funded point score de cada guardrail/mes |
+| Resultado C2 | payoff peor early `7/9`, late `5/9`; no dirección universal |
+| Sensibilidad | dos censos de 180 celdas seed-cap contienen signos opuestos |
+| Comparator scopes | `27/27` envelopes cruzan cero en cada uno de tres scopes |
+| Claim | falla de cobertura sobrevive checks temporales; resultados de portafolio no son invariantes al timing, comparador ni constraints vinculantes |
 
 Hashes SHA256 de los artefactos críticos están en [`EXTRACTION_MANIFEST.json`](EXTRACTION_MANIFEST.json). Verifica trabajo ordinario con `just validate-champion`; antes del freeze usa `just validate-champion-strict`, que también falla si falta un artefacto.
 Los estudios selected-policy, compact-v7, pool93 y A1--A40 se conservan como
 procedencia en Git/DVC, no como claims activos. La autoridad editorial es
-[`docs/research/active_claims_2026-07-11.md`](docs/research/active_claims_2026-07-11.md)
+[`docs/research/active_claims_2026-07-12.md`](docs/research/active_claims_2026-07-12.md)
 y el único manifest paper-facing es
 [`reports/crpto/ijds_fixed_taxonomy_c2_evidence.json`](reports/crpto/ijds_fixed_taxonomy_c2_evidence.json).
 
@@ -120,7 +121,7 @@ Los borradores de extracción están en [`paper/`](paper/):
 
 - `paper/CRPTO_ijds.qmd`: cuerpo anónimo IJDS.
 - `paper/supplement_ijds.qmd`: online supplement con protocolo, pruebas,
-  S1--S7, reproducibilidad y frontera histórica.
+  sensibilidad temporal, comparator scopes, reproducibilidad y frontera histórica.
 - `paper/CRPTO.qmd`: entrada genérica.
 
 Comandos rápidos:

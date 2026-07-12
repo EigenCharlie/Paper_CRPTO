@@ -18,33 +18,37 @@ check rather than permission to upload.
 
 - Title is "CRPTO: Auditing Temporal Transport and Comparator Choice in
   Conformal Portfolios" on every surface.
-- Universe is `540,121`; membership never depends on final status.
-- Taxonomy uses 2011 scores and residual calibration uses availability-safe
-  2012H1 labels.
+- Common OOT universe is `465,117`; early/late designs retain
+  `540,121`/`625,576`, and membership never depends on final status.
+- Taxonomy uses 2011 scores; both residual windows use availability-safe labels
+  and neither is selected by OOT results.
 - All nine policies are co-primary; no selected policy or OOT winner appears.
-- Fit coverage is `0.900388`.
-- Canonical OOT coverage is `[0.854714, 0.879647]`; all four taxonomy upper
-  endpoints are below 0.90.
-- C2 matches funded point PD to residual below `4.17e-17`.
-- Canonical C2 counts are payoff worse `7/9`, default higher `1/9`, and
-  miscoverage higher `8/9`.
-- All `27/27` finite comparator envelopes are indeterminate.
-- The 180 seed-purpose cells are reported without selecting a favorable cell.
+- Fit coverage is early `0.900388` and late `0.900174`.
+- Five-group OOT coverage is early `[0.854714, 0.879647]` and late
+  `[0.845072, 0.870973]`; all taxonomy and late lag upper endpoints are below
+  0.90.
+- C2 matches funded point score to residual below `4.17e-17`.
+- C2 payoff is worse `7/9` early and `5/9` late; default is higher `1/9` and
+  miscoverage `8/9` in both.
+- All `27/27` envelopes are indeterminate in each of three scopes (`81/81`).
+- Both 180-cell seed-purpose censuses are reported without selecting a cell.
 - All 2,025 sub-100% guardrail-month purpose caps are derived as binding.
 - The terminal endpoint inventory is 499,845 resolved/40,276 unresolved; the
   distinct 500,019/40,102 receipt diagnostic is not used for claims.
 - The superiority stop rule failed; the negative audit is labeled as a
   post-result retrospective interpretation, not a prespecified fallback.
-- Standardized payoff is never called IRR, NPV, welfare, or investor return.
+- The Platt score is not called a true conditional probability; its objective
+  is a model-implied plug-in. Standardized payoff is never called IRR, NPV,
+  welfare, or investor return.
 - No selected-set, causal, prospective, confirmatory, Markov, deployment, or
   fair-lending claim appears.
 
 ## Official Build QA
 
-- official PDF: 27 pages;
+- official PDF: 28 pages;
 - references start on page 25; 24 pre-reference pages;
-- 8 main tables and 4 main figures;
-- 280-word abstract and 7 keywords;
+- 7 main tables and 3 main figures;
+- 260-word abstract and 7 keywords;
 - no BibTeX warnings or undefined references/citations;
 - all four INFORMS style assets match the tracked SHA-256 manifest;
 - the known 17.54 pt publisher-class title diagnostic is visually within page;

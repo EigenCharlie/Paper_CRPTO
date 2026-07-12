@@ -9,7 +9,7 @@ from __future__ import annotations
 
 from collections.abc import Mapping
 from dataclasses import dataclass
-from typing import Any
+from typing import Any, cast
 
 import numpy as np
 import pandas as pd
@@ -355,11 +355,12 @@ def summarize_simulation(results: pd.DataFrame) -> pd.DataFrame:
     metrics = [column for column in results.columns if column not in required]
     rows: list[dict[str, float | int | str]] = []
     for shift, group in results.groupby("temporal_shift", sort=True):
+        shift_value = float(cast(float, shift))
         for metric in metrics:
             values = group[metric].to_numpy(dtype=float)
             rows.append(
                 {
-                    "temporal_shift": float(shift),
+                    "temporal_shift": shift_value,
                     "metric": metric,
                     "mean": float(np.mean(values)),
                     "q05": float(np.quantile(values, 0.05)),

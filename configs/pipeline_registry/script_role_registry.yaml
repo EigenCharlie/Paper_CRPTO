@@ -1,4 +1,4 @@
-schema_version: "2026-05-10.1"
+schema_version: "2026-07-12.1"
 scripts:
   -
     script: scripts/run_crpto_pipeline.py
@@ -107,6 +107,42 @@ scripts:
     role: evidence consistency analysis
     category: publication
     pipeline_owner: publication_exports
+    status: public
+  -
+    script: scripts/experiments/run_ijds_fixed_taxonomy_c2.py
+    role: locked fixed-taxonomy and temporal-design IJDS experiment
+    category: evaluation
+    pipeline_owner: ijds_active_audit
+    status: paper
+  -
+    script: scripts/build_ijds_fixed_taxonomy_c2_evidence.py
+    role: sole active IJDS evidence and temporal-reconciliation builder
+    category: publication
+    pipeline_owner: ijds_active_audit
+    status: public
+  -
+    script: scripts/build_ijds_submission_tex.py
+    role: deterministic QMD-to-INFORMS TeX generator
+    category: publication
+    pipeline_owner: ijds_active_audit
+    status: public
+  -
+    script: scripts/compile_ijds_submission.py
+    role: official IJDS LaTeX compiler and citation-reference gate
+    category: publication
+    pipeline_owner: ijds_active_audit
+    status: public
+  -
+    script: scripts/check_publication_integrity.py
+    role: reviewer-surface claim, anonymity, and evidence integrity gate
+    category: governance
+    pipeline_owner: ijds_active_audit
+    status: public
+  -
+    script: scripts/run_ty_advisory.py
+    role: focused and full-tree ty type-advisory runner
+    category: governance
+    pipeline_owner: ijds_active_audit
     status: public
   -
     script: scripts/build_crpto_journal_package.py

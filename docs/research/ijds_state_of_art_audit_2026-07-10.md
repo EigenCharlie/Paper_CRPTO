@@ -2,7 +2,7 @@
 
 > **Current boundary (2026-07-11):** this is a literature and historical
 > diagnosis, not a claim registry. The active fixed-taxonomy comparator audit
-> is governed by `active_claims_2026-07-11.md`; earlier variants remain Git-only
+> is governed by `active_claims_2026-07-12.md`; earlier variants remain Git-only
 > provenance.
 
 **Fecha de auditoría:** 2026-07-10

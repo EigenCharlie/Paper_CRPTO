@@ -1,5 +1,9 @@
 # CRPTO Active IJDS Claim Registry - 2026-07-11
 
+> **SUPERSEDED 2026-07-12.** This file is historical provenance. The sole
+> active authority is `active_claims_2026-07-12.md`; do not use the 7/9 early
+> payoff count or V1/V2-only contract as a current headline.
+
 This file is the source of truth for the single IJDS manuscript. It supersedes
 the earlier single-policy narrative. The active paper is a retrospective audit
 of temporal transport and decision comparability; it is not a claim that a

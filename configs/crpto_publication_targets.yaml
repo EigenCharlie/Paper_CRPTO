@@ -1,4 +1,4 @@
-version: "2026-07-11"
+version: "2026-07-12"
 project: paper-crpto
 decision_status: reconstructed_active
 
@@ -25,7 +25,7 @@ primary_target:
     data_code_disclosure: required
 
 active_scientific_contract:
-  claim_registry: docs/research/active_claims_2026-07-11.md
+  claim_registry: docs/research/active_claims_2026-07-12.md
   outcome_free_run_tag: ijds-fixed-taxonomy-c2-2026-07-11-v1
   outcome_free_protocol_tag: protocol/ijds-fixed-taxonomy-c2-2026-07-11-v1
   outcome_free_protocol_commit: 4835cc18a0117a695f89f9da70a4e3af97663a27
@@ -33,36 +33,53 @@ active_scientific_contract:
   run_tag: ijds-fixed-taxonomy-c2-2026-07-11-v2
   protocol_tag: protocol/ijds-fixed-taxonomy-c2-2026-07-11-v2
   protocol_commit: a88839dfe14875fca2c02c43725291bc49d98611
+  temporal_run_tag: ijds-fixed-taxonomy-c2-temporal-v3-2026-07-12-v1
+  temporal_protocol_tag: protocol/ijds-fixed-taxonomy-c2-temporal-v3-2026-07-12-v1
+  temporal_protocol_commit: c5ceab737ab3cda8aed7d3c1fd24a506418cfa35
   evidence_manifest: reports/crpto/ijds_fixed_taxonomy_c2_evidence.json
   previously_inspected_retrospective_archive: true
   post_result_audit_framing: true
   prespecified_negative_fallback: false
   method:
     conformal: >-
-      Five score strata fixed from 2011 calibrated scores, followed by exact
-      binary-outcome residual ranks on availability-safe 2012H1 labels.
+      Five score strata fixed from 2011 Platt-scaled scores, followed by exact
+      binary-outcome residual ranks in locked early 2012H1 and late
+      2012H2--2013M1 windows.
     policies: >-
       All nine tau-gamma guardrails are co-primary; there is no selector or
       OOT winner.
     comparator: >-
-      C2 matches each monthly guardrail's frozen funded point-PD moment on the
-      identical outcome-free menu; C0, C1, and a 29-cap frontier form the
-      declared multiverse.
-    payoff: "Expected (1-p)r-p*LGD and realized (1-Y)r-Y*LGD."
+      C2 matches each monthly guardrail's frozen funded point-score moment on
+      the identical outcome-free menu; core, development-supported, and broad
+      comparator scopes are reported.
+    payoff: "Model-implied plug-in (1-p)r-p*LGD and realized (1-Y)r-Y*LGD."
     evaluation: "Fifteen separate monthly decisions from 2016-04 through 2017-06."
     unresolved: "Retained with sharp binary aggregate and common-outcome pairwise bounds."
   headline:
-    conformal_fit_coverage: 0.900388
-    candidate_coverage: [0.854714, 0.879647]
-    c2:
+    early_conformal_fit_coverage: 0.900388
+    late_conformal_fit_coverage: 0.900174
+    early_candidate_coverage: [0.854714, 0.879647]
+    late_candidate_coverage: [0.845072, 0.870973]
+    early_c2:
       payoff_worse: 7
       default_higher: 1
       miscoverage_higher: 8
       policy_pairs: 9
-    seed_purpose_cells: 180
+    late_c2:
+      payoff_worse: 5
+      default_higher: 1
+      miscoverage_higher: 8
+      policy_pairs: 9
+    seed_purpose_cells_per_window: 180
+    seed_purpose_cells_total: 360
     binding_guardrail_month_cells: 2025
-    multiverse_indeterminate_envelopes: 27
-    multiverse_total_envelopes: 27
+    indeterminate_envelopes_per_scope: 27
+    total_scope_envelopes: 81
+    comparator_scopes: 3
+    common_oot_point_rows: 465117
+    maximum_point_score_difference: 0.0
+    canonical_point_policy_cells: 570
+    maximum_point_exposure_difference: 0.0
     terminal_endpoint_inventory:
       resolved: 499845
       unresolved: 40276
@@ -71,12 +88,11 @@ active_scientific_contract:
       unresolved: 40102
     universal_policy_direction_allowed: false
   mechanism: >-
-    Fixed-taxonomy coverage fails under temporal transport. Same-cap C0 makes
-    the guardrail appear uniformly safer, while exact funded-PD matching and
-    the point-cap frontier remove every universal direction. Binding purpose
-    constraints interact materially with the score and comparator. Clipping
-    changes USD 4,685--46,609 of allocation, while replacing group penalties
-    with a pooled affine penalty changes USD 9.849--21.352 million.
+    Candidate coverage fails under both residual windows, all fixed taxonomies,
+    and the late label-lag grid. Same-cap C0 makes the guardrail appear uniformly
+    safer, while exact funded-score matching and every declared comparator scope
+    remove universal direction. Binding purpose constraints interact materially
+    with the score and comparator.
   required_artifacts:
     - reports/crpto/ijds_fixed_taxonomy_c2_evidence.json
     - reports/crpto/tables/crpto_ijds_ft_table1_policy_grid.csv
@@ -90,6 +106,13 @@ active_scientific_contract:
     - reports/crpto/tables/crpto_ijds_ft_tableS5_policy_levels.csv
     - reports/crpto/tables/crpto_ijds_ft_tableS6_simulation.csv
     - reports/crpto/tables/crpto_ijds_ft_tableS7_label_availability.csv
+    - reports/crpto/tables/crpto_ijds_ft_tableS8_temporal_windows.csv
+    - reports/crpto/tables/crpto_ijds_ft_tableS9_label_lags.csv
+    - reports/crpto/tables/crpto_ijds_ft_tableS10_timing_directions.csv
+    - reports/crpto/tables/crpto_ijds_ft_tableS11_comparator_scopes.csv
+    - reports/crpto/tables/crpto_ijds_ft_tableS12_prediction_diagnostics.csv
+    - reports/crpto/tables/crpto_ijds_ft_tableS13_late_c2_contrasts.csv
+    - reports/crpto/tables/crpto_ijds_ft_tableS14_comparator_scope_envelopes.csv
     - reports/crpto/figures/crpto_ijds_ft_fig1_coverage.pdf
     - reports/crpto/figures/crpto_ijds_ft_fig2_comparators.pdf
     - reports/crpto/figures/crpto_ijds_ft_fig3_frontier.pdf
@@ -99,10 +122,13 @@ active_scientific_contract:
     - models/experiments/ijds_prefreeze/ijds-fixed-taxonomy-c2-2026-07-11-v1.dvc
     - data/processed/experiments/ijds_prefreeze/ijds-fixed-taxonomy-c2-2026-07-11-v2.dvc
     - models/experiments/ijds_prefreeze/ijds-fixed-taxonomy-c2-2026-07-11-v2.dvc
+    - data/processed/experiments/ijds_prefreeze/ijds-fixed-taxonomy-c2-temporal-v3-2026-07-12-v1.dvc
+    - models/experiments/ijds_prefreeze/ijds-fixed-taxonomy-c2-temporal-v3-2026-07-12-v1.dvc
 
 claim_boundaries:
   required:
-    - "Binary-outcome interval, not a latent-PD confidence interval."
+    - "Clipped binary-outcome residual interval, not a latent-PD confidence limit or discrete-set convex hull."
+    - "Platt-scaled score and plug-in objective, not asserted true conditional probability."
     - "Marginal/Mondrian coverage is not selected-set validity."
     - "Standardized payoff is not cash-flow return or IRR."
     - "Sharp bounds are partial identification, not confidence intervals."
@@ -116,6 +142,7 @@ claim_boundaries:
     - "A unique or theoretically optimal comparator-matching rule."
     - "A 9-of-9 family direction."
     - "A selected policy or OOT winner."
+    - "A selected residual window or result-based V3 promotion."
     - "A comparator-robust sign over the declared multiverse."
     - "Selected-set conformal guarantee."
     - "Markov certificate or deterministic tail guarantee."

@@ -1,9 +1,8 @@
 from __future__ import annotations
 
 from scripts.run_ty_advisory import (
-    FROZEN_DIAGNOSTIC_PREFIXES,
     TY_REQUIREMENT,
-    _partition_diagnostics,
+    _diagnostic_lines,
     build_ty_command,
     iter_python_files,
 )
@@ -66,11 +65,8 @@ def test_ty_command_can_block_the_submission_gate() -> None:
     assert "--exit-zero" not in command
 
 
-def test_ty_frozen_baseline_is_exact_and_does_not_hide_new_diagnostics() -> None:
-    frozen_line = FROZEN_DIAGNOSTIC_PREFIXES[0] + " Expected Sequence, found ndarray"
-    new_line = r"src\new_module.py:10:2: error[invalid-return-type] new failure"
+def test_ty_diagnostic_parser_keeps_every_error() -> None:
+    first = r"src\first.py:4:2: error[invalid-return-type] first failure"
+    second = r"src\second.py:10:2: error[invalid-argument-type] second failure"
 
-    frozen, actionable = _partition_diagnostics(f"{frozen_line}\n{new_line}\n")
-
-    assert frozen == [frozen_line]
-    assert actionable == [new_line]
+    assert _diagnostic_lines(f"{first}\ninformation\n{second}\n") == [first, second]

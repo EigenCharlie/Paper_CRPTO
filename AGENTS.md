@@ -4,13 +4,17 @@ The single operational source is [`CLAUDE.md`](CLAUDE.md). Read these files in
 order before changing scientific code or paper claims:
 
 1. [`CLAUDE.md`](CLAUDE.md) - repository rules and protected historical stages.
-2. [`docs/research/active_claims_2026-07-11.md`](docs/research/active_claims_2026-07-11.md)
+2. [`docs/research/active_claims_2026-07-12.md`](docs/research/active_claims_2026-07-12.md)
    - the only active IJDS claim registry.
 3. [`docs/research/ijds_fixed_taxonomy_c2_protocol_2026-07-11.md`](docs/research/ijds_fixed_taxonomy_c2_protocol_2026-07-11.md)
    - locked protocol and V1-to-V2 execution lineage.
-4. [`reports/crpto/ijds_fixed_taxonomy_c2_evidence.json`](reports/crpto/ijds_fixed_taxonomy_c2_evidence.json)
+4. [`docs/research/ijds_fixed_taxonomy_c2_temporal_v3_protocol_2026-07-12.md`](docs/research/ijds_fixed_taxonomy_c2_temporal_v3_protocol_2026-07-12.md)
+   - locked late-window sensitivity and no-promotion rule.
+5. [`docs/research/ijds_fixed_taxonomy_c2_protocol_errata_2026-07-12.md`](docs/research/ijds_fixed_taxonomy_c2_protocol_errata_2026-07-12.md)
+   - terminology correction; no numerical or protocol change.
+6. [`reports/crpto/ijds_fixed_taxonomy_c2_evidence.json`](reports/crpto/ijds_fixed_taxonomy_c2_evidence.json)
    - the only active paper-facing evidence manifest.
-5. [`.codex/skills/crpto/SKILL.md`](.codex/skills/crpto/SKILL.md) - concise
+7. [`.codex/skills/crpto/SKILL.md`](.codex/skills/crpto/SKILL.md) - concise
    execution and writing guidance.
 
 Minimum rules:

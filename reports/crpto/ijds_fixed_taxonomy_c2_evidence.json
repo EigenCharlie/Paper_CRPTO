@@ -1,5 +1,5 @@
 {
-  "schema_version": "2026-07-11.3",
+  "schema_version": "2026-07-12.1",
   "status": "complete_reconciled_paper_evidence",
   "run_tag": "ijds-fixed-taxonomy-c2-2026-07-11-v2",
   "protocol_tag": "protocol/ijds-fixed-taxonomy-c2-2026-07-11-v2",
@@ -599,6 +599,1479 @@
     },
     "literal_default_rows_reclassified_unresolved": 174
   },
+  "temporal_design_sensitivity": {
+    "status": "complete_locked_design_sensitivity",
+    "run_tag": "ijds-fixed-taxonomy-c2-temporal-v3-2026-07-12-v1",
+    "protocol_tag": "protocol/ijds-fixed-taxonomy-c2-temporal-v3-2026-07-12-v1",
+    "protocol_commit": "c5ceab737ab3cda8aed7d3c1fd24a506418cfa35",
+    "claim_boundary": {
+      "previously_inspected_archive": true,
+      "confirmatory": false,
+      "prospective": false,
+      "causal": false,
+      "selected_set_validity": false,
+      "all_nine_policies_primary": true
+    },
+    "no_result_based_promotion": true,
+    "development_supported_point_cap_range": {
+      "lower": 0.06,
+      "upper": 0.0825,
+      "step": 0.0025,
+      "target_minimum": 0.0600396539710651,
+      "target_maximum": 0.0814989466504543,
+      "target_count": 9
+    },
+    "late_seed_purpose_c2_direction_counts": [
+      {
+        "metric": "realized_payoff",
+        "negative": 56,
+        "positive": 36,
+        "indeterminate": 88,
+        "cells": 180
+      },
+      {
+        "metric": "terminal_default",
+        "negative": 51,
+        "positive": 33,
+        "indeterminate": 96,
+        "cells": 180
+      },
+      {
+        "metric": "funded_miscoverage",
+        "negative": 27,
+        "positive": 85,
+        "indeterminate": 68,
+        "cells": 180
+      }
+    ],
+    "code_path_equivalence": {
+      "point_predictions": {
+        "common_oot_rows": 465117,
+        "maximum_absolute_pd_point_difference": 0.0,
+        "exact": true
+      },
+      "point_policy_allocations": {
+        "canonical_point_policy_cells": 570,
+        "allocation_union_rows": 54894,
+        "maximum_absolute_exposure_difference": 0.0,
+        "total_allocation_l1_difference": 0.0,
+        "exact": true
+      }
+    },
+    "tables": {
+      "crpto_ijds_ft_tableS8_temporal_windows": [
+        {
+          "window_id": "early_2012h1",
+          "conformal_fit_window": "2012-01_to_2012-06",
+          "run_tag": "ijds-fixed-taxonomy-c2-2026-07-11-v2",
+          "conformal_fit_rows": 14948,
+          "conformal_fit_coverage": 0.9003880117741504,
+          "taxonomy_groups": 1,
+          "primary_rows": 376890,
+          "primary_resolved_rows": 365339,
+          "primary_unresolved_rows": 11551,
+          "resolved_empirical_coverage": 0.8765420609351862,
+          "all_candidate_coverage_lower": 0.8530287351747194,
+          "all_candidate_coverage_upper": 0.8803258245111306,
+          "mean_interval_width": 0.9249354645085559,
+          "upper_endpoint_one_share": 0.12490116479609435
+        },
+        {
+          "window_id": "early_2012h1",
+          "conformal_fit_window": "2012-01_to_2012-06",
+          "run_tag": "ijds-fixed-taxonomy-c2-2026-07-11-v2",
+          "conformal_fit_rows": 14948,
+          "conformal_fit_coverage": 0.9003880117741504,
+          "taxonomy_groups": 2,
+          "primary_rows": 376890,
+          "primary_resolved_rows": 365339,
+          "primary_unresolved_rows": 11551,
+          "resolved_empirical_coverage": 0.8784033459335029,
+          "all_candidate_coverage_lower": 0.8559287855873067,
+          "all_candidate_coverage_upper": 0.8818196290694897,
+          "mean_interval_width": 0.5835631345329754,
+          "upper_endpoint_one_share": 0.16496059858314097
+        },
+        {
+          "window_id": "early_2012h1",
+          "conformal_fit_window": "2012-01_to_2012-06",
+          "run_tag": "ijds-fixed-taxonomy-c2-2026-07-11-v2",
+          "conformal_fit_rows": 14948,
+          "conformal_fit_coverage": 0.9003880117741504,
+          "taxonomy_groups": 5,
+          "primary_rows": 376890,
+          "primary_resolved_rows": 365339,
+          "primary_unresolved_rows": 11551,
+          "resolved_empirical_coverage": 0.8763121374942177,
+          "all_candidate_coverage_lower": 0.8547135769057285,
+          "all_candidate_coverage_upper": 0.8796465812305978,
+          "mean_interval_width": 0.6649918872956118,
+          "upper_endpoint_one_share": 0.18708376449361883
+        },
+        {
+          "window_id": "early_2012h1",
+          "conformal_fit_window": "2012-01_to_2012-06",
+          "run_tag": "ijds-fixed-taxonomy-c2-2026-07-11-v2",
+          "conformal_fit_rows": 14948,
+          "conformal_fit_coverage": 0.9003880117741504,
+          "taxonomy_groups": 10,
+          "primary_rows": 376890,
+          "primary_resolved_rows": 365339,
+          "primary_unresolved_rows": 11551,
+          "resolved_empirical_coverage": 0.878614109087724,
+          "all_candidate_coverage_lower": 0.8574040170872138,
+          "all_candidate_coverage_upper": 0.8819416805964605,
+          "mean_interval_width": 0.6660719075700708,
+          "upper_endpoint_one_share": 0.20341478946111596
+        },
+        {
+          "window_id": "late_2012h2_2013m1",
+          "conformal_fit_window": "2012-07_to_2013-01",
+          "run_tag": "ijds-fixed-taxonomy-c2-temporal-v3-2026-07-12-v1",
+          "conformal_fit_rows": 33909,
+          "conformal_fit_coverage": 0.9001739951045445,
+          "taxonomy_groups": 1,
+          "primary_rows": 376890,
+          "primary_resolved_rows": 365339,
+          "primary_unresolved_rows": 11551,
+          "resolved_empirical_coverage": 0.8714645849471313,
+          "all_candidate_coverage_lower": 0.8475178434025843,
+          "all_candidate_coverage_upper": 0.8754039640213325,
+          "mean_interval_width": 0.9171022694763707,
+          "upper_endpoint_one_share": 0.10412321897635915
+        },
+        {
+          "window_id": "late_2012h2_2013m1",
+          "conformal_fit_window": "2012-07_to_2013-01",
+          "run_tag": "ijds-fixed-taxonomy-c2-temporal-v3-2026-07-12-v1",
+          "conformal_fit_rows": 33909,
+          "conformal_fit_coverage": 0.9001739951045445,
+          "taxonomy_groups": 2,
+          "primary_rows": 376890,
+          "primary_resolved_rows": 365339,
+          "primary_unresolved_rows": 11551,
+          "resolved_empirical_coverage": 0.871147071623889,
+          "all_candidate_coverage_lower": 0.8482793387991191,
+          "all_candidate_coverage_upper": 0.8747300273289289,
+          "mean_interval_width": 0.5805301380390615,
+          "upper_endpoint_one_share": 0.1413038287033352
+        },
+        {
+          "window_id": "late_2012h2_2013m1",
+          "conformal_fit_window": "2012-07_to_2013-01",
+          "run_tag": "ijds-fixed-taxonomy-c2-temporal-v3-2026-07-12-v1",
+          "conformal_fit_rows": 33909,
+          "conformal_fit_coverage": 0.9001739951045445,
+          "taxonomy_groups": 5,
+          "primary_rows": 376890,
+          "primary_resolved_rows": 365339,
+          "primary_unresolved_rows": 11551,
+          "resolved_empirical_coverage": 0.8674518734654664,
+          "all_candidate_coverage_lower": 0.8450715062750405,
+          "all_candidate_coverage_upper": 0.8709729629334819,
+          "mean_interval_width": 0.6637491227501693,
+          "upper_endpoint_one_share": 0.1521982541325055
+        },
+        {
+          "window_id": "late_2012h2_2013m1",
+          "conformal_fit_window": "2012-07_to_2013-01",
+          "run_tag": "ijds-fixed-taxonomy-c2-temporal-v3-2026-07-12-v1",
+          "conformal_fit_rows": 33909,
+          "conformal_fit_coverage": 0.9001739951045445,
+          "taxonomy_groups": 10,
+          "primary_rows": 376890,
+          "primary_resolved_rows": 365339,
+          "primary_unresolved_rows": 11551,
+          "resolved_empirical_coverage": 0.8687137152069722,
+          "all_candidate_coverage_lower": 0.8468598264745681,
+          "all_candidate_coverage_upper": 0.8722147045557059,
+          "mean_interval_width": 0.5814162018149593,
+          "upper_endpoint_one_share": 0.17013717530313885
+        }
+      ],
+      "crpto_ijds_ft_tableS9_label_lags": [
+        {
+          "charged_off_lag_months": 0,
+          "conformal_fit_rows": 33978,
+          "conformal_fit_coverage": 0.900200129495556,
+          "resolved_empirical_coverage": 0.869266626338825,
+          "all_candidate_coverage_lower": 0.8470243307065722,
+          "all_candidate_coverage_upper": 0.8727665897211387,
+          "mean_interval_width": 0.6640039753580885,
+          "upper_endpoint_one_share": 0.15819735201252355
+        },
+        {
+          "charged_off_lag_months": 3,
+          "conformal_fit_rows": 33971,
+          "conformal_fit_coverage": 0.9002090017956492,
+          "resolved_empirical_coverage": 0.8691297671477723,
+          "all_candidate_coverage_lower": 0.8468492132983099,
+          "all_candidate_coverage_upper": 0.8726339250179097,
+          "mean_interval_width": 0.6639751605770607,
+          "upper_endpoint_one_share": 0.157345644617793
+        },
+        {
+          "charged_off_lag_months": 6,
+          "conformal_fit_rows": 33909,
+          "conformal_fit_coverage": 0.9001739951045445,
+          "resolved_empirical_coverage": 0.8674518734654664,
+          "all_candidate_coverage_lower": 0.8450715062750405,
+          "all_candidate_coverage_upper": 0.8709729629334819,
+          "mean_interval_width": 0.6637491227501693,
+          "upper_endpoint_one_share": 0.1521982541325055
+        },
+        {
+          "charged_off_lag_months": 12,
+          "conformal_fit_rows": 33448,
+          "conformal_fit_coverage": 0.9001734034919876,
+          "resolved_empirical_coverage": 0.8580660701430726,
+          "all_candidate_coverage_lower": 0.8352145188251214,
+          "all_candidate_coverage_upper": 0.8617050067658999,
+          "mean_interval_width": 0.4995473625217101,
+          "upper_endpoint_one_share": 0.1250630157340338
+        }
+      ],
+      "crpto_ijds_ft_tableS10_timing_directions": [
+        {
+          "window_id": "early_2012h1",
+          "run_tag": "ijds-fixed-taxonomy-c2-2026-07-11-v2",
+          "comparator_rule": "c0_same_numeric_cap",
+          "metric": "realized_payoff",
+          "negative": 0,
+          "positive": 9,
+          "indeterminate": 0,
+          "policy_pairs": 9
+        },
+        {
+          "window_id": "early_2012h1",
+          "run_tag": "ijds-fixed-taxonomy-c2-2026-07-11-v2",
+          "comparator_rule": "c0_same_numeric_cap",
+          "metric": "terminal_default",
+          "negative": 9,
+          "positive": 0,
+          "indeterminate": 0,
+          "policy_pairs": 9
+        },
+        {
+          "window_id": "early_2012h1",
+          "run_tag": "ijds-fixed-taxonomy-c2-2026-07-11-v2",
+          "comparator_rule": "c0_same_numeric_cap",
+          "metric": "funded_miscoverage",
+          "negative": 8,
+          "positive": 0,
+          "indeterminate": 1,
+          "policy_pairs": 9
+        },
+        {
+          "window_id": "early_2012h1",
+          "run_tag": "ijds-fixed-taxonomy-c2-2026-07-11-v2",
+          "comparator_rule": "c1_development_fixed",
+          "metric": "realized_payoff",
+          "negative": 5,
+          "positive": 2,
+          "indeterminate": 2,
+          "policy_pairs": 9
+        },
+        {
+          "window_id": "early_2012h1",
+          "run_tag": "ijds-fixed-taxonomy-c2-2026-07-11-v2",
+          "comparator_rule": "c1_development_fixed",
+          "metric": "terminal_default",
+          "negative": 2,
+          "positive": 2,
+          "indeterminate": 5,
+          "policy_pairs": 9
+        },
+        {
+          "window_id": "early_2012h1",
+          "run_tag": "ijds-fixed-taxonomy-c2-2026-07-11-v2",
+          "comparator_rule": "c1_development_fixed",
+          "metric": "funded_miscoverage",
+          "negative": 1,
+          "positive": 7,
+          "indeterminate": 1,
+          "policy_pairs": 9
+        },
+        {
+          "window_id": "early_2012h1",
+          "run_tag": "ijds-fixed-taxonomy-c2-2026-07-11-v2",
+          "comparator_rule": "c2_contemporaneous",
+          "metric": "realized_payoff",
+          "negative": 7,
+          "positive": 0,
+          "indeterminate": 2,
+          "policy_pairs": 9
+        },
+        {
+          "window_id": "early_2012h1",
+          "run_tag": "ijds-fixed-taxonomy-c2-2026-07-11-v2",
+          "comparator_rule": "c2_contemporaneous",
+          "metric": "terminal_default",
+          "negative": 0,
+          "positive": 1,
+          "indeterminate": 8,
+          "policy_pairs": 9
+        },
+        {
+          "window_id": "early_2012h1",
+          "run_tag": "ijds-fixed-taxonomy-c2-2026-07-11-v2",
+          "comparator_rule": "c2_contemporaneous",
+          "metric": "funded_miscoverage",
+          "negative": 0,
+          "positive": 8,
+          "indeterminate": 1,
+          "policy_pairs": 9
+        },
+        {
+          "window_id": "late_2012h2_2013m1",
+          "run_tag": "ijds-fixed-taxonomy-c2-temporal-v3-2026-07-12-v1",
+          "comparator_rule": "c0_same_numeric_cap",
+          "metric": "realized_payoff",
+          "negative": 0,
+          "positive": 9,
+          "indeterminate": 0,
+          "policy_pairs": 9
+        },
+        {
+          "window_id": "late_2012h2_2013m1",
+          "run_tag": "ijds-fixed-taxonomy-c2-temporal-v3-2026-07-12-v1",
+          "comparator_rule": "c0_same_numeric_cap",
+          "metric": "terminal_default",
+          "negative": 9,
+          "positive": 0,
+          "indeterminate": 0,
+          "policy_pairs": 9
+        },
+        {
+          "window_id": "late_2012h2_2013m1",
+          "run_tag": "ijds-fixed-taxonomy-c2-temporal-v3-2026-07-12-v1",
+          "comparator_rule": "c0_same_numeric_cap",
+          "metric": "funded_miscoverage",
+          "negative": 7,
+          "positive": 0,
+          "indeterminate": 2,
+          "policy_pairs": 9
+        },
+        {
+          "window_id": "late_2012h2_2013m1",
+          "run_tag": "ijds-fixed-taxonomy-c2-temporal-v3-2026-07-12-v1",
+          "comparator_rule": "c1_development_fixed",
+          "metric": "realized_payoff",
+          "negative": 5,
+          "positive": 0,
+          "indeterminate": 4,
+          "policy_pairs": 9
+        },
+        {
+          "window_id": "late_2012h2_2013m1",
+          "run_tag": "ijds-fixed-taxonomy-c2-temporal-v3-2026-07-12-v1",
+          "comparator_rule": "c1_development_fixed",
+          "metric": "terminal_default",
+          "negative": 0,
+          "positive": 5,
+          "indeterminate": 4,
+          "policy_pairs": 9
+        },
+        {
+          "window_id": "late_2012h2_2013m1",
+          "run_tag": "ijds-fixed-taxonomy-c2-temporal-v3-2026-07-12-v1",
+          "comparator_rule": "c1_development_fixed",
+          "metric": "funded_miscoverage",
+          "negative": 0,
+          "positive": 8,
+          "indeterminate": 1,
+          "policy_pairs": 9
+        },
+        {
+          "window_id": "late_2012h2_2013m1",
+          "run_tag": "ijds-fixed-taxonomy-c2-temporal-v3-2026-07-12-v1",
+          "comparator_rule": "c2_contemporaneous",
+          "metric": "realized_payoff",
+          "negative": 5,
+          "positive": 0,
+          "indeterminate": 4,
+          "policy_pairs": 9
+        },
+        {
+          "window_id": "late_2012h2_2013m1",
+          "run_tag": "ijds-fixed-taxonomy-c2-temporal-v3-2026-07-12-v1",
+          "comparator_rule": "c2_contemporaneous",
+          "metric": "terminal_default",
+          "negative": 0,
+          "positive": 1,
+          "indeterminate": 8,
+          "policy_pairs": 9
+        },
+        {
+          "window_id": "late_2012h2_2013m1",
+          "run_tag": "ijds-fixed-taxonomy-c2-temporal-v3-2026-07-12-v1",
+          "comparator_rule": "c2_contemporaneous",
+          "metric": "funded_miscoverage",
+          "negative": 0,
+          "positive": 8,
+          "indeterminate": 1,
+          "policy_pairs": 9
+        }
+      ],
+      "crpto_ijds_ft_tableS11_comparator_scopes": [
+        {
+          "scope": "broad_stress",
+          "metric": "funded_miscoverage",
+          "policy_pairs": 9,
+          "negative": 0,
+          "positive": 0,
+          "indeterminate": 9,
+          "minimum_lower_bound": -0.04656399322062577,
+          "maximum_upper_bound": 0.08511551390203023,
+          "records_per_policy_min": 32,
+          "records_per_policy_max": 32
+        },
+        {
+          "scope": "broad_stress",
+          "metric": "realized_payoff",
+          "policy_pairs": 9,
+          "negative": 0,
+          "positive": 0,
+          "indeterminate": 9,
+          "minimum_lower_bound": -447651.85108630755,
+          "maximum_upper_bound": 401594.2378431647,
+          "records_per_policy_min": 32,
+          "records_per_policy_max": 32
+        },
+        {
+          "scope": "broad_stress",
+          "metric": "terminal_default",
+          "policy_pairs": 9,
+          "negative": 0,
+          "positive": 0,
+          "indeterminate": 9,
+          "minimum_lower_bound": -0.09417540235026532,
+          "maximum_upper_bound": 0.09853084067889845,
+          "records_per_policy_min": 32,
+          "records_per_policy_max": 32
+        },
+        {
+          "scope": "core_rules",
+          "metric": "funded_miscoverage",
+          "policy_pairs": 9,
+          "negative": 0,
+          "positive": 0,
+          "indeterminate": 9,
+          "minimum_lower_bound": -0.04032898378755298,
+          "maximum_upper_bound": 0.03252109758417977,
+          "records_per_policy_min": 3,
+          "records_per_policy_max": 3
+        },
+        {
+          "scope": "core_rules",
+          "metric": "realized_payoff",
+          "policy_pairs": 9,
+          "negative": 0,
+          "positive": 0,
+          "indeterminate": 9,
+          "minimum_lower_bound": -238337.20665831922,
+          "maximum_upper_bound": 328279.1738044315,
+          "records_per_policy_min": 3,
+          "records_per_policy_max": 3
+        },
+        {
+          "scope": "core_rules",
+          "metric": "terminal_default",
+          "policy_pairs": 9,
+          "negative": 0,
+          "positive": 0,
+          "indeterminate": 9,
+          "minimum_lower_bound": -0.08916207164955847,
+          "maximum_upper_bound": 0.022676923445464032,
+          "records_per_policy_min": 3,
+          "records_per_policy_max": 3
+        },
+        {
+          "scope": "development_supported",
+          "metric": "funded_miscoverage",
+          "policy_pairs": 9,
+          "negative": 0,
+          "positive": 0,
+          "indeterminate": 9,
+          "minimum_lower_bound": -0.03455857841582324,
+          "maximum_upper_bound": 0.05126925225972857,
+          "records_per_policy_min": 12,
+          "records_per_policy_max": 12
+        },
+        {
+          "scope": "development_supported",
+          "metric": "realized_payoff",
+          "policy_pairs": 9,
+          "negative": 0,
+          "positive": 0,
+          "indeterminate": 9,
+          "minimum_lower_bound": -309330.7508923353,
+          "maximum_upper_bound": 259066.59135093383,
+          "records_per_policy_min": 12,
+          "records_per_policy_max": 12
+        },
+        {
+          "scope": "development_supported",
+          "metric": "terminal_default",
+          "policy_pairs": 9,
+          "negative": 0,
+          "positive": 0,
+          "indeterminate": 9,
+          "minimum_lower_bound": -0.05801041758687721,
+          "maximum_upper_bound": 0.06436957903659679,
+          "records_per_policy_min": 12,
+          "records_per_policy_max": 12
+        }
+      ],
+      "crpto_ijds_ft_tableS12_prediction_diagnostics": [
+        {
+          "role": "pd_validation",
+          "candidate_rows": 3835,
+          "resolved_rows": 3835,
+          "unresolved_rows": 0,
+          "default_rate": 0.10039113428943937,
+          "roc_auc": 0.6889855072463767,
+          "brier": 0.13958140084291953,
+          "log_loss": 0.4418625412567847,
+          "ece_10": 0.20511774829795304
+        },
+        {
+          "role": "platt_calibration",
+          "candidate_rows": 14077,
+          "resolved_rows": 14077,
+          "unresolved_rows": 0,
+          "default_rate": 0.10478084819208638,
+          "roc_auc": 0.6763269214733201,
+          "brier": 0.09020572858912285,
+          "log_loss": 0.3165431267613625,
+          "ece_10": 0.003272660824190425
+        },
+        {
+          "role": "policy_development",
+          "candidate_rows": 94885,
+          "resolved_rows": 94885,
+          "unresolved_rows": 0,
+          "default_rate": 0.12311745797544396,
+          "roc_auc": 0.6435438636710918,
+          "brier": 0.10509273476388632,
+          "log_loss": 0.35911897632834716,
+          "ece_10": 0.0033300765518135215
+        },
+        {
+          "role": "primary_oot",
+          "candidate_rows": 376890,
+          "resolved_rows": 365339,
+          "unresolved_rows": 11551,
+          "default_rate": 0.15737985815913438,
+          "roc_auc": 0.6408480922525895,
+          "brier": 0.13075300540797932,
+          "log_loss": 0.4308586709993091,
+          "ece_10": 0.048323150230309204
+        },
+        {
+          "role": "censored_extension",
+          "candidate_rows": 88227,
+          "resolved_rows": 59502,
+          "unresolved_rows": 28725,
+          "default_rate": 0.19928741891028873,
+          "roc_auc": 0.6526848898119534,
+          "brier": 0.16137832039100275,
+          "log_loss": 0.5139237288160433,
+          "ece_10": 0.09144740573390119
+        }
+      ],
+      "crpto_ijds_ft_tableS13_late_c2_contrasts": [
+        {
+          "paired_policy_id": "linear-001",
+          "realized_payoff_difference_lower": -15407.08690878217,
+          "realized_payoff_difference_upper": 82915.65706350525,
+          "weighted_default_difference_lower": -0.008628341946203487,
+          "weighted_default_difference_upper": 0.0012034562279234343,
+          "weighted_miscoverage_difference_lower": -0.001601276599195691,
+          "weighted_miscoverage_difference_upper": 0.007030521574931229,
+          "undiscounted_snapshot_cash_yield_difference": 0.0010522913789483557
+        },
+        {
+          "paired_policy_id": "linear-002",
+          "realized_payoff_difference_lower": -168703.98956476842,
+          "realized_payoff_difference_upper": -21203.692026560588,
+          "weighted_default_difference_lower": -0.001907235576160811,
+          "weighted_default_difference_upper": 0.012846036416228179,
+          "weighted_miscoverage_difference_lower": 0.004445839501391118,
+          "weighted_miscoverage_difference_upper": 0.017612444827113445,
+          "undiscounted_snapshot_cash_yield_difference": -0.004551557336692852
+        },
+        {
+          "paired_policy_id": "linear-003",
+          "realized_payoff_difference_lower": -203853.20818665874,
+          "realized_payoff_difference_upper": -34732.01318665875,
+          "weighted_default_difference_lower": -0.001381996375419024,
+          "weighted_default_difference_upper": 0.015863003624580974,
+          "weighted_miscoverage_difference_lower": 0.01225027564857255,
+          "weighted_miscoverage_difference_upper": 0.027241942315239215,
+          "undiscounted_snapshot_cash_yield_difference": -0.007096163704545799
+        },
+        {
+          "paired_policy_id": "linear-004",
+          "realized_payoff_difference_lower": -47188.21933218214,
+          "realized_payoff_difference_upper": 4952.845187199957,
+          "weighted_default_difference_lower": -0.0013047612043960502,
+          "weighted_default_difference_upper": 0.003944341607895517,
+          "weighted_miscoverage_difference_lower": 0.0009228414725564868,
+          "weighted_miscoverage_difference_upper": 0.004971944284848056,
+          "undiscounted_snapshot_cash_yield_difference": 0.005738925523852252
+        },
+        {
+          "paired_policy_id": "linear-005",
+          "realized_payoff_difference_lower": -125832.05195368546,
+          "realized_payoff_difference_upper": 2708.471450653582,
+          "weighted_default_difference_lower": -0.004019885260745442,
+          "weighted_default_difference_upper": 0.00877820395633237,
+          "weighted_miscoverage_difference_lower": 0.002627886311681751,
+          "weighted_miscoverage_difference_upper": 0.013839308862092897,
+          "undiscounted_snapshot_cash_yield_difference": -0.004923251476098005
+        },
+        {
+          "paired_policy_id": "linear-006",
+          "realized_payoff_difference_lower": -184085.7145630766,
+          "realized_payoff_difference_upper": -27618.81247813921,
+          "weighted_default_difference_lower": -0.0013311892716725499,
+          "weighted_default_difference_upper": 0.014529612239817354,
+          "weighted_miscoverage_difference_lower": 0.009152969822063347,
+          "weighted_miscoverage_difference_upper": 0.022760438000219915,
+          "undiscounted_snapshot_cash_yield_difference": -0.00657825336320219
+        },
+        {
+          "paired_policy_id": "linear-007",
+          "realized_payoff_difference_lower": -38911.502501466275,
+          "realized_payoff_difference_upper": 1179.9249985337374,
+          "weighted_default_difference_lower": -0.0012704766151416663,
+          "weighted_default_difference_upper": 0.002582856718191669,
+          "weighted_miscoverage_difference_lower": 2.9775549615980446e-05,
+          "weighted_miscoverage_difference_upper": 0.003883108882949313,
+          "undiscounted_snapshot_cash_yield_difference": 0.0011448619910758295
+        },
+        {
+          "paired_policy_id": "linear-008",
+          "realized_payoff_difference_lower": -162498.7625046118,
+          "realized_payoff_difference_upper": -28901.2200046118,
+          "weighted_default_difference_lower": -0.0001288613515921383,
+          "weighted_default_difference_upper": 0.01313613864840786,
+          "weighted_miscoverage_difference_lower": 0.005969811989110999,
+          "weighted_miscoverage_difference_upper": 0.01764814532244433,
+          "undiscounted_snapshot_cash_yield_difference": -0.005151695188480715
+        },
+        {
+          "paired_policy_id": "linear-009",
+          "realized_payoff_difference_lower": -219372.42725158046,
+          "realized_payoff_difference_upper": -74811.02975158044,
+          "weighted_default_difference_lower": 0.0029157061169142948,
+          "weighted_default_difference_upper": 0.017339039450247628,
+          "weighted_miscoverage_difference_lower": 0.01061394929892022,
+          "weighted_miscoverage_difference_upper": 0.02345061596558689,
+          "undiscounted_snapshot_cash_yield_difference": -0.008433081853590353
+        }
+      ],
+      "crpto_ijds_ft_tableS14_comparator_scope_envelopes": [
+        {
+          "scope": "broad_stress",
+          "paired_policy_id": "linear-001",
+          "metric": "funded_miscoverage",
+          "lower": -0.030953765636106207,
+          "upper": 0.07350522996773667,
+          "sign": "indeterminate",
+          "record_count": 32
+        },
+        {
+          "scope": "broad_stress",
+          "paired_policy_id": "linear-001",
+          "metric": "realized_payoff",
+          "lower": -334319.5981752311,
+          "upper": 357333.4511922891,
+          "sign": "indeterminate",
+          "record_count": 32
+        },
+        {
+          "scope": "broad_stress",
+          "paired_policy_id": "linear-001",
+          "metric": "terminal_default",
+          "lower": -0.0696770869037403,
+          "upper": 0.07491022996773668,
+          "sign": "indeterminate",
+          "record_count": 32
+        },
+        {
+          "scope": "broad_stress",
+          "paired_policy_id": "linear-002",
+          "metric": "funded_miscoverage",
+          "lower": -0.04656399322062577,
+          "upper": 0.0603532042090902,
+          "sign": "indeterminate",
+          "record_count": 32
+        },
+        {
+          "scope": "broad_stress",
+          "paired_policy_id": "linear-002",
+          "metric": "realized_payoff",
+          "lower": -318041.5950520681,
+          "upper": 401594.2378431647,
+          "sign": "indeterminate",
+          "record_count": 32
+        },
+        {
+          "scope": "broad_stress",
+          "paired_policy_id": "linear-002",
+          "metric": "terminal_default",
+          "lower": -0.08990731448825987,
+          "upper": 0.05752487087575686,
+          "sign": "indeterminate",
+          "record_count": 32
+        },
+        {
+          "scope": "broad_stress",
+          "paired_policy_id": "linear-003",
+          "metric": "funded_miscoverage",
+          "lower": -0.043036475725306333,
+          "upper": 0.06388072170440964,
+          "sign": "indeterminate",
+          "record_count": 32
+        },
+        {
+          "scope": "broad_stress",
+          "paired_policy_id": "linear-003",
+          "metric": "realized_payoff",
+          "lower": -349942.8110720269,
+          "upper": 375795.02182320587,
+          "sign": "indeterminate",
+          "record_count": 32
+        },
+        {
+          "scope": "broad_stress",
+          "paired_policy_id": "linear-003",
+          "metric": "terminal_default",
+          "lower": -0.09417540235026532,
+          "upper": 0.053923449680418054,
+          "sign": "indeterminate",
+          "record_count": 32
+        },
+        {
+          "scope": "broad_stress",
+          "paired_policy_id": "linear-004",
+          "metric": "funded_miscoverage",
+          "lower": -0.019479089823611868,
+          "upper": 0.08147977427277076,
+          "sign": "indeterminate",
+          "record_count": 32
+        },
+        {
+          "scope": "broad_stress",
+          "paired_policy_id": "linear-004",
+          "metric": "realized_payoff",
+          "lower": -428440.2833215855,
+          "upper": 226853.5045736473,
+          "sign": "indeterminate",
+          "record_count": 32
+        },
+        {
+          "scope": "broad_stress",
+          "paired_policy_id": "linear-004",
+          "metric": "terminal_default",
+          "lower": -0.05035275451295861,
+          "upper": 0.09073443085105812,
+          "sign": "indeterminate",
+          "record_count": 32
+        },
+        {
+          "scope": "broad_stress",
+          "paired_policy_id": "linear-005",
+          "metric": "funded_miscoverage",
+          "lower": -0.03829132340905198,
+          "upper": 0.0674039632377418,
+          "sign": "indeterminate",
+          "record_count": 32
+        },
+        {
+          "scope": "broad_stress",
+          "paired_policy_id": "linear-005",
+          "metric": "realized_payoff",
+          "lower": -346649.0485932178,
+          "upper": 361027.0302063541,
+          "sign": "indeterminate",
+          "record_count": 32
+        },
+        {
+          "scope": "broad_stress",
+          "paired_policy_id": "linear-005",
+          "metric": "terminal_default",
+          "lower": -0.08151053238506419,
+          "upper": 0.06469974219603035,
+          "sign": "indeterminate",
+          "record_count": 32
+        },
+        {
+          "scope": "broad_stress",
+          "paired_policy_id": "linear-006",
+          "metric": "funded_miscoverage",
+          "lower": -0.043256526960455094,
+          "upper": 0.06366067046926088,
+          "sign": "indeterminate",
+          "record_count": 32
+        },
+        {
+          "scope": "broad_stress",
+          "paired_policy_id": "linear-006",
+          "metric": "realized_payoff",
+          "lower": -347592.63366335817,
+          "upper": 378145.19923187466,
+          "sign": "indeterminate",
+          "record_count": 32
+        },
+        {
+          "scope": "broad_stress",
+          "paired_policy_id": "linear-006",
+          "metric": "terminal_default",
+          "lower": -0.09072146684660616,
+          "upper": 0.057377385184077215,
+          "sign": "indeterminate",
+          "record_count": 32
+        },
+        {
+          "scope": "broad_stress",
+          "paired_policy_id": "linear-007",
+          "metric": "funded_miscoverage",
+          "lower": -0.013128350194352403,
+          "upper": 0.08511551390203023,
+          "sign": "indeterminate",
+          "record_count": 32
+        },
+        {
+          "scope": "broad_stress",
+          "paired_policy_id": "linear-007",
+          "metric": "realized_payoff",
+          "lower": -447651.85108630755,
+          "upper": 169155.25930892528,
+          "sign": "indeterminate",
+          "record_count": 32
+        },
+        {
+          "scope": "broad_stress",
+          "paired_policy_id": "linear-007",
+          "metric": "terminal_default",
+          "lower": -0.038641344685118276,
+          "upper": 0.09853084067889845,
+          "sign": "indeterminate",
+          "record_count": 32
+        },
+        {
+          "scope": "broad_stress",
+          "paired_policy_id": "linear-008",
+          "metric": "funded_miscoverage",
+          "lower": -0.03289010369592077,
+          "upper": 0.0723020937337952,
+          "sign": "indeterminate",
+          "record_count": 32
+        },
+        {
+          "scope": "broad_stress",
+          "paired_policy_id": "linear-008",
+          "metric": "realized_payoff",
+          "lower": -369125.243516786,
+          "upper": 333733.91437844664,
+          "sign": "indeterminate",
+          "record_count": 32
+        },
+        {
+          "scope": "broad_stress",
+          "paired_policy_id": "linear-008",
+          "metric": "terminal_default",
+          "lower": -0.07429175829688818,
+          "upper": 0.07141542706712853,
+          "sign": "indeterminate",
+          "record_count": 32
+        },
+        {
+          "scope": "broad_stress",
+          "paired_policy_id": "linear-009",
+          "metric": "funded_miscoverage",
+          "lower": -0.04044492046634795,
+          "upper": 0.06647227696336802,
+          "sign": "indeterminate",
+          "record_count": 32
+        },
+        {
+          "scope": "broad_stress",
+          "paired_policy_id": "linear-009",
+          "metric": "realized_payoff",
+          "lower": -366938.0512408459,
+          "upper": 352697.7816543869,
+          "sign": "indeterminate",
+          "record_count": 32
+        },
+        {
+          "scope": "broad_stress",
+          "paired_policy_id": "linear-009",
+          "metric": "terminal_default",
+          "lower": -0.08495172939889535,
+          "upper": 0.062480455965121376,
+          "sign": "indeterminate",
+          "record_count": 32
+        },
+        {
+          "scope": "core_rules",
+          "paired_policy_id": "linear-001",
+          "metric": "funded_miscoverage",
+          "lower": -0.024718756203033418,
+          "upper": 0.01115407492841344,
+          "sign": "indeterminate",
+          "record_count": 3
+        },
+        {
+          "scope": "core_rules",
+          "paired_policy_id": "linear-001",
+          "metric": "realized_payoff",
+          "lower": -32578.935879550147,
+          "upper": 284018.387153556,
+          "sign": "indeterminate",
+          "record_count": 3
+        },
+        {
+          "scope": "core_rules",
+          "paired_policy_id": "linear-001",
+          "metric": "terminal_default",
+          "lower": -0.06466375620303341,
+          "upper": 0.004595741595080108,
+          "sign": "indeterminate",
+          "record_count": 3
+        },
+        {
+          "scope": "core_rules",
+          "paired_policy_id": "linear-002",
+          "metric": "funded_miscoverage",
+          "lower": -0.04032898378755298,
+          "upper": 0.023586187076022745,
+          "sign": "indeterminate",
+          "record_count": 3
+        },
+        {
+          "scope": "core_rules",
+          "paired_policy_id": "linear-002",
+          "metric": "realized_payoff",
+          "lower": -189656.76978502254,
+          "upper": 328279.1738044315,
+          "sign": "indeterminate",
+          "record_count": 3
+        },
+        {
+          "scope": "core_rules",
+          "paired_policy_id": "linear-002",
+          "metric": "terminal_default",
+          "lower": -0.08489398378755297,
+          "upper": 0.01896771638184918,
+          "sign": "indeterminate",
+          "record_count": 3
+        },
+        {
+          "scope": "core_rules",
+          "paired_policy_id": "linear-003",
+          "metric": "funded_miscoverage",
+          "lower": -0.03680146629223355,
+          "upper": 0.03252109758417977,
+          "sign": "indeterminate",
+          "record_count": 3
+        },
+        {
+          "scope": "core_rules",
+          "paired_policy_id": "linear-003",
+          "metric": "realized_payoff",
+          "lower": -238337.20665831922,
+          "upper": 302479.95778447273,
+          "sign": "indeterminate",
+          "record_count": 3
+        },
+        {
+          "scope": "core_rules",
+          "paired_policy_id": "linear-003",
+          "metric": "terminal_default",
+          "lower": -0.08916207164955847,
+          "upper": 0.02224882556018819,
+          "sign": "indeterminate",
+          "record_count": 3
+        },
+        {
+          "scope": "core_rules",
+          "paired_policy_id": "linear-004",
+          "metric": "funded_miscoverage",
+          "lower": -0.013244080390539079,
+          "upper": 0.005904624789953622,
+          "sign": "indeterminate",
+          "record_count": 3
+        },
+        {
+          "scope": "core_rules",
+          "paired_policy_id": "linear-004",
+          "metric": "realized_payoff",
+          "lower": -48559.08725902889,
+          "upper": 153538.4405349142,
+          "sign": "indeterminate",
+          "record_count": 3
+        },
+        {
+          "scope": "core_rules",
+          "paired_policy_id": "linear-004",
+          "metric": "terminal_default",
+          "lower": -0.04533942381225174,
+          "upper": 0.005913808992360724,
+          "sign": "indeterminate",
+          "record_count": 3
+        },
+        {
+          "scope": "core_rules",
+          "paired_policy_id": "linear-005",
+          "metric": "funded_miscoverage",
+          "lower": -0.03205631397597918,
+          "upper": 0.021477193542356866,
+          "sign": "indeterminate",
+          "record_count": 3
+        },
+        {
+          "scope": "core_rules",
+          "paired_policy_id": "linear-005",
+          "metric": "realized_payoff",
+          "lower": -176061.53578714997,
+          "upper": 287711.96616762097,
+          "sign": "indeterminate",
+          "record_count": 3
+        },
+        {
+          "scope": "core_rules",
+          "paired_policy_id": "linear-005",
+          "metric": "terminal_default",
+          "lower": -0.0764972016843573,
+          "upper": 0.017212702265878864,
+          "sign": "indeterminate",
+          "record_count": 3
+        },
+        {
+          "scope": "core_rules",
+          "paired_policy_id": "linear-006",
+          "metric": "funded_miscoverage",
+          "lower": -0.0370215175273823,
+          "upper": 0.025424054656859388,
+          "sign": "indeterminate",
+          "record_count": 3
+        },
+        {
+          "scope": "core_rules",
+          "paired_policy_id": "linear-006",
+          "metric": "realized_payoff",
+          "lower": -184085.7145630766,
+          "upper": 304830.13519314147,
+          "sign": "indeterminate",
+          "record_count": 3
+        },
+        {
+          "scope": "core_rules",
+          "paired_policy_id": "linear-006",
+          "metric": "terminal_default",
+          "lower": -0.0857081361458993,
+          "upper": 0.01703026593941844,
+          "sign": "indeterminate",
+          "record_count": 3
+        },
+        {
+          "scope": "core_rules",
+          "paired_policy_id": "linear-007",
+          "metric": "funded_miscoverage",
+          "lower": -0.00689334076127961,
+          "upper": 0.003883108882949313,
+          "sign": "indeterminate",
+          "record_count": 3
+        },
+        {
+          "scope": "core_rules",
+          "paired_policy_id": "linear-007",
+          "metric": "realized_payoff",
+          "lower": -38911.502501466275,
+          "upper": 95840.1952701921,
+          "sign": "indeterminate",
+          "record_count": 3
+        },
+        {
+          "scope": "core_rules",
+          "paired_policy_id": "linear-007",
+          "metric": "terminal_default",
+          "lower": -0.0336280139844114,
+          "upper": 0.002611035729411893,
+          "sign": "indeterminate",
+          "record_count": 3
+        },
+        {
+          "scope": "core_rules",
+          "paired_policy_id": "linear-008",
+          "metric": "funded_miscoverage",
+          "lower": -0.026655094262847973,
+          "upper": 0.01764814532244433,
+          "sign": "indeterminate",
+          "record_count": 3
+        },
+        {
+          "scope": "core_rules",
+          "paired_policy_id": "linear-008",
+          "metric": "realized_payoff",
+          "lower": -162498.7625046118,
+          "upper": 260418.8503397136,
+          "sign": "indeterminate",
+          "record_count": 3
+        },
+        {
+          "scope": "core_rules",
+          "paired_policy_id": "linear-008",
+          "metric": "terminal_default",
+          "lower": -0.0692784275961813,
+          "upper": 0.01313613864840786,
+          "sign": "indeterminate",
+          "record_count": 3
+        },
+        {
+          "scope": "core_rules",
+          "paired_policy_id": "linear-009",
+          "metric": "funded_miscoverage",
+          "lower": -0.034209911033275156,
+          "upper": 0.028468744443710687,
+          "sign": "indeterminate",
+          "record_count": 3
+        },
+        {
+          "scope": "core_rules",
+          "paired_policy_id": "linear-009",
+          "metric": "realized_payoff",
+          "lower": -233900.37250965904,
+          "upper": 279382.7176156538,
+          "sign": "indeterminate",
+          "record_count": 3
+        },
+        {
+          "scope": "core_rules",
+          "paired_policy_id": "linear-009",
+          "metric": "terminal_default",
+          "lower": -0.07993839869818847,
+          "upper": 0.022676923445464032,
+          "sign": "indeterminate",
+          "record_count": 3
+        },
+        {
+          "scope": "development_supported",
+          "paired_policy_id": "linear-001",
+          "metric": "funded_miscoverage",
+          "lower": -0.018948350831303674,
+          "upper": 0.040792301658768355,
+          "sign": "indeterminate",
+          "record_count": 12
+        },
+        {
+          "scope": "development_supported",
+          "paired_policy_id": "linear-001",
+          "metric": "realized_payoff",
+          "lower": -207380.2979812589,
+          "upper": 214805.80470005822,
+          "sign": "indeterminate",
+          "record_count": 12
+        },
+        {
+          "scope": "development_supported",
+          "paired_policy_id": "linear-001",
+          "metric": "terminal_default",
+          "lower": -0.03351210214035216,
+          "upper": 0.041882301658768356,
+          "sign": "indeterminate",
+          "record_count": 12
+        },
+        {
+          "scope": "development_supported",
+          "paired_policy_id": "linear-002",
+          "metric": "funded_miscoverage",
+          "lower": -0.03455857841582324,
+          "upper": 0.02926027590012187,
+          "sign": "indeterminate",
+          "record_count": 12
+        },
+        {
+          "scope": "development_supported",
+          "paired_policy_id": "linear-002",
+          "metric": "realized_payoff",
+          "lower": -208384.21485809595,
+          "upper": 259066.59135093383,
+          "sign": "indeterminate",
+          "record_count": 12
+        },
+        {
+          "scope": "development_supported",
+          "paired_policy_id": "linear-002",
+          "metric": "terminal_default",
+          "lower": -0.053742329724871724,
+          "upper": 0.026116942566788537,
+          "sign": "indeterminate",
+          "record_count": 12
+        },
+        {
+          "scope": "development_supported",
+          "paired_policy_id": "linear-003",
+          "metric": "funded_miscoverage",
+          "lower": -0.031031060920503804,
+          "upper": 0.032787793395441314,
+          "sign": "indeterminate",
+          "record_count": 12
+        },
+        {
+          "scope": "development_supported",
+          "paired_policy_id": "linear-003",
+          "metric": "realized_payoff",
+          "lower": -240285.43087805473,
+          "upper": 233267.375330975,
+          "sign": "indeterminate",
+          "record_count": 12
+        },
+        {
+          "scope": "development_supported",
+          "paired_policy_id": "linear-003",
+          "metric": "terminal_default",
+          "lower": -0.05801041758687721,
+          "upper": 0.022515521371449736,
+          "sign": "indeterminate",
+          "record_count": 12
+        },
+        {
+          "scope": "development_supported",
+          "paired_policy_id": "linear-004",
+          "metric": "funded_miscoverage",
+          "lower": -0.007473675018809335,
+          "upper": 0.04774928210942734,
+          "sign": "indeterminate",
+          "record_count": 12
+        },
+        {
+          "scope": "development_supported",
+          "paired_policy_id": "linear-004",
+          "metric": "realized_payoff",
+          "lower": -291330.2476469954,
+          "upper": 84325.85808141637,
+          "sign": "indeterminate",
+          "record_count": 12
+        },
+        {
+          "scope": "development_supported",
+          "paired_policy_id": "linear-004",
+          "metric": "terminal_default",
+          "lower": -0.014187769749570487,
+          "upper": 0.05668893868771469,
+          "sign": "indeterminate",
+          "record_count": 12
+        },
+        {
+          "scope": "development_supported",
+          "paired_policy_id": "linear-005",
+          "metric": "funded_miscoverage",
+          "lower": -0.02628590860424944,
+          "upper": 0.03631103492877348,
+          "sign": "indeterminate",
+          "record_count": 12
+        },
+        {
+          "scope": "development_supported",
+          "paired_policy_id": "linear-005",
+          "metric": "realized_payoff",
+          "lower": -236991.6683992456,
+          "upper": 218499.38371412308,
+          "sign": "indeterminate",
+          "record_count": 12
+        },
+        {
+          "scope": "development_supported",
+          "paired_policy_id": "linear-005",
+          "metric": "terminal_default",
+          "lower": -0.04534554762167606,
+          "upper": 0.033291813887062024,
+          "sign": "indeterminate",
+          "record_count": 12
+        },
+        {
+          "scope": "development_supported",
+          "paired_policy_id": "linear-006",
+          "metric": "funded_miscoverage",
+          "lower": -0.03125111215565255,
+          "upper": 0.032567742160292554,
+          "sign": "indeterminate",
+          "record_count": 12
+        },
+        {
+          "scope": "development_supported",
+          "paired_policy_id": "linear-006",
+          "metric": "realized_payoff",
+          "lower": -237935.25346938602,
+          "upper": 235617.55273964372,
+          "sign": "indeterminate",
+          "record_count": 12
+        },
+        {
+          "scope": "development_supported",
+          "paired_policy_id": "linear-006",
+          "metric": "terminal_default",
+          "lower": -0.05455648208321805,
+          "upper": 0.02596945687510889,
+          "sign": "indeterminate",
+          "record_count": 12
+        },
+        {
+          "scope": "development_supported",
+          "paired_policy_id": "linear-007",
+          "metric": "funded_miscoverage",
+          "lower": -0.002809602056216537,
+          "upper": 0.05126925225972857,
+          "sign": "indeterminate",
+          "record_count": 12
+        },
+        {
+          "scope": "development_supported",
+          "paired_policy_id": "linear-007",
+          "metric": "realized_payoff",
+          "lower": -309330.7508923353,
+          "upper": 44199.48281669436,
+          "sign": "indeterminate",
+          "record_count": 12
+        },
+        {
+          "scope": "development_supported",
+          "paired_policy_id": "linear-007",
+          "metric": "terminal_default",
+          "lower": -0.004163026588396819,
+          "upper": 0.06436957903659679,
+          "sign": "indeterminate",
+          "record_count": 12
+        },
+        {
+          "scope": "development_supported",
+          "paired_policy_id": "linear-008",
+          "metric": "funded_miscoverage",
+          "lower": -0.020884688891118226,
+          "upper": 0.04120916542482688,
+          "sign": "indeterminate",
+          "record_count": 12
+        },
+        {
+          "scope": "development_supported",
+          "paired_policy_id": "linear-008",
+          "metric": "realized_payoff",
+          "lower": -259467.8633228139,
+          "upper": 191206.26788621576,
+          "sign": "indeterminate",
+          "record_count": 12
+        },
+        {
+          "scope": "development_supported",
+          "paired_policy_id": "linear-008",
+          "metric": "terminal_default",
+          "lower": -0.03812677353350006,
+          "upper": 0.04000749875816021,
+          "sign": "indeterminate",
+          "record_count": 12
+        },
+        {
+          "scope": "development_supported",
+          "paired_policy_id": "linear-009",
+          "metric": "funded_miscoverage",
+          "lower": -0.028439505661545413,
+          "upper": 0.0353793486543997,
+          "sign": "indeterminate",
+          "record_count": 12
+        },
+        {
+          "scope": "development_supported",
+          "paired_policy_id": "linear-009",
+          "metric": "realized_payoff",
+          "lower": -257280.67104687376,
+          "upper": 210170.13516215602,
+          "sign": "indeterminate",
+          "record_count": 12
+        },
+        {
+          "scope": "development_supported",
+          "paired_policy_id": "linear-009",
+          "metric": "terminal_default",
+          "lower": -0.04878674463550722,
+          "upper": 0.031072527656153044,
+          "sign": "indeterminate",
+          "record_count": 12
+        }
+      ]
+    },
+    "source_artifacts": {
+      "summary": {
+        "path": "models/experiments/ijds_prefreeze/ijds-fixed-taxonomy-c2-temporal-v3-2026-07-12-v1/fixed_taxonomy_c2_temporal_v3_summary.json",
+        "bytes": 52241,
+        "sha256": "4a332750d2658a74fcc8dacb1b4672c6f7e5b6aeae9f2ebdf7530e2bf8c59329"
+      },
+      "receipt": {
+        "path": "models/experiments/ijds_prefreeze/ijds-fixed-taxonomy-c2-temporal-v3-2026-07-12-v1/execution_receipt.json",
+        "bytes": 1435,
+        "sha256": "e4eaefdbbc43319a4c14f00a137aee47c40e38652c92bf5c6fd0a15e50008776"
+      },
+      "protocol_freeze": {
+        "path": "models/experiments/ijds_prefreeze/ijds-fixed-taxonomy-c2-temporal-v3-2026-07-12-v1/protocol_freeze.json",
+        "bytes": 16962,
+        "sha256": "4496851fe73d548776bc7e78eaf2396c3626738241c594cb33aaa4aea986fe81"
+      },
+      "temporal_candidate_coverage": {
+        "path": "data/processed/experiments/ijds_prefreeze/ijds-fixed-taxonomy-c2-temporal-v3-2026-07-12-v1/evaluation/temporal_candidate_coverage.parquet",
+        "bytes": 73157,
+        "sha256": "dc5ae6d46ea6628c8c36ce6f172cb4241577d488c4d46bdecf53e8f09c27dee2"
+      },
+      "paired_sharp_contrasts": {
+        "path": "data/processed/experiments/ijds_prefreeze/ijds-fixed-taxonomy-c2-temporal-v3-2026-07-12-v1/evaluation/paired_sharp_contrasts.parquet",
+        "bytes": 71639,
+        "sha256": "bb7fa716fb0802e7acd745e3dc5f8ef80c6e8a72208e8ef0eaeddbfc652cc1a5"
+      },
+      "label_lag_coverage_sensitivity": {
+        "path": "data/processed/experiments/ijds_prefreeze/ijds-fixed-taxonomy-c2-temporal-v3-2026-07-12-v1/evaluation/label_lag_coverage_sensitivity.parquet",
+        "bytes": 68205,
+        "sha256": "4b81217eefb3a9a66ebd8bd3045de2fbf992d1273fa58f2bd4af7ad8520976fc"
+      },
+      "outcome_free_allocations": {
+        "path": "data/processed/experiments/ijds_prefreeze/ijds-fixed-taxonomy-c2-temporal-v3-2026-07-12-v1/portfolio/outcome_free_funded_allocations.parquet",
+        "bytes": 10813013,
+        "sha256": "90cb376b7c06edfb790df412f22f11ca9f09a447fbe99f576779f43b25db8b7b"
+      },
+      "canonical_decision_panel": {
+        "path": "data/processed/experiments/ijds_prefreeze/ijds-fixed-taxonomy-c2-temporal-v3-2026-07-12-v1/prediction/canonical_decision_panel.parquet",
+        "bytes": 13905850,
+        "sha256": "4d73767177112778f4f5d4ac8f2ac39164b6362faad5f295ddd72ec12528d3c5"
+      }
+    }
+  },
+  "build_provenance": {
+    "hash_algorithm": "sha256",
+    "source_files": {
+      "evidence_builder": {
+        "path": "scripts/build_ijds_fixed_taxonomy_c2_evidence.py",
+        "bytes": 41628,
+        "sha256": "e176bdcb0fbcd4d84192c9a566182da914e478eb2e0ab76d49e18b0517bcf2b0"
+      },
+      "temporal_evidence_module": {
+        "path": "src/evaluation/ijds_temporal_evidence.py",
+        "bytes": 22965,
+        "sha256": "c1a6fd5e58ca9eedc345f94b816962f41591bb66b2fb6315aa23da9a659fe31b"
+      },
+      "environment_lock": {
+        "path": "uv.lock",
+        "bytes": 641910,
+        "sha256": "d293ed325a3b25a13000560c8551d34937735ba8c9fe59ffeeed5d64f7120dd2"
+      }
+    },
+    "protocol_commits": {
+      "early_evaluation": "a88839dfe14875fca2c02c43725291bc49d98611",
+      "late_temporal_sensitivity": "c5ceab737ab3cda8aed7d3c1fd24a506418cfa35"
+    },
+    "note": "Source hashes, rather than the containing publication commit, avoid a self-referential manifest."
+  },
   "mechanism_allocation_distances": [
     {
       "paired_policy_id": "linear-001",
@@ -863,15 +2336,120 @@
       "bytes": 840,
       "sha256": "38966fc53de4a910410029303a19a1aa1e1ebbde2146e9b5edf8bea4c586cb63"
     },
+    "reports/crpto/tables/crpto_ijds_ft_tableS8_temporal_windows.csv": {
+      "path": "reports/crpto/tables/crpto_ijds_ft_tableS8_temporal_windows.csv",
+      "bytes": 2053,
+      "sha256": "dcb1b4b99664a098a3a0b79b285f94a36814e4769e42d3634ce73257976a0ef1"
+    },
+    "reports/crpto/tables/crpto_ijds_ft_tableS8_temporal_windows.tex": {
+      "path": "reports/crpto/tables/crpto_ijds_ft_tableS8_temporal_windows.tex",
+      "bytes": 1961,
+      "sha256": "6bf6d33241e21393578a45142b19c84130287b7464f7178f54b5206c2b2c210c"
+    },
+    "reports/crpto/tables/crpto_ijds_ft_tableS8_temporal_windows.md": {
+      "path": "reports/crpto/tables/crpto_ijds_ft_tableS8_temporal_windows.md",
+      "bytes": 3910,
+      "sha256": "0ed92b8e6a6fc917038ec7c834c723a31a18a961377b305d40d5802c7e2fbe07"
+    },
+    "reports/crpto/tables/crpto_ijds_ft_tableS9_label_lags.csv": {
+      "path": "reports/crpto/tables/crpto_ijds_ft_tableS9_label_lags.csv",
+      "bytes": 683,
+      "sha256": "f50ada2fdc3213cb83911089387b7e9f025675a8df891058f42d4046a6692cbf"
+    },
+    "reports/crpto/tables/crpto_ijds_ft_tableS9_label_lags.tex": {
+      "path": "reports/crpto/tables/crpto_ijds_ft_tableS9_label_lags.tex",
+      "bytes": 620,
+      "sha256": "96785e9a73691c1bfe6bc33456506eaddadb4b90860c1a363a699dce5be3a28e"
+    },
+    "reports/crpto/tables/crpto_ijds_ft_tableS9_label_lags.md": {
+      "path": "reports/crpto/tables/crpto_ijds_ft_tableS9_label_lags.md",
+      "bytes": 1380,
+      "sha256": "9b550ef63f8b8def0197bafd956a264744bea642f90fba5b3dca6145c5f3682b"
+    },
+    "reports/crpto/tables/crpto_ijds_ft_tableS10_timing_directions.csv": {
+      "path": "reports/crpto/tables/crpto_ijds_ft_tableS10_timing_directions.csv",
+      "bytes": 1964,
+      "sha256": "75bc39cd75df34901c67a0fe820b7aaf756fe26e5ed02d6db2382f49499cfefa"
+    },
+    "reports/crpto/tables/crpto_ijds_ft_tableS10_timing_directions.tex": {
+      "path": "reports/crpto/tables/crpto_ijds_ft_tableS10_timing_directions.tex",
+      "bytes": 2442,
+      "sha256": "a7bef365251dc006c03163fbb54b22e2011b5b7a412948df52bd05f4a4ae4614"
+    },
+    "reports/crpto/tables/crpto_ijds_ft_tableS10_timing_directions.md": {
+      "path": "reports/crpto/tables/crpto_ijds_ft_tableS10_timing_directions.md",
+      "bytes": 3580,
+      "sha256": "bedc0c2db0be0caa38ca1a3e683369e8f4a9947325f7922e35c06eff75cc24d5"
+    },
+    "reports/crpto/tables/crpto_ijds_ft_tableS11_comparator_scopes.csv": {
+      "path": "reports/crpto/tables/crpto_ijds_ft_tableS11_comparator_scopes.csv",
+      "bytes": 919,
+      "sha256": "447bfd839c1e5e1f1ef9fe4e291e3368589bedc71e4bea67a89401a99cd2648a"
+    },
+    "reports/crpto/tables/crpto_ijds_ft_tableS11_comparator_scopes.tex": {
+      "path": "reports/crpto/tables/crpto_ijds_ft_tableS11_comparator_scopes.tex",
+      "bytes": 1070,
+      "sha256": "c3edf0f11731144aec708a7862d868c747835455af3007e645ea129420fbb78e"
+    },
+    "reports/crpto/tables/crpto_ijds_ft_tableS11_comparator_scopes.md": {
+      "path": "reports/crpto/tables/crpto_ijds_ft_tableS11_comparator_scopes.md",
+      "bytes": 2310,
+      "sha256": "0c2385cac83ad48c4e5e9a2a716aecdd242edab373a4dba8841a064ca12f838e"
+    },
+    "reports/crpto/tables/crpto_ijds_ft_tableS12_prediction_diagnostics.csv": {
+      "path": "reports/crpto/tables/crpto_ijds_ft_tableS12_prediction_diagnostics.csv",
+      "bytes": 748,
+      "sha256": "eb3855489cebd2a74cb3b3819fb775ed419259c24f8f911902b5e7eafa9c02ec"
+    },
+    "reports/crpto/tables/crpto_ijds_ft_tableS12_prediction_diagnostics.tex": {
+      "path": "reports/crpto/tables/crpto_ijds_ft_tableS12_prediction_diagnostics.tex",
+      "bytes": 675,
+      "sha256": "86211a818d014f565d9b82db9c995f9e3a97c16b443c0cf0f31fe48a76e98f47"
+    },
+    "reports/crpto/tables/crpto_ijds_ft_tableS12_prediction_diagnostics.md": {
+      "path": "reports/crpto/tables/crpto_ijds_ft_tableS12_prediction_diagnostics.md",
+      "bytes": 1008,
+      "sha256": "39320e0b2aeff40e2f31f193e1625c7fe447c236ab06d39d231d639576c8a08d"
+    },
+    "reports/crpto/tables/crpto_ijds_ft_tableS13_late_c2_contrasts.csv": {
+      "path": "reports/crpto/tables/crpto_ijds_ft_tableS13_late_c2_contrasts.csv",
+      "bytes": 1678,
+      "sha256": "de87ae3ae86213480881b7801a702a9ba3c9c1f6c54c82e2531dc93a75296657"
+    },
+    "reports/crpto/tables/crpto_ijds_ft_tableS13_late_c2_contrasts.tex": {
+      "path": "reports/crpto/tables/crpto_ijds_ft_tableS13_late_c2_contrasts.tex",
+      "bytes": 1305,
+      "sha256": "3f87c459dbcc68e38b25b43522fc216da9341307a92bbb6b0e9a1c243748cbf7"
+    },
+    "reports/crpto/tables/crpto_ijds_ft_tableS13_late_c2_contrasts.md": {
+      "path": "reports/crpto/tables/crpto_ijds_ft_tableS13_late_c2_contrasts.md",
+      "bytes": 3355,
+      "sha256": "5b74333684284369c93eef815a78be8cc38f6a3ba5ad8c5fe1e423b39fa6ab0e"
+    },
+    "reports/crpto/tables/crpto_ijds_ft_tableS14_comparator_scope_envelopes.csv": {
+      "path": "reports/crpto/tables/crpto_ijds_ft_tableS14_comparator_scope_envelopes.csv",
+      "bytes": 8212,
+      "sha256": "f14111385313581891e95074c4c9fb76fa9c6fb7b8bf0f9958100d0111bd4266"
+    },
+    "reports/crpto/tables/crpto_ijds_ft_tableS14_comparator_scope_envelopes.tex": {
+      "path": "reports/crpto/tables/crpto_ijds_ft_tableS14_comparator_scope_envelopes.tex",
+      "bytes": 8214,
+      "sha256": "880662923d8de560dc234e25fba9eca34f998a1ef94de28f4f576e95326a31c6"
+    },
+    "reports/crpto/tables/crpto_ijds_ft_tableS14_comparator_scope_envelopes.md": {
+      "path": "reports/crpto/tables/crpto_ijds_ft_tableS14_comparator_scope_envelopes.md",
+      "bytes": 11122,
+      "sha256": "659b8d4d9018146ac1c1accd51823471865f5e25eb0aba760de9cc2deaebe6b9"
+    },
     "reports/crpto/figures/crpto_ijds_ft_fig1_coverage.png": {
       "path": "reports/crpto/figures/crpto_ijds_ft_fig1_coverage.png",
-      "bytes": 51186,
-      "sha256": "bfb302afe592710d9d8deb850102149ecf14de0b21196aa7f286385a44ed01da"
+      "bytes": 56132,
+      "sha256": "8b6df69a56de2c998003dfdab9104857b3c499579466d54f4304d14c13150de9"
     },
     "reports/crpto/figures/crpto_ijds_ft_fig1_coverage.pdf": {
       "path": "reports/crpto/figures/crpto_ijds_ft_fig1_coverage.pdf",
-      "bytes": 15062,
-      "sha256": "a5e32f62196fea5e02a5efe66429ecb1d6a2d1e732796874c58cdc7103212daa"
+      "bytes": 15082,
+      "sha256": "6744561ffa915665cdd26f4930049114689fa0c3e77f61e9f341a075064ef332"
     },
     "reports/crpto/figures/crpto_ijds_ft_fig2_comparators.png": {
       "path": "reports/crpto/figures/crpto_ijds_ft_fig2_comparators.png",

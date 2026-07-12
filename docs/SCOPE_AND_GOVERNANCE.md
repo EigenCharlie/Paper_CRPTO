@@ -27,25 +27,28 @@ CRPTO does not cover:
 
 ## Active paper contract
 
-The current IJDS paper is the fixed-taxonomy comparator-multiverse audit:
+The current IJDS paper is the fixed-taxonomy comparator and temporal-design audit:
 
 - outcome-free run `ijds-fixed-taxonomy-c2-2026-07-11-v1` and hash-linked
   evaluation run `ijds-fixed-taxonomy-c2-2026-07-11-v2`;
-- status-independent universe of 540,121 36-month loans;
-- CatBoost/Platt fitting before conformal residual estimation on
-  availability-safe 2012H1 loans, with score taxonomies fixed before OOT;
+- isolated temporal sensitivity
+  `ijds-fixed-taxonomy-c2-temporal-v3-2026-07-12-v1`;
+- common status-independent OOT universe of 465,117 36-month loans;
+- CatBoost/Platt fitting before conformal residual estimation on early and late
+  availability-safe windows, with score taxonomies fixed before either;
 - four declared taxonomies and all nine guardrails reported as co-primary;
 - coherent standardized payoff `(1-p)r-p*LGD` in the objective and
   `(1-Y)r-Y*LGD` in evaluation;
 - 15 separate monthly USD 1 million decisions from April 2016 through June
   2017;
 - unresolved outcomes retained with sharp paired common-outcome bounds;
-- candidate-level OOT coverage bound `[0.854714,0.879647]` for the canonical
-  five-group taxonomy;
-- exact C2 funded-point-PD matching with payoff lower for 7/9 guardrails,
-  default higher for 1/9, and miscoverage higher for 8/9;
-- all 27 policy-metric envelopes over the declared comparator multiverse
-  contain zero, so no policy or universal direction is promoted; and
+- five-group OOT coverage bounds `[0.854714,0.879647]` early and
+  `[0.845072,0.870973]` late;
+- exact C2 funded-point-score matching with payoff lower for 7/9 early and 5/9
+  late, so the policy count is not timing-stable;
+- all 27 policy-metric envelopes contain zero in core,
+  development-supported, and broad scopes, so no policy, window, or universal
+  direction is promoted; and
 - active publication artifacts `crpto_ijds_ft_*`, governed by
   `ijds_fixed_taxonomy_c2_evidence.json`.
 
@@ -53,7 +56,7 @@ The paper describes a code-locked retrospective temporal audit. It does not
 claim a prospective trial, causal effect, latent-PD confidence interval,
 selected-set conformal guarantee, cash-flow return, fair-lending certificate,
 or Markov certificate. The full authority is
-`docs/research/active_claims_2026-07-11.md`.
+`docs/research/active_claims_2026-07-12.md`.
 
 Maturity-safe P1/C1, compact-v7, the previous IJDS rebaseline, and the pool93
 frontier are retained as historical provenance, not as active body claims:

@@ -40,6 +40,24 @@ performs one vectorized outcome join and generates 7,347 monthly evaluations,
 515 aggregates, 504 paired contrasts, 594 coverage rows, and 800 simulation
 repetitions.
 
+## Late Temporal-Design Sensitivity
+
+| Item | Exact value |
+|---|---|
+| Run | `ijds-fixed-taxonomy-c2-temporal-v3-2026-07-12-v1` |
+| Protocol tag | `protocol/ijds-fixed-taxonomy-c2-temporal-v3-2026-07-12-v1` |
+| Protocol commit | `c5ceab737ab3cda8aed7d3c1fd24a506418cfa35` |
+| Protocol-freeze SHA-256 | `4496851fe73d548776bc7e78eaf2396c3626738241c594cb33aaa4aea986fe81` |
+| Deterministic-summary SHA-256 | `4a332750d2658a74fcc8dacb1b4672c6f7e5b6aeae9f2ebdf7530e2bf8c59329` |
+| Execution-receipt SHA-256 | `e4eaefdbbc43319a4c14f00a137aee47c40e38652c92bf5c6fd0a15e50008776` |
+| Processed-data DVC MD5 | `3218c18336ef6bd1846a138bbd7df411.dir` |
+| Model/result DVC MD5 | `caa4e207cb887f949749e8549e7b999a.dir` |
+
+V3 completes 7,437 solves and freezes 729,789 funded rows before joining
+outcomes. It shares all 465,117 OOT point scores and all 570 canonical point
+policy cells exactly with the early code path. It is co-reported as a locked
+design sensitivity, not promoted over V2.
+
 ## Reviewer Labels
 
 Anonymous files use prose labels such as *outcome-free freeze* and *reconciled
@@ -55,6 +73,8 @@ uv run dvc pull data/processed/experiments/ijds_prefreeze/ijds-fixed-taxonomy-c2
 uv run dvc pull models/experiments/ijds_prefreeze/ijds-fixed-taxonomy-c2-2026-07-11-v1.dvc
 uv run dvc pull data/processed/experiments/ijds_prefreeze/ijds-fixed-taxonomy-c2-2026-07-11-v2.dvc
 uv run dvc pull models/experiments/ijds_prefreeze/ijds-fixed-taxonomy-c2-2026-07-11-v2.dvc
+uv run dvc pull data/processed/experiments/ijds_prefreeze/ijds-fixed-taxonomy-c2-temporal-v3-2026-07-12-v1.dvc
+uv run dvc pull models/experiments/ijds_prefreeze/ijds-fixed-taxonomy-c2-temporal-v3-2026-07-12-v1.dvc
 just ijds-active-check
 just paper-submission-official
 ```
@@ -65,4 +85,4 @@ editor requests it, must use a new run tag and fresh output paths.
 The maintainer separately runs `just submission-check`, whose strict champion
 gate requires every historical manifest artifact to be present.
 Historical P1/C1 tests likewise require their own DVC pointers; they are not
-dependencies of the four-pointer active capsule or its claims.
+dependencies of the six-pointer active capsule or its claims.

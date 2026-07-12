@@ -29,15 +29,6 @@ ACTIVE_EXPERIMENT_FILES = {
     "scripts/experiments/run_ijds_exact_alpha_grid_challenger.py",
 }
 SUMMARY_RE = re.compile(r"^Found \d+ diagnostics", flags=re.MULTILINE)
-FROZEN_DIAGNOSTIC_PREFIXES = (
-    r"scripts\experiments\run_ijds_fixed_taxonomy_c2.py:526:9: error[invalid-argument-type]",
-    r"scripts\experiments\run_ijds_fixed_taxonomy_c2.py:590:17: error[invalid-argument-type]",
-    r"scripts\experiments\run_ijds_fixed_taxonomy_c2.py:1167:28: error[no-matching-overload]",
-    r"scripts\experiments\run_ijds_fixed_taxonomy_c2.py:1167:50: error[invalid-argument-type]",
-    r"scripts\experiments\run_ijds_fixed_taxonomy_c2.py:1216:20: error[no-matching-overload]",
-    r"scripts\experiments\run_ijds_fixed_taxonomy_c2.py:1216:35: error[invalid-argument-type]",
-    r"src\evaluation\comparator_transport_simulation.py:362:45: error[invalid-argument-type]",
-)
 
 
 def _relative_posix(path: Path) -> str:
@@ -83,16 +74,9 @@ def build_ty_command(*, uvx: str, files: Sequence[str], fail_on_diagnostics: boo
     return [*command, *files]
 
 
-def _partition_diagnostics(output: str) -> tuple[list[str], list[str]]:
-    """Separate exact frozen-source diagnostics from actionable diagnostics."""
-    diagnostics = [line for line in output.splitlines() if ": error[" in line]
-    frozen = [
-        line
-        for line in diagnostics
-        if any(line.startswith(prefix) for prefix in FROZEN_DIAGNOSTIC_PREFIXES)
-    ]
-    actionable = [line for line in diagnostics if line not in frozen]
-    return frozen, actionable
+def _diagnostic_lines(output: str) -> list[str]:
+    """Return every concise ty error line."""
+    return [line for line in output.splitlines() if ": error[" in line]
 
 
 def run_ty(scope: str, output: Path, *, fail_on_diagnostics: bool = False) -> int:
@@ -115,11 +99,8 @@ def run_ty(scope: str, output: Path, *, fail_on_diagnostics: bool = False) -> in
         check=False,
     )
     raw_output = f"{result.stdout}{result.stderr}"
-    frozen, actionable = _partition_diagnostics(raw_output)
-    if fail_on_diagnostics and result.returncode != 0 and frozen and not actionable:
-        effective_return_code = 0
-    else:
-        effective_return_code = result.returncode
+    diagnostics = _diagnostic_lines(raw_output)
+    effective_return_code = result.returncode
     output.parent.mkdir(parents=True, exist_ok=True)
     report = (
         f"# ty advisory report\n"
@@ -129,17 +110,14 @@ def run_ty(scope: str, output: Path, *, fail_on_diagnostics: bool = False) -> in
         f"files_checked: {len(files)}\n"
         f"raw_return_code: {result.returncode}\n"
         f"effective_return_code: {effective_return_code}\n"
-        f"frozen_diagnostics: {len(frozen)}\n"
-        f"actionable_diagnostics: {len(actionable)}\n"
+        f"diagnostics: {len(diagnostics)}\n"
         f"\n"
         f"{raw_output}"
     )
     output.write_text(report, encoding="utf-8")
     summary = SUMMARY_RE.search(report)
-    if actionable:
-        print(f"Found {len(actionable)} actionable diagnostics")
-    elif frozen:
-        print(f"ty clean apart from {len(frozen)} protocol-frozen diagnostics")
+    if diagnostics:
+        print(f"Found {len(diagnostics)} diagnostics")
     elif summary:
         print(summary.group(0))
     elif effective_return_code == 0:

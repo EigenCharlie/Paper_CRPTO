@@ -1,4 +1,4 @@
-"""CRPTO — Conformal Robust Predict-Then-Optimize.
+"""CRPTO — Conformal Risk-Aware Predict-Then-Optimize.
 
 The package is named after the paper's core thesis: combine conformal
 prediction with robust portfolio optimization. CRPTO is applied to credit

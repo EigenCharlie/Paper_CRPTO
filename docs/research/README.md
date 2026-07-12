@@ -9,7 +9,7 @@ remains the recovery mechanism.
 
 Read in this order:
 
-1. `active_claims_2026-07-11.md` - sole paper claim registry.
+1. `active_claims_2026-07-12.md` - sole paper claim registry.
 2. `ijds_fixed_taxonomy_c2_protocol_2026-07-11.md` - locked V1/V2 protocol and
    recovery boundary.
 3. `../../reports/crpto/ijds_fixed_taxonomy_c2_evidence.json` - sole numeric

@@ -11,6 +11,9 @@ path.
   allocation are persisted before outcomes are joined.
 - **Reconciled evaluation:** source descriptors and hashes are verified before
   one vectorized outcome join, sharp bounds, sensitivities, and simulation.
+- **Temporal-design sensitivity:** a separate outcome-free freeze moves the
+  residual window, retains the common OOT point path exactly, and reports the
+  result without selecting either window.
 
 The archive is a retrospective audit of previously inspected data. It is not a
 preregistration, prospective trial, causal study, or selected-set guarantee.

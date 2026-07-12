@@ -6,7 +6,7 @@ the frozen paper pipeline.
 > The consolidated 2026-06 backlog was executed and archived:
 > [`archive/NEXT_WORK_PLAN_2026-06.md`](archive/NEXT_WORK_PLAN_2026-06.md).
 > The current scientific and engineering contract is summarized in
-> [`docs/research/active_claims_2026-07-11.md`](../research/active_claims_2026-07-11.md)
+> [`docs/research/active_claims_2026-07-12.md`](../research/active_claims_2026-07-12.md)
 > and [`.codex/skills/crpto/SKILL.md`](../../.codex/skills/crpto/SKILL.md).
 
 Each plan documents:

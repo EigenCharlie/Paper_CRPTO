@@ -1,7 +1,7 @@
 # IJDS Tooling and Refactor Decisions
 
 This is the live engineering contract for the IJDS paper. Scientific claims
-are governed only by `docs/research/active_claims_2026-07-11.md`; historical
+are governed only by `docs/research/active_claims_2026-07-12.md`; historical
 selected-policy designs remain available in Git history, not in this workflow.
 
 ## Objective
@@ -18,16 +18,15 @@ frameworks that do not improve scientific validity.
 | `uv` | Python environment, lockfile, commands | Sole Python package/runtime interface; use `--frozen` for reproduction. |
 | Ruff | lint and formatting | Sole linter and formatter. |
 | mypy | stable gradual type gate | Required over `src`, `scripts`, and `tests`. |
-| ty | independent type audit | Full scope blocks new diagnostics; seven exact V1 diagnostics are frozen by path, line, and code. |
+| ty | independent type audit | Full scope is a zero-diagnostic submission gate. |
 | pytest | behavior and claim synchronization | Focused, smoke, and full suites. |
 | just | human-facing command menu | Sole task runner and Windows-first entry point. |
-| DVC | immutable experiment lineage | Four active V1/V2 pointers; never a substitute for protocol declarations. |
+| DVC | immutable experiment lineage | Six active V1/V2/V3 pointers; never a substitute for protocol declarations. |
 | pre-commit + prek | local hook compatibility | One shared hook policy, not two sets of checks. |
 | pdoc | optional API browsing | Ephemeral only; no project dependency or publication artifact. |
 
-`ty` complements mypy. It may ignore only the seven diagnostics in
-protocol-frozen V1 sources that are enumerated by
-`scripts/run_ty_advisory.py`; any new diagnostic remains blocking. The current
+`ty` complements mypy. Its full scope has no frozen exceptions: every
+diagnostic is blocking. The current
 locked environment has one accepted audit finding: DVC's transitive
 `diskcache 5.6.3` is affected by `CVE-2025-69872`, with no fixed release. Its
 local-write threat model and mitigations are recorded in
@@ -79,7 +78,7 @@ scientific result requires a new declared protocol, run tag, and output path.
   invariance over every conceivable baseline.
 - Unresolved outcomes receive sharp common-outcome bounds rather than
   complete-case deletion or a missing-at-random assumption.
-- One evidence builder produces 41 table/figure files plus one manifest.
+- One evidence builder produces 62 table/figure files plus one manifest.
 - One QMD body generates the official TeX; the supplement remains a separate
   anonymous source.
 - Compact-v7, P1/C1, pool93, Prosper/Freddie, Markov, and A1--A40 are not
@@ -103,7 +102,7 @@ just paper-submission-official
 just submission-check
 ```
 
-`just ijds-active-replay` validates V1/V2 and rebuilds publication evidence; it
+`just ijds-active-replay` validates V1/V2/V3 and rebuilds publication evidence; it
 does not rerun the expensive allocation protocol. `just submission-check` is
 the complete ordinary pre-freeze gate. Protected historical DVC stages are
 never hidden behind either command.

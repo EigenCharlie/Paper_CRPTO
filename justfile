@@ -7,7 +7,7 @@ set dotenv-load := true
 # --- Setup ---------------------------------------------------------------
 
 # Full setup including SPO (pyepo + torch) extras
-default: setup
+default: help
 
 setup:
     uv sync --extra dev --extra search --extra spo
@@ -99,13 +99,22 @@ ijds-policy-challenger:
 ijds-historical-v7-replay: ijds-exact-alpha ijds-policy-challenger ijds-historical-v7-evidence
 
 # Active-capsule gate: rebuild paper-facing evidence and test only dependencies
-# declared by the four fixed-taxonomy V1/V2 DVC pointers.
+# declared by the six fixed-taxonomy V1/V2/V3 DVC pointers.
 ijds-active-check: ijds-evidence publication-integrity
-    uv run pytest -q tests/test_ijds_anonymity.py tests/test_ijds_active_claim_sync.py tests/test_publication_targets.py tests/test_publication_integrity.py tests/test_submission_preview_layout.py tests/test_supplement_table_sync.py tests/test_scripts/test_compile_ijds_submission.py tests/test_experiments/test_ijds_fixed_taxonomy_c2.py
+    uv run pytest -q tests/test_ijds_anonymity.py tests/test_ijds_active_claim_sync.py tests/test_publication_targets.py tests/test_publication_integrity.py tests/test_submission_preview_layout.py tests/test_supplement_table_sync.py tests/test_scripts/test_compile_ijds_submission.py tests/test_scripts/test_manage_ijds_dvc_capsule.py tests/test_experiments/test_ijds_fixed_taxonomy_c2.py tests/test_evaluation/test_ijds_design_sensitivity.py
 
 # Active replay validates both fixed-taxonomy tags and rebuilds only the
 # paper-facing evidence. The expensive policy solve is never hidden here.
 ijds-active-replay: ijds-active-check
+
+ijds-pull:
+    uv run python scripts/manage_ijds_dvc_capsule.py pull
+
+ijds-dvc-status:
+    uv run python scripts/manage_ijds_dvc_capsule.py status
+
+ijds-dvc-remote-status:
+    uv run python scripts/manage_ijds_dvc_capsule.py status --cloud
 
 paper-export: tables figures evidence journal-package ijds-evidence book
 

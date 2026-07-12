@@ -1,7 +1,7 @@
 # IJDS Data and Code Disclosure Form Responses
 
 Editor-facing transfer text for the current official two-page form. The form
-and policy were rechecked on July 11, 2026. The form remains version
+and policy were rechecked on July 12, 2026. The form remains version
 `03.05.2025`, effective March 5, 2025, and the policy page remains updated
 January 1, 2025.
 
@@ -38,6 +38,8 @@ Paste in the ethics box:
 > rather than being deleted. The results are a methodological audit of temporal
 > transport, comparator design, and optimizer selection, not evidence that any
 > evaluated policy is appropriate for live credit decisions.
+> Comparator and residual-window choices can change policy conclusions, so a
+> label such as "safer" is not used without its explicit decision contract.
 
 ## Page 2
 

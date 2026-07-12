@@ -593,7 +593,7 @@ def _fit_prediction_stack(
         conformal_labels,
         alpha=float(config["conformal"]["alpha"]),
         n_groups=group_count,
-        bin_edges=fixed_edges,
+        bin_edges=fixed_edges.tolist(),
         taxonomy_provenance="2011_all_status_independent_calibrated_scores",
         taxonomy_method="fixed_empirical_linear_score_quantiles",
         method=str(config["conformal"]["method"]),
@@ -657,7 +657,7 @@ def _fit_prediction_stack(
                 conformal_labels,
                 alpha=float(config["conformal"]["alpha"]),
                 n_groups=diagnostic_groups,
-                bin_edges=diagnostic_edges,
+                bin_edges=diagnostic_edges.tolist(),
                 taxonomy_provenance="2011_all_status_independent_calibrated_scores",
                 taxonomy_method="fixed_empirical_linear_score_quantiles",
                 method=str(config["conformal"]["method"]),
@@ -1229,12 +1229,15 @@ def _evaluate_allocations(
         raise RuntimeError(
             "Outcome-free records and funded-allocation groups have different cardinality."
         )
-    for keys, allocation in grouped:
-        base_row = record_index.loc[keys]
+    for raw_keys, allocation in grouped:
+        key_values = raw_keys if isinstance(raw_keys, tuple) else (raw_keys,)
+        if len(key_values) != len(key_columns):
+            raise RuntimeError("Funded-allocation group key has unexpected cardinality.")
+        base_row = record_index.loc[key_values]
         if isinstance(base_row, pd.DataFrame):
-            raise RuntimeError(f"Outcome-free record lookup is not unique for {keys}.")
+            raise RuntimeError(f"Outcome-free record lookup is not unique for {key_values}.")
         base_record = base_row.to_dict()
-        base_record.update(dict(zip(key_columns, keys, strict=True)))
+        base_record.update(dict(zip(key_columns, key_values, strict=True)))
         cell = _cell_config(
             config,
             seed=int(base_record["seed"]),
@@ -1281,7 +1284,10 @@ def _aggregate_monthly(frame: pd.DataFrame) -> pd.DataFrame:
         "paired_policy_id",
     ]
     rows: list[dict[str, Any]] = []
-    for key_values, group in frame.groupby(keys, observed=True, sort=True):
+    for raw_key_values, group in frame.groupby(keys, observed=True, sort=True):
+        key_values = raw_key_values if isinstance(raw_key_values, tuple) else (raw_key_values,)
+        if len(key_values) != len(keys):
+            raise RuntimeError("Monthly-evaluation group key has unexpected cardinality.")
         row = aggregate_monthly_evaluation(group)
         row.update(dict(zip(keys, key_values, strict=True)))
         weights = group["total_allocated"].to_numpy(dtype=float)

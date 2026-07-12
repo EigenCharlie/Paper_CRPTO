@@ -16,10 +16,10 @@ at submission and data/code plus a reproducibility workflow at acceptance.
 | Component | Contents | Purpose |
 |---|---|---|
 | Environment | `pyproject.toml`, `uv.lock`, `justfile` | Recreate tooling |
-| Protocol | fixed-taxonomy V1/V2 YAML and protocol memo | Fix timing, policies, comparators, payoffs, bounds |
+| Protocol | fixed-taxonomy V1/V2 and temporal V3 YAML/memos | Fix timing, policies, comparators, payoffs, bounds |
 | Method | active data/model/evaluation/optimization modules and runner | Reproduce the study |
-| Active runs | four DVC pointers | Recover freeze and evaluation bundles |
-| Evidence | one builder, 11 table families, 4 figures, manifest | Reproduce every paper-facing result |
+| Active runs | six DVC pointers | Recover both freezes and evaluation bundles |
+| Evidence | one builder, 18 table families, 4 figures, manifest | Reproduce every paper-facing result |
 | Manuscript | canonical QMD, generated INFORMS TeX, supplement, bibliography | Reproduce PDFs |
 | Gates | scientific tests, claim sync, lint, typing, anonymity, visual QA | Detect drift |
 
@@ -34,6 +34,8 @@ uv run dvc pull data/processed/experiments/ijds_prefreeze/ijds-fixed-taxonomy-c2
 uv run dvc pull models/experiments/ijds_prefreeze/ijds-fixed-taxonomy-c2-2026-07-11-v1.dvc
 uv run dvc pull data/processed/experiments/ijds_prefreeze/ijds-fixed-taxonomy-c2-2026-07-11-v2.dvc
 uv run dvc pull models/experiments/ijds_prefreeze/ijds-fixed-taxonomy-c2-2026-07-11-v2.dvc
+uv run dvc pull data/processed/experiments/ijds_prefreeze/ijds-fixed-taxonomy-c2-temporal-v3-2026-07-12-v1.dvc
+uv run dvc pull models/experiments/ijds_prefreeze/ijds-fixed-taxonomy-c2-temporal-v3-2026-07-12-v1.dvc
 just ijds-active-check
 just paper-submission
 just paper-submission-official
@@ -48,15 +50,14 @@ publisher files are intentionally ignored by Git.
 The maintainer-only `just submission-check` additionally runs
 `validate-champion-strict`, which requires every historical artifact in
 `EXTRACTION_MANIFEST.json` to be present. An active-capsule reviewer need not
-download that separate historical champion to reproduce V1/V2 or the paper;
+download that separate historical champion to reproduce V1/V2/V3 or the paper;
 maintainers must run the strict gate before freeze.
 
 This sequence was verified from the current pre-freeze commit in a fresh local
-clone: `uv` installed 335 locked packages, DVC materialized 52 files in the
-four active directories, the active scientific and publication tests passed,
-the evidence build left the Git tree unchanged, and the official PDF compiled
-citation-clean at 27 pages. Repeat the exercise at submission freeze because
-the commit and publisher kit may change before then.
+clone before V3: `uv` installed 335 locked packages and DVC materialized the
+four early-run directories. The six-pointer V3 capsule must receive a fresh-
+clone replay before submission freeze; no earlier replay statement is extended
+to V3 by assumption.
 
 `just ijds-active-replay` validates the active evidence and rebuilds
 publication outputs. It intentionally does not hide an expensive methodology
@@ -73,7 +74,7 @@ pointers as well.
 The outcome-free V1 archive is immutable and its evaluator is intentionally
 marked incomplete. V2 verifies and resumes its frozen scientific objects. A
 new full replay may be run only in a clean clone with a new run tag and fresh
-paths; it must not overwrite V1/V2 or invoke protected DVC stages. Its results
+paths; it must not overwrite V1/V2/V3 or invoke protected DVC stages. Its results
 cannot silently replace the paper contract.
 
 ## Official PDF Build

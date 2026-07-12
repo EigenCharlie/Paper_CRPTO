@@ -187,7 +187,7 @@ def test_expected_and_realized_payoff_use_the_same_binary_formula() -> None:
     np.testing.assert_allclose(realized_high, np.array([0.10, -0.45, 0.20]))
 
 
-def test_solver_receives_adjusted_rate_and_objective_is_reconciled(
+def test_solver_receives_explicit_objective_override_and_reconciles(
     monkeypatch: pytest.MonkeyPatch,
 ) -> None:
     frame = pd.DataFrame(
@@ -207,16 +207,17 @@ def test_solver_receives_adjusted_rate_and_objective_is_reconciled(
 
     def fake_solver(**kwargs: object) -> SimpleNamespace:
         point = np.asarray(kwargs["pd_point"], dtype=float)
-        adjusted_rate = np.asarray(kwargs["int_rates"], dtype=float)
-        lgd = np.asarray(kwargs["lgd"], dtype=float)
+        contractual_rate = np.asarray(kwargs["int_rates"], dtype=float)
+        objective_rate = np.asarray(kwargs["objective_rate_override"], dtype=float)
         allocation = np.array([1.0, 0.5])
         exposure = allocation * frame["loan_amnt"].to_numpy(dtype=float)
-        captured["int_rates"] = adjusted_rate
+        captured["int_rates"] = contractual_rate
+        captured["objective_rate_override"] = objective_rate
         return SimpleNamespace(
             solution={
                 "solver_status": "Optimal",
                 "solver_backend": "unit",
-                "objective_value": float(exposure @ (adjusted_rate - point * lgd)),
+                "objective_value": float(exposure @ objective_rate),
             },
             allocation=allocation,
             effective_pd=point,
@@ -254,13 +255,14 @@ def test_solver_receives_adjusted_rate_and_objective_is_reconciled(
 
     np.testing.assert_allclose(
         captured["int_rates"],
-        (1.0 - np.array([0.10, 0.25])) * [0.10, 0.20],
+        frame["contractual_rate"].to_numpy(dtype=float),
     )
     expected = challenger.expected_standardized_payoff_rate(
         frame["pd_point"].to_numpy(),
         frame["contractual_rate"].to_numpy(),
         lgd=0.45,
     )
+    np.testing.assert_allclose(captured["objective_rate_override"], expected)
     assert solved.expected_objective == pytest.approx(float(solved.exposure @ expected))
 
 

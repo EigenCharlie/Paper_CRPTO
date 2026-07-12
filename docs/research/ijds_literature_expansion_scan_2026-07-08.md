@@ -5,7 +5,7 @@
 This note records an external and local literature scan for the IJDS version of
 CRPTO. It is designed as an editorial input, not as a request to reopen the
 frozen champion. Its original pool93 framing is historical; the active paper
-contract is `docs/research/active_claims_2026-07-11.md`.
+contract is `docs/research/active_claims_2026-07-12.md`.
 
 Operational guardrails:
 

@@ -1,0 +1,11 @@
+| scope                 | metric             |   policy_pairs |   negative |   positive |   indeterminate |   minimum_lower_bound |   maximum_upper_bound |   records_per_policy_min |   records_per_policy_max |
+|:----------------------|:-------------------|---------------:|-----------:|-----------:|----------------:|----------------------:|----------------------:|-------------------------:|-------------------------:|
+| broad_stress          | funded_miscoverage |              9 |          0 |          0 |               9 |             -0.046564 |              0.085116 |                       32 |                       32 |
+| broad_stress          | realized_payoff    |              9 |          0 |          0 |               9 |        -447651.851086 |         401594.237843 |                       32 |                       32 |
+| broad_stress          | terminal_default   |              9 |          0 |          0 |               9 |             -0.094175 |              0.098531 |                       32 |                       32 |
+| core_rules            | funded_miscoverage |              9 |          0 |          0 |               9 |             -0.040329 |              0.032521 |                        3 |                        3 |
+| core_rules            | realized_payoff    |              9 |          0 |          0 |               9 |        -238337.206658 |         328279.173804 |                        3 |                        3 |
+| core_rules            | terminal_default   |              9 |          0 |          0 |               9 |             -0.089162 |              0.022677 |                        3 |                        3 |
+| development_supported | funded_miscoverage |              9 |          0 |          0 |               9 |             -0.034559 |              0.051269 |                       12 |                       12 |
+| development_supported | realized_payoff    |              9 |          0 |          0 |               9 |        -309330.750892 |         259066.591351 |                       12 |                       12 |
+| development_supported | terminal_default   |              9 |          0 |          0 |               9 |             -0.058010 |              0.064370 |                       12 |                       12 |

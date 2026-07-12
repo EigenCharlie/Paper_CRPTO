@@ -14,37 +14,40 @@ Science*.
 
 The paper studies a decision-focused failure mode: a predictive guarantee and
 a numerical risk cap need not retain their meaning after a score enters an
-optimizer. CRPTO combines a calibrated probability of default, a 90%-target
-binary-outcome conformal interval, and a monthly credit-allocation linear
-program. Its 540,121-loan universe is independent of final status; score strata
-are fixed before residual calibration; only labels observable before the first
-decision are admitted; unresolved outcomes remain in every menu; and outcomes
-are joined only after allocations are frozen.
+optimizer. CRPTO combines a Platt-scaled default score, a 90%-target
+binary-outcome conformal residual interval, and a monthly credit-allocation
+linear program. Its common OOT panel contains 465,117 status-independent loans;
+score strata are fixed before residual fitting; unresolved outcomes remain in
+every menu; and outcomes are joined only after allocations are frozen.
 
-Conformal-fit coverage is 0.900388, but five-stratum all-candidate coverage is
-[0.854714, 0.879647] over 15 monthly decisions from April 2016 through June
-2017. The upper endpoint remains below 0.90 under pooled, two-, five-, and
-ten-group taxonomies. This temporal failure occurs before portfolio selection.
+Two locked residual windows meet the target in their fit blocks: 0.900388 on
+14,948 observable 2012H1 labels and 0.900174 on 33,909 labels from July
+2012--January 2013. Their five-stratum all-candidate OOT bounds are respectively
+[0.854714, 0.879647] and [0.845072, 0.870973] over 15 monthly decisions from
+April 2016 through June 2017. Every upper endpoint remains below 0.90 across
+four fixed taxonomies and a closed late-window reporting-lag grid. The failure
+occurs before portfolio selection.
 
-The decision audit then evaluates all nine prespecified guardrails. A copied
-numeric cap uses a weaker point-PD feasible set and makes every guardrail appear
-to improve realized default. Nesting predicts the feasible-set and expected-
-objective ordering, not that realized default result. An outcome-free
-comparator instead matches each monthly funded point-PD moment to numerical
-error below 4.17e-17.
-Under that alignment, payoff is lower for 7 of 9 guardrails, default is higher
-for only 1 of 9, and funded-set miscoverage is higher for 8 of 9; the remaining
-sharp intervals cross zero. Across 180 seed-concentration cells, robust signs
-occur in both directions. All 27 policy-metric envelopes over the declared
-comparator multiverse contain zero.
+The decision audit evaluates all nine co-primary guardrails. A copied numeric
+cap uses a weaker point-score feasible set and makes every guardrail appear to
+improve realized default in both windows. Nesting predicts only the feasible
+set and optimized plug-in objective ordering; the realized signs are empirical.
+An outcome-free comparator instead matches each funded point-score moment. The
+C2 payoff census changes from 7 of 9 robust losses in the early window to 5 of
+9 in the late window; default is higher for 1 of 9 and funded-set miscoverage
+for 8 of 9 in both. All 27 policy-metric envelopes cross zero in each of three
+scopes, including the development-supported point-cap range 0.0600--0.0825.
+Each residual window's 180-cell seed--concentration census contains signs in
+both directions; no cell or window is promoted.
 
 The contribution is therefore not a winning credit policy. It is a
 reproducible audit design that separates temporal coverage transport,
 comparator stringency, unresolved outcomes, and binding operational
 constraints. The empirical conclusion is deliberately negative: temporal
-coverage failure is robust in this archive, whereas portfolio direction is
-not invariant to the defensible comparison rule. This data-models-decisions-
-implications chain fits IJDS's focus on rigorous data science for decisions.
+candidate-coverage failure survives the declared timing checks, whereas
+portfolio direction is not invariant to residual timing, comparator scope, or
+binding constraints. This data-models-decisions-implications chain fits IJDS's
+focus on rigorous data science for decisions.
 
 The locked protocol required the superiority submission to stop if neither
 declared 9-of-9 result survived. That gate failed. The present negative audit
@@ -59,9 +62,9 @@ preregistered. The review package records this boundary, provides sharp
 partial-identification bounds, and makes no causal, selected-set-validity,
 fair-lending, or deployment claim.
 
-The outcome-free freeze and evaluation have separate immutable records and DVC
-pointers. A deterministic evidence builder verifies their lineage and
-regenerates all 41 table and figure files. The official INFORMS TeX is generated
+The early freeze/evaluation and late sensitivity have separate immutable
+records and six DVC pointers. A deterministic evidence builder verifies their
+lineage, exact common point path, and all 62 table and figure files. The official INFORMS TeX is generated
 from the canonical QMD source to prevent manuscript drift. At acceptance, I
 will release code, environment lock, manuscript sources, artifact metadata,
 DVC pointers, and raw-data acquisition instructions, subject to source

@@ -1,0 +1,6 @@
+outs:
+- md5: caa4e207cb887f949749e8549e7b999a.dir
+  size: 4240970
+  nfiles: 38
+  hash: md5
+  path: ijds-fixed-taxonomy-c2-temporal-v3-2026-07-12-v1

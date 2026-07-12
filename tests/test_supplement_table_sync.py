@@ -29,6 +29,14 @@ def test_primary_taxonomy_coverage_is_visible_in_supplement() -> None:
         assert lower in supplement
         assert upper in supplement
 
+    temporal = _rows("crpto_ijds_ft_tableS8_temporal_windows.csv")
+    assert len(temporal) == 8
+    for row in temporal:
+        lower = f"{float(row['all_candidate_coverage_lower']):.6f}"
+        upper = f"{float(row['all_candidate_coverage_upper']):.6f}"
+        assert lower in supplement
+        assert upper in supplement
+
 
 def test_canonical_c2_policy_bounds_are_visible_in_supplement() -> None:
     rows = _rows("crpto_ijds_ft_table3_comparator_contrasts.csv")
@@ -38,6 +46,14 @@ def test_canonical_c2_policy_bounds_are_visible_in_supplement() -> None:
     assert len(canonical) == 9
     for row in canonical:
         assert row["paired_policy_id"] in supplement
+        payoff_lower = f"{abs(float(row['realized_payoff_difference_lower'])):,.0f}"
+        miscoverage_upper = f"{float(row['weighted_miscoverage_difference_upper']):.6f}"
+        assert payoff_lower in supplement
+        assert miscoverage_upper in supplement
+
+    late = _rows("crpto_ijds_ft_tableS13_late_c2_contrasts.csv")
+    assert len(late) == 9
+    for row in late:
         payoff_lower = f"{abs(float(row['realized_payoff_difference_lower'])):,.0f}"
         miscoverage_upper = f"{float(row['weighted_miscoverage_difference_upper']):.6f}"
         assert payoff_lower in supplement
@@ -61,6 +77,25 @@ def test_seed_cap_census_is_visible_in_supplement() -> None:
         assert counts == directions
         for count in counts:
             assert f"| {count} |" in supplement
+
+    evidence = _rows("crpto_ijds_ft_tableS10_timing_directions.csv")
+    assert len(evidence) == 18
+    for count in (56, 36, 88, 51, 33, 96, 27, 85, 68):
+        assert f"| {count} |" in supplement
+
+
+def test_comparator_scope_and_lag_evidence_are_visible_in_supplement() -> None:
+    supplement = SUPPLEMENT.read_text(encoding="utf-8")
+    scopes = _rows("crpto_ijds_ft_tableS11_comparator_scopes.csv")
+    envelopes = _rows("crpto_ijds_ft_tableS14_comparator_scope_envelopes.csv")
+    lags = _rows("crpto_ijds_ft_tableS9_label_lags.csv")
+
+    assert len(scopes) == 9
+    assert len(envelopes) == 81
+    assert {row["sign"] for row in envelopes} == {"indeterminate"}
+    assert "0.0600--0.0825" in supplement
+    for row in lags:
+        assert f"{float(row['all_candidate_coverage_upper']):.6f}" in supplement
 
 
 def test_simulation_transport_means_are_visible_in_supplement() -> None:

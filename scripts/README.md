@@ -9,19 +9,16 @@ purpose.
 Use these for the active submission workflow:
 
 - `check_publication_integrity.py` - checks that paper, supplement, README and
-  official-template docs agree on the active maturity-safe IJDS claim.
-- `build_ijds_maturity_safe_evidence.py` - validates the clean tagged v2 run
-  and regenerates main tables 1--4, S1--S7, and figures 0--3 (30 hashed
-  publication outputs).
-- `build_ijds_comparator_stringency_evidence.py` - validates the clean tagged
-  post hoc comparator audit and regenerates the baseline-alignment,
-  sensitivity, family-census, leave-one-month-out, decomposition, and
-  score-geometry evidence (38 hashed publication outputs).
-- `experiments/run_ijds_maturity_safe_challenger.py` - performs the expensive
-  locked methodology replay into a fresh immutable experiment path.
-- `experiments/run_ijds_comparator_stringency_audit.py` - evaluates the frozen
-  guardrail against development-risk-matched point-PD comparators without
-  refitting the model or touching a protected stage.
+  official-template docs agree on the active fixed-taxonomy IJDS audit.
+- `build_ijds_fixed_taxonomy_c2_evidence.py` - validates the early V1/V2
+  lineage and the late V3 timing run, reconciles exact point-path equivalence,
+  and generates the sole active `crpto_ijds_ft_*` evidence family.
+- `experiments/run_ijds_fixed_taxonomy_c2.py` - executes a locked protocol into
+  a fresh run-tagged path. The active V3 run is already complete; do not rerun
+  it in place.
+- `build_ijds_maturity_safe_evidence.py` and
+  `build_ijds_comparator_stringency_evidence.py` - historical P1/C1 evidence
+  only; they are not paper-facing.
 - `build_ijds_calibration_selected_evidence.py` and the older IJDS challenger
   scripts - compact-v7 historical replay only; never active paper evidence.
 - `compile_ijds_submission.py` - compiles the official INFORMS/IJDS LaTeX
@@ -43,7 +40,7 @@ just smoke
 just type-advisory
 just hooks-check
 just complexity-report
-just ijds-evidence              # maturity-safe base plus comparator audit
+just ijds-evidence              # active V1/V2/V3 fixed-taxonomy evidence
 just ijds-historical-v7-evidence # historical compact-v7 provenance only
 just paper-submission
 just paper-submission-official
@@ -67,8 +64,8 @@ post-submission cleanup lane justifies touching them.
 ## Protected or historical search paths
 
 The large scripts under `scripts/search/` and most `scripts/experiments/` are
-historical or governed research surfaces. The three active IJDS experiment
-modules listed above are the narrow exception. Do not run HPO, conformal interval
+historical or governed research surfaces. The fixed-taxonomy experiment module
+listed above is the narrow active exception. Do not run HPO, conformal interval
 generation, champion search, or protected portfolio search unless the work has
 a fresh run tag, artifact sink, and drift/revalidation plan.
 
@@ -81,8 +78,9 @@ TabPFN, SPO+/PyEPO/Torch and cuOpt remain optional experiment stacks. The
 scripts that need them use explicit optional imports so the base IJDS
 environment stays light and full-tree type checks still remain useful.
 
-The active paper should cite A35--A40 and `ijds_policy_governance.json`, not an
-ad hoc rerun or the historical policy frontier.
+The active paper may cite only `crpto_ijds_ft_*` outputs through
+`reports/crpto/ijds_fixed_taxonomy_c2_evidence.json`. A1--A40 and
+`ijds_policy_governance.json` are historical provenance.
 
 ## Refactor priority
 
