@@ -937,3 +937,37 @@ no identicas y para medir discrepancia entre rulers. El hallazgo fortalece la
 narrativa de identificacion del handoff ML--conformal--OR, no una politica
 winner. Fuentes: `docs/research/ijds_normalized_objective_frontier_v1c_results_2026-07-13.md`
 y los punteros DVC V1c.
+
+## 22. V2 post-freeze: la direccion depende del ruler y la coordenada
+
+V2 se fijo en el commit `d3041e5` y verifico el freeze V1c antes de su unico
+join por ejecucion. El run valido retuvo 6,240 portfolios, 622,455 filas
+financiadas, 720 contrastes mensuales, 48 contrastes de ventana completa y 144
+direcciones de metrica. Los 376,890 candidatos OOT incluyen 11,551 outcomes no
+resueltos; los bounds usan una sola asignacion binaria comun por prestamo en la
+union de las dos politicas.
+
+El ruler normalizado produjo la misma direccion en sus 24 celdas: `gamma=1`
+tuvo menor payoff realizado y mayor default y miscoverage, aunque su objetivo
+plug-in optimizado era USD 28,263--557,294 mayor. Esa regla iguala una posicion
+relativa de score, no un nivel de objetivo.
+
+Al igualar el objetivo plug-in, la direccion tampoco fue universal. En `.25`,
+solo cuatro meses por ventana fueron decision-active y `gamma=1` tuvo USD
+5,603.66 mas payoff, `0.0068` puntos porcentuales menos default y la misma
+reduccion en miscoverage. En `.50`, las ocho ventanas dieron menor payoff
+(`-82,616` a `-27,958` en el hull de bounds), `0.4572`--`1.0973` puntos mas
+default y `1.0154`--`1.9321` puntos mas miscoverage. En `.75`, payoff y default
+cruzaron cero en siete ventanas; W8 fue desfavorable y miscoverage aumento en
+ocho de ocho.
+
+El censo global fue payoff 8 higher / 33 lower / 7 crossing; default 8 lower /
+33 higher / 7 crossing; miscoverage 8 lower / 40 higher. Por contrato, esto
+cancela el challenger rolling-origin y prohibe seleccionar ruler, coordenada o
+ventana. La contribucion posible es mas limpia: la incertidumbre conformal es
+decision-active, pero su direccion empirica no esta identificada sin declarar
+simultaneamente el ruler y la coordenada de frontera. V4 sigue activo hasta una
+decision editorial separada.
+
+Fuente completa:
+`docs/research/ijds_normalized_objective_frontier_v2_results_2026-07-13.md`.
