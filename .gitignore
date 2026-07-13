@@ -172,3 +172,4 @@ configs/experiments/*
 !configs/experiments/ijds_fixed_taxonomy_*.yaml
 !configs/experiments/ijds_rolling_origin_*.yaml
 !configs/experiments/ijds_decision_active_*.yaml
+!configs/experiments/ijds_policy_support_*.yaml

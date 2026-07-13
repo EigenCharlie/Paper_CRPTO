@@ -98,6 +98,12 @@ ijds-decision-active-evidence:
     uv run python scripts/build_ijds_decision_active_evidence.py
     uv run pytest -q tests/test_ijds_decision_active_evidence.py
 
+ijds-policy-support-tie-audit:
+    uv run python scripts/experiments/run_ijds_policy_support_tie_audit.py
+
+ijds-policy-support-tie-check:
+    uv run pytest -q tests/test_ijds_policy_support_tie_audit.py
+
 ijds-historical-v1-v3-evidence:
     uv run python scripts/build_ijds_fixed_taxonomy_c2_evidence.py
 
