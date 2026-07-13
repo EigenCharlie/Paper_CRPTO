@@ -44,7 +44,7 @@ complexity-report:
     uvx radon cc src scripts -s -n C --exclude "scripts/archive/*"
 
 api-docs-core:
-    uv run --with pdoc pdoc src.optimization.portfolio_model src.optimization.policy_evaluation src.optimization.policy_selection src.models.conformal_alpha_grid src.models.calibration src.evaluation.backtesting src.evaluation.fairness --docformat google --output-directory reports/api-docs --no-browser
+    uv run --with pdoc pdoc src.ijds_audit.geometry src.ijds_audit.portfolio src.ijds_audit.evaluation src.ijds_challengers.frontier src.ijds_challengers.evaluation --docformat google --output-directory reports/api-docs --no-browser
 
 hooks-check:
     uv run pre-commit validate-config
@@ -143,9 +143,9 @@ ijds-policy-challenger:
 
 ijds-historical-v7-replay: ijds-exact-alpha ijds-policy-challenger ijds-historical-v7-evidence
 
-# Active-capsule gate: rebuild paper-facing evidence and test only dependencies
-# declared by the four V4 outcome-free/evaluated DVC pointers.
-ijds-active-check: ijds-evidence publication-integrity
+# Active-capsule gate: rebuild paper-facing evidence and verify both immutable
+# freeze/evaluation pairs represented by the eight active DVC pointers.
+ijds-active-check: ijds-evidence publication-integrity ijds-normalized-objective-frontier-v1c-check ijds-normalized-objective-frontier-v2-check
     uv run pytest -q tests/test_ijds_anonymity.py tests/test_ijds_active_claim_sync.py tests/test_ijds_v4_claim_sync.py tests/test_publication_targets.py tests/test_publication_integrity.py tests/test_submission_preview_layout.py tests/test_supplement_table_sync.py tests/test_scripts/test_compile_ijds_submission.py tests/test_scripts/test_manage_ijds_dvc_capsule.py tests/test_ijds_audit_core.py
 
 # Active replay validates V4 evidence and rebuilds only paper-facing outputs.

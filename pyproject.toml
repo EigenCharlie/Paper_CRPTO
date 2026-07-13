@@ -312,6 +312,19 @@ module = [
     "src.models.venn_abers",
     "src.models.binary_conformal_guardrail",
     "src.data.outcome_observability",
+    "src.ijds_audit.config",
+    "src.ijds_audit.evaluation",
+    "src.ijds_audit.geometry",
+    "src.ijds_audit.policy_support",
+    "src.ijds_audit.portfolio",
+    "src.ijds_audit.protocol",
+    "src.ijds_audit.simulation",
+    "src.ijds_challengers.archive",
+    "src.ijds_challengers.config",
+    "src.ijds_challengers.evaluation",
+    "src.ijds_challengers.evaluation_config",
+    "src.ijds_challengers.frontier",
+    "src.ijds_challengers.normalized_frontier",
     "src.evaluation.comparator_audit",
     "src.evaluation.comparator_transport_simulation",
     "src.evaluation.maturity_safe_portfolio",
@@ -320,17 +333,30 @@ module = [
     "src.utils.mlflow_tracing",
     "src.utils.optuna_storage",
     "src.utils.script_helpers",
+    "scripts.build_ijds_binary_geometry_frontier_v4_evidence",
     "scripts.build_ijds_calibration_selected_evidence",
     "scripts.build_ijds_fixed_taxonomy_c2_evidence",
     "scripts.build_ijds_submission_tex",
     "scripts.check_publication_integrity",
     "scripts.compile_ijds_submission",
+    "scripts.run_ty_advisory",
     "scripts.experiments.ijds_policy_support",
+    "scripts.experiments.run_ijds_binary_geometry_frontier_v4",
     "scripts.experiments.run_ijds_calibration_selected_policy_challenger",
     "scripts.experiments.run_ijds_exact_alpha_grid_challenger",
+    "scripts.experiments.run_ijds_normalized_objective_frontier",
+    "scripts.experiments.run_ijds_normalized_objective_frontier_v2",
 ]
 disallow_untyped_defs = true
 disallow_incomplete_defs = true
 disallow_untyped_decorators = true
 warn_return_any = true
 no_implicit_optional = true
+
+# V1c source is protocol-hashed. ty's pandas stubs infer the final Series.any()
+# reduction as Series | bool, while mypy strict and runtime tests verify it.
+[[tool.ty.overrides]]
+include = ["src/ijds_challengers/evaluation.py"]
+
+[tool.ty.overrides.rules]
+unresolved-attribute = "ignore"

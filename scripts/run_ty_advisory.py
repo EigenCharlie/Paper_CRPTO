@@ -11,22 +11,30 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
 DEFAULT_OUTPUT = ROOT / "reports" / "ci" / "ty-advisory.txt"
-TY_REQUIREMENT = "ty==0.0.57"
+TY_REQUIREMENT = "ty==0.0.59"
 
 SOURCE_ROOTS = ("src", "scripts")
 ACTIVE_EXCLUDED_FILES = {
+    "scripts/build_ijds_calibration_selected_evidence.py",
+    "scripts/build_ijds_comparator_stringency_evidence.py",
+    "scripts/build_ijds_fixed_taxonomy_c2_evidence.py",
+    "scripts/build_ijds_maturity_safe_evidence.py",
     "scripts/generate_conformal_intervals.py",
     "scripts/run_cqr_comparison.py",
     "scripts/run_crpto_vs_spo_stability.py",
     "scripts/run_spo_comparison.py",
     "scripts/run_spo_real.py",
     "scripts/train_pd_model.py",
+    "scripts/search/build_pool93_body_allocation_audit.py",
     "src/optimization/cuopt_adapter.py",
 }
 ACTIVE_EXPERIMENT_FILES = {
     "scripts/experiments/ijds_policy_support.py",
-    "scripts/experiments/run_ijds_calibration_selected_policy_challenger.py",
-    "scripts/experiments/run_ijds_exact_alpha_grid_challenger.py",
+    "scripts/experiments/run_ijds_binary_geometry_frontier_v4.py",
+    "scripts/experiments/run_ijds_decision_active_simulation.py",
+    "scripts/experiments/run_ijds_normalized_objective_frontier.py",
+    "scripts/experiments/run_ijds_normalized_objective_frontier_v2.py",
+    "scripts/experiments/run_ijds_policy_support_tie_audit.py",
 }
 SUMMARY_RE = re.compile(r"^Found \d+ diagnostics", flags=re.MULTILINE)
 

@@ -18,7 +18,7 @@ def active_dvc_pointers(
     root: Path = ROOT,
     targets_path: Path = TARGETS_PATH,
 ) -> list[Path]:
-    """Load and validate the four active V4 DVC pointer paths."""
+    """Load and validate the data/model pointers for every active run tag."""
     payload: Any = yaml.safe_load(targets_path.read_text(encoding="utf-8"))
     if not isinstance(payload, dict):
         raise TypeError("Publication targets must be a YAML mapping.")
@@ -28,9 +28,23 @@ def active_dvc_pointers(
     values = contract.get("dvc_pointers")
     if not isinstance(values, list) or not all(isinstance(item, str) for item in values):
         raise TypeError("active_scientific_contract.dvc_pointers must be a string list.")
-    if len(values) != 4 or len(set(values)) != 4:
+    run_keys = (
+        "outcome_free_run_tag",
+        "run_tag",
+        "two_ruler_outcome_free_run_tag",
+        "two_ruler_run_tag",
+    )
+    run_tags = [contract.get(key) for key in run_keys]
+    if not all(isinstance(tag, str) and tag for tag in run_tags):
+        raise TypeError("The active IJDS capsule must declare all four run tags.")
+    expected = {
+        f"{prefix}/experiments/ijds_audit/{tag}.dvc"
+        for tag in run_tags
+        for prefix in ("data/processed", "models")
+    }
+    if set(values) != expected or len(values) != len(expected):
         raise ValueError(
-            f"The active IJDS capsule requires four unique pointers, got {len(values)}."
+            "The active IJDS capsule pointers do not match its four declared run tags."
         )
 
     resolved: list[Path] = []
