@@ -58,6 +58,20 @@ def _output_dir(config: dict[str, Any], repo_root: Path) -> Path:
     return output
 
 
+def _dvc_md5(raw_path: Path) -> str:
+    pointer_path = raw_path.with_suffix(raw_path.suffix + ".dvc")
+    payload = yaml.safe_load(pointer_path.read_text(encoding="utf-8"))
+    if not isinstance(payload, dict) or not isinstance(payload.get("outs"), list):
+        raise TypeError(f"Invalid DVC pointer: {pointer_path}")
+    outputs = payload["outs"]
+    if len(outputs) != 1 or not isinstance(outputs[0], dict):
+        raise ValueError(f"Expected one DVC output in {pointer_path}")
+    digest = str(outputs[0].get("md5", ""))
+    if len(digest) != 32 or any(character not in "0123456789abcdef" for character in digest):
+        raise ValueError(f"Invalid DVC MD5 in {pointer_path}")
+    return digest
+
+
 def main(argv: Sequence[str] | None = None) -> None:
     args = parse_args(argv)
     root = args.repo_root.resolve()
@@ -70,6 +84,12 @@ def main(argv: Sequence[str] | None = None) -> None:
     audit = audit_raw_dataset(raw_path, base)
 
     written = {
+        "archive_inventory": write_csv_atomic(
+            audit.archive_inventory, output / "archive_inventory.csv"
+        ),
+        "status_inventory": write_csv_atomic(
+            audit.status_inventory, output / "status_inventory.csv"
+        ),
         "cohort_inventory": write_csv_atomic(audit.inventory, output / "cohort_inventory.csv"),
         "feature_coverage": write_csv_atomic(
             audit.feature_coverage, output / "raw_feature_coverage.csv"
@@ -87,6 +107,7 @@ def main(argv: Sequence[str] | None = None) -> None:
     primary = audit.amount_alignment.loc[audit.amount_alignment["cohort"].eq("primary_oot")].iloc[0]
     late_count = int(audit.feature_contract["late_feature"].sum())
     eligible_count = int(audit.feature_contract["eligible_for_current_temporal_model"].sum())
+    archive = audit.archive_inventory.iloc[0]
     evidence = {
         "schema_version": str(config["schema_version"]),
         "status": "complete_full_archive_data_contract_audit",
@@ -95,9 +116,14 @@ def main(argv: Sequence[str] | None = None) -> None:
         "config": relative_artifact_descriptor(config_path, repo_root=root),
         "raw_source": {
             **relative_artifact_descriptor(raw_path, repo_root=root),
-            "dvc_md5": "65adade308f21d60b7213088a88e684d",
+            "dvc_md5": _dvc_md5(raw_path),
         },
         "results": {
+            "raw_rows": int(archive["raw_rows"]),
+            "valid_loan_rows": int(archive["valid_loan_rows"]),
+            "distinct_nonblank_ids": int(archive["distinct_nonblank_ids"]),
+            "term36_rows_all_dates": int(archive["term36_rows"]),
+            "term60_rows_all_dates": int(archive["term60_rows"]),
             "raw_schema_columns": int(len(audit.feature_contract)),
             "term36_active_design_rows": int(
                 audit.inventory.loc[

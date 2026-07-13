@@ -60,6 +60,8 @@ CONTEMPORANEOUS_FUNDING_COLUMNS = frozenset({"funded_amnt", "funded_amnt_inv"})
 class RawDataAudit:
     """Small, inspectable outputs from one full raw-CSV scan."""
 
+    archive_inventory: pd.DataFrame
+    status_inventory: pd.DataFrame
     inventory: pd.DataFrame
     feature_coverage: pd.DataFrame
     feature_contract: pd.DataFrame
@@ -162,6 +164,51 @@ def _raw_relation(path: Path) -> str:
 def _header(connection: duckdb.DuckDBPyConnection, raw_path: Path) -> list[str]:
     rows = connection.execute(f"DESCRIBE SELECT * FROM {_raw_relation(raw_path)}").fetchall()
     return [str(row[0]) for row in rows]
+
+
+def _archive_inventory(
+    connection: duckdb.DuckDBPyConnection, raw_path: Path
+) -> tuple[pd.DataFrame, pd.DataFrame]:
+    parsed = f"""
+        SELECT *,
+               try_strptime(issue_d, '%b-%Y') AS issue_date,
+               try_cast(regexp_extract(term, '([0-9]+)', 1) AS INTEGER) AS term_months
+        FROM {_raw_relation(raw_path)}
+    """
+    inventory = connection.execute(
+        f"""
+        WITH parsed AS ({parsed})
+        SELECT count(*) AS raw_rows,
+               count(DISTINCT nullif(trim(id), '')) AS distinct_nonblank_ids,
+               sum(CASE WHEN id IS NULL OR trim(id) = '' THEN 1 ELSE 0 END) AS blank_id_rows,
+               sum(CASE WHEN issue_date IS NOT NULL THEN 1 ELSE 0 END) AS valid_loan_rows,
+               sum(CASE WHEN issue_date IS NULL THEN 1 ELSE 0 END) AS invalid_issue_date_rows,
+               min(issue_date) AS first_issue_date,
+               max(issue_date) AS last_issue_date,
+               sum(CASE WHEN term_months = 36 THEN 1 ELSE 0 END) AS term36_rows,
+               sum(CASE WHEN term_months = 60 THEN 1 ELSE 0 END) AS term60_rows,
+               sum(CASE WHEN term_months NOT IN (36, 60) OR term_months IS NULL THEN 1 ELSE 0 END)
+                   AS other_or_invalid_term_rows
+        FROM parsed
+        """
+    ).fetchdf()
+    for column in ("first_issue_date", "last_issue_date"):
+        inventory[column] = inventory[column].map(
+            lambda value: _date(value) if pd.notna(value) else None
+        )
+    statuses = connection.execute(
+        f"""
+        WITH parsed AS ({parsed})
+        SELECT coalesce(nullif(trim(loan_status), ''), '__MISSING__') AS loan_status,
+               count(*) AS rows,
+               sum(CASE WHEN term_months = 36 THEN 1 ELSE 0 END) AS term36_rows,
+               sum(CASE WHEN term_months = 60 THEN 1 ELSE 0 END) AS term60_rows
+        FROM parsed
+        GROUP BY loan_status
+        ORDER BY rows DESC, loan_status
+        """
+    ).fetchdf()
+    return inventory, statuses
 
 
 def _profile_coverage(
@@ -351,6 +398,7 @@ def audit_raw_dataset(raw_path: Path, config: Mapping[str, Any]) -> RawDataAudit
     connection = duckdb.connect()
     connection.execute("PRAGMA threads=8")
     columns = _header(connection, raw_path)
+    archive_inventory, status_inventory = _archive_inventory(connection, raw_path)
     cohort_sql = cohort_case_sql(config["design"], config["source"])
     inventory, coverage = _profile_coverage(
         connection, raw_path, columns=columns, cohort_sql=cohort_sql
@@ -366,6 +414,8 @@ def audit_raw_dataset(raw_path: Path, config: Mapping[str, Any]) -> RawDataAudit
     )
     connection.close()
     return RawDataAudit(
+        archive_inventory=archive_inventory,
+        status_inventory=status_inventory,
         inventory=inventory,
         feature_coverage=coverage,
         feature_contract=contract,

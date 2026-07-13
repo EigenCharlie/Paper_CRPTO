@@ -29,6 +29,14 @@ estimand.
    Label availability is evaluated at the declared 2016 cutoff.
 8. No protected stage or manifest-protected artifact is executed or written.
 
+## Persisted evidence
+
+The audit stores complete archive row, ID, date, term, and loan-status
+inventories; the exhaustive 36-month cohort partition; feature coverage by
+cohort; the leakage and temporal-availability feature contract; requested
+versus funded amount reconciliation; and label availability in the maturity
+gap at the declared cutoff.
+
 ## Interpretation boundary
 
 More raw rows or columns do not imply a more complete estimand. Late bureau
