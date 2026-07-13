@@ -818,3 +818,49 @@ Fuentes reproducibles:
 - tablas `crpto_ijds_policy_family_domain.csv`,
   `crpto_ijds_gamma_endpoint_audit.csv` y
   `crpto_ijds_comparator_support_domain.csv`.
+
+## 18. Cierre metodologico P1 antes del challenger normalizado
+
+La revision de los metodos vecinos cambia la pregunta, pero no autoriza una
+garantia nueva. La unidad estadistica relevante de CRPTO es el menu mensual
+completo, su vector de outcomes y la asignacion acoplada por presupuesto y
+proposito. Los 376,890 prestamos OOT no son 376,890 decisiones independientes:
+hay 15 menus OOT y solo 11 menus comunes de desarrollo. CROMS, RAC, conformal
+robustness control, decision-calibrated sets, CREME/inverse CRC, CREDO y los
+metodos end-to-end requieren contextos de decision exchangeable, una secuencia
+operativa suficiente o una ley generativa que este archivo no identifica. Su
+software podria ejecutarse, pero su teorema no se transportaria.
+
+El P1 no adopta por ello una supuesta reparacion conformal. Predeclara un
+challenger de identificacion con dos reglas outcome-free:
+
+1. La regla primaria iguala un piso absoluto de objetivo plug-in y minimiza
+   cada score en el soporte comun eficiente.
+2. La regla secundaria usa la posicion normalizada entre el portfolio de score
+   minimo y el portfolio sin cap. Es invariante a transformaciones afines
+   positivas, pero no iguala riesgo verdadero ni costo de oportunidad.
+
+La familia ahora incluye `gamma={0,.25,.50,.75,1}` y tres coordenadas en ambas
+reglas. El freeze V1 contiene exactamente 6,240 solves outcome-free; el unico
+contraste primario futuro es `gamma=1 - gamma=0`. Los gammas interiores son una
+ruta diagnostica completa, no candidatos para escoger un winner.
+
+El contrato fue fijado antes del join de outcomes. Un smoke estructural en W1,
+abril de 2016, reprodujo rangos de score de `0.078139`, `0.216985`, `0.355830`,
+`0.494675` y `0.633521`; HiGHS y GLOP reconciliaron hasta `5.82e-17`. Estos son
+chequeos de escala y formulacion, no resultados empiricos. El runner se aislo
+en `src/ijds_challengers` y su constructor central se redujo de complejidad
+ciclomatica D28 a C20 sin tocar V4 ni un outcome.
+
+La promocion exige un freeze V1 hash-verificado y un V2 separado. Si cualquier
+bound sharp cruza cero o las reglas, ventanas o coordenadas discrepan, el
+resultado fortalece la auditoria de dependencia del comparador. Solo un signo
+no nulo comun a las ocho ventanas, tres coordenadas y dos reglas habilitaria un
+challenger rolling-origin adicional; aun asi no repararia candidate coverage
+ni funded-set validity. No hay freeze de submission autorizado.
+
+Contratos completos:
+
+- `docs/research/ijds_decision_method_applicability_2026-07-12.md`;
+- `docs/research/ijds_normalized_objective_frontier_protocol_2026-07-12.md`;
+- `configs/experiments/ijds_normalized_objective_frontier_2026-07-12_v1.yaml`.
