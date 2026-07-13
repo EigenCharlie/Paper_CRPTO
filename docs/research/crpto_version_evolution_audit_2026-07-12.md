@@ -913,3 +913,26 @@ Trazabilidad:
 - `docs/research/ijds_normalized_objective_frontier_v1b_stop_2026-07-13.md`;
 - `docs/research/ijds_normalized_objective_frontier_v1c_protocol_2026-07-13.md`;
 - `configs/experiments/ijds_normalized_objective_frontier_2026-07-13_v1c.yaml`.
+
+## 21. Freeze outcome-free V1c
+
+V1c completo en 3,332 segundos: 6,240 solves, 622,455 exposiciones positivas,
+720 contrastes endpoint, 1,440 reruns por orden, 288 validaciones GLOP y 26
+diagnosticos de base. El residual maximo de presupuesto fue USD `6.366e-6`; el
+desacuerdo maximo GLOP--HiGHS fue `2.179e-13` en tasa de objetivo y `3.594e-13`
+en score financiado. No hubo near-zero reduced costs, bases degeneradas ni un
+ruler globalmente degenerado.
+
+La geometria resuelve una duda y cierra otra ruta positiva. El ruler normalizado
+cambio 360/360 endpoints. El ruler objective-matched cambio 272/360: en
+coordenada `.25`, 88/120 pares `gamma=1` versus `gamma=0` fueron exactamente
+identicos. Esas celdas tienen contraste cero bajo cualquier outcome. Como el
+protocolo exigia signo no nulo en todas las ventanas, coordenadas y rulers, una
+promocion positiva all-cell ya es imposible antes de V2. No se permite retirar
+`.25` ni seleccionar `.50`/`.75`.
+
+V2 sigue siendo necesario para cuantificar signos y bounds sharp en las celdas
+no identicas y para medir discrepancia entre rulers. El hallazgo fortalece la
+narrativa de identificacion del handoff ML--conformal--OR, no una politica
+winner. Fuentes: `docs/research/ijds_normalized_objective_frontier_v1c_results_2026-07-13.md`
+y los punteros DVC V1c.
