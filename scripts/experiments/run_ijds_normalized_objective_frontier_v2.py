@@ -40,6 +40,7 @@ from src.utils.isolated_experiment import (  # noqa: E402
     prepare_output_paths as prepare_isolated_output_paths,
     relative_artifact_descriptor,
     require_clean_tagged_head,
+    resolve_isolated_run_dir,
     resolve_repo_input,
     sha256_file,
 )
@@ -92,6 +93,37 @@ def prepare_output_paths(
         allowed_data_root=ALLOWED_DATA_ROOT,
         allowed_model_root=ALLOWED_MODEL_ROOT,
     )
+
+
+def preflight_output_paths(
+    config: Mapping[str, Any],
+    *,
+    repo_root: Path = ROOT,
+) -> OutputPaths:
+    """Reject an occupied run tag before reading any archive outcome."""
+    output = config["output"]
+    run_tag = str(config["run_tag"])
+    paths = OutputPaths(
+        data_dir=resolve_isolated_run_dir(
+            repo_root=repo_root,
+            configured_root=str(output["data_root"]),
+            allowed_relative_root=ALLOWED_DATA_ROOT,
+            run_tag=run_tag,
+        ),
+        model_dir=resolve_isolated_run_dir(
+            repo_root=repo_root,
+            configured_root=str(output["model_root"]),
+            allowed_relative_root=ALLOWED_MODEL_ROOT,
+            run_tag=run_tag,
+        ),
+    )
+    existing = [path for path in (paths.data_dir, paths.model_dir) if path.exists()]
+    if existing:
+        rendered = ", ".join(str(path) for path in existing)
+        raise FileExistsError(
+            f"Experiment output already exists ({rendered}); choose a fresh run tag."
+        )
+    return paths
 
 
 def _direction_summary(directions: pd.DataFrame) -> dict[str, Any]:
@@ -185,6 +217,7 @@ def run_evaluation(*, config_path: Path, repo_root: Path = ROOT) -> Path:
     resolved_config = resolve_repo_input(config_path, repo_root=root)
     config = load_v2_config(resolved_config)
     protocol_commit = require_clean_tagged_head(root, str(config["protocol_tag"]))
+    preflight_output_paths(config, repo_root=root)
 
     frontier = verify_frontier_freeze(config, repo_root=root)
     records = pd.read_parquet(frontier.artifacts["solve_records"])

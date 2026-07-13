@@ -7,6 +7,7 @@ import pandas as pd
 import pytest
 
 from scripts.experiments.run_ijds_normalized_objective_frontier_v2 import (
+    preflight_output_paths,
     prepare_output_paths,
 )
 from src.ijds_challengers.evaluation import (
@@ -48,6 +49,17 @@ def test_v2_output_paths_are_contained_and_immutable(tmp_path: Path) -> None:
     assert paths.model_dir == tmp_path / "models/experiments/ijds_audit/frontier-v2-test"
     with pytest.raises(FileExistsError, match="already exists"):
         prepare_output_paths(config, repo_root=tmp_path)
+
+
+def test_v2_output_preflight_does_not_create_directories(tmp_path: Path) -> None:
+    config = copy.deepcopy(load_v2_config(CONFIG))
+    config["run_tag"] = "frontier-v2-preflight-test"
+    paths = preflight_output_paths(config, repo_root=tmp_path)
+    assert not paths.data_dir.exists()
+    assert not paths.model_dir.exists()
+    paths.model_dir.mkdir(parents=True)
+    with pytest.raises(FileExistsError, match="already exists"):
+        preflight_output_paths(config, repo_root=tmp_path)
 
 
 @pytest.mark.parametrize(

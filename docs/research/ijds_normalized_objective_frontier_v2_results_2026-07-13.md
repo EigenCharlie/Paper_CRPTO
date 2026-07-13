@@ -20,6 +20,10 @@ memory and stopped at the hard no-overwrite check. Only the first invocation
 wrote artifacts. The duplicate invocation changed no specification or output
 and is not treated as another replication.
 
+The retained tag records this incident exactly. A post-run hardening change
+moved a read-only output-path preflight ahead of archive loading for any future
+run tag, while preserving the tagged implementation that produced V2.
+
 ## Complete census and outcome join
 
 The retained evaluation contains:
