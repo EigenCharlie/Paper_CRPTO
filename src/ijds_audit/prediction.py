@@ -88,7 +88,8 @@ class WindowRecipe:
     fit_audit: pd.DataFrame
 
 
-def _available_labels(frame: pd.DataFrame, *, block: str) -> np.ndarray:
+def available_binary_labels(frame: pd.DataFrame, *, block: str) -> np.ndarray:
+    """Return complete binary labels or fail with the named protocol block."""
     if not bool(frame["label_available"].all()):
         raise RuntimeError(f"{block} contains unavailable labels.")
     labels = frame["terminal_default"]
@@ -184,9 +185,10 @@ def prepare_data(config: Mapping[str, Any], *, raw_path: Path) -> PreparedData:
     )
 
 
-def _taxonomy_edges(
+def fixed_taxonomy_edges(
     probabilities: np.ndarray, groups: Sequence[int]
 ) -> dict[int, tuple[float, ...]]:
+    """Freeze strictly increasing empirical score-quantile taxonomies."""
     output: dict[int, tuple[float, ...]] = {}
     for group_count in groups:
         edges = np.quantile(
@@ -200,7 +202,8 @@ def _taxonomy_edges(
     return output
 
 
-def _calibration_metrics(labels: np.ndarray, probabilities: np.ndarray) -> dict[str, float]:
+def binary_probability_metrics(labels: np.ndarray, probabilities: np.ndarray) -> dict[str, float]:
+    """Report discrimination, calibration, and ten-bin ECE metrics."""
     metrics = classification_metrics(labels, probabilities)
     bins = pd.cut(probabilities, bins=np.linspace(0.0, 1.0, 11), include_lowest=True)
     grouped = (
@@ -232,10 +235,10 @@ def fit_primary_scores(data: PreparedData, config: Mapping[str, Any]) -> Learner
     model = CatBoostClassifier(**parameters)
     model.fit(
         data.features.loc[train.index],
-        _available_labels(train, block="pd_development_train"),
+        available_binary_labels(train, block="pd_development_train"),
         cat_features=list(data.categorical_features),
     )
-    validation_labels = _available_labels(validation, block="pd_development_validation")
+    validation_labels = available_binary_labels(validation, block="pd_development_validation")
     validation_probability = np.asarray(
         model.predict_proba(data.features.loc[validation.index])[:, 1], dtype=float
     )
@@ -248,7 +251,7 @@ def fit_primary_scores(data: PreparedData, config: Mapping[str, Any]) -> Learner
     )
     calibrator = fit_platt_calibrator(
         calibration_margin,
-        _available_labels(calibration_fit, block="probability_calibration"),
+        available_binary_labels(calibration_fit, block="probability_calibration"),
         calibrator_config,
     )
     all_probability = apply_platt_calibrator(
@@ -262,12 +265,12 @@ def fit_primary_scores(data: PreparedData, config: Mapping[str, Any]) -> Learner
         model=model,
         calibrator=calibrator,
         probabilities=all_probability,
-        taxonomy_edges=_taxonomy_edges(calibration_probability, groups),
+        taxonomy_edges=fixed_taxonomy_edges(calibration_probability, groups),
         metrics={
             "validation_cutoff": str(validation_cutoff.to_period("M")),
-            "validation": _calibration_metrics(validation_labels, validation_probability),
-            "probability_calibration": _calibration_metrics(
-                _available_labels(calibration_fit, block="probability_calibration"),
+            "validation": binary_probability_metrics(validation_labels, validation_probability),
+            "probability_calibration": binary_probability_metrics(
+                available_binary_labels(calibration_fit, block="probability_calibration"),
                 all_probability[calibration_fit.index],
             ),
         },
@@ -319,7 +322,8 @@ def fit_logistic_control(data: PreparedData, config: Mapping[str, Any]) -> Learn
         ]
     )
     pipeline.fit(
-        data.features.loc[train.index, numeric], _available_labels(train, block="logit_train")
+        data.features.loc[train.index, numeric],
+        available_binary_labels(train, block="logit_train"),
     )
     validation_margin = np.asarray(
         pipeline.decision_function(data.features.loc[validation.index, numeric]), dtype=float
@@ -336,7 +340,7 @@ def fit_logistic_control(data: PreparedData, config: Mapping[str, Any]) -> Learn
     calibrator_config["logistic_regression"]["random_state"] = int(control["random_state"])
     calibrator = fit_platt_calibrator(
         calibration_margin,
-        _available_labels(calibration_fit, block="logit_probability_calibration"),
+        available_binary_labels(calibration_fit, block="logit_probability_calibration"),
         calibrator_config,
     )
     all_margin = np.asarray(pipeline.decision_function(data.features[numeric]), dtype=float)
@@ -348,16 +352,16 @@ def fit_logistic_control(data: PreparedData, config: Mapping[str, Any]) -> Learn
         model=pipeline,
         calibrator=calibrator,
         probabilities=all_probability,
-        taxonomy_edges=_taxonomy_edges(calibration_probability, groups),
+        taxonomy_edges=fixed_taxonomy_edges(calibration_probability, groups),
         metrics={
             "validation_cutoff": str(validation_cutoff.to_period("M")),
-            "validation_uncalibrated": _calibration_metrics(
-                _available_labels(validation, block="logit_validation"),
+            "validation_uncalibrated": binary_probability_metrics(
+                available_binary_labels(validation, block="logit_validation"),
                 validation_probability,
             ),
             "validation_margin_mean": float(np.mean(validation_margin)),
-            "probability_calibration": _calibration_metrics(
-                _available_labels(calibration_fit, block="logit_probability_calibration"),
+            "probability_calibration": binary_probability_metrics(
+                available_binary_labels(calibration_fit, block="logit_probability_calibration"),
                 all_probability[calibration_fit.index],
             ),
         },
@@ -394,7 +398,7 @@ def fit_window_recipes(
             & universe["label_available"]
         )
         frame = universe.loc[mask]
-        labels = _available_labels(frame, block=f"{scores.name}_{identifier}")
+        labels = available_binary_labels(frame, block=f"{scores.name}_{identifier}")
         probability = scores.probabilities[frame.index]
         recipes: dict[int, BinaryOutcomeConformalRecipe] = {}
         fit_rows: list[pd.DataFrame] = []

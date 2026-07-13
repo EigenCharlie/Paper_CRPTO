@@ -215,3 +215,80 @@ def load_v4_config(path: Path) -> dict[str, Any]:
     _validate_design_chronology(config)
     _validate_rolling_origin(config)
     return config
+
+
+def load_credit_control_config(path: Path) -> dict[str, Any]:
+    """Load the V4-aligned, coverage-only credit-risk control protocol."""
+    config = load_v4_config(path)
+    controls = config.get("credit_risk_controls")
+    if not isinstance(controls, Mapping):
+        raise KeyError("Credit-risk control config is missing credit_risk_controls.")
+
+    expected_models = [
+        "catboost_platt",
+        "numeric_logistic_platt",
+        "catboost_monotonic_platt",
+        "woe_scorecard_platform_platt",
+        "woe_scorecard_borrower_platt",
+    ]
+    if [str(value) for value in controls.get("co_primary_models", [])] != expected_models:
+        raise ValueError("The five predeclared learner controls must remain co-primary.")
+    if controls.get("all_models_reported") is not True:
+        raise ValueError("Every predeclared learner must be reported.")
+    if controls.get("selection_from_oot") is not False:
+        raise ValueError("OOT model selection is forbidden.")
+    if controls.get("portfolio_optimization") is not False:
+        raise ValueError("Credit-risk controls are coverage-only.")
+    if controls.get("sampling") != "none_all_eligible_rows":
+        raise ValueError("Credit-risk controls must use every eligible row.")
+
+    reference = controls.get("active_score_reference")
+    if not isinstance(reference, Mapping):
+        raise KeyError("The active V4 score reference is required.")
+    digest = str(reference.get("sha256", ""))
+    if len(digest) != 64 or any(character not in "0123456789abcdef" for character in digest):
+        raise ValueError("Active score reference SHA-256 must be lowercase hexadecimal.")
+
+    active_features = {
+        *[str(value) for value in config["model"]["numeric_features"]],
+        *[str(value) for value in config["model"]["categorical_features"]],
+    }
+    monotonic = controls.get("monotonic_catboost", {})
+    constraints = monotonic.get("constraints", {})
+    if not isinstance(constraints, Mapping) or not constraints:
+        raise ValueError("Monotonic CatBoost requires a nonempty constraint map.")
+    if not set(map(str, constraints)).issubset(active_features):
+        raise ValueError("Monotonic constraints must use active model features only.")
+    if {int(value) for value in constraints.values()}.difference({-1, 1}):
+        raise ValueError("Monotonic constraints must be -1 or +1.")
+
+    scorecards = controls.get("scorecards")
+    if not isinstance(scorecards, Mapping) or set(scorecards) != {"platform", "borrower"}:
+        raise ValueError("Exactly the platform and borrower scorecards are required.")
+    platform_signals = {str(value) for value in controls.get("platform_signal_features", [])}
+    for name, specification in scorecards.items():
+        features = [str(value) for value in specification.get("features", [])]
+        if not features or len(features) != len(set(features)):
+            raise ValueError(f"Scorecard {name} has empty or duplicate features.")
+        if not set(features).issubset(active_features):
+            raise ValueError(f"Scorecard {name} uses a feature outside the active contract.")
+    if not platform_signals.issubset(set(scorecards["platform"]["features"])):
+        raise ValueError("The platform scorecard must include every declared platform signal.")
+    if platform_signals.intersection(scorecards["borrower"]["features"]):
+        raise ValueError("The borrower scorecard must exclude declared platform signals.")
+
+    resume = config.get("resume_credit_control_freeze")
+    if resume:
+        required_resume = {
+            "source_run_tag",
+            "source_protocol_tag",
+            "source_protocol_commit",
+            "source_freeze_sha256",
+        }
+        missing_resume = sorted(required_resume.difference(resume))
+        if missing_resume:
+            raise KeyError(f"Credit-control import is missing fields: {missing_resume}.")
+        digest = str(resume["source_freeze_sha256"])
+        if len(digest) != 64 or any(character not in "0123456789abcdef" for character in digest):
+            raise ValueError("Imported credit-control freeze SHA-256 is invalid.")
+    return config

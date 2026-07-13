@@ -3,7 +3,7 @@
 from __future__ import annotations
 
 import json
-from collections.abc import Mapping
+from collections.abc import Mapping, Sequence
 from dataclasses import asdict
 from pathlib import Path
 from typing import Any
@@ -62,9 +62,10 @@ ALLOWED_DATA_ROOT = Path("data/processed/experiments/ijds_audit")
 ALLOWED_MODEL_ROOT = Path("models/experiments/ijds_audit")
 
 
-def _recipe_payload(
+def recipe_payload(
     learners: Mapping[str, Mapping[str, WindowRecipe]],
 ) -> dict[str, dict[str, dict[str, Any]]]:
+    """Serialize learner/window recipes without estimator objects."""
     return {
         learner: {
             window_id: {str(groups): asdict(recipe) for groups, recipe in window.recipes.items()}
@@ -105,7 +106,8 @@ def load_recipes(
     }
 
 
-def _score_frame(data: Any, learners: tuple[LearnerScores, ...]) -> pd.DataFrame:
+def score_frame(data: Any, learners: Sequence[LearnerScores]) -> pd.DataFrame:
+    """Build the common outcome-free score artifact for any learner family."""
     frame = pd.DataFrame(
         {
             "id": data.universe["id"].astype("string"),
@@ -118,10 +120,11 @@ def _score_frame(data: Any, learners: tuple[LearnerScores, ...]) -> pd.DataFrame
     return frame
 
 
-def _outcome_free_geometry(
+def outcome_free_geometry(
     scores: pd.DataFrame,
     recipes: Mapping[str, Mapping[str, WindowRecipe]],
 ) -> pd.DataFrame:
+    """Summarize interval geometry before joining evaluation outcomes."""
     rows: list[dict[str, Any]] = []
     for learner, windows in recipes.items():
         probability = scores[f"pd_{learner}"].to_numpy(dtype=float)
@@ -289,8 +292,8 @@ def freeze_outcome_free(
         for window_id, recipe in windows[primary.name].items()
     }
     portfolio = build_outcome_free_portfolios(primary_panels, config)
-    scores = _score_frame(data, learner_scores)
-    geometry = _outcome_free_geometry(scores, windows)
+    scores = score_frame(data, learner_scores)
+    geometry = outcome_free_geometry(scores, windows)
     fit_audits = pd.concat(
         [window.fit_audit for learner in windows.values() for window in learner.values()],
         ignore_index=True,
@@ -299,7 +302,7 @@ def freeze_outcome_free(
     artifact_files = {
         "scores": atomic_write_parquet(scores, paths.data_dir / "prediction/scores.parquet"),
         "recipes": atomic_write_json(
-            paths.model_dir / "prediction/residual_recipes.json", _recipe_payload(windows)
+            paths.model_dir / "prediction/residual_recipes.json", recipe_payload(windows)
         ),
         "fit_audit": atomic_write_parquet(
             fit_audits, paths.data_dir / "prediction/residual_fit_audit.parquet"

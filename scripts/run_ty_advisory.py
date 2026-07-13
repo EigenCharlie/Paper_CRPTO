@@ -35,6 +35,8 @@ ACTIVE_EXPERIMENT_FILES = {
     "scripts/experiments/run_ijds_normalized_objective_frontier.py",
     "scripts/experiments/run_ijds_normalized_objective_frontier_v2.py",
     "scripts/experiments/run_ijds_policy_support_tie_audit.py",
+    "scripts/experiments/run_ijds_credit_risk_controls.py",
+    "scripts/experiments/run_ijds_raw_data_audit.py",
 }
 SUMMARY_RE = re.compile(r"^Found \d+ diagnostics", flags=re.MULTILINE)
 

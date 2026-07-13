@@ -215,6 +215,7 @@ def environment_provenance(repo_root: Path) -> dict[str, Any]:
         "catboost",
         "highspy",
         "numpy",
+        "optbinning",
         "pandas",
         "pyarrow",
         "scikit-learn",

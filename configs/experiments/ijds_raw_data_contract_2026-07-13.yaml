@@ -1,0 +1,21 @@
+schema_version: "2026-07-13.1"
+status: "retrospective_full_archive_data_contract_audit"
+run_tag: "ijds-raw-data-contract-2026-07-13-v1"
+base_protocol: "configs/experiments/ijds_binary_geometry_frontier_v4_2026-07-12.yaml"
+
+questions:
+  - "Which raw columns are observable, sufficiently populated, and eligible in every active fitting block?"
+  - "Which apparently richer bureau variables were introduced too late for the current temporal estimand?"
+  - "Does loan_amnt materially differ from funded_amnt in the primary decision menus?"
+  - "Can the 2014--2016 maturity-gap rows be added as ordinary binary labels at the 2016-03-31 information cutoff?"
+
+rules:
+  term_months: 36
+  minimum_fitting_feature_coverage: 0.95
+  late_feature_primary_coverage: 0.80
+  late_feature_fitting_coverage: 0.50
+  no_model_or_policy_selection: true
+  no_protected_stage_execution: true
+
+output:
+  root: "reports/crpto/data_audit"
