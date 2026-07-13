@@ -171,3 +171,4 @@ configs/experiments/*
 !configs/experiments/ijds_maturity_safe_locked_*.yaml
 !configs/experiments/ijds_fixed_taxonomy_*.yaml
 !configs/experiments/ijds_rolling_origin_*.yaml
+!configs/experiments/ijds_decision_active_*.yaml

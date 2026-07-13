@@ -87,6 +87,13 @@ ijds-rolling-origin-evidence:
 ijds-rolling-origin-check:
     uv run pytest -q tests/test_ijds_rolling_origin_protocol.py tests/test_ijds_rolling_origin_evidence.py
 
+# Locked synthetic mechanism experiment; never empirical sign validation.
+ijds-decision-active-simulation:
+    uv run python scripts/experiments/run_ijds_decision_active_simulation.py
+
+ijds-decision-active-check:
+    uv run pytest -q tests/test_ijds_decision_active_simulation.py
+
 ijds-historical-v1-v3-evidence:
     uv run python scripts/build_ijds_fixed_taxonomy_c2_evidence.py
 
