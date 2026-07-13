@@ -725,3 +725,40 @@ La evidencia, tablas y memo reproducibles estan en
 `docs/research/ijds_rolling_origin_stability_results_2026-07-12.md`. El siguiente
 P0 real es reemplazar la simulacion degenerada por un mecanismo predeclarado en
 el que la restriccion cambie decisiones sin escoger resultados favorables.
+
+## 16. Actualizacion de ejecucion P0: simulacion decision-active
+
+El segundo P0 se predeclaro en el commit `acbe65e` y el tag
+`protocol/ijds-decision-active-simulation-2026-07-12-v1`. Las 72 celdas usan 50
+bloques aleatorios pareados, para 3,600 repeticiones. Los outcomes se generan
+despues de fijar guardrail, C0 y C2; ningun signo selecciona una celda.
+
+- Los 3,600 caps guardrail ligaron. El slack absoluto maximo fue `4.44e-16`, el
+  residual de presupuesto `1.42e-14` y el residual C2 `1.67e-16`.
+- C0 cambio las 3,600 asignaciones. Su cap numerico aplicado a point PD deja
+  slack medio positivo en 11 de 12 celdas outcome-free agregadas; sigue siendo
+  un control de nesting, no un baseline neutral.
+- C2 cambio 1,866 asignaciones. Solo 66 de 1,800 cambiaron con un estrato, pero
+  las 1,800 cambiaron con cinco estratos. La taxonomia altera el orden del score
+  efectivo; matching de un solo momento no elimina esa geometria.
+- Sin shift, coverage medio fue 0.900767 con un estrato y 0.900617 con cinco.
+  Un shift de calibracion log-odds de 1.5 lo redujo a 0.696717 y 0.735733.
+- Con score shift 0.08 y sin calibration shift, cinco estratos dieron coverage
+  0.909667, pero con width medio 0.919819 y set `{0,1}` en 39.11% de candidatos.
+  Coverage sin informativeness seria una lectura incompleta.
+- Payoff, default y miscoverage revirtieron direccion entre celdas. Con 15% de
+  censoring, la mayoria de bounds C2 cruzaron cero. No se permite transportar
+  un signo sintetico al archivo Lending Club.
+
+La simulacion V4 original permanece como procedencia negativa, pero ya no es el
+mejor experimento de mecanismo para decisiones. El nuevo run demuestra que el
+cap activo, la taxonomia y la semantica C0/C2 son mecanismos separados de
+candidate coverage. La evidencia aun no modifica
+`active_claims_2026-07-12.md`: la decision editorial se toma despues de cerrar
+family support y solver ties.
+
+Fuentes reproducibles:
+
+- `reports/crpto/ijds_decision_active_simulation_evidence.json`;
+- `docs/research/ijds_decision_active_simulation_results_2026-07-12.md`;
+- tablas `crpto_ijds_decision_active_*` en `reports/crpto/tables`.
