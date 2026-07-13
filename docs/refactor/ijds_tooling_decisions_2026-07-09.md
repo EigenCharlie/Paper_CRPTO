@@ -101,8 +101,10 @@ V4 or V1c. Reformatting or splitting those functions would require a new run
 without changing the estimand. They therefore remain intact. The mutable
 orchestration was simplified instead:
 
-- `ijds-active-check` now verifies all eight DVC pointers and both locked pairs;
-- the daily ty scope includes V4/V1c/V2 and excludes retired challengers;
+- `ijds-active-check` now verifies all twelve DVC pointers and the three active
+  outcome-free/evaluation pairs;
+- the daily `ty` scope includes V4, V1c/V2, and the credit-control V1b/V2b
+  lineage while excluding retired challengers;
 - strict mypy covers every active challenger module and every mutable
   paper-facing entry point; three NumPy-return hotspots remain under the typed
   body gate because their V4 source hashes are frozen;

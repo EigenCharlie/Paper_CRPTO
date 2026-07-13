@@ -21,13 +21,19 @@ Read in this order:
    `ijds_normalized_objective_frontier_v2_paper_facing_erratum_2026-07-13.md`,
    and `ijds_normalized_objective_frontier_v2_results_2026-07-13.md` - single
    verified outcome evaluation and its paper-facing interpretation.
-6. `../../reports/crpto/ijds_binary_geometry_frontier_v4_evidence.json` - sole
-   numeric paper-facing manifest for both lineages.
-7. `../../paper/CRPTO_ijds.qmd` and `../../paper/supplement_ijds.qmd` - canonical
+6. `ijds_raw_data_contract_protocol_2026-07-13.md` and
+   `ijds_raw_data_contract_results_2026-07-13.md` - full archive population,
+   maturity, schema, and funding contract.
+7. `ijds_credit_risk_controls_protocol_2026-07-13.md` and
+   `ijds_credit_risk_controls_v2b_results_2026-07-13.md` - frozen monotonic and
+   WOE/IV model-class controls.
+8. `../../reports/crpto/ijds_binary_geometry_frontier_v4_evidence.json` - sole
+   numeric paper-facing manifest for all active lineages.
+9. `../../paper/CRPTO_ijds.qmd` and `../../paper/supplement_ijds.qmd` - canonical
    anonymous manuscript sources.
 
 The active result is an identification audit of one ML-conformal-optimization
-pipeline. Candidate coverage misses 90% in all eight windows and both learners;
+pipeline. Candidate coverage misses 90% in all eight windows and five learners;
 binary residual geometry changes discontinuously near the prevalence threshold;
 and the endpoint allocation contrast is not invariant to the outcome-free ruler,
 interior coordinate, or declared comparator support. The six ruler-coordinate

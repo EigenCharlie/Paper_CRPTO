@@ -51,15 +51,19 @@ pd.DataFrame(
 ```
 
 ::: {.callout-note}
-## Por qué WOE+OptBinning estabiliza inputs para conformal Mondrian
+## Rol correcto de WOE/IV en la evidencia actual
 
-CatBoost soporta features categóricas nativamente, así que el champion usa los valores crudos sin pre-binning. Sin embargo, el pipeline pre-conformal del proyecto **sí** computa WOE/IV mediante OptBinning para tres propósitos auditables:
+CatBoost soporta categorías nativamente y el score primario activo no usa bins
+WOE. El pipeline histórico conserva encoders WOE train-only por cuantiles; no
+son OptBinning. El audit IJDS añade dos scorecards OptBinning aislados, uno con
+señales de grade/pricing y otro borrower-only, para probar si el fallo temporal
+de cobertura depende de CatBoost o de señales de la plataforma.
 
-1. **Diagnóstico monotónico**. Los IV scores y los binarios de WOE permiten verificar que cada feature monotónica del champion respeta la dirección regulatoria (mayor `dti` → mayor PD, etc.) sin ambigüedad de modelo.
-2. **Estabilidad por grupo conformal**. Los grupos Mondrian del winner (`score_decile_mondrian`) se construyen sobre el score calibrado, no sobre features crudas. Pero la calibración Venn-Abers del score depende de que la transformación PD → score sea monotónica y bien comportada, y eso se verifica con los binarios WOE: si las celdas de WOE son monótonas y los IV están dentro del rango estable, la calibración inductiva es bien-definida.
-3. **Interpretabilidad regulatoria**. Para el comité de riesgo y el reporte MRM (@sec-p1-mrm-approval), los WOE bins de cada feature top dan una explicación `(rango → riesgo)` que un revisor puede inspeccionar directamente, mientras que la importancia CatBoost cruda es opaca.
-
-Las tablas WOE/IV detalladas viven en `notebooks/02_feature_engineering.ipynb` y los chapters 05a-05c del libro principal.
+Los 45 problemas de binning alcanzan estado `OPTIMAL`, pero los scorecards no
+entran al optimizador ni compiten por promoción OOT. WOE/IV aporta
+interpretabilidad y un diagnóstico de dependencia de especificación; no prueba
+estabilidad conformal, no valida la calibración y no constituye la novedad
+central del paper.
 :::
 
 #### Calibración Venn-Abers: por qué se eligió frente a Platt, Isotonic y Beta {#sec-p1-vennabers}

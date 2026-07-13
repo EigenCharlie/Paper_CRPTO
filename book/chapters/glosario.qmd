@@ -198,4 +198,4 @@ Términos técnicos usados en el manuscrito y el dossier extendido. Se ordenan a
 ## W
 
 **WoE (Weight of Evidence)**
-:   Transformación supervisada de variables categóricas: `WoE(x) = log(P(x|y=1) / P(x|y=0))`. CRPTO usa OptBinning para WoE de `grade`, `purpose`, `home_ownership`.
+:   Transformación supervisada por bins que contrasta la distribución de buenos y malos. El pipeline histórico usa encoders train-only con bins por cuantiles; los controles IJDS aislados usan OptBinning para scorecards de plataforma y borrower-only. Ninguno de esos controles entra al optimizador de portafolio.

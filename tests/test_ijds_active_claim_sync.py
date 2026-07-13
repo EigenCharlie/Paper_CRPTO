@@ -1,4 +1,4 @@
-"""Drift guards for active V4 and two-ruler IJDS publication evidence."""
+"""Drift guards for the active V4, two-ruler, and credit-control evidence."""
 
 from __future__ import annotations
 
@@ -54,7 +54,9 @@ def _normalize(text: str) -> str:
 def test_active_evidence_locks_v4_lineage_and_claim_boundary() -> None:
     evidence = _json(EVIDENCE)
 
-    assert evidence["status"] == "active_ijds_v4_with_two_ruler_paper_facing_evidence"
+    assert evidence["status"] == (
+        "active_ijds_v4_two_ruler_and_credit_controls_paper_facing_evidence"
+    )
     assert evidence["run_tag"] == RUN
     assert evidence["protocol_commit"] == COMMIT
     assert evidence["claim_boundary"] == {
@@ -70,17 +72,19 @@ def test_active_evidence_locks_v4_lineage_and_claim_boundary() -> None:
     assert evidence["protected_artifacts_written"] == []
 
 
-def test_active_design_and_coverage_are_exact() -> None:
+def test_active_design_is_exact() -> None:
     evidence = _json(EVIDENCE)
     design = evidence["design"]
-    coverage = evidence["coverage"]
 
     assert design == {
         "primary_oot_candidates": 376890,
         "primary_oot_resolved": 365339,
         "primary_oot_unresolved": 11551,
         "residual_windows": 8,
-        "learners": 2,
+        "learners": 5,
+        "v4_detailed_coverage_learners": 2,
+        "credit_control_learners": 5,
+        "portfolio_learners": 1,
         "taxonomy_diagnostics": [1, 2, 5, 10],
         "policies": 9,
         "v4_policies_are_supporting_not_closed_family": True,
@@ -94,6 +98,48 @@ def test_active_design_and_coverage_are_exact() -> None:
         "development_support_lower": pytest.approx(0.0555726278946077),
         "development_support_upper": pytest.approx(0.09999720664228194),
     }
+
+
+def test_full_data_contract_credit_controls_and_coverage_are_exact() -> None:
+    evidence = _json(EVIDENCE)
+    data = evidence["data_contract"]
+    controls = evidence["credit_risk_controls"]
+    coverage = evidence["coverage"]
+
+    assert data["raw_rows"] == 2925493
+    assert data["valid_loan_rows"] == 2925492
+    assert data["term36_rows_all_dates"] == 2060077
+    assert data["term60_rows_all_dates"] == 865415
+    assert data["active_design_rows"] == 640543
+    assert data["raw_schema_columns"] == 142
+    assert data["eligible_raw_features"] == 28
+    assert data["late_schema_features"] == 48
+    assert data["sampling"] == "none_all_eligible_rows_within_each_declared_temporal_role"
+
+    assert controls["all_five_all_eight_upper_below_nominal"] is True
+    assert controls["controls_enter_portfolio_optimization"] is False
+    assert controls["model_or_feature_selected_from_oot"] is False
+    assert controls["scorecard_superiority_claim_authorized"] is False
+    rows = {row["learner"]: row for row in controls["rows"]}
+    assert set(rows) == {
+        "catboost_platt",
+        "numeric_logistic_platt",
+        "catboost_monotonic_platt",
+        "woe_scorecard_platform_platt",
+        "woe_scorecard_borrower_platt",
+    }
+    assert all(row["windows_upper_below_0_90"] == 8 for row in rows.values())
+    assert rows["catboost_monotonic_platt"]["roc_auc"] == pytest.approx(0.6522442096629454)
+    assert rows["woe_scorecard_borrower_platt"]["coverage_upper_max"] == pytest.approx(
+        0.8969725914723129
+    )
+    assert controls["calibration"]["optimizer_success_rows"] == 30
+    assert controls["calibration"]["all_primary_oot_slopes_below_one"] is True
+    assert controls["woe_iv"]["optbinning_problems"] == 45
+    assert controls["woe_iv"]["all_optimal"] is True
+    assert controls["temporal_shift"]["primary_oot_score_psi"][
+        "woe_scorecard_borrower_platt"
+    ] == pytest.approx(0.07233216453444681)
     assert coverage["catboost_all_eight_upper_below_nominal"] is True
     assert coverage["logistic_all_eight_upper_below_nominal"] is True
     assert coverage["catboost_bound_min"] == pytest.approx(0.8385311364058479)
@@ -232,8 +278,8 @@ def test_simulation_is_explicitly_non_claim_bearing_for_portfolios() -> None:
 def test_evidence_manifest_hashes_every_active_output() -> None:
     evidence = _json(EVIDENCE)
 
-    assert len(evidence["source_artifacts"]) == 36
-    assert len(evidence["paper_artifacts"]) == 12
+    assert len(evidence["source_artifacts"]) == 69
+    assert len(evidence["paper_artifacts"]) == 16
     for descriptor in (
         *evidence["source_artifacts"].values(),
         *evidence["paper_artifacts"].values(),

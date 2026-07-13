@@ -32,9 +32,45 @@ V2_MANIFEST_DESCRIPTOR = {
     "bytes": 16325,
     "sha256": "d3808ce7c7a8e6fee3ef51aefd031e8abf55e11ef3536745ee213fd04752588a",
 }
+CREDIT_V2B_SUMMARY_DESCRIPTOR = {
+    "path": (
+        "models/experiments/ijds_audit/"
+        "ijds-credit-risk-controls-2026-07-13-v2b/credit_risk_controls_summary.json"
+    ),
+    "bytes": 12535,
+    "sha256": "e8b7f9c40c8288db087d55deabaa0d7712ac178d547b3f8a549e949843fce447",
+}
+CREDIT_V2B_RECEIPT_DESCRIPTOR = {
+    "path": (
+        "models/experiments/ijds_audit/"
+        "ijds-credit-risk-controls-2026-07-13-v2b/execution_receipt.json"
+    ),
+    "bytes": 829,
+    "sha256": "4daaa5f048be30f81328d9302e92ba8c47a95f703de89ed57b84b93ec650a4e2",
+}
+RAW_AUDIT_DESCRIPTOR = {
+    "path": "reports/crpto/data_audit/ijds-raw-data-contract-2026-07-13-v1/evidence.json",
+    "bytes": 3511,
+    "sha256": "bfc8eaa01fe4dc08334781896cd6f4528b73e27d6261636f4f5b4b60e2c3e87d",
+}
 EVIDENCE_PATH = ROOT / "reports/crpto/ijds_binary_geometry_frontier_v4_evidence.json"
 TABLE_DIR = ROOT / "reports/crpto/tables"
 FIGURE_DIR = ROOT / "reports/crpto/figures"
+
+CREDIT_LEARNER_ORDER = (
+    "catboost_platt",
+    "numeric_logistic_platt",
+    "catboost_monotonic_platt",
+    "woe_scorecard_platform_platt",
+    "woe_scorecard_borrower_platt",
+)
+CREDIT_LEARNER_LABELS = {
+    "catboost_platt": "CatBoost",
+    "numeric_logistic_platt": "Numeric logistic",
+    "catboost_monotonic_platt": "Monotonic CatBoost",
+    "woe_scorecard_platform_platt": "Platform-signal WOE scorecard",
+    "woe_scorecard_borrower_platt": "Borrower-only WOE scorecard",
+}
 
 BLUE = "#2F6690"
 ORANGE = "#D97706"
@@ -160,6 +196,115 @@ def _objective_quarter_repetition(joined: pd.DataFrame) -> dict[str, Any]:
 
 def _write_csv(frame: pd.DataFrame, path: Path) -> Path:
     return atomic_write_text(path, frame.to_csv(index=False, lineterminator="\n"))
+
+
+def _credit_control_tables(
+    prediction_metrics: pd.DataFrame,
+    temporal_coverage: pd.DataFrame,
+    woe_summary: pd.DataFrame,
+    feature_psi: pd.DataFrame,
+    score_psi: pd.DataFrame,
+) -> dict[str, pd.DataFrame]:
+    expected = set(CREDIT_LEARNER_ORDER)
+    metrics = prediction_metrics.copy()
+    if len(metrics) != 30 or set(metrics["learner"]) != expected:
+        raise RuntimeError("The five-model prediction-metric census changed.")
+    if not metrics["calibration_optimizer_success"].all():
+        raise RuntimeError("A declared calibration diagnostic did not converge.")
+
+    canonical = temporal_coverage.loc[
+        temporal_coverage["taxonomy_groups"].eq(5)
+        & temporal_coverage["role"].eq("primary_oot")
+        & temporal_coverage["conformal_group"].eq(-1)
+    ].copy()
+    if len(canonical) != 40 or set(canonical["learner"]) != expected:
+        raise RuntimeError("The five-model canonical coverage census changed.")
+
+    primary_rows: list[dict[str, Any]] = []
+    for learner in CREDIT_LEARNER_ORDER:
+        metric = metrics.loc[metrics["learner"].eq(learner) & metrics["role"].eq("primary_oot")]
+        coverage = canonical.loc[canonical["learner"].eq(learner)]
+        if len(metric) != 1 or len(coverage) != 8:
+            raise RuntimeError(f"Incomplete primary OOT evidence for {learner}.")
+        row = metric.iloc[0]
+        primary_rows.append(
+            {
+                "learner": learner,
+                "learner_label": CREDIT_LEARNER_LABELS[learner],
+                "candidate_rows": int(row["candidate_rows"]),
+                "resolved_rows": int(row["resolved_rows"]),
+                "unresolved_rows": int(row["unresolved_rows"]),
+                "default_rate": float(row["default_rate"]),
+                "roc_auc": float(row["roc_auc"]),
+                "gini": float(row["gini"]),
+                "ks": float(row["ks"]),
+                "average_precision": float(row["average_precision"]),
+                "brier": float(row["brier"]),
+                "log_loss": float(row["log_loss"]),
+                "ece_10": float(row["ece_10"]),
+                "calibration_in_the_large": float(row["calibration_in_the_large"]),
+                "calibration_intercept": float(row["calibration_intercept"]),
+                "calibration_slope": float(row["calibration_slope"]),
+                "coverage_lower_min": float(coverage["coverage_lower"].min()),
+                "coverage_upper_max": float(coverage["coverage_upper"].max()),
+                "windows_upper_below_0_90": int(coverage["coverage_upper"].lt(0.90).sum()),
+            }
+        )
+    primary = pd.DataFrame(primary_rows)
+
+    role_order = {
+        role: index
+        for index, role in enumerate(
+            (
+                "pd_development",
+                "probability_calibration",
+                "conformal_fit",
+                "policy_development",
+                "primary_oot",
+                "censored_extension",
+            )
+        )
+    }
+    learner_order = {learner: index for index, learner in enumerate(CREDIT_LEARNER_ORDER)}
+    metrics.insert(1, "learner_label", metrics["learner"].map(CREDIT_LEARNER_LABELS))
+    metrics["_learner_order"] = metrics["learner"].map(learner_order)
+    metrics["_role_order"] = metrics["role"].map(role_order)
+    metrics = metrics.sort_values(["_learner_order", "_role_order"]).drop(
+        columns=["_learner_order", "_role_order"]
+    )
+
+    primary_feature_psi = feature_psi.loc[
+        feature_psi["comparison_role"].eq("primary_oot"),
+        ["learner", "feature", "psi"],
+    ].rename(columns={"psi": "primary_oot_psi"})
+    woe = woe_summary.rename(columns={"name": "feature"}).merge(
+        primary_feature_psi,
+        on=["learner", "feature"],
+        how="left",
+        validate="one_to_one",
+    )
+    if len(woe) != 45 or woe["primary_oot_psi"].isna().any():
+        raise RuntimeError("The WOE/IV and primary OOT PSI census changed.")
+    woe["_learner_order"] = woe["learner"].map(learner_order)
+    woe = woe.sort_values(["_learner_order", "iv"], ascending=[True, False]).drop(
+        columns="_learner_order"
+    )
+
+    score = score_psi.copy()
+    if len(score) != 25 or set(score["learner"]) != expected:
+        raise RuntimeError("The five-model score PSI census changed.")
+    score.insert(1, "learner_label", score["learner"].map(CREDIT_LEARNER_LABELS))
+    score["_learner_order"] = score["learner"].map(learner_order)
+    score["_role_order"] = score["comparison_role"].map(role_order)
+    score = score.sort_values(["_learner_order", "_role_order"]).drop(
+        columns=["_learner_order", "_role_order"]
+    )
+    return {
+        "credit_controls": primary,
+        "credit_prediction_metrics": metrics,
+        "woe_iv_psi": woe,
+        "score_psi": score,
+    }
 
 
 def _direction(lower: pd.Series, upper: pd.Series) -> pd.Series:
@@ -400,6 +545,95 @@ def build_evidence() -> Path:
     if v2_summary.get("counts") != expected_v2_counts:
         raise RuntimeError("The V2 two-ruler evaluation census changed.")
 
+    credit_summary_path = _verified_path(CREDIT_V2B_SUMMARY_DESCRIPTOR)
+    credit_receipt_path = _verified_path(CREDIT_V2B_RECEIPT_DESCRIPTOR)
+    credit_summary = json.loads(credit_summary_path.read_text(encoding="utf-8"))
+    expected_credit_identity = {
+        "status": "complete_no_model_selection_credit_risk_control_evaluation",
+        "run_tag": "ijds-credit-risk-controls-2026-07-13-v2b",
+    }
+    if any(credit_summary.get(field) != value for field, value in expected_credit_identity.items()):
+        raise RuntimeError("The verified V2b credit-control identity changed.")
+    expected_interpretation = {
+        "model_or_feature_selected_from_oot": False,
+        "portfolio_claim_authorized": False,
+        "scorecard_superiority_claim_authorized": False,
+        "universal_transport_claim_authorized": False,
+    }
+    if credit_summary.get("interpretation") != expected_interpretation:
+        raise RuntimeError("The V2b credit-control claim boundary changed.")
+    if (
+        credit_summary.get("protected_stages_run") != []
+        or credit_summary.get("protected_artifacts_written") != []
+    ):
+        raise RuntimeError("The V2b credit controls report a protected-stage side effect.")
+    recovery = credit_summary.get("coverage_recovery", {})
+    if (
+        recovery.get("status") != "exact_frame_equivalence_verified"
+        or recovery.get("reference", {}).get("sha256")
+        != "956bdc9880c80cebc1f48fc2cdf57688dfff7dddd3939b4fd972413d83039767"
+    ):
+        raise RuntimeError("The V2b exact coverage recovery changed.")
+
+    credit_freeze_path = _verified_path(credit_summary["source_freeze"])
+    credit_freeze = json.loads(credit_freeze_path.read_text(encoding="utf-8"))
+    expected_credit_freeze = {
+        "status": "credit_control_scores_frozen_before_primary_oot_outcome_join",
+        "run_tag": "ijds-credit-risk-controls-2026-07-13-v1b",
+        "protocol_tag": "protocol/ijds-credit-risk-controls-2026-07-13-v1b",
+        "protocol_commit": "1776cbf8b201ae5b92756e5ea397a403d6cc7c9f",
+    }
+    if any(credit_freeze.get(field) != value for field, value in expected_credit_freeze.items()):
+        raise RuntimeError("The V1b credit-control freeze identity changed.")
+    if credit_freeze.get("co_primary_learners") != list(CREDIT_LEARNER_ORDER):
+        raise RuntimeError("The frozen five-model specification changed.")
+    if (
+        credit_freeze.get("model_selection") != "none_all_five_reported"
+        or credit_freeze.get("window_selection") != "none_all_eight_reported"
+        or credit_freeze.get("portfolio_optimization") is not False
+        or credit_freeze.get("sampling") != "none_all_eligible_rows"
+        or credit_freeze.get("primary_oot_outcome_columns_in_frozen_scores") != []
+    ):
+        raise RuntimeError("The frozen credit-control selection boundary changed.")
+
+    credit_evaluation_artifacts = {
+        name: _verified_path(value)
+        for name, value in credit_summary["evaluation_artifacts"].items()
+    }
+    credit_outcome_free_artifacts = {
+        name: _verified_path(value)
+        for name, value in credit_freeze["outcome_free_artifacts"].items()
+    }
+    credit_model_artifacts = {
+        name: _verified_path(value) for name, value in credit_freeze["model_artifacts"].items()
+    }
+    raw_audit_path = _verified_path(RAW_AUDIT_DESCRIPTOR)
+    raw_audit = json.loads(raw_audit_path.read_text(encoding="utf-8"))
+    if raw_audit.get("status") != "complete_full_archive_data_contract_audit":
+        raise RuntimeError("The full-archive data audit is incomplete.")
+    if (
+        raw_audit.get("protected_stages_run") != []
+        or raw_audit.get("protected_artifacts_written") != []
+    ):
+        raise RuntimeError("The raw-data audit reports a protected-stage side effect.")
+    raw_audit_artifacts = {
+        name: _verified_path(value) for name, value in raw_audit["artifacts"].items()
+    }
+
+    credit_prediction_metrics = pd.read_parquet(credit_evaluation_artifacts["prediction_metrics"])
+    credit_temporal_coverage = pd.read_parquet(credit_evaluation_artifacts["temporal_coverage"])
+    credit_woe_summary = pd.read_parquet(credit_outcome_free_artifacts["woe_summary"])
+    credit_feature_psi = pd.read_parquet(credit_outcome_free_artifacts["scorecard_feature_psi"])
+    credit_score_psi = pd.read_parquet(credit_outcome_free_artifacts["score_psi"])
+    credit_feature_variation = pd.read_parquet(credit_outcome_free_artifacts["feature_variation"])
+    credit_tables = _credit_control_tables(
+        credit_prediction_metrics,
+        credit_temporal_coverage,
+        credit_woe_summary,
+        credit_feature_psi,
+        credit_score_psi,
+    )
+
     two_ruler_windows = pd.read_parquet(v2_evaluation_artifacts["window_endpoint_contrasts"])
     two_ruler_monthly = pd.read_parquet(v2_evaluation_artifacts["monthly_endpoint_contrasts"])
     two_ruler_directions = pd.read_parquet(v2_evaluation_artifacts["metric_direction_census"])
@@ -510,6 +744,22 @@ def build_evidence() -> Path:
             named_table,
             TABLE_DIR / "crpto_ijds_v4_tableS1_named_comparators.csv",
         ),
+        "credit_controls": _write_csv(
+            credit_tables["credit_controls"],
+            TABLE_DIR / "crpto_ijds_v4_table6_credit_controls.csv",
+        ),
+        "credit_prediction_metrics": _write_csv(
+            credit_tables["credit_prediction_metrics"],
+            TABLE_DIR / "crpto_ijds_v4_tableS2_credit_prediction_metrics.csv",
+        ),
+        "woe_iv_psi": _write_csv(
+            credit_tables["woe_iv_psi"],
+            TABLE_DIR / "crpto_ijds_v4_tableS3_woe_iv_psi.csv",
+        ),
+        "score_psi": _write_csv(
+            credit_tables["score_psi"],
+            TABLE_DIR / "crpto_ijds_v4_tableS4_score_psi.csv",
+        ),
     }
     figures = {
         "coverage": _coverage_figure(coverage),
@@ -529,9 +779,32 @@ def build_evidence() -> Path:
             "point_minus_guardrail_objective",
         ]
     ]
+    credit_primary = credit_tables["credit_controls"]
+    primary_score_psi = credit_score_psi.loc[
+        credit_score_psi["comparison_role"].eq("primary_oot")
+    ].set_index("learner")["psi"]
+    primary_feature_psi = credit_feature_psi.loc[
+        credit_feature_psi["comparison_role"].eq("primary_oot")
+    ].sort_values("psi", ascending=False)
+    top_platform_iv = (
+        credit_woe_summary.loc[credit_woe_summary["learner"].eq("woe_scorecard_platform_platt")]
+        .sort_values("iv", ascending=False)
+        .head(5)[["name", "iv"]]
+        .to_dict(orient="records")
+    )
+    top_borrower_iv = (
+        credit_woe_summary.loc[credit_woe_summary["learner"].eq("woe_scorecard_borrower_platt")]
+        .sort_values("iv", ascending=False)
+        .head(5)[["name", "iv"]]
+        .to_dict(orient="records")
+    )
+    recent_chargeoff_variation = credit_feature_variation.loc[
+        credit_feature_variation["feature"].eq("recent_chargeoff")
+        & credit_feature_variation["role"].isin(["pd_development", "probability_calibration"])
+    ][["role", "rows", "unique_observed", "constant_observed"]]
     evidence = {
-        "schema_version": "2026-07-13.1",
-        "status": "active_ijds_v4_with_two_ruler_paper_facing_evidence",
+        "schema_version": "2026-07-13.2",
+        "status": "active_ijds_v4_two_ruler_and_credit_controls_paper_facing_evidence",
         "run_tag": str(config["run_tag"]),
         "protocol_tag": str(config["protocol_tag"]),
         "protocol_commit": str(summary["protocol_commit"]),
@@ -541,7 +814,10 @@ def build_evidence() -> Path:
             "primary_oot_resolved": int(coverage.iloc[0]["resolved_rows"]),
             "primary_oot_unresolved": int(coverage.iloc[0]["unresolved_rows"]),
             "residual_windows": 8,
-            "learners": 2,
+            "learners": 5,
+            "v4_detailed_coverage_learners": 2,
+            "credit_control_learners": 5,
+            "portfolio_learners": 1,
             "taxonomy_diagnostics": [1, 2, 5, 10],
             "policies": 9,
             "v4_policies_are_supporting_not_closed_family": True,
@@ -588,6 +864,90 @@ def build_evidence() -> Path:
                 ].max()
             ),
             "rows": coverage_table.to_dict(orient="records"),
+        },
+        "data_contract": {
+            "raw_rows": int(raw_audit["results"]["raw_rows"]),
+            "valid_loan_rows": int(raw_audit["results"]["valid_loan_rows"]),
+            "raw_schema_columns": int(raw_audit["results"]["raw_schema_columns"]),
+            "term36_rows_all_dates": int(raw_audit["results"]["term36_rows_all_dates"]),
+            "term60_rows_all_dates": int(raw_audit["results"]["term60_rows_all_dates"]),
+            "active_design_rows": int(raw_audit["results"]["term36_active_design_rows"]),
+            "eligible_raw_features": int(raw_audit["results"]["eligible_raw_features"]),
+            "late_schema_features": int(raw_audit["results"]["late_schema_features"]),
+            "primary_oot_funded_ratio": float(raw_audit["results"]["primary_oot_funded_ratio"]),
+            "primary_oot_requested_minus_funded_usd": float(
+                raw_audit["results"]["primary_oot_total_requested_minus_funded"]
+            ),
+            "sampling": "none_all_eligible_rows_within_each_declared_temporal_role",
+            "population_boundary": (
+                "The active 640,543-row design is the exhaustive eligible 36-month "
+                "population for the declared dates, horizon, schema, and observability "
+                "rules; it is not a sample from the raw archive."
+            ),
+            "excluded_scope": (
+                "Sixty-month contracts, immature issue dates, and late-schema fields "
+                "define different horizons, censoring regimes, or temporal feature support."
+            ),
+            "manifest": relative_artifact_descriptor(raw_audit_path, repo_root=ROOT),
+        },
+        "credit_risk_controls": {
+            "scope": "coverage_only_five_model_temporal_transport_robustness",
+            "outcome_free_run_tag": str(credit_freeze["run_tag"]),
+            "verified_evaluation_run_tag": str(credit_summary["run_tag"]),
+            "all_five_all_eight_upper_below_nominal": bool(
+                credit_primary["windows_upper_below_0_90"].eq(8).all()
+                and credit_primary["coverage_upper_max"].lt(0.90).all()
+            ),
+            "learners_reported": list(CREDIT_LEARNER_ORDER),
+            "portfolio_learner": "catboost_platt",
+            "controls_enter_portfolio_optimization": False,
+            "model_or_feature_selected_from_oot": False,
+            "scorecard_superiority_claim_authorized": False,
+            "rows": credit_primary.to_dict(orient="records"),
+            "declared_descriptive_differences": dict(credit_summary["declared_diagnostics"]),
+            "calibration": {
+                "all_primary_oot_calibration_in_the_large_negative": bool(
+                    credit_primary["calibration_in_the_large"].lt(0.0).all()
+                ),
+                "all_primary_oot_slopes_below_one": bool(
+                    credit_primary["calibration_slope"].lt(1.0).all()
+                ),
+                "optimizer_success_rows": int(
+                    credit_prediction_metrics["calibration_optimizer_success"].sum()
+                ),
+                "optimizer_total_rows": int(len(credit_prediction_metrics)),
+            },
+            "woe_iv": {
+                "optbinning_problems": int(len(credit_woe_summary)),
+                "all_optimal": bool(credit_woe_summary["status"].eq("OPTIMAL").all()),
+                "platform_features": int(
+                    credit_woe_summary["learner"].eq("woe_scorecard_platform_platt").sum()
+                ),
+                "borrower_only_features": int(
+                    credit_woe_summary["learner"].eq("woe_scorecard_borrower_platt").sum()
+                ),
+                "top_platform_iv": top_platform_iv,
+                "top_borrower_only_iv": top_borrower_iv,
+            },
+            "temporal_shift": {
+                "primary_oot_score_psi": {
+                    learner: float(primary_score_psi.loc[learner])
+                    for learner in CREDIT_LEARNER_ORDER
+                },
+                "top_primary_oot_feature_psi": primary_feature_psi.head(5)[
+                    ["learner", "feature", "psi"]
+                ].to_dict(orient="records"),
+                "recent_chargeoff_early_role_variation": recent_chargeoff_variation.to_dict(
+                    orient="records"
+                ),
+            },
+            "coverage_recovery": dict(credit_summary["coverage_recovery"]),
+            "interpretation": (
+                "WOE/IV, borrower-only features, and domain-safe monotonic constraints "
+                "are specification controls. They strengthen model-class robustness but "
+                "do not define the paper's novelty, select a learner, or authorize a new "
+                "portfolio policy."
+            ),
         },
         "binary_phase_transition": {
             "stratum": 2,
@@ -683,9 +1043,10 @@ def build_evidence() -> Path:
         "audit_thesis": (
             "Binary absolute-residual conformal guardrails can change discontinuously when "
             "a score stratum crosses the alpha prevalence threshold; candidate coverage "
-            "does not transport to the later archive; and portfolio direction is not "
-            "identified without an outcome-free comparator support and is not invariant "
-            "to the declared ruler or interior coordinate."
+            "does not transport to the later archive under five predeclared credit-risk "
+            "model specifications; and portfolio direction is not identified without an "
+            "outcome-free comparator support and is not invariant to the declared ruler "
+            "or interior coordinate."
         ),
         "source_artifacts": {
             "summary": relative_artifact_descriptor(SUMMARY_PATH, repo_root=ROOT),
@@ -695,6 +1056,16 @@ def build_evidence() -> Path:
             "two_ruler/execution_receipt": relative_artifact_descriptor(
                 v2_receipt_path, repo_root=ROOT
             ),
+            "credit_controls/summary": relative_artifact_descriptor(
+                credit_summary_path, repo_root=ROOT
+            ),
+            "credit_controls/execution_receipt": relative_artifact_descriptor(
+                credit_receipt_path, repo_root=ROOT
+            ),
+            "credit_controls/freeze": relative_artifact_descriptor(
+                credit_freeze_path, repo_root=ROOT
+            ),
+            "raw_data_audit/manifest": relative_artifact_descriptor(raw_audit_path, repo_root=ROOT),
             **{
                 f"evaluation/{name}": relative_artifact_descriptor(path, repo_root=ROOT)
                 for name, path in artifacts.items()
@@ -710,6 +1081,26 @@ def build_evidence() -> Path:
             **{
                 f"two_ruler/outcome_free/{name}": relative_artifact_descriptor(path, repo_root=ROOT)
                 for name, path in v2_source_artifacts.items()
+            },
+            **{
+                f"credit_controls/evaluation/{name}": relative_artifact_descriptor(
+                    path, repo_root=ROOT
+                )
+                for name, path in credit_evaluation_artifacts.items()
+            },
+            **{
+                f"credit_controls/outcome_free/{name}": relative_artifact_descriptor(
+                    path, repo_root=ROOT
+                )
+                for name, path in credit_outcome_free_artifacts.items()
+            },
+            **{
+                f"credit_controls/models/{name}": relative_artifact_descriptor(path, repo_root=ROOT)
+                for name, path in credit_model_artifacts.items()
+            },
+            **{
+                f"raw_data_audit/{name}": relative_artifact_descriptor(path, repo_root=ROOT)
+                for name, path in raw_audit_artifacts.items()
             },
         },
         "paper_artifacts": {

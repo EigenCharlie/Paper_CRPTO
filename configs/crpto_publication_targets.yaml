@@ -39,6 +39,13 @@ active_scientific_contract:
   two_ruler_run_tag: ijds-normalized-objective-frontier-2026-07-13-v2
   two_ruler_protocol_tag: protocol/ijds-normalized-objective-frontier-2026-07-13-v2
   two_ruler_protocol_commit: d3041e5233ee74a6b1d38f678def75d8d5ef0169
+  credit_control_outcome_free_run_tag: ijds-credit-risk-controls-2026-07-13-v1b
+  credit_control_outcome_free_protocol_tag: protocol/ijds-credit-risk-controls-2026-07-13-v1b
+  credit_control_outcome_free_protocol_commit: 1776cbf8b201ae5b92756e5ea397a403d6cc7c9f
+  credit_control_outcome_free_freeze_sha256: da4805e644bcf5decfbb0a67c0c81a5b9dd61f3ab2e17d3dc5264100e7eb4d35
+  credit_control_run_tag: ijds-credit-risk-controls-2026-07-13-v2b
+  credit_control_protocol_tag: protocol/ijds-credit-risk-controls-2026-07-13-v2b
+  credit_control_protocol_commit: a6c642aaeebb5746f77fcec8d9349d02b0df0efc
   evidence_manifest: reports/crpto/ijds_binary_geometry_frontier_v4_evidence.json
   active_code_surface:
     paper_pipeline:
@@ -51,10 +58,15 @@ active_scientific_contract:
       - scripts/experiments/run_ijds_binary_geometry_frontier_v4.py
       - scripts/experiments/run_ijds_normalized_objective_frontier.py
       - scripts/experiments/run_ijds_normalized_objective_frontier_v2.py
+      - scripts/experiments/run_ijds_raw_data_audit.py
+      - scripts/experiments/run_ijds_credit_risk_controls.py
     source_inventory_manifests:
       - models/experiments/ijds_audit/ijds-binary-geometry-frontier-v4-2026-07-12-v2/protocol_freeze.json
       - models/experiments/ijds_audit/ijds-normalized-objective-frontier-2026-07-13-v1c/protocol_freeze.json
       - models/experiments/ijds_audit/ijds-normalized-objective-frontier-2026-07-13-v2/verified_evaluation_manifest.json
+      - models/experiments/ijds_audit/ijds-credit-risk-controls-2026-07-13-v1b/protocol_freeze.json
+      - models/experiments/ijds_audit/ijds-credit-risk-controls-2026-07-13-v2b/credit_risk_controls_summary.json
+      - reports/crpto/data_audit/ijds-raw-data-contract-2026-07-13-v1/evidence.json
     historical_execution_in_active_capsule: false
   previously_inspected_retrospective_archive: true
   confirmatory: false
@@ -66,8 +78,10 @@ active_scientific_contract:
       binary-outcome residual ranks in every eligible consecutive six-month
       window from January 2012 through January 2013.
     learners: >-
-      CatBoost/Platt is primary; independently calibrated numeric logistic
-      regression is a coverage-only control and never enters optimization.
+      CatBoost/Platt is primary. Independently calibrated numeric logistic,
+      domain-constrained monotonic CatBoost, platform-signal WOE/IV, and
+      borrower-only WOE/IV specifications are coverage-only controls. No OOT
+      outcome selects among them, and only the primary CatBoost enters optimization.
     decision_diagnostic: >-
       The complete gamma path {0,.25,.50,.75,1} is evaluated under an
       objective-matched primary ruler and normalized-score secondary ruler at
@@ -86,9 +100,24 @@ active_scientific_contract:
     primary_resolved: 365339
     primary_unresolved: 11551
     residual_windows: 8
-    learners: 2
+    learners: 5
+    v4_detailed_coverage_learners: 2
+    portfolio_learners: 1
     catboost_coverage_bounds: [0.838531, 0.882167]
     logistic_coverage_bounds: [0.845687, 0.895654]
+    monotonic_catboost_coverage_bounds: [0.844050, 0.885991]
+    platform_woe_coverage_bounds: [0.844199, 0.894317]
+    borrower_woe_coverage_bounds: [0.846849, 0.896973]
+    all_five_all_eight_upper_below_nominal: true
+    raw_archive:
+      rows: 2925493
+      valid_loans: 2925492
+      term36_rows: 2060077
+      term60_rows: 865415
+      active_design_rows: 640543
+      raw_columns: 142
+      eligible_raw_features: 28
+      late_schema_features: 48
     phase_transition:
       stratum: 2
       w7_prevalence: 0.101703
@@ -121,12 +150,13 @@ active_scientific_contract:
     simulation_repetitions: 19200
     universal_policy_direction_allowed: false
   mechanism: >-
-    Candidate coverage fails under all eight windows and both learners. A score
-    stratum crosses the binary residual prevalence threshold, changing its
-    interval geometry discontinuously. Endpoint directions change across
-    objective-matched and normalized-score rulers and interior coordinates.
-    Same-cap and C2 comparisons have exact plug-in statements, while realized
-    directions also depend on exact comparator support.
+    Candidate coverage fails under all eight windows and five predeclared
+    learner specifications, including monotonic and WOE/IV credit-risk
+    controls. A score stratum crosses the binary residual prevalence threshold,
+    changing its interval geometry discontinuously. Endpoint directions change
+    across objective-matched and normalized-score rulers and interior
+    coordinates. Same-cap and C2 comparisons have exact plug-in statements,
+    while realized directions also depend on exact comparator support.
   required_artifacts:
     - reports/crpto/ijds_binary_geometry_frontier_v4_evidence.json
     - reports/crpto/tables/crpto_ijds_v4_table1_coverage_windows.csv
@@ -135,6 +165,10 @@ active_scientific_contract:
     - reports/crpto/tables/crpto_ijds_v4_table4_direction_summary.csv
     - reports/crpto/tables/crpto_ijds_v4_table5_two_ruler_tracks.csv
     - reports/crpto/tables/crpto_ijds_v4_tableS1_named_comparators.csv
+    - reports/crpto/tables/crpto_ijds_v4_table6_credit_controls.csv
+    - reports/crpto/tables/crpto_ijds_v4_tableS2_credit_prediction_metrics.csv
+    - reports/crpto/tables/crpto_ijds_v4_tableS3_woe_iv_psi.csv
+    - reports/crpto/tables/crpto_ijds_v4_tableS4_score_psi.csv
     - reports/crpto/figures/crpto_ijds_v4_fig1_coverage.pdf
     - reports/crpto/figures/crpto_ijds_v4_fig1_coverage.png
     - reports/crpto/figures/crpto_ijds_v4_fig2_phase_transition.pdf
@@ -150,6 +184,10 @@ active_scientific_contract:
     - models/experiments/ijds_audit/ijds-normalized-objective-frontier-2026-07-13-v1c.dvc
     - data/processed/experiments/ijds_audit/ijds-normalized-objective-frontier-2026-07-13-v2.dvc
     - models/experiments/ijds_audit/ijds-normalized-objective-frontier-2026-07-13-v2.dvc
+    - data/processed/experiments/ijds_audit/ijds-credit-risk-controls-2026-07-13-v1b.dvc
+    - models/experiments/ijds_audit/ijds-credit-risk-controls-2026-07-13-v1b.dvc
+    - data/processed/experiments/ijds_audit/ijds-credit-risk-controls-2026-07-13-v2b.dvc
+    - models/experiments/ijds_audit/ijds-credit-risk-controls-2026-07-13-v2b.dvc
 
 claim_boundaries:
   required:
@@ -159,7 +197,8 @@ claim_boundaries:
     - "Six ruler-coordinate tracks observed through eight windows are not 48 independent replications."
     - "Objective matching equalizes only model-implied opportunity cost; normalized-score matching is affine-invariant but does not equalize opportunity cost."
     - "The three interior coordinates form a finite diagnostic; coordinate one is a structural null and no continuous joint-frontier claim is active."
-    - "The logistic learner is a coverage-only control and does not enter portfolio optimization."
+    - "The four additional learners are coverage-only controls and do not enter portfolio optimization."
+    - "WOE/IV and monotonicity are robustness controls, not selected winners or the paper's central novelty."
     - "Marginal/Mondrian coverage is not selected-set validity."
     - "Standardized payoff is not cash-flow return or IRR."
     - "Sharp bounds are partial identification, not confidence intervals."

@@ -10,11 +10,13 @@ Read first:
 1. `docs/research/active_claims_2026-07-12.md`
 2. `docs/research/ijds_binary_geometry_frontier_v4_protocol_2026-07-12.md`
 3. `docs/research/ijds_binary_geometry_frontier_v4_v2_recovery_2026-07-12.md`
-4. `reports/crpto/ijds_binary_geometry_frontier_v4_evidence.json`
-5. `docs/ACADEMIC_CONTEXT.md`
-6. `docs/SCOPE_AND_GOVERNANCE.md`
-7. `CONTRIBUTING.md`
-8. `EXTRACTION_MANIFEST.md`
+4. `docs/research/ijds_raw_data_contract_results_2026-07-13.md`
+5. `docs/research/ijds_credit_risk_controls_v2b_results_2026-07-13.md`
+6. `reports/crpto/ijds_binary_geometry_frontier_v4_evidence.json`
+7. `docs/ACADEMIC_CONTEXT.md`
+8. `docs/SCOPE_AND_GOVERNANCE.md`
+9. `CONTRIBUTING.md`
+10. `EXTRACTION_MANIFEST.md`
 
 Active evidence:
 
@@ -22,7 +24,9 @@ Active evidence:
 - verified evaluation: `ijds-binary-geometry-frontier-v4-2026-07-12-v2`;
 - complete residual specification: eight consecutive six-month windows;
 - primary OOT: 376,890 candidates in fifteen monthly USD 1 million menus;
-- learners: CatBoost/Platt primary and independent logistic/Platt coverage control;
+- coverage learners: CatBoost/Platt primary plus numeric logistic, monotonic
+  CatBoost, platform-signal WOE/IV, and borrower-only WOE/IV controls;
+- portfolio learner: primary CatBoost only; no OOT learner is selected;
 - score path: `gamma={0,.25,.50,.75,1}` with endpoint contrast `gamma=1-gamma=0`;
 - objective-matched primary and normalized-score secondary rulers at three
   interior coordinates; there is no selector;
@@ -35,6 +39,12 @@ Headline evidence:
 
 - every CatBoost five-group OOT upper bound is below 0.90; maximum `0.882167`;
 - every logistic-control upper bound is below 0.90; maximum `0.895654`;
+- monotonic CatBoost, platform WOE, and borrower-only WOE maxima are
+  `0.885991`, `0.894317`, and `0.896973`; all five fail in all eight windows;
+- all `2,925,493` raw rows are audited; the `640,543` active rows exhaust the
+  declared 36-month population rather than forming a convenience sample;
+- all 45 OptBinning problems are optimal; WOE/IV, monotonicity, calibration,
+  and PSI remain robustness controls rather than central novelty;
 - CatBoost stratum 2 crosses prevalence alpha from W7 to W8 and its residual
   quantile changes from `0.888435` to `0.111801`;
 - C2 match residual is at most `8.33e-17` and reconciles weak plug-in dominance;
@@ -70,9 +80,9 @@ Preserve these distinctions:
 - exact declared comparator support versus universal baseline invariance;
 - tagged retrospective audit versus preregistration or confirmation.
 
-Do not claim a gamma, ruler, coordinate, or policy winner, universal direction, selected-set validity,
-Markov/tail certificate, causal effect, live deployment result, or portfolio
-mechanism from the V4 simulation.
+Do not claim a learner, gamma, ruler, coordinate, or policy winner, universal
+direction, selected-set validity, Markov/tail certificate, causal effect, live
+deployment result, or portfolio mechanism from the V4 simulation.
 
 ## Evidence Workflow
 
@@ -91,8 +101,9 @@ just paper-submission-official
 uv run dvc status --no-updates
 ```
 
-The active builder verifies the V4 and two-ruler manifests, freezes, and every
-artifact descriptor. It emits only `crpto_ijds_v4_*` tables/figures and
+The active builder verifies the V4, two-ruler, raw-data, and credit-control
+manifests/freezes and every artifact descriptor. It emits only
+`crpto_ijds_v4_*` tables/figures and
 `ijds_binary_geometry_frontier_v4_evidence.json`. Consecutive builds must be
 byte-identical. The canonical body is `paper/CRPTO_ijds.qmd`; generate official
 TeX with `scripts/build_ijds_submission_tex.py` and never edit it by hand.

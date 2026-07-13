@@ -33,19 +33,19 @@ def active_dvc_pointers(
         "run_tag",
         "two_ruler_outcome_free_run_tag",
         "two_ruler_run_tag",
+        "credit_control_outcome_free_run_tag",
+        "credit_control_run_tag",
     )
     run_tags = [contract.get(key) for key in run_keys]
     if not all(isinstance(tag, str) and tag for tag in run_tags):
-        raise TypeError("The active IJDS capsule must declare all four run tags.")
+        raise TypeError("The active IJDS capsule must declare all six run tags.")
     expected = {
         f"{prefix}/experiments/ijds_audit/{tag}.dvc"
         for tag in run_tags
         for prefix in ("data/processed", "models")
     }
     if set(values) != expected or len(values) != len(expected):
-        raise ValueError(
-            "The active IJDS capsule pointers do not match its four declared run tags."
-        )
+        raise ValueError("The active IJDS capsule pointers do not match its six declared run tags.")
 
     resolved: list[Path] = []
     for value in values:

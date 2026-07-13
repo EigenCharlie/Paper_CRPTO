@@ -14,9 +14,11 @@ edited directly.
 - claim authority: `docs/research/active_claims_2026-07-12.md`;
 - evidence: `reports/crpto/ijds_binary_geometry_frontier_v4_evidence.json`.
 
-The active study uses one 640,543-loan status-independent design universe,
-eight complete residual windows, two declared learners, a five-gamma score
-path, two outcome-free rulers, three interior coordinates, supporting
+The active study scans all 2,925,493 raw rows and uses one exhaustive
+640,543-loan status-independent design universe. It reports eight complete
+residual windows for five declared coverage learners; only the primary
+CatBoost enters the five-gamma portfolio path. Two outcome-free rulers, three
+interior coordinates, supporting
 C0/C1/C2 comparators, exact development and stress cap supports, sharp
 unresolved-outcome bounds, and a 19,200-repetition coverage-mechanism
 simulation. It reports no learner, window, gamma, ruler, coordinate, policy,
@@ -66,17 +68,19 @@ labels, floats, and pagination.
 
 ## QA Record
 
-Validated on July 13, 2026 after the two-ruler integration; regenerate this
-record after any substantive manuscript edit:
+Validated on July 13, 2026 after the full-data credit-control integration and
+editorial compression; regenerate this record after any substantive manuscript
+edit:
 
-- official INFORMS PDF: 28 pages;
-- references begin on page 25, leaving 24 pre-reference pages;
-- HTML-print verification PDFs: body 21 pages, supplement 17 pages;
+- official INFORMS PDF: 29 pages;
+- references begin on page 25, leaving 24 complete pre-reference pages and the
+  conclusion on page 25 within the 25-page limit;
+- HTML-print verification PDFs: body 22 pages, supplement 22 pages;
 - main manuscript at that checkpoint: five tables and two figures;
-- abstract: 254 words; keywords: seven;
+- abstract: 218 words; keywords: seven;
 - `.blg`: no warnings;
 - `.log`: no undefined citations, labels, or convergence requests;
-- all 28 official, 21 body-preview, and 17 supplement pages were rendered and
+- all 29 official, 22 body-preview, and 22 supplement pages were rendered and
   visually inspected; no clipping, overlap, blank page, broken table, missing
   glyph, or illegible figure was found; and
 - the publisher-class first page retains its standard red template notice;
@@ -94,7 +98,7 @@ evidence for a later manuscript.
 - body and supplement contain no identifying metadata;
 - the abstract stays below 300 words;
 - no retired selected-policy, V1--V3, pool93, or compact-v7 headline returns;
-- all V4/two-ruler claim-sync and evidence-hash tests pass; and
+- all V4/two-ruler/credit-control claim-sync and evidence-hash tests pass; and
 - page-by-page visual inspection finds no clipping, overlap, blank page, or
   missing glyph.
 

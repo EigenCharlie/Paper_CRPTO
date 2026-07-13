@@ -6,11 +6,12 @@ controls wording; it is not an independent source of results.
 
 | Claim | Evidence | Required wording | Forbidden inference |
 |---|---|---|---|
-| Candidate membership is status independent | 640,543 design rows; 376,890 primary candidates | Membership uses issue month, term, and origination fields; unresolved rows remain | A resolved-only cohort |
+| Candidate membership is status independent | 2,925,493 raw rows scanned; all 640,543 eligible design rows retained; 376,890 primary candidates | Membership uses issue month, 36-month horizon, schema, and origination fields; unresolved rows remain | A resolved-only cohort or convenience sample |
 | Residual labels respect availability | 49,007 pool rows; 48,857 available; minimum monthly retention 0.992956 | Labels are available by the March 31, 2016 cutoff under the declared lag | Contract age guarantees terminal resolution |
 | Taxonomy precedes residual calibration | Learner-specific 2011 score edges | Fixed taxonomy independent of residual and OOT outcomes | Adaptive OOT grouping |
 | Residual timing is complete | Eight consecutive six-month windows, W1--W8 | All windows are complete specifications | Independent replications or a selected window |
-| Learner conclusion is not CatBoost-only | CatBoost upper-bound range 0.869179--0.882167; logistic maximum 0.895654 | Coverage failure survives both learners; magnitude is learner-dependent | Model superiority or universal conformal failure |
+| Learner conclusion is not CatBoost-only | Maximum upper bounds: CatBoost 0.882167, logistic 0.895654, monotonic CatBoost 0.885991, platform WOE 0.894317, borrower WOE 0.896973 | Coverage failure survives all five predeclared specifications and 40 model-window cells; magnitude is learner-dependent | OOT model promotion, scorecard superiority, or universal conformal failure |
+| Credit-risk controls are auditable | 45/45 OptBinning problems optimal; monotonic constraints frozen; borrower-only score excludes pricing/grade | WOE/IV, monotonicity, and PSI challenge model-class and platform-signal explanations | Central novelty, external validity, or a PSI coverage certificate |
 | Binary geometry has a phase mechanism | Stratum-2 prevalence 0.101703 to 0.097147; quantile 0.888435 to 0.111801 | Empirical pattern is consistent with the constant-score proposition | The proposition proves the varying-score empirical path |
 | Narrower is not necessarily safer | Stratum-2 width 0.984263 to 0.207631; W8 bound [0.822536, 0.853682] | W8 is narrower without restoring transport | Width is a monotone quality or safety measure |
 | Complete score path is frozen | Five gammas, two rulers, three interior coordinates, and 6,240 solves | Endpoint contrast is gamma one minus gamma zero; interior gammas diagnose the path | Selected gamma, ruler, coordinate, or representative winner |
@@ -26,7 +27,7 @@ controls wording; it is not an independent source of results.
 | Unresolved outcomes are retained | 365,339 resolved and 11,551 unresolved primary rows | Sharp unrestricted-binary common-outcome bounds | Confidence intervals or missing-at-random identification |
 | Payoff is aligned but stylized | Plug-in `(1-p)r-p*LGD`; realized `(1-Y)r-Y*LGD` | Model-implied objective and standardized payoff | True conditional expectation, IRR, NPV, welfare, or investor return |
 | Simulation supports coverage mechanism only | 19,200 repetitions; portfolio allocation distances about $10^{-6}$ | Retain negative portfolio diagnostic | Empirical portfolio mechanism or validation |
-| Study is reproducible | Two verified freezes, separate joins, eight DVC pointers, 12 paper artifacts | Code-locked retrospective audit of a previously inspected archive | Preregistration, prospective confirmation, or causal evidence |
+| Study is reproducible | Three verified freeze/evaluation pairs, separate joins, 12 DVC pointers, 16 paper artifacts | Code-locked retrospective audit of a previously inspected archive | Preregistration, prospective confirmation, or causal evidence |
 
 ## Required Headline Results
 
@@ -34,6 +35,11 @@ controls wording; it is not an independent source of results.
 - CatBoost all-candidate bounds range from `[0.838531, 0.869179]` to
   `[0.851519, 0.882167]`;
 - logistic all-candidate upper bounds are all below 0.90, maximum `0.895654`;
+- monotonic CatBoost, platform WOE, and borrower-only WOE maxima are
+  `0.885991`, `0.894317`, and `0.896973`; all five learners fail in all eight
+  windows;
+- full data contract: `2,925,493` raw rows, `2,925,492` valid loans,
+  `2,060,077` 36-month rows, and `640,543` exhaustive active rows;
 - phase diagnostic: prevalence `0.101703 -> 0.097147`, residual quantile
   `0.888435 -> 0.111801`, width `0.984263 -> 0.207631`;
 - two-ruler freeze: `6,240` solves and `622,455` funded rows;

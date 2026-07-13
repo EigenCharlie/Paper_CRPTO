@@ -22,7 +22,7 @@ class SurfaceCheck:
     forbidden: tuple[str, ...] = ()
 
 
-TITLE = "crpto: binary conformal geometry and comparator identification in portfolio optimization"
+TITLE = "crpto: auditing binary conformal geometry and portfolio comparators"
 
 RETIRED_HEADLINE_TOKENS = (
     "0.854714",
@@ -160,7 +160,7 @@ SURFACES = (
         (
             TITLE,
             "376,890",
-            "0.8957",
+            "0.8970",
             "0.1017",
             "0.0971",
             "216",

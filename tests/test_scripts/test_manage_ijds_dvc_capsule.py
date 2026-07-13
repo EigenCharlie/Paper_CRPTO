@@ -7,7 +7,14 @@ import yaml
 
 from scripts.manage_ijds_dvc_capsule import active_dvc_pointers
 
-RUN_TAGS = ("v4-v1", "v4-v2", "two-ruler-v1c", "two-ruler-v2")
+RUN_TAGS = (
+    "v4-v1",
+    "v4-v2",
+    "two-ruler-v1c",
+    "two-ruler-v2",
+    "credit-controls-v1b",
+    "credit-controls-v2b",
+)
 
 
 def _targets(tmp_path: Path, *, omit_last: bool = False) -> Path:
@@ -30,6 +37,8 @@ def _targets(tmp_path: Path, *, omit_last: bool = False) -> Path:
                     "run_tag": RUN_TAGS[1],
                     "two_ruler_outcome_free_run_tag": RUN_TAGS[2],
                     "two_ruler_run_tag": RUN_TAGS[3],
+                    "credit_control_outcome_free_run_tag": RUN_TAGS[4],
+                    "credit_control_run_tag": RUN_TAGS[5],
                     "dvc_pointers": pointers,
                 }
             }
@@ -42,7 +51,7 @@ def _targets(tmp_path: Path, *, omit_last: bool = False) -> Path:
 def test_active_dvc_pointers_loads_two_pointers_per_active_run(tmp_path: Path) -> None:
     pointers = active_dvc_pointers(root=tmp_path, targets_path=_targets(tmp_path))
 
-    assert len(pointers) == 8
+    assert len(pointers) == 12
     assert all(path.is_file() and path.suffix == ".dvc" for path in pointers)
 
 

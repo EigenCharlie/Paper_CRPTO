@@ -23,7 +23,8 @@ two-ruler V1/V1b remain immutable provenance, not active evidence.
 
 The strongest contribution is a joint theory-and-audit result: a binary
 absolute-residual conformal construction has prevalence-sensitive set geometry,
-candidate coverage fails to transport for both declared learners, and the
+candidate coverage fails to transport for all five declared learner
+specifications, and the
 realized endpoint contrast is neither ruler-invariant nor coordinate-invariant.
 The exact point-cap frontier independently rejects a universal direction over
 the declared broad comparator support.
@@ -82,12 +83,49 @@ the declared broad comparator support.
   evaluation in memory; it stopped at no-overwrite and wrote nothing.
 - No track, window, gamma, ruler, coordinate, or result is selected.
 
+### Full-archive data-contract audit
+
+- Run: `ijds-raw-data-contract-2026-07-13-v1`.
+- The raw CSV was scanned in full: 2,925,493 rows, 2,925,492 valid dated loans,
+  142 columns, 2,060,077 36-month contracts, and 865,415 60-month contracts.
+- The 640,543 active rows are every eligible 36-month loan in the declared
+  temporal roles. There is no statistical sampling or row cap.
+- Forty-eight fields have materially later schema support and cannot be moved
+  into the early training blocks without changing the information set.
+- The 2014--2016 maturity gap has only 59,910/162,570, 28,878/283,173, and
+  1,110/96,120 labels available by the March 2016 cutoff. Treating it as
+  ordinary binary training data would condition on duration-dependent
+  resolution; survival modeling would define another target and paper.
+- Primary OOT requested and funded amount differ by only USD 18,000 over
+  376,890 loans; the funded ratio is 0.999996.
+
+### Credit-control V1b outcome-free freeze and V2b evaluation
+
+- Outcome-free run: `ijds-credit-risk-controls-2026-07-13-v1b`; tag:
+  `protocol/ijds-credit-risk-controls-2026-07-13-v1b`; commit: `1776cbf`.
+- Freeze SHA-256:
+  `da4805e644bcf5decfbb0a67c0c81a5b9dd61f3ab2e17d3dc5264100e7eb4d35`.
+- Verified evaluation: `ijds-credit-risk-controls-2026-07-13-v2b`; tag:
+  `protocol/ijds-credit-risk-controls-2026-07-13-v2b`; commit: `a6c642a`.
+- Five predeclared score specifications use all eligible rows: active CatBoost,
+  numeric logistic, domain-constrained monotonic CatBoost, a platform-signal
+  OptBinning WOE/IV scorecard, and a borrower-only WOE/IV scorecard.
+- V1 stopped before writing a freeze because an OptBinning aggregate row was
+  not Parquet-safe. V1b changed only serialization. V2 preserved all coverage
+  results but recorded overly strict BFGS convergence flags; V2b replaced only
+  that calibration diagnostic and reproduced the 3,520-row coverage frame
+  exactly by SHA-256.
+- No OOT outcome selected a model, feature, bin, taxonomy, or window. The four
+  additional specifications are coverage-only controls and never enter the
+  portfolio optimizer.
+
 The only active paper-facing manifest is
 `reports/crpto/ijds_binary_geometry_frontier_v4_evidence.json`.
 
 ## Research Object
 
-- Raw rows scanned: 2,925,493; 36-month rows at all dates: 2,060,077.
+- Raw rows scanned: 2,925,493; valid dated loans: 2,925,492; 36-month rows at
+  all dates: 2,060,077; 60-month rows: 865,415.
 - V4 design universe: 640,543 status-independent loans.
 - PD development: 17,433 rows; 17,392 labels available by cutoff.
 - Probability calibration/taxonomy: 14,101 rows; 14,077 labels available.
@@ -105,6 +143,9 @@ The only active paper-facing manifest is
   are unresolved.
 - Candidate membership never uses loan status. Outcomes are physically absent
   from prediction, policy, support, and frontier construction.
+- The active design is the exhaustive eligible population for its horizon,
+  dates, schema, and observability contract, not a convenience sample from the
+  raw archive.
 
 ## Prediction And Conformal Object
 
@@ -112,6 +153,15 @@ The only active paper-facing manifest is
   origination-time features, followed by an independent 2011 Platt map.
 - Coverage-only control: numeric logistic regression, followed by its own 2011
   Platt map and fixed taxonomy. It never enters portfolio optimization.
+- Additional coverage-only controls use the same chronology and all eligible
+  rows: CatBoost with domain-safe monotonic constraints; an OptBinning WOE/IV
+  logistic scorecard with 26 borrower, contract, grade, and pricing fields;
+  and a 19-field borrower-only scorecard that excludes grade, subgrade,
+  interest, installment, and derived platform-pricing signals.
+- Every OptBinning variable is fit on the PD-development block only with two to
+  eight bins, a five-percent minimum bin share, and automatic monotonic trend.
+  WOE/IV and monotonicity are specification controls, not selected winners or
+  the paper's central novelty.
 - Canonical five score strata are fixed separately for each learner from all
   2011 scores without using residual outcomes.
 - The complete residual specification contains all eight consecutive six-month
@@ -171,8 +221,30 @@ guarantee, or causal policy effect is active.
   [0.851519, 0.882167] at W2. Every upper endpoint is below 0.90.
 - Logistic-control bounds span [0.845687, 0.876335] at W8 to
   [0.865006, 0.895654] at W1. Every upper endpoint is below 0.90.
-- The observed failure therefore survives both learners and all eight windows;
-  its magnitude is learner-dependent.
+- Monotonic CatBoost bounds span [0.844050, 0.874698] at W8 to
+  [0.855342, 0.885991] at W2; all eight upper endpoints are below 0.90.
+- Platform-signal WOE bounds span [0.844199, 0.874847] at W8 to
+  [0.863668, 0.894317] at W2; all eight upper endpoints are below 0.90.
+- Borrower-only WOE bounds span [0.846849, 0.877497] at W8 to
+  [0.866324, 0.896973] at W2; all eight upper endpoints are below 0.90.
+- The observed failure therefore survives all five learners and all eight
+  windows; its magnitude remains model-dependent.
+- Primary OOT AUC is 0.640848, 0.642079, 0.652244, 0.633023, and 0.612712 in
+  the declared learner order. The monotonic-versus-active AUC difference
+  (+0.011396) and platform-versus-borrower difference (+0.020311) are
+  descriptive OOT diagnostics and cannot promote a model.
+- All five calibration-in-the-large values are negative (-0.0301 to -0.0483)
+  and all calibration slopes are below one (0.5432--0.9182), consistent with
+  later default underprediction and changed calibration shape.
+- All 45 OptBinning problems are `OPTIMAL`. Top platform IV values are
+  price-grade interaction 0.337569, subgrade 0.319325, grade 0.299544, and
+  interest rate 0.278429. Top borrower-only IV values are FICO 0.213574,
+  recent inquiries 0.170864, purpose 0.088878, utilization 0.073903, and
+  delinquency recency 0.049288.
+- Development-to-primary-OOT score PSI is 0.139757 (active CatBoost), 0.005168
+  (numeric logistic), 0.093706 (monotonic CatBoost), 0.148867 (platform WOE),
+  and 0.072332 (borrower-only WOE). Coverage failure despite low logistic PSI
+  shows that one marginal score-shift summary cannot explain transport alone.
 - In CatBoost stratum 2, fit prevalence is 0.101703 at W7 and 0.097147 at W8.
   The residual quantile changes from 0.888435 to 0.111801 and mean OOT width
   from 0.984263 to 0.207631.
@@ -273,7 +345,9 @@ These rules define different feasible sets. Counts are descriptive, not votes.
 
 - Candidate-level binary-outcome coverage can fail after temporal transport
   before optimization.
-- That observed failure survives all eight windows and both declared learners.
+- That observed failure survives all eight windows and five predeclared
+  learner specifications spanning nonlinear, monotonic, linear, platform, and
+  borrower-only credit-risk designs.
 - Binary absolute-residual geometry is prevalence-sensitive and can change
   discontinuously around `pi=alpha`.
 - A score, ruler, and frontier coordinate jointly define the decision estimand;
@@ -312,10 +386,11 @@ These rules define different feasible sets. Counts are descriptive, not votes.
 - `reports/crpto/ijds_binary_geometry_frontier_v4_evidence.json` is the only
   active paper-facing manifest.
 - Active table and figure prefixes are `crpto_ijds_v4_`.
-- The active builder emits six CSV tables and three figures in PNG/PDF plus
+- The active builder emits ten CSV tables and three figures in PNG/PDF plus
   one manifest. Consecutive builds must be byte-identical.
-- Eight DVC pointers must remain available together: data/model outcome-free
-  and evaluated roots for V4 and the two-ruler diagnostic.
+- Twelve DVC pointers must remain available together: data/model outcome-free
+  and evaluated roots for V4, the two-ruler diagnostic, and the five-model
+  credit-control audit.
 - Protected historical champion stages and `EXTRACTION_MANIFEST.json` remain
   untouched.
 
@@ -325,7 +400,10 @@ These rules define different feasible sets. Counts are descriptive, not votes.
 - previously inspected retrospective archive;
 - terminal snapshot endpoint with unrestricted censoring bounds;
 - strong 2012--2016 temporal shift and no exchangeability claim;
-- one primary CatBoost stack and one logistic coverage control;
+- one primary CatBoost portfolio stack and four additional coverage-only
+  controls; none is OOT-selected;
+- WOE/IV, monotonicity, and PSI are robustness diagnostics rather than a
+  scorecard-comparison claim;
 - constant-score theory versus varying-score empirical strata;
 - overlapping windows are not independent evidence;
 - six two-ruler tracks are not 48 replications;

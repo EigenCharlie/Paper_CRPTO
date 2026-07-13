@@ -1,7 +1,7 @@
 [project]
 name = "crpto"
 version = "0.1.0"
-description = "CRPTO — Conformal Robust Predict-Then-Optimize: conformal prediction + robust portfolio optimization, applied to credit risk (Lending Club 2007-2020). Standalone research pipeline and Quarto book accompanying the paper."
+description = "CRPTO - Conformal Risk-Aware Predict-Then-Optimize: an auditable study of binary conformal geometry, temporal transport, and portfolio comparator design in historical credit data."
 readme = "README.md"
 requires-python = ">=3.11,<3.13"
 license = { text = "MIT" }
@@ -11,7 +11,8 @@ keywords = [
     "probability-of-default",
     "conformal-prediction",
     "predict-then-optimize",
-    "robust-optimization",
+    "comparator-design",
+    "decision-audit",
     "portfolio-optimization",
     "model-risk-management",
     "fairness",

@@ -12,10 +12,11 @@ hash-linked evaluators; the only active paper-facing manifest is
 `reports/crpto/ijds_binary_geometry_frontier_v4_evidence.json`.
 
 Superiority and policy-winner framing are NO-GO. The IJDS audit narrative is
-GO: candidate-coverage failure survives all eight windows and both learners;
+GO: candidate-coverage failure survives all eight windows and five predeclared
+learner specifications, including monotonic and WOE/IV credit-risk controls;
 binary interval geometry changes around a prevalence threshold; and realized
 decision directions depend on ruler, coordinate, residual timing, and declared
-comparator support.
+comparator support. Only the primary CatBoost enters portfolio optimization.
 Selected-policy studies,
 compact-v7, pool93, Prosper/Freddie, and A1--A40 are historical provenance only. Never overwrite
 the V1/V2/V3 audit runs, the historical champion, or manifest-protected artifacts.
@@ -80,6 +81,10 @@ upstream protegido.
 | Two-ruler result | `.25` small favorable, `.50` unfavorable, `.75` mostly unidentified under objective matching; normalized ruler unfavorable but not opportunity-matched |
 | Cobertura CatBoost | ocho upper bounds bajo `0.90`; maximo `0.882167` |
 | Cobertura logistic control | ocho upper bounds bajo `0.90`; maximo `0.895654` |
+| Cobertura monotonic CatBoost | ocho upper bounds bajo `0.90`; maximo `0.885991` |
+| Cobertura platform WOE/IV | ocho upper bounds bajo `0.90`; maximo `0.894317` |
+| Cobertura borrower-only WOE/IV | ocho upper bounds bajo `0.90`; maximo `0.896973` |
+| Censo raw | `2,925,493` filas; `640,543` filas activas exhaustivas, sin sampling |
 | Transicion binaria | estrato 2: prevalencia `0.101703 -> 0.097147`; cuantíl `0.888435 -> 0.111801` |
 | Supporting C2 | 1,080 matches; residual maximo `8.33e-17`; dominancia plug-in mecanica |
 | Exact frontier | 3,067 caps; 216/216 broad-stress envelopes cruzan cero |

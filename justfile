@@ -143,10 +143,10 @@ ijds-policy-challenger:
 
 ijds-historical-v7-replay: ijds-exact-alpha ijds-policy-challenger ijds-historical-v7-evidence
 
-# Active-capsule gate: rebuild paper-facing evidence and verify both immutable
-# freeze/evaluation pairs represented by the eight active DVC pointers.
+# Active-capsule gate: rebuild paper-facing evidence and verify all three
+# immutable freeze/evaluation pairs represented by the twelve active DVC pointers.
 ijds-active-check: ijds-evidence publication-integrity ijds-normalized-objective-frontier-v1c-check ijds-normalized-objective-frontier-v2-check
-    uv run pytest -q tests/test_ijds_anonymity.py tests/test_ijds_active_claim_sync.py tests/test_ijds_v4_claim_sync.py tests/test_publication_targets.py tests/test_publication_integrity.py tests/test_submission_preview_layout.py tests/test_supplement_table_sync.py tests/test_scripts/test_compile_ijds_submission.py tests/test_scripts/test_manage_ijds_dvc_capsule.py tests/test_ijds_audit_core.py
+    uv run pytest -q tests/test_ijds_anonymity.py tests/test_ijds_active_claim_sync.py tests/test_ijds_v4_claim_sync.py tests/test_publication_targets.py tests/test_publication_integrity.py tests/test_submission_preview_layout.py tests/test_supplement_table_sync.py tests/test_scripts/test_compile_ijds_submission.py tests/test_scripts/test_manage_ijds_dvc_capsule.py tests/test_ijds_audit_core.py tests/test_ijds_audit/test_raw_data_audit.py tests/test_ijds_audit/test_credit_controls.py
 
 # Active replay validates V4 evidence and rebuilds only paper-facing outputs.
 # The expensive policy solve is never hidden here.

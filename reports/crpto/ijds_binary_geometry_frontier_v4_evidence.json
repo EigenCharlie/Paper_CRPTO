@@ -1,6 +1,6 @@
 {
-  "schema_version": "2026-07-13.1",
-  "status": "active_ijds_v4_with_two_ruler_paper_facing_evidence",
+  "schema_version": "2026-07-13.2",
+  "status": "active_ijds_v4_two_ruler_and_credit_controls_paper_facing_evidence",
   "run_tag": "ijds-binary-geometry-frontier-v4-2026-07-12-v2",
   "protocol_tag": "protocol/ijds-binary-geometry-frontier-v4-2026-07-12-v2",
   "protocol_commit": "60cdf298d965525cddaaf03abccd15ff805e1a15",
@@ -18,7 +18,10 @@
     "primary_oot_resolved": 365339,
     "primary_oot_unresolved": 11551,
     "residual_windows": 8,
-    "learners": 2,
+    "learners": 5,
+    "v4_detailed_coverage_learners": 2,
+    "credit_control_learners": 5,
+    "portfolio_learners": 1,
     "taxonomy_diagnostics": [
       1,
       2,
@@ -729,6 +732,273 @@
       }
     ]
   },
+  "data_contract": {
+    "raw_rows": 2925493,
+    "valid_loan_rows": 2925492,
+    "raw_schema_columns": 142,
+    "term36_rows_all_dates": 2060077,
+    "term60_rows_all_dates": 865415,
+    "active_design_rows": 640543,
+    "eligible_raw_features": 28,
+    "late_schema_features": 48,
+    "primary_oot_funded_ratio": 0.9999961757560076,
+    "primary_oot_requested_minus_funded_usd": 18000.0,
+    "sampling": "none_all_eligible_rows_within_each_declared_temporal_role",
+    "population_boundary": "The active 640,543-row design is the exhaustive eligible 36-month population for the declared dates, horizon, schema, and observability rules; it is not a sample from the raw archive.",
+    "excluded_scope": "Sixty-month contracts, immature issue dates, and late-schema fields define different horizons, censoring regimes, or temporal feature support.",
+    "manifest": {
+      "path": "reports/crpto/data_audit/ijds-raw-data-contract-2026-07-13-v1/evidence.json",
+      "bytes": 3511,
+      "sha256": "bfc8eaa01fe4dc08334781896cd6f4528b73e27d6261636f4f5b4b60e2c3e87d"
+    }
+  },
+  "credit_risk_controls": {
+    "scope": "coverage_only_five_model_temporal_transport_robustness",
+    "outcome_free_run_tag": "ijds-credit-risk-controls-2026-07-13-v1b",
+    "verified_evaluation_run_tag": "ijds-credit-risk-controls-2026-07-13-v2b",
+    "all_five_all_eight_upper_below_nominal": true,
+    "learners_reported": [
+      "catboost_platt",
+      "numeric_logistic_platt",
+      "catboost_monotonic_platt",
+      "woe_scorecard_platform_platt",
+      "woe_scorecard_borrower_platt"
+    ],
+    "portfolio_learner": "catboost_platt",
+    "controls_enter_portfolio_optimization": false,
+    "model_or_feature_selected_from_oot": false,
+    "scorecard_superiority_claim_authorized": false,
+    "rows": [
+      {
+        "learner": "catboost_platt",
+        "learner_label": "CatBoost",
+        "candidate_rows": 376890,
+        "resolved_rows": 365339,
+        "unresolved_rows": 11551,
+        "default_rate": 0.15737985815913438,
+        "roc_auc": 0.6408480922525895,
+        "gini": 0.2816961845051791,
+        "ks": 0.20629253807063164,
+        "average_precision": 0.2370770786057636,
+        "brier": 0.13075300540797932,
+        "log_loss": 0.4308586709993091,
+        "ece_10": 0.048323150230309204,
+        "calibration_in_the_large": -0.04827226982478845,
+        "calibration_intercept": 0.03143021806512476,
+        "calibration_slope": 0.7964687556441289,
+        "coverage_lower_min": 0.8385311364058479,
+        "coverage_upper_max": 0.8821672105919499,
+        "windows_upper_below_0_90": 8
+      },
+      {
+        "learner": "numeric_logistic_platt",
+        "learner_label": "Numeric logistic",
+        "candidate_rows": 376890,
+        "resolved_rows": 365339,
+        "unresolved_rows": 11551,
+        "default_rate": 0.15737985815913438,
+        "roc_auc": 0.6420788408397852,
+        "gini": 0.28415768167957034,
+        "ks": 0.20981166552848934,
+        "average_precision": 0.2435805381430461,
+        "brier": 0.12967294954245026,
+        "log_loss": 0.4350060646983095,
+        "ece_10": 0.03225732859287416,
+        "calibration_in_the_large": -0.030078037379900002,
+        "calibration_intercept": -0.5900302086613237,
+        "calibration_slope": 0.543219816175003,
+        "coverage_lower_min": 0.8456870704980233,
+        "coverage_upper_max": 0.895653904322216,
+        "windows_upper_below_0_90": 8
+      },
+      {
+        "learner": "catboost_monotonic_platt",
+        "learner_label": "Monotonic CatBoost",
+        "candidate_rows": 376890,
+        "resolved_rows": 365339,
+        "unresolved_rows": 11551,
+        "default_rate": 0.15737985815913438,
+        "roc_auc": 0.6522442096629454,
+        "gini": 0.30448841932589077,
+        "ks": 0.22011025738192402,
+        "average_precision": 0.24751731979372327,
+        "brier": 0.12945728842498827,
+        "log_loss": 0.42494773262786845,
+        "ece_10": 0.042697927519343946,
+        "calibration_in_the_large": -0.04241500572967492,
+        "calibration_intercept": 0.06432894762981776,
+        "calibration_slope": 0.8366798078258157,
+        "coverage_lower_min": 0.8440499880601767,
+        "coverage_upper_max": 0.8859906073390114,
+        "windows_upper_below_0_90": 8
+      },
+      {
+        "learner": "woe_scorecard_platform_platt",
+        "learner_label": "Platform-signal WOE scorecard",
+        "candidate_rows": 376890,
+        "resolved_rows": 365339,
+        "unresolved_rows": 11551,
+        "default_rate": 0.15737985815913438,
+        "roc_auc": 0.6330228486809497,
+        "gini": 0.2660456973618994,
+        "ks": 0.18831936884807565,
+        "average_precision": 0.22552737510569876,
+        "brier": 0.13036173009454097,
+        "log_loss": 0.4262904675075034,
+        "ece_10": 0.03710477536583455,
+        "calibration_in_the_large": -0.036691864779376776,
+        "calibration_intercept": 0.1619170281037486,
+        "calibration_slope": 0.9181629992812502,
+        "coverage_lower_min": 0.8441985725277933,
+        "coverage_upper_max": 0.8943166441136671,
+        "windows_upper_below_0_90": 8
+      },
+      {
+        "learner": "woe_scorecard_borrower_platt",
+        "learner_label": "Borrower-only WOE scorecard",
+        "candidate_rows": 376890,
+        "resolved_rows": 365339,
+        "unresolved_rows": 11551,
+        "default_rate": 0.15737985815913438,
+        "roc_auc": 0.6127115369196929,
+        "gini": 0.22542307383938587,
+        "ks": 0.15794446997935319,
+        "average_precision": 0.21671930719897986,
+        "brier": 0.131063216690659,
+        "log_loss": 0.43033049072738544,
+        "ece_10": 0.0328898561899972,
+        "calibration_in_the_large": -0.03093853429801796,
+        "calibration_intercept": -0.2797928452360484,
+        "calibration_slope": 0.7080234284798298,
+        "coverage_lower_min": 0.8468492132983099,
+        "coverage_upper_max": 0.8969725914723129,
+        "windows_upper_below_0_90": 8
+      }
+    ],
+    "declared_descriptive_differences": {
+      "platform_minus_borrower_oot_auc": 0.02031131176125678,
+      "platform_minus_borrower_oot_brier": -0.000701486596118045,
+      "monotonic_minus_active_oot_auc": 0.011396117410355844,
+      "monotonic_minus_active_oot_brier": -0.001295716982991052
+    },
+    "calibration": {
+      "all_primary_oot_calibration_in_the_large_negative": true,
+      "all_primary_oot_slopes_below_one": true,
+      "optimizer_success_rows": 30,
+      "optimizer_total_rows": 30
+    },
+    "woe_iv": {
+      "optbinning_problems": 45,
+      "all_optimal": true,
+      "platform_features": 26,
+      "borrower_only_features": 19,
+      "top_platform_iv": [
+        {
+          "name": "int_rate_bucket__grade",
+          "iv": 0.33756858301375126
+        },
+        {
+          "name": "sub_grade",
+          "iv": 0.31932538983142866
+        },
+        {
+          "name": "grade",
+          "iv": 0.29954351738889673
+        },
+        {
+          "name": "int_rate",
+          "iv": 0.2784288707439742
+        },
+        {
+          "name": "int_rate_bucket",
+          "iv": 0.24485815197270147
+        }
+      ],
+      "top_borrower_only_iv": [
+        {
+          "name": "fico_score",
+          "iv": 0.2135744222493438
+        },
+        {
+          "name": "inq_last_6mths",
+          "iv": 0.17086393760483487
+        },
+        {
+          "name": "purpose",
+          "iv": 0.08887832866960639
+        },
+        {
+          "name": "rev_utilization",
+          "iv": 0.0739026629287923
+        },
+        {
+          "name": "delinq_recency",
+          "iv": 0.04928782736183494
+        }
+      ]
+    },
+    "temporal_shift": {
+      "primary_oot_score_psi": {
+        "catboost_platt": 0.1397574884533394,
+        "numeric_logistic_platt": 0.005167903809465062,
+        "catboost_monotonic_platt": 0.09370550856801749,
+        "woe_scorecard_platform_platt": 0.14886689865662606,
+        "woe_scorecard_borrower_platt": 0.07233216453444681
+      },
+      "top_primary_oot_feature_psi": [
+        {
+          "learner": "woe_scorecard_platform_platt",
+          "feature": "int_rate_bucket__grade",
+          "psi": 0.9628044275190203
+        },
+        {
+          "learner": "woe_scorecard_platform_platt",
+          "feature": "verification_status",
+          "psi": 0.6081334177376476
+        },
+        {
+          "learner": "woe_scorecard_borrower_platt",
+          "feature": "verification_status",
+          "psi": 0.6081334177376476
+        },
+        {
+          "learner": "woe_scorecard_borrower_platt",
+          "feature": "dti",
+          "psi": 0.5522627527176915
+        },
+        {
+          "learner": "woe_scorecard_platform_platt",
+          "feature": "dti",
+          "psi": 0.5522627527176915
+        }
+      ],
+      "recent_chargeoff_early_role_variation": [
+        {
+          "role": "pd_development",
+          "rows": 17433,
+          "unique_observed": 1,
+          "constant_observed": true
+        },
+        {
+          "role": "probability_calibration",
+          "rows": 14101,
+          "unique_observed": 1,
+          "constant_observed": true
+        }
+      ]
+    },
+    "coverage_recovery": {
+      "status": "exact_frame_equivalence_verified",
+      "reference": {
+        "path": "data/processed/experiments/ijds_audit/ijds-credit-risk-controls-2026-07-13-v2/evaluation/temporal_coverage.parquet",
+        "bytes": 501571,
+        "sha256": "956bdc9880c80cebc1f48fc2cdf57688dfff7dddd3939b4fd972413d83039767"
+      },
+      "rows": 3520,
+      "columns": 39
+    },
+    "interpretation": "WOE/IV, borrower-only features, and domain-safe monotonic constraints are specification controls. They strengthen model-class robustness but do not define the paper's novelty, select a learner, or authorize a new portfolio policy."
+  },
   "binary_phase_transition": {
     "stratum": 2,
     "w7_fit_prevalence": 0.10170349131388093,
@@ -1140,7 +1410,7 @@
     "point_minus_guardrail_objective_mean": 2.4582893591122237e-12,
     "portfolio_claim_allowed": false
   },
-  "audit_thesis": "Binary absolute-residual conformal guardrails can change discontinuously when a score stratum crosses the alpha prevalence threshold; candidate coverage does not transport to the later archive; and portfolio direction is not identified without an outcome-free comparator support and is not invariant to the declared ruler or interior coordinate.",
+  "audit_thesis": "Binary absolute-residual conformal guardrails can change discontinuously when a score stratum crosses the alpha prevalence threshold; candidate coverage does not transport to the later archive under five predeclared credit-risk model specifications; and portfolio direction is not identified without an outcome-free comparator support and is not invariant to the declared ruler or interior coordinate.",
   "source_artifacts": {
     "summary": {
       "path": "models/experiments/ijds_audit/ijds-binary-geometry-frontier-v4-2026-07-12-v2/binary_geometry_frontier_v4_summary.json",
@@ -1166,6 +1436,26 @@
       "path": "models/experiments/ijds_audit/ijds-normalized-objective-frontier-2026-07-13-v2/execution_receipt.json",
       "bytes": 635,
       "sha256": "3ef3e7c7e363bcf8630ae79cabe2847f5b70bc66416f384c043c16cef2b46ca8"
+    },
+    "credit_controls/summary": {
+      "path": "models/experiments/ijds_audit/ijds-credit-risk-controls-2026-07-13-v2b/credit_risk_controls_summary.json",
+      "bytes": 12535,
+      "sha256": "e8b7f9c40c8288db087d55deabaa0d7712ac178d547b3f8a549e949843fce447"
+    },
+    "credit_controls/execution_receipt": {
+      "path": "models/experiments/ijds_audit/ijds-credit-risk-controls-2026-07-13-v2b/execution_receipt.json",
+      "bytes": 829,
+      "sha256": "4daaa5f048be30f81328d9302e92ba8c47a95f703de89ed57b84b93ec650a4e2"
+    },
+    "credit_controls/freeze": {
+      "path": "models/experiments/ijds_audit/ijds-credit-risk-controls-2026-07-13-v1b/protocol_freeze.json",
+      "bytes": 25908,
+      "sha256": "da4805e644bcf5decfbb0a67c0c81a5b9dd61f3ab2e17d3dc5264100e7eb4d35"
+    },
+    "raw_data_audit/manifest": {
+      "path": "reports/crpto/data_audit/ijds-raw-data-contract-2026-07-13-v1/evidence.json",
+      "bytes": 3511,
+      "sha256": "bfc8eaa01fe4dc08334781896cd6f4528b73e27d6261636f4f5b4b60e2c3e87d"
     },
     "evaluation/temporal_coverage": {
       "path": "data/processed/experiments/ijds_audit/ijds-binary-geometry-frontier-v4-2026-07-12-v2/evaluation/temporal_coverage.parquet",
@@ -1321,6 +1611,151 @@
       "path": "data/processed/experiments/ijds_audit/ijds-normalized-objective-frontier-2026-07-13-v1c/frontier/frontier_solve_records.parquet",
       "bytes": 386546,
       "sha256": "b44a1435bf501bcab4b8dfa6563ca1411ad4ec4912437053913c44d39354b487"
+    },
+    "credit_controls/evaluation/temporal_coverage": {
+      "path": "data/processed/experiments/ijds_audit/ijds-credit-risk-controls-2026-07-13-v2b/evaluation/temporal_coverage.parquet",
+      "bytes": 501571,
+      "sha256": "956bdc9880c80cebc1f48fc2cdf57688dfff7dddd3939b4fd972413d83039767"
+    },
+    "credit_controls/evaluation/prediction_metrics": {
+      "path": "data/processed/experiments/ijds_audit/ijds-credit-risk-controls-2026-07-13-v2b/evaluation/prediction_metrics.parquet",
+      "bytes": 14985,
+      "sha256": "74a4ba25c96b1d780ecaba950f4cfbd84dbc47ae38229a01a38012c3ef4f5c4c"
+    },
+    "credit_controls/outcome_free/scores": {
+      "path": "data/processed/experiments/ijds_audit/ijds-credit-risk-controls-2026-07-13-v1b/prediction/scores.parquet",
+      "bytes": 30407406,
+      "sha256": "5795bc0a75be90e86d37cf7d297f4b4fd6e6604b38f8179bc5042c024a53a8dc"
+    },
+    "credit_controls/outcome_free/recipes": {
+      "path": "models/experiments/ijds_audit/ijds-credit-risk-controls-2026-07-13-v1b/prediction/residual_recipes.json",
+      "bytes": 187689,
+      "sha256": "969ecbefe46bec4893a03be57385eda29b33dd291d73e7c0120f6d488a9e9936"
+    },
+    "credit_controls/outcome_free/fit_audit": {
+      "path": "data/processed/experiments/ijds_audit/ijds-credit-risk-controls-2026-07-13-v1b/prediction/residual_fit_audit.parquet",
+      "bytes": 45955332,
+      "sha256": "396c30d9bec7d222220cfe6f9870ab4994cf5c33e6da8c9e4ebbd99153155353"
+    },
+    "credit_controls/outcome_free/outcome_free_geometry": {
+      "path": "data/processed/experiments/ijds_audit/ijds-credit-risk-controls-2026-07-13-v1b/prediction/outcome_free_geometry.parquet",
+      "bytes": 362075,
+      "sha256": "7264ef5b076d62ec642c541abd376149a98c4ec4d33250454bce9c971716893b"
+    },
+    "credit_controls/outcome_free/feature_variation": {
+      "path": "data/processed/experiments/ijds_audit/ijds-credit-risk-controls-2026-07-13-v1b/diagnostics/active_feature_variation.parquet",
+      "bytes": 11844,
+      "sha256": "9f7e6a6b59887f9b8a41d5168897f5d57e38eea17f6c7d43e48cf151595ef0e6"
+    },
+    "credit_controls/outcome_free/score_psi": {
+      "path": "data/processed/experiments/ijds_audit/ijds-credit-risk-controls-2026-07-13-v1b/diagnostics/score_psi.parquet",
+      "bytes": 6933,
+      "sha256": "eb5e392446f0b9939de80b8ff2c7d78fe6a6a60b3f450e04dab6d51e8879bae1"
+    },
+    "credit_controls/outcome_free/scorecard_feature_psi": {
+      "path": "data/processed/experiments/ijds_audit/ijds-credit-risk-controls-2026-07-13-v1b/diagnostics/scorecard_feature_psi.parquet",
+      "bytes": 8216,
+      "sha256": "7293c44c9b54a966ac86769cec377d45e776a4568db6eed6e1d1cbc79dbeab58"
+    },
+    "credit_controls/outcome_free/woe_summary": {
+      "path": "data/processed/experiments/ijds_audit/ijds-credit-risk-controls-2026-07-13-v1b/diagnostics/woe_summary.parquet",
+      "bytes": 7442,
+      "sha256": "0366397f5d94e277366c3fa2d53fd7a4d654b6ad6aec90a53d63fcef765a6584"
+    },
+    "credit_controls/outcome_free/woe_coefficients": {
+      "path": "data/processed/experiments/ijds_audit/ijds-credit-risk-controls-2026-07-13-v1b/diagnostics/woe_coefficients.parquet",
+      "bytes": 3923,
+      "sha256": "a58b2b4d8c7de5ce03fbfc8fdcd5909d7a279cd6d9a41a35306f085aad199d76"
+    },
+    "credit_controls/outcome_free/woe_binning_table": {
+      "path": "data/processed/experiments/ijds_audit/ijds-credit-risk-controls-2026-07-13-v1b/diagnostics/woe_binning_table.parquet",
+      "bytes": 20130,
+      "sha256": "8506032f4155a899ac16810f834f412ef40e8438307ef76e4e1b4af6fff82a47"
+    },
+    "credit_controls/models/catboost": {
+      "path": "models/experiments/ijds_audit/ijds-credit-risk-controls-2026-07-13-v1b/prediction/catboost_seed42.cbm",
+      "bytes": 836640,
+      "sha256": "26d658e64f1b7192fe74481e45cfa2af838798887d3e5360ebd466f5fe151ec5"
+    },
+    "credit_controls/models/catboost_platt": {
+      "path": "models/experiments/ijds_audit/ijds-credit-risk-controls-2026-07-13-v1b/prediction/catboost_platt.pkl",
+      "bytes": 678,
+      "sha256": "9391c1c918e0707f61ae59c433c312f38668661edd90af5a44cfb29588a07594"
+    },
+    "credit_controls/models/numeric_logistic": {
+      "path": "models/experiments/ijds_audit/ijds-credit-risk-controls-2026-07-13-v1b/prediction/numeric_logistic.pkl",
+      "bytes": 3799,
+      "sha256": "3aef902d4ac475942f39ba93e4447bf2ee5653175c1b06c0511949ac684fd806"
+    },
+    "credit_controls/models/numeric_logistic_platt": {
+      "path": "models/experiments/ijds_audit/ijds-credit-risk-controls-2026-07-13-v1b/prediction/numeric_logistic_platt.pkl",
+      "bytes": 678,
+      "sha256": "c3b1c562d75dc65f14bb53201f221ca390a07703cb3805533cd69cd337ac9421"
+    },
+    "credit_controls/models/catboost_monotonic": {
+      "path": "models/experiments/ijds_audit/ijds-credit-risk-controls-2026-07-13-v1b/prediction/catboost_monotonic_seed42.cbm",
+      "bytes": 883944,
+      "sha256": "3808b60815633c95fcaa19345863168730ad533bce01c168d1d981f2798bd4e6"
+    },
+    "credit_controls/models/catboost_monotonic_platt": {
+      "path": "models/experiments/ijds_audit/ijds-credit-risk-controls-2026-07-13-v1b/prediction/catboost_monotonic_platt.pkl",
+      "bytes": 678,
+      "sha256": "93e38202f47fd06665ccb0e5d7e3ed996c71976a5b38d8acd00b09b3571b49ce"
+    },
+    "credit_controls/models/woe_scorecard_platform": {
+      "path": "models/experiments/ijds_audit/ijds-credit-risk-controls-2026-07-13-v1b/prediction/woe_scorecard_platform.pkl",
+      "bytes": 48526,
+      "sha256": "525946161cb2c67454b99ee611d7e62d2c9b0fe7667563b8adbe591a8973745e"
+    },
+    "credit_controls/models/woe_scorecard_platform_platt": {
+      "path": "models/experiments/ijds_audit/ijds-credit-risk-controls-2026-07-13-v1b/prediction/woe_scorecard_platform_platt.pkl",
+      "bytes": 678,
+      "sha256": "924522ee4d26cdf663b402f52dd8319809265a459b69e457c38fdd742039cf2d"
+    },
+    "credit_controls/models/woe_scorecard_borrower": {
+      "path": "models/experiments/ijds_audit/ijds-credit-risk-controls-2026-07-13-v1b/prediction/woe_scorecard_borrower.pkl",
+      "bytes": 34904,
+      "sha256": "2b8aef2bdd4d1c9353357376ea23b26dbf230c976778d026d9f99ccb418340ea"
+    },
+    "credit_controls/models/woe_scorecard_borrower_platt": {
+      "path": "models/experiments/ijds_audit/ijds-credit-risk-controls-2026-07-13-v1b/prediction/woe_scorecard_borrower_platt.pkl",
+      "bytes": 678,
+      "sha256": "66ab15c9cde1f94ba444aaac24d8c52695016db76f111064a1305b626bfbe2ba"
+    },
+    "raw_data_audit/archive_inventory": {
+      "path": "reports/crpto/data_audit/ijds-raw-data-contract-2026-07-13-v1/archive_inventory.csv",
+      "bytes": 248,
+      "sha256": "b08ad0924dd5d762f81061ca99e625e034cf78164c5a6dd159fb2a21f01ed02a"
+    },
+    "raw_data_audit/status_inventory": {
+      "path": "reports/crpto/data_audit/ijds-raw-data-contract-2026-07-13-v1/status_inventory.csv",
+      "bytes": 470,
+      "sha256": "8d81783e3854efcf5ccd88f3342984cb44ed6d0cbef774b3bfab3382b4220845"
+    },
+    "raw_data_audit/cohort_inventory": {
+      "path": "reports/crpto/data_audit/ijds-raw-data-contract-2026-07-13-v1/cohort_inventory.csv",
+      "bytes": 194,
+      "sha256": "c5bd8d225a20c53d5865473a1550e2b0b506504f4d6e777b6d4ba28d3da645bb"
+    },
+    "raw_data_audit/feature_coverage": {
+      "path": "reports/crpto/data_audit/ijds-raw-data-contract-2026-07-13-v1/raw_feature_coverage.csv",
+      "bytes": 67423,
+      "sha256": "c00b84d14e26cbba9b46f96fc22cba4f52565f3bc361b5ab24596b80cbc12e04"
+    },
+    "raw_data_audit/feature_contract": {
+      "path": "reports/crpto/data_audit/ijds-raw-data-contract-2026-07-13-v1/raw_feature_contract.csv",
+      "bytes": 19585,
+      "sha256": "45f51737154d28d6e13a0f4ed0b3cc94becc527397ccf8227ed86be4da18af0d"
+    },
+    "raw_data_audit/amount_alignment": {
+      "path": "reports/crpto/data_audit/ijds-raw-data-contract-2026-07-13-v1/loan_amount_alignment.csv",
+      "bytes": 729,
+      "sha256": "d0b2d8f6198e35b1d96739175c3d40f75584f090c67496a23295a853abbc4824"
+    },
+    "raw_data_audit/cutoff_label_availability": {
+      "path": "reports/crpto/data_audit/ijds-raw-data-contract-2026-07-13-v1/cutoff_label_availability.csv",
+      "bytes": 287,
+      "sha256": "a1463a347603fe4d6a72d69c797810e0ab72ae8ffe36258988215e8ffb35f689"
     }
   },
   "paper_artifacts": {
@@ -1353,6 +1788,26 @@
       "path": "reports/crpto/tables/crpto_ijds_v4_tableS1_named_comparators.csv",
       "bytes": 396,
       "sha256": "6f6451a425cd8ef1fa4fcf86d55c4cc2e240afe9d89d27670acd880f19c324e8"
+    },
+    "table/credit_controls": {
+      "path": "reports/crpto/tables/crpto_ijds_v4_table6_credit_controls.csv",
+      "bytes": 1874,
+      "sha256": "6f34cc81c888d10654105844250938a2f2a276f18e904605d979269725399b76"
+    },
+    "table/credit_prediction_metrics": {
+      "path": "reports/crpto/tables/crpto_ijds_v4_tableS2_credit_prediction_metrics.csv",
+      "bytes": 9545,
+      "sha256": "9c07bda56fe2d8a2b6a2b5a73d85c3433eb6a11954818f8b3db8818934111e1b"
+    },
+    "table/woe_iv_psi": {
+      "path": "reports/crpto/tables/crpto_ijds_v4_tableS3_woe_iv_psi.csv",
+      "bytes": 7731,
+      "sha256": "b5fef8582e2c181fc678642db839019e34c0ca0262573bca08151b2313e15793"
+    },
+    "table/score_psi": {
+      "path": "reports/crpto/tables/crpto_ijds_v4_tableS4_score_psi.csv",
+      "bytes": 8106,
+      "sha256": "6697eabe806b545f8b92eeb1b09a5e87533482876c08dfeee3d2aa63d4a06d50"
     },
     "figure/coverage/png": {
       "path": "reports/crpto/figures/crpto_ijds_v4_fig1_coverage.png",

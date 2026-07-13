@@ -1,4 +1,4 @@
-"""Structure and wording checks specific to the active V4 paper."""
+"""Structure and wording checks for the active V4 paper and its controls."""
 
 from __future__ import annotations
 

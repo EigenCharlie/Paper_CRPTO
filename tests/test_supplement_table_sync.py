@@ -41,6 +41,34 @@ def test_complete_phase_path_is_visible_in_supplement() -> None:
             assert f"{float(row[field]):.6f}" in supplement
 
 
+def test_credit_control_metrics_and_shift_diagnostics_are_visible() -> None:
+    controls = _rows("crpto_ijds_v4_table6_credit_controls.csv")
+    woe = _rows("crpto_ijds_v4_tableS3_woe_iv_psi.csv")
+    score_psi = _rows("crpto_ijds_v4_tableS4_score_psi.csv")
+    supplement = SUPPLEMENT.read_text(encoding="utf-8")
+
+    assert len(controls) == 5
+    assert len(woe) == 45
+    assert len(score_psi) == 25
+    for row in controls:
+        assert row["learner_label"] in supplement
+        assert f"{float(row['roc_auc']):.6f}" in supplement
+        assert f"{float(row['brier']):.6f}" in supplement
+        assert f"{float(row['calibration_slope']):.6f}" in supplement
+        assert f"{float(row['coverage_upper_max']):.6f}" in supplement
+
+    top_iv = sorted(woe, key=lambda row: float(row["iv"]), reverse=True)[:5]
+    for row in top_iv:
+        assert row["feature"] in supplement
+        assert f"{float(row['iv']):.6f}" in supplement
+        assert f"{float(row['primary_oot_psi']):.6f}" in supplement
+
+    primary_psi = [row for row in score_psi if row["comparison_role"] == "primary_oot"]
+    assert len(primary_psi) == 5
+    for row in primary_psi:
+        assert f"{float(row['psi']):.6f}" in supplement
+
+
 def test_named_and_exact_direction_counts_are_visible_in_supplement() -> None:
     named = _rows("crpto_ijds_v4_tableS1_named_comparators.csv")
     directions = _rows("crpto_ijds_v4_table4_direction_summary.csv")

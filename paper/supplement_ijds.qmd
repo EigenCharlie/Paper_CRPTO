@@ -1,5 +1,5 @@
 ---
-title: "Online Supplement for CRPTO: Binary Conformal Geometry and Comparator Identification in Portfolio Optimization"
+title: "Online Supplement for CRPTO: Auditing Binary Conformal Geometry and Portfolio Comparators"
 author: "Anonymous"
 lang: en
 bibliography: ../book/references.bib
@@ -30,9 +30,12 @@ trial, preregistration, or pristine lockbox. The inferential object is the
 finite Lending Club archive under the declared information, outcome, policy,
 and comparator contracts.
 
-The audit reports every eligible consecutive six-month residual window, both
-declared learners, the complete five-point gamma path, two outcome-free rulers,
-three interior coordinates, and every comparator in each named support. The
+The audit reports every eligible consecutive six-month residual window and five
+predeclared coverage learners. The original V4 detail retains CatBoost and
+numeric logistic, while monotonic CatBoost and two WOE/IV scorecards broaden
+model-class robustness; only the primary CatBoost enters optimization. The
+decision audit reports the complete five-point gamma path, two outcome-free
+rulers, three interior coordinates, and every comparator in each named support. The
 nine fixed-cap policies remain a supporting exact-frontier diagnostic, not a
 closed family of promotion candidates. No out-of-time (OOT) outcome selects a
 learner, window, taxonomy, gamma, ruler, coordinate, policy, cap, or comparator.
@@ -48,8 +51,9 @@ specification paths, not independent replications or votes.
 | What is exact? | Appendix D | Score-ruler algebra, C2 feasibility, binary-outcome bounds, and basis-frontier envelopes |
 | Which empirical signs survive? | Appendix E | The endpoint sign changes by ruler/coordinate and no broad-support sign survives |
 | What does the simulation establish? | Appendix F | A coverage mechanism only; its portfolio component is degenerate |
-| Can the evidence be replayed? | Appendix G | Yes, from a verified outcome-free freeze and a separate outcome join |
+| Can the evidence be replayed? | Appendix G | Yes, from three hash-linked freeze/evaluation pairs and a full raw-data audit |
 | What may the paper claim? | Appendix H | An identification audit, not superiority, causality, or selected-set validity |
+| How does CRPTO differ from its closest methods? | Appendix I | By its frozen-score audit target, not by claiming each component as new |
 
 : Reader map for the Online Supplement. {#tbl-s-reader-map}
 
@@ -57,11 +61,13 @@ specification paths, not independent replications or votes.
 
 ## A.1 Single status-independent universe
 
-The source is the Lending Club 2007--2020Q3 public research snapshot. It
-contains 2,925,493 rows, including 2,060,077 loans with 36-month terms. The
-single active design retains 640,543 loans after deterministic schema, date,
-term, and origination-feature checks. Candidate membership never depends on
-the terminal status visible at the administrative snapshot.
+The source is the Lending Club 2007--2020Q3 public research snapshot. A
+chunked full-file audit reads all 2,925,493 rows and 142 columns; 2,925,492 are
+valid dated loans. The archive contains 2,060,077 36-month and 865,415 60-month
+contracts. The single active design retains all 640,543 loans eligible under
+deterministic schema, date, term, and origination-feature checks. It is an
+exhaustive design population, not a sample or row cap. Candidate membership
+never depends on the terminal status visible at the administrative snapshot.
 
 The decision unit is issue month. Every OOT month receives a fresh USD 1
 million budget, and a policy can allocate only to loans issued in that month.
@@ -85,6 +91,22 @@ administrative outcome snapshot is September 30, 2020. A charged-off residual
 label is treated as available six calendar months after `last_pymnt_d`; every
 included residual month retains at least 99% of terminal labels under this
 rule. The minimum monthly retention is 0.992956.
+
+The complete audit explains why the remaining archive is not exchangeable
+extra training data. Forty-eight variables have negligible early support and
+near-complete later support, so admitting them would change the temporal
+feature contract. Label availability by the cutoff is 59,910/162,570 (36.85%)
+for 2014, 28,878/283,173 (10.20%) for 2015, and 1,110/96,120 (1.15%) for
+2016Q1, with zero observed bads in the last group. A resolved-only fit would
+therefore select on duration. Sixty-month contracts define another horizon;
+using censored cohorts coherently would require a survival or competing-risk
+estimand rather than a larger binary sample.
+
+For primary OOT, requested and funded amount differ by only USD 18,000 across
+376,890 loans. The funded-to-requested ratio is 0.999996 and only about two
+loans are partially funded. The optimizer nevertheless names listed loan
+amount as its exposure contract rather than treating the two fields as
+interchangeable by assumption.
 
 ## A.2 Endpoint taxonomy and censoring
 
@@ -117,6 +139,12 @@ checks, and 26 objective-optimum basis diagnostics. Its dimensions are eight
 windows by 26 months by five gammas by three coordinates by two rulers. It
 loads no outcome column.
 
+The separate credit-control freeze contains five score vectors for all 640,543
+eligible rows, 160 residual recipes, 3,638,660 fit-audit rows, and 3,520
+outcome-free geometry cells. It reproduces the two active V4 score columns
+exactly and freezes monotonic CatBoost plus both WOE/IV scorecards before any
+primary OOT outcome join. No control enters a portfolio solve.
+
 Each evaluator verifies its freeze identity and every artifact descriptor
 before a keyed outcome join. Exact ID alignment is required; partial or
 duplicated joins fail. The resulting evidence therefore separates allocation
@@ -125,7 +153,7 @@ changing the frozen decision rule.
 
 # Appendix B: Prediction and Binary Conformal Geometry
 
-## B.1 Primary learner and independent control
+## B.1 Primary learner and four independent controls
 
 The primary score is a CatBoost classifier with seed 42, 29 numeric and nine
 categorical origination-time features. A Platt map fitted on 2011 raw margins
@@ -133,13 +161,98 @@ produces $p_i$. Five score strata, fixed from all status-independent 2011
 scores, form the canonical Mondrian taxonomy. One-, two-, and ten-stratum
 recipes are closed coverage diagnostics rather than a selection grid.
 
-A numeric logistic regression provides an independent coverage-only control.
-It uses median imputation, standard scaling, class balancing, and its own 2011
-Platt map and fixed taxonomy. It never enters the portfolio optimizer. This
-control asks whether the transport conclusion is specific to the primary
-learner; it is not a model-selection contest.
+A numeric logistic regression provides the first independent coverage-only
+control. It uses median imputation, standard scaling, class balancing, and its
+own 2011 Platt map and fixed taxonomy. Three further controls use the same
+temporal roles and all eligible rows:
 
-## B.2 Complete residual-window specification
+- **Monotonic CatBoost.** Positive constraints apply to interest rate, DTI,
+  loan-to-income and its square, installment burden, revolving utilization,
+  revolving-balance-to-income, public records, recent inquiries, delinquency
+  severity, and five adverse-history flags. Negative constraints apply to
+  annual and log income, FICO, credit age, and delinquency recency. The inherited
+  `recent_chargeoff` flag is constant in PD development and Platt calibration,
+  so its declared positive constraint is inert in fitting.
+- **Platform-signal WOE/IV.** Twenty-six fields include loan amount, interest,
+  installment, income and burden ratios, revolving and bureau measures, grade,
+  subgrade, home ownership, purpose, verification, interest bucket, and the
+  interest-bucket-by-grade interaction.
+- **Borrower-only WOE/IV.** Nineteen fields retain loan amount, income, DTI,
+  loan-to-income, revolving utilization and balances, FICO, credit age,
+  employment length, account counts, public records, inquiries, delinquency,
+  home ownership, purpose, and verification. Grade, subgrade, interest,
+  installment, pricing buckets, and their interaction are excluded.
+
+Each OptBinning process is fit on PD development only, with automatic
+monotonic trend, two to eight bins, and a 5% minimum bin share
+[@navaspalencia2020]. Each learner then receives its own 2011 Platt map and
+taxonomy. None of the four controls enters the portfolio optimizer or is chosen
+from OOT outcomes. They ask whether coverage transport is specific to model
+class, unconstrained shape, or platform pricing; they are not a model-selection
+contest.
+
+## B.2 Credit-control prediction, IV, and temporal shift
+
+All five scores use the same 376,890 primary candidates, of which 365,339 are
+resolved and 11,551 are unresolved. All 30 model-by-role calibration
+intercept/slope fits converge in 8--16 iterations. Primary OOT default prevalence
+is 0.157380, versus 0.106305 on the 2011 Platt block and 0.199287 among resolved
+extension loans.
+
+| Learner | OOT AUC | Brier | ECE10 | Cal.-in-large | Slope | Min lower | Max upper | Upper $<.90$ |
+|---|---:|---:|---:|---:|---:|---:|---:|---:|
+| CatBoost | 0.640848 | 0.130753 | 0.048323 | -0.048272 | 0.796469 | 0.838531 | 0.882167 | 8 |
+| Numeric logistic | 0.642079 | 0.129673 | 0.032257 | -0.030078 | 0.543220 | 0.845687 | 0.895654 | 8 |
+| Monotonic CatBoost | 0.652244 | 0.129457 | 0.042698 | -0.042415 | 0.836680 | 0.844050 | 0.885991 | 8 |
+| Platform-signal WOE scorecard | 0.633023 | 0.130362 | 0.037105 | -0.036692 | 0.918163 | 0.844199 | 0.894317 | 8 |
+| Borrower-only WOE scorecard | 0.612712 | 0.131063 | 0.032890 | -0.030939 | 0.708023 | 0.846849 | 0.896973 | 8 |
+
+: S2 five-model primary OOT prediction and coverage audit. Min lower and max upper form the across-window all-candidate coverage hull, not a confidence interval. {#tbl-s-credit-controls}
+
+Every calibration-in-the-large value is negative and every slope is below one,
+so all specifications underpredict later default on average and change
+calibration shape. Monotonic CatBoost has descriptively higher OOT AUC than the
+active score by 0.011396 and lower Brier by 0.001296. Platform WOE exceeds the
+borrower-only scorecard by 0.020311 AUC and 0.000701 Brier. These predeclared
+contrasts diagnose model and platform-signal dependence; because they use the
+audited OOT outcomes, they cannot promote a learner.
+
+All 45 OptBinning problems report `OPTIMAL`. The most informative platform
+fields are incumbent pricing and grade signals, whereas FICO and inquiries lead
+the borrower-only scorecard:
+
+| Scorecard | Feature | IV | Primary OOT feature PSI |
+|---|---|---:|---:|
+| Platform | int_rate_bucket__grade | 0.337569 | 0.962804 |
+| Platform | sub_grade | 0.319325 | 0.104275 |
+| Platform | grade | 0.299544 | 0.093703 |
+| Platform | int_rate | 0.278429 | 0.180056 |
+| Platform | int_rate_bucket | 0.244858 | 0.146043 |
+| Borrower only | fico_score | 0.213574 | 0.227297 |
+| Borrower only | inq_last_6mths | 0.170864 | 0.390443 |
+| Borrower only | purpose | 0.088878 | 0.187985 |
+| Borrower only | rev_utilization | 0.073903 | 0.086944 |
+| Borrower only | delinq_recency | 0.049288 | 0.130864 |
+
+: S3 leading development IV values and development-to-primary-OOT feature PSI. IV ranks the frozen development bins; PSI is descriptive shift, not a validity test. {#tbl-s-woe-iv-psi}
+
+| Score | Development-to-primary-OOT PSI |
+|---|---:|
+| CatBoost | 0.139757 |
+| Numeric logistic | 0.005168 |
+| Monotonic CatBoost | 0.093706 |
+| Platform-signal WOE | 0.148867 |
+| Borrower-only WOE | 0.072332 |
+
+: S4 score PSI under common development-decile bins. {#tbl-s-score-psi}
+
+The largest feature PSI is 0.962804 for the price-grade interaction, followed
+by verification status (0.608133), DTI (0.552263), and recent inquiries
+(0.390443). Yet numeric logistic has score PSI 0.005168 and still excludes 0.90
+coverage in all eight windows. PSI can reveal marginal shift, but neither low
+nor high PSI is a conformal transport certificate.
+
+## B.3 Complete residual-window specification
 
 For each learner, window, and fixed score stratum $g$, define residuals
 
@@ -175,13 +288,13 @@ empty, $\{0\}$, $\{1\}$, or $\{0,1\}$.
 | W7 | 2012-07--2012-12 | 28,411 | 0.900215 |
 | W8 | 2012-08--2013-01 | 30,129 | 0.900229 |
 
-: S2 complete six-month residual specification. Fit rows are the sums across the five fixed CatBoost strata. {#tbl-s-windows}
+: S5 complete six-month residual specification. Fit rows are the sums across the five fixed CatBoost strata. {#tbl-s-windows}
 
 All eight windows are reported. The windows overlap, and their growing sample
 sizes partly reflect platform growth. They are not independent temporal
 replications.
 
-## B.3 Candidate coverage with unresolved outcomes
+## B.4 Candidate coverage with unresolved outcomes
 
 Let $M_i=1\{Y_i\notin[\ell_i,u_i]\}$. Resolved coverage is computed on labeled
 candidates. For all-candidate coverage, every unresolved row is assigned first
@@ -198,13 +311,14 @@ to failure and then to success, producing sharp finite-archive bounds.
 | W7 | 0.868714 | [0.842089, 0.872737] | 0.876646 | [0.849778, 0.880427] | 0.664154 |
 | W8 | 0.865043 | [0.838531, 0.869179] | 0.872425 | [0.845687, 0.876335] | 0.500569 |
 
-: S3 primary coverage over 376,890 candidates, including 11,551 unresolved outcomes. {#tbl-s-coverage}
+: S6 primary coverage over 376,890 candidates, including 11,551 unresolved outcomes. {#tbl-s-coverage}
 
-Every upper endpoint is below 0.90 for both learners. This is a temporal
-transport result for the declared archive; it does not contradict split
-conformal validity under exchangeability.
+Every upper endpoint is below 0.90 for both detailed V4 learners. Section B.2
+shows the same eight-of-eight result for all five learner specifications. This
+is a temporal transport result for the declared archive; it does not contradict
+split conformal validity under exchangeability.
 
-## B.4 Binary phase transition
+## B.5 Binary phase transition
 
 For a constant score $0\le p<1/2$ and $Y\sim\mathrm{Bernoulli}(\pi)$, the
 population absolute residual is $p$ with probability $1-\pi$ and $1-p$ with
@@ -235,7 +349,7 @@ CatBoost stratum 2 displays the corresponding diagnostic pattern:
 | W7 | 5,929 | 0.101703 | 0.888435 | 0.984263 | 0.0000 | 0.9904 | 0.0096 | [0.8261, 0.8573] |
 | W8 | 6,238 | 0.097147 | 0.111801 | 0.207631 | 0.0026 | 0.9974 | 0.0000 | [0.8225, 0.8537] |
 
-: S4 CatBoost stratum-2 geometry. Set columns report candidate shares. {#tbl-s-phase}
+: S7 CatBoost stratum-2 geometry. Set columns report candidate shares. {#tbl-s-phase}
 
 The W7--W8 prevalence change crosses $\alpha=0.10$ and coincides with the
 quantile and width change. The narrower W8 interval does not repair transport;
@@ -347,7 +461,7 @@ The earlier fixed-cap grid supplies supporting comparator diagnostics:
 | P2 | 0.15 | 0.50 | P5 | 0.17 | 0.50 | P8 | 0.19 | 0.50 |
 | P3 | 0.15 | 0.75 | P6 | 0.17 | 0.75 | P9 | 0.19 | 0.75 |
 
-: S5 supporting fixed-cap grid. It is not a closed policy family and no policy is selected or promoted. {#tbl-s-policies}
+: S8 supporting fixed-cap grid. It is not a closed policy family and no policy is selected or promoted. {#tbl-s-policies}
 
 The score and its cap jointly define a feasible decision problem. The audit
 therefore declares four point-score comparison objects.
@@ -498,7 +612,7 @@ normalized-score ruler is a secondary scale-invariance stress test.
 | Normalized score | .50 | 15 | [152,030.99, 226,847.97] | [-243,217.56, -94,767.02] | [3.6160, 6.3717] | [2.5016, 5.0222] |
 | Normalized score | .75 | 15 | [28,263.40, 51,201.89] | [-132,157.57, -31,335.21] | [1.8273, 2.3697] | [0.7329, 1.6624] |
 
-: S6 complete finite-grid endpoint contrast. Hulls are minimum lower and maximum upper bounds across windows, not sampling intervals. {#tbl-s-two-ruler}
+: S9 complete finite-grid endpoint contrast. Hulls are minimum lower and maximum upper bounds across windows, not sampling intervals. {#tbl-s-two-ruler}
 
 Objective-matched .25 is one repeated allocation contrast: every window has
 the same four active months and eleven structural zeros, with allocations
@@ -534,7 +648,7 @@ crossing contains zero.
 | C2 | Default | 8 | 52 | 12 |
 | C2 | Miscoverage | 5 | 10 | 57 |
 
-: S7 named-comparator direction census. These descriptive counts are not votes because the comparators define different feasible sets. {#tbl-s-named}
+: S10 named-comparator direction census. These descriptive counts are not votes because the comparators define different feasible sets. {#tbl-s-named}
 
 C0's uniform lower-default direction follows the same-threshold nesting design,
 not a neutral economic comparison. C2 satisfies plug-in dominance but still
@@ -554,7 +668,7 @@ development-admissible support:
 | Terminal default | 0 | 72 | 0 | 72 |
 | Funded miscoverage | 0 | 33 | 39 | 72 |
 
-: S8 exact direction counts within development-admissible support. {#tbl-s-support}
+: S11 exact direction counts within development-admissible support. {#tbl-s-support}
 
 ![Direction of the exact development-admissible comparator envelope. A minus or plus denotes a sign-robust guardrail-minus-point envelope; zero denotes an envelope containing zero. Default contains zero in all 72 cells.](../reports/crpto/figures/crpto_ijds_v4_fig3_envelopes.png){#fig-s-envelopes width=96%}
 
@@ -625,7 +739,7 @@ score, recipe, policy, comparator, allocation, hypothesis, or stop rule.
 Phase 2 contains 1,408 coverage rows, 5,112 monthly evaluations, 360 aggregate
 evaluations, 221,040 paired sharp contrasts, 648 comparator envelopes, 19,200
 simulation repetitions, and 192 simulation cells. The evidence builder checks
-source hashes and cardinalities before producing six publication tables,
+source hashes and cardinalities before producing ten publication tables,
 three figures in PNG and PDF, and one active paper-facing manifest.
 
 ## G.2 Two-ruler stopped runs and retained evaluation
@@ -653,13 +767,39 @@ hardening change now preflights output paths before loading the archive for any
 future tag. Paper-facing wording is consequently "one artifact-producing
 evaluation," not a claim that the evaluator process was invoked exactly once.
 
-## G.3 Replay contract
+## G.3 Credit-control stops and exact recovery
+
+The credit-control protocol also preserves technical stops rather than hiding
+them. V1 fit the five declared learners and reached only Parquet serialization:
+the OptBinning aggregate `Totals` row mixed an empty WOE string with numeric WOE
+values. No freeze or OOT evaluation was written. V1b changed only the exported
+aggregate representation, verified a synthetic Parquet round trip, reproduced
+the two V4 score columns with maximum absolute difference zero, and froze all
+five scores before OOT outcomes.
+
+V2 completed the fixed coverage evaluation, but a BFGS diagnostic used a
+tolerance stricter than necessary and reported `success=false` in 17 of 30
+calibration intercept/slope fits despite finite stable estimates. The coverage
+results were preserved as a technical-stop root. V2b replaced only that
+diagnostic with unpenalized logistic calibration, fails on any convergence
+warning, and requires exact equivalence to the V2 coverage artifact. The
+resulting 3,520-row by 39-column frame has the same SHA-256, order, values, and
+dtypes; all 30 fits converge in 8--16 iterations. Noncalibration metrics are
+exactly equal, and maximum intercept and slope changes relative to the finite
+V2 estimates are $1.21\times10^{-8}$ and $8.26\times10^{-9}$.
+
+The active capsule retains V1b and V2b. The V2 pointer remains immutable
+provenance for the numerical stop but is not needed to reproduce a paper claim.
+Neither path executes a protected historical stage or authorizes model
+selection, scorecard superiority, or a portfolio result.
+
+## G.4 Replay contract
 
 The replay contract requires:
 
 1. an environment locked by `uv`;
-2. immutable, hash-described outcome-free and evaluated roots tracked by eight
-   DVC pointers across V4 and the two-ruler diagnostic;
+2. immutable, hash-described outcome-free and evaluated roots tracked by twelve
+   DVC pointers across V4, the two-ruler diagnostic, and credit controls;
 3. a separate freeze and evaluate command with no combined shortcut;
 4. exact ID alignment at the outcome join;
 5. byte-identical evidence builds;
@@ -672,7 +812,7 @@ The replay contract requires:
 Protected historical stages and their extraction manifest are not required to
 replay the active evidence and are not overwritten.
 
-## G.4 Anonymous-review boundary
+## G.5 Anonymous-review boundary
 
 Reviewer-facing files omit exact commits, tags, hashes, repository links, and
 remote coordinates because they are searchable author fingerprints. An
@@ -685,7 +825,9 @@ policy.
 
 | Evidence object | Permitted conclusion | Not established |
 |---|---|---|
-| Eight windows and two learners | Candidate coverage upper bounds are below 0.90 in this archive | Universal conformal invalidity or future performance |
+| Full raw-file audit | The 640,543 active rows exhaust the declared eligible population | That all 2.9 million rows share one horizon, schema, or estimand |
+| Eight windows and five learners | Candidate coverage upper bounds are below 0.90 in all 40 declared cells | Universal conformal invalidity, an OOT-selected winner, or future performance |
+| WOE/IV, monotonic, and PSI controls | The transport result is not unique to active CatBoost or platform-pricing features | Scorecard superiority, external validity, or PSI-based coverage certification |
 | Constant-score proposition and stratum-2 path | Binary residual geometry is prevalence-sensitive | Exact finite-sample explanation for varying-score strata |
 | Two rulers and three interior coordinates | Endpoint direction is not ruler- or coordinate-invariant on the declared grid | A continuous-frontier ordering or preferred gamma/ruler/coordinate |
 | C0 nesting and 1,080 C2 reconciliations | Plug-in objective dominance under their stated cap constructions | Realized payoff, default, or miscoverage dominance |
@@ -693,14 +835,20 @@ policy.
 | Sharp unresolved-outcome bounds | Finite-archive binary completion uncertainty is exposed | Sampling uncertainty or missing-at-random identification |
 | Coverage simulation | Prevalence and endpoint saturation explain possible coverage movements | An empirical portfolio mechanism |
 
-: S9 active claim boundary. {#tbl-s-claims}
+: S12 active claim boundary. {#tbl-s-claims}
 
 The study uses one discontinued consumer-credit platform and accepted 36-month
 loans only. It observes no counterfactual outcomes for rejected applicants.
 The terminal label compresses payment paths and competing events into one
 binary endpoint. Standardized payoff omits timing, recovery, fees, discounting,
-and capital costs. The temporal gap does not restore exchangeability. The
-logistic learner is a coverage control, not a second portfolio system.
+and capital costs. The temporal gap does not restore exchangeability. Numeric
+logistic, monotonic CatBoost, and both WOE/IV learners are coverage controls,
+not four additional portfolio systems.
+
+The raw archive also contains 60-month contracts, duration-censored cohorts,
+and 48 late-schema fields. Including them would change the target or temporal
+information set. The controls share one platform and their OOT differences
+cannot support promotion because the same outcomes define this audit.
 
 Candidate-level coverage is not selected-set coverage. C2 matches one funded
 point-score moment but neither equalizes feasible sets nor defines a deployable
@@ -719,8 +867,26 @@ inverse conformal risk-control, or decision-calibration guarantee.
 The active conclusion is deliberately narrow. Binary absolute-residual
 geometry can change discontinuously around the prevalence threshold; the
 declared candidate-level coverage does not transport to the OOT archive for
-either learner; and realized portfolio direction changes with the declared
+all five learner specifications; and realized portfolio direction changes with the declared
 ruler, coordinate, residual recipe, and comparator support. No selected gamma,
 ruler, coordinate, policy, causal effect, prospective guarantee, selected-set
 validity, Markov certificate, universal guardrail direction, or deployment
 recommendation is claimed.
+
+# Appendix I: Closest-Work Positioning
+
+CRPTO combines established ingredients but asks a different identification
+question. The matrix below records the boundary that is summarized in the main
+paper; it is positioning evidence, not an empirical result or novelty claim for
+credit scoring, conformal prediction, or linear programming separately.
+
+| Literature family | Established contribution | Active CRPTO boundary |
+|---|---|---|
+| Credit scoring and cost-aware calibration [@lessmann2015; @yang2025costaware; @das2023creditgraph] | Probability quality and richer predictive structure | Treats a Platt-scaled default score as an input; no AUC-leadership claim |
+| P2P and robust credit portfolios [@serrano2016profitscoring; @chi2019p2p; @babaei2020p2p] | Economic loan selection under risk and uncertainty | Adds binary-set geometry, outcome isolation, and comparator identification |
+| Conformal robust/contextual optimization [@johnstone2021; @patel2024; @hu2026crc] | Coverage-backed uncertainty sets in optimization | Audits a frozen binary-outcome score; no inherited selected-set validity |
+| Valid selection and decision-risk calibration [@hegazy2025valid_selection_conformal_sets; @bao2025croms; @yeh2025training; @zhou2026creme] | Procedures controlling model selection, operational loss, or robustness | Uses ruler sensitivity as a diagnostic; eleven development menus do not support those certificates |
+| Decision-focused learning [@donti2017; @elmachtoub2022; @mandi2024] | Training predictions against downstream loss | Preserves the predictor for governance and audits a post-hoc decision layer |
+| Baseline and ablation design | Holding the decision problem fixed while changing one ingredient | Shows that a shared numeric cap does not hold decision stringency fixed |
+
+: S13 closest-work boundary for the active CRPTO contribution. {#tbl-s-closest-work}

@@ -7,10 +7,12 @@ learner, window, gamma, ruler, coordinate, policy, cap, or comparator.
 ## Active Foundation
 
 - one integrated V4/two-ruler scientific contract and one paper-facing evidence manifest;
-- two verified outcome-free freezes and separate outcome evaluations;
-- eight DVC pointers for the data/model roots of all four phases;
-- complete eight-window, two-learner, five-gamma, two-ruler,
+- three verified outcome-free freezes and separate outcome evaluations;
+- twelve DVC pointers for the data/model roots of all six active phases;
+- complete eight-window, five-learner coverage and five-gamma, two-ruler,
   three-coordinate specification;
+- full raw-file population/schema/maturity audit and auditable monotonic,
+  WOE/IV, calibration, and PSI controls;
 - exact HiGHS basis frontier and sharp common-outcome bounds;
 - canonical QMD body and generated INFORMS TeX;
 - separate anonymous supplement;

@@ -8,9 +8,8 @@ to the editor-facing ScholarOne slot.
 
 Dear Editors,
 
-I submit "CRPTO: Binary Conformal Geometry and Comparator Identification in
-Portfolio Optimization" for consideration at the *INFORMS Journal on Data
-Science*.
+I submit "CRPTO: Auditing Binary Conformal Geometry and Portfolio Comparators"
+for consideration at the *INFORMS Journal on Data Science*.
 
 The paper examines a data-models-decisions failure mode: a predictive guarantee
 and a numerical risk cap need not retain their meaning after a score enters an
@@ -22,11 +21,12 @@ and realized comparisons use sharp common-outcome bounds.
 
 The predictive audit reports every eligible consecutive six-month residual
 window from January 2012 through January 2013. For 376,890 primary OOT
-candidates, including 11,551 unresolved outcomes, every CatBoost five-stratum
-coverage upper bound is below 0.90. An independently calibrated logistic
-control is closer but also fails in all eight windows; its maximum upper bound
-is 0.8957. The failure therefore survives both declared learners, although its
-magnitude is learner-dependent.
+candidates, including 11,551 unresolved outcomes, all 40 model-window coverage
+upper bounds are below 0.90. The five predeclared scores span CatBoost, numeric
+logistic, monotonic CatBoost, platform-signal WOE/IV, and borrower-only WOE/IV;
+the largest upper bound is 0.8970. The failure therefore survives materially
+different credit-risk specifications, although its magnitude is
+learner-dependent and no OOT model is promoted.
 
 The complete residual path exposes a discrete mechanism. In one CatBoost score
 stratum, fit prevalence moves from 0.1017 to 0.0971 between the seventh and
@@ -64,8 +64,8 @@ theory is not presented as proof for empirical varying-score strata, and the
 factorial simulation's nonbinding portfolio component is disclosed as a
 negative diagnostic rather than used as evidence.
 
-The review package has two verified outcome-free freezes, separate evaluations,
-eight immutable DVC pointers, a deterministic evidence builder, and claim-sync
+The review package has three verified outcome-free/evaluation pairs, twelve
+immutable DVC pointers, a deterministic evidence builder, and claim-sync
 tests spanning the manuscript, supplement, evidence manifest, and generated
 INFORMS TeX. At acceptance, I will release code, environment lock,
 manuscript sources, artifact metadata, DVC pointers, and raw-data acquisition

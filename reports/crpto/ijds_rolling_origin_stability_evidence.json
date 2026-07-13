@@ -1109,13 +1109,13 @@
     },
     "coverage_and_envelopes": {
       "path": "src/ijds_audit/evaluation.py",
-      "bytes": 17135,
-      "sha256": "68174eefeeca6c47487373bc07bb1e5d05ae44d90663bac28ae941348a9838a5"
+      "bytes": 17754,
+      "sha256": "3d43dbd7721c1f6af35920f16f14cffe6f51daa7b8a6c44a029779b19fd45c93"
     },
     "protocol_artifact_loading": {
       "path": "src/ijds_audit/protocol.py",
-      "bytes": 26416,
-      "sha256": "76ffc02dfb6fc0d1405aee3c71461d9f0fb2c88bca149f3c21d807f041ad5c64"
+      "bytes": 26641,
+      "sha256": "909ccd84bda0d02318dc0e4b3d6325699c18dc98febc1788d72dee516af1c08f"
     },
     "sharp_contrast_bounds": {
       "path": "src/evaluation/policy_contrast_bounds.py",

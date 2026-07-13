@@ -12,9 +12,10 @@ path.
   persisted before outcomes are joined.
 - **Reconciled evaluations:** source descriptors and hashes are verified before
   keyed outcome joins, sharp bounds, comparator envelopes, and simulation.
-- **Complete specification:** all eight residual windows, both learners, five
-  gammas, two rulers, three coordinates, and supporting fixed-cap policies are
-  reported without selecting a result.
+- **Complete specification:** all eight residual windows and five coverage
+  learners are reported; only the primary learner enters five gammas, two
+  rulers, three coordinates, and supporting fixed-cap policies. No result is
+  selected.
 
 The archive is a retrospective audit of previously inspected data. It is not a
 preregistration, prospective trial, causal study, or selected-set guarantee.

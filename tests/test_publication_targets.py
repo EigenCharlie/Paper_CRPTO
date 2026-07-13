@@ -62,6 +62,8 @@ def test_active_contract_is_small_complete_and_numerically_locked() -> None:
     assert active["run_tag"].endswith("2026-07-12-v2")
     assert active["two_ruler_outcome_free_run_tag"].endswith("2026-07-13-v1c")
     assert active["two_ruler_run_tag"].endswith("2026-07-13-v2")
+    assert active["credit_control_outcome_free_run_tag"].endswith("2026-07-13-v1b")
+    assert active["credit_control_run_tag"].endswith("2026-07-13-v2b")
     assert active["previously_inspected_retrospective_archive"] is True
     assert active["confirmatory"] is False
     assert active["prospective"] is False
@@ -74,9 +76,25 @@ def test_active_contract_is_small_complete_and_numerically_locked() -> None:
     assert headline["primary_resolved"] == 365339
     assert headline["primary_unresolved"] == 11551
     assert headline["residual_windows"] == 8
-    assert headline["learners"] == 2
+    assert headline["learners"] == 5
+    assert headline["v4_detailed_coverage_learners"] == 2
+    assert headline["portfolio_learners"] == 1
     assert headline["catboost_coverage_bounds"] == pytest.approx([0.838531, 0.882167])
     assert headline["logistic_coverage_bounds"] == pytest.approx([0.845687, 0.895654])
+    assert headline["monotonic_catboost_coverage_bounds"] == pytest.approx([0.844050, 0.885991])
+    assert headline["platform_woe_coverage_bounds"] == pytest.approx([0.844199, 0.894317])
+    assert headline["borrower_woe_coverage_bounds"] == pytest.approx([0.846849, 0.896973])
+    assert headline["all_five_all_eight_upper_below_nominal"] is True
+    assert headline["raw_archive"] == {
+        "rows": 2925493,
+        "valid_loans": 2925492,
+        "term36_rows": 2060077,
+        "term60_rows": 865415,
+        "active_design_rows": 640543,
+        "raw_columns": 142,
+        "eligible_raw_features": 28,
+        "late_schema_features": 48,
+    }
     assert headline["phase_transition"] == pytest.approx(
         {
             "stratum": 2,
@@ -107,10 +125,10 @@ def test_active_contract_is_small_complete_and_numerically_locked() -> None:
     assert headline["w8_development_envelopes_crossing_zero"] == 27
     assert headline["simulation_repetitions"] == 19200
     assert headline["universal_policy_direction_allowed"] is False
-    assert len(active["required_artifacts"]) == 13
+    assert len(active["required_artifacts"]) == 17
     for artifact in active["required_artifacts"]:
         assert Path(artifact).is_file(), artifact
-    assert len(active["dvc_pointers"]) == 8
+    assert len(active["dvc_pointers"]) == 12
     for pointer in active["dvc_pointers"]:
         assert Path(pointer).is_file(), pointer
 

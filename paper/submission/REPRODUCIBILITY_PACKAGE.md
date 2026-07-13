@@ -16,10 +16,10 @@ at submission and data/code plus a reproducibility workflow at acceptance.
 | Component | Contents | Purpose |
 |---|---|---|
 | Environment | `pyproject.toml`, `uv.lock`, `justfile` | Recreate tooling |
-| Protocol | V4 and two-ruler configs, protocols, recovery/errata, and claim registry | Fix windows, rulers, coordinates, comparators, outcomes, and stop rules |
-| Method | `src/ijds_audit`, V4/two-ruler runners, and evidence builder | Reproduce the active study |
-| Active runs | eight DVC pointers | Recover both outcome-free and evaluated roots |
-| Evidence | one manifest, six tables, and three figures in PNG/PDF | Reproduce paper-facing results |
+| Protocol | V4, two-ruler, raw-data, and credit-control configs, protocols, recovery/errata, and claim registry | Fix population, windows, learners, rulers, coordinates, comparators, outcomes, and stop rules |
+| Method | `src/ijds_audit`, V4/two-ruler/raw/credit runners, and evidence builder | Reproduce the active study |
+| Active runs | twelve DVC pointers | Recover all three outcome-free and evaluated roots |
+| Evidence | one manifest, ten tables, and three figures in PNG/PDF | Reproduce paper-facing results |
 | Manuscript | canonical QMD, generated INFORMS TeX, supplement, bibliography | Reproduce PDFs |
 | Gates | scientific tests, claim sync, lint, typing, anonymity, visual QA | Detect drift |
 
@@ -39,6 +39,10 @@ uv run dvc pull data/processed/experiments/ijds_audit/ijds-normalized-objective-
 uv run dvc pull models/experiments/ijds_audit/ijds-normalized-objective-frontier-2026-07-13-v1c.dvc
 uv run dvc pull data/processed/experiments/ijds_audit/ijds-normalized-objective-frontier-2026-07-13-v2.dvc
 uv run dvc pull models/experiments/ijds_audit/ijds-normalized-objective-frontier-2026-07-13-v2.dvc
+uv run dvc pull data/processed/experiments/ijds_audit/ijds-credit-risk-controls-2026-07-13-v1b.dvc
+uv run dvc pull models/experiments/ijds_audit/ijds-credit-risk-controls-2026-07-13-v1b.dvc
+uv run dvc pull data/processed/experiments/ijds_audit/ijds-credit-risk-controls-2026-07-13-v2b.dvc
+uv run dvc pull models/experiments/ijds_audit/ijds-credit-risk-controls-2026-07-13-v2b.dvc
 just ijds-active-check
 just paper-submission
 just paper-submission-official
@@ -62,7 +66,7 @@ rerun.
 
 ## Full Replay Boundary
 
-Both outcome-free archives are immutable. Their evaluators verify and import
+All three outcome-free archives are immutable. Their evaluators verify and import
 them before outcomes. A new full replay may run only with a new run tag and
 fresh paths; it must not overwrite any phase or invoke protected DVC stages.
 Its results cannot silently replace the paper contract.
@@ -83,7 +87,7 @@ citations, references, floats, and pagination.
 
 ## Acceptance QA
 
-1. Reproduce from a fresh clone and the eight DVC pointers.
+1. Reproduce from a fresh clone and the twelve DVC pointers.
 2. Confirm evidence and QMD-to-TeX builders are byte-idempotent.
 3. Run the full gate and protected champion validation without reproducing its stages.
 4. Compile and visually inspect body, supplement, and official PDF.

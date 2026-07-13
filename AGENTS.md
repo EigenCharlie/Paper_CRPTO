@@ -16,9 +16,13 @@ order before changing scientific code or paper claims:
    - retained outcome-free numerical lineage.
 7. [`docs/research/ijds_normalized_objective_frontier_v2_paper_facing_erratum_2026-07-13.md`](docs/research/ijds_normalized_objective_frontier_v2_paper_facing_erratum_2026-07-13.md)
    - finite-grid and repeated-allocation interpretation boundary.
-8. [`reports/crpto/ijds_binary_geometry_frontier_v4_evidence.json`](reports/crpto/ijds_binary_geometry_frontier_v4_evidence.json)
+8. [`docs/research/ijds_raw_data_contract_results_2026-07-13.md`](docs/research/ijds_raw_data_contract_results_2026-07-13.md)
+   - full-archive population, maturity, schema, and funding audit.
+9. [`docs/research/ijds_credit_risk_controls_v2b_results_2026-07-13.md`](docs/research/ijds_credit_risk_controls_v2b_results_2026-07-13.md)
+   - frozen five-model coverage, WOE/IV, monotonicity, calibration, and PSI evidence.
+10. [`reports/crpto/ijds_binary_geometry_frontier_v4_evidence.json`](reports/crpto/ijds_binary_geometry_frontier_v4_evidence.json)
    - the only active paper-facing evidence manifest.
-9. [`.codex/skills/crpto/SKILL.md`](.codex/skills/crpto/SKILL.md) - concise
+11. [`.codex/skills/crpto/SKILL.md`](.codex/skills/crpto/SKILL.md) - concise
    execution and writing guidance.
 
 Minimum rules:
@@ -33,6 +37,8 @@ Minimum rules:
 - Use `uv run` and Windows-first commands. Never commit secrets.
 - No selected gamma, ruler, coordinate, policy, winner, universal guardrail
   direction, causal effect, or selected-set conformal claim is active.
+- The five learner specifications are coverage controls; only the primary
+  CatBoost enters portfolio optimization and no OOT model winner is active.
 - Historical V1--V3, selected-policy, compact-v7, pool93, and A1--A40 materials are
   provenance, not evidence for the active manuscript.
 - Edit `paper/CRPTO_ijds.qmd`; generate the official TeX with

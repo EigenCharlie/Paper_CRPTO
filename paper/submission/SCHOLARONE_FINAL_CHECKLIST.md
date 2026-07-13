@@ -16,11 +16,11 @@ check rather than permission to upload.
 
 ## Scientific Reconciliation
 
-- Title is "CRPTO: Binary Conformal Geometry and Comparator Identification in
-  Portfolio Optimization" on every surface.
+- Title is "CRPTO: Auditing Binary Conformal Geometry and Portfolio
+  Comparators" on every surface.
 - The design universe has `640,543` status-independent loans; primary OOT has
   `376,890` candidates, `365,339` resolved and `11,551` unresolved.
-- Both learner taxonomies use 2011 scores; all eight residual windows use
+- All five learner taxonomies use 2011 scores; all eight residual windows use
   availability-safe labels and none is selected by OOT results.
 - The complete five-gamma path, two rulers, and three interior coordinates are
   reported; no selected learner, taxonomy, gamma, ruler, coordinate, policy,
@@ -32,8 +32,8 @@ check rather than permission to upload.
 - Objective-matched `.50` is unfavorable; `.75` is mostly unidentified for
   payoff/default. Normalized-score tracks are adverse but are not called
   opportunity matched.
-- Every CatBoost and logistic all-candidate coverage upper bound is below 0.90;
-  the largest logistic upper bound is `0.895654`.
+- All `40/40` model-window all-candidate coverage upper bounds are below 0.90;
+  the largest upper bound is borrower-only WOE/IV at `0.896973`.
 - The stratum-2 phase diagnostic is prevalence `0.101703 -> 0.097147`, residual
   quantile `0.888435 -> 0.111801`, and width `0.984263 -> 0.207631`.
 - C2 matches funded point score to residual below `8.33e-17` in all `1,080`

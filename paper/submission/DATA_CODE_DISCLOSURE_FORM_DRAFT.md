@@ -14,8 +14,7 @@ Recheck both links during submission week.
 
 **Title of manuscript**
 
-CRPTO: Binary Conformal Geometry and Comparator Identification in Portfolio
-Optimization
+CRPTO: Auditing Binary Conformal Geometry and Portfolio Comparators
 
 **Policy acknowledgement**
 

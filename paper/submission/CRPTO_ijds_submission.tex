@@ -59,8 +59,8 @@
 \RUNAUTHOR{Anonymous}
 \RUNTITLE{Temporal Transport and Comparator Choice}
 
-\TITLE{CRPTO: Binary Conformal Geometry and Comparator Identification in
-Portfolio Optimization}
+\TITLE{CRPTO: Auditing Binary Conformal Geometry and Portfolio
+Comparators}
 
 \ARTICLEAUTHORS{%
   \AUTHOR{}
@@ -69,31 +69,28 @@ Portfolio Optimization}
 
 \ABSTRACT{%
 A predictive guarantee need not retain its meaning when its output
-becomes a constraint coefficient. We study this problem with Conformal
-Risk-Aware Predict-Then-Optimize (CRPTO), which combines a Platt-scaled
-default score, a 90\%-target absolute-residual interval for a binary
-outcome, and a monthly credit-allocation linear program. The audit fixes
-score strata in 2011, reports eight consecutive six-month residual
-windows, retains unresolved loans in every candidate menu, and freezes
-allocations before outcomes. For 376,890 primary out-of-time candidates,
-every CatBoost five-stratum coverage upper bound is below 0.90
-(0.8692--0.8822). An independently calibrated logistic control also
-fails in all eight windows (maximum 0.8957). In one score stratum, fit
-prevalence crosses alpha = 0.10 from 0.1017 to 0.0971; its residual
-quantile drops from 0.8884 to 0.1118 and mean interval width from 0.9843
-to 0.2076. We formalize this binary phase transition. For decisions, we
-compare the point-score and full-upper-score endpoints under two
-outcome-free rulers at three predeclared interior coordinates. An
-objective-matched ruler yields a small favorable contrast at .25, an
-unfavorable contrast at .50, and mostly unidentified payoff and default
-at .75. A normalized-score ruler is uniformly unfavorable in realized
-outcomes but does not equalize plug-in opportunity cost. An exact
-point-cap basis frontier independently shows that all 216 broad-stress
-envelopes cross zero. Thus no gamma, ruler, coordinate, or policy is
-selected. CRPTO's contribution is an identification audit: binary
-conformal geometry is prevalence-sensitive, coverage fails to transport,
-and the sign of a portfolio contrast depends on how decision stringency
-is defined.%
+becomes a constraint coefficient. We audit this handoff in Conformal
+Risk-Aware Predict-Then-Optimize (CRPTO): a Platt-scaled default score,
+90\%-target binary absolute-residual intervals, and a monthly
+credit-allocation linear program. The design fixes 2011 score strata,
+reports all eight consecutive six-month residual windows, retains
+unresolved loans in every candidate menu, and freezes allocations before
+outcomes. For 376,890 primary out-of-time candidates, all 40
+model-window all-candidate coverage upper bounds are below 0.90 across
+CatBoost, numeric logistic, monotonic CatBoost, and two WOE/IV
+scorecards (largest 0.8970). In one stratum, fit prevalence crosses
+\(\alpha=0.10\); the residual quantile falls from 0.8884 to 0.1118 and
+mean interval width from 0.9843 to 0.2076. We formalize this binary
+phase transition. For decisions, we compare point- and full-upper-score
+endpoints under two outcome-free rulers at three predeclared
+coordinates. Objective matching is favorable at .25, unfavorable at .50,
+and mostly unidentified at .75; normalized-score matching is uniformly
+unfavorable but does not equalize plug-in opportunity cost. An exact
+point-cap frontier independently places zero in all 216 broad-stress
+envelopes. No model, window, gamma, ruler, coordinate, or policy is
+selected. CRPTO contributes an identification audit: binary conformal
+geometry is prevalence-sensitive, coverage fails to transport, and
+portfolio direction depends on how decision stringency is defined.%
 }
 
 \KEYWORDS{conformal prediction; predict-then-optimize; comparator
@@ -131,11 +128,14 @@ and Platt calibrator produce point score \(p_i\). Score strata are fixed
 from all 2011 predictions, independently of outcomes. We then report the
 complete set of eight consecutive six-month residual windows beginning
 in 2012 and ending no later than January 2013. No result selects,
-weights, or removes a window. An independently fitted numeric logistic
-model, its own Platt map, and its own 2011 taxonomy provide a
-coverage-only learner control. The resulting clipped residual interval
-\([\ell_i,u_i]\) predicts the observed binary outcome. It is neither a
-confidence interval for latent individual PD nor the convex hull of its
+weights, or removes a window. Four coverage-only controls span an
+independently fitted numeric logistic model, domain-constrained
+monotonic CatBoost, a platform-signal WOE/IV scorecard, and a
+borrower-only WOE/IV scorecard. Each has its own Platt map and 2011
+taxonomy; none is selected from OOT outcomes or enters portfolio
+optimization. The resulting clipped residual interval \([\ell_i,u_i]\)
+predicts the observed binary outcome. It is neither a confidence
+interval for latent individual PD nor the convex hull of its
 intersection with \(\{0,1\}\). Its upper endpoint enters a guardrail
 score
 
@@ -165,19 +165,19 @@ exact HiGHS basis frontier avoids fixed-grid interpolation over the
 declared point-cap support.
 
 The empirical message is an identification result rather than a winner.
-All eight CatBoost windows and all eight logistic controls have
-all-candidate OOT coverage upper bounds below 0.90. One CatBoost stratum
-crosses the nominal miscoverage prevalence threshold between the seventh
-and eighth windows, causing its conformal quantile and interval geometry
-to change abruptly. In the portfolio audit, the endpoint sign changes
-with ruler and coordinate. At objective-matched coordinate .25, the same
-four-month allocation contrast has USD 5,603.66 higher standardized
-payoff and 0.0068 percentage points lower default; at .50 all eight
-window bounds are unfavorable; at .75 payoff and default cross zero in
-seven windows. The normalized ruler is unfavorable at all three
-coordinates but also gives the full-upper score USD 28,263--557,294 more
-optimized plug-in objective. Independently, every broad-stress exact-cap
-payoff, default, and miscoverage envelope crosses zero.
+All 40 model-by-window all-candidate OOT coverage upper bounds are below
+0.90. One CatBoost stratum crosses the nominal miscoverage prevalence
+threshold between the seventh and eighth windows, causing its conformal
+quantile and interval geometry to change abruptly. In the portfolio
+audit, the endpoint sign changes with ruler and coordinate. At
+objective-matched coordinate .25, the same four-month allocation
+contrast has USD 5,603.66 higher standardized payoff and 0.0068
+percentage points lower default; at .50 all eight window bounds are
+unfavorable; at .75 payoff and default cross zero in seven windows. The
+normalized ruler is unfavorable at all three coordinates but also gives
+the full-upper score USD 28,263--557,294 more optimized plug-in
+objective. Independently, every broad-stress exact-cap payoff, default,
+and miscoverage envelope crosses zero.
 
 The paper makes four contributions.
 
@@ -194,15 +194,15 @@ The paper makes four contributions.
   basis frontier separates this finite-grid diagnosis from support-wide
   identification.
 \item
-  It provides an outcome-observability-safe monthly protocol with
-  independent learner controls, fixed taxonomies, status-independent
+  It provides an outcome-observability-safe monthly protocol with four
+  independent credit-risk controls, fixed taxonomies, status-independent
   menus, sharp unresolved-outcome bounds, and allocations persisted
   before outcomes.
 \item
   It documents a complete-specification negative result: coverage
-  transport fails for both learners, while no realized portfolio
-  direction survives the declared rulers, coordinates, and comparator
-  supports.
+  transport fails across five model specifications, while no realized
+  portfolio direction survives the declared rulers, coordinates, and
+  comparator supports.
 \end{enumerate}
 
 This is a code-locked retrospective audit of a previously inspected
@@ -295,6 +295,14 @@ shape the investment decision
 uncertainty-aware profit models reinforce the need to evaluate the
 economic target directly
 \citep{xu2024profit_risk_credit, xu2025profit_uncertainty_credit}.
+Credit-risk auditability also motivates transparent scorecards and
+economically signed constraints alongside flexible learners. WOE/IV
+binning provides a supervised, inspectable representation, while
+mathematical-programming binning can enforce bin size and monotonic
+structure \citep{navaspalencia2020}. We use these devices as model-class
+controls: they test whether the transport result depends on CatBoost,
+incumbent grade/pricing signals, or unconstrained nonlinear shape. They
+are not a scorecard-superiority claim.
 
 Maturity is equally central. Ignoring random censoring can bias
 empirical risk \citep{ausset2022censoring}. In online lending, default
@@ -332,59 +340,6 @@ additions are a maturity-safe credit protocol, complete residual-window
 reporting, an exact comparator frontier, coherent economic comparison,
 and sharp treatment of unresolved outcomes.
 
-\begin{longtable}[]{@{}
-  >{\raggedright\arraybackslash}p{(\linewidth - 4\tabcolsep) * \real{0.3333}}
-  >{\raggedright\arraybackslash}p{(\linewidth - 4\tabcolsep) * \real{0.3333}}
-  >{\raggedright\arraybackslash}p{(\linewidth - 4\tabcolsep) * \real{0.3333}}@{}}
-\caption{Closest-work boundary for the active CRPTO
-contribution.}\label{tbl-closest-work}\tabularnewline
-\toprule\noalign{}
-\begin{minipage}[b]{\linewidth}\raggedright
-Literature family
-\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
-Established contribution
-\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
-Active CRPTO boundary
-\end{minipage} \\
-\midrule\noalign{}
-\endfirsthead
-\toprule\noalign{}
-\begin{minipage}[b]{\linewidth}\raggedright
-Literature family
-\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
-Established contribution
-\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
-Active CRPTO boundary
-\end{minipage} \\
-\midrule\noalign{}
-\endhead
-\bottomrule\noalign{}
-\endlastfoot
-Credit scoring and cost-aware calibration
-\citep{lessmann2015, yang2025costaware, das2023creditgraph} &
-Probability quality and richer predictive structure & Treats a
-Platt-scaled default score as an input; no AUC-leadership claim \\
-P2P and robust credit portfolios
-\citep{serrano2016profitscoring, chi2019p2p, babaei2020p2p} & Economic
-loan selection under risk and uncertainty & Adds binary-set geometry,
-outcome isolation, and comparator identification \\
-Conformal robust/contextual optimization
-\citep{johnstone2021, patel2024, hu2026crc} & Coverage-backed
-uncertainty sets in optimization & Audits a frozen binary-outcome score;
-no inherited selected-set validity \\
-Valid selection and decision-risk calibration
-\citep{hegazy2025valid_selection_conformal_sets, bao2025croms, yeh2025training, zhou2026creme}
-& Procedures that control model selection, operational loss, or
-robustness & Uses ruler sensitivity as a diagnostic; eleven development
-menus do not support those certificates \\
-Decision-focused learning \citep{donti2017, elmachtoub2022, mandi2024} &
-Training predictions against downstream loss & Preserves the predictor
-for governance and audits a post-hoc decision layer \\
-Baseline and ablation design & Holding the decision problem fixed while
-changing one ingredient & Shows that a shared numeric cap does not hold
-decision stringency fixed \\
-\end{longtable}
-
 Fernandez-Loria and Provost motivate the distinction between an
 intermediate estimate and the action it induces, Yang and Bi make
 downstream cost central to calibration, Das et al.~establish the
@@ -392,7 +347,9 @@ credit-modeling precedent, and Wiberg et al.~frame the AI--OR interface.
 CRPTO's research object is therefore the joint predictive-and-decision
 system: the discrete geometry of the interval, the allocation it
 induces, and the comparator support required to interpret that
-allocation.
+allocation. Online Supplement Table S13 preserves the detailed
+closest-work matrix while keeping the manuscript focused on the active
+estimands.
 
 \section{Data and Locked Evaluation Design}\label{sec-data}
 
@@ -427,13 +384,27 @@ designed to measure.
 \subsection{Status-independent loan
 universe}\label{status-independent-loan-universe}
 
-The source is the Lending Club 2007--2020Q3 public research snapshot.
-The raw file contains 2,925,493 rows; 2,060,077 have a 36-month
-contractual term. The single V4 design retains 640,543 rows. Its
+The source is the Lending Club 2007--2020Q3 public research snapshot. A
+full raw-file audit scans 2,925,493 rows, of which 2,925,492 are valid
+dated loans, across all 142 columns. There are 2,060,077 36-month and
+865,415 60-month contracts. The single V4 design retains 640,543 rows:
+every loan eligible under the declared 36-month horizon, dates, schema,
+and observability rules, not a sample or computational row cap. Its
 evaluation panel contains 465,117 loans: 376,890 primary candidates and
 88,227 extension candidates. Candidate membership depends on issue
 month, term, and fields observable at origination. It never depends on
 whether the snapshot status later became resolved.
+
+Using more raw rows would not merely increase sample size. Sixty-month
+loans have a different outcome horizon; 48 fields have negligible early
+support but near-complete later coverage; and the intervening cohorts
+are heavily duration-censored at the March 2016 information cutoff.
+Available labels are 59,910/162,570 for 2014, 28,878/283,173 for 2015,
+and 1,110/96,120 for 2016Q1, with no observed bads in the last group.
+Training a terminal-default classifier on those resolved subsets would
+condition on maturity. A survival estimand could use them, but it would
+change the target, theory, and paper rather than make this binary
+protocol more complete.
 
 Status strings containing \texttt{Charged\ Off} are positive and strings
 containing \texttt{Fully\ Paid} are negative. Exact \texttt{Default} and
@@ -442,6 +413,12 @@ not establish the protocol's terminal charged-off label. This is a
 terminal snapshot classification outcome, not a lifetime hazard or
 causal response. Unresolved loans remain candidates and enter sharp
 bounds after allocations are frozen.
+
+The optimizer uses listed loan amount as available exposure. A full
+primary OOT reconciliation finds only USD 18,000 of
+requested-minus-funded difference over 376,890 loans, a funded ratio of
+0.999996. The distinction is empirically immaterial here while remaining
+explicit in the estimand.
 
 The chronology has shared PD and probability-calibration blocks, a
 13-month residual pool, one common outcome-free development block, and
@@ -600,8 +577,8 @@ interior coordinates are finite diagnostics, not universal support \\
 
 \section{Method}\label{sec-method}
 
-\subsection{Platt-scaled default
-score}\label{platt-scaled-default-score}
+\subsection{Platt-scaled default score and credit-risk
+controls}\label{platt-scaled-default-score-and-credit-risk-controls}
 
 A CatBoost classifier uses 29 numeric and 9 categorical origination-time
 features. Hyperparameters are fixed in the executable protocol: 500
@@ -612,14 +589,38 @@ fitted on the 2011 raw margins, separate from both model training and
 conformal fitting.
 
 The prediction model is deliberately not tuned against downstream
-outcomes. Canonical seed 42 is inherited from the locked design. On the
-Platt block it has AUC 0.676327, Brier score 0.090206, and ten-bin ECE
-0.003273. An independent numeric-feature logistic regression, followed
-by its own 2011 Platt map and fixed taxonomy, is a coverage-only
-negative control. Its Platt-block AUC is 0.656880, Brier score 0.091000,
-and ECE 0.000876. It never enters portfolio optimization or chooses the
-primary learner. These diagnostics characterize the transport problem;
-they are not a predictive leaderboard.
+outcomes. Canonical seed 42 is inherited from the locked design. Four
+predeclared coverage-only specifications alter model class or
+credit-risk information:
+
+\begin{enumerate}
+\def\labelenumi{\arabic{enumi}.}
+\tightlist
+\item
+  numeric-feature logistic regression;
+\item
+  CatBoost with 20 domain-signed monotonic constraints, such as
+  increasing risk in interest rate, debt burden, inquiries, and
+  adverse-history flags and decreasing risk in income, FICO, and credit
+  age;
+\item
+  a 26-field OptBinning WOE/IV logistic scorecard including borrower,
+  contract, grade, subgrade, interest, and derived pricing signals; and
+\item
+  a 19-field borrower-only WOE/IV scorecard excluding grade, subgrade,
+  interest, installment, and derived platform-pricing signals.
+\end{enumerate}
+
+Each WOE process is fit only on PD development, uses two to eight bins,
+a 5\% minimum bin share, and automatic monotonic trend
+\citep{navaspalencia2020}. Every learner receives its own 2011 Platt map
+and fixed score taxonomy. On the Platt block, AUCs in primary/control
+order are 0.676327, 0.656880, 0.678091, 0.660533, and 0.662401; Brier
+scores range from 0.090054 to 0.091000. All five are frozen before the
+primary OOT outcome join and use every eligible row. The four controls
+never enter portfolio optimization, and OOT outcomes select neither
+model nor feature. These diagnostics test specification dependence; they
+are not a predictive leaderboard or a claim that WOE/IV is novel.
 
 \subsection{Exact binary-outcome Mondrian
 intervals}\label{exact-binary-outcome-mondrian-intervals}
@@ -652,8 +653,8 @@ The interval predicts the observed binary outcome. It is not a
 confidence interval for latent individual PD. No holdout-learned
 widening, floor, taxonomy adaptation, or post-cutoff label enters any
 recipe. Taxonomies with 1, 2, and 10 groups are closed coverage
-diagnostics. The logistic control repeats this construction with its own
-scores and edges.
+diagnostics. Each of the four controls repeats this construction with
+its own scores and edges.
 
 For binary \(Y\), miscoverage has the useful identity
 
@@ -963,8 +964,9 @@ all 11,551 unresolved candidates, its sharp coverage bounds range from
 calibrated logistic control is closer to nominal: resolved coverage
 ranges from 0.8724 to 0.8924 and the largest upper bound is 0.8957.
 Nevertheless, all eight logistic upper bounds also remain below 0.90.
-The failure is therefore not unique to CatBoost, while its magnitude is
-learner-dependent.
+The original V4 result is therefore not unique to CatBoost, while its
+magnitude is learner-dependent. Four additional credit-risk
+specifications test that conclusion more broadly below.
 
 \begin{longtable}[]{@{}
   >{\raggedright\arraybackslash}p{(\linewidth - 6\tabcolsep) * \real{0.2000}}
@@ -1019,10 +1021,51 @@ W8 & {[}0.8385, 0.8692{]} & {[}0.8457, 0.8763{]} & 0.5006 \\
 }
 
 \caption{\label{fig-coverage}Resolved coverage (markers) and sharp
-all-candidate bounds (error bars) for both learners. The dashed line is
-nominal 90\% coverage.}
+all-candidate bounds (error bars) for the primary CatBoost and
+numeric-logistic V4 learners. The dashed line is nominal 90\% coverage.}
 
 \end{figure}%
+
+All five frozen specifications exclude nominal coverage in all eight
+windows, including the monotonic learner and the borrower-only
+scorecard. The latter has the largest across-window upper endpoint,
+0.8970, so even assigning every unresolved candidate to coverage does
+not reach 0.90.
+
+\begin{longtable}[]{@{}lrrrr@{}}
+\caption{Five-model primary OOT robustness. \(U_{\max}\) is the largest
+all-candidate coverage upper bound across eight windows. Predictive
+metrics use 365,339 resolved outcomes; coverage retains all 376,890
+candidates. Full hulls are in Online Supplement Table S2. No OOT metric
+selects a model.}\label{tbl-credit-controls}\tabularnewline
+\toprule\noalign{}
+Score & OOT AUC & Brier & Slope & \(U_{\max}\) \\
+\midrule\noalign{}
+\endfirsthead
+\toprule\noalign{}
+Score & OOT AUC & Brier & Slope & \(U_{\max}\) \\
+\midrule\noalign{}
+\endhead
+\bottomrule\noalign{}
+\endlastfoot
+CatBoost & 0.6408 & 0.1308 & 0.7965 & 0.8822 \\
+Logistic & 0.6421 & 0.1297 & 0.5432 & 0.8957 \\
+Monotone CB & 0.6522 & 0.1295 & 0.8367 & 0.8860 \\
+Platform WOE & 0.6330 & 0.1304 & 0.9182 & 0.8943 \\
+Borrower WOE & 0.6127 & 0.1311 & 0.7080 & 0.8970 \\
+\end{longtable}
+
+All five scores underpredict later default on average:
+calibration-in-the-large ranges from -0.0483 to -0.0301, and every
+calibration slope is below one. The monotonic CatBoost AUC is
+descriptively 0.0114 above the active score, but this OOT difference
+cannot promote it. All 45 OptBinning problems reach \texttt{OPTIMAL}.
+Platform grade/pricing signals dominate its IV ranking, led by the
+price-grade interaction (0.3376), whereas FICO (0.2136) and recent
+inquiries (0.1709) lead the borrower-only scorecard. Development-to-OOT
+score PSI ranges from 0.0052 for numeric logistic to 0.1489 for platform
+WOE. The logistic model still fails coverage in every window, so
+marginal score PSI alone cannot explain or certify transport.
 
 This is a transport result for the declared archive and multi-year gap,
 not a claim that conformal prediction fails under exchangeability. It
@@ -1065,63 +1108,50 @@ narrower interval can simply expose more rare defaults as misses.
 coordinate}\label{endpoint-direction-changes-with-ruler-and-coordinate}
 
 The two-ruler freeze contains 6,240 portfolios, and the evaluator
-reports all 720 monthly and 48 complete-window endpoint contrasts. Table
-Table~\ref{tbl-two-ruler} reports \(\gamma=1\) minus \(\gamma=0\). Each
-row is one ruler-coordinate track over the same fifteen OOT menus. The
-eight windows are overlapping residual specifications, so the table is a
+reports all 720 monthly and 48 complete-window endpoint contrasts.
+Table~\ref{tbl-two-ruler} reports \(\gamma=1\) minus \(\gamma=0\);
+\emph{favorable} means higher payoff and lower default/miscoverage, and
+\emph{adverse} reverses all three signs. Each row is one
+ruler-coordinate track over the same fifteen OOT menus. The eight
+windows are overlapping residual specifications, so the table is a
 six-track census rather than 48 replications or a vote.
 
 \begin{longtable}[]{@{}
-  >{\raggedright\arraybackslash}p{(\linewidth - 8\tabcolsep) * \real{0.1667}}
-  >{\raggedleft\arraybackslash}p{(\linewidth - 8\tabcolsep) * \real{0.2222}}
-  >{\raggedleft\arraybackslash}p{(\linewidth - 8\tabcolsep) * \real{0.2222}}
-  >{\raggedleft\arraybackslash}p{(\linewidth - 8\tabcolsep) * \real{0.2222}}
-  >{\raggedright\arraybackslash}p{(\linewidth - 8\tabcolsep) * \real{0.1667}}@{}}
-\caption{Six predeclared endpoint-contrast tracks. Full sharp bound
-hulls are in Online Supplement Table
-S6.}\label{tbl-two-ruler}\tabularnewline
+  >{\raggedright\arraybackslash}p{(\linewidth - 6\tabcolsep) * \real{0.2500}}
+  >{\raggedright\arraybackslash}p{(\linewidth - 6\tabcolsep) * \real{0.2500}}
+  >{\raggedright\arraybackslash}p{(\linewidth - 6\tabcolsep) * \real{0.2500}}
+  >{\raggedright\arraybackslash}p{(\linewidth - 6\tabcolsep) * \real{0.2500}}@{}}
+\caption{Six predeclared endpoint tracks. Full sharp hulls are in Online
+Supplement Table S9.}\label{tbl-two-ruler}\tabularnewline
 \toprule\noalign{}
 \begin{minipage}[b]{\linewidth}\raggedright
 Ruler
-\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedleft
-Coord.
-\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedleft
-Active
-\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedleft
-\(\Delta\) plug-in objective
 \end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
-Sharp realized direction for \(\gamma=1-\gamma=0\)
+.25
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+.50
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+.75
 \end{minipage} \\
 \midrule\noalign{}
 \endfirsthead
 \toprule\noalign{}
 \begin{minipage}[b]{\linewidth}\raggedright
 Ruler
-\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedleft
-Coord.
-\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedleft
-Active
-\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedleft
-\(\Delta\) plug-in objective
 \end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
-Sharp realized direction for \(\gamma=1-\gamma=0\)
+.25
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+.50
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+.75
 \end{minipage} \\
 \midrule\noalign{}
 \endhead
 \bottomrule\noalign{}
 \endlastfoot
-Objective matched & .25 & 4 & 0 & Payoff +USD 5,603.66;
-default/miscoverage -0.0068 pp \\
-Objective matched & .50 & 15 & approximately 0 & Payoff lower;
-default/miscoverage higher in 8/8 \\
-Objective matched & .75 & 15 & approximately 0 & Payoff/default cross in
-7/8; miscoverage higher in 8/8 \\
-Normalized score & .25 & 15 & USD 425,196--557,294 & Payoff lower;
-default/miscoverage higher in 8/8 \\
-Normalized score & .50 & 15 & USD 152,031--226,848 & Payoff lower;
-default/miscoverage higher in 8/8 \\
-Normalized score & .75 & 15 & USD 28,263--51,202 & Payoff lower;
-default/miscoverage higher in 8/8 \\
+Objective matched & Favorable; 4 active months & Adverse in 8/8 &
+Payoff/default cross in 7/8; miscoverage adverse in 8/8 \\
+Normalized score & Adverse in 8/8 & Adverse in 8/8 & Adverse in 8/8 \\
 \end{longtable}
 
 Under objective matching, coordinate .25 changes only four months. The
@@ -1173,11 +1203,12 @@ superiority}\label{the-active-claim-stops-before-superiority}
 
 No window, learner, gamma, ruler, coordinate, or policy is promoted. The
 complete specification supports three statements: all-candidate coverage
-fails to transport for both learners; binary residual geometry can
-change discontinuously around the prevalence threshold; and realized
-portfolio direction depends on how outcome-free decision stringency is
-defined. It does not support superiority, causal effects, prospective
-validity, selected-set guarantees, or a universal guardrail direction.
+fails to transport across five predeclared learner specifications;
+binary residual geometry can change discontinuously around the
+prevalence threshold; and realized portfolio direction depends on how
+outcome-free decision stringency is defined. It does not support
+superiority, causal effects, prospective validity, selected-set
+guarantees, or a universal guardrail direction.
 
 \section{Discussion}\label{sec-discussion}
 
@@ -1213,16 +1244,16 @@ supplies OOT coverage or funded-set validity. A strong word such as
 \emph{robust} must name the quantity and perturbation it protects
 \citep{morucci2022robust_matching_uncertainty, falconer2026replication}.
 In this paper, robustness applies only to the observed temporal coverage
-failure across the complete residual-window specification and both
-declared learners. It does not describe distributional robustness,
-causal benefit, selected-set validity, or policy dominance. For this
-reason CRPTO uses \emph{risk-aware}, rather than \emph{robust}, in its
-expanded name.
+failure across the complete residual-window specification and five
+declared learner specifications. It does not describe distributional
+robustness, causal benefit, selected-set validity, or policy dominance.
+For this reason CRPTO uses \emph{risk-aware}, rather than \emph{robust},
+in its expanded name.
 
 \subsection{Implications for decision-focused data
 science}\label{implications-for-decision-focused-data-science}
 
-Six audit recommendations may transfer beyond credit, but this single
+Seven audit recommendations may transfer beyond credit, but this single
 archive does not establish their external validity.
 
 First, the score, ruler, and frontier coordinate are part of the
@@ -1255,7 +1286,14 @@ early/late windows could only hint at. Overlapping windows are a
 specification path, not independent replications or a basis for majority
 voting.
 
-Sixth, the optimized payoff must be the payoff later reported. We use
+Sixth, robustness to learner choice should be tested with controls that
+alter the suspected mechanism. Monotonic CatBoost tests economically
+signed shape; the platform and borrower-only WOE/IV scorecards test
+interpretability and incumbent-pricing dependence. Their role is to
+challenge a model-specific explanation, not to create five contestants
+from which an OOT winner is chosen.
+
+Seventh, the optimized payoff must be the payoff later reported. We use
 \((1-p)r-p\lambda\) because it is exactly the expectation of
 \((1-Y)r-Y\lambda\). A richer study should replace both sides together
 with cash flows, prepayment, recovery, fees, discounting, and capital
@@ -1296,6 +1334,15 @@ discounting, and capital costs. Continuous allocation and concentration
 constraints are modeling choices, and accepted-loan data without
 protected attributes cannot support causal or fair-lending conclusions.
 
+The full raw scan does not make every row commensurable. Sixty-month
+contracts, immature cohorts, and 48 late-schema fields are excluded to
+preserve one target and information set. A survival or multi-horizon
+design could use more of the archive, but would estimate a different
+object. The WOE/IV and monotonic controls share the same platform and
+chronology, and their overlapping windows are specification checks
+rather than independent replications. Their OOT predictive differences
+are descriptive because no second lockbox remains for model promotion.
+
 The temporal gap does not restore exchangeability, and candidate
 coverage does not control optimizer-selected coverage. Eleven common
 development menus and fifteen OOT decisions are not thousands of
@@ -1317,8 +1364,8 @@ remain future methods rather than additional claims here.
 
 \section{Reproducibility}\label{sec-reproducibility}
 
-The review package contains two hash-linked freeze/evaluation pairs. V4
-stores shared point-frontier allocations before injecting window
+The review package contains three hash-linked freeze/evaluation pairs.
+V4 stores shared point-frontier allocations before injecting window
 endpoints. The two-ruler V1 and V1b attempts stopped before outcomes;
 V1c changed only a final budget tolerance to the value already used by
 both solver wrappers. V2 wrote one immutable result. After a client
@@ -1326,15 +1373,24 @@ timeout, a second invocation repeated the fixed evaluation in memory and
 stopped at no-overwrite. Online Supplement Appendix G gives the complete
 incident and lineage record.
 
+The credit-control V1 stopped at Parquet serialization before a freeze;
+V1b changed only that representation and froze five score vectors before
+OOT outcomes. Evaluation V2 retained valid coverage but flagged a
+numerical calibration diagnostic; V2b changed only that diagnostic,
+reproduced the 3,520-row coverage frame exactly by SHA-256, and
+converged in all 30 model-role fits. A separate full-file audit records
+raw schema, maturity, status, and funding contracts without executing a
+protected stage.
+
 The evidence builder verifies source hashes, cardinalities, budgets,
-solver checks, and C2 reconciliation before producing six tables and six
-figure files byte-identically. Claim-sync tests cover the manifest,
-anonymous manuscripts, and generated IJDS TeX; eight DVC pointers
-preserve both lineages without executing protected historical stages.
-Searchable identifiers stay in an editor-only crosswalk. At acceptance,
-code, lock, evidence metadata, immutable pointers, and raw-data
-reconstruction instructions will be released under the IJDS data and
-code policy.
+solver checks, C2 reconciliation, and five-model coverage before
+producing ten tables and six figure files byte-identically. Claim-sync
+tests cover the manifest, anonymous manuscripts, and generated IJDS TeX;
+twelve DVC pointers preserve all three freeze/evaluation lineages
+without executing protected historical stages. Searchable identifiers
+stay in an editor-only crosswalk. At acceptance, code, lock, evidence
+metadata, immutable pointers, and raw-data reconstruction instructions
+will be released under the IJDS data and code policy.
 
 \section{Conclusion}\label{sec-conclusion}
 
@@ -1342,9 +1398,11 @@ CRPTO audits two unsafe inferences: that historical marginal coverage
 transports when a binary residual interval becomes a constraint score,
 and that a favorable portfolio contrast has meaning without a declared
 ruler and coordinate. The first fails in every one of eight residual
-windows for CatBoost and an independent logistic control. The same audit
-reveals why interval width is not stable: a score stratum crossing
-\(\pi=\alpha\) changes its residual quantile from 0.8884 to 0.1118.
+windows for CatBoost and four independent controls spanning numeric
+logistic, monotonic CatBoost, platform-signal WOE/IV, and borrower-only
+WOE/IV. The same audit reveals why interval width is not stable: a score
+stratum crossing \(\pi=\alpha\) changes its residual quantile from
+0.8884 to 0.1118.
 
 The second inference fails constructively. Under objective matching, the
 full-upper endpoint is slightly favorable at .25, unfavorable at .50,
