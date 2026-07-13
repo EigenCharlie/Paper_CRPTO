@@ -87,7 +87,7 @@ def _recipe_from_payload(payload: Mapping[str, Any]) -> BinaryOutcomeConformalRe
     return BinaryOutcomeConformalRecipe(**values)
 
 
-def _load_recipes(
+def load_recipes(
     path: Path,
 ) -> dict[str, dict[str, dict[int, BinaryOutcomeConformalRecipe]]]:
     payload = json.loads(path.read_text(encoding="utf-8"))
@@ -156,7 +156,9 @@ def _outcome_free_geometry(
     return pd.DataFrame(rows)
 
 
-def _artifact_paths(freeze: Mapping[str, Any], *, repo_root: Path) -> dict[str, Path]:
+def verified_freeze_artifact_paths(
+    freeze: Mapping[str, Any], *, repo_root: Path
+) -> dict[str, Path]:
     paths: dict[str, Path] = {}
     for name, descriptor in freeze["outcome_free_artifacts"].items():
         path = (repo_root / str(descriptor["path"])).resolve()
@@ -236,7 +238,7 @@ def freeze_outcome_free(
                 raise RuntimeError(f"Imported outcome-free freeze mismatch for {field}.")
         if source_freeze.get("outcome_columns_passed_to_policy_or_comparator") != []:
             raise RuntimeError("Imported freeze reports outcome leakage.")
-        _artifact_paths(source_freeze, repo_root=root)
+        verified_freeze_artifact_paths(source_freeze, repo_root=root)
         paths = prepare_output_paths(
             config,
             repo_root=root,
@@ -370,7 +372,7 @@ def freeze_outcome_free(
     return atomic_write_json(paths.model_dir / "protocol_freeze.json", freeze)
 
 
-def _load_outcome_universe(config: Mapping[str, Any], *, raw_path: Path) -> pd.DataFrame:
+def load_outcome_universe(config: Mapping[str, Any], *, raw_path: Path) -> pd.DataFrame:
     universe, _ = load_design_universe(
         config,
         raw_path=raw_path,
@@ -388,7 +390,7 @@ def _load_outcome_universe(config: Mapping[str, Any], *, raw_path: Path) -> pd.D
     return universe
 
 
-def _frontier_for_window(
+def expand_frontier_for_window(
     shared: pd.DataFrame,
     scores: pd.DataFrame,
     recipe: BinaryOutcomeConformalRecipe,
@@ -469,12 +471,12 @@ def evaluate_frozen(
             raise RuntimeError(f"Protocol freeze mismatch for {field}.")
     if freeze.get("outcome_columns_passed_to_policy_or_comparator") != []:
         raise RuntimeError("Protocol freeze reports outcome leakage.")
-    artifacts = _artifact_paths(freeze, repo_root=root)
+    artifacts = verified_freeze_artifact_paths(freeze, repo_root=root)
     raw_path = resolve_repo_input(config["source"]["raw_path"], repo_root=root)
-    universe = _load_outcome_universe(config, raw_path=raw_path)
+    universe = load_outcome_universe(config, raw_path=raw_path)
     outcomes = build_archive_outcomes(universe)
     scores = pd.read_parquet(artifacts["scores"])
-    recipes = _load_recipes(artifacts["recipes"])
+    recipes = load_recipes(artifacts["recipes"])
     fit_audit = pd.read_parquet(artifacts["fit_audit"])
     records = pd.read_parquet(artifacts["solve_records"])
     allocations = pd.read_parquet(artifacts["allocations"])
@@ -504,7 +506,7 @@ def evaluate_frozen(
     contrast_frames: list[pd.DataFrame] = []
     primary_recipes = recipes["catboost_platt"]
     for window_id, group_recipes in primary_recipes.items():
-        expanded_frontier = _frontier_for_window(
+        expanded_frontier = expand_frontier_for_window(
             shared_joined,
             scores,
             group_recipes[5],

@@ -80,6 +80,13 @@ journal-package:
 ijds-evidence:
     uv run python scripts/build_ijds_binary_geometry_frontier_v4_evidence.py
 
+# Pre-freeze robustness evidence. This does not replace the active V4 manifest.
+ijds-rolling-origin-evidence:
+    uv run python scripts/build_ijds_rolling_origin_stability_evidence.py
+
+ijds-rolling-origin-check:
+    uv run pytest -q tests/test_ijds_rolling_origin_protocol.py tests/test_ijds_rolling_origin_evidence.py
+
 ijds-historical-v1-v3-evidence:
     uv run python scripts/build_ijds_fixed_taxonomy_c2_evidence.py
 

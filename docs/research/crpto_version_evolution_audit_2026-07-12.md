@@ -694,3 +694,34 @@ Hoy la opcion con mayor probabilidad y menor riesgo cientifico es **V4+**. Manti
 la esencia ML--conformal--optimization, explica por que el puente puede fallar y
 convierte las decisiones de comparador, madurez y outcome geometry en el aporte,
 sin prometer una politica que los datos no identifican.
+
+## 15. Actualizacion de ejecucion P0: rolling origins
+
+El primer P0 ya fue ejecutado bajo un protocolo etiquetado y un erratum tambien
+etiquetado. No modifica todavia el registro activo de claims.
+
+- El origen 2015 fallo antes del outcome join: la primera ventana CatBoost tuvo
+  conteos Mondrian `(1648, 1408, 1166, 927, 619)` y los dos ultimos grupos no
+  alcanzaron el minimo bloqueado de 1,000. El umbral no se relajo.
+- El origen 2016 se restringio mecanicamente a abril--junio: 74,537 candidatos,
+  todos resueltos. Los ocho coverages CatBoost fueron 0.860861--0.874626 y los
+  logisticos 0.868629--0.888619.
+- El origen 2017 completo freeze y evaluacion: 77,105 candidatos, 66,217
+  resueltos y 10,888 no resueltos. Los bounds superiores fueron como maximo
+  0.876247 para CatBoost y 0.877401 para logistic.
+- Los 32 bounds superiores de los dos origenes factibles quedaron bajo 0.90.
+  Esto es recurrencia en dos origenes, no estabilidad de tres origenes, porque
+  2015 no fue factible bajo el mismo estimando.
+- Ningun scope/metric tuvo una sola direccion no nula en sus 72 celdas en 2016
+  o 2017. La dependencia del comparador se mantuvo y no reaparecio un ganador.
+- C2 conservo reconciliacion numerica menor que `6e-17` y dominancia plugin en
+  las 216 celdas de cada origen factible.
+- La simulacion heredada fue exactamente la misma en ambos runs: solo 2 de
+  19,200 repeticiones cambiaron la asignacion same-cap y solo 1 cambio C2; el
+  cap del guardrail fue slack en todas. No ofrece evidencia de cartera.
+
+La evidencia, tablas y memo reproducibles estan en
+`reports/crpto/ijds_rolling_origin_stability_evidence.json` y
+`docs/research/ijds_rolling_origin_stability_results_2026-07-12.md`. El siguiente
+P0 real es reemplazar la simulacion degenerada por un mecanismo predeclarado en
+el que la restriccion cambie decisiones sin escoger resultados favorables.

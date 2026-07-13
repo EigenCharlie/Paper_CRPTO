@@ -24,7 +24,7 @@ from src.ijds_audit.portfolio import (
     solve_point_portfolio,
     verify_c2_dominance,
 )
-from src.ijds_audit.protocol import _frontier_for_window
+from src.ijds_audit.protocol import expand_frontier_for_window
 from src.ijds_audit.simulation import run_factorial_simulation
 from src.models.binary_conformal_guardrail import fit_binary_outcome_recipe
 from src.optimization.portfolio_model import solve_portfolio_highspy_native
@@ -210,7 +210,7 @@ def test_shared_frontier_replaces_placeholder_endpoints() -> None:
             "conformal_group": [np.nan, np.nan],
         }
     )
-    expanded = _frontier_for_window(shared, scores, recipe, window_id="window")
+    expanded = expand_frontier_for_window(shared, scores, recipe, window_id="window")
     assert {"conformal_lower", "conformal_upper", "conformal_group"}.issubset(expanded)
     assert not any(column.endswith(("_x", "_y")) for column in expanded.columns)
     assert expanded["conformal_lower"].notna().all()

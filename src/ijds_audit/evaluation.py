@@ -2,7 +2,7 @@
 
 from __future__ import annotations
 
-from collections.abc import Mapping
+from collections.abc import Collection, Mapping, Sequence
 from typing import Any
 
 import numpy as np
@@ -265,6 +265,10 @@ def temporal_coverage_audit(
     outcomes: pd.DataFrame,
     recipes: Mapping[str, Mapping[str, Mapping[int, BinaryOutcomeConformalRecipe]]],
     fit_audit: pd.DataFrame,
+    *,
+    roles: Sequence[str] = EVALUATION_ROLES,
+    taxonomy_group_counts: Collection[int] | None = None,
+    strata: Collection[int] | None = None,
 ) -> pd.DataFrame:
     """Evaluate all learner/window/taxonomy/role/stratum coverage cells."""
     joined = scores.merge(
@@ -274,14 +278,33 @@ def temporal_coverage_audit(
         validate="one_to_one",
     )
     rows: list[dict[str, Any]] = []
+    selected_taxonomies = (
+        None
+        if taxonomy_group_counts is None
+        else frozenset(int(value) for value in taxonomy_group_counts)
+    )
     for learner, learner_windows in recipes.items():
         probability = joined[f"pd_{learner}"].to_numpy(dtype=float)
         for window_id, group_recipes in learner_windows.items():
             for taxonomy_groups, recipe in sorted(group_recipes.items()):
+                if selected_taxonomies is not None and taxonomy_groups not in selected_taxonomies:
+                    continue
                 assigned, lower, upper = apply_binary_outcome_recipe(probability, recipe)
-                for role in EVALUATION_ROLES:
+                selected_strata = (
+                    (-1, *range(int(taxonomy_groups)))
+                    if strata is None
+                    else tuple(int(value) for value in strata)
+                )
+                invalid_strata = [
+                    value for value in selected_strata if value < -1 or value >= taxonomy_groups
+                ]
+                if invalid_strata:
+                    raise ValueError(
+                        f"Invalid strata for {taxonomy_groups} groups: {invalid_strata}."
+                    )
+                for role in roles:
                     role_mask = joined["design_split"].eq(role).to_numpy(dtype=bool)
-                    for stratum in (-1, *range(int(taxonomy_groups))):
+                    for stratum in selected_strata:
                         mask = role_mask & ((assigned == stratum) if stratum >= 0 else True)
                         if not bool(mask.any()):
                             raise RuntimeError(
