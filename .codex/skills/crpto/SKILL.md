@@ -8,79 +8,72 @@ single-author IJDS paper and reproducibility bundle, not a production service.
 Read first:
 
 1. `docs/research/active_claims_2026-07-12.md`
-2. `docs/research/ijds_fixed_taxonomy_c2_protocol_2026-07-11.md`
-3. `docs/research/ijds_fixed_taxonomy_c2_temporal_v3_protocol_2026-07-12.md`
-4. `docs/research/ijds_fixed_taxonomy_c2_protocol_errata_2026-07-12.md`
-5. `reports/crpto/ijds_fixed_taxonomy_c2_evidence.json`
-6. `docs/ACADEMIC_CONTEXT.md`
-7. `docs/SCOPE_AND_GOVERNANCE.md`
-8. `CONTRIBUTING.md`
-9. `EXTRACTION_MANIFEST.md`
+2. `docs/research/ijds_binary_geometry_frontier_v4_protocol_2026-07-12.md`
+3. `docs/research/ijds_binary_geometry_frontier_v4_v2_recovery_2026-07-12.md`
+4. `reports/crpto/ijds_binary_geometry_frontier_v4_evidence.json`
+5. `docs/ACADEMIC_CONTEXT.md`
+6. `docs/SCOPE_AND_GOVERNANCE.md`
+7. `CONTRIBUTING.md`
+8. `EXTRACTION_MANIFEST.md`
 
-The active evidence is the fixed-taxonomy comparator-multiverse audit:
+Active evidence:
 
-- outcome-free run: `ijds-fixed-taxonomy-c2-2026-07-11-v1`;
-- reconciled evaluation: `ijds-fixed-taxonomy-c2-2026-07-11-v2`;
-- protocol tag: `protocol/ijds-fixed-taxonomy-c2-2026-07-11-v2`;
-- protocol commit: `a88839dfe14875fca2c02c43725291bc49d98611`;
-- temporal sensitivity: `ijds-fixed-taxonomy-c2-temporal-v3-2026-07-12-v1`;
-- common OOT universe: 465,117 status-independent 36-month loans;
-- five score strata fixed from 2011 scores and residual ranks fitted in early
-  2012H1 and late 2012H2--2013M1 windows;
-- all nine `(tau, gamma)` guardrails are co-primary; there is no selector;
-- primary evaluation: 15 monthly $1M decisions, 2016-04 through 2017-06;
-- C2 comparator: contemporaneous outcome-free funded point-score match;
-- standardized payoff: `(1-p)r-p*LGD` and `(1-Y)r-Y*LGD`;
-- unresolved terminal outcomes: retained with sharp common-outcome bounds.
+- outcome-free freeze: `ijds-binary-geometry-frontier-v4-2026-07-12-v1`;
+- verified evaluation: `ijds-binary-geometry-frontier-v4-2026-07-12-v2`;
+- complete residual specification: eight consecutive six-month windows;
+- primary OOT: 376,890 candidates in fifteen monthly USD 1 million menus;
+- learners: CatBoost/Platt primary and independent logistic/Platt coverage control;
+- all nine `(tau, gamma)` policies are co-primary; there is no selector;
+- C2 comparator: contemporaneous frozen funded point-score cap;
+- exact point-cap frontier: 3,067 HiGHS basis/support endpoints;
+- unresolved outcomes: retained with sharp common-outcome bounds.
 
 Headline evidence:
 
-- conformal-fit coverage: early `0.900388`, late `0.900174`;
-- primary five-stratum all-candidate coverage: early
-  `[0.854714, 0.879647]`, late `[0.845072, 0.870973]`;
-- canonical C2 payoff losses: early 7/9, late 5/9; the count is not stable;
-- C2 default is higher in 1/9 and miscoverage in 8/9 in both windows;
-- both 180-cell seed-purpose censuses contain signs in both directions;
-- 27/27 envelopes are indeterminate in each of core,
-  development-supported, and broad-stress scopes;
-- C2 funded point-score matching residual is at most `4.17e-17`.
+- every CatBoost five-group OOT upper bound is below 0.90; maximum `0.882167`;
+- every logistic-control upper bound is below 0.90; maximum `0.895654`;
+- CatBoost stratum 2 crosses prevalence alpha from W7 to W8 and its residual
+  quantile changes from `0.888435` to `0.111801`;
+- C2 match residual is at most `8.33e-17` and reconciles weak plug-in dominance;
+- all 216 broad-stress envelopes cross zero;
+- default crosses zero in all 72 development-support cells;
+- all 27 W8 development-support envelopes cross zero;
+- the factorial simulation is claim-bearing for coverage mechanism only; its
+  portfolio component is degenerate.
 
-The superiority paper is NO-GO. The IJDS audit narrative is GO: temporal
-candidate-coverage failure survives declared timing checks, while portfolio
-conclusions are not invariant to residual timing, comparator stringency, or
-binding operational constraints.
+The superiority paper is NO-GO. The IJDS identification-audit narrative is GO.
 
 ## Claim Boundaries
 
 Preserve these distinctions:
 
-- decision-time candidate membership versus snapshot outcome resolution;
-- clipped binary-outcome residual intervals versus latent-PD confidence limits;
-- Platt-scaled score and plug-in objective versus a true conditional probability;
-- marginal/Mondrian coverage versus funded-set validity;
+- candidate membership versus snapshot outcome resolution;
+- clipped binary residual interval versus latent-PD confidence limit;
+- continuous interval versus its intersection with `{0,1}`;
+- constant-score phase proposition versus varying-score empirical strata;
+- overlapping residual windows versus independent replications;
+- Platt score and plug-in objective versus true conditional probability;
+- candidate coverage versus funded-set validity;
 - standardized payoff versus cash-flow return, IRR, NPV, or welfare;
 - sharp identification bounds versus sampling confidence intervals;
-- an outcome-free audit comparator versus a deployable policy;
-- same numeric caps versus comparable feasible decision problems;
-- code-locked retrospective audit versus preregistration or confirmation.
+- C2 plug-in dominance versus realized-outcome dominance;
+- exact declared comparator support versus universal baseline invariance;
+- tagged retrospective audit versus preregistration or confirmation.
 
-Permitted exact results are binary miscoverage geometry, sharp fixed-allocation
-and common-outcome contrast bounds, positive-affine score-cap equivalence,
-same-threshold nesting, and finite declared comparator envelopes. Do not claim
-Markov or tail certificates, selected-set validity, causal effects, a policy
-winner, a unique matching rule, or universal dominance.
+Do not claim a policy winner, universal direction, selected-set validity,
+Markov/tail certificate, causal effect, live deployment result, or portfolio
+mechanism from the V4 simulation.
 
 ## Evidence Workflow
 
 ```powershell
-just ijds-evidence
+uv run python scripts/build_ijds_binary_geometry_frontier_v4_evidence.py
 just publication-integrity
 just lint
 just type-check
 just type-advisory-full
 just test
 just validate-champion
-just validate-champion-strict
 just drift-gate
 just paper-submission
 just paper-submission-tex
@@ -88,14 +81,13 @@ just paper-submission-official
 uv run dvc status --no-updates
 ```
 
-`just ijds-evidence` validates all three protocol tags, the exact V1 freeze,
-descriptors, cardinalities, full budgets, HiGHS-only solves, C2 matching, and
-the V2/V3 receipts. It generates only `crpto_ijds_ft_*` tables and figures plus
-`ijds_fixed_taxonomy_c2_evidence.json`. Consecutive builds must be byte-identical.
-The canonical body is `paper/CRPTO_ijds.qmd`; the official INFORMS TeX is
-generated by `scripts/build_ijds_submission_tex.py` and must not be edited by hand.
+The active builder verifies the V4 summary, freeze, and every artifact
+descriptor. It emits only `crpto_ijds_v4_*` tables/figures and
+`ijds_binary_geometry_frontier_v4_evidence.json`. Consecutive builds must be
+byte-identical. The canonical body is `paper/CRPTO_ijds.qmd`; generate official
+TeX with `scripts/build_ijds_submission_tex.py` and never edit it by hand.
 
-The official manual LaTeX fallback remains:
+Manual LaTeX fallback:
 
 ```text
 pdflatex -> bibtex -> pdflatex -> pdflatex
@@ -103,12 +95,12 @@ pdflatex -> bibtex -> pdflatex -> pdflatex
 
 ## Protected History
 
-Never overwrite `EXTRACTION_MANIFEST.json`, the canonical PD/calibrator,
-historical conformal intervals, pool93 bundles, or A35--A40 champion files.
-Protected DVC stages are `crpto.pd.champion`, `crpto.conformal.intervals`,
+Never overwrite `EXTRACTION_MANIFEST.json`, canonical PD/calibrator, historical
+conformal intervals, pool93 bundles, or A35--A40 champion files. Protected DVC
+stages are `crpto.pd.champion`, `crpto.conformal.intervals`,
 `crpto.conformal.validation`, `crpto.portfolio.optimization`, and
 `crpto.portfolio.bound_exact_eval`.
 
-Selected-policy studies, compact-v7, pool93, Prosper/Freddie, and A1--A40 are
-Git/DVC provenance only. The active paper explains the final method and
-evidence, not the sequence of discarded versions.
+Fixed-taxonomy V1--V3, selected-policy studies, compact-v7, pool93,
+Prosper/Freddie, and A1--A40 are Git/DVC provenance only. The active paper
+explains the final method and evidence, not discarded-version chronology.

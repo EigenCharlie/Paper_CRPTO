@@ -1,58 +1,60 @@
 # IJDS Claim Audit Matrix
 
-Numeric authority is `reports/crpto/ijds_fixed_taxonomy_c2_evidence.json`.
-This matrix controls wording; it is not an independent source of results.
+Numeric authority is
+`reports/crpto/ijds_binary_geometry_frontier_v4_evidence.json`. This matrix
+controls wording; it is not an independent source of results.
 
 | Claim | Evidence | Required wording | Forbidden inference |
 |---|---|---|---|
-| Candidate membership is status independent | 465,117 common OOT loans; early/late designs retain 540,121/625,576 rows | Membership uses issue date, term, and origination fields; unresolved rows remain | A resolved-only cohort or one additive universe count |
-| Fitting labels respect availability | Retention 0.997648, 0.998298, 0.998731 early, 0.996152 late | Labels must be observable by the March 31, 2016 cutoff | Contract age guarantees resolution |
-| Taxonomy precedes residual calibration | 2011 score edges; early and late residual ranks | Fixed score taxonomy with two locked residual windows | Adaptive OOT grouping or result-selected timing |
-| No policy is selected | All nine tau-gamma policies are co-primary | Complete policy-family census | A champion or representative winner |
-| Fit coverage meets target | Early/late seed-42 coverage 0.900388/0.900174 | Empirical fit-block coverage | Exact 0.90 coverage in every block |
-| OOT coverage misses target | Five-group bounds [0.854714, 0.879647] early and [0.845072, 0.870973] late | Candidate coverage failure in both windows | General invalidity of conformal prediction |
-| Coverage failure survives declared checks | Highest upper endpoint 0.881942; all late lag upper endpoints at most 0.872767 | Survives two windows, four taxonomies, and the late five-group lag grid | A full taxonomy-by-lag cross-product or all conformal recipes |
-| Same cap is not neutral | C0 payoff positive 9/9; default negative 9/9 | Positive control for feasible-set nesting; realized signs are empirical | Nesting predicts realized payoff or default |
-| C2 moment matching is exact | Maximum residual below 4.17e-17 | Matches funded point-score moment only | Equal feasible sets or unique counterfactual |
-| C2 results are timing-sensitive | Payoff worse 7/9 early and 5/9 late; default higher 1/9 and miscoverage higher 8/9 in both | Report both windows and indeterminate intervals | Universal benefit, harm, or timing-stable 7/9 headline |
-| Comparator direction is scope-sensitive | 27/27 envelopes cross zero in each of core, development-supported, and broad scopes | No sign survives the named comparator scopes | Causal unidentified set or invariance over every possible baseline |
-| Operational constraints matter | Two 180-cell seed-purpose censuses with mixed signs | Complete 360-cell sensitivity, no selected cell | Stable deployment recommendation |
-| Purpose caps bind | 2,025/2,025 sub-100% guardrail-month cells | Derived constraint-activity result | A cosmetic concentration control |
-| Unresolved outcomes are retained | 11,551 primary and 28,725 extension rows | Sharp unrestricted-binary partial-identification bounds | Confidence intervals or missing-at-random identification |
-| Endpoint inventory is distinct from the receipt diagnostic | Terminal 499,845/40,276; frozen status diagnostic 500,019/40,102 | Literal Default leaves 174 rows unresolved in every scientific endpoint | Receipt diagnostic defines coverage or contrasts |
-| Score mechanism is not clipping alone | Clipping L1 USD 4,685--46,609; group-to-pooled L1 USD 9.849--21.352 million | Distances derived from frozen exposure vectors | The smaller range measures taxonomy replacement |
-| Payoff is aligned but stylized | Plug-in `(1-p)r-p*LGD`; realized `(1-Y)r-Y*LGD` | Model-implied objective and standardized payoff | True conditional expectation, IRR, NPV, welfare, or full cash-flow return |
-| Simulation supports mechanisms | 800 repetitions over four shifts | Controlled mechanism check | Structural model of Lending Club |
-| Study is reproducible | V1 freeze, V2 evaluation, isolated V3, 62 table/figure files plus one manifest | Code-locked retrospective audit of a previously inspected archive | Preregistration, prospective confirmation, or causal evidence |
-| Superiority stop rule failed | Neither prespecified 9-of-9 condition survived | Superiority submission stopped; audit framing is post-result secondary analysis | Prespecified negative-paper fallback or confirmatory success |
+| Candidate membership is status independent | 640,543 design rows; 376,890 primary candidates | Membership uses issue month, term, and origination fields; unresolved rows remain | A resolved-only cohort |
+| Residual labels respect availability | 49,007 pool rows; 48,857 available; minimum monthly retention 0.992956 | Labels are available by the March 31, 2016 cutoff under the declared lag | Contract age guarantees terminal resolution |
+| Taxonomy precedes residual calibration | Learner-specific 2011 score edges | Fixed taxonomy independent of residual and OOT outcomes | Adaptive OOT grouping |
+| Residual timing is complete | Eight consecutive six-month windows, W1--W8 | All windows are co-primary specifications | Independent replications or a selected window |
+| Learner conclusion is not CatBoost-only | CatBoost upper-bound range 0.869179--0.882167; logistic maximum 0.895654 | Coverage failure survives both learners; magnitude is learner-dependent | Model superiority or universal conformal failure |
+| Binary geometry has a phase mechanism | Stratum-2 prevalence 0.101703 to 0.097147; quantile 0.888435 to 0.111801 | Empirical pattern is consistent with the constant-score proposition | The proposition proves the varying-score empirical path |
+| Narrower is not necessarily safer | Stratum-2 width 0.984263 to 0.207631; W8 bound [0.822536, 0.853682] | W8 is narrower without restoring transport | Width is a monotone quality or safety measure |
+| No policy is selected | All nine tau-gamma policies are co-primary | Complete policy-family audit | Champion or representative winner |
+| Same cap is not neutral | $q_i\ge p_i$ and C0 nesting | Positive control for feasible-set nesting | Realized payoff or default dominance theorem |
+| C2 plug-in theorem reconciles | 1,080 cells; maximum match residual $8.33\times10^{-17}$ | Point optimum weakly dominates in the shared plug-in objective | Realized-outcome dominance or deployability |
+| Named comparators disagree | C0/C1/C2 direction censuses over 72 cells each | Comparators define different feasible sets; counts are descriptive | Majority vote over comparators |
+| Exact support removes universal direction | 3,067 caps; all 216 broad-stress envelopes cross zero | Direction depends on the declared outcome-free support | Universal quantification over all baselines |
+| Development support remains limited | Default crosses in 72/72; payoff lower in 21; miscoverage higher in 39 | Some W1--W7 directions survive only the narrow support | A support-invariant or selected result |
+| W8 removes earlier directions | All 27 W8 development-support envelopes cross zero | Direction is not invariant over the complete residual specification | W8 is the correct window |
+| Unresolved outcomes are retained | 365,339 resolved and 11,551 unresolved primary rows | Sharp unrestricted-binary common-outcome bounds | Confidence intervals or missing-at-random identification |
+| Payoff is aligned but stylized | Plug-in `(1-p)r-p*LGD`; realized `(1-Y)r-Y*LGD` | Model-implied objective and standardized payoff | True conditional expectation, IRR, NPV, welfare, or investor return |
+| Simulation supports coverage mechanism only | 19,200 repetitions; portfolio allocation distances about $10^{-6}$ | Retain negative portfolio diagnostic | Empirical portfolio mechanism or validation |
+| Study is reproducible | Verified outcome-free freeze, separate join, four V4 DVC pointers, 11 paper artifacts | Code-locked retrospective audit of a previously inspected archive | Preregistration, prospective confirmation, or causal evidence |
 
 ## Required Headline Results
 
-- common OOT universe: `465,117`;
-- conformal-fit coverage: early `0.900388`, late `0.900174`;
-- primary five-group coverage: early `[0.854714, 0.879647]`, late
-  `[0.845072, 0.870973]`;
-- C2 payoff worse: early `7/9`, late `5/9`; default higher `1/9` and
-  miscoverage higher `8/9` in both;
-- seed-purpose census: `180` cells per window, `360` total;
-- comparator envelopes: `27/27` indeterminate in each of three scopes,
-  `81/81` total;
-- exact C2 matching residual: below `4.17e-17`;
-- purpose caps 0.20, 0.25, and 0.30 bind in every guardrail-month.
+- primary candidates: `376,890`, resolved `365,339`, unresolved `11,551`;
+- CatBoost all-candidate bounds range from `[0.838531, 0.869179]` to
+  `[0.851519, 0.882167]`;
+- logistic all-candidate upper bounds are all below 0.90, maximum `0.895654`;
+- phase diagnostic: prevalence `0.101703 -> 0.097147`, residual quantile
+  `0.888435 -> 0.111801`, width `0.984263 -> 0.207631`;
+- exact C2 match residual: at most `8.33e-17` over `1,080` cells;
+- exact point frontier: `3,067` distinct caps;
+- broad stress: all `216/216` envelopes cross zero;
+- development support: default `72/72` cross zero, and all `27/27` W8
+  envelopes cross zero; and
+- simulation: `19,200` repetitions, with no claim-bearing portfolio result.
 
 ## Do Not Claim
 
-- a selected policy, winner, or deployment recommendation;
+- a selected learner, taxonomy, residual window, policy, cap, or comparator;
 - universal economic or statistical dominance;
-- comparator-invariant direction beyond the declared finite set;
-- selected-set conformal validity;
-- a latent-PD confidence interval;
-- a true conditional probability or conditional-expectation interpretation of the Platt score;
+- comparator-invariant direction beyond a declared finite support;
+- selected-set conformal validity or a latent-PD confidence interval;
+- true conditional calibration or a true conditional-expectation objective;
 - causal, prospective, confirmatory, or preregistered evidence;
-- a Markov or deterministic tail certificate;
+- independent replication across overlapping windows or nested supports;
+- a Markov, tail, or deterministic safety certificate;
 - cash-flow return, IRR, NPV, or welfare;
+- a portfolio claim from the factorial simulation;
 - legal fair-lending certification; or
 - live post-2020 performance.
 
-Historical compact-v7, pool93, selected-policy, Prosper, Freddie, and A1--A40
-materials are recoverable from Git/DVC but are not part of the active capsule.
+Historical fixed-taxonomy V1--V3, compact-v7, pool93, selected-policy,
+Prosper/Freddie, and A1--A40 materials remain recoverable from Git/DVC but are
+not active evidence.

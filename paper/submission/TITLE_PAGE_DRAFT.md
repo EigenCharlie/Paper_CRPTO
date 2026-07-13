@@ -4,12 +4,12 @@ Upload separately from the double-anonymous manuscript.
 
 ## Title
 
-CRPTO: Auditing Temporal Transport and Comparator Choice in Conformal
-Portfolios
+CRPTO: Binary Conformal Geometry and Comparator Identification in Portfolio
+Optimization
 
 ## Running Title
 
-Temporal Transport and Comparator Choice
+Binary Geometry and Comparator Identification
 
 ## Keywords
 

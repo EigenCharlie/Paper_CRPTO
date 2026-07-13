@@ -18,7 +18,7 @@ def active_dvc_pointers(
     root: Path = ROOT,
     targets_path: Path = TARGETS_PATH,
 ) -> list[Path]:
-    """Load and validate the six active DVC pointer paths."""
+    """Load and validate the four active V4 DVC pointer paths."""
     payload: Any = yaml.safe_load(targets_path.read_text(encoding="utf-8"))
     if not isinstance(payload, dict):
         raise TypeError("Publication targets must be a YAML mapping.")
@@ -28,9 +28,9 @@ def active_dvc_pointers(
     values = contract.get("dvc_pointers")
     if not isinstance(values, list) or not all(isinstance(item, str) for item in values):
         raise TypeError("active_scientific_contract.dvc_pointers must be a string list.")
-    if len(values) != 6 or len(set(values)) != 6:
+    if len(values) != 4 or len(set(values)) != 4:
         raise ValueError(
-            f"The active IJDS capsule requires six unique pointers, got {len(values)}."
+            f"The active IJDS capsule requires four unique pointers, got {len(values)}."
         )
 
     resolved: list[Path] = []

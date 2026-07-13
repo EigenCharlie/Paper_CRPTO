@@ -1,265 +1,245 @@
 # CRPTO Active IJDS Claim Registry - 2026-07-12
 
 This is the source of truth for the single IJDS manuscript. It supersedes the
-2026-07-11 registry by adding the locked temporal-design sensitivity and by
-correcting the semantics of the conformal endpoint and default score.
+fixed-taxonomy V1--V3 claim surface with the complete-window V4 audit. V1--V3
+remain immutable provenance, not active evidence.
 
 ## Editorial Status
 
-- **NO-GO:** a superiority, dominance, champion-policy, or deployment paper.
-- **GO:** one retrospective IJDS paper about auditing temporal transport,
-  comparator stringency, censoring, and operational constraints in a frozen
+- **NO-GO:** superiority, dominance, champion-policy, universal guardrail,
+  causal, selected-set-validity, or deployment framing.
+- **GO:** one retrospective IJDS paper about binary conformal geometry,
+  temporal transport, and comparator identification in a frozen
   predict-then-optimize system.
-- All nine policies are co-primary. No OOT outcome selects a policy, residual
-  window, taxonomy, seed, cap, LGD, or comparator.
+- All eight residual windows and all nine portfolio policies are co-primary.
+- No OOT outcome selects a learner, window, taxonomy, policy, cap, or
+  comparator.
 - No policy winner is allowed.
-- The superiority stop preceded the negative audit framing. The framing is an
-  explicitly post-result secondary interpretation, not a preregistered or
-  confirmatory success.
-- The late residual-window protocol was locked before its own outcomes were
-  evaluated, but it was motivated by the early audit. It is a design
-  sensitivity and cannot promote either window by result.
+- V4 is a tagged retrospective specification audit over a previously inspected
+  archive, not a preregistration, prospective trial, or pristine lockbox.
 
-The strongest contribution is an outcome-isolated comparator-sensitivity
-audit for replacing a point score with a non-affine uncertainty score inside a
-constrained optimizer. CRPTO returns coverage bounds, paired policy-contrast
-intervals, and declared comparator envelopes. It does not return a selected
-policy.
+The strongest contribution is a joint theory-and-audit result: a binary
+absolute-residual conformal construction has prevalence-sensitive set geometry,
+candidate coverage fails to transport for both declared learners, and realized
+portfolio direction is not identified until an outcome-free comparator support
+is declared.
 
-## Immutable Lineage
+## Active Immutable Lineage
 
-### Early outcome-free freeze
+### V4-v1 outcome-free freeze
 
-- Run: `ijds-fixed-taxonomy-c2-2026-07-11-v1`.
-- Protocol tag: `protocol/ijds-fixed-taxonomy-c2-2026-07-11-v1`.
-- Protocol commit: `4835cc18a0117a695f89f9da70a4e3af97663a27`.
+- Run: `ijds-binary-geometry-frontier-v4-2026-07-12-v1`.
+- Tag: `protocol/ijds-binary-geometry-frontier-v4-2026-07-12-v1`.
+- Commit: `2f8a7606e4eb65aa3ae3701fb3af8d9a51c953cd`.
 - Freeze SHA-256:
-  `93690082880ef4ff1375dcd5b26d2df79f80e6ebe09a6d83b7fd99a9abb4cfae`.
-- The run completed 7,347 outcome-free solves and froze 718,925 funded rows.
-  Its inefficient row-wise evaluator timed out after the freeze.
+  `c2b3dc2d18c9fed80708682d5a0369c80c89643e2d28024418522d954ebe667c`.
+- Frozen objects: two learner score vectors, 64 residual recipes, 51,117 solve
+  records, and 5,001,617 funded rows.
+- Guardrails: 1,872 = 8 windows x 9 policies x (11 development + 15 OOT
+  months).
+- C2 cells: 1,080 = 8 x 9 x 15.
+- No forbidden outcome column occurs in the funded-allocation artifact.
 
-### Early reconciled evaluation
+### V4-v2 verified evaluation
 
-- Run: `ijds-fixed-taxonomy-c2-2026-07-11-v2`.
-- Protocol tag: `protocol/ijds-fixed-taxonomy-c2-2026-07-11-v2`.
-- Protocol commit: `a88839dfe14875fca2c02c43725291bc49d98611`.
-- V2 verifies and imports the V1 outcome-free artifacts, performs one validated
-  outcome join, and changes no prediction or allocation.
-
-### Late temporal-design sensitivity
-
-- Run: `ijds-fixed-taxonomy-c2-temporal-v3-2026-07-12-v1`.
-- Protocol tag:
-  `protocol/ijds-fixed-taxonomy-c2-temporal-v3-2026-07-12-v1`.
-- Protocol commit: `c5ceab737ab3cda8aed7d3c1fd24a506418cfa35`.
-- V3 completes 7,437 outcome-free solves and freezes 729,789 funded rows before
-  its outcome join.
-- V3 is not a result-based replacement for V2. Both windows must be reported.
+- Run: `ijds-binary-geometry-frontier-v4-2026-07-12-v2`.
+- Tag: `protocol/ijds-binary-geometry-frontier-v4-2026-07-12-v2`.
+- Commit: `60cdf298d965525cddaaf03abccd15ff805e1a15`.
+- V2 verifies and imports the V1 freeze by identity, SHA-256, and every
+  descriptor. It changes no prediction, recipe, support, or allocation.
+- V2 drops all-null frontier endpoint placeholders before injecting the chosen
+  window's endpoints. V1 had no evaluation output because a no-write smoke test
+  caught the pandas suffix collision first.
 
 The only active paper-facing manifest is
-`reports/crpto/ijds_fixed_taxonomy_c2_evidence.json`.
+`reports/crpto/ijds_binary_geometry_frontier_v4_evidence.json`.
 
 ## Research Object
 
-- Raw rows scanned: 2,925,493.
-- Contractual term: 36 months.
-- Early design rows: 540,121.
-- Late design rows: 625,576 because residual and policy-development windows
-  are longer.
-- Common OOT panel: 465,117 loans, comprising 376,890 primary candidates and
-  88,227 censored-extension candidates.
-- Primary decisions: 15 monthly menus, April 2016--June 2017, each with a fresh
-  USD 1 million budget.
-- Extension: July--September 2017, secondary only.
-- Information cutoff: March 31, 2016.
-- Administrative outcome snapshot: September 30, 2020.
+- Raw rows scanned: 2,925,493; 36-month rows at all dates: 2,060,077.
+- V4 design universe: 640,543 status-independent loans.
+- PD development: 17,433 rows; 17,392 labels available by cutoff.
+- Probability calibration/taxonomy: 14,101 rows; 14,077 labels available.
+- Residual pool: 49,007 rows from January 2012--January 2013; 48,857 labels
+  available.
+- Every residual month exceeds 99% label retention; the minimum is 0.992956.
+- Common outcome-free policy development: 94,885 rows in February--December
+  2013; outcomes are never read.
+- Primary OOT: 376,890 candidates in 15 monthly menus, April 2016--June 2017.
+- Censored extension: 88,227 candidates, July--September 2017, secondary only.
+- Primary unresolved outcomes: 11,551.
+- Information cutoff: March 31, 2016; administrative snapshot: September 30,
+  2020.
 - Fully Paid is 0; Charged Off is 1; exact Default and every nonterminal status
   are unresolved.
 - Candidate membership never uses loan status. Outcomes are physically absent
-  from prediction, policy, and comparator construction.
-- The scientific terminal endpoint has 499,845 resolved and 40,276 unresolved
-  rows. A receipt-only status diagnostic reports 500,019/40,102 because it
-  counted 174 literal Default rows as resolved; no scientific result uses that
-  diagnostic.
+  from prediction, policy, support, and frontier construction.
 
 ## Prediction And Conformal Object
 
-- CatBoost uses 29 numeric and 9 categorical origination-time features.
-- A logistic Platt map is fitted on 14,077 availability-safe 2011 labels.
-- Five score strata are fixed from all 2011 Platt-scaled scores without using
-  either residual-window outcome.
-- The early residual recipe uses 14,948 availability-safe labels from 2012H1.
-- The late recipe uses 33,909 availability-safe labels from July
-  2012--January 2013 under the canonical six-month charged-off lag.
-- Both use rank `ceil((n_g + 1) * (1 - alpha))` at `alpha=0.10`.
-- The output `[max(0,p-c_g), min(1,p+c_g)]` is a clipped residual prediction
-  interval for the observed binary outcome. Its upper endpoint is a decision
-  score. It is not a confidence limit for latent individual PD and not the
-  convex hull of a discrete conformal prediction set.
-- `p` is a Platt-scaled default score. The optimized coefficient
-  `(1-p)r-p*LGD` is a model-implied plug-in objective, not an asserted true
-  conditional expectation.
-- Taxonomies with 1, 2, 5, and 10 groups are closed diagnostics, not an OOT
+- Primary learner: CatBoost seed 42, 29 numeric and 9 categorical
+  origination-time features, followed by an independent 2011 Platt map.
+- Coverage-only control: numeric logistic regression, followed by its own 2011
+  Platt map and fixed taxonomy. It never enters portfolio optimization.
+- Canonical five score strata are fixed separately for each learner from all
+  2011 scores without using residual outcomes.
+- The complete residual specification contains all eight consecutive six-month
+  windows beginning January--August 2012 and ending by January 2013.
+- Exact group rank: `ceil((n_g + 1) * (1 - alpha))` at `alpha=0.10`.
+- The object `[max(0,p-c_g), min(1,p+c_g)]` is a clipped residual interval for
+  the observed binary outcome. It is not a latent-PD confidence interval and
+  not the convex hull of its intersection with `{0,1}`.
+- Taxonomies with 1, 2, 5, and 10 groups are closed coverage diagnostics, not a
   selection grid.
-- Label lags 0, 3, 6, and 12 months are evaluated for the late five-group
-  recipe only. This is not a full taxonomy-by-lag cross-product.
+- The optimized coefficient `(1-p)r-p*LGD` is a model-implied plug-in
+  objective, not asserted true conditional expectation.
 
-For canonical seed 42, Platt calibration has AUC 0.676327, Brier 0.090206, log
-loss 0.316543, and ten-bin ECE 0.003273. Late policy development has ECE
-0.003330; primary OOT has AUC 0.640848, Brier 0.130753, and ECE 0.048323; the
-extension has ECE 0.091447. These are drift diagnostics, not a leaderboard.
+## Active Exact Statements
 
-## Portfolio And Comparators
-
-- Policies are all nine combinations of `tau in {0.15,0.17,0.19}` and
-  `gamma in {0.25,0.50,0.75}`.
-- Guardrail score: `q=p+gamma*(u-p)`.
-- The monthly LP has a full budget, loan bounds, a score cap, and a purpose cap.
-- The model-implied objective is `(1-p)r-p*LGD`; realized standardized payoff
-  is `(1-Y)r-Y*LGD`. Canonical `LGD=0.45`.
-- Standardized payoff is not IRR, NPV, welfare, or terminal investor profit.
-- **C0:** point score under the same numeric cap. Because `q>=p`, its feasible
-  region weakly contains the guardrail region. It is a positive control, not a
-  neutral baseline.
-- **C1:** a point cap fixed from outcome-free development allocations following
-  each residual window: six early menus or eleven late menus.
-- **C2:** a monthly point cap matching the already frozen guardrail's funded
-  point-score moment. The maximum canonical residual is below `4.17e-17`.
-  C2 matches one scalar moment but does not equal feasible sets or identify a
-  unique counterfactual.
-- **Comparator scopes:** core C0--C2; development-supported core plus caps
-  `0.0600:0.0025:0.0825`; broad stress core plus caps
-  `0.0500:0.0025:0.1200`.
-
-The development-supported endpoints round outward from late-development
-targets 0.0600396539710651--0.0814989466504543. The broad range may be used as
-a stress test, never as the sole support for comparator ambiguity.
-
-## Exact Statement Boundary
-
-1. **Proposition 1, positive affine cap equivalence.** Under full budget, a
-   globally positive-affine score admits an exact translated point cap. The
-   actual guardrail is piecewise affine because of clipping and
-   stratum-specific penalties, so this proposition does not equate it to point
-   score.
-2. **Corollary 1, same-cap nesting.** Since `q>=p`, C0 weakly contains the
-   guardrail feasible region and weakly dominates its optimized plug-in
-   objective. This does not order realized payoff, default, or miscoverage.
-3. **Identity 1, binary miscoverage.** For binary `Y`, miscoverage equals
+1. **Positive affine cap equivalence.** Under full budget, a globally
+   positive-affine score admits an exact translated point cap. The empirical
+   guardrail is not globally affine.
+2. **Same-cap nesting.** Since `q>=p`, C0 weakly contains the guardrail feasible
+   region and weakly dominates its optimized plug-in objective. This does not
+   order realized outcomes.
+3. **C2 plug-in dominance.** For frozen guardrail allocation `a_q`, the cap
+   `c=p'a_q/B` makes `a_q` feasible for the point LP under identical nonrisk
+   constraints. The optimized point plug-in objective therefore weakly
+   dominates. This does not order realized payoff, default, or miscoverage.
+4. **Constant-score binary phase transition.** For fixed `0<=p<1/2` and
+   `Y~Bernoulli(pi)`, the population residual quantile is `p` when `pi<=alpha`
+   and `1-p` when `pi>alpha`. The discrete set changes from `{0}` to `{0,1}`.
+   Empirical strata have varying scores, so this is a mechanism, not a proof of
+   the observed discontinuity.
+5. **Binary miscoverage identity.** Miscoverage is
    `1{Y=0,l>0}+1{Y=1,u<1}`.
-4. **Proposition 2, sharp fixed-allocation bounds.** Loan-wise extrema attain
-   additive bounds under unrestricted missing binary outcomes.
-5. **Paired-policy corollary.** Signed exposure on the funded union uses one
-   common unresolved outcome per loan and gives sharp paired contrasts.
-6. **Definition 1, declared comparator sensitivity envelope.** The minimum
-   lower and maximum upper endpoints over a named finite scope report whether a
-   sign survives that scope. This is not a confidence interval, causal
-   identified set, or universal statement over comparators.
-7. **Selection-transport identity.** Row weighting, available-exposure
-   weighting, funded group mix, and within-group selection telescope exactly.
-   Under censoring, intermediate terms depend on the extremal completion; only
-   final fixed-allocation endpoints are claimed sharp.
+6. **Sharp common-outcome bounds.** Loan-wise binary extrema give sharp
+   fixed-allocation bounds; paired policies optimize one common unresolved
+   outcome over their funded union.
+7. **Basis-endpoint sufficiency.** Within an LP basis the point allocation is
+   affine in cap. Sharp lower and upper contrast bounds are respectively
+   concave and convex, so adverse extrema over a basis range occur at its
+   endpoints. Support endpoints plus all HiGHS basis endpoints give the exact
+   declared frontier up to solver tolerance.
+8. **Declared comparator envelope.** Minimum lower and maximum upper endpoints
+   over a named support report whether a sign survives that support. This is
+   not a confidence interval, causal identified set, or universal statement
+   over comparators.
 
 No Markov certificate, selected-set conformal validity, deterministic tail
 guarantee, or causal policy effect is active.
 
-## Coverage Evidence
+## Coverage And Geometry Evidence
 
-| Residual window | Fit rows | Fit coverage | Five-group resolved OOT | Five-group all-candidate bound | Largest taxonomy upper bound |
-|---|---:|---:|---:|---:|---:|
-| Early 2012H1 | 14,948 | 0.900388 | 0.876312 | [0.854714, 0.879647] | 0.881942 |
-| Late 2012H2--2013M1 | 33,909 | 0.900174 | 0.867452 | [0.845072, 0.870973] | 0.875404 |
+- Primary candidate rows: 376,890; resolved: 365,339; unresolved: 11,551.
+- CatBoost five-group all-candidate bounds span [0.838531, 0.869179] at W8 to
+  [0.851519, 0.882167] at W2. Every upper endpoint is below 0.90.
+- Logistic-control bounds span [0.845687, 0.876335] at W8 to
+  [0.865006, 0.895654] at W1. Every upper endpoint is below 0.90.
+- The observed failure therefore survives both learners and all eight windows;
+  its magnitude is learner-dependent.
+- In CatBoost stratum 2, fit prevalence is 0.101703 at W7 and 0.097147 at W8.
+  The residual quantile changes from 0.888435 to 0.111801 and mean OOT width
+  from 0.984263 to 0.207631.
+- W8 stratum-2 all-candidate coverage remains [0.822536, 0.853682]. A narrower
+  interval does not restore transport.
+- Overlapping windows are a complete specification path, not independent
+  replications and not inputs to a vote.
 
-Every upper endpoint is below 0.90 across both windows and all four
-taxonomies. For late five-group lag sensitivity, upper endpoints are 0.872767,
-0.872634, 0.870973, and 0.861705 at lags 0, 3, 6, and 12 months. This supports
-an observed candidate-coverage transport failure before portfolio selection.
-It does not establish general conformal invalidity or selected-set validity.
+## Portfolio And Comparator Evidence
 
-## Comparator Evidence
+- Policies: all nine `tau in {0.15,0.17,0.19}` by
+  `gamma in {0.25,0.50,0.75}` combinations.
+- Monthly budget: USD 1 million; purpose cap: 25%; LGD: 0.45.
+- C0 copies the numeric guardrail cap and is a nesting positive control.
+- C1 is the capital-weighted mean of eleven common development monthly
+  guardrail point moments.
+- Development support is each window-policy pair's min/max over those eleven
+  moments. Its global hull is [0.055573, 0.099997].
+- C2 copies the frozen guardrail's funded point moment on the same month.
+- Maximum absolute C2 match residual: `8.33e-17`.
+- Minimum point-minus-guardrail plug-in objective: `-1.46e-10` dollars,
+  numerical zero within tolerance.
+- Exact frontier: 3,067 distinct caps, formed from the union of monthly HiGHS
+  basis endpoints and all development-support endpoints.
 
-Counts are guardrail minus point score, reported as negative / positive /
-indeterminate over nine policies.
+### Named C0/C1/C2 cells (72 per rule)
 
-| Window/comparator | Payoff | Default | Miscoverage |
+Counts below are guardrail lower / crosses zero / guardrail higher.
+
+| Rule | Payoff | Default | Miscoverage |
 |---|---:|---:|---:|
-| Early C0 | 0 / 9 / 0 | 9 / 0 / 0 | 8 / 0 / 1 |
-| Late C0 | 0 / 9 / 0 | 9 / 0 / 0 | 7 / 0 / 2 |
-| Early C1 | 5 / 2 / 2 | 2 / 2 / 5 | 1 / 7 / 1 |
-| Late C1 | 5 / 0 / 4 | 0 / 5 / 4 | 0 / 8 / 1 |
-| Early C2 | 7 / 0 / 2 | 0 / 1 / 8 | 0 / 8 / 1 |
-| Late C2 | 5 / 0 / 4 | 0 / 1 / 8 | 0 / 8 / 1 |
+| C0 | 0 / 5 / 67 | 72 / 0 / 0 | 38 / 29 / 5 |
+| C1 | 39 / 29 / 4 | 3 / 28 / 41 | 3 / 6 / 63 |
+| C2 | 49 / 16 / 7 | 8 / 52 / 12 | 5 / 10 / 57 |
 
-The 7-of-9 early payoff count is not timing-stable and cannot be a general
-headline. All 27 policy-metric envelopes cross zero in each comparator scope:
-27/27 core, 27/27 development-supported, and 27/27 broad stress, or 81/81
-scope-specific summaries.
+These rules define different feasible sets. Counts are descriptive, not votes.
 
-Across the 180 C2 seed-purpose cells in each window:
+### Exact comparator envelopes
 
-| Window/metric | Negative | Positive | Indeterminate |
-|---|---:|---:|---:|
-| Early payoff | 59 | 37 | 84 |
-| Late payoff | 56 | 36 | 88 |
-| Early default | 50 | 33 | 97 |
-| Late default | 51 | 33 | 96 |
-| Early miscoverage | 33 | 64 | 83 |
-| Late miscoverage | 27 | 85 | 68 |
+- Broad stress `[0.05,0.12]`: all 216 window-policy-metric envelopes cross
+  zero.
+- Development-admissible support:
+  - default: 72/72 cross zero;
+  - standardized payoff: 21 guardrail-lower, 51 cross zero;
+  - funded miscoverage: 39 guardrail-higher, 33 cross zero.
+- The 21 payoff directions are the three `gamma=0.75` policies in W1--W7.
+- At W8, all 27 development-support envelopes cross zero.
+- No nested scope count is an independent replication.
 
-Signs occur in both directions. Purpose caps 20%, 25%, and 30% bind in all
-2,025 reference guardrail policy-month-seed cells; the 100% diagnostic removes
-the constraint. Operational choices interact materially with score changes.
+## Simulation Boundary
 
-## Code-Path Equivalence
-
-- Common OOT point-score rows: 465,117.
-- Maximum absolute early/late point-score difference: 0.
-- Canonical C0 and point-frontier policy-month cells: 570.
-- Maximum absolute exposure difference: 0.
-- Total allocation L1 difference: 0.
-
-These controls isolate temporal differences to the residual recipe and
-dependent comparators rather than PD, menu, objective, or point-policy code.
+- Closed factorial: 19,200 repetitions over 192 cells.
+- The simulation supports only a coverage mechanism: prevalence shifts reduce
+  coverage while score shifts can increase endpoint saturation.
+- Its fixed portfolio cap is almost always nonbinding. Mean same-cap allocation
+  distance is about `2e-6`, mean C2 distance about `1e-6`, and mean C2 objective
+  gain `2.46e-12`.
+- No portfolio claim may use the simulation. The degenerate decision component
+  is retained rather than retuned after inspection.
 
 ## Permitted Claims
 
-- Candidate-level conformal coverage can fail after temporal transport before
-  optimization.
-- That observed failure survives the two locked windows, four fixed
-  taxonomies, and late-window lag grid.
-- A score and its numeric cap jointly define the decision problem; copying a
-  threshold is not a neutral baseline.
-- Exact funded-score matching removes one scalar stringency difference but does
-  not equate non-affine feasible regions.
-- Portfolio direction depends on comparator scope, residual timing, and binding
-  operational constraints in this archive.
-- Outcome isolation, explicit label availability, sharp common-outcome bounds,
-  and complete policy-family reporting make this fragility auditable.
-- The contribution is an audit framework and negative result, not a winning
-  credit policy.
+- Candidate-level binary-outcome coverage can fail after temporal transport
+  before optimization.
+- That observed failure survives all eight windows and both declared learners.
+- Binary absolute-residual geometry is prevalence-sensitive and can change
+  discontinuously around `pi=alpha`.
+- A score and cap jointly define the decision estimand; copying a numeric cap is
+  not neutral.
+- C2 has a mechanical plug-in dominance theorem but no realized-outcome
+  dominance theorem.
+- Realized portfolio directions depend on the outcome-free comparator support
+  and residual window in this archive.
+- The contribution is an identification audit and negative result, not a
+  winning credit policy.
 
 ## Forbidden Claims
 
 - a universally better or worse guardrail;
-- a selected best policy, residual window, seed, cap, taxonomy, or comparator;
+- a selected best policy, learner, residual window, cap, taxonomy, or
+  comparator;
 - comparator-robust direction over all possible baselines;
-- selected-set conformal validity or a latent-PD confidence interval;
+- selected-set conformal validity or latent-PD confidence intervals;
 - true conditional calibration, causal effects, prospective confirmation, or
   preregistration;
 - investor return, IRR, NPV, welfare, or live post-2020 performance;
 - fair-lending certification or deployment readiness;
-- Markov, tail, deterministic safety, or robustness certificates.
+- Markov, tail, deterministic safety, or robustness certificates;
+- independent-replication language for overlapping windows or nested supports;
+- a portfolio mechanism claim from the V4 factorial simulation.
 
 ## Evidence Contract
 
-- `reports/crpto/ijds_fixed_taxonomy_c2_evidence.json` is the only active
-  paper-facing evidence manifest.
-- Active table and figure prefixes are `crpto_ijds_ft_`.
-- The builder emits 62 table/figure files plus one manifest. Consecutive builds
-  must be byte-identical.
-- V1, V2, and V3 DVC pointers must remain available together.
+- `reports/crpto/ijds_binary_geometry_frontier_v4_evidence.json` is the only
+  active paper-facing manifest.
+- Active table and figure prefixes are `crpto_ijds_v4_`.
+- The active builder emits five CSV tables and three figures in PNG/PDF plus
+  one manifest. Consecutive builds must be byte-identical.
+- Four V4 DVC pointers must remain available together: data/model outcome-free
+  V1 and data/model evaluated V2.
 - Protected historical champion stages and `EXTRACTION_MANIFEST.json` remain
-  untouched by this audit.
+  untouched.
 
 ## Required Limitations
 
@@ -267,18 +247,20 @@ dependent comparators rather than PD, menu, objective, or point-policy code.
 - previously inspected retrospective archive;
 - terminal snapshot endpoint with unrestricted censoring bounds;
 - strong 2012--2016 temporal shift and no exchangeability claim;
-- one CatBoost/Platt stack and coarse fixed score taxonomies;
-- reporting-lag grid is not a resolution-time model;
-- purpose caps bind and interact with policy results;
+- one primary CatBoost stack and one logistic coverage control;
+- constant-score theory versus varying-score empirical strata;
+- overlapping windows are not independent evidence;
 - one-period plug-in payoff omits cash-flow timing and prepayment;
-- C2 is outcome-free but menu-adaptive and nondeployable;
-- finite comparator scopes, not universal quantification;
+- C2 is outcome-free, menu-adaptive, and nondeployable;
+- finite comparator supports, not universal quantification;
+- portfolio simulation is degenerate and not claim-bearing;
 - no causal, prospective, fairness, or deployment interpretation.
 
 ## Historical Boundary
 
-Compact-v7, maturity-safe P1, comparator-stringency C1, selected
-`linear-004`, pool93, Markov-style diagnostics, Prosper/Freddie exercises, and
-A1--A40 tables remain provenance in Git history and immutable artifacts. They
-must not fill, validate, or redefine the active result. The manuscript explains
-the final audit method and evidence, not the sequence of discarded versions.
+Fixed-taxonomy V1--V3, compact-v7, maturity-safe P1, comparator-stringency C1,
+selected `linear-004`, pool93, Markov-style diagnostics, Prosper/Freddie
+exercises, and A1--A40 tables remain provenance in Git history and immutable
+artifacts. They must not fill, validate, or redefine the active result. The
+manuscript explains the final audit method and evidence, not the sequence of
+discarded versions.

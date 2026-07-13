@@ -8,26 +8,25 @@ Pipeline de investigación y libro Quarto que acompañan el paper **CRPTO**, una
 
 | Campo | Valor |
 | --- | --- |
-| Outcome-free run | `ijds-fixed-taxonomy-c2-2026-07-11-v1` |
-| Reconciled run | `ijds-fixed-taxonomy-c2-2026-07-11-v2` |
-| Temporal sensitivity | `ijds-fixed-taxonomy-c2-temporal-v3-2026-07-12-v1` |
-| Universo OOT común | `465,117` préstamos de 36 meses; membership independiente del status |
-| Cronología | residuos early 2012H1 y late 2012H2--2013M1; 15 decisiones 2016-04--2017-06 |
-| Conformal | taxonomía fija con scores 2011 y dos ventanas de residuos; no es CI de PD latente |
+| Outcome-free run | `ijds-binary-geometry-frontier-v4-2026-07-12-v1` |
+| Reconciled run | `ijds-binary-geometry-frontier-v4-2026-07-12-v2` |
+| Universo | `640,543` préstamos; primary OOT `376,890`; membership independiente del status |
+| Cronología | ocho ventanas residuales consecutivas; 15 decisiones 2016-04--2017-06 |
+| Conformal | taxonomías fijas con scores 2011; intervalo binario residual, no CI de PD latente |
 | Políticas | nueve guardrails co-primarios; sin selector ni winner |
-| Cobertura candidata OOT | early `[0.854714, 0.879647]`; late `[0.845072, 0.870973]` |
-| Comparador C2 | matched al funded point score de cada guardrail/mes |
-| Resultado C2 | payoff peor early `7/9`, late `5/9`; no dirección universal |
-| Sensibilidad | dos censos de 180 celdas seed-cap contienen signos opuestos |
-| Comparator scopes | `27/27` envelopes cruzan cero en cada uno de tres scopes |
-| Claim | falla de cobertura sobrevive checks temporales; resultados de portafolio no son invariantes al timing, comparador ni constraints vinculantes |
+| Cobertura candidata OOT | CatBoost max upper `0.882167`; logistic max upper `0.895654` |
+| Transición binaria | estrato 2: prevalencia `0.101703 -> 0.097147`; cuantil `0.888435 -> 0.111801` |
+| Comparador C2 | 1,080 funded-point matches; dominancia plug-in mecánica, no dominancia realizada |
+| Exact frontier | 3,067 caps; `216/216` broad-stress envelopes cruzan cero |
+| Development support | default `72/72` cruza cero; W8 `27/27` cruza cero |
+| Claim | falla de cobertura y geometría binaria sensible a prevalencia; dirección de portafolio depende del soporte del comparador |
 
 Hashes SHA256 de los artefactos críticos están en [`EXTRACTION_MANIFEST.json`](EXTRACTION_MANIFEST.json). Verifica trabajo ordinario con `just validate-champion`; antes del freeze usa `just validate-champion-strict`, que también falla si falta un artefacto.
 Los estudios selected-policy, compact-v7, pool93 y A1--A40 se conservan como
 procedencia en Git/DVC, no como claims activos. La autoridad editorial es
 [`docs/research/active_claims_2026-07-12.md`](docs/research/active_claims_2026-07-12.md)
 y el único manifest paper-facing es
-[`reports/crpto/ijds_fixed_taxonomy_c2_evidence.json`](reports/crpto/ijds_fixed_taxonomy_c2_evidence.json).
+[`reports/crpto/ijds_binary_geometry_frontier_v4_evidence.json`](reports/crpto/ijds_binary_geometry_frontier_v4_evidence.json).
 
 ## Requisitos del sistema
 

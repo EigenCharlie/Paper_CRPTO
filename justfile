@@ -78,6 +78,9 @@ journal-package:
     uv run python scripts/build_crpto_journal_package.py
 
 ijds-evidence:
+    uv run python scripts/build_ijds_binary_geometry_frontier_v4_evidence.py
+
+ijds-historical-v1-v3-evidence:
     uv run python scripts/build_ijds_fixed_taxonomy_c2_evidence.py
 
 # Historical P1/C1 evidence remains reproducible but is not paper-facing.
@@ -99,12 +102,12 @@ ijds-policy-challenger:
 ijds-historical-v7-replay: ijds-exact-alpha ijds-policy-challenger ijds-historical-v7-evidence
 
 # Active-capsule gate: rebuild paper-facing evidence and test only dependencies
-# declared by the six fixed-taxonomy V1/V2/V3 DVC pointers.
+# declared by the four V4 outcome-free/evaluated DVC pointers.
 ijds-active-check: ijds-evidence publication-integrity
-    uv run pytest -q tests/test_ijds_anonymity.py tests/test_ijds_active_claim_sync.py tests/test_publication_targets.py tests/test_publication_integrity.py tests/test_submission_preview_layout.py tests/test_supplement_table_sync.py tests/test_scripts/test_compile_ijds_submission.py tests/test_scripts/test_manage_ijds_dvc_capsule.py tests/test_experiments/test_ijds_fixed_taxonomy_c2.py tests/test_evaluation/test_ijds_design_sensitivity.py
+    uv run pytest -q tests/test_ijds_anonymity.py tests/test_ijds_active_claim_sync.py tests/test_ijds_v4_claim_sync.py tests/test_publication_targets.py tests/test_publication_integrity.py tests/test_submission_preview_layout.py tests/test_supplement_table_sync.py tests/test_scripts/test_compile_ijds_submission.py tests/test_scripts/test_manage_ijds_dvc_capsule.py tests/test_ijds_audit_core.py
 
-# Active replay validates both fixed-taxonomy tags and rebuilds only the
-# paper-facing evidence. The expensive policy solve is never hidden here.
+# Active replay validates V4 evidence and rebuilds only paper-facing outputs.
+# The expensive policy solve is never hidden here.
 ijds-active-replay: ijds-active-check
 
 # V4 is intentionally two-phase. There is no combined target: the outcome-free

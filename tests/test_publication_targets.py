@@ -58,46 +58,46 @@ def test_ijds_sources_are_anonymous_by_default() -> None:
 
 def test_active_contract_is_small_complete_and_numerically_locked() -> None:
     active = _config()["active_scientific_contract"]
-    assert active["outcome_free_run_tag"].endswith("2026-07-11-v1")
-    assert active["run_tag"].endswith("2026-07-11-v2")
-    assert active["temporal_run_tag"].endswith("temporal-v3-2026-07-12-v1")
+    assert active["outcome_free_run_tag"].endswith("2026-07-12-v1")
+    assert active["run_tag"].endswith("2026-07-12-v2")
     assert active["previously_inspected_retrospective_archive"] is True
-    assert active["post_result_audit_framing"] is True
-    assert active["prespecified_negative_fallback"] is False
+    assert active["confirmatory"] is False
+    assert active["prospective"] is False
+    assert active["policy_winner_allowed"] is False
     assert "all nine" in active["method"]["policies"].lower()
-    assert "c2 matches" in active["method"]["comparator"].lower()
-    assert active["headline"]["early_candidate_coverage"] == pytest.approx([0.854714, 0.879647])
-    assert active["headline"]["late_candidate_coverage"] == pytest.approx([0.845072, 0.870973])
-    assert active["headline"]["early_c2"] == {
-        "payoff_worse": 7,
-        "default_higher": 1,
-        "miscoverage_higher": 8,
-        "policy_pairs": 9,
-    }
-    assert active["headline"]["late_c2"] == {
-        "payoff_worse": 5,
-        "default_higher": 1,
-        "miscoverage_higher": 8,
-        "policy_pairs": 9,
-    }
-    assert active["headline"]["seed_purpose_cells_per_window"] == 180
-    assert active["headline"]["seed_purpose_cells_total"] == 360
-    assert active["headline"]["binding_guardrail_month_cells"] == 2025
-    assert active["headline"]["terminal_endpoint_inventory"] == {
-        "resolved": 499845,
-        "unresolved": 40276,
-    }
-    assert active["headline"]["indeterminate_envelopes_per_scope"] == 27
-    assert active["headline"]["total_scope_envelopes"] == 81
-    assert active["headline"]["common_oot_point_rows"] == 465117
-    assert active["headline"]["maximum_point_score_difference"] == 0.0
-    assert active["headline"]["canonical_point_policy_cells"] == 570
-    assert active["headline"]["maximum_point_exposure_difference"] == 0.0
-    assert active["headline"]["universal_policy_direction_allowed"] is False
-    assert len(active["required_artifacts"]) == 23
+    assert "basis endpoints" in active["method"]["comparator"].lower()
+    headline = active["headline"]
+    assert headline["primary_candidates"] == 376890
+    assert headline["primary_resolved"] == 365339
+    assert headline["primary_unresolved"] == 11551
+    assert headline["residual_windows"] == 8
+    assert headline["learners"] == 2
+    assert headline["catboost_coverage_bounds"] == pytest.approx([0.838531, 0.882167])
+    assert headline["logistic_coverage_bounds"] == pytest.approx([0.845687, 0.895654])
+    assert headline["phase_transition"] == pytest.approx(
+        {
+            "stratum": 2,
+            "w7_prevalence": 0.101703,
+            "w8_prevalence": 0.097147,
+            "w7_quantile": 0.888435,
+            "w8_quantile": 0.111801,
+            "w7_width": 0.984263,
+            "w8_width": 0.207631,
+        }
+    )
+    assert headline["c2_cells"] == 1080
+    assert headline["c2_maximum_match_residual"] < 1e-16
+    assert headline["exact_frontier_caps"] == 3067
+    assert headline["development_support_hull"] == pytest.approx([0.055573, 0.099997])
+    assert headline["broad_stress_envelopes_crossing_zero"] == 216
+    assert headline["development_default_envelopes_crossing_zero"] == 72
+    assert headline["w8_development_envelopes_crossing_zero"] == 27
+    assert headline["simulation_repetitions"] == 19200
+    assert headline["universal_policy_direction_allowed"] is False
+    assert len(active["required_artifacts"]) == 12
     for artifact in active["required_artifacts"]:
         assert Path(artifact).is_file(), artifact
-    assert len(active["dvc_pointers"]) == 6
+    assert len(active["dvc_pointers"]) == 4
     for pointer in active["dvc_pointers"]:
         assert Path(pointer).is_file(), pointer
 

@@ -22,45 +22,23 @@ class SurfaceCheck:
     forbidden: tuple[str, ...] = ()
 
 
-ACTIVE_NUMERIC_TOKENS = (
-    "465,117",
-    "0.900388",
-    "0.900174",
+TITLE = "crpto: binary conformal geometry and comparator identification in portfolio optimization"
+
+RETIRED_HEADLINE_TOKENS = (
     "0.854714",
     "0.879647",
     "0.845072",
     "0.870973",
     "7 of 9",
     "5 of 9",
-    "180",
     "2,025",
-    "27",
-    "0.0600",
-    "0.0825",
-    "81",
-    "62",
-)
-
-RETIRED_HEADLINE_TOKENS = (
-    "0.854923",
-    "0.879692",
-    "0.900448",
-    "0.068313",
-    "295,967.17",
-    "506,587.03",
     "selected guardrail",
     "development-matched point",
     "maturity-safe parent",
-)
-
-COMPACT_V7_TOKENS = (
     "$179,327.59",
-    "276,869",
     "0.039375",
     "0.036875",
     "0.258051",
-    "0.574279",
-    "$196,369.14",
 )
 
 REVIEWER_SURFACES = (
@@ -73,11 +51,9 @@ REVIEWER_SURFACES = (
 )
 
 ACTIVE_EDITORIAL_SURFACES = (
-    REPO / "README.md",
     REPO / "CLAUDE.md",
     REPO / "AGENTS.md",
     REPO / "docs/SCOPE_AND_GOVERNANCE.md",
-    REPO / "docs/refactor/ijds_tooling_decisions_2026-07-09.md",
     REPO / "docs/research/active_claims_2026-07-12.md",
     REPO / "paper/CRPTO_ijds.qmd",
     REPO / "paper/supplement_ijds.qmd",
@@ -94,94 +70,89 @@ ACTIVE_EDITORIAL_SURFACES = (
     REPO / "configs/crpto_publication_targets.yaml",
 )
 
-TITLE = "crpto: auditing temporal transport and comparator choice in conformal portfolios"
+COMMON_ACTIVE_TOKENS = (
+    "376,890",
+    "11,551",
+    "eight",
+    "0.1017",
+    "0.0971",
+    "0.8884",
+    "0.1118",
+    "3,067",
+    "216",
+    "72",
+    "selected-set",
+)
 
 SURFACES = (
     SurfaceCheck(
         REPO / "paper/CRPTO_ijds.qmd",
         (
             TITLE,
-            *ACTIVE_NUMERIC_TOKENS,
+            *COMMON_ACTIVE_TOKENS,
+            "0.8957",
+            "1,080",
+            "19,200",
             "all nine policies are co-primary",
-            "comparator scopes",
             "standardized payoff",
             "not a prospective trial",
-            "present negative audit framing was formulated after observing that stop",
             "ethical and governance implications",
         ),
-        RETIRED_HEADLINE_TOKENS + COMPACT_V7_TOKENS,
+        RETIRED_HEADLINE_TOKENS,
     ),
     SurfaceCheck(
         REPO / "paper/supplement_ijds.qmd",
         (
             TITLE,
-            *ACTIVE_NUMERIC_TOKENS,
-            "all nine policies are co-primary",
-            "outcome-free freezes",
-            "audit interpretation in the paper was developed after observing that failure",
-            "identity s1",
-            "499,845",
-            "500,019",
-            "9.849--21.352 million",
-            "active claim boundary",
+            *COMMON_ACTIVE_TOKENS,
+            "365,339",
+            "5,001,617",
+            "1,080",
+            "19,200",
+            "binary phase transition",
+            "active conclusion is deliberately narrow",
         ),
-        RETIRED_HEADLINE_TOKENS + COMPACT_V7_TOKENS,
+        RETIRED_HEADLINE_TOKENS,
     ),
     SurfaceCheck(
         REPO / "paper/submission/CRPTO_ijds_submission.tex",
         (
             TITLE,
-            *ACTIVE_NUMERIC_TOKENS,
+            *COMMON_ACTIVE_TOKENS,
             "generated from paper/crpto_ijds.qmd",
-            "comparator scopes",
-            "present negative audit framing was formulated after observing that stop",
+            "0.8957",
+            "1,080",
         ),
-        RETIRED_HEADLINE_TOKENS + COMPACT_V7_TOKENS,
+        RETIRED_HEADLINE_TOKENS,
     ),
     SurfaceCheck(
         REPO / "docs/research/active_claims_2026-07-12.md",
         (
             "source of truth",
-            "0.854714",
-            "0.879647",
-            "27/27",
-            "180",
+            "0.838531",
+            "0.895654",
+            "8.33e-17",
+            "216",
             "no policy winner",
         ),
         RETIRED_HEADLINE_TOKENS,
     ),
     SurfaceCheck(
         REPO / "paper/submission/CLAIM_AUDIT_MATRIX.md",
-        (
-            "0.854714",
-            "0.879647",
-            "27/27",
-            "180",
-            "all nine",
-        ),
+        ("0.838531", "0.895654", "3,067", "216", "all nine"),
         RETIRED_HEADLINE_TOKENS,
     ),
     SurfaceCheck(
         REPO / "paper/submission/COVER_LETTER_AND_DISCLOSURE.md",
         (
             TITLE,
-            "0.854714",
-            "0.879647",
-            "27",
-            "180",
-            "present negative audit framing was developed after observing the stop",
+            "376,890",
+            "0.8957",
+            "0.1017",
+            "0.0971",
+            "216",
             "openai codex",
             "accepts full responsibility",
-        ),
-        RETIRED_HEADLINE_TOKENS,
-    ),
-    SurfaceCheck(
-        REPO / "paper/submission/README.md",
-        (
-            "single editorial source",
-            "build_ijds_submission_tex.py",
-            "pdflatex -> bibtex -> pdflatex -> pdflatex",
-            "28 pages",
         ),
         RETIRED_HEADLINE_TOKENS,
     ),
@@ -189,12 +160,11 @@ SURFACES = (
         REPO / "configs/crpto_publication_targets.yaml",
         (
             "active_claims_2026-07-12.md",
-            "ijds-fixed-taxonomy-c2-2026-07-11-v1",
-            "ijds-fixed-taxonomy-c2-2026-07-11-v2",
-            "0.854714",
-            "0.879647",
-            "post_result_audit_framing: true",
-            "git_history_only",
+            "ijds-binary-geometry-frontier-v4-2026-07-12-v1",
+            "ijds-binary-geometry-frontier-v4-2026-07-12-v2",
+            "0.838531",
+            "0.895654",
+            "policy_winner_allowed: false",
         ),
         RETIRED_HEADLINE_TOKENS,
     ),
@@ -257,21 +227,21 @@ def _check_surface_contracts() -> list[str]:
 
 def _check_retired_headlines() -> list[str]:
     failures: list[str] = []
-
     for path in ACTIVE_EDITORIAL_SURFACES:
         if not path.is_file():
             failures.append(f"{path.relative_to(REPO)} is missing")
             continue
         normalized = _normalize(path.read_text(encoding="utf-8"))
-        for token in RETIRED_HEADLINE_TOKENS:
-            if _normalize(token) in normalized:
-                failures.append(f"{path.relative_to(REPO)}: retired headline token '{token}'")
+        failures.extend(
+            f"{path.relative_to(REPO)}: retired headline token '{token}'"
+            for token in RETIRED_HEADLINE_TOKENS
+            if _normalize(token) in normalized
+        )
     return failures
 
 
 def _check_reviewer_anonymity() -> list[str]:
     failures: list[str] = []
-
     for path in REVIEWER_SURFACES:
         if not path.is_file():
             continue
@@ -287,33 +257,35 @@ def _check_reviewer_anonymity() -> list[str]:
 
 
 def _check_evidence_decision() -> list[str]:
+    path = REPO / "reports/crpto/ijds_binary_geometry_frontier_v4_evidence.json"
+    if not path.is_file():
+        return ["active evidence manifest is missing"]
+    evidence = json.loads(path.read_text(encoding="utf-8"))
     failures: list[str] = []
-
-    evidence_path = REPO / "reports/crpto/ijds_fixed_taxonomy_c2_evidence.json"
-    if evidence_path.is_file():
-        evidence = json.loads(evidence_path.read_text(encoding="utf-8"))
-        if evidence["decision"]["policy_winner_allowed"] is not False:
-            failures.append("active evidence unexpectedly allows a policy winner")
-        if evidence["decision"].get("post_result_audit_framing") is not True:
-            failures.append("active evidence no longer discloses post-result audit framing")
-        if evidence["decision"].get("prespecified_negative_fallback") is not False:
-            failures.append("active evidence misstates the audit as a prespecified fallback")
-        if evidence["headline"]["comparator_multiverse_envelopes_indeterminate"] != 27:
-            failures.append("active evidence no longer has 27 indeterminate envelopes")
-    else:
-        failures.append("active evidence manifest is missing")
+    boundary = evidence["claim_boundary"]
+    if boundary["policy_winner"] is not False:
+        failures.append("active evidence unexpectedly allows a policy winner")
+    if boundary["confirmatory"] is not False or boundary["prospective"] is not False:
+        failures.append("active evidence misstates its retrospective boundary")
+    if not evidence["coverage"]["catboost_all_eight_upper_below_nominal"]:
+        failures.append("CatBoost coverage no longer fails in all eight windows")
+    if not evidence["coverage"]["logistic_all_eight_upper_below_nominal"]:
+        failures.append("logistic coverage no longer fails in all eight windows")
+    if not evidence["portfolio"]["broad_stress_all_envelopes_cross_zero"]:
+        failures.append("broad comparator support no longer crosses zero everywhere")
+    if evidence["simulation"]["portfolio_claim_allowed"] is not False:
+        failures.append("degenerate simulation unexpectedly allows a portfolio claim")
     return failures
 
 
 def check_publication_integrity() -> list[str]:
     """Return every active-paper synchronization or anonymity failure."""
-    failures: list[str] = []
-    failures.extend(_check_surface_contracts())
-    failures.extend(_check_retired_headlines())
-    failures.extend(_check_reviewer_anonymity())
-    failures.extend(_check_evidence_decision())
-
-    return failures
+    return [
+        *_check_surface_contracts(),
+        *_check_retired_headlines(),
+        *_check_reviewer_anonymity(),
+        *_check_evidence_decision(),
+    ]
 
 
 def main() -> int:

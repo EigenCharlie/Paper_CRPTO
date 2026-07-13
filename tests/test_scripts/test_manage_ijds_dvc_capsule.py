@@ -24,13 +24,13 @@ def _targets(tmp_path: Path, count: int) -> Path:
     return targets
 
 
-def test_active_dvc_pointers_loads_exact_six_pointer_capsule(tmp_path: Path) -> None:
-    pointers = active_dvc_pointers(root=tmp_path, targets_path=_targets(tmp_path, 6))
+def test_active_dvc_pointers_loads_exact_four_pointer_capsule(tmp_path: Path) -> None:
+    pointers = active_dvc_pointers(root=tmp_path, targets_path=_targets(tmp_path, 4))
 
-    assert len(pointers) == 6
+    assert len(pointers) == 4
     assert all(path.is_file() and path.suffix == ".dvc" for path in pointers)
 
 
 def test_active_dvc_pointers_rejects_incomplete_capsule(tmp_path: Path) -> None:
-    with pytest.raises(ValueError, match="six unique pointers"):
-        active_dvc_pointers(root=tmp_path, targets_path=_targets(tmp_path, 4))
+    with pytest.raises(ValueError, match="four unique pointers"):
+        active_dvc_pointers(root=tmp_path, targets_path=_targets(tmp_path, 3))

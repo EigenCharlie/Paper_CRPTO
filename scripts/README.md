@@ -9,13 +9,16 @@ purpose.
 Use these for the active submission workflow:
 
 - `check_publication_integrity.py` - checks that paper, supplement, README and
-  official-template docs agree on the active fixed-taxonomy IJDS audit.
-- `build_ijds_fixed_taxonomy_c2_evidence.py` - validates the early V1/V2
-  lineage and the late V3 timing run, reconciles exact point-path equivalence,
-  and generates the sole active `crpto_ijds_ft_*` evidence family.
-- `experiments/run_ijds_fixed_taxonomy_c2.py` - executes a locked protocol into
-  a fresh run-tagged path. The active V3 run is already complete; do not rerun
-  it in place.
+  official-template docs agree on the active V4 IJDS audit.
+- `build_ijds_binary_geometry_frontier_v4_evidence.py` - verifies the V4
+  freeze/evaluation lineage and generates the sole active `crpto_ijds_v4_*`
+  evidence family.
+- `experiments/run_ijds_binary_geometry_frontier_v4.py` - exposes separate
+  `freeze` and `evaluate` phases for a fresh immutable V4 run. There is no
+  combined command that can hide the pre-outcome inspection boundary.
+- `build_ijds_fixed_taxonomy_c2_evidence.py` and
+  `experiments/run_ijds_fixed_taxonomy_c2.py` - historical V1--V3 provenance;
+  they are no longer paper-facing.
 - `build_ijds_maturity_safe_evidence.py` and
   `build_ijds_comparator_stringency_evidence.py` - historical P1/C1 evidence
   only; they are not paper-facing.
@@ -40,7 +43,7 @@ just smoke
 just type-advisory
 just hooks-check
 just complexity-report
-just ijds-evidence              # active V1/V2/V3 fixed-taxonomy evidence
+just ijds-evidence              # active V4 binary-geometry evidence
 just ijds-historical-v7-evidence # historical compact-v7 provenance only
 just paper-submission
 just paper-submission-official
@@ -64,8 +67,8 @@ post-submission cleanup lane justifies touching them.
 ## Protected or historical search paths
 
 The large scripts under `scripts/search/` and most `scripts/experiments/` are
-historical or governed research surfaces. The fixed-taxonomy experiment module
-listed above is the narrow active exception. Do not run HPO, conformal interval
+historical or governed research surfaces. The V4 experiment module listed
+above is the narrow active exception. Do not run HPO, conformal interval
 generation, champion search, or protected portfolio search unless the work has
 a fresh run tag, artifact sink, and drift/revalidation plan.
 
@@ -78,8 +81,8 @@ TabPFN, SPO+/PyEPO/Torch and cuOpt remain optional experiment stacks. The
 scripts that need them use explicit optional imports so the base IJDS
 environment stays light and full-tree type checks still remain useful.
 
-The active paper may cite only `crpto_ijds_ft_*` outputs through
-`reports/crpto/ijds_fixed_taxonomy_c2_evidence.json`. A1--A40 and
+The active paper may cite only `crpto_ijds_v4_*` outputs through
+`reports/crpto/ijds_binary_geometry_frontier_v4_evidence.json`. A1--A40 and
 `ijds_policy_governance.json` are historical provenance.
 
 ## Refactor priority

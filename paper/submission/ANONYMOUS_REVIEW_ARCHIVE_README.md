@@ -7,13 +7,13 @@ path.
 
 ## Evidence Layers
 
-- **Outcome-free freeze:** models, fixed taxonomies, decision panels, and every
-  allocation are persisted before outcomes are joined.
+- **Outcome-free freeze:** two learner score vectors, all residual recipes,
+  comparator supports, exact point frontiers, and every allocation are
+  persisted before outcomes are joined.
 - **Reconciled evaluation:** source descriptors and hashes are verified before
-  one vectorized outcome join, sharp bounds, sensitivities, and simulation.
-- **Temporal-design sensitivity:** a separate outcome-free freeze moves the
-  residual window, retains the common OOT point path exactly, and reports the
-  result without selecting either window.
+  one keyed outcome join, sharp bounds, comparator envelopes, and simulation.
+- **Complete specification:** all eight residual windows, both learners, and
+  all nine policies are reported without selecting a result.
 
 The archive is a retrospective audit of previously inspected data. It is not a
 preregistration, prospective trial, causal study, or selected-set guarantee.

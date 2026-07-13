@@ -1,0 +1,6 @@
+outs:
+- md5: b7e249de7842a31ccb92ef1eb68366d8.dir
+  size: 40503
+  nfiles: 3
+  hash: md5
+  path: ijds-binary-geometry-frontier-v4-2026-07-12-v2

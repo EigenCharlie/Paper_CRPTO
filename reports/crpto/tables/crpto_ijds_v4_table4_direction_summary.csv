@@ -1,0 +1,6 @@
+metric,direction,cells
+funded_miscoverage,crosses_zero,33
+funded_miscoverage,guardrail_higher,39
+standardized_payoff,crosses_zero,51
+standardized_payoff,guardrail_lower,21
+terminal_default,crosses_zero,72

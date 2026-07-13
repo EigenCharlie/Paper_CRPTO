@@ -26,123 +26,106 @@ primary_target:
 
 active_scientific_contract:
   claim_registry: docs/research/active_claims_2026-07-12.md
-  outcome_free_run_tag: ijds-fixed-taxonomy-c2-2026-07-11-v1
-  outcome_free_protocol_tag: protocol/ijds-fixed-taxonomy-c2-2026-07-11-v1
-  outcome_free_protocol_commit: 4835cc18a0117a695f89f9da70a4e3af97663a27
-  outcome_free_freeze_sha256: 93690082880ef4ff1375dcd5b26d2df79f80e6ebe09a6d83b7fd99a9abb4cfae
-  run_tag: ijds-fixed-taxonomy-c2-2026-07-11-v2
-  protocol_tag: protocol/ijds-fixed-taxonomy-c2-2026-07-11-v2
-  protocol_commit: a88839dfe14875fca2c02c43725291bc49d98611
-  temporal_run_tag: ijds-fixed-taxonomy-c2-temporal-v3-2026-07-12-v1
-  temporal_protocol_tag: protocol/ijds-fixed-taxonomy-c2-temporal-v3-2026-07-12-v1
-  temporal_protocol_commit: c5ceab737ab3cda8aed7d3c1fd24a506418cfa35
-  evidence_manifest: reports/crpto/ijds_fixed_taxonomy_c2_evidence.json
+  outcome_free_run_tag: ijds-binary-geometry-frontier-v4-2026-07-12-v1
+  outcome_free_protocol_tag: protocol/ijds-binary-geometry-frontier-v4-2026-07-12-v1
+  outcome_free_protocol_commit: 2f8a7606e4eb65aa3ae3701fb3af8d9a51c953cd
+  outcome_free_freeze_sha256: c2b3dc2d18c9fed80708682d5a0369c80c89643e2d28024418522d954ebe667c
+  run_tag: ijds-binary-geometry-frontier-v4-2026-07-12-v2
+  protocol_tag: protocol/ijds-binary-geometry-frontier-v4-2026-07-12-v2
+  protocol_commit: 60cdf298d965525cddaaf03abccd15ff805e1a15
+  evidence_manifest: reports/crpto/ijds_binary_geometry_frontier_v4_evidence.json
   previously_inspected_retrospective_archive: true
-  post_result_audit_framing: true
-  prespecified_negative_fallback: false
+  confirmatory: false
+  prospective: false
+  policy_winner_allowed: false
   method:
     conformal: >-
       Five score strata fixed from 2011 Platt-scaled scores, followed by exact
-      binary-outcome residual ranks in locked early 2012H1 and late
-      2012H2--2013M1 windows.
+      binary-outcome residual ranks in every eligible consecutive six-month
+      window from January 2012 through January 2013.
+    learners: >-
+      CatBoost/Platt is primary; independently calibrated numeric logistic
+      regression is a coverage-only control and never enters optimization.
     policies: >-
       All nine tau-gamma guardrails are co-primary; there is no selector or
       OOT winner.
     comparator: >-
-      C2 matches each monthly guardrail's frozen funded point-score moment on
-      the identical outcome-free menu; core, development-supported, and broad
-      comparator scopes are reported.
+      C0, C1, C2, the exact development-admissible support, and the broad
+      [0.05,0.12] stress support are outcome-free. HiGHS basis endpoints give
+      exact sharp envelopes over each declared cap interval.
     payoff: "Model-implied plug-in (1-p)r-p*LGD and realized (1-Y)r-Y*LGD."
     evaluation: "Fifteen separate monthly decisions from 2016-04 through 2017-06."
     unresolved: "Retained with sharp binary aggregate and common-outcome pairwise bounds."
   headline:
-    early_conformal_fit_coverage: 0.900388
-    late_conformal_fit_coverage: 0.900174
-    early_candidate_coverage: [0.854714, 0.879647]
-    late_candidate_coverage: [0.845072, 0.870973]
-    early_c2:
-      payoff_worse: 7
-      default_higher: 1
-      miscoverage_higher: 8
-      policy_pairs: 9
-    late_c2:
-      payoff_worse: 5
-      default_higher: 1
-      miscoverage_higher: 8
-      policy_pairs: 9
-    seed_purpose_cells_per_window: 180
-    seed_purpose_cells_total: 360
-    binding_guardrail_month_cells: 2025
-    indeterminate_envelopes_per_scope: 27
-    total_scope_envelopes: 81
-    comparator_scopes: 3
-    common_oot_point_rows: 465117
-    maximum_point_score_difference: 0.0
-    canonical_point_policy_cells: 570
-    maximum_point_exposure_difference: 0.0
-    terminal_endpoint_inventory:
-      resolved: 499845
-      unresolved: 40276
-    frozen_status_diagnostic:
-      resolved: 500019
-      unresolved: 40102
+    primary_candidates: 376890
+    primary_resolved: 365339
+    primary_unresolved: 11551
+    residual_windows: 8
+    learners: 2
+    catboost_coverage_bounds: [0.838531, 0.882167]
+    logistic_coverage_bounds: [0.845687, 0.895654]
+    phase_transition:
+      stratum: 2
+      w7_prevalence: 0.101703
+      w8_prevalence: 0.097147
+      w7_quantile: 0.888435
+      w8_quantile: 0.111801
+      w7_width: 0.984263
+      w8_width: 0.207631
+    c2_cells: 1080
+    c2_maximum_match_residual: 8.326672684688674e-17
+    exact_frontier_caps: 3067
+    development_support_hull: [0.055573, 0.099997]
+    broad_stress_envelopes_crossing_zero: 216
+    development_default_envelopes_crossing_zero: 72
+    w8_development_envelopes_crossing_zero: 27
+    simulation_repetitions: 19200
     universal_policy_direction_allowed: false
   mechanism: >-
-    Candidate coverage fails under both residual windows, all fixed taxonomies,
-    and the late label-lag grid. Same-cap C0 makes the guardrail appear uniformly
-    safer, while exact funded-score matching and every declared comparator scope
-    remove universal direction. Binding purpose constraints interact materially
-    with the score and comparator.
+    Candidate coverage fails under all eight windows and both learners. A score
+    stratum crosses the binary residual prevalence threshold, changing its
+    interval geometry discontinuously. Same-cap and C2 comparisons have exact
+    plug-in theorems, but realized directions depend on comparator support.
   required_artifacts:
-    - reports/crpto/ijds_fixed_taxonomy_c2_evidence.json
-    - reports/crpto/tables/crpto_ijds_ft_table1_policy_grid.csv
-    - reports/crpto/tables/crpto_ijds_ft_table2_coverage.csv
-    - reports/crpto/tables/crpto_ijds_ft_table3_comparator_contrasts.csv
-    - reports/crpto/tables/crpto_ijds_ft_table4_direction_summary.csv
-    - reports/crpto/tables/crpto_ijds_ft_tableS1_seed_cap_sensitivity.csv
-    - reports/crpto/tables/crpto_ijds_ft_tableS2_point_cap_frontier.csv
-    - reports/crpto/tables/crpto_ijds_ft_tableS3_lgd.csv
-    - reports/crpto/tables/crpto_ijds_ft_tableS4_group_ablation.csv
-    - reports/crpto/tables/crpto_ijds_ft_tableS5_policy_levels.csv
-    - reports/crpto/tables/crpto_ijds_ft_tableS6_simulation.csv
-    - reports/crpto/tables/crpto_ijds_ft_tableS7_label_availability.csv
-    - reports/crpto/tables/crpto_ijds_ft_tableS8_temporal_windows.csv
-    - reports/crpto/tables/crpto_ijds_ft_tableS9_label_lags.csv
-    - reports/crpto/tables/crpto_ijds_ft_tableS10_timing_directions.csv
-    - reports/crpto/tables/crpto_ijds_ft_tableS11_comparator_scopes.csv
-    - reports/crpto/tables/crpto_ijds_ft_tableS12_prediction_diagnostics.csv
-    - reports/crpto/tables/crpto_ijds_ft_tableS13_late_c2_contrasts.csv
-    - reports/crpto/tables/crpto_ijds_ft_tableS14_comparator_scope_envelopes.csv
-    - reports/crpto/figures/crpto_ijds_ft_fig1_coverage.pdf
-    - reports/crpto/figures/crpto_ijds_ft_fig2_comparators.pdf
-    - reports/crpto/figures/crpto_ijds_ft_fig3_frontier.pdf
-    - reports/crpto/figures/crpto_ijds_ft_fig4_simulation.pdf
+    - reports/crpto/ijds_binary_geometry_frontier_v4_evidence.json
+    - reports/crpto/tables/crpto_ijds_v4_table1_coverage_windows.csv
+    - reports/crpto/tables/crpto_ijds_v4_table2_phase_transition.csv
+    - reports/crpto/tables/crpto_ijds_v4_table3_development_envelopes.csv
+    - reports/crpto/tables/crpto_ijds_v4_table4_direction_summary.csv
+    - reports/crpto/tables/crpto_ijds_v4_tableS1_named_comparators.csv
+    - reports/crpto/figures/crpto_ijds_v4_fig1_coverage.pdf
+    - reports/crpto/figures/crpto_ijds_v4_fig1_coverage.png
+    - reports/crpto/figures/crpto_ijds_v4_fig2_phase_transition.pdf
+    - reports/crpto/figures/crpto_ijds_v4_fig2_phase_transition.png
+    - reports/crpto/figures/crpto_ijds_v4_fig3_envelopes.pdf
+    - reports/crpto/figures/crpto_ijds_v4_fig3_envelopes.png
   dvc_pointers:
-    - data/processed/experiments/ijds_prefreeze/ijds-fixed-taxonomy-c2-2026-07-11-v1.dvc
-    - models/experiments/ijds_prefreeze/ijds-fixed-taxonomy-c2-2026-07-11-v1.dvc
-    - data/processed/experiments/ijds_prefreeze/ijds-fixed-taxonomy-c2-2026-07-11-v2.dvc
-    - models/experiments/ijds_prefreeze/ijds-fixed-taxonomy-c2-2026-07-11-v2.dvc
-    - data/processed/experiments/ijds_prefreeze/ijds-fixed-taxonomy-c2-temporal-v3-2026-07-12-v1.dvc
-    - models/experiments/ijds_prefreeze/ijds-fixed-taxonomy-c2-temporal-v3-2026-07-12-v1.dvc
+    - data/processed/experiments/ijds_audit/ijds-binary-geometry-frontier-v4-2026-07-12-v1.dvc
+    - models/experiments/ijds_audit/ijds-binary-geometry-frontier-v4-2026-07-12-v1.dvc
+    - data/processed/experiments/ijds_audit/ijds-binary-geometry-frontier-v4-2026-07-12-v2.dvc
+    - models/experiments/ijds_audit/ijds-binary-geometry-frontier-v4-2026-07-12-v2.dvc
 
 claim_boundaries:
   required:
     - "Clipped binary-outcome residual interval, not a latent-PD confidence limit or discrete-set convex hull."
     - "Platt-scaled score and plug-in objective, not asserted true conditional probability."
+    - "All eight overlapping residual windows are co-primary specifications, not independent replications."
+    - "The logistic learner is a coverage-only control and does not enter portfolio optimization."
     - "Marginal/Mondrian coverage is not selected-set validity."
     - "Standardized payoff is not cash-flow return or IRR."
     - "Sharp bounds are partial identification, not confidence intervals."
     - "Retrospective contrasts are not causal effects."
     - "Code-locked retrospective audit, not preregistration or a prospective trial."
     - "C2 is an outcome-free adaptive audit comparator, not a deployable fixed rule."
+    - "Exact comparator envelopes quantify only the declared outcome-free cap supports."
     - "The archive was previously inspected; the protocol is not confirmatory."
-    - "The superiority stop rule failed; the audit framing is a post-result secondary interpretation."
+    - "The factorial simulation supports a coverage mechanism only, not a portfolio claim."
   forbidden:
     - "Universal economic dominance."
     - "A unique or theoretically optimal comparator-matching rule."
     - "A 9-of-9 family direction."
     - "A selected policy or OOT winner."
-    - "A selected residual window or result-based V3 promotion."
+    - "A selected residual window, learner, taxonomy, cap, or comparator."
     - "A comparator-robust sign over the declared multiverse."
     - "Selected-set conformal guarantee."
     - "Markov certificate or deterministic tail guarantee."
@@ -159,7 +142,7 @@ historical_boundary:
     - "A35--A40: compact-v7 exact-alpha, selector, and portfolio bundle."
   rule: >-
     Historical artifacts remain recoverable from Git/DVC but are excluded from
-    the active capsule and cannot validate, fill, or redefine the fixed-taxonomy audit.
+    the active capsule and cannot validate, fill, or redefine the V4 binary-geometry audit.
 
 secondary_targets:
   - id: ejor

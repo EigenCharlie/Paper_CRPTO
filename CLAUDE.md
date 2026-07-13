@@ -3,18 +3,18 @@
 ## Scientific status override - 2026-07-12
 
 The only active IJDS source of truth is
-`docs/research/active_claims_2026-07-12.md`. The paper is a fixed-taxonomy,
-comparator-multiverse and temporal-design audit. It does not select a policy or
-residual window and does not claim a universal guardrail direction. The
-outcome-free V1 freeze is imported by the clean tagged V2 evaluator through
-exact SHA-256 lineage. The isolated V3 run co-reports a later residual window
-without result-based promotion; the only active paper-facing manifest is
-`reports/crpto/ijds_fixed_taxonomy_c2_evidence.json`.
+`docs/research/active_claims_2026-07-12.md`. The paper is a complete-window
+binary-geometry and exact comparator-frontier audit. It does not select a
+policy, learner, or residual window and does not claim a universal guardrail
+direction. The outcome-free V4-v1 freeze is imported by the clean tagged
+V4-v2 evaluator through exact SHA-256 lineage; the only active paper-facing
+manifest is `reports/crpto/ijds_binary_geometry_frontier_v4_evidence.json`.
 
-The superiority submission is NO-GO. The IJDS audit narrative is GO: temporal
-candidate-coverage failure survives declared timing checks, while decision
-conclusions depend on residual timing, comparator stringency, and binding
-operational constraints. Selected-policy studies,
+Superiority and policy-winner framing are NO-GO. The IJDS audit narrative is
+GO: candidate-coverage failure survives all eight windows and both learners;
+binary interval geometry changes around a prevalence threshold; and realized
+decision directions depend on residual timing and declared comparator support.
+Selected-policy studies,
 compact-v7, pool93, Prosper/Freddie, and A1--A40 are historical provenance only. Never overwrite
 the V1/V2/V3 audit runs, the historical champion, or manifest-protected artifacts.
 
@@ -63,29 +63,28 @@ congelados como procedencia histórica. El body IJDS activo usa un experimento
 nuevo, aislado y DVC-tracked; no regenera ni sobreescribe ningún artefacto
 upstream protegido.
 
-**Body claim activo - fixed-taxonomy comparator multiverse:**
+**Body claim activo - binary geometry and comparator identification:**
 
 | Campo | Valor |
 | --- | --- |
-| Outcome-free run | `ijds-fixed-taxonomy-c2-2026-07-11-v1` |
-| Reconciled run | `ijds-fixed-taxonomy-c2-2026-07-11-v2` |
-| Temporal sensitivity | `ijds-fixed-taxonomy-c2-temporal-v3-2026-07-12-v1` |
-| Universo OOT comun | `465,117` prestamos de 36 meses; membership independiente del status |
-| Cronologia | residuos early 2012H1 y late 2012H2--2013M1; 15 decisiones 2016-04--2017-06 |
+| Outcome-free run | `ijds-binary-geometry-frontier-v4-2026-07-12-v1` |
+| Verified evaluation | `ijds-binary-geometry-frontier-v4-2026-07-12-v2` |
+| Universo | `640,543` filas; primary OOT `376,890`; extension `88,227`; membership independiente del status |
+| Cronologia | ocho ventanas residuales consecutivas; 15 decisiones 2016-04--2017-06 |
 | Conformal | bordes de score fijos en 2011; clipped residual interval, no CI de PD latente |
 | Politicas | nueve guardrails co-primarios; sin selector ni winner |
-| Cobertura candidata OOT | early `[0.854714, 0.879647]`; late `[0.845072, 0.870973]` |
-| Comparator C2 | matched al funded point score de cada guardrail/mes; no causal |
-| C2 payoff | early `7/9` lower; late `5/9` lower; no headline universal |
-| C2 default | `1/9` higher y `8/9` indeterminado en ambas ventanas |
-| C2 miscoverage | `8/9` higher y `1/9` indeterminado en ambas ventanas |
-| Comparator scopes | `27/27` cruzan cero en core, development-supported y broad |
-| Evidencia | `reports/crpto/ijds_fixed_taxonomy_c2_evidence.json` |
+| Cobertura CatBoost | ocho upper bounds bajo `0.90`; maximo `0.882167` |
+| Cobertura logistic control | ocho upper bounds bajo `0.90`; maximo `0.895654` |
+| Transicion binaria | estrato 2: prevalencia `0.101703 -> 0.097147`; cuantíl `0.888435 -> 0.111801` |
+| Comparator C2 | 1,080 matches; residual maximo `8.33e-17`; dominancia plug-in mecanica |
+| Exact frontier | 3,067 caps; 216/216 broad-stress envelopes cruzan cero |
+| Development support | default 72/72 cruza; W8 27/27 cruza |
+| Evidencia | `reports/crpto/ijds_binary_geometry_frontier_v4_evidence.json` |
 
-El claim activo es una falsificacion metodologica: la falla temporal de
-cobertura sobrevive los checks declarados, pero el signo de los resultados de
-portafolio depende del timing residual, el comparador y restricciones
-operacionales vinculantes. No existe un winner ni una direccion universal. La
+El claim activo es una auditoria de identificacion: la falla temporal de
+cobertura sobrevive los checks declarados, la geometria binaria es sensible a
+prevalencia, y el signo de los resultados de portafolio depende del timing
+residual y del soporte del comparador. No existe un winner ni una direccion universal. La
 autoridad completa es
 `docs/research/active_claims_2026-07-12.md`.
 
@@ -122,7 +121,7 @@ Artefactos históricos congelados cuyos hashes están en
 - `EXTRACTION_MANIFEST.json`
 
 La sincronia del claim activo con body, supplement y TeX la vigilan el builder
-`scripts/build_ijds_fixed_taxonomy_c2_evidence.py`, el manifest activo y
+`scripts/build_ijds_binary_geometry_frontier_v4_evidence.py`, el manifest activo y
 `scripts/check_publication_integrity.py`. El TeX oficial es generado desde
 `paper/CRPTO_ijds.qmd` por `scripts/build_ijds_submission_tex.py`; no se edita
 manualmente.

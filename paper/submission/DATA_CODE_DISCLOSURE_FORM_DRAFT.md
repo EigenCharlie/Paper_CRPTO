@@ -14,8 +14,8 @@ Recheck both links during submission week.
 
 **Title of manuscript**
 
-CRPTO: Auditing Temporal Transport and Comparator Choice in Conformal
-Portfolios
+CRPTO: Binary Conformal Geometry and Comparator Identification in Portfolio
+Optimization
 
 **Policy acknowledgement**
 
@@ -36,7 +36,8 @@ Paste in the ethics box:
 > fair-lending certification. Terminal snapshot outcomes are partially
 > unresolved; such rows remain in candidate menus and receive sharp bounds
 > rather than being deleted. The results are a methodological audit of temporal
-> transport, comparator design, and optimizer selection, not evidence that any
+> transport, binary set geometry, comparator support, and optimizer selection,
+> not evidence that any
 > evaluated policy is appropriate for live credit decisions.
 > Comparator and residual-window choices can change policy conclusions, so a
 > label such as "safer" is not used without its explicit decision contract.

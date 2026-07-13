@@ -1,74 +1,71 @@
 # IJDS Cover Letter and Editor Disclosures
 
-Editor-facing template only. At freeze, create `COVER_LETTER_PRIVATE.md`
-locally, insert the author identity, and upload it only to the editor-facing
-ScholarOne slot. The private filename is ignored by Git.
+Editor-facing template only. At the eventual submission freeze, create the
+ignored `COVER_LETTER_PRIVATE.md`, add the author identity, and upload it only
+to the editor-facing ScholarOne slot.
 
 ## Cover Letter Draft
 
 Dear Editors,
 
-I submit "CRPTO: Auditing Temporal Transport and Comparator Choice in
-Conformal Portfolios" for consideration at the *INFORMS Journal on Data
+I submit "CRPTO: Binary Conformal Geometry and Comparator Identification in
+Portfolio Optimization" for consideration at the *INFORMS Journal on Data
 Science*.
 
-The paper studies a decision-focused failure mode: a predictive guarantee and
-a numerical risk cap need not retain their meaning after a score enters an
+The paper examines a data-models-decisions failure mode: a predictive guarantee
+and a numerical risk cap need not retain their meaning after a score enters an
 optimizer. CRPTO combines a Platt-scaled default score, a 90%-target
-binary-outcome conformal residual interval, and a monthly credit-allocation
-linear program. Its common OOT panel contains 465,117 status-independent loans;
-score strata are fixed before residual fitting; unresolved outcomes remain in
-every menu; and outcomes are joined only after allocations are frozen.
+absolute-residual interval for a binary outcome, and a monthly credit-allocation
+linear program. Candidate membership is status independent, unresolved loans
+remain in every menu, allocations are persisted before outcomes are joined,
+and realized comparisons use sharp common-outcome bounds.
 
-Two locked residual windows meet the target in their fit blocks: 0.900388 on
-14,948 observable 2012H1 labels and 0.900174 on 33,909 labels from July
-2012--January 2013. Their five-stratum all-candidate OOT bounds are respectively
-[0.854714, 0.879647] and [0.845072, 0.870973] over 15 monthly decisions from
-April 2016 through June 2017. Every upper endpoint remains below 0.90 across
-four fixed taxonomies and a closed late-window reporting-lag grid. The failure
-occurs before portfolio selection.
+The predictive audit reports every eligible consecutive six-month residual
+window from January 2012 through January 2013. For 376,890 primary OOT
+candidates, including 11,551 unresolved outcomes, every CatBoost five-stratum
+coverage upper bound is below 0.90. An independently calibrated logistic
+control is closer but also fails in all eight windows; its maximum upper bound
+is 0.8957. The failure therefore survives both declared learners, although its
+magnitude is learner-dependent.
 
-The decision audit evaluates all nine co-primary guardrails. A copied numeric
-cap uses a weaker point-score feasible set and makes every guardrail appear to
-improve realized default in both windows. Nesting predicts only the feasible
-set and optimized plug-in objective ordering; the realized signs are empirical.
-An outcome-free comparator instead matches each funded point-score moment. The
-C2 payoff census changes from 7 of 9 robust losses in the early window to 5 of
-9 in the late window; default is higher for 1 of 9 and funded-set miscoverage
-for 8 of 9 in both. All 27 policy-metric envelopes cross zero in each of three
-scopes, including the development-supported point-cap range 0.0600--0.0825.
-Each residual window's 180-cell seed--concentration census contains signs in
-both directions; no cell or window is promoted.
+The complete residual path exposes a discrete mechanism. In one CatBoost score
+stratum, fit prevalence moves from 0.1017 to 0.0971 between the seventh and
+eighth windows, crossing the nominal alpha of 0.10. Its residual quantile
+changes from 0.8884 to 0.1118 and its OOT mean interval width from 0.9843 to
+0.2076. The paper formalizes the corresponding constant-score binary phase
+transition while keeping its conditions separate from the varying-score
+empirical diagnostic.
+
+The decision audit treats the comparator as part of the estimand. We prove
+same-cap nesting and a contemporaneous funded-score feasibility theorem, then
+enumerate the exact HiGHS basis frontier for the point-score cap. All 216
+broad-stress policy-window-metric envelopes cross zero. Within the narrower
+development-admissible support, default remains unidentified in all 72 cells,
+and the payoff and miscoverage directions that survive windows 1--7 disappear
+in window 8. No learner, window, policy, cap, or comparator is promoted.
 
 The contribution is therefore not a winning credit policy. It is a
-reproducible audit design that separates temporal coverage transport,
-comparator stringency, unresolved outcomes, and binding operational
-constraints. The empirical conclusion is deliberately negative: temporal
-candidate-coverage failure survives the declared timing checks, whereas
-portfolio direction is not invariant to residual timing, comparator scope, or
-binding constraints. This data-models-decisions-implications chain fits IJDS's
-focus on rigorous data science for decisions.
+reproducible identification audit of binary conformal geometry, temporal
+transport, and comparator support in a frozen predict-then-optimize system.
+This data-models-decisions-implications chain fits IJDS's focus on rigorous data
+science for decisions while making the negative result operationally useful:
+coverage does not transport in the declared archive, and realized portfolio
+direction cannot be interpreted without an outcome-free comparator support.
 
-The locked protocol required the superiority submission to stop if neither
-declared 9-of-9 result survived. That gate failed. The present negative audit
-framing was developed after observing the stop and is submitted as an
-explicitly retrospective secondary interpretation, not as a prespecified
-fallback or confirmatory success.
+The archive was inspected during earlier project iterations. The active
+protocol was committed before its complete run, but the study is retrospective
+rather than prospective, confirmatory, or preregistered. It makes no causal,
+selected-set-validity, fair-lending, or deployment claim. The constant-score
+theory is not presented as proof for empirical varying-score strata, and the
+factorial simulation's nonbinding portfolio component is disclosed as a
+negative diagnostic rather than used as evidence.
 
-The archive was inspected during earlier project iterations. The current code
-and outcome-free allocation protocol were locked before the complete
-evaluation, but the study is retrospective rather than prospective or
-preregistered. The review package records this boundary, provides sharp
-partial-identification bounds, and makes no causal, selected-set-validity,
-fair-lending, or deployment claim.
-
-The early freeze/evaluation and late sensitivity have separate immutable
-records and six DVC pointers. A deterministic evidence builder verifies their
-lineage, exact common point path, and all 62 table and figure files. The official INFORMS TeX is generated
-from the canonical QMD source to prevent manuscript drift. At acceptance, I
-will release code, environment lock, manuscript sources, artifact metadata,
-DVC pointers, and raw-data acquisition instructions, subject to source
-redistribution terms.
+The review package has a verified outcome-free freeze, a separate evaluation
+join, four immutable DVC pointers, a deterministic evidence builder, and
+claim-sync tests spanning the manuscript, supplement, evidence manifest, and
+generated INFORMS TeX. At acceptance, I will release code, environment lock,
+manuscript sources, artifact metadata, DVC pointers, and raw-data acquisition
+instructions, subject to source redistribution terms.
 
 This manuscript is original, is not under review elsewhere, and has one author.
 I declare no conflict of interest and no specific funding for this work.

@@ -10,55 +10,58 @@ check rather than permission to upload.
 | Official anonymous manuscript PDF | Yes | Generated from QMD through the INFORMS template |
 | Anonymous online supplement PDF | Yes | Current protocol, proofs, full sensitivities, limitations |
 | Separate title page | No | Author, affiliation, email, ORCID, declarations |
-| Data and Code Disclosure Form | Editor/system | Current official form; Option 4 explanation reconciled |
+| Data and Code Disclosure Form | Editor/system | Current official form; release explanation reconciled |
 | Cover letter | Editor | Current title, results, retrospective boundary |
 | Reproducibility note/archive | Editor/system | Sanitized or exact identifiers according to audience |
 
 ## Scientific Reconciliation
 
-- Title is "CRPTO: Auditing Temporal Transport and Comparator Choice in
-  Conformal Portfolios" on every surface.
-- Common OOT universe is `465,117`; early/late designs retain
-  `540,121`/`625,576`, and membership never depends on final status.
-- Taxonomy uses 2011 scores; both residual windows use availability-safe labels
-  and neither is selected by OOT results.
-- All nine policies are co-primary; no selected policy or OOT winner appears.
-- Fit coverage is early `0.900388` and late `0.900174`.
-- Five-group OOT coverage is early `[0.854714, 0.879647]` and late
-  `[0.845072, 0.870973]`; all taxonomy and late lag upper endpoints are below
-  0.90.
-- C2 matches funded point score to residual below `4.17e-17`.
-- C2 payoff is worse `7/9` early and `5/9` late; default is higher `1/9` and
-  miscoverage `8/9` in both.
-- All `27/27` envelopes are indeterminate in each of three scopes (`81/81`).
-- Both 180-cell seed-purpose censuses are reported without selecting a cell.
-- All 2,025 sub-100% guardrail-month purpose caps are derived as binding.
-- The terminal endpoint inventory is 499,845 resolved/40,276 unresolved; the
-  distinct 500,019/40,102 receipt diagnostic is not used for claims.
-- The superiority stop rule failed; the negative audit is labeled as a
-  post-result retrospective interpretation, not a prespecified fallback.
+- Title is "CRPTO: Binary Conformal Geometry and Comparator Identification in
+  Portfolio Optimization" on every surface.
+- The design universe has `640,543` status-independent loans; primary OOT has
+  `376,890` candidates, `365,339` resolved and `11,551` unresolved.
+- Both learner taxonomies use 2011 scores; all eight residual windows use
+  availability-safe labels and none is selected by OOT results.
+- All nine policies are co-primary; no selected learner, taxonomy, policy, cap,
+  comparator, or OOT winner appears.
+- Every CatBoost and logistic all-candidate coverage upper bound is below 0.90;
+  the largest logistic upper bound is `0.895654`.
+- The stratum-2 phase diagnostic is prevalence `0.101703 -> 0.097147`, residual
+  quantile `0.888435 -> 0.111801`, and width `0.984263 -> 0.207631`.
+- C2 matches funded point score to residual below `8.33e-17` in all `1,080`
+  cells and is described only as a plug-in feasibility theorem.
+- The exact point frontier contains `3,067` caps.
+- All `216/216` broad-stress envelopes cross zero; default crosses in all
+  `72/72` development-support cells; all `27/27` W8 envelopes cross zero.
+- The 19,200-repetition simulation supports only a coverage mechanism; its
+  portfolio component is disclosed as degenerate.
 - The Platt score is not called a true conditional probability; its objective
-  is a model-implied plug-in. Standardized payoff is never called IRR, NPV,
-  welfare, or investor return.
+  is model-implied. Standardized payoff is never called IRR, NPV, welfare, or
+  investor return.
 - No selected-set, causal, prospective, confirmatory, Markov, deployment, or
   fair-lending claim appears.
 
 ## Official Build QA
 
-- official PDF: 28 pages;
-- references start on page 25; 24 pre-reference pages;
-- 7 main tables and 3 main figures;
-- 260-word abstract and 7 keywords;
+After the explicit freeze, record and verify:
+
+- total official pages and pre-reference pages;
+- reference start page and compliance with the 25-page exclusion rule;
+- five main tables and three main figures, unless a documented editorial edit
+  deliberately changes the count;
+- abstract at most 300 words and 1--10 keywords;
 - no BibTeX warnings or undefined references/citations;
 - all four INFORMS style assets match the tracked SHA-256 manifest;
-- the known 17.54 pt publisher-class title diagnostic is visually within page;
-- every page is rendered and checked after the final build.
+- every body, supplement, and official page has been rendered and visually
+  checked; and
+- no figure, table, equation, header, footer, or reference is clipped or
+  overlapping.
 
 ## Full Local Gate
 
 ```powershell
 just submission-check
-uv run dvc status --no-updates
+just ijds-dvc-remote-status
 git status --short
 ```
 
@@ -72,15 +75,9 @@ and official compilation. It does not run protected DVC stages.
   URL, local path, exact tag/hash, or private remote appears in reviewer files.
 - Title page, cover letter, disclosure form, and exact crosswalk are uploaded
   only in editor/system slots.
-- The completed title page is created locally as `TITLE_PAGE_PRIVATE.md` from
-  the tracked anonymous template and is never committed.
-- The completed cover letter is created locally as `COVER_LETTER_PRIVATE.md`
-  from the tracked anonymous template and is never committed.
-- Search the exact title before upload and record any public repository or
-  preprint discoverability. The [INFORMS peer-review
-  policy](https://pubsonline.informs.org/authorportal/peer-review) notes that
-  complete anonymity may be impossible for posted preprints; reviewer files
-  still must contain no repository link or author identifier.
+- The completed title page is created locally as `TITLE_PAGE_PRIVATE.md`; the
+  completed cover letter as `COVER_LETTER_PRIVATE.md`. Both are ignored by Git.
+- Search the exact title before upload and document public discoverability.
 - Supplement is designated as a separate online supplement.
 - ScholarOne-generated proof is opened and compared with the validated local
   PDFs before submission.

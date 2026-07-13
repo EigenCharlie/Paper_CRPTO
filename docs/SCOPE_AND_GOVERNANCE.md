@@ -27,30 +27,29 @@ CRPTO does not cover:
 
 ## Active paper contract
 
-The current IJDS paper is the fixed-taxonomy comparator and temporal-design audit:
+The current IJDS paper is the complete-window binary-geometry and comparator audit:
 
-- outcome-free run `ijds-fixed-taxonomy-c2-2026-07-11-v1` and hash-linked
-  evaluation run `ijds-fixed-taxonomy-c2-2026-07-11-v2`;
-- isolated temporal sensitivity
-  `ijds-fixed-taxonomy-c2-temporal-v3-2026-07-12-v1`;
-- common status-independent OOT universe of 465,117 36-month loans;
-- CatBoost/Platt fitting before conformal residual estimation on early and late
-  availability-safe windows, with score taxonomies fixed before either;
+- outcome-free run `ijds-binary-geometry-frontier-v4-2026-07-12-v1` and
+  hash-linked evaluation `ijds-binary-geometry-frontier-v4-2026-07-12-v2`;
+- one status-independent 640,543-loan design universe, including 376,890
+  primary OOT and 88,227 extension candidates;
+- CatBoost/Platt fitting plus an independent logistic coverage control;
+- all eight availability-safe six-month residual windows, with learner-specific
+  score taxonomies fixed in 2011;
 - four declared taxonomies and all nine guardrails reported as co-primary;
 - coherent standardized payoff `(1-p)r-p*LGD` in the objective and
   `(1-Y)r-Y*LGD` in evaluation;
 - 15 separate monthly USD 1 million decisions from April 2016 through June
   2017;
 - unresolved outcomes retained with sharp paired common-outcome bounds;
-- five-group OOT coverage bounds `[0.854714,0.879647]` early and
-  `[0.845072,0.870973]` late;
-- exact C2 funded-point-score matching with payoff lower for 7/9 early and 5/9
-  late, so the policy count is not timing-stable;
-- all 27 policy-metric envelopes contain zero in core,
-  development-supported, and broad scopes, so no policy, window, or universal
-  direction is promoted; and
-- active publication artifacts `crpto_ijds_ft_*`, governed by
-  `ijds_fixed_taxonomy_c2_evidence.json`.
+- all eight CatBoost and all eight logistic coverage upper bounds below 0.90;
+- a W7--W8 binary residual phase transition in CatBoost stratum 2;
+- exact C2 funded-point-score matching and plug-in dominance reconciliation;
+- 3,067-cap exact frontier with 216/216 broad-stress envelopes crossing zero;
+- default crossing zero in all 72 development-support cells and all 27 W8
+  envelopes crossing zero; and
+- active publication artifacts `crpto_ijds_v4_*`, governed by
+  `ijds_binary_geometry_frontier_v4_evidence.json`.
 
 The paper describes a code-locked retrospective temporal audit. It does not
 claim a prospective trial, causal effect, latent-PD confidence interval,

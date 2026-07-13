@@ -6,15 +6,13 @@ order before changing scientific code or paper claims:
 1. [`CLAUDE.md`](CLAUDE.md) - repository rules and protected historical stages.
 2. [`docs/research/active_claims_2026-07-12.md`](docs/research/active_claims_2026-07-12.md)
    - the only active IJDS claim registry.
-3. [`docs/research/ijds_fixed_taxonomy_c2_protocol_2026-07-11.md`](docs/research/ijds_fixed_taxonomy_c2_protocol_2026-07-11.md)
-   - locked protocol and V1-to-V2 execution lineage.
-4. [`docs/research/ijds_fixed_taxonomy_c2_temporal_v3_protocol_2026-07-12.md`](docs/research/ijds_fixed_taxonomy_c2_temporal_v3_protocol_2026-07-12.md)
-   - locked late-window sensitivity and no-promotion rule.
-5. [`docs/research/ijds_fixed_taxonomy_c2_protocol_errata_2026-07-12.md`](docs/research/ijds_fixed_taxonomy_c2_protocol_errata_2026-07-12.md)
-   - terminology correction; no numerical or protocol change.
-6. [`reports/crpto/ijds_fixed_taxonomy_c2_evidence.json`](reports/crpto/ijds_fixed_taxonomy_c2_evidence.json)
+3. [`docs/research/ijds_binary_geometry_frontier_v4_protocol_2026-07-12.md`](docs/research/ijds_binary_geometry_frontier_v4_protocol_2026-07-12.md)
+   - complete-window V4 protocol and stop rules.
+4. [`docs/research/ijds_binary_geometry_frontier_v4_v2_recovery_2026-07-12.md`](docs/research/ijds_binary_geometry_frontier_v4_v2_recovery_2026-07-12.md)
+   - verified V1-freeze to V2-evaluation lineage.
+5. [`reports/crpto/ijds_binary_geometry_frontier_v4_evidence.json`](reports/crpto/ijds_binary_geometry_frontier_v4_evidence.json)
    - the only active paper-facing evidence manifest.
-7. [`.codex/skills/crpto/SKILL.md`](.codex/skills/crpto/SKILL.md) - concise
+6. [`.codex/skills/crpto/SKILL.md`](.codex/skills/crpto/SKILL.md) - concise
    execution and writing guidance.
 
 Minimum rules:
@@ -29,7 +27,7 @@ Minimum rules:
 - Use `uv run` and Windows-first commands. Never commit secrets.
 - No selected policy, winner, universal guardrail direction, causal effect, or
   selected-set conformal claim is active.
-- Historical selected-policy, compact-v7, pool93, and A1--A40 materials are
+- Historical V1--V3, selected-policy, compact-v7, pool93, and A1--A40 materials are
   provenance, not evidence for the active manuscript.
 - Edit `paper/CRPTO_ijds.qmd`; generate the official TeX with
   `scripts/build_ijds_submission_tex.py` rather than editing it directly.
