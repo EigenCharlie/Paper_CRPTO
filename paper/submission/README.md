@@ -15,14 +15,17 @@ edited directly.
 - evidence: `reports/crpto/ijds_binary_geometry_frontier_v4_evidence.json`.
 
 The active study uses one 640,543-loan status-independent design universe,
-eight co-primary residual windows, two declared learners, all nine portfolio
-policies, C0/C1/C2 comparators, exact development and stress cap supports,
-sharp unresolved-outcome bounds, and a 19,200-repetition mechanism simulation.
-It reports no learner, window, policy, cap, or comparator winner.
+eight complete residual windows, two declared learners, a five-gamma score
+path, two outcome-free rulers, three interior coordinates, supporting
+C0/C1/C2 comparators, exact development and stress cap supports, sharp
+unresolved-outcome bounds, and a 19,200-repetition coverage-mechanism
+simulation. It reports no learner, window, gamma, ruler, coordinate, policy,
+cap, or comparator winner.
 
 ## Current IJDS Requirements
 
-Official pages were rechecked July 12, 2026:
+Official pages were rechecked July 13, 2026, after integrating the locked
+two-ruler diagnostic:
 
 - [submission guidelines](https://pubsonline.informs.org/page/ijds/submission-guidelines);
 - [data/code policy](https://pubsonline.informs.org/page/ijds/data-and-code-disclosure-policy);
@@ -48,8 +51,10 @@ just paper-submission-official
 equation, and logo files by byte count and SHA-256; the compiler rejects a
 missing or changed style kit until the manifest is explicitly reviewed.
 
-The official compiler first attempts `latexmk`. If the TinyTeX Windows wrapper
-fails in `runscript.tlu`, the robust fallback is:
+The official compiler first attempts `latexmk`. On Windows it locates
+TinyTeX's `latexmk.pl` payload and invokes it through Perl, bypassing the
+fragile `runscript.tlu` wrapper. If that route is unavailable or fails, the
+robust fallback is:
 
 ```text
 pdflatex -> bibtex -> pdflatex -> pdflatex
@@ -61,16 +66,17 @@ labels, floats, and pagination.
 
 ## QA Record
 
-Validated on July 12, 2026 after the V4 rewrite:
+Validated on July 13, 2026 after the two-ruler integration; regenerate this
+record after any substantive manuscript edit:
 
 - official INFORMS PDF: 28 pages;
 - references begin on page 25, leaving 24 pre-reference pages;
-- HTML-print verification PDFs: body 21 pages, supplement 13 pages;
-- main manuscript: five tables and three figures;
-- abstract: 272 words; keywords: seven;
+- HTML-print verification PDFs: body 21 pages, supplement 17 pages;
+- main manuscript at that checkpoint: five tables and two figures;
+- abstract: 254 words; keywords: seven;
 - `.blg`: no warnings;
 - `.log`: no undefined citations, labels, or convergence requests;
-- all 28 official, 21 body-preview, and 13 supplement pages were rendered and
+- all 28 official, 21 body-preview, and 17 supplement pages were rendered and
   visually inspected; no clipping, overlap, blank page, broken table, missing
   glyph, or illegible figure was found; and
 - the publisher-class first page retains its standard red template notice;
@@ -88,7 +94,7 @@ evidence for a later manuscript.
 - body and supplement contain no identifying metadata;
 - the abstract stays below 300 words;
 - no retired selected-policy, V1--V3, pool93, or compact-v7 headline returns;
-- all V4 claim-sync and evidence-hash tests pass; and
+- all V4/two-ruler claim-sync and evidence-hash tests pass; and
 - page-by-page visual inspection finds no clipping, overlap, blank page, or
   missing glyph.
 

@@ -1,9 +1,10 @@
 # Auditoría del estado del arte y del encaje IJDS de CRPTO
 
-> **Current boundary (2026-07-11):** this is a literature and historical
-> diagnosis, not a claim registry. The active fixed-taxonomy comparator audit
-> is governed by `active_claims_2026-07-12.md`; earlier variants remain Git-only
-> provenance.
+> **Current boundary (2026-07-13):** this is a literature and historical
+> diagnosis of the design that preceded V4, not a claim registry. The active
+> binary-geometry plus two-ruler audit is governed only by
+> `active_claims_2026-07-12.md`; conclusions below about the then-current paper
+> explain why it was replaced and are not current evidence.
 
 **Fecha de auditoría:** 2026-07-10
 **Corte de literatura:** inclusivo hasta 2026-07-09

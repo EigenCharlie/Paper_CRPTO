@@ -5,7 +5,7 @@ from __future__ import annotations
 import json
 from collections.abc import Mapping
 from pathlib import Path
-from typing import Any
+from typing import Any, cast
 
 import matplotlib.pyplot as plt
 import numpy as np
@@ -20,6 +20,18 @@ ROOT = Path(__file__).resolve().parents[1]
 CONFIG_PATH = ROOT / "configs/experiments/ijds_binary_geometry_frontier_v4_2026-07-12_v2.yaml"
 MODEL_DIR = ROOT / "models/experiments/ijds_audit/ijds-binary-geometry-frontier-v4-2026-07-12-v2"
 SUMMARY_PATH = MODEL_DIR / "binary_geometry_frontier_v4_summary.json"
+V2_MODEL_DIR = (
+    ROOT / "models/experiments/ijds_audit/ijds-normalized-objective-frontier-2026-07-13-v2"
+)
+V2_MANIFEST_PATH = V2_MODEL_DIR / "verified_evaluation_manifest.json"
+V2_MANIFEST_DESCRIPTOR = {
+    "path": (
+        "models/experiments/ijds_audit/"
+        "ijds-normalized-objective-frontier-2026-07-13-v2/verified_evaluation_manifest.json"
+    ),
+    "bytes": 16325,
+    "sha256": "d3808ce7c7a8e6fee3ef51aefd031e8abf55e11ef3536745ee213fd04752588a",
+}
 EVIDENCE_PATH = ROOT / "reports/crpto/ijds_binary_geometry_frontier_v4_evidence.json"
 TABLE_DIR = ROOT / "reports/crpto/tables"
 FIGURE_DIR = ROOT / "reports/crpto/figures"
@@ -37,8 +49,113 @@ def _verified_path(descriptor: Mapping[str, Any]) -> Path:
     actual = relative_artifact_descriptor(path, repo_root=ROOT)
     for field in ("path", "bytes", "sha256"):
         if actual[field] != descriptor[field]:
-            raise RuntimeError(f"V4 artifact mismatch for {path}: {field}.")
+            raise RuntimeError(f"Paper-facing artifact mismatch for {path}: {field}.")
     return path
+
+
+def _direction_pattern(directions: pd.DataFrame, metric: str) -> str:
+    counts = directions.loc[directions["metric"].eq(metric), "direction"].value_counts()
+    order = ("gamma_1_higher", "gamma_1_lower", "crosses_zero", "exact_zero")
+    return ";".join(f"{name}:{int(counts[name])}" for name in order if name in counts)
+
+
+def _two_ruler_track_table(
+    window_contrasts: pd.DataFrame,
+    directions: pd.DataFrame,
+) -> pd.DataFrame:
+    rows: list[dict[str, Any]] = []
+    ruler_order = {"objective_matched": 0, "normalized_score": 1}
+    for group_key, frame in window_contrasts.groupby(
+        ["ruler", "coordinate"], observed=True, sort=True
+    ):
+        if not isinstance(group_key, tuple) or len(group_key) != 2:
+            raise RuntimeError("Unexpected two-ruler group key.")
+        ruler, coordinate = group_key
+        coordinate_value = float(cast(Any, coordinate))
+        scoped = directions.loc[
+            directions["ruler"].eq(ruler) & directions["coordinate"].eq(coordinate)
+        ]
+        rows.append(
+            {
+                "ruler": str(ruler),
+                "coordinate": coordinate_value,
+                "ruler_semantics": (
+                    "common_plugin_objective_floor"
+                    if str(ruler) == "objective_matched"
+                    else "common_relative_score_relaxation"
+                ),
+                "window_cells": int(len(frame)),
+                "active_months_per_window_min": int(frame["nonidentical_months"].min()),
+                "active_months_per_window_max": int(frame["nonidentical_months"].max()),
+                "expected_objective_difference_usd_min": float(
+                    frame["expected_objective_difference"].min()
+                ),
+                "expected_objective_difference_usd_max": float(
+                    frame["expected_objective_difference"].max()
+                ),
+                "payoff_bound_usd_lower_min": float(
+                    frame["realized_payoff_difference_lower"].min()
+                ),
+                "payoff_bound_usd_upper_max": float(
+                    frame["realized_payoff_difference_upper"].max()
+                ),
+                "default_bound_pp_lower_min": float(
+                    100.0 * frame["weighted_default_difference_lower"].min()
+                ),
+                "default_bound_pp_upper_max": float(
+                    100.0 * frame["weighted_default_difference_upper"].max()
+                ),
+                "miscoverage_bound_pp_lower_min": float(
+                    100.0 * frame["weighted_miscoverage_difference_lower"].min()
+                ),
+                "miscoverage_bound_pp_upper_max": float(
+                    100.0 * frame["weighted_miscoverage_difference_upper"].max()
+                ),
+                "payoff_direction_pattern": _direction_pattern(scoped, "standardized_payoff"),
+                "default_direction_pattern": _direction_pattern(scoped, "funded_default"),
+                "miscoverage_direction_pattern": _direction_pattern(
+                    scoped, "funded_binary_miscoverage"
+                ),
+            }
+        )
+    table = pd.DataFrame(rows)
+    table["_ruler_order"] = table["ruler"].map(ruler_order)
+    return table.sort_values(["_ruler_order", "coordinate"]).drop(columns="_ruler_order")
+
+
+def _objective_quarter_repetition(joined: pd.DataFrame) -> dict[str, Any]:
+    labels = ("objective_matched_g100_c025", "objective_matched_g000_c025")
+    scoped = joined.loc[joined["role"].eq("primary_oot") & joined["policy_label"].isin(labels)]
+    audits: list[dict[str, Any]] = []
+    reference: pd.DataFrame | None = None
+    identical_to_cents = True
+    for window_id, frame in scoped.groupby("window_id", observed=True, sort=True):
+        exposures = (
+            frame.pivot(index=["period", "id"], columns="policy_label", values="exposure")
+            .fillna(0.0)
+            .sort_index()
+        )
+        delta = exposures[labels[0]] - exposures[labels[1]]
+        rounded = exposures[list(labels)].round(2)
+        if reference is None:
+            reference = rounded
+        else:
+            identical_to_cents = bool(identical_to_cents and rounded.equals(reference))
+        audits.append(
+            {
+                "window_id": str(window_id),
+                "changed_loan_month_positions": int(delta.abs().gt(1.0e-8).sum()),
+                "one_way_turnover_usd": float(delta.abs().sum() / 2.0),
+            }
+        )
+    audit = pd.DataFrame(audits)
+    return {
+        "allocations_identical_across_windows_to_cents": identical_to_cents,
+        "changed_loan_month_positions_min": int(audit["changed_loan_month_positions"].min()),
+        "changed_loan_month_positions_max": int(audit["changed_loan_month_positions"].max()),
+        "one_way_turnover_usd_min": float(audit["one_way_turnover_usd"].min()),
+        "one_way_turnover_usd_max": float(audit["one_way_turnover_usd"].max()),
+    }
 
 
 def _write_csv(frame: pd.DataFrame, path: Path) -> Path:
@@ -246,6 +363,52 @@ def build_evidence() -> Path:
         name: _verified_path(value) for name, value in freeze["outcome_free_artifacts"].items()
     }
 
+    v2_manifest_path = _verified_path(V2_MANIFEST_DESCRIPTOR)
+    v2_manifest = json.loads(v2_manifest_path.read_text(encoding="utf-8"))
+    expected_v2_identity = {
+        "status": "verified_post_freeze_outcome_evaluation_complete",
+        "run_tag": "ijds-normalized-objective-frontier-2026-07-13-v2",
+        "protocol_tag": "protocol/ijds-normalized-objective-frontier-2026-07-13-v2",
+        "protocol_commit": "d3041e5233ee74a6b1d38f678def75d8d5ef0169",
+    }
+    if any(v2_manifest.get(field) != value for field, value in expected_v2_identity.items()):
+        raise RuntimeError("The verified V2 two-ruler identity changed.")
+    if any(value is not None for value in v2_manifest["selection"].values()):
+        raise RuntimeError("The V2 manifest reports a selected two-ruler result.")
+    if (
+        v2_manifest.get("protected_stages_run") != []
+        or v2_manifest.get("protected_artifacts_written") != []
+    ):
+        raise RuntimeError("The V2 manifest reports a protected-stage side effect.")
+    v2_evaluation_artifacts = {
+        name: _verified_path(value) for name, value in v2_manifest["evaluation_artifacts"].items()
+    }
+    v2_source_artifacts = {
+        name: _verified_path(value) for name, value in v2_manifest["source_artifacts"].items()
+    }
+    v2_summary_path = _verified_path(v2_manifest["summary"])
+    v2_receipt_path = _verified_path(v2_manifest["execution_receipt"])
+    v2_summary = json.loads(v2_summary_path.read_text(encoding="utf-8"))
+    expected_v2_counts = {
+        "evaluated_portfolios": 6240,
+        "joined_funded_rows": 622455,
+        "window_endpoint_contrasts": 48,
+        "monthly_endpoint_contrasts": 720,
+        "metric_direction_cells": 144,
+        "outcome_audit_rows": 5,
+    }
+    if v2_summary.get("counts") != expected_v2_counts:
+        raise RuntimeError("The V2 two-ruler evaluation census changed.")
+
+    two_ruler_windows = pd.read_parquet(v2_evaluation_artifacts["window_endpoint_contrasts"])
+    two_ruler_monthly = pd.read_parquet(v2_evaluation_artifacts["monthly_endpoint_contrasts"])
+    two_ruler_directions = pd.read_parquet(v2_evaluation_artifacts["metric_direction_census"])
+    two_ruler_joined = pd.read_parquet(v2_evaluation_artifacts["joined_funded_allocations"])
+    two_ruler_table = _two_ruler_track_table(two_ruler_windows, two_ruler_directions)
+    if len(two_ruler_table) != 6 or len(two_ruler_monthly) != 720:
+        raise RuntimeError("The paper-facing two-ruler track census is incomplete.")
+    objective_quarter = _objective_quarter_repetition(two_ruler_joined)
+
     coverage_all = pd.read_parquet(artifacts["temporal_coverage"])
     coverage = coverage_all.loc[
         coverage_all["taxonomy_groups"].eq(5)
@@ -339,6 +502,10 @@ def build_evidence() -> Path:
             direction_table,
             TABLE_DIR / "crpto_ijds_v4_table4_direction_summary.csv",
         ),
+        "two_ruler_tracks": _write_csv(
+            two_ruler_table,
+            TABLE_DIR / "crpto_ijds_v4_table5_two_ruler_tracks.csv",
+        ),
         "named_comparators": _write_csv(
             named_table,
             TABLE_DIR / "crpto_ijds_v4_tableS1_named_comparators.csv",
@@ -363,8 +530,8 @@ def build_evidence() -> Path:
         ]
     ]
     evidence = {
-        "schema_version": "2026-07-12.1",
-        "status": "active_ijds_v4_paper_facing_evidence",
+        "schema_version": "2026-07-13.1",
+        "status": "active_ijds_v4_with_two_ruler_paper_facing_evidence",
         "run_tag": str(config["run_tag"]),
         "protocol_tag": str(config["protocol_tag"]),
         "protocol_commit": str(summary["protocol_commit"]),
@@ -377,8 +544,13 @@ def build_evidence() -> Path:
             "learners": 2,
             "taxonomy_diagnostics": [1, 2, 5, 10],
             "policies": 9,
+            "v4_policies_are_supporting_not_closed_family": True,
             "oot_months": 15,
             "development_months": 11,
+            "two_ruler_gamma_grid": [0.0, 0.25, 0.5, 0.75, 1.0],
+            "two_ruler_primary_contrast": "gamma_1_minus_gamma_0",
+            "two_ruler_interior_coordinates": [0.25, 0.5, 0.75],
+            "two_ruler_tracks": 6,
             "frontier_caps": int(
                 contrasts.loc[
                     contrasts["comparator_rule"].eq("point_cap_frontier"), "frontier_cap"
@@ -447,6 +619,41 @@ def build_evidence() -> Path:
             ),
             "named_direction_counts": named_table.to_dict(orient="records"),
         },
+        "decision_challenger": {
+            "scope": "finite_two_ruler_three_interior_coordinate_diagnostic",
+            "continuous_frontier_claim": False,
+            "tracks_are_independent_replications": False,
+            "primary_ruler": "objective_matched",
+            "secondary_ruler": "normalized_score",
+            "endpoint_contrast": "gamma_1_minus_gamma_0",
+            "run_tag": expected_v2_identity["run_tag"],
+            "protocol_tag": expected_v2_identity["protocol_tag"],
+            "protocol_commit": expected_v2_identity["protocol_commit"],
+            "manifest": relative_artifact_descriptor(v2_manifest_path, repo_root=ROOT),
+            "counts": dict(expected_v2_counts),
+            "primary_oot_unresolved": int(
+                v2_summary["outcomes"]["candidate_unresolved_by_role"]["primary_oot"]
+            ),
+            "metric_directions": dict(v2_summary["metric_directions"]),
+            "objective_matched_coordinate_025_repetition": objective_quarter,
+            "rows": two_ruler_table.to_dict(orient="records"),
+            "interpretation": {
+                "coordinate_one_is_structural_null": True,
+                "objective_matched_equalizes_plugin_objective_floor": True,
+                "normalized_score_equalizes_relative_score_relaxation": True,
+                "normalized_score_equalizes_opportunity_cost": False,
+                "objective_matched_coordinate_025_is_one_repeated_allocation_contrast": True,
+                "preferred_gamma": None,
+                "preferred_ruler": None,
+                "preferred_coordinate": None,
+                "policy_winner": None,
+                "permitted_conclusion": (
+                    "Within the predeclared finite grid, the gamma endpoint allocation "
+                    "contrast is not invariant to the outcome-free ruler or interior "
+                    "coordinate."
+                ),
+            },
+        },
         "simulation": {
             "scope": "coverage_mechanism_only_portfolio_component_degenerate",
             "repetitions": int(len(simulation)),
@@ -476,12 +683,18 @@ def build_evidence() -> Path:
         "audit_thesis": (
             "Binary absolute-residual conformal guardrails can change discontinuously when "
             "a score stratum crosses the alpha prevalence threshold; candidate coverage "
-            "does not transport to the later archive, and portfolio direction is not "
-            "identified without an outcome-free comparator support."
+            "does not transport to the later archive; and portfolio direction is not "
+            "identified without an outcome-free comparator support and is not invariant "
+            "to the declared ruler or interior coordinate."
         ),
         "source_artifacts": {
             "summary": relative_artifact_descriptor(SUMMARY_PATH, repo_root=ROOT),
             "freeze": relative_artifact_descriptor(freeze_path, repo_root=ROOT),
+            "two_ruler/manifest": relative_artifact_descriptor(v2_manifest_path, repo_root=ROOT),
+            "two_ruler/summary": relative_artifact_descriptor(v2_summary_path, repo_root=ROOT),
+            "two_ruler/execution_receipt": relative_artifact_descriptor(
+                v2_receipt_path, repo_root=ROOT
+            ),
             **{
                 f"evaluation/{name}": relative_artifact_descriptor(path, repo_root=ROOT)
                 for name, path in artifacts.items()
@@ -489,6 +702,14 @@ def build_evidence() -> Path:
             **{
                 f"outcome_free/{name}": relative_artifact_descriptor(path, repo_root=ROOT)
                 for name, path in source_artifacts.items()
+            },
+            **{
+                f"two_ruler/evaluation/{name}": relative_artifact_descriptor(path, repo_root=ROOT)
+                for name, path in v2_evaluation_artifacts.items()
+            },
+            **{
+                f"two_ruler/outcome_free/{name}": relative_artifact_descriptor(path, repo_root=ROOT)
+                for name, path in v2_source_artifacts.items()
             },
         },
         "paper_artifacts": {

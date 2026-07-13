@@ -36,21 +36,25 @@ changes from 0.8884 to 0.1118 and its OOT mean interval width from 0.9843 to
 transition while keeping its conditions separate from the varying-score
 empirical diagnostic.
 
-The decision audit treats the comparator as part of the estimand. We prove
-same-cap nesting and a contemporaneous funded-score feasibility theorem, then
-enumerate the exact HiGHS basis frontier for the point-score cap. All 216
-broad-stress policy-window-metric envelopes cross zero. Within the narrower
-development-admissible support, default remains unidentified in all 72 cells,
-and the payoff and miscoverage directions that survive windows 1--7 disappear
-in window 8. No learner, window, policy, cap, or comparator is promoted.
+The decision audit treats the score, ruler, and frontier coordinate as part of
+the estimand. A 6,240-solve outcome-free freeze compares the point-score and
+full-upper-score endpoints under objective-matched and normalized-score rulers.
+At objective-matched coordinate .25, one repeated four-month allocation
+contrast has USD 5,603.66 higher standardized payoff; at .50 the payoff bound
+is uniformly unfavorable, and at .75 payoff/default are mostly unidentified.
+All normalized-score tracks are unfavorable, but do not match plug-in
+opportunity cost. An exact HiGHS point-cap frontier independently places zero
+in all 216 broad-stress envelopes. No learner, window, gamma, ruler,
+coordinate, policy, cap, or comparator is promoted.
 
 The contribution is therefore not a winning credit policy. It is a
 reproducible identification audit of binary conformal geometry, temporal
-transport, and comparator support in a frozen predict-then-optimize system.
+transport, and decision stringency in a frozen predict-then-optimize system.
 This data-models-decisions-implications chain fits IJDS's focus on rigorous data
 science for decisions while making the negative result operationally useful:
 coverage does not transport in the declared archive, and realized portfolio
-direction cannot be interpreted without an outcome-free comparator support.
+direction cannot be interpreted without an outcome-free ruler, coordinate,
+and comparator support.
 
 The archive was inspected during earlier project iterations. The active
 protocol was committed before its complete run, but the study is retrospective
@@ -60,10 +64,10 @@ theory is not presented as proof for empirical varying-score strata, and the
 factorial simulation's nonbinding portfolio component is disclosed as a
 negative diagnostic rather than used as evidence.
 
-The review package has a verified outcome-free freeze, a separate evaluation
-join, four immutable DVC pointers, a deterministic evidence builder, and
-claim-sync tests spanning the manuscript, supplement, evidence manifest, and
-generated INFORMS TeX. At acceptance, I will release code, environment lock,
+The review package has two verified outcome-free freezes, separate evaluations,
+eight immutable DVC pointers, a deterministic evidence builder, and claim-sync
+tests spanning the manuscript, supplement, evidence manifest, and generated
+INFORMS TeX. At acceptance, I will release code, environment lock,
 manuscript sources, artifact metadata, DVC pointers, and raw-data acquisition
 instructions, subject to source redistribution terms.
 

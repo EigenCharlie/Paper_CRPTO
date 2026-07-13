@@ -10,18 +10,23 @@ Pipeline de investigación y libro Quarto que acompañan el paper **CRPTO**, una
 | --- | --- |
 | Outcome-free run | `ijds-binary-geometry-frontier-v4-2026-07-12-v1` |
 | Reconciled run | `ijds-binary-geometry-frontier-v4-2026-07-12-v2` |
+| Two-ruler freeze/evaluation | `ijds-normalized-objective-frontier-2026-07-13-v1c` / `v2` |
 | Universo | `640,543` préstamos; primary OOT `376,890`; membership independiente del status |
 | Cronología | ocho ventanas residuales consecutivas; 15 decisiones 2016-04--2017-06 |
 | Conformal | taxonomías fijas con scores 2011; intervalo binario residual, no CI de PD latente |
-| Políticas | nueve guardrails co-primarios; sin selector ni winner |
+| Decisión | seis tracks ruler-coordinate sobre `gamma={0,.25,.50,.75,1}`; sin selector ni winner |
 | Cobertura candidata OOT | CatBoost max upper `0.882167`; logistic max upper `0.895654` |
 | Transición binaria | estrato 2: prevalencia `0.101703 -> 0.097147`; cuantil `0.888435 -> 0.111801` |
+| Dos rulers | objective-matched `.25`: `+$5,603.66`, 44 posiciones y `$155,937.27` de turnover; el signo no es invariante |
 | Comparador C2 | 1,080 funded-point matches; dominancia plug-in mecánica, no dominancia realizada |
 | Exact frontier | 3,067 caps; `216/216` broad-stress envelopes cruzan cero |
 | Development support | default `72/72` cruza cero; W8 `27/27` cruza cero |
-| Claim | falla de cobertura y geometría binaria sensible a prevalencia; dirección de portafolio depende del soporte del comparador |
+| Claim | falla de transporte, geometría binaria sensible a prevalencia y dirección dependiente de ruler, coordenada y soporte del comparador |
 
-Hashes SHA256 de los artefactos críticos están en [`EXTRACTION_MANIFEST.json`](EXTRACTION_MANIFEST.json). Verifica trabajo ordinario con `just validate-champion`; antes del freeze usa `just validate-champion-strict`, que también falla si falta un artefacto.
+Los hashes del champion histórico están en [`EXTRACTION_MANIFEST.json`](EXTRACTION_MANIFEST.json);
+los hashes IJDS activos viven en los freezes protocolarios y en el manifest
+paper-facing. Verifica trabajo ordinario con `just validate-champion`; antes del
+freeze usa `just validate-champion-strict`, que también falla si falta un artefacto.
 Los estudios selected-policy, compact-v7, pool93 y A1--A40 se conservan como
 procedencia en Git/DVC, no como claims activos. La autoridad editorial es
 [`docs/research/active_claims_2026-07-12.md`](docs/research/active_claims_2026-07-12.md)
@@ -36,7 +41,7 @@ y el único manifest paper-facing es
 | [uv](https://docs.astral.sh/uv/) | 0.4+ | Gestor de dependencias. Reemplaza pip/poetry. |
 | [just](https://github.com/casey/just) | 1.28+ | Task runner cross-platform. Reemplaza `make`. Windows: `winget install Casey.Just`. |
 | [Quarto CLI](https://quarto.org/docs/get-started/) | 1.9+ | Para renderizar el libro. CI usa 1.9.35. |
-| LaTeX (LuaLaTeX) | TeX Live 2024+ | Solo si renderizas el PDF. Opcional para HTML. |
+| LaTeX (`pdflatex`, BibTeX, `latexmk`) | TeX Live 2024+ | Requerido para el PDF oficial; opcional para HTML. |
 | DuckDB CLI | 1.3+ | Opcional, queries directas a `data/processed/crpto.duckdb`. |
 | Git | 2.40+ | Para hooks pre-commit. |
 
@@ -70,7 +75,7 @@ just book-clean         # borra _book/, _freeze/, .quarto/
 
 # Pipeline de paper (no toca el champion)
 just paper-export       # tablas + figuras + evidence + journal + libro
-just ijds-evidence      # evidencia fixed-taxonomy + multiverso de comparadores
+just ijds-evidence      # evidencia V4 + diagnóstico bloqueado de dos rulers
 just paper-submission-tex # genera TeX INFORMS desde el QMD canonico
 just tables             # solo CSVs
 just figures            # solo PNGs/PDFs
@@ -78,7 +83,7 @@ just figures            # solo PNGs/PDFs
 # Calidad
 just lint               # ruff check + format check
 just fmt                # ruff fix + format
-just type-check         # mypy src scripts
+just type-check         # mypy src, scripts y tests
 just type-advisory      # ty sobre ruta activa IJDS, no bloqueante
 just type-advisory-full # ty sobre src/scripts completos; bloquea el cierre IJDS
 just api-docs-core      # pdoc local para modulos core, salida ignorada

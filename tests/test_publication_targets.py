@@ -17,7 +17,7 @@ def test_publication_target_points_to_active_sources() -> None:
     primary = cfg["primary_target"]
     active = cfg["active_scientific_contract"]
 
-    assert cfg["version"] == "2026-07-12"
+    assert cfg["version"] == "2026-07-13"
     assert cfg["decision_status"] == "reconstructed_active"
     assert primary["id"] == "informs_ijds"
     assert cfg["current_decision"]["write_first_for"] == "informs_ijds"
@@ -60,11 +60,14 @@ def test_active_contract_is_small_complete_and_numerically_locked() -> None:
     active = _config()["active_scientific_contract"]
     assert active["outcome_free_run_tag"].endswith("2026-07-12-v1")
     assert active["run_tag"].endswith("2026-07-12-v2")
+    assert active["two_ruler_outcome_free_run_tag"].endswith("2026-07-13-v1c")
+    assert active["two_ruler_run_tag"].endswith("2026-07-13-v2")
     assert active["previously_inspected_retrospective_archive"] is True
     assert active["confirmatory"] is False
     assert active["prospective"] is False
     assert active["policy_winner_allowed"] is False
-    assert "all nine" in active["method"]["policies"].lower()
+    assert "complete gamma path" in active["method"]["decision_diagnostic"].lower()
+    assert "nine fixed-cap policies" in active["method"]["comparator"].lower()
     assert "basis endpoints" in active["method"]["comparator"].lower()
     headline = active["headline"]
     assert headline["primary_candidates"] == 376890
@@ -85,6 +88,16 @@ def test_active_contract_is_small_complete_and_numerically_locked() -> None:
             "w8_width": 0.207631,
         }
     )
+    two_ruler = headline["two_ruler"]
+    assert two_ruler["solves"] == 6240
+    assert two_ruler["funded_rows"] == 622455
+    assert two_ruler["tracks"] == 6
+    assert two_ruler["window_cells"] == 48
+    assert two_ruler["coordinates"] == pytest.approx([0.25, 0.50, 0.75])
+    assert two_ruler["objective_matched_025_payoff_usd"] == pytest.approx(5603.66)
+    assert two_ruler["objective_matched_025_changed_loan_month_positions"] == 44
+    assert two_ruler["objective_matched_025_one_way_turnover_usd"] == pytest.approx(155937.27)
+    assert two_ruler["policy_winner_allowed"] is False
     assert headline["c2_cells"] == 1080
     assert headline["c2_maximum_match_residual"] < 1e-16
     assert headline["exact_frontier_caps"] == 3067
@@ -94,12 +107,22 @@ def test_active_contract_is_small_complete_and_numerically_locked() -> None:
     assert headline["w8_development_envelopes_crossing_zero"] == 27
     assert headline["simulation_repetitions"] == 19200
     assert headline["universal_policy_direction_allowed"] is False
-    assert len(active["required_artifacts"]) == 12
+    assert len(active["required_artifacts"]) == 13
     for artifact in active["required_artifacts"]:
         assert Path(artifact).is_file(), artifact
-    assert len(active["dvc_pointers"]) == 4
+    assert len(active["dvc_pointers"]) == 8
     for pointer in active["dvc_pointers"]:
         assert Path(pointer).is_file(), pointer
+
+    code_surface = active["active_code_surface"]
+    assert code_surface["historical_execution_in_active_capsule"] is False
+    for group in (
+        "paper_pipeline",
+        "immutable_protocol_entrypoints",
+        "source_inventory_manifests",
+    ):
+        for path in code_surface[group]:
+            assert Path(path).is_file(), path
 
 
 def test_historical_diagnostics_are_explicitly_outside_active_evidence() -> None:

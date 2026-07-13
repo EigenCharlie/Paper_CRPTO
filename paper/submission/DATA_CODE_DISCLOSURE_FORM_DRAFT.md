@@ -36,10 +36,11 @@ Paste in the ethics box:
 > fair-lending certification. Terminal snapshot outcomes are partially
 > unresolved; such rows remain in candidate menus and receive sharp bounds
 > rather than being deleted. The results are a methodological audit of temporal
-> transport, binary set geometry, comparator support, and optimizer selection,
+> transport, binary set geometry, ruler/coordinate choice, comparator support,
+> and optimizer selection,
 > not evidence that any
 > evaluated policy is appropriate for live credit decisions.
-> Comparator and residual-window choices can change policy conclusions, so a
+> Ruler, coordinate, comparator, and residual-window choices can change policy conclusions, so a
 > label such as "safer" is not used without its explicit decision contract.
 
 ## Page 2

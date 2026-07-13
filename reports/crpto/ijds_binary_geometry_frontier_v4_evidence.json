@@ -1,6 +1,6 @@
 {
-  "schema_version": "2026-07-12.1",
-  "status": "active_ijds_v4_paper_facing_evidence",
+  "schema_version": "2026-07-13.1",
+  "status": "active_ijds_v4_with_two_ruler_paper_facing_evidence",
   "run_tag": "ijds-binary-geometry-frontier-v4-2026-07-12-v2",
   "protocol_tag": "protocol/ijds-binary-geometry-frontier-v4-2026-07-12-v2",
   "protocol_commit": "60cdf298d965525cddaaf03abccd15ff805e1a15",
@@ -26,8 +26,23 @@
       10
     ],
     "policies": 9,
+    "v4_policies_are_supporting_not_closed_family": true,
     "oot_months": 15,
     "development_months": 11,
+    "two_ruler_gamma_grid": [
+      0.0,
+      0.25,
+      0.5,
+      0.75,
+      1.0
+    ],
+    "two_ruler_primary_contrast": "gamma_1_minus_gamma_0",
+    "two_ruler_interior_coordinates": [
+      0.25,
+      0.5,
+      0.75
+    ],
+    "two_ruler_tracks": 6,
     "frontier_caps": 3067,
     "development_support_lower": 0.0555726278946077,
     "development_support_upper": 0.09999720664228194
@@ -925,6 +940,197 @@
       }
     ]
   },
+  "decision_challenger": {
+    "scope": "finite_two_ruler_three_interior_coordinate_diagnostic",
+    "continuous_frontier_claim": false,
+    "tracks_are_independent_replications": false,
+    "primary_ruler": "objective_matched",
+    "secondary_ruler": "normalized_score",
+    "endpoint_contrast": "gamma_1_minus_gamma_0",
+    "run_tag": "ijds-normalized-objective-frontier-2026-07-13-v2",
+    "protocol_tag": "protocol/ijds-normalized-objective-frontier-2026-07-13-v2",
+    "protocol_commit": "d3041e5233ee74a6b1d38f678def75d8d5ef0169",
+    "manifest": {
+      "path": "models/experiments/ijds_audit/ijds-normalized-objective-frontier-2026-07-13-v2/verified_evaluation_manifest.json",
+      "bytes": 16325,
+      "sha256": "d3808ce7c7a8e6fee3ef51aefd031e8abf55e11ef3536745ee213fd04752588a"
+    },
+    "counts": {
+      "evaluated_portfolios": 6240,
+      "joined_funded_rows": 622455,
+      "window_endpoint_contrasts": 48,
+      "monthly_endpoint_contrasts": 720,
+      "metric_direction_cells": 144,
+      "outcome_audit_rows": 5
+    },
+    "primary_oot_unresolved": 11551,
+    "metric_directions": {
+      "funded_binary_miscoverage": {
+        "cells": 48,
+        "direction_counts": {
+          "gamma_1_higher": 40,
+          "gamma_1_lower": 8
+        },
+        "universal_nonzero_direction": null,
+        "eligible_for_separate_rolling_origin_challenger": false
+      },
+      "funded_default": {
+        "cells": 48,
+        "direction_counts": {
+          "crosses_zero": 7,
+          "gamma_1_higher": 33,
+          "gamma_1_lower": 8
+        },
+        "universal_nonzero_direction": null,
+        "eligible_for_separate_rolling_origin_challenger": false
+      },
+      "standardized_payoff": {
+        "cells": 48,
+        "direction_counts": {
+          "crosses_zero": 7,
+          "gamma_1_higher": 8,
+          "gamma_1_lower": 33
+        },
+        "universal_nonzero_direction": null,
+        "eligible_for_separate_rolling_origin_challenger": false
+      }
+    },
+    "objective_matched_coordinate_025_repetition": {
+      "allocations_identical_across_windows_to_cents": true,
+      "changed_loan_month_positions_min": 44,
+      "changed_loan_month_positions_max": 44,
+      "one_way_turnover_usd_min": 155937.26968238514,
+      "one_way_turnover_usd_max": 155937.26968417346
+    },
+    "rows": [
+      {
+        "ruler": "objective_matched",
+        "coordinate": 0.25,
+        "ruler_semantics": "common_plugin_objective_floor",
+        "window_cells": 8,
+        "active_months_per_window_min": 4,
+        "active_months_per_window_max": 4,
+        "expected_objective_difference_usd_min": 0.0,
+        "expected_objective_difference_usd_max": 0.0,
+        "payoff_bound_usd_lower_min": 5603.660798294787,
+        "payoff_bound_usd_upper_max": 5603.660798333496,
+        "default_bound_pp_lower_min": -0.006789927307658072,
+        "default_bound_pp_upper_max": -0.006789927307173987,
+        "miscoverage_bound_pp_lower_min": -0.006789927307658072,
+        "miscoverage_bound_pp_upper_max": -0.006789927307173987,
+        "payoff_direction_pattern": "gamma_1_higher:8",
+        "default_direction_pattern": "gamma_1_lower:8",
+        "miscoverage_direction_pattern": "gamma_1_lower:8"
+      },
+      {
+        "ruler": "objective_matched",
+        "coordinate": 0.5,
+        "ruler_semantics": "common_plugin_objective_floor",
+        "window_cells": 8,
+        "active_months_per_window_min": 15,
+        "active_months_per_window_max": 15,
+        "expected_objective_difference_usd_min": 0.0,
+        "expected_objective_difference_usd_max": 4.656612873077393e-10,
+        "payoff_bound_usd_lower_min": -82616.17453934051,
+        "payoff_bound_usd_upper_max": -27958.36861160415,
+        "default_bound_pp_lower_min": 0.457176922370002,
+        "default_bound_pp_upper_max": 1.0972986534287477,
+        "miscoverage_bound_pp_lower_min": 1.0153517160736112,
+        "miscoverage_bound_pp_upper_max": 1.9321319867620808,
+        "payoff_direction_pattern": "gamma_1_lower:8",
+        "default_direction_pattern": "gamma_1_higher:8",
+        "miscoverage_direction_pattern": "gamma_1_higher:8"
+      },
+      {
+        "ruler": "objective_matched",
+        "coordinate": 0.75,
+        "ruler_semantics": "common_plugin_objective_floor",
+        "window_cells": 8,
+        "active_months_per_window_min": 15,
+        "active_months_per_window_max": 15,
+        "expected_objective_difference_usd_min": 0.0,
+        "expected_objective_difference_usd_max": 4.656612873077393e-10,
+        "payoff_bound_usd_lower_min": -158470.2519098305,
+        "payoff_bound_usd_upper_max": 72564.81248965129,
+        "default_bound_pp_lower_min": -0.22641652851544558,
+        "default_bound_pp_upper_max": 2.2453244834663084,
+        "miscoverage_bound_pp_lower_min": 1.4325658226326694,
+        "miscoverage_bound_pp_upper_max": 3.935249561651806,
+        "payoff_direction_pattern": "gamma_1_lower:1;crosses_zero:7",
+        "default_direction_pattern": "gamma_1_higher:1;crosses_zero:7",
+        "miscoverage_direction_pattern": "gamma_1_higher:8"
+      },
+      {
+        "ruler": "normalized_score",
+        "coordinate": 0.25,
+        "ruler_semantics": "common_relative_score_relaxation",
+        "window_cells": 8,
+        "active_months_per_window_min": 15,
+        "active_months_per_window_max": 15,
+        "expected_objective_difference_usd_min": 425196.4593238123,
+        "expected_objective_difference_usd_max": 557294.0146438954,
+        "payoff_bound_usd_lower_min": -598986.3403958206,
+        "payoff_bound_usd_upper_max": -201873.243254245,
+        "default_bound_pp_lower_min": 8.69168590520043,
+        "default_bound_pp_upper_max": 13.014779320969442,
+        "miscoverage_bound_pp_lower_min": 8.599788871869041,
+        "miscoverage_bound_pp_upper_max": 13.343756348713647,
+        "payoff_direction_pattern": "gamma_1_lower:8",
+        "default_direction_pattern": "gamma_1_higher:8",
+        "miscoverage_direction_pattern": "gamma_1_higher:8"
+      },
+      {
+        "ruler": "normalized_score",
+        "coordinate": 0.5,
+        "ruler_semantics": "common_relative_score_relaxation",
+        "window_cells": 8,
+        "active_months_per_window_min": 15,
+        "active_months_per_window_max": 15,
+        "expected_objective_difference_usd_min": 152030.9877972738,
+        "expected_objective_difference_usd_max": 226847.9705495569,
+        "payoff_bound_usd_lower_min": -243217.56448523604,
+        "payoff_bound_usd_upper_max": -94767.02415282579,
+        "default_bound_pp_lower_min": 3.6160187470494085,
+        "default_bound_pp_upper_max": 6.371699817357987,
+        "miscoverage_bound_pp_lower_min": 2.501638156350509,
+        "miscoverage_bound_pp_upper_max": 5.02215906991543,
+        "payoff_direction_pattern": "gamma_1_lower:8",
+        "default_direction_pattern": "gamma_1_higher:8",
+        "miscoverage_direction_pattern": "gamma_1_higher:8"
+      },
+      {
+        "ruler": "normalized_score",
+        "coordinate": 0.75,
+        "ruler_semantics": "common_relative_score_relaxation",
+        "window_cells": 8,
+        "active_months_per_window_min": 15,
+        "active_months_per_window_max": 15,
+        "expected_objective_difference_usd_min": 28263.397028705105,
+        "expected_objective_difference_usd_max": 51201.887608815916,
+        "payoff_bound_usd_lower_min": -132157.56706879055,
+        "payoff_bound_usd_upper_max": -31335.210604134496,
+        "default_bound_pp_lower_min": 1.8273221311424244,
+        "default_bound_pp_upper_max": 2.369689457397012,
+        "miscoverage_bound_pp_lower_min": 0.7328943604051414,
+        "miscoverage_bound_pp_upper_max": 1.6623605535566646,
+        "payoff_direction_pattern": "gamma_1_lower:8",
+        "default_direction_pattern": "gamma_1_higher:8",
+        "miscoverage_direction_pattern": "gamma_1_higher:8"
+      }
+    ],
+    "interpretation": {
+      "coordinate_one_is_structural_null": true,
+      "objective_matched_equalizes_plugin_objective_floor": true,
+      "normalized_score_equalizes_relative_score_relaxation": true,
+      "normalized_score_equalizes_opportunity_cost": false,
+      "objective_matched_coordinate_025_is_one_repeated_allocation_contrast": true,
+      "preferred_gamma": null,
+      "preferred_ruler": null,
+      "preferred_coordinate": null,
+      "policy_winner": null,
+      "permitted_conclusion": "Within the predeclared finite grid, the gamma endpoint allocation contrast is not invariant to the outcome-free ruler or interior coordinate."
+    }
+  },
   "simulation": {
     "scope": "coverage_mechanism_only_portfolio_component_degenerate",
     "repetitions": 19200,
@@ -934,7 +1140,7 @@
     "point_minus_guardrail_objective_mean": 2.4582893591122237e-12,
     "portfolio_claim_allowed": false
   },
-  "audit_thesis": "Binary absolute-residual conformal guardrails can change discontinuously when a score stratum crosses the alpha prevalence threshold; candidate coverage does not transport to the later archive, and portfolio direction is not identified without an outcome-free comparator support.",
+  "audit_thesis": "Binary absolute-residual conformal guardrails can change discontinuously when a score stratum crosses the alpha prevalence threshold; candidate coverage does not transport to the later archive; and portfolio direction is not identified without an outcome-free comparator support and is not invariant to the declared ruler or interior coordinate.",
   "source_artifacts": {
     "summary": {
       "path": "models/experiments/ijds_audit/ijds-binary-geometry-frontier-v4-2026-07-12-v2/binary_geometry_frontier_v4_summary.json",
@@ -945,6 +1151,21 @@
       "path": "models/experiments/ijds_audit/ijds-binary-geometry-frontier-v4-2026-07-12-v2/protocol_freeze.json",
       "bytes": 21595,
       "sha256": "2293424cad97a9e4dad81c0efe3a2c4d23067b9d35f53d0e0b1bfc3d48478994"
+    },
+    "two_ruler/manifest": {
+      "path": "models/experiments/ijds_audit/ijds-normalized-objective-frontier-2026-07-13-v2/verified_evaluation_manifest.json",
+      "bytes": 16325,
+      "sha256": "d3808ce7c7a8e6fee3ef51aefd031e8abf55e11ef3536745ee213fd04752588a"
+    },
+    "two_ruler/summary": {
+      "path": "models/experiments/ijds_audit/ijds-normalized-objective-frontier-2026-07-13-v2/normalized_objective_frontier_v2_summary.json",
+      "bytes": 2861,
+      "sha256": "1dbfb2652d5bd2f9a1478ca10bbc829c9bcd0cf847a9e179454b3f2c629beb03"
+    },
+    "two_ruler/execution_receipt": {
+      "path": "models/experiments/ijds_audit/ijds-normalized-objective-frontier-2026-07-13-v2/execution_receipt.json",
+      "bytes": 635,
+      "sha256": "3ef3e7c7e363bcf8630ae79cabe2847f5b70bc66416f384c043c16cef2b46ca8"
     },
     "evaluation/temporal_coverage": {
       "path": "data/processed/experiments/ijds_audit/ijds-binary-geometry-frontier-v4-2026-07-12-v2/evaluation/temporal_coverage.parquet",
@@ -1040,6 +1261,66 @@
       "path": "data/processed/experiments/ijds_audit/ijds-binary-geometry-frontier-v4-2026-07-12-v1/portfolio/exact_frontier_breakpoints.parquet",
       "bytes": 867552,
       "sha256": "0433a66c7d9e689108158c980d1451af57b6bb93beb9b8b64134c1b7ea9414eb"
+    },
+    "two_ruler/evaluation/evaluated_portfolios": {
+      "path": "data/processed/experiments/ijds_audit/ijds-normalized-objective-frontier-2026-07-13-v2/evaluation/evaluated_portfolios.parquet",
+      "bytes": 668034,
+      "sha256": "9867e70a00f7bdae9c70bc68996ae5808a69d23053fed7fcf1e029a8a29f498d"
+    },
+    "two_ruler/evaluation/joined_funded_allocations": {
+      "path": "data/processed/experiments/ijds_audit/ijds-normalized-objective-frontier-2026-07-13-v2/evaluation/joined_funded_allocations.parquet",
+      "bytes": 15281252,
+      "sha256": "abdb7e1778335a8c6d4643738753b5dd643c9eaf028b6993d0bb01e064c0e1aa"
+    },
+    "two_ruler/evaluation/window_endpoint_contrasts": {
+      "path": "data/processed/experiments/ijds_audit/ijds-normalized-objective-frontier-2026-07-13-v2/evaluation/window_endpoint_contrasts.parquet",
+      "bytes": 25541,
+      "sha256": "3f9d74111c4b5d6f4ade91a614fda13d6919e1cc31a32748ce84506d0811e216"
+    },
+    "two_ruler/evaluation/monthly_endpoint_contrasts": {
+      "path": "data/processed/experiments/ijds_audit/ijds-normalized-objective-frontier-2026-07-13-v2/evaluation/monthly_endpoint_contrasts.parquet",
+      "bytes": 67493,
+      "sha256": "98d305b45326331a685b7665c2ddc5c3d9335572995cdda60e1da5ddfa459465"
+    },
+    "two_ruler/evaluation/metric_direction_census": {
+      "path": "data/processed/experiments/ijds_audit/ijds-normalized-objective-frontier-2026-07-13-v2/evaluation/metric_direction_census.parquet",
+      "bytes": 7946,
+      "sha256": "bbed02797619105a3ef008cc5cf30953fd553a2cfeee00ff5a148beb25c7d692"
+    },
+    "two_ruler/evaluation/outcome_join_audit": {
+      "path": "data/processed/experiments/ijds_audit/ijds-normalized-objective-frontier-2026-07-13-v2/evaluation/outcome_join_audit.parquet",
+      "bytes": 3780,
+      "sha256": "309f69a4b7ced2348d4e892a58d4ff22c63b9391c8c0a7f50f6a355f03dfe06d"
+    },
+    "two_ruler/outcome_free/allocations": {
+      "path": "data/processed/experiments/ijds_audit/ijds-normalized-objective-frontier-2026-07-13-v1c/frontier/frontier_funded_allocations.parquet",
+      "bytes": 12532305,
+      "sha256": "57301665dafe2e18cd6a7abe6338067fa99adb12d680401af8f0c9c7f7f7c26d"
+    },
+    "two_ruler/outcome_free/endpoint_diagnostics": {
+      "path": "data/processed/experiments/ijds_audit/ijds-normalized-objective-frontier-2026-07-13-v1c/frontier/frontier_endpoint_diagnostics.parquet",
+      "bytes": 36907,
+      "sha256": "f60f4d92cbf55fac3d89747f16c065d019e68f21b963995a3f4efd32c3e6eb4d"
+    },
+    "two_ruler/outcome_free/independent_validation": {
+      "path": "data/processed/experiments/ijds_audit/ijds-normalized-objective-frontier-2026-07-13-v1c/frontier/frontier_independent_solver_validation.parquet",
+      "bytes": 19044,
+      "sha256": "77f1aa085c9797746473bfb8f89db7d5947d00c47c9560723381d7a45babae43"
+    },
+    "two_ruler/outcome_free/objective_optimum_diagnostics": {
+      "path": "data/processed/experiments/ijds_audit/ijds-normalized-objective-frontier-2026-07-13-v1c/frontier/objective_optimum_diagnostics.parquet",
+      "bytes": 13092,
+      "sha256": "cf5539a1ce2f57a44e02253202396262e0a6d1f5a01fc911b62d63e7eddc0cf7"
+    },
+    "two_ruler/outcome_free/order_sensitivity": {
+      "path": "data/processed/experiments/ijds_audit/ijds-normalized-objective-frontier-2026-07-13-v1c/frontier/frontier_order_sensitivity.parquet",
+      "bytes": 28054,
+      "sha256": "6abc638c90e1df79aafd1f4b140713ff67cb6460a7364111682471275c9c1b1c"
+    },
+    "two_ruler/outcome_free/solve_records": {
+      "path": "data/processed/experiments/ijds_audit/ijds-normalized-objective-frontier-2026-07-13-v1c/frontier/frontier_solve_records.parquet",
+      "bytes": 386546,
+      "sha256": "b44a1435bf501bcab4b8dfa6563ca1411ad4ec4912437053913c44d39354b487"
     }
   },
   "paper_artifacts": {
@@ -1062,6 +1343,11 @@
       "path": "reports/crpto/tables/crpto_ijds_v4_table4_direction_summary.csv",
       "bytes": 205,
       "sha256": "2718a611f6235d2690d98a4ef2fc7d7b3b8f5c815144173c6a894fd0ee6ca812"
+    },
+    "table/two_ruler_tracks": {
+      "path": "reports/crpto/tables/crpto_ijds_v4_table5_two_ruler_tracks.csv",
+      "bytes": 1985,
+      "sha256": "7f5821d8a5d18b5e48141de8247a77407e5e3cf1c7628604b4e7193db93ecce9"
     },
     "table/named_comparators": {
       "path": "reports/crpto/tables/crpto_ijds_v4_tableS1_named_comparators.csv",

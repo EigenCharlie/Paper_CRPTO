@@ -1,19 +1,21 @@
 # CLAUDE.md — Contexto para Claude Code en Paper_CRPTO
 
-## Scientific status override - 2026-07-12
+## Scientific status override - 2026-07-13
 
 The only active IJDS source of truth is
-`docs/research/active_claims_2026-07-12.md`. The paper is a complete-window
-binary-geometry and exact comparator-frontier audit. It does not select a
-policy, learner, or residual window and does not claim a universal guardrail
-direction. The outcome-free V4-v1 freeze is imported by the clean tagged
-V4-v2 evaluator through exact SHA-256 lineage; the only active paper-facing
-manifest is `reports/crpto/ijds_binary_geometry_frontier_v4_evidence.json`.
+`docs/research/active_claims_2026-07-12.md`. The paper combines a
+complete-window binary-geometry/exact-frontier audit with a finite two-ruler
+endpoint diagnostic. It does not select a gamma, ruler, coordinate, policy,
+learner, or residual window and does not claim a universal guardrail direction.
+The outcome-free V4-v1 and two-ruler V1c freezes are imported by separate
+hash-linked evaluators; the only active paper-facing manifest is
+`reports/crpto/ijds_binary_geometry_frontier_v4_evidence.json`.
 
 Superiority and policy-winner framing are NO-GO. The IJDS audit narrative is
 GO: candidate-coverage failure survives all eight windows and both learners;
 binary interval geometry changes around a prevalence threshold; and realized
-decision directions depend on residual timing and declared comparator support.
+decision directions depend on ruler, coordinate, residual timing, and declared
+comparator support.
 Selected-policy studies,
 compact-v7, pool93, Prosper/Freddie, and A1--A40 are historical provenance only. Never overwrite
 the V1/V2/V3 audit runs, the historical champion, or manifest-protected artifacts.
@@ -72,20 +74,23 @@ upstream protegido.
 | Universo | `640,543` filas; primary OOT `376,890`; extension `88,227`; membership independiente del status |
 | Cronologia | ocho ventanas residuales consecutivas; 15 decisiones 2016-04--2017-06 |
 | Conformal | bordes de score fijos en 2011; clipped residual interval, no CI de PD latente |
-| Politicas | nueve guardrails co-primarios; sin selector ni winner |
+| Score path | `gamma={0,.25,.50,.75,1}`; endpoint contrast `gamma=1-gamma=0` |
+| Rulers | objective-matched primary; normalized-score secondary; coordinates `.25/.50/.75` |
+| Two-ruler freeze | 6,240 solves; 622,455 funded rows; no outcomes |
+| Two-ruler result | `.25` small favorable, `.50` unfavorable, `.75` mostly unidentified under objective matching; normalized ruler unfavorable but not opportunity-matched |
 | Cobertura CatBoost | ocho upper bounds bajo `0.90`; maximo `0.882167` |
 | Cobertura logistic control | ocho upper bounds bajo `0.90`; maximo `0.895654` |
 | Transicion binaria | estrato 2: prevalencia `0.101703 -> 0.097147`; cuantíl `0.888435 -> 0.111801` |
-| Comparator C2 | 1,080 matches; residual maximo `8.33e-17`; dominancia plug-in mecanica |
+| Supporting C2 | 1,080 matches; residual maximo `8.33e-17`; dominancia plug-in mecanica |
 | Exact frontier | 3,067 caps; 216/216 broad-stress envelopes cruzan cero |
 | Development support | default 72/72 cruza; W8 27/27 cruza |
 | Evidencia | `reports/crpto/ijds_binary_geometry_frontier_v4_evidence.json` |
 
 El claim activo es una auditoria de identificacion: la falla temporal de
 cobertura sobrevive los checks declarados, la geometria binaria es sensible a
-prevalencia, y el signo de los resultados de portafolio depende del timing
-residual y del soporte del comparador. No existe un winner ni una direccion universal. La
-autoridad completa es
+prevalencia, y el signo de los resultados de portafolio depende del ruler, la
+coordenada, el timing residual y el soporte del comparador. No existe un winner
+ni una direccion universal. La autoridad completa es
 `docs/research/active_claims_2026-07-12.md`.
 
 **Body claim histórico v7:** NO-GO y replay-only. Sus A35--A40, retorno

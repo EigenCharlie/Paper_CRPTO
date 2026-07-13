@@ -23,7 +23,10 @@ Active evidence:
 - complete residual specification: eight consecutive six-month windows;
 - primary OOT: 376,890 candidates in fifteen monthly USD 1 million menus;
 - learners: CatBoost/Platt primary and independent logistic/Platt coverage control;
-- all nine `(tau, gamma)` policies are co-primary; there is no selector;
+- score path: `gamma={0,.25,.50,.75,1}` with endpoint contrast `gamma=1-gamma=0`;
+- objective-matched primary and normalized-score secondary rulers at three
+  interior coordinates; there is no selector;
+- the nine V4 fixed-cap policies are supporting exact-frontier diagnostics;
 - C2 comparator: contemporaneous frozen funded point-score cap;
 - exact point-cap frontier: 3,067 HiGHS basis/support endpoints;
 - unresolved outcomes: retained with sharp common-outcome bounds.
@@ -38,6 +41,11 @@ Headline evidence:
 - all 216 broad-stress envelopes cross zero;
 - default crosses zero in all 72 development-support cells;
 - all 27 W8 development-support envelopes cross zero;
+- the objective-matched endpoint contrast is favorable at `.25`, unfavorable
+  at `.50`, and mostly unidentified for payoff/default at `.75`;
+- all normalized-score tracks are unfavorable in realized outcomes but do not
+  match plug-in opportunity cost;
+- the six ruler-coordinate tracks are not 48 independent replications;
 - the factorial simulation is claim-bearing for coverage mechanism only; its
   portfolio component is degenerate.
 
@@ -54,13 +62,15 @@ Preserve these distinctions:
 - overlapping residual windows versus independent replications;
 - Platt score and plug-in objective versus true conditional probability;
 - candidate coverage versus funded-set validity;
+- objective-matched opportunity cost versus normalized-score relaxation;
+- finite three-coordinate diagnostics versus a continuous joint frontier;
 - standardized payoff versus cash-flow return, IRR, NPV, or welfare;
 - sharp identification bounds versus sampling confidence intervals;
 - C2 plug-in dominance versus realized-outcome dominance;
 - exact declared comparator support versus universal baseline invariance;
 - tagged retrospective audit versus preregistration or confirmation.
 
-Do not claim a policy winner, universal direction, selected-set validity,
+Do not claim a gamma, ruler, coordinate, or policy winner, universal direction, selected-set validity,
 Markov/tail certificate, causal effect, live deployment result, or portfolio
 mechanism from the V4 simulation.
 
@@ -81,8 +91,8 @@ just paper-submission-official
 uv run dvc status --no-updates
 ```
 
-The active builder verifies the V4 summary, freeze, and every artifact
-descriptor. It emits only `crpto_ijds_v4_*` tables/figures and
+The active builder verifies the V4 and two-ruler manifests, freezes, and every
+artifact descriptor. It emits only `crpto_ijds_v4_*` tables/figures and
 `ijds_binary_geometry_frontier_v4_evidence.json`. Consecutive builds must be
 byte-identical. The canonical body is `paper/CRPTO_ijds.qmd`; generate official
 TeX with `scripts/build_ijds_submission_tex.py` and never edit it by hand.

@@ -22,8 +22,16 @@ check rather than permission to upload.
   `376,890` candidates, `365,339` resolved and `11,551` unresolved.
 - Both learner taxonomies use 2011 scores; all eight residual windows use
   availability-safe labels and none is selected by OOT results.
-- All nine policies are co-primary; no selected learner, taxonomy, policy, cap,
-  comparator, or OOT winner appears.
+- The complete five-gamma path, two rulers, and three interior coordinates are
+  reported; no selected learner, taxonomy, gamma, ruler, coordinate, policy,
+  cap, comparator, or OOT winner appears.
+- The two-ruler freeze contains `6,240` solves and `622,455` funded rows.
+- Objective-matched `.25` is reported once: `44` changed loan-month positions,
+  USD `155,937.27` one-way turnover, USD `5,603.66` higher payoff, and
+  `-0.00679` pp default/miscoverage. It is not eight confirmations.
+- Objective-matched `.50` is unfavorable; `.75` is mostly unidentified for
+  payoff/default. Normalized-score tracks are adverse but are not called
+  opportunity matched.
 - Every CatBoost and logistic all-candidate coverage upper bound is below 0.90;
   the largest logistic upper bound is `0.895654`.
 - The stratum-2 phase diagnostic is prevalence `0.101703 -> 0.097147`, residual
@@ -47,7 +55,7 @@ After the explicit freeze, record and verify:
 
 - total official pages and pre-reference pages;
 - reference start page and compliance with the 25-page exclusion rule;
-- five main tables and three main figures, unless a documented editorial edit
+- five main tables and two main figures, unless a documented editorial edit
   deliberately changes the count;
 - abstract at most 300 words and 1--10 keywords;
 - no BibTeX warnings or undefined references/citations;

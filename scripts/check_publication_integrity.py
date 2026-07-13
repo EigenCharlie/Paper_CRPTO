@@ -35,6 +35,7 @@ RETIRED_HEADLINE_TOKENS = (
     "selected guardrail",
     "development-matched point",
     "maturity-safe parent",
+    "all nine policies are co-primary",
     "$179,327.59",
     "0.039375",
     "0.036875",
@@ -73,6 +74,10 @@ ACTIVE_EDITORIAL_SURFACES = (
 COMMON_ACTIVE_TOKENS = (
     "376,890",
     "11,551",
+    "6,240",
+    "5,603.66",
+    "155,937.27",
+    "44 loan-month positions",
     "eight",
     "0.1017",
     "0.0971",
@@ -92,8 +97,10 @@ SURFACES = (
             *COMMON_ACTIVE_TOKENS,
             "0.8957",
             "1,080",
-            "19,200",
-            "all nine policies are co-primary",
+            "two outcome-free rulers",
+            "not 48 replications",
+            "objective-matched",
+            "normalized-score",
             "standardized payoff",
             "not a prospective trial",
             "ethical and governance implications",
@@ -109,6 +116,8 @@ SURFACES = (
             "5,001,617",
             "1,080",
             "19,200",
+            "not eight independent confirmations",
+            "coordinate one",
             "binary phase transition",
             "active conclusion is deliberately narrow",
         ),
@@ -122,6 +131,8 @@ SURFACES = (
             "generated from paper/crpto_ijds.qmd",
             "0.8957",
             "1,080",
+            "objective-matched",
+            "normalized-score",
         ),
         RETIRED_HEADLINE_TOKENS,
     ),
@@ -133,13 +144,15 @@ SURFACES = (
             "0.895654",
             "8.33e-17",
             "216",
+            "155,937.27",
+            "no gamma, ruler, coordinate, or policy winner",
             "no policy winner",
         ),
         RETIRED_HEADLINE_TOKENS,
     ),
     SurfaceCheck(
         REPO / "paper/submission/CLAIM_AUDIT_MATRIX.md",
-        ("0.838531", "0.895654", "3,067", "216", "all nine"),
+        ("0.838531", "0.895654", "3,067", "216", "two-ruler"),
         RETIRED_HEADLINE_TOKENS,
     ),
     SurfaceCheck(
@@ -151,6 +164,7 @@ SURFACES = (
             "0.1017",
             "0.0971",
             "216",
+            "5,603.66",
             "openai codex",
             "accepts full responsibility",
         ),
@@ -162,6 +176,8 @@ SURFACES = (
             "active_claims_2026-07-12.md",
             "ijds-binary-geometry-frontier-v4-2026-07-12-v1",
             "ijds-binary-geometry-frontier-v4-2026-07-12-v2",
+            "ijds-normalized-objective-frontier-2026-07-13-v1c",
+            "ijds-normalized-objective-frontier-2026-07-13-v2",
             "0.838531",
             "0.895654",
             "policy_winner_allowed: false",
@@ -275,6 +291,17 @@ def _check_evidence_decision() -> list[str]:
         failures.append("broad comparator support no longer crosses zero everywhere")
     if evidence["simulation"]["portfolio_claim_allowed"] is not False:
         failures.append("degenerate simulation unexpectedly allows a portfolio claim")
+    challenger = evidence.get("decision_challenger", {})
+    if challenger.get("scope") != "finite_two_ruler_three_interior_coordinate_diagnostic":
+        failures.append("two-ruler finite diagnostic is missing")
+    if challenger.get("continuous_frontier_claim") is not False:
+        failures.append("two-ruler evidence unexpectedly claims a continuous frontier")
+    if challenger.get("tracks_are_independent_replications") is not False:
+        failures.append("two-ruler tracks are incorrectly treated as replications")
+    interpretation = challenger.get("interpretation", {})
+    for field in ("preferred_gamma", "preferred_ruler", "preferred_coordinate", "policy_winner"):
+        if interpretation.get(field) is not None:
+            failures.append(f"two-ruler evidence unexpectedly selects {field}")
     return failures
 
 

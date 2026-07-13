@@ -1,4 +1,4 @@
-version: "2026-07-12"
+version: "2026-07-13"
 project: paper-crpto
 decision_status: reconstructed_active
 
@@ -33,7 +33,29 @@ active_scientific_contract:
   run_tag: ijds-binary-geometry-frontier-v4-2026-07-12-v2
   protocol_tag: protocol/ijds-binary-geometry-frontier-v4-2026-07-12-v2
   protocol_commit: 60cdf298d965525cddaaf03abccd15ff805e1a15
+  two_ruler_outcome_free_run_tag: ijds-normalized-objective-frontier-2026-07-13-v1c
+  two_ruler_outcome_free_protocol_tag: protocol/ijds-normalized-objective-frontier-2026-07-13-v1c
+  two_ruler_outcome_free_freeze_sha256: 7877c5e460772a0093e4132eaa542e9049f7ec15d2ddaa35c2df389892a0e185
+  two_ruler_run_tag: ijds-normalized-objective-frontier-2026-07-13-v2
+  two_ruler_protocol_tag: protocol/ijds-normalized-objective-frontier-2026-07-13-v2
+  two_ruler_protocol_commit: d3041e5233ee74a6b1d38f678def75d8d5ef0169
   evidence_manifest: reports/crpto/ijds_binary_geometry_frontier_v4_evidence.json
+  active_code_surface:
+    paper_pipeline:
+      - scripts/build_ijds_binary_geometry_frontier_v4_evidence.py
+      - scripts/check_publication_integrity.py
+      - scripts/build_ijds_submission_tex.py
+      - scripts/compile_ijds_submission.py
+      - scripts/render_submission_pdf_previews.py
+    immutable_protocol_entrypoints:
+      - scripts/experiments/run_ijds_binary_geometry_frontier_v4.py
+      - scripts/experiments/run_ijds_normalized_objective_frontier.py
+      - scripts/experiments/run_ijds_normalized_objective_frontier_v2.py
+    source_inventory_manifests:
+      - models/experiments/ijds_audit/ijds-binary-geometry-frontier-v4-2026-07-12-v2/protocol_freeze.json
+      - models/experiments/ijds_audit/ijds-normalized-objective-frontier-2026-07-13-v1c/protocol_freeze.json
+      - models/experiments/ijds_audit/ijds-normalized-objective-frontier-2026-07-13-v2/verified_evaluation_manifest.json
+    historical_execution_in_active_capsule: false
   previously_inspected_retrospective_archive: true
   confirmatory: false
   prospective: false
@@ -46,13 +68,16 @@ active_scientific_contract:
     learners: >-
       CatBoost/Platt is primary; independently calibrated numeric logistic
       regression is a coverage-only control and never enters optimization.
-    policies: >-
-      All nine tau-gamma guardrails are co-primary; there is no selector or
-      OOT winner.
+    decision_diagnostic: >-
+      The complete gamma path {0,.25,.50,.75,1} is evaluated under an
+      objective-matched primary ruler and normalized-score secondary ruler at
+      coordinates {.25,.50,.75}; gamma=1-gamma=0 is the frozen contrast and
+      there is no selector or OOT winner.
     comparator: >-
-      C0, C1, C2, the exact development-admissible support, and the broad
-      [0.05,0.12] stress support are outcome-free. HiGHS basis endpoints give
-      exact sharp envelopes over each declared cap interval.
+      The nine fixed-cap policies, C0, C1, C2, exact development-admissible
+      support, and broad [0.05,0.12] stress support are supporting outcome-free
+      diagnostics. HiGHS basis endpoints give exact sharp envelopes over each
+      declared point-cap interval.
     payoff: "Model-implied plug-in (1-p)r-p*LGD and realized (1-Y)r-Y*LGD."
     evaluation: "Fifteen separate monthly decisions from 2016-04 through 2017-06."
     unresolved: "Retained with sharp binary aggregate and common-outcome pairwise bounds."
@@ -72,6 +97,20 @@ active_scientific_contract:
       w8_quantile: 0.111801
       w7_width: 0.984263
       w8_width: 0.207631
+    two_ruler:
+      solves: 6240
+      funded_rows: 622455
+      tracks: 6
+      window_cells: 48
+      coordinates: [0.25, 0.50, 0.75]
+      objective_matched_025_payoff_usd: 5603.66
+      objective_matched_025_default_pp: -0.00679
+      objective_matched_025_changed_loan_month_positions: 44
+      objective_matched_025_one_way_turnover_usd: 155937.27
+      objective_matched_050_payoff_hull_usd: [-82616, -27958]
+      objective_matched_075_payoff_hull_usd: [-158470, 72565]
+      normalized_payoff_direction: gamma_1_lower_all_24_window_cells
+      policy_winner_allowed: false
     c2_cells: 1080
     c2_maximum_match_residual: 8.326672684688674e-17
     exact_frontier_caps: 3067
@@ -84,14 +123,17 @@ active_scientific_contract:
   mechanism: >-
     Candidate coverage fails under all eight windows and both learners. A score
     stratum crosses the binary residual prevalence threshold, changing its
-    interval geometry discontinuously. Same-cap and C2 comparisons have exact
-    plug-in theorems, but realized directions depend on comparator support.
+    interval geometry discontinuously. Endpoint directions change across
+    objective-matched and normalized-score rulers and interior coordinates.
+    Same-cap and C2 comparisons have exact plug-in statements, while realized
+    directions also depend on exact comparator support.
   required_artifacts:
     - reports/crpto/ijds_binary_geometry_frontier_v4_evidence.json
     - reports/crpto/tables/crpto_ijds_v4_table1_coverage_windows.csv
     - reports/crpto/tables/crpto_ijds_v4_table2_phase_transition.csv
     - reports/crpto/tables/crpto_ijds_v4_table3_development_envelopes.csv
     - reports/crpto/tables/crpto_ijds_v4_table4_direction_summary.csv
+    - reports/crpto/tables/crpto_ijds_v4_table5_two_ruler_tracks.csv
     - reports/crpto/tables/crpto_ijds_v4_tableS1_named_comparators.csv
     - reports/crpto/figures/crpto_ijds_v4_fig1_coverage.pdf
     - reports/crpto/figures/crpto_ijds_v4_fig1_coverage.png
@@ -104,12 +146,19 @@ active_scientific_contract:
     - models/experiments/ijds_audit/ijds-binary-geometry-frontier-v4-2026-07-12-v1.dvc
     - data/processed/experiments/ijds_audit/ijds-binary-geometry-frontier-v4-2026-07-12-v2.dvc
     - models/experiments/ijds_audit/ijds-binary-geometry-frontier-v4-2026-07-12-v2.dvc
+    - data/processed/experiments/ijds_audit/ijds-normalized-objective-frontier-2026-07-13-v1c.dvc
+    - models/experiments/ijds_audit/ijds-normalized-objective-frontier-2026-07-13-v1c.dvc
+    - data/processed/experiments/ijds_audit/ijds-normalized-objective-frontier-2026-07-13-v2.dvc
+    - models/experiments/ijds_audit/ijds-normalized-objective-frontier-2026-07-13-v2.dvc
 
 claim_boundaries:
   required:
     - "Clipped binary-outcome residual interval, not a latent-PD confidence limit or discrete-set convex hull."
     - "Platt-scaled score and plug-in objective, not asserted true conditional probability."
-    - "All eight overlapping residual windows are co-primary specifications, not independent replications."
+    - "All eight overlapping residual windows are complete specifications, not independent replications."
+    - "Six ruler-coordinate tracks observed through eight windows are not 48 independent replications."
+    - "Objective matching equalizes only model-implied opportunity cost; normalized-score matching is affine-invariant but does not equalize opportunity cost."
+    - "The three interior coordinates form a finite diagnostic; coordinate one is a structural null and no continuous joint-frontier claim is active."
     - "The logistic learner is a coverage-only control and does not enter portfolio optimization."
     - "Marginal/Mondrian coverage is not selected-set validity."
     - "Standardized payoff is not cash-flow return or IRR."
@@ -123,8 +172,8 @@ claim_boundaries:
   forbidden:
     - "Universal economic dominance."
     - "A unique or theoretically optimal comparator-matching rule."
-    - "A 9-of-9 family direction."
-    - "A selected policy or OOT winner."
+    - "A 9-of-9 family direction or eight-confirmation claim for one repeated allocation contrast."
+    - "A selected gamma, ruler, coordinate, policy, or OOT winner."
     - "A selected residual window, learner, taxonomy, cap, or comparator."
     - "A comparator-robust sign over the declared multiverse."
     - "Selected-set conformal guarantee."

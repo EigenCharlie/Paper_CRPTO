@@ -43,23 +43,24 @@ def test_body_and_generated_tex_share_architecture_citations_and_displays() -> N
         tex_citations.update(key.strip() for key in group.split(","))
     assert body_citations == tex_citations
     assert body.count("{#tbl-") == official.count(r"\begin{longtable}") == 5
-    assert body.count("{#fig-") == official.count(r"\begin{figure}") == 3
+    assert body.count("{#fig-") == official.count(r"\begin{figure}") == 2
 
 
 def test_v4_wording_keeps_theory_and_empirical_scope_separate() -> None:
     body = BODY.read_text(encoding="utf-8").lower()
     supplement = SUPPLEMENT.read_text(encoding="utf-8").lower()
+    body_normalized = re.sub(r"\s+", " ", body)
     supplement_normalized = re.sub(r"\s+", " ", supplement)
 
-    for surface in (body, supplement):
+    for surface in (body_normalized, supplement_normalized):
         assert "constant-score" in surface
-        assert "varying scores" in surface
+        assert re.search(r"varying scores|scores vary", surface)
         assert "not a confidence interval" in surface
         assert "not a deployable" in surface
         assert "not independent replications" in surface
-    assert "not a prospective trial, preregistration, or causal estimate" in body
+    assert "not a prospective trial, preregistration, or causal estimate" in body_normalized
     assert "not a causal identified set" in supplement
-    assert "does not support a portfolio claim" in body
+    assert "simulation identifies only a coverage mechanism" in body_normalized
     assert "no portfolio claim uses this simulation" in supplement_normalized
 
 

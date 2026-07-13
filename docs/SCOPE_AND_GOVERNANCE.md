@@ -27,16 +27,22 @@ CRPTO does not cover:
 
 ## Active paper contract
 
-The current IJDS paper is the complete-window binary-geometry and comparator audit:
+The current IJDS paper is the complete-window binary-geometry and
+decision-estimand audit:
 
 - outcome-free run `ijds-binary-geometry-frontier-v4-2026-07-12-v1` and
   hash-linked evaluation `ijds-binary-geometry-frontier-v4-2026-07-12-v2`;
+- outcome-free two-ruler run
+  `ijds-normalized-objective-frontier-2026-07-13-v1c` and hash-linked
+  evaluation `ijds-normalized-objective-frontier-2026-07-13-v2`;
 - one status-independent 640,543-loan design universe, including 376,890
   primary OOT and 88,227 extension candidates;
 - CatBoost/Platt fitting plus an independent logistic coverage control;
 - all eight availability-safe six-month residual windows, with learner-specific
   score taxonomies fixed in 2011;
-- four declared taxonomies and all nine guardrails reported as co-primary;
+- four declared taxonomies, a five-gamma path, two rulers, and three interior
+  coordinates reported without selection; the nine fixed-cap guardrails are
+  supporting exact-frontier diagnostics;
 - coherent standardized payoff `(1-p)r-p*LGD` in the objective and
   `(1-Y)r-Y*LGD` in evaluation;
 - 15 separate monthly USD 1 million decisions from April 2016 through June
@@ -44,6 +50,10 @@ The current IJDS paper is the complete-window binary-geometry and comparator aud
 - unresolved outcomes retained with sharp paired common-outcome bounds;
 - all eight CatBoost and all eight logistic coverage upper bounds below 0.90;
 - a W7--W8 binary residual phase transition in CatBoost stratum 2;
+- a 6,240-solve two-ruler freeze whose endpoint direction changes with ruler
+  and coordinate;
+- one repeated objective-matched `.25` contrast with USD 5,603.66 higher
+  payoff, versus unfavorable `.50` and mostly unidentified `.75` contrasts;
 - exact C2 funded-point-score matching and plug-in dominance reconciliation;
 - 3,067-cap exact frontier with 216/216 broad-stress envelopes crossing zero;
 - default crossing zero in all 72 development-support cells and all 27 W8

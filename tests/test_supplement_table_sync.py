@@ -56,6 +56,27 @@ def test_named_and_exact_direction_counts_are_visible_in_supplement() -> None:
     assert "| Funded miscoverage | 0 | 33 | 39 | 72 |" in supplement
 
 
+def test_two_ruler_tracks_and_repeated_quarter_contrast_are_visible() -> None:
+    rows = _rows("crpto_ijds_v4_table5_two_ruler_tracks.csv")
+    supplement = SUPPLEMENT.read_text(encoding="utf-8")
+
+    assert len(rows) == 6
+    assert {(row["ruler"], float(row["coordinate"])) for row in rows} == {
+        (ruler, coordinate)
+        for ruler in ("objective_matched", "normalized_score")
+        for coordinate in (0.25, 0.5, 0.75)
+    }
+    for row in rows:
+        assert f"{float(row['payoff_bound_usd_lower_min']):,.2f}" in supplement
+        assert f"{float(row['payoff_bound_usd_upper_max']):,.2f}" in supplement
+        assert f"{float(row['default_bound_pp_lower_min']):.4f}" in supplement
+        assert f"{float(row['default_bound_pp_upper_max']):.4f}" in supplement
+    normalized = re.sub(r"\s+", " ", supplement.lower())
+    assert "44 loan-month positions" in normalized
+    assert "155,937.27" in normalized
+    assert "not eight independent confirmations" in normalized
+
+
 def test_supplement_discloses_negative_simulation_and_recovery() -> None:
     supplement = re.sub(r"\s+", " ", SUPPLEMENT.read_text(encoding="utf-8").lower())
 

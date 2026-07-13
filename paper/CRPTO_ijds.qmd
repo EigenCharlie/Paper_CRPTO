@@ -8,27 +8,25 @@ abstract: |
   Predict-Then-Optimize (CRPTO), which combines a Platt-scaled default score, a
   90%-target absolute-residual interval for a binary outcome, and a monthly
   credit-allocation linear program. The audit fixes score strata in 2011,
-  reports all eight consecutive six-month residual windows from January 2012
-  through January 2013, retains unresolved loans in every candidate menu, and
-  freezes allocations before one outcome join. For 376,890 primary out-of-time
-  candidates, every CatBoost five-stratum coverage upper bound is below 0.90
-  (range across windows: 0.8692--0.8822). An independently calibrated logistic
-  control is closer but also fails in all eight windows (maximum upper bound
-  0.8957). The binary construction has a discontinuity: in one score stratum,
-  fit prevalence falls from 0.1017 to 0.0971 as the window advances, crossing
-  alpha = 0.10; its residual quantile drops from 0.8884 to 0.1118 and mean
-  interval width from 0.9843 to 0.2076. We formalize this phase transition and
-  distinguish the clipped interval from its intersection with the binary
-  outcome space. For decisions, we prove that a contemporaneous funded-score
-  comparator weakly dominates the guardrail in the shared plug-in objective,
-  then enumerate the exact HiGHS basis frontier for the point-score cap. All
-  216 broad-stress policy-by-window-by-metric envelopes cross zero. Within the
-  development-admissible support, default remains unidentified in all 72
-  policy-window cells; earlier payoff and miscoverage directions disappear in
-  the eighth window. The contribution is an auditable identification result,
-  not a policy winner: binary conformal geometry is prevalence-sensitive,
-  coverage fails to transport, and portfolio direction depends on the declared
-  comparator support.
+  reports eight consecutive six-month residual windows, retains unresolved
+  loans in every candidate menu, and freezes allocations before outcomes. For
+  376,890 primary out-of-time candidates, every CatBoost five-stratum coverage
+  upper bound is below 0.90 (0.8692--0.8822). An independently calibrated
+  logistic control also fails in all eight windows (maximum 0.8957). In one
+  score stratum, fit prevalence crosses alpha = 0.10 from 0.1017 to 0.0971;
+  its residual quantile drops from 0.8884 to 0.1118 and mean interval width
+  from 0.9843 to 0.2076. We formalize this binary phase transition. For
+  decisions, we compare the point-score and full-upper-score endpoints under
+  two outcome-free rulers at three predeclared interior coordinates. An
+  objective-matched ruler yields a small favorable contrast at .25, an
+  unfavorable contrast at .50, and mostly unidentified payoff and default at
+  .75. A normalized-score ruler is uniformly unfavorable in realized outcomes
+  but does not equalize plug-in opportunity cost. An exact point-cap basis
+  frontier independently shows that all 216 broad-stress envelopes cross
+  zero. Thus no gamma, ruler, coordinate, or policy is selected. CRPTO's
+  contribution is an identification audit: binary conformal geometry is
+  prevalence-sensitive, coverage fails to transport, and the sign of a
+  portfolio contrast depends on how decision stringency is defined.
 keywords:
   - conformal prediction
   - predict-then-optimize
@@ -97,50 +95,51 @@ $$ {#eq-score}
 
 in the portfolio risk constraint. Guardrail and point-score policies maximize the
 same model-implied objective over identical monthly menus, budgets, loan
-bounds, and purpose constraints. All nine combinations
-$\tau\in\{0.15,0.17,0.19\}$ and
-$\gamma\in\{0.25,0.50,0.75\}$ are evaluated. All nine policies are co-primary.
-No development outcome selects a
-champion, and no OOT result promotes a policy.
+bounds, and purpose constraints. The complete diagnostic score path is
+$\gamma\in\{0,0.25,0.50,0.75,1\}$. Its primary empirical contrast is the
+full-upper-score endpoint minus the point-score endpoint. No development
+outcome selects a score, and no OOT result promotes a gamma.
 
-The comparator is part of the estimand. C0 copies the guardrail's numerical cap,
-although $u_i\ge p_i$ makes the guardrail feasible region mechanically smaller.
-C1 uses the capital-weighted mean of eleven outcome-free monthly guardrail
-point-score moments from a common February--December 2013 development block.
-The closed interval spanned by those eleven moments defines a
-development-admissible comparator support for each window-policy pair. C2
-freezes a guardrail allocation and sets the point cap to that allocation's
-funded point-score moment on the same menu. This construction yields a useful
-theorem: the guardrail allocation is feasible for C2, so the optimized point
-policy must weakly dominate it in the common plug-in objective. It does not
-order realized outcomes. Finally, a full-budget HiGHS representation places
-the cap in the right-hand side; basis-ranging endpoints enumerate the exact
-piecewise-linear point-cap frontier rather than a fixed interpolation grid.
+The comparator is part of the estimand. We therefore use two outcome-free
+rulers on the common attainable frontier. The primary ruler imposes the same
+model-implied objective floor for every score and hence matches plug-in
+opportunity cost. The secondary ruler uses the same relative relaxation from
+each score's minimum-risk allocation to the common plug-in optimum; it is
+invariant to positive affine score transformations but does not match
+opportunity cost. Both rulers are evaluated at coordinates
+$\{0.25,0.50,0.75\}$. A supporting audit triangulates these finite tracks with
+same-cap, development-matched, contemporaneous funded-moment, and exact
+point-cap comparators. The exact HiGHS basis frontier avoids fixed-grid
+interpolation over the declared point-cap support.
 
 The empirical message is an identification result rather than a winner. All
 eight CatBoost windows and all eight logistic controls have all-candidate OOT
 coverage upper bounds below 0.90. One CatBoost stratum crosses the nominal
 miscoverage prevalence threshold between the seventh and eighth windows,
 causing its conformal quantile and interval geometry to change abruptly. In
-the portfolio audit, every broad-stress payoff, default, and miscoverage
-envelope crosses zero. Development-admissible support retains some early
-payoff and miscoverage directions, but all 27 envelopes cross zero in the
-eighth window and default crosses zero in every window-policy cell.
+the portfolio audit, the endpoint sign changes with ruler and coordinate. At
+objective-matched coordinate .25, the same four-month allocation contrast has
+USD 5,603.66 higher standardized payoff and 0.0068 percentage points lower
+default; at .50 all eight window bounds are unfavorable; at .75 payoff and
+default cross zero in seven windows. The normalized ruler is unfavorable at
+all three coordinates but also gives the full-upper score USD 28,263--557,294
+more optimized plug-in objective. Independently, every broad-stress exact-cap
+payoff, default, and miscoverage envelope crosses zero.
 
 The paper makes four contributions.
 
 1. It derives the prevalence phase transition of a constant-score binary
    absolute-residual conformal interval and audits the corresponding empirical
    set geometry across every eligible residual window.
-2. It treats comparator support as an identification object. The C2 feasibility
-   theorem and an exact basis frontier separate mechanical plug-in dominance
-   from realized-outcome conclusions.
+2. It defines two common frontier rulers and shows that endpoint direction is
+   not invariant to ruler or interior coordinate. An exact basis frontier
+   separates this finite-grid diagnosis from support-wide identification.
 3. It provides an outcome-observability-safe monthly protocol with independent
    learner controls, fixed taxonomies, status-independent menus, sharp
    unresolved-outcome bounds, and allocations persisted before outcomes.
 4. It documents a complete-specification negative result: coverage transport
-   fails for both learners, while portfolio signs vary across outcome-free
-   comparator supports and disappear under the final residual window.
+   fails for both learners, while no realized portfolio direction survives the
+   declared rulers, coordinates, and comparator supports.
 
 This is a code-locked retrospective audit of a previously inspected archive,
 not a prospective trial, preregistration, or causal estimate. The purpose is
@@ -201,6 +200,18 @@ empirical question: when a simple conformal score is attached to a conventional
 credit LP, where does its apparent risk effect come from, and where does
 coverage fail to follow?
 
+The closest decision-level methods also clarify what this audit cannot borrow.
+CROMS selects conformal models using downstream robust-decision risk
+[@bao2025croms]; decision-theoretic conformal prediction begins from the
+agent's loss [@kiyani2025]; and inverse conformal risk control calibrates a
+robustness choice against decision regret [@zhou2026creme]. Those methods
+require labeled decision contexts under their stated sampling conditions.
+CRPTO instead has eleven common development menus, fifteen later monthly
+decisions, and direct evidence against temporal coverage transport. Treating
+hundreds of thousands of loans as independent decision contexts would ignore
+that each action is one coupled monthly allocation. We therefore use these
+methods to define the correct target, not to import a finite-sample guarantee.
+
 ## Credit maturity and economic evaluation
 
 Credit scoring and profit scoring are related but distinct. High discrimination
@@ -249,7 +260,7 @@ treatment of unresolved outcomes.
 | Credit scoring and cost-aware calibration [@lessmann2015; @yang2025costaware; @das2023creditgraph] | Probability quality and richer predictive structure | Treats a Platt-scaled default score as an input; no AUC-leadership claim |
 | P2P and robust credit portfolios [@serrano2016profitscoring; @chi2019p2p; @babaei2020p2p] | Economic loan selection under risk and uncertainty | Adds binary-set geometry, outcome isolation, and comparator identification |
 | Conformal robust/contextual optimization [@johnstone2021; @patel2024; @hu2026crc] | Coverage-backed uncertainty sets in optimization | Audits a frozen binary-outcome score; no inherited selected-set validity |
-| Valid selection and decision-risk calibration [@hegazy2025valid_selection_conformal_sets; @yeh2025training; @zhou2026creme] | Procedures that control selection or operational loss | Provides a diagnostic failure mechanism, not a substitute control procedure |
+| Valid selection and decision-risk calibration [@hegazy2025valid_selection_conformal_sets; @bao2025croms; @yeh2025training; @zhou2026creme] | Procedures that control model selection, operational loss, or robustness | Uses ruler sensitivity as a diagnostic; eleven development menus do not support those certificates |
 | Decision-focused learning [@donti2017; @elmachtoub2022; @mandi2024] | Training predictions against downstream loss | Preserves the predictor for governance and audits a post-hoc decision layer |
 | Baseline and ablation design | Holding the decision problem fixed while changing one ingredient | Shows that a shared numeric cap does not hold decision stringency fixed |
 
@@ -322,7 +333,7 @@ extension rather than silently discarded.
 | PD development | 2007-06--2010-12 | 17,433 | 17,392 | train/validate |
 | Probability calibration | 2011-01--2011-12 | 14,101 | 14,077 | Platt fit and taxonomy |
 | Residual pool | 2012-01--2013-01 | 49,007 | 48,857 | eight overlapping six-month recipes |
-| Policy development | 2013-02--2013-12 | 94,885 | not read | common C1/support construction |
+| Policy development | 2013-02--2013-12 | 94,885 | not read | common outcome-free frontier construction |
 | Primary OOT | 2016-04--2017-06 | 376,890 | post-freeze only | locked evaluation |
 | Censored extension | 2017-07--2017-09 | 88,227 | post-freeze only | stress only |
 
@@ -356,6 +367,15 @@ after the shared point allocation is loaded. It changes evaluation plumbing,
 not predictions, recipes, comparators, or allocations. Online Supplement
 Appendix G records the full lineage.
 
+The two-ruler diagnostic has a separate outcome-free freeze. It contains 6,240
+solves and 622,455 funded rows over eight windows, 26 development/OOT months,
+five gamma values, three interior coordinates, and two rulers. Reversed-ID
+reruns and an independent GLOP implementation check the endpoint allocations.
+A hash-locked evaluator then joins the same outcome panel without refitting,
+resolving, or selecting a track. Its 48 window cells are six specification
+tracks observed through eight overlapping residual recipes, not 48
+replications.
+
 ## Identification safeguards
 
 The design addresses five common retrospective failure modes directly. Each
@@ -368,7 +388,7 @@ column records what still cannot be inferred.
 | Later labels influence fitting | Explicit cutoff plus separate PD, Platt, and conformal blocks | Temporal exchangeability is not restored |
 | One decision pools future originations | Fifteen separate monthly menus and budgets | The exercise is still retrospective |
 | Optimized and reported payoffs differ | Expected and realized payoff are one coherent pair | The pair is not cash-flow return or welfare |
-| One comparator determines the conclusion | C0, C1, C2, development support, and an exact basis frontier are reported | The declared supports are not universal over all baselines |
+| One comparator determines the conclusion | Two common rulers are triangulated with C0, C1, C2, and an exact basis frontier | Three interior coordinates are finite diagnostics, not universal support |
 
 : Identification safeguards and residual boundaries. {#tbl-safeguards}
 
@@ -475,49 +495,70 @@ where $B=\$1$ million in every month. The point-score baseline sets $\gamma=0$.
 The objective is identical across policies, so differences arise from the risk
 score and the loans made feasible by it.
 
-## Closed policy family and comparator multiverse
+## Common-frontier rulers and supporting comparator audit
 
-All nine combinations of $\tau\in\{0.15,0.17,0.19\}$ and
-$\gamma\in\{0.25,0.50,0.75\}$ are co-primary. Outcomes do not rank them. Every
-policy is solved in every development and OOT month for every residual window,
-and its allocation is persisted before outcomes are available to the evaluator.
-
-The same-numeric-cap comparator C0 sets $\gamma=0$ and copies each
-guardrail's $\tau$. C1 uses the guardrail's mean funded point-score moment over
-the same eleven February--December 2013 development allocations for the
-corresponding residual window. Their minimum and maximum monthly moments define
-the closed development-admissible support. C1 is available before OOT but can
-become looser or tighter as the menu shifts.
-
-The primary C2 comparator is constructed within each policy-month pair. Let
-$a^q_{it}$ denote the already frozen guardrail allocation. Its funded point-score
-moment is
+Let $\mathcal A_t$ contain the budget, loan-bound, and purpose constraints in
+@eq-lp, let $v_i=\bar\pi_i$, and let $s_i(\gamma)=q_i(\gamma)$ for
+$\gamma\in\{0,0.25,0.50,0.75,1\}$. For every month and score, define the
+minimum funded score, the common unconstrained plug-in optimum, and the score
+of that optimum as
 
 $$
-\tau^{C2}_{pt}=\frac{\sum_i a^q_{it}p_i}{\sum_i a^q_{it}}.
-$$ {#eq-c2-match}
+m_{\gamma t}=B^{-1}\min_{a\in\mathcal A_t}s(\gamma)^\top a,
+\quad z_t^*=\max_{a\in\mathcal A_t}v^\top a,
+\quad o_{\gamma t}=B^{-1}s(\gamma)^\top a_t^*.
+$$ {#eq-ruler-anchors}
 
-Point PD is then solved on the identical menu with cap $\tau^{C2}_{pt}$. The
-achieved moments match to at most $8.33\times10^{-17}$. C2 uses no outcome but
-adapts to the realized menu and guardrail allocation. It is therefore a
-decomposition comparator, not a deployable fixed policy or unique causal
-counterfactual.
+The primary **objective-matched ruler** compares scores at a common plug-in
+opportunity cost. Let $z^{\min}_{\gamma t}$ be the objective attained by a
+minimum-score portfolio and set $z_t^L=\max_\gamma z^{\min}_{\gamma t}$. At
+$\rho\in\{0.25,0.50,0.75\}$, every score solves
 
-The point LP uses a binding budget equality, so cap $c$ enters the risk-row
-right-hand side as $cB$. HiGHS basis ranging enumerates every breakpoint over
-the hull of the development-admissible support and the secondary broad stress
-interval [0.05, 0.12]. The union of monthly breakpoints is evaluated on every
-month; fixed-grid interpolation is not used. Across the fifteen primary menus,
-this yields 3,067 distinct caps. The canonical result uses seed 42, purpose cap
-25%, and $\lambda=0.45$; it is not a selected winner. No OOT outcome chooses a
-window, learner, cap, taxonomy, policy, or comparator.
+$$
+\min_{a\in\mathcal A_t}s(\gamma)^\top a
+\quad\text{s.t.}\quad
+v^\top a\ge z_t^L+\rho(z_t^*-z_t^L).
+$$ {#eq-objective-ruler}
+
+The shared floor is a model-implied objective, not true expected return. The
+secondary **normalized-score ruler** instead sets
+
+$$
+c_{\gamma t}(\eta)=m_{\gamma t}
+  +\eta(o_{\gamma t}-m_{\gamma t}),\qquad
+\eta\in\{0.25,0.50,0.75\},
+$$ {#eq-normalized-ruler}
+
+and maximizes $v^\top a$ subject to
+$s(\gamma)^\top a\le Bc_{\gamma t}(\eta)$. Equal $\eta$ is invariant to a
+positive affine rescaling of a score, but it is not equal default risk,
+objective sacrifice, or operational tolerance. At coordinate one both rulers
+reach the verified common plug-in optimum, so the endpoint allocation contrast
+is structurally null. The empirical diagnostic is therefore the complete
+declared three-coordinate interior grid, not a continuous-frontier claim.
+
+For each ruler and coordinate, the frozen contrast is
+$\gamma=1$ minus $\gamma=0$. Interior gamma values verify the path but cannot
+be selected as winners. Every allocation is outcome-free; unresolved outcomes
+enter only through the common-outcome bounds after the freeze.
+
+A supporting audit triangulates the finite grid. C0 copies the numerical cap,
+C1 uses the eleven-menu development point-score support, and C2 matches the
+frozen guardrail's funded point-score moment on the same menu. C2 is an
+outcome-free decomposition, not a deployable policy. HiGHS basis ranging then
+enumerates 3,067 exact point caps over development support and [0.05, 0.12]
+broad stress. Nine historical $(\tau,\gamma)$ pairs index this audit; they are
+not a closed policy family or promotion candidates. Full definitions are in
+Online Supplement Appendix C. No OOT outcome chooses any learner, window,
+gamma, ruler, coordinate, cap, policy, or comparator.
 
 # Audit Theory and Estimands {#sec-theory}
 
-The audit theory diagnoses binary residual geometry, same-threshold nesting,
-C2 feasibility, and what can be learned with unresolved outcomes. It separates
-population coverage from optimizer selection. None assumes funded-set conformal
-validity or makes development matching uniquely correct.
+The audit theory diagnoses binary residual geometry, common-frontier rulers,
+same-threshold nesting, supporting C2 feasibility, and what can be learned with
+unresolved outcomes. It separates population coverage from optimizer
+selection. None assumes funded-set conformal validity or makes one ruler or
+development match uniquely correct.
 
 ## Comparator non-invariance
 
@@ -553,7 +594,22 @@ satisfies the point cap but violates the guardrail cap. This corollary explains
 why C0 is not neutral. It does not order realized payoff or default, prove C2
 unique, or imply that matching one funded moment equates feasible sets.
 
-**Proposition 2 (C2 plug-in objective dominance).** Let $a^q$ be any full-budget
+**Proposition 2 (positive-affine invariance of the normalized ruler).** Let
+$\widetilde s=as+b$ with $a>0$. Then
+$m_{\widetilde s}=am_s+b$, $o_{\widetilde s}=ao_s+b$, and
+$c_{\widetilde s}(\eta)=ac_s(\eta)+b$. Under the full-budget equality,
+
+$$
+\widetilde s^\top a\le Bc_{\widetilde s}(\eta)
+\quad\Longleftrightarrow\quad
+s^\top a\le Bc_s(\eta).
+$$ {#eq-normalized-invariance}
+
+The feasible allocation set is therefore unchanged by positive affine score
+units at a common normalized coordinate. This invariance does not make two
+non-affine scores equally stringent or equalize plug-in opportunity cost.
+
+**Lemma 1 (C2 plug-in objective dominance).** Let $a^q$ be any full-budget
 guardrail allocation and define $c=(p^\top a^q)/B$. Under the same loan bounds,
 budget, purpose constraints, and plug-in objective, $a^q$ is feasible for the
 point-score LP at cap $c$. Therefore
@@ -563,7 +619,7 @@ V_p(c)\ge \bar\pi^\top a^q.
 $$ {#eq-c2-dominance}
 
 The proof is immediate: the point-risk row holds with equality by construction,
-and all nonrisk constraints are unchanged. This proposition explains why C2
+and all nonrisk constraints are unchanged. This lemma explains why C2
 cannot establish plug-in superiority of the guardrail. It does not order
 realized payoff, default, or miscoverage; the empirical evaluation of those
 outcomes remains necessary.
@@ -655,21 +711,9 @@ extrema occur at its endpoints. Evaluating every support endpoint and every
 HiGHS basis-ranging endpoint therefore gives the exact sharp sensitivity
 envelope over the declared cap interval, up to solver tolerance.
 
-These exact statements support a compact audit map.
-
-::: {.keep-together}
-| Object | Exact statement | Evidence used | Does not imply |
-|---|---|---|---|
-| Score-cap geometry | Positive affine scores admit an exact cap translation | Proposition 1 and affine placebo | Equivalence for a non-affine conformal score |
-| Same-threshold comparison | At common $\tau$, $q\ge p$ nests the guardrail feasible set inside the point score | Corollary 1 and C0 | A neutral baseline or realized dominance |
-| C2 comparator | The frozen guardrail is feasible for its funded-moment point cap | Proposition 2 | Realized-outcome dominance or a deployable comparator |
-| Binary interval | Geometry changes at the constant-score prevalence threshold; miscoverage depends on binary-set membership | Proposition 3 and Identity 1 | Confidence interval for latent individual PD |
-| Fixed allocation | Unresolved additive metrics attain the bounds in @eq-sharp-bounds | Proposition 4 | Sampling uncertainty or missing-at-random identification |
-| Paired policies | A common unresolved outcome is optimized once over the funded union | Sharp contrast implementation | Causal policy effect |
-| Comparator scopes | Basis endpoints give the exact envelope over a declared cap support | Definition 1 and Proposition 5 | Invariance over all possible comparators |
-
-: Audit map for the paper's exact claims. {#tbl-identification}
-:::
+Together these statements separate exact algebra, finite-archive partial
+identification, and empirical sensitivity. Online Supplement Appendix D gives
+the proof map and Appendix H states the corresponding claim boundaries.
 
 # Results {#sec-results}
 
@@ -723,71 +767,75 @@ Nor does the narrower W8 interval repair transport: stratum-2 all-candidate
 coverage is only [0.8225, 0.8537]. A narrower interval can simply expose more
 rare defaults as misses.
 
-## C2 reconciles a theorem, not a realized winner
+## Endpoint direction changes with ruler and coordinate
 
-The 1,080 C2 cells cover eight windows, nine policies, and fifteen OOT months.
-Their maximum absolute funded point-score residual is
-$8.33\times10^{-17}$. The minimum point-minus-guardrail plug-in objective is
-$-1.46\times10^{-10}$ dollars, numerical zero at the declared tolerance; all
-other cells satisfy the weak dominance in Proposition 2. Thus C2 empirically
-reconciles the feasibility theorem. It cannot be evidence that the point policy
-has higher realized payoff: C2 sharp payoff contrasts classify 49 guardrails as
-lower, 7 as higher, and 16 as crossing zero. Default is lower in 8, higher in
-12, and unidentified in 52; miscoverage is lower in 5, higher in 57, and
-unidentified in 10.
+The two-ruler freeze contains 6,240 portfolios, and the evaluator reports all
+720 monthly and 48 complete-window endpoint contrasts. Table
+@tbl-two-ruler reports $\gamma=1$ minus $\gamma=0$. Each row is one
+ruler-coordinate track over the same fifteen OOT menus. The eight windows are
+overlapping residual specifications, so the table is a six-track census rather
+than 48 replications or a vote.
 
-The named comparators disagree more broadly. Under C0, 67 of 72 guardrails have
-higher realized payoff but all 72 have lower default; under C1, payoff is lower
-in 39 and higher in 4, while default is lower in 3 and higher in 41. These are
-descriptive signs over different feasible sets, not votes. C0 remains a
-positive control for same-threshold nesting; C1 and C2 remain outcome-free
-decompositions.
+::: {.keep-together}
+| Ruler | Coord. | Active | $\Delta$ plug-in objective | Sharp realized direction for $\gamma=1-\gamma=0$ |
+|---|---:|---:|---:|---|
+| Objective matched | .25 | 4 | 0 | Payoff +USD 5,603.66; default/miscoverage -0.0068 pp |
+| Objective matched | .50 | 15 | approximately 0 | Payoff lower; default/miscoverage higher in 8/8 |
+| Objective matched | .75 | 15 | approximately 0 | Payoff/default cross in 7/8; miscoverage higher in 8/8 |
+| Normalized score | .25 | 15 | USD 425,196--557,294 | Payoff lower; default/miscoverage higher in 8/8 |
+| Normalized score | .50 | 15 | USD 152,031--226,848 | Payoff lower; default/miscoverage higher in 8/8 |
+| Normalized score | .75 | 15 | USD 28,263--51,202 | Payoff lower; default/miscoverage higher in 8/8 |
 
-## Exact comparator support removes universal directions
+: Six predeclared endpoint-contrast tracks. Full sharp bound hulls are in Online Supplement Table S6. {#tbl-two-ruler}
+:::
 
-The exact frontier evaluates 3,067 distinct caps. Over the broad stress support
-[0.05, 0.12], all 216 policy-by-window-by-metric envelopes cross zero. The
-development-admissible support is narrower and policy/window-specific. Default
-still crosses zero in all 72 cells. Standardized payoff is guardrail-lower in
-21 cells and crosses zero in 51; funded miscoverage is guardrail-higher in 39
-and crosses zero in 33. The 21 payoff directions are exactly the three
-$\gamma=0.75$ policies over W1--W7. In W8, all 27 development-support envelopes
-cross zero.
+Under objective matching, coordinate .25 changes only four months. The
+allocation contrast is identical across windows to cents: 44 loan-month
+positions change, one-way turnover is USD 155,937.27 across USD 15 million,
+standardized payoff is USD 5,603.66 higher (3.74 basis points of budget), and
+default and miscoverage are 0.0068 percentage points lower. This is one
+repeated allocation contrast, not eight independent confirmations. At .50,
+every sharp window bound instead gives lower payoff and higher default and
+miscoverage. At .75, payoff and default cross zero in seven windows; only W8
+is unfavorable for both, while miscoverage is higher in all eight.
 
-![Direction of the exact development-admissible comparator envelope. A minus or plus denotes a sign-robust guardrail-minus-point envelope; zero denotes an envelope containing zero. Default contains zero in all 72 cells.](../reports/crpto/figures/crpto_ijds_v4_fig3_envelopes.png){#fig-envelopes width=96%}
+The normalized ruler gives lower payoff and higher default and miscoverage in
+all 24 window cells. It also gives $\gamma=1$ between USD 28,263 and USD 557,294
+more optimized plug-in objective than $\gamma=0$. The ruler therefore compares
+the same relative score relaxation, not the same opportunity cost. Its adverse
+realized sign cannot be interpreted as a causal effect or combined with the
+objective-matched tracks as evidence for a preferred endpoint. Across the six
+tracks, the sign is neither ruler-invariant nor coordinate-invariant.
 
-This pattern links prediction geometry to decision identification without
-claiming causality. The W8 phase change materially alters guardrail scores and
-removes directions that survived earlier supports. It does not show that W8 is
-the correct window or that earlier signs are false. It shows that those signs
-are not invariant to the complete outcome-free residual specification.
+## Exact point-cap support triangulates the finite diagnostic
 
-## Mechanism simulation is informative only for coverage
+The supporting C2 exercise reconciles Lemma 1 in all 1,080 cells: its maximum
+funded-score residual is $8.33\times10^{-17}$ and point-minus-guardrail plug-in
+objective never falls below numerical tolerance. Named C0/C1/C2 realized
+directions nevertheless disagree; their full census is reported in the Online
+Supplement rather than treated as another policy contest.
 
-The closed factorial simulation contains 19,200 repetitions over score shift,
-outcome-prevalence shift, taxonomy size, and censoring. In the five-group,
-uncensored cells at zero score shift, mean coverage falls from 0.9008 with no
-prevalence shift to 0.8161 at a +0.10 shift. Score shifts can instead increase
-coverage by saturating more intervals at $\{0,1\}$; at +0.15 score shift,
-coverage is 0.9557 with no prevalence shift. These are mechanism checks, not a
-structural model of Lending Club.
+The exact point-cap frontier evaluates 3,067 distinct caps. Over [0.05, 0.12]
+broad stress, all 216 policy-by-window-by-metric envelopes cross zero. The
+development-admissible support is narrower: default still crosses zero in all
+72 cells; payoff has 21 one-sided and 51 crossing envelopes; miscoverage has
+39 one-sided and 33 crossing envelopes. All 27 W8 envelopes cross zero.
 
-The fixed simulation cap was almost always nonbinding. Mean same-cap and C2
-allocation distances are approximately $2\times10^{-6}$ and $1\times10^{-6}$,
-and mean C2 objective gain is $2.46\times10^{-12}$. The simulation therefore
-does not support a portfolio claim and is not used to validate any empirical
-direction. This negative diagnostic is retained rather than tuned away after
-inspection.
+The exact frontier is not a seventh track. It triangulates the finite
+two-ruler grid against a continuous point-cap support. Together the analyses
+show that realized direction depends on residual recipe, comparator support,
+ruler, and frontier coordinate; none identifies a universally safer or more
+profitable conformal endpoint.
 
 ## The active claim stops before superiority
 
-No window, learner, or policy is promoted. The complete specification supports
-three statements: all-candidate coverage fails to transport for both learners;
-binary residual geometry can change discontinuously around the prevalence
-threshold; and realized portfolio direction depends on the declared
-outcome-free comparator support. It does not support superiority, causal
-effects, prospective validity, selected-set guarantees, or a universal
-guardrail direction.
+No window, learner, gamma, ruler, coordinate, or policy is promoted. The
+complete specification supports three statements: all-candidate coverage
+fails to transport for both learners; binary residual geometry can change
+discontinuously around the prevalence threshold; and realized portfolio
+direction depends on how outcome-free decision stringency is defined. It does
+not support superiority, causal effects, prospective validity, selected-set
+guarantees, or a universal guardrail direction.
 
 # Discussion {#sec-discussion}
 
@@ -795,14 +843,23 @@ guardrail direction.
 
 The guardrail changes a score, a feasible region, and the allocation produced
 under other binding constraints. Those objects cannot be separated by copying
-the same numeric threshold. C0 proves the mechanical nesting result; C2 removes
-one moment of stringency; the cap frontier shows that neither comparator is a
-unique counterfactual. The scoped envelopes then ask the more defensible
-question: which signs survive the core, development-supported, and broad-stress
-choices? None survives the broad stress support. Some payoff and miscoverage
-signs survive development support in W1--W7, but default never does and all
-three metrics become unidentified in W8. That distinction is the result, not a
-reason to privilege the broader or narrower scope after outcomes.
+the same numeric threshold. The objective-matched ruler holds a model-implied
+opportunity cost fixed; the normalized ruler holds a scale-invariant relative
+score relaxation fixed. Neither is neutral, and their endpoint results differ.
+The favorable .25 objective-matched contrast, unfavorable .50 contrast, and
+mostly unidentified .75 contrast show that even one defensible ruler does not
+produce a coordinate-free ordering. The uniformly adverse normalized result
+cannot settle the question because it compares different plug-in objective
+levels. Selecting whichever ruler or coordinate gives the desired sign would
+recreate the problem the audit is designed to expose.
+
+C0 proves mechanical same-threshold nesting; C2 removes one funded point-score
+moment; and the exact cap frontier shows that neither is a unique
+counterfactual. None of the 216 broad-stress envelopes has a fixed sign. Some
+payoff and miscoverage signs survive the narrower development support, but
+default never does and all three metrics become unidentified in W8. This exact
+support result is the safeguard against overinterpreting a finite grid, not a
+reason to privilege the broadest support after outcomes.
 
 The evidence separates three meanings of conservatism. First, the upper score
 is pointwise no smaller than the point score. Second, at a shared cap the guardrail is
@@ -821,11 +878,12 @@ expanded name.
 Six audit recommendations may transfer beyond credit, but this single archive
 does not establish their external validity.
 
-First, comparator hyperparameters are part of the estimand. Holding a number
-fixed while changing a score does not hold decision stringency fixed. A proper
-evaluation should characterize feasible-set nesting, report binding
-constraints, and show a comparator frontier rather than elevate one convenient
-threshold.
+First, the score, ruler, and frontier coordinate are part of the estimand.
+Holding a number fixed while changing a score does not hold decision stringency
+fixed; holding a normalized coordinate fixed does not hold opportunity cost
+fixed. A proper evaluation should state which quantity is matched, report
+binding constraints, and triangulate a finite grid with an exact support where
+the LP permits it.
 
 Second, candidate construction is part of the policy. Excluding rows because
 their outcomes are unavailable creates a retrospective menu. Keeping the rows
@@ -857,11 +915,11 @@ than relabel this standardized endpoint as investor return.
 
 For a model-risk or credit committee, the audit map gives concise answers:
 the menu and outcome isolation are verifiable; 90% coverage does not transport;
-binary geometry changes around the prevalence threshold; the copied cap is not
-neutral; C2 reconciles plug-in dominance but not realized outcomes; broad-support
-signs are unidentified; and no policy is promoted. The audit cannot substitute for
-selection-valid prediction, nonexchangeable calibration, complete cash-flow
-modeling, or live monitoring.
+binary geometry changes around the prevalence threshold; objective-matched and
+normalized rulers answer different questions; C2 reconciles plug-in dominance
+but not realized outcomes; broad-support signs are unidentified; and no policy
+is promoted. The audit cannot substitute for selection-valid prediction,
+nonexchangeable calibration, complete cash-flow modeling, or live monitoring.
 
 ## Ethical and governance implications
 
@@ -879,61 +937,48 @@ access as well as lender risk.
 
 # Limitations {#sec-limitations}
 
-The study has eleven main limitations. First, Lending Club is one historical
-platform whose retail originations ended in 2020; the design cannot establish
-live performance or external validity. Second, terminal labels collapse
-payment paths into a binary endpoint. Sharp bounds retain unresolved loans but
-can be wide, especially in the 2017 extension. Third, standardized payoff omits
-amortization timing, prepayment, recoveries, fees, discounting, and capital
-costs; the snapshot cash metric is only a secondary check. Fourth, the temporal
-gap does not restore exchangeability, and no nonexchangeable conformal method
-is claimed.
+Lending Club is one discontinued historical platform, so the design cannot
+establish live or external performance. Terminal labels collapse payment paths;
+sharp bounds retain unresolved loans but can be wide. Standardized payoff
+omits timing, prepayment, recoveries, fees, discounting, and capital costs.
+Continuous allocation and concentration constraints are modeling choices, and
+accepted-loan data without protected attributes cannot support causal or
+fair-lending conclusions.
 
-Fifth, candidate-level conformal validity does not control coverage after the
-optimizer selects and weights loans. Sixth, C2 matches one funded point-score
-moment exactly but does not identify a unique counterfactual or equal feasible
-sets. Seventh, continuous allocation, monthly budget, purpose taxonomy, and
-concentration caps are modeling choices rather than a reconstruction of a live
-credit committee. Eighth, purpose categories and score strata are not
-protected classes, so this is not a fair-lending certification. Ninth, changing
-the residual window can move a binary order statistic discontinuously. The
-constant-score proposition explains a mechanism, but empirical strata contain
-varying scores and the overlapping windows are not independent replications.
-Tenth, the study is retrospective and the archive had been inspected during
-earlier project iterations. V4 was tagged before its complete run, but the
-evidence is neither a pristine lockbox nor a preregistered prospective test.
-Eleventh, the locked factorial simulation's portfolio cap was almost always
-nonbinding, so only its coverage mechanism is informative; its allocation
-component cannot validate the archive results.
+The temporal gap does not restore exchangeability, and candidate coverage does
+not control optimizer-selected coverage. Eleven common development menus and
+fifteen OOT decisions are not thousands of independent decision contexts, so
+the archive cannot import CROMS, inverse conformal risk-control, or
+decision-calibration certificates. Overlapping windows are not replications;
+the constant-score proposition explains a mechanism for empirical strata whose
+scores vary.
 
-These boundaries motivate survival or competing-risk outcomes, richer
-cash-flow objectives, weighted or nonexchangeable calibration, and
-selection-valid prediction. They are future methods, not hidden claims or
-additional CRPTO versions in this paper.
+The two-ruler result covers only $.25$, $.50$, and $.75$; coordinate one is a
+structural null. Objective matching controls a model-implied payoff, while
+normalized matching controls score units but not opportunity cost. C2 matches
+one moment, and the exact point-cap frontier is not a continuous joint frontier
+for both scores. Finally, this previously inspected retrospective archive is
+not a pristine lockbox or prospective preregistration. The supporting
+simulation identifies only a coverage mechanism. Survival outcomes, richer
+cash flows, nonexchangeable calibration, and selection-valid prediction remain
+future methods rather than additional claims here.
 
 # Reproducibility {#sec-reproducibility}
 
-The review package separates the V4-v1 outcome-free freeze from the hash-linked
-V4-v2 evaluation. The evaluator verifies the v1 freeze identity, SHA-256, and
-every source descriptor before an outcome join. Shared point-frontier
-allocations are stored once; window-specific endpoints are injected only in
-the evaluator. Online Supplement Appendix G reports the incident and complete
-lineage.
+The review package contains two hash-linked freeze/evaluation pairs. V4 stores
+shared point-frontier allocations before injecting window endpoints. The
+two-ruler V1 and V1b attempts stopped before outcomes; V1c changed only a final
+budget tolerance to the value already used by both solver wrappers. V2 wrote
+one immutable result. After a client timeout, a second invocation repeated the
+fixed evaluation in memory and stopped at no-overwrite. Online Supplement
+Appendix G gives the complete incident and lineage record.
 
-The evidence builder validates source cardinalities, full-budget allocations,
-the HiGHS solver, exact C2 matches, and artifact hashes before generating the
-paper tables and figures. Two consecutive builds reproduce the active evidence,
-five tables, and six figure files byte for byte. Claim-sync tests compare the
-numerical source, anonymous body, supplement, and official IJDS TeX. Four new
-DVC pointers preserve the outcome-free and evaluated V4 roots. The protected
-historical champion and its extraction manifest are neither executed nor
-overwritten.
-
-Exact run tags, commits, hashes, repository links, and remote coordinates are
-intentionally absent from reviewer-facing files because they are searchable
-author fingerprints. An editor-only crosswalk preserves them, and a
-metadata-sanitized review archive can be supplied through ScholarOne. At
-acceptance, the full code, environment lock, evidence manifest, immutable data
+The evidence builder verifies source hashes, cardinalities, budgets, solver
+checks, and C2 reconciliation before producing six tables and six figure files
+byte-identically. Claim-sync tests cover the manifest, anonymous manuscripts,
+and generated IJDS TeX; eight DVC pointers preserve both lineages without
+executing protected historical stages. Searchable identifiers stay in an
+editor-only crosswalk. At acceptance, code, lock, evidence metadata, immutable
 pointers, and raw-data reconstruction instructions will be released under the
 IJDS data and code policy.
 
@@ -941,17 +986,25 @@ IJDS data and code policy.
 
 CRPTO audits two unsafe inferences: that historical marginal coverage
 transports when a binary residual interval becomes a constraint score, and that
-a favorable portfolio contrast has meaning without comparator support. The
-first fails in every one of eight residual windows for CatBoost and an
-independent logistic control. The same audit reveals why interval width is not
-stable: a score stratum crossing $\pi=\alpha$ changes its residual quantile from
-0.8884 to 0.1118. The second inference fails broadly: all 216 broad-stress
-envelopes contain zero, default is unidentified in all 72 development-support
-cells, and the directions surviving W1--W7 disappear in W8.
+a favorable portfolio contrast has meaning without a declared ruler and
+coordinate. The first fails in every one of eight residual windows for CatBoost
+and an independent logistic control. The same audit reveals why interval width
+is not stable: a score stratum crossing $\pi=\alpha$ changes its residual
+quantile from 0.8884 to 0.1118.
+
+The second inference fails constructively. Under objective matching, the
+full-upper endpoint is slightly favorable at .25, unfavorable at .50, and
+mostly unidentified for payoff and default at .75. Under normalized-score
+matching it is uniformly unfavorable, but receives a different plug-in
+opportunity cost. The exact point-cap frontier independently places zero in all
+216 broad-stress envelopes. None of these results licenses selecting the
+favorable ruler, adverse ruler, or convenient coordinate after outcomes.
 
 The contribution is a reproducible identification audit, not a winning credit
 policy. It fixes information boundaries, retains censored candidates, reports
-the complete residual and policy families, proves the C2 plug-in comparison,
-enumerates the exact cap frontier, and uses sharp common-outcome bounds. In
-this archive, coverage failure survives the declared learners and windows;
-portfolio direction does not survive the declared comparator supports.
+the complete residual and gamma paths, formalizes binary and score-ruler
+geometry, enumerates an exact cap frontier, and uses sharp common-outcome
+bounds. The ML, conformal, and optimization components remain one research
+object; the result is that their interface does not yield a direction until the
+decision estimand is specified, and no declared specification supports a
+universal ordering.

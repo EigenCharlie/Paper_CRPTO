@@ -1,28 +1,32 @@
 # CRPTO Active IJDS Claim Registry - 2026-07-12
 
-This is the source of truth for the single IJDS manuscript. It supersedes the
-fixed-taxonomy V1--V3 claim surface with the complete-window V4 audit. V1--V3
-remain immutable provenance, not active evidence.
+This is the source of truth for the single IJDS manuscript. It combines the
+complete-window V4 geometry/exact-support audit with the locked V1c/V2
+two-ruler diagnostic. Fixed-taxonomy V1--V3, pool93, compact-v7, and stopped
+two-ruler V1/V1b remain immutable provenance, not active evidence.
 
 ## Editorial Status
 
 - **NO-GO:** superiority, dominance, champion-policy, universal guardrail,
   causal, selected-set-validity, or deployment framing.
 - **GO:** one retrospective IJDS paper about binary conformal geometry,
-  temporal transport, and comparator identification in a frozen
+  temporal transport, and decision-estimand identification in a frozen
   predict-then-optimize system.
-- All eight residual windows and all nine portfolio policies are co-primary.
-- No OOT outcome selects a learner, window, taxonomy, policy, cap, or
-  comparator.
+- All eight residual windows, five gamma values, two rulers, and three interior
+  coordinates are reported under their declared roles. The nine fixed-cap V4
+  policies are supporting exact-frontier diagnostics, not a closed family.
+- No OOT outcome selects a learner, window, taxonomy, gamma, ruler, coordinate,
+  policy, cap, or comparator.
 - No policy winner is allowed.
 - V4 is a tagged retrospective specification audit over a previously inspected
   archive, not a preregistration, prospective trial, or pristine lockbox.
 
 The strongest contribution is a joint theory-and-audit result: a binary
 absolute-residual conformal construction has prevalence-sensitive set geometry,
-candidate coverage fails to transport for both declared learners, and realized
-portfolio direction is not identified until an outcome-free comparator support
-is declared.
+candidate coverage fails to transport for both declared learners, and the
+realized endpoint contrast is neither ruler-invariant nor coordinate-invariant.
+The exact point-cap frontier independently rejects a universal direction over
+the declared broad comparator support.
 
 ## Active Immutable Lineage
 
@@ -50,6 +54,33 @@ is declared.
 - V2 drops all-null frontier endpoint placeholders before injecting the chosen
   window's endpoints. V1 had no evaluation output because a no-write smoke test
   caught the pandas suffix collision first.
+
+### Two-ruler V1c outcome-free freeze
+
+- Run: `ijds-normalized-objective-frontier-2026-07-13-v1c`.
+- Tag: `protocol/ijds-normalized-objective-frontier-2026-07-13-v1c`.
+- Commit: `46f4df9`.
+- Freeze SHA-256:
+  `7877c5e460772a0093e4132eaa542e9049f7ec15d2ddaa35c2df389892a0e185`.
+- Frozen objects: 6,240 solve records and 622,455 funded rows over eight
+  windows, 26 months, five gammas, three coordinates, and two rulers.
+- Numerical checks: 720 endpoint comparisons, 1,440 reversed-ID reruns, 288
+  independent GLOP validations, and 26 objective-optimum basis diagnostics.
+- V1 and V1b stopped outcome-free; V1c changed only the final budget
+  reconciliation tolerance to the USD `1e-4` already used by both wrappers.
+
+### Two-ruler V2 verified evaluation
+
+- Run: `ijds-normalized-objective-frontier-2026-07-13-v2`.
+- Tag: `protocol/ijds-normalized-objective-frontier-2026-07-13-v2`.
+- Commit: `d3041e5233ee74a6b1d38f678def75d8d5ef0169`.
+- Manifest SHA-256:
+  `d3808ce7c7a8e6fee3ef51aefd031e8abf55e11ef3536745ee213fd04752588a`.
+- V2 verifies every V1c descriptor before outcomes and reports 720 monthly
+  contrasts, 48 window contrasts, and 144 metric-direction cells.
+- One invocation produced artifacts. A client timeout caused a second fixed
+  evaluation in memory; it stopped at no-overwrite and wrote nothing.
+- No track, window, gamma, ruler, coordinate, or result is selected.
 
 The only active paper-facing manifest is
 `reports/crpto/ijds_binary_geometry_frontier_v4_evidence.json`.
@@ -99,29 +130,33 @@ The only active paper-facing manifest is
 1. **Positive affine cap equivalence.** Under full budget, a globally
    positive-affine score admits an exact translated point cap. The empirical
    guardrail is not globally affine.
-2. **Same-cap nesting.** Since `q>=p`, C0 weakly contains the guardrail feasible
+2. **Normalized-ruler affine invariance.** If `s_tilde=a*s+b`, `a>0`, then its
+   minimum-score and common-optimum anchors transform by the same affine map.
+   The normalized-coordinate feasible set is unchanged. This does not equalize
+   non-affine scores, opportunity cost, default, or operational tolerance.
+3. **Same-cap nesting.** Since `q>=p`, C0 weakly contains the guardrail feasible
    region and weakly dominates its optimized plug-in objective. This does not
    order realized outcomes.
-3. **C2 plug-in dominance.** For frozen guardrail allocation `a_q`, the cap
+4. **C2 plug-in dominance.** For frozen guardrail allocation `a_q`, the cap
    `c=p'a_q/B` makes `a_q` feasible for the point LP under identical nonrisk
    constraints. The optimized point plug-in objective therefore weakly
    dominates. This does not order realized payoff, default, or miscoverage.
-4. **Constant-score binary phase transition.** For fixed `0<=p<1/2` and
+5. **Constant-score binary phase transition.** For fixed `0<=p<1/2` and
    `Y~Bernoulli(pi)`, the population residual quantile is `p` when `pi<=alpha`
    and `1-p` when `pi>alpha`. The discrete set changes from `{0}` to `{0,1}`.
    Empirical strata have varying scores, so this is a mechanism, not a proof of
    the observed discontinuity.
-5. **Binary miscoverage identity.** Miscoverage is
+6. **Binary miscoverage identity.** Miscoverage is
    `1{Y=0,l>0}+1{Y=1,u<1}`.
-6. **Sharp common-outcome bounds.** Loan-wise binary extrema give sharp
+7. **Sharp common-outcome bounds.** Loan-wise binary extrema give sharp
    fixed-allocation bounds; paired policies optimize one common unresolved
    outcome over their funded union.
-7. **Basis-endpoint sufficiency.** Within an LP basis the point allocation is
+8. **Basis-endpoint sufficiency.** Within an LP basis the point allocation is
    affine in cap. Sharp lower and upper contrast bounds are respectively
    concave and convex, so adverse extrema over a basis range occur at its
    endpoints. Support endpoints plus all HiGHS basis endpoints give the exact
    declared frontier up to solver tolerance.
-8. **Declared comparator envelope.** Minimum lower and maximum upper endpoints
+9. **Declared comparator envelope.** Minimum lower and maximum upper endpoints
    over a named support report whether a sign survives that support. This is
    not a confidence interval, causal identified set, or universal statement
    over comparators.
@@ -146,10 +181,46 @@ guarantee, or causal policy effect is active.
 - Overlapping windows are a complete specification path, not independent
   replications and not inputs to a vote.
 
-## Portfolio And Comparator Evidence
+## Decision And Comparator Evidence
 
-- Policies: all nine `tau in {0.15,0.17,0.19}` by
-  `gamma in {0.25,0.50,0.75}` combinations.
+### Two-ruler endpoint diagnostic
+
+- Complete score path: `gamma in {0,.25,.50,.75,1}`; frozen contrast is
+  `gamma=1 - gamma=0`.
+- Primary objective-matched ruler: common model-implied objective floor.
+- Secondary normalized-score ruler: common positive-affine-invariant relative
+  score relaxation; it does not equalize plug-in opportunity cost.
+- Coordinates: `.25`, `.50`, `.75`. Coordinate one is a structural null, so no
+  continuous nonzero endpoint ordering is possible on `[0,1]`.
+- Six tracks are observed through eight overlapping residual recipes. They are
+  not 48 independent replications.
+
+| Ruler / coordinate | Payoff bound hull (USD) | Default bound hull (pp) | Miscoverage bound hull (pp) |
+|---|---:|---:|---:|
+| Objective matched .25 | [5,603.66, 5,603.66] | [-.0068, -.0068] | [-.0068, -.0068] |
+| Objective matched .50 | [-82,616, -27,958] | [.4572, 1.0973] | [1.0154, 1.9321] |
+| Objective matched .75 | [-158,470, 72,565] | [-.2264, 2.2453] | [1.4326, 3.9352] |
+| Normalized score .25 | [-598,986, -201,873] | [8.6917, 13.0148] | [8.5998, 13.3438] |
+| Normalized score .50 | [-243,218, -94,767] | [3.6160, 6.3717] | [2.5016, 5.0222] |
+| Normalized score .75 | [-132,158, -31,335] | [1.8273, 2.3697] | [.7329, 1.6624] |
+
+- Objective-matched `.25` is one repeated four-month allocation contrast: 44
+  loan-month positions, USD 155,937.27 one-way turnover, USD 5,603.66 payoff
+  difference, and `-0.00679` pp default/miscoverage. It is reported once.
+- Objective-matched `.50` is unfavorable in all eight windows; at `.75`,
+  payoff/default cross zero in seven windows and miscoverage is higher in all
+  eight.
+- Every normalized track is unfavorable in realized outcomes, but gamma one
+  receives USD 28,263--557,294 more optimized plug-in objective.
+- Direction census: payoff 8 higher / 33 lower / 7 crossing; default 8 lower /
+  33 higher / 7 crossing; miscoverage 8 lower / 40 higher.
+- No gamma, ruler, coordinate, or policy winner is identified.
+
+### Supporting exact point-cap audit
+
+- Supporting fixed-cap grid: nine `tau in {0.15,0.17,0.19}` by
+  `gamma in {0.25,0.50,0.75}` combinations. These index the exact comparator
+  audit and are not co-primary promotion candidates.
 - Monthly budget: USD 1 million; purpose cap: 25%; LGD: 0.45.
 - C0 copies the numeric guardrail cap and is a nesting positive control.
 - C1 is the capital-weighted mean of eleven common development monthly
@@ -205,20 +276,24 @@ These rules define different feasible sets. Counts are descriptive, not votes.
 - That observed failure survives all eight windows and both declared learners.
 - Binary absolute-residual geometry is prevalence-sensitive and can change
   discontinuously around `pi=alpha`.
-- A score and cap jointly define the decision estimand; copying a numeric cap is
-  not neutral.
+- A score, ruler, and frontier coordinate jointly define the decision estimand;
+  copying a numeric cap is not neutral.
+- The normalized ruler is positive-affine invariant but does not match plug-in
+  opportunity cost.
+- Within the predeclared finite grid, the gamma endpoint direction is neither
+  ruler-invariant nor coordinate-invariant.
 - C2 has a mechanical plug-in dominance theorem but no realized-outcome
   dominance theorem.
-- Realized portfolio directions depend on the outcome-free comparator support
-  and residual window in this archive.
+- Realized portfolio directions depend on the ruler, coordinate, outcome-free
+  comparator support, and residual window in this archive.
 - The contribution is an identification audit and negative result, not a
   winning credit policy.
 
 ## Forbidden Claims
 
 - a universally better or worse guardrail;
-- a selected best policy, learner, residual window, cap, taxonomy, or
-  comparator;
+- a selected best gamma, ruler, coordinate, policy, learner, residual window,
+  cap, taxonomy, or comparator;
 - comparator-robust direction over all possible baselines;
 - selected-set conformal validity or latent-PD confidence intervals;
 - true conditional calibration, causal effects, prospective confirmation, or
@@ -227,6 +302,9 @@ These rules define different feasible sets. Counts are descriptive, not votes.
 - fair-lending certification or deployment readiness;
 - Markov, tail, deterministic safety, or robustness certificates;
 - independent-replication language for overlapping windows or nested supports;
+- eight-confirmation language for the repeated objective-matched `.25`
+  allocation contrast;
+- equal-opportunity-cost or causal language for normalized-score coordinates;
 - a portfolio mechanism claim from the V4 factorial simulation.
 
 ## Evidence Contract
@@ -234,10 +312,10 @@ These rules define different feasible sets. Counts are descriptive, not votes.
 - `reports/crpto/ijds_binary_geometry_frontier_v4_evidence.json` is the only
   active paper-facing manifest.
 - Active table and figure prefixes are `crpto_ijds_v4_`.
-- The active builder emits five CSV tables and three figures in PNG/PDF plus
+- The active builder emits six CSV tables and three figures in PNG/PDF plus
   one manifest. Consecutive builds must be byte-identical.
-- Four V4 DVC pointers must remain available together: data/model outcome-free
-  V1 and data/model evaluated V2.
+- Eight DVC pointers must remain available together: data/model outcome-free
+  and evaluated roots for V4 and the two-ruler diagnostic.
 - Protected historical champion stages and `EXTRACTION_MANIFEST.json` remain
   untouched.
 
@@ -250,6 +328,13 @@ These rules define different feasible sets. Counts are descriptive, not votes.
 - one primary CatBoost stack and one logistic coverage control;
 - constant-score theory versus varying-score empirical strata;
 - overlapping windows are not independent evidence;
+- six two-ruler tracks are not 48 replications;
+- only three interior coordinates are evaluated; coordinate one is a
+  structural null and no continuous joint-frontier claim is active;
+- objective matching uses a model-implied payoff; normalized matching does not
+  equalize opportunity cost;
+- eleven development and fifteen OOT menus do not supply an exchangeable
+  decision-context sample for CROMS/inverse-CRC certificates;
 - one-period plug-in payoff omits cash-flow timing and prepayment;
 - C2 is outcome-free, menu-adaptive, and nondeployable;
 - finite comparator supports, not universal quantification;
@@ -259,8 +344,8 @@ These rules define different feasible sets. Counts are descriptive, not votes.
 ## Historical Boundary
 
 Fixed-taxonomy V1--V3, compact-v7, maturity-safe P1, comparator-stringency C1,
-selected `linear-004`, pool93, Markov-style diagnostics, Prosper/Freddie
-exercises, and A1--A40 tables remain provenance in Git history and immutable
-artifacts. They must not fill, validate, or redefine the active result. The
-manuscript explains the final audit method and evidence, not the sequence of
-discarded versions.
+selected `linear-004`, pool93, stopped normalized-frontier V1/V1b,
+Markov-style diagnostics, Prosper/Freddie exercises, and A1--A40 tables remain
+provenance in Git history and immutable artifacts. They must not fill,
+validate, or redefine the active result. The manuscript explains the final
+audit method and evidence, not the sequence of discarded versions.

@@ -31,19 +31,22 @@ finite Lending Club archive under the declared information, outcome, policy,
 and comparator contracts.
 
 The audit reports every eligible consecutive six-month residual window, both
-declared learners, all nine portfolio policies, and every comparator in each
-named support. No out-of-time (OOT) outcome selects a learner, window,
-taxonomy, policy, cap, or comparator. The nested supports and overlapping
-windows are specification paths, not independent replications or votes.
+declared learners, the complete five-point gamma path, two outcome-free rulers,
+three interior coordinates, and every comparator in each named support. The
+nine fixed-cap policies remain a supporting exact-frontier diagnostic, not a
+closed family of promotion candidates. No out-of-time (OOT) outcome selects a
+learner, window, taxonomy, gamma, ruler, coordinate, policy, cap, or comparator.
+Nested supports, overlapping windows, and repeated allocations are
+specification paths, not independent replications or votes.
 
 | Reader question | Location | Audit answer |
 |---|---|---|
 | Which loans could enter a decision? | Appendix A | Status-independent monthly menus retain unresolved outcomes |
 | What does the conformal object predict? | Appendix B | The observed binary terminal label, not latent individual PD |
 | Why can interval geometry change abruptly? | Appendix B | The binary residual order statistic changes around prevalence $\pi=\alpha$ |
-| What is held fixed in portfolio comparisons? | Appendix C | Menu, budget, payoff, loan bounds, purpose cap, and solver |
-| What is exact? | Appendix D | Score-cap algebra, C2 feasibility, binary-outcome bounds, and basis-frontier envelopes |
-| Which empirical signs survive? | Appendix E | Coverage failure survives; portfolio directions do not survive every declared support |
+| What is held fixed in portfolio comparisons? | Appendix C | Menu, budget, payoff, loan bounds, purpose cap, solver, and one declared ruler |
+| What is exact? | Appendix D | Score-ruler algebra, C2 feasibility, binary-outcome bounds, and basis-frontier envelopes |
+| Which empirical signs survive? | Appendix E | The endpoint sign changes by ruler/coordinate and no broad-support sign survives |
 | What does the simulation establish? | Appendix F | A coverage mechanism only; its portfolio component is degenerate |
 | Can the evidence be replayed? | Appendix G | Yes, from a verified outcome-free freeze and a separate outcome join |
 | What may the paper claim? | Appendix H | An identification audit, not superiority, causality, or selected-set validity |
@@ -72,7 +75,7 @@ and is retained only as a more heavily censored diagnostic.
 | Platt calibration and taxonomy | 2011-01--2011-12 | 14,101 | 14,077 | independent score map and fixed edges |
 | Residual pool | 2012-01--2013-01 | 49,007 | 48,857 | all eight six-month recipes |
 | Policy development | 2013-02--2013-12 | 94,885 | not read | outcome-free comparator support |
-| Primary OOT | 2016-04--2017-06 | 376,890 | read only after freeze | co-primary evaluation |
+| Primary OOT | 2016-04--2017-06 | 376,890 | read only after freeze | complete locked evaluation |
 | Censored extension | 2017-07--2017-09 | 88,227 | read only after freeze | secondary censoring stress |
 
 : S1 chronology and label observability. Blocks do not overlap except that the eight residual windows overlap by design. {#tbl-s-chronology}
@@ -108,10 +111,17 @@ contains 1,872 guardrail solves: eight windows by nine policies by 26 monthly
 menus, of which 11 are development and 15 are primary OOT. It also contains
 1,080 OOT C2 solves: eight windows by nine policies by 15 months.
 
-An evaluator verifies the freeze identity and every artifact descriptor before
-performing one keyed outcome join. Exact ID alignment is required; partial or
-duplicated joins fail. The resulting evidence therefore separates the
-construction of an allocation from the outcomes used to evaluate it.
+The separate two-ruler freeze contains 6,240 solves, 622,455 funded rows, 720
+endpoint comparisons, 1,440 reversed-ID endpoint reruns, 288 independent GLOP
+checks, and 26 objective-optimum basis diagnostics. Its dimensions are eight
+windows by 26 months by five gammas by three coordinates by two rulers. It
+loads no outcome column.
+
+Each evaluator verifies its freeze identity and every artifact descriptor
+before a keyed outcome join. Exact ID alignment is required; partial or
+duplicated joins fail. The resulting evidence therefore separates allocation
+construction from outcomes and prevents an apparently favorable track from
+changing the frozen decision rule.
 
 # Appendix B: Prediction and Binary Conformal Geometry
 
@@ -284,8 +294,52 @@ $$
 q_i(\gamma)=(1-\gamma)p_i+\gamma u_i.
 $$
 
-All combinations $\tau\in\{0.15,0.17,0.19\}$ and
-$\gamma\in\{0.25,0.50,0.75\}$ are co-primary:
+The complete score path is
+$\gamma\in\{0,0.25,0.50,0.75,1\}$. The frozen empirical contrast is
+$\gamma=1$ minus $\gamma=0$; the three interior gamma values diagnose the path
+and cannot be selected as winners.
+
+## C.3 Two common-frontier rulers
+
+Let $\mathcal A_t$ contain the nonrisk constraints above, let
+$s(\gamma)=q(\gamma)$, and define
+
+$$
+m_{\gamma t}=B^{-1}\min_{a\in\mathcal A_t}s(\gamma)^\top a,
+\quad z_t^*=\max_{a\in\mathcal A_t}v^\top a,
+\quad o_{\gamma t}=B^{-1}s(\gamma)^\top a_t^*.
+$$
+
+For the primary **objective-matched ruler**, let
+$z^{\min}_{\gamma t}$ denote the plug-in objective at a minimum-score
+portfolio and $z_t^L=\max_\gamma z^{\min}_{\gamma t}$. At
+$\rho\in\{.25,.50,.75\}$ every score minimizes funded score subject to the
+same objective floor
+
+$$
+v^\top a\ge z_t^L+\rho(z_t^*-z_t^L).
+$$
+
+This matches model-implied objective sacrifice, not true expected return. For
+the secondary **normalized-score ruler**, define
+
+$$
+c_{\gamma t}(\eta)=m_{\gamma t}
+ +\eta(o_{\gamma t}-m_{\gamma t}),\qquad
+\eta\in\{.25,.50,.75\},
+$$
+
+and maximize the plug-in objective under
+$s(\gamma)^\top a\le Bc_{\gamma t}(\eta)$. This coordinate is invariant to
+positive affine score units, but it does not match objective sacrifice,
+default risk, or shadow price. Coordinate one reaches the common verified
+plug-in optimum for every gamma and is therefore a structural null for the
+endpoint allocation contrast. The evaluated three-coordinate interior grid is
+finite; it is not a continuous two-ruler frontier.
+
+## C.4 Supporting named comparators and exact support
+
+The earlier fixed-cap grid supplies supporting comparator diagnostics:
 
 | Policy | $\tau$ | $\gamma$ | Policy | $\tau$ | $\gamma$ | Policy | $\tau$ | $\gamma$ |
 |---|---:|---:|---|---:|---:|---|---:|---:|
@@ -293,9 +347,7 @@ $\gamma\in\{0.25,0.50,0.75\}$ are co-primary:
 | P2 | 0.15 | 0.50 | P5 | 0.17 | 0.50 | P8 | 0.19 | 0.50 |
 | P3 | 0.15 | 0.75 | P6 | 0.17 | 0.75 | P9 | 0.19 | 0.75 |
 
-: S5 closed portfolio family. No policy is selected or promoted. {#tbl-s-policies}
-
-## C.3 Named comparators and supports
+: S5 supporting fixed-cap grid. It is not a closed policy family and no policy is selected or promoted. {#tbl-s-policies}
 
 The score and its cap jointly define a feasible decision problem. The audit
 therefore declares four point-score comparison objects.
@@ -348,7 +400,24 @@ cap, every guardrail-feasible allocation is point-feasible. The point optimum
 therefore weakly dominates in the shared plug-in objective. Neither statement
 orders realized outcomes.
 
-## D.2 C2 plug-in objective dominance
+## D.2 Positive-affine invariance of normalized coordinates
+
+Let $\widetilde s=as+b$ for $a>0$. The score minimum and score of the common
+plug-in optimum transform as
+$m_{\widetilde s}=am_s+b$ and $o_{\widetilde s}=ao_s+b$. Hence
+
+$$
+c_{\widetilde s}(\eta)=ac_s(\eta)+b.
+$$
+
+Using the full-budget equality,
+$\widetilde s^\top a\le Bc_{\widetilde s}(\eta)$ if and only if
+$s^\top a\le Bc_s(\eta)$. The normalized ruler therefore defines the same
+feasible set after a positive affine change of score units. The result does not
+extend to the non-affine point-versus-upper score map and does not equalize
+plug-in opportunity cost.
+
+## D.3 C2 plug-in objective dominance
 
 Let $a^q$ be a full-budget guardrail allocation and set
 $c=p^\top a^q/B$. Then $p^\top a^q=cB$, so $a^q$ is feasible for the point LP
@@ -364,7 +433,7 @@ $8.33\times10^{-17}$. The minimum point-minus-guardrail plug-in objective is
 $-1.46\times10^{-10}$ dollars, numerical zero within solver tolerance. This
 reconciles the theorem; it does not establish realized payoff dominance.
 
-## D.3 Sharp common-outcome bounds
+## D.4 Sharp common-outcome bounds
 
 For fixed exposure weights $w_i$ and an additive binary endpoint
 $f_i(Y_i)$, each unresolved outcome may be zero or one. The fixed-policy lower
@@ -384,7 +453,7 @@ different outcomes to the same unresolved loan under two policies. The bounds
 are sharp for the finite archive under unrestricted binary completion. They are
 not sampling confidence intervals.
 
-## D.4 Basis-endpoint sufficiency
+## D.5 Basis-endpoint sufficiency
 
 With the full-budget equality, the point-score cap appears in the LP right-hand
 side. Within one optimal basis, the allocation is affine in the cap. Against a
@@ -413,7 +482,41 @@ over all conceivable comparators.
 
 # Appendix E: Empirical Comparator Audit
 
-## E.1 Named-comparator census
+## E.1 Complete two-ruler endpoint census
+
+Each row below summarizes one predeclared ruler-coordinate track over the same
+eight overlapping residual recipes and fifteen OOT menus. Contrasts are
+$\gamma=1$ minus $\gamma=0$. The objective-matched ruler is primary; the
+normalized-score ruler is a secondary scale-invariance stress test.
+
+| Ruler | Coordinate | Active months/window | Plug-in objective difference (USD) | Payoff bound hull (USD) | Default bound hull (pp) | Miscoverage bound hull (pp) |
+|---|---:|---:|---:|---:|---:|---:|
+| Objective matched | .25 | 4 | [0.00, 0.00] | [5,603.66, 5,603.66] | [-0.0068, -0.0068] | [-0.0068, -0.0068] |
+| Objective matched | .50 | 15 | [0.00, 0.00] | [-82,616.17, -27,958.37] | [0.4572, 1.0973] | [1.0154, 1.9321] |
+| Objective matched | .75 | 15 | [0.00, 0.00] | [-158,470.25, 72,564.81] | [-0.2264, 2.2453] | [1.4326, 3.9352] |
+| Normalized score | .25 | 15 | [425,196.46, 557,294.01] | [-598,986.34, -201,873.24] | [8.6917, 13.0148] | [8.5998, 13.3438] |
+| Normalized score | .50 | 15 | [152,030.99, 226,847.97] | [-243,217.56, -94,767.02] | [3.6160, 6.3717] | [2.5016, 5.0222] |
+| Normalized score | .75 | 15 | [28,263.40, 51,201.89] | [-132,157.57, -31,335.21] | [1.8273, 2.3697] | [0.7329, 1.6624] |
+
+: S6 complete finite-grid endpoint contrast. Hulls are minimum lower and maximum upper bounds across windows, not sampling intervals. {#tbl-s-two-ruler}
+
+Objective-matched .25 is one repeated allocation contrast: every window has
+the same four active months and eleven structural zeros, with allocations
+identical across windows to cents. The endpoint changes 44 loan-month positions
+and USD 155,937.27 of one-way turnover across USD 15 million. Its USD 5,603.66
+payoff difference and -0.0068 percentage-point default/miscoverage differences
+must be reported once, not eight independent confirmations.
+
+At objective-matched .50, payoff is lower and default/miscoverage higher in all
+eight window bounds. At .75, payoff and default cross zero in seven windows and
+are unfavorable in W8; miscoverage is higher in all eight. Every normalized
+track is unfavorable in all eight windows, but its plug-in objective difference
+shows that it does not equalize opportunity cost. Across the full 48-cell
+census, payoff is higher in 8, lower in 33, and crosses zero in 7; default is
+lower in 8, higher in 33, and crosses zero in 7; miscoverage is lower in 8 and
+higher in 40. These are specification counts, not votes.
+
+## E.2 Named-comparator census
 
 The table counts the sign of the guardrail-minus-point sharp contrast over 72
 window-policy cells per rule. “Lower” and “higher” refer to the guardrail. A
@@ -431,7 +534,7 @@ crossing contains zero.
 | C2 | Default | 8 | 52 | 12 |
 | C2 | Miscoverage | 5 | 10 | 57 |
 
-: S6 named-comparator direction census. These descriptive counts are not votes because the comparators define different feasible sets. {#tbl-s-named}
+: S7 named-comparator direction census. These descriptive counts are not votes because the comparators define different feasible sets. {#tbl-s-named}
 
 C0's uniform lower-default direction follows the same-threshold nesting design,
 not a neutral economic comparison. C2 satisfies plug-in dominance but still
@@ -439,7 +542,7 @@ produces both realized-payoff signs and many unresolved contrasts. The
 difference is precisely why a comparator label cannot replace an explicit
 support.
 
-## E.2 Exact support envelopes
+## E.3 Exact support envelopes
 
 Over the broad stress support $[0.05,0.12]$, every one of the 216
 window-policy-metric envelopes crosses zero. Within the narrower
@@ -451,7 +554,9 @@ development-admissible support:
 | Terminal default | 0 | 72 | 0 | 72 |
 | Funded miscoverage | 0 | 33 | 39 | 72 |
 
-: S7 exact direction counts within development-admissible support. {#tbl-s-support}
+: S8 exact direction counts within development-admissible support. {#tbl-s-support}
+
+![Direction of the exact development-admissible comparator envelope. A minus or plus denotes a sign-robust guardrail-minus-point envelope; zero denotes an envelope containing zero. Default contains zero in all 72 cells.](../reports/crpto/figures/crpto_ijds_v4_fig3_envelopes.png){#fig-s-envelopes width=96%}
 
 The 21 lower-payoff cells are the three $\gamma=0.75$ policies in W1--W7. In
 W8, all 27 policy-metric envelopes cross zero. The W8 geometry change therefore
@@ -464,15 +569,16 @@ than reporting disagreement between C0, C1, and C2 because it evaluates the
 continuous cap support exactly. It remains scoped to the declared finite
 support.
 
-## E.3 Why no policy is promoted
+## E.4 Why no policy is promoted
 
 The empirical record does not support a winner for three separate reasons.
 First, candidate coverage misses its 0.90 target before optimization for both
-learners and every residual window. Second, named comparators disagree because
-they define different feasible sets. Third, exact envelopes eliminate all
-broad-support directions and all W8 development-support directions. Selecting
-an earlier window, one comparator, or one of the 21 payoff cells after seeing
-these results would convert a specification audit into post-result selection.
+learners and every residual window. Second, the endpoint sign changes across
+the two rulers and three coordinates. Third, named comparators disagree and
+exact envelopes eliminate all broad-support directions and all W8
+development-support directions. Selecting .25, one ruler, an earlier window,
+one comparator, or one of the 21 payoff cells after seeing these results would
+convert a specification audit into post-result selection.
 
 # Appendix F: Controlled Mechanism Simulation
 
@@ -519,16 +625,41 @@ score, recipe, policy, comparator, allocation, hypothesis, or stop rule.
 Phase 2 contains 1,408 coverage rows, 5,112 monthly evaluations, 360 aggregate
 evaluations, 221,040 paired sharp contrasts, 648 comparator envelopes, 19,200
 simulation repetitions, and 192 simulation cells. The evidence builder checks
-source hashes and cardinalities before producing five publication tables,
+source hashes and cardinalities before producing six publication tables,
 three figures in PNG and PDF, and one active paper-facing manifest.
 
-## G.2 Replay contract
+## G.2 Two-ruler stopped runs and retained evaluation
+
+The two-ruler protocol records two outcome-free stops rather than repairing
+them silently. V1 used a score span under an allowed objective slack as an
+exact-tie diagnostic; that span measured the slack itself and was not a valid
+test of alternate optima. V1b replaced it with nonbasic reduced costs,
+reversed-ID endpoint reruns, and independent GLOP checks. It then stopped
+because final validation required a budget residual below USD $10^{-6}$ while
+both solver wrappers accepted USD $10^{-4}$; the observed maximum was only
+USD $6.366\times10^{-6}$. Neither run loaded outcomes.
+
+V1c changed only that final budget reconciliation threshold to USD $10^{-4}$,
+a relative tolerance of $10^{-10}$ on a USD 1 million budget. It froze 6,240
+solves and 622,455 funded rows, then wrote an immutable freeze descriptor. V2
+verified that descriptor and every source hash before one artifact-producing
+outcome evaluation. It reports 720 monthly contrasts, 48 window contrasts, 144
+metric-direction cells, and no selected result.
+
+The first shell client timed out while the artifact-producing V2 child process
+continued. A second invocation therefore repeated the fixed evaluation in
+memory and stopped at the no-overwrite gate; it wrote no artifact. A post-run
+hardening change now preflights output paths before loading the archive for any
+future tag. Paper-facing wording is consequently "one artifact-producing
+evaluation," not a claim that the evaluator process was invoked exactly once.
+
+## G.3 Replay contract
 
 The replay contract requires:
 
 1. an environment locked by `uv`;
-2. immutable, hash-described outcome-free and evaluated roots tracked by four
-   DVC pointers;
+2. immutable, hash-described outcome-free and evaluated roots tracked by eight
+   DVC pointers across V4 and the two-ruler diagnostic;
 3. a separate freeze and evaluate command with no combined shortcut;
 4. exact ID alignment at the outcome join;
 5. byte-identical evidence builds;
@@ -539,9 +670,9 @@ The replay contract requires:
    official IJDS submission PDF.
 
 Protected historical stages and their extraction manifest are not required to
-replay V4 and are not overwritten.
+replay the active evidence and are not overwritten.
 
-## G.3 Anonymous-review boundary
+## G.4 Anonymous-review boundary
 
 Reviewer-facing files omit exact commits, tags, hashes, repository links, and
 remote coordinates because they are searchable author fingerprints. An
@@ -556,12 +687,13 @@ policy.
 |---|---|---|
 | Eight windows and two learners | Candidate coverage upper bounds are below 0.90 in this archive | Universal conformal invalidity or future performance |
 | Constant-score proposition and stratum-2 path | Binary residual geometry is prevalence-sensitive | Exact finite-sample explanation for varying-score strata |
+| Two rulers and three interior coordinates | Endpoint direction is not ruler- or coordinate-invariant on the declared grid | A continuous-frontier ordering or preferred gamma/ruler/coordinate |
 | C0 nesting and 1,080 C2 reconciliations | Plug-in objective dominance under their stated cap constructions | Realized payoff, default, or miscoverage dominance |
 | Exact declared supports | Portfolio signs depend on comparator support and residual window | Universal quantification over all comparators |
 | Sharp unresolved-outcome bounds | Finite-archive binary completion uncertainty is exposed | Sampling uncertainty or missing-at-random identification |
 | Coverage simulation | Prevalence and endpoint saturation explain possible coverage movements | An empirical portfolio mechanism |
 
-: S8 active claim boundary. {#tbl-s-claims}
+: S9 active claim boundary. {#tbl-s-claims}
 
 The study uses one discontinued consumer-credit platform and accepted 36-month
 loans only. It observes no counterfactual outcomes for rejected applicants.
@@ -577,10 +709,18 @@ so the audit is not a fair-lending assessment. The overlapping windows are not
 independent evidence, and the constant-score proposition is only a mechanism
 for empirical strata whose scores vary.
 
+The two-ruler diagnostic contains three interior coordinates, not a continuous
+joint frontier. Coordinate one is a structural null. Objective matching uses a
+model-implied payoff, while normalized-score matching does not equalize its
+opportunity cost. Eleven common development menus and fifteen OOT decisions do
+not satisfy the decision-context requirements needed to import a CROMS,
+inverse conformal risk-control, or decision-calibration guarantee.
+
 The active conclusion is deliberately narrow. Binary absolute-residual
 geometry can change discontinuously around the prevalence threshold; the
 declared candidate-level coverage does not transport to the OOT archive for
-either learner; and realized portfolio direction is not identified without a
-declared outcome-free comparator support. No selected policy, causal effect,
-prospective guarantee, selected-set validity, Markov certificate, universal
-guardrail direction, or deployment recommendation is claimed.
+either learner; and realized portfolio direction changes with the declared
+ruler, coordinate, residual recipe, and comparator support. No selected gamma,
+ruler, coordinate, policy, causal effect, prospective guarantee, selected-set
+validity, Markov certificate, universal guardrail direction, or deployment
+recommendation is claimed.

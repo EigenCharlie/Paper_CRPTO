@@ -7,13 +7,14 @@ path.
 
 ## Evidence Layers
 
-- **Outcome-free freeze:** two learner score vectors, all residual recipes,
+- **Outcome-free freezes:** learner scores, residual recipes, two-ruler paths,
   comparator supports, exact point frontiers, and every allocation are
   persisted before outcomes are joined.
-- **Reconciled evaluation:** source descriptors and hashes are verified before
-  one keyed outcome join, sharp bounds, comparator envelopes, and simulation.
-- **Complete specification:** all eight residual windows, both learners, and
-  all nine policies are reported without selecting a result.
+- **Reconciled evaluations:** source descriptors and hashes are verified before
+  keyed outcome joins, sharp bounds, comparator envelopes, and simulation.
+- **Complete specification:** all eight residual windows, both learners, five
+  gammas, two rulers, three coordinates, and supporting fixed-cap policies are
+  reported without selecting a result.
 
 The archive is a retrospective audit of previously inspected data. It is not a
 preregistration, prospective trial, causal study, or selected-set guarantee.

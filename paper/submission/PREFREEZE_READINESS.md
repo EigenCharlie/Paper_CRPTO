@@ -2,14 +2,15 @@
 
 No submission date is fixed. Continue improving the active audit until an
 explicit freeze decision; do not retune on 2016--2017 outcomes or promote a
-learner, window, policy, cap, or comparator.
+learner, window, gamma, ruler, coordinate, policy, cap, or comparator.
 
 ## Active Foundation
 
-- one active V4 scientific contract and one paper-facing evidence manifest;
-- verified outcome-free Phase 1 and separate Phase-2 outcome evaluation;
-- four DVC pointers for the data/model roots of both phases;
-- complete eight-window, two-learner, nine-policy specification;
+- one integrated V4/two-ruler scientific contract and one paper-facing evidence manifest;
+- two verified outcome-free freezes and separate outcome evaluations;
+- eight DVC pointers for the data/model roots of all four phases;
+- complete eight-window, two-learner, five-gamma, two-ruler,
+  three-coordinate specification;
 - exact HiGHS basis frontier and sharp common-outcome bounds;
 - canonical QMD body and generated INFORMS TeX;
 - separate anonymous supplement;

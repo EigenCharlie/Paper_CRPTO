@@ -6,6 +6,16 @@
 **Estado:** diagnostico historico y programa de trabajo; **no** sustituye el
 registro activo de claims, el protocolo V4 ni el manifiesto de evidencia.
 
+> **Actualizacion 2026-07-13.** Este documento conserva el razonamiento del
+> checkpoint anterior al diagnostico bloqueado de dos rulers. Desde entonces se
+> completaron el censo de ties, la aplicabilidad metodologica, V1c outcome-free y
+> la unica evaluacion V2. El contrato activo ahora combina V4 con seis tracks
+> ruler-coordinate; las nueve policies fixed-cap pasaron a soporte exacto y no
+> son una familia co-primaria de promocion. El PDF oficial sigue en 28 paginas,
+> las referencias empiezan en la 25, y los previews son body 21/supplement 17.
+> Las secciones historicas que dicen "V4 activa", "co-primarias" o enumeran P0
+> pendientes describen el estado que motivo esos runs, no el estado actual.
+
 Las unicas fuentes operativas para claims activos siguen siendo:
 
 1. [`active_claims_2026-07-12.md`](active_claims_2026-07-12.md).
@@ -87,7 +97,7 @@ finito; no demuestra unicidad para cada cap real.
 La compactacion V6/V7 si elimino demasiada profundidad editorial: el PDF V7 tenia
 12 paginas y las referencias empezaban en la pagina 10. Esa perdida fue transitoria.
 La entrega actual tiene 28 paginas oficiales, referencias desde la pagina 25, body
-de verificacion de 21 paginas y suplemento de 13. Recupero profundidad y sigue
+de verificacion de 21 paginas y suplemento de 17. Recupero profundidad y sigue
 dentro de la regla IJDS de 25 paginas excluyendo referencias.
 
 ## 4. Que afirmaba cada familia de versiones

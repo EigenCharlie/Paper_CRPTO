@@ -38,6 +38,40 @@ objects. It removes all-null shared-frontier endpoint placeholders before
 injecting window-specific endpoints. No scientific specification or allocation
 changes between phases.
 
+## Two-Ruler Outcome-Free Freeze
+
+| Field | Exact value |
+|---|---|
+| Reviewer label | Two-ruler outcome-free freeze |
+| Run | `ijds-normalized-objective-frontier-2026-07-13-v1c` |
+| Protocol tag | `protocol/ijds-normalized-objective-frontier-2026-07-13-v1c` |
+| Protocol commit | `46f4df915d38eb5a6cc144484c6e6fe56d8ed397` |
+| Freeze SHA-256 | `7877c5e460772a0093e4132eaa542e9049f7ec15d2ddaa35c2df389892a0e185` |
+| Data pointer | `data/processed/experiments/ijds_audit/ijds-normalized-objective-frontier-2026-07-13-v1c.dvc` |
+| Model pointer | `models/experiments/ijds_audit/ijds-normalized-objective-frontier-2026-07-13-v1c.dvc` |
+
+The freeze contains 6,240 solves, 622,455 funded rows, 720 endpoint
+comparisons, 1,440 reversed-ID reruns, 288 GLOP validations, and 26
+objective-optimum diagnostics. It contains no outcome column.
+
+## Two-Ruler Evaluation
+
+| Field | Exact value |
+|---|---|
+| Reviewer label | Two-ruler reconciled evaluation |
+| Run | `ijds-normalized-objective-frontier-2026-07-13-v2` |
+| Protocol tag | `protocol/ijds-normalized-objective-frontier-2026-07-13-v2` |
+| Protocol commit | `d3041e5233ee74a6b1d38f678def75d8d5ef0169` |
+| Manifest SHA-256 | `d3808ce7c7a8e6fee3ef51aefd031e8abf55e11ef3536745ee213fd04752588a` |
+| Summary SHA-256 | `1dbfb2652d5bd2f9a1478ca10bbc829c9bcd0cf847a9e179454b3f2c629beb03` |
+| Receipt SHA-256 | `3ef3e7c7e363bcf8630ae79cabe2847f5b70bc66416f384c043c16cef2b46ca8` |
+| Data pointer | `data/processed/experiments/ijds_audit/ijds-normalized-objective-frontier-2026-07-13-v2.dvc` |
+| Model pointer | `models/experiments/ijds_audit/ijds-normalized-objective-frontier-2026-07-13-v2.dvc` |
+
+One invocation produced the immutable artifact set. A client timeout caused a
+second fixed evaluation in memory; it stopped at no-overwrite and wrote no
+artifact.
+
 ## Paper-Facing Evidence
 
 | Field | Exact value |
@@ -46,7 +80,7 @@ changes between phases.
 | Builder | `scripts/build_ijds_binary_geometry_frontier_v4_evidence.py` |
 | Table prefix | `reports/crpto/tables/crpto_ijds_v4_` |
 | Figure prefix | `reports/crpto/figures/crpto_ijds_v4_` |
-| Outputs | one manifest, five CSV tables, three PNG figures, three PDF figures |
+| Outputs | one manifest, six CSV tables, three PNG figures, three PDF figures |
 
 Every paper-facing descriptor is verified by SHA-256. Two consecutive evidence
 builds must be byte-identical.
@@ -59,6 +93,10 @@ uv run dvc pull data/processed/experiments/ijds_audit/ijds-binary-geometry-front
 uv run dvc pull models/experiments/ijds_audit/ijds-binary-geometry-frontier-v4-2026-07-12-v1.dvc
 uv run dvc pull data/processed/experiments/ijds_audit/ijds-binary-geometry-frontier-v4-2026-07-12-v2.dvc
 uv run dvc pull models/experiments/ijds_audit/ijds-binary-geometry-frontier-v4-2026-07-12-v2.dvc
+uv run dvc pull data/processed/experiments/ijds_audit/ijds-normalized-objective-frontier-2026-07-13-v1c.dvc
+uv run dvc pull models/experiments/ijds_audit/ijds-normalized-objective-frontier-2026-07-13-v1c.dvc
+uv run dvc pull data/processed/experiments/ijds_audit/ijds-normalized-objective-frontier-2026-07-13-v2.dvc
+uv run dvc pull models/experiments/ijds_audit/ijds-normalized-objective-frontier-2026-07-13-v2.dvc
 just ijds-active-check
 just paper-submission
 just paper-submission-official
