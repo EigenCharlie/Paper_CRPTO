@@ -1,4 +1,4 @@
-"""Run the locked outcome-free IJDS normalized/objective frontier V1b."""
+"""Run the locked outcome-free IJDS normalized/objective frontier V1c."""
 
 from __future__ import annotations
 
@@ -45,7 +45,7 @@ from src.utils.pipeline_runtime import (  # noqa: E402
 )
 
 DEFAULT_CONFIG_PATH = (
-    ROOT / "configs/experiments/ijds_normalized_objective_frontier_2026-07-13_v1b.yaml"
+    ROOT / "configs/experiments/ijds_normalized_objective_frontier_2026-07-13_v1c.yaml"
 )
 ALLOWED_DATA_ROOT = Path("data/processed/experiments/ijds_audit")
 ALLOWED_MODEL_ROOT = Path("models/experiments/ijds_audit")
@@ -53,6 +53,8 @@ IMPLEMENTATION_PATHS = (
     Path("docs/research/ijds_normalized_objective_frontier_protocol_2026-07-12.md"),
     Path("docs/research/ijds_normalized_objective_frontier_v1_stop_2026-07-13.md"),
     Path("docs/research/ijds_normalized_objective_frontier_v1b_protocol_2026-07-13.md"),
+    Path("docs/research/ijds_normalized_objective_frontier_v1b_stop_2026-07-13.md"),
+    Path("docs/research/ijds_normalized_objective_frontier_v1c_protocol_2026-07-13.md"),
     Path("docs/research/ijds_decision_method_applicability_2026-07-12.md"),
     Path("scripts/experiments/run_ijds_normalized_objective_frontier.py"),
     Path("src/evaluation/standardized_credit_payoff.py"),
@@ -207,7 +209,7 @@ def run_outcome_free(
     config_path: Path,
     repo_root: Path = ROOT,
 ) -> Path:
-    """Verify sources, solve the complete census, and atomically freeze V1b."""
+    """Verify sources, solve the complete census, and atomically freeze V1c."""
     started = time.perf_counter()
     started_at = utc_now_iso()
     root = repo_root.resolve()

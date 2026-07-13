@@ -64,6 +64,8 @@ def _validate_solver(solver: Any) -> None:
         raise TypeError("solver must be a mapping.")
     if solver["primary"] != "highspy_exact_budget_simplex" or int(solver["threads"]) != 1:
         raise ValueError("The deterministic primary solver contract changed.")
+    if float(solver["budget_residual_tolerance_dollars"]) != 1.0e-4:
+        raise ValueError("The V1c budget-reconciliation correction changed.")
     validation = solver["independent_validation"]
     if validation["solver"] != "ortools_glop" or validation["periods"] != [
         "2016-04",
@@ -108,12 +110,19 @@ def load_frontier_config(path: Path) -> dict[str, Any]:
     if payload["protocol_status"] != "locked_outcome_free_frontier_before_execution":
         raise ValueError("Frontier protocol is not locked for outcome-free execution.")
     lineage = payload["lineage"]
-    if lineage.get("failed_protocol_tag") != (
-        "protocol/ijds-normalized-objective-frontier-2026-07-12-v1"
-    ) or lineage.get("correction") != (
-        "replace_slack_floor_score_span_with_basis_reduced_cost_and_id_reversal"
-    ):
-        raise ValueError("The V1 stop-to-V1b correction lineage changed.")
+    expected_lineage = {
+        "original_failed_protocol_tag": (
+            "protocol/ijds-normalized-objective-frontier-2026-07-12-v1"
+        ),
+        "objective_tie_erratum_tag": ("protocol/ijds-normalized-objective-frontier-2026-07-13-v1b"),
+        "objective_tie_correction": (
+            "replace_slack_floor_score_span_with_basis_reduced_cost_and_id_reversal"
+        ),
+        "v1b_stop": "maximum_budget_residual_6.366e-6_exceeded_1e-6",
+        "budget_correction": ("align_final_budget_tolerance_with_solver_wrappers_at_1e-4_dollars"),
+    }
+    if lineage != expected_lineage:
+        raise ValueError("The V1-to-V1c numerical correction lineage changed.")
     _validate_frontier(payload["frontier"])
     _validate_source(payload["source_ingest"])
     _validate_solver(payload["solver"])

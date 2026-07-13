@@ -21,7 +21,7 @@ from src.ijds_challengers.frontier import (
 from src.ijds_challengers.normalized_frontier import _solve_objective_optimum
 
 ROOT = Path(__file__).resolve().parents[1]
-CONFIG = ROOT / "configs/experiments/ijds_normalized_objective_frontier_2026-07-13_v1b.yaml"
+CONFIG = ROOT / "configs/experiments/ijds_normalized_objective_frontier_2026-07-13_v1c.yaml"
 
 
 def _small_menu() -> tuple[pd.DataFrame, np.ndarray, np.ndarray]:
@@ -92,6 +92,7 @@ def test_frontier_config_is_locked_and_outcome_free() -> None:
     assert config["frontier"]["objective_optimum"]["diagnostic"] == (
         "nonbasic_reduced_costs_plus_reversed_id_order"
     )
+    assert config["solver"]["budget_residual_tolerance_dollars"] == 1.0e-4
 
 
 def test_frontier_config_rejects_policy_winner(tmp_path: Path) -> None:

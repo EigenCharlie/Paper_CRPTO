@@ -892,3 +892,24 @@ Trazabilidad:
 - `docs/research/ijds_normalized_objective_frontier_v1_stop_2026-07-13.md`;
 - `docs/research/ijds_normalized_objective_frontier_v1b_protocol_2026-07-13.md`;
 - `configs/experiments/ijds_normalized_objective_frontier_2026-07-13_v1b.yaml`.
+
+## 20. Stop V1b y alineacion de tolerancia V1c
+
+V1b completo las ocho ventanas en memoria, pero se detuvo antes de escribir
+outputs porque el residual maximo de presupuesto fue USD `6.366e-6`, superior
+al stop final USD `1e-6`. Los dos wrappers LP ya aceptaban hasta USD `1e-4`, de
+modo que el protocolo tenia dos definiciones incompatibles de factibilidad
+numerica. El residual observado equivale a aproximadamente `6.4e-12` del
+presupuesto mensual.
+
+V1c fija el chequeo final en USD `1e-4`, exactamente el umbral interno existente
+y `1e-10` del presupuesto. No redondea, reescala ni modifica una asignacion; no
+cambia LPs, grids, endpoints, outcomes o claims. V1b permanece fallido bajo su
+propio tag y V1c recibe config, commit, tag y directorios nuevos. Esta es otra
+correccion outcome-free y no una adaptacion a resultados empiricos.
+
+Trazabilidad:
+
+- `docs/research/ijds_normalized_objective_frontier_v1b_stop_2026-07-13.md`;
+- `docs/research/ijds_normalized_objective_frontier_v1c_protocol_2026-07-13.md`;
+- `configs/experiments/ijds_normalized_objective_frontier_2026-07-13_v1c.yaml`.
