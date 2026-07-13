@@ -199,13 +199,27 @@ def _scorecard_binning_process(
     )
 
 
-def _binning_table(model: WOELogisticModel) -> pd.DataFrame:
+def scorecard_binning_table(model: WOELogisticModel) -> pd.DataFrame:
+    """Return a Parquet-safe long table for every frozen WOE bin."""
     tables: list[pd.DataFrame] = []
+    numeric_columns = (
+        "Count",
+        "Count (%)",
+        "Non-event",
+        "Event",
+        "Event rate",
+        "WoE",
+        "IV",
+        "JS",
+    )
     for feature in model.features:
         table = model.binning_process.get_binned_variable(feature).binning_table.build().copy()
         table.insert(0, "feature", feature)
         table.insert(0, "learner", model.name)
         table["Bin"] = table["Bin"].map(str)
+        for column in numeric_columns:
+            if column in table:
+                table[column] = pd.to_numeric(table[column], errors="coerce")
         tables.append(table)
     return pd.concat(tables, ignore_index=True)
 
@@ -293,7 +307,7 @@ def fit_woe_scorecard_control(
         model=model,
         summary=summary,
         coefficients=coefficients,
-        binning_table=_binning_table(model),
+        binning_table=scorecard_binning_table(model),
     )
 
 

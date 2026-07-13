@@ -10,7 +10,7 @@ from optbinning import BinningProcess
 from sklearn.linear_model import LogisticRegression
 
 from src.ijds_audit.config import load_credit_control_config
-from src.ijds_audit.credit_controls import WOELogisticModel
+from src.ijds_audit.credit_controls import WOELogisticModel, scorecard_binning_table
 
 ROOT = Path(__file__).resolve().parents[2]
 CONFIG = ROOT / "configs/experiments/ijds_credit_risk_controls_2026-07-13_v1.yaml"
@@ -47,7 +47,7 @@ def test_credit_control_config_rejects_platform_signal_in_borrower_scorecard(
         load_credit_control_config(path)
 
 
-def test_woe_model_handles_unknown_and_missing_values_and_is_pickle_safe() -> None:
+def test_woe_model_handles_unknown_missing_and_parquet_serialization(tmp_path: Path) -> None:
     generator = np.random.default_rng(7)
     features = pd.DataFrame(
         {
@@ -95,3 +95,6 @@ def test_woe_model_handles_unknown_and_missing_values_and_is_pickle_safe() -> No
     assert probabilities.shape == (2, 2)
     assert np.isfinite(probabilities).all()
     assert np.allclose(probabilities.sum(axis=1), 1.0)
+    binning_table = scorecard_binning_table(restored)
+    binning_table.to_parquet(tmp_path / "woe_binning_table.parquet", index=False)
+    assert pd.api.types.is_numeric_dtype(binning_table["WoE"])
