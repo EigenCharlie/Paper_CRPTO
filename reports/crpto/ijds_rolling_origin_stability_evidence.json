@@ -1094,8 +1094,8 @@
   "aggregation_implementation": {
     "builder": {
       "path": "scripts/build_ijds_rolling_origin_stability_evidence.py",
-      "bytes": 31999,
-      "sha256": "9203914a130fa40f3d2eb23dd5c8c4ec8e2835a52d0792d2cc2e0622f8950a94"
+      "bytes": 32088,
+      "sha256": "a71012673b6dd535a0d859ab7e169061fdd0161c7cfeab88eb1c9f0e76270b29"
     },
     "v4_config": {
       "path": "configs/experiments/ijds_binary_geometry_frontier_v4_2026-07-12_v2.yaml",

@@ -53,7 +53,7 @@ def _collapse_paired(
     values: list[str],
 ) -> pd.DataFrame:
     grouped = frame.groupby(keys, observed=True, sort=True)[values]
-    if not bool(grouped.nunique().le(1).all().all()):
+    if not bool(grouped.nunique().le(1).to_numpy().all()):
         raise RuntimeError(f"Paired decision-active values diverged for keys {keys}.")
     return grouped.first().reset_index()
 
@@ -146,7 +146,10 @@ def _direction_table(direction_counts: pd.DataFrame) -> pd.DataFrame:
 
 
 def _records(frame: pd.DataFrame) -> list[dict[str, Any]]:
-    return json.loads(frame.to_json(orient="records", double_precision=15))
+    payload = frame.to_json(orient="records", double_precision=15)
+    if payload is None:
+        raise RuntimeError("Pandas did not serialize decision-active evidence records.")
+    return json.loads(payload)
 
 
 def _memo(evidence: Mapping[str, Any]) -> str:

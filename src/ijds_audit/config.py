@@ -5,7 +5,7 @@ from __future__ import annotations
 import copy
 from collections.abc import Mapping
 from pathlib import Path
-from typing import Any
+from typing import Any, cast
 
 import pandas as pd
 import yaml
@@ -56,10 +56,10 @@ def _validate_windows(config: Mapping[str, Any]) -> None:
         if identifier in identifiers:
             raise ValueError(f"Duplicate residual-window id: {identifier}.")
         identifiers.add(identifier)
-        start = pd.Timestamp(window["start"])
-        end = pd.Timestamp(window["end"])
+        start = cast(pd.Timestamp, pd.Timestamp(window["start"]))
+        end = cast(pd.Timestamp, pd.Timestamp(window["end"]))
         expected_end = start + pd.offsets.MonthEnd(6)
-        if start != expected_start or end != expected_end:
+        if start != cast(pd.Timestamp, expected_start) or end != expected_end:
             raise ValueError(
                 f"Residual window {identifier} is not the declared consecutive six-month window."
             )
@@ -90,15 +90,25 @@ def _validate_design_chronology(config: Mapping[str, Any]) -> None:
         raise ValueError("Policy development must contain exactly eleven complete months.")
 
     cutoff = pd.Timestamp(config["source"]["information_cutoff"])
-    primary_start = pd.Period(str(design["primary_oot_start_month"]), freq="M").start_time
-    primary_end = pd.Period(str(design["primary_oot_end_month"]), freq="M")
-    extension_start = pd.Period(str(design["censored_extension_start_month"]), freq="M")
-    extension_end = pd.Period(str(design["censored_extension_end_month"]), freq="M")
+    primary_start_period = cast(
+        pd.Period, pd.Period(str(design["primary_oot_start_month"]), freq="M")
+    )
+    primary_start = primary_start_period.start_time
+    primary_end = cast(pd.Period, pd.Period(str(design["primary_oot_end_month"]), freq="M"))
+    extension_start = cast(
+        pd.Period, pd.Period(str(design["censored_extension_start_month"]), freq="M")
+    )
+    extension_end = cast(
+        pd.Period, pd.Period(str(design["censored_extension_end_month"]), freq="M")
+    )
     if cutoff != primary_start - pd.Timedelta(days=1):
         raise ValueError("The information cutoff must immediately precede primary OOT.")
-    if primary_end < primary_start.to_period("M"):
+    if primary_end.ordinal < primary_start_period.ordinal:
         raise ValueError("Primary OOT has an invalid month range.")
-    if extension_start != primary_end + 1 or extension_end < extension_start:
+    if (
+        extension_start.ordinal != primary_end.ordinal + 1
+        or extension_end.ordinal < extension_start.ordinal
+    ):
         raise ValueError("The censored extension must immediately follow primary OOT.")
 
 

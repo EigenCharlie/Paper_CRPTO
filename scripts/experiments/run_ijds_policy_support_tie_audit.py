@@ -178,7 +178,7 @@ def _load_decision_base(
     pieces: list[pd.DataFrame] = []
     for chunk in pd.read_csv(
         raw_path,
-        usecols=allowed,
+        usecols=lambda column: str(column) in allowed,
         dtype={"id": "string"},
         chunksize=int(source["chunksize"]),
         low_memory=False,
@@ -553,8 +553,7 @@ def _run_point_cap_audit(
                     "tie_sensitive": bool(distance > float(tie["order_sensitivity_tolerance"])),
                 }
             )
-    sensitivity = pd.DataFrame(
-        sensitivity_rows,
+    sensitivity = pd.DataFrame(sensitivity_rows).reindex(
         columns=[
             "period",
             "point_cap",
@@ -568,7 +567,10 @@ def _run_point_cap_audit(
 
 
 def _records(frame: pd.DataFrame) -> list[dict[str, Any]]:
-    return json.loads(frame.to_json(orient="records", double_precision=15))
+    payload = frame.to_json(orient="records", double_precision=15)
+    if payload is None:
+        raise RuntimeError("Pandas did not serialize policy-support records.")
+    return json.loads(payload)
 
 
 def _compact_summary(
@@ -577,16 +579,12 @@ def _compact_summary(
     diagnostics: pd.DataFrame,
     sensitivity: pd.DataFrame,
 ) -> dict[str, Any]:
-    family_counts = (
-        family.groupby(
-            ["role", "gamma", "risk_tolerance", "cap_classification"],
-            observed=True,
-            sort=True,
-        )
-        .size()
-        .rename("cells")
-        .reset_index()
-    )
+    family_count_series = family.groupby(
+        ["role", "gamma", "risk_tolerance", "cap_classification"],
+        observed=True,
+        sort=True,
+    ).size()
+    family_counts = family_count_series.to_frame(name="cells").reset_index()
     source_columns = [column for column in diagnostics if column.startswith("is_")]
     support_rows = []
     for column in source_columns:

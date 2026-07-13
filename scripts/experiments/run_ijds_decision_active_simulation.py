@@ -83,7 +83,10 @@ def prepare_output_paths(config: Mapping[str, Any], *, repo_root: Path = ROOT) -
 
 
 def _records(frame: pd.DataFrame) -> list[dict[str, Any]]:
-    return json.loads(frame.to_json(orient="records", double_precision=15))
+    payload = frame.to_json(orient="records", double_precision=15)
+    if payload is None:
+        raise RuntimeError("Pandas did not serialize decision-active records.")
+    return json.loads(payload)
 
 
 def _direction_counts(repetitions: pd.DataFrame, *, tolerance: float) -> pd.DataFrame:
@@ -160,7 +163,7 @@ def _assert_complete(
             ]
             .nunique()
             .eq(1)
-            .all()
+            .to_numpy()
             .all()
         ),
         "paired_complete_outcomes_across_cap_and_censoring": bool(
@@ -175,7 +178,7 @@ def _assert_complete(
             )[["candidate_outcome_prevalence", "candidate_coverage_full"]]
             .nunique()
             .eq(1)
-            .all()
+            .to_numpy()
             .all()
         ),
     }

@@ -6,7 +6,7 @@ import json
 import re
 from collections.abc import Mapping
 from pathlib import Path
-from typing import Any
+from typing import Any, cast
 
 import numpy as np
 import pandas as pd
@@ -306,9 +306,8 @@ def _common_2016_envelopes(
 
 def _coverage_summary(coverage: pd.DataFrame) -> list[dict[str, Any]]:
     rows: list[dict[str, Any]] = []
-    for (origin, learner), frame in coverage.groupby(
-        ["origin", "learner"], observed=True, sort=True
-    ):
+    for raw_key, frame in coverage.groupby(["origin", "learner"], observed=True, sort=True):
+        origin, learner = cast(tuple[Any, Any], raw_key)
         rows.append(
             {
                 "origin": int(origin),
@@ -327,12 +326,10 @@ def _coverage_summary(coverage: pd.DataFrame) -> list[dict[str, Any]]:
 
 
 def _direction_summary(envelopes: pd.DataFrame) -> list[dict[str, Any]]:
-    result = (
-        envelopes.groupby(["origin", "scope", "metric", "direction"], observed=True, sort=True)
-        .size()
-        .rename("cells")
-        .reset_index()
-    )
+    counts = envelopes.groupby(
+        ["origin", "scope", "metric", "direction"], observed=True, sort=True
+    ).size()
+    result = counts.to_frame(name="cells").reset_index()
     return result.to_dict(orient="records")
 
 
@@ -604,9 +601,10 @@ def build_evidence() -> Path:
     }
     coverage_summaries = _coverage_summary(coverage)
     universally_identified = []
-    for (origin, scope, metric), frame in envelopes.groupby(
+    for raw_key, frame in envelopes.groupby(
         ["origin", "scope", "metric"], observed=True, sort=True
     ):
+        origin, scope, metric = cast(tuple[Any, Any, Any], raw_key)
         directions = set(frame["direction"].astype(str))
         universally_identified.append(
             {
