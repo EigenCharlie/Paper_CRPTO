@@ -13,6 +13,7 @@ import pandas as pd
 from src.ijds_audit.config import load_credit_control_config
 from src.ijds_audit.credit_controls import (
     ScorecardFit,
+    credit_prediction_metrics,
     feature_variation_audit,
     fit_monotonic_catboost_control,
     fit_woe_scorecard_control,
@@ -36,7 +37,6 @@ from src.ijds_audit.protocol import (
     score_frame,
     verified_freeze_artifact_paths,
 )
-from src.models.maturity_safe_pd import classification_metrics
 from src.utils.isolated_experiment import (
     environment_provenance,
     implementation_provenance,
@@ -352,7 +352,7 @@ def _prediction_metrics(scores: pd.DataFrame, outcomes: pd.DataFrame) -> pd.Data
                 raise RuntimeError(f"No resolved outcomes for {learner}/{role}.")
             values = labels.loc[observed].astype(int).to_numpy()
             probability = frame.loc[observed, column].to_numpy(dtype=float)
-            metrics = classification_metrics(values, probability)
+            metrics = credit_prediction_metrics(values, probability)
             rows.append(
                 {
                     "learner": learner,
@@ -388,6 +388,12 @@ def _evaluation_summary(
             "primary_oot_roc_auc": float(row["roc_auc"]),
             "primary_oot_brier": float(row["brier"]),
             "primary_oot_log_loss": float(row["log_loss"]),
+            "primary_oot_gini": float(row["gini"]),
+            "primary_oot_ks": float(row["ks"]),
+            "primary_oot_average_precision": float(row["average_precision"]),
+            "primary_oot_ece_10": float(row["ece_10"]),
+            "primary_oot_calibration_intercept": float(row["calibration_intercept"]),
+            "primary_oot_calibration_slope": float(row["calibration_slope"]),
             "primary_oot_default_rate": float(row["default_rate"]),
             "canonical_coverage_lower_min": float(cells["coverage_lower"].min()),
             "canonical_coverage_lower_max": float(cells["coverage_lower"].max()),

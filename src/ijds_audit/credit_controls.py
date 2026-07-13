@@ -12,7 +12,9 @@ import numpy as np
 import pandas as pd
 from catboost import CatBoostClassifier
 from optbinning import BinningProcess
+from scipy.optimize import minimize
 from sklearn.linear_model import LogisticRegression
+from sklearn.metrics import average_precision_score, roc_curve
 
 from src.data.outcome_observability import temporal_tail_split
 from src.ijds_audit.prediction import (
@@ -35,6 +37,49 @@ STABILITY_ROLES = (
     "primary_oot",
     "censored_extension",
 )
+
+
+def credit_prediction_metrics(labels: np.ndarray, probabilities: np.ndarray) -> dict[str, Any]:
+    """Return fixed discrimination and calibration diagnostics for credit PD."""
+    y = np.asarray(labels, dtype=int)
+    probability = np.clip(np.asarray(probabilities, dtype=float), 1e-8, 1.0 - 1e-8)
+    if len(y) != len(probability) or set(np.unique(y)) != {0, 1}:
+        raise ValueError("Credit prediction metrics require aligned binary classes.")
+    metrics: dict[str, Any] = dict(binary_probability_metrics(y, probability))
+    false_positive_rate, true_positive_rate, _ = roc_curve(y, probability)
+    logits = np.log(probability / (1.0 - probability))
+
+    def objective(beta: np.ndarray) -> float:
+        linear = beta[0] + beta[1] * logits
+        return float(np.sum(np.logaddexp(0.0, linear) - y * linear))
+
+    def gradient(beta: np.ndarray) -> np.ndarray:
+        linear = beta[0] + beta[1] * logits
+        fitted = 1.0 / (1.0 + np.exp(-np.clip(linear, -40.0, 40.0)))
+        residual = fitted - y
+        return np.asarray([np.sum(residual), np.sum(residual * logits)], dtype=float)
+
+    calibration = minimize(
+        objective,
+        x0=np.asarray([0.0, 1.0], dtype=float),
+        jac=gradient,
+        method="BFGS",
+        options={"gtol": 1e-8, "maxiter": 2000},
+    )
+    if not bool(np.isfinite(calibration.x).all()):
+        raise RuntimeError("Calibration intercept/slope optimization returned non-finite values.")
+    metrics.update(
+        {
+            "gini": float(2.0 * float(metrics["roc_auc"]) - 1.0),
+            "ks": float(np.max(true_positive_rate - false_positive_rate)),
+            "average_precision": float(average_precision_score(y, probability)),
+            "calibration_in_the_large": float(np.mean(probability) - np.mean(y)),
+            "calibration_intercept": float(calibration.x[0]),
+            "calibration_slope": float(calibration.x[1]),
+            "calibration_optimizer_success": bool(calibration.success),
+        }
+    )
+    return metrics
 
 
 @dataclass

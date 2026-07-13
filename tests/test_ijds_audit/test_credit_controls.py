@@ -10,10 +10,15 @@ from optbinning import BinningProcess
 from sklearn.linear_model import LogisticRegression
 
 from src.ijds_audit.config import load_credit_control_config
-from src.ijds_audit.credit_controls import WOELogisticModel, scorecard_binning_table
+from src.ijds_audit.credit_controls import (
+    WOELogisticModel,
+    credit_prediction_metrics,
+    scorecard_binning_table,
+)
 
 ROOT = Path(__file__).resolve().parents[2]
 CONFIG = ROOT / "configs/experiments/ijds_credit_risk_controls_2026-07-13_v1.yaml"
+V2_CONFIG = ROOT / "configs/experiments/ijds_credit_risk_controls_2026-07-13_v2.yaml"
 
 
 def test_credit_control_config_is_closed_and_uses_all_rows() -> None:
@@ -26,6 +31,17 @@ def test_credit_control_config_is_closed_and_uses_all_rows() -> None:
     assert len(controls["co_primary_models"]) == 5
     assert not set(controls["platform_signal_features"]).intersection(
         controls["scorecards"]["borrower"]["features"]
+    )
+
+
+def test_credit_control_v2_imports_the_exact_v1b_freeze() -> None:
+    config = load_credit_control_config(V2_CONFIG)
+    resume = config["resume_credit_control_freeze"]
+
+    assert resume["source_run_tag"].endswith("v1b")
+    assert resume["source_protocol_commit"] == "1776cbf8b201ae5b92756e5ea397a403d6cc7c9f"
+    assert resume["source_freeze_sha256"] == (
+        "da4805e644bcf5decfbb0a67c0c81a5b9dd61f3ab2e17d3dc5264100e7eb4d35"
     )
 
 
@@ -98,3 +114,17 @@ def test_woe_model_handles_unknown_missing_and_parquet_serialization(tmp_path: P
     binning_table = scorecard_binning_table(restored)
     binning_table.to_parquet(tmp_path / "woe_binning_table.parquet", index=False)
     assert pd.api.types.is_numeric_dtype(binning_table["WoE"])
+
+
+def test_credit_prediction_metrics_report_discrimination_and_calibration() -> None:
+    generator = np.random.default_rng(19)
+    probability = np.linspace(0.01, 0.60, 5000)
+    labels = generator.binomial(1, probability)
+
+    metrics = credit_prediction_metrics(labels, probability)
+
+    assert metrics["gini"] == pytest.approx(2.0 * metrics["roc_auc"] - 1.0)
+    assert 0.0 <= metrics["ks"] <= 1.0
+    assert 0.0 <= metrics["average_precision"] <= 1.0
+    assert np.isfinite(metrics["calibration_intercept"])
+    assert np.isfinite(metrics["calibration_slope"])

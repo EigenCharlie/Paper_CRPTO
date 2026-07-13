@@ -1,0 +1,20 @@
+extends: "ijds_credit_risk_controls_2026-07-13_v1b.yaml"
+
+schema_version: "2026-07-13.3"
+protocol_tag: "protocol/ijds-credit-risk-controls-2026-07-13-v2"
+run_tag: "ijds-credit-risk-controls-2026-07-13-v2"
+
+protocol_lineage_files:
+  - "configs/experiments/ijds_binary_geometry_frontier_v4_2026-07-12.yaml"
+  - "docs/research/ijds_binary_geometry_frontier_v4_protocol_2026-07-12.md"
+  - "docs/research/ijds_raw_data_contract_protocol_2026-07-13.md"
+  - "docs/research/ijds_credit_risk_controls_protocol_2026-07-13.md"
+  - "docs/research/ijds_credit_risk_controls_v1_stop_2026-07-13.md"
+  - "configs/experiments/ijds_credit_risk_controls_2026-07-13_v1b.yaml"
+  - "docs/research/ijds_credit_risk_controls_v2_evaluation_2026-07-13.md"
+
+resume_credit_control_freeze:
+  source_run_tag: "ijds-credit-risk-controls-2026-07-13-v1b"
+  source_protocol_tag: "protocol/ijds-credit-risk-controls-2026-07-13-v1b"
+  source_protocol_commit: "1776cbf8b201ae5b92756e5ea397a403d6cc7c9f"
+  source_freeze_sha256: "da4805e644bcf5decfbb0a67c0c81a5b9dd61f3ab2e17d3dc5264100e7eb4d35"
