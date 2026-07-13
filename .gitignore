@@ -170,3 +170,4 @@ configs/experiments/*
 !configs/experiments/champion_reopen*.txt
 !configs/experiments/ijds_maturity_safe_locked_*.yaml
 !configs/experiments/ijds_fixed_taxonomy_*.yaml
+!configs/experiments/ijds_rolling_origin_*.yaml

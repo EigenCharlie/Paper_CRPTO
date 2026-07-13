@@ -1,0 +1,61 @@
+extends: "ijds_binary_geometry_frontier_v4_2026-07-12.yaml"
+
+schema_version: "2026-07-12.4"
+protocol_tag: "protocol/ijds-rolling-origin-stability-2026-07-12-v1"
+run_tag: "ijds-rolling-origin-2017-2026-07-12-v1"
+
+protocol_lineage_files:
+  - "configs/experiments/ijds_fixed_taxonomy_c2_2026-07-11.yaml"
+  - "docs/research/ijds_fixed_taxonomy_c2_protocol_errata_2026-07-12.md"
+  - "configs/experiments/ijds_binary_geometry_frontier_v4_2026-07-12.yaml"
+  - "docs/research/ijds_binary_geometry_frontier_v4_protocol_2026-07-12.md"
+  - "docs/research/ijds_rolling_origin_stability_protocol_2026-07-12.md"
+
+hypothesis: >-
+  The V4 binary-geometry and comparator-identification findings may depend on
+  the calendar origin. A symmetric three-month rolling-origin audit must
+  therefore report 2015, 2016, and 2017 without selecting an origin, residual
+  window, learner, policy, comparator, or metric from outcomes.
+
+source:
+  information_cutoff: "2017-03-31"
+
+design:
+  development_end: "2011-12-31"
+  probability_calibration_start: "2012-01-01"
+  probability_calibration_end: "2012-12-31"
+  conformal_fit_start: "2013-01-01"
+  conformal_fit_end: "2014-01-31"
+  policy_development_start: "2014-02-01"
+  policy_development_end: "2014-12-31"
+  primary_oot_start_month: "2017-04"
+  primary_oot_end_month: "2017-06"
+  censored_extension_start_month: "2017-07"
+  censored_extension_end_month: "2017-09"
+
+conformal:
+  taxonomy_source: "2012_all_status_independent_calibrated_scores"
+
+learner_control:
+  platt_calibration: "independent_2012_raw_margin"
+
+residual_specification:
+  windows:
+    - {id: "w01_2013m01_m06", start: "2013-01-01", end: "2013-06-30"}
+    - {id: "w02_2013m02_m07", start: "2013-02-01", end: "2013-07-31"}
+    - {id: "w03_2013m03_m08", start: "2013-03-01", end: "2013-08-31"}
+    - {id: "w04_2013m04_m09", start: "2013-04-01", end: "2013-09-30"}
+    - {id: "w05_2013m05_m10", start: "2013-05-01", end: "2013-10-31"}
+    - {id: "w06_2013m06_m11", start: "2013-06-01", end: "2013-11-30"}
+    - {id: "w07_2013m07_m12", start: "2013-07-01", end: "2013-12-31"}
+    - {id: "w08_2013m08_2014m01", start: "2013-08-01", end: "2014-01-31"}
+
+rolling_origin:
+  audit_id: "symmetric_calendar_origin_stability_v1"
+  origin_year: 2017
+  common_primary_months: 3
+  reference_origin_year: 2016
+  outcome_based_origin_selection: false
+  pooled_origin_claims: false
+
+resume_outcome_free: null

@@ -366,6 +366,12 @@ def fit_window_recipes(
     output: dict[str, WindowRecipe] = {}
     group_counts = [int(value) for value in config["conformal"]["diagnostic_group_counts"]]
     alpha = float(config["conformal"]["alpha"])
+    calibration_start = pd.Timestamp(config["design"]["probability_calibration_start"])
+    calibration_end = pd.Timestamp(config["design"]["probability_calibration_end"])
+    taxonomy_provenance = (
+        f"{scores.name}_{calibration_start:%Y%m}_{calibration_end:%Y%m}"
+        "_all_status_independent_scores"
+    )
     for specification in config["residual_specification"]["windows"]:
         identifier = str(specification["id"])
         start = pd.Timestamp(specification["start"])
@@ -391,7 +397,7 @@ def fit_window_recipes(
                 alpha=alpha,
                 n_groups=groups,
                 bin_edges=scores.taxonomy_edges[groups],
-                taxonomy_provenance=f"{scores.name}_2011_all_status_independent_scores",
+                taxonomy_provenance=taxonomy_provenance,
                 taxonomy_method="fixed_empirical_linear_score_quantiles",
                 method="fixed_taxonomy_split_mondrian_absolute_residual",
             )

@@ -41,12 +41,16 @@ def _load_payload(path: Path, seen: frozenset[Path] = frozenset()) -> dict[str, 
 
 
 def _validate_windows(config: Mapping[str, Any]) -> None:
+    design = config["design"]
     specification = config["residual_specification"]
     windows = specification["windows"]
     if len(windows) != 8 or int(specification["window_months"]) != 6:
         raise ValueError("V4 requires exactly eight six-month residual windows.")
-    expected_starts = pd.date_range("2012-01-01", periods=8, freq="MS")
+    conformal_start = pd.Timestamp(design["conformal_fit_start"])
+    conformal_end = pd.Timestamp(design["conformal_fit_end"])
+    expected_starts = pd.date_range(conformal_start, periods=8, freq="MS")
     identifiers: set[str] = set()
+    observed_end: pd.Timestamp | None = None
     for expected_start, window in zip(expected_starts, windows, strict=True):
         identifier = str(window["id"])
         if identifier in identifiers:
@@ -59,6 +63,78 @@ def _validate_windows(config: Mapping[str, Any]) -> None:
             raise ValueError(
                 f"Residual window {identifier} is not the declared consecutive six-month window."
             )
+        observed_end = end
+    if observed_end != conformal_end:
+        raise ValueError("The final residual window must end at design.conformal_fit_end.")
+
+
+def _validate_design_chronology(config: Mapping[str, Any]) -> None:
+    design = config["design"]
+    development_end = pd.Timestamp(design["development_end"])
+    calibration_start = pd.Timestamp(design["probability_calibration_start"])
+    calibration_end = pd.Timestamp(design["probability_calibration_end"])
+    conformal_start = pd.Timestamp(design["conformal_fit_start"])
+    conformal_end = pd.Timestamp(design["conformal_fit_end"])
+    policy_start = pd.Timestamp(design["policy_development_start"])
+    policy_end = pd.Timestamp(design["policy_development_end"])
+
+    if calibration_start != development_end + pd.Timedelta(days=1):
+        raise ValueError("Probability calibration must start immediately after PD development.")
+    if calibration_end != calibration_start + pd.offsets.MonthEnd(12):
+        raise ValueError("Probability calibration must contain exactly twelve complete months.")
+    if conformal_start != calibration_end + pd.Timedelta(days=1):
+        raise ValueError("Residual fitting must start immediately after probability calibration.")
+    if policy_start != conformal_end + pd.Timedelta(days=1):
+        raise ValueError("Policy development must start immediately after residual fitting.")
+    if policy_end != policy_start + pd.offsets.MonthEnd(11):
+        raise ValueError("Policy development must contain exactly eleven complete months.")
+
+    cutoff = pd.Timestamp(config["source"]["information_cutoff"])
+    primary_start = pd.Period(str(design["primary_oot_start_month"]), freq="M").start_time
+    primary_end = pd.Period(str(design["primary_oot_end_month"]), freq="M")
+    extension_start = pd.Period(str(design["censored_extension_start_month"]), freq="M")
+    extension_end = pd.Period(str(design["censored_extension_end_month"]), freq="M")
+    if cutoff != primary_start - pd.Timedelta(days=1):
+        raise ValueError("The information cutoff must immediately precede primary OOT.")
+    if primary_end < primary_start.to_period("M"):
+        raise ValueError("Primary OOT has an invalid month range.")
+    if extension_start != primary_end + 1 or extension_end < extension_start:
+        raise ValueError("The censored extension must immediately follow primary OOT.")
+
+
+def _validate_rolling_origin(config: Mapping[str, Any]) -> None:
+    rolling = config.get("rolling_origin")
+    if rolling is None:
+        return
+    origin = int(rolling["origin_year"])
+    expected_source = {"information_cutoff": f"{origin}-03-31"}
+    expected_design = {
+        "development_end": f"{origin - 6}-12-31",
+        "probability_calibration_start": f"{origin - 5}-01-01",
+        "probability_calibration_end": f"{origin - 5}-12-31",
+        "conformal_fit_start": f"{origin - 4}-01-01",
+        "conformal_fit_end": f"{origin - 3}-01-31",
+        "policy_development_start": f"{origin - 3}-02-01",
+        "policy_development_end": f"{origin - 3}-12-31",
+        "primary_oot_start_month": f"{origin}-04",
+        "primary_oot_end_month": f"{origin}-06",
+        "censored_extension_start_month": f"{origin}-07",
+        "censored_extension_end_month": f"{origin}-09",
+    }
+    for field, expected in expected_source.items():
+        if str(config["source"][field]) != expected:
+            raise ValueError(f"Rolling origin {origin} has an asymmetric source.{field}.")
+    for field, expected in expected_design.items():
+        if str(config["design"][field]) != expected:
+            raise ValueError(f"Rolling origin {origin} has an asymmetric design.{field}.")
+    if int(rolling.get("common_primary_months", -1)) != 3:
+        raise ValueError("The rolling-origin common primary horizon must contain three months.")
+    if int(rolling.get("reference_origin_year", -1)) != 2016:
+        raise ValueError("The rolling-origin reference year must remain 2016.")
+    if rolling.get("outcome_based_origin_selection") is not False:
+        raise ValueError("Outcome-based origin selection is forbidden.")
+    if rolling.get("pooled_origin_claims") is not False:
+        raise ValueError("Pooled rolling-origin claims are forbidden.")
 
 
 def load_v4_config(path: Path) -> dict[str, Any]:
@@ -126,4 +202,6 @@ def load_v4_config(path: Path) -> dict[str, Any]:
         if len(digest) != 64 or any(character not in "0123456789abcdef" for character in digest):
             raise ValueError("Imported freeze SHA-256 must be lowercase hexadecimal.")
     _validate_windows(config)
+    _validate_design_chronology(config)
+    _validate_rolling_origin(config)
     return config
