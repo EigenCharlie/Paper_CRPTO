@@ -57,13 +57,16 @@ La auditoria no acepta los memos anteriores como autoridad. Se contrastaron:
 - las guias vigentes de IJDS sobre aporte metodologico, decision, anonimato y
   reproducibilidad.
 
-Ademas se reconstruyeron los LP V4 de los 15 meses OOT. En 2,249 solves que
-incluyen todos los caps nominales C0/C1/C2 y puntos de soporte, no aparecio ningun
-costo reducido menor que `8.49e-4` entre variables no basicas. Hubo 11 bases
-primalmente degeneradas, pero no evidencia de un segundo optimo en esos puntos.
-Esta prueba apoya la estabilidad de la trayectoria determinista de HiGHS; no
-demuestra unicidad para cada cap del continuo ni envuelve todos los desempates
-matematicamente posibles.
+Una reconstruccion exploratoria inicial habia contado 2,249 solves y 11 bases
+degeneradas. Ese conteo no era el censo completo y queda corregido por el audit
+outcome-free etiquetado. La union tolerante contiene 7,297 pares cap-mes: 2,204
+caps nominales unicos mas endpoints de soporte y 2,952 breakpoints propios de
+los 15 meses. Hay 2,941 bases primalmente degeneradas, como es esperable en
+breakpoints, pero cero costos reducidos no basicos dentro de `1e-7`; el minimo
+absoluto es `3.87573e-4`. Las 2,941 bases activadas se resolvieron tambien con
+orden de IDs inverso: ninguna fue tie-sensitive y la distancia maxima de
+exposicion fue `1.45e-14`. Esto apoya estabilidad determinista en el censo
+finito; no demuestra unicidad para cada cap real.
 
 ## 3. Cronologia verificable
 
@@ -529,14 +532,23 @@ como el metodo, no como una lista de errores de un proyecto anterior.
 2. **Single archive:** no hay una segunda aplicacion equivalente.
 3. **Frozen-score stress:** el gap largo hace la falla creible, pero un reviewer
    puede preguntar si una actualizacion maturity-aware la corrige.
-4. **Familia de policy:** `tau={.15,.17,.19}` y `gamma={.25,.5,.75}` fue heredada;
-   falta una derivacion outcome-free o una sensibilidad continua.
-5. **Soporte de comparador:** development y broad stress son declarados, no
-   universalmente canonicos.
+4. **Familia de policy:** el censo outcome-free confirma que las nueve reglas
+   heredadas son factibles y casi siempre decision-active, pero tambien que
+   `gamma=1` es factible y activo en 624/624 celdas. Omitir ese endpoint sin una
+   justificacion semantica dejaria incompleta la familia; falta comparar una
+   parametrizacion outcome-free de stringencia normalizada.
+5. **Soporte de comparador:** los roles C0/C1/C2 y los endpoints de desarrollo
+   ya tienen un censo exacto de actividad, pero development y broad stress
+   siguen siendo soportes declarados, no universalmente canonicos. El intervalo
+   `[.05,.12]` cruza deliberadamente de caps activos a slack y no debe leerse
+   como dominio normativo.
 6. **Simulation:** 19,200 repeticiones apoyan coverage, pero el cap de portfolio
    casi nunca liga; no puede sostener el claim de decision.
-7. **Solver tie boundary:** no se vieron dual alternatives en 2,249 comparadores,
-   pero falta una prueba persistida de tie sensitivity sobre breakpoints.
+7. **Solver tie boundary:** queda cerrado para el censo finito evaluado. En
+   7,297 pares cap-mes hubo 2,941 bases primalmente degeneradas, pero ningun
+   nonbasic reduced cost dentro de `1e-7` de cero y ninguna de las 2,941
+   reruns con orden de ID invertido cambio la asignacion mas de `1.45e-14`.
+   Esto no es un teorema de unicidad para todo cap real.
 8. **Retrospectivo:** no queda lockbox empirico pristino; cualquier run nuevo debe
    llamarse specification-complete retrospective, nunca confirmatory.
 9. **Payoff:** es coherente pero deliberadamente simple; no es IRR/NPV/cash flow.
@@ -762,3 +774,47 @@ Fuentes reproducibles:
 - `reports/crpto/ijds_decision_active_simulation_evidence.json`;
 - `docs/research/ijds_decision_active_simulation_results_2026-07-12.md`;
 - tablas `crpto_ijds_decision_active_*` en `reports/crpto/tables`.
+
+## 17. Actualizacion de ejecucion P1: soporte de policy y empates
+
+El protocolo se fijo en el commit `115eaf1` y el tag
+`protocol/ijds-policy-support-tie-audit-2026-07-12-v1`. El runner uso solo ID,
+monto, tasa contractual, proposito, rol temporal, point score y recetas
+conformales congeladas. Ningun outcome entro en los 3,120 solves de familia ni
+en el censo de caps.
+
+- Las 1,872 celdas heredadas fueron factibles y 1,846 fueron decision-active.
+  Las 26 slack aparecen solo en `gamma=.25`, ventana W8.
+- El endpoint `gamma=0` fue objective-slack en 624/624 celdas bajo los tres
+  `tau`; confirma su funcion de control point-score, no de policy robusta.
+- El endpoint `gamma=1` fue factible y decision-active en 624/624 celdas. Con
+  el mismo menu y cap, su objetivo plug-in fue menor que `gamma=.75` en las
+  624 celdas: diferencia media `-2519.44`, rango
+  `[-8337.85,-579.98]` dolares de objetivo plug-in por presupuesto mensual de
+  USD 1 millon.
+- La union tolerante del frontier contiene 7,297 pares cap-mes: 2,204 caps
+  nominales unicos y 2,952 breakpoints period-specific, ademas de endpoints de
+  soporte. Los 45 C0 fueron slack; C1 tuvo 1,079 activos y uno slack; C2 tuvo
+  1,075 activos y cuatro en la frontera del objetivo.
+- Hubo 2,941 bases primalmente degeneradas, principalmente en breakpoints. El
+  minimo reduced cost no basico absoluto fue `3.876e-4`; no hubo near-zero
+  dual alternatives al umbral `1e-7`. Invertir el orden de ID no produjo una
+  sola asignacion tie-sensitive.
+
+El hallazgo elimina una explicacion espuria: los cambios de direccion V4 no son
+un artefacto de empates numericos en los caps auditados. A la vez, invalida la
+idea de que la grilla interior heredada sea automaticamente una familia
+completa. El siguiente challenger debe fijar antes de outcomes una stringencia
+normalizada
+`lambda=(q_cap-q_min)/(q_obj-q_min)` e incluir `gamma={0,.25,.5,.75,1}`. Ese
+diseno compara posiciones homologas entre el portfolio de menor score y el
+portfolio sin cap; no convierte `lambda` en una tolerancia de riesgo
+desplegable y debe conservar esa limitacion.
+
+Fuentes reproducibles:
+
+- `reports/crpto/ijds_policy_support_tie_evidence.json`;
+- `docs/research/ijds_policy_support_tie_results_2026-07-12.md`;
+- tablas `crpto_ijds_policy_family_domain.csv`,
+  `crpto_ijds_gamma_endpoint_audit.csv` y
+  `crpto_ijds_comparator_support_domain.csv`.

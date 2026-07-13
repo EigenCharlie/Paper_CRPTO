@@ -104,6 +104,10 @@ ijds-policy-support-tie-audit:
 ijds-policy-support-tie-check:
     uv run pytest -q tests/test_ijds_policy_support_tie_audit.py
 
+ijds-policy-support-tie-evidence:
+    uv run python scripts/build_ijds_policy_support_tie_evidence.py
+    uv run pytest -q tests/test_ijds_policy_support_tie_evidence.py
+
 ijds-historical-v1-v3-evidence:
     uv run python scripts/build_ijds_fixed_taxonomy_c2_evidence.py
 
