@@ -72,6 +72,22 @@ def _period_frames(panel: pd.DataFrame, role: str) -> tuple[tuple[str, pd.DataFr
     )
 
 
+def declared_menu_counts(config: Mapping[str, Any]) -> tuple[int, int]:
+    """Return the exact development and primary month counts declared by the design."""
+    design = config["design"]
+    development = pd.period_range(
+        str(design["policy_development_start"]),
+        str(design["policy_development_end"]),
+        freq="M",
+    )
+    primary = pd.period_range(
+        str(design["primary_oot_start_month"]),
+        str(design["primary_oot_end_month"]),
+        freq="M",
+    )
+    return len(development), len(primary)
+
+
 def _guardrail_solve(
     month: pd.DataFrame,
     *,
@@ -216,13 +232,16 @@ def build_outcome_free_portfolios(
     support_caps: list[float] = []
     point_cache: dict[tuple[str, str], PointPortfolioSolution] = {}
     point_sessions: dict[str, PointPortfolioSession] = {}
+    expected_development, expected_primary = declared_menu_counts(config)
 
     for window_id, panel in panels.items():
         development = _period_frames(panel, "policy_development")
         primary = _period_frames(panel, "primary_oot")
-        if len(development) != 11 or len(primary) != 15:
+        if len(development) != expected_development or len(primary) != expected_primary:
             raise RuntimeError(
-                f"{window_id} requires 11 development and 15 primary OOT monthly menus."
+                f"{window_id} requires {expected_development} development and "
+                f"{expected_primary} primary OOT monthly menus; observed "
+                f"{len(development)} and {len(primary)}."
             )
         for policy in policies:
             development_moments: list[float] = []

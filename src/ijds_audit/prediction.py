@@ -44,6 +44,14 @@ LABEL_FIT_SPLITS = ("pd_development", "probability_calibration", "conformal_fit"
 DECISION_SPLITS = ("policy_development", "primary_oot", "censored_extension")
 
 
+class ProtocolFeasibilityError(RuntimeError):
+    """A locked scientific requirement failed without authorizing adaptation."""
+
+    def __init__(self, message: str, *, details: Mapping[str, Any]) -> None:
+        super().__init__(message)
+        self.protocol_details = dict(details)
+
+
 @dataclass(frozen=True)
 class PreparedData:
     """One status-independent universe and its model matrix."""
@@ -401,10 +409,24 @@ def fit_window_recipes(
                 taxonomy_method="fixed_empirical_linear_score_quantiles",
                 method="fixed_taxonomy_split_mondrian_absolute_residual",
             )
-            if groups == int(config["conformal"]["canonical_groups"]) and min(
-                recipe.group_counts
-            ) < int(config["conformal"]["minimum_rows_per_group"]):
-                raise RuntimeError(f"{identifier} has a canonical residual group below 1,000 rows.")
+            minimum = int(config["conformal"]["minimum_rows_per_group"])
+            if (
+                groups == int(config["conformal"]["canonical_groups"])
+                and min(recipe.group_counts) < minimum
+            ):
+                counts = tuple(int(value) for value in recipe.group_counts)
+                raise ProtocolFeasibilityError(
+                    f"{identifier} has canonical residual group counts {counts}; "
+                    f"the locked minimum is {minimum}.",
+                    details={
+                        "stage": "canonical_residual_group_size",
+                        "learner": scores.name,
+                        "window_id": identifier,
+                        "taxonomy_groups": groups,
+                        "group_counts": list(counts),
+                        "minimum_rows_per_group": minimum,
+                    },
+                )
             assigned, lower, upper = apply_binary_outcome_recipe(probability, recipe)
             recipes[groups] = recipe
             fit_rows.append(

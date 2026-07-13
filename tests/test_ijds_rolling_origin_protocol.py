@@ -4,6 +4,7 @@ from pathlib import Path
 
 import pytest
 
+from src.ijds_audit.allocations import declared_menu_counts
 from src.ijds_audit.config import load_v4_config
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -33,6 +34,12 @@ def test_rolling_origin_configs_shift_the_complete_design(
     assert config["rolling_origin"]["origin_year"] == origin
     assert config["rolling_origin"]["outcome_based_origin_selection"] is False
     assert config.get("resume_outcome_free") is None
+    assert declared_menu_counts(config) == (11, 3)
+
+
+def test_original_v4_retains_its_fifteen_month_primary_horizon() -> None:
+    config = load_v4_config(CONFIGS / "ijds_binary_geometry_frontier_v4_2026-07-12.yaml")
+    assert declared_menu_counts(config) == (11, 15)
 
 
 def test_window_validation_is_relative_to_declared_origin(tmp_path: Path) -> None:
