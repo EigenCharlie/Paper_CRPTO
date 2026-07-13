@@ -926,10 +926,11 @@ ruler globalmente degenerado.
 La geometria resuelve una duda y cierra otra ruta positiva. El ruler normalizado
 cambio 360/360 endpoints. El ruler objective-matched cambio 272/360: en
 coordenada `.25`, 88/120 pares `gamma=1` versus `gamma=0` fueron exactamente
-identicos. Esas celdas tienen contraste cero bajo cualquier outcome. Como el
-protocolo exigia signo no nulo en todas las ventanas, coordenadas y rulers, una
-promocion positiva all-cell ya es imposible antes de V2. No se permite retirar
-`.25` ni seleccionar `.50`/`.75`.
+identicos. Esas celdas tienen contraste mensual cero bajo cualquier outcome,
+pero no fuerzan a cero el agregado de 15 meses: cada una de las ocho ventanas
+conserva exactamente cuatro meses no identicos en `.25`. V1c por si solo no
+establece ni descarta un signo agregado comun. No se permite retirar `.25`,
+seleccionar `.50`/`.75` ni reportar solo los cuatro meses activos.
 
 V2 sigue siendo necesario para cuantificar signos y bounds sharp en las celdas
 no identicas y para medir discrepancia entre rulers. El hallazgo fortalece la

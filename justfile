@@ -115,6 +115,13 @@ ijds-normalized-objective-frontier-v1c-freeze:
 ijds-normalized-objective-frontier-v1c-check:
     uv run pytest -q tests/test_ijds_normalized_objective_frontier.py
 
+# Post-freeze V2 verifies V1c hashes before its single archive-outcome join.
+ijds-normalized-objective-frontier-v2-evaluate:
+    uv run python scripts/experiments/run_ijds_normalized_objective_frontier_v2.py
+
+ijds-normalized-objective-frontier-v2-check:
+    uv run pytest -q tests/test_ijds_normalized_objective_frontier_v2.py
+
 ijds-historical-v1-v3-evidence:
     uv run python scripts/build_ijds_fixed_taxonomy_c2_evidence.py
 

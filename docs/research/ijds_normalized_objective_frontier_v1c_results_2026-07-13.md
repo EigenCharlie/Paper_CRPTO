@@ -63,18 +63,20 @@ allocation.
 
 ## Scientific consequence before outcomes
 
-The locked promotion rule required a common **nonzero** sign for every window,
-coordinate, and ruler before any positive direction could advance. The 88
-allocation-identical objective-matched `.25` cells necessarily have zero
-payoff, default, and miscoverage contrasts under any outcome vector. A positive
-all-cell promotion is therefore structurally impossible before V2.
+The 88 allocation-identical objective-matched `.25` month cells necessarily
+have zero monthly payoff, default, and miscoverage contrasts under any outcome
+vector. They do **not**, however, make a 15-month window contrast zero: each of
+the eight windows has exactly four nonidentical `.25` months, with the same
+outcome-free distance pattern. The locked promotion rule is evaluated at the
+window aggregate, so V1c alone neither establishes nor rules out a common
+nonzero aggregate sign.
 
-This is not a reason to delete `.25`, select `.50`/`.75`, or narrow the support.
-It is evidence that the CRPTO decision effect depends on where the common
-efficient frontier is evaluated. V2 remains necessary to quantify signs and
-sharp common-outcome bounds in the nonidentical cells and to determine whether
-the two rulers also disagree beyond the structural zeros. It cannot revive a
-winner by excluding the zeros.
+This is not a reason to delete `.25`, select `.50`/`.75`, or report only the
+four active months. It shows that the low objective coordinate has a sparse
+decision mechanism and that CRPTO's effect depends on where the common
+efficient frontier is evaluated. V2 is necessary to compute each complete
+15-month window contrast, its sharp common-outcome bounds, and disagreement
+between rulers. Structural monthly zeros remain part of every aggregate.
 
 ## Frozen sources
 
