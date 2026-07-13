@@ -3,7 +3,7 @@
 from __future__ import annotations
 
 from collections.abc import Collection, Mapping, Sequence
-from typing import Any
+from typing import Any, cast
 
 import numpy as np
 import pandas as pd
@@ -277,6 +277,14 @@ def temporal_coverage_audit(
         how="left",
         validate="one_to_one",
     )
+    fit_lookup: dict[tuple[str, str, int], pd.DataFrame] = {}
+    for raw_key, frame in fit_audit.groupby(
+        ["learner", "window_id", "taxonomy_groups"],
+        observed=True,
+        sort=False,
+    ):
+        learner, window_id, taxonomy_groups = cast(tuple[Any, Any, Any], raw_key)
+        fit_lookup[(str(learner), str(window_id), int(taxonomy_groups))] = frame
     rows: list[dict[str, Any]] = []
     selected_taxonomies = (
         None
@@ -318,12 +326,18 @@ def temporal_coverage_audit(
                         n = int(mask.sum())
                         observed_covered = int(covered[observed].sum())
                         geometry = summarize_binary_geometry(lower[mask], upper[mask])
-                        fitted = fit_audit.loc[
-                            fit_audit["learner"].eq(learner)
-                            & fit_audit["window_id"].eq(window_id)
-                            & fit_audit["taxonomy_groups"].eq(taxonomy_groups)
-                            & (fit_audit["conformal_group"].eq(stratum) if stratum >= 0 else True)
-                        ]
+                        fitted_base = fit_lookup.get(
+                            (str(learner), str(window_id), int(taxonomy_groups))
+                        )
+                        if fitted_base is None:
+                            raise RuntimeError(
+                                f"Missing fit audit: {learner}/{window_id}/{taxonomy_groups}."
+                            )
+                        fitted = (
+                            fitted_base.loc[fitted_base["conformal_group"].eq(stratum)]
+                            if stratum >= 0
+                            else fitted_base
+                        )
                         if fitted.empty:
                             raise RuntimeError(
                                 f"Missing fit audit: {learner}/{window_id}/{taxonomy_groups}/{stratum}."

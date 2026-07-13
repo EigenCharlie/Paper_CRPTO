@@ -19,6 +19,7 @@ from src.ijds_audit.credit_controls import (
 ROOT = Path(__file__).resolve().parents[2]
 CONFIG = ROOT / "configs/experiments/ijds_credit_risk_controls_2026-07-13_v1.yaml"
 V2_CONFIG = ROOT / "configs/experiments/ijds_credit_risk_controls_2026-07-13_v2.yaml"
+V2B_CONFIG = ROOT / "configs/experiments/ijds_credit_risk_controls_2026-07-13_v2b.yaml"
 
 
 def test_credit_control_config_is_closed_and_uses_all_rows() -> None:
@@ -42,6 +43,17 @@ def test_credit_control_v2_imports_the_exact_v1b_freeze() -> None:
     assert resume["source_protocol_commit"] == "1776cbf8b201ae5b92756e5ea397a403d6cc7c9f"
     assert resume["source_freeze_sha256"] == (
         "da4805e644bcf5decfbb0a67c0c81a5b9dd61f3ab2e17d3dc5264100e7eb4d35"
+    )
+
+
+def test_credit_control_v2b_requires_exact_v2_coverage() -> None:
+    config = load_credit_control_config(V2B_CONFIG)
+    recovery = config["evaluation_recovery"]
+
+    assert recovery["calibration_solver"] == "sklearn_unpenalized_lbfgs"
+    assert recovery["require_exact_coverage_equivalence"] is True
+    assert recovery["coverage_reference"]["sha256"] == (
+        "956bdc9880c80cebc1f48fc2cdf57688dfff7dddd3939b4fd972413d83039767"
     )
 
 
@@ -128,3 +140,4 @@ def test_credit_prediction_metrics_report_discrimination_and_calibration() -> No
     assert 0.0 <= metrics["average_precision"] <= 1.0
     assert np.isfinite(metrics["calibration_intercept"])
     assert np.isfinite(metrics["calibration_slope"])
+    assert metrics["calibration_optimizer_success"] is True

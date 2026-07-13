@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import copy
 import json
+import warnings
 from collections.abc import Mapping, Sequence
 from dataclasses import dataclass
 from typing import Any
@@ -12,7 +13,7 @@ import numpy as np
 import pandas as pd
 from catboost import CatBoostClassifier
 from optbinning import BinningProcess
-from scipy.optimize import minimize
+from sklearn.exceptions import ConvergenceWarning
 from sklearn.linear_model import LogisticRegression
 from sklearn.metrics import average_precision_score, roc_curve
 
@@ -47,26 +48,21 @@ def credit_prediction_metrics(labels: np.ndarray, probabilities: np.ndarray) -> 
         raise ValueError("Credit prediction metrics require aligned binary classes.")
     metrics: dict[str, Any] = dict(binary_probability_metrics(y, probability))
     false_positive_rate, true_positive_rate, _ = roc_curve(y, probability)
-    logits = np.log(probability / (1.0 - probability))
-
-    def objective(beta: np.ndarray) -> float:
-        linear = beta[0] + beta[1] * logits
-        return float(np.sum(np.logaddexp(0.0, linear) - y * linear))
-
-    def gradient(beta: np.ndarray) -> np.ndarray:
-        linear = beta[0] + beta[1] * logits
-        fitted = 1.0 / (1.0 + np.exp(-np.clip(linear, -40.0, 40.0)))
-        residual = fitted - y
-        return np.asarray([np.sum(residual), np.sum(residual * logits)], dtype=float)
-
-    calibration = minimize(
-        objective,
-        x0=np.asarray([0.0, 1.0], dtype=float),
-        jac=gradient,
-        method="BFGS",
-        options={"gtol": 1e-8, "maxiter": 2000},
+    logits = np.log(probability / (1.0 - probability)).reshape(-1, 1)
+    maximum_iterations = 5000
+    calibration = LogisticRegression(
+        C=np.inf,
+        solver="lbfgs",
+        tol=1e-10,
+        max_iter=maximum_iterations,
+        random_state=42,
     )
-    if not bool(np.isfinite(calibration.x).all()):
+    with warnings.catch_warnings():
+        warnings.simplefilter("error", ConvergenceWarning)
+        calibration.fit(logits, y)
+    coefficients = np.asarray([calibration.intercept_[0], calibration.coef_[0, 0]], dtype=float)
+    iterations = int(calibration.n_iter_[0])
+    if iterations >= maximum_iterations or not bool(np.isfinite(coefficients).all()):
         raise RuntimeError("Calibration intercept/slope optimization returned non-finite values.")
     metrics.update(
         {
@@ -74,9 +70,10 @@ def credit_prediction_metrics(labels: np.ndarray, probabilities: np.ndarray) -> 
             "ks": float(np.max(true_positive_rate - false_positive_rate)),
             "average_precision": float(average_precision_score(y, probability)),
             "calibration_in_the_large": float(np.mean(probability) - np.mean(y)),
-            "calibration_intercept": float(calibration.x[0]),
-            "calibration_slope": float(calibration.x[1]),
-            "calibration_optimizer_success": bool(calibration.success),
+            "calibration_intercept": float(coefficients[0]),
+            "calibration_slope": float(coefficients[1]),
+            "calibration_iterations": iterations,
+            "calibration_optimizer_success": True,
         }
     )
     return metrics

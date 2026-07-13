@@ -482,6 +482,29 @@ def evaluate_credit_controls(*, config_path: Path, repo_root: Path) -> Path:
     recipes = load_recipes(artifacts["recipes"])
     fit_audit = pd.read_parquet(artifacts["fit_audit"])
     coverage = temporal_coverage_audit(scores, outcomes, recipes, fit_audit)
+    coverage_equivalence: dict[str, Any] | None = None
+    recovery = config.get("evaluation_recovery")
+    if recovery:
+        reference_spec = recovery["coverage_reference"]
+        reference_path = resolve_repo_input(reference_spec["path"], repo_root=root)
+        reference_descriptor = relative_artifact_descriptor(reference_path, repo_root=root)
+        for field in ("path", "bytes", "sha256"):
+            if reference_descriptor[field] != reference_spec[field]:
+                raise RuntimeError(f"Coverage recovery reference mismatch for {field}.")
+        reference_coverage = pd.read_parquet(reference_path)
+        pd.testing.assert_frame_equal(
+            coverage,
+            reference_coverage,
+            check_dtype=True,
+            check_exact=True,
+            check_like=False,
+        )
+        coverage_equivalence = {
+            "status": "exact_frame_equivalence_verified",
+            "reference": reference_descriptor,
+            "rows": int(len(coverage)),
+            "columns": int(len(coverage.columns)),
+        }
     prediction = _prediction_metrics(scores, outcomes)
     output_files = {
         "temporal_coverage": atomic_write_parquet(
@@ -496,6 +519,7 @@ def evaluate_credit_controls(*, config_path: Path, repo_root: Path) -> Path:
     summary = _evaluation_summary(config=config, coverage=coverage, prediction=prediction)
     summary["source_freeze"] = source_descriptor
     summary["source_protocol"] = expected
+    summary["coverage_recovery"] = coverage_equivalence
     summary["evaluation_artifacts"] = {
         name: relative_artifact_descriptor(path, repo_root=root)
         for name, path in output_files.items()

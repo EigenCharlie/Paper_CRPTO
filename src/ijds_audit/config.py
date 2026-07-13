@@ -291,4 +291,18 @@ def load_credit_control_config(path: Path) -> dict[str, Any]:
         digest = str(resume["source_freeze_sha256"])
         if len(digest) != 64 or any(character not in "0123456789abcdef" for character in digest):
             raise ValueError("Imported credit-control freeze SHA-256 is invalid.")
+    recovery = config.get("evaluation_recovery")
+    if recovery:
+        if recovery.get("status") != "numerical_calibration_recovery_only":
+            raise ValueError("Unexpected credit-control evaluation recovery status.")
+        if recovery.get("require_exact_coverage_equivalence") is not True:
+            raise ValueError("Evaluation recovery must require exact coverage equivalence.")
+        if recovery.get("calibration_solver") != "sklearn_unpenalized_lbfgs":
+            raise ValueError("Unexpected calibration recovery solver.")
+        reference = recovery.get("coverage_reference")
+        if not isinstance(reference, Mapping):
+            raise KeyError("Evaluation recovery requires a coverage reference.")
+        digest = str(reference.get("sha256", ""))
+        if len(digest) != 64 or any(character not in "0123456789abcdef" for character in digest):
+            raise ValueError("Coverage reference SHA-256 is invalid.")
     return config
