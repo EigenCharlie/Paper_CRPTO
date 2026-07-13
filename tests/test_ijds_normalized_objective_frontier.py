@@ -18,14 +18,16 @@ from src.ijds_challengers.frontier import (
     normalized_score_cap,
     solve_glop_portfolio,
 )
+from src.ijds_challengers.normalized_frontier import _solve_objective_optimum
 
 ROOT = Path(__file__).resolve().parents[1]
-CONFIG = ROOT / "configs/experiments/ijds_normalized_objective_frontier_2026-07-12_v1.yaml"
+CONFIG = ROOT / "configs/experiments/ijds_normalized_objective_frontier_2026-07-13_v1b.yaml"
 
 
 def _small_menu() -> tuple[pd.DataFrame, np.ndarray, np.ndarray]:
     frame = pd.DataFrame(
         {
+            "id": ["a", "b", "c", "d"],
             "loan_amnt": [1.0, 1.0, 1.0, 1.0],
             "purpose": ["a", "a", "b", "b"],
         }
@@ -87,6 +89,9 @@ def test_frontier_config_is_locked_and_outcome_free() -> None:
     assert config["frontier"]["coordinate_grid"] == [0.25, 0.5, 0.75]
     assert config["claim_boundary"]["outcome_columns_passed"] == []
     assert config["frontier"]["rulers"]["primary"] == "objective_matched"
+    assert config["frontier"]["objective_optimum"]["diagnostic"] == (
+        "nonbasic_reduced_costs_plus_reversed_id_order"
+    )
 
 
 def test_frontier_config_rejects_policy_winner(tmp_path: Path) -> None:
@@ -254,3 +259,43 @@ def test_both_rulers_match_vertex_enumeration_and_glop() -> None:
     assert matched.weighted_score == pytest.approx(brute_score, abs=1e-9)
     assert glop.objective_value == pytest.approx(brute_objective, abs=1e-9)
     assert glop.weighted_score == pytest.approx(brute_score, abs=1e-9)
+
+
+def test_objective_optimum_uses_basis_and_order_diagnostics() -> None:
+    config = load_frontier_config(CONFIG)
+    frame, score, objective = _small_menu()
+    optimum = _solve_objective_optimum(
+        frame,
+        point_score=score,
+        objective_rate=objective,
+        budget=2.0,
+        purpose_cap=0.75,
+        time_limit=30,
+        threads=1,
+        role="primary_oot",
+        period="2016-04",
+        optimum_config=config["frontier"]["objective_optimum"],
+        solver_config=config["solver"],
+    )
+    assert optimum.diagnostics["near_zero_nonbasic_reduced_costs"] == 0
+    assert optimum.diagnostics["reversed_id_exposure_distance"] < 1e-10
+
+
+def test_objective_optimum_rejects_alternate_optimum() -> None:
+    config = load_frontier_config(CONFIG)
+    frame, score, objective = _small_menu()
+    objective[:] = 0.1
+    with pytest.raises(RuntimeError, match="near-zero nonbasic reduced cost"):
+        _solve_objective_optimum(
+            frame,
+            point_score=score,
+            objective_rate=objective,
+            budget=2.0,
+            purpose_cap=0.75,
+            time_limit=30,
+            threads=1,
+            role="primary_oot",
+            period="2016-04",
+            optimum_config=config["frontier"]["objective_optimum"],
+            solver_config=config["solver"],
+        )

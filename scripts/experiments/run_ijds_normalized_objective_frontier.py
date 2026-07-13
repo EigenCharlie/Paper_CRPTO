@@ -1,4 +1,4 @@
-"""Run the locked outcome-free IJDS normalized/objective frontier V1."""
+"""Run the locked outcome-free IJDS normalized/objective frontier V1b."""
 
 from __future__ import annotations
 
@@ -45,12 +45,14 @@ from src.utils.pipeline_runtime import (  # noqa: E402
 )
 
 DEFAULT_CONFIG_PATH = (
-    ROOT / "configs/experiments/ijds_normalized_objective_frontier_2026-07-12_v1.yaml"
+    ROOT / "configs/experiments/ijds_normalized_objective_frontier_2026-07-13_v1b.yaml"
 )
 ALLOWED_DATA_ROOT = Path("data/processed/experiments/ijds_audit")
 ALLOWED_MODEL_ROOT = Path("models/experiments/ijds_audit")
 IMPLEMENTATION_PATHS = (
     Path("docs/research/ijds_normalized_objective_frontier_protocol_2026-07-12.md"),
+    Path("docs/research/ijds_normalized_objective_frontier_v1_stop_2026-07-13.md"),
+    Path("docs/research/ijds_normalized_objective_frontier_v1b_protocol_2026-07-13.md"),
     Path("docs/research/ijds_decision_method_applicability_2026-07-12.md"),
     Path("scripts/experiments/run_ijds_normalized_objective_frontier.py"),
     Path("src/evaluation/standardized_credit_payoff.py"),
@@ -101,6 +103,7 @@ def _summary(
 ) -> dict[str, Any]:
     records = build.solve_records
     endpoints = build.endpoint_diagnostics
+    optimum = build.objective_optimum_diagnostics
     order = build.order_sensitivity
     validation = build.independent_validation
     degeneracy_tolerance = float(config["solver"]["endpoint_pair_degeneracy_tolerance"])
@@ -128,6 +131,7 @@ def _summary(
         "run_tag": str(config["run_tag"]),
         "protocol_tag": str(config["protocol_tag"]),
         "protocol_commit": protocol_commit,
+        "lineage": dict(config["lineage"]),
         "parent_run_tag": str(config["parent"]["run_tag"]),
         "parent_protocol_freeze_sha256": str(config["parent"]["protocol_freeze"]["sha256"]),
         "parent_status": parent_freeze.get("status"),
@@ -135,6 +139,7 @@ def _summary(
             "solve_records": int(len(records)),
             "funded_rows": int(len(build.allocations)),
             "endpoint_comparisons": int(len(endpoints)),
+            "objective_optimum_diagnostics": int(len(optimum)),
             "order_reruns": int(len(order)),
             "independent_solver_cells": int(len(validation)),
             "windows": int(records["window_id"].nunique()),
@@ -153,8 +158,23 @@ def _summary(
             "maximum_common_objective_range_dollars": float(
                 (records["unconstrained_objective"] - records["common_objective_lower"]).max()
             ),
-            "maximum_objective_optimum_tie_score_range": float(
-                records["objective_optimum_tie_score_range"].abs().max()
+        },
+        "objective_optimum_stability": {
+            "minimum_absolute_nonbasic_reduced_cost": float(
+                optimum["minimum_absolute_nonbasic_reduced_cost"].min()
+            ),
+            "minimum_scaled_nonbasic_reduced_cost": float(
+                optimum["minimum_scaled_nonbasic_reduced_cost"].min()
+            ),
+            "near_zero_nonbasic_reduced_costs": int(
+                optimum["near_zero_nonbasic_reduced_costs"].sum()
+            ),
+            "primal_degenerate_menus": int(optimum["basis_primal_degenerate"].sum()),
+            "maximum_reversed_id_exposure_distance": float(
+                optimum["reversed_id_exposure_distance"].max()
+            ),
+            "maximum_reversed_id_objective_difference_dollars": float(
+                optimum["reversed_id_objective_difference"].abs().max()
             ),
         },
         "numerical_reconciliation": {
@@ -187,7 +207,7 @@ def run_outcome_free(
     config_path: Path,
     repo_root: Path = ROOT,
 ) -> Path:
-    """Verify sources, solve the complete census, and atomically freeze V1."""
+    """Verify sources, solve the complete census, and atomically freeze V1b."""
     started = time.perf_counter()
     started_at = utc_now_iso()
     root = repo_root.resolve()
@@ -232,6 +252,10 @@ def run_outcome_free(
             build.endpoint_diagnostics,
             frontier_dir / str(output["endpoint_diagnostics"]),
         ),
+        "objective_optimum_diagnostics": atomic_write_parquet(
+            build.objective_optimum_diagnostics,
+            frontier_dir / str(output["objective_optimum_diagnostics"]),
+        ),
         "order_sensitivity": atomic_write_parquet(
             build.order_sensitivity,
             frontier_dir / str(output["order_sensitivity"]),
@@ -274,6 +298,7 @@ def run_outcome_free(
         "run_tag": str(config["run_tag"]),
         "protocol_tag": str(config["protocol_tag"]),
         "protocol_commit": protocol_commit,
+        "lineage": dict(config["lineage"]),
         "parent": {
             "run_tag": str(config["parent"]["run_tag"]),
             "protocol_freeze": dict(config["parent"]["protocol_freeze"]),
@@ -289,6 +314,7 @@ def run_outcome_free(
             "solve_records": dataframe_schema(build.solve_records),
             "allocations": dataframe_schema(build.allocations),
             "endpoint_diagnostics": dataframe_schema(build.endpoint_diagnostics),
+            "objective_optimum_diagnostics": dataframe_schema(build.objective_optimum_diagnostics),
             "order_sensitivity": dataframe_schema(build.order_sensitivity),
             "independent_validation": dataframe_schema(build.independent_validation),
         },

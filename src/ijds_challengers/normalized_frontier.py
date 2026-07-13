@@ -11,6 +11,7 @@ import pandas as pd
 from loguru import logger
 
 from src.evaluation.standardized_credit_payoff import expected_objective_coefficients
+from src.ijds_audit.policy_support import point_basis_diagnostics
 from src.ijds_audit.portfolio import PointPortfolioSession, PointPortfolioSolution
 from src.ijds_challengers.archive import monthly_frames
 from src.ijds_challengers.frontier import (
@@ -34,6 +35,7 @@ class FrontierBuild:
     solve_records: pd.DataFrame
     allocations: pd.DataFrame
     endpoint_diagnostics: pd.DataFrame
+    objective_optimum_diagnostics: pd.DataFrame
     order_sensitivity: pd.DataFrame
     independent_validation: pd.DataFrame
 
@@ -45,9 +47,6 @@ class _GammaState:
     score_at_objective: float
     score_range: float
     minimum_objective: float
-    objective_tie_score_min: float
-    objective_tie_score_max: float
-    objective_tie_score_range: float
     normalized_session: PointPortfolioSession
     objective_session: ObjectiveFloorPortfolioSession
 
@@ -61,6 +60,12 @@ class _RulerSolution:
     objective_target: float | None
 
 
+@dataclass(frozen=True)
+class _ObjectiveOptimum:
+    solution: ScoreFrontierSolution
+    diagnostics: dict[str, Any]
+
+
 def build_outcome_free_frontiers(
     base: pd.DataFrame,
     recipes: Mapping[str, Mapping[str, Mapping[int, BinaryOutcomeConformalRecipe]]],
@@ -68,7 +73,7 @@ def build_outcome_free_frontiers(
     config: Mapping[str, Any],
     parent_config: Mapping[str, Any],
 ) -> FrontierBuild:
-    """Solve every locked V1 cell without accepting an outcome dataframe."""
+    """Solve every locked V1b cell without accepting an outcome dataframe."""
     _assert_outcome_free(base, config=config)
     frontier = config["frontier"]
     solver_config = config["solver"]
@@ -81,10 +86,9 @@ def build_outcome_free_frontiers(
     time_limit = int(solver_config["time_limit_seconds"])
     allocation_tolerance = float(solver_config["allocation_tolerance"])
     budget_tolerance = float(solver_config["budget_residual_tolerance_dollars"])
-    tie_floor_tolerance = float(frontier["objective_optimum"]["floor_tolerance_dollars"])
-    tie_range_tolerance = float(frontier["objective_optimum"]["score_tie_range_tolerance"])
     normalized_config = frontier["normalized_score"]
     objective_config = frontier["objective_matched"]
+    optimum_config = frontier["objective_optimum"]
     validation_periods = {
         str(value) for value in solver_config["independent_validation"]["periods"]
     }
@@ -92,9 +96,10 @@ def build_outcome_free_frontiers(
     records: list[dict[str, Any]] = []
     allocation_frames: list[pd.DataFrame] = []
     endpoint_rows: list[dict[str, Any]] = []
+    optimum_rows: list[dict[str, Any]] = []
     order_rows: list[dict[str, Any]] = []
     validation_rows: list[dict[str, Any]] = []
-    objective_cache: dict[tuple[str, str], ScoreFrontierSolution] = {}
+    objective_cache: dict[tuple[str, str], _ObjectiveOptimum] = {}
     windows = recipes["catboost_platt"]
 
     for window_index, (window_id, group_recipes) in enumerate(sorted(windows.items()), start=1):
@@ -122,9 +127,9 @@ def build_outcome_free_frontiers(
                 rates = month["contractual_rate"].to_numpy(dtype=float)
                 objective = expected_objective_coefficients(point, rates, lgd=lgd)
                 cache_key = (str(role), period)
-                unconstrained = objective_cache.get(cache_key)
-                if unconstrained is None:
-                    point_objective_solution = PointPortfolioSession(
+                optimum = objective_cache.get(cache_key)
+                if optimum is None:
+                    optimum = _solve_objective_optimum(
                         month,
                         point_score=point,
                         objective_rate=objective,
@@ -132,9 +137,14 @@ def build_outcome_free_frontiers(
                         purpose_cap=purpose_cap,
                         time_limit=time_limit,
                         threads=threads,
-                    ).solve(1.0)
-                    unconstrained = _from_point_solution(point_objective_solution)
-                    objective_cache[cache_key] = unconstrained
+                        role=str(role),
+                        period=period,
+                        optimum_config=optimum_config,
+                        solver_config=solver_config,
+                    )
+                    objective_cache[cache_key] = optimum
+                    optimum_rows.append(optimum.diagnostics)
+                unconstrained = optimum.solution
                 gamma_states = _build_gamma_states(
                     month,
                     point=point,
@@ -149,8 +159,6 @@ def build_outcome_free_frontiers(
                     purpose_cap=purpose_cap,
                     time_limit=time_limit,
                     threads=threads,
-                    tie_floor_tolerance=tie_floor_tolerance,
-                    tie_range_tolerance=tie_range_tolerance,
                     normalized_config=normalized_config,
                 )
                 common_lower, _ = common_objective_target(
@@ -276,6 +284,7 @@ def build_outcome_free_frontiers(
         solve_records=pd.DataFrame(records),
         allocations=pd.concat(allocation_frames, ignore_index=True),
         endpoint_diagnostics=pd.DataFrame(endpoint_rows),
+        objective_optimum_diagnostics=pd.DataFrame(optimum_rows),
         order_sensitivity=pd.DataFrame(order_rows),
         independent_validation=pd.DataFrame(validation_rows),
     )
@@ -283,6 +292,98 @@ def build_outcome_free_frontiers(
         result, config=config, budget=budget, budget_tolerance=budget_tolerance
     )
     return result
+
+
+def _solve_objective_optimum(
+    month: pd.DataFrame,
+    *,
+    point_score: np.ndarray,
+    objective_rate: np.ndarray,
+    budget: float,
+    purpose_cap: float,
+    time_limit: int,
+    threads: int,
+    role: str,
+    period: str,
+    optimum_config: Mapping[str, Any],
+    solver_config: Mapping[str, Any],
+) -> _ObjectiveOptimum:
+    session = PointPortfolioSession(
+        month,
+        point_score=point_score,
+        objective_rate=objective_rate,
+        budget=budget,
+        purpose_cap=purpose_cap,
+        time_limit=time_limit,
+        threads=threads,
+    )
+    raw_solution = session.solve(1.0)
+    solution = _from_point_solution(raw_solution)
+    basis = point_basis_diagnostics(
+        session,
+        raw_solution,
+        dual_tolerance=float(optimum_config["dual_tolerance"]),
+        primal_tolerance=float(optimum_config["primal_tolerance"]),
+    )
+    minimum_reduced_cost = float(basis["minimum_absolute_nonbasic_reduced_cost"])
+    near_zero = int(basis["near_zero_nonbasic_reduced_costs"])
+    if near_zero > 0 or minimum_reduced_cost <= float(optimum_config["dual_tolerance"]):
+        raise RuntimeError(
+            f"Objective optimum has a near-zero nonbasic reduced cost for "
+            f"{role} {period}: minimum={minimum_reduced_cost:.12g}, count={near_zero}."
+        )
+
+    reverse = month.iloc[::-1].reset_index(drop=True)
+    reversed_solution = PointPortfolioSession(
+        reverse,
+        point_score=point_score[::-1],
+        objective_rate=objective_rate[::-1],
+        budget=budget,
+        purpose_cap=purpose_cap,
+        time_limit=time_limit,
+        threads=threads,
+    ).solve(1.0)
+    reverse_exposure = pd.Series(
+        reversed_solution.exposure,
+        index=reverse["id"].astype("string"),
+    )
+    aligned = month["id"].astype("string").map(reverse_exposure).to_numpy(dtype=float)
+    exposure_distance = normalized_exposure_distance(
+        solution.exposure,
+        aligned,
+        budget=budget,
+    )
+    objective_difference = float(reversed_solution.objective_value - solution.objective_value)
+    if exposure_distance > float(solver_config["order_exposure_distance_tolerance"]):
+        raise RuntimeError(f"ID reversal changed the objective optimum for {role} {period}.")
+    if abs(objective_difference) > float(solver_config["order_objective_tolerance_dollars"]):
+        raise RuntimeError(f"ID reversal changed the objective value for {role} {period}.")
+
+    return _ObjectiveOptimum(
+        solution=solution,
+        diagnostics={
+            "role": role,
+            "period": period,
+            "n_candidates": int(len(month)),
+            "objective_value": float(solution.objective_value),
+            "weighted_point_score": float(solution.weighted_score),
+            "minimum_absolute_nonbasic_reduced_cost": minimum_reduced_cost,
+            "minimum_scaled_nonbasic_reduced_cost": float(
+                basis["minimum_scaled_nonbasic_reduced_cost"]
+            ),
+            "near_zero_nonbasic_reduced_costs": near_zero,
+            "primal_degenerate_basic_columns": int(basis["primal_degenerate_basic_columns"]),
+            "primal_degenerate_basic_rows": int(basis["primal_degenerate_basic_rows"]),
+            "basis_primal_degenerate": bool(basis["basis_primal_degenerate"]),
+            "maximum_dual_sign_violation": float(basis["maximum_dual_sign_violation"]),
+            "objective_reconciliation_error": float(basis["objective_reconciliation_error"]),
+            "reversed_id_exposure_distance": exposure_distance,
+            "reversed_id_objective_difference": objective_difference,
+            "reversed_id_weighted_point_score_difference": float(
+                reversed_solution.weighted_point_score - solution.weighted_score
+            ),
+        },
+    )
 
 
 def _build_gamma_states(
@@ -300,8 +401,6 @@ def _build_gamma_states(
     purpose_cap: float,
     time_limit: int,
     threads: int,
-    tie_floor_tolerance: float,
-    tie_range_tolerance: float,
     normalized_config: Mapping[str, Any],
 ) -> dict[float, _GammaState]:
     states: dict[float, _GammaState] = {}
@@ -349,33 +448,12 @@ def _build_gamma_states(
             time_limit=time_limit,
             threads=threads,
         )
-        tie_floor = unconstrained.objective_value - tie_floor_tolerance
-        tie_minimum = objective_session.solve(tie_floor)
-        tie_maximum = ObjectiveFloorPortfolioSession(
-            month,
-            score=score,
-            objective_rate=objective,
-            budget=budget,
-            purpose_cap=purpose_cap,
-            sense="maximize",
-            time_limit=time_limit,
-            threads=threads,
-        ).solve(tie_floor)
-        tie_range = float(tie_maximum.weighted_score - tie_minimum.weighted_score)
-        if tie_range < -tie_range_tolerance or tie_range > tie_range_tolerance:
-            raise RuntimeError(
-                f"Objective-optimum score tie range failed for {window_id} {role} "
-                f"{period} gamma={gamma}: {tie_range:.12g}."
-            )
         states[gamma] = _GammaState(
             score=score,
             minimum_score=minimum_score,
             score_at_objective=score_at_objective,
             score_range=score_range,
             minimum_objective=float(efficient_minimum.objective_value),
-            objective_tie_score_min=float(tie_minimum.weighted_score),
-            objective_tie_score_max=float(tie_maximum.weighted_score),
-            objective_tie_score_range=tie_range,
             normalized_session=normalized_session,
             objective_session=objective_session,
         )
@@ -537,9 +615,6 @@ def _append_solution(
                 (solution.objective_value - common_objective_lower)
                 / (unconstrained_objective - common_objective_lower)
             ),
-            "objective_optimum_tie_score_min": state.objective_tie_score_min,
-            "objective_optimum_tie_score_max": state.objective_tie_score_max,
-            "objective_optimum_tie_score_range": state.objective_tie_score_range,
             "constraint_slack": constraint_slack,
             "highs_simplex_iterations": int(solution.simplex_iterations),
         }
@@ -673,6 +748,14 @@ def _validate_complete_build(
         )
     if len(result.endpoint_diagnostics) != 8 * 15 * 3 * 2:
         raise RuntimeError("Primary endpoint diagnostic census is incomplete.")
+    optimum = result.objective_optimum_diagnostics
+    if len(optimum) != 11 + 15:
+        raise RuntimeError("Objective-optimum diagnostic census is incomplete.")
+    optimum_config = config["frontier"]["objective_optimum"]
+    if int(optimum["near_zero_nonbasic_reduced_costs"].sum()) != 0 or float(
+        optimum["minimum_absolute_nonbasic_reduced_cost"].min()
+    ) <= float(optimum_config["dual_tolerance"]):
+        raise RuntimeError("An objective optimum has an unresolved nonbasic reduced cost.")
     if len(result.order_sensitivity) != 8 * 15 * 2 * 3 * 2:
         raise RuntimeError("Primary endpoint ID-order audit census is incomplete.")
     expected_validation = 8 * 3 * 2 * 3 * 2
@@ -683,6 +766,14 @@ def _validate_complete_build(
         raise RuntimeError(f"Frontier budget residual reached {maximum_budget:.3e} dollars.")
     order = result.order_sensitivity
     order_config = config["solver"]
+    if float(optimum["reversed_id_exposure_distance"].max()) > float(
+        order_config["order_exposure_distance_tolerance"]
+    ):
+        raise RuntimeError("ID reversal changed a score-independent objective optimum.")
+    if float(optimum["reversed_id_objective_difference"].abs().max()) > float(
+        order_config["order_objective_tolerance_dollars"]
+    ):
+        raise RuntimeError("ID reversal changed a score-independent optimum objective.")
     if float(order["normalized_exposure_distance"].max()) > float(
         order_config["order_exposure_distance_tolerance"]
     ):

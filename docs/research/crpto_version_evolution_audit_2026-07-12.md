@@ -864,3 +864,31 @@ Contratos completos:
 - `docs/research/ijds_decision_method_applicability_2026-07-12.md`;
 - `docs/research/ijds_normalized_objective_frontier_protocol_2026-07-12.md`;
 - `configs/experiments/ijds_normalized_objective_frontier_2026-07-12_v1.yaml`.
+
+## 19. Stop V1 y correccion outcome-free V1b
+
+V1 se ejecuto desde el tag bloqueado y se detuvo despues de 3,514.5 segundos,
+antes de outcomes y sin crear directorios de salida. La celda W8, abril de 2017,
+`gamma=.25` produjo un span de score `3.49719776749e-08` al permitir un deterioro
+de objetivo de USD `1e-7`, por encima del stop `1e-8`.
+
+La auditoria posterior, todavia outcome-free, mostro que no era una cara optima
+alternativa. El minimo reduced cost no basico fue `0.004653`, no hubo reduced
+costs cercanos a cero ni degeneracion primal, y el orden inverso reprodujo la
+asignacion. El proxy V1 confundia el score que podia comprarse con una pequena
+holgura de objetivo y un empate exacto. El tag V1 no se modifico ni su umbral se
+relajo.
+
+V1b reemplaza ese proxy por reduced costs de la base optima y orden inverso una
+vez por menu. El smoke de los 26 menus dio cero near-zero reduced costs, cero
+bases primalmente degeneradas, distancia maxima `9.09e-19` y drift de objetivo
+`1.16e-10` dolares. Como el optimo plug-in no depende de gamma ni ventana, la
+correccion tambien elimina miles de LP redundantes sin cambiar los 6,240 solves
+de las dos reglas. V1b requiere commit, tag y run tag nuevos; todavia no modifica
+claims ni autoriza outcomes o freeze de submission.
+
+Trazabilidad:
+
+- `docs/research/ijds_normalized_objective_frontier_v1_stop_2026-07-13.md`;
+- `docs/research/ijds_normalized_objective_frontier_v1b_protocol_2026-07-13.md`;
+- `configs/experiments/ijds_normalized_objective_frontier_2026-07-13_v1b.yaml`.

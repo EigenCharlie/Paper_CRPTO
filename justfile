@@ -108,11 +108,11 @@ ijds-policy-support-tie-evidence:
     uv run python scripts/build_ijds_policy_support_tie_evidence.py
     uv run pytest -q tests/test_ijds_policy_support_tie_evidence.py
 
-# Locked two-ruler challenger; V1 is outcome-free and cannot evaluate outcomes.
-ijds-normalized-objective-frontier-freeze:
+# Locked two-ruler challenger; V1b is outcome-free and cannot evaluate outcomes.
+ijds-normalized-objective-frontier-v1b-freeze:
     uv run python scripts/experiments/run_ijds_normalized_objective_frontier.py
 
-ijds-normalized-objective-frontier-check:
+ijds-normalized-objective-frontier-v1b-check:
     uv run pytest -q tests/test_ijds_normalized_objective_frontier.py
 
 ijds-historical-v1-v3-evidence:

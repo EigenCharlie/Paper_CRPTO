@@ -1,0 +1,110 @@
+schema_version: "2026-07-13.1"
+protocol_status: "locked_outcome_free_frontier_before_execution"
+protocol_tag: "protocol/ijds-normalized-objective-frontier-2026-07-13-v1b"
+run_tag: "ijds-normalized-objective-frontier-2026-07-13-v1b"
+
+hypothesis: >-
+  Fixed numeric caps confound score scale with decision stringency. A complete
+  gamma path evaluated under both an affine-invariant normalized-score ruler
+  and a common plug-in-objective ruler can determine whether portfolio
+  directions survive the comparator coordinate or remain unidentified.
+
+lineage:
+  failed_protocol_tag: "protocol/ijds-normalized-objective-frontier-2026-07-12-v1"
+  failed_protocol_commit: "64d1131"
+  failed_cell: "w08_2012m08_2013m01|primary_oot|2017-04|gamma=.25"
+  failed_score_span: 3.49719776749e-08
+  correction: "replace_slack_floor_score_span_with_basis_reduced_cost_and_id_reversal"
+
+parent:
+  config: "configs/experiments/ijds_binary_geometry_frontier_v4_2026-07-12.yaml"
+  protocol: "docs/research/ijds_binary_geometry_frontier_v4_protocol_2026-07-12.md"
+  run_tag: "ijds-binary-geometry-frontier-v4-2026-07-12-v1"
+  protocol_tag: "protocol/ijds-binary-geometry-frontier-v4-2026-07-12-v1"
+  protocol_commit: "2f8a7606e4eb65aa3ae3701fb3af8d9a51c953cd"
+  protocol_freeze:
+    path: "models/experiments/ijds_audit/ijds-binary-geometry-frontier-v4-2026-07-12-v1/protocol_freeze.json"
+    bytes: 20362
+    sha256: "c2b3dc2d18c9fed80708682d5a0369c80c89643e2d28024418522d954ebe667c"
+
+source_ingest:
+  raw_path: "data/raw/Loan_status_2007-2020Q3.csv"
+  raw_sha256: "5878af2a088f8ab5214c9337289fb8b5eb6c6338fd3f417b6cdc18513dc6f35f"
+  allowed_raw_columns: ["id", "loan_amnt", "int_rate", "purpose"]
+  forbidden_tokens: ["status", "outcome", "default", "pymnt", "realized", "miscoverage"]
+  chunksize: 100000
+
+frontier:
+  roles: ["policy_development", "primary_oot"]
+  expected_development_months: 11
+  expected_primary_months: 15
+  expected_windows: 8
+  gamma_grid: [0.0, 0.25, 0.50, 0.75, 1.0]
+  endpoint_contrast: [1.0, 0.0]
+  rulers:
+    primary: "objective_matched"
+    secondary: "normalized_score"
+  coordinate_grid: [0.25, 0.50, 0.75]
+  normalized_score:
+    definition: "score_min_plus_coordinate_times_score_at_objective_minus_score_min"
+    minimum_score_range: 1.0e-4
+    cap_residual_tolerance: 1.0e-8
+  objective_matched:
+    definition: "score_minimizer_subject_to_common_absolute_plugin_objective_floor"
+    common_lower_endpoint: "maximum_minimum_score_portfolio_objective_over_gamma"
+    minimum_objective_range_dollars: 1.0e-4
+    floor_residual_tolerance_dollars: 1.0e-5
+  objective_optimum:
+    diagnostic: "nonbasic_reduced_costs_plus_reversed_id_order"
+    dual_tolerance: 1.0e-7
+    primal_tolerance: 1.0e-8
+
+solver:
+  primary: "highspy_exact_budget_simplex"
+  threads: 1
+  time_limit_seconds: 300
+  allocation_tolerance: 1.0e-8
+  budget_residual_tolerance_dollars: 1.0e-6
+  order_rule: "ascending_id_vs_descending_id"
+  order_audit_scope: "objective_optimum_once_per_menu_and_primary_oot_gamma_endpoints"
+  order_exposure_distance_tolerance: 1.0e-10
+  order_objective_tolerance_dollars: 1.0e-5
+  endpoint_pair_degeneracy_tolerance: 1.0e-6
+  independent_validation:
+    solver: "ortools_glop"
+    periods: ["2016-04", "2016-11", "2017-06"]
+    scope: "gamma_endpoints_all_windows_rulers_and_coordinates"
+    objective_rate_tolerance: 1.0e-7
+    weighted_score_tolerance: 1.0e-7
+
+claim_boundary:
+  outcome_columns_passed: []
+  no_policy_selection: true
+  no_policy_winner: true
+  no_conformal_guarantee_repair: true
+  no_equal_true_risk_claim: true
+  no_equal_shadow_price_claim: true
+  no_causal_claim: true
+  no_submission_freeze: true
+
+stop_rules:
+  stop_on_incomplete_cell: true
+  stop_on_score_range_failure: true
+  stop_on_objective_range_failure: true
+  stop_on_objective_optimum_tie: true
+  stop_on_order_sensitivity: true
+  stop_on_independent_solver_mismatch: true
+  stop_before_outcomes_if_endpoint_allocations_all_identical: true
+
+output:
+  data_root: "data/processed/experiments/ijds_audit"
+  model_root: "models/experiments/ijds_audit"
+  immutability: "hard_no_overwrite_choose_fresh_run_tag"
+  solve_records: "frontier_solve_records.parquet"
+  allocations: "frontier_funded_allocations.parquet"
+  endpoint_diagnostics: "frontier_endpoint_diagnostics.parquet"
+  objective_optimum_diagnostics: "objective_optimum_diagnostics.parquet"
+  order_sensitivity: "frontier_order_sensitivity.parquet"
+  independent_validation: "frontier_independent_solver_validation.parquet"
+  deterministic_summary: "normalized_objective_frontier_summary.json"
+  execution_receipt: "execution_receipt.json"

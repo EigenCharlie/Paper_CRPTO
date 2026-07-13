@@ -36,6 +36,13 @@ def _validate_frontier(frontier: Any) -> None:
         15,
     ) or int(frontier["expected_windows"]) != 8:
         raise ValueError("The locked window or month census changed.")
+    objective_optimum = frontier["objective_optimum"]
+    if objective_optimum.get("diagnostic") != "nonbasic_reduced_costs_plus_reversed_id_order":
+        raise ValueError("The objective-optimum uniqueness diagnostic changed.")
+    if any(
+        float(objective_optimum[name]) <= 0.0 for name in ("dual_tolerance", "primal_tolerance")
+    ):
+        raise ValueError("Objective-optimum basis tolerances must be positive.")
 
 
 def _validate_source(source: Any) -> None:
@@ -78,7 +85,7 @@ def _validate_solver(solver: Any) -> None:
 
 
 def load_frontier_config(path: Path) -> dict[str, Any]:
-    """Load and validate the locked outcome-free V1 challenger config."""
+    """Load and validate the locked outcome-free V1b challenger config."""
     payload = yaml.safe_load(path.read_text(encoding="utf-8"))
     if not isinstance(payload, dict):
         raise TypeError("Frontier config must be a YAML mapping.")
@@ -86,6 +93,7 @@ def load_frontier_config(path: Path) -> dict[str, Any]:
         "protocol_status",
         "protocol_tag",
         "run_tag",
+        "lineage",
         "parent",
         "source_ingest",
         "frontier",
@@ -99,6 +107,13 @@ def load_frontier_config(path: Path) -> dict[str, Any]:
         raise ValueError(f"Frontier config is missing sections: {missing}.")
     if payload["protocol_status"] != "locked_outcome_free_frontier_before_execution":
         raise ValueError("Frontier protocol is not locked for outcome-free execution.")
+    lineage = payload["lineage"]
+    if lineage.get("failed_protocol_tag") != (
+        "protocol/ijds-normalized-objective-frontier-2026-07-12-v1"
+    ) or lineage.get("correction") != (
+        "replace_slack_floor_score_span_with_basis_reduced_cost_and_id_reversal"
+    ):
+        raise ValueError("The V1 stop-to-V1b correction lineage changed.")
     _validate_frontier(payload["frontier"])
     _validate_source(payload["source_ingest"])
     _validate_solver(payload["solver"])
