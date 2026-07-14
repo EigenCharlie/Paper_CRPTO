@@ -375,6 +375,7 @@ def create_credit_history_features(df: pd.DataFrame) -> pd.DataFrame:
         else None
     )
     if recency_source is not None:
+        out["delinq_recency_observed"] = out[recency_source].notna().astype(int)
         out["delinq_recency"] = pd.to_numeric(out[recency_source], errors="coerce").fillna(999.0)
 
     delinquency_components = [
@@ -406,6 +407,7 @@ def create_flags(df: pd.DataFrame) -> pd.DataFrame:
     if "pub_rec" in out.columns:
         out["has_pub_rec"] = (out["pub_rec"] > 0).astype(int)
     if "pub_rec_bankruptcies" in out.columns:
+        out["bankruptcy_observed"] = out["pub_rec_bankruptcies"].notna().astype(int)
         out["has_bankruptcy"] = (out["pub_rec_bankruptcies"] > 0).astype(int)
     elif "pub_rec" in out.columns:
         out["has_bankruptcy"] = 0

@@ -6,8 +6,10 @@ import numpy as np
 import pandas as pd
 import pytest
 
+from src.evaluation.coverage_transport import binary_miscoverage_bounds
 from src.evaluation.standardized_credit_payoff import expected_objective_coefficients
 from src.ijds_audit.config import load_v4_config
+from src.ijds_audit.evaluation import build_archive_outcomes
 from src.ijds_audit.geometry import (
     BOTH,
     EMPTY,
@@ -45,6 +47,14 @@ def test_v4_config_is_closed_and_complete() -> None:
     assert recovery["run_tag"].endswith("-v2")
     assert recovery["resume_outcome_free"]["source_run_tag"].endswith("-v1")
 
+    endpoint_recovery = load_v4_config(
+        ROOT / "configs/experiments/ijds_binary_geometry_frontier_v4_2026-07-14_v3.yaml"
+    )
+    contract = endpoint_recovery["target"]["evaluation_outcome_contract"]
+    assert endpoint_recovery["run_tag"].endswith("-v3")
+    assert contract["mode"] == "conservative_terminal_status_reconstruction"
+    assert contract["archive_is_verified_point_in_time_snapshot"] is False
+
 
 def test_binary_set_codes_and_summary() -> None:
     lower = np.array([0.1, 0.0, 0.2, 0.0])
@@ -57,6 +67,34 @@ def test_binary_set_codes_and_summary() -> None:
     assert summary["set_empty_count"] == 1
     assert summary["set_both_count"] == 1
     assert summary["width_q50"] == pytest.approx(0.8)
+
+
+def test_binary_coverage_bounds_respect_empty_singleton_and_both_sets() -> None:
+    outcomes = np.full(4, np.nan)
+    lower = np.array([0.1, 0.0, 0.2, 0.0])
+    upper = np.array([0.9, 0.8, 1.0, 1.0])
+    miss_low, miss_high = binary_miscoverage_bounds(outcomes, lower, upper)
+    assert 1.0 - miss_high.mean() == pytest.approx(0.25)
+    assert 1.0 - miss_low.mean() == pytest.approx(0.75)
+
+
+def test_reconstructed_endpoint_censors_terminal_status_after_cutoff() -> None:
+    universe = pd.DataFrame(
+        {
+            "id": pd.Series(["a", "b", "c"], dtype="string"),
+            "terminal_default": pd.Series([0, 1, pd.NA], dtype="Int8"),
+            "label_available_at": pd.to_datetime(["2020-09-01", "2020-10-01", None]),
+            "design_split": ["primary_oot"] * 3,
+            "issue_d": pd.to_datetime(["2016-04-01"] * 3),
+        }
+    )
+    outcomes = build_archive_outcomes(universe, evaluation_cutoff="2020-09-30")
+    assert outcomes["snapshot_default"].tolist() == [0, pd.NA, pd.NA]
+    assert outcomes["snapshot_resolution"].tolist() == [
+        "fully_paid",
+        "terminal_after_reconstructed_cutoff",
+        "right_censored",
+    ]
 
 
 def test_constant_score_phase_transition() -> None:

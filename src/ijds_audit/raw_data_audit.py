@@ -167,11 +167,17 @@ def _header(connection: duckdb.DuckDBPyConnection, raw_path: Path) -> list[str]:
 
 
 def _archive_inventory(
-    connection: duckdb.DuckDBPyConnection, raw_path: Path
+    connection: duckdb.DuckDBPyConnection,
+    raw_path: Path,
+    *,
+    servicing_cutoff: str,
 ) -> tuple[pd.DataFrame, pd.DataFrame]:
+    cutoff = pd.Timestamp(servicing_cutoff).date().isoformat()
     parsed = f"""
         SELECT *,
                try_strptime(issue_d, '%b-%Y') AS issue_date,
+               try_strptime(last_pymnt_d, '%b-%Y') AS last_payment_date,
+               try_strptime(last_credit_pull_d, '%b-%Y') AS last_credit_pull_date,
                try_cast(regexp_extract(term, '([0-9]+)', 1) AS INTEGER) AS term_months
         FROM {_raw_relation(raw_path)}
     """
@@ -185,6 +191,12 @@ def _archive_inventory(
                sum(CASE WHEN issue_date IS NULL THEN 1 ELSE 0 END) AS invalid_issue_date_rows,
                min(issue_date) AS first_issue_date,
                max(issue_date) AS last_issue_date,
+               max(last_payment_date) AS last_payment_date_max,
+               max(last_credit_pull_date) AS last_credit_pull_date_max,
+               sum(CASE WHEN last_payment_date > DATE '{cutoff}' THEN 1 ELSE 0 END)
+                   AS last_payment_rows_after_cutoff,
+               sum(CASE WHEN last_credit_pull_date > DATE '{cutoff}' THEN 1 ELSE 0 END)
+                   AS last_credit_pull_rows_after_cutoff,
                sum(CASE WHEN term_months = 36 THEN 1 ELSE 0 END) AS term36_rows,
                sum(CASE WHEN term_months = 60 THEN 1 ELSE 0 END) AS term60_rows,
                sum(CASE WHEN term_months NOT IN (36, 60) OR term_months IS NULL THEN 1 ELSE 0 END)
@@ -192,7 +204,12 @@ def _archive_inventory(
         FROM parsed
         """
     ).fetchdf()
-    for column in ("first_issue_date", "last_issue_date"):
+    for column in (
+        "first_issue_date",
+        "last_issue_date",
+        "last_payment_date_max",
+        "last_credit_pull_date_max",
+    ):
         inventory[column] = inventory[column].map(
             lambda value: _date(value) if pd.notna(value) else None
         )
@@ -355,8 +372,15 @@ def _feature_contract(
     *,
     columns: Sequence[str],
     active_required: Sequence[str],
+    rules: Mapping[str, Any],
 ) -> pd.DataFrame:
     fitting = {"pd_development", "probability_calibration", "conformal_fit"}
+    minimum_required = float(rules["minimum_fitting_feature_coverage"])
+    late_fitting = float(rules["late_feature_fitting_coverage"])
+    late_primary = float(rules["late_feature_primary_coverage"])
+    exceptions = rules.get("active_feature_coverage_exceptions", {})
+    if not isinstance(exceptions, Mapping):
+        raise TypeError("active_feature_coverage_exceptions must be a mapping.")
     pivot = coverage.pivot(index="feature", columns="cohort", values="coverage")
     rows: list[dict[str, Any]] = []
     for column in columns:
@@ -365,10 +389,17 @@ def _feature_contract(
         fitting_values = [float(values.get(cohort, 0.0)) for cohort in sorted(fitting)]
         minimum_fitting_coverage = min(fitting_values) if fitting_values else 0.0
         primary_coverage = float(values.get("primary_oot", 0.0))
-        eligible = (
-            role in {"active_protocol_input", "candidate_origination"}
-            and minimum_fitting_coverage >= 0.95
+        exception = exceptions.get(column)
+        if exception is not None and not isinstance(exception, Mapping):
+            raise TypeError(f"Coverage exception for {column} must be a mapping.")
+        exception_type = None if exception is None else str(exception["type"])
+        requires_sensitivity = bool(
+            exception is not None and exception.get("requires_sensitivity", False)
         )
+        eligible = role in {"active_protocol_input", "candidate_origination"} and (
+            minimum_fitting_coverage >= minimum_required or exception is not None
+        )
+        late_feature = minimum_fitting_coverage < late_fitting and primary_coverage >= late_primary
         rows.append(
             {
                 "feature": column,
@@ -376,15 +407,23 @@ def _feature_contract(
                 "loaded_by_active_protocol": column in active_required,
                 "minimum_fitting_coverage": minimum_fitting_coverage,
                 "primary_oot_coverage": primary_coverage,
-                "late_feature": minimum_fitting_coverage < 0.50 and primary_coverage >= 0.80,
+                "coverage_threshold": minimum_required,
+                "coverage_exception": exception_type,
+                "missingness_semantics": (
+                    None if exception is None else str(exception["missingness_semantics"])
+                ),
+                "requires_sensitivity": requires_sensitivity,
+                "late_feature": late_feature,
                 "eligible_for_current_temporal_model": eligible,
                 "decision": (
-                    "eligible"
+                    "eligible_with_declared_coverage_exception"
+                    if eligible and exception is not None
+                    else "eligible"
                     if eligible
                     else "exclude_post_outcome"
                     if role == "post_outcome_or_servicing"
                     else "exclude_late_schema"
-                    if minimum_fitting_coverage < 0.50 and primary_coverage >= 0.80
+                    if late_feature
                     else "exclude_by_role_or_coverage"
                 ),
                 "reason": reason,
@@ -393,18 +432,32 @@ def _feature_contract(
     return pd.DataFrame(rows).sort_values(["decision", "feature"]).reset_index(drop=True)
 
 
-def audit_raw_dataset(raw_path: Path, config: Mapping[str, Any]) -> RawDataAudit:
+def audit_raw_dataset(
+    raw_path: Path,
+    config: Mapping[str, Any],
+    *,
+    rules: Mapping[str, Any],
+) -> RawDataAudit:
     """Scan the complete CSV once per audit family and return compact evidence."""
     connection = duckdb.connect()
     connection.execute("PRAGMA threads=8")
     columns = _header(connection, raw_path)
-    archive_inventory, status_inventory = _archive_inventory(connection, raw_path)
+    archive_inventory, status_inventory = _archive_inventory(
+        connection,
+        raw_path,
+        servicing_cutoff=str(config["source"]["snapshot_date"]),
+    )
     cohort_sql = cohort_case_sql(config["design"], config["source"])
     inventory, coverage = _profile_coverage(
         connection, raw_path, columns=columns, cohort_sql=cohort_sql
     )
     active_required = [str(value) for value in config["source"]["required_raw_columns"]]
-    contract = _feature_contract(coverage, columns=columns, active_required=active_required)
+    contract = _feature_contract(
+        coverage,
+        columns=columns,
+        active_required=active_required,
+        rules=rules,
+    )
     amount = _amount_alignment(connection, raw_path, cohort_sql=cohort_sql)
     labels = _cutoff_label_availability(
         connection,

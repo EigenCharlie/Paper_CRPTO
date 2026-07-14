@@ -393,6 +393,16 @@ def load_outcome_universe(config: Mapping[str, Any], *, raw_path: Path) -> pd.Da
     return universe
 
 
+def configured_archive_outcomes(
+    universe: pd.DataFrame,
+    config: Mapping[str, Any],
+) -> pd.DataFrame:
+    """Apply the declared endpoint without exposing outcomes to selection."""
+    contract = config["target"].get("evaluation_outcome_contract")
+    cutoff = None if contract is None else str(contract["cutoff"])
+    return build_archive_outcomes(universe, evaluation_cutoff=cutoff)
+
+
 def expand_frontier_for_window(
     shared: pd.DataFrame,
     scores: pd.DataFrame,
@@ -477,7 +487,7 @@ def evaluate_frozen(
     artifacts = verified_freeze_artifact_paths(freeze, repo_root=root)
     raw_path = resolve_repo_input(config["source"]["raw_path"], repo_root=root)
     universe = load_outcome_universe(config, raw_path=raw_path)
-    outcomes = build_archive_outcomes(universe)
+    outcomes = configured_archive_outcomes(universe, config)
     scores = pd.read_parquet(artifacts["scores"])
     recipes = load_recipes(artifacts["recipes"])
     fit_audit = pd.read_parquet(artifacts["fit_audit"])

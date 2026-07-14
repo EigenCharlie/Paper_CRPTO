@@ -9,6 +9,7 @@ from typing import Any
 import numpy as np
 import pandas as pd
 
+from src.evaluation.coverage_transport import binary_miscoverage_bounds
 from src.evaluation.standardized_credit_payoff import expected_objective_coefficients
 from src.ijds_audit.geometry import summarize_binary_geometry
 from src.ijds_audit.portfolio import (
@@ -88,8 +89,7 @@ def _one_repetition(
     observed_outcome[censored] = np.nan
     _, lower, upper = apply_binary_outcome_recipe(candidate_score, recipe)
     observed = np.isfinite(observed_outcome)
-    covered = (observed_outcome >= lower) & (observed_outcome <= upper)
-    observed_covered = int(covered[observed].sum())
+    miss_low, miss_high = binary_miscoverage_bounds(observed_outcome, lower, upper)
     geometry = summarize_binary_geometry(lower, upper)
 
     frame = pd.DataFrame(
@@ -148,9 +148,9 @@ def _one_repetition(
         "fit_prevalence": float(np.mean(fit_outcome)),
         "candidate_prevalence": float(np.mean(candidate_outcome)),
         "resolved_rows": int(observed.sum()),
-        "coverage_resolved": float(np.mean(covered[observed])),
-        "coverage_lower": float(observed_covered / sample_size),
-        "coverage_upper": float((observed_covered + censored.sum()) / sample_size),
+        "coverage_resolved": float(1.0 - miss_low[observed].mean()),
+        "coverage_lower": float(1.0 - miss_high.mean()),
+        "coverage_upper": float(1.0 - miss_low.mean()),
         "guardrail_weighted_effective_score": guardrail.weighted_point_score,
         "guardrail_weighted_point_score": c2_cap(guardrail.exposure, candidate_score),
         "same_cap_allocation_distance": _allocation_distance(guardrail, same_cap),

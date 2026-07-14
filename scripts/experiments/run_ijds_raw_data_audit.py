@@ -81,7 +81,7 @@ def main(argv: Sequence[str] | None = None) -> None:
     base = load_v4_config(base_path)
     raw_path = resolve_repo_input(base["source"]["raw_path"], repo_root=root)
     output = _output_dir(config, root)
-    audit = audit_raw_dataset(raw_path, base)
+    audit = audit_raw_dataset(raw_path, base, rules=config["rules"])
 
     written = {
         "archive_inventory": write_csv_atomic(
@@ -107,6 +107,8 @@ def main(argv: Sequence[str] | None = None) -> None:
     primary = audit.amount_alignment.loc[audit.amount_alignment["cohort"].eq("primary_oot")].iloc[0]
     late_count = int(audit.feature_contract["late_feature"].sum())
     eligible_count = int(audit.feature_contract["eligible_for_current_temporal_model"].sum())
+    exception_count = int(audit.feature_contract["coverage_exception"].notna().sum())
+    sensitivity_count = int(audit.feature_contract["requires_sensitivity"].sum())
     archive = audit.archive_inventory.iloc[0]
     evidence = {
         "schema_version": str(config["schema_version"]),
@@ -125,6 +127,12 @@ def main(argv: Sequence[str] | None = None) -> None:
             "term36_rows_all_dates": int(archive["term36_rows"]),
             "term60_rows_all_dates": int(archive["term60_rows"]),
             "raw_schema_columns": int(len(audit.feature_contract)),
+            "last_payment_date_max": str(archive["last_payment_date_max"]),
+            "last_credit_pull_date_max": str(archive["last_credit_pull_date_max"]),
+            "last_payment_rows_after_cutoff": int(archive["last_payment_rows_after_cutoff"]),
+            "last_credit_pull_rows_after_cutoff": int(
+                archive["last_credit_pull_rows_after_cutoff"]
+            ),
             "term36_active_design_rows": int(
                 audit.inventory.loc[
                     audit.inventory["cohort"].isin(
@@ -141,6 +149,8 @@ def main(argv: Sequence[str] | None = None) -> None:
                 ].sum()
             ),
             "eligible_raw_features": eligible_count,
+            "declared_coverage_exceptions": exception_count,
+            "coverage_exceptions_requiring_sensitivity": sensitivity_count,
             "late_schema_features": late_count,
             "primary_oot_partial_funding_share": float(primary["partial_share"]),
             "primary_oot_funded_ratio": float(primary["funded_ratio"]),

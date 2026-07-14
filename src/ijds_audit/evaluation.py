@@ -8,6 +8,7 @@ from typing import Any, cast
 import numpy as np
 import pandas as pd
 
+from src.evaluation.coverage_transport import binary_miscoverage_bounds
 from src.evaluation.maturity_safe_portfolio import (
     aggregate_monthly_evaluation,
     evaluate_prejoined_frozen_allocation,
@@ -22,17 +23,42 @@ from src.models.binary_conformal_guardrail import (
 EVALUATION_ROLES = ("conformal_fit", "policy_development", "primary_oot", "censored_extension")
 
 
-def build_archive_outcomes(universe: pd.DataFrame) -> pd.DataFrame:
-    """Materialize the terminal-outcome panel kept outside policy construction."""
+def build_archive_outcomes(
+    universe: pd.DataFrame,
+    *,
+    evaluation_cutoff: str | pd.Timestamp | None = None,
+) -> pd.DataFrame:
+    """Materialize the nullable endpoint panel kept outside policy construction.
+
+    When ``evaluation_cutoff`` is supplied, a terminal status is retained only
+    when its conservative ``label_available_at`` date is no later than that
+    cutoff. This reconstructs an as-of endpoint from the distributed archive;
+    it does not pretend that the archive itself is a point-in-time snapshot.
+    """
     terminal = universe["terminal_default"].astype("Int8")
+    available_at = pd.to_datetime(
+        universe.get("label_available_at", pd.Series(pd.NaT, index=universe.index)),
+        errors="coerce",
+    )
+    observed_by_cutoff = terminal.notna()
+    if evaluation_cutoff is not None:
+        cutoff = pd.Timestamp(evaluation_cutoff)
+        if pd.isna(cutoff):
+            raise ValueError("Evaluation cutoff must be a valid timestamp.")
+        observed_by_cutoff &= available_at.notna() & available_at.le(cutoff)
+        terminal = terminal.where(observed_by_cutoff).astype("Int8")
     resolution = pd.Series("right_censored", index=universe.index, dtype="string")
     resolution.loc[terminal.eq(0).fillna(False)] = "fully_paid"
     resolution.loc[terminal.eq(1).fillna(False)] = "charged_off"
+    if evaluation_cutoff is not None:
+        post_cutoff = universe["terminal_default"].notna() & ~observed_by_cutoff
+        resolution.loc[post_cutoff] = "terminal_after_reconstructed_cutoff"
     return pd.DataFrame(
         {
             "id": universe["id"].astype("string"),
             "snapshot_default": terminal,
             "snapshot_resolution": resolution,
+            "outcome_available_at": available_at,
             "role": universe["design_split"].astype("string"),
             "period": pd.to_datetime(universe["issue_d"]).dt.to_period("M").astype(str),
         }
@@ -322,9 +348,12 @@ def temporal_coverage_audit(
                             joined.loc[mask, "snapshot_default"], errors="coerce"
                         ).to_numpy(dtype=float)
                         observed = np.isfinite(outcome)
-                        covered = (outcome >= lower[mask]) & (outcome <= upper[mask])
+                        miss_low, miss_high = binary_miscoverage_bounds(
+                            outcome,
+                            lower[mask],
+                            upper[mask],
+                        )
                         n = int(mask.sum())
-                        observed_covered = int(covered[observed].sum())
                         geometry = summarize_binary_geometry(lower[mask], upper[mask])
                         fitted_base = fit_lookup.get(
                             (str(learner), str(window_id), int(taxonomy_groups))
@@ -367,9 +396,9 @@ def temporal_coverage_audit(
                                 "candidate_rows": n,
                                 "resolved_rows": int(observed.sum()),
                                 "unresolved_rows": int((~observed).sum()),
-                                "coverage_resolved": float(np.mean(covered[observed])),
-                                "coverage_lower": float(observed_covered / n),
-                                "coverage_upper": float((observed_covered + (~observed).sum()) / n),
+                                "coverage_resolved": float(1.0 - miss_low[observed].mean()),
+                                "coverage_lower": float(1.0 - miss_high.mean()),
+                                "coverage_upper": float(1.0 - miss_low.mean()),
                                 "score_min": float(np.min(probability[mask])),
                                 "score_max": float(np.max(probability[mask])),
                                 "fit_rows": int(len(fitted)),

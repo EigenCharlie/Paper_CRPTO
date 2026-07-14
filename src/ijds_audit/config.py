@@ -112,6 +112,30 @@ def _validate_design_chronology(config: Mapping[str, Any]) -> None:
         raise ValueError("The censored extension must immediately follow primary OOT.")
 
 
+def _validate_evaluation_outcome_contract(config: Mapping[str, Any]) -> None:
+    contract = config["target"].get("evaluation_outcome_contract")
+    if contract is None:
+        return
+    expected_mode = "conservative_terminal_status_reconstruction"
+    if contract.get("mode") != expected_mode:
+        raise ValueError(f"Evaluation outcome mode must be {expected_mode!r}.")
+    cutoff = pd.Timestamp(contract.get("cutoff"))
+    if pd.isna(cutoff):
+        raise ValueError("Evaluation outcome contract requires a valid cutoff.")
+    if cutoff != pd.Timestamp(config["source"]["snapshot_date"]):
+        raise ValueError("Endpoint reconstruction cutoff must match source.snapshot_date.")
+    if contract.get("archive_is_verified_point_in_time_snapshot") is not False:
+        raise ValueError(
+            "The distributed archive cannot be declared a verified point-in-time snapshot."
+        )
+    if contract.get("terminal_status_source") != "distributed_archive_final_status":
+        raise ValueError("Unexpected terminal-status source for endpoint reconstruction.")
+    if int(contract.get("charged_off_reporting_lag_months", -1)) != int(
+        config["source"]["charged_off_reporting_lag_months"]
+    ):
+        raise ValueError("Evaluation and fitting charge-off lags must agree.")
+
+
 def _validate_rolling_origin(config: Mapping[str, Any]) -> None:
     rolling = config.get("rolling_origin")
     if rolling is None:
@@ -213,6 +237,7 @@ def load_v4_config(path: Path) -> dict[str, Any]:
             raise ValueError("Imported freeze SHA-256 must be lowercase hexadecimal.")
     _validate_windows(config)
     _validate_design_chronology(config)
+    _validate_evaluation_outcome_contract(config)
     _validate_rolling_origin(config)
     return config
 

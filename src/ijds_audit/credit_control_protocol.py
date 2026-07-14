@@ -20,7 +20,7 @@ from src.ijds_audit.credit_controls import (
     score_psi_audit,
     scorecard_feature_psi_audit,
 )
-from src.ijds_audit.evaluation import build_archive_outcomes, temporal_coverage_audit
+from src.ijds_audit.evaluation import temporal_coverage_audit
 from src.ijds_audit.prediction import (
     LearnerScores,
     fit_logistic_control,
@@ -30,6 +30,7 @@ from src.ijds_audit.prediction import (
     prepare_data,
 )
 from src.ijds_audit.protocol import (
+    configured_archive_outcomes,
     load_outcome_universe,
     load_recipes,
     outcome_free_geometry,
@@ -477,7 +478,7 @@ def evaluate_credit_controls(*, config_path: Path, repo_root: Path) -> Path:
     )
     raw_path = resolve_repo_input(config["source"]["raw_path"], repo_root=root)
     universe = load_outcome_universe(config, raw_path=raw_path)
-    outcomes = build_archive_outcomes(universe)
+    outcomes = configured_archive_outcomes(universe, config)
     scores = pd.read_parquet(artifacts["scores"])
     recipes = load_recipes(artifacts["recipes"])
     fit_audit = pd.read_parquet(artifacts["fit_audit"])

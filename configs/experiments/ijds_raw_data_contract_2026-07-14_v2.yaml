@@ -1,0 +1,30 @@
+schema_version: "2026-07-14.1"
+status: "retrospective_full_archive_data_contract_audit"
+run_tag: "ijds-raw-data-contract-2026-07-14-v2"
+base_protocol: "configs/experiments/ijds_binary_geometry_frontier_v4_2026-07-14_v3.yaml"
+
+questions:
+  - "Does the distributed archive establish the claimed endpoint date?"
+  - "Which raw columns meet the ordinary temporal coverage threshold?"
+  - "Which active inputs require explicit structural-null or legacy-schema exceptions?"
+  - "Do those exceptions require a model sensitivity before paper-facing use?"
+
+rules:
+  term_months: 36
+  minimum_fitting_feature_coverage: 0.95
+  late_feature_primary_coverage: 0.80
+  late_feature_fitting_coverage: 0.50
+  active_feature_coverage_exceptions:
+    mths_since_last_delinq:
+      type: "structurally_nullable_credit_history_field"
+      missingness_semantics: "frozen feature engineering maps missing recency to 999"
+      requires_sensitivity: true
+    pub_rec_bankruptcies:
+      type: "legacy_schema_partial_coverage"
+      missingness_semantics: "frozen feature engineering maps missing bankruptcy count to no recorded bankruptcy"
+      requires_sensitivity: true
+  no_model_or_policy_selection: true
+  no_protected_stage_execution: true
+
+output:
+  root: "reports/crpto/data_audit"
