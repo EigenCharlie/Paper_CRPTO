@@ -138,9 +138,10 @@ def _template_asset_drift(directory: Path) -> tuple[str, ...]:
     return tuple(drift)
 
 
-def compile_submission(*, prefer_manual: bool = False) -> int:
+def compile_submission(*, prefer_manual: bool = False, render: bool = True) -> int:
     """Compile the official submission with latexmk, falling back to manual passes."""
-    render_submission_tex()
+    if render:
+        render_submission_tex()
     if not (SUBMISSION_DIR / TEX_NAME).is_file():
         logger.error("Missing {}", (SUBMISSION_DIR / TEX_NAME).relative_to(ROOT))
         return 2
@@ -232,10 +233,18 @@ def main(argv: list[str] | None = None) -> int:
         action="store_true",
         help="Do not compile; only inspect existing .log and .blg files.",
     )
+    parser.add_argument(
+        "--skip-render",
+        action="store_true",
+        help="Compile the existing generated TeX without rendering the QMD again.",
+    )
     args = parser.parse_args(argv)
 
+    if args.scan_only and args.skip_render:
+        parser.error("--skip-render is redundant with --scan-only")
+
     if not args.scan_only:
-        code = compile_submission(prefer_manual=args.manual)
+        code = compile_submission(prefer_manual=args.manual, render=not args.skip_render)
         if code != 0:
             logger.error("Official IJDS LaTeX compile failed with code {}.", code)
             return code

@@ -9,6 +9,11 @@ from typing import Any
 
 import yaml
 
+from src.ijds_audit.publication_sources import (
+    active_lineage_run_tags,
+    load_source_registry,
+)
+
 ROOT = Path(__file__).resolve().parents[1]
 TARGETS_PATH = ROOT / "configs/crpto_publication_targets.yaml"
 
@@ -25,27 +30,14 @@ def active_dvc_pointers(
     contract = payload.get("active_scientific_contract")
     if not isinstance(contract, dict):
         raise TypeError("Publication targets omit active_scientific_contract.")
-    values = contract.get("dvc_pointers")
-    if not isinstance(values, list) or not all(isinstance(item, str) for item in values):
-        raise TypeError("active_scientific_contract.dvc_pointers must be a string list.")
-    run_keys = (
-        "outcome_free_run_tag",
-        "run_tag",
-        "two_ruler_outcome_free_run_tag",
-        "two_ruler_run_tag",
-        "credit_control_outcome_free_run_tag",
-        "credit_control_run_tag",
-    )
-    run_tags = [contract.get(key) for key in run_keys]
-    if not all(isinstance(tag, str) and tag for tag in run_tags):
-        raise TypeError("The active IJDS capsule must declare all six run tags.")
-    expected = {
-        f"{prefix}/experiments/ijds_audit/{tag}.dvc"
-        for tag in run_tags
-        for prefix in ("data/processed", "models")
-    }
-    if set(values) != expected or len(values) != len(expected):
-        raise ValueError("The active IJDS capsule pointers do not match its six declared run tags.")
+    registry_value = contract.get("source_registry")
+    if not isinstance(registry_value, str) or not registry_value:
+        raise TypeError("Publication targets omit the active source_registry path.")
+    registry_path = (root / registry_value).resolve()
+    registry_path.relative_to(root.resolve())
+    registry = load_source_registry(registry_path)
+    active_lineage_run_tags(registry)
+    values = registry["dvc_pointers"]
 
     resolved: list[Path] = []
     for value in values:

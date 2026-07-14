@@ -4,25 +4,27 @@ The single operational source is [`CLAUDE.md`](CLAUDE.md). Read these files in
 order before changing scientific code or paper claims:
 
 1. [`CLAUDE.md`](CLAUDE.md) - repository rules and protected historical stages.
-2. [`docs/research/active_claims_2026-07-12.md`](docs/research/active_claims_2026-07-12.md)
+2. [`docs/research/active_claims_2026-07-14.md`](docs/research/active_claims_2026-07-14.md)
    - the only active IJDS claim registry.
 3. [`docs/research/ijds_binary_geometry_frontier_v4_protocol_2026-07-12.md`](docs/research/ijds_binary_geometry_frontier_v4_protocol_2026-07-12.md)
    - complete-window V4 protocol and stop rules.
-4. [`docs/research/ijds_binary_geometry_frontier_v4_v2_recovery_2026-07-12.md`](docs/research/ijds_binary_geometry_frontier_v4_v2_recovery_2026-07-12.md)
-   - verified V1-freeze to V2-evaluation lineage.
+4. [`docs/research/ijds_evaluation_endpoint_recovery_v3_protocol_2026-07-14.md`](docs/research/ijds_evaluation_endpoint_recovery_v3_protocol_2026-07-14.md)
+   - endpoint-corrected V1-freeze to V3-evaluation lineage.
 5. [`docs/research/ijds_normalized_objective_frontier_protocol_2026-07-12.md`](docs/research/ijds_normalized_objective_frontier_protocol_2026-07-12.md)
    - two-ruler research question, estimands, and locked stop rules.
 6. [`docs/research/ijds_normalized_objective_frontier_v1c_protocol_2026-07-13.md`](docs/research/ijds_normalized_objective_frontier_v1c_protocol_2026-07-13.md)
    - retained outcome-free numerical lineage.
-7. [`docs/research/ijds_normalized_objective_frontier_v2_paper_facing_erratum_2026-07-13.md`](docs/research/ijds_normalized_objective_frontier_v2_paper_facing_erratum_2026-07-13.md)
-   - finite-grid and repeated-allocation interpretation boundary.
-8. [`docs/research/ijds_raw_data_contract_results_2026-07-13.md`](docs/research/ijds_raw_data_contract_results_2026-07-13.md)
-   - full-archive population, maturity, schema, and funding audit.
-9. [`docs/research/ijds_credit_risk_controls_v2b_results_2026-07-13.md`](docs/research/ijds_credit_risk_controls_v2b_results_2026-07-13.md)
-   - frozen five-model coverage, WOE/IV, monotonicity, calibration, and PSI evidence.
-10. [`reports/crpto/ijds_binary_geometry_frontier_v4_evidence.json`](reports/crpto/ijds_binary_geometry_frontier_v4_evidence.json)
+7. [`docs/research/ijds_two_ruler_endpoint_recovery_v3_protocol_2026-07-14.md`](docs/research/ijds_two_ruler_endpoint_recovery_v3_protocol_2026-07-14.md)
+   - endpoint-corrected finite-grid interpretation boundary.
+8. [`reports/crpto/data_audit/ijds-raw-data-contract-2026-07-14-v2/evidence.json`](reports/crpto/data_audit/ijds-raw-data-contract-2026-07-14-v2/evidence.json)
+   - active full-archive population, maturity, schema, and funding audit.
+9. [`models/experiments/ijds_audit/ijds-credit-risk-controls-2026-07-14-v3/credit_risk_controls_summary.json`](models/experiments/ijds_audit/ijds-credit-risk-controls-2026-07-14-v3/credit_risk_controls_summary.json)
+   - active five-model coverage, WOE/IV, monotonicity, calibration, and PSI evidence.
+10. [`docs/research/ijds_label_lag_sensitivity_protocol_2026-07-14.md`](docs/research/ijds_label_lag_sensitivity_protocol_2026-07-14.md)
+   - predeclared endpoint-timing sensitivity and retention stop rule.
+11. [`reports/crpto/ijds_binary_geometry_frontier_v4_evidence.json`](reports/crpto/ijds_binary_geometry_frontier_v4_evidence.json)
    - the only active paper-facing evidence manifest.
-11. [`.codex/skills/crpto/SKILL.md`](.codex/skills/crpto/SKILL.md) - concise
+12. [`.codex/skills/crpto/SKILL.md`](.codex/skills/crpto/SKILL.md) - concise
    execution and writing guidance.
 
 Minimum rules:

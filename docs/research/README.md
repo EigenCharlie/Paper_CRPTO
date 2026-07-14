@@ -9,27 +9,25 @@ support manuscript claims.
 
 Read in this order:
 
-1. `active_claims_2026-07-12.md` - sole paper claim registry.
+1. `active_claims_2026-07-14.md` - sole paper claim registry.
 2. `ijds_binary_geometry_frontier_v4_protocol_2026-07-12.md` - locked V4
    complete-window protocol.
-3. `ijds_binary_geometry_frontier_v4_v2_recovery_2026-07-12.md` - verified V4
-   freeze/evaluation lineage.
+3. `ijds_evaluation_endpoint_recovery_v3_protocol_2026-07-14.md` - verified V4
+   freeze and endpoint-corrected evaluation lineage.
 4. `ijds_normalized_objective_frontier_v1c_protocol_2026-07-13.md` and
    `ijds_normalized_objective_frontier_v1c_results_2026-07-13.md` - locked
    outcome-free two-ruler construction.
-5. `ijds_normalized_objective_frontier_v2_protocol_2026-07-13.md`,
-   `ijds_normalized_objective_frontier_v2_paper_facing_erratum_2026-07-13.md`,
-   and `ijds_normalized_objective_frontier_v2_results_2026-07-13.md` - single
-   verified outcome evaluation and its paper-facing interpretation.
-6. `ijds_raw_data_contract_protocol_2026-07-13.md` and
-   `ijds_raw_data_contract_results_2026-07-13.md` - full archive population,
-   maturity, schema, and funding contract.
-7. `ijds_credit_risk_controls_protocol_2026-07-13.md` and
-   `ijds_credit_risk_controls_v2b_results_2026-07-13.md` - frozen monotonic and
-   WOE/IV model-class controls.
-8. `../../reports/crpto/ijds_binary_geometry_frontier_v4_evidence.json` - sole
+5. `ijds_two_ruler_endpoint_recovery_v3_protocol_2026-07-14.md` - verified
+   endpoint-corrected two-ruler evaluation and finite-grid boundary.
+6. `ijds_raw_data_contract_protocol_2026-07-13.md`, the V2 audit artifacts, and
+   `ijds_label_lag_sensitivity_protocol_2026-07-14.md` - full archive,
+   endpoint, schema, funding, and reporting-lag contracts.
+7. `ijds_credit_risk_controls_protocol_2026-07-13.md` and the V3 evaluation -
+   frozen monotonic and WOE/IV model-class controls under the corrected endpoint.
+8. `../../configs/ijds_active_evidence_sources.yaml` - hash-locked source registry.
+9. `../../reports/crpto/ijds_binary_geometry_frontier_v4_evidence.json` - sole
    numeric paper-facing manifest for all active lineages.
-9. `../../paper/CRPTO_ijds.qmd` and `../../paper/supplement_ijds.qmd` - canonical
+10. `../../paper/CRPTO_ijds.qmd` and `../../paper/supplement_ijds.qmd` - canonical
    anonymous manuscript sources.
 
 The active result is an identification audit of one ML-conformal-optimization

@@ -41,8 +41,8 @@ provide an ORCID under the current IJDS instructions.
 - Data and code: The official IJDS disclosure form will describe the staged
   release of source code, environment locks, DVC metadata, derived evidence,
   and raw-data acquisition instructions.
-- Generative AI: OpenAI Codex, including GPT-5.6 Sol, assisted with code review
-  and refactoring, test scaffolding, literature triage and summarization,
+- Generative AI: OpenAI Codex assisted with code review and refactoring, test
+  scaffolding, literature triage and summarization,
   consistency checks, and language editing. It was not treated as evidence or
   an author. The author verified all primary sources, analyses, citations,
   numbers, code, claims, and prose and accepts full responsibility.

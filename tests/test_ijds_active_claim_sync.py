@@ -14,8 +14,8 @@ from scripts.build_ijds_submission_tex import render_submission_tex
 
 REPO = Path(__file__).resolve().parents[1]
 EVIDENCE = REPO / "reports/crpto/ijds_binary_geometry_frontier_v4_evidence.json"
-RUN = "ijds-binary-geometry-frontier-v4-2026-07-12-v2"
-COMMIT = "60cdf298d965525cddaaf03abccd15ff805e1a15"
+RUN = "ijds-binary-geometry-frontier-v4-2026-07-14-v3"
+COMMIT = "688f75dc4f285c75bc499c9e041dd30fb3acd70d"
 SURFACES = (
     REPO / "paper/CRPTO_ijds.qmd",
     REPO / "paper/supplement_ijds.qmd",
@@ -54,9 +54,7 @@ def _normalize(text: str) -> str:
 def test_active_evidence_locks_v4_lineage_and_claim_boundary() -> None:
     evidence = _json(EVIDENCE)
 
-    assert evidence["status"] == (
-        "active_ijds_v4_two_ruler_and_credit_controls_paper_facing_evidence"
-    )
+    assert evidence["status"] == "active_ijds_v4_endpoint_corrected_paper_facing_evidence"
     assert evidence["run_tag"] == RUN
     assert evidence["protocol_commit"] == COMMIT
     assert evidence["claim_boundary"] == {
@@ -78,8 +76,8 @@ def test_active_design_is_exact() -> None:
 
     assert design == {
         "primary_oot_candidates": 376890,
-        "primary_oot_resolved": 365339,
-        "primary_oot_unresolved": 11551,
+        "primary_oot_resolved": 364814,
+        "primary_oot_unresolved": 12076,
         "residual_windows": 8,
         "learners": 5,
         "v4_detailed_coverage_learners": 2,
@@ -97,6 +95,8 @@ def test_active_design_is_exact() -> None:
         "frontier_caps": 3067,
         "development_support_lower": pytest.approx(0.0555726278946077),
         "development_support_upper": pytest.approx(0.09999720664228194),
+        "evaluation_endpoint": "terminal_default_reconstructed_as_observable_by_2020-09-30",
+        "archive_is_verified_point_in_time_snapshot": False,
     }
 
 
@@ -112,7 +112,9 @@ def test_full_data_contract_credit_controls_and_coverage_are_exact() -> None:
     assert data["term60_rows_all_dates"] == 865415
     assert data["active_design_rows"] == 640543
     assert data["raw_schema_columns"] == 142
-    assert data["eligible_raw_features"] == 28
+    assert data["eligible_raw_features"] == 30
+    assert data["declared_coverage_exceptions"] == 2
+    assert data["coverage_exceptions_requiring_sensitivity"] == 2
     assert data["late_schema_features"] == 48
     assert data["sampling"] == "none_all_eligible_rows_within_each_declared_temporal_role"
 
@@ -129,11 +131,12 @@ def test_full_data_contract_credit_controls_and_coverage_are_exact() -> None:
         "woe_scorecard_borrower_platt",
     }
     assert all(row["windows_upper_below_0_90"] == 8 for row in rows.values())
-    assert rows["catboost_monotonic_platt"]["roc_auc"] == pytest.approx(0.6522442096629454)
+    assert rows["catboost_monotonic_platt"]["roc_auc"] == pytest.approx(0.6519537792141734)
     assert rows["woe_scorecard_borrower_platt"]["coverage_upper_max"] == pytest.approx(
-        0.8969725914723129
+        0.8977261269866539
     )
     assert controls["calibration"]["optimizer_success_rows"] == 30
+    assert controls["calibration"]["all_primary_oot_mean_calibration_error_negative"] is True
     assert controls["calibration"]["all_primary_oot_slopes_below_one"] is True
     assert controls["woe_iv"]["optbinning_problems"] == 45
     assert controls["woe_iv"]["all_optimal"] is True
@@ -142,10 +145,10 @@ def test_full_data_contract_credit_controls_and_coverage_are_exact() -> None:
     ] == pytest.approx(0.07233216453444681)
     assert coverage["catboost_all_eight_upper_below_nominal"] is True
     assert coverage["logistic_all_eight_upper_below_nominal"] is True
-    assert coverage["catboost_bound_min"] == pytest.approx(0.8385311364058479)
-    assert coverage["catboost_bound_max"] == pytest.approx(0.8821672105919499)
-    assert coverage["logistic_bound_min"] == pytest.approx(0.8456870704980233)
-    assert coverage["logistic_bound_max"] == pytest.approx(0.895653904322216)
+    assert coverage["catboost_bound_min"] == pytest.approx(0.8424845445620738)
+    assert coverage["catboost_bound_max"] == pytest.approx(0.8825970442304121)
+    assert coverage["logistic_bound_min"] == pytest.approx(0.8500305128817427)
+    assert coverage["logistic_bound_max"] == pytest.approx(0.8962217092520364)
     rows = coverage["rows"]
     assert len(rows) == 16
     assert {row["learner"] for row in rows} == {
@@ -182,7 +185,13 @@ def test_phase_transition_and_portfolio_boundary_are_exact() -> None:
     assert phase["w8_residual_quantile"] == pytest.approx(0.1118010883671265)
     assert phase["w7_mean_width"] == pytest.approx(0.9842633701640714)
     assert phase["w8_mean_width"] == pytest.approx(0.2076312400549422)
-    assert phase["w8_oot_coverage_bound"] == pytest.approx([0.8225359596189609, 0.8536819866661607])
+    assert phase["w8_oot_coverage_bound"] == pytest.approx([0.8225359596189609, 0.8547066934861538])
+    lag = phase["label_lag_sensitivity"]
+    assert lag["admissible_lags_months"] == [0, 3, 6]
+    assert lag["nonadmissible_lags_months"] == [8, 12]
+    assert lag["w7_to_w8_threshold_crossing_at_all_admissible_lags"] is True
+    assert lag["crossing_disappears_outside_locked_retention_scope"] is True
+    assert lag["causal_interpretation_authorized"] is False
 
     assert portfolio["c2_cells"] == 1080
     assert portfolio["c2_match_residual_abs_max"] < 1e-16
@@ -195,12 +204,17 @@ def test_phase_transition_and_portfolio_boundary_are_exact() -> None:
         for row in portfolio["development_direction_counts"]
     }
     assert counts == {
-        ("funded_miscoverage", "crosses_zero"): 33,
-        ("funded_miscoverage", "guardrail_higher"): 39,
-        ("standardized_payoff", "crosses_zero"): 51,
-        ("standardized_payoff", "guardrail_lower"): 21,
+        ("funded_miscoverage", "crosses_zero"): 45,
+        ("funded_miscoverage", "guardrail_higher"): 27,
+        ("standardized_payoff", "crosses_zero"): 66,
+        ("standardized_payoff", "guardrail_lower"): 6,
         ("terminal_default", "crosses_zero"): 72,
     }
+    tie = portfolio["evaluated_point_cap_solver_stability"]
+    assert tie["point_cap_rows"] == 7297
+    assert tie["near_zero_bases"] == 0
+    assert tie["tie_sensitive_rows"] == 0
+    assert tie["continuous_frontier_uniqueness_claim"] is False
 
 
 def test_two_ruler_diagnostic_is_finite_complete_and_nonselective() -> None:
@@ -216,11 +230,11 @@ def test_two_ruler_diagnostic_is_finite_complete_and_nonselective() -> None:
         "window_endpoint_contrasts": 48,
         "monthly_endpoint_contrasts": 720,
         "metric_direction_cells": 144,
-        "outcome_audit_rows": 5,
+        "outcome_audit_rows": 7,
     }
-    assert challenger["primary_oot_unresolved"] == 11551
+    assert challenger["primary_oot_unresolved"] == 12076
     assert challenger["manifest"]["sha256"] == (
-        "d3808ce7c7a8e6fee3ef51aefd031e8abf55e11ef3536745ee213fd04752588a"
+        "76e3643b92a537c9e0cea4d131f8085d4c843ead0cb95362f19a3442207af96e"
     )
 
     rows = {(row["ruler"], row["coordinate"]): row for row in challenger["rows"]}
@@ -232,8 +246,12 @@ def test_two_ruler_diagnostic_is_finite_complete_and_nonselective() -> None:
     quarter = rows[("objective_matched", 0.25)]
     assert quarter["active_months_per_window_min"] == 4
     assert quarter["active_months_per_window_max"] == 4
-    assert quarter["payoff_bound_usd_lower_min"] == pytest.approx(5603.660798294787)
-    assert quarter["default_bound_pp_upper_max"] == pytest.approx(-0.006789927307173987)
+    assert quarter["payoff_bound_usd_lower_min"] == pytest.approx(-9134.339201705214)
+    assert quarter["payoff_bound_usd_upper_max"] == pytest.approx(5603.660798333496)
+    assert quarter["default_bound_pp_upper_max"] == pytest.approx(0.12654340602615935)
+    assert quarter["payoff_direction_pattern"] == "crosses_zero:8"
+    assert quarter["default_direction_pattern"] == "crosses_zero:8"
+    assert quarter["miscoverage_direction_pattern"] == "crosses_zero:8"
 
     half = rows[("objective_matched", 0.5)]
     assert half["payoff_bound_usd_upper_max"] < 0.0
@@ -246,7 +264,8 @@ def test_two_ruler_diagnostic_is_finite_complete_and_nonselective() -> None:
     assert three_quarters["miscoverage_direction_pattern"] == "gamma_1_higher:8"
 
     normalized = [row for key, row in rows.items() if key[0] == "normalized_score"]
-    assert all(row["payoff_bound_usd_upper_max"] < 0.0 for row in normalized)
+    assert all(row["payoff_bound_usd_upper_max"] < 0.0 for row in normalized[:2])
+    assert normalized[2]["payoff_direction_pattern"] == "gamma_1_lower:7;crosses_zero:1"
     assert all(row["default_bound_pp_lower_min"] > 0.0 for row in normalized)
     assert all(row["miscoverage_bound_pp_lower_min"] > 0.0 for row in normalized)
 
@@ -278,8 +297,16 @@ def test_simulation_is_explicitly_non_claim_bearing_for_portfolios() -> None:
 def test_evidence_manifest_hashes_every_active_output() -> None:
     evidence = _json(EVIDENCE)
 
-    assert len(evidence["source_artifacts"]) == 69
-    assert len(evidence["paper_artifacts"]) == 16
+    assert {
+        "active_source_registry",
+        "evidence_builder",
+        "source_registry_loader",
+        "artifact_descriptor_helper",
+        "outcome_free/source_protocol_freeze",
+        "two_ruler/outcome_free/freeze",
+        "credit_controls/freeze",
+    }.issubset(evidence["source_artifacts"])
+    assert evidence["paper_artifacts"]
     for descriptor in (
         *evidence["source_artifacts"].values(),
         *evidence["paper_artifacts"].values(),
@@ -293,8 +320,10 @@ def test_evidence_manifest_hashes_every_active_output() -> None:
 def test_manuscript_surfaces_share_v4_claims_and_retire_old_headlines() -> None:
     active = (
         "376,890",
-        "11,551",
+        "364,814",
+        "12,076",
         "6,240",
+        "9,134.34",
         "5,603.66",
         "155,937.27",
         "44 loan-month positions",
@@ -309,7 +338,6 @@ def test_manuscript_surfaces_share_v4_claims_and_retire_old_headlines() -> None:
         "selected-set",
     )
     retired = (
-        "0.854714",
         "0.879647",
         "0.845072",
         "0.870973",
@@ -323,6 +351,7 @@ def test_manuscript_surfaces_share_v4_claims_and_retire_old_headlines() -> None:
         text = _normalize(surface.read_text(encoding="utf-8"))
         assert not [token for token in active if _normalize(token) not in text], surface
         assert not [token for token in retired if _normalize(token) in text], surface
+        assert all(token in text for token in ("365,339", "11,551", "v2", "v3", "promoted"))
 
 
 def test_official_tex_is_deterministically_generated_from_qmd() -> None:

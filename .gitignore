@@ -55,6 +55,8 @@ data/processed/optuna/
 data/processed/**/*
 !data/processed/**/*.dvc
 !data/processed/experiments/
+!data/processed/experiments/ijds_audit/
+!data/processed/experiments/ijds_audit/*.dvc
 !data/processed/experiments/champion_reopen/
 !data/processed/experiments/champion_reopen/champion-reopen-2026-07-10__maturity-safe-locked-bounded-h1h2-v2.dvc
 !data/processed/experiments/ijds_prefreeze/

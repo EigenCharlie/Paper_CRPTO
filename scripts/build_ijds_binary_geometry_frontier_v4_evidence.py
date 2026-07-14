@@ -14,7 +14,7 @@ from loguru import logger
 
 from src.ijds_audit.config import load_v4_config
 from src.ijds_audit.publication_sources import load_verified_source_registry
-from src.utils.isolated_experiment import relative_artifact_descriptor
+from src.utils.artifact_descriptor import relative_artifact_descriptor
 from src.utils.pipeline_runtime import atomic_write_json, atomic_write_text
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -53,6 +53,19 @@ def _verified_path(descriptor: Mapping[str, Any]) -> Path:
         if actual[field] != descriptor[field]:
             raise RuntimeError(f"Paper-facing artifact mismatch for {path}: {field}.")
     return path
+
+
+def _require_identity(
+    actual: Mapping[str, Any],
+    expected: Mapping[str, Any],
+    *,
+    label: str,
+) -> None:
+    """Fail when a registered run identity differs from its frozen artifact."""
+    fields = ("run_tag", "protocol_tag", "protocol_commit")
+    mismatches = [field for field in fields if actual.get(field) != expected.get(field)]
+    if mismatches:
+        raise RuntimeError(f"{label} identity changed: {', '.join(mismatches)}.")
 
 
 def _direction_pattern(directions: pd.DataFrame, metric: str) -> str:
@@ -468,6 +481,11 @@ def build_evidence() -> Path:
         SOURCE_REGISTRY_PATH,
         repo_root=ROOT,
     )
+    lineages = cast(dict[str, Any], registry["lineages"])
+    v4_lineage = cast(dict[str, Any], lineages["binary_geometry"])
+    two_ruler_lineage = cast(dict[str, Any], lineages["two_ruler"])
+    credit_lineage = cast(dict[str, Any], lineages["credit_controls"])
+    diagnostic_lineage = cast(dict[str, Any], lineages["diagnostics"])
     config_path = registered["v4_config"]
     summary_path = registered["v4_summary"]
     v4_receipt_path = registered["v4_receipt"]
@@ -475,26 +493,51 @@ def build_evidence() -> Path:
     summary = json.loads(summary_path.read_text(encoding="utf-8"))
     if summary.get("status") != "complete_retrospective_binary_geometry_frontier_audit":
         raise RuntimeError("V4 deterministic summary is incomplete.")
+    _require_identity(summary, v4_lineage["evaluation"], label="V4 evaluation")
+    v4_receipt = json.loads(v4_receipt_path.read_text(encoding="utf-8"))
+    if v4_receipt.get("protocol_commit") != v4_lineage["evaluation"]["protocol_commit"]:
+        raise RuntimeError("V4 receipt protocol commit changed.")
+    if v4_receipt.get("summary") != relative_artifact_descriptor(summary_path, repo_root=ROOT):
+        raise RuntimeError("V4 receipt no longer binds the registered summary.")
     artifacts = {name: _verified_path(value) for name, value in summary["artifacts"].items()}
     freeze_path = _verified_path(summary["outcome_free_freeze"])
     freeze = json.loads(freeze_path.read_text(encoding="utf-8"))
+    _require_identity(
+        freeze["outcome_free_lineage"],
+        v4_lineage["outcome_free"],
+        label="V4 outcome-free freeze",
+    )
+    v4_source_freeze_path = _verified_path(freeze["outcome_free_lineage"]["source_protocol_freeze"])
+    if (
+        freeze["outcome_free_lineage"]["source_protocol_freeze"]["sha256"]
+        != v4_lineage["outcome_free"]["freeze_sha256"]
+    ):
+        raise RuntimeError("V4 outcome-free freeze hash changed.")
     source_artifacts = {
         name: _verified_path(value) for name, value in freeze["outcome_free_artifacts"].items()
     }
 
     two_ruler_manifest_path = registered["two_ruler_manifest"]
     two_ruler_manifest = json.loads(two_ruler_manifest_path.read_text(encoding="utf-8"))
-    expected_two_ruler_identity = {
-        "status": "verified_post_freeze_outcome_evaluation_complete",
-        "run_tag": "ijds-normalized-objective-frontier-2026-07-14-v3",
-        "protocol_tag": "protocol/ijds-normalized-objective-frontier-2026-07-14-v3",
-        "protocol_commit": "a1ae516a6c9674686dba245cb275475073b298a0",
-    }
-    if any(
-        two_ruler_manifest.get(field) != value
-        for field, value in expected_two_ruler_identity.items()
+    if two_ruler_manifest.get("status") != "verified_post_freeze_outcome_evaluation_complete":
+        raise RuntimeError("The verified V3 two-ruler evaluation is incomplete.")
+    _require_identity(
+        two_ruler_manifest,
+        two_ruler_lineage["evaluation"],
+        label="Two-ruler evaluation",
+    )
+    two_ruler_freeze_path = _verified_path(two_ruler_manifest["source_frontier_freeze"])
+    two_ruler_freeze = json.loads(two_ruler_freeze_path.read_text(encoding="utf-8"))
+    _require_identity(
+        two_ruler_freeze,
+        two_ruler_lineage["outcome_free"],
+        label="Two-ruler outcome-free freeze",
+    )
+    if (
+        two_ruler_manifest["source_frontier_freeze"]["sha256"]
+        != two_ruler_lineage["outcome_free"]["freeze_sha256"]
     ):
-        raise RuntimeError("The verified V3 two-ruler identity changed.")
+        raise RuntimeError("Two-ruler outcome-free freeze hash changed.")
     if any(value is not None for value in two_ruler_manifest["selection"].values()):
         raise RuntimeError("The V3 manifest reports a selected two-ruler result.")
     if (
@@ -527,12 +570,14 @@ def build_evidence() -> Path:
     credit_summary_path = registered["credit_summary"]
     credit_receipt_path = registered["credit_receipt"]
     credit_summary = json.loads(credit_summary_path.read_text(encoding="utf-8"))
-    expected_credit_identity = {
-        "status": "complete_no_model_selection_credit_risk_control_evaluation",
-        "run_tag": "ijds-credit-risk-controls-2026-07-14-v3",
-    }
-    if any(credit_summary.get(field) != value for field, value in expected_credit_identity.items()):
-        raise RuntimeError("The verified V3 credit-control identity changed.")
+    if credit_summary.get("status") != "complete_no_model_selection_credit_risk_control_evaluation":
+        raise RuntimeError("The verified V3 credit-control evaluation is incomplete.")
+    credit_receipt = json.loads(credit_receipt_path.read_text(encoding="utf-8"))
+    _require_identity(
+        credit_receipt,
+        credit_lineage["evaluation"],
+        label="Credit-control evaluation",
+    )
     expected_interpretation = {
         "model_or_feature_selected_from_oot": False,
         "portfolio_claim_authorized": False,
@@ -551,14 +596,18 @@ def build_evidence() -> Path:
 
     credit_freeze_path = _verified_path(credit_summary["source_freeze"])
     credit_freeze = json.loads(credit_freeze_path.read_text(encoding="utf-8"))
-    expected_credit_freeze = {
-        "status": "credit_control_scores_frozen_before_primary_oot_outcome_join",
-        "run_tag": "ijds-credit-risk-controls-2026-07-13-v1b",
-        "protocol_tag": "protocol/ijds-credit-risk-controls-2026-07-13-v1b",
-        "protocol_commit": "1776cbf8b201ae5b92756e5ea397a403d6cc7c9f",
-    }
-    if any(credit_freeze.get(field) != value for field, value in expected_credit_freeze.items()):
-        raise RuntimeError("The V1b credit-control freeze identity changed.")
+    if (
+        credit_freeze.get("status")
+        != "credit_control_scores_frozen_before_primary_oot_outcome_join"
+    ):
+        raise RuntimeError("The V1b credit-control freeze is incomplete.")
+    _require_identity(
+        credit_freeze,
+        credit_lineage["outcome_free"],
+        label="Credit-control outcome-free freeze",
+    )
+    if credit_summary["source_freeze"]["sha256"] != credit_lineage["outcome_free"]["freeze_sha256"]:
+        raise RuntimeError("Credit-control outcome-free freeze hash changed.")
     if credit_freeze.get("co_primary_learners") != list(CREDIT_LEARNER_ORDER):
         raise RuntimeError("The frozen five-model specification changed.")
     if (
@@ -585,6 +634,8 @@ def build_evidence() -> Path:
     raw_audit = json.loads(raw_audit_path.read_text(encoding="utf-8"))
     if raw_audit.get("status") != "complete_full_archive_data_contract_audit":
         raise RuntimeError("The full-archive data audit is incomplete.")
+    if raw_audit.get("run_tag") != diagnostic_lineage["raw_data_audit"]["run_tag"]:
+        raise RuntimeError("The raw-data audit identity changed.")
     if (
         raw_audit.get("protected_stages_run") != []
         or raw_audit.get("protected_artifacts_written") != []
@@ -604,6 +655,11 @@ def build_evidence() -> Path:
     lag_evidence = json.loads(lag_evidence_path.read_text(encoding="utf-8"))
     if lag_evidence.get("status") != "complete_frozen_score_label_lag_sensitivity":
         raise RuntimeError("The label-lag sensitivity is incomplete.")
+    _require_identity(
+        lag_evidence,
+        diagnostic_lineage["label_lag_sensitivity"],
+        label="Label-lag sensitivity",
+    )
     lag_table_path = _verified_path(lag_evidence["artifact"])
     lag_table = pd.read_csv(lag_table_path)
     if len(lag_table) != 40 or set(lag_table["charged_off_lag_months"]) != {0, 3, 6, 8, 12}:
@@ -620,6 +676,11 @@ def build_evidence() -> Path:
     tie_evidence = json.loads(tie_evidence_path.read_text(encoding="utf-8"))
     if tie_evidence.get("status") != "complete_prefreeze_structural_evidence":
         raise RuntimeError("The solver-tie audit is incomplete.")
+    _require_identity(
+        tie_evidence,
+        diagnostic_lineage["solver_tie_audit"],
+        label="Solver-tie audit",
+    )
     tie_census = tie_evidence["results"]["point_cap_census"]
     tie_order = tie_evidence["results"]["order_sensitivity"]
     if int(tie_census["near_zero_bases"]) != 0 or int(tie_order["tie_sensitive_rows"]) != 0:
@@ -816,13 +877,14 @@ def build_evidence() -> Path:
         & credit_feature_variation["role"].isin(["pd_development", "probability_calibration"])
     ][["role", "rows", "unique_observed", "constant_observed"]]
     evidence = {
-        "schema_version": "2026-07-14.1",
+        "schema_version": "2026-07-14.2",
         "status": "active_ijds_v4_endpoint_corrected_paper_facing_evidence",
         "source_registry": {
             "schema_version": str(registry["schema_version"]),
             "status": str(registry["status"]),
             "sources": sorted(registered),
         },
+        "lineages": lineages,
         "run_tag": str(config["run_tag"]),
         "protocol_tag": str(config["protocol_tag"]),
         "protocol_commit": str(summary["protocol_commit"]),
@@ -1094,9 +1156,9 @@ def build_evidence() -> Path:
             "primary_ruler": "objective_matched",
             "secondary_ruler": "normalized_score",
             "endpoint_contrast": "gamma_1_minus_gamma_0",
-            "run_tag": expected_two_ruler_identity["run_tag"],
-            "protocol_tag": expected_two_ruler_identity["protocol_tag"],
-            "protocol_commit": expected_two_ruler_identity["protocol_commit"],
+            "run_tag": two_ruler_lineage["evaluation"]["run_tag"],
+            "protocol_tag": two_ruler_lineage["evaluation"]["protocol_tag"],
+            "protocol_commit": two_ruler_lineage["evaluation"]["protocol_commit"],
             "manifest": relative_artifact_descriptor(two_ruler_manifest_path, repo_root=ROOT),
             "counts": dict(expected_two_ruler_counts),
             "primary_oot_unresolved": int(
@@ -1160,10 +1222,35 @@ def build_evidence() -> Path:
             "active_source_registry": relative_artifact_descriptor(
                 SOURCE_REGISTRY_PATH, repo_root=ROOT
             ),
+            "evidence_builder": relative_artifact_descriptor(Path(__file__), repo_root=ROOT),
+            "source_registry_loader": relative_artifact_descriptor(
+                ROOT / "src/ijds_audit/publication_sources.py", repo_root=ROOT
+            ),
+            "artifact_descriptor_helper": relative_artifact_descriptor(
+                ROOT / "src/utils/artifact_descriptor.py", repo_root=ROOT
+            ),
             "config": relative_artifact_descriptor(config_path, repo_root=ROOT),
+            "outcome_free/source_protocol_freeze": relative_artifact_descriptor(
+                v4_source_freeze_path, repo_root=ROOT
+            ),
+            "freeze": relative_artifact_descriptor(freeze_path, repo_root=ROOT),
+            **{
+                f"outcome_free/{name}": relative_artifact_descriptor(path, repo_root=ROOT)
+                for name, path in source_artifacts.items()
+            },
             "summary": relative_artifact_descriptor(summary_path, repo_root=ROOT),
             "execution_receipt": relative_artifact_descriptor(v4_receipt_path, repo_root=ROOT),
-            "freeze": relative_artifact_descriptor(freeze_path, repo_root=ROOT),
+            **{
+                f"evaluation/{name}": relative_artifact_descriptor(path, repo_root=ROOT)
+                for name, path in artifacts.items()
+            },
+            "two_ruler/outcome_free/freeze": relative_artifact_descriptor(
+                two_ruler_freeze_path, repo_root=ROOT
+            ),
+            **{
+                f"two_ruler/outcome_free/{name}": relative_artifact_descriptor(path, repo_root=ROOT)
+                for name, path in two_ruler_source_artifacts.items()
+            },
             "two_ruler/manifest": relative_artifact_descriptor(
                 two_ruler_manifest_path, repo_root=ROOT
             ),
@@ -1182,6 +1269,16 @@ def build_evidence() -> Path:
             "credit_controls/freeze": relative_artifact_descriptor(
                 credit_freeze_path, repo_root=ROOT
             ),
+            **{
+                f"credit_controls/outcome_free/{name}": relative_artifact_descriptor(
+                    path, repo_root=ROOT
+                )
+                for name, path in credit_outcome_free_artifacts.items()
+            },
+            **{
+                f"credit_controls/models/{name}": relative_artifact_descriptor(path, repo_root=ROOT)
+                for name, path in credit_model_artifacts.items()
+            },
             "raw_data_audit/manifest": relative_artifact_descriptor(raw_audit_path, repo_root=ROOT),
             "label_lag_sensitivity/manifest": relative_artifact_descriptor(
                 lag_evidence_path, repo_root=ROOT
@@ -1193,36 +1290,14 @@ def build_evidence() -> Path:
                 tie_evidence_path, repo_root=ROOT
             ),
             **{
-                f"evaluation/{name}": relative_artifact_descriptor(path, repo_root=ROOT)
-                for name, path in artifacts.items()
-            },
-            **{
-                f"outcome_free/{name}": relative_artifact_descriptor(path, repo_root=ROOT)
-                for name, path in source_artifacts.items()
-            },
-            **{
                 f"two_ruler/evaluation/{name}": relative_artifact_descriptor(path, repo_root=ROOT)
                 for name, path in two_ruler_evaluation_artifacts.items()
-            },
-            **{
-                f"two_ruler/outcome_free/{name}": relative_artifact_descriptor(path, repo_root=ROOT)
-                for name, path in two_ruler_source_artifacts.items()
             },
             **{
                 f"credit_controls/evaluation/{name}": relative_artifact_descriptor(
                     path, repo_root=ROOT
                 )
                 for name, path in credit_evaluation_artifacts.items()
-            },
-            **{
-                f"credit_controls/outcome_free/{name}": relative_artifact_descriptor(
-                    path, repo_root=ROOT
-                )
-                for name, path in credit_outcome_free_artifacts.items()
-            },
-            **{
-                f"credit_controls/models/{name}": relative_artifact_descriptor(path, repo_root=ROOT)
-                for name, path in credit_model_artifacts.items()
             },
             **{
                 f"raw_data_audit/{name}": relative_artifact_descriptor(path, repo_root=ROOT)

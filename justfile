@@ -2,7 +2,7 @@
 # Install: https://github.com/casey/just  (or `winget install Casey.Just` on Windows)
 
 set windows-shell := ["powershell.exe", "-NoLogo", "-NoProfile", "-Command"]
-set dotenv-load := true
+set dotenv-load
 
 # --- Setup ---------------------------------------------------------------
 
@@ -50,9 +50,15 @@ hooks-check:
     uv run pre-commit validate-config
     uvx prek validate-config .pre-commit-config.yaml
 
-# Fast smoke: paper-final guardrails + Quarto book guardrails
-smoke:
-    uv run pytest tests/test_crpto_final_sync.py tests/test_quarto_book_guardrails.py tests/test_publication_integrity.py -q
+# Fast active-manuscript smoke. This is read-only with respect to paper evidence.
+smoke-active:
+    uv run pytest tests/test_publication_integrity.py tests/test_ijds_active_claim_sync.py tests/test_publication_targets.py -q
+
+# Historical champion/book integrity remains separate from the active IJDS capsule.
+historical-integrity:
+    uv run pytest tests/test_crpto_final_sync.py tests/test_quarto_book_guardrails.py -q
+
+smoke: smoke-active historical-integrity
 
 publication-integrity:
     uv run python scripts/check_publication_integrity.py
@@ -143,22 +149,22 @@ ijds-policy-challenger:
 
 ijds-historical-v7-replay: ijds-exact-alpha ijds-policy-challenger ijds-historical-v7-evidence
 
-# Active-capsule gate: rebuild paper-facing evidence and verify all three
-# immutable freeze/evaluation pairs represented by the twelve active DVC pointers.
-ijds-active-check: ijds-evidence publication-integrity ijds-normalized-objective-frontier-v1c-check ijds-normalized-objective-frontier-v2-check
+# Read-only active-capsule gate over the current evidence and all three immutable
+# freeze/evaluation pairs represented by the twelve active DVC pointers.
+ijds-active-check: publication-integrity ijds-normalized-objective-frontier-v1c-check ijds-normalized-objective-frontier-v2-check
     uv run pytest -q tests/test_ijds_anonymity.py tests/test_ijds_active_claim_sync.py tests/test_ijds_v4_claim_sync.py tests/test_publication_targets.py tests/test_publication_integrity.py tests/test_submission_preview_layout.py tests/test_supplement_table_sync.py tests/test_scripts/test_compile_ijds_submission.py tests/test_scripts/test_manage_ijds_dvc_capsule.py tests/test_ijds_audit_core.py tests/test_ijds_audit/test_raw_data_audit.py tests/test_ijds_audit/test_credit_controls.py
 
-# Active replay validates V4 evidence and rebuilds only paper-facing outputs.
-# The expensive policy solve is never hidden here.
-ijds-active-replay: ijds-active-check
+# Explicit replay rebuilds only paper-facing evidence. Run `ijds-active-check`
+# after the manuscript surfaces have also been rebuilt.
+ijds-active-replay: ijds-evidence
 
 # V4 is intentionally two-phase. There is no combined target: the outcome-free
 # artifacts must be inspected and hashed before archive outcomes are joined.
-ijds-v4-freeze:
-    uv run python scripts/experiments/run_ijds_binary_geometry_frontier_v4.py freeze
+ijds-v4-freeze CONFIG:
+    uv run python scripts/experiments/run_ijds_binary_geometry_frontier_v4.py freeze --config "{{ CONFIG }}"
 
-ijds-v4-evaluate:
-    uv run python scripts/experiments/run_ijds_binary_geometry_frontier_v4.py evaluate
+ijds-v4-evaluate CONFIG:
+    uv run python scripts/experiments/run_ijds_binary_geometry_frontier_v4.py evaluate --config "{{ CONFIG }}"
 
 ijds-v4-code-check:
     uv run pytest tests/test_ijds_audit_core.py -q
@@ -174,7 +180,12 @@ ijds-dvc-status:
 ijds-dvc-remote-status:
     uv run python scripts/manage_ijds_dvc_capsule.py status --cloud
 
-paper-export: tables figures evidence journal-package ijds-evidence book
+# Current paper export path. Legacy champion/book exports remain explicit below.
+paper-export:
+    just ijds-active-replay
+    just paper-submission
+
+historical-paper-export: tables figures evidence journal-package book
 
 # IJDS-oriented manuscript body (HTML writing preview).
 paper-ijds:
@@ -191,12 +202,28 @@ paper-submission: paper-ijds paper-ijds-supplement
 paper-submission-tex:
     uv run python scripts/build_ijds_submission_tex.py
 
+paper-submission-tex-check:
+    uv run python scripts/build_ijds_submission_tex.py --check
+
 # Compile and scan the official INFORMS/IJDS LaTeX handoff draft.
 paper-submission-official: paper-submission-tex
-    @uv run python scripts/compile_ijds_submission.py
+    @uv run python scripts/compile_ijds_submission.py --skip-render
 
-# Final local IJDS gate before freezing or uploading.
-submission-check: ijds-evidence publication-integrity lint type-check type-advisory-full test validate-champion-strict paper-submission paper-submission-official
+paper-submission-official-scan:
+    @uv run python scripts/compile_ijds_submission.py --scan-only
+
+# Explicitly write all active paper outputs in causal order. This is not a freeze.
+submission-build:
+    just ijds-active-replay
+    just paper-submission
+    just paper-submission-official
+    just paper-submission-pdf
+
+# Read-only final local gate over already-built outputs.
+submission-check: ijds-active-check paper-submission-tex-check paper-submission-official-scan lint type-check type-advisory-full test validate-champion-strict
+
+# Build, then verify. Submission freeze remains a separate human decision.
+submission-closeout: submission-build submission-check
 
 # IJDS-oriented manuscript body (local HTML-print PDF verification draft).
 paper-ijds-pdf:
@@ -235,8 +262,8 @@ dvc-status:
 dvc-dag:
     uv run dvc dag --md
 
-# Regenerates downstream paper artefacts only (does NOT touch champion stages).
-dvc-paper:
+# Historical champion/book DVC exports; never part of the active IJDS capsule.
+historical-dvc-paper:
     uv run dvc repro --single-item crpto.paper.export_tables
     uv run dvc repro --single-item crpto.paper.evidence
     uv run dvc repro --single-item crpto.paper.journal_package
@@ -285,7 +312,7 @@ params-check:
 # Local HPO dashboard. Defaults to the journal file used by make_study(); pass
 # OPTUNA_DASH_FILE to point at a different study.
 optuna-dashboard FILE="data/processed/optuna/pd_catboost_hpo.log":
-    uv run optuna-dashboard "journal:{{FILE}}"
+    uv run optuna-dashboard "journal:{{ FILE }}"
 
 # --- Dbt extras ---------------------------------------------------------
 
@@ -301,18 +328,18 @@ dbt-docs:
 # Interactive DuckDB session over the CRPTO warehouse. Useful for MRM
 # reviewers who want to inspect the marts without booting a Quarto chunk.
 duckdb FILE="data/processed/crpto.duckdb":
-    uv run duckdb "{{FILE}}"
+    uv run duckdb "{{ FILE }}"
 
 # Optional Datasette UI. Requires the duckdb-datasette plugin; if it is not
 # installed this recipe fails fast with a helpful pointer.
 datasette FILE="data/processed/crpto.duckdb":
     @uv run python -c "import datasette" 2>&1 || echo "Run: uv pip install datasette datasette-duckdb"
-    uv run datasette serve --plugins-dir=. -i "{{FILE}}"
+    uv run datasette serve --plugins-dir=. -i "{{ FILE }}"
 
 # --- Safe one-shot release gate -----------------------------------------
 
 all: submission-check
-    @echo "Safe alias complete: protected training and search stages were not executed."
+    @echo "Read-only checks complete: no evidence replay or protected stage was executed."
 
 # --- Help ---------------------------------------------------------------
 

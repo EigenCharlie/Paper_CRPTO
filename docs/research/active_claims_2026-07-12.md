@@ -1,6 +1,10 @@
-# CRPTO Active IJDS Claim Registry - 2026-07-12
+# RETIRED CRPTO Claim Registry - 2026-07-12
 
-This is the source of truth for the single IJDS manuscript. It combines the
+This registry was superseded by `active_claims_2026-07-14.md` after the
+evaluation-endpoint and sharp-bound corrections. It is retained only as
+provenance and must not supply paper-facing numbers or claims.
+
+This was the source of truth for an earlier IJDS manuscript state. It combined the
 complete-window V4 geometry/exact-support audit with the locked V1c/V2
 two-ruler diagnostic. Fixed-taxonomy V1--V3, pool93, compact-v7, and stopped
 two-ruler V1/V1b remain immutable provenance, not active evidence.

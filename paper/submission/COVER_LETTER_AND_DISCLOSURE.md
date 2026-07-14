@@ -1,108 +1,62 @@
-# IJDS Cover Letter and Editor Disclosures
+# Cover Letter and Disclosure Draft
 
-Editor-facing template only. At the eventual submission freeze, create the
-ignored `COVER_LETTER_PRIVATE.md`, add the author identity, and upload it only
-to the editor-facing ScholarOne slot.
+Dear Editor,
 
-## Cover Letter Draft
+Please consider **"CRPTO: Auditing Binary Conformal Geometry and Portfolio
+Comparators"** for publication in *INFORMS Journal on Data Science*.
 
-Dear Editors,
+The paper studies a common but under-audited handoff: a predictive uncertainty
+object becomes a coefficient in a constrained optimization problem. CRPTO keeps
+credit-risk prediction, binary conformal intervals, and monthly portfolio
+optimization in one system, then asks which conclusions survive explicit
+timing, outcome-observability, and comparator contracts.
 
-I submit "CRPTO: Auditing Binary Conformal Geometry and Portfolio Comparators"
-for consideration at the *INFORMS Journal on Data Science*.
+The contribution is an identification audit rather than a policy contest.
+First, the paper derives a prevalence-threshold discontinuity for constant-score
+binary absolute-residual intervals and separates that mechanism from the
+empirical varying-score path. Second, it defines objective-matched and
+normalized-score rulers and an exact basis-endpoint support audit for comparing
+non-affine risk scores. Third, it provides a status-independent,
+maturity-restricted
+evaluation with outcomes physically isolated until allocations are frozen and
+with sharp common-outcome bounds for unresolved loans.
 
-The paper examines a data-models-decisions failure mode: a predictive guarantee
-and a numerical risk cap need not retain their meaning after a score enters an
-optimizer. CRPTO combines a Platt-scaled default score, a 90%-target
-absolute-residual interval for a binary outcome, and a monthly credit-allocation
-linear program. Candidate membership is status independent, unresolved loans
-remain in every menu, allocations are persisted before outcomes are joined,
-and realized comparisons use sharp common-outcome bounds.
+The full archive audit covers 2,925,493 rows and an exhaustive 640,543-loan
+eligible design. The primary OOT panel contains 376,890 candidates: 364,814
+outcomes are reconstructed as observable by the evaluation cutoff and 12,076
+remain unresolved. All 40 all-candidate coverage upper bounds are below 0.90
+across five predeclared learner specifications; the largest is 0.8977. The
+stratum-level W7--W8 quantile change persists under every predeclared reporting
+lag retaining more than 99% of each fitting month.
 
-The predictive audit reports every eligible consecutive six-month residual
-window from January 2012 through January 2013. For 376,890 primary OOT
-candidates, including 11,551 unresolved outcomes, all 40 model-window coverage
-upper bounds are below 0.90. The five predeclared scores span CatBoost, numeric
-logistic, monotonic CatBoost, platform-signal WOE/IV, and borrower-only WOE/IV;
-the largest upper bound is 0.8970. The failure therefore survives materially
-different credit-risk specifications, although its magnitude is
-learner-dependent and no OOT model is promoted.
+The decision result has a narrow interpretation. Objective-matched coordinate .25
+crosses zero for payoff, default, and miscoverage in all eight windows; .50 is
+adverse; and .75 is mostly unidentified. Normalized-score comparisons answer a
+different opportunity-cost question. An exact point-cap audit places zero in
+all 216 broad-support envelopes. No model, window, gamma, ruler, coordinate,
+comparator, or policy is selected.
 
-The complete residual path exposes a discrete mechanism. In one CatBoost score
-stratum, fit prevalence moves from 0.1017 to 0.0971 between the seventh and
-eighth windows, crossing the nominal alpha of 0.10. Its residual quantile
-changes from 0.8884 to 0.1118 and its OOT mean interval width from 0.9843 to
-0.2076. The paper formalizes the corresponding constant-score binary phase
-transition while keeping its conditions separate from the varying-score
-empirical diagnostic.
+The manuscript addresses a decision-making problem at the
+predictive-to-prescriptive interface. It combines executable information
+boundaries, exact optimization geometry, partial identification, and complete
+reporting of the prespecified paths. It makes no causal, selected-set,
+prospective, deployment, or fair-lending claim. The distributed archive is
+explicitly not described as a verified point-in-time snapshot, and standardized
+payoff is not presented as investor return.
 
-The decision audit treats the score, ruler, and frontier coordinate as part of
-the estimand. A 6,240-solve outcome-free freeze compares the point-score and
-full-upper-score endpoints under objective-matched and normalized-score rulers.
-At objective-matched coordinate .25, one repeated four-month allocation
-contrast has USD 5,603.66 higher standardized payoff; at .50 the payoff bound
-is uniformly unfavorable, and at .75 payoff/default are mostly unidentified.
-All normalized-score tracks are unfavorable, but do not match plug-in
-opportunity cost. An exact HiGHS point-cap frontier independently places zero
-in all 216 broad-stress envelopes. No learner, window, gamma, ruler,
-coordinate, policy, cap, or comparator is promoted.
+The submission is original, is not under review elsewhere, and uses a separate
+online supplement. Code, environment lock, immutable evidence metadata, and
+raw-data reconstruction instructions are prepared under the journal's data and
+code policy.
 
-The contribution is therefore not a winning credit policy. It is a
-reproducible identification audit of binary conformal geometry, temporal
-transport, and decision stringency in a frozen predict-then-optimize system.
-This data-models-decisions-implications chain fits IJDS's focus on rigorous data
-science for decisions while making the negative result operationally useful:
-coverage does not transport in the declared archive, and realized portfolio
-direction cannot be interpreted without an outcome-free ruler, coordinate,
-and comparator support.
+## Generative AI Disclosure
 
-The archive was inspected during earlier project iterations. The active
-protocol was committed before its complete run, but the study is retrospective
-rather than prospective, confirmatory, or preregistered. It makes no causal,
-selected-set-validity, fair-lending, or deployment claim. The constant-score
-theory is not presented as proof for empirical varying-score strata, and the
-factorial simulation's nonbinding portfolio component is disclosed as a
-negative diagnostic rather than used as evidence.
-
-The review package has three verified outcome-free/evaluation pairs, twelve
-immutable DVC pointers, a deterministic evidence builder, and claim-sync
-tests spanning the manuscript, supplement, evidence manifest, and generated
-INFORMS TeX. At acceptance, I will release code, environment lock,
-manuscript sources, artifact metadata, DVC pointers, and raw-data acquisition
-instructions, subject to source redistribution terms.
-
-This manuscript is original, is not under review elsewhere, and has one author.
-I declare no conflict of interest and no specific funding for this work.
-
-Thank you for your consideration.
+OpenAI Codex was used for code review, test generation, editorial revision, and
+reproducibility checks under author direction. The author independently
+verified the analysis, citations, numerical evidence, and final wording and
+accepts full responsibility for the submitted work. Generative AI is not an
+author and did not determine the scientific conclusions.
 
 Sincerely,
 
-**Author name required in the private ScholarOne copy.**
-
-## Required Editor-Only Statements
-
-- **Originality:** The manuscript is original and is not under simultaneous
-  review elsewhere.
-- **Authorship:** The sole author accepts responsibility for the work. Insert
-  the full legal name only in the private ScholarOne copy.
-- **Funding:** No specific funding supported this work.
-- **Conflicts:** The author declares no conflicts of interest.
-- **Data/code:** Use the response selected in the current official IJDS form.
-  Code can be released; loan-level redistribution depends on the governing
-  source terms. Reconfirm the form and policy during submission week.
-- **Retrospective boundary:** The archive was previously inspected. The active
-  protocol is code locked but is not preregistered, prospective, or confirmatory.
-- **Generative AI assistance:** OpenAI Codex, including GPT-5.6 Sol, assisted
-  with code review and refactoring, test scaffolding, literature triage and
-  summarization, consistency checks, and language editing. It was not treated
-  as evidence or an author. The sole author inspected the primary sources,
-  executed and validated the analyses, verified citations, numbers, code,
-  prose, and claims, and accepts full responsibility for the work.
-
-## Anonymous-Packet Boundary
-
-Reviewer-facing files contain only the anonymous official manuscript,
-anonymous supplement, and a sanitized archive if requested. Identity,
-affiliation, email, ORCID, repository ownership, exact tags/hashes, local paths,
-credentials, and DVC remotes remain editor-only.
+The Author

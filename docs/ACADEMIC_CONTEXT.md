@@ -7,12 +7,14 @@ deployment that is never going to happen.
 ## What this project is
 
 - A **master's thesis** by Carlos Alfredo Vergara Rojas.
-- A pipeline + Quarto book + paper draft + journal package built on the
-  **Lending Club Loan Data 2007–2020** (Kaggle mirror, 2.26M loans, 174 raw
-  columns → 21 modeling features).
-- The deliverables are the **paper PDF**, the **Quarto book** rendered to
-  HTML (and PDF for journal), the **18 paper tables**, the **8 paper figures**
-  and the **MRM dossier**.
+- A research repository and one active IJDS manuscript built on the
+  **Lending Club Loan Data 2007--2020Q3** archive (2,925,493 rows and 142 raw
+  columns). The active design exhausts 640,543 eligible 36-month loans under
+  its declared temporal and observability contract.
+- The active deliverables are the anonymous **IJDS paper PDF**, a separate
+  **online supplement PDF**, source/evidence registries, and a reproducibility
+  capsule. The Quarto book and historical journal package are secondary and do
+  not supply active claims.
 
 ## What this project is NOT
 
@@ -32,7 +34,7 @@ deployment that is never going to happen.
 
 | Decision | Industrial default | CRPTO academic stance |
 | --- | --- | --- |
-| CI/CD coverage | every push runs full test matrix | only render the book + lint; tests run locally via pre-push hook |
+| CI/CD coverage | every push runs full test matrix | focused CI plus a full local submission gate before journal milestones |
 | Branch protection on `main` | required reviews, status checks | none — single author can push direct |
 | Dependabot version PRs | auto-merge after CI | dismissed by default; manual review when a real CVE shows up |
 | Monitoring / observability | dashboards, alerts | MLflow for experiment trace, nothing else |

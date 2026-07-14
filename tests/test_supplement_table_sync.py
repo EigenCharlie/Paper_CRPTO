@@ -79,9 +79,23 @@ def test_named_and_exact_direction_counts_are_visible_in_supplement() -> None:
     for row in named:
         for field in ("guardrail_lower", "crosses_zero", "guardrail_higher"):
             assert f"| {int(row[field])} |" in supplement
-    assert "| Standardized payoff | 21 | 51 | 0 | 72 |" in supplement
-    assert "| Terminal default | 0 | 72 | 0 | 72 |" in supplement
-    assert "| Funded miscoverage | 0 | 33 | 39 | 72 |" in supplement
+    labels = {
+        "standardized_payoff": "Standardized payoff",
+        "terminal_default": "Terminal default",
+        "funded_miscoverage": "Funded miscoverage",
+    }
+    by_metric = {
+        metric: {
+            row["direction"]: int(row["cells"]) for row in directions if row["metric"] == metric
+        }
+        for metric in labels
+    }
+    for metric, label in labels.items():
+        counts = by_metric[metric]
+        lower = counts.get("guardrail_lower", 0)
+        crossing = counts.get("crosses_zero", 0)
+        higher = counts.get("guardrail_higher", 0)
+        assert f"| {label} | {lower} | {crossing} | {higher} | 72 |" in supplement
 
 
 def test_two_ruler_tracks_and_repeated_quarter_contrast_are_visible() -> None:
@@ -102,7 +116,25 @@ def test_two_ruler_tracks_and_repeated_quarter_contrast_are_visible() -> None:
     normalized = re.sub(r"\s+", " ", supplement.lower())
     assert "44 loan-month positions" in normalized
     assert "155,937.27" in normalized
-    assert "not eight independent confirmations" in normalized
+    assert "one repeated allocation, not eight independent confirmations" in normalized
+    assert "all three sharp intervals cross zero in all eight windows" in normalized
+    assert "s9a endpoint-recovery direction reconciliation" in normalized
+    assert "| 8 / 33 / 7 | 0 / 32 / 16 |" in normalized
+    assert "| 8 / 33 / 7 | 0 / 33 / 15 |" in normalized
+    assert "| 8 / 40 / 0 | 0 / 40 / 8 |" in normalized
+
+
+def test_label_lag_sensitivity_is_visible_in_supplement() -> None:
+    rows = _rows("crpto_ijds_v4_tableS5_label_lag_sensitivity.csv")
+    supplement = SUPPLEMENT.read_text(encoding="utf-8")
+
+    assert len(rows) == 40
+    assert {int(row["charged_off_lag_months"]) for row in rows} == {0, 3, 6, 8, 12}
+    scoped = [row for row in rows if row["window_id"].startswith(("w07_", "w08_"))]
+    assert len(scoped) == 10
+    for row in scoped:
+        assert f"{float(row['phase_prevalence']):.6f}" in supplement
+        assert f"{float(row['phase_residual_quantile']):.6f}" in supplement
 
 
 def test_supplement_discloses_negative_simulation_and_recovery() -> None:

@@ -361,3 +361,18 @@ include = ["src/ijds_challengers/evaluation.py"]
 
 [tool.ty.overrides.rules]
 unresolved-attribute = "ignore"
+
+# These active sources are implementation-hashed in the publication evidence.
+# Pandas stubs widen groupby scalar keys to Hashable and Timestamp.date() to
+# date | NaTType; runtime contracts and strict mypy checks cover both paths.
+[[tool.ty.overrides]]
+include = ["scripts/experiments/run_ijds_label_lag_sensitivity.py"]
+
+[tool.ty.overrides.rules]
+invalid-argument-type = "ignore"
+
+[[tool.ty.overrides]]
+include = ["src/ijds_audit/raw_data_audit.py"]
+
+[tool.ty.overrides.rules]
+unresolved-attribute = "ignore"

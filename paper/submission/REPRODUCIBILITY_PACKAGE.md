@@ -1,99 +1,93 @@
-# IJDS Reproducibility Package Plan
+# IJDS Reproducibility Package
 
-Editor-facing operations. The current IJDS policy requires the disclosure form
-at submission and data/code plus a reproducibility workflow at acceptance.
+This editor-facing plan is the single source for capsule contents, raw-data
+instructions, and replay commands.
 
 ## Release Stages
 
-| Stage | Provide | Withhold |
+| Stage | Provide | Exclude |
 |---|---|---|
-| Initial submission | Anonymous manuscript, supplement, title page, disclosure form | Public identity inside reviewer files, secrets, remote metadata |
-| Editor-requested verification | Sanitized active capsule and archive-local checksums | Git history, public-searchable identifiers, credentials |
-| Acceptance | Source, lock, data instructions, active artifacts, final outputs | Secrets and files prohibited from redistribution |
+| Initial submission | Anonymous body, supplement, title-page form, disclosure form | Identity and searchable repository metadata in reviewer files |
+| Editor verification | Sanitized active capsule and archive-local checksums | Credentials, machine paths, unrelated Git history |
+| Acceptance | Code, lock, data instructions, active artifacts, final outputs | Secrets and source files prohibited from redistribution |
 
 ## Minimal Active Capsule
 
-| Component | Contents | Purpose |
-|---|---|---|
-| Environment | `pyproject.toml`, `uv.lock`, `justfile` | Recreate tooling |
-| Protocol | V4, two-ruler, raw-data, and credit-control configs, protocols, recovery/errata, and claim registry | Fix population, windows, learners, rulers, coordinates, comparators, outcomes, and stop rules |
-| Method | `src/ijds_audit`, V4/two-ruler/raw/credit runners, and evidence builder | Reproduce the active study |
-| Active runs | twelve DVC pointers | Recover all three outcome-free and evaluated roots |
-| Evidence | one manifest, ten tables, and three figures in PNG/PDF | Reproduce paper-facing results |
-| Manuscript | canonical QMD, generated INFORMS TeX, supplement, bibliography | Reproduce PDFs |
-| Gates | scientific tests, claim sync, lint, typing, anonymity, visual QA | Detect drift |
+| Component | Contents |
+|---|---|
+| Environment | `pyproject.toml`, `uv.lock`, `justfile` |
+| Authority | Active claim registry, source registry, publication targets |
+| Method | `src/ijds_audit`, active runners, evidence and paper builders |
+| Runs | Twelve DVC pointers for three freeze/evaluation pairs |
+| Evidence | One manifest, eleven tables, three figures in PDF/PNG |
+| Manuscript | QMD body/supplement, generated INFORMS TeX, bibliography |
+| Gates | Scientific tests, lint, typing, drift, claim sync, anonymity, PDF QA |
 
-Historical fixed-taxonomy V1--V3, selected-policy, compact-v7, pool93,
-Prosper/Freddie, and A1--A40 materials remain recoverable from Git/DVC but are
-excluded from the active capsule.
+Historical selected-policy, compact-v7, pool93, external-transfer, and A1--A40
+materials are excluded from this capsule.
+
+## Raw Data Contract
+
+The active raw source is `Loan_status_2007-2020Q3.csv`, expected size
+1,773,470,505 bytes and SHA-256
+`5878af2a088f8ab5214c9337289fb8b5eb6c6338fd3f417b6cdc18513dc6f35f`.
+It is ignored by Git and referenced by DVC metadata. Public community or
+repository mirrors have existed, but no single issuer-maintained permanent URL
+is guaranteed. The package therefore supplies file identity, schema and
+cleaning code, full-file audit artifacts, and reconstruction instructions
+rather than depending on one URL or rehosting the raw CSV.
+
+The code scans 2,925,493 rows and 142 columns. The active design uses every
+eligible 36-month loan under the declared chronology and schema. The archive is
+not a verified point-in-time snapshot; endpoint availability is reconstructed
+from servicing dates. Prosper, Freddie/Mendeley, and Home Credit files are
+historical diagnostics and are not required.
 
 ## Standard Reproduction
 
 ```powershell
 uv sync --frozen --extra dev --extra search --extra spo
-uv run dvc pull data/processed/experiments/ijds_audit/ijds-binary-geometry-frontier-v4-2026-07-12-v1.dvc
-uv run dvc pull models/experiments/ijds_audit/ijds-binary-geometry-frontier-v4-2026-07-12-v1.dvc
-uv run dvc pull data/processed/experiments/ijds_audit/ijds-binary-geometry-frontier-v4-2026-07-12-v2.dvc
-uv run dvc pull models/experiments/ijds_audit/ijds-binary-geometry-frontier-v4-2026-07-12-v2.dvc
-uv run dvc pull data/processed/experiments/ijds_audit/ijds-normalized-objective-frontier-2026-07-13-v1c.dvc
-uv run dvc pull models/experiments/ijds_audit/ijds-normalized-objective-frontier-2026-07-13-v1c.dvc
-uv run dvc pull data/processed/experiments/ijds_audit/ijds-normalized-objective-frontier-2026-07-13-v2.dvc
-uv run dvc pull models/experiments/ijds_audit/ijds-normalized-objective-frontier-2026-07-13-v2.dvc
-uv run dvc pull data/processed/experiments/ijds_audit/ijds-credit-risk-controls-2026-07-13-v1b.dvc
-uv run dvc pull models/experiments/ijds_audit/ijds-credit-risk-controls-2026-07-13-v1b.dvc
-uv run dvc pull data/processed/experiments/ijds_audit/ijds-credit-risk-controls-2026-07-13-v2b.dvc
-uv run dvc pull models/experiments/ijds_audit/ijds-credit-risk-controls-2026-07-13-v2b.dvc
+uv run python scripts/manage_ijds_dvc_capsule.py pull
+just submission-build
 just ijds-active-check
-just paper-submission
-just paper-submission-official
+uv run python scripts/manage_ijds_dvc_capsule.py status
 ```
 
-The DVC pull requires a machine-local `.dvc/config.local` or equivalent remote
-credentials; credentials are never committed. The official PDF additionally
-requires the current INFORMS style kit (`informs4.cls`, `informs2014.bst`,
-`eqndefns-left.sty`, and `informs_Logo.pdf`) in `paper/submission`; these
-publisher files are intentionally ignored by Git.
+The DVC pull requires machine-local credentials. The official PDF additionally
+requires the pinned INFORMS style kit in `paper/submission`.
 
-The maintainer-only `just submission-check` also runs
-`validate-champion-strict`. That gate requires every historical artifact in
-`EXTRACTION_MANIFEST.json` to be present, but does not execute its protected
-stages. An active-capsule reviewer does not need those historical artifacts to
-reproduce V4.
-
-`just ijds-active-replay` validates the active evidence and rebuilds
-paper-facing outputs. It intentionally does not hide an expensive methodology
-rerun.
+`just ijds-active-check` verifies active evidence without executing protected
+historical stages. The maintainer-only submission closeout may validate
+historical artifacts already present with `just submission-check`, but it does
+not reproduce them.
 
 ## Full Replay Boundary
 
-All three outcome-free archives are immutable. Their evaluators verify and import
-them before outcomes. A new full replay may run only with a new run tag and
-fresh paths; it must not overwrite any phase or invoke protected DVC stages.
-Its results cannot silently replace the paper contract.
+All outcome-free roots are immutable. A new methodology replay requires a new
+protocol tag, run tag, and fresh output paths. It must retain all declared cells,
+may not overwrite an active or historical root, and cannot silently replace the
+paper contract after inspecting outcomes.
 
 ## Official PDF Build
-
-The INFORMS TeX is generated from `paper/CRPTO_ijds.qmd`:
 
 ```powershell
 just paper-submission-tex
 just paper-submission-official
 ```
 
-The compiler attempts `latexmk` and uses the robust Windows fallback
-`pdflatex -> bibtex -> pdflatex -> pdflatex`. The first LaTeX pass writes
-`.aux`, BibTeX writes `.bbl`, and the final two passes resolve and stabilize
-citations, references, floats, and pagination.
+The compiler attempts `latexmk` and falls back to
+`pdflatex -> bibtex -> pdflatex -> pdflatex`. The passes create the auxiliary
+graph, bibliography, cross-references, and stable pagination in that order.
 
 ## Acceptance QA
 
 1. Reproduce from a fresh clone and the twelve DVC pointers.
 2. Confirm evidence and QMD-to-TeX builders are byte-idempotent.
-3. Run the full gate and protected champion validation without reproducing its stages.
-4. Compile and visually inspect body, supplement, and official PDF.
-5. Confirm reviewer-facing identity and path sanitization.
-6. Publish acquisition instructions, data dictionary, environment, and hashes.
-7. Document any platform-level numerical difference rather than changing evidence.
+3. Run scientific, lint, type, drift, publication, and protected-artifact checks.
+4. Compile and inspect body, supplement, and official PDF page by page.
+5. Confirm identity, path, tag, commit, and hash sanitization for reviewers.
+6. Publish data acquisition, dictionary, environment, and artifact hashes.
+7. Document platform-level numerical differences without retuning evidence.
 
-The exact immutable identifiers live only in
+Exact immutable identifiers live only in
 `EDITOR_ONLY_REPRODUCIBILITY_CROSSWALK.md`.

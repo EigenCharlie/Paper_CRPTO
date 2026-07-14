@@ -8,6 +8,8 @@ import subprocess
 import tempfile
 from pathlib import Path
 
+from src.utils.pipeline_runtime import atomic_write_text
+
 ROOT = Path(__file__).resolve().parents[1]
 SOURCE = ROOT / "paper" / "CRPTO_ijds.qmd"
 TEMPLATE = ROOT / "paper" / "submission" / "informs-pandoc-template.tex"
@@ -56,7 +58,7 @@ def render_submission_tex(*, check: bool = False) -> bool:
             return False
         return _sha256(OUTPUT.read_bytes()) == _sha256(payload)
 
-    OUTPUT.write_bytes(payload)
+    atomic_write_text(OUTPUT, payload.decode("utf-8"))
     return True
 
 

@@ -10,8 +10,10 @@ path.
 - **Outcome-free freezes:** learner scores, residual recipes, two-ruler paths,
   comparator supports, exact point frontiers, and every allocation are
   persisted before outcomes are joined.
-- **Reconciled evaluations:** source descriptors and hashes are verified before
-  keyed outcome joins, sharp bounds, comparator envelopes, and simulation.
+- **Endpoint-corrected evaluations:** source descriptors and hashes are verified
+  before keyed outcome joins. Terminal status is reconstructed as observable by
+  the cutoff; 364,814 primary outcomes are resolved and 12,076 remain in sharp
+  bounds. The distributed file is not a verified point-in-time snapshot.
 - **Complete specification:** all eight residual windows and five coverage
   learners are reported; only the primary learner enters five gammas, two
   rulers, three coordinates, and supporting fixed-cap policies. No result is

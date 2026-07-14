@@ -31,10 +31,10 @@ The current IJDS paper is the complete-window binary-geometry and
 decision-estimand audit:
 
 - outcome-free run `ijds-binary-geometry-frontier-v4-2026-07-12-v1` and
-  hash-linked evaluation `ijds-binary-geometry-frontier-v4-2026-07-12-v2`;
+  endpoint-corrected evaluation `ijds-binary-geometry-frontier-v4-2026-07-14-v3`;
 - outcome-free two-ruler run
   `ijds-normalized-objective-frontier-2026-07-13-v1c` and hash-linked
-  evaluation `ijds-normalized-objective-frontier-2026-07-13-v2`;
+  endpoint-corrected evaluation `ijds-normalized-objective-frontier-2026-07-14-v3`;
 - one status-independent 640,543-loan design universe, including 376,890
   primary OOT and 88,227 extension candidates;
 - CatBoost/Platt fitting plus an independent logistic coverage control;
@@ -52,8 +52,8 @@ decision-estimand audit:
 - a W7--W8 binary residual phase transition in CatBoost stratum 2;
 - a 6,240-solve two-ruler freeze whose endpoint direction changes with ruler
   and coordinate;
-- one repeated objective-matched `.25` contrast with USD 5,603.66 higher
-  payoff, versus unfavorable `.50` and mostly unidentified `.75` contrasts;
+- objective-matched `.25` bounds crossing zero, unfavorable `.50`, and mostly
+  unidentified `.75` contrasts under the reconstructed evaluation endpoint;
 - exact C2 funded-point-score matching and plug-in dominance reconciliation;
 - 3,067-cap exact frontier with 216/216 broad-stress envelopes crossing zero;
 - default crossing zero in all 72 development-support cells and all 27 W8
@@ -61,11 +61,11 @@ decision-estimand audit:
 - active publication artifacts `crpto_ijds_v4_*`, governed by
   `ijds_binary_geometry_frontier_v4_evidence.json`.
 
-The paper describes a code-locked retrospective temporal audit. It does not
+The paper describes a prespecified and hash-verified retrospective temporal audit. It does not
 claim a prospective trial, causal effect, latent-PD confidence interval,
 selected-set conformal guarantee, cash-flow return, fair-lending certificate,
 or Markov certificate. The full authority is
-`docs/research/active_claims_2026-07-12.md`.
+`docs/research/active_claims_2026-07-14.md`.
 
 Maturity-safe P1/C1, compact-v7, the previous IJDS rebaseline, and the pool93
 frontier are retained as historical provenance, not as active body claims:

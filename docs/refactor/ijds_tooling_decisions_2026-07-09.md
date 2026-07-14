@@ -170,3 +170,7 @@ or conformal code changes. Light drift is not itself a benefit.
 Protocol-frozen V1 hotspots are not refactored merely to lower complexity or
 silence a type checker. A refactor that changes their source hash requires a
 new full run and must offer methodological value commensurate with that cost.
+> **Historical tooling memo.** The active command and evidence contracts moved
+> to `configs/ijds_active_evidence_sources.yaml`, `justfile`, and
+> `docs/research/active_claims_2026-07-14.md`. Command descriptions below record
+> the July 9 state and must not override those sources.

@@ -1,57 +1,55 @@
 # CRPTO Manuscript Workspace
 
-This directory contains one active IJDS paper and one online supplement. The
-Quarto book is a broader internal dossier, not a source of manuscript claims.
+This directory contains one active IJDS manuscript and one online supplement.
+The Quarto book and historical paper drafts are not claim sources.
 
-## Active Paper
+## Active Sources
 
-- Title: "CRPTO: Auditing Temporal Transport and Comparator Choice in
-  Conformal Portfolios".
-- Claim registry: `../docs/research/active_claims_2026-07-12.md`.
-- Evidence: `../reports/crpto/ijds_fixed_taxonomy_c2_evidence.json`.
-- Canonical source: `CRPTO_ijds.qmd`.
-- Supplement: `supplement_ijds.qmd`.
-- Generated official source: `submission/CRPTO_ijds_submission.tex`.
+- Claim registry: `../docs/research/active_claims_2026-07-14.md`.
+- Evidence source registry: `../configs/ijds_active_evidence_sources.yaml`.
+- Paper-facing evidence: `../reports/crpto/ijds_binary_geometry_frontier_v4_evidence.json`.
+- Canonical body: `CRPTO_ijds.qmd`.
+- Canonical supplement: `supplement_ijds.qmd`.
+- Generated official TeX: `submission/CRPTO_ijds_submission.tex`.
 
-The paper reports a retrospective decision audit, not a selected policy. OOT
-candidate coverage falls below 90% under both residual windows, all four fixed
-taxonomies, and the late-window lag grid. Portfolio directions vary across
-timing, C0/C1/C2, comparator scopes, seeds, purpose constraints, and LGD; all
-27 envelopes are indeterminate in each scope. The defensible claim is observed
-coverage transport failure plus comparator non-invariance.
+The paper is a retrospective identification audit of one integrated
+ML--conformal--optimization pipeline. The distributed archive is not a verified
+point-in-time snapshot, so the endpoint is reconstructed as observable by the
+declared cutoff. All 376,890 primary candidates remain in the menus; 364,814
+are resolved and 12,076 enter sharp binary bounds. No learner, window, gamma,
+ruler, coordinate, comparator, or policy is selected.
 
 Historical selected-policy, compact-v7, pool93, external-transfer, and A1--A40
 materials remain recoverable from Git/DVC but are outside the active capsule.
-
-## Editorial Architecture
-
-`CRPTO_ijds.qmd` is the single editorial source for the body. The deterministic
-builder and `submission/informs-pandoc-template.tex` generate the official
-INFORMS TeX. This removes manual QMD/TeX duplication. The supplement remains a
-separate QMD because IJDS requires appendices and lengthy diagnostics in an
-online supplement.
+`CRPTO_ijds.qmd` is the only body source; never edit generated TeX directly.
 
 ## Build
 
 ```powershell
-just ijds-evidence
-just paper-submission
-just paper-submission-tex
-just paper-submission-official
+just submission-build
 ```
 
-The validated official PDF has 28 pages, with references beginning on page 25
-(24 pre-reference pages), 7 main tables, and 3 figures. The abstract has 260
-words and the keyword list has 7 entries.
+The official compiler attempts `latexmk`; its robust fallback is
+`pdflatex -> bibtex -> pdflatex -> pdflatex`. The first LaTeX pass writes the
+auxiliary graph, BibTeX writes the bibliography, and the final two passes
+resolve citations, labels, floats, and pagination.
 
-## Closeout
+## Validation
 
 ```powershell
-just submission-check
+just ijds-active-check
+just paper-submission-tex-check
+just paper-submission-official-scan
+just validate-champion
+just drift-gate
 uv run dvc status --no-updates
 git status --short
 ```
 
-After substantive edits, rebuild evidence and TeX, compile all surfaces, and
-inspect rendered pages. The repository remains pre-freeze until the user makes
-an explicit freeze decision.
+Page counts and visual QA records belong in `submission/README.md` and must be
+regenerated after substantive edits. The project remains pre-freeze until an
+explicit submission-freeze decision.
+
+`submission-build` writes paper-facing evidence and document outputs in causal
+order. `submission-check` and `ijds-active-check` verify the current outputs
+without replaying evidence or a scientific protocol.

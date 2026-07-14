@@ -28,18 +28,40 @@ def _targets(tmp_path: Path, *, omit_last: bool = False) -> Path:
             pointers.append(relative)
     if omit_last:
         pointers.pop()
+    lineage_names = (
+        ("binary_geometry", "outcome_free", RUN_TAGS[0]),
+        ("binary_geometry", "evaluation", RUN_TAGS[1]),
+        ("two_ruler", "outcome_free", RUN_TAGS[2]),
+        ("two_ruler", "evaluation", RUN_TAGS[3]),
+        ("credit_controls", "outcome_free", RUN_TAGS[4]),
+        ("credit_controls", "evaluation", RUN_TAGS[5]),
+    )
+    lineages: dict[str, dict[str, dict[str, str]]] = {}
+    for family, phase, run_tag in lineage_names:
+        lineages.setdefault(family, {})[phase] = {
+            "run_tag": run_tag,
+            "protocol_tag": f"protocol/{run_tag}",
+            "protocol_commit": "a" * 40,
+        }
+    registry = tmp_path / "registry.yaml"
+    registry.write_text(
+        yaml.safe_dump(
+            {
+                "schema_version": "test",
+                "status": "active_ijds_paper_evidence_source_registry",
+                "lineages": lineages,
+                "dvc_pointers": pointers,
+                "sources": {"placeholder": {"path": "unused", "bytes": 0, "sha256": "0" * 64}},
+            }
+        ),
+        encoding="utf-8",
+    )
     targets = tmp_path / "targets.yaml"
     targets.write_text(
         yaml.safe_dump(
             {
                 "active_scientific_contract": {
-                    "outcome_free_run_tag": RUN_TAGS[0],
-                    "run_tag": RUN_TAGS[1],
-                    "two_ruler_outcome_free_run_tag": RUN_TAGS[2],
-                    "two_ruler_run_tag": RUN_TAGS[3],
-                    "credit_control_outcome_free_run_tag": RUN_TAGS[4],
-                    "credit_control_run_tag": RUN_TAGS[5],
-                    "dvc_pointers": pointers,
+                    "source_registry": registry.name,
                 }
             }
         ),

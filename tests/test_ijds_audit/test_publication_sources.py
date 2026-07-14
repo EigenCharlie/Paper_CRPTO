@@ -14,7 +14,7 @@ def test_active_evidence_registry_verifies_every_source() -> None:
         ROOT / "configs/ijds_active_evidence_sources.yaml",
         repo_root=ROOT,
     )
-    assert payload["schema_version"] == "2026-07-14.1"
+    assert payload["schema_version"] == "2026-07-14.2"
     assert set(sources) == {
         "v4_config",
         "v4_summary",
@@ -26,3 +26,5 @@ def test_active_evidence_registry_verifies_every_source() -> None:
         "label_lag_sensitivity",
         "solver_tie_audit",
     }
+    assert len(payload["dvc_pointers"]) == 12
+    assert payload["lineages"]["binary_geometry"]["evaluation"]["run_tag"].endswith("2026-07-14-v3")

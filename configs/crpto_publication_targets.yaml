@@ -1,6 +1,6 @@
-version: "2026-07-13"
+version: "2026-07-14"
 project: paper-crpto
-decision_status: reconstructed_active
+decision_status: prefreeze_active
 
 primary_target:
   id: informs_ijds
@@ -25,28 +25,11 @@ primary_target:
     data_code_disclosure: required
 
 active_scientific_contract:
-  claim_registry: docs/research/active_claims_2026-07-12.md
-  outcome_free_run_tag: ijds-binary-geometry-frontier-v4-2026-07-12-v1
-  outcome_free_protocol_tag: protocol/ijds-binary-geometry-frontier-v4-2026-07-12-v1
-  outcome_free_protocol_commit: 2f8a7606e4eb65aa3ae3701fb3af8d9a51c953cd
-  outcome_free_freeze_sha256: c2b3dc2d18c9fed80708682d5a0369c80c89643e2d28024418522d954ebe667c
-  run_tag: ijds-binary-geometry-frontier-v4-2026-07-12-v2
-  protocol_tag: protocol/ijds-binary-geometry-frontier-v4-2026-07-12-v2
-  protocol_commit: 60cdf298d965525cddaaf03abccd15ff805e1a15
-  two_ruler_outcome_free_run_tag: ijds-normalized-objective-frontier-2026-07-13-v1c
-  two_ruler_outcome_free_protocol_tag: protocol/ijds-normalized-objective-frontier-2026-07-13-v1c
-  two_ruler_outcome_free_freeze_sha256: 7877c5e460772a0093e4132eaa542e9049f7ec15d2ddaa35c2df389892a0e185
-  two_ruler_run_tag: ijds-normalized-objective-frontier-2026-07-13-v2
-  two_ruler_protocol_tag: protocol/ijds-normalized-objective-frontier-2026-07-13-v2
-  two_ruler_protocol_commit: d3041e5233ee74a6b1d38f678def75d8d5ef0169
-  credit_control_outcome_free_run_tag: ijds-credit-risk-controls-2026-07-13-v1b
-  credit_control_outcome_free_protocol_tag: protocol/ijds-credit-risk-controls-2026-07-13-v1b
-  credit_control_outcome_free_protocol_commit: 1776cbf8b201ae5b92756e5ea397a403d6cc7c9f
-  credit_control_outcome_free_freeze_sha256: da4805e644bcf5decfbb0a67c0c81a5b9dd61f3ab2e17d3dc5264100e7eb4d35
-  credit_control_run_tag: ijds-credit-risk-controls-2026-07-13-v2b
-  credit_control_protocol_tag: protocol/ijds-credit-risk-controls-2026-07-13-v2b
-  credit_control_protocol_commit: a6c642aaeebb5746f77fcec8d9349d02b0df0efc
+  claim_registry: docs/research/active_claims_2026-07-14.md
+  source_registry: configs/ijds_active_evidence_sources.yaml
   evidence_manifest: reports/crpto/ijds_binary_geometry_frontier_v4_evidence.json
+  lineage_and_dvc_authority: configs/ijds_active_evidence_sources.yaml
+
   active_code_surface:
     paper_pipeline:
       - scripts/build_ijds_binary_geometry_frontier_v4_evidence.py
@@ -54,109 +37,45 @@ active_scientific_contract:
       - scripts/build_ijds_submission_tex.py
       - scripts/compile_ijds_submission.py
       - scripts/render_submission_pdf_previews.py
-    immutable_protocol_entrypoints:
+    protocol_entrypoints:
       - scripts/experiments/run_ijds_binary_geometry_frontier_v4.py
       - scripts/experiments/run_ijds_normalized_objective_frontier.py
       - scripts/experiments/run_ijds_normalized_objective_frontier_v2.py
       - scripts/experiments/run_ijds_raw_data_audit.py
       - scripts/experiments/run_ijds_credit_risk_controls.py
-    source_inventory_manifests:
-      - models/experiments/ijds_audit/ijds-binary-geometry-frontier-v4-2026-07-12-v2/protocol_freeze.json
-      - models/experiments/ijds_audit/ijds-normalized-objective-frontier-2026-07-13-v1c/protocol_freeze.json
-      - models/experiments/ijds_audit/ijds-normalized-objective-frontier-2026-07-13-v2/verified_evaluation_manifest.json
-      - models/experiments/ijds_audit/ijds-credit-risk-controls-2026-07-13-v1b/protocol_freeze.json
-      - models/experiments/ijds_audit/ijds-credit-risk-controls-2026-07-13-v2b/credit_risk_controls_summary.json
-      - reports/crpto/data_audit/ijds-raw-data-contract-2026-07-13-v1/evidence.json
+      - scripts/experiments/run_ijds_label_lag_sensitivity.py
+      - scripts/experiments/run_ijds_policy_support_tie_audit.py
     historical_execution_in_active_capsule: false
+
   previously_inspected_retrospective_archive: true
+  archive_is_verified_point_in_time_snapshot: false
+  endpoint_cutoff: "2020-09-30"
   confirmatory: false
   prospective: false
+  causal: false
   policy_winner_allowed: false
+
   method:
+    prediction: >-
+      CatBoost/Platt is the only portfolio score. Numeric logistic, monotonic
+      CatBoost, platform-signal WOE/IV, and pricing-excluded application WOE/IV
+      are coverage-only controls and cannot be selected from OOT outcomes.
     conformal: >-
-      Five score strata fixed from 2011 Platt-scaled scores, followed by exact
-      binary-outcome residual ranks in every eligible consecutive six-month
-      window from January 2012 through January 2013.
-    learners: >-
-      CatBoost/Platt is primary. Independently calibrated numeric logistic,
-      domain-constrained monotonic CatBoost, platform-signal WOE/IV, and
-      borrower-only WOE/IV specifications are coverage-only controls. No OOT
-      outcome selects among them, and only the primary CatBoost enters optimization.
-    decision_diagnostic: >-
-      The complete gamma path {0,.25,.50,.75,1} is evaluated under an
-      objective-matched primary ruler and normalized-score secondary ruler at
-      coordinates {.25,.50,.75}; gamma=1-gamma=0 is the frozen contrast and
-      there is no selector or OOT winner.
+      Five score strata are fixed from 2011 scores. Exact binary-outcome
+      residual ranks are reported for all eight eligible six-month windows.
+    decision: >-
+      Gamma {0,.25,.50,.75,1} is evaluated under objective-matched and
+      normalized-score rulers at {.25,.50,.75}; gamma 1 minus gamma 0 is the
+      frozen endpoint contrast, with no selector.
     comparator: >-
-      The nine fixed-cap policies, C0, C1, C2, exact development-admissible
-      support, and broad [0.05,0.12] stress support are supporting outcome-free
-      diagnostics. HiGHS basis endpoints give exact sharp envelopes over each
-      declared point-cap interval.
-    payoff: "Model-implied plug-in (1-p)r-p*LGD and realized (1-Y)r-Y*LGD."
-    evaluation: "Fifteen separate monthly decisions from 2016-04 through 2017-06."
-    unresolved: "Retained with sharp binary aggregate and common-outcome pairwise bounds."
-  headline:
-    primary_candidates: 376890
-    primary_resolved: 365339
-    primary_unresolved: 11551
-    residual_windows: 8
-    learners: 5
-    v4_detailed_coverage_learners: 2
-    portfolio_learners: 1
-    catboost_coverage_bounds: [0.838531, 0.882167]
-    logistic_coverage_bounds: [0.845687, 0.895654]
-    monotonic_catboost_coverage_bounds: [0.844050, 0.885991]
-    platform_woe_coverage_bounds: [0.844199, 0.894317]
-    borrower_woe_coverage_bounds: [0.846849, 0.896973]
-    all_five_all_eight_upper_below_nominal: true
-    raw_archive:
-      rows: 2925493
-      valid_loans: 2925492
-      term36_rows: 2060077
-      term60_rows: 865415
-      active_design_rows: 640543
-      raw_columns: 142
-      eligible_raw_features: 28
-      late_schema_features: 48
-    phase_transition:
-      stratum: 2
-      w7_prevalence: 0.101703
-      w8_prevalence: 0.097147
-      w7_quantile: 0.888435
-      w8_quantile: 0.111801
-      w7_width: 0.984263
-      w8_width: 0.207631
-    two_ruler:
-      solves: 6240
-      funded_rows: 622455
-      tracks: 6
-      window_cells: 48
-      coordinates: [0.25, 0.50, 0.75]
-      objective_matched_025_payoff_usd: 5603.66
-      objective_matched_025_default_pp: -0.00679
-      objective_matched_025_changed_loan_month_positions: 44
-      objective_matched_025_one_way_turnover_usd: 155937.27
-      objective_matched_050_payoff_hull_usd: [-82616, -27958]
-      objective_matched_075_payoff_hull_usd: [-158470, 72565]
-      normalized_payoff_direction: gamma_1_lower_all_24_window_cells
-      policy_winner_allowed: false
-    c2_cells: 1080
-    c2_maximum_match_residual: 8.326672684688674e-17
-    exact_frontier_caps: 3067
-    development_support_hull: [0.055573, 0.099997]
-    broad_stress_envelopes_crossing_zero: 216
-    development_default_envelopes_crossing_zero: 72
-    w8_development_envelopes_crossing_zero: 27
-    simulation_repetitions: 19200
-    universal_policy_direction_allowed: false
-  mechanism: >-
-    Candidate coverage fails under all eight windows and five predeclared
-    learner specifications, including monotonic and WOE/IV credit-risk
-    controls. A score stratum crosses the binary residual prevalence threshold,
-    changing its interval geometry discontinuously. Endpoint directions change
-    across objective-matched and normalized-score rulers and interior
-    coordinates. Same-cap and C2 comparisons have exact plug-in statements,
-    while realized directions also depend on exact comparator support.
+      C0, C1, C2, exact development-admissible support, and broad [0.05,0.12]
+      support are outcome-free diagnostics. HiGHS basis endpoints give exact
+      sharp envelopes on each declared point-cap interval.
+    endpoint: >-
+      Terminal status is conservatively reconstructed as observable by the
+      cutoff; later terminal statuses and nonterminal rows remain unresolved.
+    payoff: "Plug-in (1-p)r-p*LGD and realized (1-Y)r-Y*LGD."
+
   required_artifacts:
     - reports/crpto/ijds_binary_geometry_frontier_v4_evidence.json
     - reports/crpto/tables/crpto_ijds_v4_table1_coverage_windows.csv
@@ -164,61 +83,32 @@ active_scientific_contract:
     - reports/crpto/tables/crpto_ijds_v4_table3_development_envelopes.csv
     - reports/crpto/tables/crpto_ijds_v4_table4_direction_summary.csv
     - reports/crpto/tables/crpto_ijds_v4_table5_two_ruler_tracks.csv
-    - reports/crpto/tables/crpto_ijds_v4_tableS1_named_comparators.csv
     - reports/crpto/tables/crpto_ijds_v4_table6_credit_controls.csv
+    - reports/crpto/tables/crpto_ijds_v4_tableS1_named_comparators.csv
     - reports/crpto/tables/crpto_ijds_v4_tableS2_credit_prediction_metrics.csv
     - reports/crpto/tables/crpto_ijds_v4_tableS3_woe_iv_psi.csv
     - reports/crpto/tables/crpto_ijds_v4_tableS4_score_psi.csv
+    - reports/crpto/tables/crpto_ijds_v4_tableS5_label_lag_sensitivity.csv
     - reports/crpto/figures/crpto_ijds_v4_fig1_coverage.pdf
     - reports/crpto/figures/crpto_ijds_v4_fig1_coverage.png
     - reports/crpto/figures/crpto_ijds_v4_fig2_phase_transition.pdf
     - reports/crpto/figures/crpto_ijds_v4_fig2_phase_transition.png
     - reports/crpto/figures/crpto_ijds_v4_fig3_envelopes.pdf
     - reports/crpto/figures/crpto_ijds_v4_fig3_envelopes.png
-  dvc_pointers:
-    - data/processed/experiments/ijds_audit/ijds-binary-geometry-frontier-v4-2026-07-12-v1.dvc
-    - models/experiments/ijds_audit/ijds-binary-geometry-frontier-v4-2026-07-12-v1.dvc
-    - data/processed/experiments/ijds_audit/ijds-binary-geometry-frontier-v4-2026-07-12-v2.dvc
-    - models/experiments/ijds_audit/ijds-binary-geometry-frontier-v4-2026-07-12-v2.dvc
-    - data/processed/experiments/ijds_audit/ijds-normalized-objective-frontier-2026-07-13-v1c.dvc
-    - models/experiments/ijds_audit/ijds-normalized-objective-frontier-2026-07-13-v1c.dvc
-    - data/processed/experiments/ijds_audit/ijds-normalized-objective-frontier-2026-07-13-v2.dvc
-    - models/experiments/ijds_audit/ijds-normalized-objective-frontier-2026-07-13-v2.dvc
-    - data/processed/experiments/ijds_audit/ijds-credit-risk-controls-2026-07-13-v1b.dvc
-    - models/experiments/ijds_audit/ijds-credit-risk-controls-2026-07-13-v1b.dvc
-    - data/processed/experiments/ijds_audit/ijds-credit-risk-controls-2026-07-13-v2b.dvc
-    - models/experiments/ijds_audit/ijds-credit-risk-controls-2026-07-13-v2b.dvc
 
 claim_boundaries:
   required:
-    - "Clipped binary-outcome residual interval, not a latent-PD confidence limit or discrete-set convex hull."
-    - "Platt-scaled score and plug-in objective, not asserted true conditional probability."
-    - "All eight overlapping residual windows are complete specifications, not independent replications."
-    - "Six ruler-coordinate tracks observed through eight windows are not 48 independent replications."
-    - "Objective matching equalizes only model-implied opportunity cost; normalized-score matching is affine-invariant but does not equalize opportunity cost."
-    - "The three interior coordinates form a finite diagnostic; coordinate one is a structural null and no continuous joint-frontier claim is active."
-    - "The four additional learners are coverage-only controls and do not enter portfolio optimization."
-    - "WOE/IV and monotonicity are robustness controls, not selected winners or the paper's central novelty."
-    - "Marginal/Mondrian coverage is not selected-set validity."
-    - "Standardized payoff is not cash-flow return or IRR."
+    - "Observed binary-endpoint residual interval, not a latent-PD confidence interval."
+    - "Five coverage controls, one portfolio learner, and no OOT model winner."
+    - "Overlapping windows and repeated allocations are not independent replications."
     - "Sharp bounds are partial identification, not confidence intervals."
-    - "Retrospective contrasts are not causal effects."
-    - "Code-locked retrospective audit, not preregistration or a prospective trial."
-    - "C2 is an outcome-free adaptive audit comparator, not a deployable fixed rule."
-    - "Exact comparator envelopes quantify only the declared outcome-free cap supports."
-    - "The archive was previously inspected; the protocol is not confirmatory."
-    - "The factorial simulation supports a coverage mechanism only, not a portfolio claim."
+    - "Retrospective contrasts are not causal, prospective, or confirmatory."
+    - "The archive is not a verified point-in-time snapshot."
+    - "Standardized payoff is not cash-flow return or welfare."
   forbidden:
-    - "Universal economic dominance."
-    - "A unique or theoretically optimal comparator-matching rule."
-    - "A 9-of-9 family direction or eight-confirmation claim for one repeated allocation contrast."
-    - "A selected gamma, ruler, coordinate, policy, or OOT winner."
-    - "A selected residual window, learner, taxonomy, cap, or comparator."
-    - "A comparator-robust sign over the declared multiverse."
-    - "Selected-set conformal guarantee."
-    - "Markov certificate or deterministic tail guarantee."
-    - "Fair-lending certification."
-    - "Live post-2020 performance."
+    - "Selected model, gamma, ruler, coordinate, cap, comparator, or policy."
+    - "Universal portfolio direction or selected-set conformal guarantee."
+    - "Markov, deployment, causal, or fair-lending certificate."
 
 historical_boundary:
   compact_v7_status: git_history_only
@@ -226,37 +116,27 @@ historical_boundary:
   diagnostics_status: git_history_only
   diagnostics:
     - "A1--A24: OCE/CVaR, SPO+, dependence, and online-style studies."
-    - "A25--A34: Prosper and Freddie/Mendeley static transfer studies."
-    - "A35--A40: compact-v7 exact-alpha, selector, and portfolio bundle."
+    - "A25--A34: Prosper and Freddie/Mendeley transfer studies."
+    - "A35--A40: compact-v7 selector and pool93 portfolio bundle."
   rule: >-
-    Historical artifacts remain recoverable from Git/DVC but are excluded from
-    the active capsule and cannot validate, fill, or redefine the V4 binary-geometry audit.
+    Historical artifacts remain recoverable from Git/DVC but cannot validate,
+    fill, or redefine the active endpoint-corrected audit.
 
 secondary_targets:
   - id: ejor
     role: secondary
     name: "European Journal of Operational Research"
     publisher: Elsevier
-    template_family: "Elsevier elsarticle"
-    official_urls:
-      journal: "https://www.sciencedirect.com/journal/european-journal-of-operational-research"
-    pivot_trigger:
-      - "IJDS judges the contribution primarily as applied operational research."
   - id: decision_support_systems
     role: applied_fallback
     name: "Decision Support Systems"
     publisher: Elsevier
-    template_family: "Elsevier article template"
-    official_urls:
-      journal: "https://www.sciencedirect.com/journal/decision-support-systems"
-    pivot_trigger:
-      - "The decision-support application dominates the methodological audit."
 
 current_decision:
   write_first_for: informs_ijds
   keep_second_ready_for: ejor
   target_submission_date: not_fixed
   freeze_rule: >-
-    Continue pre-freeze editorial and reproducibility work. Do not retune on
-    2016-2017 outcomes or promote a policy. The eventual submission freeze is
-    a separate explicit decision.
+    Continue pre-freeze scientific, editorial, and reproducibility work. Do not
+    select on 2016--2017 outcomes. Submission freeze requires a separate
+    explicit decision.

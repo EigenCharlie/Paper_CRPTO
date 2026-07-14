@@ -9,15 +9,16 @@ Pipeline de investigación y libro Quarto que acompañan el paper **CRPTO**, una
 | Campo | Valor |
 | --- | --- |
 | Outcome-free run | `ijds-binary-geometry-frontier-v4-2026-07-12-v1` |
-| Reconciled run | `ijds-binary-geometry-frontier-v4-2026-07-12-v2` |
-| Two-ruler freeze/evaluation | `ijds-normalized-objective-frontier-2026-07-13-v1c` / `v2` |
+| Endpoint-corrected run | `ijds-binary-geometry-frontier-v4-2026-07-14-v3` |
+| Two-ruler freeze/evaluation | `ijds-normalized-objective-frontier-2026-07-13-v1c` / `2026-07-14-v3` |
 | Universo | `640,543` préstamos; primary OOT `376,890`; membership independiente del status |
 | Cronología | ocho ventanas residuales consecutivas; 15 decisiones 2016-04--2017-06 |
 | Conformal | taxonomías fijas con scores 2011; intervalo binario residual, no CI de PD latente |
 | Decisión | seis tracks ruler-coordinate sobre `gamma={0,.25,.50,.75,1}`; sin selector ni winner |
-| Cobertura candidata OOT | CatBoost max upper `0.882167`; logistic max upper `0.895654` |
+| Endpoint | `364,814` resueltos y `12,076` no resueltos; el archivo no es un snapshot point-in-time verificado |
+| Cobertura candidata OOT | CatBoost max upper `0.882597`; logistic max upper `0.896222`; maximo de cinco modelos `0.897726` |
 | Transición binaria | estrato 2: prevalencia `0.101703 -> 0.097147`; cuantil `0.888435 -> 0.111801` |
-| Dos rulers | objective-matched `.25`: `+$5,603.66`, 44 posiciones y `$155,937.27` de turnover; el signo no es invariante |
+| Dos rulers | objective-matched `.25` cruza cero en las tres metricas; `.50` es adverso; `.75` es mayormente no identificado |
 | Comparador C2 | 1,080 funded-point matches; dominancia plug-in mecánica, no dominancia realizada |
 | Exact frontier | 3,067 caps; `216/216` broad-stress envelopes cruzan cero |
 | Development support | default `72/72` cruza cero; W8 `27/27` cruza cero |
@@ -29,7 +30,7 @@ paper-facing. Verifica trabajo ordinario con `just validate-champion`; antes del
 freeze usa `just validate-champion-strict`, que también falla si falta un artefacto.
 Los estudios selected-policy, compact-v7, pool93 y A1--A40 se conservan como
 procedencia en Git/DVC, no como claims activos. La autoridad editorial es
-[`docs/research/active_claims_2026-07-12.md`](docs/research/active_claims_2026-07-12.md)
+[`docs/research/active_claims_2026-07-14.md`](docs/research/active_claims_2026-07-14.md)
 y el único manifest paper-facing es
 [`reports/crpto/ijds_binary_geometry_frontier_v4_evidence.json`](reports/crpto/ijds_binary_geometry_frontier_v4_evidence.json).
 
@@ -74,9 +75,10 @@ just book-preview       # live reload
 just book-clean         # borra _book/, _freeze/, .quarto/
 
 # Pipeline de paper (no toca el champion)
-just paper-export       # tablas + figuras + evidence + journal + libro
-just ijds-evidence      # evidencia V4 + diagnóstico bloqueado de dos rulers
+just paper-export       # evidencia IJDS activa + previews HTML de paper/supplement
+just ijds-active-replay # reconstruye solo evidencia paper-facing desde freezes
 just paper-submission-tex # genera TeX INFORMS desde el QMD canonico
+just submission-build   # construye evidencia, HTML, TeX y los tres PDFs activos
 just tables             # solo CSVs
 just figures            # solo PNGs/PDFs
 
@@ -90,7 +92,8 @@ just api-docs-core      # pdoc local para modulos core, salida ignorada
 just hooks-check        # valida hooks con pre-commit y prek
 just smoke              # tests críticos rápidos
 just test               # suite completa
-just submission-check   # cierre IJDS: claims, lint, type, suite completa, champion y PDF oficial
+just submission-check   # verifica outputs construidos; no regenera evidencia
+just submission-closeout # submission-build seguido por submission-check
 
 # DVC
 just dvc-status         # drift detection
@@ -131,9 +134,8 @@ Los borradores de extracción están en [`paper/`](paper/):
 Comandos rápidos:
 
 ```powershell
-just paper-ijds
-just paper-ijds-supplement
-just paper-submission
+just submission-build
+just submission-check
 ```
 
 ## Estructura

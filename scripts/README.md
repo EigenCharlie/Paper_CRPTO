@@ -43,11 +43,12 @@ just smoke
 just type-advisory
 just hooks-check
 just complexity-report
-just ijds-evidence              # active V4 binary-geometry evidence
+just ijds-active-replay         # explicit paper-facing evidence replay
+just ijds-active-check          # read-only active-capsule verification
 just ijds-historical-v7-evidence # historical compact-v7 provenance only
-just paper-submission
-just paper-submission-official
-just submission-check
+just submission-build           # writes evidence and document outputs
+just submission-check           # read-only gate over built outputs
+just submission-closeout        # build, then verify
 ```
 
 Optional local inspection:

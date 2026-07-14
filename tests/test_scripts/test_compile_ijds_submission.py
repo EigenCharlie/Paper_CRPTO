@@ -3,6 +3,8 @@ from __future__ import annotations
 import hashlib
 import json
 
+import pytest
+
 from scripts.compile_ijds_submission import (
     OFFICIAL_TEMPLATE_FILES,
     STYLE_MANIFEST,
@@ -10,6 +12,7 @@ from scripts.compile_ijds_submission import (
     _missing_template_files,
     _template_asset_drift,
     _windows_latexmk_script,
+    main,
 )
 
 
@@ -67,3 +70,16 @@ def test_style_manifest_detects_tampered_publisher_asset(tmp_path) -> None:
     (tmp_path / OFFICIAL_TEMPLATE_FILES[0]).write_bytes(b"tampered")
 
     assert _template_asset_drift(tmp_path) == (OFFICIAL_TEMPLATE_FILES[0],)
+
+
+def test_official_template_starts_references_on_a_new_page() -> None:
+    template = STYLE_MANIFEST.parent / "informs-pandoc-template.tex"
+
+    assert "\\clearpage\n\\bibliographystyle" in template.read_text(encoding="utf-8")
+
+
+def test_scan_only_rejects_redundant_skip_render() -> None:
+    with pytest.raises(SystemExit) as error:
+        main(["--scan-only", "--skip-render"])
+
+    assert error.value.code == 2

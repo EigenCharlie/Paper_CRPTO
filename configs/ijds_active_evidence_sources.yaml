@@ -1,5 +1,63 @@
-schema_version: "2026-07-14.1"
+schema_version: "2026-07-14.2"
 status: "active_ijds_paper_evidence_source_registry"
+
+lineages:
+  binary_geometry:
+    outcome_free:
+      run_tag: "ijds-binary-geometry-frontier-v4-2026-07-12-v1"
+      protocol_tag: "protocol/ijds-binary-geometry-frontier-v4-2026-07-12-v1"
+      protocol_commit: "2f8a7606e4eb65aa3ae3701fb3af8d9a51c953cd"
+      freeze_sha256: "c2b3dc2d18c9fed80708682d5a0369c80c89643e2d28024418522d954ebe667c"
+    evaluation:
+      run_tag: "ijds-binary-geometry-frontier-v4-2026-07-14-v3"
+      protocol_tag: "protocol/ijds-binary-geometry-frontier-v4-2026-07-14-v3"
+      protocol_commit: "688f75dc4f285c75bc499c9e041dd30fb3acd70d"
+  two_ruler:
+    outcome_free:
+      run_tag: "ijds-normalized-objective-frontier-2026-07-13-v1c"
+      protocol_tag: "protocol/ijds-normalized-objective-frontier-2026-07-13-v1c"
+      protocol_commit: "46f4df915d38eb5a6cc144484c6e6fe56d8ed397"
+      freeze_sha256: "7877c5e460772a0093e4132eaa542e9049f7ec15d2ddaa35c2df389892a0e185"
+    evaluation:
+      run_tag: "ijds-normalized-objective-frontier-2026-07-14-v3"
+      protocol_tag: "protocol/ijds-normalized-objective-frontier-2026-07-14-v3"
+      protocol_commit: "a1ae516a6c9674686dba245cb275475073b298a0"
+  credit_controls:
+    outcome_free:
+      run_tag: "ijds-credit-risk-controls-2026-07-13-v1b"
+      protocol_tag: "protocol/ijds-credit-risk-controls-2026-07-13-v1b"
+      protocol_commit: "1776cbf8b201ae5b92756e5ea397a403d6cc7c9f"
+      freeze_sha256: "da4805e644bcf5decfbb0a67c0c81a5b9dd61f3ab2e17d3dc5264100e7eb4d35"
+    evaluation:
+      run_tag: "ijds-credit-risk-controls-2026-07-14-v3"
+      protocol_tag: "protocol/ijds-credit-risk-controls-2026-07-14-v3"
+      protocol_commit: "688f75dc4f285c75bc499c9e041dd30fb3acd70d"
+  diagnostics:
+    raw_data_audit:
+      run_tag: "ijds-raw-data-contract-2026-07-14-v2"
+      status: "complete_full_archive_data_contract_audit"
+    label_lag_sensitivity:
+      run_tag: "ijds-label-lag-sensitivity-2026-07-14-v1"
+      protocol_tag: "protocol/ijds-label-lag-sensitivity-2026-07-14-v1"
+      protocol_commit: "688f75dc4f285c75bc499c9e041dd30fb3acd70d"
+    solver_tie_audit:
+      run_tag: "ijds-policy-support-tie-audit-2026-07-12-v1"
+      protocol_tag: "protocol/ijds-policy-support-tie-audit-2026-07-12-v1"
+      protocol_commit: "115eaf1b81ed5f05ffe601e9c20079059c40c200"
+
+dvc_pointers:
+  - "data/processed/experiments/ijds_audit/ijds-binary-geometry-frontier-v4-2026-07-12-v1.dvc"
+  - "models/experiments/ijds_audit/ijds-binary-geometry-frontier-v4-2026-07-12-v1.dvc"
+  - "data/processed/experiments/ijds_audit/ijds-binary-geometry-frontier-v4-2026-07-14-v3.dvc"
+  - "models/experiments/ijds_audit/ijds-binary-geometry-frontier-v4-2026-07-14-v3.dvc"
+  - "data/processed/experiments/ijds_audit/ijds-normalized-objective-frontier-2026-07-13-v1c.dvc"
+  - "models/experiments/ijds_audit/ijds-normalized-objective-frontier-2026-07-13-v1c.dvc"
+  - "data/processed/experiments/ijds_audit/ijds-normalized-objective-frontier-2026-07-14-v3.dvc"
+  - "models/experiments/ijds_audit/ijds-normalized-objective-frontier-2026-07-14-v3.dvc"
+  - "data/processed/experiments/ijds_audit/ijds-credit-risk-controls-2026-07-13-v1b.dvc"
+  - "models/experiments/ijds_audit/ijds-credit-risk-controls-2026-07-13-v1b.dvc"
+  - "data/processed/experiments/ijds_audit/ijds-credit-risk-controls-2026-07-14-v3.dvc"
+  - "models/experiments/ijds_audit/ijds-credit-risk-controls-2026-07-14-v3.dvc"
 
 sources:
   v4_config:
