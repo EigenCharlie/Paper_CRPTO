@@ -13,46 +13,12 @@ import pandas as pd
 from loguru import logger
 
 from src.ijds_audit.config import load_v4_config
+from src.ijds_audit.publication_sources import load_verified_source_registry
 from src.utils.isolated_experiment import relative_artifact_descriptor
 from src.utils.pipeline_runtime import atomic_write_json, atomic_write_text
 
 ROOT = Path(__file__).resolve().parents[1]
-CONFIG_PATH = ROOT / "configs/experiments/ijds_binary_geometry_frontier_v4_2026-07-12_v2.yaml"
-MODEL_DIR = ROOT / "models/experiments/ijds_audit/ijds-binary-geometry-frontier-v4-2026-07-12-v2"
-SUMMARY_PATH = MODEL_DIR / "binary_geometry_frontier_v4_summary.json"
-V2_MODEL_DIR = (
-    ROOT / "models/experiments/ijds_audit/ijds-normalized-objective-frontier-2026-07-13-v2"
-)
-V2_MANIFEST_PATH = V2_MODEL_DIR / "verified_evaluation_manifest.json"
-V2_MANIFEST_DESCRIPTOR = {
-    "path": (
-        "models/experiments/ijds_audit/"
-        "ijds-normalized-objective-frontier-2026-07-13-v2/verified_evaluation_manifest.json"
-    ),
-    "bytes": 16325,
-    "sha256": "d3808ce7c7a8e6fee3ef51aefd031e8abf55e11ef3536745ee213fd04752588a",
-}
-CREDIT_V2B_SUMMARY_DESCRIPTOR = {
-    "path": (
-        "models/experiments/ijds_audit/"
-        "ijds-credit-risk-controls-2026-07-13-v2b/credit_risk_controls_summary.json"
-    ),
-    "bytes": 12535,
-    "sha256": "e8b7f9c40c8288db087d55deabaa0d7712ac178d547b3f8a549e949843fce447",
-}
-CREDIT_V2B_RECEIPT_DESCRIPTOR = {
-    "path": (
-        "models/experiments/ijds_audit/"
-        "ijds-credit-risk-controls-2026-07-13-v2b/execution_receipt.json"
-    ),
-    "bytes": 829,
-    "sha256": "4daaa5f048be30f81328d9302e92ba8c47a95f703de89ed57b84b93ec650a4e2",
-}
-RAW_AUDIT_DESCRIPTOR = {
-    "path": "reports/crpto/data_audit/ijds-raw-data-contract-2026-07-13-v1/evidence.json",
-    "bytes": 3511,
-    "sha256": "bfc8eaa01fe4dc08334781896cd6f4528b73e27d6261636f4f5b4b60e2c3e87d",
-}
+SOURCE_REGISTRY_PATH = ROOT / "configs/ijds_active_evidence_sources.yaml"
 EVIDENCE_PATH = ROOT / "reports/crpto/ijds_binary_geometry_frontier_v4_evidence.json"
 TABLE_DIR = ROOT / "reports/crpto/tables"
 FIGURE_DIR = ROOT / "reports/crpto/figures"
@@ -69,7 +35,7 @@ CREDIT_LEARNER_LABELS = {
     "numeric_logistic_platt": "Numeric logistic",
     "catboost_monotonic_platt": "Monotonic CatBoost",
     "woe_scorecard_platform_platt": "Platform-signal WOE scorecard",
-    "woe_scorecard_borrower_platt": "Borrower-only WOE scorecard",
+    "woe_scorecard_borrower_platt": "Pricing-excluded application WOE scorecard",
 }
 
 BLUE = "#2F6690"
@@ -242,7 +208,7 @@ def _credit_control_tables(
                 "brier": float(row["brier"]),
                 "log_loss": float(row["log_loss"]),
                 "ece_10": float(row["ece_10"]),
-                "calibration_in_the_large": float(row["calibration_in_the_large"]),
+                "mean_calibration_error": float(row["calibration_in_the_large"]),
                 "calibration_intercept": float(row["calibration_intercept"]),
                 "calibration_slope": float(row["calibration_slope"]),
                 "coverage_lower_min": float(coverage["coverage_lower"].min()),
@@ -272,6 +238,7 @@ def _credit_control_tables(
     metrics = metrics.sort_values(["_learner_order", "_role_order"]).drop(
         columns=["_learner_order", "_role_order"]
     )
+    metrics = metrics.rename(columns={"calibration_in_the_large": "mean_calibration_error"})
 
     primary_feature_psi = feature_psi.loc[
         feature_psi["comparison_role"].eq("primary_oot"),
@@ -497,8 +464,15 @@ def _envelope_figure(envelopes: pd.DataFrame) -> dict[str, Path]:
 
 
 def build_evidence() -> Path:
-    config = load_v4_config(CONFIG_PATH)
-    summary = json.loads(SUMMARY_PATH.read_text(encoding="utf-8"))
+    registry, registered = load_verified_source_registry(
+        SOURCE_REGISTRY_PATH,
+        repo_root=ROOT,
+    )
+    config_path = registered["v4_config"]
+    summary_path = registered["v4_summary"]
+    v4_receipt_path = registered["v4_receipt"]
+    config = load_v4_config(config_path)
+    summary = json.loads(summary_path.read_text(encoding="utf-8"))
     if summary.get("status") != "complete_retrospective_binary_geometry_frontier_audit":
         raise RuntimeError("V4 deterministic summary is incomplete.")
     artifacts = {name: _verified_path(value) for name, value in summary["artifacts"].items()}
@@ -508,52 +482,57 @@ def build_evidence() -> Path:
         name: _verified_path(value) for name, value in freeze["outcome_free_artifacts"].items()
     }
 
-    v2_manifest_path = _verified_path(V2_MANIFEST_DESCRIPTOR)
-    v2_manifest = json.loads(v2_manifest_path.read_text(encoding="utf-8"))
-    expected_v2_identity = {
+    two_ruler_manifest_path = registered["two_ruler_manifest"]
+    two_ruler_manifest = json.loads(two_ruler_manifest_path.read_text(encoding="utf-8"))
+    expected_two_ruler_identity = {
         "status": "verified_post_freeze_outcome_evaluation_complete",
-        "run_tag": "ijds-normalized-objective-frontier-2026-07-13-v2",
-        "protocol_tag": "protocol/ijds-normalized-objective-frontier-2026-07-13-v2",
-        "protocol_commit": "d3041e5233ee74a6b1d38f678def75d8d5ef0169",
+        "run_tag": "ijds-normalized-objective-frontier-2026-07-14-v3",
+        "protocol_tag": "protocol/ijds-normalized-objective-frontier-2026-07-14-v3",
+        "protocol_commit": "a1ae516a6c9674686dba245cb275475073b298a0",
     }
-    if any(v2_manifest.get(field) != value for field, value in expected_v2_identity.items()):
-        raise RuntimeError("The verified V2 two-ruler identity changed.")
-    if any(value is not None for value in v2_manifest["selection"].values()):
-        raise RuntimeError("The V2 manifest reports a selected two-ruler result.")
-    if (
-        v2_manifest.get("protected_stages_run") != []
-        or v2_manifest.get("protected_artifacts_written") != []
+    if any(
+        two_ruler_manifest.get(field) != value
+        for field, value in expected_two_ruler_identity.items()
     ):
-        raise RuntimeError("The V2 manifest reports a protected-stage side effect.")
-    v2_evaluation_artifacts = {
-        name: _verified_path(value) for name, value in v2_manifest["evaluation_artifacts"].items()
+        raise RuntimeError("The verified V3 two-ruler identity changed.")
+    if any(value is not None for value in two_ruler_manifest["selection"].values()):
+        raise RuntimeError("The V3 manifest reports a selected two-ruler result.")
+    if (
+        two_ruler_manifest.get("protected_stages_run") != []
+        or two_ruler_manifest.get("protected_artifacts_written") != []
+    ):
+        raise RuntimeError("The V3 manifest reports a protected-stage side effect.")
+    two_ruler_evaluation_artifacts = {
+        name: _verified_path(value)
+        for name, value in two_ruler_manifest["evaluation_artifacts"].items()
     }
-    v2_source_artifacts = {
-        name: _verified_path(value) for name, value in v2_manifest["source_artifacts"].items()
+    two_ruler_source_artifacts = {
+        name: _verified_path(value)
+        for name, value in two_ruler_manifest["source_artifacts"].items()
     }
-    v2_summary_path = _verified_path(v2_manifest["summary"])
-    v2_receipt_path = _verified_path(v2_manifest["execution_receipt"])
-    v2_summary = json.loads(v2_summary_path.read_text(encoding="utf-8"))
-    expected_v2_counts = {
+    two_ruler_summary_path = _verified_path(two_ruler_manifest["summary"])
+    two_ruler_receipt_path = _verified_path(two_ruler_manifest["execution_receipt"])
+    two_ruler_summary = json.loads(two_ruler_summary_path.read_text(encoding="utf-8"))
+    expected_two_ruler_counts = {
         "evaluated_portfolios": 6240,
         "joined_funded_rows": 622455,
         "window_endpoint_contrasts": 48,
         "monthly_endpoint_contrasts": 720,
         "metric_direction_cells": 144,
-        "outcome_audit_rows": 5,
+        "outcome_audit_rows": 7,
     }
-    if v2_summary.get("counts") != expected_v2_counts:
-        raise RuntimeError("The V2 two-ruler evaluation census changed.")
+    if two_ruler_summary.get("counts") != expected_two_ruler_counts:
+        raise RuntimeError("The V3 two-ruler evaluation census changed.")
 
-    credit_summary_path = _verified_path(CREDIT_V2B_SUMMARY_DESCRIPTOR)
-    credit_receipt_path = _verified_path(CREDIT_V2B_RECEIPT_DESCRIPTOR)
+    credit_summary_path = registered["credit_summary"]
+    credit_receipt_path = registered["credit_receipt"]
     credit_summary = json.loads(credit_summary_path.read_text(encoding="utf-8"))
     expected_credit_identity = {
         "status": "complete_no_model_selection_credit_risk_control_evaluation",
-        "run_tag": "ijds-credit-risk-controls-2026-07-13-v2b",
+        "run_tag": "ijds-credit-risk-controls-2026-07-14-v3",
     }
     if any(credit_summary.get(field) != value for field, value in expected_credit_identity.items()):
-        raise RuntimeError("The verified V2b credit-control identity changed.")
+        raise RuntimeError("The verified V3 credit-control identity changed.")
     expected_interpretation = {
         "model_or_feature_selected_from_oot": False,
         "portfolio_claim_authorized": False,
@@ -561,19 +540,14 @@ def build_evidence() -> Path:
         "universal_transport_claim_authorized": False,
     }
     if credit_summary.get("interpretation") != expected_interpretation:
-        raise RuntimeError("The V2b credit-control claim boundary changed.")
+        raise RuntimeError("The V3 credit-control claim boundary changed.")
     if (
         credit_summary.get("protected_stages_run") != []
         or credit_summary.get("protected_artifacts_written") != []
     ):
-        raise RuntimeError("The V2b credit controls report a protected-stage side effect.")
-    recovery = credit_summary.get("coverage_recovery", {})
-    if (
-        recovery.get("status") != "exact_frame_equivalence_verified"
-        or recovery.get("reference", {}).get("sha256")
-        != "956bdc9880c80cebc1f48fc2cdf57688dfff7dddd3939b4fd972413d83039767"
-    ):
-        raise RuntimeError("The V2b exact coverage recovery changed.")
+        raise RuntimeError("The V3 credit controls report a protected-stage side effect.")
+    if credit_summary.get("coverage_recovery") is not None:
+        raise RuntimeError("V3 credit controls unexpectedly report a numerical recovery block.")
 
     credit_freeze_path = _verified_path(credit_summary["source_freeze"])
     credit_freeze = json.loads(credit_freeze_path.read_text(encoding="utf-8"))
@@ -607,7 +581,7 @@ def build_evidence() -> Path:
     credit_model_artifacts = {
         name: _verified_path(value) for name, value in credit_freeze["model_artifacts"].items()
     }
-    raw_audit_path = _verified_path(RAW_AUDIT_DESCRIPTOR)
+    raw_audit_path = registered["raw_data_audit"]
     raw_audit = json.loads(raw_audit_path.read_text(encoding="utf-8"))
     if raw_audit.get("status") != "complete_full_archive_data_contract_audit":
         raise RuntimeError("The full-archive data audit is incomplete.")
@@ -619,6 +593,37 @@ def build_evidence() -> Path:
     raw_audit_artifacts = {
         name: _verified_path(value) for name, value in raw_audit["artifacts"].items()
     }
+    raw_feature_contract = pd.read_csv(raw_audit_artifacts["feature_contract"])
+    raw_coverage_exceptions = raw_feature_contract.loc[
+        raw_feature_contract["coverage_exception"].notna()
+        & raw_feature_contract["requires_sensitivity"].eq(True)
+    ].copy()
+    if len(raw_coverage_exceptions) != 2:
+        raise RuntimeError("The declared raw-feature coverage exceptions changed.")
+    lag_evidence_path = registered["label_lag_sensitivity"]
+    lag_evidence = json.loads(lag_evidence_path.read_text(encoding="utf-8"))
+    if lag_evidence.get("status") != "complete_frozen_score_label_lag_sensitivity":
+        raise RuntimeError("The label-lag sensitivity is incomplete.")
+    lag_table_path = _verified_path(lag_evidence["artifact"])
+    lag_table = pd.read_csv(lag_table_path)
+    if len(lag_table) != 40 or set(lag_table["charged_off_lag_months"]) != {0, 3, 6, 8, 12}:
+        raise RuntimeError("The label-lag sensitivity census changed.")
+    admissible_lag_table = lag_table.loc[lag_table["passes_locked_retention"]].copy()
+    nonadmissible_lag_table = lag_table.loc[~lag_table["passes_locked_retention"]].copy()
+    if set(admissible_lag_table["charged_off_lag_months"]) != {0, 3, 6}:
+        raise RuntimeError("The admissible label-lag set changed.")
+    lag_w7_w8 = lag_table.loc[
+        lag_table["window_id"].isin(("w07_2012m07_m12", "w08_2012m08_2013m01"))
+    ].copy()
+
+    tie_evidence_path = registered["solver_tie_audit"]
+    tie_evidence = json.loads(tie_evidence_path.read_text(encoding="utf-8"))
+    if tie_evidence.get("status") != "complete_prefreeze_structural_evidence":
+        raise RuntimeError("The solver-tie audit is incomplete.")
+    tie_census = tie_evidence["results"]["point_cap_census"]
+    tie_order = tie_evidence["results"]["order_sensitivity"]
+    if int(tie_census["near_zero_bases"]) != 0 or int(tie_order["tie_sensitive_rows"]) != 0:
+        raise RuntimeError("The evaluated point-cap census contains an unresolved solver tie.")
 
     credit_prediction_metrics = pd.read_parquet(credit_evaluation_artifacts["prediction_metrics"])
     credit_temporal_coverage = pd.read_parquet(credit_evaluation_artifacts["temporal_coverage"])
@@ -634,10 +639,14 @@ def build_evidence() -> Path:
         credit_score_psi,
     )
 
-    two_ruler_windows = pd.read_parquet(v2_evaluation_artifacts["window_endpoint_contrasts"])
-    two_ruler_monthly = pd.read_parquet(v2_evaluation_artifacts["monthly_endpoint_contrasts"])
-    two_ruler_directions = pd.read_parquet(v2_evaluation_artifacts["metric_direction_census"])
-    two_ruler_joined = pd.read_parquet(v2_evaluation_artifacts["joined_funded_allocations"])
+    two_ruler_windows = pd.read_parquet(two_ruler_evaluation_artifacts["window_endpoint_contrasts"])
+    two_ruler_monthly = pd.read_parquet(
+        two_ruler_evaluation_artifacts["monthly_endpoint_contrasts"]
+    )
+    two_ruler_directions = pd.read_parquet(
+        two_ruler_evaluation_artifacts["metric_direction_census"]
+    )
+    two_ruler_joined = pd.read_parquet(two_ruler_evaluation_artifacts["joined_funded_allocations"])
     two_ruler_table = _two_ruler_track_table(two_ruler_windows, two_ruler_directions)
     if len(two_ruler_table) != 6 or len(two_ruler_monthly) != 720:
         raise RuntimeError("The paper-facing two-ruler track census is incomplete.")
@@ -760,6 +769,10 @@ def build_evidence() -> Path:
             credit_tables["score_psi"],
             TABLE_DIR / "crpto_ijds_v4_tableS4_score_psi.csv",
         ),
+        "label_lag_sensitivity": _write_csv(
+            lag_table.sort_values(["charged_off_lag_months", "window_id"]),
+            TABLE_DIR / "crpto_ijds_v4_tableS5_label_lag_sensitivity.csv",
+        ),
     }
     figures = {
         "coverage": _coverage_figure(coverage),
@@ -803,8 +816,13 @@ def build_evidence() -> Path:
         & credit_feature_variation["role"].isin(["pd_development", "probability_calibration"])
     ][["role", "rows", "unique_observed", "constant_observed"]]
     evidence = {
-        "schema_version": "2026-07-13.2",
-        "status": "active_ijds_v4_two_ruler_and_credit_controls_paper_facing_evidence",
+        "schema_version": "2026-07-14.1",
+        "status": "active_ijds_v4_endpoint_corrected_paper_facing_evidence",
+        "source_registry": {
+            "schema_version": str(registry["schema_version"]),
+            "status": str(registry["status"]),
+            "sources": sorted(registered),
+        },
         "run_tag": str(config["run_tag"]),
         "protocol_tag": str(config["protocol_tag"]),
         "protocol_commit": str(summary["protocol_commit"]),
@@ -834,6 +852,12 @@ def build_evidence() -> Path:
             ),
             "development_support_lower": float(support["support_lower"].min()),
             "development_support_upper": float(support["support_upper"].max()),
+            "evaluation_endpoint": str(config["design"]["endpoint"]),
+            "archive_is_verified_point_in_time_snapshot": bool(
+                config["target"]["evaluation_outcome_contract"][
+                    "archive_is_verified_point_in_time_snapshot"
+                ]
+            ),
         },
         "coverage": {
             "catboost_all_eight_upper_below_nominal": bool(
@@ -865,6 +889,22 @@ def build_evidence() -> Path:
             ),
             "rows": coverage_table.to_dict(orient="records"),
         },
+        "evaluation_endpoint": {
+            **dict(config["target"]["evaluation_outcome_contract"]),
+            "role": str(config["source"]["snapshot_date_role"]),
+            "terminal_statuses_after_cutoff_reclassified_unresolved": True,
+            "primary_oot_candidates": int(coverage.iloc[0]["candidate_rows"]),
+            "primary_oot_resolved": int(coverage.iloc[0]["resolved_rows"]),
+            "primary_oot_unresolved": int(coverage.iloc[0]["unresolved_rows"]),
+            "last_payment_date_max": str(raw_audit["results"]["last_payment_date_max"]),
+            "last_credit_pull_date_max": str(raw_audit["results"]["last_credit_pull_date_max"]),
+            "last_payment_rows_after_cutoff": int(
+                raw_audit["results"]["last_payment_rows_after_cutoff"]
+            ),
+            "last_credit_pull_rows_after_cutoff": int(
+                raw_audit["results"]["last_credit_pull_rows_after_cutoff"]
+            ),
+        },
         "data_contract": {
             "raw_rows": int(raw_audit["results"]["raw_rows"]),
             "valid_loan_rows": int(raw_audit["results"]["valid_loan_rows"]),
@@ -874,6 +914,22 @@ def build_evidence() -> Path:
             "active_design_rows": int(raw_audit["results"]["term36_active_design_rows"]),
             "eligible_raw_features": int(raw_audit["results"]["eligible_raw_features"]),
             "late_schema_features": int(raw_audit["results"]["late_schema_features"]),
+            "declared_coverage_exceptions": int(
+                raw_audit["results"]["declared_coverage_exceptions"]
+            ),
+            "coverage_exceptions_requiring_sensitivity": int(
+                raw_audit["results"]["coverage_exceptions_requiring_sensitivity"]
+            ),
+            "coverage_exception_rows": raw_coverage_exceptions[
+                [
+                    "feature",
+                    "minimum_fitting_coverage",
+                    "primary_oot_coverage",
+                    "coverage_exception",
+                    "missingness_semantics",
+                    "requires_sensitivity",
+                ]
+            ].to_dict(orient="records"),
             "primary_oot_funded_ratio": float(raw_audit["results"]["primary_oot_funded_ratio"]),
             "primary_oot_requested_minus_funded_usd": float(
                 raw_audit["results"]["primary_oot_total_requested_minus_funded"]
@@ -906,8 +962,8 @@ def build_evidence() -> Path:
             "rows": credit_primary.to_dict(orient="records"),
             "declared_descriptive_differences": dict(credit_summary["declared_diagnostics"]),
             "calibration": {
-                "all_primary_oot_calibration_in_the_large_negative": bool(
-                    credit_primary["calibration_in_the_large"].lt(0.0).all()
+                "all_primary_oot_mean_calibration_error_negative": bool(
+                    credit_primary["mean_calibration_error"].lt(0.0).all()
                 ),
                 "all_primary_oot_slopes_below_one": bool(
                     credit_primary["calibration_slope"].lt(1.0).all()
@@ -923,11 +979,11 @@ def build_evidence() -> Path:
                 "platform_features": int(
                     credit_woe_summary["learner"].eq("woe_scorecard_platform_platt").sum()
                 ),
-                "borrower_only_features": int(
+                "pricing_excluded_application_features": int(
                     credit_woe_summary["learner"].eq("woe_scorecard_borrower_platt").sum()
                 ),
                 "top_platform_iv": top_platform_iv,
-                "top_borrower_only_iv": top_borrower_iv,
+                "top_pricing_excluded_application_iv": top_borrower_iv,
             },
             "temporal_shift": {
                 "primary_oot_score_psi": {
@@ -941,12 +997,11 @@ def build_evidence() -> Path:
                     orient="records"
                 ),
             },
-            "coverage_recovery": dict(credit_summary["coverage_recovery"]),
             "interpretation": (
-                "WOE/IV, borrower-only features, and domain-safe monotonic constraints "
-                "are specification controls. They strengthen model-class robustness but "
-                "do not define the paper's novelty, select a learner, or authorize a new "
-                "portfolio policy."
+                "WOE/IV, a pricing-excluded application scorecard, and domain-safe "
+                "monotonic constraints are predeclared coverage-only specification "
+                "controls. They strengthen model-class robustness but do not define the "
+                "paper's novelty, select a learner, or authorize a portfolio policy."
             ),
         },
         "binary_phase_transition": {
@@ -961,6 +1016,42 @@ def build_evidence() -> Path:
                 float(phase.iloc[7]["coverage_lower"]),
                 float(phase.iloc[7]["coverage_upper"]),
             ],
+            "label_lag_sensitivity": {
+                "admissible_lags_months": sorted(
+                    int(value) for value in admissible_lag_table["charged_off_lag_months"].unique()
+                ),
+                "nonadmissible_lags_months": sorted(
+                    int(value)
+                    for value in nonadmissible_lag_table["charged_off_lag_months"].unique()
+                ),
+                "minimum_monthly_retention_by_lag": dict(
+                    lag_evidence["results"]["minimum_monthly_retention_by_lag"]
+                ),
+                "locked_retention_threshold": 0.99,
+                "w7_to_w8_threshold_crossing_at_all_admissible_lags": bool(
+                    lag_w7_w8.loc[
+                        lag_w7_w8["passes_locked_retention"]
+                        & lag_w7_w8["window_id"].eq("w07_2012m07_m12"),
+                        "phase_residual_quantile",
+                    ]
+                    .gt(0.5)
+                    .all()
+                    and lag_w7_w8.loc[
+                        lag_w7_w8["passes_locked_retention"]
+                        & lag_w7_w8["window_id"].eq("w08_2012m08_2013m01"),
+                        "phase_residual_quantile",
+                    ]
+                    .lt(0.5)
+                    .all()
+                ),
+                "crossing_disappears_outside_locked_retention_scope": bool(
+                    lag_w7_w8.loc[~lag_w7_w8["passes_locked_retention"], "phase_residual_quantile"]
+                    .lt(0.5)
+                    .all()
+                ),
+                "causal_interpretation_authorized": False,
+                "rows": lag_w7_w8.to_dict(orient="records"),
+            },
             "rows": phase_table.to_dict(orient="records"),
         },
         "portfolio": {
@@ -978,6 +1069,23 @@ def build_evidence() -> Path:
                 w8_development["direction"].eq("crosses_zero").all()
             ),
             "named_direction_counts": named_table.to_dict(orient="records"),
+            "evaluated_point_cap_solver_stability": {
+                "scope": "evaluated_point_caps_only_not_continuous_uniqueness",
+                "point_cap_rows": int(tie_census["rows"]),
+                "named_unique_cap_months": int(tie_census["named_unique_cap_months"]),
+                "minimum_absolute_nonbasic_reduced_cost": float(
+                    tie_census["minimum_absolute_nonbasic_reduced_cost"]
+                ),
+                "near_zero_bases": int(tie_census["near_zero_bases"]),
+                "primal_degenerate_bases": int(tie_census["primal_degenerate_bases"]),
+                "reversed_order_reruns": int(tie_order["triggered_rows"]),
+                "tie_sensitive_rows": int(tie_order["tie_sensitive_rows"]),
+                "maximum_allocation_distance": float(tie_order["maximum_allocation_distance"]),
+                "maximum_absolute_objective_difference": float(
+                    tie_order["maximum_absolute_objective_difference"]
+                ),
+                "continuous_frontier_uniqueness_claim": False,
+            },
         },
         "decision_challenger": {
             "scope": "finite_two_ruler_three_interior_coordinate_diagnostic",
@@ -986,15 +1094,15 @@ def build_evidence() -> Path:
             "primary_ruler": "objective_matched",
             "secondary_ruler": "normalized_score",
             "endpoint_contrast": "gamma_1_minus_gamma_0",
-            "run_tag": expected_v2_identity["run_tag"],
-            "protocol_tag": expected_v2_identity["protocol_tag"],
-            "protocol_commit": expected_v2_identity["protocol_commit"],
-            "manifest": relative_artifact_descriptor(v2_manifest_path, repo_root=ROOT),
-            "counts": dict(expected_v2_counts),
+            "run_tag": expected_two_ruler_identity["run_tag"],
+            "protocol_tag": expected_two_ruler_identity["protocol_tag"],
+            "protocol_commit": expected_two_ruler_identity["protocol_commit"],
+            "manifest": relative_artifact_descriptor(two_ruler_manifest_path, repo_root=ROOT),
+            "counts": dict(expected_two_ruler_counts),
             "primary_oot_unresolved": int(
-                v2_summary["outcomes"]["candidate_unresolved_by_role"]["primary_oot"]
+                two_ruler_summary["outcomes"]["candidate_unresolved_by_role"]["primary_oot"]
             ),
-            "metric_directions": dict(v2_summary["metric_directions"]),
+            "metric_directions": dict(two_ruler_summary["metric_directions"]),
             "objective_matched_coordinate_025_repetition": objective_quarter,
             "rows": two_ruler_table.to_dict(orient="records"),
             "interpretation": {
@@ -1049,12 +1157,21 @@ def build_evidence() -> Path:
             "or interior coordinate."
         ),
         "source_artifacts": {
-            "summary": relative_artifact_descriptor(SUMMARY_PATH, repo_root=ROOT),
+            "active_source_registry": relative_artifact_descriptor(
+                SOURCE_REGISTRY_PATH, repo_root=ROOT
+            ),
+            "config": relative_artifact_descriptor(config_path, repo_root=ROOT),
+            "summary": relative_artifact_descriptor(summary_path, repo_root=ROOT),
+            "execution_receipt": relative_artifact_descriptor(v4_receipt_path, repo_root=ROOT),
             "freeze": relative_artifact_descriptor(freeze_path, repo_root=ROOT),
-            "two_ruler/manifest": relative_artifact_descriptor(v2_manifest_path, repo_root=ROOT),
-            "two_ruler/summary": relative_artifact_descriptor(v2_summary_path, repo_root=ROOT),
+            "two_ruler/manifest": relative_artifact_descriptor(
+                two_ruler_manifest_path, repo_root=ROOT
+            ),
+            "two_ruler/summary": relative_artifact_descriptor(
+                two_ruler_summary_path, repo_root=ROOT
+            ),
             "two_ruler/execution_receipt": relative_artifact_descriptor(
-                v2_receipt_path, repo_root=ROOT
+                two_ruler_receipt_path, repo_root=ROOT
             ),
             "credit_controls/summary": relative_artifact_descriptor(
                 credit_summary_path, repo_root=ROOT
@@ -1066,6 +1183,15 @@ def build_evidence() -> Path:
                 credit_freeze_path, repo_root=ROOT
             ),
             "raw_data_audit/manifest": relative_artifact_descriptor(raw_audit_path, repo_root=ROOT),
+            "label_lag_sensitivity/manifest": relative_artifact_descriptor(
+                lag_evidence_path, repo_root=ROOT
+            ),
+            "label_lag_sensitivity/table": relative_artifact_descriptor(
+                lag_table_path, repo_root=ROOT
+            ),
+            "solver_tie_audit/manifest": relative_artifact_descriptor(
+                tie_evidence_path, repo_root=ROOT
+            ),
             **{
                 f"evaluation/{name}": relative_artifact_descriptor(path, repo_root=ROOT)
                 for name, path in artifacts.items()
@@ -1076,11 +1202,11 @@ def build_evidence() -> Path:
             },
             **{
                 f"two_ruler/evaluation/{name}": relative_artifact_descriptor(path, repo_root=ROOT)
-                for name, path in v2_evaluation_artifacts.items()
+                for name, path in two_ruler_evaluation_artifacts.items()
             },
             **{
                 f"two_ruler/outcome_free/{name}": relative_artifact_descriptor(path, repo_root=ROOT)
-                for name, path in v2_source_artifacts.items()
+                for name, path in two_ruler_source_artifacts.items()
             },
             **{
                 f"credit_controls/evaluation/{name}": relative_artifact_descriptor(

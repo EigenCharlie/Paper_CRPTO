@@ -1,9 +1,24 @@
 {
-  "schema_version": "2026-07-13.2",
-  "status": "active_ijds_v4_two_ruler_and_credit_controls_paper_facing_evidence",
-  "run_tag": "ijds-binary-geometry-frontier-v4-2026-07-12-v2",
-  "protocol_tag": "protocol/ijds-binary-geometry-frontier-v4-2026-07-12-v2",
-  "protocol_commit": "60cdf298d965525cddaaf03abccd15ff805e1a15",
+  "schema_version": "2026-07-14.1",
+  "status": "active_ijds_v4_endpoint_corrected_paper_facing_evidence",
+  "source_registry": {
+    "schema_version": "2026-07-14.1",
+    "status": "active_ijds_paper_evidence_source_registry",
+    "sources": [
+      "credit_receipt",
+      "credit_summary",
+      "label_lag_sensitivity",
+      "raw_data_audit",
+      "solver_tie_audit",
+      "two_ruler_manifest",
+      "v4_config",
+      "v4_receipt",
+      "v4_summary"
+    ]
+  },
+  "run_tag": "ijds-binary-geometry-frontier-v4-2026-07-14-v3",
+  "protocol_tag": "protocol/ijds-binary-geometry-frontier-v4-2026-07-14-v3",
+  "protocol_commit": "688f75dc4f285c75bc499c9e041dd30fb3acd70d",
   "claim_boundary": {
     "previously_inspected_archive": true,
     "confirmatory": false,
@@ -15,8 +30,8 @@
   },
   "design": {
     "primary_oot_candidates": 376890,
-    "primary_oot_resolved": 365339,
-    "primary_oot_unresolved": 11551,
+    "primary_oot_resolved": 364814,
+    "primary_oot_unresolved": 12076,
     "residual_windows": 8,
     "learners": 5,
     "v4_detailed_coverage_learners": 2,
@@ -48,15 +63,17 @@
     "two_ruler_tracks": 6,
     "frontier_caps": 3067,
     "development_support_lower": 0.0555726278946077,
-    "development_support_upper": 0.09999720664228194
+    "development_support_upper": 0.09999720664228194,
+    "evaluation_endpoint": "terminal_default_reconstructed_as_observable_by_2020-09-30",
+    "archive_is_verified_point_in_time_snapshot": false
   },
   "coverage": {
     "catboost_all_eight_upper_below_nominal": true,
     "logistic_all_eight_upper_below_nominal": true,
-    "catboost_bound_min": 0.8385311364058479,
-    "catboost_bound_max": 0.8821672105919499,
-    "logistic_bound_min": 0.8456870704980233,
-    "logistic_bound_max": 0.895653904322216,
+    "catboost_bound_min": 0.8424845445620738,
+    "catboost_bound_max": 0.8825970442304121,
+    "logistic_bound_min": 0.8500305128817427,
+    "logistic_bound_max": 0.8962217092520364,
     "rows": [
       {
         "learner": "catboost_platt",
@@ -65,11 +82,11 @@
         "role": "primary_oot",
         "conformal_group": -1,
         "candidate_rows": 376890,
-        "resolved_rows": 365339,
-        "unresolved_rows": 11551,
-        "coverage_resolved": 0.8763121374942177,
-        "coverage_lower": 0.8494547480697285,
-        "coverage_upper": 0.8801029478097058,
+        "resolved_rows": 364814,
+        "unresolved_rows": 12076,
+        "coverage_resolved": 0.8770469335058413,
+        "coverage_lower": 0.8547135769057285,
+        "coverage_upper": 0.8805221682719095,
         "score_min": 0.005424291130823528,
         "score_max": 0.5544847575803251,
         "fit_rows": 14948,
@@ -107,11 +124,11 @@
         "role": "primary_oot",
         "conformal_group": -1,
         "candidate_rows": 376890,
-        "resolved_rows": 365339,
-        "unresolved_rows": 11551,
-        "coverage_resolved": 0.8784416665069976,
-        "coverage_lower": 0.8515190108519727,
-        "coverage_upper": 0.8821672105919499,
+        "resolved_rows": 364814,
+        "unresolved_rows": 12076,
+        "coverage_resolved": 0.879165821487114,
+        "coverage_lower": 0.8570245960359787,
+        "coverage_upper": 0.8825970442304121,
         "score_min": 0.005424291130823528,
         "score_max": 0.5544847575803251,
         "fit_rows": 16674,
@@ -149,11 +166,11 @@
         "role": "primary_oot",
         "conformal_group": -1,
         "candidate_rows": 376890,
-        "resolved_rows": 365339,
-        "unresolved_rows": 11551,
-        "coverage_resolved": 0.8770046450009443,
-        "coverage_lower": 0.8501260314680676,
-        "coverage_upper": 0.8807742312080448,
+        "resolved_rows": 364814,
+        "unresolved_rows": 12076,
+        "coverage_resolved": 0.8777349553471084,
+        "coverage_lower": 0.8556528430045902,
+        "coverage_upper": 0.8811430390830216,
         "score_min": 0.005424291130823528,
         "score_max": 0.5544847575803251,
         "fit_rows": 19049,
@@ -191,11 +208,11 @@
         "role": "primary_oot",
         "conformal_group": -1,
         "candidate_rows": 376890,
-        "resolved_rows": 365339,
-        "unresolved_rows": 11551,
-        "coverage_resolved": 0.8741196532535536,
-        "coverage_lower": 0.8473294595239991,
-        "coverage_upper": 0.8779776592639762,
+        "resolved_rows": 364814,
+        "unresolved_rows": 12076,
+        "coverage_resolved": 0.8748732230670972,
+        "coverage_lower": 0.8525697153015469,
+        "coverage_upper": 0.8783411605508239,
         "score_min": 0.005424291130823528,
         "score_max": 0.5544847575803251,
         "fit_rows": 21767,
@@ -233,11 +250,11 @@
         "role": "primary_oot",
         "conformal_group": -1,
         "candidate_rows": 376890,
-        "resolved_rows": 365339,
-        "unresolved_rows": 11551,
-        "coverage_resolved": 0.8717602007998051,
-        "coverage_lower": 0.8450423200403301,
-        "coverage_upper": 0.8756905197803072,
+        "resolved_rows": 364814,
+        "unresolved_rows": 12076,
+        "coverage_resolved": 0.87251311627295,
+        "coverage_lower": 0.8499323410013532,
+        "coverage_upper": 0.8760327947146382,
         "score_min": 0.005424291130823528,
         "score_max": 0.5544847575803251,
         "fit_rows": 24270,
@@ -275,11 +292,11 @@
         "role": "primary_oot",
         "conformal_group": -1,
         "candidate_rows": 376890,
-        "resolved_rows": 365339,
-        "unresolved_rows": 11551,
-        "coverage_resolved": 0.871349623226647,
-        "coverage_lower": 0.8446443259306429,
-        "coverage_upper": 0.8752925256706201,
+        "resolved_rows": 364814,
+        "unresolved_rows": 12076,
+        "coverage_resolved": 0.8721129123334083,
+        "coverage_lower": 0.8494255618350182,
+        "coverage_upper": 0.8756692934277905,
         "score_min": 0.005424291130823528,
         "score_max": 0.5544847575803251,
         "fit_rows": 26685,
@@ -317,11 +334,11 @@
         "role": "primary_oot",
         "conformal_group": -1,
         "candidate_rows": 376890,
-        "resolved_rows": 365339,
-        "unresolved_rows": 11551,
-        "coverage_resolved": 0.8687137152069722,
-        "coverage_lower": 0.8420892037464512,
-        "coverage_upper": 0.8727374034864284,
+        "resolved_rows": 364814,
+        "unresolved_rows": 12076,
+        "coverage_resolved": 0.8694814343747773,
+        "coverage_lower": 0.8465175515402372,
+        "coverage_upper": 0.8730929448910822,
         "score_min": 0.005424291130823528,
         "score_max": 0.5544847575803251,
         "fit_rows": 28411,
@@ -359,11 +376,11 @@
         "role": "primary_oot",
         "conformal_group": -1,
         "candidate_rows": 376890,
-        "resolved_rows": 365339,
-        "unresolved_rows": 11551,
-        "coverage_resolved": 0.8650431517029389,
-        "coverage_lower": 0.8385311364058479,
-        "coverage_upper": 0.869179336145825,
+        "resolved_rows": 364814,
+        "unresolved_rows": 12076,
+        "coverage_resolved": 0.8658549288130389,
+        "coverage_lower": 0.8424845445620738,
+        "coverage_upper": 0.8695640637851894,
         "score_min": 0.005424291130823528,
         "score_max": 0.5544847575803251,
         "fit_rows": 30129,
@@ -401,11 +418,11 @@
         "role": "primary_oot",
         "conformal_group": -1,
         "candidate_rows": 376890,
-        "resolved_rows": 365339,
-        "unresolved_rows": 11551,
-        "coverage_resolved": 0.8923547718694145,
-        "coverage_lower": 0.8650057045822388,
-        "coverage_upper": 0.895653904322216,
+        "resolved_rows": 364814,
+        "unresolved_rows": 12076,
+        "coverage_resolved": 0.8930578322103867,
+        "coverage_lower": 0.8718193637400833,
+        "coverage_upper": 0.8962217092520364,
         "score_min": 1.9895529665330944e-46,
         "score_max": 1.0,
         "fit_rows": 14948,
@@ -443,11 +460,11 @@
         "role": "primary_oot",
         "conformal_group": -1,
         "candidate_rows": 376890,
-        "resolved_rows": 365339,
-        "unresolved_rows": 11551,
-        "coverage_resolved": 0.8913967575320456,
-        "coverage_lower": 0.8640770516596354,
-        "coverage_upper": 0.8947252513996126,
+        "resolved_rows": 364814,
+        "unresolved_rows": 12076,
+        "coverage_resolved": 0.8921011803275094,
+        "coverage_lower": 0.8708509114065112,
+        "coverage_upper": 0.8952771365650455,
         "score_min": 1.9895529665330944e-46,
         "score_max": 1.0,
         "fit_rows": 16674,
@@ -485,11 +502,11 @@
         "role": "primary_oot",
         "conformal_group": -1,
         "candidate_rows": 376890,
-        "resolved_rows": 365339,
-        "unresolved_rows": 11551,
-        "coverage_resolved": 0.8911175647822981,
-        "coverage_lower": 0.8638064156650481,
-        "coverage_upper": 0.8944546154050254,
+        "resolved_rows": 364814,
+        "unresolved_rows": 12076,
+        "coverage_resolved": 0.8918188446715313,
+        "coverage_lower": 0.8706413011754093,
+        "coverage_upper": 0.8949693544535541,
         "score_min": 1.9895529665330944e-46,
         "score_max": 1.0,
         "fit_rows": 19049,
@@ -527,11 +544,11 @@
         "role": "primary_oot",
         "conformal_group": -1,
         "candidate_rows": 376890,
-        "resolved_rows": 365339,
-        "unresolved_rows": 11551,
-        "coverage_resolved": 0.8874360525429806,
-        "coverage_lower": 0.8602377351481865,
-        "coverage_upper": 0.8908859348881637,
+        "resolved_rows": 364814,
+        "unresolved_rows": 12076,
+        "coverage_resolved": 0.8881567045124364,
+        "coverage_lower": 0.8666640133726021,
+        "coverage_upper": 0.8913741409960466,
         "score_min": 1.9895529665330944e-46,
         "score_max": 1.0,
         "fit_rows": 21767,
@@ -569,11 +586,11 @@
         "role": "primary_oot",
         "conformal_group": -1,
         "candidate_rows": 376890,
-        "resolved_rows": 365339,
-        "unresolved_rows": 11551,
-        "coverage_resolved": 0.8849534268172847,
-        "coverage_lower": 0.8578311974316113,
-        "coverage_upper": 0.8884793971715885,
+        "resolved_rows": 364814,
+        "unresolved_rows": 12076,
+        "coverage_resolved": 0.8856924350490936,
+        "coverage_lower": 0.8636631377855608,
+        "coverage_upper": 0.8890127092785693,
         "score_min": 1.9895529665330944e-46,
         "score_max": 1.0,
         "fit_rows": 24270,
@@ -611,11 +628,11 @@
         "role": "primary_oot",
         "conformal_group": -1,
         "candidate_rows": 376890,
-        "resolved_rows": 365339,
-        "unresolved_rows": 11551,
-        "coverage_resolved": 0.8822791982241152,
-        "coverage_lower": 0.8552389291305156,
-        "coverage_upper": 0.8858871288704927,
+        "resolved_rows": 364814,
+        "unresolved_rows": 12076,
+        "coverage_resolved": 0.8830445103532211,
+        "coverage_lower": 0.8605614370240654,
+        "coverage_upper": 0.886468200270636,
         "score_min": 1.9895529665330944e-46,
         "score_max": 1.0,
         "fit_rows": 26685,
@@ -653,11 +670,11 @@
         "role": "primary_oot",
         "conformal_group": -1,
         "candidate_rows": 376890,
-        "resolved_rows": 365339,
-        "unresolved_rows": 11551,
-        "coverage_resolved": 0.8766460739203863,
-        "coverage_lower": 0.8497784499456075,
-        "coverage_upper": 0.8804266496855847,
+        "resolved_rows": 364814,
+        "unresolved_rows": 12076,
+        "coverage_resolved": 0.8774279495852682,
+        "coverage_lower": 0.8545172331449494,
+        "coverage_upper": 0.8809758815569529,
         "score_min": 1.9895529665330944e-46,
         "score_max": 1.0,
         "fit_rows": 28411,
@@ -695,11 +712,11 @@
         "role": "primary_oot",
         "conformal_group": -1,
         "candidate_rows": 376890,
-        "resolved_rows": 365339,
-        "unresolved_rows": 11551,
-        "coverage_resolved": 0.8724253364683212,
-        "coverage_lower": 0.8456870704980233,
-        "coverage_upper": 0.8763352702380005,
+        "resolved_rows": 364814,
+        "unresolved_rows": 12076,
+        "coverage_resolved": 0.8732340315886999,
+        "coverage_lower": 0.8500305128817427,
+        "coverage_upper": 0.8768632757568522,
         "score_min": 1.9895529665330944e-46,
         "score_max": 1.0,
         "fit_rows": 30129,
@@ -732,6 +749,22 @@
       }
     ]
   },
+  "evaluation_endpoint": {
+    "mode": "conservative_terminal_status_reconstruction",
+    "cutoff": "2020-09-30",
+    "terminal_status_source": "distributed_archive_final_status",
+    "archive_is_verified_point_in_time_snapshot": false,
+    "charged_off_reporting_lag_months": 6,
+    "role": "reconstructed_endpoint_cutoff_not_verified_archive_snapshot",
+    "terminal_statuses_after_cutoff_reclassified_unresolved": true,
+    "primary_oot_candidates": 376890,
+    "primary_oot_resolved": 364814,
+    "primary_oot_unresolved": 12076,
+    "last_payment_date_max": "2020-12-01",
+    "last_credit_pull_date_max": "2020-10-01",
+    "last_payment_rows_after_cutoff": 36485,
+    "last_credit_pull_rows_after_cutoff": 40214
+  },
   "data_contract": {
     "raw_rows": 2925493,
     "valid_loan_rows": 2925492,
@@ -739,23 +772,43 @@
     "term36_rows_all_dates": 2060077,
     "term60_rows_all_dates": 865415,
     "active_design_rows": 640543,
-    "eligible_raw_features": 28,
+    "eligible_raw_features": 30,
     "late_schema_features": 48,
+    "declared_coverage_exceptions": 2,
+    "coverage_exceptions_requiring_sensitivity": 2,
+    "coverage_exception_rows": [
+      {
+        "feature": "mths_since_last_delinq",
+        "minimum_fitting_coverage": 0.3360754556414438,
+        "primary_oot_coverage": 0.5285547507230226,
+        "coverage_exception": "structurally_nullable_credit_history_field",
+        "missingness_semantics": "frozen feature engineering maps missing recency to 999",
+        "requires_sensitivity": true
+      },
+      {
+        "feature": "pub_rec_bankruptcies",
+        "minimum_fitting_coverage": 0.9217002237136466,
+        "primary_oot_coverage": 1.0,
+        "coverage_exception": "legacy_schema_partial_coverage",
+        "missingness_semantics": "frozen feature engineering maps missing bankruptcy count to no recorded bankruptcy",
+        "requires_sensitivity": true
+      }
+    ],
     "primary_oot_funded_ratio": 0.9999961757560076,
     "primary_oot_requested_minus_funded_usd": 18000.0,
     "sampling": "none_all_eligible_rows_within_each_declared_temporal_role",
     "population_boundary": "The active 640,543-row design is the exhaustive eligible 36-month population for the declared dates, horizon, schema, and observability rules; it is not a sample from the raw archive.",
     "excluded_scope": "Sixty-month contracts, immature issue dates, and late-schema fields define different horizons, censoring regimes, or temporal feature support.",
     "manifest": {
-      "path": "reports/crpto/data_audit/ijds-raw-data-contract-2026-07-13-v1/evidence.json",
-      "bytes": 3511,
-      "sha256": "bfc8eaa01fe4dc08334781896cd6f4528b73e27d6261636f4f5b4b60e2c3e87d"
+      "path": "reports/crpto/data_audit/ijds-raw-data-contract-2026-07-14-v2/evidence.json",
+      "bytes": 3654,
+      "sha256": "ac3cda119d919006210435eb0ff2234ffd6281d46edf8d29f04157b5f64ba6a5"
     }
   },
   "credit_risk_controls": {
     "scope": "coverage_only_five_model_temporal_transport_robustness",
     "outcome_free_run_tag": "ijds-credit-risk-controls-2026-07-13-v1b",
-    "verified_evaluation_run_tag": "ijds-credit-risk-controls-2026-07-13-v2b",
+    "verified_evaluation_run_tag": "ijds-credit-risk-controls-2026-07-14-v3",
     "all_five_all_eight_upper_below_nominal": true,
     "learners_reported": [
       "catboost_platt",
@@ -773,116 +826,116 @@
         "learner": "catboost_platt",
         "learner_label": "CatBoost",
         "candidate_rows": 376890,
-        "resolved_rows": 365339,
-        "unresolved_rows": 11551,
-        "default_rate": 0.15737985815913438,
-        "roc_auc": 0.6408480922525895,
-        "gini": 0.2816961845051791,
-        "ks": 0.20629253807063164,
-        "average_precision": 0.2370770786057636,
-        "brier": 0.13075300540797932,
-        "log_loss": 0.4308586709993091,
-        "ece_10": 0.048323150230309204,
-        "calibration_in_the_large": -0.04827226982478845,
-        "calibration_intercept": 0.03143021806512476,
-        "calibration_slope": 0.7964687556441289,
-        "coverage_lower_min": 0.8385311364058479,
-        "coverage_upper_max": 0.8821672105919499,
+        "resolved_rows": 364814,
+        "unresolved_rows": 12076,
+        "default_rate": 0.156167252353254,
+        "roc_auc": 0.6406052990079556,
+        "gini": 0.2812105980159112,
+        "ks": 0.20588181451177345,
+        "average_precision": 0.2350998561447269,
+        "brier": 0.12987780627268664,
+        "log_loss": 0.42846570011698926,
+        "ece_10": 0.047215103762021676,
+        "mean_calibration_error": -0.0471089772795769,
+        "calibration_intercept": 0.020228532871166095,
+        "calibration_slope": 0.7954274631320676,
+        "coverage_lower_min": 0.8424845445620738,
+        "coverage_upper_max": 0.8825970442304121,
         "windows_upper_below_0_90": 8
       },
       {
         "learner": "numeric_logistic_platt",
         "learner_label": "Numeric logistic",
         "candidate_rows": 376890,
-        "resolved_rows": 365339,
-        "unresolved_rows": 11551,
-        "default_rate": 0.15737985815913438,
-        "roc_auc": 0.6420788408397852,
-        "gini": 0.28415768167957034,
-        "ks": 0.20981166552848934,
-        "average_precision": 0.2435805381430461,
-        "brier": 0.12967294954245026,
-        "log_loss": 0.4350060646983095,
-        "ece_10": 0.03225732859287416,
-        "calibration_in_the_large": -0.030078037379900002,
-        "calibration_intercept": -0.5900302086613237,
-        "calibration_slope": 0.543219816175003,
-        "coverage_lower_min": 0.8456870704980233,
-        "coverage_upper_max": 0.895653904322216,
+        "resolved_rows": 364814,
+        "unresolved_rows": 12076,
+        "default_rate": 0.156167252353254,
+        "roc_auc": 0.6420446945807546,
+        "gini": 0.2840893891615093,
+        "ks": 0.2096638411920359,
+        "average_precision": 0.24160749827700292,
+        "brier": 0.128845865115775,
+        "log_loss": 0.4327000703812235,
+        "ece_10": 0.031149374770624953,
+        "mean_calibration_error": -0.028922756555184087,
+        "calibration_intercept": -0.5991391826510897,
+        "calibration_slope": 0.5432095920187805,
+        "coverage_lower_min": 0.8500305128817427,
+        "coverage_upper_max": 0.8962217092520364,
         "windows_upper_below_0_90": 8
       },
       {
         "learner": "catboost_monotonic_platt",
         "learner_label": "Monotonic CatBoost",
         "candidate_rows": 376890,
-        "resolved_rows": 365339,
-        "unresolved_rows": 11551,
-        "default_rate": 0.15737985815913438,
-        "roc_auc": 0.6522442096629454,
-        "gini": 0.30448841932589077,
-        "ks": 0.22011025738192402,
-        "average_precision": 0.24751731979372327,
-        "brier": 0.12945728842498827,
-        "log_loss": 0.42494773262786845,
-        "ece_10": 0.042697927519343946,
-        "calibration_in_the_large": -0.04241500572967492,
-        "calibration_intercept": 0.06432894762981776,
-        "calibration_slope": 0.8366798078258157,
-        "coverage_lower_min": 0.8440499880601767,
-        "coverage_upper_max": 0.8859906073390114,
+        "resolved_rows": 364814,
+        "unresolved_rows": 12076,
+        "default_rate": 0.156167252353254,
+        "roc_auc": 0.6519537792141734,
+        "gini": 0.3039075584283468,
+        "ks": 0.21969571391561254,
+        "average_precision": 0.24540282093264182,
+        "brier": 0.12861326735049058,
+        "log_loss": 0.42267695477753886,
+        "ece_10": 0.04156277982947754,
+        "mean_calibration_error": -0.04126410836574358,
+        "calibration_intercept": 0.052284509244371016,
+        "calibration_slope": 0.8351490384153631,
+        "coverage_lower_min": 0.8483960837379607,
+        "coverage_upper_max": 0.8864894266231527,
         "windows_upper_below_0_90": 8
       },
       {
         "learner": "woe_scorecard_platform_platt",
         "learner_label": "Platform-signal WOE scorecard",
         "candidate_rows": 376890,
-        "resolved_rows": 365339,
-        "unresolved_rows": 11551,
-        "default_rate": 0.15737985815913438,
-        "roc_auc": 0.6330228486809497,
-        "gini": 0.2660456973618994,
-        "ks": 0.18831936884807565,
-        "average_precision": 0.22552737510569876,
-        "brier": 0.13036173009454097,
-        "log_loss": 0.4262904675075034,
-        "ece_10": 0.03710477536583455,
-        "calibration_in_the_large": -0.036691864779376776,
-        "calibration_intercept": 0.1619170281037486,
-        "calibration_slope": 0.9181629992812502,
-        "coverage_lower_min": 0.8441985725277933,
-        "coverage_upper_max": 0.8943166441136671,
+        "resolved_rows": 364814,
+        "unresolved_rows": 12076,
+        "default_rate": 0.156167252353254,
+        "roc_auc": 0.6330661809401453,
+        "gini": 0.26613236188029066,
+        "ks": 0.18843820687722823,
+        "average_precision": 0.22388791917890766,
+        "brier": 0.12948509376427816,
+        "log_loss": 0.4239586771759354,
+        "ece_10": 0.035967619770033946,
+        "mean_calibration_error": -0.03551023236967947,
+        "calibration_intercept": 0.15367586807582181,
+        "calibration_slope": 0.9186554972959701,
+        "coverage_lower_min": 0.8489081694924249,
+        "coverage_upper_max": 0.8949083286900688,
         "windows_upper_below_0_90": 8
       },
       {
         "learner": "woe_scorecard_borrower_platt",
-        "learner_label": "Borrower-only WOE scorecard",
+        "learner_label": "Pricing-excluded application WOE scorecard",
         "candidate_rows": 376890,
-        "resolved_rows": 365339,
-        "unresolved_rows": 11551,
-        "default_rate": 0.15737985815913438,
-        "roc_auc": 0.6127115369196929,
-        "gini": 0.22542307383938587,
-        "ks": 0.15794446997935319,
-        "average_precision": 0.21671930719897986,
-        "brier": 0.131063216690659,
-        "log_loss": 0.43033049072738544,
-        "ece_10": 0.0328898561899972,
-        "calibration_in_the_large": -0.03093853429801796,
-        "calibration_intercept": -0.2797928452360484,
-        "calibration_slope": 0.7080234284798298,
-        "coverage_lower_min": 0.8468492132983099,
-        "coverage_upper_max": 0.8969725914723129,
+        "resolved_rows": 364814,
+        "unresolved_rows": 12076,
+        "default_rate": 0.156167252353254,
+        "roc_auc": 0.6129392722275023,
+        "gini": 0.22587854445500466,
+        "ks": 0.15809243291132968,
+        "average_precision": 0.2151918293521198,
+        "brier": 0.13019024412756694,
+        "log_loss": 0.42796595827034617,
+        "ece_10": 0.03176877520031669,
+        "mean_calibration_error": -0.029751737101973152,
+        "calibration_intercept": -0.28557359284456246,
+        "calibration_slope": 0.7098359251738742,
+        "coverage_lower_min": 0.8520125235479848,
+        "coverage_upper_max": 0.8977261269866539,
         "windows_upper_below_0_90": 8
       }
     ],
     "declared_descriptive_differences": {
-      "platform_minus_borrower_oot_auc": 0.02031131176125678,
-      "platform_minus_borrower_oot_brier": -0.000701486596118045,
-      "monotonic_minus_active_oot_auc": 0.011396117410355844,
-      "monotonic_minus_active_oot_brier": -0.001295716982991052
+      "platform_minus_borrower_oot_auc": 0.020126908712643,
+      "platform_minus_borrower_oot_brier": -0.0007051503632887757,
+      "monotonic_minus_active_oot_auc": 0.011348480206217815,
+      "monotonic_minus_active_oot_brier": -0.0012645389221960512
     },
     "calibration": {
-      "all_primary_oot_calibration_in_the_large_negative": true,
+      "all_primary_oot_mean_calibration_error_negative": true,
       "all_primary_oot_slopes_below_one": true,
       "optimizer_success_rows": 30,
       "optimizer_total_rows": 30
@@ -891,7 +944,7 @@
       "optbinning_problems": 45,
       "all_optimal": true,
       "platform_features": 26,
-      "borrower_only_features": 19,
+      "pricing_excluded_application_features": 19,
       "top_platform_iv": [
         {
           "name": "int_rate_bucket__grade",
@@ -914,7 +967,7 @@
           "iv": 0.24485815197270147
         }
       ],
-      "top_borrower_only_iv": [
+      "top_pricing_excluded_application_iv": [
         {
           "name": "fico_score",
           "iv": 0.2135744222493438
@@ -987,17 +1040,7 @@
         }
       ]
     },
-    "coverage_recovery": {
-      "status": "exact_frame_equivalence_verified",
-      "reference": {
-        "path": "data/processed/experiments/ijds_audit/ijds-credit-risk-controls-2026-07-13-v2/evaluation/temporal_coverage.parquet",
-        "bytes": 501571,
-        "sha256": "956bdc9880c80cebc1f48fc2cdf57688dfff7dddd3939b4fd972413d83039767"
-      },
-      "rows": 3520,
-      "columns": 39
-    },
-    "interpretation": "WOE/IV, borrower-only features, and domain-safe monotonic constraints are specification controls. They strengthen model-class robustness but do not define the paper's novelty, select a learner, or authorize a new portfolio policy."
+    "interpretation": "WOE/IV, a pricing-excluded application scorecard, and domain-safe monotonic constraints are predeclared coverage-only specification controls. They strengthen model-class robustness but do not define the paper's novelty, select a learner, or authorize a portfolio policy."
   },
   "binary_phase_transition": {
     "stratum": 2,
@@ -1009,16 +1052,190 @@
     "w8_mean_width": 0.2076312400549422,
     "w8_oot_coverage_bound": [
       0.8225359596189609,
-      0.8536819866661607
+      0.8547066934861538
     ],
+    "label_lag_sensitivity": {
+      "admissible_lags_months": [
+        0,
+        3,
+        6
+      ],
+      "nonadmissible_lags_months": [
+        8,
+        12
+      ],
+      "minimum_monthly_retention_by_lag": {
+        "0": 0.9971164936562861,
+        "3": 0.9966694421315571,
+        "6": 0.9929564746252483,
+        "8": 0.9868159653241828,
+        "12": 0.9745349467220517
+      },
+      "locked_retention_threshold": 0.99,
+      "w7_to_w8_threshold_crossing_at_all_admissible_lags": true,
+      "crossing_disappears_outside_locked_retention_scope": true,
+      "causal_interpretation_authorized": false,
+      "rows": [
+        {
+          "charged_off_lag_months": 0,
+          "window_id": "w07_2012m07_m12",
+          "window_rows": 28503,
+          "retained_rows": 28453,
+          "window_retention": 0.9982457986878576,
+          "minimum_monthly_retention": 0.997116493656286,
+          "passes_locked_retention": true,
+          "phase_stratum": 2,
+          "phase_rows": 5939,
+          "phase_prevalence": 0.1032160296346186,
+          "phase_residual_quantile": 0.8886909233974287,
+          "phase_interval_width_mean": 0.98515359958887,
+          "phase_set_both_share": 0.0220575854520963
+        },
+        {
+          "charged_off_lag_months": 0,
+          "window_id": "w08_2012m08_2013m01",
+          "window_rows": 30259,
+          "retained_rows": 30198,
+          "window_retention": 0.9979840708549522,
+          "minimum_monthly_retention": 0.997116493656286,
+          "passes_locked_retention": true,
+          "phase_stratum": 2,
+          "phase_rows": 6251,
+          "phase_prevalence": 0.0990241561350184,
+          "phase_residual_quantile": 0.1118700059392816,
+          "phase_interval_width_mean": 0.2082540244531064,
+          "phase_set_both_share": 0.0
+        },
+        {
+          "charged_off_lag_months": 3,
+          "window_id": "w07_2012m07_m12",
+          "window_rows": 28503,
+          "retained_rows": 28449,
+          "window_retention": 0.998105462582886,
+          "minimum_monthly_retention": 0.9966694421315572,
+          "passes_locked_retention": true,
+          "phase_stratum": 2,
+          "phase_rows": 5937,
+          "phase_prevalence": 0.102913929594071,
+          "phase_residual_quantile": 0.8886749896176616,
+          "phase_interval_width_mean": 0.9851387217798036,
+          "phase_set_both_share": 0.0212228398180899
+        },
+        {
+          "charged_off_lag_months": 3,
+          "window_id": "w08_2012m08_2013m01",
+          "window_rows": 30259,
+          "retained_rows": 30191,
+          "window_retention": 0.9977527347235532,
+          "minimum_monthly_retention": 0.9966694421315572,
+          "passes_locked_retention": true,
+          "phase_stratum": 2,
+          "phase_rows": 6249,
+          "phase_prevalence": 0.0987357977276364,
+          "phase_residual_quantile": 0.1118616046782793,
+          "phase_interval_width_mean": 0.2082462684749756,
+          "phase_set_both_share": 0.0
+        },
+        {
+          "charged_off_lag_months": 6,
+          "window_id": "w07_2012m07_m12",
+          "window_rows": 28503,
+          "retained_rows": 28411,
+          "window_retention": 0.9967722695856576,
+          "minimum_monthly_retention": 0.9929564746252484,
+          "passes_locked_retention": true,
+          "phase_stratum": 2,
+          "phase_rows": 5929,
+          "phase_prevalence": 0.1017034913138809,
+          "phase_residual_quantile": 0.8884345991499274,
+          "phase_interval_width_mean": 0.9848983200473448,
+          "phase_set_both_share": 0.0129870129870129
+        },
+        {
+          "charged_off_lag_months": 6,
+          "window_id": "w08_2012m08_2013m01",
+          "window_rows": 30259,
+          "retained_rows": 30129,
+          "window_retention": 0.9957037575597344,
+          "minimum_monthly_retention": 0.9929564746252484,
+          "passes_locked_retention": true,
+          "phase_stratum": 2,
+          "phase_rows": 6238,
+          "phase_prevalence": 0.0971465213209362,
+          "phase_residual_quantile": 0.1118010883671265,
+          "phase_interval_width_mean": 0.2081817207788981,
+          "phase_set_both_share": 0.0
+        },
+        {
+          "charged_off_lag_months": 8,
+          "window_id": "w07_2012m07_m12",
+          "window_rows": 28503,
+          "retained_rows": 28349,
+          "window_retention": 0.9945970599586008,
+          "minimum_monthly_retention": 0.9868159653241828,
+          "passes_locked_retention": false,
+          "phase_stratum": 2,
+          "phase_rows": 5916,
+          "phase_prevalence": 0.0997295469912102,
+          "phase_residual_quantile": 0.1118832525211423,
+          "phase_interval_width_mean": 0.2083465264137485,
+          "phase_set_both_share": 0.0
+        },
+        {
+          "charged_off_lag_months": 8,
+          "window_id": "w08_2012m08_2013m01",
+          "window_rows": 30259,
+          "retained_rows": 30035,
+          "window_retention": 0.9925972437952344,
+          "minimum_monthly_retention": 0.9868159653241828,
+          "passes_locked_retention": false,
+          "phase_stratum": 2,
+          "phase_rows": 6217,
+          "phase_prevalence": 0.0940968312691008,
+          "phase_residual_quantile": 0.1117123594604784,
+          "phase_interval_width_mean": 0.208087780959762,
+          "phase_set_both_share": 0.0
+        },
+        {
+          "charged_off_lag_months": 12,
+          "window_id": "w07_2012m07_m12",
+          "window_rows": 28503,
+          "retained_rows": 28052,
+          "window_retention": 0.984177104164474,
+          "minimum_monthly_retention": 0.9745349467220517,
+          "passes_locked_retention": false,
+          "phase_stratum": 2,
+          "phase_rows": 5873,
+          "phase_prevalence": 0.0931380895624042,
+          "phase_residual_quantile": 0.1116902104787908,
+          "phase_interval_width_mean": 0.2081424372028483,
+          "phase_set_both_share": 0.0
+        },
+        {
+          "charged_off_lag_months": 12,
+          "window_id": "w08_2012m08_2013m01",
+          "window_rows": 30259,
+          "retained_rows": 29700,
+          "window_retention": 0.9815261575068576,
+          "minimum_monthly_retention": 0.9745349467220517,
+          "passes_locked_retention": false,
+          "phase_stratum": 2,
+          "phase_rows": 6170,
+          "phase_prevalence": 0.0871961102106969,
+          "phase_residual_quantile": 0.1115043934501935,
+          "phase_interval_width_mean": 0.2078719347850636,
+          "phase_set_both_share": 0.0
+        }
+      ]
+    },
     "rows": [
       {
         "window_id": "w01_2012m01_m06",
         "fit_rows": 3249,
         "fit_prevalence": 0.11665127731609726,
         "fit_residual_quantile": 0.8919735883395368,
-        "coverage_lower": 0.8435867268840057,
-        "coverage_upper": 0.8747327539312055,
+        "coverage_lower": 0.8470909711943527,
+        "coverage_upper": 0.8755930016319405,
         "mean_width": 0.9875801457582357,
         "set_empty_share": 0.0,
         "set_zero_only_share": 0.8844484926689185,
@@ -1029,8 +1246,8 @@
         "fit_rows": 3621,
         "fit_prevalence": 0.11654239160452913,
         "fit_residual_quantile": 0.8920116585417792,
-        "coverage_lower": 0.8438017888091894,
-        "coverage_upper": 0.8749478158563893,
+        "coverage_lower": 0.8473313345224993,
+        "coverage_upper": 0.8758080635571243,
         "mean_width": 0.9876137950975032,
         "set_empty_share": 0.0,
         "set_zero_only_share": 0.8831707718192974,
@@ -1041,8 +1258,8 @@
         "fit_rows": 4018,
         "fit_prevalence": 0.11398705823792932,
         "fit_residual_quantile": 0.8916085888119072,
-        "coverage_lower": 0.841840930079573,
-        "coverage_upper": 0.8729869571267727,
+        "coverage_lower": 0.845092160360292,
+        "coverage_upper": 0.8738851569319519,
         "mean_width": 0.9872553690886571,
         "set_empty_share": 0.0,
         "set_zero_only_share": 0.8954419522562526,
@@ -1053,8 +1270,8 @@
         "fit_rows": 4511,
         "fit_prevalence": 0.10995344712923964,
         "fit_residual_quantile": 0.890281077239412,
-        "coverage_lower": 0.835186661100358,
-        "coverage_upper": 0.8663326881475578,
+        "coverage_lower": 0.837223424038863,
+        "coverage_upper": 0.8673573949675509,
         "mean_width": 0.9860405848595958,
         "set_empty_share": 0.0,
         "set_zero_only_share": 0.9347223803559908,
@@ -1065,8 +1282,8 @@
         "fit_rows": 5001,
         "fit_prevalence": 0.10657868426314737,
         "fit_residual_quantile": 0.8894148014498154,
-        "coverage_lower": 0.8309107239996458,
-        "coverage_upper": 0.8620567510468455,
+        "coverage_lower": 0.8320872392374157,
+        "coverage_upper": 0.8630941085683201,
         "mean_width": 0.9852197606709866,
         "set_empty_share": 0.0,
         "set_zero_only_share": 0.9606310169898921,
@@ -1077,8 +1294,8 @@
         "fit_rows": 5502,
         "fit_prevalence": 0.10523446019629226,
         "fit_residual_quantile": 0.8892521057704302,
-        "coverage_lower": 0.8301643326122433,
-        "coverage_upper": 0.8613103596594431,
+        "coverage_lower": 0.8311890394322365,
+        "coverage_upper": 0.8623603678823991,
         "mean_width": 0.9850630399535071,
         "set_empty_share": 0.0,
         "set_zero_only_share": 0.9660202158209673,
@@ -1089,8 +1306,8 @@
         "fit_rows": 5929,
         "fit_prevalence": 0.10170349131388093,
         "fit_residual_quantile": 0.8884345991499274,
-        "coverage_lower": 0.8261414095411591,
-        "coverage_upper": 0.8572874365883588,
+        "coverage_lower": 0.8264829784811568,
+        "coverage_upper": 0.858375396915759,
         "mean_width": 0.9842633701640714,
         "set_empty_share": 0.0,
         "set_zero_only_share": 0.9904360696800638,
@@ -1102,7 +1319,7 @@
         "fit_prevalence": 0.0971465213209362,
         "fit_residual_quantile": 0.1118010883671265,
         "coverage_lower": 0.8225359596189609,
-        "coverage_upper": 0.8536819866661607,
+        "coverage_upper": 0.8547066934861538,
         "mean_width": 0.2076312400549422,
         "set_empty_share": 0.002618695206649209,
         "set_zero_only_share": 0.9973813047933507,
@@ -1120,22 +1337,22 @@
       {
         "metric": "funded_miscoverage",
         "direction": "crosses_zero",
-        "cells": 33
+        "cells": 45
       },
       {
         "metric": "funded_miscoverage",
         "direction": "guardrail_higher",
-        "cells": 39
+        "cells": 27
       },
       {
         "metric": "standardized_payoff",
         "direction": "crosses_zero",
-        "cells": 51
+        "cells": 66
       },
       {
         "metric": "standardized_payoff",
         "direction": "guardrail_lower",
-        "cells": 21
+        "cells": 6
       },
       {
         "metric": "terminal_default",
@@ -1149,8 +1366,8 @@
         "comparator_rule": "c0_same_numeric_cap",
         "metric": "payoff",
         "guardrail_lower": 0,
-        "crosses_zero": 5,
-        "guardrail_higher": 67
+        "crosses_zero": 54,
+        "guardrail_higher": 18
       },
       {
         "comparator_rule": "c0_same_numeric_cap",
@@ -1162,53 +1379,66 @@
       {
         "comparator_rule": "c0_same_numeric_cap",
         "metric": "miscoverage",
-        "guardrail_lower": 38,
-        "crosses_zero": 29,
+        "guardrail_lower": 15,
+        "crosses_zero": 52,
         "guardrail_higher": 5
       },
       {
         "comparator_rule": "c1_development_mean",
         "metric": "payoff",
-        "guardrail_lower": 39,
-        "crosses_zero": 29,
+        "guardrail_lower": 28,
+        "crosses_zero": 40,
         "guardrail_higher": 4
       },
       {
         "comparator_rule": "c1_development_mean",
         "metric": "default",
         "guardrail_lower": 3,
-        "crosses_zero": 28,
-        "guardrail_higher": 41
+        "crosses_zero": 35,
+        "guardrail_higher": 34
       },
       {
         "comparator_rule": "c1_development_mean",
         "metric": "miscoverage",
         "guardrail_lower": 3,
-        "crosses_zero": 6,
-        "guardrail_higher": 63
+        "crosses_zero": 24,
+        "guardrail_higher": 45
       },
       {
         "comparator_rule": "c2_contemporaneous",
         "metric": "payoff",
-        "guardrail_lower": 49,
-        "crosses_zero": 16,
-        "guardrail_higher": 7
+        "guardrail_lower": 35,
+        "crosses_zero": 31,
+        "guardrail_higher": 6
       },
       {
         "comparator_rule": "c2_contemporaneous",
         "metric": "default",
-        "guardrail_lower": 8,
-        "crosses_zero": 52,
-        "guardrail_higher": 12
+        "guardrail_lower": 7,
+        "crosses_zero": 58,
+        "guardrail_higher": 7
       },
       {
         "comparator_rule": "c2_contemporaneous",
         "metric": "miscoverage",
         "guardrail_lower": 5,
-        "crosses_zero": 10,
-        "guardrail_higher": 57
+        "crosses_zero": 20,
+        "guardrail_higher": 47
       }
-    ]
+    ],
+    "evaluated_point_cap_solver_stability": {
+      "scope": "evaluated_point_caps_only_not_continuous_uniqueness",
+      "point_cap_rows": 7297,
+      "named_unique_cap_months": 2204,
+      "minimum_absolute_nonbasic_reduced_cost": 0.00038757301081204787,
+      "near_zero_bases": 0,
+      "primal_degenerate_bases": 2941,
+      "reversed_order_reruns": 2941,
+      "tie_sensitive_rows": 0,
+      "maximum_allocation_distance": 1.449778343358131e-14,
+      "maximum_absolute_objective_difference": 1.7171259969472885e-09,
+      "continuous_frontier_uniqueness_claim": false
+    }
   },
   "decision_challenger": {
     "scope": "finite_two_ruler_three_interior_coordinate_diagnostic",
@@ -1217,13 +1447,13 @@
     "primary_ruler": "objective_matched",
     "secondary_ruler": "normalized_score",
     "endpoint_contrast": "gamma_1_minus_gamma_0",
-    "run_tag": "ijds-normalized-objective-frontier-2026-07-13-v2",
-    "protocol_tag": "protocol/ijds-normalized-objective-frontier-2026-07-13-v2",
-    "protocol_commit": "d3041e5233ee74a6b1d38f678def75d8d5ef0169",
+    "run_tag": "ijds-normalized-objective-frontier-2026-07-14-v3",
+    "protocol_tag": "protocol/ijds-normalized-objective-frontier-2026-07-14-v3",
+    "protocol_commit": "a1ae516a6c9674686dba245cb275475073b298a0",
     "manifest": {
-      "path": "models/experiments/ijds_audit/ijds-normalized-objective-frontier-2026-07-13-v2/verified_evaluation_manifest.json",
-      "bytes": 16325,
-      "sha256": "d3808ce7c7a8e6fee3ef51aefd031e8abf55e11ef3536745ee213fd04752588a"
+      "path": "models/experiments/ijds_audit/ijds-normalized-objective-frontier-2026-07-14-v3/verified_evaluation_manifest.json",
+      "bytes": 16944,
+      "sha256": "76e3643b92a537c9e0cea4d131f8085d4c843ead0cb95362f19a3442207af96e"
     },
     "counts": {
       "evaluated_portfolios": 6240,
@@ -1231,15 +1461,15 @@
       "window_endpoint_contrasts": 48,
       "monthly_endpoint_contrasts": 720,
       "metric_direction_cells": 144,
-      "outcome_audit_rows": 5
+      "outcome_audit_rows": 7
     },
-    "primary_oot_unresolved": 11551,
+    "primary_oot_unresolved": 12076,
     "metric_directions": {
       "funded_binary_miscoverage": {
         "cells": 48,
         "direction_counts": {
-          "gamma_1_higher": 40,
-          "gamma_1_lower": 8
+          "crosses_zero": 8,
+          "gamma_1_higher": 40
         },
         "universal_nonzero_direction": null,
         "eligible_for_separate_rolling_origin_challenger": false
@@ -1247,9 +1477,8 @@
       "funded_default": {
         "cells": 48,
         "direction_counts": {
-          "crosses_zero": 7,
-          "gamma_1_higher": 33,
-          "gamma_1_lower": 8
+          "crosses_zero": 15,
+          "gamma_1_higher": 33
         },
         "universal_nonzero_direction": null,
         "eligible_for_separate_rolling_origin_challenger": false
@@ -1257,9 +1486,8 @@
       "standardized_payoff": {
         "cells": 48,
         "direction_counts": {
-          "crosses_zero": 7,
-          "gamma_1_higher": 8,
-          "gamma_1_lower": 33
+          "crosses_zero": 16,
+          "gamma_1_lower": 32
         },
         "universal_nonzero_direction": null,
         "eligible_for_separate_rolling_origin_challenger": false
@@ -1282,15 +1510,15 @@
         "active_months_per_window_max": 4,
         "expected_objective_difference_usd_min": 0.0,
         "expected_objective_difference_usd_max": 0.0,
-        "payoff_bound_usd_lower_min": 5603.660798294787,
+        "payoff_bound_usd_lower_min": -9134.339201705214,
         "payoff_bound_usd_upper_max": 5603.660798333496,
         "default_bound_pp_lower_min": -0.006789927307658072,
-        "default_bound_pp_upper_max": -0.006789927307173987,
+        "default_bound_pp_upper_max": 0.12654340602615935,
         "miscoverage_bound_pp_lower_min": -0.006789927307658072,
-        "miscoverage_bound_pp_upper_max": -0.006789927307173987,
-        "payoff_direction_pattern": "gamma_1_higher:8",
-        "default_direction_pattern": "gamma_1_lower:8",
-        "miscoverage_direction_pattern": "gamma_1_lower:8"
+        "miscoverage_bound_pp_upper_max": 0.12654340602615935,
+        "payoff_direction_pattern": "crosses_zero:8",
+        "default_direction_pattern": "crosses_zero:8",
+        "miscoverage_direction_pattern": "crosses_zero:8"
       },
       {
         "ruler": "objective_matched",
@@ -1320,12 +1548,12 @@
         "active_months_per_window_max": 15,
         "expected_objective_difference_usd_min": 0.0,
         "expected_objective_difference_usd_max": 4.656612873077393e-10,
-        "payoff_bound_usd_lower_min": -158470.2519098305,
-        "payoff_bound_usd_upper_max": 72564.81248965129,
-        "default_bound_pp_lower_min": -0.22641652851544558,
-        "default_bound_pp_upper_max": 2.2453244834663084,
-        "miscoverage_bound_pp_lower_min": 1.4325658226326694,
-        "miscoverage_bound_pp_upper_max": 3.935249561651806,
+        "payoff_bound_usd_lower_min": -179484.66459580814,
+        "payoff_bound_usd_upper_max": 92558.17998965128,
+        "default_bound_pp_lower_min": -0.4352498618487788,
+        "default_bound_pp_upper_max": 2.494842541954273,
+        "miscoverage_bound_pp_lower_min": 1.3252372459918247,
+        "miscoverage_bound_pp_upper_max": 4.184767620139838,
         "payoff_direction_pattern": "gamma_1_lower:1;crosses_zero:7",
         "default_direction_pattern": "gamma_1_higher:1;crosses_zero:7",
         "miscoverage_direction_pattern": "gamma_1_higher:8"
@@ -1339,12 +1567,12 @@
         "active_months_per_window_max": 15,
         "expected_objective_difference_usd_min": 425196.4593238123,
         "expected_objective_difference_usd_max": 557294.0146438954,
-        "payoff_bound_usd_lower_min": -598986.3403958206,
-        "payoff_bound_usd_upper_max": -201873.243254245,
-        "default_bound_pp_lower_min": 8.69168590520043,
-        "default_bound_pp_upper_max": 13.014779320969442,
-        "miscoverage_bound_pp_lower_min": 8.599788871869041,
-        "miscoverage_bound_pp_upper_max": 13.343756348713647,
+        "payoff_bound_usd_lower_min": -626374.6147907167,
+        "payoff_bound_usd_upper_max": -195967.628254245,
+        "default_bound_pp_lower_min": 8.482852571867097,
+        "default_bound_pp_upper_max": 13.424612654302775,
+        "miscoverage_bound_pp_lower_min": 8.390955538535708,
+        "miscoverage_bound_pp_upper_max": 13.753589682046982,
         "payoff_direction_pattern": "gamma_1_lower:8",
         "default_direction_pattern": "gamma_1_higher:8",
         "miscoverage_direction_pattern": "gamma_1_higher:8"
@@ -1358,12 +1586,12 @@
         "active_months_per_window_max": 15,
         "expected_objective_difference_usd_min": 152030.9877972738,
         "expected_objective_difference_usd_max": 226847.9705495569,
-        "payoff_bound_usd_lower_min": -243217.56448523604,
-        "payoff_bound_usd_upper_max": -94767.02415282579,
-        "default_bound_pp_lower_min": 3.6160187470494085,
-        "default_bound_pp_upper_max": 6.371699817357987,
-        "miscoverage_bound_pp_lower_min": 2.501638156350509,
-        "miscoverage_bound_pp_upper_max": 5.02215906991543,
+        "payoff_bound_usd_lower_min": -259658.18448523604,
+        "payoff_bound_usd_upper_max": -54025.8191528258,
+        "default_bound_pp_lower_min": 3.2213520803827533,
+        "default_bound_pp_upper_max": 6.563699817357987,
+        "miscoverage_bound_pp_lower_min": 2.1069714896837946,
+        "miscoverage_bound_pp_upper_max": 5.21415906991543,
         "payoff_direction_pattern": "gamma_1_lower:8",
         "default_direction_pattern": "gamma_1_higher:8",
         "miscoverage_direction_pattern": "gamma_1_higher:8"
@@ -1377,13 +1605,13 @@
         "active_months_per_window_max": 15,
         "expected_objective_difference_usd_min": 28263.397028705105,
         "expected_objective_difference_usd_max": 51201.887608815916,
-        "payoff_bound_usd_lower_min": -132157.56706879055,
-        "payoff_bound_usd_upper_max": -31335.210604134496,
-        "default_bound_pp_lower_min": 1.8273221311424244,
-        "default_bound_pp_upper_max": 2.369689457397012,
-        "miscoverage_bound_pp_lower_min": 0.7328943604051414,
-        "miscoverage_bound_pp_upper_max": 1.6623605535566646,
-        "payoff_direction_pattern": "gamma_1_lower:8",
+        "payoff_bound_usd_lower_min": -135781.22300933156,
+        "payoff_bound_usd_upper_max": 9812.591895865517,
+        "default_bound_pp_lower_min": 1.4391554644757423,
+        "default_bound_pp_upper_max": 2.3807174501084845,
+        "miscoverage_bound_pp_lower_min": 0.34472769373846956,
+        "miscoverage_bound_pp_upper_max": 1.6990552129348044,
+        "payoff_direction_pattern": "gamma_1_lower:7;crosses_zero:1",
         "default_direction_pattern": "gamma_1_higher:8",
         "miscoverage_direction_pattern": "gamma_1_higher:8"
       }
@@ -1412,40 +1640,55 @@
   },
   "audit_thesis": "Binary absolute-residual conformal guardrails can change discontinuously when a score stratum crosses the alpha prevalence threshold; candidate coverage does not transport to the later archive under five predeclared credit-risk model specifications; and portfolio direction is not identified without an outcome-free comparator support and is not invariant to the declared ruler or interior coordinate.",
   "source_artifacts": {
+    "active_source_registry": {
+      "path": "configs/ijds_active_evidence_sources.yaml",
+      "bytes": 2032,
+      "sha256": "df46995ee90e1686ea02a595322b7f333f5be9c4e7ed5b2b520bb594fa5ce17f"
+    },
+    "config": {
+      "path": "configs/experiments/ijds_binary_geometry_frontier_v4_2026-07-14_v3.yaml",
+      "bytes": 1232,
+      "sha256": "5123698bd6d21a0531f81ce7b26edc093dc49452e13aa531166c5ccc36400eca"
+    },
     "summary": {
-      "path": "models/experiments/ijds_audit/ijds-binary-geometry-frontier-v4-2026-07-12-v2/binary_geometry_frontier_v4_summary.json",
-      "bytes": 17796,
-      "sha256": "1483713ce410a07851047f60b483774b866dfdbe864ea525a9cf098ad5ff8647"
+      "path": "models/experiments/ijds_audit/ijds-binary-geometry-frontier-v4-2026-07-14-v3/binary_geometry_frontier_v4_summary.json",
+      "bytes": 17794,
+      "sha256": "c05a6048fd6e259d53b5901b975a5970256bdd20901fdf236112e85930bafa5f"
+    },
+    "execution_receipt": {
+      "path": "models/experiments/ijds_audit/ijds-binary-geometry-frontier-v4-2026-07-14-v3/execution_receipt.json",
+      "bytes": 1142,
+      "sha256": "e4edf9ea250195710d1bac37296a745f665fb15593717d307ce48d5fd37b3fa8"
     },
     "freeze": {
-      "path": "models/experiments/ijds_audit/ijds-binary-geometry-frontier-v4-2026-07-12-v2/protocol_freeze.json",
-      "bytes": 21595,
-      "sha256": "2293424cad97a9e4dad81c0efe3a2c4d23067b9d35f53d0e0b1bfc3d48478994"
+      "path": "models/experiments/ijds_audit/ijds-binary-geometry-frontier-v4-2026-07-14-v3/protocol_freeze.json",
+      "bytes": 21922,
+      "sha256": "abf692962015bed45a6beda6f12363d2b8951f15c323d56a93251b064bcecc0b"
     },
     "two_ruler/manifest": {
-      "path": "models/experiments/ijds_audit/ijds-normalized-objective-frontier-2026-07-13-v2/verified_evaluation_manifest.json",
-      "bytes": 16325,
-      "sha256": "d3808ce7c7a8e6fee3ef51aefd031e8abf55e11ef3536745ee213fd04752588a"
+      "path": "models/experiments/ijds_audit/ijds-normalized-objective-frontier-2026-07-14-v3/verified_evaluation_manifest.json",
+      "bytes": 16944,
+      "sha256": "76e3643b92a537c9e0cea4d131f8085d4c843ead0cb95362f19a3442207af96e"
     },
     "two_ruler/summary": {
-      "path": "models/experiments/ijds_audit/ijds-normalized-objective-frontier-2026-07-13-v2/normalized_objective_frontier_v2_summary.json",
-      "bytes": 2861,
-      "sha256": "1dbfb2652d5bd2f9a1478ca10bbc829c9bcd0cf847a9e179454b3f2c629beb03"
+      "path": "models/experiments/ijds_audit/ijds-normalized-objective-frontier-2026-07-14-v3/normalized_objective_frontier_v3_summary.json",
+      "bytes": 2806,
+      "sha256": "7fc957f2c72491902f2d56a9fb90cc179befcaac7103604f8f08482c189a1ba4"
     },
     "two_ruler/execution_receipt": {
-      "path": "models/experiments/ijds_audit/ijds-normalized-objective-frontier-2026-07-13-v2/execution_receipt.json",
-      "bytes": 635,
-      "sha256": "3ef3e7c7e363bcf8630ae79cabe2847f5b70bc66416f384c043c16cef2b46ca8"
+      "path": "models/experiments/ijds_audit/ijds-normalized-objective-frontier-2026-07-14-v3/execution_receipt.json",
+      "bytes": 636,
+      "sha256": "2ed3588cb4c2b31a2937a207dcba9004eb66480ca1aefb2daf5e0a5bb1e76ddf"
     },
     "credit_controls/summary": {
-      "path": "models/experiments/ijds_audit/ijds-credit-risk-controls-2026-07-13-v2b/credit_risk_controls_summary.json",
-      "bytes": 12535,
-      "sha256": "e8b7f9c40c8288db087d55deabaa0d7712ac178d547b3f8a549e949843fce447"
+      "path": "models/experiments/ijds_audit/ijds-credit-risk-controls-2026-07-14-v3/credit_risk_controls_summary.json",
+      "bytes": 12473,
+      "sha256": "c64bb3088771d7f3c9a2fb550bbd8ee9a789a5e340054e09f3126656b6a89ca7"
     },
     "credit_controls/execution_receipt": {
-      "path": "models/experiments/ijds_audit/ijds-credit-risk-controls-2026-07-13-v2b/execution_receipt.json",
-      "bytes": 829,
-      "sha256": "4daaa5f048be30f81328d9302e92ba8c47a95f703de89ed57b84b93ec650a4e2"
+      "path": "models/experiments/ijds_audit/ijds-credit-risk-controls-2026-07-14-v3/execution_receipt.json",
+      "bytes": 826,
+      "sha256": "da07c576b7a9946c2fec1ae4c3f0e9958dfe42412d86c961516cfeb8aff3e452"
     },
     "credit_controls/freeze": {
       "path": "models/experiments/ijds_audit/ijds-credit-risk-controls-2026-07-13-v1b/protocol_freeze.json",
@@ -1453,54 +1696,69 @@
       "sha256": "da4805e644bcf5decfbb0a67c0c81a5b9dd61f3ab2e17d3dc5264100e7eb4d35"
     },
     "raw_data_audit/manifest": {
-      "path": "reports/crpto/data_audit/ijds-raw-data-contract-2026-07-13-v1/evidence.json",
-      "bytes": 3511,
-      "sha256": "bfc8eaa01fe4dc08334781896cd6f4528b73e27d6261636f4f5b4b60e2c3e87d"
+      "path": "reports/crpto/data_audit/ijds-raw-data-contract-2026-07-14-v2/evidence.json",
+      "bytes": 3654,
+      "sha256": "ac3cda119d919006210435eb0ff2234ffd6281d46edf8d29f04157b5f64ba6a5"
+    },
+    "label_lag_sensitivity/manifest": {
+      "path": "reports/crpto/sensitivity/ijds-label-lag-sensitivity-2026-07-14-v1/evidence.json",
+      "bytes": 2476,
+      "sha256": "6078892647c0f041631ebdb47c63b5613619fd61a82c2d13d9fb8c9c84e0adc7"
+    },
+    "label_lag_sensitivity/table": {
+      "path": "reports/crpto/sensitivity/ijds-label-lag-sensitivity-2026-07-14-v1/label_lag_phase_sensitivity.csv",
+      "bytes": 6476,
+      "sha256": "ddafa5977bb3ae3e1698caf412c3824708633bb17310d88d43deb301e5f389ea"
+    },
+    "solver_tie_audit/manifest": {
+      "path": "reports/crpto/ijds_policy_support_tie_evidence.json",
+      "bytes": 12845,
+      "sha256": "2903694ee502e6144008bbbc5891e5932f88f8527e12686363c85a28fa78684e"
     },
     "evaluation/temporal_coverage": {
-      "path": "data/processed/experiments/ijds_audit/ijds-binary-geometry-frontier-v4-2026-07-12-v2/evaluation/temporal_coverage.parquet",
-      "bytes": 215413,
-      "sha256": "86d03ac04be452f2063e961c92a0a10661331b173234ce3d8e7545a6503ea2d3"
+      "path": "data/processed/experiments/ijds_audit/ijds-binary-geometry-frontier-v4-2026-07-14-v3/evaluation/temporal_coverage.parquet",
+      "bytes": 215583,
+      "sha256": "8c1877acb9630d40cd52005d06a8aa6357cbc65da41895e31b76e44e62f195df"
     },
     "evaluation/monthly_evaluation": {
-      "path": "data/processed/experiments/ijds_audit/ijds-binary-geometry-frontier-v4-2026-07-12-v2/evaluation/monthly_evaluation.parquet",
-      "bytes": 506662,
-      "sha256": "af582b22d6376f91bf874a4e58efbf989aa266d89a93bb9e2fef65c07cf42e7c"
+      "path": "data/processed/experiments/ijds_audit/ijds-binary-geometry-frontier-v4-2026-07-14-v3/evaluation/monthly_evaluation.parquet",
+      "bytes": 498741,
+      "sha256": "f4c043fa5f4e10f9d86adfcbd775b14334fa3a075acbd1cd55fd6c40767be5ab"
     },
     "evaluation/funded_allocations_with_outcomes": {
-      "path": "data/processed/experiments/ijds_audit/ijds-binary-geometry-frontier-v4-2026-07-12-v2/evaluation/funded_allocations_with_outcomes.parquet",
-      "bytes": 9176724,
-      "sha256": "288a9f06151a07acef1de410e7d6aa9f335c03b833c572495a0fc9ba49c367cd"
+      "path": "data/processed/experiments/ijds_audit/ijds-binary-geometry-frontier-v4-2026-07-14-v3/evaluation/funded_allocations_with_outcomes.parquet",
+      "bytes": 9184118,
+      "sha256": "75aec6293fa698a9065b06b528a4fd53b0325d4fe7579c346d9d26005930a4a8"
     },
     "evaluation/shared_frontier_allocations_with_outcomes": {
-      "path": "data/processed/experiments/ijds_audit/ijds-binary-geometry-frontier-v4-2026-07-12-v2/evaluation/shared_frontier_allocations_with_outcomes.parquet",
-      "bytes": 12945235,
-      "sha256": "eb6da33ee90e4721d18955119e39ca676fc072b2753c855306cc0b5643b117ab"
+      "path": "data/processed/experiments/ijds_audit/ijds-binary-geometry-frontier-v4-2026-07-14-v3/evaluation/shared_frontier_allocations_with_outcomes.parquet",
+      "bytes": 12956013,
+      "sha256": "9e8e97aec173eb59122d645cabb514b8e71a09ddd37e98c52ba0fea2cc747fc7"
     },
     "evaluation/aggregate_evaluation": {
-      "path": "data/processed/experiments/ijds_audit/ijds-binary-geometry-frontier-v4-2026-07-12-v2/evaluation/aggregate_evaluation.parquet",
-      "bytes": 43367,
-      "sha256": "bd55eb90964433b303990a06f98916bec4cc042d823f28102fc30d7ce44d3f4d"
+      "path": "data/processed/experiments/ijds_audit/ijds-binary-geometry-frontier-v4-2026-07-14-v3/evaluation/aggregate_evaluation.parquet",
+      "bytes": 43595,
+      "sha256": "11d0eb671baeac24dbfe78b79962689eabe079ed0b42f7ae94163c9298aad4c0"
     },
     "evaluation/paired_contrasts": {
-      "path": "data/processed/experiments/ijds_audit/ijds-binary-geometry-frontier-v4-2026-07-12-v2/evaluation/paired_sharp_contrasts.parquet",
-      "bytes": 21646234,
-      "sha256": "ea5893500733062dabf2caa48f7e473de78c8c09a91c12f8214653199548aec9"
+      "path": "data/processed/experiments/ijds_audit/ijds-binary-geometry-frontier-v4-2026-07-14-v3/evaluation/paired_sharp_contrasts.parquet",
+      "bytes": 21649277,
+      "sha256": "355457f739540008fae2d6dc2b6040ac73140835513e16cf96a9a452325ce46d"
     },
     "evaluation/comparator_envelopes": {
-      "path": "data/processed/experiments/ijds_audit/ijds-binary-geometry-frontier-v4-2026-07-12-v2/evaluation/comparator_envelopes.parquet",
-      "bytes": 19048,
-      "sha256": "8f5ab712ef390d1dd3fbd2be6b58d0d937890ead93dadd10aadbeb28dfafe0aa"
+      "path": "data/processed/experiments/ijds_audit/ijds-binary-geometry-frontier-v4-2026-07-14-v3/evaluation/comparator_envelopes.parquet",
+      "bytes": 19052,
+      "sha256": "756b948f3c19de5f51cbeeba943010ef497b5f7647bded865cf6cfd81f9220e1"
     },
     "evaluation/simulation_repetitions": {
-      "path": "data/processed/experiments/ijds_audit/ijds-binary-geometry-frontier-v4-2026-07-12-v2/simulation/factorial_repetitions.parquet",
-      "bytes": 2494777,
-      "sha256": "6b0520a7d6dda13911bb90fdf5e6afcd2e78df8813d6afb6c892a12383132b1c"
+      "path": "data/processed/experiments/ijds_audit/ijds-binary-geometry-frontier-v4-2026-07-14-v3/simulation/factorial_repetitions.parquet",
+      "bytes": 2495699,
+      "sha256": "fe0afcc70916575528109be3af3df729dcfcc2c8f55c5c24fe03e2abfa420547"
     },
     "evaluation/simulation_summary": {
-      "path": "data/processed/experiments/ijds_audit/ijds-binary-geometry-frontier-v4-2026-07-12-v2/simulation/factorial_summary.parquet",
-      "bytes": 250857,
-      "sha256": "0c19ce79c334801724ef7af12d3acd2dc27d6cbe6d9eef8dc337ab593208cb6e"
+      "path": "data/processed/experiments/ijds_audit/ijds-binary-geometry-frontier-v4-2026-07-14-v3/simulation/factorial_summary.parquet",
+      "bytes": 250906,
+      "sha256": "c23abc6588f1bf3c847ee16b623d0781f277c3b0fdefd74a84b14fba1f2eecd7"
     },
     "outcome_free/scores": {
       "path": "data/processed/experiments/ijds_audit/ijds-binary-geometry-frontier-v4-2026-07-12-v1/prediction/scores.parquet",
@@ -1553,34 +1811,34 @@
       "sha256": "0433a66c7d9e689108158c980d1451af57b6bb93beb9b8b64134c1b7ea9414eb"
     },
     "two_ruler/evaluation/evaluated_portfolios": {
-      "path": "data/processed/experiments/ijds_audit/ijds-normalized-objective-frontier-2026-07-13-v2/evaluation/evaluated_portfolios.parquet",
-      "bytes": 668034,
-      "sha256": "9867e70a00f7bdae9c70bc68996ae5808a69d23053fed7fcf1e029a8a29f498d"
+      "path": "data/processed/experiments/ijds_audit/ijds-normalized-objective-frontier-2026-07-14-v3/evaluation/evaluated_portfolios.parquet",
+      "bytes": 658119,
+      "sha256": "7cf4ecbb86d427852793bc2da08c3ac95fb123970b00784580b9995a1bec4464"
     },
     "two_ruler/evaluation/joined_funded_allocations": {
-      "path": "data/processed/experiments/ijds_audit/ijds-normalized-objective-frontier-2026-07-13-v2/evaluation/joined_funded_allocations.parquet",
-      "bytes": 15281252,
-      "sha256": "abdb7e1778335a8c6d4643738753b5dd643c9eaf028b6993d0bb01e064c0e1aa"
+      "path": "data/processed/experiments/ijds_audit/ijds-normalized-objective-frontier-2026-07-14-v3/evaluation/joined_funded_allocations.parquet",
+      "bytes": 15288236,
+      "sha256": "9342c351c9aba49f2ac2d17e6eaa8fa86140721626ea45a07abf1a86d49a7793"
     },
     "two_ruler/evaluation/window_endpoint_contrasts": {
-      "path": "data/processed/experiments/ijds_audit/ijds-normalized-objective-frontier-2026-07-13-v2/evaluation/window_endpoint_contrasts.parquet",
-      "bytes": 25541,
-      "sha256": "3f9d74111c4b5d6f4ade91a614fda13d6919e1cc31a32748ce84506d0811e216"
+      "path": "data/processed/experiments/ijds_audit/ijds-normalized-objective-frontier-2026-07-14-v3/evaluation/window_endpoint_contrasts.parquet",
+      "bytes": 25509,
+      "sha256": "46a66ae565fcea0c8fbabd17ad374a120874ce3df1d2acaad3ec872757feca5d"
     },
     "two_ruler/evaluation/monthly_endpoint_contrasts": {
-      "path": "data/processed/experiments/ijds_audit/ijds-normalized-objective-frontier-2026-07-13-v2/evaluation/monthly_endpoint_contrasts.parquet",
-      "bytes": 67493,
-      "sha256": "98d305b45326331a685b7665c2ddc5c3d9335572995cdda60e1da5ddfa459465"
+      "path": "data/processed/experiments/ijds_audit/ijds-normalized-objective-frontier-2026-07-14-v3/evaluation/monthly_endpoint_contrasts.parquet",
+      "bytes": 67761,
+      "sha256": "291b567cbc9bd3a66538e2c97a009aa11e26e13612589e8f3af468c248652a54"
     },
     "two_ruler/evaluation/metric_direction_census": {
-      "path": "data/processed/experiments/ijds_audit/ijds-normalized-objective-frontier-2026-07-13-v2/evaluation/metric_direction_census.parquet",
-      "bytes": 7946,
-      "sha256": "bbed02797619105a3ef008cc5cf30953fd553a2cfeee00ff5a148beb25c7d692"
+      "path": "data/processed/experiments/ijds_audit/ijds-normalized-objective-frontier-2026-07-14-v3/evaluation/metric_direction_census.parquet",
+      "bytes": 7939,
+      "sha256": "00c1a58b169792f54799a911b77d4879940876eec0b1c9502538e985473f1d00"
     },
     "two_ruler/evaluation/outcome_join_audit": {
-      "path": "data/processed/experiments/ijds_audit/ijds-normalized-objective-frontier-2026-07-13-v2/evaluation/outcome_join_audit.parquet",
-      "bytes": 3780,
-      "sha256": "309f69a4b7ced2348d4e892a58d4ff22c63b9391c8c0a7f50f6a355f03dfe06d"
+      "path": "data/processed/experiments/ijds_audit/ijds-normalized-objective-frontier-2026-07-14-v3/evaluation/outcome_join_audit.parquet",
+      "bytes": 3882,
+      "sha256": "58c29824cebad32d9e980747b46cea406d2337cf6142b5c06139772159fc3309"
     },
     "two_ruler/outcome_free/allocations": {
       "path": "data/processed/experiments/ijds_audit/ijds-normalized-objective-frontier-2026-07-13-v1c/frontier/frontier_funded_allocations.parquet",
@@ -1613,14 +1871,14 @@
       "sha256": "b44a1435bf501bcab4b8dfa6563ca1411ad4ec4912437053913c44d39354b487"
     },
     "credit_controls/evaluation/temporal_coverage": {
-      "path": "data/processed/experiments/ijds_audit/ijds-credit-risk-controls-2026-07-13-v2b/evaluation/temporal_coverage.parquet",
-      "bytes": 501571,
-      "sha256": "956bdc9880c80cebc1f48fc2cdf57688dfff7dddd3939b4fd972413d83039767"
+      "path": "data/processed/experiments/ijds_audit/ijds-credit-risk-controls-2026-07-14-v3/evaluation/temporal_coverage.parquet",
+      "bytes": 502111,
+      "sha256": "73b9f099746ebf67da3cfdef42320dd06bf17296cd1687f4a3e6e83383025631"
     },
     "credit_controls/evaluation/prediction_metrics": {
-      "path": "data/processed/experiments/ijds_audit/ijds-credit-risk-controls-2026-07-13-v2b/evaluation/prediction_metrics.parquet",
-      "bytes": 14985,
-      "sha256": "74a4ba25c96b1d780ecaba950f4cfbd84dbc47ae38229a01a38012c3ef4f5c4c"
+      "path": "data/processed/experiments/ijds_audit/ijds-credit-risk-controls-2026-07-14-v3/evaluation/prediction_metrics.parquet",
+      "bytes": 14998,
+      "sha256": "8848cdffbaa01ff211976a13b2820a42d9ce8d93b4c5c7e3bfd90da3de517768"
     },
     "credit_controls/outcome_free/scores": {
       "path": "data/processed/experiments/ijds_audit/ijds-credit-risk-controls-2026-07-13-v1b/prediction/scores.parquet",
@@ -1723,37 +1981,37 @@
       "sha256": "66ab15c9cde1f94ba444aaac24d8c52695016db76f111064a1305b626bfbe2ba"
     },
     "raw_data_audit/archive_inventory": {
-      "path": "reports/crpto/data_audit/ijds-raw-data-contract-2026-07-13-v1/archive_inventory.csv",
-      "bytes": 248,
-      "sha256": "b08ad0924dd5d762f81061ca99e625e034cf78164c5a6dd159fb2a21f01ed02a"
+      "path": "reports/crpto/data_audit/ijds-raw-data-contract-2026-07-14-v2/archive_inventory.csv",
+      "bytes": 400,
+      "sha256": "b6788da7d4d33c43f34b5bed5ca944a9ff4d349983df041bbc9eef8fd971d6e2"
     },
     "raw_data_audit/status_inventory": {
-      "path": "reports/crpto/data_audit/ijds-raw-data-contract-2026-07-13-v1/status_inventory.csv",
+      "path": "reports/crpto/data_audit/ijds-raw-data-contract-2026-07-14-v2/status_inventory.csv",
       "bytes": 470,
       "sha256": "8d81783e3854efcf5ccd88f3342984cb44ed6d0cbef774b3bfab3382b4220845"
     },
     "raw_data_audit/cohort_inventory": {
-      "path": "reports/crpto/data_audit/ijds-raw-data-contract-2026-07-13-v1/cohort_inventory.csv",
+      "path": "reports/crpto/data_audit/ijds-raw-data-contract-2026-07-14-v2/cohort_inventory.csv",
       "bytes": 194,
       "sha256": "c5bd8d225a20c53d5865473a1550e2b0b506504f4d6e777b6d4ba28d3da645bb"
     },
     "raw_data_audit/feature_coverage": {
-      "path": "reports/crpto/data_audit/ijds-raw-data-contract-2026-07-13-v1/raw_feature_coverage.csv",
+      "path": "reports/crpto/data_audit/ijds-raw-data-contract-2026-07-14-v2/raw_feature_coverage.csv",
       "bytes": 67423,
       "sha256": "c00b84d14e26cbba9b46f96fc22cba4f52565f3bc361b5ab24596b80cbc12e04"
     },
     "raw_data_audit/feature_contract": {
-      "path": "reports/crpto/data_audit/ijds-raw-data-contract-2026-07-13-v1/raw_feature_contract.csv",
-      "bytes": 19585,
-      "sha256": "45f51737154d28d6e13a0f4ed0b3cc94becc527397ccf8227ed86be4da18af0d"
+      "path": "reports/crpto/data_audit/ijds-raw-data-contract-2026-07-14-v2/raw_feature_contract.csv",
+      "bytes": 21744,
+      "sha256": "9444486e9139b5a2b5af53d0bd153f5153d618fceea95e9831f79f8d01477d97"
     },
     "raw_data_audit/amount_alignment": {
-      "path": "reports/crpto/data_audit/ijds-raw-data-contract-2026-07-13-v1/loan_amount_alignment.csv",
+      "path": "reports/crpto/data_audit/ijds-raw-data-contract-2026-07-14-v2/loan_amount_alignment.csv",
       "bytes": 729,
       "sha256": "d0b2d8f6198e35b1d96739175c3d40f75584f090c67496a23295a853abbc4824"
     },
     "raw_data_audit/cutoff_label_availability": {
-      "path": "reports/crpto/data_audit/ijds-raw-data-contract-2026-07-13-v1/cutoff_label_availability.csv",
+      "path": "reports/crpto/data_audit/ijds-raw-data-contract-2026-07-14-v2/cutoff_label_availability.csv",
       "bytes": 287,
       "sha256": "a1463a347603fe4d6a72d69c797810e0ab72ae8ffe36258988215e8ffb35f689"
     }
@@ -1761,43 +2019,43 @@
   "paper_artifacts": {
     "table/coverage": {
       "path": "reports/crpto/tables/crpto_ijds_v4_table1_coverage_windows.csv",
-      "bytes": 9213,
-      "sha256": "cdfee2dda818592d3c67d8f5acead4f3322f6ad1d67432065d657981b1e4ce4f"
+      "bytes": 9212,
+      "sha256": "b3c017027663882a45bc7916aae8653567b94bfa400903f8229532d00885a6e6"
     },
     "table/phase_transition": {
       "path": "reports/crpto/tables/crpto_ijds_v4_table2_phase_transition.csv",
-      "bytes": 1430,
-      "sha256": "c2593415dd1570748d2afa4d5d6c3976517754de8778323f762cbabc17ab96dc"
+      "bytes": 1429,
+      "sha256": "57864d38168cdfb99ea49e1ef980e1773a472fd511805e832190528afa1975ab"
     },
     "table/development_envelopes": {
       "path": "reports/crpto/tables/crpto_ijds_v4_table3_development_envelopes.csv",
-      "bytes": 32379,
-      "sha256": "ac318699e868df2e30ddf7a80ee61aca14bc8bd4ef5240ba2f59fbebdff6d078"
+      "bytes": 32236,
+      "sha256": "949138cd932607d75b746dbc721879c03334ad825742e9f129766d912d4da52b"
     },
     "table/direction_summary": {
       "path": "reports/crpto/tables/crpto_ijds_v4_table4_direction_summary.csv",
-      "bytes": 205,
-      "sha256": "2718a611f6235d2690d98a4ef2fc7d7b3b8f5c815144173c6a894fd0ee6ca812"
+      "bytes": 204,
+      "sha256": "e92abbfb42d625db7111b43465e6fda6b064684aedced85d492a5907cd59d610"
     },
     "table/two_ruler_tracks": {
       "path": "reports/crpto/tables/crpto_ijds_v4_table5_two_ruler_tracks.csv",
-      "bytes": 1985,
-      "sha256": "7f5821d8a5d18b5e48141de8247a77407e5e3cf1c7628604b4e7193db93ecce9"
+      "bytes": 1993,
+      "sha256": "4c51319af375d332e59bf6539a741671024c3b28eb2af8c8bfbdc596895525c0"
     },
     "table/named_comparators": {
       "path": "reports/crpto/tables/crpto_ijds_v4_tableS1_named_comparators.csv",
-      "bytes": 396,
-      "sha256": "6f6451a425cd8ef1fa4fcf86d55c4cc2e240afe9d89d27670acd880f19c324e8"
+      "bytes": 397,
+      "sha256": "c1575fb5b09ac56c358b67e85b8f2a9084cdebed83516f3ebf890a08aef8d9d9"
     },
     "table/credit_controls": {
       "path": "reports/crpto/tables/crpto_ijds_v4_table6_credit_controls.csv",
-      "bytes": 1874,
-      "sha256": "6f34cc81c888d10654105844250938a2f2a276f18e904605d979269725399b76"
+      "bytes": 1883,
+      "sha256": "7c978c4e893ad16f8f3a99cd8a139066819dabbb43cd2e9e00507379487632f7"
     },
     "table/credit_prediction_metrics": {
       "path": "reports/crpto/tables/crpto_ijds_v4_tableS2_credit_prediction_metrics.csv",
-      "bytes": 9545,
-      "sha256": "9c07bda56fe2d8a2b6a2b5a73d85c3433eb6a11954818f8b3db8818934111e1b"
+      "bytes": 9649,
+      "sha256": "52ac8e3c9d1707ba596e9cb3e6b66cdb41081104eb674c8b6c76ef980bfe83f0"
     },
     "table/woe_iv_psi": {
       "path": "reports/crpto/tables/crpto_ijds_v4_tableS3_woe_iv_psi.csv",
@@ -1806,18 +2064,23 @@
     },
     "table/score_psi": {
       "path": "reports/crpto/tables/crpto_ijds_v4_tableS4_score_psi.csv",
-      "bytes": 8106,
-      "sha256": "6697eabe806b545f8b92eeb1b09a5e87533482876c08dfeee3d2aa63d4a06d50"
+      "bytes": 8181,
+      "sha256": "e26e44608a95f83fd67777c3fa438c3cb5f2fdde22f4392c23e4ef2dd23463e7"
+    },
+    "table/label_lag_sensitivity": {
+      "path": "reports/crpto/tables/crpto_ijds_v4_tableS5_label_lag_sensitivity.csv",
+      "bytes": 6365,
+      "sha256": "7488224317a6e06af77dff5203261cabc6b73a7fda6b294cd88b2be868be352d"
     },
     "figure/coverage/png": {
       "path": "reports/crpto/figures/crpto_ijds_v4_fig1_coverage.png",
-      "bytes": 142190,
-      "sha256": "368b5baa1b97727c7bbc90153ab51f6e99795f38a4b970069ffa7b5c81a014df"
+      "bytes": 142518,
+      "sha256": "aff4aac92a7a04a9df2771a28c219fb140633ada0fa48d47df1f3c2ac932e174"
     },
     "figure/coverage/pdf": {
       "path": "reports/crpto/figures/crpto_ijds_v4_fig1_coverage.pdf",
-      "bytes": 22701,
-      "sha256": "c64afb9f1a47a6a860590470e896d7639c0ed26cb4f875446c595f5bad2bfc08"
+      "bytes": 22772,
+      "sha256": "6c4725454f98f0f0097fdd8ee24d9957f0167c00572e19f00acdaf3de3192e2e"
     },
     "figure/phase_transition/png": {
       "path": "reports/crpto/figures/crpto_ijds_v4_fig2_phase_transition.png",
@@ -1831,13 +2094,13 @@
     },
     "figure/development_envelopes/png": {
       "path": "reports/crpto/figures/crpto_ijds_v4_fig3_envelopes.png",
-      "bytes": 183742,
-      "sha256": "a037c3aaef77436c83ab6673852f8d4d00e2df9b4da5565a076b864e5ccadb89"
+      "bytes": 197839,
+      "sha256": "47b985822749585ec5540c37ad7d66c914f9901d023704c67ccb5ca021d8caa8"
     },
     "figure/development_envelopes/pdf": {
       "path": "reports/crpto/figures/crpto_ijds_v4_fig3_envelopes.pdf",
-      "bytes": 22786,
-      "sha256": "310145746d050e51db6a1b3d4ab34b9a891460faf0c61dc0c0ebadedabd55a37"
+      "bytes": 22715,
+      "sha256": "a5428ae8c537528a06d902ded93ba0094eadfe73ff7230a23214159f980ff5ca"
     }
   },
   "protected_stages_run": [],

@@ -1,0 +1,40 @@
+schema_version: "2026-07-14.1"
+status: "active_ijds_paper_evidence_source_registry"
+
+sources:
+  v4_config:
+    path: "configs/experiments/ijds_binary_geometry_frontier_v4_2026-07-14_v3.yaml"
+    bytes: 1232
+    sha256: "5123698bd6d21a0531f81ce7b26edc093dc49452e13aa531166c5ccc36400eca"
+  v4_summary:
+    path: "models/experiments/ijds_audit/ijds-binary-geometry-frontier-v4-2026-07-14-v3/binary_geometry_frontier_v4_summary.json"
+    bytes: 17794
+    sha256: "c05a6048fd6e259d53b5901b975a5970256bdd20901fdf236112e85930bafa5f"
+  v4_receipt:
+    path: "models/experiments/ijds_audit/ijds-binary-geometry-frontier-v4-2026-07-14-v3/execution_receipt.json"
+    bytes: 1142
+    sha256: "e4edf9ea250195710d1bac37296a745f665fb15593717d307ce48d5fd37b3fa8"
+  two_ruler_manifest:
+    path: "models/experiments/ijds_audit/ijds-normalized-objective-frontier-2026-07-14-v3/verified_evaluation_manifest.json"
+    bytes: 16944
+    sha256: "76e3643b92a537c9e0cea4d131f8085d4c843ead0cb95362f19a3442207af96e"
+  credit_summary:
+    path: "models/experiments/ijds_audit/ijds-credit-risk-controls-2026-07-14-v3/credit_risk_controls_summary.json"
+    bytes: 12473
+    sha256: "c64bb3088771d7f3c9a2fb550bbd8ee9a789a5e340054e09f3126656b6a89ca7"
+  credit_receipt:
+    path: "models/experiments/ijds_audit/ijds-credit-risk-controls-2026-07-14-v3/execution_receipt.json"
+    bytes: 826
+    sha256: "da07c576b7a9946c2fec1ae4c3f0e9958dfe42412d86c961516cfeb8aff3e452"
+  raw_data_audit:
+    path: "reports/crpto/data_audit/ijds-raw-data-contract-2026-07-14-v2/evidence.json"
+    bytes: 3654
+    sha256: "ac3cda119d919006210435eb0ff2234ffd6281d46edf8d29f04157b5f64ba6a5"
+  label_lag_sensitivity:
+    path: "reports/crpto/sensitivity/ijds-label-lag-sensitivity-2026-07-14-v1/evidence.json"
+    bytes: 2476
+    sha256: "6078892647c0f041631ebdb47c63b5613619fd61a82c2d13d9fb8c9c84e0adc7"
+  solver_tie_audit:
+    path: "reports/crpto/ijds_policy_support_tie_evidence.json"
+    bytes: 12845
+    sha256: "2903694ee502e6144008bbbc5891e5932f88f8527e12686363c85a28fa78684e"
