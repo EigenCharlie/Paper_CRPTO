@@ -1,0 +1,89 @@
+{
+  "schema_version": "2026-07-14.1",
+  "status": "complete_full_archive_data_contract_audit",
+  "run_tag": "ijds-raw-data-contract-2026-07-14-v2",
+  "base_protocol": {
+    "path": "configs/experiments/ijds_binary_geometry_frontier_v4_2026-07-14_v3.yaml",
+    "bytes": 1232,
+    "sha256": "5123698bd6d21a0531f81ce7b26edc093dc49452e13aa531166c5ccc36400eca"
+  },
+  "config": {
+    "path": "configs/experiments/ijds_raw_data_contract_2026-07-14_v2.yaml",
+    "bytes": 1268,
+    "sha256": "bb6f240caeb87999d7071590f851d5db886ba93baba5072c60e6f550c7d970e2"
+  },
+  "raw_source": {
+    "path": "data/raw/Loan_status_2007-2020Q3.csv",
+    "bytes": 1773470505,
+    "sha256": "5878af2a088f8ab5214c9337289fb8b5eb6c6338fd3f417b6cdc18513dc6f35f",
+    "dvc_md5": "65adade308f21d60b7213088a88e684d"
+  },
+  "results": {
+    "raw_rows": 2925493,
+    "valid_loan_rows": 2925492,
+    "distinct_nonblank_ids": 2925493,
+    "term36_rows_all_dates": 2060077,
+    "term60_rows_all_dates": 865415,
+    "raw_schema_columns": 142,
+    "last_payment_date_max": "2020-12-01",
+    "last_credit_pull_date_max": "2020-10-01",
+    "last_payment_rows_after_cutoff": 36485,
+    "last_credit_pull_rows_after_cutoff": 40214,
+    "term36_active_design_rows": 640543,
+    "eligible_raw_features": 30,
+    "declared_coverage_exceptions": 2,
+    "coverage_exceptions_requiring_sensitivity": 2,
+    "late_schema_features": 48,
+    "primary_oot_partial_funding_share": 5.306588129162355e-06,
+    "primary_oot_funded_ratio": 0.9999961757560076,
+    "primary_oot_total_requested_minus_funded": 18000.0
+  },
+  "artifacts": {
+    "archive_inventory": {
+      "path": "reports/crpto/data_audit/ijds-raw-data-contract-2026-07-14-v2/archive_inventory.csv",
+      "bytes": 400,
+      "sha256": "b6788da7d4d33c43f34b5bed5ca944a9ff4d349983df041bbc9eef8fd971d6e2"
+    },
+    "status_inventory": {
+      "path": "reports/crpto/data_audit/ijds-raw-data-contract-2026-07-14-v2/status_inventory.csv",
+      "bytes": 470,
+      "sha256": "8d81783e3854efcf5ccd88f3342984cb44ed6d0cbef774b3bfab3382b4220845"
+    },
+    "cohort_inventory": {
+      "path": "reports/crpto/data_audit/ijds-raw-data-contract-2026-07-14-v2/cohort_inventory.csv",
+      "bytes": 194,
+      "sha256": "c5bd8d225a20c53d5865473a1550e2b0b506504f4d6e777b6d4ba28d3da645bb"
+    },
+    "feature_coverage": {
+      "path": "reports/crpto/data_audit/ijds-raw-data-contract-2026-07-14-v2/raw_feature_coverage.csv",
+      "bytes": 67423,
+      "sha256": "c00b84d14e26cbba9b46f96fc22cba4f52565f3bc361b5ab24596b80cbc12e04"
+    },
+    "feature_contract": {
+      "path": "reports/crpto/data_audit/ijds-raw-data-contract-2026-07-14-v2/raw_feature_contract.csv",
+      "bytes": 21744,
+      "sha256": "9444486e9139b5a2b5af53d0bd153f5153d618fceea95e9831f79f8d01477d97"
+    },
+    "amount_alignment": {
+      "path": "reports/crpto/data_audit/ijds-raw-data-contract-2026-07-14-v2/loan_amount_alignment.csv",
+      "bytes": 729,
+      "sha256": "d0b2d8f6198e35b1d96739175c3d40f75584f090c67496a23295a853abbc4824"
+    },
+    "cutoff_label_availability": {
+      "path": "reports/crpto/data_audit/ijds-raw-data-contract-2026-07-14-v2/cutoff_label_availability.csv",
+      "bytes": 287,
+      "sha256": "a1463a347603fe4d6a72d69c797810e0ab72ae8ffe36258988215e8ffb35f689"
+    }
+  },
+  "implementation_sha256": "21d3526d53f1329b5c08de8e3c3ea9e605975ea173e5ab24d963c2b5d861c1cd",
+  "git": {
+    "commit": "688f75dc4f285c75bc499c9e041dd30fb3acd70d",
+    "dirty": true,
+    "dirty_entries": 1,
+    "dirty_paths": [
+      "?? reports/crpto/data_audit/ijds-raw-data-contract-2026-07-14-v2/"
+    ]
+  },
+  "protected_stages_run": [],
+  "protected_artifacts_written": []
+}

@@ -1,0 +1,100 @@
+schema_version: "2026-07-14.1"
+protocol_status: "locked_post_freeze_outcome_evaluation"
+protocol_tag: "protocol/ijds-normalized-objective-frontier-2026-07-14-v3"
+run_tag: "ijds-normalized-objective-frontier-2026-07-14-v3"
+
+protocol_lineage_files:
+  - "docs/research/ijds_normalized_objective_frontier_v2_protocol_2026-07-13.md"
+  - "docs/research/ijds_two_ruler_endpoint_recovery_v3_protocol_2026-07-14.md"
+  - "docs/research/ijds_evaluation_endpoint_recovery_v3_protocol_2026-07-14.md"
+
+source_frontier:
+  run_tag: "ijds-normalized-objective-frontier-2026-07-13-v1c"
+  protocol_tag: "protocol/ijds-normalized-objective-frontier-2026-07-13-v1c"
+  protocol_commit: "46f4df915d38eb5a6cc144484c6e6fe56d8ed397"
+  status: "outcome_free_frontiers_frozen_before_archive_outcome_join"
+  freeze:
+    path: "models/experiments/ijds_audit/ijds-normalized-objective-frontier-2026-07-13-v1c/protocol_freeze.json"
+    bytes: 15192
+    sha256: "7877c5e460772a0093e4132eaa542e9049f7ec15d2ddaa35c2df389892a0e185"
+
+parent:
+  config: "configs/experiments/ijds_binary_geometry_frontier_v4_2026-07-14_v3.yaml"
+  raw_path: "data/raw/Loan_status_2007-2020Q3.csv"
+  raw_sha256: "5878af2a088f8ab5214c9337289fb8b5eb6c6338fd3f417b6cdc18513dc6f35f"
+
+evaluation:
+  evaluated_roles: ["policy_development", "primary_oot"]
+  primary_contrast_role: "primary_oot"
+  endpoint_contrast: [1.0, 0.0]
+  rulers: ["objective_matched", "normalized_score"]
+  coordinates: [0.25, 0.50, 0.75]
+  expected_solve_records: 6240
+  expected_funded_rows: 622455
+  expected_window_contrasts: 48
+  expected_monthly_contrasts: 720
+  expected_metric_directions: 144
+  expected_windows: 8
+  expected_primary_months: 15
+  expected_candidate_counts:
+    policy_development: 94885
+    primary_oot: 376890
+  outcome_join: "single_validated_join_after_hash_verified_v1c_freeze"
+  unresolved_outcomes: "sharp_common_loanwise_assignment_on_funded_union"
+
+metrics:
+  standardized_payoff:
+    lower: "realized_payoff_difference_lower"
+    upper: "realized_payoff_difference_upper"
+    direction_tolerance: 1.0e-4
+  funded_default:
+    lower: "weighted_default_difference_lower"
+    upper: "weighted_default_difference_upper"
+    direction_tolerance: 1.0e-10
+  funded_binary_miscoverage:
+    lower: "weighted_miscoverage_difference_lower"
+    upper: "weighted_miscoverage_difference_upper"
+    direction_tolerance: 1.0e-10
+
+outcomes:
+  source_columns: ["loan_status", "last_pymnt_d"]
+  joined_columns: ["snapshot_default", "snapshot_resolution"]
+  endpoint_contract: "conservative_terminal_status_reconstruction_by_2020-09-30"
+  no_outcome_refit: true
+  no_outcome_resolve: true
+  no_outcome_selection: true
+
+claim_boundary:
+  no_policy_selection: true
+  no_window_selection: true
+  no_ruler_selection: true
+  no_coordinate_selection: true
+  no_gamma_selection: true
+  no_policy_winner: true
+  no_causal_claim: true
+  no_conformal_guarantee_repair: true
+  no_selected_set_validity: true
+  no_submission_freeze: true
+
+stop_rules:
+  stop_on_v1c_freeze_mismatch: true
+  stop_on_artifact_descriptor_mismatch: true
+  stop_on_outcome_alignment_failure: true
+  stop_on_incomplete_portfolio_evaluation: true
+  stop_on_incomplete_contrast_census: true
+  stop_on_nonbinary_observed_outcome: true
+  retain_all_predeclared_results: true
+
+output:
+  data_root: "data/processed/experiments/ijds_audit"
+  model_root: "models/experiments/ijds_audit"
+  immutability: "hard_no_overwrite_choose_fresh_run_tag"
+  evaluated_portfolios: "evaluated_portfolios.parquet"
+  joined_funded_allocations: "joined_funded_allocations.parquet"
+  window_endpoint_contrasts: "window_endpoint_contrasts.parquet"
+  monthly_endpoint_contrasts: "monthly_endpoint_contrasts.parquet"
+  metric_direction_census: "metric_direction_census.parquet"
+  outcome_join_audit: "outcome_join_audit.parquet"
+  deterministic_summary: "normalized_objective_frontier_v3_summary.json"
+  execution_receipt: "execution_receipt.json"
+  evaluation_manifest: "verified_evaluation_manifest.json"

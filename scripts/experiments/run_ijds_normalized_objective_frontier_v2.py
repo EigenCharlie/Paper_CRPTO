@@ -17,11 +17,11 @@ if str(ROOT) not in sys.path:
     sys.path.insert(0, str(ROOT))
 
 from src.ijds_audit.config import load_v4_config  # noqa: E402
-from src.ijds_audit.evaluation import (  # noqa: E402
-    build_archive_outcomes,
-    evaluate_frozen_portfolios,
+from src.ijds_audit.evaluation import evaluate_frozen_portfolios  # noqa: E402
+from src.ijds_audit.protocol import (  # noqa: E402
+    configured_archive_outcomes,
+    load_outcome_universe,
 )
-from src.ijds_audit.protocol import load_outcome_universe  # noqa: E402
 from src.ijds_challengers.evaluation import (  # noqa: E402
     FrozenFrontier,
     build_endpoint_contrasts,
@@ -230,7 +230,7 @@ def run_evaluation(*, config_path: Path, repo_root: Path = ROOT) -> Path:
     if sha256_file(raw_path) != str(config["parent"]["raw_sha256"]):
         raise RuntimeError("The locked raw archive hash changed before the V2 outcome join.")
     universe = load_outcome_universe(parent_config, raw_path=raw_path)
-    outcomes = build_archive_outcomes(universe)
+    outcomes = configured_archive_outcomes(universe, parent_config)
     outcome_audit = validate_outcome_alignment(allocations, outcomes, config=config)
 
     evaluated, joined = evaluate_frozen_portfolios(
@@ -336,7 +336,10 @@ def run_evaluation(*, config_path: Path, repo_root: Path = ROOT) -> Path:
         "execution_receipt": relative_artifact_descriptor(receipt_path, repo_root=root),
         "implementation_provenance": implementation_provenance(
             config_path=resolved_config,
-            relative_paths=IMPLEMENTATION_PATHS,
+            relative_paths=(
+                *IMPLEMENTATION_PATHS,
+                *[Path(value) for value in config.get("protocol_lineage_files", [])],
+            ),
             repo_root=root,
         ),
         "environment": environment_provenance(root),
@@ -355,7 +358,7 @@ def run_evaluation(*, config_path: Path, repo_root: Path = ROOT) -> Path:
         paths.model_dir / str(output["evaluation_manifest"]), manifest
     )
     logger.info(
-        "V2 evaluation complete: {} portfolios, {} window contrasts in {:.1f}s",
+        "Frontier evaluation complete: {} portfolios, {} window contrasts in {:.1f}s",
         len(evaluated),
         len(window_contrasts),
         time.perf_counter() - started,
@@ -364,7 +367,7 @@ def run_evaluation(*, config_path: Path, repo_root: Path = ROOT) -> Path:
 
 
 def main(argv: Sequence[str] | None = None) -> None:
-    """Run the locked V2 post-freeze evaluation."""
+    """Run the locked post-freeze evaluation."""
     args = parse_args(argv)
     manifest = run_evaluation(config_path=args.config, repo_root=ROOT)
     logger.info("Wrote {}", manifest)
