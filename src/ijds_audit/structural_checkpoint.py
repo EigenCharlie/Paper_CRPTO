@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import os
+from collections.abc import Collection
 from dataclasses import dataclass
 from pathlib import Path
 
@@ -51,7 +52,7 @@ def inspect_structural_shard(
     scenario_root: Path,
     *,
     scenario_id: str,
-    retry_slack: float,
+    retry_slacks: Collection[float],
     cap_residual_tolerance: float,
 ) -> StructuralShardInspection:
     """Reject incomplete, mislabeled, outcome-bearing, or numerically invalid shards."""
@@ -96,12 +97,14 @@ def inspect_structural_shard(
             "minimum_cap_residual",
         ],
     ).to_pandas()
+    allowed_slacks = {0.0, *(float(value) for value in retry_slacks)}
     slack_values = set(minimum["minimum_endpoint_retry_slack"].astype(float).unique())
-    if not slack_values.issubset({0.0, float(retry_slack)}):
+    if not slack_values.issubset(allowed_slacks):
         raise RuntimeError(f"Structural shard {scenario_id} has undeclared retry slack.")
     maximum_slack = float(minimum["minimum_endpoint_retry_slack"].max())
     maximum_residual = float(minimum["minimum_cap_residual"].abs().max())
-    if maximum_slack > float(retry_slack) or maximum_residual > float(cap_residual_tolerance):
+    declared_maximum = max(allowed_slacks)
+    if maximum_slack > declared_maximum or maximum_residual > float(cap_residual_tolerance):
         raise RuntimeError(f"Structural shard {scenario_id} exceeds its numerical contract.")
     return StructuralShardInspection(
         scenario_id=scenario_id,

@@ -2,7 +2,7 @@
 
 from __future__ import annotations
 
-from collections.abc import Mapping
+from collections.abc import Mapping, Sequence
 from dataclasses import dataclass
 from typing import Any, Protocol
 
@@ -435,11 +435,21 @@ def _build_gamma_states(
     normalized_config: Mapping[str, Any],
 ) -> dict[float, _GammaState]:
     states: dict[float, _GammaState] = {}
-    retry_slack = float(normalized_config.get("minimum_endpoint_retry_slack", 0.0))
     cap_tolerance = float(normalized_config["cap_residual_tolerance"])
-    if retry_slack < 0.0 or retry_slack > cap_tolerance:
+    configured_slacks = normalized_config.get("minimum_endpoint_retry_slacks")
+    retry_slacks: tuple[float, ...]
+    if configured_slacks is None:
+        single_slack = float(normalized_config.get("minimum_endpoint_retry_slack", 0.0))
+        retry_slacks = () if single_slack == 0.0 else (single_slack,)
+    else:
+        retry_slacks = tuple(float(value) for value in configured_slacks)
+    if (
+        any(slack <= 0.0 or slack > cap_tolerance for slack in retry_slacks)
+        or tuple(sorted(set(retry_slacks))) != retry_slacks
+    ):
         raise ValueError(
-            "Minimum-endpoint retry slack must lie between zero and the cap tolerance."
+            "Minimum-endpoint retry slacks must be unique, increasing, positive, and no "
+            "larger than the cap tolerance."
         )
     for gamma in gamma_grid:
         score = point + gamma * (upper - point)
@@ -465,7 +475,7 @@ def _build_gamma_states(
         point_minimum, applied_retry_slack = _solve_minimum_endpoint(
             normalized_session,
             minimum_score=minimum_score,
-            retry_slack=retry_slack,
+            retry_slacks=retry_slacks,
         )
         efficient_minimum = _from_point_solution(point_minimum)
         minimum_cap_residual = float(efficient_minimum.weighted_score - minimum_score)
@@ -508,21 +518,34 @@ def _solve_minimum_endpoint(
     session: _PointEndpointSession,
     *,
     minimum_score: float,
-    retry_slack: float,
+    retry_slacks: Sequence[float],
 ) -> tuple[PointPortfolioSolution, float]:
     """Reconcile one cross-solver endpoint, retrying only known boundary failures."""
     try:
         return session.solve(float(minimum_score)), 0.0
     except RuntimeError as error:
-        message = str(error)
-        known_boundary_failure = (
-            message == "Point LP is not optimal: Infeasible."
-            or message.startswith("Point LP did not fill its budget:")
-        )
-        if not known_boundary_failure or float(retry_slack) <= 0.0:
+        if not _is_minimum_endpoint_boundary_failure(error):
             raise
-        solution = session.solve(float(minimum_score) + float(retry_slack))
-        return solution, float(retry_slack)
+        if not retry_slacks:
+            raise
+        last_error = error
+        for retry_slack in retry_slacks:
+            try:
+                solution = session.solve(float(minimum_score) + float(retry_slack))
+                return solution, float(retry_slack)
+            except RuntimeError as retry_error:
+                if not _is_minimum_endpoint_boundary_failure(retry_error):
+                    raise
+                last_error = retry_error
+        raise last_error from error
+
+
+def _is_minimum_endpoint_boundary_failure(error: RuntimeError) -> bool:
+    message = str(error)
+    return message in {
+        "Point LP is not optimal: Infeasible.",
+        "Point LP is not optimal: Unknown.",
+    } or message.startswith("Point LP did not fill its budget:")
 
 
 def _solve_rulers(

@@ -57,7 +57,7 @@ from src.utils.pipeline_runtime import atomic_write_json, atomic_write_parquet, 
 
 ROOT = Path(__file__).resolve().parents[2]
 DEFAULT_CONFIG = (
-    ROOT / "configs/experiments/ijds_portfolio_structure_sensitivity_2026-07-15_v4.yaml"
+    ROOT / "configs/experiments/ijds_portfolio_structure_sensitivity_2026-07-15_v5.yaml"
 )
 ALLOWED_DATA_ROOT = Path("data/processed/experiments/ijds_audit")
 ALLOWED_MODEL_ROOT = Path("models/experiments/ijds_audit")
@@ -90,6 +90,7 @@ def _load_config(path: Path) -> dict[str, Any]:
         "locked_retrospective_outcome_free_structural_sensitivity_v2",
         "locked_retrospective_outcome_free_structural_sensitivity_v3_parallel_execution",
         "locked_retrospective_outcome_free_structural_sensitivity_v4_interruption_recovery",
+        "locked_retrospective_outcome_free_structural_sensitivity_v5_retry_ladder",
     }
     if payload.get("protocol_status") not in allowed_statuses:
         raise ValueError("Structural-sensitivity protocol is not locked.")
@@ -139,7 +140,39 @@ def _load_config(path: Path) -> dict[str, Any]:
             raise ValueError("V4 recovery scenario identities changed.")
         if int(recovery.get("expected_recovered_scenarios", -1)) != 29:
             raise ValueError("V4 must recover exactly 29 validated V3 scenarios.")
+    if payload.get("protocol_status") == (
+        "locked_retrospective_outcome_free_structural_sensitivity_v5_retry_ladder"
+    ):
+        execution = payload.get("execution", {})
+        recovery = execution.get("recovery", {})
+        missing = recovery.get("expected_missing_scenario_ids", [])
+        slacks = [
+            float(value)
+            for value in payload.get("numerics", {}).get("minimum_endpoint_retry_slacks", [])
+        ]
+        if slacks != [1.0e-12, 1.0e-10]:
+            raise ValueError("V5 minimum-endpoint retry ladder changed.")
+        if payload.get("numerics", {}).get("retry_scope") != (
+            "closed_known_boundary_status_ladder"
+        ):
+            raise ValueError("V5 minimum-endpoint retry scope changed.")
+        if int(execution.get("freeze_workers", 0)) != 3 or len(missing) != 3:
+            raise ValueError("V5 must retain three workers for three missing scenarios.")
+        declared_ids = {str(item["scenario_id"]) for item in scenarios}
+        if not isinstance(missing, list) or not set(map(str, missing)).issubset(declared_ids):
+            raise ValueError("V5 recovery scenario identities changed.")
+        if int(recovery.get("expected_recovered_scenarios", -1)) != 33:
+            raise ValueError("V5 must recover exactly 33 validated V4 scenarios.")
     return payload
+
+
+def _minimum_endpoint_retry_slacks(config: Mapping[str, Any]) -> tuple[float, ...]:
+    numerics = config.get("numerics", {})
+    configured = numerics.get("minimum_endpoint_retry_slacks")
+    if configured is not None:
+        return tuple(float(value) for value in configured)
+    single = float(numerics.get("minimum_endpoint_retry_slack", 0.0))
+    return () if single == 0.0 else (single,)
 
 
 def _protocol_documents(config: Mapping[str, Any]) -> tuple[Path, ...]:
@@ -185,8 +218,9 @@ def _frontier_config(base: Mapping[str, Any], structural: Mapping[str, Any]) -> 
         float(value) for value in grid["reported_gamma_grid"]
     ]
     config["frontier"]["coordinate_grid"] = [float(value) for value in grid["coordinates"]]
-    retry_slack = float(structural.get("numerics", {}).get("minimum_endpoint_retry_slack", 0.0))
-    config["frontier"]["normalized_score"]["minimum_endpoint_retry_slack"] = retry_slack
+    config["frontier"]["normalized_score"]["minimum_endpoint_retry_slacks"] = list(
+        _minimum_endpoint_retry_slacks(structural)
+    )
     return config
 
 
@@ -344,7 +378,7 @@ def _recover_interrupted_scenarios(
     }
     if physical_scenarios != set(recovered):
         raise RuntimeError("V4 recovery source directories differ from the locked complement.")
-    retry_slack = float(config["numerics"]["minimum_endpoint_retry_slack"])
+    retry_slacks = _minimum_endpoint_retry_slacks(config)
     cap_tolerance = float(config["numerics"]["cap_residual_tolerance"])
     artifacts: dict[str, Any] = {}
     counts: list[dict[str, Any]] = []
@@ -353,7 +387,7 @@ def _recover_interrupted_scenarios(
         inspection = inspect_structural_shard(
             source_root / "scenarios" / scenario_id,
             scenario_id=scenario_id,
-            retry_slack=retry_slack,
+            retry_slacks=retry_slacks,
             cap_residual_tolerance=cap_tolerance,
         )
         linked = hardlink_structural_shard(
@@ -461,7 +495,7 @@ def freeze(*, config_path: Path, repo_root: Path = ROOT) -> Path:
             inspection = inspect_structural_shard(
                 paths.data_dir / "scenarios" / scenario_id,
                 scenario_id=scenario_id,
-                retry_slack=float(config["numerics"]["minimum_endpoint_retry_slack"]),
+                retry_slacks=_minimum_endpoint_retry_slacks(config),
                 cap_residual_tolerance=float(config["numerics"]["cap_residual_tolerance"]),
             )
             scenario_artifacts[scenario_id] = {

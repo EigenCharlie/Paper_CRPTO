@@ -37,7 +37,7 @@ def test_structural_shard_is_validated_and_hardlinked(tmp_path: Path) -> None:
     inspection = inspect_structural_shard(
         source,
         scenario_id=SCENARIO,
-        retry_slack=1.0e-12,
+        retry_slacks=[1.0e-12, 1.0e-10],
         cap_residual_tolerance=1.0e-8,
     )
 
@@ -58,7 +58,7 @@ def test_structural_shard_rejects_undeclared_retry_slack(tmp_path: Path) -> None
         inspect_structural_shard(
             source,
             scenario_id=SCENARIO,
-            retry_slack=1.0e-12,
+            retry_slacks=[1.0e-12],
             cap_residual_tolerance=1.0e-8,
         )
 
@@ -74,6 +74,6 @@ def test_structural_shard_rejects_outcome_columns(tmp_path: Path) -> None:
         inspect_structural_shard(
             source,
             scenario_id=SCENARIO,
-            retry_slack=1.0e-12,
+            retry_slacks=[1.0e-12, 1.0e-10],
             cap_residual_tolerance=1.0e-8,
         )

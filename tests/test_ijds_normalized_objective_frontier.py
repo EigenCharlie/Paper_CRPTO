@@ -41,14 +41,16 @@ def _point_solution() -> PointPortfolioSolution:
 
 
 class _BoundarySession:
-    def __init__(self, first_error: RuntimeError | None) -> None:
-        self.first_error = first_error
+    def __init__(self, errors: list[RuntimeError | None]) -> None:
+        self.errors = errors
         self.calls: list[float] = []
 
     def solve(self, risk_cap: float) -> PointPortfolioSolution:
         self.calls.append(float(risk_cap))
-        if len(self.calls) == 1 and self.first_error is not None:
-            raise self.first_error
+        index = len(self.calls) - 1
+        error = self.errors[index] if index < len(self.errors) else None
+        if error is not None:
+            raise error
         return _point_solution()
 
 
@@ -60,12 +62,12 @@ class _BoundarySession:
     ],
 )
 def test_minimum_endpoint_retries_only_known_boundary_failures(message: str) -> None:
-    session = _BoundarySession(RuntimeError(message))
+    session = _BoundarySession([RuntimeError(message)])
 
     solution, slack = _solve_minimum_endpoint(
         session,
         minimum_score=0.2,
-        retry_slack=1.0e-12,
+        retry_slacks=[1.0e-12],
     )
 
     assert solution.objective_value == 0.1
@@ -74,12 +76,27 @@ def test_minimum_endpoint_retries_only_known_boundary_failures(message: str) -> 
 
 
 def test_minimum_endpoint_does_not_mask_unrecognized_failure() -> None:
-    session = _BoundarySession(RuntimeError("HiGHS failed unexpectedly."))
+    session = _BoundarySession([RuntimeError("HiGHS failed unexpectedly.")])
 
     with pytest.raises(RuntimeError, match="unexpectedly"):
-        _solve_minimum_endpoint(session, minimum_score=0.2, retry_slack=1.0e-12)
+        _solve_minimum_endpoint(session, minimum_score=0.2, retry_slacks=[1.0e-12, 1.0e-10])
 
     assert session.calls == [0.2]
+
+
+def test_minimum_endpoint_uses_closed_retry_ladder_for_unknown_status() -> None:
+    unknown = RuntimeError("Point LP is not optimal: Unknown.")
+    session = _BoundarySession([unknown, unknown])
+
+    solution, slack = _solve_minimum_endpoint(
+        session,
+        minimum_score=0.2,
+        retry_slacks=[1.0e-12, 1.0e-10],
+    )
+
+    assert solution.objective_value == 0.1
+    assert slack == 1.0e-10
+    assert session.calls == [0.2, 0.2 + 1.0e-12, 0.2 + 1.0e-10]
 
 
 def _small_menu() -> tuple[pd.DataFrame, np.ndarray, np.ndarray]:
