@@ -5,8 +5,10 @@ from __future__ import annotations
 import argparse
 import copy
 import json
+import multiprocessing as mp
 import time
 from collections.abc import Mapping, Sequence
+from concurrent.futures import ProcessPoolExecutor, as_completed
 from pathlib import Path
 from typing import Any
 
@@ -49,7 +51,7 @@ from src.utils.pipeline_runtime import atomic_write_json, atomic_write_parquet, 
 
 ROOT = Path(__file__).resolve().parents[2]
 DEFAULT_CONFIG = (
-    ROOT / "configs/experiments/ijds_portfolio_structure_sensitivity_2026-07-15_v2.yaml"
+    ROOT / "configs/experiments/ijds_portfolio_structure_sensitivity_2026-07-15_v3.yaml"
 )
 ALLOWED_DATA_ROOT = Path("data/processed/experiments/ijds_audit")
 ALLOWED_MODEL_ROOT = Path("models/experiments/ijds_audit")
@@ -62,6 +64,7 @@ ARTIFACT_NAMES = (
     "order_sensitivity",
     "independent_validation",
 )
+_FREEZE_WORKER_STATE: dict[str, Any] | None = None
 
 
 def parse_args(argv: Sequence[str] | None = None) -> argparse.Namespace:
@@ -79,6 +82,7 @@ def _load_config(path: Path) -> dict[str, Any]:
     allowed_statuses = {
         "locked_retrospective_outcome_free_structural_sensitivity",
         "locked_retrospective_outcome_free_structural_sensitivity_v2",
+        "locked_retrospective_outcome_free_structural_sensitivity_v3_parallel_execution",
     }
     if payload.get("protocol_status") not in allowed_statuses:
         raise ValueError("Structural-sensitivity protocol is not locked.")
@@ -99,16 +103,37 @@ def _load_config(path: Path) -> dict[str, Any]:
     }
     if any(boundary.get(field) is not False for field in required_false):
         raise ValueError("Structural-sensitivity claim boundary changed.")
-    if (
-        payload.get("protocol_status")
-        == "locked_retrospective_outcome_free_structural_sensitivity_v2"
-    ):
+    if payload.get("protocol_status") in {
+        "locked_retrospective_outcome_free_structural_sensitivity_v2",
+        "locked_retrospective_outcome_free_structural_sensitivity_v3_parallel_execution",
+    }:
         numerics = payload.get("numerics", {})
         if float(numerics.get("minimum_endpoint_retry_slack", -1.0)) != 1.0e-12:
             raise ValueError("V2 must retain the locked 1e-12 endpoint retry slack.")
         if numerics.get("retry_scope") != "known_exact_minimum_boundary_failure_only":
             raise ValueError("V2 endpoint retry scope changed.")
+    if (
+        payload.get("protocol_status")
+        == ("locked_retrospective_outcome_free_structural_sensitivity_v3_parallel_execution")
+        and int(payload.get("execution", {}).get("freeze_workers", 0)) != 10
+    ):
+        raise ValueError("V3 must retain ten deterministic freeze workers.")
     return payload
+
+
+def _protocol_documents(config: Mapping[str, Any]) -> tuple[Path, ...]:
+    documents = config.get(
+        "protocol_documents",
+        [
+            config.get(
+                "protocol_document",
+                "docs/research/ijds_portfolio_structure_sensitivity_protocol_2026-07-14.md",
+            )
+        ],
+    )
+    if not isinstance(documents, list) or not documents:
+        raise TypeError("Structural protocol documents must be a nonempty list.")
+    return tuple(Path(str(document)) for document in documents)
 
 
 def _run_paths(config: Mapping[str, Any], *, repo_root: Path) -> OutputPaths:
@@ -186,6 +211,69 @@ def _write_build(
     return descriptors
 
 
+def _initialize_freeze_worker(
+    config_path: str,
+    repo_root: str,
+    decision_base_path: str,
+) -> None:
+    """Load immutable outcome-free inputs once in each spawned worker."""
+    global _FREEZE_WORKER_STATE
+    root = Path(repo_root).resolve()
+    config = _load_config(Path(config_path))
+    parent = config["parent"]
+    source_frontier_config = load_frontier_config(
+        resolve_repo_input(str(parent["frontier_config"]), repo_root=root)
+    )
+    parent_paths, _ = verified_parent_artifacts(source_frontier_config, repo_root=root)
+    v4_config = load_v4_config(resolve_repo_input(str(parent["v4_config"]), repo_root=root))
+    _FREEZE_WORKER_STATE = {
+        "root": root,
+        "config": config,
+        "v4_config": v4_config,
+        "build_config": _frontier_config(source_frontier_config, config),
+        "base": pd.read_parquet(Path(decision_base_path)),
+        "recipes": load_recipes(parent_paths["recipes"]),
+        "paths": _run_paths(config, repo_root=root),
+    }
+
+
+def _freeze_scenario_worker(scenario: Mapping[str, Any]) -> dict[str, Any]:
+    """Build one complete scenario in a directory no other worker can write."""
+    state = _FREEZE_WORKER_STATE
+    if state is None:
+        raise RuntimeError("Structural freeze worker was not initialized.")
+    build = build_outcome_free_frontiers(
+        state["base"],
+        state["recipes"],
+        config=state["build_config"],
+        parent_config=_scenario_parent(state["v4_config"], scenario),
+    )
+    diagnostics = build.minimum_endpoint_diagnostics
+    artifacts = _write_build(
+        build,
+        data_dir=state["paths"].data_dir,
+        scenario=scenario,
+        repo_root=state["root"],
+    )
+    return {
+        "scenario_id": str(scenario["scenario_id"]),
+        "artifacts": artifacts,
+        "counts": {
+            **dict(scenario),
+            "solve_records": int(len(build.solve_records)),
+            "funded_rows": int(len(build.allocations)),
+            "endpoint_cells": int(len(build.endpoint_diagnostics)),
+            "minimum_endpoint_cells": int(len(diagnostics)),
+            "minimum_endpoint_retries": int(diagnostics["minimum_endpoint_retried"].sum()),
+            "maximum_minimum_endpoint_retry_slack": float(
+                diagnostics["minimum_endpoint_retry_slack"].max()
+            ),
+            "maximum_minimum_cap_residual": float(diagnostics["minimum_cap_residual"].abs().max()),
+            "outcome_columns_passed": [],
+        },
+    }
+
+
 def freeze(*, config_path: Path, repo_root: Path = ROOT) -> Path:
     """Build and hash-freeze every structural allocation before outcomes."""
     started = time.perf_counter()
@@ -208,46 +296,42 @@ def freeze(*, config_path: Path, repo_root: Path = ROOT) -> Path:
         resolve_repo_input(str(parent["frontier_config"]), repo_root=root)
     )
     parent_paths, parent_freeze = verified_parent_artifacts(source_frontier_config, repo_root=root)
-    v4_config = load_v4_config(resolve_repo_input(str(parent["v4_config"]), repo_root=root))
-    base = load_outcome_free_decision_base(
+    load_v4_config(resolve_repo_input(str(parent["v4_config"]), repo_root=root))
+    decision_base = load_outcome_free_decision_base(
         scores_path=parent_paths["scores"],
         raw_path=raw_path,
         config=source_frontier_config,
     )
-    recipes = load_recipes(parent_paths["recipes"])
-    build_config = _frontier_config(source_frontier_config, config)
+    decision_base_path = atomic_write_parquet(
+        decision_base,
+        paths.data_dir / "frontier/outcome_free_decision_base.parquet",
+    )
+    del decision_base
     scenario_artifacts: dict[str, Any] = {}
     scenario_counts: list[dict[str, Any]] = []
-    for index, scenario in enumerate(declared_scenarios(config), start=1):
-        logger.info("Structural freeze scenario {}/36: {}", index, scenario["scenario_id"])
-        build = build_outcome_free_frontiers(
-            base,
-            recipes,
-            config=build_config,
-            parent_config=_scenario_parent(v4_config, scenario),
-        )
-        scenario_artifacts[str(scenario["scenario_id"])] = _write_build(
-            build,
-            data_dir=paths.data_dir,
-            scenario=scenario,
-            repo_root=root,
-        )
-        scenario_counts.append(
-            {
-                **dict(scenario),
-                "solve_records": int(len(build.solve_records)),
-                "funded_rows": int(len(build.allocations)),
-                "endpoint_cells": int(len(build.endpoint_diagnostics)),
-                "minimum_endpoint_cells": int(len(build.minimum_endpoint_diagnostics)),
-                "minimum_endpoint_retries": int(
-                    build.minimum_endpoint_diagnostics["minimum_endpoint_retried"].sum()
-                ),
-                "maximum_minimum_endpoint_retry_slack": float(
-                    build.minimum_endpoint_diagnostics["minimum_endpoint_retry_slack"].max()
-                ),
-                "outcome_columns_passed": [],
-            }
-        )
+    scenarios = declared_scenarios(config)
+    workers = int(config.get("execution", {}).get("freeze_workers", 1))
+    logger.info("Structural freeze dispatching {} scenarios to {} workers", len(scenarios), workers)
+    with ProcessPoolExecutor(
+        max_workers=workers,
+        mp_context=mp.get_context("spawn"),
+        initializer=_initialize_freeze_worker,
+        initargs=(str(resolved_config), str(root), str(decision_base_path)),
+    ) as executor:
+        futures = {
+            executor.submit(_freeze_scenario_worker, scenario): str(scenario["scenario_id"])
+            for scenario in scenarios
+        }
+        for index, future in enumerate(as_completed(futures), start=1):
+            scenario_id = futures[future]
+            result = future.result()
+            if result["scenario_id"] != scenario_id:
+                raise RuntimeError("Structural worker returned the wrong scenario identity.")
+            scenario_artifacts[scenario_id] = result["artifacts"]
+            scenario_counts.append(result["counts"])
+            logger.info("Structural freeze completed scenario {}/36: {}", index, scenario_id)
+    scenario_artifacts = dict(sorted(scenario_artifacts.items()))
+    scenario_counts.sort(key=lambda item: str(item["scenario_id"]))
     counts_path = atomic_write_parquet(
         pd.DataFrame(scenario_counts), paths.data_dir / "frontier/scenario_counts.parquet"
     )
@@ -262,6 +346,7 @@ def freeze(*, config_path: Path, repo_root: Path = ROOT) -> Path:
         "elapsed_seconds": float(time.perf_counter() - started),
         "claim_boundary": dict(config["claim_boundary"]),
         "numerics": dict(config.get("numerics", {})),
+        "execution": dict(config.get("execution", {})),
         "source_frontier_freeze": {
             "status": parent_freeze["status"],
             "run_tag": parent_freeze["run_tag"],
@@ -269,6 +354,9 @@ def freeze(*, config_path: Path, repo_root: Path = ROOT) -> Path:
         },
         "scenario_count": len(scenario_artifacts),
         "outcome_columns_passed_to_frontier": [],
+        "outcome_free_decision_base": relative_artifact_descriptor(
+            decision_base_path, repo_root=root
+        ),
         "scenario_artifacts": scenario_artifacts,
         "scenario_counts": relative_artifact_descriptor(counts_path, repo_root=root),
         "implementation": implementation_provenance(
@@ -278,14 +366,7 @@ def freeze(*, config_path: Path, repo_root: Path = ROOT) -> Path:
                 Path("src/ijds_audit/structural_sensitivity.py"),
                 Path("src/ijds_challengers/normalized_frontier.py"),
                 Path("scripts/experiments/run_ijds_portfolio_structure_sensitivity.py"),
-                Path(
-                    str(
-                        config.get(
-                            "protocol_document",
-                            "docs/research/ijds_portfolio_structure_sensitivity_protocol_2026-07-14.md",
-                        )
-                    )
-                ),
+                *_protocol_documents(config),
             ),
         ),
         "environment": environment_provenance(root),
@@ -316,6 +397,14 @@ def _verified_structural_freeze(
         raise RuntimeError("Structural freeze reports outcome leakage.")
     if int(payload.get("scenario_count", -1)) != len(declared_scenarios(config)):
         raise RuntimeError("Structural freeze scenario census changed.")
+    if payload.get("execution") != dict(config.get("execution", {})):
+        raise RuntimeError("Structural freeze execution contract changed.")
+    decision_base = payload.get("outcome_free_decision_base")
+    if not isinstance(decision_base, dict):
+        raise RuntimeError("Structural freeze lacks its outcome-free decision base.")
+    decision_base_path = resolve_repo_input(str(decision_base["path"]), repo_root=repo_root)
+    if relative_artifact_descriptor(decision_base_path, repo_root=repo_root) != decision_base:
+        raise RuntimeError("Structural outcome-free decision base changed.")
     for artifacts in payload["scenario_artifacts"].values():
         if set(artifacts) != set(ARTIFACT_NAMES):
             raise RuntimeError("Structural scenario artifact inventory changed.")
@@ -549,14 +638,7 @@ def evaluate(*, config_path: Path, repo_root: Path = ROOT) -> Path:
                 relative_paths=(
                     Path("src/ijds_audit/structural_sensitivity.py"),
                     Path("scripts/experiments/run_ijds_portfolio_structure_sensitivity.py"),
-                    Path(
-                        str(
-                            config.get(
-                                "protocol_document",
-                                "docs/research/ijds_portfolio_structure_sensitivity_protocol_2026-07-14.md",
-                            )
-                        )
-                    ),
+                    *_protocol_documents(config),
                 ),
             ),
             "environment": environment_provenance(root),
