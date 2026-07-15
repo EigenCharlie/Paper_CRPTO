@@ -37,10 +37,10 @@ To re-render the Quarto book without re-executing any chunks (uses
 just book            # uv run -- quarto render book --to html --no-execute
 ```
 
-To regenerate the paper tables and figures from frozen inputs:
+To rebuild the active IJDS evidence and manuscript from registered inputs:
 
 ```powershell
-just paper-export    # tables + figures + evidence + journal package + book
+just paper-export    # active evidence replay + body and supplement previews
 ```
 
 These commands never touch the champion artefacts on disk and never

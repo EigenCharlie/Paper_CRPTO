@@ -12,7 +12,7 @@ hash-linked evaluators; the only active paper-facing manifest is
 `reports/crpto/ijds_binary_geometry_frontier_v4_evidence.json`.
 
 Superiority and policy-winner framing are NO-GO. The IJDS audit narrative is
-GO: candidate-coverage failure survives all eight windows and five predeclared
+GO: candidate-coverage failure survives all eight windows and five reported
 learner specifications, including monotonic and WOE/IV credit-risk controls;
 binary interval geometry changes around a prevalence threshold; and realized
 decision directions depend on ruler, coordinate, residual timing, and declared

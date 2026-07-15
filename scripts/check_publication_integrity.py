@@ -38,8 +38,12 @@ REVIEWER_SURFACES = (
 )
 
 ACTIVE_EDITORIAL_SURFACES = (
+    REPO / ".codex/skills/crpto/SKILL.md",
     REPO / "CLAUDE.md",
     REPO / "AGENTS.md",
+    REPO / "CONTRIBUTING.md",
+    REPO / "EXTRACTION_MANIFEST.md",
+    REPO / "docs/ACADEMIC_CONTEXT.md",
     REPO / "docs/SCOPE_AND_GOVERNANCE.md",
     REPO / "docs/research/active_claims_2026-07-14.md",
     REPO / "paper/README.md",
@@ -73,6 +77,7 @@ RETIRED_CLAIM_TOKENS = (
     "ijds-binary-geometry-frontier-v4-2026-07-12-v2",
     "ijds-normalized-objective-frontier-2026-07-13-v2",
     "ijds-credit-risk-controls-2026-07-13-v2b",
+    "active_claims_2026-07-12.md",
 )
 
 SURFACES = (

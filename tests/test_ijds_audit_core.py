@@ -5,6 +5,7 @@ from pathlib import Path
 import numpy as np
 import pandas as pd
 import pytest
+import yaml
 
 from src.evaluation.coverage_transport import binary_miscoverage_bounds
 from src.evaluation.standardized_credit_payoff import expected_objective_coefficients
@@ -54,6 +55,17 @@ def test_v4_config_is_closed_and_complete() -> None:
     assert endpoint_recovery["run_tag"].endswith("-v3")
     assert contract["mode"] == "conservative_terminal_status_reconstruction"
     assert contract["archive_is_verified_point_in_time_snapshot"] is False
+
+
+def test_v4_config_rejects_unknown_critical_keys(tmp_path: Path) -> None:
+    config = load_v4_config(
+        ROOT / "configs/experiments/ijds_binary_geometry_frontier_v4_2026-07-14_v3.yaml"
+    )
+    config["policy"]["budegt"] = config["policy"]["budget"]
+    path = tmp_path / "typo.yaml"
+    path.write_text(yaml.safe_dump(config, sort_keys=False), encoding="utf-8")
+    with pytest.raises(KeyError, match="budegt"):
+        load_v4_config(path)
 
 
 def test_binary_set_codes_and_summary() -> None:

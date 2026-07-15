@@ -1,0 +1,52 @@
+schema_version: "2026-07-14.1"
+protocol_status: "locked_retrospective_endpoint_assumption_sensitivity"
+protocol_tag: "protocol/ijds-endpoint-availability-sensitivity-2026-07-14-v1"
+run_tag: "ijds-endpoint-availability-sensitivity-2026-07-14-v1"
+
+parent:
+  v4_config: "configs/experiments/ijds_binary_geometry_frontier_v4_2026-07-14_v3.yaml"
+  two_ruler_config: "configs/experiments/ijds_normalized_objective_frontier_2026-07-14_v3.yaml"
+  raw_path: "data/raw/Loan_status_2007-2020Q3.csv"
+  raw_sha256: "5878af2a088f8ab5214c9337289fb8b5eb6c6338fd3f417b6cdc18513dc6f35f"
+  v4_freeze:
+    path: "models/experiments/ijds_audit/ijds-binary-geometry-frontier-v4-2026-07-12-v1/protocol_freeze.json"
+    bytes: 20362
+    sha256: "c2b3dc2d18c9fed80708682d5a0369c80c89643e2d28024418522d954ebe667c"
+  credit_freeze:
+    path: "models/experiments/ijds_audit/ijds-credit-risk-controls-2026-07-13-v1b/protocol_freeze.json"
+    bytes: 25908
+    sha256: "da4805e644bcf5decfbb0a67c0c81a5b9dd61f3ab2e17d3dc5264100e7eb4d35"
+
+endpoint:
+  evaluation_cutoff: "2020-09-30"
+  charged_off_lag_months: [0, 3, 6, 8, 12]
+  fully_paid_lag_months: 0
+  roles: ["policy_development", "primary_oot", "censored_extension"]
+  canonical_taxonomy_groups: 5
+  all_lags_models_windows_and_rulers_reported: true
+
+claim_boundary:
+  historical_archive_previously_inspected: true
+  exploratory_values_seen_before_protocol: true
+  preregistered: false
+  confirmatory: false
+  prospective: false
+  outcome_based_selection: false
+  allocation_refit: false
+  policy_selection: false
+  model_selection: false
+  endpoint_selection: false
+  no_submission_freeze: true
+
+stop_rules:
+  stop_on_source_hash_mismatch: true
+  stop_on_candidate_membership_change: true
+  stop_on_incomplete_coverage_census: true
+  stop_on_incomplete_two_ruler_census: true
+  stop_on_incomplete_exact_support_census: true
+  retain_every_declared_lag: true
+
+output:
+  data_root: "data/processed/experiments/ijds_audit"
+  model_root: "models/experiments/ijds_audit"
+  immutability: "hard_no_overwrite_choose_fresh_run_tag"

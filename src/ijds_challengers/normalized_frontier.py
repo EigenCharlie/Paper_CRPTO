@@ -78,6 +78,13 @@ def build_outcome_free_frontiers(
     frontier = config["frontier"]
     solver_config = config["solver"]
     gamma_grid = tuple(float(value) for value in frontier["gamma_grid"])
+    reported_gamma_grid = tuple(
+        float(value) for value in frontier.get("reported_gamma_grid", gamma_grid)
+    )
+    if not set(reported_gamma_grid).issubset(gamma_grid) or not {0.0, 1.0}.issubset(
+        reported_gamma_grid
+    ):
+        raise ValueError("Reported gammas must be a subset containing both endpoints.")
     coordinates = tuple(float(value) for value in frontier["coordinate_grid"])
     budget = float(parent_config["policy"]["budget"])
     purpose_cap = float(parent_config["policy"]["max_concentration_by_purpose"])
@@ -168,7 +175,8 @@ def build_outcome_free_frontiers(
                     minimum_range=float(objective_config["minimum_objective_range_dollars"]),
                 )
                 endpoint_solutions: dict[tuple[str, float, float], ScoreFrontierSolution] = {}
-                for gamma, state in gamma_states.items():
+                for gamma in reported_gamma_grid:
+                    state = gamma_states[gamma]
                     for coordinate in coordinates:
                         ruler_solutions = _solve_rulers(
                             state,
@@ -741,24 +749,52 @@ def _validate_complete_build(
     budget: float,
     budget_tolerance: float,
 ) -> None:
-    expected_records = 8 * (11 + 15) * 5 * 3 * 2
+    frontier = config["frontier"]
+    roles = tuple(str(value) for value in frontier["roles"])
+    role_months = {
+        "policy_development": int(frontier["expected_development_months"]),
+        "primary_oot": int(frontier["expected_primary_months"]),
+    }
+    unknown_roles = sorted(set(roles).difference(role_months))
+    if unknown_roles:
+        raise RuntimeError(f"Unsupported frontier roles: {unknown_roles}.")
+    windows = int(result.solve_records["window_id"].nunique())
+    coordinates = len(frontier["coordinate_grid"])
+    all_gammas = tuple(float(value) for value in frontier["gamma_grid"])
+    reported_gammas = tuple(
+        float(value) for value in frontier.get("reported_gamma_grid", all_gammas)
+    )
+    expected_records = (
+        windows * sum(role_months[role] for role in roles) * len(reported_gammas) * coordinates * 2
+    )
     if len(result.solve_records) != expected_records:
         raise RuntimeError(
             f"Frontier produced {len(result.solve_records)} records, not {expected_records}."
         )
-    if len(result.endpoint_diagnostics) != 8 * 15 * 3 * 2:
+    expected_endpoints = (
+        windows * role_months["primary_oot"] * coordinates * 2
+        if "primary_oot" in roles and {0.0, 1.0}.issubset(reported_gammas)
+        else 0
+    )
+    if len(result.endpoint_diagnostics) != expected_endpoints:
         raise RuntimeError("Primary endpoint diagnostic census is incomplete.")
     optimum = result.objective_optimum_diagnostics
-    if len(optimum) != 11 + 15:
+    if len(optimum) != sum(role_months[role] for role in roles):
         raise RuntimeError("Objective-optimum diagnostic census is incomplete.")
     optimum_config = config["frontier"]["objective_optimum"]
     if int(optimum["near_zero_nonbasic_reduced_costs"].sum()) != 0 or float(
         optimum["minimum_absolute_nonbasic_reduced_cost"].min()
     ) <= float(optimum_config["dual_tolerance"]):
         raise RuntimeError("An objective optimum has an unresolved nonbasic reduced cost.")
-    if len(result.order_sensitivity) != 8 * 15 * 2 * 3 * 2:
+    expected_order = expected_endpoints * 2
+    if len(result.order_sensitivity) != expected_order:
         raise RuntimeError("Primary endpoint ID-order audit census is incomplete.")
-    expected_validation = 8 * 3 * 2 * 3 * 2
+    validation_periods = len(config["solver"]["independent_validation"]["periods"])
+    expected_validation = (
+        windows * validation_periods * 2 * coordinates * 2
+        if "primary_oot" in roles and {0.0, 1.0}.issubset(reported_gammas)
+        else 0
+    )
     if len(result.independent_validation) != expected_validation:
         raise RuntimeError("Independent GLOP validation census is incomplete.")
     maximum_budget = float(result.solve_records["budget_residual"].abs().max())

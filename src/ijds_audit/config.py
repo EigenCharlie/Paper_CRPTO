@@ -10,6 +10,184 @@ from typing import Any, cast
 import pandas as pd
 import yaml
 
+_ALLOWED_TOP_LEVEL_KEYS = frozenset(
+    {
+        "schema_version",
+        "protocol_status",
+        "protocol_tag",
+        "run_tag",
+        "hypothesis",
+        "source",
+        "target",
+        "design",
+        "model",
+        "probability_calibration",
+        "conformal",
+        "payoff",
+        "policy",
+        "comparators",
+        "analysis",
+        "simulation",
+        "execution",
+        "output",
+        "protocol_lineage_files",
+        "residual_specification",
+        "learner_control",
+        "resume_outcome_free",
+        "credit_risk_controls",
+        "resume_credit_control_freeze",
+        "evaluation_recovery",
+        "rolling_origin",
+        "decision_active_simulation",
+    }
+)
+
+_ALLOWED_SECTION_KEYS = {
+    "source": frozenset(
+        {
+            "charged_off_reporting_lag_months",
+            "csv_chunksize",
+            "information_cutoff",
+            "minimum_label_retention",
+            "raw_path",
+            "required_raw_columns",
+            "snapshot_date",
+            "snapshot_date_role",
+        }
+    ),
+    "target": frozenset(
+        {
+            "evaluation_outcome_contract",
+            "name",
+            "negative_definition",
+            "positive_definition",
+            "right_censored_definition",
+        }
+    ),
+    "design": frozenset(
+        {
+            "censored_extension_end_month",
+            "censored_extension_start_month",
+            "conformal_fit_end",
+            "conformal_fit_start",
+            "development_end",
+            "endpoint",
+            "historical_archive_previously_inspected",
+            "policy_development_end",
+            "policy_development_start",
+            "primary_oot_end_month",
+            "primary_oot_start_month",
+            "probability_calibration_end",
+            "probability_calibration_start",
+            "term_months",
+            "validation_tail_fraction",
+        }
+    ),
+    "payoff": frozenset(
+        {
+            "expected_formula",
+            "id",
+            "lgd",
+            "realized_formula",
+            "reoptimization_lgd_grid",
+            "secondary_cash_metric",
+        }
+    ),
+    "policy": frozenset(
+        {
+            "budget",
+            "canonical_purpose_cap",
+            "family",
+            "gammas",
+            "max_concentration_by_purpose",
+            "min_budget_utilization_solver",
+            "outcome_based_selection",
+            "purpose_cap_sensitivity",
+            "risk_tolerances",
+            "score_ablations",
+            "uncertainty_aversions",
+        }
+    ),
+    "analysis": frozenset(
+        {
+            "all_eight_windows_primary",
+            "all_nine_policies_primary",
+            "canonical_seed_only_for_v4_portfolio",
+            "comparator_reversal_requires",
+            "confirmatory_language_forbidden",
+            "finite_population_estimand",
+            "miscoverage_direction_requires",
+            "nested_scope_counts_are_not_independent",
+            "no_result_based_promotion",
+            "report_discrete_set_geometry",
+            "report_every_cell",
+            "report_exact_frontier_breakpoints",
+            "universal_direction_requires",
+            "unresolved_outcomes",
+        }
+    ),
+    "residual_specification": frozenset(
+        {"minimum_monthly_label_retention", "window_months", "windows"}
+    ),
+    "execution": frozenset(
+        {
+            "allocation_tolerance",
+            "solver_backend",
+            "solver_time_limit_seconds",
+            "strict_solver_backend",
+            "threads",
+        }
+    ),
+    "rolling_origin": frozenset(
+        {
+            "audit_id",
+            "common_primary_months",
+            "origin_year",
+            "outcome_based_origin_selection",
+            "pooled_origin_claims",
+            "reference_origin_year",
+        }
+    ),
+}
+
+
+def _reject_unknown_keys(
+    payload: Mapping[str, Any], allowed: frozenset[str], *, context: str
+) -> None:
+    unknown = sorted(str(key) for key in payload if str(key) not in allowed)
+    if unknown:
+        raise KeyError(f"Unknown {context} keys: {unknown}.")
+
+
+def _validate_known_config_keys(config: Mapping[str, Any]) -> None:
+    """Reject silent top-level and critical-section YAML typos."""
+    _reject_unknown_keys(config, _ALLOWED_TOP_LEVEL_KEYS, context="V4 config")
+    for section, allowed in _ALLOWED_SECTION_KEYS.items():
+        value = config.get(section)
+        if value is not None:
+            if not isinstance(value, Mapping):
+                raise TypeError(f"V4 config section {section} must be a mapping.")
+            _reject_unknown_keys(value, allowed, context=f"V4 {section}")
+    target = config.get("target")
+    if isinstance(target, Mapping):
+        contract = target.get("evaluation_outcome_contract")
+        if contract is not None:
+            if not isinstance(contract, Mapping):
+                raise TypeError("Evaluation outcome contract must be a mapping.")
+            _reject_unknown_keys(
+                contract,
+                frozenset(
+                    {
+                        "mode",
+                        "cutoff",
+                        "terminal_status_source",
+                        "archive_is_verified_point_in_time_snapshot",
+                        "charged_off_reporting_lag_months",
+                    }
+                ),
+                context="evaluation outcome contract",
+            )
+
 
 def _deep_merge(base: dict[str, Any], override: Mapping[str, Any]) -> dict[str, Any]:
     merged = copy.deepcopy(base)
@@ -174,6 +352,7 @@ def _validate_rolling_origin(config: Mapping[str, Any]) -> None:
 def load_v4_config(path: Path) -> dict[str, Any]:
     """Load V4 and reject any expansion of its closed analysis family."""
     config = _load_payload(path)
+    _validate_known_config_keys(config)
     required = {
         "source",
         "target",
@@ -257,9 +436,9 @@ def load_credit_control_config(path: Path) -> dict[str, Any]:
         "woe_scorecard_borrower_platt",
     ]
     if [str(value) for value in controls.get("co_primary_models", [])] != expected_models:
-        raise ValueError("The five predeclared learner controls must remain co-primary.")
+        raise ValueError("The five reported learner controls must remain co-primary.")
     if controls.get("all_models_reported") is not True:
-        raise ValueError("Every predeclared learner must be reported.")
+        raise ValueError("Every protocol-locked learner must be reported.")
     if controls.get("selection_from_oot") is not False:
         raise ValueError("OOT model selection is forbidden.")
     if controls.get("portfolio_optimization") is not False:

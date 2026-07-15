@@ -7,25 +7,26 @@ single-author IJDS paper and reproducibility bundle, not a production service.
 
 Read first:
 
-1. `docs/research/active_claims_2026-07-12.md`
+1. `docs/research/active_claims_2026-07-14.md`
 2. `docs/research/ijds_binary_geometry_frontier_v4_protocol_2026-07-12.md`
-3. `docs/research/ijds_binary_geometry_frontier_v4_v2_recovery_2026-07-12.md`
-4. `docs/research/ijds_raw_data_contract_results_2026-07-13.md`
-5. `docs/research/ijds_credit_risk_controls_v2b_results_2026-07-13.md`
-6. `reports/crpto/ijds_binary_geometry_frontier_v4_evidence.json`
-7. `docs/ACADEMIC_CONTEXT.md`
-8. `docs/SCOPE_AND_GOVERNANCE.md`
-9. `CONTRIBUTING.md`
-10. `EXTRACTION_MANIFEST.md`
+3. `docs/research/ijds_evaluation_endpoint_recovery_v3_protocol_2026-07-14.md`
+4. `docs/research/ijds_normalized_objective_frontier_v1c_protocol_2026-07-13.md`
+5. `docs/research/ijds_two_ruler_endpoint_recovery_v3_protocol_2026-07-14.md`
+6. `configs/ijds_active_evidence_sources.yaml`
+7. `reports/crpto/ijds_binary_geometry_frontier_v4_evidence.json`
+8. `docs/ACADEMIC_CONTEXT.md`
+9. `docs/SCOPE_AND_GOVERNANCE.md`
+10. `CONTRIBUTING.md`
+11. `EXTRACTION_MANIFEST.md`
 
 Active evidence:
 
 - outcome-free freeze: `ijds-binary-geometry-frontier-v4-2026-07-12-v1`;
-- verified evaluation: `ijds-binary-geometry-frontier-v4-2026-07-12-v2`;
+- verified evaluation: `ijds-binary-geometry-frontier-v4-2026-07-14-v3`;
 - complete residual specification: eight consecutive six-month windows;
 - primary OOT: 376,890 candidates in fifteen monthly USD 1 million menus;
 - coverage learners: CatBoost/Platt primary plus numeric logistic, monotonic
-  CatBoost, platform-signal WOE/IV, and borrower-only WOE/IV controls;
+  CatBoost, platform-signal WOE/IV, and pricing-excluded WOE/IV controls;
 - portfolio learner: primary CatBoost only; no OOT learner is selected;
 - score path: `gamma={0,.25,.50,.75,1}` with endpoint contrast `gamma=1-gamma=0`;
 - objective-matched primary and normalized-score secondary rulers at three
@@ -37,10 +38,11 @@ Active evidence:
 
 Headline evidence:
 
-- every CatBoost five-group OOT upper bound is below 0.90; maximum `0.882167`;
-- every logistic-control upper bound is below 0.90; maximum `0.895654`;
-- monotonic CatBoost, platform WOE, and borrower-only WOE maxima are
-  `0.885991`, `0.894317`, and `0.896973`; all five fail in all eight windows;
+- under the declared six-month endpoint contract, every CatBoost five-group
+  OOT upper bound is below 0.90; maximum `0.882597`;
+- every logistic-control upper bound is below 0.90; maximum `0.896222`;
+- monotonic CatBoost, platform WOE, and pricing-excluded WOE maxima are
+  `0.886489`, `0.894908`, and `0.897726`; all five fail in all eight windows;
 - all `2,925,493` raw rows are audited; the `640,543` active rows exhaust the
   declared 36-month population rather than forming a convenience sample;
 - all 45 OptBinning problems are optimal; WOE/IV, monotonicity, calibration,
@@ -51,14 +53,17 @@ Headline evidence:
 - all 216 broad-stress envelopes cross zero;
 - default crosses zero in all 72 development-support cells;
 - all 27 W8 development-support envelopes cross zero;
-- the objective-matched endpoint contrast is favorable at `.25`, unfavorable
-  at `.50`, and mostly unidentified for payoff/default at `.75`;
-- all normalized-score tracks are unfavorable in realized outcomes but do not
-  match plug-in opportunity cost;
+- the objective-matched endpoint contrast crosses zero at `.25`, is adverse at
+  `.50`, and is mostly unidentified for payoff/default at `.75`;
+- normalized-score `.25` and `.50` are adverse; `.75` has adverse default and
+  miscoverage while payoff is adverse in seven windows and crosses in one;
 - the six ruler-coordinate tracks are not 48 independent replications;
 - the factorial simulation is claim-bearing for coverage mechanism only; its
   portfolio component is degenerate.
 
+The archive and earlier results were inspected. Each retained evaluation is
+protocol-locked before its corresponding outcome join, but the study is not a
+preregistration, untouched holdout, prospective confirmation, or model contest.
 The superiority paper is NO-GO. The IJDS identification-audit narrative is GO.
 
 ## Claim Boundaries

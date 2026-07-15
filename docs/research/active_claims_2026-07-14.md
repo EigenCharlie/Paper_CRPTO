@@ -16,7 +16,7 @@ pre-endpoint-correction evaluations are provenance only.
   causal effects, a universal guardrail direction, prospective confirmation,
   or deployment claims.
 - The strongest result is negative but constructive: candidate coverage does
-  not transport under five predeclared learner specifications, binary residual
+  not transport under five reported learner specifications, binary residual
   geometry changes near a prevalence threshold, and realized portfolio
   direction depends on the outcome-free ruler and coordinate used to define
   comparable decision stringency.
@@ -86,8 +86,11 @@ pre-endpoint-correction evaluations are provenance only.
 - Coverage-only controls: numeric logistic, domain-constrained monotonic
   CatBoost, platform-signal WOE/IV, and a pricing-excluded application WOE/IV
   scorecard. Each has a separately fitted Platt map and fixed 2011 taxonomy.
-- The five learner specifications form a prespecified coverage audit, not a
-  model contest. OOT AUC, Brier, calibration, IV, and PSI are descriptive.
+- The two original V4 specifications and three later credit-risk controls form
+  a complete reported coverage audit, not a model contest. Every retained
+  evaluation was protocol-locked before its corresponding outcome join, but
+  the inspected archive means this is not preregistration or an untouched
+  holdout. OOT AUC, Brier, calibration, IV, and PSI are descriptive.
 - Five score strata are fixed separately from 2011 scores. All eight eligible
   consecutive six-month residual windows beginning January--August 2012 are
   reported. The windows overlap and are not independent replications.
@@ -132,7 +135,8 @@ pre-endpoint-correction evaluations are provenance only.
 
 ## Coverage and Geometry Evidence
 
-All eight all-candidate coverage upper bounds are below 0.90 for every model:
+Under the declared six-month endpoint contract, all eight all-candidate
+coverage upper bounds are below 0.90 for every model:
 
 | Specification | Lowest lower bound | Highest upper bound | OOT AUC | OOT Brier |
 |---|---:|---:|---:|---:|
@@ -219,8 +223,9 @@ either endpoint version is promoted.
 
 ## Permitted Claims
 
-- Candidate-level binary endpoint coverage fails after temporal transport
-  before optimization for the five predeclared score specifications.
+- Under the declared six-month endpoint contract, candidate-level binary
+  coverage fails after temporal transport before optimization for all five
+  reported score specifications.
 - Binary absolute-residual geometry is prevalence-sensitive.
 - The score, ruler, and coordinate jointly define the portfolio comparison.
 - Within the finite predeclared grid, direction is not invariant to ruler or
