@@ -56,9 +56,6 @@ from src.utils.isolated_experiment import (
 from src.utils.pipeline_runtime import atomic_write_json, atomic_write_parquet, utc_now_iso
 
 ROOT = Path(__file__).resolve().parents[2]
-DEFAULT_CONFIG = (
-    ROOT / "configs/experiments/ijds_portfolio_structure_sensitivity_2026-07-15_v5.yaml"
-)
 ALLOWED_DATA_ROOT = Path("data/processed/experiments/ijds_audit")
 ALLOWED_MODEL_ROOT = Path("models/experiments/ijds_audit")
 ARTIFACT_NAMES = (
@@ -72,27 +69,81 @@ ARTIFACT_NAMES = (
 )
 _FREEZE_WORKER_STATE: dict[str, Any] | None = None
 
+STATUS_V1 = "locked_retrospective_outcome_free_structural_sensitivity"
+STATUS_V2 = "locked_retrospective_outcome_free_structural_sensitivity_v2"
+STATUS_V3 = "locked_retrospective_outcome_free_structural_sensitivity_v3_parallel_execution"
+STATUS_V4 = "locked_retrospective_outcome_free_structural_sensitivity_v4_interruption_recovery"
+STATUS_V5 = "locked_retrospective_outcome_free_structural_sensitivity_v5_retry_ladder"
+STATUS_V6 = "locked_retrospective_outcome_free_structural_sensitivity_v6_order_tolerance"
+ALLOWED_STATUSES = {STATUS_V1, STATUS_V2, STATUS_V3, STATUS_V4, STATUS_V5, STATUS_V6}
+
 
 def parse_args(argv: Sequence[str] | None = None) -> argparse.Namespace:
     """Parse the structural-sensitivity CLI."""
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("--config", type=Path, default=DEFAULT_CONFIG)
+    parser.add_argument("--config", type=Path, required=True)
     parser.add_argument("--phase", choices=("freeze", "evaluate"), required=True)
     return parser.parse_args(argv)
+
+
+def _require_retry_contract(
+    payload: Mapping[str, Any],
+    *,
+    version: str,
+    slacks: Sequence[float],
+    scope: str,
+) -> None:
+    numerics = payload.get("numerics", {})
+    configured = numerics.get("minimum_endpoint_retry_slacks")
+    if configured is None:
+        configured = [numerics.get("minimum_endpoint_retry_slack", 0.0)]
+    if [float(value) for value in configured] != list(slacks):
+        raise ValueError(f"{version} minimum-endpoint retry contract changed.")
+    if numerics.get("retry_scope") != scope:
+        raise ValueError(f"{version} minimum-endpoint retry scope changed.")
+
+
+def _require_recovery_contract(
+    payload: Mapping[str, Any],
+    scenarios: Sequence[Mapping[str, Any]],
+    *,
+    version: str,
+    workers: int,
+    recovered: int,
+    missing_ids: Sequence[str] | None = None,
+) -> None:
+    execution = payload.get("execution", {})
+    recovery = execution.get("recovery", {})
+    missing = recovery.get("expected_missing_scenario_ids", [])
+    expected_missing = len(scenarios) - recovered
+    if int(execution.get("freeze_workers", 0)) != workers:
+        raise ValueError(f"{version} freeze-worker contract changed.")
+    if not isinstance(missing, list) or len(missing) != expected_missing:
+        raise ValueError(f"{version} recovery complement size changed.")
+    declared_ids = {str(item["scenario_id"]) for item in scenarios}
+    actual_missing = {str(value) for value in missing}
+    if not actual_missing.issubset(declared_ids):
+        raise ValueError(f"{version} recovery scenario identities changed.")
+    if missing_ids is not None and actual_missing != set(missing_ids):
+        raise ValueError(f"{version} locked missing scenario changed.")
+    if int(recovery.get("expected_recovered_scenarios", -1)) != recovered:
+        raise ValueError(f"{version} recovered-scenario count changed.")
+
+
+def _require_v6_numerics(payload: Mapping[str, Any]) -> None:
+    numerics = payload.get("numerics", {})
+    if float(numerics.get("order_exposure_distance_tolerance", -1.0)) != 1.0e-8:
+        raise ValueError("V6 order-exposure tolerance must remain 1e-8.")
+    if float(numerics.get("order_objective_tolerance_dollars", -1.0)) != 1.0e-5:
+        raise ValueError("V6 must retain the parent 1e-5 objective tolerance.")
 
 
 def _load_config(path: Path) -> dict[str, Any]:
     payload = yaml.safe_load(path.read_text(encoding="utf-8"))
     if not isinstance(payload, dict):
         raise TypeError("Structural-sensitivity config must be a mapping.")
-    allowed_statuses = {
-        "locked_retrospective_outcome_free_structural_sensitivity",
-        "locked_retrospective_outcome_free_structural_sensitivity_v2",
-        "locked_retrospective_outcome_free_structural_sensitivity_v3_parallel_execution",
-        "locked_retrospective_outcome_free_structural_sensitivity_v4_interruption_recovery",
-        "locked_retrospective_outcome_free_structural_sensitivity_v5_retry_ladder",
-    }
-    if payload.get("protocol_status") not in allowed_statuses:
+    status = payload.get("protocol_status")
+    if status not in ALLOWED_STATUSES:
         raise ValueError("Structural-sensitivity protocol is not locked.")
     scenarios = declared_scenarios(payload)
     if int(payload["structural_grid"].get("scenarios", -1)) != len(scenarios):
@@ -111,58 +162,36 @@ def _load_config(path: Path) -> dict[str, Any]:
     }
     if any(boundary.get(field) is not False for field in required_false):
         raise ValueError("Structural-sensitivity claim boundary changed.")
-    if payload.get("protocol_status") in {
-        "locked_retrospective_outcome_free_structural_sensitivity_v2",
-        "locked_retrospective_outcome_free_structural_sensitivity_v3_parallel_execution",
-        "locked_retrospective_outcome_free_structural_sensitivity_v4_interruption_recovery",
-    }:
-        numerics = payload.get("numerics", {})
-        if float(numerics.get("minimum_endpoint_retry_slack", -1.0)) != 1.0e-12:
-            raise ValueError("V2 must retain the locked 1e-12 endpoint retry slack.")
-        if numerics.get("retry_scope") != "known_exact_minimum_boundary_failure_only":
-            raise ValueError("V2 endpoint retry scope changed.")
-    if (
-        payload.get("protocol_status")
-        == ("locked_retrospective_outcome_free_structural_sensitivity_v3_parallel_execution")
-        and int(payload.get("execution", {}).get("freeze_workers", 0)) != 10
-    ):
+    if status in {STATUS_V2, STATUS_V3, STATUS_V4}:
+        _require_retry_contract(
+            payload,
+            version="V2--V4",
+            slacks=(1.0e-12,),
+            scope="known_exact_minimum_boundary_failure_only",
+        )
+    if status == STATUS_V3 and int(payload.get("execution", {}).get("freeze_workers", 0)) != 10:
         raise ValueError("V3 must retain ten deterministic freeze workers.")
-    if payload.get("protocol_status") == (
-        "locked_retrospective_outcome_free_structural_sensitivity_v4_interruption_recovery"
-    ):
-        execution = payload.get("execution", {})
-        recovery = execution.get("recovery", {})
-        missing = recovery.get("expected_missing_scenario_ids", [])
-        if int(execution.get("freeze_workers", 0)) != 7 or len(missing) != 7:
-            raise ValueError("V4 must retain seven workers for seven missing scenarios.")
-        declared_ids = {str(item["scenario_id"]) for item in scenarios}
-        if not isinstance(missing, list) or not set(map(str, missing)).issubset(declared_ids):
-            raise ValueError("V4 recovery scenario identities changed.")
-        if int(recovery.get("expected_recovered_scenarios", -1)) != 29:
-            raise ValueError("V4 must recover exactly 29 validated V3 scenarios.")
-    if payload.get("protocol_status") == (
-        "locked_retrospective_outcome_free_structural_sensitivity_v5_retry_ladder"
-    ):
-        execution = payload.get("execution", {})
-        recovery = execution.get("recovery", {})
-        missing = recovery.get("expected_missing_scenario_ids", [])
-        slacks = [
-            float(value)
-            for value in payload.get("numerics", {}).get("minimum_endpoint_retry_slacks", [])
-        ]
-        if slacks != [1.0e-12, 1.0e-10]:
-            raise ValueError("V5 minimum-endpoint retry ladder changed.")
-        if payload.get("numerics", {}).get("retry_scope") != (
-            "closed_known_boundary_status_ladder"
-        ):
-            raise ValueError("V5 minimum-endpoint retry scope changed.")
-        if int(execution.get("freeze_workers", 0)) != 3 or len(missing) != 3:
-            raise ValueError("V5 must retain three workers for three missing scenarios.")
-        declared_ids = {str(item["scenario_id"]) for item in scenarios}
-        if not isinstance(missing, list) or not set(map(str, missing)).issubset(declared_ids):
-            raise ValueError("V5 recovery scenario identities changed.")
-        if int(recovery.get("expected_recovered_scenarios", -1)) != 33:
-            raise ValueError("V5 must recover exactly 33 validated V4 scenarios.")
+    if status == STATUS_V4:
+        _require_recovery_contract(payload, scenarios, version="V4", workers=7, recovered=29)
+    if status in {STATUS_V5, STATUS_V6}:
+        _require_retry_contract(
+            payload,
+            version="V5--V6",
+            slacks=(1.0e-12, 1.0e-10),
+            scope="closed_known_boundary_status_ladder",
+        )
+    if status == STATUS_V5:
+        _require_recovery_contract(payload, scenarios, version="V5", workers=3, recovered=33)
+    if status == STATUS_V6:
+        _require_recovery_contract(
+            payload,
+            scenarios,
+            version="V6",
+            workers=1,
+            recovered=35,
+            missing_ids=("b0500k_p020_l025",),
+        )
+        _require_v6_numerics(payload)
     return payload
 
 
@@ -221,6 +250,15 @@ def _frontier_config(base: Mapping[str, Any], structural: Mapping[str, Any]) -> 
     config["frontier"]["normalized_score"]["minimum_endpoint_retry_slacks"] = list(
         _minimum_endpoint_retry_slacks(structural)
     )
+    numerics = structural.get("numerics", {})
+    if "order_exposure_distance_tolerance" in numerics:
+        config["solver"]["order_exposure_distance_tolerance"] = float(
+            numerics["order_exposure_distance_tolerance"]
+        )
+    if "order_objective_tolerance_dollars" in numerics:
+        config["solver"]["order_objective_tolerance_dollars"] = float(
+            numerics["order_objective_tolerance_dollars"]
+        )
     return config
 
 
@@ -360,7 +398,9 @@ def _recover_interrupted_scenarios(
     source_protocol_tag = str(recovery["source_protocol_tag"])
     source_protocol_commit = str(recovery["source_protocol_commit"])
     if resolve_git_tag(repo_root, source_protocol_tag) != source_protocol_commit:
-        raise RuntimeError("V4 recovery source tag no longer resolves to its locked commit.")
+        raise RuntimeError(
+            "Structural recovery source tag no longer resolves to its locked commit."
+        )
     source_root = resolve_isolated_run_dir(
         repo_root=repo_root,
         configured_root=str(config["output"]["data_root"]),
@@ -372,12 +412,14 @@ def _recover_interrupted_scenarios(
     missing = {str(value) for value in recovery["expected_missing_scenario_ids"]}
     recovered = sorted(set(lookup).difference(missing))
     if len(recovered) != int(recovery["expected_recovered_scenarios"]):
-        raise RuntimeError("V4 recovery complement has the wrong scenario count.")
+        raise RuntimeError("Structural recovery complement has the wrong scenario count.")
     physical_scenarios = {
         path.name for path in (source_root / "scenarios").iterdir() if path.is_dir()
     }
     if physical_scenarios != set(recovered):
-        raise RuntimeError("V4 recovery source directories differ from the locked complement.")
+        raise RuntimeError(
+            "Structural recovery source directories differ from the locked complement."
+        )
     retry_slacks = _minimum_endpoint_retry_slacks(config)
     cap_tolerance = float(config["numerics"]["cap_residual_tolerance"])
     artifacts: dict[str, Any] = {}

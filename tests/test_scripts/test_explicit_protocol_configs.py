@@ -10,6 +10,7 @@ from scripts.experiments import (
     run_ijds_binary_geometry_frontier_v4 as binary_geometry,
     run_ijds_credit_risk_controls as credit_controls,
     run_ijds_normalized_objective_frontier_v2 as two_ruler,
+    run_ijds_portfolio_structure_sensitivity as structural_sensitivity,
     run_ijds_raw_data_audit as raw_data_audit,
 )
 
@@ -20,6 +21,7 @@ from scripts.experiments import (
         (binary_geometry.parse_args, ["evaluate"]),
         (credit_controls.parse_args, ["evaluate"]),
         (two_ruler.parse_args, []),
+        (structural_sensitivity.parse_args, ["--phase", "freeze"]),
         (raw_data_audit.parse_args, []),
     ],
 )
