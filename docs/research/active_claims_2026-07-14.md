@@ -57,7 +57,23 @@ pre-endpoint-correction evaluations are provenance only.
 - Label-lag sensitivity: `ijds-label-lag-sensitivity-2026-07-14-v1`.
 - Evaluated-cap solver audit: `ijds-policy-support-tie-audit-2026-07-12-v1`.
 
+### Evaluation-endpoint availability sensitivity
+
+- Complete nonselective run:
+  `ijds-endpoint-availability-sensitivity-2026-07-14-v1`, tag
+  `protocol/ijds-endpoint-availability-sensitivity-2026-07-14-v1`, commit
+  `8865f1cfbd387576bdf805f3e52f030261e4b717`.
+- It changes the Charged Off administrative availability lag over
+  `{0,3,6,8,12}` months while holding scores, fitted residual recipes,
+  supports, rulers, coordinates, and allocations fixed.
+- The archive and exploratory lag results had already been inspected. This is
+  retrospectively protocol-locked complete reporting, not preregistration,
+  confirmation, or a basis for choosing an endpoint.
+
 ## Research Object
+
+<!-- claim:data.exhaustive_status_independent_population -->
+<!-- claim:endpoint.not_verified_snapshot -->
 
 - Raw archive: 2,925,493 rows, 2,925,492 valid dated loans, 142 columns,
   2,060,077 36-month contracts, and 865,415 60-month contracts.
@@ -104,6 +120,10 @@ pre-endpoint-correction evaluations are provenance only.
 
 ## Active Exact Statements
 
+<!-- claim:geometry.prevalence_sensitive_mechanism -->
+<!-- claim:theory.sharp_common_outcome_bounds -->
+<!-- claim:theory.basis_endpoint_sufficiency -->
+
 1. **Positive-affine cap equivalence.** Under a binding budget, a globally
    positive-affine score admits an exact translated cap. The empirical upper
    score is not globally affine in the point score.
@@ -135,6 +155,9 @@ pre-endpoint-correction evaluations are provenance only.
 
 ## Coverage and Geometry Evidence
 
+<!-- claim:coverage.five_models_all_windows_below_nominal -->
+<!-- claim:timing.fit_label_crossing_retained -->
+
 Under the declared six-month endpoint contract, all eight all-candidate
 coverage upper bounds are below 0.90 for every model:
 
@@ -159,14 +182,19 @@ coverage upper bounds are below 0.90 for every model:
 - In CatBoost stratum 2, prevalence changes from 0.101703 in W7 to 0.097147 in
   W8; the fitted residual quantile changes from 0.888435 to 0.111801 and mean
   OOT width from 0.984263 to 0.207631.
-- The W7--W8 threshold crossing persists for the predeclared 0-, 3-, and
-  6-month charged-off reporting lags, each retaining more than 99% in every
+- The W7--W8 threshold crossing persists for the retrospectively
+  protocol-locked 0-, 3-, and 6-month fit-label lags, each retaining more than 99% in every
   fitting month. It disappears at 8 and 12 months, which fail the locked
   retention rule. This is sensitivity evidence, not a causal attribution.
 - W8 stratum-2 coverage remains bounded by [0.822536, 0.854707]. Narrower
   intervals do not restore transport.
 
 ## Decision and Comparator Evidence
+
+<!-- claim:timing.endpoint_six_month_reconciles_v3 -->
+<!-- claim:timing.fit_and_endpoint_lags_not_factorial -->
+<!-- claim:decision.no_selected_policy -->
+<!-- claim:comparator.broad_support_all_cross_zero -->
 
 The frozen contrast is gamma 1 minus gamma 0. The objective-matched ruler holds
 the common plug-in objective floor fixed; the normalized-score ruler holds a
@@ -200,6 +228,35 @@ modeled availability date followed the cutoff. V2 had 365,339 resolved and
 V2 is immutable provenance and V3 is the active endpoint; no direction from
 either endpoint version is promoted.
 
+The complete endpoint-availability sensitivity is:
+
+| Charged Off lag (months) | Resolved / unresolved | Coverage upper below 0.90 | Maximum upper | Payoff lower / cross | Default higher / cross | Miscoverage higher / cross |
+|---:|---:|---:|---:|---:|---:|---:|
+| 0 | 364,861 / 12,029 | 40/40 | 0.897641 | 32/16 | 33/15 | 40/8 |
+| 3 | 364,861 / 12,029 | 40/40 | 0.897641 | 32/16 | 33/15 | 40/8 |
+| 6 | 364,814 / 12,076 | 40/40 | 0.897726 | 32/16 | 33/15 | 40/8 |
+| 8 | 364,570 / 12,320 | 40/40 | 0.898151 | 32/16 | 33/15 | 40/8 |
+| 12 | 363,288 / 13,602 | 39/40 | 0.900411 | 31/17 | 32/16 | 40/8 |
+
+- The sole lag-12 coverage exception is the pricing-excluded application
+  WOE/IV scorecard in W2. Therefore the 40/40 statement is valid for the active
+  six-month contract and lags 0, 3, and 8, but not universally over all tested
+  endpoint lags.
+- After removing the lag column, the six-month row is value-identical to active
+  V3 for 120 coverage cells, 48 two-ruler contrasts, and 648 exact-support
+  envelopes.
+- No opposite one-sided decision direction appears at 12 months. Payoff and
+  default each move one cell from adverse to crossing zero; miscoverage is
+  unchanged.
+- Broad stress places zero in all 216 exact envelopes at every endpoint lag.
+  Development-support payoff is 6 lower/66 crossing at lags 0, 3, 6, and 8 and 72
+  crossing at lag 12; default is 72 crossing at every lag; miscoverage changes
+  from 27 higher/45 crossing at lags 0, 3, 6, and 8 to 26/46 at lag 12.
+- Fit-label timing and evaluation-endpoint timing are separate one-factor
+  sensitivities. The former refits residual recipes; the latter holds recipes
+  and allocations fixed. They were not crossed factorially, so no joint lag
+  robustness claim is active.
+
 - Objective-matched .25 crosses zero for all three metrics in all eight
   windows. Its repeated allocation remains identical across windows, but the
   12,076 unresolved endpoints eliminate the earlier favorable point claim.
@@ -228,7 +285,7 @@ either endpoint version is promoted.
   reported score specifications.
 - Binary absolute-residual geometry is prevalence-sensitive.
 - The score, ruler, and coordinate jointly define the portfolio comparison.
-- Within the finite predeclared grid, direction is not invariant to ruler or
+- Within the finite protocol-locked grid, direction is not invariant to ruler or
   coordinate and no endpoint has a universal realized-outcome ordering.
 - Exact support envelopes quantify partial identification over declared
   outcome-free comparator supports.
@@ -236,6 +293,9 @@ either endpoint version is promoted.
   an audit of the handoff, not abandonment of any component.
 
 ## Forbidden Claims
+
+<!-- claim:boundary.no_selected_set_validity -->
+<!-- claim:simulation.portfolio_claim_forbidden -->
 
 - Policy, gamma, ruler, coordinate, learner, or window winner.
 - Selected-set or funded-set conformal guarantee.
@@ -253,5 +313,7 @@ either endpoint version is promoted.
 Submission freeze is not active. Further work may improve code, sensitivity
 analysis, exposition, and reproducibility, but it may not select results from
 2016--2017 outcomes or rewrite protected historical artifacts. Any new
-paper-facing run requires a predeclared protocol, immutable tag, explicit stop
-rules, complete reporting, and a new versioned evidence source.
+paper-facing run requires a written protocol and immutable tag before the
+corresponding run, explicit stop rules, complete reporting, and a new versioned
+evidence source. Because the archive has already been inspected, such locking
+is retrospective discipline rather than preregistration.

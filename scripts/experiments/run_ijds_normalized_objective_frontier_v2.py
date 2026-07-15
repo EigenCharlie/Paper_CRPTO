@@ -50,9 +50,6 @@ from src.utils.pipeline_runtime import (  # noqa: E402
     utc_now_iso,
 )
 
-DEFAULT_CONFIG_PATH = (
-    ROOT / "configs/experiments/ijds_normalized_objective_frontier_2026-07-13_v2.yaml"
-)
 ALLOWED_DATA_ROOT = Path("data/processed/experiments/ijds_audit")
 ALLOWED_MODEL_ROOT = Path("models/experiments/ijds_audit")
 IMPLEMENTATION_PATHS = (
@@ -75,9 +72,9 @@ IMPLEMENTATION_PATHS = (
 
 
 def parse_args(argv: Sequence[str] | None = None) -> argparse.Namespace:
-    """Parse the locked V2 CLI."""
+    """Parse one explicit hash-verified evaluation configuration."""
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("--config", type=Path, default=DEFAULT_CONFIG_PATH)
+    parser.add_argument("--config", type=Path, required=True)
     return parser.parse_args(argv)
 
 

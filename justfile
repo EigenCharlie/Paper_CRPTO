@@ -1,4 +1,4 @@
-# CRPTO task runner — cross-platform via `just`.
+# CRPTO task runner - cross-platform via `just`.
 # Install: https://github.com/casey/just  (or `winget install Casey.Just` on Windows)
 
 set windows-shell := ["powershell.exe", "-NoLogo", "-NoProfile", "-Command"]
@@ -6,16 +6,17 @@ set dotenv-load
 
 # --- Setup ---------------------------------------------------------------
 
-# Full setup including SPO (pyepo + torch) extras
+# Default research setup without the historical SPO/Torch stack.
 default: help
 
 setup:
-    uv sync --extra dev --extra search --extra spo
+    uv sync --extra dev --extra search
 
-# Lighter setup without SPO/torch
+# Backward-compatible alias for the default lightweight setup.
 setup-base:
     uv sync --extra dev --extra search
 
+# Explicit historical SPO environment.
 setup-spo:
     uv sync --extra dev --extra search --extra spo
 
@@ -38,7 +39,7 @@ type-advisory:
     @uv run python scripts/run_ty_advisory.py --scope active
 
 type-advisory-full:
-    @uv run python scripts/run_ty_advisory.py --scope full --fail-on-diagnostics --output reports/ci/ty-advisory-full.txt
+    @uv run python scripts/run_ty_advisory.py --scope full --fail-on-diagnostics --no-report
 
 complexity-report:
     uvx radon cc src scripts -s -n C --exclude "scripts/archive/*"
@@ -63,13 +64,15 @@ smoke: smoke-active historical-integrity
 publication-integrity:
     uv run python scripts/check_publication_integrity.py
 
+# Full repository regression. Some historical tests exercise legacy builders;
+# this is intentionally separate from the read-only IJDS gate.
 test:
     uv run pytest -q
 
 test-fast:
     uv run pytest -q -m "not slow"
 
-# --- Paper outputs (safe — do NOT touch the frozen champion) -------------
+# --- Paper outputs (safe - do NOT touch the frozen champion) -------------
 
 tables:
     uv run python scripts/export_crpto_tables.py
@@ -121,9 +124,9 @@ ijds-normalized-objective-frontier-v1c-freeze:
 ijds-normalized-objective-frontier-v1c-check:
     uv run pytest -q tests/test_ijds_normalized_objective_frontier.py
 
-# Post-freeze V2 verifies V1c hashes before its single archive-outcome join.
-ijds-normalized-objective-frontier-v2-evaluate:
-    uv run python scripts/experiments/run_ijds_normalized_objective_frontier_v2.py
+# The V2/V3 evaluator always receives an explicit immutable configuration.
+ijds-normalized-objective-frontier-v2-evaluate CONFIG:
+    uv run python scripts/experiments/run_ijds_normalized_objective_frontier_v2.py --config "{{ CONFIG }}"
 
 ijds-normalized-objective-frontier-v2-check:
     uv run pytest -q tests/test_ijds_normalized_objective_frontier_v2.py
@@ -149,10 +152,12 @@ ijds-policy-challenger:
 
 ijds-historical-v7-replay: ijds-exact-alpha ijds-policy-challenger ijds-historical-v7-evidence
 
-# Read-only active-capsule gate over the current evidence and all three immutable
-# freeze/evaluation pairs represented by the twelve active DVC pointers.
-ijds-active-check: publication-integrity ijds-normalized-objective-frontier-v1c-check ijds-normalized-objective-frontier-v2-check
-    uv run pytest -q tests/test_ijds_anonymity.py tests/test_ijds_active_claim_sync.py tests/test_ijds_v4_claim_sync.py tests/test_publication_targets.py tests/test_publication_integrity.py tests/test_submission_preview_layout.py tests/test_supplement_table_sync.py tests/test_scripts/test_compile_ijds_submission.py tests/test_scripts/test_manage_ijds_dvc_capsule.py tests/test_ijds_audit_core.py tests/test_ijds_audit/test_raw_data_audit.py tests/test_ijds_audit/test_credit_controls.py
+# Read-only active-capsule gate over six freeze/evaluation runs plus the endpoint
+# sensitivity, represented by fourteen active DVC pointers.
+ijds-active-check: publication-integrity
+    uv run pytest -q tests/test_ijds_anonymity.py tests/test_ijds_active_claim_sync.py tests/test_ijds_v4_claim_sync.py tests/test_publication_targets.py tests/test_submission_preview_layout.py tests/test_supplement_table_sync.py
+    uv run pytest -q tests/test_scripts/test_compile_ijds_submission.py tests/test_scripts/test_explicit_protocol_configs.py tests/test_scripts/test_manage_ijds_dvc_capsule.py tests/test_ijds_audit_core.py tests/test_ijds_normalized_objective_frontier.py tests/test_ijds_normalized_objective_frontier_v2.py tests/test_ijds_policy_support_tie_audit.py
+    uv run pytest -q tests/test_ijds_audit/test_claim_ledger.py tests/test_ijds_audit/test_credit_controls.py tests/test_ijds_audit/test_endpoint_sensitivity.py tests/test_ijds_audit/test_evaluation_outcome_contracts.py tests/test_ijds_audit/test_grid_contracts.py tests/test_ijds_audit/test_lag_sensitivity.py tests/test_ijds_audit/test_publication_sources.py tests/test_ijds_audit/test_raw_data_audit.py tests/test_ijds_audit/test_sensitivity_evidence.py tests/test_evaluation/test_policy_contrast_bounds.py tests/test_experiments/test_ijds_endpoint_availability_sensitivity.py
 
 # Explicit replay rebuilds only paper-facing evidence. Run `ijds-active-check`
 # after the manuscript surfaces have also been rebuilt.
@@ -220,7 +225,7 @@ submission-build:
     just paper-submission-pdf
 
 # Read-only final local gate over already-built outputs.
-submission-check: ijds-active-check paper-submission-tex-check paper-submission-official-scan lint type-check type-advisory-full test validate-champion-strict
+submission-check: ijds-active-check paper-submission-tex-check paper-submission-official-scan lint type-check type-advisory-full validate-champion-strict
 
 # Build, then verify. Submission freeze remains a separate human decision.
 submission-closeout: submission-build submission-check

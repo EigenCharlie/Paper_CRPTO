@@ -72,9 +72,10 @@ permission to overwrite canonical artifacts.
 
 The repo is public for academic reproducibility. We keep:
 
-- `book-publish.yml` — auto-deploys the Quarto book to GitHub Pages on every
-  push to `main`. This is the single most valuable workflow because
-  reviewers can read the book at https://eigencharlie.github.io/Paper_CRPTO/.
+- `book-publish.yml` — manually renders and deploys the reviewed Quarto book
+  to GitHub Pages. Manual dispatch prevents stale or historical drafts from
+  being published automatically; reviewers can read the last approved build
+  at https://eigencharlie.github.io/Paper_CRPTO/.
 - `lint.yml` — catches formatting/import issues before they accumulate.
   Runs in ~30s.
 
@@ -86,8 +87,8 @@ We **drop** (or never adopt):
   fire for real CVEs.
 - A full `pytest` workflow on every push — local pre-push hook already runs
   the artifact-independent suite, and reviewers do not consult the test tab.
-- `dbt.yml` and `book-build.yml` — `dbt parse` without parquets is trivial
-  and the book build is already part of book-publish.
+- `dbt.yml` and `book-build.yml` — `dbt parse` without parquets is trivial,
+  and the manual Pages workflow already performs the reviewed book build.
 
 If the project ever moves to multi-author (very unlikely), revisit this
 document and re-enable the dropped workflows + branch protection.

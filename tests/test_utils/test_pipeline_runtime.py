@@ -3,8 +3,11 @@ from __future__ import annotations
 import json
 from pathlib import Path
 
+import pytest
+
 from src.utils.pipeline_runtime import (
     atomic_write_json,
+    atomic_write_strict_json,
     load_runtime_status,
     runtime_checkpoint_dir,
     runtime_last_artifact_path,
@@ -28,6 +31,16 @@ def test_atomic_write_json_replaces_existing_file_without_tmp_leak(tmp_path: Pat
     assert json.loads(target.read_text(encoding="utf-8")) == {"step": 2, "ok": True}
     assert target.read_text(encoding="utf-8").endswith("\n")
     assert _tmp_files(target) == []
+
+
+def test_atomic_write_strict_json_rejects_nan_and_unsupported_values(tmp_path: Path) -> None:
+    target = tmp_path / "strict.json"
+
+    with pytest.raises(ValueError, match="Out of range float"):
+        atomic_write_strict_json(target, {"value": float("nan")})
+    with pytest.raises(TypeError, match="not JSON serializable"):
+        atomic_write_strict_json(target, {"value": tmp_path})
+    assert not target.exists()
 
 
 def test_runtime_status_helpers_write_named_artifacts(tmp_path: Path) -> None:

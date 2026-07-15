@@ -17,7 +17,8 @@ path.
 - **Complete specification:** all eight residual windows and five coverage
   learners are reported; only the primary learner enters five gammas, two
   rulers, three coordinates, and supporting fixed-cap policies. No result is
-  selected.
+  selected. Evaluation-endpoint lags 0, 3, 6, 8, and 12 are all reported;
+  conformal-fit label timing is a separate one-factor sensitivity.
 
 The archive is a retrospective audit of previously inspected data. It is not a
 preregistration, prospective trial, causal study, or selected-set guarantee.

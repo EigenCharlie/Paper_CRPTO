@@ -283,6 +283,24 @@ def test_two_ruler_diagnostic_is_finite_complete_and_nonselective() -> None:
     assert interpretation["policy_winner"] is None
 
 
+def test_endpoint_availability_sensitivity_is_complete_and_nonselective() -> None:
+    sensitivity = _json(EVIDENCE)["sensitivity"]["evaluation_endpoint_availability"]
+
+    assert sensitivity["charged_off_lags_months"] == [0, 3, 6, 8, 12]
+    assert sensitivity["endpoint_or_result_selected"] is False
+    assert sensitivity["allocation_refit"] is False
+    assert sensitivity["six_month_endpoint_reconciles_exactly_to_active_v3"] is True
+    assert sensitivity["fit_label_lag_crossed_factorially"] is False
+    assert len(sensitivity["rows"]) == 5
+    assert {row["charged_off_lag_months"] for row in sensitivity["rows"]} == {
+        0,
+        3,
+        6,
+        8,
+        12,
+    }
+
+
 def test_simulation_is_explicitly_non_claim_bearing_for_portfolios() -> None:
     simulation = _json(EVIDENCE)["simulation"]
 
@@ -301,6 +319,10 @@ def test_evidence_manifest_hashes_every_active_output() -> None:
         "active_source_registry",
         "evidence_builder",
         "source_registry_loader",
+        "claim_ledger_contract",
+        "claim_ledger_loader",
+        "endpoint_availability_sensitivity/summary",
+        "endpoint_availability_sensitivity/loader",
         "artifact_descriptor_helper",
         "outcome_free/source_protocol_freeze",
         "two_ruler/outcome_free/freeze",

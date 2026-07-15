@@ -38,7 +38,7 @@ classifiers = [
 ]
 
 dependencies = [
-    # Core data & numerics — floors aligned with uv.lock effective versions
+    # Core data & numerics - floors aligned with uv.lock effective versions
     "pandas>=2.3,<4",
     "numpy>=2.0,<3",
     "pyarrow>=18",
@@ -48,7 +48,7 @@ dependencies = [
     "pandera>=0.25",
     "tqdm>=4.66",
     # ML / Conformal / Calibration
-    "catboost>=1.2,<1.3",            # PIN — champion reproducibility
+    "catboost>=1.2,<1.3",            # PIN - champion reproducibility
     "optuna>=4.0",
     "mapie>=1.4",
     "fairlearn>=0.12",
@@ -232,7 +232,7 @@ strict_optional = true
 warn_redundant_casts = true
 warn_unused_ignores = true
 warn_unreachable = true
-disallow_untyped_defs = false   # gradual — flip to true later
+disallow_untyped_defs = false   # gradual - flip to true later
 check_untyped_defs = true
 follow_imports = "silent"
 show_error_codes = true

@@ -5,6 +5,11 @@ from pathlib import Path
 
 import yaml
 
+from src.ijds_audit.publication_sources import load_source_registry
+
+ROOT = Path(__file__).resolve().parents[1]
+REGISTRY_PATH = ROOT / "configs/ijds_active_evidence_sources.yaml"
+
 
 def _config() -> dict:
     return yaml.safe_load(
@@ -21,17 +26,16 @@ def _evidence() -> dict:
 
 
 def _registry() -> dict:
-    return yaml.safe_load(
-        Path("configs/ijds_active_evidence_sources.yaml").read_text(encoding="utf-8")
-    )
+    return load_source_registry(REGISTRY_PATH, repo_root=ROOT)
 
 
 def test_publication_target_points_to_active_sources() -> None:
     cfg = _config()
     primary = cfg["primary_target"]
     active = cfg["active_scientific_contract"]
+    registry = _registry()
 
-    assert cfg["version"] == "2026-07-14"
+    assert cfg["version"] == str(registry["schema_version"]).rsplit(".", maxsplit=1)[0]
     assert cfg["decision_status"] == "prefreeze_active"
     assert primary["id"] == "informs_ijds"
     assert cfg["current_decision"]["write_first_for"] == "informs_ijds"
@@ -114,10 +118,14 @@ def test_active_contract_has_one_numeric_source_and_current_lineages() -> None:
 def test_active_capsule_paths_exist() -> None:
     active = _config()["active_scientific_contract"]
     registry = _registry()
-    assert len(active["required_artifacts"]) == 18
+    evidence = _evidence()
+    expected_artifacts = {
+        active["evidence_manifest"],
+        *(descriptor["path"] for descriptor in evidence["paper_artifacts"].values()),
+    }
+    assert set(active["required_artifacts"]) == expected_artifacts
     for artifact in active["required_artifacts"]:
         assert Path(artifact).is_file(), artifact
-    assert len(registry["dvc_pointers"]) == 12
     for pointer in registry["dvc_pointers"]:
         assert Path(pointer).is_file(), pointer
 

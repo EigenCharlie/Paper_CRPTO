@@ -21,13 +21,18 @@ Read in this order:
    endpoint-corrected two-ruler evaluation and finite-grid boundary.
 6. `ijds_raw_data_contract_protocol_2026-07-13.md`, the V2 audit artifacts, and
    `ijds_label_lag_sensitivity_protocol_2026-07-14.md` - full archive,
-   endpoint, schema, funding, and reporting-lag contracts.
+   schema, funding, and conformal-fit label-timing contracts.
 7. `ijds_credit_risk_controls_protocol_2026-07-13.md` and the V3 evaluation -
    frozen monotonic and WOE/IV model-class controls under the corrected endpoint.
-8. `../../configs/ijds_active_evidence_sources.yaml` - hash-locked source registry.
-9. `../../reports/crpto/ijds_binary_geometry_frontier_v4_evidence.json` - sole
+8. `ijds_endpoint_availability_sensitivity_protocol_2026-07-14.md` - complete
+   nonselective evaluation-endpoint availability lag grid; it is separate from
+   fit-label timing and the two factors were not crossed.
+9. `../../configs/ijds_active_evidence_sources.yaml` - hash-locked source registry.
+10. `../../configs/ijds_claim_ledger.yaml` - executable qualitative-claim and
+    publication-surface contract.
+11. `../../reports/crpto/ijds_binary_geometry_frontier_v4_evidence.json` - sole
    numeric paper-facing manifest for all active lineages.
-10. `../../paper/CRPTO_ijds.qmd` and `../../paper/supplement_ijds.qmd` - canonical
+12. `../../paper/CRPTO_ijds.qmd` and `../../paper/supplement_ijds.qmd` - canonical
    anonymous manuscript sources.
 
 The active result is an identification audit of one ML-conformal-optimization

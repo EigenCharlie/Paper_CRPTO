@@ -36,6 +36,8 @@ ACTIVE_EXPERIMENT_FILES = {
     "scripts/experiments/run_ijds_normalized_objective_frontier_v2.py",
     "scripts/experiments/run_ijds_policy_support_tie_audit.py",
     "scripts/experiments/run_ijds_credit_risk_controls.py",
+    "scripts/experiments/run_ijds_endpoint_availability_sensitivity.py",
+    "scripts/experiments/run_ijds_label_lag_sensitivity.py",
     "scripts/experiments/run_ijds_raw_data_audit.py",
 }
 SUMMARY_RE = re.compile(r"^Found \d+ diagnostics", flags=re.MULTILINE)
@@ -89,8 +91,13 @@ def _diagnostic_lines(output: str) -> list[str]:
     return [line for line in output.splitlines() if ": error[" in line]
 
 
-def run_ty(scope: str, output: Path, *, fail_on_diagnostics: bool = False) -> int:
-    """Run pinned ty, persist its report, and optionally enforce diagnostics."""
+def run_ty(
+    scope: str,
+    output: Path | None,
+    *,
+    fail_on_diagnostics: bool = False,
+) -> int:
+    """Run pinned ty, optionally persist its report, and enforce diagnostics."""
     uvx = shutil.which("uvx")
     if uvx is None:
         raise RuntimeError("uvx is required to run the ty advisory check.")
@@ -111,7 +118,6 @@ def run_ty(scope: str, output: Path, *, fail_on_diagnostics: bool = False) -> in
     raw_output = f"{result.stdout}{result.stderr}"
     diagnostics = _diagnostic_lines(raw_output)
     effective_return_code = result.returncode
-    output.parent.mkdir(parents=True, exist_ok=True)
     report = (
         f"# ty advisory report\n"
         f"requirement: {TY_REQUIREMENT}\n"
@@ -124,7 +130,11 @@ def run_ty(scope: str, output: Path, *, fail_on_diagnostics: bool = False) -> in
         f"\n"
         f"{raw_output}"
     )
-    output.write_text(report, encoding="utf-8")
+    if output is not None:
+        output.parent.mkdir(parents=True, exist_ok=True)
+        output.write_text(report, encoding="utf-8")
+    elif raw_output.strip():
+        print(raw_output.rstrip())
     summary = SUMMARY_RE.search(report)
     if diagnostics:
         print(f"Found {len(diagnostics)} diagnostics")
@@ -134,7 +144,12 @@ def run_ty(scope: str, output: Path, *, fail_on_diagnostics: bool = False) -> in
         print("ty advisory clean")
     else:
         print(f"ty failed with return code {effective_return_code}")
-    print(f"Full report: {output.relative_to(ROOT)}")
+    if output is not None:
+        try:
+            display_path = output.relative_to(ROOT)
+        except ValueError:
+            display_path = output
+        print(f"Full report: {display_path}")
     return effective_return_code if fail_on_diagnostics else 0
 
 
@@ -143,12 +158,19 @@ def main() -> int:
     parser.add_argument("--scope", choices=["active", "full"], default="active")
     parser.add_argument("--output", type=Path, default=DEFAULT_OUTPUT)
     parser.add_argument(
+        "--no-report",
+        action="store_true",
+        help="Do not write a report file; emit diagnostics to the terminal only.",
+    )
+    parser.add_argument(
         "--fail-on-diagnostics",
         action="store_true",
         help="Return ty's nonzero status when diagnostics are present.",
     )
     args = parser.parse_args()
-    output = args.output if args.output.is_absolute() else ROOT / args.output
+    output = None
+    if not args.no_report:
+        output = args.output if args.output.is_absolute() else ROOT / args.output
     return run_ty(
         scope=args.scope,
         output=output,

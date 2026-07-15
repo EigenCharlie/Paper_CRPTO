@@ -1,397 +1,181 @@
-<!-- Extracted and sanitized for the standalone CRPTO book on 2026-05-10. -->
-
 # Guía Editorial, Claims y Referencias {#sec-crpto-editorial-guide}
 
-Esta página existe porque el libro cumple una función distinta al paper. El
-paper final debe ser breve, selectivo y persuasivo; el libro puede ser más
-generoso: explica por qué se tomó cada decisión, qué evidencia sostiene cada
-claim, qué preguntas de reviewer ya están respondidas y qué partes todavía son
-agenda futura. En otras palabras, esta sección es el puente entre el proyecto
-vivo y el manuscrito publicable.
+Esta guía gobierna cómo escribir el CRPTO activo. Su propósito es impedir tres
+saltos frecuentes: de calidad predictiva a calidad de decisión, de cobertura
+candidata a validez del selected set, y de una comparación bajo cierto ruler a
+dominancia universal.
 
-Para facilitar la escritura posterior, esta página usa referencias numeradas
-locales del tipo `[1]`. La bibliografía global del libro sigue viviendo en
-`book/references.bib`; los números de esta página son una guía editorial para
-el CRPTO, no un reemplazo del sistema BibTeX del libro.
+## Regla de autoridad
 
-### Tesis defendible en una frase
+1. `docs/research/active_claims_2026-07-14.md` decide qué afirmaciones están
+   activas.
+2. `reports/crpto/ijds_binary_geometry_frontier_v4_evidence.json` decide qué
+   números pueden aparecer como paper-facing.
+3. `configs/ijds_claim_ledger.yaml` convierte los claims cualitativos y sus
+   límites en un contrato ejecutable sobre las superficies editoriales.
+4. `configs/ijds_active_evidence_sources.yaml` decide qué lineages y hashes
+   sustentan el manifest.
+5. Body, supplement y TeX generado deben concordar con esas cuatro capas.
 
-CRPTO demuestra que una banda conformal calibrada puede dejar de ser un
-diagnóstico posterior y convertirse en una restricción operativa para asignar
-capital crediticio bajo incertidumbre, con una policy económica promovida,
-artefactos reproducibles y un bound que separa cuidadosamente garantía
-distribution-free de evidencia empírica post-selección.
+Un memo, una tabla histórica o un resultado visualmente favorable no puede
+ampliar el claim. Los bundles `pool93`, `compact-v7`, selected-policy y A1--A40
+son procedencia, no evidencia activa.
 
-La frase anterior tiene cuatro piezas:
+## Escalera de claims {#sec-crpto-claim-ladder}
 
-1. **banda conformal calibrada**: se apoya en la teoría conformal y de control de
-   riesgo [1]--[5];
-2. **restricción operativa**: conecta esos intervalos con robust optimization y
-   price of robustness [6]--[9];
-3. **policy económica promovida**: usa el cierre rebaselined `ijds-rebaseline-2026-06-07`
-   y no reabre el champion;
-4. **cautela post-selección**: separa el teorema Markov del tightening
-   condicional y de las validaciones empíricas A7--A11.
-
-### Escalera de claims {#sec-crpto-claim-ladder}
-
-El paper se vuelve más fuerte cuando los claims se ordenan por nivel de
-ambición. No todos tienen el mismo estatus. Algunos son teóricos, otros son
-empíricos, otros son de ingeniería reproducible.
-
-| Nivel | Claim | Evidencia actual | Lo que no debe prometer |
-|---|---|---|---|
-| 1 | La PD base es suficientemente calibrada para alimentar incertidumbre | AUC `0.7139`, Brier `0.1544`, ECE `0.0070`, Venn-Abers | No afirmar que AUC es el aporte principal |
-| 2 | Los intervalos conformales tienen cobertura útil para decisión | Coverage 90 `92.97%`, min group coverage `91.90%` | No afirmar cobertura condicional perfecta |
-| 3 | El intervalo puede convertirse en conjunto de incertidumbre | Definición de `u_i(alpha)` y `Gamma_CP` | No tratar `Gamma_CP` como presupuesto ad hoc |
-| 4 | El bound controla no-cobertura ponderada del funded set | @sec-thm-feasibility y `V` | No decir que controla directamente una PD latente sin supuesto adicional |
-| 5 | Existe una frontera finita robusta en OOT | A35: 50,010 políticas semánticas; 27,508 all-alpha above-floor policies | No decir que eso elimina toda incertidumbre post-selección ni que certifica una región continua |
-| 6 | El punto oficial es pool93 body/default, no el endpoint económico extremo | Retorno `$184.8K`, `V=0.035350`, `gamma_cp=0.162616`, `gamma_res=0.073584`, umbral Markov `0.345084`, pass `8/8` | No mezclarlo con el max-return endpoint de `$223K` ni con el punto de threshold mínimo |
-| 7 | La evidencia CRPTO fortalece el paper sin cambiar dirección | A7--A11, apéndice condicional, A25--A34 | No venderlo como validación live o universal |
+| Nivel | Claim defendible | Evidencia | Frontera obligatoria |
+|---:|---|---|---|
+| 1 | El universo activo es status-independent y exhaustivo bajo el contrato declarado. | 640,543 préstamos elegibles de 2,925,493 filas crudas. | No generalizar a otros plazos, esquemas o plataformas. |
+| 2 | La cobertura candidata no transporta en la especificación completa. | Cinco learners × ocho ventanas: 40/40 upper bounds < 0.90. | No afirmar invalidez conformal universal. |
+| 3 | La geometría del intervalo binario es sensible a prevalencia. | Cruce W7--W8 en stratum 2 y resultado de score constante. | Mecanismo, no prueba causal del caso variable-score. |
+| 4 | Copiar un cap o igualar una coordenada no define el mismo contrafactual. | Equivalencia afín, same-cap nesting, C2 y normalized invariance. | La teoría ordena objetos plug-in específicos, no outcomes realizados. |
+| 5 | La dirección downstream depende de ruler y coordenada. | Seis tracks, 48 contrastes de ventana y 144 celdas metric-direction. | No seleccionar gamma, ruler, coordenada o signo. |
+| 6 | La incertidumbre de endpoint y comparator support puede acotarse exactamente. | 12,076 outcomes no resueltos; sharp common-outcome bounds; 3,067 caps. | Partial identification, no confidence interval ni frontera universal. |
+| 7 | El sistema completo es el objeto científico. | Score, intervalo, LP, endpoint y soporte hash-linked. | No separar una cifra favorable de su protocolo. |
 
 : Escalera editorial de claims del CRPTO {#tbl-crpto-claim-ladder}
 
-La regla de escritura es simple: el cuerpo principal del paper debe vivir en los
-niveles 1--6; el nivel 7 alimenta appendix, respuesta a reviewers y versión
-journal. Si una frase no cabe en esta escalera, probablemente pertenece a la
-agenda futura o a otro paper.
+La contribución más fuerte es negativa y constructiva. El paper no dice que
+conformal prediction o robust optimization fallen en general; muestra qué no
+queda identificado al conectarlos sin fijar transporte, endpoint y comparador.
 
-### Aportes por audiencia
+## Traducción por audiencia
 
-El mismo resultado se lee distinto según quién revise el manuscrito.
-
-| Audiencia | Qué le importa | Qué debe ver rápido | Artefacto o sección |
-|---|---|---|---|
-| OR / Management Science | Decisión bajo incertidumbre y trade-off robustez-retorno | CRPTO como puente CP -> RO -> portfolio | @sec-alpha-gamma-bound, @sec-crpto-results |
-| ML / conformal prediction | Garantía distribution-free y límites post-selección | Markov como claim principal, tightening condicional separado | @sec-thm-feasibility, @sec-lem-conditional-tightening |
-| Crédito / riesgo | Auditabilidad, funded set, governance | Policy congelada, composición del funded set, segment checks | @sec-crpto-p1-evidence |
-| Reviewer escéptico de DFL | Por qué no basta SPO+ | SPO+ reduce regret, CRPTO compra cobertura auditable | @fig-p1-spo-regret, @sec-crpto-comparison |
-| Reproducibilidad | Trazabilidad y no cherry-picking | Mapa claim -> artifact -> test | @tbl-crpto-claim-artifact-test |
+| Audiencia | Pregunta principal | Respuesta CRPTO |
+|---|---|---|
+| Data science | ¿La incertidumbre predictiva conserva significado downstream? | No automáticamente: se auditan transporte y geometría antes del LP. |
+| Conformal prediction | ¿La cobertura marginal autoriza un claim sobre funded set? | No; candidate coverage y selected-set validity son objetos distintos. |
+| Optimization | ¿Qué significa comparar dos scores con caps diferentes? | El ruler y la coordenada son parte del estimand; exact support revela sensibilidad. |
+| Credit risk | ¿El resultado depende de CatBoost o de señales de pricing? | Cinco controles, incluidos WOE/IV y monotonic CatBoost, rechazan esa explicación simple. |
+| Reproducibilidad | ¿Se eligió una combinación después de ver outcomes? | No se promueve ninguna; grids completas, freezes outcome-free y joins estrictos. |
+| Governance | ¿Puede desplegarse la policy? | No; es una auditoría retrospectiva sin fair-lending ni validación prospectiva. |
 
 : Traducción del aporte por tipo de reviewer {#tbl-crpto-reviewer-audiences}
 
-Esta tabla es útil para escribir la introducción del paper. El paper no debe
-presentarse como "ganamos todo"; debe presentarse como "resolvemos una dimensión
-que otros enfoques dejan débil: decisión auditable bajo incertidumbre".
+## Vocabulario gobernado
 
-### Qué aprendimos de la literatura
+Usar:
 
-La literatura conformal fundacional nos da el permiso teórico para construir
-intervalos con cobertura finita bajo intercambiabilidad [1], [2]. RCPS, LTT y
-CRC enseñan una lección más general: la predicción conformal puede controlar
-riesgos definidos por el usuario, no solamente coverage marginal promedio [3]--
-[5]. Esa es la puerta conceptual para nuestro bound: el riesgo relevante no es
-solo "falló el intervalo", sino "falló el intervalo en préstamos que realmente
-financié".
+- **retrospectively protocol-locked before the corresponding outcome join**;
+- **complete declared grid**;
+- **sharp common-outcome bound**;
+- **partial identification over declared support**;
+- **coverage control**, no model challenger ganador;
+- **standardized payoff**, no cash return o welfare;
+- **risk-aware allocation audit**, no certified robust policy.
 
-La robust optimization clásica enseña que la robustez tiene precio y que ese
-precio puede medirse [6]. Los trabajos conformal robust optimization muestran
-que los conjuntos conformales pueden alimentar problemas de optimización [7],
-[8]. Predict-then-Calibrate es especialmente cercano porque separa predicción y
-calibración para LP contextuales robustos [9]. Nuestra diferencia práctica es el
-aterrizaje: crédito minorista, funded set ponderado, región finita exacta y
-artefactos reproducibles.
+Evitar:
 
-La literatura más reciente marca hacia dónde crecería una versión futura:
-CROMS sugiere selección de modelos conformales con criterio de robust
-optimization [10]; end-to-end conformal calibration y conformal risk training
-apuntan a entrenar la calibración con la decisión aguas abajo [11], [12];
-multi-distribution robust CP y online CP vía universal portfolios apuntan a
-shift y streaming [13], [14]. Online DFL abre el comparador dinámico para
-decisiones repetidas [16]. Ninguna de esas líneas invalida el paper actual; más
-bien confirma que la dirección del paper es contemporánea y fértil.
+- *preregistered*, *confirmatory*, *prospective* o *untouched holdout*;
+- *selected-set conformal guarantee*;
+- *policy winner*, *optimal gamma* o *best ruler*;
+- *universal guardrail benefit*;
+- *causal mechanism* para W7--W8;
+- *verified September 2020 snapshot*;
+- *continuous-frontier uniqueness*;
+- *deployment-ready* o *fair-lending compliant*.
 
-La biblioteca de tesis integrada aterriza, además, varias de esas líneas en
-evidencia concreta del proyecto. La monografía de fundamentos [18] y los límites
-de la inferencia condicional [20] fijan por qué solo prometemos cobertura
-marginal/Mondrian; covariate shift [19], group-weighted CP [21] y localized CP
-[22] sostienen el diagnóstico multi-distribución A23, mientras que la robustez al
-ruido de etiquetas [23] respalda el stress de flips A11. En la capa de decisión,
-el conformal risk control para pérdidas no monótonas [24] junto con CVaR [25] y
-OCE [26] son el soporte teórico de la re-optimización con cota de cola A22, y la
-optimización-satisficing conformal [27] enmarca A13/A20. El decision-focused
-learning queda anclado en su raíz task-based [28] y en los regret robustos [29],
-que complementan a SPO+. El equilibrio de gradiente online [30] da la lectura de
-recalibración secuencial de A24. Por último, el contexto de crédito y fairness
---- desempeño y equidad de scores [31], datos alternativos en LendingClub [32],
-proxy BISG [33] y el marco de política de FinRegLab [34] --- encuadra el
-checkpoint MRM/fair-lending sin convertirlo en un claim legal.
+## Diccionario operativo
 
-### Tabla de traducción conceptual
-
-| Concepto estadístico | Traducción en CRPTO | Lectura de negocio |
+| Término | Definición activa | No significa |
 |---|---|---|
-| `alpha` | Nivel de tolerancia a no-cobertura | Cuánto riesgo de cola acepta el comité |
-| `PD_low`, `PD_high` | Intervalo conformal por préstamo | Rango defendible de riesgo |
-| `u_i(alpha)` | Cota superior usada por el LP | PD prudente para decisión |
-| `Gamma_CP` | Prima conformal ponderada | Costo promedio de comprar robustez |
-| `V` | No-cobertura ponderada del funded set | Cuánto default realizado quedó fuera de la cota |
-| `violation` | Exceso de riesgo ponderado sobre `tau` | Incumplimiento del límite de portafolio |
-| `alpha01_exact_pass` | Check exacto de bound en OOT | Semáforo para promoción paper-facing |
-| `price_of_robustness` | A40 empareja candidatos y restricciones: costo realizado `5.875%`, reducción default/V `8.305` pp y reducción de threshold `43.55` pp | Costo económico de la robustez, solo con comparadores semánticamente equivalentes |
+| `point score` | PD calibrada usada por el LP base. | Probabilidad causal individual. |
+| `upper score` | Endpoint superior del intervalo binario. | Garantía de riesgo del funded set. |
+| `coverage bound` | Sharp all-candidate completion bound con outcomes no resueltos. | Intervalo de confianza. |
+| `objective-matched ruler` | Mantiene un floor común de objetivo plug-in. | Igual oportunidad económica realizada. |
+| `normalized-score ruler` | Mantiene una relajación relativa positive-affine-invariant. | Mismo opportunity cost. |
+| `C0` | Copia el mismo cap numérico. | Comparador justo por construcción. |
+| `C2` | Iguala el momento point-score del allocation guardrail. | Igual feasible set o outcomes. |
+| `standardized payoff` | Payoff coherente `(1-p)r-pLGD` y su endpoint realizado simplificado. | IRR, discounted cash flow o welfare. |
+| `support envelope` | Extremos sharp sobre caps outcome-free declarados. | Universalidad sobre cualquier comparador. |
+| `endpoint sensitivity` | Cambia cuándo un outcome terminal se considera observable. | Sensibilidad del label usado para fit. |
+| `fit-label sensitivity` | Cambia el lag de disponibilidad del label de calibración. | Cambio del cutoff de evaluación. |
 
 : Diccionario operativo del CRPTO {#tbl-crpto-operational-dictionary}
 
-Esta traducción es una de las fortalezas del libro. En el paper final, varios de
-estos términos pueden aparecer en una sola figura o tabla; aquí conviene
-mantenerlos explícitos porque ayudan a que el lector no confunda métricas
-predictivas, conformales y de portafolio.
+## Banco de defensa ante reviewers {#sec-crpto-reviewer-defense-bank}
 
-### Preguntas de reviewer y respuesta corta
-
-**¿Por qué no basta con reportar AUC?**
-Porque el aporte está downstream. La PD es un insumo; la contribución ocurre
-cuando la incertidumbre entra al optimizador y cambia el funded set.
-
-**¿SPO+ no es mejor porque reduce regret?**
-SPO+ es un comparador fuerte y reduce regret en el benchmark. CRPTO no pretende
-dominarlo en regret; compra auditabilidad, cobertura verificable y una región
-robusta exacta. Es otro eje de valor [15], [16].
-
-**¿El bound controla PD latente o default observado?**
-El bound principal controla un target acotado observado `Y_i in [0,1]` y su
-no-cobertura ponderada. Interpretarlo como PD latente requiere un supuesto
-adicional. Esa cautela está explícita en @sec-alpha-gamma-bound.
-
-**¿Hay riesgo de post-selección?**
-Sí, por eso el paper no vende el cierre `276k` como una garantía conformal nueva.
-Lo presenta como evidencia empírica exacta de la policy promovida y lo refuerza
-con A3, A9 y el apéndice condicional.
-
-**¿Por qué rank 2 y rank 3 no son winners si pasan exact eval?**
-Porque el selector no solo mira bound de portfolio. Ranks 2 y 3 pasan la eval
-exacta de portfolio, pero fallan el gate conformal por cobertura mínima de
-grupo. Esa es precisamente la utilidad de A10: muestra que el selector no es una
-excusa post-hoc.
-
-**¿Los stress tests reemplazan un dataset externo?**
-No. A6 y A11 fortalecen la evidencia bajo reponderación y flips adversariales,
-pero no reemplazan la réplica externa. Esa capa ya queda cubierta por A25--A34
-en Prosper y Freddie/Mendeley; lo que sigue fuera es una validación live o
-prospectiva con protocolo sellado.
-
-### Reviewer-defense bank gobernado {#sec-crpto-reviewer-defense-bank}
-
-Las preguntas anteriores cubren las objeciones más frecuentes en prosa. La tabla
-siguiente es el **banco gobernado completo** (13 objeciones) que se usa para
-preparar el rebuttal IJDS y la defensa de tesis. Cada fila fija la objeción
-probable, la respuesta gobernada y la evidencia canónica. La regla es no
-improvisar: si llega una objeción nueva, primero se busca aquí.
-
-| Objeción probable | Respuesta gobernada | Evidencia |
+| Objeción probable | Respuesta gobernada | Evidencia canónica |
 |---|---|---|
-| "Conformal no garantiza cobertura condicional perfecta." | Correcto; el claim usa cobertura marginal/Mondrian y reporta límites explícitos. | @sec-thm-feasibility; cap. 07; ablación Mondrian (cap. 08). |
-| "AUC no basta para decidir portafolios." | Precisamente: el paper separa ranking, calibración, incertidumbre y valor económico. | Tabla 0 (`crpto_table0_key_metrics.csv`); escalera de claims (esta página). |
-| "SPO+/DFL podría reducir regret." | Sí; CRPTO no compite como regret-minimizer universal, sino como puente auditable con restricciones conformales. | Cap. 09 (`@fig-p1-spo-regret`); registro de negativos. |
-| "Lending Club no es banco regulado." | Se presenta como dataset público de originación, no como validación contractual bancaria. | `docs/ACADEMIC_CONTEXT.md`; limitaciones del cuerpo. |
-| "Fair lending no está probado." | No se hace claim legal; solo proxy governance y source/fairness boundary. | Cap. 10; `models/fairness_audit_status.json`. |
-| "IFRS9/SICR parece otro paper." | En IJDS entra como implicación/limitación; la tesis puede expandirlo. | Cap. 23 (señal SICR conformal). |
-| "El resultado podría ser un punto aislado." | La frontera A35 muestra 50,010 políticas semánticas y 27,508 políticas all-alpha above-floor. | `crpto_tableA35_pool93_ijds_frontier.csv`; @sec-crpto-results. |
-| "¿La validación PD se está tratando como clasificación?" | No. CRPTO separa risk differentiation, risk quantification, calibración y valor económico antes de optimizar portafolio. | Tabla 0; cap. 02; `crpto_metrics_triage_2026-05-18.md`. |
-| "¿El backtesting multi-periodo es confiable por defecto?" | No se sobrepromete: las pruebas multi-periodo dependen del estimador, tamaño efectivo y autocorrelación; quedan como caveat o appendix controlado. | Cap. 07 (A14--A15); `crpto_metrics_triage_2026-05-18.md`. |
-| "¿Usar ML en IRB implica perder auditabilidad?" | No. ML queda como soporte selectivo para imputación, factores, residuos o challengers; el champion no se reabre sin gate reproducible. | Cap. 13 (freeze policy); `crpto_metrics_triage_2026-05-18.md`. |
-| "¿WOE/scorecards son estables bajo monitoreo?" | Se tratan como inputs auditables con caveats: IV no es soberano y WoE puede volverse inestable si se recalcula bajo datos etiquetados por el propio modelo. | `crpto_metrics_triage_2026-05-18.md`. |
-| "¿Los umbrales IV/PSI/correlación prueban calidad del modelo?" | No. Son heurísticas operativas útiles, no evidencia estadística suficiente; los umbrales tipo 0.02/0.1 son sensibles a desbalance y deben gobernarse como incertidumbre estimable. | `crpto_metrics_triage_2026-05-18.md`. |
-| "¿Los árboles sobre residuos contradicen el scorecard auditable?" | No. Quedan como validación de segmentos y búsqueda de factores omitidos; no reemplazan el champion ni la calibración oficial. | Agenda extendida CRPTO/tesis; `crpto_metrics_triage_2026-05-18.md`. |
+| “El resultado es negativo.” | Sí, y es informativo: localiza dos fallos de inferencia en una cadena decision-focused y ofrece un protocolo para detectarlos. | Body, Discussion y claim registry. |
+| “Entonces CRPTO ya no conecta ML, CP y optimización.” | Sí los conecta. Precisamente por tratar el sistema completo muestra que las propiedades no se heredan entre capas. | Method + Audit Theory. |
+| “¿Por qué no elegir la mejor ventana o policy?” | Porque los mismos outcomes usados para evaluar no pueden seleccionar el objeto sin otro procedimiento de validez. | Outcome-free freezes y no-selector boundary. |
+| “¿Los cinco modelos forman un leaderboard?” | No. Son controles de cobertura; solo CatBoost primario entra al LP. | Tabla de credit controls. |
+| “¿WOE/IV mejora la auditabilidad?” | Aporta una especificación inspeccionable y monotonicidad, pero no es novedad ni ganador. | 45 fits OptBinning óptimos y métricas descriptivas. |
+| “¿Split conformal no garantiza 90%?” | Bajo exchangeability, sí para el objeto correspondiente. Aquí el transporte temporal falla en las 40 celdas evaluadas. | Coverage tables y teoría de shift. |
+| “¿Por qué conservar outcomes no resueltos?” | Excluirlos reconstruiría retrospectivamente el menú. Los sharp bounds mantienen el universo original. | Endpoint census y common-outcome bounds. |
+| “¿El archivo representa septiembre de 2020?” | No. La observabilidad se reconstruye conservadoramente y 12,076 casos quedan no resueltos. | Raw-data audit y endpoint protocol. |
+| “¿W7--W8 prueba una phase transition causal?” | No. El teorema de score constante da un mecanismo y el stratum observado es evidencia compatible. | Binary geometry proposition + label-lag sensitivity. |
+| “¿El ruler normalizado es el correcto?” | Es scale-invariant, pero no iguala opportunity cost. Se reporta junto al objective-matched ruler sin seleccionar uno. | Two-ruler grid. |
+| “¿Exact support resuelve toda la comparación?” | Solo sobre el soporte de caps declarado; no identifica una frontera conjunta continua. | 3,067 caps y basis-endpoint theorem. |
+| “¿Puede llamarse robusta la policy?” | No se promueve policy. `Risk-aware` describe la entrada de incertidumbre sin atribuir garantía downstream. | Claim boundary. |
+| “¿El payoff es retorno económico?” | Es un endpoint estandarizado que omite timing, prepago, recoveries, fees y capital. | Method y Limitations. |
+| “¿Hay evidencia externa o fair-lending?” | No para el claim activo. Un archivo histórico de aceptados no identifica esos objetos. | Ethical implications y Limitations. |
 
 : Banco gobernado de respuestas a reviewers del CRPTO {#tbl-crpto-reviewer-defense-bank}
 
-### Qué puede entrar al paper final
+## Qué entra al paper
 
-| Material del libro | Ubicación probable en paper | Motivo |
+| Material | Destino | Motivo |
 |---|---|---|
-| Diagrama CRPTO | Figura 1 | Explica el método en una sola vista |
-| Escalera alpha -> `Gamma_CP` -> funded set | Teoría / método | Une conformal y robust optimization |
-| Tablas A35/A40 | Resultados principales | Demuestran frontera finita y trade-off contra point-PD emparejado |
-| Holdout temporal estricto CRPTO | Appendix o robustness checks | Responde post-selección |
-| Funded-set composition | Appendix | Útil para reviewers de crédito y riesgo |
-| A10 exact finalists | Appendix | Defiende el selector conformal |
-| A11 enhanced shift | Appendix | Fortalece robustness interna; A25--A34 cubren réplica externa estática |
-| A25--A34 external replication | Cuerpo corto y appendix | Responde la crítica de un solo dataset sin reabrir el champion |
-| Referencias numeradas | Related work del paper | Ayuda a pasar de libro a manuscrito |
+| Universo, roles y endpoint | Body | Sin information boundary no hay estimand defendible. |
+| Cinco-model coverage audit | Body | Establece que el fallo no es exclusivo de CatBoost. |
+| Binary geometry W1--W8 | Body | Explica por qué ancho y cobertura pueden cambiar abruptamente. |
+| Two-ruler endpoint tracks | Body | Resultado downstream principal sin seleccionar policy. |
+| Exact statements | Body, con proofs al supplement | Separa resultados matemáticos de outcomes. |
+| WOE/IV, PSI, label lag y endpoint timing | Supplement | Controles y sensibilidades, no contribuciones autónomas. |
+| Named comparators y exact cap support | Supplement, resumen en body | Evita que la grid finita se lea como familia cerrada. |
+| Simulation | Supplement | Ilustra geometría; no sostiene claims de portafolio. |
+| Lineage y runs detenidos | Supplement/editor-only | Procedencia necesaria, no narrativa central. |
 
 : Destino editorial probable del material del libro {#tbl-crpto-paper-placement}
 
-### Paquete journal-ready CRPTO
+## Paquete journal-ready
 
-Las páginas @sec-p1-manuscript-blueprint y @sec-p1-journal-appendix convierten
-esta guía editorial en un paquete de escritura más cercano al manuscrito. El
-blueprint define venue target, abstract operativo, claims C1--C7, notacion única
-y plan de figuras/tablas. El appendix journal agrega A12--A34 y las figuras
-paper-grade generadas desde artefactos congelados.
-
-| Nuevo material | Papel editorial | Artefacto |
+| Capa | Objeto activo | Papel editorial |
 |---|---|---|
-| Blueprint del manuscrito | Estructura paper-ready y mapa claim -> artifact -> test -> location | `06-blueprint-manuscrito.qmd` |
-| Figura CRPTO limpia | Figura 1 IJDS | `crpto_fig1_journal_pipeline.png` |
-| Figura pila del bound | Puente visual entre endpoint conformal, identidad, supuesto y certificado | `crpto_fig20_bound_claim_layers.png` |
-| Figura alpha -> `Gamma_CP` -> funded set | Puente teoría-método | `crpto_fig13_alpha_gamma_funded_set.png` |
-| Frontera pool93 A35 | Evidencia tabular de no-aislamiento | `crpto_tableA35_pool93_ijds_frontier.csv` |
-| A12--A34 | Robustness appendix journal | `scripts/build_crpto_journal_package.py`; `scripts/build_tail_satisficing_challenger_audit.py`; `scripts/build_tail_constrained_reoptimization.py`; `scripts/build_distribution_robustness_diagnostics.py`; `scripts/build_multidataset_external_replication.py`; `scripts/build_price_of_robustness_cross_dataset.py` |
-| A22--A24 (re-opt de cola, multi-distribución y online) | Cierre P2 sin reabrir champion | `scripts/build_tail_constrained_reoptimization.py`; `scripts/build_distribution_robustness_diagnostics.py` |
-| A25--A34 (Prosper/Freddie) | Réplica externa sin reabrir Lending Club | `scripts/build_multidataset_external_replication.py`; `scripts/build_price_of_robustness_cross_dataset.py` |
-| Status del paquete | Trazabilidad y fuente canónica | `models/crpto_journal_package_status.json`; `models/crpto_tail_constrained_reopt_status.json`; `models/crpto_distribution_robustness_status.json`; `models/crpto_multidataset_external_status.json` |
+| Body | `paper/CRPTO_ijds.qmd` | Argumento mínimo y resultados centrales. |
+| Supplement | `paper/supplement_ijds.qmd` | Pruebas, grids completas, sensibilidades y lineage. |
+| TeX | `scripts/build_ijds_submission_tex.py` | Genera la fuente oficial; no se edita a mano. |
+| Evidence | `ijds_binary_geometry_frontier_v4_evidence.json` | Autoridad numérica única. |
+| Claim ledger | `ijds_claim_ledger.yaml` | Claims cualitativos, alcance y forbidden inferences. |
+| Registry | `ijds_active_evidence_sources.yaml` | Identidades, roles, hashes y punteros DVC. |
+| Tables | `crpto_ijds_v4_table*.csv` | Exportaciones derivadas, nunca autoridad independiente. |
+| Figures | Tres objetos `crpto_ijds_v4_fig*` en PNG/PDF | Cobertura, geometría y envelopes. |
+| Tests | Active claim sync, V4 claim sync, publication integrity | Rechazan drift de texto, grids y fuentes. |
 
-: Material journal-ready agregado al CRPTO {#tbl-crpto-journal-ready-package}
+: Material journal-ready activo del CRPTO {#tbl-crpto-journal-ready-package}
 
-La regla de jerarquia sigue intacta: si una tabla diagnostica nueva entra en
-tension con `models/final_project_promotion.json`, gana la promoción oficial.
-A12--A34 fortalecen robustez y escritura journal, pero no re-promueven el
-champion: A22 reporta un *tail-constrained challenger* y A25--A34 reportan
-réplica externa, no un nuevo champion.
+## Uso del corpus de literatura {#sec-crpto-papers-tesis-deep-audit}
 
-### Auditoría Papers_tesis 2026-06-06 {#sec-crpto-papers-tesis-deep-audit}
+`Papers_tesis` es una biblioteca de contraste, no una votación de claims. Cada
+fuente entra por la pregunta que ayuda a delimitar:
 
-El source pack de tesis queda auditado con una regla evidence-gated: leer mucho,
-promover poco y no cambiar el champion sin un gate capaz de modificar C1--C7.
-La auditoría cubre los 61 PDFs locales de `Papers_tesis/`: 21 en `paper/`, 28
-en `supplement/` y 12 en `tesis/`.
+| Familia | Uso en CRPTO | Lo que no se importa |
+|---|---|---|
+| Decision quality y cost-aware calibration [@fernandezloria2022causaldecision; @yang2025costaware] | Separa calidad de score y calidad de acción. | Identificación causal para este archivo. |
+| Conformal bajo exchangeability y shift [@vovk2005; @angelopoulos2023; @barber2021limits] | Define el objeto de cobertura y sus límites. | Cobertura condicional o temporal automática. |
+| Valid selection y decision-risk calibration [@hegazy2025valid_selection_conformal_sets; @bao2025croms; @zhou2026creme] | Muestra qué diseño requeriría seleccionar un set o decisión. | Sus garantías con solo 11 menús de desarrollo. |
+| Conformal robust optimization [@johnstone2021; @patel2024] | Sitúa el puente CP--OR. | Selected-set validity para CRPTO. |
+| Credit scoring, profit y madurez [@lessmann2015; @ausset2022censoring; @li2023online_loans] | Motiva payoff, censoring y observabilidad. | IRR, survival o cash-flow claims no estimados. |
+| WOE/IV y monotonicidad [@navaspalencia2020] | Construye controles auditables. | Superioridad de scorecard. |
+| AI--OR [@wiberg2025ai_or] | Justifica estudiar el sistema completo. | Novedad separada de ML, CP o LP. |
 
-| Artefacto | Uso editorial |
-|---|---|
-| `docs/research/papers_tesis_deep_audit_2026-06-06.md` | Memo paper-by-paper con conceptos, claims, método, conclusiones, figuras/tablas útiles, limitaciones, destino editorial y acción requerida. |
-| `reports/crpto/literature/papers_tesis_source_matrix_2026-06-06.csv` | Matriz fuente para decidir `promote`, `append`, `park` o `future_gate` sin depender de memoria editorial. |
-| `reports/crpto/literature/papers_tesis_figure_caption_index_2026-06-06.csv` | Índice de figuras/tablas detectadas en PDFs para seleccionar visual sinks sin copiar figuras ajenas. |
-| `reports/crpto/literature/papers_tesis_curated_visual_sinks_2026-06-06.csv` | Lista corta de sinks visuales que pueden inspirar figuras propias del paper, supplement o tesis. |
+: Uso gobernado del corpus local {#tbl-crpto-papers-tesis-audit-artifacts}
 
-: Artefactos canónicos de la auditoría Papers_tesis 2026-06-06 {#tbl-crpto-papers-tesis-audit-artifacts}
+No se fija aquí un conteo de PDFs porque el corpus puede crecer. La literatura
+se promueve al related work solo si cambia el gap, el estimand, una limitación o
+la interpretación de evidencia activa.
 
-La regla de absorción es conservadora. En el cuerpo CRPTO solo entran fuentes que
-sostienen directamente CP/CRC/LTT, robust optimization, CP -> RO /
-Predict-then-Calibrate, contexto Lending Club y DFL/SPO+ como comparador. Las
-fuentes de Hu CRC, utility-directed CP, group-weighted/localized/source-shift,
-decision-risk certificates, IFRS9 y fairness/equity quedan como related work,
-appendix o future work. Ese material fortalece límites de claim y defensa ante
-reviewers; no reabre la policy promovida ni convierte diagnósticos en método
-oficial.
+## Checklist antes de aceptar una frase
 
-### Referencias numeradas locales
+1. ¿El sustantivo nombra el objeto correcto: candidato, allocation, endpoint o
+   support?
+2. ¿El número existe en el evidence manifest activo?
+3. ¿La frase distingue fit-label timing de evaluation-endpoint timing?
+4. ¿Nombra ruler y coordenada cuando habla de dirección downstream?
+5. ¿Conserva outcomes no resueltos o declara el bound usado?
+6. ¿Evita selección por signo, causalidad, prospective language y deployment?
+7. ¿La limitación aparece en la misma sección, no escondida al final?
 
-[1] Vovk, Gammerman and Shafer (2005), *Algorithmic Learning in a Random
-World*. Fundamento original de conformal prediction.
-
-[2] Angelopoulos and Bates (2023), *Conformal Prediction: A Gentle Introduction*.
-Entrada pedagógica moderna para explicar cobertura distribution-free.
-
-[3] Bates et al. (2021), *Distribution-Free, Risk-Controlling Prediction Sets*.
-Base RCPS para hablar de control de riesgo más allá de intervalos clásicos.
-
-[4] Angelopoulos et al. (2025), *Learn then Test*. Marco para calibrar
-algoritmos predictivos con control de riesgo.
-
-[5] Angelopoulos et al. (2024), *Conformal Risk Control*. Generaliza control de
-riesgo conformal para pérdidas monotónicas acotadas.
-
-[6] Bertsimas and Sim (2004), *The Price of Robustness*. Lenguaje clásico de
-presupuesto de robustez y costo de protección.
-
-[7] Johnstone and Cox (2021), *Conformal Uncertainty Sets for Robust
-Optimization*. Puente temprano entre CP y robust optimization.
-
-[8] Patel, Rayan and Tewari (2024), *Conformal Contextual Robust Optimization*.
-Extiende la conexión CP-RO en problemas contextuales.
-
-[9] Sun, Liu and Li (2024), *Predict-then-Calibrate*. Comparador cercano para LP
-contextuales robustos con calibración posterior.
-
-[10] Bao et al. (2025), *Optimal Model Selection for Conformalized Robust
-Optimization (CROMS)*. Motiva el selector conformal decision-aware.
-
-[11] Yeh et al. (2025/2026), *End-to-End Conformal Calibration for Optimization
-Under Uncertainty*. Dirección futura para calibración conformal integrada a
-decisión.
-
-[12] Yeh et al. (2025), *Conformal Risk Training*. Motiva OCE/CVaR y control de
-cola como extensión P2.
-
-[13] Yang and Jin (2026), *Multi-Distribution Robust Conformal Prediction*.
-Motiva validación robusta ante múltiples fuentes o distribuciones.
-
-[14] Liu, Dobriban and Orabona (2026), *Online Conformal Prediction vía
-Universal Portfolio Algorithms*. Motiva recalibración online bajo streaming.
-
-[15] Elmachtoub and Grigas (2022), *Smart Predict, then Optimize*. Base de SPO+
-y decision-focused learning.
-
-[16] Capitaine et al. (2026), *Online Decision-Focused Learning*. Extiende DFL a
-decisiones online y drift.
-
-[17] Powell (2026), *Sequential Decisión Analytics and Modeling*. Da el lenguaje
-CFA/VFA/DLA para clasificar CRPTO como política parametrizada auditable.
-
-La biblioteca de tesis (`Papers_tesis`) añade las siguientes fuentes, ya
-integradas en `book/references.bib` y citadas en los capítulos donde aplican.
-
-**Fundamentos conformales y límites de cobertura.**
-
-[18] Angelopoulos, Barber and Bates (2024), *Theoretical Foundations of
-Conformal Prediction*. Monografía de referencia para la validez finita bajo
-intercambiabilidad; respalda [1]--[2].
-
-[19] Tibshirani et al. (2019), *Conformal Prediction Under Covariate Shift*.
-Reponderación por likelihood ratio bajo shift; base teórica de los stress A6 y
-del diagnóstico multi-distribución A23.
-
-[20] Barber et al. (2021), *The Limits of Distribution-Free Conditional
-Predictive Inference*. Justifica por qué el paper no promete cobertura
-condicional perfecta, solo marginal/Mondrian.
-
-[21] Bhattacharyya and Barber (2026), *Group-Weighted Conformal Prediction*.
-Cobertura por grupos cuando el shift está determinado por grupos; vecino directo
-de la cobertura Mondrian y del diagnóstico A23.
-
-[22] Guan (2023), *Localized Conformal Prediction*. Marco de inferencia local;
-alternativa a la partición Mondrian para cobertura condicional aproximada.
-
-[23] Einbinder et al. (2024), *Label Noise Robustness of Conformal Prediction*.
-Cuándo los conjuntos cubren la etiqueta limpia bajo ruido; sustenta el stress de
-flips adversariales A11.
-
-**Control de riesgo y medidas de cola.**
-
-[24] Angelopoulos (2026), *Conformal Risk Control for Non-Monotonic Losses*.
-Extiende CRC a pérdidas no monótonas y multidimensionales; soporte teórico
-directo de la re-optimización por CVaR/OCE de A22.
-
-[25] Rockafellar and Uryasev (2000), *Optimization of Conditional Value-at-Risk*.
-Base de CVaR; define la cantidad de cola usada en A12 y A22.
-
-[26] Ben-Tal and Teboulle (2007), *An Old-New Concept of Convex Risk Measures
-(OCE)*. Base del optimized certainty equivalent entrópico de A12 y A22.
-
-**Optimización robusta conformal y decision-focused.**
-
-[27] Zhao, Jiang and Qi (2026), *Conformal Robust Optimization and Satisficing*.
-Equivalencia CRO $\equiv$ CRS y cobertura finita $O(n^{-1/2})$; motiva el bound y
-las tablas de satisficing A13/A20.
-
-[28] Donti, Amos and Kolter (2017), *Task-based End-to-End Model Learning*. Raíz
-del decision-focused learning que SPO+ y CRPTO toman como punto de partida.
-
-[29] Schutte, Postek and Yorke-Smith (2024), *Robust Losses for Decision-Focused
-Learning*. Regret robusto frente a incertidumbre aleatoria/epistémica;
-complementa el comparador SPO+.
-
-**Multi-distribución y online.**
-
-[30] Angelopoulos, Jordan and Tibshirani (2025), *Gradient Equilibrium in Online
-Learning*. Debiasing post-hoc de predicciones black-box bajo shift arbitrario;
-respalda la lectura online de A24 junto a [14].
-
-**Crédito, fairness y datos.**
-
-[31] Albanesi and Vamossy (2024), *Credit Scores: Performance and Equity*.
-Benchmark de un score frente a un modelo ML de default; contexto de desempeño y
-equidad para la lectura de crédito.
-
-[32] Jagtiani and Lemieux (2019), *The Roles of Alternative Data and Machine
-Learning in Fintech Lending* (LendingClub). Contexto del dataset y del rol de
-datos alternativos en el originador estudiado.
-
-[33] Consumer Financial Protection Bureau (2014), *Using Publicly Available
-Information to Proxy for Race and Ethnicity (BISG)*. Método proxy que sustenta la
-auditoría de fair lending sin atributos protegidos directos.
-
-[34] FinRegLab (2023), *Explainability and Fairness in Machine Learning for
-Credit Underwriting*. Marco de política para explicabilidad y fairness que
-encuadra el checkpoint MRM/fair-lending.
+Si alguna respuesta es no, la frase todavía no está lista para IJDS.

@@ -13,11 +13,13 @@ Read first:
 4. `docs/research/ijds_normalized_objective_frontier_v1c_protocol_2026-07-13.md`
 5. `docs/research/ijds_two_ruler_endpoint_recovery_v3_protocol_2026-07-14.md`
 6. `configs/ijds_active_evidence_sources.yaml`
-7. `reports/crpto/ijds_binary_geometry_frontier_v4_evidence.json`
-8. `docs/ACADEMIC_CONTEXT.md`
-9. `docs/SCOPE_AND_GOVERNANCE.md`
-10. `CONTRIBUTING.md`
-11. `EXTRACTION_MANIFEST.md`
+7. `configs/ijds_claim_ledger.yaml`
+8. `docs/research/ijds_endpoint_availability_sensitivity_protocol_2026-07-14.md`
+9. `reports/crpto/ijds_binary_geometry_frontier_v4_evidence.json`
+10. `docs/ACADEMIC_CONTEXT.md`
+11. `docs/SCOPE_AND_GOVERNANCE.md`
+12. `CONTRIBUTING.md`
+13. `EXTRACTION_MANIFEST.md`
 
 Active evidence:
 
@@ -35,6 +37,8 @@ Active evidence:
 - C2 comparator: contemporaneous frozen funded point-score cap;
 - exact point-cap frontier: 3,067 HiGHS basis/support endpoints;
 - unresolved outcomes: retained with sharp common-outcome bounds.
+- evaluation-endpoint availability: all lags 0, 3, 6, 8, and 12 months are
+  reported without selection; the 6-month slice reconciles exactly to V3.
 
 Headline evidence:
 
@@ -84,6 +88,8 @@ Preserve these distinctions:
 - C2 plug-in dominance versus realized-outcome dominance;
 - exact declared comparator support versus universal baseline invariance;
 - tagged retrospective audit versus preregistration or confirmation.
+- conformal-fit label timing versus evaluation-endpoint availability; these
+  are separate one-factor sensitivities and were not crossed factorially.
 
 Do not claim a learner, gamma, ruler, coordinate, or policy winner, universal
 direction, selected-set validity, Markov/tail certificate, causal effect, live

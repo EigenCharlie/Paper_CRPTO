@@ -5,6 +5,7 @@ from __future__ import annotations
 import json
 from collections.abc import Mapping
 from pathlib import Path
+from tempfile import TemporaryDirectory
 from typing import Any, cast
 
 import matplotlib.pyplot as plt
@@ -12,16 +13,56 @@ import numpy as np
 import pandas as pd
 from loguru import logger
 
+from src.ijds_audit.claim_ledger import materialize_claim_ledger
 from src.ijds_audit.config import load_v4_config
+from src.ijds_audit.grid_contracts import (
+    require_exact_grid,
+    require_finite,
+    require_unique_row,
+    require_unique_value,
+)
+from src.ijds_audit.publication_generation import (
+    promote_publication_generation,
+    publication_implementation_descriptors,
+    staged_artifact_descriptor,
+    staged_output_path,
+)
 from src.ijds_audit.publication_sources import load_verified_source_registry
+from src.ijds_audit.sensitivity_evidence import (
+    endpoint_publication_table,
+    load_endpoint_sensitivity_evidence,
+)
 from src.utils.artifact_descriptor import relative_artifact_descriptor
-from src.utils.pipeline_runtime import atomic_write_json, atomic_write_text
+from src.utils.pipeline_runtime import atomic_write_strict_json, atomic_write_text
 
 ROOT = Path(__file__).resolve().parents[1]
 SOURCE_REGISTRY_PATH = ROOT / "configs/ijds_active_evidence_sources.yaml"
+CLAIM_LEDGER_PATH = ROOT / "configs/ijds_claim_ledger.yaml"
 EVIDENCE_PATH = ROOT / "reports/crpto/ijds_binary_geometry_frontier_v4_evidence.json"
 TABLE_DIR = ROOT / "reports/crpto/tables"
 FIGURE_DIR = ROOT / "reports/crpto/figures"
+
+TABLE_TARGETS = {
+    "coverage": TABLE_DIR / "crpto_ijds_v4_table1_coverage_windows.csv",
+    "phase_transition": TABLE_DIR / "crpto_ijds_v4_table2_phase_transition.csv",
+    "development_envelopes": TABLE_DIR / "crpto_ijds_v4_table3_development_envelopes.csv",
+    "direction_summary": TABLE_DIR / "crpto_ijds_v4_table4_direction_summary.csv",
+    "two_ruler_tracks": TABLE_DIR / "crpto_ijds_v4_table5_two_ruler_tracks.csv",
+    "named_comparators": TABLE_DIR / "crpto_ijds_v4_tableS1_named_comparators.csv",
+    "credit_controls": TABLE_DIR / "crpto_ijds_v4_table6_credit_controls.csv",
+    "credit_prediction_metrics": TABLE_DIR / "crpto_ijds_v4_tableS2_credit_prediction_metrics.csv",
+    "woe_iv_psi": TABLE_DIR / "crpto_ijds_v4_tableS3_woe_iv_psi.csv",
+    "score_psi": TABLE_DIR / "crpto_ijds_v4_tableS4_score_psi.csv",
+    "label_lag_sensitivity": TABLE_DIR / "crpto_ijds_v4_tableS5_label_lag_sensitivity.csv",
+    "endpoint_availability_sensitivity": (
+        TABLE_DIR / "crpto_ijds_v4_tableS6_endpoint_availability_sensitivity.csv"
+    ),
+}
+FIGURE_STEMS = {
+    "coverage": "crpto_ijds_v4_fig1_coverage",
+    "phase_transition": "crpto_ijds_v4_fig2_phase_transition",
+    "development_envelopes": "crpto_ijds_v4_fig3_envelopes",
+}
 
 CREDIT_LEARNER_ORDER = (
     "catboost_platt",
@@ -37,6 +78,40 @@ CREDIT_LEARNER_LABELS = {
     "woe_scorecard_platform_platt": "Platform-signal WOE scorecard",
     "woe_scorecard_borrower_platt": "Pricing-excluded application WOE scorecard",
 }
+WINDOW_IDS = (
+    "w01_2012m01_m06",
+    "w02_2012m02_m07",
+    "w03_2012m03_m08",
+    "w04_2012m04_m09",
+    "w05_2012m05_m10",
+    "w06_2012m06_m11",
+    "w07_2012m07_m12",
+    "w08_2012m08_2013m01",
+)
+PREDICTION_ROLES = (
+    "pd_development",
+    "probability_calibration",
+    "conformal_fit",
+    "policy_development",
+    "primary_oot",
+    "censored_extension",
+)
+SCORE_PSI_ROLES = PREDICTION_ROLES[1:]
+RULERS = ("objective_matched", "normalized_score")
+COORDINATES = (0.25, 0.50, 0.75)
+TWO_RULER_METRICS = (
+    "standardized_payoff",
+    "funded_default",
+    "funded_binary_miscoverage",
+)
+POLICY_IDS = tuple(f"linear-{index:03d}" for index in range(1, 10))
+PRIMARY_PERIODS = tuple(str(period) for period in pd.period_range("2016-04", "2017-06", freq="M"))
+SUPPORT_SCOPES = (
+    "named_c0_c1_c2",
+    "development_admissible_exact_frontier",
+    "broad_stress_exact_frontier",
+)
+SUPPORT_METRICS = ("standardized_payoff", "terminal_default", "funded_miscoverage")
 
 BLUE = "#2F6690"
 ORANGE = "#D97706"
@@ -184,10 +259,32 @@ def _credit_control_tables(
     feature_psi: pd.DataFrame,
     score_psi: pd.DataFrame,
 ) -> dict[str, pd.DataFrame]:
-    expected = set(CREDIT_LEARNER_ORDER)
     metrics = prediction_metrics.copy()
-    if len(metrics) != 30 or set(metrics["learner"]) != expected:
-        raise RuntimeError("The five-model prediction-metric census changed.")
+    require_exact_grid(
+        metrics,
+        domains={"learner": CREDIT_LEARNER_ORDER, "role": PREDICTION_ROLES},
+        label="five-model prediction metrics",
+    )
+    require_finite(
+        metrics,
+        (
+            "candidate_rows",
+            "resolved_rows",
+            "unresolved_rows",
+            "default_rate",
+            "roc_auc",
+            "gini",
+            "ks",
+            "average_precision",
+            "brier",
+            "log_loss",
+            "ece_10",
+            "calibration_in_the_large",
+            "calibration_intercept",
+            "calibration_slope",
+        ),
+        label="five-model prediction metrics",
+    )
     if not metrics["calibration_optimizer_success"].all():
         raise RuntimeError("A declared calibration diagnostic did not converge.")
 
@@ -196,16 +293,31 @@ def _credit_control_tables(
         & temporal_coverage["role"].eq("primary_oot")
         & temporal_coverage["conformal_group"].eq(-1)
     ].copy()
-    if len(canonical) != 40 or set(canonical["learner"]) != expected:
-        raise RuntimeError("The five-model canonical coverage census changed.")
+    require_exact_grid(
+        canonical,
+        domains={"learner": CREDIT_LEARNER_ORDER, "window_id": WINDOW_IDS},
+        label="five-model canonical coverage",
+    )
+    require_finite(
+        canonical,
+        ("candidate_rows", "resolved_rows", "unresolved_rows", "coverage_lower", "coverage_upper"),
+        label="five-model canonical coverage",
+    )
 
     primary_rows: list[dict[str, Any]] = []
     for learner in CREDIT_LEARNER_ORDER:
         metric = metrics.loc[metrics["learner"].eq(learner) & metrics["role"].eq("primary_oot")]
         coverage = canonical.loc[canonical["learner"].eq(learner)]
-        if len(metric) != 1 or len(coverage) != 8:
-            raise RuntimeError(f"Incomplete primary OOT evidence for {learner}.")
-        row = metric.iloc[0]
+        row = require_unique_row(
+            metric,
+            key={"learner": learner, "role": "primary_oot"},
+            label="primary OOT prediction metrics",
+        )
+        require_exact_grid(
+            coverage,
+            domains={"learner": (learner,), "window_id": WINDOW_IDS},
+            label=f"primary OOT coverage for {learner}",
+        )
         primary_rows.append(
             {
                 "learner": learner,
@@ -271,8 +383,12 @@ def _credit_control_tables(
     )
 
     score = score_psi.copy()
-    if len(score) != 25 or set(score["learner"]) != expected:
-        raise RuntimeError("The five-model score PSI census changed.")
+    require_exact_grid(
+        score,
+        domains={"learner": CREDIT_LEARNER_ORDER, "comparison_role": SCORE_PSI_ROLES},
+        label="five-model score PSI",
+    )
+    require_finite(score, ("psi",), label="five-model score PSI")
     score.insert(1, "learner_label", score["learner"].map(CREDIT_LEARNER_LABELS))
     score["_learner_order"] = score["learner"].map(learner_order)
     score["_role_order"] = score["comparison_role"].map(role_order)
@@ -322,10 +438,10 @@ def _style() -> None:
     )
 
 
-def _save_figure(figure: plt.Figure, stem: str) -> dict[str, Path]:
-    FIGURE_DIR.mkdir(parents=True, exist_ok=True)
-    png = FIGURE_DIR / f"{stem}.png"
-    pdf = FIGURE_DIR / f"{stem}.pdf"
+def _save_figure(figure: plt.Figure, stem: str, *, output_dir: Path) -> dict[str, Path]:
+    output_dir.mkdir(parents=True, exist_ok=True)
+    png = output_dir / f"{stem}.png"
+    pdf = output_dir / f"{stem}.pdf"
     figure.savefig(png, dpi=300, bbox_inches="tight", facecolor="white")
     figure.savefig(
         pdf,
@@ -337,7 +453,7 @@ def _save_figure(figure: plt.Figure, stem: str) -> dict[str, Path]:
     return {"png": png, "pdf": pdf}
 
 
-def _coverage_figure(coverage: pd.DataFrame) -> dict[str, Path]:
+def _coverage_figure(coverage: pd.DataFrame, *, output_dir: Path) -> dict[str, Path]:
     _style()
     figure, axis = plt.subplots(figsize=(7.2, 3.7))
     labels = [f"W{index}" for index in range(1, 9)]
@@ -371,12 +487,27 @@ def _coverage_figure(coverage: pd.DataFrame) -> dict[str, Path]:
     axis.legend(ncol=3, loc="lower left")
     axis.spines[["top", "right"]].set_visible(False)
     figure.tight_layout()
-    return _save_figure(figure, "crpto_ijds_v4_fig1_coverage")
+    return _save_figure(figure, FIGURE_STEMS["coverage"], output_dir=output_dir)
 
 
-def _phase_figure(phase: pd.DataFrame) -> dict[str, Path]:
+def _phase_figure(phase: pd.DataFrame, *, output_dir: Path) -> dict[str, Path]:
     _style()
     frame = phase.sort_values("window_id")
+    require_exact_grid(
+        frame,
+        domains={"window_id": WINDOW_IDS},
+        label="phase-transition figure",
+    )
+    w7 = require_unique_row(
+        frame,
+        key={"window_id": "w07_2012m07_m12"},
+        label="phase-transition W7",
+    )
+    w8 = require_unique_row(
+        frame,
+        key={"window_id": "w08_2012m08_2013m01"},
+        label="phase-transition W8",
+    )
     x = np.arange(len(frame), dtype=float)
     labels = [f"W{index}" for index in range(1, 9)]
     figure, axes = plt.subplots(1, 2, figsize=(7.2, 3.35), sharex=True)
@@ -400,31 +531,31 @@ def _phase_figure(phase: pd.DataFrame) -> dict[str, Path]:
         axis.spines[["top", "right"]].set_visible(False)
     axes[0].annotate(
         "W7: 0.1017",
-        xy=(6, float(frame.iloc[6]["fit_prevalence"])),
+        xy=(6, float(w7["fit_prevalence"])),
         xytext=(4.6, 0.111),
         arrowprops={"arrowstyle": "-", "color": MID},
         fontsize=8,
     )
     axes[0].annotate(
         "W8: 0.0971",
-        xy=(7, float(frame.iloc[7]["fit_prevalence"])),
+        xy=(7, float(w8["fit_prevalence"])),
         xytext=(5.5, 0.0975),
         arrowprops={"arrowstyle": "-", "color": MID},
         fontsize=8,
     )
     axes[1].annotate(
         "0.8884 to 0.1118",
-        xy=(7, float(frame.iloc[7]["fit_residual_quantile"])),
+        xy=(7, float(w8["fit_residual_quantile"])),
         xytext=(3.8, 0.35),
         arrowprops={"arrowstyle": "->", "color": MID},
         fontsize=8,
     )
     figure.suptitle("Binary residual geometry changes discontinuously at the prevalence threshold")
     figure.tight_layout()
-    return _save_figure(figure, "crpto_ijds_v4_fig2_phase_transition")
+    return _save_figure(figure, FIGURE_STEMS["phase_transition"], output_dir=output_dir)
 
 
-def _envelope_figure(envelopes: pd.DataFrame) -> dict[str, Path]:
+def _envelope_figure(envelopes: pd.DataFrame, *, output_dir: Path) -> dict[str, Path]:
     _style()
     metrics = ("standardized_payoff", "funded_miscoverage")
     direction_code = {"guardrail_lower": -1, "crosses_zero": 0, "guardrail_higher": 1}
@@ -473,10 +604,10 @@ def _envelope_figure(envelopes: pd.DataFrame) -> dict[str, Path]:
         color=MID,
     )
     figure.tight_layout(rect=(0, 0.04, 1, 0.96))
-    return _save_figure(figure, "crpto_ijds_v4_fig3_envelopes")
+    return _save_figure(figure, FIGURE_STEMS["development_envelopes"], output_dir=output_dir)
 
 
-def build_evidence() -> Path:
+def _build_evidence(staging_root: Path) -> Path:
     registry, registered = load_verified_source_registry(
         SOURCE_REGISTRY_PATH,
         repo_root=ROOT,
@@ -486,6 +617,8 @@ def build_evidence() -> Path:
     two_ruler_lineage = cast(dict[str, Any], lineages["two_ruler"])
     credit_lineage = cast(dict[str, Any], lineages["credit_controls"])
     diagnostic_lineage = cast(dict[str, Any], lineages["diagnostics"])
+    sensitivities = cast(dict[str, Any], registry["sensitivities"])
+    endpoint_lineage = cast(dict[str, Any], sensitivities["endpoint_availability"])
     config_path = registered["v4_config"]
     summary_path = registered["v4_summary"]
     v4_receipt_path = registered["v4_receipt"]
@@ -662,8 +795,16 @@ def build_evidence() -> Path:
     )
     lag_table_path = _verified_path(lag_evidence["artifact"])
     lag_table = pd.read_csv(lag_table_path)
-    if len(lag_table) != 40 or set(lag_table["charged_off_lag_months"]) != {0, 3, 6, 8, 12}:
-        raise RuntimeError("The label-lag sensitivity census changed.")
+    require_exact_grid(
+        lag_table,
+        domains={"charged_off_lag_months": (0, 3, 6, 8, 12), "window_id": WINDOW_IDS},
+        label="fit-label lag sensitivity",
+    )
+    require_finite(
+        lag_table,
+        ("minimum_monthly_retention", "phase_prevalence", "phase_residual_quantile"),
+        label="fit-label lag sensitivity",
+    )
     admissible_lag_table = lag_table.loc[lag_table["passes_locked_retention"]].copy()
     nonadmissible_lag_table = lag_table.loc[~lag_table["passes_locked_retention"]].copy()
     if set(admissible_lag_table["charged_off_lag_months"]) != {0, 3, 6}:
@@ -708,9 +849,37 @@ def build_evidence() -> Path:
         two_ruler_evaluation_artifacts["metric_direction_census"]
     )
     two_ruler_joined = pd.read_parquet(two_ruler_evaluation_artifacts["joined_funded_allocations"])
+    require_exact_grid(
+        two_ruler_windows,
+        domains={"window_id": WINDOW_IDS, "ruler": RULERS, "coordinate": COORDINATES},
+        label="two-ruler window contrasts",
+    )
+    require_exact_grid(
+        two_ruler_monthly,
+        domains={
+            "window_id": WINDOW_IDS,
+            "ruler": RULERS,
+            "coordinate": COORDINATES,
+            "period": PRIMARY_PERIODS,
+        },
+        label="two-ruler monthly contrasts",
+    )
+    require_exact_grid(
+        two_ruler_directions,
+        domains={
+            "window_id": WINDOW_IDS,
+            "ruler": RULERS,
+            "coordinate": COORDINATES,
+            "metric": TWO_RULER_METRICS,
+        },
+        label="two-ruler metric directions",
+    )
     two_ruler_table = _two_ruler_track_table(two_ruler_windows, two_ruler_directions)
-    if len(two_ruler_table) != 6 or len(two_ruler_monthly) != 720:
-        raise RuntimeError("The paper-facing two-ruler track census is incomplete.")
+    require_exact_grid(
+        two_ruler_table,
+        domains={"ruler": RULERS, "coordinate": COORDINATES},
+        label="paper-facing two-ruler tracks",
+    )
     objective_quarter = _objective_quarter_repetition(two_ruler_joined)
 
     coverage_all = pd.read_parquet(artifacts["temporal_coverage"])
@@ -719,14 +888,75 @@ def build_evidence() -> Path:
         & coverage_all["role"].eq("primary_oot")
         & coverage_all["conformal_group"].eq(-1)
     ].sort_values(["learner", "window_id"])
+    require_exact_grid(
+        coverage,
+        domains={
+            "learner": ("catboost_platt", "numeric_logistic_platt"),
+            "window_id": WINDOW_IDS,
+        },
+        label="detailed V4 canonical coverage",
+    )
+    require_finite(
+        coverage,
+        ("candidate_rows", "resolved_rows", "unresolved_rows", "coverage_lower", "coverage_upper"),
+        label="detailed V4 canonical coverage",
+    )
     phase = coverage_all.loc[
         coverage_all["learner"].eq("catboost_platt")
         & coverage_all["taxonomy_groups"].eq(5)
         & coverage_all["role"].eq("primary_oot")
         & coverage_all["conformal_group"].eq(2)
     ].sort_values("window_id")
+    require_exact_grid(
+        phase,
+        domains={"window_id": WINDOW_IDS},
+        label="binary phase transition",
+    )
+    require_finite(
+        phase,
+        (
+            "fit_prevalence",
+            "fit_residual_quantile",
+            "mean_width",
+            "coverage_lower",
+            "coverage_upper",
+        ),
+        label="binary phase transition",
+    )
     contrasts = pd.read_parquet(artifacts["paired_contrasts"])
     envelopes = pd.read_parquet(artifacts["comparator_envelopes"])
+    require_exact_grid(
+        envelopes,
+        domains={
+            "window_id": WINDOW_IDS,
+            "paired_policy_id": POLICY_IDS,
+            "scope": SUPPORT_SCOPES,
+            "metric": SUPPORT_METRICS,
+        },
+        label="exact comparator envelopes",
+    )
+    require_finite(envelopes, ("lower", "upper"), label="exact comparator envelopes")
+    if not envelopes["lower"].le(envelopes["upper"]).all():
+        raise RuntimeError("An exact comparator envelope has reversed bounds.")
+    endpoint_summary_path = registered["endpoint_sensitivity_summary"]
+    endpoint_evidence = load_endpoint_sensitivity_evidence(
+        endpoint_summary_path,
+        identity=endpoint_lineage,
+        repo_root=ROOT,
+        reference_coverage=credit_temporal_coverage,
+        reference_two_ruler=two_ruler_windows,
+        reference_envelopes=envelopes,
+    )
+    endpoint_table = endpoint_publication_table(endpoint_evidence)
+    require_exact_grid(
+        endpoint_table,
+        domains={"charged_off_lag_months": (0, 3, 6, 8, 12)},
+        label="paper-facing endpoint availability sensitivity",
+    )
+    endpoint_sensitivity_artifacts = {
+        name: _verified_path(descriptor)
+        for name, descriptor in endpoint_evidence.summary["artifacts"].items()
+    }
     development_envelopes = envelopes.loc[
         envelopes["scope"].eq("development_admissible_exact_frontier")
     ].copy()
@@ -734,6 +964,18 @@ def build_evidence() -> Path:
     fit_audit = pd.read_parquet(source_artifacts["fit_audit"])
     solve_records = pd.read_parquet(source_artifacts["solve_records"])
     support = pd.read_parquet(source_artifacts["comparator_support"])
+    require_exact_grid(
+        support,
+        domains={"window_id": WINDOW_IDS, "paired_policy_id": POLICY_IDS},
+        label="development comparator support",
+    )
+    require_finite(
+        support,
+        ("development_months", "c1_cap", "support_lower", "support_upper"),
+        label="development comparator support",
+    )
+    if not support["support_lower"].le(support["support_upper"]).all():
+        raise RuntimeError("Development comparator support has reversed bounds.")
 
     fit_coverage = (
         fit_audit.loc[fit_audit["taxonomy_groups"].eq(5)]
@@ -789,57 +1031,89 @@ def build_evidence() -> Path:
             )
     named_table = pd.DataFrame(named_counts)
 
+    staged_table_targets = {
+        name: staged_output_path(staging_root, target, repo_root=ROOT)
+        for name, target in TABLE_TARGETS.items()
+    }
     table_paths = {
         "coverage": _write_csv(
             coverage_table,
-            TABLE_DIR / "crpto_ijds_v4_table1_coverage_windows.csv",
+            staged_table_targets["coverage"],
         ),
         "phase_transition": _write_csv(
             phase_table,
-            TABLE_DIR / "crpto_ijds_v4_table2_phase_transition.csv",
+            staged_table_targets["phase_transition"],
         ),
         "development_envelopes": _write_csv(
             development_envelopes,
-            TABLE_DIR / "crpto_ijds_v4_table3_development_envelopes.csv",
+            staged_table_targets["development_envelopes"],
         ),
         "direction_summary": _write_csv(
             direction_table,
-            TABLE_DIR / "crpto_ijds_v4_table4_direction_summary.csv",
+            staged_table_targets["direction_summary"],
         ),
         "two_ruler_tracks": _write_csv(
             two_ruler_table,
-            TABLE_DIR / "crpto_ijds_v4_table5_two_ruler_tracks.csv",
+            staged_table_targets["two_ruler_tracks"],
         ),
         "named_comparators": _write_csv(
             named_table,
-            TABLE_DIR / "crpto_ijds_v4_tableS1_named_comparators.csv",
+            staged_table_targets["named_comparators"],
         ),
         "credit_controls": _write_csv(
             credit_tables["credit_controls"],
-            TABLE_DIR / "crpto_ijds_v4_table6_credit_controls.csv",
+            staged_table_targets["credit_controls"],
         ),
         "credit_prediction_metrics": _write_csv(
             credit_tables["credit_prediction_metrics"],
-            TABLE_DIR / "crpto_ijds_v4_tableS2_credit_prediction_metrics.csv",
+            staged_table_targets["credit_prediction_metrics"],
         ),
         "woe_iv_psi": _write_csv(
             credit_tables["woe_iv_psi"],
-            TABLE_DIR / "crpto_ijds_v4_tableS3_woe_iv_psi.csv",
+            staged_table_targets["woe_iv_psi"],
         ),
         "score_psi": _write_csv(
             credit_tables["score_psi"],
-            TABLE_DIR / "crpto_ijds_v4_tableS4_score_psi.csv",
+            staged_table_targets["score_psi"],
         ),
         "label_lag_sensitivity": _write_csv(
             lag_table.sort_values(["charged_off_lag_months", "window_id"]),
-            TABLE_DIR / "crpto_ijds_v4_tableS5_label_lag_sensitivity.csv",
+            staged_table_targets["label_lag_sensitivity"],
+        ),
+        "endpoint_availability_sensitivity": _write_csv(
+            endpoint_table,
+            staged_table_targets["endpoint_availability_sensitivity"],
         ),
     }
+    staged_figure_dir = staging_root / "outputs" / FIGURE_DIR.relative_to(ROOT)
     figures = {
-        "coverage": _coverage_figure(coverage),
-        "phase_transition": _phase_figure(phase),
-        "development_envelopes": _envelope_figure(development_envelopes),
+        "coverage": _coverage_figure(coverage, output_dir=staged_figure_dir),
+        "phase_transition": _phase_figure(phase, output_dir=staged_figure_dir),
+        "development_envelopes": _envelope_figure(
+            development_envelopes,
+            output_dir=staged_figure_dir,
+        ),
     }
+    figure_targets = {
+        name: {kind: FIGURE_DIR / f"{FIGURE_STEMS[name]}.{kind}" for kind in ("png", "pdf")}
+        for name in FIGURE_STEMS
+    }
+    publication_outputs = {
+        **{TABLE_TARGETS[name]: path for name, path in table_paths.items()},
+        **{
+            figure_targets[name][kind]: path
+            for name, paths in figures.items()
+            for kind, path in paths.items()
+        },
+    }
+    expected_targets = {
+        *TABLE_TARGETS.values(),
+        *(target for targets in figure_targets.values() for target in targets.values()),
+    }
+    if len(publication_outputs) != 18 or set(publication_outputs) != expected_targets:
+        raise RuntimeError(
+            "The staged publication generation is not exactly 12 CSVs and 6 figures."
+        )
 
     c2 = solve_records.loc[solve_records["comparator_rule"].eq("c2_contemporaneous")]
     broad = envelopes.loc[envelopes["scope"].eq("broad_stress_exact_frontier")]
@@ -876,8 +1150,27 @@ def build_evidence() -> Path:
         credit_feature_variation["feature"].eq("recent_chargeoff")
         & credit_feature_variation["role"].isin(["pd_development", "probability_calibration"])
     ][["role", "rows", "unique_observed", "constant_observed"]]
+    primary_oot_candidates = int(
+        require_unique_value(coverage, "candidate_rows", label="detailed V4 canonical coverage")
+    )
+    primary_oot_resolved = int(
+        require_unique_value(coverage, "resolved_rows", label="detailed V4 canonical coverage")
+    )
+    primary_oot_unresolved = int(
+        require_unique_value(coverage, "unresolved_rows", label="detailed V4 canonical coverage")
+    )
+    phase_w7 = require_unique_row(
+        phase,
+        key={"window_id": "w07_2012m07_m12"},
+        label="binary phase transition W7",
+    )
+    phase_w8 = require_unique_row(
+        phase,
+        key={"window_id": "w08_2012m08_2013m01"},
+        label="binary phase transition W8",
+    )
     evidence = {
-        "schema_version": "2026-07-14.2",
+        "schema_version": "2026-07-15.1",
         "status": "active_ijds_v4_endpoint_corrected_paper_facing_evidence",
         "source_registry": {
             "schema_version": str(registry["schema_version"]),
@@ -885,14 +1178,15 @@ def build_evidence() -> Path:
             "sources": sorted(registered),
         },
         "lineages": lineages,
+        "sensitivities": sensitivities,
         "run_tag": str(config["run_tag"]),
         "protocol_tag": str(config["protocol_tag"]),
         "protocol_commit": str(summary["protocol_commit"]),
         "claim_boundary": dict(summary["claim_boundary"]),
         "design": {
-            "primary_oot_candidates": int(coverage.iloc[0]["candidate_rows"]),
-            "primary_oot_resolved": int(coverage.iloc[0]["resolved_rows"]),
-            "primary_oot_unresolved": int(coverage.iloc[0]["unresolved_rows"]),
+            "primary_oot_candidates": primary_oot_candidates,
+            "primary_oot_resolved": primary_oot_resolved,
+            "primary_oot_unresolved": primary_oot_unresolved,
             "residual_windows": 8,
             "learners": 5,
             "v4_detailed_coverage_learners": 2,
@@ -955,9 +1249,9 @@ def build_evidence() -> Path:
             **dict(config["target"]["evaluation_outcome_contract"]),
             "role": str(config["source"]["snapshot_date_role"]),
             "terminal_statuses_after_cutoff_reclassified_unresolved": True,
-            "primary_oot_candidates": int(coverage.iloc[0]["candidate_rows"]),
-            "primary_oot_resolved": int(coverage.iloc[0]["resolved_rows"]),
-            "primary_oot_unresolved": int(coverage.iloc[0]["unresolved_rows"]),
+            "primary_oot_candidates": primary_oot_candidates,
+            "primary_oot_resolved": primary_oot_resolved,
+            "primary_oot_unresolved": primary_oot_unresolved,
             "last_payment_date_max": str(raw_audit["results"]["last_payment_date_max"]),
             "last_credit_pull_date_max": str(raw_audit["results"]["last_credit_pull_date_max"]),
             "last_payment_rows_after_cutoff": int(
@@ -966,6 +1260,27 @@ def build_evidence() -> Path:
             "last_credit_pull_rows_after_cutoff": int(
                 raw_audit["results"]["last_credit_pull_rows_after_cutoff"]
             ),
+        },
+        "sensitivity": {
+            "evaluation_endpoint_availability": {
+                "scope": "complete_nonselective_retrospective_lag_grid",
+                "run_tag": str(endpoint_evidence.summary["run_tag"]),
+                "protocol_tag": str(endpoint_evidence.summary["protocol_tag"]),
+                "protocol_commit": str(endpoint_evidence.summary["protocol_commit"]),
+                "charged_off_lags_months": list(endpoint_evidence.summary["lags"]),
+                "endpoint_or_result_selected": False,
+                "allocation_refit": False,
+                "six_month_endpoint_reconciles_exactly_to_active_v3": True,
+                "reconciliation": dict(endpoint_evidence.reconciliation),
+                "fit_label_lag_crossed_factorially": False,
+                "estimand_boundary": (
+                    "This family changes evaluation-outcome availability while holding "
+                    "scores, fitted residual recipes, supports, and allocations fixed. "
+                    "The separate label-lag family changes conformal-fit labels and was "
+                    "not crossed factorially with endpoint availability."
+                ),
+                "rows": endpoint_table.to_dict(orient="records"),
+            },
         },
         "data_contract": {
             "raw_rows": int(raw_audit["results"]["raw_rows"]),
@@ -1068,15 +1383,15 @@ def build_evidence() -> Path:
         },
         "binary_phase_transition": {
             "stratum": 2,
-            "w7_fit_prevalence": float(phase.iloc[6]["fit_prevalence"]),
-            "w8_fit_prevalence": float(phase.iloc[7]["fit_prevalence"]),
-            "w7_residual_quantile": float(phase.iloc[6]["fit_residual_quantile"]),
-            "w8_residual_quantile": float(phase.iloc[7]["fit_residual_quantile"]),
-            "w7_mean_width": float(phase.iloc[6]["mean_width"]),
-            "w8_mean_width": float(phase.iloc[7]["mean_width"]),
+            "w7_fit_prevalence": float(phase_w7["fit_prevalence"]),
+            "w8_fit_prevalence": float(phase_w8["fit_prevalence"]),
+            "w7_residual_quantile": float(phase_w7["fit_residual_quantile"]),
+            "w8_residual_quantile": float(phase_w8["fit_residual_quantile"]),
+            "w7_mean_width": float(phase_w7["mean_width"]),
+            "w8_mean_width": float(phase_w8["mean_width"]),
             "w8_oot_coverage_bound": [
-                float(phase.iloc[7]["coverage_lower"]),
-                float(phase.iloc[7]["coverage_upper"]),
+                float(phase_w8["coverage_lower"]),
+                float(phase_w8["coverage_upper"]),
             ],
             "label_lag_sensitivity": {
                 "admissible_lags_months": sorted(
@@ -1219,16 +1534,7 @@ def build_evidence() -> Path:
             "or interior coordinate."
         ),
         "source_artifacts": {
-            "active_source_registry": relative_artifact_descriptor(
-                SOURCE_REGISTRY_PATH, repo_root=ROOT
-            ),
-            "evidence_builder": relative_artifact_descriptor(Path(__file__), repo_root=ROOT),
-            "source_registry_loader": relative_artifact_descriptor(
-                ROOT / "src/ijds_audit/publication_sources.py", repo_root=ROOT
-            ),
-            "artifact_descriptor_helper": relative_artifact_descriptor(
-                ROOT / "src/utils/artifact_descriptor.py", repo_root=ROOT
-            ),
+            **publication_implementation_descriptors(ROOT),
             "config": relative_artifact_descriptor(config_path, repo_root=ROOT),
             "outcome_free/source_protocol_freeze": relative_artifact_descriptor(
                 v4_source_freeze_path, repo_root=ROOT
@@ -1286,6 +1592,15 @@ def build_evidence() -> Path:
             "label_lag_sensitivity/table": relative_artifact_descriptor(
                 lag_table_path, repo_root=ROOT
             ),
+            "endpoint_availability_sensitivity/summary": relative_artifact_descriptor(
+                endpoint_summary_path, repo_root=ROOT
+            ),
+            **{
+                f"endpoint_availability_sensitivity/{name}": relative_artifact_descriptor(
+                    path, repo_root=ROOT
+                )
+                for name, path in endpoint_sensitivity_artifacts.items()
+            },
             "solver_tie_audit/manifest": relative_artifact_descriptor(
                 tie_evidence_path, repo_root=ROOT
             ),
@@ -1306,11 +1621,19 @@ def build_evidence() -> Path:
         },
         "paper_artifacts": {
             **{
-                f"table/{name}": relative_artifact_descriptor(path, repo_root=ROOT)
+                f"table/{name}": staged_artifact_descriptor(
+                    path,
+                    TABLE_TARGETS[name],
+                    repo_root=ROOT,
+                )
                 for name, path in table_paths.items()
             },
             **{
-                f"figure/{name}/{kind}": relative_artifact_descriptor(path, repo_root=ROOT)
+                f"figure/{name}/{kind}": staged_artifact_descriptor(
+                    path,
+                    figure_targets[name][kind],
+                    repo_root=ROOT,
+                )
                 for name, paths in figures.items()
                 for kind, path in paths.items()
             },
@@ -1318,9 +1641,30 @@ def build_evidence() -> Path:
         "protected_stages_run": [],
         "protected_artifacts_written": [],
     }
-    written = atomic_write_json(EVIDENCE_PATH, evidence)
-    logger.info("Built active IJDS V4 evidence: {}", written)
-    return written
+    evidence["claim_ledger"] = materialize_claim_ledger(
+        CLAIM_LEDGER_PATH,
+        evidence=evidence,
+        repo_root=ROOT,
+    )
+    staged_manifest = staged_output_path(staging_root, EVIDENCE_PATH, repo_root=ROOT)
+    atomic_write_strict_json(staged_manifest, evidence)
+    promote_publication_generation(
+        publication_outputs,
+        staged_manifest=staged_manifest,
+        manifest_target=EVIDENCE_PATH,
+        repo_root=ROOT,
+        transaction_root=staging_root,
+    )
+    logger.info("Built one transactional active IJDS V4 evidence generation: {}", EVIDENCE_PATH)
+    return EVIDENCE_PATH
+
+
+def build_evidence() -> Path:
+    """Build and atomically promote one complete paper-facing generation."""
+    staging_parent = ROOT / "reports/crpto"
+    staging_parent.mkdir(parents=True, exist_ok=True)
+    with TemporaryDirectory(prefix=".ijds-v4-generation-", dir=staging_parent) as staging:
+        return _build_evidence(Path(staging))
 
 
 if __name__ == "__main__":

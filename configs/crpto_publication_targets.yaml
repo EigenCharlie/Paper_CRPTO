@@ -1,4 +1,4 @@
-version: "2026-07-14"
+version: "2026-07-15"
 project: paper-crpto
 decision_status: prefreeze_active
 
@@ -26,6 +26,7 @@ primary_target:
 
 active_scientific_contract:
   claim_registry: docs/research/active_claims_2026-07-14.md
+  claim_ledger: configs/ijds_claim_ledger.yaml
   source_registry: configs/ijds_active_evidence_sources.yaml
   evidence_manifest: reports/crpto/ijds_binary_geometry_frontier_v4_evidence.json
   lineage_and_dvc_authority: configs/ijds_active_evidence_sources.yaml
@@ -44,6 +45,7 @@ active_scientific_contract:
       - scripts/experiments/run_ijds_raw_data_audit.py
       - scripts/experiments/run_ijds_credit_risk_controls.py
       - scripts/experiments/run_ijds_label_lag_sensitivity.py
+      - scripts/experiments/run_ijds_endpoint_availability_sensitivity.py
       - scripts/experiments/run_ijds_policy_support_tie_audit.py
     historical_execution_in_active_capsule: false
 
@@ -89,6 +91,7 @@ active_scientific_contract:
     - reports/crpto/tables/crpto_ijds_v4_tableS3_woe_iv_psi.csv
     - reports/crpto/tables/crpto_ijds_v4_tableS4_score_psi.csv
     - reports/crpto/tables/crpto_ijds_v4_tableS5_label_lag_sensitivity.csv
+    - reports/crpto/tables/crpto_ijds_v4_tableS6_endpoint_availability_sensitivity.csv
     - reports/crpto/figures/crpto_ijds_v4_fig1_coverage.pdf
     - reports/crpto/figures/crpto_ijds_v4_fig1_coverage.png
     - reports/crpto/figures/crpto_ijds_v4_fig2_phase_transition.pdf

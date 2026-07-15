@@ -1,4 +1,4 @@
-"""Run one phase of the predeclared IJDS credit-risk learner controls."""
+"""Run one phase of protocol-locked IJDS credit-risk learner controls."""
 
 from __future__ import annotations
 
@@ -12,13 +12,12 @@ from src.ijds_audit.credit_control_protocol import (
 )
 
 ROOT = Path(__file__).resolve().parents[2]
-DEFAULT_CONFIG = ROOT / "configs/experiments/ijds_credit_risk_controls_2026-07-13_v1.yaml"
 
 
 def parse_args(argv: Sequence[str] | None = None) -> argparse.Namespace:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("phase", choices=("freeze", "evaluate"))
-    parser.add_argument("--config", type=Path, default=DEFAULT_CONFIG)
+    parser.add_argument("--config", type=Path, required=True)
     parser.add_argument("--repo-root", type=Path, default=ROOT)
     return parser.parse_args(argv)
 

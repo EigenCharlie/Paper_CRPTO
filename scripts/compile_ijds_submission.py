@@ -39,10 +39,17 @@ class LatexScan:
     pages: int | None
     blg_warnings: tuple[str, ...]
     log_failures: tuple[str, ...]
+    artifact_failures: tuple[str, ...] = ()
 
     @property
     def ok(self) -> bool:
-        return not self.blg_warnings and not self.log_failures
+        return (
+            self.pages is not None
+            and self.pages > 0
+            and not self.blg_warnings
+            and not self.log_failures
+            and not self.artifact_failures
+        )
 
 
 def _run(command: list[str], *, cwd: Path, env: dict[str, str], transcript: Path) -> int:
@@ -194,12 +201,26 @@ def compile_submission(*, prefer_manual: bool = False, render: bool = True) -> i
     return code
 
 
-def scan_submission_logs() -> LatexScan:
-    """Inspect `.blg` and `.log` outputs for bibliography/reference drift."""
-    blg_path = SUBMISSION_DIR / f"{JOB_NAME}.blg"
-    log_path = SUBMISSION_DIR / f"{JOB_NAME}.log"
-    blg_text = blg_path.read_text(encoding="utf-8", errors="replace") if blg_path.exists() else ""
-    log_text = log_path.read_text(encoding="utf-8", errors="replace") if log_path.exists() else ""
+def scan_submission_logs(directory: Path | None = None) -> LatexScan:
+    """Inspect required PDF, `.blg`, and `.log` outputs for build drift."""
+    directory = SUBMISSION_DIR if directory is None else directory
+    pdf_path = directory / f"{JOB_NAME}.pdf"
+    blg_path = directory / f"{JOB_NAME}.blg"
+    log_path = directory / f"{JOB_NAME}.log"
+    required_outputs = (
+        ("PDF", pdf_path),
+        ("LaTeX log", log_path),
+        ("BibTeX log", blg_path),
+    )
+    artifact_failures: list[str] = []
+    for label, path in required_outputs:
+        if not path.is_file():
+            artifact_failures.append(f"missing {label}: {path.name}")
+        elif path.stat().st_size == 0:
+            artifact_failures.append(f"empty {label}: {path.name}")
+
+    blg_text = blg_path.read_text(encoding="utf-8", errors="replace") if blg_path.is_file() else ""
+    log_text = log_path.read_text(encoding="utf-8", errors="replace") if log_path.is_file() else ""
 
     blg_warnings = tuple(
         line.strip() for line in blg_text.splitlines() if line.strip().startswith("Warning--")
@@ -218,7 +239,12 @@ def scan_submission_logs() -> LatexScan:
     if matches:
         pages = int(matches[-1])
 
-    return LatexScan(pages=pages, blg_warnings=blg_warnings, log_failures=log_failures)
+    return LatexScan(
+        pages=pages,
+        blg_warnings=blg_warnings,
+        log_failures=log_failures,
+        artifact_failures=tuple(artifact_failures),
+    )
 
 
 def main(argv: list[str] | None = None) -> int:
@@ -254,8 +280,12 @@ def main(argv: list[str] | None = None) -> int:
         logger.error("BibTeX warnings:\n{}", "\n".join(scan.blg_warnings))
     if scan.log_failures:
         logger.error("LaTeX convergence failures: {}", ", ".join(scan.log_failures))
+    if scan.artifact_failures:
+        logger.error("Required LaTeX output failures: {}", ", ".join(scan.artifact_failures))
     if scan.pages is None:
-        logger.warning("Could not read page count from the LaTeX log.")
+        logger.error("Could not read page count from the LaTeX log.")
+    elif scan.pages <= 0:
+        logger.error("LaTeX log reported a nonpositive page count: {}", scan.pages)
     else:
         logger.success("Official IJDS PDF page count: {}", scan.pages)
 

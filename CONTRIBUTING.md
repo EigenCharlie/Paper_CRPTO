@@ -108,15 +108,17 @@ run them from the default branch:
 
 ## Releasing
 
-Single-author releases happen by tagging a clean `main`:
+Single-author source releases may be tagged from a clean `main`:
 
 ```bash
 git tag -a vX.Y.Z -m "release notes here"
 git push origin vX.Y.Z
 ```
 
-The tag triggers the `book-publish` workflow which deploys the latest
-HTML rendering of the book to GitHub Pages.
+Tags do not deploy the book automatically. After reviewing the current chapter
+set and running `just book`, dispatch `book-publish` manually from GitHub
+Actions on the intended commit; that workflow deploys the HTML rendering to
+GitHub Pages.
 
 ## Citing
 

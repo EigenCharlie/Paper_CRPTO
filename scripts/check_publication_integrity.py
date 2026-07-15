@@ -11,13 +11,15 @@ from pathlib import Path
 import yaml
 from loguru import logger
 
+from src.ijds_audit.claim_ledger import materialize_claim_ledger
+from src.ijds_audit.publication_generation import publication_implementation_descriptors
 from src.ijds_audit.publication_sources import load_verified_source_registry
-from src.utils.artifact_descriptor import relative_artifact_descriptor
 
 REPO = Path(__file__).resolve().parents[1]
 EVIDENCE_PATH = REPO / "reports/crpto/ijds_binary_geometry_frontier_v4_evidence.json"
 SOURCE_REGISTRY_PATH = REPO / "configs/ijds_active_evidence_sources.yaml"
 PUBLICATION_TARGETS_PATH = REPO / "configs/crpto_publication_targets.yaml"
+CLAIM_LEDGER_PATH = REPO / "configs/ijds_claim_ledger.yaml"
 
 
 @dataclass(frozen=True)
@@ -42,7 +44,6 @@ ACTIVE_EDITORIAL_SURFACES = (
     REPO / "CLAUDE.md",
     REPO / "AGENTS.md",
     REPO / "CONTRIBUTING.md",
-    REPO / "EXTRACTION_MANIFEST.md",
     REPO / "docs/ACADEMIC_CONTEXT.md",
     REPO / "docs/SCOPE_AND_GOVERNANCE.md",
     REPO / "docs/research/active_claims_2026-07-14.md",
@@ -303,7 +304,30 @@ def _check_evidence_decision() -> list[str]:
             failures.append(f"objective-matched .25 unexpectedly changed: {field}")
     if evidence["simulation"]["portfolio_claim_allowed"] is not False:
         failures.append("degenerate simulation unexpectedly allows a portfolio claim")
+    endpoint = evidence.get("sensitivity", {}).get("evaluation_endpoint_availability", {})
+    if endpoint.get("six_month_endpoint_reconciles_exactly_to_active_v3") is not True:
+        failures.append("endpoint sensitivity no longer reconciles exactly to active V3")
+    if endpoint.get("endpoint_or_result_selected") is not False:
+        failures.append("endpoint sensitivity unexpectedly selects an endpoint or result")
+    if endpoint.get("fit_label_lag_crossed_factorially") is not False:
+        failures.append("separate timing sensitivities are incorrectly reported as factorial")
     return failures
+
+
+def _check_claim_ledger() -> list[str]:
+    """Require every active qualitative claim to resolve and appear only where allowed."""
+    evidence = _evidence()
+    try:
+        expected = materialize_claim_ledger(
+            CLAIM_LEDGER_PATH,
+            evidence=evidence,
+            repo_root=REPO,
+        )
+    except (KeyError, OSError, TypeError, ValueError, RuntimeError) as error:
+        return [f"active claim ledger failed verification: {error}"]
+    if evidence.get("claim_ledger") != expected:
+        return ["evidence manifest claim ledger differs from the executable contract"]
+    return []
 
 
 def _check_lineage_sync() -> list[str]:
@@ -326,6 +350,8 @@ def _check_lineage_sync() -> list[str]:
         failures.append("publication target duplicates or omits lineage/DVC authority")
     if evidence.get("lineages") != registry["lineages"]:
         failures.append("evidence manifest lineages differ from the active source registry")
+    if evidence.get("sensitivities") != registry.get("sensitivities"):
+        failures.append("evidence manifest sensitivities differ from the active source registry")
     expected_source_registry = {
         "schema_version": str(registry["schema_version"]),
         "status": str(registry["status"]),
@@ -342,23 +368,12 @@ def _check_lineage_sync() -> list[str]:
     for field in ("run_tag", "protocol_tag", "protocol_commit"):
         if challenger.get(field) != two_ruler[field]:
             failures.append(f"two-ruler {field} differs from the registry")
-    expected_descriptors = {
-        "active_source_registry": relative_artifact_descriptor(
-            SOURCE_REGISTRY_PATH, repo_root=REPO
-        ),
-        "evidence_builder": relative_artifact_descriptor(
-            REPO / "scripts/build_ijds_binary_geometry_frontier_v4_evidence.py",
-            repo_root=REPO,
-        ),
-        "source_registry_loader": relative_artifact_descriptor(
-            REPO / "src/ijds_audit/publication_sources.py",
-            repo_root=REPO,
-        ),
-        "artifact_descriptor_helper": relative_artifact_descriptor(
-            REPO / "src/utils/artifact_descriptor.py",
-            repo_root=REPO,
-        ),
-    }
+    endpoint = registry["sensitivities"]["endpoint_availability"]
+    endpoint_evidence = evidence.get("sensitivity", {}).get("evaluation_endpoint_availability", {})
+    for field in ("run_tag", "protocol_tag", "protocol_commit"):
+        if endpoint_evidence.get(field) != endpoint[field]:
+            failures.append(f"endpoint sensitivity {field} differs from the registry")
+    expected_descriptors = publication_implementation_descriptors(REPO)
     evidence_sources = evidence.get("source_artifacts", {})
     for name, descriptor in expected_descriptors.items():
         if evidence_sources.get(name) != descriptor:
@@ -377,6 +392,7 @@ def check_publication_integrity() -> list[str]:
         *_check_retired_claims(),
         *_check_reviewer_anonymity(),
         *_check_evidence_decision(),
+        *_check_claim_ledger(),
         *_check_lineage_sync(),
     ]
 

@@ -41,7 +41,10 @@ Lo crítico de `ACADEMIC_CONTEXT.md`:
 - **Single-author.** Yo soy el único que toca este repo. No hay PR reviews, no hay branch protection necesaria, no hay reviewers que aprueben. Las reglas de operación existen para disciplinar agentes, no para satisfacer un proceso corporativo.
 - **Dataset estático.** Lending Club cerró originación retail en 2020. No vamos a recibir datos nuevos. Sin streaming, sin concept drift por cohortes nuevas. Si re-entrenamos, es sobre el mismo histórico.
 - **No va a producción.** Output: paper + journal + libro Quarto + MRM dossier. Sin servicio live, sin SLAs, sin on-call.
-- **GitHub Actions minimalista.** `book-publish.yml` (Pages) y `lint.yml` corren en push; `tests-full.yml` queda manual para hitos de journal o revalidación con DVC. `test.yml`, `dbt.yml`, `book-build.yml` se retiraron porque el pre-push hook ya valida lo equivalente en local.
+- **GitHub Actions minimalista.** `lint.yml` corre en push;
+  `book-publish.yml` y `tests-full.yml` son manuales para despliegues del
+  companion e hitos de journal. `test.yml`, `dbt.yml` y `book-build.yml` se
+  retiraron porque el pre-push hook ya valida lo equivalente en local.
 
 ## Re-corrida del champion: regla inequívoca
 
@@ -89,6 +92,7 @@ upstream protegido.
 | Supporting C2 | 1,080 matches; residual maximo `8.33e-17`; dominancia plug-in mecanica |
 | Exact frontier | 3,067 caps; 216/216 broad-stress envelopes cruzan cero |
 | Development support | default 72/72 cruza; W8 27/27 cruza |
+| Sensibilidad endpoint | lags 0/3/6/8/12 completos; lag 6 reconcilia exactamente con V3; sin seleccion de endpoint |
 | Evidencia | `reports/crpto/ijds_binary_geometry_frontier_v4_evidence.json` |
 
 El claim activo es una auditoria de identificacion: la falla temporal de
@@ -130,7 +134,8 @@ Artefactos históricos congelados cuyos hashes están en
 - `models/experiments/champion_reopen/...__pool93__ijds-certificate-semantics-v2/portfolio/pool93_point_pd_baseline_audit.json`
 - `EXTRACTION_MANIFEST.json`
 
-La sincronia del claim activo con body, supplement y TeX la vigilan el builder
+La sincronia del claim activo con body, supplement y TeX la vigilan el ledger
+`configs/ijds_claim_ledger.yaml`, el builder
 `scripts/build_ijds_binary_geometry_frontier_v4_evidence.py`, el manifest activo y
 `scripts/check_publication_integrity.py`. El TeX oficial es generado desde
 `paper/CRPTO_ijds.qmd` por `scripts/build_ijds_submission_tex.py`; no se edita
@@ -161,8 +166,8 @@ Lista completa: `pyproject.toml`. Versiones efectivas: `uv.lock`.
 
 ```powershell
 # Setup
-just setup                  # uv sync --extra dev --extra search --extra spo
-just setup-base             # sin pyepo/torch
+just setup                  # uv sync --extra dev --extra search; sin pyepo/torch
+just setup-spo              # agrega el stack historico pyepo/torch
 
 # Render del libro
 just book                   # uv run -- quarto render book --to html
@@ -234,7 +239,7 @@ El archivo `.env` está en `.gitignore`. Nunca commitear tokens.
 │   ├── optimization/        # Pyomo/HiGHS + robust + SPO
 │   └── utils/               # I/O, MLflow, helpers
 ├── scripts/                 # 40+ entry points del pipeline
-├── tests/                   # 26 pytest (slow / integration markers)
+├── tests/                   # tests activos, históricos e integración
 ├── configs/                 # YAML config (modelos, conformal, optim, fairness)
 ├── dbt_project/             # 6 modelos (3 staging + 3 marts) sobre crpto.duckdb
 ├── data/
@@ -242,8 +247,8 @@ El archivo `.env` está en `.gitignore`. Nunca commitear tokens.
 │   └── processed/           # parquets + DuckDB — DVC tracked
 ├── models/                  # champion + calibrator + status JSONs
 ├── reports/
-│   ├── crpto/tables/        # 18 CSVs del paper
-│   ├── crpto/figures/       # 8 PNGs/PDFs
+│   ├── crpto/tables/        # exports activos e históricos del paper
+│   ├── crpto/figures/       # figuras activas e históricas
 │   └── mrm/                 # Model Risk Management cards (skops)
 ├── docs/research/           # dossier académico
 ├── paper/                   # manuscrito principal

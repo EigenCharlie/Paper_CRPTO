@@ -105,10 +105,10 @@ def direction_census(directions: pd.DataFrame, *, lag_months: int) -> pd.DataFra
 
 def exact_support_census(envelopes: pd.DataFrame, *, lag_months: int) -> pd.DataFrame:
     """Count exact-support directions by scope and metric."""
-    return (
+    census = (
         envelopes.groupby(["scope", "metric", "direction"], observed=True, sort=True)
         .size()
-        .rename("cells")
         .reset_index()
-        .assign(charged_off_lag_months=int(lag_months))
     )
+    census.columns = ["scope", "metric", "direction", "cells"]
+    return census.assign(charged_off_lag_months=int(lag_months))

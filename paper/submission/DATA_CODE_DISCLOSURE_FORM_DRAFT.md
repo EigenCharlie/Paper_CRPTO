@@ -69,7 +69,8 @@ public. The author agrees to complete the IJDS reproducibility report.
 ## Package Boundary
 
 The release includes `pyproject.toml`, `uv.lock`, active source and claim
-registries, `src/ijds_audit`, active experiment/build scripts, twelve DVC
+registries and executable claim ledger, `src/ijds_audit`, active
+experiment/build scripts, fourteen DVC
 pointers, aggregate evidence, canonical QMD, generated TeX, bibliography, and
 the scientific, type, drift, anonymity, compilation, and visual-QA gates.
 Credentials, local DVC configuration, absolute paths, protected historical

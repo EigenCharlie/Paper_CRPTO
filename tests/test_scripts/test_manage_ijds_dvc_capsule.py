@@ -24,7 +24,23 @@ def _targets(tmp_path: Path, *, omit_last: bool = False) -> Path:
             relative = f"{prefix}/experiments/ijds_audit/{run_tag}.dvc"
             path = tmp_path / relative
             path.parent.mkdir(parents=True, exist_ok=True)
-            path.write_text("outs: []\n", encoding="utf-8")
+            path.write_text(
+                yaml.safe_dump(
+                    {
+                        "outs": [
+                            {
+                                "md5": f"{'a' * 32}.dir",
+                                "size": 1,
+                                "nfiles": 1,
+                                "hash": "md5",
+                                "path": run_tag,
+                            }
+                        ]
+                    },
+                    sort_keys=False,
+                ),
+                encoding="utf-8",
+            )
             pointers.append(relative)
     if omit_last:
         pointers.pop()

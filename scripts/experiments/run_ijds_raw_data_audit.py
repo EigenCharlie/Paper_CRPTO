@@ -22,13 +22,12 @@ from src.utils.isolated_experiment import (
 from src.utils.pipeline_runtime import atomic_write_json
 
 ROOT = Path(__file__).resolve().parents[2]
-DEFAULT_CONFIG = ROOT / "configs/experiments/ijds_raw_data_contract_2026-07-13.yaml"
 ALLOWED_OUTPUT_ROOT = Path("reports/crpto/data_audit")
 
 
 def parse_args(argv: Sequence[str] | None = None) -> argparse.Namespace:
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("--config", type=Path, default=DEFAULT_CONFIG)
+    parser.add_argument("--config", type=Path, required=True)
     parser.add_argument("--repo-root", type=Path, default=ROOT)
     return parser.parse_args(argv)
 

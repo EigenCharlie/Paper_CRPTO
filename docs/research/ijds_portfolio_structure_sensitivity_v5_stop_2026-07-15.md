@@ -46,3 +46,26 @@ nonunique optimal allocation. If the allocation is nonunique, the successor
 must define an outcome-free policy convention or a set-valued evaluation that
 accounts for that ambiguity. Any amendment must use a fresh protocol, run tag,
 and complete reporting; V5 remains immutable stopped provenance.
+
+## Completed outcome-free diagnosis
+
+The required rerun completed all eight windows for the missing scenario while
+temporarily bypassing only the final order validator. It joined no outcome
+columns and produced the following reconciliation over 1,440 order-audit rows:
+
+- maximum normalized exposure distance: `1.3504744038073114e-10`;
+- rows above `1e-10`: `8`, all repetitions of the same October 2016,
+  normalized-score, coordinate-0.25, gamma-0 endpoint across the eight residual
+  windows;
+- rows above `1e-8`: `0`;
+- maximum absolute plug-in objective difference: `$0.000007320079021155834`;
+- maximum absolute weighted-score difference: `3.62847252244336e-12`.
+
+The exposure discrepancy is therefore below the already locked `1e-8`
+cap-residual tolerance, the objective discrepancy remains below the parent's
+`1e-5` dollar order tolerance, and the score reconciliation is at floating-point
+scale. This supports a numerical-tolerance diagnosis rather than materially
+different optimal allocations. A successor may set the order-exposure
+tolerance to `1e-8`, but must keep the objective tolerance unchanged, recover
+only fully validated V5 shards, recompute the missing scenario, and retain the
+complete 36-scenario grid. This diagnosis does not complete or promote V5.

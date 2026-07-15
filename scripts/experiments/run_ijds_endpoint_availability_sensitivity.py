@@ -13,6 +13,7 @@ import pandas as pd
 import yaml
 from loguru import logger
 
+from src.evaluation.policy_contrast_bounds import PolicyContrastIndex
 from src.ijds_audit.allocations import policy_family
 from src.ijds_audit.config import load_v4_config
 from src.ijds_audit.endpoint_sensitivity import (
@@ -25,11 +26,9 @@ from src.ijds_audit.endpoint_sensitivity import (
 from src.ijds_audit.evaluation import (
     comparator_envelopes,
     evaluate_frozen_portfolios,
-    paired_portfolio_contrasts,
     temporal_coverage_audit,
 )
 from src.ijds_audit.protocol import (
-    expand_frontier_for_window,
     load_outcome_universe,
     load_recipes,
     verified_freeze_artifact_paths,
@@ -42,6 +41,10 @@ from src.ijds_challengers.evaluation import (
     verify_frontier_freeze,
 )
 from src.ijds_challengers.evaluation_config import load_v2_config
+from src.models.binary_conformal_guardrail import (
+    BinaryOutcomeConformalRecipe,
+    apply_binary_outcome_recipe,
+)
 from src.utils.isolated_experiment import (
     dataframe_schema,
     environment_provenance,
@@ -59,6 +62,15 @@ ROOT = Path(__file__).resolve().parents[2]
 DEFAULT_CONFIG = ROOT / "configs/experiments/ijds_endpoint_availability_sensitivity_2026-07-14.yaml"
 ALLOWED_DATA_ROOT = Path("data/processed/experiments/ijds_audit")
 ALLOWED_MODEL_ROOT = Path("models/experiments/ijds_audit")
+_INDEX_ALLOCATION_COLUMNS = [
+    "id",
+    "role",
+    "policy_label",
+    "exposure",
+    "expected_payoff_contribution",
+    "comparator_rule",
+    "frontier_cap",
+]
 
 
 def parse_args(argv: Sequence[str] | None = None) -> argparse.Namespace:
@@ -111,6 +123,181 @@ def _verified_freeze(
     return payload, artifacts
 
 
+def _primary_loan_facts(
+    allocations: pd.DataFrame,
+    outcomes: pd.DataFrame,
+) -> pd.DataFrame:
+    required_allocations = {"id", "role", "period", "contractual_rate"}
+    missing_allocations = sorted(required_allocations - set(allocations.columns))
+    if missing_allocations:
+        raise KeyError(f"Allocations are missing primary fact columns: {missing_allocations}.")
+    required_outcomes = {
+        "id",
+        "role",
+        "period",
+        "snapshot_default",
+        "snapshot_resolution",
+    }
+    missing_outcomes = sorted(required_outcomes - set(outcomes.columns))
+    if missing_outcomes:
+        raise KeyError(f"Outcomes are missing primary fact columns: {missing_outcomes}.")
+    if bool(outcomes["id"].isna().any()) or bool(outcomes["id"].duplicated().any()):
+        raise RuntimeError("Endpoint outcomes must contain one nonmissing row per ID.")
+
+    primary = allocations.loc[
+        allocations["role"].eq("primary_oot"),
+        ["id", "role", "period", "contractual_rate"],
+    ].copy()
+    if primary.empty or bool(primary["id"].isna().any()):
+        raise RuntimeError("Primary allocation facts are empty or contain missing IDs.")
+    conflicts = primary.groupby("id", observed=True, dropna=False)[
+        ["role", "period", "contractual_rate"]
+    ].nunique(dropna=False)
+    if bool(conflicts.gt(1).any(axis=None)):
+        raise RuntimeError("Primary allocations contain conflicting per-loan facts.")
+    primary = primary.drop_duplicates()
+    if bool(primary["id"].duplicated().any()):
+        raise RuntimeError("Primary allocation facts do not reduce to one row per ID.")
+
+    endpoint = outcomes.loc[
+        outcomes["id"].isin(primary["id"]),
+        ["id", "role", "period", "snapshot_default", "snapshot_resolution"],
+    ].rename(columns={"role": "outcome_role", "period": "outcome_period"})
+    joined = primary.merge(
+        endpoint,
+        on="id",
+        how="left",
+        validate="one_to_one",
+        indicator="outcome_join",
+        sort=False,
+    )
+    missing = int(joined["outcome_join"].eq("left_only").sum())
+    if missing:
+        raise RuntimeError(f"Exact-frontier funded outcome ID mismatch: missing={missing}.")
+    role_mismatch = joined["role"].astype("string").ne(joined["outcome_role"].astype("string"))
+    period_mismatch = (
+        joined["period"].astype("string").ne(joined["outcome_period"].astype("string"))
+    )
+    if bool(role_mismatch.fillna(True).any()) or bool(period_mismatch.fillna(True).any()):
+        raise RuntimeError("Exact-frontier outcome role or period disagrees with allocations.")
+    if bool(joined["snapshot_resolution"].isna().any()):
+        raise RuntimeError("Exact-frontier outcome resolution is incomplete.")
+    return joined[["id", "contractual_rate", "snapshot_default"]]
+
+
+def _window_loan_facts(
+    base_facts: pd.DataFrame,
+    scores: pd.DataFrame,
+    recipe: BinaryOutcomeConformalRecipe,
+) -> pd.DataFrame:
+    required_scores = {"id", "design_split", "pd_catboost_platt"}
+    missing = sorted(required_scores - set(scores.columns))
+    if missing:
+        raise KeyError(f"Scores are missing endpoint columns: {missing}.")
+    primary = scores.loc[
+        scores["design_split"].eq("primary_oot"), ["id", "pd_catboost_platt"]
+    ].copy()
+    if bool(primary["id"].isna().any()) or bool(primary["id"].duplicated().any()):
+        raise RuntimeError("Primary score census must contain one nonmissing row per ID.")
+    probability = primary["pd_catboost_platt"].to_numpy(dtype=float)
+    _, lower, upper = apply_binary_outcome_recipe(probability, recipe)
+    endpoints = pd.DataFrame(
+        {
+            "id": primary["id"].astype("string"),
+            "conformal_lower": lower,
+            "conformal_upper": upper,
+        }
+    )
+    facts = base_facts.merge(
+        endpoints,
+        on="id",
+        how="left",
+        validate="one_to_one",
+        indicator="score_join",
+        sort=False,
+    )
+    missing_scores = int(facts["score_join"].eq("left_only").sum())
+    if missing_scores:
+        raise RuntimeError(f"Exact-frontier score ID mismatch: missing={missing_scores}.")
+    return facts[
+        [
+            "id",
+            "contractual_rate",
+            "conformal_lower",
+            "conformal_upper",
+            "snapshot_default",
+        ]
+    ]
+
+
+def _indexed_portfolio_contrasts(
+    allocations: pd.DataFrame,
+    *,
+    loan_facts: pd.DataFrame,
+    window_id: str,
+    policy_ids: tuple[str, ...],
+    lgd: float,
+) -> pd.DataFrame:
+    """Compute the public contrast grid from one validated allocation index."""
+    primary = allocations.loc[allocations["role"].eq("primary_oot")]
+    index = PolicyContrastIndex(primary, role="primary_oot", loan_facts=loan_facts)
+    frontier = primary.loc[
+        primary["comparator_rule"].eq("point_cap_frontier"),
+        ["policy_label", "frontier_cap"],
+    ].drop_duplicates()
+    duplicate_frontier = frontier["policy_label"].duplicated(keep=False)
+    if bool(duplicate_frontier.any()):
+        raise RuntimeError("A frontier policy label maps to conflicting cap values.")
+    frontier = frontier.sort_values("frontier_cap")
+
+    rows: list[dict[str, Any]] = []
+    for policy_id in policy_ids:
+        guard_label = f"guardrail_{policy_id}"
+        named = (
+            ("c0_same_numeric_cap", f"c0_same_numeric_cap_{policy_id}"),
+            ("c1_development_mean", f"c1_development_mean_{policy_id}"),
+            ("c2_contemporaneous", f"c2_contemporaneous_{policy_id}"),
+        )
+        for rule, comparator_label in named:
+            cap = primary.loc[primary["policy_label"].eq(comparator_label), "frontier_cap"]
+            if cap.empty:
+                raise RuntimeError(f"Named comparator {comparator_label!r} is missing.")
+            cap_values = pd.to_numeric(cap, errors="raise").drop_duplicates()
+            if len(cap_values) != 1:
+                raise RuntimeError(
+                    f"Named comparator {comparator_label!r} maps to conflicting cap values."
+                )
+            rows.append(
+                {
+                    "window_id": str(window_id),
+                    "paired_policy_id": policy_id,
+                    "comparator_rule": rule,
+                    "frontier_cap": float(cap_values.iloc[0]),
+                    **index.sharp_bounds(
+                        policy_a=guard_label,
+                        policy_b=comparator_label,
+                        lgd=float(lgd),
+                    ),
+                }
+            )
+        for item in frontier.itertuples(index=False):
+            comparator_label = str(item.policy_label)
+            rows.append(
+                {
+                    "window_id": str(window_id),
+                    "paired_policy_id": policy_id,
+                    "comparator_rule": "point_cap_frontier",
+                    "frontier_cap": float(item.frontier_cap),
+                    **index.sharp_bounds(
+                        policy_a=guard_label,
+                        policy_b=comparator_label,
+                        lgd=float(lgd),
+                    ),
+                }
+            )
+    return pd.DataFrame(rows)
+
+
 def _exact_support(
     *,
     records: pd.DataFrame,
@@ -128,30 +315,25 @@ def _exact_support(
     _, named_joined = evaluate_frozen_portfolios(
         named_records, named_allocations, outcomes, config=config
     )
-    shared_joined = shared_allocations.merge(
-        outcomes[["id", "snapshot_default", "snapshot_resolution"]],
-        on="id",
-        how="left",
-        validate="many_to_one",
-    )
-    if bool(shared_joined["snapshot_resolution"].isna().any()):
-        raise RuntimeError("Exact-frontier outcome join is incomplete.")
+    base_facts = _primary_loan_facts(allocations, outcomes)
+    shared_index_allocations = shared_allocations[_INDEX_ALLOCATION_COLUMNS]
     policy_ids = tuple(candidate.candidate_id for candidate in policy_family(config))
     frames: list[pd.DataFrame] = []
     for window_id, group_recipes in recipes["catboost_platt"].items():
-        expanded = expand_frontier_for_window(
-            shared_joined,
-            scores,
-            group_recipes[5],
-            window_id=str(window_id),
-        )
+        loan_facts = _window_loan_facts(base_facts, scores, group_recipes[5])
+        named_window = named_joined.loc[
+            named_joined["window_id"].eq(window_id), _INDEX_ALLOCATION_COLUMNS
+        ]
         window_allocations = pd.concat(
-            [named_joined.loc[named_joined["window_id"].eq(window_id)], expanded],
+            [named_window, shared_index_allocations],
             ignore_index=True,
+            copy=False,
         )
         frames.append(
-            paired_portfolio_contrasts(
+            _indexed_portfolio_contrasts(
                 window_allocations,
+                loan_facts=loan_facts,
+                window_id=str(window_id),
                 policy_ids=policy_ids,
                 lgd=float(config["payoff"]["lgd"]),
             )

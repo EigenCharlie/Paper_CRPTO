@@ -25,9 +25,11 @@ The full archive audit covers 2,925,493 rows and an exhaustive 640,543-loan
 eligible design. The primary OOT panel contains 376,890 candidates: 364,814
 outcomes are reconstructed as observable by the evaluation cutoff and 12,076
 remain unresolved. All 40 all-candidate coverage upper bounds are below 0.90
-across five predeclared learner specifications; the largest is 0.8977. The
-stratum-level W7--W8 quantile change persists under every predeclared reporting
-lag retaining more than 99% of each fitting month.
+across five retrospectively protocol-locked learner specifications; the largest
+is 0.8977. The stratum-level W7--W8 quantile change persists under every
+fit-label lag retaining more than 99% of each fitting month. A separate complete
+evaluation-endpoint lag grid reports 0, 3, 6, 8, and 12 months without selection;
+the six-month slice exactly reproduces the active endpoint evaluation.
 
 The decision result has a narrow interpretation. Objective-matched coordinate .25
 crosses zero for payoff, default, and miscoverage in all eight windows; .50 is
@@ -39,7 +41,7 @@ comparator, or policy is selected.
 The manuscript addresses a decision-making problem at the
 predictive-to-prescriptive interface. It combines executable information
 boundaries, exact optimization geometry, partial identification, and complete
-reporting of the prespecified paths. It makes no causal, selected-set,
+reporting of the protocol-locked paths. It makes no causal, selected-set,
 prospective, deployment, or fair-lending claim. The distributed archive is
 explicitly not described as a verified point-in-time snapshot, and standardized
 payoff is not presented as investor return.

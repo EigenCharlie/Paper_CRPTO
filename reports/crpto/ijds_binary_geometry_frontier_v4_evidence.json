@@ -1,12 +1,13 @@
 {
-  "schema_version": "2026-07-14.2",
+  "schema_version": "2026-07-15.1",
   "status": "active_ijds_v4_endpoint_corrected_paper_facing_evidence",
   "source_registry": {
-    "schema_version": "2026-07-14.2",
+    "schema_version": "2026-07-15.1",
     "status": "active_ijds_paper_evidence_source_registry",
     "sources": [
       "credit_receipt",
       "credit_summary",
+      "endpoint_sensitivity_summary",
       "label_lag_sensitivity",
       "raw_data_audit",
       "solver_tie_audit",
@@ -22,12 +23,16 @@
         "run_tag": "ijds-binary-geometry-frontier-v4-2026-07-12-v1",
         "protocol_tag": "protocol/ijds-binary-geometry-frontier-v4-2026-07-12-v1",
         "protocol_commit": "2f8a7606e4eb65aa3ae3701fb3af8d9a51c953cd",
-        "freeze_sha256": "c2b3dc2d18c9fed80708682d5a0369c80c89643e2d28024418522d954ebe667c"
+        "freeze_sha256": "c2b3dc2d18c9fed80708682d5a0369c80c89643e2d28024418522d954ebe667c",
+        "paper_role": "outcome_free_freeze",
+        "dvc_tracked": true
       },
       "evaluation": {
         "run_tag": "ijds-binary-geometry-frontier-v4-2026-07-14-v3",
         "protocol_tag": "protocol/ijds-binary-geometry-frontier-v4-2026-07-14-v3",
-        "protocol_commit": "688f75dc4f285c75bc499c9e041dd30fb3acd70d"
+        "protocol_commit": "688f75dc4f285c75bc499c9e041dd30fb3acd70d",
+        "paper_role": "verified_evaluation",
+        "dvc_tracked": true
       }
     },
     "two_ruler": {
@@ -35,12 +40,16 @@
         "run_tag": "ijds-normalized-objective-frontier-2026-07-13-v1c",
         "protocol_tag": "protocol/ijds-normalized-objective-frontier-2026-07-13-v1c",
         "protocol_commit": "46f4df915d38eb5a6cc144484c6e6fe56d8ed397",
-        "freeze_sha256": "7877c5e460772a0093e4132eaa542e9049f7ec15d2ddaa35c2df389892a0e185"
+        "freeze_sha256": "7877c5e460772a0093e4132eaa542e9049f7ec15d2ddaa35c2df389892a0e185",
+        "paper_role": "outcome_free_freeze",
+        "dvc_tracked": true
       },
       "evaluation": {
         "run_tag": "ijds-normalized-objective-frontier-2026-07-14-v3",
         "protocol_tag": "protocol/ijds-normalized-objective-frontier-2026-07-14-v3",
-        "protocol_commit": "a1ae516a6c9674686dba245cb275475073b298a0"
+        "protocol_commit": "a1ae516a6c9674686dba245cb275475073b298a0",
+        "paper_role": "verified_evaluation",
+        "dvc_tracked": true
       }
     },
     "credit_controls": {
@@ -48,29 +57,48 @@
         "run_tag": "ijds-credit-risk-controls-2026-07-13-v1b",
         "protocol_tag": "protocol/ijds-credit-risk-controls-2026-07-13-v1b",
         "protocol_commit": "1776cbf8b201ae5b92756e5ea397a403d6cc7c9f",
-        "freeze_sha256": "da4805e644bcf5decfbb0a67c0c81a5b9dd61f3ab2e17d3dc5264100e7eb4d35"
+        "freeze_sha256": "da4805e644bcf5decfbb0a67c0c81a5b9dd61f3ab2e17d3dc5264100e7eb4d35",
+        "paper_role": "outcome_free_freeze",
+        "dvc_tracked": true
       },
       "evaluation": {
         "run_tag": "ijds-credit-risk-controls-2026-07-14-v3",
         "protocol_tag": "protocol/ijds-credit-risk-controls-2026-07-14-v3",
-        "protocol_commit": "688f75dc4f285c75bc499c9e041dd30fb3acd70d"
+        "protocol_commit": "688f75dc4f285c75bc499c9e041dd30fb3acd70d",
+        "paper_role": "verified_evaluation",
+        "dvc_tracked": true
       }
     },
     "diagnostics": {
       "raw_data_audit": {
         "run_tag": "ijds-raw-data-contract-2026-07-14-v2",
-        "status": "complete_full_archive_data_contract_audit"
+        "status": "complete_full_archive_data_contract_audit",
+        "paper_role": "data_contract_diagnostic",
+        "dvc_tracked": false
       },
       "label_lag_sensitivity": {
         "run_tag": "ijds-label-lag-sensitivity-2026-07-14-v1",
         "protocol_tag": "protocol/ijds-label-lag-sensitivity-2026-07-14-v1",
-        "protocol_commit": "688f75dc4f285c75bc499c9e041dd30fb3acd70d"
+        "protocol_commit": "688f75dc4f285c75bc499c9e041dd30fb3acd70d",
+        "paper_role": "fit_label_timing_sensitivity",
+        "dvc_tracked": false
       },
       "solver_tie_audit": {
         "run_tag": "ijds-policy-support-tie-audit-2026-07-12-v1",
         "protocol_tag": "protocol/ijds-policy-support-tie-audit-2026-07-12-v1",
-        "protocol_commit": "115eaf1b81ed5f05ffe601e9c20079059c40c200"
+        "protocol_commit": "115eaf1b81ed5f05ffe601e9c20079059c40c200",
+        "paper_role": "evaluated_cap_numerical_diagnostic",
+        "dvc_tracked": false
       }
+    }
+  },
+  "sensitivities": {
+    "endpoint_availability": {
+      "run_tag": "ijds-endpoint-availability-sensitivity-2026-07-14-v1",
+      "protocol_tag": "protocol/ijds-endpoint-availability-sensitivity-2026-07-14-v1",
+      "protocol_commit": "8865f1cfbd387576bdf805f3e52f030261e4b717",
+      "paper_role": "evaluation_endpoint_timing_sensitivity",
+      "dvc_tracked": true
     }
   },
   "run_tag": "ijds-binary-geometry-frontier-v4-2026-07-14-v3",
@@ -821,6 +849,250 @@
     "last_credit_pull_date_max": "2020-10-01",
     "last_payment_rows_after_cutoff": 36485,
     "last_credit_pull_rows_after_cutoff": 40214
+  },
+  "sensitivity": {
+    "evaluation_endpoint_availability": {
+      "scope": "complete_nonselective_retrospective_lag_grid",
+      "run_tag": "ijds-endpoint-availability-sensitivity-2026-07-14-v1",
+      "protocol_tag": "protocol/ijds-endpoint-availability-sensitivity-2026-07-14-v1",
+      "protocol_commit": "8865f1cfbd387576bdf805f3e52f030261e4b717",
+      "charged_off_lags_months": [
+        0,
+        3,
+        6,
+        8,
+        12
+      ],
+      "endpoint_or_result_selected": false,
+      "allocation_refit": false,
+      "six_month_endpoint_reconciles_exactly_to_active_v3": true,
+      "reconciliation": {
+        "charged_off_lag_months": 6,
+        "coverage_cells_exact": 120,
+        "two_ruler_contrasts_exact": 48,
+        "exact_support_envelopes_exact": 648,
+        "byte_value_equal_after_lag_column_removed": true
+      },
+      "fit_label_lag_crossed_factorially": false,
+      "estimand_boundary": "This family changes evaluation-outcome availability while holding scores, fitted residual recipes, supports, and allocations fixed. The separate label-lag family changes conformal-fit labels and was not crossed factorially with endpoint availability.",
+      "rows": [
+        {
+          "charged_off_lag_months": 0,
+          "primary_candidates": 376890,
+          "primary_resolved": 364861,
+          "primary_unresolved": 12029,
+          "primary_defaults": 57019,
+          "coverage_cells": 40,
+          "coverage_upper_below_0_90_cells": 40,
+          "coverage_upper_at_or_above_0_90_cells": 0,
+          "coverage_upper_max": 0.8976412215765873,
+          "coverage_upper_max_learner": "woe_scorecard_borrower_platt",
+          "coverage_upper_max_window": "w02_2012m02_m07",
+          "two_ruler_payoff_gamma_1_lower_cells": 32,
+          "two_ruler_payoff_gamma_1_higher_cells": 0,
+          "two_ruler_payoff_crosses_zero_cells": 16,
+          "two_ruler_payoff_exact_zero_cells": 0,
+          "two_ruler_default_gamma_1_lower_cells": 0,
+          "two_ruler_default_gamma_1_higher_cells": 33,
+          "two_ruler_default_crosses_zero_cells": 15,
+          "two_ruler_default_exact_zero_cells": 0,
+          "two_ruler_miscoverage_gamma_1_lower_cells": 0,
+          "two_ruler_miscoverage_gamma_1_higher_cells": 40,
+          "two_ruler_miscoverage_crosses_zero_cells": 8,
+          "two_ruler_miscoverage_exact_zero_cells": 0,
+          "development_admissible_exact_frontier_standardized_payoff_guardrail_lower_cells": 6,
+          "development_admissible_exact_frontier_standardized_payoff_guardrail_higher_cells": 0,
+          "development_admissible_exact_frontier_standardized_payoff_crosses_zero_cells": 66,
+          "broad_stress_exact_frontier_standardized_payoff_guardrail_lower_cells": 0,
+          "broad_stress_exact_frontier_standardized_payoff_guardrail_higher_cells": 0,
+          "broad_stress_exact_frontier_standardized_payoff_crosses_zero_cells": 72,
+          "development_admissible_exact_frontier_terminal_default_guardrail_lower_cells": 0,
+          "development_admissible_exact_frontier_terminal_default_guardrail_higher_cells": 0,
+          "development_admissible_exact_frontier_terminal_default_crosses_zero_cells": 72,
+          "broad_stress_exact_frontier_terminal_default_guardrail_lower_cells": 0,
+          "broad_stress_exact_frontier_terminal_default_guardrail_higher_cells": 0,
+          "broad_stress_exact_frontier_terminal_default_crosses_zero_cells": 72,
+          "development_admissible_exact_frontier_funded_miscoverage_guardrail_lower_cells": 0,
+          "development_admissible_exact_frontier_funded_miscoverage_guardrail_higher_cells": 27,
+          "development_admissible_exact_frontier_funded_miscoverage_crosses_zero_cells": 45,
+          "broad_stress_exact_frontier_funded_miscoverage_guardrail_lower_cells": 0,
+          "broad_stress_exact_frontier_funded_miscoverage_guardrail_higher_cells": 0,
+          "broad_stress_exact_frontier_funded_miscoverage_crosses_zero_cells": 72
+        },
+        {
+          "charged_off_lag_months": 3,
+          "primary_candidates": 376890,
+          "primary_resolved": 364861,
+          "primary_unresolved": 12029,
+          "primary_defaults": 57019,
+          "coverage_cells": 40,
+          "coverage_upper_below_0_90_cells": 40,
+          "coverage_upper_at_or_above_0_90_cells": 0,
+          "coverage_upper_max": 0.8976412215765873,
+          "coverage_upper_max_learner": "woe_scorecard_borrower_platt",
+          "coverage_upper_max_window": "w02_2012m02_m07",
+          "two_ruler_payoff_gamma_1_lower_cells": 32,
+          "two_ruler_payoff_gamma_1_higher_cells": 0,
+          "two_ruler_payoff_crosses_zero_cells": 16,
+          "two_ruler_payoff_exact_zero_cells": 0,
+          "two_ruler_default_gamma_1_lower_cells": 0,
+          "two_ruler_default_gamma_1_higher_cells": 33,
+          "two_ruler_default_crosses_zero_cells": 15,
+          "two_ruler_default_exact_zero_cells": 0,
+          "two_ruler_miscoverage_gamma_1_lower_cells": 0,
+          "two_ruler_miscoverage_gamma_1_higher_cells": 40,
+          "two_ruler_miscoverage_crosses_zero_cells": 8,
+          "two_ruler_miscoverage_exact_zero_cells": 0,
+          "development_admissible_exact_frontier_standardized_payoff_guardrail_lower_cells": 6,
+          "development_admissible_exact_frontier_standardized_payoff_guardrail_higher_cells": 0,
+          "development_admissible_exact_frontier_standardized_payoff_crosses_zero_cells": 66,
+          "broad_stress_exact_frontier_standardized_payoff_guardrail_lower_cells": 0,
+          "broad_stress_exact_frontier_standardized_payoff_guardrail_higher_cells": 0,
+          "broad_stress_exact_frontier_standardized_payoff_crosses_zero_cells": 72,
+          "development_admissible_exact_frontier_terminal_default_guardrail_lower_cells": 0,
+          "development_admissible_exact_frontier_terminal_default_guardrail_higher_cells": 0,
+          "development_admissible_exact_frontier_terminal_default_crosses_zero_cells": 72,
+          "broad_stress_exact_frontier_terminal_default_guardrail_lower_cells": 0,
+          "broad_stress_exact_frontier_terminal_default_guardrail_higher_cells": 0,
+          "broad_stress_exact_frontier_terminal_default_crosses_zero_cells": 72,
+          "development_admissible_exact_frontier_funded_miscoverage_guardrail_lower_cells": 0,
+          "development_admissible_exact_frontier_funded_miscoverage_guardrail_higher_cells": 27,
+          "development_admissible_exact_frontier_funded_miscoverage_crosses_zero_cells": 45,
+          "broad_stress_exact_frontier_funded_miscoverage_guardrail_lower_cells": 0,
+          "broad_stress_exact_frontier_funded_miscoverage_guardrail_higher_cells": 0,
+          "broad_stress_exact_frontier_funded_miscoverage_crosses_zero_cells": 72
+        },
+        {
+          "charged_off_lag_months": 6,
+          "primary_candidates": 376890,
+          "primary_resolved": 364814,
+          "primary_unresolved": 12076,
+          "primary_defaults": 56972,
+          "coverage_cells": 40,
+          "coverage_upper_below_0_90_cells": 40,
+          "coverage_upper_at_or_above_0_90_cells": 0,
+          "coverage_upper_max": 0.8977261269866539,
+          "coverage_upper_max_learner": "woe_scorecard_borrower_platt",
+          "coverage_upper_max_window": "w02_2012m02_m07",
+          "two_ruler_payoff_gamma_1_lower_cells": 32,
+          "two_ruler_payoff_gamma_1_higher_cells": 0,
+          "two_ruler_payoff_crosses_zero_cells": 16,
+          "two_ruler_payoff_exact_zero_cells": 0,
+          "two_ruler_default_gamma_1_lower_cells": 0,
+          "two_ruler_default_gamma_1_higher_cells": 33,
+          "two_ruler_default_crosses_zero_cells": 15,
+          "two_ruler_default_exact_zero_cells": 0,
+          "two_ruler_miscoverage_gamma_1_lower_cells": 0,
+          "two_ruler_miscoverage_gamma_1_higher_cells": 40,
+          "two_ruler_miscoverage_crosses_zero_cells": 8,
+          "two_ruler_miscoverage_exact_zero_cells": 0,
+          "development_admissible_exact_frontier_standardized_payoff_guardrail_lower_cells": 6,
+          "development_admissible_exact_frontier_standardized_payoff_guardrail_higher_cells": 0,
+          "development_admissible_exact_frontier_standardized_payoff_crosses_zero_cells": 66,
+          "broad_stress_exact_frontier_standardized_payoff_guardrail_lower_cells": 0,
+          "broad_stress_exact_frontier_standardized_payoff_guardrail_higher_cells": 0,
+          "broad_stress_exact_frontier_standardized_payoff_crosses_zero_cells": 72,
+          "development_admissible_exact_frontier_terminal_default_guardrail_lower_cells": 0,
+          "development_admissible_exact_frontier_terminal_default_guardrail_higher_cells": 0,
+          "development_admissible_exact_frontier_terminal_default_crosses_zero_cells": 72,
+          "broad_stress_exact_frontier_terminal_default_guardrail_lower_cells": 0,
+          "broad_stress_exact_frontier_terminal_default_guardrail_higher_cells": 0,
+          "broad_stress_exact_frontier_terminal_default_crosses_zero_cells": 72,
+          "development_admissible_exact_frontier_funded_miscoverage_guardrail_lower_cells": 0,
+          "development_admissible_exact_frontier_funded_miscoverage_guardrail_higher_cells": 27,
+          "development_admissible_exact_frontier_funded_miscoverage_crosses_zero_cells": 45,
+          "broad_stress_exact_frontier_funded_miscoverage_guardrail_lower_cells": 0,
+          "broad_stress_exact_frontier_funded_miscoverage_guardrail_higher_cells": 0,
+          "broad_stress_exact_frontier_funded_miscoverage_crosses_zero_cells": 72
+        },
+        {
+          "charged_off_lag_months": 8,
+          "primary_candidates": 376890,
+          "primary_resolved": 364570,
+          "primary_unresolved": 12320,
+          "primary_defaults": 56728,
+          "coverage_cells": 40,
+          "coverage_upper_below_0_90_cells": 40,
+          "coverage_upper_at_or_above_0_90_cells": 0,
+          "coverage_upper_max": 0.8981506540369869,
+          "coverage_upper_max_learner": "woe_scorecard_borrower_platt",
+          "coverage_upper_max_window": "w02_2012m02_m07",
+          "two_ruler_payoff_gamma_1_lower_cells": 32,
+          "two_ruler_payoff_gamma_1_higher_cells": 0,
+          "two_ruler_payoff_crosses_zero_cells": 16,
+          "two_ruler_payoff_exact_zero_cells": 0,
+          "two_ruler_default_gamma_1_lower_cells": 0,
+          "two_ruler_default_gamma_1_higher_cells": 33,
+          "two_ruler_default_crosses_zero_cells": 15,
+          "two_ruler_default_exact_zero_cells": 0,
+          "two_ruler_miscoverage_gamma_1_lower_cells": 0,
+          "two_ruler_miscoverage_gamma_1_higher_cells": 40,
+          "two_ruler_miscoverage_crosses_zero_cells": 8,
+          "two_ruler_miscoverage_exact_zero_cells": 0,
+          "development_admissible_exact_frontier_standardized_payoff_guardrail_lower_cells": 6,
+          "development_admissible_exact_frontier_standardized_payoff_guardrail_higher_cells": 0,
+          "development_admissible_exact_frontier_standardized_payoff_crosses_zero_cells": 66,
+          "broad_stress_exact_frontier_standardized_payoff_guardrail_lower_cells": 0,
+          "broad_stress_exact_frontier_standardized_payoff_guardrail_higher_cells": 0,
+          "broad_stress_exact_frontier_standardized_payoff_crosses_zero_cells": 72,
+          "development_admissible_exact_frontier_terminal_default_guardrail_lower_cells": 0,
+          "development_admissible_exact_frontier_terminal_default_guardrail_higher_cells": 0,
+          "development_admissible_exact_frontier_terminal_default_crosses_zero_cells": 72,
+          "broad_stress_exact_frontier_terminal_default_guardrail_lower_cells": 0,
+          "broad_stress_exact_frontier_terminal_default_guardrail_higher_cells": 0,
+          "broad_stress_exact_frontier_terminal_default_crosses_zero_cells": 72,
+          "development_admissible_exact_frontier_funded_miscoverage_guardrail_lower_cells": 0,
+          "development_admissible_exact_frontier_funded_miscoverage_guardrail_higher_cells": 27,
+          "development_admissible_exact_frontier_funded_miscoverage_crosses_zero_cells": 45,
+          "broad_stress_exact_frontier_funded_miscoverage_guardrail_lower_cells": 0,
+          "broad_stress_exact_frontier_funded_miscoverage_guardrail_higher_cells": 0,
+          "broad_stress_exact_frontier_funded_miscoverage_crosses_zero_cells": 72
+        },
+        {
+          "charged_off_lag_months": 12,
+          "primary_candidates": 376890,
+          "primary_resolved": 363288,
+          "primary_unresolved": 13602,
+          "primary_defaults": 55446,
+          "coverage_cells": 40,
+          "coverage_upper_below_0_90_cells": 39,
+          "coverage_upper_at_or_above_0_90_cells": 1,
+          "coverage_upper_max": 0.9004112605800101,
+          "coverage_upper_max_learner": "woe_scorecard_borrower_platt",
+          "coverage_upper_max_window": "w02_2012m02_m07",
+          "two_ruler_payoff_gamma_1_lower_cells": 31,
+          "two_ruler_payoff_gamma_1_higher_cells": 0,
+          "two_ruler_payoff_crosses_zero_cells": 17,
+          "two_ruler_payoff_exact_zero_cells": 0,
+          "two_ruler_default_gamma_1_lower_cells": 0,
+          "two_ruler_default_gamma_1_higher_cells": 32,
+          "two_ruler_default_crosses_zero_cells": 16,
+          "two_ruler_default_exact_zero_cells": 0,
+          "two_ruler_miscoverage_gamma_1_lower_cells": 0,
+          "two_ruler_miscoverage_gamma_1_higher_cells": 40,
+          "two_ruler_miscoverage_crosses_zero_cells": 8,
+          "two_ruler_miscoverage_exact_zero_cells": 0,
+          "development_admissible_exact_frontier_standardized_payoff_guardrail_lower_cells": 0,
+          "development_admissible_exact_frontier_standardized_payoff_guardrail_higher_cells": 0,
+          "development_admissible_exact_frontier_standardized_payoff_crosses_zero_cells": 72,
+          "broad_stress_exact_frontier_standardized_payoff_guardrail_lower_cells": 0,
+          "broad_stress_exact_frontier_standardized_payoff_guardrail_higher_cells": 0,
+          "broad_stress_exact_frontier_standardized_payoff_crosses_zero_cells": 72,
+          "development_admissible_exact_frontier_terminal_default_guardrail_lower_cells": 0,
+          "development_admissible_exact_frontier_terminal_default_guardrail_higher_cells": 0,
+          "development_admissible_exact_frontier_terminal_default_crosses_zero_cells": 72,
+          "broad_stress_exact_frontier_terminal_default_guardrail_lower_cells": 0,
+          "broad_stress_exact_frontier_terminal_default_guardrail_higher_cells": 0,
+          "broad_stress_exact_frontier_terminal_default_crosses_zero_cells": 72,
+          "development_admissible_exact_frontier_funded_miscoverage_guardrail_lower_cells": 0,
+          "development_admissible_exact_frontier_funded_miscoverage_guardrail_higher_cells": 26,
+          "development_admissible_exact_frontier_funded_miscoverage_crosses_zero_cells": 46,
+          "broad_stress_exact_frontier_funded_miscoverage_guardrail_lower_cells": 0,
+          "broad_stress_exact_frontier_funded_miscoverage_guardrail_higher_cells": 0,
+          "broad_stress_exact_frontier_funded_miscoverage_crosses_zero_cells": 72
+        }
+      ]
+    }
   },
   "data_contract": {
     "raw_rows": 2925493,
@@ -1699,23 +1971,68 @@
   "source_artifacts": {
     "active_source_registry": {
       "path": "configs/ijds_active_evidence_sources.yaml",
-      "bytes": 5376,
-      "sha256": "2426c64267cc1f0952f4b362cd21288fbf59b539c74e5c37d046545e1a97aa3b"
+      "bytes": 6769,
+      "sha256": "90dcec9b8cf1947ae6037c5f9cba9bb40bd038b41cd6b82d439d507d3582a79c"
+    },
+    "claim_ledger_contract": {
+      "path": "configs/ijds_claim_ledger.yaml",
+      "bytes": 6921,
+      "sha256": "a12d10405d5cbec6f63c073c6857d61954e5f18fa3d2fb96d853dc0348e75e58"
+    },
+    "publication_targets_contract": {
+      "path": "configs/crpto_publication_targets.yaml",
+      "bytes": 6792,
+      "sha256": "5226c64c60a4027e48b8852f21078e4a81924a6c31158cee4b9ae009c7b7fbd8"
     },
     "evidence_builder": {
       "path": "scripts/build_ijds_binary_geometry_frontier_v4_evidence.py",
-      "bytes": 60806,
-      "sha256": "9a8608ab562413fc92c5abbf1d5e742450c9d67632c3e523e6a74f0641108c11"
+      "bytes": 72819,
+      "sha256": "bc17c6b7ee8cc094c23b7d3c1b2fcc17756d18b2739c61877acc7f31064c8c56"
+    },
+    "publication_integrity_checker": {
+      "path": "scripts/check_publication_integrity.py",
+      "bytes": 15950,
+      "sha256": "3c041a925dd5e086cd47ea96c48f74da928fa465721a9569461e0a19cf269ffa"
+    },
+    "publication_generation_helper": {
+      "path": "src/ijds_audit/publication_generation.py",
+      "bytes": 6875,
+      "sha256": "c78382f511f60e03a1442cfd068fff3aad47968277a648caa7eed980e3bfbc9b"
+    },
+    "v4_config_loader": {
+      "path": "src/ijds_audit/config.py",
+      "bytes": 22479,
+      "sha256": "028f2a862c49810409f4ce4a4574f101bfa26c7884c4fd047f3cff19b16b4b20"
+    },
+    "grid_contracts": {
+      "path": "src/ijds_audit/grid_contracts.py",
+      "bytes": 2753,
+      "sha256": "e667ce83f660bf04a1425ae4c1afa8d7f668986c69b63e0dd5d5cd14fda0b771"
+    },
+    "endpoint_availability_sensitivity/loader": {
+      "path": "src/ijds_audit/sensitivity_evidence.py",
+      "bytes": 18513,
+      "sha256": "e7773ee99b34a5822f8f7d3a074b42c93bdfd9807a314030502d088e1d35b930"
+    },
+    "claim_ledger_loader": {
+      "path": "src/ijds_audit/claim_ledger.py",
+      "bytes": 8378,
+      "sha256": "ab9cb1f1897950301c05e8fb7103a77020876692ec97ae6dd5cc07c4239892cf"
     },
     "source_registry_loader": {
       "path": "src/ijds_audit/publication_sources.py",
-      "bytes": 4221,
-      "sha256": "876d4b2f683ced3ea083ccd7ef6ff13b9077f18e7449e2119ec8c254ba0f87a2"
+      "bytes": 14267,
+      "sha256": "3c2602acf4025fbbd5d78cdc9e074f3486b2831a1053b9b85c8217fad736b697"
     },
     "artifact_descriptor_helper": {
       "path": "src/utils/artifact_descriptor.py",
       "bytes": 873,
       "sha256": "10a4af2f5699caa2bdc6df82394ce6caa9ed275068de8ab8d6046a5755e5f2d6"
+    },
+    "pipeline_runtime_helper": {
+      "path": "src/utils/pipeline_runtime.py",
+      "bytes": 4402,
+      "sha256": "7c350fdf6736d210418e8cefec5dc8d85c7f1bc2a1bf94aa6ae44a12d4948cde"
     },
     "config": {
       "path": "configs/experiments/ijds_binary_geometry_frontier_v4_2026-07-14_v3.yaml",
@@ -2017,6 +2334,51 @@
       "bytes": 6476,
       "sha256": "ddafa5977bb3ae3e1698caf412c3824708633bb17310d88d43deb301e5f389ea"
     },
+    "endpoint_availability_sensitivity/summary": {
+      "path": "models/experiments/ijds_audit/ijds-endpoint-availability-sensitivity-2026-07-14-v1/endpoint_sensitivity_summary.json",
+      "bytes": 10692,
+      "sha256": "f8192d9b97289ea49480b92975258801c2f9e6640acdee7606307d0368575ff6"
+    },
+    "endpoint_availability_sensitivity/endpoint_census": {
+      "path": "data/processed/experiments/ijds_audit/ijds-endpoint-availability-sensitivity-2026-07-14-v1/evaluation/endpoint_census.parquet",
+      "bytes": 5381,
+      "sha256": "0bba3e50961bd5d0293da57b4e34e06f9f0271e1119e6d0b31e891fa07068669"
+    },
+    "endpoint_availability_sensitivity/coverage_cells": {
+      "path": "data/processed/experiments/ijds_audit/ijds-endpoint-availability-sensitivity-2026-07-14-v1/evaluation/coverage_cells.parquet",
+      "bytes": 49351,
+      "sha256": "2dc769f8fc350dbc961e9249fddfb7d97ffc47971ce7c65ca010532547054505"
+    },
+    "endpoint_availability_sensitivity/coverage_summary": {
+      "path": "data/processed/experiments/ijds_audit/ijds-endpoint-availability-sensitivity-2026-07-14-v1/evaluation/coverage_summary.parquet",
+      "bytes": 5148,
+      "sha256": "cd88d0cb8d76629d7b4216ced0d6e4f99f2d08303467948da73ad35927d1830e"
+    },
+    "endpoint_availability_sensitivity/two_ruler_window_contrasts": {
+      "path": "data/processed/experiments/ijds_audit/ijds-endpoint-availability-sensitivity-2026-07-14-v1/evaluation/two_ruler_window_contrasts.parquet",
+      "bytes": 29560,
+      "sha256": "301a74915340de77a0e3479bb0096f00d07815fec27ac038af2d2a13658e5836"
+    },
+    "endpoint_availability_sensitivity/two_ruler_directions": {
+      "path": "data/processed/experiments/ijds_audit/ijds-endpoint-availability-sensitivity-2026-07-14-v1/evaluation/two_ruler_directions.parquet",
+      "bytes": 10957,
+      "sha256": "32eda9aeb6c7375794dff6e9b9b5b81ef6fae6cbc557e6a9182f657f67ac68fa"
+    },
+    "endpoint_availability_sensitivity/two_ruler_direction_census": {
+      "path": "data/processed/experiments/ijds_audit/ijds-endpoint-availability-sensitivity-2026-07-14-v1/evaluation/two_ruler_direction_census.parquet",
+      "bytes": 3209,
+      "sha256": "6826a0caff6d227ab7c9851f9f7400066796cb6e888060f9c5a2099e0750ad89"
+    },
+    "endpoint_availability_sensitivity/exact_support_envelopes": {
+      "path": "data/processed/experiments/ijds_audit/ijds-endpoint-availability-sensitivity-2026-07-14-v1/evaluation/exact_support_envelopes.parquet",
+      "bytes": 36417,
+      "sha256": "3c8dd8da77beb8f8cc7c6e394c8d85fce52fea7078fc86077a00a276068aecda"
+    },
+    "endpoint_availability_sensitivity/exact_support_census": {
+      "path": "data/processed/experiments/ijds_audit/ijds-endpoint-availability-sensitivity-2026-07-14-v1/evaluation/exact_support_census.parquet",
+      "bytes": 3887,
+      "sha256": "11cfc06b80a967c72aafbfc944bc835176a0b94986d920724179497513fa29f9"
+    },
     "solver_tie_audit/manifest": {
       "path": "reports/crpto/ijds_policy_support_tie_evidence.json",
       "bytes": 12845,
@@ -2154,6 +2516,11 @@
       "bytes": 6365,
       "sha256": "7488224317a6e06af77dff5203261cabc6b73a7fda6b294cd88b2be868be352d"
     },
+    "table/endpoint_availability_sensitivity": {
+      "path": "reports/crpto/tables/crpto_ijds_v4_tableS6_endpoint_availability_sensitivity.csv",
+      "bytes": 2886,
+      "sha256": "df753518b2865dc034601f5bc14ac0ba65c01331eaf7450af14703881b9a3d8e"
+    },
     "figure/coverage/png": {
       "path": "reports/crpto/figures/crpto_ijds_v4_fig1_coverage.png",
       "bytes": 142518,
@@ -2186,5 +2553,420 @@
     }
   },
   "protected_stages_run": [],
-  "protected_artifacts_written": []
+  "protected_artifacts_written": [],
+  "claim_ledger": {
+    "schema_version": "2026-07-15.1",
+    "status": "active_ijds_claim_contract",
+    "numeric_authority": "parent_evidence_manifest_only",
+    "contract": {
+      "path": "configs/ijds_claim_ledger.yaml",
+      "bytes": 6921,
+      "sha256": "a12d10405d5cbec6f63c073c6857d61954e5f18fa3d2fb96d853dc0348e75e58"
+    },
+    "claims": [
+      {
+        "id": "data.exhaustive_status_independent_population",
+        "status": "active",
+        "kind": "empirical",
+        "lineages": [
+          "raw_data_audit",
+          "binary_geometry"
+        ],
+        "scope": "declared_36_month_temporal_design",
+        "rule": "equals",
+        "result_pointer": "/data_contract/sampling",
+        "result": "none_all_eligible_rows_within_each_declared_temporal_role",
+        "forbidden_inference": [
+          "raw_archive_census_is_one_common_estimand",
+          "external_validity"
+        ],
+        "surfaces": {
+          "required": [
+            "body",
+            "supplement",
+            "registry",
+            "claim_matrix"
+          ],
+          "allowed": [
+            "body",
+            "supplement",
+            "registry",
+            "claim_matrix"
+          ]
+        }
+      },
+      {
+        "id": "endpoint.not_verified_snapshot",
+        "status": "active",
+        "kind": "boundary",
+        "lineages": [
+          "raw_data_audit",
+          "binary_geometry.evaluation"
+        ],
+        "scope": "reconstructed_status_availability_at_2020_09_30",
+        "rule": "equals",
+        "result_pointer": "/design/archive_is_verified_point_in_time_snapshot",
+        "result": false,
+        "forbidden_inference": [
+          "verified_point_in_time_snapshot",
+          "observed_operational_chargeoff_date"
+        ],
+        "surfaces": {
+          "required": [
+            "body",
+            "supplement",
+            "registry",
+            "claim_matrix"
+          ],
+          "allowed": [
+            "body",
+            "supplement",
+            "registry",
+            "claim_matrix"
+          ]
+        }
+      },
+      {
+        "id": "coverage.five_models_all_windows_below_nominal",
+        "status": "active",
+        "kind": "empirical",
+        "lineages": [
+          "binary_geometry.evaluation",
+          "credit_controls.evaluation"
+        ],
+        "scope": "all_candidate_sharp_bounds_under_six_month_endpoint",
+        "rule": "equals",
+        "result_pointer": "/credit_risk_controls/all_five_all_eight_upper_below_nominal",
+        "result": true,
+        "forbidden_inference": [
+          "universal_conformal_invalidity",
+          "selected_model_winner",
+          "funded_set_validity"
+        ],
+        "surfaces": {
+          "required": [
+            "body",
+            "supplement",
+            "registry",
+            "claim_matrix"
+          ],
+          "allowed": [
+            "body",
+            "supplement",
+            "registry",
+            "claim_matrix"
+          ]
+        }
+      },
+      {
+        "id": "geometry.prevalence_sensitive_mechanism",
+        "status": "active",
+        "kind": "theorem",
+        "lineages": [
+          "binary_geometry.outcome_free",
+          "label_lag_sensitivity"
+        ],
+        "scope": "constant_score_binary_threshold_and_observed_stratum_path",
+        "rule": "documented",
+        "result_pointer": null,
+        "result": null,
+        "forbidden_inference": [
+          "finite_sample_causal_explanation",
+          "universal_threshold_transition"
+        ],
+        "surfaces": {
+          "required": [
+            "body",
+            "supplement",
+            "registry",
+            "claim_matrix"
+          ],
+          "allowed": [
+            "body",
+            "supplement",
+            "registry",
+            "claim_matrix"
+          ]
+        }
+      },
+      {
+        "id": "timing.fit_label_crossing_retained",
+        "status": "active",
+        "kind": "empirical",
+        "lineages": [
+          "label_lag_sensitivity"
+        ],
+        "scope": "lags_passing_locked_monthly_retention_rule",
+        "rule": "equals",
+        "result_pointer": "/binary_phase_transition/label_lag_sensitivity/w7_to_w8_threshold_crossing_at_all_admissible_lags",
+        "result": true,
+        "forbidden_inference": [
+          "arbitrary_label_lag_invariance",
+          "causal_attribution"
+        ],
+        "surfaces": {
+          "required": [
+            "body",
+            "supplement",
+            "registry"
+          ],
+          "allowed": [
+            "body",
+            "supplement",
+            "registry",
+            "claim_matrix"
+          ]
+        }
+      },
+      {
+        "id": "timing.endpoint_six_month_reconciles_v3",
+        "status": "active",
+        "kind": "empirical",
+        "lineages": [
+          "endpoint_availability",
+          "binary_geometry.evaluation",
+          "two_ruler.evaluation"
+        ],
+        "scope": "complete_endpoint_availability_lag_grid",
+        "rule": "equals",
+        "result_pointer": "/sensitivity/evaluation_endpoint_availability/six_month_endpoint_reconciles_exactly_to_active_v3",
+        "result": true,
+        "forbidden_inference": [
+          "endpoint_selection",
+          "independent_replications"
+        ],
+        "surfaces": {
+          "required": [
+            "body",
+            "supplement",
+            "registry",
+            "claim_matrix"
+          ],
+          "allowed": [
+            "body",
+            "supplement",
+            "registry",
+            "claim_matrix"
+          ]
+        }
+      },
+      {
+        "id": "timing.fit_and_endpoint_lags_not_factorial",
+        "status": "active",
+        "kind": "boundary",
+        "lineages": [
+          "label_lag_sensitivity",
+          "endpoint_availability"
+        ],
+        "scope": "two_separate_one_factor_sensitivities",
+        "rule": "equals",
+        "result_pointer": "/sensitivity/evaluation_endpoint_availability/fit_label_lag_crossed_factorially",
+        "result": false,
+        "forbidden_inference": [
+          "joint_lag_robustness",
+          "full_factorial_robustness"
+        ],
+        "surfaces": {
+          "required": [
+            "body",
+            "supplement",
+            "registry",
+            "claim_matrix"
+          ],
+          "allowed": [
+            "body",
+            "supplement",
+            "registry",
+            "claim_matrix"
+          ]
+        }
+      },
+      {
+        "id": "decision.no_selected_policy",
+        "status": "active",
+        "kind": "boundary",
+        "lineages": [
+          "two_ruler.outcome_free",
+          "two_ruler.evaluation",
+          "binary_geometry.evaluation"
+        ],
+        "scope": "all_reported_rulers_coordinates_windows_and_supports",
+        "rule": "equals",
+        "result_pointer": "/decision_challenger/interpretation/policy_winner",
+        "result": null,
+        "forbidden_inference": [
+          "policy_winner",
+          "preferred_ruler",
+          "preferred_coordinate",
+          "universal_direction"
+        ],
+        "surfaces": {
+          "required": [
+            "body",
+            "supplement",
+            "registry",
+            "claim_matrix"
+          ],
+          "allowed": [
+            "body",
+            "supplement",
+            "registry",
+            "claim_matrix"
+          ]
+        }
+      },
+      {
+        "id": "comparator.broad_support_all_cross_zero",
+        "status": "active",
+        "kind": "empirical",
+        "lineages": [
+          "binary_geometry.outcome_free",
+          "binary_geometry.evaluation"
+        ],
+        "scope": "declared_point_cap_support_0_05_to_0_12",
+        "rule": "equals",
+        "result_pointer": "/portfolio/broad_stress_all_envelopes_cross_zero",
+        "result": true,
+        "forbidden_inference": [
+          "universal_comparator_quantification",
+          "policy_equivalence"
+        ],
+        "surfaces": {
+          "required": [
+            "body",
+            "supplement",
+            "registry",
+            "claim_matrix"
+          ],
+          "allowed": [
+            "body",
+            "supplement",
+            "registry",
+            "claim_matrix"
+          ]
+        }
+      },
+      {
+        "id": "simulation.portfolio_claim_forbidden",
+        "status": "active",
+        "kind": "boundary",
+        "lineages": [
+          "binary_geometry.evaluation"
+        ],
+        "scope": "locked_factorial_simulation",
+        "rule": "equals",
+        "result_pointer": "/simulation/portfolio_claim_allowed",
+        "result": false,
+        "forbidden_inference": [
+          "empirical_portfolio_mechanism",
+          "retuned_simulation_claim"
+        ],
+        "surfaces": {
+          "required": [
+            "body",
+            "supplement",
+            "registry",
+            "claim_matrix"
+          ],
+          "allowed": [
+            "body",
+            "supplement",
+            "registry",
+            "claim_matrix"
+          ]
+        }
+      },
+      {
+        "id": "theory.sharp_common_outcome_bounds",
+        "status": "active",
+        "kind": "theorem",
+        "lineages": [
+          "binary_geometry.evaluation",
+          "two_ruler.evaluation"
+        ],
+        "scope": "binary_completion_bounds_for_candidates_and_paired_allocations",
+        "rule": "documented",
+        "result_pointer": null,
+        "result": null,
+        "forbidden_inference": [
+          "sampling_confidence_interval",
+          "missing_at_random_identification"
+        ],
+        "surfaces": {
+          "required": [
+            "body",
+            "supplement",
+            "registry"
+          ],
+          "allowed": [
+            "body",
+            "supplement",
+            "registry",
+            "claim_matrix"
+          ]
+        }
+      },
+      {
+        "id": "theory.basis_endpoint_sufficiency",
+        "status": "active",
+        "kind": "theorem",
+        "lineages": [
+          "binary_geometry.outcome_free",
+          "binary_geometry.evaluation"
+        ],
+        "scope": "declared_piecewise_linear_point_cap_support",
+        "rule": "documented",
+        "result_pointer": null,
+        "result": null,
+        "forbidden_inference": [
+          "continuous_joint_frontier_uniqueness",
+          "arbitrary_comparator_support"
+        ],
+        "surfaces": {
+          "required": [
+            "body",
+            "supplement",
+            "registry"
+          ],
+          "allowed": [
+            "body",
+            "supplement",
+            "registry",
+            "claim_matrix"
+          ]
+        }
+      },
+      {
+        "id": "boundary.no_selected_set_validity",
+        "status": "active",
+        "kind": "boundary",
+        "lineages": [
+          "binary_geometry",
+          "two_ruler"
+        ],
+        "scope": "candidate_conformal_audit_followed_by_outcome_free_allocation",
+        "rule": "documented",
+        "result_pointer": null,
+        "result": null,
+        "forbidden_inference": [
+          "selected_set_conformal_guarantee",
+          "post_selection_coverage"
+        ],
+        "surfaces": {
+          "required": [
+            "body",
+            "supplement",
+            "registry",
+            "claim_matrix"
+          ],
+          "allowed": [
+            "body",
+            "supplement",
+            "registry",
+            "claim_matrix"
+          ]
+        }
+      }
+    ]
+  }
 }

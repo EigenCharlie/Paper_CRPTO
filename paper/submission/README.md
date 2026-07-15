@@ -8,6 +8,7 @@ generated from `paper/CRPTO_ijds.qmd` and must not be edited directly.
 - body: `paper/CRPTO_ijds.qmd`;
 - supplement: `paper/supplement_ijds.qmd`;
 - claim registry: `docs/research/active_claims_2026-07-14.md`;
+- executable claim ledger: `configs/ijds_claim_ledger.yaml`;
 - evidence registry: `configs/ijds_active_evidence_sources.yaml`;
 - evidence manifest: `reports/crpto/ijds_binary_geometry_frontier_v4_evidence.json`;
 - TeX generator: `scripts/build_ijds_submission_tex.py`;
@@ -16,10 +17,11 @@ generated from `paper/CRPTO_ijds.qmd` and must not be edited directly.
 The active study scans 2,925,493 raw rows and uses the exhaustive 640,543-loan
 eligible design. It retains 376,890 primary OOT candidates, reconstructs
 364,814 outcomes as observable by the cutoff, and bounds 12,076 unresolved
-outcomes. Five predeclared learner specifications support the coverage audit;
+outcomes. Five retrospectively protocol-locked learner specifications support the coverage audit;
 only CatBoost enters optimization. The decision audit reports five gamma
 values, two rulers, three coordinates, exact declared point-cap supports, and
-no winner.
+no winner. Evaluation-endpoint lags 0, 3, 6, 8, and 12 are reported without
+selection; conformal-fit label timing is a separate sensitivity.
 
 ## IJDS Requirements
 

@@ -2,68 +2,90 @@
 
 from __future__ import annotations
 
-from collections.abc import Mapping
-from pathlib import Path
+import posixpath
+import re
+from collections.abc import Iterator, Mapping
+from dataclasses import dataclass
+from pathlib import Path, PurePosixPath
 from typing import Any
 
 import yaml
 
 from src.utils.artifact_descriptor import relative_artifact_descriptor
 
-LINEAGE_PHASES = (
-    ("binary_geometry", "outcome_free"),
-    ("binary_geometry", "evaluation"),
-    ("two_ruler", "outcome_free"),
-    ("two_ruler", "evaluation"),
-    ("credit_controls", "outcome_free"),
-    ("credit_controls", "evaluation"),
+_REGISTRY_SECTIONS = ("lineages", "diagnostics", "sensitivities")
+_IDENTITY_MARKERS = frozenset(
+    {
+        "run_tag",
+        "protocol_tag",
+        "protocol_commit",
+        "status",
+        "paper_role",
+        "dvc_tracked",
+        "freeze_sha256",
+    }
 )
+_LEGACY_DVC_PHASES = frozenset({"outcome_free", "evaluation"})
+_DVC_ROOTS = ("data/processed", "models")
+_PROTOCOL_COMMIT_PATTERN = re.compile(r"[0-9a-f]{40}")
+_DVC_DIRECTORY_MD5_PATTERN = re.compile(r"[0-9a-f]{32}\.dir")
 
 
-def load_source_registry(path: Path) -> dict[str, Any]:
-    """Load and structurally validate the active source registry."""
+@dataclass(frozen=True)
+class _RegistryUnit:
+    location: tuple[str, ...]
+    run_tag: str
+    protocol_tag: str | None
+    paper_role: str | None
+    declared_dvc_tracked: bool | None
+
+
+def load_source_registry(
+    path: Path,
+    *,
+    repo_root: Path | None = None,
+) -> dict[str, Any]:
+    """Load and structurally validate the active source registry.
+
+    Passing ``repo_root`` additionally validates the contents of every declared
+    DVC pointer. The optional argument preserves the structural-only API used by
+    lightweight DVC target discovery.
+    """
     payload = yaml.safe_load(path.read_text(encoding="utf-8"))
     if not isinstance(payload, dict):
         raise TypeError("Active evidence source registry must be a mapping.")
     if payload.get("status") != "active_ijds_paper_evidence_source_registry":
         raise ValueError("Unexpected active evidence source registry status.")
-    lineages = payload.get("lineages")
-    if not isinstance(lineages, Mapping):
-        raise TypeError("Active evidence source registry omits lineages.")
-    run_tags = active_lineage_run_tags(payload)
-    if len(set(run_tags)) != len(run_tags):
-        raise ValueError("Active evidence lineage run tags must be unique.")
+
+    units = _validated_registry_units(payload)
+    run_tags = tuple(unit.run_tag for unit in _dvc_tracked_units(units))
     pointers = payload.get("dvc_pointers")
-    if not isinstance(pointers, list) or not all(isinstance(item, str) for item in pointers):
+    if not isinstance(pointers, list) or not all(
+        isinstance(item, str) and bool(item) for item in pointers
+    ):
         raise TypeError("Active evidence source registry dvc_pointers must be a string list.")
+
     expected = {
-        f"{prefix}/experiments/ijds_audit/{tag}.dvc"
-        for tag in run_tags
-        for prefix in ("data/processed", "models")
+        f"{prefix}/experiments/ijds_audit/{tag}.dvc" for tag in run_tags for prefix in _DVC_ROOTS
     }
-    if set(pointers) != expected or len(pointers) != len(expected):
-        raise ValueError("Active DVC pointers do not match the six registered run tags.")
+    actual = set(pointers)
+    if actual != expected or len(pointers) != len(expected):
+        missing = sorted(expected - actual)
+        unexpected = sorted(actual - expected)
+        details = f" Missing: {missing}; unexpected: {unexpected}."
+        raise ValueError(
+            "Active DVC pointers do not match the DVC-tracked registry units." + details
+        )
+
+    if repo_root is not None:
+        _verify_dvc_pointers(pointers, repo_root=repo_root)
     return payload
 
 
 def active_lineage_run_tags(payload: Mapping[str, Any]) -> tuple[str, ...]:
-    """Return the six outcome-free/evaluation run tags in causal order."""
-    lineages = payload.get("lineages")
-    if not isinstance(lineages, Mapping):
-        raise TypeError("Active evidence source registry omits lineages.")
-    tags: list[str] = []
-    for family, phase in LINEAGE_PHASES:
-        family_payload = lineages.get(family)
-        if not isinstance(family_payload, Mapping):
-            raise TypeError(f"Missing lineage family: {family}")
-        identity = family_payload.get(phase)
-        if not isinstance(identity, Mapping):
-            raise TypeError(f"Missing lineage phase: {family}.{phase}")
-        for field in ("run_tag", "protocol_tag", "protocol_commit"):
-            if not isinstance(identity.get(field), str) or not identity[field]:
-                raise TypeError(f"Missing lineage identity: {family}.{phase}.{field}")
-        tags.append(str(identity["run_tag"]))
-    return tuple(tags)
+    """Return DVC-tracked run tags in causal/config declaration order."""
+    units = _validated_registry_units(payload)
+    return tuple(unit.run_tag for unit in _dvc_tracked_units(units))
 
 
 def load_verified_source_registry(
@@ -72,7 +94,7 @@ def load_verified_source_registry(
     repo_root: Path,
 ) -> tuple[dict[str, Any], dict[str, Path]]:
     """Return registry metadata and hash-verified source paths."""
-    payload = load_source_registry(path)
+    payload = load_source_registry(path, repo_root=repo_root)
     sources = payload.get("sources")
     if not isinstance(sources, Mapping) or not sources:
         raise ValueError("Active evidence source registry is empty.")
@@ -82,7 +104,10 @@ def load_verified_source_registry(
         if not isinstance(raw_descriptor, Mapping):
             raise TypeError(f"Evidence source descriptor {name!r} must be a mapping.")
         descriptor = dict(raw_descriptor)
-        source_path = (repo_root / str(descriptor["path"])).resolve()
+        descriptor_path = descriptor.get("path")
+        if not isinstance(descriptor_path, str) or not descriptor_path:
+            raise TypeError(f"Evidence source descriptor {name!r} omits path.")
+        source_path = (repo_root / descriptor_path).resolve()
         source_path.relative_to(repo_root.resolve())
         actual = relative_artifact_descriptor(source_path, repo_root=repo_root)
         for field in ("path", "bytes", "sha256"):
@@ -93,3 +118,246 @@ def load_verified_source_registry(
         seen_paths.add(str(actual["path"]))
         verified[str(name)] = source_path
     return payload, verified
+
+
+def _validated_registry_units(payload: Mapping[str, Any]) -> tuple[_RegistryUnit, ...]:
+    lineages = payload.get("lineages")
+    if not isinstance(lineages, Mapping):
+        raise TypeError("Active evidence source registry omits lineages.")
+
+    units = list(_walk_registry_group(lineages, location=("lineages",)))
+    for section in _REGISTRY_SECTIONS[1:]:
+        if section not in payload:
+            continue
+        section_payload = payload[section]
+        if not isinstance(section_payload, Mapping):
+            raise TypeError(f"Active evidence source registry {section} must be a mapping.")
+        units.extend(_walk_registry_group(section_payload, location=(section,)))
+    if not units:
+        raise ValueError("Active evidence source registry declares no identities.")
+
+    uses_explicit_contract = any(
+        unit.paper_role is not None or unit.declared_dvc_tracked is not None for unit in units
+    )
+    if uses_explicit_contract:
+        incomplete = [
+            _format_location(unit.location)
+            for unit in units
+            if unit.paper_role is None or unit.declared_dvc_tracked is None
+        ]
+        if incomplete:
+            raise TypeError(
+                "Explicit registry identities require both paper_role and dvc_tracked: "
+                f"{incomplete}."
+            )
+
+    seen_run_tags: dict[str, tuple[str, ...]] = {}
+    seen_protocol_tags: dict[str, tuple[str, ...]] = {}
+    for unit in units:
+        previous = seen_run_tags.get(unit.run_tag)
+        if previous is not None:
+            raise ValueError(
+                "Active evidence registry run tags must be globally unique: "
+                f"{unit.run_tag!r} appears at {_format_location(previous)} and "
+                f"{_format_location(unit.location)}."
+            )
+        seen_run_tags[unit.run_tag] = unit.location
+        if unit.protocol_tag is None:
+            continue
+        previous = seen_protocol_tags.get(unit.protocol_tag)
+        if previous is not None:
+            raise ValueError(
+                "Active evidence registry protocol tags must be globally unique: "
+                f"{unit.protocol_tag!r} appears at {_format_location(previous)} and "
+                f"{_format_location(unit.location)}."
+            )
+        seen_protocol_tags[unit.protocol_tag] = unit.location
+    return tuple(units)
+
+
+def _walk_registry_group(
+    group: Mapping[str, Any],
+    *,
+    location: tuple[str, ...],
+) -> Iterator[_RegistryUnit]:
+    if _looks_like_identity(group):
+        yield _parse_registry_unit(group, location=location)
+        return
+    if not group:
+        raise TypeError(f"Registry identity group {_format_location(location)} is empty.")
+
+    for raw_name, child in group.items():
+        if not isinstance(raw_name, str) or not raw_name:
+            raise TypeError(
+                f"Registry identity group {_format_location(location)} has an invalid name."
+            )
+        child_location = (*location, raw_name)
+        if not isinstance(child, Mapping):
+            raise TypeError(
+                f"Registry identity {_format_location(child_location)} must be a mapping."
+            )
+        yield from _walk_registry_group(child, location=child_location)
+
+
+def _looks_like_identity(payload: Mapping[str, Any]) -> bool:
+    return not payload or any(field in payload for field in _IDENTITY_MARKERS)
+
+
+def _parse_registry_unit(
+    identity: Mapping[str, Any],
+    *,
+    location: tuple[str, ...],
+) -> _RegistryUnit:
+    run_tag = _required_text(identity, "run_tag", location=location)
+    if run_tag in {".", ".."} or "/" in run_tag or "\\" in run_tag:
+        raise ValueError(
+            f"Registry identity {_format_location(location)}.run_tag must name one directory."
+        )
+
+    has_protocol_tag = "protocol_tag" in identity
+    has_protocol_commit = "protocol_commit" in identity
+    if has_protocol_tag != has_protocol_commit:
+        missing_field = "protocol_commit" if has_protocol_tag else "protocol_tag"
+        raise TypeError(
+            f"Missing registry identity: {_format_location((*location, missing_field))}."
+        )
+
+    protocol_tag: str | None = None
+    if has_protocol_tag:
+        protocol_tag = _required_text(identity, "protocol_tag", location=location)
+        protocol_commit = _required_text(identity, "protocol_commit", location=location)
+        if _PROTOCOL_COMMIT_PATTERN.fullmatch(protocol_commit) is None:
+            raise ValueError(
+                f"Registry identity {_format_location(location)}.protocol_commit "
+                "must be a 40-character lowercase hexadecimal commit."
+            )
+    else:
+        _required_text(identity, "status", location=location)
+
+    if "status" in identity:
+        _required_text(identity, "status", location=location)
+    paper_role = None
+    if "paper_role" in identity:
+        paper_role = _required_text(identity, "paper_role", location=location)
+
+    declared_dvc_tracked: bool | None = None
+    if "dvc_tracked" in identity:
+        raw_dvc_tracked = identity["dvc_tracked"]
+        if not isinstance(raw_dvc_tracked, bool):
+            raise TypeError(
+                f"Registry identity {_format_location(location)}.dvc_tracked must be boolean."
+            )
+        declared_dvc_tracked = raw_dvc_tracked
+    return _RegistryUnit(
+        location=location,
+        run_tag=run_tag,
+        protocol_tag=protocol_tag,
+        paper_role=paper_role,
+        declared_dvc_tracked=declared_dvc_tracked,
+    )
+
+
+def _required_text(
+    payload: Mapping[str, Any],
+    field: str,
+    *,
+    location: tuple[str, ...],
+) -> str:
+    value = payload.get(field)
+    if not isinstance(value, str) or not value or value != value.strip():
+        raise TypeError(f"Missing registry identity: {_format_location((*location, field))}.")
+    return value
+
+
+def _dvc_tracked_units(units: tuple[_RegistryUnit, ...]) -> tuple[_RegistryUnit, ...]:
+    uses_explicit_tracking = any(unit.declared_dvc_tracked is not None for unit in units)
+    if uses_explicit_tracking:
+        return tuple(unit for unit in units if unit.declared_dvc_tracked is True)
+    return tuple(unit for unit in units if _legacy_dvc_tracked(unit))
+
+
+def _legacy_dvc_tracked(unit: _RegistryUnit) -> bool:
+    middle = set(unit.location[1:-1])
+    return (
+        unit.location[0] == "lineages"
+        and unit.location[-1] in _LEGACY_DVC_PHASES
+        and not middle.intersection({"diagnostics", "sensitivities"})
+    )
+
+
+def _verify_dvc_pointers(pointers: list[str], *, repo_root: Path) -> None:
+    resolved_root = repo_root.resolve()
+    for pointer in pointers:
+        pointer_path = (resolved_root / pointer).resolve()
+        try:
+            pointer_path.relative_to(resolved_root)
+        except ValueError as exc:
+            raise ValueError(f"Active DVC pointer escapes the repository: {pointer}") from exc
+        if pointer_path.suffix != ".dvc" or not pointer_path.is_file():
+            raise FileNotFoundError(f"Invalid active DVC pointer: {pointer_path}")
+        _verify_dvc_pointer(pointer_path, display_path=pointer)
+
+
+def _verify_dvc_pointer(path: Path, *, display_path: str) -> None:
+    try:
+        payload = yaml.safe_load(path.read_text(encoding="utf-8"))
+    except yaml.YAMLError as exc:
+        raise ValueError(f"Malformed active DVC pointer YAML: {display_path}") from exc
+    if not isinstance(payload, Mapping):
+        raise TypeError(f"Active DVC pointer {display_path} must be a mapping.")
+
+    outs = payload.get("outs")
+    if not isinstance(outs, list) or len(outs) != 1:
+        raise ValueError(f"Active DVC pointer {display_path} must declare exactly one out.")
+    out = outs[0]
+    if not isinstance(out, Mapping):
+        raise TypeError(f"Active DVC pointer {display_path} out must be a mapping.")
+
+    raw_out_path = out.get("path")
+    if not isinstance(raw_out_path, str) or not raw_out_path:
+        raise TypeError(f"Active DVC pointer {display_path} out path must be a string.")
+    normalized_out_path = _normalize_dvc_out_path(raw_out_path, display_path=display_path)
+    if normalized_out_path != path.stem:
+        raise ValueError(
+            f"Active DVC pointer {display_path} out path {normalized_out_path!r} "
+            f"does not match run directory {path.stem!r}."
+        )
+
+    md5 = out.get("md5")
+    if not isinstance(md5, str) or _DVC_DIRECTORY_MD5_PATTERN.fullmatch(md5) is None:
+        raise ValueError(
+            f"Active DVC pointer {display_path} md5 must be a lowercase DVC directory hash."
+        )
+    if "hash" in out and out["hash"] != "md5":
+        raise ValueError(f"Active DVC pointer {display_path} hash must be 'md5'.")
+    _validate_nonnegative_integer(out, "size", display_path=display_path)
+    _validate_nonnegative_integer(out, "nfiles", display_path=display_path)
+
+
+def _normalize_dvc_out_path(value: str, *, display_path: str) -> str:
+    normalized = posixpath.normpath(value.replace("\\", "/"))
+    normalized_path = PurePosixPath(normalized)
+    if (
+        normalized in {"", ".", ".."}
+        or normalized_path.is_absolute()
+        or normalized.startswith("../")
+    ):
+        raise ValueError(f"Active DVC pointer {display_path} out path must be relative.")
+    return normalized_path.as_posix()
+
+
+def _validate_nonnegative_integer(
+    payload: Mapping[str, Any],
+    field: str,
+    *,
+    display_path: str,
+) -> None:
+    value = payload.get(field)
+    if isinstance(value, bool) or not isinstance(value, int) or value < 0:
+        raise ValueError(
+            f"Active DVC pointer {display_path} {field} must be a non-negative integer."
+        )
+
+
+def _format_location(location: tuple[str, ...]) -> str:
+    return ".".join(location)

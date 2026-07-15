@@ -70,32 +70,33 @@ Comparators}
 \ABSTRACT{%
 A predictive guarantee need not retain its meaning when its output
 becomes a constraint coefficient. We audit this handoff in Conformal
-Risk-Aware Predict-Then-Optimize (CRPTO): a Platt-scaled default score,
-90\%-target binary absolute-residual intervals, and monthly
-credit-allocation linear programs. The design fixes 2011 score strata,
-reports all eight eligible six-month residual windows, constructs
-status-independent menus, and freezes allocations before outcomes.
-Because the distributed archive is not a verified point-in-time
-snapshot, terminal status is reconstructed as observable by September
-30, 2020. Among 376,890 primary out-of-time candidates, 364,814 are
-resolved and 12,076 remain unresolved. Sharp all-candidate coverage
-upper bounds are below 0.90 in all 40 model-window cells across
-CatBoost, numeric logistic, monotonic CatBoost, and two WOE/IV
-scorecards (largest 0.8977). In one stratum, fit prevalence crosses
-\(\alpha=0.10\); the residual quantile changes from 0.8884 to 0.1118 and
-mean interval width from 0.9843 to 0.2076. This crossing persists under
-every predeclared reporting lag that retains more than 99\% of each
-fitting month. For decisions, we compare point- and full-upper-score
-endpoints under two rulers constructed without policy-development or OOT
-evaluation outcomes at three coordinates. Objective-matched .25 is
-sign-unidentified under unrestricted binary completion, .50 is adverse,
-and .75 is mostly sign-unidentified; normalized .25 and .50 are adverse,
-while .75 retains one sign-unidentified payoff cell. An exact point-cap
-audit places zero in all 216 broad-support envelopes. No model, window,
-gamma, ruler, coordinate, or policy is selected. CRPTO's contribution is
-an identification audit: binary conformal geometry is
-prevalence-sensitive, coverage does not transport here, and portfolio
-direction depends on how comparable decision stringency is defined.%
+Risk-Aware Predict-Then-Optimize (CRPTO), combining a Platt-scaled
+default score, 90\%-target binary absolute-residual intervals, and
+monthly credit-allocation linear programs. The retrospectively
+protocol-locked design fixes 2011 score strata, reports all eight
+six-month residual windows, constructs status-independent menus, and
+freezes allocations before outcomes. Because the archive is not a
+verified point-in-time snapshot, terminal status is reconstructed as
+observable by September 30, 2020. Of 376,890 primary out-of-time
+candidates, 364,814 are resolved and 12,076 remain unresolved. Under the
+active six-month endpoint, all 40 model-window coverage upper bounds are
+below 0.90 across five learners (maximum 0.8977). In one stratum,
+prevalence crosses \(\alpha=0.10\); the residual quantile changes from
+0.8884 to 0.1118 and mean width from 0.9843 to 0.2076. Fit-label
+sensitivity retains this crossing at the 0-, 3-, and 6-month lags
+passing the locked greater-than-99\% retention rule. Separately,
+evaluation-endpoint sensitivity retains 40/40 upper bounds below 0.90 at
+lags 0, 3, 6, and 8 but only 39/40 at 12 months (maximum 0.9004). The
+axes were not crossed factorially, and no lag is selected. The decision
+audit compares point- and full-upper-score endpoints under two
+outcome-blind rulers at three coordinates. Objective-matched .25 is
+sign-unidentified, .50 adverse, and .75 mostly sign-unidentified;
+normalized .25 and .50 are adverse, while .75 retains one
+sign-unidentified payoff cell. All 216 broad-support exact envelopes
+include zero. No model, window, gamma, ruler, coordinate, or policy is
+selected. CRPTO contributes an identification audit: binary conformal
+geometry is prevalence-sensitive, coverage does not transport here, and
+portfolio direction depends on comparator stringency.%
 }
 
 \KEYWORDS{conformal prediction; predict-then-optimize; comparator
@@ -211,11 +212,11 @@ The paper makes three contributions.
   portfolio direction is identified.
 \end{enumerate}
 
-This is a prespecified and hash-verified retrospective audit of a
-previously inspected archive, not a prospective trial, preregistration,
-or causal estimate. The purpose is to identify which conclusions are
-properties of the predictive object and which are artifacts of the
-decision comparison.
+This audit was retrospectively protocol-locked and hash-verified after
+the archive had been inspected; it is not a prospective trial,
+preregistration, or causal estimate. The purpose is to identify which
+conclusions are properties of the predictive object and which are
+artifacts of the decision comparison.
 
 \section{Related Work}\label{sec-related}
 
@@ -543,52 +544,16 @@ overlapping residual recipes, not 48 replications.
 
 \subsection{Identification safeguards}\label{identification-safeguards}
 
-The design addresses five common retrospective failure modes directly.
-Each safeguard removes one source of look-ahead or estimand drift, but
-the final column records what still cannot be inferred.
-
-\begin{longtable}[]{@{}
-  >{\raggedright\arraybackslash}p{(\linewidth - 4\tabcolsep) * \real{0.3333}}
-  >{\raggedright\arraybackslash}p{(\linewidth - 4\tabcolsep) * \real{0.3333}}
-  >{\raggedright\arraybackslash}p{(\linewidth - 4\tabcolsep) * \real{0.3333}}@{}}
-\caption{Identification safeguards and residual
-boundaries.}\label{tbl-safeguards}\tabularnewline
-\toprule\noalign{}
-\begin{minipage}[b]{\linewidth}\raggedright
-Design hazard
-\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
-Active safeguard
-\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
-Remaining boundary
-\end{minipage} \\
-\midrule\noalign{}
-\endfirsthead
-\toprule\noalign{}
-\begin{minipage}[b]{\linewidth}\raggedright
-Design hazard
-\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
-Active safeguard
-\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
-Remaining boundary
-\end{minipage} \\
-\midrule\noalign{}
-\endhead
-\bottomrule\noalign{}
-\endlastfoot
-Candidate inclusion uses future status & Membership uses issue date,
-term, and origination fields; unresolved rows remain & The reconstructed
-endpoint is still administratively censored \\
-Later labels influence fitting & Explicit cutoff plus separate PD,
-Platt, and conformal blocks & Temporal exchangeability is not
-restored \\
-One decision pools future originations & Fifteen separate monthly menus
-and budgets & The exercise is still retrospective \\
-Optimized and reported payoffs differ & Expected and realized payoff are
-one coherent pair & The pair is not cash-flow return or welfare \\
-One comparator determines the conclusion & Two common rulers are checked
-against C0, C1, C2, and an exact basis frontier & Three interior
-coordinates are finite diagnostics, not universal support \\
-\end{longtable}
+The design addresses five retrospective failure modes directly:
+status-independent membership retains unresolved candidates; dated and
+separate fitting blocks limit later-label use; monthly menus prevent
+future originations from entering earlier decisions; optimized and
+realized payoffs use one coherent pair; and two rulers are checked
+against named and exact-cap comparators. These safeguards remove
+specific look-ahead and estimand defects, but they do not restore
+exchangeability, identify lifetime cash flows, or make three coordinates
+universal support. Online Supplement Appendices A and H give the full
+audit map and inferential boundaries.
 
 \section{Method}\label{sec-method}
 
@@ -605,7 +570,7 @@ conformal fitting.
 
 The prediction model is deliberately not tuned against downstream
 outcomes. Canonical seed 42 is inherited from the locked design. Four
-predeclared coverage-only specifications alter model class or
+protocol-locked coverage-only specifications alter model class or
 credit-risk information:
 
 \begin{enumerate}
@@ -814,18 +779,18 @@ constraints and the objective are held fixed.
 
 \textbf{Proposition 1 (positive affine cap equivalence).} Suppose the
 budget binds, \(\sum_i a_i=B\), and one score is a positive affine
-transformation of another, \(s_i=ap_i+b\) with \(a>0\). Then
+transformation of another, \(s_i=\kappa p_i+b\) with \(\kappa>0\). Then
 
 \begin{equation}\protect\phantomsection\label{eq-affine-cap}{
 \sum_i a_i s_i\le \tau_s B
 \quad\Longleftrightarrow\quad
-\sum_i a_i p_i\le \frac{\tau_s-b}{a}B.
+\sum_i a_i p_i\le \frac{\tau_s-b}{\kappa}B.
 }\end{equation}
 
 Thus an affine score has an exact translated point cap. Conversely,
 absent an affine relation on the candidate menu, one scalar cap
 generally cannot make the two halfspaces identical. The proof
-substitutes \(s_i=ap_i+b\) and uses the full-budget equality. The
+substitutes \(s_i=\kappa p_i+b\) and uses the full-budget equality. The
 pooled-residual placebo in the experiment reproduces its translated
 point allocation exactly.
 
@@ -845,9 +810,10 @@ payoff or default, prove C2 unique, or imply that matching one funded
 moment equates feasible sets.
 
 \textbf{Proposition 2 (positive-affine invariance of the normalized
-ruler).} Let \(\widetilde s=as+b\) with \(a>0\). Then
-\(m_{\widetilde s}=am_s+b\), \(o_{\widetilde s}=ao_s+b\), and
-\(c_{\widetilde s}(\eta)=ac_s(\eta)+b\). Under the full-budget equality,
+ruler).} Let \(\widetilde s=\kappa s+b\) with \(\kappa>0\). Then
+\(m_{\widetilde s}=\kappa m_s+b\), \(o_{\widetilde s}=\kappa o_s+b\),
+and \(c_{\widetilde s}(\eta)=\kappa c_s(\eta)+b\). Under the full-budget
+equality,
 
 \begin{equation}\protect\phantomsection\label{eq-normalized-invariance}{
 \widetilde s^\top a\le Bc_{\widetilde s}(\eta)
@@ -995,61 +961,18 @@ boundaries.
 \subsection{Coverage fails across the complete residual-window
 specification}\label{coverage-fails-across-the-complete-residual-window-specification}
 
-Every five-stratum recipe attains its finite-sample fit rank, but none
-transports 90\% all-candidate coverage to the primary OOT panel.
-CatBoost resolved coverage ranges from 0.8659 to 0.8792. After retaining
-all 12,076 unresolved candidates, its sharp coverage bounds range from
-{[}0.8425, 0.8696{]} to {[}0.8570, 0.8826{]}. The separately calibrated
-logistic control is closer to nominal: resolved coverage ranges from
-0.8732 to 0.8931 and the largest upper bound is 0.8962. Nevertheless,
-all eight logistic upper bounds also remain below 0.90. The original V4
-result is therefore not unique to CatBoost, while its magnitude is
+Under the active six-month evaluation endpoint, every five-stratum
+recipe attains its finite-sample fit rank, but none transports 90\%
+all-candidate coverage to the primary OOT panel. CatBoost resolved
+coverage ranges from 0.8659 to 0.8792. After retaining all 12,076
+unresolved candidates, its sharp coverage bounds range from {[}0.8425,
+0.8696{]} to {[}0.8570, 0.8826{]}. The separately calibrated logistic
+control is closer to nominal: resolved coverage ranges from 0.8732 to
+0.8931 and the largest upper bound is 0.8962. Nevertheless, all eight
+logistic upper bounds also remain below 0.90. The original V4 result is
+therefore not unique to CatBoost, while its magnitude is
 learner-dependent. Four additional credit-risk specifications test that
 conclusion more broadly below.
-
-\begin{longtable}[]{@{}
-  >{\raggedright\arraybackslash}p{(\linewidth - 6\tabcolsep) * \real{0.2000}}
-  >{\raggedleft\arraybackslash}p{(\linewidth - 6\tabcolsep) * \real{0.2667}}
-  >{\raggedleft\arraybackslash}p{(\linewidth - 6\tabcolsep) * \real{0.2667}}
-  >{\raggedleft\arraybackslash}p{(\linewidth - 6\tabcolsep) * \real{0.2667}}@{}}
-\caption{Primary OOT coverage under the canonical five-stratum recipes.
-Bounds include every primary
-candidate.}\label{tbl-coverage}\tabularnewline
-\toprule\noalign{}
-\begin{minipage}[b]{\linewidth}\raggedright
-Window
-\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedleft
-CatBoost all-candidate bound
-\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedleft
-Logistic all-candidate bound
-\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedleft
-CatBoost mean width
-\end{minipage} \\
-\midrule\noalign{}
-\endfirsthead
-\toprule\noalign{}
-\begin{minipage}[b]{\linewidth}\raggedright
-Window
-\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedleft
-CatBoost all-candidate bound
-\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedleft
-Logistic all-candidate bound
-\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedleft
-CatBoost mean width
-\end{minipage} \\
-\midrule\noalign{}
-\endhead
-\bottomrule\noalign{}
-\endlastfoot
-W1 & {[}0.8547, 0.8805{]} & {[}0.8718, 0.8962{]} & 0.6650 \\
-W2 & {[}0.8570, 0.8826{]} & {[}0.8709, 0.8953{]} & 0.6653 \\
-W3 & {[}0.8557, 0.8811{]} & {[}0.8706, 0.8950{]} & 0.6653 \\
-W4 & {[}0.8526, 0.8783{]} & {[}0.8667, 0.8914{]} & 0.6650 \\
-W5 & {[}0.8499, 0.8760{]} & {[}0.8637, 0.8890{]} & 0.6647 \\
-W6 & {[}0.8494, 0.8757{]} & {[}0.8606, 0.8865{]} & 0.6646 \\
-W7 & {[}0.8465, 0.8731{]} & {[}0.8545, 0.8810{]} & 0.6642 \\
-W8 & {[}0.8425, 0.8696{]} & {[}0.8500, 0.8769{]} & 0.5006 \\
-\end{longtable}
 
 \begin{figure}
 
@@ -1064,6 +987,10 @@ all-candidate bounds (error bars) for the primary CatBoost and
 numeric-logistic V4 learners. The dashed line is nominal 90\% coverage.}
 
 \end{figure}%
+
+Online Supplement Table S6 reports all eight exact window bounds and
+widths; the figure retains their complete nonselective pattern in the
+main text.
 
 All five frozen specifications exclude nominal coverage in all eight
 windows, including the monotonic learner and the pricing-excluded
@@ -1140,17 +1067,25 @@ coincides with a discontinuous quantile change.}
 
 This empirical pattern matches the mechanism in Proposition 3, but
 scores vary within the stratum and the proposition is not used as a
-finite-sample proof. The predeclared reporting-lag sensitivity gives the
-same threshold crossing at 0, 3, and 6 months; their minimum monthly
-retention is 99.71\%, 99.67\%, and 99.30\%, respectively. At 8 and 12
-months the W7 quantile also lies near 0.112, so the crossing disappears,
-but those specifications retain only 98.68\% and 97.45\% in their
-weakest month and fail the strict greater-than-99\% rule. The evidence
-thus supports stability across lags satisfying the strict retention
-rule, not a claim that prevalence causally produced the empirical
-change. Nor does the narrower W8 interval repair transport: stratum-2
-all-candidate coverage is only {[}0.8225, 0.8547{]}. A narrower interval
-can simply expose more rare defaults as misses.
+finite-sample proof. The retrospectively protocol-locked fit-label
+sensitivity gives the same threshold crossing at 0, 3, and 6 months;
+their minimum monthly retention is 99.71\%, 99.67\%, and 99.30\%,
+respectively. At 8 and 12 months the W7 quantile also lies near 0.112,
+so the crossing disappears, but those specifications retain only 98.68\%
+and 97.45\% in their weakest month and fail the strict greater-than-99\%
+rule. The evidence thus supports stability across lags satisfying the
+strict retention rule, not a claim that prevalence causally produced the
+empirical change. Nor does the narrower W8 interval repair transport:
+stratum-2 all-candidate coverage is only {[}0.8225, 0.8547{]}. A
+narrower interval can simply expose more rare defaults as misses.
+
+This is the \textbf{fit-label timing} axis: it changes which 2012 labels
+enter conformal fitting and therefore refits the residual recipes. The
+\textbf{evaluation-endpoint availability} axis below instead holds
+scores, recipes, supports, and allocations fixed while changing which
+outcomes are observable at the September 2020 cutoff. The two one-factor
+sensitivities were not crossed factorially, so they do not establish
+joint lag robustness.
 
 \subsection{Endpoint direction changes with ruler and
 coordinate}\label{endpoint-direction-changes-with-ruler-and-coordinate}
@@ -1169,8 +1104,8 @@ six-track census, not independent replications or votes.
   >{\raggedright\arraybackslash}p{(\linewidth - 6\tabcolsep) * \real{0.2500}}
   >{\raggedright\arraybackslash}p{(\linewidth - 6\tabcolsep) * \real{0.2500}}
   >{\raggedright\arraybackslash}p{(\linewidth - 6\tabcolsep) * \real{0.2500}}@{}}
-\caption{Six predeclared endpoint tracks. Full sharp hulls are in Online
-Supplement Table S9.}\label{tbl-two-ruler}\tabularnewline
+\caption{Six protocol-locked endpoint tracks. Full sharp hulls are in
+Online Supplement Table S9.}\label{tbl-two-ruler}\tabularnewline
 \toprule\noalign{}
 \begin{minipage}[b]{\linewidth}\raggedright
 Ruler
@@ -1216,15 +1151,13 @@ and default cross zero in seven windows; only W8 is adverse for both,
 while miscoverage is higher in all eight.
 
 Endpoint reconstruction reclassified 525 archive-terminal candidates
-whose conservative availability date followed the cutoff. The primary
-endpoint therefore changed from 365,339 resolved and 11,551 unresolved
-candidates in V2 to 364,814 resolved and 12,076 unresolved candidates in
-V3. Under V2, objective-matched .25 was payoff-higher and
-default/miscoverage-lower in 8/8 windows; under V3, all three intervals
-cross zero in 8/8. Normalized .75 payoff changed from lower in 8/8 to
-lower in 7/8 and crossing in 1/8. Online Supplement Table S9A reports
-the complete direction reconciliation. Neither endpoint version is
-promoted.
+whose conservative availability date followed the cutoff. The census
+changed from 365,339 resolved and 11,551 unresolved candidates in V2 to
+364,814 and 12,076 in active V3. Objective-matched .25 consequently
+changed from favorable in all eight windows to crossing zero for all
+three metrics in all eight; normalized .75 payoff changed from lower in
+8/8 to lower in 7/8 and crossing in 1/8. Online Supplement Table S9A
+gives the complete reconciliation. Neither endpoint version is promoted.
 
 The normalized ruler gives lower payoff and higher default and
 miscoverage in all .25 and .50 cells. At .75, default and miscoverage
@@ -1238,6 +1171,29 @@ objective-matched tracks as evidence for a preferred endpoint. Across
 all 48 cells, payoff is lower in 32 and crosses zero in 16; default is
 higher in 33 and crosses in 15; miscoverage is higher in 40 and crosses
 in 8.
+
+The complete retrospective endpoint-availability grid changes the
+Charged Off administrative lag to 0, 3, 6, 8, and 12 months without
+refitting any score, recipe, support, ruler, or allocation.
+Resolved/unresolved primary counts are, respectively, 364,861/12,029,
+364,861/12,029, 364,814/12,076, 364,570/12,320, and 363,288/13,602. The
+numbers of model-window coverage upper bounds below 0.90 are 40, 40, 40,
+40, and 39; their maxima are 0.897641, 0.897641, 0.897726, 0.898151, and
+0.900411. The sole exception is the pricing-excluded WOE/IV scorecard in
+W2 at 12 months.
+
+Decision counts are equally nonselective. At lags 0, 3, 6, and 8, payoff
+is lower/crossing in 32/16 cells, default higher/crossing in 33/15, and
+miscoverage higher/crossing in 40/8; at 12 months these are 31/17,
+32/16, and 40/8. Every broad-support exact envelope crosses zero at
+every lag. On development support, the lag-12 payoff census weakens from
+6 lower/66 crossing to 72 crossing, default remains 72 crossing, and
+miscoverage changes from 27 higher/45 crossing to 26/46. The six-month
+row reconciles exactly to active V3 in 120 coverage cells, 48 two-ruler
+contrasts, and 648 exact-support envelopes. Online Supplement Tables
+S9B--S9C report the full grid. These results make the 40/40 coverage
+statement endpoint-contract-specific; they do not authorize selecting
+the six-month endpoint.
 
 \subsection{Exact point-cap support checks the finite
 diagnostic}\label{exact-point-cap-support-checks-the-finite-diagnostic}
@@ -1274,18 +1230,14 @@ universally safer or more profitable conformal endpoint.
 \subsection{What the audit
 establishes}\label{what-the-audit-establishes}
 
-The guardrail changes a score, a feasible region, and the allocation
-produced under other binding constraints. Those objects cannot be
-separated by copying the same numeric threshold. The objective-matched
-ruler holds a model-implied opportunity cost fixed; the normalized ruler
-holds a scale-invariant relative score relaxation fixed. Neither is
-neutral, and their endpoint results differ. The unidentified .25
-objective-matched contrast, adverse .50 contrast, and mostly
-unidentified .75 contrast show that even one defensible ruler does not
-produce a coordinate-free ordering. The mostly adverse normalized result
-cannot settle the question because it compares different plug-in
-objective levels. Selecting whichever ruler or coordinate gives the
-desired sign would recreate the problem the audit is designed to expose.
+The guardrail changes a score, feasible region, and allocation; copying
+a numeric threshold cannot separate them. Objective matching fixes
+model-implied opportunity cost, whereas normalization fixes a
+scale-invariant relative score relaxation. Neither is neutral. The
+objective-matched result changes from unidentified at .25 to adverse at
+.50 and mostly unidentified at .75; the mostly adverse normalized result
+compares different plug-in objective levels. Selecting a ruler or
+coordinate by its sign would recreate the identification problem.
 
 C0 proves mechanical same-threshold nesting; C2 removes one funded
 point-score moment; and the exact cap frontier shows that neither is a
@@ -1296,134 +1248,88 @@ unidentified in W8. This exact support result is the safeguard against
 overinterpreting a finite grid, not a reason to privilege the broadest
 support after outcomes.
 
-The evidence separates three meanings of conservatism. First, the upper
-score is pointwise no smaller than the point score. Second, at a shared
-cap the guardrail is mechanically more restrictive. Third, neither fact
-supplies OOT coverage or funded-set validity. A strong word such as
-\emph{robust} must name the quantity and perturbation it protects
+The upper score is pointwise larger and, at a shared cap, mechanically
+more restrictive; neither fact supplies OOT coverage or funded-set
+validity. \emph{Robust} must name a protected quantity and perturbation
 \citep{morucci2022robust_matching_uncertainty, falconer2026replication}.
-In this paper, robustness applies only to the observed temporal coverage
-failure across the complete residual-window specification and five
-declared learner specifications. It does not describe distributional
-robustness, causal benefit, selected-set validity, or policy dominance.
-For this reason CRPTO uses \emph{risk-aware}, rather than \emph{robust},
-in its expanded name.
+Here it describes only the observed coverage failure across complete
+windows and five learner specifications, not causal benefit,
+selected-set validity, or policy dominance. CRPTO therefore uses
+\emph{risk-aware} in its expanded name.
 
 \subsection{Implications for decision-focused data
 science}\label{implications-for-decision-focused-data-science}
 
-Three implications may transfer beyond credit, although one historical
-archive cannot establish their external validity.
-
-First, define the decision estimand before comparing policies. The
-score, ruler, and coordinate jointly determine stringency: copying a
-threshold does not hold the feasible problem fixed, while a normalized
-coordinate need not hold opportunity cost fixed. Evaluations should name
-the matched quantity, report binding constraints, and use exact support
-analysis when LP structure permits it.
-
-Second, preserve the information set of the decision. Candidate
-construction, label availability, and calibration timing are part of the
-policy protocol. Excluding unresolved rows creates a retrospective menu;
-treating a later file as a historical snapshot creates look-ahead.
-Status-independent menus, a dated endpoint contract, complete eligible
-windows, and sharp unresolved-outcome bounds trade precision for a
-defensible estimand.
-
-Third, keep predictive, geometric, and decision claims separate.
-Marginal or group coverage does not imply funded-set validity; a
-narrower binary interval need not be more useful; model-class controls
-are not a leaderboard; and the optimized payoff must match the payoff
-evaluated. Selection-valid prediction, nonexchangeable calibration,
-richer cash flows, and live monitoring would each require a different
-design rather than a stronger adjective for this one.
+Three implications may transfer beyond credit, without establishing
+external validity. First, define the decision estimand: name the matched
+quantity and binding constraints, and use exact support analysis when LP
+structure permits. Second, preserve the decision information set.
+Status-independent menus, dated labels, complete eligible windows, and
+unresolved-outcome bounds prevent later status from redefining an
+earlier choice. Third, separate predictive, geometric, and decision
+claims: marginal coverage is not funded-set validity, narrower binary
+intervals need not improve decisions, controls are not a leaderboard,
+and optimized and evaluated payoffs must agree.
 
 \subsection{Ethical and governance
 implications}\label{ethical-and-governance-implications}
 
-In credit allocation, calling one score \emph{safer} can legitimize a
-tighter feasible set and redirect capital even when the label comes from
-a copied cap rather than better predictive validity. The comparator,
-calibration window, binding constraints, and unresolved-outcome
-treatment should therefore be disclosed with any policy claim. This
-archive observes accepted loans only; it contains neither counterfactual
-outcomes for rejected applicants nor a design for disparate-impact
-estimation. CRPTO is consequently an audit of model-risk claims, not
-authorization to deploy, deny credit, or claim fair-lending compliance.
-A deployment review would additionally require protected-group analysis,
-adverse-action governance, live drift monitoring, and evaluation of
-access as well as lender risk.
+Calling one credit score \emph{safer} can redirect capital because of a
+copied cap rather than better predictive validity. Policy claims should
+disclose the comparator, calibration window, binding constraints, and
+unresolved-outcome treatment. The accepted-loan archive has neither
+rejected-applicant counterfactuals nor a disparate-impact design; CRPTO
+audits model-risk claims and does not authorize deployment or
+fair-lending conclusions.
 
 \section{Limitations}\label{sec-limitations}
 
-Lending Club is one discontinued historical platform, so the design
-cannot establish live or external performance. The distributed file is
-not a verified point-in-time snapshot; reconstructing endpoint
-availability from servicing dates cannot recover a missing historical
-extract. Terminal labels collapse payment paths, sharp bounds can be
-wide, and standardized payoff omits timing, prepayment, recoveries,
-fees, discounting, and capital costs.
-
-The full scan does not make every row commensurable. Sixty-month
-contracts, immature cohorts, and 48 late-schema fields are excluded to
-preserve one target and information set; a survival or multi-horizon
-design would estimate a different object. The five learner
-specifications share one platform and chronology, so overlapping windows
-are controls, not independent replications or a model leaderboard.
-Delinquency recency and legacy bankruptcy count also require disclosed
-deterministic missing-value mappings whose alternatives are not
+One discontinued platform cannot establish live or external performance.
+The file is not a verified point-in-time snapshot, terminal labels
+compress payment paths, and standardized payoff omits timing,
+prepayment, recoveries, fees, discounting, and capital costs.
+Sixty-month contracts, immature cohorts, and 48 late-schema fields are
+excluded to preserve one target; delinquency recency and legacy
+bankruptcy count use disclosed mappings whose alternatives are not
 evaluated.
 
-The temporal gap does not restore exchangeability, and candidate
-coverage does not control optimizer-selected coverage. Eleven
-development menus and fifteen OOT decisions are not independent
-replications, and the constant-score result explains a mechanism rather
-than proving it for varying scores. The simulation identifies only a
-coverage mechanism. The two-ruler grid covers only \(.25\), \(.50\), and
-\(.75\); C2 matches one moment; and the exact point-cap support is not a
-continuous joint frontier. This previously inspected archive is neither
-a pristine lockbox nor a prospective preregistration. Nonexchangeable
-calibration, selection-valid prediction, survival outcomes, and richer
-cash flows remain different future designs.
+The five learners and overlapping windows share one chronology and are
+not independent replications. Temporal separation does not restore
+exchangeability, candidate coverage does not control selected-set
+coverage, and the constant-score theorem and simulation identify
+mechanisms rather than the finite varying-score path. The
+three-coordinate ruler grid, one-moment C2, and exact point-cap support
+do not form a continuous joint frontier. The inspected archive is not a
+pristine lockbox or preregistration.
 
 \section{Reproducibility}\label{sec-reproducibility}
 
-The review package contains three hash-linked outcome-free
-freeze/evaluation pairs for binary geometry and exact support, the
-two-ruler diagnostic, and the five-model coverage controls; all
-evaluators use the reconstructed endpoint contract. One source registry
-verifies their configurations, artifacts, raw audit, label-lag
-sensitivity, solver-tie audit, and no-overwrite boundaries. The evidence
-builder then checks hashes and scientific invariants before producing
-eleven tables and six figures byte-identically. Twelve DVC pointers, the
-environment lock, reconstruction instructions, and publication tests
-bind the anonymous body, supplement, generated TeX, and evidence
-manifest. Full run identities and stopped attempts remain in Online
-Supplement Appendix G and the editor-only crosswalk.
+One source registry binds three outcome-free freeze/evaluation pairs,
+the raw and timing audits, solver checks, versioned DVC pointers, and
+the environment lock. The evidence builder verifies hashes and
+scientific invariants before producing twelve tables and three figures
+in PNG and PDF byte-identically. Online Supplement Appendix G and the
+editor-only crosswalk retain full run identities and stopped attempts.
 
 \section{Conclusion}\label{sec-conclusion}
 
-CRPTO audits two unsupported interpretations. First, historical marginal
-coverage does not transport when these binary residual intervals become
-constraint scores: all 40 predeclared learner-window upper bounds are
-below 0.90. A stratum crossing \(\pi=\alpha\) coincides with a
-residual-quantile change from 0.8884 to 0.1118 under every reporting lag
-that passes the retention rule.
+Under the active six-month endpoint, all 40 learner-window coverage
+upper bounds are below 0.90; the complete endpoint sensitivity retains
+40/40 at lags 0, 3, 6, and 8 but only 39/40 at 12. Separately, the
+W7--W8 fit-label crossing survives all lags passing the retention rule.
+These axes were not crossed factorially.
 
-Second, portfolio direction is not identified without a ruler and
-coordinate. The objective-matched full-upper endpoint is unidentified at
-.25, adverse at .50, and mostly unidentified for payoff and default at
-.75. Normalized matching is adverse at .25 and .50 but changes
-opportunity cost; .75 retains one unidentified payoff cell. All 216
-broad-support exact envelopes include zero. These results license
-neither endpoint selection nor a universal ordering.
+Portfolio direction likewise requires a ruler and coordinate. Objective
+matching is unidentified at .25, adverse at .50, and mostly unidentified
+at .75; normalized matching is adverse at .25 and .50 but changes
+opportunity cost, and .75 retains one unidentified payoff cell. All 216
+broad-support exact envelopes include zero.
 
-The contribution is a reproducible identification audit, not a winning
-credit policy. It fixes information boundaries, retains censored
-candidates, reports complete residual and gamma paths, formalizes binary
-and ruler geometry, and uses exact support with sharp common-outcome
-bounds. ML, conformal prediction, and optimization remain connected, but
-their interface acquires a direction only after the decision estimand is
+CRPTO is therefore an identification audit, not a winning policy. It
+retains censored candidates, reports complete residual and gamma paths,
+and combines binary geometry, sharp outcome bounds, and exact comparator
+support. ML, conformal prediction, and optimization remain connected,
+but their interface has a direction only after the decision estimand is
 specified.
 
 \clearpage

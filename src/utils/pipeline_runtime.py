@@ -30,6 +30,14 @@ def atomic_write_json(path: str | Path, payload: dict[str, Any]) -> Path:
     )
 
 
+def atomic_write_strict_json(path: str | Path, payload: dict[str, Any]) -> Path:
+    """Atomically write portable JSON without coercing unsupported values."""
+    return atomic_write_text(
+        path,
+        json.dumps(payload, indent=2, ensure_ascii=False, allow_nan=False) + "\n",
+    )
+
+
 def atomic_write_pickle(path: str | Path, obj: Any) -> Path:
     target = Path(path)
     target.parent.mkdir(parents=True, exist_ok=True)

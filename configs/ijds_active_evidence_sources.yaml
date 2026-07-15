@@ -1,4 +1,4 @@
-schema_version: "2026-07-14.2"
+schema_version: "2026-07-15.1"
 status: "active_ijds_paper_evidence_source_registry"
 
 lineages:
@@ -8,42 +8,68 @@ lineages:
       protocol_tag: "protocol/ijds-binary-geometry-frontier-v4-2026-07-12-v1"
       protocol_commit: "2f8a7606e4eb65aa3ae3701fb3af8d9a51c953cd"
       freeze_sha256: "c2b3dc2d18c9fed80708682d5a0369c80c89643e2d28024418522d954ebe667c"
+      paper_role: "outcome_free_freeze"
+      dvc_tracked: true
     evaluation:
       run_tag: "ijds-binary-geometry-frontier-v4-2026-07-14-v3"
       protocol_tag: "protocol/ijds-binary-geometry-frontier-v4-2026-07-14-v3"
       protocol_commit: "688f75dc4f285c75bc499c9e041dd30fb3acd70d"
+      paper_role: "verified_evaluation"
+      dvc_tracked: true
   two_ruler:
     outcome_free:
       run_tag: "ijds-normalized-objective-frontier-2026-07-13-v1c"
       protocol_tag: "protocol/ijds-normalized-objective-frontier-2026-07-13-v1c"
       protocol_commit: "46f4df915d38eb5a6cc144484c6e6fe56d8ed397"
       freeze_sha256: "7877c5e460772a0093e4132eaa542e9049f7ec15d2ddaa35c2df389892a0e185"
+      paper_role: "outcome_free_freeze"
+      dvc_tracked: true
     evaluation:
       run_tag: "ijds-normalized-objective-frontier-2026-07-14-v3"
       protocol_tag: "protocol/ijds-normalized-objective-frontier-2026-07-14-v3"
       protocol_commit: "a1ae516a6c9674686dba245cb275475073b298a0"
+      paper_role: "verified_evaluation"
+      dvc_tracked: true
   credit_controls:
     outcome_free:
       run_tag: "ijds-credit-risk-controls-2026-07-13-v1b"
       protocol_tag: "protocol/ijds-credit-risk-controls-2026-07-13-v1b"
       protocol_commit: "1776cbf8b201ae5b92756e5ea397a403d6cc7c9f"
       freeze_sha256: "da4805e644bcf5decfbb0a67c0c81a5b9dd61f3ab2e17d3dc5264100e7eb4d35"
+      paper_role: "outcome_free_freeze"
+      dvc_tracked: true
     evaluation:
       run_tag: "ijds-credit-risk-controls-2026-07-14-v3"
       protocol_tag: "protocol/ijds-credit-risk-controls-2026-07-14-v3"
       protocol_commit: "688f75dc4f285c75bc499c9e041dd30fb3acd70d"
+      paper_role: "verified_evaluation"
+      dvc_tracked: true
   diagnostics:
     raw_data_audit:
       run_tag: "ijds-raw-data-contract-2026-07-14-v2"
       status: "complete_full_archive_data_contract_audit"
+      paper_role: "data_contract_diagnostic"
+      dvc_tracked: false
     label_lag_sensitivity:
       run_tag: "ijds-label-lag-sensitivity-2026-07-14-v1"
       protocol_tag: "protocol/ijds-label-lag-sensitivity-2026-07-14-v1"
       protocol_commit: "688f75dc4f285c75bc499c9e041dd30fb3acd70d"
+      paper_role: "fit_label_timing_sensitivity"
+      dvc_tracked: false
     solver_tie_audit:
       run_tag: "ijds-policy-support-tie-audit-2026-07-12-v1"
       protocol_tag: "protocol/ijds-policy-support-tie-audit-2026-07-12-v1"
       protocol_commit: "115eaf1b81ed5f05ffe601e9c20079059c40c200"
+      paper_role: "evaluated_cap_numerical_diagnostic"
+      dvc_tracked: false
+
+sensitivities:
+  endpoint_availability:
+    run_tag: "ijds-endpoint-availability-sensitivity-2026-07-14-v1"
+    protocol_tag: "protocol/ijds-endpoint-availability-sensitivity-2026-07-14-v1"
+    protocol_commit: "8865f1cfbd387576bdf805f3e52f030261e4b717"
+    paper_role: "evaluation_endpoint_timing_sensitivity"
+    dvc_tracked: true
 
 dvc_pointers:
   - "data/processed/experiments/ijds_audit/ijds-binary-geometry-frontier-v4-2026-07-12-v1.dvc"
@@ -58,6 +84,8 @@ dvc_pointers:
   - "models/experiments/ijds_audit/ijds-credit-risk-controls-2026-07-13-v1b.dvc"
   - "data/processed/experiments/ijds_audit/ijds-credit-risk-controls-2026-07-14-v3.dvc"
   - "models/experiments/ijds_audit/ijds-credit-risk-controls-2026-07-14-v3.dvc"
+  - "data/processed/experiments/ijds_audit/ijds-endpoint-availability-sensitivity-2026-07-14-v1.dvc"
+  - "models/experiments/ijds_audit/ijds-endpoint-availability-sensitivity-2026-07-14-v1.dvc"
 
 sources:
   v4_config:
@@ -96,3 +124,7 @@ sources:
     path: "reports/crpto/ijds_policy_support_tie_evidence.json"
     bytes: 12845
     sha256: "2903694ee502e6144008bbbc5891e5932f88f8527e12686363c85a28fa78684e"
+  endpoint_sensitivity_summary:
+    path: "models/experiments/ijds_audit/ijds-endpoint-availability-sensitivity-2026-07-14-v1/endpoint_sensitivity_summary.json"
+    bytes: 10692
+    sha256: "f8192d9b97289ea49480b92975258801c2f9e6640acdee7606307d0368575ff6"

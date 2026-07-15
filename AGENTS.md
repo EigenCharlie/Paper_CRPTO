@@ -21,10 +21,16 @@ order before changing scientific code or paper claims:
 9. [`models/experiments/ijds_audit/ijds-credit-risk-controls-2026-07-14-v3/credit_risk_controls_summary.json`](models/experiments/ijds_audit/ijds-credit-risk-controls-2026-07-14-v3/credit_risk_controls_summary.json)
    - active five-model coverage, WOE/IV, monotonicity, calibration, and PSI evidence.
 10. [`docs/research/ijds_label_lag_sensitivity_protocol_2026-07-14.md`](docs/research/ijds_label_lag_sensitivity_protocol_2026-07-14.md)
-   - predeclared endpoint-timing sensitivity and retention stop rule.
-11. [`reports/crpto/ijds_binary_geometry_frontier_v4_evidence.json`](reports/crpto/ijds_binary_geometry_frontier_v4_evidence.json)
+   - retrospectively locked fit-label timing sensitivity and retention stop rule.
+11. [`docs/research/ijds_endpoint_availability_sensitivity_protocol_2026-07-14.md`](docs/research/ijds_endpoint_availability_sensitivity_protocol_2026-07-14.md)
+   - complete nonselective evaluation-endpoint availability sensitivity.
+12. [`configs/ijds_active_evidence_sources.yaml`](configs/ijds_active_evidence_sources.yaml)
+   - active lineage identities and exact DVC-pointer authority.
+13. [`configs/ijds_claim_ledger.yaml`](configs/ijds_claim_ledger.yaml)
+   - executable nonnumeric claim and surface contract.
+14. [`reports/crpto/ijds_binary_geometry_frontier_v4_evidence.json`](reports/crpto/ijds_binary_geometry_frontier_v4_evidence.json)
    - the only active paper-facing evidence manifest.
-12. [`.codex/skills/crpto/SKILL.md`](.codex/skills/crpto/SKILL.md) - concise
+15. [`.codex/skills/crpto/SKILL.md`](.codex/skills/crpto/SKILL.md) - concise
    execution and writing guidance.
 
 Minimum rules:

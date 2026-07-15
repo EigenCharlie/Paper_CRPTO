@@ -42,7 +42,9 @@ def test_body_and_generated_tex_share_architecture_citations_and_displays() -> N
     for group in re.findall(r"\\cite\w*\{([^}]+)\}", official):
         tex_citations.update(key.strip() for key in group.split(","))
     assert body_citations == tex_citations
-    assert body.count("{#tbl-") == official.count(r"\begin{longtable}") == 5
+    body_table_ids = set(re.findall(r"\{#(tbl-[A-Za-z0-9_-]+)\}", body))
+    assert body_table_ids == {"tbl-protocol", "tbl-credit-controls", "tbl-two-ruler"}
+    assert official.count(r"\begin{longtable}") == len(body_table_ids)
     assert body.count("{#fig-") == official.count(r"\begin{figure}") == 2
 
 
@@ -60,7 +62,10 @@ def test_v4_wording_keeps_theory_and_empirical_scope_separate() -> None:
         assert "not independent replications" in surface
     assert "not a prospective trial, preregistration, or causal estimate" in body_normalized
     assert "not a causal identified set" in supplement
-    assert "simulation identifies only a coverage mechanism" in body_normalized
+    assert (
+        "constant-score theorem and simulation identify mechanisms rather than the "
+        "finite varying-score path"
+    ) in body_normalized
     assert "no portfolio claim uses this simulation" in supplement_normalized
 
 

@@ -163,11 +163,12 @@ GitHub repository security currently expects:
 - Secret scanning enabled.
 - No required branch protection in the current single-author academic mode.
   If CRPTO becomes multi-author, re-enable branch protection with at least
-  `lint` and `book-publish` as required checks.
+  `lint` as a required check; keep `book-publish` as an explicit deployment.
 
-The default CI must remain lightweight: `lint` and `book-publish` run on push.
-The artifact-aware `tests-full` workflow is manual and should be run before
-journal milestones or any protected-stage revalidation.
+The default CI must remain lightweight: only `lint` runs on push. The
+artifact-aware `tests-full` and Pages `book-publish` workflows are manual and
+should be dispatched only for journal milestones, reviewed companion updates,
+or an explicitly authorized protected-stage revalidation.
 
 ## Environment
 

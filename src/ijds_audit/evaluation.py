@@ -22,6 +22,202 @@ from src.models.binary_conformal_guardrail import (
 
 EVALUATION_ROLES = ("conformal_fit", "policy_development", "primary_oot", "censored_extension")
 
+_EXPECTED_ROLE = "__expected_role"
+_EXPECTED_PERIOD = "__expected_period"
+_OUTCOME_ROLE = "__outcome_role"
+_OUTCOME_PERIOD = "__outcome_period"
+_OUTCOME_JOIN = "__outcome_join"
+
+
+def _outcome_payload(
+    outcomes: pd.DataFrame,
+    *,
+    value_columns: Sequence[str],
+) -> pd.DataFrame:
+    required = {"id", *value_columns}
+    missing = sorted(required - set(outcomes.columns))
+    if missing:
+        raise KeyError(f"Outcome census is missing required columns: {missing}.")
+    if bool(outcomes["id"].isna().any()):
+        raise RuntimeError("The outcome census contains missing IDs.")
+    duplicate_ids = outcomes.loc[outcomes["id"].duplicated(keep=False), "id"]
+    if not duplicate_ids.empty:
+        sample = duplicate_ids.astype(str).drop_duplicates().head(5).tolist()
+        raise RuntimeError(f"The outcome census contains duplicate IDs: {sample}.")
+
+    columns = ["id", *value_columns]
+    rename: dict[str, str] = {}
+    if "role" in outcomes.columns:
+        columns.append("role")
+        rename["role"] = _OUTCOME_ROLE
+    if "period" in outcomes.columns:
+        columns.append("period")
+        rename["period"] = _OUTCOME_PERIOD
+    return outcomes.loc[:, columns].rename(columns=rename)
+
+
+def _with_expected_outcome_metadata(frame: pd.DataFrame) -> pd.DataFrame:
+    result = frame.copy()
+    if "role" in result.columns:
+        result[_EXPECTED_ROLE] = result["role"].astype("string")
+    elif "design_split" in result.columns:
+        result[_EXPECTED_ROLE] = result["design_split"].astype("string")
+
+    if "period" in result.columns:
+        result[_EXPECTED_PERIOD] = result["period"].astype("string")
+    elif "issue_d" in result.columns:
+        issue_date = pd.to_datetime(result["issue_d"], errors="coerce")
+        if bool(issue_date.isna().any()):
+            raise RuntimeError("The expected outcome census contains an invalid issue date.")
+        result[_EXPECTED_PERIOD] = issue_date.dt.to_period("M").astype("string")
+    return result
+
+
+def _validate_outcome_metadata(joined: pd.DataFrame) -> None:
+    comparisons = (
+        ("role", _EXPECTED_ROLE, _OUTCOME_ROLE),
+        ("period", _EXPECTED_PERIOD, _OUTCOME_PERIOD),
+    )
+    for label, expected_column, outcome_column in comparisons:
+        if expected_column not in joined.columns or outcome_column not in joined.columns:
+            continue
+        expected = joined[expected_column].astype("string")
+        observed = joined[outcome_column].astype("string")
+        mismatch = expected.isna() | observed.isna() | expected.ne(observed).fillna(True)
+        if bool(mismatch.any()):
+            sample = joined.loc[mismatch, "id"].astype(str).head(5).tolist()
+            raise RuntimeError(f"Outcome {label} disagrees with the frozen census: {sample}.")
+
+
+def _drop_outcome_join_helpers(frame: pd.DataFrame) -> pd.DataFrame:
+    return frame.drop(
+        columns=[
+            _EXPECTED_ROLE,
+            _EXPECTED_PERIOD,
+            _OUTCOME_ROLE,
+            _OUTCOME_PERIOD,
+            _OUTCOME_JOIN,
+        ],
+        errors="ignore",
+    )
+
+
+def _scoped_outcome_payload(
+    expected: pd.DataFrame,
+    payload: pd.DataFrame,
+) -> pd.DataFrame:
+    expected_ids = expected["id"]
+    metadata_scope = np.zeros(len(payload), dtype=bool)
+    metadata_pairs = (
+        (_EXPECTED_ROLE, _OUTCOME_ROLE),
+        (_EXPECTED_PERIOD, _OUTCOME_PERIOD),
+    )
+    available_pairs = [
+        (expected_column, outcome_column)
+        for expected_column, outcome_column in metadata_pairs
+        if expected_column in expected.columns and outcome_column in payload.columns
+    ]
+    if len(available_pairs) == 2:
+        expected_keys = pd.MultiIndex.from_frame(
+            expected[[column for column, _ in available_pairs]].drop_duplicates()
+        )
+        outcome_keys = pd.MultiIndex.from_frame(payload[[column for _, column in available_pairs]])
+        metadata_scope = outcome_keys.isin(expected_keys)
+    elif len(available_pairs) == 1:
+        expected_column, outcome_column = available_pairs[0]
+        metadata_scope = payload[outcome_column].isin(expected[expected_column])
+    return payload.loc[payload["id"].isin(expected_ids) | metadata_scope].copy()
+
+
+def _exact_outcome_join(
+    expected: pd.DataFrame,
+    outcomes: pd.DataFrame,
+    *,
+    value_columns: Sequence[str],
+) -> pd.DataFrame:
+    census = _with_expected_outcome_metadata(expected)
+    if bool(census["id"].isna().any()):
+        raise RuntimeError("The frozen census contains missing IDs.")
+    if bool(census["id"].duplicated().any()):
+        raise RuntimeError("The frozen census contains duplicate IDs.")
+    payload = _scoped_outcome_payload(
+        census,
+        _outcome_payload(outcomes, value_columns=value_columns),
+    )
+    joined = census.merge(
+        payload,
+        on="id",
+        how="outer",
+        validate="one_to_one",
+        indicator=_OUTCOME_JOIN,
+        sort=False,
+    )
+    missing = int(joined[_OUTCOME_JOIN].eq("left_only").sum())
+    extra = int(joined[_OUTCOME_JOIN].eq("right_only").sum())
+    if missing or extra:
+        raise RuntimeError(f"Outcome ID census mismatch: missing={missing}, extra={extra}.")
+    _validate_outcome_metadata(joined)
+    return _drop_outcome_join_helpers(joined)
+
+
+def _validate_portfolio_candidate_census(
+    records: pd.DataFrame,
+    outcomes: pd.DataFrame,
+) -> None:
+    required = {"role", "period", "n_candidates"}
+    missing = sorted(required - set(records.columns))
+    if missing:
+        raise KeyError(f"Solve records are missing candidate census columns: {missing}.")
+    if not {"role", "period"}.issubset(outcomes.columns):
+        raise KeyError("Portfolio outcomes must contain role and period columns.")
+
+    expected = records.loc[:, ["role", "period", "n_candidates"]].copy()
+    expected["role"] = expected["role"].astype("string")
+    expected["period"] = expected["period"].astype("string")
+    candidate_counts = pd.to_numeric(expected["n_candidates"], errors="raise")
+    candidate_values = candidate_counts.to_numpy(dtype=float)
+    if (
+        not bool(np.isfinite(candidate_values).all())
+        or bool((candidate_values < 0).any())
+        or not bool(np.equal(candidate_values, np.floor(candidate_values)).all())
+    ):
+        raise RuntimeError("Solve records contain an invalid candidate census.")
+    expected["expected_candidates"] = candidate_counts.astype("int64")
+    conflicts = expected.groupby(["role", "period"], observed=True)["expected_candidates"].nunique(
+        dropna=False
+    )
+    if bool(conflicts.gt(1).any()):
+        raise RuntimeError("Solve records disagree on the role/period candidate census.")
+    expected = expected[["role", "period", "expected_candidates"]].drop_duplicates()
+
+    evaluated_roles = expected["role"].drop_duplicates()
+    actual = outcomes.loc[
+        outcomes["role"].astype("string").isin(evaluated_roles), ["role", "period", "id"]
+    ].copy()
+    actual["role"] = actual["role"].astype("string")
+    actual["period"] = actual["period"].astype("string")
+    actual = (
+        actual.groupby(["role", "period"], observed=True, sort=False)
+        .size()
+        .rename("actual_candidates")
+        .reset_index()
+    )
+    comparison = expected.merge(
+        actual,
+        on=["role", "period"],
+        how="outer",
+        validate="one_to_one",
+        indicator="__candidate_census_join",
+    )
+    expected_count = comparison["expected_candidates"].fillna(0).to_numpy(dtype=np.int64)
+    actual_count = comparison["actual_candidates"].fillna(0).to_numpy(dtype=np.int64)
+    missing_count = int(np.maximum(expected_count - actual_count, 0).sum())
+    extra_count = int(np.maximum(actual_count - expected_count, 0).sum())
+    if missing_count or extra_count:
+        raise RuntimeError(
+            f"Portfolio outcome ID census mismatch: missing={missing_count}, extra={extra_count}."
+        )
+
 
 def build_archive_outcomes(
     universe: pd.DataFrame,
@@ -75,15 +271,28 @@ def evaluate_frozen_portfolios(
     """Perform one validated outcome join and evaluate every frozen allocation."""
     keys = ["window_id", "role", "period", "policy_label", "comparator_rule"]
     record_index = records.set_index(keys, verify_integrity=True)
-    candidate_unresolved = outcomes.groupby(["role", "period"], observed=True)[
-        "snapshot_default"
-    ].apply(lambda values: int(values.isna().sum()))
-    joined = allocations.merge(
-        outcomes[["id", "snapshot_default", "snapshot_resolution"]],
+    outcome_payload = _outcome_payload(
+        outcomes,
+        value_columns=("snapshot_default", "snapshot_resolution"),
+    )
+    join_source = _with_expected_outcome_metadata(allocations)
+    joined = join_source.merge(
+        outcome_payload,
         on="id",
         how="left",
         validate="many_to_one",
+        indicator=_OUTCOME_JOIN,
+        sort=False,
     )
+    missing_funded = int(joined[_OUTCOME_JOIN].eq("left_only").sum())
+    if missing_funded:
+        raise RuntimeError(f"Funded outcome ID census mismatch: missing={missing_funded}.")
+    _validate_outcome_metadata(joined)
+    joined = _drop_outcome_join_helpers(joined)
+    _validate_portfolio_candidate_census(records, outcomes)
+    candidate_unresolved = outcomes.groupby(["role", "period"], observed=True)[
+        "snapshot_default"
+    ].apply(lambda values: int(values.isna().sum()))
     if len(joined) != len(allocations) or bool(joined["snapshot_resolution"].isna().any()):
         raise RuntimeError("The shared outcome join did not preserve every funded row.")
     evaluated: list[dict[str, Any]] = []
@@ -297,11 +506,13 @@ def temporal_coverage_audit(
     strata: Collection[int] | None = None,
 ) -> pd.DataFrame:
     """Evaluate all learner/window/taxonomy/role/stratum coverage cells."""
-    joined = scores.merge(
-        outcomes[["id", "snapshot_default"]],
-        on="id",
-        how="left",
-        validate="one_to_one",
+    requested_roles = frozenset(str(role) for role in roles)
+    score_role = "role" if "role" in scores.columns else "design_split"
+    selected_scores = scores.loc[scores[score_role].astype(str).isin(requested_roles)].copy()
+    joined = _exact_outcome_join(
+        selected_scores,
+        outcomes,
+        value_columns=("snapshot_default",),
     )
     fit_lookup: dict[tuple[str, str, int], pd.DataFrame] = {}
     for raw_key, frame in fit_audit.groupby(

@@ -8,10 +8,10 @@ scripts:
     status: active
   -
     script: scripts/experiments/run_ijds_portfolio_structure_sensitivity.py
-    role: outcome-free budget-purpose-LGD structural sensitivity
-    category: diagnostics
-    pipeline_owner: ijds_active_audit
-    status: active
+    role: stopped outcome-free budget-purpose-LGD structural sensitivity V1--V5
+    category: provenance
+    pipeline_owner: ijds_stopped_diagnostic
+    status: stopped
   -
     script: scripts/experiments/run_ijds_policy_support_tie_audit.py
     role: evaluated-cap basis and ID-order stability audit

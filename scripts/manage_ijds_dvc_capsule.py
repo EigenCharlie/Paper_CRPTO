@@ -35,7 +35,7 @@ def active_dvc_pointers(
         raise TypeError("Publication targets omit the active source_registry path.")
     registry_path = (root / registry_value).resolve()
     registry_path.relative_to(root.resolve())
-    registry = load_source_registry(registry_path)
+    registry = load_source_registry(registry_path, repo_root=root)
     active_lineage_run_tags(registry)
     values = registry["dvc_pointers"]
 

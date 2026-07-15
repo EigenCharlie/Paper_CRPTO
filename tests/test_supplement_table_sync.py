@@ -137,6 +137,36 @@ def test_label_lag_sensitivity_is_visible_in_supplement() -> None:
         assert f"{float(row['phase_residual_quantile']):.6f}" in supplement
 
 
+def test_endpoint_availability_grid_is_visible_and_kept_separate() -> None:
+    rows = _rows("crpto_ijds_v4_tableS6_endpoint_availability_sensitivity.csv")
+    supplement = SUPPLEMENT.read_text(encoding="utf-8")
+
+    assert len(rows) == 5
+    assert {int(row["charged_off_lag_months"]) for row in rows} == {0, 3, 6, 8, 12}
+    for row in rows:
+        lag = int(row["charged_off_lag_months"])
+        resolved = int(row["primary_resolved"])
+        unresolved = int(row["primary_unresolved"])
+        below = int(row["coverage_upper_below_0_90_cells"])
+        maximum = float(row["coverage_upper_max"])
+        payoff_lower = int(row["two_ruler_payoff_gamma_1_lower_cells"])
+        payoff_cross = int(row["two_ruler_payoff_crosses_zero_cells"])
+        default_higher = int(row["two_ruler_default_gamma_1_higher_cells"])
+        default_cross = int(row["two_ruler_default_crosses_zero_cells"])
+        miscoverage_higher = int(row["two_ruler_miscoverage_gamma_1_higher_cells"])
+        miscoverage_cross = int(row["two_ruler_miscoverage_crosses_zero_cells"])
+        expected = (
+            f"| {lag} | {resolved:,} / {unresolved:,} | {below} / 40 | {maximum:.6f} | "
+            f"{payoff_lower} / {payoff_cross} | {default_higher} / {default_cross} | "
+            f"{miscoverage_higher} / {miscoverage_cross} |"
+        )
+        assert expected in supplement
+
+    normalized = re.sub(r"\s+", " ", supplement.lower())
+    assert "fit-label-by-endpoint combinations had been evaluated" in normalized
+    assert "active six-month result remains the inherited endpoint contract" in normalized
+
+
 def test_supplement_discloses_negative_simulation_and_recovery() -> None:
     supplement = re.sub(r"\s+", " ", SUPPLEMENT.read_text(encoding="utf-8").lower())
 

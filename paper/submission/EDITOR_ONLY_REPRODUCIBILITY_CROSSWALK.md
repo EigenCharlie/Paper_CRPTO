@@ -8,6 +8,7 @@ searchable protocol identifiers and immutable provenance.
 | Object | Path |
 |---|---|
 | Claim registry | `docs/research/active_claims_2026-07-14.md` |
+| Executable claim ledger | `configs/ijds_claim_ledger.yaml` |
 | Source registry | `configs/ijds_active_evidence_sources.yaml` |
 | Evidence manifest | `reports/crpto/ijds_binary_geometry_frontier_v4_evidence.json` |
 | Body | `paper/CRPTO_ijds.qmd` |
@@ -36,12 +37,18 @@ sensitivity is `ijds-label-lag-sensitivity-2026-07-14-v1`; and the evaluated-cap
 tie audit is `ijds-policy-support-tie-audit-2026-07-12-v1`. Their descriptors
 are hash-locked in `configs/ijds_active_evidence_sources.yaml`.
 
+The complete evaluation-endpoint availability sensitivity is
+`ijds-endpoint-availability-sensitivity-2026-07-14-v1`, protocol-locked at
+commit `8865f1cfbd387576bdf805f3e52f030261e4b717`. It reports lags 0, 3, 6, 8,
+and 12 without selecting an endpoint; its six-month slice reconciles exactly
+to the active V3 evaluations. It is distinct from conformal-fit label timing.
+
 ## DVC Capsule
 
-The twelve pointers are listed once in
-`configs/crpto_publication_targets.yaml`. They comprise data and model pointers
-for each of the three outcome-free roots and three endpoint-corrected evaluation
-roots. Pull with:
+The fourteen pointers are listed once in
+`configs/ijds_active_evidence_sources.yaml`. They comprise data and model
+pointers for the three outcome-free roots, three endpoint-corrected evaluation
+roots, and the endpoint-availability sensitivity. Pull with:
 
 ```powershell
 uv run python scripts/manage_ijds_dvc_capsule.py pull
@@ -53,7 +60,7 @@ committed.
 ## Replay
 
 ```powershell
-uv sync --frozen --extra dev --extra search --extra spo
+uv sync --frozen --extra dev --extra search
 just submission-build
 just ijds-active-check
 uv run python scripts/manage_ijds_dvc_capsule.py status

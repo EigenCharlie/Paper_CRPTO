@@ -31,7 +31,7 @@ finite Lending Club archive under the declared information, outcome, policy,
 and comparator contracts.
 
 The audit reports every eligible consecutive six-month residual window and five
-predeclared coverage learners. The original V4 detail retains CatBoost and
+protocol-locked coverage specifications. The original V4 detail retains CatBoost and
 numeric logistic, while monotonic CatBoost and two WOE/IV scorecards broaden
 model-class coverage checks; only the primary CatBoost enters optimization. The
 decision audit reports the complete five-point gamma path, two rulers constructed
@@ -63,6 +63,9 @@ specification paths, not independent replications or votes.
 # Appendix A: Data, Timing, and Outcome Observability
 
 ## A.1 Single status-independent universe
+
+<!-- claim:data.exhaustive_status_independent_population -->
+<!-- claim:endpoint.not_verified_snapshot -->
 
 The source is the Lending Club 2007--2020Q3 public research archive. A
 chunked full-file audit reads all 2,925,493 rows and 142 columns; 2,925,492 are
@@ -164,7 +167,7 @@ from changing the frozen decision rule.
 
 # Appendix B: Prediction and Binary Conformal Geometry
 
-## B.1 Primary learner and four predeclared coverage controls
+## B.1 Primary learner and four protocol-locked coverage controls
 
 The primary score is a CatBoost classifier with seed 42, 29 numeric and nine
 categorical origination-time features. A Platt map fitted on 2011 raw margins
@@ -234,7 +237,7 @@ so all specifications underpredict later default on average and change
 calibration shape. Monotonic CatBoost has descriptively higher OOT AUC than the
 active score by 0.011348 and lower Brier by 0.001265. Platform WOE exceeds the
 pricing-excluded application scorecard by 0.020127 AUC and has 0.000705 lower
-Brier. These predeclared
+Brier. These complete reported
 contrasts diagnose model and platform-signal dependence; because they use the
 audited OOT outcomes, they cannot promote a learner.
 
@@ -274,6 +277,8 @@ coverage in all eight windows. PSI can reveal marginal shift, but neither low
 nor high PSI is a conformal transport certificate.
 
 ## B.3 Complete residual-window specification
+
+<!-- claim:coverage.five_models_all_windows_below_nominal -->
 
 For each learner, window, and fixed score stratum $g$, define residuals
 
@@ -345,6 +350,8 @@ split conformal validity under exchangeability.
 
 ## B.5 Binary threshold discontinuity
 
+<!-- claim:geometry.prevalence_sensitive_mechanism -->
+
 For a constant score $0\le p<1/2$ and $Y\sim\mathrm{Bernoulli}(\pi)$, the
 population absolute residual is $p$ with probability $1-\pi$ and $1-p$ with
 probability $\pi$. Its $(1-\alpha)$ quantile is therefore
@@ -391,10 +398,13 @@ ranking, and a width reduction can increase missed rare positives.
 
 ## B.6 Label-lag sensitivity
 
+<!-- claim:timing.fit_label_crossing_retained -->
+
 The primary recipes date a charged-off label six calendar months after the
-month-end of last payment.
-Before evaluation, the sensitivity protocol fixed alternative lags of 0, 3, 6,
-8, and 12 months and required more than 99% retention in every fitting month.
+month-end of last payment. Because the archive and six-month recipe had already
+been inspected, the retrospective sensitivity protocol locked the complete
+0-, 3-, 6-, 8-, and 12-month grid before its corresponding run; this is not
+preregistration. The inherited rule requires more than 99% retention in every fitting month.
 Scores, strata, OOT candidates, and outcomes are unchanged; only fitting-label
 availability and the resulting stratum-2 residual quantile vary.
 
@@ -406,13 +416,18 @@ availability and the resulting stratum-2 residual quantile vary.
 | 8 | 0.986816 | No | 0.099730 | 0.111883 | 0.094097 | 0.111712 |
 | 12 | 0.974535 | No | 0.093138 | 0.111690 | 0.087196 | 0.111504 |
 
-: S7A predeclared label-lag sensitivity. The W7--W8 threshold crossing persists for every lag satisfying the retention stop rule. {#tbl-s-label-lag}
+: S7A retrospectively protocol-locked fit-label sensitivity. The W7--W8 threshold crossing persists for every lag satisfying the retention stop rule. {#tbl-s-label-lag}
 
 The crossing disappears at 8 and 12 months because W7 is already below the
 threshold, but those specifications fail the locked retention criterion. This
 separates stability across lags satisfying the strict retention rule from sensitivity
 under more aggressive label delay. It does not establish that prevalence
 caused the empirical geometry change.
+
+This family changes labels used to fit the conformal recipes. It does not vary
+availability of primary OOT outcomes at the evaluation cutoff. Appendix E.2
+reports that separate endpoint-availability family; the two timing axes were
+not crossed factorially.
 
 # Appendix C: Portfolio and Comparator Protocol
 
@@ -546,7 +561,7 @@ distinct point caps. The supports are fixed without outcomes.
 
 ## D.1 Positive affine cap equivalence and same-cap nesting
 
-Suppose a score is globally $s_i=ap_i+b$ with $a>0$ and every feasible
+Suppose a score is globally $s_i=\kappa p_i+b$ with $\kappa>0$ and every feasible
 portfolio fills budget $B$. Then
 
 $$
@@ -566,12 +581,12 @@ orders realized outcomes.
 
 ## D.2 Positive-affine invariance of normalized coordinates
 
-Let $\widetilde s=as+b$ for $a>0$. The score minimum and score of the common
+Let $\widetilde s=\kappa s+b$ for $\kappa>0$. The score minimum and score of the common
 plug-in optimum transform as
-$m_{\widetilde s}=am_s+b$ and $o_{\widetilde s}=ao_s+b$. Hence
+$m_{\widetilde s}=\kappa m_s+b$ and $o_{\widetilde s}=\kappa o_s+b$. Hence
 
 $$
-c_{\widetilde s}(\eta)=ac_s(\eta)+b.
+c_{\widetilde s}(\eta)=\kappa c_s(\eta)+b.
 $$
 
 Using the full-budget equality,
@@ -598,6 +613,8 @@ $-1.46\times10^{-10}$ dollars, numerical zero within solver tolerance. This
 reconciles the theorem; it does not establish realized payoff dominance.
 
 ## D.4 Sharp common-outcome bounds
+
+<!-- claim:theory.sharp_common_outcome_bounds -->
 
 For fixed exposure weights $w_i$ and an additive binary endpoint
 $f_i(Y_i)$, each unresolved outcome may be zero or one. The fixed-policy lower
@@ -630,6 +647,8 @@ not sampling confidence intervals.
 
 ## D.5 Basis-endpoint sufficiency
 
+<!-- claim:theory.basis_endpoint_sufficiency -->
+
 With the full-budget equality, the point-score cap appears in the LP right-hand
 side. Within one optimal basis, the allocation is affine in the cap. Against a
 fixed guardrail, every resolved-outcome contrast is therefore affine. For one
@@ -659,7 +678,11 @@ over all conceivable comparators.
 
 ## E.1 Complete two-ruler endpoint census
 
-Each row below summarizes one predeclared ruler-coordinate track over the same
+<!-- claim:timing.endpoint_six_month_reconciles_v3 -->
+<!-- claim:timing.fit_and_endpoint_lags_not_factorial -->
+<!-- claim:decision.no_selected_policy -->
+
+Each row below summarizes one protocol-locked ruler-coordinate track over the same
 eight overlapping residual recipes and fifteen OOT menus. Contrasts are
 $\gamma=1$ minus $\gamma=0$. The objective-matched ruler is primary; the
 normalized-score ruler is a secondary scale-invariance stress test.
@@ -712,7 +735,51 @@ crosses zero in 16; default is higher in 33 and crosses zero in 15;
 miscoverage is higher in 40 and crosses zero in 8. These are specification
 counts, not votes.
 
-## E.2 Named-comparator census
+## E.2 Evaluation-endpoint availability sensitivity
+
+The endpoint-availability sensitivity holds every score, fitted residual
+recipe, ruler, coordinate, support, and allocation fixed. It changes only the
+administrative lag used to decide whether a Charged Off outcome is observable
+at September 30, 2020. All five retrospectively protocol-locked lags are
+reported; neither coverage nor portfolio outcomes select an endpoint.
+
+| Lag (months) | Resolved / unresolved | Coverage upper $<.90$ | Maximum upper | Payoff lower / cross | Default higher / cross | Miscoverage higher / cross |
+|---:|---:|---:|---:|---:|---:|---:|
+| 0 | 364,861 / 12,029 | 40 / 40 | 0.897641 | 32 / 16 | 33 / 15 | 40 / 8 |
+| 3 | 364,861 / 12,029 | 40 / 40 | 0.897641 | 32 / 16 | 33 / 15 | 40 / 8 |
+| 6 | 364,814 / 12,076 | 40 / 40 | 0.897726 | 32 / 16 | 33 / 15 | 40 / 8 |
+| 8 | 364,570 / 12,320 | 40 / 40 | 0.898151 | 32 / 16 | 33 / 15 | 40 / 8 |
+| 12 | 363,288 / 13,602 | 39 / 40 | 0.900411 | 31 / 17 | 32 / 16 | 40 / 8 |
+
+: S9B complete nonselective evaluation-endpoint lag grid. Direction counts summarize all 48 two-ruler cells for $\gamma=1-\gamma=0$; omitted opposite and exact-zero counts are zero. {#tbl-s-endpoint-lag}
+
+The six-month row reconciles exactly to active V3: after removing the lag
+column, all 120 coverage cells, 48 two-ruler contrasts, and 648 exact-support
+envelopes are value-identical. Lags 0, 3, 6, and 8 retain the active 40/40 coverage result
+and the same two-ruler direction census despite different endpoint counts. At
+12 months, the pricing-excluded WOE/IV scorecard in W2 has upper coverage
+0.900411, leaving 39/40 cells below target. One payoff and one default cell also
+move from a one-sided adverse direction to crossing zero; no opposite
+one-sided direction appears.
+
+| Lag (months) | Development payoff lower / cross | Development default cross | Development miscoverage higher / cross | Broad-support cross |
+|---:|---:|---:|---:|---:|
+| 0 | 6 / 66 | 72 | 27 / 45 | 216 |
+| 3 | 6 / 66 | 72 | 27 / 45 | 216 |
+| 6 | 6 / 66 | 72 | 27 / 45 | 216 |
+| 8 | 6 / 66 | 72 | 27 / 45 | 216 |
+| 12 | 0 / 72 | 72 | 26 / 46 | 216 |
+
+: S9C complete exact-support endpoint sensitivity. Each row contains all 72 development-support cells and all 216 broad-stress cells; omitted opposite and exact-zero counts are zero. {#tbl-s-endpoint-support-lag}
+
+Thus the broad-support nonidentification result survives every endpoint lag,
+while the all-model/all-window coverage statement is not universal over the
+complete lag grid. The active six-month result remains the inherited endpoint
+contract, not a lag selected from these outcomes. This family must not be
+combined with Appendix B.6 as if all 25 fit-label-by-endpoint combinations had
+been evaluated.
+
+## E.3 Named-comparator census
 
 The table counts the sign of the guardrail-minus-point sharp contrast over 72
 window-policy cells per rule. “Lower” and “higher” refer to the guardrail. A
@@ -738,7 +805,9 @@ produces both realized-payoff signs and many unresolved contrasts. The
 difference is precisely why a comparator label cannot replace an explicit
 support.
 
-## E.3 Exact support envelopes
+## E.4 Exact support envelopes
+
+<!-- claim:comparator.broad_support_all_cross_zero -->
 
 Over the broad stress support $[0.05,0.12]$, every one of the 216
 window-policy-metric envelopes crosses zero. Within the narrower
@@ -776,7 +845,7 @@ rows; maximum allocation distance is $1.45\times10^{-14}$ and maximum absolute
 objective difference is $1.72\times10^{-9}$. This establishes deterministic
 stability at the evaluated caps, not continuous-frontier uniqueness.
 
-## E.4 Why no policy is promoted
+## E.5 Why no policy is promoted
 
 The empirical record does not support a winner for three separate reasons.
 First, candidate coverage misses its 0.90 target before optimization for both
@@ -788,6 +857,8 @@ one comparator, or one of the six payoff cells after seeing these results would
 convert a specification audit into post-result selection.
 
 # Appendix F: Controlled Mechanism Simulation
+
+<!-- claim:simulation.portfolio_claim_forbidden -->
 
 The locked factorial crosses score shift
 $\{0,0.05,0.10,0.15\}$, prevalence shift
@@ -916,14 +987,18 @@ policy.
 
 # Appendix H: Claim Boundary and Limitations
 
+<!-- claim:boundary.no_selected_set_validity -->
+
 | Evidence object | Permitted conclusion | Not established |
 |---|---|---|
 | Full raw-file audit | The 640,543 active rows exhaust the declared eligible population | That all 2.9 million rows share one horizon, schema, or estimand |
 | Reconstructed endpoint | 364,814 primary outcomes are resolved by the declared cutoff and 12,076 are bounded as unresolved | That the distributed file is a verified point-in-time snapshot |
-| Eight windows and five learners | Candidate coverage upper bounds are below 0.90 in all 40 declared cells | Universal conformal invalidity, an OOT-selected winner, or future performance |
+| Eight windows and five learners | Under the active six-month endpoint, candidate coverage upper bounds are below 0.90 in all 40 declared cells | Universal conformal invalidity, endpoint-lag invariance, an OOT-selected winner, or future performance |
 | WOE/IV, monotonic, and PSI controls | The transport result is not unique to active CatBoost or platform-pricing features | Scorecard superiority, external validity, or PSI-based coverage certification |
 | Constant-score proposition and stratum-2 path | Binary residual geometry is prevalence-sensitive | Exact finite-sample explanation for varying-score strata |
-| Label-lag sensitivity | The W7--W8 crossing persists at every lag passing the 99% retention rule | Invariance to arbitrarily delayed labels or a causal explanation |
+| Fit-label sensitivity | The W7--W8 crossing persists at every lag passing the 99% retention rule | Invariance to arbitrarily delayed fit labels or a causal explanation |
+| Evaluation-endpoint sensitivity | Coverage is below 0.90 in 40/40 cells at lags 0, 3, 6, and 8 and in 39/40 at lag 12; all broad-support envelopes cross at every lag | Lag-universal coverage failure or an endpoint selected from outcomes |
+| Timing design | Fit-label and evaluation-endpoint lags are separate one-factor sensitivities | Joint or full-factorial lag robustness |
 | Two rulers and three interior coordinates | Endpoint direction is not ruler- or coordinate-invariant on the declared grid | A continuous-frontier ordering or preferred gamma/ruler/coordinate |
 | C0 nesting and 1,080 C2 reconciliations | Plug-in objective dominance under their stated cap constructions | Realized payoff, default, or miscoverage dominance |
 | Exact declared supports | Portfolio signs depend on comparator support and residual window | Universal quantification over all comparators |
@@ -948,10 +1023,11 @@ cannot support promotion because the same outcomes define this audit.
 
 The archive is not a verified historical snapshot. Servicing dates after the
 cutoff require a conservative reconstruction that cannot recover the missing
-point-in-time extract. The six-month Charged Off availability delay is a
-modeling assumption rather than an observed operational charge-off date; the
-predeclared lag analysis supports only the specifications satisfying strict
-greater-than-99% fitting-label retention. Delinquency recency is structurally nullable and
+point-in-time extract. The six-month Charged Off delay is a modeling assumption
+rather than an observed operational date. The retrospectively locked fit-label
+analysis supports only lags satisfying strict greater-than-99% retention; the
+separate endpoint analysis has one upper-coverage exception at 12 months. They
+were not crossed factorially. Delinquency recency is structurally nullable and
 bankruptcy count has partial early schema support; deterministic frozen
 mappings are disclosed, but alternative missingness models are not identified.
 

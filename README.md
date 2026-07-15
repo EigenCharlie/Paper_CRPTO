@@ -53,9 +53,8 @@ proyecto vive en `.venv/Scripts/`; usa PowerShell como shell normal de trabajo.
 
 ```powershell
 # Una sola vez
-just setup              # uv sync --extra dev --extra search --extra spo
-# O setup ligero (sin pyepo/torch)
-just setup-base
+just setup              # entorno activo: dev + search, sin pyepo/torch
+just setup-spo          # entorno historico SPO: agrega pyepo + torch
 
 # Copia el archivo de entorno y rellena con tus tokens reales
 cp .env.example .env
