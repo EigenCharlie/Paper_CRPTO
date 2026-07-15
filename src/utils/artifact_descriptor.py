@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import hashlib
+from collections.abc import Mapping
 from pathlib import Path
 from typing import Any
 
@@ -25,3 +26,24 @@ def relative_artifact_descriptor(path: Path, *, repo_root: Path) -> dict[str, An
         "bytes": int(resolved.stat().st_size),
         "sha256": sha256_file(resolved),
     }
+
+
+def verified_artifact_path(
+    descriptor: Mapping[str, Any],
+    *,
+    repo_root: Path,
+    label: str,
+) -> Path:
+    """Resolve one repository artifact only after path, size, and hash agree."""
+    raw_path = descriptor.get("path")
+    if not isinstance(raw_path, str) or not raw_path:
+        raise TypeError(f"{label} descriptor omits a path.")
+    path = (repo_root / raw_path).resolve()
+    path.relative_to(repo_root.resolve())
+    if not path.is_file():
+        raise FileNotFoundError(f"{label} artifact is missing: {path}")
+    actual = relative_artifact_descriptor(path, repo_root=repo_root)
+    for field in ("path", "bytes", "sha256"):
+        if actual[field] != descriptor.get(field):
+            raise RuntimeError(f"{label} artifact mismatched on {field}.")
+    return path

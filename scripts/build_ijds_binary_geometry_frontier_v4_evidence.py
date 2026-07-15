@@ -32,6 +32,10 @@ from src.ijds_audit.sensitivity_evidence import (
     endpoint_publication_table,
     load_endpoint_sensitivity_evidence,
 )
+from src.ijds_audit.structural_evidence import (
+    load_structural_sensitivity_evidence,
+    structural_publication_table,
+)
 from src.utils.artifact_descriptor import relative_artifact_descriptor
 from src.utils.pipeline_runtime import atomic_write_strict_json, atomic_write_text
 
@@ -56,6 +60,9 @@ TABLE_TARGETS = {
     "label_lag_sensitivity": TABLE_DIR / "crpto_ijds_v4_tableS5_label_lag_sensitivity.csv",
     "endpoint_availability_sensitivity": (
         TABLE_DIR / "crpto_ijds_v4_tableS6_endpoint_availability_sensitivity.csv"
+    ),
+    "portfolio_structure_sensitivity": (
+        TABLE_DIR / "crpto_ijds_v4_tableS7_portfolio_structure_sensitivity.csv"
     ),
 }
 FIGURE_STEMS = {
@@ -619,6 +626,7 @@ def _build_evidence(staging_root: Path) -> Path:
     diagnostic_lineage = cast(dict[str, Any], lineages["diagnostics"])
     sensitivities = cast(dict[str, Any], registry["sensitivities"])
     endpoint_lineage = cast(dict[str, Any], sensitivities["endpoint_availability"])
+    structural_lineage = cast(dict[str, Any], sensitivities["portfolio_structure"])
     config_path = registered["v4_config"]
     summary_path = registered["v4_summary"]
     v4_receipt_path = registered["v4_receipt"]
@@ -849,6 +857,18 @@ def _build_evidence(staging_root: Path) -> Path:
         two_ruler_evaluation_artifacts["metric_direction_census"]
     )
     two_ruler_joined = pd.read_parquet(two_ruler_evaluation_artifacts["joined_funded_allocations"])
+    structural_config_path = registered["structural_sensitivity_config"]
+    structural_freeze_path = registered["structural_sensitivity_freeze"]
+    structural_summary_path = registered["structural_sensitivity_summary"]
+    structural_evidence = load_structural_sensitivity_evidence(
+        structural_summary_path,
+        freeze_path=structural_freeze_path,
+        config_path=structural_config_path,
+        identity=structural_lineage,
+        repo_root=ROOT,
+        reference_two_ruler=two_ruler_windows,
+    )
+    structural_table = structural_publication_table(structural_evidence)
     require_exact_grid(
         two_ruler_windows,
         domains={"window_id": WINDOW_IDS, "ruler": RULERS, "coordinate": COORDINATES},
@@ -1084,6 +1104,10 @@ def _build_evidence(staging_root: Path) -> Path:
             endpoint_table,
             staged_table_targets["endpoint_availability_sensitivity"],
         ),
+        "portfolio_structure_sensitivity": _write_csv(
+            structural_table,
+            staged_table_targets["portfolio_structure_sensitivity"],
+        ),
     }
     staged_figure_dir = staging_root / "outputs" / FIGURE_DIR.relative_to(ROOT)
     figures = {
@@ -1110,9 +1134,9 @@ def _build_evidence(staging_root: Path) -> Path:
         *TABLE_TARGETS.values(),
         *(target for targets in figure_targets.values() for target in targets.values()),
     }
-    if len(publication_outputs) != 18 or set(publication_outputs) != expected_targets:
+    if len(publication_outputs) != 19 or set(publication_outputs) != expected_targets:
         raise RuntimeError(
-            "The staged publication generation is not exactly 12 CSVs and 6 figures."
+            "The staged publication generation is not exactly 13 CSVs and 6 figures."
         )
 
     c2 = solve_records.loc[solve_records["comparator_rule"].eq("c2_contemporaneous")]
@@ -1170,7 +1194,7 @@ def _build_evidence(staging_root: Path) -> Path:
         label="binary phase transition W8",
     )
     evidence = {
-        "schema_version": "2026-07-15.1",
+        "schema_version": "2026-07-15.2",
         "status": "active_ijds_v4_endpoint_corrected_paper_facing_evidence",
         "source_registry": {
             "schema_version": str(registry["schema_version"]),
@@ -1280,6 +1304,21 @@ def _build_evidence(staging_root: Path) -> Path:
                     "not crossed factorially with endpoint availability."
                 ),
                 "rows": endpoint_table.to_dict(orient="records"),
+            },
+            "portfolio_structure": {
+                "scope": "complete_nonselective_budget_by_purpose_cap_by_lgd_grid",
+                "run_tag": str(structural_evidence.summary["run_tag"]),
+                "protocol_tag": str(structural_evidence.summary["protocol_tag"]),
+                "protocol_commit": str(structural_evidence.summary["protocol_commit"]),
+                "scenario_or_result_selected": False,
+                "baseline_reconciles_exactly_to_active_v3": True,
+                **dict(structural_evidence.findings),
+                "estimand_boundary": (
+                    "This complete retrospective assumption sensitivity changes budget, "
+                    "purpose concentration, and LGD without selecting a scenario. Direction "
+                    "remains conditional on ruler, coordinate, window, metric, and scenario."
+                ),
+                "rows": structural_table.to_dict(orient="records"),
             },
         },
         "data_contract": {
@@ -1600,6 +1639,21 @@ def _build_evidence(staging_root: Path) -> Path:
                     path, repo_root=ROOT
                 )
                 for name, path in endpoint_sensitivity_artifacts.items()
+            },
+            "portfolio_structure_sensitivity/config": relative_artifact_descriptor(
+                structural_config_path, repo_root=ROOT
+            ),
+            "portfolio_structure_sensitivity/freeze": relative_artifact_descriptor(
+                structural_freeze_path, repo_root=ROOT
+            ),
+            "portfolio_structure_sensitivity/summary": relative_artifact_descriptor(
+                structural_summary_path, repo_root=ROOT
+            ),
+            **{
+                f"portfolio_structure_sensitivity/{name}": relative_artifact_descriptor(
+                    ROOT / str(descriptor["path"]), repo_root=ROOT
+                )
+                for name, descriptor in structural_evidence.summary["artifacts"].items()
             },
             "solver_tie_audit/manifest": relative_artifact_descriptor(
                 tie_evidence_path, repo_root=ROOT

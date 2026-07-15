@@ -46,6 +46,7 @@ active_scientific_contract:
       - scripts/experiments/run_ijds_credit_risk_controls.py
       - scripts/experiments/run_ijds_label_lag_sensitivity.py
       - scripts/experiments/run_ijds_endpoint_availability_sensitivity.py
+      - scripts/experiments/run_ijds_portfolio_structure_sensitivity.py
       - scripts/experiments/run_ijds_policy_support_tie_audit.py
     historical_execution_in_active_capsule: false
 
@@ -92,6 +93,7 @@ active_scientific_contract:
     - reports/crpto/tables/crpto_ijds_v4_tableS4_score_psi.csv
     - reports/crpto/tables/crpto_ijds_v4_tableS5_label_lag_sensitivity.csv
     - reports/crpto/tables/crpto_ijds_v4_tableS6_endpoint_availability_sensitivity.csv
+    - reports/crpto/tables/crpto_ijds_v4_tableS7_portfolio_structure_sensitivity.csv
     - reports/crpto/figures/crpto_ijds_v4_fig1_coverage.pdf
     - reports/crpto/figures/crpto_ijds_v4_fig1_coverage.png
     - reports/crpto/figures/crpto_ijds_v4_fig2_phase_transition.pdf

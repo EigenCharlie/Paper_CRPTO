@@ -3,17 +3,16 @@
 from __future__ import annotations
 
 import json
-from collections.abc import Iterable, Mapping, Sequence
+from collections.abc import Iterable, Mapping
 from dataclasses import dataclass
 from itertools import product
 from pathlib import Path
 from typing import Any, cast
 
 import pandas as pd
-from pandas.testing import assert_frame_equal
 
-from src.ijds_audit.grid_contracts import require_exact_grid, require_finite
-from src.utils.artifact_descriptor import relative_artifact_descriptor
+from src.ijds_audit.grid_contracts import require_exact_frame, require_exact_grid, require_finite
+from src.utils.artifact_descriptor import verified_artifact_path
 
 ENDPOINT_LAGS = (0, 3, 6, 8, 12)
 COVERAGE_LEARNERS = (
@@ -75,39 +74,12 @@ def _verified_artifacts(
     for name, raw in artifacts.items():
         if not isinstance(raw, Mapping):
             raise TypeError(f"Endpoint artifact {name!r} is not a descriptor.")
-        path = (repo_root / str(raw.get("path"))).resolve()
-        path.relative_to(repo_root.resolve())
-        actual = relative_artifact_descriptor(path, repo_root=repo_root)
-        if any(actual[field] != raw.get(field) for field in ("path", "bytes", "sha256")):
-            raise RuntimeError(f"Endpoint artifact {name!r} failed hash verification.")
-        verified[str(name)] = path
-    return verified
-
-
-def _sorted(frame: pd.DataFrame, keys: Sequence[str]) -> pd.DataFrame:
-    return frame.sort_values(list(keys), kind="stable").reset_index(drop=True)
-
-
-def _assert_exact_frame(
-    actual: pd.DataFrame,
-    expected: pd.DataFrame,
-    *,
-    keys: Sequence[str],
-    label: str,
-) -> None:
-    if set(actual.columns) != set(expected.columns):
-        raise RuntimeError(f"{label} columns differ from the active reference.")
-    columns = list(expected.columns)
-    try:
-        assert_frame_equal(
-            _sorted(actual.loc[:, columns], keys),
-            _sorted(expected.loc[:, columns], keys),
-            check_exact=True,
-            check_dtype=True,
-            check_like=False,
+        verified[str(name)] = verified_artifact_path(
+            raw,
+            repo_root=repo_root,
+            label=f"Endpoint {name}",
         )
-    except AssertionError as error:
-        raise RuntimeError(f"{label} does not reconcile exactly to active V3.") from error
+    return verified
 
 
 def _validate_endpoint_frames(frames: Mapping[str, pd.DataFrame]) -> None:
@@ -193,7 +165,7 @@ def _validate_endpoint_frames(frames: Mapping[str, pd.DataFrame]) -> None:
         )
         .reset_index()
     )
-    _assert_exact_frame(
+    require_exact_frame(
         coverage_summary,
         derived_coverage,
         keys=("charged_off_lag_months", "learner", "role"),
@@ -250,7 +222,7 @@ def _validate_endpoint_frames(frames: Mapping[str, pd.DataFrame]) -> None:
             }
             for direction in TWO_RULER_DIRECTIONS
         )
-    _assert_exact_frame(
+    require_exact_frame(
         direction_census,
         pd.DataFrame(derived_direction_rows),
         keys=("charged_off_lag_months", "metric", "direction"),
@@ -288,7 +260,7 @@ def _validate_endpoint_frames(frames: Mapping[str, pd.DataFrame]) -> None:
         "charged_off_lag_months",
         "cells",
     ]
-    _assert_exact_frame(
+    require_exact_frame(
         support_census,
         derived_support,
         keys=("charged_off_lag_months", "scope", "metric", "direction"),
@@ -390,7 +362,7 @@ def load_endpoint_sensitivity_evidence(
         },
         label="active V3 coverage reference",
     )
-    _assert_exact_frame(
+    require_exact_frame(
         lag6_coverage,
         reference_coverage_slice,
         keys=coverage_keys,
@@ -403,7 +375,7 @@ def load_endpoint_sensitivity_evidence(
         .drop(columns="charged_off_lag_months")
     )
     contrast_keys = ("window_id", "ruler", "coordinate")
-    _assert_exact_frame(
+    require_exact_frame(
         lag6_two_ruler,
         reference_two_ruler,
         keys=contrast_keys,
@@ -416,7 +388,7 @@ def load_endpoint_sensitivity_evidence(
         .drop(columns="charged_off_lag_months")
     )
     envelope_keys = ("window_id", "paired_policy_id", "scope", "metric")
-    _assert_exact_frame(
+    require_exact_frame(
         lag6_envelopes,
         reference_envelopes,
         keys=envelope_keys,

@@ -167,6 +167,59 @@ def test_endpoint_availability_grid_is_visible_and_kept_separate() -> None:
     assert "active six-month result remains the inherited endpoint contract" in normalized
 
 
+def test_complete_portfolio_structure_grid_is_visible_in_supplement() -> None:
+    rows = _rows("crpto_ijds_v4_tableS7_portfolio_structure_sensitivity.csv")
+    supplement = SUPPLEMENT.read_text(encoding="utf-8")
+
+    assert len(rows) == 36
+    assert {float(row["budget"]) for row in rows} == {500_000.0, 1_000_000.0, 2_000_000.0}
+    assert {float(row["purpose_cap"]) for row in rows} == {0.2, 0.25, 0.3, 1.0}
+    assert {float(row["lgd"]) for row in rows} == {0.25, 0.45, 0.65}
+    assert {int(row["activity_portfolios"]) for row in rows} == {1440}
+    assert {float(row["activity_frontier_constraint_binding_share"]) for row in rows} == {1.0}
+    for row in rows:
+        payoff = "/".join(
+            row[column]
+            for column in (
+                "standardized_payoff_gamma_1_lower_cells",
+                "standardized_payoff_gamma_1_higher_cells",
+                "standardized_payoff_crosses_zero_cells",
+                "standardized_payoff_exact_zero_cells",
+            )
+        )
+        default = "/".join(
+            row[column]
+            for column in (
+                "funded_default_gamma_1_higher_cells",
+                "funded_default_gamma_1_lower_cells",
+                "funded_default_crosses_zero_cells",
+                "funded_default_exact_zero_cells",
+            )
+        )
+        miscoverage = "/".join(
+            row[column]
+            for column in (
+                "funded_binary_miscoverage_gamma_1_higher_cells",
+                "funded_binary_miscoverage_gamma_1_lower_cells",
+                "funded_binary_miscoverage_crosses_zero_cells",
+                "funded_binary_miscoverage_exact_zero_cells",
+            )
+        )
+        expected = (
+            f"| {float(row['budget']) / 1_000_000:.1f} | "
+            f"{float(row['purpose_cap']):.2f} | {float(row['lgd']):.2f} | "
+            f"{payoff} | {default} | {miscoverage} | "
+            f"{float(row['activity_purpose_cap_binding_share']):.0%} |"
+        )
+        assert expected in supplement
+
+    normalized = re.sub(r"\s+", " ", supplement.lower())
+    assert "zero scenarios are favorable on all three metrics" in normalized
+    assert "zero are adverse on all three metrics" in normalized
+    assert "share of the 1,440 portfolios" in normalized
+    assert "baseline scenario reproduces the active v3 two-ruler bounds exactly" in normalized
+
+
 def test_supplement_discloses_negative_simulation_and_recovery() -> None:
     supplement = re.sub(r"\s+", " ", SUPPLEMENT.read_text(encoding="utf-8").lower())
 

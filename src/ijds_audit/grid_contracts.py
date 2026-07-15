@@ -8,6 +8,7 @@ from typing import Any
 
 import numpy as np
 import pandas as pd
+from pandas.testing import assert_frame_equal
 
 
 def require_exact_grid(
@@ -68,3 +69,32 @@ def require_unique_value(frame: pd.DataFrame, column: str, *, label: str) -> Any
     if len(values) != 1 or bool(values.isna().any()):
         raise RuntimeError(f"{label} has no unique nonmissing {column!r} value.")
     return values.iloc[0]
+
+
+def require_exact_frame(
+    actual: pd.DataFrame,
+    expected: pd.DataFrame,
+    *,
+    keys: Sequence[str],
+    label: str,
+) -> None:
+    """Require value-, dtype-, column-, and key-exact dataframe equality."""
+    if set(actual.columns) != set(expected.columns):
+        raise RuntimeError(f"{label} columns differ from the active reference.")
+    columns = list(expected.columns)
+    actual_sorted = (
+        actual.loc[:, columns].sort_values(list(keys), kind="stable").reset_index(drop=True)
+    )
+    expected_sorted = (
+        expected.loc[:, columns].sort_values(list(keys), kind="stable").reset_index(drop=True)
+    )
+    try:
+        assert_frame_equal(
+            actual_sorted,
+            expected_sorted,
+            check_exact=True,
+            check_dtype=True,
+            check_like=False,
+        )
+    except AssertionError as error:
+        raise RuntimeError(f"{label} does not reconcile exactly to active evidence.") from error

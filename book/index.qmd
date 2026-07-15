@@ -21,12 +21,15 @@ no fija la misma oportunidad de inversión.
 **Método**: CRPTO audita un universo exhaustivo y status-independent de 640,543
 préstamos a 36 meses, cinco especificaciones predictivas, ocho ventanas
 residuales completas, dos reglas outcome-free de comparación, resultados no
-resueltos mediante bounds sharp y soporte exacto de caps.
+resueltos mediante bounds sharp, soporte exacto de caps y una sensibilidad
+completa de 36 escenarios de estructura de portafolio.
 
 **Hallazgo**: la cobertura candidata no transporta en las 40 celdas declaradas;
 la geometría residual binaria cambia cerca del umbral de prevalencia; y la
 dirección downstream depende del ruler, la coordenada y el soporte del
-comparador. No se promueve una policy ni un modelo ganador.
+comparador. Cada escenario estructural conserva celdas adversas de default y
+miscoverage, pero ninguno es uniformemente favorable o adverso. No se promueve
+una policy, escenario ni modelo ganador.
 :::
 
 ```{mermaid}
@@ -39,7 +42,8 @@ flowchart LR
   D --> E["LP mensual con CatBoost primario"]
   E --> F["Dos rulers y tres coordenadas"]
   F --> G["Endpoint reconstruido y bounds sharp"]
-  G --> H["Soporte exacto y límites de claim"]
+  G --> H["36 escenarios estructurales"]
+  H --> I["Soporte exacto y límites de claim"]
 ```
 
 ::: {.callout-important}
@@ -59,7 +63,7 @@ solo como procedencia histórica. No prueban los claims del manuscrito activo.
 | Superficie | Función actual | Evidencia visible |
 |---|---|---|
 | Paper IJDS | Auditoría de identificación en la interfaz ML, conformal y optimización. | Universo status-independent, cobertura completa, mecanismo de geometría binaria, dos rulers y exact support. |
-| Online supplement | Pruebas, censos completos, sensibilidad temporal, trazabilidad y fronteras de interpretación. | Apéndices A--I, endpoint reconstruido, WOE/IV, monotonicidad, PSI, label lag y solver audit. |
+| Online supplement | Pruebas, censos completos, sensibilidades temporal y estructural, trazabilidad y fronteras de interpretación. | Apéndices A--I, endpoint reconstruido, WOE/IV, monotonicidad, PSI, label lag, 36 escenarios y solver audit. |
 | Libro | Companion pedagógico del manuscrito activo. | Blueprint, claims, teoría, límites y defensa ante reviewers. |
 | Reproducibilidad | Une cada afirmación activa con una fuente verificable. | Registry, DVC, evidence manifest, tests de publicación y TeX generado. |
 

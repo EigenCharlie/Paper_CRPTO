@@ -94,9 +94,12 @@ sign-unidentified, .50 adverse, and .75 mostly sign-unidentified;
 normalized .25 and .50 are adverse, while .75 retains one
 sign-unidentified payoff cell. All 216 broad-support exact envelopes
 include zero. No model, window, gamma, ruler, coordinate, or policy is
-selected. CRPTO contributes an identification audit: binary conformal
-geometry is prevalence-sensitive, coverage does not transport here, and
-portfolio direction depends on comparator stringency.%
+selected. Across a complete 36-scenario budget--concentration--LGD grid,
+every scenario retains adverse default and miscoverage cells, but none
+is uniformly favorable or adverse. CRPTO contributes an identification
+audit: binary conformal geometry is prevalence-sensitive, coverage does
+not transport here, and portfolio direction depends on comparator
+stringency.%
 }
 
 \KEYWORDS{conformal prediction; predict-then-optimize; comparator
@@ -1195,6 +1198,28 @@ S9B--S9C report the full grid. These results make the 40/40 coverage
 statement endpoint-contract-specific; they do not authorize selecting
 the six-month endpoint.
 
+\subsection{Structural assumptions do not restore a universal
+direction}\label{structural-assumptions-do-not-restore-a-universal-direction}
+
+A separate outcome-free freeze crosses monthly budgets of USD 0.5, 1,
+and 2 million, maximum purpose shares of 0.20, 0.25, 0.30, and 1.00, and
+LGD values of 0.25, 0.45, and 0.65. The evaluation reports the complete
+36-scenario Cartesian product without selecting a scenario. Each
+scenario retains both rulers, all three coordinates, and all eight
+residual windows, giving 48 guardrail-minus-point cells per metric and
+1,728 cells over the structural grid.
+
+Every scenario contains at least 17 cells with higher default and at
+least 21 with higher miscoverage. No scenario makes all three metrics
+favorable in all 48 cells, but no scenario makes all three metrics
+adverse in all 48 cells either. At least one favorable cell appears in
+26 scenarios for payoff and 20 each for default and miscoverage. The
+baseline scenario reconciles exactly to the active two-ruler result.
+Thus budget, concentration, and LGD change the mix of adverse,
+favorable, and unidentified cells, but do not supply a
+scenario-independent ordering. Online Supplement Tables S9D--S9E report
+the complete census and binding diagnostics.
+
 \subsection{Exact point-cap support checks the finite
 diagnostic}\label{exact-point-cap-support-checks-the-finite-diagnostic}
 
@@ -1222,8 +1247,9 @@ continuous joint frontier.
 The exact frontier is not a seventh track. It checks the finite
 two-ruler grid against a continuous point-cap support. Together the
 analyses show that realized direction depends on residual recipe,
-comparator support, ruler, and frontier coordinate; none identifies a
-universally safer or more profitable conformal endpoint.
+comparator support, ruler, frontier coordinate, and declared portfolio
+structure; none identifies a universally safer or more profitable
+conformal endpoint.
 
 \section{Discussion}\label{sec-discussion}
 
@@ -1247,6 +1273,13 @@ development support, but default never does and all three metrics become
 unidentified in W8. This exact support result is the safeguard against
 overinterpreting a finite grid, not a reason to privilege the broadest
 support after outcomes.
+
+The complete structural grid adds a different safeguard. It shows that
+the absence of a universally favorable direction is not an artifact of
+one budget, purpose cap, or LGD, while favorable cells under many
+scenarios prevent the opposite claim of universal harm. Structural
+sensitivity therefore sharpens the identification boundary; it does not
+identify a preferred scenario.
 
 The upper score is pointwise larger and, at a shared cap, mechanically
 more restrictive; neither fact supplies OOT coverage or funded-set
@@ -1299,17 +1332,21 @@ exchangeability, candidate coverage does not control selected-set
 coverage, and the constant-score theorem and simulation identify
 mechanisms rather than the finite varying-score path. The
 three-coordinate ruler grid, one-moment C2, and exact point-cap support
-do not form a continuous joint frontier. The inspected archive is not a
-pristine lockbox or preregistration.
+do not form a continuous joint frontier. The structural grid varies
+three stylized assumptions but does not represent cash-flow timing,
+recoveries, prepayment, capital costs, or all possible portfolio
+constraints. The inspected archive is not a pristine lockbox or
+preregistration.
 
 \section{Reproducibility}\label{sec-reproducibility}
 
 One source registry binds three outcome-free freeze/evaluation pairs,
-the raw and timing audits, solver checks, versioned DVC pointers, and
-the environment lock. The evidence builder verifies hashes and
-scientific invariants before producing twelve tables and three figures
-in PNG and PDF byte-identically. Online Supplement Appendix G and the
-editor-only crosswalk retain full run identities and stopped attempts.
+the raw and timing audits, the complete structural sensitivity, solver
+checks, versioned DVC pointers, and the environment lock. The evidence
+builder verifies hashes and scientific invariants before producing
+thirteen tables and three figures in PNG and PDF byte-identically.
+Online Supplement Appendix G and the editor-only crosswalk retain full
+run identities and stopped attempts.
 
 \section{Conclusion}\label{sec-conclusion}
 
@@ -1323,7 +1360,10 @@ Portfolio direction likewise requires a ruler and coordinate. Objective
 matching is unidentified at .25, adverse at .50, and mostly unidentified
 at .75; normalized matching is adverse at .25 and .50 but changes
 opportunity cost, and .75 retains one unidentified payoff cell. All 216
-broad-support exact envelopes include zero.
+broad-support exact envelopes include zero. Across the complete
+36-scenario structural grid, every scenario retains adverse default and
+miscoverage cells, while zero scenarios are uniformly favorable or
+uniformly adverse.
 
 CRPTO is therefore an identification audit, not a winning policy. It
 retains censored candidates, reports complete residual and gamma paths,

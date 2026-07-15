@@ -11,6 +11,7 @@ reviewer manuscript and does not authorize claims beyond the registry.
 <!-- claim:timing.fit_and_endpoint_lags_not_factorial -->
 <!-- claim:decision.no_selected_policy -->
 <!-- claim:comparator.broad_support_all_cross_zero -->
+<!-- claim:sensitivity.structure_no_universal_direction -->
 <!-- claim:simulation.portfolio_claim_forbidden -->
 <!-- claim:boundary.no_selected_set_validity -->
 
@@ -28,6 +29,7 @@ reviewer manuscript and does not authorize claims beyond the registry.
 | Objective ruler .25 | Payoff [-9,134.34, 5,603.66]; default/miscoverage [-0.0068, 0.1265] pp | All three metrics are unidentified in all eight windows | A favorable endpoint |
 | Objective ruler .50/.75 | .50 adverse in 8/8; .75 payoff/default cross in 7/8 | Direction changes with coordinate | Coordinate-free ordering |
 | Normalized ruler | .25/.50 adverse; .75 payoff crosses in 1/8 | Same relative score relaxation, different opportunity cost | Neutral comparison or preferred ruler |
+| Portfolio structure | Complete 36-scenario budget--purpose-cap--LGD grid; every scenario has at least 17 adverse default and 21 adverse miscoverage cells; zero scenarios are uniformly favorable or adverse | Direction remains conditional after varying three active structural assumptions | Scenario winner, structural invariance, universal harm, or deployment guidance |
 | Exact support | 216/216 broad envelopes cross zero; default 72/72 development envelopes cross | No universal direction over declared supports | Universal comparator quantification |
 | Solver stability | 7,297 evaluated rows; 0 tie-sensitive reversed-order reruns | Deterministic stability at evaluated caps | Continuous-frontier uniqueness |
 | Credit controls | Five coverage specifications; one portfolio learner | Same below-target finding across the protocol-locked specifications under the active endpoint | Model promotion or WOE/IV novelty |
@@ -36,7 +38,7 @@ reviewer manuscript and does not authorize claims beyond the registry.
 ## Nonnegotiable Boundaries
 
 - No selected learner, window, taxonomy, endpoint lag, gamma, ruler,
-  coordinate, cap, comparator, or policy.
+  coordinate, structural scenario, cap, comparator, or policy.
 - No causal, prospective, confirmatory, deployment, Markov, or fair-lending
   claim.
 - Overlapping windows and repeated allocations are not independent replications.

@@ -5,7 +5,8 @@
 The only active IJDS source of truth is
 `docs/research/active_claims_2026-07-14.md`. The paper combines a
 complete-window binary-geometry/exact-frontier audit with a finite two-ruler
-endpoint diagnostic. It does not select a gamma, ruler, coordinate, policy,
+endpoint diagnostic and a complete 36-scenario portfolio-structure sensitivity.
+It does not select a gamma, ruler, coordinate, structural scenario, policy,
 learner, or residual window and does not claim a universal guardrail direction.
 The outcome-free V4-v1 and two-ruler V1c freezes are imported by separate
 hash-linked evaluators; the only active paper-facing manifest is
@@ -16,7 +17,9 @@ GO: candidate-coverage failure survives all eight windows and five reported
 learner specifications, including monotonic and WOE/IV credit-risk controls;
 binary interval geometry changes around a prevalence threshold; and realized
 decision directions depend on ruler, coordinate, residual timing, and declared
-comparator support. Only the primary CatBoost enters portfolio optimization.
+comparator support. Every budget--purpose-cap--LGD scenario retains adverse
+default and miscoverage cells, but no scenario is uniformly favorable or
+adverse. Only the primary CatBoost enters portfolio optimization.
 Selected-policy studies,
 compact-v7, pool93, Prosper/Freddie, and A1--A40 are historical provenance only. Never overwrite
 the V1/V2/V3 audit runs, the historical champion, or manifest-protected artifacts.
@@ -93,13 +96,15 @@ upstream protegido.
 | Exact frontier | 3,067 caps; 216/216 broad-stress envelopes cruzan cero |
 | Development support | default 72/72 cruza; W8 27/27 cruza |
 | Sensibilidad endpoint | lags 0/3/6/8/12 completos; lag 6 reconcilia exactamente con V3; sin seleccion de endpoint |
+| Sensibilidad estructural | 36/36 escenarios budget--purpose-cap--LGD; minimo 17 default y 21 miscoverage adversos por escenario; 0 escenarios universalmente favorables o adversos |
 | Evidencia | `reports/crpto/ijds_binary_geometry_frontier_v4_evidence.json` |
 
 El claim activo es una auditoria de identificacion: la falla temporal de
 cobertura sobrevive los checks declarados, la geometria binaria es sensible a
 prevalencia, y el signo de los resultados de portafolio depende del ruler, la
-coordenada, el timing residual y el soporte del comparador. No existe un winner
-ni una direccion universal. La autoridad completa es
+coordenada, el timing residual, el soporte del comparador y la estructura
+declarada del portafolio. No existe un winner ni una direccion universal. La
+autoridad completa es
 `docs/research/active_claims_2026-07-14.md`.
 
 **Body claim histórico v7:** NO-GO y replay-only. Sus A35--A40, retorno

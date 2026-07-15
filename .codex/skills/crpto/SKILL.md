@@ -15,11 +15,12 @@ Read first:
 6. `configs/ijds_active_evidence_sources.yaml`
 7. `configs/ijds_claim_ledger.yaml`
 8. `docs/research/ijds_endpoint_availability_sensitivity_protocol_2026-07-14.md`
-9. `reports/crpto/ijds_binary_geometry_frontier_v4_evidence.json`
-10. `docs/ACADEMIC_CONTEXT.md`
-11. `docs/SCOPE_AND_GOVERNANCE.md`
-12. `CONTRIBUTING.md`
-13. `EXTRACTION_MANIFEST.md`
+9. `docs/research/ijds_portfolio_structure_sensitivity_v6_protocol_2026-07-15.md`
+10. `reports/crpto/ijds_binary_geometry_frontier_v4_evidence.json`
+11. `docs/ACADEMIC_CONTEXT.md`
+12. `docs/SCOPE_AND_GOVERNANCE.md`
+13. `CONTRIBUTING.md`
+14. `EXTRACTION_MANIFEST.md`
 
 Active evidence:
 
@@ -39,6 +40,8 @@ Active evidence:
 - unresolved outcomes: retained with sharp common-outcome bounds.
 - evaluation-endpoint availability: all lags 0, 3, 6, 8, and 12 months are
   reported without selection; the 6-month slice reconciles exactly to V3.
+- portfolio structure: all 36 budget--purpose-cap--LGD scenarios are reported
+  without selection; the baseline reconciles exactly to V3.
 
 Headline evidence:
 
@@ -62,6 +65,8 @@ Headline evidence:
 - normalized-score `.25` and `.50` are adverse; `.75` has adverse default and
   miscoverage while payoff is adverse in seven windows and crosses in one;
 - the six ruler-coordinate tracks are not 48 independent replications;
+- every structural scenario retains adverse default and miscoverage cells;
+  zero scenarios are uniformly favorable or uniformly adverse;
 - the factorial simulation is claim-bearing for coverage mechanism only; its
   portfolio component is degenerate.
 
@@ -90,6 +95,8 @@ Preserve these distinctions:
 - tagged retrospective audit versus preregistration or confirmation.
 - conformal-fit label timing versus evaluation-endpoint availability; these
   are separate one-factor sensitivities and were not crossed factorially.
+- complete structural conditionality versus a selected scenario, universal
+  adversity, or deployment guidance.
 
 Do not claim a learner, gamma, ruler, coordinate, or policy winner, universal
 direction, selected-set validity, Markov/tail certificate, causal effect, live
@@ -112,8 +119,9 @@ just paper-submission-official
 uv run dvc status --no-updates
 ```
 
-The active builder verifies the V4, two-ruler, raw-data, and credit-control
-manifests/freezes and every artifact descriptor. It emits only
+The active builder verifies the V4, two-ruler, raw-data, credit-control,
+endpoint-sensitivity, and structural-sensitivity manifests/freezes and every
+artifact descriptor. The active capsule contains sixteen DVC pointers. It emits only
 `crpto_ijds_v4_*` tables/figures and
 `ijds_binary_geometry_frontier_v4_evidence.json`. Consecutive builds must be
 byte-identical. The canonical body is `paper/CRPTO_ijds.qmd`; generate official

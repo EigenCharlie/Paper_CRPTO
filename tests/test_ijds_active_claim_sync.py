@@ -301,6 +301,36 @@ def test_endpoint_availability_sensitivity_is_complete_and_nonselective() -> Non
     }
 
 
+def test_portfolio_structure_sensitivity_is_complete_and_nonselective() -> None:
+    sensitivity = _json(EVIDENCE)["sensitivity"]["portfolio_structure"]
+
+    assert sensitivity["scenario_count"] == 36
+    assert sensitivity["complete_cartesian_grid"] is True
+    assert sensitivity["scenario_or_result_selected"] is False
+    assert sensitivity["baseline_reconciles_exactly_to_active_v3"] is True
+    assert sensitivity["every_scenario_has_adverse_default_and_miscoverage_cells"] is True
+    assert sensitivity["minimum_adverse_default_cells_per_scenario"] == 17
+    assert sensitivity["minimum_adverse_miscoverage_cells_per_scenario"] == 21
+    assert sensitivity["universally_favorable_scenarios"] == 0
+    assert sensitivity["universally_adverse_scenarios"] == 0
+    assert sensitivity["scenarios_with_any_favorable_payoff_cell"] == 26
+    assert sensitivity["scenarios_with_any_favorable_default_cell"] == 20
+    assert sensitivity["scenarios_with_any_favorable_miscoverage_cell"] == 20
+    assert sensitivity["portfolios_per_scenario"] == 1440
+    assert sensitivity["purpose_cap_binding_share_by_cap"] == {
+        "0.20": 1.0,
+        "0.25": 1.0,
+        "0.30": 1.0,
+        "1.00": 0.0,
+    }
+    assert sensitivity["maximum_loan_weight_by_budget"] == {
+        "500000": 0.08,
+        "1000000": 0.04,
+        "2000000": 0.02,
+    }
+    assert len(sensitivity["rows"]) == 36
+
+
 def test_simulation_is_explicitly_non_claim_bearing_for_portfolios() -> None:
     simulation = _json(EVIDENCE)["simulation"]
 
@@ -323,6 +353,8 @@ def test_evidence_manifest_hashes_every_active_output() -> None:
         "claim_ledger_loader",
         "endpoint_availability_sensitivity/summary",
         "endpoint_availability_sensitivity/loader",
+        "portfolio_structure_sensitivity/summary",
+        "portfolio_structure_sensitivity/loader",
         "artifact_descriptor_helper",
         "outcome_free/source_protocol_freeze",
         "two_ruler/outcome_free/freeze",

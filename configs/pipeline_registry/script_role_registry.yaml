@@ -1,4 +1,4 @@
-schema_version: "2026-07-14.2"
+schema_version: "2026-07-15.3"
 scripts:
   -
     script: scripts/experiments/run_ijds_endpoint_availability_sensitivity.py
@@ -8,10 +8,10 @@ scripts:
     status: active
   -
     script: scripts/experiments/run_ijds_portfolio_structure_sensitivity.py
-    role: stopped outcome-free budget-purpose-LGD structural sensitivity V1--V5
-    category: provenance
-    pipeline_owner: ijds_stopped_diagnostic
-    status: stopped
+    role: complete nonselective budget-purpose-LGD structural sensitivity V6
+    category: diagnostics
+    pipeline_owner: ijds_active_audit
+    status: active
   -
     script: scripts/experiments/run_ijds_policy_support_tie_audit.py
     role: evaluated-cap basis and ID-order stability audit

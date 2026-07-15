@@ -40,13 +40,15 @@ ni un holdout intacto.
 > change in binary absolute-residual geometry. Downstream, objective-matched and
 > normalized-score rulers produce different realized contrast directions, and
 > exact common-outcome envelopes expose unresolved endpoints and comparator
-> support. No model, gamma, ruler, coordinate, or policy is selected. CRPTO's
+> support. Across a complete 36-scenario budget--concentration--LGD grid, every
+> scenario retains adverse default and miscoverage cells, but none is uniformly
+> favorable or adverse. No model, gamma, ruler, coordinate, scenario, or policy is selected. CRPTO's
 > contribution is a reproducible identification audit of the
 > machine-learning--conformal--optimization handoff.
 
 ### Claims editoriales activos
 
-Los identificadores I1--I7 son claves de escritura, no hipótesis independientes
+Los identificadores I1--I8 son claves de escritura, no hipótesis independientes
 ni nombres de comparadores.
 
 ::: {#tbl-crpto-numbered-claims}
@@ -59,7 +61,8 @@ ni nombres de comparadores.
 | I4 | Score, ruler y coordenada definen conjuntamente la comparación de portafolios. | Dos rulers, tres coordenadas interiores, ocho ventanas y 48 contrastes de ventana. | Ningún ruler es neutral ni seleccionado por outcomes. |
 | I5 | El endpoint reconstruido cambia la interpretación de direcciones previamente aparentes. | 376,890 candidatos; 364,814 resueltos y 12,076 no resueltos. | El archivo no es un snapshot administrativo verificado. |
 | I6 | Los bounds sharp y el exact support cuantifican identificación parcial sobre outcomes y caps declarados. | 216 broad-support envelopes cruzan cero; terminal default cruza cero en 72/72 celdas de development support. | No son intervalos de confianza ni una frontera continua universal. |
-| I7 | La evidencia es reproducible y outcome-isolated. | Registry hash-locked, freezes/evaluations DVC, manifest paper-facing y tests de publicación. | Reproducibilidad no convierte el estudio en prospectivo. |
+| I7 | La ausencia de dirección universal sobrevive una sensibilidad estructural completa. | 36/36 escenarios; mínimo 17 celdas de default y 21 de miscoverage adversas por escenario; 0 escenarios uniformemente favorables o adversos. | No identifica un escenario ganador ni prueba daño universal. |
+| I8 | La evidencia es reproducible y outcome-isolated. | Registry hash-locked, freezes/evaluations DVC, manifest paper-facing y tests de publicación. | Reproducibilidad no convierte el estudio en prospectivo. |
 
 : Claims editoriales del manuscrito activo.
 :::
@@ -70,12 +73,12 @@ ni nombres de comparadores.
 
 | Sección | Pregunta que resuelve | Material esencial |
 |---|---|---|
-| 1. Introduction | ¿Qué se rompe al inferir una policy a partir de cobertura candidata? | Gap, contribuciones I1--I7 y límites. |
+| 1. Introduction | ¿Qué se rompe al inferir una policy a partir de cobertura candidata? | Gap, contribuciones I1--I8 y límites. |
 | 2. Related Work | ¿Qué aportan y qué no transfieren los vecinos más cercanos? | Decision quality, CP bajo shift, conformal RO, crédito y madurez. |
 | 3. Data and Locked Evaluation Design | ¿Cuál era la información físicamente disponible? | Universo status-independent, roles temporales, outcome isolation y endpoint. |
 | 4. Method | ¿Cómo se construyen scores, intervalos, payoff y LP? | CatBoost primario, cuatro controles, Mondrian binario y asignación mensual. |
 | 5. Audit Theory and Estimands | ¿Qué puede ordenarse sin observar outcomes? | Equivalencia afín, nesting, C2, geometría binaria y bounds sharp. |
-| 6. Results | ¿Transporta cobertura y es invariante la dirección downstream? | 40 celdas, W7--W8, two-ruler y exact support. |
+| 6. Results | ¿Transporta cobertura y es invariante la dirección downstream? | 40 celdas, W7--W8, two-ruler, estructura y exact support. |
 | 7. Discussion | ¿Qué aprende un sistema decision-focused de este fallo de transporte? | Estimand, información y separación de claims. |
 | 8. Limitations | ¿Qué diseño sería necesario para afirmar más? | Snapshot, censura, selected set, cash flows y validez externa. |
 | 9. Reproducibility | ¿Cómo se reconstruye cada cifra? | Registry, DVC, evidence manifest, tablas, figuras y tests. |
@@ -118,6 +121,7 @@ No hay freeze de submission. Este ledger es una restricción editorial móvil,
 | Tabla two-ruler | Body | Seis tracks y sus hulls endpoint-corrected. | `crpto_ijds_v4_table5_two_ruler_tracks.csv` |
 | Figura 3 | Supplement | Dirección de envelopes sobre development support. | `crpto_ijds_v4_fig3_envelopes` |
 | Tabla endpoint timing | Supplement | Sensibilidad separada del fit-label lag. | `crpto_ijds_v4_tableS6_endpoint_availability_sensitivity.csv` |
+| Tabla structural sensitivity | Supplement, resumen en body | Censo no selectivo de los 36 escenarios. | `crpto_ijds_v4_tableS7_portfolio_structure_sensitivity.csv` |
 
 : Selección activa de figuras y tablas.
 :::
@@ -135,7 +139,7 @@ figuras” confunde formatos con objetos visuales.
 | B | Cinco learners, WOE/IV, monotonicidad, PSI, ventanas y label lag. | Censo técnico de cobertura y geometría. |
 | C | Payoff, LP, rulers y named comparators. | Definición exacta del contrafactual. |
 | D | Enunciados y pruebas. | Mantiene legible el body. |
-| E | Censo two-ruler, endpoint recovery y exact support. | Reporte completo sin elegir celdas. |
+| E | Censo two-ruler, endpoint recovery, estructura y exact support. | Reporte completo sin elegir celdas o escenarios. |
 | F | Simulación de mecanismo. | Aísla explicación geométrica de claims empíricos de policy. |
 | G | Lineage, runs detenidos y replay. | Procedencia reproducible. |
 | H | Claim boundary y limitaciones. | Evita que una tabla favorable amplíe el claim. |
@@ -159,6 +163,7 @@ figuras” confunde formatos con objetos visuales.
 | Binary geometry | V4 summary + execution receipt | V4 scientific invariants | Cobertura, fase, support y solver. |
 | Two-ruler | V3 verified evaluation manifest | Endpoint reconciliation tests | Contrastes y sharp hulls. |
 | Endpoint sensitivity | V1 endpoint sensitivity summary | Sensitivity evidence tests | Timing del endpoint, separado de fit labels. |
+| Structural sensitivity | V6 freeze + evaluation summary | Structural evidence tests | 36 escenarios completos, baseline reconciliado y ningún selector. |
 
 : Mapa de autoridad y verificación.
 :::

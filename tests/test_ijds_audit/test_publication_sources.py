@@ -128,7 +128,7 @@ def test_active_evidence_registry_verifies_every_source() -> None:
         ROOT / "configs/ijds_active_evidence_sources.yaml",
         repo_root=ROOT,
     )
-    assert payload["schema_version"] == "2026-07-15.1"
+    assert payload["schema_version"] == "2026-07-15.2"
     assert set(sources) == {
         "v4_config",
         "v4_summary",
@@ -140,12 +140,15 @@ def test_active_evidence_registry_verifies_every_source() -> None:
         "label_lag_sensitivity",
         "solver_tie_audit",
         "endpoint_sensitivity_summary",
+        "structural_sensitivity_config",
+        "structural_sensitivity_freeze",
+        "structural_sensitivity_summary",
     }
-    assert len(payload["dvc_pointers"]) == 14
+    assert len(payload["dvc_pointers"]) == 16
     assert payload["lineages"]["binary_geometry"]["evaluation"]["run_tag"].endswith("2026-07-14-v3")
 
 
-def test_active_registry_returns_seven_dvc_run_tags_in_causal_config_order() -> None:
+def test_active_registry_returns_eight_dvc_run_tags_in_causal_config_order() -> None:
     payload = load_source_registry(ROOT / "configs/ijds_active_evidence_sources.yaml")
 
     assert active_lineage_run_tags(payload) == (
@@ -156,6 +159,7 @@ def test_active_registry_returns_seven_dvc_run_tags_in_causal_config_order() -> 
         "ijds-credit-risk-controls-2026-07-13-v1b",
         "ijds-credit-risk-controls-2026-07-14-v3",
         "ijds-endpoint-availability-sensitivity-2026-07-14-v1",
+        "ijds-portfolio-structure-sensitivity-2026-07-15-v6",
     )
 
 

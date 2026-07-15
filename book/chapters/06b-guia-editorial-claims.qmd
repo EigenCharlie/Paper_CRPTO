@@ -31,7 +31,8 @@ son procedencia, no evidencia activa.
 | 4 | Copiar un cap o igualar una coordenada no define el mismo contrafactual. | Equivalencia afín, same-cap nesting, C2 y normalized invariance. | La teoría ordena objetos plug-in específicos, no outcomes realizados. |
 | 5 | La dirección downstream depende de ruler y coordenada. | Seis tracks, 48 contrastes de ventana y 144 celdas metric-direction. | No seleccionar gamma, ruler, coordenada o signo. |
 | 6 | La incertidumbre de endpoint y comparator support puede acotarse exactamente. | 12,076 outcomes no resueltos; sharp common-outcome bounds; 3,067 caps. | Partial identification, no confidence interval ni frontera universal. |
-| 7 | El sistema completo es el objeto científico. | Score, intervalo, LP, endpoint y soporte hash-linked. | No separar una cifra favorable de su protocolo. |
+| 7 | La dirección sigue siendo condicional al variar estructura de portafolio. | 36 escenarios completos; todos conservan celdas adversas de default y miscoverage; ninguno es uniformemente favorable o adverso. | No seleccionar escenario ni afirmar daño universal. |
+| 8 | El sistema completo es el objeto científico. | Score, intervalo, LP, endpoint y soporte hash-linked. | No separar una cifra favorable de su protocolo. |
 
 : Escalera editorial de claims del CRPTO {#tbl-crpto-claim-ladder}
 
@@ -90,6 +91,7 @@ Evitar:
 | `support envelope` | Extremos sharp sobre caps outcome-free declarados. | Universalidad sobre cualquier comparador. |
 | `endpoint sensitivity` | Cambia cuándo un outcome terminal se considera observable. | Sensibilidad del label usado para fit. |
 | `fit-label sensitivity` | Cambia el lag de disponibilidad del label de calibración. | Cambio del cutoff de evaluación. |
+| `structural sensitivity` | Reporta el producto completo budget--purpose-cap--LGD sin seleccionar escenario. | Robustez universal, policy recommendation o búsqueda de ganador. |
 
 : Diccionario operativo del CRPTO {#tbl-crpto-operational-dictionary}
 
@@ -108,6 +110,7 @@ Evitar:
 | “¿W7--W8 prueba una phase transition causal?” | No. El teorema de score constante da un mecanismo y el stratum observado es evidencia compatible. | Binary geometry proposition + label-lag sensitivity. |
 | “¿El ruler normalizado es el correcto?” | Es scale-invariant, pero no iguala opportunity cost. Se reporta junto al objective-matched ruler sin seleccionar uno. | Two-ruler grid. |
 | “¿Exact support resuelve toda la comparación?” | Solo sobre el soporte de caps declarado; no identifica una frontera conjunta continua. | 3,067 caps y basis-endpoint theorem. |
+| “¿El resultado depende del presupuesto, concentración o LGD?” | Las proporciones cambian, pero cada uno de los 36 escenarios retiene celdas adversas de default y miscoverage; también hay celdas favorables en muchos escenarios. | Structural sensitivity V6, Tables S9D--S9E. |
 | “¿Puede llamarse robusta la policy?” | No se promueve policy. `Risk-aware` describe la entrada de incertidumbre sin atribuir garantía downstream. | Claim boundary. |
 | “¿El payoff es retorno económico?” | Es un endpoint estandarizado que omite timing, prepago, recoveries, fees y capital. | Method y Limitations. |
 | “¿Hay evidencia externa o fair-lending?” | No para el claim activo. Un archivo histórico de aceptados no identifica esos objetos. | Ethical implications y Limitations. |
@@ -124,6 +127,7 @@ Evitar:
 | Two-ruler endpoint tracks | Body | Resultado downstream principal sin seleccionar policy. |
 | Exact statements | Body, con proofs al supplement | Separa resultados matemáticos de outcomes. |
 | WOE/IV, PSI, label lag y endpoint timing | Supplement | Controles y sensibilidades, no contribuciones autónomas. |
+| Structural sensitivity | Body y censo completo en supplement | Evita que el baseline estilizado cargue por sí solo la conclusión downstream. |
 | Named comparators y exact cap support | Supplement, resumen en body | Evita que la grid finita se lea como familia cerrada. |
 | Simulation | Supplement | Ilustra geometría; no sostiene claims de portafolio. |
 | Lineage y runs detenidos | Supplement/editor-only | Procedencia necesaria, no narrativa central. |

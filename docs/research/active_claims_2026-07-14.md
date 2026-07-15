@@ -70,6 +70,24 @@ pre-endpoint-correction evaluations are provenance only.
   retrospectively protocol-locked complete reporting, not preregistration,
   confirmation, or a basis for choosing an endpoint.
 
+### Portfolio-structure sensitivity
+
+- Complete nonselective run:
+  `ijds-portfolio-structure-sensitivity-2026-07-15-v6`, tag
+  `protocol/ijds-portfolio-structure-sensitivity-2026-07-15-v6`, commit
+  `490c653a43e2003d83184f47e1277bd2d4390c43`.
+- It crosses budgets `{0.5,1,2}` million, purpose caps
+  `{0.20,0.25,0.30,1.00}`, and LGD `{0.25,0.45,0.65}` while preserving both
+  rulers, all three coordinates, eight windows, fifteen monthly menus, and the
+  active six-month endpoint.
+- The outcome-free freeze contains all 36 scenarios and 252 hash-described
+  shard artifacts. The separately invoked evaluator reports every 1,728
+  window contrast and 5,184 metric direction; it selects no scenario.
+- V1--V5 are stopped or checkpoint provenance. V6 changes only the
+  outcome-free ID-order exposure tolerance after a documented numerical
+  diagnosis; it is retrospective discipline, not preregistration or
+  confirmation.
+
 ## Research Object
 
 <!-- claim:data.exhaustive_status_independent_population -->
@@ -195,6 +213,7 @@ coverage upper bounds are below 0.90 for every model:
 <!-- claim:timing.fit_and_endpoint_lags_not_factorial -->
 <!-- claim:decision.no_selected_policy -->
 <!-- claim:comparator.broad_support_all_cross_zero -->
+<!-- claim:sensitivity.structure_no_universal_direction -->
 
 The frozen contrast is gamma 1 minus gamma 0. The objective-matched ruler holds
 the common plug-in objective floor fixed; the normalized-score ruler holds a
@@ -257,6 +276,24 @@ The complete endpoint-availability sensitivity is:
   and allocations fixed. They were not crossed factorially, so no joint lag
   robustness claim is active.
 
+- The complete portfolio-structure grid contains 36 scenarios and 48
+  ruler-coordinate-window cells per metric in each scenario. Every scenario
+  retains at least 17 cells with higher default and at least 21 with higher
+  miscoverage.
+- Across all 1,728 cells per metric, payoff is lower/higher/crossing/exact-zero
+  in 740/223/709/56; default is higher/lower/crossing/exact-zero in
+  1,072/133/467/56; and miscoverage is higher/lower/crossing/exact-zero in
+  1,205/131/336/56.
+- Zero scenarios are favorable on all three metrics in all 48 cells, and zero
+  are adverse on all three metrics in all 48 cells. At least one favorable cell
+  appears in 26 scenarios for payoff and 20 each for default and miscoverage.
+- Purpose caps 0.20--0.30 bind in every portfolio; the 1.00 cap never binds.
+  The common-frontier constraint binds throughout, and maximum single-loan
+  weight rounds to 0.08, 0.04, and 0.02 at the three increasing budgets.
+- The baseline scenario reconciles exactly to active V3. The grid supports
+  structural conditionality, not a scenario winner, universal adversity,
+  structural invariance, or deployment guidance.
+
 - Objective-matched .25 crosses zero for all three metrics in all eight
   windows. Its repeated allocation remains identical across windows, but the
   12,076 unresolved endpoints eliminate the earlier favorable point claim.
@@ -287,6 +324,9 @@ The complete endpoint-availability sensitivity is:
 - The score, ruler, and coordinate jointly define the portfolio comparison.
 - Within the finite protocol-locked grid, direction is not invariant to ruler or
   coordinate and no endpoint has a universal realized-outcome ordering.
+- Across the complete budget--concentration--LGD grid, every scenario retains
+  adverse default and miscoverage cells, while neither universal favorability
+  nor universal adversity holds.
 - Exact support envelopes quantify partial identification over declared
   outcome-free comparator supports.
 - CRPTO remains one integrated ML--conformal--optimization object; its result is

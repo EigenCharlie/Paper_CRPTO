@@ -779,7 +779,87 @@ contract, not a lag selected from these outcomes. This family must not be
 combined with Appendix B.6 as if all 25 fit-label-by-endpoint combinations had
 been evaluated.
 
-## E.3 Named-comparator census
+## E.3 Portfolio-structure sensitivity
+
+<!-- claim:sensitivity.structure_no_universal_direction -->
+
+The structural sensitivity changes three declared portfolio assumptions while
+preserving the frozen scores, residual recipes, rulers, coordinates, windows,
+monthly menus, and endpoint contract. It reports every element of
+$\{0.5,1,2\}$ million in budget $\times\{0.20,0.25,0.30,1.00\}$ in maximum
+purpose share $\times\{0.25,0.45,0.65\}$ in LGD. Allocations were constructed
+without outcome columns and hash-frozen before the endpoint join; no scenario
+or result was selected.
+
+| Metric | Adverse | Favorable | Crosses zero | Exact zero | Total |
+|---|---:|---:|---:|---:|---:|
+| Standardized payoff | 740 | 223 | 709 | 56 | 1,728 |
+| Terminal default | 1,072 | 133 | 467 | 56 | 1,728 |
+| Funded miscoverage | 1,205 | 131 | 336 | 56 | 1,728 |
+
+: S9D complete structural direction census. Adverse means lower payoff or higher default/miscoverage; favorable reverses those signs. Counts cover 36 scenarios, six ruler-coordinate tracks, and eight windows. {#tbl-s-structure-aggregate}
+
+Every scenario retains at least 17 adverse default cells and 21 adverse
+miscoverage cells. Zero scenarios are favorable on all three metrics in all 48
+cells, and zero are adverse on all three metrics in all 48 cells. Conversely,
+26 scenarios contain at least one favorable payoff cell and 20 contain at
+least one favorable default or miscoverage cell. These facts rule out both a
+universal favorable ordering and its universal-adversity mirror.
+
+The complete scenario census follows. Within each metric, entries are
+adverse/favorable/crossing/exact-zero counts and sum to 48. `B` is monthly
+budget in USD millions; `Cap bind` is the share of the 1,440 portfolios in which
+the purpose constraint binds.
+
+| B | Purpose cap | LGD | Pay A/F/C/Z | Default A/F/C/Z | Miss A/F/C/Z | Cap bind |
+|---:|---:|---:|---:|---:|---:|---:|
+| 0.5 | 0.20 | 0.25 | 16/1/31/0 | 39/1/8/0 | 39/0/9/0 | 100% |
+| 0.5 | 0.20 | 0.45 | 32/8/8/0 | 32/1/15/0 | 39/1/8/0 | 100% |
+| 0.5 | 0.20 | 0.65 | 31/8/1/8 | 32/8/0/8 | 32/3/5/8 | 100% |
+| 0.5 | 0.25 | 0.25 | 16/8/24/0 | 24/8/16/0 | 39/0/9/0 | 100% |
+| 0.5 | 0.25 | 0.45 | 30/2/8/8 | 31/1/8/8 | 23/1/16/8 | 100% |
+| 0.5 | 0.25 | 0.65 | 32/0/8/8 | 32/0/8/8 | 32/0/8/8 | 100% |
+| 0.5 | 0.30 | 0.25 | 17/8/23/0 | 40/1/7/0 | 40/6/2/0 | 100% |
+| 0.5 | 0.30 | 0.45 | 24/1/15/8 | 31/1/8/8 | 24/8/8/8 | 100% |
+| 0.5 | 0.30 | 0.65 | 31/0/9/8 | 31/0/9/8 | 32/0/8/8 | 100% |
+| 0.5 | 1.00 | 0.25 | 15/8/25/0 | 25/0/23/0 | 24/8/16/0 | 0% |
+| 0.5 | 1.00 | 0.45 | 30/1/9/8 | 31/1/8/8 | 30/0/10/8 | 0% |
+| 0.5 | 1.00 | 0.65 | 24/8/8/8 | 24/8/8/8 | 32/0/8/8 | 0% |
+| 1.0 | 0.20 | 0.25 | 1/17/30/0 | 32/15/1/0 | 32/16/0/0 | 100% |
+| 1.0 | 0.20 | 0.45 | 11/8/29/0 | 25/8/15/0 | 34/8/6/0 | 100% |
+| 1.0 | 0.20 | 0.65 | 33/0/15/0 | 33/0/15/0 | 40/0/8/0 | 100% |
+| 1.0 | 0.25 | 0.25 | 14/15/19/0 | 24/8/16/0 | 32/15/1/0 | 100% |
+| 1.0 | 0.25 | 0.45 | 32/0/16/0 | 33/0/15/0 | 40/0/8/0 | 100% |
+| 1.0 | 0.25 | 0.65 | 25/0/23/0 | 38/0/10/0 | 40/0/8/0 | 100% |
+| 1.0 | 0.30 | 0.25 | 28/9/11/0 | 32/8/8/0 | 32/14/2/0 | 100% |
+| 1.0 | 0.30 | 0.45 | 18/8/22/0 | 32/8/8/0 | 33/8/7/0 | 100% |
+| 1.0 | 0.30 | 0.65 | 31/8/9/0 | 26/8/14/0 | 32/4/12/0 | 100% |
+| 1.0 | 1.00 | 0.25 | 18/8/22/0 | 24/8/16/0 | 40/8/0/0 | 0% |
+| 1.0 | 1.00 | 0.45 | 16/16/16/0 | 31/16/1/0 | 24/10/14/0 | 0% |
+| 1.0 | 1.00 | 0.65 | 31/8/9/0 | 24/8/16/0 | 24/3/21/0 | 0% |
+| 2.0 | 0.20 | 0.25 | 0/0/48/0 | 17/0/31/0 | 26/1/21/0 | 100% |
+| 2.0 | 0.20 | 0.45 | 2/0/46/0 | 22/0/26/0 | 33/0/15/0 | 100% |
+| 2.0 | 0.20 | 0.65 | 24/8/16/0 | 24/0/24/0 | 32/0/16/0 | 100% |
+| 2.0 | 0.25 | 0.25 | 0/9/39/0 | 32/0/16/0 | 21/1/26/0 | 100% |
+| 2.0 | 0.25 | 0.45 | 9/16/23/0 | 17/0/31/0 | 32/5/11/0 | 100% |
+| 2.0 | 0.25 | 0.65 | 20/0/28/0 | 32/0/16/0 | 40/0/8/0 | 100% |
+| 2.0 | 0.30 | 0.25 | 16/16/16/0 | 33/8/7/0 | 32/3/13/0 | 100% |
+| 2.0 | 0.30 | 0.45 | 9/8/31/0 | 31/0/17/0 | 37/0/11/0 | 100% |
+| 2.0 | 0.30 | 0.65 | 31/0/17/0 | 33/0/15/0 | 48/0/0/0 | 100% |
+| 2.0 | 1.00 | 0.25 | 8/8/32/0 | 32/8/8/0 | 35/8/5/0 | 0% |
+| 2.0 | 1.00 | 0.45 | 32/0/16/0 | 40/0/8/0 | 40/0/8/0 | 0% |
+| 2.0 | 1.00 | 0.65 | 33/8/7/0 | 33/0/15/0 | 40/0/8/0 | 0% |
+
+: S9E complete 36-scenario structural sensitivity. Exact zeros occur when the two endpoint allocations coincide under the declared ruler-coordinate-window cell. {#tbl-s-structure-scenarios}
+
+Purpose caps 0.20--0.30 bind in every portfolio, whereas the 1.00 stress cap
+never binds. The common-frontier constraint binds in every portfolio. Maximum
+single-loan weight rounds to 0.08, 0.04, and 0.02 as the budget rises from USD
+0.5 to 1 to 2 million. The grid therefore changes realized concentration rather
+than relabeling an inactive parameter. Its baseline scenario reproduces the
+active V3 two-ruler bounds exactly.
+
+## E.4 Named-comparator census
 
 The table counts the sign of the guardrail-minus-point sharp contrast over 72
 window-policy cells per rule. “Lower” and “higher” refer to the guardrail. A
@@ -805,7 +885,7 @@ produces both realized-payoff signs and many unresolved contrasts. The
 difference is precisely why a comparator label cannot replace an explicit
 support.
 
-## E.4 Exact support envelopes
+## E.5 Exact support envelopes
 
 <!-- claim:comparator.broad_support_all_cross_zero -->
 
@@ -845,7 +925,7 @@ rows; maximum allocation distance is $1.45\times10^{-14}$ and maximum absolute
 objective difference is $1.72\times10^{-9}$. This establishes deterministic
 stability at the evaluated caps, not continuous-frontier uniqueness.
 
-## E.5 Why no policy is promoted
+## E.6 Why no policy is promoted
 
 The empirical record does not support a winner for three separate reasons.
 First, candidate coverage misses its 0.90 target before optimization for both
@@ -903,7 +983,7 @@ score, recipe, policy, comparator, allocation, hypothesis, or stop rule.
 Phase 2 contains 1,408 coverage rows, 5,112 monthly evaluations, 360 aggregate
 evaluations, 221,040 paired sharp contrasts, 648 comparator envelopes, 19,200
 simulation repetitions, and 192 simulation cells. The evidence builder checks
-source hashes and cardinalities before producing eleven publication tables,
+source hashes and cardinalities before producing thirteen publication tables,
 three figures in PNG and PDF, and one active paper-facing manifest.
 
 ## G.2 Two-ruler stopped runs and retained evaluation
@@ -957,13 +1037,36 @@ immutable provenance but are not needed to reproduce a paper claim. No path
 executes a protected historical stage or authorizes model selection, scorecard
 superiority, or a portfolio result.
 
-## G.4 Replay contract
+## G.4 Structural-sensitivity stops and retained evaluation
+
+The 36-scenario structural family preserves its failures instead of silently
+relaxing a solver check. V1 stopped at an exact minimum-score endpoint. An
+outcome-free diagnosis motivated V2's closed minimum-cap retry. V3 changed only
+execution architecture and was externally interrupted after 29 shards. V4
+validated those shards, completed four more, and stopped on a HiGHS `Unknown`
+status. V5 extended the outcome-free retry ladder, completed 35 shards, and
+then stopped when one ID-reversal audit exceeded its $10^{-10}$ exposure
+tolerance.
+
+The required V5 diagnosis covered 1,440 order-audit rows. Its maximum normalized
+exposure distance was $1.35\times10^{-10}$, maximum plug-in objective difference
+was USD $7.32\times10^{-6}$, and maximum weighted-score difference was
+$3.63\times10^{-12}$; no row exceeded $10^{-8}$. V6 therefore changed only the
+exposure tolerance to $10^{-8}$, kept the USD $10^{-5}$ objective tolerance,
+verified 35 V5 shards, and recomputed the one missing scenario with a single
+worker. Its freeze contains all 36 scenarios, 252 shard artifacts, no outcome
+columns, and no protected-stage writes. The separate evaluator then reports all
+1,728 window contrasts and 5,184 metric directions. V1--V5 remain stopped or
+checkpoint provenance, not paper evidence.
+
+## G.5 Replay contract
 
 The replay contract requires:
 
 1. an environment locked by `uv`;
-2. immutable, hash-described outcome-free and evaluated roots tracked by twelve
-   DVC pointers across V4, the two-ruler diagnostic, and credit controls;
+2. immutable, hash-described outcome-free and evaluated roots tracked by sixteen
+   DVC pointers across V4, the two-ruler diagnostic, credit controls, endpoint
+   sensitivity, and structural sensitivity;
 3. a separate freeze and evaluate command with no combined shortcut;
 4. exact ID alignment at the outcome join;
 5. byte-identical evidence builds;
@@ -976,7 +1079,7 @@ The replay contract requires:
 Protected historical stages and their extraction manifest are not required to
 replay the active evidence and are not overwritten.
 
-## G.5 Anonymous-review boundary
+## G.6 Anonymous-review boundary
 
 Reviewer-facing files omit exact commits, tags, hashes, repository links, and
 remote coordinates because they are searchable author fingerprints. An
@@ -1000,6 +1103,7 @@ policy.
 | Evaluation-endpoint sensitivity | Coverage is below 0.90 in 40/40 cells at lags 0, 3, 6, and 8 and in 39/40 at lag 12; all broad-support envelopes cross at every lag | Lag-universal coverage failure or an endpoint selected from outcomes |
 | Timing design | Fit-label and evaluation-endpoint lags are separate one-factor sensitivities | Joint or full-factorial lag robustness |
 | Two rulers and three interior coordinates | Endpoint direction is not ruler- or coordinate-invariant on the declared grid | A continuous-frontier ordering or preferred gamma/ruler/coordinate |
+| Complete portfolio-structure grid | Every scenario retains adverse default and miscoverage cells; zero scenarios are uniformly favorable or adverse | A scenario winner, structural invariance, universal harm, or deployment guidance |
 | C0 nesting and 1,080 C2 reconciliations | Plug-in objective dominance under their stated cap constructions | Realized payoff, default, or miscoverage dominance |
 | Exact declared supports | Portfolio signs depend on comparator support and residual window | Universal quantification over all comparators |
 | Evaluated-cap solver audit | Allocations are deterministic to tolerance at the 7,297 evaluated rows | Continuous joint-frontier uniqueness |

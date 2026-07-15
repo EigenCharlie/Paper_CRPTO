@@ -43,12 +43,20 @@ commit `8865f1cfbd387576bdf805f3e52f030261e4b717`. It reports lags 0, 3, 6, 8,
 and 12 without selecting an endpoint; its six-month slice reconciles exactly
 to the active V3 evaluations. It is distinct from conformal-fit label timing.
 
+The complete portfolio-structure sensitivity is
+`ijds-portfolio-structure-sensitivity-2026-07-15-v6`, protocol-locked at commit
+`490c653a43e2003d83184f47e1277bd2d4390c43`. Its outcome-free freeze reports
+all 36 budget--purpose-cap--LGD scenarios; its separate evaluation selects no
+scenario and reconciles the baseline exactly to active V3. Structural V1--V5
+remain stopped or checkpoint provenance.
+
 ## DVC Capsule
 
-The fourteen pointers are listed once in
+The sixteen pointers are listed once in
 `configs/ijds_active_evidence_sources.yaml`. They comprise data and model
 pointers for the three outcome-free roots, three endpoint-corrected evaluation
-roots, and the endpoint-availability sensitivity. Pull with:
+roots, the endpoint-availability sensitivity, and the portfolio-structure
+sensitivity. Pull with:
 
 ```powershell
 uv run python scripts/manage_ijds_dvc_capsule.py pull

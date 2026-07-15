@@ -152,12 +152,12 @@ ijds-policy-challenger:
 
 ijds-historical-v7-replay: ijds-exact-alpha ijds-policy-challenger ijds-historical-v7-evidence
 
-# Read-only active-capsule gate over six freeze/evaluation runs plus the endpoint
-# sensitivity, represented by fourteen active DVC pointers.
+# Read-only active-capsule gate over six freeze/evaluation runs plus endpoint and
+# structural sensitivities, represented by sixteen active DVC pointers.
 ijds-active-check: publication-integrity
     uv run pytest -q tests/test_ijds_anonymity.py tests/test_ijds_active_claim_sync.py tests/test_ijds_v4_claim_sync.py tests/test_publication_targets.py tests/test_submission_preview_layout.py tests/test_supplement_table_sync.py
     uv run pytest -q tests/test_scripts/test_compile_ijds_submission.py tests/test_scripts/test_explicit_protocol_configs.py tests/test_scripts/test_manage_ijds_dvc_capsule.py tests/test_ijds_audit_core.py tests/test_ijds_normalized_objective_frontier.py tests/test_ijds_normalized_objective_frontier_v2.py tests/test_ijds_policy_support_tie_audit.py
-    uv run pytest -q tests/test_ijds_audit/test_claim_ledger.py tests/test_ijds_audit/test_credit_controls.py tests/test_ijds_audit/test_endpoint_sensitivity.py tests/test_ijds_audit/test_evaluation_outcome_contracts.py tests/test_ijds_audit/test_grid_contracts.py tests/test_ijds_audit/test_lag_sensitivity.py tests/test_ijds_audit/test_publication_sources.py tests/test_ijds_audit/test_raw_data_audit.py tests/test_ijds_audit/test_sensitivity_evidence.py tests/test_evaluation/test_policy_contrast_bounds.py tests/test_experiments/test_ijds_endpoint_availability_sensitivity.py
+    uv run pytest -q tests/test_ijds_audit/test_claim_ledger.py tests/test_ijds_audit/test_credit_controls.py tests/test_ijds_audit/test_endpoint_sensitivity.py tests/test_ijds_audit/test_evaluation_outcome_contracts.py tests/test_ijds_audit/test_grid_contracts.py tests/test_ijds_audit/test_lag_sensitivity.py tests/test_ijds_audit/test_publication_sources.py tests/test_ijds_audit/test_raw_data_audit.py tests/test_ijds_audit/test_sensitivity_evidence.py tests/test_ijds_audit/test_structural_evidence.py tests/test_evaluation/test_policy_contrast_bounds.py tests/test_experiments/test_ijds_endpoint_availability_sensitivity.py tests/test_experiments/test_ijds_portfolio_structure_sensitivity.py
 
 # Explicit replay rebuilds only paper-facing evidence. Run `ijds-active-check`
 # after the manuscript surfaces have also been rebuilt.

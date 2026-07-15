@@ -1,4 +1,4 @@
-schema_version: "2026-07-15.1"
+schema_version: "2026-07-15.2"
 status: "active_ijds_paper_evidence_source_registry"
 
 lineages:
@@ -70,6 +70,12 @@ sensitivities:
     protocol_commit: "8865f1cfbd387576bdf805f3e52f030261e4b717"
     paper_role: "evaluation_endpoint_timing_sensitivity"
     dvc_tracked: true
+  portfolio_structure:
+    run_tag: "ijds-portfolio-structure-sensitivity-2026-07-15-v6"
+    protocol_tag: "protocol/ijds-portfolio-structure-sensitivity-2026-07-15-v6"
+    protocol_commit: "490c653a43e2003d83184f47e1277bd2d4390c43"
+    paper_role: "complete_budget_concentration_lgd_sensitivity"
+    dvc_tracked: true
 
 dvc_pointers:
   - "data/processed/experiments/ijds_audit/ijds-binary-geometry-frontier-v4-2026-07-12-v1.dvc"
@@ -86,6 +92,8 @@ dvc_pointers:
   - "models/experiments/ijds_audit/ijds-credit-risk-controls-2026-07-14-v3.dvc"
   - "data/processed/experiments/ijds_audit/ijds-endpoint-availability-sensitivity-2026-07-14-v1.dvc"
   - "models/experiments/ijds_audit/ijds-endpoint-availability-sensitivity-2026-07-14-v1.dvc"
+  - "data/processed/experiments/ijds_audit/ijds-portfolio-structure-sensitivity-2026-07-15-v6.dvc"
+  - "models/experiments/ijds_audit/ijds-portfolio-structure-sensitivity-2026-07-15-v6.dvc"
 
 sources:
   v4_config:
@@ -128,3 +136,15 @@ sources:
     path: "models/experiments/ijds_audit/ijds-endpoint-availability-sensitivity-2026-07-14-v1/endpoint_sensitivity_summary.json"
     bytes: 10692
     sha256: "f8192d9b97289ea49480b92975258801c2f9e6640acdee7606307d0368575ff6"
+  structural_sensitivity_config:
+    path: "configs/experiments/ijds_portfolio_structure_sensitivity_2026-07-15_v6.yaml"
+    bytes: 5016
+    sha256: "600d3332da280f4329603b4c5e72df2077711137de403b0236ab92e7285122e4"
+  structural_sensitivity_freeze:
+    path: "models/experiments/ijds_audit/ijds-portfolio-structure-sensitivity-2026-07-15-v6/protocol_freeze.json"
+    bytes: 176170
+    sha256: "2fb1ac688cc702c47b26552c2af9d953ad6103eb1df17190f388dfeeb04de951"
+  structural_sensitivity_summary:
+    path: "models/experiments/ijds_audit/ijds-portfolio-structure-sensitivity-2026-07-15-v6/structural_sensitivity_summary.json"
+    bytes: 8091
+    sha256: "240aef92e9eb204d6a9dd3eda388544face71118c63509476087c6baa461b853"

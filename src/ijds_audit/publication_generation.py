@@ -20,6 +20,7 @@ PUBLICATION_IMPLEMENTATION_PATHS: dict[str, str] = {
     "v4_config_loader": "src/ijds_audit/config.py",
     "grid_contracts": "src/ijds_audit/grid_contracts.py",
     "endpoint_availability_sensitivity/loader": "src/ijds_audit/sensitivity_evidence.py",
+    "portfolio_structure_sensitivity/loader": "src/ijds_audit/structural_evidence.py",
     "claim_ledger_loader": "src/ijds_audit/claim_ledger.py",
     "source_registry_loader": "src/ijds_audit/publication_sources.py",
     "artifact_descriptor_helper": "src/utils/artifact_descriptor.py",

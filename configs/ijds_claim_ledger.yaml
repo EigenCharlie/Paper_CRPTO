@@ -1,4 +1,4 @@
-schema_version: "2026-07-15.1"
+schema_version: "2026-07-15.2"
 status: active_ijds_claim_contract
 
 surfaces:
@@ -165,6 +165,19 @@ claims:
     lineages: [binary_geometry, two_ruler]
     scope: candidate_conformal_audit_followed_by_outcome_free_allocation
     forbidden_inference: [selected_set_conformal_guarantee, post_selection_coverage]
+    surfaces:
+      required: [body, supplement, registry, claim_matrix]
+      allowed: [body, supplement, registry, claim_matrix]
+
+  - id: sensitivity.structure_no_universal_direction
+    status: active
+    kind: empirical
+    rule: equals
+    result_pointer: /sensitivity/portfolio_structure/every_scenario_has_adverse_default_and_miscoverage_cells
+    expected: true
+    lineages: [portfolio_structure, two_ruler.evaluation]
+    scope: complete_budget_by_purpose_cap_by_lgd_cartesian_grid
+    forbidden_inference: [scenario_winner, universal_adversity, structural_invariance, deployment]
     surfaces:
       required: [body, supplement, registry, claim_matrix]
       allowed: [body, supplement, registry, claim_matrix]

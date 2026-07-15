@@ -30,6 +30,7 @@ def test_implementation_inventory_binds_every_acceptance_dependency() -> None:
         "v4_config_loader",
         "grid_contracts",
         "endpoint_availability_sensitivity/loader",
+        "portfolio_structure_sensitivity/loader",
         "claim_ledger_loader",
         "source_registry_loader",
         "artifact_descriptor_helper",

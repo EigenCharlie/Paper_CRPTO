@@ -24,13 +24,17 @@ order before changing scientific code or paper claims:
    - retrospectively locked fit-label timing sensitivity and retention stop rule.
 11. [`docs/research/ijds_endpoint_availability_sensitivity_protocol_2026-07-14.md`](docs/research/ijds_endpoint_availability_sensitivity_protocol_2026-07-14.md)
    - complete nonselective evaluation-endpoint availability sensitivity.
-12. [`configs/ijds_active_evidence_sources.yaml`](configs/ijds_active_evidence_sources.yaml)
+12. [`docs/research/ijds_portfolio_structure_sensitivity_v6_protocol_2026-07-15.md`](docs/research/ijds_portfolio_structure_sensitivity_v6_protocol_2026-07-15.md)
+   - retained complete budget--purpose-cap--LGD sensitivity and numerical lineage.
+13. [`models/experiments/ijds_audit/ijds-portfolio-structure-sensitivity-2026-07-15-v6/structural_sensitivity_summary.json`](models/experiments/ijds_audit/ijds-portfolio-structure-sensitivity-2026-07-15-v6/structural_sensitivity_summary.json)
+   - active complete-grid structural evidence.
+14. [`configs/ijds_active_evidence_sources.yaml`](configs/ijds_active_evidence_sources.yaml)
    - active lineage identities and exact DVC-pointer authority.
-13. [`configs/ijds_claim_ledger.yaml`](configs/ijds_claim_ledger.yaml)
+15. [`configs/ijds_claim_ledger.yaml`](configs/ijds_claim_ledger.yaml)
    - executable nonnumeric claim and surface contract.
-14. [`reports/crpto/ijds_binary_geometry_frontier_v4_evidence.json`](reports/crpto/ijds_binary_geometry_frontier_v4_evidence.json)
+16. [`reports/crpto/ijds_binary_geometry_frontier_v4_evidence.json`](reports/crpto/ijds_binary_geometry_frontier_v4_evidence.json)
    - the only active paper-facing evidence manifest.
-15. [`.codex/skills/crpto/SKILL.md`](.codex/skills/crpto/SKILL.md) - concise
+17. [`.codex/skills/crpto/SKILL.md`](.codex/skills/crpto/SKILL.md) - concise
    execution and writing guidance.
 
 Minimum rules:
@@ -43,11 +47,13 @@ Minimum rules:
   invokes `just validate-champion-strict` so missing protected artifacts fail.
   PD/conformal refactors also require `just drift-gate`.
 - Use `uv run` and Windows-first commands. Never commit secrets.
-- No selected gamma, ruler, coordinate, policy, winner, universal guardrail
-  direction, causal effect, or selected-set conformal claim is active.
+- No selected gamma, ruler, coordinate, structural scenario, policy, winner,
+  universal guardrail direction, causal effect, or selected-set conformal claim
+  is active.
 - The five learner specifications are coverage controls; only the primary
   CatBoost enters portfolio optimization and no OOT model winner is active.
-- Historical V1--V3, selected-policy, compact-v7, pool93, and A1--A40 materials are
-  provenance, not evidence for the active manuscript.
+- Historical V1--V3, structural-sensitivity V1--V5, selected-policy,
+  compact-v7, pool93, and A1--A40 materials are provenance, not evidence for
+  the active manuscript.
 - Edit `paper/CRPTO_ijds.qmd`; generate the official TeX with
   `scripts/build_ijds_submission_tex.py` rather than editing it directly.
