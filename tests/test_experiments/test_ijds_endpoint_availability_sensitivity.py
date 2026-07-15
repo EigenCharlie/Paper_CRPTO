@@ -4,11 +4,11 @@ import pandas as pd
 import pytest
 
 from scripts.experiments.run_ijds_endpoint_availability_sensitivity import (
-    _indexed_portfolio_contrasts,
     _primary_loan_facts,
     _window_loan_facts,
 )
-from src.ijds_audit.evaluation import paired_portfolio_contrasts
+from src.evaluation.policy_contrast_bounds import sharp_policy_contrast_bounds
+from src.ijds_audit.evaluation import indexed_portfolio_contrasts
 from src.models.binary_conformal_guardrail import BinaryOutcomeConformalRecipe
 
 
@@ -97,16 +97,80 @@ def _adversarial_contrast_grid() -> tuple[pd.DataFrame, pd.DataFrame]:
     return allocations, facts
 
 
+def _slow_contrast_grid(
+    allocations: pd.DataFrame,
+    *,
+    policy_ids: tuple[str, ...],
+    lgd: float,
+) -> pd.DataFrame:
+    labels = {
+        str(label): frame
+        for label, frame in allocations.groupby("policy_label", observed=True, sort=False)
+    }
+    frontier = (
+        allocations.loc[
+            allocations["comparator_rule"].eq("point_cap_frontier"),
+            ["policy_label", "frontier_cap"],
+        ]
+        .drop_duplicates()
+        .sort_values("frontier_cap")
+    )
+    rows: list[dict[str, object]] = []
+    for policy_id in policy_ids:
+        guardrail = f"guardrail_{policy_id}"
+        comparators = (
+            ("c0_same_numeric_cap", f"c0_same_numeric_cap_{policy_id}"),
+            ("c1_development_mean", f"c1_development_mean_{policy_id}"),
+            ("c2_contemporaneous", f"c2_contemporaneous_{policy_id}"),
+        )
+        for rule, comparator in comparators:
+            pair = pd.concat([labels[guardrail], labels[comparator]], ignore_index=True)
+            rows.append(
+                {
+                    "window_id": "w-adversarial",
+                    "paired_policy_id": policy_id,
+                    "comparator_rule": rule,
+                    "frontier_cap": float(labels[comparator]["frontier_cap"].iloc[0]),
+                    **sharp_policy_contrast_bounds(
+                        pair,
+                        policy_a=guardrail,
+                        policy_b=comparator,
+                        role="primary_oot",
+                        lgd=lgd,
+                    ),
+                }
+            )
+        for item in frontier.itertuples(index=False):
+            comparator = str(item.policy_label)
+            pair = pd.concat([labels[guardrail], labels[comparator]], ignore_index=True)
+            rows.append(
+                {
+                    "window_id": "w-adversarial",
+                    "paired_policy_id": policy_id,
+                    "comparator_rule": "point_cap_frontier",
+                    "frontier_cap": float(item.frontier_cap),
+                    **sharp_policy_contrast_bounds(
+                        pair,
+                        policy_a=guardrail,
+                        policy_b=comparator,
+                        role="primary_oot",
+                        lgd=lgd,
+                    ),
+                }
+            )
+    return pd.DataFrame(rows)
+
+
 def test_indexed_grid_matches_slow_public_oracle() -> None:
     allocations, facts = _adversarial_contrast_grid()
     policy_ids = ("p1", "p2")
 
-    oracle = paired_portfolio_contrasts(
+    oracle = _slow_contrast_grid(
         allocations,
         policy_ids=policy_ids,
         lgd=0.45,
     )
-    optimized = _indexed_portfolio_contrasts(
+    optimized = indexed_portfolio_contrasts(
         allocations,
         loan_facts=facts,
         window_id="w-adversarial",
@@ -135,7 +199,7 @@ def test_indexed_grid_rejects_conflicting_named_comparator_caps() -> None:
     allocations = pd.concat([allocations, duplicate], ignore_index=True)
 
     with pytest.raises(RuntimeError, match="conflicting cap values"):
-        _indexed_portfolio_contrasts(
+        indexed_portfolio_contrasts(
             allocations,
             loan_facts=facts,
             window_id="w-adversarial",

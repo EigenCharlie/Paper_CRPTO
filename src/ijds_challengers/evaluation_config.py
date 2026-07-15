@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import math
 from pathlib import Path
 from typing import Any
 
@@ -77,10 +78,21 @@ def load_v2_config(path: Path) -> dict[str, Any]:
     if recovery is not None:
         if not isinstance(recovery, dict):
             raise TypeError("Endpoint reason recovery must be a mapping.")
-        if recovery.get("status") != "reason_taxonomy_only_no_scientific_metric_change":
+        status = recovery.get("status")
+        if status == "reason_taxonomy_only_no_scientific_metric_change":
+            if recovery.get("require_exact_reference_column_equivalence") is not True:
+                raise ValueError("Endpoint reason recovery must require exact equivalence.")
+        elif status == "reason_taxonomy_only_machine_tolerance_recovery":
+            if recovery.get("require_exact_non_float_reference_equivalence") is not True:
+                raise ValueError("Endpoint recovery must retain exact non-floating equivalence.")
+            if recovery.get("equivalence_mode") != "exact_non_float_machine_tolerant_float":
+                raise ValueError("Endpoint recovery has an invalid equivalence mode.")
+            for field in ("float_atol", "float_rtol"):
+                tolerance = float(recovery.get(field, -1.0))
+                if not math.isfinite(tolerance) or not 0.0 <= tolerance <= 1.0e-12:
+                    raise ValueError(f"Endpoint recovery {field} exceeds its ceiling.")
+        else:
             raise ValueError("Unexpected endpoint reason recovery status.")
-        if recovery.get("require_exact_reference_column_equivalence") is not True:
-            raise ValueError("Endpoint reason recovery must require exact equivalence.")
         if recovery.get("artifact_section") != "evaluation_artifacts":
             raise ValueError("Two-ruler recovery must reference evaluation_artifacts.")
         if not isinstance(recovery.get("reference_json"), dict):

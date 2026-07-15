@@ -11,7 +11,11 @@ Question: does the primary CatBoost candidate-coverage conclusion depend on the
 frozen conventions for structurally nullable delinquency recency and the
 partially supported legacy bankruptcy count?
 
-Required tag: `protocol/ijds-missingness-sensitivity-2026-07-15-v1`.
+The original required tag was
+`protocol/ijds-missingness-sensitivity-2026-07-15-v1`. Before either phase was
+run, the implementation-only V5 recovery erratum moved execution to
+`protocol/ijds-missingness-sensitivity-2026-07-15-v2`; the specification family
+and stop rules below are unchanged.
 
 ## Fixed Information Contract
 

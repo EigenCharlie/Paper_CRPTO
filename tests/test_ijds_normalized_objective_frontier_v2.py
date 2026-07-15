@@ -20,7 +20,7 @@ from src.ijds_challengers.evaluation_config import EXPECTED_FREEZE_SHA256, load_
 ROOT = Path(__file__).resolve().parents[1]
 CONFIG = ROOT / "configs/experiments/ijds_normalized_objective_frontier_2026-07-13_v2.yaml"
 V3_CONFIG = ROOT / "configs/experiments/ijds_normalized_objective_frontier_2026-07-14_v3.yaml"
-V4_CONFIG = ROOT / "configs/experiments/ijds_normalized_objective_frontier_2026-07-15_v4.yaml"
+V5_CONFIG = ROOT / "configs/experiments/ijds_normalized_objective_frontier_2026-07-15_v5.yaml"
 
 
 def test_v2_config_locks_freeze_grid_and_no_selection() -> None:
@@ -41,10 +41,13 @@ def test_v3_reuses_v1c_freeze_with_reconstructed_endpoint() -> None:
     )
 
 
-def test_v4_changes_only_endpoint_reason_taxonomy() -> None:
-    config = load_v2_config(V4_CONFIG)
-    assert config["parent"]["config"].endswith("2026-07-15_v4.yaml")
-    assert config["endpoint_reason_recovery"]["require_exact_reference_column_equivalence"] is True
+def test_v5_changes_only_endpoint_reason_taxonomy_and_recovery_implementation() -> None:
+    config = load_v2_config(V5_CONFIG)
+    assert config["parent"]["config"].endswith("2026-07-15_v5.yaml")
+    recovery = config["endpoint_reason_recovery"]
+    assert recovery["require_exact_non_float_reference_equivalence"] is True
+    assert recovery["float_atol"] == 5.0e-14
+    assert recovery["float_rtol"] == 5.0e-14
     assert config["evaluation"] == load_v2_config(V3_CONFIG)["evaluation"]
 
 

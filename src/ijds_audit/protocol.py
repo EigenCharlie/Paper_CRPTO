@@ -566,6 +566,8 @@ def evaluate_frozen(
             reference_json=recovery["reference_json"],
             artifact_section=str(recovery["artifact_section"]),
             repo_root=root,
+            float_atol=float(recovery.get("float_atol", 0.0)),
+            float_rtol=float(recovery.get("float_rtol", 0.0)),
         )
 
     evaluation_files = {

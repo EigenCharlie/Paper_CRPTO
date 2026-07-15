@@ -11,7 +11,7 @@ from src.ijds_audit.missingness_sensitivity import (
 from src.ijds_audit.prediction import PreparedData
 
 ROOT = Path(__file__).resolve().parents[2]
-CONFIG = ROOT / "configs/experiments/ijds_missingness_sensitivity_2026-07-15_v1.yaml"
+CONFIG = ROOT / "configs/experiments/ijds_missingness_sensitivity_2026-07-15_v2.yaml"
 
 
 def _prepared() -> PreparedData:
@@ -49,6 +49,7 @@ def test_missingness_protocol_is_closed_and_no_selection() -> None:
     ]
     assert config["evaluation"]["no_model_selection"] is True
     assert config["evaluation"]["no_portfolio_optimization"] is True
+    assert config["protocol_tag"].endswith("2026-07-15-v2")
 
 
 def test_explicit_indicator_variant_retains_active_mappings() -> None:

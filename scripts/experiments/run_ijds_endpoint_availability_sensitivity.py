@@ -13,7 +13,6 @@ import pandas as pd
 import yaml
 from loguru import logger
 
-from src.evaluation.policy_contrast_bounds import PolicyContrastIndex
 from src.ijds_audit.allocations import policy_family
 from src.ijds_audit.config import load_v4_config
 from src.ijds_audit.endpoint_sensitivity import (
@@ -26,6 +25,7 @@ from src.ijds_audit.endpoint_sensitivity import (
 from src.ijds_audit.evaluation import (
     comparator_envelopes,
     evaluate_frozen_portfolios,
+    indexed_portfolio_contrasts,
     temporal_coverage_audit,
 )
 from src.ijds_audit.protocol import (
@@ -230,74 +230,6 @@ def _window_loan_facts(
     ]
 
 
-def _indexed_portfolio_contrasts(
-    allocations: pd.DataFrame,
-    *,
-    loan_facts: pd.DataFrame,
-    window_id: str,
-    policy_ids: tuple[str, ...],
-    lgd: float,
-) -> pd.DataFrame:
-    """Compute the public contrast grid from one validated allocation index."""
-    primary = allocations.loc[allocations["role"].eq("primary_oot")]
-    index = PolicyContrastIndex(primary, role="primary_oot", loan_facts=loan_facts)
-    frontier = primary.loc[
-        primary["comparator_rule"].eq("point_cap_frontier"),
-        ["policy_label", "frontier_cap"],
-    ].drop_duplicates()
-    duplicate_frontier = frontier["policy_label"].duplicated(keep=False)
-    if bool(duplicate_frontier.any()):
-        raise RuntimeError("A frontier policy label maps to conflicting cap values.")
-    frontier = frontier.sort_values("frontier_cap")
-
-    rows: list[dict[str, Any]] = []
-    for policy_id in policy_ids:
-        guard_label = f"guardrail_{policy_id}"
-        named = (
-            ("c0_same_numeric_cap", f"c0_same_numeric_cap_{policy_id}"),
-            ("c1_development_mean", f"c1_development_mean_{policy_id}"),
-            ("c2_contemporaneous", f"c2_contemporaneous_{policy_id}"),
-        )
-        for rule, comparator_label in named:
-            cap = primary.loc[primary["policy_label"].eq(comparator_label), "frontier_cap"]
-            if cap.empty:
-                raise RuntimeError(f"Named comparator {comparator_label!r} is missing.")
-            cap_values = pd.to_numeric(cap, errors="raise").drop_duplicates()
-            if len(cap_values) != 1:
-                raise RuntimeError(
-                    f"Named comparator {comparator_label!r} maps to conflicting cap values."
-                )
-            rows.append(
-                {
-                    "window_id": str(window_id),
-                    "paired_policy_id": policy_id,
-                    "comparator_rule": rule,
-                    "frontier_cap": float(cap_values.iloc[0]),
-                    **index.sharp_bounds(
-                        policy_a=guard_label,
-                        policy_b=comparator_label,
-                        lgd=float(lgd),
-                    ),
-                }
-            )
-        for item in frontier.itertuples(index=False):
-            comparator_label = str(item.policy_label)
-            rows.append(
-                {
-                    "window_id": str(window_id),
-                    "paired_policy_id": policy_id,
-                    "comparator_rule": "point_cap_frontier",
-                    "frontier_cap": float(item.frontier_cap),
-                    **index.sharp_bounds(
-                        policy_a=guard_label,
-                        policy_b=comparator_label,
-                        lgd=float(lgd),
-                    ),
-                }
-            )
-    return pd.DataFrame(rows)
-
-
 def _exact_support(
     *,
     records: pd.DataFrame,
@@ -330,7 +262,7 @@ def _exact_support(
             copy=False,
         )
         frames.append(
-            _indexed_portfolio_contrasts(
+            indexed_portfolio_contrasts(
                 window_allocations,
                 loan_facts=loan_facts,
                 window_id=str(window_id),

@@ -1,0 +1,31 @@
+extends: "ijds_credit_risk_controls_2026-07-15_v4.yaml"
+
+schema_version: "2026-07-15.4"
+protocol_tag: "protocol/ijds-credit-risk-controls-2026-07-15-v5"
+run_tag: "ijds-credit-risk-controls-2026-07-15-v5"
+
+protocol_lineage_files:
+  - "configs/experiments/ijds_binary_geometry_frontier_v4_2026-07-12.yaml"
+  - "docs/research/ijds_binary_geometry_frontier_v4_protocol_2026-07-12.md"
+  - "docs/research/ijds_raw_data_contract_protocol_2026-07-13.md"
+  - "docs/research/ijds_credit_risk_controls_protocol_2026-07-13.md"
+  - "docs/research/ijds_credit_risk_controls_v1_stop_2026-07-13.md"
+  - "configs/experiments/ijds_credit_risk_controls_2026-07-13_v1b.yaml"
+  - "docs/research/ijds_credit_risk_controls_v2_evaluation_2026-07-13.md"
+  - "configs/experiments/ijds_credit_risk_controls_2026-07-13_v2.yaml"
+  - "docs/research/ijds_credit_risk_controls_v2_stop_2026-07-13.md"
+  - "docs/research/ijds_evaluation_endpoint_recovery_v3_protocol_2026-07-14.md"
+  - "docs/research/ijds_endpoint_reason_taxonomy_v4_protocol_2026-07-15.md"
+  - "docs/research/ijds_endpoint_reason_recovery_v5_erratum_2026-07-15.md"
+
+endpoint_reason_recovery:
+  status: "reason_taxonomy_only_machine_tolerance_recovery"
+  equivalence_mode: "exact_non_float_machine_tolerant_float"
+  require_exact_non_float_reference_equivalence: true
+  float_atol: 5.0e-14
+  float_rtol: 5.0e-14
+  artifact_section: "evaluation_artifacts"
+  reference_json:
+    path: "models/experiments/ijds_audit/ijds-credit-risk-controls-2026-07-14-v3/credit_risk_controls_summary.json"
+    bytes: 12473
+    sha256: "c64bb3088771d7f3c9a2fb550bbd8ee9a789a5e340054e09f3126656b6a89ca7"

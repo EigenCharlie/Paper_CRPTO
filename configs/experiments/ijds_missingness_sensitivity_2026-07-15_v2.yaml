@@ -1,0 +1,49 @@
+schema_version: "2026-07-15.2"
+protocol_status: "locked_outcome_free_then_evaluate_missingness_sensitivity"
+protocol_tag: "protocol/ijds-missingness-sensitivity-2026-07-15-v2"
+run_tag: "ijds-missingness-sensitivity-2026-07-15-v2"
+
+base_config: "configs/experiments/ijds_binary_geometry_frontier_v4_2026-07-15_v5.yaml"
+protocol_document: "docs/research/ijds_missingness_sensitivity_protocol_2026-07-15.md"
+implementation_lineage_files:
+  - "docs/research/ijds_endpoint_reason_recovery_v5_erratum_2026-07-15.md"
+
+source_freeze:
+  path: "models/experiments/ijds_audit/ijds-binary-geometry-frontier-v4-2026-07-12-v1/protocol_freeze.json"
+  bytes: 20362
+  sha256: "c2b3dc2d18c9fed80708682d5a0369c80c89643e2d28024418522d954ebe667c"
+  run_tag: "ijds-binary-geometry-frontier-v4-2026-07-12-v1"
+  protocol_tag: "protocol/ijds-binary-geometry-frontier-v4-2026-07-12-v1"
+  protocol_commit: "2f8a7606e4eb65aa3ae3701fb3af8d9a51c953cd"
+
+specifications:
+  - id: "catboost_platt"
+    encoding: "active_sentinel_convention"
+    imported: true
+  - id: "catboost_missing_indicators_platt"
+    encoding: "active_mappings_plus_explicit_missing_indicators"
+    imported: false
+    added_numeric_features: ["delinq_recency_missing", "bankruptcy_count_missing"]
+  - id: "catboost_native_missing_platt"
+    encoding: "native_numeric_nan_without_active_mapped_features"
+    imported: false
+    dropped_numeric_features: ["delinq_recency", "has_bankruptcy"]
+    added_numeric_features: ["delinq_recency_native", "bankruptcy_count_native"]
+
+evaluation:
+  role: "primary_oot"
+  expected_candidates: 376890
+  expected_windows: 8
+  taxonomy_groups: 5
+  aggregate_stratum: -1
+  nominal_coverage: 0.90
+  no_model_selection: true
+  no_window_selection: true
+  no_portfolio_optimization: true
+
+output:
+  data_root: "data/processed/experiments/ijds_audit"
+  model_root: "models/experiments/ijds_audit"
+  immutability: "hard_no_overwrite_choose_fresh_run_tag"
+  deterministic_summary: "missingness_sensitivity_summary.json"
+  execution_receipt: "execution_receipt.json"

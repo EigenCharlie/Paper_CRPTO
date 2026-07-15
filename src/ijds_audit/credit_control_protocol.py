@@ -521,6 +521,8 @@ def evaluate_credit_controls(*, config_path: Path, repo_root: Path) -> Path:
             reference_json=endpoint_recovery["reference_json"],
             artifact_section=str(endpoint_recovery["artifact_section"]),
             repo_root=root,
+            float_atol=float(endpoint_recovery.get("float_atol", 0.0)),
+            float_rtol=float(endpoint_recovery.get("float_rtol", 0.0)),
         )
     output_files = {
         "temporal_coverage": atomic_write_parquet(

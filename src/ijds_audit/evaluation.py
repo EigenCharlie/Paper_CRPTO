@@ -13,7 +13,7 @@ from src.evaluation.maturity_safe_portfolio import (
     aggregate_monthly_evaluation,
     evaluate_prejoined_frozen_allocation,
 )
-from src.evaluation.policy_contrast_bounds import sharp_policy_contrast_bounds
+from src.evaluation.policy_contrast_bounds import PolicyContrastIndex
 from src.ijds_audit.geometry import summarize_binary_geometry
 from src.models.binary_conformal_guardrail import (
     BinaryOutcomeConformalRecipe,
@@ -377,81 +377,101 @@ def aggregate_portfolios(evaluated: pd.DataFrame) -> pd.DataFrame:
     return pd.DataFrame(rows)
 
 
+def indexed_portfolio_contrasts(
+    allocations: pd.DataFrame,
+    *,
+    loan_facts: pd.DataFrame | None,
+    window_id: str,
+    policy_ids: tuple[str, ...],
+    lgd: float,
+) -> pd.DataFrame:
+    """Compute one window's contrast grid from one validated sparse index."""
+    primary = allocations.loc[allocations["role"].eq("primary_oot")]
+    observed_windows = set(primary["window_id"].astype(str))
+    if observed_windows != {str(window_id)}:
+        raise RuntimeError(
+            f"Indexed contrast window mismatch: expected={window_id!r}, "
+            f"observed={sorted(observed_windows)}."
+        )
+    index = PolicyContrastIndex(primary, role="primary_oot", loan_facts=loan_facts)
+    frontier = primary.loc[
+        primary["comparator_rule"].eq("point_cap_frontier"),
+        ["policy_label", "frontier_cap"],
+    ].drop_duplicates()
+    duplicate_frontier = frontier["policy_label"].duplicated(keep=False)
+    if bool(duplicate_frontier.any()):
+        raise RuntimeError("A frontier policy label maps to conflicting cap values.")
+    frontier = frontier.sort_values("frontier_cap")
+
+    rows: list[dict[str, Any]] = []
+    for policy_id in policy_ids:
+        guard_label = f"guardrail_{policy_id}"
+        named = (
+            ("c0_same_numeric_cap", f"c0_same_numeric_cap_{policy_id}"),
+            ("c1_development_mean", f"c1_development_mean_{policy_id}"),
+            ("c2_contemporaneous", f"c2_contemporaneous_{policy_id}"),
+        )
+        for rule, comparator_label in named:
+            cap = primary.loc[primary["policy_label"].eq(comparator_label), "frontier_cap"]
+            if cap.empty:
+                raise RuntimeError(f"Named comparator {comparator_label!r} is missing.")
+            cap_values = pd.to_numeric(cap, errors="raise").drop_duplicates()
+            if rule != "c2_contemporaneous" and len(cap_values) != 1:
+                raise RuntimeError(
+                    f"Named comparator {comparator_label!r} maps to conflicting cap values."
+                )
+            rows.append(
+                {
+                    "window_id": str(window_id),
+                    "paired_policy_id": policy_id,
+                    "comparator_rule": rule,
+                    # C2 is matched monthly; the retained scalar is legacy metadata.
+                    "frontier_cap": float(pd.to_numeric(cap, errors="raise").iloc[0]),
+                    **index.sharp_bounds(
+                        policy_a=guard_label,
+                        policy_b=comparator_label,
+                        lgd=float(lgd),
+                    ),
+                }
+            )
+        for item in frontier.itertuples(index=False):
+            comparator_label = str(item.policy_label)
+            rows.append(
+                {
+                    "window_id": str(window_id),
+                    "paired_policy_id": policy_id,
+                    "comparator_rule": "point_cap_frontier",
+                    "frontier_cap": float(item.frontier_cap),
+                    **index.sharp_bounds(
+                        policy_a=guard_label,
+                        policy_b=comparator_label,
+                        lgd=float(lgd),
+                    ),
+                }
+            )
+    return pd.DataFrame(rows)
+
+
 def paired_portfolio_contrasts(
     joined_allocations: pd.DataFrame,
     *,
     policy_ids: tuple[str, ...],
     lgd: float,
 ) -> pd.DataFrame:
-    """Compute guardrail-minus-point sharp bounds for named and frontier comparators."""
-    rows: list[dict[str, Any]] = []
-    for window_id, window in joined_allocations.groupby("window_id", observed=True, sort=True):
-        primary = window.loc[window["role"].eq("primary_oot")]
-        allocations_by_label = {
-            str(label): frame
-            for label, frame in primary.groupby("policy_label", observed=True, sort=False)
-        }
-        frontier = (
-            primary.loc[
-                primary["comparator_rule"].eq("point_cap_frontier"),
-                [
-                    "policy_label",
-                    "frontier_cap",
-                ],
-            ]
-            .drop_duplicates()
-            .sort_values("frontier_cap")
+    """Compute guardrail-minus-point bounds while indexing each window once."""
+    frames = [
+        indexed_portfolio_contrasts(
+            window,
+            loan_facts=None,
+            window_id=str(window_id),
+            policy_ids=policy_ids,
+            lgd=lgd,
         )
-        for policy_id in policy_ids:
-            guard_label = f"guardrail_{policy_id}"
-            guard = allocations_by_label[guard_label]
-            named = (
-                ("c0_same_numeric_cap", f"c0_same_numeric_cap_{policy_id}"),
-                ("c1_development_mean", f"c1_development_mean_{policy_id}"),
-                ("c2_contemporaneous", f"c2_contemporaneous_{policy_id}"),
-            )
-            for rule, comparator_label in named:
-                pair = pd.concat([guard, allocations_by_label[comparator_label]], ignore_index=True)
-                bounds = sharp_policy_contrast_bounds(
-                    pair,
-                    policy_a=guard_label,
-                    policy_b=comparator_label,
-                    role="primary_oot",
-                    lgd=float(lgd),
-                )
-                rows.append(
-                    {
-                        "window_id": str(window_id),
-                        "paired_policy_id": policy_id,
-                        "comparator_rule": rule,
-                        "frontier_cap": float(
-                            primary.loc[
-                                primary["policy_label"].eq(comparator_label), "frontier_cap"
-                            ].iloc[0]
-                        ),
-                        **bounds,
-                    }
-                )
-            for item in frontier.itertuples(index=False):
-                comparator_label = str(item.policy_label)
-                pair = pd.concat([guard, allocations_by_label[comparator_label]], ignore_index=True)
-                bounds = sharp_policy_contrast_bounds(
-                    pair,
-                    policy_a=guard_label,
-                    policy_b=comparator_label,
-                    role="primary_oot",
-                    lgd=float(lgd),
-                )
-                rows.append(
-                    {
-                        "window_id": str(window_id),
-                        "paired_policy_id": policy_id,
-                        "comparator_rule": "point_cap_frontier",
-                        "frontier_cap": float(item.frontier_cap),
-                        **bounds,
-                    }
-                )
-    return pd.DataFrame(rows)
+        for window_id, window in joined_allocations.groupby("window_id", observed=True, sort=True)
+    ]
+    if not frames:
+        raise ValueError("No allocation windows are available for policy contrasts.")
+    return pd.concat(frames, ignore_index=True)
 
 
 def comparator_envelopes(

@@ -266,6 +266,8 @@ def run_evaluation(*, config_path: Path, repo_root: Path = ROOT) -> Path:
             reference_json=endpoint_recovery["reference_json"],
             artifact_section=str(endpoint_recovery["artifact_section"]),
             repo_root=root,
+            float_atol=float(endpoint_recovery.get("float_atol", 0.0)),
+            float_rtol=float(endpoint_recovery.get("float_rtol", 0.0)),
         )
     summary = _summary(
         config=config,

@@ -115,17 +115,20 @@ def test_archive_endpoint_reasons_separate_missing_and_post_cutoff_dates() -> No
     assert audit["unresolved_rows"].sum() == 3
 
 
-def test_v4_endpoint_recovery_configs_lock_exact_reference_reconciliation() -> None:
+def test_v5_endpoint_recovery_configs_lock_machine_tolerance_reconciliation() -> None:
     binary = load_v4_config(
-        ROOT / "configs/experiments/ijds_binary_geometry_frontier_v4_2026-07-15_v4.yaml"
+        ROOT / "configs/experiments/ijds_binary_geometry_frontier_v4_2026-07-15_v5.yaml"
     )
     credit = load_credit_control_config(
-        ROOT / "configs/experiments/ijds_credit_risk_controls_2026-07-15_v4.yaml"
+        ROOT / "configs/experiments/ijds_credit_risk_controls_2026-07-15_v5.yaml"
     )
 
-    assert binary["run_tag"].endswith("2026-07-15-v4")
-    assert credit["run_tag"].endswith("2026-07-15-v4")
-    assert binary["endpoint_reason_recovery"]["require_exact_reference_column_equivalence"] is True
+    assert binary["run_tag"].endswith("2026-07-15-v5")
+    assert credit["run_tag"].endswith("2026-07-15-v5")
+    recovery = binary["endpoint_reason_recovery"]
+    assert recovery["require_exact_non_float_reference_equivalence"] is True
+    assert recovery["float_atol"] == 5.0e-14
+    assert recovery["float_rtol"] == 5.0e-14
     assert credit["endpoint_reason_recovery"]["artifact_section"] == "evaluation_artifacts"
 
 

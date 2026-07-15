@@ -188,7 +188,12 @@ def _missingness_census(data: PreparedData) -> pd.DataFrame:
     return pd.DataFrame(rows)
 
 
-def _implementation(config_path: Path, *, repo_root: Path) -> dict[str, Any]:
+def _implementation(
+    config_path: Path,
+    config: Mapping[str, Any],
+    *,
+    repo_root: Path,
+) -> dict[str, Any]:
     return implementation_provenance(
         config_path=config_path,
         repo_root=repo_root,
@@ -201,6 +206,7 @@ def _implementation(config_path: Path, *, repo_root: Path) -> dict[str, Any]:
             Path("src/data/outcome_observability.py"),
             Path("src/features/feature_engineering.py"),
             Path("docs/research/ijds_missingness_sensitivity_protocol_2026-07-15.md"),
+            *[Path(value) for value in config.get("implementation_lineage_files", [])],
         ],
     )
 
@@ -330,7 +336,7 @@ def freeze_missingness_sensitivity(*, config_path: Path, repo_root: Path) -> Pat
             for name, path in artifacts.items()
         },
         "model_artifacts": model_artifacts,
-        "implementation_provenance": _implementation(resolved_config, repo_root=root),
+        "implementation_provenance": _implementation(resolved_config, config, repo_root=root),
         "environment": environment_provenance(root),
         "git": git_provenance(root),
         "selection": {"model": None, "encoding": None, "window": None},
@@ -465,7 +471,7 @@ def evaluate_missingness_sensitivity(*, config_path: Path, repo_root: Path) -> P
             name: relative_artifact_descriptor(path, repo_root=root)
             for name, path in output_files.items()
         },
-        "implementation_provenance": _implementation(resolved_config, repo_root=root),
+        "implementation_provenance": _implementation(resolved_config, config, repo_root=root),
         "environment": environment_provenance(root),
         "git": git_provenance(root),
         "protected_stages_run": [],

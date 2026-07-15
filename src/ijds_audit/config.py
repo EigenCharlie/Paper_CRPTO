@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import copy
+import math
 from collections.abc import Mapping
 from pathlib import Path
 from typing import Any, cast
@@ -322,10 +323,21 @@ def _validate_endpoint_reason_recovery(config: Mapping[str, Any]) -> None:
         return
     if not isinstance(recovery, Mapping):
         raise TypeError("Endpoint reason recovery must be a mapping.")
-    if recovery.get("status") != "reason_taxonomy_only_no_scientific_metric_change":
+    status = recovery.get("status")
+    if status == "reason_taxonomy_only_no_scientific_metric_change":
+        if recovery.get("require_exact_reference_column_equivalence") is not True:
+            raise ValueError("Endpoint reason recovery must require exact scientific equivalence.")
+    elif status == "reason_taxonomy_only_machine_tolerance_recovery":
+        if recovery.get("require_exact_non_float_reference_equivalence") is not True:
+            raise ValueError("Endpoint recovery must retain exact non-floating equivalence.")
+        if recovery.get("equivalence_mode") != "exact_non_float_machine_tolerant_float":
+            raise ValueError("Endpoint recovery has an invalid equivalence mode.")
+        for field in ("float_atol", "float_rtol"):
+            tolerance = float(recovery.get(field, -1.0))
+            if not math.isfinite(tolerance) or not 0.0 <= tolerance <= 1.0e-12:
+                raise ValueError(f"Endpoint recovery {field} exceeds the machine-drift ceiling.")
+    else:
         raise ValueError("Unexpected endpoint reason recovery status.")
-    if recovery.get("require_exact_reference_column_equivalence") is not True:
-        raise ValueError("Endpoint reason recovery must require exact scientific equivalence.")
     if not isinstance(recovery.get("reference_json"), Mapping):
         raise KeyError("Endpoint reason recovery requires a reference JSON descriptor.")
     if recovery.get("artifact_section") not in {"artifacts", "evaluation_artifacts"}:

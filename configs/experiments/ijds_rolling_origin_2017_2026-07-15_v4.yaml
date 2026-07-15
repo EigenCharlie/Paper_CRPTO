@@ -1,0 +1,16 @@
+extends: "ijds_rolling_origin_2017_2026-07-15_v3.yaml"
+
+schema_version: "2026-07-15.4"
+protocol_tag: "protocol/ijds-rolling-origin-stability-2026-07-15-v4"
+run_tag: "ijds-rolling-origin-2017-2026-07-15-v4"
+
+protocol_lineage_files:
+  - "configs/experiments/ijds_binary_geometry_frontier_v4_2026-07-12.yaml"
+  - "docs/research/ijds_binary_geometry_frontier_v4_protocol_2026-07-12.md"
+  - "configs/experiments/ijds_rolling_origin_2015_2026-07-12.yaml"
+  - "configs/experiments/ijds_rolling_origin_2017_2026-07-12.yaml"
+  - "docs/research/ijds_rolling_origin_stability_protocol_2026-07-12.md"
+  - "docs/research/ijds_rolling_origin_stability_v2_erratum_2026-07-12.md"
+  - "docs/research/ijds_endpoint_reason_taxonomy_v4_protocol_2026-07-15.md"
+  - "docs/research/ijds_rolling_origin_endpoint_v3_protocol_2026-07-15.md"
+  - "docs/research/ijds_endpoint_reason_recovery_v5_erratum_2026-07-15.md"

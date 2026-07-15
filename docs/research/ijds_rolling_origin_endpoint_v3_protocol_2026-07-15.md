@@ -9,7 +9,10 @@ stability evidence, not preregistration, prospective validation, an independent
 replication count, or submission freeze.
 
 Required tag:
-`protocol/ijds-rolling-origin-stability-2026-07-15-v3`.
+`protocol/ijds-rolling-origin-stability-2026-07-15-v3`. Before execution, the
+implementation-only V5 recovery erratum moved the fresh run to
+`protocol/ijds-rolling-origin-stability-2026-07-15-v4`; the imported freeze,
+endpoint contract, estimands, and stop rules are unchanged.
 
 ## Immutable Inputs
 
