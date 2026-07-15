@@ -48,13 +48,16 @@ from src.utils.isolated_experiment import (
 from src.utils.pipeline_runtime import atomic_write_json, atomic_write_parquet, utc_now_iso
 
 ROOT = Path(__file__).resolve().parents[2]
-DEFAULT_CONFIG = ROOT / "configs/experiments/ijds_portfolio_structure_sensitivity_2026-07-14.yaml"
+DEFAULT_CONFIG = (
+    ROOT / "configs/experiments/ijds_portfolio_structure_sensitivity_2026-07-15_v2.yaml"
+)
 ALLOWED_DATA_ROOT = Path("data/processed/experiments/ijds_audit")
 ALLOWED_MODEL_ROOT = Path("models/experiments/ijds_audit")
 ARTIFACT_NAMES = (
     "solve_records",
     "allocations",
     "endpoint_diagnostics",
+    "minimum_endpoint_diagnostics",
     "objective_optimum_diagnostics",
     "order_sensitivity",
     "independent_validation",
@@ -73,7 +76,11 @@ def _load_config(path: Path) -> dict[str, Any]:
     payload = yaml.safe_load(path.read_text(encoding="utf-8"))
     if not isinstance(payload, dict):
         raise TypeError("Structural-sensitivity config must be a mapping.")
-    if payload.get("protocol_status") != "locked_retrospective_outcome_free_structural_sensitivity":
+    allowed_statuses = {
+        "locked_retrospective_outcome_free_structural_sensitivity",
+        "locked_retrospective_outcome_free_structural_sensitivity_v2",
+    }
+    if payload.get("protocol_status") not in allowed_statuses:
         raise ValueError("Structural-sensitivity protocol is not locked.")
     scenarios = declared_scenarios(payload)
     if int(payload["structural_grid"].get("scenarios", -1)) != len(scenarios):
@@ -92,6 +99,15 @@ def _load_config(path: Path) -> dict[str, Any]:
     }
     if any(boundary.get(field) is not False for field in required_false):
         raise ValueError("Structural-sensitivity claim boundary changed.")
+    if (
+        payload.get("protocol_status")
+        == "locked_retrospective_outcome_free_structural_sensitivity_v2"
+    ):
+        numerics = payload.get("numerics", {})
+        if float(numerics.get("minimum_endpoint_retry_slack", -1.0)) != 1.0e-12:
+            raise ValueError("V2 must retain the locked 1e-12 endpoint retry slack.")
+        if numerics.get("retry_scope") != "known_exact_minimum_boundary_failure_only":
+            raise ValueError("V2 endpoint retry scope changed.")
     return payload
 
 
@@ -123,6 +139,8 @@ def _frontier_config(base: Mapping[str, Any], structural: Mapping[str, Any]) -> 
         float(value) for value in grid["reported_gamma_grid"]
     ]
     config["frontier"]["coordinate_grid"] = [float(value) for value in grid["coordinates"]]
+    retry_slack = float(structural.get("numerics", {}).get("minimum_endpoint_retry_slack", 0.0))
+    config["frontier"]["normalized_score"]["minimum_endpoint_retry_slack"] = retry_slack
     return config
 
 
@@ -156,6 +174,7 @@ def _write_build(
         "solve_records": build.solve_records,
         "allocations": build.allocations,
         "endpoint_diagnostics": build.endpoint_diagnostics,
+        "minimum_endpoint_diagnostics": build.minimum_endpoint_diagnostics,
         "objective_optimum_diagnostics": build.objective_optimum_diagnostics,
         "order_sensitivity": build.order_sensitivity,
         "independent_validation": build.independent_validation,
@@ -219,6 +238,13 @@ def freeze(*, config_path: Path, repo_root: Path = ROOT) -> Path:
                 "solve_records": int(len(build.solve_records)),
                 "funded_rows": int(len(build.allocations)),
                 "endpoint_cells": int(len(build.endpoint_diagnostics)),
+                "minimum_endpoint_cells": int(len(build.minimum_endpoint_diagnostics)),
+                "minimum_endpoint_retries": int(
+                    build.minimum_endpoint_diagnostics["minimum_endpoint_retried"].sum()
+                ),
+                "maximum_minimum_endpoint_retry_slack": float(
+                    build.minimum_endpoint_diagnostics["minimum_endpoint_retry_slack"].max()
+                ),
                 "outcome_columns_passed": [],
             }
         )
@@ -235,6 +261,7 @@ def freeze(*, config_path: Path, repo_root: Path = ROOT) -> Path:
         "completed_at_utc": utc_now_iso(),
         "elapsed_seconds": float(time.perf_counter() - started),
         "claim_boundary": dict(config["claim_boundary"]),
+        "numerics": dict(config.get("numerics", {})),
         "source_frontier_freeze": {
             "status": parent_freeze["status"],
             "run_tag": parent_freeze["run_tag"],
@@ -251,7 +278,14 @@ def freeze(*, config_path: Path, repo_root: Path = ROOT) -> Path:
                 Path("src/ijds_audit/structural_sensitivity.py"),
                 Path("src/ijds_challengers/normalized_frontier.py"),
                 Path("scripts/experiments/run_ijds_portfolio_structure_sensitivity.py"),
-                Path("docs/research/ijds_portfolio_structure_sensitivity_protocol_2026-07-14.md"),
+                Path(
+                    str(
+                        config.get(
+                            "protocol_document",
+                            "docs/research/ijds_portfolio_structure_sensitivity_protocol_2026-07-14.md",
+                        )
+                    )
+                ),
             ),
         ),
         "environment": environment_provenance(root),
@@ -516,7 +550,12 @@ def evaluate(*, config_path: Path, repo_root: Path = ROOT) -> Path:
                     Path("src/ijds_audit/structural_sensitivity.py"),
                     Path("scripts/experiments/run_ijds_portfolio_structure_sensitivity.py"),
                     Path(
-                        "docs/research/ijds_portfolio_structure_sensitivity_protocol_2026-07-14.md"
+                        str(
+                            config.get(
+                                "protocol_document",
+                                "docs/research/ijds_portfolio_structure_sensitivity_protocol_2026-07-14.md",
+                            )
+                        )
                     ),
                 ),
             ),

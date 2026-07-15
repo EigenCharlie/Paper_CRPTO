@@ -9,7 +9,7 @@ import pandas as pd
 import pytest
 
 from scripts.experiments.run_ijds_normalized_objective_frontier import prepare_output_paths
-from src.ijds_audit.portfolio import PointPortfolioSession
+from src.ijds_audit.portfolio import PointPortfolioSession, PointPortfolioSolution
 from src.ijds_challengers.config import load_frontier_config
 from src.ijds_challengers.frontier import (
     ObjectiveFloorPortfolioSession,
@@ -18,10 +18,68 @@ from src.ijds_challengers.frontier import (
     normalized_score_cap,
     solve_glop_portfolio,
 )
-from src.ijds_challengers.normalized_frontier import _solve_objective_optimum
+from src.ijds_challengers.normalized_frontier import (
+    _solve_minimum_endpoint,
+    _solve_objective_optimum,
+)
 
 ROOT = Path(__file__).resolve().parents[1]
 CONFIG = ROOT / "configs/experiments/ijds_normalized_objective_frontier_2026-07-13_v1c.yaml"
+
+
+def _point_solution() -> PointPortfolioSolution:
+    return PointPortfolioSolution(
+        allocation_fraction=np.array([1.0]),
+        exposure=np.array([1.0]),
+        objective_value=0.1,
+        weighted_point_score=0.2,
+        total_allocated=1.0,
+        basis_cap_lower=0.0,
+        basis_cap_upper=1.0,
+        simplex_iterations=1,
+    )
+
+
+class _BoundarySession:
+    def __init__(self, first_error: RuntimeError | None) -> None:
+        self.first_error = first_error
+        self.calls: list[float] = []
+
+    def solve(self, risk_cap: float) -> PointPortfolioSolution:
+        self.calls.append(float(risk_cap))
+        if len(self.calls) == 1 and self.first_error is not None:
+            raise self.first_error
+        return _point_solution()
+
+
+@pytest.mark.parametrize(
+    "message",
+    [
+        "Point LP is not optimal: Infeasible.",
+        "Point LP did not fill its budget: 500000.001.",
+    ],
+)
+def test_minimum_endpoint_retries_only_known_boundary_failures(message: str) -> None:
+    session = _BoundarySession(RuntimeError(message))
+
+    solution, slack = _solve_minimum_endpoint(
+        session,
+        minimum_score=0.2,
+        retry_slack=1.0e-12,
+    )
+
+    assert solution.objective_value == 0.1
+    assert slack == 1.0e-12
+    assert session.calls == [0.2, 0.2 + 1.0e-12]
+
+
+def test_minimum_endpoint_does_not_mask_unrecognized_failure() -> None:
+    session = _BoundarySession(RuntimeError("HiGHS failed unexpectedly."))
+
+    with pytest.raises(RuntimeError, match="unexpectedly"):
+        _solve_minimum_endpoint(session, minimum_score=0.2, retry_slack=1.0e-12)
+
+    assert session.calls == [0.2]
 
 
 def _small_menu() -> tuple[pd.DataFrame, np.ndarray, np.ndarray]:

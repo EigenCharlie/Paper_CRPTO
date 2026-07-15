@@ -4,7 +4,7 @@ from __future__ import annotations
 
 from collections.abc import Mapping
 from dataclasses import dataclass
-from typing import Any
+from typing import Any, Protocol
 
 import numpy as np
 import pandas as pd
@@ -35,6 +35,7 @@ class FrontierBuild:
     solve_records: pd.DataFrame
     allocations: pd.DataFrame
     endpoint_diagnostics: pd.DataFrame
+    minimum_endpoint_diagnostics: pd.DataFrame
     objective_optimum_diagnostics: pd.DataFrame
     order_sensitivity: pd.DataFrame
     independent_validation: pd.DataFrame
@@ -47,6 +48,8 @@ class _GammaState:
     score_at_objective: float
     score_range: float
     minimum_objective: float
+    minimum_cap_residual: float
+    minimum_endpoint_retry_slack: float
     normalized_session: PointPortfolioSession
     objective_session: ObjectiveFloorPortfolioSession
 
@@ -64,6 +67,11 @@ class _RulerSolution:
 class _ObjectiveOptimum:
     solution: ScoreFrontierSolution
     diagnostics: dict[str, Any]
+
+
+class _PointEndpointSession(Protocol):
+    def solve(self, risk_cap: float) -> PointPortfolioSolution:
+        """Solve one point-score cap."""
 
 
 def build_outcome_free_frontiers(
@@ -103,6 +111,7 @@ def build_outcome_free_frontiers(
     records: list[dict[str, Any]] = []
     allocation_frames: list[pd.DataFrame] = []
     endpoint_rows: list[dict[str, Any]] = []
+    minimum_endpoint_rows: list[dict[str, Any]] = []
     optimum_rows: list[dict[str, Any]] = []
     order_rows: list[dict[str, Any]] = []
     validation_rows: list[dict[str, Any]] = []
@@ -167,6 +176,19 @@ def build_outcome_free_frontiers(
                     time_limit=time_limit,
                     threads=threads,
                     normalized_config=normalized_config,
+                )
+                minimum_endpoint_rows.extend(
+                    {
+                        "window_id": window_id,
+                        "role": str(role),
+                        "period": period,
+                        "gamma": gamma,
+                        "minimum_score": state.minimum_score,
+                        "minimum_cap_residual": state.minimum_cap_residual,
+                        "minimum_endpoint_retry_slack": state.minimum_endpoint_retry_slack,
+                        "minimum_endpoint_retried": bool(state.minimum_endpoint_retry_slack > 0.0),
+                    }
+                    for gamma, state in sorted(gamma_states.items())
                 )
                 common_lower, _ = common_objective_target(
                     minimum_objectives=[state.minimum_objective for state in gamma_states.values()],
@@ -292,6 +314,7 @@ def build_outcome_free_frontiers(
         solve_records=pd.DataFrame(records),
         allocations=pd.concat(allocation_frames, ignore_index=True),
         endpoint_diagnostics=pd.DataFrame(endpoint_rows),
+        minimum_endpoint_diagnostics=pd.DataFrame(minimum_endpoint_rows),
         objective_optimum_diagnostics=pd.DataFrame(optimum_rows),
         order_sensitivity=pd.DataFrame(order_rows),
         independent_validation=pd.DataFrame(validation_rows),
@@ -412,6 +435,12 @@ def _build_gamma_states(
     normalized_config: Mapping[str, Any],
 ) -> dict[float, _GammaState]:
     states: dict[float, _GammaState] = {}
+    retry_slack = float(normalized_config.get("minimum_endpoint_retry_slack", 0.0))
+    cap_tolerance = float(normalized_config["cap_residual_tolerance"])
+    if retry_slack < 0.0 or retry_slack > cap_tolerance:
+        raise ValueError(
+            "Minimum-endpoint retry slack must lie between zero and the cap tolerance."
+        )
     for gamma in gamma_grid:
         score = point + gamma * (upper - point)
         normalized_session = PointPortfolioSession(
@@ -433,9 +462,14 @@ def _build_gamma_states(
             threads=threads,
         ).solve()
         minimum_score = float(raw_minimum.weighted_score)
-        efficient_minimum = _from_point_solution(normalized_session.solve(minimum_score))
+        point_minimum, applied_retry_slack = _solve_minimum_endpoint(
+            normalized_session,
+            minimum_score=minimum_score,
+            retry_slack=retry_slack,
+        )
+        efficient_minimum = _from_point_solution(point_minimum)
         minimum_cap_residual = float(efficient_minimum.weighted_score - minimum_score)
-        if abs(minimum_cap_residual) > float(normalized_config["cap_residual_tolerance"]):
+        if abs(minimum_cap_residual) > cap_tolerance:
             raise RuntimeError(
                 f"Minimum-score endpoint failed for {window_id} {role} "
                 f"{period} gamma={gamma}: {minimum_cap_residual:.3e}."
@@ -462,10 +496,33 @@ def _build_gamma_states(
             score_at_objective=score_at_objective,
             score_range=score_range,
             minimum_objective=float(efficient_minimum.objective_value),
+            minimum_cap_residual=minimum_cap_residual,
+            minimum_endpoint_retry_slack=applied_retry_slack,
             normalized_session=normalized_session,
             objective_session=objective_session,
         )
     return states
+
+
+def _solve_minimum_endpoint(
+    session: _PointEndpointSession,
+    *,
+    minimum_score: float,
+    retry_slack: float,
+) -> tuple[PointPortfolioSolution, float]:
+    """Reconcile one cross-solver endpoint, retrying only known boundary failures."""
+    try:
+        return session.solve(float(minimum_score)), 0.0
+    except RuntimeError as error:
+        message = str(error)
+        known_boundary_failure = (
+            message == "Point LP is not optimal: Infeasible."
+            or message.startswith("Point LP did not fill its budget:")
+        )
+        if not known_boundary_failure or float(retry_slack) <= 0.0:
+            raise
+        solution = session.solve(float(minimum_score) + float(retry_slack))
+        return solution, float(retry_slack)
 
 
 def _solve_rulers(
@@ -778,6 +835,16 @@ def _validate_complete_build(
     )
     if len(result.endpoint_diagnostics) != expected_endpoints:
         raise RuntimeError("Primary endpoint diagnostic census is incomplete.")
+    expected_minimum_endpoints = (
+        windows * sum(role_months[role] for role in roles) * len(all_gammas)
+    )
+    minimum_endpoints = result.minimum_endpoint_diagnostics
+    if len(minimum_endpoints) != expected_minimum_endpoints:
+        raise RuntimeError("Minimum-endpoint diagnostic census is incomplete.")
+    if float(minimum_endpoints["minimum_cap_residual"].abs().max()) > float(
+        frontier["normalized_score"]["cap_residual_tolerance"]
+    ):
+        raise RuntimeError("A minimum-endpoint retry exceeded the declared cap tolerance.")
     optimum = result.objective_optimum_diagnostics
     if len(optimum) != sum(role_months[role] for role in roles):
         raise RuntimeError("Objective-optimum diagnostic census is incomplete.")
