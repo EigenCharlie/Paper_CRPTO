@@ -192,8 +192,18 @@ def require_clean_tagged_head(repo_root: Path, tag: str) -> str:
         raise RuntimeError("A readable Git HEAD is required before experiment execution.")
     if state.get("dirty") is not False:
         raise RuntimeError("Experiment execution requires a clean predeclared worktree.")
+    tagged_commit = resolve_git_tag(repo_root, tag)
+    if tagged_commit != commit:
+        raise RuntimeError(
+            f"Protocol tag {tag!r} points to {tagged_commit!r}, not current HEAD {commit!r}."
+        )
+    return commit
+
+
+def resolve_git_tag(repo_root: Path, tag: str) -> str:
+    """Resolve one required annotated or lightweight tag to its commit."""
     try:
-        tagged_commit = subprocess.run(
+        commit = subprocess.run(
             ["git", "rev-list", "-n", "1", str(tag)],
             cwd=repo_root,
             check=True,
@@ -202,10 +212,8 @@ def require_clean_tagged_head(repo_root: Path, tag: str) -> str:
         ).stdout.strip()
     except (OSError, subprocess.CalledProcessError) as exc:
         raise RuntimeError(f"Required protocol tag is unavailable: {tag}") from exc
-    if tagged_commit != commit:
-        raise RuntimeError(
-            f"Protocol tag {tag!r} points to {tagged_commit!r}, not current HEAD {commit!r}."
-        )
+    if not commit:
+        raise RuntimeError(f"Required protocol tag has no commit: {tag}")
     return commit
 
 

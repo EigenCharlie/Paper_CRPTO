@@ -21,6 +21,11 @@ from src.ijds_audit.config import load_v4_config
 from src.ijds_audit.endpoint_sensitivity import rebuild_archive_outcomes
 from src.ijds_audit.evaluation import evaluate_frozen_portfolios
 from src.ijds_audit.protocol import load_outcome_universe, load_recipes
+from src.ijds_audit.structural_checkpoint import (
+    StructuralShardInspection,
+    hardlink_structural_shard,
+    inspect_structural_shard,
+)
 from src.ijds_audit.structural_sensitivity import (
     allocation_activity,
     declared_scenarios,
@@ -43,6 +48,7 @@ from src.utils.isolated_experiment import (
     prepare_output_paths,
     relative_artifact_descriptor,
     require_clean_tagged_head,
+    resolve_git_tag,
     resolve_isolated_run_dir,
     resolve_repo_input,
     sha256_file,
@@ -51,7 +57,7 @@ from src.utils.pipeline_runtime import atomic_write_json, atomic_write_parquet, 
 
 ROOT = Path(__file__).resolve().parents[2]
 DEFAULT_CONFIG = (
-    ROOT / "configs/experiments/ijds_portfolio_structure_sensitivity_2026-07-15_v3.yaml"
+    ROOT / "configs/experiments/ijds_portfolio_structure_sensitivity_2026-07-15_v4.yaml"
 )
 ALLOWED_DATA_ROOT = Path("data/processed/experiments/ijds_audit")
 ALLOWED_MODEL_ROOT = Path("models/experiments/ijds_audit")
@@ -83,6 +89,7 @@ def _load_config(path: Path) -> dict[str, Any]:
         "locked_retrospective_outcome_free_structural_sensitivity",
         "locked_retrospective_outcome_free_structural_sensitivity_v2",
         "locked_retrospective_outcome_free_structural_sensitivity_v3_parallel_execution",
+        "locked_retrospective_outcome_free_structural_sensitivity_v4_interruption_recovery",
     }
     if payload.get("protocol_status") not in allowed_statuses:
         raise ValueError("Structural-sensitivity protocol is not locked.")
@@ -106,6 +113,7 @@ def _load_config(path: Path) -> dict[str, Any]:
     if payload.get("protocol_status") in {
         "locked_retrospective_outcome_free_structural_sensitivity_v2",
         "locked_retrospective_outcome_free_structural_sensitivity_v3_parallel_execution",
+        "locked_retrospective_outcome_free_structural_sensitivity_v4_interruption_recovery",
     }:
         numerics = payload.get("numerics", {})
         if float(numerics.get("minimum_endpoint_retry_slack", -1.0)) != 1.0e-12:
@@ -118,6 +126,19 @@ def _load_config(path: Path) -> dict[str, Any]:
         and int(payload.get("execution", {}).get("freeze_workers", 0)) != 10
     ):
         raise ValueError("V3 must retain ten deterministic freeze workers.")
+    if payload.get("protocol_status") == (
+        "locked_retrospective_outcome_free_structural_sensitivity_v4_interruption_recovery"
+    ):
+        execution = payload.get("execution", {})
+        recovery = execution.get("recovery", {})
+        missing = recovery.get("expected_missing_scenario_ids", [])
+        if int(execution.get("freeze_workers", 0)) != 7 or len(missing) != 7:
+            raise ValueError("V4 must retain seven workers for seven missing scenarios.")
+        declared_ids = {str(item["scenario_id"]) for item in scenarios}
+        if not isinstance(missing, list) or not set(map(str, missing)).issubset(declared_ids):
+            raise ValueError("V4 recovery scenario identities changed.")
+        if int(recovery.get("expected_recovered_scenarios", -1)) != 29:
+            raise ValueError("V4 must recover exactly 29 validated V3 scenarios.")
     return payload
 
 
@@ -274,6 +295,104 @@ def _freeze_scenario_worker(scenario: Mapping[str, Any]) -> dict[str, Any]:
     }
 
 
+def _inspection_counts(
+    inspection: StructuralShardInspection,
+    *,
+    scenario: Mapping[str, Any],
+) -> dict[str, Any]:
+    return {
+        **dict(scenario),
+        "solve_records": int(inspection.rows["solve_records"]),
+        "funded_rows": int(inspection.rows["allocations"]),
+        "endpoint_cells": int(inspection.rows["endpoint_diagnostics"]),
+        "minimum_endpoint_cells": int(inspection.rows["minimum_endpoint_diagnostics"]),
+        "minimum_endpoint_retries": int(inspection.minimum_endpoint_retries),
+        "maximum_minimum_endpoint_retry_slack": float(inspection.maximum_retry_slack),
+        "maximum_minimum_cap_residual": float(inspection.maximum_cap_residual),
+        "outcome_columns_passed": [],
+    }
+
+
+def _recover_interrupted_scenarios(
+    config: Mapping[str, Any],
+    *,
+    paths: OutputPaths,
+    repo_root: Path,
+) -> tuple[dict[str, Any], list[dict[str, Any]], dict[str, Any]]:
+    recovery = config.get("execution", {}).get("recovery")
+    if not isinstance(recovery, dict):
+        return {}, [], {"enabled": False}
+    source_tag = str(recovery["source_run_tag"])
+    source_protocol_tag = str(recovery["source_protocol_tag"])
+    source_protocol_commit = str(recovery["source_protocol_commit"])
+    if resolve_git_tag(repo_root, source_protocol_tag) != source_protocol_commit:
+        raise RuntimeError("V4 recovery source tag no longer resolves to its locked commit.")
+    source_root = resolve_isolated_run_dir(
+        repo_root=repo_root,
+        configured_root=str(config["output"]["data_root"]),
+        allowed_relative_root=ALLOWED_DATA_ROOT,
+        run_tag=source_tag,
+    )
+    scenarios = declared_scenarios(config)
+    lookup = {str(item["scenario_id"]): item for item in scenarios}
+    missing = {str(value) for value in recovery["expected_missing_scenario_ids"]}
+    recovered = sorted(set(lookup).difference(missing))
+    if len(recovered) != int(recovery["expected_recovered_scenarios"]):
+        raise RuntimeError("V4 recovery complement has the wrong scenario count.")
+    physical_scenarios = {
+        path.name for path in (source_root / "scenarios").iterdir() if path.is_dir()
+    }
+    if physical_scenarios != set(recovered):
+        raise RuntimeError("V4 recovery source directories differ from the locked complement.")
+    retry_slack = float(config["numerics"]["minimum_endpoint_retry_slack"])
+    cap_tolerance = float(config["numerics"]["cap_residual_tolerance"])
+    artifacts: dict[str, Any] = {}
+    counts: list[dict[str, Any]] = []
+    source_descriptors: dict[str, Any] = {}
+    for scenario_id in recovered:
+        inspection = inspect_structural_shard(
+            source_root / "scenarios" / scenario_id,
+            scenario_id=scenario_id,
+            retry_slack=retry_slack,
+            cap_residual_tolerance=cap_tolerance,
+        )
+        linked = hardlink_structural_shard(
+            inspection,
+            destination_root=paths.data_dir / "scenarios" / scenario_id,
+        )
+        artifacts[scenario_id] = {}
+        counts.append(_inspection_counts(inspection, scenario=lookup[scenario_id]))
+        source_descriptors[scenario_id] = {}
+        for name, source_path in inspection.paths.items():
+            descriptor = relative_artifact_descriptor(source_path, repo_root=repo_root)
+            destination_path = linked[name].resolve().relative_to(repo_root.resolve()).as_posix()
+            artifacts[scenario_id][name] = {
+                "path": destination_path,
+                "bytes": descriptor["bytes"],
+                "sha256": descriptor["sha256"],
+            }
+            source_descriptors[scenario_id][name] = {
+                "original_path": descriptor["path"],
+                "bytes": descriptor["bytes"],
+                "sha256": descriptor["sha256"],
+            }
+    return (
+        artifacts,
+        counts,
+        {
+            "enabled": True,
+            "source_run_tag": source_tag,
+            "source_protocol_tag": source_protocol_tag,
+            "source_protocol_commit": source_protocol_commit,
+            "recovered_scenarios": len(recovered),
+            "recomputed_scenarios": len(missing),
+            "missing_scenario_ids": sorted(missing),
+            "source_artifacts": source_descriptors,
+            "copy_method": "ntfs_hardlink_after_full_shard_validation",
+        },
+    )
+
+
 def freeze(*, config_path: Path, repo_root: Path = ROOT) -> Path:
     """Build and hash-freeze every structural allocation before outcomes."""
     started = time.perf_counter()
@@ -307,11 +426,23 @@ def freeze(*, config_path: Path, repo_root: Path = ROOT) -> Path:
         paths.data_dir / "frontier/outcome_free_decision_base.parquet",
     )
     del decision_base
-    scenario_artifacts: dict[str, Any] = {}
-    scenario_counts: list[dict[str, Any]] = []
     scenarios = declared_scenarios(config)
+    scenario_lookup = {str(item["scenario_id"]): item for item in scenarios}
+    scenario_artifacts, scenario_counts, recovery_audit = _recover_interrupted_scenarios(
+        config,
+        paths=paths,
+        repo_root=root,
+    )
+    pending = [
+        scenario for scenario in scenarios if str(scenario["scenario_id"]) not in scenario_artifacts
+    ]
     workers = int(config.get("execution", {}).get("freeze_workers", 1))
-    logger.info("Structural freeze dispatching {} scenarios to {} workers", len(scenarios), workers)
+    logger.info(
+        "Structural freeze recovered {} scenarios and dispatching {} to {} workers",
+        len(scenario_artifacts),
+        len(pending),
+        workers,
+    )
     with ProcessPoolExecutor(
         max_workers=workers,
         mp_context=mp.get_context("spawn"),
@@ -320,16 +451,42 @@ def freeze(*, config_path: Path, repo_root: Path = ROOT) -> Path:
     ) as executor:
         futures = {
             executor.submit(_freeze_scenario_worker, scenario): str(scenario["scenario_id"])
-            for scenario in scenarios
+            for scenario in pending
         }
         for index, future in enumerate(as_completed(futures), start=1):
             scenario_id = futures[future]
             result = future.result()
             if result["scenario_id"] != scenario_id:
                 raise RuntimeError("Structural worker returned the wrong scenario identity.")
-            scenario_artifacts[scenario_id] = result["artifacts"]
-            scenario_counts.append(result["counts"])
-            logger.info("Structural freeze completed scenario {}/36: {}", index, scenario_id)
+            inspection = inspect_structural_shard(
+                paths.data_dir / "scenarios" / scenario_id,
+                scenario_id=scenario_id,
+                retry_slack=float(config["numerics"]["minimum_endpoint_retry_slack"]),
+                cap_residual_tolerance=float(config["numerics"]["cap_residual_tolerance"]),
+            )
+            scenario_artifacts[scenario_id] = {
+                name: relative_artifact_descriptor(path, repo_root=root)
+                for name, path in inspection.paths.items()
+            }
+            if scenario_artifacts[scenario_id] != result["artifacts"]:
+                raise RuntimeError(f"Worker descriptors failed shard inspection for {scenario_id}.")
+            verified_counts = _inspection_counts(
+                inspection,
+                scenario=scenario_lookup[scenario_id],
+            )
+            if verified_counts != result["counts"]:
+                raise RuntimeError(f"Worker counts failed shard inspection for {scenario_id}.")
+            scenario_counts.append(verified_counts)
+            logger.info(
+                "Structural freeze completed new scenario {}/{}: {}",
+                index,
+                len(pending),
+                scenario_id,
+            )
+    expected_scenario_ids = set(scenario_lookup)
+    if set(scenario_artifacts) != expected_scenario_ids:
+        missing_ids = sorted(expected_scenario_ids.difference(scenario_artifacts))
+        raise RuntimeError(f"Structural freeze is missing scenarios: {missing_ids}.")
     scenario_artifacts = dict(sorted(scenario_artifacts.items()))
     scenario_counts.sort(key=lambda item: str(item["scenario_id"]))
     counts_path = atomic_write_parquet(
@@ -347,6 +504,7 @@ def freeze(*, config_path: Path, repo_root: Path = ROOT) -> Path:
         "claim_boundary": dict(config["claim_boundary"]),
         "numerics": dict(config.get("numerics", {})),
         "execution": dict(config.get("execution", {})),
+        "recovery": recovery_audit,
         "source_frontier_freeze": {
             "status": parent_freeze["status"],
             "run_tag": parent_freeze["run_tag"],
@@ -364,6 +522,7 @@ def freeze(*, config_path: Path, repo_root: Path = ROOT) -> Path:
             repo_root=root,
             relative_paths=(
                 Path("src/ijds_audit/structural_sensitivity.py"),
+                Path("src/ijds_audit/structural_checkpoint.py"),
                 Path("src/ijds_challengers/normalized_frontier.py"),
                 Path("scripts/experiments/run_ijds_portfolio_structure_sensitivity.py"),
                 *_protocol_documents(config),
@@ -399,6 +558,16 @@ def _verified_structural_freeze(
         raise RuntimeError("Structural freeze scenario census changed.")
     if payload.get("execution") != dict(config.get("execution", {})):
         raise RuntimeError("Structural freeze execution contract changed.")
+    recovery = payload.get("recovery", {})
+    expected_recovery = config.get("execution", {}).get("recovery")
+    if expected_recovery is not None and (
+        recovery.get("enabled") is not True
+        or int(recovery.get("recovered_scenarios", -1))
+        != int(expected_recovery["expected_recovered_scenarios"])
+        or sorted(recovery.get("missing_scenario_ids", []))
+        != sorted(expected_recovery["expected_missing_scenario_ids"])
+    ):
+        raise RuntimeError("Structural recovery audit changed.")
     decision_base = payload.get("outcome_free_decision_base")
     if not isinstance(decision_base, dict):
         raise RuntimeError("Structural freeze lacks its outcome-free decision base.")
@@ -637,6 +806,7 @@ def evaluate(*, config_path: Path, repo_root: Path = ROOT) -> Path:
                 repo_root=root,
                 relative_paths=(
                     Path("src/ijds_audit/structural_sensitivity.py"),
+                    Path("src/ijds_audit/structural_checkpoint.py"),
                     Path("scripts/experiments/run_ijds_portfolio_structure_sensitivity.py"),
                     *_protocol_documents(config),
                 ),
