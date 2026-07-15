@@ -39,6 +39,7 @@ _ALLOWED_TOP_LEVEL_KEYS = frozenset(
         "evaluation_recovery",
         "rolling_origin",
         "decision_active_simulation",
+        "endpoint_reason_recovery",
     }
 )
 
@@ -202,7 +203,8 @@ def _deep_merge(base: dict[str, Any], override: Mapping[str, Any]) -> dict[str, 
     return merged
 
 
-def _load_payload(path: Path, seen: frozenset[Path] = frozenset()) -> dict[str, Any]:
+def load_config_payload(path: Path, seen: frozenset[Path] = frozenset()) -> dict[str, Any]:
+    """Load one recursively inherited YAML mapping with cycle protection."""
     resolved = path.resolve()
     if resolved in seen:
         raise ValueError(f"Protocol config inheritance cycle at {resolved}.")
@@ -213,7 +215,7 @@ def _load_payload(path: Path, seen: frozenset[Path] = frozenset()) -> dict[str, 
     if extends is None:
         return payload
     return _deep_merge(
-        _load_payload((resolved.parent / str(extends)).resolve(), seen | {resolved}),
+        load_config_payload((resolved.parent / str(extends)).resolve(), seen | {resolved}),
         payload,
     )
 
@@ -314,6 +316,22 @@ def _validate_evaluation_outcome_contract(config: Mapping[str, Any]) -> None:
         raise ValueError("Evaluation and fitting charge-off lags must agree.")
 
 
+def _validate_endpoint_reason_recovery(config: Mapping[str, Any]) -> None:
+    recovery = config.get("endpoint_reason_recovery")
+    if recovery is None:
+        return
+    if not isinstance(recovery, Mapping):
+        raise TypeError("Endpoint reason recovery must be a mapping.")
+    if recovery.get("status") != "reason_taxonomy_only_no_scientific_metric_change":
+        raise ValueError("Unexpected endpoint reason recovery status.")
+    if recovery.get("require_exact_reference_column_equivalence") is not True:
+        raise ValueError("Endpoint reason recovery must require exact scientific equivalence.")
+    if not isinstance(recovery.get("reference_json"), Mapping):
+        raise KeyError("Endpoint reason recovery requires a reference JSON descriptor.")
+    if recovery.get("artifact_section") not in {"artifacts", "evaluation_artifacts"}:
+        raise ValueError("Endpoint reason recovery has an invalid artifact section.")
+
+
 def _validate_rolling_origin(config: Mapping[str, Any]) -> None:
     rolling = config.get("rolling_origin")
     if rolling is None:
@@ -351,7 +369,7 @@ def _validate_rolling_origin(config: Mapping[str, Any]) -> None:
 
 def load_v4_config(path: Path) -> dict[str, Any]:
     """Load V4 and reject any expansion of its closed analysis family."""
-    config = _load_payload(path)
+    config = load_config_payload(path)
     _validate_known_config_keys(config)
     required = {
         "source",
@@ -417,6 +435,7 @@ def load_v4_config(path: Path) -> dict[str, Any]:
     _validate_windows(config)
     _validate_design_chronology(config)
     _validate_evaluation_outcome_contract(config)
+    _validate_endpoint_reason_recovery(config)
     _validate_rolling_origin(config)
     return config
 

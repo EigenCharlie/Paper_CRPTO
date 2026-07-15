@@ -2898,8 +2898,8 @@
     },
     "v4_config_loader": {
       "path": "src/ijds_audit/config.py",
-      "bytes": 22479,
-      "sha256": "028f2a862c49810409f4ce4a4574f101bfa26c7884c4fd047f3cff19b16b4b20"
+      "bytes": 23598,
+      "sha256": "8bf98dbfafbb27722558e97d28dd0313590b13952725be2907120a76ba9033fd"
     },
     "grid_contracts": {
       "path": "src/ijds_audit/grid_contracts.py",

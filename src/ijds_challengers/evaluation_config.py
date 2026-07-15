@@ -3,16 +3,16 @@
 from __future__ import annotations
 
 from pathlib import Path
-from typing import Any, cast
+from typing import Any
 
-import yaml
+from src.ijds_audit.config import load_config_payload
 
 EXPECTED_FREEZE_SHA256 = "7877c5e460772a0093e4132eaa542e9049f7ec15d2ddaa35c2df389892a0e185"
 
 
 def load_v2_config(path: Path) -> dict[str, Any]:
     """Load and validate the locked V2 outcome-evaluation config."""
-    payload = yaml.safe_load(path.read_text(encoding="utf-8"))
+    payload = load_config_payload(path)
     if not isinstance(payload, dict):
         raise TypeError("V2 config must be a YAML mapping.")
     required = {
@@ -73,7 +73,19 @@ def load_v2_config(path: Path) -> dict[str, Any]:
     )
     if payload["output"].get("immutability") != "hard_no_overwrite_choose_fresh_run_tag":
         raise ValueError("V2 outputs must remain immutable.")
-    return cast(dict[str, Any], payload)
+    recovery = payload.get("endpoint_reason_recovery")
+    if recovery is not None:
+        if not isinstance(recovery, dict):
+            raise TypeError("Endpoint reason recovery must be a mapping.")
+        if recovery.get("status") != "reason_taxonomy_only_no_scientific_metric_change":
+            raise ValueError("Unexpected endpoint reason recovery status.")
+        if recovery.get("require_exact_reference_column_equivalence") is not True:
+            raise ValueError("Endpoint reason recovery must require exact equivalence.")
+        if recovery.get("artifact_section") != "evaluation_artifacts":
+            raise ValueError("Two-ruler recovery must reference evaluation_artifacts.")
+        if not isinstance(recovery.get("reference_json"), dict):
+            raise KeyError("Two-ruler recovery requires a reference JSON descriptor.")
+    return payload
 
 
 def _validate_source_frontier(source: Any) -> None:

@@ -37,6 +37,15 @@ def test_rolling_origin_configs_shift_the_complete_design(
     assert declared_menu_counts(config) == (11, 3)
 
 
+def test_rolling_origin_v3_imports_2017_freeze_and_uses_corrected_endpoint() -> None:
+    config = load_v4_config(CONFIGS / "ijds_rolling_origin_2017_2026-07-15_v3.yaml")
+    assert config["resume_outcome_free"]["source_run_tag"].endswith("2026-07-12-v2")
+    assert config["target"]["evaluation_outcome_contract"]["cutoff"] == "2020-09-30"
+    assert config["design"]["primary_oot_start_month"] == "2017-04"
+    assert config["design"]["primary_oot_end_month"] == "2017-06"
+    assert declared_menu_counts(config) == (11, 3)
+
+
 def test_original_v4_retains_its_fifteen_month_primary_horizon() -> None:
     config = load_v4_config(CONFIGS / "ijds_binary_geometry_frontier_v4_2026-07-12.yaml")
     assert declared_menu_counts(config) == (11, 15)

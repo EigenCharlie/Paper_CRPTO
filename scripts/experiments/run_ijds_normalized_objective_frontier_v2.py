@@ -17,6 +17,7 @@ if str(ROOT) not in sys.path:
     sys.path.insert(0, str(ROOT))
 
 from src.ijds_audit.config import load_v4_config  # noqa: E402
+from src.ijds_audit.endpoint_recovery import reconcile_from_json_reference  # noqa: E402
 from src.ijds_audit.evaluation import evaluate_frozen_portfolios  # noqa: E402
 from src.ijds_audit.protocol import (  # noqa: E402
     configured_archive_outcomes,
@@ -60,6 +61,7 @@ IMPLEMENTATION_PATHS = (
     Path("src/evaluation/policy_contrast_bounds.py"),
     Path("src/evaluation/standardized_credit_payoff.py"),
     Path("src/ijds_audit/evaluation.py"),
+    Path("src/ijds_audit/endpoint_recovery.py"),
     Path("src/ijds_audit/protocol.py"),
     Path("src/ijds_challengers/evaluation.py"),
     Path("src/ijds_challengers/evaluation_config.py"),
@@ -251,6 +253,20 @@ def run_evaluation(*, config_path: Path, repo_root: Path = ROOT) -> Path:
         directions,
         config=config,
     )
+    endpoint_recovery = config.get("endpoint_reason_recovery")
+    recovery_audit = None
+    if endpoint_recovery:
+        recovery_audit = reconcile_from_json_reference(
+            {
+                "evaluated_portfolios": evaluated,
+                "window_endpoint_contrasts": window_contrasts,
+                "monthly_endpoint_contrasts": monthly_contrasts,
+                "metric_direction_census": directions,
+            },
+            reference_json=endpoint_recovery["reference_json"],
+            artifact_section=str(endpoint_recovery["artifact_section"]),
+            repo_root=root,
+        )
     summary = _summary(
         config=config,
         protocol_commit=protocol_commit,
@@ -262,6 +278,7 @@ def run_evaluation(*, config_path: Path, repo_root: Path = ROOT) -> Path:
         directions=directions,
         outcome_audit=outcome_audit,
     )
+    summary["endpoint_reason_recovery"] = recovery_audit
 
     paths = prepare_output_paths(config, repo_root=root)
     evaluation_dir = paths.data_dir / "evaluation"

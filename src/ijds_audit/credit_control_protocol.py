@@ -20,7 +20,8 @@ from src.ijds_audit.credit_controls import (
     score_psi_audit,
     scorecard_feature_psi_audit,
 )
-from src.ijds_audit.evaluation import temporal_coverage_audit
+from src.ijds_audit.endpoint_recovery import reconcile_from_json_reference
+from src.ijds_audit.evaluation import endpoint_resolution_audit, temporal_coverage_audit
 from src.ijds_audit.prediction import (
     LearnerScores,
     fit_logistic_control,
@@ -81,6 +82,7 @@ def _implementation(config_path: Path, repo_root: Path) -> dict[str, Any]:
             Path("src/ijds_audit/credit_controls.py"),
             Path("src/ijds_audit/credit_control_protocol.py"),
             Path("src/ijds_audit/evaluation.py"),
+            Path("src/ijds_audit/endpoint_recovery.py"),
             Path("src/ijds_audit/protocol.py"),
             Path("src/data/outcome_observability.py"),
             Path("src/features/feature_engineering.py"),
@@ -479,6 +481,7 @@ def evaluate_credit_controls(*, config_path: Path, repo_root: Path) -> Path:
     raw_path = resolve_repo_input(config["source"]["raw_path"], repo_root=root)
     universe = load_outcome_universe(config, raw_path=raw_path)
     outcomes = configured_archive_outcomes(universe, config)
+    endpoint_audit = endpoint_resolution_audit(outcomes)
     scores = pd.read_parquet(artifacts["scores"])
     recipes = load_recipes(artifacts["recipes"])
     fit_audit = pd.read_parquet(artifacts["fit_audit"])
@@ -507,6 +510,18 @@ def evaluate_credit_controls(*, config_path: Path, repo_root: Path) -> Path:
             "columns": int(len(coverage.columns)),
         }
     prediction = _prediction_metrics(scores, outcomes)
+    recovery_audit = None
+    endpoint_recovery = config.get("endpoint_reason_recovery")
+    if endpoint_recovery:
+        recovery_audit = reconcile_from_json_reference(
+            {
+                "temporal_coverage": coverage,
+                "prediction_metrics": prediction,
+            },
+            reference_json=endpoint_recovery["reference_json"],
+            artifact_section=str(endpoint_recovery["artifact_section"]),
+            repo_root=root,
+        )
     output_files = {
         "temporal_coverage": atomic_write_parquet(
             coverage,
@@ -516,11 +531,17 @@ def evaluate_credit_controls(*, config_path: Path, repo_root: Path) -> Path:
             prediction,
             paths.data_dir / "evaluation/prediction_metrics.parquet",
         ),
+        "endpoint_resolution_audit": atomic_write_parquet(
+            endpoint_audit,
+            paths.data_dir / "evaluation/endpoint_resolution_audit.parquet",
+        ),
     }
     summary = _evaluation_summary(config=config, coverage=coverage, prediction=prediction)
     summary["source_freeze"] = source_descriptor
     summary["source_protocol"] = expected
     summary["coverage_recovery"] = coverage_equivalence
+    summary["endpoint_reason_recovery"] = recovery_audit
+    summary["endpoint_resolution_audit"] = endpoint_audit.to_dict(orient="records")
     summary["evaluation_artifacts"] = {
         name: relative_artifact_descriptor(path, repo_root=root)
         for name, path in output_files.items()

@@ -36,6 +36,16 @@ def _sharp_binary_sum_bounds(
     return float(lower.sum()), float(upper.sum())
 
 
+def _binary_identification_width(
+    value_if_zero: np.ndarray,
+    value_if_one: np.ndarray,
+    outcomes: np.ndarray,
+) -> float:
+    """Return the exact width contributed by unrestricted binary outcomes."""
+    unresolved = ~np.isfinite(outcomes)
+    return float(np.abs(value_if_one[unresolved] - value_if_zero[unresolved]).sum())
+
+
 def _sharp_policy_bounds_from_arrays(
     *,
     exposure_a: np.ndarray,
@@ -86,26 +96,47 @@ def _sharp_policy_bounds_from_arrays(
         raise ValueError("Both policies must allocate positive capital.")
     delta_exposure = exposure_a - exposure_b
     delta_weight = exposure_a / total_a - exposure_b / total_b
-    payoff_lower, payoff_upper = _sharp_binary_sum_bounds(
-        delta_exposure * rates,
-        delta_exposure * -float(lgd),
-        outcomes,
-    )
+    payoff_if_zero = delta_exposure * rates
+    payoff_if_one = delta_exposure * -float(lgd)
+    payoff_rate_if_zero = delta_weight * rates
+    payoff_rate_if_one = delta_weight * -float(lgd)
+    default_if_zero = np.zeros(len(outcomes), dtype=float)
+    default_if_one = delta_weight
+    miscoverage_if_zero = delta_weight * (lower > 0.0).astype(float)
+    miscoverage_if_one = delta_weight * (upper < 1.0).astype(float)
+    payoff_lower, payoff_upper = _sharp_binary_sum_bounds(payoff_if_zero, payoff_if_one, outcomes)
     payoff_rate_lower, payoff_rate_upper = _sharp_binary_sum_bounds(
-        delta_weight * rates,
-        delta_weight * -float(lgd),
-        outcomes,
+        payoff_rate_if_zero, payoff_rate_if_one, outcomes
     )
     default_lower, default_upper = _sharp_binary_sum_bounds(
-        np.zeros(len(outcomes), dtype=float),
-        delta_weight,
-        outcomes,
+        default_if_zero, default_if_one, outcomes
     )
     miscoverage_lower, miscoverage_upper = _sharp_binary_sum_bounds(
-        delta_weight * (lower > 0.0).astype(float),
-        delta_weight * (upper < 1.0).astype(float),
-        outcomes,
+        miscoverage_if_zero, miscoverage_if_one, outcomes
     )
+    widths = {
+        "realized_payoff_identification_width": _binary_identification_width(
+            payoff_if_zero, payoff_if_one, outcomes
+        ),
+        "realized_payoff_rate_identification_width": _binary_identification_width(
+            payoff_rate_if_zero, payoff_rate_if_one, outcomes
+        ),
+        "weighted_default_identification_width": _binary_identification_width(
+            default_if_zero, default_if_one, outcomes
+        ),
+        "weighted_miscoverage_identification_width": _binary_identification_width(
+            miscoverage_if_zero, miscoverage_if_one, outcomes
+        ),
+    }
+    bound_widths = {
+        "realized_payoff_identification_width": payoff_upper - payoff_lower,
+        "realized_payoff_rate_identification_width": payoff_rate_upper - payoff_rate_lower,
+        "weighted_default_identification_width": default_upper - default_lower,
+        "weighted_miscoverage_identification_width": miscoverage_upper - miscoverage_lower,
+    }
+    for name, width in widths.items():
+        if not np.isclose(width, bound_widths[name], atol=1.0e-10, rtol=1.0e-12):
+            raise RuntimeError(f"Sharp-bound width failed direct reconciliation for {name}.")
     return {
         "contrast": f"{policy_a}_minus_{policy_b}",
         "role": role,
@@ -124,6 +155,7 @@ def _sharp_policy_bounds_from_arrays(
         "weighted_default_difference_upper": default_upper,
         "weighted_miscoverage_difference_lower": miscoverage_lower,
         "weighted_miscoverage_difference_upper": miscoverage_upper,
+        **widths,
         "payoff_direction_sign_robust": bool(payoff_lower > 0.0 or payoff_upper < 0.0),
         "default_direction_sign_robust": bool(default_lower > 0.0 or default_upper < 0.0),
         "miscoverage_direction_sign_robust": bool(

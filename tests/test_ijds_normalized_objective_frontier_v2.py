@@ -20,6 +20,7 @@ from src.ijds_challengers.evaluation_config import EXPECTED_FREEZE_SHA256, load_
 ROOT = Path(__file__).resolve().parents[1]
 CONFIG = ROOT / "configs/experiments/ijds_normalized_objective_frontier_2026-07-13_v2.yaml"
 V3_CONFIG = ROOT / "configs/experiments/ijds_normalized_objective_frontier_2026-07-14_v3.yaml"
+V4_CONFIG = ROOT / "configs/experiments/ijds_normalized_objective_frontier_2026-07-15_v4.yaml"
 
 
 def test_v2_config_locks_freeze_grid_and_no_selection() -> None:
@@ -38,6 +39,13 @@ def test_v3_reuses_v1c_freeze_with_reconstructed_endpoint() -> None:
     assert config["outcomes"]["endpoint_contract"].startswith(
         "conservative_terminal_status_reconstruction"
     )
+
+
+def test_v4_changes_only_endpoint_reason_taxonomy() -> None:
+    config = load_v2_config(V4_CONFIG)
+    assert config["parent"]["config"].endswith("2026-07-15_v4.yaml")
+    assert config["endpoint_reason_recovery"]["require_exact_reference_column_equivalence"] is True
+    assert config["evaluation"] == load_v2_config(V3_CONFIG)["evaluation"]
 
 
 def test_v2_config_rejects_coordinate_selection(tmp_path: Path) -> None:

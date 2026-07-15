@@ -1,11 +1,25 @@
 from __future__ import annotations
 
+from pathlib import Path
 from typing import Any
 
 import pandas as pd
 import pytest
 
-from src.ijds_audit.evaluation import evaluate_frozen_portfolios, temporal_coverage_audit
+from src.ijds_audit.config import load_credit_control_config, load_v4_config
+from src.ijds_audit.evaluation import (
+    RESOLUTION_CHARGED_OFF_BY_CUTOFF,
+    RESOLUTION_FULLY_PAID_BY_CUTOFF,
+    RESOLUTION_NONTERMINAL,
+    RESOLUTION_TERMINAL_AFTER_CUTOFF,
+    RESOLUTION_TERMINAL_DATE_MISSING,
+    build_archive_outcomes,
+    endpoint_resolution_audit,
+    evaluate_frozen_portfolios,
+    temporal_coverage_audit,
+)
+
+ROOT = Path(__file__).resolve().parents[2]
 
 
 def _portfolio_inputs() -> tuple[pd.DataFrame, pd.DataFrame, pd.DataFrame, dict[str, Any]]:
@@ -69,6 +83,50 @@ def _coverage_inputs() -> tuple[pd.DataFrame, pd.DataFrame]:
         }
     )
     return scores, outcomes
+
+
+def test_archive_endpoint_reasons_separate_missing_and_post_cutoff_dates() -> None:
+    universe = pd.DataFrame(
+        {
+            "id": pd.Series(["paid", "charged", "missing", "late", "current"], dtype="string"),
+            "terminal_default": pd.Series([0, 1, 1, 0, pd.NA], dtype="Int8"),
+            "label_available_at": pd.to_datetime(
+                ["2020-01-31", "2020-02-29", None, "2020-10-31", None]
+            ),
+            "design_split": pd.Series(["primary_oot"] * 5, dtype="string"),
+            "issue_d": pd.to_datetime(["2016-04-01"] * 5),
+        }
+    )
+
+    outcomes = build_archive_outcomes(universe, evaluation_cutoff="2020-09-30")
+
+    assert outcomes["snapshot_default"].tolist()[:2] == [0, 1]
+    assert outcomes["snapshot_default"].isna().tolist()[2:] == [True, True, True]
+    assert outcomes["snapshot_resolution"].tolist() == [
+        RESOLUTION_FULLY_PAID_BY_CUTOFF,
+        RESOLUTION_CHARGED_OFF_BY_CUTOFF,
+        RESOLUTION_TERMINAL_DATE_MISSING,
+        RESOLUTION_TERMINAL_AFTER_CUTOFF,
+        RESOLUTION_NONTERMINAL,
+    ]
+    audit = endpoint_resolution_audit(outcomes, roles=("primary_oot",))
+    assert audit["candidate_rows"].sum() == 5
+    assert audit["resolved_rows"].sum() == 2
+    assert audit["unresolved_rows"].sum() == 3
+
+
+def test_v4_endpoint_recovery_configs_lock_exact_reference_reconciliation() -> None:
+    binary = load_v4_config(
+        ROOT / "configs/experiments/ijds_binary_geometry_frontier_v4_2026-07-15_v4.yaml"
+    )
+    credit = load_credit_control_config(
+        ROOT / "configs/experiments/ijds_credit_risk_controls_2026-07-15_v4.yaml"
+    )
+
+    assert binary["run_tag"].endswith("2026-07-15-v4")
+    assert credit["run_tag"].endswith("2026-07-15-v4")
+    assert binary["endpoint_reason_recovery"]["require_exact_reference_column_equivalence"] is True
+    assert credit["endpoint_reason_recovery"]["artifact_section"] == "evaluation_artifacts"
 
 
 def test_evaluate_frozen_portfolios_preserves_nullable_outcome_fact() -> None:

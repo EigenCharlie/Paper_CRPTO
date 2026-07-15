@@ -103,9 +103,9 @@ def test_reconstructed_endpoint_censors_terminal_status_after_cutoff() -> None:
     outcomes = build_archive_outcomes(universe, evaluation_cutoff="2020-09-30")
     assert outcomes["snapshot_default"].tolist() == [0, pd.NA, pd.NA]
     assert outcomes["snapshot_resolution"].tolist() == [
-        "fully_paid",
+        "fully_paid_by_reconstructed_cutoff",
         "terminal_after_reconstructed_cutoff",
-        "right_censored",
+        "nonterminal_or_unresolved_status",
     ]
 
 

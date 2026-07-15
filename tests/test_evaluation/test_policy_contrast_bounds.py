@@ -40,6 +40,31 @@ def test_sharp_policy_contrast_preserves_matching_nullable_outcome_fact() -> Non
     assert bounds["unresolved_union_loans"] == 1
     assert np.isfinite(bounds["realized_payoff_difference_lower"])
     assert bounds["realized_payoff_difference_lower"] <= bounds["realized_payoff_difference_upper"]
+    assert bounds["realized_payoff_identification_width"] == pytest.approx(
+        bounds["realized_payoff_difference_upper"] - bounds["realized_payoff_difference_lower"]
+    )
+    assert bounds["weighted_default_identification_width"] == pytest.approx(
+        bounds["weighted_default_difference_upper"] - bounds["weighted_default_difference_lower"]
+    )
+    assert bounds["weighted_miscoverage_identification_width"] == pytest.approx(
+        bounds["weighted_miscoverage_difference_upper"]
+        - bounds["weighted_miscoverage_difference_lower"]
+    )
+
+
+def test_identification_width_uses_only_unresolved_exposure_difference() -> None:
+    bounds = sharp_policy_contrast_bounds(
+        _policy_pair(),
+        policy_a="policy-a",
+        policy_b="policy-b",
+        role="primary_oot",
+        lgd=0.45,
+    )
+
+    # Only the shared loan is unresolved; its exposure difference is USD 20.
+    assert bounds["realized_payoff_identification_width"] == pytest.approx(11.0)
+    assert bounds["weighted_default_identification_width"] == pytest.approx(0.2)
+    assert bounds["weighted_miscoverage_identification_width"] == pytest.approx(0.2)
 
 
 @pytest.mark.parametrize(

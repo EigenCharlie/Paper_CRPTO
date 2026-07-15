@@ -28,6 +28,12 @@ _OUTCOME_ROLE = "__outcome_role"
 _OUTCOME_PERIOD = "__outcome_period"
 _OUTCOME_JOIN = "__outcome_join"
 
+RESOLUTION_FULLY_PAID_BY_CUTOFF = "fully_paid_by_reconstructed_cutoff"
+RESOLUTION_CHARGED_OFF_BY_CUTOFF = "charged_off_by_reconstructed_cutoff"
+RESOLUTION_TERMINAL_DATE_MISSING = "terminal_availability_date_missing"
+RESOLUTION_TERMINAL_AFTER_CUTOFF = "terminal_after_reconstructed_cutoff"
+RESOLUTION_NONTERMINAL = "nonterminal_or_unresolved_status"
+
 
 def _outcome_payload(
     outcomes: pd.DataFrame,
@@ -231,24 +237,32 @@ def build_archive_outcomes(
     cutoff. This reconstructs an as-of endpoint from the distributed archive;
     it does not pretend that the archive itself is a point-in-time snapshot.
     """
-    terminal = universe["terminal_default"].astype("Int8")
+    archive_terminal = universe["terminal_default"].astype("Int8")
     available_at = pd.to_datetime(
         universe.get("label_available_at", pd.Series(pd.NaT, index=universe.index)),
         errors="coerce",
     )
-    observed_by_cutoff = terminal.notna()
+    terminal = archive_terminal.copy()
+    observed_by_cutoff = archive_terminal.notna()
+    resolution = pd.Series("right_censored", index=universe.index, dtype="string")
     if evaluation_cutoff is not None:
         cutoff = pd.Timestamp(evaluation_cutoff)
         if pd.isna(cutoff):
             raise ValueError("Evaluation cutoff must be a valid timestamp.")
         observed_by_cutoff &= available_at.notna() & available_at.le(cutoff)
-        terminal = terminal.where(observed_by_cutoff).astype("Int8")
-    resolution = pd.Series("right_censored", index=universe.index, dtype="string")
-    resolution.loc[terminal.eq(0).fillna(False)] = "fully_paid"
-    resolution.loc[terminal.eq(1).fillna(False)] = "charged_off"
-    if evaluation_cutoff is not None:
-        post_cutoff = universe["terminal_default"].notna() & ~observed_by_cutoff
-        resolution.loc[post_cutoff] = "terminal_after_reconstructed_cutoff"
+        terminal = archive_terminal.where(observed_by_cutoff).astype("Int8")
+        terminal_missing_date = archive_terminal.notna() & available_at.isna()
+        terminal_after_cutoff = (
+            archive_terminal.notna() & available_at.notna() & available_at.gt(cutoff)
+        )
+        resolution[:] = RESOLUTION_NONTERMINAL
+        resolution.loc[terminal.eq(0).fillna(False)] = RESOLUTION_FULLY_PAID_BY_CUTOFF
+        resolution.loc[terminal.eq(1).fillna(False)] = RESOLUTION_CHARGED_OFF_BY_CUTOFF
+        resolution.loc[terminal_missing_date] = RESOLUTION_TERMINAL_DATE_MISSING
+        resolution.loc[terminal_after_cutoff] = RESOLUTION_TERMINAL_AFTER_CUTOFF
+    else:
+        resolution.loc[terminal.eq(0).fillna(False)] = "fully_paid"
+        resolution.loc[terminal.eq(1).fillna(False)] = "charged_off"
     return pd.DataFrame(
         {
             "id": universe["id"].astype("string"),
@@ -259,6 +273,34 @@ def build_archive_outcomes(
             "period": pd.to_datetime(universe["issue_d"]).dt.to_period("M").astype(str),
         }
     )
+
+
+def endpoint_resolution_audit(
+    outcomes: pd.DataFrame,
+    *,
+    roles: Collection[str] | None = None,
+) -> pd.DataFrame:
+    """Count resolved and unresolved candidates by explicit endpoint reason."""
+    required = {"id", "role", "snapshot_default", "snapshot_resolution"}
+    missing = sorted(required.difference(outcomes.columns))
+    if missing:
+        raise KeyError(f"Endpoint audit is missing required columns: {missing}.")
+    selected = outcomes.copy()
+    if roles is not None:
+        selected = selected.loc[selected["role"].astype(str).isin(map(str, roles))].copy()
+    if selected.empty:
+        raise ValueError("Endpoint audit received no candidate rows.")
+    selected["resolved"] = selected["snapshot_default"].notna()
+    audit = (
+        selected.groupby(["role", "snapshot_resolution"], observed=True, sort=True)
+        .agg(candidate_rows=("id", "size"), resolved_rows=("resolved", "sum"))
+        .reset_index()
+    )
+    audit["resolved_rows"] = audit["resolved_rows"].astype("int64")
+    audit["unresolved_rows"] = audit["candidate_rows"] - audit["resolved_rows"]
+    if int(audit["candidate_rows"].sum()) != len(selected):
+        raise RuntimeError("Endpoint reason taxonomy does not partition the candidate census.")
+    return audit
 
 
 def evaluate_frozen_portfolios(

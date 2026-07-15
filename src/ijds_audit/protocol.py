@@ -18,10 +18,12 @@ from src.data.outcome_observability import (
 )
 from src.ijds_audit.allocations import build_outcome_free_portfolios, policy_family
 from src.ijds_audit.config import load_v4_config
+from src.ijds_audit.endpoint_recovery import reconcile_from_json_reference
 from src.ijds_audit.evaluation import (
     aggregate_portfolios,
     build_archive_outcomes,
     comparator_envelopes,
+    endpoint_resolution_audit,
     evaluate_frozen_portfolios,
     paired_portfolio_contrasts,
     temporal_coverage_audit,
@@ -188,6 +190,7 @@ def _implementation(config_path: Path, repo_root: Path) -> dict[str, Any]:
             Path("src/ijds_audit/portfolio.py"),
             Path("src/ijds_audit/allocations.py"),
             Path("src/ijds_audit/evaluation.py"),
+            Path("src/ijds_audit/endpoint_recovery.py"),
             Path("src/ijds_audit/simulation.py"),
             Path("src/ijds_audit/protocol.py"),
             Path("src/data/outcome_observability.py"),
@@ -488,6 +491,7 @@ def evaluate_frozen(
     raw_path = resolve_repo_input(config["source"]["raw_path"], repo_root=root)
     universe = load_outcome_universe(config, raw_path=raw_path)
     outcomes = configured_archive_outcomes(universe, config)
+    endpoint_audit = endpoint_resolution_audit(outcomes)
     scores = pd.read_parquet(artifacts["scores"])
     recipes = load_recipes(artifacts["recipes"])
     fit_audit = pd.read_parquet(artifacts["fit_audit"])
@@ -546,6 +550,24 @@ def evaluate_frozen(
     )
     simulation, simulation_summary = run_factorial_simulation(config)
 
+    recovery = config.get("endpoint_reason_recovery")
+    recovery_audit = None
+    if recovery:
+        recovery_audit = reconcile_from_json_reference(
+            {
+                "temporal_coverage": coverage,
+                "monthly_evaluation": evaluated,
+                "aggregate_evaluation": aggregates,
+                "paired_contrasts": contrasts,
+                "comparator_envelopes": envelopes,
+                "simulation_repetitions": simulation,
+                "simulation_summary": simulation_summary,
+            },
+            reference_json=recovery["reference_json"],
+            artifact_section=str(recovery["artifact_section"]),
+            repo_root=root,
+        )
+
     evaluation_files = {
         "temporal_coverage": atomic_write_parquet(
             coverage, data_dir / "evaluation/temporal_coverage.parquet"
@@ -574,6 +596,9 @@ def evaluate_frozen(
         ),
         "simulation_summary": atomic_write_parquet(
             simulation_summary, data_dir / "simulation/factorial_summary.parquet"
+        ),
+        "endpoint_resolution_audit": atomic_write_parquet(
+            endpoint_audit, data_dir / "evaluation/endpoint_resolution_audit.parquet"
         ),
     }
     canonical_coverage = coverage.loc[
@@ -622,6 +647,8 @@ def evaluate_frozen(
             ].min()
         ),
         "simulation_scope": "synthetic_mechanism_interpretation_only",
+        "endpoint_resolution_audit": endpoint_audit.to_dict(orient="records"),
+        "endpoint_reason_recovery": recovery_audit,
         "outcome_free_freeze": relative_artifact_descriptor(freeze_path, repo_root=root),
         "artifacts": {
             name: relative_artifact_descriptor(path, repo_root=root)
