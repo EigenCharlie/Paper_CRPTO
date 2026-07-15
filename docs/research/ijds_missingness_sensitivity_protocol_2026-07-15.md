@@ -13,9 +13,13 @@ partially supported legacy bankruptcy count?
 
 The original required tag was
 `protocol/ijds-missingness-sensitivity-2026-07-15-v1`. Before either phase was
-run, the implementation-only V5 recovery erratum moved execution to
-`protocol/ijds-missingness-sensitivity-2026-07-15-v2`; the specification family
-and stop rules below are unchanged.
+run, the implementation-only V5 recovery erratum moved execution to V2. A
+pre-execution red-team review then found that V2's native arm replaced a binary
+bankruptcy indicator with a count, confounding feature semantics and missing-
+value encoding. V1 and V2 were therefore stopped before freeze or evaluation.
+The corrected execution tag is
+`protocol/ijds-missingness-sensitivity-2026-07-15-v3`; its computational
+erratum is part of the locked lineage.
 
 ## Fixed Information Contract
 
@@ -40,10 +44,12 @@ All three specifications are co-reported:
    `pub_rec_bankruptcies` is missing. Import the frozen V4 score and recipes.
 2. **Explicit missing indicators.** Retain the active mapped features and add
    `delinq_recency_missing` and `bankruptcy_count_missing`.
-3. **Native numeric missingness.** Remove mapped `delinq_recency` and
-   `has_bankruptcy`; replace them with numeric raw delinquency recency and
-   bankruptcy count, preserving `NaN` for CatBoost's native missing-value
-   handling.
+3. **Native numeric missingness with preserved feature semantics.** Replace
+   mapped `delinq_recency` by the same numeric delinquency-recency field with
+   `NaN` instead of 999. Replace `has_bankruptcy` by the same binary transform
+   (strictly positive bankruptcy count is 1; observed zero is 0) while
+   preserving source missingness as `NaN`. CatBoost handles both nullable
+   values natively. The raw bankruptcy count is not a model feature.
 
 No hybrid or winning variant may be created after evaluation. The two
 alternatives isolate sensitivity to the encoding contract; they are not a new
