@@ -185,6 +185,11 @@ ijds-dvc-status:
 ijds-dvc-remote-status:
     uv run python scripts/manage_ijds_dvc_capsule.py status --cloud
 
+# Release-only network gate: unlike `status --cloud`, this fails when DVC
+# reports any active object as new, deleted, or modified relative to remote.
+ijds-dvc-verify-remote:
+    uv run python scripts/manage_ijds_dvc_capsule.py verify-remote
+
 # Current paper export path. Legacy champion/book exports remain explicit below.
 paper-export:
     just ijds-active-replay

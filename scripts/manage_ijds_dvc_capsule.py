@@ -3,7 +3,9 @@
 from __future__ import annotations
 
 import argparse
+import json
 import subprocess
+from collections.abc import Sequence
 from pathlib import Path
 from typing import Any
 
@@ -49,14 +51,81 @@ def active_dvc_pointers(
     return resolved
 
 
+def _pointer_arguments(pointers: Sequence[Path], *, root: Path) -> list[str]:
+    root_resolved = root.resolve()
+    return [path.resolve().relative_to(root_resolved).as_posix() for path in pointers]
+
+
+def cloud_status_payload(
+    *,
+    root: Path = ROOT,
+    targets_path: Path = TARGETS_PATH,
+    pointers: Sequence[Path] | None = None,
+) -> Any:
+    """Return DVC's machine-readable local-cache versus remote status."""
+    selected = (
+        list(pointers)
+        if pointers is not None
+        else active_dvc_pointers(root=root, targets_path=targets_path)
+    )
+    command = ["dvc", "status", "--cloud", "--json", *_pointer_arguments(selected, root=root)]
+    result = subprocess.run(
+        command,
+        cwd=root,
+        check=True,
+        capture_output=True,
+        text=True,
+    )
+    output = result.stdout.strip()
+    if not output:
+        raise RuntimeError("DVC returned no JSON while verifying the active IJDS capsule.")
+    try:
+        return json.loads(output)
+    except json.JSONDecodeError as exc:
+        raise RuntimeError(
+            "DVC returned invalid JSON while verifying the active IJDS capsule."
+        ) from exc
+
+
+def verify_remote(
+    *,
+    root: Path = ROOT,
+    targets_path: Path = TARGETS_PATH,
+    pointers: Sequence[Path] | None = None,
+) -> None:
+    """Fail unless every active IJDS object is present and equal in the remote."""
+    payload = cloud_status_payload(root=root, targets_path=targets_path, pointers=pointers)
+    if payload:
+        if isinstance(payload, dict):
+            items = list(payload.items())
+            excerpt: Any = dict(items[:25])
+            omitted = max(0, len(items) - len(excerpt))
+        elif isinstance(payload, list):
+            excerpt = payload[:25]
+            omitted = max(0, len(payload) - len(excerpt))
+        else:
+            excerpt = payload
+            omitted = 0
+        detail = json.dumps(excerpt, indent=2, sort_keys=True)
+        suffix = f"\n... {omitted} additional status entries omitted." if omitted else ""
+        raise RuntimeError(
+            "Active IJDS DVC objects differ from or are absent in the configured remote:\n"
+            f"{detail}{suffix}"
+        )
+
+
 def run_dvc(action: str, *, cloud: bool = False) -> None:
     """Run pull or status against only the active IJDS pointers."""
     pointers = active_dvc_pointers()
-    relative = [path.relative_to(ROOT).as_posix() for path in pointers]
+    relative = _pointer_arguments(pointers, root=ROOT)
     if action == "pull":
         command = ["dvc", "pull", *relative]
     elif action == "status":
         command = ["dvc", "status", *(["--cloud"] if cloud else ["--no-updates"]), *relative]
+    elif action == "verify-remote":
+        verify_remote(pointers=pointers)
+        print("Active IJDS DVC capsule is fully available in the configured remote.")
+        return
     else:
         raise ValueError(f"Unsupported DVC action: {action}")
     subprocess.run(command, cwd=ROOT, check=True)
@@ -64,7 +133,7 @@ def run_dvc(action: str, *, cloud: bool = False) -> None:
 
 def main() -> None:
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("action", choices=("pull", "status"))
+    parser.add_argument("action", choices=("pull", "status", "verify-remote"))
     parser.add_argument(
         "--cloud",
         action="store_true",

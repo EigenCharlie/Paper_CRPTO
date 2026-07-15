@@ -1,11 +1,12 @@
 from __future__ import annotations
 
+import subprocess
 from pathlib import Path
 
 import pytest
 import yaml
 
-from scripts.manage_ijds_dvc_capsule import active_dvc_pointers
+from scripts.manage_ijds_dvc_capsule import active_dvc_pointers, verify_remote
 
 RUN_TAGS = (
     "v4-v1",
@@ -96,3 +97,41 @@ def test_active_dvc_pointers_loads_two_pointers_per_active_run(tmp_path: Path) -
 def test_active_dvc_pointers_rejects_incomplete_capsule(tmp_path: Path) -> None:
     with pytest.raises(ValueError, match="do not match"):
         active_dvc_pointers(root=tmp_path, targets_path=_targets(tmp_path, omit_last=True))
+
+
+def test_verify_remote_accepts_empty_cloud_status(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    pointer = tmp_path / "active.dvc"
+    pointer.write_text("outs: []\n", encoding="utf-8")
+    observed: list[list[str]] = []
+
+    def fake_run(command: list[str], **_: object) -> subprocess.CompletedProcess[str]:
+        observed.append(command)
+        return subprocess.CompletedProcess(command, 0, stdout="{}\n", stderr="")
+
+    monkeypatch.setattr(subprocess, "run", fake_run)
+
+    verify_remote(root=tmp_path, pointers=[pointer])
+
+    assert observed == [["dvc", "status", "--cloud", "--json", "active.dvc"]]
+
+
+def test_verify_remote_rejects_missing_remote_objects(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    pointer = tmp_path / "active.dvc"
+    pointer.write_text("outs: []\n", encoding="utf-8")
+
+    def fake_run(command: list[str], **_: object) -> subprocess.CompletedProcess[str]:
+        return subprocess.CompletedProcess(
+            command,
+            0,
+            stdout='{"data/run": "new"}\n',
+            stderr="",
+        )
+
+    monkeypatch.setattr(subprocess, "run", fake_run)
+
+    with pytest.raises(RuntimeError, match="absent in the configured remote"):
+        verify_remote(root=tmp_path, pointers=[pointer])
