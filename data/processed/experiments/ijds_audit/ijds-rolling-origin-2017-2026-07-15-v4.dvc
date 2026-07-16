@@ -1,0 +1,6 @@
+outs:
+- md5: 0a6757e5107cd32ff47a14d2babcff3b.dir
+  size: 11341341
+  nfiles: 10
+  hash: md5
+  path: ijds-rolling-origin-2017-2026-07-15-v4

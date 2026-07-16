@@ -1,15 +1,19 @@
 {
-  "schema_version": "2026-07-15.2",
-  "status": "active_ijds_v4_endpoint_corrected_paper_facing_evidence",
+  "schema_version": "2026-07-15.3",
+  "status": "active_ijds_v5_endpoint_reason_audited_paper_facing_evidence",
   "source_registry": {
-    "schema_version": "2026-07-15.2",
+    "schema_version": "2026-07-15.3",
     "status": "active_ijds_paper_evidence_source_registry",
     "sources": [
       "credit_receipt",
       "credit_summary",
       "endpoint_sensitivity_summary",
       "label_lag_sensitivity",
+      "missingness_receipt",
+      "missingness_summary",
       "raw_data_audit",
+      "rolling_origin_receipt",
+      "rolling_origin_summary",
       "solver_tie_audit",
       "structural_sensitivity_config",
       "structural_sensitivity_freeze",
@@ -31,9 +35,9 @@
         "dvc_tracked": true
       },
       "evaluation": {
-        "run_tag": "ijds-binary-geometry-frontier-v4-2026-07-14-v3",
-        "protocol_tag": "protocol/ijds-binary-geometry-frontier-v4-2026-07-14-v3",
-        "protocol_commit": "688f75dc4f285c75bc499c9e041dd30fb3acd70d",
+        "run_tag": "ijds-binary-geometry-frontier-v4-2026-07-15-v5",
+        "protocol_tag": "protocol/ijds-binary-geometry-frontier-v4-2026-07-15-v5",
+        "protocol_commit": "e2bba580a0b07c145bd64ff61440973d6e31349b",
         "paper_role": "verified_evaluation",
         "dvc_tracked": true
       }
@@ -48,9 +52,9 @@
         "dvc_tracked": true
       },
       "evaluation": {
-        "run_tag": "ijds-normalized-objective-frontier-2026-07-14-v3",
-        "protocol_tag": "protocol/ijds-normalized-objective-frontier-2026-07-14-v3",
-        "protocol_commit": "a1ae516a6c9674686dba245cb275475073b298a0",
+        "run_tag": "ijds-normalized-objective-frontier-2026-07-15-v5",
+        "protocol_tag": "protocol/ijds-normalized-objective-frontier-2026-07-15-v5",
+        "protocol_commit": "e2bba580a0b07c145bd64ff61440973d6e31349b",
         "paper_role": "verified_evaluation",
         "dvc_tracked": true
       }
@@ -65,9 +69,9 @@
         "dvc_tracked": true
       },
       "evaluation": {
-        "run_tag": "ijds-credit-risk-controls-2026-07-14-v3",
-        "protocol_tag": "protocol/ijds-credit-risk-controls-2026-07-14-v3",
-        "protocol_commit": "688f75dc4f285c75bc499c9e041dd30fb3acd70d",
+        "run_tag": "ijds-credit-risk-controls-2026-07-15-v5",
+        "protocol_tag": "protocol/ijds-credit-risk-controls-2026-07-15-v5",
+        "protocol_commit": "e2bba580a0b07c145bd64ff61440973d6e31349b",
         "paper_role": "verified_evaluation",
         "dvc_tracked": true
       }
@@ -109,11 +113,37 @@
       "protocol_commit": "490c653a43e2003d83184f47e1277bd2d4390c43",
       "paper_role": "complete_budget_concentration_lgd_sensitivity",
       "dvc_tracked": true
+    },
+    "rolling_origin": {
+      "run_tag": "ijds-rolling-origin-2017-2026-07-15-v4",
+      "protocol_tag": "protocol/ijds-rolling-origin-stability-2026-07-15-v4",
+      "protocol_commit": "e2bba580a0b07c145bd64ff61440973d6e31349b",
+      "paper_role": "two_origin_retrospective_recurrence",
+      "dvc_tracked": true
+    },
+    "missingness_encoding": {
+      "run_tag": "ijds-missingness-sensitivity-2026-07-15-v3",
+      "protocol_tag": "protocol/ijds-missingness-sensitivity-2026-07-15-v3",
+      "protocol_commit": "199afb083da37af6a51d5ba9e3c4d6280b952fe9",
+      "paper_role": "feature_semantics_preserving_encoding_sensitivity",
+      "dvc_tracked": true
     }
   },
-  "run_tag": "ijds-binary-geometry-frontier-v4-2026-07-14-v3",
-  "protocol_tag": "protocol/ijds-binary-geometry-frontier-v4-2026-07-14-v3",
-  "protocol_commit": "688f75dc4f285c75bc499c9e041dd30fb3acd70d",
+  "replay_dependencies": {
+    "portfolio_structure_v5_shards": {
+      "run_tag": "ijds-portfolio-structure-sensitivity-2026-07-15-v5",
+      "protocol_tag": "protocol/ijds-portfolio-structure-sensitivity-2026-07-15-v5",
+      "protocol_commit": "481528a6973eded94189435957f9b8064bc4bb06",
+      "paper_role": "non_evidence_structural_v6_replay_dependency",
+      "dvc_tracked": true,
+      "dvc_roots": [
+        "data/processed"
+      ]
+    }
+  },
+  "run_tag": "ijds-binary-geometry-frontier-v4-2026-07-15-v5",
+  "protocol_tag": "protocol/ijds-binary-geometry-frontier-v4-2026-07-15-v5",
+  "protocol_commit": "e2bba580a0b07c145bd64ff61440973d6e31349b",
   "claim_boundary": {
     "previously_inspected_archive": true,
     "confirmatory": false,
@@ -234,7 +264,7 @@
         "scores_below_fit_range": 139,
         "scores_above_fit_range": 32,
         "rows": 376890,
-        "mean_width": 0.6653409452353941,
+        "mean_width": 0.665340945235394,
         "lower_positive_share": 0.012327204224044151,
         "upper_saturated_share": 0.19626946854519886,
         "set_empty_count": 4646,
@@ -276,7 +306,7 @@
         "scores_below_fit_range": 139,
         "scores_above_fit_range": 32,
         "rows": 376890,
-        "mean_width": 0.6653200651843034,
+        "mean_width": 0.6653200651843035,
         "lower_positive_share": 0.014086338188861472,
         "upper_saturated_share": 0.19673644830056516,
         "set_empty_count": 5309,
@@ -360,7 +390,7 @@
         "scores_below_fit_range": 119,
         "scores_above_fit_range": 32,
         "rows": 376890,
-        "mean_width": 0.6647076525088492,
+        "mean_width": 0.6647076525088493,
         "lower_positive_share": 0.01602058956194115,
         "upper_saturated_share": 0.17684470269840005,
         "set_empty_count": 6038,
@@ -402,7 +432,7 @@
         "scores_below_fit_range": 113,
         "scores_above_fit_range": 32,
         "rows": 376890,
-        "mean_width": 0.6645688455708322,
+        "mean_width": 0.6645688455708323,
         "lower_positive_share": 0.015450131338056197,
         "upper_saturated_share": 0.17227838361325587,
         "set_empty_count": 5823,
@@ -444,7 +474,7 @@
         "scores_below_fit_range": 113,
         "scores_above_fit_range": 18,
         "rows": 376890,
-        "mean_width": 0.6641544351090524,
+        "mean_width": 0.6641544351090525,
         "lower_positive_share": 0.01606569556103903,
         "upper_saturated_share": 0.1612910928918252,
         "set_empty_count": 6055,
@@ -612,7 +642,7 @@
         "scores_below_fit_range": 2268,
         "scores_above_fit_range": 1395,
         "rows": 376890,
-        "mean_width": 0.7500939205698408,
+        "mean_width": 0.750093920569841,
         "lower_positive_share": 0.00950675263339436,
         "upper_saturated_share": 0.23981267743904056,
         "set_empty_count": 3294,
@@ -654,7 +684,7 @@
         "scores_below_fit_range": 2268,
         "scores_above_fit_range": 1395,
         "rows": 376890,
-        "mean_width": 0.7496760765048107,
+        "mean_width": 0.7496760765048108,
         "lower_positive_share": 0.011305686009180398,
         "upper_saturated_share": 0.22668683170155748,
         "set_empty_count": 3972,
@@ -738,7 +768,7 @@
         "scores_below_fit_range": 2268,
         "scores_above_fit_range": 1476,
         "rows": 376890,
-        "mean_width": 0.7482864173070809,
+        "mean_width": 0.7482864173070811,
         "lower_positive_share": 0.009997612035341876,
         "upper_saturated_share": 0.18963092679561674,
         "set_empty_count": 3476,
@@ -855,6 +885,55 @@
     "primary_oot_candidates": 376890,
     "primary_oot_resolved": 364814,
     "primary_oot_unresolved": 12076,
+    "reason_census": [
+      {
+        "role": "primary_oot",
+        "snapshot_resolution": "charged_off_by_reconstructed_cutoff",
+        "candidate_rows": 56972,
+        "resolved_rows": 56972,
+        "unresolved_rows": 0
+      },
+      {
+        "role": "primary_oot",
+        "snapshot_resolution": "fully_paid_by_reconstructed_cutoff",
+        "candidate_rows": 307842,
+        "resolved_rows": 307842,
+        "unresolved_rows": 0
+      },
+      {
+        "role": "primary_oot",
+        "snapshot_resolution": "nonterminal_or_unresolved_status",
+        "candidate_rows": 11551,
+        "resolved_rows": 0,
+        "unresolved_rows": 11551
+      },
+      {
+        "role": "primary_oot",
+        "snapshot_resolution": "terminal_after_reconstructed_cutoff",
+        "candidate_rows": 47,
+        "resolved_rows": 0,
+        "unresolved_rows": 47
+      },
+      {
+        "role": "primary_oot",
+        "snapshot_resolution": "terminal_availability_date_missing",
+        "candidate_rows": 478,
+        "resolved_rows": 0,
+        "unresolved_rows": 478
+      }
+    ],
+    "reason_census_partitions_primary_candidates": true,
+    "primary_oot_nonterminal_or_unresolved_status": 11551,
+    "primary_oot_terminal_after_cutoff": 47,
+    "primary_oot_terminal_availability_date_missing": 478,
+    "missingness_mechanism_identified": false,
+    "operational_event_dates_identified": false,
+    "recovery_audit": {
+      "float_atol": 5e-14,
+      "float_rtol": 5e-14,
+      "maximum_absolute_drift": 3.3306690738754696e-16,
+      "maximum_relative_drift": 4.2430279119375826e-16
+    },
     "last_payment_date_max": "2020-12-01",
     "last_credit_pull_date_max": "2020-10-01",
     "last_payment_rows_after_cutoff": 36485,
@@ -875,7 +954,7 @@
       ],
       "endpoint_or_result_selected": false,
       "allocation_refit": false,
-      "six_month_endpoint_reconciles_exactly_to_active_v3": true,
+      "six_month_endpoint_reconciles_to_active_evaluation": true,
       "reconciliation": {
         "charged_off_lag_months": 6,
         "coverage_cells_exact": 120,
@@ -1109,7 +1188,7 @@
       "protocol_tag": "protocol/ijds-portfolio-structure-sensitivity-2026-07-15-v6",
       "protocol_commit": "490c653a43e2003d83184f47e1277bd2d4390c43",
       "scenario_or_result_selected": false,
-      "baseline_reconciles_exactly_to_active_v3": true,
+      "baseline_reconciles_to_active_evaluation": true,
       "scenario_count": 36,
       "complete_cartesian_grid": true,
       "every_scenario_has_adverse_default_and_miscoverage_cells": true,
@@ -1989,6 +2068,278 @@
           "activity_maximum_loan_weight": 0.020000000000002353
         }
       ]
+    },
+    "rolling_origin": {
+      "scope": "two_origin_retrospective_recurrence_not_replication",
+      "run_tag": "ijds-rolling-origin-2017-2026-07-15-v4",
+      "protocol_tag": "protocol/ijds-rolling-origin-stability-2026-07-15-v4",
+      "protocol_commit": "e2bba580a0b07c145bd64ff61440973d6e31349b",
+      "origins": [
+        "primary_2016",
+        "rolling_2017"
+      ],
+      "origin_count": 2,
+      "window_cells": 16,
+      "all_sixteen_upper_below_nominal": true,
+      "primary_2016_upper_max": 0.8825970442304121,
+      "rolling_2017_upper_max": 0.8747681732702159,
+      "model_or_origin_selected": false,
+      "independent_replication_claim_authorized": false,
+      "rows": [
+        {
+          "origin": "primary_2016",
+          "window_id": "w01_2012m01_m06",
+          "candidate_rows": 376890,
+          "resolved_rows": 364814,
+          "unresolved_rows": 12076,
+          "coverage_resolved": 0.8770469335058413,
+          "coverage_lower": 0.8547135769057285,
+          "coverage_upper": 0.8805221682719095,
+          "mean_width": 0.6649918872956118
+        },
+        {
+          "origin": "primary_2016",
+          "window_id": "w02_2012m02_m07",
+          "candidate_rows": 376890,
+          "resolved_rows": 364814,
+          "unresolved_rows": 12076,
+          "coverage_resolved": 0.879165821487114,
+          "coverage_lower": 0.8570245960359787,
+          "coverage_upper": 0.8825970442304121,
+          "mean_width": 0.665340945235394
+        },
+        {
+          "origin": "primary_2016",
+          "window_id": "w03_2012m03_m08",
+          "candidate_rows": 376890,
+          "resolved_rows": 364814,
+          "unresolved_rows": 12076,
+          "coverage_resolved": 0.8777349553471084,
+          "coverage_lower": 0.8556528430045902,
+          "coverage_upper": 0.8811430390830216,
+          "mean_width": 0.6653200651843035
+        },
+        {
+          "origin": "primary_2016",
+          "window_id": "w04_2012m04_m09",
+          "candidate_rows": 376890,
+          "resolved_rows": 364814,
+          "unresolved_rows": 12076,
+          "coverage_resolved": 0.8748732230670972,
+          "coverage_lower": 0.8525697153015469,
+          "coverage_upper": 0.8783411605508239,
+          "mean_width": 0.665031208384886
+        },
+        {
+          "origin": "primary_2016",
+          "window_id": "w05_2012m05_m10",
+          "candidate_rows": 376890,
+          "resolved_rows": 364814,
+          "unresolved_rows": 12076,
+          "coverage_resolved": 0.87251311627295,
+          "coverage_lower": 0.8499323410013532,
+          "coverage_upper": 0.8760327947146382,
+          "mean_width": 0.6647076525088493
+        },
+        {
+          "origin": "primary_2016",
+          "window_id": "w06_2012m06_m11",
+          "candidate_rows": 376890,
+          "resolved_rows": 364814,
+          "unresolved_rows": 12076,
+          "coverage_resolved": 0.8721129123334083,
+          "coverage_lower": 0.8494255618350182,
+          "coverage_upper": 0.8756692934277905,
+          "mean_width": 0.6645688455708323
+        },
+        {
+          "origin": "primary_2016",
+          "window_id": "w07_2012m07_m12",
+          "candidate_rows": 376890,
+          "resolved_rows": 364814,
+          "unresolved_rows": 12076,
+          "coverage_resolved": 0.8694814343747773,
+          "coverage_lower": 0.8465175515402372,
+          "coverage_upper": 0.8730929448910822,
+          "mean_width": 0.6641544351090525
+        },
+        {
+          "origin": "primary_2016",
+          "window_id": "w08_2012m08_2013m01",
+          "candidate_rows": 376890,
+          "resolved_rows": 364814,
+          "unresolved_rows": 12076,
+          "coverage_resolved": 0.8658549288130389,
+          "coverage_lower": 0.8424845445620738,
+          "coverage_upper": 0.8695640637851894,
+          "mean_width": 0.5005686881638921
+        },
+        {
+          "origin": "rolling_2017",
+          "window_id": "w01_2013m01_m06",
+          "candidate_rows": 77105,
+          "resolved_rows": 66091,
+          "unresolved_rows": 11014,
+          "coverage_resolved": 0.8571061112708236,
+          "coverage_lower": 0.7535568380779456,
+          "coverage_upper": 0.8747681732702159,
+          "mean_width": 0.562496881282411
+        },
+        {
+          "origin": "rolling_2017",
+          "window_id": "w02_2013m02_m07",
+          "candidate_rows": 77105,
+          "resolved_rows": 66091,
+          "unresolved_rows": 11014,
+          "coverage_resolved": 0.8565916690623534,
+          "coverage_lower": 0.7524285065819337,
+          "coverage_upper": 0.8743401854613838,
+          "mean_width": 0.5624542821226854
+        },
+        {
+          "origin": "rolling_2017",
+          "window_id": "w03_2013m03_m08",
+          "candidate_rows": 77105,
+          "resolved_rows": 66091,
+          "unresolved_rows": 11014,
+          "coverage_resolved": 0.8546700761071855,
+          "coverage_lower": 0.7501588742623695,
+          "coverage_upper": 0.8725374489332728,
+          "mean_width": 0.5622224070109993
+        },
+        {
+          "origin": "rolling_2017",
+          "window_id": "w04_2013m04_m09",
+          "candidate_rows": 77105,
+          "resolved_rows": 66091,
+          "unresolved_rows": 11014,
+          "coverage_resolved": 0.8552601715816072,
+          "coverage_lower": 0.7506257700538227,
+          "coverage_upper": 0.8731988846378316,
+          "mean_width": 0.5621829530516125
+        },
+        {
+          "origin": "rolling_2017",
+          "window_id": "w05_2013m05_m10",
+          "candidate_rows": 77105,
+          "resolved_rows": 66091,
+          "unresolved_rows": 11014,
+          "coverage_resolved": 0.8554720007262714,
+          "coverage_lower": 0.7508203099669282,
+          "coverage_upper": 0.8734063938784774,
+          "mean_width": 0.5621735581049848
+        },
+        {
+          "origin": "rolling_2017",
+          "window_id": "w06_2013m06_m11",
+          "candidate_rows": 77105,
+          "resolved_rows": 66091,
+          "unresolved_rows": 11014,
+          "coverage_resolved": 0.8561831414262153,
+          "coverage_lower": 0.7517411322222942,
+          "coverage_upper": 0.8739900136177939,
+          "mean_width": 0.5622719357684526
+        },
+        {
+          "origin": "rolling_2017",
+          "window_id": "w07_2013m07_m12",
+          "candidate_rows": 77105,
+          "resolved_rows": 66091,
+          "unresolved_rows": 11014,
+          "coverage_resolved": 0.855956181628361,
+          "coverage_lower": 0.7509759418974127,
+          "coverage_upper": 0.873886258997471,
+          "mean_width": 0.5621830723291171
+        },
+        {
+          "origin": "rolling_2017",
+          "window_id": "w08_2013m08_2014m01",
+          "candidate_rows": 77105,
+          "resolved_rows": 66091,
+          "unresolved_rows": 11014,
+          "coverage_resolved": 0.8553963474603199,
+          "coverage_lower": 0.7498994877115621,
+          "coverage_upper": 0.8735231178263407,
+          "mean_width": 0.5620254873690599
+        }
+      ]
+    },
+    "missingness_encoding": {
+      "scope": "three_declared_feature_semantics_preserving_catboost_encodings",
+      "run_tag": "ijds-missingness-sensitivity-2026-07-15-v3",
+      "protocol_tag": "protocol/ijds-missingness-sensitivity-2026-07-15-v3",
+      "protocol_commit": "199afb083da37af6a51d5ba9e3c4d6280b952fe9",
+      "specifications": [
+        {
+          "id": "catboost_platt",
+          "encoding": "active_sentinel_convention",
+          "imported": true
+        },
+        {
+          "id": "catboost_missing_indicators_platt",
+          "encoding": "active_mappings_plus_explicit_missing_indicators",
+          "imported": false,
+          "added_numeric_features": [
+            "delinq_recency_missing",
+            "bankruptcy_count_missing"
+          ]
+        },
+        {
+          "id": "catboost_native_missing_platt",
+          "encoding": "native_numeric_nan_with_nullable_binary_semantics",
+          "imported": false,
+          "dropped_numeric_features": [
+            "delinq_recency",
+            "has_bankruptcy"
+          ],
+          "added_numeric_features": [
+            "delinq_recency_native",
+            "has_bankruptcy_native"
+          ]
+        }
+      ],
+      "all_three_all_eight_upper_below_nominal": true,
+      "model_or_encoding_selected": false,
+      "missingness_mechanism_identified": false,
+      "portfolio_claim_authorized": false,
+      "rows": [
+        {
+          "learner": "catboost_missing_indicators_platt",
+          "coverage_lower_min": 0.8455066465016318,
+          "coverage_upper_max": 0.8843322985486481,
+          "windows_with_upper_below_nominal": 8,
+          "all_windows_upper_below_nominal": true,
+          "roc_auc": 0.6436322403148622,
+          "brier": 0.12965175159650838,
+          "log_loss": 0.42810867198186225,
+          "ece_10": 0.04742800450704818,
+          "calibration_slope": 0.7913021921642017
+        },
+        {
+          "learner": "catboost_native_missing_platt",
+          "coverage_lower_min": 0.8452837698002069,
+          "coverage_upper_max": 0.8800366154580912,
+          "windows_with_upper_below_nominal": 8,
+          "all_windows_upper_below_nominal": true,
+          "roc_auc": 0.6442620078596174,
+          "brier": 0.12953346396196225,
+          "log_loss": 0.4267357005890355,
+          "ece_10": 0.0457674296671821,
+          "calibration_slope": 0.8184948803074936
+        },
+        {
+          "learner": "catboost_platt",
+          "coverage_lower_min": 0.8424845445620738,
+          "coverage_upper_max": 0.8825970442304121,
+          "windows_with_upper_below_nominal": 8,
+          "all_windows_upper_below_nominal": true,
+          "roc_auc": 0.6406052990079556,
+          "brier": 0.12987780627268664,
+          "log_loss": 0.42846570011698926,
+          "ece_10": 0.047215103762021676,
+          "calibration_slope": 0.7954274631320678
+        }
+      ]
     }
   },
   "data_contract": {
@@ -2034,7 +2385,7 @@
   "credit_risk_controls": {
     "scope": "coverage_only_five_model_temporal_transport_robustness",
     "outcome_free_run_tag": "ijds-credit-risk-controls-2026-07-13-v1b",
-    "verified_evaluation_run_tag": "ijds-credit-risk-controls-2026-07-14-v3",
+    "verified_evaluation_run_tag": "ijds-credit-risk-controls-2026-07-15-v5",
     "all_five_all_eight_upper_below_nominal": true,
     "learners_reported": [
       "catboost_platt",
@@ -2160,6 +2511,12 @@
       "monotonic_minus_active_oot_auc": 0.011348480206217815,
       "monotonic_minus_active_oot_brier": -0.0012645389221960512
     },
+    "endpoint_recovery_audit": {
+      "float_atol": 5e-14,
+      "float_rtol": 5e-14,
+      "maximum_absolute_drift": 4.440892098500626e-16,
+      "maximum_relative_drift": 4.942751060322734e-16
+    },
     "calibration": {
       "all_primary_oot_mean_calibration_error_negative": true,
       "all_primary_oot_slopes_below_one": true,
@@ -2274,7 +2631,7 @@
     "w8_fit_prevalence": 0.0971465213209362,
     "w7_residual_quantile": 0.8884345991499274,
     "w8_residual_quantile": 0.1118010883671265,
-    "w7_mean_width": 0.9842633701640714,
+    "w7_mean_width": 0.9842633701640712,
     "w8_mean_width": 0.2076312400549422,
     "w8_oot_coverage_bound": [
       0.8225359596189609,
@@ -2462,7 +2819,7 @@
         "fit_residual_quantile": 0.8919735883395368,
         "coverage_lower": 0.8470909711943527,
         "coverage_upper": 0.8755930016319405,
-        "mean_width": 0.9875801457582357,
+        "mean_width": 0.9875801457582358,
         "set_empty_share": 0.0,
         "set_zero_only_share": 0.8844484926689185,
         "set_both_share": 0.11555150733108151
@@ -2474,7 +2831,7 @@
         "fit_residual_quantile": 0.8920116585417792,
         "coverage_lower": 0.8473313345224993,
         "coverage_upper": 0.8758080635571243,
-        "mean_width": 0.9876137950975032,
+        "mean_width": 0.9876137950975035,
         "set_empty_share": 0.0,
         "set_zero_only_share": 0.8831707718192974,
         "set_both_share": 0.11682922818070263
@@ -2486,7 +2843,7 @@
         "fit_residual_quantile": 0.8916085888119072,
         "coverage_lower": 0.845092160360292,
         "coverage_upper": 0.8738851569319519,
-        "mean_width": 0.9872553690886571,
+        "mean_width": 0.9872553690886569,
         "set_empty_share": 0.0,
         "set_zero_only_share": 0.8954419522562526,
         "set_both_share": 0.10455804774374738
@@ -2534,7 +2891,7 @@
         "fit_residual_quantile": 0.8884345991499274,
         "coverage_lower": 0.8264829784811568,
         "coverage_upper": 0.858375396915759,
-        "mean_width": 0.9842633701640714,
+        "mean_width": 0.9842633701640712,
         "set_empty_share": 0.0,
         "set_zero_only_share": 0.9904360696800638,
         "set_both_share": 0.00956393031993624
@@ -2673,13 +3030,13 @@
     "primary_ruler": "objective_matched",
     "secondary_ruler": "normalized_score",
     "endpoint_contrast": "gamma_1_minus_gamma_0",
-    "run_tag": "ijds-normalized-objective-frontier-2026-07-14-v3",
-    "protocol_tag": "protocol/ijds-normalized-objective-frontier-2026-07-14-v3",
-    "protocol_commit": "a1ae516a6c9674686dba245cb275475073b298a0",
+    "run_tag": "ijds-normalized-objective-frontier-2026-07-15-v5",
+    "protocol_tag": "protocol/ijds-normalized-objective-frontier-2026-07-15-v5",
+    "protocol_commit": "e2bba580a0b07c145bd64ff61440973d6e31349b",
     "manifest": {
-      "path": "models/experiments/ijds_audit/ijds-normalized-objective-frontier-2026-07-14-v3/verified_evaluation_manifest.json",
-      "bytes": 16944,
-      "sha256": "76e3643b92a537c9e0cea4d131f8085d4c843ead0cb95362f19a3442207af96e"
+      "path": "models/experiments/ijds_audit/ijds-normalized-objective-frontier-2026-07-15-v5/verified_evaluation_manifest.json",
+      "bytes": 18231,
+      "sha256": "9ee55a2522349c8520f308bc69273774dd48964847dfd340b78a7be46474cd7f"
     },
     "counts": {
       "evaluated_portfolios": 6240,
@@ -2687,7 +3044,13 @@
       "window_endpoint_contrasts": 48,
       "monthly_endpoint_contrasts": 720,
       "metric_direction_cells": 144,
-      "outcome_audit_rows": 7
+      "outcome_audit_rows": 8
+    },
+    "endpoint_recovery_audit": {
+      "float_atol": 5e-14,
+      "float_rtol": 5e-14,
+      "maximum_absolute_drift": 0.0,
+      "maximum_relative_drift": 0.0
     },
     "primary_oot_unresolved": 12076,
     "metric_directions": {
@@ -2738,10 +3101,16 @@
         "expected_objective_difference_usd_max": 0.0,
         "payoff_bound_usd_lower_min": -9134.339201705214,
         "payoff_bound_usd_upper_max": 5603.660798333496,
+        "payoff_identification_width_usd_min": 14738.0,
+        "payoff_identification_width_usd_max": 14738.0,
         "default_bound_pp_lower_min": -0.006789927307658072,
         "default_bound_pp_upper_max": 0.12654340602615935,
+        "default_identification_width_pp_min": 0.13333333333333333,
+        "default_identification_width_pp_max": 0.13333333333333333,
         "miscoverage_bound_pp_lower_min": -0.006789927307658072,
         "miscoverage_bound_pp_upper_max": 0.12654340602615935,
+        "miscoverage_identification_width_pp_min": 0.13333333333333333,
+        "miscoverage_identification_width_pp_max": 0.13333333333333333,
         "payoff_direction_pattern": "crosses_zero:8",
         "default_direction_pattern": "crosses_zero:8",
         "miscoverage_direction_pattern": "crosses_zero:8"
@@ -2757,10 +3126,16 @@
         "expected_objective_difference_usd_max": 4.656612873077393e-10,
         "payoff_bound_usd_lower_min": -82616.17453934051,
         "payoff_bound_usd_upper_max": -27958.36861160415,
+        "payoff_identification_width_usd_min": 53530.42261970967,
+        "payoff_identification_width_usd_max": 54370.44762289172,
         "default_bound_pp_lower_min": 0.457176922370002,
         "default_bound_pp_upper_max": 1.0972986534287477,
+        "default_identification_width_pp_min": 0.6281743811120005,
+        "default_identification_width_pp_max": 0.6375359246695269,
         "miscoverage_bound_pp_lower_min": 1.0153517160736112,
         "miscoverage_bound_pp_upper_max": 1.9321319867620808,
+        "miscoverage_identification_width_pp_min": 0.6281743811120005,
+        "miscoverage_identification_width_pp_max": 0.6375359246695269,
         "payoff_direction_pattern": "gamma_1_lower:8",
         "default_direction_pattern": "gamma_1_higher:8",
         "miscoverage_direction_pattern": "gamma_1_higher:8"
@@ -2776,10 +3151,16 @@
         "expected_objective_difference_usd_max": 4.656612873077393e-10,
         "payoff_bound_usd_lower_min": -179484.66459580814,
         "payoff_bound_usd_upper_max": 92558.17998965128,
+        "payoff_identification_width_usd_min": 109550.45677067185,
+        "payoff_identification_width_usd_max": 271561.8753013419,
         "default_bound_pp_lower_min": -0.4352498618487788,
         "default_bound_pp_upper_max": 2.494842541954273,
+        "default_identification_width_pp_min": 1.2006435014285781,
+        "default_identification_width_pp_max": 2.9246052959625377,
         "miscoverage_bound_pp_lower_min": 1.3252372459918247,
         "miscoverage_bound_pp_upper_max": 4.184767620139838,
+        "miscoverage_identification_width_pp_min": 1.1339768347619112,
+        "miscoverage_identification_width_pp_max": 2.645938629295871,
         "payoff_direction_pattern": "gamma_1_lower:1;crosses_zero:7",
         "default_direction_pattern": "gamma_1_higher:1;crosses_zero:7",
         "miscoverage_direction_pattern": "gamma_1_higher:8"
@@ -2795,10 +3176,16 @@
         "expected_objective_difference_usd_max": 557294.0146438954,
         "payoff_bound_usd_lower_min": -626374.6147907167,
         "payoff_bound_usd_upper_max": -195967.628254245,
+        "payoff_identification_width_usd_min": 340845.41518178507,
+        "payoff_identification_width_usd_max": 373705.3081783684,
         "default_bound_pp_lower_min": 8.482852571867097,
         "default_bound_pp_upper_max": 13.424612654302775,
+        "default_identification_width_pp_min": 3.7599027571533226,
+        "default_identification_width_pp_max": 4.101884671392359,
         "miscoverage_bound_pp_lower_min": 8.390955538535708,
         "miscoverage_bound_pp_upper_max": 13.753589682046982,
+        "miscoverage_identification_width_pp_min": 3.639902757153319,
+        "miscoverage_identification_width_pp_max": 3.9432180047256917,
         "payoff_direction_pattern": "gamma_1_lower:8",
         "default_direction_pattern": "gamma_1_higher:8",
         "miscoverage_direction_pattern": "gamma_1_higher:8"
@@ -2814,10 +3201,16 @@
         "expected_objective_difference_usd_max": 226847.9705495569,
         "payoff_bound_usd_lower_min": -259658.18448523604,
         "payoff_bound_usd_upper_max": -54025.8191528258,
+        "payoff_identification_width_usd_min": 146499.38968489924,
+        "payoff_identification_width_usd_max": 198657.05281574934,
         "default_bound_pp_lower_min": 3.2213520803827533,
         "default_bound_pp_upper_max": 6.563699817357987,
+        "default_identification_width_pp_min": 1.5345657876974395,
+        "default_identification_width_pp_max": 2.0382675456422694,
         "miscoverage_bound_pp_lower_min": 2.1069714896837946,
         "miscoverage_bound_pp_upper_max": 5.21415906991543,
+        "miscoverage_identification_width_pp_min": 1.5345657876974395,
+        "miscoverage_identification_width_pp_max": 1.9182675456351144,
         "payoff_direction_pattern": "gamma_1_lower:8",
         "default_direction_pattern": "gamma_1_higher:8",
         "miscoverage_direction_pattern": "gamma_1_higher:8"
@@ -2833,10 +3226,16 @@
         "expected_objective_difference_usd_max": 51201.887608815916,
         "payoff_bound_usd_lower_min": -135781.22300933156,
         "payoff_bound_usd_upper_max": 9812.591895865517,
+        "payoff_identification_width_usd_min": 83832.63333388747,
+        "payoff_identification_width_usd_max": 97897.24126478202,
         "default_bound_pp_lower_min": 1.4391554644757423,
         "default_bound_pp_upper_max": 2.3807174501084845,
+        "default_identification_width_pp_min": 0.8041480359892984,
+        "default_identification_width_pp_max": 0.9415619856327422,
         "miscoverage_bound_pp_lower_min": 0.34472769373846956,
         "miscoverage_bound_pp_upper_max": 1.6990552129348044,
+        "miscoverage_identification_width_pp_min": 0.7256480359893016,
+        "miscoverage_identification_width_pp_max": 0.9415619856327422,
         "payoff_direction_pattern": "gamma_1_lower:7;crosses_zero:1",
         "default_direction_pattern": "gamma_1_higher:8",
         "miscoverage_direction_pattern": "gamma_1_higher:8"
@@ -2855,41 +3254,32 @@
       "permitted_conclusion": "Within the predeclared finite grid, the gamma endpoint allocation contrast is not invariant to the outcome-free ruler or interior coordinate."
     }
   },
-  "simulation": {
-    "scope": "coverage_mechanism_only_portfolio_component_degenerate",
-    "repetitions": 19200,
-    "cells": 192,
-    "same_cap_allocation_distance_mean": 2.0833333333333334e-06,
-    "c2_allocation_distance_mean": 1.0416666666666667e-06,
-    "point_minus_guardrail_objective_mean": 2.4582893591122237e-12,
-    "portfolio_claim_allowed": false
-  },
-  "audit_thesis": "Binary absolute-residual conformal guardrails can change discontinuously when a score stratum crosses the alpha prevalence threshold; candidate coverage does not transport to the later archive under five predeclared credit-risk model specifications; and portfolio direction is not identified without an outcome-free comparator support and is not invariant to the declared ruler or interior coordinate.",
+  "audit_thesis": "Binary absolute-residual conformal guardrails can change discontinuously when a score stratum crosses the alpha prevalence threshold; candidate coverage does not transport to the later archive under five predeclared credit-risk model specifications, recurs in the only additional feasible origin, and persists under three feature-semantics-preserving missing-value encodings for primary CatBoost; portfolio direction is not identified without outcome-free comparator support and is not invariant to the declared ruler or interior coordinate.",
   "source_artifacts": {
     "active_source_registry": {
       "path": "configs/ijds_active_evidence_sources.yaml",
-      "bytes": 7996,
-      "sha256": "93da6e1ad547096e2a7ab5af06cb8c7ae99d00aee67ce51e91307c3c862c7ef1"
+      "bytes": 10347,
+      "sha256": "edd6949daa0dd4ced395e2811e625bab464d839e4bd4f49c1cd641a240516232"
     },
     "claim_ledger_contract": {
       "path": "configs/ijds_claim_ledger.yaml",
-      "bytes": 7512,
-      "sha256": "36d610de33d6441471de4e570f98cab984ac5bb35b5e9adb39aaedc7f6842ddb"
+      "bytes": 9180,
+      "sha256": "da8a6871160c62030ff7eae100d01bf540aba95d90801dc9a0b6325f12a0291a"
     },
     "publication_targets_contract": {
       "path": "configs/crpto_publication_targets.yaml",
-      "bytes": 6949,
-      "sha256": "a7361868a5d788f9d9816777b28fe4a38651459c87002604b5518e8bdcd55235"
+      "bytes": 7404,
+      "sha256": "c62090527fbbcfb8770310d9fa23e1d50147c1b7238bec37d1c949e43f19b8ac"
     },
     "evidence_builder": {
       "path": "scripts/build_ijds_binary_geometry_frontier_v4_evidence.py",
-      "bytes": 75630,
-      "sha256": "fca25dd14a74a4e8d2de1cb200df639d628754edaba8c3ee3e5d205f17ae2432"
+      "bytes": 98677,
+      "sha256": "2db7579a43538e16dfa3593d461861a9d95c6ed19461fa46fe5e118b7d1cff8a"
     },
     "publication_integrity_checker": {
       "path": "scripts/check_publication_integrity.py",
-      "bytes": 15950,
-      "sha256": "3c041a925dd5e086cd47ea96c48f74da928fa465721a9569461e0a19cf269ffa"
+      "bytes": 16828,
+      "sha256": "07d3e00cce0ddd14380d5f2da5c393e2eb8446ee9c663f0e9b5afb6a53ff0ac2"
     },
     "publication_generation_helper": {
       "path": "src/ijds_audit/publication_generation.py",
@@ -2903,18 +3293,18 @@
     },
     "grid_contracts": {
       "path": "src/ijds_audit/grid_contracts.py",
-      "bytes": 3759,
-      "sha256": "a8bcada9821becedf09c056279f424f6d4a96655d4bb29c8f0b5ec2a1834e546"
+      "bytes": 5258,
+      "sha256": "439e08405a4c1e58e21fe2fe84e02cdfd1d8a88bbbc88b550ae395ace5948a8b"
     },
     "endpoint_availability_sensitivity/loader": {
       "path": "src/ijds_audit/sensitivity_evidence.py",
-      "bytes": 17401,
-      "sha256": "68e2ca51d153e0d5811655a9da4870011ec982246335a66e4f4bd8ccea929874"
+      "bytes": 17942,
+      "sha256": "1a2fc17e58fc660e7455aa721cd2180d73fa86ab916b9bfe1682e073d43f4ab2"
     },
     "portfolio_structure_sensitivity/loader": {
       "path": "src/ijds_audit/structural_evidence.py",
-      "bytes": 22270,
-      "sha256": "118ca50f4847c79cc5132917305d7f463bb79de0db6052031bbecaf3fabf34da"
+      "bytes": 23110,
+      "sha256": "6027a6612241d9e8ae213099066886f77a5231b6b828679fec30aa59ce07c7a6"
     },
     "claim_ledger_loader": {
       "path": "src/ijds_audit/claim_ledger.py",
@@ -2923,8 +3313,8 @@
     },
     "source_registry_loader": {
       "path": "src/ijds_audit/publication_sources.py",
-      "bytes": 14267,
-      "sha256": "3c2602acf4025fbbd5d78cdc9e074f3486b2831a1053b9b85c8217fad736b697"
+      "bytes": 16257,
+      "sha256": "603e5cf61e8f24889e884088acc3d08dfd7f88806b697aa8c3db00a42c85a444"
     },
     "artifact_descriptor_helper": {
       "path": "src/utils/artifact_descriptor.py",
@@ -2937,9 +3327,9 @@
       "sha256": "7c350fdf6736d210418e8cefec5dc8d85c7f1bc2a1bf94aa6ae44a12d4948cde"
     },
     "config": {
-      "path": "configs/experiments/ijds_binary_geometry_frontier_v4_2026-07-14_v3.yaml",
-      "bytes": 1232,
-      "sha256": "5123698bd6d21a0531f81ce7b26edc093dc49452e13aa531166c5ccc36400eca"
+      "path": "configs/experiments/ijds_binary_geometry_frontier_v4_2026-07-15_v5.yaml",
+      "bytes": 1371,
+      "sha256": "c749befbd0ab7e0f8d6fcded7e7c730cae998032f897f65c7e7673d2a12c3715"
     },
     "outcome_free/source_protocol_freeze": {
       "path": "models/experiments/ijds_audit/ijds-binary-geometry-frontier-v4-2026-07-12-v1/protocol_freeze.json",
@@ -2947,9 +3337,9 @@
       "sha256": "c2b3dc2d18c9fed80708682d5a0369c80c89643e2d28024418522d954ebe667c"
     },
     "freeze": {
-      "path": "models/experiments/ijds_audit/ijds-binary-geometry-frontier-v4-2026-07-14-v3/protocol_freeze.json",
-      "bytes": 21922,
-      "sha256": "abf692962015bed45a6beda6f12363d2b8951f15c323d56a93251b064bcecc0b"
+      "path": "models/experiments/ijds_audit/ijds-binary-geometry-frontier-v4-2026-07-15-v5/protocol_freeze.json",
+      "bytes": 22714,
+      "sha256": "b3ddeb31dee3e94cd06ea5b9a4e4f41aa837d8e813ee2db190e92f9283f69752"
     },
     "outcome_free/scores": {
       "path": "data/processed/experiments/ijds_audit/ijds-binary-geometry-frontier-v4-2026-07-12-v1/prediction/scores.parquet",
@@ -3002,59 +3392,54 @@
       "sha256": "0433a66c7d9e689108158c980d1451af57b6bb93beb9b8b64134c1b7ea9414eb"
     },
     "summary": {
-      "path": "models/experiments/ijds_audit/ijds-binary-geometry-frontier-v4-2026-07-14-v3/binary_geometry_frontier_v4_summary.json",
-      "bytes": 17794,
-      "sha256": "c05a6048fd6e259d53b5901b975a5970256bdd20901fdf236112e85930bafa5f"
+      "path": "models/experiments/ijds_audit/ijds-binary-geometry-frontier-v4-2026-07-15-v5/binary_geometry_frontier_v4_summary.json",
+      "bytes": 58584,
+      "sha256": "07e793df7e457c6afa946e04d3e95d30307faa48424249659ae8d921ea060a3f"
     },
     "execution_receipt": {
-      "path": "models/experiments/ijds_audit/ijds-binary-geometry-frontier-v4-2026-07-14-v3/execution_receipt.json",
+      "path": "models/experiments/ijds_audit/ijds-binary-geometry-frontier-v4-2026-07-15-v5/execution_receipt.json",
       "bytes": 1142,
-      "sha256": "e4edf9ea250195710d1bac37296a745f665fb15593717d307ce48d5fd37b3fa8"
+      "sha256": "b67cf57d200e71417f4a0b51ac2a2978b8b5105396ebfe3b7647cc1554d2aced"
     },
     "evaluation/temporal_coverage": {
-      "path": "data/processed/experiments/ijds_audit/ijds-binary-geometry-frontier-v4-2026-07-14-v3/evaluation/temporal_coverage.parquet",
+      "path": "data/processed/experiments/ijds_audit/ijds-binary-geometry-frontier-v4-2026-07-15-v5/evaluation/temporal_coverage.parquet",
       "bytes": 215583,
-      "sha256": "8c1877acb9630d40cd52005d06a8aa6357cbc65da41895e31b76e44e62f195df"
+      "sha256": "25be1d2e065a6eab632618127cb21ccfb99be6f582ef557e80122c184f28dfe2"
     },
     "evaluation/monthly_evaluation": {
-      "path": "data/processed/experiments/ijds_audit/ijds-binary-geometry-frontier-v4-2026-07-14-v3/evaluation/monthly_evaluation.parquet",
+      "path": "data/processed/experiments/ijds_audit/ijds-binary-geometry-frontier-v4-2026-07-15-v5/evaluation/monthly_evaluation.parquet",
       "bytes": 498741,
       "sha256": "f4c043fa5f4e10f9d86adfcbd775b14334fa3a075acbd1cd55fd6c40767be5ab"
     },
     "evaluation/funded_allocations_with_outcomes": {
-      "path": "data/processed/experiments/ijds_audit/ijds-binary-geometry-frontier-v4-2026-07-14-v3/evaluation/funded_allocations_with_outcomes.parquet",
-      "bytes": 9184118,
-      "sha256": "75aec6293fa698a9065b06b528a4fd53b0325d4fe7579c346d9d26005930a4a8"
+      "path": "data/processed/experiments/ijds_audit/ijds-binary-geometry-frontier-v4-2026-07-15-v5/evaluation/funded_allocations_with_outcomes.parquet",
+      "bytes": 9184776,
+      "sha256": "923ee1326145ad9ed2e14f556bf9fe2de380dffbc6148ab296e5fb35fae6ca48"
     },
     "evaluation/shared_frontier_allocations_with_outcomes": {
-      "path": "data/processed/experiments/ijds_audit/ijds-binary-geometry-frontier-v4-2026-07-14-v3/evaluation/shared_frontier_allocations_with_outcomes.parquet",
-      "bytes": 12956013,
-      "sha256": "9e8e97aec173eb59122d645cabb514b8e71a09ddd37e98c52ba0fea2cc747fc7"
+      "path": "data/processed/experiments/ijds_audit/ijds-binary-geometry-frontier-v4-2026-07-15-v5/evaluation/shared_frontier_allocations_with_outcomes.parquet",
+      "bytes": 12965316,
+      "sha256": "93da70a7c7d73655e4f62c1555e9f6e9e3b845f53363bf64a81f511d040703d1"
     },
     "evaluation/aggregate_evaluation": {
-      "path": "data/processed/experiments/ijds_audit/ijds-binary-geometry-frontier-v4-2026-07-14-v3/evaluation/aggregate_evaluation.parquet",
+      "path": "data/processed/experiments/ijds_audit/ijds-binary-geometry-frontier-v4-2026-07-15-v5/evaluation/aggregate_evaluation.parquet",
       "bytes": 43595,
       "sha256": "11d0eb671baeac24dbfe78b79962689eabe079ed0b42f7ae94163c9298aad4c0"
     },
     "evaluation/paired_contrasts": {
-      "path": "data/processed/experiments/ijds_audit/ijds-binary-geometry-frontier-v4-2026-07-14-v3/evaluation/paired_sharp_contrasts.parquet",
-      "bytes": 21649277,
-      "sha256": "355457f739540008fae2d6dc2b6040ac73140835513e16cf96a9a452325ce46d"
+      "path": "data/processed/experiments/ijds_audit/ijds-binary-geometry-frontier-v4-2026-07-15-v5/evaluation/paired_sharp_contrasts.parquet",
+      "bytes": 25471150,
+      "sha256": "bf2ffeae1f9223dc2abf7d833cec6a3f2ed6776d3fed52e2b91467783ce7773d"
     },
     "evaluation/comparator_envelopes": {
-      "path": "data/processed/experiments/ijds_audit/ijds-binary-geometry-frontier-v4-2026-07-14-v3/evaluation/comparator_envelopes.parquet",
+      "path": "data/processed/experiments/ijds_audit/ijds-binary-geometry-frontier-v4-2026-07-15-v5/evaluation/comparator_envelopes.parquet",
       "bytes": 19052,
       "sha256": "756b948f3c19de5f51cbeeba943010ef497b5f7647bded865cf6cfd81f9220e1"
     },
-    "evaluation/simulation_repetitions": {
-      "path": "data/processed/experiments/ijds_audit/ijds-binary-geometry-frontier-v4-2026-07-14-v3/simulation/factorial_repetitions.parquet",
-      "bytes": 2495699,
-      "sha256": "fe0afcc70916575528109be3af3df729dcfcc2c8f55c5c24fe03e2abfa420547"
-    },
-    "evaluation/simulation_summary": {
-      "path": "data/processed/experiments/ijds_audit/ijds-binary-geometry-frontier-v4-2026-07-14-v3/simulation/factorial_summary.parquet",
-      "bytes": 250906,
-      "sha256": "c23abc6588f1bf3c847ee16b623d0781f277c3b0fdefd74a84b14fba1f2eecd7"
+    "evaluation/endpoint_resolution_audit": {
+      "path": "data/processed/experiments/ijds_audit/ijds-binary-geometry-frontier-v4-2026-07-15-v5/evaluation/endpoint_resolution_audit.parquet",
+      "bytes": 4278,
+      "sha256": "fe9544b2929f4ff5ba458cbe0e3b2c7632fd0385f0c8101eac2538a343a477a8"
     },
     "two_ruler/outcome_free/freeze": {
       "path": "models/experiments/ijds_audit/ijds-normalized-objective-frontier-2026-07-13-v1c/protocol_freeze.json",
@@ -3092,29 +3477,29 @@
       "sha256": "b44a1435bf501bcab4b8dfa6563ca1411ad4ec4912437053913c44d39354b487"
     },
     "two_ruler/manifest": {
-      "path": "models/experiments/ijds_audit/ijds-normalized-objective-frontier-2026-07-14-v3/verified_evaluation_manifest.json",
-      "bytes": 16944,
-      "sha256": "76e3643b92a537c9e0cea4d131f8085d4c843ead0cb95362f19a3442207af96e"
+      "path": "models/experiments/ijds_audit/ijds-normalized-objective-frontier-2026-07-15-v5/verified_evaluation_manifest.json",
+      "bytes": 18231,
+      "sha256": "9ee55a2522349c8520f308bc69273774dd48964847dfd340b78a7be46474cd7f"
     },
     "two_ruler/summary": {
-      "path": "models/experiments/ijds_audit/ijds-normalized-objective-frontier-2026-07-14-v3/normalized_objective_frontier_v3_summary.json",
-      "bytes": 2806,
-      "sha256": "7fc957f2c72491902f2d56a9fb90cc179befcaac7103604f8f08482c189a1ba4"
+      "path": "models/experiments/ijds_audit/ijds-normalized-objective-frontier-2026-07-15-v5/normalized_objective_frontier_v3_summary.json",
+      "bytes": 13175,
+      "sha256": "c9ac243e43ae30f31b60738f6fdd48db46499b9549b2b08ad8c6209fc3dce8f7"
     },
     "two_ruler/execution_receipt": {
-      "path": "models/experiments/ijds_audit/ijds-normalized-objective-frontier-2026-07-14-v3/execution_receipt.json",
+      "path": "models/experiments/ijds_audit/ijds-normalized-objective-frontier-2026-07-15-v5/execution_receipt.json",
       "bytes": 636,
-      "sha256": "2ed3588cb4c2b31a2937a207dcba9004eb66480ca1aefb2daf5e0a5bb1e76ddf"
+      "sha256": "cb876f7b1d714ea910154653eb68a6e899cb07567ed4b9c585f21c2a59050840"
     },
     "credit_controls/summary": {
-      "path": "models/experiments/ijds_audit/ijds-credit-risk-controls-2026-07-14-v3/credit_risk_controls_summary.json",
-      "bytes": 12473,
-      "sha256": "c64bb3088771d7f3c9a2fb550bbd8ee9a789a5e340054e09f3126656b6a89ca7"
+      "path": "models/experiments/ijds_audit/ijds-credit-risk-controls-2026-07-15-v5/credit_risk_controls_summary.json",
+      "bytes": 23359,
+      "sha256": "37c0a5c224b62ee3f47259aea4231df26ea184d3666e7fab80431ad26d611715"
     },
     "credit_controls/execution_receipt": {
-      "path": "models/experiments/ijds_audit/ijds-credit-risk-controls-2026-07-14-v3/execution_receipt.json",
+      "path": "models/experiments/ijds_audit/ijds-credit-risk-controls-2026-07-15-v5/execution_receipt.json",
       "bytes": 826,
-      "sha256": "da07c576b7a9946c2fec1ae4c3f0e9958dfe42412d86c961516cfeb8aff3e452"
+      "sha256": "179016a1c064318502cc11a7f197db0656eff8cf3f896e0e1905ddc1a9f994db"
     },
     "credit_controls/freeze": {
       "path": "models/experiments/ijds_audit/ijds-credit-risk-controls-2026-07-13-v1b/protocol_freeze.json",
@@ -3316,50 +3701,175 @@
       "bytes": 104159,
       "sha256": "fdbee01642869671bfd27071d22374735504d0e243406ac3fe5d67b2b83bd885"
     },
+    "rolling_origin/summary": {
+      "path": "models/experiments/ijds_audit/ijds-rolling-origin-2017-2026-07-15-v4/binary_geometry_frontier_v4_summary.json",
+      "bytes": 21830,
+      "sha256": "ab1bf51d5a6f54592276ec33de4affda6ff5327e6c2c362327f08089b09ff4a8"
+    },
+    "rolling_origin/execution_receipt": {
+      "path": "models/experiments/ijds_audit/ijds-rolling-origin-2017-2026-07-15-v4/execution_receipt.json",
+      "bytes": 1134,
+      "sha256": "d64ef87ce6e1a2f7f0493ed17e009bf8349f68546ed137d0cafd74a6292edb0a"
+    },
+    "rolling_origin/temporal_coverage": {
+      "path": "data/processed/experiments/ijds_audit/ijds-rolling-origin-2017-2026-07-15-v4/evaluation/temporal_coverage.parquet",
+      "bytes": 214187,
+      "sha256": "47096ab92be201827efdcb330aea77b65b6c31233fd11b5127d6202c4cd087bf"
+    },
+    "rolling_origin/monthly_evaluation": {
+      "path": "data/processed/experiments/ijds_audit/ijds-rolling-origin-2017-2026-07-15-v4/evaluation/monthly_evaluation.parquet",
+      "bytes": 181455,
+      "sha256": "89444bfdd650cf2ee9d862333cdd6064ac0ea94b13420ba60b4b2cdc0256a049"
+    },
+    "rolling_origin/funded_allocations_with_outcomes": {
+      "path": "data/processed/experiments/ijds_audit/ijds-rolling-origin-2017-2026-07-15-v4/evaluation/funded_allocations_with_outcomes.parquet",
+      "bytes": 2572605,
+      "sha256": "0908613e2d08f45fcdc1eadafb0ad9886e1036def54a2e922df8acca8284b9f7"
+    },
+    "rolling_origin/shared_frontier_allocations_with_outcomes": {
+      "path": "data/processed/experiments/ijds_audit/ijds-rolling-origin-2017-2026-07-15-v4/evaluation/shared_frontier_allocations_with_outcomes.parquet",
+      "bytes": 618802,
+      "sha256": "3aff256e6f7cc1587ae66fcf19a043b90d9d0514df01faf1f92d3984c0e74613"
+    },
+    "rolling_origin/aggregate_evaluation": {
+      "path": "data/processed/experiments/ijds_audit/ijds-rolling-origin-2017-2026-07-15-v4/evaluation/aggregate_evaluation.parquet",
+      "bytes": 42643,
+      "sha256": "a60eefd0670126d404875f4647226e49f6ecc0f710b9456405d7b64f7ce04379"
+    },
+    "rolling_origin/paired_contrasts": {
+      "path": "data/processed/experiments/ijds_audit/ijds-rolling-origin-2017-2026-07-15-v4/evaluation/paired_sharp_contrasts.parquet",
+      "bytes": 4942885,
+      "sha256": "2fb92b57bff0fcdd15d6a76e139ed26367b2752bd55c1655203f1cab167fbe03"
+    },
+    "rolling_origin/comparator_envelopes": {
+      "path": "data/processed/experiments/ijds_audit/ijds-rolling-origin-2017-2026-07-15-v4/evaluation/comparator_envelopes.parquet",
+      "bytes": 17884,
+      "sha256": "7f276896a24ccbcf258d8a1532a87929cdc51c57a9ff98f1243b708e9e1eea00"
+    },
+    "rolling_origin/endpoint_resolution_audit": {
+      "path": "data/processed/experiments/ijds_audit/ijds-rolling-origin-2017-2026-07-15-v4/evaluation/endpoint_resolution_audit.parquet",
+      "bytes": 4275,
+      "sha256": "8ad75f1397125ab0648eacce04471f85008f72393eb095670647f36eb9ea3f1b"
+    },
+    "missingness_encoding/summary": {
+      "path": "models/experiments/ijds_audit/ijds-missingness-sensitivity-2026-07-15-v3/missingness_sensitivity_summary.json",
+      "bytes": 10170,
+      "sha256": "33d4c760746b8c860d441fc5a461fd94affbe06c0bcfa47a69aa5a7aef077ebe"
+    },
+    "missingness_encoding/execution_receipt": {
+      "path": "models/experiments/ijds_audit/ijds-missingness-sensitivity-2026-07-15-v3/execution_receipt.json",
+      "bytes": 574,
+      "sha256": "85f1da84b2961d1fcbb2bc3c45f0e4b970d1ed011e8023e248db410230b1186d"
+    },
+    "missingness_encoding/freeze": {
+      "path": "models/experiments/ijds_audit/ijds-missingness-sensitivity-2026-07-15-v3/protocol_freeze.json",
+      "bytes": 7793,
+      "sha256": "0e3087268492f4fb27af3fecac2524a60514518441bfbf1f61d6311366144552"
+    },
+    "missingness_encoding/evaluation/temporal_coverage": {
+      "path": "data/processed/experiments/ijds_audit/ijds-missingness-sensitivity-2026-07-15-v3/evaluation/temporal_coverage.parquet",
+      "bytes": 28313,
+      "sha256": "a44ef4a5af35ec55c969b1a856687f6bab3ac31e61c643b663028aebee83509c"
+    },
+    "missingness_encoding/evaluation/prediction_metrics": {
+      "path": "data/processed/experiments/ijds_audit/ijds-missingness-sensitivity-2026-07-15-v3/evaluation/prediction_metrics.parquet",
+      "bytes": 11641,
+      "sha256": "8d08584b605c1398acfa7a47c86f026b3e661b5114f1d9635292c2bec9265f3e"
+    },
+    "missingness_encoding/evaluation/endpoint_resolution_audit": {
+      "path": "data/processed/experiments/ijds_audit/ijds-missingness-sensitivity-2026-07-15-v3/evaluation/endpoint_resolution_audit.parquet",
+      "bytes": 3924,
+      "sha256": "78542f4eb7eb6d851e8f14177b9f626959d8cb2be47b1c18e673b231fd286df4"
+    },
+    "missingness_encoding/outcome_free/scores": {
+      "path": "data/processed/experiments/ijds_audit/ijds-missingness-sensitivity-2026-07-15-v3/prediction/scores.parquet",
+      "bytes": 19610910,
+      "sha256": "25d23f163ade1f13e5677c0df08306eec7ffbea47915bc6fd2f035239170a7d3"
+    },
+    "missingness_encoding/outcome_free/recipes": {
+      "path": "models/experiments/ijds_audit/ijds-missingness-sensitivity-2026-07-15-v3/prediction/residual_recipes.json",
+      "bytes": 112610,
+      "sha256": "3f2977009a4abb619dac8de0c1b10c0902bbb8c8bc7ebb5cce50ab4281696178"
+    },
+    "missingness_encoding/outcome_free/fit_audit": {
+      "path": "data/processed/experiments/ijds_audit/ijds-missingness-sensitivity-2026-07-15-v3/prediction/residual_fit_audit.parquet",
+      "bytes": 27709888,
+      "sha256": "2e768411de2ddc0c4afdc04e0efc513ba91198ea130c7d422faf76d03f3a9583"
+    },
+    "missingness_encoding/outcome_free/missingness_census": {
+      "path": "data/processed/experiments/ijds_audit/ijds-missingness-sensitivity-2026-07-15-v3/data/missingness_census.parquet",
+      "bytes": 3813,
+      "sha256": "687e7b9df0765e97fe55ea065a00f3ab9d69e35d42a8f1d177bf45a0e9a02a3c"
+    },
+    "missingness_encoding/models/catboost_missing_indicators": {
+      "path": "models/experiments/ijds_audit/ijds-missingness-sensitivity-2026-07-15-v3/prediction/catboost_missing_indicators.cbm",
+      "bytes": 811196,
+      "sha256": "a3e28362366164c35d1358946e2d8206edbdd34127924550a02647a2105b5637"
+    },
+    "missingness_encoding/models/catboost_missing_indicators_platt": {
+      "path": "models/experiments/ijds_audit/ijds-missingness-sensitivity-2026-07-15-v3/prediction/catboost_missing_indicators_platt.pkl",
+      "bytes": 678,
+      "sha256": "9ed10e1a78767c437c9f47750688cd54610d4a3fdfa009f77150ad32a1f0e272"
+    },
+    "missingness_encoding/models/catboost_native_missing": {
+      "path": "models/experiments/ijds_audit/ijds-missingness-sensitivity-2026-07-15-v3/prediction/catboost_native_missing.cbm",
+      "bytes": 811676,
+      "sha256": "25a69b32a60c01f19e4e49353ab32f75e825f041cd0bedaeef0981fcd81b63c8"
+    },
+    "missingness_encoding/models/catboost_native_missing_platt": {
+      "path": "models/experiments/ijds_audit/ijds-missingness-sensitivity-2026-07-15-v3/prediction/catboost_native_missing_platt.pkl",
+      "bytes": 678,
+      "sha256": "8cc9523794408e67eea61daa5a1e7e7e8da590cbdff78c073e44aa405f5e84bc"
+    },
     "solver_tie_audit/manifest": {
       "path": "reports/crpto/ijds_policy_support_tie_evidence.json",
       "bytes": 12845,
       "sha256": "2903694ee502e6144008bbbc5891e5932f88f8527e12686363c85a28fa78684e"
     },
     "two_ruler/evaluation/evaluated_portfolios": {
-      "path": "data/processed/experiments/ijds_audit/ijds-normalized-objective-frontier-2026-07-14-v3/evaluation/evaluated_portfolios.parquet",
+      "path": "data/processed/experiments/ijds_audit/ijds-normalized-objective-frontier-2026-07-15-v5/evaluation/evaluated_portfolios.parquet",
       "bytes": 658119,
       "sha256": "7cf4ecbb86d427852793bc2da08c3ac95fb123970b00784580b9995a1bec4464"
     },
     "two_ruler/evaluation/joined_funded_allocations": {
-      "path": "data/processed/experiments/ijds_audit/ijds-normalized-objective-frontier-2026-07-14-v3/evaluation/joined_funded_allocations.parquet",
-      "bytes": 15288236,
-      "sha256": "9342c351c9aba49f2ac2d17e6eaa8fa86140721626ea45a07abf1a86d49a7793"
+      "path": "data/processed/experiments/ijds_audit/ijds-normalized-objective-frontier-2026-07-15-v5/evaluation/joined_funded_allocations.parquet",
+      "bytes": 15289032,
+      "sha256": "2c95e0c8cec52f5be8d52084e7842f253e6a297a70cd6f413acde4065ec95d04"
     },
     "two_ruler/evaluation/window_endpoint_contrasts": {
-      "path": "data/processed/experiments/ijds_audit/ijds-normalized-objective-frontier-2026-07-14-v3/evaluation/window_endpoint_contrasts.parquet",
-      "bytes": 25509,
-      "sha256": "46a66ae565fcea0c8fbabd17ad374a120874ce3df1d2acaad3ec872757feca5d"
+      "path": "data/processed/experiments/ijds_audit/ijds-normalized-objective-frontier-2026-07-15-v5/evaluation/window_endpoint_contrasts.parquet",
+      "bytes": 29942,
+      "sha256": "9460e557bf2b414e8306133b434e9911b5bc4046eda7906de008d76309ef4fd0"
     },
     "two_ruler/evaluation/monthly_endpoint_contrasts": {
-      "path": "data/processed/experiments/ijds_audit/ijds-normalized-objective-frontier-2026-07-14-v3/evaluation/monthly_endpoint_contrasts.parquet",
-      "bytes": 67761,
-      "sha256": "291b567cbc9bd3a66538e2c97a009aa11e26e13612589e8f3af468c248652a54"
+      "path": "data/processed/experiments/ijds_audit/ijds-normalized-objective-frontier-2026-07-15-v5/evaluation/monthly_endpoint_contrasts.parquet",
+      "bytes": 76167,
+      "sha256": "ca6a9e043f3242cd632c52b57a9233380855568442b302c2abb7de7546966cca"
     },
     "two_ruler/evaluation/metric_direction_census": {
-      "path": "data/processed/experiments/ijds_audit/ijds-normalized-objective-frontier-2026-07-14-v3/evaluation/metric_direction_census.parquet",
+      "path": "data/processed/experiments/ijds_audit/ijds-normalized-objective-frontier-2026-07-15-v5/evaluation/metric_direction_census.parquet",
       "bytes": 7939,
       "sha256": "00c1a58b169792f54799a911b77d4879940876eec0b1c9502538e985473f1d00"
     },
     "two_ruler/evaluation/outcome_join_audit": {
-      "path": "data/processed/experiments/ijds_audit/ijds-normalized-objective-frontier-2026-07-14-v3/evaluation/outcome_join_audit.parquet",
-      "bytes": 3882,
-      "sha256": "58c29824cebad32d9e980747b46cea406d2337cf6142b5c06139772159fc3309"
+      "path": "data/processed/experiments/ijds_audit/ijds-normalized-objective-frontier-2026-07-15-v5/evaluation/outcome_join_audit.parquet",
+      "bytes": 3988,
+      "sha256": "4884c29e5edcae71abd33d2ecb27effd1cc8d048dfa247f54ab5cc28caf4d375"
     },
     "credit_controls/evaluation/temporal_coverage": {
-      "path": "data/processed/experiments/ijds_audit/ijds-credit-risk-controls-2026-07-14-v3/evaluation/temporal_coverage.parquet",
+      "path": "data/processed/experiments/ijds_audit/ijds-credit-risk-controls-2026-07-15-v5/evaluation/temporal_coverage.parquet",
       "bytes": 502111,
-      "sha256": "73b9f099746ebf67da3cfdef42320dd06bf17296cd1687f4a3e6e83383025631"
+      "sha256": "968872d3dd119cf89cebceb969d4d155fb3a75e010026e023ae10d1cede9e58c"
     },
     "credit_controls/evaluation/prediction_metrics": {
-      "path": "data/processed/experiments/ijds_audit/ijds-credit-risk-controls-2026-07-14-v3/evaluation/prediction_metrics.parquet",
+      "path": "data/processed/experiments/ijds_audit/ijds-credit-risk-controls-2026-07-15-v5/evaluation/prediction_metrics.parquet",
       "bytes": 14998,
       "sha256": "8848cdffbaa01ff211976a13b2820a42d9ce8d93b4c5c7e3bfd90da3de517768"
+    },
+    "credit_controls/evaluation/endpoint_resolution_audit": {
+      "path": "data/processed/experiments/ijds_audit/ijds-credit-risk-controls-2026-07-15-v5/evaluation/endpoint_resolution_audit.parquet",
+      "bytes": 4278,
+      "sha256": "fe9544b2929f4ff5ba458cbe0e3b2c7632fd0385f0c8101eac2538a343a477a8"
     },
     "raw_data_audit/archive_inventory": {
       "path": "reports/crpto/data_audit/ijds-raw-data-contract-2026-07-14-v2/archive_inventory.csv",
@@ -3400,13 +3910,13 @@
   "paper_artifacts": {
     "table/coverage": {
       "path": "reports/crpto/tables/crpto_ijds_v4_table1_coverage_windows.csv",
-      "bytes": 9212,
-      "sha256": "b3c017027663882a45bc7916aae8653567b94bfa400903f8229532d00885a6e6"
+      "bytes": 9210,
+      "sha256": "4d6b72d01ca8074bf8463ebc3e9bd2d22aae0f89e7c41625df4df708e7453196"
     },
     "table/phase_transition": {
       "path": "reports/crpto/tables/crpto_ijds_v4_table2_phase_transition.csv",
       "bytes": 1429,
-      "sha256": "57864d38168cdfb99ea49e1ef980e1773a472fd511805e832190528afa1975ab"
+      "sha256": "da1c61c4c7c529a061d35711b6e6d3bd701a2509a3c4493b5555768426b6cb00"
     },
     "table/development_envelopes": {
       "path": "reports/crpto/tables/crpto_ijds_v4_table3_development_envelopes.csv",
@@ -3420,8 +3930,8 @@
     },
     "table/two_ruler_tracks": {
       "path": "reports/crpto/tables/crpto_ijds_v4_table5_two_ruler_tracks.csv",
-      "bytes": 1993,
-      "sha256": "4c51319af375d332e59bf6539a741671024c3b28eb2af8c8bfbdc596895525c0"
+      "bytes": 2874,
+      "sha256": "f6b31b94345041fc2df644795738ab7a06f0578a4b95a5d5eb4d71b0c7de4865"
     },
     "table/named_comparators": {
       "path": "reports/crpto/tables/crpto_ijds_v4_tableS1_named_comparators.csv",
@@ -3463,6 +3973,21 @@
       "bytes": 4384,
       "sha256": "664347e71a723c44388f458e88a1af80c45bcc774c0d16af058b3629eca6f8f6"
     },
+    "table/endpoint_resolution": {
+      "path": "reports/crpto/tables/crpto_ijds_v4_tableS8_endpoint_resolution.csv",
+      "bytes": 367,
+      "sha256": "435e313836f3c703242fad44d28aa1dc31a943d3bcbf6e3c3d4974543e2ff732"
+    },
+    "table/missingness_encoding": {
+      "path": "reports/crpto/tables/crpto_ijds_v4_tableS9_missingness_encoding_sensitivity.csv",
+      "bytes": 666,
+      "sha256": "abc9c7eea485ca61c0914a7d7992b9061e6b7dab9bba80b29f88453a99b17d15"
+    },
+    "table/rolling_origin": {
+      "path": "reports/crpto/tables/crpto_ijds_v4_tableS10_rolling_origin_recurrence.csv",
+      "bytes": 2105,
+      "sha256": "5d675c4d65567e31b1d41db8947eb369a65b14b08aa21f5963c2559ce260de5e"
+    },
     "figure/coverage/png": {
       "path": "reports/crpto/figures/crpto_ijds_v4_fig1_coverage.png",
       "bytes": 142518,
@@ -3497,13 +4022,13 @@
   "protected_stages_run": [],
   "protected_artifacts_written": [],
   "claim_ledger": {
-    "schema_version": "2026-07-15.2",
+    "schema_version": "2026-07-15.3",
     "status": "active_ijds_claim_contract",
     "numeric_authority": "parent_evidence_manifest_only",
     "contract": {
       "path": "configs/ijds_claim_ledger.yaml",
-      "bytes": 7512,
-      "sha256": "36d610de33d6441471de4e570f98cab984ac5bb35b5e9adb39aaedc7f6842ddb"
+      "bytes": 9180,
+      "sha256": "da8a6871160c62030ff7eae100d01bf540aba95d90801dc9a0b6325f12a0291a"
     },
     "claims": [
       {
@@ -3552,6 +4077,36 @@
         "forbidden_inference": [
           "verified_point_in_time_snapshot",
           "observed_operational_chargeoff_date"
+        ],
+        "surfaces": {
+          "required": [
+            "body",
+            "supplement",
+            "registry",
+            "claim_matrix"
+          ],
+          "allowed": [
+            "body",
+            "supplement",
+            "registry",
+            "claim_matrix"
+          ]
+        }
+      },
+      {
+        "id": "endpoint.reason_census_partitions_candidates",
+        "status": "active",
+        "kind": "empirical",
+        "lineages": [
+          "binary_geometry.evaluation"
+        ],
+        "scope": "primary_oot_reconstructed_endpoint_reason_taxonomy",
+        "rule": "equals",
+        "result_pointer": "/evaluation_endpoint/reason_census_partitions_primary_candidates",
+        "result": true,
+        "forbidden_inference": [
+          "identified_missingness_mechanism",
+          "observed_operational_event_dates"
         ],
         "surfaces": {
           "required": [
@@ -3661,7 +4216,7 @@
         }
       },
       {
-        "id": "timing.endpoint_six_month_reconciles_v3",
+        "id": "timing.endpoint_six_month_reconciles_active",
         "status": "active",
         "kind": "empirical",
         "lineages": [
@@ -3671,11 +4226,75 @@
         ],
         "scope": "complete_endpoint_availability_lag_grid",
         "rule": "equals",
-        "result_pointer": "/sensitivity/evaluation_endpoint_availability/six_month_endpoint_reconciles_exactly_to_active_v3",
+        "result_pointer": "/sensitivity/evaluation_endpoint_availability/six_month_endpoint_reconciles_to_active_evaluation",
         "result": true,
         "forbidden_inference": [
           "endpoint_selection",
           "independent_replications"
+        ],
+        "surfaces": {
+          "required": [
+            "body",
+            "supplement",
+            "registry",
+            "claim_matrix"
+          ],
+          "allowed": [
+            "body",
+            "supplement",
+            "registry",
+            "claim_matrix"
+          ]
+        }
+      },
+      {
+        "id": "sensitivity.second_origin_coverage_recurrence",
+        "status": "active",
+        "kind": "empirical",
+        "lineages": [
+          "binary_geometry.evaluation",
+          "rolling_origin"
+        ],
+        "scope": "two_retrospective_origins_eight_windows_each",
+        "rule": "equals",
+        "result_pointer": "/sensitivity/rolling_origin/all_sixteen_upper_below_nominal",
+        "result": true,
+        "forbidden_inference": [
+          "independent_replication",
+          "temporal_invariance",
+          "prospective_validation"
+        ],
+        "surfaces": {
+          "required": [
+            "body",
+            "supplement",
+            "registry",
+            "claim_matrix"
+          ],
+          "allowed": [
+            "body",
+            "supplement",
+            "registry",
+            "claim_matrix"
+          ]
+        }
+      },
+      {
+        "id": "sensitivity.missingness_encoding_recurrence",
+        "status": "active",
+        "kind": "empirical",
+        "lineages": [
+          "binary_geometry.evaluation",
+          "missingness_encoding"
+        ],
+        "scope": "three_feature_semantics_preserving_catboost_encodings",
+        "rule": "equals",
+        "result_pointer": "/sensitivity/missingness_encoding/all_three_all_eight_upper_below_nominal",
+        "result": true,
+        "forbidden_inference": [
+          "identified_missingness_mechanism",
+          "encoding_winner",
+          "portfolio_robustness"
         ],
         "surfaces": {
           "required": [
@@ -3789,36 +4408,6 @@
         }
       },
       {
-        "id": "simulation.portfolio_claim_forbidden",
-        "status": "active",
-        "kind": "boundary",
-        "lineages": [
-          "binary_geometry.evaluation"
-        ],
-        "scope": "locked_factorial_simulation",
-        "rule": "equals",
-        "result_pointer": "/simulation/portfolio_claim_allowed",
-        "result": false,
-        "forbidden_inference": [
-          "empirical_portfolio_mechanism",
-          "retuned_simulation_claim"
-        ],
-        "surfaces": {
-          "required": [
-            "body",
-            "supplement",
-            "registry",
-            "claim_matrix"
-          ],
-          "allowed": [
-            "body",
-            "supplement",
-            "registry",
-            "claim_matrix"
-          ]
-        }
-      },
-      {
         "id": "theory.sharp_common_outcome_bounds",
         "status": "active",
         "kind": "theorem",
@@ -3833,6 +4422,37 @@
         "forbidden_inference": [
           "sampling_confidence_interval",
           "missing_at_random_identification"
+        ],
+        "surfaces": {
+          "required": [
+            "body",
+            "supplement",
+            "registry"
+          ],
+          "allowed": [
+            "body",
+            "supplement",
+            "registry",
+            "claim_matrix"
+          ]
+        }
+      },
+      {
+        "id": "theory.binary_identification_width",
+        "status": "active",
+        "kind": "theorem",
+        "lineages": [
+          "binary_geometry.evaluation",
+          "two_ruler.evaluation"
+        ],
+        "scope": "unrestricted_binary_completion_for_common_outcome_policy_contrasts",
+        "rule": "documented",
+        "result_pointer": null,
+        "result": null,
+        "forbidden_inference": [
+          "missing_at_random_identification",
+          "sampling_uncertainty",
+          "causal_effect"
         ],
         "surfaces": {
           "required": [

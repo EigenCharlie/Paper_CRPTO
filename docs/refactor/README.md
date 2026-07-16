@@ -6,7 +6,7 @@ the frozen paper pipeline.
 > The consolidated 2026-06 backlog was executed and archived:
 > [`archive/NEXT_WORK_PLAN_2026-06.md`](archive/NEXT_WORK_PLAN_2026-06.md).
 > The current scientific and engineering contract is summarized in
-> [`docs/research/active_claims_2026-07-12.md`](../research/active_claims_2026-07-12.md)
+> [`docs/research/active_claims_2026-07-14.md`](../research/active_claims_2026-07-14.md)
 > and [`.codex/skills/crpto/SKILL.md`](../../.codex/skills/crpto/SKILL.md).
 
 Each plan documents:
@@ -21,7 +21,7 @@ Each plan documents:
 | [`CONFORMAL_REFACTOR_PLAN.md`](CONFORMAL_REFACTOR_PLAN.md) | Yes (calibrator pickle) | Full public split executed 2026-06-13; `src.models.conformal` is now a package facade with strict-typed submodules. |
 | [`MAPIE_MIGRATION_PLAN.md`](MAPIE_MIGRATION_PLAN.md) | Yes (intervals parquet) | Runtime is already MAPIE 1.x and the drift report is green; protected reruns still require explicit approval. |
 | [`archive/FEATURE_CONFIG_PARQUET_PLAN.md`](archive/FEATURE_CONFIG_PARQUET_PLAN.md) | Yes (downstream stages) | Executed 2026-06-13 and archived; `feature_config.pkl` retired from the live DVC DAG and manifest. |
-| [`ijds_tooling_decisions_2026-07-09.md`](ijds_tooling_decisions_2026-07-09.md) | No (tooling/refactor only) | Final live contract: `uv`, Ruff, mypy, `ty`, pytest, `just`, DVC and hook validation; Pyrefly and Commitizen are not adopted. |
+| [`ijds_tooling_decisions_2026-07-09.md`](ijds_tooling_decisions_2026-07-09.md) | No (tooling/refactor only) | Current engineering rationale for `uv`, Ruff, mypy, `ty`, pytest, `just`, DVC and hook validation; scientific authority remains elsewhere. |
 
 Executed lanes now in `main`:
 

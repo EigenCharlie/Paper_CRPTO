@@ -18,7 +18,7 @@ order before changing scientific code or paper claims:
    - endpoint-corrected finite-grid interpretation boundary.
 8. [`reports/crpto/data_audit/ijds-raw-data-contract-2026-07-14-v2/evidence.json`](reports/crpto/data_audit/ijds-raw-data-contract-2026-07-14-v2/evidence.json)
    - active full-archive population, maturity, schema, and funding audit.
-9. [`models/experiments/ijds_audit/ijds-credit-risk-controls-2026-07-14-v3/credit_risk_controls_summary.json`](models/experiments/ijds_audit/ijds-credit-risk-controls-2026-07-14-v3/credit_risk_controls_summary.json)
+9. [`models/experiments/ijds_audit/ijds-credit-risk-controls-2026-07-15-v5/credit_risk_controls_summary.json`](models/experiments/ijds_audit/ijds-credit-risk-controls-2026-07-15-v5/credit_risk_controls_summary.json)
    - active five-model coverage, WOE/IV, monotonicity, calibration, and PSI evidence.
 10. [`docs/research/ijds_label_lag_sensitivity_protocol_2026-07-14.md`](docs/research/ijds_label_lag_sensitivity_protocol_2026-07-14.md)
    - retrospectively locked fit-label timing sensitivity and retention stop rule.

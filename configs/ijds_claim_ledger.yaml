@@ -1,4 +1,4 @@
-schema_version: "2026-07-15.2"
+schema_version: "2026-07-15.3"
 status: active_ijds_claim_contract
 
 surfaces:
@@ -30,6 +30,19 @@ claims:
     lineages: [raw_data_audit, binary_geometry.evaluation]
     scope: reconstructed_status_availability_at_2020_09_30
     forbidden_inference: [verified_point_in_time_snapshot, observed_operational_chargeoff_date]
+    surfaces:
+      required: [body, supplement, registry, claim_matrix]
+      allowed: [body, supplement, registry, claim_matrix]
+
+  - id: endpoint.reason_census_partitions_candidates
+    status: active
+    kind: empirical
+    rule: equals
+    result_pointer: /evaluation_endpoint/reason_census_partitions_primary_candidates
+    expected: true
+    lineages: [binary_geometry.evaluation]
+    scope: primary_oot_reconstructed_endpoint_reason_taxonomy
+    forbidden_inference: [identified_missingness_mechanism, observed_operational_event_dates]
     surfaces:
       required: [body, supplement, registry, claim_matrix]
       allowed: [body, supplement, registry, claim_matrix]
@@ -71,15 +84,41 @@ claims:
       required: [body, supplement, registry]
       allowed: [body, supplement, registry, claim_matrix]
 
-  - id: timing.endpoint_six_month_reconciles_v3
+  - id: timing.endpoint_six_month_reconciles_active
     status: active
     kind: empirical
     rule: equals
-    result_pointer: /sensitivity/evaluation_endpoint_availability/six_month_endpoint_reconciles_exactly_to_active_v3
+    result_pointer: /sensitivity/evaluation_endpoint_availability/six_month_endpoint_reconciles_to_active_evaluation
     expected: true
     lineages: [endpoint_availability, binary_geometry.evaluation, two_ruler.evaluation]
     scope: complete_endpoint_availability_lag_grid
     forbidden_inference: [endpoint_selection, independent_replications]
+    surfaces:
+      required: [body, supplement, registry, claim_matrix]
+      allowed: [body, supplement, registry, claim_matrix]
+
+  - id: sensitivity.second_origin_coverage_recurrence
+    status: active
+    kind: empirical
+    rule: equals
+    result_pointer: /sensitivity/rolling_origin/all_sixteen_upper_below_nominal
+    expected: true
+    lineages: [binary_geometry.evaluation, rolling_origin]
+    scope: two_retrospective_origins_eight_windows_each
+    forbidden_inference: [independent_replication, temporal_invariance, prospective_validation]
+    surfaces:
+      required: [body, supplement, registry, claim_matrix]
+      allowed: [body, supplement, registry, claim_matrix]
+
+  - id: sensitivity.missingness_encoding_recurrence
+    status: active
+    kind: empirical
+    rule: equals
+    result_pointer: /sensitivity/missingness_encoding/all_three_all_eight_upper_below_nominal
+    expected: true
+    lineages: [binary_geometry.evaluation, missingness_encoding]
+    scope: three_feature_semantics_preserving_catboost_encodings
+    forbidden_inference: [identified_missingness_mechanism, encoding_winner, portfolio_robustness]
     surfaces:
       required: [body, supplement, registry, claim_matrix]
       allowed: [body, supplement, registry, claim_matrix]
@@ -123,19 +162,6 @@ claims:
       required: [body, supplement, registry, claim_matrix]
       allowed: [body, supplement, registry, claim_matrix]
 
-  - id: simulation.portfolio_claim_forbidden
-    status: active
-    kind: boundary
-    rule: equals
-    result_pointer: /simulation/portfolio_claim_allowed
-    expected: false
-    lineages: [binary_geometry.evaluation]
-    scope: locked_factorial_simulation
-    forbidden_inference: [empirical_portfolio_mechanism, retuned_simulation_claim]
-    surfaces:
-      required: [body, supplement, registry, claim_matrix]
-      allowed: [body, supplement, registry, claim_matrix]
-
   - id: theory.sharp_common_outcome_bounds
     status: active
     kind: theorem
@@ -143,6 +169,17 @@ claims:
     lineages: [binary_geometry.evaluation, two_ruler.evaluation]
     scope: binary_completion_bounds_for_candidates_and_paired_allocations
     forbidden_inference: [sampling_confidence_interval, missing_at_random_identification]
+    surfaces:
+      required: [body, supplement, registry]
+      allowed: [body, supplement, registry, claim_matrix]
+
+  - id: theory.binary_identification_width
+    status: active
+    kind: theorem
+    rule: documented
+    lineages: [binary_geometry.evaluation, two_ruler.evaluation]
+    scope: unrestricted_binary_completion_for_common_outcome_policy_contrasts
+    forbidden_inference: [missing_at_random_identification, sampling_uncertainty, causal_effect]
     surfaces:
       required: [body, supplement, registry]
       allowed: [body, supplement, registry, claim_matrix]

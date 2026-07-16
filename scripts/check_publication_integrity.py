@@ -104,7 +104,8 @@ SURFACES = (
             "label-lag sensitivity",
             "not independent replications",
             "coordinate one",
-            "no portfolio claim uses this simulation",
+            "missingness-encoding sensitivity",
+            "second temporal origin",
         ),
     ),
     SurfaceCheck(
@@ -123,7 +124,7 @@ SURFACES = (
             "0.842485",
             "0.897726",
             "12,076",
-            "no endpoint has a universal realized-outcome ordering",
+            "no endpoint has a universal status-indexed outcome ordering",
         ),
     ),
     SurfaceCheck(
@@ -216,9 +217,9 @@ def _check_numeric_sync() -> list[str]:
     return failures
 
 
-def _check_endpoint_reconciliation() -> list[str]:
-    """Require the stop-rule disclosure wherever the active endpoint is reported."""
-    required = ("365,339", "11,551", "364,814", "12,076", "525", "v2", "v3", "promoted")
+def _check_endpoint_reason_partition() -> list[str]:
+    """Require the active reason census wherever the endpoint is reported."""
+    required = ("307,842", "56,972", "11,551", "47", "478", "364,814", "12,076")
     failures: list[str] = []
     for path in (
         REPO / "paper/CRPTO_ijds.qmd",
@@ -228,7 +229,7 @@ def _check_endpoint_reconciliation() -> list[str]:
     ):
         text = _normalize(path.read_text(encoding="utf-8"))
         failures.extend(
-            f"{path.relative_to(REPO)}: incomplete V2--V3 endpoint reconciliation '{token}'"
+            f"{path.relative_to(REPO)}: incomplete endpoint-reason partition '{token}'"
             for token in required
             if token not in text
         )
@@ -302,15 +303,28 @@ def _check_evidence_decision() -> list[str]:
     ):
         if quarter[field] != "crosses_zero:8":
             failures.append(f"objective-matched .25 unexpectedly changed: {field}")
-    if evidence["simulation"]["portfolio_claim_allowed"] is not False:
-        failures.append("degenerate simulation unexpectedly allows a portfolio claim")
+    if (
+        evidence["evaluation_endpoint"].get("reason_census_partitions_primary_candidates")
+        is not True
+    ):
+        failures.append("endpoint reasons no longer partition the primary candidate census")
     endpoint = evidence.get("sensitivity", {}).get("evaluation_endpoint_availability", {})
-    if endpoint.get("six_month_endpoint_reconciles_exactly_to_active_v3") is not True:
-        failures.append("endpoint sensitivity no longer reconciles exactly to active V3")
+    if endpoint.get("six_month_endpoint_reconciles_to_active_evaluation") is not True:
+        failures.append("endpoint sensitivity no longer reconciles to the active evaluation")
     if endpoint.get("endpoint_or_result_selected") is not False:
         failures.append("endpoint sensitivity unexpectedly selects an endpoint or result")
     if endpoint.get("fit_label_lag_crossed_factorially") is not False:
         failures.append("separate timing sensitivities are incorrectly reported as factorial")
+    missingness = evidence.get("sensitivity", {}).get("missingness_encoding", {})
+    if missingness.get("all_three_all_eight_upper_below_nominal") is not True:
+        failures.append("missingness-encoding coverage recurrence no longer holds")
+    if missingness.get("model_or_encoding_selected") is not False:
+        failures.append("missingness sensitivity unexpectedly selects a model or encoding")
+    rolling = evidence.get("sensitivity", {}).get("rolling_origin", {})
+    if rolling.get("all_sixteen_upper_below_nominal") is not True:
+        failures.append("two-origin coverage recurrence no longer holds")
+    if rolling.get("independent_replication_claim_authorized") is not False:
+        failures.append("second origin is incorrectly reported as an independent replication")
     return failures
 
 
@@ -362,7 +376,7 @@ def _check_lineage_sync() -> list[str]:
     binary = registry["lineages"]["binary_geometry"]["evaluation"]
     for field in ("run_tag", "protocol_tag", "protocol_commit"):
         if evidence.get(field) != binary[field]:
-            failures.append(f"evidence manifest V4 {field} differs from the registry")
+            failures.append(f"active binary evidence {field} differs from the registry")
     two_ruler = registry["lineages"]["two_ruler"]["evaluation"]
     challenger = evidence.get("decision_challenger", {})
     for field in ("run_tag", "protocol_tag", "protocol_commit"):
@@ -388,7 +402,7 @@ def check_publication_integrity() -> list[str]:
     return [
         *_check_surface_contracts(),
         *_check_numeric_sync(),
-        *_check_endpoint_reconciliation(),
+        *_check_endpoint_reason_partition(),
         *_check_retired_claims(),
         *_check_reviewer_anonymity(),
         *_check_evidence_decision(),

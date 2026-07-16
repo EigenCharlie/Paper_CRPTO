@@ -16,8 +16,9 @@ First, the paper derives a prevalence-threshold discontinuity for constant-score
 binary absolute-residual intervals and separates that mechanism from the
 empirical varying-score path. Second, it defines objective-matched and
 normalized-score rulers and an exact basis-endpoint support audit for comparing
-non-affine risk scores. Third, it provides a status-independent,
-maturity-restricted
+non-affine risk scores. It also gives an exact identity linking each contrast's
+identification width to unresolved selected rows and the outcome-switch
+coefficient. Third, it provides a status-independent, maturity-restricted
 evaluation with outcomes physically isolated until allocations are frozen and
 with sharp common-outcome bounds for unresolved loans.
 
@@ -26,10 +27,17 @@ eligible design. The primary OOT panel contains 376,890 candidates: 364,814
 outcomes are reconstructed as observable by the evaluation cutoff and 12,076
 remain unresolved. All 40 all-candidate coverage upper bounds are below 0.90
 across five retrospectively protocol-locked learner specifications; the largest
-is 0.8977. The stratum-level W7--W8 quantile change persists under every
+is 0.8977. The endpoint census partitions all candidates into 307,842 fully paid
+and 56,972 charged off by the cutoff, 11,551 nonterminal, 47 terminal after the
+cutoff, and 478 terminal with no reconstructible availability date. The
+stratum-level W7--W8 quantile change persists under every
 fit-label lag retaining more than 99% of each fitting month. A separate complete
 evaluation-endpoint lag grid reports 0, 3, 6, 8, and 12 months without selection;
-the six-month slice exactly reproduces the active endpoint evaluation.
+the six-month slice exactly reproduces the active endpoint evaluation. The
+below-target coverage finding also recurs across three feature-semantics-
+preserving missingness encodings and the only additional feasible retrospective
+origin; neither exercise selects a representation or constitutes independent
+validation.
 
 The decision result has a narrow interpretation. Objective-matched coordinate .25
 crosses zero for payoff, default, and miscoverage in all eight windows; .50 is

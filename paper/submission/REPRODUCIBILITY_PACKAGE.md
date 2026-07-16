@@ -17,9 +17,9 @@ instructions, and replay commands.
 |---|---|
 | Environment | `pyproject.toml`, `uv.lock`, `justfile` |
 | Authority | Active claim registry, executable claim ledger, source registry, publication targets |
-| Method | `src/ijds_audit`, active runners, evidence and paper builders |
-| Runs | Sixteen DVC pointers for three freeze/evaluation pairs plus endpoint and structural sensitivities |
-| Evidence | One manifest, thirteen tables, three figures in PDF/PNG |
+| Method | Complete `src` package, active runners, evidence and paper builders |
+| Runs | Twenty-one DVC pointers for the active roots, sensitivities, and one data-only replay dependency |
+| Evidence | One manifest, sixteen tables, three figures in PDF/PNG |
 | Manuscript | QMD body/supplement, generated INFORMS TeX, bibliography |
 | Gates | Scientific tests, lint, typing, drift, claim sync, anonymity, PDF QA |
 
@@ -81,7 +81,7 @@ graph, bibliography, cross-references, and stable pagination in that order.
 
 ## Acceptance QA
 
-1. Reproduce from a fresh clone and the sixteen DVC pointers.
+1. Reproduce from a fresh clone and the 21 DVC pointers.
 2. Confirm evidence and QMD-to-TeX builders are byte-idempotent.
 3. Run scientific, lint, type, drift, publication, and protected-artifact checks.
 4. Compile and inspect body, supplement, and official PDF page by page.

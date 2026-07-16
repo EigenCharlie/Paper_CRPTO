@@ -1,4 +1,4 @@
-# CRPTO Active IJDS Claim Registry - 2026-07-14
+# CRPTO Active IJDS Claim Registry - 2026-07-15
 
 This is the sole claim registry for the active IJDS manuscript. Numerical
 statements must be traceable to
@@ -17,8 +17,8 @@ pre-endpoint-correction evaluations are provenance only.
   or deployment claims.
 - The strongest result is negative but constructive: candidate coverage does
   not transport under five reported learner specifications, binary residual
-  geometry changes near a prevalence threshold, and realized portfolio
-  direction depends on the outcome-free ruler and coordinate used to define
+  geometry changes near a prevalence threshold, and status-indexed portfolio
+  contrasts depend on the outcome-free ruler and coordinate used to define
   comparable decision stringency.
 - No OOT outcome selects a learner, window, taxonomy, gamma, ruler, coordinate,
   cap, comparator, or policy.
@@ -30,29 +30,35 @@ pre-endpoint-correction evaluations are provenance only.
 - Outcome-free freeze: `ijds-binary-geometry-frontier-v4-2026-07-12-v1`, tag
   `protocol/ijds-binary-geometry-frontier-v4-2026-07-12-v1`, commit
   `2f8a7606e4eb65aa3ae3701fb3af8d9a51c953cd`.
-- Endpoint-corrected evaluation: `ijds-binary-geometry-frontier-v4-2026-07-14-v3`,
-  tag `protocol/ijds-binary-geometry-frontier-v4-2026-07-14-v3`, commit
-  `688f75dc4f285c75bc499c9e041dd30fb3acd70d`.
-- V3 imports and verifies the V1 freeze. It changes the evaluation endpoint and
-  sharp bounds, not frozen scores, residual recipes, supports, or allocations.
+- Active reason-audited evaluation:
+  `ijds-binary-geometry-frontier-v4-2026-07-15-v5`, tag
+  `protocol/ijds-binary-geometry-frontier-v4-2026-07-15-v5`, commit
+  `e2bba580a0b07c145bd64ff61440973d6e31349b`.
+- V5 imports and verifies the V1 outcome-free freeze. Relative to the preceding
+  endpoint-corrected evaluation, every shared scientific column reconciles at
+  machine precision; V5 adds an exhaustive endpoint-reason taxonomy and exact
+  identification-width columns.
 
 ### Two-ruler diagnostic
 
 - Outcome-free freeze: `ijds-normalized-objective-frontier-2026-07-13-v1c`, tag
   `protocol/ijds-normalized-objective-frontier-2026-07-13-v1c`.
-- Endpoint-corrected evaluation: `ijds-normalized-objective-frontier-2026-07-14-v3`,
-  tag `protocol/ijds-normalized-objective-frontier-2026-07-14-v3`, commit
-  `a1ae516a6c9674686dba245cb275475073b298a0`.
-- The freeze contains 6,240 solves and 622,455 funded rows. V3 reports 720
-  monthly contrasts, 48 window contrasts, and 144 metric-direction cells.
+- Active reason-audited evaluation:
+  `ijds-normalized-objective-frontier-2026-07-15-v5`, tag
+  `protocol/ijds-normalized-objective-frontier-2026-07-15-v5`, commit
+  `e2bba580a0b07c145bd64ff61440973d6e31349b`.
+- The freeze contains 6,240 solves and 622,455 funded rows. V5 reports 720
+  monthly contrasts, 48 window contrasts, 144 metric-direction cells, and eight
+  endpoint-audit rows.
 
 ### Credit-risk controls and data audits
 
 - Frozen five-model scores: `ijds-credit-risk-controls-2026-07-13-v1b`, tag
   `protocol/ijds-credit-risk-controls-2026-07-13-v1b`.
-- Endpoint-corrected evaluation: `ijds-credit-risk-controls-2026-07-14-v3`, tag
-  `protocol/ijds-credit-risk-controls-2026-07-14-v3`, commit
-  `688f75dc4f285c75bc499c9e041dd30fb3acd70d`.
+- Active reason-audited evaluation:
+  `ijds-credit-risk-controls-2026-07-15-v5`, tag
+  `protocol/ijds-credit-risk-controls-2026-07-15-v5`, commit
+  `e2bba580a0b07c145bd64ff61440973d6e31349b`.
 - Full archive audit: `ijds-raw-data-contract-2026-07-14-v2`.
 - Label-lag sensitivity: `ijds-label-lag-sensitivity-2026-07-14-v1`.
 - Evaluated-cap solver audit: `ijds-policy-support-tie-audit-2026-07-12-v1`.
@@ -88,10 +94,32 @@ pre-endpoint-correction evaluations are provenance only.
   diagnosis; it is retrospective discipline, not preregistration or
   confirmation.
 
+### Missingness-encoding sensitivity
+
+- Complete feature-semantics-preserving run:
+  `ijds-missingness-sensitivity-2026-07-15-v3`, tag
+  `protocol/ijds-missingness-sensitivity-2026-07-15-v3`, commit
+  `199afb083da37af6a51d5ba9e3c4d6280b952fe9`.
+- It compares the active sentinel convention, explicit missing indicators, and
+  native nullable CatBoost features. All three specifications and all eight
+  windows are reported; no encoding or learner is selected and no missingness
+  mechanism or portfolio result is identified.
+
+### Second temporal origin
+
+- Complete later-origin run:
+  `ijds-rolling-origin-2017-2026-07-15-v4`, tag
+  `protocol/ijds-rolling-origin-stability-2026-07-15-v4`, commit
+  `e2bba580a0b07c145bd64ff61440973d6e31349b`.
+- The later origin repeats the declared CatBoost coverage audit over eight
+  shifted residual windows. It is a two-origin retrospective recurrence, not an
+  independent replication, prospective validation, or invariance result.
+
 ## Research Object
 
 <!-- claim:data.exhaustive_status_independent_population -->
 <!-- claim:endpoint.not_verified_snapshot -->
+<!-- claim:endpoint.reason_census_partitions_candidates -->
 
 - Raw archive: 2,925,493 rows, 2,925,492 valid dated loans, 142 columns,
   2,060,077 36-month contracts, and 865,415 60-month contracts.
@@ -103,6 +131,10 @@ pre-endpoint-correction evaluations are provenance only.
 - Primary OOT: 376,890 candidates in 15 monthly menus from April 2016 through
   June 2017. Censored extension: 88,227 candidates from July--September 2017.
 - Primary endpoint census: 364,814 resolved and 12,076 unresolved candidates.
+- The endpoint-reason taxonomy partitions every candidate: 307,842 are Fully
+  Paid by the cutoff, 56,972 are Charged Off by the cutoff, 11,551 remain
+  nonterminal or unresolved, 47 terminate after the reconstructed cutoff, and
+  478 have no reconstructible terminal availability date.
 - The distributed archive is not a verified September 2020 point-in-time
   snapshot. Terminal status is conservatively reconstructed as observable by
   September 30, 2020; terminal statuses whose reconstructed availability is
@@ -147,13 +179,13 @@ pre-endpoint-correction evaluations are provenance only.
    score is not globally affine in the point score.
 2. **Normalized-ruler affine invariance.** A positive-affine transformation
    preserves normalized-score coordinates; this does not equalize plug-in
-   opportunity cost or realized outcomes for non-affine scores.
+   opportunity cost or status-indexed outcomes for non-affine scores.
 3. **Same-cap nesting.** Because the upper score is no smaller than the point
    score, the copied-cap point feasible set weakly contains the guardrail set.
    This orders only the optimized plug-in objective.
 4. **C2 plug-in dominance.** Matching the frozen guardrail allocation's funded
    point-score moment makes that allocation feasible for the point LP. It does
-   not order realized payoff, default, or miscoverage.
+   not order the status-indexed payoff proxy, default, or miscoverage.
 5. **Constant-score binary threshold discontinuity.** For fixed `0 <= p < 1/2`, the
    population absolute-residual quantile changes from `p` to `1-p` when binary
    prevalence crosses alpha. Empirical scores vary, so this is a mechanism, not
@@ -163,11 +195,18 @@ pre-endpoint-correction evaluations are provenance only.
 7. **Sharp common-outcome bounds.** Candidate and fixed-allocation bounds use
    binary loan-wise extrema; paired-policy bounds optimize one common unresolved
    endpoint assignment over the funded union.
-8. **Basis-endpoint sufficiency.** On each LP basis, allocations are affine in
+<!-- claim:theory.binary_identification_width -->
+
+8. **Binary identification-width identity.** For an additive paired contrast,
+   the sharp interval width is the sum, over unresolved loans, of the absolute
+   difference between that loan's two attainable contrast contributions. This
+   is finite-archive partial identification, not sampling uncertainty or a
+   missingness model.
+9. **Basis-endpoint sufficiency.** On each LP basis, allocations are affine in
    the cap and the sharp contrast endpoints are concave/convex. Basis endpoints
    suffice for extrema over the declared point-cap support up to solver
    tolerance.
-9. **Declared comparator envelope.** A support envelope is partial
+10. **Declared comparator envelope.** A support envelope is partial
    identification over that declared support, not a confidence interval, a
    causal identified set, or a universal comparator claim.
 
@@ -175,6 +214,8 @@ pre-endpoint-correction evaluations are provenance only.
 
 <!-- claim:coverage.five_models_all_windows_below_nominal -->
 <!-- claim:timing.fit_label_crossing_retained -->
+<!-- claim:sensitivity.second_origin_coverage_recurrence -->
+<!-- claim:sensitivity.missingness_encoding_recurrence -->
 
 Under the declared six-month endpoint contract, all eight all-candidate
 coverage upper bounds are below 0.90 for every model:
@@ -195,8 +236,14 @@ coverage upper bounds are below 0.90 for every model:
 - Two active raw features have declared coverage exceptions:
   `mths_since_last_delinq` is structurally nullable and
   `pub_rec_bankruptcies` has partial legacy support. Their deterministic
-  missing-value conventions must be disclosed; no missingness-robustness claim
-  is active without a dedicated sensitivity.
+  missing-value conventions are disclosed. The dedicated encoding sensitivity
+  preserves feature semantics and gives 8/8 below-nominal upper bounds for the
+  active convention (maximum 0.882597), explicit indicators (0.884332), and
+  native nullable features (0.880037). It neither identifies the missingness
+  mechanism nor authorizes an encoding winner or portfolio claim.
+- At the later temporal origin, all eight CatBoost upper bounds are also below
+  0.90 (maximum 0.874768), versus 0.882597 at the primary origin. These 16 cells
+  are two retrospective origin-window families, not independent replications.
 - In CatBoost stratum 2, prevalence changes from 0.101703 in W7 to 0.097147 in
   W8; the fitted residual quantile changes from 0.888435 to 0.111801 and mean
   OOT width from 0.984263 to 0.207631.
@@ -209,7 +256,7 @@ coverage upper bounds are below 0.90 for every model:
 
 ## Decision and Comparator Evidence
 
-<!-- claim:timing.endpoint_six_month_reconciles_v3 -->
+<!-- claim:timing.endpoint_six_month_reconciles_active -->
 <!-- claim:timing.fit_and_endpoint_lags_not_factorial -->
 <!-- claim:decision.no_selected_policy -->
 <!-- claim:comparator.broad_support_all_cross_zero -->
@@ -229,23 +276,12 @@ opportunity cost.
 | Normalized score .50 | [-259,658.18, -54,025.82] | [3.2214, 6.5637] | [2.1070, 5.2142] |
 | Normalized score .75 | [-135,781.22, 9,812.59] | [1.4392, 2.3807] | [0.3447, 1.6991] |
 
-Endpoint reconstruction reclassified 525 archive-terminal candidates whose
-modeled availability date followed the cutoff. V2 had 365,339 resolved and
-11,551 unresolved primary candidates; active V3 has 364,814 resolved and
-12,076 unresolved. The required direction reconciliation is:
-
-| Quantity | V2 | V3 |
-|---|---:|---:|
-| Objective-matched .25 payoff (higher/lower/cross) | 8/0/0 | 0/0/8 |
-| Objective-matched .25 default (lower/higher/cross) | 8/0/0 | 0/0/8 |
-| Objective-matched .25 miscoverage (lower/higher/cross) | 8/0/0 | 0/0/8 |
-| Normalized .75 payoff (higher/lower/cross) | 0/8/0 | 0/7/1 |
-| All payoff cells (higher/lower/cross) | 8/33/7 | 0/32/16 |
-| All default cells (lower/higher/cross) | 8/33/7 | 0/33/15 |
-| All miscoverage cells (lower/higher/cross) | 8/40/0 | 0/40/8 |
-
-V2 is immutable provenance and V3 is the active endpoint; no direction from
-either endpoint version is promoted.
+The active reason-audited evaluation keeps 12,076 outcomes unrestricted. Of
+these, 11,551 are nonterminal or unresolved, 47 have reconstructed terminal
+availability after the cutoff, and 478 lack a reconstructible terminal
+availability date. The latter two categories together explain the 525-row
+difference from the pre-correction endpoint, but they encode distinct sources
+of nonobservability and are never presented as one timing mechanism.
 
 The complete endpoint-availability sensitivity is:
 
@@ -261,8 +297,8 @@ The complete endpoint-availability sensitivity is:
   WOE/IV scorecard in W2. Therefore the 40/40 statement is valid for the active
   six-month contract and lags 0, 3, and 8, but not universally over all tested
   endpoint lags.
-- After removing the lag column, the six-month row is value-identical to active
-  V3 for 120 coverage cells, 48 two-ruler contrasts, and 648 exact-support
+- After removing the lag column, the six-month row is value-identical to the
+  active evaluation for 120 coverage cells, 48 two-ruler contrasts, and 648 exact-support
   envelopes.
 - No opposite one-sided decision direction appears at 12 months. Payoff and
   default each move one cell from adverse to crossing zero; miscoverage is
@@ -290,7 +326,7 @@ The complete endpoint-availability sensitivity is:
 - Purpose caps 0.20--0.30 bind in every portfolio; the 1.00 cap never binds.
   The common-frontier constraint binds throughout, and maximum single-loan
   weight rounds to 0.08, 0.04, and 0.02 at the three increasing budgets.
-- The baseline scenario reconciles exactly to active V3. The grid supports
+- The baseline scenario reconciles exactly to the active evaluation. The grid supports
   structural conditionality, not a scenario winner, universal adversity,
   structural invariance, or deployment guidance.
 
@@ -320,10 +356,13 @@ The complete endpoint-availability sensitivity is:
 - Under the declared six-month endpoint contract, candidate-level binary
   coverage fails after temporal transport before optimization for all five
   reported score specifications.
+- The same CatBoost coverage finding recurs under three feature-semantics-
+  preserving missingness encodings and at one later retrospective origin,
+  without selecting an encoding or claiming independent replication.
 - Binary absolute-residual geometry is prevalence-sensitive.
 - The score, ruler, and coordinate jointly define the portfolio comparison.
 - Within the finite protocol-locked grid, direction is not invariant to ruler or
-  coordinate and no endpoint has a universal realized-outcome ordering.
+  coordinate and no endpoint has a universal status-indexed outcome ordering.
 - Across the complete budget--concentration--LGD grid, every scenario retains
   adverse default and miscoverage cells, while neither universal favorability
   nor universal adversity holds.
@@ -335,15 +374,13 @@ The complete endpoint-availability sensitivity is:
 ## Forbidden Claims
 
 <!-- claim:boundary.no_selected_set_validity -->
-<!-- claim:simulation.portfolio_claim_forbidden -->
-
 - Policy, gamma, ruler, coordinate, learner, or window winner.
 - Selected-set or funded-set conformal guarantee.
 - Universal economic, default, or miscoverage dominance.
 - A verified September 2020 archive snapshot.
 - Causal, prospective, confirmatory, preregistered, deployment, or fair-lending
   conclusions.
-- Standardized payoff as cash-flow return, IRR, or welfare.
+- Status-indexed standardized payoff proxy as cash-flow return, IRR, NPV, or welfare.
 - Independent replication counts from overlapping windows or repeated
   allocations.
 - Continuous-frontier uniqueness or a universal comparator support.

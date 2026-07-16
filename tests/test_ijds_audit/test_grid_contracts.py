@@ -7,6 +7,7 @@ import pandas as pd
 import pytest
 
 from src.ijds_audit.grid_contracts import (
+    require_exact_frame,
     require_exact_grid,
     require_finite,
     require_unique_row,
@@ -79,3 +80,62 @@ def test_finite_and_unique_value_contracts_reject_silent_corruption() -> None:
     nonconstant.loc[1, "constant"] = 8
     with pytest.raises(RuntimeError, match="no unique"):
         require_unique_value(nonconstant, "constant", label="test constant")
+
+
+def test_exact_frame_tolerance_applies_only_to_nonkey_floats() -> None:
+    expected = pd.DataFrame({"key": [1.0], "value": [0.3], "label": ["a"]})
+    rounded = expected.copy()
+    rounded.loc[0, "value"] += 2.0e-16
+
+    require_exact_frame(
+        rounded,
+        expected,
+        keys=("key",),
+        label="roundoff",
+        float_atol=5.0e-14,
+        float_rtol=5.0e-14,
+    )
+
+    changed_key = rounded.copy()
+    changed_key.loc[0, "key"] += 2.0e-16
+    with pytest.raises(RuntimeError, match="does not reconcile exactly"):
+        require_exact_frame(
+            changed_key,
+            expected,
+            keys=("key",),
+            label="changed key",
+            float_atol=5.0e-14,
+            float_rtol=5.0e-14,
+        )
+
+    changed_label = rounded.copy()
+    changed_label.loc[0, "label"] = "b"
+    with pytest.raises(RuntimeError, match="does not reconcile exactly"):
+        require_exact_frame(
+            changed_label,
+            expected,
+            keys=("key",),
+            label="changed label",
+            float_atol=5.0e-14,
+            float_rtol=5.0e-14,
+        )
+
+
+def test_exact_frame_allows_only_named_reference_columns() -> None:
+    actual = pd.DataFrame({"key": [1], "value": [0.3]})
+    expected = actual.assign(width=[0.0])
+
+    require_exact_frame(
+        actual,
+        expected,
+        keys=("key",),
+        label="declared extension",
+        allowed_expected_extra_columns=("width",),
+    )
+    with pytest.raises(RuntimeError, match="columns differ"):
+        require_exact_frame(
+            actual,
+            expected,
+            keys=("key",),
+            label="undeclared extension",
+        )

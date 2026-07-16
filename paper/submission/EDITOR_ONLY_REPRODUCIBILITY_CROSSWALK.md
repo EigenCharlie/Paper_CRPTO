@@ -19,17 +19,17 @@ searchable protocol identifiers and immutable provenance.
 
 | Lineage | Outcome-free freeze | Endpoint-corrected evaluation |
 |---|---|---|
-| Binary geometry / exact support | `ijds-binary-geometry-frontier-v4-2026-07-12-v1` | `ijds-binary-geometry-frontier-v4-2026-07-14-v3` |
-| Protocol tags | `protocol/ijds-binary-geometry-frontier-v4-2026-07-12-v1` | `protocol/ijds-binary-geometry-frontier-v4-2026-07-14-v3` |
-| Protocol commits | `2f8a7606e4eb65aa3ae3701fb3af8d9a51c953cd` | `688f75dc4f285c75bc499c9e041dd30fb3acd70d` |
+| Binary geometry / exact support | `ijds-binary-geometry-frontier-v4-2026-07-12-v1` | `ijds-binary-geometry-frontier-v4-2026-07-15-v5` |
+| Protocol tags | `protocol/ijds-binary-geometry-frontier-v4-2026-07-12-v1` | `protocol/ijds-binary-geometry-frontier-v4-2026-07-15-v5` |
+| Protocol commits | `2f8a7606e4eb65aa3ae3701fb3af8d9a51c953cd` | `e2bba580a0b07c145bd64ff61440973d6e31349b` |
 | Freeze SHA-256 | `c2b3dc2d18c9fed80708682d5a0369c80c89643e2d28024418522d954ebe667c` | See source registry and execution receipt |
-| Two-ruler diagnostic | `ijds-normalized-objective-frontier-2026-07-13-v1c` | `ijds-normalized-objective-frontier-2026-07-14-v3` |
-| Protocol tags | `protocol/ijds-normalized-objective-frontier-2026-07-13-v1c` | `protocol/ijds-normalized-objective-frontier-2026-07-14-v3` |
-| Evaluation commit | Outcome-free freeze lineage | `a1ae516a6c9674686dba245cb275475073b298a0` |
+| Two-ruler diagnostic | `ijds-normalized-objective-frontier-2026-07-13-v1c` | `ijds-normalized-objective-frontier-2026-07-15-v5` |
+| Protocol tags | `protocol/ijds-normalized-objective-frontier-2026-07-13-v1c` | `protocol/ijds-normalized-objective-frontier-2026-07-15-v5` |
+| Protocol commits | `46f4df915d38eb5a6cc144484c6e6fe56d8ed397` | `e2bba580a0b07c145bd64ff61440973d6e31349b` |
 | Freeze SHA-256 | `7877c5e460772a0093e4132eaa542e9049f7ec15d2ddaa35c2df389892a0e185` | See source registry and verified manifest |
-| Credit controls | `ijds-credit-risk-controls-2026-07-13-v1b` | `ijds-credit-risk-controls-2026-07-14-v3` |
-| Protocol tags | `protocol/ijds-credit-risk-controls-2026-07-13-v1b` | `protocol/ijds-credit-risk-controls-2026-07-14-v3` |
-| Protocol commits | `1776cbf8b201ae5b92756e5ea397a403d6cc7c9f` | `688f75dc4f285c75bc499c9e041dd30fb3acd70d` |
+| Credit controls | `ijds-credit-risk-controls-2026-07-13-v1b` | `ijds-credit-risk-controls-2026-07-15-v5` |
+| Protocol tags | `protocol/ijds-credit-risk-controls-2026-07-13-v1b` | `protocol/ijds-credit-risk-controls-2026-07-15-v5` |
+| Protocol commits | `1776cbf8b201ae5b92756e5ea397a403d6cc7c9f` | `e2bba580a0b07c145bd64ff61440973d6e31349b` |
 | Freeze SHA-256 | `da4805e644bcf5decfbb0a67c0c81a5b9dd61f3ab2e17d3dc5264100e7eb4d35` | See source registry and execution receipt |
 
 The raw-data audit is `ijds-raw-data-contract-2026-07-14-v2`; the reporting-lag
@@ -41,22 +41,28 @@ The complete evaluation-endpoint availability sensitivity is
 `ijds-endpoint-availability-sensitivity-2026-07-14-v1`, protocol-locked at
 commit `8865f1cfbd387576bdf805f3e52f030261e4b717`. It reports lags 0, 3, 6, 8,
 and 12 without selecting an endpoint; its six-month slice reconciles exactly
-to the active V3 evaluations. It is distinct from conformal-fit label timing.
+to the active evaluations. It is distinct from conformal-fit label timing.
 
 The complete portfolio-structure sensitivity is
 `ijds-portfolio-structure-sensitivity-2026-07-15-v6`, protocol-locked at commit
 `490c653a43e2003d83184f47e1277bd2d4390c43`. Its outcome-free freeze reports
 all 36 budget--purpose-cap--LGD scenarios; its separate evaluation selects no
-scenario and reconciles the baseline exactly to active V3. Structural V1--V5
-remain stopped or checkpoint provenance.
+scenario and reconciles the baseline exactly to the active evaluation.
+Structural V1--V4 remain stopped provenance; V5 is a data-only replay
+dependency for V6 and is not paper-facing evidence.
+
+The later-origin recurrence is
+`ijds-rolling-origin-2017-2026-07-15-v4`, protocol-locked at commit
+`e2bba580a0b07c145bd64ff61440973d6e31349b`. The missingness recurrence is
+`ijds-missingness-sensitivity-2026-07-15-v3`, protocol-locked at commit
+`199afb083da37af6a51d5ba9e3c4d6280b952fe9`. Both report their declared grids
+without selecting a model, encoding, or origin.
 
 ## DVC Capsule
 
-The sixteen pointers are listed once in
-`configs/ijds_active_evidence_sources.yaml`. They comprise data and model
-pointers for the three outcome-free roots, three endpoint-corrected evaluation
-roots, the endpoint-availability sensitivity, and the portfolio-structure
-sensitivity. Pull with:
+The 21 pointers are listed once in `configs/ijds_active_evidence_sources.yaml`.
+They comprise data and model pointers for the active roots and sensitivities,
+plus the data-only structural replay dependency. Pull with:
 
 ```powershell
 uv run python scripts/manage_ijds_dvc_capsule.py pull

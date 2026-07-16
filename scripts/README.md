@@ -8,31 +8,24 @@ purpose.
 
 Use these for the active submission workflow:
 
-- `check_publication_integrity.py` - checks that paper, supplement, README and
-  official-template docs agree on the active V4 IJDS audit.
-- `build_ijds_binary_geometry_frontier_v4_evidence.py` - verifies the V4
-  freeze/evaluation lineage and generates the sole active `crpto_ijds_v4_*`
-  evidence family.
+- `check_publication_integrity.py` - checks that the paper, supplement,
+  registries, disclosure files, and generated TeX agree on the active audit.
+- `build_ijds_binary_geometry_frontier_v4_evidence.py` - verifies every source
+  in `configs/ijds_active_evidence_sources.yaml` and transactionally generates
+  the sole active `crpto_ijds_v4_*` evidence family.
 - `experiments/run_ijds_binary_geometry_frontier_v4.py` - exposes separate
   `freeze` and `evaluate` phases for a fresh immutable V4 run. There is no
   combined command that can hide the pre-outcome inspection boundary.
-- `build_ijds_fixed_taxonomy_c2_evidence.py` and
-  `experiments/run_ijds_fixed_taxonomy_c2.py` - historical V1--V3 provenance;
-  they are no longer paper-facing.
-- `build_ijds_maturity_safe_evidence.py` and
-  `build_ijds_comparator_stringency_evidence.py` - historical P1/C1 evidence
-  only; they are not paper-facing.
-- `build_ijds_calibration_selected_evidence.py` and the older IJDS challenger
-  scripts - compact-v7 historical replay only; never active paper evidence.
+- `experiments/run_ijds_normalized_objective_frontier*.py`,
+  `run_ijds_credit_risk_controls.py`, `run_ijds_endpoint_availability_sensitivity.py`,
+  `run_ijds_missingness_sensitivity.py`, and
+  `run_ijds_portfolio_structure_sensitivity.py` are the other registered
+  versioned runners. A new execution always needs a new protocol and run tag.
 - `compile_ijds_submission.py` - compiles the official INFORMS/IJDS LaTeX
   handoff and scans `.log`/`.blg` for unresolved citations or references.
 - `run_ty_advisory.py` - runs pinned `ty` in a focused advisory scope for daily
   IJDS work or in a blocking full scope. Both scopes are currently clean;
   `submission-check` enforces the full scope.
-- `build_crpto_journal_package.py` - builds the journal evidence package from
-  frozen inputs.
-- `export_crpto_tables.py` - exports paper tables from frozen artifacts.
-- `generate_crpto_figures.py` - exports paper figures from frozen artifacts.
 - `render_submission_pdf_previews.py` - creates local HTML-print preview PDFs
   for body and supplement.
 
@@ -45,7 +38,6 @@ just hooks-check
 just complexity-report
 just ijds-active-replay         # explicit paper-facing evidence replay
 just ijds-active-check          # read-only active-capsule verification
-just ijds-historical-v7-evidence # historical compact-v7 provenance only
 just submission-build           # writes evidence and document outputs
 just submission-check           # read-only gate over built outputs
 just submission-closeout        # build, then verify
@@ -67,9 +59,9 @@ post-submission cleanup lane justifies touching them.
 
 ## Protected or historical search paths
 
-The large scripts under `scripts/search/` and most `scripts/experiments/` are
-historical or governed research surfaces. The V4 experiment module listed
-above is the narrow active exception. Do not run HPO, conformal interval
+The large scripts under `scripts/search/` and unregistered experiment runners
+are historical or governed research surfaces. The source registry defines the
+active exceptions. Do not run HPO, conformal interval
 generation, champion search, or protected portfolio search unless the work has
 a fresh run tag, artifact sink, and drift/revalidation plan.
 

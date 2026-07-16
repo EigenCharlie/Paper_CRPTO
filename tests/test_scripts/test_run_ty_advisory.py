@@ -20,7 +20,8 @@ def test_active_ty_scope_excludes_archived_optional_and_protected_paths() -> Non
     assert "scripts/experiments/run_ijds_binary_geometry_frontier_v4.py" in files
     assert "scripts/experiments/run_ijds_normalized_objective_frontier.py" in files
     assert "scripts/experiments/run_ijds_normalized_objective_frontier_v2.py" in files
-    assert "scripts/experiments/run_ijds_portfolio_structure_sensitivity.py" not in files
+    assert "scripts/experiments/run_ijds_missingness_sensitivity.py" in files
+    assert "scripts/experiments/run_ijds_portfolio_structure_sensitivity.py" in files
     assert "scripts/experiments/run_ijds_calibration_selected_policy_challenger.py" not in files
     assert "scripts/experiments/run_ijds_exact_alpha_grid_challenger.py" not in files
     assert all(

@@ -1,4 +1,4 @@
-"""Sync hand-authored supplement summaries to active V4 evidence tables."""
+"""Sync hand-authored supplement summaries to active IJDS evidence tables."""
 
 from __future__ import annotations
 
@@ -80,7 +80,7 @@ def test_named_and_exact_direction_counts_are_visible_in_supplement() -> None:
         for field in ("guardrail_lower", "crosses_zero", "guardrail_higher"):
             assert f"| {int(row[field])} |" in supplement
     labels = {
-        "standardized_payoff": "Standardized payoff",
+        "standardized_payoff": "Status-indexed payoff proxy",
         "terminal_default": "Terminal default",
         "funded_miscoverage": "Funded miscoverage",
     }
@@ -113,15 +113,15 @@ def test_two_ruler_tracks_and_repeated_quarter_contrast_are_visible() -> None:
         assert f"{float(row['payoff_bound_usd_upper_max']):,.2f}" in supplement
         assert f"{float(row['default_bound_pp_lower_min']):.4f}" in supplement
         assert f"{float(row['default_bound_pp_upper_max']):.4f}" in supplement
+        assert f"{float(row['payoff_identification_width_usd_min']):,.0f}" in supplement
+        assert f"{float(row['payoff_identification_width_usd_max']):,.0f}" in supplement
     normalized = re.sub(r"\s+", " ", supplement.lower())
     assert "44 loan-month positions" in normalized
     assert "155,937.27" in normalized
     assert "one repeated allocation, not eight independent confirmations" in normalized
     assert "all three sharp intervals cross zero in all eight windows" in normalized
-    assert "s9a endpoint-recovery direction reconciliation" in normalized
-    assert "| 8 / 33 / 7 | 0 / 32 / 16 |" in normalized
-    assert "| 8 / 33 / 7 | 0 / 33 / 15 |" in normalized
-    assert "| 8 / 40 / 0 | 0 / 40 / 8 |" in normalized
+    assert "exact identification-width ranges" in normalized
+    assert "endpoint-recovery direction reconciliation" not in normalized
 
 
 def test_label_lag_sensitivity_is_visible_in_supplement() -> None:
@@ -164,7 +164,7 @@ def test_endpoint_availability_grid_is_visible_and_kept_separate() -> None:
 
     normalized = re.sub(r"\s+", " ", supplement.lower())
     assert "fit-label-by-endpoint combinations had been evaluated" in normalized
-    assert "active six-month result remains the inherited endpoint contract" in normalized
+    assert "active six-month result remains the declared endpoint" in normalized
 
 
 def test_complete_portfolio_structure_grid_is_visible_in_supplement() -> None:
@@ -217,13 +217,31 @@ def test_complete_portfolio_structure_grid_is_visible_in_supplement() -> None:
     assert "zero scenarios are favorable on all three metrics" in normalized
     assert "zero are adverse on all three metrics" in normalized
     assert "share of the 1,440 portfolios" in normalized
-    assert "baseline scenario reproduces the active v3 two-ruler bounds exactly" in normalized
+    assert "baseline scenario reproduces the active two-ruler bounds exactly" in normalized
 
 
-def test_supplement_discloses_negative_simulation_and_recovery() -> None:
-    supplement = re.sub(r"\s+", " ", SUPPLEMENT.read_text(encoding="utf-8").lower())
+def test_endpoint_reason_missingness_and_second_origin_tables_are_visible() -> None:
+    endpoint = _rows("crpto_ijds_v4_tableS8_endpoint_resolution.csv")
+    missingness = _rows("crpto_ijds_v4_tableS9_missingness_encoding_sensitivity.csv")
+    rolling = _rows("crpto_ijds_v4_tableS10_rolling_origin_recurrence.csv")
+    supplement = SUPPLEMENT.read_text(encoding="utf-8")
 
-    assert "portfolio component is uninformative" in supplement
-    assert "no portfolio claim uses this simulation" in supplement
-    assert "no outcome evaluation artifact had been written" in supplement
-    assert "changes no model" in supplement
+    assert len(endpoint) == 5
+    assert sum(int(row["candidate_rows"]) for row in endpoint) == 376890
+    for row in endpoint:
+        assert f"{int(row['candidate_rows']):,}" in supplement
+
+    assert len(missingness) == 3
+    for row in missingness:
+        assert f"{float(row['roc_auc']):.6f}" in supplement
+        assert f"{float(row['coverage_upper_max']):.6f}" in supplement
+
+    assert len(rolling) == 16
+    assert {row["origin"] for row in rolling} == {"primary_2016", "rolling_2017"}
+    for row in rolling:
+        assert f"{float(row['coverage_lower']):.6f}" in supplement
+        assert f"{float(row['coverage_upper']):.6f}" in supplement
+
+    normalized = re.sub(r"\s+", " ", supplement.lower())
+    assert "not an independent replication" in normalized
+    assert "does not identify a missingness mechanism" in normalized

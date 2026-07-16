@@ -38,6 +38,12 @@ SCENARIO_TAG_COLUMNS = (
     "scenario_lgd",
     "scenario_is_baseline",
 )
+REFERENCE_ONLY_IDENTIFICATION_WIDTH_COLUMNS = {
+    "realized_payoff_identification_width",
+    "realized_payoff_rate_identification_width",
+    "weighted_default_identification_width",
+    "weighted_miscoverage_identification_width",
+}
 DIRECTION_SUMMARY_COLUMNS = {
     "standardized_payoff": {
         "gamma_1_lower": "standardized_payoff_gamma_1_lower_cells",
@@ -337,9 +343,20 @@ def _validate_frames(
     baseline = contrasts.loc[contrasts["scenario_is_baseline"]].drop(
         columns=list(SCENARIO_TAG_COLUMNS)
     )
+    reference_only = set(reference_two_ruler.columns).difference(baseline.columns)
+    if reference_only.difference(REFERENCE_ONLY_IDENTIFICATION_WIDTH_COLUMNS):
+        raise RuntimeError(
+            "The active two-ruler reference added undeclared columns beyond identification widths."
+        )
+    missing_reference = set(baseline.columns).difference(reference_two_ruler.columns)
+    if missing_reference:
+        raise RuntimeError(
+            f"The active two-ruler reference dropped structural baseline columns: "
+            f"{sorted(missing_reference)}."
+        )
     require_exact_frame(
         baseline,
-        reference_two_ruler,
+        reference_two_ruler.loc[:, baseline.columns],
         keys=("window_id", "ruler", "coordinate"),
         label="structural baseline two-ruler reconciliation",
     )

@@ -8,11 +8,14 @@ living closeout checklist, not evidence that the package is final.
 - [ ] Active claim registry is `docs/research/active_claims_2026-07-14.md`.
 - [ ] Evidence manifest, executable claim ledger, and source registry verify by hash.
 - [ ] Census is 376,890 candidates, 364,814 resolved, and 12,076 unresolved.
+- [ ] The five endpoint reasons sum exactly to the candidate, resolved, and unresolved totals.
 - [ ] All 40 five-model coverage upper bounds are below 0.90; largest 0.897726.
 - [ ] Objective-matched .25 is described as crossing zero, never as favorable.
 - [ ] Two-ruler, exact-support, fit-label-lag, endpoint-availability, and solver-stability limits are stated.
-- [ ] Endpoint lags 0/3/6/8/12 are complete, unselected, and the six-month slice reconciles to V3.
+- [ ] Endpoint lags 0/3/6/8/12 are complete, unselected, and the six-month slice reconciles to the active evaluation.
 - [ ] Fit-label and evaluation-endpoint timing are not described as a joint factorial sensitivity.
+- [ ] Missingness encodings and the second origin are bounded recurrences, not winners or independent validation.
+- [ ] Identification-width statements match the exact unresolved-row identity and the six reported tracks.
 - [ ] No learner, window, gamma, ruler, coordinate, cap, comparator, or policy is selected.
 - [ ] No selected-set, causal, prospective, confirmatory, deployment, Markov,
       point-in-time-snapshot, cash-flow-return, or fair-lending claim appears.

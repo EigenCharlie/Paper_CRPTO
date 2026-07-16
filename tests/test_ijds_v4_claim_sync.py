@@ -63,10 +63,11 @@ def test_v4_wording_keeps_theory_and_empirical_scope_separate() -> None:
     assert "not a prospective trial, preregistration, or causal estimate" in body_normalized
     assert "not a causal identified set" in supplement
     assert (
-        "constant-score theorem and simulation identify mechanisms rather than the "
-        "finite varying-score path"
+        "constant-score theorem identifies a mechanism rather than the varying-score empirical path"
     ) in body_normalized
-    assert "no portfolio claim uses this simulation" in supplement_normalized
+    for surface in (body_normalized, supplement_normalized):
+        assert "simulation claim" not in surface
+        assert "no portfolio claim uses this simulation" not in surface
 
 
 def test_review_surfaces_do_not_expose_exact_v4_identifiers() -> None:

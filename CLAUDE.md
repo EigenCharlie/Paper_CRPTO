@@ -1,6 +1,6 @@
 # CLAUDE.md — Contexto para Claude Code en Paper_CRPTO
 
-## Scientific status override - 2026-07-14
+## Scientific status override - 2026-07-15
 
 The only active IJDS source of truth is
 `docs/research/active_claims_2026-07-14.md`. The paper combines a
@@ -77,7 +77,7 @@ upstream protegido.
 | Campo | Valor |
 | --- | --- |
 | Outcome-free run | `ijds-binary-geometry-frontier-v4-2026-07-12-v1` |
-| Verified evaluation | `ijds-binary-geometry-frontier-v4-2026-07-14-v3` |
+| Verified evaluation | `ijds-binary-geometry-frontier-v4-2026-07-15-v5` |
 | Universo | `640,543` filas; primary OOT `376,890`; extension `88,227`; membership independiente del status |
 | Cronologia | ocho ventanas residuales consecutivas; 15 decisiones 2016-04--2017-06 |
 | Conformal | bordes de score fijos en 2011; clipped residual interval, no CI de PD latente |
@@ -90,12 +90,15 @@ upstream protegido.
 | Cobertura monotonic CatBoost | ocho upper bounds bajo `0.90`; maximo `0.886489` |
 | Cobertura platform WOE/IV | ocho upper bounds bajo `0.90`; maximo `0.894908` |
 | Cobertura pricing-excluded WOE/IV | ocho upper bounds bajo `0.90`; maximo `0.897726` |
+| Resolucion endpoint | `307,842` fully paid by cutoff; `56,972` charged off by cutoff; `11,551` nonterminal; `47` terminal after cutoff; `478` terminal sin fecha de disponibilidad |
+| Missingness | tres codificaciones feature-semantics-preserving; 24/24 upper bounds bajo `0.90`; sin seleccion de codificacion |
+| Segundo origen | ocho ventanas 2017; 8/8 upper bounds bajo `0.90`; recurrencia retrospectiva, no validacion independiente |
 | Censo raw | `2,925,493` filas; `640,543` filas activas exhaustivas, sin sampling |
 | Transicion binaria | estrato 2: prevalencia `0.101703 -> 0.097147`; cuantíl `0.888435 -> 0.111801` |
 | Supporting C2 | 1,080 matches; residual maximo `8.33e-17`; dominancia plug-in mecanica |
 | Exact frontier | 3,067 caps; 216/216 broad-stress envelopes cruzan cero |
 | Development support | default 72/72 cruza; W8 27/27 cruza |
-| Sensibilidad endpoint | lags 0/3/6/8/12 completos; lag 6 reconcilia exactamente con V3; sin seleccion de endpoint |
+| Sensibilidad endpoint | lags 0/3/6/8/12 completos; lag 6 reconcilia exactamente con la evaluacion activa; sin seleccion de endpoint |
 | Sensibilidad estructural | 36/36 escenarios budget--purpose-cap--LGD; minimo 17 default y 21 miscoverage adversos por escenario; 0 escenarios universalmente favorables o adversos |
 | Evidencia | `reports/crpto/ijds_binary_geometry_frontier_v4_evidence.json` |
 

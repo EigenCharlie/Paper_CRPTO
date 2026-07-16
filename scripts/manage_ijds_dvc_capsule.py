@@ -18,6 +18,7 @@ from src.ijds_audit.publication_sources import (
 
 ROOT = Path(__file__).resolve().parents[1]
 TARGETS_PATH = ROOT / "configs/crpto_publication_targets.yaml"
+DVC_REMOTE = "dagshub"
 
 
 def active_dvc_pointers(
@@ -68,7 +69,15 @@ def cloud_status_payload(
         if pointers is not None
         else active_dvc_pointers(root=root, targets_path=targets_path)
     )
-    command = ["dvc", "status", "--cloud", "--json", *_pointer_arguments(selected, root=root)]
+    command = [
+        "dvc",
+        "status",
+        "--cloud",
+        "--remote",
+        DVC_REMOTE,
+        "--json",
+        *_pointer_arguments(selected, root=root),
+    ]
     result = subprocess.run(
         command,
         cwd=root,
@@ -119,12 +128,14 @@ def run_dvc(action: str, *, cloud: bool = False) -> None:
     pointers = active_dvc_pointers()
     relative = _pointer_arguments(pointers, root=ROOT)
     if action == "pull":
-        command = ["dvc", "pull", *relative]
+        command = ["dvc", "pull", "--remote", DVC_REMOTE, *relative]
+    elif action == "push":
+        command = ["dvc", "push", "--remote", DVC_REMOTE, *relative]
     elif action == "status":
         command = ["dvc", "status", *(["--cloud"] if cloud else ["--no-updates"]), *relative]
     elif action == "verify-remote":
         verify_remote(pointers=pointers)
-        print("Active IJDS DVC capsule is fully available in the configured remote.")
+        print(f"Active IJDS DVC capsule is fully available in remote {DVC_REMOTE!r}.")
         return
     else:
         raise ValueError(f"Unsupported DVC action: {action}")
@@ -133,7 +144,7 @@ def run_dvc(action: str, *, cloud: bool = False) -> None:
 
 def main() -> None:
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("action", choices=("pull", "status", "verify-remote"))
+    parser.add_argument("action", choices=("pull", "push", "status", "verify-remote"))
     parser.add_argument(
         "--cloud",
         action="store_true",

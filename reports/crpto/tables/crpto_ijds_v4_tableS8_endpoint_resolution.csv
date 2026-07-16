@@ -1,0 +1,6 @@
+role,snapshot_resolution,candidate_rows,resolved_rows,unresolved_rows
+primary_oot,charged_off_by_reconstructed_cutoff,56972,56972,0
+primary_oot,fully_paid_by_reconstructed_cutoff,307842,307842,0
+primary_oot,nonterminal_or_unresolved_status,11551,0,11551
+primary_oot,terminal_after_reconstructed_cutoff,47,0,47
+primary_oot,terminal_availability_date_missing,478,0,478

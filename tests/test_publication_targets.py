@@ -89,11 +89,11 @@ def test_active_contract_has_one_numeric_source_and_current_lineages() -> None:
     }.intersection(active)
     lineages = registry["lineages"]
     assert lineages["binary_geometry"]["outcome_free"]["run_tag"].endswith("2026-07-12-v1")
-    assert lineages["binary_geometry"]["evaluation"]["run_tag"].endswith("2026-07-14-v3")
+    assert lineages["binary_geometry"]["evaluation"]["run_tag"].endswith("2026-07-15-v5")
     assert lineages["two_ruler"]["outcome_free"]["run_tag"].endswith("2026-07-13-v1c")
-    assert lineages["two_ruler"]["evaluation"]["run_tag"].endswith("2026-07-14-v3")
+    assert lineages["two_ruler"]["evaluation"]["run_tag"].endswith("2026-07-15-v5")
     assert lineages["credit_controls"]["outcome_free"]["run_tag"].endswith("2026-07-13-v1b")
-    assert lineages["credit_controls"]["evaluation"]["run_tag"].endswith("2026-07-14-v3")
+    assert lineages["credit_controls"]["evaluation"]["run_tag"].endswith("2026-07-15-v5")
     assert evidence["lineages"] == lineages
     assert active["previously_inspected_retrospective_archive"] is True
     assert active["archive_is_verified_point_in_time_snapshot"] is False
@@ -131,6 +131,8 @@ def test_active_capsule_paths_exist() -> None:
 
     code_surface = active["active_code_surface"]
     assert code_surface["historical_execution_in_active_capsule"] is False
+    for path in code_surface["source_roots"]:
+        assert Path(path).is_dir(), path
     for group in ("paper_pipeline", "protocol_entrypoints"):
         for path in code_surface[group]:
             assert Path(path).is_file(), path

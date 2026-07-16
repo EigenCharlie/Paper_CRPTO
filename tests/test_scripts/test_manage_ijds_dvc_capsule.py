@@ -114,7 +114,17 @@ def test_verify_remote_accepts_empty_cloud_status(
 
     verify_remote(root=tmp_path, pointers=[pointer])
 
-    assert observed == [["dvc", "status", "--cloud", "--json", "active.dvc"]]
+    assert observed == [
+        [
+            "dvc",
+            "status",
+            "--cloud",
+            "--remote",
+            "dagshub",
+            "--json",
+            "active.dvc",
+        ]
+    ]
 
 
 def test_verify_remote_rejects_missing_remote_objects(

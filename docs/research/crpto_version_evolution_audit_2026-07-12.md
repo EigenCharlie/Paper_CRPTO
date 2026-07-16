@@ -742,11 +742,9 @@ etiquetado. No modifica todavia el registro activo de claims.
   19,200 repeticiones cambiaron la asignacion same-cap y solo 1 cambio C2; el
   cap del guardrail fue slack en todas. No ofrece evidencia de cartera.
 
-La evidencia, tablas y memo reproducibles estan en
-`reports/crpto/ijds_rolling_origin_stability_evidence.json` y
-`docs/research/ijds_rolling_origin_stability_results_2026-07-12.md`. El siguiente
-P0 real es reemplazar la simulacion degenerada por un mecanismo predeclarado en
-el que la restriccion cambie decisiones sin escoger resultados favorables.
+Esos agregados rolling V2 fueron retirados del arbol activo el 15 de julio de
+2026; permanecen recuperables en Git. La evidencia vigente del segundo origen
+es el run V4 registrado y la tabla S10 del manifiesto paper-facing.
 
 ## 16. Actualizacion de ejecucion P0: simulacion decision-active
 
@@ -779,11 +777,9 @@ candidate coverage. La evidencia aun no modifica
 `active_claims_2026-07-12.md`: la decision editorial se toma despues de cerrar
 family support y solver ties.
 
-Fuentes reproducibles:
-
-- `reports/crpto/ijds_decision_active_simulation_evidence.json`;
-- `docs/research/ijds_decision_active_simulation_results_2026-07-12.md`;
-- tablas `crpto_ijds_decision_active_*` en `reports/crpto/tables`.
+Los archivos ejecutables y agregados de esta simulacion fueron retirados del
+arbol activo el 15 de julio de 2026 y permanecen recuperables en Git. No son
+fuente para ningun claim vigente.
 
 ## 17. Actualizacion de ejecucion P1: soporte de policy y empates
 

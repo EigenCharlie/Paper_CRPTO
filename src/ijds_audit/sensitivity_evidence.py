@@ -15,6 +15,12 @@ from src.ijds_audit.grid_contracts import require_exact_frame, require_exact_gri
 from src.utils.artifact_descriptor import verified_artifact_path
 
 ENDPOINT_LAGS = (0, 3, 6, 8, 12)
+IDENTIFICATION_WIDTH_COLUMNS = (
+    "realized_payoff_identification_width",
+    "realized_payoff_rate_identification_width",
+    "weighted_default_identification_width",
+    "weighted_miscoverage_identification_width",
+)
 COVERAGE_LEARNERS = (
     "catboost_platt",
     "numeric_logistic_platt",
@@ -54,7 +60,7 @@ SUPPORT_METRICS = ("standardized_payoff", "terminal_default", "funded_miscoverag
 
 @dataclass(frozen=True)
 class EndpointSensitivityEvidence:
-    """Hash-verified endpoint sensitivity and exact V3 reconciliation."""
+    """Hash-verified endpoint sensitivity and active-evaluation reconciliation."""
 
     summary: dict[str, Any]
     frames: dict[str, pd.DataFrame]
@@ -276,6 +282,8 @@ def load_endpoint_sensitivity_evidence(
     reference_coverage: pd.DataFrame,
     reference_two_ruler: pd.DataFrame,
     reference_envelopes: pd.DataFrame,
+    float_atol: float = 0.0,
+    float_rtol: float = 0.0,
 ) -> EndpointSensitivityEvidence:
     """Load endpoint V1, verify all grids, and reconcile its six-month slice."""
     summary_raw: object = json.loads(summary_path.read_text(encoding="utf-8"))
@@ -360,13 +368,15 @@ def load_endpoint_sensitivity_evidence(
             "role": COVERAGE_ROLES,
             "conformal_group": (-1,),
         },
-        label="active V3 coverage reference",
+        label="active coverage reference",
     )
     require_exact_frame(
         lag6_coverage,
         reference_coverage_slice,
         keys=coverage_keys,
         label="endpoint lag-6 coverage",
+        float_atol=float_atol,
+        float_rtol=float_rtol,
     )
 
     lag6_two_ruler = (
@@ -380,6 +390,9 @@ def load_endpoint_sensitivity_evidence(
         reference_two_ruler,
         keys=contrast_keys,
         label="endpoint lag-6 two-ruler contrasts",
+        float_atol=float_atol,
+        float_rtol=float_rtol,
+        allowed_expected_extra_columns=IDENTIFICATION_WIDTH_COLUMNS,
     )
 
     lag6_envelopes = (
@@ -393,6 +406,8 @@ def load_endpoint_sensitivity_evidence(
         reference_envelopes,
         keys=envelope_keys,
         label="endpoint lag-6 exact-support envelopes",
+        float_atol=float_atol,
+        float_rtol=float_rtol,
     )
     reconciliation = {
         "charged_off_lag_months": 6,

@@ -62,6 +62,9 @@ public. The author agrees to complete the IJDS reproducibility report.
 - Primary OOT: 376,890 candidates, 364,814 outcomes reconstructed as observable
   by September 30, 2020, and 12,076 unresolved outcomes retained in sharp
   binary bounds.
+- Endpoint reasons: 307,842 fully paid and 56,972 charged off by the cutoff;
+  11,551 nonterminal; 47 terminal after the cutoff; and 478 terminal with a
+  missing availability date. These categories partition the primary panel.
 - Endpoint timing: Fully Paid is available at the month-end of `last_pymnt_d`;
   Charged Off is available at that month-end plus six calendar months. The
   latter is a modeling assumption, not an observed operational charge-off date.
@@ -69,8 +72,8 @@ public. The author agrees to complete the IJDS reproducibility report.
 ## Package Boundary
 
 The release includes `pyproject.toml`, `uv.lock`, active source and claim
-registries and executable claim ledger, `src/ijds_audit`, active
-experiment/build scripts, sixteen DVC
+registries and executable claim ledger, the complete `src` package,
+active experiment/build scripts, 21 DVC
 pointers, aggregate evidence, canonical QMD, generated TeX, bibliography, and
 the scientific, type, drift, anonymity, compilation, and visual-QA gates.
 Credentials, local DVC configuration, absolute paths, protected historical

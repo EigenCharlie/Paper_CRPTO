@@ -59,18 +59,20 @@ labels, floats, and pagination.
 
 ## QA Record
 
-The pre-freeze closeout on 2026-07-14 produced the following current record:
+The pre-freeze closeout on 2026-07-15 produced the following current record:
 
 - official PDF pages: `29`;
 - pre-reference pages: `25` (references begin on page 26);
 - body preview pages: `22`;
-- supplement preview pages: `24`;
-- abstract words: `266`;
+- supplement preview pages: `29`;
+- abstract words: `249`;
 - `.blg` warnings: `0`;
 - undefined citations/references: `0`;
-- page-level visual inspection: `75/75` pages across the official, body, and
+- page-level visual inspection: `80/80` pages across the official, body, and
   supplement PDFs, rendered under
-  `.tmp_pdf_intake_benchmark/visual_qa_2026-07-14_v5/`.
+  `.tmp_pdf_intake_benchmark/visual_qa_2026-07-15_v6/`;
+- automated PDF inspection: one Letter page size per document, no blank page,
+  and no author identity in the official PDF metadata.
 
 ## Acceptance Criteria
 

@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import posixpath
 import re
+import subprocess
 from collections.abc import Iterator, Mapping
 from dataclasses import dataclass
 from pathlib import Path, PurePosixPath
@@ -13,7 +14,7 @@ import yaml
 
 from src.utils.artifact_descriptor import relative_artifact_descriptor
 
-_REGISTRY_SECTIONS = ("lineages", "diagnostics", "sensitivities")
+_REGISTRY_SECTIONS = ("lineages", "diagnostics", "sensitivities", "replay_dependencies")
 _IDENTITY_MARKERS = frozenset(
     {
         "run_tag",
@@ -22,6 +23,7 @@ _IDENTITY_MARKERS = frozenset(
         "status",
         "paper_role",
         "dvc_tracked",
+        "dvc_roots",
         "freeze_sha256",
     }
 )
@@ -36,8 +38,10 @@ class _RegistryUnit:
     location: tuple[str, ...]
     run_tag: str
     protocol_tag: str | None
+    protocol_commit: str | None
     paper_role: str | None
     declared_dvc_tracked: bool | None
+    dvc_roots: tuple[str, ...] | None
 
 
 def load_source_registry(
@@ -58,7 +62,7 @@ def load_source_registry(
         raise ValueError("Unexpected active evidence source registry status.")
 
     units = _validated_registry_units(payload)
-    run_tags = tuple(unit.run_tag for unit in _dvc_tracked_units(units))
+    tracked_units = _dvc_tracked_units(units)
     pointers = payload.get("dvc_pointers")
     if not isinstance(pointers, list) or not all(
         isinstance(item, str) and bool(item) for item in pointers
@@ -66,7 +70,9 @@ def load_source_registry(
         raise TypeError("Active evidence source registry dvc_pointers must be a string list.")
 
     expected = {
-        f"{prefix}/experiments/ijds_audit/{tag}.dvc" for tag in run_tags for prefix in _DVC_ROOTS
+        f"{prefix}/experiments/ijds_audit/{unit.run_tag}.dvc"
+        for unit in tracked_units
+        for prefix in (unit.dvc_roots or _DVC_ROOTS)
     }
     actual = set(pointers)
     if actual != expected or len(pointers) != len(expected):
@@ -79,6 +85,7 @@ def load_source_registry(
 
     if repo_root is not None:
         _verify_dvc_pointers(pointers, repo_root=repo_root)
+        _verify_protocol_tags(units, repo_root=repo_root)
     return payload
 
 
@@ -223,6 +230,7 @@ def _parse_registry_unit(
         )
 
     protocol_tag: str | None = None
+    protocol_commit: str | None = None
     if has_protocol_tag:
         protocol_tag = _required_text(identity, "protocol_tag", location=location)
         protocol_commit = _required_text(identity, "protocol_commit", location=location)
@@ -248,12 +256,33 @@ def _parse_registry_unit(
                 f"Registry identity {_format_location(location)}.dvc_tracked must be boolean."
             )
         declared_dvc_tracked = raw_dvc_tracked
+    dvc_roots: tuple[str, ...] | None = None
+    if "dvc_roots" in identity:
+        raw_roots = identity["dvc_roots"]
+        if declared_dvc_tracked is not True:
+            raise ValueError(
+                f"Registry identity {_format_location(location)}.dvc_roots requires "
+                "dvc_tracked=true."
+            )
+        if (
+            not isinstance(raw_roots, list)
+            or not raw_roots
+            or not all(isinstance(value, str) and value in _DVC_ROOTS for value in raw_roots)
+            or len(raw_roots) != len(set(raw_roots))
+        ):
+            raise ValueError(
+                f"Registry identity {_format_location(location)}.dvc_roots must be a "
+                f"nonempty unique subset of {list(_DVC_ROOTS)}."
+            )
+        dvc_roots = tuple(raw_roots)
     return _RegistryUnit(
         location=location,
         run_tag=run_tag,
         protocol_tag=protocol_tag,
+        protocol_commit=protocol_commit,
         paper_role=paper_role,
         declared_dvc_tracked=declared_dvc_tracked,
+        dvc_roots=dvc_roots,
     )
 
 
@@ -296,6 +325,28 @@ def _verify_dvc_pointers(pointers: list[str], *, repo_root: Path) -> None:
         if pointer_path.suffix != ".dvc" or not pointer_path.is_file():
             raise FileNotFoundError(f"Invalid active DVC pointer: {pointer_path}")
         _verify_dvc_pointer(pointer_path, display_path=pointer)
+
+
+def _verify_protocol_tags(units: tuple[_RegistryUnit, ...], *, repo_root: Path) -> None:
+    """Require every registered protocol tag to resolve to its declared commit."""
+    if not (repo_root / ".git").exists():
+        return
+    for unit in units:
+        if unit.protocol_tag is None or unit.protocol_commit is None:
+            continue
+        result = subprocess.run(
+            ["git", "rev-list", "-n", "1", unit.protocol_tag],
+            cwd=repo_root,
+            check=False,
+            capture_output=True,
+            text=True,
+        )
+        resolved = result.stdout.strip()
+        if result.returncode != 0 or resolved != unit.protocol_commit:
+            raise RuntimeError(
+                f"Registry protocol tag {unit.protocol_tag!r} does not resolve to "
+                f"declared commit {unit.protocol_commit}."
+            )
 
 
 def _verify_dvc_pointer(path: Path, *, display_path: str) -> None:

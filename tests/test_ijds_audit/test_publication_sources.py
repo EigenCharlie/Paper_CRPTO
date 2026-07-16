@@ -128,7 +128,7 @@ def test_active_evidence_registry_verifies_every_source() -> None:
         ROOT / "configs/ijds_active_evidence_sources.yaml",
         repo_root=ROOT,
     )
-    assert payload["schema_version"] == "2026-07-15.2"
+    assert payload["schema_version"] == "2026-07-15.3"
     assert set(sources) == {
         "v4_config",
         "v4_summary",
@@ -143,24 +143,63 @@ def test_active_evidence_registry_verifies_every_source() -> None:
         "structural_sensitivity_config",
         "structural_sensitivity_freeze",
         "structural_sensitivity_summary",
+        "rolling_origin_summary",
+        "rolling_origin_receipt",
+        "missingness_summary",
+        "missingness_receipt",
     }
-    assert len(payload["dvc_pointers"]) == 16
-    assert payload["lineages"]["binary_geometry"]["evaluation"]["run_tag"].endswith("2026-07-14-v3")
+    assert len(payload["dvc_pointers"]) == 21
+    assert payload["lineages"]["binary_geometry"]["evaluation"]["run_tag"].endswith("2026-07-15-v5")
 
 
-def test_active_registry_returns_eight_dvc_run_tags_in_causal_config_order() -> None:
+def test_active_registry_returns_all_dvc_run_tags_in_causal_config_order() -> None:
     payload = load_source_registry(ROOT / "configs/ijds_active_evidence_sources.yaml")
 
     assert active_lineage_run_tags(payload) == (
         "ijds-binary-geometry-frontier-v4-2026-07-12-v1",
-        "ijds-binary-geometry-frontier-v4-2026-07-14-v3",
+        "ijds-binary-geometry-frontier-v4-2026-07-15-v5",
         "ijds-normalized-objective-frontier-2026-07-13-v1c",
-        "ijds-normalized-objective-frontier-2026-07-14-v3",
+        "ijds-normalized-objective-frontier-2026-07-15-v5",
         "ijds-credit-risk-controls-2026-07-13-v1b",
-        "ijds-credit-risk-controls-2026-07-14-v3",
+        "ijds-credit-risk-controls-2026-07-15-v5",
         "ijds-endpoint-availability-sensitivity-2026-07-14-v1",
         "ijds-portfolio-structure-sensitivity-2026-07-15-v6",
+        "ijds-rolling-origin-2017-2026-07-15-v4",
+        "ijds-missingness-sensitivity-2026-07-15-v3",
+        "ijds-portfolio-structure-sensitivity-2026-07-15-v5",
     )
+
+
+def test_tracked_unit_can_declare_one_dvc_root(tmp_path: Path) -> None:
+    payload = _explicit_payload(tmp_path)
+    run_tag = "data-only-replay-dependency"
+    payload["replay_dependencies"] = {
+        "fixture": {
+            **_protocol_identity(
+                run_tag,
+                paper_role="non_evidence_replay_dependency",
+                dvc_tracked=True,
+                commit="4" * 40,
+            ),
+            "dvc_roots": ["data/processed"],
+        }
+    }
+    pointer = f"data/processed/experiments/ijds_audit/{run_tag}.dvc"
+    payload["dvc_pointers"].append(pointer)
+    registry_path = _materialize_registry(tmp_path, payload)
+
+    loaded = load_source_registry(registry_path, repo_root=tmp_path)
+
+    assert active_lineage_run_tags(loaded)[-1] == run_tag
+
+
+def test_registry_rejects_dvc_roots_on_untracked_unit(tmp_path: Path) -> None:
+    payload = _explicit_payload(tmp_path)
+    payload["diagnostics"]["raw_data_audit"]["dvc_roots"] = ["data/processed"]
+    registry_path = _write_registry(tmp_path, payload)
+
+    with pytest.raises(ValueError, match="requires dvc_tracked=true"):
+        load_source_registry(registry_path)
 
 
 def test_explicit_paper_roles_and_dvc_tracking_control_pointer_contract(tmp_path: Path) -> None:

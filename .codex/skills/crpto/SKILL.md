@@ -16,16 +16,18 @@ Read first:
 7. `configs/ijds_claim_ledger.yaml`
 8. `docs/research/ijds_endpoint_availability_sensitivity_protocol_2026-07-14.md`
 9. `docs/research/ijds_portfolio_structure_sensitivity_v6_protocol_2026-07-15.md`
-10. `reports/crpto/ijds_binary_geometry_frontier_v4_evidence.json`
-11. `docs/ACADEMIC_CONTEXT.md`
-12. `docs/SCOPE_AND_GOVERNANCE.md`
-13. `CONTRIBUTING.md`
-14. `EXTRACTION_MANIFEST.md`
+10. `docs/research/ijds_rolling_origin_endpoint_v3_protocol_2026-07-15.md`
+11. `docs/research/ijds_missingness_sensitivity_protocol_2026-07-15.md`
+12. `reports/crpto/ijds_binary_geometry_frontier_v4_evidence.json`
+13. `docs/ACADEMIC_CONTEXT.md`
+14. `docs/SCOPE_AND_GOVERNANCE.md`
+15. `CONTRIBUTING.md`
+16. `EXTRACTION_MANIFEST.md`
 
 Active evidence:
 
 - outcome-free freeze: `ijds-binary-geometry-frontier-v4-2026-07-12-v1`;
-- verified evaluation: `ijds-binary-geometry-frontier-v4-2026-07-14-v3`;
+- verified evaluation: `ijds-binary-geometry-frontier-v4-2026-07-15-v5`;
 - complete residual specification: eight consecutive six-month windows;
 - primary OOT: 376,890 candidates in fifteen monthly USD 1 million menus;
 - coverage learners: CatBoost/Platt primary plus numeric logistic, monotonic
@@ -39,9 +41,15 @@ Active evidence:
 - exact point-cap frontier: 3,067 HiGHS basis/support endpoints;
 - unresolved outcomes: retained with sharp common-outcome bounds.
 - evaluation-endpoint availability: all lags 0, 3, 6, 8, and 12 months are
-  reported without selection; the 6-month slice reconciles exactly to V3.
+  reported without selection; the 6-month slice reconciles exactly to the
+  active evaluation.
 - portfolio structure: all 36 budget--purpose-cap--LGD scenarios are reported
-  without selection; the baseline reconciles exactly to V3.
+  without selection; the baseline reconciles exactly to the active evaluation.
+- endpoint resolution is partitioned exhaustively into 307,842 fully paid by
+  cutoff, 56,972 charged off by cutoff, 11,551 nonterminal, 47 terminal after
+  cutoff, and 478 terminal with missing availability date.
+- three missingness encodings and a second retrospective origin are complete,
+  bounded recurrences; neither selects a representation or model.
 
 Headline evidence:
 
@@ -67,8 +75,8 @@ Headline evidence:
 - the six ruler-coordinate tracks are not 48 independent replications;
 - every structural scenario retains adverse default and miscoverage cells;
   zero scenarios are uniformly favorable or uniformly adverse;
-- the factorial simulation is claim-bearing for coverage mechanism only; its
-  portfolio component is degenerate.
+- for every binary contrast, identification width equals the number of
+  unresolved selected rows times the outcome-switch coefficient.
 
 The archive and earlier results were inspected. Each retained evaluation is
 protocol-locked before its corresponding outcome join, but the study is not a
@@ -100,7 +108,7 @@ Preserve these distinctions:
 
 Do not claim a learner, gamma, ruler, coordinate, or policy winner, universal
 direction, selected-set validity, Markov/tail certificate, causal effect, live
-deployment result, or portfolio mechanism from the V4 simulation.
+deployment result, missingness mechanism, or independent temporal replication.
 
 ## Evidence Workflow
 
@@ -121,7 +129,7 @@ uv run dvc status --no-updates
 
 The active builder verifies the V4, two-ruler, raw-data, credit-control,
 endpoint-sensitivity, and structural-sensitivity manifests/freezes and every
-artifact descriptor. The active capsule contains sixteen DVC pointers. It emits only
+artifact descriptor. The active capsule contains 21 DVC pointers. It emits only
 `crpto_ijds_v4_*` tables/figures and
 `ijds_binary_geometry_frontier_v4_evidence.json`. Consecutive builds must be
 byte-identical. The canonical body is `paper/CRPTO_ijds.qmd`; generate official

@@ -13,12 +13,17 @@ path.
 - **Endpoint-corrected evaluations:** source descriptors and hashes are verified
   before keyed outcome joins. Terminal status is reconstructed as observable by
   the cutoff; 364,814 primary outcomes are resolved and 12,076 remain in sharp
-  bounds. The distributed file is not a verified point-in-time snapshot.
+  bounds. Resolved and unresolved rows are partitioned into five mutually
+  exclusive endpoint-reason categories. The distributed file is not a verified
+  point-in-time snapshot.
 - **Complete specification:** all eight residual windows and five coverage
   learners are reported; only the primary learner enters five gammas, two
   rulers, three coordinates, and supporting fixed-cap policies. No result is
   selected. Evaluation-endpoint lags 0, 3, 6, 8, and 12 are all reported;
   conformal-fit label timing is a separate one-factor sensitivity.
+- **Bounded recurrences:** three feature-semantics-preserving missingness
+  encodings and one later retrospective origin are reported completely. They
+  do not select an encoding or constitute an independent replication.
 
 The archive is a retrospective audit of previously inspected data. It is not a
 preregistration, prospective trial, causal study, or selected-set guarantee.
@@ -31,7 +36,7 @@ preregistration, prospective trial, causal study, or selected-set guarantee.
 | `online_supplement.pdf` | Anonymous proofs, full protocol, sensitivities, and limitations |
 | `source/` | Sanitized active method, evidence builder, and manuscript source |
 | `evidence/outcome_free/` | Opaque models, recipes, panels, and allocations |
-| `evidence/evaluation/` | Opaque evaluation, contrasts, simulation, and receipts |
+| `evidence/evaluation/` | Opaque evaluation, contrasts, sensitivities, and receipts |
 | `tests/` | Scientific, claim-sync, and anonymity tests |
 | `environment/` | Dependency lock and setup instructions |
 | `ARCHIVE_SHA256.txt` | Archive-local checksums created after sanitization |

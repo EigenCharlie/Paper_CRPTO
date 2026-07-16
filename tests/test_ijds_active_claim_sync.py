@@ -1,4 +1,4 @@
-"""Drift guards for the active V4, two-ruler, and credit-control evidence."""
+"""Drift guards for the active IJDS evidence and manuscript surfaces."""
 
 from __future__ import annotations
 
@@ -14,8 +14,8 @@ from scripts.build_ijds_submission_tex import render_submission_tex
 
 REPO = Path(__file__).resolve().parents[1]
 EVIDENCE = REPO / "reports/crpto/ijds_binary_geometry_frontier_v4_evidence.json"
-RUN = "ijds-binary-geometry-frontier-v4-2026-07-14-v3"
-COMMIT = "688f75dc4f285c75bc499c9e041dd30fb3acd70d"
+RUN = "ijds-binary-geometry-frontier-v4-2026-07-15-v5"
+COMMIT = "e2bba580a0b07c145bd64ff61440973d6e31349b"
 SURFACES = (
     REPO / "paper/CRPTO_ijds.qmd",
     REPO / "paper/supplement_ijds.qmd",
@@ -54,7 +54,7 @@ def _normalize(text: str) -> str:
 def test_active_evidence_locks_v4_lineage_and_claim_boundary() -> None:
     evidence = _json(EVIDENCE)
 
-    assert evidence["status"] == "active_ijds_v4_endpoint_corrected_paper_facing_evidence"
+    assert evidence["status"] == "active_ijds_v5_endpoint_reason_audited_paper_facing_evidence"
     assert evidence["run_tag"] == RUN
     assert evidence["protocol_commit"] == COMMIT
     assert evidence["claim_boundary"] == {
@@ -230,11 +230,11 @@ def test_two_ruler_diagnostic_is_finite_complete_and_nonselective() -> None:
         "window_endpoint_contrasts": 48,
         "monthly_endpoint_contrasts": 720,
         "metric_direction_cells": 144,
-        "outcome_audit_rows": 7,
+        "outcome_audit_rows": 8,
     }
     assert challenger["primary_oot_unresolved"] == 12076
     assert challenger["manifest"]["sha256"] == (
-        "76e3643b92a537c9e0cea4d131f8085d4c843ead0cb95362f19a3442207af96e"
+        "9ee55a2522349c8520f308bc69273774dd48964847dfd340b78a7be46474cd7f"
     )
 
     rows = {(row["ruler"], row["coordinate"]): row for row in challenger["rows"]}
@@ -289,7 +289,7 @@ def test_endpoint_availability_sensitivity_is_complete_and_nonselective() -> Non
     assert sensitivity["charged_off_lags_months"] == [0, 3, 6, 8, 12]
     assert sensitivity["endpoint_or_result_selected"] is False
     assert sensitivity["allocation_refit"] is False
-    assert sensitivity["six_month_endpoint_reconciles_exactly_to_active_v3"] is True
+    assert sensitivity["six_month_endpoint_reconciles_to_active_evaluation"] is True
     assert sensitivity["fit_label_lag_crossed_factorially"] is False
     assert len(sensitivity["rows"]) == 5
     assert {row["charged_off_lag_months"] for row in sensitivity["rows"]} == {
@@ -307,7 +307,7 @@ def test_portfolio_structure_sensitivity_is_complete_and_nonselective() -> None:
     assert sensitivity["scenario_count"] == 36
     assert sensitivity["complete_cartesian_grid"] is True
     assert sensitivity["scenario_or_result_selected"] is False
-    assert sensitivity["baseline_reconciles_exactly_to_active_v3"] is True
+    assert sensitivity["baseline_reconciles_to_active_evaluation"] is True
     assert sensitivity["every_scenario_has_adverse_default_and_miscoverage_cells"] is True
     assert sensitivity["minimum_adverse_default_cells_per_scenario"] == 17
     assert sensitivity["minimum_adverse_miscoverage_cells_per_scenario"] == 21
@@ -331,15 +331,28 @@ def test_portfolio_structure_sensitivity_is_complete_and_nonselective() -> None:
     assert len(sensitivity["rows"]) == 36
 
 
-def test_simulation_is_explicitly_non_claim_bearing_for_portfolios() -> None:
-    simulation = _json(EVIDENCE)["simulation"]
+def test_endpoint_reasons_missingness_and_second_origin_are_bounded() -> None:
+    evidence = _json(EVIDENCE)
+    endpoint = evidence["evaluation_endpoint"]
+    assert endpoint["reason_census_partitions_primary_candidates"] is True
+    assert endpoint["primary_oot_nonterminal_or_unresolved_status"] == 11551
+    assert endpoint["primary_oot_terminal_after_cutoff"] == 47
+    assert endpoint["primary_oot_terminal_availability_date_missing"] == 478
+    assert endpoint["missingness_mechanism_identified"] is False
 
-    assert simulation["scope"] == "coverage_mechanism_only_portfolio_component_degenerate"
-    assert simulation["repetitions"] == 19200
-    assert simulation["cells"] == 192
-    assert simulation["portfolio_claim_allowed"] is False
-    assert simulation["same_cap_allocation_distance_mean"] == pytest.approx(2.083333333e-6)
-    assert simulation["c2_allocation_distance_mean"] == pytest.approx(1.041666667e-6)
+    missingness = evidence["sensitivity"]["missingness_encoding"]
+    assert missingness["all_three_all_eight_upper_below_nominal"] is True
+    assert missingness["model_or_encoding_selected"] is False
+    assert missingness["missingness_mechanism_identified"] is False
+    assert missingness["portfolio_claim_authorized"] is False
+    assert len(missingness["rows"]) == 3
+
+    rolling = evidence["sensitivity"]["rolling_origin"]
+    assert rolling["origin_count"] == 2
+    assert rolling["window_cells"] == 16
+    assert rolling["all_sixteen_upper_below_nominal"] is True
+    assert rolling["model_or_origin_selected"] is False
+    assert rolling["independent_replication_claim_authorized"] is False
 
 
 def test_evidence_manifest_hashes_every_active_output() -> None:
@@ -376,9 +389,13 @@ def test_manuscript_surfaces_share_v4_claims_and_retire_old_headlines() -> None:
         "376,890",
         "364,814",
         "12,076",
+        "307,842",
+        "56,972",
+        "478",
         "6,240",
         "9,134.34",
         "5,603.66",
+        "14,738",
         "155,937.27",
         "44 loan-month positions",
         "0.1017",
@@ -388,7 +405,9 @@ def test_manuscript_surfaces_share_v4_claims_and_retire_old_headlines() -> None:
         "3,067",
         "216",
         "72",
-        "standardized payoff",
+        "0.884332",
+        "0.874768",
+        "status-indexed",
         "selected-set",
     )
     retired = (
@@ -400,12 +419,13 @@ def test_manuscript_surfaces_share_v4_claims_and_retire_old_headlines() -> None:
         "selected guardrail",
         "all nine policies are co-primary",
         "$179,327.59",
+        "active v3",
+        "endpoint-recovery direction reconciliation",
     )
     for surface in SURFACES:
         text = _normalize(surface.read_text(encoding="utf-8"))
         assert not [token for token in active if _normalize(token) not in text], surface
         assert not [token for token in retired if _normalize(token) in text], surface
-        assert all(token in text for token in ("365,339", "11,551", "v2", "v3", "promoted"))
 
 
 def test_official_tex_is_deterministically_generated_from_qmd() -> None:

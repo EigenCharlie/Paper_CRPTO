@@ -1,4 +1,4 @@
-schema_version: "2026-07-15.2"
+schema_version: "2026-07-15.3"
 status: "active_ijds_paper_evidence_source_registry"
 
 lineages:
@@ -11,9 +11,9 @@ lineages:
       paper_role: "outcome_free_freeze"
       dvc_tracked: true
     evaluation:
-      run_tag: "ijds-binary-geometry-frontier-v4-2026-07-14-v3"
-      protocol_tag: "protocol/ijds-binary-geometry-frontier-v4-2026-07-14-v3"
-      protocol_commit: "688f75dc4f285c75bc499c9e041dd30fb3acd70d"
+      run_tag: "ijds-binary-geometry-frontier-v4-2026-07-15-v5"
+      protocol_tag: "protocol/ijds-binary-geometry-frontier-v4-2026-07-15-v5"
+      protocol_commit: "e2bba580a0b07c145bd64ff61440973d6e31349b"
       paper_role: "verified_evaluation"
       dvc_tracked: true
   two_ruler:
@@ -25,9 +25,9 @@ lineages:
       paper_role: "outcome_free_freeze"
       dvc_tracked: true
     evaluation:
-      run_tag: "ijds-normalized-objective-frontier-2026-07-14-v3"
-      protocol_tag: "protocol/ijds-normalized-objective-frontier-2026-07-14-v3"
-      protocol_commit: "a1ae516a6c9674686dba245cb275475073b298a0"
+      run_tag: "ijds-normalized-objective-frontier-2026-07-15-v5"
+      protocol_tag: "protocol/ijds-normalized-objective-frontier-2026-07-15-v5"
+      protocol_commit: "e2bba580a0b07c145bd64ff61440973d6e31349b"
       paper_role: "verified_evaluation"
       dvc_tracked: true
   credit_controls:
@@ -39,9 +39,9 @@ lineages:
       paper_role: "outcome_free_freeze"
       dvc_tracked: true
     evaluation:
-      run_tag: "ijds-credit-risk-controls-2026-07-14-v3"
-      protocol_tag: "protocol/ijds-credit-risk-controls-2026-07-14-v3"
-      protocol_commit: "688f75dc4f285c75bc499c9e041dd30fb3acd70d"
+      run_tag: "ijds-credit-risk-controls-2026-07-15-v5"
+      protocol_tag: "protocol/ijds-credit-risk-controls-2026-07-15-v5"
+      protocol_commit: "e2bba580a0b07c145bd64ff61440973d6e31349b"
       paper_role: "verified_evaluation"
       dvc_tracked: true
   diagnostics:
@@ -76,50 +76,76 @@ sensitivities:
     protocol_commit: "490c653a43e2003d83184f47e1277bd2d4390c43"
     paper_role: "complete_budget_concentration_lgd_sensitivity"
     dvc_tracked: true
+  rolling_origin:
+    run_tag: "ijds-rolling-origin-2017-2026-07-15-v4"
+    protocol_tag: "protocol/ijds-rolling-origin-stability-2026-07-15-v4"
+    protocol_commit: "e2bba580a0b07c145bd64ff61440973d6e31349b"
+    paper_role: "two_origin_retrospective_recurrence"
+    dvc_tracked: true
+  missingness_encoding:
+    run_tag: "ijds-missingness-sensitivity-2026-07-15-v3"
+    protocol_tag: "protocol/ijds-missingness-sensitivity-2026-07-15-v3"
+    protocol_commit: "199afb083da37af6a51d5ba9e3c4d6280b952fe9"
+    paper_role: "feature_semantics_preserving_encoding_sensitivity"
+    dvc_tracked: true
+
+replay_dependencies:
+  portfolio_structure_v5_shards:
+    run_tag: "ijds-portfolio-structure-sensitivity-2026-07-15-v5"
+    protocol_tag: "protocol/ijds-portfolio-structure-sensitivity-2026-07-15-v5"
+    protocol_commit: "481528a6973eded94189435957f9b8064bc4bb06"
+    paper_role: "non_evidence_structural_v6_replay_dependency"
+    dvc_tracked: true
+    dvc_roots: ["data/processed"]
 
 dvc_pointers:
   - "data/processed/experiments/ijds_audit/ijds-binary-geometry-frontier-v4-2026-07-12-v1.dvc"
   - "models/experiments/ijds_audit/ijds-binary-geometry-frontier-v4-2026-07-12-v1.dvc"
-  - "data/processed/experiments/ijds_audit/ijds-binary-geometry-frontier-v4-2026-07-14-v3.dvc"
-  - "models/experiments/ijds_audit/ijds-binary-geometry-frontier-v4-2026-07-14-v3.dvc"
+  - "data/processed/experiments/ijds_audit/ijds-binary-geometry-frontier-v4-2026-07-15-v5.dvc"
+  - "models/experiments/ijds_audit/ijds-binary-geometry-frontier-v4-2026-07-15-v5.dvc"
   - "data/processed/experiments/ijds_audit/ijds-normalized-objective-frontier-2026-07-13-v1c.dvc"
   - "models/experiments/ijds_audit/ijds-normalized-objective-frontier-2026-07-13-v1c.dvc"
-  - "data/processed/experiments/ijds_audit/ijds-normalized-objective-frontier-2026-07-14-v3.dvc"
-  - "models/experiments/ijds_audit/ijds-normalized-objective-frontier-2026-07-14-v3.dvc"
+  - "data/processed/experiments/ijds_audit/ijds-normalized-objective-frontier-2026-07-15-v5.dvc"
+  - "models/experiments/ijds_audit/ijds-normalized-objective-frontier-2026-07-15-v5.dvc"
   - "data/processed/experiments/ijds_audit/ijds-credit-risk-controls-2026-07-13-v1b.dvc"
   - "models/experiments/ijds_audit/ijds-credit-risk-controls-2026-07-13-v1b.dvc"
-  - "data/processed/experiments/ijds_audit/ijds-credit-risk-controls-2026-07-14-v3.dvc"
-  - "models/experiments/ijds_audit/ijds-credit-risk-controls-2026-07-14-v3.dvc"
+  - "data/processed/experiments/ijds_audit/ijds-credit-risk-controls-2026-07-15-v5.dvc"
+  - "models/experiments/ijds_audit/ijds-credit-risk-controls-2026-07-15-v5.dvc"
   - "data/processed/experiments/ijds_audit/ijds-endpoint-availability-sensitivity-2026-07-14-v1.dvc"
   - "models/experiments/ijds_audit/ijds-endpoint-availability-sensitivity-2026-07-14-v1.dvc"
   - "data/processed/experiments/ijds_audit/ijds-portfolio-structure-sensitivity-2026-07-15-v6.dvc"
   - "models/experiments/ijds_audit/ijds-portfolio-structure-sensitivity-2026-07-15-v6.dvc"
+  - "data/processed/experiments/ijds_audit/ijds-rolling-origin-2017-2026-07-15-v4.dvc"
+  - "models/experiments/ijds_audit/ijds-rolling-origin-2017-2026-07-15-v4.dvc"
+  - "data/processed/experiments/ijds_audit/ijds-missingness-sensitivity-2026-07-15-v3.dvc"
+  - "models/experiments/ijds_audit/ijds-missingness-sensitivity-2026-07-15-v3.dvc"
+  - "data/processed/experiments/ijds_audit/ijds-portfolio-structure-sensitivity-2026-07-15-v5.dvc"
 
 sources:
   v4_config:
-    path: "configs/experiments/ijds_binary_geometry_frontier_v4_2026-07-14_v3.yaml"
-    bytes: 1232
-    sha256: "5123698bd6d21a0531f81ce7b26edc093dc49452e13aa531166c5ccc36400eca"
+    path: "configs/experiments/ijds_binary_geometry_frontier_v4_2026-07-15_v5.yaml"
+    bytes: 1371
+    sha256: "c749befbd0ab7e0f8d6fcded7e7c730cae998032f897f65c7e7673d2a12c3715"
   v4_summary:
-    path: "models/experiments/ijds_audit/ijds-binary-geometry-frontier-v4-2026-07-14-v3/binary_geometry_frontier_v4_summary.json"
-    bytes: 17794
-    sha256: "c05a6048fd6e259d53b5901b975a5970256bdd20901fdf236112e85930bafa5f"
+    path: "models/experiments/ijds_audit/ijds-binary-geometry-frontier-v4-2026-07-15-v5/binary_geometry_frontier_v4_summary.json"
+    bytes: 58584
+    sha256: "07e793df7e457c6afa946e04d3e95d30307faa48424249659ae8d921ea060a3f"
   v4_receipt:
-    path: "models/experiments/ijds_audit/ijds-binary-geometry-frontier-v4-2026-07-14-v3/execution_receipt.json"
+    path: "models/experiments/ijds_audit/ijds-binary-geometry-frontier-v4-2026-07-15-v5/execution_receipt.json"
     bytes: 1142
-    sha256: "e4edf9ea250195710d1bac37296a745f665fb15593717d307ce48d5fd37b3fa8"
+    sha256: "b67cf57d200e71417f4a0b51ac2a2978b8b5105396ebfe3b7647cc1554d2aced"
   two_ruler_manifest:
-    path: "models/experiments/ijds_audit/ijds-normalized-objective-frontier-2026-07-14-v3/verified_evaluation_manifest.json"
-    bytes: 16944
-    sha256: "76e3643b92a537c9e0cea4d131f8085d4c843ead0cb95362f19a3442207af96e"
+    path: "models/experiments/ijds_audit/ijds-normalized-objective-frontier-2026-07-15-v5/verified_evaluation_manifest.json"
+    bytes: 18231
+    sha256: "9ee55a2522349c8520f308bc69273774dd48964847dfd340b78a7be46474cd7f"
   credit_summary:
-    path: "models/experiments/ijds_audit/ijds-credit-risk-controls-2026-07-14-v3/credit_risk_controls_summary.json"
-    bytes: 12473
-    sha256: "c64bb3088771d7f3c9a2fb550bbd8ee9a789a5e340054e09f3126656b6a89ca7"
+    path: "models/experiments/ijds_audit/ijds-credit-risk-controls-2026-07-15-v5/credit_risk_controls_summary.json"
+    bytes: 23359
+    sha256: "37c0a5c224b62ee3f47259aea4231df26ea184d3666e7fab80431ad26d611715"
   credit_receipt:
-    path: "models/experiments/ijds_audit/ijds-credit-risk-controls-2026-07-14-v3/execution_receipt.json"
+    path: "models/experiments/ijds_audit/ijds-credit-risk-controls-2026-07-15-v5/execution_receipt.json"
     bytes: 826
-    sha256: "da07c576b7a9946c2fec1ae4c3f0e9958dfe42412d86c961516cfeb8aff3e452"
+    sha256: "179016a1c064318502cc11a7f197db0656eff8cf3f896e0e1905ddc1a9f994db"
   raw_data_audit:
     path: "reports/crpto/data_audit/ijds-raw-data-contract-2026-07-14-v2/evidence.json"
     bytes: 3654
@@ -148,3 +174,19 @@ sources:
     path: "models/experiments/ijds_audit/ijds-portfolio-structure-sensitivity-2026-07-15-v6/structural_sensitivity_summary.json"
     bytes: 8091
     sha256: "240aef92e9eb204d6a9dd3eda388544face71118c63509476087c6baa461b853"
+  rolling_origin_summary:
+    path: "models/experiments/ijds_audit/ijds-rolling-origin-2017-2026-07-15-v4/binary_geometry_frontier_v4_summary.json"
+    bytes: 21830
+    sha256: "ab1bf51d5a6f54592276ec33de4affda6ff5327e6c2c362327f08089b09ff4a8"
+  rolling_origin_receipt:
+    path: "models/experiments/ijds_audit/ijds-rolling-origin-2017-2026-07-15-v4/execution_receipt.json"
+    bytes: 1134
+    sha256: "d64ef87ce6e1a2f7f0493ed17e009bf8349f68546ed137d0cafd74a6292edb0a"
+  missingness_summary:
+    path: "models/experiments/ijds_audit/ijds-missingness-sensitivity-2026-07-15-v3/missingness_sensitivity_summary.json"
+    bytes: 10170
+    sha256: "33d4c760746b8c860d441fc5a461fd94affbe06c0bcfa47a69aa5a7aef077ebe"
+  missingness_receipt:
+    path: "models/experiments/ijds_audit/ijds-missingness-sensitivity-2026-07-15-v3/execution_receipt.json"
+    bytes: 574
+    sha256: "85f1da84b2961d1fcbb2bc3c45f0e4b970d1ed011e8023e248db410230b1186d"

@@ -32,6 +32,8 @@ active_scientific_contract:
   lineage_and_dvc_authority: configs/ijds_active_evidence_sources.yaml
 
   active_code_surface:
+    source_roots:
+      - src
     paper_pipeline:
       - scripts/build_ijds_binary_geometry_frontier_v4_evidence.py
       - scripts/check_publication_integrity.py
@@ -46,6 +48,7 @@ active_scientific_contract:
       - scripts/experiments/run_ijds_credit_risk_controls.py
       - scripts/experiments/run_ijds_label_lag_sensitivity.py
       - scripts/experiments/run_ijds_endpoint_availability_sensitivity.py
+      - scripts/experiments/run_ijds_missingness_sensitivity.py
       - scripts/experiments/run_ijds_portfolio_structure_sensitivity.py
       - scripts/experiments/run_ijds_policy_support_tie_audit.py
     historical_execution_in_active_capsule: false
@@ -77,7 +80,9 @@ active_scientific_contract:
     endpoint: >-
       Terminal status is conservatively reconstructed as observable by the
       cutoff; later terminal statuses and nonterminal rows remain unresolved.
-    payoff: "Plug-in (1-p)r-p*LGD and realized (1-Y)r-Y*LGD."
+    payoff: >-
+      Plug-in (1-p)r-p*LGD and status-indexed standardized proxy
+      (1-Y)r-Y*LGD; neither is a cash-flow return, IRR, NPV, or welfare measure.
 
   required_artifacts:
     - reports/crpto/ijds_binary_geometry_frontier_v4_evidence.json
@@ -94,6 +99,9 @@ active_scientific_contract:
     - reports/crpto/tables/crpto_ijds_v4_tableS5_label_lag_sensitivity.csv
     - reports/crpto/tables/crpto_ijds_v4_tableS6_endpoint_availability_sensitivity.csv
     - reports/crpto/tables/crpto_ijds_v4_tableS7_portfolio_structure_sensitivity.csv
+    - reports/crpto/tables/crpto_ijds_v4_tableS8_endpoint_resolution.csv
+    - reports/crpto/tables/crpto_ijds_v4_tableS9_missingness_encoding_sensitivity.csv
+    - reports/crpto/tables/crpto_ijds_v4_tableS10_rolling_origin_recurrence.csv
     - reports/crpto/figures/crpto_ijds_v4_fig1_coverage.pdf
     - reports/crpto/figures/crpto_ijds_v4_fig1_coverage.png
     - reports/crpto/figures/crpto_ijds_v4_fig2_phase_transition.pdf
@@ -109,7 +117,7 @@ claim_boundaries:
     - "Sharp bounds are partial identification, not confidence intervals."
     - "Retrospective contrasts are not causal, prospective, or confirmatory."
     - "The archive is not a verified point-in-time snapshot."
-    - "Standardized payoff is not cash-flow return or welfare."
+    - "The status-indexed payoff proxy is not cash-flow return, NPV, IRR, or welfare."
   forbidden:
     - "Selected model, gamma, ruler, coordinate, cap, comparator, or policy."
     - "Universal portfolio direction or selected-set conformal guarantee."
