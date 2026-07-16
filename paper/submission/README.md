@@ -69,8 +69,7 @@ The pre-freeze closeout on 2026-07-15 produced the following current record:
 - `.blg` warnings: `0`;
 - undefined citations/references: `0`;
 - page-level visual inspection: `80/80` pages across the official, body, and
-  supplement PDFs, rendered under
-  `.tmp_pdf_intake_benchmark/visual_qa_2026-07-15_v6/`;
+  supplement PDFs; transient page renders were discarded after inspection;
 - automated PDF inspection: one Letter page size per document, no blank page,
   and no author identity in the official PDF metadata.
 

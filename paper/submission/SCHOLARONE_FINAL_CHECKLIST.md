@@ -33,7 +33,8 @@ living closeout checklist, not evidence that the package is final.
 ## Build and Numerical QA
 
 - [ ] `just ijds-active-check` passes.
-- [ ] `just validate-champion` and `just drift-gate` pass.
+- [ ] `just validate-champion-strict`, `just type-check`, and
+      `just type-check-fast` pass.
 - [ ] Full active tests, Ruff, mypy, and ty pass.
 - [ ] Generated TeX is current with QMD.
 - [ ] `.blg` has no warnings.

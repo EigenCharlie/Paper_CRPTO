@@ -1648,7 +1648,7 @@ def _build_evidence(staging_root: Path) -> Path:
     )
     endpoint_by_reason = endpoint_resolution_table.set_index("snapshot_resolution")
     evidence = {
-        "schema_version": "2026-07-15.3",
+        "schema_version": "2026-07-15.4",
         "status": "active_ijds_v5_endpoint_reason_audited_paper_facing_evidence",
         "source_registry": {
             "schema_version": str(registry["schema_version"]),

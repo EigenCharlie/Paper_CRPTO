@@ -1,7 +1,6 @@
 # CRPTO Manuscript Workspace
 
 This directory contains one active IJDS manuscript and one online supplement.
-The Quarto book and historical paper drafts are not claim sources.
 
 ## Active Sources
 
@@ -19,9 +18,9 @@ declared cutoff. All 376,890 primary candidates remain in the menus; 364,814
 are resolved and 12,076 enter sharp binary bounds. No learner, window, gamma,
 ruler, coordinate, comparator, or policy is selected.
 
-Historical selected-policy, compact-v7, pool93, external-transfer, and A1--A40
-materials remain recoverable from Git/DVC but are outside the active capsule.
-`CRPTO_ijds.qmd` is the only body source; never edit generated TeX directly.
+Earlier manuscript versions are outside the active capsule and preserved in
+Git history and `D:\crpto_legacy`. `CRPTO_ijds.qmd` is the only body source;
+never edit generated TeX directly.
 
 ## Build
 
@@ -38,11 +37,11 @@ resolve citations, labels, floats, and pagination.
 
 ```powershell
 just ijds-active-check
-just paper-submission-tex-check
-just paper-submission-official-scan
+just paper-tex-check
+just paper-official-scan
 just validate-champion
-just drift-gate
-uv run dvc status --no-updates
+just type-check
+just type-check-fast
 git status --short
 ```
 

@@ -1,9 +1,0 @@
-dataset,metric,estimate,ci_low,ci_high,method,n
-Prosper,auc_roc,0.7072982821805249,0.6955733258816219,0.719023238479428,Hanley-McNeil large-sample approximation,10531
-Prosper,coverage_90,0.920425410692242,0.9151019142826232,0.9254422965261512,Wilson binomial interval,10531
-Prosper,coverage_alpha01,0.9943025353717596,0.9926737771462196,0.995570805432002,Wilson binomial interval,10531
-Prosper,robust_objective,199419.0887756553,186546.04708826495,213330.69865323557,Funded-loan contribution bootstrap; solver input uncertainty is not resampled,234
-Freddie FM48,auc_roc,0.7838634726333499,0.7799265563524038,0.7878003889142959,Hanley-McNeil large-sample approximation,1396053
-Freddie FM48,coverage_90,0.974523173547136,0.9742604888155064,0.974783246836056,Wilson binomial interval,1396053
-Freddie FM48,coverage_alpha01,0.9907116706887202,0.9905511894862964,0.9908694513583008,Wilson binomial interval,1396053
-Freddie FM48,robust_objective,1291227.5801824057,1062741.9024937386,1535012.3146356042,Funded-loan contribution bootstrap; solver input uncertainty is not resampled,143

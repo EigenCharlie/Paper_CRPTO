@@ -1,201 +1,99 @@
-# CRPTO scope and governance
+# Scope And Governance
 
-This repository is the standalone home for the CRPTO paper, journal package,
-Quarto book and reproducibility pipeline. It is intentionally scoped to the
-CRPTO paper lane only; extraction history and lessons are kept in
-`docs/PROJECT_HISTORY.md`.
+## Public Scope
 
-## Public scope
+This repository contains the active CRPTO IJDS research object:
 
-CRPTO covers:
+- exact data-role, endpoint, and feature contracts;
+- frozen prediction and binary conformal coverage controls;
+- outcome-blind portfolio construction and exact comparator analysis;
+- registered aggregate evidence, tables, and figures;
+- the anonymous paper, supplement, and official submission build;
+- tests and CI needed to reproduce and audit those outputs.
 
-- Lending Club credit-risk data preparation used by the frozen paper run.
-- Canonical PD champion, calibration contract and model-risk documentation.
-- Conformal prediction intervals and diagnostics used by the paper evidence.
-- Robust predict-then-optimize portfolio policy and SPO/funded-set analyses.
-- Fair-lending, governance, MRM, traceability and journal appendix material.
-- Quarto book, manuscript draft, tables, figures and publication exports.
-- CI, dbt, DVC metadata, MLflow/DagsHub integration templates and local skills.
+It does not contain a production service, a live lending policy, an experiment
+dashboard, or a narrative of prior CRPTO versions.
 
-CRPTO does not cover:
+## Authorities
 
-- Parent-project Streamlit or FastAPI apps.
-- Paper 2/Paper 3 lanes, IFRS9, survival, causal, quantum/GPU labs or the
-  insights factory, except where a CRPTO chapter cites prior context.
-- New model-training research unless it is explicitly isolated from the frozen
-  champion or run under a new tag.
+| Concern | Authority |
+|---|---|
+| Active prose claims | `docs/research/active_claims_2026-07-14.md` |
+| Lineage and DVC identities | `configs/ijds_active_evidence_sources.yaml` |
+| Executable qualitative claims | `configs/ijds_claim_ledger.yaml` |
+| Numeric paper evidence | `reports/crpto/ijds_binary_geometry_frontier_v4_evidence.json` |
+| Active code surface | `configs/crpto_publication_targets.yaml` |
+| Historical protected hashes | `EXTRACTION_MANIFEST.json` |
 
-## Active paper contract
+No memo, old manuscript, stopped protocol, or unregistered run may override
+these files.
 
-The current IJDS paper is the complete-window binary-geometry and
-decision-estimand audit:
+## Safe Operations
 
-- outcome-free run `ijds-binary-geometry-frontier-v4-2026-07-12-v1` and
-  endpoint-reason-audited evaluation `ijds-binary-geometry-frontier-v4-2026-07-15-v5`;
-- outcome-free two-ruler run
-  `ijds-normalized-objective-frontier-2026-07-13-v1c` and hash-linked
-  endpoint-reason-audited evaluation `ijds-normalized-objective-frontier-2026-07-15-v5`;
-- one status-independent 640,543-loan design universe, including 376,890
-  primary OOT and 88,227 extension candidates;
-- CatBoost/Platt fitting plus logistic, monotonic CatBoost, platform-signal
-  WOE/IV, and pricing-excluded WOE/IV coverage controls;
-- all eight availability-safe six-month residual windows, with learner-specific
-  score taxonomies fixed in 2011;
-- four declared taxonomies, a five-gamma path, two rulers, and three interior
-  coordinates reported without selection; the nine fixed-cap guardrails are
-  supporting exact-frontier diagnostics;
-- coherent standardized payoff proxy `(1-p)r-p*LGD` in the objective and
-  `(1-Y)r-Y*LGD` in evaluation; this is not cash-flow return, IRR, NPV, or
-  welfare;
-- 15 separate monthly USD 1 million decisions from April 2016 through June
-  2017;
-- unresolved outcomes retained with sharp paired common-outcome bounds;
-- all eight upper bounds below 0.90 for each of five declared learner
-  specifications;
-- a W7--W8 binary residual phase transition in CatBoost stratum 2;
-- a 6,240-solve two-ruler freeze whose endpoint direction changes with ruler
-  and coordinate;
-- objective-matched `.25` bounds crossing zero, unfavorable `.50`, and mostly
-  unidentified `.75` contrasts under the reconstructed evaluation endpoint;
-- exact C2 funded-point-score matching and plug-in dominance reconciliation;
-- 3,067-cap exact frontier with 216/216 broad-stress envelopes crossing zero;
-- default crossing zero in all 72 development-support cells and all 27 W8
-  envelopes crossing zero;
-- exact endpoint-reason partition, three missingness encodings, and a second
-  retrospective origin reported without selection; and
-- active publication artifacts `crpto_ijds_v4_*`, governed by
-  `ijds_binary_geometry_frontier_v4_evidence.json`.
+- Read registered roots and rebuild active aggregate evidence.
+- Render the body, supplement, generated TeX, and PDFs.
+- Run tests, lint, static typing, source verification, and visual QA.
+- Refactor current code when scientific outputs and lineage identities remain
+  stable.
+- Add a new, predeclared, contained experiment with a distinct run tag.
 
-The paper describes a prespecified and hash-verified retrospective temporal audit. It does not
-claim a prospective trial, causal effect, latent-PD confidence interval,
-selected-set conformal guarantee, cash-flow return, fair-lending certificate,
-or Markov certificate. The full authority is
-`docs/research/active_claims_2026-07-14.md`.
+## Protected Operations
 
-Maturity-safe P1/C1, compact-v7, the previous IJDS rebaseline, and the pool93
-frontier are retained as historical provenance, not as active body claims:
+Explicit permission is required before running:
 
-- run tag: `ijds-rebaseline-2026-06-07`
-- policy: `bound_aware_276k_economic_champion`
-- robust return: `$170,464.54`
-- `V(alpha=0.01)=0.028875`
-- `Gamma_CP(alpha=0.01)=0.187987`
-- exact pass: `true`
-- robust region: `45/45`
+- `crpto.pd.champion`
+- `crpto.conformal.intervals`
+- `crpto.conformal.validation`
+- `crpto.portfolio.optimization`
+- `crpto.portfolio.bound_exact_eval`
 
-The older run tag `paper-thesis-final-economic-2026-04-06` is retained as
-historical provenance, not as the current manifest baseline.
+Do not modify `EXTRACTION_MANIFEST.json` or overwrite protected artifacts. A
+new result belongs under a new run tag; it must not replace a frozen root.
 
-Do not overwrite these protected files without an explicit revalidation plan:
+## Sealed Compatibility
 
-- `models/pd_canonical.cbm`
-- `models/pd_canonical_calibrator.pkl`
-- `models/final_project_promotion.json`
-- `models/conformal_policy_status.json`
-- `data/processed/conformal_intervals_mondrian.parquet`
-- `data/processed/portfolio_bound_aware/rank1_alpha01_bound_aware_276k_full_2026-04-05-1734/`
-- `reports/crpto/tables/crpto_tableA35_pool93_ijds_frontier.csv`
-- `reports/crpto/tables/crpto_tableA36_pool93_body_funded_grade_audit.csv`
-- `reports/crpto/tables/crpto_tableA37_pool93_body_tail_risk.csv`
-- `reports/crpto/tables/crpto_tableA38_pool93_body_cluster_bound_audit.csv`
-- `reports/crpto/tables/crpto_tableA39_pool93_body_bootstrap_metrics.csv`
-- `reports/crpto/tables/crpto_tableA40_pool93_point_baseline.csv`
-- `models/experiments/champion_reopen/champion-reopen-2026-06-19__pool93__ijds-certificate-semantics-v2/portfolio/pool93_ijds_consolidated_frontier.json`
-- `models/experiments/champion_reopen/champion-reopen-2026-06-19__pool93__ijds-certificate-semantics-v2/portfolio/pool93_ijds_consolidated_governance.json`
-- `models/experiments/champion_reopen/champion-reopen-2026-06-19__pool93__ijds-certificate-semantics-v2/portfolio/pool93_point_pd_baseline_audit.json`
-- `models/experiments/champion_reopen/champion-reopen-2026-06-19__pool93__ijds-claim-bound-terminal/portfolio/pool93_ijds_claim_governance.json`
-- `EXTRACTION_MANIFEST.json`
+`dvc.yaml`, `dvc.lock`, and files whose exact paths are fixed by the extraction
+manifest form a non-executable compatibility capsule. Their only current role
+is hash and provenance verification. Active commands must not call them, and
+the manuscript must not cite their historical results.
 
-## Safe work
+The complete project history is preserved outside the repository in
+`D:\crpto_legacy`, including a Git mirror, verified bundle, snapshots, and the
+pre-consolidation material worktree.
 
-Safe changes by default:
+## Data And Secrets
 
-- Documentation, README, runbooks, Quarto prose and non-executed book renders.
-- Artifact-independent tests and adapters that do not change model outputs.
-- CI/workflow maintenance, dependency-review metadata and public docs.
-- Regenerating CRPTO tables, figures, evidence summaries and journal package
-  from already-frozen artifacts.
-- Adding tests around utilities, schemas, policy aliases and pipeline state.
+Keep raw CSVs, DVC cache, model binaries, local PDFs, `.env` files, tokens, and
+temporary benchmark outputs out of Git. Commit only DVC pointers and aggregate
+artifacts allowed by the active publication contract. Never place credentials
+in YAML, code, notebooks, logs, or submission files.
 
-Potentially safe but review first:
+## Change Classification
 
-- dbt model changes that only read existing CRPTO DuckDB/parquet artifacts.
-- DVC metadata edits that do not repro protected stages.
-- Dependency floor bumps that do not affect protected model or conformal code.
+| Change | Required validation |
+|---|---|
+| Prose/citation only | claim sync, TeX generation, manuscript build |
+| Deterministic builder | focused tests, idempotence, evidence reconciliation |
+| Current code refactor | full tests, lint, mypy, ty, active checks |
+| Data/model/conformal behavior | new protocol/run tag plus explicit drift and scientific review |
+| Submission closeout | all gates, strict protected hashes, DVC remote, visual QA |
 
-Not safe on `main`:
+## Closeout
 
-- `dvc repro crpto.pd.champion`
-- `dvc repro crpto.conformal.intervals`
-- `dvc repro crpto.conformal.validation`
-- `dvc repro crpto.portfolio.optimization`
-- `dvc repro crpto.portfolio.bound_exact_eval`
-- MAPIE, feature-config or conformal refactors that require fresh champion
-  artifacts before drift validation.
+Before synchronization:
 
-## Refactor lanes
+```powershell
+just test
+just lint
+just type-check
+just type-check-fast
+just drift-gate
+just ijds-active-check
+just validate-champion-strict
+just submission-build
+just submission-check
+just ijds-dvc-verify-remote
+```
 
-The files in `docs/refactor/` are plans, not approvals to execute. The current
-high-risk lanes are:
-
-- `MAPIE_MIGRATION_PLAN.md`: code is MAPIE 1.x-compatible and the June 2026
-  drift report is green under the current stack. Protected conformal stage
-  reruns still require explicit approval.
-- `CONFORMAL_REFACTOR_PLAN.md`: script-level extraction is underway, but
-  class/module modularization must preserve pickled calibrator compatibility
-  or create a new run tag.
-- `archive/FEATURE_CONFIG_PARQUET_PLAN.md` (executed 2026-06-13, archived):
-  the live feature contract is now YAML/Parquet; changing it affects the
-  data/features contract and requires downstream validation.
-
-## Public GitHub rules
-
-The GitHub repo is public: <https://github.com/EigenCharlie/Paper_CRPTO>.
-
-Keep in Git:
-
-- Source, tests, Quarto, docs, tables, figures, JSON status files, DVC lock
-  files and DVC pointer files.
-
-Keep out of Git:
-
-- `.env`, `.env.*` except templates, `.dvc/config.local`, raw CSVs, processed
-  parquet/DuckDB files, model binaries, MLflow runs, local caches and tokens.
-
-GitHub repository security currently expects:
-
-- Dependency graph and Dependabot security updates enabled.
-- Secret scanning enabled.
-- No required branch protection in the current single-author academic mode.
-  If CRPTO becomes multi-author, re-enable branch protection with at least
-  `lint` as a required check; keep `book-publish` as an explicit deployment.
-
-The default CI must remain lightweight: only `lint` runs on push. The
-artifact-aware `tests-full` and Pages `book-publish` workflows are manual and
-should be dispatched only for journal milestones, reviewed companion updates,
-or an explicitly authorized protected-stage revalidation.
-
-## Environment
-
-Use the Windows-native project environment:
-
-- Windows PowerShell: `.venv/Scripts/python.exe`
-- Python tools: `uv run ...`
-- Quarto renders: `uv run -- quarto ...`
-
-Do not route normal CRPTO work through non-Windows shells. If a shell or tool
-creates a non-Windows virtualenv layout, treat it as a misconfigured local
-environment and recreate the venv from PowerShell.
-
-## Release checklist
-
-Before considering a CRPTO change ready:
-
-1. `just lint`
-2. `just smoke`
-3. `uv run pytest tests/test_utils/test_pipeline_state.py tests/test_utils/test_optuna_storage.py -q`
-4. `uv run -- quarto render book --to html --no-execute`
-5. Confirm `git status --short` does not include data, models or secrets.
-
-For any protected-stage or dependency migration, add a branch-specific drift
-report before merge.
+The project remains `prefreeze_active`; a clean closeout is not a submission
+freeze.

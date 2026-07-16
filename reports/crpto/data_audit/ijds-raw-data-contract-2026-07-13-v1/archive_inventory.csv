@@ -1,2 +1,0 @@
-raw_rows,distinct_nonblank_ids,blank_id_rows,valid_loan_rows,invalid_issue_date_rows,first_issue_date,last_issue_date,term36_rows,term60_rows,other_or_invalid_term_rows
-2925493,2925493,0.0,2925492.0,1.0,2007-06-01,2020-09-01,2060077.0,865415.0,1.0

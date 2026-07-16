@@ -51,7 +51,23 @@ active_scientific_contract:
       - scripts/experiments/run_ijds_missingness_sensitivity.py
       - scripts/experiments/run_ijds_portfolio_structure_sensitivity.py
       - scripts/experiments/run_ijds_policy_support_tie_audit.py
+    support_tools:
+      - scripts/build_ijds_policy_support_tie_evidence.py
+      - scripts/manage_ijds_dvc_capsule.py
+      - scripts/run_complexity_report.py
+      - scripts/run_ty_advisory.py
     historical_execution_in_active_capsule: false
+
+  sealed_compatibility_capsule:
+    purpose: >-
+      Preserve path-bound hashes and the historical DVC graph without exposing
+      either as current evidence, an executable workflow, or manuscript history.
+    authorities:
+      - EXTRACTION_MANIFEST.json
+      - dvc.yaml
+      - dvc.lock
+    execution_allowed: false
+    paper_evidence_allowed: false
 
   previously_inspected_retrospective_archive: true
   archive_is_verified_point_in_time_snapshot: false
@@ -86,6 +102,10 @@ active_scientific_contract:
 
   required_artifacts:
     - reports/crpto/ijds_binary_geometry_frontier_v4_evidence.json
+    - reports/crpto/ijds_policy_support_tie_evidence.json
+    - reports/crpto/tables/crpto_ijds_comparator_support_domain.csv
+    - reports/crpto/tables/crpto_ijds_gamma_endpoint_audit.csv
+    - reports/crpto/tables/crpto_ijds_policy_family_domain.csv
     - reports/crpto/tables/crpto_ijds_v4_table1_coverage_windows.csv
     - reports/crpto/tables/crpto_ijds_v4_table2_phase_transition.csv
     - reports/crpto/tables/crpto_ijds_v4_table3_development_envelopes.csv
@@ -122,18 +142,6 @@ claim_boundaries:
     - "Selected model, gamma, ruler, coordinate, cap, comparator, or policy."
     - "Universal portfolio direction or selected-set conformal guarantee."
     - "Markov, deployment, causal, or fair-lending certificate."
-
-historical_boundary:
-  compact_v7_status: git_history_only
-  p1_c1_status: git_history_only
-  diagnostics_status: git_history_only
-  diagnostics:
-    - "A1--A24: OCE/CVaR, SPO+, dependence, and online-style studies."
-    - "A25--A34: Prosper and Freddie/Mendeley transfer studies."
-    - "A35--A40: compact-v7 selector and pool93 portfolio bundle."
-  rule: >-
-    Historical artifacts remain recoverable from Git/DVC but cannot validate,
-    fill, or redefine the active endpoint-corrected audit.
 
 secondary_targets:
   - id: ejor

@@ -1,13 +1,12 @@
 name: tests-full
 
-# Manually-triggered full test suite. Pulls champion artefacts from the
-# DagsHub DVC remote and runs the regression hash checks plus the slow
+# Manually-triggered full test suite. Pulls protected extraction artifacts from
+# the DagsHub DVC remote and runs their hash checks plus the active IJDS suite.
 # tests. NOT wired to push events — it would be too expensive (and add
 # zero value to a single-author academic project) to run on every commit.
 #
 # Trigger it from the GitHub UI (Actions tab → tests-full → Run workflow)
-# whenever you want to verify the champion is still bit-exact against the
-# DVC remote (e.g. before a paper submission, after a major refactor).
+# Use it before a paper submission or after a major scientific refactor.
 #
 # Required repository secrets:
 # - DAGSHUB_USER_TOKEN
@@ -33,7 +32,6 @@ jobs:
       AWS_ACCESS_KEY_ID: ${{ secrets.DAGSHUB_TOKEN }}
       AWS_SECRET_ACCESS_KEY: ${{ secrets.DAGSHUB_TOKEN }}
       AWS_ENDPOINT_URL: https://dagshub.com/EigenCharlie94/Paper_CRPTO.s3
-      MLFLOW_TRACKING_URI: https://dagshub.com/EigenCharlie94/Paper_CRPTO.mlflow
       CRPTO_REQUIRE_DVC_ARTIFACTS: "1"
     steps:
       - uses: actions/checkout@v5
@@ -47,21 +45,22 @@ jobs:
         run: uv python install 3.11
 
       - name: Sync deps
-        run: uv sync --extra dev --extra search --frozen
+        run: uv sync --extra dev --frozen
 
-      - name: DVC pull (champion artefacts)
+      - name: DVC pull (active and protected artifacts)
         run: uv run dvc pull --no-run-cache
 
-      - name: Manifest regression (hash check vs frozen champion)
+      - name: Protected extraction hash regression
         run: uv run pytest tests/test_manifest_regression.py -v
 
-      - name: Champion drift gate
-        env:
-          CRPTO_RUN_CHAMPION_DRIFT: "1"
-        run: |
-          mkdir -p reports/ci
-          uv run pytest tests/test_models/test_conformal_mapie_drift.py -q -s \
-            | tee reports/ci/champion-drift-gate.txt
+      - name: Strict protected-artifact gate
+        run: just validate-champion-strict
+
+      - name: Active IJDS contract
+        run: just ijds-active-check
+
+      - name: Active implementation and evidence drift gate
+        run: just drift-gate
 
       - name: Full author tests
         run: uv run pytest -q
@@ -74,6 +73,5 @@ jobs:
           path: |
             coverage.xml
             .pytest_cache/
-            reports/ci/champion-drift-gate.txt
           retention-days: 7
           if-no-files-found: ignore

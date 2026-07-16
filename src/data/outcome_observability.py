@@ -340,7 +340,7 @@ def load_design_universe(
         "declared_window_rows_all_terms": 0,
         "retained_rows": 0,
     }
-    reader = pd.read_csv(  # ty: ignore[no-matching-overload]
+    reader = pd.read_csv(
         raw_path,
         usecols=required_columns,
         dtype={"id": "string", "loan_status": "string", "term": "string"},

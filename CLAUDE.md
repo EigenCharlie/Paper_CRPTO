@@ -1,346 +1,138 @@
-# CLAUDE.md — Contexto para Claude Code en Paper_CRPTO
+# CRPTO Operating Contract
 
-## Scientific status override - 2026-07-15
+This repository contains one active IJDS manuscript. Historical searches,
+promoted policies, thesis-book material, and earlier manuscript versions are
+not active evidence.
 
-The only active IJDS source of truth is
-`docs/research/active_claims_2026-07-14.md`. The paper combines a
-complete-window binary-geometry/exact-frontier audit with a finite two-ruler
-endpoint diagnostic and a complete 36-scenario portfolio-structure sensitivity.
-It does not select a gamma, ruler, coordinate, structural scenario, policy,
-learner, or residual window and does not claim a universal guardrail direction.
-The outcome-free V4-v1 and two-ruler V1c freezes are imported by separate
-hash-linked evaluators; the only active paper-facing manifest is
-`reports/crpto/ijds_binary_geometry_frontier_v4_evidence.json`.
+## Read Before Changing Science
 
-Superiority and policy-winner framing are NO-GO. The IJDS audit narrative is
-GO: candidate-coverage failure survives all eight windows and five reported
-learner specifications, including monotonic and WOE/IV credit-risk controls;
-binary interval geometry changes around a prevalence threshold; and realized
-decision directions depend on ruler, coordinate, residual timing, and declared
-comparator support. Every budget--purpose-cap--LGD scenario retains adverse
-default and miscoverage cells, but no scenario is uniformly favorable or
-adverse. Only the primary CatBoost enters portfolio optimization.
-Selected-policy studies,
-compact-v7, pool93, Prosper/Freddie, and A1--A40 are historical provenance only. Never overwrite
-the V1/V2/V3 audit runs, the historical champion, or manifest-protected artifacts.
+1. `docs/research/active_claims_2026-07-14.md`
+2. `docs/research/ijds_binary_geometry_frontier_v4_protocol_2026-07-12.md`
+3. `docs/research/ijds_evaluation_endpoint_recovery_v3_protocol_2026-07-14.md`
+4. `docs/research/ijds_normalized_objective_frontier_protocol_2026-07-12.md`
+5. `docs/research/ijds_normalized_objective_frontier_v1c_protocol_2026-07-13.md`
+6. `docs/research/ijds_two_ruler_endpoint_recovery_v3_protocol_2026-07-14.md`
+7. `docs/research/ijds_endpoint_availability_sensitivity_protocol_2026-07-14.md`
+8. `docs/research/ijds_portfolio_structure_sensitivity_v6_protocol_2026-07-15.md`
+9. `configs/ijds_active_evidence_sources.yaml`
+10. `configs/ijds_claim_ledger.yaml`
+11. `reports/crpto/ijds_binary_geometry_frontier_v4_evidence.json`
+12. `.codex/skills/crpto/SKILL.md`
 
-## Quién soy y qué es este proyecto
+The claim registry is the editorial authority. The source registry owns exact
+lineage identities, artifact descriptors, and 27 DVC pointers. The V4 evidence
+JSON is the only numeric paper-facing manifest.
 
-Soy Carlos Vergara, científico de datos terminando un paper académico de tesis. **CRPTO** (Conformal Risk-Aware Predict-Then-Optimize en el paper activo) aplica **conformal prediction** + **optimización de carteras** al dominio de **credit risk** usando datos de Lending Club. Este repositorio es standalone: GitHub, DVC y MLflow apuntan a recursos propios de CRPTO. La historia de extracción está en `docs/PROJECT_HISTORY.md`; el repositorio no debe re-correr el **pipeline de búsqueda** del champion sin permiso explícito.
+## Active Scientific Object
 
-**Prefiero código simple y funcional. Sin sobre-ingeniería, sin abstracciones prematuras, sin refactors gratuitos.**
+- One status-independent universe of 640,543 eligible 36-month loans.
+- Primary OOT: 376,890 candidates, of which 364,814 are resolved and 12,076
+  remain unresolved under the declared six-month availability rule.
+- Five frozen coverage specifications and eight complete residual windows.
+- CatBoost/Platt is the only score entering portfolio optimization; logistic,
+  monotonic CatBoost, and two WOE/IV scorecards are coverage controls.
+- Five gamma values, two outcome-blind rulers, and three interior coordinates;
+  none is selected.
+- Fifteen separate monthly allocations, sharp common-outcome bounds, exact
+  point-cap support, and 36 structural scenarios.
+- All 40 six-month all-candidate coverage upper bounds are below 0.90.
+- All 216 broad-support comparator envelopes cross zero.
 
-## Contexto académico (lectura obligatoria)
+The paper supports archive-specific temporal transport failure, binary
+residual geometry near a prevalence threshold, and comparator-dependent
+decision identification. It does not support a policy winner.
 
-Antes de cualquier cambio estructural, lee en este orden:
+## Forbidden Claims
 
-1. [`docs/ACADEMIC_CONTEXT.md`](docs/ACADEMIC_CONTEXT.md) — naturaleza single-author / dataset estático / no producción y consecuencias operacionales.
-2. [`docs/SCOPE_AND_GOVERNANCE.md`](docs/SCOPE_AND_GOVERNANCE.md) — qué entra en CRPTO, lista explícita de stages prohibidos en `main`, refactor lanes con precondiciones, release checklist.
-3. [`CONTRIBUTING.md`](CONTRIBUTING.md) — qué se puede cambiar libremente vs. qué requiere plan de revalidación.
-4. [`EXTRACTION_MANIFEST.md`](EXTRACTION_MANIFEST.md) — qué es exactamente lo "congelado" y cómo los tests de regresión lo enforzan.
+Do not claim:
 
-Lo crítico de `ACADEMIC_CONTEXT.md`:
+- selected model, missingness encoding, gamma, ruler, coordinate, cap,
+  structural scenario, comparator, or policy;
+- selected-set conformal validity or latent-PD confidence intervals;
+- universal favorable or adverse portfolio direction;
+- causal, prospective, confirmatory, deployment, fair-lending, or Markov
+  conclusions;
+- cash-flow return, IRR, NPV, welfare, or counterfactual funding effects.
 
-- **Single-author.** Yo soy el único que toca este repo. No hay PR reviews, no hay branch protection necesaria, no hay reviewers que aprueben. Las reglas de operación existen para disciplinar agentes, no para satisfacer un proceso corporativo.
-- **Dataset estático.** Lending Club cerró originación retail en 2020. No vamos a recibir datos nuevos. Sin streaming, sin concept drift por cohortes nuevas. Si re-entrenamos, es sobre el mismo histórico.
-- **No va a producción.** Output: paper + journal + libro Quarto + MRM dossier. Sin servicio live, sin SLAs, sin on-call.
-- **GitHub Actions minimalista.** `lint.yml` corre en push;
-  `book-publish.yml` y `tests-full.yml` son manuales para despliegues del
-  companion e hitos de journal. `test.yml`, `dbt.yml` y `book-build.yml` se
-  retiraron porque el pre-push hook ya valida lo equivalente en local.
+The five-model coverage result and the CatBoost-only missingness/second-origin
+sensitivities are distinct claims. Every first-use 40/40 statement must name
+the six-month outcome-availability rule.
 
-## Re-corrida del champion: regla inequívoca
+## Code Architecture
 
-Ningún stage DVC que escriba una ruta protegida se ejecuta sin permiso explícito,
-aunque consuma hiperparámetros ya congelados. Esto incluye
-`crpto.pd.champion`, `crpto.conformal.intervals`,
-`crpto.conformal.validation`, `crpto.portfolio.optimization` y
-`crpto.portfolio.bound_exact_eval`. Tampoco se relanza HPO Optuna sobre el
-champion. La validación ordinaria usa `just validate-champion`, `just
-drift-gate` y replays con run tags y rutas experimentales nuevas; no usa `dvc
-repro` sobre outputs canónicos. Los stages `crpto.paper.*` y el render
-`crpto.book.render` son regenerables porque sólo consumen evidencia congelada.
+Active reusable modules:
 
-Un permiso excepcional debe nombrar el stage, la rama, las rutas de salida y
-el plan de drift. Nunca se interpreta una nota histórica de “re-runnable” como
-autorización implícita.
+- `src/ijds_audit/`: protocol, binary geometry, portfolio construction,
+  evaluation, policy support, simulation, and raw-data controls.
+- `src/ijds_challengers/`: frozen/evaluated frontier lineage and archive
+  contracts.
+- `src/data/outcome_observability.py`: endpoint reconstruction.
+- `src/models/`: maturity-safe PD and binary conformal guardrail components.
+- `src/optimization/`: current portfolio, policy, and solver adapters.
+- `src/evaluation/`: maturity-safe and paired policy evaluation.
 
-## Champion congelado — NO RE-CORRER
+Active execution is declared in
+`configs/crpto_publication_targets.yaml`. Top-level scripts outside that list
+may remain only because `dvc.yaml` or `EXTRACTION_MANIFEST.json` fixes their
+paths. They are sealed compatibility, not active architecture.
 
-El modelo PD, calibrador, intervalos y bundle pool93 del manifest permanecen
-congelados como procedencia histórica. El body IJDS activo usa un experimento
-nuevo, aislado y DVC-tracked; no regenera ni sobreescribe ningún artefacto
-upstream protegido.
+## Protected Operations
 
-**Body claim activo - binary geometry and comparator identification:**
+Never run these without explicit permission:
 
-| Campo | Valor |
-| --- | --- |
-| Outcome-free run | `ijds-binary-geometry-frontier-v4-2026-07-12-v1` |
-| Verified evaluation | `ijds-binary-geometry-frontier-v4-2026-07-15-v5` |
-| Universo | `640,543` filas; primary OOT `376,890`; extension `88,227`; membership independiente del status |
-| Cronologia | ocho ventanas residuales consecutivas; 15 decisiones 2016-04--2017-06 |
-| Conformal | bordes de score fijos en 2011; clipped residual interval, no CI de PD latente |
-| Score path | `gamma={0,.25,.50,.75,1}`; endpoint contrast `gamma=1-gamma=0` |
-| Rulers | objective-matched primary; normalized-score secondary; coordinates `.25/.50/.75` |
-| Two-ruler freeze | 6,240 solves; 622,455 funded rows; no outcomes |
-| Two-ruler result | `.25` cruza cero, `.50` es desfavorable, `.75` es mayormente no identificado bajo objective matching; normalized `.25/.50` es desfavorable y `.75` mezcla payoff adverso/no identificado, sin igualar opportunity cost |
-| Cobertura CatBoost | ocho upper bounds bajo `0.90`; maximo `0.882597` |
-| Cobertura logistic control | ocho upper bounds bajo `0.90`; maximo `0.896222` |
-| Cobertura monotonic CatBoost | ocho upper bounds bajo `0.90`; maximo `0.886489` |
-| Cobertura platform WOE/IV | ocho upper bounds bajo `0.90`; maximo `0.894908` |
-| Cobertura pricing-excluded WOE/IV | ocho upper bounds bajo `0.90`; maximo `0.897726` |
-| Resolucion endpoint | `307,842` fully paid by cutoff; `56,972` charged off by cutoff; `11,551` nonterminal; `47` terminal after cutoff; `478` terminal sin fecha de disponibilidad |
-| Missingness | tres codificaciones feature-semantics-preserving; 24/24 upper bounds bajo `0.90`; sin seleccion de codificacion |
-| Segundo origen | ocho ventanas 2017; 8/8 upper bounds bajo `0.90`; recurrencia retrospectiva, no validacion independiente |
-| Censo raw | `2,925,493` filas; `640,543` filas activas exhaustivas, sin sampling |
-| Transicion binaria | estrato 2: prevalencia `0.101703 -> 0.097147`; cuantíl `0.888435 -> 0.111801` |
-| Supporting C2 | 1,080 matches; residual maximo `8.33e-17`; dominancia plug-in mecanica |
-| Exact frontier | 3,067 caps; 216/216 broad-stress envelopes cruzan cero |
-| Development support | default 72/72 cruza; W8 27/27 cruza |
-| Sensibilidad endpoint | lags 0/3/6/8/12 completos; lag 6 reconcilia exactamente con la evaluacion activa; sin seleccion de endpoint |
-| Sensibilidad estructural | 36/36 escenarios budget--purpose-cap--LGD; minimo 17 default y 21 miscoverage adversos por escenario; 0 escenarios universalmente favorables o adversos |
-| Evidencia | `reports/crpto/ijds_binary_geometry_frontier_v4_evidence.json` |
+- `crpto.pd.champion`
+- `crpto.conformal.intervals`
+- `crpto.conformal.validation`
+- `crpto.portfolio.optimization`
+- `crpto.portfolio.bound_exact_eval`
 
-El claim activo es una auditoria de identificacion: la falla temporal de
-cobertura sobrevive los checks declarados, la geometria binaria es sensible a
-prevalencia, y el signo de los resultados de portafolio depende del ruler, la
-coordenada, el timing residual, el soporte del comparador y la estructura
-declarada del portafolio. No existe un winner ni una direccion universal. La
-autoridad completa es
-`docs/research/active_claims_2026-07-14.md`.
+Never modify `EXTRACTION_MANIFEST.json` or protected historical artifacts.
+Do not execute the sealed historical DVC graph merely to make `dvc status`
+clean.
 
-**Body claim histórico v7:** NO-GO y replay-only. Sus A35--A40, retorno
-positivo, endpoint y sensibilidades no pueden reaparecer en superficies
-editoriales activas.
+Safe evidence work reads registered roots and writes only the active
+`crpto_ijds_v4_*` outputs and evidence JSON. New empirical objects require a
+new predeclared protocol, a distinct run tag, contained output paths, and
+updated source registration before manuscript use.
 
-**Cadena upstream congelada (histórica; su retorno es el return floor declarado del pool93):**
+## Commands
 
-| Campo | Valor |
-| --- | --- |
-| Run tag | `ijds-rebaseline-2026-06-07` |
-| Policy | `bound_aware_276k_economic_champion` |
-| Retorno robusto | `$170,464.54` |
-| V(α=0.01) | `0.028875` |
-| Γ_CP(α=0.01) | `0.187987` |
-| Exact pass | `True` |
-| Región robusta | `45/45` |
-
-Artefactos históricos congelados cuyos hashes están en
-`EXTRACTION_MANIFEST.json` y **no se tocan** sin permiso:
-
-- `models/pd_canonical.cbm`
-- `models/pd_canonical_calibrator.pkl`
-- `models/final_project_promotion.json`
-- `models/conformal_policy_status.json`
-- `data/processed/conformal_intervals_mondrian.parquet`
-- `data/processed/portfolio_bound_aware/rank1_alpha01_bound_aware_276k_full_2026-04-05-1734/`
-- `reports/crpto/tables/crpto_tableA35..A40_pool93_*.csv/.tex` (evidencia pool93)
-- `models/experiments/champion_reopen/...__pool93__ijds-claim-bound-terminal/portfolio/pool93_ijds_claim_governance.json`
-- `models/experiments/champion_reopen/...__pool93__ijds-certificate-semantics-v2/portfolio/pool93_ijds_consolidated_frontier.json`
-- `models/experiments/champion_reopen/...__pool93__ijds-certificate-semantics-v2/portfolio/pool93_ijds_consolidated_governance.json`
-- `models/experiments/champion_reopen/...__pool93__ijds-certificate-semantics-v2/portfolio/pool93_point_pd_baseline_audit.json`
-- `EXTRACTION_MANIFEST.json`
-
-La sincronia del claim activo con body, supplement y TeX la vigilan el ledger
-`configs/ijds_claim_ledger.yaml`, el builder
-`scripts/build_ijds_binary_geometry_frontier_v4_evidence.py`, el manifest activo y
-`scripts/check_publication_integrity.py`. El TeX oficial es generado desde
-`paper/CRPTO_ijds.qmd` por `scripts/build_ijds_submission_tex.py`; no se edita
-manualmente.
-
-Stages DVC que regeneran estos artefactos (`crpto.pd.champion`, `crpto.conformal.intervals`, `crpto.conformal.validation`, `crpto.portfolio.optimization`, `crpto.portfolio.bound_exact_eval`) **no se ejecutan** sin permiso. Validar con `crpto-validate-champion` antes de cualquier merge.
-
-## Stack técnico (resumen)
-
-- **Python** 3.11 con `uv` (no pip, no poetry). `uv.exe` típicamente en `C:\Users\carlos\anaconda3\Scripts\uv.exe`.
-- **ML**: CatBoost 1.2.x (PD), MAPIE 1.4 (conformal), Optuna 4 (HPO), fairlearn 0.14, scikit-learn 1.9, Venn-Abers 1.5.
-- **Optimización**: Pyomo 6.10 + HiGHS 1.15 (LP/MILP), OR-Tools 9.10, PyEPO 1.1 (SPO+, opcional).
-- **Data**: pandas 2.3, numpy 2.4, pyarrow 24, duckdb 1.5, pandera 0.32.
-- **Pipeline**: DVC 3.67 (con remote S3), dbt-duckdb 1.10, MLflow 3.14, DagsHub 0.7.
-- **Docs**: Quarto 1.9+ (libro de 24 capítulos en español, HTML + PDF).
-- **Tooling**: ruff 0.15, pytest 9, pre-commit 4, jupytext 1.19.
-
-Lista completa: `pyproject.toml`. Versiones efectivas: `uv.lock`.
-
-## Plataforma y paths
-
-- **OS**: Windows 11 Pro. Shell por defecto: PowerShell. No usar shells no Windows como flujo operativo del proyecto.
-- **Venv**: `.venv/Scripts/python.exe`; todo debe pasar por `uv run` o por el Python de ese entorno.
-- **Task runner**: `justfile` (cross-platform). Existió un `Makefile` que se retiró por bug Linux-only.
-- **Quarto CLI**: debe estar en PATH. `quarto --version` ≥ 1.9.
-
-## Comandos clave
+Use Windows PowerShell and `uv run`.
 
 ```powershell
-# Setup
-just setup                  # uv sync --extra dev --extra search; sin pyepo/torch
-just setup-spo              # agrega el stack historico pyepo/torch
-
-# Render del libro
-just book                   # uv run -- quarto render book --to html
-just book-pdf               # no-op intencional: PDF completo diferido hasta tesis curada
-just book-preview           # quarto preview book (live reload)
-
-# Tests y validación
-just smoke                  # pytest tests/test_crpto_final_sync.py tests/test_quarto_book_guardrails.py
-just test                   # pytest completo
-just lint                   # ruff check + format check
-just type-check             # mypy src scripts (limpio: 0 errores)
-just validate-champion      # verifica hashes vs EXTRACTION_MANIFEST.json
-just validate-champion-strict # además falla si cualquier artefacto protegido falta
-just drift-gate             # recomputa la cadena del certificado y exige diff bit-exacto (CRPTO_RUN_CHAMPION_DRIFT=1)
-just bound-audit            # re-deriva el menú de bounds A21 + búsquedas bound-aware
-
-# Paper outputs (re-genera artefactos pero NO toca el champion)
-just tables                 # python scripts/export_crpto_tables.py
-just figures                # python scripts/generate_crpto_figures.py --paper crpto
-just paper-export           # tables + figures + book
-
-# DVC / DBT
-just dvc-status             # dvc status (sin re-correr)
-just dvc-dag                # dvc dag --md
-just dbt-test               # dbt parse + dbt test
+uv sync --extra dev
+just smoke
+just test
+just lint
+just type-check
+just type-check-fast
+just publication-integrity
+just drift-gate
+just ijds-active-check
+just validate-champion
+just submission-build
+just submission-check
 ```
 
-## Variables de entorno (.env)
+`submission-check` must retain `validate-champion-strict`. PD or conformal
+implementation changes also require the separately authorized drift gate.
 
-Copiar `.env.example` a `.env` y rellenar con tokens reales. Variables clave:
+## Manuscript Rules
 
-- `DAGSHUB_OWNER`, `DAGSHUB_USER`, `DAGSHUB_REPO=Paper_CRPTO`, `DAGSHUB_TOKEN` o `DAGSHUB_USER_TOKEN` — standalone CRPTO.
-- `MLFLOW_TRACKING_URI`, `MLFLOW_TRACKING_USERNAME`, `MLFLOW_TRACKING_PASSWORD` — DagsHub MLflow.
-- `AWS_ENDPOINT_URL`/`AWS_ACCESS_KEY_ID`/`AWS_SECRET_ACCESS_KEY` o `GDRIVE_FOLDER_ID` — DVC remote opcional.
-- Variables manuales de entorno Python/Quarto — no setearlas en el flujo normal; `uv run` usa `.venv/Scripts` y resuelve Python para Quarto.
+- Edit `paper/CRPTO_ijds.qmd` and `paper/supplement_ijds.qmd`.
+- Generate official TeX with `scripts/build_ijds_submission_tex.py`; never edit
+  generated TeX directly.
+- Treat sharp bounds as finite-archive identification bounds, not confidence
+  intervals.
+- Distinguish fit-label timing from evaluation-endpoint availability.
+- Distinguish five-model controls from CatBoost-only sensitivities.
+- Keep iteration history out of the manuscript.
+- Keep the submission double-anonymous.
 
-El archivo `.env` está en `.gitignore`. Nunca commitear tokens.
+## Compatibility And Archive
 
-## Convenciones de código
-
-- **Type hints obligatorios** en `src/` y `scripts/`. Verificados con `mypy` (laxo, gradual).
-- **`from __future__ import annotations`** al tope de cada módulo nuevo.
-- **Docstrings** en funciones públicas (estilo Google o NumPy, consistente con módulo).
-- **Logging con `loguru`** — NO `print`, NO `logging` estándar salvo en librerías que ya lo usan.
-- **Configs en YAML** bajo `configs/`, validados con Pandera donde aplique.
-- **Paths absolutos via `pathlib.Path`**, no strings con `/` o `\\`.
-- **Pandera schemas** para contratos de DataFrames en boundaries.
-- **Ruff** corre en pre-commit con reglas: `E,F,W,I,UP,B,SIM,C4,ANN,RET,RUF,PERF,FURB` (gradual).
-
-## Estructura del proyecto
-
-```
-.
-├── book/                    # Libro Quarto (24 capítulos ES, HTML+PDF)
-│   ├── _quarto.yml          # config raíz
-│   ├── _brand.yml           # paleta + tipografías CRPTO
-│   ├── styles.scss          # CSS custom
-│   ├── chapters/            # 24 .qmd
-│   ├── includes/            # snippets reutilizables
-│   ├── assets/figures/      # PNG/PDF (editorial, notebooks, publication)
-│   ├── _helpers/            # paquete Python con load_artifacts, plot_helpers
-│   ├── references.bib       # 70 entradas
-│   └── apa.csl              # estilo APA7
-├── src/                     # paquete Python `crpto`
-│   ├── data/                # ingesta + cleaning
-│   ├── features/            # FE + Pandera contracts
-│   ├── models/              # PD + conformal + calibración
-│   ├── evaluation/          # métricas + fairness + backtesting
-│   ├── optimization/        # Pyomo/HiGHS + robust + SPO
-│   └── utils/               # I/O, MLflow, helpers
-├── scripts/                 # 40+ entry points del pipeline
-├── tests/                   # tests activos, históricos e integración
-├── configs/                 # YAML config (modelos, conformal, optim, fairness)
-├── dbt_project/             # 6 modelos (3 staging + 3 marts) sobre crpto.duckdb
-├── data/
-│   ├── raw/                 # Lending Club CSV (1.7 GB) — NO commit
-│   └── processed/           # parquets + DuckDB — DVC tracked
-├── models/                  # champion + calibrator + status JSONs
-├── reports/
-│   ├── crpto/tables/        # exports activos e históricos del paper
-│   ├── crpto/figures/       # figuras activas e históricas
-│   └── mrm/                 # Model Risk Management cards (skops)
-├── docs/research/           # dossier académico
-├── paper/                   # manuscrito principal
-├── notebooks/               # exploraciones (Jupyter)
-├── dvc.yaml / dvc.lock      # pipeline de 13 stages
-├── pyproject.toml           # dependencias y tooling
-├── uv.lock                  # lockfile reproducible
-├── justfile                 # task runner cross-platform
-└── EXTRACTION_MANIFEST.json # hashes de artefactos congelados
-```
-
-## Reglas de operación
-
-1. **Champion congelado es ley.** Si una tarea sugiere re-correr stages que afecten al champion, parar y preguntar.
-2. **No modificar `EXTRACTION_MANIFEST.json` ni artefactos listados** sin permiso.
-3. **No subir secretos** (`.env`, tokens, credenciales DagsHub/AWS).
-4. **No re-formatear el libro completo** en una sola pasada — preserva freeze cache y diffs limpios.
-5. **Render del libro tras cambios a `_quarto.yml`** o capítulos, con QA visual.
-6. **Antes de commit**: `just lint && just smoke` deben pasar (pre-commit hook lo enforza).
-7. **No bypassar hooks** (`--no-verify`) sin permiso.
-8. **Windows-first**: cualquier script o comando nuevo debe correr en Windows PowerShell sin depender de shells Unix.
-9. **`uv run`** para invocar herramientas Python (`pytest`, `quarto`, `dbt`, `dvc`, `mlflow`, `optuna`).
-10. **Repo público**: `https://github.com/EigenCharlie/Paper_CRPTO`. No subir secretos ni artefactos pesados; usar DVC remote para datos/modelos.
-11. **Branch de trabajo**: para código/refactors usa rama y PR. Hotfixes de docs/CI en `main` solo si el usuario lo pide explícitamente.
-12. **Drift-gate tras tocar la capa conformal/PD.** Cualquier refactor de `src/models/conformal*.py`, `src/models/optuna_tuning.py`, `scripts/generate_conformal_intervals.py` o `scripts/train_pd_model.py` debe pasar `just drift-gate` (diff bit-exacto vs la cadena del certificado). Un ROJO significa cambio numérico, no refactor: parar y preguntar. Es la red de seguridad que permitió descomponer los `main()` sin tocar el certificado.
-
-## Qué stages son seguros re-correr
-
-| Stage DVC | ¿Seguro? | Notas |
-| --- | --- | --- |
-| `crpto.data.dataset` | ⚠️ Lento (1.7 GB) | Determinista; no rompe champion pero re-corre todo downstream. |
-| `crpto.data.splits` | ❌ NO | Regenera `train/test/calibration.parquet` (congelados en el manifest). En la deny-list: un `dvc repro` aquí cascada hasta el champion. |
-| `crpto.data.features` | ⚠️ | No rompe champion pero re-corre todo downstream; ahora depende de `calibration.parquet`. |
-| `crpto.pd.champion` | ❌ NO | Rompe `pd_canonical.cbm`. Ahora también produce `test_predictions.parquet` como out. |
-| `crpto.conformal.intervals` | ❌ NO | Rompe intervalos congelados. |
-| `crpto.conformal.validation` | ❌ NO | Rompe `conformal_policy_status.json`. |
-| `crpto.portfolio.optimization` | ❌ NO | Rompe `portfolio_allocations.parquet`. |
-| `crpto.portfolio.bound_exact_eval` | ❌ NO | Rompe `portfolio_bound_aware_bound_eval.parquet`. |
-| `crpto.paper.export_tables` | ✅ Sí | Determinista; regenera CSVs. |
-| `crpto.paper.evidence` | ✅ Sí | Determinista; regenera `crpto_evidence_status.json`. |
-| `crpto.paper.journal_package` | ✅ Sí | Determinista. |
-| `crpto.paper.figures` | ✅ Sí | Determinista. |
-| `crpto.paper.spo_stability` | ✅ Sí | Determinista. |
-| `crpto.book.render` | ✅ Sí | Render Quarto; output a `book/_book/`. |
-
-## Scope operativo
-
-El documento rector es `docs/SCOPE_AND_GOVERNANCE.md`. En corto:
-
-- Seguro: docs, Quarto no-execute, CI, tests utilitarios, tablas/figuras/evidence/journal package.
-- Revisar antes: cambios dbt/DVC/dependencias que afecten contratos de datos.
-- No seguro en `main`: PD champion, intervalos conformal, validación conformal, optimización portfolio, exact eval, MAPIE/conformal/feature-config migrations sin drift report.
-
-## Sub-agentes y MCP útiles
-
-- `Explore` (built-in) para búsquedas de código y archivos.
-- `Plan` (built-in) para diseñar cambios estructurales.
-- **Context7 MCP** — docs actualizadas de pandas/sklearn/MAPIE/Quarto/dbt.
-- **Chrome/Playwright MCP** — QA visual del libro renderizado.
-- **DuckDB MCP** — queries directas a `data/processed/crpto.duckdb`.
-- **GitHub MCP** — repo `EigenCharlie/Paper_CRPTO`.
-
-## Skills custom del proyecto (`.claude/skills/<nombre>/SKILL.md`)
-
-- `/crpto-render` — render del libro + QA visual con Playwright.
-- `/crpto-stage` — `dvc repro` de un stage aislado, con dry-run.
-- `/crpto-smoke` — smoke tests + dbt parse + dbt test.
-- `/crpto-paper-export` — pipeline completo de salida journal.
-- `/crpto-validate-champion` — verifica hashes vs `EXTRACTION_MANIFEST.json`.
-- `/crpto-mrm-card` — actualiza model cards en `reports/mrm/`.
-- `/crpto-claim-sync` — gate de sincronía de claims paper/gobernanza; obligatorio tras editar paper o supplement.
-- `/crpto-submission-freeze` — checklist ejecutable del freeze de submission IJDS (gates, PDFs, anonimato, páginas).
-
-## Plan vigente
-
-Las fases bootstrap ya fueron publicadas. Los cambios estructurales que quedan
-viven como planes explícitos en `docs/refactor/` y no se ejecutan sin validar
-drift contra el champion congelado.
-
-## Cómo me gusta trabajar
-
-- Respuestas concisas. Sin resúmenes redundantes al final.
-- Tool calls en paralelo cuando son independientes.
-- Plan-first para cambios no triviales (3+ archivos).
-- Comentarios solo cuando el WHY no es obvio.
-- Sin emojis en archivos salvo que los pida.
-- En español para el libro/paper/docs; inglés para código/docstrings/identifiers/CI.
+The complete pre-consolidation worktree, Git mirror, bundle, and selected
+historical snapshots are preserved at `D:\crpto_legacy`. In-repository
+historical files are retained only when path-bound by the immutable extraction
+manifest or DVC graph. They must not appear in active commands, claims, or
+paper narrative.

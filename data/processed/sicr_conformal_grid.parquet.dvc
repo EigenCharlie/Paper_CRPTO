@@ -1,5 +1,0 @@
-outs:
-- md5: 8e6353c5f38aedf7915f3736972aa343
-  size: 12999
-  hash: md5
-  path: sicr_conformal_grid.parquet

@@ -5,6 +5,7 @@ from pathlib import Path
 
 import pandas as pd
 import pytest
+import yaml
 
 from scripts.experiments.run_ijds_normalized_objective_frontier_v2 import (
     preflight_output_paths,
@@ -18,13 +19,12 @@ from src.ijds_challengers.evaluation import (
 from src.ijds_challengers.evaluation_config import EXPECTED_FREEZE_SHA256, load_v2_config
 
 ROOT = Path(__file__).resolve().parents[1]
-CONFIG = ROOT / "configs/experiments/ijds_normalized_objective_frontier_2026-07-13_v2.yaml"
 V3_CONFIG = ROOT / "configs/experiments/ijds_normalized_objective_frontier_2026-07-14_v3.yaml"
-V5_CONFIG = ROOT / "configs/experiments/ijds_normalized_objective_frontier_2026-07-15_v5.yaml"
+ACTIVE_CONFIG = ROOT / "configs/experiments/ijds_normalized_objective_frontier_2026-07-15_v5.yaml"
 
 
-def test_v2_config_locks_freeze_grid_and_no_selection() -> None:
-    config = load_v2_config(CONFIG)
+def test_active_config_locks_freeze_grid_and_no_selection() -> None:
+    config = load_v2_config(ACTIVE_CONFIG)
     assert config["source_frontier"]["freeze"]["sha256"] == EXPECTED_FREEZE_SHA256
     assert config["evaluation"]["expected_window_contrasts"] == 48
     assert config["evaluation"]["expected_monthly_contrasts"] == 720
@@ -42,7 +42,7 @@ def test_v3_reuses_v1c_freeze_with_reconstructed_endpoint() -> None:
 
 
 def test_v5_changes_only_endpoint_reason_taxonomy_and_recovery_implementation() -> None:
-    config = load_v2_config(V5_CONFIG)
+    config = load_v2_config(ACTIVE_CONFIG)
     assert config["parent"]["config"].endswith("2026-07-15_v5.yaml")
     recovery = config["endpoint_reason_recovery"]
     assert recovery["require_exact_non_float_reference_equivalence"] is True
@@ -51,19 +51,17 @@ def test_v5_changes_only_endpoint_reason_taxonomy_and_recovery_implementation() 
     assert config["evaluation"] == load_v2_config(V3_CONFIG)["evaluation"]
 
 
-def test_v2_config_rejects_coordinate_selection(tmp_path: Path) -> None:
-    text = CONFIG.read_text(encoding="utf-8").replace(
-        "no_coordinate_selection: true",
-        "no_coordinate_selection: false",
-    )
+def test_active_config_rejects_coordinate_selection(tmp_path: Path) -> None:
+    config = load_v2_config(ACTIVE_CONFIG)
+    config["claim_boundary"]["no_coordinate_selection"] = False
     path = tmp_path / "invalid.yaml"
-    path.write_text(text, encoding="utf-8")
+    path.write_text(yaml.safe_dump(config, sort_keys=False), encoding="utf-8")
     with pytest.raises(ValueError, match="claim boundary"):
         load_v2_config(path)
 
 
-def test_v2_output_paths_are_contained_and_immutable(tmp_path: Path) -> None:
-    config = copy.deepcopy(load_v2_config(CONFIG))
+def test_active_output_paths_are_contained_and_immutable(tmp_path: Path) -> None:
+    config = copy.deepcopy(load_v2_config(ACTIVE_CONFIG))
     config["run_tag"] = "frontier-v2-test"
     paths = prepare_output_paths(config, repo_root=tmp_path)
     assert paths.data_dir == tmp_path / "data/processed/experiments/ijds_audit/frontier-v2-test"
@@ -72,8 +70,8 @@ def test_v2_output_paths_are_contained_and_immutable(tmp_path: Path) -> None:
         prepare_output_paths(config, repo_root=tmp_path)
 
 
-def test_v2_output_preflight_does_not_create_directories(tmp_path: Path) -> None:
-    config = copy.deepcopy(load_v2_config(CONFIG))
+def test_active_output_preflight_does_not_create_directories(tmp_path: Path) -> None:
+    config = copy.deepcopy(load_v2_config(ACTIVE_CONFIG))
     config["run_tag"] = "frontier-v2-preflight-test"
     paths = preflight_output_paths(config, repo_root=tmp_path)
     assert not paths.data_dir.exists()
@@ -102,7 +100,7 @@ def test_direction_classification(
 
 
 def test_outcome_alignment_requires_exact_role_and_period() -> None:
-    config = copy.deepcopy(load_v2_config(CONFIG))
+    config = copy.deepcopy(load_v2_config(ACTIVE_CONFIG))
     config["evaluation"]["evaluated_roles"] = ["primary_oot"]
     config["evaluation"]["expected_candidate_counts"] = {"primary_oot": 2}
     allocations = pd.DataFrame(
@@ -126,7 +124,7 @@ def test_outcome_alignment_requires_exact_role_and_period() -> None:
 
 
 def test_endpoint_contrast_uses_common_unresolved_union() -> None:
-    config = copy.deepcopy(load_v2_config(CONFIG))
+    config = copy.deepcopy(load_v2_config(ACTIVE_CONFIG))
     config["evaluation"].update(
         rulers=["normalized_score"],
         coordinates=[0.5],
@@ -186,7 +184,7 @@ def test_endpoint_contrast_uses_common_unresolved_union() -> None:
 
 
 def test_endpoint_contrast_rejects_inconsistent_loan_attributes() -> None:
-    config = copy.deepcopy(load_v2_config(CONFIG))
+    config = copy.deepcopy(load_v2_config(ACTIVE_CONFIG))
     config["evaluation"].update(
         rulers=["normalized_score"],
         coordinates=[0.5],

@@ -13,35 +13,27 @@ repos:
   - repo: https://github.com/pre-commit/pre-commit-hooks
     rev: v5.0.0
     hooks:
+      # These path-bound compatibility files must remain byte-exact.
       - id: trailing-whitespace
-        exclude: '^(book/_freeze/|book/_book/|.*\.cbm|.*\.pkl|.*\.parquet)'
+        exclude: '^(.*\.cbm|.*\.pkl|.*\.parquet)'
       - id: end-of-file-fixer
-        exclude: '^(book/_freeze/|book/_book/|.*\.cbm|.*\.pkl|.*\.parquet)'
+        exclude: '^(.*\.cbm|.*\.pkl|.*\.parquet|models/experiments/champion_reopen/champion-reopen-2026-06-19__pool93__ijds-claim-consolidated-definitive/portfolio/pool93_ijds_consolidated_governance\.json)$'
       - id: check-yaml
-        exclude: 'dbt_project/profiles\.yml'
       - id: check-toml
       - id: check-json
       - id: check-added-large-files
         args: [--maxkb=2000]
-        exclude: '^(EXTRACTION_MANIFEST\.json|models/.*\.cbm|models/.*\.pkl|book/_freeze/|book/_book/|book/apa\.csl|book/assets/figures/editorial/diagrama-crpto\.png)'
       - id: check-merge-conflict
       - id: detect-private-key
       - id: mixed-line-ending
         args: [--fix=lf]
-
-  - repo: https://github.com/kynan/nbstripout
-    rev: 0.9.1
-    hooks:
-      - id: nbstripout
+        exclude: '^book/references\.bib$'
 
   - repo: local
     hooks:
-      # mypy is intentionally not enforced locally while the legacy codebase is
-      # gradually annotated. Keep strict checks scoped to the modules that opt in.
-
       - id: dvc-status
-        name: dvc status (non-blocking drift report)
-        entry: uv run python scripts/check_dvc_status_warning.py
+        name: active IJDS DVC status
+        entry: just ijds-dvc-status
         language: system
         pass_filenames: false
         stages: [pre-push]
@@ -54,7 +46,7 @@ repos:
         stages: [pre-push]
 
       - id: validate-champion
-        name: validate champion artefacts
+        name: validate protected extraction artifacts
         entry: just validate-champion
         language: system
         pass_filenames: false

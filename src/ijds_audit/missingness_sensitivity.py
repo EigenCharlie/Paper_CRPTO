@@ -77,25 +77,15 @@ def load_missingness_config(path: Path, *, repo_root: Path) -> dict[str, Any]:
     if tuple(str(item["id"]) for item in specifications) != SPECIFICATION_IDS:
         raise ValueError("The complete missingness specification family changed.")
     schema_version = str(payload["schema_version"])
-    if schema_version not in {"2026-07-15.1", "2026-07-15.2", "2026-07-15.3"}:
+    if schema_version != "2026-07-15.3":
         raise ValueError("Unexpected missingness protocol schema version.")
-    native_encoding = (
-        "native_numeric_nan_with_nullable_binary_semantics"
-        if schema_version == "2026-07-15.3"
-        else "native_numeric_nan_without_active_mapped_features"
-    )
     expected_encodings = (
         "active_sentinel_convention",
         "active_mappings_plus_explicit_missing_indicators",
-        native_encoding,
+        "native_numeric_nan_with_nullable_binary_semantics",
     )
     if tuple(str(item["encoding"]) for item in specifications) != expected_encodings:
         raise ValueError("The missingness encoding family changed.")
-    expected_native_features = (
-        ["delinq_recency_native", "has_bankruptcy_native"]
-        if schema_version == "2026-07-15.3"
-        else ["delinq_recency_native", "bankruptcy_count_native"]
-    )
     if specifications[0] != {
         "id": "catboost_platt",
         "encoding": "active_sentinel_convention",
@@ -114,10 +104,10 @@ def load_missingness_config(path: Path, *, repo_root: Path) -> dict[str, Any]:
         raise ValueError("The explicit-indicator feature contract changed.")
     if specifications[2] != {
         "id": "catboost_native_missing_platt",
-        "encoding": native_encoding,
+        "encoding": "native_numeric_nan_with_nullable_binary_semantics",
         "imported": False,
         "dropped_numeric_features": ["delinq_recency", "has_bankruptcy"],
-        "added_numeric_features": expected_native_features,
+        "added_numeric_features": ["delinq_recency_native", "has_bankruptcy_native"],
     }:
         raise ValueError("The native-missingness feature contract changed.")
     evaluation = payload["evaluation"]
@@ -166,21 +156,17 @@ def build_missingness_variant(data: PreparedData, *, variant: str) -> PreparedDa
             .astype("int8")
         )
         numeric.extend(["delinq_recency_missing", "bankruptcy_count_missing"])
-    elif variant in {"native_missing", "native_missing_legacy_count"}:
+    elif variant == "native_missing":
         features = features.drop(columns=["delinq_recency", "has_bankruptcy"])
         numeric = [name for name in numeric if name not in {"delinq_recency", "has_bankruptcy"}]
         features["delinq_recency_native"] = pd.to_numeric(
             data.universe["mths_since_last_delinq"], errors="coerce"
         )
         bankruptcy_count = pd.to_numeric(data.universe["pub_rec_bankruptcies"], errors="coerce")
-        if variant == "native_missing_legacy_count":
-            features["bankruptcy_count_native"] = bankruptcy_count
-            numeric.extend(["delinq_recency_native", "bankruptcy_count_native"])
-        else:
-            features["has_bankruptcy_native"] = (
-                bankruptcy_count.gt(0).astype("float64").where(bankruptcy_count.notna())
-            )
-            numeric.extend(["delinq_recency_native", "has_bankruptcy_native"])
+        features["has_bankruptcy_native"] = (
+            bankruptcy_count.gt(0).astype("float64").where(bankruptcy_count.notna())
+        )
+        numeric.extend(["delinq_recency_native", "has_bankruptcy_native"])
     else:
         raise ValueError(f"Unknown missingness variant: {variant!r}.")
     if len(numeric) != len(set(numeric)):
@@ -288,13 +274,7 @@ def freeze_missingness_sensitivity(*, config_path: Path, repo_root: Path) -> Pat
         raise RuntimeError("The frozen baseline score does not align to the active universe.")
 
     indicator_data = build_missingness_variant(data, variant="explicit_indicators")
-    native_encoding = str(config["specifications"][2]["encoding"])
-    native_variant = (
-        "native_missing"
-        if native_encoding == "native_numeric_nan_with_nullable_binary_semantics"
-        else "native_missing_legacy_count"
-    )
-    native_data = build_missingness_variant(data, variant=native_variant)
+    native_data = build_missingness_variant(data, variant="native_missing")
     indicator = replace(
         fit_primary_scores(indicator_data, parent),
         name="catboost_missing_indicators_platt",

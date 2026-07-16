@@ -1,5 +1,0 @@
-comparator_rule,comparator,policy_pairs,payoff_negative,payoff_positive,payoff_indeterminate,default_negative,default_positive,default_indeterminate,miscoverage_negative,miscoverage_positive,miscoverage_indeterminate
-c0_same_numeric_cap,C0: same numeric cap,9,0,9,0,9,0,0,8,0,1
-c1_development_fixed,C1: fixed development cap,9,5,2,2,2,2,5,1,7,1
-c2_contemporaneous,C2: contemporaneous funded-PD match,9,7,0,2,0,1,8,0,8,1
-finite_multiverse_envelope,"Envelope over C0, C1, C2, and 29 point caps",9,0,0,9,0,0,9,0,0,9

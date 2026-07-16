@@ -117,19 +117,18 @@ uv run python scripts/build_ijds_binary_geometry_frontier_v4_evidence.py
 just publication-integrity
 just lint
 just type-check
-just type-advisory-full
+just type-check-fast
 just test
 just validate-champion
-just drift-gate
-just paper-submission
-just paper-submission-tex
-just paper-submission-official
-uv run dvc status --no-updates
+just ijds-active-check
+just submission-build
+just submission-check
+just ijds-dvc-status
 ```
 
 The active builder verifies the V4, two-ruler, raw-data, credit-control,
 endpoint-sensitivity, and structural-sensitivity manifests/freezes and every
-artifact descriptor. The active capsule contains 21 DVC pointers. It emits only
+artifact descriptor. The active capsule contains 27 DVC pointers. It emits only
 `crpto_ijds_v4_*` tables/figures and
 `ijds_binary_geometry_frontier_v4_evidence.json`. Consecutive builds must be
 byte-identical. The canonical body is `paper/CRPTO_ijds.qmd`; generate official
@@ -143,12 +142,11 @@ pdflatex -> bibtex -> pdflatex -> pdflatex
 
 ## Protected History
 
-Never overwrite `EXTRACTION_MANIFEST.json`, canonical PD/calibrator, historical
-conformal intervals, pool93 bundles, or A35--A40 champion files. Protected DVC
+Never overwrite `EXTRACTION_MANIFEST.json`, canonical PD/calibrator, or other
+artifacts protected by that manifest. Protected DVC
 stages are `crpto.pd.champion`, `crpto.conformal.intervals`,
 `crpto.conformal.validation`, `crpto.portfolio.optimization`, and
 `crpto.portfolio.bound_exact_eval`.
 
-Fixed-taxonomy V1--V3, selected-policy studies, compact-v7, pool93,
-Prosper/Freddie, and A1--A40 are Git/DVC provenance only. The active paper
-explains the final method and evidence, not discarded-version chronology.
+Earlier studies are preserved in Git history and `D:\crpto_legacy`. The active
+paper explains the final method and evidence, not discarded-version chronology.

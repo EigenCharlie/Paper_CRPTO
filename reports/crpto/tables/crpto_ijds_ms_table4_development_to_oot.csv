@@ -1,3 +1,0 @@
-block,months,expected_payoff_difference,realized_payoff_difference_lower,realized_payoff_difference_upper,weighted_default_difference_lower,weighted_default_difference_upper,weighted_miscoverage_difference_lower,weighted_miscoverage_difference_upper,outcome_status
-policy_development_2012H2,6,-72701.67335314059,50260.10081012396,50260.10081012396,-0.0638021547037051,-0.0638021547037051,-0.007358371110674056,-0.007358371110674056,resolved_exact
-locked_primary_2016-04_to_2017-06,15,-240977.7786228247,-322703.7874780131,-58040.33924711874,-0.046274834615204194,-0.02009309459512156,0.00882183205146247,0.029850238738211774,sharp_unresolved_outcome_bounds

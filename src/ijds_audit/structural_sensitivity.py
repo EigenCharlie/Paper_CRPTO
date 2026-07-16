@@ -80,7 +80,12 @@ def allocation_activity(
     ruler = records["frontier_ruler"].astype("string")
     binding_tolerance = np.where(ruler.eq("normalized_score"), 1e-8, 1e-5)
     weights = allocations["weight"].to_numpy(dtype=float)
-    hhi = grouped["weight"].apply(lambda values: float(np.square(values).sum()))
+    hhi = (
+        allocations.assign(_weight_squared=np.square(weights))
+        .groupby(keys, observed=True, sort=False)["_weight_squared"]
+        .sum()
+        .to_numpy(dtype=float)
+    )
     return {
         **dict(scenario),
         "portfolios": int(len(records)),

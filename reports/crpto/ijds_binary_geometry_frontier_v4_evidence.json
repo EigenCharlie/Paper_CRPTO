@@ -1,8 +1,8 @@
 {
-  "schema_version": "2026-07-15.3",
+  "schema_version": "2026-07-15.4",
   "status": "active_ijds_v5_endpoint_reason_audited_paper_facing_evidence",
   "source_registry": {
-    "schema_version": "2026-07-15.3",
+    "schema_version": "2026-07-15.4",
     "status": "active_ijds_paper_evidence_source_registry",
     "sources": [
       "credit_receipt",
@@ -130,6 +130,27 @@
     }
   },
   "replay_dependencies": {
+    "binary_geometry_v3_reason_reference": {
+      "run_tag": "ijds-binary-geometry-frontier-v4-2026-07-14-v3",
+      "protocol_tag": "protocol/ijds-binary-geometry-frontier-v4-2026-07-14-v3",
+      "protocol_commit": "688f75dc4f285c75bc499c9e041dd30fb3acd70d",
+      "paper_role": "non_evidence_v5_reason_recovery_reference",
+      "dvc_tracked": true
+    },
+    "normalized_frontier_v3_reason_reference": {
+      "run_tag": "ijds-normalized-objective-frontier-2026-07-14-v3",
+      "protocol_tag": "protocol/ijds-normalized-objective-frontier-2026-07-14-v3",
+      "protocol_commit": "a1ae516a6c9674686dba245cb275475073b298a0",
+      "paper_role": "non_evidence_v5_reason_recovery_reference",
+      "dvc_tracked": true
+    },
+    "credit_controls_v3_reason_reference": {
+      "run_tag": "ijds-credit-risk-controls-2026-07-14-v3",
+      "protocol_tag": "protocol/ijds-credit-risk-controls-2026-07-14-v3",
+      "protocol_commit": "688f75dc4f285c75bc499c9e041dd30fb3acd70d",
+      "paper_role": "non_evidence_v5_reason_recovery_reference",
+      "dvc_tracked": true
+    },
     "portfolio_structure_v5_shards": {
       "run_tag": "ijds-portfolio-structure-sensitivity-2026-07-15-v5",
       "protocol_tag": "protocol/ijds-portfolio-structure-sensitivity-2026-07-15-v5",
@@ -3258,8 +3279,8 @@
   "source_artifacts": {
     "active_source_registry": {
       "path": "configs/ijds_active_evidence_sources.yaml",
-      "bytes": 10347,
-      "sha256": "edd6949daa0dd4ced395e2811e625bab464d839e4bd4f49c1cd641a240516232"
+      "bytes": 11846,
+      "sha256": "686832792a3f69a33a833816525423bcfc2726652185e3bf3c2df10ee79e9552"
     },
     "claim_ledger_contract": {
       "path": "configs/ijds_claim_ledger.yaml",
@@ -3268,18 +3289,18 @@
     },
     "publication_targets_contract": {
       "path": "configs/crpto_publication_targets.yaml",
-      "bytes": 7404,
-      "sha256": "c62090527fbbcfb8770310d9fa23e1d50147c1b7238bec37d1c949e43f19b8ac"
+      "bytes": 7710,
+      "sha256": "ebbcb2a5ff24c36ea5f186c61d607e1e268235b4184d90c8163b45793629d9c4"
     },
     "evidence_builder": {
       "path": "scripts/build_ijds_binary_geometry_frontier_v4_evidence.py",
       "bytes": 98677,
-      "sha256": "2db7579a43538e16dfa3593d461861a9d95c6ed19461fa46fe5e118b7d1cff8a"
+      "sha256": "187fec253f0194a81406e239222ac507b5f23918e7b251b0afec84e90c465ccd"
     },
     "publication_integrity_checker": {
       "path": "scripts/check_publication_integrity.py",
-      "bytes": 16828,
-      "sha256": "07d3e00cce0ddd14380d5f2da5c393e2eb8446ee9c663f0e9b5afb6a53ff0ac2"
+      "bytes": 16696,
+      "sha256": "b42aa426aebec8d64ea5ca386273035cb551c111051bc7f261137739656e7b52"
     },
     "publication_generation_helper": {
       "path": "src/ijds_audit/publication_generation.py",

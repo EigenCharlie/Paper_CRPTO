@@ -1,5 +1,0 @@
-outs:
-- md5: 6e9f41db20e264f707d7b68ce2884ccc
-  size: 9619
-  hash: md5
-  path: stage_cost_by_grade.parquet

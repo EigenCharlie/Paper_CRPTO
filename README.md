@@ -1,261 +1,152 @@
-# CRPTO — Conformal Risk-Aware Predict-Then-Optimize
+# CRPTO
 
-Pipeline de investigación y libro Quarto que acompañan el paper **CRPTO**, una metodología de auditoría que integra *conformal prediction* con optimización de carteras aplicada a riesgo de crédito (datos de Lending Club, 2007–2020).
+CRPTO is a research repository for one manuscript targeted to the **INFORMS
+Journal on Data Science**. It studies what happens when a binary conformal
+score is used as a coefficient in a monthly credit-allocation linear program.
+The contribution is an identification audit of the
+machine-learning--conformal--optimization interface, not a promoted lending
+policy or a new credit-scoring leaderboard.
 
-> CRPTO opera como repositorio standalone: GitHub, DVC y MLflow apuntan a recursos propios del paper. La historia de extracción y aprendizajes queda documentada en [`docs/PROJECT_HISTORY.md`](docs/PROJECT_HISTORY.md).
+## Active Result
 
-## Claim IJDS activo
+The active design uses the Lending Club 2007--2020Q3 archive and declares all
+time roles before evaluation.
 
-| Campo | Valor |
-| --- | --- |
-| Outcome-free run | `ijds-binary-geometry-frontier-v4-2026-07-12-v1` |
-| Endpoint-corrected run | `ijds-binary-geometry-frontier-v4-2026-07-14-v3` |
-| Two-ruler freeze/evaluation | `ijds-normalized-objective-frontier-2026-07-13-v1c` / `2026-07-14-v3` |
-| Universo | `640,543` préstamos; primary OOT `376,890`; membership independiente del status |
-| Cronología | ocho ventanas residuales consecutivas; 15 decisiones 2016-04--2017-06 |
-| Conformal | taxonomías fijas con scores 2011; intervalo binario residual, no CI de PD latente |
-| Decisión | seis tracks ruler-coordinate sobre `gamma={0,.25,.50,.75,1}`; sin selector ni winner |
-| Endpoint | `364,814` resueltos y `12,076` no resueltos; el archivo no es un snapshot point-in-time verificado |
-| Cobertura candidata OOT | CatBoost max upper `0.882597`; logistic max upper `0.896222`; maximo de cinco modelos `0.897726` |
-| Transición binaria | estrato 2: prevalencia `0.101703 -> 0.097147`; cuantil `0.888435 -> 0.111801` |
-| Dos rulers | objective-matched `.25` cruza cero en las tres metricas; `.50` es adverso; `.75` es mayormente no identificado |
-| Comparador C2 | 1,080 funded-point matches; dominancia plug-in mecánica, no dominancia realizada |
-| Exact frontier | 3,067 caps; `216/216` broad-stress envelopes cruzan cero |
-| Development support | default `72/72` cruza cero; W8 `27/27` cruza cero |
-| Claim | falla de transporte, geometría binaria sensible a prevalencia y dirección dependiente de ruler, coordenada y soporte del comparador |
+| Quantity | Active value |
+|---|---:|
+| Raw archive | 2,925,493 rows |
+| Eligible 36-month design universe | 640,543 loans |
+| Primary OOT candidates | 376,890 loans |
+| Resolved / unresolved at the six-month endpoint | 364,814 / 12,076 |
+| Coverage controls | 5 frozen learner specifications x 8 windows |
+| Largest all-candidate coverage upper bound | 0.897726 |
+| Two-ruler optimization solves | 6,240 |
+| Exact point-cap frontier | 3,067 caps |
+| Broad-support comparator envelopes crossing zero | 216 / 216 |
+| Structural sensitivity | 36 complete scenarios |
 
-Los hashes del champion histórico están en [`EXTRACTION_MANIFEST.json`](EXTRACTION_MANIFEST.json);
-los hashes IJDS activos viven en los freezes protocolarios y en el manifest
-paper-facing. Verifica trabajo ordinario con `just validate-champion`; antes del
-freeze usa `just validate-champion-strict`, que también falla si falta un artefacto.
-Los estudios selected-policy, compact-v7, pool93 y A1--A40 se conservan como
-procedencia en Git/DVC, no como claims activos. La autoridad editorial es
-[`docs/research/active_claims_2026-07-14.md`](docs/research/active_claims_2026-07-14.md)
-y el único manifest paper-facing es
-[`reports/crpto/ijds_binary_geometry_frontier_v4_evidence.json`](reports/crpto/ijds_binary_geometry_frontier_v4_evidence.json).
+Under the declared six-month outcome-availability rule, all 40 sharp
+all-candidate coverage upper bounds are below 0.90. Separately, the primary
+CatBoost eight-window pattern recurs under three feature-semantics-preserving
+missingness encodings and at a later retrospective origin. Portfolio direction
+changes with the outcome-blind ruler, coordinate, and comparator support; no
+model, encoding, gamma, ruler, coordinate, scenario, or policy is selected.
 
-## Requisitos del sistema
+These are retrospective, archive-specific identification results. They are not
+prospective validity, selected-set conformal coverage, causal lending effects,
+cash-flow returns, or deployment evidence.
 
-| Herramienta | Versión mínima | Notas |
-| --- | --- | --- |
-| Python | 3.11 (≤3.12) | Declarado en `.python-version` y `pyproject.toml`. |
-| [uv](https://docs.astral.sh/uv/) | 0.4+ | Gestor de dependencias. Reemplaza pip/poetry. |
-| [just](https://github.com/casey/just) | 1.28+ | Task runner cross-platform. Reemplaza `make`. Windows: `winget install Casey.Just`. |
-| [Quarto CLI](https://quarto.org/docs/get-started/) | 1.9+ | Para renderizar el libro. CI usa 1.9.35. |
-| LaTeX (`pdflatex`, BibTeX, `latexmk`) | TeX Live 2024+ | Requerido para el PDF oficial; opcional para HTML. |
-| DuckDB CLI | 1.3+ | Opcional, queries directas a `data/processed/crpto.duckdb`. |
-| Git | 2.40+ | Para hooks pre-commit. |
+## Sources Of Truth
 
-En Windows, `uv`, `just` y `quarto` deben estar en `PATH`. El venv oficial del
-proyecto vive en `.venv/Scripts/`; usa PowerShell como shell normal de trabajo.
+Read these in order:
 
-## Setup rápido
+1. [`docs/research/active_claims_2026-07-14.md`](docs/research/active_claims_2026-07-14.md)
+2. [`configs/ijds_active_evidence_sources.yaml`](configs/ijds_active_evidence_sources.yaml)
+3. [`configs/ijds_claim_ledger.yaml`](configs/ijds_claim_ledger.yaml)
+4. [`reports/crpto/ijds_binary_geometry_frontier_v4_evidence.json`](reports/crpto/ijds_binary_geometry_frontier_v4_evidence.json)
+5. [`paper/CRPTO_ijds.qmd`](paper/CRPTO_ijds.qmd)
+6. [`paper/supplement_ijds.qmd`](paper/supplement_ijds.qmd)
+
+The source registry owns lineage identities and 27 DVC pointers. The evidence
+manifest is the only numeric paper-facing manifest. The body QMD is the only
+editable source for the official submission TeX.
+
+## Architecture
+
+```text
+raw archive + frozen experiment roots
+              |
+              v
+  configs/ijds_active_evidence_sources.yaml
+              |
+              v
+  scripts/build_ijds_binary_geometry_frontier_v4_evidence.py
+              |
+              +--> reports/crpto/ijds_binary_geometry_frontier_v4_evidence.json
+              +--> reports/crpto/tables/crpto_ijds_v4_*.csv
+              +--> reports/crpto/figures/crpto_ijds_v4_*.{png,pdf}
+              |
+              v
+  paper/CRPTO_ijds.qmd + paper/supplement_ijds.qmd
+              |
+              v
+  generated HTML/PDF + official INFORMS TeX/PDF
+```
+
+Current reusable code is under `src/ijds_audit`, `src/ijds_challengers`, and
+the retained data, model, evaluation, and optimization modules they import.
+Current experiment entrypoints are the ten `scripts/experiments/run_ijds_*`
+files named by `configs/crpto_publication_targets.yaml`.
+
+`dvc.yaml`, `dvc.lock`, and paths fixed by `EXTRACTION_MANIFEST.json` form a
+sealed compatibility capsule. They preserve old hashes and path-bound replay
+metadata but are not active workflows or manuscript evidence. The complete
+pre-consolidation repository is archived outside the project at
+`D:\crpto_legacy`.
+
+## Setup
+
+Requirements: Python 3.11 or 3.12, `uv`, `just`, Quarto, Git, and TeX Live.
 
 ```powershell
-# Una sola vez
-just setup              # entorno activo: dev + search, sin pyepo/torch
-just setup-spo          # entorno historico SPO: agrega pyepo + torch
-
-# Copia el archivo de entorno y rellena con tus tokens reales
-cp .env.example .env
-# Edita .env (DagsHub/MLflow/DVC standalone de CRPTO)
-
-# Verifica que todo está sano
-just smoke              # tests críticos rápidos
+uv sync --extra dev
+just smoke
 ```
 
-## Comandos principales
+Use Windows PowerShell and `uv run` for Python commands.
+
+## Main Commands
 
 ```powershell
-# Libro Quarto
-just book               # HTML
-just book-pdf           # no-op: PDF completo diferido hasta tesis curada
-just book-preview       # live reload
-just book-clean         # borra _book/, _freeze/, .quarto/
-
-# Pipeline de paper (no toca el champion)
-just paper-export       # evidencia IJDS activa + previews HTML de paper/supplement
-just ijds-active-replay # reconstruye solo evidencia paper-facing desde freezes
-just paper-submission-tex # genera TeX INFORMS desde el QMD canonico
-just submission-build   # construye evidencia, HTML, TeX y los tres PDFs activos
-just tables             # solo CSVs
-just figures            # solo PNGs/PDFs
-
-# Calidad
-just lint               # ruff check + format check
-just fmt                # ruff fix + format
-just type-check         # mypy src, scripts y tests
-just type-advisory      # ty sobre ruta activa IJDS, no bloqueante
-just type-advisory-full # ty sobre src/scripts completos; bloquea el cierre IJDS
-just api-docs-core      # pdoc local para modulos core, salida ignorada
-just hooks-check        # valida hooks con pre-commit y prek
-just smoke              # tests críticos rápidos
-just test               # suite completa
-just submission-check   # verifica outputs construidos; no regenera evidencia
-just submission-closeout # submission-build seguido por submission-check
-
-# DVC
-just dvc-status         # drift detection
-just dvc-dag            # imprime el DAG en markdown
-
-# dbt
-just dbt-test           # parse + tests
-just dbt-build          # marts materializadas
-
-# Listado completo
-just help
+just test                    # complete retained test suite
+just lint                    # Ruff check and format check
+just type-check              # mypy
+just type-check-fast         # blocking ty check on the active surface
+just publication-integrity   # source, claim, and artifact contracts
+just drift-gate              # read-only PD/conformal/evidence regression
+just ijds-active-check       # scientific and manuscript synchronization
+just submission-build       # evidence, HTML, TeX, PDFs, previews
+just submission-check       # all read-only submission gates
+just submission-closeout    # build, check, and remote DVC verification
 ```
 
-## Alcance y reglas de operación
+The manual fallback for official TeX compilation is intentionally
+`pdflatex -> bibtex -> pdflatex -> pdflatex`: the first pass writes citation
+and cross-reference metadata, BibTeX writes the bibliography, and the final two
+passes stabilize references and pagination.
 
-El repositorio es público y está dedicado solo a CRPTO. El alcance operativo,
-qué se puede regenerar, qué no debe tocarse en `main`, cómo manejar secretos y
-qué refactors requieren revalidación están documentados en
-[`docs/SCOPE_AND_GOVERNANCE.md`](docs/SCOPE_AND_GOVERNANCE.md).
+## Protected Boundary
 
-Regla corta: documentación, CI, tablas, figuras y journal package son seguros;
-reentrenar PD, recalcular intervalos conformal o reoptimizar el champion no lo
-es sin una rama de revalidación y drift report.
+Do not run these historical DVC stages without explicit permission:
 
-## Estrategia de publicación
+- `crpto.pd.champion`
+- `crpto.conformal.intervals`
+- `crpto.conformal.validation`
+- `crpto.portfolio.optimization`
+- `crpto.portfolio.bound_exact_eval`
 
-La decisión editorial activa es escribir para **INFORMS Journal on Data
-Science**. El contrato vigente, sus límites y los enlaces oficiales viven en
-[`configs/crpto_publication_targets.yaml`](configs/crpto_publication_targets.yaml).
+Do not modify `EXTRACTION_MANIFEST.json` or its protected model/data artifacts.
+Use `just validate-champion` for ordinary work and
+`just validate-champion-strict` when every protected artifact is available.
 
-Los borradores de extracción están en [`paper/`](paper/):
+## Paper Editing
 
-- `paper/CRPTO_ijds.qmd`: cuerpo anónimo IJDS.
-- `paper/supplement_ijds.qmd`: online supplement con protocolo, pruebas,
-  sensibilidad temporal, comparator scopes, reproducibilidad y frontera histórica.
-- `paper/CRPTO.qmd`: entrada genérica.
-
-Comandos rápidos:
+Edit `paper/CRPTO_ijds.qmd`, then generate the official TeX with:
 
 ```powershell
-just submission-build
-just submission-check
+just paper-tex
 ```
 
-## Estructura
+Never edit `paper/submission/CRPTO_ijds_submission.tex` directly. The paper is
+double-anonymous; author-identifying material belongs only in the separate
+submission forms.
 
-```
-.
-├── CLAUDE.md                # Contexto para Claude Code
-├── .claude/                 # Configuración Claude Code + skills CRPTO
-│   ├── settings.json        # Permisos pre-aprobados (compartido)
-│   └── skills/              # 6 skills custom (/crpto-render, /crpto-smoke, ...)
-├── .codex/                  # Skill local CRPTO para Codex
-├── .github/workflows/       # CI/CD (lint, book-publish, tests-full manual)
-├── .pre-commit-config.yaml  # ruff + nbstripout + dvc-status + smoke
-├── pyproject.toml           # Deps y tooling (ruff, pytest, mypy)
-├── uv.lock                  # Lockfile reproducible
-├── justfile                 # Task runner cross-platform
-├── dvc.yaml / dvc.lock      # Pipeline de 13 stages
-├── EXTRACTION_MANIFEST.json # Hashes SHA256 de artefactos congelados
-├── book/                    # Libro Quarto (24 capítulos en español)
-│   ├── _quarto.yml
-│   ├── _brand.yml           # Paleta + tipografías (Fase 3)
-│   ├── styles.scss          # CSS custom con dark mode + print media
-│   ├── chapters/            # 24 .qmd (manuscrito + dossier)
-│   ├── includes/            # snippets reutilizables
-│   ├── assets/figures/      # editorial/, notebooks/, publication/
-│   ├── _helpers/            # paquete Python con load_artifacts, plot_helpers
-│   ├── references.bib       # 70 entradas
-│   └── apa.csl              # estilo APA 7
-├── crpto/                   # paquete público mínimo (`import crpto`)
-├── src/                     # módulos fuente históricos (data, features, models, optimization, evaluation, utils)
-├── scripts/                 # entry points; ver scripts/README.md para rutas IJDS vs históricas
-├── tests/                   # 26 archivos pytest (markers slow / integration)
-├── configs/                 # YAML (pd_model, conformal, optimization, fairness, mrm)
-├── dbt_project/             # 3 staging + 3 marts sobre crpto.duckdb
-├── data/
-│   ├── raw/                 # Lending Club CSV (1.7 GB) — DVC tracked
-│   └── processed/           # parquets + DuckDB
-├── models/                  # champion + calibrator + status JSONs
-├── reports/
-│   ├── crpto/tables/        # 18 CSVs del paper
-│   ├── crpto/figures/       # 8 PNGs/PDFs
-│   └── mrm/                 # Model risk cards (skops)
-├── docs/research/           # dossier académico
-├── paper/                   # manuscrito principal + versión IJDS + supplement
-└── notebooks/               # exploraciones Jupyter
-```
+## Data And Literature
 
-## Qué stages son seguros re-correr
+The raw CSV and experiment roots are DVC-managed and excluded from Git. The
+local `Papers_tesis/` corpus is also excluded because it contains copyrighted
+PDFs; bibliographic metadata belongs in `paper/references.bib`.
 
-| Stage DVC | Seguro | Notas |
-| --- | --- | --- |
-| `crpto.data.dataset` | ⚠️ Lento | 1.7 GB; regenera todo downstream. |
-| `crpto.data.features` | ⚠️ | Regenera train_fe/test_fe/calibration_fe. |
-| `crpto.pd.champion` | ❌ | Rompe `pd_canonical.cbm`. |
-| `crpto.conformal.intervals` | ❌ | Rompe intervalos congelados. |
-| `crpto.conformal.validation` | ❌ | Rompe `conformal_policy_status.json`. |
-| `crpto.portfolio.optimization` | ❌ | Rompe `portfolio_allocations.parquet`. |
-| `crpto.portfolio.bound_exact_eval` | ❌ | Rompe `portfolio_bound_aware_bound_eval.parquet`. |
-| `crpto.paper.export_tables` | ✅ | Determinista; regenera CSVs. |
-| `crpto.paper.evidence` | ✅ | Determinista. |
-| `crpto.paper.journal_package` | ✅ | Determinista. |
-| `crpto.paper.figures` | ✅ | Determinista. |
-| `crpto.paper.spo_stability` | ✅ | Determinista. |
-| `crpto.book.render` | ✅ | Render Quarto. |
+## License And Citation
 
-## Troubleshooting
-
-**`quarto: command not found`** — instala Quarto CLI desde https://quarto.org/docs/get-started/ y reabre PowerShell.
-
-**`uv: command not found`** — `winget install --id=astral-sh.uv` en Windows, o `pip install uv`.
-
-**Render del libro falla con `ModuleNotFoundError`** — los chunks Python requieren el venv activo. `uv run -- quarto render book` resuelve esto.
-
-**El entorno Python parece incorrecto** — borra variables locales que cambien el
-entorno de `uv` o Quarto, recrea con `uv venv && uv sync --extra dev --extra
-search`, y trabaja desde PowerShell en `C:\Users\carlos\Documents\Paper_CRPTO`.
-
-**`dvc status` muestra muchos cambios** — probablemente el lockfile cambió. Ejecuta `just dvc-status` para ver detalle. Si los stages del champion están afectados, NO repro: documenta y consulta antes.
-
-**Pre-commit bloquea un commit** — corre `just fmt && just smoke` para arreglar lint/format y verificar tests. Si el hook `dvc-status` falla, hay drift inesperado.
-
-**Render PDF falla** — los PDFs activos son los borradores IJDS
-(`just paper-submission-pdf`) y, más adelante, un PDF APA de tesis curado. El
-PDF completo del libro no se mantiene como artefacto rutinario; ver
-[`docs/THESIS_PDF_SCOPE.md`](docs/THESIS_PDF_SCOPE.md).
-
-## Herramientas interactivas para reviewers
-
-Comandos opcionales útiles para inspeccionar el champion sin tocar el pipeline:
-
-```powershell
-just duckdb              # REPL DuckDB sobre data/processed/crpto.duckdb
-just datasette           # UI web sobre el warehouse (requiere datasette + datasette-duckdb)
-just dbt-docs            # UI dbt en http://localhost:8088
-just optuna-dashboard    # Optuna Dashboard sobre el journal de HPO
-just pipeline-state      # Snapshot JSON de todos los status del pipeline
-```
-
-Ninguno modifica artefactos congelados — solo leen `data/processed/` y `models/`.
-
-## Documentación adicional
-
-- [`CLAUDE.md`](CLAUDE.md) — Contexto operativo para Claude Code (champion, comandos, convenciones).
-- [`CONTRIBUTING.md`](CONTRIBUTING.md) — Cómo reproducir las salidas y qué requiere plan de revalidación.
-- [`CHANGELOG.md`](CHANGELOG.md) — Historial de cambios.
-- [`docs/ACADEMIC_CONTEXT.md`](docs/ACADEMIC_CONTEXT.md) — Single-author, dataset estático, sin producción.
-- [`docs/SCOPE_AND_GOVERNANCE.md`](docs/SCOPE_AND_GOVERNANCE.md) — Alcance CRPTO, límites del repo público y reglas de refactor.
-- [`docs/refactor/`](docs/refactor/) — Planes de refactor diferido (MAPIE, conformal split, feature_config Parquet).
-- [`docs/research/`](docs/research/) — Dossier académico (conformal prediction readme, audit, integrations).
-- [`paper/README.md`](paper/README.md) — Workspace de manuscrito, target IJDS y
-  comandos de render.
-- [`docs/security/SECRETS_AND_REMOTES.md`](docs/security/SECRETS_AND_REMOTES.md) — Variables de entorno, secretos y remotes DVC/MLflow para Windows.
-- [`EXTRACTION_MANIFEST.json`](EXTRACTION_MANIFEST.json) + [`EXTRACTION_MANIFEST.md`](EXTRACTION_MANIFEST.md) — Hashes y narrativa de la extracción.
-
-## Citar este trabajo
-
-Ver [`CITATION.cff`](CITATION.cff). Resumen:
-
-> Vergara Rojas, C. A. (2026). *CRPTO: predict-then-optimize con conformal prediction para riesgo de crédito* [Master's thesis]. https://github.com/EigenCharlie/Paper_CRPTO
-
-## Licencia
-
-- Código fuente: [MIT](LICENSE).
-- Texto del libro/paper, figuras y tablas: [CC BY 4.0](LICENSE-CONTENT).
+Code is MIT licensed. See [`CITATION.cff`](CITATION.cff) for citation metadata.

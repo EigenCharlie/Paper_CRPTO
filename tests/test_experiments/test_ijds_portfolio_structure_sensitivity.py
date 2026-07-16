@@ -1,4 +1,4 @@
-"""Locked numerical contracts for structural-sensitivity V1--V6."""
+"""Locked numerical contracts for the V5 recovery source and active V6."""
 
 from __future__ import annotations
 
@@ -22,15 +22,11 @@ V6_CONFIG = CONFIG_DIR / "ijds_portfolio_structure_sensitivity_2026-07-15_v6.yam
 @pytest.mark.parametrize(
     "name",
     [
-        "ijds_portfolio_structure_sensitivity_2026-07-14.yaml",
-        "ijds_portfolio_structure_sensitivity_2026-07-15_v2.yaml",
-        "ijds_portfolio_structure_sensitivity_2026-07-15_v3.yaml",
-        "ijds_portfolio_structure_sensitivity_2026-07-15_v4.yaml",
         "ijds_portfolio_structure_sensitivity_2026-07-15_v5.yaml",
         "ijds_portfolio_structure_sensitivity_2026-07-15_v6.yaml",
     ],
 )
-def test_every_structural_protocol_retains_its_locked_contract(name: str) -> None:
+def test_retained_structural_protocols_keep_the_locked_grid(name: str) -> None:
     config = _load_config(CONFIG_DIR / name)
 
     assert config["structural_grid"]["scenarios"] == 36

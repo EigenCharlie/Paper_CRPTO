@@ -9,37 +9,17 @@ import subprocess
 from collections.abc import Sequence
 from pathlib import Path
 
+import yaml
+
 ROOT = Path(__file__).resolve().parents[1]
 DEFAULT_OUTPUT = ROOT / "reports" / "ci" / "ty-advisory.txt"
 TY_REQUIREMENT = "ty==0.0.59"
 
 SOURCE_ROOTS = ("src", "scripts")
-ACTIVE_EXCLUDED_FILES = {
-    "scripts/build_ijds_calibration_selected_evidence.py",
-    "scripts/build_ijds_comparator_stringency_evidence.py",
-    "scripts/build_ijds_fixed_taxonomy_c2_evidence.py",
-    "scripts/build_ijds_maturity_safe_evidence.py",
-    "scripts/generate_conformal_intervals.py",
-    "scripts/run_cqr_comparison.py",
-    "scripts/run_crpto_vs_spo_stability.py",
-    "scripts/run_spo_comparison.py",
-    "scripts/run_spo_real.py",
-    "scripts/train_pd_model.py",
-    "scripts/search/build_pool93_body_allocation_audit.py",
-    "src/optimization/cuopt_adapter.py",
-}
-ACTIVE_EXPERIMENT_FILES = {
-    "scripts/experiments/ijds_policy_support.py",
-    "scripts/experiments/run_ijds_binary_geometry_frontier_v4.py",
-    "scripts/experiments/run_ijds_normalized_objective_frontier.py",
-    "scripts/experiments/run_ijds_normalized_objective_frontier_v2.py",
-    "scripts/experiments/run_ijds_policy_support_tie_audit.py",
-    "scripts/experiments/run_ijds_credit_risk_controls.py",
-    "scripts/experiments/run_ijds_endpoint_availability_sensitivity.py",
-    "scripts/experiments/run_ijds_label_lag_sensitivity.py",
-    "scripts/experiments/run_ijds_missingness_sensitivity.py",
-    "scripts/experiments/run_ijds_portfolio_structure_sensitivity.py",
-    "scripts/experiments/run_ijds_raw_data_audit.py",
+COMPATIBILITY_SOURCE_FILES = {
+    "src/data/make_dataset.py",
+    "src/data/prepare_dataset.py",
+    "src/optimization/tail_satisficing_objective.py",
 }
 SUMMARY_RE = re.compile(r"^Found \d+ diagnostics", flags=re.MULTILINE)
 
@@ -50,22 +30,33 @@ def _relative_posix(path: Path) -> str:
 
 def iter_python_files(*, scope: str) -> list[str]:
     """Return the Python files ty should check for a given advisory scope."""
-    files: list[str] = []
-    for root_name in SOURCE_ROOTS:
-        for path in sorted((ROOT / root_name).rglob("*.py")):
-            rel = _relative_posix(path)
-            parts = rel.split("/")
-            if scope == "active":
-                if parts[:2] == ["scripts", "archive"]:
-                    continue
-                if parts[:2] == ["scripts", "experiments"] and rel not in (ACTIVE_EXPERIMENT_FILES):
-                    continue
-                if parts[:2] == ["scripts", "search"] and path.name.startswith("run_"):
-                    continue
-                if rel in ACTIVE_EXCLUDED_FILES:
-                    continue
-            files.append(rel)
-    return files
+    if scope not in {"active", "full"}:
+        raise ValueError(f"Unsupported ty scope: {scope}")
+    full = [
+        _relative_posix(path)
+        for root_name in SOURCE_ROOTS
+        for path in sorted((ROOT / root_name).rglob("*.py"))
+    ]
+    if scope == "full":
+        return full
+
+    publication = yaml.safe_load(
+        (ROOT / "configs/crpto_publication_targets.yaml").read_text(encoding="utf-8")
+    )
+    surface = publication["active_scientific_contract"]["active_code_surface"]
+    active_scripts = {
+        *surface["paper_pipeline"],
+        *surface["protocol_entrypoints"],
+        *surface["support_tools"],
+        "scripts/__init__.py",
+        "scripts/experiments/__init__.py",
+    }
+    return [
+        path
+        for path in full
+        if (path.startswith("src/") and path not in COMPATIBILITY_SOURCE_FILES)
+        or path in active_scripts
+    ]
 
 
 def build_ty_command(*, uvx: str, files: Sequence[str], fail_on_diagnostics: bool) -> list[str]:

@@ -2,8 +2,8 @@
 title: "Online Supplement for CRPTO: Auditing Binary Conformal Geometry and Portfolio Comparators"
 author: "Anonymous"
 lang: en
-bibliography: ../book/references.bib
-csl: ../book/apa.csl
+bibliography: references.bib
+csl: apa.csl
 link-citations: true
 format:
   html:
@@ -167,9 +167,10 @@ loads no outcome column.
 
 The separate credit-control freeze contains five score vectors for all 640,543
 eligible rows, 160 residual recipes, 3,638,660 fit-audit rows, and 3,520
-outcome-free geometry cells. It reproduces the two active V4 score columns
-exactly and freezes monotonic CatBoost plus both WOE/IV scorecards before any
-primary OOT outcome join. No control enters a portfolio solve.
+outcome-free geometry cells. It reproduces the CatBoost and numeric-logistic
+score columns used in the detailed geometry audit exactly, and freezes
+monotonic CatBoost plus both WOE/IV scorecards before any primary OOT outcome
+join. No control enters a portfolio solve.
 
 Each evaluator verifies its freeze identity and every artifact descriptor
 before a keyed outcome join. Exact ID alignment is required; partial or
@@ -356,7 +357,7 @@ set is empty.
 
 : S6 primary coverage over 376,890 candidates, including 12,076 unresolved outcomes. {#tbl-s-coverage}
 
-Every upper endpoint is below 0.90 for both detailed V4 learners. Section B.2
+Every upper endpoint is below 0.90 for both detailed learners. Section B.2
 shows the same eight-of-eight result for all five learner specifications. This
 is a temporal transport result for the declared archive; it does not contradict
 split conformal validity under exchangeability.
@@ -1061,15 +1062,15 @@ paper-facing manifest.
 The replay contract requires:
 
 1. an environment locked by `uv`;
-2. immutable, hash-described outcome-free and evaluated roots tracked by 21
+2. immutable, hash-described outcome-free and evaluated roots tracked by 27
    DVC pointers across the primary audit, two-ruler diagnostic, credit controls,
    endpoint, structure, missingness, and second-origin families;
 3. a separate freeze and evaluate command with no combined shortcut;
 4. exact ID alignment at the outcome join;
 5. byte-identical evidence builds;
 6. claim-sync tests across the manifest, body, supplement, and generated TeX;
-7. full tests, lint, static typing, historical-champion validation, and a zero
-   drift gate; and
+7. full tests, lint, static typing, protected-artifact validation, and an
+   active implementation/evidence drift gate; and
 8. compilation and page-level visual inspection of the body, supplement, and
    official IJDS submission PDF.
 
@@ -1172,7 +1173,7 @@ credit scoring, conformal prediction, or linear programming separately.
 |---|---|---|
 | Credit scoring and cost-aware calibration [@lessmann2015; @yang2025costaware; @das2023creditgraph] | Probability quality and richer predictive structure | Treats a Platt-scaled default score as an input; no AUC-leadership claim |
 | P2P and robust credit portfolios [@serrano2016profitscoring; @chi2019p2p; @babaei2020p2p] | Economic loan selection under risk and uncertainty | Adds binary-set geometry, outcome isolation, and comparator identification |
-| Conformal robust/contextual optimization [@johnstone2021; @patel2024; @hu2026crc] | Coverage-backed uncertainty sets in optimization | Audits a frozen binary-outcome score; no inherited selected-set validity |
+| Conformal portfolio and contextual optimization [@kato2025; @sun2024ptc; @johnstone2021; @patel2024; @hu2026crc] | Coverage-backed uncertainty sets or calibrated decision guarantees for portfolio and contextual programs | Audits a frozen binary credit score, endpoint reconstruction, and matched comparators; no asset-return, contextual-LP, or selected-set guarantee is inherited |
 | Decision-optimal and counterfactual prediction sets [@wang2026optimal_decision_prediction_sets; @zheng2026counterfactual_decision_sets] | Couple set construction or coverage to an explicit downstream loss or induced action | Audits an observational accepted-loan archive; no counterfactual funding effect or policy-coupled validity |
 | Valid selection and decision-risk calibration [@hegazy2025valid_selection_conformal_sets; @bao2025croms; @yeh2025training; @zhou2026creme] | Procedures controlling model selection, operational loss, or robustness | Uses ruler sensitivity as a diagnostic; eleven development menus do not support those certificates |
 | Decision-focused learning [@donti2017; @elmachtoub2022; @mandi2024] | Training predictions against downstream loss | Preserves the predictor for governance and audits a post-hoc decision layer |

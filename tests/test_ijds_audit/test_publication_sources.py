@@ -128,7 +128,7 @@ def test_active_evidence_registry_verifies_every_source() -> None:
         ROOT / "configs/ijds_active_evidence_sources.yaml",
         repo_root=ROOT,
     )
-    assert payload["schema_version"] == "2026-07-15.3"
+    assert payload["schema_version"] == "2026-07-15.4"
     assert set(sources) == {
         "v4_config",
         "v4_summary",
@@ -148,7 +148,7 @@ def test_active_evidence_registry_verifies_every_source() -> None:
         "missingness_summary",
         "missingness_receipt",
     }
-    assert len(payload["dvc_pointers"]) == 21
+    assert len(payload["dvc_pointers"]) == 27
     assert payload["lineages"]["binary_geometry"]["evaluation"]["run_tag"].endswith("2026-07-15-v5")
 
 
@@ -166,6 +166,9 @@ def test_active_registry_returns_all_dvc_run_tags_in_causal_config_order() -> No
         "ijds-portfolio-structure-sensitivity-2026-07-15-v6",
         "ijds-rolling-origin-2017-2026-07-15-v4",
         "ijds-missingness-sensitivity-2026-07-15-v3",
+        "ijds-binary-geometry-frontier-v4-2026-07-14-v3",
+        "ijds-normalized-objective-frontier-2026-07-14-v3",
+        "ijds-credit-risk-controls-2026-07-14-v3",
         "ijds-portfolio-structure-sensitivity-2026-07-15-v5",
     )
 

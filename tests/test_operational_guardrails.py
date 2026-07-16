@@ -1,54 +1,93 @@
 from __future__ import annotations
 
+import json
 from pathlib import Path
+
+import yaml
 
 
 def _text(path: str) -> str:
     return Path(path).read_text(encoding="utf-8")
 
 
-def test_one_shot_alias_cannot_run_retired_canonical_pipeline() -> None:
+def test_one_shot_alias_is_read_only_and_current_only() -> None:
     justfile = _text("justfile")
+
     assert "all: submission-check" in justfile
-    assert "uv run python scripts/run_crpto_pipeline.py" not in justfile
-
-    runner = _text("scripts/run_crpto_pipeline.py")
-    assert "is retired because it rewrote protected artifacts" in runner
-    assert "train_pd_model.py" not in runner
-    assert "generate_conformal_intervals.py" not in runner
-    assert "optimize_portfolio.py" not in runner
+    assert "submission-check: ijds-active-check drift-gate" in justfile
+    assert "run_crpto_pipeline.py" not in justfile
+    assert "dvc repro" not in justfile
 
 
-def test_book_render_defaults_are_no_execute_and_source_stable() -> None:
+def test_active_drift_gate_is_read_only_and_claim_bound() -> None:
     justfile = _text("justfile")
-    dvc = _text("dvc.yaml")
-    build_info = _text("book/includes/_build-info.qmd")
 
-    assert "quarto render book --to html --no-execute" in justfile
-    assert "quarto render book --to html --no-execute" in dvc
-    assert "write_book_build_info.py" not in justfile
-    assert "write_book_build_info.py" not in dvc
-    assert "Rama:" not in build_info
-    assert "Actualizado:" not in build_info
-    assert "TARGET.write_text" not in _text("scripts/write_book_build_info.py")
+    assert "drift-gate: publication-integrity" in justfile
+    assert "tests/test_models/test_binary_conformal_guardrail.py" in justfile
+    assert "tests/test_ijds_active_claim_sync.py" in justfile
+    assert "CRPTO_RUN_CHAMPION_DRIFT" not in justfile
 
 
-def test_historical_dvc_dataset_explicitly_opts_into_resolved_only_replay() -> None:
-    """Keep the frozen canonical lane compatible with the maturity-safe default."""
-    dvc = _text("dvc.yaml")
+def test_compatibility_surfaces_are_not_active_recipes() -> None:
+    justfile = _text("justfile").lower()
 
-    dataset_stage = dvc.split("crpto.data.splits:", maxsplit=1)[0]
-    assert "src/data/make_dataset.py" in dataset_stage
-    assert "--legacy-resolved-only" in dataset_stage
+    for retired_recipe in ("book", "dbt", "notebook", "scripts/search", "dvc repro"):
+        assert retired_recipe not in justfile
+
+
+def test_publication_contract_names_every_executable_protocol() -> None:
+    config = yaml.safe_load(_text("configs/crpto_publication_targets.yaml"))
+    surface = config["active_scientific_contract"]["active_code_surface"]
+    declared = {
+        *surface["paper_pipeline"],
+        *surface["protocol_entrypoints"],
+        *surface["support_tools"],
+    }
+    actual_experiments = {
+        path.as_posix()
+        for path in Path("scripts/experiments").glob("*.py")
+        if path.name != "__init__.py"
+    }
+
+    assert actual_experiments == set(surface["protocol_entrypoints"])
+    assert all(Path(path).is_file() for path in declared)
+
+
+def test_extra_scripts_are_only_sealed_path_bound_compatibility() -> None:
+    config = yaml.safe_load(_text("configs/crpto_publication_targets.yaml"))
+    surface = config["active_scientific_contract"]["active_code_surface"]
+    active = {
+        *surface["paper_pipeline"],
+        *surface["protocol_entrypoints"],
+        *surface["support_tools"],
+    }
+    dvc = yaml.safe_load(_text("dvc.yaml"))
+    path_bound = {
+        item
+        for stage in dvc["stages"].values()
+        for item in stage.get("deps", [])
+        if isinstance(item, str) and item.startswith("scripts/") and item.endswith(".py")
+    }
+    manifest = json.loads(_text("EXTRACTION_MANIFEST.json"))
+    path_bound.update(
+        path
+        for path in manifest["critical_hashes"]
+        if path.startswith("scripts/") and path.endswith(".py")
+    )
+    actual = {
+        path.as_posix() for path in Path("scripts").rglob("*.py") if path.name != "__init__.py"
+    }
+
+    assert actual == active | path_bound
 
 
 def test_manual_full_workflow_runs_the_collected_suite() -> None:
     workflow = _text(".github/workflows/tests-full.yml")
-    assert "- name: Full author tests\n        run: uv run pytest -q" in workflow
-    assert "tests/test_optimization/ \\" not in workflow
+    assert "run: uv run pytest -q" in workflow
+    assert "run: just drift-gate" in workflow
 
 
-def test_mypy_gate_covers_product_and_test_code() -> None:
+def test_type_gates_cover_product_and_test_code() -> None:
     justfile = _text("justfile")
     pyproject = _text("pyproject.toml")
 
@@ -56,7 +95,13 @@ def test_mypy_gate_covers_product_and_test_code() -> None:
     assert 'files = ["src", "scripts", "tests"]' in pyproject
 
 
-def test_example_data_root_matches_dbt_processed_artifacts() -> None:
-    env_example = _text(".env.example")
-    assert "CRPTO_DATA_DIR=data/processed" in env_example
-    assert "CRPTO_DATA_DIR=data\n" not in env_example
+def test_paper_owns_its_bibliography_and_citation_style() -> None:
+    body = _text("paper/CRPTO_ijds.qmd")
+    supplement = _text("paper/supplement_ijds.qmd")
+    template = _text("paper/submission/informs-pandoc-template.tex")
+
+    assert "bibliography: references.bib" in body
+    assert "csl: apa.csl" in body
+    assert "bibliography: references.bib" in supplement
+    assert "csl: apa.csl" in supplement
+    assert r"\bibliography{../references}" in template

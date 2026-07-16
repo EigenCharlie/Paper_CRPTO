@@ -1,4 +1,4 @@
-schema_version: "2026-07-15.3"
+schema_version: "2026-07-15.4"
 status: "active_ijds_paper_evidence_source_registry"
 
 lineages:
@@ -90,6 +90,24 @@ sensitivities:
     dvc_tracked: true
 
 replay_dependencies:
+  binary_geometry_v3_reason_reference:
+    run_tag: "ijds-binary-geometry-frontier-v4-2026-07-14-v3"
+    protocol_tag: "protocol/ijds-binary-geometry-frontier-v4-2026-07-14-v3"
+    protocol_commit: "688f75dc4f285c75bc499c9e041dd30fb3acd70d"
+    paper_role: "non_evidence_v5_reason_recovery_reference"
+    dvc_tracked: true
+  normalized_frontier_v3_reason_reference:
+    run_tag: "ijds-normalized-objective-frontier-2026-07-14-v3"
+    protocol_tag: "protocol/ijds-normalized-objective-frontier-2026-07-14-v3"
+    protocol_commit: "a1ae516a6c9674686dba245cb275475073b298a0"
+    paper_role: "non_evidence_v5_reason_recovery_reference"
+    dvc_tracked: true
+  credit_controls_v3_reason_reference:
+    run_tag: "ijds-credit-risk-controls-2026-07-14-v3"
+    protocol_tag: "protocol/ijds-credit-risk-controls-2026-07-14-v3"
+    protocol_commit: "688f75dc4f285c75bc499c9e041dd30fb3acd70d"
+    paper_role: "non_evidence_v5_reason_recovery_reference"
+    dvc_tracked: true
   portfolio_structure_v5_shards:
     run_tag: "ijds-portfolio-structure-sensitivity-2026-07-15-v5"
     protocol_tag: "protocol/ijds-portfolio-structure-sensitivity-2026-07-15-v5"
@@ -103,14 +121,20 @@ dvc_pointers:
   - "models/experiments/ijds_audit/ijds-binary-geometry-frontier-v4-2026-07-12-v1.dvc"
   - "data/processed/experiments/ijds_audit/ijds-binary-geometry-frontier-v4-2026-07-15-v5.dvc"
   - "models/experiments/ijds_audit/ijds-binary-geometry-frontier-v4-2026-07-15-v5.dvc"
+  - "data/processed/experiments/ijds_audit/ijds-binary-geometry-frontier-v4-2026-07-14-v3.dvc"
+  - "models/experiments/ijds_audit/ijds-binary-geometry-frontier-v4-2026-07-14-v3.dvc"
   - "data/processed/experiments/ijds_audit/ijds-normalized-objective-frontier-2026-07-13-v1c.dvc"
   - "models/experiments/ijds_audit/ijds-normalized-objective-frontier-2026-07-13-v1c.dvc"
   - "data/processed/experiments/ijds_audit/ijds-normalized-objective-frontier-2026-07-15-v5.dvc"
   - "models/experiments/ijds_audit/ijds-normalized-objective-frontier-2026-07-15-v5.dvc"
+  - "data/processed/experiments/ijds_audit/ijds-normalized-objective-frontier-2026-07-14-v3.dvc"
+  - "models/experiments/ijds_audit/ijds-normalized-objective-frontier-2026-07-14-v3.dvc"
   - "data/processed/experiments/ijds_audit/ijds-credit-risk-controls-2026-07-13-v1b.dvc"
   - "models/experiments/ijds_audit/ijds-credit-risk-controls-2026-07-13-v1b.dvc"
   - "data/processed/experiments/ijds_audit/ijds-credit-risk-controls-2026-07-15-v5.dvc"
   - "models/experiments/ijds_audit/ijds-credit-risk-controls-2026-07-15-v5.dvc"
+  - "data/processed/experiments/ijds_audit/ijds-credit-risk-controls-2026-07-14-v3.dvc"
+  - "models/experiments/ijds_audit/ijds-credit-risk-controls-2026-07-14-v3.dvc"
   - "data/processed/experiments/ijds_audit/ijds-endpoint-availability-sensitivity-2026-07-14-v1.dvc"
   - "models/experiments/ijds_audit/ijds-endpoint-availability-sensitivity-2026-07-14-v1.dvc"
   - "data/processed/experiments/ijds_audit/ijds-portfolio-structure-sensitivity-2026-07-15-v6.dvc"

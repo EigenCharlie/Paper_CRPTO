@@ -34,7 +34,6 @@ REVIEWER_SURFACES = (
     REPO / "paper/CRPTO_ijds.qmd",
     REPO / "paper/supplement_ijds.qmd",
     REPO / "paper/submission/CRPTO_ijds_submission.tex",
-    REPO / "paper/submission/ANONYMOUS_REVIEW_ARCHIVE_README.md",
     REPO / "paper/submission/TITLE_PAGE_DRAFT.md",
     REPO / "paper/submission/COVER_LETTER_AND_DISCLOSURE.md",
 )
@@ -51,7 +50,6 @@ ACTIVE_EDITORIAL_SURFACES = (
     REPO / "paper/CRPTO_ijds.qmd",
     REPO / "paper/supplement_ijds.qmd",
     REPO / "paper/submission/CRPTO_ijds_submission.tex",
-    REPO / "paper/submission/ANONYMOUS_REVIEW_ARCHIVE_README.md",
     REPO / "paper/submission/CLAIM_AUDIT_MATRIX.md",
     REPO / "paper/submission/COVER_LETTER_AND_DISCLOSURE.md",
     REPO / "paper/submission/DATA_CODE_DISCLOSURE_FORM_DRAFT.md",

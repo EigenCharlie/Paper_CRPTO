@@ -79,23 +79,25 @@ six-month residual windows, constructs status-independent menus, and
 freezes allocations before outcomes. Because the archive is not a
 verified point-in-time snapshot, we reconstruct outcome availability at
 September 30, 2020 and keep 12,076 of 376,890 primary candidates
-unresolved. All 40 model-window sharp coverage upper bounds lie below
-0.90 across five credit-risk specifications (maximum 0.8977); the result
-also recurs under three feature-semantics-preserving missingness
-encodings and at a later retrospective origin. In one score stratum,
-prevalence crosses \(\alpha=0.10\) while the residual quantile changes
-from 0.8884 to 0.1118 and mean interval width from 0.9843 to 0.2076,
-matching a derived binary-threshold mechanism. For decisions, we compare
-the point and full-upper scores under two outcome-blind common-frontier
-rulers and three coordinates. Sharp common-outcome bounds, an exact
+unresolved. Under the declared six-month availability rule, all 40
+model-window sharp coverage upper bounds lie below 0.90 across five
+credit-risk specifications (maximum 0.8977). Separately, the primary
+CatBoost eight-window pattern recurs under three
+feature-semantics-preserving missingness encodings and at a later
+retrospective origin. In one score stratum, prevalence crosses
+\(\alpha=0.10\) while the residual quantile changes from 0.8884 to
+0.1118 and mean interval width from 0.9843 to 0.2076, consistent with a
+derived binary-threshold mechanism. For decisions, we compare the point
+and full-upper scores under two outcome-blind common-frontier rulers and
+three coordinates. Sharp common-outcome bounds, an exact
 identification-width identity, and basis enumeration show that direction
 is comparator-dependent: all 216 broad point-cap envelopes include zero,
 and no ruler, coordinate, or policy is selected. CRPTO contributes a
 reproducible identification audit for the
 machine-learning--conformal--optimization interface: candidate coverage
-does not transport here, censoring widens policy contrasts through
-exposure disagreement, and decision claims require an explicit
-comparator estimand.%
+does not transport here, unresolved outcomes widen identification
+intervals when policies disagree in exposure, and decision claims
+require an explicit comparator estimand.%
 }
 
 \KEYWORDS{conformal prediction; predict-then-optimize; comparator
@@ -175,14 +177,15 @@ exact HiGHS basis frontier avoids fixed-grid interpolation over the
 declared point-cap support.
 
 The empirical message is an identification result rather than a winner.
-All 40 model-by-window all-candidate OOT coverage upper bounds are below
-0.90. One CatBoost stratum crosses the nominal miscoverage prevalence
-threshold between the seventh and eighth windows, coinciding with an
-abrupt change in its conformal quantile and interval geometry. Under
-every reporting lag that passes the locked greater-than-99\% retention
-rule, the same W7--W8 crossing remains. The coverage result also recurs
-under three semantics-preserving missingness encodings and one later
-retrospective origin, without selecting an encoding or treating
+Under the declared six-month availability rule, all 40 model-by-window
+all-candidate OOT coverage upper bounds are below 0.90. One CatBoost
+stratum crosses the nominal miscoverage prevalence threshold between the
+seventh and eighth windows, coinciding with an abrupt change in its
+conformal quantile and interval geometry. Under every reporting lag that
+passes the locked greater-than-99\% retention rule, the same W7--W8
+crossing remains. Separately, the primary CatBoost eight-window pattern
+recurs under three semantics-preserving missingness encodings and one
+later retrospective origin, without selecting an encoding or treating
 overlapping windows as replications. In the portfolio audit, no endpoint
 ordering survives all rulers and coordinates. Objective-matched .25
 crosses zero for all three metrics in every window; .50 is adverse in
@@ -269,11 +272,15 @@ recent work constructs stable or otherwise controlled selection
 procedures precisely because validity is not closed under arbitrary
 data-dependent choice \citep{hegazy2025valid_selection_conformal_sets}.
 
-Conformal uncertainty sets have also entered robust and contextual
-optimization \citep{johnstone2021, patel2024}. Recent work instead
-calibrates decision loss, operational violations, or the
-miscoverage--regret frontier rather than using predictive coverage as a
-proxy
+Conformal uncertainty sets have also entered portfolio, robust, and
+contextual optimization \citep{kato2025, johnstone2021, patel2024}. Kato
+studies asset-return portfolio selection, while Sun et al.~calibrate
+predict-then-optimize contextual linear programs \citep{sun2024ptc}.
+Those designs supply useful decision-level benchmarks, but their
+sampling units and guarantees do not transfer to binary credit
+allocation with reconstructed endpoints. Recent work instead calibrates
+decision loss, operational violations, or the miscoverage--regret
+frontier rather than using predictive coverage as a proxy
 \citep{yeh2025training, zhou2026creme, stratigakos2026decision_calibrated_sets}.
 Wang and Dobriban derive risk-optimal actions and prediction sets from
 an explicit decision loss
@@ -420,16 +427,16 @@ evaluation panel contains 465,117 loans: 376,890 primary candidates and
 month, term, and fields observable at origination. It never depends on
 whether the reconstructed endpoint is resolved.
 
-Using more raw rows would not merely increase sample size. Sixty-month
-loans have a different outcome horizon; 48 fields have negligible early
-support but near-complete later coverage; and the intervening cohorts
-are heavily duration-censored at the March 2016 information cutoff.
-Available labels are 59,910/162,570 for 2014, 28,878/283,173 for 2015,
-and 1,110/96,120 for 2016Q1, with no observed bads in the last group.
-Training a terminal-default classifier on those resolved subsets would
-condition on maturity. A survival estimand could use them, but it would
-change the target, theory, and paper rather than make this binary
-protocol more complete.
+Adding the excluded rows would change the estimand, not merely increase
+sample size. Sixty-month loans have a different outcome horizon; 48
+fields have negligible early support but near-complete later coverage;
+and the intervening cohorts are heavily duration-censored at the March
+2016 information cutoff. Available labels are 59,910/162,570 for 2014,
+28,878/283,173 for 2015, and 1,110/96,120 for 2016Q1, with no observed
+bads in the last group. Training a terminal-default classifier on those
+resolved subsets would condition on maturity. A survival estimand could
+use them, but it would change the target, theory, and paper rather than
+make this binary protocol more complete.
 
 Status strings containing \texttt{Charged\ Off} are positive and strings
 containing \texttt{Fully\ Paid} are negative only when their
@@ -952,10 +959,10 @@ For exposure difference \(\delta_i=a_i^A-a_i^B\), the dollar
 payoff-proxy width is \(\sum_{i\in U}|\delta_i|(r_i+\lambda)\). With
 normalized exposure difference \(\delta_i^w\), default-rate width is
 \(\sum_{i\in U}|\delta_i^w|\), and miscoverage-rate width is
-\(\sum_{i\in U}|\delta_i^w|\,|m_i(1)-m_i(0)|\). Hence censoring alone
-does not determine identification loss: width depends on where the two
-policies disagree in exposure and, for miscoverage, on the binary
-prediction-set geometry. The identity is deterministic partial
+\(\sum_{i\in U}|\delta_i^w|\,|m_i(1)-m_i(0)|\). Hence unresolved
+outcomes alone do not determine identification loss: width depends on
+where the two policies disagree in exposure and, for miscoverage, on the
+binary prediction-set geometry. The identity is deterministic partial
 identification, not sampling uncertainty or a missingness assumption.
 
 \subsection{Declared comparator sensitivity
@@ -1032,7 +1039,7 @@ Online Supplement Table S6 reports all eight exact window bounds and
 widths; the figure retains their complete nonselective pattern in the
 main text.
 
-All five frozen specifications exclude nominal coverage in all eight
+All five all-candidate sharp upper bounds remain below 0.90 in all eight
 windows, including the monotonic learner and the pricing-excluded
 application scorecard. The latter has the largest across-window upper
 endpoint, 0.8977, so even assigning every unresolved candidate to
@@ -1315,11 +1322,10 @@ identify a preferred scenario.
 The upper score is pointwise larger and, at a shared cap, mechanically
 more restrictive; neither fact supplies OOT coverage or funded-set
 validity. \emph{Robust} must name a protected quantity and perturbation
-\citep{morucci2022robust_matching_uncertainty, falconer2026replication}.
-Here it describes only the observed coverage failure across complete
-windows and five learner specifications, not causal benefit,
-selected-set validity, or policy dominance. CRPTO therefore uses
-\emph{risk-aware} in its expanded name.
+\citep{bertsimas2004, bertsimas2018datadriven}. Here it describes only
+the observed coverage failure across complete windows and five learner
+specifications, not causal benefit, selected-set validity, or policy
+dominance. CRPTO therefore uses \emph{risk-aware} in its expanded name.
 
 \subsection{Implications for decision-focused data
 science}\label{implications-for-decision-focused-data-science}
@@ -1378,12 +1384,12 @@ Supplement Appendix F provides the replay boundary.
 
 Under the active six-month endpoint, all 40 learner-window coverage
 upper bounds are below 0.90; the complete endpoint sensitivity retains
-40/40 at lags 0, 3, 6, and 8 but only 39/40 at 12. The five-model
-finding recurs under three semantics-preserving missingness encodings
-and at a later retrospective origin. Separately, the W7--W8 fit-label
-crossing survives all lags passing the retention rule. These axes were
-not crossed factorially, and none authorizes model, encoding, endpoint,
-or origin selection.
+40/40 at lags 0, 3, 6, and 8 but only 39/40 at 12. Separately, the
+primary CatBoost eight-window pattern recurs under three
+semantics-preserving missingness encodings and at a later retrospective
+origin. The W7--W8 fit-label crossing separately survives all lags
+passing the retention rule. These axes were not crossed factorially, and
+none authorizes model, encoding, endpoint, or origin selection.
 
 Portfolio direction likewise requires a ruler and coordinate. Objective
 matching is unidentified at .25, adverse at .50, and mostly unidentified
@@ -1395,14 +1401,14 @@ miscoverage cells, while zero scenarios are uniformly favorable or
 uniformly adverse.
 
 CRPTO is therefore an identification audit, not a winning policy. It
-retains censored candidates, reports complete residual and gamma paths,
-and combines binary geometry, sharp outcome bounds, an exact width
-decomposition, and exact comparator support. ML, conformal prediction,
-and optimization remain connected, but their interface has a direction
-only after the decision estimand is specified.
+retains unresolved candidates, reports complete residual and gamma
+paths, and combines binary geometry, sharp outcome bounds, an exact
+width decomposition, and exact comparator support. ML, conformal
+prediction, and optimization remain connected, but their interface has a
+direction only after the decision estimand is specified.
 
 \clearpage
 \bibliographystyle{informs2014}
-\bibliography{../../book/references}
+\bibliography{../references}
 
 \end{document}

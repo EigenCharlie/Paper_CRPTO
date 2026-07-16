@@ -60,7 +60,7 @@ without selecting a model, encoding, or origin.
 
 ## DVC Capsule
 
-The 21 pointers are listed once in `configs/ijds_active_evidence_sources.yaml`.
+The 27 pointers are listed once in `configs/ijds_active_evidence_sources.yaml`.
 They comprise data and model pointers for the active roots and sensitivities,
 plus the data-only structural replay dependency. Pull with:
 
@@ -74,7 +74,7 @@ committed.
 ## Replay
 
 ```powershell
-uv sync --frozen --extra dev --extra search
+uv sync --frozen --extra dev
 just submission-build
 just ijds-active-check
 uv run python scripts/manage_ijds_dvc_capsule.py status

@@ -14,6 +14,7 @@ from src.ijds_audit.evaluation import (
     RESOLUTION_TERMINAL_AFTER_CUTOFF,
     RESOLUTION_TERMINAL_DATE_MISSING,
     build_archive_outcomes,
+    comparator_envelopes,
     endpoint_resolution_audit,
     evaluate_frozen_portfolios,
     temporal_coverage_audit,
@@ -145,6 +146,33 @@ def test_evaluate_frozen_portfolios_preserves_nullable_outcome_fact() -> None:
     assert pd.isna(joined.loc[0, "snapshot_default"])
     assert evaluated.loc[0, "n_unresolved_candidates"] == 1
     assert evaluated.loc[0, "n_unresolved_positive_exposure"] == 1
+
+
+def test_evaluate_frozen_portfolios_rejects_duplicate_solve_keys() -> None:
+    records, allocations, outcomes, config = _portfolio_inputs()
+    records = pd.concat([records, records], ignore_index=True)
+
+    with pytest.raises(ValueError, match="duplicate evaluation keys"):
+        evaluate_frozen_portfolios(records, allocations, outcomes, config=config)
+
+
+def test_comparator_envelopes_rejects_duplicate_support_keys() -> None:
+    support = pd.DataFrame(
+        {
+            "window_id": ["w01", "w01"],
+            "paired_policy_id": ["policy", "policy"],
+            "support_lower": [0.05, 0.05],
+            "support_upper": [0.12, 0.12],
+        }
+    )
+
+    with pytest.raises(ValueError, match="duplicate policy-window keys"):
+        comparator_envelopes(
+            pd.DataFrame(),
+            support,
+            broad_lower=0.05,
+            broad_upper=0.12,
+        )
 
 
 @pytest.mark.parametrize("invalid_count", [1.5, float("inf"), -1])

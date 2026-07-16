@@ -1,92 +1,50 @@
-# Secrets, remotes and local credentials
+# Secrets And Remotes
 
-This public repository should be safe to push to GitHub without real
-credentials. Only templates belong in Git.
+CRPTO uses GitHub for source and DagsHub S3-compatible storage for DVC
+artifacts. Credentials are local or GitHub Actions secrets; they never belong
+in tracked files.
 
-## Files
+## Local Variables
 
-- Commit: `.env.example`, `.env.local.example`, `.github/workflows/*`.
-- Do not commit: `.env`, `.env.*` except examples, `.dvc/config.local`,
-  `.claude/settings.local.json`, cloud keys, private keys, local tokens.
-
-## Required variables
-
-Use `.env.example` as the canonical list. The most common values are:
-
-- `DAGSHUB_OWNER=EigenCharlie94`, `DAGSHUB_USER=EigenCharlie94`,
-  `DAGSHUB_REPO=Paper_CRPTO`
-- `DAGSHUB_TOKEN` or `DAGSHUB_USER_TOKEN`
-- `MLFLOW_TRACKING_URI`, `MLFLOW_TRACKING_USERNAME`,
-  `MLFLOW_TRACKING_PASSWORD`
-- `CRPTO_DATA_DIR`, `CRPTO_MODELS_DIR`, `CRPTO_DUCKDB_PATH`
-- `OPTUNA_STORAGE` when using persistent Optuna studies
-
-## Standalone remotes
-
-CRPTO no longer points to the parent DagsHub project. The committed DVC remote
-is:
-
-```text
-https://dagshub.com/EigenCharlie94/Paper_CRPTO.s3
-```
-
-The MLflow tracking URI is:
-
-```text
-https://dagshub.com/EigenCharlie94/Paper_CRPTO.mlflow
-```
-
-The old upstream GitHub remote (`EigenCharlie94/Lending-Club-End-to-End`) may still be
-mentioned in learning/provenance notes, but it must not appear in active
-runtime config, `.env.example`, DVC config or GitHub Actions secrets.
-
-Historical WSL-era paths should not appear in active runtime configuration or
-current JSON status artifacts. After the Windows revalidation, committed paths
-that are consumed by scripts should be repository-relative. Active scripts must
-construct paths from the repository root, config files, or CLI arguments.
-
-## GitHub Actions secrets
-
-For CI with DVC/MLflow enabled, configure these in GitHub repository settings,
-not in files:
-
-- `DAGSHUB_TOKEN`
-- `DAGSHUB_USER_TOKEN`
-- `MLFLOW_TRACKING_USERNAME`
-- `MLFLOW_TRACKING_PASSWORD`
-- `AWS_ACCESS_KEY_ID`, `AWS_SECRET_ACCESS_KEY`, `AWS_ENDPOINT_URL` if using an
-  S3-compatible DVC remote
-
-The default workflows avoid pulling large DVC artifacts. They validate the
-book, metadata, and artifact-independent tests. Full artifact tests should run
-locally or in CI only after a DVC remote is configured.
-
-## GitHub security settings
-
-For `EigenCharlie/Paper_CRPTO`, keep these enabled in repository settings:
-
-- Dependency graph and Dependabot security updates.
-- Secret scanning.
-- Optional branch protection on `main` if the project becomes multi-author.
-  In the current single-author academic mode, `lint` and `book-publish` run on
-  push, while `tests-full` is manually triggered before journal milestones.
-
-`dependency-review` requires the Dependency graph. If GitHub reports the
-repository as unsupported, enable it in Settings -> Security and analysis
-before merging dependency PRs.
-
-## Windows-native environment
-
-The official local environment for this standalone repository is Windows
-PowerShell with `.venv/Scripts`.
-
-Use:
+Keep credentials in an ignored `.env` or in the current PowerShell process:
 
 ```powershell
-uv venv
-uv sync --extra dev --extra search
+$env:DAGSHUB_USER = "..."
+$env:DAGSHUB_TOKEN = "..."
+$env:DAGSHUB_REPO = "Paper_CRPTO"
+$env:AWS_ACCESS_KEY_ID = $env:DAGSHUB_TOKEN
+$env:AWS_SECRET_ACCESS_KEY = $env:DAGSHUB_TOKEN
+$env:AWS_ENDPOINT_URL = "https://dagshub.com/EigenCharlie94/Paper_CRPTO.s3"
 ```
 
-Do not set custom Python/Quarto environment overrides for normal work. `uv run`
-selects the project venv and `uv run -- quarto ...` provides the right Python
-context for Quarto renders.
+Do not print tokens into logs or place them in `.dvc/config`, YAML, Python,
+paper sources, or submission forms. Machine-specific DVC configuration belongs
+in ignored `.dvc/config.local`.
+
+## Active DVC Capsule
+
+The source registry declares exactly 27 pointer files. Use the capsule manager
+instead of an unrestricted historical replay:
+
+```powershell
+just ijds-pull
+just ijds-dvc-status
+just ijds-dvc-verify-remote
+```
+
+The historical `dvc.yaml` graph is sealed compatibility metadata. Never run its
+protected PD, conformal, validation, portfolio, or exact-evaluation stages
+without explicit permission.
+
+## GitHub Actions
+
+The manual full workflow requires `DAGSHUB_USER`, `DAGSHUB_TOKEN`, and
+`DAGSHUB_REPO` repository secrets. It installs the locked development
+environment with:
+
+```powershell
+uv sync --frozen --extra dev
+```
+
+Secret scanning and dependency alerts should remain enabled. A leaked token
+must be revoked first, then removed from Git history if it was committed.

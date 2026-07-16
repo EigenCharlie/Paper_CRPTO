@@ -119,9 +119,16 @@ def test_active_capsule_paths_exist() -> None:
     active = _config()["active_scientific_contract"]
     registry = _registry()
     evidence = _evidence()
+    support_artifacts = {
+        "reports/crpto/ijds_policy_support_tie_evidence.json",
+        "reports/crpto/tables/crpto_ijds_comparator_support_domain.csv",
+        "reports/crpto/tables/crpto_ijds_gamma_endpoint_audit.csv",
+        "reports/crpto/tables/crpto_ijds_policy_family_domain.csv",
+    }
     expected_artifacts = {
         active["evidence_manifest"],
         *(descriptor["path"] for descriptor in evidence["paper_artifacts"].values()),
+        *support_artifacts,
     }
     assert set(active["required_artifacts"]) == expected_artifacts
     for artifact in active["required_artifacts"]:
@@ -133,17 +140,15 @@ def test_active_capsule_paths_exist() -> None:
     assert code_surface["historical_execution_in_active_capsule"] is False
     for path in code_surface["source_roots"]:
         assert Path(path).is_dir(), path
-    for group in ("paper_pipeline", "protocol_entrypoints"):
+    for group in ("paper_pipeline", "protocol_entrypoints", "support_tools"):
         for path in code_surface[group]:
             assert Path(path).is_file(), path
 
 
-def test_historical_diagnostics_are_explicitly_outside_active_evidence() -> None:
-    historical = _config()["historical_boundary"]
-    assert historical["compact_v7_status"] == "git_history_only"
-    assert historical["diagnostics_status"] == "git_history_only"
-    text = " ".join(historical["diagnostics"])
-    assert "A1--A24" in text
-    assert "A25--A34" in text
-    assert "A35--A40" in text
-    assert "cannot validate" in historical["rule"]
+def test_active_capsule_does_not_advertise_retired_result_families() -> None:
+    config = _config()
+    assert "historical_boundary" not in config
+    serialized = json.dumps(config).lower()
+    assert "pool93" not in serialized
+    assert "compact-v7" not in serialized
+    assert "a1--a40" not in serialized

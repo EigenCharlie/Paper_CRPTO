@@ -1,3 +1,0 @@
-::: {.build-info}
-La versión exacta de cada entrega se identifica mediante su tag y los hashes del paquete de reproducibilidad.
-:::

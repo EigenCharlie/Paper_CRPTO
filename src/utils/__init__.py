@@ -1,1 +1,1 @@
-"""Utility functions: MLflow tracking, visualization."""
+"""Artifact, isolated-run, and atomic-write utilities."""

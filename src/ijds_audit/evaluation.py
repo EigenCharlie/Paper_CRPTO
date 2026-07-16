@@ -312,7 +312,9 @@ def evaluate_frozen_portfolios(
 ) -> tuple[pd.DataFrame, pd.DataFrame]:
     """Perform one validated outcome join and evaluate every frozen allocation."""
     keys = ["window_id", "role", "period", "policy_label", "comparator_rule"]
-    record_index = records.set_index(keys, verify_integrity=True)
+    record_index = records.set_index(keys)
+    if not record_index.index.is_unique:
+        raise ValueError("Solve records contain duplicate evaluation keys.")
     outcome_payload = _outcome_payload(
         outcomes,
         value_columns=("snapshot_default", "snapshot_resolution"),
@@ -497,7 +499,9 @@ def comparator_envelopes(
         ),
     }
     rows: list[dict[str, Any]] = []
-    support_index = support.set_index(["window_id", "paired_policy_id"], verify_integrity=True)
+    support_index = support.set_index(["window_id", "paired_policy_id"])
+    if not support_index.index.is_unique:
+        raise ValueError("Comparator support contains duplicate policy-window keys.")
     for raw_keys, frame in contrasts.groupby(
         ["window_id", "paired_policy_id"], observed=True, sort=True
     ):

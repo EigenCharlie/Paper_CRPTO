@@ -1,125 +1,87 @@
-# Contributing to CRPTO
+# Contributing To CRPTO
 
-This is a single-author academic project (master's thesis + paper +
-journal package). It is **not** a community-driven open-source library.
-Pull requests from external contributors are not expected; this document
-exists so that reviewers (MRM, journal, defense committee) can
-reproduce the deliverables and understand the operational guardrails.
+CRPTO is a single-author academic repository for one IJDS manuscript, not a
+general-purpose Python package. Contributions should improve the validity,
+clarity, or reproducibility of that manuscript.
 
-If you are reading this because you are a reviewer or a future agent that
-inherited the repo, read in this order:
+## Start Here
 
-1. [`README.md`](README.md) — what the repo is and how to run the book.
-2. [`docs/ACADEMIC_CONTEXT.md`](docs/ACADEMIC_CONTEXT.md) — why the
-   tooling is intentionally minimal and how the champion-versus-search
-   distinction works.
-3. [`docs/SCOPE_AND_GOVERNANCE.md`](docs/SCOPE_AND_GOVERNANCE.md) —
-   what is in scope, what is forbidden in `main`, the release
-   checklist.
-4. [`CLAUDE.md`](CLAUDE.md) — operating rules for AI agents working in
-   this repo.
-
-## Reproducing the paper outputs
+Read `CLAUDE.md`, the active claim registry, the source registry, and the
+publication contract before changing scientific code or prose.
 
 ```powershell
-# One-time setup (Windows PowerShell)
-git clone https://github.com/EigenCharlie/Paper_CRPTO.git
-cd Paper_CRPTO
-uv venv
-uv sync --extra dev --extra search
-just smoke           # runs artifact-independent guardrail tests
+uv sync --extra dev
+just smoke
 ```
 
-To re-render the Quarto book without re-executing any chunks (uses
-`_freeze`):
+## Ordinary Changes
+
+The following are normally safe when their tests pass:
+
+- prose and citation corrections that remain inside the active claim boundary;
+- tests and validation code that do not rewrite registered experiment roots;
+- deterministic evidence, table, figure, and submission builders;
+- CI, formatting, typing, and reproducibility documentation;
+- refactors whose outputs are unchanged and whose compatibility paths remain
+  intact.
+
+Run:
 
 ```powershell
-just book            # uv run -- quarto render book --to html --no-execute
+just test
+just lint
+just type-check
+just type-check-fast
+just publication-integrity
+just ijds-active-check
+just validate-champion
 ```
 
-To rebuild the active IJDS evidence and manuscript from registered inputs:
+## Scientific Changes
+
+A new estimand, data role, endpoint rule, model, comparator, sensitivity, or
+optimization contract is a new scientific object, even if implemented as a
+small code edit. Before running it:
+
+1. state the research question and stop rule;
+2. declare the information set and all outcome-blind choices;
+3. assign a new run tag and contained output path;
+4. separate freeze from outcome evaluation;
+5. register exact hashes and DVC pointers before using results in prose;
+6. reconcile every reported number against the evidence manifest.
+
+Do not select a model, ruler, coordinate, gamma, scenario, or policy from OOT
+outcomes.
+
+## Protected Boundary
+
+Never run the protected `crpto.pd.champion`, `crpto.conformal.intervals`,
+`crpto.conformal.validation`, `crpto.portfolio.optimization`, or
+`crpto.portfolio.bound_exact_eval` stages without explicit permission. Do not
+modify `EXTRACTION_MANIFEST.json` or protected model/data artifacts.
+
+`dvc.yaml` and manifest-fixed paths form a sealed compatibility capsule. Their
+presence does not make them active workflows. The active execution surface is
+the allow-list in `configs/crpto_publication_targets.yaml`.
+
+## Paper Workflow
+
+Edit the canonical QMD files, not generated outputs:
 
 ```powershell
-just paper-export    # active evidence replay + body and supplement previews
+just submission-build
+just submission-check
 ```
 
-These commands never touch the champion artefacts on disk and never
-re-run any DVC stage that performs *search* (the 276k portfolio sweep
-or Optuna HPO are out of scope by policy).
+The official TeX is generated from `paper/CRPTO_ijds.qmd`. Keep author identity
+out of reviewer-facing files and keep project-version history out of the paper.
 
-## What you may change freely
+## Style
 
-- Documentation, comments, docstrings.
-- Quarto prose, glossary entries, chapter ordering.
-- Test coverage (especially in `tests/test_utils/`, `tests/test_optimization/`,
-  `tests/test_features/`).
-- Tooling: ruff config, hooks, IDE settings, justfile recipes.
-- New scripts that read frozen artefacts without overwriting them.
-
-## What requires a deliberate revalidation plan
-
-Anything that would change the bytes of these files:
-
-- `models/pd_canonical.cbm`
-- `models/pd_canonical_calibrator.pkl`
-- `models/final_project_promotion.json`
-- `models/conformal_policy_status.json`
-- `data/processed/conformal_intervals_mondrian.parquet`
-- The `portfolio_bound_aware/rank1_alpha01_bound_aware_276k_full_*` directory
-- `EXTRACTION_MANIFEST.json`
-
-`tests/test_manifest_regression.py` will fail loudly if these drift.
-
-A revalidation plan must include:
-
-1. A branch dedicated to the change (never on `main`).
-2. A drift report comparing the new artefact to the frozen one with
-   tolerances documented in `docs/ACADEMIC_CONTEXT.md`:
-   max abs diff `≤ 1e-6` per loan on conformal intervals, coverage
-   delta `≤ 5e-4` per Mondrian cell, robust return delta `≤ $1.00`.
-3. If the drift is non-zero, the change is not a refactor — it is a
-   model change and needs a fresh run tag.
-
-See the three plans under `docs/refactor/` for the pre-written templates
-(MAPIE migration, conformal module split, feature_config Parquet).
-
-## What is forbidden in `main`
-
-The DVC search stages listed in `docs/ACADEMIC_CONTEXT.md` are blocked
-by `.claude/settings.json` and `.codex/skills/crpto/SKILL.md`. Do not
-run them from the default branch:
-
-- `dvc repro crpto.portfolio.bound_exact_eval`
-- Any Optuna HPO that would overwrite the frozen study.
-
-## Code style
-
-- Run `just lint` (ruff check + format check) before any commit.
-- Run `just smoke` to verify the tests that the pre-push hook will
-  re-run anyway.
-- Mypy strict applies to a small allow-list of new modules
-  (`src/optimization/policy.py`, `src/utils/pipeline_state.py`,
-  `src/utils/mlflow_tracing.py`, `src/utils/optuna_storage.py`).
-  Other modules use a laxer config to absorb research-grade code.
-- No new top-level scripts; add to `src/` or `scripts/` according to
-  whether the code is library or pipeline.
-- Spanish for book/paper prose; English for code, docstrings, tests,
-  CI and changelog.
-
-## Releasing
-
-Single-author source releases may be tagged from a clean `main`:
-
-```bash
-git tag -a vX.Y.Z -m "release notes here"
-git push origin vX.Y.Z
-```
-
-Tags do not deploy the book automatically. After reviewing the current chapter
-set and running `just book`, dispatch `book-publish` manually from GitHub
-Actions on the intended commit; that workflow deploys the HTML rendering to
-GitHub Pages.
-
-## Citing
-
-See [`CITATION.cff`](CITATION.cff) for the canonical citation block.
+- English for code, tests, and manuscript prose.
+- Type new public functions and keep comments limited to non-obvious logic.
+- Prefer existing modules and structured parsers over new wrappers.
+- Avoid one-off scripts when a current library function or registered runner
+  already owns the behavior.
+- Do not add services, dashboards, notebooks, or release machinery that does
+  not improve the paper or its reproducibility.
