@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import hashlib
 import posixpath
 import re
 import subprocess
@@ -20,6 +21,7 @@ _IDENTITY_MARKERS = frozenset(
         "run_tag",
         "protocol_tag",
         "protocol_commit",
+        "scientific_uv_lock_sha256",
         "status",
         "paper_role",
         "dvc_tracked",
@@ -30,6 +32,7 @@ _IDENTITY_MARKERS = frozenset(
 _LEGACY_DVC_PHASES = frozenset({"outcome_free", "evaluation"})
 _DVC_ROOTS = ("data/processed", "models")
 _PROTOCOL_COMMIT_PATTERN = re.compile(r"[0-9a-f]{40}")
+_SHA256_PATTERN = re.compile(r"[0-9a-f]{64}")
 _DVC_DIRECTORY_MD5_PATTERN = re.compile(r"[0-9a-f]{32}\.dir")
 
 
@@ -39,6 +42,7 @@ class _RegistryUnit:
     run_tag: str
     protocol_tag: str | None
     protocol_commit: str | None
+    scientific_uv_lock_sha256: str | None
     paper_role: str | None
     declared_dvc_tracked: bool | None
     dvc_roots: tuple[str, ...] | None
@@ -85,7 +89,7 @@ def load_source_registry(
 
     if repo_root is not None:
         _verify_dvc_pointers(pointers, repo_root=repo_root)
-        _verify_protocol_tags(units, repo_root=repo_root)
+        _verify_protocol_replay_contracts(units, repo_root=repo_root)
     return payload
 
 
@@ -231,6 +235,7 @@ def _parse_registry_unit(
 
     protocol_tag: str | None = None
     protocol_commit: str | None = None
+    scientific_uv_lock_sha256: str | None = None
     if has_protocol_tag:
         protocol_tag = _required_text(identity, "protocol_tag", location=location)
         protocol_commit = _required_text(identity, "protocol_commit", location=location)
@@ -239,8 +244,23 @@ def _parse_registry_unit(
                 f"Registry identity {_format_location(location)}.protocol_commit "
                 "must be a 40-character lowercase hexadecimal commit."
             )
+        scientific_uv_lock_sha256 = _required_text(
+            identity,
+            "scientific_uv_lock_sha256",
+            location=location,
+        )
+        if _SHA256_PATTERN.fullmatch(scientific_uv_lock_sha256) is None:
+            raise ValueError(
+                f"Registry identity {_format_location(location)}.scientific_uv_lock_sha256 "
+                "must be a 64-character lowercase hexadecimal digest."
+            )
     else:
         _required_text(identity, "status", location=location)
+        if "scientific_uv_lock_sha256" in identity:
+            raise ValueError(
+                f"Registry identity {_format_location(location)} cannot declare a scientific "
+                "lock without a protocol commit."
+            )
 
     if "status" in identity:
         _required_text(identity, "status", location=location)
@@ -280,6 +300,7 @@ def _parse_registry_unit(
         run_tag=run_tag,
         protocol_tag=protocol_tag,
         protocol_commit=protocol_commit,
+        scientific_uv_lock_sha256=scientific_uv_lock_sha256,
         paper_role=paper_role,
         declared_dvc_tracked=declared_dvc_tracked,
         dvc_roots=dvc_roots,
@@ -327,25 +348,46 @@ def _verify_dvc_pointers(pointers: list[str], *, repo_root: Path) -> None:
         _verify_dvc_pointer(pointer_path, display_path=pointer)
 
 
-def _verify_protocol_tags(units: tuple[_RegistryUnit, ...], *, repo_root: Path) -> None:
-    """Require every registered protocol tag to resolve to its declared commit."""
+def _verify_protocol_replay_contracts(units: tuple[_RegistryUnit, ...], *, repo_root: Path) -> None:
+    """Verify every protocol tag and the environment lock stored at that commit."""
     if not (repo_root / ".git").exists():
         return
     for unit in units:
-        if unit.protocol_tag is None or unit.protocol_commit is None:
+        if (
+            unit.protocol_tag is None
+            or unit.protocol_commit is None
+            or unit.scientific_uv_lock_sha256 is None
+        ):
             continue
-        result = subprocess.run(
+        tag_result = subprocess.run(
             ["git", "rev-list", "-n", "1", unit.protocol_tag],
             cwd=repo_root,
             check=False,
             capture_output=True,
             text=True,
         )
-        resolved = result.stdout.strip()
-        if result.returncode != 0 or resolved != unit.protocol_commit:
+        resolved = tag_result.stdout.strip()
+        if tag_result.returncode != 0 or resolved != unit.protocol_commit:
             raise RuntimeError(
                 f"Registry protocol tag {unit.protocol_tag!r} does not resolve to "
                 f"declared commit {unit.protocol_commit}."
+            )
+        lock_result = subprocess.run(
+            ["git", "show", f"{unit.protocol_commit}:uv.lock"],
+            cwd=repo_root,
+            check=False,
+            capture_output=True,
+        )
+        if lock_result.returncode != 0:
+            raise RuntimeError(
+                f"Registry protocol commit {unit.protocol_commit} does not contain uv.lock."
+            )
+        actual_lock_sha256 = hashlib.sha256(lock_result.stdout).hexdigest()
+        if actual_lock_sha256 != unit.scientific_uv_lock_sha256:
+            raise RuntimeError(
+                f"Registry protocol tag {unit.protocol_tag!r} declares uv.lock "
+                f"{unit.scientific_uv_lock_sha256}, but its commit contains "
+                f"{actual_lock_sha256}."
             )
 
 

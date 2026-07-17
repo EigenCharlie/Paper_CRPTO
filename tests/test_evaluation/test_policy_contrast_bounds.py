@@ -214,3 +214,32 @@ def test_indexed_bounds_reject_invalid_lgd() -> None:
 
     with pytest.raises(ValueError, match="LGD"):
         index.sharp_bounds(policy_a="policy-a", policy_b="policy-b", lgd=float("nan"))
+
+
+def test_indexed_bounds_can_normalize_both_policies_to_committed_capital() -> None:
+    index = PolicyContrastIndex(_policy_pair(), role="primary_oot")
+
+    bounds = index.sharp_bounds(
+        policy_a="policy-a",
+        policy_b="policy-b",
+        lgd=0.45,
+        normalization_capital_a=125.0,
+        normalization_capital_b=125.0,
+    )
+
+    assert bounds["policy_a_capital"] == 100.0
+    assert bounds["policy_a_normalization_capital"] == 125.0
+    assert bounds["policy_b_normalization_capital"] == 125.0
+    assert bounds["weighted_default_identification_width"] == pytest.approx(0.16)
+
+
+def test_indexed_bounds_reject_normalizer_below_invested_capital() -> None:
+    index = PolicyContrastIndex(_policy_pair(), role="primary_oot")
+
+    with pytest.raises(ValueError, match="below invested"):
+        index.sharp_bounds(
+            policy_a="policy-a",
+            policy_b="policy-b",
+            lgd=0.45,
+            normalization_capital_a=99.0,
+        )

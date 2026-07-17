@@ -47,9 +47,11 @@ active_scientific_contract:
       - scripts/experiments/run_ijds_raw_data_audit.py
       - scripts/experiments/run_ijds_credit_risk_controls.py
       - scripts/experiments/run_ijds_label_lag_sensitivity.py
+      - scripts/experiments/run_ijds_fit_label_completion_sensitivity.py
       - scripts/experiments/run_ijds_endpoint_availability_sensitivity.py
       - scripts/experiments/run_ijds_missingness_sensitivity.py
       - scripts/experiments/run_ijds_portfolio_structure_sensitivity.py
+      - scripts/experiments/run_ijds_allocation_granularity_sensitivity.py
       - scripts/experiments/run_ijds_policy_support_tie_audit.py
     support_tools:
       - scripts/build_ijds_policy_support_tie_evidence.py

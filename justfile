@@ -71,6 +71,9 @@ ijds-raw-data-audit CONFIG="configs/experiments/ijds_raw_data_contract_2026-07-1
 ijds-label-lag CONFIG="configs/experiments/ijds_label_lag_sensitivity_2026-07-14.yaml":
     uv run python scripts/experiments/run_ijds_label_lag_sensitivity.py --config "{{ CONFIG }}"
 
+ijds-fit-label-completion PHASE CONFIG="configs/experiments/ijds_fit_label_completion_sensitivity_2026-07-16.yaml":
+    uv run python scripts/experiments/run_ijds_fit_label_completion_sensitivity.py "{{ PHASE }}" --config "{{ CONFIG }}"
+
 ijds-endpoint-sensitivity CONFIG="configs/experiments/ijds_endpoint_availability_sensitivity_2026-07-14.yaml":
     uv run python scripts/experiments/run_ijds_endpoint_availability_sensitivity.py --config "{{ CONFIG }}"
 
@@ -79,6 +82,9 @@ ijds-missingness PHASE CONFIG="configs/experiments/ijds_missingness_sensitivity_
 
 ijds-structure PHASE CONFIG="configs/experiments/ijds_portfolio_structure_sensitivity_2026-07-15_v6.yaml":
     uv run python scripts/experiments/run_ijds_portfolio_structure_sensitivity.py --phase "{{ PHASE }}" --config "{{ CONFIG }}"
+
+ijds-allocation-granularity PHASE CONFIG="configs/experiments/ijds_allocation_granularity_sensitivity_2026-07-16.yaml":
+    uv run python scripts/experiments/run_ijds_allocation_granularity_sensitivity.py "{{ PHASE }}" --config "{{ CONFIG }}"
 
 ijds-tie-audit CONFIG="configs/experiments/ijds_policy_support_tie_audit_2026-07-12.yaml":
     uv run python scripts/experiments/run_ijds_policy_support_tie_audit.py --config "{{ CONFIG }}"
@@ -128,7 +134,7 @@ paper-official-scan:
 paper-previews: paper-body paper-supplement
     uv run python scripts/render_submission_pdf_previews.py
 
-submission-build: ijds-evidence paper-body paper-supplement paper-official paper-previews
+submission-build: ijds-tie-evidence ijds-evidence paper-body paper-supplement paper-official paper-previews
 
 validate-champion:
     uv run pytest tests/test_manifest_regression.py -q

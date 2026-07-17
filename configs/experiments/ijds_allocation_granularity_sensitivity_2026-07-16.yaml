@@ -1,0 +1,48 @@
+schema_version: "2026-07-16.1"
+protocol_tag: "protocol/ijds-allocation-granularity-sensitivity-2026-07-16-v1"
+run_tag: "ijds-allocation-granularity-sensitivity-2026-07-16-v1"
+
+parent:
+  v4_config: "configs/experiments/ijds_binary_geometry_frontier_v4_2026-07-15_v5.yaml"
+  allocations:
+    path: "data/processed/experiments/ijds_audit/ijds-portfolio-structure-sensitivity-2026-07-15-v6/scenarios/b1000k_p025_l045/frontier/allocations.parquet"
+    bytes: 3180848
+    sha256: "83870a9e0234289a46641f53f8857eeba5937ebdb8cd19b25eb56f7e8a8dfa81"
+  solve_records:
+    path: "data/processed/experiments/ijds_audit/ijds-portfolio-structure-sensitivity-2026-07-15-v6/scenarios/b1000k_p025_l045/frontier/solve_records.parquet"
+    bytes: 98930
+    sha256: "2fd5bf83dcfce215a44521edf2475c8e4fe2a1df03e6061a59ce619563c6ef51"
+
+allocation_granularity:
+  lot_size_usd: 25.0
+  committed_budget_usd: 1000000.0
+  lgd: 0.45
+  rounding_rule: "floor_each_exposure_hold_residual_as_cash"
+  periods:
+    - "2016-04"
+    - "2016-05"
+    - "2016-06"
+    - "2016-07"
+    - "2016-08"
+    - "2016-09"
+    - "2016-10"
+    - "2016-11"
+    - "2016-12"
+    - "2017-01"
+    - "2017-02"
+    - "2017-03"
+    - "2017-04"
+    - "2017-05"
+    - "2017-06"
+  expected_portfolios: 1440
+  expected_tracks: 96
+  numerical_tolerance: 1.0e-8
+  all_tracks_reported: true
+  historical_archive_previously_inspected: true
+  outcome_based_selection: false
+  paper_role: "continuous_relaxation_granularity_diagnostic_not_policy_selection"
+
+output:
+  data_root: "data/processed/experiments/ijds_audit"
+  model_root: "models/experiments/ijds_audit"
+  immutability: "hard_no_overwrite_choose_fresh_run_tag"

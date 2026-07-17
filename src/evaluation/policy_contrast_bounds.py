@@ -59,6 +59,8 @@ def _sharp_policy_bounds_from_arrays(
     policy_b: str,
     role: str,
     lgd: float,
+    normalization_capital_a: float | None = None,
+    normalization_capital_b: float | None = None,
 ) -> dict[str, Any]:
     lengths = {
         len(exposure_a),
@@ -94,8 +96,16 @@ def _sharp_policy_bounds_from_arrays(
     total_b = float(exposure_b.sum())
     if total_a <= 0.0 or total_b <= 0.0:
         raise ValueError("Both policies must allocate positive capital.")
+    normalizer_a = total_a if normalization_capital_a is None else float(normalization_capital_a)
+    normalizer_b = total_b if normalization_capital_b is None else float(normalization_capital_b)
+    if not np.isfinite(normalizer_a) or not np.isfinite(normalizer_b):
+        raise ValueError("Policy normalization capital must be finite.")
+    if normalizer_a <= 0.0 or normalizer_b <= 0.0:
+        raise ValueError("Policy normalization capital must be positive.")
+    if normalizer_a < total_a - 1.0e-8 or normalizer_b < total_b - 1.0e-8:
+        raise ValueError("Policy normalization capital cannot be below invested capital.")
     delta_exposure = exposure_a - exposure_b
-    delta_weight = exposure_a / total_a - exposure_b / total_b
+    delta_weight = exposure_a / normalizer_a - exposure_b / normalizer_b
     payoff_if_zero = delta_exposure * rates
     payoff_if_one = delta_exposure * -float(lgd)
     payoff_rate_if_zero = delta_weight * rates
@@ -144,6 +154,8 @@ def _sharp_policy_bounds_from_arrays(
         "policy_b": policy_b,
         "policy_a_capital": total_a,
         "policy_b_capital": total_b,
+        "policy_a_normalization_capital": normalizer_a,
+        "policy_b_normalization_capital": normalizer_b,
         "funded_union_loans": int(len(outcomes)),
         "unresolved_union_loans": int((~np.isfinite(outcomes)).sum()),
         "expected_objective_difference": float(expected_difference),
@@ -338,6 +350,8 @@ class PolicyContrastIndex:
         policy_a: str,
         policy_b: str,
         lgd: float,
+        normalization_capital_a: float | None = None,
+        normalization_capital_b: float | None = None,
     ) -> dict[str, Any]:
         """Return sharp ``policy_a - policy_b`` bounds from the reusable index."""
         missing = sorted({policy_a, policy_b} - set(self._positions))
@@ -375,6 +389,8 @@ class PolicyContrastIndex:
             policy_b=policy_b,
             role=self._role,
             lgd=lgd,
+            normalization_capital_a=normalization_capital_a,
+            normalization_capital_b=normalization_capital_b,
         )
 
 

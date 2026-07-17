@@ -59,6 +59,7 @@ def _targets(tmp_path: Path, *, omit_last: bool = False) -> Path:
             "run_tag": run_tag,
             "protocol_tag": f"protocol/{run_tag}",
             "protocol_commit": "a" * 40,
+            "scientific_uv_lock_sha256": "b" * 64,
         }
     registry = tmp_path / "registry.yaml"
     registry.write_text(

@@ -2,6 +2,8 @@
 
 from __future__ import annotations
 
+import hashlib
+import subprocess
 from pathlib import Path
 from typing import Any
 
@@ -35,6 +37,7 @@ def _protocol_identity(
         "run_tag": run_tag,
         "protocol_tag": f"protocol/{run_tag}",
         "protocol_commit": commit,
+        "scientific_uv_lock_sha256": "a" * 64,
         "paper_role": paper_role,
         "dvc_tracked": dvc_tracked,
     }
@@ -260,6 +263,68 @@ def test_registry_rejects_incomplete_protocol_identity(tmp_path: Path) -> None:
 
     with pytest.raises(TypeError, match="protocol_commit"):
         load_source_registry(registry_path)
+
+
+def test_registry_requires_scientific_lock_for_protocol_identity(tmp_path: Path) -> None:
+    payload = _explicit_payload(tmp_path)
+    del payload["sensitivities"]["endpoint_availability"]["scientific_uv_lock_sha256"]
+    registry_path = _write_registry(tmp_path, payload)
+
+    with pytest.raises(TypeError, match="scientific_uv_lock_sha256"):
+        load_source_registry(registry_path)
+
+
+def test_registry_rejects_malformed_scientific_lock(tmp_path: Path) -> None:
+    payload = _explicit_payload(tmp_path)
+    payload["sensitivities"]["endpoint_availability"]["scientific_uv_lock_sha256"] = "ABC"
+    registry_path = _write_registry(tmp_path, payload)
+
+    with pytest.raises(ValueError, match="64-character lowercase"):
+        load_source_registry(registry_path)
+
+
+def test_registry_verifies_lock_from_protocol_commit(tmp_path: Path) -> None:
+    subprocess.run(["git", "init", "--quiet"], cwd=tmp_path, check=True)
+    subprocess.run(["git", "config", "user.email", "test@example.com"], cwd=tmp_path, check=True)
+    subprocess.run(["git", "config", "user.name", "Test"], cwd=tmp_path, check=True)
+    lock = b"version = 1\n"
+    (tmp_path / "uv.lock").write_bytes(lock)
+    subprocess.run(["git", "add", "uv.lock"], cwd=tmp_path, check=True)
+    subprocess.run(["git", "commit", "--quiet", "-m", "fixture"], cwd=tmp_path, check=True)
+    commit = subprocess.run(
+        ["git", "rev-parse", "HEAD"],
+        cwd=tmp_path,
+        check=True,
+        capture_output=True,
+        text=True,
+    ).stdout.strip()
+
+    payload = _explicit_payload(tmp_path)
+    for section in ("lineages", "diagnostics", "sensitivities"):
+        del payload[section]
+    run_tag = "fixture-protocol"
+    protocol_tag = f"protocol/{run_tag}"
+    subprocess.run(["git", "tag", protocol_tag], cwd=tmp_path, check=True)
+    payload["lineages"] = {
+        "fixture": {
+            **_protocol_identity(
+                run_tag,
+                paper_role="outcome_free",
+                dvc_tracked=True,
+                commit=commit,
+            ),
+            "scientific_uv_lock_sha256": hashlib.sha256(lock).hexdigest(),
+        }
+    }
+    payload["dvc_pointers"] = [f"{root}/experiments/ijds_audit/{run_tag}.dvc" for root in DVC_ROOTS]
+    registry_path = _materialize_registry(tmp_path, payload)
+
+    load_source_registry(registry_path, repo_root=tmp_path)
+
+    payload["lineages"]["fixture"]["scientific_uv_lock_sha256"] = "0" * 64
+    registry_path = _write_registry(tmp_path, payload)
+    with pytest.raises(RuntimeError, match="commit contains"):
+        load_source_registry(registry_path, repo_root=tmp_path)
 
 
 def test_registry_rejects_null_explicit_dvc_tracking(tmp_path: Path) -> None:

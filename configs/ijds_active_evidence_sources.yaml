@@ -7,6 +7,7 @@ lineages:
       run_tag: "ijds-binary-geometry-frontier-v4-2026-07-12-v1"
       protocol_tag: "protocol/ijds-binary-geometry-frontier-v4-2026-07-12-v1"
       protocol_commit: "2f8a7606e4eb65aa3ae3701fb3af8d9a51c953cd"
+      scientific_uv_lock_sha256: "d293ed325a3b25a13000560c8551d34937735ba8c9fe59ffeeed5d64f7120dd2"
       freeze_sha256: "c2b3dc2d18c9fed80708682d5a0369c80c89643e2d28024418522d954ebe667c"
       paper_role: "outcome_free_freeze"
       dvc_tracked: true
@@ -14,6 +15,7 @@ lineages:
       run_tag: "ijds-binary-geometry-frontier-v4-2026-07-15-v5"
       protocol_tag: "protocol/ijds-binary-geometry-frontier-v4-2026-07-15-v5"
       protocol_commit: "e2bba580a0b07c145bd64ff61440973d6e31349b"
+      scientific_uv_lock_sha256: "d293ed325a3b25a13000560c8551d34937735ba8c9fe59ffeeed5d64f7120dd2"
       paper_role: "verified_evaluation"
       dvc_tracked: true
   two_ruler:
@@ -21,6 +23,7 @@ lineages:
       run_tag: "ijds-normalized-objective-frontier-2026-07-13-v1c"
       protocol_tag: "protocol/ijds-normalized-objective-frontier-2026-07-13-v1c"
       protocol_commit: "46f4df915d38eb5a6cc144484c6e6fe56d8ed397"
+      scientific_uv_lock_sha256: "d293ed325a3b25a13000560c8551d34937735ba8c9fe59ffeeed5d64f7120dd2"
       freeze_sha256: "7877c5e460772a0093e4132eaa542e9049f7ec15d2ddaa35c2df389892a0e185"
       paper_role: "outcome_free_freeze"
       dvc_tracked: true
@@ -28,6 +31,7 @@ lineages:
       run_tag: "ijds-normalized-objective-frontier-2026-07-15-v5"
       protocol_tag: "protocol/ijds-normalized-objective-frontier-2026-07-15-v5"
       protocol_commit: "e2bba580a0b07c145bd64ff61440973d6e31349b"
+      scientific_uv_lock_sha256: "d293ed325a3b25a13000560c8551d34937735ba8c9fe59ffeeed5d64f7120dd2"
       paper_role: "verified_evaluation"
       dvc_tracked: true
   credit_controls:
@@ -35,6 +39,7 @@ lineages:
       run_tag: "ijds-credit-risk-controls-2026-07-13-v1b"
       protocol_tag: "protocol/ijds-credit-risk-controls-2026-07-13-v1b"
       protocol_commit: "1776cbf8b201ae5b92756e5ea397a403d6cc7c9f"
+      scientific_uv_lock_sha256: "d293ed325a3b25a13000560c8551d34937735ba8c9fe59ffeeed5d64f7120dd2"
       freeze_sha256: "da4805e644bcf5decfbb0a67c0c81a5b9dd61f3ab2e17d3dc5264100e7eb4d35"
       paper_role: "outcome_free_freeze"
       dvc_tracked: true
@@ -42,6 +47,7 @@ lineages:
       run_tag: "ijds-credit-risk-controls-2026-07-15-v5"
       protocol_tag: "protocol/ijds-credit-risk-controls-2026-07-15-v5"
       protocol_commit: "e2bba580a0b07c145bd64ff61440973d6e31349b"
+      scientific_uv_lock_sha256: "d293ed325a3b25a13000560c8551d34937735ba8c9fe59ffeeed5d64f7120dd2"
       paper_role: "verified_evaluation"
       dvc_tracked: true
   diagnostics:
@@ -54,12 +60,14 @@ lineages:
       run_tag: "ijds-label-lag-sensitivity-2026-07-14-v1"
       protocol_tag: "protocol/ijds-label-lag-sensitivity-2026-07-14-v1"
       protocol_commit: "688f75dc4f285c75bc499c9e041dd30fb3acd70d"
+      scientific_uv_lock_sha256: "d293ed325a3b25a13000560c8551d34937735ba8c9fe59ffeeed5d64f7120dd2"
       paper_role: "fit_label_timing_sensitivity"
       dvc_tracked: false
     solver_tie_audit:
       run_tag: "ijds-policy-support-tie-audit-2026-07-12-v1"
       protocol_tag: "protocol/ijds-policy-support-tie-audit-2026-07-12-v1"
       protocol_commit: "115eaf1b81ed5f05ffe601e9c20079059c40c200"
+      scientific_uv_lock_sha256: "d293ed325a3b25a13000560c8551d34937735ba8c9fe59ffeeed5d64f7120dd2"
       paper_role: "evaluated_cap_numerical_diagnostic"
       dvc_tracked: false
 
@@ -68,24 +76,28 @@ sensitivities:
     run_tag: "ijds-endpoint-availability-sensitivity-2026-07-14-v1"
     protocol_tag: "protocol/ijds-endpoint-availability-sensitivity-2026-07-14-v1"
     protocol_commit: "8865f1cfbd387576bdf805f3e52f030261e4b717"
+    scientific_uv_lock_sha256: "d293ed325a3b25a13000560c8551d34937735ba8c9fe59ffeeed5d64f7120dd2"
     paper_role: "evaluation_endpoint_timing_sensitivity"
     dvc_tracked: true
   portfolio_structure:
     run_tag: "ijds-portfolio-structure-sensitivity-2026-07-15-v6"
     protocol_tag: "protocol/ijds-portfolio-structure-sensitivity-2026-07-15-v6"
     protocol_commit: "490c653a43e2003d83184f47e1277bd2d4390c43"
+    scientific_uv_lock_sha256: "d293ed325a3b25a13000560c8551d34937735ba8c9fe59ffeeed5d64f7120dd2"
     paper_role: "complete_budget_concentration_lgd_sensitivity"
     dvc_tracked: true
   rolling_origin:
     run_tag: "ijds-rolling-origin-2017-2026-07-15-v4"
     protocol_tag: "protocol/ijds-rolling-origin-stability-2026-07-15-v4"
     protocol_commit: "e2bba580a0b07c145bd64ff61440973d6e31349b"
+    scientific_uv_lock_sha256: "d293ed325a3b25a13000560c8551d34937735ba8c9fe59ffeeed5d64f7120dd2"
     paper_role: "two_origin_retrospective_recurrence"
     dvc_tracked: true
   missingness_encoding:
     run_tag: "ijds-missingness-sensitivity-2026-07-15-v3"
     protocol_tag: "protocol/ijds-missingness-sensitivity-2026-07-15-v3"
     protocol_commit: "199afb083da37af6a51d5ba9e3c4d6280b952fe9"
+    scientific_uv_lock_sha256: "d293ed325a3b25a13000560c8551d34937735ba8c9fe59ffeeed5d64f7120dd2"
     paper_role: "feature_semantics_preserving_encoding_sensitivity"
     dvc_tracked: true
 
@@ -94,24 +106,28 @@ replay_dependencies:
     run_tag: "ijds-binary-geometry-frontier-v4-2026-07-14-v3"
     protocol_tag: "protocol/ijds-binary-geometry-frontier-v4-2026-07-14-v3"
     protocol_commit: "688f75dc4f285c75bc499c9e041dd30fb3acd70d"
+    scientific_uv_lock_sha256: "d293ed325a3b25a13000560c8551d34937735ba8c9fe59ffeeed5d64f7120dd2"
     paper_role: "non_evidence_v5_reason_recovery_reference"
     dvc_tracked: true
   normalized_frontier_v3_reason_reference:
     run_tag: "ijds-normalized-objective-frontier-2026-07-14-v3"
     protocol_tag: "protocol/ijds-normalized-objective-frontier-2026-07-14-v3"
     protocol_commit: "a1ae516a6c9674686dba245cb275475073b298a0"
+    scientific_uv_lock_sha256: "d293ed325a3b25a13000560c8551d34937735ba8c9fe59ffeeed5d64f7120dd2"
     paper_role: "non_evidence_v5_reason_recovery_reference"
     dvc_tracked: true
   credit_controls_v3_reason_reference:
     run_tag: "ijds-credit-risk-controls-2026-07-14-v3"
     protocol_tag: "protocol/ijds-credit-risk-controls-2026-07-14-v3"
     protocol_commit: "688f75dc4f285c75bc499c9e041dd30fb3acd70d"
+    scientific_uv_lock_sha256: "d293ed325a3b25a13000560c8551d34937735ba8c9fe59ffeeed5d64f7120dd2"
     paper_role: "non_evidence_v5_reason_recovery_reference"
     dvc_tracked: true
   portfolio_structure_v5_shards:
     run_tag: "ijds-portfolio-structure-sensitivity-2026-07-15-v5"
     protocol_tag: "protocol/ijds-portfolio-structure-sensitivity-2026-07-15-v5"
     protocol_commit: "481528a6973eded94189435957f9b8064bc4bb06"
+    scientific_uv_lock_sha256: "d293ed325a3b25a13000560c8551d34937735ba8c9fe59ffeeed5d64f7120dd2"
     paper_role: "non_evidence_structural_v6_replay_dependency"
     dvc_tracked: true
     dvc_roots: ["data/processed"]
