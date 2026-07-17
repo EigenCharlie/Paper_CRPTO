@@ -1,5 +1,5 @@
 ---
-title: "Online Supplement for CRPTO: Auditing Binary Conformal Geometry and Portfolio Comparators"
+title: "Online Supplement for CRPTO: An Identification Audit of Binary Conformal Credit Portfolio Optimization"
 author: "Anonymous"
 lang: en
 bibliography: references.bib
@@ -217,6 +217,15 @@ taxonomy. None of the four controls enters the portfolio optimizer or is chosen
 from OOT outcomes. They ask whether coverage transport is specific to model
 class, unconstrained shape, or platform pricing; they are not a model-selection
 contest.
+
+The raw audit labels 30 origination fields as temporally eligible, whereas the
+frozen model consumes engineered predictors rather than every eligible raw
+column. Four eligible fields are deliberately absent. `initial_list_status`
+and `policy_code` are constant in PD development. `acc_now_delinq` and
+`delinq_amnt` have only a handful of nonzero early observations and are not
+added beside the more stable delinquency history and severity features. This
+is a prespecified representation choice, not a claim that the omitted fields
+are unavailable or useless in another design.
 
 The raw-feature contract records two exceptions to the 95% coverage threshold.
 `mths_since_last_delinq` is structurally nullable: minimum fitting coverage is
@@ -494,6 +503,37 @@ bounds reflect its larger unresolved fraction; they should not be read as a
 more severe resolved-case coverage failure. No origin is selected, and two
 origins cannot establish temporal invariance or prospective performance.
 
+## B.9 Declared fit-label scenario sensitivity
+
+<!-- claim:sensitivity.fit_label_completion_coverage_recurrence -->
+<!-- claim:geometry.fit_label_completion_crossing_not_universal -->
+
+The active fit uses only labels observable at each fitting cutoff. There are
+215 unavailable labels: 41 in PD development, 24 in Platt calibration, and 150
+in conformal fitting. A separately frozen sensitivity refits the complete
+CatBoost--Platt--residual pipeline under the observed-only fit and three
+declared stress rules. The
+evaluation outcome panel remains physically isolated until all scores and
+recipes have been written.
+
+| Completion scenario | Lowest lower | Highest upper | Windows upper $<.90$ | W7 prevalence / quantile | W8 prevalence / quantile | W7--W8 crossing |
+|---|---:|---:|---:|---:|---:|:---:|
+| All unavailable default | 0.849662 | 0.884669 | 8/8 | 0.105974 / 0.889212 | 0.100287 / 0.887805 | No |
+| All unavailable nondefault | 0.842466 | 0.883252 | 8/8 | 0.101993 / 0.889341 | 0.093092 / 0.111002 | Yes |
+| Hindsight terminal | 0.848980 | 0.884579 | 8/8 | 0.105467 / 0.889103 | 0.099809 / 0.112260 | Yes |
+| Observed only | 0.842485 | 0.882594 | 8/8 | 0.101703 / 0.888435 | 0.097147 / 0.111801 | Yes |
+
+: S7B declared fit-label scenario sensitivity. Coverage columns summarize the eight overall candidate bounds; prevalence and quantile columns refer to stratum 2. {#tbl-s-fit-completion}
+
+All 32 overall scenario-window upper bounds remain below 0.90. The coverage
+transport conclusion is therefore unchanged across these four scenarios. The
+geometric account is narrower: the all-default scenario leaves both W7 and W8
+above the 0.10 prevalence threshold and removes the quantile crossing. Since
+learner and calibration refits are nonlinear, these four scenarios are
+declared stresses rather than sharp bounds over every one of the $2^{215}$ label
+assignments. No scenario is selected, and the later terminal scenario is
+hindsight sensitivity rather than an information-safe deployment recipe.
+
 # Appendix C: Portfolio and Comparator Protocol
 
 ## C.1 Coherent plug-in objective and status-indexed endpoint
@@ -622,6 +662,16 @@ $[0.055573,0.099997]$. A secondary broad-stress support is $[0.05,0.12]$.
 HiGHS basis-ranging endpoints and every named/support endpoint produce 3,067
 distinct point caps. The supports are fixed without outcomes.
 
+## C.5 Allocation granularity diagnostic
+
+The LP permits fractional dollar exposure. To diagnose whether that relaxation
+drives the reported rates, an outcome-free transformation floors each positive
+baseline exposure to the nearest USD 25 lot and leaves the monthly residual as
+cash. It does not redistribute cash, resolve a mixed-integer program, change a
+ruler, or select a track. Both rounded and continuous outcomes are normalized
+by the same committed capital, so cash remains visible rather than silently
+renormalizing the rounded portfolio upward.
+
 # Appendix D: Exact Statements and Proofs
 
 ## D.1 Positive affine cap equivalence and same-cap nesting
@@ -727,21 +777,25 @@ $$
 U-L=\sum_{i\in U}|d_i(1)-d_i(0)|.
 $$
 
-Let $\delta_i=a_i^A-a_i^B$ and
-$\delta_i^w=a_i^A/\sum_j a_j^A-a_i^B/\sum_j a_j^B$. The three active widths
-are therefore
+Let $\delta_i=a_i^A-a_i^B$. For declared positive capital normalizers
+$N_A,N_B$, define $\delta_i^w=a_i^A/N_A-a_i^B/N_B$. The reported widths are
+therefore
 
 $$
 \begin{aligned}
 W_{\mathrm{payoff}}&=\sum_{i\in U}|\delta_i|(r_i+\lambda),\\
+W_{\mathrm{payoff\ rate}}&=\sum_{i\in U}|\delta_i^w|(r_i+\lambda),\\
 W_{\mathrm{default}}&=\sum_{i\in U}|\delta_i^w|,\\
 W_{\mathrm{miss}}&=\sum_{i\in U}|\delta_i^w|\,|m_i(1)-m_i(0)|.
 \end{aligned}
 $$
 
-Resolved loans contribute zero width. Unresolved loans funded identically by
-both policies also contribute zero; for miscoverage, so do unresolved loans
-whose prediction set gives the same miss indicator at both binary outcomes.
+The active fully invested policies set $N_A=N_B=B$. The floor-with-cash
+diagnostic retains the same committed-capital denominator $B$ so that cash is
+not removed by renormalization. Resolved loans contribute zero width.
+Unresolved loans funded identically by both policies also contribute zero; for
+miscoverage, so do unresolved loans whose prediction set gives the same miss
+indicator at both binary outcomes.
 Identification loss is consequently governed by exposure disagreement and
 binary set geometry, not by the unresolved count alone.
 
@@ -960,7 +1014,33 @@ single-loan weight rounds to 0.08, 0.04, and 0.02 as the budget rises from USD
 than relabeling an inactive parameter. Its baseline scenario reproduces the
 active two-ruler bounds exactly.
 
-## E.4 Named-comparator census
+## E.4 Allocation granularity diagnostic
+
+<!-- claim:optimization.allocation_granularity_is_diagnostic -->
+
+The USD 25 floor-with-cash rule covers the complete baseline continuous family:
+1,440 monthly portfolios, 143,175 positive source exposures, and all 96
+ruler-coordinate-window endpoint tracks. It changes 2,985 exposures; eight
+rounded exposures become zero. Monthly residual cash ranges from USD 25 to USD
+75, averaging USD 26.01.
+
+| Diagnostic | Maximum absolute value |
+|---|---:|
+| Monthly cash share | 0.0000750 |
+| Fifteen-month track cash share | 0.0000333 |
+| Status-indexed payoff-rate perturbation | 0.000003448 |
+| Default-rate perturbation | 0.000012843 |
+| Miscoverage-rate perturbation | 0.000011902 |
+
+: S9F deterministic USD 25 allocation-granularity diagnostic. Rate differences are proportions; multiplying by 100 gives percentage points. {#tbl-s-allocation-granularity}
+
+The largest rate change is therefore 0.001284 percentage points. This is small
+relative to the reported endpoint hulls and supports use of the continuous
+relaxation for this archive and lot size. It does not establish integer
+optimality, robustness to another rounding rule, or the outcome of a discrete
+reoptimization.
+
+## E.5 Named-comparator census
 
 The table counts the sign of the guardrail-minus-point sharp contrast over 72
 window-policy cells per rule. Lower and higher refer to the guardrail. A
@@ -986,7 +1066,7 @@ produces both status-indexed payoff signs and many unresolved contrasts. The
 difference is precisely why a comparator label cannot replace an explicit
 support.
 
-## E.5 Exact support envelopes
+## E.6 Exact support envelopes
 
 <!-- claim:comparator.broad_support_all_cross_zero -->
 
@@ -1026,7 +1106,7 @@ rows; maximum allocation distance is $1.45\times10^{-14}$ and maximum absolute
 objective difference is $1.72\times10^{-9}$. This establishes deterministic
 stability at the evaluated caps, not continuous-frontier uniqueness.
 
-## E.6 Why no policy is promoted
+## E.7 Why no policy is promoted
 
 The empirical record does not support a winner for three separate reasons.
 First, candidate coverage misses its 0.90 target before optimization for both
@@ -1054,17 +1134,26 @@ coverage rows, 5,112 monthly evaluations, 360 aggregates, 221,040 paired sharp
 contrasts, and 648 comparator envelopes. Separate complete families cover five
 credit learners, endpoint lag, portfolio structure, missingness encoding, and
 a second temporal origin. The evidence builder checks hashes, contracts, and
-cardinalities before producing 16 tables, three figures in PNG and PDF, and one
-paper-facing manifest.
+cardinalities before producing 18 tables, three figures in PNG and PDF, and one
+paper-facing manifest. Additional outcome-isolated families cover joint
+fit-label completion and deterministic allocation granularity.
 
 ## F.2 Replay contract
 
-The replay contract requires:
+The replay contract distinguishes two operations. **Publication replay** runs
+the current builder against immutable DVC artifacts, verifies every descriptor,
+and regenerates paper tables, figures, and the manifest transactionally.
+**Scientific replay** checks out the recorded protocol commit for a lineage and
+uses the `uv.lock` hash stored with that lineage; current source code is not
+silently substituted for historical scientific code.
 
-1. an environment locked by `uv`;
-2. immutable, hash-described outcome-free and evaluated roots tracked by 27
+The shared contract requires:
+
+1. a lineage-specific environment locked by `uv`;
+2. immutable, hash-described outcome-free and evaluated roots tracked by 31
    DVC pointers across the primary audit, two-ruler diagnostic, credit controls,
-   endpoint, structure, missingness, and second-origin families;
+   endpoint, structure, missingness, second-origin, fit-label completion, and
+   allocation-granularity families;
 3. a separate freeze and evaluate command with no combined shortcut;
 4. exact ID alignment at the outcome join;
 5. byte-identical evidence builds;
@@ -1089,6 +1178,9 @@ policy.
 # Appendix G: Claim Boundary and Limitations
 
 <!-- claim:boundary.no_selected_set_validity -->
+<!-- claim:sensitivity.fit_label_completion_coverage_recurrence -->
+<!-- claim:geometry.fit_label_completion_crossing_not_universal -->
+<!-- claim:optimization.allocation_granularity_is_diagnostic -->
 
 | Evidence object | Permitted conclusion | Not established |
 |---|---|---|
@@ -1099,12 +1191,14 @@ policy.
 | WOE/IV, monotonic, and PSI controls | The transport result is not unique to active CatBoost or platform-pricing features | Scorecard superiority, external validity, or PSI-based coverage certification |
 | Three missingness encodings | All 24 coverage upper bounds are below 0.90 | A missingness mechanism, encoding winner, or portfolio robustness |
 | Second temporal origin | All eight later-origin CatBoost upper bounds are below 0.90 | Independent replication, temporal invariance, or prospective validation |
-| Constant-score proposition and stratum-2 path | Binary residual geometry is prevalence-sensitive | Exact finite-sample explanation for varying-score strata |
+| Four fit-label scenarios | All 32 overall coverage upper bounds are below 0.90; the W7--W8 crossing remains in three scenarios | Sharp bounds over all label assignments, geometry invariance, or preregistration |
+| Constant-score proposition and stratum-2 path | Binary residual geometry is prevalence-sensitive | Exact finite-sample explanation for varying-score strata or a universal transition |
 | Fit-label sensitivity | The W7--W8 crossing persists at every lag passing the 99% retention rule | Invariance to arbitrarily delayed fit labels or a causal explanation |
 | Evaluation-endpoint sensitivity | Coverage is below 0.90 in 40/40 cells at lags 0, 3, 6, and 8 and in 39/40 at lag 12; all broad-support envelopes cross at every lag | Lag-universal coverage failure or an endpoint selected from outcomes |
 | Timing design | Fit-label and evaluation-endpoint lags are separate one-factor sensitivities | Joint or full-factorial lag robustness |
 | Two rulers and three interior coordinates | Endpoint direction is not ruler- or coordinate-invariant on the declared grid | A continuous-frontier ordering or preferred gamma/ruler/coordinate |
 | Complete portfolio-structure grid | Every scenario retains adverse default and miscoverage cells; zero scenarios are uniformly favorable or adverse | A scenario winner, structural invariance, universal harm, or deployment guidance |
+| USD 25 floor-with-cash diagnostic | Rate perturbations are at most 0.001284 percentage points in the complete baseline family | Integer optimality, discrete reoptimization, or another lot rule |
 | C0 nesting and 1,080 C2 reconciliations | Plug-in objective dominance under their stated cap constructions | Status-indexed payoff, default, or miscoverage dominance |
 | Exact declared supports | Portfolio signs depend on comparator support and residual window | Universal quantification over all comparators |
 | Evaluated-cap solver audit | Allocations are deterministic to tolerance at the 7,297 evaluated rows | Continuous joint-frontier uniqueness |
@@ -1139,6 +1233,13 @@ mappings and two alternative encodings are evaluated, but the missingness
 mechanism is not identified. The second origin remains a retrospective
 recurrence from the same platform, not prospective validation.
 
+The observed-only fit and three declared stress rules retain the coverage
+conclusion but not one common geometric path. The all-default scenario removes
+the W7--W8 crossing, and the four nonlinear refits are not exhaustive over
+every missing-label assignment. Continuous allocation is numerically stable
+under the declared USD
+25 floor rule, but the study does not solve or evaluate a mixed-integer policy.
+
 Candidate-level coverage is not selected-set coverage. C2 matches one funded
 point-score moment but neither equalizes feasible sets nor defines a deployable
 counterfactual. Purpose categories and score strata are not protected classes,
@@ -1154,9 +1255,10 @@ not satisfy the decision-context requirements needed to import a CROMS,
 inverse conformal risk-control, or decision-calibration guarantee.
 
 The active conclusion is deliberately narrow. Binary absolute-residual
-geometry can change discontinuously around the prevalence threshold; the
-declared candidate-level coverage does not transport to the OOT archive for
-all five learner specifications; and status-indexed portfolio direction changes with the declared
+geometry can change discontinuously around the prevalence threshold, but that
+path is not invariant to every fit-label completion. Declared candidate-level
+coverage does not transport to the OOT archive for all five learner
+specifications, and status-indexed portfolio direction changes with the declared
 ruler, coordinate, residual recipe, and comparator support. No selected gamma,
 ruler, coordinate, policy, causal effect, prospective guarantee, selected-set
 validity, Markov certificate, universal guardrail direction, or deployment

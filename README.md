@@ -24,6 +24,8 @@ time roles before evaluation.
 | Exact point-cap frontier | 3,067 caps |
 | Broad-support comparator envelopes crossing zero | 216 / 216 |
 | Structural sensitivity | 36 complete scenarios |
+| Joint fit-label completion stress | 32 / 32 upper bounds below 0.90 |
+| USD 25 floor diagnostic | maximum rate perturbation 0.001284 pp |
 
 Under the declared six-month outcome-availability rule, all 40 sharp
 all-candidate coverage upper bounds are below 0.90. Separately, the primary
@@ -47,7 +49,7 @@ Read these in order:
 5. [`paper/CRPTO_ijds.qmd`](paper/CRPTO_ijds.qmd)
 6. [`paper/supplement_ijds.qmd`](paper/supplement_ijds.qmd)
 
-The source registry owns lineage identities and 27 DVC pointers. The evidence
+The source registry owns lineage identities and 31 DVC pointers. The evidence
 manifest is the only numeric paper-facing manifest. The body QMD is the only
 editable source for the official submission TeX.
 
@@ -75,7 +77,7 @@ raw archive + frozen experiment roots
 
 Current reusable code is under `src/ijds_audit`, `src/ijds_challengers`, and
 the retained data, model, evaluation, and optimization modules they import.
-Current experiment entrypoints are the ten `scripts/experiments/run_ijds_*`
+Current experiment entrypoints are exactly the `scripts/experiments/run_ijds_*`
 files named by `configs/crpto_publication_targets.yaml`.
 
 `dvc.yaml`, `dvc.lock`, and paths fixed by `EXTRACTION_MANIFEST.json` form a

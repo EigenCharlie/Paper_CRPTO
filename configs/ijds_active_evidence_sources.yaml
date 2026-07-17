@@ -100,6 +100,20 @@ sensitivities:
     scientific_uv_lock_sha256: "d293ed325a3b25a13000560c8551d34937735ba8c9fe59ffeeed5d64f7120dd2"
     paper_role: "feature_semantics_preserving_encoding_sensitivity"
     dvc_tracked: true
+  fit_label_completion:
+    run_tag: "ijds-fit-label-completion-sensitivity-2026-07-16-v2"
+    protocol_tag: "protocol/ijds-fit-label-completion-sensitivity-2026-07-16-v2"
+    protocol_commit: "fbcafcf84645024b9753aba2f04a4263b8e76236"
+    scientific_uv_lock_sha256: "25cefb168506538c22b86a348c42869ea7fda64338815f2adea3fe7e07608f93"
+    paper_role: "declared_fit_label_scenario_sensitivity"
+    dvc_tracked: true
+  allocation_granularity:
+    run_tag: "ijds-allocation-granularity-sensitivity-2026-07-16-v3"
+    protocol_tag: "protocol/ijds-allocation-granularity-sensitivity-2026-07-16-v3"
+    protocol_commit: "fb1a7b1837d1f8ab2b81239533f51c996f41671c"
+    scientific_uv_lock_sha256: "25cefb168506538c22b86a348c42869ea7fda64338815f2adea3fe7e07608f93"
+    paper_role: "continuous_allocation_granularity_diagnostic"
+    dvc_tracked: true
 
 replay_dependencies:
   binary_geometry_v3_reason_reference:
@@ -159,6 +173,10 @@ dvc_pointers:
   - "models/experiments/ijds_audit/ijds-rolling-origin-2017-2026-07-15-v4.dvc"
   - "data/processed/experiments/ijds_audit/ijds-missingness-sensitivity-2026-07-15-v3.dvc"
   - "models/experiments/ijds_audit/ijds-missingness-sensitivity-2026-07-15-v3.dvc"
+  - "data/processed/experiments/ijds_audit/ijds-fit-label-completion-sensitivity-2026-07-16-v2.dvc"
+  - "models/experiments/ijds_audit/ijds-fit-label-completion-sensitivity-2026-07-16-v2.dvc"
+  - "data/processed/experiments/ijds_audit/ijds-allocation-granularity-sensitivity-2026-07-16-v3.dvc"
+  - "models/experiments/ijds_audit/ijds-allocation-granularity-sensitivity-2026-07-16-v3.dvc"
   - "data/processed/experiments/ijds_audit/ijds-portfolio-structure-sensitivity-2026-07-15-v5.dvc"
 
 sources:
@@ -230,3 +248,19 @@ sources:
     path: "models/experiments/ijds_audit/ijds-missingness-sensitivity-2026-07-15-v3/execution_receipt.json"
     bytes: 574
     sha256: "85f1da84b2961d1fcbb2bc3c45f0e4b970d1ed011e8023e248db410230b1186d"
+  fit_label_completion_freeze:
+    path: "models/experiments/ijds_audit/ijds-fit-label-completion-sensitivity-2026-07-16-v2/protocol_freeze.json"
+    bytes: 7348
+    sha256: "f4b887f3a08e453e39be6b461887449e89c7882bff8b0918b9849cd29a8426db"
+  fit_label_completion_summary:
+    path: "models/experiments/ijds_audit/ijds-fit-label-completion-sensitivity-2026-07-16-v2/fit_label_completion_summary.json"
+    bytes: 4644
+    sha256: "8b9f7fde7f8776809350d4921b4221a9df0325f957ffbbfc94686bf1463b9c38"
+  allocation_granularity_freeze:
+    path: "models/experiments/ijds_audit/ijds-allocation-granularity-sensitivity-2026-07-16-v3/protocol_freeze.json"
+    bytes: 4677
+    sha256: "cb66f9eedcd130d5d8f57cd182bcb83603df3fb2bdd8292244ec6a5f77d78c1d"
+  allocation_granularity_summary:
+    path: "models/experiments/ijds_audit/ijds-allocation-granularity-sensitivity-2026-07-16-v3/allocation_granularity_summary.json"
+    bytes: 2226
+    sha256: "7e8d9609367ae2cb07e9d0d56e676d7af5486258f7f36a2680d66d2f90d4b51a"

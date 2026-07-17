@@ -46,7 +46,24 @@ def _binary_identification_width(
     return float(np.abs(value_if_one[unresolved] - value_if_zero[unresolved]).sum())
 
 
-def _sharp_policy_bounds_from_arrays(
+def _validated_normalizer(total: float, requested: float | None) -> float:
+    normalizer = total if requested is None else float(requested)
+    if not np.isfinite(normalizer):
+        raise ValueError("Policy normalization capital must be finite.")
+    if normalizer <= 0.0:
+        raise ValueError("Policy normalization capital must be positive.")
+    below_total = normalizer < total and not np.isclose(
+        normalizer,
+        total,
+        rtol=1.0e-10,
+        atol=1.0e-8,
+    )
+    if below_total:
+        raise ValueError("Policy normalization capital cannot be below invested capital.")
+    return normalizer
+
+
+def _validate_policy_bound_inputs(
     *,
     exposure_a: np.ndarray,
     exposure_b: np.ndarray,
@@ -55,13 +72,10 @@ def _sharp_policy_bounds_from_arrays(
     lower: np.ndarray,
     upper: np.ndarray,
     expected_difference: float,
-    policy_a: str,
-    policy_b: str,
-    role: str,
     lgd: float,
-    normalization_capital_a: float | None = None,
-    normalization_capital_b: float | None = None,
-) -> dict[str, Any]:
+    normalization_capital_a: float | None,
+    normalization_capital_b: float | None,
+) -> tuple[float, float, float, float]:
     lengths = {
         len(exposure_a),
         len(exposure_b),
@@ -96,69 +110,96 @@ def _sharp_policy_bounds_from_arrays(
     total_b = float(exposure_b.sum())
     if total_a <= 0.0 or total_b <= 0.0:
         raise ValueError("Both policies must allocate positive capital.")
-    normalizer_a = total_a if normalization_capital_a is None else float(normalization_capital_a)
-    normalizer_b = total_b if normalization_capital_b is None else float(normalization_capital_b)
-    if not np.isfinite(normalizer_a) or not np.isfinite(normalizer_b):
-        raise ValueError("Policy normalization capital must be finite.")
-    if normalizer_a <= 0.0 or normalizer_b <= 0.0:
-        raise ValueError("Policy normalization capital must be positive.")
-    normalizer_a_below_total = normalizer_a < total_a and not np.isclose(
-        normalizer_a,
-        total_a,
-        rtol=1.0e-10,
-        atol=1.0e-8,
-    )
-    normalizer_b_below_total = normalizer_b < total_b and not np.isclose(
-        normalizer_b,
-        total_b,
-        rtol=1.0e-10,
-        atol=1.0e-8,
-    )
-    if normalizer_a_below_total or normalizer_b_below_total:
-        raise ValueError("Policy normalization capital cannot be below invested capital.")
+    normalizer_a = _validated_normalizer(total_a, normalization_capital_a)
+    normalizer_b = _validated_normalizer(total_b, normalization_capital_b)
+    return total_a, total_b, normalizer_a, normalizer_b
+
+
+def _metric_contributions(
+    *,
+    exposure_a: np.ndarray,
+    exposure_b: np.ndarray,
+    rates: np.ndarray,
+    lower: np.ndarray,
+    upper: np.ndarray,
+    lgd: float,
+    normalizer_a: float,
+    normalizer_b: float,
+) -> dict[str, tuple[np.ndarray, np.ndarray]]:
     delta_exposure = exposure_a - exposure_b
     delta_weight = exposure_a / normalizer_a - exposure_b / normalizer_b
-    payoff_if_zero = delta_exposure * rates
-    payoff_if_one = delta_exposure * -float(lgd)
-    payoff_rate_if_zero = delta_weight * rates
-    payoff_rate_if_one = delta_weight * -float(lgd)
-    default_if_zero = np.zeros(len(outcomes), dtype=float)
-    default_if_one = delta_weight
-    miscoverage_if_zero = delta_weight * (lower > 0.0).astype(float)
-    miscoverage_if_one = delta_weight * (upper < 1.0).astype(float)
-    payoff_lower, payoff_upper = _sharp_binary_sum_bounds(payoff_if_zero, payoff_if_one, outcomes)
-    payoff_rate_lower, payoff_rate_upper = _sharp_binary_sum_bounds(
-        payoff_rate_if_zero, payoff_rate_if_one, outcomes
-    )
-    default_lower, default_upper = _sharp_binary_sum_bounds(
-        default_if_zero, default_if_one, outcomes
-    )
-    miscoverage_lower, miscoverage_upper = _sharp_binary_sum_bounds(
-        miscoverage_if_zero, miscoverage_if_one, outcomes
-    )
-    widths = {
-        "realized_payoff_identification_width": _binary_identification_width(
-            payoff_if_zero, payoff_if_one, outcomes
-        ),
-        "realized_payoff_rate_identification_width": _binary_identification_width(
-            payoff_rate_if_zero, payoff_rate_if_one, outcomes
-        ),
-        "weighted_default_identification_width": _binary_identification_width(
-            default_if_zero, default_if_one, outcomes
-        ),
-        "weighted_miscoverage_identification_width": _binary_identification_width(
-            miscoverage_if_zero, miscoverage_if_one, outcomes
+    return {
+        "realized_payoff": (delta_exposure * rates, delta_exposure * -float(lgd)),
+        "realized_payoff_rate": (delta_weight * rates, delta_weight * -float(lgd)),
+        "weighted_default": (np.zeros(len(delta_weight), dtype=float), delta_weight),
+        "weighted_miscoverage": (
+            delta_weight * (lower > 0.0).astype(float),
+            delta_weight * (upper < 1.0).astype(float),
         ),
     }
-    bound_widths = {
-        "realized_payoff_identification_width": payoff_upper - payoff_lower,
-        "realized_payoff_rate_identification_width": payoff_rate_upper - payoff_rate_lower,
-        "weighted_default_identification_width": default_upper - default_lower,
-        "weighted_miscoverage_identification_width": miscoverage_upper - miscoverage_lower,
-    }
-    for name, width in widths.items():
-        if not np.isclose(width, bound_widths[name], atol=1.0e-10, rtol=1.0e-12):
-            raise RuntimeError(f"Sharp-bound width failed direct reconciliation for {name}.")
+
+
+def _sharp_metric_results(
+    contributions: dict[str, tuple[np.ndarray, np.ndarray]],
+    outcomes: np.ndarray,
+) -> tuple[dict[str, float], dict[str, float]]:
+    bounds: dict[str, float] = {}
+    widths: dict[str, float] = {}
+    for metric, (value_if_zero, value_if_one) in contributions.items():
+        lower_bound, upper_bound = _sharp_binary_sum_bounds(
+            value_if_zero,
+            value_if_one,
+            outcomes,
+        )
+        bounds[f"{metric}_difference_lower"] = lower_bound
+        bounds[f"{metric}_difference_upper"] = upper_bound
+        width_name = f"{metric}_identification_width"
+        width = _binary_identification_width(value_if_zero, value_if_one, outcomes)
+        if not np.isclose(width, upper_bound - lower_bound, atol=1.0e-10, rtol=1.0e-12):
+            raise RuntimeError(f"Sharp-bound width failed direct reconciliation for {width_name}.")
+        widths[width_name] = width
+    return bounds, widths
+
+
+def _sharp_policy_bounds_from_arrays(
+    *,
+    exposure_a: np.ndarray,
+    exposure_b: np.ndarray,
+    outcomes: np.ndarray,
+    rates: np.ndarray,
+    lower: np.ndarray,
+    upper: np.ndarray,
+    expected_difference: float,
+    policy_a: str,
+    policy_b: str,
+    role: str,
+    lgd: float,
+    normalization_capital_a: float | None = None,
+    normalization_capital_b: float | None = None,
+) -> dict[str, Any]:
+    total_a, total_b, normalizer_a, normalizer_b = _validate_policy_bound_inputs(
+        exposure_a=exposure_a,
+        exposure_b=exposure_b,
+        outcomes=outcomes,
+        rates=rates,
+        lower=lower,
+        upper=upper,
+        expected_difference=expected_difference,
+        lgd=lgd,
+        normalization_capital_a=normalization_capital_a,
+        normalization_capital_b=normalization_capital_b,
+    )
+    contributions = _metric_contributions(
+        exposure_a=exposure_a,
+        exposure_b=exposure_b,
+        rates=rates,
+        lower=lower,
+        upper=upper,
+        lgd=lgd,
+        normalizer_a=normalizer_a,
+        normalizer_b=normalizer_b,
+    )
+    bounds, widths = _sharp_metric_results(contributions, outcomes)
     return {
         "contrast": f"{policy_a}_minus_{policy_b}",
         "role": role,
@@ -171,19 +212,19 @@ def _sharp_policy_bounds_from_arrays(
         "funded_union_loans": int(len(outcomes)),
         "unresolved_union_loans": int((~np.isfinite(outcomes)).sum()),
         "expected_objective_difference": float(expected_difference),
-        "realized_payoff_difference_lower": payoff_lower,
-        "realized_payoff_difference_upper": payoff_upper,
-        "realized_payoff_rate_difference_lower": payoff_rate_lower,
-        "realized_payoff_rate_difference_upper": payoff_rate_upper,
-        "weighted_default_difference_lower": default_lower,
-        "weighted_default_difference_upper": default_upper,
-        "weighted_miscoverage_difference_lower": miscoverage_lower,
-        "weighted_miscoverage_difference_upper": miscoverage_upper,
+        **bounds,
         **widths,
-        "payoff_direction_sign_robust": bool(payoff_lower > 0.0 or payoff_upper < 0.0),
-        "default_direction_sign_robust": bool(default_lower > 0.0 or default_upper < 0.0),
+        "payoff_direction_sign_robust": bool(
+            bounds["realized_payoff_difference_lower"] > 0.0
+            or bounds["realized_payoff_difference_upper"] < 0.0
+        ),
+        "default_direction_sign_robust": bool(
+            bounds["weighted_default_difference_lower"] > 0.0
+            or bounds["weighted_default_difference_upper"] < 0.0
+        ),
         "miscoverage_direction_sign_robust": bool(
-            miscoverage_lower > 0.0 or miscoverage_upper < 0.0
+            bounds["weighted_miscoverage_difference_lower"] > 0.0
+            or bounds["weighted_miscoverage_difference_upper"] < 0.0
         ),
         "causal_interpretation": False,
     }
@@ -193,6 +234,20 @@ def _require_columns(frame: pd.DataFrame, columns: tuple[str, ...], *, label: st
     missing = sorted(set(columns) - set(frame.columns))
     if missing:
         raise KeyError(f"{label} is missing required columns: {missing}.")
+
+
+def _require_consistent_loan_facts(frame: pd.DataFrame) -> None:
+    fact_counts = frame.groupby("id", observed=True, dropna=False)[list(_FACT_COLUMNS)].nunique(
+        dropna=False
+    )
+    conflicting = fact_counts.gt(1)
+    if bool(conflicting.to_numpy().any()):
+        conflict_ids = conflicting.index[conflicting.any(axis=1)].astype(str).tolist()
+        conflict_columns = conflicting.columns[conflicting.any(axis=0)].tolist()
+        raise ValueError(
+            "Conflicting policy facts for the same loan: "
+            f"ids={conflict_ids[:5]}, columns={conflict_columns}."
+        )
 
 
 def _validated_loan_facts(
@@ -205,17 +260,7 @@ def _validated_loan_facts(
     facts = source.loc[source["id"].isin(required_ids), ["id", *_FACT_COLUMNS]].copy()
     if bool(facts["id"].isna().any()):
         raise ValueError("Policy loan facts contain missing IDs.")
-    fact_counts = facts.groupby("id", observed=True, dropna=False)[list(_FACT_COLUMNS)].nunique(
-        dropna=False
-    )
-    conflicting = fact_counts.gt(1)
-    if bool(conflicting.any(axis=None)):
-        conflict_ids = conflicting.index[conflicting.any(axis=1)].astype(str).tolist()
-        conflict_columns = conflicting.columns[conflicting.any(axis=0)].tolist()
-        raise ValueError(
-            "Conflicting policy facts for the same loan: "
-            f"ids={conflict_ids[:5]}, columns={conflict_columns}."
-        )
+    _require_consistent_loan_facts(facts)
     if require_unique_ids and bool(facts["id"].duplicated().any()):
         raise ValueError("External policy loan facts contain duplicate IDs.")
     facts = facts.drop_duplicates().set_index("id")
@@ -252,17 +297,7 @@ def _union_policy_allocations(
         )
 
     attributes = ["id", *_FACT_COLUMNS]
-    fact_counts = subset.groupby("id", observed=True, dropna=False)[list(_FACT_COLUMNS)].nunique(
-        dropna=False
-    )
-    conflicting = fact_counts.gt(1)
-    if bool(conflicting.any(axis=None)):
-        conflict_ids = conflicting.index[conflicting.any(axis=1)].astype(str).tolist()
-        conflict_columns = conflicting.columns[conflicting.any(axis=0)].tolist()
-        raise ValueError(
-            "Conflicting policy facts for the same loan: "
-            f"ids={conflict_ids[:5]}, columns={conflict_columns}."
-        )
+    _require_consistent_loan_facts(subset)
     loans = subset[attributes].drop_duplicates()
     if bool(loans["id"].duplicated().any()):
         raise ValueError("Policy loan facts do not reduce to one row per ID.")

@@ -28,13 +28,17 @@ order before changing scientific code or paper claims:
    - retained complete budget--purpose-cap--LGD sensitivity and numerical lineage.
 13. [`models/experiments/ijds_audit/ijds-portfolio-structure-sensitivity-2026-07-15-v6/structural_sensitivity_summary.json`](models/experiments/ijds_audit/ijds-portfolio-structure-sensitivity-2026-07-15-v6/structural_sensitivity_summary.json)
    - active complete-grid structural evidence.
-14. [`configs/ijds_active_evidence_sources.yaml`](configs/ijds_active_evidence_sources.yaml)
+14. [`docs/research/ijds_fit_label_completion_sensitivity_protocol_2026-07-16.md`](docs/research/ijds_fit_label_completion_sensitivity_protocol_2026-07-16.md)
+   - observed-only fit plus three completion rules and nonlinear interpretation boundary.
+15. [`docs/research/ijds_allocation_granularity_sensitivity_protocol_2026-07-16.md`](docs/research/ijds_allocation_granularity_sensitivity_protocol_2026-07-16.md)
+   - USD 25 floor-with-cash diagnostic and fixed-capital estimands.
+16. [`configs/ijds_active_evidence_sources.yaml`](configs/ijds_active_evidence_sources.yaml)
    - active lineage identities and exact DVC-pointer authority.
-15. [`configs/ijds_claim_ledger.yaml`](configs/ijds_claim_ledger.yaml)
+17. [`configs/ijds_claim_ledger.yaml`](configs/ijds_claim_ledger.yaml)
    - executable nonnumeric claim and surface contract.
-16. [`reports/crpto/ijds_binary_geometry_frontier_v4_evidence.json`](reports/crpto/ijds_binary_geometry_frontier_v4_evidence.json)
+18. [`reports/crpto/ijds_binary_geometry_frontier_v4_evidence.json`](reports/crpto/ijds_binary_geometry_frontier_v4_evidence.json)
    - the only active paper-facing evidence manifest.
-17. [`.codex/skills/crpto/SKILL.md`](.codex/skills/crpto/SKILL.md) - concise
+19. [`.codex/skills/crpto/SKILL.md`](.codex/skills/crpto/SKILL.md) - concise
    execution and writing guidance.
 
 Minimum rules:

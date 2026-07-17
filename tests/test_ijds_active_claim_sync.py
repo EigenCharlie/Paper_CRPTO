@@ -355,6 +355,32 @@ def test_endpoint_reasons_missingness_and_second_origin_are_bounded() -> None:
     assert rolling["independent_replication_claim_authorized"] is False
 
 
+def test_fit_label_completion_and_allocation_granularity_are_bounded() -> None:
+    evidence = _json(EVIDENCE)
+    fit = evidence["sensitivity"]["fit_label_completion"]
+    assert fit["unavailable_fit_labels_total"] == 215
+    assert fit["unavailable_fit_labels_by_split"] == {
+        "pd_development": 41,
+        "probability_calibration": 24,
+        "conformal_fit": 150,
+    }
+    assert fit["all_scenarios_all_windows_upper_below_nominal"] is True
+    assert fit["w7_w8_crossing_scenarios"] == 3
+    assert fit["w7_w8_crossing_in_all_scenarios"] is False
+    assert fit["scenarios_are_sharp_bounds_over_all_label_assignments"] is False
+    assert fit["scenario_or_result_selected"] is False
+    assert len(fit["rows"]) == 4
+
+    granularity = evidence["sensitivity"]["allocation_granularity"]
+    assert granularity["portfolios"] == 1440
+    assert granularity["tracks"] == 96
+    assert granularity["source_rows"] == 143175
+    assert granularity["changed_rows"] == 2985
+    assert granularity["cash_share_max"] < 3.4e-5
+    assert granularity["default_rate_perturbation_abs_max"] < 1.3e-5
+    assert granularity["integer_policy_or_reoptimization_claim_authorized"] is False
+
+
 def test_evidence_manifest_hashes_every_active_output() -> None:
     evidence = _json(EVIDENCE)
 
@@ -368,6 +394,7 @@ def test_evidence_manifest_hashes_every_active_output() -> None:
         "endpoint_availability_sensitivity/loader",
         "portfolio_structure_sensitivity/summary",
         "portfolio_structure_sensitivity/loader",
+        "robustness_sensitivities/loader",
         "artifact_descriptor_helper",
         "outcome_free/source_protocol_freeze",
         "two_ruler/outcome_free/freeze",
@@ -402,6 +429,10 @@ def test_manuscript_surfaces_share_v4_claims_and_retire_old_headlines() -> None:
         "0.0971",
         "0.8884",
         "0.1118",
+        "215",
+        "0.884669",
+        "2,985",
+        "0.001284",
         "3,067",
         "216",
         "72",

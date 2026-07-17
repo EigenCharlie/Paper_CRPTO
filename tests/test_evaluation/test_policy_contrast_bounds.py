@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+from itertools import product
+
 import numpy as np
 import pandas as pd
 import pytest
@@ -65,6 +67,64 @@ def test_identification_width_uses_only_unresolved_exposure_difference() -> None
     assert bounds["realized_payoff_identification_width"] == pytest.approx(11.0)
     assert bounds["weighted_default_identification_width"] == pytest.approx(0.2)
     assert bounds["weighted_miscoverage_identification_width"] == pytest.approx(0.2)
+
+
+def test_sharp_bounds_equal_exhaustive_binary_completions() -> None:
+    loan_ids = ["resolved", "missing-a", "missing-b"]
+    exposure_a = np.array([50.0, 30.0, 20.0])
+    exposure_b = np.array([20.0, 50.0, 30.0])
+    rates = np.array([0.08, 0.12, 0.16])
+    conformal_lower = np.array([0.0, 0.2, 0.0])
+    conformal_upper = np.array([0.8, 1.0, 0.7])
+    outcomes = np.array([0.0, np.nan, np.nan])
+    allocations = pd.concat(
+        [
+            pd.DataFrame(
+                {
+                    "id": loan_ids,
+                    "role": "primary_oot",
+                    "policy_label": policy,
+                    "exposure": exposures,
+                    "expected_payoff_contribution": exposures * 0.01,
+                    "contractual_rate": rates,
+                    "conformal_lower": conformal_lower,
+                    "conformal_upper": conformal_upper,
+                    "snapshot_default": pd.Series([0, pd.NA, pd.NA], dtype="Int8"),
+                }
+            )
+            for policy, exposures in (("policy-a", exposure_a), ("policy-b", exposure_b))
+        ],
+        ignore_index=True,
+    )
+    bounds = sharp_policy_contrast_bounds(
+        allocations,
+        policy_a="policy-a",
+        policy_b="policy-b",
+        role="primary_oot",
+        lgd=0.45,
+    )
+
+    delta_exposure = exposure_a - exposure_b
+    delta_weight = exposure_a / exposure_a.sum() - exposure_b / exposure_b.sum()
+    completed_metrics: dict[str, list[float]] = {
+        "realized_payoff": [],
+        "realized_payoff_rate": [],
+        "weighted_default": [],
+        "weighted_miscoverage": [],
+    }
+    for completion in product((0.0, 1.0), repeat=2):
+        realized = outcomes.copy()
+        realized[~np.isfinite(realized)] = completion
+        payoff = (1.0 - realized) * rates - realized * 0.45
+        completed_metrics["realized_payoff"].append(float((delta_exposure * payoff).sum()))
+        completed_metrics["realized_payoff_rate"].append(float((delta_weight * payoff).sum()))
+        completed_metrics["weighted_default"].append(float((delta_weight * realized).sum()))
+        miscovered = np.where(realized == 0.0, conformal_lower > 0.0, conformal_upper < 1.0)
+        completed_metrics["weighted_miscoverage"].append(float((delta_weight * miscovered).sum()))
+
+    for metric, values in completed_metrics.items():
+        assert bounds[f"{metric}_difference_lower"] == pytest.approx(min(values))
+        assert bounds[f"{metric}_difference_upper"] == pytest.approx(max(values))
 
 
 @pytest.mark.parametrize(

@@ -69,6 +69,20 @@ class _ObjectiveOptimum:
     diagnostics: dict[str, Any]
 
 
+@dataclass(frozen=True)
+class _FrontierCensus:
+    roles: tuple[str, ...]
+    role_months: dict[str, int]
+    windows: int
+    coordinates: int
+    all_gammas: tuple[float, ...]
+    reported_gammas: tuple[float, ...]
+    expected_records: int
+    expected_endpoints: int
+    expected_minimum_endpoints: int
+    expected_validation: int
+
+
 class _PointEndpointSession(Protocol):
     def solve(self, risk_cap: float) -> PointPortfolioSolution:
         """Solve one point-score cap."""
@@ -822,13 +836,7 @@ def _independent_diagnostic(
     }
 
 
-def _validate_complete_build(
-    result: FrontierBuild,
-    *,
-    config: Mapping[str, Any],
-    budget: float,
-    budget_tolerance: float,
-) -> None:
+def _frontier_census(result: FrontierBuild, config: Mapping[str, Any]) -> _FrontierCensus:
     frontier = config["frontier"]
     roles = tuple(str(value) for value in frontier["roles"])
     role_months = {
@@ -847,50 +855,82 @@ def _validate_complete_build(
     expected_records = (
         windows * sum(role_months[role] for role in roles) * len(reported_gammas) * coordinates * 2
     )
-    if len(result.solve_records) != expected_records:
-        raise RuntimeError(
-            f"Frontier produced {len(result.solve_records)} records, not {expected_records}."
-        )
     expected_endpoints = (
         windows * role_months["primary_oot"] * coordinates * 2
         if "primary_oot" in roles and {0.0, 1.0}.issubset(reported_gammas)
         else 0
     )
-    if len(result.endpoint_diagnostics) != expected_endpoints:
-        raise RuntimeError("Primary endpoint diagnostic census is incomplete.")
     expected_minimum_endpoints = (
         windows * sum(role_months[role] for role in roles) * len(all_gammas)
     )
-    minimum_endpoints = result.minimum_endpoint_diagnostics
-    if len(minimum_endpoints) != expected_minimum_endpoints:
-        raise RuntimeError("Minimum-endpoint diagnostic census is incomplete.")
-    if float(minimum_endpoints["minimum_cap_residual"].abs().max()) > float(
-        frontier["normalized_score"]["cap_residual_tolerance"]
-    ):
-        raise RuntimeError("A minimum-endpoint retry exceeded the declared cap tolerance.")
-    optimum = result.objective_optimum_diagnostics
-    if len(optimum) != sum(role_months[role] for role in roles):
-        raise RuntimeError("Objective-optimum diagnostic census is incomplete.")
-    optimum_config = config["frontier"]["objective_optimum"]
-    if int(optimum["near_zero_nonbasic_reduced_costs"].sum()) != 0 or float(
-        optimum["minimum_absolute_nonbasic_reduced_cost"].min()
-    ) <= float(optimum_config["dual_tolerance"]):
-        raise RuntimeError("An objective optimum has an unresolved nonbasic reduced cost.")
-    expected_order = expected_endpoints * 2
-    if len(result.order_sensitivity) != expected_order:
-        raise RuntimeError("Primary endpoint ID-order audit census is incomplete.")
     validation_periods = len(config["solver"]["independent_validation"]["periods"])
     expected_validation = (
         windows * validation_periods * 2 * coordinates * 2
         if "primary_oot" in roles and {0.0, 1.0}.issubset(reported_gammas)
         else 0
     )
-    if len(result.independent_validation) != expected_validation:
+    return _FrontierCensus(
+        roles=roles,
+        role_months=role_months,
+        windows=windows,
+        coordinates=coordinates,
+        all_gammas=all_gammas,
+        reported_gammas=reported_gammas,
+        expected_records=expected_records,
+        expected_endpoints=expected_endpoints,
+        expected_minimum_endpoints=expected_minimum_endpoints,
+        expected_validation=expected_validation,
+    )
+
+
+def _validate_frontier_censuses(
+    result: FrontierBuild,
+    *,
+    config: Mapping[str, Any],
+    census: _FrontierCensus,
+) -> None:
+    frontier = config["frontier"]
+    if len(result.solve_records) != census.expected_records:
+        raise RuntimeError(
+            f"Frontier produced {len(result.solve_records)} records, not {census.expected_records}."
+        )
+    if len(result.endpoint_diagnostics) != census.expected_endpoints:
+        raise RuntimeError("Primary endpoint diagnostic census is incomplete.")
+    minimum_endpoints = result.minimum_endpoint_diagnostics
+    if len(minimum_endpoints) != census.expected_minimum_endpoints:
+        raise RuntimeError("Minimum-endpoint diagnostic census is incomplete.")
+    if float(minimum_endpoints["minimum_cap_residual"].abs().max()) > float(
+        frontier["normalized_score"]["cap_residual_tolerance"]
+    ):
+        raise RuntimeError("A minimum-endpoint retry exceeded the declared cap tolerance.")
+    optimum = result.objective_optimum_diagnostics
+    expected_optima = sum(census.role_months[role] for role in census.roles)
+    if len(optimum) != expected_optima:
+        raise RuntimeError("Objective-optimum diagnostic census is incomplete.")
+    optimum_config = config["frontier"]["objective_optimum"]
+    if int(optimum["near_zero_nonbasic_reduced_costs"].sum()) != 0 or float(
+        optimum["minimum_absolute_nonbasic_reduced_cost"].min()
+    ) <= float(optimum_config["dual_tolerance"]):
+        raise RuntimeError("An objective optimum has an unresolved nonbasic reduced cost.")
+    expected_order = census.expected_endpoints * 2
+    if len(result.order_sensitivity) != expected_order:
+        raise RuntimeError("Primary endpoint ID-order audit census is incomplete.")
+    if len(result.independent_validation) != census.expected_validation:
         raise RuntimeError("Independent GLOP validation census is incomplete.")
+
+
+def _validate_frontier_numerics(
+    result: FrontierBuild,
+    *,
+    config: Mapping[str, Any],
+    budget: float,
+    budget_tolerance: float,
+) -> None:
     maximum_budget = float(result.solve_records["budget_residual"].abs().max())
     if maximum_budget > budget_tolerance:
         raise RuntimeError(f"Frontier budget residual reached {maximum_budget:.3e} dollars.")
     order = result.order_sensitivity
+    optimum = result.objective_optimum_diagnostics
     order_config = config["solver"]
     if float(optimum["reversed_id_exposure_distance"].max()) > float(
         order_config["order_exposure_distance_tolerance"]
@@ -925,6 +965,23 @@ def _validate_complete_build(
         rtol=0.0,
     ).all():
         raise RuntimeError("At least one frontier solve failed the exact-budget contract.")
+
+
+def _validate_complete_build(
+    result: FrontierBuild,
+    *,
+    config: Mapping[str, Any],
+    budget: float,
+    budget_tolerance: float,
+) -> None:
+    census = _frontier_census(result, config)
+    _validate_frontier_censuses(result, config=config, census=census)
+    _validate_frontier_numerics(
+        result,
+        config=config,
+        budget=budget,
+        budget_tolerance=budget_tolerance,
+    )
 
 
 def _assert_outcome_free(frame: pd.DataFrame, *, config: Mapping[str, Any]) -> None:

@@ -6,8 +6,8 @@ is a field map, not a substitute for the signed official form.
 
 ## Page 1
 
-**Title of manuscript:** CRPTO: Auditing Binary Conformal Geometry and
-Portfolio Comparators
+**Title of manuscript:** CRPTO: An Identification Audit of Binary Conformal
+Credit Portfolio Optimization
 
 **Policy confirmation:** Check the box confirming familiarity with and
 agreement to comply with the IJDS Data and Code Disclosure Policy.
@@ -73,7 +73,7 @@ public. The author agrees to complete the IJDS reproducibility report.
 
 The release includes `pyproject.toml`, `uv.lock`, active source and claim
 registries and executable claim ledger, the complete `src` package,
-active experiment/build scripts, 27 DVC
+active experiment/build scripts, 31 DVC
 pointers, aggregate evidence, canonical QMD, generated TeX, bibliography, and
 the scientific, type, drift, anonymity, compilation, and visual-QA gates.
 Credentials, local DVC configuration, absolute paths, protected extraction

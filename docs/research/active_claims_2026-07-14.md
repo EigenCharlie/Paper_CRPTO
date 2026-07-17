@@ -115,6 +115,34 @@ pre-endpoint-correction evaluations are provenance only.
   shifted residual windows. It is a two-origin retrospective recurrence, not an
   independent replication, prospective validation, or invariance result.
 
+### Fit-label completion sensitivity
+
+- Complete four-scenario run:
+  `ijds-fit-label-completion-sensitivity-2026-07-16-v2`, tag
+  `protocol/ijds-fit-label-completion-sensitivity-2026-07-16-v2`, commit
+  `fbcafcf84645024b9753aba2f04a4263b8e76236`.
+- It refits CatBoost, Platt scaling, and all residual recipes under the
+  observed-only fit and three declared stress rules for the 215 labels
+  unavailable at their fitting cutoffs. Evaluation outcomes remain isolated
+  until the score-and-recipe freeze.
+- All 32 overall scenario-window coverage upper bounds remain below 0.90. The
+  W7--W8 stratum-2 crossing remains in three scenarios but disappears when all
+  unavailable labels are completed as default. These are nonlinear stress
+  scenarios, not sharp bounds over all label assignments.
+
+### Allocation-granularity sensitivity
+
+- Complete deterministic run:
+  `ijds-allocation-granularity-sensitivity-2026-07-16-v3`, tag
+  `protocol/ijds-allocation-granularity-sensitivity-2026-07-16-v3`, commit
+  `fb1a7b1837d1f8ab2b81239533f51c996f41671c`.
+- It floors every positive continuous exposure to a USD 25 lot, holds residual
+  capital as cash, and evaluates all 96 baseline endpoint tracks without
+  reoptimization or selection.
+- Rate perturbations are at most 0.000345 percentage points for payoff, 0.001284
+  for default, and 0.001190 for miscoverage. This diagnoses the continuous
+  relaxation; it does not authorize an integer policy.
+
 ## Research Object
 
 <!-- claim:data.exhaustive_status_independent_population -->
@@ -174,41 +202,30 @@ pre-endpoint-correction evaluations are provenance only.
 <!-- claim:theory.sharp_common_outcome_bounds -->
 <!-- claim:theory.basis_endpoint_sufficiency -->
 
-1. **Positive-affine cap equivalence.** Under a binding budget, a globally
-   positive-affine score admits an exact translated cap. The empirical upper
-   score is not globally affine in the point score.
-2. **Normalized-ruler affine invariance.** A positive-affine transformation
-   preserves normalized-score coordinates; this does not equalize plug-in
-   opportunity cost or status-indexed outcomes for non-affine scores.
-3. **Same-cap nesting.** Because the upper score is no smaller than the point
-   score, the copied-cap point feasible set weakly contains the guardrail set.
-   This orders only the optimized plug-in objective.
-4. **C2 plug-in dominance.** Matching the frozen guardrail allocation's funded
-   point-score moment makes that allocation feasible for the point LP. It does
-   not order the status-indexed payoff proxy, default, or miscoverage.
-5. **Constant-score binary threshold discontinuity.** For fixed `0 <= p < 1/2`, the
-   population absolute-residual quantile changes from `p` to `1-p` when binary
-   prevalence crosses alpha. Empirical scores vary, so this is a mechanism, not
-   a finite-sample proof.
-6. **Binary miscoverage identity.** Miscoverage is
-   `1{Y=0,l>0} + 1{Y=1,u<1}`.
-7. **Sharp common-outcome bounds.** Candidate and fixed-allocation bounds use
-   binary loan-wise extrema; paired-policy bounds optimize one common unresolved
-   endpoint assignment over the funded union.
+1. **Comparator map.** Positive-affine scores admit translated caps;
+   normalized coordinates preserve positive-affine units; same-cap nesting and
+   C2 funded-moment matching mechanically order only the plug-in objective.
+   None of these facts orders status-indexed payoff, default, or miscoverage.
+2. **Binary threshold geometry.** For fixed `0 <= p < 1/2`, the population
+   residual quantile changes from `p` to `1-p` when prevalence crosses alpha,
+   while miscoverage is exactly `1{Y=0,l>0} + 1{Y=1,u<1}`. Varying empirical
+   scores make this a mechanism rather than a finite-sample explanation.
+3. **Sharp common-outcome identification.** Candidate and fixed-allocation
+   bounds use binary loan-wise extrema; paired-policy bounds assign each
+   unresolved endpoint once over the funded union.
 <!-- claim:theory.binary_identification_width -->
 
-8. **Binary identification-width identity.** For an additive paired contrast,
+   For an additive paired contrast,
    the sharp interval width is the sum, over unresolved loans, of the absolute
    difference between that loan's two attainable contrast contributions. This
    is finite-archive partial identification, not sampling uncertainty or a
-   missingness model.
-9. **Basis-endpoint sufficiency.** On each LP basis, allocations are affine in
-   the cap and the sharp contrast endpoints are concave/convex. Basis endpoints
-   suffice for extrema over the declared point-cap support up to solver
-   tolerance.
-10. **Declared comparator envelope.** A support envelope is partial
-   identification over that declared support, not a confidence interval, a
-   causal identified set, or a universal comparator claim.
+   missingness model. Rate metrics use declared capital normalizers; the
+   floor-with-cash diagnostic retains committed capital rather than
+   renormalizing away residual cash.
+4. **Exact declared support.** On each LP basis, allocations are affine in the
+   cap and sharp endpoints are concave/convex, so basis endpoints suffice for
+   extrema over the declared support. Its envelope is deterministic design
+   sensitivity, not a confidence interval or universal comparator claim.
 
 ## Coverage and Geometry Evidence
 
@@ -216,6 +233,8 @@ pre-endpoint-correction evaluations are provenance only.
 <!-- claim:timing.fit_label_crossing_retained -->
 <!-- claim:sensitivity.second_origin_coverage_recurrence -->
 <!-- claim:sensitivity.missingness_encoding_recurrence -->
+<!-- claim:sensitivity.fit_label_completion_coverage_recurrence -->
+<!-- claim:geometry.fit_label_completion_crossing_not_universal -->
 
 Under the declared six-month endpoint contract, all eight all-candidate
 coverage upper bounds are below 0.90 for every model:
@@ -244,6 +263,11 @@ coverage upper bounds are below 0.90 for every model:
 - At the later temporal origin, all eight CatBoost upper bounds are also below
   0.90 (maximum 0.874768), versus 0.882597 at the primary origin. These 16 cells
   are two retrospective origin-window families, not independent replications.
+- Four declared fit-label scenarios cover 41 unavailable PD-development labels,
+  24 Platt labels, and 150 conformal-fit labels. Every one of the 32 overall
+  coverage upper bounds is below 0.90; scenario maxima range from 0.882594 to
+  0.884669. The four scenarios are declared stresses, not a sharp nonlinear
+  identification region.
 - In CatBoost stratum 2, prevalence changes from 0.101703 in W7 to 0.097147 in
   W8; the fitted residual quantile changes from 0.888435 to 0.111801 and mean
   OOT width from 0.984263 to 0.207631.
@@ -251,6 +275,10 @@ coverage upper bounds are below 0.90 for every model:
   protocol-locked 0-, 3-, and 6-month fit-label lags, each retaining more than 99% in every
   fitting month. It disappears at 8 and 12 months, which fail the locked
   retention rule. This is sensitivity evidence, not a causal attribution.
+- The W7--W8 crossing persists in the observed-only, all-nondefault, and
+  hindsight-terminal completion scenarios. It disappears under all-default:
+  W7/W8 prevalence is 0.105974/0.100287 and both quantiles remain near 0.889.
+  The observed phase path is therefore not scenario-invariant.
 - W8 stratum-2 coverage remains bounded by [0.822536, 0.854707]. Narrower
   intervals do not restore transport.
 
@@ -261,6 +289,7 @@ coverage upper bounds are below 0.90 for every model:
 <!-- claim:decision.no_selected_policy -->
 <!-- claim:comparator.broad_support_all_cross_zero -->
 <!-- claim:sensitivity.structure_no_universal_direction -->
+<!-- claim:optimization.allocation_granularity_is_diagnostic -->
 
 The frozen contrast is gamma 1 minus gamma 0. The objective-matched ruler holds
 the common plug-in objective floor fixed; the normalized-score ruler holds a
@@ -329,6 +358,11 @@ The complete endpoint-availability sensitivity is:
 - The baseline scenario reconciles exactly to the active evaluation. The grid supports
   structural conditionality, not a scenario winner, universal adversity,
   structural invariance, or deployment guidance.
+- The USD 25 floor-with-cash diagnostic covers 1,440 portfolios, 143,175
+  positive source exposures, and 96 endpoint tracks. It changes 2,985
+  exposures, leaves at most USD 75 cash per month, and perturbs any evaluated
+  rate by at most 0.001284 percentage points. It is not an integer
+  reoptimization or a discrete-policy claim.
 
 - Objective-matched .25 crosses zero for all three metrics in all eight
   windows. Its repeated allocation remains identical across windows, but the
@@ -359,7 +393,10 @@ The complete endpoint-availability sensitivity is:
 - The same CatBoost coverage finding recurs under three feature-semantics-
   preserving missingness encodings and at one later retrospective origin,
   without selecting an encoding or claiming independent replication.
-- Binary absolute-residual geometry is prevalence-sensitive.
+- The coverage finding also survives all four declared fit-label scenarios;
+  the W7--W8 geometric crossing survives only three of them.
+- Binary absolute-residual geometry is prevalence-sensitive but not invariant
+  to every fit-label completion.
 - The score, ruler, and coordinate jointly define the portfolio comparison.
 - Within the finite protocol-locked grid, direction is not invariant to ruler or
   coordinate and no endpoint has a universal status-indexed outcome ordering.
@@ -368,6 +405,8 @@ The complete endpoint-availability sensitivity is:
   nor universal adversity holds.
 - Exact support envelopes quantify partial identification over declared
   outcome-free comparator supports.
+- USD 25 floor-with-cash rounding negligibly perturbs rates in the evaluated
+  baseline family; this is a continuous-relaxation diagnostic only.
 - CRPTO remains one integrated ML--conformal--optimization object; its result is
   an audit of the handoff, not abandonment of any component.
 
@@ -384,6 +423,9 @@ The complete endpoint-availability sensitivity is:
 - Independent replication counts from overlapping windows or repeated
   allocations.
 - Continuous-frontier uniqueness or a universal comparator support.
+- Sharp fit-label completion bounds or a phase transition invariant to all
+  fit-label assignments.
+- Integer-policy optimality or robustness to untested allocation lot rules.
 
 ## Pre-Freeze Boundary
 

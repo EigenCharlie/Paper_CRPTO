@@ -12,10 +12,13 @@ reviewer manuscript and does not authorize claims beyond the registry.
 <!-- claim:timing.fit_and_endpoint_lags_not_factorial -->
 <!-- claim:sensitivity.second_origin_coverage_recurrence -->
 <!-- claim:sensitivity.missingness_encoding_recurrence -->
+<!-- claim:sensitivity.fit_label_completion_coverage_recurrence -->
+<!-- claim:geometry.fit_label_completion_crossing_not_universal -->
 <!-- claim:theory.binary_identification_width -->
 <!-- claim:decision.no_selected_policy -->
 <!-- claim:comparator.broad_support_all_cross_zero -->
 <!-- claim:sensitivity.structure_no_universal_direction -->
+<!-- claim:optimization.allocation_granularity_is_diagnostic -->
 <!-- claim:boundary.no_selected_set_validity -->
 
 | Claim object | Active evidence | Permitted wording | Forbidden inference |
@@ -38,8 +41,10 @@ reviewer manuscript and does not authorize claims beyond the registry.
 | Credit controls | Five coverage specifications; one portfolio learner | Same below-target finding across the protocol-locked specifications under the active endpoint | Model promotion or WOE/IV novelty |
 | Missingness encoding | Active sentinels, explicit indicators, and native nullable features each have 8/8 upper bounds below 0.90; maxima 0.882597, 0.884332, and 0.880037 | Coverage finding recurs across three semantics-preserving encodings | Missingness mechanism, encoding winner, or portfolio robustness |
 | Second origin | Both retrospective origins have 8/8 upper bounds below 0.90; maxima 0.882597 and 0.874768 | Two-origin retrospective recurrence | Independent replication, temporal invariance, or prospective validation |
+| Fit-label completion | All four scenarios have 8/8 upper bounds below 0.90; the W7--W8 crossing remains in three of four | Coverage nontransport survives the declared scenario family, while the geometric path is not scenario-invariant | Sharp bounds over all $2^{215}$ assignments, preregistration, or a universal phase transition |
+| Allocation granularity | USD 25 flooring changes any evaluated rate by at most 0.001284 percentage points over 1,440 portfolios | The continuous relaxation is numerically adequate for this archive and lot rule | Integer optimality, reoptimization, or robustness to another lot rule |
 | Payoff proxy | Plug-in `(1-p)r-p*LGD`; status-indexed `(1-Y)r-Y*LGD` | Coherent standardized proxy under the declared binary endpoint | IRR, cash-flow return, NPV, or welfare |
-| Identification width | For a fixed contrast, width is exactly $\sum_{i\in U}|d_i(1)-d_i(0)|$; reported payoff widths span \$14,738 to \$373,705.31 across the six tracks | Finite-archive sensitivity to unresolved selected outcomes is algebraically transparent | Sampling uncertainty, confidence interval, or an unresolved-count-only ordering across metrics |
+| Identification width | For a fixed contrast, width is exactly $\sum_{i\in U}|d_i(1)-d_i(0)|$; reported payoff widths span \$14,738 to \$373,705.31 across the six tracks | Finite-archive sensitivity to unresolved exposure disagreement is algebraically transparent; rate metrics retain their declared capital normalizer | Sampling uncertainty, confidence interval, or an unresolved-count-only ordering across metrics |
 
 ## Nonnegotiable Boundaries
 

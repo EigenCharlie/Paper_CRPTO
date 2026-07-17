@@ -245,3 +245,25 @@ def test_endpoint_reason_missingness_and_second_origin_tables_are_visible() -> N
     normalized = re.sub(r"\s+", " ", supplement.lower())
     assert "not an independent replication" in normalized
     assert "does not identify a missingness mechanism" in normalized
+
+
+def test_fit_completion_and_allocation_granularity_tables_are_visible() -> None:
+    fit = _rows("crpto_ijds_v4_tableS11_fit_label_completion.csv")
+    granularity = _rows("crpto_ijds_v4_tableS12_allocation_granularity.csv")
+    supplement = SUPPLEMENT.read_text(encoding="utf-8")
+
+    assert len(fit) == 4
+    assert sum(row["w7_w8_stratum2_crossing"] == "True" for row in fit) == 3
+    for row in fit:
+        assert f"{float(row['coverage_lower_min']):.6f}" in supplement
+        assert f"{float(row['coverage_upper_max']):.6f}" in supplement
+
+    assert len(granularity) == 1
+    row = granularity[0]
+    assert int(row["portfolios"]) == 1440
+    assert int(row["changed_rows"]) == 2985
+    assert f"{float(row['default_rate_perturbation_abs_max']):.9f}" in supplement
+
+    normalized = re.sub(r"\s+", " ", supplement.lower())
+    assert "declared stresses rather than sharp bounds" in normalized
+    assert "does not establish integer optimality" in normalized

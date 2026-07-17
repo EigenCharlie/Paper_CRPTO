@@ -4,11 +4,11 @@ Upload separately from the double-anonymous manuscript.
 
 ## Title
 
-CRPTO: Auditing Binary Conformal Geometry and Portfolio Comparators
+CRPTO: An Identification Audit of Binary Conformal Credit Portfolio Optimization
 
 ## Running Title
 
-Binary Conformal Geometry Audit
+Binary Conformal Portfolio Audit
 
 ## Keywords
 

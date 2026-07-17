@@ -131,6 +131,9 @@ paper-official: paper-tex
 paper-official-scan:
     @uv run python scripts/compile_ijds_submission.py --scan-only
 
+paper-pdf-audit:
+    @uv run python scripts/inspect_ijds_pdfs.py
+
 paper-previews: paper-body paper-supplement
     uv run python scripts/render_submission_pdf_previews.py
 
@@ -142,7 +145,7 @@ validate-champion:
 validate-champion-strict:
     $env:CRPTO_REQUIRE_DVC_ARTIFACTS = "1"; uv run pytest tests/test_manifest_regression.py -q
 
-submission-check: ijds-active-check drift-gate paper-tex-check paper-official-scan lint type-check type-check-fast validate-champion-strict
+submission-check: ijds-active-check drift-gate paper-tex-check paper-official-scan paper-pdf-audit lint type-check type-check-fast validate-champion-strict
 
 submission-closeout: submission-build submission-check ijds-dvc-verify-remote
 

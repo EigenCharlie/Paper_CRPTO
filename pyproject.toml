@@ -43,7 +43,7 @@ dependencies = [
     "optbinning>=0.21",
     "pyomo>=6.10",
     "highspy>=1.10",
-    "ortools>=9.10",
+    "ortools>=9.10,<9.12", # OptBinning 0.21 requires OR-Tools <9.12.
     "duckdb>=1.3",
     "dvc[s3]>=3.60",
     "matplotlib>=3.10",
@@ -59,6 +59,7 @@ dev = [
     "mypy>=1.13",
     "hypothesis>=6.115",
     "pre-commit>=4.0",
+    "pypdf>=6,<7",
 ]
 
 [project.urls]
@@ -201,7 +202,9 @@ strict_optional = true
 warn_redundant_casts = true
 warn_unused_ignores = true
 warn_unreachable = true
-disallow_untyped_defs = false   # gradual - flip to true later
+# Compatibility modules remain on typed-body checking; the active modules
+# listed below are fully strict.
+disallow_untyped_defs = false
 check_untyped_defs = true
 follow_imports = "silent"
 show_error_codes = true
@@ -236,12 +239,21 @@ module = [
     "src.models.binary_conformal_guardrail",
     "src.data.outcome_observability",
     "src.ijds_audit.config",
+    "src.ijds_audit.allocation_granularity",
+    "src.ijds_audit.claim_ledger",
     "src.ijds_audit.evaluation",
+    "src.ijds_audit.fit_label_sensitivity",
     "src.ijds_audit.geometry",
+    "src.ijds_audit.grid_contracts",
     "src.ijds_audit.policy_support",
     "src.ijds_audit.portfolio",
+    "src.ijds_audit.publication_generation",
+    "src.ijds_audit.publication_sources",
     "src.ijds_audit.protocol",
+    "src.ijds_audit.robustness_evidence",
+    "src.ijds_audit.sensitivity_evidence",
     "src.ijds_audit.simulation",
+    "src.ijds_audit.structural_evidence",
     "src.ijds_challengers.archive",
     "src.ijds_challengers.config",
     "src.ijds_challengers.evaluation",
@@ -254,8 +266,11 @@ module = [
     "scripts.build_ijds_submission_tex",
     "scripts.check_publication_integrity",
     "scripts.compile_ijds_submission",
+    "scripts.inspect_ijds_pdfs",
     "scripts.run_ty_advisory",
     "scripts.experiments.run_ijds_binary_geometry_frontier_v4",
+    "scripts.experiments.run_ijds_allocation_granularity_sensitivity",
+    "scripts.experiments.run_ijds_fit_label_completion_sensitivity",
     "scripts.experiments.run_ijds_normalized_objective_frontier",
     "scripts.experiments.run_ijds_normalized_objective_frontier_v2",
 ]

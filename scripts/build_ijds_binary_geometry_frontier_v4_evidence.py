@@ -29,6 +29,12 @@ from src.ijds_audit.publication_generation import (
     staged_output_path,
 )
 from src.ijds_audit.publication_sources import load_verified_source_registry
+from src.ijds_audit.robustness_evidence import (
+    allocation_granularity_publication_table,
+    fit_label_completion_publication_table,
+    load_allocation_granularity_evidence,
+    load_fit_label_completion_evidence,
+)
 from src.ijds_audit.sensitivity_evidence import (
     endpoint_publication_table,
     load_endpoint_sensitivity_evidence,
@@ -70,6 +76,8 @@ TABLE_TARGETS = {
         TABLE_DIR / "crpto_ijds_v4_tableS9_missingness_encoding_sensitivity.csv"
     ),
     "rolling_origin": TABLE_DIR / "crpto_ijds_v4_tableS10_rolling_origin_recurrence.csv",
+    "fit_label_completion": (TABLE_DIR / "crpto_ijds_v4_tableS11_fit_label_completion.csv"),
+    "allocation_granularity": (TABLE_DIR / "crpto_ijds_v4_tableS12_allocation_granularity.csv"),
 }
 FIGURE_STEMS = {
     "coverage": "crpto_ijds_v4_fig1_coverage",
@@ -1098,6 +1106,16 @@ class MissingnessInputs:
     publication_table: pd.DataFrame
 
 
+@dataclass(frozen=True)
+class StagedPublicationGeneration:
+    """One complete set of staged paper-facing tables and figures."""
+
+    table_paths: dict[str, Path]
+    figures: dict[str, dict[str, Path]]
+    figure_targets: dict[str, dict[str, Path]]
+    outputs: dict[Path, Path]
+
+
 def _load_missingness_inputs(
     registered: Mapping[str, Path],
     lineage: Mapping[str, Any],
@@ -1165,6 +1183,117 @@ def _load_missingness_inputs(
     )
 
 
+def _stage_publication_generation(
+    staging_root: Path,
+    *,
+    tables: Mapping[str, pd.DataFrame],
+    coverage: pd.DataFrame,
+    phase: pd.DataFrame,
+    development_envelopes: pd.DataFrame,
+) -> StagedPublicationGeneration:
+    """Write one complete staged generation and validate its exact surface."""
+    if set(tables) != set(TABLE_TARGETS):
+        missing = sorted(set(TABLE_TARGETS).difference(tables))
+        unexpected = sorted(set(tables).difference(TABLE_TARGETS))
+        raise RuntimeError(
+            f"The publication table family changed: missing={missing}, unexpected={unexpected}."
+        )
+    staged_table_targets = {
+        name: staged_output_path(staging_root, target, repo_root=ROOT)
+        for name, target in TABLE_TARGETS.items()
+    }
+    table_paths = {
+        name: _write_csv(tables[name], staged_table_targets[name]) for name in TABLE_TARGETS
+    }
+    staged_figure_dir = staging_root / "outputs" / FIGURE_DIR.relative_to(ROOT)
+    figures = {
+        "coverage": _coverage_figure(coverage, output_dir=staged_figure_dir),
+        "phase_transition": _phase_figure(phase, output_dir=staged_figure_dir),
+        "development_envelopes": _envelope_figure(
+            development_envelopes,
+            output_dir=staged_figure_dir,
+        ),
+    }
+    figure_targets = {
+        name: {kind: FIGURE_DIR / f"{FIGURE_STEMS[name]}.{kind}" for kind in ("png", "pdf")}
+        for name in FIGURE_STEMS
+    }
+    outputs = {
+        **{TABLE_TARGETS[name]: path for name, path in table_paths.items()},
+        **{
+            figure_targets[name][kind]: path
+            for name, paths in figures.items()
+            for kind, path in paths.items()
+        },
+    }
+    expected_targets = {
+        *TABLE_TARGETS.values(),
+        *(target for targets in figure_targets.values() for target in targets.values()),
+    }
+    if len(outputs) != 24 or set(outputs) != expected_targets:
+        raise RuntimeError(
+            "The staged publication generation is not exactly 18 CSVs and 6 figures."
+        )
+    return StagedPublicationGeneration(
+        table_paths=table_paths,
+        figures=figures,
+        figure_targets=figure_targets,
+        outputs=outputs,
+    )
+
+
+def _without_simulation_artifacts(artifacts: Mapping[str, Path]) -> dict[str, Path]:
+    """Exclude the historical synthetic mechanism outputs from paper evidence."""
+    return {name: path for name, path in artifacts.items() if not name.startswith("simulation_")}
+
+
+def _publication_source_descriptors(
+    *,
+    direct_paths: Mapping[str, Path],
+    artifact_groups: Mapping[str, Mapping[str, Path]],
+) -> dict[str, dict[str, Any]]:
+    """Describe every implementation and scientific source exactly once."""
+    descriptors = dict(publication_implementation_descriptors(ROOT))
+
+    def add(name: str, path: Path) -> None:
+        if name in descriptors:
+            raise RuntimeError(f"Duplicate publication source descriptor: {name!r}.")
+        descriptors[name] = relative_artifact_descriptor(path, repo_root=ROOT)
+
+    for name, path in direct_paths.items():
+        add(name, path)
+    for prefix, paths in artifact_groups.items():
+        for name, path in paths.items():
+            add(f"{prefix}/{name}", path)
+    return descriptors
+
+
+def _paper_artifact_descriptors(
+    generation: StagedPublicationGeneration,
+) -> dict[str, dict[str, Any]]:
+    """Bind staged outputs to their final paper-facing paths."""
+    descriptors = {
+        f"table/{name}": staged_artifact_descriptor(
+            path,
+            TABLE_TARGETS[name],
+            repo_root=ROOT,
+        )
+        for name, path in generation.table_paths.items()
+    }
+    descriptors.update(
+        {
+            f"figure/{name}/{kind}": staged_artifact_descriptor(
+                path,
+                generation.figure_targets[name][kind],
+                repo_root=ROOT,
+            )
+            for name, paths in generation.figures.items()
+            for kind, path in paths.items()
+        }
+    )
+    return descriptors
+
+
 def _build_evidence(staging_root: Path) -> Path:
     registry, registered = load_verified_source_registry(
         SOURCE_REGISTRY_PATH,
@@ -1180,6 +1309,8 @@ def _build_evidence(staging_root: Path) -> Path:
     structural_lineage = cast(dict[str, Any], sensitivities["portfolio_structure"])
     rolling_lineage = cast(dict[str, Any], sensitivities["rolling_origin"])
     missingness_lineage = cast(dict[str, Any], sensitivities["missingness_encoding"])
+    fit_label_lineage = cast(dict[str, Any], sensitivities["fit_label_completion"])
+    granularity_lineage = cast(dict[str, Any], sensitivities["allocation_granularity"])
     v4 = _load_v4_inputs(registered, v4_lineage)
     config_path = v4.config_path
     summary_path = v4.summary_path
@@ -1274,6 +1405,24 @@ def _build_evidence(staging_root: Path) -> Path:
     missingness_freeze_artifacts = missingness.freeze_artifacts
     missingness_model_artifacts = missingness.model_artifacts
     missingness_table = missingness.publication_table
+    fit_label_freeze_path = registered["fit_label_completion_freeze"]
+    fit_label_summary_path = registered["fit_label_completion_summary"]
+    fit_label_evidence = load_fit_label_completion_evidence(
+        fit_label_summary_path,
+        freeze_path=fit_label_freeze_path,
+        identity=fit_label_lineage,
+        repo_root=ROOT,
+    )
+    fit_label_table = fit_label_completion_publication_table(fit_label_evidence)
+    granularity_freeze_path = registered["allocation_granularity_freeze"]
+    granularity_summary_path = registered["allocation_granularity_summary"]
+    granularity_evidence = load_allocation_granularity_evidence(
+        granularity_summary_path,
+        freeze_path=granularity_freeze_path,
+        identity=granularity_lineage,
+        repo_root=ROOT,
+    )
+    granularity_table = allocation_granularity_publication_table(granularity_evidence)
     require_exact_grid(
         two_ruler_windows,
         domains={"window_id": WINDOW_IDS, "ruler": RULERS, "coordinate": COORDINATES},
@@ -1499,105 +1648,32 @@ def _build_evidence(staging_root: Path) -> Path:
             )
     named_table = pd.DataFrame(named_counts)
 
-    staged_table_targets = {
-        name: staged_output_path(staging_root, target, repo_root=ROOT)
-        for name, target in TABLE_TARGETS.items()
-    }
-    table_paths = {
-        "coverage": _write_csv(
-            coverage_table,
-            staged_table_targets["coverage"],
-        ),
-        "phase_transition": _write_csv(
-            phase_table,
-            staged_table_targets["phase_transition"],
-        ),
-        "development_envelopes": _write_csv(
-            development_envelopes,
-            staged_table_targets["development_envelopes"],
-        ),
-        "direction_summary": _write_csv(
-            direction_table,
-            staged_table_targets["direction_summary"],
-        ),
-        "two_ruler_tracks": _write_csv(
-            two_ruler_table,
-            staged_table_targets["two_ruler_tracks"],
-        ),
-        "named_comparators": _write_csv(
-            named_table,
-            staged_table_targets["named_comparators"],
-        ),
-        "credit_controls": _write_csv(
-            credit_tables["credit_controls"],
-            staged_table_targets["credit_controls"],
-        ),
-        "credit_prediction_metrics": _write_csv(
-            credit_tables["credit_prediction_metrics"],
-            staged_table_targets["credit_prediction_metrics"],
-        ),
-        "woe_iv_psi": _write_csv(
-            credit_tables["woe_iv_psi"],
-            staged_table_targets["woe_iv_psi"],
-        ),
-        "score_psi": _write_csv(
-            credit_tables["score_psi"],
-            staged_table_targets["score_psi"],
-        ),
-        "label_lag_sensitivity": _write_csv(
-            lag_table.sort_values(["charged_off_lag_months", "window_id"]),
-            staged_table_targets["label_lag_sensitivity"],
-        ),
-        "endpoint_availability_sensitivity": _write_csv(
-            endpoint_table,
-            staged_table_targets["endpoint_availability_sensitivity"],
-        ),
-        "portfolio_structure_sensitivity": _write_csv(
-            structural_table,
-            staged_table_targets["portfolio_structure_sensitivity"],
-        ),
-        "endpoint_resolution": _write_csv(
-            endpoint_resolution_table,
-            staged_table_targets["endpoint_resolution"],
-        ),
-        "missingness_encoding": _write_csv(
-            missingness_table,
-            staged_table_targets["missingness_encoding"],
-        ),
-        "rolling_origin": _write_csv(
-            rolling_table,
-            staged_table_targets["rolling_origin"],
-        ),
-    }
-    staged_figure_dir = staging_root / "outputs" / FIGURE_DIR.relative_to(ROOT)
-    figures = {
-        "coverage": _coverage_figure(coverage, output_dir=staged_figure_dir),
-        "phase_transition": _phase_figure(phase, output_dir=staged_figure_dir),
-        "development_envelopes": _envelope_figure(
-            development_envelopes,
-            output_dir=staged_figure_dir,
-        ),
-    }
-    figure_targets = {
-        name: {kind: FIGURE_DIR / f"{FIGURE_STEMS[name]}.{kind}" for kind in ("png", "pdf")}
-        for name in FIGURE_STEMS
-    }
-    publication_outputs = {
-        **{TABLE_TARGETS[name]: path for name, path in table_paths.items()},
-        **{
-            figure_targets[name][kind]: path
-            for name, paths in figures.items()
-            for kind, path in paths.items()
+    publication_generation = _stage_publication_generation(
+        staging_root,
+        tables={
+            "coverage": coverage_table,
+            "phase_transition": phase_table,
+            "development_envelopes": development_envelopes,
+            "direction_summary": direction_table,
+            "two_ruler_tracks": two_ruler_table,
+            "named_comparators": named_table,
+            "credit_controls": credit_tables["credit_controls"],
+            "credit_prediction_metrics": credit_tables["credit_prediction_metrics"],
+            "woe_iv_psi": credit_tables["woe_iv_psi"],
+            "score_psi": credit_tables["score_psi"],
+            "label_lag_sensitivity": lag_table.sort_values(["charged_off_lag_months", "window_id"]),
+            "endpoint_availability_sensitivity": endpoint_table,
+            "portfolio_structure_sensitivity": structural_table,
+            "endpoint_resolution": endpoint_resolution_table,
+            "missingness_encoding": missingness_table,
+            "rolling_origin": rolling_table,
+            "fit_label_completion": fit_label_table,
+            "allocation_granularity": granularity_table,
         },
-    }
-    expected_targets = {
-        *TABLE_TARGETS.values(),
-        *(target for targets in figure_targets.values() for target in targets.values()),
-    }
-    if len(publication_outputs) != 22 or set(publication_outputs) != expected_targets:
-        raise RuntimeError(
-            "The staged publication generation is not exactly 16 CSVs and 6 figures."
-        )
+        coverage=coverage,
+        phase=phase,
+        development_envelopes=development_envelopes,
+    )
 
     c2 = solve_records.loc[solve_records["comparator_rule"].eq("c2_contemporaneous")]
     broad = envelopes.loc[envelopes["scope"].eq("broad_stress_exact_frontier")]
@@ -1647,6 +1723,63 @@ def _build_evidence(staging_root: Path) -> Path:
         label="binary phase transition W8",
     )
     endpoint_by_reason = endpoint_resolution_table.set_index("snapshot_resolution")
+    structural_artifacts = _verified_artifact_paths(
+        cast(Mapping[str, Mapping[str, Any]], structural_evidence.summary["artifacts"])
+    )
+    source_artifact_descriptors = _publication_source_descriptors(
+        direct_paths={
+            "config": config_path,
+            "outcome_free/source_protocol_freeze": v4_source_freeze_path,
+            "freeze": freeze_path,
+            "summary": summary_path,
+            "execution_receipt": v4_receipt_path,
+            "two_ruler/outcome_free/freeze": two_ruler_freeze_path,
+            "two_ruler/manifest": two_ruler_manifest_path,
+            "two_ruler/summary": two_ruler_summary_path,
+            "two_ruler/execution_receipt": two_ruler_receipt_path,
+            "credit_controls/summary": credit_summary_path,
+            "credit_controls/execution_receipt": credit_receipt_path,
+            "credit_controls/freeze": credit_freeze_path,
+            "raw_data_audit/manifest": raw_audit_path,
+            "label_lag_sensitivity/manifest": lag_evidence_path,
+            "label_lag_sensitivity/table": lag_table_path,
+            "endpoint_availability_sensitivity/summary": endpoint_summary_path,
+            "portfolio_structure_sensitivity/config": structural_config_path,
+            "portfolio_structure_sensitivity/freeze": structural_freeze_path,
+            "portfolio_structure_sensitivity/summary": structural_summary_path,
+            "rolling_origin/summary": rolling_summary_path,
+            "rolling_origin/execution_receipt": rolling_receipt_path,
+            "missingness_encoding/summary": missingness_summary_path,
+            "missingness_encoding/execution_receipt": missingness_receipt_path,
+            "missingness_encoding/freeze": missingness_freeze_path,
+            "fit_label_completion/freeze": fit_label_freeze_path,
+            "fit_label_completion/summary": fit_label_summary_path,
+            "allocation_granularity/freeze": granularity_freeze_path,
+            "allocation_granularity/summary": granularity_summary_path,
+            "solver_tie_audit/manifest": tie_evidence_path,
+        },
+        artifact_groups={
+            "outcome_free": source_artifacts,
+            "evaluation": _without_simulation_artifacts(artifacts),
+            "two_ruler/outcome_free": two_ruler_source_artifacts,
+            "two_ruler/evaluation": two_ruler_evaluation_artifacts,
+            "credit_controls/outcome_free": credit_outcome_free_artifacts,
+            "credit_controls/models": credit_model_artifacts,
+            "credit_controls/evaluation": credit_evaluation_artifacts,
+            "raw_data_audit": raw_audit_artifacts,
+            "endpoint_availability_sensitivity": endpoint_sensitivity_artifacts,
+            "portfolio_structure_sensitivity": structural_artifacts,
+            "rolling_origin": _without_simulation_artifacts(rolling_artifacts),
+            "missingness_encoding/evaluation": missingness_artifacts,
+            "missingness_encoding/outcome_free": missingness_freeze_artifacts,
+            "missingness_encoding/models": missingness_model_artifacts,
+            "fit_label_completion/outcome_free": fit_label_evidence.outcome_free_artifacts,
+            "fit_label_completion/evaluation": fit_label_evidence.evaluation_artifacts,
+            "allocation_granularity/outcome_free": (granularity_evidence.outcome_free_artifacts),
+            "allocation_granularity/evaluation": granularity_evidence.evaluation_artifacts,
+        },
+    )
+    paper_artifact_descriptors = _paper_artifact_descriptors(publication_generation)
     evidence = {
         "schema_version": "2026-07-15.4",
         "status": "active_ijds_v5_endpoint_reason_audited_paper_facing_evidence",
@@ -1824,6 +1957,46 @@ def _build_evidence(staging_root: Path) -> Path:
                 "missingness_mechanism_identified": False,
                 "portfolio_claim_authorized": False,
                 "rows": missingness_table.to_dict(orient="records"),
+            },
+            "fit_label_completion": {
+                "scope": "observed_only_plus_three_declared_fit_label_stress_rules",
+                "run_tag": str(fit_label_evidence.summary["run_tag"]),
+                "protocol_tag": str(fit_label_evidence.summary["protocol_tag"]),
+                "protocol_commit": str(fit_label_evidence.summary["protocol_commit"]),
+                **dict(fit_label_evidence.findings),
+                "scenario_or_result_selected": False,
+                "evaluation_outcomes_passed_to_fitting": False,
+                "scenarios_are_sharp_bounds_over_all_label_assignments": False,
+                "observed_only_active_replay": dict(
+                    fit_label_evidence.summary["results"]["observed_only_active_replay"]
+                ),
+                "estimand_boundary": (
+                    "The observed-only fit and three declared stress rules vary 215 fit "
+                    "labels that were unavailable at their information cutoffs. Every "
+                    "scenario retains "
+                    "all eight overall coverage upper bounds below 0.90, but the W7--W8 "
+                    "stratum-2 crossing fails under the all-default scenario. Nonlinear "
+                    "refitting means these scenarios are not sharp bounds over all 2^215 "
+                    "label assignments."
+                ),
+                "rows": fit_label_table.to_dict(orient="records"),
+            },
+            "allocation_granularity": {
+                "scope": "deterministic_usd25_floor_with_residual_cash",
+                "run_tag": str(granularity_evidence.summary["run_tag"]),
+                "protocol_tag": str(granularity_evidence.summary["protocol_tag"]),
+                "protocol_commit": str(granularity_evidence.summary["protocol_commit"]),
+                **dict(granularity_evidence.findings),
+                "scenario_or_result_selected": False,
+                "outcomes_passed_to_rounding": False,
+                "integer_policy_or_reoptimization_claim_authorized": False,
+                "estimand_boundary": (
+                    "This deterministic diagnostic floors each continuous exposure to a "
+                    "USD 25 lot and holds the residual as cash. It supports numerical "
+                    "adequacy of the continuous relaxation for this archive, not optimality "
+                    "of an integer policy or robustness to other lot rules."
+                ),
+                "rows": granularity_table.to_dict(orient="records"),
             },
         },
         "data_contract": {
@@ -2046,174 +2219,18 @@ def _build_evidence(staging_root: Path) -> Path:
             },
         },
         "audit_thesis": (
-            "Binary absolute-residual conformal guardrails can change discontinuously when "
-            "a score stratum crosses the alpha prevalence threshold; candidate coverage "
-            "does not transport to the later archive under five predeclared credit-risk "
-            "model specifications, recurs in the only additional feasible origin, and "
-            "persists under three feature-semantics-preserving missing-value encodings for "
-            "primary CatBoost; portfolio direction is not identified without outcome-free "
-            "comparator support and is not invariant to the declared ruler or interior "
-            "coordinate."
+            "Binary absolute-residual conformal coverage does not transport to the later "
+            "archive under five declared credit-risk model specifications, recurs in the "
+            "only additional feasible origin, persists under three missing-value encodings, "
+            "and remains below nominal under four declared fit-label scenarios. A "
+            "prevalence-threshold crossing explains one observed geometry change but is "
+            "not invariant to every fit-label scenario. Portfolio direction is not identified "
+            "without outcome-free comparator support and is not invariant to the declared "
+            "ruler or interior coordinate; USD 25 floor rounding produces only negligible "
+            "rate perturbations in the evaluated archive."
         ),
-        "source_artifacts": {
-            **publication_implementation_descriptors(ROOT),
-            "config": relative_artifact_descriptor(config_path, repo_root=ROOT),
-            "outcome_free/source_protocol_freeze": relative_artifact_descriptor(
-                v4_source_freeze_path, repo_root=ROOT
-            ),
-            "freeze": relative_artifact_descriptor(freeze_path, repo_root=ROOT),
-            **{
-                f"outcome_free/{name}": relative_artifact_descriptor(path, repo_root=ROOT)
-                for name, path in source_artifacts.items()
-            },
-            "summary": relative_artifact_descriptor(summary_path, repo_root=ROOT),
-            "execution_receipt": relative_artifact_descriptor(v4_receipt_path, repo_root=ROOT),
-            **{
-                f"evaluation/{name}": relative_artifact_descriptor(path, repo_root=ROOT)
-                for name, path in artifacts.items()
-                if not name.startswith("simulation_")
-            },
-            "two_ruler/outcome_free/freeze": relative_artifact_descriptor(
-                two_ruler_freeze_path, repo_root=ROOT
-            ),
-            **{
-                f"two_ruler/outcome_free/{name}": relative_artifact_descriptor(path, repo_root=ROOT)
-                for name, path in two_ruler_source_artifacts.items()
-            },
-            "two_ruler/manifest": relative_artifact_descriptor(
-                two_ruler_manifest_path, repo_root=ROOT
-            ),
-            "two_ruler/summary": relative_artifact_descriptor(
-                two_ruler_summary_path, repo_root=ROOT
-            ),
-            "two_ruler/execution_receipt": relative_artifact_descriptor(
-                two_ruler_receipt_path, repo_root=ROOT
-            ),
-            "credit_controls/summary": relative_artifact_descriptor(
-                credit_summary_path, repo_root=ROOT
-            ),
-            "credit_controls/execution_receipt": relative_artifact_descriptor(
-                credit_receipt_path, repo_root=ROOT
-            ),
-            "credit_controls/freeze": relative_artifact_descriptor(
-                credit_freeze_path, repo_root=ROOT
-            ),
-            **{
-                f"credit_controls/outcome_free/{name}": relative_artifact_descriptor(
-                    path, repo_root=ROOT
-                )
-                for name, path in credit_outcome_free_artifacts.items()
-            },
-            **{
-                f"credit_controls/models/{name}": relative_artifact_descriptor(path, repo_root=ROOT)
-                for name, path in credit_model_artifacts.items()
-            },
-            "raw_data_audit/manifest": relative_artifact_descriptor(raw_audit_path, repo_root=ROOT),
-            "label_lag_sensitivity/manifest": relative_artifact_descriptor(
-                lag_evidence_path, repo_root=ROOT
-            ),
-            "label_lag_sensitivity/table": relative_artifact_descriptor(
-                lag_table_path, repo_root=ROOT
-            ),
-            "endpoint_availability_sensitivity/summary": relative_artifact_descriptor(
-                endpoint_summary_path, repo_root=ROOT
-            ),
-            **{
-                f"endpoint_availability_sensitivity/{name}": relative_artifact_descriptor(
-                    path, repo_root=ROOT
-                )
-                for name, path in endpoint_sensitivity_artifacts.items()
-            },
-            "portfolio_structure_sensitivity/config": relative_artifact_descriptor(
-                structural_config_path, repo_root=ROOT
-            ),
-            "portfolio_structure_sensitivity/freeze": relative_artifact_descriptor(
-                structural_freeze_path, repo_root=ROOT
-            ),
-            "portfolio_structure_sensitivity/summary": relative_artifact_descriptor(
-                structural_summary_path, repo_root=ROOT
-            ),
-            **{
-                f"portfolio_structure_sensitivity/{name}": relative_artifact_descriptor(
-                    ROOT / str(descriptor["path"]), repo_root=ROOT
-                )
-                for name, descriptor in structural_evidence.summary["artifacts"].items()
-            },
-            "rolling_origin/summary": relative_artifact_descriptor(
-                rolling_summary_path, repo_root=ROOT
-            ),
-            "rolling_origin/execution_receipt": relative_artifact_descriptor(
-                rolling_receipt_path, repo_root=ROOT
-            ),
-            **{
-                f"rolling_origin/{name}": relative_artifact_descriptor(path, repo_root=ROOT)
-                for name, path in rolling_artifacts.items()
-                if not name.startswith("simulation_")
-            },
-            "missingness_encoding/summary": relative_artifact_descriptor(
-                missingness_summary_path, repo_root=ROOT
-            ),
-            "missingness_encoding/execution_receipt": relative_artifact_descriptor(
-                missingness_receipt_path, repo_root=ROOT
-            ),
-            "missingness_encoding/freeze": relative_artifact_descriptor(
-                missingness_freeze_path, repo_root=ROOT
-            ),
-            **{
-                f"missingness_encoding/evaluation/{name}": relative_artifact_descriptor(
-                    path, repo_root=ROOT
-                )
-                for name, path in missingness_artifacts.items()
-            },
-            **{
-                f"missingness_encoding/outcome_free/{name}": relative_artifact_descriptor(
-                    path, repo_root=ROOT
-                )
-                for name, path in missingness_freeze_artifacts.items()
-            },
-            **{
-                f"missingness_encoding/models/{name}": relative_artifact_descriptor(
-                    path, repo_root=ROOT
-                )
-                for name, path in missingness_model_artifacts.items()
-            },
-            "solver_tie_audit/manifest": relative_artifact_descriptor(
-                tie_evidence_path, repo_root=ROOT
-            ),
-            **{
-                f"two_ruler/evaluation/{name}": relative_artifact_descriptor(path, repo_root=ROOT)
-                for name, path in two_ruler_evaluation_artifacts.items()
-            },
-            **{
-                f"credit_controls/evaluation/{name}": relative_artifact_descriptor(
-                    path, repo_root=ROOT
-                )
-                for name, path in credit_evaluation_artifacts.items()
-            },
-            **{
-                f"raw_data_audit/{name}": relative_artifact_descriptor(path, repo_root=ROOT)
-                for name, path in raw_audit_artifacts.items()
-            },
-        },
-        "paper_artifacts": {
-            **{
-                f"table/{name}": staged_artifact_descriptor(
-                    path,
-                    TABLE_TARGETS[name],
-                    repo_root=ROOT,
-                )
-                for name, path in table_paths.items()
-            },
-            **{
-                f"figure/{name}/{kind}": staged_artifact_descriptor(
-                    path,
-                    figure_targets[name][kind],
-                    repo_root=ROOT,
-                )
-                for name, paths in figures.items()
-                for kind, path in paths.items()
-            },
-        },
+        "source_artifacts": source_artifact_descriptors,
+        "paper_artifacts": paper_artifact_descriptors,
         "protected_stages_run": [],
         "protected_artifacts_written": [],
     }
@@ -2225,7 +2242,7 @@ def _build_evidence(staging_root: Path) -> Path:
     staged_manifest = staged_output_path(staging_root, EVIDENCE_PATH, repo_root=ROOT)
     atomic_write_strict_json(staged_manifest, evidence)
     promote_publication_generation(
-        publication_outputs,
+        publication_generation.outputs,
         staged_manifest=staged_manifest,
         manifest_target=EVIDENCE_PATH,
         repo_root=ROOT,

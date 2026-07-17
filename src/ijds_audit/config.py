@@ -152,6 +152,22 @@ _ALLOWED_SECTION_KEYS = {
     ),
 }
 
+_CREDIT_CONTROL_MODELS = (
+    "catboost_platt",
+    "numeric_logistic_platt",
+    "catboost_monotonic_platt",
+    "woe_scorecard_platform_platt",
+    "woe_scorecard_borrower_platt",
+)
+_FREEZE_RESUME_FIELDS = frozenset(
+    {
+        "source_run_tag",
+        "source_protocol_tag",
+        "source_protocol_commit",
+        "source_freeze_sha256",
+    }
+)
+
 
 def _reject_unknown_keys(
     payload: Mapping[str, Any], allowed: frozenset[str], *, context: str
@@ -202,6 +218,20 @@ def _deep_merge(base: dict[str, Any], override: Mapping[str, Any]) -> dict[str, 
         else:
             merged[name] = copy.deepcopy(value)
     return merged
+
+
+def _require_lowercase_sha256(value: Any, *, label: str) -> str:
+    digest = str(value)
+    if len(digest) != 64 or any(character not in "0123456789abcdef" for character in digest):
+        raise ValueError(f"{label} must be a lowercase hexadecimal SHA-256.")
+    return digest
+
+
+def _validate_freeze_resume(resume: Mapping[str, Any], *, label: str) -> None:
+    missing = sorted(_FREEZE_RESUME_FIELDS.difference(resume))
+    if missing:
+        raise KeyError(f"{label} is missing fields: {missing}.")
+    _require_lowercase_sha256(resume["source_freeze_sha256"], label=f"{label} freeze digest")
 
 
 def load_config_payload(path: Path, seen: frozenset[Path] = frozenset()) -> dict[str, Any]:
@@ -432,18 +462,9 @@ def load_v4_config(path: Path) -> dict[str, Any]:
         raise ValueError("The logistic learner is coverage-only.")
     resume = config.get("resume_outcome_free")
     if resume:
-        required_resume = {
-            "source_run_tag",
-            "source_protocol_tag",
-            "source_protocol_commit",
-            "source_freeze_sha256",
-        }
-        missing_resume = sorted(required_resume.difference(resume))
-        if missing_resume:
-            raise KeyError(f"Outcome-free import is missing fields: {missing_resume}.")
-        digest = str(resume["source_freeze_sha256"])
-        if len(digest) != 64 or any(character not in "0123456789abcdef" for character in digest):
-            raise ValueError("Imported freeze SHA-256 must be lowercase hexadecimal.")
+        if not isinstance(resume, Mapping):
+            raise TypeError("Outcome-free import must be a mapping.")
+        _validate_freeze_resume(resume, label="Outcome-free import")
     _validate_windows(config)
     _validate_design_chronology(config)
     _validate_evaluation_outcome_contract(config)
@@ -452,44 +473,37 @@ def load_v4_config(path: Path) -> dict[str, Any]:
     return config
 
 
-def load_credit_control_config(path: Path) -> dict[str, Any]:
-    """Load the V4-aligned, coverage-only credit-risk control protocol."""
-    config = load_v4_config(path)
-    controls = config.get("credit_risk_controls")
-    if not isinstance(controls, Mapping):
-        raise KeyError("Credit-risk control config is missing credit_risk_controls.")
-
-    expected_models = [
-        "catboost_platt",
-        "numeric_logistic_platt",
-        "catboost_monotonic_platt",
-        "woe_scorecard_platform_platt",
-        "woe_scorecard_borrower_platt",
-    ]
-    if [str(value) for value in controls.get("co_primary_models", [])] != expected_models:
+def _validate_credit_control_scope(controls: Mapping[str, Any]) -> None:
+    models = tuple(str(value) for value in controls.get("co_primary_models", []))
+    if models != _CREDIT_CONTROL_MODELS:
         raise ValueError("The five reported learner controls must remain co-primary.")
-    if controls.get("all_models_reported") is not True:
-        raise ValueError("Every protocol-locked learner must be reported.")
-    if controls.get("selection_from_oot") is not False:
-        raise ValueError("OOT model selection is forbidden.")
-    if controls.get("portfolio_optimization") is not False:
-        raise ValueError("Credit-risk controls are coverage-only.")
-    if controls.get("sampling") != "none_all_eligible_rows":
-        raise ValueError("Credit-risk controls must use every eligible row.")
-
+    required_flags = {
+        "all_models_reported": True,
+        "selection_from_oot": False,
+        "portfolio_optimization": False,
+        "sampling": "none_all_eligible_rows",
+    }
+    for field, expected in required_flags.items():
+        if controls.get(field) != expected:
+            raise ValueError(f"Credit-risk control field {field!r} must equal {expected!r}.")
     reference = controls.get("active_score_reference")
     if not isinstance(reference, Mapping):
         raise KeyError("The active V4 score reference is required.")
-    digest = str(reference.get("sha256", ""))
-    if len(digest) != 64 or any(character not in "0123456789abcdef" for character in digest):
-        raise ValueError("Active score reference SHA-256 must be lowercase hexadecimal.")
+    _require_lowercase_sha256(reference.get("sha256", ""), label="Active score reference")
 
-    active_features = {
+
+def _active_model_features(config: Mapping[str, Any]) -> set[str]:
+    return {
         *[str(value) for value in config["model"]["numeric_features"]],
         *[str(value) for value in config["model"]["categorical_features"]],
     }
-    monotonic = controls.get("monotonic_catboost", {})
-    constraints = monotonic.get("constraints", {})
+
+
+def _validate_monotonic_control(controls: Mapping[str, Any], *, active_features: set[str]) -> None:
+    monotonic = controls.get("monotonic_catboost")
+    if not isinstance(monotonic, Mapping):
+        raise ValueError("Monotonic CatBoost requires a configuration mapping.")
+    constraints = monotonic.get("constraints")
     if not isinstance(constraints, Mapping) or not constraints:
         raise ValueError("Monotonic CatBoost requires a nonempty constraint map.")
     if not set(map(str, constraints)).issubset(active_features):
@@ -497,47 +511,62 @@ def load_credit_control_config(path: Path) -> dict[str, Any]:
     if {int(value) for value in constraints.values()}.difference({-1, 1}):
         raise ValueError("Monotonic constraints must be -1 or +1.")
 
+
+def _validate_scorecard_controls(controls: Mapping[str, Any], *, active_features: set[str]) -> None:
     scorecards = controls.get("scorecards")
     if not isinstance(scorecards, Mapping) or set(scorecards) != {"platform", "borrower"}:
         raise ValueError("Exactly the platform and borrower scorecards are required.")
-    platform_signals = {str(value) for value in controls.get("platform_signal_features", [])}
-    for name, specification in scorecards.items():
-        features = [str(value) for value in specification.get("features", [])]
+    features_by_scorecard: dict[str, set[str]] = {}
+    for name, raw_specification in scorecards.items():
+        if not isinstance(raw_specification, Mapping):
+            raise TypeError(f"Scorecard {name} must be a mapping.")
+        features = [str(value) for value in raw_specification.get("features", [])]
         if not features or len(features) != len(set(features)):
             raise ValueError(f"Scorecard {name} has empty or duplicate features.")
         if not set(features).issubset(active_features):
             raise ValueError(f"Scorecard {name} uses a feature outside the active contract.")
-    if not platform_signals.issubset(set(scorecards["platform"]["features"])):
+        features_by_scorecard[str(name)] = set(features)
+    platform_signals = {str(value) for value in controls.get("platform_signal_features", [])}
+    if not platform_signals.issubset(features_by_scorecard["platform"]):
         raise ValueError("The platform scorecard must include every declared platform signal.")
-    if platform_signals.intersection(scorecards["borrower"]["features"]):
+    if platform_signals.intersection(features_by_scorecard["borrower"]):
         raise ValueError("The borrower scorecard must exclude declared platform signals.")
 
+
+def _validate_credit_evaluation_recovery(config: Mapping[str, Any]) -> None:
+    recovery = config.get("evaluation_recovery")
+    if not recovery:
+        return
+    if not isinstance(recovery, Mapping):
+        raise TypeError("Credit-control evaluation recovery must be a mapping.")
+    required_values = {
+        "status": "numerical_calibration_recovery_only",
+        "require_exact_coverage_equivalence": True,
+        "calibration_solver": "sklearn_unpenalized_lbfgs",
+    }
+    for field, expected in required_values.items():
+        if recovery.get(field) != expected:
+            raise ValueError(f"Credit-control recovery field {field!r} must equal {expected!r}.")
+    reference = recovery.get("coverage_reference")
+    if not isinstance(reference, Mapping):
+        raise KeyError("Evaluation recovery requires a coverage reference.")
+    _require_lowercase_sha256(reference.get("sha256", ""), label="Coverage reference")
+
+
+def load_credit_control_config(path: Path) -> dict[str, Any]:
+    """Load the V4-aligned, coverage-only credit-risk control protocol."""
+    config = load_v4_config(path)
+    controls = config.get("credit_risk_controls")
+    if not isinstance(controls, Mapping):
+        raise KeyError("Credit-risk control config is missing credit_risk_controls.")
+    _validate_credit_control_scope(controls)
+    active_features = _active_model_features(config)
+    _validate_monotonic_control(controls, active_features=active_features)
+    _validate_scorecard_controls(controls, active_features=active_features)
     resume = config.get("resume_credit_control_freeze")
     if resume:
-        required_resume = {
-            "source_run_tag",
-            "source_protocol_tag",
-            "source_protocol_commit",
-            "source_freeze_sha256",
-        }
-        missing_resume = sorted(required_resume.difference(resume))
-        if missing_resume:
-            raise KeyError(f"Credit-control import is missing fields: {missing_resume}.")
-        digest = str(resume["source_freeze_sha256"])
-        if len(digest) != 64 or any(character not in "0123456789abcdef" for character in digest):
-            raise ValueError("Imported credit-control freeze SHA-256 is invalid.")
-    recovery = config.get("evaluation_recovery")
-    if recovery:
-        if recovery.get("status") != "numerical_calibration_recovery_only":
-            raise ValueError("Unexpected credit-control evaluation recovery status.")
-        if recovery.get("require_exact_coverage_equivalence") is not True:
-            raise ValueError("Evaluation recovery must require exact coverage equivalence.")
-        if recovery.get("calibration_solver") != "sklearn_unpenalized_lbfgs":
-            raise ValueError("Unexpected calibration recovery solver.")
-        reference = recovery.get("coverage_reference")
-        if not isinstance(reference, Mapping):
-            raise KeyError("Evaluation recovery requires a coverage reference.")
-        digest = str(reference.get("sha256", ""))
-        if len(digest) != 64 or any(character not in "0123456789abcdef" for character in digest):
-            raise ValueError("Coverage reference SHA-256 is invalid.")
+        if not isinstance(resume, Mapping):
+            raise TypeError("Credit-control import must be a mapping.")
+        _validate_freeze_resume(resume, label="Credit-control import")
+    _validate_credit_evaluation_recovery(config)
     return config

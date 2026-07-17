@@ -150,8 +150,12 @@ def test_active_evidence_registry_verifies_every_source() -> None:
         "rolling_origin_receipt",
         "missingness_summary",
         "missingness_receipt",
+        "fit_label_completion_freeze",
+        "fit_label_completion_summary",
+        "allocation_granularity_freeze",
+        "allocation_granularity_summary",
     }
-    assert len(payload["dvc_pointers"]) == 27
+    assert len(payload["dvc_pointers"]) == 31
     assert payload["lineages"]["binary_geometry"]["evaluation"]["run_tag"].endswith("2026-07-15-v5")
 
 
@@ -169,6 +173,8 @@ def test_active_registry_returns_all_dvc_run_tags_in_causal_config_order() -> No
         "ijds-portfolio-structure-sensitivity-2026-07-15-v6",
         "ijds-rolling-origin-2017-2026-07-15-v4",
         "ijds-missingness-sensitivity-2026-07-15-v3",
+        "ijds-fit-label-completion-sensitivity-2026-07-16-v2",
+        "ijds-allocation-granularity-sensitivity-2026-07-16-v3",
         "ijds-binary-geometry-frontier-v4-2026-07-14-v3",
         "ijds-normalized-objective-frontier-2026-07-14-v3",
         "ijds-credit-risk-controls-2026-07-14-v3",

@@ -31,8 +31,12 @@ def normalize_loan_status(statuses: pd.Series) -> pd.Series:
     )
 
 
-def snapshot_default_from_status(statuses: pd.Series) -> pd.Series:
-    """Map resolved snapshot statuses to a nullable binary default outcome."""
+def archive_status_default_from_status(statuses: pd.Series) -> pd.Series:
+    """Map the archive's observed status field to a nullable binary outcome.
+
+    This is a retrospective classification of the status stored in the raw
+    archive. It is not the date-reconstructed evaluation endpoint below.
+    """
     normalized = normalize_loan_status(statuses)
     positive = normalized.str.contains("charged off", regex=False) | normalized.eq("default")
     negative = normalized.str.contains("fully paid", regex=False)
@@ -44,13 +48,23 @@ def snapshot_default_from_status(statuses: pd.Series) -> pd.Series:
     return target
 
 
-def snapshot_resolution_from_status(statuses: pd.Series) -> pd.Series:
-    """Classify snapshot statuses as default, nondefault, or unresolved."""
-    target = snapshot_default_from_status(statuses)
+def archive_status_resolution_from_status(statuses: pd.Series) -> pd.Series:
+    """Classify the raw archive status as default, nondefault, or unresolved."""
+    target = archive_status_default_from_status(statuses)
     resolution = pd.Series("unresolved", index=statuses.index, dtype="string")
     resolution.loc[target.eq(0).fillna(False)] = "nondefault"
     resolution.loc[target.eq(1).fillna(False)] = "default"
     return resolution.rename("snapshot_resolution")
+
+
+def snapshot_default_from_status(statuses: pd.Series) -> pd.Series:
+    """Compatibility alias for :func:`archive_status_default_from_status`."""
+    return archive_status_default_from_status(statuses)
+
+
+def snapshot_resolution_from_status(statuses: pd.Series) -> pd.Series:
+    """Compatibility alias for :func:`archive_status_resolution_from_status`."""
+    return archive_status_resolution_from_status(statuses)
 
 
 def terminal_outcome_from_status(statuses: pd.Series) -> pd.Series:
@@ -375,8 +389,8 @@ def load_design_universe(
     if bool(frame["id"].duplicated().any()):
         examples = frame.loc[frame["id"].duplicated(keep=False), "id"].head(5).tolist()
         raise ValueError(f"Retained design universe contains duplicate IDs: {examples}")
-    frame["snapshot_default"] = snapshot_default_from_status(frame["loan_status"])
-    frame["snapshot_resolution"] = snapshot_resolution_from_status(frame["loan_status"])
+    frame["snapshot_default"] = archive_status_default_from_status(frame["loan_status"])
+    frame["snapshot_resolution"] = archive_status_resolution_from_status(frame["loan_status"])
     frame = frame.sort_values(["issue_d", "id"], kind="mergesort").reset_index(drop=True)
 
     required_labels = (

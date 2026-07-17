@@ -123,6 +123,32 @@ claims:
       required: [body, supplement, registry, claim_matrix]
       allowed: [body, supplement, registry, claim_matrix]
 
+  - id: sensitivity.fit_label_completion_coverage_recurrence
+    status: active
+    kind: empirical
+    rule: equals
+    result_pointer: /sensitivity/fit_label_completion/all_scenarios_all_windows_upper_below_nominal
+    expected: true
+    lineages: [binary_geometry.evaluation, fit_label_completion]
+    scope: observed_only_plus_three_declared_fit_label_completion_rules
+    forbidden_inference: [sharp_completion_bounds, arbitrary_label_assignment_robustness, preregistration]
+    surfaces:
+      required: [body, supplement, registry, claim_matrix]
+      allowed: [body, supplement, registry, claim_matrix]
+
+  - id: geometry.fit_label_completion_crossing_not_universal
+    status: active
+    kind: boundary
+    rule: equals
+    result_pointer: /sensitivity/fit_label_completion/w7_w8_crossing_in_all_scenarios
+    expected: false
+    lineages: [binary_geometry.outcome_free, fit_label_completion]
+    scope: stratum_2_w7_w8_path_over_four_fit_label_scenarios
+    forbidden_inference: [universal_threshold_transition, causal_explanation, geometry_invariance]
+    surfaces:
+      required: [body, supplement, registry, claim_matrix]
+      allowed: [body, supplement, registry, claim_matrix]
+
   - id: timing.fit_and_endpoint_lags_not_factorial
     status: active
     kind: boundary
@@ -215,6 +241,19 @@ claims:
     lineages: [portfolio_structure, two_ruler.evaluation]
     scope: complete_budget_by_purpose_cap_by_lgd_cartesian_grid
     forbidden_inference: [scenario_winner, universal_adversity, structural_invariance, deployment]
+    surfaces:
+      required: [body, supplement, registry, claim_matrix]
+      allowed: [body, supplement, registry, claim_matrix]
+
+  - id: optimization.allocation_granularity_is_diagnostic
+    status: active
+    kind: boundary
+    rule: equals
+    result_pointer: /sensitivity/allocation_granularity/integer_policy_or_reoptimization_claim_authorized
+    expected: false
+    lineages: [two_ruler.outcome_free, allocation_granularity]
+    scope: deterministic_usd25_floor_with_residual_cash_on_active_allocations
+    forbidden_inference: [integer_optimality, discrete_policy_robustness, reoptimization]
     surfaces:
       required: [body, supplement, registry, claim_matrix]
       allowed: [body, supplement, registry, claim_matrix]

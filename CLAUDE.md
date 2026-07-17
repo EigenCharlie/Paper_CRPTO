@@ -14,13 +14,15 @@ not active evidence.
 6. `docs/research/ijds_two_ruler_endpoint_recovery_v3_protocol_2026-07-14.md`
 7. `docs/research/ijds_endpoint_availability_sensitivity_protocol_2026-07-14.md`
 8. `docs/research/ijds_portfolio_structure_sensitivity_v6_protocol_2026-07-15.md`
-9. `configs/ijds_active_evidence_sources.yaml`
-10. `configs/ijds_claim_ledger.yaml`
-11. `reports/crpto/ijds_binary_geometry_frontier_v4_evidence.json`
-12. `.codex/skills/crpto/SKILL.md`
+9. `docs/research/ijds_fit_label_completion_sensitivity_protocol_2026-07-16.md`
+10. `docs/research/ijds_allocation_granularity_sensitivity_protocol_2026-07-16.md`
+11. `configs/ijds_active_evidence_sources.yaml`
+12. `configs/ijds_claim_ledger.yaml`
+13. `reports/crpto/ijds_binary_geometry_frontier_v4_evidence.json`
+14. `.codex/skills/crpto/SKILL.md`
 
 The claim registry is the editorial authority. The source registry owns exact
-lineage identities, artifact descriptors, and 27 DVC pointers. The V4 evidence
+lineage identities, artifact descriptors, and 31 DVC pointers. The V4 evidence
 JSON is the only numeric paper-facing manifest.
 
 ## Active Scientific Object
@@ -37,6 +39,10 @@ JSON is the only numeric paper-facing manifest.
   point-cap support, and 36 structural scenarios.
 - All 40 six-month all-candidate coverage upper bounds are below 0.90.
 - All 216 broad-support comparator envelopes cross zero.
+- All 32 overall cells across four declared fit-label scenarios remain
+  below 0.90, but the W7--W8 geometry change is not scenario-invariant.
+- USD 25 floor rounding is numerically negligible in the declared archive; it
+  is a diagnostic of the continuous relaxation, not an integer policy.
 
 The paper supports archive-specific temporal transport failure, binary
 residual geometry near a prevalence threshold, and comparator-dependent
@@ -63,7 +69,8 @@ the six-month outcome-availability rule.
 Active reusable modules:
 
 - `src/ijds_audit/`: protocol, binary geometry, portfolio construction,
-  evaluation, policy support, simulation, and raw-data controls.
+  evaluation, policy support, evidence loaders, and raw-data controls. Frozen
+  synthetic mechanism outputs are compatibility material, not active evidence.
 - `src/ijds_challengers/`: frozen/evaluated frontier lineage and archive
   contracts.
 - `src/data/outcome_observability.py`: endpoint reconstruction.

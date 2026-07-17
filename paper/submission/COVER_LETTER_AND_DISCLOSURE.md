@@ -2,8 +2,8 @@
 
 Dear Editor,
 
-Please consider **"CRPTO: Auditing Binary Conformal Geometry and Portfolio
-Comparators"** for publication in *INFORMS Journal on Data Science*.
+Please consider **"CRPTO: An Identification Audit of Binary Conformal Credit
+Portfolio Optimization"** for publication in *INFORMS Journal on Data Science*.
 
 The paper studies a common but under-audited handoff: a predictive uncertainty
 object becomes a coefficient in a constrained optimization problem. CRPTO keeps
@@ -14,11 +14,12 @@ timing, outcome-observability, and comparator contracts.
 The contribution is an identification audit rather than a policy contest.
 First, the paper derives a prevalence-threshold discontinuity for constant-score
 binary absolute-residual intervals and separates that mechanism from the
-empirical varying-score path. Second, it defines objective-matched and
+empirical varying-score path with a joint fit-label completion sensitivity.
+Second, it defines objective-matched and
 normalized-score rulers and an exact basis-endpoint support audit for comparing
 non-affine risk scores. It also gives an exact identity linking each contrast's
-identification width to unresolved selected rows and the outcome-switch
-coefficient. Third, it provides a status-independent, maturity-restricted
+identification width to the sum of unresolved loan-wise attainable
+contribution ranges. Third, it provides a status-independent, maturity-restricted
 evaluation with outcomes physically isolated until allocations are frozen and
 with sharp common-outcome bounds for unresolved loans.
 
@@ -38,6 +39,10 @@ below-target coverage finding also recurs across three feature-semantics-
 preserving missingness encodings and the only additional feasible retrospective
 origin; neither exercise selects a representation or constitutes independent
 validation.
+All four declared scenarios for 215 labels unavailable at fitting retain
+8/8 below-target coverage upper bounds. The all-default scenario removes the
+W7--W8 geometric crossing, so the paper reports that mechanism as diagnostic
+rather than universal.
 
 The decision result has a narrow interpretation. Objective-matched coordinate .25
 crosses zero for payoff, default, and miscoverage in all eight windows; .50 is
@@ -45,6 +50,11 @@ adverse; and .75 is mostly unidentified. Normalized-score comparisons answer a
 different opportunity-cost question. An exact point-cap audit places zero in
 all 216 broad-support envelopes. No model, window, gamma, ruler, coordinate,
 comparator, or policy is selected.
+The complete 36-scenario budget--concentration--LGD grid restores neither a
+universally favorable nor a universally adverse ordering. A deterministic USD
+25 floor-with-cash diagnostic changes evaluated rates by at most 0.0013
+percentage points; it supports the continuous relaxation without claiming an
+optimized integer policy.
 
 The manuscript addresses a decision-making problem at the
 predictive-to-prescriptive interface. It combines executable information

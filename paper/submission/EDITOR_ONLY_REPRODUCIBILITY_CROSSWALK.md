@@ -58,9 +58,18 @@ The later-origin recurrence is
 `199afb083da37af6a51d5ba9e3c4d6280b952fe9`. Both report their declared grids
 without selecting a model, encoding, or origin.
 
+The fit-label completion sensitivity is
+`ijds-fit-label-completion-sensitivity-2026-07-16-v2`, protocol-locked at
+commit `fbcafcf84645024b9753aba2f04a4263b8e76236`. The allocation-granularity
+sensitivity is `ijds-allocation-granularity-sensitivity-2026-07-16-v3`,
+protocol-locked at commit `fb1a7b1837d1f8ab2b81239533f51c996f41671c`.
+Both record scientific `uv.lock` SHA-256
+`25cefb168506538c22b86a348c42869ea7fda64338815f2adea3fe7e07608f93`;
+their freezes, summaries, and DVC roots are verified by the source registry.
+
 ## DVC Capsule
 
-The 27 pointers are listed once in `configs/ijds_active_evidence_sources.yaml`.
+The 31 pointers are listed once in `configs/ijds_active_evidence_sources.yaml`.
 They comprise data and model pointers for the active roots and sensitivities,
 plus the data-only structural replay dependency. Pull with:
 
@@ -72,6 +81,12 @@ Machine-local DVC credentials belong in `.dvc/config.local` and are never
 committed.
 
 ## Replay
+
+Publication replay uses the current checked-out builder to verify immutable
+evidence and regenerate reviewer artifacts. A scientific rerun instead checks
+out the protocol commit and environment-lock hash recorded for that lineage.
+These are complementary contracts; current source code is not treated as a
+substitute for a historical scientific environment.
 
 ```powershell
 uv sync --frozen --extra dev

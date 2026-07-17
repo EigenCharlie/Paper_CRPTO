@@ -28,7 +28,7 @@ class SurfaceCheck:
     required: tuple[str, ...]
 
 
-TITLE = "crpto: auditing binary conformal geometry and portfolio comparators"
+TITLE = "crpto: an identification audit of binary conformal credit portfolio optimization"
 
 REVIEWER_SURFACES = (
     REPO / "paper/CRPTO_ijds.qmd",

@@ -21,7 +21,12 @@ outcomes. Five retrospectively protocol-locked learner specifications support th
 only CatBoost enters optimization. The decision audit reports five gamma
 values, two rulers, three coordinates, exact declared point-cap supports, and
 no winner. Evaluation-endpoint lags 0, 3, 6, 8, and 12 are reported without
-selection; conformal-fit label timing is a separate sensitivity.
+selection; conformal-fit label timing is a separate sensitivity. An
+observed-only fit and three declared stress rules vary the 215 labels that were
+unavailable at their fitting cutoffs, without claiming sharp bounds over all
+possible assignments. A USD 25 floor-with-residual-cash diagnostic checks the
+numerical adequacy of the continuous allocation without claiming integer
+optimality.
 
 ## IJDS Requirements
 
@@ -57,21 +62,28 @@ The first `pdflatex` creates `.aux`, BibTeX creates `.bbl`, the second LaTeX
 pass resolves citations and cross-references, and the final pass stabilizes
 labels, floats, and pagination.
 
+`just paper-pdf-audit` then verifies the three generated reviewer PDFs: Letter
+page size, no blank pages, no identity or artifact fingerprints, a one-paragraph
+abstract of at most 300 words, and no more than 25 official pages before the
+References heading. Visual inspection remains required for clipping, overlap,
+and table or figure legibility.
+
 ## QA Record
 
-The pre-freeze closeout on 2026-07-15 produced the following current record:
+The pre-freeze closeout on 2026-07-16 produced the following current record:
 
 - official PDF pages: `29`;
 - pre-reference pages: `25` (references begin on page 26);
-- body preview pages: `22`;
-- supplement preview pages: `29`;
-- abstract words: `249`;
+- body preview pages: `21`;
+- supplement preview pages: `31`;
+- abstract words: `267`;
 - `.blg` warnings: `0`;
 - undefined citations/references: `0`;
-- page-level visual inspection: `80/80` pages across the official, body, and
+- page-level visual inspection: `81/81` pages across the official, body, and
   supplement PDFs; transient page renders were discarded after inspection;
 - automated PDF inspection: one Letter page size per document, no blank page,
-  and no author identity in the official PDF metadata.
+  no reviewer identity or artifact fingerprint in text or metadata, and the
+  IJDS page and abstract limits satisfied.
 
 ## Acceptance Criteria
 

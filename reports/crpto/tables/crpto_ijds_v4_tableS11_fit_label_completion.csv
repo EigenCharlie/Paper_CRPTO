@@ -1,0 +1,5 @@
+fit_label_scenario,windows,coverage_lower_min,coverage_upper_max,windows_upper_below_nominal,all_windows_upper_below_nominal,mean_width_min,mean_width_max,w7_w8_stratum2_crossing
+all_unavailable_default,8,0.8496617050067659,0.8846692668948499,8,True,0.6522207777018078,0.6537859842285183,False
+all_unavailable_nondefault,8,0.8424659715036218,0.8832524078643637,8,True,0.49225574027300617,0.6485696557890056,True
+hindsight_terminal,8,0.8489798084321685,0.8845790548966542,8,True,0.5003892753736984,0.6537743949931867,True
+observed_only,8,0.8424845445620738,0.8825943909363475,8,True,0.5005686859367924,0.6653409371377675,True

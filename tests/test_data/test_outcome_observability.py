@@ -4,12 +4,25 @@ import pandas as pd
 import pytest
 
 from src.data.outcome_observability import (
+    archive_status_default_from_status,
     audit_outcome_label_availability,
     build_outcome_label_availability,
     parse_last_payment_dates,
     terminal_outcome_from_status,
     validate_minimum_label_retention,
 )
+
+
+def test_archive_status_and_reconstructed_terminal_endpoint_are_distinct() -> None:
+    statuses = pd.Series(["Fully Paid", "Charged Off", "Default", "Current"])
+
+    archive_outcome = archive_status_default_from_status(statuses)
+    terminal_outcome = terminal_outcome_from_status(statuses)
+
+    assert archive_outcome.iloc[:3].tolist() == [0, 1, 1]
+    assert pd.isna(archive_outcome.iloc[3])
+    assert terminal_outcome.iloc[:2].tolist() == [0, 1]
+    assert terminal_outcome.iloc[2:].isna().all()
 
 
 def test_terminal_protocol_leaves_default_and_other_states_unresolved() -> None:

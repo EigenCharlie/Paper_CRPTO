@@ -39,6 +39,7 @@ active_scientific_contract:
       - scripts/check_publication_integrity.py
       - scripts/build_ijds_submission_tex.py
       - scripts/compile_ijds_submission.py
+      - scripts/inspect_ijds_pdfs.py
       - scripts/render_submission_pdf_previews.py
     protocol_entrypoints:
       - scripts/experiments/run_ijds_binary_geometry_frontier_v4.py
@@ -86,7 +87,9 @@ active_scientific_contract:
       are coverage-only controls and cannot be selected from OOT outcomes.
     conformal: >-
       Five score strata are fixed from 2011 scores. Exact binary-outcome
-      residual ranks are reported for all eight eligible six-month windows.
+      residual ranks are reported for all eight eligible six-month windows;
+      an observed-only fit and three declared completion rules stress labels
+      unavailable at fit time.
     decision: >-
       Gamma {0,.25,.50,.75,1} is evaluated under objective-matched and
       normalized-score rulers at {.25,.50,.75}; gamma 1 minus gamma 0 is the
@@ -101,6 +104,10 @@ active_scientific_contract:
     payoff: >-
       Plug-in (1-p)r-p*LGD and status-indexed standardized proxy
       (1-Y)r-Y*LGD; neither is a cash-flow return, IRR, NPV, or welfare measure.
+    allocation_granularity: >-
+      The portfolio is a continuous linear-program relaxation. A deterministic
+      USD 25 floor-with-cash diagnostic measures implementation granularity but
+      does not define or optimize an integer policy.
 
   required_artifacts:
     - reports/crpto/ijds_binary_geometry_frontier_v4_evidence.json
@@ -124,6 +131,8 @@ active_scientific_contract:
     - reports/crpto/tables/crpto_ijds_v4_tableS8_endpoint_resolution.csv
     - reports/crpto/tables/crpto_ijds_v4_tableS9_missingness_encoding_sensitivity.csv
     - reports/crpto/tables/crpto_ijds_v4_tableS10_rolling_origin_recurrence.csv
+    - reports/crpto/tables/crpto_ijds_v4_tableS11_fit_label_completion.csv
+    - reports/crpto/tables/crpto_ijds_v4_tableS12_allocation_granularity.csv
     - reports/crpto/figures/crpto_ijds_v4_fig1_coverage.pdf
     - reports/crpto/figures/crpto_ijds_v4_fig1_coverage.png
     - reports/crpto/figures/crpto_ijds_v4_fig2_phase_transition.pdf
@@ -140,6 +149,8 @@ claim_boundaries:
     - "Retrospective contrasts are not causal, prospective, or confirmatory."
     - "The archive is not a verified point-in-time snapshot."
     - "The status-indexed payoff proxy is not cash-flow return, NPV, IRR, or welfare."
+    - "Fit-label scenarios are declared stresses, not sharp bounds over all assignments."
+    - "USD 25 floor rounding is a diagnostic, not an optimized integer policy."
   forbidden:
     - "Selected model, gamma, ruler, coordinate, cap, comparator, or policy."
     - "Universal portfolio direction or selected-set conformal guarantee."
