@@ -1,6 +1,6 @@
-schema_version: "2026-07-16.2"
-protocol_tag: "protocol/ijds-allocation-granularity-sensitivity-2026-07-16-v2"
-run_tag: "ijds-allocation-granularity-sensitivity-2026-07-16-v2"
+schema_version: "2026-07-16.3"
+protocol_tag: "protocol/ijds-allocation-granularity-sensitivity-2026-07-16-v3"
+run_tag: "ijds-allocation-granularity-sensitivity-2026-07-16-v3"
 
 parent:
   v4_config: "configs/experiments/ijds_binary_geometry_frontier_v4_2026-07-15_v5.yaml"
@@ -37,6 +37,7 @@ allocation_granularity:
   expected_portfolios: 1440
   expected_tracks: 96
   numerical_tolerance: 1.0e-8
+  committed_capital_comparison_rtol: 1.0e-10
   all_tracks_reported: true
   historical_archive_previously_inspected: true
   outcome_based_selection: false

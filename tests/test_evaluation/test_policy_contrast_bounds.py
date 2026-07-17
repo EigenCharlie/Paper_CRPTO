@@ -243,3 +243,21 @@ def test_indexed_bounds_reject_normalizer_below_invested_capital() -> None:
             lgd=0.45,
             normalization_capital_a=99.0,
         )
+
+
+def test_indexed_bounds_accepts_scale_small_solver_budget_residual() -> None:
+    pair = _policy_pair()
+    pair.loc[pair["policy_label"].eq("policy-a"), "exposure"] *= 150_000.00000001
+    pair.loc[pair["policy_label"].eq("policy-b"), "exposure"] *= 150_000.0
+    pair["expected_payoff_contribution"] = pair["exposure"] * 0.05
+    index = PolicyContrastIndex(pair, role="primary_oot")
+
+    bounds = index.sharp_bounds(
+        policy_a="policy-a",
+        policy_b="policy-b",
+        lgd=0.45,
+        normalization_capital_a=15_000_000.0,
+        normalization_capital_b=15_000_000.0,
+    )
+
+    assert bounds["policy_a_normalization_capital"] == 15_000_000.0

@@ -102,7 +102,19 @@ def _sharp_policy_bounds_from_arrays(
         raise ValueError("Policy normalization capital must be finite.")
     if normalizer_a <= 0.0 or normalizer_b <= 0.0:
         raise ValueError("Policy normalization capital must be positive.")
-    if normalizer_a < total_a - 1.0e-8 or normalizer_b < total_b - 1.0e-8:
+    normalizer_a_below_total = normalizer_a < total_a and not np.isclose(
+        normalizer_a,
+        total_a,
+        rtol=1.0e-10,
+        atol=1.0e-8,
+    )
+    normalizer_b_below_total = normalizer_b < total_b and not np.isclose(
+        normalizer_b,
+        total_b,
+        rtol=1.0e-10,
+        atol=1.0e-8,
+    )
+    if normalizer_a_below_total or normalizer_b_below_total:
         raise ValueError("Policy normalization capital cannot be below invested capital.")
     delta_exposure = exposure_a - exposure_b
     delta_weight = exposure_a / normalizer_a - exposure_b / normalizer_b

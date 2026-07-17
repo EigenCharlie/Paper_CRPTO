@@ -1,4 +1,14 @@
-# IJDS Allocation-Granularity Sensitivity Protocol V2 - 2026-07-16
+# IJDS Allocation-Granularity Sensitivity Protocol V3 - 2026-07-16
+
+## Numerical Recovery
+
+V2 completed the outcome-free freeze but its evaluator stopped before writing
+contrasts because the fixed-capital validator used an absolute `1e-8` check on
+USD 15 million aggregated tracks. Existing solver budget residuals are accepted
+at the monthly protocol tolerance but can exceed that unscaled aggregate check
+by microdollars. V3 changes only this guard to `isclose` with relative tolerance
+`1e-10` and absolute tolerance `1e-8`; it changes no exposure, transform,
+endpoint, estimand, or reporting grid. V2 is stopped provenance, not evidence.
 
 ## Lineage Note
 
