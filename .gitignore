@@ -54,6 +54,13 @@ data/processed/optuna/
 !data/processed/*.dvc
 data/processed/**/*
 !data/processed/**/*.dvc
+!data/processed/experiments/
+!data/processed/experiments/ijds_audit/
+!data/processed/experiments/ijds_audit/*.dvc
+!data/processed/experiments/champion_reopen/
+!data/processed/experiments/champion_reopen/champion-reopen-2026-07-10__maturity-safe-locked-bounded-h1h2-v2.dvc
+!data/processed/experiments/ijds_prefreeze/
+!data/processed/experiments/ijds_prefreeze/*.dvc
 
 # DVC cache, locks, tmp (only `.dvc/config` and `dvc.yaml`/`dvc.lock` belong in git)
 .dvc/cache/
@@ -130,6 +137,7 @@ mlartifacts/
 
 # Scratch runtime checkpoints are observability, not canonical deliverables.
 models/*_runtime_checkpoints/
+tmp/
 
 # Optuna local
 optuna.db
@@ -154,6 +162,7 @@ models/experiments/**
 !models/experiments/champion_reopen/champion-reopen-2026-06-19__pool93__ijds-certificate-semantics-v2/portfolio/pool93_ijds_consolidated_frontier.json
 !models/experiments/champion_reopen/champion-reopen-2026-06-19__pool93__ijds-certificate-semantics-v2/portfolio/pool93_ijds_consolidated_governance.json
 !models/experiments/champion_reopen/champion-reopen-2026-06-19__pool93__ijds-certificate-semantics-v2/portfolio/pool93_point_pd_baseline_audit.json
+!models/experiments/**/*.dvc
 configs/experiments/
 !configs/experiments/
 configs/experiments/*
@@ -161,3 +170,9 @@ configs/experiments/*
 !configs/experiments/tabpfn_*.yaml
 !configs/experiments/champion_reopen*.yaml
 !configs/experiments/champion_reopen*.txt
+!configs/experiments/ijds_maturity_safe_locked_*.yaml
+!configs/experiments/ijds_fixed_taxonomy_*.yaml
+!configs/experiments/ijds_rolling_origin_*.yaml
+!configs/experiments/ijds_decision_active_*.yaml
+!configs/experiments/ijds_policy_support_*.yaml
+!configs/experiments/ijds_*.yaml

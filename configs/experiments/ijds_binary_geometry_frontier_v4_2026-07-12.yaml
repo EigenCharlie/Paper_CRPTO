@@ -1,0 +1,117 @@
+extends: "ijds_fixed_taxonomy_c2_2026-07-11.yaml"
+
+schema_version: "2026-07-12.2"
+protocol_status: "locked_retrospective_complete_specification_audit"
+protocol_tag: "protocol/ijds-binary-geometry-frontier-v4-2026-07-12-v1"
+run_tag: "ijds-binary-geometry-frontier-v4-2026-07-12-v1"
+
+protocol_lineage_files:
+  - "configs/experiments/ijds_fixed_taxonomy_c2_2026-07-11.yaml"
+  - "docs/research/ijds_fixed_taxonomy_c2_protocol_errata_2026-07-12.md"
+  - "docs/research/ijds_binary_geometry_frontier_v4_protocol_2026-07-12.md"
+
+hypothesis: >-
+  Absolute-residual conformalization for a binary outcome has a prevalence-
+  sensitive set geometry, candidate coverage need not transport over time,
+  and portfolio direction is not identified until the score-cap comparator
+  family is declared. Every eligible six-month residual window and every
+  declared comparator must be reported without result-based selection.
+
+design:
+  conformal_fit_start: "2012-01-01"
+  conformal_fit_end: "2013-01-31"
+  policy_development_start: "2013-02-01"
+  policy_development_end: "2013-12-31"
+
+residual_specification:
+  window_months: 6
+  minimum_monthly_label_retention: 0.99
+  windows:
+    - {id: "w01_2012m01_m06", start: "2012-01-01", end: "2012-06-30"}
+    - {id: "w02_2012m02_m07", start: "2012-02-01", end: "2012-07-31"}
+    - {id: "w03_2012m03_m08", start: "2012-03-01", end: "2012-08-31"}
+    - {id: "w04_2012m04_m09", start: "2012-04-01", end: "2012-09-30"}
+    - {id: "w05_2012m05_m10", start: "2012-05-01", end: "2012-10-31"}
+    - {id: "w06_2012m06_m11", start: "2012-06-01", end: "2012-11-30"}
+    - {id: "w07_2012m07_m12", start: "2012-07-01", end: "2012-12-31"}
+    - {id: "w08_2012m08_2013m01", start: "2012-08-01", end: "2013-01-31"}
+
+conformal:
+  method: "fixed_taxonomy_split_mondrian_absolute_residual"
+  estimand: "clipped_residual_interval_for_observed_binary_outcome"
+  residual_source: "all_eight_declared_six_month_availability_safe_windows"
+  discrete_intersection: "interval_intersect_binary_outcome_space"
+  canonical_groups: 5
+  diagnostic_group_counts: [1, 2, 5, 10]
+  report_set_cardinality: true
+  report_width_quantiles: [0.0, 0.10, 0.25, 0.50, 0.75, 0.90, 1.0]
+
+learner_control:
+  enabled: true
+  role: "coverage_only_negative_control"
+  model: "numeric_logistic_regression"
+  numeric_features: "inherit_primary_numeric_features"
+  imputer: "median"
+  scaler: "standard"
+  logistic_regression:
+    C: 1.0
+    class_weight: "balanced"
+    solver: "lbfgs"
+    max_iter: 3000
+    random_state: 42
+  platt_calibration: "independent_2011_raw_margin"
+  portfolio_optimization: false
+
+policy:
+  max_concentration_by_purpose: 0.25
+
+comparators:
+  primary: "complete_development_supported_point_cap_frontier"
+  same_numeric_cap: true
+  development_fixed_funded_pd_cap: true
+  contemporaneous_funded_pd_match: true
+  development_support:
+    definition: "window_policy_monthly_guardrail_point_moment_hull"
+    rounding: false
+  exact_point_cap_frontier:
+    start: 0.05
+    stop: 0.12
+    method: "highs_rhs_basis_ranging"
+    include_c0_c1_c2_caps: true
+    cap_tolerance: 1.0e-10
+    objective_dominance_tolerance: 1.0e-5
+
+analysis:
+  all_eight_windows_primary: true
+  all_nine_policies_primary: true
+  canonical_seed_only_for_v4_portfolio: true
+  nested_scope_counts_are_not_independent: true
+  report_discrete_set_geometry: true
+  report_exact_frontier_breakpoints: true
+  confirmatory_language_forbidden: true
+  no_result_based_promotion: true
+
+simulation:
+  enabled: true
+  random_seed: 20260712
+  repetitions: 100
+  sample_size: 2000
+  mechanism_policy:
+    risk_tolerance: 0.40
+    gamma: 0.25
+    budget_units: 50.0
+    purpose_cap: 1.0
+    lgd: 0.45
+  score_shift_grid: [0.0, 0.05, 0.10, 0.15]
+  prevalence_shift_grid: [0.0, 0.025, 0.05, 0.10]
+  taxonomy_groups_grid: [1, 2, 5, 10]
+  censoring_rate_grid: [0.0, 0.05, 0.15]
+
+resume_outcome_free: null
+
+output:
+  data_root: "data/processed/experiments/ijds_audit"
+  model_root: "models/experiments/ijds_audit"
+  immutability: "hard_no_overwrite_choose_fresh_run_tag"
+  deterministic_summary: "binary_geometry_frontier_v4_summary.json"
+  execution_receipt: "execution_receipt.json"

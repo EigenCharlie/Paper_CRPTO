@@ -1,4 +1,0 @@
-scope,n_groups,min_coverage_90,min_coverage_alpha01,test_rows
-all_groups,29,0.5,0.5,1396053
-eligible_cal_and_test_ge_500,25,0.8853734439834025,0.9565383149065956,1396010
-sparse_or_fallback_groups,4,0.5,0.5,43

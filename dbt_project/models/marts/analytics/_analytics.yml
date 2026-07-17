@@ -1,7 +1,0 @@
-version: 2
-
-models:
-  - name: fct_conformal_coverage
-    description: CRPTO conformal coverage by grade.
-  - name: fct_model_performance_by_cohort
-    description: PD performance by score band.

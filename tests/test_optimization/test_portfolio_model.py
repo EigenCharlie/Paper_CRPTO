@@ -163,6 +163,30 @@ def test_highspy_matches_sparse_highs_objective_on_toy_lp() -> None:
     assert native["total_allocated"] == pytest.approx(sparse["total_allocated"], rel=1e-6)
 
 
+def test_explicit_objective_rate_override_matches_independent_reconciliation() -> None:
+    loans, pd_point, pd_low, pd_high, lgd, int_rates = _toy_loans()
+    coherent_rates = (1.0 - pd_point) * int_rates - pd_point * lgd
+    result = optimize_portfolio_allocation(
+        loans=loans,
+        pd_point=pd_point,
+        pd_low=pd_low,
+        pd_high=pd_high,
+        lgd=lgd,
+        int_rates=int_rates,
+        objective_rate_override=coherent_rates,
+        total_budget=3500,
+        max_concentration=0.60,
+        max_portfolio_pd=0.11,
+        robust=True,
+        pd_constraint_override=pd_high,
+        solver_backend="highspy",
+    )
+
+    allocation = np.asarray(result["allocation_vector"], dtype=float)
+    exposure = allocation * loans["loan_amnt"].to_numpy(dtype=float)
+    assert result["objective_value"] == pytest.approx(float(exposure @ coherent_rates))
+
+
 def test_highspy_falls_back_to_sparse_highs_when_native_solver_fails(
     monkeypatch,
 ) -> None:

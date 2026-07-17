@@ -1,0 +1,23 @@
+schema_version: "2026-07-14.1"
+protocol_tag: "protocol/ijds-label-lag-sensitivity-2026-07-14-v1"
+run_tag: "ijds-label-lag-sensitivity-2026-07-14-v1"
+
+parent:
+  config: "configs/experiments/ijds_binary_geometry_frontier_v4_2026-07-14_v3.yaml"
+  protocol_freeze:
+    path: "models/experiments/ijds_audit/ijds-binary-geometry-frontier-v4-2026-07-12-v1/protocol_freeze.json"
+    bytes: 20362
+    sha256: "c2b3dc2d18c9fed80708682d5a0369c80c89643e2d28024418522d954ebe667c"
+
+lag_sensitivity:
+  charged_off_lag_months: [0, 3, 6, 8, 12]
+  phase_stratum: 2
+  minimum_monthly_label_retention: 0.99
+  all_lags_reported: true
+  historical_archive_previously_inspected: true
+  outcome_based_selection: false
+  paper_role: "assumption_sensitivity_not_model_or_window_selection"
+
+output:
+  root: "reports/crpto/sensitivity"
+  immutability: "hard_no_overwrite_choose_fresh_run_tag"

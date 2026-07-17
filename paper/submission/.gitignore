@@ -1,6 +1,7 @@
 # Do NOT vendor the official INFORMS template or build artifacts.
-# Authors download informs4.cls + informs2014.bst from the INFORMS author portal
-# and drop them here locally; they must not be committed.
+# Authors download the style kit from the INFORMS author portal and drop it
+# here locally. The reviewed revision is pinned by informs_style_assets.json;
+# publisher files and the private title page must not be committed.
 informs4.cls
 informs*.bst
 *.bst
@@ -12,6 +13,8 @@ INFORMS-IJDS-Template.*
 Style-Instructions.pdf
 sample.bib
 Sample-Figure.*
+IJDS-datadisclosureform-*.pdf
+IJDS_Reproducibility*.docx
 # LaTeX build artifacts
 *.aux
 *.bbl
@@ -23,3 +26,5 @@ Sample-Figure.*
 *.fdb_latexmk
 # Compiled submission PDF (regenerate locally)
 CRPTO_ijds_submission.pdf
+TITLE_PAGE_PRIVATE.md
+COVER_LETTER_PRIVATE.md

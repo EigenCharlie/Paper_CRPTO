@@ -1,4 +1,0 @@
-::: {.callout-important}
-## Paper autocontenido
-Esta landing funciona como la portada editorial del dossier: explica el claim central, orienta la lectura y deja explícito qué parte del argumento vive en el cuerpo IJDS, el supplement, la tesis y la capa de reproducibilidad.
-:::

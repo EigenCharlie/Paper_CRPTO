@@ -6,23 +6,23 @@ quarto-required: ">=1.9.0"
 
 book:
   title: "CRPTO"
-  subtitle: "Conformal Robust Predict-Then-Optimize aplicado a credit risk"
+  subtitle: "Auditoría de identificación en ML, conformal prediction y asignación crediticia"
   author: "Carlos Alfredo Vergara Rojas"
   date: today
   date-format: long
-  description: "Libro técnico y dossier reproducible de CRPTO: conformal prediction, optimización robusta de portafolio y credit risk sobre Lending Club."
+  description: "Companion técnico del CRPTO activo: diseño temporal, geometría conformal binaria, asignación y evidencia reproducible sobre Lending Club."
   site-url: "https://eigencharlie.github.io/Paper_CRPTO/"
   favicon: assets/logo-small.svg
-  image: "https://eigencharlie.github.io/Paper_CRPTO/assets/figures/editorial/diagrama-crpto.png"
-  image-alt: "Diagrama maestro del pipeline CRPTO con datos, PD calibrada, conformal Mondrian, optimización robusta y política promovida."
+  image: "https://eigencharlie.github.io/Paper_CRPTO/assets/logo.svg"
+  image-alt: "Identidad visual de CRPTO."
   open-graph:
-    image: "https://eigencharlie.github.io/Paper_CRPTO/assets/figures/editorial/diagrama-crpto.png"
-    image-alt: "Diagrama maestro del pipeline CRPTO."
+    image: "https://eigencharlie.github.io/Paper_CRPTO/assets/logo.svg"
+    image-alt: "Identidad visual de CRPTO."
     locale: es_CO
   twitter-card:
-    image: "https://eigencharlie.github.io/Paper_CRPTO/assets/figures/editorial/diagrama-crpto.png"
-    image-alt: "Diagrama maestro del pipeline CRPTO."
-    card-style: summary_large_image
+    image: "https://eigencharlie.github.io/Paper_CRPTO/assets/logo.svg"
+    image-alt: "Identidad visual de CRPTO."
+    card-style: summary
   search:
     location: sidebar
     type: textbox
@@ -54,46 +54,10 @@ book:
     right: "[GitHub](https://github.com/EigenCharlie/Paper_CRPTO) · [DagsHub](https://dagshub.com/EigenCharlie94/Paper_CRPTO) · [Quarto](https://quarto.org)"
   chapters:
     - index.qmd
-    - chapters/00-crpto-en-una-pagina.qmd
-    - chapters/00b-prologo-tesis.qmd
-    - part: "Manuscrito CRPTO y evidencia paper-ready"
+    - part: "Companion del manuscrito IJDS activo"
       chapters:
-        - chapters/01-introduccion.qmd
-        - chapters/02-marco-teorico.qmd
-        - chapters/03-metodologia.qmd
-        - chapters/04-resultados.qmd
-        - chapters/30-replicacion-multidataset.qmd
-        - chapters/05-discusion.qmd
         - chapters/06-blueprint-manuscrito.qmd
         - chapters/06b-guia-editorial-claims.qmd
-        - chapters/07-apendice-robustez.qmd
-        - chapters/08-ablacion-mondrian.qmd
-        - chapters/09-spo-regret.qmd
-        - chapters/10-fair-lending.qmd
-        - chapters/11-mrm.qmd
-        - chapters/12-funded-set.qmd
-        - chapters/13-trazabilidad.qmd
-        - chapters/14-release.qmd
-    - part: "Dossier extendido para journal y appendix"
-      chapters:
-        - chapters/15-fundamentos-riesgo-ml.qmd
-        - chapters/16-fundamentos-conformal-optimizacion.qmd
-        - chapters/17-pipeline-datos-features.qmd
-        - chapters/18-pd-calibracion-champion.qmd
-        - chapters/19-conformal-dossier.qmd
-        - chapters/20-portafolio-policy.qmd
-        - chapters/21-gobernanza-explicabilidad-dataset.qmd
-        - chapters/22-literatura-trazabilidad-entorno.qmd
-        - chapters/24-bibliografia-crpto-actualizada.qmd
-        - chapters/25-reviewer-map.qmd
-        - chapters/23-apendices-regulatorios-y-future-work.qmd
-    - part: "Cierre de tesis"
-      chapters:
-        - chapters/28-resultados-auxiliares.qmd
-        - chapters/29-ecl-incertidumbre.qmd
-        - chapters/26-sintesis-tesis.qmd
-        - chapters/27-conclusiones-tesis.qmd
-    - chapters/glosario.qmd
     - references.qmd
 
 lang: es

@@ -1,0 +1,71 @@
+{
+  "schema_version": "2026-07-14.1",
+  "status": "complete_frozen_score_label_lag_sensitivity",
+  "run_tag": "ijds-label-lag-sensitivity-2026-07-14-v1",
+  "protocol_tag": "protocol/ijds-label-lag-sensitivity-2026-07-14-v1",
+  "protocol_commit": "688f75dc4f285c75bc499c9e041dd30fb3acd70d",
+  "historical_archive_previously_inspected": true,
+  "outcome_based_selection": false,
+  "source_freeze": {
+    "path": "models/experiments/ijds_audit/ijds-binary-geometry-frontier-v4-2026-07-12-v1/protocol_freeze.json",
+    "bytes": 20362,
+    "sha256": "c2b3dc2d18c9fed80708682d5a0369c80c89643e2d28024418522d954ebe667c"
+  },
+  "results": {
+    "rows": 40,
+    "lags": [
+      0,
+      3,
+      6,
+      8,
+      12
+    ],
+    "windows": 8,
+    "minimum_monthly_retention_by_lag": {
+      "0": 0.9971164936562861,
+      "3": 0.9966694421315571,
+      "6": 0.9929564746252483,
+      "8": 0.9868159653241828,
+      "12": 0.9745349467220517
+    },
+    "retention_stop_pass_by_lag": {
+      "0": true,
+      "3": true,
+      "6": true,
+      "8": false,
+      "12": false
+    }
+  },
+  "artifact": {
+    "path": "reports/crpto/sensitivity/ijds-label-lag-sensitivity-2026-07-14-v1/label_lag_phase_sensitivity.csv",
+    "bytes": 6476,
+    "sha256": "ddafa5977bb3ae3e1698caf412c3824708633bb17310d88d43deb301e5f389ea"
+  },
+  "implementation": {
+    "source_files": {
+      "configs/experiments/ijds_label_lag_sensitivity_2026-07-14.yaml": {
+        "path": "configs/experiments/ijds_label_lag_sensitivity_2026-07-14.yaml",
+        "bytes": 865,
+        "sha256": "89d1c31c28a3167f4b90d1fee812ce7d2027154159aaf5f8217b97e25f3db44d"
+      },
+      "src/ijds_audit/lag_sensitivity.py": {
+        "path": "src/ijds_audit/lag_sensitivity.py",
+        "bytes": 4523,
+        "sha256": "1836826e4d2c1b2c71a16a1c55bb66a67a164a4d412fcd4b257440b3e26dbcc1"
+      },
+      "scripts/experiments/run_ijds_label_lag_sensitivity.py": {
+        "path": "scripts/experiments/run_ijds_label_lag_sensitivity.py",
+        "bytes": 5860,
+        "sha256": "7c89c6f9a2cb7af5606b0382f4bcb7a782e3377d37416bca60413d0b408278c6"
+      },
+      "docs/research/ijds_label_lag_sensitivity_protocol_2026-07-14.md": {
+        "path": "docs/research/ijds_label_lag_sensitivity_protocol_2026-07-14.md",
+        "bytes": 1491,
+        "sha256": "e7d3485344946359e219ad40a97665fd8dd9346aa3e93ba426cafee2597b49e4"
+      }
+    },
+    "hash_algorithm": "sha256"
+  },
+  "protected_stages_run": [],
+  "protected_artifacts_written": []
+}

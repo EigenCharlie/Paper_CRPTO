@@ -1,0 +1,138 @@
+extends: "ijds_binary_geometry_frontier_v4_2026-07-12.yaml"
+
+schema_version: "2026-07-13.1"
+protocol_tag: "protocol/ijds-credit-risk-controls-2026-07-13-v1"
+run_tag: "ijds-credit-risk-controls-2026-07-13-v1"
+
+protocol_lineage_files:
+  - "configs/experiments/ijds_binary_geometry_frontier_v4_2026-07-12.yaml"
+  - "docs/research/ijds_binary_geometry_frontier_v4_protocol_2026-07-12.md"
+  - "docs/research/ijds_raw_data_contract_protocol_2026-07-13.md"
+  - "docs/research/ijds_credit_risk_controls_protocol_2026-07-13.md"
+
+credit_risk_controls:
+  question: >-
+    Does the V4 temporal coverage result survive an auditable credit-scorecard,
+    removal of incumbent platform pricing/grade signals, and domain-safe
+    monotonic CatBoost constraints when every eligible row is used?
+  inference_role: "coverage_and_model_generalization_control_only"
+  co_primary_models:
+    - "catboost_platt"
+    - "numeric_logistic_platt"
+    - "catboost_monotonic_platt"
+    - "woe_scorecard_platform_platt"
+    - "woe_scorecard_borrower_platt"
+  all_models_reported: true
+  selection_from_oot: false
+  portfolio_optimization: false
+  sampling: "none_all_eligible_rows"
+  active_score_reference:
+    path: "data/processed/experiments/ijds_audit/ijds-binary-geometry-frontier-v4-2026-07-12-v1/prediction/scores.parquet"
+    bytes: 14212211
+    sha256: "4053efdbf13066355bb772233231e5fe4ccb436ca75aaf873fb14e213c1e319c"
+    numerical_tolerance: 1.0e-12
+  score_psi_bins: 10
+  platform_signal_features:
+    - "int_rate"
+    - "installment"
+    - "installment_burden"
+    - "grade"
+    - "sub_grade"
+    - "int_rate_bucket"
+    - "int_rate_bucket__grade"
+  monotonic_catboost:
+    constraints:
+      int_rate: 1
+      annual_inc: -1
+      dti: 1
+      loan_to_income: 1
+      loan_to_income_sq: 1
+      installment_burden: 1
+      rev_utilization: 1
+      revol_bal_to_income: 1
+      fico_score: -1
+      credit_age_years: -1
+      pub_rec: 1
+      inq_last_6mths: 1
+      delinq_severity: 1
+      delinq_recency: -1
+      log_annual_inc: -1
+      has_delinq_2yrs: 1
+      has_pub_rec: 1
+      has_bankruptcy: 1
+      has_recent_inq: 1
+      recent_chargeoff: 1
+  optbinning:
+    max_n_prebins: 20
+    min_prebin_size: 0.05
+    min_n_bins: 2
+    max_n_bins: 8
+    min_bin_size: 0.05
+    n_jobs: -1
+  scorecard_logistic:
+    C: 1.0
+    class_weight: "balanced"
+    solver: "lbfgs"
+    max_iter: 3000
+    random_state: 42
+  scorecards:
+    platform:
+      name: "woe_scorecard_platform_platt"
+      features:
+        - "loan_amnt"
+        - "int_rate"
+        - "installment"
+        - "annual_inc"
+        - "dti"
+        - "loan_to_income"
+        - "installment_burden"
+        - "rev_utilization"
+        - "revol_bal_to_income"
+        - "fico_score"
+        - "credit_age_years"
+        - "emp_length_num"
+        - "open_acc"
+        - "total_acc"
+        - "revol_bal"
+        - "pub_rec"
+        - "inq_last_6mths"
+        - "delinq_severity"
+        - "delinq_recency"
+        - "grade"
+        - "sub_grade"
+        - "home_ownership"
+        - "purpose"
+        - "verification_status"
+        - "int_rate_bucket"
+        - "int_rate_bucket__grade"
+    borrower:
+      name: "woe_scorecard_borrower_platt"
+      features:
+        - "loan_amnt"
+        - "annual_inc"
+        - "dti"
+        - "loan_to_income"
+        - "rev_utilization"
+        - "revol_bal_to_income"
+        - "fico_score"
+        - "credit_age_years"
+        - "emp_length_num"
+        - "open_acc"
+        - "total_acc"
+        - "revol_bal"
+        - "pub_rec"
+        - "inq_last_6mths"
+        - "delinq_severity"
+        - "delinq_recency"
+        - "home_ownership"
+        - "purpose"
+        - "verification_status"
+
+resume_credit_control_freeze: null
+
+output:
+  data_root: "data/processed/experiments/ijds_audit"
+  model_root: "models/experiments/ijds_audit"
+  immutability: "hard_no_overwrite_choose_fresh_run_tag"
+  deterministic_summary: "credit_risk_controls_summary.json"
+  execution_receipt: "execution_receipt.json"

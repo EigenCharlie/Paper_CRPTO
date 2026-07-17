@@ -1,5 +1,0 @@
-outs:
-- md5: 93c32e9e7e5a387002f0af9fed5a4425
-  size: 6083
-  hash: md5
-  path: ab_attribution_by_grade.parquet

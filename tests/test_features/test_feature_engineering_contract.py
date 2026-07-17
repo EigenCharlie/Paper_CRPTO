@@ -12,10 +12,27 @@ from src.features.feature_engineering import (
     TARGET,
     build_feature_config,
     build_feature_manifest,
+    normalize_raw_columns,
 )
 
 CONTRACT_PATH = Path("models/pd_model_contract.json")
 EXPECTED_CONTRACT_OMISSIONS = {"rev_utilization", "high_util_pct"}
+
+
+def test_lending_club_credit_line_dates_use_the_declared_month_year_format() -> None:
+    normalized = normalize_raw_columns(
+        pd.DataFrame(
+            {
+                "issue_d": ["2016-04-01", "2016-05-01"],
+                "earliest_cr_line": ["Jan-1985", "Sep-2007"],
+            }
+        )
+    )
+
+    assert normalized["earliest_cr_line"].tolist() == [
+        pd.Timestamp("1985-01-01"),
+        pd.Timestamp("2007-09-01"),
+    ]
 
 
 def _load_contract() -> dict[str, object]:
@@ -26,14 +43,20 @@ def _load_contract() -> dict[str, object]:
 
 def test_frozen_pd_contract_matches_current_catboost_feature_order() -> None:
     contract = _load_contract()
-    feature_names = list(contract["feature_names"])  # type: ignore[index]
-    categorical = list(contract["categorical_features"])  # type: ignore[index]
+    feature_names = contract["feature_names"]
+    categorical = contract["categorical_features"]
+    n_features = contract["n_features"]
+    assert isinstance(feature_names, list)
+    assert isinstance(categorical, list)
+    assert isinstance(n_features, int)
+    assert all(isinstance(feature, str) for feature in feature_names)
+    assert all(isinstance(feature, str) for feature in categorical)
 
     expected_features = [
         feature for feature in CATBOOST_FEATURES if feature not in EXPECTED_CONTRACT_OMISSIONS
     ]
 
-    assert int(contract["n_features"]) == 42  # type: ignore[index]
+    assert n_features == 42
     assert len(feature_names) == 42
     assert feature_names == expected_features
     assert categorical == CATEGORICAL_FEATURES
@@ -42,7 +65,9 @@ def test_frozen_pd_contract_matches_current_catboost_feature_order() -> None:
 
 def test_feature_config_materializes_the_champion_feature_contract() -> None:
     contract = _load_contract()
-    feature_names = list(contract["feature_names"])  # type: ignore[index]
+    feature_names = contract["feature_names"]
+    assert isinstance(feature_names, list)
+    assert all(isinstance(feature, str) for feature in feature_names)
     frame = pd.DataFrame(
         {
             **{feature: [1, 2, 3] for feature in feature_names},

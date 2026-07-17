@@ -1,0 +1,2 @@
+tracks,cash_share_max,payoff_rate_perturbation_abs_max,default_rate_perturbation_abs_max,miscoverage_rate_perturbation_abs_max,portfolios,source_rows,rounded_positive_rows,changed_rows,cash_residual_min,cash_residual_mean,cash_residual_max,monthly_cash_share_max
+96,3.333333333332966e-05,3.4483590284581524e-06,1.2842831024732755e-05,1.1901916329666367e-05,1440,143175,143167,2985,25.0,26.006944444444443,75.0,7.5e-05

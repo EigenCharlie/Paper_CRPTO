@@ -31,10 +31,33 @@
   }
 
   #quarto-content {
-    grid-template-rows: [content-top] auto [content-bottom] 0 [page-bottom] !important;
+    display: block !important;
+    grid-template-rows: none !important;
   }
 
   #quarto-appendix {
-    break-after: avoid-page;
+    break-after: auto !important;
+    page-break-after: auto !important;
+  }
+
+  .keep-together {
+    break-inside: avoid-page !important;
+    font-size: 0.88em;
+    line-height: 1.12;
+    page-break-inside: avoid !important;
+  }
+
+  .keep-together th,
+  .keep-together td {
+    padding: 0.28rem 0.36rem !important;
+  }
+
+  #refs {
+    font-size: 0.80em;
+    line-height: 1.12;
+  }
+
+  #refs .csl-entry {
+    margin-bottom: 0.12rem;
   }
 }

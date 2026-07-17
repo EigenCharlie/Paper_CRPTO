@@ -1,1 +1,1 @@
-"""Evaluation metrics, backtesting, and IFRS9 calculations."""
+"""Coverage, payoff, and partial-identification evaluation for the IJDS audit."""

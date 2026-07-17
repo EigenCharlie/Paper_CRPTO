@@ -1,3 +1,0 @@
-::: {.build-info}
-Build: `2a9b5e9` | Rama: `codex/ijds-refactor-lab-2026-07-08` | Actualizado: `2026-07-09`
-:::

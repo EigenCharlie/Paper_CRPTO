@@ -1,0 +1,10 @@
+comparator_rule,metric,guardrail_lower,crosses_zero,guardrail_higher
+c0_same_numeric_cap,payoff,0,54,18
+c0_same_numeric_cap,default,72,0,0
+c0_same_numeric_cap,miscoverage,15,52,5
+c1_development_mean,payoff,28,40,4
+c1_development_mean,default,3,35,34
+c1_development_mean,miscoverage,3,24,45
+c2_contemporaneous,payoff,35,31,6
+c2_contemporaneous,default,7,58,7
+c2_contemporaneous,miscoverage,5,20,47

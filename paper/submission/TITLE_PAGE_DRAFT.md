@@ -1,63 +1,55 @@
 # IJDS Title Page Draft
 
-**Do not include this file in the anonymous reviewer packet.** It contains
-author identity and contact fields by design and belongs only in the separate
-ScholarOne/INFORMS title-page surface.
+Upload separately from the double-anonymous manuscript.
 
-Upload it only as the separate title page requested by ScholarOne/INFORMS.
+## Title
 
-## Manuscript Title
+CRPTO: An Identification Audit of Binary Conformal Credit Portfolio Optimization
 
-CRPTO: A Calibration-Selected Conformal Guardrail for Credit Portfolios
+## Running Title
+
+Binary Conformal Portfolio Audit
 
 ## Keywords
 
-conformal prediction; predict-then-optimize; credit risk; portfolio
-optimization; calibration; reproducible data science
+conformal prediction; predict-then-optimize; comparator design; credit risk;
+portfolio selection; temporal transport; partial identification
 
 ## Author
 
-Carlos Alfredo Vergara Rojas
+**Author input required in the private ScholarOne copy.** Do not place author
+identity in this tracked template.
 
 ## Affiliation
 
-Not listed in this repository. Complete in ScholarOne before upload, using the
-current institutional affiliation exactly as it should appear in the submission
-system.
+**Author input required:** enter the current institutional affiliation exactly
+as it should appear in the publication record. Do not infer it from an old
+profile or thesis record.
 
 ## Corresponding Author
 
-Carlos Alfredo Vergara Rojas
+**Author input required in the private ScholarOne copy:** full name, current
+email, postal address if requested, and ORCID. The submitting author must
+provide an ORCID under the current IJDS instructions.
 
-Email: cavr94@gmail.com
+## Declarations
 
-ORCID: Not listed in this repository; complete in ScholarOne if applicable.
+- Funding: The author received no specific funding for this work.
+- Conflicts of interest: The author declares no conflicts of interest.
+- Acknowledgements: None in the initial submission unless a non-anonymous
+  acknowledgement is required by the editor.
+- Data and code: The official IJDS disclosure form will describe the staged
+  release of source code, environment locks, DVC metadata, derived evidence,
+  and raw-data acquisition instructions.
+- Generative AI: OpenAI Codex assisted with code review and refactoring, test
+  scaffolding, literature triage and summarization,
+  consistency checks, and language editing. It was not treated as evidence or
+  an author. The author verified all primary sources, analyses, citations,
+  numbers, code, claims, and prose and accepts full responsibility.
 
-## Acknowledgements
+## Handling
 
-None for the initial double-anonymous submission. Any acknowledgements should
-remain outside the anonymous manuscript and supplement.
-
-## Funding
-
-The author received no specific funding for this work.
-
-## Conflicts of Interest
-
-The author declares no conflicts of interest.
-
-## Data and Code Disclosure Summary
-
-The manuscript includes numerical and computational work. The author will
-complete the IJDS Data and Code Disclosure Form at submission and, if the paper
-is accepted, provide the code, manuscript sources, reproducibility commands,
-artifact metadata, and data-access instructions described in
-`REPRODUCIBILITY_PACKAGE.md` and `RAW_DATA_SOURCE_NOTES.md`.
-
-## Double-Anonymous Handling
-
-- Do not include this file in reviewer-facing materials.
-- Keep public repository, DVC, MLflow, DagsHub, personal, affiliation, and
-  acknowledgement details out of `CRPTO_ijds_submission.tex`,
-  `CRPTO_ijds.qmd`, and `supplement_ijds.qmd`.
-- Use third-person citations for any author-identifying prior work, if added.
+Create `TITLE_PAGE_PRIVATE.md` locally for the completed upload; that filename
+is ignored by Git. Do not merge the private title page into the reviewer-facing
+PDF. Reconcile title, running title, keywords, author spelling, email, ORCID,
+and declarations against the final ScholarOne proof before submission.

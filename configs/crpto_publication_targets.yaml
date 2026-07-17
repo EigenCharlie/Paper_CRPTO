@@ -1,6 +1,6 @@
-version: "2026-07-09"
+version: "2026-07-15"
 project: paper-crpto
-decision_status: active
+decision_status: prefreeze_active
 
 primary_target:
   id: informs_ijds
@@ -9,232 +9,168 @@ primary_target:
   publisher: INFORMS
   manuscript_source: paper/CRPTO_ijds.qmd
   supplement_source: paper/supplement_ijds.qmd
+  official_tex_source: paper/submission/CRPTO_ijds_submission.tex
   template_family: "INFORMS IJDS LaTeX"
-  template_note: "Use the official INFORMS-IJDS-Template.tex when producing the submission PDF."
   official_urls:
     submission_guidelines: "https://pubsonline.informs.org/page/ijds/submission-guidelines"
     data_code_policy: "https://pubsonline.informs.org/page/ijds/data-and-code-disclosure-policy"
+    reviewer_guidelines: "https://pubsonline.informs.org/page/ijds/reviewer-guidelines"
+    latex_style_files: "https://pubsonline.informs.org/authorportal/latex-style-files"
   constraints:
     initial_submission_pages: 25
-    page_limit_excludes:
-      - references
-      - appendices
+    page_limit_excludes: [references, appendices]
     online_supplement: separate_file
     review_model: double_anonymous
-    anonymity_start_date: "2025-01-01"
     submission_file: pdf_from_ijds_latex_template
-    data_code_disclosure: required_at_submission_acknowledgment
-    accepted_paper_reproducibility: data_code_required_unless_exempt
-  crpto_fit:
-    - "Decision-focused data science with auditable reproducibility."
-    - "DVC/DagsHub/MLflow companion already matches data/code disclosure expectations."
-    - "25-page body encourages compression of the current Quarto dossier."
-  required_before_submission:
-    - "Create anonymized IJDS PDF from paper/CRPTO_ijds.qmd."
-    - "Create anonymized online supplement from paper/supplement_ijds.qmd."
-    - "Remove author-identifying GitHub/DagsHub URLs from the anonymous PDF unless policy allows non-anonymous companion disclosure."
-    - "Freeze a release tag and reproducibility bundle after anonymity decision."
-  current_paper_scope:
-    include:
-      - "Exact 90% conformal replay plus a November-selected 3x3 linear policy grid under deterministic endpoint cap B_u<=0.28."
-      - "Outcome-free December selector replay and independent decision audit showing that policy stability is not selected-set coverage validity."
-      - "One interpretable policy, q=(p+u)/2 with tau=0.17, and a matched point-PD comparator."
-      - "Frozen upstream PD/calibration/conformal chain and historical pool93 frontier retained only as provenance."
-      - "A3--A34 as supporting diagnostics and A35--A40 as the active exact-alpha/selector/evaluation bundle."
-      - "Regret-auditability frontier as the body-level SPO+/CRPTO trade-off."
-      - "OCE/CVaR, robust satisficing, external replications, and SPO+ as diagnostics or comparators, not additional CRPTO methods."
-      - "Cluster-aware dependence caveat/proposition in the theory supplement."
-      - "Prosper/Freddie external economic replication without reopening the Lending Club champion."
-      - "Quarto/DVC/DagsHub/MLflow companion after anonymity handling."
-    out_of_scope_method_extensions:
-      - "OCE/CVaR as an optimized portfolio objective."
-      - "Multi-distribution or online conformal prediction as the promoted conformal layer."
-      - "Online DFL, SPO+ + conformal hybrid training, or causal CRPTO."
-      - "Multi-period portfolio, production dashboard, field trial, or package extraction."
+    data_code_disclosure: required
 
-journal_strengthening_pack:
-  stance: "Selected former P2/P3 ideas are included as current paper/journal diagnostics or framing, while method-changing variants remain backlog."
-  include_in_current_submission:
-    regret_auditability_frontier:
-      status: include_body
-      role: "Central trade-off: SPO+ wins regret, CRPTO buys coverage, exact funded-set control and auditability."
-      artifacts:
-        - reports/crpto/tables/crpto_tableA19_regret_auditability_frontier.csv
-        - reports/crpto/figures/crpto_fig15_regret_auditability_frontier.png
-      requires_new_run: false
-    tail_risk_oce_cvar_diagnostic:
-      status: include_supplement
-      role: "Legacy OCE/CVaR sensitivity retained in the supplement; it does not select or redefine the active linear policy."
-      artifacts:
-        - reports/crpto/tables/crpto_tableA12_tail_risk_oce_cvar.csv
-        - reports/crpto/tables/crpto_tableA20_tail_satisficing_challenger_audit.csv
-      requires_new_run: false
-    exact_alpha_calibration_selected_policy:
-      status: include_body_and_supplement
-      role: "Active IJDS evidence: exact alpha replay, split nine-policy selector/audit, temporal/funded-set audits, month-cluster bootstrap, and matched comparisons."
-      artifacts:
-        - reports/crpto/tables/crpto_tableA35_exact_alpha_grid.csv
-        - reports/crpto/tables/crpto_tableA36_calibration_policy_selector.csv
-        - reports/crpto/tables/crpto_tableA37_calibration_selected_temporal_evaluation.csv
-        - reports/crpto/tables/crpto_tableA38_calibration_selected_grade_audit.csv
-        - reports/crpto/tables/crpto_tableA39_calibration_selected_bootstrap.csv
-        - reports/crpto/tables/crpto_tableA40_calibration_selected_point_baseline.csv
-        - models/experiments/champion_reopen/champion-reopen-2026-06-19__pool93__ijds-calibration-selected-endpoint28-v7/portfolio/ijds_policy_governance.json
-      requires_new_run: false
-    matched_point_pd_baseline:
-      status: include_body_and_supplement
-      role: "A40 matched Lending Club baseline: same candidates, tau=0.17 and operating constraints; point PD replaces the conformal guardrail."
-      artifacts:
-        - reports/crpto/tables/crpto_tableA40_calibration_selected_point_baseline.csv
-        - reports/crpto/tables/crpto_tableA40_calibration_selected_point_baseline.tex
-        - models/experiments/champion_reopen/champion-reopen-2026-06-19__pool93__ijds-calibration-selected-endpoint28-v7/portfolio/ijds_policy_governance.json
-      requires_new_run: false
-    robust_satisficing_margins:
-      status: include_supplement_or_short_body
-      role: "OR/committee margins for return, V, Gamma_CP, realized risk-tolerance excess and robust-region pass."
-      artifacts:
-        - reports/crpto/tables/crpto_tableA13_satisficing_margins.csv
-      requires_new_run: false
-    dependence_aware_bound:
-      status: include_theory_appendix_or_caveat
-      role: "Cluster-aware conditional tightening statement; Markov remains the main distribution-free bound."
-      artifacts:
-        - reports/crpto/tables/crpto_tableA14_dependency_cluster_diagnostics.csv
-        - reports/crpto/tables/crpto_tableA21_cluster_bound_tightening.csv
-        - docs/research/crpto_conditional_tightening_appendix_2026-05-04.md
-      requires_new_run: false
-    tail_satisficing_challenger_audit:
-      status: include_supplement
-      role: "Journal-only legacy audit; it is not a selector for the active 50/50 linear policy."
-      artifacts:
-        - reports/crpto/tables/crpto_tableA20_tail_satisficing_challenger_audit.csv
-        - models/crpto_tail_satisficing_audit_status.json
-      requires_new_run: false
-    tail_constrained_reoptimization:
-      status: include_supplement
-      role: "CVaR/OCE tail-constrained re-optimization over the frozen robust-region policies; challenger evidence only."
-      artifacts:
-        - reports/crpto/tables/crpto_tableA22_tail_constrained_reoptimization.csv
-        - models/crpto_tail_constrained_reopt_status.json
-      requires_new_run: false
-    distribution_online_diagnostics:
-      status: include_supplement
-      role: "Multi-distribution and online ACI diagnostics over frozen Lending Club conformal intervals."
-      artifacts:
-        - reports/crpto/tables/crpto_tableA23_multidistribution_robustness.csv
-        - reports/crpto/tables/crpto_tableA24_online_conformal_stability.csv
-        - models/crpto_distribution_robustness_status.json
-      requires_new_run: false
-    multidataset_external_replication:
-      status: include_supplement_or_short_body
-      role: "External economic replication on Prosper and Freddie/Mendeley; it supports transfer of the recipe without replacing the Lending Club certificate."
-      artifacts:
-        - reports/crpto/tables/crpto_tableA25_external_replication_gate.csv
-        - reports/crpto/tables/crpto_tableA26_external_candidate_sensitivity.csv
-        - reports/crpto/tables/crpto_tableA27_freddie_horizon_sensitivity.csv
-        - reports/crpto/tables/crpto_tableA28_external_lp_exhaustiveness.csv
-        - reports/crpto/tables/crpto_tableA29_freddie_mondrian_sparse_group_audit.csv
-        - reports/crpto/tables/crpto_tableA30_external_metric_intervals.csv
-        - reports/crpto/tables/crpto_tableA31_external_subperiod_metrics.csv
-        - reports/crpto/tables/crpto_tableA32_prosper_default_definition_sensitivity.csv
-        - reports/crpto/tables/crpto_tableA33_freddie_segment_sensitivity.csv
-        - reports/crpto/figures/crpto_fig22_external_replication.png
-        - reports/crpto/figures/crpto_fig23_external_candidate_sensitivity.png
-        - reports/crpto/figures/crpto_fig24_freddie_all_candidate_certificate.png
-        - models/crpto_multidataset_external_status.json
-      requires_new_run: false
-  backlog_not_blocking:
-    tail_satisficing_objective_scaffold:
-      status: research_scaffold_not_champion
-      role: "Reusable OCE/CVaR/satisficing scoring layer for a future isolated search or sensitivity experiment."
-      config: configs/crpto_tail_satisficing_objective.yaml
-      module: src/optimization/tail_satisficing_objective.py
-      requires_new_dataset: false
-      requires_new_run: true
-    prospective_multidataset_validation:
-      status: future_protocol_not_blocker
-      role: "Prospective/live external validation beyond the static Prosper/Freddie replications."
-      requires_new_dataset: true
-      requires_new_run: true
-  still_out_of_scope:
-    - "OCE/CVaR as a promoted optimized portfolio objective or hard search constraint for the current champion."
-    - "Multi-distribution conformal prediction as the promoted conformal layer."
-    - "Online conformal recalibration, online DFL, SPO+ + conformal hybrid training or causal CRPTO."
-    - "Production monitoring, package extraction, field trial or multi-period portfolio."
+active_scientific_contract:
+  claim_registry: docs/research/active_claims_2026-07-14.md
+  claim_ledger: configs/ijds_claim_ledger.yaml
+  source_registry: configs/ijds_active_evidence_sources.yaml
+  evidence_manifest: reports/crpto/ijds_binary_geometry_frontier_v4_evidence.json
+  lineage_and_dvc_authority: configs/ijds_active_evidence_sources.yaml
+
+  active_code_surface:
+    source_roots:
+      - src
+    paper_pipeline:
+      - scripts/build_ijds_binary_geometry_frontier_v4_evidence.py
+      - scripts/check_publication_integrity.py
+      - scripts/build_ijds_submission_tex.py
+      - scripts/compile_ijds_submission.py
+      - scripts/inspect_ijds_pdfs.py
+      - scripts/render_submission_pdf_previews.py
+    protocol_entrypoints:
+      - scripts/experiments/run_ijds_binary_geometry_frontier_v4.py
+      - scripts/experiments/run_ijds_normalized_objective_frontier.py
+      - scripts/experiments/run_ijds_normalized_objective_frontier_v2.py
+      - scripts/experiments/run_ijds_raw_data_audit.py
+      - scripts/experiments/run_ijds_credit_risk_controls.py
+      - scripts/experiments/run_ijds_label_lag_sensitivity.py
+      - scripts/experiments/run_ijds_fit_label_completion_sensitivity.py
+      - scripts/experiments/run_ijds_endpoint_availability_sensitivity.py
+      - scripts/experiments/run_ijds_missingness_sensitivity.py
+      - scripts/experiments/run_ijds_portfolio_structure_sensitivity.py
+      - scripts/experiments/run_ijds_allocation_granularity_sensitivity.py
+      - scripts/experiments/run_ijds_policy_support_tie_audit.py
+    support_tools:
+      - scripts/build_ijds_policy_support_tie_evidence.py
+      - scripts/manage_ijds_dvc_capsule.py
+      - scripts/run_complexity_report.py
+      - scripts/run_ty_advisory.py
+    historical_execution_in_active_capsule: false
+
+  sealed_compatibility_capsule:
+    purpose: >-
+      Preserve path-bound hashes and the historical DVC graph without exposing
+      either as current evidence, an executable workflow, or manuscript history.
+    authorities:
+      - EXTRACTION_MANIFEST.json
+      - dvc.yaml
+      - dvc.lock
+    execution_allowed: false
+    paper_evidence_allowed: false
+
+  previously_inspected_retrospective_archive: true
+  archive_is_verified_point_in_time_snapshot: false
+  endpoint_cutoff: "2020-09-30"
+  confirmatory: false
+  prospective: false
+  causal: false
+  policy_winner_allowed: false
+
+  method:
+    prediction: >-
+      CatBoost/Platt is the only portfolio score. Numeric logistic, monotonic
+      CatBoost, platform-signal WOE/IV, and pricing-excluded application WOE/IV
+      are coverage-only controls and cannot be selected from OOT outcomes.
+    conformal: >-
+      Five score strata are fixed from 2011 scores. Exact binary-outcome
+      residual ranks are reported for all eight eligible six-month windows;
+      an observed-only fit and three declared completion rules stress labels
+      unavailable at fit time.
+    decision: >-
+      Gamma {0,.25,.50,.75,1} is evaluated under objective-matched and
+      normalized-score rulers at {.25,.50,.75}; gamma 1 minus gamma 0 is the
+      frozen endpoint contrast, with no selector.
+    comparator: >-
+      C0, C1, C2, exact development-admissible support, and broad [0.05,0.12]
+      support are outcome-free diagnostics. HiGHS basis endpoints give exact
+      sharp envelopes on each declared point-cap interval.
+    endpoint: >-
+      Terminal status is conservatively reconstructed as observable by the
+      cutoff; later terminal statuses and nonterminal rows remain unresolved.
+    payoff: >-
+      Plug-in (1-p)r-p*LGD and status-indexed standardized proxy
+      (1-Y)r-Y*LGD; neither is a cash-flow return, IRR, NPV, or welfare measure.
+    allocation_granularity: >-
+      The portfolio is a continuous linear-program relaxation. A deterministic
+      USD 25 floor-with-cash diagnostic measures implementation granularity but
+      does not define or optimize an integer policy.
+
+  required_artifacts:
+    - reports/crpto/ijds_binary_geometry_frontier_v4_evidence.json
+    - reports/crpto/ijds_policy_support_tie_evidence.json
+    - reports/crpto/tables/crpto_ijds_comparator_support_domain.csv
+    - reports/crpto/tables/crpto_ijds_gamma_endpoint_audit.csv
+    - reports/crpto/tables/crpto_ijds_policy_family_domain.csv
+    - reports/crpto/tables/crpto_ijds_v4_table1_coverage_windows.csv
+    - reports/crpto/tables/crpto_ijds_v4_table2_phase_transition.csv
+    - reports/crpto/tables/crpto_ijds_v4_table3_development_envelopes.csv
+    - reports/crpto/tables/crpto_ijds_v4_table4_direction_summary.csv
+    - reports/crpto/tables/crpto_ijds_v4_table5_two_ruler_tracks.csv
+    - reports/crpto/tables/crpto_ijds_v4_table6_credit_controls.csv
+    - reports/crpto/tables/crpto_ijds_v4_tableS1_named_comparators.csv
+    - reports/crpto/tables/crpto_ijds_v4_tableS2_credit_prediction_metrics.csv
+    - reports/crpto/tables/crpto_ijds_v4_tableS3_woe_iv_psi.csv
+    - reports/crpto/tables/crpto_ijds_v4_tableS4_score_psi.csv
+    - reports/crpto/tables/crpto_ijds_v4_tableS5_label_lag_sensitivity.csv
+    - reports/crpto/tables/crpto_ijds_v4_tableS6_endpoint_availability_sensitivity.csv
+    - reports/crpto/tables/crpto_ijds_v4_tableS7_portfolio_structure_sensitivity.csv
+    - reports/crpto/tables/crpto_ijds_v4_tableS8_endpoint_resolution.csv
+    - reports/crpto/tables/crpto_ijds_v4_tableS9_missingness_encoding_sensitivity.csv
+    - reports/crpto/tables/crpto_ijds_v4_tableS10_rolling_origin_recurrence.csv
+    - reports/crpto/tables/crpto_ijds_v4_tableS11_fit_label_completion.csv
+    - reports/crpto/tables/crpto_ijds_v4_tableS12_allocation_granularity.csv
+    - reports/crpto/figures/crpto_ijds_v4_fig1_coverage.pdf
+    - reports/crpto/figures/crpto_ijds_v4_fig1_coverage.png
+    - reports/crpto/figures/crpto_ijds_v4_fig2_phase_transition.pdf
+    - reports/crpto/figures/crpto_ijds_v4_fig2_phase_transition.png
+    - reports/crpto/figures/crpto_ijds_v4_fig3_envelopes.pdf
+    - reports/crpto/figures/crpto_ijds_v4_fig3_envelopes.png
+
+claim_boundaries:
+  required:
+    - "Observed binary-endpoint residual interval, not a latent-PD confidence interval."
+    - "Five coverage controls, one portfolio learner, and no OOT model winner."
+    - "Overlapping windows and repeated allocations are not independent replications."
+    - "Sharp bounds are partial identification, not confidence intervals."
+    - "Retrospective contrasts are not causal, prospective, or confirmatory."
+    - "The archive is not a verified point-in-time snapshot."
+    - "The status-indexed payoff proxy is not cash-flow return, NPV, IRR, or welfare."
+    - "Fit-label scenarios are declared stresses, not sharp bounds over all assignments."
+    - "USD 25 floor rounding is a diagnostic, not an optimized integer policy."
+  forbidden:
+    - "Selected model, gamma, ruler, coordinate, cap, comparator, or policy."
+    - "Universal portfolio direction or selected-set conformal guarantee."
+    - "Markov, deployment, causal, or fair-lending certificate."
 
 secondary_targets:
   - id: ejor
     role: secondary
     name: "European Journal of Operational Research"
     publisher: Elsevier
-    template_family: "Elsevier elsarticle"
-    official_urls:
-      journal: "https://www.sciencedirect.com/journal/european-journal-of-operational-research"
-    crpto_fit:
-      - "Operational research methodology plus decision-making practice."
-      - "Strong fit if the manuscript emphasizes robust optimization and applied decision value."
-    pivot_trigger:
-      - "IJDS desk-rejects as too OR/methodological."
-      - "Internal draft reads more like robust optimization than data science."
-  - id: informs_ijoo
-    role: stretch_theory
-    name: "INFORMS Journal on Optimization"
-    publisher: INFORMS
-    template_family: "INFORMS optimization journal style"
-    official_urls:
-      journal: "https://pubsonline.informs.org/journal/ijoo"
-    crpto_fit:
-      - "Good stretch only if the dependence-aware theory or optimization contribution becomes central."
-    pivot_trigger:
-      - "A stronger theorem, algorithm, or satisficing/robust optimization formulation is added."
-  - id: management_science
-    role: stretch_managerial
-    name: "Management Science"
-    publisher: INFORMS
-    template_family: "Management Science LaTeX"
-    official_urls:
-      submission_guidelines: "https://pubsonline.informs.org/page/mnsc/submission-guidelines"
-    crpto_fit:
-      - "Possible stretch if managerial decision value and governance become the dominant story."
-    pivot_trigger:
-      - "The paper gains broader managerial insight beyond the Lending Club experiment."
-  - id: operations_research
-    role: stretch_or
-    name: "Operations Research"
-    publisher: INFORMS
-    template_family: "INFORMS Operations Research style"
-    official_urls:
-      submission_guidelines: "https://pubsonline.informs.org/page/opre/submission-guidelines"
-    crpto_fit:
-      - "Possible stretch if the OR contribution is stronger than the empirical pipeline."
-    pivot_trigger:
-      - "The paper can be written as a broad OR method with concise proofs and code/data disclosure."
   - id: decision_support_systems
     role: applied_fallback
     name: "Decision Support Systems"
     publisher: Elsevier
-    template_family: "Elsevier article template"
-    official_urls:
-      journal: "https://www.sciencedirect.com/journal/decision-support-systems"
-    crpto_fit:
-      - "Applied fallback if the decision-support framing dominates the methodological framing."
-  - id: expert_systems_with_applications
-    role: applied_fallback
-    name: "Expert Systems with Applications"
-    publisher: Elsevier
-    template_family: "Elsevier article template"
-    official_urls:
-      journal: "https://www.sciencedirect.com/journal/expert-systems-with-applications"
-    crpto_fit:
-      - "Applied fallback if the manuscript is judged primarily as an intelligent risk system."
 
 current_decision:
   write_first_for: informs_ijds
-  target_submission_date: "2026-08-10"
   keep_second_ready_for: ejor
-  do_not_write_first_for:
-    - management_science
-    - operations_research
-    - informs_ijoo
-  reason: "CRPTO currently has the strongest fit as reproducible decision-focused data science with OR substance."
-  p2_p3_boundary: "P2/P3 are no longer a blanket exclusion: the journal strengthening pack enters as diagnostics, framing and theory caveat; method-changing extensions remain outside the submitted claim and are not acceptance criteria."
+  target_submission_date: not_fixed
+  freeze_rule: >-
+    Continue pre-freeze scientific, editorial, and reproducibility work. Do not
+    select on 2016--2017 outcomes. Submission freeze requires a separate
+    explicit decision.

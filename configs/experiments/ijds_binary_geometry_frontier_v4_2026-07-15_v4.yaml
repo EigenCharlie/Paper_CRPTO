@@ -1,0 +1,23 @@
+extends: "ijds_binary_geometry_frontier_v4_2026-07-14_v3.yaml"
+
+schema_version: "2026-07-15.3"
+protocol_tag: "protocol/ijds-binary-geometry-frontier-v4-2026-07-15-v4"
+run_tag: "ijds-binary-geometry-frontier-v4-2026-07-15-v4"
+
+protocol_lineage_files:
+  - "configs/experiments/ijds_fixed_taxonomy_c2_2026-07-11.yaml"
+  - "docs/research/ijds_fixed_taxonomy_c2_protocol_errata_2026-07-12.md"
+  - "configs/experiments/ijds_binary_geometry_frontier_v4_2026-07-12.yaml"
+  - "docs/research/ijds_binary_geometry_frontier_v4_protocol_2026-07-12.md"
+  - "docs/research/ijds_binary_geometry_frontier_v4_v2_recovery_2026-07-12.md"
+  - "docs/research/ijds_evaluation_endpoint_recovery_v3_protocol_2026-07-14.md"
+  - "docs/research/ijds_endpoint_reason_taxonomy_v4_protocol_2026-07-15.md"
+
+endpoint_reason_recovery:
+  status: "reason_taxonomy_only_no_scientific_metric_change"
+  require_exact_reference_column_equivalence: true
+  artifact_section: "artifacts"
+  reference_json:
+    path: "models/experiments/ijds_audit/ijds-binary-geometry-frontier-v4-2026-07-14-v3/binary_geometry_frontier_v4_summary.json"
+    bytes: 17794
+    sha256: "c05a6048fd6e259d53b5901b975a5970256bdd20901fdf236112e85930bafa5f"

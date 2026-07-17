@@ -15,6 +15,21 @@ DEFAULT_CUTOFF_DATE = "2018-01-01"
 CALIBRATION_FRACTION = 0.15  # fraction of train set for conformal calibration
 
 
+def require_observed_binary_target(df: pd.DataFrame) -> None:
+    """Reject implicit outcome-based filtering before model splits."""
+    if "default_flag" not in df.columns:
+        raise KeyError("Input data must contain default_flag.")
+    target = pd.to_numeric(df["default_flag"], errors="coerce")
+    unresolved = int(target.isna().sum())
+    if unresolved:
+        raise RuntimeError(
+            f"Input contains {unresolved:,} unresolved outcomes. Do not filter them by loan_status; "
+            "use a declared maturity/label-availability experiment instead."
+        )
+    if not set(target.astype(int).unique()).issubset({0, 1}):
+        raise ValueError("default_flag must be binary once label availability is established.")
+
+
 def _parse_mixed_date(series: pd.Series, *, primary_format: str | None = None) -> pd.Series:
     if primary_format:
         parsed = pd.to_datetime(series, format=primary_format, errors="coerce")
@@ -103,6 +118,7 @@ def main(
     """Run full prepare pipeline."""
     df = pd.read_parquet(input_path)
     df = parse_dates(df)
+    require_observed_binary_target(df)
     train, test = out_of_time_split(df, cutoff_date)
     proper_train, calibration = create_calibration_set(train)
     save_splits(proper_train, test, calibration, output_dir)

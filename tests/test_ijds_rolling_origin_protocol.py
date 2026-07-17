@@ -1,0 +1,103 @@
+from __future__ import annotations
+
+from pathlib import Path
+
+import pytest
+
+from src.ijds_audit.allocations import declared_menu_counts
+from src.ijds_audit.config import load_v4_config
+
+ROOT = Path(__file__).resolve().parents[1]
+CONFIGS = ROOT / "configs" / "experiments"
+
+
+@pytest.mark.parametrize(
+    ("origin", "cutoff", "development_end", "calibration_start", "primary_start"),
+    [
+        (2015, "2015-03-31", "2009-12-31", "2010-01-01", "2015-04"),
+        (2017, "2017-03-31", "2011-12-31", "2012-01-01", "2017-04"),
+    ],
+)
+def test_rolling_origin_configs_shift_the_complete_design(
+    origin: int,
+    cutoff: str,
+    development_end: str,
+    calibration_start: str,
+    primary_start: str,
+) -> None:
+    config = load_v4_config(CONFIGS / f"ijds_rolling_origin_{origin}_2026-07-12.yaml")
+    assert config["source"]["information_cutoff"] == cutoff
+    assert config["design"]["development_end"] == development_end
+    assert config["design"]["probability_calibration_start"] == calibration_start
+    assert config["design"]["primary_oot_start_month"] == primary_start
+    assert config["design"]["primary_oot_end_month"] == f"{origin}-06"
+    assert config["rolling_origin"]["origin_year"] == origin
+    assert config["rolling_origin"]["outcome_based_origin_selection"] is False
+    assert config.get("resume_outcome_free") is None
+    assert declared_menu_counts(config) == (11, 3)
+
+
+def test_rolling_origin_v4_imports_2017_freeze_and_uses_corrected_endpoint() -> None:
+    config = load_v4_config(CONFIGS / "ijds_rolling_origin_2017_2026-07-15_v4.yaml")
+    assert config["resume_outcome_free"]["source_run_tag"].endswith("2026-07-12-v2")
+    assert config["target"]["evaluation_outcome_contract"]["cutoff"] == "2020-09-30"
+    assert config["design"]["primary_oot_start_month"] == "2017-04"
+    assert config["design"]["primary_oot_end_month"] == "2017-06"
+    assert declared_menu_counts(config) == (11, 3)
+    assert config["protocol_tag"].endswith("2026-07-15-v4")
+
+
+def test_original_v4_retains_its_fifteen_month_primary_horizon() -> None:
+    config = load_v4_config(CONFIGS / "ijds_binary_geometry_frontier_v4_2026-07-12.yaml")
+    assert declared_menu_counts(config) == (11, 15)
+
+
+def test_window_validation_is_relative_to_declared_origin(tmp_path: Path) -> None:
+    source = CONFIGS / "ijds_rolling_origin_2015_2026-07-12.yaml"
+    payload = source.read_text(encoding="utf-8")
+    broken = payload.replace('start: "2011-02-01"', 'start: "2011-03-01"', 1)
+    path = tmp_path / "broken.yaml"
+    path.write_text(
+        broken.replace(
+            'extends: "ijds_binary_geometry_frontier_v4_2026-07-12.yaml"',
+            f'extends: "{(CONFIGS / "ijds_binary_geometry_frontier_v4_2026-07-12.yaml").as_posix()}"',
+        ),
+        encoding="utf-8",
+    )
+    with pytest.raises(ValueError, match="consecutive six-month window"):
+        load_v4_config(path)
+
+
+def test_chronology_validator_rejects_a_post_cutoff_primary_gap(tmp_path: Path) -> None:
+    source = CONFIGS / "ijds_rolling_origin_2017_2026-07-12.yaml"
+    payload = source.read_text(encoding="utf-8")
+    broken = payload.replace(
+        'primary_oot_start_month: "2017-04"',
+        'primary_oot_start_month: "2017-05"',
+    )
+    path = tmp_path / "broken.yaml"
+    path.write_text(
+        broken.replace(
+            'extends: "ijds_binary_geometry_frontier_v4_2026-07-12.yaml"',
+            f'extends: "{(CONFIGS / "ijds_binary_geometry_frontier_v4_2026-07-12.yaml").as_posix()}"',
+        ),
+        encoding="utf-8",
+    )
+    with pytest.raises(ValueError, match="information cutoff"):
+        load_v4_config(path)
+
+
+def test_rolling_origin_validator_rejects_an_asymmetric_training_origin(tmp_path: Path) -> None:
+    source = CONFIGS / "ijds_rolling_origin_2015_2026-07-12.yaml"
+    payload = source.read_text(encoding="utf-8")
+    broken = payload.replace("origin_year: 2015", "origin_year: 2014")
+    path = tmp_path / "broken.yaml"
+    path.write_text(
+        broken.replace(
+            'extends: "ijds_binary_geometry_frontier_v4_2026-07-12.yaml"',
+            f'extends: "{(CONFIGS / "ijds_binary_geometry_frontier_v4_2026-07-12.yaml").as_posix()}"',
+        ),
+        encoding="utf-8",
+    )
+    with pytest.raises(ValueError, match=r"asymmetric source\.information_cutoff"):
+        load_v4_config(path)

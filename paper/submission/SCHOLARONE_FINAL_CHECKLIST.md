@@ -1,79 +1,61 @@
 # ScholarOne Final Checklist
 
-Use only after the scientific content and official PDFs are frozen.
+Use only after an explicit submission-freeze decision. Until then this is a
+living closeout checklist, not evidence that the package is final.
+
+## Scientific Lock
+
+- [ ] Active claim registry is `docs/research/active_claims_2026-07-14.md`.
+- [ ] Evidence manifest, executable claim ledger, and source registry verify by hash.
+- [ ] Census is 376,890 candidates, 364,814 resolved, and 12,076 unresolved.
+- [ ] The five endpoint reasons sum exactly to the candidate, resolved, and unresolved totals.
+- [ ] All 40 five-model coverage upper bounds are below 0.90; largest 0.897726.
+- [ ] Objective-matched .25 is described as crossing zero, never as favorable.
+- [ ] Two-ruler, exact-support, fit-label-lag, endpoint-availability, and solver-stability limits are stated.
+- [ ] Endpoint lags 0/3/6/8/12 are complete, unselected, and the six-month slice reconciles to the active evaluation.
+- [ ] Fit-label and evaluation-endpoint timing are not described as a joint factorial sensitivity.
+- [ ] Missingness encodings and the second origin are bounded recurrences, not winners or independent validation.
+- [ ] Identification-width statements match the exact unresolved-row identity and the six reported tracks.
+- [ ] No learner, window, gamma, ruler, coordinate, cap, comparator, or policy is selected.
+- [ ] No selected-set, causal, prospective, confirmatory, deployment, Markov,
+      point-in-time-snapshot, cash-flow-return, or fair-lending claim appears.
 
 ## Files
 
-| File | Reviewer-facing | Local status |
-|---|:---:|---|
-| Anonymous manuscript PDF from `CRPTO_ijds_submission.tex` | Yes | Rebuild and recheck after every body edit. |
-| Anonymous supplement PDF | Yes | Render and visually inspect. |
-| Separate title page | No | Complete from `TITLE_PAGE_DRAFT.md`. |
-| Data and Code Disclosure Form | Editor/system | Finalize from the draft. |
-| Cover letter | Editor | Finalize from `COVER_LETTER_AND_DISCLOSURE.md`. |
-| Reproducibility note/archive | Editor/system | Sanitize identity, paths, and remotes. |
+- [ ] Anonymous official IJDS PDF.
+- [ ] Anonymous online supplement PDF.
+- [ ] Separate title-page metadata form.
+- [ ] Optional cover letter and generative-AI disclosure, if uploaded.
+- [ ] Data and code disclosure form.
+- [ ] Editor-only reproducibility crosswalk, if requested.
+- [ ] Sanitized reproducibility capsule, if requested.
 
-## Official Build
+## Build and Numerical QA
 
-```powershell
-just paper-submission-official
-```
+- [ ] `just ijds-active-check` passes.
+- [ ] `just validate-champion-strict`, `just type-check`, and
+      `just type-check-fast` pass.
+- [ ] Full active tests, Ruff, mypy, and ty pass.
+- [ ] Generated TeX is current with QMD.
+- [ ] `.blg` has no warnings.
+- [ ] `.log` has no undefined citations, labels, or rerun requests.
+- [ ] Pre-reference body is within the IJDS page limit.
+- [ ] Abstract is at most 300 words and keywords are within 1--10.
+- [ ] Every official, body-preview, and supplement page is visually inspected.
+- [ ] No clipping, overlap, blank page, broken table, missing glyph, or tiny figure text.
 
-The wrapper uses the direct `latexmk.pl` payload on Windows and falls back to the verified
-`pdflatex -> bibtex -> pdflatex -> pdflatex` loop. Accept only when:
+## Anonymity and Availability
 
-- `.blg` has zero warnings;
-- `.log` has no undefined citation/reference warnings;
-- body page count satisfies the IJDS 25-page rule;
-- figures and tables fit;
-- PDF metadata and visible content remain anonymous.
+- [ ] Reviewer files contain no author name, email, local path, repository URL,
+      protocol tag, commit, hash, DVC coordinate, or acknowledgments.
+- [ ] Public/searchable code does not create an identity leak in reviewer files.
+- [ ] Raw-data acquisition and hash instructions are accurate.
+- [ ] No secrets or `.dvc/config.local` contents are included.
 
-Current local build (2026-07-09): 13 pages total, with References beginning on
-page 11; citation/reference scans are clean. Recount after every substantive
-TeX edit.
+## Final ScholarOne Proof
 
-## Local Gates
-
-```powershell
-just ijds-evidence
-uv run pytest tests/test_ijds_active_claim_sync.py -q
-just publication-integrity
-just lint
-just type-check
-just type-advisory-full
-just smoke
-just validate-champion
-just paper-submission
-just paper-submission-official
-uv run dvc status --no-updates
-```
-
-`dvc status` is a report, not permission to rerun protected stages. Do not
-repair paper-stage drift by overwriting the frozen upstream chain.
-
-## Anonymous PDF QA
-
-- No author names, affiliations, acknowledgements, repository ownership,
-  personal URLs, local usernames, or private remotes.
-- Correct title, abstract, keywords, section order, and supplement designation.
-- References use the official INFORMS bibliography style.
-- No missing glyphs, clipped figures, overflow tables, orphan headings, or
-  unreadably small text.
-- Active numbers match A35--A40 and governance.
-- Temporal reversals and retrospective-design caveat remain visible.
-- OCE/CVaR, SPO+, and external datasets remain diagnostics, not active methods.
-
-## ScholarOne Proof Go/No-Go
-
-Open the ScholarOne-generated proof, not only the local files. Submission is
-**NO-GO** if any of these occur:
-
-- title page or author identity leaks into reviewer files;
-- body/supplement order is wrong;
-- figure, equation, table, or bibliography is missing or clipped;
-- data/code answers differ from the cover letter;
-- page count or anonymous-review option is wrong;
-- uploaded PDF differs from the locally validated build.
-
-Repair locally, rerun the gates, re-upload, and inspect the new proof before
-final submission.
+- [ ] Submitting-author ORCID iD is present in ScholarOne.
+- [ ] Compare uploaded proof page by page with the validated local PDFs.
+- [ ] Confirm title, abstract, keywords, equations, references, and supplement links.
+- [ ] Record final page counts and artifact hashes.
+- [ ] Create the immutable submission tag only after user approval.

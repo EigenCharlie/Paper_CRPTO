@@ -7,88 +7,113 @@
 ::: {.whole-game-intro}
 <span class="whole-game-question">Pregunta central</span>
 
-¿Qué ganamos cuando la incertidumbre predictiva deja de ser un diagnóstico y se vuelve una entrada explícita del optimizador? Este libro independiente abre el dossier CRPTO alrededor de esa tesis y conserva tanto el material paper-ready como la evidencia extendida para journal, apéndices y respuestas a reviewers.
+¿Qué puede identificarse cuando una puntuación de riesgo, un intervalo conformal
+binario y un optimizador mensual se conectan bajo transporte temporal,
+resultados censurados y comparadores que no comparten una escala natural?
 :::
 
 ::: {.callout-note .mini-abstract}
 ## Mini-abstract
-**Problema**: la mayoría de pipelines de crédito optimizan con PD puntual y tratan la incertidumbre como diagnóstico tardío.
-**Método**: PD calibrada, bandas conformales Mondrian y optimización robusta sobre el conjunto resultante.
-**Hallazgo**: el resultado clave no es un AUC aislado, sino la posibilidad de cuantificar explícitamente el trade-off entre retorno, cobertura, robustez y auditabilidad.
+**Problema**: una garantía predictiva no se hereda automáticamente por la
+decisión que selecciona un portafolio, y copiar el mismo umbral entre dos scores
+no fija la misma oportunidad de inversión.
+
+**Método**: CRPTO audita un universo exhaustivo y status-independent de 640,543
+préstamos a 36 meses, cinco especificaciones predictivas, ocho ventanas
+residuales completas, dos reglas outcome-free de comparación, resultados no
+resueltos mediante bounds sharp, soporte exacto de caps y una sensibilidad
+completa de 36 escenarios de estructura de portafolio.
+
+**Hallazgo**: la cobertura candidata no transporta en las 40 celdas declaradas;
+la geometría residual binaria cambia cerca del umbral de prevalencia; y la
+dirección downstream depende del ruler, la coordenada y el soporte del
+comparador. Cada escenario estructural conserva celdas adversas de default y
+miscoverage, pero ninguno es uniformemente favorable o adverso. No se promueve
+una policy, escenario ni modelo ganador.
 :::
 
-![Las seis etapas del pipeline CRPTO --- datos y split temporal, PD calibrada, conformal Mondrian, conjunto de incertidumbre, LP robusto y política promovida con bound exacto --- anotadas con métricas del cierre IJDS pool93: retorno $184,832.48, $V=0.035350$, $\Gamma_{\text{CP}}=0.162616$ y frontera finita A35/A36.](assets/figures/editorial/diagrama-crpto.png){#fig-crpto-overview fig-alt="Diagrama maestro del pipeline CRPTO en seis etapas desde datos hasta política promovida auditable."}
+```{mermaid}
+%%| label: fig-crpto-overview
+%%| fig-cap: "Arquitectura activa de la auditoría CRPTO."
+flowchart LR
+  A["Archivo crudo: 2,925,493 filas"] --> B["Diseño elegible: 640,543 préstamos"]
+  B --> C["Cinco scores de cobertura"]
+  C --> D["Ocho recetas conformales"]
+  D --> E["LP mensual con CatBoost primario"]
+  E --> F["Dos rulers y tres coordenadas"]
+  F --> G["Endpoint reconstruido y bounds sharp"]
+  G --> H["36 escenarios estructurales"]
+  H --> I["Soporte exacto y límites de claim"]
+```
 
-La superficie IJDS activa promueve el punto pool93 body/default: retorno
-`$184,832.48`, `V = 0.035350`, `Gamma_CP = 0.162616`, `Gamma_res = 0.073584`,
-umbral Markov `0.345084`, `alpha_grid_pass = 8/8` y frontera finita A35. A40
-cuantifica el trade-off contra point-PD. Los cierres anteriores quedan
-como procedencia histórica, no como baseline operativo vigente.
+::: {.callout-important}
+## Contrato activo
+La única narrativa paper-facing está en `paper/CRPTO_ijds.qmd` y
+`paper/supplement_ijds.qmd`. La autoridad numérica es
+`reports/crpto/ijds_binary_geometry_frontier_v4_evidence.json`, cuyos insumos
+están hash-locked por `configs/ijds_active_evidence_sources.yaml`; el alcance y
+los límites cualitativos se verifican con `configs/ijds_claim_ledger.yaml`.
 
-::: {.callout-warning}
-Algunos capítulos largos de tesis conservan análisis históricos del champion
-anterior para trazabilidad. La fuente paper-facing actual es
-`paper/CRPTO_ijds.qmd`, su suplemento y las tablas A35--A40.
+Los materiales `pool93`, `compact-v7`, selected-policy y A1--A40 se conservan
+solo como procedencia histórica. No prueban los claims del manuscrito activo.
 :::
 
 ## Mapa editorial
 
-Este libro es el companion vivo del paper y de la tesis. No compite con el
-cuerpo IJDS: lo respalda. Conserva explicaciones largas, decisiones
-metodológicas, vínculos con artefactos, preguntas de reviewer, tablas y figuras
-que el manuscrito comprime en una historia corta y que la tesis desarrolla como
-superconjunto académico.
-
-| Superficie | Qué defiende | Evidencia visible |
+| Superficie | Función actual | Evidencia visible |
 |---|---|---|
-| Paper IJDS | El claim estrecho: una PD calibrada congelada puede convertirse en una decisión robusta y auditable mediante conformal prediction. | Teoría mínima, Figura 1, frontera policy-aware A35, baseline A40, regret-auditability y réplica externa compacta. |
-| Online supplement | Que el resultado no es frágil ni cherry-picked. | A3--A40, ablations, stress tests, MRM/fairness, funded-set audit, SPO+, tail risk, diagnósticos multi-distribución/online y Prosper/Freddie. |
-| Tesis | El superconjunto académico y operativo del paper. | Fundamentos, arquitectura reproducible, gobernanza, trazabilidad, réplica multidataset, bibliografía extendida y future work controlado. |
-| Reproducibilidad | Que las cifras vienen de artefactos versionados, no de edición manual. | DVC, manifests, tablas/figuras regenerables, tests de sincronía y guardrails de champion congelado. |
+| Paper IJDS | Auditoría de identificación en la interfaz ML, conformal y optimización. | Universo status-independent, cobertura completa, mecanismo de geometría binaria, dos rulers y exact support. |
+| Online supplement | Pruebas, censos completos, sensibilidades temporal y estructural, trazabilidad y fronteras de interpretación. | Apéndices A--I, endpoint reconstruido, WOE/IV, monotonicidad, PSI, label lag, 36 escenarios y solver audit. |
+| Libro | Companion pedagógico del manuscrito activo. | Blueprint, claims, teoría, límites y defensa ante reviewers. |
+| Reproducibilidad | Une cada afirmación activa con una fuente verificable. | Registry, DVC, evidence manifest, tests de publicación y TeX generado. |
 
 : Mapa de superficies del dossier CRPTO.
 
-## Contrato de lectura
+## Cómo leer el resultado
 
-La lectura correcta es de claim a evidencia. El paper hereda las afirmaciones y
-las tablas esenciales; el libro preserva el razonamiento, las cautelas y la
-trazabilidad. Cuando una explicación es demasiado larga para IJDS, no se borra:
-se mantiene aquí como soporte de tesis, supplement o respuesta a reviewer.
+1. La PD y los intervalos conformales siguen siendo componentes del sistema,
+   pero su validez debe examinarse antes de atribuir propiedades al funded set.
+2. El optimizador sigue siendo central: revela que score, ruler y coordenada
+   definen conjuntamente el contrafactual.
+3. Un resultado negativo de transporte o de identificación no elimina el
+   método. Delimita qué puede defenderse y qué requeriría otro diseño.
 
 ## Rutas de lectura
 
 ::: {.route-grid}
 ::: {.route-card}
-### En 20 minutos
-[CRPTO en una página](chapters/00-crpto-en-una-pagina.qmd) → [Resultados](chapters/04-resultados.qmd) → [Discusión](chapters/05-discusion.qmd).
-Ruta para captar problema, método, resultado y límite sin entrar al dossier completo.
+### Manuscrito activo
+[Blueprint](chapters/06-blueprint-manuscrito.qmd) →
+[Guía de claims](chapters/06b-guia-editorial-claims.qmd) →
+`paper/CRPTO_ijds.qmd` → `paper/supplement_ijds.qmd`.
 :::
 
 ::: {.route-card}
-### Reviewer IJDS
-[Mapa reviewer](chapters/25-reviewer-map.qmd) → [Introducción](chapters/01-introduccion.qmd) → [Marco teórico](chapters/02-marco-teorico.qmd) → [Metodología](chapters/03-metodologia.qmd) → [Resultados](chapters/04-resultados.qmd) → [Apéndice de robustez](chapters/07-apendice-robustez.qmd).
-Ruta para verificar novelty, bound, evidencia central, artefactos y controles de robustez.
+### Arquitectura activa
+[Blueprint](chapters/06-blueprint-manuscrito.qmd) reúne el estimand, la
+secuencia teórica, los objetos empíricos y el contrato reproducible.
 :::
 
 ::: {.route-card}
-### Tesis
-[Fundamentos de riesgo](chapters/15-fundamentos-riesgo-ml.qmd) → [Conformal y optimización](chapters/16-fundamentos-conformal-optimizacion.qmd) → [Pipeline](chapters/17-pipeline-datos-features.qmd) → [Gobernanza](chapters/21-gobernanza-explicabilidad-dataset.qmd) → [Bibliografía](chapters/24-bibliografia-crpto-actualizada.qmd).
-Ruta para leer CRPTO como superconjunto académico del paper.
+### Defensa y límites
+[Guía de claims](chapters/06b-guia-editorial-claims.qmd) reúne vocabulario,
+closest work, objeciones previsibles y fronteras de interpretación.
+:::
 :::
 
-::: {.route-card}
-### Reproducibilidad
-[Trazabilidad](chapters/13-trazabilidad.qmd) → [Release](chapters/14-release.qmd) → [Pipeline](chapters/17-pipeline-datos-features.qmd) → [Literatura y entorno](chapters/22-literatura-trazabilidad-entorno.qmd).
-Ruta para auditar artefactos, builds, guardrails y evidencia regenerable.
-:::
-:::
+Los demás capítulos del antiguo libro de tesis permanecen en Git como
+procedencia, pero no se renderizan: describen lineages retirados y no deben
+leerse como evidencia del manuscrito activo.
 
 ## Frontera del claim
 
-| El libro puede explicar... | El paper debe afirmar... |
+| Sí puede afirmarse | No puede afirmarse |
 |---|---|
-| Fundamentos amplios de crédito, conformal prediction, robust optimization, MRM y fairness. | Un patrón post-hoc auditable para llevar intervalos conformales de una PD congelada a un LP robusto de portafolio. |
-| Robustez extendida, stress tests, tail risk, satisficing, SPO+, diagnósticos online/multi-distribución y réplica externa. | Que esos análisis fortalecen el champion congelado sin reabrir la búsqueda ni vender un protocolo live o universal. |
-| Bibliografía de tesis y future work. | Una frontera de novelty estrecha frente a P2P/Lending Club OR, conformal credit scoring, CP+RO, DFL/SPO+ y conformal finance. |
+| Las 640,543 filas agotan la población elegible bajo el contrato declarado. | Que los 2.9 millones de registros comparten horizonte, esquema o estimand. |
+| Los 40 upper bounds de cobertura candidata están por debajo de 0.90. | Invalidez conformal universal o validez del selected set. |
+| La geometría residual binaria es sensible a prevalencia y saturación. | Que el cruce observado sea una explicación causal completa. |
+| La dirección del contraste cambia con ruler, coordenada, ventana y soporte. | Un ganador universal, una policy promovida o dominancia económica. |
+| Los bounds sharp exponen incertidumbre por outcomes no resueltos. | Que sean intervalos de confianza o identificación missing-at-random. |
+| El exact support es válido sobre el soporte finito declarado. | Unicidad de una frontera continua o un comparador universal. |
 
-: Regla editorial para mantener separado el dossier amplio del claim IJDS.
+: Regla editorial del objeto IJDS activo.

@@ -248,7 +248,11 @@ def normalize_raw_columns(df: pd.DataFrame) -> pd.DataFrame:
     if "issue_d" in out.columns:
         out["issue_d"] = pd.to_datetime(out["issue_d"], errors="coerce")
     if "earliest_cr_line" in out.columns:
-        out["earliest_cr_line"] = pd.to_datetime(out["earliest_cr_line"], errors="coerce")
+        out["earliest_cr_line"] = pd.to_datetime(
+            out["earliest_cr_line"],
+            format="%b-%Y",
+            errors="coerce",
+        )
     if TARGET in out.columns:
         out[TARGET] = pd.to_numeric(out[TARGET], errors="coerce").fillna(0).astype(int)
     return out
@@ -371,6 +375,7 @@ def create_credit_history_features(df: pd.DataFrame) -> pd.DataFrame:
         else None
     )
     if recency_source is not None:
+        out["delinq_recency_observed"] = out[recency_source].notna().astype(int)
         out["delinq_recency"] = pd.to_numeric(out[recency_source], errors="coerce").fillna(999.0)
 
     delinquency_components = [
@@ -402,6 +407,7 @@ def create_flags(df: pd.DataFrame) -> pd.DataFrame:
     if "pub_rec" in out.columns:
         out["has_pub_rec"] = (out["pub_rec"] > 0).astype(int)
     if "pub_rec_bankruptcies" in out.columns:
+        out["bankruptcy_observed"] = out["pub_rec_bankruptcies"].notna().astype(int)
         out["has_bankruptcy"] = (out["pub_rec_bankruptcies"] > 0).astype(int)
     elif "pub_rec" in out.columns:
         out["has_bankruptcy"] = 0

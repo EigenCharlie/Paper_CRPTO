@@ -1,0 +1,85 @@
+schema_version: "2026-07-12.1"
+protocol_status: "locked_outcome_free_structural_audit_before_execution"
+protocol_tag: "protocol/ijds-policy-support-tie-audit-2026-07-12-v1"
+run_tag: "ijds-policy-support-tie-audit-2026-07-12-v1"
+
+hypothesis: >-
+  The inherited interior policy grid can be interpreted only after its feasible
+  and decision-active domain is compared with the point and full-endpoint score
+  limits, while comparator conclusions require a declared outcome-free cap
+  support and evidence that HiGHS tie resolution does not choose the result.
+
+parent:
+  config: "configs/experiments/ijds_binary_geometry_frontier_v4_2026-07-12.yaml"
+  protocol: "docs/research/ijds_binary_geometry_frontier_v4_protocol_2026-07-12.md"
+  run_tag: "ijds-binary-geometry-frontier-v4-2026-07-12-v1"
+  protocol_tag: "protocol/ijds-binary-geometry-frontier-v4-2026-07-12-v1"
+  protocol_commit: "2f8a7606e4eb65aa3ae3701fb3af8d9a51c953cd"
+  protocol_freeze:
+    path: "models/experiments/ijds_audit/ijds-binary-geometry-frontier-v4-2026-07-12-v1/protocol_freeze.json"
+    bytes: 20362
+    sha256: "c2b3dc2d18c9fed80708682d5a0369c80c89643e2d28024418522d954ebe667c"
+
+source_ingest:
+  raw_path: "data/raw/Loan_status_2007-2020Q3.csv"
+  raw_sha256: "5878af2a088f8ab5214c9337289fb8b5eb6c6338fd3f417b6cdc18513dc6f35f"
+  allowed_raw_columns: ["id", "loan_amnt", "int_rate", "purpose"]
+  forbidden_tokens: ["status", "outcome", "default", "pymnt", "realized", "miscoverage"]
+  chunksize: 100000
+
+family_audit:
+  roles: ["policy_development", "primary_oot"]
+  expected_development_months: 11
+  expected_primary_months: 15
+  expected_windows: 8
+  risk_tolerances: [0.15, 0.17, 0.19]
+  gamma_grid: [0.0, 0.25, 0.50, 0.75, 1.0]
+  inherited_interior_gammas: [0.25, 0.50, 0.75]
+  gamma_zero_role: "point_score_endpoint_already_represented_by_c0"
+  gamma_one_role: "full_conformal_upper_endpoint_diagnostic_not_automatic_promotion"
+  cap_classification_tolerance: 1.0e-8
+  reconstruction_objective_tolerance: 1.0e-4
+  reconstruction_score_tolerance: 1.0e-8
+  minimum_score_range: 1.0e-8
+
+comparator_support:
+  named_rules:
+    - "c0_same_numeric_cap"
+    - "c1_development_mean"
+    - "c2_contemporaneous"
+  development_definition: "window_policy_monthly_guardrail_point_moment_hull"
+  broad_stress: [0.05, 0.12]
+  broad_stress_role: "sensitivity_only_not_normative_admissibility"
+  cap_deduplication_tolerance: 1.0e-10
+  cap_census_cardinality: "derived_from_tolerance_union_not_preselected"
+
+tie_audit:
+  cap_family:
+    - "named_c0_c1_c2"
+    - "development_support_endpoints"
+    - "period_specific_basis_breakpoints"
+    - "broad_stress_endpoints"
+  dual_tolerance: 1.0e-7
+  primal_tolerance: 1.0e-9
+  objective_reconciliation_tolerance: 1.0e-5
+  order_sensitivity_tolerance: 1.0e-10
+  order_rule: "original_source_order_vs_descending_loan_id"
+  rerun_trigger: "near_zero_nonbasic_reduced_cost_or_primal_degenerate_basis"
+  threads: 1
+
+claim_boundary:
+  outcome_columns_passed: []
+  no_empirical_metric_or_direction: true
+  no_policy_promotion: true
+  no_universal_support_claim: true
+  no_unique_optimum_claim_without_diagnostics: true
+
+output:
+  data_root: "data/processed/experiments/ijds_audit"
+  model_root: "models/experiments/ijds_audit"
+  immutability: "hard_no_overwrite_choose_fresh_run_tag"
+  family_feasibility: "policy_family_feasibility.parquet"
+  point_cap_diagnostics: "point_cap_basis_diagnostics.parquet"
+  order_sensitivity: "point_cap_order_sensitivity.parquet"
+  deterministic_result: "policy_support_tie_audit_summary.json"
+  execution_receipt: "execution_receipt.json"

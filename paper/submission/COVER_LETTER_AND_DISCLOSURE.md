@@ -1,86 +1,82 @@
-# IJDS Cover Letter and Disclosure Draft
+# Cover Letter and Disclosure Draft
 
-Editor-facing material only. Do not include it in the double-anonymous reviewer
-packet unless ScholarOne requests the corresponding disclosure text.
+Dear Editor,
 
-## Cover Letter
+Please consider **"CRPTO: An Identification Audit of Binary Conformal Credit
+Portfolio Optimization"** for publication in *INFORMS Journal on Data Science*.
 
-Dear Editors,
+The paper studies a common but under-audited handoff: a predictive uncertainty
+object becomes a coefficient in a constrained optimization problem. CRPTO keeps
+credit-risk prediction, binary conformal intervals, and monthly portfolio
+optimization in one system, then asks which conclusions survive explicit
+timing, outcome-observability, and comparator contracts.
 
-We submit "CRPTO: A Calibration-Selected Conformal Guardrail for Credit
-Portfolios" for consideration at the *INFORMS Journal on Data Science*. The
-paper treats credit allocation as data science for decisions,
-not as a credit-scoring leaderboard. A frozen calibrated PD model is combined
-with an exactly replayed 90% Mondrian conformal endpoint. The resulting
-midpoint score, `q=(p+u)/2`, constrains a `$1M` portfolio while point PD remains
-in the expected-return objective.
+The contribution is an identification audit rather than a policy contest.
+First, the paper derives a prevalence-threshold discontinuity for constant-score
+binary absolute-residual intervals and separates that mechanism from the
+empirical varying-score path with a joint fit-label completion sensitivity.
+Second, it defines objective-matched and
+normalized-score rulers and an exact basis-endpoint support audit for comparing
+non-affine risk scores. It also gives an exact identity linking each contrast's
+identification width to the sum of unresolved loan-wise attainable
+contribution ranges. Third, it provides a status-independent, maturity-restricted
+evaluation with outcomes physically isolated until allocations are frozen and
+with sharp common-outcome bounds for unresolved loans.
 
-The final policy is selected from nine round-number candidates on November
-2017 using a deterministic endpoint cap. Outcomes are stored separately from
-its 12-column ranking frame, which contains no assumption-conditional
-statistics. An outcome-free December replay selects the same rule; opening
-outcomes afterward reveals
-miscoverage `0.124925`, so the paper explicitly does not infer selected-set
-validity from policy stability. On 276,869 out-of-time Lending Club loans, the
-fixed policy earns `$179,327.59`, with weighted default `0.039375`.
-A matched point-PD allocation earns `$196,369.14` with weighted default
-`0.118400`. The paper reports both the `8.678%` return cost and the `7.9025`
-percentage-point default reduction, together with temporal periods in which
-the point-PD decision performs better. We therefore position CRPTO as an
-auditable retrospective return-risk guardrail, not as a universal winner or
-prospective deployment guarantee.
+The full archive audit covers 2,925,493 rows and an exhaustive 640,543-loan
+eligible design. The primary OOT panel contains 376,890 candidates: 364,814
+outcomes are reconstructed as observable by the evaluation cutoff and 12,076
+remain unresolved. All 40 all-candidate coverage upper bounds are below 0.90
+across five retrospectively protocol-locked learner specifications; the largest
+is 0.8977. The endpoint census partitions all candidates into 307,842 fully paid
+and 56,972 charged off by the cutoff, 11,551 nonterminal, 47 terminal after the
+cutoff, and 478 terminal with no reconstructible availability date. The
+stratum-level W7--W8 quantile change persists under every
+fit-label lag retaining more than 99% of each fitting month. A separate complete
+evaluation-endpoint lag grid reports 0, 3, 6, 8, and 12 months without selection;
+the six-month slice exactly reproduces the active endpoint evaluation. The
+below-target coverage finding also recurs across three feature-semantics-
+preserving missingness encodings and the only additional feasible retrospective
+origin; neither exercise selects a representation or constitutes independent
+validation.
+All four declared scenarios for 215 labels unavailable at fitting retain
+8/8 below-target coverage upper bounds. The all-default scenario removes the
+W7--W8 geometric crossing, so the paper reports that mechanism as diagnostic
+rather than universal.
 
-The submission contributes an explicit prediction-to-decision contract, an
-exact conformal replay, a temporally separated selector/audit, matched economic
-comparisons, and a file-backed reproducibility package. These features align
-with IJDS's emphasis on data, innovative methodology, decision relevance, and
-reproducible evidence.
+The decision result has a narrow interpretation. Objective-matched coordinate .25
+crosses zero for payoff, default, and miscoverage in all eight windows; .50 is
+adverse; and .75 is mostly unidentified. Normalized-score comparisons answer a
+different opportunity-cost question. An exact point-cap audit places zero in
+all 216 broad-support envelopes. No model, window, gamma, ruler, coordinate,
+comparator, or policy is selected.
+The complete 36-scenario budget--concentration--LGD grid restores neither a
+universally favorable nor a universally adverse ordering. A deterministic USD
+25 floor-with-cash diagnostic changes evaluated rates by at most 0.0013
+percentage points; it supports the continuous relaxation without claiming an
+optimized integer policy.
+
+The manuscript addresses a decision-making problem at the
+predictive-to-prescriptive interface. It combines executable information
+boundaries, exact optimization geometry, partial identification, and complete
+reporting of the protocol-locked paths. It makes no causal, selected-set,
+prospective, deployment, or fair-lending claim. The distributed archive is
+explicitly not described as a verified point-in-time snapshot, and standardized
+payoff is not presented as investor return.
+
+The submission is original, is not under review elsewhere, and uses a separate
+online supplement. Code, environment lock, immutable evidence metadata, and
+raw-data reconstruction instructions are prepared under the journal's data and
+code policy.
+
+## Generative AI Disclosure
+
+OpenAI Codex was used for code review, test generation, editorial revision, and
+reproducibility checks under author direction. The author independently
+verified the analysis, citations, numerical evidence, and final wording and
+accepts full responsibility for the submitted work. Generative AI is not an
+author and did not determine the scientific conclusions.
 
 Sincerely,
 
-[Author details supplied separately]
-
-## Data and Code Availability
-
-The body and supplement are double-anonymous. During review they refer to a
-reproducible companion without exposing author-identifying URLs. The IJDS Data
-and Code Disclosure Form will state that, when venue policy permits, the
-companion includes:
-
-- source code, configurations, and manuscript sources;
-- A35--A40 evidence tables and active governance metadata;
-- DVC metadata and artifact pointers for large processed data and model files;
-- source instructions for Lending Club, Prosper, and Freddie/Mendeley data
-  rather than unauthorized redistribution;
-- exact-alpha and calibration-selector replay commands;
-- manifest, claim-sync, and publication-integrity tests;
-- commands for regenerating tables, previews, and the official-template PDF.
-
-No secrets, tokens, private storage credentials, local usernames, or machine
-paths belong in the reviewer package.
-
-Suggested ScholarOne prose:
-
-> Code, configurations, manuscript sources, and evidence-generation scripts
-> will be released under the journal's accepted-paper reproducibility process.
-> Public-source raw data are disclosed through source instructions; large or
-> license-constrained artifacts are provided through documented pointers and
-> integrity hashes where redistribution terms permit.
-
-## Anonymity Handling
-
-- Upload the `informs4` PDF built with `dblanonrev` as the manuscript.
-- Upload the anonymous supplement separately.
-- Keep the title page, affiliation, acknowledgements, repository ownership,
-  and personal URLs outside reviewer-facing files.
-- Use this file and ScholarOne fields for editor-only disclosure timing.
-
-## Editorial Boundary
-
-The final ranking code is outcome-free with respect to OOT policy selection,
-but earlier project development inspected the static OOT corpus. The manuscript
-therefore says "retrospective lockbox replay," not "preregistered" or
-"untouched holdout." Marginal/Mondrian coverage is not promoted to nominal
-validity under optimizer-selected funded weights. OCE/CVaR, SPO+, online-style
-checks, and external datasets remain diagnostics or context rather than
-additional active methods.
+The Author

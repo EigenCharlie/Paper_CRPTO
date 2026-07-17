@@ -1,0 +1,24 @@
+{
+  "schema_version": "1.0",
+  "source_url": "https://pubsonline.informs.org/authorportal/latex-style-files",
+  "verified_on": "2026-07-11",
+  "informs4_class_version": "2024/06/03 v1.02",
+  "assets": {
+    "eqndefns-left.sty": {
+      "bytes": 16576,
+      "sha256": "98914dc259f4bfab181631123f0fba994d888212f174e322ba267c8c01035b25"
+    },
+    "informs2014.bst": {
+      "bytes": 31531,
+      "sha256": "73c34c8f36abd9088a9b7462e4601419360cdc9afaa227a98cd07f4e8a60c366"
+    },
+    "informs4.cls": {
+      "bytes": 101135,
+      "sha256": "82bc064ab2540b5bd11ad8804330fcd9ffc5b420fe6ebe9dfa9ab6b29f8349aa"
+    },
+    "informs_Logo.pdf": {
+      "bytes": 14342,
+      "sha256": "fb3afb44b470f0d54463e894a990d2a375cd67a70997d98c1dd35a1df094aa0c"
+    }
+  }
+}

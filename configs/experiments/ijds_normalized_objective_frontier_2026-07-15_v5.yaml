@@ -1,0 +1,27 @@
+extends: "ijds_normalized_objective_frontier_2026-07-15_v4.yaml"
+
+schema_version: "2026-07-15.4"
+protocol_tag: "protocol/ijds-normalized-objective-frontier-2026-07-15-v5"
+run_tag: "ijds-normalized-objective-frontier-2026-07-15-v5"
+
+protocol_lineage_files:
+  - "docs/research/ijds_normalized_objective_frontier_v2_protocol_2026-07-13.md"
+  - "docs/research/ijds_two_ruler_endpoint_recovery_v3_protocol_2026-07-14.md"
+  - "docs/research/ijds_evaluation_endpoint_recovery_v3_protocol_2026-07-14.md"
+  - "docs/research/ijds_endpoint_reason_taxonomy_v4_protocol_2026-07-15.md"
+  - "docs/research/ijds_endpoint_reason_recovery_v5_erratum_2026-07-15.md"
+
+parent:
+  config: "configs/experiments/ijds_binary_geometry_frontier_v4_2026-07-15_v5.yaml"
+
+endpoint_reason_recovery:
+  status: "reason_taxonomy_only_machine_tolerance_recovery"
+  equivalence_mode: "exact_non_float_machine_tolerant_float"
+  require_exact_non_float_reference_equivalence: true
+  float_atol: 5.0e-14
+  float_rtol: 5.0e-14
+  artifact_section: "evaluation_artifacts"
+  reference_json:
+    path: "models/experiments/ijds_audit/ijds-normalized-objective-frontier-2026-07-14-v3/verified_evaluation_manifest.json"
+    bytes: 16944
+    sha256: "76e3643b92a537c9e0cea4d131f8085d4c843ead0cb95362f19a3442207af96e"

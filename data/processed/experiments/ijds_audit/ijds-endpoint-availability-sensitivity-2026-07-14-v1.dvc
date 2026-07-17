@@ -1,0 +1,6 @@
+outs:
+- md5: b05f729bf21f2b35fda69e308c9ba499.dir
+  size: 143910
+  nfiles: 8
+  hash: md5
+  path: ijds-endpoint-availability-sensitivity-2026-07-14-v1

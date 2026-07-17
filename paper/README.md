@@ -1,70 +1,54 @@
-# paper-crpto Manuscript Workspace
+# CRPTO Manuscript Workspace
 
-This folder contains the manuscript extraction layer for the standalone CRPTO
-paper. The Quarto book remains the full companion dossier; this folder is where
-the submission-shaped versions are written.
+This directory contains one active IJDS manuscript and one online supplement.
 
-## Current Venue Decision
+## Active Sources
 
-- Primary target: INFORMS Journal on Data Science.
-- Secondary pivot: European Journal of Operational Research.
-- Config source: `../configs/crpto_publication_targets.yaml`.
-- Strategy memo: `../docs/research/crpto_publication_strategy_2026-05-12.md`.
+- Claim registry: `../docs/research/active_claims_2026-07-14.md`.
+- Evidence source registry: `../configs/ijds_active_evidence_sources.yaml`.
+- Paper-facing evidence: `../reports/crpto/ijds_binary_geometry_frontier_v4_evidence.json`.
+- Canonical body: `CRPTO_ijds.qmd`.
+- Canonical supplement: `supplement_ijds.qmd`.
+- Generated official TeX: `submission/CRPTO_ijds_submission.tex`.
 
-## Files
+The paper is a retrospective identification audit of one integrated
+ML--conformal--optimization pipeline. The distributed archive is not a verified
+point-in-time snapshot, so the endpoint is reconstructed as observable by the
+declared cutoff. All 376,890 primary candidates remain in the menus; 364,814
+are resolved and 12,076 enter sharp binary bounds. No learner, window, gamma,
+ruler, coordinate, comparator, or policy is selected.
 
-- `CRPTO.qmd`: generic landing manuscript stub.
-- `CRPTO_ijds.qmd`: active IJDS-style anonymous body source and current
-  manuscript source of truth.
-- `supplement_ijds.qmd`: IJDS-style online supplement source.
-- `submission/README.md`: IJDS handoff checklist, anonymity guardrails, PDF
-  draft commands, and SPO+ numbering rule.
-- `submission/COVER_LETTER_AND_DISCLOSURE.md`: editor-facing cover letter and
-  data/code disclosure draft; keep it out of the anonymous reviewer packet
-  unless the submission system asks for disclosure text.
-- `submission/IJDS_SUBMISSION_ROADMAP_2026-08-10.md`: target-date readiness
-  plan and 15-track improvement checklist.
-- `submission/CLAIM_AUDIT_MATRIX.md`: claim-to-evidence map and reviewer
-  objection bank.
-- `submission/REPRODUCIBILITY_PACKAGE.md`: IJDS data/code disclosure and
-  accepted-paper reproducibility plan.
-- `submission/TITLE_PAGE_DRAFT.md`: non-anonymous title-page draft for
-  ScholarOne.
-- `submission/DATA_CODE_DISCLOSURE_FORM_DRAFT.md`: working text for the official
-  IJDS disclosure form.
-- `submission/SCHOLARONE_FINAL_CHECKLIST.md`: final upload/proof checklist.
+Earlier manuscript versions are outside the active capsule and preserved in
+Git history and `D:\crpto_legacy`. `CRPTO_ijds.qmd` is the only body source;
+never edit generated TeX directly.
 
-The active paper has one method: exact 90% conformal replay, the midpoint
-guardrail `q=(p+u)/2`, `tau=0.17`, and a nine-cell November selector under
-`B_u<=0.28`. A35 is the exact-alpha audit, A36 is the split selector/December
-audit, A37 is temporal evaluation, A38 is letter-grade composition, A39 is the
-month-cluster bootstrap with loan-level sensitivity, and A40 is the matched
-point-PD comparison. OCE/CVaR, SPO+, satisficing, online-style checks,
-and Prosper/Freddie replications remain supplement diagnostics; they do not
-select or redefine the midpoint policy. Prospective validation, causal variants,
-live recalibration, production, and package tracks remain outside the claim.
-
-## Render Commands
+## Build
 
 ```powershell
-just ijds-evidence
-just paper-ijds
-just paper-ijds-supplement
-just paper-submission
-just paper-submission-pdf
+just submission-build
 ```
 
-The HTML render is the writing preview; the PDF render is an HTML-print
-verification draft produced from the anonymous previews. The final submission
-PDF should use the official venue template. These Quarto files are the writing
-source of truth until the IJDS LaTeX template is applied with double-anonymous
-settings.
+The official compiler attempts `latexmk`; its robust fallback is
+`pdflatex -> bibtex -> pdflatex -> pdflatex`. The first LaTeX pass writes the
+auxiliary graph, BibTeX writes the bibliography, and the final two passes
+resolve citations, labels, floats, and pagination.
 
-## Closeout Gates
+## Validation
 
-Before tagging a submission release, do a final sweep for stale numbers,
-captions, body-vs-supplement placement, and IJDS length. Keep public GitHub,
-DagsHub, and MLflow links anonymized in the manuscript unless the venue policy
-or cover-letter disclosure requires otherwise.
-Use the roadmap and claim audit matrix as the final editorial checklist before
-freezing the official `informs4` PDF.
+```powershell
+just ijds-active-check
+just paper-tex-check
+just paper-official-scan
+just validate-champion
+just type-check
+just type-check-fast
+git status --short
+```
+
+Page counts and visual QA records belong in `submission/README.md` and must be
+regenerated after substantive edits. The project remains pre-freeze until an
+explicit submission-freeze decision.
+
+`submission-build` writes paper-facing evidence and document outputs in causal
+order. `submission-check` and `ijds-active-check` verify the current outputs
+without replaying evidence or a scientific protocol.

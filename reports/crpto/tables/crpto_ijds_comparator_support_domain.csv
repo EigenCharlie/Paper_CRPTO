@@ -1,0 +1,9 @@
+source,cap_month_rows,decision_active,objective_boundary,objective_slack,primal_degenerate_bases,near_zero_bases
+broad_support_lower,15,15,0,0,0,0
+broad_support_upper,15,0,0,15,0,0
+development_support_lower,1065,1065,0,0,14,0
+development_support_upper,1080,1074,0,6,0,0
+named_c0,45,0,0,45,0,0
+named_c1,1080,1079,0,1,7,0
+named_c2,1079,1075,4,0,4,0
+period_basis_breakpoint,2952,2922,15,15,2920,0

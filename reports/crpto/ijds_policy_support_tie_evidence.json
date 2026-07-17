@@ -1,0 +1,403 @@
+{
+  "schema_version": "2026-07-12.1",
+  "status": "complete_prefreeze_structural_evidence",
+  "active_claim_status": "not_active_until_family_redesign_decision",
+  "run_tag": "ijds-policy-support-tie-audit-2026-07-12-v1",
+  "protocol_tag": "protocol/ijds-policy-support-tie-audit-2026-07-12-v1",
+  "protocol_commit": "115eaf1b81ed5f05ffe601e9c20079059c40c200",
+  "claim_boundary": "Outcome-free structural evidence only. No empirical metric, direction, policy promotion, universal comparator support, or selected-set claim.",
+  "outcome_columns_passed": [],
+  "results": {
+    "family": {
+      "rows": 3120,
+      "inherited_rows": 1872,
+      "inherited_infeasible": 0,
+      "inherited_decision_active": 1846,
+      "gamma_one_infeasible": 0,
+      "gamma_one_decision_active": 624,
+      "gamma_one_objective_slack": 0,
+      "classification_counts": [
+        {
+          "role": "policy_development",
+          "gamma": 0.0,
+          "risk_tolerance": 0.15,
+          "cap_classification": "objective_slack",
+          "cells": 88
+        },
+        {
+          "role": "policy_development",
+          "gamma": 0.0,
+          "risk_tolerance": 0.17,
+          "cap_classification": "objective_slack",
+          "cells": 88
+        },
+        {
+          "role": "policy_development",
+          "gamma": 0.0,
+          "risk_tolerance": 0.19,
+          "cap_classification": "objective_slack",
+          "cells": 88
+        },
+        {
+          "role": "policy_development",
+          "gamma": 0.25,
+          "risk_tolerance": 0.15,
+          "cap_classification": "decision_active",
+          "cells": 85
+        },
+        {
+          "role": "policy_development",
+          "gamma": 0.25,
+          "risk_tolerance": 0.15,
+          "cap_classification": "objective_slack",
+          "cells": 3
+        },
+        {
+          "role": "policy_development",
+          "gamma": 0.25,
+          "risk_tolerance": 0.17,
+          "cap_classification": "decision_active",
+          "cells": 80
+        },
+        {
+          "role": "policy_development",
+          "gamma": 0.25,
+          "risk_tolerance": 0.17,
+          "cap_classification": "objective_slack",
+          "cells": 8
+        },
+        {
+          "role": "policy_development",
+          "gamma": 0.25,
+          "risk_tolerance": 0.19,
+          "cap_classification": "decision_active",
+          "cells": 78
+        },
+        {
+          "role": "policy_development",
+          "gamma": 0.25,
+          "risk_tolerance": 0.19,
+          "cap_classification": "objective_slack",
+          "cells": 10
+        },
+        {
+          "role": "policy_development",
+          "gamma": 0.5,
+          "risk_tolerance": 0.15,
+          "cap_classification": "decision_active",
+          "cells": 88
+        },
+        {
+          "role": "policy_development",
+          "gamma": 0.5,
+          "risk_tolerance": 0.17,
+          "cap_classification": "decision_active",
+          "cells": 88
+        },
+        {
+          "role": "policy_development",
+          "gamma": 0.5,
+          "risk_tolerance": 0.19,
+          "cap_classification": "decision_active",
+          "cells": 88
+        },
+        {
+          "role": "policy_development",
+          "gamma": 0.75,
+          "risk_tolerance": 0.15,
+          "cap_classification": "decision_active",
+          "cells": 88
+        },
+        {
+          "role": "policy_development",
+          "gamma": 0.75,
+          "risk_tolerance": 0.17,
+          "cap_classification": "decision_active",
+          "cells": 88
+        },
+        {
+          "role": "policy_development",
+          "gamma": 0.75,
+          "risk_tolerance": 0.19,
+          "cap_classification": "decision_active",
+          "cells": 88
+        },
+        {
+          "role": "policy_development",
+          "gamma": 1.0,
+          "risk_tolerance": 0.15,
+          "cap_classification": "decision_active",
+          "cells": 88
+        },
+        {
+          "role": "policy_development",
+          "gamma": 1.0,
+          "risk_tolerance": 0.17,
+          "cap_classification": "decision_active",
+          "cells": 88
+        },
+        {
+          "role": "policy_development",
+          "gamma": 1.0,
+          "risk_tolerance": 0.19,
+          "cap_classification": "decision_active",
+          "cells": 88
+        },
+        {
+          "role": "primary_oot",
+          "gamma": 0.0,
+          "risk_tolerance": 0.15,
+          "cap_classification": "objective_slack",
+          "cells": 120
+        },
+        {
+          "role": "primary_oot",
+          "gamma": 0.0,
+          "risk_tolerance": 0.17,
+          "cap_classification": "objective_slack",
+          "cells": 120
+        },
+        {
+          "role": "primary_oot",
+          "gamma": 0.0,
+          "risk_tolerance": 0.19,
+          "cap_classification": "objective_slack",
+          "cells": 120
+        },
+        {
+          "role": "primary_oot",
+          "gamma": 0.25,
+          "risk_tolerance": 0.15,
+          "cap_classification": "decision_active",
+          "cells": 120
+        },
+        {
+          "role": "primary_oot",
+          "gamma": 0.25,
+          "risk_tolerance": 0.17,
+          "cap_classification": "decision_active",
+          "cells": 119
+        },
+        {
+          "role": "primary_oot",
+          "gamma": 0.25,
+          "risk_tolerance": 0.17,
+          "cap_classification": "objective_slack",
+          "cells": 1
+        },
+        {
+          "role": "primary_oot",
+          "gamma": 0.25,
+          "risk_tolerance": 0.19,
+          "cap_classification": "decision_active",
+          "cells": 116
+        },
+        {
+          "role": "primary_oot",
+          "gamma": 0.25,
+          "risk_tolerance": 0.19,
+          "cap_classification": "objective_slack",
+          "cells": 4
+        },
+        {
+          "role": "primary_oot",
+          "gamma": 0.5,
+          "risk_tolerance": 0.15,
+          "cap_classification": "decision_active",
+          "cells": 120
+        },
+        {
+          "role": "primary_oot",
+          "gamma": 0.5,
+          "risk_tolerance": 0.17,
+          "cap_classification": "decision_active",
+          "cells": 120
+        },
+        {
+          "role": "primary_oot",
+          "gamma": 0.5,
+          "risk_tolerance": 0.19,
+          "cap_classification": "decision_active",
+          "cells": 120
+        },
+        {
+          "role": "primary_oot",
+          "gamma": 0.75,
+          "risk_tolerance": 0.15,
+          "cap_classification": "decision_active",
+          "cells": 120
+        },
+        {
+          "role": "primary_oot",
+          "gamma": 0.75,
+          "risk_tolerance": 0.17,
+          "cap_classification": "decision_active",
+          "cells": 120
+        },
+        {
+          "role": "primary_oot",
+          "gamma": 0.75,
+          "risk_tolerance": 0.19,
+          "cap_classification": "decision_active",
+          "cells": 120
+        },
+        {
+          "role": "primary_oot",
+          "gamma": 1.0,
+          "risk_tolerance": 0.15,
+          "cap_classification": "decision_active",
+          "cells": 120
+        },
+        {
+          "role": "primary_oot",
+          "gamma": 1.0,
+          "risk_tolerance": 0.17,
+          "cap_classification": "decision_active",
+          "cells": 120
+        },
+        {
+          "role": "primary_oot",
+          "gamma": 1.0,
+          "risk_tolerance": 0.19,
+          "cap_classification": "decision_active",
+          "cells": 120
+        }
+      ],
+      "maximum_absolute_parent_score_difference": 2.220446049250313e-16,
+      "maximum_absolute_parent_objective_difference": 8.731149137020111e-11,
+      "gamma_zero_objective_slack": 624,
+      "inherited_slack": 26,
+      "gamma_one_minus_075_objective_mean": -2519.4381117036437,
+      "gamma_one_minus_075_objective_min": -8337.854696241615,
+      "gamma_one_minus_075_objective_max": -579.9765933432209
+    },
+    "point_cap_census": {
+      "rows": 7297,
+      "periods": 15,
+      "named_unique_cap_months": 2204,
+      "minimum_absolute_nonbasic_reduced_cost": 0.00038757301081204787,
+      "near_zero_bases": 0,
+      "primal_degenerate_bases": 2941,
+      "maximum_dual_sign_violation": 0.0,
+      "maximum_objective_reconciliation_error": 5.820766091346741e-10,
+      "support_sources": [
+        {
+          "source": "broad_support_lower",
+          "cap_month_rows": 15,
+          "decision_active": 15,
+          "objective_slack": 0,
+          "near_zero_bases": 0,
+          "primal_degenerate_bases": 0
+        },
+        {
+          "source": "broad_support_upper",
+          "cap_month_rows": 15,
+          "decision_active": 0,
+          "objective_slack": 15,
+          "near_zero_bases": 0,
+          "primal_degenerate_bases": 0
+        },
+        {
+          "source": "development_support_lower",
+          "cap_month_rows": 1065,
+          "decision_active": 1065,
+          "objective_slack": 0,
+          "near_zero_bases": 0,
+          "primal_degenerate_bases": 14
+        },
+        {
+          "source": "development_support_upper",
+          "cap_month_rows": 1080,
+          "decision_active": 1074,
+          "objective_slack": 6,
+          "near_zero_bases": 0,
+          "primal_degenerate_bases": 0
+        },
+        {
+          "source": "named_c0",
+          "cap_month_rows": 45,
+          "decision_active": 0,
+          "objective_slack": 45,
+          "near_zero_bases": 0,
+          "primal_degenerate_bases": 0
+        },
+        {
+          "source": "named_c1",
+          "cap_month_rows": 1080,
+          "decision_active": 1079,
+          "objective_slack": 1,
+          "near_zero_bases": 0,
+          "primal_degenerate_bases": 7
+        },
+        {
+          "source": "named_c2",
+          "cap_month_rows": 1079,
+          "decision_active": 1075,
+          "objective_slack": 0,
+          "near_zero_bases": 0,
+          "primal_degenerate_bases": 4
+        },
+        {
+          "source": "period_basis_breakpoint",
+          "cap_month_rows": 2952,
+          "decision_active": 2922,
+          "objective_slack": 15,
+          "near_zero_bases": 0,
+          "primal_degenerate_bases": 2920
+        }
+      ]
+    },
+    "order_sensitivity": {
+      "triggered_rows": 2941,
+      "tie_sensitive_rows": 0,
+      "maximum_allocation_distance": 1.449778343358131e-14,
+      "maximum_absolute_objective_difference": 1.7171259969472885e-09
+    }
+  },
+  "source_summary": {
+    "path": "models/experiments/ijds_audit/ijds-policy-support-tie-audit-2026-07-12-v1/policy_support_tie_audit_summary.json",
+    "bytes": 18692,
+    "sha256": "f0b7a938d2e11671cb0216a35d02d3d3c00ec9c484064ed201e6a740178c29da"
+  },
+  "source_artifacts": {
+    "models/experiments/ijds_audit/ijds-policy-support-tie-audit-2026-07-12-v1/protocol_freeze.json": {
+      "path": "models/experiments/ijds_audit/ijds-policy-support-tie-audit-2026-07-12-v1/protocol_freeze.json",
+      "bytes": 7105,
+      "sha256": "decc2f03b4fd6bdc358ab2b47c9d8c52c188def5c341fbc1da8e640cc982b79d"
+    },
+    "data/processed/experiments/ijds_audit/ijds-policy-support-tie-audit-2026-07-12-v1/policy_family_feasibility.parquet": {
+      "path": "data/processed/experiments/ijds_audit/ijds-policy-support-tie-audit-2026-07-12-v1/policy_family_feasibility.parquet",
+      "bytes": 110455,
+      "sha256": "6127eac96d4d2860136473c812368ea7360db22d78b8d4487667028cab062538"
+    },
+    "data/processed/experiments/ijds_audit/ijds-policy-support-tie-audit-2026-07-12-v1/point_cap_basis_diagnostics.parquet": {
+      "path": "data/processed/experiments/ijds_audit/ijds-policy-support-tie-audit-2026-07-12-v1/point_cap_basis_diagnostics.parquet",
+      "bytes": 428056,
+      "sha256": "809ce7a295c8794765439b82f329ef1cf8c5c1f37e789bd874f8b485288ae4e0"
+    },
+    "data/processed/experiments/ijds_audit/ijds-policy-support-tie-audit-2026-07-12-v1/point_cap_order_sensitivity.parquet": {
+      "path": "data/processed/experiments/ijds_audit/ijds-policy-support-tie-audit-2026-07-12-v1/point_cap_order_sensitivity.parquet",
+      "bytes": 64487,
+      "sha256": "d8b03aa46041af0346bc6a3c369621682f6157c96be490c4f9e00007f783d474"
+    }
+  },
+  "tables": {
+    "family": {
+      "path": "reports/crpto/tables/crpto_ijds_policy_family_domain.csv",
+      "bytes": 4249,
+      "sha256": "fd6e1b9bcdc4560291410cc4e421c38dacf074cd78e3d8da2ee12eaf2fa9e027"
+    },
+    "gamma_endpoint": {
+      "path": "reports/crpto/tables/crpto_ijds_gamma_endpoint_audit.csv",
+      "bytes": 642,
+      "sha256": "da638fc1f9d684779e67739fd0b6237694f354fee724730f7b2aa166a36178cf"
+    },
+    "comparator_support": {
+      "path": "reports/crpto/tables/crpto_ijds_comparator_support_domain.csv",
+      "bytes": 394,
+      "sha256": "081eec38e541a3fe64c8fdeb680d230a0dbe4b32093a00e2b22425814dbd3ac4"
+    }
+  },
+  "protected_stages_run": [],
+  "protected_artifacts_written": []
+}

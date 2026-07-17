@@ -1,0 +1,25 @@
+extends: "ijds_credit_risk_controls_2026-07-13_v2.yaml"
+
+schema_version: "2026-07-13.4"
+protocol_tag: "protocol/ijds-credit-risk-controls-2026-07-13-v2b"
+run_tag: "ijds-credit-risk-controls-2026-07-13-v2b"
+
+protocol_lineage_files:
+  - "configs/experiments/ijds_binary_geometry_frontier_v4_2026-07-12.yaml"
+  - "docs/research/ijds_binary_geometry_frontier_v4_protocol_2026-07-12.md"
+  - "docs/research/ijds_raw_data_contract_protocol_2026-07-13.md"
+  - "docs/research/ijds_credit_risk_controls_protocol_2026-07-13.md"
+  - "docs/research/ijds_credit_risk_controls_v1_stop_2026-07-13.md"
+  - "configs/experiments/ijds_credit_risk_controls_2026-07-13_v1b.yaml"
+  - "docs/research/ijds_credit_risk_controls_v2_evaluation_2026-07-13.md"
+  - "configs/experiments/ijds_credit_risk_controls_2026-07-13_v2.yaml"
+  - "docs/research/ijds_credit_risk_controls_v2_stop_2026-07-13.md"
+
+evaluation_recovery:
+  status: "numerical_calibration_recovery_only"
+  calibration_solver: "sklearn_unpenalized_lbfgs"
+  require_exact_coverage_equivalence: true
+  coverage_reference:
+    path: "data/processed/experiments/ijds_audit/ijds-credit-risk-controls-2026-07-13-v2/evaluation/temporal_coverage.parquet"
+    bytes: 501571
+    sha256: "956bdc9880c80cebc1f48fc2cdf57688dfff7dddd3939b4fd972413d83039767"

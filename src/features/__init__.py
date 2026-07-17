@@ -1,1 +1,1 @@
-"""Feature engineering and validation schemas."""
+"""Feature engineering used by the active credit-risk specifications."""

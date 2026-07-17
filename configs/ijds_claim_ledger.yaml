@@ -1,0 +1,259 @@
+schema_version: "2026-07-15.3"
+status: active_ijds_claim_contract
+
+surfaces:
+  body: paper/CRPTO_ijds.qmd
+  supplement: paper/supplement_ijds.qmd
+  registry: docs/research/active_claims_2026-07-14.md
+  claim_matrix: paper/submission/CLAIM_AUDIT_MATRIX.md
+
+claims:
+  - id: data.exhaustive_status_independent_population
+    status: active
+    kind: empirical
+    rule: equals
+    result_pointer: /data_contract/sampling
+    expected: none_all_eligible_rows_within_each_declared_temporal_role
+    lineages: [raw_data_audit, binary_geometry]
+    scope: declared_36_month_temporal_design
+    forbidden_inference: [raw_archive_census_is_one_common_estimand, external_validity]
+    surfaces:
+      required: [body, supplement, registry, claim_matrix]
+      allowed: [body, supplement, registry, claim_matrix]
+
+  - id: endpoint.not_verified_snapshot
+    status: active
+    kind: boundary
+    rule: equals
+    result_pointer: /design/archive_is_verified_point_in_time_snapshot
+    expected: false
+    lineages: [raw_data_audit, binary_geometry.evaluation]
+    scope: reconstructed_status_availability_at_2020_09_30
+    forbidden_inference: [verified_point_in_time_snapshot, observed_operational_chargeoff_date]
+    surfaces:
+      required: [body, supplement, registry, claim_matrix]
+      allowed: [body, supplement, registry, claim_matrix]
+
+  - id: endpoint.reason_census_partitions_candidates
+    status: active
+    kind: empirical
+    rule: equals
+    result_pointer: /evaluation_endpoint/reason_census_partitions_primary_candidates
+    expected: true
+    lineages: [binary_geometry.evaluation]
+    scope: primary_oot_reconstructed_endpoint_reason_taxonomy
+    forbidden_inference: [identified_missingness_mechanism, observed_operational_event_dates]
+    surfaces:
+      required: [body, supplement, registry, claim_matrix]
+      allowed: [body, supplement, registry, claim_matrix]
+
+  - id: coverage.five_models_all_windows_below_nominal
+    status: active
+    kind: empirical
+    rule: equals
+    result_pointer: /credit_risk_controls/all_five_all_eight_upper_below_nominal
+    expected: true
+    lineages: [binary_geometry.evaluation, credit_controls.evaluation]
+    scope: all_candidate_sharp_bounds_under_six_month_endpoint
+    forbidden_inference: [universal_conformal_invalidity, selected_model_winner, funded_set_validity]
+    surfaces:
+      required: [body, supplement, registry, claim_matrix]
+      allowed: [body, supplement, registry, claim_matrix]
+
+  - id: geometry.prevalence_sensitive_mechanism
+    status: active
+    kind: theorem
+    rule: documented
+    lineages: [binary_geometry.outcome_free, label_lag_sensitivity]
+    scope: constant_score_binary_threshold_and_observed_stratum_path
+    forbidden_inference: [finite_sample_causal_explanation, universal_threshold_transition]
+    surfaces:
+      required: [body, supplement, registry, claim_matrix]
+      allowed: [body, supplement, registry, claim_matrix]
+
+  - id: timing.fit_label_crossing_retained
+    status: active
+    kind: empirical
+    rule: equals
+    result_pointer: /binary_phase_transition/label_lag_sensitivity/w7_to_w8_threshold_crossing_at_all_admissible_lags
+    expected: true
+    lineages: [label_lag_sensitivity]
+    scope: lags_passing_locked_monthly_retention_rule
+    forbidden_inference: [arbitrary_label_lag_invariance, causal_attribution]
+    surfaces:
+      required: [body, supplement, registry]
+      allowed: [body, supplement, registry, claim_matrix]
+
+  - id: timing.endpoint_six_month_reconciles_active
+    status: active
+    kind: empirical
+    rule: equals
+    result_pointer: /sensitivity/evaluation_endpoint_availability/six_month_endpoint_reconciles_to_active_evaluation
+    expected: true
+    lineages: [endpoint_availability, binary_geometry.evaluation, two_ruler.evaluation]
+    scope: complete_endpoint_availability_lag_grid
+    forbidden_inference: [endpoint_selection, independent_replications]
+    surfaces:
+      required: [body, supplement, registry, claim_matrix]
+      allowed: [body, supplement, registry, claim_matrix]
+
+  - id: sensitivity.second_origin_coverage_recurrence
+    status: active
+    kind: empirical
+    rule: equals
+    result_pointer: /sensitivity/rolling_origin/all_sixteen_upper_below_nominal
+    expected: true
+    lineages: [binary_geometry.evaluation, rolling_origin]
+    scope: two_retrospective_origins_eight_windows_each
+    forbidden_inference: [independent_replication, temporal_invariance, prospective_validation]
+    surfaces:
+      required: [body, supplement, registry, claim_matrix]
+      allowed: [body, supplement, registry, claim_matrix]
+
+  - id: sensitivity.missingness_encoding_recurrence
+    status: active
+    kind: empirical
+    rule: equals
+    result_pointer: /sensitivity/missingness_encoding/all_three_all_eight_upper_below_nominal
+    expected: true
+    lineages: [binary_geometry.evaluation, missingness_encoding]
+    scope: three_feature_semantics_preserving_catboost_encodings
+    forbidden_inference: [identified_missingness_mechanism, encoding_winner, portfolio_robustness]
+    surfaces:
+      required: [body, supplement, registry, claim_matrix]
+      allowed: [body, supplement, registry, claim_matrix]
+
+  - id: sensitivity.fit_label_completion_coverage_recurrence
+    status: active
+    kind: empirical
+    rule: equals
+    result_pointer: /sensitivity/fit_label_completion/all_scenarios_all_windows_upper_below_nominal
+    expected: true
+    lineages: [binary_geometry.evaluation, fit_label_completion]
+    scope: observed_only_plus_three_declared_fit_label_completion_rules
+    forbidden_inference: [sharp_completion_bounds, arbitrary_label_assignment_robustness, preregistration]
+    surfaces:
+      required: [body, supplement, registry, claim_matrix]
+      allowed: [body, supplement, registry, claim_matrix]
+
+  - id: geometry.fit_label_completion_crossing_not_universal
+    status: active
+    kind: boundary
+    rule: equals
+    result_pointer: /sensitivity/fit_label_completion/w7_w8_crossing_in_all_scenarios
+    expected: false
+    lineages: [binary_geometry.outcome_free, fit_label_completion]
+    scope: stratum_2_w7_w8_path_over_four_fit_label_scenarios
+    forbidden_inference: [universal_threshold_transition, causal_explanation, geometry_invariance]
+    surfaces:
+      required: [body, supplement, registry, claim_matrix]
+      allowed: [body, supplement, registry, claim_matrix]
+
+  - id: timing.fit_and_endpoint_lags_not_factorial
+    status: active
+    kind: boundary
+    rule: equals
+    result_pointer: /sensitivity/evaluation_endpoint_availability/fit_label_lag_crossed_factorially
+    expected: false
+    lineages: [label_lag_sensitivity, endpoint_availability]
+    scope: two_separate_one_factor_sensitivities
+    forbidden_inference: [joint_lag_robustness, full_factorial_robustness]
+    surfaces:
+      required: [body, supplement, registry, claim_matrix]
+      allowed: [body, supplement, registry, claim_matrix]
+
+  - id: decision.no_selected_policy
+    status: active
+    kind: boundary
+    rule: equals
+    result_pointer: /decision_challenger/interpretation/policy_winner
+    expected: null
+    lineages: [two_ruler.outcome_free, two_ruler.evaluation, binary_geometry.evaluation]
+    scope: all_reported_rulers_coordinates_windows_and_supports
+    forbidden_inference: [policy_winner, preferred_ruler, preferred_coordinate, universal_direction]
+    surfaces:
+      required: [body, supplement, registry, claim_matrix]
+      allowed: [body, supplement, registry, claim_matrix]
+
+  - id: comparator.broad_support_all_cross_zero
+    status: active
+    kind: empirical
+    rule: equals
+    result_pointer: /portfolio/broad_stress_all_envelopes_cross_zero
+    expected: true
+    lineages: [binary_geometry.outcome_free, binary_geometry.evaluation]
+    scope: declared_point_cap_support_0_05_to_0_12
+    forbidden_inference: [universal_comparator_quantification, policy_equivalence]
+    surfaces:
+      required: [body, supplement, registry, claim_matrix]
+      allowed: [body, supplement, registry, claim_matrix]
+
+  - id: theory.sharp_common_outcome_bounds
+    status: active
+    kind: theorem
+    rule: documented
+    lineages: [binary_geometry.evaluation, two_ruler.evaluation]
+    scope: binary_completion_bounds_for_candidates_and_paired_allocations
+    forbidden_inference: [sampling_confidence_interval, missing_at_random_identification]
+    surfaces:
+      required: [body, supplement, registry]
+      allowed: [body, supplement, registry, claim_matrix]
+
+  - id: theory.binary_identification_width
+    status: active
+    kind: theorem
+    rule: documented
+    lineages: [binary_geometry.evaluation, two_ruler.evaluation]
+    scope: unrestricted_binary_completion_for_common_outcome_policy_contrasts
+    forbidden_inference: [missing_at_random_identification, sampling_uncertainty, causal_effect]
+    surfaces:
+      required: [body, supplement, registry]
+      allowed: [body, supplement, registry, claim_matrix]
+
+  - id: theory.basis_endpoint_sufficiency
+    status: active
+    kind: theorem
+    rule: documented
+    lineages: [binary_geometry.outcome_free, binary_geometry.evaluation]
+    scope: declared_piecewise_linear_point_cap_support
+    forbidden_inference: [continuous_joint_frontier_uniqueness, arbitrary_comparator_support]
+    surfaces:
+      required: [body, supplement, registry]
+      allowed: [body, supplement, registry, claim_matrix]
+
+  - id: boundary.no_selected_set_validity
+    status: active
+    kind: boundary
+    rule: documented
+    lineages: [binary_geometry, two_ruler]
+    scope: candidate_conformal_audit_followed_by_outcome_free_allocation
+    forbidden_inference: [selected_set_conformal_guarantee, post_selection_coverage]
+    surfaces:
+      required: [body, supplement, registry, claim_matrix]
+      allowed: [body, supplement, registry, claim_matrix]
+
+  - id: sensitivity.structure_no_universal_direction
+    status: active
+    kind: empirical
+    rule: equals
+    result_pointer: /sensitivity/portfolio_structure/every_scenario_has_adverse_default_and_miscoverage_cells
+    expected: true
+    lineages: [portfolio_structure, two_ruler.evaluation]
+    scope: complete_budget_by_purpose_cap_by_lgd_cartesian_grid
+    forbidden_inference: [scenario_winner, universal_adversity, structural_invariance, deployment]
+    surfaces:
+      required: [body, supplement, registry, claim_matrix]
+      allowed: [body, supplement, registry, claim_matrix]
+
+  - id: optimization.allocation_granularity_is_diagnostic
+    status: active
+    kind: boundary
+    rule: equals
+    result_pointer: /sensitivity/allocation_granularity/integer_policy_or_reoptimization_claim_authorized
+    expected: false
+    lineages: [two_ruler.outcome_free, allocation_granularity]
+    scope: deterministic_usd25_floor_with_residual_cash_on_active_allocations
+    forbidden_inference: [integer_optimality, discrete_policy_robustness, reoptimization]
+    surfaces:
+      required: [body, supplement, registry, claim_matrix]
+      allowed: [body, supplement, registry, claim_matrix]

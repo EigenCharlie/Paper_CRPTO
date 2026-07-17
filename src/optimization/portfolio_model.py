@@ -441,6 +441,7 @@ def solve_portfolio_highs_sparse(
     min_budget_utilization: float = 0.0,
     pd_cap_slack_penalty: float = 0.0,
     pd_constraint_override: np.ndarray | None = None,
+    objective_rate_override: np.ndarray | None = None,
     time_limit: int = 300,
     threads: int = 4,
 ) -> dict[str, Any]:
@@ -464,6 +465,7 @@ def solve_portfolio_highs_sparse(
         min_budget_utilization=min_budget_utilization,
         pd_cap_slack_penalty=pd_cap_slack_penalty,
         pd_constraint_override=pd_constraint_override,
+        objective_rate_override=objective_rate_override,
     )
 
     options: dict[str, Any] = {
@@ -526,6 +528,7 @@ def solve_portfolio_highspy_native(
     min_budget_utilization: float = 0.0,
     pd_cap_slack_penalty: float = 0.0,
     pd_constraint_override: np.ndarray | None = None,
+    objective_rate_override: np.ndarray | None = None,
     time_limit: int = 300,
     threads: int = 4,
 ) -> dict[str, Any]:
@@ -557,6 +560,7 @@ def solve_portfolio_highspy_native(
         min_budget_utilization=min_budget_utilization,
         pd_cap_slack_penalty=pd_cap_slack_penalty,
         pd_constraint_override=pd_constraint_override,
+        objective_rate_override=objective_rate_override,
     )
     lp = _build_highspy_lp(highspy, components)
     solver = highspy.Highs()
@@ -702,6 +706,7 @@ def _portfolio_lp_components(
     min_budget_utilization: float,
     pd_cap_slack_penalty: float,
     pd_constraint_override: np.ndarray | None,
+    objective_rate_override: np.ndarray | None,
 ) -> _PortfolioLpComponents:
     n = len(loans)
     if n == 0:
@@ -718,8 +723,16 @@ def _portfolio_lp_components(
         else (high if robust else point)
     )
     pd_uncertainty = np.clip(high - point, 0.0, 1.0)
+    if objective_rate_override is None:
+        objective_rate = rates - point * lgd_arr
+    else:
+        objective_rate = np.asarray(objective_rate_override, dtype=float)
+        if objective_rate.shape != point.shape:
+            raise ValueError("objective_rate_override must align with pd_point.")
+        if not bool(np.isfinite(objective_rate).all()):
+            raise ValueError("objective_rate_override must contain finite values.")
     objective = loan_amounts * (
-        rates - point * lgd_arr - float(uncertainty_aversion) * pd_uncertainty * lgd_arr
+        objective_rate - float(uncertainty_aversion) * pd_uncertainty * lgd_arr
     )
 
     rows, rhs, pd_cap_row_idx = _portfolio_constraint_rows(
@@ -829,6 +842,7 @@ def optimize_portfolio_allocation(
     min_budget_utilization: float = 0.0,
     pd_cap_slack_penalty: float = 0.0,
     pd_constraint_override: np.ndarray | None = None,
+    objective_rate_override: np.ndarray | None = None,
     time_limit: int = 300,
     threads: int = 4,
     solver_backend: str = "highs",
@@ -854,6 +868,7 @@ def optimize_portfolio_allocation(
             min_budget_utilization=min_budget_utilization,
             pd_cap_slack_penalty=pd_cap_slack_penalty,
             pd_constraint_override=pd_constraint_override,
+            objective_rate_override=objective_rate_override,
             time_limit=time_limit,
             threads=threads,
         )
@@ -874,6 +889,7 @@ def optimize_portfolio_allocation(
                 min_budget_utilization=min_budget_utilization,
                 pd_cap_slack_penalty=pd_cap_slack_penalty,
                 pd_constraint_override=pd_constraint_override,
+                objective_rate_override=objective_rate_override,
                 time_limit=time_limit,
                 threads=threads,
             )
@@ -903,6 +919,7 @@ def optimize_portfolio_allocation(
                 min_budget_utilization=min_budget_utilization,
                 pd_cap_slack_penalty=pd_cap_slack_penalty,
                 pd_constraint_override=pd_constraint_override,
+                objective_rate_override=objective_rate_override,
                 time_limit=time_limit,
                 threads=threads,
             )
@@ -910,6 +927,8 @@ def optimize_portfolio_allocation(
             result["native_solver_error"] = str(exc)
             return result
     if backend == "cuopt":
+        if objective_rate_override is not None:
+            raise ValueError("objective_rate_override is not supported by the cuOpt backend.")
         from src.optimization.cuopt_adapter import solve_portfolio_cuopt_native
 
         return solve_portfolio_cuopt_native(
@@ -937,6 +956,9 @@ def optimize_portfolio_allocation(
             f"Unsupported solver_backend={solver_backend!r}. "
             "Use 'highs', 'highs_sparse', 'highspy', 'highs_pyomo', or 'cuopt'."
         )
+
+    if objective_rate_override is not None:
+        raise ValueError("objective_rate_override is not supported by the Pyomo backend.")
 
     model = build_portfolio_model(
         loans=loans,

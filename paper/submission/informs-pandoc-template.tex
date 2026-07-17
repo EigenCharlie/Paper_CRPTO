@@ -1,0 +1,84 @@
+%% Generated manuscript template. Edit paper/CRPTO_ijds.qmd, not the output TeX.
+\documentclass[ijds,dblanonrev]{informs4}
+
+\usepackage{eqndefns-left}
+\RequirePackage{tgtermes}
+\RequirePackage{newtxtext}
+\RequirePackage{newtxmath}
+\RequirePackage{bm}
+\RequirePackage{endnotes}
+\OneAndAHalfSpacedXII
+\TheoremsNumberedThrough
+\EquationsNumberedThrough
+\ECRepeatTheorems
+\MANUSCRIPTNO{}
+
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage{amsmath,amssymb,mathtools}
+\usepackage{booktabs,longtable,array,calc}
+\usepackage{graphicx}
+\usepackage{placeins}
+\usepackage{float}
+\usepackage{tabularx}
+\usepackage{xcolor}
+\usepackage{hyperref}
+\hypersetup{hidelinks}
+\graphicspath{{../../reports/crpto/figures/}}
+\floatplacement{figure}{H}
+\setlength{\emergencystretch}{2em}
+\usepackage{natbib}
+\bibpunct[, ]{(}{)}{,}{a}{}{,}
+\def\bibfont{\small}
+\def\bibsep{\smallskipamount}
+\def\bibhang{24pt}
+\def\newblock{\ }
+\def\BIBand{and}
+
+\providecommand{\tightlist}{%
+  \setlength{\itemsep}{0pt}\setlength{\parskip}{0pt}}
+\providecommand{\passthrough}[1]{#1}
+\newsavebox\pandocbox
+\newcommand*\pandocbounded[1]{%
+  \sbox\pandocbox{#1}%
+  \ifdim\wd\pandocbox>\linewidth
+    \resizebox{\linewidth}{!}{\usebox\pandocbox}%
+  \else
+    \usebox\pandocbox
+  \fi}
+
+$if(highlighting-macros)$
+$highlighting-macros$
+$endif$
+
+\begin{document}
+
+\RUNAUTHOR{Anonymous}
+\RUNTITLE{Binary Conformal Geometry Audit}
+
+\TITLE{$title$}
+
+\ARTICLEAUTHORS{%
+  \AUTHOR{}
+  \AFF{}
+}
+
+$if(abstract)$
+\ABSTRACT{%
+$abstract$%
+}
+$endif$
+
+$if(keywords)$
+\KEYWORDS{$for(keywords)$$keywords$$sep$; $endfor$}
+$endif$
+
+\maketitle
+
+$body$
+
+\clearpage
+\bibliographystyle{informs2014}
+\bibliography{../references}
+
+\end{document}

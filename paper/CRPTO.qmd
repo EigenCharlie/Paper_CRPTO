@@ -1,60 +1,30 @@
 ---
-title: "CRPTO"
-author: "Carlos Alfredo Vergara Rojas"
-lang: es
-bibliography: ../book/references.bib
-format:
-  html:
-    toc: true
-  pdf:
-    documentclass: article
-execute:
-  freeze: true
+title: "CRPTO Manuscript Index"
+author: "Anonymous"
+lang: en
+format: html
 ---
 
-# Resumen
+# Active IJDS Manuscript
 
-CRPTO convierte una PD calibrada en una decision de portafolio auditable. La
-version IJDS activa reproduce exactamente el endpoint conformal al 90%, usa la
-regla simple `q=(p+u)/2` con `tau=0.17`, y selecciona esa politica dentro de una
-grilla `3x3` en noviembre bajo `B_u<=0.28`. Un replay outcome-free en diciembre
-elige la misma politica; al abrir outcomes, la miscoverage `0.124925` muestra
-que estabilidad de seleccion no equivale a cobertura del funded set.
+The single active paper is
+`CRPTO_ijds.qmd`, with online supplement `supplement_ijds.qmd` and official
+INFORMS source `submission/CRPTO_ijds_submission.tex`.
 
-En 276,869 prestamos OOT, la politica financia 308 prestamos y obtiene
-`$179,327.59` sobre `$1M`, con default ponderado `0.039375`, miscoverage
-`0.036875` y endpoint `0.258051`. La baseline point-PD emparejada obtiene
-`$196,369.14` y default `0.118400`. El costo observado de retorno es `8.678%` y
-la reduccion de default es `7.9025` puntos porcentuales. El paper reporta tambien
-los periodos donde point-PD domina; no afirma superioridad universal.
+The active claim registry is
+`../docs/research/active_claims_2026-07-10.md`. The experiment uses a
+status-independent 540,121-loan universe, a 2012-selected conformal upper-score
+guardrail, and 15 separate monthly 2016--2017 decisions. It finds a genuine
+trade-off: lower default, lower standardized payoff, and worse funded-set
+miscoverage relative to point PD.
 
-# Fuentes del manuscrito
+Compact-v7, A1--A40, and external-dataset experiments are historical
+provenance. They do not define or validate the active paper.
 
-- `CRPTO_ijds.qmd`: body anonimo y fuente narrativa activa.
-- `supplement_ijds.qmd`: pruebas y evidencia A35--A40, mas diagnosticos
-  historicos A1--A34.
-- `submission/CRPTO_ijds_submission.tex`: handoff compacto bajo `informs4`.
-- `../docs/research/active_claims_2026-07-04.md`: contrato numerico vigente.
-
-# Evidencia activa
-
-- A35: replay exacto y saturacion por alpha.
-- A36: selector de noviembre, estabilidad del cap y auditoria de diciembre.
-- A37: evaluacion OOT total y temporal.
-- A38: composicion por grado de credito.
-- A39: bootstrap por mes de originacion y sensibilidad por prestamo.
-- A40: politica seleccionada, blend conservador y baseline point-PD.
-
-La gobernanza vive en
-`models/experiments/champion_reopen/<active-run>/portfolio/ijds_policy_governance.json`.
-Los artefactos historicos protegidos por `EXTRACTION_MANIFEST.json` permanecen
-intactos como procedencia, no como claims activos.
-
-# Comandos
+# Build
 
 ```powershell
 just ijds-evidence
 just paper-submission
 just paper-submission-official
-just submission-check
 ```

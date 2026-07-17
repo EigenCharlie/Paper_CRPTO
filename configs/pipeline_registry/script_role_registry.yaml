@@ -1,5 +1,29 @@
-schema_version: "2026-05-10.1"
+schema_version: "2026-07-15.3"
 scripts:
+  -
+    script: scripts/experiments/run_ijds_endpoint_availability_sensitivity.py
+    role: complete frozen endpoint-availability sensitivity
+    category: diagnostics
+    pipeline_owner: ijds_active_audit
+    status: active
+  -
+    script: scripts/experiments/run_ijds_portfolio_structure_sensitivity.py
+    role: complete nonselective budget-purpose-LGD structural sensitivity V6
+    category: diagnostics
+    pipeline_owner: ijds_active_audit
+    status: active
+  -
+    script: scripts/experiments/run_ijds_policy_support_tie_audit.py
+    role: evaluated-cap basis and ID-order stability audit
+    category: diagnostics
+    pipeline_owner: ijds_active_audit
+    status: active
+  -
+    script: scripts/render_submission_pdf_previews.py
+    role: paper and supplement PDF preview renderer
+    category: publication
+    pipeline_owner: ijds_active_audit
+    status: active
   -
     script: scripts/run_crpto_pipeline.py
     role: "fixed CRPTO end-to-end orchestrator"
@@ -107,6 +131,84 @@ scripts:
     role: evidence consistency analysis
     category: publication
     pipeline_owner: publication_exports
+    status: public
+  -
+    script: scripts/experiments/run_ijds_fixed_taxonomy_c2.py
+    role: historical fixed-taxonomy V1--V3 IJDS experiment
+    category: provenance
+    pipeline_owner: ijds_historical_audit
+    status: historical
+  -
+    script: scripts/build_ijds_fixed_taxonomy_c2_evidence.py
+    role: historical fixed-taxonomy V1--V3 evidence builder
+    category: provenance
+    pipeline_owner: ijds_historical_audit
+    status: historical
+  -
+    script: scripts/experiments/run_ijds_binary_geometry_frontier_v4.py
+    role: two-phase outcome-free freeze and endpoint-corrected V4 evaluation
+    category: evaluation
+    pipeline_owner: ijds_active_audit
+    status: paper
+  -
+    script: scripts/build_ijds_binary_geometry_frontier_v4_evidence.py
+    role: sole active endpoint-corrected IJDS evidence builder
+    category: publication
+    pipeline_owner: ijds_active_audit
+    status: public
+  -
+    script: scripts/experiments/run_ijds_normalized_objective_frontier.py
+    role: outcome-free two-ruler frontier freeze
+    category: evaluation
+    pipeline_owner: ijds_active_audit
+    status: paper
+  -
+    script: scripts/experiments/run_ijds_normalized_objective_frontier_v2.py
+    role: hash-verified two-ruler endpoint evaluation
+    category: evaluation
+    pipeline_owner: ijds_active_audit
+    status: paper
+  -
+    script: scripts/experiments/run_ijds_credit_risk_controls.py
+    role: two-phase five-model coverage-control audit
+    category: evaluation
+    pipeline_owner: ijds_active_audit
+    status: paper
+  -
+    script: scripts/experiments/run_ijds_raw_data_audit.py
+    role: full-archive data and endpoint contract audit
+    category: diagnostics
+    pipeline_owner: ijds_active_audit
+    status: paper
+  -
+    script: scripts/experiments/run_ijds_label_lag_sensitivity.py
+    role: frozen-score label-availability sensitivity
+    category: diagnostics
+    pipeline_owner: ijds_active_audit
+    status: paper
+  -
+    script: scripts/build_ijds_submission_tex.py
+    role: deterministic QMD-to-INFORMS TeX generator
+    category: publication
+    pipeline_owner: ijds_active_audit
+    status: public
+  -
+    script: scripts/compile_ijds_submission.py
+    role: official IJDS LaTeX compiler and citation-reference gate
+    category: publication
+    pipeline_owner: ijds_active_audit
+    status: public
+  -
+    script: scripts/check_publication_integrity.py
+    role: reviewer-surface claim, anonymity, and evidence integrity gate
+    category: governance
+    pipeline_owner: ijds_active_audit
+    status: public
+  -
+    script: scripts/run_ty_advisory.py
+    role: focused and full-tree ty type-advisory runner
+    category: governance
+    pipeline_owner: ijds_active_audit
     status: public
   -
     script: scripts/build_crpto_journal_package.py

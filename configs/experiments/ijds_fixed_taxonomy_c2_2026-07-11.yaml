@@ -1,0 +1,230 @@
+schema_version: "2026-07-11.2"
+protocol_status: "locked_retrospective_prefreeze_audit"
+protocol_tag: "protocol/ijds-fixed-taxonomy-c2-2026-07-11-v2"
+run_tag: "ijds-fixed-taxonomy-c2-2026-07-11-v2"
+
+hypothesis: >-
+  A conformal-derived portfolio score can attain its target in a near
+  post-calibration cohort yet lose both coverage and decision meaning after
+  temporal transport; conclusions about the score must therefore be robust
+  to an outcome-free comparator multiverse rather than one copied risk cap.
+
+source:
+  raw_path: "data/raw/Loan_status_2007-2020Q3.csv"
+  snapshot_date: "2020-09-30"
+  information_cutoff: "2016-03-31"
+  charged_off_reporting_lag_months: 6
+  minimum_label_retention: 0.99
+  csv_chunksize: 100000
+  required_raw_columns:
+    - id
+    - loan_amnt
+    - funded_amnt
+    - total_pymnt
+    - term
+    - int_rate
+    - installment
+    - grade
+    - sub_grade
+    - emp_length
+    - home_ownership
+    - annual_inc
+    - verification_status
+    - issue_d
+    - loan_status
+    - last_pymnt_d
+    - purpose
+    - dti
+    - delinq_2yrs
+    - earliest_cr_line
+    - fico_range_low
+    - fico_range_high
+    - inq_last_6mths
+    - mths_since_last_delinq
+    - open_acc
+    - pub_rec
+    - revol_bal
+    - revol_util
+    - total_acc
+    - collections_12_mths_ex_med
+    - chargeoff_within_12_mths
+    - tax_liens
+    - pub_rec_bankruptcies
+    - mort_acc
+    - num_tl_op_past_12m
+    - acc_open_past_24mths
+
+target:
+  name: "terminal_default_by_snapshot"
+  positive_definition: "Normalized status contains Charged Off."
+  negative_definition: "Normalized status contains Fully Paid."
+  right_censored_definition: >-
+    Exact Default and every other nonterminal snapshot status remain
+    unresolved; no unresolved row is coerced to a binary outcome.
+
+design:
+  term_months: 36
+  development_end: "2010-12-31"
+  validation_tail_fraction: 0.20
+  probability_calibration_start: "2011-01-01"
+  probability_calibration_end: "2011-12-31"
+  conformal_fit_start: "2012-01-01"
+  conformal_fit_end: "2012-06-30"
+  policy_development_start: "2012-07-01"
+  policy_development_end: "2012-12-31"
+  primary_oot_start_month: "2016-04"
+  primary_oot_end_month: "2017-06"
+  censored_extension_start_month: "2017-07"
+  censored_extension_end_month: "2017-09"
+  endpoint: "terminal_default_observed_by_2020-09-30_with_right_censoring"
+  historical_archive_previously_inspected: true
+
+model:
+  type: "CatBoostClassifier"
+  canonical_seed: 42
+  sensitivity_seeds: [40, 41, 42, 43, 44]
+  fixed_params:
+    iterations: 500
+    learning_rate: 0.04
+    depth: 6
+    l2_leaf_reg: 10.0
+    loss_function: "Logloss"
+    eval_metric: "AUC"
+    auto_class_weights: "Balanced"
+    bootstrap_type: "Bernoulli"
+    subsample: 0.80
+    has_time: true
+    allow_writing_files: false
+    verbose: false
+  numeric_features:
+    - loan_amnt
+    - int_rate
+    - installment
+    - annual_inc
+    - dti
+    - loan_to_income
+    - installment_burden
+    - rev_utilization
+    - revol_bal_to_income
+    - open_acc_ratio
+    - fico_score
+    - credit_age_years
+    - emp_length_num
+    - open_acc
+    - total_acc
+    - revol_bal
+    - pub_rec
+    - inq_last_6mths
+    - delinq_severity
+    - delinq_recency
+    - log_annual_inc
+    - log_revol_bal
+    - loan_to_income_sq
+    - fico_x_dti
+    - has_delinq_2yrs
+    - has_pub_rec
+    - has_bankruptcy
+    - has_recent_inq
+    - recent_chargeoff
+  categorical_features:
+    - grade
+    - sub_grade
+    - home_ownership
+    - purpose
+    - verification_status
+    - int_rate_bucket
+    - dti_bucket
+    - fico_bucket
+    - int_rate_bucket__grade
+
+probability_calibration:
+  method: "platt_on_catboost_raw_margin"
+  logistic_regression:
+    C: 1000000.0
+    solver: "lbfgs"
+    max_iter: 2000
+    random_state: 42
+
+conformal:
+  method: "fixed_taxonomy_split_mondrian_absolute_residual"
+  estimand: "binary_terminal_outcome_prediction_set_convex_hull"
+  alpha: 0.10
+  canonical_groups: 5
+  taxonomy_source: "2011_all_status_independent_calibrated_scores"
+  residual_source: "2012H1_availability_safe_labels"
+  minimum_rows_per_group: 1000
+  diagnostic_group_counts: [1, 2, 5, 10]
+  finite_sample_rank: "ceil((n_group + 1) * (1 - alpha))"
+  exactness_boundary: "order_statistic_rank_only_under_exchangeability"
+
+payoff:
+  id: "coherent_standardized_binary_payoff_v1"
+  expected_formula: "(1 - p) * r - p * LGD"
+  realized_formula: "(1 - y) * r - y * LGD"
+  lgd: 0.45
+  reoptimization_lgd_grid: [0.25, 0.45, 0.65]
+  secondary_cash_metric: "undiscounted_snapshot_cumulative_net_cash_yield"
+
+policy:
+  family: "closed_linear_conformal_score_family"
+  risk_tolerances: [0.15, 0.17, 0.19]
+  gammas: [0.25, 0.50, 0.75]
+  uncertainty_aversions: [0.0]
+  outcome_based_selection: false
+  budget: 1000000.0
+  min_budget_utilization_solver: 1.0
+  canonical_purpose_cap: 0.25
+  purpose_cap_sensitivity: [0.20, 0.25, 0.30, 1.00]
+  score_ablations:
+    - "clipped_conformal_upper_blend"
+    - "unclipped_group_residual_penalty"
+    - "pooled_residual_penalty"
+
+comparators:
+  primary: "contemporaneous_outcome_free_funded_pd_match"
+  match_tolerance: 1.0e-10
+  same_numeric_cap: true
+  development_fixed_funded_pd_cap: true
+  point_cap_frontier:
+    start: 0.05
+    stop: 0.12
+    step: 0.0025
+  selection_from_outcomes: false
+
+analysis:
+  all_nine_policies_primary: true
+  report_every_cell: true
+  unresolved_outcomes: "sharp_common_outcome_binary_bounds"
+  finite_population_estimand: true
+  confirmatory_language_forbidden: true
+  universal_direction_requires: "9_of_9_canonical_pairs_and_no_opposite_seed_purpose_cell"
+  comparator_reversal_requires: "same_threshold_and_c2_opposite_for_9_of_9"
+  miscoverage_direction_requires: "9_of_9"
+
+simulation:
+  enabled: true
+  random_seed: 20260711
+  repetitions: 200
+  sample_size: 2000
+  temporal_shift_grid: [0.0, 0.05, 0.10, 0.15]
+
+resume_outcome_free:
+  enabled: true
+  source_run_tag: "ijds-fixed-taxonomy-c2-2026-07-11-v1"
+  source_protocol_tag: "protocol/ijds-fixed-taxonomy-c2-2026-07-11-v1"
+  source_protocol_commit: "4835cc18a0117a695f89f9da70a4e3af97663a27"
+  source_freeze_sha256: "93690082880ef4ff1375dcd5b26d2df79f80e6ebe09a6d83b7fd99a9abb4cfae"
+
+execution:
+  solver_backend: "highspy"
+  strict_solver_backend: true
+  solver_time_limit_seconds: 300
+  threads: 4
+  allocation_tolerance: 1.0e-10
+
+output:
+  data_root: "data/processed/experiments/ijds_prefreeze"
+  model_root: "models/experiments/ijds_prefreeze"
+  immutability: "hard_no_overwrite_choose_fresh_run_tag"
+  deterministic_summary: "fixed_taxonomy_c2_summary.json"
+  execution_receipt: "execution_receipt.json"

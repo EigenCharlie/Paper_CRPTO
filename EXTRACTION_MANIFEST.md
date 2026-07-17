@@ -12,7 +12,8 @@ exists, and how `tests/test_manifest_regression.py` enforces it.
 - **Manifest scope**: frozen upstream baseline plus the historical pool93
   promotion recorded at extraction time. The current IJDS manuscript policy is
   newer and is governed separately by
-  `docs/research/active_claims_2026-07-04.md`.
+  `docs/research/active_claims_2026-07-14.md`. The retired registry remains
+  recoverable from Git history.
 - **187 critical files** are hashed under `critical_hashes` (SHA256 + byte
   count).
 - **Historical pool93 claim**: return `$184,832.48`, `V(alpha=0.01)=0.035350`,

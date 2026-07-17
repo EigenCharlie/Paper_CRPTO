@@ -1,5 +1,0 @@
-outs:
-- md5: 59bfec199f0e23cc13c8a9fb05ce18e5
-  size: 15059
-  hash: md5
-  path: model_comparison.json

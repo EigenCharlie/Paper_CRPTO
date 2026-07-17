@@ -1,0 +1,42 @@
+schema_version: "2026-07-16.2"
+protocol_tag: "protocol/ijds-fit-label-completion-sensitivity-2026-07-16-v2"
+run_tag: "ijds-fit-label-completion-sensitivity-2026-07-16-v2"
+
+parent:
+  config: "configs/experiments/ijds_binary_geometry_frontier_v4_2026-07-15_v5.yaml"
+  outcome_freeze:
+    path: "models/experiments/ijds_audit/ijds-binary-geometry-frontier-v4-2026-07-12-v1/protocol_freeze.json"
+    bytes: 20362
+    sha256: "c2b3dc2d18c9fed80708682d5a0369c80c89643e2d28024418522d954ebe667c"
+  active_coverage:
+    path: "data/processed/experiments/ijds_audit/ijds-binary-geometry-frontier-v4-2026-07-15-v5/evaluation/temporal_coverage.parquet"
+    bytes: 215583
+    sha256: "25be1d2e065a6eab632618127cb21ccfb99be6f582ef557e80122c184f28dfe2"
+
+fit_label_completion:
+  scenarios:
+    - "observed_only"
+    - "all_unavailable_nondefault"
+    - "all_unavailable_default"
+    - "hindsight_terminal"
+  taxonomy_groups: 5
+  evaluation_strata: [-1, 2]
+  baseline_score_replay_tolerance: 1.0e-4
+  baseline_recipe_replay_tolerance: 1.0e-4
+  baseline_coverage_replay_tolerance: 1.0e-5
+  baseline_geometry_replay_tolerance: 2.0e-5
+  v1_stopped_score_drift: 7.389153786618863e-6
+  numerical_recovery_only: true
+  all_scenarios_reported: true
+  historical_archive_previously_inspected: true
+  outcome_based_selection: false
+  nonlinear_corner_interpretation_only: true
+  paper_role: "fit_label_availability_stress_not_model_or_scenario_selection"
+
+execution:
+  threads: 10
+
+output:
+  data_root: "data/processed/experiments/ijds_audit"
+  model_root: "models/experiments/ijds_audit"
+  immutability: "hard_no_overwrite_choose_fresh_run_tag"

@@ -1,7 +1,7 @@
 [project]
 name = "crpto"
 version = "0.1.0"
-description = "CRPTO — Conformal Robust Predict-Then-Optimize: conformal prediction + robust portfolio optimization, applied to credit risk (Lending Club 2007-2020). Standalone research pipeline and Quarto book accompanying the paper."
+description = "CRPTO - Conformal Risk-Aware Predict-Then-Optimize: an auditable study of binary conformal geometry, temporal transport, and portfolio comparator design in historical credit data."
 readme = "README.md"
 requires-python = ">=3.11,<3.13"
 license = { text = "MIT" }
@@ -11,15 +11,12 @@ keywords = [
     "probability-of-default",
     "conformal-prediction",
     "predict-then-optimize",
-    "robust-optimization",
+    "comparator-design",
+    "decision-audit",
     "portfolio-optimization",
-    "model-risk-management",
-    "fairness",
     "lending-club",
     "catboost",
-    "mapie",
-    "pyomo",
-    "quarto",
+    "partial-identification",
 ]
 classifiers = [
     "Development Status :: 4 - Beta",
@@ -37,71 +34,32 @@ classifiers = [
 ]
 
 dependencies = [
-    # Core data & numerics — floors aligned with uv.lock effective versions
     "pandas>=2.3,<4",
     "numpy>=2.0,<3",
     "pyarrow>=18",
     "scipy>=1.14,<2",
     "scikit-learn>=1.6,<2",
-    "joblib>=1.5",
-    "pandera>=0.25",
-    "tqdm>=4.66",
-    # ML / Conformal / Calibration
-    "catboost>=1.2,<1.3",            # PIN — champion reproducibility
-    "optuna>=4.0",
-    "mapie>=1.4",
-    "fairlearn>=0.12",
-    "betacal>=1.1",
-    "venn-abers>=1.5",
-    "skops>=0.12",
+    "catboost>=1.2,<1.3",
     "optbinning>=0.21",
-    # Optimization
     "pyomo>=6.10",
     "highspy>=1.10",
-    "ortools>=9.10",
-    # Data orchestration & MLOps
-    "dvc[s3]>=3.60",
-    "mlflow>=3.10",
-    "dagshub>=0.7",
+    "ortools>=9.10,<9.12", # OptBinning 0.21 requires OR-Tools <9.12.
     "duckdb>=1.3",
-    "dbt-duckdb>=1.10",
-    # Visualization
+    "dvc[s3]>=3.60",
     "matplotlib>=3.10",
-    "seaborn>=0.13",
-    "plotly>=6.0",
-    # Notebooks / Jupyter
-    "nbformat>=5.10",
-    "nbclient>=0.10",
-    "ipykernel>=6.29",
-    # Runtime & config
     "pyyaml>=6.0",
-    "python-dotenv>=1.0",
     "loguru>=0.7",
-    # Testing baseline (also exposed in dev extra)
-    "pytest>=9.0",
 ]
 
 [project.optional-dependencies]
 dev = [
+    "pytest>=9.0",
     "pytest-cov>=7.0",
     "ruff>=0.10",
     "mypy>=1.13",
     "hypothesis>=6.115",
-    "nbstripout>=0.9",
-    "jupytext>=1.19",
-    "jupyter>=1.1",
     "pre-commit>=4.0",
-    "optuna-integration>=4.0",
-]
-search = [
-    "optuna-integration>=4.0",
-]
-spo = [
-    "pyepo>=1.0",
-    "torch>=2.5",
-]
-docs = [
-    "jupyterlab>=4.5",
+    "pypdf>=6,<7",
 ]
 
 [project.urls]
@@ -109,14 +67,13 @@ Homepage = "https://github.com/EigenCharlie/Paper_CRPTO"
 Repository = "https://github.com/EigenCharlie/Paper_CRPTO"
 Issues = "https://github.com/EigenCharlie/Paper_CRPTO/issues"
 Documentation = "https://github.com/EigenCharlie/Paper_CRPTO#readme"
-Changelog = "https://github.com/EigenCharlie/Paper_CRPTO/blob/main/CHANGELOG.md"
 
 [build-system]
 requires = ["hatchling"]
 build-backend = "hatchling.build"
 
 [tool.hatch.build.targets.wheel]
-packages = ["src", "crpto"]
+packages = ["src"]
 
 # ---------------------------------------------------------------------------
 # Ruff
@@ -125,13 +82,11 @@ packages = ["src", "crpto"]
 target-version = "py311"
 line-length = 100
 extend-exclude = [
-    "book/_book",
-    "book/_freeze",
-    "book/.quarto",
     ".venv",
     "data",
     "models",
     "reports",
+    "scripts/search",
 ]
 
 [tool.ruff.lint]
@@ -173,13 +128,10 @@ ignore = [
 
 [tool.ruff.lint.per-file-ignores]
 "tests/**/*.py"     = ["T20", "B011", "PT011"]
-"notebooks/**/*.py" = ["T20", "B018"]
-"notebooks/**/*.ipynb" = ["T20", "B018"]
 "scripts/**/*.py"   = ["T20"]
-"book/_helpers/**"  = ["T20"]
 
 [tool.ruff.lint.isort]
-known-first-party = ["crpto", "src"]
+known-first-party = ["src"]
 combine-as-imports = true
 
 [tool.ruff.format]
@@ -199,7 +151,6 @@ markers = [
 ]
 filterwarnings = [
     "ignore::DeprecationWarning:catboost.*",
-    "ignore::DeprecationWarning:pandera.*",
     "ignore::PendingDeprecationWarning",
 ]
 
@@ -209,7 +160,7 @@ filterwarnings = [
 [tool.coverage.run]
 branch = true
 source = ["src"]
-omit = ["tests/*", "scripts/*", "notebooks/*"]
+omit = ["tests/*", "scripts/*"]
 
 [tool.coverage.report]
 exclude_lines = [
@@ -226,92 +177,128 @@ skip_covered = false
 # ---------------------------------------------------------------------------
 [tool.mypy]
 python_version = "3.11"
-files = ["src", "scripts"]
+files = ["src", "scripts", "tests"]
+exclude = [
+    "^scripts/analyze_crpto_evidence\\.py$",
+    "^scripts/backtest_conformal_coverage\\.py$",
+    "^scripts/build_crpto_journal_package\\.py$",
+    "^scripts/build_tail_satisficing_challenger_audit\\.py$",
+    "^scripts/export_crpto_tables\\.py$",
+    "^scripts/generate_conformal_intervals\\.py$",
+    "^scripts/generate_crpto_figures\\.py$",
+    "^scripts/materialize_feature_artifacts\\.py$",
+    "^scripts/optimize_portfolio\\.py$",
+    "^scripts/optimize_portfolio_tradeoff\\.py$",
+    "^scripts/run_crpto_vs_spo_stability\\.py$",
+    "^scripts/search/",
+    "^scripts/train_pd_model\\.py$",
+    "^scripts/validate_conformal_experiment\\.py$",
+    "^scripts/validate_conformal_policy\\.py$",
+    "^src/data/make_dataset\\.py$",
+    "^src/data/prepare_dataset\\.py$",
+    "^src/optimization/tail_satisficing_objective\\.py$",
+]
 strict_optional = true
 warn_redundant_casts = true
 warn_unused_ignores = true
 warn_unreachable = true
-disallow_untyped_defs = false   # gradual — flip to true later
+# Compatibility modules remain on typed-body checking; the active modules
+# listed below are fully strict.
+disallow_untyped_defs = false
 check_untyped_defs = true
 follow_imports = "silent"
 show_error_codes = true
 pretty = true
-# Suppress import-untyped (mypy 1.x) globally: most third-party scientific libs
-# (pandas, sklearn, mlflow, ...) don't ship stubs and we don't want each call
-# site littered with `# type: ignore[import-untyped]`.
+# Suppress import-untyped globally because several scientific dependencies do
+# not ship complete stubs; runtime contracts cover their integration points.
 disable_error_code = ["import-untyped"]
 
 [[tool.mypy.overrides]]
 module = [
     "catboost.*",
-    "mapie.*",
-    "venn_abers.*",
-    "betacal.*",
     "optbinning.*",
-    "skops.*",
-    "fairlearn.*",
     "pyomo.*",
     "highspy.*",
     "ortools.*",
     "dvc.*",
-    "dagshub.*",
-    "pyepo.*",
-    "shap.*",
-    "plotly.*",
     "pandas.*",
-    "pandera.*",
-    "mlflow.*",
     "duckdb.*",
     "loguru.*",
-    "torch",
-    "torch.*",
-    "tabpfn",
-    "tabpfn.*",
 ]
 ignore_missing_imports = true
 
-[[tool.mypy.overrides]]
-module = [
-    "scripts.run_spo_comparison",
-    "scripts.run_spo_real",
-    "scripts.run_crpto_vs_spo_stability",
-    "scripts.experiments.run_tabpfn_tabprep_full",
-]
-disable_error_code = ["import-not-found"]
-
-# Strict mode for the fully-annotated modules. Legacy code stays under the
-# global laxer config. Promote modules to this list once they pass cleanly.
-# Modules in this list have been made fully typed enough for strict checks.
+# Strict mode for the fully annotated current modules. Protocol-frozen sources
+# not listed here still pass the global typed-body gate without source churn.
 [[tool.mypy.overrides]]
 module = [
     "src.optimization.policy",
+    "src.optimization.policy_evaluation",
+    "src.optimization.policy_selection",
     "src.optimization.cuopt_adapter",
     "src.optimization.portfolio_model",
-    "src.optimization.robust_opt",
-    "src.optimization.tail_satisficing_objective",
-    "src.models.calibration",
-    "src.models.conformal",
-    "src.models.conformal._scores",
-    "src.models.conformal.classification",
-    "src.models.conformal.pd_intervals",
-    "src.models.conformal.regression",
-    "src.models.conformal_adapters",
-    "src.models.conformal_artifacts",
-    "src.models.conformal_diagnostics",
-    "src.models.conformal_tuning",
-    "src.models.optuna_tuning",
-    "src.models.pd_contract",
-    "src.models.pd_model",
-    "src.models.pd_pipeline",
-    "src.models.venn_abers",
-    "src.utils.pipeline_state",
-    "src.utils.pipeline_topology",
-    "src.utils.mlflow_tracing",
-    "src.utils.optuna_storage",
-    "src.utils.script_helpers",
+    "src.models.binary_conformal_guardrail",
+    "src.data.outcome_observability",
+    "src.ijds_audit.config",
+    "src.ijds_audit.allocation_granularity",
+    "src.ijds_audit.claim_ledger",
+    "src.ijds_audit.evaluation",
+    "src.ijds_audit.fit_label_sensitivity",
+    "src.ijds_audit.geometry",
+    "src.ijds_audit.grid_contracts",
+    "src.ijds_audit.policy_support",
+    "src.ijds_audit.portfolio",
+    "src.ijds_audit.publication_generation",
+    "src.ijds_audit.publication_sources",
+    "src.ijds_audit.protocol",
+    "src.ijds_audit.robustness_evidence",
+    "src.ijds_audit.sensitivity_evidence",
+    "src.ijds_audit.simulation",
+    "src.ijds_audit.structural_evidence",
+    "src.ijds_challengers.archive",
+    "src.ijds_challengers.config",
+    "src.ijds_challengers.evaluation",
+    "src.ijds_challengers.evaluation_config",
+    "src.ijds_challengers.frontier",
+    "src.ijds_challengers.normalized_frontier",
+    "src.evaluation.maturity_safe_portfolio",
+    "scripts.build_ijds_binary_geometry_frontier_v4_evidence",
+    "scripts.build_ijds_policy_support_tie_evidence",
+    "scripts.build_ijds_submission_tex",
+    "scripts.check_publication_integrity",
+    "scripts.compile_ijds_submission",
+    "scripts.inspect_ijds_pdfs",
+    "scripts.run_ty_advisory",
+    "scripts.experiments.run_ijds_binary_geometry_frontier_v4",
+    "scripts.experiments.run_ijds_allocation_granularity_sensitivity",
+    "scripts.experiments.run_ijds_fit_label_completion_sensitivity",
+    "scripts.experiments.run_ijds_normalized_objective_frontier",
+    "scripts.experiments.run_ijds_normalized_objective_frontier_v2",
 ]
 disallow_untyped_defs = true
 disallow_incomplete_defs = true
 disallow_untyped_decorators = true
 warn_return_any = true
 no_implicit_optional = true
+
+# V1c source is protocol-hashed. ty's pandas stubs infer the final Series.any()
+# reduction as Series | bool, while mypy strict and runtime tests verify it.
+[[tool.ty.overrides]]
+include = ["src/ijds_challengers/evaluation.py"]
+
+[tool.ty.overrides.rules]
+unresolved-attribute = "ignore"
+
+# These active sources are implementation-hashed in the publication evidence.
+# Pandas stubs widen groupby scalar keys to Hashable and Timestamp.date() to
+# date | NaTType; runtime contracts and strict mypy checks cover both paths.
+[[tool.ty.overrides]]
+include = ["scripts/experiments/run_ijds_label_lag_sensitivity.py"]
+
+[tool.ty.overrides.rules]
+invalid-argument-type = "ignore"
+
+[[tool.ty.overrides]]
+include = ["src/ijds_audit/raw_data_audit.py"]
+
+[tool.ty.overrides.rules]
+unresolved-attribute = "ignore"

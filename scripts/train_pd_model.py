@@ -2078,7 +2078,6 @@ def _train_hpo_catboost(
         n_startup_trials=int(hpo_cfg.get("n_startup_trials", 40)),
         multivariate_tpe=bool(hpo_cfg.get("multivariate_tpe", True)),
         group_tpe=bool(hpo_cfg.get("group_tpe", True)),
-        warn_independent_sampling=bool(hpo_cfg.get("warn_independent_sampling", True)),
         constant_liar=bool(hpo_cfg.get("constant_liar", False)),
         pruner_n_startup_trials=int(hpo_cfg.get("pruner_n_startup_trials", 20)),
         pruner_n_warmup_steps=int(hpo_cfg.get("pruner_n_warmup_steps", 50)),

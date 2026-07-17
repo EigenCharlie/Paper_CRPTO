@@ -1,25 +1,14 @@
-# CRPTO task runner — cross-platform via `just`.
-# Install: https://github.com/casey/just  (or `winget install Casey.Just` on Windows)
+# Current CRPTO/IJDS task surface. All recipes are Windows-compatible via `just`.
 
 set windows-shell := ["powershell.exe", "-NoLogo", "-NoProfile", "-Command"]
-set dotenv-load := true
+set dotenv-load
 
-# --- Setup ---------------------------------------------------------------
+default: help
 
-# Full setup including SPO (pyepo + torch) extras
-default: setup
+# --- Environment and quality ---------------------------------------------
 
 setup:
-    uv sync --extra dev --extra search --extra spo
-
-# Lighter setup without SPO/torch
-setup-base:
-    uv sync --extra dev --extra search
-
-setup-spo:
-    uv sync --extra dev --extra search --extra spo
-
-# --- Quality gates -------------------------------------------------------
+    uv sync --extra dev
 
 lint:
     uv run ruff check .
@@ -30,199 +19,138 @@ fmt:
     uv run ruff format .
 
 type-check:
-    uv run mypy src scripts
+    uv run mypy src scripts tests
 
-# Fast type checker from Astral. Daily active-scope use remains advisory while
-# ty matures; the clean full scope is blocking in the final submission gate.
-type-advisory:
-    @uv run python scripts/run_ty_advisory.py --scope active
-
-type-advisory-full:
-    @uv run python scripts/run_ty_advisory.py --scope full --fail-on-diagnostics --output reports/ci/ty-advisory-full.txt
-
-complexity-report:
-    uvx radon cc src scripts -s -n D
-
-api-docs-core:
-    uv run --with pdoc pdoc src.optimization.portfolio_model src.optimization.policy_evaluation src.optimization.policy_selection src.models.conformal_alpha_grid src.models.calibration src.evaluation.backtesting src.evaluation.fairness --docformat google --output-directory reports/api-docs --no-browser
+type-check-fast:
+    @uv run python scripts/run_ty_advisory.py --scope active --fail-on-diagnostics --no-report
 
 hooks-check:
     uv run pre-commit validate-config
     uvx prek validate-config .pre-commit-config.yaml
 
-# Fast smoke: paper-final guardrails + Quarto book guardrails
-smoke:
-    uv run pytest tests/test_crpto_final_sync.py tests/test_quarto_book_guardrails.py tests/test_publication_integrity.py -q
-
-publication-integrity:
-    uv run python scripts/check_publication_integrity.py
+complexity-report:
+    uv run python scripts/run_complexity_report.py
 
 test:
     uv run pytest -q
 
-test-fast:
-    uv run pytest -q -m "not slow"
+smoke:
+    uv run pytest tests/test_publication_integrity.py tests/test_ijds_active_claim_sync.py tests/test_publication_targets.py -q
 
-# --- Paper outputs (safe — do NOT touch the frozen champion) -------------
+# Read-only regression gate for the current PD/conformal implementation and
+# every paper-facing numerical contract. It does not execute a scientific run.
+drift-gate: publication-integrity
+    uv run pytest -q tests/test_models/test_binary_conformal_guardrail.py tests/test_ijds_audit_core.py tests/test_ijds_active_claim_sync.py tests/test_ijds_v4_claim_sync.py tests/test_ijds_audit/test_credit_controls.py tests/test_ijds_audit/test_endpoint_recovery.py tests/test_ijds_audit/test_evaluation_outcome_contracts.py
 
-tables:
-    uv run python scripts/export_crpto_tables.py
+# --- Active evidence and protocol entrypoints -----------------------------
 
-figures:
-    uv run python scripts/generate_crpto_figures.py --paper crpto
-
-evidence:
-    uv run python scripts/analyze_crpto_evidence.py
-
-journal-package:
-    uv run python scripts/build_crpto_journal_package.py
+publication-integrity:
+    uv run python scripts/check_publication_integrity.py
 
 ijds-evidence:
-    uv run python scripts/build_ijds_calibration_selected_evidence.py
+    uv run python scripts/build_ijds_binary_geometry_frontier_v4_evidence.py
 
-# Explicit methodology replays. These write only to versioned experiment paths.
-ijds-exact-alpha:
-    uv run python scripts/experiments/run_ijds_exact_alpha_grid_challenger.py --config configs/experiments/champion_reopen_ijds_exact_alpha_grid_v1.yaml
+ijds-tie-evidence:
+    uv run python scripts/build_ijds_policy_support_tie_evidence.py
 
-ijds-policy-challenger:
-    uv run python scripts/experiments/run_ijds_calibration_selected_policy_challenger.py --config configs/experiments/champion_reopen_ijds_calibration_selected_endpoint28_v7.yaml
+ijds-v4 PHASE CONFIG:
+    uv run python scripts/experiments/run_ijds_binary_geometry_frontier_v4.py "{{ PHASE }}" --config "{{ CONFIG }}"
 
-ijds-active-replay: ijds-exact-alpha ijds-policy-challenger ijds-evidence
+ijds-credit-controls PHASE CONFIG:
+    uv run python scripts/experiments/run_ijds_credit_risk_controls.py "{{ PHASE }}" --config "{{ CONFIG }}"
 
-paper-export: tables figures evidence journal-package ijds-evidence book
+ijds-two-ruler-freeze CONFIG="configs/experiments/ijds_normalized_objective_frontier_2026-07-13_v1c.yaml":
+    uv run python scripts/experiments/run_ijds_normalized_objective_frontier.py --config "{{ CONFIG }}"
 
-# IJDS-oriented manuscript body (HTML writing preview).
-paper-ijds:
+ijds-two-ruler-evaluate CONFIG:
+    uv run python scripts/experiments/run_ijds_normalized_objective_frontier_v2.py --config "{{ CONFIG }}"
+
+ijds-raw-data-audit CONFIG="configs/experiments/ijds_raw_data_contract_2026-07-14_v2.yaml":
+    uv run python scripts/experiments/run_ijds_raw_data_audit.py --config "{{ CONFIG }}"
+
+ijds-label-lag CONFIG="configs/experiments/ijds_label_lag_sensitivity_2026-07-14.yaml":
+    uv run python scripts/experiments/run_ijds_label_lag_sensitivity.py --config "{{ CONFIG }}"
+
+ijds-fit-label-completion PHASE CONFIG="configs/experiments/ijds_fit_label_completion_sensitivity_2026-07-16.yaml":
+    uv run python scripts/experiments/run_ijds_fit_label_completion_sensitivity.py "{{ PHASE }}" --config "{{ CONFIG }}"
+
+ijds-endpoint-sensitivity CONFIG="configs/experiments/ijds_endpoint_availability_sensitivity_2026-07-14.yaml":
+    uv run python scripts/experiments/run_ijds_endpoint_availability_sensitivity.py --config "{{ CONFIG }}"
+
+ijds-missingness PHASE CONFIG="configs/experiments/ijds_missingness_sensitivity_2026-07-15_v3.yaml":
+    uv run python scripts/experiments/run_ijds_missingness_sensitivity.py "{{ PHASE }}" --config "{{ CONFIG }}"
+
+ijds-structure PHASE CONFIG="configs/experiments/ijds_portfolio_structure_sensitivity_2026-07-15_v6.yaml":
+    uv run python scripts/experiments/run_ijds_portfolio_structure_sensitivity.py --phase "{{ PHASE }}" --config "{{ CONFIG }}"
+
+ijds-allocation-granularity PHASE CONFIG="configs/experiments/ijds_allocation_granularity_sensitivity_2026-07-16.yaml":
+    uv run python scripts/experiments/run_ijds_allocation_granularity_sensitivity.py "{{ PHASE }}" --config "{{ CONFIG }}"
+
+ijds-tie-audit CONFIG="configs/experiments/ijds_policy_support_tie_audit_2026-07-12.yaml":
+    uv run python scripts/experiments/run_ijds_policy_support_tie_audit.py --config "{{ CONFIG }}"
+
+# Read-only gate over all registered lineages and current paper surfaces.
+ijds-active-check: publication-integrity
+    uv run pytest -q tests/test_ijds_anonymity.py tests/test_ijds_active_claim_sync.py tests/test_ijds_v4_claim_sync.py tests/test_ijds_rolling_origin_protocol.py tests/test_publication_targets.py tests/test_submission_preview_layout.py tests/test_supplement_table_sync.py
+    uv run pytest -q tests/test_ijds_audit tests/test_ijds_audit_core.py tests/test_ijds_normalized_objective_frontier.py tests/test_ijds_normalized_objective_frontier_v2.py tests/test_ijds_policy_support_tie_audit.py tests/test_ijds_policy_support_tie_evidence.py
+
+# --- DVC capsule ----------------------------------------------------------
+
+ijds-pull:
+    uv run python scripts/manage_ijds_dvc_capsule.py pull
+
+ijds-push:
+    uv run python scripts/manage_ijds_dvc_capsule.py push
+
+ijds-dvc-status:
+    uv run python scripts/manage_ijds_dvc_capsule.py status
+
+ijds-dvc-remote-status:
+    uv run python scripts/manage_ijds_dvc_capsule.py status --cloud
+
+ijds-dvc-verify-remote:
+    uv run python scripts/manage_ijds_dvc_capsule.py verify-remote
+
+# --- Manuscript -----------------------------------------------------------
+
+paper-body:
     uv run -- quarto render paper/CRPTO_ijds.qmd --to html --no-execute
 
-# IJDS-oriented online supplement (HTML writing preview).
-paper-ijds-supplement:
+paper-supplement:
     uv run -- quarto render paper/supplement_ijds.qmd --to html --no-execute
 
-# Render the current submission-shaped manuscript surfaces.
-paper-submission: paper-ijds paper-ijds-supplement
+paper-tex:
+    uv run python scripts/build_ijds_submission_tex.py
 
-# Compile and scan the official INFORMS/IJDS LaTeX handoff draft.
-paper-submission-official:
-    @uv run python scripts/compile_ijds_submission.py
+paper-tex-check:
+    uv run python scripts/build_ijds_submission_tex.py --check
 
-# Final local IJDS gate before freezing or uploading.
-submission-check: ijds-evidence publication-integrity lint type-check type-advisory-full test validate-champion paper-submission paper-submission-official
+paper-official: paper-tex
+    @uv run python scripts/compile_ijds_submission.py --skip-render
 
-# IJDS-oriented manuscript body (local HTML-print PDF verification draft).
-paper-ijds-pdf:
-    uv run python scripts/render_submission_pdf_previews.py --body-only
+paper-official-scan:
+    @uv run python scripts/compile_ijds_submission.py --scan-only
 
-# IJDS-oriented online supplement (local HTML-print PDF verification draft).
-paper-ijds-supplement-pdf:
-    uv run python scripts/render_submission_pdf_previews.py --supplement-only
+paper-pdf-audit:
+    @uv run python scripts/inspect_ijds_pdfs.py
 
-# Render local PDF verification drafts for the submission surfaces.
-paper-submission-pdf: paper-submission
+paper-previews: paper-body paper-supplement
     uv run python scripts/render_submission_pdf_previews.py
 
-# --- Quarto book ---------------------------------------------------------
-
-book:
-    uv run python scripts/write_book_build_info.py
-    uv run -- quarto render book --to html
-
-book-pdf:
-    @echo "CRPTO.pdf is intentionally not maintained as a routine artifact. Use paper-submission-pdf for IJDS PDFs; create a curated thesis PDF later from selected sections."
-
-book-all: book
-    uv run python scripts/write_book_build_info.py
-    @echo "book-all currently means HTML book only; full thesis PDF is deferred until the thesis section set and APA layout are fixed."
-
-book-preview:
-    uv run -- quarto preview book
-
-book-clean:
-    uv run python -c "import shutil; [shutil.rmtree(p, ignore_errors=True) for p in ('book/_book', 'book/_freeze', 'book/.quarto')]; print('Quarto cache cleaned.')"
-
-# --- DVC -----------------------------------------------------------------
-
-dvc-status:
-    uv run dvc status
-
-dvc-dag:
-    uv run dvc dag --md
-
-# Regenerates downstream paper artefacts only (does NOT touch champion stages).
-dvc-paper:
-    uv run dvc repro --single-item crpto.paper.export_tables
-    uv run dvc repro --single-item crpto.paper.evidence
-    uv run dvc repro --single-item crpto.paper.journal_package
-    uv run dvc repro --single-item crpto.paper.tail_satisficing_audit
-    uv run dvc repro --single-item crpto.paper.figures
-    uv run dvc repro --single-item crpto.book.render
-
-# --- dbt -----------------------------------------------------------------
-
-dbt-parse:
-    uv run dbt parse --project-dir dbt_project --profiles-dir dbt_project
-
-dbt-test:
-    uv run dbt test --project-dir dbt_project --profiles-dir dbt_project
-
-dbt-build:
-    uv run dbt build --project-dir dbt_project --profiles-dir dbt_project
-
-# --- Governance ---------------------------------------------------------
+submission-build: ijds-tie-evidence ijds-evidence paper-body paper-supplement paper-official paper-previews
 
 validate-champion:
     uv run pytest tests/test_manifest_regression.py -q
 
-drift-gate:
-    $env:CRPTO_RUN_CHAMPION_DRIFT = "1"; uv run pytest tests/test_models/test_conformal_mapie_drift.py -q -s
+validate-champion-strict:
+    $env:CRPTO_REQUIRE_DVC_ARTIFACTS = "1"; uv run pytest tests/test_manifest_regression.py -q
 
-bound-audit:
-    uv run pytest tests/test_scripts/test_build_bound_tightening_audit.py tests/test_scripts/test_run_portfolio_bound_aware_search.py tests/test_scripts/test_run_portfolio_bound_exact_eval.py -q
+submission-check: ijds-active-check drift-gate paper-tex-check paper-official-scan paper-pdf-audit lint type-check type-check-fast validate-champion-strict
 
-mrm-card:
-    uv run python -c "print('use /crpto-mrm-card via Claude Code or write the script')"
+submission-closeout: submission-build submission-check ijds-dvc-verify-remote
 
-pipeline-state:
-    uv run python -c "from src.utils.pipeline_state import load_pipeline_state; import json; s = load_pipeline_state(); print(json.dumps({'missing': s.missing, 'namespaces': list(s.state.keys())}, indent=2))"
-
-params-check:
-    uv run python scripts/build_params_view.py --check
-
-# --- Optuna Dashboard ---------------------------------------------------
-
-# Local HPO dashboard. Defaults to the journal file used by make_study(); pass
-# OPTUNA_DASH_FILE to point at a different study.
-optuna-dashboard FILE="data/processed/optuna/pd_catboost_hpo.log":
-    uv run optuna-dashboard "journal:{{FILE}}"
-
-# --- Dbt extras ---------------------------------------------------------
-
-dbt-deps:
-    uv run dbt deps --project-dir dbt_project --profiles-dir dbt_project
-
-dbt-docs:
-    uv run dbt docs generate --project-dir dbt_project --profiles-dir dbt_project
-    uv run dbt docs serve --project-dir dbt_project --profiles-dir dbt_project --port 8088
-
-# --- DuckDB CLI ---------------------------------------------------------
-
-# Interactive DuckDB session over the CRPTO warehouse. Useful for MRM
-# reviewers who want to inspect the marts without booting a Quarto chunk.
-duckdb FILE="data/processed/crpto.duckdb":
-    uv run duckdb "{{FILE}}"
-
-# Optional Datasette UI. Requires the duckdb-datasette plugin; if it is not
-# installed this recipe fails fast with a helpful pointer.
-datasette FILE="data/processed/crpto.duckdb":
-    @uv run python -c "import datasette" 2>&1 || echo "Run: uv pip install datasette datasette-duckdb"
-    uv run datasette serve --plugins-dir=. -i "{{FILE}}"
-
-# --- One-shot orchestrator ----------------------------------------------
-
-all:
-    uv run python scripts/run_crpto_pipeline.py
-
-# --- Help ---------------------------------------------------------------
+all: submission-check
+    @echo "Read-only checks complete: no evidence-generating or protected stage was executed."
 
 help:
     @just --list
