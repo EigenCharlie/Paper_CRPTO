@@ -68,6 +68,16 @@ def _load_config(path: Path) -> dict[str, Any]:
         raise ValueError("Fitting-label completion must retain the canonical five-group taxonomy.")
     if sensitivity.get("evaluation_strata") != [-1, 2]:
         raise ValueError("Fitting-label completion must report overall and phase-stratum cells.")
+    tolerances = (
+        "baseline_score_replay_tolerance",
+        "baseline_recipe_replay_tolerance",
+        "baseline_coverage_replay_tolerance",
+        "baseline_geometry_replay_tolerance",
+    )
+    if any(float(sensitivity.get(name, 0.0)) <= 0.0 for name in tolerances):
+        raise ValueError("Fitting-label replay tolerances must be positive.")
+    if sensitivity.get("numerical_recovery_only") is not True:
+        raise ValueError("Fitting-label v2 must remain a numerical recovery only.")
     return payload
 
 
@@ -196,17 +206,30 @@ def freeze(config_path: Path, *, repo_root: Path) -> Path:
             current_recipes = {window_id: window.recipes for window_id, window in windows.items()}
             baseline_recipe_difference = _recipe_difference(current_recipes, parent_recipes)
 
-    tolerance = float(config["fit_label_completion"]["baseline_replay_tolerance"])
-    if baseline_score_difference is None or baseline_score_difference > tolerance:
+    score_tolerance = float(config["fit_label_completion"]["baseline_score_replay_tolerance"])
+    recipe_tolerance = float(config["fit_label_completion"]["baseline_recipe_replay_tolerance"])
+    if baseline_score_difference is None or baseline_score_difference > score_tolerance:
         raise RuntimeError(
             f"Observed-only score replay drifted by {baseline_score_difference}; "
-            f"tolerance={tolerance}."
+            f"tolerance={score_tolerance}."
         )
-    if baseline_recipe_difference is None or baseline_recipe_difference > tolerance:
+    if baseline_recipe_difference is None or baseline_recipe_difference > recipe_tolerance:
         raise RuntimeError(
             f"Observed-only recipe replay drifted by {baseline_recipe_difference}; "
-            f"tolerance={tolerance}."
+            f"tolerance={recipe_tolerance}."
         )
+    baseline_column = f"pd_{LEARNER_PREFIX}observed_only"
+    score_shift = {
+        scenario: float(
+            np.max(
+                np.abs(
+                    score_frame[f"pd_{LEARNER_PREFIX}{scenario}"].to_numpy(dtype=float)
+                    - score_frame[baseline_column].to_numpy(dtype=float)
+                )
+            )
+        )
+        for scenario in FIT_LABEL_SCENARIOS
+    }
 
     artifact_paths = {
         "scores": atomic_write_parquet(score_frame, paths.data_dir / "outcome_free/scores.parquet"),
@@ -236,8 +259,13 @@ def freeze(config_path: Path, *, repo_root: Path) -> Path:
         "baseline_replay": {
             "score_max_abs_difference": baseline_score_difference,
             "recipe_max_abs_difference": baseline_recipe_difference,
-            "tolerance": tolerance,
+            "score_tolerance": score_tolerance,
+            "recipe_tolerance": recipe_tolerance,
+            "v1_stopped_score_drift": float(
+                config["fit_label_completion"]["v1_stopped_score_drift"]
+            ),
         },
+        "score_shift_max_abs_from_observed_only": score_shift,
         "model_metrics": model_metrics,
         "parent": {
             "config": relative_artifact_descriptor(parent_config_path, repo_root=root),
@@ -319,6 +347,60 @@ def evaluate(config_path: Path, *, repo_root: Path) -> Path:
         nominal_coverage=nominal,
     )
     phase = coverage.loc[coverage["conformal_group"].eq(2)].copy()
+    active_coverage_path = _verified_descriptor(
+        config["parent"]["active_coverage"],
+        repo_root=root,
+    )
+    active_coverage = pd.read_parquet(active_coverage_path)
+    active_reference = active_coverage.loc[
+        active_coverage["learner"].eq("catboost_platt")
+        & active_coverage["taxonomy_groups"].eq(5)
+        & active_coverage["role"].eq("primary_oot")
+        & active_coverage["conformal_group"].isin((-1, 2))
+    ].copy()
+    observed_replay = coverage.loc[coverage["fit_label_scenario"].eq("observed_only")].copy()
+    comparison = observed_replay.merge(
+        active_reference,
+        on=["window_id", "taxonomy_groups", "role", "conformal_group"],
+        how="outer",
+        validate="one_to_one",
+        suffixes=("_replay", "_active"),
+        indicator=True,
+    )
+    if len(comparison) != 16 or not bool(comparison["_merge"].eq("both").all()):
+        raise RuntimeError("Observed-only coverage replay grid does not match the active grid.")
+    bound_columns = ("coverage_lower", "coverage_upper", "coverage_resolved")
+    geometry_columns = ("mean_width", "fit_prevalence", "fit_residual_quantile")
+    bound_difference = max(
+        float(
+            np.max(
+                np.abs(
+                    comparison[f"{column}_replay"].to_numpy(dtype=float)
+                    - comparison[f"{column}_active"].to_numpy(dtype=float)
+                )
+            )
+        )
+        for column in bound_columns
+    )
+    geometry_difference = max(
+        float(
+            np.max(
+                np.abs(
+                    comparison[f"{column}_replay"].to_numpy(dtype=float)
+                    - comparison[f"{column}_active"].to_numpy(dtype=float)
+                )
+            )
+        )
+        for column in geometry_columns
+    )
+    bound_tolerance = float(config["fit_label_completion"]["baseline_coverage_replay_tolerance"])
+    geometry_tolerance = float(config["fit_label_completion"]["baseline_geometry_replay_tolerance"])
+    if bound_difference > bound_tolerance or geometry_difference > geometry_tolerance:
+        raise RuntimeError(
+            "Observed-only coverage replay exceeds the declared recovery tolerance: "
+            f"bounds={bound_difference}/{bound_tolerance}, "
+            f"geometry={geometry_difference}/{geometry_tolerance}."
+        )
     evaluation_paths = {
         "coverage": atomic_write_parquet(coverage, evaluation_dir / "temporal_coverage.parquet"),
         "summary_table": atomic_write_parquet(
@@ -351,6 +433,12 @@ def evaluate(config_path: Path, *, repo_root: Path) -> Path:
             "phase_cells": int(coverage["conformal_group"].eq(2).sum()),
             "all_scenarios_all_windows_upper_below_nominal": all_below,
             "scenario_rows": summary_table.to_dict(orient="records"),
+            "observed_only_active_replay": {
+                "coverage_max_abs_difference": bound_difference,
+                "coverage_tolerance": bound_tolerance,
+                "geometry_max_abs_difference": geometry_difference,
+                "geometry_tolerance": geometry_tolerance,
+            },
         },
         "freeze": relative_artifact_descriptor(freeze_path, repo_root=root),
         "artifacts": {

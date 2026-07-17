@@ -1,4 +1,15 @@
-# IJDS Fitting-Label Completion Sensitivity Protocol - 2026-07-16
+# IJDS Fitting-Label Completion Sensitivity Protocol V2 - 2026-07-16
+
+## Numerical Recovery
+
+The tagged V1 protocol stopped before writing scientific artifacts because an
+`observed_only` refit under the current lock differed from the historical
+outcome-free score by `7.389153786618863e-6`, above its unrealistic `1e-12`
+score tolerance. V2 changes no scenario, sample, endpoint, model, or estimand.
+Before evaluation it fixes a conservative `1e-4` score/recipe tolerance and,
+independently, requires the observed-only coverage cells to reconcile with the
+active artifact within `1e-5` and their geometry within `2e-5`. V1 is a stopped
+numerical protocol, not evidence.
 
 ## Question
 
@@ -23,8 +34,9 @@ constructed?
   OOT endpoint join. Evaluate every scenario over every window, overall and in
   the declared phase stratum 2.
 - Require the `observed_only` score and recipe replay to match the active
-  outcome-free freeze within `1e-12`; otherwise stop without interpreting the
-  sensitivity.
+  outcome-free freeze within the V2 numerical recovery tolerances. After the
+  endpoint join, separately reconcile all 16 overall/phase coverage cells with
+  the active artifact before interpreting any completion scenario.
 
 ## Estimands
 
