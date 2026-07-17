@@ -1,6 +1,6 @@
-schema_version: "2026-07-16.1"
-protocol_tag: "protocol/ijds-allocation-granularity-sensitivity-2026-07-16-v1"
-run_tag: "ijds-allocation-granularity-sensitivity-2026-07-16-v1"
+schema_version: "2026-07-16.2"
+protocol_tag: "protocol/ijds-allocation-granularity-sensitivity-2026-07-16-v2"
+run_tag: "ijds-allocation-granularity-sensitivity-2026-07-16-v2"
 
 parent:
   v4_config: "configs/experiments/ijds_binary_geometry_frontier_v4_2026-07-15_v5.yaml"

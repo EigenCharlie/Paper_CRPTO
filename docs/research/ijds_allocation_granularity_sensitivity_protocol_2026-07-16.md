@@ -1,4 +1,11 @@
-# IJDS Allocation-Granularity Sensitivity Protocol - 2026-07-16
+# IJDS Allocation-Granularity Sensitivity Protocol V2 - 2026-07-16
+
+## Lineage Note
+
+V1 was locked but not executed because the clean repository HEAD advanced to
+record the separately stopped and recovered fitting-label protocol. V2 changes
+only the run/tag identity needed for a clean tagged execution. The USD 25 rule,
+inputs, 96-track census, estimands, and stop rules are unchanged from V1.
 
 ## Question
 
