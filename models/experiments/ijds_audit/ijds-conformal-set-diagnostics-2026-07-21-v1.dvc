@@ -1,0 +1,6 @@
+outs:
+- md5: e2e3155283fe89488897bcd4ebf17b36.dir
+  size: 10815
+  nfiles: 2
+  hash: md5
+  path: ijds-conformal-set-diagnostics-2026-07-21-v1
