@@ -3,6 +3,16 @@ title: "Composición del Funded Set Promovido"
 page-layout: article
 ---
 
+<!-- crpto-companion-status: retired-historical-source -->
+
+::: {.callout-warning title="Fuente histórica retirada"}
+Esta página no pertenece al companion activo. Se conserva solo como procedencia,
+puede contradecir el estimando y los claims vigentes y no debe citarse como
+evidencia del manuscrito activo. La autoridad está en las superficies
+registradas por `book/_quarto.yml`.
+:::
+
+
 ## Anatomía del Funded Set por Periodo y Grado {#sec-p1-funded-set-composition}
 
 El champion oficial financia 341 filas con exposición positiva en el export loan-level del OOT 276K, con retorno realizado de $170,464.54 y `V = 0.028875` (no-cobertura ponderada bajo `α=0.01`). Esa cifra agregada esconde la pregunta operativa que un comité de riesgo va a formular primero: **¿de dónde vienen esos préstamos? ¿concentra el funded set algún periodo o grado peligroso? ¿qué segmentos cargan el bound?**

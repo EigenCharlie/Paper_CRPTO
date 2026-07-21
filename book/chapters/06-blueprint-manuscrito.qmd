@@ -17,6 +17,13 @@ identificación que muestra cuándo una propiedad del score no transporta al
 periodo OOT y cuándo la comparación downstream depende del ruler que define
 stringency común.
 
+::: {.callout-warning title="Frontera de estimando"}
+La cobertura de $Y$ binario observado no se transporta por sí sola a un
+intervalo o claim de calibración para la PD latente individual, ni identifica
+ECL, SICR, expected loss o una policy seleccionada. Esos objetos exigirían
+estimandos, datos y validaciones propios.
+:::
+
 El encaje con **INFORMS Journal on Data Science (IJDS)** descansa en cuatro
 rasgos: una pregunta de decisión, un diseño temporal auditable, teoría que
 separa objetos predictivos y de optimización, y evidencia reproducible que

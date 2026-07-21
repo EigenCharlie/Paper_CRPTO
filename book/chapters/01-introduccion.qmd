@@ -1,3 +1,12 @@
+<!-- crpto-companion-status: retired-historical-source -->
+
+::: {.callout-warning title="Fuente histórica retirada"}
+Esta página no pertenece al companion activo. Se conserva solo como procedencia,
+puede contradecir el estimando y los claims vigentes y no debe citarse como
+evidencia del manuscrito activo. La autoridad está en las superficies
+registradas por `book/_quarto.yml`.
+:::
+
 # Introducción y Motivación {#sec-crpto-intro}
 
 La mayoría de los pipelines de crédito siguen una receta implícita: predecir una PD puntual y optimizar decisiones como si esa predicción fuera exacta. El problema es conocido y profundo: pequeñas desviaciones de calibración o cambios de régimen pueden inducir políticas frágiles, justo en la capa donde se asigna capital.

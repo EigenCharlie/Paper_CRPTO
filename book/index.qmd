@@ -55,6 +55,13 @@ Los materiales `pool93`, `compact-v7`, selected-policy y A1--A40 se conservan
 solo como procedencia histórica. No prueban los claims del manuscrito activo.
 :::
 
+::: {.callout-warning title="Frontera de estimando"}
+La cobertura de $Y$ binario observado no se transporta por sí sola a un
+intervalo o claim de calibración para la PD latente individual, ni identifica
+ECL, SICR, expected loss o una policy seleccionada. Esos objetos exigirían
+estimandos, datos y validaciones propios.
+:::
+
 ## Mapa editorial
 
 | Superficie | Función actual | Evidencia visible |

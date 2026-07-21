@@ -1,3 +1,12 @@
+<!-- crpto-companion-status: retired-historical-source -->
+
+::: {.callout-warning title="Fuente histórica retirada"}
+Esta página no pertenece al companion activo. Se conserva solo como procedencia,
+puede contradecir el estimando y los claims vigentes y no debe citarse como
+evidencia del manuscrito activo. La autoridad está en las superficies
+registradas por `book/_quarto.yml`.
+:::
+
 # Metodología {#sec-crpto-methodology}
 
 El experimento se construye sobre el pipeline canónico vigente del proyecto: la base predictiva sigue anclada al champion monotónico confirmado `canonical-monotonic-confirmatory-adsfcr-2026-03-30-1129`, mientras que la policy oficial del CRPTO queda promovida desde el rebaseline IJDS `ijds-rebaseline-2026-06-07`. La metodología reutiliza artefactos productivos del proyecto para evitar una bifurcación artificial entre “demo académica” y sistema real, pero añade una capa final paper-facing donde el champion de portafolio se unifica con el **economic champion**, dejando al punto theorem-tight como comparador documentado y no como policy oficial.
