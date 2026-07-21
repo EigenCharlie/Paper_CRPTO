@@ -10,6 +10,7 @@ format:
     toc: true
     number-sections: false
     css: ijds.css
+    body-classes: supplement-ijds
   pdf:
     documentclass: article
     number-sections: false
@@ -59,7 +60,7 @@ specification paths, not independent replications or votes.
 | What may the paper claim? | Appendix G | An identification audit, not superiority, causality, or selected-set validity |
 | How does CRPTO differ from its closest methods? | Appendix H | By its frozen-score audit target, not by claiming each component as new |
 
-: Reader map for the Online Supplement. {#tbl-s-reader-map}
+: Reader map for the Online Supplement.
 
 # Appendix A: Data, Timing, and Outcome Observability
 
@@ -91,7 +92,7 @@ and is retained only as a more heavily censored diagnostic.
 | Primary OOT | 2016-04--2017-06 | 376,890 | read only after freeze | complete locked evaluation |
 | Censored extension | 2017-07--2017-09 | 88,227 | read only after freeze | secondary censoring stress |
 
-: S1 chronology and label observability. Blocks do not overlap except that the eight residual windows overlap by design. {#tbl-s-chronology}
+: Table S1. Chronology and label observability. Blocks do not overlap except that the eight residual windows overlap by design.
 
 The information cutoff for model and residual labels is March 31, 2016. The
 evaluation endpoint cutoff is September 30, 2020. The distributed file is not
@@ -140,7 +141,7 @@ is:
 | Terminal after reconstructed cutoff | 47 | 0 | 47 |
 | Terminal availability date missing | 478 | 0 | 478 |
 
-: Endpoint-reason partition of all 376,890 primary candidates. The last two rows sum to 525 but represent different observability failures. {#tbl-s-endpoint-reasons}
+: Table S1A. Endpoint-reason partition of all 376,890 primary candidates. The last two rows sum to 525 but represent different observability failures.
 
 This endpoint is a cutoff-specific terminal classification, not a lifetime hazard.
 The analysis does not assume that unresolved outcomes are missing at random.
@@ -253,7 +254,7 @@ extension loans.
 | Platform-signal WOE scorecard | 0.633066 | 0.129485 | 0.035968 | -0.035510 | 0.918655 | 0.848908 | 0.894908 | 8 |
 | Pricing-excluded application WOE scorecard | 0.612939 | 0.130190 | 0.031769 | -0.029752 | 0.709836 | 0.852013 | 0.897726 | 8 |
 
-: S2 five-model primary OOT prediction and coverage audit. Min lower and max upper form the across-window all-candidate coverage hull, not a confidence interval. {#tbl-s-credit-controls}
+: Table S2. Five-model primary OOT prediction and coverage audit. Min lower and max upper form the across-window all-candidate coverage hull, not a confidence interval.
 
 Every mean calibration error is negative and every slope is below one,
 so all specifications underpredict later default on average and change
@@ -281,7 +282,7 @@ the pricing-excluded application scorecard:
 | Pricing excluded | rev_utilization | 0.073903 | 0.086944 |
 | Pricing excluded | delinq_recency | 0.049288 | 0.130864 |
 
-: S3 leading development IV values and development-to-primary-OOT feature PSI. IV ranks the frozen development bins; PSI is descriptive shift, not a validity test. {#tbl-s-woe-iv-psi}
+: Table S3. Leading development IV values and development-to-primary-OOT feature PSI. IV ranks the frozen development bins; PSI is descriptive shift, not a validity test.
 
 | Score | Development-to-primary-OOT PSI |
 |---|---:|
@@ -291,7 +292,7 @@ the pricing-excluded application scorecard:
 | Platform-signal WOE | 0.148867 |
 | Pricing-excluded application WOE | 0.072332 |
 
-: S4 score PSI under common development-decile bins. {#tbl-s-score-psi}
+: Table S4. Score PSI under common development-decile bins.
 
 The largest feature PSI is 0.962804 for the price-grade interaction, followed
 by verification status (0.608133), DTI (0.552263), and recent inquiries
@@ -322,9 +323,10 @@ $$
 $$
 
 It predicts the observed binary outcome. It is not a confidence interval for
-latent individual PD and not the convex hull of its intersection with the
-binary outcome space. The latter intersection is reported separately as
-empty, $\{0\}$, $\{1\}$, or $\{0,1\}$.
+latent individual PD. The interval is not constructed as the convex hull of
+its intersection with the binary outcome space and does not equal that hull in
+general. The latter intersection is reported separately as empty, $\{0\}$,
+$\{1\}$, or $\{0,1\}$.
 
 | Window | Residual dates | Fit rows | CatBoost fit coverage |
 |---|---:|---:|---:|
@@ -337,7 +339,7 @@ empty, $\{0\}$, $\{1\}$, or $\{0,1\}$.
 | W7 | 2012-07--2012-12 | 28,411 | 0.900215 |
 | W8 | 2012-08--2013-01 | 30,129 | 0.900229 |
 
-: S5 complete six-month residual specification. Fit rows are the sums across the five fixed CatBoost strata. {#tbl-s-windows}
+: Table S5. Complete six-month residual specification. Fit rows are the sums across the five fixed CatBoost strata.
 
 All eight windows are reported. The windows overlap, and their growing sample
 sizes partly reflect platform growth. They are not independent temporal
@@ -364,7 +366,7 @@ set is empty.
 | W7 | 0.869481 | [0.846518, 0.873093] | 0.877428 | [0.854517, 0.880976] | 0.664154 |
 | W8 | 0.865855 | [0.842485, 0.869564] | 0.873234 | [0.850031, 0.876863] | 0.500569 |
 
-: S6 primary coverage over 376,890 candidates, including 12,076 unresolved outcomes. {#tbl-s-coverage}
+: Table S6. Primary coverage over 376,890 candidates, including 12,076 unresolved outcomes.
 
 Every upper endpoint is below 0.90 for both detailed learners. Section B.2
 shows the same eight-of-eight result for all five learner specifications. This
@@ -404,7 +406,7 @@ CatBoost stratum 2 displays the corresponding diagnostic pattern:
 | W7 | 5,929 | 0.101703 | 0.888435 | 0.984263 | 0.0000 | 0.9904 | 0.0096 | [0.826483, 0.858375] |
 | W8 | 6,238 | 0.097147 | 0.111801 | 0.207631 | 0.0026 | 0.9974 | 0.0000 | [0.822536, 0.854707] |
 
-: S7 CatBoost stratum-2 geometry. Set columns report candidate shares. {#tbl-s-phase}
+: Table S7. CatBoost stratum-2 geometry. Set columns report candidate shares.
 
 The W7--W8 prevalence change crosses $\alpha=0.10$ and coincides with the
 quantile and width change. The narrower W8 interval does not repair transport;
@@ -439,7 +441,7 @@ availability and the resulting stratum-2 residual quantile vary.
 | 8 | 0.986816 | No | 0.099730 | 0.111883 | 0.094097 | 0.111712 |
 | 12 | 0.974535 | No | 0.093138 | 0.111690 | 0.087196 | 0.111504 |
 
-: S7A retrospectively protocol-locked fit-label sensitivity. The W7--W8 threshold crossing persists for every lag satisfying the retention stop rule. {#tbl-s-label-lag}
+: Table S7A. Retrospectively protocol-locked fit-label sensitivity. The W7--W8 threshold crossing persists for every lag satisfying the retention stop rule.
 
 The crossing disappears at 8 and 12 months because W7 is already below the
 threshold, but those specifications fail the locked retention criterion. This
@@ -469,7 +471,7 @@ native arm. Thus the comparison changes encoding, not feature semantics.
 | Explicit missing indicators | 0.643632 | 0.129652 | 0.845507 | 0.884332 | 8/8 |
 | Native nullable features | 0.644262 | 0.129533 | 0.845284 | 0.880037 | 8/8 |
 
-: Complete missingness-encoding sensitivity. OOT outcomes select neither the encoding nor the learner. {#tbl-s-missingness}
+: Table S7B. Complete missingness-encoding sensitivity. OOT outcomes select neither the encoding nor the learner.
 
 The coverage finding recurs in all 24 model-window cells. Small descriptive
 differences in AUC or Brier do not promote an encoding. The exercise neither
@@ -496,7 +498,7 @@ candidates, respectively; 12,076 and 11,014 outcomes remain unrestricted.
 | W7 | [0.846518, 0.873093] | [0.750976, 0.873886] |
 | W8 | [0.842485, 0.869564] | [0.749899, 0.873523] |
 
-: Complete two-origin CatBoost coverage census. The later family is a retrospective recurrence, not an independent replication. {#tbl-s-second-origin}
+: Table S7C. Complete two-origin CatBoost coverage census. The later family is a retrospective recurrence, not an independent replication.
 
 All 16 upper bounds lie below 0.90. The substantially lower later-origin lower
 bounds reflect its larger unresolved fraction; they should not be read as a
@@ -523,7 +525,7 @@ recipes have been written.
 | Hindsight terminal | 0.848980 | 0.884579 | 8/8 | 0.105467 / 0.889103 | 0.099809 / 0.112260 | Yes |
 | Observed only | 0.842485 | 0.882594 | 8/8 | 0.101703 / 0.888435 | 0.097147 / 0.111801 | Yes |
 
-: S7B declared fit-label scenario sensitivity. Coverage columns summarize the eight overall candidate bounds; prevalence and quantile columns refer to stratum 2. {#tbl-s-fit-completion}
+: Table S7D. Declared fit-label scenario sensitivity. Coverage columns summarize the eight overall candidate bounds; prevalence and quantile columns refer to stratum 2.
 
 All 32 overall scenario-window upper bounds remain below 0.90. The coverage
 transport conclusion is therefore unchanged across these four scenarios. The
@@ -631,7 +633,7 @@ The earlier fixed-cap grid supplies supporting comparator diagnostics:
 | P2 | 0.15 | 0.50 | P5 | 0.17 | 0.50 | P8 | 0.19 | 0.50 |
 | P3 | 0.15 | 0.75 | P6 | 0.17 | 0.75 | P9 | 0.19 | 0.75 |
 
-: S8 supporting fixed-cap grid. It is not a closed policy family and no policy is selected or promoted. {#tbl-s-policies}
+: Table S8. Supporting fixed-cap grid. It is not a closed policy family and no policy is selected or promoted.
 
 The score and its cap jointly define a feasible decision problem. The audit
 therefore declares four point-score comparison objects.
@@ -850,7 +852,7 @@ normalized-score ruler is a secondary scale-invariance stress test.
 | Normalized score | .50 | 15 | [152,030.99, 226,847.97] | [-259,658.18, -54,025.82] | [3.2214, 6.5637] | [2.1070, 5.2142] |
 | Normalized score | .75 | 15 | [28,263.40, 51,201.89] | [-135,781.22, 9,812.59] | [1.4392, 2.3807] | [0.3447, 1.6991] |
 
-: S9 complete finite-grid endpoint contrast. Hulls are minimum lower and maximum upper bounds across windows, not sampling intervals. {#tbl-s-two-ruler}
+: Table S9. Complete finite-grid endpoint contrast. Hulls are minimum lower and maximum upper bounds across windows, not sampling intervals.
 
 | Ruler / coordinate | Payoff-proxy width (USD) | Default width (pp) | Miscoverage width (pp) |
 |---|---:|---:|---:|
@@ -861,12 +863,12 @@ normalized-score ruler is a secondary scale-invariance stress test.
 | Normalized score .50 | 146,499--198,657 | 1.5346--2.0383 | 1.5346--1.9183 |
 | Normalized score .75 | 83,833--97,897 | 0.8041--0.9416 | 0.7256--0.9416 |
 
-: Exact identification-width ranges across the eight windows. Each width equals the sum of unresolved loan-wise contribution ranges in Appendix D.4. {#tbl-s-identification-width}
+: Table S9A. Exact identification-width ranges across the eight windows. Each width equals the sum of unresolved loan-wise contribution ranges in Appendix D.4.
 
 The active evaluator changes only outcome observability and the resulting sharp
 bounds; scores, residual recipes, rulers, coordinates, and allocations remain
-frozen. Its five-row endpoint-reason partition appears in
-@tbl-s-endpoint-reasons. The sharp interval width is governed by the exposure
+frozen. Its five-row endpoint-reason partition appears in Table S1A. The sharp
+interval width is governed by the exposure
 disagreement on those unresolved loans, as shown in Appendix D.4, rather than
 by treating all 12,076 cases as an undifferentiated timing count.
 
@@ -906,7 +908,7 @@ reported; neither coverage nor portfolio outcomes select an endpoint.
 | 8 | 364,570 / 12,320 | 40 / 40 | 0.898151 | 32 / 16 | 33 / 15 | 40 / 8 |
 | 12 | 363,288 / 13,602 | 39 / 40 | 0.900411 | 31 / 17 | 32 / 16 | 40 / 8 |
 
-: S9B complete nonselective evaluation-endpoint lag grid. Direction counts summarize all 48 two-ruler cells for $\gamma=1-\gamma=0$; omitted opposite and exact-zero counts are zero. {#tbl-s-endpoint-lag}
+: Table S9B. Complete nonselective evaluation-endpoint lag grid. Direction counts summarize all 48 two-ruler cells for the endpoint contrast $\gamma=1$ minus $\gamma=0$; omitted opposite and exact-zero counts are zero.
 
 The six-month row reconciles exactly to the active evaluation: after removing the lag
 column, all 120 coverage cells, 48 two-ruler contrasts, and 648 exact-support
@@ -925,7 +927,7 @@ one-sided direction appears.
 | 8 | 6 / 66 | 72 | 27 / 45 | 216 |
 | 12 | 0 / 72 | 72 | 26 / 46 | 216 |
 
-: S9C complete exact-support endpoint sensitivity. Each row contains all 72 development-support cells and all 216 broad-stress cells; omitted opposite and exact-zero counts are zero. {#tbl-s-endpoint-support-lag}
+: Table S9C. Complete exact-support endpoint sensitivity. Each row contains all 72 development-support cells and all 216 broad-stress cells; omitted opposite and exact-zero counts are zero.
 
 Thus the broad-support nonidentification result survives every endpoint lag,
 while the all-model/all-window coverage statement is not universal over the
@@ -952,7 +954,7 @@ or result was selected.
 | Terminal default | 1,072 | 133 | 467 | 56 | 1,728 |
 | Funded miscoverage | 1,205 | 131 | 336 | 56 | 1,728 |
 
-: S9D complete structural direction census. Adverse means lower payoff or higher default/miscoverage; favorable reverses those signs. Counts cover 36 scenarios, six ruler-coordinate tracks, and eight windows. {#tbl-s-structure-aggregate}
+: Table S9D. Complete structural direction census. Adverse means lower payoff or higher default/miscoverage; favorable reverses those signs. Counts cover 36 scenarios, six ruler-coordinate tracks, and eight windows.
 
 Every scenario retains at least 17 adverse default cells and 21 adverse
 miscoverage cells. Zero scenarios are favorable on all three metrics in all 48
@@ -1005,7 +1007,7 @@ the purpose constraint binds.
 | 2.0 | 1.00 | 0.45 | 32/0/16/0 | 40/0/8/0 | 40/0/8/0 | 0% |
 | 2.0 | 1.00 | 0.65 | 33/8/7/0 | 33/0/15/0 | 40/0/8/0 | 0% |
 
-: S9E complete 36-scenario structural sensitivity. Exact zeros occur when the two endpoint allocations coincide under the declared ruler-coordinate-window cell. {#tbl-s-structure-scenarios}
+: Table S9E. Complete 36-scenario structural sensitivity. Exact zeros occur when the two endpoint allocations coincide under the declared ruler-coordinate-window cell.
 
 Purpose caps 0.20--0.30 bind in every portfolio, whereas the 1.00 stress cap
 never binds. The common-frontier constraint binds in every portfolio. Maximum
@@ -1032,7 +1034,7 @@ rounded exposures become zero. Monthly residual cash ranges from USD 25 to USD
 | Default-rate perturbation | 0.000012843 |
 | Miscoverage-rate perturbation | 0.000011902 |
 
-: S9F deterministic USD 25 allocation-granularity diagnostic. Rate differences are proportions; multiplying by 100 gives percentage points. {#tbl-s-allocation-granularity}
+: Table S9F. Deterministic USD 25 allocation-granularity diagnostic. Rate differences are proportions; multiplying by 100 gives percentage points.
 
 The largest rate change is therefore 0.001284 percentage points. This is small
 relative to the reported endpoint hulls and supports use of the continuous
@@ -1058,7 +1060,7 @@ crossing contains zero.
 | C2 | Default | 7 | 58 | 7 |
 | C2 | Miscoverage | 5 | 20 | 47 |
 
-: S10 named-comparator direction census. These descriptive counts are not votes because the comparators define different feasible sets. {#tbl-s-named}
+: Table S10. Named-comparator direction census. These descriptive counts are not votes because the comparators define different feasible sets.
 
 C0's uniform lower-default direction follows the same-threshold nesting design,
 not a neutral economic comparison. C2 satisfies plug-in dominance but still
@@ -1080,9 +1082,9 @@ development-admissible support:
 | Terminal default | 0 | 72 | 0 | 72 |
 | Funded miscoverage | 0 | 45 | 27 | 72 |
 
-: S11 exact direction counts within development-admissible support. {#tbl-s-support}
+: Table S11. Exact direction counts within development-admissible support.
 
-![Direction of the exact development-admissible comparator envelope. A minus or plus denotes a sign-robust guardrail-minus-point envelope; zero denotes an envelope containing zero. Default contains zero in all 72 cells.](../reports/crpto/figures/crpto_ijds_v4_fig3_envelopes.png){#fig-s-envelopes width=96%}
+![Figure S1. Direction of the exact development-admissible comparator envelope. A minus or plus denotes a sign-robust guardrail-minus-point envelope; zero denotes an envelope containing zero. Default contains zero in all 72 cells.](../reports/crpto/figures/crpto_ijds_v4_fig3_envelopes.png){width=96%}
 
 The six lower-payoff cells occur before W8; in W8, all 27 policy-metric
 envelopes cross zero. The W8 geometry change therefore removes the directions
@@ -1205,7 +1207,7 @@ policy.
 | Sharp unresolved-outcome bounds | Finite-archive binary completion uncertainty is exposed | Sampling uncertainty or missing-at-random identification |
 | Identification-width identity | Bound width decomposes exactly over unresolved exposure disagreement | Sampling uncertainty, causal uncertainty, or a missingness model |
 
-: S12 active claim boundary. {#tbl-s-claims}
+: Table S12. Active claim boundary.
 
 The study uses one discontinued consumer-credit platform and accepted 36-month
 loans only. It observes no counterfactual outcomes for rejected applicants.
@@ -1281,4 +1283,4 @@ credit scoring, conformal prediction, or linear programming separately.
 | Decision-focused learning [@donti2017; @elmachtoub2022; @mandi2024] | Training predictions against downstream loss | Preserves the predictor for governance and audits a post-hoc decision layer |
 | Baseline and ablation design | Holding the decision problem fixed while changing one ingredient | Shows that a shared numeric cap does not hold decision stringency fixed |
 
-: S13 closest-work boundary for the active CRPTO contribution. {#tbl-s-closest-work}
+: Table S13. Closest-work boundary for the active CRPTO contribution.

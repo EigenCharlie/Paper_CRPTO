@@ -15,7 +15,8 @@ abstract: |
   retain 12,076 of 376,890 primary candidates as unresolved. Under the declared
   six-month rule, all 40 model-window sharp coverage upper bounds are below 0.90
   across five credit-risk specifications (maximum 0.8977). The CatBoost pattern
-  recurs under three missing-value encodings and one later retrospective origin.
+  recurs under three missing-value encodings and, on a common three-month
+  horizon, at one later retrospective origin.
   Four declared fitting-label scenarios for 215 unavailable labels also leave
   all 32 scenario-window upper bounds below 0.90. A derived binary threshold
   mechanism is consistent with an observed W7--W8 change in interval geometry,
@@ -91,13 +92,17 @@ coverage-only controls span a separately fitted numeric logistic model,
 domain-constrained monotonic CatBoost, a platform-signal WOE/IV scorecard, and
 a pricing-excluded application WOE/IV scorecard. Each has its own Platt map and
 2011 taxonomy;
-none is selected from OOT outcomes or enters portfolio optimization. The
-resulting clipped residual interval $[\ell_i,u_i]$ predicts the observed binary
-outcome $Y$. Coverage of observed binary $Y$ does not by itself transport to an
-interval or calibration claim for latent individual PD, nor does it identify
-ECL, SICR, expected loss, or a selected allocation policy. Those objects require
-their own estimands, data, and validation. The interval is not the convex hull
-of its intersection with $\{0,1\}$. Its upper endpoint enters a guardrail score
+none is selected from OOT outcomes or enters portfolio optimization. The same
+residual threshold defines a discrete binary prediction set $S_i$ and a clipped
+continuous interval $[\ell_i,u_i]$, with
+$S_i=[\ell_i,u_i]\cap\{0,1\}$. Their coverage events coincide for the observed
+binary outcome, but the interval is not constructed as the convex hull of
+$S_i$ and does not equal that hull in general: it is retained as a design
+embedding whose upper endpoint enters a guardrail score. Neither
+object is a confidence interval for latent individual PD, and candidate
+coverage supplies no selected- or funded-set guarantee. It also does not
+identify ECL, SICR, expected loss, or a selected allocation policy; those
+objects require their own estimands, data, and validation.
 
 $$
 q_i(\gamma)=(1-\gamma)p_i+\gamma u_i,
@@ -128,8 +133,9 @@ interpolation over the declared point-cap support.
 The empirical message is an identification result rather than a winner. Under
 the declared six-month availability rule, all 40 model-by-window all-candidate
 OOT coverage upper bounds are below 0.90. The primary CatBoost pattern recurs
-under three semantics-preserving missing-value encodings, one later
-retrospective origin, and four declared fit-label scenarios. One score
+under three semantics-preserving missing-value encodings, on the common
+three-month horizon at one later retrospective origin, and under four declared
+fit-label scenarios. One score
 stratum crosses the nominal miscoverage prevalence threshold between W7 and W8,
 coinciding with an abrupt change in conformal geometry, but the crossing
 disappears when every label unavailable at its fitting cutoff is completed as
@@ -496,18 +502,26 @@ comparing the active sentinel convention, explicit missing indicators, and
 CatBoost-native nullable values. It selects no encoding and does not identify a
 missingness mechanism.
 
-## Exact binary-outcome Mondrian intervals
+## Mondrian binary prediction sets and continuous interval embedding
 
 Let $Y_i\in\{0,1\}$ denote terminal default and $p_i$ the Platt-scaled score.
+Write $\widehat p_i(1)=p_i$ and $\widehat p_i(0)=1-p_i$. For either candidate
+label $y\in\{0,1\}$, the absolute-residual nonconformity score is exactly the
+probability-complement classification nonconformity,
+
+$$
+s_i(y)=|y-p_i|=1-\widehat p_i(y).
+$$ {#eq-binary-nonconformity}
+
 Five groups are defined by quantiles of all 2011 Platt-scaled scores, without
 using residual-window labels. The frozen CatBoost edges are
 $0.008219$, $0.050265$, $0.080369$, $0.111894$, $0.153262$, and $0.475854$.
-Within fixed group $g$, the conformity score on an availability-safe residual
-window is $s_i=|Y_i-p_i|$. The complete specification reports all eight
+Within fixed group $g$, the observed residual-window score is
+$s_i(Y_i)=|Y_i-p_i|$. The complete specification reports all eight
 consecutive six-month windows beginning January--August 2012. Every included
 month exceeds 99% label retention under the six-month lag. For $n_g$
 observations and target $\alpha=0.10$,
-the finite-sample rank is
+the predeclared split-conformal rank rule is
 
 $$
 k_g=\left\lceil(n_g+1)(1-\alpha)\right\rceil,
@@ -521,25 +535,54 @@ $$
 \left[\max\{0,p_i-c_{g(i)}\},\min\{1,p_i+c_{g(i)}\}\right].
 $$ {#eq-interval}
 
-The interval predicts the observed binary outcome. It is not a confidence
-interval for latent individual PD. No holdout-learned widening, floor,
-taxonomy adaptation, or post-cutoff label enters any recipe. Taxonomies with
-1, 2, and 10 groups are closed coverage diagnostics. Each of the four controls
-repeats this construction with its own scores and edges.
+The same threshold defines the canonical binary classification set
+
+$$
+S_i=\left\{y\in\{0,1\}:|y-p_i|\le c_{g(i)}\right\}
+   =[\ell_i,u_i]\cap\{0,1\}.
+$$ {#eq-binary-set}
+
+Thus $Y_i\in S_i$ if and only if $Y_i\in[\ell_i,u_i]$, but the objects serve
+different roles. $S_i$ is the discrete prediction set; $[\ell_i,u_i]$ is a
+continuous design embedding that is not constructed as, and generally differs
+from, the convex hull of $S_i$; and $u_i$ is a
+scalar input to the downstream decision score in @eq-score. None is a
+confidence interval for latent individual PD, and freezing an allocation based
+on $u_i$ does not confer a funded-set conformal guarantee. No holdout-learned
+widening, floor, taxonomy adaptation, or post-cutoff label enters any recipe.
+Taxonomies with 1, 2, and 10 groups are closed coverage diagnostics. Each of
+the four controls repeats this construction with its own scores and edges.
+
+The four possible binary sets are $\varnothing$, $\{0\}$, $\{1\}$, and
+$\{0,1\}$. If their candidate shares are $e,z,o,b$, respectively, then
+$e+z+o+b=1$ and the standard classification-set efficiency summaries are
+
+$$
+\operatorname{AvgC}=z+o+2b=1-e+b,
+\qquad
+\operatorname{OneC}=z+o=1-e-b.
+$$ {#eq-set-efficiency}
+
+AvgC is mean set cardinality and OneC is the singleton share. Reporting $e$
+and $b$ separately prevents an average cardinality from hiding never-covered
+empty sets or uninformative two-label sets; neither metric is a coverage
+guarantee.
 
 <!-- claim:boundary.no_selected_set_validity -->
 
 For binary $Y$, miscoverage has the useful identity
 
 $$
-m_i=\mathbf 1\{Y_i=0,\ell_i>0\}+
+m_i=\mathbf 1\{Y_i\notin S_i\}
+   =\mathbf 1\{Y_i=0,\ell_i>0\}+
     \mathbf 1\{Y_i=1,u_i<1\}.
 $$ {#eq-binary-miss}
 
 Thus a default is counted as covered whenever $u_i=1$, even though such an
 endpoint offers little discrimination to the optimizer. Conversely, a narrow
 low-score interval with $u_i<1$ misses every realized default. This geometry is
-central to interpreting funded-set coverage.
+central to interpreting the funded-set miscoverage diagnostic, but it does not
+establish funded-set conformal validity.
 
 ## Coherent objective and status-indexed payoff proxy
 
@@ -809,9 +852,11 @@ the proof map and Appendix G states the corresponding claim boundaries.
 
 <!-- claim:coverage.five_models_all_windows_below_nominal -->
 
-Under the active six-month evaluation endpoint, every five-stratum recipe
-attains its finite-sample fit rank, but none transports 90% all-candidate
-coverage to the primary OOT panel. CatBoost resolved coverage
+Under the active six-month evaluation endpoint, every five-stratum recipe uses
+the predeclared split-conformal rank rule on its residual window. The
+nominal 90% finite-sample statement requires its exchangeability conditions;
+none of these recipes transports 90% all-candidate coverage to the primary OOT
+panel. CatBoost resolved coverage
 ranges from 0.8659 to 0.8792. After retaining all 12,076 unresolved candidates,
 its sharp coverage bounds range from [0.8425, 0.8696] to [0.8570, 0.8826]. The
 separately calibrated logistic control is closer to nominal: resolved
@@ -826,10 +871,19 @@ conclusion more broadly below.
 Online Supplement Table S6 reports all eight exact window bounds and widths;
 the figure retains their complete nonselective pattern in the main text.
 
+Because continuous interval width is not binary-set cardinality, the audit also
+summarizes AvgC, OneC, and the empty- and two-label-set shares defined in
+@eq-set-efficiency. These quantities diagnose efficiency and degeneracy; they
+do not replace candidate coverage.
+
+<!-- BUILDER-INJECT: registered W1--W8 AvgC, OneC, empty-set, and two-label-set values. -->
+
 All five all-candidate sharp upper bounds remain below 0.90 in all eight windows,
 including the monotonic learner and the pricing-excluded application scorecard.
-The latter has the largest across-window upper endpoint, 0.8977, so even assigning every
-unresolved candidate to coverage does not reach 0.90.
+The latter has the largest across-window upper endpoint, 0.8977. That sharp
+upper bound already assigns each unresolved loan whichever binary completion
+maximizes attainable coverage, while preserving empty sets as never covered;
+even this loan-wise best-case completion remains below 0.90.
 
 | Score | OOT AUC | Brier | Slope | $U_{\max}$ |
 |---|---:|---:|---:|---:|
@@ -850,14 +904,17 @@ contest or an explanation of the coverage gap.
 <!-- claim:sensitivity.second_origin_coverage_recurrence -->
 <!-- claim:sensitivity.fit_label_completion_coverage_recurrence -->
 
-Two complete sensitivities narrow the specification concern. The active
+Two complete sensitivity families narrow the specification concern. The active
 sentinel encoding, explicit missing indicators, and native nullable CatBoost
 features each have all eight coverage upper bounds below 0.90, with maxima
-0.882597, 0.884332, and 0.880037. At a later retrospective origin, all eight
-CatBoost upper bounds are again below 0.90, with maximum 0.874768. No encoding,
-model, or origin is selected. These are three semantics-preserving encoding
-paths and two retrospective origins, not evidence about the missingness
-mechanism, independent replications, or prospective temporal invariance.
+0.882597, 0.884332, and 0.880037. The registered rolling-origin comparison uses
+the same mechanically restricted three-month horizon at both feasible origins;
+all eight CatBoost upper bounds remain below 0.90 at each origin. Online
+Supplement Table S10 reports the exact origin-specific censuses and maxima from
+that recovery lineage. No encoding, model, or origin is selected. These are
+three semantics-preserving encoding paths and two retrospective origins, not
+evidence about the missingness mechanism, independent replications, or
+prospective temporal invariance.
 
 A separate four-scenario sensitivity addresses 215 labels unavailable at their
 own fitting cutoffs: 41 in PD development, 24 in Platt calibration, and 150 in

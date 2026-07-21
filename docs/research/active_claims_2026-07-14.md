@@ -190,8 +190,9 @@ pre-endpoint-correction evaluations are provenance only.
   reported. The windows overlap and are not independent replications.
 - At alpha 0.10, the interval
   `[max(0,p-c_g), min(1,p+c_g)]` predicts the observed binary endpoint. It is
-  neither a confidence interval for individual latent PD nor the convex hull of
-  a discrete prediction set.
+  neither a confidence interval for individual latent PD nor constructed as the
+  convex hull of a discrete prediction set; it does not equal that hull in
+  general.
 - Exact all-candidate sharp coverage bounds are
   `1 - mean(miss_high)` and `1 - mean(miss_low)`. Singleton, empty, and
   `{0,1}` prediction sets are handled loan by loan.

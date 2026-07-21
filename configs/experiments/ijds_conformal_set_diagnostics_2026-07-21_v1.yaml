@@ -1,0 +1,71 @@
+schema_version: "2026-07-21.1"
+run_tag: "ijds-conformal-set-diagnostics-2026-07-21-v1"
+protocol_tag: "protocol/ijds-conformal-set-diagnostics-2026-07-21-v1"
+
+source:
+  active_v5_config:
+    path: "configs/experiments/ijds_binary_geometry_frontier_v4_2026-07-15_v5.yaml"
+    bytes: 1371
+    sha256: "c749befbd0ab7e0f8d6fcded7e7c730cae998032f897f65c7e7673d2a12c3715"
+  credit_control_summary:
+    path: "models/experiments/ijds_audit/ijds-credit-risk-controls-2026-07-15-v5/credit_risk_controls_summary.json"
+    bytes: 23359
+    sha256: "37c0a5c224b62ee3f47259aea4231df26ea184d3666e7fab80431ad26d611715"
+  credit_control_freeze_sha256: "da4805e644bcf5decfbb0a67c0c81a5b9dd61f3ab2e17d3dc5264100e7eb4d35"
+  temporal_coverage_sha256: "968872d3dd119cf89cebceb969d4d155fb3a75e010026e023ae10d1cede9e58c"
+  raw_archive_sha256: "5878af2a088f8ab5214c9337289fb8b5eb6c6338fd3f417b6cdc18513dc6f35f"
+
+design:
+  alpha: 0.10
+  taxonomy_groups: 5
+  role: "primary_oot"
+  issue_months:
+    - "2016-04"
+    - "2016-05"
+    - "2016-06"
+    - "2016-07"
+    - "2016-08"
+    - "2016-09"
+    - "2016-10"
+    - "2016-11"
+    - "2016-12"
+    - "2017-01"
+    - "2017-02"
+    - "2017-03"
+    - "2017-04"
+    - "2017-05"
+    - "2017-06"
+  learners:
+    - "catboost_platt"
+    - "numeric_logistic_platt"
+    - "catboost_monotonic_platt"
+    - "woe_scorecard_platform_platt"
+    - "woe_scorecard_borrower_platt"
+  window_ids:
+    - "w01_2012m01_m06"
+    - "w02_2012m02_m07"
+    - "w03_2012m03_m08"
+    - "w04_2012m04_m09"
+    - "w05_2012m05_m10"
+    - "w06_2012m06_m11"
+    - "w07_2012m07_m12"
+    - "w08_2012m08_2013m01"
+  expected_candidates: 376890
+  expected_resolved: 364814
+  expected_unresolved: 12076
+  expected_resolved_y0: 307842
+  expected_resolved_y1: 56972
+
+output:
+  data_root: "data/processed/experiments/ijds_audit"
+  model_root: "models/experiments/ijds_audit"
+  table: "evaluation/conformal_set_diagnostics.parquet"
+  summary: "conformal_set_diagnostics_summary.json"
+  execution_receipt: "execution_receipt.json"
+
+interpretation:
+  learner_or_window_selected: false
+  label_conditional_guarantee: false
+  selected_set_guarantee: false
+  funded_set_guarantee: false
+  latent_pd_interval: false

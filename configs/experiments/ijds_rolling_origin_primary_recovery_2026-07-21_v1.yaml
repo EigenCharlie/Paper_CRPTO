@@ -1,0 +1,38 @@
+extends: "ijds_binary_geometry_frontier_v4_2026-07-15_v5.yaml"
+
+schema_version: "2026-07-21.1"
+protocol_tag: "protocol/ijds-rolling-origin-primary-recovery-2026-07-21-v1"
+run_tag: "ijds-rolling-origin-primary-recovery-2026-07-21-v1"
+
+protocol_lineage_files:
+  - "configs/experiments/ijds_binary_geometry_frontier_v4_2026-07-12.yaml"
+  - "docs/research/ijds_binary_geometry_frontier_v4_protocol_2026-07-12.md"
+  - "docs/research/ijds_evaluation_endpoint_recovery_v3_protocol_2026-07-14.md"
+  - "docs/research/ijds_rolling_origin_endpoint_v3_protocol_2026-07-15.md"
+  - "docs/research/ijds_rolling_origin_primary_recovery_protocol_2026-07-21.md"
+
+design:
+  primary_oot_start_month: "2016-04"
+  primary_oot_end_month: "2016-06"
+  censored_extension_start_month: "2016-07"
+  censored_extension_end_month: "2016-09"
+
+rolling_origin:
+  audit_id: "primary_origin_three_month_horizon_recovery"
+  common_primary_months: 3
+  origin_year: 2016
+  reference_origin_year: 2016
+  outcome_based_origin_selection: false
+  pooled_origin_claims: false
+
+resume_outcome_free:
+  source_run_tag: "ijds-binary-geometry-frontier-v4-2026-07-12-v1"
+  source_protocol_tag: "protocol/ijds-binary-geometry-frontier-v4-2026-07-12-v1"
+  source_protocol_commit: "2f8a7606e4eb65aa3ae3701fb3af8d9a51c953cd"
+  source_freeze_sha256: "c2b3dc2d18c9fed80708682d5a0369c80c89643e2d28024418522d954ebe667c"
+
+endpoint_reason_recovery: null
+
+output:
+  deterministic_summary: "rolling_origin_primary_recovery_summary.json"
+  execution_receipt: "execution_receipt.json"

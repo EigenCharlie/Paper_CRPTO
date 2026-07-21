@@ -40,6 +40,37 @@
     page-break-after: auto !important;
   }
 
+  .supplement-ijds h1,
+  .supplement-ijds h2,
+  .supplement-ijds h3,
+  .supplement-ijds h4,
+  .supplement-ijds caption,
+  .supplement-ijds figcaption,
+  .supplement-ijds .quarto-float-caption {
+    break-after: avoid-page !important;
+    page-break-after: avoid !important;
+  }
+
+  .supplement-ijds h1 + *,
+  .supplement-ijds h2 + *,
+  .supplement-ijds h3 + *,
+  .supplement-ijds h4 + * {
+    break-before: avoid-page !important;
+    page-break-before: avoid !important;
+  }
+
+  .supplement-ijds thead {
+    display: table-header-group;
+  }
+
+  .supplement-ijds tr,
+  .supplement-ijds figure,
+  .supplement-ijds .quarto-figure,
+  .supplement-ijds .quarto-float-fig {
+    break-inside: avoid-page !important;
+    page-break-inside: avoid !important;
+  }
+
   .keep-together {
     break-inside: avoid-page !important;
     font-size: 0.88em;
