@@ -1,10 +1,13 @@
-"""Portfolio optimization using Pyomo + HiGHS.
+"""Portfolio optimization with native HiGHS and optional compatibility backends.
 
 Maximizes expected return net of expected loss under credit constraints.
 Supports multiple uncertainty policies for PD constraints:
 - point_estimate: uses point PD only
 - hard_worst_case: uses conformal upper bound
 - blended_uncertainty: interpolates between point and upper bound
+
+The active IJDS path uses the direct ``highspy`` formulation. Pyomo remains a
+lazy-loaded compatibility backend for historical replay and cross-solver tests.
 """
 
 from __future__ import annotations
@@ -16,7 +19,6 @@ from typing import Any, cast
 
 import numpy as np
 import pandas as pd
-import pyomo.environ as pyo
 from loguru import logger
 from scipy.optimize import linprog
 from scipy.sparse import csc_matrix, csr_matrix, hstack
@@ -33,6 +35,18 @@ class _PortfolioLpComponents:
     rhs: np.ndarray
     bounds: list[tuple[float, float]]
     use_pd_slack: bool
+
+
+def _require_pyomo() -> Any:
+    """Import the compatibility modeling layer only when explicitly requested."""
+    try:
+        import pyomo.environ as pyo
+    except ImportError as exc:  # pragma: no cover - exercised in minimal installs
+        raise RuntimeError(
+            "The Pyomo compatibility backend is not installed. "
+            "Run `uv sync --group compat` or use the native highspy backend."
+        ) from exc
+    return pyo
 
 
 def solution_allocation_vector(solution: Mapping[str, Any], n_items: int) -> np.ndarray:
@@ -204,7 +218,7 @@ def build_portfolio_model(
     min_budget_utilization: float = 0.0,
     pd_cap_slack_penalty: float = 0.0,
     pd_constraint_override: np.ndarray | None = None,
-) -> pyo.ConcreteModel:
+) -> Any:
     """Build Pyomo portfolio optimization model.
 
     Args:
@@ -225,6 +239,7 @@ def build_portfolio_model(
     Returns:
         Pyomo ConcreteModel ready to solve.
     """
+    pyo = _require_pyomo()
     n = len(loans)
     model = pyo.ConcreteModel("CreditPortfolioOptimization")
 
@@ -320,7 +335,7 @@ def build_portfolio_model(
 
 
 def solve_portfolio(
-    model: pyo.ConcreteModel,
+    model: Any,
     time_limit: int = 300,
     threads: int = 4,
     solver_backend: str = "highs",
@@ -347,7 +362,7 @@ def solve_portfolio(
 
 
 def _solve_pyomo_backend(
-    model: pyo.ConcreteModel,
+    model: Any,
     *,
     backend: str,
     time_limit: int,
@@ -361,11 +376,12 @@ def _solve_pyomo_backend(
 
 
 def _solve_pyomo_highs(
-    model: pyo.ConcreteModel,
+    model: Any,
     *,
     time_limit: int,
     threads: int,
 ) -> Any:
+    _require_pyomo()
     from pyomo.contrib.appsi.solvers import Highs
 
     solver = Highs()
@@ -375,11 +391,12 @@ def _solve_pyomo_highs(
 
 
 def _solve_pyomo_cuopt(
-    model: pyo.ConcreteModel,
+    model: Any,
     *,
     time_limit: int,
     threads: int,
 ) -> Any:
+    pyo = _require_pyomo()
     solver = pyo.SolverFactory("cuopt")
     if solver is None or not solver.available(False):
         raise RuntimeError(
@@ -391,21 +408,20 @@ def _solve_pyomo_cuopt(
 
 
 def _pyomo_portfolio_solution(
-    model: pyo.ConcreteModel,
+    model: Any,
     *,
     backend: str,
     results: Any,
 ) -> dict[str, Any]:
-    index_set = cast(Any, model.I)
-    decision_vars = cast(Any, model.x)
-    loan_amount_param = cast(Any, model.loan_amnt)
+    pyo = _require_pyomo()
+    index_set = model.I
+    decision_vars = model.x
+    loan_amount_param = model.loan_amnt
     allocation = {i: pyo.value(decision_vars[i]) for i in index_set}
-    obj_value = pyo.value(cast(Any, model.obj))
+    obj_value = pyo.value(model.obj)
     n_funded = sum(1 for v in allocation.values() if v > 0.01)
     total_allocated = sum(allocation[i] * pyo.value(loan_amount_param[i]) for i in index_set)
-    pd_cap_slack = (
-        float(pyo.value(cast(Any, model.pd_cap_slack))) if hasattr(model, "pd_cap_slack") else 0.0
-    )
+    pd_cap_slack = float(pyo.value(model.pd_cap_slack)) if hasattr(model, "pd_cap_slack") else 0.0
 
     return {
         "allocation": allocation,
@@ -992,8 +1008,9 @@ def build_binary_model(
     int_rates: np.ndarray,
     total_budget: float = 1_000_000,
     max_portfolio_pd: float = 0.10,
-) -> pyo.ConcreteModel:
+) -> Any:
     """Build MILP approve/reject model (binary decisions)."""
+    pyo = _require_pyomo()
     n = len(loans)
     model = pyo.ConcreteModel("CreditApprovalMILP")
 

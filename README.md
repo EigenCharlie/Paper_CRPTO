@@ -86,21 +86,27 @@ metadata but are not active workflows or manuscript evidence. The complete
 pre-consolidation repository is archived outside the project at
 `D:\crpto_legacy`.
 
+The current package and evidence flow is mapped in
+[`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md).
+
 ## Setup
 
 Requirements: Python 3.11 or 3.12, `uv`, `just`, Quarto, Git, and TeX Live.
 
 ```powershell
-uv sync --extra dev
+uv sync --group dev --locked
 just smoke
 ```
 
 Use Windows PowerShell and `uv run` for Python commands.
+Known transitive advisories and their containment rules are recorded in
+[`docs/security/DEPENDENCY_RISK_REGISTER.md`](docs/security/DEPENDENCY_RISK_REGISTER.md).
 
 ## Main Commands
 
 ```powershell
 just test                    # complete retained test suite
+just coverage                # complete suite plus branch coverage XML
 just lint                    # Ruff check and format check
 just type-check              # mypy
 just type-check-fast         # blocking ty check on the active surface
@@ -110,6 +116,7 @@ just ijds-active-check       # scientific and manuscript synchronization
 just submission-build       # evidence, HTML, TeX, PDFs, previews
 just submission-check       # all read-only submission gates
 just submission-closeout    # build, check, and remote DVC verification
+just dependency-audit        # fail on unregistered dependency advisories
 ```
 
 The manual fallback for official TeX compilation is intentionally

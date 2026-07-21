@@ -107,7 +107,7 @@ updated source registration before manuscript use.
 Use Windows PowerShell and `uv run`.
 
 ```powershell
-uv sync --extra dev
+uv sync --group dev --locked
 just smoke
 just test
 just lint

@@ -3454,8 +3454,8 @@
     },
     "publication_integrity_checker": {
       "path": "scripts/check_publication_integrity.py",
-      "bytes": 16709,
-      "sha256": "79b486122a114c8100ad327e13bbd404639ab804687a61cbba30e95d2b86fccc"
+      "bytes": 17326,
+      "sha256": "effc2eeeebbba50ae7beee611e5475b65788a43304715fd7c606852d00feebfe"
     },
     "paper_pdf_auditor": {
       "path": "scripts/inspect_ijds_pdfs.py",
@@ -3499,8 +3499,8 @@
     },
     "source_registry_loader": {
       "path": "src/ijds_audit/publication_sources.py",
-      "bytes": 18075,
-      "sha256": "99bbad2ca6445c284398102ed60ed1d33e64e1f63bc610acc5dc6b14f80eaa4c"
+      "bytes": 18604,
+      "sha256": "fcb3afcbe81092f57cd2f71f1144375d00de751b60d91508cb7d8ce93c3ea62e"
     },
     "artifact_descriptor_helper": {
       "path": "src/utils/artifact_descriptor.py",

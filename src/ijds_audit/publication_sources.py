@@ -132,6 +132,13 @@ def load_verified_source_registry(
 
 
 def _validated_registry_units(payload: Mapping[str, Any]) -> tuple[_RegistryUnit, ...]:
+    units = _collect_registry_units(payload)
+    _require_complete_explicit_contract(units)
+    _require_unique_identity_values(units)
+    return units
+
+
+def _collect_registry_units(payload: Mapping[str, Any]) -> tuple[_RegistryUnit, ...]:
     lineages = payload.get("lineages")
     if not isinstance(lineages, Mapping):
         raise TypeError("Active evidence source registry omits lineages.")
@@ -146,44 +153,50 @@ def _validated_registry_units(payload: Mapping[str, Any]) -> tuple[_RegistryUnit
         units.extend(_walk_registry_group(section_payload, location=(section,)))
     if not units:
         raise ValueError("Active evidence source registry declares no identities.")
+    return tuple(units)
 
+
+def _require_complete_explicit_contract(units: tuple[_RegistryUnit, ...]) -> None:
     uses_explicit_contract = any(
         unit.paper_role is not None or unit.declared_dvc_tracked is not None for unit in units
     )
-    if uses_explicit_contract:
-        incomplete = [
-            _format_location(unit.location)
-            for unit in units
-            if unit.paper_role is None or unit.declared_dvc_tracked is None
-        ]
-        if incomplete:
-            raise TypeError(
-                "Explicit registry identities require both paper_role and dvc_tracked: "
-                f"{incomplete}."
-            )
+    if not uses_explicit_contract:
+        return
+    incomplete = [
+        _format_location(unit.location)
+        for unit in units
+        if unit.paper_role is None or unit.declared_dvc_tracked is None
+    ]
+    if incomplete:
+        raise TypeError(
+            f"Explicit registry identities require both paper_role and dvc_tracked: {incomplete}."
+        )
 
-    seen_run_tags: dict[str, tuple[str, ...]] = {}
-    seen_protocol_tags: dict[str, tuple[str, ...]] = {}
+
+def _require_unique_identity_values(units: tuple[_RegistryUnit, ...]) -> None:
+    _require_unique_identity_field(units, field="run_tag", label="run tags")
+    _require_unique_identity_field(units, field="protocol_tag", label="protocol tags")
+
+
+def _require_unique_identity_field(
+    units: tuple[_RegistryUnit, ...],
+    *,
+    field: str,
+    label: str,
+) -> None:
+    seen: dict[str, tuple[str, ...]] = {}
     for unit in units:
-        previous = seen_run_tags.get(unit.run_tag)
-        if previous is not None:
-            raise ValueError(
-                "Active evidence registry run tags must be globally unique: "
-                f"{unit.run_tag!r} appears at {_format_location(previous)} and "
-                f"{_format_location(unit.location)}."
-            )
-        seen_run_tags[unit.run_tag] = unit.location
-        if unit.protocol_tag is None:
+        value = getattr(unit, field)
+        if value is None:
             continue
-        previous = seen_protocol_tags.get(unit.protocol_tag)
+        previous = seen.get(value)
         if previous is not None:
             raise ValueError(
-                "Active evidence registry protocol tags must be globally unique: "
-                f"{unit.protocol_tag!r} appears at {_format_location(previous)} and "
+                f"Active evidence registry {label} must be globally unique: "
+                f"{value!r} appears at {_format_location(previous)} and "
                 f"{_format_location(unit.location)}."
             )
-        seen_protocol_tags[unit.protocol_tag] = unit.location
-    return tuple(units)
+        seen[value] = unit.location
 
 
 def _walk_registry_group(
@@ -225,76 +238,18 @@ def _parse_registry_unit(
             f"Registry identity {_format_location(location)}.run_tag must name one directory."
         )
 
-    has_protocol_tag = "protocol_tag" in identity
-    has_protocol_commit = "protocol_commit" in identity
-    if has_protocol_tag != has_protocol_commit:
-        missing_field = "protocol_commit" if has_protocol_tag else "protocol_tag"
-        raise TypeError(
-            f"Missing registry identity: {_format_location((*location, missing_field))}."
-        )
-
-    protocol_tag: str | None = None
-    protocol_commit: str | None = None
-    scientific_uv_lock_sha256: str | None = None
-    if has_protocol_tag:
-        protocol_tag = _required_text(identity, "protocol_tag", location=location)
-        protocol_commit = _required_text(identity, "protocol_commit", location=location)
-        if _PROTOCOL_COMMIT_PATTERN.fullmatch(protocol_commit) is None:
-            raise ValueError(
-                f"Registry identity {_format_location(location)}.protocol_commit "
-                "must be a 40-character lowercase hexadecimal commit."
-            )
-        scientific_uv_lock_sha256 = _required_text(
-            identity,
-            "scientific_uv_lock_sha256",
-            location=location,
-        )
-        if _SHA256_PATTERN.fullmatch(scientific_uv_lock_sha256) is None:
-            raise ValueError(
-                f"Registry identity {_format_location(location)}.scientific_uv_lock_sha256 "
-                "must be a 64-character lowercase hexadecimal digest."
-            )
-    else:
-        _required_text(identity, "status", location=location)
-        if "scientific_uv_lock_sha256" in identity:
-            raise ValueError(
-                f"Registry identity {_format_location(location)} cannot declare a scientific "
-                "lock without a protocol commit."
-            )
-
+    protocol_tag, protocol_commit, scientific_uv_lock_sha256 = _parse_protocol_identity(
+        identity,
+        location=location,
+    )
     if "status" in identity:
         _required_text(identity, "status", location=location)
-    paper_role = None
-    if "paper_role" in identity:
-        paper_role = _required_text(identity, "paper_role", location=location)
-
-    declared_dvc_tracked: bool | None = None
-    if "dvc_tracked" in identity:
-        raw_dvc_tracked = identity["dvc_tracked"]
-        if not isinstance(raw_dvc_tracked, bool):
-            raise TypeError(
-                f"Registry identity {_format_location(location)}.dvc_tracked must be boolean."
-            )
-        declared_dvc_tracked = raw_dvc_tracked
-    dvc_roots: tuple[str, ...] | None = None
-    if "dvc_roots" in identity:
-        raw_roots = identity["dvc_roots"]
-        if declared_dvc_tracked is not True:
-            raise ValueError(
-                f"Registry identity {_format_location(location)}.dvc_roots requires "
-                "dvc_tracked=true."
-            )
-        if (
-            not isinstance(raw_roots, list)
-            or not raw_roots
-            or not all(isinstance(value, str) and value in _DVC_ROOTS for value in raw_roots)
-            or len(raw_roots) != len(set(raw_roots))
-        ):
-            raise ValueError(
-                f"Registry identity {_format_location(location)}.dvc_roots must be a "
-                f"nonempty unique subset of {list(_DVC_ROOTS)}."
-            )
-        dvc_roots = tuple(raw_roots)
+    paper_role = (
+        _required_text(identity, "paper_role", location=location)
+        if "paper_role" in identity
+        else None
+    )
+    declared_dvc_tracked, dvc_roots = _parse_dvc_metadata(identity, location=location)
     return _RegistryUnit(
         location=location,
         run_tag=run_tag,
@@ -305,6 +260,82 @@ def _parse_registry_unit(
         declared_dvc_tracked=declared_dvc_tracked,
         dvc_roots=dvc_roots,
     )
+
+
+def _parse_protocol_identity(
+    identity: Mapping[str, Any],
+    *,
+    location: tuple[str, ...],
+) -> tuple[str | None, str | None, str | None]:
+    has_protocol_tag = "protocol_tag" in identity
+    has_protocol_commit = "protocol_commit" in identity
+    if has_protocol_tag != has_protocol_commit:
+        missing_field = "protocol_commit" if has_protocol_tag else "protocol_tag"
+        raise TypeError(
+            f"Missing registry identity: {_format_location((*location, missing_field))}."
+        )
+
+    if not has_protocol_tag:
+        _required_text(identity, "status", location=location)
+        if "scientific_uv_lock_sha256" in identity:
+            raise ValueError(
+                f"Registry identity {_format_location(location)} cannot declare a scientific "
+                "lock without a protocol commit."
+            )
+        return None, None, None
+
+    protocol_tag = _required_text(identity, "protocol_tag", location=location)
+    protocol_commit = _required_text(identity, "protocol_commit", location=location)
+    if _PROTOCOL_COMMIT_PATTERN.fullmatch(protocol_commit) is None:
+        raise ValueError(
+            f"Registry identity {_format_location(location)}.protocol_commit "
+            "must be a 40-character lowercase hexadecimal commit."
+        )
+    scientific_uv_lock_sha256 = _required_text(
+        identity,
+        "scientific_uv_lock_sha256",
+        location=location,
+    )
+    if _SHA256_PATTERN.fullmatch(scientific_uv_lock_sha256) is None:
+        raise ValueError(
+            f"Registry identity {_format_location(location)}.scientific_uv_lock_sha256 "
+            "must be a 64-character lowercase hexadecimal digest."
+        )
+    return protocol_tag, protocol_commit, scientific_uv_lock_sha256
+
+
+def _parse_dvc_metadata(
+    identity: Mapping[str, Any],
+    *,
+    location: tuple[str, ...],
+) -> tuple[bool | None, tuple[str, ...] | None]:
+    declared_dvc_tracked: bool | None = None
+    if "dvc_tracked" in identity:
+        raw_dvc_tracked = identity["dvc_tracked"]
+        if not isinstance(raw_dvc_tracked, bool):
+            raise TypeError(
+                f"Registry identity {_format_location(location)}.dvc_tracked must be boolean."
+            )
+        declared_dvc_tracked = raw_dvc_tracked
+
+    if "dvc_roots" not in identity:
+        return declared_dvc_tracked, None
+    raw_roots = identity["dvc_roots"]
+    if declared_dvc_tracked is not True:
+        raise ValueError(
+            f"Registry identity {_format_location(location)}.dvc_roots requires dvc_tracked=true."
+        )
+    if (
+        not isinstance(raw_roots, list)
+        or not raw_roots
+        or not all(isinstance(value, str) and value in _DVC_ROOTS for value in raw_roots)
+        or len(raw_roots) != len(set(raw_roots))
+    ):
+        raise ValueError(
+            f"Registry identity {_format_location(location)}.dvc_roots must be a "
+            f"nonempty unique subset of {list(_DVC_ROOTS)}."
+        )
+    return declared_dvc_tracked, tuple(raw_roots)
 
 
 def _required_text(

@@ -74,7 +74,7 @@ They comprise data and model pointers for the active roots and sensitivities,
 plus the data-only structural replay dependency. Pull with:
 
 ```powershell
-uv run python scripts/manage_ijds_dvc_capsule.py pull
+uv run --locked python scripts/manage_ijds_dvc_capsule.py pull
 ```
 
 Machine-local DVC credentials belong in `.dvc/config.local` and are never
@@ -89,10 +89,10 @@ These are complementary contracts; current source code is not treated as a
 substitute for a historical scientific environment.
 
 ```powershell
-uv sync --frozen --extra dev
+uv sync --group dev --frozen
 just submission-build
 just ijds-active-check
-uv run python scripts/manage_ijds_dvc_capsule.py status
+uv run --locked python scripts/manage_ijds_dvc_capsule.py status
 ```
 
 The paper-facing builder fails closed on source-hash, cardinality, endpoint,
