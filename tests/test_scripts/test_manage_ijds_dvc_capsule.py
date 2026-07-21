@@ -6,7 +6,13 @@ from pathlib import Path
 import pytest
 import yaml
 
-from scripts.manage_ijds_dvc_capsule import active_dvc_pointers, verify_remote
+from scripts.manage_ijds_dvc_capsule import (
+    active_dvc_pointers,
+    protected_dvc_targets,
+    publication_dvc_targets,
+    run_dvc,
+    verify_remote,
+)
 
 RUN_TAGS = (
     "v4-v1",
@@ -98,6 +104,66 @@ def test_active_dvc_pointers_loads_two_pointers_per_active_run(tmp_path: Path) -
 def test_active_dvc_pointers_rejects_incomplete_capsule(tmp_path: Path) -> None:
     with pytest.raises(ValueError, match="do not match"):
         active_dvc_pointers(root=tmp_path, targets_path=_targets(tmp_path, omit_last=True))
+
+
+def test_publication_targets_cover_strict_artifacts_without_raw_archive() -> None:
+    protected = protected_dvc_targets()
+    publication = publication_dvc_targets()
+
+    assert "data/processed/train.parquet" in protected
+    assert "models/pd_canonical.cbm" in protected
+    assert "data/processed/final_project_summary.parquet.dvc" in protected
+    assert "data/raw/Loan_status_2007-2020Q3.csv.dvc" not in publication
+    assert "dvc.yaml" not in publication
+    assert set(protected) <= set(publication)
+    assert len(publication) == len(set(publication))
+
+
+def test_publication_pull_batches_pointers_but_isolates_locked_outputs(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    observed: list[list[str]] = []
+
+    monkeypatch.setattr(
+        "scripts.manage_ijds_dvc_capsule.publication_dvc_targets",
+        lambda: ["active-a.dvc", "active-b.dvc", "models/model.bin", "data/table.parquet"],
+    )
+
+    def fake_run(command: list[str], **_: object) -> subprocess.CompletedProcess[str]:
+        observed.append(command)
+        return subprocess.CompletedProcess(command, 0)
+
+    monkeypatch.setattr(subprocess, "run", fake_run)
+
+    run_dvc("pull-publication")
+
+    assert observed == [
+        [
+            "dvc",
+            "pull",
+            "--remote",
+            "dagshub",
+            "--no-run-cache",
+            "active-a.dvc",
+            "active-b.dvc",
+        ],
+        [
+            "dvc",
+            "pull",
+            "--remote",
+            "dagshub",
+            "--no-run-cache",
+            "models/model.bin",
+        ],
+        [
+            "dvc",
+            "pull",
+            "--remote",
+            "dagshub",
+            "--no-run-cache",
+            "data/table.parquet",
+        ],
+    ]
 
 
 def test_verify_remote_accepts_empty_cloud_status(

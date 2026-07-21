@@ -14,7 +14,6 @@ import argparse
 from dataclasses import dataclass
 from datetime import UTC, datetime
 from pathlib import Path
-from typing import Any
 
 import numpy as np
 import pandas as pd
@@ -279,9 +278,6 @@ def _solve_single(
     gamma: float = 1.0,
     delta_cap_quantile: float = 1.0,
     tail_focus_quantile: float = 1.0,
-    random_seed: int | None = None,
-    cuopt_presolve: int | None = 1,
-    cuopt_parameters: dict[str, Any] | None = None,
 ) -> tuple[dict[str, float | int | str], np.ndarray]:
     result = solve_policy_allocation(
         loans=loans,
@@ -304,9 +300,6 @@ def _solve_single(
         time_limit=time_limit,
         threads=threads,
         solver_backend=solver_backend,
-        random_seed=random_seed,
-        cuopt_presolve=cuopt_presolve,
-        cuopt_parameters=cuopt_parameters,
     )
     solution = result.solution
     n = len(loans)
@@ -973,7 +966,7 @@ if __name__ == "__main__":
     parser.add_argument("--strict_risk_threshold", type=float, default=0.12)
     parser.add_argument("--robust_pd_slack_penalty", type=float, default=1.5)
     parser.add_argument("--grid-profile", dest="grid_profile", default="custom")
-    parser.add_argument("--solver_backend", choices=["highs", "cuopt"], default="highs")
+    parser.add_argument("--solver_backend", choices=["highs", "highspy"], default="highs")
     parser.add_argument(
         "--candidate_universe_path",
         default="data/processed/champion_candidate_universe.parquet",

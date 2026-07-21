@@ -54,9 +54,6 @@ def solve_policy_allocation(
     time_limit: int = 300,
     threads: int = 4,
     solver_backend: str = "highs",
-    random_seed: int | None = None,
-    cuopt_presolve: int | None = 1,
-    cuopt_parameters: dict[str, Any] | None = None,
 ) -> PolicyAllocationResult:
     """Resolve policy semantics once and solve the corresponding portfolio.
 
@@ -103,9 +100,6 @@ def solve_policy_allocation(
         time_limit=time_limit,
         threads=threads,
         solver_backend=solver_backend,
-        random_seed=random_seed,
-        cuopt_presolve=cuopt_presolve,
-        cuopt_parameters=cuopt_parameters,
     )
     return PolicyAllocationResult(
         solution=solution,

@@ -17,7 +17,9 @@ Repository state:
 - Public repo: <https://github.com/EigenCharlie/Paper_CRPTO>
 - GitHub Pages target: <https://eigencharlie.github.io/Paper_CRPTO/>
 - `main` is intentionally not branch-protected in the current single-author
-  academic mode. `lint` and `book-publish` run on push; `tests-full` is manual.
+  academic mode. `lint` runs on pushes; the manual workflow
+  `clean-clone-reproducibility` retains the file path `tests-full.yml` and is
+  reserved for major refactors and publication checkpoints.
 
 Publication rules:
 

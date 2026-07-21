@@ -1,11 +1,12 @@
-name: tests-full
+name: clean-clone-reproducibility
 
-# Manually-triggered full test suite. Pulls protected extraction artifacts from
-# the DagsHub DVC remote, checks their hashes, and runs the active IJDS suite.
-# It is NOT wired to push events; that would be too expensive (and add
-# zero value to a single-author academic project) to run on every commit.
+# Manually triggered clean-clone audit. It reconstructs the publication capsule
+# on a disposable CPU runner; Linux is a portability check, not a scientific or
+# GPU requirement.
+# It remains manual because it downloads authenticated DVC artifacts and runs
+# the complete suite; the lightweight lint workflow covers ordinary pushes.
 #
-# Trigger it from the GitHub UI (Actions tab > tests-full > Run workflow).
+# Trigger it from the GitHub UI (Actions > clean-clone-reproducibility).
 # Use it before a paper submission or after a major scientific refactor.
 #
 # Required repository secrets:
@@ -17,11 +18,11 @@ on:
   workflow_dispatch:
 
 concurrency:
-  group: tests-full-${{ github.ref }}
+  group: clean-clone-reproducibility-${{ github.ref }}
   cancel-in-progress: true
 
 jobs:
-  pytest-full:
+  clean-clone:
     runs-on: ubuntu-latest
     timeout-minutes: 60
     env:
@@ -63,8 +64,8 @@ jobs:
       - name: Dependency audit
         run: just dependency-audit
 
-      - name: DVC pull (active and protected artifacts)
-        run: uv run --locked dvc pull --no-run-cache
+      - name: Pull publication DVC capsule
+        run: just ijds-pull-publication
 
       - name: Protected extraction hash regression
         run: uv run --locked pytest tests/test_manifest_regression.py -v

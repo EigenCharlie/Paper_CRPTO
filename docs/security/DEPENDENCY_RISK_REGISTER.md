@@ -15,11 +15,14 @@ ignores only the identifiers listed here; any newly reported advisory fails.
 ## Environment Separation
 
 - `uv sync --no-dev` installs the current scientific runtime without DVC,
-  Pyomo, test runners, or author tooling.
+  test runners, or author tooling.
 - `uv sync --group repro` adds DVC and the authenticated S3 capsule tools.
-- `uv sync --group compat` adds the lazy Pyomo historical backend.
-- `uv sync --group dev` composes test, quality, reproducibility, and
-  compatibility groups for author validation.
+- `uv sync --group dev` composes test, quality, and reproducibility groups for
+  author validation.
+
+The portfolio optimizer uses direct HiGHS interfaces (`highspy` in the active
+path and SciPy HiGHS as a fallback). Historical Pyomo and cuOpt compatibility
+layers are intentionally absent from the environment.
 
 Do not force a protobuf override. OR-Tools 9.11 constrains protobuf below the
 patched line, and OptBinning 0.21 constrains OR-Tools below 9.12. A forced

@@ -254,7 +254,7 @@ if __name__ == "__main__":
     parser.add_argument("--pd_cap_slack_penalty", type=float, default=0.0)
     parser.add_argument("--max_candidates", type=int, default=5_000)
     parser.add_argument("--random_state", type=int, default=42)
-    parser.add_argument("--solver_backend", choices=["highs", "cuopt"], default=None)
+    parser.add_argument("--solver_backend", choices=["highs", "highspy"], default=None)
     args = parser.parse_args()
     main(
         args.config,

@@ -29,13 +29,13 @@ flowchart TB
 | `src/ijds_audit` | Active protocols, grids, exact geometry, evidence validation, and publication assembly | Active core |
 | `src/ijds_challengers` | Outcome-free two-ruler frontier and its evaluated frozen lineage | Active evidence; name retained because protocol tags bind it |
 | `src/models` | Maturity-safe CatBoost/Platt and binary conformal recipe | Active core |
-| `src/optimization` | Native HiGHS allocation plus compatibility adapters | Native path active; Pyomo/cuOpt compatibility only |
+| `src/optimization` | Native HiGHS allocation, sparse fallback, and policy semantics | Active core; CPU only |
 | `src/evaluation` | Standardized payoff and sharp common-outcome contrast bounds | Active core |
 | `src/data` and `src/features` | Endpoint reconstruction and origination-time feature contract | Active core plus path-bound compatibility |
 
-Renaming `src/ijds_challengers` or deleting compatibility modules would add
-wrappers while breaking protocol paths. The active publication contract, rather
-than directory naming, is therefore the executable architecture authority.
+Renaming `src/ijds_challengers` would add wrappers while breaking protocol
+paths. The active publication contract, rather than directory naming, is the
+executable architecture authority.
 
 ## Dependency Layers
 
@@ -45,13 +45,12 @@ than directory naming, is therefore the executable architecture authority.
 | Tests | pytest, pytest-cov, Hypothesis | `uv sync --group test` |
 | Quality | Ruff, mypy, pre-commit, pypdf | `uv sync --group quality` |
 | Reproducibility | DVC with S3 support | `uv sync --group repro` |
-| Compatibility | Pyomo | `uv sync --group compat` |
-| Author environment | All four local groups | `uv sync --group dev` |
+| Author environment | Test, quality, and reproducibility groups | `uv sync --group dev` |
 
 The active optimizer uses direct `highspy`, including basis reuse, basis
 ranging, reduced costs, and deterministic single-thread checks. SciPy HiGHS is
-a sparse fallback; OR-Tools GLOP is an independent finite-grid diagnostic;
-Pyomo is lazy-loaded only for historical parity tests.
+a sparse fallback and OR-Tools GLOP is an independent finite-grid diagnostic.
+The project requires neither WSL, a GPU, cuOpt, nor a symbolic modeling layer.
 
 ## Direct Library Decisions
 
@@ -86,7 +85,6 @@ The author-only tools are deliberately outside the scientific runtime:
 | pre-commit | 4.6.0 | Hook configuration and local quality entrypoint | Useful; one hook manager is enough, so `prek` was removed |
 | pypdf | 6.14.2 | Page size, blank-page, anonymity, abstract, and reference-start audits | Indispensable publication QA |
 | DVC | 3.67.1 | Content-addressed scientific capsule and authenticated remote verification | Indispensable reproducibility tool, intentionally not runtime |
-| Pyomo | 6.10.1 | Historical model parity and optional backend comparison | Overkill for the active path; retained only as lazy `compat` dependency |
 | uv | 0.11.29 | Locked Python resolution, environments, tools, and command execution | Indispensable environment authority |
 | Just | 1.56.0 | Small Windows-first command surface over locked commands | Indispensable orchestration; recipes must remain declarative |
 | Quarto / TeX Live | 1.9.38 / 2026 | Reviewer previews and generated official INFORMS LaTeX/PDF | Indispensable publication toolchain |
@@ -94,6 +92,16 @@ The author-only tools are deliberately outside the scientific runtime:
 No additional dataframe framework, experiment tracker, dependency injector,
 workflow engine, formatter, or solver abstraction is warranted. Those would
 duplicate a working boundary without improving an active estimand or gate.
+
+## Clean-Clone Boundary
+
+Windows PowerShell is the author environment and owns the complete PDF build.
+The manual GitHub clean-clone workflow uses a disposable Ubuntu CPU runner to
+verify that Git history, protocol tags, the locked Python environment, Quarto
+generation, and DVC artifacts can be reconstructed independently. It does not
+run scientific stages, compile with CUDA, or introduce a second production
+platform. Its DVC target set is the union of the active registry and the files
+required by the strict protected-manifest gate; the raw archive is not pulled.
 
 ## Publication Boundary
 

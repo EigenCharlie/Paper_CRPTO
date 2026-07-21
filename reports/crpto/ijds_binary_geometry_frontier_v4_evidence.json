@@ -3464,8 +3464,8 @@
     },
     "publication_generation_helper": {
       "path": "src/ijds_audit/publication_generation.py",
-      "bytes": 7099,
-      "sha256": "b7065e4c61d8bf68bd2972c5e0b44844414fae06e6a29b9baa748c999a21981c"
+      "bytes": 7675,
+      "sha256": "975e9953a2e4631baa364e89f951e35a18d954a4bc299399a4d853c52b87c736"
     },
     "v4_config_loader": {
       "path": "src/ijds_audit/config.py",
