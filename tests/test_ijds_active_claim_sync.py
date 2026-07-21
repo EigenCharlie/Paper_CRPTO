@@ -17,6 +17,16 @@ REPO = Path(__file__).resolve().parents[1]
 EVIDENCE = REPO / "reports/crpto/ijds_binary_geometry_frontier_v4_evidence.json"
 RUN = "ijds-binary-geometry-frontier-v4-2026-07-15-v5"
 COMMIT = "e2bba580a0b07c145bd64ff61440973d6e31349b"
+CLOSED_WINDOW_IDS = (
+    "w01_2012m01_m06",
+    "w02_2012m02_m07",
+    "w03_2012m03_m08",
+    "w04_2012m04_m09",
+    "w05_2012m05_m10",
+    "w06_2012m06_m11",
+    "w07_2012m07_m12",
+    "w08_2012m08_2013m01",
+)
 SURFACES = (
     REPO / "paper/CRPTO_ijds.qmd",
     REPO / "paper/supplement_ijds.qmd",
@@ -67,7 +77,7 @@ def _normalize(text: str) -> str:
 def test_active_evidence_locks_v4_lineage_and_claim_boundary() -> None:
     evidence = _json(EVIDENCE)
 
-    assert evidence["schema_version"] == "2026-07-21.3"
+    assert evidence["schema_version"] == "2026-07-21.4"
     assert evidence["status"] == "active_ijds_v5_endpoint_reason_audited_paper_facing_evidence"
     assert evidence["run_tag"] == RUN
     assert evidence["protocol_commit"] == COMMIT
@@ -514,6 +524,35 @@ def test_joint_block_rank_reference_is_complete_and_scoped() -> None:
     assert exact["interpretation"]["flag_identifies_cause_of_shift"] is False
 
 
+def test_closed_coverage_diagnostics_are_complete_and_nonselective() -> None:
+    closed = _json(EVIDENCE)["closed_coverage_diagnostics"]
+
+    assert closed["all_sixty_four_primary_upper_below_nominal"] is True
+    assert closed["censored_extension_mixed_stress_pattern"] is True
+    assert closed["censored_extension_catboost_below_nominal_windows"] == list(CLOSED_WINDOW_IDS)
+    assert closed["censored_extension_logistic_contains_nominal_windows"] == list(
+        CLOSED_WINDOW_IDS[:6]
+    )
+    assert closed["censored_extension_logistic_below_nominal_windows"] == list(
+        CLOSED_WINDOW_IDS[6:]
+    )
+    assert len(closed["taxonomy_rows"]) == 64
+    assert len(closed["taxonomy_summary_rows"]) == 8
+    assert len(closed["censored_extension_rows"]) == 16
+    assert {
+        (row["learner"], int(row["taxonomy_groups"])) for row in closed["taxonomy_summary_rows"]
+    } == {
+        (learner, groups)
+        for learner in ("catboost_platt", "numeric_logistic_platt")
+        for groups in (1, 2, 5, 10)
+    }
+    assert all(row["windows_upper_below_0_90"] == 8 for row in closed["taxonomy_summary_rows"])
+    assert all(row["coverage_upper"] < 0.90 for row in closed["taxonomy_rows"])
+    assert closed["joint_block_rank_reference_extended_to_these_rows"] is False
+    assert closed["independent_replication_claimed"] is False
+    assert closed["extension_is_primary_oot"] is False
+
+
 def test_label_mondrian_sensitivity_is_complete_and_nonconfirmatory() -> None:
     label = _json(EVIDENCE)["sensitivity"]["label_mondrian"]
 
@@ -641,7 +680,7 @@ def test_evidence_manifest_hashes_every_active_output() -> None:
 
 
 def test_manuscript_surfaces_share_v4_claims_and_retire_old_headlines() -> None:
-    active = (
+    shared_active = (
         "376,890",
         "364,814",
         "12,076",
@@ -659,15 +698,11 @@ def test_manuscript_surfaces_share_v4_claims_and_retire_old_headlines() -> None:
         "0.8884",
         "0.1118",
         "215",
-        "0.884669",
         "2,985",
         "0.001284",
         "3,067",
         "216",
         "72",
-        "0.884332",
-        "0.879120",
-        "0.875261",
         "individual-age",
         "31 of 40",
         "109",
@@ -675,6 +710,7 @@ def test_manuscript_surfaces_share_v4_claims_and_retire_old_headlines() -> None:
         "status-indexed",
         "selected-set",
     )
+    supplement_active = ("0.884669", "0.884332", "0.879120", "0.875261")
     retired = (
         "0.879647",
         "0.845072",
@@ -689,8 +725,10 @@ def test_manuscript_surfaces_share_v4_claims_and_retire_old_headlines() -> None:
     )
     for surface in SURFACES:
         text = _normalize(surface.read_text(encoding="utf-8"))
-        assert not [token for token in active if _normalize(token) not in text], surface
+        assert not [token for token in shared_active if _normalize(token) not in text], surface
         assert not [token for token in retired if _normalize(token) in text], surface
+    supplement = _normalize((REPO / "paper/supplement_ijds.qmd").read_text(encoding="utf-8"))
+    assert not [token for token in supplement_active if _normalize(token) not in supplement]
 
 
 def test_official_tex_is_deterministically_generated_from_qmd() -> None:

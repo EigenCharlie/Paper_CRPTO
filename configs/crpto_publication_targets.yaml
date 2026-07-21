@@ -54,6 +54,7 @@ active_scientific_contract:
       - scripts/experiments/run_ijds_portfolio_structure_sensitivity.py
       - scripts/experiments/run_ijds_allocation_granularity_sensitivity.py
       - scripts/experiments/run_ijds_policy_support_tie_audit.py
+      - scripts/experiments/run_ijds_policy_support_optimal_face_v2.py
       - scripts/experiments/run_ijds_conformal_set_diagnostics.py
       - scripts/experiments/run_ijds_rolling_origin_primary_recovery.py
       - scripts/experiments/run_ijds_exchangeability_transport_test.py
@@ -146,6 +147,8 @@ active_scientific_contract:
     - reports/crpto/tables/crpto_ijds_v4_tableS6D_label_mondrian_cells.csv
     - reports/crpto/tables/crpto_ijds_v4_tableS6E_label_mondrian_strata.csv
     - reports/crpto/tables/crpto_ijds_v4_tableS6F_label_mondrian_categories.csv
+    - reports/crpto/tables/crpto_ijds_v4_tableS6G_taxonomy_diagnostics.csv
+    - reports/crpto/tables/crpto_ijds_v4_tableS6H_censored_extension_coverage.csv
     - reports/crpto/tables/crpto_ijds_v4_tableS7D_individual_age_endpoint_census.csv
     - reports/crpto/tables/crpto_ijds_v4_tableS11_fit_label_completion.csv
     - reports/crpto/tables/crpto_ijds_v4_tableS12_allocation_granularity.csv

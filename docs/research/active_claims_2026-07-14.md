@@ -17,8 +17,8 @@ pre-endpoint-correction evaluations are provenance only.
   or deployment claims.
 - The strongest result separates three evidential layers. All 40 finite-archive
   sharp upper coverage endpoints are below 0.90; a separate combined-rank
-  diagnostic places 31 of 40 learner-window joint-block nulls past locked
-  nominal Bonferroni--Holm thresholds without a post-selection FWER claim; and
+  diagnostic has 31 of 40 learner-window joint-block reference tail areas meet
+  locked nominal Bonferroni--Holm reporting thresholds without a post-selection FWER claim; and
   deterministic sensitivities show what
   changes under label-Mondrian calibration, individual-age follow-up, fit labels, and
   comparator design. None of these layers identifies the cause of shift or a
@@ -28,7 +28,7 @@ pre-endpoint-correction evaluations are provenance only.
 
 ## Active Lineages
 
-### Binary geometry and exact point-cap audit
+### Binary geometry and registered point-cap audit
 
 - Outcome-free freeze: `ijds-binary-geometry-frontier-v4-2026-07-12-v1`, tag
   `protocol/ijds-binary-geometry-frontier-v4-2026-07-12-v1`, commit
@@ -152,8 +152,8 @@ pre-endpoint-correction evaluations are provenance only.
   ordinary pointwise split-conformal guarantee.
 - Loan-wise minimum misses over unresolved binary completions maximize the
   upper-tail p-value. Bonferroni combines five strata within each learner-window
-  cell and Holm adjusts the 40 cell p-values. Thirty-one cells meet the locked
-  nominal thresholds: 8/8
+  cell and Holm adjusts the 40 cell p-values. Thirty-one cell reference tail
+  areas meet the locked nominal reporting thresholds: 8/8
   CatBoost, 4/8 logistic, 8/8 monotonic CatBoost, 6/8 platform WOE, and 5/8
   pricing-excluded WOE.
 - The exploratory flag pattern was seen before the V1 tag. For an ex ante fixed
@@ -299,15 +299,20 @@ pre-endpoint-correction evaluations are provenance only.
    missingness model. Rate metrics use declared capital normalizers; the
    floor-with-cash diagnostic retains committed capital rather than
    renormalizing away residual cash.
-4. **Exact declared support.** On each LP basis, allocations are affine in the
-   cap and sharp endpoints are concave/convex, so basis endpoints suffice for
-   extrema over the declared support. Its envelope is deterministic design
-   sensitivity, not a confidence interval or universal comparator claim.
+4. **Conditional within-basis endpoint lemma.** On each fixed optimal LP basis,
+   allocations are affine in the cap and sharp endpoints are concave/convex,
+   so that basis range's endpoints suffice for its adverse extrema. Exactness
+   over a continuous interval additionally requires a certified exhaustive
+   partition into all relevant optimal-basis ranges. The active empirical
+   lineage audits registered support and solver-reported endpoints, not such an
+   exhaustive continuous path.
 
 ## Coverage and Geometry Evidence
 
 <!-- claim:coverage.five_models_all_windows_below_nominal -->
-<!-- claim:coverage.exact_exchangeability_transport_test -->
+<!-- claim:coverage.closed_taxonomies_primary_below_nominal -->
+<!-- claim:coverage.censored_extension_mixed_stress -->
+<!-- claim:coverage.joint_block_rank_reference_nominal_flags -->
 <!-- claim:coverage.resolved_label_diagnostic_descriptive -->
 <!-- claim:sensitivity.label_mondrian_complete_mixed -->
 <!-- claim:sensitivity.label_mondrian_common_completion_gap -->
@@ -333,6 +338,19 @@ coverage upper bounds are below 0.90 for every model:
 - All 45 OptBinning fits are optimal. The WOE/IV and monotonic specifications
   challenge model-class and platform-pricing explanations; they are not the
   paper's methodological novelty and cannot promote a model.
+- Under the declared six-month Charged Off availability rule, across the two
+  V4 learners all 64 primary learner--taxonomy--window sharp
+  upper endpoints are below 0.90 for the four protocol-frozen taxonomies with
+  1, 2, 5, and 10 score groups. The largest upper endpoint is 0.897294. This is
+  complete closed-grid reporting, not a taxonomy selection or an extension of
+  the separate joint-block rank-reference analysis.
+- Under the same declared six-month Charged Off availability rule, the
+  July--September 2017 extension contains 59,291 resolved and
+  28,936 unresolved candidates. CatBoost has 8/8 upper endpoints below 0.90
+  (maximum 0.895157); numeric logistic has 2/8 below, with W1--W6 crossing 0.90
+  (maximum 0.908928). This highly censored stress is neither primary OOT
+  evidence nor an independent or prospective replication; its sharp bounds do
+  not test the conformal theorem or exchangeability.
 - Two active raw features have declared coverage exceptions:
   `mths_since_last_delinq` is structurally nullable and
   `pub_rec_bankruptcies` has partial legacy support. Their deterministic
@@ -357,7 +375,7 @@ coverage upper bounds are below 0.90 for every model:
 - The 40 sharp upper endpoints are deterministic finite-archive identification
   facts, not sampling confidence bounds and not by themselves a rejection of
   split conformal. In the separate joint-block combined-rank analysis, 31/40
-  learner-window intersection nulls meet the locked nominal thresholds after
+  learner-window cell reference tail areas meet the locked nominal reporting thresholds after
   Bonferroni within cell and Holm across cells. The nine nonflags are logistic
   W1--W4, platform WOE W1--W2, and pricing-excluded WOE W1--W3. This
   post-inspection lineage has no selective-FWER claim, does not directly test
@@ -437,12 +455,12 @@ The complete endpoint-availability sensitivity is:
   six-month contract and lags 0, 3, and 8, but not universally over all tested
   endpoint lags.
 - After removing the lag column, the six-month row is value-identical to the
-  active evaluation for 120 coverage cells, 48 two-ruler contrasts, and 648 exact-support
+  active evaluation for 120 coverage cells, 48 two-ruler contrasts, and 648 registered-support
   envelopes.
 - No opposite one-sided decision direction appears at 12 months. Payoff and
   default each move one cell from adverse to crossing zero; miscoverage is
   unchanged.
-- Broad stress places zero in all 216 exact envelopes at every endpoint lag.
+- Broad stress places zero in all 216 registered-support envelopes at every endpoint lag.
   Development-support payoff is 6 lower/66 crossing at lags 0, 3, 6, and 8 and 72
   crossing at lag 12; default is 72 crossing at every lag; miscoverage changes
   from 27 higher/45 crossing at lags 0, 3, 6, and 8 to 26/46 at lag 12.
@@ -486,7 +504,7 @@ The complete endpoint-availability sensitivity is:
 - Across all 48 cells, payoff is lower in 32 and crosses zero in 16; default is
   higher in 33 and crosses zero in 15; miscoverage is higher in 40 and crosses
   zero in 8. No opposite one-sided direction survives.
-- Broad stress `[0.05,0.12]` places zero in all 216 exact envelopes.
+- Broad stress `[0.05,0.12]` places zero in all 216 registered-support envelopes.
 - Over development-admissible support, terminal default crosses zero in 72/72
   cells, payoff is lower in 6 and crosses in 66, and miscoverage is higher in
   27 and crosses in 45. All 27 W8 envelopes cross zero.
@@ -499,8 +517,8 @@ The complete endpoint-availability sensitivity is:
 
 - Under the declared six-month endpoint contract, all 40 candidate-level sharp
   finite-archive coverage upper endpoints are below 0.90. Separately, the
-  joint-block combined-rank diagnostic places 31/40 frozen learner-window nulls
-  past locked nominal thresholds; it has no post-selection FWER claim and is
+  joint-block combined-rank diagnostic has 31/40 frozen learner-window cell
+  reference tail areas meeting locked nominal reporting thresholds; it has no post-selection FWER claim and is
   not a direct test of the usual one-future-point condition.
 - The same CatBoost coverage finding recurs under three feature-semantics-
   preserving missingness encodings and at one later retrospective origin on a
@@ -524,8 +542,9 @@ The complete endpoint-availability sensitivity is:
 - Across the complete budget--concentration--LGD grid, every scenario retains
   adverse default and miscoverage cells, while neither universal favorability
   nor universal adversity holds.
-- Exact support envelopes quantify partial identification over declared
-  outcome-free comparator supports.
+- Registered-support envelopes quantify partial identification over declared
+  finite outcome-free comparator supports; no exhaustive continuous-support
+  certificate is active.
 - USD 25 floor-with-cash rounding negligibly perturbs rates in the evaluated
   baseline family; this is a continuous-relaxation diagnostic only.
 - CRPTO remains one integrated ML--conformal--optimization object; its result is

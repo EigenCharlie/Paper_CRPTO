@@ -1,0 +1,215 @@
+schema_version: "2026-07-21.1"
+protocol_status: "locked_retrospective_outcome_free_optimal_face_audit_v2_before_execution"
+protocol_tag: "protocol/ijds-policy-support-optimal-face-audit-2026-07-21-v2"
+run_tag: "ijds-policy-support-optimal-face-audit-2026-07-21-v2"
+
+hypothesis: >-
+  Complete structural-column and row/slack reduced-cost diagnostics, bilateral
+  breakpoint probes, and conditional optimal-face ranges can determine whether
+  every allocation in the finite V1 cap census is numerically unique without
+  using any realized outcome.
+
+parent:
+  config: "configs/experiments/ijds_binary_geometry_frontier_v4_2026-07-12.yaml"
+  run_tag: "ijds-binary-geometry-frontier-v4-2026-07-12-v1"
+  protocol_tag: "protocol/ijds-binary-geometry-frontier-v4-2026-07-12-v1"
+  protocol_commit: "2f8a7606e4eb65aa3ae3701fb3af8d9a51c953cd"
+  protocol_freeze:
+    path: "models/experiments/ijds_audit/ijds-binary-geometry-frontier-v4-2026-07-12-v1/protocol_freeze.json"
+    bytes: 20362
+    sha256: "c2b3dc2d18c9fed80708682d5a0369c80c89643e2d28024418522d954ebe667c"
+
+parent_v1_audit:
+  config: "configs/experiments/ijds_policy_support_tie_audit_2026-07-12.yaml"
+  protocol: "docs/research/ijds_policy_support_tie_audit_protocol_2026-07-12.md"
+  run_tag: "ijds-policy-support-tie-audit-2026-07-12-v1"
+  protocol_tag: "protocol/ijds-policy-support-tie-audit-2026-07-12-v1"
+  protocol_commit: "115eaf1b81ed5f05ffe601e9c20079059c40c200"
+  deterministic_summary:
+    path: "models/experiments/ijds_audit/ijds-policy-support-tie-audit-2026-07-12-v1/policy_support_tie_audit_summary.json"
+    bytes: 18692
+    sha256: "f0b7a938d2e11671cb0216a35d02d3d3c00ec9c484064ed201e6a740178c29da"
+  census_artifact_name: "point_cap_basis_diagnostics.parquet"
+
+source_ingest:
+  raw_path: "data/raw/Loan_status_2007-2020Q3.csv"
+  raw_sha256: "5878af2a088f8ab5214c9337289fb8b5eb6c6338fd3f417b6cdc18513dc6f35f"
+  allowed_raw_columns: ["id", "loan_amnt", "int_rate", "purpose"]
+  forbidden_tokens: ["status", "outcome", "default", "pymnt", "realized", "miscoverage"]
+  chunksize: 100000
+
+frontier:
+  roles: ["policy_development", "primary_oot"]
+
+census:
+  expected_rows: 7297
+  expected_periods: 15
+  expected_basis_breakpoints: 2952
+  expected_lateral_probe_rows: 5874
+  key_columns: ["period", "point_cap"]
+  breakpoint_column: "is_period_basis_breakpoint"
+  required_value_columns:
+    - "expected_objective"
+    - "weighted_point_score"
+    - "basis_cap_lower"
+    - "basis_cap_upper"
+    - "is_development_support_lower"
+    - "is_development_support_upper"
+  complete_census_required: true
+
+frozen_allocation_reconciliation:
+  parent_artifact_key: "allocations"
+  parent_solve_records_key: "solve_records"
+  role: "primary_oot"
+  comparator_rules:
+    - "point_cap_frontier"
+    - "c0_same_numeric_cap"
+    - "c1_development_mean"
+    - "c2_contemporaneous"
+  comparator_rules_are_deterministic_priority_order: true
+  source_identity_columns:
+    - "period"
+    - "window_id"
+    - "candidate_id"
+    - "comparator_rule"
+    - "policy_label"
+    - "paired_policy_id"
+    - "frontier_cap"
+  canonical_collapse_unit: "complete_source_vector"
+  cap_match_method: "nearest_within_period"
+  cap_match_tolerance: 1.0e-10
+  positive_exposure_rows_only: true
+  absent_candidate_ids_are_zero_exposure: true
+  duplicate_exposure_tolerance_dollars: 1.0e-7
+  coefficient_tolerance: 1.0e-12
+  expected_mapped_v1_caps: 7297
+
+rhs_basis_range_coverage:
+  source: "fresh_highs_rhs_basis_ranging_at_every_v1_census_cap"
+  broad_support: [0.05, 0.12]
+  include_complete_development_support_hull: true
+  gap_tolerance: 1.0e-10
+  persist_raw_uncollapsed_gap: true
+  compare_v1_ranges_descriptively: true
+  require_v1_basis_identity: false
+  interpretation: "fresh_rhs_basis_range_coverage_at_registered_tolerance_only"
+
+solver:
+  highspy_version: "1.15.1"
+  highs_native_version: "1.15.1"
+  highs_githash: "04024d7"
+  solver: "simplex"
+  presolve: "on"
+  threads: 1
+  time_limit_seconds: 300
+  dual_feasibility_tolerance: 1.0e-9
+  primal_feasibility_tolerance: 1.0e-9
+  reset_global_scheduler_if_available: true
+  zero_all_clocks_if_available: true
+  zero_all_clocks_required: false
+  session_scope: "central_by_month_and_each_bilateral_probe_in_a_fresh_midpoint_to_cap_session"
+  persist_get_run_time: true
+  deterministic_candidate_order: ["issue_d", "id"]
+
+tolerances:
+  dual_near_zero_scaled_absolute: 1.0e-7
+  dual_near_zero_relative: 1.0e-12
+  dual_sign_scaled_violation: 1.0e-9
+  primal_degeneracy: 1.0e-9
+  objective_reconciliation_dollars: 1.0e-5
+  cap_residual: 1.0e-8
+  allocation_distance: 1.0e-10
+  lateral_objective_difference_dollars: 1.0e-5
+  lateral_weighted_point_difference: 1.0e-10
+  face_objective_absolute_dollars: 1.0e-7
+  face_objective_relative: 1.0e-12
+  face_normalized_mobility: 1.0e-10
+  face_range_consistency: 1.0e-9
+  freeze_coefficient: 1.0e-12
+  freeze_l1_exposure_dollars: 2.0e-4
+  freeze_objective_difference_dollars: 1.0e-5
+  freeze_weighted_point_difference: 1.0e-10
+
+optimal_face:
+  trigger: "nonbasic_standard_variable_scaled_absolute_dual_at_most_scaled_absolute_plus_relative_tolerance"
+  column_dual_reference_scale: "max_j(abs(c_j))"
+  row_slack_dual_reference_scale: "max_j(abs(c_j))/max_j(abs(A_ij))"
+  row_slack_threshold: "reference_scale*(dual_near_zero_scaled_absolute+dual_near_zero_relative)"
+  exclude_equality_rows: true
+  targets: "union_of_warned_standard_variables_across_central_left_and_right_bases"
+  structural_column_range: "min_and_max_column_fraction"
+  row_slack_range: "min_and_max_row_activity"
+  primary_face_lower_lock: "objective_at_least_z_star_minus_reported_epsilon"
+  primary_face_redundant_upper_lock: true
+  raw_highs_objective_is_z_star: true
+  solution_to_raw_objective_must_not_exceed_reported_epsilon: true
+  interpretation: "epsilon_near_optimal_range_not_exact_symbolic_optimal_face"
+  individual_ranges_do_not_bound_global_l1_face_diameter: true
+  no_untriggered_face_solves: true
+  no_tie_break_selection: true
+
+claim_boundary:
+  outcome_columns_passed: []
+  retrospective: true
+  preregistered: false
+  confirmatory: false
+  prospective: false
+  no_empirical_metric_or_direction: true
+  no_policy_or_cap_selection: true
+  no_tie_break_selection: true
+  no_continuous_joint_frontier_uniqueness: true
+  no_universal_comparator_support: true
+  no_selected_set_claim: true
+  no_exact_symbolic_optimal_face_claim: true
+  no_global_optimal_face_diameter_claim: true
+  certificate_requires_complete_frozen_allocation_reconciliation: true
+  fresh_rhs_basis_range_coverage_at_registered_tolerance_only: true
+  no_allocation_continuity_or_seam_conditioning_claim: true
+  bilateral_midpoint_probes_are_path_stresses_not_exhaustive_fresh_basis_enumeration: true
+  no_symbolic_continuous_frontier_claim: true
+  no_historical_extrema_claim_if_freeze_or_rhs_coverage_fails: true
+
+replay_provenance_context:
+  equal_quarter_followup: "non_primary_replay_provenance_only"
+  input_to_this_outcome_free_audit: false
+
+stop_rules:
+  stop_on_source_hash_mismatch: true
+  stop_on_dirty_or_untagged_head: true
+  stop_on_outcome_like_input: true
+  stop_on_incomplete_census: true
+  stop_on_incomplete_breakpoint_probes: true
+  stop_on_unsupported_basis_status: false
+  stop_on_nonoptimal_or_nonfinite_solve: true
+  stop_on_implementation_drift: true
+  stop_on_preexisting_output_path: true
+  claim_gate_on_scaled_dual_sign_violation: true
+  claim_gate_on_invalid_or_unsupported_basis: true
+  claim_gate_on_policy_constraint_violation: true
+  claim_gate_on_objective_reconciliation_failure: true
+  claim_gate_on_allocation_difference_without_same_cap_epsilon_mobility: true
+  claim_gate_on_lateral_objective_discrepancy: true
+  claim_gate_on_lateral_weighted_point_discrepancy: true
+  claim_gate_on_face_objective_band_failure: true
+  claim_gate_on_face_range_inconsistency: true
+  claim_gate_on_epsilon_near_optimal_mobility: true
+  claim_gate_on_any_registered_warning_without_global_face_diameter: true
+  claim_gate_on_incomplete_or_failed_frozen_allocation_reconciliation: true
+  claim_gate_on_fresh_rhs_basis_range_coverage_failure: true
+  retain_complete_results_after_scientific_stop: true
+
+output:
+  data_root: "data/processed/experiments/ijds_audit"
+  model_root: "models/experiments/ijds_audit"
+  immutability: "hard_no_overwrite_choose_fresh_run_tag"
+  central_basis_diagnostics: "central_full_basis_diagnostics.parquet"
+  frozen_allocation_reconciliation: "frozen_allocation_reconciliation.parquet"
+  fresh_rhs_basis_range_coverage: "fresh_rhs_basis_range_coverage.parquet"
+  column_registry: "column_registry.parquet"
+  row_slack_details: "row_slack_basis_details.parquet"
+  lateral_probe_diagnostics: "breakpoint_lateral_probe_diagnostics.parquet"
+  breakpoint_comparisons: "breakpoint_allocation_comparisons.parquet"
+  flagged_nonbasic_variables: "flagged_nonbasic_variables.parquet"
+  optimal_face_ranges: "conditional_optimal_face_ranges.parquet"
+  deterministic_result: "optimal_face_audit_summary.json"
+  execution_receipt: "execution_receipt.json"

@@ -2,6 +2,7 @@ from __future__ import annotations
 
 from dataclasses import replace
 from pathlib import Path
+from typing import Any
 
 import pandas as pd
 import pytest
@@ -13,6 +14,7 @@ from src.ijds_audit.rolling_origin_equal_followup import (
     EXPECTED_COVERAGE_CELLS,
     PROTOCOL_TAG,
     RUN_TAG,
+    OriginSpec,
     build_endpoint_census_tables,
     load_equal_followup_config,
     load_raw_candidate_rows,
@@ -28,7 +30,7 @@ CONFIG = ROOT / "configs" / "experiments" / "ijds_rolling_origin_equal_followup_
 PROTOCOL = ROOT / "docs" / "research" / "ijds_rolling_origin_equal_followup_protocol_2026-07-21.md"
 
 
-def _config_and_origins() -> tuple[dict[str, object], tuple[object, ...]]:
+def _config_and_origins() -> tuple[dict[str, Any], tuple[OriginSpec, ...]]:
     config = load_equal_followup_config(CONFIG, repo_root=ROOT)
     return config, origin_specs(config)
 

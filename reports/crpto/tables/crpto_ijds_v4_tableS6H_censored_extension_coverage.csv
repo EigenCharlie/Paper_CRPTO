@@ -1,0 +1,17 @@
+learner,learner_label,taxonomy_groups,role,conformal_group,window_id,candidate_rows,resolved_rows,unresolved_rows,coverage_lower,coverage_upper
+catboost_platt,CatBoost,5,censored_extension,-1,w01_2012m01_m06,88227,59291,28936,0.6271436181667743,0.8934339827943827
+catboost_platt,CatBoost,5,censored_extension,-1,w02_2012m02_m07,88227,59291,28936,0.6312240017228286,0.8951568114069389
+catboost_platt,CatBoost,5,censored_extension,-1,w03_2012m03_m08,88227,59291,28936,0.630147233839981,0.89372867716232
+catboost_platt,CatBoost,5,censored_extension,-1,w04_2012m04_m09,88227,59291,28936,0.6251714327813481,0.8912577782311537
+catboost_platt,CatBoost,5,censored_extension,-1,w05_2012m05_m10,88227,59291,28936,0.6205129948881862,0.8891382456617589
+catboost_platt,CatBoost,5,censored_extension,-1,w06_2012m06_m11,88227,59291,28936,0.6187448286805626,0.8889795640790235
+catboost_platt,CatBoost,5,censored_extension,-1,w07_2012m07_m12,88227,59291,28936,0.6130889636959207,0.8865880059392249
+catboost_platt,CatBoost,5,censored_extension,-1,w08_2012m08_2013m01,88227,59291,28936,0.6045541614245072,0.883233023904247
+numeric_logistic_platt,Numeric logistic,5,censored_extension,-1,w01_2012m01_m06,88227,59291,28936,0.6557516406542214,0.908928105908622
+numeric_logistic_platt,Numeric logistic,5,censored_extension,-1,w02_2012m02_m07,88227,59291,28936,0.6547088759676742,0.9078740068233081
+numeric_logistic_platt,Numeric logistic,5,censored_extension,-1,w03_2012m03_m08,88227,59291,28936,0.6554569462862843,0.907817334829474
+numeric_logistic_platt,Numeric logistic,5,censored_extension,-1,w04_2012m04_m09,88227,59291,28936,0.6482255998730547,0.9043603432055947
+numeric_logistic_platt,Numeric logistic,5,censored_extension,-1,w05_2012m05_m10,88227,59291,28936,0.6398041415893094,0.9024221610164689
+numeric_logistic_platt,Numeric logistic,5,censored_extension,-1,w06_2012m06_m11,88227,59291,28936,0.6315413648882995,0.9000192684779036
+numeric_logistic_platt,Numeric logistic,5,censored_extension,-1,w07_2012m07_m12,88227,59291,28936,0.6210003740351593,0.8951341426094053
+numeric_logistic_platt,Numeric logistic,5,censored_extension,-1,w08_2012m08_2013m01,88227,59291,28936,0.6137123556280957,0.891303115826221

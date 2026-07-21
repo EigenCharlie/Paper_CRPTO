@@ -306,6 +306,85 @@ def test_complete_conformal_set_diagnostic_is_visible_and_bounded() -> None:
     assert "fairness result" in normalized
 
 
+def test_closed_taxonomies_and_censored_extension_are_visible_and_scoped() -> None:
+    taxonomies = _rows("crpto_ijds_v4_tableS6G_taxonomy_diagnostics.csv")
+    extension = _rows("crpto_ijds_v4_tableS6H_censored_extension_coverage.csv")
+    supplement = SUPPLEMENT.read_text(encoding="utf-8")
+    normalized = _normalize(supplement)
+
+    assert len(taxonomies) == 64
+    assert {int(row["taxonomy_groups"]) for row in taxonomies} == {1, 2, 5, 10}
+    assert {row["learner"] for row in taxonomies} == {
+        "catboost_platt",
+        "numeric_logistic_platt",
+    }
+    assert all(float(row["coverage_upper"]) < 0.90 for row in taxonomies)
+    grouped: dict[tuple[str, int], list[dict[str, str]]] = {}
+    for row in taxonomies:
+        grouped.setdefault((row["learner"], int(row["taxonomy_groups"])), []).append(row)
+    assert all(len(rows) == 8 for rows in grouped.values())
+    for rows in grouped.values():
+        assert f"{min(float(row['coverage_lower']) for row in rows):.6f}" in supplement
+        assert f"{max(float(row['coverage_upper']) for row in rows):.6f}" in supplement
+
+    assert len(extension) == 16
+    assert {row["learner"] for row in extension} == {
+        "catboost_platt",
+        "numeric_logistic_platt",
+    }
+    assert {int(row["candidate_rows"]) for row in extension} == {88_227}
+    assert {int(row["resolved_rows"]) for row in extension} == {59_291}
+    assert {int(row["unresolved_rows"]) for row in extension} == {28_936}
+    assert {int(row["taxonomy_groups"]) for row in extension} == {5}
+    assert {row["role"] for row in extension} == {"censored_extension"}
+    for count in (88_227, 59_291, 28_936):
+        assert f"{count:,}" in supplement
+    extension_by_learner: dict[str, list[dict[str, str]]] = {}
+    for row in extension:
+        extension_by_learner.setdefault(row["learner"], []).append(row)
+    for rows in extension_by_learner.values():
+        assert f"{min(float(row['coverage_lower']) for row in rows):.6f}" in supplement
+        assert f"{max(float(row['coverage_upper']) for row in rows):.6f}" in supplement
+    below = {
+        learner: sum(
+            float(row["coverage_upper"]) < 0.90 for row in extension if row["learner"] == learner
+        )
+        for learner in {row["learner"] for row in extension}
+    }
+    assert below == {"catboost_platt": 8, "numeric_logistic_platt": 2}
+    catboost_rows = sorted(extension_by_learner["catboost_platt"], key=lambda row: row["window_id"])
+    logistic_rows = sorted(
+        extension_by_learner["numeric_logistic_platt"],
+        key=lambda row: row["window_id"],
+    )
+    assert all(float(row["coverage_upper"]) < 0.90 for row in catboost_rows)
+    assert [float(row["coverage_upper"]) < 0.90 for row in logistic_rows] == [
+        False,
+        False,
+        False,
+        False,
+        False,
+        False,
+        True,
+        True,
+    ]
+    assert [
+        float(row["coverage_lower"]) <= 0.90 <= float(row["coverage_upper"])
+        for row in logistic_rows
+    ] == [True, True, True, True, True, True, False, False]
+    for token in (
+        "no alternative taxonomy is selected",
+        "joint-block rank-reference result is not extended",
+        "highly unresolved extension",
+        "not primary oot evidence",
+        "independent replication",
+        "not a conformal-theorem or exchangeability test",
+        "w1--w6",
+        "w7--w8",
+    ):
+        assert token in normalized
+
+
 def test_exact_exchangeability_tables_are_complete_and_scoped() -> None:
     cells = _rows("crpto_ijds_v4_tableS6B_exchangeability_cells.csv")
     strata = _rows("crpto_ijds_v4_tableS6C_exchangeability_strata.csv")
@@ -435,4 +514,4 @@ def test_fit_completion_and_allocation_granularity_tables_are_visible() -> None:
 
     normalized = re.sub(r"\s+", " ", supplement.lower())
     assert "declared stresses rather than sharp bounds" in normalized
-    assert "does not establish integer optimality" in normalized
+    assert "does not establish adequacy or optimality of the continuous relaxation" in normalized

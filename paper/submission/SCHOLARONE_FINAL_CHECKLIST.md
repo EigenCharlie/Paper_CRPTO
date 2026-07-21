@@ -12,14 +12,15 @@ living closeout checklist, not evidence that the package is final.
 - [ ] All 40 five-model sharp coverage upper bounds are below 0.90; largest
       0.897726; this is described as a finite-archive fact, not by itself an
       exchangeability rejection or conformal-theorem failure.
-- [ ] The combined-rank diagnostic is described as 31/40 learner-window cells
-      meeting locked nominal Bonferroni-within-cell and Holm-across-cell
-      thresholds under the stronger joint calibration-plus-target-block null.
+- [ ] The combined-rank diagnostic is described as 31/40 learner-window cell
+      reference tail areas meeting locked nominal Bonferroni-within-cell and
+      Holm-across-cell reporting thresholds under the stronger joint
+      calibration-plus-target-block null.
       It is not described as rejecting the usual one-future-point marginal
       guarantee, providing post-selection or study-wide FWER, finding
       a shift cause, or establishing exchangeability in unflagged cells.
 - [ ] Objective-matched .25 is described as crossing zero, never as favorable.
-- [ ] Two-ruler, exact-support, fit-label-lag, endpoint-availability, and solver-stability limits are stated.
+- [ ] Two-ruler, registered-support, fit-label-lag, endpoint-availability, and solver-stability limits are stated; no exhaustive continuous point-cap path is claimed.
 - [ ] Endpoint lags 0/3/6/8/12 are complete, unselected, and the six-month slice reconciles to the active evaluation.
 - [ ] Fit-label and evaluation-endpoint timing are not described as a joint factorial sensitivity.
 - [ ] Missingness encodings and the individual-age origin sensitivity are
@@ -46,7 +47,7 @@ living closeout checklist, not evidence that the package is final.
 - [ ] Data and code disclosure form.
 - [ ] Editor-only reproducibility crosswalk, if requested.
 - [ ] Sanitized reproducibility capsule, if requested.
-- [ ] Capsule inventory reconciles to exactly 47 DVC pointers and 25
+- [ ] Capsule inventory reconciles to exactly 47 DVC pointers and 27
       paper-facing CSV tables; unequal-follow-up roots appear only as replay
       provenance.
 

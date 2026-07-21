@@ -1,4 +1,4 @@
-schema_version: "2026-07-21.2"
+schema_version: "2026-07-21.3"
 status: active_ijds_claim_contract
 
 surfaces:
@@ -54,7 +54,7 @@ claims:
     result_pointer: /credit_risk_controls/all_five_all_eight_upper_below_nominal
     expected: true
     lineages: [binary_geometry.evaluation, credit_controls.evaluation]
-    scope: all_candidate_sharp_bounds_under_six_month_endpoint
+    scope: alpha_0_10_all_candidate_sharp_bounds_under_six_month_endpoint_with_five_frozen_score_strata
     forbidden_inference:
       [universal_conformal_invalidity, conformal_theorem_failure,
        exchangeability_rejection_without_formal_test, selected_model_winner,
@@ -63,14 +63,47 @@ claims:
       required: [body, supplement, registry, claim_matrix]
       allowed: [body, supplement, registry, claim_matrix]
 
-  - id: coverage.exact_exchangeability_transport_test
+  - id: coverage.closed_taxonomies_primary_below_nominal
+    status: active
+    kind: empirical
+    rule: equals
+    result_pointer: /closed_coverage_diagnostics/all_sixty_four_primary_upper_below_nominal
+    expected: true
+    lineages: [binary_geometry.evaluation]
+    scope: alpha_0_10_under_six_month_endpoint_two_v4_learners_by_four_frozen_taxonomies_1_2_5_10_by_eight_primary_windows
+    forbidden_inference:
+      [selected_taxonomy, taxonomy_winner, universal_taxonomy_robustness,
+       conformal_theorem_failure, exchangeability_rejection,
+       joint_block_rank_reference_extension, selected_set_validity]
+    surfaces:
+      required: [supplement, registry, claim_matrix]
+      allowed: [supplement, registry, claim_matrix]
+
+  - id: coverage.censored_extension_mixed_stress
+    status: active
+    kind: empirical
+    rule: equals
+    result_pointer: /closed_coverage_diagnostics/censored_extension_mixed_stress_pattern
+    expected: true
+    lineages: [binary_geometry.evaluation]
+    scope: alpha_0_10_under_six_month_endpoint_five_frozen_score_strata_two_v4_learners_eight_windows_july_to_september_2017_declared_censored_extension
+    forbidden_inference:
+      [selected_origin, primary_oot_evidence, independent_replication,
+       prospective_validation, endpoint_missingness_mechanism,
+       joint_block_rank_reference_extension, model_winner,
+       conformal_theorem_failure, exchangeability_rejection_without_formal_test]
+    surfaces:
+      required: [supplement, registry, claim_matrix]
+      allowed: [supplement, registry, claim_matrix]
+
+  - id: coverage.joint_block_rank_reference_nominal_flags
     status: active
     kind: empirical
     rule: equals
     result_pointer: /exchangeability_transport_test/thirty_one_of_forty_meet_locked_nominal_thresholds
     expected: true
     lineages: [credit_controls.evaluation, exchangeability_transport_test]
-    scope: fixed_post_inspection_forty_learner_window_joint_block_intersection_nulls_under_frozen_score_strata
+    scope: alpha_0_10_fixed_post_inspection_forty_learner_window_joint_block_intersection_nulls_under_five_frozen_score_strata
     forbidden_inference:
       [preregistration, study_wide_confirmation, global_200_stratum_fwer,
        post_selection_fwer_control, usual_single_future_point_split_conformal_null_rejected,
@@ -102,7 +135,7 @@ claims:
     result_pointer: /sensitivity/label_mondrian/mixed_category_identification_states
     expected: true
     lineages: [label_mondrian.outcome_free, label_mondrian.evaluation]
-    scope: all_five_learners_eight_windows_five_score_strata_two_labels
+    scope: alpha_0_10_all_five_learners_eight_windows_five_score_strata_two_labels
     forbidden_inference:
       [restored_temporal_transport, label_conditional_validity, category_tests,
        fairness_or_equalized_coverage, selected_method, funded_set_validity]
@@ -117,7 +150,7 @@ claims:
     result_pointer: /sensitivity/label_mondrian/all_forty_aggregate_class_gap_bounds_cross_zero
     expected: true
     lineages: [label_mondrian.evaluation]
-    scope: each_sharp_gap_endpoint_optimizes_over_single_assignment_completions_shared_by_both_class_ratios_endpoints_may_differ
+    scope: alpha_0_10_five_score_strata_two_labels_each_sharp_gap_endpoint_optimizes_over_single_assignment_completions_shared_by_both_class_ratios_endpoints_may_differ
     forbidden_inference:
       [separate_endpoint_subtraction, conditional_coverage_equality,
        exchangeability, fairness_or_equalized_coverage]
@@ -249,8 +282,10 @@ claims:
     result_pointer: /portfolio/broad_stress_all_envelopes_cross_zero
     expected: true
     lineages: [binary_geometry.outcome_free, binary_geometry.evaluation]
-    scope: declared_point_cap_support_0_05_to_0_12
-    forbidden_inference: [universal_comparator_quantification, policy_equivalence]
+    scope: registered_point_cap_endpoints_with_values_in_0_05_to_0_12
+    forbidden_inference:
+      [universal_comparator_quantification, policy_equivalence,
+       exhaustive_continuous_point_cap_envelope]
     surfaces:
       required: [body, supplement, registry, claim_matrix]
       allowed: [body, supplement, registry, claim_matrix]
@@ -282,8 +317,10 @@ claims:
     kind: theorem
     rule: documented
     lineages: [binary_geometry.outcome_free, binary_geometry.evaluation]
-    scope: declared_piecewise_linear_point_cap_support
-    forbidden_inference: [continuous_joint_frontier_uniqueness, arbitrary_comparator_support]
+    scope: one_fixed_optimal_lp_basis_range_with_continuous_interval_exactness_conditional_on_a_certified_exhaustive_partition
+    forbidden_inference:
+      [continuous_joint_frontier_uniqueness, arbitrary_comparator_support,
+       empirical_exhaustive_continuous_basis_path]
     surfaces:
       required: [body, supplement, registry]
       allowed: [body, supplement, registry, claim_matrix]

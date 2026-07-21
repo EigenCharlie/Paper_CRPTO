@@ -19,7 +19,7 @@ searchable protocol identifiers and immutable provenance.
 
 | Lineage | Outcome-free freeze | Endpoint-corrected evaluation |
 |---|---|---|
-| Binary geometry / exact support | `ijds-binary-geometry-frontier-v4-2026-07-12-v1` | `ijds-binary-geometry-frontier-v4-2026-07-15-v5` |
+| Binary geometry / registered point-cap support | `ijds-binary-geometry-frontier-v4-2026-07-12-v1` | `ijds-binary-geometry-frontier-v4-2026-07-15-v5` |
 | Protocol tags | `protocol/ijds-binary-geometry-frontier-v4-2026-07-12-v1` | `protocol/ijds-binary-geometry-frontier-v4-2026-07-15-v5` |
 | Protocol commits | `2f8a7606e4eb65aa3ae3701fb3af8d9a51c953cd` | `e2bba580a0b07c145bd64ff61440973d6e31349b` |
 | Freeze SHA-256 | `c2b3dc2d18c9fed80708682d5a0369c80c89643e2d28024418522d954ebe667c` | See source registry and execution receipt |
@@ -102,7 +102,7 @@ structural V5 shard root and the unequal-follow-up origin roots. Pull with:
 uv run --locked python scripts/manage_ijds_dvc_capsule.py pull
 ```
 
-The registered evidence builder emits one paper-facing manifest, 25 CSV
+The registered evidence builder emits one paper-facing manifest, 27 CSV
 tables, and three figure families in both PDF and PNG.
 
 Machine-local DVC credentials belong in `.dvc/config.local` and are never

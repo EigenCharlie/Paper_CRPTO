@@ -133,8 +133,8 @@ def test_active_capsule_paths_exist() -> None:
     paper_artifact_paths = {
         descriptor["path"] for descriptor in evidence["paper_artifacts"].values()
     }
-    assert len(paper_artifact_paths) == 31
-    assert len({path for path in paper_artifact_paths if path.endswith(".csv")}) == 25
+    assert len(paper_artifact_paths) == 33
+    assert len({path for path in paper_artifact_paths if path.endswith(".csv")}) == 27
     assert len({path for path in paper_artifact_paths if path.endswith((".pdf", ".png"))}) == 6
     assert len(registry["dvc_pointers"]) == 47
     assert (
@@ -164,6 +164,7 @@ def test_active_capsule_paths_exist() -> None:
         "scripts/experiments/run_ijds_rolling_origin_individual_age_followup.py",
         "scripts/experiments/run_ijds_label_mondrian_freeze.py",
         "scripts/experiments/run_ijds_label_mondrian_evaluation.py",
+        "scripts/experiments/run_ijds_policy_support_optimal_face_v2.py",
     }.issubset(code_surface["protocol_entrypoints"])
 
 

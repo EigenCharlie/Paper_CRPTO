@@ -10,8 +10,11 @@ book audit is in
 
 ## Corpus status
 
-- `Papers_tesis` contains 112 PDFs and 4,412 pages.
-- The 2026-07-21 frontier addition contains 15 PDFs and 557 pages.
+- `Papers_tesis` contains 120 PDFs and 4,636 pages.
+- The 2026-07-21 frontier addition contains 22 PDF objects representing 21
+  papers and 770 pages; one paper has a separate supplement.
+- One additional 11-page foundational learner paper documents CatBoost; its
+  presence identifies the algorithmic source and does not promote a model.
 - Every frontier PDF was read completely, including appendices, proofs,
   formulas, tables, and figures; suspicious formulas were checked against the
   rendered PDF rather than trusted to extraction alone.
@@ -74,6 +77,17 @@ pattern were inspected before the lock, so those flags do not carry
 post-selection or study-wide FWER control and do not refute the usual marginal
 split-conformal guarantee.
 
+This diagnostic is also not a joint batch prediction set. The batch paper of
+Gazin et al. (2025) constructs a set for the complete vector of labels under iid
+or class-conditional contracts; its symmetric Simes construction is sound,
+although the broader claim for any combining function needs permutation
+invariance. CRPTO instead computes a retrospective count reference and returns
+no vector-valued predictive object. Barber and Pananjady (2026) bound
+one-next-point coverage loss by a switch coefficient and, under stationarity,
+by beta-mixing coefficients. Those are law-level inputs: the issue-month panel,
+two origins, PSI values, and rank flags supply neither a predeclared sequential
+unit nor a mixing bound to plug into that theory.
+
 ### Selection and optimization
 
 Candidate-level marginal or class-conditional coverage is not funded-set
@@ -95,6 +109,23 @@ slowly. Weighted conformal and weighted conformal risk control require
 identified density ratios or invariance assumptions that are not established
 here. These are future-work directions, not repairs for the active archive.
 
+### Censoring and competing events
+
+Candès, Lei, and Ren (2023) and Gui et al. (2024) construct lower prediction
+bounds for a time-to-event under Type-I censoring, where the potential
+censoring time is observed for every unit. Their conditional-censoring
+extensions require iid sampling, positivity, and nuisance-model control. These
+are different estimands and observation contracts from CRPTO's terminal
+36-month binary label.
+
+Prepayment is not automatically independent censoring. If it prevents a later
+default from being observed, default and prepayment are competing events and
+the natural probabilistic targets are event-specific cumulative incidence
+functions, as illustrated in the credit application of Li et al. (2023).
+CRPTO does not currently have exact event/censoring times, an overlap audit, or
+a competing-risk model, so this literature defines a future endpoint redesign
+rather than an active repair.
+
 ## Frontier-paper dispositions
 
 ### Use in the manuscript
@@ -108,6 +139,11 @@ here. These are future-work directions, not repairs for the active archive.
 - Gazin et al. (2025): FCR as distinct from candidate or funded-set coverage.
 - Gibbs and Candes (2024): adaptive online calibration as future work with a
   delayed-feedback limitation.
+- Candès et al. (2023) and Gui et al. (2024): censoring-aware time-to-event
+  bounds as a future endpoint-redesign boundary.
+- Li et al. (2023): default and prepayment as event-specific competing risks.
+- Gazin et al. (2025) and Barber and Pananjady (2026): joint-batch and
+  dependent-sequence targets that the active rank diagnostic does not claim.
 
 ### Future work only
 
@@ -127,6 +163,12 @@ drop-in guarantees for CRPTO.
   calibration, and metric-orientation inconsistencies.
 - Sesia and Svetnik (2025): reciprocal mismatch in the published IPCW theorem
   mapping; do not rely on the current proof as methodological support.
+- Farina et al. (2026): reversed general score-to-set formulas, an omitted
+  at-risk factor, an invalid total-variation bound feeding the advertised rate,
+  and positivity assumptions violated by the paper's own unbounded simulations.
+- Alberge et al. (2026): false equivalence between two calibration criteria,
+  a reversed Bonferroni threshold, wrong-sign Aalen--Johansen recalibration, and
+  a temperature map that does not preserve the competing-risk probability mass.
 - Zhu et al. (2026): inverted utility tail in the method statement, unsupported
   convexity/subgradient steps, boundary KKT omission, experiment/theorem step
   mismatch, and reported coverage below nominal.

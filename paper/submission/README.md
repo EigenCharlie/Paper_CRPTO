@@ -114,7 +114,7 @@ submission:
 - reviewer files contain no identity, local path, commit, tag, or hash;
 - the abstract stays below 300 words;
 - no retired endpoint or favorable `.25` claim returns; and
-- the package contains exactly 45 registered DVC pointers and 25 paper-facing
+- the package contains exactly 47 registered DVC pointers and 27 paper-facing
   CSV tables, with unequal-follow-up roots labeled only as replay provenance;
 - scientific, drift, publication, compilation, and visual gates pass.
 

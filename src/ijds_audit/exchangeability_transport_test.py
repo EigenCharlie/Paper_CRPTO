@@ -13,7 +13,7 @@ rejected.
 from __future__ import annotations
 
 import math
-from collections.abc import Mapping, Sequence
+from collections.abc import Iterable, Mapping, Sequence
 from itertools import product
 from typing import Any
 
@@ -96,7 +96,7 @@ def probability_from_log(log_probability: float) -> float:
     return float(math.exp(value))
 
 
-def holm_adjustment(log_p_values: Sequence[float], *, alpha: float) -> pd.DataFrame:
+def holm_adjustment(log_p_values: Iterable[float], *, alpha: float) -> pd.DataFrame:
     """Return Holm step-down decisions and adjusted p-values in input order.
 
     The implementation operates on log p-values so arbitrarily small exact

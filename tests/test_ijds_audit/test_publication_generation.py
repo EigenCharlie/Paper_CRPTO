@@ -5,8 +5,13 @@ from __future__ import annotations
 import os
 from pathlib import Path
 
+import pandas as pd
 import pytest
 
+from scripts.build_ijds_binary_geometry_frontier_v4_evidence import (
+    _require_coverage_aggregate_reconciliation,
+    _require_coverage_contract,
+)
 from src.ijds_audit import publication_generation
 from src.ijds_audit.publication_generation import (
     PUBLICATION_IMPLEMENTATION_PATHS,
@@ -17,6 +22,102 @@ from src.ijds_audit.publication_generation import (
 )
 
 REPO = Path(__file__).resolve().parents[2]
+
+
+def test_closed_coverage_contract_fails_on_invalid_bounds_or_denominators() -> None:
+    valid = pd.DataFrame(
+        {
+            "learner": ["a", "a"],
+            "candidate_rows": [10, 10],
+            "resolved_rows": [8, 8],
+            "unresolved_rows": [2, 2],
+            "coverage_resolved": [0.75, 0.875],
+            "coverage_lower": [0.6, 0.7],
+            "coverage_upper": [0.8, 0.9],
+        }
+    )
+    _require_coverage_contract(valid, label="test", constant_within=("learner",))
+
+    broken_partition = valid.copy()
+    broken_partition.loc[1, "unresolved_rows"] = 1
+    with pytest.raises(RuntimeError, match="partition"):
+        _require_coverage_contract(broken_partition, label="test", constant_within=("learner",))
+
+    reversed_bound = valid.copy()
+    reversed_bound.loc[0, "coverage_lower"] = 0.95
+    with pytest.raises(RuntimeError, match="lower coverage bound"):
+        _require_coverage_contract(reversed_bound, label="test", constant_within=("learner",))
+
+    changing_denominator = valid.copy()
+    changing_denominator.loc[1, ["candidate_rows", "resolved_rows"]] = [11, 9]
+    changing_denominator.loc[1, "coverage_resolved"] = 8 / 9
+    changing_denominator.loc[1, "coverage_lower"] = 8 / 11
+    changing_denominator.loc[1, "coverage_upper"] = 10 / 11
+    with pytest.raises(RuntimeError, match="changes its candidate denominators"):
+        _require_coverage_contract(changing_denominator, label="test", constant_within=("learner",))
+
+    nonintegral_hits = valid.copy()
+    nonintegral_hits.loc[0, "coverage_resolved"] = 0.85
+    with pytest.raises(RuntimeError, match="integer resolved-hit"):
+        _require_coverage_contract(nonintegral_hits, label="test", constant_within=("learner",))
+
+    inconsistent_sharp_bound = valid.copy()
+    inconsistent_sharp_bound.loc[0, "coverage_lower"] = 0.61
+    with pytest.raises(RuntimeError, match="integer coverage_lower numerators"):
+        _require_coverage_contract(
+            inconsistent_sharp_bound, label="test", constant_within=("learner",)
+        )
+
+    with pytest.raises(RuntimeError, match="locked global candidate census"):
+        _require_coverage_contract(
+            valid,
+            label="test",
+            constant_within=("learner",),
+            expected_counts=(11, 9, 2),
+        )
+
+
+def test_closed_coverage_aggregate_reconciles_exact_frozen_strata() -> None:
+    frame = pd.DataFrame(
+        {
+            "learner": ["a", "a", "a"],
+            "taxonomy_groups": [2, 2, 2],
+            "role": ["primary_oot", "primary_oot", "primary_oot"],
+            "window_id": ["w01", "w01", "w01"],
+            "conformal_group": [-1, 0, 1],
+            "candidate_rows": [10, 4, 6],
+            "resolved_rows": [8, 3, 5],
+            "unresolved_rows": [2, 1, 1],
+            "coverage_resolved": [0.75, 2 / 3, 0.8],
+            "coverage_lower": [0.6, 0.5, 4 / 6],
+            "coverage_upper": [0.8, 0.75, 5 / 6],
+        }
+    )
+    _require_coverage_aggregate_reconciliation(
+        frame,
+        label="test aggregate",
+        expected_counts=(10, 8, 2),
+    )
+
+    broken = frame.copy()
+    broken.loc[2, "coverage_resolved"] = 0.6
+    broken.loc[2, "coverage_lower"] = 0.5
+    broken.loc[2, "coverage_upper"] = 4 / 6
+    with pytest.raises(RuntimeError, match="coverage hits do not reconcile"):
+        _require_coverage_aggregate_reconciliation(
+            broken,
+            label="test aggregate",
+            expected_counts=(10, 8, 2),
+        )
+
+    broken_sharp_lower = frame.copy()
+    broken_sharp_lower.loc[2, "coverage_lower"] = 5 / 6
+    with pytest.raises(RuntimeError, match="coverage hits do not reconcile"):
+        _require_coverage_aggregate_reconciliation(
+            broken_sharp_lower,
+            label="test aggregate",
+            expected_counts=(10, 8, 2),
+        )
 
 
 def test_implementation_inventory_binds_every_acceptance_dependency() -> None:

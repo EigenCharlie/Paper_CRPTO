@@ -86,6 +86,10 @@ TABLE_TARGETS = {
     "label_mondrian_categories": (
         TABLE_DIR / "crpto_ijds_v4_tableS6F_label_mondrian_categories.csv"
     ),
+    "taxonomy_diagnostics": (TABLE_DIR / "crpto_ijds_v4_tableS6G_taxonomy_diagnostics.csv"),
+    "censored_extension_coverage": (
+        TABLE_DIR / "crpto_ijds_v4_tableS6H_censored_extension_coverage.csv"
+    ),
     "rolling_individual_age_census": (
         TABLE_DIR / "crpto_ijds_v4_tableS7D_individual_age_endpoint_census.csv"
     ),
@@ -518,6 +522,175 @@ def _write_csv(frame: pd.DataFrame, path: Path) -> Path:
     return atomic_write_text(path, frame.to_csv(index=False, lineterminator="\n"))
 
 
+def _integer_coverage_hits(frame: pd.DataFrame, *, label: str) -> pd.Series:
+    """Recover and validate the integer resolved-hit numerator in every row."""
+    resolved = frame["resolved_rows"].to_numpy(dtype=float)
+    if bool(np.any(resolved <= 0.0)):
+        raise RuntimeError(f"{label} contains a nonpositive resolved denominator.")
+    raw_hits = frame["coverage_resolved"].to_numpy(dtype=float) * resolved
+    rounded_hits = np.rint(raw_hits)
+    if not bool(np.allclose(raw_hits, rounded_hits, rtol=0.0, atol=1.0e-8)):
+        raise RuntimeError(f"{label} does not imply integer resolved-hit numerators.")
+    return pd.Series(rounded_hits.astype(np.int64), index=frame.index, dtype="int64")
+
+
+def _integer_sharp_numerator(
+    frame: pd.DataFrame,
+    *,
+    column: str,
+    label: str,
+) -> pd.Series:
+    """Recover one integer all-candidate numerator from a sharp coverage rate."""
+    raw = frame[column].to_numpy(dtype=float) * frame["candidate_rows"].to_numpy(dtype=float)
+    rounded = np.rint(raw)
+    if not bool(np.allclose(raw, rounded, rtol=0.0, atol=1.0e-8)):
+        raise RuntimeError(f"{label} does not imply integer {column} numerators.")
+    return pd.Series(rounded.astype(np.int64), index=frame.index, dtype="int64")
+
+
+def _require_coverage_contract(
+    frame: pd.DataFrame,
+    *,
+    label: str,
+    constant_within: tuple[str, ...],
+    expected_counts: tuple[int, int, int] | None = None,
+) -> None:
+    """Fail closed on counts, exact sharp arithmetic, and probability bounds."""
+    count_columns = ("candidate_rows", "resolved_rows", "unresolved_rows")
+    counts = frame.loc[:, count_columns].to_numpy(dtype=float)
+    if bool(np.any(counts < 0.0)) or not bool(np.equal(counts, np.round(counts)).all()):
+        raise RuntimeError(f"{label} contains a negative or nonintegral count.")
+    if not bool(
+        frame["resolved_rows"].add(frame["unresolved_rows"]).eq(frame["candidate_rows"]).all()
+    ):
+        raise RuntimeError(f"{label} does not partition candidates into resolved/unresolved rows.")
+    for column in ("coverage_resolved", "coverage_lower", "coverage_upper"):
+        if not bool(frame[column].between(0.0, 1.0, inclusive="both").all()):
+            raise RuntimeError(f"{label} has {column} outside [0, 1].")
+    if not bool(frame["coverage_lower"].le(frame["coverage_upper"]).all()):
+        raise RuntimeError(f"{label} has a lower coverage bound above its upper bound.")
+    hits = _integer_coverage_hits(frame, label=label)
+    lower_hits = _integer_sharp_numerator(frame, column="coverage_lower", label=label)
+    upper_hits = _integer_sharp_numerator(frame, column="coverage_upper", label=label)
+    candidate = frame["candidate_rows"].to_numpy(dtype=float)
+    resolved = frame["resolved_rows"].to_numpy(dtype=float)
+    unresolved = frame["unresolved_rows"].to_numpy(dtype=float)
+    if bool(np.any(candidate <= 0.0)):
+        raise RuntimeError(f"{label} contains a nonpositive candidate denominator.")
+    hit_values = hits.to_numpy(dtype=float)
+    lower_values = lower_hits.to_numpy(dtype=float)
+    upper_values = upper_hits.to_numpy(dtype=float)
+    if bool(
+        np.any(lower_values < hit_values)
+        or np.any(upper_values < lower_values)
+        or np.any(upper_values > hit_values + unresolved)
+    ):
+        raise RuntimeError(f"{label} has infeasible sharp completion numerators.")
+    for column, expected in (
+        ("coverage_resolved", hit_values / resolved),
+        ("coverage_lower", lower_values / candidate),
+        ("coverage_upper", upper_values / candidate),
+    ):
+        if not bool(
+            np.allclose(
+                frame[column].to_numpy(dtype=float),
+                expected,
+                rtol=0.0,
+                atol=1.0e-12,
+            )
+        ):
+            raise RuntimeError(f"{label} has {column} inconsistent with its exact counts.")
+    if expected_counts is not None:
+        expected = np.asarray(expected_counts, dtype=float)
+        if expected.shape != (3,) or not bool(np.equal(counts, expected).all()):
+            raise RuntimeError(f"{label} changed its locked global candidate census.")
+    denominator_variation = frame.groupby(list(constant_within), observed=True)[
+        list(count_columns)
+    ].nunique()
+    if bool(denominator_variation.gt(1).any().any()):
+        raise RuntimeError(
+            f"{label} changes its candidate denominators within a declared cell family."
+        )
+
+
+def _require_coverage_aggregate_reconciliation(
+    frame: pd.DataFrame,
+    *,
+    label: str,
+    expected_counts: tuple[int, int, int],
+) -> None:
+    """Require each aggregate coverage row to equal the sum of its frozen strata."""
+    count_columns = ("candidate_rows", "resolved_rows", "unresolved_rows")
+    counts = frame.loc[:, count_columns].to_numpy(dtype=float)
+    if bool(np.any(counts < 0.0)) or not bool(np.equal(counts, np.round(counts)).all()):
+        raise RuntimeError(f"{label} contains a negative or nonintegral count.")
+    if not bool(
+        frame["resolved_rows"].add(frame["unresolved_rows"]).eq(frame["candidate_rows"]).all()
+    ):
+        raise RuntimeError(f"{label} does not partition candidates into resolved/unresolved rows.")
+    for column in ("coverage_resolved", "coverage_lower", "coverage_upper"):
+        if not bool(frame[column].between(0.0, 1.0, inclusive="both").all()):
+            raise RuntimeError(f"{label} has {column} outside [0, 1].")
+    hits = _integer_coverage_hits(frame, label=label)
+    lower_hits = _integer_sharp_numerator(frame, column="coverage_lower", label=label)
+    upper_hits = _integer_sharp_numerator(frame, column="coverage_upper", label=label)
+    candidate = frame["candidate_rows"].to_numpy(dtype=float)
+    resolved = frame["resolved_rows"].to_numpy(dtype=float)
+    unresolved = frame["unresolved_rows"].to_numpy(dtype=float)
+    if bool(np.any(candidate <= 0.0)):
+        raise RuntimeError(f"{label} contains a nonpositive candidate denominator.")
+    hit_values = hits.to_numpy(dtype=float)
+    lower_values = lower_hits.to_numpy(dtype=float)
+    upper_values = upper_hits.to_numpy(dtype=float)
+    if bool(
+        np.any(lower_values < hit_values)
+        or np.any(upper_values < lower_values)
+        or np.any(upper_values > hit_values + unresolved)
+    ):
+        raise RuntimeError(f"{label} has infeasible sharp completion numerators.")
+    for column, expected in (
+        ("coverage_resolved", hit_values / resolved),
+        ("coverage_lower", lower_values / candidate),
+        ("coverage_upper", upper_values / candidate),
+    ):
+        if not bool(
+            np.allclose(
+                frame[column].to_numpy(dtype=float),
+                expected,
+                rtol=0.0,
+                atol=1.0e-12,
+            )
+        ):
+            raise RuntimeError(f"{label} has {column} inconsistent with its exact counts.")
+    work = frame.assign(
+        _resolved_hits=hits,
+        _lower_hits=lower_hits,
+        _upper_hits=upper_hits,
+    )
+    cell_columns = ("learner", "taxonomy_groups", "role", "window_id")
+    for cell_key, cell in work.groupby(list(cell_columns), observed=True, sort=False):
+        aggregate = cell.loc[cell["conformal_group"].eq(-1)]
+        strata = cell.loc[cell["conformal_group"].ge(0)]
+        if len(aggregate) != 1:
+            raise RuntimeError(f"{label} has no unique aggregate row for {cell_key}.")
+        taxonomy_groups = int(aggregate["taxonomy_groups"].iloc[0])
+        actual_groups = set(strata["conformal_group"].astype(int))
+        if actual_groups != set(range(taxonomy_groups)) or len(strata) != taxonomy_groups:
+            raise RuntimeError(f"{label} has an incomplete frozen stratum grid for {cell_key}.")
+        aggregate_counts = aggregate.loc[:, list(count_columns)].iloc[0].to_numpy(dtype=np.int64)
+        if not bool(np.equal(aggregate_counts, np.asarray(expected_counts, dtype=np.int64)).all()):
+            raise RuntimeError(f"{label} changed its locked global candidate census.")
+        stratum_counts = strata.loc[:, list(count_columns)].sum().to_numpy(dtype=np.int64)
+        if not bool(np.equal(aggregate_counts, stratum_counts).all()):
+            raise RuntimeError(f"{label} aggregate counts do not reconcile to frozen strata.")
+        for numerator in ("_resolved_hits", "_lower_hits", "_upper_hits"):
+            aggregate_hits = int(aggregate[numerator].iloc[0])
+            if aggregate_hits != int(strata[numerator].sum()):
+                raise RuntimeError(
+                    f"{label} aggregate coverage hits do not reconcile to frozen strata."
+                )
+
+
 def _credit_control_tables(
     prediction_metrics: pd.DataFrame,
     temporal_coverage: pd.DataFrame,
@@ -666,6 +839,155 @@ def _credit_control_tables(
         "credit_prediction_metrics": metrics,
         "woe_iv_psi": woe,
         "score_psi": score,
+    }
+
+
+def _closed_coverage_diagnostic_tables(
+    temporal_coverage: pd.DataFrame,
+) -> dict[str, pd.DataFrame]:
+    """Summarize every locked V4 taxonomy and the declared censored extension."""
+    learners = ("catboost_platt", "numeric_logistic_platt")
+    taxonomies = (1, 2, 5, 10)
+    primary_all_groups = temporal_coverage.loc[
+        temporal_coverage["learner"].isin(learners)
+        & temporal_coverage["taxonomy_groups"].isin(taxonomies)
+        & temporal_coverage["role"].eq("primary_oot")
+    ].copy()
+    primary = primary_all_groups.loc[primary_all_groups["conformal_group"].eq(-1)].copy()
+    require_exact_grid(
+        primary,
+        domains={
+            "learner": learners,
+            "taxonomy_groups": taxonomies,
+            "window_id": WINDOW_IDS,
+        },
+        label="closed V4 taxonomy diagnostics",
+    )
+    require_finite(
+        primary,
+        (
+            "candidate_rows",
+            "resolved_rows",
+            "unresolved_rows",
+            "coverage_resolved",
+            "coverage_lower",
+            "coverage_upper",
+        ),
+        label="closed V4 taxonomy diagnostics",
+    )
+    _require_coverage_contract(
+        primary,
+        label="closed V4 taxonomy diagnostics",
+        constant_within=("learner", "taxonomy_groups"),
+        expected_counts=(376_890, 364_814, 12_076),
+    )
+    _require_coverage_aggregate_reconciliation(
+        primary_all_groups,
+        label="closed V4 taxonomy diagnostics",
+        expected_counts=(376_890, 364_814, 12_076),
+    )
+    learner_order = {learner: index for index, learner in enumerate(learners)}
+    primary.insert(1, "learner_label", primary["learner"].map(CREDIT_LEARNER_LABELS))
+    primary["_learner_order"] = primary["learner"].map(learner_order)
+    primary = primary.sort_values(
+        ["_learner_order", "taxonomy_groups", "window_id"], kind="mergesort"
+    ).drop(columns="_learner_order")
+    taxonomy_table = primary[
+        [
+            "learner",
+            "learner_label",
+            "taxonomy_groups",
+            "role",
+            "conformal_group",
+            "window_id",
+            "candidate_rows",
+            "resolved_rows",
+            "unresolved_rows",
+            "coverage_resolved",
+            "coverage_lower",
+            "coverage_upper",
+        ]
+    ].copy()
+    taxonomy_rows: list[dict[str, Any]] = []
+    for learner in learners:
+        for taxonomy in taxonomies:
+            frame = primary.loc[
+                primary["learner"].eq(learner) & primary["taxonomy_groups"].eq(taxonomy)
+            ]
+            taxonomy_rows.append(
+                {
+                    "learner": learner,
+                    "learner_label": CREDIT_LEARNER_LABELS[learner],
+                    "taxonomy_groups": taxonomy,
+                    "windows": int(len(frame)),
+                    "candidate_rows": int(frame["candidate_rows"].iloc[0]),
+                    "resolved_rows": int(frame["resolved_rows"].iloc[0]),
+                    "unresolved_rows": int(frame["unresolved_rows"].iloc[0]),
+                    "coverage_lower_min": float(frame["coverage_lower"].min()),
+                    "coverage_upper_max": float(frame["coverage_upper"].max()),
+                    "windows_upper_below_0_90": int(frame["coverage_upper"].lt(0.90).sum()),
+                }
+            )
+    taxonomy_summary = pd.DataFrame(taxonomy_rows)
+
+    extension_all_groups = temporal_coverage.loc[
+        temporal_coverage["learner"].isin(learners)
+        & temporal_coverage["taxonomy_groups"].eq(5)
+        & temporal_coverage["role"].eq("censored_extension")
+    ].copy()
+    extension = extension_all_groups.loc[extension_all_groups["conformal_group"].eq(-1)].copy()
+    require_exact_grid(
+        extension,
+        domains={"learner": learners, "window_id": WINDOW_IDS},
+        label="declared censored-extension coverage",
+    )
+    require_finite(
+        extension,
+        (
+            "candidate_rows",
+            "resolved_rows",
+            "unresolved_rows",
+            "coverage_resolved",
+            "coverage_lower",
+            "coverage_upper",
+        ),
+        label="declared censored-extension coverage",
+    )
+    _require_coverage_contract(
+        extension,
+        label="declared censored-extension coverage",
+        constant_within=("learner",),
+        expected_counts=(88_227, 59_291, 28_936),
+    )
+    _require_coverage_aggregate_reconciliation(
+        extension_all_groups,
+        label="declared censored-extension coverage",
+        expected_counts=(88_227, 59_291, 28_936),
+    )
+    extension.insert(1, "learner_label", extension["learner"].map(CREDIT_LEARNER_LABELS))
+    extension["_learner_order"] = extension["learner"].map(learner_order)
+    extension = extension.sort_values(["_learner_order", "window_id"]).drop(
+        columns="_learner_order"
+    )
+    extension_table = extension[
+        [
+            "learner",
+            "learner_label",
+            "taxonomy_groups",
+            "role",
+            "conformal_group",
+            "window_id",
+            "candidate_rows",
+            "resolved_rows",
+            "unresolved_rows",
+            "coverage_lower",
+            "coverage_upper",
+        ]
+    ].copy()
+    return {
+        "taxonomy_diagnostics": taxonomy_table,
+        "taxonomy_summary": taxonomy_summary,
+        "censored_extension_coverage": extension_table,
     }
 
 
@@ -2176,9 +2498,9 @@ def _stage_publication_generation(
         *TABLE_TARGETS.values(),
         *(target for targets in figure_targets.values() for target in targets.values()),
     }
-    if len(outputs) != 31 or set(outputs) != expected_targets:
+    if len(outputs) != 33 or set(outputs) != expected_targets:
         raise RuntimeError(
-            "The staged publication generation is not exactly 25 CSVs and 6 figures."
+            "The staged publication generation is not exactly 27 CSVs and 6 figures."
         )
     return StagedPublicationGeneration(
         table_paths=table_paths,
@@ -2459,6 +2781,7 @@ def _build_evidence(staging_root: Path) -> Path:
     objective_quarter = _objective_quarter_repetition(two_ruler_joined)
 
     coverage_all = pd.read_parquet(artifacts["temporal_coverage"])
+    closed_coverage_tables = _closed_coverage_diagnostic_tables(coverage_all)
     coverage = coverage_all.loc[
         coverage_all["taxonomy_groups"].eq(5)
         & coverage_all["role"].eq("primary_oot")
@@ -2718,6 +3041,8 @@ def _build_evidence(staging_root: Path) -> Path:
             "label_mondrian_cells": label_mondrian.publication_cells,
             "label_mondrian_strata": label_mondrian.publication_strata,
             "label_mondrian_categories": label_mondrian.publication_categories,
+            "taxonomy_diagnostics": closed_coverage_tables["taxonomy_diagnostics"],
+            "censored_extension_coverage": closed_coverage_tables["censored_extension_coverage"],
             "rolling_individual_age_census": individual_followup.publication_census,
             "fit_label_completion": fit_label_table,
             "allocation_granularity": granularity_table,
@@ -2864,9 +3189,34 @@ def _build_evidence(staging_root: Path) -> Path:
             "allocation_granularity/evaluation": granularity_evidence.evaluation_artifacts,
         },
     )
+    extension_rows = closed_coverage_tables["censored_extension_coverage"]
+    catboost_extension = extension_rows.loc[extension_rows["learner"].eq("catboost_platt")]
+    logistic_extension = extension_rows.loc[extension_rows["learner"].eq("numeric_logistic_platt")]
+    catboost_below_windows = set(
+        catboost_extension.loc[catboost_extension["coverage_upper"].lt(0.90), "window_id"].astype(
+            str
+        )
+    )
+    logistic_below_windows = set(
+        logistic_extension.loc[logistic_extension["coverage_upper"].lt(0.90), "window_id"].astype(
+            str
+        )
+    )
+    logistic_contains_windows = set(
+        logistic_extension.loc[
+            logistic_extension["coverage_lower"].le(0.90)
+            & logistic_extension["coverage_upper"].ge(0.90),
+            "window_id",
+        ].astype(str)
+    )
+    censored_extension_pattern = bool(
+        catboost_below_windows == set(WINDOW_IDS)
+        and logistic_contains_windows == set(WINDOW_IDS[:6])
+        and logistic_below_windows == set(WINDOW_IDS[6:])
+    )
     paper_artifact_descriptors = _paper_artifact_descriptors(publication_generation)
     evidence = {
-        "schema_version": "2026-07-21.3",
+        "schema_version": "2026-07-21.4",
         "status": "active_ijds_v5_endpoint_reason_audited_paper_facing_evidence",
         "source_registry": {
             "schema_version": str(registry["schema_version"]),
@@ -2941,6 +3291,32 @@ def _build_evidence(staging_root: Path) -> Path:
                 ].max()
             ),
             "rows": coverage_table.to_dict(orient="records"),
+        },
+        "closed_coverage_diagnostics": {
+            "taxonomy_scope": "two_v4_learners_by_four_locked_taxonomies_by_eight_windows",
+            "extension_scope": "two_v4_learners_by_eight_windows_censored_extension",
+            "all_sixty_four_primary_upper_below_nominal": bool(
+                len(closed_coverage_tables["taxonomy_diagnostics"]) == 64
+                and closed_coverage_tables["taxonomy_diagnostics"]["coverage_upper"].lt(0.90).all()
+            ),
+            "censored_extension_mixed_stress_pattern": censored_extension_pattern,
+            "censored_extension_catboost_below_nominal_windows": sorted(catboost_below_windows),
+            "censored_extension_logistic_contains_nominal_windows": sorted(
+                logistic_contains_windows
+            ),
+            "censored_extension_logistic_below_nominal_windows": sorted(logistic_below_windows),
+            "taxonomy_rows": closed_coverage_tables["taxonomy_diagnostics"].to_dict(
+                orient="records"
+            ),
+            "taxonomy_summary_rows": closed_coverage_tables["taxonomy_summary"].to_dict(
+                orient="records"
+            ),
+            "censored_extension_rows": closed_coverage_tables[
+                "censored_extension_coverage"
+            ].to_dict(orient="records"),
+            "joint_block_rank_reference_extended_to_these_rows": False,
+            "independent_replication_claimed": False,
+            "extension_is_primary_oot": False,
         },
         "conformal_set_diagnostics": {
             "scope": "all_five_learners_all_eight_windows_primary_oot",

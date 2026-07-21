@@ -30,9 +30,10 @@ remain unresolved. Under the declared six-month endpoint, all 40 sharp
 all-candidate coverage upper bounds are below 0.90 across five retrospectively
 protocol-locked learner specifications; the largest is 0.8977. These 40
 endpoints are finite-archive identification facts, not by themselves a
-rejection of split conformal. In a separate post-inspection exact combined-rank
-reference diagnostic, 31/40 frozen learner-window cells meet the locked
-Bonferroni-within-cell and Holm-across-cell nominal thresholds. Its reference
+rejection of split conformal. In a separate post-inspection combined-rank
+reference diagnostic, 31/40 frozen learner-window cell reference tail areas
+meet the locked Bonferroni-within-cell and Holm-across-cell nominal reporting
+thresholds. Its reference
 law assumes the stronger joint exchangeability of each calibration stratum and
 its entire target block, so it does not test or refute the ordinary
 one-future-point marginal split-conformal guarantee. Because the family and
@@ -67,8 +68,9 @@ rather than universal.
 The decision result has a narrow interpretation. Objective-matched coordinate .25
 crosses zero for payoff, default, and miscoverage in all eight windows; .50 is
 adverse; and .75 is mostly unidentified. Normalized-score comparisons answer a
-different opportunity-cost question. An exact point-cap audit places zero in
-all 216 broad-support envelopes. No model, window, gamma, ruler, coordinate,
+different opportunity-cost question. A registered point-cap audit places zero
+in all 216 broad-support envelopes without claiming an exhaustive continuous
+path. No model, window, gamma, ruler, coordinate,
 comparator, or policy is selected.
 The complete 36-scenario budget--concentration--LGD grid restores neither a
 universally favorable nor a universally adverse ordering. A deterministic USD

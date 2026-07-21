@@ -195,7 +195,7 @@ The active builder verifies the V4, two-ruler, raw-data, credit-control,
   joint-block rank reference, individual-age follow-up, label-Mondrian, fit-label completion,
 and allocation-granularity
 manifests/freezes and every artifact descriptor. The active capsule contains
-47 DVC pointers. It emits 25 paper-facing CSV tables, three figures under the
+47 DVC pointers. It emits 27 paper-facing CSV tables, three figures under the
 `crpto_ijds_v4_*` naming family, and
 `ijds_binary_geometry_frontier_v4_evidence.json`. Consecutive builds must be
 byte-identical. The canonical body is `paper/CRPTO_ijds.qmd`; generate official

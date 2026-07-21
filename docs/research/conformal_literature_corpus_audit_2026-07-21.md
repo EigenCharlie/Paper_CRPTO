@@ -3,8 +3,9 @@
 ## Status, scope, and evidentiary boundary
 
 This audit records the literature-intake state as of 2026-07-21. It covers the
-complete local corpus under `Papers_tesis`, the fifteen-paper frontier intake,
-and the separately supplied book *Applied Conformal Prediction*. Its purpose is
+complete local corpus under `Papers_tesis`, the twenty-one-paper conformal frontier
+intake, one foundational learner paper, and the separately supplied book
+*Applied Conformal Prediction*. Its purpose is
 to decide what the active IJDS manuscript may cite, what ideas are technically
 applicable, and what material must remain future work or be excluded.
 
@@ -31,14 +32,15 @@ The audit reached three central conclusions:
 
 ## Corpus inventory and provenance
 
-The inventory checksum for `Papers_tesis` is **112 PDFs and 4,412 pages**.
+The inventory checksum for `Papers_tesis` is **120 PDFs and 4,636 pages**.
 Derived manuscript PDFs are not included in this count.
 
 | Intake layer | PDFs | Pages | Composition |
 |---|---:|---:|---|
 | Existing corpus | 97 | 3,855 | 28 `paper`, 57 `supplement`, and 12 `tesis` objects |
-| Frontier intake | 15 | 557 | `Papers_tesis/supplement/p01.pdf` through `p15.pdf` |
-| Total | 112 | 4,412 | Complete local literature corpus |
+| Conformal frontier intake | 22 | 770 | Twenty-one papers on classwise, shift, selection, censoring, batch, competing-risk, and action-conditional inference; Gui et al. has a separate supplement |
+| Foundational learner intake | 1 | 11 | Prokhorenkova et al. (2018), the primary CatBoost paper |
+| Total | 120 | 4,636 | Complete local literature corpus |
 
 The existing 97-document corpus spans six connected literatures:
 
@@ -59,7 +61,7 @@ frontier intake was therefore targeted rather than indiscriminate: classwise
 coverage, temporal non-exchangeability, selection after conformalization,
 partially observed outcomes, and decision-dependent coverage.
 
-The book is outside `Papers_tesis` and is not included in the 112/4,412
+The book is outside `Papers_tesis` and is not included in the 120/4,636
 checksum:
 
 - source: `C:\Users\carlos\Downloads\Applied_Conformal_Prediction (3).pdf`;
@@ -98,7 +100,7 @@ does not mean that every equation in all 97 objects was independently
 re-proved. Manual review was concentrated on claims, formulas, tables, and
 figures that could alter the active manuscript.
 
-### Fifteen-paper frontier intake
+### Original fifteen-paper frontier intake
 
 All fifteen PDFs had strong born-digital text layers and were routed to
 Docling with OCR disabled. Every run succeeded. The combined outputs contain:
@@ -132,6 +134,50 @@ Conversely, the p08 label-definition conflict, p09 weighting substitution,
 p14 order-statistic inconsistency, and p15 tail/optimization problems remain
 after contextual or visual verification.
 
+### Supplemental six-paper frontier intake
+
+The additional 213 pages were read in full, including appendices and separate
+supplements. Candès--Lei--Ren and both Gui objects were processed with Docling
+without OCR; the durable runs are under
+`.tmp_pdf_intake_benchmark/literature_audit_2026-07-21/p16_*` and `p17_*`.
+Docling exhausted memory on the denser Farina and Alberge objects, so the
+academic-intake routing rule moved both to OpenDataLoader and retained pypdf as
+an independent text-layer check. Farina produced 118,099 Markdown and 523,836
+JSON bytes; Alberge produced 87,284 Markdown characters and 485,054 JSON bytes.
+The successful p18/p19 outputs contain no empty pages, and every formula
+supporting an adverse verdict was checked on a rendered PDF page. Farina's
+linked code was separately audited at commit
+`c57d9324050fd8fa2f369ebe48643586a32009af`.
+
+The Gazin and Barber PDFs were routed through the born-digital Docling path
+under `.tmp_pdf_intake_benchmark/batch_mixing_audit_2026-07-21/`. Their defining
+statistics, theorem assumptions, appendices, empirical displays, and the
+suspect order-statistic/Figure 6 passages were checked against the rendered
+objects. The final sequential extraction produced 119,673 Markdown and
+2,289,487 JSON bytes for Gazin (59 formula objects, 11 tables, eight images),
+and 57,895 Markdown and 396,462 JSON bytes for Barber--Pananjady (97 formula
+objects and one figure). All 55 pages were rendered and reviewed. The resulting
+adverse findings are paper defects rather than parser artifacts. This second
+intake is why p18/p19 are quarantined even though their abstract-level topics
+initially appeared to close important corpus gaps.
+
+### Foundational learner intake
+
+The audit also recovered the missing primary source for the portfolio learner:
+Prokhorenkova et al. (2018), *CatBoost: Unbiased Boosting with Categorical
+Features*. The 11-page official NeurIPS PDF was downloaded to
+`Papers_tesis/supplement/Prokhorenkova et al 2018 - CatBoost Unbiased Boosting
+with Categorical Features.pdf` and processed completely with Docling. Its
+SHA-256 is
+`CE3CA98A0C58EB7D6C8A0376C44E4AC56AF2771D93182F9C58CB865F811C2A79`.
+
+This source documents ordered target statistics and ordered boosting as the
+algorithmic response to target leakage and prediction shift in categorical
+boosting. It supports identification of the learner family used by CRPTO; it
+does **not** establish that the frozen CatBoost specification is superior,
+well calibrated, temporally transportable, or appropriate for portfolio
+selection. Those questions remain empirical controls in CRPTO.
+
 ### Book intake
 
 The 168-page book was routed to MinerU hybrid because of its length and dense
@@ -147,9 +193,9 @@ should be cited instead.
 
 | Grade | Meaning | Frontier objects |
 |---|---|---|
-| A: cite and use for a stated boundary | Primary result is relevant and its assumptions can be stated without implying that CRPTO already implements the method | p01, p03, p04, p05, p07 |
-| B: retain for a predeclared future extension | Technically informative, but its estimand, data structure, or assumptions do not match the active design | p02, p06, p10, p11, p12, p13, p14 |
-| C: do not use as methodological support | The supplied version contains a material internal inconsistency or empirical contradiction that prevents safe reliance | p08, p09, p15 |
+| A: cite and use for a stated boundary | Primary result is relevant and its assumptions can be stated without implying that CRPTO already implements the method | p01, p03, p04, p05, p07, p16, p20, p21 |
+| B: retain for a predeclared future extension | Technically informative, but its estimand, data structure, or assumptions do not match the active design | p02, p06, p10, p11, p12, p13, p14, p17 |
+| C: do not use as methodological support | The supplied version contains a material internal inconsistency or empirical contradiction that prevents safe reliance | p08, p09, p15, p18, p19 |
 
 Grade A does not mean wholesale adoption. In particular, p03 and p05 explain
 why selected-set guarantees require a new method; p04 and p07 explain possible
@@ -465,6 +511,165 @@ in any event require a different action/outcome design than the historical
 loan archive. The internal theory--algorithm--experiment inconsistencies make
 the current version unsuitable even as indirect methodological support.
 
+### p16 — Candès, Lei, and Ren, *Conformalized Survival Analysis*
+
+**Object.** JRSS B 85(1), 24--45 (2023), canonical local arXiv v3 with proofs,
+54 pages. The method targets a lower prediction bound for a time-to-event under
+Type-I right censoring, with the potential censoring time observed for every
+unit. It filters on `C >= c0`, conformalizes `T wedge c0`, and corrects the
+induced covariate shift with weights proportional to
+`1 / P(C >= c0 | X)`.
+
+**Technical assessment.** Finite-sample marginal validity requires known
+weights; estimated censoring or outcome models yield error bounds and
+asymptotic double robustness only under iid sampling, conditional independent
+censoring, overlap, moment, and local-quantile conditions. The supplied version
+contains several local defects, including a density-ratio typo, an
+insufficient homoscedasticity condition for its CMR extension, and smaller
+proof-notation errors, but its CQR/CDR core remains a credible primary result.
+Its controlled simulations mostly use the easy completely independent
+censoring case and do not establish conditional or selected-set validity.
+
+**CRPTO decision.** **Cite only as a future endpoint-redesign boundary.** It
+does not cover a terminal binary label, competing prepayment, reconstructed
+availability, temporal transport, or optimizer selection. The recent CRPTO
+vintages also have structurally zero support for 36-month follow-up, which
+weighting cannot create.
+
+### p17 — Gui et al., *Conformalized Survival Analysis with Adaptive Cut-Offs*
+
+**Object.** Biometrika 111(2), 459--477 (2024), 22-page arXiv v3 plus an
+8-page official supplement. Instead of one fixed censoring cutoff, the method
+learns a nested covariate-dependent frontier `f_a(x)` and selects the largest
+level whose weighted observed miscoverage remains below target. A stabilized
+version caps the frontier with a conditional censoring quantile.
+
+**Technical assessment.** Its main guarantee is PAC/approximate rather than an
+exact ordinary conformal guarantee; it depends on inverse observability
+weights, positivity, boundedness, and uniform nuisance accuracy. The printed
+Algorithm 1 describes the weight rather than its inverse, the simulation text
+prints an impossible censoring quantile instead of `1-1/log(n)`, the proof
+silently needs a normalization such as `w_hat >= 1`, and the zero-denominator
+case is defined only in code. The official code uses the intended inverse
+weights and correct quantile. Reported real-data informativeness improvement is
+small and the simulations are limited.
+
+**CRPTO decision.** **Retain as future work, not an active repair.** Adaptive
+cutoffs reduce the time frontier where support is poor; they do not recover an
+unobserved 36-month binary endpoint. A future study would first need exact
+event/censoring histories, an overlap/ESS audit, temporal splits, and a
+separate competing-event contract.
+
+### p18 — Farina, Tchetgen Tchetgen, and Kuchibhotla, *Doubly Robust and Efficient Calibration of Prediction Sets for Right-Censored Time-to-Event Outcomes*
+
+**Object.** Accepted Biometrika manuscript, arXiv:2501.04615v4 (2026), 48
+pages including its supplement. It proposes outcome-regression, IPCW, and
+augmented-IPCW calibration of lower time-to-event bounds under ordinary right
+censoring, rather than Type-I censoring.
+
+**Adversarial findings.** The semiparametric idea and the core lower-bound
+moment are plausible, but the supplied accepted version is not safe authority:
+
+- the general score examples on pages 6 and 9 use score-to-set orientations
+  opposite to the displayed acceptance event;
+- the printed projection proof has sign errors and omits an at-risk survival
+  factor in one of the two equations it equates;
+- Lemma S6.1 substitutes a bound on the absolute value of a martingale integral
+  for a bound on its total variation, feeding an unjustified constant into
+  Theorem 2.10;
+- the essential positivity assumption is violated by the paper's own
+  unbounded exponential/lognormal simulation laws unless an unreported horizon
+  or clipping rule is imposed; and
+- COR self-calibrates a model quantile using only the model and `X`, making its
+  advertised adjustment tautological for a continuous invertible survival
+  model.
+
+The linked code adds undisclosed clipping, silently zeroes some nonfinite
+augmented terms, can stop a nonmonotone augmented search early, leaks test
+event times into one prediction grid, and does not reproduce the complete
+reported pipeline.
+
+**CRPTO decision.** **Grade C: quarantine as methodological support.** Keep it
+as a research lead for a future general-right-censoring protocol, but do not
+cite its printed theorem rate, efficiency, double-robust coverage, COR,
+conditional-coverage, or empirical-superiority claims. It also does not solve
+competing events, temporal transport, or funded-set selection.
+
+### p19 — Alberge et al., *On the Calibration of Survival Models with Competing Risks*
+
+**Object.** AISTATS 2026 / PMLR 300, arXiv:2602.00194v1, 26 pages. The paper
+emphasizes the correct structural idea that event-specific cumulative
+incidence functions form a coupled vector with survival, and proposes CR-D and
+population-average CIF calibration diagnostics plus two recalibrators.
+
+**Adversarial findings.** The central theoretical and algorithmic claims do not
+survive audit. Theorem 2's equivalence is false: swapping two heterogeneous
+conditional CIFs preserves their population average while destroying the
+aggregate PIT, and a reciprocal continuous counterexample preserves the PIT
+while changing the average CIF. The printed Aalen--Johansen adjustment has the
+wrong sign; the temperature map is not the identity at unit temperature and
+forces event CIFs to sum to one at finite time; the raw Bonferroni threshold is
+multiplied rather than divided by the number of causes; the KS references do
+not account for estimated fractional censoring weights; and the claimed
+asymptotic conformal lemma contains neither a conformal score/rank algorithm nor
+the censoring assumptions needed for predictive coverage.
+
+**CRPTO decision.** **Grade C: retain for conceptual provenance only.** The
+coupled-CIF warning is useful, but its theorems, tests, and recalibrations must
+not support the manuscript. Reliable credit competing-risk sources already
+justify treating early payoff as an event rather than automatic independent
+censoring. A genuine redesign needs exact event and censoring times, coherent
+CIFs, positivity, proper multicause scoring, temporal validation, and a
+separate downstream-selection audit.
+
+### p20 — Gazin et al., *Powerful Batch Conformal Prediction for Classification*
+
+**Object.** AISTATS 2025, PMLR 258:3250--3258, 31-page downloaded version with
+appendices. It constructs a set for the complete vector of `m` future labels by
+combining conformal p-values, with Simes/Storey--Simes constructions that are
+more informative than Cartesian Bonferroni sets under the paper's iid or
+class-conditional contracts.
+
+**Technical assessment.** The central symmetric Simes construction is a valid
+and useful distinction from pointwise prediction. The broader statement that
+Algorithm 1 accepts any combining function under the class-conditional model
+is too strong: it learns one representative ordering per class-count vector,
+so a non-permutation-invariant function can have a different law for another
+ordering when class calibration sizes differ. The section defining the Simes
+order statistic calls it the `l`-th largest although the formulas and proofs
+require the `l`-th smallest. The Figure 6 appendix bounds also conflict with its
+Table 10 and with the stated Simes-set inclusion, so that display is not a safe
+numerical benchmark.
+
+**CRPTO decision.** **Cite as a boundary, not an implemented method.** CRPTO's
+combined-rank statistic is a retrospective diagnostic of a stronger joint
+exchangeability null; it constructs no predictive set for the vector of loan
+labels. Batch CP also assumes observed calibration labels and does not address
+issue-month dependence, endpoint censoring, LP selection, or funded-set
+validity.
+
+### p21 — Barber and Pananjady, *Predictive Inference for Time Series: Why Is Split Conformal Effective Despite Temporal Dependence?*
+
+**Object.** ALT 2026, PMLR 313:1--24. The paper introduces a switch coefficient
+that exactly characterizes how replacing a calibration observation by the
+future observation changes the rank experiment. For stationary beta-mixing
+processes it yields sharp loss-of-coverage bounds of the form
+`inf_tau {tau/n + 2 beta(tau)}` up to the paper's finite-rank term.
+
+**Technical assessment.** The main results are mathematically sound and
+sharpen earlier blocking penalties. They still concern marginal coverage of
+the next point in a defined stationary sequence, not exchangeability of a
+whole target block. A minor endpoint omission leaves `beta(n)` undefined when
+one displayed minimization includes `tau=n`; the intended empty-past
+convention is apparent and does not affect the central result.
+
+**CRPTO decision.** **Cite as the precise future temporal frontier.** CRPTO has
+monthly candidate clusters, overlapping training/calibration windows, drift,
+and no natural within-month order. Without a preregistered sequential unit,
+stationarity model, and defensible beta-mixing bound, the paper supplies no
+numerical penalty for the current archive and no batch, missing-endpoint, or
+funded-set guarantee.
+
 ## Book disposition
 
 The book's durable audit should be read together with this corpus record. Its
@@ -488,23 +693,27 @@ only and cite the primary papers above for formal statements.
 
 ## Gaps that remain after the frontier intake
 
-The corpus is broad, but five gaps remain material to the next research cycle:
+The corpus is broad, but six gaps remain material to the next research cycle:
 
-1. **Correct, mature conformal inference for delayed or right-censored binary
-   endpoints.** The downloaded p09 version cannot fill this role. Candès, Lei,
-   and Ren's *Conformalized Survival Analysis* is a primary starting point, but
-   its estimand and censoring assumptions still need to be compared carefully
-   with CRPTO's administrative 36-month label availability.
+1. **A trustworthy general-right-censoring or competing-risk predictive
+   protocol.** p16/p17 are Type-I time-to-event methods, while the supplied
+   p18/p19 versions contain material theoretical errors. None targets CRPTO's
+   coarsened terminal binary endpoint or distinguishes prepayment from
+   administrative censoring using exact event histories.
 2. **A predeclared dependence model for batch temporal loan panels.** p07 gives
-   a framework, but CRPTO has not estimated the mixing/discrepancy objects that
-   would turn it into a numerical coverage penalty.
-3. **Selection-conditional coverage for the exact portfolio optimizer with
+   a general framework and p21 sharpens the stationary beta-mixing case, but
+   CRPTO has not defined a stationary sequential unit or estimated a defensible
+   mixing/discrepancy object that yields a numerical coverage penalty.
+3. **Joint prediction for a censored, dependent portfolio batch.** p20 builds a
+   joint vector-label set under iid or class-conditional sampling, not under
+   missing endpoints, issue-month dependence, or downstream LP selection.
+4. **Selection-conditional coverage for the exact portfolio optimizer with
    missing endpoints.** JOMI and FCR methods cover parts of this problem, not
    their combination with sharp completion bounds and capital constraints.
-4. **A defensible source-to-target weighting model.** The corpus contains
+5. **A defensible source-to-target weighting model.** The corpus contains
    covariate-shift and posterior-drift methods, but the active archive has not
    established their invariance, overlap, or weight-boundedness assumptions.
-5. **External credit-domain validation of binary conformal sets under label
+6. **External credit-domain validation of binary conformal sets under label
    delay and competing prepayment.** Existing credit papers rarely combine a
    locked temporal split, explicit outcome availability, classwise set
    geometry, and downstream portfolio selection.
@@ -518,24 +727,33 @@ candidate to the same theorem-to-code and endpoint audit used here.
 | Manuscript surface | Add or retain | Do not infer |
 |---|---|---|
 | Related work: class-conditional coverage | Cite `ding2023`; distinguish direct CLASSWISE/Mondrian calibration from clustered many-class pooling | That resolved-label diagnostics are all-candidate class-conditional validity |
-| Related work: temporal shift | Cite `gibbs2024online` and `oliveira2024split` as two different replacement frameworks | That either applies without online feedback or a quantified dependence/drift penalty |
+| Related work: temporal shift | Cite `gibbs2024online`, `oliveira2024split`, and `barber2026timeseries` as distinct replacement frameworks | That any applies without online feedback, a defined stationary sequence, or a quantified dependence/drift penalty |
+| Related work: joint batch | Cite `gazin2025batch`; state that the combined-rank statistic constructs no vector-label prediction set | Joint batch coverage, funded-set coverage, or iid labels for the active monthly menus |
+| Related work: censoring | Cite `candes2023survival` and `gui2024adaptive` only as a future time-to-event boundary | That Type-I censoring, an LPB on time, or adaptive cutoffs recover the current binary endpoint or optimizer-selected validity |
 | Related work and limitations: selection | Cite `jin2025focal` and `gazin2025informative` | Funded-set, singleton-selected, JOMI, or FCR coverage for the active portfolios |
 | Method: binary label benchmark | Define candidate-label membership with a separate frozen cutoff for `y=0` and `y=1`; report cell sizes and exact ranks | A symmetric latent-PD confidence interval or a post hoc selected-set claim |
 | Identification and theory | Separate deterministic all-candidate completion bounds, the stronger joint-block rank reference, and deterministic design sensitivities | That either a sharp upper bound below 0.90 or the block diagnostic refutes the usual marginal split-conformal guarantee |
 | Results | Report finite-archive set geometry and label-Mondrian comparisons descriptively; report 31/40 cells as meeting locked nominal Bonferroni--Holm thresholds for the joint-block reference | Rejection/significance language, post-selection or study-wide FWER, causal source of drift, prospective guarantee, or universal learner winner |
 | Discussion/future work | Mention delayed-feedback ACI, quantified non-exchangeable penalties, JOMI/FCR selection, interval/censoring methods, and weighted shift as distinct protocols | That naming a method repairs the present archive |
-| References | Use the five verified primary records added in this audit | Cite p08, p09, or p15 as methodological support |
+| References | Use the eleven verified primary records added or refreshed in this audit, including CatBoost, corrected Platt, the two credible survival papers, joint-batch CP, and dependent-sequence CP | Cite p08, p09, p15, p18, or p19 as methodological support |
 
 ## Bibliographic changes made by this audit
 
 `paper/references.bib` already contained the correct NeurIPS record under
 `ding2023`; its URL was changed from the arXiv abstract to the official NeurIPS
-proceedings page. Four nonduplicative primary records were added:
+proceedings page. The incomplete `platt1999` record was corrected to
+`platt2000`, with the complete chapter title, editors, pages, publication year,
+and MIT Press source. Nine nonduplicative primary records were added:
 
 - `gibbs2024online` — JMLR 25(162), 1--36;
 - `oliveira2024split` — JMLR 25(225), 1--38;
-- `jin2025focal` — JRSS B 87(4), 1239--1259, DOI qkaf016; and
-- `gazin2025informative` — JRSS B 87(4), 909--929, DOI qkae120.
+- `jin2025focal` — JRSS B 87(4), 1239--1259, DOI qkaf016;
+- `gazin2025informative` — JRSS B 87(4), 909--929, DOI qkae120;
+- `prokhorenkova2018catboost` — NeurIPS 31, official proceedings record;
+- `candes2023survival` — JRSS B 85(1), 24--45, DOI qkac004;
+- `gui2024adaptive` — Biometrika 111(2), 459--477, DOI asad076;
+- `gazin2025batch` — AISTATS 2025, PMLR 258:3250--3258; and
+- `barber2026timeseries` — ALT 2026, PMLR 313:1--24.
 
 No bibliographic entry was added for a quarantined paper or for a future-work
 paper that the active manuscript does not need to cite.
@@ -559,3 +777,11 @@ paper that the active manuscript does not need to cite.
 | p13 | 42 | `3ef439babb94f96388951daaea407494e3dbe8b5` | Prediction Sets for Counterfactual Decisions | B |
 | p14 | 59 | `78170dc19ec1b4ed7e38c42aecc968f93f0c5842` | Audited Conformal Prediction | B |
 | p15 | 38 | `21c1c1b5111bd7f0d807bd15f95e3ecca9ab3fab` | Action-Conditional Risk-Averse CP | C |
+| p16 | 54 | `b69bc321ade7d40a04b22f5d9d3fcb217b546c76` | Conformalized Survival Analysis | A / future endpoint only |
+| p17 | 22 | `9228fe94e21a0decdc742da359233db0506759b5` | Survival Analysis with Adaptive Cut-Offs | B |
+| p17s | 8 | `b8b6f5602824660763f7dc593e2ff99ea2807412` | Adaptive Cut-Offs Supplement | p17 supplement |
+| p18 | 48 | `8710e254d5084c5ace179fe7c7dd57dfa585ef74` | Doubly Robust Calibration under Right Censoring | C |
+| p19 | 26 | `90e2daa0797817951c2687311be764420d1478dd` | Calibration with Competing Risks | C |
+| p20 | 31 | `52c8d676014a0f802b265cbe6f816139968ab02a` | Powerful Batch CP for Classification | A / boundary only |
+| p21 | 24 | `fd0fc641882dc84fbf823967de81bbffa062a02f` | Split CP under Temporal Dependence | A / boundary only |
+| f01 | 11 | `ee0a0f04d45f86bf50b24d7258e884725fcaa621` | CatBoost: Unbiased Boosting with Categorical Features | Foundational learner |

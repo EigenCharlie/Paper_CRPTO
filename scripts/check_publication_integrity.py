@@ -583,8 +583,8 @@ def _check_lineage_sync() -> list[str]:
                     if str(descriptor.get("path", "")).endswith(".csv")
                 ]
             )
-            != 25,
-            "paper evidence manifest does not contain exactly 25 CSV tables",
+            != 27,
+            "paper evidence manifest does not contain exactly 27 CSV tables",
         ),
         (
             contract.get("source_registry") != expected_registry_path,
@@ -659,6 +659,57 @@ def _check_lineage_sync() -> list[str]:
     return failures
 
 
+def _check_inventory_count_sync() -> list[str]:
+    """Keep manually written capsule counts tied to the machine registries."""
+    registry, _ = load_verified_source_registry(SOURCE_REGISTRY_PATH, repo_root=REPO)
+    evidence = json.loads(EVIDENCE_PATH.read_text(encoding="utf-8"))
+    dvc_count = len(registry["dvc_pointers"])
+    csv_count = sum(
+        str(descriptor.get("path", "")).endswith(".csv")
+        for descriptor in evidence["paper_artifacts"].values()
+    )
+    dvc_surfaces = (
+        REPO / ".codex/skills/crpto/SKILL.md",
+        REPO / "CLAUDE.md",
+        REPO / "README.md",
+        REPO / "docs/security/SECRETS_AND_REMOTES.md",
+        REPO / "paper/CRPTO_ijds.qmd",
+        REPO / "paper/submission/CRPTO_ijds_submission.tex",
+        REPO / "paper/submission/DATA_CODE_DISCLOSURE_FORM_DRAFT.md",
+        REPO / "paper/submission/EDITOR_ONLY_REPRODUCIBILITY_CROSSWALK.md",
+        REPO / "paper/submission/README.md",
+        REPO / "paper/submission/REPRODUCIBILITY_PACKAGE.md",
+        REPO / "paper/submission/SCHOLARONE_FINAL_CHECKLIST.md",
+    )
+    csv_surfaces = (
+        REPO / ".codex/skills/crpto/SKILL.md",
+        REPO / "paper/submission/DATA_CODE_DISCLOSURE_FORM_DRAFT.md",
+        REPO / "paper/submission/EDITOR_ONLY_REPRODUCIBILITY_CROSSWALK.md",
+        REPO / "paper/submission/README.md",
+        REPO / "paper/submission/REPRODUCIBILITY_PACKAGE.md",
+        REPO / "paper/submission/SCHOLARONE_FINAL_CHECKLIST.md",
+    )
+    failures: list[str] = []
+    dvc_pattern = re.compile(rf"\b{dvc_count}\s+(?:registered\s+)?dvc\s+pointers?\b", re.IGNORECASE)
+    for path in dvc_surfaces:
+        normalized = re.sub(r"\s+", " ", path.read_text(encoding="utf-8"))
+        if dvc_pattern.search(normalized) is None:
+            failures.append(
+                f"manual DVC inventory count is stale in {path.relative_to(REPO).as_posix()}"
+            )
+    csv_pattern = re.compile(
+        rf"\b{csv_count}\s+(?:(?:paper-facing|aggregate|publication)\s+)*csv\b",
+        re.IGNORECASE,
+    )
+    for path in csv_surfaces:
+        normalized = re.sub(r"\s+", " ", path.read_text(encoding="utf-8"))
+        if csv_pattern.search(normalized) is None:
+            failures.append(
+                f"manual CSV inventory count is stale in {path.relative_to(REPO).as_posix()}"
+            )
+    return failures
+
+
 def check_publication_integrity() -> list[str]:
     return [
         *_check_surface_contracts(),
@@ -669,6 +720,7 @@ def check_publication_integrity() -> list[str]:
         *_check_evidence_decision(),
         *_check_claim_ledger(),
         *_check_lineage_sync(),
+        *_check_inventory_count_sync(),
     ]
 
 
