@@ -11,6 +11,7 @@ from typing import Any
 import pytest
 
 from scripts.build_ijds_submission_tex import render_submission_tex
+from src.ijds_audit.publication_sources import load_source_registry
 
 REPO = Path(__file__).resolve().parents[1]
 EVIDENCE = REPO / "reports/crpto/ijds_binary_geometry_frontier_v4_evidence.json"
@@ -20,6 +21,18 @@ SURFACES = (
     REPO / "paper/CRPTO_ijds.qmd",
     REPO / "paper/supplement_ijds.qmd",
     REPO / "paper/submission/CRPTO_ijds_submission.tex",
+)
+ACTIVE_DVC_COUNT_SURFACES = (
+    REPO / "README.md",
+    REPO / "CLAUDE.md",
+    REPO / ".codex/skills/crpto/SKILL.md",
+    REPO / "docs/security/SECRETS_AND_REMOTES.md",
+    REPO / "paper/CRPTO_ijds.qmd",
+    REPO / "paper/supplement_ijds.qmd",
+    REPO / "paper/submission/CRPTO_ijds_submission.tex",
+    REPO / "paper/submission/DATA_CODE_DISCLOSURE_FORM_DRAFT.md",
+    REPO / "paper/submission/EDITOR_ONLY_REPRODUCIBILITY_CROSSWALK.md",
+    REPO / "paper/submission/REPRODUCIBILITY_PACKAGE.md",
 )
 
 
@@ -68,6 +81,19 @@ def test_active_evidence_locks_v4_lineage_and_claim_boundary() -> None:
     }
     assert evidence["protected_stages_run"] == []
     assert evidence["protected_artifacts_written"] == []
+
+
+def test_active_dvc_pointer_count_is_synchronized_across_release_surfaces() -> None:
+    registry = load_source_registry(
+        REPO / "configs/ijds_active_evidence_sources.yaml",
+        repo_root=REPO,
+    )
+    expected = len(registry["dvc_pointers"])
+
+    for surface in ACTIVE_DVC_COUNT_SURFACES:
+        text = _normalize(surface.read_text(encoding="utf-8"))
+        counts = {int(value) for value in re.findall(r"\b(\d+)\s+dvc pointers?\b", text)}
+        assert counts == {expected}, surface
 
 
 def test_active_design_is_exact() -> None:

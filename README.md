@@ -49,7 +49,7 @@ Read these in order:
 5. [`paper/CRPTO_ijds.qmd`](paper/CRPTO_ijds.qmd)
 6. [`paper/supplement_ijds.qmd`](paper/supplement_ijds.qmd)
 
-The source registry owns lineage identities and 31 DVC pointers. The evidence
+The source registry owns lineage identities and 33 DVC pointers. The evidence
 manifest is the only numeric paper-facing manifest. The body QMD is the only
 editable source for the official submission TeX.
 

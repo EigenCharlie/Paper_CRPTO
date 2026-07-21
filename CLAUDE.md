@@ -22,7 +22,7 @@ not active evidence.
 14. `.codex/skills/crpto/SKILL.md`
 
 The claim registry is the editorial authority. The source registry owns exact
-lineage identities, artifact descriptors, and 31 DVC pointers. The V4 evidence
+lineage identities, artifact descriptors, and 33 DVC pointers. The V4 evidence
 JSON is the only numeric paper-facing manifest.
 
 ## Active Scientific Object

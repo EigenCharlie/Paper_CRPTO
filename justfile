@@ -48,7 +48,7 @@ dependency-audit:
     uv run --locked --with pip-audit==2.10.1 pip-audit --progress-spinner off --ignore-vuln PYSEC-2026-2447 --ignore-vuln PYSEC-2026-1806 --ignore-vuln PYSEC-2026-1805
 
 smoke:
-    uv run --locked pytest tests/test_publication_integrity.py tests/test_ijds_active_claim_sync.py tests/test_publication_targets.py -q
+    uv run --locked pytest tests/test_publication_integrity.py tests/test_ijds_active_claim_sync.py tests/test_publication_targets.py tests/test_book_active_companion.py -q
 
 # Read-only regression gate for the current PD/conformal implementation and
 # every paper-facing numerical contract. It does not execute a scientific run.
@@ -104,7 +104,7 @@ ijds-tie-audit CONFIG="configs/experiments/ijds_policy_support_tie_audit_2026-07
 
 # Read-only gate over all registered lineages and current paper surfaces.
 ijds-active-check: publication-integrity
-    uv run --locked pytest -q tests/test_ijds_anonymity.py tests/test_ijds_active_claim_sync.py tests/test_ijds_v4_claim_sync.py tests/test_ijds_rolling_origin_protocol.py tests/test_publication_targets.py tests/test_submission_preview_layout.py tests/test_supplement_table_sync.py
+    uv run --locked pytest -q tests/test_ijds_anonymity.py tests/test_ijds_active_claim_sync.py tests/test_ijds_v4_claim_sync.py tests/test_ijds_rolling_origin_protocol.py tests/test_publication_targets.py tests/test_submission_preview_layout.py tests/test_supplement_table_sync.py tests/test_book_active_companion.py
     uv run --locked pytest -q tests/test_ijds_audit tests/test_ijds_audit_core.py tests/test_ijds_normalized_objective_frontier.py tests/test_ijds_normalized_objective_frontier_v2.py tests/test_ijds_policy_support_tie_audit.py tests/test_ijds_policy_support_tie_evidence.py
 
 # --- DVC capsule ----------------------------------------------------------
@@ -128,6 +128,15 @@ ijds-dvc-verify-remote:
     uv run --locked python scripts/manage_ijds_dvc_capsule.py verify-remote
 
 # --- Manuscript -----------------------------------------------------------
+
+companion-build:
+    uv run --locked -- quarto render book --no-execute
+
+companion-html:
+    uv run --locked -- quarto render book --to html --no-execute --no-clean
+
+companion-pdf:
+    uv run --locked -- quarto render book --to pdf --no-execute --no-clean
 
 paper-body:
     uv run --locked -- quarto render paper/CRPTO_ijds.qmd --to html --no-execute
