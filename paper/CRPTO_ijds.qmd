@@ -186,154 +186,63 @@ which are artifacts of the decision comparison.
 
 # Related Work {#sec-related}
 
-## From predictive quality to decision quality
+Decision quality is not prediction quality: the same estimate may induce a
+different ranking, feasible region, or action once costs and constraints enter
+[@fernandezloria2022causaldecision; @yang2025costaware]. Decision-focused
+learning trains against an optimization loss, whereas modular
+predict-then-optimize methods keep the predictor fixed and expose the handoff
+[@donti2017; @elmachtoub2022; @bertsimas2020prescriptive]. CRPTO takes the
+modular route because its object is governance of an already frozen credit
+score. Model, payoff, menus, budget, concentration limits, and solver are held
+constant; score and cap cannot be separated because together they define the
+feasible set. This audit-chain perspective also follows work connecting credit
+modeling to reproducible empirical design and the AI--OR interface
+[@das2023creditgraph; @wiberg2025ai_or].
 
-Research on decision quality distinguishes estimation quality from the quality
-of the action induced by an estimate. Fernandez-Loria and Provost show that a
-useful decision ranking and an accurate effect estimate are different objects
-[@fernandezloria2022causaldecision], and later make the identifying assumptions
-behind observational decision rules explicit [@fernandezloria2025observational].
-Cost-aware calibration similarly evaluates probability errors through their
-downstream asymmetry rather than through calibration alone [@yang2025costaware].
-Das et al. link credit-modeling choices to empirical design and
-reproducibility [@das2023creditgraph].
-More broadly, the AI--OR interface is valuable when prediction, mathematical
-optimization, and operational interpretation form one auditable chain
-[@wiberg2025ai_or].
+Split conformal prediction gives marginal finite-sample coverage under
+exchangeability [@vovk2005; @angelopoulos2023], while exact conditional
+coverage is generally unavailable without restrictions [@barber2021limits].
+Classwise calibration changes the category and still requires within-category
+exchangeability [@ding2023]. Under nonexchangeability, guarantees need explicit
+dependence or discrepancy controls; chronology alone is insufficient
+[@barber2023beyond; @oliveira2024split]. Online adaptive calibration addresses
+a different sequential-feedback design [@gibbs2024online]. These distinctions
+motivate our separation of finite-archive bounds, a stronger joint-block
+rank-reference null, and deterministic sensitivities.
 
-Decision-focused learning trains predictors against an optimization loss
-[@donti2017; @elmachtoub2022; @mandi2024]. Contextual optimization and
-predict-then-optimize methods instead preserve a modular predictor and expose
-how forecast errors enter the decision [@bertsimas2020prescriptive;
-@sadana2025contextual]. CRPTO takes the modular route because the research
-question concerns governance of a frozen score, not a new credit-scoring
-leaderboard. The baseline and guardrail therefore share the model, payoff,
-budget, concentration limits, solver, and monthly candidate menus. They cannot,
-however, share a numeric risk threshold by label alone: once the score changes,
-the threshold defines a different feasible set. CRPTO treats comparator
-alignment as part of the empirical design rather than an implementation
-default.
+Selection is a separate inferential problem. JOMI targets coverage conditional
+on permutation-invariant black-box selection, informative-selection methods
+target false-coverage rate, and selecting among otherwise valid conformal
+objects can itself invalidate them [@jin2025focal; @gazin2025informative;
+@hegazy2025valid_selection_conformal_sets]. None of those targets follows from
+candidate-level coverage, and CRPTO does not implement their reference-set or
+randomization contracts. Its budget-coupled monthly allocation therefore has
+no selected- or funded-set coverage claim.
 
-## What conformal coverage does and does not transport
+Conformal sets have entered robust, portfolio, and contextual optimization
+[@johnstone2021; @patel2024; @sun2024ptc]. More recent methods calibrate
+decision loss, violations, regret, or the robustness choice itself
+[@bao2025croms; @kiyani2025; @zhou2026creme;
+@stratigakos2026decision_calibrated_sets]. Those methods require labeled
+decision contexts under their own sampling conditions. Here one context is a
+coupled monthly allocation, not each loan independently; the accepted-loan
+archive also cannot identify counterfactual funding effects. CRPTO thus asks a
+narrower empirical question: when a simple conformal upper score constrains a
+conventional credit LP, which apparent effects come from interval geometry,
+comparator choice, or unresolved outcomes?
 
-Split conformal prediction supplies finite-sample marginal coverage under
-exchangeability [@vovk2005; @angelopoulos2023]. Exact conditional coverage is
-generally unattainable without strong restrictions [@barber2021limits], and
-the pointwise guarantee for one future observation does not itself require all
-future observations to be jointly exchangeable as one block. Our rank-reference
-diagnostic below imposes that stronger block null explicitly. Likewise,
-classwise conformal prediction obtains label-conditional coverage by calibrating
-within each label category [@ding2023]. That guarantee still requires
-exchangeability inside the category. For nonexchangeable observations,
-approximate split-conformal bounds depend on explicit concentration,
-dependence, or distribution-discrepancy controls rather than chronology alone
-[@oliveira2024split; @barber2023beyond]. Adaptive online calibration addresses a
-different feedback design [@gibbs2024online]; delayed credit outcomes prevent
-us from importing its sequential guarantee.
-
-Selection introduces a second boundary. JOMI constructs strong
-selection-conditional coverage for permutation-invariant black-box selection,
-including optimization-like rules, but requires its own exchangeability,
-reference-set, and frozen-randomization contract [@jin2025focal]. Procedures for
-informative selection instead control false-coverage rate, an expected error
-proportion among selected sets [@gazin2025informative]. Neither target follows
-from candidate-level marginal coverage, and neither is implemented by CRPTO's
-budget-coupled monthly optimizer. More generally, selecting among otherwise
-valid conformal objects can invalidate them [@hegazy2025valid_selection_conformal_sets].
-
-Conformal uncertainty sets have also entered portfolio, robust, and contextual
-optimization [@kato2025; @johnstone2021; @patel2024]. Kato studies asset-return
-portfolio selection, while Sun et al. calibrate predict-then-optimize contextual
-linear programs [@sun2024ptc]. Those designs supply useful decision-level
-benchmarks, but their sampling units and guarantees do not transfer to binary
-credit allocation with reconstructed endpoints. Recent work instead calibrates
-decision loss, operational violations, or the miscoverage--regret
-frontier rather than using predictive coverage as a proxy
-[@yeh2025training; @zhou2026creme;
-@stratigakos2026decision_calibrated_sets]. Wang and Dobriban derive
-risk-optimal actions and prediction sets from an explicit decision loss
-[@wang2026optimal_decision_prediction_sets], while Zheng and Jin couple
-coverage to counterfactual actions when outcomes depend on the induced policy
-[@zheng2026counterfactual_decision_sets]. CRPTO does not compete with those
-methods by claiming a new selected-set theorem. Its accepted-loan archive
-cannot identify a counterfactual funding effect. It asks a complementary
-empirical question: when a simple conformal score is attached to a conventional
-credit LP, where does its apparent risk effect come from, and where does
-candidate coverage fail to follow?
-
-The closest decision-level methods also clarify what this audit cannot borrow.
-CROMS selects conformal models using downstream robust-decision risk
-[@bao2025croms]; decision-theoretic conformal prediction begins from the
-agent's loss [@kiyani2025]; and inverse conformal risk control calibrates a
-robustness choice against decision regret [@zhou2026creme]. Those methods
-require labeled decision contexts under their stated sampling conditions.
-CRPTO instead has eleven common development menus, fifteen later monthly
-decisions, complete finite-archive shortfalls, and a scoped joint-block
-rank-reference diagnostic. Treating
-hundreds of thousands of loans as independent decision contexts would ignore
-that each action is one coupled monthly allocation. We therefore use these
-methods to define the correct target, not to import a finite-sample guarantee.
-
-## Credit maturity and economic evaluation
-
-Credit scoring and profit scoring are related but distinct. High discrimination
-does not determine which loan is profitable [@lessmann2015], and Lending Club
-studies have long shown that interest rate, default, recoveries, and portfolio
-constraints jointly shape the investment decision
-[@serrano2016profitscoring; @lyocsa2022profit]. Recent uncertainty-aware profit
-models reinforce the need to evaluate the economic target directly
-[@xu2024profit_risk_credit; @xu2025profit_uncertainty_credit].
-Credit-risk auditability also motivates transparent scorecards and economically
-signed constraints alongside flexible learners. WOE/IV binning provides a
-supervised, inspectable representation, while mathematical-programming binning
-can enforce bin size and monotonic structure [@navaspalencia2020]. We use these
-devices as model-class controls: they test whether the finite-archive pattern
-and joint-block nominal flags are confined to CatBoost, incumbent grade/pricing
-signals, or unconstrained nonlinear shape.
-They are not a scorecard-superiority claim.
-
-Maturity is equally central. Ignoring random censoring can bias empirical risk
-[@ausset2022censoring]. In online lending, default and prepayment are competing
-events whose timing changes portfolio profitability [@li2023online_loans], and
-dynamic portfolio models track state transitions and cash flows rather than a
-single binary reward [@djeundje2025dynamic_loan_portfolio_profitability]. Our
-status-indexed payoff proxy is deliberately simpler. It is useful for isolating the
-decision effect of PD and conformal uncertainty, but it is not an internal rate
-of return, a discounted cash-flow estimate, or a substitute for survival
-analysis.
-
-## Closest-work boundary
-
-CRPTO lies between several mature literatures, so its contribution cannot be
-that any one ingredient is new. Classical and data-driven robust optimization
-make the price of protection explicit [@bertsimas2004;
-@bertsimas2018datadriven; @goldfarb2003robustportfolio]. P2P lending research
-already combines credit scores, returns, and portfolio constraints
-[@guo2016p2p; @zhao2016p2pportfolio; @chi2019p2p; @babaei2020p2p]. Conformal
-robust optimization carries coverage-backed sets into downstream decisions
-[@johnstone2021; @patel2024; @hu2026crc], while valid-selection and
-decision-calibration methods directly target the inferential break caused by
-choosing a set or action [@hegazy2025valid_selection_conformal_sets;
-@zhou2026creme; @stratigakos2026decision_calibrated_sets].
-
-The active CRPTO role is narrower: it audits what happens when a conventional,
-frozen credit score receives a simple conformal upper-score constraint. It does
-not retrain through the optimizer, calibrate a selected-set loss, or claim
-selected-set validity. Its theoretical additions concern this specific handoff:
-a binary-residual threshold discontinuity, comparator-feasibility results, and
-an exact identification-width identity for unresolved binary outcomes. Its
-empirical additions are a maturity-restricted credit protocol, complete residual-window
-reporting, an exact comparator frontier, coherent economic comparison, and sharp
-treatment of unresolved outcomes.
-
-Fernandez-Loria and Provost motivate the distinction between an intermediate
-estimate and the action it induces, Yang and Bi make downstream cost central to
-calibration, Das et al. link credit-modeling choices to empirical design, and
-Wiberg et al. frame the AI--OR interface. The unit of analysis is the combined
-predictive and decision system: the discrete geometry of the interval, the
-allocation it induces, and the comparator support required to interpret that
-allocation. Online Supplement Table S13 preserves the detailed closest-work
-matrix while keeping the manuscript focused on the active estimands.
+Credit discrimination likewise does not determine portfolio value
+[@lessmann2015; @serrano2016profitscoring]. Maturity, censoring, prepayment, and
+cash-flow timing matter [@ausset2022censoring; @li2023online_loans;
+@djeundje2025dynamic_loan_portfolio_profitability], so our binary endpoint and
+status-indexed payoff are deliberately not survival or return models. WOE/IV
+scorecards and monotonic CatBoost are transparency and model-class controls,
+not challenger winners [@navaspalencia2020]. Classical robust optimization and
+P2P portfolio studies already establish that protection and portfolio design
+have costs [@bertsimas2004; @guo2016p2p]. The contribution here is the audited
+interface: complete residual-window reporting, binary-threshold geometry,
+common-outcome identification, and comparator-support diagnostics. Online
+Supplement Table S13 gives the detailed closest-work matrix and claim boundary.
 
 # Data and Locked Evaluation Design {#sec-data}
 
@@ -374,25 +283,14 @@ mechanism the paper is designed to measure.
 
 <!-- claim:data.exhaustive_status_independent_population -->
 
-The source is the Lending Club 2007--2020Q3 public research archive. A full
-raw-file audit scans 2,925,493 rows, of which 2,925,492 are valid dated loans,
-across all 142 columns. There are 2,060,077 36-month and 865,415 60-month
-contracts. The active design retains 640,543 rows: every loan eligible under
-the declared 36-month horizon, dates, schema, and observability rules, not a
-sample or computational row cap. Its evaluation panel contains 465,117 loans:
-376,890 primary candidates and 88,227 extension candidates. Candidate
-membership depends on issue month, term, and fields observable at origination.
-It never depends on whether the reconstructed endpoint is resolved.
-
-Adding the excluded rows would change the estimand, not merely increase sample
-size. Sixty-month loans have a different outcome horizon; 48 fields have
-negligible early support but near-complete later coverage; and the intervening
-cohorts are heavily duration-censored at the March 2016 information cutoff. Available labels are
-59,910/162,570 for 2014, 28,878/283,173 for 2015, and 1,110/96,120 for 2016Q1,
-with no observed bads in the last group. Training a terminal-default classifier
-on those resolved subsets would condition on maturity. A survival estimand
-could use them, but it would change the target, theory, and paper rather than
-make this binary protocol more complete.
+The Lending Club 2007--2020Q3 archive contains 2,925,493 rows. The status-independent
+design retains all 640,543 loans eligible under its 36-month horizon, dates,
+schema, and observability rules; its evaluation panel has 376,890 primary and
+88,227 extension candidates. Membership never depends on endpoint resolution.
+Including 60-month contracts, late-schema fields, or heavily censored intervening
+cohorts would change the estimand; training on their resolved subset would
+condition on maturity. Appendix B reports the complete population and exclusion
+census.
 
 Status strings containing `Charged Off` are positive and strings containing
 `Fully Paid` are negative only when their reconstructed availability is no
@@ -407,22 +305,11 @@ terminal classification endpoint, not a lifetime hazard or causal response.
 Unresolved loans remain candidates and enter sharp bounds after allocations
 are frozen.
 
-The optimizer uses listed loan amount as available exposure. A full primary
-OOT reconciliation finds only USD 18,000 of requested-minus-funded difference
-over 376,890 loans, a funded ratio of 0.999996. The distinction is empirically
-immaterial here while remaining explicit in the estimand.
-
-The chronology has shared PD and probability-calibration blocks, a 13-month
-residual pool, one common outcome-free development block, and one common OOT
-panel. Every consecutive six-month residual window beginning January--August
-2012 is reported; all end by January 2013. February--December 2013 supplies the
-same eleven development menus for every window. Policy-development outcomes
-are neither required nor read. The first primary month is April 2016. Its
-window ends in June 2017, at least 39 months before the September 2020 cutoff
-for a 36-month contract. Contract age nevertheless does not force
-administrative resolution, which is why 12,076 primary candidates remain
-unresolved. July--September 2017 is retained as a more heavily censored
-extension rather than silently discarded.
+Listed amount defines available exposure; requested and funded amounts differ
+by only USD 18,000 over the primary panel. The chronology below uses shared PD,
+Platt, development, and OOT blocks. It reports every eligible residual window,
+never reads policy-development outcomes, bounds the 12,076 unresolved primary
+endpoints, and retains July--September 2017 as an explicitly censored extension.
 
 | Block | Issue months | Rows | Information role |
 |---|---:|---:|---|
@@ -437,40 +324,22 @@ extension rather than silently discarded.
 
 ## Information boundary
 
-The implementation materializes two ID-keyed panels. The decision panel
-contains issue date, amount, purpose, contractual rate, point score, conformal
-endpoints, and the frozen score stratum. It rejects outcome, status-indexed payoff,
-miscoverage, or outcome-derived columns. The outcome panel contains the
-reconstructed endpoint and is joined only after the solver returns an allocation. IDs must align
-one-to-one; partial joins fail. This physical separation does not create a new
-statistical theorem, but it makes the timing claim testable in code.
+Two ID-keyed panels enforce the boundary. The decision panel admits only dated
+origination variables, scores, endpoints, and strata; the outcome panel is
+joined one-to-one only after allocations are frozen. This separation makes the
+timing claim testable but creates no statistical guarantee.
 
 Label-dependent fitting is additionally restricted by an information cutoff
 of March 31, 2016. A Fully Paid label becomes available at the month-end of its
 last payment; a Charged Off label is conservatively dated six calendar months
 after that month-end.
-The retained shares are 99.765% in PD development, 99.830% in probability
-calibration, and 99.694% over the residual pool. Every residual month exceeds
-99%; the minimum is 99.296% in January 2013. Missing dates and labels arriving
-after the cutoff are excluded from fitting, not from the candidate universe.
-
-The outcome-free protocol froze two learner score vectors, 64 residual
-recipes, 51,117 solve records, and 5,001,617 funded rows before any outcome
-join. Its maximum absolute C2 match residual is $8.33\times10^{-17}$. The
-active evaluator verifies that freeze by SHA-256, reconstructs
-status availability, and injects window-specific endpoints only after the
-shared point allocation is loaded. It changes neither predictions, recipes,
-comparators, nor allocations. Online Supplement Appendix F records the active
-lineage and replay contract.
-
-The two-ruler diagnostic has a separate outcome-free freeze. It contains 6,240
-solves and 622,455 funded rows over eight windows, 26 development/OOT months,
-five gamma values, three interior coordinates, and two rulers. Reversed-ID
-reruns and a separate GLOP implementation check the endpoint allocations.
-A hash-locked evaluator then joins the same outcome panel without refitting,
-resolving, or selecting a track. Its 48 window cells are six specification
-tracks observed through eight overlapping residual recipes, not 48
-replications.
+Retained fitting-label shares exceed 99% in every block and residual month;
+unavailable labels are excluded from fitting, not candidacy. SHA-256-locked
+freezes contain all scores, recipes, allocations, and comparator tracks before
+the outcome join. Reversed-ID and independent-solver checks audit endpoint
+allocations. The resulting 48 two-ruler cells are six tracks viewed through
+eight overlapping recipes, not replications; Appendix F records all counts,
+hashes, and replay contracts.
 
 ## Identification safeguards
 
@@ -490,46 +359,21 @@ Online Supplement Appendices A and G give the full audit map and boundaries.
 
 ## Platt-scaled default score and credit-risk controls
 
-A CatBoost classifier uses 29 numeric and 9 categorical origination-time
-features. Hyperparameters are fixed in the executable protocol: 500 trees,
-depth 6, learning rate 0.04, class balancing, Bernoulli subsampling, and a
-time-aware ordering. The last 20% of PD-development months form a temporal
-validation tail. A logistic Platt map is then fitted on the 2011 raw margins,
-separate from both model training and conformal fitting.
+The primary model is a protocol-fixed CatBoost classifier on 29 numeric and nine
+categorical origination-time features, followed by a separate 2011 logistic
+Platt map. It is not tuned against downstream or OOT outcomes. Four
+coverage-only controls change model class or information: numeric logistic
+regression, domain-constrained monotonic CatBoost, a platform-signal WOE/IV
+scorecard, and a pricing-excluded application WOE/IV scorecard
+[@navaspalencia2020]. Each receives its own Platt map and 2011 score taxonomy;
+only primary CatBoost enters optimization. These are specification controls,
+not a leaderboard.
 
-The prediction model is deliberately not tuned against downstream outcomes.
-Canonical seed 42 is inherited from the locked design. Four protocol-locked
-coverage-only specifications alter model class or credit-risk information:
-
-1. numeric-feature logistic regression;
-2. CatBoost with 20 domain-signed monotonic constraints, such as increasing
-   risk in interest rate, debt burden, inquiries, and adverse-history flags and
-   decreasing risk in income, FICO, and credit age;
-3. a 26-field OptBinning WOE/IV logistic scorecard including borrower,
-   contract, grade, subgrade, interest, and derived pricing signals; and
-4. a 19-field pricing-excluded application WOE/IV scorecard excluding grade,
-   subgrade, interest, installment, and derived platform-pricing signals.
-
-Each WOE process is fit only on PD development, uses two to eight bins, a 5%
-minimum bin share, and automatic monotonic trend [@navaspalencia2020]. Every
-learner receives its own 2011 Platt map and fixed score taxonomy. On the Platt
-block, AUCs in primary/control order are 0.676327, 0.656880, 0.678091,
-0.660533, and 0.662401; Brier scores range from 0.090054 to 0.091000. All five
-are frozen before the primary OOT outcome join and use every eligible row. The
-four controls never enter portfolio optimization, and OOT outcomes select
-neither model nor feature. These diagnostics test specification dependence;
-they are not a predictive leaderboard or a claim that WOE/IV is novel.
-
-The full-file contract identifies two active-input exceptions to the 95% raw
-coverage rule. Missing delinquency recency is structurally meaningful and is
-mapped to the frozen no-recent-delinquency convention; bankruptcy count has
-92.17% minimum early coverage and missing values map to no recorded bankruptcy.
-Observed-value indicators are retained by feature engineering for auditability,
-but the active portfolio model does not add them as post hoc predictors. A
-separately frozen sensitivity preserves the two feature definitions while
-comparing the active sentinel convention, explicit missing indicators, and
-CatBoost-native nullable values. It selects no encoding and does not identify a
-missingness mechanism.
+The raw-data contract predeclares mappings for structurally missing delinquency
+recency and sparsely recorded bankruptcy count. A frozen sensitivity compares
+that sentinel convention with explicit indicators and native nullable values;
+it selects no encoding or missingness mechanism. Appendix B gives features,
+hyperparameters, mappings, fit diagnostics, and WOE/IV controls.
 
 ## Score-Mondrian binary prediction sets and continuous interval embedding
 
@@ -542,17 +386,10 @@ $$
 s_i(y)=|y-p_i|=1-\widehat p_i(y).
 $$ {#eq-binary-nonconformity}
 
-Five groups are defined by quantiles of all 2011 Platt-scaled scores, without
-using residual-window labels. The frozen CatBoost edges are
-$0.008219$, $0.050265$, $0.080369$, $0.111894$, $0.153262$, and $0.475854$.
-Assignment uses the four internal cutpoints; the two extreme strata extend
-beyond the observed 2011 range so that every valid later score is retained.
-Within fixed group $g$, the observed residual-window score is
-$s_i(Y_i)=|Y_i-p_i|$. The complete specification reports all eight
-consecutive six-month windows beginning January--August 2012. Every included
-month exceeds 99% label retention under the six-month lag. For $n_g$
-observations and target $\alpha=0.10$,
-the predeclared split-conformal rank rule is
+Five groups are fixed from 2011 score quantiles, without residual-window labels;
+extreme strata are open-ended so every later score is retained. The specification
+reports all eight consecutive six-month windows beginning January--August 2012.
+For $n_g$ observations and target $\alpha=0.10$, the split-conformal rank is
 
 $$
 k_g=\left\lceil(n_g+1)(1-\alpha)\right\rceil,
@@ -576,16 +413,12 @@ S_i=\left\{y\in\{0,1\}:|y-p_i|\le c_{g(i)}\right\}
    =[\ell_i,u_i]\cap\{0,1\}.
 $$ {#eq-binary-set}
 
-Thus $Y_i\in S_i$ if and only if $Y_i\in[\ell_i,u_i]$, but the objects serve
-different roles. $S_i$ is the discrete prediction set; $[\ell_i,u_i]$ is a
-continuous design embedding that is not constructed as, and generally differs
-from, the convex hull of $S_i$; and $u_i$ is a
-scalar input to the downstream decision score in @eq-score. None is a
-confidence interval for latent individual PD, and freezing an allocation based
-on $u_i$ does not confer a funded-set conformal guarantee. No holdout-learned
-widening, floor, taxonomy adaptation, or post-cutoff label enters any recipe.
-Taxonomies with 1, 2, and 10 groups are closed coverage diagnostics. Each of
-the four controls repeats this construction with its own scores and edges.
+Thus coverage of $S_i$ and $[\ell_i,u_i]$ coincides for binary $Y_i$, but the
+interval is a continuous design embedding, generally not the convex hull of
+$S_i$, and $u_i$ is the downstream score input. Neither object is a confidence
+interval for latent PD or a funded-set guarantee. No outcome-dependent
+widening or taxonomy adaptation enters a recipe; 1-, 2-, and 10-group
+taxonomies and the four learners are closed coverage diagnostics.
 
 The four possible binary sets are $\varnothing$, $\{0\}$, $\{1\}$, and
 $\{0,1\}$. If their candidate shares are $e,z,o,b$, respectively, then
@@ -620,11 +453,10 @@ S_i^{\mathrm{LM}}=
 \{1:1-p_i\le q_{g(i),1}\}.
 $$ {#eq-label-mondrian}
 
-This set need not be a symmetric interval around $p_i$. For a target category
-$(g,y)$, let $N_y$ and $C_y$ be the resolved class count and covered count, and
-let $U_y^{\mathrm{hit}}$ and $U_y^{\mathrm{miss}}$ count unresolved candidates
-whose set would contain or omit $y$ if assigned that label. Its sharp
-class-specific coverage bounds are
+This set need not be symmetric around $p_i$. For category $(g,y)$, let $N_y$
+and $C_y$ be resolved class and covered counts, and let
+$U_y^{\mathrm{hit}},U_y^{\mathrm{miss}}$ count unresolved candidates whose set
+would contain or omit $y$. Sharp class-specific bounds are
 
 $$
 L_y=\frac{C_y}{N_y+U_y^{\mathrm{miss}}},
@@ -632,13 +464,10 @@ L_y=\frac{C_y}{N_y+U_y^{\mathrm{miss}}},
 U_y=\frac{C_y+U_y^{\mathrm{hit}}}{N_y+U_y^{\mathrm{hit}}},
 $$ {#eq-label-bounds}
 
-when the relevant denominator is positive. These endpoints are sharp for each
-class separately. A bound on $\operatorname{Cov}_0-\operatorname{Cov}_1$ instead
-optimizes each endpoint over completions in which every unresolved loan is
-assigned once and that assignment is shared by both class ratios; the lower and
-upper endpoints may use different completions. Subtracting separately optimized
-class intervals would not be sharp. All 400 label-stratum categories are
-identification diagnostics, not 400 hypothesis tests.
+when denominators are positive. Bounds on
+$\operatorname{Cov}_0-\operatorname{Cov}_1$ instead share each unresolved
+assignment across both ratios; subtracting separately optimized intervals is
+not sharp. The 400 label-stratum rows are identification diagnostics, not tests.
 
 <!-- claim:boundary.no_selected_set_validity -->
 
@@ -749,19 +578,13 @@ $\gamma=1$ minus $\gamma=0$. Interior gamma values verify the path but cannot
 be selected as winners. Every allocation is outcome-free; unresolved outcomes
 enter only through the common-outcome bounds after the freeze.
 
-A supporting audit checks the finite grid against declared point-cap
-comparators. C0 copies the numerical cap,
-C1 uses the eleven-menu development point-score support, and C2 matches the
-frozen guardrail's funded point-score moment on the same menu. C2 is an
-outcome-free decomposition, not a deployable policy. HiGHS basis ranging then
-enumerates 3,067 exact point caps over development support and [0.05, 0.12]
-broad stress. Nine historical $(\tau,\gamma)$ pairs index this audit; they are
-not a closed policy family or promotion candidates. Full definitions are in
-Online Supplement Appendix C. No OOT outcome chooses any learner, window,
-gamma, ruler, coordinate, cap, policy, or comparator.
-This is computational isolation within each locked lineage, not a claim that
-the global family of analyses was chosen before the archive or earlier results
-were inspected.
+A supporting audit compares the grid with same-cap C0, development-supported
+C1, funded-point-moment C2, and 3,067 HiGHS basis-ranging point caps over the
+development and [0.05,0.12] supports. C2 is a decomposition, not a deployable
+policy; the nine historical index pairs are neither a closed family nor
+promotion candidates. Appendix C defines every comparator. No evaluation
+outcome chooses a track, although this within-lineage isolation does not imply
+that the global analysis family preceded archive inspection.
 
 # Audit Theory and Estimands {#sec-theory}
 
@@ -809,11 +632,8 @@ $$
 V_p(c)\ge \bar\pi^\top a^q.
 $$ {#eq-c2-dominance}
 
-Parts 1 and 3 identify exact invariances. Parts 2 and 4 show why same-cap and
-funded-moment matching are not neutral performance tests: they mechanically
-order feasible plug-in objectives but do not order realized payoff, default, or
-miscoverage. Equality of one optimizer is also insufficient to establish
-affine score equivalence.
+Parts 1 and 3 are exact invariances. Parts 2 and 4 mechanically order feasible
+plug-in objectives, not realized payoff, default, or miscoverage.
 
 ## Binary interval geometry
 
@@ -858,41 +678,24 @@ M_g\sim\operatorname{BetaBinomial}
 E(M_g/m_g)=\frac{n_g+1-r_g}{n_g+1}.
 $$ {#eq-rank-reference}
 
-This follows from the uniform allocation of combined ranks; it does not require
-independent scores. The familiar Beta mixture is an equivalent representation
-under the stronger iid-continuous construction, not the primary argument here.
-The finite-sample null miss rate is the displayed rank fraction and need not
-equal exactly 0.10. This joint-block null is stronger than the condition needed
-for the usual marginal guarantee at one future point. A flag can therefore
-reflect target--target dependence or heterogeneity and need not refute that
-pointwise guarantee.
+Uniform combined ranks give this law without score independence. Its expected
+miss rate is the displayed finite-sample fraction, not necessarily 0.10. The
+null is stronger than calibration-plus-one-future-point exchangeability, so a
+flag may reflect target-block dependence or heterogeneity without refuting the
+usual marginal guarantee.
 
-Ties do not require randomizing the reported prediction sets. Append iid
-continuous auxiliaries to every calibration and target score and order pairs
-lexicographically. The augmented ranks obey @eq-rank-reference, while the
-deterministic strict-miss count is no larger than the augmented count. Its
-Beta--Binomial upper tail is therefore conservative. Observing no threshold
-ties in this archive is a diagnostic, not proof that the score distribution is
-continuous.
+Lexicographic iid auxiliaries make combined ranks continuous while leaving the
+reported sets deterministic. Because the strict-miss count cannot exceed its
+augmented counterpart, the Beta--Binomial upper tail is conservative. The
+observed absence of threshold ties does not prove continuity.
 
-For unresolved candidate $i$, the minimum of its two attainable strict-miss
-indicators yields the sharp minimum total miss count. Because the upper-tail
-p-value decreases with the observed miss count, this gives its supremum over
-all unrestricted binary completions, without a missing-at-random model. The
-locked reporting calculation combines five stratum p-values by Bonferroni
-within each learner-window cell and applies Holm step-down to the 40 cell
-p-values. If the family and hierarchy had been fixed ex ante, this construction
-would control FWER without an independence assumption. Here its target is the
-40 learner-window intersections of five joint-block nulls. Stratum flags are
-not a 200-test FWER claim, and this diagnostic does not extend to the endpoint,
-missingness, fit-label, individual-age follow-up, or label-Mondrian sensitivities.
-
-An exploratory implementation and its flag pattern were inspected before the
-immutable V1 lock. The Bonferroni--Holm cutoffs are therefore locked nominal
-reporting thresholds, not post-selection or study-wide FWER control. A flag
-only records that the joint-block reference p-value crosses its locked nominal
-threshold; it does not establish incompatibility, significance, or a causal or
-distributional mechanism. A nonflag does not establish exchangeability or
+Minimizing attainable strict misses gives the supremum upper-tail p-value over
+all unrestricted binary completions. The locked calculation uses Bonferroni
+across five strata and Holm across 40 learner-window intersections. Because an
+exploratory implementation and pattern were inspected before V1 lock, these are
+nominal reporting thresholds, not post-selection FWER control. They do not
+cover the 200 strata or any sensitivity. A flag identifies neither theorem
+failure nor mechanism; a nonflag establishes neither exchangeability nor
 transportability.
 
 ## Sharp bounds for unresolved outcomes
@@ -916,10 +719,8 @@ are sharp because each endpoint is attained by a joint assignment of all
 unresolved outcomes. This is partial identification under unrestricted binary
 completion, not a sampling confidence interval.
 
-For all-candidate coverage, let $R$ and $U$ index resolved and unresolved
-candidates, respectively, and let $m_i(0)$ and $m_i(1)$ be the two attainable
-miscoverage values. Resolved candidates retain their observed $m_i(Y_i)$;
-only unresolved labels are completed. The sharp coverage interval is
+For candidate coverage, resolved $R$ retain observed miscoverage and only
+unresolved $U$ are completed. The sharp interval is
 
 $$
 \left[
@@ -930,10 +731,9 @@ $$
 \right].
 $$ {#eq-sharp-coverage}
 
-For paired policies, subtracting marginal intervals is not sharp. Instead, form
-the union of funded IDs, retain each signed exposure difference, and assign the
-same unresolved $Y_i$ once to both policies. If $d_i(Y_i)$ is loan $i$'s
-contrast contribution, then
+For paired policies, marginal-interval subtraction is not sharp. On the union
+of funded IDs, retain signed exposure differences and assign each unresolved
+$Y_i$ once to both policies. For contribution $d_i(Y_i)$,
 
 <!-- claim:theory.binary_identification_width -->
 
@@ -941,18 +741,13 @@ $$
 T_U-T_L=\sum_{i\in U}\left|d_i(1)-d_i(0)\right|.
 $$ {#eq-identification-width}
 
-For exposure difference $\delta_i=a_i^A-a_i^B$, the dollar payoff-proxy width
-is $\sum_{i\in U}|\delta_i|(r_i+\lambda)$. Let $N_A,N_B$ be the declared
-positive capital normalizers and define
-$\delta_i^w=a_i^A/N_A-a_i^B/N_B$. Payoff-rate width is
-$\sum_{i\in U}|\delta_i^w|(r_i+\lambda)$, default-rate width is
-$\sum_{i\in U}|\delta_i^w|$, and miscoverage-rate width is
-$\sum_{i\in U}|\delta_i^w|\,|m_i(1)-m_i(0)|$. The fully invested policies use
-$N_A=N_B=B$; the floor-with-cash diagnostic also uses committed capital $B$
-rather than renormalizing away cash. Hence unresolved outcomes alone do not
-determine identification loss: width depends on where the policies disagree in
-exposure and, for miscoverage, on prediction-set geometry. These are
-finite-archive identification intervals, not confidence intervals.
+For normalized exposure difference
+$\delta_i^w=a_i^A/N_A-a_i^B/N_B$, payoff-, default-, and miscoverage-rate
+widths are respectively $\sum_U|\delta_i^w|(r_i+\lambda)$,
+$\sum_U|\delta_i^w|$, and
+$\sum_U|\delta_i^w||m_i(1)-m_i(0)|$. Here $N_A=N_B=B$, including the
+floor-with-cash diagnostic. Identification loss therefore depends on exposure
+disagreement and set geometry, not merely the unresolved count.
 
 ## Declared comparator sensitivity envelope
 
@@ -992,15 +787,10 @@ the proof map and Appendix G states the corresponding claim boundaries.
 <!-- claim:coverage.five_models_all_windows_below_nominal -->
 <!-- claim:coverage.exact_exchangeability_transport_test -->
 
-Under the active six-month endpoint, every five-stratum recipe uses the frozen
-split-conformal rank rule on its residual window. All 40 learner-window sharp
-coverage upper endpoints are below 0.90. CatBoost resolved coverage is
-0.8659--0.8792; after retaining all 12,076 unresolved candidates, its bounds
-range from [0.8425, 0.8696] to [0.8570, 0.8826]. Logistic is closer to nominal,
-with resolved coverage 0.8732--0.8931 and maximum upper endpoint 0.8962. The
-pricing-excluded scorecard supplies the largest upper endpoint, 0.8977. Each
-upper endpoint already assigns every unresolved loan its coverage-maximizing
-binary label and preserves empty sets as never covered.
+All 40 learner-window sharp coverage upper endpoints are below 0.90. CatBoost
+bounds range from [0.8425,0.8696] to [0.8570,0.8826]; the largest upper endpoint
+across models is 0.8977. Each upper endpoint already assigns every unresolved
+loan its coverage-maximizing label and preserves empty sets as uncovered.
 
 These 40 statements are uniform finite-archive identification results, not
 sampling confidence intervals and not, by themselves, a rejection of conformal
@@ -1009,11 +799,7 @@ rank-reference decisions.
 
 ![Panel A reports all 40 resolved coverages (open dots) and sharp all-candidate completion bounds (segments) on a focused scale; the segment and dot use their stated all-candidate and resolved denominators and are not estimate-plus-error bars. Panel B reports whether each stronger joint-block null meets the locked nominal Bonferroni-within-cell and Holm-across-cell reporting thresholds. Because the family and pattern were inspected before locking, these flags do not claim post-selection FWER control. The dashed line is nominal 0.90.](../reports/crpto/figures/crpto_ijds_v4_fig1_coverage.png){#fig-coverage width=95%}
 
-Online Supplement Tables S6 and S6A report the full coverage and set geometry.
-For CatBoost, AvgC is 1.128128--1.183942, singleton share is
-0.789177--0.839736, empty-set share is 0.012327--0.016068, and two-label share
-is 0.144196--0.196736. Table S6A reports `{0}` and `{1}` separately rather than
-allowing their sum to hide orientation.
+Supplement Tables S6--S6A report every bound and set-geometry component.
 
 <!-- claim:coverage.resolved_label_diagnostic_descriptive -->
 
@@ -1040,64 +826,37 @@ PSI summaries are descriptive controls rather than unbiased estimates for all
 376,890 candidates, a model contest, or an identified explanation of the
 coverage gap.
 
-The separate combined-rank analysis places 31 of 40 learner-window joint-block
-intersection nulls past the locked nominal thresholds: 8/8 CatBoost, 4/8
-logistic, 8/8 monotonic CatBoost, 6/8 platform WOE, and 5/8 pricing-excluded
-WOE. The nine nonflags are logistic
-W1--W4, platform WOE W1--W2, and pricing-excluded WOE W1--W3. All calibration
-threshold ties are singletons and no target residual equals a threshold, but
-this observed tie census does not prove continuity. Online Supplement Tables
-S6B--S6C report all 40 cell flags and 200 stratum rows. The null treats each
-calibration-plus-target block as jointly exchangeable and is stronger than the
-usual single-future-point condition. Because
-the exploratory pattern was seen before the V1 lock, the result is
-post-inspection retrospective reporting, not post-selection FWER control,
-preregistration, or study-wide confirmation. A flag does not identify a shift
-mechanism or directly refute pointwise split-conformal validity; a nonflag does
-not establish exchangeability.
+The combined-rank analysis places 31/40 joint-block intersections past locked
+nominal thresholds: 8 CatBoost, 4 logistic, 8 monotonic CatBoost, 6 platform
+WOE, and 5 pricing-excluded WOE cells. Tables S6B--S6C give all cells and
+strata. This stronger calibration-plus-target-block null is post-inspection;
+the flags have no post-selection FWER or theorem-failure interpretation, and
+nonflags do not establish exchangeability.
 
 <!-- claim:sensitivity.label_mondrian_complete_mixed -->
 <!-- claim:sensitivity.label_mondrian_common_completion_gap -->
 
-Label-Mondrian calibration [@ding2023] materially redistributes coverage. The
-resolved nondefault range falls to 0.885412--0.903457 while the resolved default
-range rises to 0.876044--0.906533. Marginally, 27/40 learner-window upper
-endpoints remain below 0.90, 12 cross nominal, and one has lower bound at or
-above nominal. Across the complete 400 label-stratum categories, 109 are robust
-shortfalls, 185 cross nominal, and 106 have lower bound at or above nominal.
-For each aggregate gap endpoint, every unresolved loan receives one assignment
-shared by both class ratios; the two endpoints may optimize over different
-completions. All 40 aggregate gap bounds cross zero. Within the 200 score
-strata, however, 51 bounds are positive, 37 are negative, and 112 cross zero.
-
-The improvement is expensive: AvgC becomes 1.723718--1.785468, two-label sets
-become 72.37%--78.55%, and singleton share falls to 21.45%--27.63%; empty sets
-are eliminated. Label-Mondrian sharply reduces the aggregate resolved-label
-gap, but it does not equalize score-stratum coverage: 88 of 200 sharp
-stratum-level gap ranges exclude zero. It neither uniformly restores nominal
-finite-archive coverage nor establishes within-label exchangeability. Tables S6D--S6F report all
-40/200/400 rows; the 400 categories are not multiplicity-adjusted tests.
+Label-Mondrian calibration [@ding2023] raises default coverage: 27/40 marginal
+upper endpoints remain below 0.90, 12 cross, and one lower endpoint reaches
+nominal. Yet AvgC rises to 1.724--1.785 and two-label sets to 72.37%--78.55%.
+All 40 aggregate class-gap bounds cross zero, while 88/200 stratum gaps exclude
+zero. It therefore neither uniformly repairs coverage nor establishes
+within-label exchangeability; Tables S6D--S6F give all 40/200/400 rows.
 
 <!-- claim:sensitivity.missingness_encoding_recurrence -->
 <!-- claim:sensitivity.second_origin_coverage_recurrence -->
 <!-- claim:sensitivity.fit_label_completion_coverage_recurrence -->
 
-The sentinel, explicit-indicator, and native-null CatBoost encodings leave all
-eight upper endpoints below 0.90 (maxima 0.882597, 0.884332, and 0.880037). At
-loan-specific cutoffs 39 calendar months after issue-month end, April--June
-2016 has 74,537 candidates (73,934/603 resolved/unresolved) and maximum
-0.879120; April--June 2017 has 77,105 (66,037/11,068) and maximum 0.875261. All
-eight endpoints remain below 0.90 at both origins. Tables S7C--S7D give
-coverage and the complete six-month endpoint census; no encoding, model, or
-origin is selected, and these are not independent replications, exact
-day-level loan ages, a missingness mechanism, or prospective invariance.
+All eight upper endpoints remain below 0.90 for sentinel, indicator, and
+native-null encodings (maxima 0.8826, 0.8843, 0.8800) and at individual
+39-calendar-month cutoffs for the 2016 and 2017 origins (maxima 0.8791 and
+0.8753). Tables S7C--S7D report the complete censuses. These shared-chronology
+sensitivities are neither independent replications nor exact day-age matches.
 
-A four-scenario refit addresses 215 cutoff-unavailable labels (41 PD, 24 Platt,
-150 conformal). Observed-only, all-nondefault, all-default, and later-terminal
-completion leave all 32 upper bounds below 0.90, with scenario maxima
-0.8826--0.884669; none is selected. This recurrence is a deterministic
-sensitivity, not joint-block rank-reference inference for those refits or a
-funded-set result.
+Observed-only, all-nondefault, all-default, and later-terminal completion of 215
+cutoff-unavailable fit labels leave all 32 upper bounds below 0.90 (maxima
+0.8826--0.8847). This is deterministic sensitivity, not rank-reference or
+funded-set inference.
 
 ## A prevalence crossing coincides with a change in binary interval geometry
 
