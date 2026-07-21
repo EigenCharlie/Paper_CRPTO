@@ -147,6 +147,12 @@ def apply_binary_outcome_recipe(
 ) -> tuple[np.ndarray, np.ndarray, np.ndarray]:
     """Apply the frozen recipe without holdout-learned widening or floors."""
     point = np.asarray(probabilities, dtype=float)
+    if point.ndim != 1:
+        raise ValueError("Conformal probabilities must be a one-dimensional vector.")
+    if not bool(np.isfinite(point).all()):
+        raise ValueError("Conformal probabilities must be finite.")
+    if bool(np.any((point < 0.0) | (point > 1.0))):
+        raise ValueError("Conformal probabilities must lie in [0, 1].")
     groups = assign_conformal_groups(point, recipe.bin_edges)
     quantiles = np.asarray(recipe.residual_quantiles, dtype=float)[groups]
     lower = np.clip(point - quantiles, 0.0, 1.0)

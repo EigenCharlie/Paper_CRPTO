@@ -1,0 +1,57 @@
+schema_version: "2026-07-21.1"
+phase: "evaluation_outcome_free_threshold_freeze"
+run_tag: "ijds-label-mondrian-freeze-2026-07-21-v1"
+protocol_tag: "protocol/ijds-label-mondrian-freeze-2026-07-21-v1"
+
+source:
+  credit_control_freeze:
+    path: "models/experiments/ijds_audit/ijds-credit-risk-controls-2026-07-13-v1b/protocol_freeze.json"
+    bytes: 25908
+    sha256: "da4805e644bcf5decfbb0a67c0c81a5b9dd61f3ab2e17d3dc5264100e7eb4d35"
+  scores:
+    path: "data/processed/experiments/ijds_audit/ijds-credit-risk-controls-2026-07-13-v1b/prediction/scores.parquet"
+    bytes: 30407406
+    sha256: "5795bc0a75be90e86d37cf7d297f4b4fd6e6604b38f8179bc5042c024a53a8dc"
+  recipes:
+    path: "models/experiments/ijds_audit/ijds-credit-risk-controls-2026-07-13-v1b/prediction/residual_recipes.json"
+    bytes: 187689
+    sha256: "969ecbefe46bec4893a03be57385eda29b33dd291d73e7c0120f6d488a9e9936"
+  fit_audit:
+    path: "data/processed/experiments/ijds_audit/ijds-credit-risk-controls-2026-07-13-v1b/prediction/residual_fit_audit.parquet"
+    bytes: 45955332
+    sha256: "396c30d9bec7d222220cfe6f9870ab4994cf5c33e6da8c9e4ebbd99153155353"
+
+design:
+  alpha: 0.10
+  taxonomy_groups: 5
+  learners:
+    - "catboost_platt"
+    - "numeric_logistic_platt"
+    - "catboost_monotonic_platt"
+    - "woe_scorecard_platform_platt"
+    - "woe_scorecard_borrower_platt"
+  window_ids:
+    - "w01_2012m01_m06"
+    - "w02_2012m02_m07"
+    - "w03_2012m03_m08"
+    - "w04_2012m04_m09"
+    - "w05_2012m05_m10"
+    - "w06_2012m06_m11"
+    - "w07_2012m07_m12"
+    - "w08_2012m08_2013m01"
+  expected_threshold_cells: 400
+
+output:
+  data_root: "data/processed/experiments/ijds_audit"
+  model_root: "models/experiments/ijds_audit"
+  thresholds: "prediction/label_mondrian_thresholds.parquet"
+  freeze: "protocol_freeze.json"
+  execution_receipt: "execution_receipt.json"
+
+interpretation:
+  evaluation_outcomes_joined: false
+  learner_or_window_selected: false
+  label_conditional_transport_guarantee: false
+  selected_set_guarantee: false
+  funded_set_guarantee: false
+  fairness_claim: false

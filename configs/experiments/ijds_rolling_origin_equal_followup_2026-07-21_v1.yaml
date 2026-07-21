@@ -1,0 +1,125 @@
+schema_version: "2026-07-21.1"
+protocol_status: "locked_retrospective_equal_followup_coverage_evaluation"
+protocol_tag: "protocol/ijds-rolling-origin-equal-followup-2026-07-21-v1"
+run_tag: "ijds-rolling-origin-equal-followup-2026-07-21-v1"
+
+protocol_document: "docs/research/ijds_rolling_origin_equal_followup_protocol_2026-07-21.md"
+protocol_lineage_files:
+  - "docs/research/ijds_binary_geometry_frontier_v4_protocol_2026-07-12.md"
+  - "docs/research/ijds_evaluation_endpoint_recovery_v3_protocol_2026-07-14.md"
+  - "docs/research/ijds_rolling_origin_stability_protocol_2026-07-12.md"
+  - "docs/research/ijds_rolling_origin_stability_v2_erratum_2026-07-12.md"
+  - "docs/research/ijds_rolling_origin_endpoint_v3_protocol_2026-07-15.md"
+  - "docs/research/ijds_rolling_origin_primary_recovery_protocol_2026-07-21.md"
+  - "docs/research/ijds_rolling_origin_equal_followup_protocol_2026-07-21.md"
+
+raw_source:
+  path: "data/raw/Loan_status_2007-2020Q3.csv"
+  bytes: 1773470505
+  sha256: "5878af2a088f8ab5214c9337289fb8b5eb6c6338fd3f417b6cdc18513dc6f35f"
+  csv_chunksize: 250000
+  membership_uses_status: false
+
+evaluation:
+  origin_ids: ["primary_2016", "rolling_2017"]
+  origin_years: [2016, 2017]
+  common_issue_month_numbers: [4, 5, 6]
+  common_primary_months: 3
+  common_followup_months_after_quarter_end: 39
+  charged_off_reporting_lag_months: 6
+  alpha: 0.10
+  nominal_coverage: 0.90
+  learner: "catboost_platt"
+  score_column: "pd_catboost_platt"
+  taxonomy_groups: 5
+  aggregate_stratum: -1
+  expected_windows_per_origin: 8
+  expected_coverage_cells: 16
+  complete_endpoint_reason_rows_per_origin: 5
+  no_model_selection: true
+  no_origin_selection: true
+  no_window_selection: true
+  no_pooling: true
+  no_portfolio_evaluation: true
+
+origins:
+  - id: "primary_2016"
+    year: 2016
+    issue_periods: ["2016-04", "2016-05", "2016-06"]
+    issue_quarter_end: "2016-06-30"
+    evaluation_cutoff: "2019-09-30"
+    expected_candidate_rows: 74537
+    base_config: "configs/experiments/ijds_binary_geometry_frontier_v4_2026-07-12.yaml"
+    window_ids:
+      - "w01_2012m01_m06"
+      - "w02_2012m02_m07"
+      - "w03_2012m03_m08"
+      - "w04_2012m04_m09"
+      - "w05_2012m05_m10"
+      - "w06_2012m06_m11"
+      - "w07_2012m07_m12"
+      - "w08_2012m08_2013m01"
+    source_freeze:
+      path: "models/experiments/ijds_audit/ijds-binary-geometry-frontier-v4-2026-07-12-v1/protocol_freeze.json"
+      bytes: 20362
+      sha256: "c2b3dc2d18c9fed80708682d5a0369c80c89643e2d28024418522d954ebe667c"
+      run_tag: "ijds-binary-geometry-frontier-v4-2026-07-12-v1"
+      protocol_tag: "protocol/ijds-binary-geometry-frontier-v4-2026-07-12-v1"
+      protocol_commit: "2f8a7606e4eb65aa3ae3701fb3af8d9a51c953cd"
+      required_artifacts:
+        scores:
+          path: "data/processed/experiments/ijds_audit/ijds-binary-geometry-frontier-v4-2026-07-12-v1/prediction/scores.parquet"
+          bytes: 14212211
+          sha256: "4053efdbf13066355bb772233231e5fe4ccb436ca75aaf873fb14e213c1e319c"
+        recipes:
+          path: "models/experiments/ijds_audit/ijds-binary-geometry-frontier-v4-2026-07-12-v1/prediction/residual_recipes.json"
+          bytes: 74218
+          sha256: "0874a5e9eea37adce302f4a059d4ccde5570230a7fdabcc29ceab410988f207a"
+        fit_audit:
+          path: "data/processed/experiments/ijds_audit/ijds-binary-geometry-frontier-v4-2026-07-12-v1/prediction/residual_fit_audit.parquet"
+          bytes: 18436852
+          sha256: "a80efcedfe749c52c0624536d361a8b1e9e5121901ee9b91ad4c746c68da107c"
+
+  - id: "rolling_2017"
+    year: 2017
+    issue_periods: ["2017-04", "2017-05", "2017-06"]
+    issue_quarter_end: "2017-06-30"
+    evaluation_cutoff: "2020-09-30"
+    expected_candidate_rows: 77105
+    base_config: "configs/experiments/ijds_rolling_origin_2017_2026-07-12_v2.yaml"
+    window_ids:
+      - "w01_2013m01_m06"
+      - "w02_2013m02_m07"
+      - "w03_2013m03_m08"
+      - "w04_2013m04_m09"
+      - "w05_2013m05_m10"
+      - "w06_2013m06_m11"
+      - "w07_2013m07_m12"
+      - "w08_2013m08_2014m01"
+    source_freeze:
+      path: "models/experiments/ijds_audit/ijds-rolling-origin-2017-2026-07-12-v2/protocol_freeze.json"
+      bytes: 21068
+      sha256: "e224e1ae534435d1b166a07c50fb1ce907b07d36257f37e826ee41a0cb086759"
+      run_tag: "ijds-rolling-origin-2017-2026-07-12-v2"
+      protocol_tag: "protocol/ijds-rolling-origin-stability-2026-07-12-v2"
+      protocol_commit: "9e689b2e3ca18aae5a2a967cc186da5dcd140891"
+      required_artifacts:
+        scores:
+          path: "data/processed/experiments/ijds_audit/ijds-rolling-origin-2017-2026-07-12-v2/prediction/scores.parquet"
+          bytes: 11305405
+          sha256: "38c8ce704f9fc332e72c84c69864b4f8929fd4e46c47db9ec50dd015482b6e75"
+        recipes:
+          path: "models/experiments/ijds_audit/ijds-rolling-origin-2017-2026-07-12-v2/prediction/residual_recipes.json"
+          bytes: 74912
+          sha256: "087fff482122b4d984798b324d906dbfb2e68f861a0df97d6fe5622876c16be2"
+        fit_audit:
+          path: "data/processed/experiments/ijds_audit/ijds-rolling-origin-2017-2026-07-12-v2/prediction/residual_fit_audit.parquet"
+          bytes: 46903218
+          sha256: "74e00eff213efc2b21d7e311d30edeb85fb53864f7f0250e23fe01270a5cc38b"
+
+output:
+  data_root: "data/processed/experiments/ijds_audit"
+  model_root: "models/experiments/ijds_audit"
+  deterministic_summary: "rolling_origin_equal_followup_summary.json"
+  execution_receipt: "execution_receipt.json"
+  immutability: "hard_no_overwrite_choose_fresh_run_tag"

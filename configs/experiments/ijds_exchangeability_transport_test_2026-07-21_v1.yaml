@@ -1,0 +1,114 @@
+schema_version: "2026-07-21.1"
+run_tag: "ijds-exchangeability-transport-test-2026-07-21-v1"
+protocol_tag: "protocol/ijds-exchangeability-transport-test-2026-07-21-v1"
+
+source:
+  active_v5_config:
+    path: "configs/experiments/ijds_binary_geometry_frontier_v4_2026-07-15_v5.yaml"
+    bytes: 1371
+    sha256: "c749befbd0ab7e0f8d6fcded7e7c730cae998032f897f65c7e7673d2a12c3715"
+  credit_control_summary:
+    path: "models/experiments/ijds_audit/ijds-credit-risk-controls-2026-07-15-v5/credit_risk_controls_summary.json"
+    bytes: 23359
+    sha256: "37c0a5c224b62ee3f47259aea4231df26ea184d3666e7fab80431ad26d611715"
+  temporal_coverage:
+    path: "data/processed/experiments/ijds_audit/ijds-credit-risk-controls-2026-07-15-v5/evaluation/temporal_coverage.parquet"
+    bytes: 502111
+    sha256: "968872d3dd119cf89cebceb969d4d155fb3a75e010026e023ae10d1cede9e58c"
+  credit_control_freeze:
+    path: "models/experiments/ijds_audit/ijds-credit-risk-controls-2026-07-13-v1b/protocol_freeze.json"
+    bytes: 25908
+    sha256: "da4805e644bcf5decfbb0a67c0c81a5b9dd61f3ab2e17d3dc5264100e7eb4d35"
+  scores:
+    path: "data/processed/experiments/ijds_audit/ijds-credit-risk-controls-2026-07-13-v1b/prediction/scores.parquet"
+    bytes: 30407406
+    sha256: "5795bc0a75be90e86d37cf7d297f4b4fd6e6604b38f8179bc5042c024a53a8dc"
+  recipes:
+    path: "models/experiments/ijds_audit/ijds-credit-risk-controls-2026-07-13-v1b/prediction/residual_recipes.json"
+    bytes: 187689
+    sha256: "969ecbefe46bec4893a03be57385eda29b33dd291d73e7c0120f6d488a9e9936"
+  fit_audit:
+    path: "data/processed/experiments/ijds_audit/ijds-credit-risk-controls-2026-07-13-v1b/prediction/residual_fit_audit.parquet"
+    bytes: 45955332
+    sha256: "396c30d9bec7d222220cfe6f9870ab4994cf5c33e6da8c9e4ebbd99153155353"
+  raw_archive:
+    path: "data/raw/Loan_status_2007-2020Q3.csv"
+    bytes: 1773470505
+    sha256: "5878af2a088f8ab5214c9337289fb8b5eb6c6338fd3f417b6cdc18513dc6f35f"
+
+design:
+  nominal_miscoverage: 0.10
+  taxonomy_groups: 5
+  role: "primary_oot"
+  test_sidedness: "upper_tail_excess_miscoverage"
+  null_law: "exchangeable_split_conformal_beta_binomial_upper_bound"
+  unresolved_primary_count: "sharp_loanwise_minimum_misses"
+  issue_months:
+    - "2016-04"
+    - "2016-05"
+    - "2016-06"
+    - "2016-07"
+    - "2016-08"
+    - "2016-09"
+    - "2016-10"
+    - "2016-11"
+    - "2016-12"
+    - "2017-01"
+    - "2017-02"
+    - "2017-03"
+    - "2017-04"
+    - "2017-05"
+    - "2017-06"
+  learners:
+    - "catboost_platt"
+    - "numeric_logistic_platt"
+    - "catboost_monotonic_platt"
+    - "woe_scorecard_platform_platt"
+    - "woe_scorecard_borrower_platt"
+  window_ids:
+    - "w01_2012m01_m06"
+    - "w02_2012m02_m07"
+    - "w03_2012m03_m08"
+    - "w04_2012m04_m09"
+    - "w05_2012m05_m10"
+    - "w06_2012m06_m11"
+    - "w07_2012m07_m12"
+    - "w08_2012m08_2013m01"
+  expected_candidates: 376890
+  expected_resolved: 364814
+  expected_unresolved: 12076
+  expected_resolved_y0: 307842
+  expected_resolved_y1: 56972
+
+multiplicity:
+  familywise_alpha: 0.05
+  strata_per_cell: 5
+  within_cell_method: "bonferroni"
+  cell_family_size: 40
+  across_cells_method: "holm"
+  dependence_requirement: "none"
+
+output:
+  data_root: "data/processed/experiments/ijds_audit"
+  model_root: "models/experiments/ijds_audit"
+  strata_table: "evaluation/exchangeability_transport_strata.parquet"
+  cell_table: "evaluation/exchangeability_transport_cells.parquet"
+  summary: "exchangeability_transport_test_summary.json"
+  execution_receipt: "execution_receipt.json"
+
+interpretation:
+  retrospective_after_archive_inspection: true
+  exploratory_test_implementation_and_pattern_seen_before_lock: true
+  preregistered: false
+  confirmatory: false
+  continuous_scores_required_for_exact_count_law: true
+  ties_use_conservative_rank_tail_bound: true
+  failure_to_reject_establishes_exchangeability: false
+  rejection_identifies_cause_of_shift: false
+  unresolved_outcomes_modeled_probabilistically: false
+  learner_window_or_stratum_selected: false
+  conformal_method_repaired: false
+  selected_set_or_funded_set_validity: false
+  prospective_or_deployment_claim: false
+  nominal_fwer_scope: "fixed_post_inspection_40_cell_lineage_not_study_wide"
+  stratum_flags_control_global_200_test_fwer: false

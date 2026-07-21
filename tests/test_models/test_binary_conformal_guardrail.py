@@ -7,6 +7,7 @@ import pytest
 
 from src.models.binary_conformal_guardrail import (
     BinaryOutcomeConformalRecipe,
+    apply_binary_outcome_recipe,
     assign_conformal_groups,
     fit_binary_outcome_recipe,
 )
@@ -74,3 +75,31 @@ def test_old_recipe_payload_deserializes_with_provenance_defaults() -> None:
 
     assert recipe.taxonomy_provenance == "unspecified_legacy_recipe"
     assert recipe.taxonomy_method == "unspecified_legacy_taxonomy"
+
+
+@pytest.mark.parametrize(
+    ("probabilities", "message"),
+    [
+        (np.array([np.nan]), "finite"),
+        (np.array([np.inf]), "finite"),
+        (np.array([-0.01]), r"\[0, 1\]"),
+        (np.array([1.01]), r"\[0, 1\]"),
+        (np.array([[0.2]]), "one-dimensional"),
+    ],
+)
+def test_apply_recipe_rejects_invalid_probability_vectors(
+    probabilities: np.ndarray,
+    message: str,
+) -> None:
+    recipe = BinaryOutcomeConformalRecipe(
+        alpha=0.1,
+        requested_groups=1,
+        bin_edges=(0.0, 1.0),
+        residual_quantiles=(0.2,),
+        group_counts=(10,),
+        finite_sample_ranks=(10,),
+        raw_finite_sample_ranks=(10,),
+    )
+
+    with pytest.raises(ValueError, match=message):
+        apply_binary_outcome_recipe(probabilities, recipe)
