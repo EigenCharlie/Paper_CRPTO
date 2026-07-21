@@ -56,6 +56,10 @@ active_scientific_contract:
       - scripts/experiments/run_ijds_policy_support_tie_audit.py
       - scripts/experiments/run_ijds_conformal_set_diagnostics.py
       - scripts/experiments/run_ijds_rolling_origin_primary_recovery.py
+      - scripts/experiments/run_ijds_exchangeability_transport_test.py
+      - scripts/experiments/run_ijds_rolling_origin_equal_followup.py
+      - scripts/experiments/run_ijds_label_mondrian_freeze.py
+      - scripts/experiments/run_ijds_label_mondrian_evaluation.py
     support_tools:
       - scripts/build_ijds_policy_support_tie_evidence.py
       - scripts/manage_ijds_dvc_capsule.py
@@ -90,8 +94,10 @@ active_scientific_contract:
     conformal: >-
       Five score strata are fixed from 2011 scores. Exact binary-outcome
       residual ranks are reported for all eight eligible six-month windows;
-      an observed-only fit and three declared completion rules stress labels
-      unavailable at fit time.
+      a separate combined-rank diagnostic audits the stronger within-stratum
+      joint-block exchangeability null, and a complete label-Mondrian sensitivity reports all
+      400 score-stratum-by-label categories. An observed-only fit and three
+      declared completion rules stress labels unavailable at fit time.
     decision: >-
       Gamma {0,.25,.50,.75,1} is evaluated under objective-matched and
       normalized-score rulers at {.25,.50,.75}; gamma 1 minus gamma 0 is the
@@ -134,6 +140,12 @@ active_scientific_contract:
     - reports/crpto/tables/crpto_ijds_v4_tableS9_missingness_encoding_sensitivity.csv
     - reports/crpto/tables/crpto_ijds_v4_tableS7C_rolling_origin_recurrence.csv
     - reports/crpto/tables/crpto_ijds_v4_tableS6A_conformal_set_diagnostics.csv
+    - reports/crpto/tables/crpto_ijds_v4_tableS6B_exchangeability_cells.csv
+    - reports/crpto/tables/crpto_ijds_v4_tableS6C_exchangeability_strata.csv
+    - reports/crpto/tables/crpto_ijds_v4_tableS6D_label_mondrian_cells.csv
+    - reports/crpto/tables/crpto_ijds_v4_tableS6E_label_mondrian_strata.csv
+    - reports/crpto/tables/crpto_ijds_v4_tableS6F_label_mondrian_categories.csv
+    - reports/crpto/tables/crpto_ijds_v4_tableS7D_equal_followup_census.csv
     - reports/crpto/tables/crpto_ijds_v4_tableS11_fit_label_completion.csv
     - reports/crpto/tables/crpto_ijds_v4_tableS12_allocation_granularity.csv
     - reports/crpto/figures/crpto_ijds_v4_fig1_coverage.pdf
@@ -154,9 +166,15 @@ claim_boundaries:
     - "The status-indexed payoff proxy is not cash-flow return, NPV, IRR, or welfare."
     - "Fit-label scenarios are declared stresses, not sharp bounds over all assignments."
     - "USD 25 floor rounding is a diagnostic, not an optimized integer policy."
+    - "Finite-archive shortfall is distinct from a joint-block rank-reference flag."
+    - "The exact rank tail is retrospective and post-inspection; its locked Bonferroni--Holm cutoffs are nominal reporting thresholds, not post-selection FWER control."
+    - "Joint-block exchangeability is stronger than the usual calibration-plus-one-future-point split-conformal condition."
+    - "Label-Mondrian is a complete sensitivity, not restored temporal validity."
   forbidden:
     - "Selected model, gamma, ruler, coordinate, cap, comparator, or policy."
     - "Universal portfolio direction or selected-set conformal guarantee."
+    - "Conformal theorem failure inferred from a realized coverage endpoint alone."
+    - "Exchangeability established by a nonflag, usual pointwise split-conformal validity refuted by a joint-block flag, or a shift cause identified by a flag."
     - "Markov, deployment, causal, or fair-lending certificate."
 
 secondary_targets:

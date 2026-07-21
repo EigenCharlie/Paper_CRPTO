@@ -130,6 +130,13 @@ def test_active_capsule_paths_exist() -> None:
         *(descriptor["path"] for descriptor in evidence["paper_artifacts"].values()),
         *support_artifacts,
     }
+    paper_artifact_paths = {
+        descriptor["path"] for descriptor in evidence["paper_artifacts"].values()
+    }
+    assert len(paper_artifact_paths) == 31
+    assert len({path for path in paper_artifact_paths if path.endswith(".csv")}) == 25
+    assert len({path for path in paper_artifact_paths if path.endswith((".pdf", ".png"))}) == 6
+    assert len(registry["dvc_pointers"]) == 45
     assert set(active["required_artifacts"]) == expected_artifacts
     for artifact in active["required_artifacts"]:
         assert Path(artifact).is_file(), artifact
@@ -143,6 +150,12 @@ def test_active_capsule_paths_exist() -> None:
     for group in ("paper_pipeline", "protocol_entrypoints", "support_tools"):
         for path in code_surface[group]:
             assert Path(path).is_file(), path
+    assert {
+        "scripts/experiments/run_ijds_exchangeability_transport_test.py",
+        "scripts/experiments/run_ijds_rolling_origin_equal_followup.py",
+        "scripts/experiments/run_ijds_label_mondrian_freeze.py",
+        "scripts/experiments/run_ijds_label_mondrian_evaluation.py",
+    }.issubset(code_surface["protocol_entrypoints"])
 
 
 def test_active_capsule_does_not_advertise_retired_result_families() -> None:

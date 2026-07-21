@@ -36,13 +36,21 @@ order before changing scientific code or paper claims:
    - common April--June horizon recovery and explicit rejection of the stale 15-month comparison.
 17. [`docs/research/ijds_conformal_set_diagnostics_protocol_2026-07-21.md`](docs/research/ijds_conformal_set_diagnostics_protocol_2026-07-21.md)
    - complete binary-set efficiency and resolved-label diagnostic boundary.
-18. [`configs/ijds_active_evidence_sources.yaml`](configs/ijds_active_evidence_sources.yaml)
+18. [`docs/research/ijds_exchangeability_transport_test_protocol_2026-07-21.md`](docs/research/ijds_exchangeability_transport_test_protocol_2026-07-21.md)
+   - exact combined-rank law, unresolved-completion p-value, and multiplicity boundary.
+19. [`docs/research/ijds_exchangeability_transport_test_interpretive_addendum_2026-07-21.md`](docs/research/ijds_exchangeability_transport_test_interpretive_addendum_2026-07-21.md)
+   - joint-block null and post-inspection nominal-threshold correction.
+20. [`docs/research/ijds_rolling_origin_equal_followup_protocol_2026-07-21.md`](docs/research/ijds_rolling_origin_equal_followup_protocol_2026-07-21.md)
+   - quarter-level minimum-follow-up comparison and stop rules.
+21. [`docs/research/ijds_label_mondrian_sensitivity_protocol_2026-07-21.md`](docs/research/ijds_label_mondrian_sensitivity_protocol_2026-07-21.md)
+   - outcome-free classwise thresholds and complete 40/200/400 evaluation boundary.
+22. [`configs/ijds_active_evidence_sources.yaml`](configs/ijds_active_evidence_sources.yaml)
    - active lineage identities and exact DVC-pointer authority.
-19. [`configs/ijds_claim_ledger.yaml`](configs/ijds_claim_ledger.yaml)
+23. [`configs/ijds_claim_ledger.yaml`](configs/ijds_claim_ledger.yaml)
    - executable nonnumeric claim and surface contract.
-20. [`reports/crpto/ijds_binary_geometry_frontier_v4_evidence.json`](reports/crpto/ijds_binary_geometry_frontier_v4_evidence.json)
+24. [`reports/crpto/ijds_binary_geometry_frontier_v4_evidence.json`](reports/crpto/ijds_binary_geometry_frontier_v4_evidence.json)
    - the only active paper-facing evidence manifest.
-21. [`.codex/skills/crpto/SKILL.md`](.codex/skills/crpto/SKILL.md) - concise
+25. [`.codex/skills/crpto/SKILL.md`](.codex/skills/crpto/SKILL.md) - concise
    execution and writing guidance.
 
 Minimum rules:

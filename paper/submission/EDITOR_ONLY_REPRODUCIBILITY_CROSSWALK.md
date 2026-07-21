@@ -51,15 +51,35 @@ scenario and reconciles the baseline exactly to the active evaluation.
 Structural V1--V4 remain stopped provenance; V5 is a data-only replay
 dependency for V6 and is not paper-facing evidence.
 
-The common-three-month two-origin recurrence combines primary-origin recovery
-`ijds-rolling-origin-primary-recovery-2026-07-21-v1`, protocol-locked at commit
-`8bb24b819f0559036a4723ba83bd2c50354bc435`, with later-origin run
-`ijds-rolling-origin-2017-2026-07-15-v4`, protocol-locked at commit
-`e2bba580a0b07c145bd64ff61440973d6e31349b`. The resolved-label and set-efficiency
-diagnostic is `ijds-conformal-set-diagnostics-2026-07-21-v1`, protocol-locked at
-commit `5248099e2c02fa0340acb6d9c0ef5fbaa1b4e3cf`. The missingness recurrence is
-`ijds-missingness-sensitivity-2026-07-15-v3`, protocol-locked at commit
-`199afb083da37af6a51d5ba9e3c4d6280b952fe9`. These complete grids select no
+The active two-origin sensitivity is
+`ijds-rolling-origin-equal-followup-2026-07-21-v1`, protocol-locked at commit
+`c9d30b02885bac516ae21eae32c56120cf7d296e`. It evaluates April--June 2016 at
+September 30, 2019 and April--June 2017 at September 30, 2020, exactly 39
+months after each issue-quarter end. The earlier primary-recovery and 2017
+rolling-origin roots remain registered only as unequal-follow-up replay
+dependencies; they are not paper-facing evidence.
+
+The exact combined-rank reference analysis is
+`ijds-exchangeability-transport-test-2026-07-21-v1`, protocol-locked at commit
+`c9d30b02885bac516ae21eae32c56120cf7d296e`. It reports all 200 strata and all
+40 learner-window omnibus reference calculations, with Bonferroni within cell
+and Holm across cells. In 31/40 cells the reference p-values meet those locked
+nominal thresholds. The Beta--Binomial law assumes joint exchangeability of a
+calibration stratum with its entire target block, which is stronger than the
+usual one-future-point marginal split-conformal condition. The family and
+pattern were inspected before locking, so these flags provide no
+post-selection or study-wide FWER guarantee.
+
+The resolved-label and set-efficiency diagnostic is
+`ijds-conformal-set-diagnostics-2026-07-21-v1`, protocol-locked at commit
+`5248099e2c02fa0340acb6d9c0ef5fbaa1b4e3cf`. The label-Mondrian lineage uses
+outcome-free freeze `ijds-label-mondrian-freeze-2026-07-21-v1`, protocol-locked
+at commit `c9d30b02885bac516ae21eae32c56120cf7d296e`, followed by evaluation
+`ijds-label-mondrian-evaluation-2026-07-21-v1`, protocol-locked at commit
+`a341135eaf1ff32401a360fcb64c7a22fbf0b202`. It reports the complete 40/200/400
+grid and selects no learner, window, category, or method. The missingness
+sensitivity is `ijds-missingness-sensitivity-2026-07-15-v3`, protocol-locked at
+commit `199afb083da37af6a51d5ba9e3c4d6280b952fe9`. These complete grids select no
 model, encoding, origin, or observed-label subgroup.
 
 The fit-label completion sensitivity is
@@ -73,13 +93,17 @@ their freezes, summaries, and DVC roots are verified by the source registry.
 
 ## DVC Capsule
 
-The 37 DVC pointers are listed once in `configs/ijds_active_evidence_sources.yaml`.
+The 45 DVC pointers are listed once in `configs/ijds_active_evidence_sources.yaml`.
 They comprise data and model pointers for the active roots and sensitivities,
-plus the data-only structural replay dependency. Pull with:
+plus explicitly labeled replay dependencies, including the data-only
+structural V5 shard root and the unequal-follow-up origin roots. Pull with:
 
 ```powershell
 uv run --locked python scripts/manage_ijds_dvc_capsule.py pull
 ```
+
+The registered evidence builder emits one paper-facing manifest, 25 CSV
+tables, and three figure families in both PDF and PNG.
 
 Machine-local DVC credentials belong in `.dvc/config.local` and are never
 committed.

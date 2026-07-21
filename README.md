@@ -20,6 +20,9 @@ time roles before evaluation.
 | Resolved / unresolved at the six-month endpoint | 364,814 / 12,076 |
 | Coverage controls | 5 frozen learner specifications x 8 windows |
 | Largest all-candidate coverage upper bound | 0.897726 |
+| Joint-block rank diagnostic | 31 / 40 cells meet the locked nominal thresholds |
+| Equal-follow-up origin sensitivity | 16 / 16 upper bounds below 0.90 |
+| Label-Mondrian sensitivity | 27 / 40 marginal and 109 / 400 category shortfalls |
 | Two-ruler optimization solves | 6,240 |
 | Exact point-cap frontier | 3,067 caps |
 | Broad-support comparator envelopes crossing zero | 216 / 216 |
@@ -28,9 +31,21 @@ time roles before evaluation.
 | USD 25 floor diagnostic | maximum rate perturbation 0.001284 pp |
 
 Under the declared six-month outcome-availability rule, all 40 sharp
-all-candidate coverage upper bounds are below 0.90. Separately, the primary
-CatBoost eight-window pattern recurs under three feature-semantics-preserving
-missingness encodings and at a later retrospective origin. Portfolio direction
+all-candidate coverage upper bounds are below 0.90. That is a deterministic
+finite-archive fact, not by itself a rejection of split conformal. In a
+separate post-inspection combined-rank diagnostic, 31 of the 40 frozen
+learner-window cells meet the locked Bonferroni-within-cell and
+Holm-across-cell nominal thresholds. Its Beta--Binomial reference law assumes
+the stronger joint exchangeability of each calibration stratum together with
+its entire target block; it does not test or refute the usual one-future-point
+marginal split-conformal guarantee. Because the family and pattern were
+inspected before locking, the thresholds do not provide post-selection or
+study-wide FWER control. The primary CatBoost eight-window finding also recurs
+under three feature-semantics-preserving missingness encodings and at both April--June
+origins with cutoffs 39 months after issue-quarter end (equal quarter-level
+minimum, not exact loan-age, follow-up). Label-Mondrian calibration changes the
+40 marginal states to 27 shortfalls, 12 crossings, and one lower endpoint at or
+above nominal; it is a complete sensitivity, not a repair. Portfolio direction
 changes with the outcome-blind ruler, coordinate, and comparator support; no
 model, encoding, gamma, ruler, coordinate, scenario, or policy is selected.
 
@@ -49,7 +64,7 @@ Read these in order:
 5. [`paper/CRPTO_ijds.qmd`](paper/CRPTO_ijds.qmd)
 6. [`paper/supplement_ijds.qmd`](paper/supplement_ijds.qmd)
 
-The source registry owns lineage identities and 37 DVC pointers. The evidence
+The source registry owns lineage identities and 45 DVC pointers. The evidence
 manifest is the only numeric paper-facing manifest. The body QMD is the only
 editable source for the official submission TeX.
 

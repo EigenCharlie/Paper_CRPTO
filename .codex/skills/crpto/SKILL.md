@@ -22,11 +22,17 @@ Read first:
 13. `docs/research/ijds_allocation_granularity_sensitivity_protocol_2026-07-16.md`
 14. `docs/research/ijds_rolling_origin_primary_recovery_protocol_2026-07-21.md`
 15. `docs/research/ijds_conformal_set_diagnostics_protocol_2026-07-21.md`
-16. `reports/crpto/ijds_binary_geometry_frontier_v4_evidence.json`
-17. `docs/ACADEMIC_CONTEXT.md`
-18. `docs/SCOPE_AND_GOVERNANCE.md`
-19. `CONTRIBUTING.md`
-20. `EXTRACTION_MANIFEST.md`
+16. `docs/research/ijds_exchangeability_transport_test_protocol_2026-07-21.md`
+17. `docs/research/ijds_exchangeability_transport_test_interpretive_addendum_2026-07-21.md`
+18. `docs/research/ijds_rolling_origin_equal_followup_protocol_2026-07-21.md`
+19. `docs/research/ijds_label_mondrian_sensitivity_protocol_2026-07-21.md`
+20. `docs/research/applied_conformal_prediction_book_audit_2026-07-21.md`
+21. `docs/research/conformal_literature_corpus_audit_2026-07-21.md`
+22. `reports/crpto/ijds_binary_geometry_frontier_v4_evidence.json`
+23. `docs/ACADEMIC_CONTEXT.md`
+24. `docs/SCOPE_AND_GOVERNANCE.md`
+25. `CONTRIBUTING.md`
+26. `EXTRACTION_MANIFEST.md`
 
 Active evidence:
 
@@ -53,13 +59,22 @@ Active evidence:
 - endpoint resolution is partitioned exhaustively into 307,842 fully paid by
   cutoff, 56,972 charged off by cutoff, 11,551 nonterminal, 47 terminal after
   cutoff, and 478 terminal with missing availability date.
-- three missingness encodings and a horizon-corrected second retrospective
+- three missingness encodings and an equal-follow-up second retrospective
   origin are complete, bounded recurrences; the origin comparison uses
-  April--June at both origins (74,537 versus 77,105 candidates), and neither
-  family selects a representation or model.
+  April--June at both origins and cutoffs 39 months after each quarter end
+  (74,537 versus 77,105 candidates), equalizing minimum rather than exact
+  loan-level follow-up; neither family selects a representation or model.
 - all 40 five-model/window binary-set cells report AvgC, OneC, empty/two-label
   shares, and resolved-label coverage. The label stratification conditions on
   administrative resolution and is not all-candidate label-conditional validity.
+- the joint-block combined-rank reference diagnostic reports 200 strata and 40
+  learner-window intersection nulls, with nominal Bonferroni-within-cell and
+  Holm-across-cell thresholds. The block null is stronger than the usual
+  calibration-plus-one-target condition, and the post-inspection family has no
+  selective- or study-wide-FWER claim.
+- the label-Mondrian sensitivity freezes all 400 historical classwise
+  thresholds before the OOT outcome join and reports 40/200/400 summaries. It
+  is descriptive under temporal shift and is not a repair or fairness method.
 - four declared fit-label scenarios are complete; they stress 215
   unavailable fitting labels but are not sharp bounds over all assignments.
 - USD 25 floor-with-cash rounding is complete for all 1,440 portfolios and 96
@@ -71,7 +86,13 @@ Headline evidence:
   OOT upper bound is below 0.90; maximum `0.882597`;
 - every logistic-control upper bound is below 0.90; maximum `0.896222`;
 - monotonic CatBoost, platform WOE, and pricing-excluded WOE maxima are
-  `0.886489`, `0.894908`, and `0.897726`; all five fail in all eight windows;
+  `0.886489`, `0.894908`, and `0.897726`; all 40 finite-archive upper endpoints
+  are below nominal, which alone is not a theorem-failure claim;
+- the joint-block combined-rank lineage places `31/40` learner-window nulls
+  past locked nominal thresholds: `8/8` CatBoost, `4/8` logistic, `8/8`
+  monotonic CatBoost, `6/8` platform WOE, and `5/8` pricing-excluded WOE. A flag
+  neither directly refutes one-point validity nor identifies a cause, and a
+  nonflag does not establish exchangeability;
 - all `2,925,493` raw rows are audited; the `640,543` active rows exhaust the
   declared 36-month population rather than forming a convenience sample;
 - all 45 OptBinning problems are optimal; WOE/IV, monotonicity, calibration,
@@ -79,9 +100,11 @@ Headline evidence:
 - resolved-panel nondefault coverage is `0.982982`--`0.992714` and resolved
   default coverage is `0.232570`--`0.363916` across all 40 cells; this is a
   descriptive resolved-label diagnostic only;
-- on the common three-month origin horizon, the 2016 and 2017 maximum upper
-  bounds are `0.875364` and `0.874768`; the 15-month primary maximum remains a
-  separate main estimand;
+- with cutoffs 39 months after quarter end, the 2016 and 2017 maximum upper bounds are
+  `0.877685` and `0.874768`;
+- label-Mondrian leaves `27/40` marginal and `109/400` category upper endpoints
+  below 0.90; AvgC becomes `1.723718`--`1.785468` and `{0,1}` shares
+  `0.723718`--`0.785468`. All 40 aggregate class-gap bounds cross zero;
 - CatBoost stratum 2 crosses prevalence alpha from W7 to W8 and its residual
   quantile changes from `0.888435` to `0.111801`;
 - C2 match residual is at most `8.33e-17` and reconciles weak plug-in dominance;
@@ -127,6 +150,13 @@ Preserve these distinctions:
 - C2 plug-in dominance versus realized-outcome dominance;
 - exact declared comparator support versus universal baseline invariance;
 - tagged retrospective audit versus preregistration or confirmation.
+- deterministic finite-archive shortfall versus exact rank-reference
+  inference;
+- cell-level nominal Holm flags versus unadjusted stratum flags;
+- score-Mondrian marginal sets versus label-Mondrian classwise sets;
+- class-specific sharp ratio bounds versus gap endpoints that each use a
+  shared single-assignment completion for both class ratios (the two endpoint
+  completions may differ);
 - conformal-fit label timing versus evaluation-endpoint availability; these
   are separate one-factor sensitivities and were not crossed factorially.
 - complete structural conditionality versus a selected scenario, universal
@@ -137,7 +167,11 @@ Preserve these distinctions:
 
 Do not claim a learner, gamma, ruler, coordinate, or policy winner, universal
 direction, selected-set validity, Markov/tail certificate, causal effect, live
-deployment result, missingness mechanism, or independent temporal replication.
+deployment result, missingness mechanism, independent temporal replication,
+conformal theorem failure from a realized shortfall, ordinary one-point
+validity refuted by a joint-block flag, exchangeability from a nonflag,
+post-selection FWER, an identified shift mechanism from a flag, or label-Mondrian
+repair/equalized coverage.
 
 ## Evidence Workflow
 
@@ -156,11 +190,12 @@ just ijds-dvc-status
 ```
 
 The active builder verifies the V4, two-ruler, raw-data, credit-control,
-endpoint, structural, rolling-primary recovery, conformal-set diagnostic,
-fit-label completion, and allocation-granularity
+  endpoint, structural, rolling-primary recovery, conformal-set diagnostic,
+  joint-block rank reference, equal-follow-up, label-Mondrian, fit-label completion,
+and allocation-granularity
 manifests/freezes and every artifact descriptor. The active capsule contains
-37 DVC pointers. It emits only
-`crpto_ijds_v4_*` tables/figures and
+45 DVC pointers. It emits 25 paper-facing CSV tables, three figures under the
+`crpto_ijds_v4_*` naming family, and
 `ijds_binary_geometry_frontier_v4_evidence.json`. Consecutive builds must be
 byte-identical. The canonical body is `paper/CRPTO_ijds.qmd`; generate official
 TeX with `scripts/build_ijds_submission_tex.py` and never edit it by hand.

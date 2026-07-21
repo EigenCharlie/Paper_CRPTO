@@ -18,13 +18,17 @@ not active evidence.
 10. `docs/research/ijds_allocation_granularity_sensitivity_protocol_2026-07-16.md`
 11. `docs/research/ijds_rolling_origin_primary_recovery_protocol_2026-07-21.md`
 12. `docs/research/ijds_conformal_set_diagnostics_protocol_2026-07-21.md`
-13. `configs/ijds_active_evidence_sources.yaml`
-14. `configs/ijds_claim_ledger.yaml`
-15. `reports/crpto/ijds_binary_geometry_frontier_v4_evidence.json`
-16. `.codex/skills/crpto/SKILL.md`
+13. `docs/research/ijds_exchangeability_transport_test_protocol_2026-07-21.md`
+14. `docs/research/ijds_exchangeability_transport_test_interpretive_addendum_2026-07-21.md`
+15. `docs/research/ijds_rolling_origin_equal_followup_protocol_2026-07-21.md`
+16. `docs/research/ijds_label_mondrian_sensitivity_protocol_2026-07-21.md`
+17. `configs/ijds_active_evidence_sources.yaml`
+18. `configs/ijds_claim_ledger.yaml`
+19. `reports/crpto/ijds_binary_geometry_frontier_v4_evidence.json`
+20. `.codex/skills/crpto/SKILL.md`
 
 The claim registry is the editorial authority. The source registry owns exact
-lineage identities, artifact descriptors, and 37 DVC pointers. The V4 evidence
+lineage identities, artifact descriptors, and 45 DVC pointers. The V4 evidence
 JSON is the only numeric paper-facing manifest.
 
 ## Active Scientific Object
@@ -40,20 +44,29 @@ JSON is the only numeric paper-facing manifest.
 - Fifteen separate monthly allocations, sharp common-outcome bounds, exact
   point-cap support, and 36 structural scenarios.
 - All 40 six-month all-candidate coverage upper bounds are below 0.90.
+- A separate post-inspection joint-block combined-rank diagnostic places 31 of
+  40 learner-window nulls past locked nominal Bonferroni--Holm thresholds. The
+  null is stronger than the usual calibration-plus-one-target condition, and
+  no post-selection FWER or shift-mechanism claim is active.
 - All 40 resolved-panel cells have higher observed-label coverage for
   nondefaults than defaults; this is descriptive conditioning on administrative
   resolution, not label-conditional validity for all candidates.
-- The two-origin recurrence uses April--June at both origins; the historical
-  15-month primary panel is excluded from that comparison.
+- The active two-origin recurrence uses April--June at both origins with
+  cutoffs 39 months after quarter end, equalizing minimum rather than exact
+  loan-level follow-up. Earlier unequal-follow-up runs are replay provenance.
+- The complete label-Mondrian sensitivity reports 400 label-stratum
+  categories. It reduces but does not eliminate finite-archive shortfalls and
+  expands two-label sets; it is not restored conditional validity.
 - All 216 broad-support comparator envelopes cross zero.
 - All 32 overall cells across four declared fit-label scenarios remain
   below 0.90, but the W7--W8 geometry change is not scenario-invariant.
 - USD 25 floor rounding is numerically negligible in the declared archive; it
   is a diagnostic of the continuous relaxation, not an integer policy.
 
-The paper supports archive-specific temporal transport failure, binary
-residual geometry near a prevalence threshold, and comparator-dependent
-decision identification. It does not support a policy winner.
+The paper supports complete finite-archive shortfall reporting, a scoped
+joint-block rank-reference flag result, binary residual geometry near a prevalence
+threshold, and comparator-dependent decision identification. It does not
+support a universal conformal failure, identified shift cause, or policy winner.
 
 ## Forbidden Claims
 
@@ -62,6 +75,12 @@ Do not claim:
 - selected model, missingness encoding, gamma, ruler, coordinate, cap,
   structural scenario, comparator, or policy;
 - selected-set conformal validity or latent-PD confidence intervals;
+- conformal theorem failure inferred from a realized archive endpoint, ordinary
+  one-future-point validity refuted by a joint-block flag, exchangeability
+  inferred from a nonflag, post-selection FWER control, or a shift mechanism
+  inferred from a flag;
+- label-Mondrian repair, label-conditional transport, or 400 adjusted category
+  tests;
 - universal favorable or adverse portfolio direction;
 - causal, prospective, confirmatory, deployment, fair-lending, or Markov
   conclusions;

@@ -93,6 +93,10 @@ SURFACES = (
             "crosses zero",
             "not a prospective trial",
             "ethical and governance implications",
+            "exact combined-rank",
+            "label-mondrian",
+            "equal-follow-up",
+            "39-month",
         ),
     ),
     SurfaceCheck(
@@ -105,6 +109,10 @@ SURFACES = (
             "coordinate one",
             "missingness-encoding sensitivity",
             "second temporal origin",
+            "exact combined-rank",
+            "label-mondrian",
+            "equal-follow-up",
+            "39-month",
         ),
     ),
     SurfaceCheck(
@@ -114,6 +122,8 @@ SURFACES = (
             "generated from paper/crpto_ijds.qmd",
             "objective-matched",
             "normalized-score",
+            "exact combined-rank",
+            "label-mondrian",
         ),
     ),
     SurfaceCheck(
@@ -124,6 +134,8 @@ SURFACES = (
             "0.897726",
             "12,076",
             "no endpoint has a universal status-indexed outcome ordering",
+            "31/40",
+            "0.877685",
         ),
     ),
     SurfaceCheck(
@@ -133,6 +145,10 @@ SURFACES = (
             "lineage_and_dvc_authority",
             "configs/ijds_active_evidence_sources.yaml",
             "policy_winner_allowed: false",
+            "run_ijds_exchangeability_transport_test.py",
+            "run_ijds_rolling_origin_equal_followup.py",
+            "run_ijds_label_mondrian_freeze.py",
+            "run_ijds_label_mondrian_evaluation.py",
         ),
     ),
 )
@@ -277,6 +293,8 @@ def _check_evidence_decision() -> list[str]:
     missingness = evidence.get("sensitivity", {}).get("missingness_encoding", {})
     rolling = evidence.get("sensitivity", {}).get("rolling_origin", {})
     conformal_set = evidence.get("conformal_set_diagnostics", {})
+    exact = evidence.get("exchangeability_transport_test", {})
+    label_mondrian = evidence.get("sensitivity", {}).get("label_mondrian", {})
 
     checks = [
         *(
@@ -347,17 +365,29 @@ def _check_evidence_decision() -> list[str]:
         (
             rolling.get("primary_2016_periods") != ["2016-04", "2016-05", "2016-06"]
             or rolling.get("rolling_2017_periods") != ["2017-04", "2017-05", "2017-06"]
+            or rolling.get("common_followup_months_after_issue_quarter_end") != 39
+            or rolling.get("approximate_followup_months_by_issue_month")
+            != {"April": 41, "May": 40, "June": 39}
+            or rolling.get("exact_loan_level_age_matched") is not False
+            or rolling.get("evaluation_cutoffs")
+            != {"primary_2016": "2019-09-30", "rolling_2017": "2020-09-30"}
             or rolling.get("primary_2016_census")
-            != {"candidate_rows": 74537, "resolved_rows": 74443, "unresolved_rows": 94}
+            != {"candidate_rows": 74537, "resolved_rows": 74120, "unresolved_rows": 417}
             or rolling.get("rolling_2017_census")
             != {"candidate_rows": 77105, "resolved_rows": 66091, "unresolved_rows": 11014}
-            or rolling.get("historical_primary_15_month_horizon_excluded") is not True
+            or rolling.get("unequal_followup_runs_retained_as_provenance")
+            != {
+                "rolling_2017_run_tag": "ijds-rolling-origin-2017-2026-07-15-v4",
+                "primary_2016_recovery_run_tag": (
+                    "ijds-rolling-origin-primary-recovery-2026-07-21-v1"
+                ),
+            }
             or any(
                 row.get("candidate_rows") == 376890
                 for row in rolling.get("rows", [])
-                if row.get("origin") == "primary_2016"
+                if row.get("origin_id") == "primary_2016"
             ),
-            "two-origin coverage comparison no longer uses the corrected common horizon",
+            "two-origin coverage comparison no longer uses cutoffs 39 months after quarter end",
         ),
         (
             rolling.get("independent_replication_claim_authorized") is not False,
@@ -375,6 +405,60 @@ def _check_evidence_decision() -> list[str]:
             or conformal_set.get("interpretation", {}).get("fairness_or_equalized_coverage_claim")
             is not False,
             "complete conformal-set diagnostic or its claim boundary changed",
+        ),
+        (
+            exact.get("thirty_one_of_forty_meet_locked_nominal_thresholds") is not True
+            or exact.get("cells_meeting_locked_nominal_thresholds") != 31
+            or exact.get("cells_not_meeting_locked_nominal_thresholds") != 9
+            or len(exact.get("cell_rows", [])) != 40
+            or len(exact.get("stratum_rows", [])) != 200
+            or exact.get("multiplicity", {}).get("stratum_flags_control_global_200_test_fwer")
+            is not False
+            or exact.get("multiplicity", {}).get("post_selection_fwer_control_claimed") is not False
+            or exact.get("rank_null", {}).get(
+                "stronger_than_single_future_point_split_conformal_condition"
+            )
+            is not True
+            or exact.get("interpretation", {}).get("preregistered") is not False
+            or exact.get("interpretation", {}).get("confirmatory") is not False
+            or exact.get("interpretation", {}).get("nonflag_establishes_exchangeability")
+            is not False
+            or exact.get("interpretation", {}).get("flag_identifies_cause_of_shift") is not False,
+            "joint-block rank reference or its post-inspection boundary changed",
+        ),
+        (
+            label_mondrian.get("counts")
+            != {
+                "learner_window_cells": 40,
+                "threshold_cells": 400,
+                "target_category_cells": 400,
+                "target_stratum_cells": 200,
+                "learners": 5,
+                "windows_per_learner": 8,
+                "score_strata": 5,
+                "labels": 2,
+                "candidate_rows": 376890,
+                "resolved_rows": 364814,
+                "unresolved_rows": 12076,
+            }
+            or label_mondrian.get("learner_window_states")
+            != {
+                "robust_shortfall": 27,
+                "robust_at_or_above_nominal": 1,
+                "crosses_nominal": 12,
+            }
+            or label_mondrian.get("category_states")
+            != {
+                "crosses_nominal": 185,
+                "robust_shortfall": 109,
+                "robust_at_or_above_nominal": 106,
+            }
+            or label_mondrian.get("mixed_category_identification_states") is not True
+            or label_mondrian.get("all_forty_aggregate_class_gap_bounds_cross_zero") is not True
+            or label_mondrian.get("interpretation", {}).get("label_conditional_transport_guarantee")
+            is not False
+            or label_mondrian.get("interpretation", {}).get("fairness_claim") is not False,
+            "label-Mondrian sensitivity or its interpretation boundary changed",
         ),
     ]
     failures = [message for failed, message in checks if failed]
@@ -445,6 +529,25 @@ def _check_lineage_sync() -> list[str]:
     }
     checks = (
         (
+            str(registry.get("schema_version")) != "2026-07-21.2",
+            "active source registry schema is not 2026-07-21.2",
+        ),
+        (
+            len(registry.get("dvc_pointers", [])) != 45,
+            "active source registry does not contain exactly 45 DVC pointers",
+        ),
+        (
+            len(
+                [
+                    descriptor
+                    for descriptor in evidence.get("paper_artifacts", {}).values()
+                    if str(descriptor.get("path", "")).endswith(".csv")
+                ]
+            )
+            != 25,
+            "paper evidence manifest does not contain exactly 25 CSV tables",
+        ),
+        (
             contract.get("source_registry") != expected_registry_path,
             "publication target does not consume the active source registry",
         ),
@@ -475,6 +578,33 @@ def _check_lineage_sync() -> list[str]:
     endpoint = registry["sensitivities"]["endpoint_availability"]
     endpoint_evidence = evidence.get("sensitivity", {}).get("evaluation_endpoint_availability", {})
     failures.extend(_identity_mismatches(endpoint_evidence, endpoint, label="endpoint sensitivity"))
+    exact_registry = registry["lineages"]["diagnostics"]["exchangeability_transport_test"]
+    failures.extend(
+        _identity_mismatches(
+            evidence.get("exchangeability_transport_test", {}),
+            exact_registry,
+            label="exact exchangeability diagnostic",
+        )
+    )
+    rolling_registry = registry["sensitivities"]["rolling_origin_equal_followup"]
+    failures.extend(
+        _identity_mismatches(
+            evidence.get("sensitivity", {}).get("rolling_origin", {}),
+            rolling_registry,
+            label="equal-follow-up sensitivity",
+        )
+    )
+    label_registry = registry["sensitivities"]["label_mondrian"]
+    label_evidence = evidence.get("sensitivity", {}).get("label_mondrian", {})
+    failures.extend(
+        _identity_mismatches(
+            label_evidence,
+            label_registry["evaluation"],
+            label="label-Mondrian evaluation",
+        )
+    )
+    if label_evidence.get("freeze_run_tag") != label_registry["outcome_free"].get("run_tag"):
+        failures.append("label-Mondrian outcome-free freeze differs from the registry")
     expected_descriptors = publication_implementation_descriptors(REPO)
     evidence_sources = evidence.get("source_artifacts", {})
     failures.extend(

@@ -35,8 +35,11 @@ The audit reports every eligible consecutive six-month residual window and five
 protocol-locked coverage specifications. The primary detailed audit retains CatBoost and
 numeric logistic, while monotonic CatBoost and two WOE/IV scorecards broaden
 model-class coverage checks; only the primary CatBoost enters optimization. The
-missingness-encoding and second-origin families are complete, bounded
-sensitivities rather than selection grids. The
+coverage record has three deliberately separate layers: sharp finite-archive
+identification bounds, a retrospective joint-block combined-rank reference
+diagnostic, and outcome-isolated sensitivities for timing and calibration
+taxonomy. The missingness-encoding, equal-follow-up second-origin, and
+label-Mondrian families are complete sensitivities rather than selection grids. The
 decision audit reports the complete five-point gamma path, two rulers constructed
 without policy-development or OOT evaluation outcomes, three interior coordinates,
 and every comparator in each named support. *Evaluation-outcome-blind* means that
@@ -57,7 +60,7 @@ specification paths, not independent replications or votes.
 | What is exact? | Appendix D | Score-ruler algebra, C2 feasibility, binary-outcome bounds, and basis-frontier envelopes |
 | Which empirical signs survive? | Appendix E | The endpoint sign changes by ruler/coordinate and no broad-support sign survives |
 | Can the evidence be replayed? | Appendix F | Yes, from the hash-linked active source registry and full raw-data audit |
-| What may the paper claim? | Appendix G | An identification audit, not superiority, causality, or selected-set validity |
+| What may the paper claim? | Appendix G | Finite-archive facts and joint-block rank-reference flags at locked nominal thresholds, not significance, superiority, causality, or selected-set validity |
 | How does CRPTO differ from its closest methods? | Appendix H | By its frozen-score audit target, not by claiming each component as new |
 
 : Reader map for the Online Supplement.
@@ -103,8 +106,8 @@ calendar months; every included residual month retains more than 99% of
 terminal labels under this
 rule. The minimum monthly retention is 0.992956.
 
-The complete audit explains why the remaining archive is not exchangeable
-extra training data. Forty-eight variables have negligible early support and
+The complete audit explains why the remaining archive cannot be treated as
+exchangeable extra training data without further assumptions. Forty-eight variables have negligible early support and
 near-complete later support, so admitting them would change the temporal
 feature contract. Label availability by the cutoff is 59,910/162,570 (36.85%)
 for 2014, 28,878/283,173 (10.20%) for 2015, and 1,110/96,120 (1.15%) for
@@ -249,6 +252,10 @@ intercept/slope fits converge in 8--16 iterations. Among resolved primary OOT
 outcomes, default prevalence is 0.156167, versus 0.104781 on the 2011 Platt
 block and 0.196438 among resolved extension loans.
 
+AUC, Brier, ECE, and calibration fits below condition on administrative
+resolution. They describe the 364,814-row resolved panel and are not unbiased
+performance estimates for all 376,890 status-independent candidates.
+
 | Learner | OOT AUC | Brier | ECE10 | Mean cal. error | Slope | Min lower | Max upper | Upper $<.90$ |
 |---|---:|---:|---:|---:|---:|---:|---:|---:|
 | CatBoost | 0.640605 | 0.129878 | 0.047215 | -0.047109 | 0.795427 | 0.842485 | 0.882597 | 8 |
@@ -319,7 +326,8 @@ $$
 k_g=\left\lceil(n_g+1)(1-\alpha)\right\rceil,
 $$
 
-and $c_g$ is the corresponding ordered residual. The clipped interval is
+and $c_g=R_{(k_g)}$ is the $k_g$-th smallest residual under ascending order,
+with the standard convention $R_{(n_g+1)}=+\infty$. The clipped interval is
 
 $$
 [\ell_i,u_i]=[\max(0,p_i-c_g),\min(1,p_i+c_g)].
@@ -381,71 +389,225 @@ set is empty.
 **Table S6.** Primary coverage over 376,890 candidates, including 12,076 unresolved outcomes.
 
 Every upper endpoint is below 0.90 for both detailed learners. Section B.2
-shows the same eight-of-eight result for all five learner specifications. This
-is a temporal transport result for the declared archive; it does not contradict
-split conformal validity under exchangeability.
+shows the same eight-of-eight result for all five learner specifications. These
+40 sharp exclusions are finite-archive descriptive facts. By themselves they
+are neither sampling tests nor a refutation of split-conformal validity under
+exchangeability. Section B.4.1 supplies a separate one-sided joint-block rank
+reference with locked nominal multiplicity thresholds and no post-selection
+error-control claim.
 
 <!-- claim:coverage.resolved_label_diagnostic_descriptive -->
 
 The canonical binary set is
 $S_i=\{y\in\{0,1\}:|y-p_i|\le c_{g(i)}\}=[\ell_i,u_i]\cap\{0,1\}$.
 The complete diagnostic below reports resolved-panel coverage stratified by the
-observed label, mean set cardinality (AvgC), singleton share (OneC), and the
-empty and two-label shares.
+observed label, mean set cardinality (AvgC), and all four binary-set shares.
 
-| Score | W | Cov. $Y=0$ | Cov. $Y=1$ | AvgC | OneC | Empty | Both |
-|---|---:|---:|---:|---:|---:|---:|---:|
-| CatBoost | W1 | 0.986867 | 0.283648 | 1.174579 | 0.800411 | 0.012505 | 0.187084 |
-| CatBoost | W2 | 0.986977 | 0.296619 | 1.183942 | 0.791403 | 0.012327 | 0.196269 |
-| CatBoost | W3 | 0.985116 | 0.297515 | 1.182650 | 0.789177 | 0.014086 | 0.196736 |
-| CatBoost | W4 | 0.983683 | 0.286930 | 1.171156 | 0.798087 | 0.015378 | 0.186535 |
-| CatBoost | W5 | 0.982998 | 0.275521 | 1.160824 | 0.807135 | 0.016021 | 0.176845 |
-| CatBoost | W6 | 0.983599 | 0.269711 | 1.156828 | 0.812271 | 0.015450 | 0.172278 |
-| CatBoost | W7 | 0.982982 | 0.256196 | 1.145225 | 0.822643 | 0.016066 | 0.161291 |
-| CatBoost | W8 | 0.983056 | 0.232570 | 1.128128 | 0.839736 | 0.016068 | 0.144196 |
-| Numeric logistic | W1 | 0.991002 | 0.363828 | 1.230860 | 0.753750 | 0.007695 | 0.238555 |
-| Numeric logistic | W2 | 0.990547 | 0.360159 | 1.229550 | 0.754201 | 0.008124 | 0.237674 |
-| Numeric logistic | W3 | 0.989897 | 0.361862 | 1.230306 | 0.752214 | 0.008740 | 0.239046 |
-| Numeric logistic | W4 | 0.987942 | 0.348978 | 1.215381 | 0.763541 | 0.010539 | 0.225920 |
-| Numeric logistic | W5 | 0.988566 | 0.329829 | 1.197440 | 0.782655 | 0.009953 | 0.207392 |
-| Numeric logistic | W6 | 0.989374 | 0.308502 | 1.179633 | 0.801921 | 0.009223 | 0.188856 |
-| Numeric logistic | W7 | 0.987481 | 0.282770 | 1.157224 | 0.820797 | 0.010990 | 0.168214 |
-| Numeric logistic | W8 | 0.985752 | 0.265253 | 1.141975 | 0.832665 | 0.012680 | 0.154655 |
-| Monotonic CatBoost | W1 | 0.987721 | 0.315436 | 1.189392 | 0.788188 | 0.011210 | 0.200602 |
-| Monotonic CatBoost | W2 | 0.987162 | 0.320824 | 1.193279 | 0.783207 | 0.011757 | 0.205036 |
-| Monotonic CatBoost | W3 | 0.986467 | 0.320596 | 1.191578 | 0.783422 | 0.012500 | 0.204078 |
-| Monotonic CatBoost | W4 | 0.985213 | 0.310029 | 1.178965 | 0.793759 | 0.013638 | 0.192603 |
-| Monotonic CatBoost | W5 | 0.985330 | 0.305080 | 1.174008 | 0.798891 | 0.013550 | 0.187559 |
-| Monotonic CatBoost | W6 | 0.985665 | 0.298076 | 1.169299 | 0.804205 | 0.013248 | 0.182547 |
-| Monotonic CatBoost | W7 | 0.983940 | 0.286966 | 1.158709 | 0.811414 | 0.014938 | 0.173647 |
-| Monotonic CatBoost | W8 | 0.983342 | 0.267131 | 1.144273 | 0.824567 | 0.015580 | 0.159853 |
-| Platform WOE | W1 | 0.990281 | 0.351980 | 1.242731 | 0.739481 | 0.008894 | 0.251625 |
-| Platform WOE | W2 | 0.990219 | 0.359650 | 1.249903 | 0.732198 | 0.008950 | 0.258853 |
-| Platform WOE | W3 | 0.990222 | 0.346468 | 1.236114 | 0.745950 | 0.008968 | 0.245082 |
-| Platform WOE | W4 | 0.989085 | 0.337640 | 1.227162 | 0.752822 | 0.010008 | 0.237170 |
-| Platform WOE | W5 | 0.989862 | 0.312048 | 1.203884 | 0.777585 | 0.009265 | 0.213150 |
-| Platform WOE | W6 | 0.990096 | 0.302166 | 1.196946 | 0.784969 | 0.009042 | 0.205988 |
-| Platform WOE | W7 | 0.988384 | 0.277645 | 1.175614 | 0.802789 | 0.010799 | 0.186412 |
-| Platform WOE | W8 | 0.986837 | 0.250123 | 1.152846 | 0.822521 | 0.012317 | 0.165162 |
-| Pricing-excluded WOE | W1 | 0.992171 | 0.357333 | 1.260386 | 0.725116 | 0.007249 | 0.267635 |
-| Pricing-excluded WOE | W2 | 0.992714 | 0.363916 | 1.268134 | 0.718456 | 0.006705 | 0.274839 |
-| Pricing-excluded WOE | W3 | 0.991320 | 0.361669 | 1.264013 | 0.719940 | 0.008024 | 0.272037 |
-| Pricing-excluded WOE | W4 | 0.989300 | 0.355631 | 1.255051 | 0.725029 | 0.009960 | 0.265011 |
-| Pricing-excluded WOE | W5 | 0.988449 | 0.343362 | 1.243084 | 0.735424 | 0.010746 | 0.253830 |
-| Pricing-excluded WOE | W6 | 0.990645 | 0.327512 | 1.232139 | 0.750487 | 0.008687 | 0.240826 |
-| Pricing-excluded WOE | W7 | 0.990612 | 0.292372 | 1.201223 | 0.781313 | 0.008732 | 0.209955 |
-| Pricing-excluded WOE | W8 | 0.990057 | 0.250333 | 1.164568 | 0.816896 | 0.009268 | 0.173836 |
+| Score | W | Cov. $Y=0$ | Cov. $Y=1$ | AvgC | $\{0\}$ | $\{1\}$ | Empty | Both |
+|---|---:|---:|---:|---:|---:|---:|---:|---:|
+| CatBoost | W1 | 0.986867 | 0.283648 | 1.174579 | 0.800411 | 0.000000 | 0.012505 | 0.187084 |
+| CatBoost | W2 | 0.986977 | 0.296619 | 1.183942 | 0.791403 | 0.000000 | 0.012327 | 0.196269 |
+| CatBoost | W3 | 0.985116 | 0.297515 | 1.182650 | 0.789177 | 0.000000 | 0.014086 | 0.196736 |
+| CatBoost | W4 | 0.983683 | 0.286930 | 1.171156 | 0.798087 | 0.000000 | 0.015378 | 0.186535 |
+| CatBoost | W5 | 0.982998 | 0.275521 | 1.160824 | 0.807135 | 0.000000 | 0.016021 | 0.176845 |
+| CatBoost | W6 | 0.983599 | 0.269711 | 1.156828 | 0.812271 | 0.000000 | 0.015450 | 0.172278 |
+| CatBoost | W7 | 0.982982 | 0.256196 | 1.145225 | 0.822643 | 0.000000 | 0.016066 | 0.161291 |
+| CatBoost | W8 | 0.983056 | 0.232570 | 1.128128 | 0.839736 | 0.000000 | 0.016068 | 0.144196 |
+| Numeric logistic | W1 | 0.991002 | 0.363828 | 1.230860 | 0.752994 | 0.000756 | 0.007695 | 0.238555 |
+| Numeric logistic | W2 | 0.990547 | 0.360159 | 1.229550 | 0.753435 | 0.000767 | 0.008124 | 0.237674 |
+| Numeric logistic | W3 | 0.989897 | 0.361862 | 1.230306 | 0.751447 | 0.000767 | 0.008740 | 0.239046 |
+| Numeric logistic | W4 | 0.987942 | 0.348978 | 1.215381 | 0.762774 | 0.000767 | 0.010539 | 0.225920 |
+| Numeric logistic | W5 | 0.988566 | 0.329829 | 1.197440 | 0.781889 | 0.000767 | 0.009953 | 0.207392 |
+| Numeric logistic | W6 | 0.989374 | 0.308502 | 1.179633 | 0.801146 | 0.000775 | 0.009223 | 0.188856 |
+| Numeric logistic | W7 | 0.987481 | 0.282770 | 1.157224 | 0.820016 | 0.000780 | 0.010990 | 0.168214 |
+| Numeric logistic | W8 | 0.985752 | 0.265253 | 1.141975 | 0.831877 | 0.000788 | 0.012680 | 0.154655 |
+| Monotonic CatBoost | W1 | 0.987721 | 0.315436 | 1.189392 | 0.788188 | 0.000000 | 0.011210 | 0.200602 |
+| Monotonic CatBoost | W2 | 0.987162 | 0.320824 | 1.193279 | 0.783207 | 0.000000 | 0.011757 | 0.205036 |
+| Monotonic CatBoost | W3 | 0.986467 | 0.320596 | 1.191578 | 0.783422 | 0.000000 | 0.012500 | 0.204078 |
+| Monotonic CatBoost | W4 | 0.985213 | 0.310029 | 1.178965 | 0.793759 | 0.000000 | 0.013638 | 0.192603 |
+| Monotonic CatBoost | W5 | 0.985330 | 0.305080 | 1.174008 | 0.798891 | 0.000000 | 0.013550 | 0.187559 |
+| Monotonic CatBoost | W6 | 0.985665 | 0.298076 | 1.169299 | 0.804205 | 0.000000 | 0.013248 | 0.182547 |
+| Monotonic CatBoost | W7 | 0.983940 | 0.286966 | 1.158709 | 0.811414 | 0.000000 | 0.014938 | 0.173647 |
+| Monotonic CatBoost | W8 | 0.983342 | 0.267131 | 1.144273 | 0.824567 | 0.000000 | 0.015580 | 0.159853 |
+| Platform WOE | W1 | 0.990281 | 0.351980 | 1.242731 | 0.739481 | 0.000000 | 0.008894 | 0.251625 |
+| Platform WOE | W2 | 0.990219 | 0.359650 | 1.249903 | 0.732198 | 0.000000 | 0.008950 | 0.258853 |
+| Platform WOE | W3 | 0.990222 | 0.346468 | 1.236114 | 0.745950 | 0.000000 | 0.008968 | 0.245082 |
+| Platform WOE | W4 | 0.989085 | 0.337640 | 1.227162 | 0.752822 | 0.000000 | 0.010008 | 0.237170 |
+| Platform WOE | W5 | 0.989862 | 0.312048 | 1.203884 | 0.777585 | 0.000000 | 0.009265 | 0.213150 |
+| Platform WOE | W6 | 0.990096 | 0.302166 | 1.196946 | 0.784969 | 0.000000 | 0.009042 | 0.205988 |
+| Platform WOE | W7 | 0.988384 | 0.277645 | 1.175614 | 0.802789 | 0.000000 | 0.010799 | 0.186412 |
+| Platform WOE | W8 | 0.986837 | 0.250123 | 1.152846 | 0.822521 | 0.000000 | 0.012317 | 0.165162 |
+| Pricing-excluded WOE | W1 | 0.992171 | 0.357333 | 1.260386 | 0.725116 | 0.000000 | 0.007249 | 0.267635 |
+| Pricing-excluded WOE | W2 | 0.992714 | 0.363916 | 1.268134 | 0.718456 | 0.000000 | 0.006705 | 0.274839 |
+| Pricing-excluded WOE | W3 | 0.991320 | 0.361669 | 1.264013 | 0.719940 | 0.000000 | 0.008024 | 0.272037 |
+| Pricing-excluded WOE | W4 | 0.989300 | 0.355631 | 1.255051 | 0.725029 | 0.000000 | 0.009960 | 0.265011 |
+| Pricing-excluded WOE | W5 | 0.988449 | 0.343362 | 1.243084 | 0.735424 | 0.000000 | 0.010746 | 0.253830 |
+| Pricing-excluded WOE | W6 | 0.990645 | 0.327512 | 1.232139 | 0.750487 | 0.000000 | 0.008687 | 0.240826 |
+| Pricing-excluded WOE | W7 | 0.990612 | 0.292372 | 1.201223 | 0.781313 | 0.000000 | 0.008732 | 0.209955 |
+| Pricing-excluded WOE | W8 | 0.990057 | 0.250333 | 1.164568 | 0.816896 | 0.000000 | 0.009268 | 0.173836 |
 
 **Table S6A.** Complete five-model binary-set and resolved-label diagnostic over all eight windows.
+
+OneC is the sum of the two singleton columns. The only nonzero $\{1\}$ shares
+occur for numeric logistic; its W1--W8 OneC path is 0.753750, 0.754201,
+0.752214, 0.763541, 0.782655, 0.801921, 0.820797, and 0.832665.
 
 The label-stratified columns condition on administrative resolution and on the
 observed class. Resolution can depend on status and timing, and the classes of
 12,076 unresolved candidates are unknown. The table therefore does not
 estimate all-candidate label-conditional validity, implement label-Mondrian
 calibration, or establish equalized coverage or a fairness result. AvgC and
-OneC and the set-share columns use all 376,890 candidates; the two
+set-share columns use all 376,890 candidates; the two
 label-stratified columns use only the 364,814 resolved candidates. These are
 efficiency and descriptive coverage summaries, not coverage guarantees.
+
+### B.4.1 Joint-block combined-rank reference diagnostic
+
+<!-- claim:coverage.exact_exchangeability_transport_test -->
+
+The 40 sharp exclusions above do not themselves test an exchangeability
+assumption. A separate locked lineage therefore compares the target miss count
+with a one-sided upper-tail exact combined-rank law. Fix a learner, window, and
+score stratum; let $n$ be the calibration count, $m$ the target count,
+$r=\lceil(n+1)(1-\alpha)\rceil$, and $q=R_{(r)}$. If the $n+m$ residuals are
+jointly continuous and exchangeable, the number of strict target misses obeys
+
+$$
+M=\sum_{j=1}^{m}1\{R_j>q\}
+\sim \operatorname{BetaBinomial}(m,n+1-r,r).
+$$
+
+This is a joint block-exchangeability null for the calibration residuals and
+all target residuals in the stratum. It is stronger than the
+calibration-plus-one-target condition sufficient for ordinary split-conformal
+marginal coverage; a flag may therefore reflect target--target dependence or
+heterogeneity and does not directly refute one-point validity. The rank
+statement does not require treating target rows as independent conditional
+Bernoulli trials. With ties, attach independent
+continuous auxiliary tie breakers to all residuals and order the resulting
+pairs lexicographically. The paired count $M^*$ has the law above and every
+deterministic strict miss is also a lexicographic miss, so $M\le M^*$
+pointwise. The same upper tail is therefore conservative under arbitrary joint
+exchangeability with ties; the auxiliary variables are a proof device and do
+not change the fitted sets.
+
+For unresolved outcomes, the sharp minimum miss count is
+
+$$
+M_{g,\min}=\sum_{i\in R_g}M_i(Y_i)+
+\sum_{i\in U_g}\min\{M_i(0),M_i(1)\}.
+$$
+
+Because the beta--binomial upper tail decreases with the miss count, the
+reported $p_g=\Pr(M\ge M_{g,\min})$ is the supremum p-value over all binary
+completions. Within each learner--window cell the five stratum p-values form
+$p_{\mathrm{cell}}=\min(1,5\min_g p_g)$; Holm is then applied over the 40
+dependent cells. For an ex ante fixed family of valid p-values,
+Bonferroni--Holm would control FWER at 0.05 without an independence assumption.
+Here the family and an exploratory flag pattern were inspected before the V1
+lock, so this is post-inspection reporting and the same cutoffs are nominal
+within-table thresholds, not
+post-selection or study-wide FWER control.
+
+| Learner | Nominal flags | No flag | Flagged windows |
+|---|---:|---:|---|
+| CatBoost | 8 | 0 | W1--W8 |
+| Numeric logistic | 4 | 4 | W5--W8 |
+| Monotonic CatBoost | 8 | 0 | W1--W8 |
+| Platform-signal WOE | 6 | 2 | W3--W8 |
+| Pricing-excluded application WOE | 5 | 3 | W4--W8 |
+| **Total** | **31** | **9** | -- |
+
+**Table S6B (summary view).** Retrospective joint-block rank-reference flags.
+The machine-readable S6B retains all 40 Holm-threshold rows and S6C retains all 200
+stratum tails, tie counts, and sharp miss bounds. Columns prefixed `source_`
+preserve calculations and field meanings from the immutable executed lineage;
+`locked_nominal_` and `meets_locked_nominal_` are the active reporting names.
+Neither prefix authorizes post-selection FWER or significance.
+
+Thus 31 of 40 learner--window joint-block intersection nulls meet the locked
+nominal thresholds. The nine nonflags are logistic W1--W4, platform WOE
+W1--W2, and pricing-excluded WOE W1--W3. The inference “exchangeability
+established by nonflag” is prohibited. All
+calibration-threshold tie multiplicities are one and target equality counts
+are zero, which is consistent with but does not prove continuity. The
+stratum-level flags are within-cell diagnostics, not a 200-test FWER claim. A
+flag identifies neither the source of departure nor failure of the usual
+single-future-point conformal guarantee.
+
+### B.4.2 Label-Mondrian retrospective sensitivity
+
+<!-- claim:sensitivity.label_mondrian_complete_mixed -->
+<!-- claim:sensitivity.label_mondrian_common_completion_gap -->
+
+The active recipe is score-Mondrian but marginal over the label. A physically
+separate outcome-free freeze also fits 400 class-specific thresholds,
+
+$$
+q_{gy}=R^{(gy)}_{(k_{gy})},\qquad
+k_{gy}=\left\lceil(n_{gy}+1)(1-\alpha)\right\rceil,
+$$
+
+with $q_{gy}=+\infty$ if $k_{gy}=n_{gy}+1$. Evaluation constructs the discrete
+set directly as
+
+$$
+S(p,g)=\{0:p\le q_{g0}\}\cup\{1:1-p\le q_{g1}\}.
+$$
+
+This is not generally the intersection of one symmetric interval with the
+binary label space. Its standard class-conditional guarantee would require
+exchangeability within every $(G,Y)$ cell, a stronger target-period condition
+that this retrospective sensitivity does not establish.
+
+| Learner | Upper $<.90$ | Crosses $.90$ | Lower $\ge.90$ |
+|---|---:|---:|---:|
+| CatBoost | 4 | 4 | 0 |
+| Numeric logistic | 8 | 0 | 0 |
+| Monotonic CatBoost | 7 | 1 | 0 |
+| Platform-signal WOE | 1 | 6 | 1 |
+| Pricing-excluded application WOE | 7 | 1 | 0 |
+| **Total** | **27** | **12** | **1** |
+
+**Table S6D (summary view).** Sharp marginal coverage states for the complete
+40-cell label-Mondrian sensitivity. The sole lower-at-or-above cell is platform
+WOE W8, with bound $[0.900074,0.907015]$; it is not promoted.
+
+For a target class $y$, let $A_y$ and $B_y$ be covered and total resolved
+class-$y$ counts, and let $U_y^0,U_y^1$ count unresolved rows that would be
+missed or covered if assigned $y$. Its sharp ratio bounds are
+
+$$
+\left[\frac{A_y}{B_y+U_y^0},
+\frac{A_y+U_y^1}{B_y+U_y^1}\right].
+$$
+
+The two class endpoints may use different label completions. For each endpoint
+of the class-0-minus-class-1 gap, every unresolved row is assigned only once and
+that assignment is shared by both class ratios; the lower and upper gap
+endpoints may themselves use different completions. Enumerating the possible
+class-1 count gives the sharp extrema, whereas subtracting separately optimized
+class intervals would not. All 40 aggregate gap bounds cross zero.
+
+| Target category | Upper $<.90$ | Crosses $.90$ | Lower $\ge.90$ |
+|---|---:|---:|---:|
+| $Y=0$ | 72 | 29 | 99 |
+| $Y=1$ | 37 | 156 | 7 |
+| **All 400** | **109** | **185** | **106** |
+
+**Table S6F (summary view).** Complete state census over the 400
+learner--window--stratum--label categories. Machine-readable S6D--S6F retain
+all 40 cell, 200 stratum, and 400 category rows.
+
+Label conditioning therefore changes, but does not uniformly repair, the
+transport audit. It redistributes resolved coverage from $Y=0$ to $Y=1$ and
+raises AvgC from $1.128128$--$1.268134$ under the baseline to
+$1.723718$--$1.785468$; $72.37$--$78.55\%$ of candidate sets contain both
+labels. At the stratum level, 51 sharp gap intervals identify higher coverage
+for $Y=0$, 37 identify higher coverage for $Y=1$, and 112 cross zero. The 400
+category bounds are identification diagnostics, not unadjusted tests. Neither
+the 12 crossing cells nor the sole lower-at-or-above cell establishes restored
+exchangeability, prospective validity, or a method winner.
 
 ## B.5 Binary threshold discontinuity
 
@@ -558,25 +720,38 @@ portfolio contrasts under the alternative encodings.
 
 One later-origin protocol shifts the same CatBoost construction from the 2016
 decision origin to 2017, using eight six-month residual windows beginning in
-2013. The horizon-correction lineage mechanically restricts each feasible
-origin to April--June: 2016 contains 74,537 candidates (74,443 resolved and 94
-unresolved), while 2017 contains 77,105 (66,091 resolved and 11,014
-unresolved). The main 15-month 2016 coverage estimand remains separate.
+2013. The equal-follow-up lineage mechanically restricts each origin to
+April--June and places each cutoff 39 months after issue-quarter end. This
+equalizes the quarter-level minimum follow-up: June loans receive 39 months,
+while April and May loans receive approximately 41 and 40. The 2016
+origin is evaluated at September 30, 2019 and contains 74,537 candidates
+(74,120 resolved and 417 unresolved); the 2017 origin is evaluated at September
+30, 2020 and contains 77,105 (66,091 resolved and 11,014 unresolved). The main
+15-month 2016 coverage estimand remains separate.
 
 | Window | Primary-origin bound | Later-origin bound |
 |---|---:|---:|
-| W1 | [0.872345, 0.873083] | [0.753557, 0.874768] |
-| W2 | [0.874626, 0.875364] | [0.752429, 0.874340] |
-| W3 | [0.872815, 0.873566] | [0.750159, 0.872537] |
-| W4 | [0.870158, 0.870910] | [0.750626, 0.873199] |
-| W5 | [0.867489, 0.868240] | [0.750820, 0.873406] |
-| W6 | [0.867314, 0.868066] | [0.751741, 0.873990] |
-| W7 | [0.864457, 0.865221] | [0.750976, 0.873886] |
-| W8 | [0.860861, 0.861653] | [0.749899, 0.873523] |
+| W1 | [0.871527, 0.875431] | [0.753557, 0.874768] |
+| W2 | [0.873821, 0.877685] | [0.752429, 0.874340] |
+| W3 | [0.872010, 0.875887] | [0.750159, 0.872537] |
+| W4 | [0.869340, 0.873204] | [0.750626, 0.873199] |
+| W5 | [0.866657, 0.870548] | [0.750820, 0.873406] |
+| W6 | [0.866482, 0.870387] | [0.751741, 0.873990] |
+| W7 | [0.863585, 0.867542] | [0.750976, 0.873886] |
+| W8 | [0.859935, 0.864068] | [0.749899, 0.873523] |
 
-**Table S7C.** Horizon-corrected, common-three-month two-origin CatBoost coverage census. The later family is a retrospective recurrence, not an independent replication.
+**Table S7C.** Equal-39-month-from-quarter-end two-origin CatBoost coverage
+bounds. The later family is a retrospective recurrence, not an independent
+replication.
 
-All 16 upper bounds lie below 0.90. The 2016 and 2017 maxima are 0.875364 and
+| Origin | Cutoff | Candidates | Resolved | Unresolved | Terminal after cutoff | Missing terminal date |
+|---|---:|---:|---:|---:|---:|---:|
+| 2016 | 2019-09-30 | 74,537 | 74,120 | 417 | 323 | 94 |
+| 2017 | 2020-09-30 | 77,105 | 66,091 | 11,014 | 32 | 94 |
+
+**Table S7D.** Complete endpoint-reason census for the equal-follow-up family.
+
+All 16 upper bounds lie below 0.90. The 2016 and 2017 maxima are 0.877685 and
 0.874768, respectively. The substantially lower later-origin lower bounds
 reflect its larger unresolved fraction; they should not be read as a more
 severe resolved-case coverage failure. The historical 376,890-row, 15-month
@@ -603,10 +778,11 @@ recipes have been written.
 | Hindsight terminal | 0.848980 | 0.884579 | 8/8 | 0.105467 / 0.889103 | 0.099809 / 0.112260 | Yes |
 | Observed only | 0.842485 | 0.882594 | 8/8 | 0.101703 / 0.888435 | 0.097147 / 0.111801 | Yes |
 
-**Table S7D.** Declared fit-label scenario sensitivity. Coverage columns summarize the eight overall candidate bounds; prevalence and quantile columns refer to stratum 2.
+**Table S7E.** Declared fit-label scenario sensitivity. Coverage columns summarize the eight overall candidate bounds; prevalence and quantile columns refer to stratum 2.
 
-All 32 overall scenario-window upper bounds remain below 0.90. The coverage
-transport conclusion is therefore unchanged across these four scenarios. The
+All 32 overall scenario-window upper bounds remain below 0.90. The
+finite-archive sharp exclusion is therefore unchanged across these four
+scenarios. The
 geometric account is narrower: the all-default scenario leaves both W7 and W8
 above the 0.10 prevalence threshold and removes the quantile crossing. Since
 learner and calibration refits are nonlinear, these four scenarios are
@@ -754,7 +930,52 @@ renormalizing the rounded portfolio upward.
 
 # Appendix D: Exact Statements and Proofs
 
-## D.1 Positive affine cap equivalence and same-cap nesting
+## D.1 Combined-rank miss law and tie-safe domination
+
+Fix one pre-existing score stratum. Under joint exchangeability and continuity,
+the calibration indices occupy a uniformly distributed $n$-subset of the
+$n+m$ combined residual ranks. Let $r$ be the fitted calibration order and let
+$M$ count target ranks above the $r$-th calibration rank. The uniform-rank
+count gives
+
+$$
+\Pr(M=j)=\binom mj
+\frac{\mathrm B(j+n+1-r,m-j+r)}{\mathrm B(n+1-r,r)},
+\qquad j=0,\ldots,m,
+$$
+
+which is the beta--binomial distribution with parameters
+$(m,n+1-r,r)$. Equivalently, the number of target ranks occurring after the
+$r$-th calibration rank has the same beta--binomial urn count. This argument
+uses exchangeability of the combined ranks; an i.i.d. representation is not
+needed. It is nevertheless a joint-block assumption on all $m$ targets, not
+merely the calibration-plus-one-target condition used for a pointwise marginal
+split-conformal guarantee.
+
+When residuals tie, augment every calibration and target residual with an
+independent continuous tie breaker and order pairs lexicographically. Joint
+exchangeability is preserved and the pair ranks are almost surely distinct, so
+their exceedance count $M^*$ obeys the displayed law. The scalar value of the
+$r$-th calibration pair remains the fitted scalar threshold $q$. If $R_j>q$,
+then $(R_j,U_j)$ necessarily exceeds that pair; if $R_j=q$, it may or may not.
+Consequently the deterministic strict-miss count satisfies $M_{\rm det}\le
+M^*$ for every realization. Hence
+
+$$
+\Pr(M_{\rm det}\ge t)\le \Pr(M^*\ge t),
+$$
+
+so the beta--binomial upper tail is exact in the continuous case and
+conservative with arbitrary ties. Finally, $M_{g,\min}$ is attained by choosing
+the less adverse binary endpoint independently for each unresolved loan. Since
+the upper tail is nonincreasing in its threshold, its p-value is the supremum
+over all unrestricted binary completions. For an ex ante fixed family,
+Bonferroni within each five-stratum cell followed by Holm over 40 cells controls
+the declared familywise level without an independence assumption. Because this
+family and an exploratory flag pattern were inspected before locking, the
+reported cutoffs have no post-selection FWER guarantee.
+
+## D.2 Positive affine cap equivalence and same-cap nesting
 
 Suppose a score is globally $s_i=\kappa p_i+b$ with $\kappa>0$ and every feasible
 portfolio fills budget $B$. Then
@@ -782,7 +1003,7 @@ cap, every guardrail-feasible allocation is point-feasible. The point optimum
 therefore weakly dominates in the shared plug-in objective. Neither statement
 orders status-indexed outcomes.
 
-## D.2 Positive-affine invariance of normalized coordinates
+## D.3 Positive-affine invariance of normalized coordinates
 
 Let $\widetilde s=\kappa s+b$ for $\kappa>0$. The score minimum and score of the common
 plug-in optimum transform as
@@ -799,7 +1020,7 @@ feasible set after a positive affine change of score units. The result does not
 extend to the non-affine point-versus-upper score map and does not equalize
 plug-in opportunity cost.
 
-## D.3 C2 plug-in objective dominance
+## D.4 C2 plug-in objective dominance
 
 Let $a^q$ be a full-budget guardrail allocation and set
 $c=p^\top a^q/B$. Then $p^\top a^q=cB$, so $a^q$ is feasible for the point LP
@@ -815,7 +1036,7 @@ $8.33\times10^{-17}$. The minimum point-minus-guardrail plug-in objective is
 $-1.46\times10^{-10}$ dollars, numerical zero within solver tolerance. This
 reconciles the theorem; it does not establish status-indexed payoff dominance.
 
-## D.4 Sharp common-outcome bounds
+## D.5 Sharp common-outcome bounds
 
 <!-- claim:theory.sharp_common_outcome_bounds -->
 
@@ -852,6 +1073,35 @@ different outcomes to the same unresolved loan under two policies. The bounds
 are sharp for the finite archive under unrestricted binary completion. They are
 not sampling confidence intervals.
 
+Class-specific coverage is a ratio rather than an additive endpoint. For class
+$y$, write $z_i=1$ when unresolved loan $i$ is assigned that class and
+$c_i=C_i(y)$. Then
+
+$$
+C_y(z)=\frac{A_y+\sum_i z_i c_i}{B_y+\sum_i z_i}.
+$$
+
+Adding a missed row cannot increase this ratio and adding a covered row cannot
+decrease it. Therefore the sharp lower endpoint assigns all and only the
+$U_y^0$ missed rows to class $y$, while the upper endpoint assigns all and only
+the $U_y^1$ covered rows, giving the bounds in Section B.4.2.
+
+Those two extrema need not use the same completion. For the gap $C_0-C_1$,
+let $z_i=1$ instead denote assignment to class 1 and fix
+$m=\sum_i z_i$. Both denominators are then fixed. The gap is a constant plus
+a sum of $m$ loan-wise weights,
+
+$$
+\sum_i z_i\left{-\frac{C_i(0)}{B_0+|U|-m}
+-\frac{C_i(1)}{B_1+m}\right}.
+$$
+
+Selecting the $m$ smallest weights minimizes the gap and selecting the $m$
+largest maximizes it. Enumerating $m=0,\ldots,|U|$ is therefore exact and uses
+one common label for every unresolved loan. This proves the reported sharp gap
+bounds; subtracting two separately optimized class intervals would generally
+be only an outer bound.
+
 <!-- claim:theory.binary_identification_width -->
 
 For any additive paired contrast with unresolved contribution $d_i(Y_i)$,
@@ -883,7 +1133,7 @@ indicator at both binary outcomes.
 Identification loss is consequently governed by exposure disagreement and
 binary set geometry, not by the unresolved count alone.
 
-## D.5 Basis-endpoint sufficiency
+## D.6 Basis-endpoint sufficiency
 
 <!-- claim:theory.basis_endpoint_sufficiency -->
 
@@ -1029,6 +1279,12 @@ $\{0.5,1,2\}$ million in budget $\times\{0.20,0.25,0.30,1.00\}$ in maximum
 purpose share $\times\{0.25,0.45,0.65\}$ in LGD. Allocations were constructed
 without outcome columns and hash-frozen before the endpoint join; no scenario
 or result was selected.
+
+Because a common multiplier $k>0$ on every contractual rate is equivalent,
+after positive rescaling, to replacing the baseline LGD by $0.45/k$, the three
+LGD values also represent common relative rate scales 1.80, 1.00, and 0.6923.
+This is a sensitivity of the status-indexed decision-score normalization, not
+a cash-flow model.
 
 | Metric | Adverse | Favorable | Crosses zero | Exact zero | Total |
 |---|---:|---:|---:|---:|---:|
@@ -1195,8 +1451,9 @@ stability at the evaluated caps, not continuous-frontier uniqueness.
 ## E.7 Why no policy is promoted
 
 The empirical record does not support a winner for three separate reasons.
-First, candidate coverage misses its 0.90 target before optimization for both
-learners and every residual window. Second, the endpoint sign changes across
+First, all 40 finite-archive candidate-coverage bounds exclude 0.90 before
+optimization, and 31 of 40 cells meet the separate joint-block diagnostic's
+locked nominal thresholds. Second, the endpoint sign changes across
 the two rulers and three coordinates. Third, named comparators disagree and
 exact envelopes eliminate all broad-support directions and all W8
 development-support directions. Selecting .25, one ruler, an earlier window,
@@ -1220,7 +1477,7 @@ coverage rows, 5,112 monthly evaluations, 360 aggregates, 221,040 paired sharp
 contrasts, and 648 comparator envelopes. Separate complete families cover five
 credit learners, endpoint lag, portfolio structure, missingness encoding, and
 a second temporal origin. The evidence builder checks hashes, contracts, and
-cardinalities before producing 19 tables, three figures in PNG and PDF, and one
+cardinalities before producing 25 tables, three figures in PNG and PDF, and one
 paper-facing manifest. Additional outcome-isolated families cover joint
 fit-label completion and deterministic allocation granularity.
 
@@ -1236,10 +1493,11 @@ silently substituted for historical scientific code.
 The shared contract requires:
 
 1. a lineage-specific environment locked by `uv`;
-2. immutable, hash-described outcome-free and evaluated roots tracked by 37
+2. immutable, hash-described outcome-free and evaluated roots tracked by 45
    DVC pointers across the primary audit, two-ruler diagnostic, credit controls,
-   endpoint, structure, missingness, second-origin, fit-label completion, and
-   allocation-granularity families;
+   endpoint, structure, missingness, equal-follow-up second-origin, fit-label
+   completion, allocation-granularity, joint-block rank-reference diagnostic, and
+   label-Mondrian families;
 3. a separate freeze and evaluate command with no combined shortcut;
 4. exact ID alignment at the outcome join;
 5. byte-identical evidence builds;
@@ -1267,16 +1525,21 @@ policy.
 <!-- claim:sensitivity.fit_label_completion_coverage_recurrence -->
 <!-- claim:geometry.fit_label_completion_crossing_not_universal -->
 <!-- claim:optimization.allocation_granularity_is_diagnostic -->
+<!-- claim:coverage.exact_exchangeability_transport_test -->
+<!-- claim:sensitivity.label_mondrian_complete_mixed -->
+<!-- claim:sensitivity.label_mondrian_common_completion_gap -->
 
 | Evidence object | Permitted conclusion | Not established |
 |---|---|---|
 | Full raw-file audit | The 640,543 active rows exhaust the declared eligible population | That all 2.9 million rows share one horizon, schema, or estimand |
 | Reconstructed endpoint | 364,814 primary outcomes are resolved by the declared cutoff and 12,076 are bounded as unresolved | That the distributed file is a verified point-in-time snapshot |
 | Endpoint-reason partition | The five reasons sum exactly to all 376,890 candidates, including 47 terminal-after-cutoff and 478 missing-date cases | An identified missingness mechanism or observed operational event dates |
-| Eight windows and five learners | Under the active six-month endpoint, candidate coverage upper bounds are below 0.90 in all 40 declared cells | Universal conformal invalidity, endpoint-lag invariance, an OOT-selected winner, or future performance |
-| WOE/IV, monotonic, and PSI controls | The transport result is not unique to active CatBoost or platform-pricing features | Scorecard superiority, external validity, or PSI-based coverage certification |
+| Eight windows and five learners | Under the active six-month endpoint, sharp candidate-coverage upper bounds are below 0.90 in all 40 declared cells | A sampling test by itself, universal conformal invalidity, endpoint-lag invariance, an OOT-selected winner, or future performance |
+| Joint-block combined-rank diagnostic | After within-cell Bonferroni and Holm over 40 cells, 31 learner--window intersection nulls meet locked nominal thresholds | Post-selection FWER control, a direct test of the usual one-future-point condition, a cause of shift, rejection of every cell or stratum, or exchangeability established by a nonflag |
+| WOE/IV, monotonic, and PSI controls | The descriptive exclusion spans all five learners and nominal joint-block flags span 31 cells | Scorecard superiority, external validity, or PSI-based coverage certification |
+| Label-Mondrian sensitivity | Marginal states are 27 shortfall, 12 crossing, and one at-or-above; 109/400 class-stratum categories remain shortfalls and all 40 aggregate gap bounds cross zero when each endpoint uses shared single-assignment completions | Uniform repair, class-conditional transport, a selected method, fairness, or 400 unadjusted inferential claims |
 | Three missingness encodings | All 24 coverage upper bounds are below 0.90 | A missingness mechanism, encoding winner, or portfolio robustness |
-| Second temporal origin | All eight later-origin CatBoost upper bounds are below 0.90 | Independent replication, temporal invariance, or prospective validation |
+| Equal-follow-up second temporal origin | All 16 CatBoost upper bounds are below 0.90 after both April--June origins receive cutoffs 39 months after issue-quarter end | Exact loan-age matching, independent replication, temporal invariance, prospective validation, or selection of an origin |
 | Four fit-label scenarios | All 32 overall coverage upper bounds are below 0.90; the W7--W8 crossing remains in three scenarios | Sharp bounds over all label assignments, geometry invariance, or preregistration |
 | Constant-score proposition and stratum-2 path | Binary residual geometry is prevalence-sensitive | Exact finite-sample explanation for varying-score strata or a universal transition |
 | Fit-label sensitivity | The W7--W8 crossing persists at every lag passing the 99% retention rule | Invariance to arbitrarily delayed fit labels or a causal explanation |
@@ -1319,6 +1582,15 @@ mappings and two alternative encodings are evaluated, but the missingness
 mechanism is not identified. The second origin remains a retrospective
 recurrence from the same platform, not prospective validation.
 
+The combined-rank diagnostic was locked only after the archive, the 40 sharp
+exclusions, and an exploratory flag pattern had been inspected. Its Holm
+cutoffs are nominal reporting thresholds, not post-selection or study-wide
+FWER control. A nonflag in nine cells does not verify the assumption, and a
+flag of the stronger joint-block null does not directly refute the usual
+one-future-point condition. Label-Mondrian requires exchangeability within each score-stratum
+and class, which is not established, and its much larger two-label sets expose
+a material efficiency cost.
+
 The observed-only fit and three declared stress rules retain the coverage
 conclusion but not one common geometric path. The all-default scenario removes
 the W7--W8 crossing, and the four nonlinear refits are not exhaustive over
@@ -1342,10 +1614,13 @@ inverse conformal risk-control, or decision-calibration guarantee.
 
 The active conclusion is deliberately narrow. Binary absolute-residual
 geometry can change discontinuously around the prevalence threshold, but that
-path is not invariant to every fit-label completion. Declared candidate-level
-coverage does not transport to the OOT archive for all five learner
-specifications, and status-indexed portfolio direction changes with the declared
-ruler, coordinate, residual recipe, and comparator support. No selected gamma,
+path is not invariant to every fit-label completion. All 40 sharp
+finite-archive coverage bounds exclude 0.90; 31 of 40 joint-block nulls meet the
+separate diagnostic's locked nominal thresholds without a post-selection FWER
+claim; and label conditioning
+produces a mixed, less efficient sensitivity rather than a uniform repair.
+Status-indexed portfolio direction changes with the declared ruler,
+coordinate, residual recipe, and comparator support. No selected gamma,
 ruler, coordinate, policy, causal effect, prospective guarantee, selected-set
 validity, Markov certificate, universal guardrail direction, or deployment
 recommendation is claimed.
@@ -1361,7 +1636,9 @@ credit scoring, conformal prediction, or linear programming separately.
 |---|---|---|
 | Credit scoring and cost-aware calibration [@lessmann2015; @yang2025costaware; @das2023creditgraph] | Probability quality and richer predictive structure | Treats a Platt-scaled default score as an input; no AUC-leadership claim |
 | P2P and robust credit portfolios [@serrano2016profitscoring; @chi2019p2p; @babaei2020p2p] | Economic loan selection under risk and uncertainty | Adds binary-set geometry, outcome isolation, and comparator identification |
+| Classwise and nonexchangeable conformal prediction [@ding2023; @oliveira2024split; @gibbs2024online] | Label-category calibration and guarantees under explicit discrepancy, dependence, concentration, or feedback designs | Audits a retrospective label-Mondrian sensitivity but establishes neither within-class temporal exchangeability nor an online-feedback guarantee |
 | Conformal portfolio and contextual optimization [@kato2025; @sun2024ptc; @johnstone2021; @patel2024; @hu2026crc] | Coverage-backed uncertainty sets or calibrated decision guarantees for portfolio and contextual programs | Audits a frozen binary credit score, endpoint reconstruction, and matched comparators; no asset-return, contextual-LP, or selected-set guarantee is inherited |
+| Selection-conditional coverage and false-coverage-rate control [@jin2025focal; @gazin2025informative] | Validity targets tailored to black-box or informative selection under their own reference-set and multiplicity contracts | Candidate-level coverage is not transferred to budget-selected loans; neither procedure is implemented by the monthly optimizer |
 | Decision-optimal and counterfactual prediction sets [@wang2026optimal_decision_prediction_sets; @zheng2026counterfactual_decision_sets] | Couple set construction or coverage to an explicit downstream loss or induced action | Audits an observational accepted-loan archive; no counterfactual funding effect or policy-coupled validity |
 | Valid selection and decision-risk calibration [@hegazy2025valid_selection_conformal_sets; @bao2025croms; @yeh2025training; @zhou2026creme] | Procedures controlling model selection, operational loss, or robustness | Uses ruler sensitivity as a diagnostic; eleven development menus do not support those certificates |
 | Decision-focused learning [@donti2017; @elmachtoub2022; @mandi2024] | Training predictions against downstream loss | Preserves the predictor for governance and audits a post-hoc decision layer |

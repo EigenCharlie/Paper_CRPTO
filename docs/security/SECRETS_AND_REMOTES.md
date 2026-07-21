@@ -23,7 +23,7 @@ in ignored `.dvc/config.local`.
 
 ## Active DVC Capsule
 
-The source registry declares exactly 37 DVC pointer files. Use the capsule manager
+The source registry declares exactly 45 DVC pointer files. Use the capsule manager
 instead of an unrestricted historical replay:
 
 ```powershell

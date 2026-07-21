@@ -67,6 +67,7 @@ def _normalize(text: str) -> str:
 def test_active_evidence_locks_v4_lineage_and_claim_boundary() -> None:
     evidence = _json(EVIDENCE)
 
+    assert evidence["schema_version"] == "2026-07-21.2"
     assert evidence["status"] == "active_ijds_v5_endpoint_reason_audited_paper_facing_evidence"
     assert evidence["run_tag"] == RUN
     assert evidence["protocol_commit"] == COMMIT
@@ -376,31 +377,50 @@ def test_endpoint_reasons_missingness_and_second_origin_are_bounded() -> None:
     rolling = evidence["sensitivity"]["rolling_origin"]
     assert rolling["origin_count"] == 2
     assert rolling["window_cells"] == 16
-    assert rolling["common_horizon_months"] == 3
+    assert rolling["common_issue_months"] == ["April", "May", "June"]
+    assert rolling["common_followup_months_after_issue_quarter_end"] == 39
+    assert rolling["approximate_followup_months_by_issue_month"] == {
+        "April": 41,
+        "May": 40,
+        "June": 39,
+    }
+    assert rolling["exact_loan_level_age_matched"] is False
+    assert rolling["evaluation_cutoffs"] == {
+        "primary_2016": "2019-09-30",
+        "rolling_2017": "2020-09-30",
+    }
     assert rolling["primary_2016_periods"] == ["2016-04", "2016-05", "2016-06"]
     assert rolling["rolling_2017_periods"] == ["2017-04", "2017-05", "2017-06"]
     assert rolling["primary_2016_census"] == {
         "candidate_rows": 74537,
-        "resolved_rows": 74443,
-        "unresolved_rows": 94,
+        "resolved_rows": 74120,
+        "unresolved_rows": 417,
     }
     assert rolling["rolling_2017_census"] == {
         "candidate_rows": 77105,
         "resolved_rows": 66091,
         "unresolved_rows": 11014,
     }
-    assert rolling["historical_primary_15_month_horizon_excluded"] is True
-    assert rolling["primary_2016_upper_max"] == pytest.approx(0.8753639132243047)
+    assert rolling["unequal_followup_runs_retained_as_provenance"] == {
+        "rolling_2017_run_tag": "ijds-rolling-origin-2017-2026-07-15-v4",
+        "primary_2016_recovery_run_tag": ("ijds-rolling-origin-primary-recovery-2026-07-21-v1"),
+    }
+    assert rolling["primary_2016_upper_max"] == pytest.approx(0.877684908166414)
     assert rolling["rolling_2017_upper_max"] == pytest.approx(0.8747681732702159)
     assert all(
         row["candidate_rows"] != 376890
         for row in rolling["rows"]
-        if row["origin"] == "primary_2016"
+        if row["origin_id"] == "primary_2016"
     )
-    assert {(row["origin"], row["window"]) for row in rolling["rows"]} == {
+    assert {(row["origin_id"], row["window"]) for row in rolling["rows"]} == {
         (origin, f"W{window}")
         for origin in ("primary_2016", "rolling_2017")
         for window in range(1, 9)
+    }
+    assert {row["common_followup_months"] for row in rolling["rows"]} == {39}
+    assert {(row["origin_id"], row["evaluation_cutoff"]) for row in rolling["rows"]} == {
+        ("primary_2016", "2019-09-30"),
+        ("rolling_2017", "2020-09-30"),
     }
     assert rolling["all_sixteen_upper_below_nominal"] is True
     assert rolling["model_or_origin_selected"] is False
@@ -418,6 +438,100 @@ def test_endpoint_reasons_missingness_and_second_origin_are_bounded() -> None:
         diagnostic["interpretation"]["all_candidate_label_conditional_coverage_estimated"] is False
     )
     assert diagnostic["interpretation"]["fairness_or_equalized_coverage_claim"] is False
+
+
+def test_joint_block_rank_reference_is_complete_and_scoped() -> None:
+    exact = _json(EVIDENCE)["exchangeability_transport_test"]
+
+    assert exact["run_tag"] == "ijds-exchangeability-transport-test-2026-07-21-v1"
+    assert exact["rank_null"]["law"] == "BetaBinomial(m, n + 1 - r, r)"
+    assert exact["rank_null"]["continuous_scores_give_exact_count_law"] is True
+    assert exact["rank_null"]["beta_binomial_upper_tail_is_conservative_with_ties"] is True
+    assert exact["rank_null"]["stronger_than_single_future_point_split_conformal_condition"] is True
+    assert (
+        exact["rank_null"]["rejection_need_not_refute_pointwise_marginal_split_conformal_validity"]
+        is True
+    )
+    assert exact["unresolved_endpoint_rule"]["sharp_under_unrestricted_binary_completion"] is True
+    assert exact["multiplicity"]["familywise_alpha"] == 0.05
+    assert exact["multiplicity"]["active_role"] == "locked_nominal_reporting_thresholds"
+    assert exact["multiplicity"]["would_control_fwer_if_family_fixed_ex_ante"] is True
+    assert exact["multiplicity"]["post_selection_fwer_control_claimed"] is False
+    assert exact["multiplicity"]["study_wide_fwer_control_claimed"] is False
+    assert exact["thirty_one_of_forty_meet_locked_nominal_thresholds"] is True
+    assert exact["cells_meeting_locked_nominal_thresholds"] == 31
+    assert exact["cells_not_meeting_locked_nominal_thresholds"] == 9
+    assert exact["nominal_flags_by_learner"] == {
+        "catboost_platt": 8,
+        "numeric_logistic_platt": 4,
+        "catboost_monotonic_platt": 8,
+        "woe_scorecard_platform_platt": 6,
+        "woe_scorecard_borrower_platt": 5,
+    }
+    assert len(exact["cell_rows"]) == 40
+    assert len(exact["stratum_rows"]) == 200
+    assert {
+        (row["learner"], row["window"])
+        for row in exact["cell_rows"]
+        if not row["meets_locked_nominal_holm_threshold"]
+    } == {
+        *(("numeric_logistic_platt", f"W{window}") for window in range(1, 5)),
+        *(("woe_scorecard_platform_platt", f"W{window}") for window in range(1, 3)),
+        *(("woe_scorecard_borrower_platt", f"W{window}") for window in range(1, 4)),
+    }
+    assert exact["interpretation"]["preregistered"] is False
+    assert exact["interpretation"]["confirmatory"] is False
+    assert exact["interpretation"]["usual_single_future_point_condition_tested_directly"] is False
+    assert exact["interpretation"]["usual_pointwise_split_conformal_theorem_refuted"] is False
+    assert exact["interpretation"]["post_selection_fwer_control_claimed"] is False
+    assert exact["interpretation"]["nonflag_establishes_exchangeability"] is False
+    assert exact["interpretation"]["flag_identifies_cause_of_shift"] is False
+
+
+def test_label_mondrian_sensitivity_is_complete_and_nonconfirmatory() -> None:
+    label = _json(EVIDENCE)["sensitivity"]["label_mondrian"]
+
+    assert label["freeze_run_tag"] == "ijds-label-mondrian-freeze-2026-07-21-v1"
+    assert label["run_tag"] == "ijds-label-mondrian-evaluation-2026-07-21-v1"
+    assert label["counts"] == {
+        "learner_window_cells": 40,
+        "threshold_cells": 400,
+        "target_category_cells": 400,
+        "target_stratum_cells": 200,
+        "learners": 5,
+        "windows_per_learner": 8,
+        "score_strata": 5,
+        "labels": 2,
+        "candidate_rows": 376890,
+        "resolved_rows": 364814,
+        "unresolved_rows": 12076,
+    }
+    assert label["learner_window_states"] == {
+        "robust_shortfall": 27,
+        "robust_at_or_above_nominal": 1,
+        "crosses_nominal": 12,
+    }
+    assert label["category_states"] == {
+        "crosses_nominal": 185,
+        "robust_shortfall": 109,
+        "robust_at_or_above_nominal": 106,
+    }
+    assert label["mixed_category_identification_states"] is True
+    assert label["all_forty_aggregate_class_gap_bounds_cross_zero"] is True
+    assert label["average_set_size_min"] == pytest.approx(1.7237177956432912)
+    assert label["average_set_size_max"] == pytest.approx(1.785467908408289)
+    assert label["set_both_share_min"] == pytest.approx(0.7237177956432912)
+    assert label["set_both_share_max"] == pytest.approx(0.7854679084082888)
+    assert len(label["cell_rows"]) == 40
+    assert len(label["stratum_rows"]) == 200
+    assert len(label["category_rows"]) == 400
+    assert all(
+        row["coverage_gap_y0_minus_y1_lower"] <= 0 <= row["coverage_gap_y0_minus_y1_upper"]
+        for row in label["cell_rows"]
+    )
+    assert label["interpretation"]["label_conditional_transport_guarantee"] is False
+    assert label["interpretation"]["fairness_claim"] is False
+    assert label["interpretation"]["policy_claim"] is False
 
 
 def test_fit_label_completion_and_allocation_granularity_are_bounded() -> None:
@@ -460,6 +574,22 @@ def test_evidence_manifest_hashes_every_active_output() -> None:
         "portfolio_structure_sensitivity/summary",
         "portfolio_structure_sensitivity/loader",
         "robustness_sensitivities/loader",
+        "exchangeability_transport/summary",
+        "exchangeability_transport/config",
+        "exchangeability_transport/stratum_tests",
+        "exchangeability_transport/learner_window_cells",
+        "rolling_origin_equal_followup/summary",
+        "rolling_origin_equal_followup/config",
+        "rolling_origin_equal_followup/temporal_coverage",
+        "rolling_origin_equal_followup/origin_endpoint_census",
+        "label_mondrian/outcome_free/freeze",
+        "label_mondrian/outcome_free/config",
+        "label_mondrian/outcome_free/thresholds",
+        "label_mondrian/evaluation/summary",
+        "label_mondrian/evaluation/config",
+        "label_mondrian/evaluation/label_mondrian_diagnostics",
+        "label_mondrian/evaluation/label_mondrian_category_diagnostics",
+        "label_mondrian/evaluation/label_mondrian_stratum_diagnostics",
         "artifact_descriptor_helper",
         "outcome_free/source_protocol_freeze",
         "two_ruler/outcome_free/freeze",
@@ -502,8 +632,11 @@ def test_manuscript_surfaces_share_v4_claims_and_retire_old_headlines() -> None:
         "216",
         "72",
         "0.884332",
-        "0.875364",
+        "0.877685",
         "0.874768",
+        "31 of 40",
+        "109",
+        "label-mondrian",
         "status-indexed",
         "selected-set",
     )

@@ -1,4 +1,4 @@
-schema_version: "2026-07-21.1"
+schema_version: "2026-07-21.2"
 status: "active_ijds_paper_evidence_source_registry"
 
 lineages:
@@ -77,6 +77,13 @@ lineages:
       scientific_uv_lock_sha256: "6c862cbad9ab7e3a07dd2823c775127403093d6ad59a789ee227d827165e4733"
       paper_role: "complete_binary_set_and_resolved_label_diagnostic"
       dvc_tracked: true
+    exchangeability_transport_test:
+      run_tag: "ijds-exchangeability-transport-test-2026-07-21-v1"
+      protocol_tag: "protocol/ijds-exchangeability-transport-test-2026-07-21-v1"
+      protocol_commit: "c9d30b02885bac516ae21eae32c56120cf7d296e"
+      scientific_uv_lock_sha256: "6c862cbad9ab7e3a07dd2823c775127403093d6ad59a789ee227d827165e4733"
+      paper_role: "retrospective_joint_block_rank_reference_diagnostic"
+      dvc_tracked: true
 
 sensitivities:
   endpoint_availability:
@@ -93,19 +100,12 @@ sensitivities:
     scientific_uv_lock_sha256: "d293ed325a3b25a13000560c8551d34937735ba8c9fe59ffeeed5d64f7120dd2"
     paper_role: "complete_budget_concentration_lgd_sensitivity"
     dvc_tracked: true
-  rolling_origin:
-    run_tag: "ijds-rolling-origin-2017-2026-07-15-v4"
-    protocol_tag: "protocol/ijds-rolling-origin-stability-2026-07-15-v4"
-    protocol_commit: "e2bba580a0b07c145bd64ff61440973d6e31349b"
-    scientific_uv_lock_sha256: "d293ed325a3b25a13000560c8551d34937735ba8c9fe59ffeeed5d64f7120dd2"
-    paper_role: "two_origin_retrospective_recurrence"
-    dvc_tracked: true
-  rolling_origin_primary_recovery:
-    run_tag: "ijds-rolling-origin-primary-recovery-2026-07-21-v1"
-    protocol_tag: "protocol/ijds-rolling-origin-primary-recovery-2026-07-21-v1"
-    protocol_commit: "8bb24b819f0559036a4723ba83bd2c50354bc435"
+  rolling_origin_equal_followup:
+    run_tag: "ijds-rolling-origin-equal-followup-2026-07-21-v1"
+    protocol_tag: "protocol/ijds-rolling-origin-equal-followup-2026-07-21-v1"
+    protocol_commit: "c9d30b02885bac516ae21eae32c56120cf7d296e"
     scientific_uv_lock_sha256: "6c862cbad9ab7e3a07dd2823c775127403093d6ad59a789ee227d827165e4733"
-    paper_role: "three_month_primary_origin_horizon_recovery"
+    paper_role: "equal_quarter_level_minimum_followup_two_origin_retrospective_sensitivity"
     dvc_tracked: true
   missingness_encoding:
     run_tag: "ijds-missingness-sensitivity-2026-07-15-v3"
@@ -128,8 +128,38 @@ sensitivities:
     scientific_uv_lock_sha256: "25cefb168506538c22b86a348c42869ea7fda64338815f2adea3fe7e07608f93"
     paper_role: "continuous_allocation_granularity_diagnostic"
     dvc_tracked: true
+  label_mondrian:
+    outcome_free:
+      run_tag: "ijds-label-mondrian-freeze-2026-07-21-v1"
+      protocol_tag: "protocol/ijds-label-mondrian-freeze-2026-07-21-v1"
+      protocol_commit: "c9d30b02885bac516ae21eae32c56120cf7d296e"
+      scientific_uv_lock_sha256: "6c862cbad9ab7e3a07dd2823c775127403093d6ad59a789ee227d827165e4733"
+      freeze_sha256: "2e8e151bfb81b5451d1b944b60a3652ac866dd5c700ce3465df0e83f334c4766"
+      paper_role: "outcome_free_label_mondrian_threshold_freeze"
+      dvc_tracked: true
+    evaluation:
+      run_tag: "ijds-label-mondrian-evaluation-2026-07-21-v1"
+      protocol_tag: "protocol/ijds-label-mondrian-evaluation-2026-07-21-v1"
+      protocol_commit: "a341135eaf1ff32401a360fcb64c7a22fbf0b202"
+      scientific_uv_lock_sha256: "6c862cbad9ab7e3a07dd2823c775127403093d6ad59a789ee227d827165e4733"
+      paper_role: "complete_retrospective_label_mondrian_sensitivity"
+      dvc_tracked: true
 
 replay_dependencies:
+  rolling_origin_unequal_followup:
+    run_tag: "ijds-rolling-origin-2017-2026-07-15-v4"
+    protocol_tag: "protocol/ijds-rolling-origin-stability-2026-07-15-v4"
+    protocol_commit: "e2bba580a0b07c145bd64ff61440973d6e31349b"
+    scientific_uv_lock_sha256: "d293ed325a3b25a13000560c8551d34937735ba8c9fe59ffeeed5d64f7120dd2"
+    paper_role: "non_evidence_unequal_followup_origin_provenance"
+    dvc_tracked: true
+  rolling_origin_primary_recovery_unequal_followup:
+    run_tag: "ijds-rolling-origin-primary-recovery-2026-07-21-v1"
+    protocol_tag: "protocol/ijds-rolling-origin-primary-recovery-2026-07-21-v1"
+    protocol_commit: "8bb24b819f0559036a4723ba83bd2c50354bc435"
+    scientific_uv_lock_sha256: "6c862cbad9ab7e3a07dd2823c775127403093d6ad59a789ee227d827165e4733"
+    paper_role: "non_evidence_unequal_followup_primary_origin_provenance"
+    dvc_tracked: true
   binary_geometry_v3_reason_reference:
     run_tag: "ijds-binary-geometry-frontier-v4-2026-07-14-v3"
     protocol_tag: "protocol/ijds-binary-geometry-frontier-v4-2026-07-14-v3"
@@ -198,6 +228,14 @@ dvc_pointers:
   - "models/experiments/ijds_audit/ijds-rolling-origin-primary-recovery-2026-07-21-v1.dvc"
   - "data/processed/experiments/ijds_audit/ijds-conformal-set-diagnostics-2026-07-21-v1.dvc"
   - "models/experiments/ijds_audit/ijds-conformal-set-diagnostics-2026-07-21-v1.dvc"
+  - "data/processed/experiments/ijds_audit/ijds-exchangeability-transport-test-2026-07-21-v1.dvc"
+  - "models/experiments/ijds_audit/ijds-exchangeability-transport-test-2026-07-21-v1.dvc"
+  - "data/processed/experiments/ijds_audit/ijds-rolling-origin-equal-followup-2026-07-21-v1.dvc"
+  - "models/experiments/ijds_audit/ijds-rolling-origin-equal-followup-2026-07-21-v1.dvc"
+  - "data/processed/experiments/ijds_audit/ijds-label-mondrian-freeze-2026-07-21-v1.dvc"
+  - "models/experiments/ijds_audit/ijds-label-mondrian-freeze-2026-07-21-v1.dvc"
+  - "data/processed/experiments/ijds_audit/ijds-label-mondrian-evaluation-2026-07-21-v1.dvc"
+  - "models/experiments/ijds_audit/ijds-label-mondrian-evaluation-2026-07-21-v1.dvc"
 
 sources:
   v4_config:
@@ -276,6 +314,54 @@ sources:
     path: "models/experiments/ijds_audit/ijds-conformal-set-diagnostics-2026-07-21-v1/execution_receipt.json"
     bytes: 1389
     sha256: "de0ba04ff08a9bc16067fffd523ad9bfd2d088fc04ec98b55ea61f668ad1e473"
+  exchangeability_transport_summary:
+    path: "models/experiments/ijds_audit/ijds-exchangeability-transport-test-2026-07-21-v1/exchangeability_transport_test_summary.json"
+    bytes: 9078
+    sha256: "72d9d39b2bef36a36440f1ccc720575d74005f1ad1932a774a91f73ed26c8af6"
+  exchangeability_transport_config:
+    path: "configs/experiments/ijds_exchangeability_transport_test_2026-07-21_v1.yaml"
+    bytes: 4243
+    sha256: "6a4d22d6119af84ee38b5a059fc45d4f1b4eb1e53066c66ff29da6ef5e38cdcb"
+  exchangeability_transport_receipt:
+    path: "models/experiments/ijds_audit/ijds-exchangeability-transport-test-2026-07-21-v1/execution_receipt.json"
+    bytes: 1409
+    sha256: "35d09ca9fa9bdddd879a485394c9aa491a41ee7a7cf2b294fab17af69ffe5758"
+  rolling_equal_followup_summary:
+    path: "models/experiments/ijds_audit/ijds-rolling-origin-equal-followup-2026-07-21-v1/rolling_origin_equal_followup_summary.json"
+    bytes: 55027
+    sha256: "313b2575d69cb44d5f45c47bf08167ee2ec0124faca70857cfbea0f7676a8768"
+  rolling_equal_followup_config:
+    path: "configs/experiments/ijds_rolling_origin_equal_followup_2026-07-21_v1.yaml"
+    bytes: 5502
+    sha256: "5a3d8369a371b346b2268377a195028e84ed8efca74a9e55e468b4df0ed0828a"
+  rolling_equal_followup_receipt:
+    path: "models/experiments/ijds_audit/ijds-rolling-origin-equal-followup-2026-07-21-v1/execution_receipt.json"
+    bytes: 1463
+    sha256: "87953660188d6eb4ef878b2d5e0f1ccdeec936d8c5c280cfe893f6fced97e256"
+  label_mondrian_freeze:
+    path: "models/experiments/ijds_audit/ijds-label-mondrian-freeze-2026-07-21-v1/protocol_freeze.json"
+    bytes: 5909
+    sha256: "2e8e151bfb81b5451d1b944b60a3652ac866dd5c700ce3465df0e83f334c4766"
+  label_mondrian_freeze_config:
+    path: "configs/experiments/ijds_label_mondrian_freeze_2026-07-21_v1.yaml"
+    bytes: 2053
+    sha256: "2fcc0e92669828a33d336a54f8839c236ddf96948fbe944558c0ff73940d9cd4"
+  label_mondrian_freeze_receipt:
+    path: "models/experiments/ijds_audit/ijds-label-mondrian-freeze-2026-07-21-v1/execution_receipt.json"
+    bytes: 1432
+    sha256: "4867a70a5bcd30574b3f9ed12d1f748dc643270d276c0139d7a1bf42c0600f01"
+  label_mondrian_evaluation_summary:
+    path: "models/experiments/ijds_audit/ijds-label-mondrian-evaluation-2026-07-21-v1/label_mondrian_evaluation_summary.json"
+    bytes: 18125
+    sha256: "e5dbbdc76d75b2459df780b487cc9e1ed490ee89bba1a10da2b29e939a5ed18f"
+  label_mondrian_evaluation_config:
+    path: "configs/experiments/ijds_label_mondrian_evaluation_2026-07-21_v1.yaml"
+    bytes: 3459
+    sha256: "8eac567b00bc8840919ac73c97e1d581cbc461ac155fb795eb6a65a75d89392a"
+  label_mondrian_evaluation_receipt:
+    path: "models/experiments/ijds_audit/ijds-label-mondrian-evaluation-2026-07-21-v1/execution_receipt.json"
+    bytes: 1390
+    sha256: "bd285c01d2c98fc695c6cf4be31834c8496d256984ab24b0a8ceb956ee5b4f4d"
   missingness_summary:
     path: "models/experiments/ijds_audit/ijds-missingness-sensitivity-2026-07-15-v3/missingness_sensitivity_summary.json"
     bytes: 10170

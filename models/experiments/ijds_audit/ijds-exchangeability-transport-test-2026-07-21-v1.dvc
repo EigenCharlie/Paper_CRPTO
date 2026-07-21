@@ -1,0 +1,6 @@
+outs:
+- md5: 9637ce69c47ffdf4b29de671b561a8c3.dir
+  size: 10487
+  nfiles: 2
+  hash: md5
+  path: ijds-exchangeability-transport-test-2026-07-21-v1

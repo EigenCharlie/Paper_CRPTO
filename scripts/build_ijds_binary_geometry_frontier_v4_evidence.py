@@ -79,6 +79,16 @@ TABLE_TARGETS = {
     "conformal_set_diagnostics": (
         TABLE_DIR / "crpto_ijds_v4_tableS6A_conformal_set_diagnostics.csv"
     ),
+    "exchangeability_cells": (TABLE_DIR / "crpto_ijds_v4_tableS6B_exchangeability_cells.csv"),
+    "exchangeability_strata": (TABLE_DIR / "crpto_ijds_v4_tableS6C_exchangeability_strata.csv"),
+    "label_mondrian_cells": (TABLE_DIR / "crpto_ijds_v4_tableS6D_label_mondrian_cells.csv"),
+    "label_mondrian_strata": (TABLE_DIR / "crpto_ijds_v4_tableS6E_label_mondrian_strata.csv"),
+    "label_mondrian_categories": (
+        TABLE_DIR / "crpto_ijds_v4_tableS6F_label_mondrian_categories.csv"
+    ),
+    "rolling_equal_followup_census": (
+        TABLE_DIR / "crpto_ijds_v4_tableS7D_equal_followup_census.csv"
+    ),
     "fit_label_completion": (TABLE_DIR / "crpto_ijds_v4_tableS11_fit_label_completion.csv"),
     "allocation_granularity": (TABLE_DIR / "crpto_ijds_v4_tableS12_allocation_granularity.csv"),
 }
@@ -101,6 +111,13 @@ CREDIT_LEARNER_LABELS = {
     "catboost_monotonic_platt": "Monotonic CatBoost",
     "woe_scorecard_platform_platt": "Platform-signal WOE scorecard",
     "woe_scorecard_borrower_platt": "Pricing-excluded application WOE scorecard",
+}
+CREDIT_LEARNER_SHORT_LABELS = {
+    "catboost_platt": "CatBoost",
+    "numeric_logistic_platt": "Logistic",
+    "catboost_monotonic_platt": "Monotonic CB",
+    "woe_scorecard_platform_platt": "Platform WOE",
+    "woe_scorecard_borrower_platt": "Borrower WOE",
 }
 WINDOW_IDS = (
     "w01_2012m01_m06",
@@ -800,40 +817,110 @@ def _save_figure(figure: plt.Figure, stem: str, *, output_dir: Path) -> dict[str
     return {"png": png, "pdf": pdf}
 
 
-def _coverage_figure(coverage: pd.DataFrame, *, output_dir: Path) -> dict[str, Path]:
+def _coverage_figure(
+    coverage: pd.DataFrame,
+    exchangeability_cells: pd.DataFrame,
+    *,
+    output_dir: Path,
+) -> dict[str, Path]:
     _style()
-    figure, axis = plt.subplots(figsize=(7.2, 3.7))
-    labels = [f"W{index}" for index in range(1, 9)]
-    x = np.arange(8, dtype=float)
-    specifications = (
-        ("catboost_platt", "CatBoost + Platt", BLUE, "o", -0.08),
-        ("numeric_logistic_platt", "Logistic + Platt", ORANGE, "s", 0.08),
+    canonical = coverage.loc[
+        coverage["taxonomy_groups"].eq(5)
+        & coverage["role"].eq("primary_oot")
+        & coverage["conformal_group"].eq(-1)
+    ].copy()
+    require_exact_grid(
+        canonical,
+        domains={"learner": CREDIT_LEARNER_ORDER, "window_id": WINDOW_IDS},
+        label="five-model coverage figure",
     )
-    for learner, label, color, marker, offset in specifications:
-        frame = coverage.loc[coverage["learner"].eq(learner)].sort_values("window_id")
-        center = frame["coverage_resolved"].to_numpy(dtype=float)
+    require_exact_grid(
+        exchangeability_cells,
+        domains={"learner": CREDIT_LEARNER_ORDER, "window_id": WINDOW_IDS},
+        label="joint-block rank-reference threshold heatmap",
+    )
+    window_labels = [f"W{index}" for index in range(1, 9)]
+    x = np.arange(8, dtype=float)
+    figure = plt.figure(figsize=(10.8, 7.2))
+    grid = figure.add_gridspec(5, 2, width_ratios=(2.9, 1.8), hspace=0.12, wspace=0.24)
+    palette = (BLUE, ORANGE, "#2A9D8F", "#8E5EA2", GOLD)
+    for index, (learner, color) in enumerate(zip(CREDIT_LEARNER_ORDER, palette, strict=True)):
+        axis = figure.add_subplot(grid[index, 0])
+        frame = canonical.loc[canonical["learner"].eq(learner)].sort_values("window_id")
         lower = frame["coverage_lower"].to_numpy(dtype=float)
         upper = frame["coverage_upper"].to_numpy(dtype=float)
-        axis.errorbar(
-            x + offset,
-            center,
-            yerr=np.vstack([center - lower, upper - center]),
-            color=color,
-            marker=marker,
-            markersize=4.5,
-            linewidth=1.4,
-            capsize=2.5,
-            label=label,
+        resolved = frame["coverage_resolved"].to_numpy(dtype=float)
+        axis.vlines(x, lower, upper, color=color, linewidth=2.3, alpha=0.9)
+        axis.scatter(
+            x,
+            resolved,
+            s=23,
+            facecolors="white",
+            edgecolors=color,
+            linewidths=1.2,
+            zorder=3,
         )
-    axis.axhline(0.90, color=INK, linestyle="--", linewidth=1.1, label="Nominal 0.90")
-    axis.set_xticks(x, labels)
-    axis.set_ylim(0.83, 0.905)
-    axis.set_ylabel("Coverage")
-    axis.set_xlabel("Six-month residual window (W1 = Jan-Jun 2012; W8 = Aug 2012-Jan 2013)")
-    axis.set_title("Primary OOT binary-outcome coverage across the complete window specification")
-    axis.legend(ncol=3, loc="lower left")
-    axis.spines[["top", "right"]].set_visible(False)
-    figure.tight_layout()
+        axis.axhline(0.90, color=INK, linestyle="--", linewidth=0.9)
+        axis.set_ylim(0.83, 0.905)
+        axis.set_xlim(-0.45, 7.45)
+        axis.set_ylabel(CREDIT_LEARNER_SHORT_LABELS[learner], rotation=0, ha="right", va="center")
+        axis.spines[["top", "right"]].set_visible(False)
+        if index == 0:
+            axis.set_title(
+                "A. Resolved coverage (open dots) and sharp completion bounds (segments)",
+                loc="left",
+            )
+        if index == 4:
+            axis.set_xticks(x, window_labels)
+            axis.set_xlabel("Six-month residual window")
+        else:
+            axis.set_xticks(x, [])
+
+    heat_axis = figure.add_subplot(grid[:, 1])
+    decisions = np.zeros((5, 8), dtype=float)
+    for row_index, learner in enumerate(CREDIT_LEARNER_ORDER):
+        frame = exchangeability_cells.loc[exchangeability_cells["learner"].eq(learner)].sort_values(
+            "window_id"
+        )
+        decisions[row_index, :] = frame["holm_reject_exchangeability_null"].astype(int)
+    heat_axis.imshow(decisions, cmap="RdYlGn_r", vmin=0, vmax=1, aspect="auto")
+    for row_index in range(5):
+        for column_index in range(8):
+            flagged = bool(decisions[row_index, column_index])
+            heat_axis.text(
+                column_index,
+                row_index,
+                "F" if flagged else "NF",
+                ha="center",
+                va="center",
+                color="white" if flagged else INK,
+                fontsize=8.5,
+                fontweight="bold",
+            )
+    heat_axis.set_xticks(x, window_labels)
+    heat_axis.set_yticks(
+        np.arange(5),
+        [CREDIT_LEARNER_SHORT_LABELS[learner] for learner in CREDIT_LEARNER_ORDER],
+    )
+    heat_axis.set_xlabel("Six-month residual window")
+    heat_axis.set_title("B. Locked nominal thresholds for 40 joint-block nulls", loc="left")
+    heat_axis.tick_params(length=0)
+    figure.suptitle(
+        "Finite-archive coverage and joint-block rank-reference flags",
+        y=0.995,
+        fontsize=12,
+        fontweight="bold",
+    )
+    figure.text(
+        0.01,
+        0.006,
+        "Focused coverage scale. Bounds are sharp completion intervals, not sampling intervals; "
+        "F/NF denotes meets/does not meet the locked nominal Bonferroni--Holm thresholds. "
+        "The post-inspection family has no selective-FWER claim.",
+        fontsize=7.8,
+        color=MID,
+    )
+    figure.subplots_adjust(left=0.13, right=0.98, top=0.93, bottom=0.09)
     return _save_figure(figure, FIGURE_STEMS["coverage"], output_dir=output_dir)
 
 
@@ -1351,6 +1438,410 @@ def _load_conformal_set_diagnostic_inputs(
 
 
 @dataclass(frozen=True)
+class ExchangeabilityTransportInputs:
+    summary_path: Path
+    receipt_path: Path
+    summary: dict[str, Any]
+    artifacts: dict[str, Path]
+    strata: pd.DataFrame
+    cells: pd.DataFrame
+    publication_strata: pd.DataFrame
+    publication_cells: pd.DataFrame
+
+
+def _load_exchangeability_transport_inputs(
+    registered: Mapping[str, Path],
+    lineage: Mapping[str, Any],
+) -> ExchangeabilityTransportInputs:
+    summary_path = registered["exchangeability_transport_summary"]
+    receipt_path = registered["exchangeability_transport_receipt"]
+    summary = _read_json(summary_path, label="Exchangeability transport summary")
+    if summary.get("status") != "complete_retrospective_exchangeability_transport_test":
+        raise RuntimeError("The exact exchangeability transport test is incomplete.")
+    _require_identity(summary, lineage, label="Exchangeability transport test")
+    receipt = _read_json(receipt_path, label="Exchangeability transport receipt")
+    _require_identity(receipt, lineage, label="Exchangeability transport receipt")
+    if receipt.get("summary") != relative_artifact_descriptor(summary_path, repo_root=ROOT):
+        raise RuntimeError("The exchangeability receipt no longer binds its summary.")
+    _require_clean_execution(summary, label="The exchangeability transport test")
+    _require_clean_execution(receipt, label="The exchangeability transport receipt")
+    if (
+        summary.get("counts", {}).get("stratum_tests") != 200
+        or summary.get("counts", {}).get("learner_window_cells") != 40
+        or summary.get("results", {}).get("holm_rejected_cells") != 31
+        or summary.get("multiplicity", {}).get("formal_rejection_family")
+        != "forty_learner_window_intersection_nulls"
+        or summary.get("interpretation", {}).get("preregistered") is not False
+        or summary.get("interpretation", {}).get("confirmatory") is not False
+    ):
+        raise RuntimeError("The exact exchangeability result or claim boundary changed.")
+
+    artifacts = _verified_artifact_paths(summary["artifacts"])
+    strata = pd.read_parquet(artifacts["stratum_tests"])
+    cells = pd.read_parquet(artifacts["learner_window_cells"])
+    require_exact_grid(
+        strata,
+        domains={
+            "learner": CREDIT_LEARNER_ORDER,
+            "window_id": WINDOW_IDS,
+            "conformal_group": tuple(range(5)),
+        },
+        label="exchangeability transport strata",
+    )
+    require_exact_grid(
+        cells,
+        domains={"learner": CREDIT_LEARNER_ORDER, "window_id": WINDOW_IDS},
+        label="exchangeability transport cells",
+    )
+    require_finite(
+        strata,
+        (
+            "fit_rows",
+            "finite_sample_rank",
+            "candidate_rows",
+            "misses_min",
+            "misses_max",
+            "null_expected_miss_rate",
+            "exact_log_p_value",
+            "bonferroni_log_p_value",
+        ),
+        label="exchangeability transport strata",
+    )
+    require_finite(
+        cells,
+        (
+            "cell_bonferroni_log_p_value",
+            "holm_adjusted_log_p_value",
+            "holm_critical_value",
+        ),
+        label="exchangeability transport cells",
+    )
+    if (
+        int(cells["holm_reject_exchangeability_null"].sum()) != 31
+        or not cells["holm_reject"].eq(cells["holm_reject_exchangeability_null"]).all()
+        or int(strata["continuous_threshold_tie_singleton"].sum()) != 200
+        or int(strata["resolved_target_residual_equal_threshold"].sum()) != 0
+    ):
+        raise RuntimeError("The exact exchangeability decisions or tie audit changed.")
+
+    window_map = dict(zip(WINDOW_IDS, WINDOW_ORDINALS, strict=True))
+    publication_cells = cells.rename(
+        columns={
+            "cell_bonferroni_log_p_value": "source_cell_bonferroni_log_p_value",
+            "cell_bonferroni_p_value": "source_cell_bonferroni_p_value",
+            "holm_rank": "source_holm_rank",
+            "holm_critical_value": "locked_nominal_holm_critical_value",
+            "holm_adjusted_log_p_value": "source_holm_adjusted_log_p_value",
+            "holm_adjusted_p_value": "source_holm_adjusted_p_value",
+            "holm_reject": "source_holm_reject_flag",
+            "holm_reject_exchangeability_null": "meets_locked_nominal_holm_threshold",
+            "hierarchical_fwer_alpha": "source_declared_hierarchical_fwer_alpha",
+        }
+    ).copy()
+    publication_cells.insert(
+        1, "learner_label", publication_cells["learner"].map(CREDIT_LEARNER_LABELS)
+    )
+    publication_cells.insert(2, "window", publication_cells["window_id"].map(window_map))
+    publication_strata = strata.rename(
+        columns={
+            "exact_log_p_value": "joint_block_reference_exact_log_p_value",
+            "exact_p_value": "joint_block_reference_exact_p_value",
+            "exact_neg_log10_p_value": "joint_block_reference_exact_neg_log10_p_value",
+            "bonferroni_log_p_value": "source_within_cell_bonferroni_log_p_value",
+            "bonferroni_p_value": "source_within_cell_bonferroni_p_value",
+            "within_cell_bonferroni_reject_at_cell_alpha": (
+                "meets_locked_nominal_within_cell_threshold"
+            ),
+        }
+    ).copy()
+    publication_strata.insert(
+        1, "learner_label", publication_strata["learner"].map(CREDIT_LEARNER_LABELS)
+    )
+    publication_strata.insert(2, "window", publication_strata["window_id"].map(window_map))
+    publication_strata.insert(
+        5, "score_stratum", publication_strata["conformal_group"].astype(int) + 1
+    )
+    return ExchangeabilityTransportInputs(
+        summary_path=summary_path,
+        receipt_path=receipt_path,
+        summary=summary,
+        artifacts=artifacts,
+        strata=strata,
+        cells=cells,
+        publication_strata=publication_strata,
+        publication_cells=publication_cells,
+    )
+
+
+@dataclass(frozen=True)
+class EqualFollowupInputs:
+    summary_path: Path
+    receipt_path: Path
+    summary: dict[str, Any]
+    artifacts: dict[str, Path]
+    coverage: pd.DataFrame
+    publication_coverage: pd.DataFrame
+    publication_census: pd.DataFrame
+
+
+def _load_equal_followup_inputs(
+    registered: Mapping[str, Path],
+    lineage: Mapping[str, Any],
+) -> EqualFollowupInputs:
+    summary_path = registered["rolling_equal_followup_summary"]
+    receipt_path = registered["rolling_equal_followup_receipt"]
+    summary = _read_json(summary_path, label="Equal-follow-up summary")
+    if (
+        summary.get("status")
+        != "complete_retrospective_equal_relative_followup_coverage_evaluation"
+    ):
+        raise RuntimeError("The equal-follow-up evaluation is incomplete.")
+    _require_identity(summary, lineage, label="Equal-follow-up evaluation")
+    receipt = _read_json(receipt_path, label="Equal-follow-up receipt")
+    _require_identity(receipt, lineage, label="Equal-follow-up receipt")
+    if receipt.get("summary") != relative_artifact_descriptor(summary_path, repo_root=ROOT):
+        raise RuntimeError("The equal-follow-up receipt no longer binds its summary.")
+    _require_clean_execution(summary, label="The equal-follow-up evaluation")
+    _require_clean_execution(receipt, label="The equal-follow-up receipt")
+    if (
+        summary.get("design", {}).get("common_followup_months_after_issue_quarter_end") != 39
+        or summary.get("coverage_cells") != 16
+        or summary.get("all_sixteen_upper_below_nominal") is not True
+        or summary.get("claim_boundary", {}).get("independent_replication") is not False
+    ):
+        raise RuntimeError("The equal-follow-up design or result changed.")
+
+    artifacts = _verified_artifact_paths(summary["artifacts"])
+    coverage = pd.read_parquet(artifacts["temporal_coverage"])
+    require_exact_grid(
+        coverage,
+        domains={
+            "origin_id": ("primary_2016", "rolling_2017"),
+            "window_ordinal": tuple(range(1, 9)),
+        },
+        label="equal-follow-up coverage",
+    )
+    require_finite(
+        coverage,
+        (
+            "candidate_rows",
+            "resolved_rows",
+            "unresolved_rows",
+            "coverage_resolved",
+            "coverage_lower",
+            "coverage_upper",
+            "mean_width",
+        ),
+        label="equal-follow-up coverage",
+    )
+    if (
+        not coverage["common_followup_months"].eq(39).all()
+        or not coverage["coverage_upper"].lt(0.90).all()
+        or not coverage.loc[coverage["origin_id"].eq("primary_2016"), "candidate_rows"]
+        .eq(74537)
+        .all()
+        or not coverage.loc[coverage["origin_id"].eq("primary_2016"), "resolved_rows"]
+        .eq(74120)
+        .all()
+        or not coverage.loc[coverage["origin_id"].eq("rolling_2017"), "candidate_rows"]
+        .eq(77105)
+        .all()
+        or not coverage.loc[coverage["origin_id"].eq("rolling_2017"), "resolved_rows"]
+        .eq(66091)
+        .all()
+    ):
+        raise RuntimeError("The equal-follow-up coverage or census changed.")
+    publication_coverage = coverage.copy()
+    publication_coverage.insert(
+        1,
+        "origin",
+        publication_coverage["origin_id"].map(
+            {"primary_2016": "2016 origin", "rolling_2017": "2017 origin"}
+        ),
+    )
+    publication_coverage.insert(
+        2, "window", publication_coverage["window_ordinal"].map(lambda value: f"W{int(value)}")
+    )
+    reason = pd.read_parquet(artifacts["origin_endpoint_reason_census"])
+    require_exact_grid(
+        reason,
+        domains={
+            "origin_id": ("primary_2016", "rolling_2017"),
+            "snapshot_resolution": (
+                "fully_paid_by_reconstructed_cutoff",
+                "charged_off_by_reconstructed_cutoff",
+                "nonterminal_or_unresolved_status",
+                "terminal_after_reconstructed_cutoff",
+                "terminal_availability_date_missing",
+            ),
+        },
+        label="equal-follow-up endpoint-reason census",
+    )
+    publication_census = reason.copy()
+    publication_census.insert(
+        1,
+        "origin",
+        publication_census["origin_id"].map(
+            {"primary_2016": "2016 origin", "rolling_2017": "2017 origin"}
+        ),
+    )
+    return EqualFollowupInputs(
+        summary_path=summary_path,
+        receipt_path=receipt_path,
+        summary=summary,
+        artifacts=artifacts,
+        coverage=coverage,
+        publication_coverage=publication_coverage,
+        publication_census=publication_census,
+    )
+
+
+@dataclass(frozen=True)
+class LabelMondrianInputs:
+    freeze_path: Path
+    freeze_receipt_path: Path
+    summary_path: Path
+    receipt_path: Path
+    summary: dict[str, Any]
+    freeze_artifacts: dict[str, Path]
+    artifacts: dict[str, Path]
+    cells: pd.DataFrame
+    strata: pd.DataFrame
+    categories: pd.DataFrame
+    reconciliation: pd.DataFrame
+    publication_cells: pd.DataFrame
+    publication_strata: pd.DataFrame
+    publication_categories: pd.DataFrame
+
+
+def _load_label_mondrian_inputs(
+    registered: Mapping[str, Path],
+    lineage: Mapping[str, Any],
+) -> LabelMondrianInputs:
+    freeze_identity = cast(Mapping[str, Any], lineage["outcome_free"])
+    evaluation_identity = cast(Mapping[str, Any], lineage["evaluation"])
+    freeze_path = registered["label_mondrian_freeze"]
+    freeze_receipt_path = registered["label_mondrian_freeze_receipt"]
+    summary_path = registered["label_mondrian_evaluation_summary"]
+    receipt_path = registered["label_mondrian_evaluation_receipt"]
+    freeze = _read_json(freeze_path, label="Label-Mondrian freeze")
+    freeze_receipt = _read_json(freeze_receipt_path, label="Label-Mondrian freeze receipt")
+    summary = _read_json(summary_path, label="Label-Mondrian evaluation summary")
+    receipt = _read_json(receipt_path, label="Label-Mondrian evaluation receipt")
+    _require_identity(freeze, freeze_identity, label="Label-Mondrian freeze")
+    _require_identity(freeze_receipt, freeze_identity, label="Label-Mondrian freeze receipt")
+    _require_identity(summary, evaluation_identity, label="Label-Mondrian evaluation")
+    _require_identity(receipt, evaluation_identity, label="Label-Mondrian evaluation receipt")
+    if (
+        freeze_receipt.get("freeze") != relative_artifact_descriptor(freeze_path, repo_root=ROOT)
+        or receipt.get("summary") != relative_artifact_descriptor(summary_path, repo_root=ROOT)
+        or summary.get("source_artifacts", {}).get("label_mondrian_freeze")
+        != relative_artifact_descriptor(freeze_path, repo_root=ROOT)
+        or summary.get("source_artifacts", {}).get("label_mondrian_freeze_receipt")
+        != relative_artifact_descriptor(freeze_receipt_path, repo_root=ROOT)
+    ):
+        raise RuntimeError("The Label-Mondrian freeze/evaluation descriptor chain changed.")
+    _require_clean_execution(freeze, label="The Label-Mondrian freeze")
+    _require_clean_execution(freeze_receipt, label="The Label-Mondrian freeze receipt")
+    _require_clean_execution(summary, label="The Label-Mondrian evaluation")
+    _require_clean_execution(receipt, label="The Label-Mondrian evaluation receipt")
+    if (
+        summary.get("status") != "complete_retrospective_label_mondrian_evaluation"
+        or summary.get("counts", {}).get("learner_window_cells") != 40
+        or summary.get("counts", {}).get("target_stratum_cells") != 200
+        or summary.get("counts", {}).get("target_category_cells") != 400
+        or summary.get("baseline_reconciliation", {}).get("maximum_absolute_difference", 1.0)
+        > 5.0e-14
+        or summary.get("interpretation", {}).get("label_conditional_transport_guarantee")
+        is not False
+    ):
+        raise RuntimeError("The Label-Mondrian result or interpretation boundary changed.")
+
+    freeze_artifacts = _verified_artifact_paths(freeze["outcome_free_artifacts"])
+    artifacts = _verified_artifact_paths(summary["artifacts"])
+    cells = pd.read_parquet(artifacts["label_mondrian_diagnostics"])
+    strata = pd.read_parquet(artifacts["label_mondrian_stratum_diagnostics"])
+    categories = pd.read_parquet(artifacts["label_mondrian_category_diagnostics"])
+    reconciliation = pd.read_parquet(artifacts["marginal_baseline_reconciliation"])
+    require_exact_grid(
+        cells,
+        domains={"learner": CREDIT_LEARNER_ORDER, "window_id": WINDOW_IDS},
+        label="Label-Mondrian learner-window cells",
+    )
+    require_exact_grid(
+        strata,
+        domains={
+            "learner": CREDIT_LEARNER_ORDER,
+            "window_id": WINDOW_IDS,
+            "score_stratum": tuple(range(5)),
+        },
+        label="Label-Mondrian target strata",
+    )
+    require_exact_grid(
+        categories,
+        domains={
+            "learner": CREDIT_LEARNER_ORDER,
+            "window_id": WINDOW_IDS,
+            "score_stratum": tuple(range(5)),
+            "label": (0, 1),
+        },
+        label="Label-Mondrian target categories",
+    )
+    require_exact_grid(
+        reconciliation,
+        domains={"learner": CREDIT_LEARNER_ORDER, "window_id": WINDOW_IDS},
+        label="Label-Mondrian baseline reconciliation",
+    )
+    cell_state = pd.Series("crosses_nominal", index=cells.index)
+    cell_state.loc[cells["coverage_upper"].lt(0.90)] = "robust_shortfall"
+    cell_state.loc[cells["coverage_lower"].ge(0.90)] = "robust_at_or_above_nominal"
+    if (
+        cell_state.value_counts().to_dict()
+        != {"robust_shortfall": 27, "crosses_nominal": 12, "robust_at_or_above_nominal": 1}
+        or categories["identification_state_at_nominal"].value_counts().to_dict()
+        != {"crosses_nominal": 185, "robust_shortfall": 109, "robust_at_or_above_nominal": 106}
+        or not cells["set_empty_share"].eq(0.0).all()
+        or not categories["sharp_endpoint_delta_reported"].eq(False).all()
+        or not strata["sharp_endpoint_delta_reported"].eq(False).all()
+    ):
+        raise RuntimeError("The Label-Mondrian identification or geometry pattern changed.")
+
+    window_map = dict(zip(WINDOW_IDS, WINDOW_ORDINALS, strict=True))
+    publication_cells = cells.copy()
+    publication_cells.insert(
+        1, "learner_label", publication_cells["learner"].map(CREDIT_LEARNER_LABELS)
+    )
+    publication_cells.insert(2, "window", publication_cells["window_id"].map(window_map))
+    publication_cells.insert(5, "identification_state_at_nominal", cell_state)
+    publication_strata = strata.copy()
+    publication_strata.insert(
+        1, "learner_label", publication_strata["learner"].map(CREDIT_LEARNER_LABELS)
+    )
+    publication_strata.insert(2, "window", publication_strata["window_id"].map(window_map))
+    publication_categories = categories.copy()
+    publication_categories.insert(
+        1, "learner_label", publication_categories["learner"].map(CREDIT_LEARNER_LABELS)
+    )
+    publication_categories.insert(2, "window", publication_categories["window_id"].map(window_map))
+    return LabelMondrianInputs(
+        freeze_path=freeze_path,
+        freeze_receipt_path=freeze_receipt_path,
+        summary_path=summary_path,
+        receipt_path=receipt_path,
+        summary=summary,
+        freeze_artifacts=freeze_artifacts,
+        artifacts=artifacts,
+        cells=cells,
+        strata=strata,
+        categories=categories,
+        reconciliation=reconciliation,
+        publication_cells=publication_cells,
+        publication_strata=publication_strata,
+        publication_categories=publication_categories,
+    )
+
+
+@dataclass(frozen=True)
 class MissingnessInputs:
     summary_path: Path
     receipt_path: Path
@@ -1444,6 +1935,7 @@ def _stage_publication_generation(
     *,
     tables: Mapping[str, pd.DataFrame],
     coverage: pd.DataFrame,
+    exchangeability_cells: pd.DataFrame,
     phase: pd.DataFrame,
     development_envelopes: pd.DataFrame,
 ) -> StagedPublicationGeneration:
@@ -1463,7 +1955,11 @@ def _stage_publication_generation(
     }
     staged_figure_dir = staging_root / "outputs" / FIGURE_DIR.relative_to(ROOT)
     figures = {
-        "coverage": _coverage_figure(coverage, output_dir=staged_figure_dir),
+        "coverage": _coverage_figure(
+            coverage,
+            exchangeability_cells,
+            output_dir=staged_figure_dir,
+        ),
         "phase_transition": _phase_figure(phase, output_dir=staged_figure_dir),
         "development_envelopes": _envelope_figure(
             development_envelopes,
@@ -1486,9 +1982,9 @@ def _stage_publication_generation(
         *TABLE_TARGETS.values(),
         *(target for targets in figure_targets.values() for target in targets.values()),
     }
-    if len(outputs) != 25 or set(outputs) != expected_targets:
+    if len(outputs) != 31 or set(outputs) != expected_targets:
         raise RuntimeError(
-            "The staged publication generation is not exactly 19 CSVs and 6 figures."
+            "The staged publication generation is not exactly 25 CSVs and 6 figures."
         )
     return StagedPublicationGeneration(
         table_paths=table_paths,
@@ -1561,13 +2057,19 @@ def _build_evidence(staging_root: Path) -> Path:
     credit_lineage = cast(dict[str, Any], lineages["credit_controls"])
     diagnostic_lineage = cast(dict[str, Any], lineages["diagnostics"])
     sensitivities = cast(dict[str, Any], registry["sensitivities"])
+    replay_dependencies = cast(dict[str, Any], registry["replay_dependencies"])
     endpoint_lineage = cast(dict[str, Any], sensitivities["endpoint_availability"])
     structural_lineage = cast(dict[str, Any], sensitivities["portfolio_structure"])
-    rolling_lineage = cast(dict[str, Any], sensitivities["rolling_origin"])
-    rolling_primary_lineage = cast(dict[str, Any], sensitivities["rolling_origin_primary_recovery"])
+    rolling_lineage = cast(dict[str, Any], replay_dependencies["rolling_origin_unequal_followup"])
+    rolling_primary_lineage = cast(
+        dict[str, Any],
+        replay_dependencies["rolling_origin_primary_recovery_unequal_followup"],
+    )
+    rolling_equal_lineage = cast(dict[str, Any], sensitivities["rolling_origin_equal_followup"])
     missingness_lineage = cast(dict[str, Any], sensitivities["missingness_encoding"])
     fit_label_lineage = cast(dict[str, Any], sensitivities["fit_label_completion"])
     granularity_lineage = cast(dict[str, Any], sensitivities["allocation_granularity"])
+    label_mondrian_lineage = cast(dict[str, Any], sensitivities["label_mondrian"])
     v4 = _load_v4_inputs(registered, v4_lineage)
     config_path = v4.config_path
     summary_path = v4.summary_path
@@ -1651,7 +2153,6 @@ def _build_evidence(staging_root: Path) -> Path:
     rolling_receipt_path = rolling.receipt_path
     rolling_summary = rolling.summary
     rolling_artifacts = rolling.artifacts
-    rolling_coverage = rolling.coverage
     rolling_primary = _load_rolling_primary_recovery_inputs(
         registered,
         rolling_primary_lineage,
@@ -1660,7 +2161,6 @@ def _build_evidence(staging_root: Path) -> Path:
     rolling_primary_receipt_path = rolling_primary.receipt_path
     rolling_primary_summary = rolling_primary.summary
     rolling_primary_artifacts = rolling_primary.artifacts
-    rolling_primary_coverage = rolling_primary.coverage
 
     conformal_set_diagnostics = _load_conformal_set_diagnostic_inputs(
         registered,
@@ -1672,6 +2172,25 @@ def _build_evidence(staging_root: Path) -> Path:
     conformal_set_artifacts = conformal_set_diagnostics.artifacts
     conformal_set_table = conformal_set_diagnostics.table
     conformal_set_publication_table = conformal_set_diagnostics.publication_table
+
+    exchangeability = _load_exchangeability_transport_inputs(
+        registered,
+        cast(dict[str, Any], diagnostic_lineage["exchangeability_transport_test"]),
+    )
+    exchangeability_summary_path = exchangeability.summary_path
+    exchangeability_receipt_path = exchangeability.receipt_path
+    exchangeability_summary = exchangeability.summary
+    exchangeability_artifacts = exchangeability.artifacts
+    exchangeability_cells = exchangeability.cells
+
+    equal_followup = _load_equal_followup_inputs(registered, rolling_equal_lineage)
+    equal_followup_summary_path = equal_followup.summary_path
+    equal_followup_receipt_path = equal_followup.receipt_path
+    equal_followup_summary = equal_followup.summary
+    equal_followup_artifacts = equal_followup.artifacts
+
+    label_mondrian = _load_label_mondrian_inputs(registered, label_mondrian_lineage)
+    label_mondrian_summary = label_mondrian.summary
 
     missingness = _load_missingness_inputs(registered, missingness_lineage)
     missingness_summary_path = missingness.summary_path
@@ -1849,24 +2368,15 @@ def _build_evidence(staging_root: Path) -> Path:
     ):
         raise RuntimeError("The primary endpoint-reason census changed.")
 
-    primary_origin = rolling_primary_coverage.copy()
-    primary_origin.insert(0, "origin", "primary_2016")
-    primary_origin.insert(
-        1,
-        "window",
-        primary_origin["window_id"].map(dict(zip(WINDOW_IDS, WINDOW_ORDINALS, strict=True))),
-    )
-    later_origin = rolling_coverage.copy()
-    later_origin.insert(0, "origin", "rolling_2017")
-    later_origin.insert(
-        1,
-        "window",
-        later_origin["window_id"].map(dict(zip(ROLLING_WINDOW_IDS, WINDOW_ORDINALS, strict=True))),
-    )
+    rolling_equal_coverage = equal_followup.publication_coverage.copy()
     rolling_table_columns = [
+        "origin_id",
         "origin",
+        "origin_year",
         "window",
         "window_id",
+        "evaluation_cutoff",
+        "common_followup_months",
         "candidate_rows",
         "resolved_rows",
         "unresolved_rows",
@@ -1875,26 +2385,21 @@ def _build_evidence(staging_root: Path) -> Path:
         "coverage_upper",
         "mean_width",
     ]
-    rolling_table = pd.concat(
-        [primary_origin[rolling_table_columns], later_origin[rolling_table_columns]],
-        ignore_index=True,
-    )
+    rolling_table = rolling_equal_coverage[rolling_table_columns].copy()
     require_exact_grid(
         rolling_table,
         domains={
-            "origin": ("primary_2016", "rolling_2017"),
+            "origin_id": ("primary_2016", "rolling_2017"),
             "window": WINDOW_ORDINALS,
         },
-        label="horizon-corrected two-origin rolling coverage",
+        label="equal-follow-up two-origin rolling coverage",
     )
     if (
         len(rolling_table) != 16
         or not rolling_table["coverage_upper"].lt(0.90).all()
-        or rolling_table.loc[rolling_table["origin"].eq("primary_2016"), "candidate_rows"]
-        .eq(376890)
-        .any()
+        or not rolling_table["common_followup_months"].eq(39).all()
     ):
-        raise RuntimeError("The two-origin retrospective recurrence contract changed.")
+        raise RuntimeError("The equal-follow-up retrospective recurrence contract changed.")
 
     fit_coverage = (
         fit_audit.loc[fit_audit["taxonomy_groups"].eq(5)]
@@ -2001,10 +2506,17 @@ def _build_evidence(staging_root: Path) -> Path:
             "missingness_encoding": missingness_table,
             "rolling_origin": rolling_table,
             "conformal_set_diagnostics": conformal_set_publication_table,
+            "exchangeability_cells": exchangeability.publication_cells,
+            "exchangeability_strata": exchangeability.publication_strata,
+            "label_mondrian_cells": label_mondrian.publication_cells,
+            "label_mondrian_strata": label_mondrian.publication_strata,
+            "label_mondrian_categories": label_mondrian.publication_categories,
+            "rolling_equal_followup_census": equal_followup.publication_census,
             "fit_label_completion": fit_label_table,
             "allocation_granularity": granularity_table,
         },
-        coverage=coverage,
+        coverage=credit_temporal_coverage,
+        exchangeability_cells=exchangeability_cells,
         phase=phase,
         development_envelopes=development_envelopes,
     )
@@ -2089,6 +2601,18 @@ def _build_evidence(staging_root: Path) -> Path:
             "rolling_origin_primary_recovery/execution_receipt": (rolling_primary_receipt_path),
             "conformal_set_diagnostics/summary": conformal_set_summary_path,
             "conformal_set_diagnostics/execution_receipt": conformal_set_receipt_path,
+            "exchangeability_transport/summary": exchangeability_summary_path,
+            "exchangeability_transport/config": registered["exchangeability_transport_config"],
+            "exchangeability_transport/execution_receipt": exchangeability_receipt_path,
+            "rolling_origin_equal_followup/summary": equal_followup_summary_path,
+            "rolling_origin_equal_followup/config": registered["rolling_equal_followup_config"],
+            "rolling_origin_equal_followup/execution_receipt": equal_followup_receipt_path,
+            "label_mondrian/outcome_free/freeze": label_mondrian.freeze_path,
+            "label_mondrian/outcome_free/config": registered["label_mondrian_freeze_config"],
+            "label_mondrian/outcome_free/execution_receipt": (label_mondrian.freeze_receipt_path),
+            "label_mondrian/evaluation/summary": label_mondrian.summary_path,
+            "label_mondrian/evaluation/config": registered["label_mondrian_evaluation_config"],
+            "label_mondrian/evaluation/execution_receipt": label_mondrian.receipt_path,
             "missingness_encoding/summary": missingness_summary_path,
             "missingness_encoding/execution_receipt": missingness_receipt_path,
             "missingness_encoding/freeze": missingness_freeze_path,
@@ -2112,6 +2636,10 @@ def _build_evidence(staging_root: Path) -> Path:
             "rolling_origin": _without_simulation_artifacts(rolling_artifacts),
             "rolling_origin_primary_recovery": rolling_primary_artifacts,
             "conformal_set_diagnostics": conformal_set_artifacts,
+            "exchangeability_transport": exchangeability_artifacts,
+            "rolling_origin_equal_followup": equal_followup_artifacts,
+            "label_mondrian/outcome_free": label_mondrian.freeze_artifacts,
+            "label_mondrian/evaluation": label_mondrian.artifacts,
             "missingness_encoding/evaluation": missingness_artifacts,
             "missingness_encoding/outcome_free": missingness_freeze_artifacts,
             "missingness_encoding/models": missingness_model_artifacts,
@@ -2123,7 +2651,7 @@ def _build_evidence(staging_root: Path) -> Path:
     )
     paper_artifact_descriptors = _paper_artifact_descriptors(publication_generation)
     evidence = {
-        "schema_version": "2026-07-21.1",
+        "schema_version": "2026-07-21.2",
         "status": "active_ijds_v5_endpoint_reason_audited_paper_facing_evidence",
         "source_registry": {
             "schema_version": str(registry["schema_version"]),
@@ -2226,6 +2754,71 @@ def _build_evidence(staging_root: Path) -> Path:
             },
             "rows": conformal_set_publication_table.to_dict(orient="records"),
         },
+        "exchangeability_transport_test": {
+            "scope": "five_learners_by_eight_windows_by_five_frozen_score_strata",
+            "run_tag": str(exchangeability_summary["run_tag"]),
+            "protocol_tag": str(exchangeability_summary["protocol_tag"]),
+            "protocol_commit": str(exchangeability_summary["protocol_commit"]),
+            "rank_null": {
+                **dict(exchangeability_summary["rank_null"]),
+                "active_name": "joint_block_exchangeability_of_calibration_and_all_targets",
+                "stronger_than_single_future_point_split_conformal_condition": True,
+                "rejection_need_not_refute_pointwise_marginal_split_conformal_validity": True,
+                "target_target_dependence_or_heterogeneity_can_contribute": True,
+            },
+            "unresolved_endpoint_rule": dict(exchangeability_summary["unresolved_endpoint_rule"]),
+            "multiplicity": {
+                **dict(exchangeability_summary["multiplicity"]),
+                "active_role": "locked_nominal_reporting_thresholds",
+                "would_control_fwer_if_family_fixed_ex_ante": True,
+                "family_and_pattern_inspected_before_lock": True,
+                "post_selection_fwer_control_claimed": False,
+                "study_wide_fwer_control_claimed": False,
+            },
+            "source_protocol_results": dict(exchangeability_summary["results"]),
+            "results": {
+                "cells_meeting_locked_nominal_thresholds": int(
+                    exchangeability_cells["holm_reject_exchangeability_null"].sum()
+                ),
+                "interpret_as_post_selection_controlled_rejections": False,
+            },
+            "cells_meeting_locked_nominal_thresholds": int(
+                exchangeability_cells["holm_reject_exchangeability_null"].sum()
+            ),
+            "thirty_one_of_forty_meet_locked_nominal_thresholds": bool(
+                exchangeability_cells["holm_reject_exchangeability_null"].sum() == 31
+            ),
+            "cells_not_meeting_locked_nominal_thresholds": int(
+                (~exchangeability_cells["holm_reject_exchangeability_null"]).sum()
+            ),
+            "nominal_flags_by_learner": {
+                learner: int(
+                    exchangeability_cells.loc[
+                        exchangeability_cells["learner"].eq(learner),
+                        "holm_reject_exchangeability_null",
+                    ].sum()
+                )
+                for learner in CREDIT_LEARNER_ORDER
+            },
+            "source_protocol_interpretation": dict(exchangeability_summary["interpretation"]),
+            "interpretation": {
+                "retrospective_after_archive_inspection": True,
+                "exploratory_test_implementation_and_pattern_seen_before_lock": True,
+                "preregistered": False,
+                "confirmatory": False,
+                "active_null_is_joint_block_exchangeability": True,
+                "usual_single_future_point_condition_tested_directly": False,
+                "usual_pointwise_split_conformal_theorem_refuted": False,
+                "post_selection_fwer_control_claimed": False,
+                "study_wide_fwer_control_claimed": False,
+                "locked_threshold_flags_are_confirmatory_rejections": False,
+                "nonflag_establishes_exchangeability": False,
+                "flag_identifies_cause_of_shift": False,
+                "selected_set_or_funded_set_validity": False,
+            },
+            "cell_rows": exchangeability.publication_cells.to_dict(orient="records"),
+            "stratum_rows": exchangeability.publication_strata.to_dict(orient="records"),
+        },
         "evaluation_endpoint": {
             **dict(config["target"]["evaluation_outcome_contract"]),
             "role": str(config["source"]["snapshot_date_role"]),
@@ -2296,39 +2889,119 @@ def _build_evidence(staging_root: Path) -> Path:
                 "rows": structural_table.to_dict(orient="records"),
             },
             "rolling_origin": {
-                "scope": "two_origin_retrospective_recurrence_not_replication",
-                "run_tag": str(rolling_summary["run_tag"]),
-                "protocol_tag": str(rolling_summary["protocol_tag"]),
-                "protocol_commit": str(rolling_summary["protocol_commit"]),
-                "primary_recovery_run_tag": str(rolling_primary_summary["run_tag"]),
-                "primary_recovery_protocol_tag": str(rolling_primary_summary["protocol_tag"]),
-                "primary_recovery_protocol_commit": str(rolling_primary_summary["protocol_commit"]),
+                "scope": "two_origin_equal_quarter_level_minimum_followup_retrospective_sensitivity_not_replication",
+                "run_tag": str(equal_followup_summary["run_tag"]),
+                "protocol_tag": str(equal_followup_summary["protocol_tag"]),
+                "protocol_commit": str(equal_followup_summary["protocol_commit"]),
                 "origins": ["primary_2016", "rolling_2017"],
                 "primary_2016_periods": list(PRIMARY_ROLLING_PERIODS),
                 "rolling_2017_periods": list(LATER_ROLLING_PERIODS),
                 "primary_2016_census": {
-                    "candidate_rows": PRIMARY_ROLLING_CENSUS[0],
-                    "resolved_rows": PRIMARY_ROLLING_CENSUS[1],
-                    "unresolved_rows": PRIMARY_ROLLING_CENSUS[2],
+                    "candidate_rows": 74537,
+                    "resolved_rows": 74120,
+                    "unresolved_rows": 417,
                 },
                 "rolling_2017_census": {
-                    "candidate_rows": LATER_ROLLING_CENSUS[0],
-                    "resolved_rows": LATER_ROLLING_CENSUS[1],
-                    "unresolved_rows": LATER_ROLLING_CENSUS[2],
+                    "candidate_rows": 77105,
+                    "resolved_rows": 66091,
+                    "unresolved_rows": 11014,
                 },
-                "common_horizon_months": 3,
+                "common_issue_months": ["April", "May", "June"],
+                "common_followup_months_after_issue_quarter_end": 39,
+                "approximate_followup_months_by_issue_month": {
+                    "April": 41,
+                    "May": 40,
+                    "June": 39,
+                },
+                "exact_loan_level_age_matched": False,
+                "evaluation_cutoffs": {
+                    "primary_2016": "2019-09-30",
+                    "rolling_2017": "2020-09-30",
+                },
                 "window_alignment": "ordinal_W1_through_W8_with_origin_specific_fit_dates",
-                "historical_primary_15_month_horizon_excluded": True,
                 "origin_count": 2,
                 "window_cells": int(len(rolling_table)),
                 "all_sixteen_upper_below_nominal": bool(
                     rolling_table["coverage_upper"].lt(0.90).all()
                 ),
-                "primary_2016_upper_max": float(primary_origin["coverage_upper"].max()),
-                "rolling_2017_upper_max": float(later_origin["coverage_upper"].max()),
+                "primary_2016_upper_max": float(
+                    rolling_table.loc[
+                        rolling_table["origin_id"].eq("primary_2016"), "coverage_upper"
+                    ].max()
+                ),
+                "rolling_2017_upper_max": float(
+                    rolling_table.loc[
+                        rolling_table["origin_id"].eq("rolling_2017"), "coverage_upper"
+                    ].max()
+                ),
                 "model_or_origin_selected": False,
                 "independent_replication_claim_authorized": False,
+                "unequal_followup_runs_retained_as_provenance": {
+                    "rolling_2017_run_tag": str(rolling_summary["run_tag"]),
+                    "primary_2016_recovery_run_tag": str(rolling_primary_summary["run_tag"]),
+                },
+                "endpoint_reason_census": equal_followup.publication_census.to_dict(
+                    orient="records"
+                ),
                 "rows": rolling_table.to_dict(orient="records"),
+            },
+            "label_mondrian": {
+                "scope": "complete_retrospective_label_by_score_stratum_sensitivity",
+                "freeze_run_tag": str(label_mondrian_lineage["outcome_free"]["run_tag"]),
+                "run_tag": str(label_mondrian_summary["run_tag"]),
+                "protocol_tag": str(label_mondrian_summary["protocol_tag"]),
+                "protocol_commit": str(label_mondrian_summary["protocol_commit"]),
+                "counts": dict(label_mondrian_summary["counts"]),
+                "baseline_reconciliation": dict(label_mondrian_summary["baseline_reconciliation"]),
+                "learner_window_states": {
+                    "robust_shortfall": int(label_mondrian.cells["coverage_upper"].lt(0.90).sum()),
+                    "robust_at_or_above_nominal": int(
+                        label_mondrian.cells["coverage_lower"].ge(0.90).sum()
+                    ),
+                    "crosses_nominal": int(
+                        (
+                            label_mondrian.cells["coverage_lower"].lt(0.90)
+                            & label_mondrian.cells["coverage_upper"].ge(0.90)
+                        ).sum()
+                    ),
+                },
+                "category_states": dict(
+                    label_mondrian_summary["target_categories"]["identification_state_counts"]
+                ),
+                "twenty_seven_of_forty_marginal_upper_endpoints_below_nominal": bool(
+                    label_mondrian.cells["coverage_upper"].lt(0.90).sum() == 27
+                ),
+                "one_hundred_nine_of_four_hundred_category_upper_endpoints_below_nominal": bool(
+                    label_mondrian.categories["coverage_upper_below_nominal"].sum() == 109
+                ),
+                "mixed_category_identification_states": bool(
+                    label_mondrian.categories["identification_state_at_nominal"].nunique() == 3
+                ),
+                "all_forty_aggregate_class_gap_bounds_cross_zero": bool(
+                    label_mondrian.cells["coverage_gap_y0_minus_y1_lower"].le(0.0).all()
+                    and label_mondrian.cells["coverage_gap_y0_minus_y1_upper"].ge(0.0).all()
+                ),
+                "average_set_size_min": float(label_mondrian.cells["average_set_size"].min()),
+                "average_set_size_max": float(label_mondrian.cells["average_set_size"].max()),
+                "set_both_share_min": float(label_mondrian.cells["set_both_share"].min()),
+                "set_both_share_max": float(label_mondrian.cells["set_both_share"].max()),
+                "resolved_y0_coverage_min": float(
+                    label_mondrian.cells["coverage_resolved_y0"].min()
+                ),
+                "resolved_y0_coverage_max": float(
+                    label_mondrian.cells["coverage_resolved_y0"].max()
+                ),
+                "resolved_y1_coverage_min": float(
+                    label_mondrian.cells["coverage_resolved_y1"].min()
+                ),
+                "resolved_y1_coverage_max": float(
+                    label_mondrian.cells["coverage_resolved_y1"].max()
+                ),
+                "identification": dict(label_mondrian_summary["identification"]),
+                "interpretation": dict(label_mondrian_summary["interpretation"]),
+                "cell_rows": label_mondrian.publication_cells.to_dict(orient="records"),
+                "stratum_rows": label_mondrian.publication_strata.to_dict(orient="records"),
+                "category_rows": label_mondrian.publication_categories.to_dict(orient="records"),
             },
             "missingness_encoding": {
                 "scope": ("three_declared_feature_semantics_preserving_catboost_encodings"),
@@ -2428,7 +3101,7 @@ def _build_evidence(staging_root: Path) -> Path:
             "manifest": relative_artifact_descriptor(raw_audit_path, repo_root=ROOT),
         },
         "credit_risk_controls": {
-            "scope": "coverage_only_five_model_temporal_transport_robustness",
+            "scope": "complete_five_model_finite_archive_coverage_audit",
             "outcome_free_run_tag": str(credit_freeze["run_tag"]),
             "verified_evaluation_run_tag": str(credit_summary["run_tag"]),
             "all_five_all_eight_upper_below_nominal": bool(
@@ -2606,13 +3279,19 @@ def _build_evidence(staging_root: Path) -> Path:
             },
         },
         "audit_thesis": (
-            "Binary absolute-residual conformal coverage does not transport to the later "
-            "archive under five declared credit-risk model specifications, recurs on the "
-            "common three-month horizon at the only additional feasible origin, persists "
-            "under three missing-value encodings, and remains below nominal under four "
-            "declared fit-label scenarios. Across all five models and windows, resolved-panel "
-            "coverage is descriptively lower for observed defaults than for observed "
-            "nondefaults; this is not a label-conditional conformal guarantee. A "
+            "All 40 finite-archive sharp coverage upper endpoints are below 0.90 under the "
+            "active six-month endpoint; this deterministic completion statement is not by "
+            "itself a rejection of conformal validity. A separate retrospectively locked "
+            "joint-block rank-reference diagnostic places 31 of 40 learner-window cells past "
+            "the locked nominal Bonferroni--Holm thresholds. Its null is stronger than the "
+            "usual single-future-point split-conformal condition, and the post-inspection "
+            "family has no selective-FWER claim. The CatBoost shortfall recurs "
+            "at two origins with cutoffs 39 months after issue-quarter end, under three missing-value "
+            "encodings, and under four declared fit-label scenarios. A complete label-Mondrian "
+            "sensitivity redistributes resolved coverage from nondefault toward default but "
+            "leaves 27 of 40 learner-window and 109 of 400 label-stratum upper endpoints below "
+            "0.90 while expanding two-label sets to 72.4%--78.5%; it is not a restored "
+            "transport guarantee. A "
             "prevalence-threshold crossing explains one observed geometry change but is "
             "not invariant to every fit-label scenario. Portfolio direction is not identified "
             "without outcome-free comparator support and is not invariant to the declared "

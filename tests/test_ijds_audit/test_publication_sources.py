@@ -131,7 +131,7 @@ def test_active_evidence_registry_verifies_every_source() -> None:
         ROOT / "configs/ijds_active_evidence_sources.yaml",
         repo_root=ROOT,
     )
-    assert payload["schema_version"] == "2026-07-21.1"
+    assert payload["schema_version"] == "2026-07-21.2"
     assert set(sources) == {
         "v4_config",
         "v4_summary",
@@ -152,6 +152,18 @@ def test_active_evidence_registry_verifies_every_source() -> None:
         "rolling_primary_recovery_receipt",
         "conformal_set_diagnostics_summary",
         "conformal_set_diagnostics_receipt",
+        "exchangeability_transport_summary",
+        "exchangeability_transport_config",
+        "exchangeability_transport_receipt",
+        "rolling_equal_followup_summary",
+        "rolling_equal_followup_config",
+        "rolling_equal_followup_receipt",
+        "label_mondrian_freeze",
+        "label_mondrian_freeze_config",
+        "label_mondrian_freeze_receipt",
+        "label_mondrian_evaluation_summary",
+        "label_mondrian_evaluation_config",
+        "label_mondrian_evaluation_receipt",
         "missingness_summary",
         "missingness_receipt",
         "fit_label_completion_freeze",
@@ -159,7 +171,7 @@ def test_active_evidence_registry_verifies_every_source() -> None:
         "allocation_granularity_freeze",
         "allocation_granularity_summary",
     }
-    assert len(payload["dvc_pointers"]) == 37
+    assert len(payload["dvc_pointers"]) == 45
     assert payload["lineages"]["binary_geometry"]["evaluation"]["run_tag"].endswith("2026-07-15-v5")
 
 
@@ -175,13 +187,17 @@ def test_active_registry_returns_all_dvc_run_tags_in_causal_config_order() -> No
         "ijds-credit-risk-controls-2026-07-15-v5",
         "ijds-policy-support-tie-audit-2026-07-12-v1",
         "ijds-conformal-set-diagnostics-2026-07-21-v1",
+        "ijds-exchangeability-transport-test-2026-07-21-v1",
         "ijds-endpoint-availability-sensitivity-2026-07-14-v1",
         "ijds-portfolio-structure-sensitivity-2026-07-15-v6",
-        "ijds-rolling-origin-2017-2026-07-15-v4",
-        "ijds-rolling-origin-primary-recovery-2026-07-21-v1",
+        "ijds-rolling-origin-equal-followup-2026-07-21-v1",
         "ijds-missingness-sensitivity-2026-07-15-v3",
         "ijds-fit-label-completion-sensitivity-2026-07-16-v2",
         "ijds-allocation-granularity-sensitivity-2026-07-16-v3",
+        "ijds-label-mondrian-freeze-2026-07-21-v1",
+        "ijds-label-mondrian-evaluation-2026-07-21-v1",
+        "ijds-rolling-origin-2017-2026-07-15-v4",
+        "ijds-rolling-origin-primary-recovery-2026-07-21-v1",
         "ijds-binary-geometry-frontier-v4-2026-07-14-v3",
         "ijds-normalized-objective-frontier-2026-07-14-v3",
         "ijds-credit-risk-controls-2026-07-14-v3",

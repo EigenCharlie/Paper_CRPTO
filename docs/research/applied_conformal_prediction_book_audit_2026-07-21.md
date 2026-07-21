@@ -61,9 +61,10 @@ It nevertheless contains several material errors and overstatements:
    empirical curve or run can illustrate, but cannot establish, marginal
    validity.
 
-These points directly motivate two additions to CRPTO: an exact
-Beta--Binomial reference test that distinguishes realized shortfall from
-evidence against transport/exchangeability, and a complete label-Mondrian
+These points directly motivate two additions to CRPTO: a combined-rank
+Beta--Binomial diagnostic for the stronger joint calibration-plus-target-block
+exchangeability null, kept distinct from both realized shortfall and the usual
+one-future-point marginal guarantee, and a complete label-Mondrian
 benchmark rather than interpreting resolved-label coverage as if it were
 class-conditional conformal validity.
 
@@ -71,11 +72,11 @@ class-conditional conformal validity.
 
 | Object | Book treatment | Technical verdict | CRPTO implication |
 |---|---|---|---|
-| Exchangeability | Defines invariance of the joint law to permutations and distinguishes it from i.i.d. | Correct. Some prose later weakens the argument incorrectly to equal marginals. | State exchangeability for calibration and evaluation scores conditional on the earlier fitted model and frozen group map. |
+| Exchangeability | Defines invariance of the joint law to permutations and distinguishes it from i.i.d. | Correct. Some prose later weakens the argument incorrectly to equal marginals. | Distinguish exchangeability of calibration plus one future score, which supports the usual marginal theorem, from joint exchangeability of calibration plus the entire target block, which is needed for the combined-count law. |
 | Split score | Uses `s(x,y)=1-p_hat_y(x)` for classification. | Correct for the hinge/probability-complement score. It need not be a calibrated probability. | Exactly equals CRPTO's `|y-p|` for binary `y`. |
 | Split rank | Uses `k=ceil((n+1)(1-alpha))`. | Correct when `k<=n`; otherwise use an infinite cutoff/full set. The prose calling it k-th largest is wrong. | Existing CRPTO groups are large and reconcile the k-th *ascending* order statistic. Keep an explicit assertion. |
-| Marginal coverage | States `P{Y_new in C(X_new)} >= 1-alpha`. | Correct under score exchangeability and the stated inclusive tie rule. It is not a statement about every realized OOT panel. | Replace categorical "coverage failure" language with finite-archive shortfall plus a separate inferential test. |
-| Conditional-on-calibration coverage | Mentioned informally as finite-sample fluctuation. | Needs the explicit law. Under an i.i.d.-continuous model, `F(S_(k)) ~ Beta(k,n+1-k)`. More generally, joint continuity and exchangeability give the same Beta--Binomial target miss-count law directly by uniform combined-rank allocation. | Use this reference to test whether the observed minimum miss count is compatible with the null. |
+| Marginal coverage | States `P{Y_new in C(X_new)} >= 1-alpha`. | Correct under score exchangeability and the stated inclusive tie rule. It is not a statement about every realized OOT panel. | Replace categorical "coverage failure" language with a finite-archive shortfall; the block-count diagnostic does not test this one-future-point guarantee. |
+| Conditional-on-calibration coverage | Mentioned informally as finite-sample fluctuation. | Needs the explicit law. Under an i.i.d.-continuous model, `F(S_(k)) ~ Beta(k,n+1-k)`. More generally, joint continuity and joint exchangeability of all calibration and target scores give the same Beta--Binomial target miss-count law directly by uniform combined-rank allocation. | Use this only as a diagnostic of the stronger joint-block null. In CRPTO, prior inspection means that meeting the locked nominal thresholds is not post-selection inference or FWER control. |
 | Ties | Says inclusive ties are conservative and randomized ties can be exact. | First clause is right. Exact `1-alpha` generally also needs randomization calibrated to the unattainable fractional rank, not merely an unspecified tie break. | CRPTO uses inclusive sets; discrete score ties make the continuous Beta--Binomial reference conservative. |
 | Proof by ranks | One proof uses exchangeability; another uses only identical distribution. | The exchangeability proof is the valid one. Equal marginals do not imply a uniform rank under dependence. | The manuscript should use only the permutation/rank argument. |
 | Binary interval embedding | Presents thresholded probability scores and binary label sets. | The direct label set is conformal. A continuous interval around `p` is a design embedding, not a confidence interval for latent PD. | CRPTO already makes this distinction correctly and should retain it. |
@@ -246,10 +247,12 @@ captured by the calibrated score.
    two distinct statements:
    - all 40 realized finite-archive sharp upper coverage endpoints are below
      0.90 under the six-month endpoint contract; and
-   - only cells rejected by the predeclared multiplicity-adjusted
-     Beta--Binomial test are inferentially incompatible with the within-stratum
-     exchangeable continuous-score reference.
-2. Add the conditional coverage law and exact test definition, including the
+   - 31 cells meet the locked nominal Bonferroni--Holm thresholds of a
+     Beta--Binomial diagnostic for the stronger within-stratum joint-block
+     exchangeability null. The family and pattern were inspected before the
+     lock, so this is neither a rejection of the usual marginal guarantee nor
+     post-selection or study-wide FWER-controlled inference.
+2. Add the exact joint-block reference law and diagnostic definition, including the
    lower miss count over every completion of unresolved labels and the
    conservative role of inclusive ties.
 3. Add the complete score-stratum-by-label Mondrian benchmark. It must use
@@ -295,5 +298,6 @@ Use the book as a private cross-check and teaching aid. Do not cite it for the
 paper's central theorem or frontier claims. The CRPTO manuscript should rely on
 primary conformal sources and should explicitly correct the book's most
 important practical misconception: a below-target realized OOT coverage rate
-is a finite-archive fact, while evidence against the conformal transport null
-requires a separate inferential calculation.
+is a finite-archive fact. The separate block-count calculation addresses a
+stronger joint-block reference law; it neither tests the usual marginal
+conformal guarantee nor becomes confirmatory after prior inspection.

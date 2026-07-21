@@ -15,11 +15,14 @@ pre-endpoint-correction evaluations are provenance only.
 - **NO-GO:** model or policy superiority, selected-set conformal validity,
   causal effects, a universal guardrail direction, prospective confirmation,
   or deployment claims.
-- The strongest result is negative but constructive: candidate coverage does
-  not transport under five reported learner specifications, binary residual
-  geometry changes near a prevalence threshold, and status-indexed portfolio
-  contrasts depend on the outcome-free ruler and coordinate used to define
-  comparable decision stringency.
+- The strongest result separates three evidential layers. All 40 finite-archive
+  sharp upper coverage endpoints are below 0.90; a separate combined-rank
+  diagnostic places 31 of 40 learner-window joint-block nulls past locked
+  nominal Bonferroni--Holm thresholds without a post-selection FWER claim; and
+  deterministic sensitivities show what
+  changes under label-Mondrian calibration, equal follow-up, fit labels, and
+  comparator design. None of these layers identifies the cause of shift or a
+  policy winner.
 - No OOT outcome selects a learner, window, taxonomy, gamma, ruler, coordinate,
   cap, comparator, or policy.
 
@@ -107,20 +110,20 @@ pre-endpoint-correction evaluations are provenance only.
 
 ### Second temporal origin
 
-- Primary-origin common-horizon recovery:
-  `ijds-rolling-origin-primary-recovery-2026-07-21-v1`, tag
-  `protocol/ijds-rolling-origin-primary-recovery-2026-07-21-v1`, commit
-  `8bb24b819f0559036a4723ba83bd2c50354bc435`.
-- Complete later-origin run:
-  `ijds-rolling-origin-2017-2026-07-15-v4`, tag
-  `protocol/ijds-rolling-origin-stability-2026-07-15-v4`, commit
-  `e2bba580a0b07c145bd64ff61440973d6e31349b`.
-- The recovery restricts the 2016 source mechanically to April--June
-  (74,537 candidates; 74,443 resolved; 94 unresolved), rather than reusing its
-  15-month primary panel. The later origin uses April--June 2017 (77,105;
-  66,091; 11,014). Each origin contributes all eight declared CatBoost windows.
-  This is a two-origin retrospective recurrence, not an independent
-  replication, prospective validation, or invariance result.
+- Active equal-follow-up run:
+  `ijds-rolling-origin-equal-followup-2026-07-21-v1`, tag
+  `protocol/ijds-rolling-origin-equal-followup-2026-07-21-v1`, commit
+  `c9d30b02885bac516ae21eae32c56120cf7d296e`.
+- Both April--June issue quarters use a cutoff 39 months after quarter end,
+  equalizing minimum rather than exact loan-level follow-up: the 2016
+  origin is evaluated at September 30, 2019 (74,537 candidates; 74,120 resolved;
+  417 unresolved) and the 2017 origin at September 30, 2020 (77,105; 66,091;
+  11,014). Each contributes all eight declared CatBoost windows.
+- The earlier common-issue-month runs used unequal endpoint follow-up and are
+  replay provenance, not active evidence. The active comparison is still a
+  retrospective sensitivity, not an independent replication, prospective
+  validation, temporal invariance result, or claim of identical age for every
+  individual loan.
 
 ### Conformal-set and resolved-label diagnostic
 
@@ -133,6 +136,55 @@ pre-endpoint-correction evaluations are provenance only.
   no learner or window. Coverage stratified by observed label conditions on the
   administratively resolved panel; it is not all-candidate label-conditional
   validity, a label-Mondrian procedure, or a fairness result.
+
+### Joint-block combined-rank reference diagnostic
+
+- Complete five-model run:
+  `ijds-exchangeability-transport-test-2026-07-21-v1`, tag
+  `protocol/ijds-exchangeability-transport-test-2026-07-21-v1`, commit
+  `c9d30b02885bac516ae21eae32c56120cf7d296e`.
+- Under joint exchangeability of the calibration residuals and the entire
+  target-residual block within stratum, strict target misses obey the exact
+  one-sided Beta--Binomial reference law under continuity; lexicographic random
+  tie-breaking supplies a conservative upper-tail bound with ties. The
+  deterministic sets themselves are not randomized. This block null is
+  stronger than the calibration-plus-one-target condition sufficient for the
+  ordinary pointwise split-conformal guarantee.
+- Loan-wise minimum misses over unresolved binary completions maximize the
+  upper-tail p-value. Bonferroni combines five strata within each learner-window
+  cell and Holm adjusts the 40 cell p-values. Thirty-one cells meet the locked
+  nominal thresholds: 8/8
+  CatBoost, 4/8 logistic, 8/8 monotonic CatBoost, 6/8 platform WOE, and 5/8
+  pricing-excluded WOE.
+- The exploratory flag pattern was seen before the V1 tag. For an ex ante fixed
+  family the hierarchy would control FWER under arbitrary dependence; here the
+  cutoffs are nominal within-table reporting thresholds, not post-selection or
+  study-wide FWER control. A flag can reflect target--target dependence or
+  heterogeneity and neither directly refutes one-point conformal validity nor
+  identifies a shift mechanism. A nonflag does not establish exchangeability;
+  stratum flags are not a 200-test FWER claim. The immutable V1 protocol is
+  interpreted through
+  `ijds_exchangeability_transport_test_interpretive_addendum_2026-07-21.md`.
+
+### Label-Mondrian sensitivity
+
+- Outcome-free threshold freeze:
+  `ijds-label-mondrian-freeze-2026-07-21-v1`, tag
+  `protocol/ijds-label-mondrian-freeze-2026-07-21-v1`, commit
+  `c9d30b02885bac516ae21eae32c56120cf7d296e`.
+- Complete evaluation:
+  `ijds-label-mondrian-evaluation-2026-07-21-v1`, tag
+  `protocol/ijds-label-mondrian-evaluation-2026-07-21-v1`, commit
+  `a341135eaf1ff32401a360fcb64c7a22fbf0b202`.
+- All 400 score-stratum-by-label thresholds and target categories, 200 target
+  strata, and 40 learner-window summaries are reported. Baseline reconciliation
+  is within `1.11e-16`; no learner, window, category, or method is selected.
+- Label-Mondrian redistributes resolved coverage toward default and removes
+  empty sets, but 27/40 learner-window upper endpoints and 109/400 category
+  upper endpoints remain below 0.90. Two-label sets rise to
+  72.37%--78.55%. This is a descriptive sensitivity, not restored temporal or
+  label-conditional validity, 400 hypothesis tests, equalized coverage, or a
+  fairness result.
 
 ### Fit-label completion sensitivity
 
@@ -255,7 +307,10 @@ pre-endpoint-correction evaluations are provenance only.
 ## Coverage and Geometry Evidence
 
 <!-- claim:coverage.five_models_all_windows_below_nominal -->
+<!-- claim:coverage.exact_exchangeability_transport_test -->
 <!-- claim:coverage.resolved_label_diagnostic_descriptive -->
+<!-- claim:sensitivity.label_mondrian_complete_mixed -->
+<!-- claim:sensitivity.label_mondrian_common_completion_gap -->
 <!-- claim:timing.fit_label_crossing_retained -->
 <!-- claim:sensitivity.second_origin_coverage_recurrence -->
 <!-- claim:sensitivity.missingness_encoding_recurrence -->
@@ -286,18 +341,38 @@ coverage upper bounds are below 0.90 for every model:
   active convention (maximum 0.882597), explicit indicators (0.884332), and
   native nullable features (0.880037). It neither identifies the missingness
   mechanism nor authorizes an encoding winner or portfolio claim.
-- On the common three-month horizon, all eight CatBoost upper bounds are below
-  0.90 at both origins. The corrected April--June 2016 maximum is 0.875364 and
-  the April--June 2017 maximum is 0.874768. The 15-month primary maximum
-  0.882597 remains the main coverage estimand and is not used in this origin
-  comparison. These 16 cells are two retrospective origin-window families,
-  not independent replications.
+- With cutoffs 39 months after each issue-quarter end, all eight CatBoost
+  upper bounds are below 0.90 at both origins. The April--June 2016 maximum is
+  0.877685 and the April--June 2017 maximum is 0.874768. These 16 cells are two
+  dependent retrospective origin-window families, not independent replications.
 - Across all five learners and eight windows, resolved-panel nondefault
   coverage ranges from 0.982982 to 0.992714, whereas resolved-panel default
   coverage ranges from 0.232570 to 0.363916. This 40-cell descriptive
   stratification conditions on administrative resolution: unresolved classes
   remain unknown, so it does not estimate label-conditional coverage for all
   candidates or authorize a fairness claim.
+- Predictive metrics use the 364,814 administratively resolved rows. They are
+  descriptive summaries of a resolution-selected panel, not unbiased
+  all-candidate performance estimates.
+- The 40 sharp upper endpoints are deterministic finite-archive identification
+  facts, not sampling confidence bounds and not by themselves a rejection of
+  split conformal. In the separate joint-block combined-rank analysis, 31/40
+  learner-window intersection nulls meet the locked nominal thresholds after
+  Bonferroni within cell and Holm across cells. The nine nonflags are logistic
+  W1--W4, platform WOE W1--W2, and pricing-excluded WOE W1--W3. This
+  post-inspection lineage has no selective-FWER claim, does not directly test
+  the usual one-future-point condition, and identifies no departure mechanism.
+- Label-Mondrian changes the 40 marginal states from 40 robust shortfalls to 27
+  shortfalls, 12 crossings, and one lower bound at or above 0.90. Across 400
+  label-stratum categories, 109 are robust shortfalls, 185 cross, and 106 have
+  lower bound at or above nominal. Resolved nondefault coverage becomes
+  0.885412--0.903457 and resolved default coverage 0.876044--0.906533, but AvgC
+  rises to 1.723718--1.785468 and `{0,1}` sets to 0.723718--0.785468. All 40
+  aggregate class-gap bounds cross zero. Each gap endpoint optimizes over
+  completions in which every unresolved loan is assigned once and shared by
+  both class ratios; the two endpoints may use different completions. Across
+  200 score strata, 51 gap bounds are positive, 37 negative, and 112 cross
+  zero. These are identification diagnostics, not conditional-validity tests.
 - Four declared fit-label scenarios cover 41 unavailable PD-development labels,
   24 Platt labels, and 150 conformal-fit labels. Every one of the 32 overall
   coverage upper bounds is below 0.90; scenario maxima range from 0.882594 to
@@ -422,17 +497,23 @@ The complete endpoint-availability sensitivity is:
 
 ## Permitted Claims
 
-- Under the declared six-month endpoint contract, candidate-level binary
-  coverage fails after temporal transport before optimization for all five
-  reported score specifications.
+- Under the declared six-month endpoint contract, all 40 candidate-level sharp
+  finite-archive coverage upper endpoints are below 0.90. Separately, the
+  joint-block combined-rank diagnostic places 31/40 frozen learner-window nulls
+  past locked nominal thresholds; it has no post-selection FWER claim and is
+  not a direct test of the usual one-future-point condition.
 - The same CatBoost coverage finding recurs under three feature-semantics-
   preserving missingness encodings and at one later retrospective origin on a
-  common April--June horizon, without selecting an encoding or claiming
+  common April--June horizon with cutoffs 39 months after issue-quarter end,
+  without selecting an encoding or claiming
   independent replication.
 - Resolved-panel coverage is substantially lower for observed defaults than
   observed nondefaults in every one of the 40 reported learner-window cells;
   this is a descriptive resolved-label diagnostic, not all-candidate
   label-conditional validity.
+- Complete label-Mondrian reporting redistributes coverage toward observed
+  defaults but does not uniformly restore nominal finite-archive coverage and
+  substantially increases two-label sets.
 - The coverage finding also survives all four declared fit-label scenarios;
   the W7--W8 geometric crossing survives only three of them.
 - Binary absolute-residual geometry is prevalence-sensitive but not invariant
@@ -455,6 +536,14 @@ The complete endpoint-availability sensitivity is:
 <!-- claim:boundary.no_selected_set_validity -->
 - Policy, gamma, ruler, coordinate, learner, or window winner.
 - Selected-set or funded-set conformal guarantee.
+- A realized finite-archive shortfall described as proof that the conformal
+  theorem fails.
+- A nonflag described as proof of exchangeability; a joint-block flag described
+  as direct refutation of ordinary one-point split-conformal validity or as a
+  specific shift mechanism; post-selection FWER control; or the 31/40 result
+  exported to untested sensitivities.
+- Label-Mondrian described as a repair, fairness result, equalized-coverage
+  certificate, or 400 multiplicity-adjusted tests.
 - Universal economic, default, or miscoverage dominance.
 - A verified September 2020 archive snapshot.
 - Causal, prospective, confirmatory, preregistered, deployment, or fair-lending

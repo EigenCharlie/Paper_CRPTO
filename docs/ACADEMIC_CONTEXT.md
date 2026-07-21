@@ -20,16 +20,26 @@ bounds rather than being dropped.
 
 1. **Prediction controls:** CatBoost/Platt plus four frozen learner
    specifications describe discrimination, calibration, WOE/IV, monotonicity,
-   PSI, and all-candidate coverage.
-2. **Binary geometry:** exact residual ranks and set intersections explain how
+   PSI, and the 40-cell finite-archive all-candidate coverage census.
+2. **Joint-block rank diagnostic:** 31/40 learner-window cells meet the locked
+   Bonferroni-within-cell and Holm-across-cell nominal thresholds. The
+   Beta--Binomial law concerns the stronger joint exchangeability of a
+   calibration stratum with its entire target block, not the usual marginal
+   condition for one future point. Prior inspection of the family and pattern
+   also precludes post-selection or study-wide FWER control.
+3. **Binary geometry:** exact residual ranks and set intersections explain how
    a prevalence threshold can change interval width discontinuously.
-3. **Decision construction:** outcome-blind rulers and coordinates create
+4. **Decision construction:** outcome-blind rulers and coordinates create
    comparable monthly allocation tracks without selecting a winner.
-4. **Identification:** paired common-outcome bounds and exact point-cap support
+5. **Identification:** paired common-outcome bounds and exact point-cap support
    determine which policy contrasts are signed and which cross zero.
-5. **Sensitivity:** endpoint availability, fit-label timing, missingness
-   encoding, later origin, and portfolio structure are separate axes. They are
-   not interchangeable replications and were not crossed factorially.
+6. **Sensitivity:** endpoint availability, fit-label timing, missingness
+   encoding, equal quarter-level minimum follow-up at two origins,
+   label-Mondrian calibration,
+   and portfolio structure are separate axes. The equal-follow-up grid has
+   16/16 upper endpoints below nominal; label-Mondrian leaves 27/40 marginal
+   and 109/400 category upper endpoints below nominal. These axes are not
+   interchangeable replications and were not crossed factorially.
 
 ## Engineering Consequences
 
@@ -48,8 +58,11 @@ bounds rather than being dropped.
 
 ## Interpretation Boundary
 
-The active results are retrospective and archive-specific. They do not imply
-prospective exchangeability, selected-set validity, causal funding effects,
-deployment safety, fair-lending compliance, or external validity. The economic
-quantity is a standardized status-indexed payoff proxy, not realized cash-flow
-return, NPV, IRR, or welfare.
+The active results are retrospective and archive-specific. The 40/40 sharp
+endpoint census and the separate 31/40 joint-block threshold flags are
+retrospective diagnostics. Neither layer refutes the usual marginal
+split-conformal guarantee, supplies post-selection inference, or implies
+prospective exchangeability, selected-set validity, causal funding effects, deployment
+safety, fair-lending compliance, or external validity. The economic quantity
+is a standardized status-indexed payoff proxy, not realized cash-flow return,
+NPV, IRR, or welfare.

@@ -16,6 +16,10 @@ def _rows(name: str) -> list[dict[str, str]]:
         return list(csv.DictReader(handle))
 
 
+def _normalize(text: str) -> str:
+    return re.sub(r"\s+", " ", text.lower())
+
+
 def test_all_primary_coverage_bounds_are_visible_in_supplement() -> None:
     rows = _rows("crpto_ijds_v4_table1_coverage_windows.csv")
     supplement = SUPPLEMENT.read_text(encoding="utf-8")
@@ -237,8 +241,8 @@ def test_endpoint_reason_missingness_and_second_origin_tables_are_visible() -> N
         assert f"{float(row['coverage_upper_max']):.6f}" in supplement
 
     assert len(rolling) == 16
-    assert {row["origin"] for row in rolling} == {"primary_2016", "rolling_2017"}
-    assert {(row["origin"], row["window"]) for row in rolling} == {
+    assert {row["origin_id"] for row in rolling} == {"primary_2016", "rolling_2017"}
+    assert {(row["origin_id"], row["window"]) for row in rolling} == {
         (origin, f"W{window}")
         for origin in ("primary_2016", "rolling_2017")
         for window in range(1, 9)
@@ -246,16 +250,23 @@ def test_endpoint_reason_missingness_and_second_origin_tables_are_visible() -> N
     assert {
         (row["candidate_rows"], row["resolved_rows"], row["unresolved_rows"])
         for row in rolling
-        if row["origin"] == "primary_2016"
-    } == {("74537", "74443", "94")}
+        if row["origin_id"] == "primary_2016"
+    } == {("74537", "74120", "417")}
     assert {
         (row["candidate_rows"], row["resolved_rows"], row["unresolved_rows"])
         for row in rolling
-        if row["origin"] == "rolling_2017"
+        if row["origin_id"] == "rolling_2017"
     } == {("77105", "66091", "11014")}
     assert not any(
-        int(row["candidate_rows"]) == 376890 for row in rolling if row["origin"] == "primary_2016"
+        int(row["candidate_rows"]) == 376890
+        for row in rolling
+        if row["origin_id"] == "primary_2016"
     )
+    assert {int(row["common_followup_months"]) for row in rolling} == {39}
+    assert {(row["origin_id"], row["evaluation_cutoff"]) for row in rolling} == {
+        ("primary_2016", "2019-09-30"),
+        ("rolling_2017", "2020-09-30"),
+    }
     for row in rolling:
         assert f"{float(row['coverage_lower']):.6f}" in supplement
         assert f"{float(row['coverage_upper']):.6f}" in supplement
@@ -281,6 +292,8 @@ def test_complete_conformal_set_diagnostic_is_visible_and_bounded() -> None:
             "average_set_size",
             "singleton_share",
             "set_empty_share",
+            "set_zero_only_share",
+            "set_one_only_share",
             "set_both_share",
         ):
             assert f"{float(row[column]):.6f}" in supplement
@@ -288,6 +301,88 @@ def test_complete_conformal_set_diagnostic_is_visible_and_bounded() -> None:
     assert "condition on administrative resolution" in normalized
     assert "does not estimate all-candidate label-conditional validity" in normalized
     assert "fairness result" in normalized
+
+
+def test_exact_exchangeability_tables_are_complete_and_scoped() -> None:
+    cells = _rows("crpto_ijds_v4_tableS6B_exchangeability_cells.csv")
+    strata = _rows("crpto_ijds_v4_tableS6C_exchangeability_strata.csv")
+    supplement = _normalize(SUPPLEMENT.read_text(encoding="utf-8"))
+
+    assert len(cells) == 40
+    assert len(strata) == 200
+    assert len({row["learner"] for row in cells}) == 5
+    assert len({row["window"] for row in cells}) == 8
+    assert sum(row["meets_locked_nominal_holm_threshold"] == "True" for row in cells) == 31
+    assert {int(row["score_stratum"]) for row in strata} == {1, 2, 3, 4, 5}
+    assert all(row["continuous_threshold_tie_singleton"] == "True" for row in strata)
+    assert all(int(row["resolved_target_residual_equal_threshold"]) == 0 for row in strata)
+    for token in (
+        "beta--binomial",
+        "bonferroni",
+        "holm",
+        "31 of 40",
+        "joint block-exchangeability",
+        "post-inspection",
+        "post-selection",
+        "exchangeability established by nonflag",
+    ):
+        assert token in supplement
+
+
+def test_label_mondrian_tables_are_complete_and_bounded() -> None:
+    cells = _rows("crpto_ijds_v4_tableS6D_label_mondrian_cells.csv")
+    strata = _rows("crpto_ijds_v4_tableS6E_label_mondrian_strata.csv")
+    categories = _rows("crpto_ijds_v4_tableS6F_label_mondrian_categories.csv")
+    supplement = _normalize(SUPPLEMENT.read_text(encoding="utf-8"))
+
+    assert len(cells) == 40
+    assert len(strata) == 200
+    assert len(categories) == 400
+    assert sum(row["identification_state_at_nominal"] == "robust_shortfall" for row in cells) == 27
+    assert sum(row["identification_state_at_nominal"] == "crosses_nominal" for row in cells) == 12
+    assert (
+        sum(row["identification_state_at_nominal"] == "robust_at_or_above_nominal" for row in cells)
+        == 1
+    )
+    assert (
+        sum(row["identification_state_at_nominal"] == "robust_shortfall" for row in categories)
+        == 109
+    )
+    assert all(float(row["set_empty_share"]) == 0.0 for row in cells)
+    assert all(
+        float(row["coverage_gap_y0_minus_y1_lower"])
+        <= 0
+        <= float(row["coverage_gap_y0_minus_y1_upper"])
+        for row in cells
+    )
+    for token in (
+        "label-mondrian",
+        "27",
+        "109",
+        "400",
+        "shared by both class ratios",
+        "restored exchangeability",
+    ):
+        assert token in supplement
+
+
+def test_equal_followup_endpoint_census_is_complete() -> None:
+    census = _rows("crpto_ijds_v4_tableS7D_equal_followup_census.csv")
+    supplement = _normalize(SUPPLEMENT.read_text(encoding="utf-8"))
+
+    assert len(census) == 10
+    assert {row["origin_id"] for row in census} == {"primary_2016", "rolling_2017"}
+    assert {int(row["common_followup_months"]) for row in census} == {39}
+    for origin, expected in {
+        "primary_2016": (74537, 74120, 417),
+        "rolling_2017": (77105, 66091, 11014),
+    }.items():
+        scoped = [row for row in census if row["origin_id"] == origin]
+        assert sum(int(row["candidate_rows"]) for row in scoped) == expected[0]
+        assert sum(int(row["resolved_rows"]) for row in scoped) == expected[1]
+        assert sum(int(row["unresolved_rows"]) for row in scoped) == expected[2]
+    for token in ("equal-39-month", "equal-follow-up", "2019-09-30", "2020-09-30"):
+        assert token in supplement
 
 
 def test_fit_completion_and_allocation_granularity_tables_are_visible() -> None:

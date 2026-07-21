@@ -1,0 +1,58 @@
+schema_version: "2026-07-21.1"
+protocol_status: "locked_preexecution_retrospective_individual_age_followup_sensitivity"
+protocol_tag: "protocol/ijds-rolling-origin-individual-age-followup-2026-07-21-v1"
+run_tag: "ijds-rolling-origin-individual-age-followup-2026-07-21-v1"
+
+protocol_document: "docs/research/ijds_rolling_origin_individual_age_followup_protocol_2026-07-21.md"
+protocol_lineage_files:
+  - "docs/research/ijds_rolling_origin_equal_followup_protocol_2026-07-21.md"
+  - "docs/research/ijds_rolling_origin_individual_age_followup_protocol_2026-07-21.md"
+
+parent_equal_followup_config:
+  path: "configs/experiments/ijds_rolling_origin_equal_followup_2026-07-21_v1.yaml"
+  bytes: 5502
+  sha256: "5a3d8369a371b346b2268377a195028e84ed8efca74a9e55e468b4df0ed0828a"
+
+evaluation:
+  origin_ids: ["primary_2016", "rolling_2017"]
+  origin_years: [2016, 2017]
+  common_issue_month_numbers: [4, 5, 6]
+  common_primary_months: 3
+  individual_followup_months_after_issue_month_end: 39
+  issue_date_resolution: "calendar_month"
+  expected_cutoffs_by_issue_period:
+    "2016-04": "2019-07-31"
+    "2016-05": "2019-08-31"
+    "2016-06": "2019-09-30"
+    "2017-04": "2020-07-31"
+    "2017-05": "2020-08-31"
+    "2017-06": "2020-09-30"
+  maximum_supported_cutoff: "2020-09-30"
+  charged_off_reporting_lag_months: 6
+  alpha: 0.10
+  nominal_coverage: 0.90
+  learner: "catboost_platt"
+  score_column: "pd_catboost_platt"
+  taxonomy_groups: 5
+  aggregate_stratum: -1
+  expected_windows_per_origin: 8
+  expected_coverage_cells: 16
+  expected_issue_month_cells: 6
+  complete_endpoint_reason_rows_per_origin: 5
+  complete_descriptive_family: true
+  error_controlled: false
+  hypothesis_tests: false
+  multiplicity_adjustment: false
+  no_model_selection: true
+  no_origin_selection: true
+  no_month_selection: true
+  no_window_selection: true
+  no_pooling: true
+  no_portfolio_evaluation: true
+
+output:
+  data_root: "data/processed/experiments/ijds_audit"
+  model_root: "models/experiments/ijds_audit"
+  deterministic_summary: "rolling_origin_individual_age_followup_summary.json"
+  execution_receipt: "execution_receipt.json"
+  immutability: "hard_no_overwrite_choose_fresh_run_tag"

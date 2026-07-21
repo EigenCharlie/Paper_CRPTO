@@ -1,4 +1,4 @@
-schema_version: "2026-07-21.1"
+schema_version: "2026-07-21.2"
 status: active_ijds_claim_contract
 
 surfaces:
@@ -55,7 +55,27 @@ claims:
     expected: true
     lineages: [binary_geometry.evaluation, credit_controls.evaluation]
     scope: all_candidate_sharp_bounds_under_six_month_endpoint
-    forbidden_inference: [universal_conformal_invalidity, selected_model_winner, funded_set_validity]
+    forbidden_inference:
+      [universal_conformal_invalidity, conformal_theorem_failure,
+       exchangeability_rejection_without_formal_test, selected_model_winner,
+       funded_set_validity]
+    surfaces:
+      required: [body, supplement, registry, claim_matrix]
+      allowed: [body, supplement, registry, claim_matrix]
+
+  - id: coverage.exact_exchangeability_transport_test
+    status: active
+    kind: empirical
+    rule: equals
+    result_pointer: /exchangeability_transport_test/thirty_one_of_forty_meet_locked_nominal_thresholds
+    expected: true
+    lineages: [credit_controls.evaluation, exchangeability_transport_test]
+    scope: fixed_post_inspection_forty_learner_window_joint_block_intersection_nulls_under_frozen_score_strata
+    forbidden_inference:
+      [preregistration, study_wide_confirmation, global_200_stratum_fwer,
+       post_selection_fwer_control, usual_single_future_point_split_conformal_null_rejected,
+       exchangeability_established_by_nonflag, identified_shift_mechanism,
+       inference_for_other_sensitivity_lineages]
     surfaces:
       required: [body, supplement, registry, claim_matrix]
       allowed: [body, supplement, registry, claim_matrix]
@@ -73,6 +93,36 @@ claims:
        fairness_or_equalized_coverage]
     surfaces:
       required: [body, supplement, registry, claim_matrix]
+      allowed: [body, supplement, registry, claim_matrix]
+
+  - id: sensitivity.label_mondrian_complete_mixed
+    status: active
+    kind: empirical
+    rule: equals
+    result_pointer: /sensitivity/label_mondrian/mixed_category_identification_states
+    expected: true
+    lineages: [label_mondrian.outcome_free, label_mondrian.evaluation]
+    scope: all_five_learners_eight_windows_five_score_strata_two_labels
+    forbidden_inference:
+      [restored_temporal_transport, label_conditional_validity, category_tests,
+       fairness_or_equalized_coverage, selected_method, funded_set_validity]
+    surfaces:
+      required: [body, supplement, registry, claim_matrix]
+      allowed: [body, supplement, registry, claim_matrix]
+
+  - id: sensitivity.label_mondrian_common_completion_gap
+    status: active
+    kind: empirical
+    rule: equals
+    result_pointer: /sensitivity/label_mondrian/all_forty_aggregate_class_gap_bounds_cross_zero
+    expected: true
+    lineages: [label_mondrian.evaluation]
+    scope: each_sharp_gap_endpoint_optimizes_over_single_assignment_completions_shared_by_both_class_ratios_endpoints_may_differ
+    forbidden_inference:
+      [separate_endpoint_subtraction, conditional_coverage_equality,
+       exchangeability, fairness_or_equalized_coverage]
+    surfaces:
+      required: [body, supplement, registry]
       allowed: [body, supplement, registry, claim_matrix]
 
   - id: geometry.prevalence_sensitive_mechanism
@@ -118,9 +168,11 @@ claims:
     rule: equals
     result_pointer: /sensitivity/rolling_origin/all_sixteen_upper_below_nominal
     expected: true
-    lineages: [binary_geometry.outcome_free, rolling_origin_primary_recovery, rolling_origin]
-    scope: two_retrospective_origins_common_april_june_horizon_eight_windows_each_excluding_primary_fifteen_month_panel
-    forbidden_inference: [independent_replication, temporal_invariance, prospective_validation]
+    lineages: [binary_geometry.outcome_free, rolling_origin_equal_followup]
+    scope: two_retrospective_april_june_origins_with_cutoffs_39_months_after_quarter_end_equal_minimum_not_exact_loan_age
+    forbidden_inference:
+      [independent_replication, temporal_invariance, prospective_validation,
+       identical_loan_level_age, pooled_origin_estimand]
     surfaces:
       required: [body, supplement, registry, claim_matrix]
       allowed: [body, supplement, registry, claim_matrix]

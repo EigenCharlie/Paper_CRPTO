@@ -26,19 +26,39 @@ with sharp common-outcome bounds for unresolved loans.
 The full archive audit covers 2,925,493 rows and an exhaustive 640,543-loan
 eligible design. The primary OOT panel contains 376,890 candidates: 364,814
 outcomes are reconstructed as observable by the evaluation cutoff and 12,076
-remain unresolved. All 40 all-candidate coverage upper bounds are below 0.90
-across five retrospectively protocol-locked learner specifications; the largest
-is 0.8977. The endpoint census partitions all candidates into 307,842 fully paid
-and 56,972 charged off by the cutoff, 11,551 nonterminal, 47 terminal after the
-cutoff, and 478 terminal with no reconstructible availability date. The
-stratum-level W7--W8 quantile change persists under every
-fit-label lag retaining more than 99% of each fitting month. A separate complete
-evaluation-endpoint lag grid reports 0, 3, 6, 8, and 12 months without selection;
-the six-month slice exactly reproduces the active endpoint evaluation. The
-below-target coverage finding also recurs across three feature-semantics-
-preserving missingness encodings and the only additional feasible retrospective
-origin; neither exercise selects a representation or constitutes independent
-validation.
+remain unresolved. Under the declared six-month endpoint, all 40 sharp
+all-candidate coverage upper bounds are below 0.90 across five retrospectively
+protocol-locked learner specifications; the largest is 0.8977. These 40
+endpoints are finite-archive identification facts, not by themselves a
+rejection of split conformal. In a separate post-inspection exact combined-rank
+reference diagnostic, 31/40 frozen learner-window cells meet the locked
+Bonferroni-within-cell and Holm-across-cell nominal thresholds. Its reference
+law assumes the stronger joint exchangeability of each calibration stratum and
+its entire target block, so it does not test or refute the ordinary
+one-future-point marginal split-conformal guarantee. Because the family and
+pattern were inspected before locking, the flags do not carry post-selection
+or study-wide FWER control; they identify neither a shift
+mechanism nor exchangeability in the nine unflagged cells. The endpoint
+census partitions all candidates into 307,842 fully paid and 56,972 charged off
+by the cutoff, 11,551 nonterminal, 47 terminal after the cutoff, and 478
+terminal with no reconstructible availability date. The stratum-level W7--W8
+quantile change persists under every fit-label lag retaining more than 99% of
+each fitting month. A separate complete evaluation-endpoint lag grid reports 0,
+3, 6, 8, and 12 months without selection; the six-month slice exactly
+reproduces the active endpoint evaluation. The below-target finite-archive
+finding also recurs across three feature-semantics-preserving missingness
+encodings and in all 16 CatBoost origin-window cells when both April--June
+origins use cutoffs 39 months after issue-quarter end, equalizing quarter-level
+minimum rather than exact loan-level follow-up. Neither exercise selects a
+representation or constitutes independent validation.
+
+A complete label-Mondrian sensitivity changes the 40 marginal states to 27
+shortfalls, 12 crossings, and one lower endpoint at or above 0.90; 109 of 400
+score-stratum-by-label category upper endpoints remain below 0.90. All 40
+aggregate class-gap bounds cross zero under a common unresolved completion,
+while two-label sets rise to 72.37%--78.55%. The paper treats this as a
+descriptive sensitivity, not restored conditional validity, a selected repair,
+or a fairness result.
 All four declared scenarios for 215 labels unavailable at fitting retain
 8/8 below-target coverage upper bounds. The all-default scenario removes the
 W7--W8 geometric crossing, so the paper reports that mechanism as diagnostic

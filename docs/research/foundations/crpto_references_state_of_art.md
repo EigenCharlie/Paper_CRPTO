@@ -1,154 +1,167 @@
-# Crpto References State Of Art
+# CRPTO references: active state of the art
 
-> Documento curado para el dossier CRPTO independiente desde el mapa bibliografico original del dossier historico CRPTO.
+Last audited: 2026-07-21.
 
-# Paper References — State of the Art (March 2026)
+This note is a concise routing document. The complete paper-by-paper corpus
+audit, extraction QA, and inclusion decisions are in
+`docs/research/conformal_literature_corpus_audit_2026-07-21.md`. The separate
+book audit is in
+`docs/research/applied_conformal_prediction_book_audit_2026-07-21.md`.
 
-Curated bibliography for the Lending Club Risk Project publication strategy.
-Each entry includes a direct link for easy access.
+## Corpus status
 
-May 2026 update: the CRPTO audit re-read the 17 local PDFs in the ignored `Papers_tesis/` reading folder, corrected metadata for the new papers, and added online, multi-distribution, end-to-end and satisficing conformal work as explicit future-work references. The PDFs are intentionally not committed; public traceability lives in BibTeX, DOI/URL links and Markdown notes.
+- `Papers_tesis` contains 112 PDFs and 4,412 pages.
+- The 2026-07-21 frontier addition contains 15 PDFs and 557 pages.
+- Every frontier PDF was read completely, including appendices, proofs,
+  formulas, tables, and figures; suspicious formulas were checked against the
+  rendered PDF rather than trusted to extraction alone.
+- The external 168-page *Applied Conformal Prediction* book was independently
+  extracted and audited. It is useful pedagogically but is not an authority for
+  several claims about ordering, conditional coverage, calibration, and
+  empirical validation.
 
----
+## Theory that directly governs CRPTO
 
-## A. Conformal Prediction — Foundations
+### Marginal and class-conditional conformal prediction
 
-| # | Paper | Authors | Year | Venue | Link |
-|---|-------|---------|------|-------|------|
-| A1 | Algorithmic Learning in a Random World | Vovk, Gammerman & Shafer | 2005 | Springer (book) | [Springer](https://link.springer.com/book/10.1007/978-3-031-06649-8) |
-| A2 | Conformalized Quantile Regression | Romano, Patterson & Candès | 2019 | NeurIPS | [arXiv](https://arxiv.org/abs/1905.03222) |
-| A3 | Conformal Prediction: A Gentle Introduction | Angelopoulos & Bates | 2023 | Foundations & Trends in ML | [arXiv](https://arxiv.org/abs/2107.07511) |
-| A4 | Conformal Risk Control | Angelopoulos, Bates, et al. | 2024 | ICLR 2024 | [arXiv](https://arxiv.org/abs/2208.02814) |
-| A5 | Conformal Prediction: A Data Perspective (Survey) | — | 2025 | ACM Computing Surveys | [ACM](https://dl.acm.org/doi/10.1145/3736575) |
-| A6 | Conformal Prediction and Trustworthy AI | Bellotti & Zhao | 2025 | Springer / arXiv | [arXiv](https://arxiv.org/abs/2508.06885) |
+Classwise or label-Mondrian conformal prediction uses a threshold for each
+label and targets
 
-## B. Mondrian & Group-Conditional Coverage
+$$
+P\{Y\in C(X)\mid Y=y\}\ge 1-\alpha
+$$
 
-| # | Paper | Authors | Year | Venue | Link |
-|---|-------|---------|------|-------|------|
-| B1 | Mondrian Conformal Predictive Distributions | Boström et al. | 2021 | COPA (PMLR v152) | [PMLR](https://proceedings.mlr.press/v152/bostrom21a/bostrom21a.pdf) |
-| B2 | Class-Conditional Conformal Prediction with Many Classes | Ding et al. | 2023 | NeurIPS | [arXiv](https://arxiv.org/abs/2306.09335) |
-| B3 | Conformal Prediction With Conditional Guarantees | Gibbs & Cherian | 2024 | JRSS-B | [arXiv](https://arxiv.org/abs/2305.12616) |
-| B4 | Conformal Classification with Equalized Coverage for Adaptively Selected Groups | Zhou & Sesia | 2024 | NeurIPS 2024 | [arXiv](https://arxiv.org/abs/2405.15106) |
-| B5 | Kandinsky Conformal Prediction: Beyond Class- and Covariate-Conditional Coverage | Bairaktari et al. | 2025 | ICML 2025 | [PMLR](https://proceedings.mlr.press/v267/bairaktari25a.html) |
-| B6 | Probabilistic Conformal Prediction with Approximate Conditional Validity | Plassier et al. | 2024 | arXiv | [arXiv](https://arxiv.org/abs/2407.00107) |
-| B7 | Conditional Coverage Diagnostics | — | 2025 | arXiv | [arXiv](https://arxiv.org/abs/2512.11779) |
+under exchangeability within the relevant label category. Ding et al. (2023)
+is the primary current reference. In binary CRPTO, clustering many classes is
+unnecessary; direct label-Mondrian thresholds are the relevant benchmark.
 
-## C. Conformal Prediction + Robust Optimization
+The active paper therefore reports both:
 
-| # | Paper | Authors | Year | Venue | Link |
-|---|-------|---------|------|-------|------|
-| C1 | Conformal Uncertainty Sets for Robust Optimization | Johnstone & Cox | 2021 | COPA (PMLR v152) | [arXiv](https://arxiv.org/abs/2105.14957) |
-| C2 | Conformal Contextual Robust Optimization | Patel, Rayan & Tewari | 2024 | AISTATS (PMLR v238) | [arXiv](https://arxiv.org/abs/2310.10003) |
-| C3 | End-to-End Conformal Calibration for Optimization Under Uncertainty | Christopher Yeh, Christianson, Wu, Wierman & Yue | 2025 | TMLR / arXiv v2 2026 | [arXiv](https://arxiv.org/abs/2409.20534) |
-| C4 | End-to-End Conditional Robust Optimization | Chenreddy et al. | 2024 | UAI (PMLR v244) | [arXiv](https://arxiv.org/abs/2403.04670) |
-| C5 | Conformal Robust Optimization and Satisficing for Prescriptive Analytics with Black-Box Predictors | Lingjie Zhao, Hansheng Jiang & Wei Qi | 2026 | AISTATS workshop / SSRN | [SSRN](https://papers.ssrn.com/sol3/papers.cfm?abstract_id=5338354) |
-| C6 | Optimal Model Selection for Conformalized Robust Optimization (CROMS) | Yajie Bao, Yang Hu, Haojie Ren, Peng Zhao & Changliang Zou | 2025 | arXiv | [arXiv](https://arxiv.org/abs/2507.04716) |
-| C7 | Calibrating Decision Robustness via Inverse Conformal Risk Control | Zhou & Zhu | 2026 | arXiv | [arXiv](https://arxiv.org/abs/2510.07750) |
-| C8 | Conformal Predictive Programming for Chance Constrained Optimization | Zhao, Yu, Deshmukh & Lindemann | 2024 | arXiv | [arXiv](https://arxiv.org/abs/2402.07407) |
-| C9 | Conformal Inverse Optimization | Chan, Delage & Lin | 2024 | NeurIPS 2024 | [arXiv](https://arxiv.org/abs/2402.01489) |
-| C10 | Risk-controlling Prediction with Distributionally Robust Optimization | Iutzeler & Mazoyer | 2025 | TMLR | [HAL](https://hal.science/hal-05217569v1) |
-| C11 | Multi-Distribution Robust Conformal Prediction | Yang & Jin | 2026 | arXiv | [arXiv](https://arxiv.org/abs/2601.02998) |
+1. the original score-stratified marginal recipe; and
+2. a complete label-by-score-stratum sensitivity.
 
-## D. Conformal Prediction in Finance & Portfolios
+The latter does not restore validity under unverified temporal transport.
 
-| # | Paper | Authors | Year | Venue | Link |
-|---|-------|---------|------|-------|------|
-| D1 | Conformal Predictive Portfolio Selection | Kato | 2025 | arXiv | [arXiv](https://arxiv.org/abs/2410.16333) |
-| D2 | Conformal Portfolio Optimization | Noguer i Alonso | 2024 | SSRN | [SSRN](https://papers.ssrn.com/sol3/papers.cfm?abstract_id=5011129) |
-| D3 | Conformal Prediction in Finance (survey) | Noguer i Alonso | 2024 | SSRN | [SSRN](https://papers.ssrn.com/sol3/papers.cfm?abstract_id=4939336) |
-| D4 | Online Conformal Prediction via Universal Portfolio Algorithms | Tuo Liu, Dobriban & Orabona | 2026 | arXiv | [arXiv](https://arxiv.org/abs/2602.03168) |
-| D5 | Adaptive Conformal Inference for Computing Market Risk Measures | Fantazzini | 2024 | JRFM | [MPRA](https://mpra.ub.uni-muenchen.de/121214/1/MPRA_paper_121214.pdf) |
-| D6 | Temporal Conformal Prediction (TCP) | — | 2025 | arXiv | [arXiv](https://arxiv.org/abs/2507.05470) |
+### Exchangeability and temporal transport
 
-## E. Decision-Focused Learning / Predict-then-Optimize
+Split conformal's usual marginal finite-sample rank guarantee requires
+exchangeability of the calibration scores with one new score in the frozen
+category. Applying that statement separately to future points does not imply
+that their whole target block is jointly exchangeable with calibration.
+Temporal separation and overlapping windows do not themselves establish either
+condition. Oliveira et al. (2024) gives approximate guarantees under explicitly
+bounded dependence or distribution discrepancy; CRPTO has not identified such
+bounds.
 
-| # | Paper | Authors | Year | Venue | Link |
-|---|-------|---------|------|-------|------|
-| E1 | Smart "Predict, then Optimize" (SPO+) | Elmachtoub & Grigas | 2022 | Management Science 68(1) | [DOI](https://doi.org/10.1287/mnsc.2020.3922) |
-| E2 | Decision-Focused Learning: Foundations, State of the Art, Benchmark | Mandi et al. | 2024 | JAIR (survey) | [arXiv](https://arxiv.org/abs/2307.13565) |
-| E3 | Task-based End-to-end Model Learning in Stochastic Optimization | Donti, Amos & Kolter | 2017 | NeurIPS | [arXiv](https://arxiv.org/abs/1703.04529) |
-| E4 | Decision Theoretic Foundations for Conformal Prediction | Kiyani et al. | 2025 | AISTATS / ICML 2025 | [arXiv](https://arxiv.org/abs/2502.02561) |
-| E5 | Conformal Risk Training: End-to-End Optimization of Conformal Risk Control | Christopher Yeh, Christianson, Wierman & Yue | 2025 | NeurIPS 2025 | [arXiv](https://arxiv.org/abs/2510.08748) |
-| E6 | Utility-Directed Conformal Prediction | — | 2025 | ICLR 2025 | [arXiv](https://arxiv.org/abs/2410.01767) |
-| E7 | The Price of Robustness | Bertsimas & Sim | 2004 | Operations Research | [DOI](https://doi.org/10.1287/opre.1030.0065) |
-| E8 | Online Decision-Focused Learning | Capitaine, Haddouche, Moulines, Jordan, Boursier & Durmus | 2026 | ICLR 2026 | [arXiv](https://arxiv.org/abs/2505.13564) |
+The active combined-rank reference diagnostic uses the following exact law
+under its assumptions. For calibration
+size $n$, rank $r=\lceil(n+1)(1-\alpha)\rceil$, and target size $m$, strict
+misses satisfy
 
-## F. Credit Risk, IFRS9 & Survival Analysis
+$$
+M\sim\operatorname{BetaBinomial}(m,n+1-r,r)
+$$
 
-| # | Paper | Authors | Year | Venue | Link |
-|---|-------|---------|------|-------|------|
-| F1 | PD for lifetime credit loss for IFRS 9 using ML competing risks | Bárcena Saavedra et al. | 2024 | Expert Systems w/ Applications | [ScienceDirect](https://www.sciencedirect.com/science/article/abs/pii/S095741742400472X) |
-| F2 | Defining and comparing SICR-events under IFRS 9 | — | 2025 | Annals of Operations Research | [Springer](https://link.springer.com/article/10.1007/s10479-025-06546-3) |
-| F3 | Improving Credit Risk Assessment: Insights from IFRS 9 | — | 2025 | MDPI Risks | [MDPI](https://www.mdpi.com/2227-9091/13/2/38) |
-| F4 | Approaches for modelling term-structure of default risk under IFRS 9 | Botha & Verster | 2026 | Int. J. Data Science & Analytics | [arXiv](https://arxiv.org/abs/2501.04975) |
-| F5 | Practical Credit Risk and Capital Modeling, and Validation | Chen | 2024 | Springer | [Springer](https://link.springer.com/book/10.1007/978-3-031-52542-1) |
-| F6 | Financial Risk Assessment Model (CP + Cox PH) | — | 2025 | Preprints.org | [Preprint](https://www.preprints.org/manuscript/202601.1407/v1/download) |
-| F7 | Random survival forests and Cox regression in LGD estimation | Ptak-Chmielewska & Kopciuszewski | 2024 | Journal of Credit Risk | [DOI](https://doi.org/10.21314/JCR.2024.3656) |
-| F8 | ECB IFRS 9 overlays and model improvements for novel risks | ECB | 2024 | ECB Banking Supervision | [ECB](https://www.bankingsupervision.europa.eu/ecb/pub/pdf/ssm.IFRS9novelrisks_202407~5e0eb30b5c.en.pdf) |
-| F9 | IFRS Board SICR Feedback Analysis | IFRS Board | 2024 | IFRS Meeting Materials | [IFRS](https://www.ifrs.org/content/dam/ifrs/meetings/2024/february/iasb/ap27b-feedback-analysis-sicr.pdf) |
+under continuous joint exchangeability of all $n+m$ scores. This is a stronger
+block null than the condition used for the ordinary one-future-point marginal
+guarantee. With tied scores, independent continuous
+lexicographic tie breakers are used only as a proof device; deterministic
+strict misses are bounded by the tie-broken count, making the same upper tail
+conservative. This diagnostic is separate from the deterministic finite-archive
+coverage bounds. In CRPTO it is reported only as a retrospective diagnostic:
+31/40 cells meet locked nominal Bonferroni--Holm thresholds, but the family and
+pattern were inspected before the lock, so those flags do not carry
+post-selection or study-wide FWER control and do not refute the usual marginal
+split-conformal guarantee.
 
-## G. ML in Credit Scoring
+### Selection and optimization
 
-| # | Paper | Authors | Year | Venue | Link |
-|---|-------|---------|------|-------|------|
-| G1 | ML powered financial credit scoring: systematic review | Ayari, Guetari & Kraiem | 2026 | AI Review (Springer) | [Springer](https://link.springer.com/article/10.1007/s10462-025-11148-z) |
-| G2 | Benchmarking state-of-the-art classification for credit scoring | Lessmann et al. | 2015 | EJOR | [DOI](https://doi.org/10.1016/j.ejor.2015.05.030) |
-| G3 | Two-stage ML for credit risk with fragmentary data | Liu et al. | 2026 | Expert Systems w/ Applications | [ScienceDirect](https://www.sciencedirect.com/science/article/abs/pii/S0957417425004300) |
-| G4 | Integrating AI and OR for Investment Decision-Making (Lending Club) | — | 2025 | JORS | [Taylor&Francis](https://www.tandfonline.com/doi/full/10.1080/01605682.2025.2498652) |
-| G5 | Comparative analysis of boosting algorithms for default prediction | — | 2025 | Cogent Economics & Finance | [Taylor&Francis](https://www.tandfonline.com/doi/full/10.1080/23322039.2025.2465971) |
-| G6 | SSA-CatBoost for Corporate Credit Rating | — | 2025 | Annals of OR | [Springer](https://link.springer.com/article/10.1007/s10479-025-06513-y) |
+Candidate-level marginal or class-conditional coverage is not funded-set
+validity. Jin and Ren (2025) is the closest theoretical reference for strong
+selection-conditional coverage under permutation-invariant black-box
+selection. Applying that theory to CRPTO would require a fully frozen solver
+and randomization contract, exchangeability, and computational reference-set
+construction that the current design does not implement.
 
-## H. Causal Inference in Credit
+Gazin et al. (2025) and related FCR methods control a different target: the
+expected proportion of erroneous sets among selected informative sets. Their
+selection rules do not automatically cover a budget-coupled knapsack or LP.
 
-| # | Paper | Authors | Year | Venue | Link |
-|---|-------|---------|------|-------|------|
-| H1 | Double/Debiased ML for Treatment and Structural Parameters | Chernozhukov et al. | 2018 | The Econometrics Journal | [DOI](https://doi.org/10.1111/ectj.12097) |
-| H2 | Estimating Treatment Effects with Causal Forests | Athey & Wager | 2019 | Annals of Statistics | [DOI](https://doi.org/10.1214/18-AOS1709) |
-| H3 | Causal Inference for Banking, Finance, and Insurance (Survey) | — | 2023 | arXiv | [arXiv](https://arxiv.org/abs/2307.16427) |
+### Online and distribution-shift methods
 
-## I. Calibration
+Gibbs and Candes (2024) motivates adaptive online calibration under shift, but
+CRPTO lacks prompt sequential label feedback because default labels mature
+slowly. Weighted conformal and weighted conformal risk control require
+identified density ratios or invariance assumptions that are not established
+here. These are future-work directions, not repairs for the active archive.
 
-| # | Paper | Authors | Year | Venue | Link |
-|---|-------|---------|------|-------|------|
-| I1 | Probabilistic Outputs for SVMs | Platt | 1999 | Advances in Large Margin Classifiers | [Microsoft](https://www.microsoft.com/en-us/research/publication/probabilistic-outputs-for-support-vector-machines/) |
-| I2 | Transforming classifier scores into accurate probability estimates | Zadrozny & Elkan | 2002 | KDD | [DOI](https://doi.org/10.1145/775047.775151) |
-| I3 | Venn-Abers Predictors | Vovk & Petej | 2014 | UAI | [arXiv](https://arxiv.org/abs/1211.0025) |
-| I4 | Probabilistic Conformal Prediction with Calibration | — | 2025 | ICLR 2025 | [ICLR](https://proceedings.iclr.cc/paper_files/paper/2025/file/9da457059dd3386a2166c5b08f29b7de-Paper-Conference.pdf) |
+## Frontier-paper dispositions
 
-## J. Conformal Prediction + Fairness
+### Use in the manuscript
 
-| # | Paper | Authors | Year | Venue | Link |
-|---|-------|---------|------|-------|------|
-| J1 | CP Sets Can Cause Disparate Impact | — | 2025 | arXiv | [arXiv](https://arxiv.org/html/2410.01888) |
-| J2 | Counterfactually Fair Conformal Prediction | — | 2025 | arXiv | [arXiv](https://arxiv.org/abs/2504.00000) |
-| J3 | Beyond Procedure: Substantive Fairness in CP | — | 2026 | arXiv | [arXiv](https://arxiv.org/pdf/2602.16794) |
+- Ding et al. (2023): class-conditional conformal prediction and finite-sample
+  classwise variability.
+- Oliveira et al. (2024): explicit conditions needed for nonexchangeable split
+  conformal guarantees.
+- Jin and Ren (2025): selection-conditional coverage boundary closest to the
+  portfolio optimizer.
+- Gazin et al. (2025): FCR as distinct from candidate or funded-set coverage.
+- Gibbs and Candes (2024): adaptive online calibration as future work with a
+  delayed-feedback limitation.
 
-## K. Time Series + Conformal
+### Future work only
 
-| # | Paper | Authors | Year | Venue | Link |
-|---|-------|---------|------|-------|------|
-| K1 | Conformal multistep-ahead multivariate TS forecasting | Schlembach et al. | 2025 | Machine Learning (Springer) | [Springer](https://link.springer.com/article/10.1007/s10994-024-06707-0) |
-| K2 | Online conformal inference for multi-step TS forecasting | Wang & Hyndman | 2024 | arXiv | [arXiv](https://arxiv.org/abs/2401.00000) |
-| K3 | Adaptive Conformal Inference Under Distribution Shift | Gibbs & Candès | 2021 | NeurIPS | [arXiv](https://arxiv.org/abs/2106.00170) |
-| K4 | JANET: Joint Adaptive Conformal Inference and Transductive Calibration | — | 2024 | arXiv | [arXiv](https://arxiv.org/abs/2407.00000) |
+- long-tail multiclasse conformal prediction;
+- interval-valued outcomes;
+- optimized FCR;
+- weighted conformal risk control;
+- counterfactual decision sets;
+- audited conformal prediction under a strictly nested target design.
 
-## L. COPA Conference Proceedings
+These methods change assumptions or estimands and cannot be presented as
+drop-in guarantees for CRPTO.
 
-| # | Event | Year | Link |
-|---|-------|------|------|
-| L1 | COPA 2024 (13th Symposium) — Milan | 2024 | [PMLR v230](https://proceedings.mlr.press/v230/) |
-| L2 | COPA 2025 (14th Symposium) | 2025 | [PMLR v266](https://proceedings.mlr.press/v266/) |
-| L3 | COPA 2026 (15th Symposium) — upcoming | 2026 | [Website](https://copa-conference.com/) |
+### Quarantine as support
 
----
+- Peng and Lessmann (2026): target-definition, simulated-drift, cross-validation,
+  calibration, and metric-orientation inconsistencies.
+- Sesia and Svetnik (2025): reciprocal mismatch in the published IPCW theorem
+  mapping; do not rely on the current proof as methodological support.
+- Zhu et al. (2026): inverted utility tail in the method statement, unsupported
+  convexity/subgradient steps, boundary KKT omission, experiment/theorem step
+  mismatch, and reported coverage below nominal.
 
-## Key Gaps Identified in Literature (March 2026)
+These papers remain in the local corpus for provenance and adversarial review,
+not as affirmative support.
 
-1. **ZERO papers** combine conformal prediction with IFRS9 ECL estimation
-2. **ZERO papers** use Mondrian CP for credit portfolio optimization
-3. **ZERO papers** use conformal interval width as SICR signal
-4. **ZERO papers** build CatBoost → Calibration → Mondrian CP → Pyomo RO pipeline
-5. **ZERO papers** apply SPO+ loss jointly with conformal prediction
-6. **ZERO papers** apply CP to MRM/SR 11-7 model risk management
-7. Credit grades are naturally disjoint → Mondrian (not Kandinsky) is the correct tool
+## Current research gaps, stated conservatively
+
+The literature search did not find a method that simultaneously supplies all
+of the following for the active CRPTO setting:
+
+- delayed and partially unresolved binary credit outcomes;
+- unverified temporal transport from conformal fit to evaluation;
+- status-independent monthly candidate menus;
+- a batch-coupled budget and concentration optimizer;
+- selected- or funded-set coverage after optimization; and
+- sharp finite-archive evaluation without a missing-at-random assumption.
+
+This is a scoped corpus finding, not a universal claim that no such paper
+exists. The defensible contribution is therefore an identification audit of
+the handoff, not novelty of conformal prediction, credit scoring, or robust
+optimization individually.
+
+## Writing rules induced by the literature audit
+
+- Say `k`-th smallest residual in ascending order and use `+infinity` when
+  $k=n+1$.
+- Distinguish a realized sharp coverage shortfall from a stronger joint-block
+  rank diagnostic, and neither from a test of the usual marginal guarantee.
+- Distinguish marginal, label-conditional, selection-conditional, and FCR
+  guarantees.
+- Never call Platt scaling, Venn--Abers calibration, or label-Mondrian fitting a
+  generic repair for conditional coverage or temporal shift.
+- Do not export a candidate-level guarantee to funded loans.
+- Treat adaptive, weighted, survival, counterfactual, and action-conditional
+  methods as different designs unless their assumptions and decision unit are
+  implemented explicitly.

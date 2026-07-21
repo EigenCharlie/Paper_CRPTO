@@ -1,9 +1,19 @@
-# IJDS Exact Exchangeability/Transport Test Protocol V1 - 2026-07-21
+# IJDS Joint-Block Combined-Rank Diagnostic Protocol V1 - 2026-07-21
+
+> **Post-run interpretive notice.** The immutable protocol tag preserves the
+> originally executed text; this working-tree copy incorporates the later
+> correction. Active manuscript interpretation is narrowed by
+> `ijds_exchangeability_transport_test_interpretive_addendum_2026-07-21.md`:
+> the null is joint block exchangeability of calibration plus the entire target
+> block, stronger than the usual calibration-plus-one-target condition, and the
+> inspected-before-lock Bonferroni--Holm cutoffs carry no post-selection FWER
+> claim. Source fields named `reject` are reported actively as locked nominal
+> threshold flags.
 
 ## Status and question
 
-This lineage adds a complete retrospective falsification test for the
-split-conformal exchangeability null. The Lending Club archive, the active
+This lineage adds a complete retrospective joint-block rank-reference
+diagnostic. The Lending Club archive, the active
 coverage results, their class asymmetry, and an exploratory implementation and
 approximate rejection pattern from this test family were already inspected.
 V1 therefore fixes a complete reproducible reporting analysis after inspection;
@@ -11,9 +21,10 @@ it is not preregistration, confirmation, an untouched holdout, independent
 inference from the exploratory analysis, or a conformal repair.
 
 The question is deliberately narrower than "does conformal prediction work?":
-within each frozen learner--window--score-stratum cell, is the sharp minimum
-number of primary-OOT misses compatible with the exact continuous-rank count
-law, used as a conservative upper-tail bound when scores tie?
+within each frozen learner--window--score-stratum cell, does the sharp minimum
+number of primary-OOT misses cross a locked nominal threshold under the exact
+continuous-rank count law, used as a conservative upper-tail reference when
+scores tie?
 
 Required protocol tag:
 `protocol/ijds-exchangeability-transport-test-2026-07-21-v1`.
@@ -56,7 +67,7 @@ method and provenance and requires identical edges across all eight windows
 for a learner. A grouping learned asymmetrically on the calibration residuals
 would not inherit this conditional-exchangeability argument.
 
-## Exact rank law and tie-safe exchangeability test
+## Exact rank law and tie-safe joint-block diagnostic
 
 Fix one learner, residual window, and score stratum. Let `n` be its calibration
 count, let
@@ -151,26 +162,28 @@ The familywise level is fixed at 0.05.
 
 The stratum-level Bonferroni flags are diagnostics within their own
 learner--window cell; they do not control FWER over the family of 200 strata and
-must not be called globally significant or incompatible. Formal rejection
-claims in V1 are restricted to the 40 Holm-adjusted learner--window cells.
+must not be called globally significant or incompatible. The 40 Holm values
+are likewise retained only as locked nominal learner--window reporting flags.
 
-Bonferroni and Holm control familywise error without independence assumptions;
-therefore no independence claim is made for overlapping windows, shared
-learners, or the common target panel. The cell null is the intersection of its
-five stratum-specific exchangeability nulls. The 0.05 level is nominal
-within-lineage FWER for this fixed post-inspection family, not study-wide
-confirmatory error control over earlier analytical choices.
+For a family fixed before inspection, Bonferroni and Holm would control
+familywise error without independence assumptions. That condition does not
+hold here because the implementation and approximate flag pattern were
+inspected before the V1 lock. No post-selection, within-lineage, study-wide, or
+global 200-stratum FWER claim is active. The cell reference null remains the
+intersection of its five joint-block stratum nulls, and overlapping windows,
+shared learners, and the common target panel are not independent replications.
 
 ## Interpretation and stop rules
 
-- Rejection means incompatibility with within-stratum exchangeability after
-  the locked hierarchy; the test is exact for continuous scores and
-  conservative with ties. It does not identify
+- A flag means only that a joint-block reference p-value crosses its locked
+  nominal threshold. The underlying combined-rank law is exact for continuous
+  residuals and conservative with ties, but the inspected-before-lock family
+  does not authorize significance or incompatibility language. A flag does not identify
   covariate shift, label shift, calibration drift, censoring, model error, or
   any other cause.
 - Failure to reject does not establish exchangeability, transportability,
   prospective coverage, or adequate power.
-- This test does not create label-conditional, selected-set, funded-set,
+- This diagnostic does not create label-conditional, selected-set, funded-set,
   latent-PD, causal, fairness, policy, or deployment validity.
 - Report all 200 strata and all 40 cells. Do not promote a favorable learner,
   window, stratum, or subset.

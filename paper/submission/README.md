@@ -28,6 +28,22 @@ possible assignments. A USD 25 floor-with-residual-cash diagnostic checks the
 numerical adequacy of the continuous allocation without claiming integer
 optimality.
 
+All 40 sharp six-month coverage upper endpoints are below 0.90 as a
+finite-archive descriptive result. Separately, 31/40 learner-window cells in an
+exact combined-rank reference diagnostic meet its locked nominal
+Bonferroni--Holm thresholds. This concerns the stronger joint exchangeability
+of each calibration stratum and its entire target block, not the usual
+one-future-point marginal guarantee; prior inspection precludes a
+post-selection or study-wide FWER claim. The equal-follow-up sensitivity
+reports all 16 CatBoost origin-window cells at 39 months after each April--June
+quarter end; that matches quarter-level minimum follow-up, not every loan's
+exact age.
+The label-Mondrian sensitivity reports all 40/200/400 cells: 27/40 marginal
+and 109/400 category upper endpoints remain below 0.90. None of these results
+selects a model or method, rejects the marginal split-conformal guarantee,
+identifies a shift mechanism, restores conditional validity, or authorizes a
+fairness claim.
+
 ## IJDS Requirements
 
 - IJDS-template PDF;
@@ -70,7 +86,10 @@ and table or figure legibility.
 
 ## QA Record
 
-The pre-freeze closeout on 2026-07-20 produced the following current record:
+The pre-freeze closeout on 2026-07-20 produced the following historical
+baseline. The 2026-07-21 scientific revision supersedes it; every page and word
+count below must be refreshed by a new full build and visual inspection before
+submission:
 
 - official PDF pages: `29`;
 - pre-reference pages: `25` (references begin on page 26);
@@ -95,6 +114,8 @@ The pre-freeze closeout on 2026-07-20 produced the following current record:
 - reviewer files contain no identity, local path, commit, tag, or hash;
 - the abstract stays below 300 words;
 - no retired endpoint or favorable `.25` claim returns; and
+- the package contains exactly 45 registered DVC pointers and 25 paper-facing
+  CSV tables, with unequal-follow-up roots labeled only as replay provenance;
 - scientific, drift, publication, compilation, and visual gates pass.
 
 This is still pre-freeze. Final tagging and ScholarOne proof comparison require

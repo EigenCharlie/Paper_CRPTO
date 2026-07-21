@@ -12,7 +12,7 @@ follow-up horizon.
 
 This lineage evaluates the two frozen CatBoost origin families at one common
 relative endpoint: 39 calendar months after the end of each April--June issue
-quarter. It is error-controlled retrospective sensitivity analysis, not
+quarter. It is a protocol-locked complete retrospective sensitivity, not
 preregistration, an untouched holdout, prospective validation, independent
 replication, or a new model search.
 
@@ -87,9 +87,12 @@ Thus the two and only two cutoffs are:
 | 2016 | April--June 2016 | 2016-06-30 | 2019-09-30 |
 | 2017 | April--June 2017 | 2017-06-30 | 2020-09-30 |
 
-The 39-month horizon is the maximum common relative follow-up supported by the
-already declared September 30, 2020 endpoint for the later origin. It is fixed
-before this run and is not chosen from coverage outcomes.
+The 39-month-from-quarter-end cutoff is the maximum common quarter-level
+minimum follow-up supported by the already declared September 30, 2020 endpoint
+for the later origin. Within each quarter, April, May, and June loans receive
+approximately 41, 40, and 39 months, respectively; V1 does not claim exact
+loan-level age matching. The cutoff is fixed before this run and is not chosen
+from coverage outcomes.
 
 At each origin, Fully Paid becomes available at last-payment month-end and
 Charged Off becomes available at last-payment month-end plus the already frozen
@@ -144,7 +147,8 @@ other; the windows use their own frozen calendar dates and are not pooled.
 
 The nominal reference is 0.90. If all 16 sharp upper endpoints are below 0.90,
 the paper may describe the finite-archive below-nominal sharp endpoints as
-recurrent under equal 39-month follow-up at the two feasible fitted origins.
+recurrent under equal quarter-level minimum follow-up at the two feasible
+fitted origins.
 That descriptive result alone is not a finite-sample rejection of
 exchangeability or a failure of the conformal theorem. If any endpoint reaches
 0.90, the run must retain the complete mixed result and the existing two-origin
