@@ -53,6 +53,7 @@ data/processed/optuna/
 !data/raw/*.dvc
 !data/processed/*.dvc
 data/processed/**/*
+!data/processed/**/
 !data/processed/**/*.dvc
 !data/processed/experiments/
 !data/processed/experiments/ijds_audit/
@@ -93,7 +94,10 @@ models/search_pd/
 !models/champion_*.json
 !models/conformal_method_registry.json
 !models/conformal_gap_summary.json
-models/conformal_gap/
+models/conformal_gap/**
+!models/conformal_gap/
+!models/conformal_gap/**/
+!models/conformal_gap/**/*.dvc
 models/feature_artifacts_last_valid_artifact.json
 models/feature_artifacts_runtime_status.json
 
