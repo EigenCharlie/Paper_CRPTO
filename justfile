@@ -3,6 +3,12 @@
 set windows-shell := ["powershell.exe", "-NoLogo", "-NoProfile", "-Command"]
 set dotenv-load
 
+strict-manifest-prefix := if os() == "windows" {
+    "$env:CRPTO_REQUIRE_DVC_ARTIFACTS = '1';"
+} else {
+    "CRPTO_REQUIRE_DVC_ARTIFACTS=1"
+}
+
 default: help
 
 # --- Environment and quality ---------------------------------------------
@@ -150,7 +156,7 @@ validate-champion:
     uv run --locked pytest tests/test_manifest_regression.py -q
 
 validate-champion-strict:
-    $env:CRPTO_REQUIRE_DVC_ARTIFACTS = "1"; uv run --locked pytest tests/test_manifest_regression.py -q
+    {{ strict-manifest-prefix }} uv run --locked pytest tests/test_manifest_regression.py -q
 
 submission-check: ijds-active-check drift-gate paper-tex-check paper-official-scan paper-pdf-audit lint type-check type-check-fast validate-champion-strict
 

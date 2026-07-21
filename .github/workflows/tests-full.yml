@@ -41,6 +41,11 @@ jobs:
         with:
           enable-cache: true
 
+      - name: Install just
+        uses: extractions/setup-just@v4
+        with:
+          just-version: "1.56.0"
+
       - name: Set up Python
         run: uv python install 3.11
 

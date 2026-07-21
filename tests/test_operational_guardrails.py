@@ -83,6 +83,8 @@ def test_extra_scripts_are_only_sealed_path_bound_compatibility() -> None:
 
 def test_manual_full_workflow_runs_the_collected_suite() -> None:
     workflow = _text(".github/workflows/tests-full.yml")
+    assert "uses: extractions/setup-just@v4" in workflow
+    assert 'just-version: "1.56.0"' in workflow
     assert "run: just coverage" in workflow
     assert "run: just dependency-audit" in workflow
     assert "run: just drift-gate" in workflow
@@ -101,6 +103,15 @@ def test_dependency_audit_is_cross_platform() -> None:
 
     assert "uv run --locked --with pip-audit==2.10.1 pip-audit" in justfile
     assert r".venv\Lib\site-packages" not in justfile
+
+
+def test_strict_manifest_gate_has_windows_and_posix_environment_prefixes() -> None:
+    justfile = _text("justfile")
+
+    assert 'if os() == "windows"' in justfile
+    assert "$env:CRPTO_REQUIRE_DVC_ARTIFACTS = '1';" in justfile
+    assert '"CRPTO_REQUIRE_DVC_ARTIFACTS=1"' in justfile
+    assert "{{ strict-manifest-prefix }} uv run --locked pytest" in justfile
 
 
 def test_type_gates_cover_product_and_test_code() -> None:
