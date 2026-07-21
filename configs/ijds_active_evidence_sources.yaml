@@ -1,4 +1,4 @@
-schema_version: "2026-07-21.2"
+schema_version: "2026-07-21.3"
 status: "active_ijds_paper_evidence_source_registry"
 
 lineages:
@@ -100,12 +100,12 @@ sensitivities:
     scientific_uv_lock_sha256: "d293ed325a3b25a13000560c8551d34937735ba8c9fe59ffeeed5d64f7120dd2"
     paper_role: "complete_budget_concentration_lgd_sensitivity"
     dvc_tracked: true
-  rolling_origin_equal_followup:
-    run_tag: "ijds-rolling-origin-equal-followup-2026-07-21-v1"
-    protocol_tag: "protocol/ijds-rolling-origin-equal-followup-2026-07-21-v1"
-    protocol_commit: "c9d30b02885bac516ae21eae32c56120cf7d296e"
+  rolling_origin_individual_age_followup:
+    run_tag: "ijds-rolling-origin-individual-age-followup-2026-07-21-v1"
+    protocol_tag: "protocol/ijds-rolling-origin-individual-age-followup-2026-07-21-v1"
+    protocol_commit: "78a0a588c35f53daeeef526c3fbe53c10e664385"
     scientific_uv_lock_sha256: "6c862cbad9ab7e3a07dd2823c775127403093d6ad59a789ee227d827165e4733"
-    paper_role: "equal_quarter_level_minimum_followup_two_origin_retrospective_sensitivity"
+    paper_role: "individual_issue_month_age_equalized_two_origin_retrospective_sensitivity"
     dvc_tracked: true
   missingness_encoding:
     run_tag: "ijds-missingness-sensitivity-2026-07-15-v3"
@@ -146,6 +146,13 @@ sensitivities:
       dvc_tracked: true
 
 replay_dependencies:
+  rolling_origin_equal_followup_parent:
+    run_tag: "ijds-rolling-origin-equal-followup-2026-07-21-v1"
+    protocol_tag: "protocol/ijds-rolling-origin-equal-followup-2026-07-21-v1"
+    protocol_commit: "c9d30b02885bac516ae21eae32c56120cf7d296e"
+    scientific_uv_lock_sha256: "6c862cbad9ab7e3a07dd2823c775127403093d6ad59a789ee227d827165e4733"
+    paper_role: "non_primary_equal_quarter_level_minimum_followup_parent_provenance"
+    dvc_tracked: true
   rolling_origin_unequal_followup:
     run_tag: "ijds-rolling-origin-2017-2026-07-15-v4"
     protocol_tag: "protocol/ijds-rolling-origin-stability-2026-07-15-v4"
@@ -236,6 +243,8 @@ dvc_pointers:
   - "models/experiments/ijds_audit/ijds-label-mondrian-freeze-2026-07-21-v1.dvc"
   - "data/processed/experiments/ijds_audit/ijds-label-mondrian-evaluation-2026-07-21-v1.dvc"
   - "models/experiments/ijds_audit/ijds-label-mondrian-evaluation-2026-07-21-v1.dvc"
+  - "data/processed/experiments/ijds_audit/ijds-rolling-origin-individual-age-followup-2026-07-21-v1.dvc"
+  - "models/experiments/ijds_audit/ijds-rolling-origin-individual-age-followup-2026-07-21-v1.dvc"
 
 sources:
   v4_config:
@@ -338,6 +347,18 @@ sources:
     path: "models/experiments/ijds_audit/ijds-rolling-origin-equal-followup-2026-07-21-v1/execution_receipt.json"
     bytes: 1463
     sha256: "87953660188d6eb4ef878b2d5e0f1ccdeec936d8c5c280cfe893f6fced97e256"
+  rolling_individual_age_followup_summary:
+    path: "models/experiments/ijds_audit/ijds-rolling-origin-individual-age-followup-2026-07-21-v1/rolling_origin_individual_age_followup_summary.json"
+    bytes: 59199
+    sha256: "f4ea902f4f4d3701345b72b632d6ac104b88efd14b5f5c9d17abdb7b4fee2a38"
+  rolling_individual_age_followup_config:
+    path: "configs/experiments/ijds_rolling_origin_individual_age_followup_2026-07-21_v1.yaml"
+    bytes: 2167
+    sha256: "043e1ebaab3345aca30403d07a694080c08b2d7ed1016187bc4d29cf7b28fbbc"
+  rolling_individual_age_followup_receipt:
+    path: "models/experiments/ijds_audit/ijds-rolling-origin-individual-age-followup-2026-07-21-v1/execution_receipt.json"
+    bytes: 1508
+    sha256: "3a95da6ddaad4c68fd472e2a5cd6c5edfc7f9535b7c8da9f9af54202d598a5dd"
   label_mondrian_freeze:
     path: "models/experiments/ijds_audit/ijds-label-mondrian-freeze-2026-07-21-v1/protocol_freeze.json"
     bytes: 5909

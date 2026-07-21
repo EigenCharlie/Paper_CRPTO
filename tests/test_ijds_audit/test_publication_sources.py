@@ -131,7 +131,7 @@ def test_active_evidence_registry_verifies_every_source() -> None:
         ROOT / "configs/ijds_active_evidence_sources.yaml",
         repo_root=ROOT,
     )
-    assert payload["schema_version"] == "2026-07-21.2"
+    assert payload["schema_version"] == "2026-07-21.3"
     assert set(sources) == {
         "v4_config",
         "v4_summary",
@@ -158,6 +158,9 @@ def test_active_evidence_registry_verifies_every_source() -> None:
         "rolling_equal_followup_summary",
         "rolling_equal_followup_config",
         "rolling_equal_followup_receipt",
+        "rolling_individual_age_followup_summary",
+        "rolling_individual_age_followup_config",
+        "rolling_individual_age_followup_receipt",
         "label_mondrian_freeze",
         "label_mondrian_freeze_config",
         "label_mondrian_freeze_receipt",
@@ -171,8 +174,15 @@ def test_active_evidence_registry_verifies_every_source() -> None:
         "allocation_granularity_freeze",
         "allocation_granularity_summary",
     }
-    assert len(payload["dvc_pointers"]) == 45
+    assert len(payload["dvc_pointers"]) == 47
     assert payload["lineages"]["binary_geometry"]["evaluation"]["run_tag"].endswith("2026-07-15-v5")
+    assert payload["sensitivities"]["rolling_origin_individual_age_followup"]["paper_role"] == (
+        "individual_issue_month_age_equalized_two_origin_retrospective_sensitivity"
+    )
+    assert (
+        payload["replay_dependencies"]["rolling_origin_equal_followup_parent"]["paper_role"]
+        == "non_primary_equal_quarter_level_minimum_followup_parent_provenance"
+    )
 
 
 def test_active_registry_returns_all_dvc_run_tags_in_causal_config_order() -> None:
@@ -190,12 +200,13 @@ def test_active_registry_returns_all_dvc_run_tags_in_causal_config_order() -> No
         "ijds-exchangeability-transport-test-2026-07-21-v1",
         "ijds-endpoint-availability-sensitivity-2026-07-14-v1",
         "ijds-portfolio-structure-sensitivity-2026-07-15-v6",
-        "ijds-rolling-origin-equal-followup-2026-07-21-v1",
+        "ijds-rolling-origin-individual-age-followup-2026-07-21-v1",
         "ijds-missingness-sensitivity-2026-07-15-v3",
         "ijds-fit-label-completion-sensitivity-2026-07-16-v2",
         "ijds-allocation-granularity-sensitivity-2026-07-16-v3",
         "ijds-label-mondrian-freeze-2026-07-21-v1",
         "ijds-label-mondrian-evaluation-2026-07-21-v1",
+        "ijds-rolling-origin-equal-followup-2026-07-21-v1",
         "ijds-rolling-origin-2017-2026-07-15-v4",
         "ijds-rolling-origin-primary-recovery-2026-07-21-v1",
         "ijds-binary-geometry-frontier-v4-2026-07-14-v3",

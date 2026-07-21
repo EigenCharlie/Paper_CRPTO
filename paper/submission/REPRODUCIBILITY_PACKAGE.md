@@ -18,7 +18,7 @@ instructions, and replay commands.
 | Environment | `pyproject.toml`, `uv.lock`, `justfile` |
 | Authority | Active claim registry, executable claim ledger, source registry, publication targets |
 | Method | Complete `src` package, active runners, evidence and paper builders |
-| Runs | 45 DVC pointers for active roots, sensitivities, and replay dependencies |
+| Runs | 47 DVC pointers for active roots, sensitivities, and replay dependencies |
 | Evidence | One manifest, 25 CSV tables, three figures in PDF/PNG |
 | Manuscript | QMD body/supplement, generated INFORMS TeX, bibliography |
 | Gates | Scientific tests, lint, typing, drift, claim sync, anonymity, PDF QA |
@@ -75,6 +75,7 @@ clean checkout at its own registered protocol tag. The active commands are:
 uv run --locked python scripts/experiments/run_ijds_conformal_set_diagnostics.py --config configs/experiments/ijds_conformal_set_diagnostics_2026-07-21_v1.yaml
 uv run --locked python scripts/experiments/run_ijds_exchangeability_transport_test.py --config configs/experiments/ijds_exchangeability_transport_test_2026-07-21_v1.yaml
 uv run --locked python scripts/experiments/run_ijds_rolling_origin_equal_followup.py --config configs/experiments/ijds_rolling_origin_equal_followup_2026-07-21_v1.yaml
+uv run --locked python scripts/experiments/run_ijds_rolling_origin_individual_age_followup.py --config configs/experiments/ijds_rolling_origin_individual_age_followup_2026-07-21_v1.yaml
 uv run --locked python scripts/experiments/run_ijds_label_mondrian_freeze.py --config configs/experiments/ijds_label_mondrian_freeze_2026-07-21_v1.yaml
 uv run --locked python scripts/experiments/run_ijds_label_mondrian_evaluation.py --config configs/experiments/ijds_label_mondrian_evaluation_2026-07-21_v1.yaml
 ```
@@ -83,8 +84,8 @@ Every runner requires fresh run-tag output paths and refuses a dirty or
 non-tagged scientific checkout. Label-Mondrian evaluation is a second stage:
 its config must retain the registered descriptors of the completed outcome-free
 freeze. The earlier primary-origin recovery and 2017 rolling-origin runs remain
-available as unequal-follow-up replay provenance, but they are not active
-paper-facing evidence and are not substitutes for the equal-follow-up runner.
+available with the parent equal-quarter run as replay provenance, but they are
+not active paper-facing evidence and are not substitutes for the individual-age runner.
 
 ## Official PDF Build
 
@@ -99,7 +100,7 @@ graph, bibliography, cross-references, and stable pagination in that order.
 
 ## Acceptance QA
 
-1. Reproduce from a fresh clone and the 45 DVC pointers.
+1. Reproduce from a fresh clone and the 47 DVC pointers.
 2. Confirm evidence and QMD-to-TeX builders are byte-idempotent.
 3. Run scientific, lint, type, drift, publication, and protected-artifact checks.
 4. Compile and inspect body, supplement, and official PDF page by page.

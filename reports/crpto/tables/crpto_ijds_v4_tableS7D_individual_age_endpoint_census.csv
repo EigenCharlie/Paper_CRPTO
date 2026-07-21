@@ -1,0 +1,7 @@
+origin_id,origin,origin_year,period,issue_month_end,individual_evaluation_cutoff,candidate_rows,resolved_rows,unresolved_rows,individual_followup_months,charged_off_by_reconstructed_cutoff,fully_paid_by_reconstructed_cutoff,nonterminal_or_unresolved_status,terminal_after_reconstructed_cutoff,terminal_availability_date_missing
+primary_2016,2016 origin,2016,2016-04,2016-04-30,2019-07-31,28106,27858,248,39,4469,23389,0,213,35
+primary_2016,2016 origin,2016,2016-05,2016-05-31,2019-08-31,21831,21659,172,39,3614,18045,0,144,28
+primary_2016,2016 origin,2016,2016-06,2016-06-30,2019-09-30,24600,24417,183,39,3484,20933,0,152,31
+rolling_2017,2017 origin,2017,2017-04,2017-04-30,2020-07-31,21864,21348,516,39,3052,18296,448,38,30
+rolling_2017,2017 origin,2017,2017-05,2017-05-31,2020-08-31,27456,24461,2995,39,3906,20555,2938,35,22
+rolling_2017,2017 origin,2017,2017-06,2017-06-30,2020-09-30,27785,20228,7557,39,3779,16449,7502,13,42

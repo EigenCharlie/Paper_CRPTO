@@ -21,7 +21,7 @@ time roles before evaluation.
 | Coverage controls | 5 frozen learner specifications x 8 windows |
 | Largest all-candidate coverage upper bound | 0.897726 |
 | Joint-block rank diagnostic | 31 / 40 cells meet the locked nominal thresholds |
-| Equal-follow-up origin sensitivity | 16 / 16 upper bounds below 0.90 |
+| Individual-age origin sensitivity | 16 / 16 upper bounds below 0.90 |
 | Label-Mondrian sensitivity | 27 / 40 marginal and 109 / 400 category shortfalls |
 | Two-ruler optimization solves | 6,240 |
 | Exact point-cap frontier | 3,067 caps |
@@ -42,8 +42,8 @@ marginal split-conformal guarantee. Because the family and pattern were
 inspected before locking, the thresholds do not provide post-selection or
 study-wide FWER control. The primary CatBoost eight-window finding also recurs
 under three feature-semantics-preserving missingness encodings and at both April--June
-origins with cutoffs 39 months after issue-quarter end (equal quarter-level
-minimum, not exact loan-age, follow-up). Label-Mondrian calibration changes the
+origins with cutoffs 39 months after each issue-month end (equal whole-month
+administrative age, not exact day-level age). Label-Mondrian calibration changes the
 40 marginal states to 27 shortfalls, 12 crossings, and one lower endpoint at or
 above nominal; it is a complete sensitivity, not a repair. Portfolio direction
 changes with the outcome-blind ruler, coordinate, and comparator support; no
@@ -64,7 +64,7 @@ Read these in order:
 5. [`paper/CRPTO_ijds.qmd`](paper/CRPTO_ijds.qmd)
 6. [`paper/supplement_ijds.qmd`](paper/supplement_ijds.qmd)
 
-The source registry owns lineage identities and 45 DVC pointers. The evidence
+The source registry owns lineage identities and 47 DVC pointers. The evidence
 manifest is the only numeric paper-facing manifest. The body QMD is the only
 editable source for the official submission TeX.
 

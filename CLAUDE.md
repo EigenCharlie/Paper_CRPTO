@@ -20,15 +20,16 @@ not active evidence.
 12. `docs/research/ijds_conformal_set_diagnostics_protocol_2026-07-21.md`
 13. `docs/research/ijds_exchangeability_transport_test_protocol_2026-07-21.md`
 14. `docs/research/ijds_exchangeability_transport_test_interpretive_addendum_2026-07-21.md`
-15. `docs/research/ijds_rolling_origin_equal_followup_protocol_2026-07-21.md`
-16. `docs/research/ijds_label_mondrian_sensitivity_protocol_2026-07-21.md`
-17. `configs/ijds_active_evidence_sources.yaml`
-18. `configs/ijds_claim_ledger.yaml`
-19. `reports/crpto/ijds_binary_geometry_frontier_v4_evidence.json`
-20. `.codex/skills/crpto/SKILL.md`
+15. `docs/research/ijds_rolling_origin_individual_age_followup_protocol_2026-07-21.md`
+16. `docs/research/ijds_rolling_origin_equal_followup_protocol_2026-07-21.md` (parent provenance)
+17. `docs/research/ijds_label_mondrian_sensitivity_protocol_2026-07-21.md`
+18. `configs/ijds_active_evidence_sources.yaml`
+19. `configs/ijds_claim_ledger.yaml`
+20. `reports/crpto/ijds_binary_geometry_frontier_v4_evidence.json`
+21. `.codex/skills/crpto/SKILL.md`
 
 The claim registry is the editorial authority. The source registry owns exact
-lineage identities, artifact descriptors, and 45 DVC pointers. The V4 evidence
+lineage identities, artifact descriptors, and 47 DVC pointers. The V4 evidence
 JSON is the only numeric paper-facing manifest.
 
 ## Active Scientific Object
@@ -52,8 +53,9 @@ JSON is the only numeric paper-facing manifest.
   nondefaults than defaults; this is descriptive conditioning on administrative
   resolution, not label-conditional validity for all candidates.
 - The active two-origin recurrence uses April--June at both origins with
-  cutoffs 39 months after quarter end, equalizing minimum rather than exact
-  loan-level follow-up. Earlier unequal-follow-up runs are replay provenance.
+  cutoffs 39 months after each issue-month end. It equalizes administrative
+  age at calendar-month resolution, not exact day-level age. The coarser
+  equal-quarter and earlier unequal-follow-up runs are replay provenance.
 - The complete label-Mondrian sensitivity reports 400 label-stratum
   categories. It reduces but does not eliminate finite-archive shortfalls and
   expands two-label sets; it is not restored conditional validity.

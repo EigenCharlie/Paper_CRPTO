@@ -58,6 +58,7 @@ active_scientific_contract:
       - scripts/experiments/run_ijds_rolling_origin_primary_recovery.py
       - scripts/experiments/run_ijds_exchangeability_transport_test.py
       - scripts/experiments/run_ijds_rolling_origin_equal_followup.py
+      - scripts/experiments/run_ijds_rolling_origin_individual_age_followup.py
       - scripts/experiments/run_ijds_label_mondrian_freeze.py
       - scripts/experiments/run_ijds_label_mondrian_evaluation.py
     support_tools:
@@ -145,7 +146,7 @@ active_scientific_contract:
     - reports/crpto/tables/crpto_ijds_v4_tableS6D_label_mondrian_cells.csv
     - reports/crpto/tables/crpto_ijds_v4_tableS6E_label_mondrian_strata.csv
     - reports/crpto/tables/crpto_ijds_v4_tableS6F_label_mondrian_categories.csv
-    - reports/crpto/tables/crpto_ijds_v4_tableS7D_equal_followup_census.csv
+    - reports/crpto/tables/crpto_ijds_v4_tableS7D_individual_age_endpoint_census.csv
     - reports/crpto/tables/crpto_ijds_v4_tableS11_fit_label_completion.csv
     - reports/crpto/tables/crpto_ijds_v4_tableS12_allocation_granularity.csv
     - reports/crpto/figures/crpto_ijds_v4_fig1_coverage.pdf

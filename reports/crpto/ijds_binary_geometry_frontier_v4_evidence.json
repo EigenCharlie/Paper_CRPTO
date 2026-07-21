@@ -1,8 +1,8 @@
 {
-  "schema_version": "2026-07-21.2",
+  "schema_version": "2026-07-21.3",
   "status": "active_ijds_v5_endpoint_reason_audited_paper_facing_evidence",
   "source_registry": {
-    "schema_version": "2026-07-21.2",
+    "schema_version": "2026-07-21.3",
     "status": "active_ijds_paper_evidence_source_registry",
     "sources": [
       "allocation_granularity_freeze",
@@ -30,6 +30,9 @@
       "rolling_equal_followup_config",
       "rolling_equal_followup_receipt",
       "rolling_equal_followup_summary",
+      "rolling_individual_age_followup_config",
+      "rolling_individual_age_followup_receipt",
+      "rolling_individual_age_followup_summary",
       "rolling_origin_receipt",
       "rolling_origin_summary",
       "rolling_primary_recovery_receipt",
@@ -160,12 +163,12 @@
       "paper_role": "complete_budget_concentration_lgd_sensitivity",
       "dvc_tracked": true
     },
-    "rolling_origin_equal_followup": {
-      "run_tag": "ijds-rolling-origin-equal-followup-2026-07-21-v1",
-      "protocol_tag": "protocol/ijds-rolling-origin-equal-followup-2026-07-21-v1",
-      "protocol_commit": "c9d30b02885bac516ae21eae32c56120cf7d296e",
+    "rolling_origin_individual_age_followup": {
+      "run_tag": "ijds-rolling-origin-individual-age-followup-2026-07-21-v1",
+      "protocol_tag": "protocol/ijds-rolling-origin-individual-age-followup-2026-07-21-v1",
+      "protocol_commit": "78a0a588c35f53daeeef526c3fbe53c10e664385",
       "scientific_uv_lock_sha256": "6c862cbad9ab7e3a07dd2823c775127403093d6ad59a789ee227d827165e4733",
-      "paper_role": "equal_quarter_level_minimum_followup_two_origin_retrospective_sensitivity",
+      "paper_role": "individual_issue_month_age_equalized_two_origin_retrospective_sensitivity",
       "dvc_tracked": true
     },
     "missingness_encoding": {
@@ -213,6 +216,14 @@
     }
   },
   "replay_dependencies": {
+    "rolling_origin_equal_followup_parent": {
+      "run_tag": "ijds-rolling-origin-equal-followup-2026-07-21-v1",
+      "protocol_tag": "protocol/ijds-rolling-origin-equal-followup-2026-07-21-v1",
+      "protocol_commit": "c9d30b02885bac516ae21eae32c56120cf7d296e",
+      "scientific_uv_lock_sha256": "6c862cbad9ab7e3a07dd2823c775127403093d6ad59a789ee227d827165e4733",
+      "paper_role": "non_primary_equal_quarter_level_minimum_followup_parent_provenance",
+      "dvc_tracked": true
+    },
     "rolling_origin_unequal_followup": {
       "run_tag": "ijds-rolling-origin-2017-2026-07-15-v4",
       "protocol_tag": "protocol/ijds-rolling-origin-stability-2026-07-15-v4",
@@ -18032,10 +18043,10 @@
       ]
     },
     "rolling_origin": {
-      "scope": "two_origin_equal_quarter_level_minimum_followup_retrospective_sensitivity_not_replication",
-      "run_tag": "ijds-rolling-origin-equal-followup-2026-07-21-v1",
-      "protocol_tag": "protocol/ijds-rolling-origin-equal-followup-2026-07-21-v1",
-      "protocol_commit": "c9d30b02885bac516ae21eae32c56120cf7d296e",
+      "scope": "two_origin_individual_issue_month_age_equalized_retrospective_sensitivity_not_replication",
+      "run_tag": "ijds-rolling-origin-individual-age-followup-2026-07-21-v1",
+      "protocol_tag": "protocol/ijds-rolling-origin-individual-age-followup-2026-07-21-v1",
+      "protocol_commit": "78a0a588c35f53daeeef526c3fbe53c10e664385",
       "origins": [
         "primary_2016",
         "rolling_2017"
@@ -18052,152 +18063,547 @@
       ],
       "primary_2016_census": {
         "candidate_rows": 74537,
-        "resolved_rows": 74120,
-        "unresolved_rows": 417
+        "resolved_rows": 73934,
+        "unresolved_rows": 603
       },
       "rolling_2017_census": {
         "candidate_rows": 77105,
-        "resolved_rows": 66091,
-        "unresolved_rows": 11014
+        "resolved_rows": 66037,
+        "unresolved_rows": 11068
       },
       "common_issue_months": [
         "April",
         "May",
         "June"
       ],
-      "common_followup_months_after_issue_quarter_end": 39,
-      "approximate_followup_months_by_issue_month": {
-        "April": 41,
-        "May": 40,
-        "June": 39
-      },
-      "exact_loan_level_age_matched": false,
-      "evaluation_cutoffs": {
-        "primary_2016": "2019-09-30",
-        "rolling_2017": "2020-09-30"
+      "issue_date_resolution": "calendar_month",
+      "individual_followup_months_after_issue_month_end": 39,
+      "exact_calendar_month_age_matched": true,
+      "exact_day_level_age_matched": false,
+      "cutoff_by_issue_period": {
+        "2016-04": "2019-07-31",
+        "2016-05": "2019-08-31",
+        "2016-06": "2019-09-30",
+        "2017-04": "2020-07-31",
+        "2017-05": "2020-08-31",
+        "2017-06": "2020-09-30"
       },
       "window_alignment": "ordinal_W1_through_W8_with_origin_specific_fit_dates",
       "origin_count": 2,
       "window_cells": 16,
       "all_sixteen_upper_below_nominal": true,
-      "primary_2016_upper_max": 0.877684908166414,
-      "rolling_2017_upper_max": 0.8747681732702159,
+      "primary_2016_upper_max": 0.8791204368300307,
+      "rolling_2017_upper_max": 0.8752610077167499,
       "model_or_origin_selected": false,
       "independent_replication_claim_authorized": false,
+      "coarser_equal_quarter_followup_retained_as_provenance": {
+        "run_tag": "ijds-rolling-origin-equal-followup-2026-07-21-v1",
+        "protocol_tag": "protocol/ijds-rolling-origin-equal-followup-2026-07-21-v1",
+        "all_sixteen_upper_below_nominal": true,
+        "approximate_followup_months_by_issue_month": {
+          "April": 41,
+          "May": 40,
+          "June": 39
+        }
+      },
       "unequal_followup_runs_retained_as_provenance": {
         "rolling_2017_run_tag": "ijds-rolling-origin-2017-2026-07-15-v4",
         "primary_2016_recovery_run_tag": "ijds-rolling-origin-primary-recovery-2026-07-21-v1"
       },
-      "endpoint_reason_census": [
+      "monthly_endpoint_census": [
         {
           "origin_id": "primary_2016",
           "origin": "2016 origin",
           "origin_year": 2016,
+          "period": "2016-04",
+          "issue_month_end": "2016-04-30",
+          "individual_evaluation_cutoff": "2019-07-31",
+          "candidate_rows": 28106,
+          "resolved_rows": 27858,
+          "unresolved_rows": 248,
+          "individual_followup_months": 39,
+          "charged_off_by_reconstructed_cutoff": 4469,
+          "fully_paid_by_reconstructed_cutoff": 23389,
+          "nonterminal_or_unresolved_status": 0,
+          "terminal_after_reconstructed_cutoff": 213,
+          "terminal_availability_date_missing": 35
+        },
+        {
+          "origin_id": "primary_2016",
+          "origin": "2016 origin",
+          "origin_year": 2016,
+          "period": "2016-05",
+          "issue_month_end": "2016-05-31",
+          "individual_evaluation_cutoff": "2019-08-31",
+          "candidate_rows": 21831,
+          "resolved_rows": 21659,
+          "unresolved_rows": 172,
+          "individual_followup_months": 39,
+          "charged_off_by_reconstructed_cutoff": 3614,
+          "fully_paid_by_reconstructed_cutoff": 18045,
+          "nonterminal_or_unresolved_status": 0,
+          "terminal_after_reconstructed_cutoff": 144,
+          "terminal_availability_date_missing": 28
+        },
+        {
+          "origin_id": "primary_2016",
+          "origin": "2016 origin",
+          "origin_year": 2016,
+          "period": "2016-06",
+          "issue_month_end": "2016-06-30",
+          "individual_evaluation_cutoff": "2019-09-30",
+          "candidate_rows": 24600,
+          "resolved_rows": 24417,
+          "unresolved_rows": 183,
+          "individual_followup_months": 39,
+          "charged_off_by_reconstructed_cutoff": 3484,
+          "fully_paid_by_reconstructed_cutoff": 20933,
+          "nonterminal_or_unresolved_status": 0,
+          "terminal_after_reconstructed_cutoff": 152,
+          "terminal_availability_date_missing": 31
+        },
+        {
+          "origin_id": "rolling_2017",
+          "origin": "2017 origin",
+          "origin_year": 2017,
+          "period": "2017-04",
+          "issue_month_end": "2017-04-30",
+          "individual_evaluation_cutoff": "2020-07-31",
+          "candidate_rows": 21864,
+          "resolved_rows": 21348,
+          "unresolved_rows": 516,
+          "individual_followup_months": 39,
+          "charged_off_by_reconstructed_cutoff": 3052,
+          "fully_paid_by_reconstructed_cutoff": 18296,
+          "nonterminal_or_unresolved_status": 448,
+          "terminal_after_reconstructed_cutoff": 38,
+          "terminal_availability_date_missing": 30
+        },
+        {
+          "origin_id": "rolling_2017",
+          "origin": "2017 origin",
+          "origin_year": 2017,
+          "period": "2017-05",
+          "issue_month_end": "2017-05-31",
+          "individual_evaluation_cutoff": "2020-08-31",
+          "candidate_rows": 27456,
+          "resolved_rows": 24461,
+          "unresolved_rows": 2995,
+          "individual_followup_months": 39,
+          "charged_off_by_reconstructed_cutoff": 3906,
+          "fully_paid_by_reconstructed_cutoff": 20555,
+          "nonterminal_or_unresolved_status": 2938,
+          "terminal_after_reconstructed_cutoff": 35,
+          "terminal_availability_date_missing": 22
+        },
+        {
+          "origin_id": "rolling_2017",
+          "origin": "2017 origin",
+          "origin_year": 2017,
+          "period": "2017-06",
+          "issue_month_end": "2017-06-30",
+          "individual_evaluation_cutoff": "2020-09-30",
+          "candidate_rows": 27785,
+          "resolved_rows": 20228,
+          "unresolved_rows": 7557,
+          "individual_followup_months": 39,
+          "charged_off_by_reconstructed_cutoff": 3779,
+          "fully_paid_by_reconstructed_cutoff": 16449,
+          "nonterminal_or_unresolved_status": 7502,
+          "terminal_after_reconstructed_cutoff": 13,
+          "terminal_availability_date_missing": 42
+        }
+      ],
+      "monthly_endpoint_reason_census": [
+        {
+          "origin_id": "primary_2016",
+          "origin": "2016 origin",
+          "origin_year": 2016,
+          "period": "2016-04",
           "snapshot_resolution": "fully_paid_by_reconstructed_cutoff",
-          "candidate_rows": 62414,
-          "resolved_rows": 62414,
+          "candidate_rows": 23389,
+          "resolved_rows": 23389,
           "unresolved_rows": 0,
-          "evaluation_cutoff": "2019-09-30",
-          "common_followup_months": 39
+          "issue_month_end": "2016-04-30",
+          "individual_evaluation_cutoff": "2019-07-31",
+          "individual_followup_months": 39
         },
         {
           "origin_id": "primary_2016",
           "origin": "2016 origin",
           "origin_year": 2016,
+          "period": "2016-04",
           "snapshot_resolution": "charged_off_by_reconstructed_cutoff",
-          "candidate_rows": 11706,
-          "resolved_rows": 11706,
+          "candidate_rows": 4469,
+          "resolved_rows": 4469,
           "unresolved_rows": 0,
-          "evaluation_cutoff": "2019-09-30",
-          "common_followup_months": 39
+          "issue_month_end": "2016-04-30",
+          "individual_evaluation_cutoff": "2019-07-31",
+          "individual_followup_months": 39
         },
         {
           "origin_id": "primary_2016",
           "origin": "2016 origin",
           "origin_year": 2016,
+          "period": "2016-04",
           "snapshot_resolution": "nonterminal_or_unresolved_status",
           "candidate_rows": 0,
           "resolved_rows": 0,
           "unresolved_rows": 0,
-          "evaluation_cutoff": "2019-09-30",
-          "common_followup_months": 39
+          "issue_month_end": "2016-04-30",
+          "individual_evaluation_cutoff": "2019-07-31",
+          "individual_followup_months": 39
         },
         {
           "origin_id": "primary_2016",
           "origin": "2016 origin",
           "origin_year": 2016,
+          "period": "2016-04",
           "snapshot_resolution": "terminal_after_reconstructed_cutoff",
-          "candidate_rows": 323,
+          "candidate_rows": 213,
           "resolved_rows": 0,
-          "unresolved_rows": 323,
-          "evaluation_cutoff": "2019-09-30",
-          "common_followup_months": 39
+          "unresolved_rows": 213,
+          "issue_month_end": "2016-04-30",
+          "individual_evaluation_cutoff": "2019-07-31",
+          "individual_followup_months": 39
         },
         {
           "origin_id": "primary_2016",
           "origin": "2016 origin",
           "origin_year": 2016,
+          "period": "2016-04",
           "snapshot_resolution": "terminal_availability_date_missing",
-          "candidate_rows": 94,
+          "candidate_rows": 35,
           "resolved_rows": 0,
-          "unresolved_rows": 94,
-          "evaluation_cutoff": "2019-09-30",
-          "common_followup_months": 39
+          "unresolved_rows": 35,
+          "issue_month_end": "2016-04-30",
+          "individual_evaluation_cutoff": "2019-07-31",
+          "individual_followup_months": 39
         },
         {
-          "origin_id": "rolling_2017",
-          "origin": "2017 origin",
-          "origin_year": 2017,
+          "origin_id": "primary_2016",
+          "origin": "2016 origin",
+          "origin_year": 2016,
+          "period": "2016-05",
           "snapshot_resolution": "fully_paid_by_reconstructed_cutoff",
-          "candidate_rows": 55300,
-          "resolved_rows": 55300,
+          "candidate_rows": 18045,
+          "resolved_rows": 18045,
           "unresolved_rows": 0,
-          "evaluation_cutoff": "2020-09-30",
-          "common_followup_months": 39
+          "issue_month_end": "2016-05-31",
+          "individual_evaluation_cutoff": "2019-08-31",
+          "individual_followup_months": 39
         },
         {
-          "origin_id": "rolling_2017",
-          "origin": "2017 origin",
-          "origin_year": 2017,
+          "origin_id": "primary_2016",
+          "origin": "2016 origin",
+          "origin_year": 2016,
+          "period": "2016-05",
           "snapshot_resolution": "charged_off_by_reconstructed_cutoff",
-          "candidate_rows": 10791,
-          "resolved_rows": 10791,
+          "candidate_rows": 3614,
+          "resolved_rows": 3614,
           "unresolved_rows": 0,
-          "evaluation_cutoff": "2020-09-30",
-          "common_followup_months": 39
+          "issue_month_end": "2016-05-31",
+          "individual_evaluation_cutoff": "2019-08-31",
+          "individual_followup_months": 39
         },
         {
-          "origin_id": "rolling_2017",
-          "origin": "2017 origin",
-          "origin_year": 2017,
+          "origin_id": "primary_2016",
+          "origin": "2016 origin",
+          "origin_year": 2016,
+          "period": "2016-05",
           "snapshot_resolution": "nonterminal_or_unresolved_status",
-          "candidate_rows": 10888,
+          "candidate_rows": 0,
           "resolved_rows": 0,
-          "unresolved_rows": 10888,
-          "evaluation_cutoff": "2020-09-30",
-          "common_followup_months": 39
+          "unresolved_rows": 0,
+          "issue_month_end": "2016-05-31",
+          "individual_evaluation_cutoff": "2019-08-31",
+          "individual_followup_months": 39
         },
         {
-          "origin_id": "rolling_2017",
-          "origin": "2017 origin",
-          "origin_year": 2017,
+          "origin_id": "primary_2016",
+          "origin": "2016 origin",
+          "origin_year": 2016,
+          "period": "2016-05",
           "snapshot_resolution": "terminal_after_reconstructed_cutoff",
-          "candidate_rows": 32,
+          "candidate_rows": 144,
           "resolved_rows": 0,
-          "unresolved_rows": 32,
-          "evaluation_cutoff": "2020-09-30",
-          "common_followup_months": 39
+          "unresolved_rows": 144,
+          "issue_month_end": "2016-05-31",
+          "individual_evaluation_cutoff": "2019-08-31",
+          "individual_followup_months": 39
+        },
+        {
+          "origin_id": "primary_2016",
+          "origin": "2016 origin",
+          "origin_year": 2016,
+          "period": "2016-05",
+          "snapshot_resolution": "terminal_availability_date_missing",
+          "candidate_rows": 28,
+          "resolved_rows": 0,
+          "unresolved_rows": 28,
+          "issue_month_end": "2016-05-31",
+          "individual_evaluation_cutoff": "2019-08-31",
+          "individual_followup_months": 39
+        },
+        {
+          "origin_id": "primary_2016",
+          "origin": "2016 origin",
+          "origin_year": 2016,
+          "period": "2016-06",
+          "snapshot_resolution": "fully_paid_by_reconstructed_cutoff",
+          "candidate_rows": 20933,
+          "resolved_rows": 20933,
+          "unresolved_rows": 0,
+          "issue_month_end": "2016-06-30",
+          "individual_evaluation_cutoff": "2019-09-30",
+          "individual_followup_months": 39
+        },
+        {
+          "origin_id": "primary_2016",
+          "origin": "2016 origin",
+          "origin_year": 2016,
+          "period": "2016-06",
+          "snapshot_resolution": "charged_off_by_reconstructed_cutoff",
+          "candidate_rows": 3484,
+          "resolved_rows": 3484,
+          "unresolved_rows": 0,
+          "issue_month_end": "2016-06-30",
+          "individual_evaluation_cutoff": "2019-09-30",
+          "individual_followup_months": 39
+        },
+        {
+          "origin_id": "primary_2016",
+          "origin": "2016 origin",
+          "origin_year": 2016,
+          "period": "2016-06",
+          "snapshot_resolution": "nonterminal_or_unresolved_status",
+          "candidate_rows": 0,
+          "resolved_rows": 0,
+          "unresolved_rows": 0,
+          "issue_month_end": "2016-06-30",
+          "individual_evaluation_cutoff": "2019-09-30",
+          "individual_followup_months": 39
+        },
+        {
+          "origin_id": "primary_2016",
+          "origin": "2016 origin",
+          "origin_year": 2016,
+          "period": "2016-06",
+          "snapshot_resolution": "terminal_after_reconstructed_cutoff",
+          "candidate_rows": 152,
+          "resolved_rows": 0,
+          "unresolved_rows": 152,
+          "issue_month_end": "2016-06-30",
+          "individual_evaluation_cutoff": "2019-09-30",
+          "individual_followup_months": 39
+        },
+        {
+          "origin_id": "primary_2016",
+          "origin": "2016 origin",
+          "origin_year": 2016,
+          "period": "2016-06",
+          "snapshot_resolution": "terminal_availability_date_missing",
+          "candidate_rows": 31,
+          "resolved_rows": 0,
+          "unresolved_rows": 31,
+          "issue_month_end": "2016-06-30",
+          "individual_evaluation_cutoff": "2019-09-30",
+          "individual_followup_months": 39
         },
         {
           "origin_id": "rolling_2017",
           "origin": "2017 origin",
           "origin_year": 2017,
-          "snapshot_resolution": "terminal_availability_date_missing",
-          "candidate_rows": 94,
+          "period": "2017-04",
+          "snapshot_resolution": "fully_paid_by_reconstructed_cutoff",
+          "candidate_rows": 18296,
+          "resolved_rows": 18296,
+          "unresolved_rows": 0,
+          "issue_month_end": "2017-04-30",
+          "individual_evaluation_cutoff": "2020-07-31",
+          "individual_followup_months": 39
+        },
+        {
+          "origin_id": "rolling_2017",
+          "origin": "2017 origin",
+          "origin_year": 2017,
+          "period": "2017-04",
+          "snapshot_resolution": "charged_off_by_reconstructed_cutoff",
+          "candidate_rows": 3052,
+          "resolved_rows": 3052,
+          "unresolved_rows": 0,
+          "issue_month_end": "2017-04-30",
+          "individual_evaluation_cutoff": "2020-07-31",
+          "individual_followup_months": 39
+        },
+        {
+          "origin_id": "rolling_2017",
+          "origin": "2017 origin",
+          "origin_year": 2017,
+          "period": "2017-04",
+          "snapshot_resolution": "nonterminal_or_unresolved_status",
+          "candidate_rows": 448,
           "resolved_rows": 0,
-          "unresolved_rows": 94,
-          "evaluation_cutoff": "2020-09-30",
-          "common_followup_months": 39
+          "unresolved_rows": 448,
+          "issue_month_end": "2017-04-30",
+          "individual_evaluation_cutoff": "2020-07-31",
+          "individual_followup_months": 39
+        },
+        {
+          "origin_id": "rolling_2017",
+          "origin": "2017 origin",
+          "origin_year": 2017,
+          "period": "2017-04",
+          "snapshot_resolution": "terminal_after_reconstructed_cutoff",
+          "candidate_rows": 38,
+          "resolved_rows": 0,
+          "unresolved_rows": 38,
+          "issue_month_end": "2017-04-30",
+          "individual_evaluation_cutoff": "2020-07-31",
+          "individual_followup_months": 39
+        },
+        {
+          "origin_id": "rolling_2017",
+          "origin": "2017 origin",
+          "origin_year": 2017,
+          "period": "2017-04",
+          "snapshot_resolution": "terminal_availability_date_missing",
+          "candidate_rows": 30,
+          "resolved_rows": 0,
+          "unresolved_rows": 30,
+          "issue_month_end": "2017-04-30",
+          "individual_evaluation_cutoff": "2020-07-31",
+          "individual_followup_months": 39
+        },
+        {
+          "origin_id": "rolling_2017",
+          "origin": "2017 origin",
+          "origin_year": 2017,
+          "period": "2017-05",
+          "snapshot_resolution": "fully_paid_by_reconstructed_cutoff",
+          "candidate_rows": 20555,
+          "resolved_rows": 20555,
+          "unresolved_rows": 0,
+          "issue_month_end": "2017-05-31",
+          "individual_evaluation_cutoff": "2020-08-31",
+          "individual_followup_months": 39
+        },
+        {
+          "origin_id": "rolling_2017",
+          "origin": "2017 origin",
+          "origin_year": 2017,
+          "period": "2017-05",
+          "snapshot_resolution": "charged_off_by_reconstructed_cutoff",
+          "candidate_rows": 3906,
+          "resolved_rows": 3906,
+          "unresolved_rows": 0,
+          "issue_month_end": "2017-05-31",
+          "individual_evaluation_cutoff": "2020-08-31",
+          "individual_followup_months": 39
+        },
+        {
+          "origin_id": "rolling_2017",
+          "origin": "2017 origin",
+          "origin_year": 2017,
+          "period": "2017-05",
+          "snapshot_resolution": "nonterminal_or_unresolved_status",
+          "candidate_rows": 2938,
+          "resolved_rows": 0,
+          "unresolved_rows": 2938,
+          "issue_month_end": "2017-05-31",
+          "individual_evaluation_cutoff": "2020-08-31",
+          "individual_followup_months": 39
+        },
+        {
+          "origin_id": "rolling_2017",
+          "origin": "2017 origin",
+          "origin_year": 2017,
+          "period": "2017-05",
+          "snapshot_resolution": "terminal_after_reconstructed_cutoff",
+          "candidate_rows": 35,
+          "resolved_rows": 0,
+          "unresolved_rows": 35,
+          "issue_month_end": "2017-05-31",
+          "individual_evaluation_cutoff": "2020-08-31",
+          "individual_followup_months": 39
+        },
+        {
+          "origin_id": "rolling_2017",
+          "origin": "2017 origin",
+          "origin_year": 2017,
+          "period": "2017-05",
+          "snapshot_resolution": "terminal_availability_date_missing",
+          "candidate_rows": 22,
+          "resolved_rows": 0,
+          "unresolved_rows": 22,
+          "issue_month_end": "2017-05-31",
+          "individual_evaluation_cutoff": "2020-08-31",
+          "individual_followup_months": 39
+        },
+        {
+          "origin_id": "rolling_2017",
+          "origin": "2017 origin",
+          "origin_year": 2017,
+          "period": "2017-06",
+          "snapshot_resolution": "fully_paid_by_reconstructed_cutoff",
+          "candidate_rows": 16449,
+          "resolved_rows": 16449,
+          "unresolved_rows": 0,
+          "issue_month_end": "2017-06-30",
+          "individual_evaluation_cutoff": "2020-09-30",
+          "individual_followup_months": 39
+        },
+        {
+          "origin_id": "rolling_2017",
+          "origin": "2017 origin",
+          "origin_year": 2017,
+          "period": "2017-06",
+          "snapshot_resolution": "charged_off_by_reconstructed_cutoff",
+          "candidate_rows": 3779,
+          "resolved_rows": 3779,
+          "unresolved_rows": 0,
+          "issue_month_end": "2017-06-30",
+          "individual_evaluation_cutoff": "2020-09-30",
+          "individual_followup_months": 39
+        },
+        {
+          "origin_id": "rolling_2017",
+          "origin": "2017 origin",
+          "origin_year": 2017,
+          "period": "2017-06",
+          "snapshot_resolution": "nonterminal_or_unresolved_status",
+          "candidate_rows": 7502,
+          "resolved_rows": 0,
+          "unresolved_rows": 7502,
+          "issue_month_end": "2017-06-30",
+          "individual_evaluation_cutoff": "2020-09-30",
+          "individual_followup_months": 39
+        },
+        {
+          "origin_id": "rolling_2017",
+          "origin": "2017 origin",
+          "origin_year": 2017,
+          "period": "2017-06",
+          "snapshot_resolution": "terminal_after_reconstructed_cutoff",
+          "candidate_rows": 13,
+          "resolved_rows": 0,
+          "unresolved_rows": 13,
+          "issue_month_end": "2017-06-30",
+          "individual_evaluation_cutoff": "2020-09-30",
+          "individual_followup_months": 39
+        },
+        {
+          "origin_id": "rolling_2017",
+          "origin": "2017 origin",
+          "origin_year": 2017,
+          "period": "2017-06",
+          "snapshot_resolution": "terminal_availability_date_missing",
+          "candidate_rows": 42,
+          "resolved_rows": 0,
+          "unresolved_rows": 42,
+          "issue_month_end": "2017-06-30",
+          "individual_evaluation_cutoff": "2020-09-30",
+          "individual_followup_months": 39
         }
       ],
       "rows": [
@@ -18207,14 +18613,15 @@
           "origin_year": 2016,
           "window": "W1",
           "window_id": "w01_2012m01_m06",
-          "evaluation_cutoff": "2019-09-30",
-          "common_followup_months": 39,
+          "evaluation_cutoff_min": "2019-07-31",
+          "evaluation_cutoff_max": "2019-09-30",
+          "individual_followup_months": 39,
           "candidate_rows": 74537,
-          "resolved_rows": 74120,
-          "unresolved_rows": 417,
-          "coverage_resolved": 0.8747706422018349,
-          "coverage_lower": 0.8715268926841703,
-          "coverage_upper": 0.8754309940029784,
+          "resolved_rows": 73934,
+          "unresolved_rows": 603,
+          "coverage_resolved": 0.8759163578326615,
+          "coverage_lower": 0.8710439110777197,
+          "coverage_upper": 0.8768665226665951,
           "mean_width": 0.6482436543033322
         },
         {
@@ -18223,14 +18630,15 @@
           "origin_year": 2016,
           "window": "W2",
           "window_id": "w02_2012m02_m07",
-          "evaluation_cutoff": "2019-09-30",
-          "common_followup_months": 39,
+          "evaluation_cutoff_min": "2019-07-31",
+          "evaluation_cutoff_max": "2019-09-30",
+          "individual_followup_months": 39,
           "candidate_rows": 74537,
-          "resolved_rows": 74120,
-          "unresolved_rows": 417,
-          "coverage_resolved": 0.8770372369131139,
-          "coverage_lower": 0.8738210553148101,
-          "coverage_upper": 0.877684908166414,
+          "resolved_rows": 73934,
+          "unresolved_rows": 603,
+          "coverage_resolved": 0.878188654746125,
+          "coverage_lower": 0.8733380737083596,
+          "coverage_upper": 0.8791204368300307,
           "mean_width": 0.6485772685318177
         },
         {
@@ -18239,14 +18647,15 @@
           "origin_year": 2016,
           "window": "W3",
           "window_id": "w03_2012m03_m08",
-          "evaluation_cutoff": "2019-09-30",
-          "common_followup_months": 39,
+          "evaluation_cutoff_min": "2019-07-31",
+          "evaluation_cutoff_max": "2019-09-30",
+          "individual_followup_months": 39,
           "candidate_rows": 74537,
-          "resolved_rows": 74120,
-          "unresolved_rows": 417,
-          "coverage_resolved": 0.8752293577981651,
-          "coverage_lower": 0.8720098742906208,
-          "coverage_upper": 0.8758871432979594,
+          "resolved_rows": 73934,
+          "unresolved_rows": 603,
+          "coverage_resolved": 0.8763762274461006,
+          "coverage_lower": 0.8715268926841703,
+          "coverage_upper": 0.8773226719615761,
           "mean_width": 0.6485482597059139
         },
         {
@@ -18255,14 +18664,15 @@
           "origin_year": 2016,
           "window": "W4",
           "window_id": "w04_2012m04_m09",
-          "evaluation_cutoff": "2019-09-30",
-          "common_followup_months": 39,
+          "evaluation_cutoff_min": "2019-07-31",
+          "evaluation_cutoff_max": "2019-09-30",
+          "individual_followup_months": 39,
           "candidate_rows": 74537,
-          "resolved_rows": 74120,
-          "unresolved_rows": 417,
-          "coverage_resolved": 0.8725445223961144,
-          "coverage_lower": 0.8693400592994084,
-          "coverage_upper": 0.8732039121510122,
+          "resolved_rows": 73934,
+          "unresolved_rows": 603,
+          "coverage_resolved": 0.8736711120729299,
+          "coverage_lower": 0.8688704938486926,
+          "coverage_upper": 0.8746126085031595,
           "mean_width": 0.6482509233385934
         },
         {
@@ -18271,14 +18681,15 @@
           "origin_year": 2016,
           "window": "W5",
           "window_id": "w05_2012m05_m10",
-          "evaluation_cutoff": "2019-09-30",
-          "common_followup_months": 39,
+          "evaluation_cutoff_min": "2019-07-31",
+          "evaluation_cutoff_max": "2019-09-30",
+          "individual_followup_months": 39,
           "candidate_rows": 74537,
-          "resolved_rows": 74120,
-          "unresolved_rows": 417,
-          "coverage_resolved": 0.8698866702644361,
-          "coverage_lower": 0.8666568281524611,
-          "coverage_upper": 0.8705475133155346,
+          "resolved_rows": 73934,
+          "unresolved_rows": 603,
+          "coverage_resolved": 0.8710065734303568,
+          "coverage_lower": 0.8661872627017455,
+          "coverage_upper": 0.8719562096676818,
           "mean_width": 0.6479297572943244
         },
         {
@@ -18287,14 +18698,15 @@
           "origin_year": 2016,
           "window": "W6",
           "window_id": "w06_2012m06_m11",
-          "evaluation_cutoff": "2019-09-30",
-          "common_followup_months": 39,
+          "evaluation_cutoff_min": "2019-07-31",
+          "evaluation_cutoff_max": "2019-09-30",
+          "individual_followup_months": 39,
           "candidate_rows": 74537,
-          "resolved_rows": 74120,
-          "unresolved_rows": 417,
-          "coverage_resolved": 0.8697247706422018,
-          "coverage_lower": 0.8664824181279096,
-          "coverage_upper": 0.8703865194467177,
+          "resolved_rows": 73934,
+          "unresolved_rows": 603,
+          "coverage_resolved": 0.8708442665079665,
+          "coverage_lower": 0.8659860203657244,
+          "coverage_upper": 0.8718086319545997,
           "mean_width": 0.6477969892932692
         },
         {
@@ -18303,14 +18715,15 @@
           "origin_year": 2016,
           "window": "W7",
           "window_id": "w07_2012m07_m12",
-          "evaluation_cutoff": "2019-09-30",
-          "common_followup_months": 39,
+          "evaluation_cutoff_min": "2019-07-31",
+          "evaluation_cutoff_max": "2019-09-30",
+          "individual_followup_months": 39,
           "candidate_rows": 74537,
-          "resolved_rows": 74120,
-          "unresolved_rows": 417,
-          "coverage_resolved": 0.8668645439827307,
-          "coverage_lower": 0.8635845284892067,
-          "coverage_upper": 0.8675422944309538,
+          "resolved_rows": 73934,
+          "unresolved_rows": 603,
+          "coverage_resolved": 0.8680038953661373,
+          "coverage_lower": 0.8630881307270215,
+          "coverage_upper": 0.8689778230945705,
           "mean_width": 0.6473906531911655
         },
         {
@@ -18319,14 +18732,15 @@
           "origin_year": 2016,
           "window": "W8",
           "window_id": "w08_2012m08_2013m01",
-          "evaluation_cutoff": "2019-09-30",
-          "common_followup_months": 39,
+          "evaluation_cutoff_min": "2019-07-31",
+          "evaluation_cutoff_max": "2019-09-30",
+          "individual_followup_months": 39,
           "candidate_rows": 74537,
-          "resolved_rows": 74120,
-          "unresolved_rows": 417,
-          "coverage_resolved": 0.8633837021046951,
-          "coverage_lower": 0.8599353341293585,
-          "coverage_upper": 0.8640675100956572,
+          "resolved_rows": 73934,
+          "unresolved_rows": 603,
+          "coverage_resolved": 0.8645548732653447,
+          "coverage_lower": 0.8594389363671734,
+          "coverage_upper": 0.8655432872264781,
           "mean_width": 0.48270786956287004
         },
         {
@@ -18335,14 +18749,15 @@
           "origin_year": 2017,
           "window": "W1",
           "window_id": "w01_2013m01_m06",
-          "evaluation_cutoff": "2020-09-30",
-          "common_followup_months": 39,
+          "evaluation_cutoff_min": "2020-07-31",
+          "evaluation_cutoff_max": "2020-09-30",
+          "individual_followup_months": 39,
           "candidate_rows": 77105,
-          "resolved_rows": 66091,
-          "unresolved_rows": 11014,
-          "coverage_resolved": 0.8571061112708236,
+          "resolved_rows": 66037,
+          "unresolved_rows": 11068,
+          "coverage_resolved": 0.8575646985780698,
           "coverage_lower": 0.7535568380779456,
-          "coverage_upper": 0.8747681732702159,
+          "coverage_upper": 0.8752610077167499,
           "mean_width": 0.562496881282411
         },
         {
@@ -18351,14 +18766,15 @@
           "origin_year": 2017,
           "window": "W2",
           "window_id": "w02_2013m02_m07",
-          "evaluation_cutoff": "2020-09-30",
-          "common_followup_months": 39,
+          "evaluation_cutoff_min": "2020-07-31",
+          "evaluation_cutoff_max": "2020-09-30",
+          "individual_followup_months": 39,
           "candidate_rows": 77105,
-          "resolved_rows": 66091,
-          "unresolved_rows": 11014,
-          "coverage_resolved": 0.8565916690623534,
+          "resolved_rows": 66037,
+          "unresolved_rows": 11068,
+          "coverage_resolved": 0.8570649787240486,
           "coverage_lower": 0.7524285065819337,
-          "coverage_upper": 0.8743401854613838,
+          "coverage_upper": 0.8748459892354581,
           "mean_width": 0.5624542821226854
         },
         {
@@ -18367,14 +18783,15 @@
           "origin_year": 2017,
           "window": "W3",
           "window_id": "w03_2013m03_m08",
-          "evaluation_cutoff": "2020-09-30",
-          "common_followup_months": 39,
+          "evaluation_cutoff_min": "2020-07-31",
+          "evaluation_cutoff_max": "2020-09-30",
+          "individual_followup_months": 39,
           "candidate_rows": 77105,
-          "resolved_rows": 66091,
-          "unresolved_rows": 11014,
-          "coverage_resolved": 0.8546700761071855,
+          "resolved_rows": 66037,
+          "unresolved_rows": 11068,
+          "coverage_resolved": 0.8551418144373608,
           "coverage_lower": 0.7501588742623695,
-          "coverage_upper": 0.8725374489332728,
+          "coverage_upper": 0.8730432527073471,
           "mean_width": 0.5622224070109993
         },
         {
@@ -18383,14 +18800,15 @@
           "origin_year": 2017,
           "window": "W4",
           "window_id": "w04_2013m04_m09",
-          "evaluation_cutoff": "2020-09-30",
-          "common_followup_months": 39,
+          "evaluation_cutoff_min": "2020-07-31",
+          "evaluation_cutoff_max": "2020-09-30",
+          "individual_followup_months": 39,
           "candidate_rows": 77105,
-          "resolved_rows": 66091,
-          "unresolved_rows": 11014,
-          "coverage_resolved": 0.8552601715816072,
+          "resolved_rows": 66037,
+          "unresolved_rows": 11068,
+          "coverage_resolved": 0.8557323924466587,
           "coverage_lower": 0.7506257700538227,
-          "coverage_upper": 0.8731988846378316,
+          "coverage_upper": 0.8737046884119058,
           "mean_width": 0.5621829530516125
         },
         {
@@ -18399,14 +18817,15 @@
           "origin_year": 2017,
           "window": "W5",
           "window_id": "w05_2013m05_m10",
-          "evaluation_cutoff": "2020-09-30",
-          "common_followup_months": 39,
+          "evaluation_cutoff_min": "2020-07-31",
+          "evaluation_cutoff_max": "2020-09-30",
+          "individual_followup_months": 39,
           "candidate_rows": 77105,
-          "resolved_rows": 66091,
-          "unresolved_rows": 11014,
-          "coverage_resolved": 0.8554720007262714,
+          "resolved_rows": 66037,
+          "unresolved_rows": 11068,
+          "coverage_resolved": 0.8559443948089707,
           "coverage_lower": 0.7508203099669282,
-          "coverage_upper": 0.8734063938784774,
+          "coverage_upper": 0.8739121976525517,
           "mean_width": 0.5621735581049848
         },
         {
@@ -18415,14 +18834,15 @@
           "origin_year": 2017,
           "window": "W6",
           "window_id": "w06_2013m06_m11",
-          "evaluation_cutoff": "2020-09-30",
-          "common_followup_months": 39,
+          "evaluation_cutoff_min": "2020-07-31",
+          "evaluation_cutoff_max": "2020-09-30",
+          "individual_followup_months": 39,
           "candidate_rows": 77105,
-          "resolved_rows": 66091,
-          "unresolved_rows": 11014,
-          "coverage_resolved": 0.8561831414262153,
+          "resolved_rows": 66037,
+          "unresolved_rows": 11068,
+          "coverage_resolved": 0.8566409739994245,
           "coverage_lower": 0.7517411322222942,
-          "coverage_upper": 0.8739900136177939,
+          "coverage_upper": 0.8744828480643279,
           "mean_width": 0.5622719357684526
         },
         {
@@ -18431,14 +18851,15 @@
           "origin_year": 2017,
           "window": "W7",
           "window_id": "w07_2013m07_m12",
-          "evaluation_cutoff": "2020-09-30",
-          "common_followup_months": 39,
+          "evaluation_cutoff_min": "2020-07-31",
+          "evaluation_cutoff_max": "2020-09-30",
+          "individual_followup_months": 39,
           "candidate_rows": 77105,
-          "resolved_rows": 66091,
-          "unresolved_rows": 11014,
-          "coverage_resolved": 0.855956181628361,
+          "resolved_rows": 66037,
+          "unresolved_rows": 11068,
+          "coverage_resolved": 0.8564289716371125,
           "coverage_lower": 0.7509759418974127,
-          "coverage_upper": 0.873886258997471,
+          "coverage_upper": 0.8743920627715454,
           "mean_width": 0.5621830723291171
         },
         {
@@ -18447,14 +18868,15 @@
           "origin_year": 2017,
           "window": "W8",
           "window_id": "w08_2013m08_2014m01",
-          "evaluation_cutoff": "2020-09-30",
-          "common_followup_months": 39,
+          "evaluation_cutoff_min": "2020-07-31",
+          "evaluation_cutoff_max": "2020-09-30",
+          "individual_followup_months": 39,
           "candidate_rows": 77105,
-          "resolved_rows": 66091,
-          "unresolved_rows": 11014,
-          "coverage_resolved": 0.8553963474603199,
+          "resolved_rows": 66037,
+          "unresolved_rows": 11068,
+          "coverage_resolved": 0.8558686796795736,
           "coverage_lower": 0.7498994877115621,
-          "coverage_upper": 0.8735231178263407,
+          "coverage_upper": 0.874028921600415,
           "mean_width": 0.5620254873690599
         }
       ]
@@ -50239,32 +50661,32 @@
       "permitted_conclusion": "Within the predeclared finite grid, the gamma endpoint allocation contrast is not invariant to the outcome-free ruler or interior coordinate."
     }
   },
-  "audit_thesis": "All 40 finite-archive sharp coverage upper endpoints are below 0.90 under the active six-month endpoint; this deterministic completion statement is not by itself a rejection of conformal validity. A separate retrospectively locked joint-block rank-reference diagnostic places 31 of 40 learner-window cells past the locked nominal Bonferroni--Holm thresholds. Its null is stronger than the usual single-future-point split-conformal condition, and the post-inspection family has no selective-FWER claim. The CatBoost shortfall recurs at two origins with cutoffs 39 months after issue-quarter end, under three missing-value encodings, and under four declared fit-label scenarios. A complete label-Mondrian sensitivity redistributes resolved coverage from nondefault toward default but leaves 27 of 40 learner-window and 109 of 400 label-stratum upper endpoints below 0.90 while expanding two-label sets to 72.4%--78.5%; it is not a restored transport guarantee. A prevalence-threshold crossing explains one observed geometry change but is not invariant to every fit-label scenario. Portfolio direction is not identified without outcome-free comparator support and is not invariant to the declared ruler or interior coordinate; USD 25 floor rounding produces only negligible rate perturbations in the evaluated archive.",
+  "audit_thesis": "All 40 finite-archive sharp coverage upper endpoints are below 0.90 under the active six-month endpoint; this deterministic completion statement is not by itself a rejection of conformal validity. A separate retrospectively locked joint-block rank-reference diagnostic places 31 of 40 learner-window cells past the locked nominal Bonferroni--Holm thresholds. Its null is stronger than the usual single-future-point split-conformal condition, and the post-inspection family has no selective-FWER claim. The CatBoost shortfall recurs at two origins with cutoffs 39 months after each issue-month end, under three missing-value encodings, and under four declared fit-label scenarios. A complete label-Mondrian sensitivity redistributes resolved coverage from nondefault toward default but leaves 27 of 40 learner-window and 109 of 400 label-stratum upper endpoints below 0.90 while expanding two-label sets to 72.4%--78.5%; it is not a restored transport guarantee. A prevalence-threshold crossing explains one observed geometry change but is not invariant to every fit-label scenario. Portfolio direction is not identified without outcome-free comparator support and is not invariant to the declared ruler or interior coordinate; USD 25 floor rounding produces only negligible rate perturbations in the evaluated archive.",
   "source_artifacts": {
     "active_source_registry": {
       "path": "configs/ijds_active_evidence_sources.yaml",
-      "bytes": 23506,
-      "sha256": "b75f2cf579d60603de25db6ea473b3ae140840d0c547372389b2023db450ccc7"
+      "bytes": 24972,
+      "sha256": "600bb392a9acdfdcb26fdbd56709a2d770c9a02694d1f38a3ddffca7804fa7cb"
     },
     "claim_ledger_contract": {
       "path": "configs/ijds_claim_ledger.yaml",
-      "bytes": 14062,
-      "sha256": "e89eb11a8c512589a93997cd99e12fb4c2855661176d09ef08ffdc89239fc276"
+      "bytes": 14076,
+      "sha256": "f33639306ad32b3f7132e24d2394a70f8e29edd1486d41ad41c6b1d8ccf4169c"
     },
     "publication_targets_contract": {
       "path": "configs/crpto_publication_targets.yaml",
-      "bytes": 10430,
-      "sha256": "60f2c77ece25361d516fcb995acc9888b402cc5373e22071846bbf798f77eb80"
+      "bytes": 10518,
+      "sha256": "9c3f5c96e34434aedaef013109f43e90a3fef78d543ef8e7f7b0fb6d8a0f2a7c"
     },
     "evidence_builder": {
       "path": "scripts/build_ijds_binary_geometry_frontier_v4_evidence.py",
-      "bytes": 150631,
-      "sha256": "fe656ac99062fd485d71b928dcf43015b4e9eb7b3e5eabc1a7eb717ec5c04ac6"
+      "bytes": 159994,
+      "sha256": "12ef7c8cc72fc222c001c9997d40e07a03934435b7a34af0a45b53d6ce300eb4"
     },
     "publication_integrity_checker": {
       "path": "scripts/check_publication_integrity.py",
-      "bytes": 24711,
-      "sha256": "df104cd83a4709089cb722d90995b70df2a996a7123cb576b9dbf95f29cd453e"
+      "bytes": 26415,
+      "sha256": "46132d757482be8f97efc9d10c0cbdb1c36dec0bfa7e3ae9587e6323b065b456"
     },
     "paper_pdf_auditor": {
       "path": "scripts/inspect_ijds_pdfs.py",
@@ -50485,6 +50907,21 @@
       "path": "models/experiments/ijds_audit/ijds-rolling-origin-equal-followup-2026-07-21-v1/execution_receipt.json",
       "bytes": 1463,
       "sha256": "87953660188d6eb4ef878b2d5e0f1ccdeec936d8c5c280cfe893f6fced97e256"
+    },
+    "rolling_origin_individual_age_followup/summary": {
+      "path": "models/experiments/ijds_audit/ijds-rolling-origin-individual-age-followup-2026-07-21-v1/rolling_origin_individual_age_followup_summary.json",
+      "bytes": 59199,
+      "sha256": "f4ea902f4f4d3701345b72b632d6ac104b88efd14b5f5c9d17abdb7b4fee2a38"
+    },
+    "rolling_origin_individual_age_followup/config": {
+      "path": "configs/experiments/ijds_rolling_origin_individual_age_followup_2026-07-21_v1.yaml",
+      "bytes": 2167,
+      "sha256": "043e1ebaab3345aca30403d07a694080c08b2d7ed1016187bc4d29cf7b28fbbc"
+    },
+    "rolling_origin_individual_age_followup/execution_receipt": {
+      "path": "models/experiments/ijds_audit/ijds-rolling-origin-individual-age-followup-2026-07-21-v1/execution_receipt.json",
+      "bytes": 1508,
+      "sha256": "3a95da6ddaad4c68fd472e2a5cd6c5edfc7f9535b7c8da9f9af54202d598a5dd"
     },
     "label_mondrian/outcome_free/freeze": {
       "path": "models/experiments/ijds_audit/ijds-label-mondrian-freeze-2026-07-21-v1/protocol_freeze.json",
@@ -51011,6 +51448,31 @@
       "bytes": 6657,
       "sha256": "8a5424280f80f3b3e0e6c7ce494b4890b8006cd6d8d32f9c2c181ec26131caee"
     },
+    "rolling_origin_individual_age_followup/temporal_coverage": {
+      "path": "data/processed/experiments/ijds_audit/ijds-rolling-origin-individual-age-followup-2026-07-21-v1/evaluation/individual_age_temporal_coverage.parquet",
+      "bytes": 33429,
+      "sha256": "d4b30f7318c66a2de26c1bcecac2bc308c449df7fd4d2f3b7076be62c4970ef0"
+    },
+    "rolling_origin_individual_age_followup/origin_endpoint_census": {
+      "path": "data/processed/experiments/ijds_audit/ijds-rolling-origin-individual-age-followup-2026-07-21-v1/evaluation/origin_endpoint_census.parquet",
+      "bytes": 6873,
+      "sha256": "27aa03e849e4a64e50acf68bb590c0d41f5cd92beaa47f376128bb9eb7662f66"
+    },
+    "rolling_origin_individual_age_followup/monthly_endpoint_census": {
+      "path": "data/processed/experiments/ijds_audit/ijds-rolling-origin-individual-age-followup-2026-07-21-v1/evaluation/monthly_endpoint_census.parquet",
+      "bytes": 6476,
+      "sha256": "b4c562545bc556db320cbe2762d59d98dee83a4b822f3933f4ba0ef9dbf2cb75"
+    },
+    "rolling_origin_individual_age_followup/origin_endpoint_reason_census": {
+      "path": "data/processed/experiments/ijds_audit/ijds-rolling-origin-individual-age-followup-2026-07-21-v1/evaluation/origin_endpoint_reason_census.parquet",
+      "bytes": 6616,
+      "sha256": "4d492fde04cb893d866d81a24276e0ab81e91f2a23f10d1a3295b329d9f2246e"
+    },
+    "rolling_origin_individual_age_followup/monthly_endpoint_reason_census": {
+      "path": "data/processed/experiments/ijds_audit/ijds-rolling-origin-individual-age-followup-2026-07-21-v1/evaluation/monthly_endpoint_reason_census.parquet",
+      "bytes": 7575,
+      "sha256": "c669c24e50596db5f6252018c897379264fbcf6535ca2969b5c0b040fb58472a"
+    },
     "label_mondrian/outcome_free/thresholds": {
       "path": "data/processed/experiments/ijds_audit/ijds-label-mondrian-freeze-2026-07-21-v1/prediction/label_mondrian_thresholds.parquet",
       "bytes": 31556,
@@ -51225,8 +51687,8 @@
     },
     "table/rolling_origin": {
       "path": "reports/crpto/tables/crpto_ijds_v4_tableS7C_rolling_origin_recurrence.csv",
-      "bytes": 2692,
-      "sha256": "f0bbda932b32eda39e0efad0df9c5b34b5eb913f13f424f3582ed35184f2148f"
+      "bytes": 2899,
+      "sha256": "d3cfb1b4ca0a2d19df762b0a85e5e2a8b8f0017d9467dfd70c9718cebb8f6c1c"
     },
     "table/conformal_set_diagnostics": {
       "path": "reports/crpto/tables/crpto_ijds_v4_tableS6A_conformal_set_diagnostics.csv",
@@ -51258,10 +51720,10 @@
       "bytes": 153667,
       "sha256": "85c71fd5037475110d8a5983b72d351bf3134947d40c179732e58c9b4c1b6ecb"
     },
-    "table/rolling_equal_followup_census": {
-      "path": "reports/crpto/tables/crpto_ijds_v4_tableS7D_equal_followup_census.csv",
-      "bytes": 1035,
-      "sha256": "fe174cb143a80b46b39ab0d8a1f8fa348b19b6d8d528b8df388275b89446cfc2"
+    "table/rolling_individual_age_census": {
+      "path": "reports/crpto/tables/crpto_ijds_v4_tableS7D_individual_age_endpoint_census.csv",
+      "bytes": 929,
+      "sha256": "59ca7aa974c674cb022199941a02323941bf88f0d02ddd03529ada699edae27f"
     },
     "table/fit_label_completion": {
       "path": "reports/crpto/tables/crpto_ijds_v4_tableS11_fit_label_completion.csv",
@@ -51312,8 +51774,8 @@
     "numeric_authority": "parent_evidence_manifest_only",
     "contract": {
       "path": "configs/ijds_claim_ledger.yaml",
-      "bytes": 14062,
-      "sha256": "e89eb11a8c512589a93997cd99e12fb4c2855661176d09ef08ffdc89239fc276"
+      "bytes": 14076,
+      "sha256": "f33639306ad32b3f7132e24d2394a70f8e29edd1486d41ad41c6b1d8ccf4169c"
     },
     "claims": [
       {
@@ -51676,9 +52138,9 @@
         "kind": "empirical",
         "lineages": [
           "binary_geometry.outcome_free",
-          "rolling_origin_equal_followup"
+          "rolling_origin_individual_age_followup"
         ],
-        "scope": "two_retrospective_april_june_origins_with_cutoffs_39_months_after_quarter_end_equal_minimum_not_exact_loan_age",
+        "scope": "two_retrospective_april_june_origins_with_cutoffs_39_months_after_each_issue_month_end_at_calendar_month_resolution",
         "rule": "equals",
         "result_pointer": "/sensitivity/rolling_origin/all_sixteen_upper_below_nominal",
         "result": true,
@@ -51686,7 +52148,7 @@
           "independent_replication",
           "temporal_invariance",
           "prospective_validation",
-          "identical_loan_level_age",
+          "exact_day_level_loan_age",
           "pooled_origin_estimand"
         ],
         "surfaces": {

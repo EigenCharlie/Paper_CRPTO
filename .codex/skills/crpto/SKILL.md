@@ -24,14 +24,15 @@ Read first:
 15. `docs/research/ijds_conformal_set_diagnostics_protocol_2026-07-21.md`
 16. `docs/research/ijds_exchangeability_transport_test_protocol_2026-07-21.md`
 17. `docs/research/ijds_exchangeability_transport_test_interpretive_addendum_2026-07-21.md`
-18. `docs/research/ijds_rolling_origin_equal_followup_protocol_2026-07-21.md`
-19. `docs/research/ijds_label_mondrian_sensitivity_protocol_2026-07-21.md`
-20. `docs/research/applied_conformal_prediction_book_audit_2026-07-21.md`
-21. `docs/research/conformal_literature_corpus_audit_2026-07-21.md`
-22. `reports/crpto/ijds_binary_geometry_frontier_v4_evidence.json`
-23. `docs/ACADEMIC_CONTEXT.md`
-24. `docs/SCOPE_AND_GOVERNANCE.md`
-25. `CONTRIBUTING.md`
+18. `docs/research/ijds_rolling_origin_individual_age_followup_protocol_2026-07-21.md`
+19. `docs/research/ijds_rolling_origin_equal_followup_protocol_2026-07-21.md` (parent provenance)
+20. `docs/research/ijds_label_mondrian_sensitivity_protocol_2026-07-21.md`
+21. `docs/research/applied_conformal_prediction_book_audit_2026-07-21.md`
+22. `docs/research/conformal_literature_corpus_audit_2026-07-21.md`
+23. `reports/crpto/ijds_binary_geometry_frontier_v4_evidence.json`
+24. `docs/ACADEMIC_CONTEXT.md`
+25. `docs/SCOPE_AND_GOVERNANCE.md`
+26. `CONTRIBUTING.md`
 26. `EXTRACTION_MANIFEST.md`
 
 Active evidence:
@@ -59,11 +60,11 @@ Active evidence:
 - endpoint resolution is partitioned exhaustively into 307,842 fully paid by
   cutoff, 56,972 charged off by cutoff, 11,551 nonterminal, 47 terminal after
   cutoff, and 478 terminal with missing availability date.
-- three missingness encodings and an equal-follow-up second retrospective
+- three missingness encodings and an individual-age second retrospective
   origin are complete, bounded recurrences; the origin comparison uses
-  April--June at both origins and cutoffs 39 months after each quarter end
-  (74,537 versus 77,105 candidates), equalizing minimum rather than exact
-  loan-level follow-up; neither family selects a representation or model.
+  April--June at both origins and cutoffs 39 months after each issue-month end
+  (74,537 versus 77,105 candidates), equalizing whole-month administrative age
+  rather than exact day-level age; neither family selects a representation or model.
 - all 40 five-model/window binary-set cells report AvgC, OneC, empty/two-label
   shares, and resolved-label coverage. The label stratification conditions on
   administrative resolution and is not all-candidate label-conditional validity.
@@ -100,8 +101,8 @@ Headline evidence:
 - resolved-panel nondefault coverage is `0.982982`--`0.992714` and resolved
   default coverage is `0.232570`--`0.363916` across all 40 cells; this is a
   descriptive resolved-label diagnostic only;
-- with cutoffs 39 months after quarter end, the 2016 and 2017 maximum upper bounds are
-  `0.877685` and `0.874768`;
+- with cutoffs 39 months after issue-month end, the 2016 and 2017 maximum upper
+  bounds are `0.879120` and `0.875261`;
 - label-Mondrian leaves `27/40` marginal and `109/400` category upper endpoints
   below 0.90; AvgC becomes `1.723718`--`1.785468` and `{0,1}` shares
   `0.723718`--`0.785468`. All 40 aggregate class-gap bounds cross zero;
@@ -191,10 +192,10 @@ just ijds-dvc-status
 
 The active builder verifies the V4, two-ruler, raw-data, credit-control,
   endpoint, structural, rolling-primary recovery, conformal-set diagnostic,
-  joint-block rank reference, equal-follow-up, label-Mondrian, fit-label completion,
+  joint-block rank reference, individual-age follow-up, label-Mondrian, fit-label completion,
 and allocation-granularity
 manifests/freezes and every artifact descriptor. The active capsule contains
-45 DVC pointers. It emits 25 paper-facing CSV tables, three figures under the
+47 DVC pointers. It emits 25 paper-facing CSV tables, three figures under the
 `crpto_ijds_v4_*` naming family, and
 `ijds_binary_geometry_frontier_v4_evidence.json`. Consecutive builds must be
 byte-identical. The canonical body is `paper/CRPTO_ijds.qmd`; generate official

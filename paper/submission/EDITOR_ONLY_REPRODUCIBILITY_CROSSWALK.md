@@ -52,12 +52,12 @@ Structural V1--V4 remain stopped provenance; V5 is a data-only replay
 dependency for V6 and is not paper-facing evidence.
 
 The active two-origin sensitivity is
-`ijds-rolling-origin-equal-followup-2026-07-21-v1`, protocol-locked at commit
-`c9d30b02885bac516ae21eae32c56120cf7d296e`. It evaluates April--June 2016 at
-September 30, 2019 and April--June 2017 at September 30, 2020, exactly 39
-months after each issue-quarter end. The earlier primary-recovery and 2017
-rolling-origin roots remain registered only as unequal-follow-up replay
-dependencies; they are not paper-facing evidence.
+`ijds-rolling-origin-individual-age-followup-2026-07-21-v1`, protocol-locked at
+commit `78a0a588c35f53daeeef526c3fbe53c10e664385`. Each April--June candidate
+receives a cutoff 39 calendar months after its issue-month end, giving
+July--September 2019 and July--September 2020 cutoffs. The parent equal-quarter
+run and the earlier primary-recovery and 2017 rolling-origin roots remain
+registered only as replay dependencies; they are not paper-facing evidence.
 
 The exact combined-rank reference analysis is
 `ijds-exchangeability-transport-test-2026-07-21-v1`, protocol-locked at commit
@@ -93,7 +93,7 @@ their freezes, summaries, and DVC roots are verified by the source registry.
 
 ## DVC Capsule
 
-The 45 DVC pointers are listed once in `configs/ijds_active_evidence_sources.yaml`.
+The 47 DVC pointers are listed once in `configs/ijds_active_evidence_sources.yaml`.
 They comprise data and model pointers for the active roots and sensitivities,
 plus explicitly labeled replay dependencies, including the data-only
 structural V5 shard root and the unequal-follow-up origin roots. Pull with:

@@ -22,9 +22,9 @@ living closeout checklist, not evidence that the package is final.
 - [ ] Two-ruler, exact-support, fit-label-lag, endpoint-availability, and solver-stability limits are stated.
 - [ ] Endpoint lags 0/3/6/8/12 are complete, unselected, and the six-month slice reconciles to the active evaluation.
 - [ ] Fit-label and evaluation-endpoint timing are not described as a joint factorial sensitivity.
-- [ ] Missingness encodings and the equal-follow-up origin sensitivity are
+- [ ] Missingness encodings and the individual-age origin sensitivity are
       bounded recurrences, not winners or independent validation; all 16
-      origin-window upper bounds use cutoffs 39 months after quarter end, which
+      origin-window upper bounds use cutoffs 39 months after issue-month end, which
       equalizes minimum rather than exact loan-level follow-up.
 - [ ] Label-Mondrian is reported as 27/40 shortfalls, 12/40 crossings, and
       1/40 at-or-above nominal, with 109/400 category shortfalls and all 40
@@ -46,7 +46,7 @@ living closeout checklist, not evidence that the package is final.
 - [ ] Data and code disclosure form.
 - [ ] Editor-only reproducibility crosswalk, if requested.
 - [ ] Sanitized reproducibility capsule, if requested.
-- [ ] Capsule inventory reconciles to exactly 45 DVC pointers and 25
+- [ ] Capsule inventory reconciles to exactly 47 DVC pointers and 25
       paper-facing CSV tables; unequal-follow-up roots appear only as replay
       provenance.
 

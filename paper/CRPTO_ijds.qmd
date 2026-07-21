@@ -22,7 +22,7 @@ abstract: |
   locking, these are reporting flags, not post-selection FWER control, and they
   do not directly test the usual calibration-plus-one-future-point condition.
   The CatBoost shortfall recurs under three missing-value encodings and at two
-  origins under an equal-39-month-from-quarter-end comparison. Label-Mondrian calibration leaves 27/40
+  origins with 39 months from each loan's issue-month end. Label-Mondrian calibration leaves 27/40
   marginal and 109/400 label-stratum upper endpoints below nominal while
   expanding two-label sets to 72.4%--78.5%. For decisions, two outcome-blind
   rulers and three coordinates compare point and full-upper scores. Sharp
@@ -143,7 +143,7 @@ the calibration residuals and the entire target block to be jointly
 exchangeable, which is stronger than the usual calibration-plus-one-target
 condition; pre-lock inspection also precludes a post-selection FWER claim. The primary
 CatBoost pattern also recurs under three semantics-preserving missing-value
-encodings, at two origins with equal quarter-level minimum follow-up, and under four
+encodings, at two origins with equalized 39-month administrative age, and under four
 declared fit-label scenarios. A complete label-Mondrian sensitivity substantially
 raises default coverage but also expands ambiguous sets and does not uniformly
 restore nominal finite-archive coverage. One score
@@ -885,7 +885,7 @@ p-values. If the family and hierarchy had been fixed ex ante, this construction
 would control FWER without an independence assumption. Here its target is the
 40 learner-window intersections of five joint-block nulls. Stratum flags are
 not a 200-test FWER claim, and this diagnostic does not extend to the endpoint,
-missingness, fit-label, equal-follow-up, or label-Mondrian sensitivities.
+missingness, fit-label, individual-age follow-up, or label-Mondrian sensitivities.
 
 An exploratory implementation and its flag pattern were inspected before the
 immutable V1 lock. The Bonferroni--Holm cutoffs are therefore locked nominal
@@ -1084,13 +1084,13 @@ finite-archive coverage nor establishes within-label exchangeability. Tables S6D
 
 The sentinel, explicit-indicator, and native-null CatBoost encodings leave all
 eight upper endpoints below 0.90 (maxima 0.882597, 0.884332, and 0.880037). At
-cutoffs 39 months after issue-quarter end, April--June 2016 has 74,537
-candidates (74,120/417 resolved/unresolved) and maximum 0.877685; April--June
-2017 has 77,105 (66,091/11,014) and maximum 0.874768. All eight endpoints remain
-below 0.90 at both origins. Tables S7C--S7D give coverage and endpoint-reason
-censuses; no encoding, model, or origin is selected, and these are not
-independent replications, identical individual-loan ages, a missingness
-mechanism, or prospective invariance.
+loan-specific cutoffs 39 calendar months after issue-month end, April--June
+2016 has 74,537 candidates (73,934/603 resolved/unresolved) and maximum
+0.879120; April--June 2017 has 77,105 (66,037/11,068) and maximum 0.875261. All
+eight endpoints remain below 0.90 at both origins. Tables S7C--S7D give
+coverage and the complete six-month endpoint census; no encoding, model, or
+origin is selected, and these are not independent replications, exact
+day-level loan ages, a missingness mechanism, or prospective invariance.
 
 A four-scenario refit addresses 215 cutoff-unavailable labels (41 PD, 24 Platt,
 150 conformal). Observed-only, all-nondefault, all-default, and later-terminal
@@ -1296,7 +1296,7 @@ The conformal audit likewise has three noninterchangeable layers. The 40 sharp
 coverage intervals identify attainable coverage in this finite archive. The
 combined-rank diagnostic adds a joint-block sampling reference and places
 31/40 cells past locked nominal thresholds without post-selection FWER control.
-Label-Mondrian, equal-follow-up, missingness, endpoint,
+Label-Mondrian, individual-age follow-up, missingness, endpoint,
 and fit-label analyses are deterministic design sensitivities with different
 grids; they inherit neither the joint-block reference p-values nor its locked
 nominal threshold hierarchy. The label-Mondrian result is constructive precisely because it shows
@@ -1354,8 +1354,8 @@ transport. It also does not directly test the usual one-future-point guarantee.
 Label-Mondrian
 requires exchangeability within each score-stratum-by-label category, which is
 not established, and its 400 categories are identification rows rather than
-adjusted tests. The equal-follow-up comparison aligns quarter-level minimum
-follow-up, not every individual loan's exact age. Likewise, the finite ruler
+adjusted tests. The individual-age comparison aligns 39 whole calendar months
+from issue-month end; it cannot recover an exact origination day. Likewise, the finite ruler
 grid, one-moment C2, and point-cap
 support are not a continuous joint frontier; the structural grid is stylized,
 and USD 25 flooring is not integer optimization. The inspected archive is
@@ -1363,7 +1363,7 @@ neither a pristine lockbox nor a preregistration.
 
 # Reproducibility {#sec-reproducibility}
 
-One registry binds every active lineage and 45 DVC pointers. Publication replay
+One registry binds every active lineage and 47 DVC pointers. Publication replay
 verifies frozen artifacts and regenerates 25 tables and three figures
 transactionally; scientific replay uses each lineage's protocol commit and
 `uv.lock`, not the current source tree. Online Supplement Appendix F specifies

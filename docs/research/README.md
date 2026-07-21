@@ -21,11 +21,12 @@ claim or source registry names it.
 13. `ijds_allocation_granularity_sensitivity_protocol_2026-07-16.md`
 14. `ijds_conformal_set_diagnostics_protocol_2026-07-21.md`
 15. `ijds_exchangeability_transport_test_protocol_2026-07-21.md`
-16. `ijds_rolling_origin_equal_followup_protocol_2026-07-21.md`
-17. `ijds_label_mondrian_sensitivity_protocol_2026-07-21.md`
-18. `../../configs/ijds_active_evidence_sources.yaml`
-19. `../../configs/ijds_claim_ledger.yaml`
-20. `../../reports/crpto/ijds_binary_geometry_frontier_v4_evidence.json`
+16. `ijds_rolling_origin_individual_age_followup_protocol_2026-07-21.md`
+17. `ijds_rolling_origin_equal_followup_protocol_2026-07-21.md` (parent provenance)
+18. `ijds_label_mondrian_sensitivity_protocol_2026-07-21.md`
+19. `../../configs/ijds_active_evidence_sources.yaml`
+20. `../../configs/ijds_claim_ledger.yaml`
+21. `../../reports/crpto/ijds_binary_geometry_frontier_v4_evidence.json`
 
 ## Active Interpretation
 
@@ -39,8 +40,8 @@ law assumes joint exchangeability of each calibration stratum with its entire
 target block, a stronger null than the usual one-future-point marginal
 split-conformal condition. Because the family and pattern were inspected
 before the lock, these flags carry no post-selection or study-wide FWER claim.
-With cutoffs 39 months after issue-quarter end, all 16 CatBoost origin-window
-upper endpoints remain
+With cutoffs 39 months after each issue-month end, all 16 CatBoost
+origin-window upper endpoints remain
 below nominal. Label-Mondrian changes the marginal states to 27 shortfalls, 12
 crossings, and one at-or-above-nominal cell, with 109/400 category shortfalls;
 it is not a conditional-validity repair. Binary residual geometry changes

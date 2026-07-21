@@ -67,7 +67,7 @@ def _normalize(text: str) -> str:
 def test_active_evidence_locks_v4_lineage_and_claim_boundary() -> None:
     evidence = _json(EVIDENCE)
 
-    assert evidence["schema_version"] == "2026-07-21.2"
+    assert evidence["schema_version"] == "2026-07-21.3"
     assert evidence["status"] == "active_ijds_v5_endpoint_reason_audited_paper_facing_evidence"
     assert evidence["run_tag"] == RUN
     assert evidence["protocol_commit"] == COMMIT
@@ -378,35 +378,45 @@ def test_endpoint_reasons_missingness_and_second_origin_are_bounded() -> None:
     assert rolling["origin_count"] == 2
     assert rolling["window_cells"] == 16
     assert rolling["common_issue_months"] == ["April", "May", "June"]
-    assert rolling["common_followup_months_after_issue_quarter_end"] == 39
-    assert rolling["approximate_followup_months_by_issue_month"] == {
-        "April": 41,
-        "May": 40,
-        "June": 39,
-    }
-    assert rolling["exact_loan_level_age_matched"] is False
-    assert rolling["evaluation_cutoffs"] == {
-        "primary_2016": "2019-09-30",
-        "rolling_2017": "2020-09-30",
+    assert rolling["individual_followup_months_after_issue_month_end"] == 39
+    assert rolling["exact_calendar_month_age_matched"] is True
+    assert rolling["exact_day_level_age_matched"] is False
+    assert rolling["cutoff_by_issue_period"] == {
+        "2016-04": "2019-07-31",
+        "2016-05": "2019-08-31",
+        "2016-06": "2019-09-30",
+        "2017-04": "2020-07-31",
+        "2017-05": "2020-08-31",
+        "2017-06": "2020-09-30",
     }
     assert rolling["primary_2016_periods"] == ["2016-04", "2016-05", "2016-06"]
     assert rolling["rolling_2017_periods"] == ["2017-04", "2017-05", "2017-06"]
     assert rolling["primary_2016_census"] == {
         "candidate_rows": 74537,
-        "resolved_rows": 74120,
-        "unresolved_rows": 417,
+        "resolved_rows": 73934,
+        "unresolved_rows": 603,
     }
     assert rolling["rolling_2017_census"] == {
         "candidate_rows": 77105,
-        "resolved_rows": 66091,
-        "unresolved_rows": 11014,
+        "resolved_rows": 66037,
+        "unresolved_rows": 11068,
+    }
+    assert rolling["coarser_equal_quarter_followup_retained_as_provenance"] == {
+        "run_tag": "ijds-rolling-origin-equal-followup-2026-07-21-v1",
+        "protocol_tag": "protocol/ijds-rolling-origin-equal-followup-2026-07-21-v1",
+        "all_sixteen_upper_below_nominal": True,
+        "approximate_followup_months_by_issue_month": {
+            "April": 41,
+            "May": 40,
+            "June": 39,
+        },
     }
     assert rolling["unequal_followup_runs_retained_as_provenance"] == {
         "rolling_2017_run_tag": "ijds-rolling-origin-2017-2026-07-15-v4",
         "primary_2016_recovery_run_tag": ("ijds-rolling-origin-primary-recovery-2026-07-21-v1"),
     }
-    assert rolling["primary_2016_upper_max"] == pytest.approx(0.877684908166414)
-    assert rolling["rolling_2017_upper_max"] == pytest.approx(0.8747681732702159)
+    assert rolling["primary_2016_upper_max"] == pytest.approx(0.8791204368300307)
+    assert rolling["rolling_2017_upper_max"] == pytest.approx(0.8752610077167499)
     assert all(
         row["candidate_rows"] != 376890
         for row in rolling["rows"]
@@ -417,11 +427,27 @@ def test_endpoint_reasons_missingness_and_second_origin_are_bounded() -> None:
         for origin in ("primary_2016", "rolling_2017")
         for window in range(1, 9)
     }
-    assert {row["common_followup_months"] for row in rolling["rows"]} == {39}
-    assert {(row["origin_id"], row["evaluation_cutoff"]) for row in rolling["rows"]} == {
-        ("primary_2016", "2019-09-30"),
-        ("rolling_2017", "2020-09-30"),
+    assert {row["individual_followup_months"] for row in rolling["rows"]} == {39}
+    assert {
+        (row["origin_id"], row["evaluation_cutoff_min"], row["evaluation_cutoff_max"])
+        for row in rolling["rows"]
+    } == {
+        ("primary_2016", "2019-07-31", "2019-09-30"),
+        ("rolling_2017", "2020-07-31", "2020-09-30"),
     }
+    assert len(rolling["monthly_endpoint_census"]) == 6
+    assert {
+        (row["period"], row["individual_evaluation_cutoff"])
+        for row in rolling["monthly_endpoint_census"]
+    } == set(rolling["cutoff_by_issue_period"].items())
+    for origin, expected in {
+        "primary_2016": (74537, 73934, 603),
+        "rolling_2017": (77105, 66037, 11068),
+    }.items():
+        scoped = [row for row in rolling["monthly_endpoint_census"] if row["origin_id"] == origin]
+        assert sum(row["candidate_rows"] for row in scoped) == expected[0]
+        assert sum(row["resolved_rows"] for row in scoped) == expected[1]
+        assert sum(row["unresolved_rows"] for row in scoped) == expected[2]
     assert rolling["all_sixteen_upper_below_nominal"] is True
     assert rolling["model_or_origin_selected"] is False
     assert rolling["independent_replication_claim_authorized"] is False
@@ -582,6 +608,14 @@ def test_evidence_manifest_hashes_every_active_output() -> None:
         "rolling_origin_equal_followup/config",
         "rolling_origin_equal_followup/temporal_coverage",
         "rolling_origin_equal_followup/origin_endpoint_census",
+        "rolling_origin_individual_age_followup/summary",
+        "rolling_origin_individual_age_followup/config",
+        "rolling_origin_individual_age_followup/execution_receipt",
+        "rolling_origin_individual_age_followup/temporal_coverage",
+        "rolling_origin_individual_age_followup/origin_endpoint_census",
+        "rolling_origin_individual_age_followup/monthly_endpoint_census",
+        "rolling_origin_individual_age_followup/origin_endpoint_reason_census",
+        "rolling_origin_individual_age_followup/monthly_endpoint_reason_census",
         "label_mondrian/outcome_free/freeze",
         "label_mondrian/outcome_free/config",
         "label_mondrian/outcome_free/thresholds",
@@ -632,8 +666,9 @@ def test_manuscript_surfaces_share_v4_claims_and_retire_old_headlines() -> None:
         "216",
         "72",
         "0.884332",
-        "0.877685",
-        "0.874768",
+        "0.879120",
+        "0.875261",
+        "individual-age",
         "31 of 40",
         "109",
         "label-mondrian",

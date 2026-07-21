@@ -38,7 +38,7 @@ model-class coverage checks; only the primary CatBoost enters optimization. The
 coverage record has three deliberately separate layers: sharp finite-archive
 identification bounds, a retrospective joint-block combined-rank reference
 diagnostic, and outcome-isolated sensitivities for timing and calibration
-taxonomy. The missingness-encoding, equal-follow-up second-origin, and
+taxonomy. The missingness-encoding, individual-age second-origin, and
 label-Mondrian families are complete sensitivities rather than selection grids. The
 decision audit reports the complete five-point gamma path, two rulers constructed
 without policy-development or OOT evaluation outcomes, three interior coordinates,
@@ -720,39 +720,46 @@ portfolio contrasts under the alternative encodings.
 
 One later-origin protocol shifts the same CatBoost construction from the 2016
 decision origin to 2017, using eight six-month residual windows beginning in
-2013. The equal-follow-up lineage mechanically restricts each origin to
-April--June and places each cutoff 39 months after issue-quarter end. This
-equalizes the quarter-level minimum follow-up: June loans receive 39 months,
-while April and May loans receive approximately 41 and 40. The 2016
-origin is evaluated at September 30, 2019 and contains 74,537 candidates
-(74,120 resolved and 417 unresolved); the 2017 origin is evaluated at September
-30, 2020 and contains 77,105 (66,091 resolved and 11,014 unresolved). The main
-15-month 2016 coverage estimand remains separate.
+2013. The active individual-age lineage restricts each origin to April--June
+and assigns each candidate a cutoff 39 calendar months after the end of its own
+issue month. At the archive's calendar-month resolution, the six cutoffs are
+July--September 2019 and July--September 2020. This is a 39-month
+administrative-age match, not an exact day-level age. The 2016 origin contains
+74,537 candidates (73,934 resolved and 603 unresolved); the 2017 origin
+contains 77,105 (66,037 resolved and 11,068 unresolved). The main 15-month
+2016 coverage estimand remains separate. The coarser parent comparison used one
+quarter-end cutoff per origin, giving approximately 41/40/39 months for
+April/May/June, and is retained only as provenance.
 
 | Window | Primary-origin bound | Later-origin bound |
 |---|---:|---:|
-| W1 | [0.871527, 0.875431] | [0.753557, 0.874768] |
-| W2 | [0.873821, 0.877685] | [0.752429, 0.874340] |
-| W3 | [0.872010, 0.875887] | [0.750159, 0.872537] |
-| W4 | [0.869340, 0.873204] | [0.750626, 0.873199] |
-| W5 | [0.866657, 0.870548] | [0.750820, 0.873406] |
-| W6 | [0.866482, 0.870387] | [0.751741, 0.873990] |
-| W7 | [0.863585, 0.867542] | [0.750976, 0.873886] |
-| W8 | [0.859935, 0.864068] | [0.749899, 0.873523] |
+| W1 | [0.871044, 0.876867] | [0.753557, 0.875261] |
+| W2 | [0.873338, 0.879120] | [0.752429, 0.874846] |
+| W3 | [0.871527, 0.877323] | [0.750159, 0.873043] |
+| W4 | [0.868870, 0.874613] | [0.750626, 0.873705] |
+| W5 | [0.866187, 0.871956] | [0.750820, 0.873912] |
+| W6 | [0.865986, 0.871809] | [0.751741, 0.874483] |
+| W7 | [0.863088, 0.868978] | [0.750976, 0.874392] |
+| W8 | [0.859439, 0.865543] | [0.749899, 0.874029] |
 
-**Table S7C.** Equal-39-month-from-quarter-end two-origin CatBoost coverage
-bounds. The later family is a retrospective recurrence, not an independent
-replication.
+**Table S7C.** Individual-age 39-month two-origin CatBoost coverage bounds. The
+later family is a retrospective recurrence, not an independent replication.
 
-| Origin | Cutoff | Candidates | Resolved | Unresolved | Terminal after cutoff | Missing terminal date |
-|---|---:|---:|---:|---:|---:|---:|
-| 2016 | 2019-09-30 | 74,537 | 74,120 | 417 | 323 | 94 |
-| 2017 | 2020-09-30 | 77,105 | 66,091 | 11,014 | 32 | 94 |
+| Issue month | Cutoff | Candidates | Resolved | Unresolved | Nonterminal | Terminal after cutoff | Missing terminal date |
+|---|---:|---:|---:|---:|---:|---:|---:|
+| 2016-04 | 2019-07-31 | 28,106 | 27,858 | 248 | 0 | 213 | 35 |
+| 2016-05 | 2019-08-31 | 21,831 | 21,659 | 172 | 0 | 144 | 28 |
+| 2016-06 | 2019-09-30 | 24,600 | 24,417 | 183 | 0 | 152 | 31 |
+| 2017-04 | 2020-07-31 | 21,864 | 21,348 | 516 | 448 | 38 | 30 |
+| 2017-05 | 2020-08-31 | 27,456 | 24,461 | 2,995 | 2,938 | 35 | 22 |
+| 2017-06 | 2020-09-30 | 27,785 | 20,228 | 7,557 | 7,502 | 13 | 42 |
 
-**Table S7D.** Complete endpoint-reason census for the equal-follow-up family.
+**Table S7D.** Complete monthly endpoint census for the individual-age family;
+the three unresolved-reason columns partition every unresolved candidate. The
+machine-readable table also gives fully-paid and charged-off resolved counts.
 
-All 16 upper bounds lie below 0.90. The 2016 and 2017 maxima are 0.877685 and
-0.874768, respectively. The substantially lower later-origin lower bounds
+All 16 upper bounds lie below 0.90. The 2016 and 2017 maxima are 0.879120 and
+0.875261, respectively. The substantially lower later-origin lower bounds
 reflect its larger unresolved fraction; they should not be read as a more
 severe resolved-case coverage failure. The historical 376,890-row, 15-month
 panel is explicitly rejected from this comparison. No origin is selected, and
@@ -1493,9 +1500,9 @@ silently substituted for historical scientific code.
 The shared contract requires:
 
 1. a lineage-specific environment locked by `uv`;
-2. immutable, hash-described outcome-free and evaluated roots tracked by 45
+2. immutable, hash-described outcome-free and evaluated roots tracked by 47
    DVC pointers across the primary audit, two-ruler diagnostic, credit controls,
-   endpoint, structure, missingness, equal-follow-up second-origin, fit-label
+   endpoint, structure, missingness, individual-age second-origin, fit-label
    completion, allocation-granularity, joint-block rank-reference diagnostic, and
    label-Mondrian families;
 3. a separate freeze and evaluate command with no combined shortcut;
@@ -1539,7 +1546,7 @@ policy.
 | WOE/IV, monotonic, and PSI controls | The descriptive exclusion spans all five learners and nominal joint-block flags span 31 cells | Scorecard superiority, external validity, or PSI-based coverage certification |
 | Label-Mondrian sensitivity | Marginal states are 27 shortfall, 12 crossing, and one at-or-above; 109/400 class-stratum categories remain shortfalls and all 40 aggregate gap bounds cross zero when each endpoint uses shared single-assignment completions | Uniform repair, class-conditional transport, a selected method, fairness, or 400 unadjusted inferential claims |
 | Three missingness encodings | All 24 coverage upper bounds are below 0.90 | A missingness mechanism, encoding winner, or portfolio robustness |
-| Equal-follow-up second temporal origin | All 16 CatBoost upper bounds are below 0.90 after both April--June origins receive cutoffs 39 months after issue-quarter end | Exact loan-age matching, independent replication, temporal invariance, prospective validation, or selection of an origin |
+| Individual-age second temporal origin | All 16 CatBoost upper bounds are below 0.90 after every candidate receives 39 months from issue-month end | Exact day-level age, independent replication, temporal invariance, prospective validation, or selection of an origin |
 | Four fit-label scenarios | All 32 overall coverage upper bounds are below 0.90; the W7--W8 crossing remains in three scenarios | Sharp bounds over all label assignments, geometry invariance, or preregistration |
 | Constant-score proposition and stratum-2 path | Binary residual geometry is prevalence-sensitive | Exact finite-sample explanation for varying-score strata or a universal transition |
 | Fit-label sensitivity | The W7--W8 crossing persists at every lag passing the 99% retention rule | Invariance to arbitrarily delayed fit labels or a causal explanation |

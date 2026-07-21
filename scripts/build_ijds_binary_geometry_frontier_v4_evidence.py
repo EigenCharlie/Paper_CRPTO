@@ -86,8 +86,8 @@ TABLE_TARGETS = {
     "label_mondrian_categories": (
         TABLE_DIR / "crpto_ijds_v4_tableS6F_label_mondrian_categories.csv"
     ),
-    "rolling_equal_followup_census": (
-        TABLE_DIR / "crpto_ijds_v4_tableS7D_equal_followup_census.csv"
+    "rolling_individual_age_census": (
+        TABLE_DIR / "crpto_ijds_v4_tableS7D_individual_age_endpoint_census.csv"
     ),
     "fit_label_completion": (TABLE_DIR / "crpto_ijds_v4_tableS11_fit_label_completion.csv"),
     "allocation_granularity": (TABLE_DIR / "crpto_ijds_v4_tableS12_allocation_granularity.csv"),
@@ -1697,6 +1697,200 @@ def _load_equal_followup_inputs(
 
 
 @dataclass(frozen=True)
+class IndividualAgeFollowupInputs:
+    summary_path: Path
+    receipt_path: Path
+    summary: dict[str, Any]
+    artifacts: dict[str, Path]
+    coverage: pd.DataFrame
+    publication_coverage: pd.DataFrame
+    publication_census: pd.DataFrame
+    publication_reason_census: pd.DataFrame
+
+
+def _load_individual_age_followup_inputs(
+    registered: Mapping[str, Path],
+    lineage: Mapping[str, Any],
+) -> IndividualAgeFollowupInputs:
+    summary_path = registered["rolling_individual_age_followup_summary"]
+    receipt_path = registered["rolling_individual_age_followup_receipt"]
+    summary = _read_json(summary_path, label="Individual-age follow-up summary")
+    receipt = _read_json(receipt_path, label="Individual-age follow-up receipt")
+    _require_identity(summary, lineage, label="Individual-age follow-up evaluation")
+    _require_identity(receipt, lineage, label="Individual-age follow-up receipt")
+    if receipt.get("summary") != relative_artifact_descriptor(summary_path, repo_root=ROOT):
+        raise RuntimeError("The individual-age receipt no longer binds its summary.")
+    _require_clean_execution(summary, label="The individual-age follow-up evaluation")
+    _require_clean_execution(receipt, label="The individual-age follow-up receipt")
+    if (
+        summary.get("status") != "complete_retrospective_individual_age_followup_sensitivity"
+        or summary.get("design", {}).get("individual_followup_months_after_issue_month_end") != 39
+        or summary.get("design", {}).get("issue_date_resolution") != "calendar_month"
+        or summary.get("design", {}).get("endpoint_rule")
+        != "issue_month_end_plus_39_calendar_months"
+        or summary.get("coverage_cells") != 16
+        or summary.get("all_sixteen_upper_below_nominal") is not True
+        or summary.get("claim_boundary", {}).get("independent_replication") is not False
+        or summary.get("claim_boundary", {}).get("error_controlled") is not False
+    ):
+        raise RuntimeError("The individual-age follow-up design or result changed.")
+
+    artifacts = _verified_artifact_paths(summary["artifacts"])
+    coverage = pd.read_parquet(artifacts["temporal_coverage"])
+    require_exact_grid(
+        coverage,
+        domains={
+            "origin_id": ("primary_2016", "rolling_2017"),
+            "window_ordinal": tuple(range(1, 9)),
+        },
+        label="individual-age follow-up coverage",
+    )
+    require_finite(
+        coverage,
+        (
+            "candidate_rows",
+            "resolved_rows",
+            "unresolved_rows",
+            "coverage_resolved",
+            "coverage_lower",
+            "coverage_upper",
+            "mean_width",
+        ),
+        label="individual-age follow-up coverage",
+    )
+    expected_censuses = {
+        "primary_2016": (74_537, 73_934, 603),
+        "rolling_2017": (77_105, 66_037, 11_068),
+    }
+    for origin_id, (candidate_rows, resolved_rows, unresolved_rows) in expected_censuses.items():
+        origin = coverage.loc[coverage["origin_id"].eq(origin_id)]
+        if (
+            not origin["candidate_rows"].eq(candidate_rows).all()
+            or not origin["resolved_rows"].eq(resolved_rows).all()
+            or not origin["unresolved_rows"].eq(unresolved_rows).all()
+        ):
+            raise RuntimeError(f"The {origin_id} individual-age census changed.")
+    if (
+        not coverage["individual_followup_months"].eq(39).all()
+        or not coverage["coverage_upper"].lt(0.90).all()
+    ):
+        raise RuntimeError("The individual-age coverage endpoints changed.")
+
+    publication_coverage = coverage.copy()
+    publication_coverage.insert(
+        1,
+        "origin",
+        publication_coverage["origin_id"].map(
+            {"primary_2016": "2016 origin", "rolling_2017": "2017 origin"}
+        ),
+    )
+    publication_coverage.insert(
+        2, "window", publication_coverage["window_ordinal"].map(lambda value: f"W{int(value)}")
+    )
+
+    monthly = pd.read_parquet(artifacts["monthly_endpoint_census"])
+    monthly_reason = pd.read_parquet(artifacts["monthly_endpoint_reason_census"])
+    expected_origin_periods = (
+        "primary_2016:2016-04",
+        "primary_2016:2016-05",
+        "primary_2016:2016-06",
+        "rolling_2017:2017-04",
+        "rolling_2017:2017-05",
+        "rolling_2017:2017-06",
+    )
+    endpoint_reasons = (
+        "fully_paid_by_reconstructed_cutoff",
+        "charged_off_by_reconstructed_cutoff",
+        "nonterminal_or_unresolved_status",
+        "terminal_after_reconstructed_cutoff",
+        "terminal_availability_date_missing",
+    )
+    monthly_reason = monthly_reason.assign(
+        origin_period=(
+            monthly_reason["origin_id"].astype(str) + ":" + monthly_reason["period"].astype(str)
+        )
+    )
+    require_exact_grid(
+        monthly_reason,
+        domains={
+            "origin_period": expected_origin_periods,
+            "snapshot_resolution": endpoint_reasons,
+        },
+        label="individual-age monthly endpoint-reason census",
+    )
+    expected_cutoffs = {
+        "2016-04": "2019-07-31",
+        "2016-05": "2019-08-31",
+        "2016-06": "2019-09-30",
+        "2017-04": "2020-07-31",
+        "2017-05": "2020-08-31",
+        "2017-06": "2020-09-30",
+    }
+    observed_cutoffs = {
+        str(row.period): str(pd.Timestamp(row.individual_evaluation_cutoff).date())
+        for row in monthly.itertuples(index=False)
+    }
+    if (
+        len(monthly) != 6
+        or observed_cutoffs != expected_cutoffs
+        or not monthly["individual_followup_months"].eq(39).all()
+        or int(monthly["candidate_rows"].sum()) != 151_642
+        or int(monthly["resolved_rows"].sum()) != 139_971
+        or int(monthly["unresolved_rows"].sum()) != 11_671
+    ):
+        raise RuntimeError("The individual-age monthly endpoint census changed.")
+
+    reason_wide = (
+        monthly_reason.pivot(
+            index=["origin_id", "origin_year", "period"],
+            columns="snapshot_resolution",
+            values="candidate_rows",
+        )
+        .reset_index()
+        .rename_axis(columns=None)
+    )
+    publication_census = monthly.merge(
+        reason_wide,
+        on=["origin_id", "origin_year", "period"],
+        how="left",
+        validate="one_to_one",
+    )
+    for column in ("issue_month_end", "individual_evaluation_cutoff"):
+        publication_census[column] = pd.to_datetime(
+            publication_census[column], errors="raise"
+        ).dt.strftime("%Y-%m-%d")
+    publication_census.insert(
+        1,
+        "origin",
+        publication_census["origin_id"].map(
+            {"primary_2016": "2016 origin", "rolling_2017": "2017 origin"}
+        ),
+    )
+    publication_reason_census = monthly_reason.drop(columns="origin_period").copy()
+    for column in ("issue_month_end", "individual_evaluation_cutoff"):
+        publication_reason_census[column] = pd.to_datetime(
+            publication_reason_census[column], errors="raise"
+        ).dt.strftime("%Y-%m-%d")
+    publication_reason_census.insert(
+        1,
+        "origin",
+        publication_reason_census["origin_id"].map(
+            {"primary_2016": "2016 origin", "rolling_2017": "2017 origin"}
+        ),
+    )
+    return IndividualAgeFollowupInputs(
+        summary_path=summary_path,
+        receipt_path=receipt_path,
+        summary=summary,
+        artifacts=artifacts,
+        coverage=coverage,
+        publication_coverage=publication_coverage,
+        publication_census=publication_census,
+        publication_reason_census=publication_reason_census,
+    )
+
+
+@dataclass(frozen=True)
 class LabelMondrianInputs:
     freeze_path: Path
     freeze_receipt_path: Path
@@ -2065,7 +2259,12 @@ def _build_evidence(staging_root: Path) -> Path:
         dict[str, Any],
         replay_dependencies["rolling_origin_primary_recovery_unequal_followup"],
     )
-    rolling_equal_lineage = cast(dict[str, Any], sensitivities["rolling_origin_equal_followup"])
+    rolling_equal_lineage = cast(
+        dict[str, Any], replay_dependencies["rolling_origin_equal_followup_parent"]
+    )
+    rolling_individual_lineage = cast(
+        dict[str, Any], sensitivities["rolling_origin_individual_age_followup"]
+    )
     missingness_lineage = cast(dict[str, Any], sensitivities["missingness_encoding"])
     fit_label_lineage = cast(dict[str, Any], sensitivities["fit_label_completion"])
     granularity_lineage = cast(dict[str, Any], sensitivities["allocation_granularity"])
@@ -2188,6 +2387,13 @@ def _build_evidence(staging_root: Path) -> Path:
     equal_followup_receipt_path = equal_followup.receipt_path
     equal_followup_summary = equal_followup.summary
     equal_followup_artifacts = equal_followup.artifacts
+    individual_followup = _load_individual_age_followup_inputs(
+        registered, rolling_individual_lineage
+    )
+    individual_followup_summary_path = individual_followup.summary_path
+    individual_followup_receipt_path = individual_followup.receipt_path
+    individual_followup_summary = individual_followup.summary
+    individual_followup_artifacts = individual_followup.artifacts
 
     label_mondrian = _load_label_mondrian_inputs(registered, label_mondrian_lineage)
     label_mondrian_summary = label_mondrian.summary
@@ -2368,15 +2574,16 @@ def _build_evidence(staging_root: Path) -> Path:
     ):
         raise RuntimeError("The primary endpoint-reason census changed.")
 
-    rolling_equal_coverage = equal_followup.publication_coverage.copy()
+    rolling_individual_coverage = individual_followup.publication_coverage.copy()
     rolling_table_columns = [
         "origin_id",
         "origin",
         "origin_year",
         "window",
         "window_id",
-        "evaluation_cutoff",
-        "common_followup_months",
+        "evaluation_cutoff_min",
+        "evaluation_cutoff_max",
+        "individual_followup_months",
         "candidate_rows",
         "resolved_rows",
         "unresolved_rows",
@@ -2385,21 +2592,21 @@ def _build_evidence(staging_root: Path) -> Path:
         "coverage_upper",
         "mean_width",
     ]
-    rolling_table = rolling_equal_coverage[rolling_table_columns].copy()
+    rolling_table = rolling_individual_coverage[rolling_table_columns].copy()
     require_exact_grid(
         rolling_table,
         domains={
             "origin_id": ("primary_2016", "rolling_2017"),
             "window": WINDOW_ORDINALS,
         },
-        label="equal-follow-up two-origin rolling coverage",
+        label="individual-age two-origin rolling coverage",
     )
     if (
         len(rolling_table) != 16
         or not rolling_table["coverage_upper"].lt(0.90).all()
-        or not rolling_table["common_followup_months"].eq(39).all()
+        or not rolling_table["individual_followup_months"].eq(39).all()
     ):
-        raise RuntimeError("The equal-follow-up retrospective recurrence contract changed.")
+        raise RuntimeError("The individual-age retrospective recurrence contract changed.")
 
     fit_coverage = (
         fit_audit.loc[fit_audit["taxonomy_groups"].eq(5)]
@@ -2511,7 +2718,7 @@ def _build_evidence(staging_root: Path) -> Path:
             "label_mondrian_cells": label_mondrian.publication_cells,
             "label_mondrian_strata": label_mondrian.publication_strata,
             "label_mondrian_categories": label_mondrian.publication_categories,
-            "rolling_equal_followup_census": equal_followup.publication_census,
+            "rolling_individual_age_census": individual_followup.publication_census,
             "fit_label_completion": fit_label_table,
             "allocation_granularity": granularity_table,
         },
@@ -2607,6 +2814,13 @@ def _build_evidence(staging_root: Path) -> Path:
             "rolling_origin_equal_followup/summary": equal_followup_summary_path,
             "rolling_origin_equal_followup/config": registered["rolling_equal_followup_config"],
             "rolling_origin_equal_followup/execution_receipt": equal_followup_receipt_path,
+            "rolling_origin_individual_age_followup/summary": (individual_followup_summary_path),
+            "rolling_origin_individual_age_followup/config": registered[
+                "rolling_individual_age_followup_config"
+            ],
+            "rolling_origin_individual_age_followup/execution_receipt": (
+                individual_followup_receipt_path
+            ),
             "label_mondrian/outcome_free/freeze": label_mondrian.freeze_path,
             "label_mondrian/outcome_free/config": registered["label_mondrian_freeze_config"],
             "label_mondrian/outcome_free/execution_receipt": (label_mondrian.freeze_receipt_path),
@@ -2638,6 +2852,7 @@ def _build_evidence(staging_root: Path) -> Path:
             "conformal_set_diagnostics": conformal_set_artifacts,
             "exchangeability_transport": exchangeability_artifacts,
             "rolling_origin_equal_followup": equal_followup_artifacts,
+            "rolling_origin_individual_age_followup": individual_followup_artifacts,
             "label_mondrian/outcome_free": label_mondrian.freeze_artifacts,
             "label_mondrian/evaluation": label_mondrian.artifacts,
             "missingness_encoding/evaluation": missingness_artifacts,
@@ -2651,7 +2866,7 @@ def _build_evidence(staging_root: Path) -> Path:
     )
     paper_artifact_descriptors = _paper_artifact_descriptors(publication_generation)
     evidence = {
-        "schema_version": "2026-07-21.2",
+        "schema_version": "2026-07-21.3",
         "status": "active_ijds_v5_endpoint_reason_audited_paper_facing_evidence",
         "source_registry": {
             "schema_version": str(registry["schema_version"]),
@@ -2889,35 +3104,31 @@ def _build_evidence(staging_root: Path) -> Path:
                 "rows": structural_table.to_dict(orient="records"),
             },
             "rolling_origin": {
-                "scope": "two_origin_equal_quarter_level_minimum_followup_retrospective_sensitivity_not_replication",
-                "run_tag": str(equal_followup_summary["run_tag"]),
-                "protocol_tag": str(equal_followup_summary["protocol_tag"]),
-                "protocol_commit": str(equal_followup_summary["protocol_commit"]),
+                "scope": "two_origin_individual_issue_month_age_equalized_retrospective_sensitivity_not_replication",
+                "run_tag": str(individual_followup_summary["run_tag"]),
+                "protocol_tag": str(individual_followup_summary["protocol_tag"]),
+                "protocol_commit": str(individual_followup_summary["protocol_commit"]),
                 "origins": ["primary_2016", "rolling_2017"],
                 "primary_2016_periods": list(PRIMARY_ROLLING_PERIODS),
                 "rolling_2017_periods": list(LATER_ROLLING_PERIODS),
                 "primary_2016_census": {
                     "candidate_rows": 74537,
-                    "resolved_rows": 74120,
-                    "unresolved_rows": 417,
+                    "resolved_rows": 73934,
+                    "unresolved_rows": 603,
                 },
                 "rolling_2017_census": {
                     "candidate_rows": 77105,
-                    "resolved_rows": 66091,
-                    "unresolved_rows": 11014,
+                    "resolved_rows": 66037,
+                    "unresolved_rows": 11068,
                 },
                 "common_issue_months": ["April", "May", "June"],
-                "common_followup_months_after_issue_quarter_end": 39,
-                "approximate_followup_months_by_issue_month": {
-                    "April": 41,
-                    "May": 40,
-                    "June": 39,
-                },
-                "exact_loan_level_age_matched": False,
-                "evaluation_cutoffs": {
-                    "primary_2016": "2019-09-30",
-                    "rolling_2017": "2020-09-30",
-                },
+                "issue_date_resolution": "calendar_month",
+                "individual_followup_months_after_issue_month_end": 39,
+                "exact_calendar_month_age_matched": True,
+                "exact_day_level_age_matched": False,
+                "cutoff_by_issue_period": dict(
+                    individual_followup_summary["design"]["cutoffs_by_issue_period"]
+                ),
                 "window_alignment": "ordinal_W1_through_W8_with_origin_specific_fit_dates",
                 "origin_count": 2,
                 "window_cells": int(len(rolling_table)),
@@ -2936,12 +3147,27 @@ def _build_evidence(staging_root: Path) -> Path:
                 ),
                 "model_or_origin_selected": False,
                 "independent_replication_claim_authorized": False,
+                "coarser_equal_quarter_followup_retained_as_provenance": {
+                    "run_tag": str(equal_followup_summary["run_tag"]),
+                    "protocol_tag": str(equal_followup_summary["protocol_tag"]),
+                    "all_sixteen_upper_below_nominal": bool(
+                        equal_followup.coverage["coverage_upper"].lt(0.90).all()
+                    ),
+                    "approximate_followup_months_by_issue_month": {
+                        "April": 41,
+                        "May": 40,
+                        "June": 39,
+                    },
+                },
                 "unequal_followup_runs_retained_as_provenance": {
                     "rolling_2017_run_tag": str(rolling_summary["run_tag"]),
                     "primary_2016_recovery_run_tag": str(rolling_primary_summary["run_tag"]),
                 },
-                "endpoint_reason_census": equal_followup.publication_census.to_dict(
+                "monthly_endpoint_census": individual_followup.publication_census.to_dict(
                     orient="records"
+                ),
+                "monthly_endpoint_reason_census": (
+                    individual_followup.publication_reason_census.to_dict(orient="records")
                 ),
                 "rows": rolling_table.to_dict(orient="records"),
             },
@@ -3286,7 +3512,7 @@ def _build_evidence(staging_root: Path) -> Path:
             "the locked nominal Bonferroni--Holm thresholds. Its null is stronger than the "
             "usual single-future-point split-conformal condition, and the post-inspection "
             "family has no selective-FWER claim. The CatBoost shortfall recurs "
-            "at two origins with cutoffs 39 months after issue-quarter end, under three missing-value "
+            "at two origins with cutoffs 39 months after each issue-month end, under three missing-value "
             "encodings, and under four declared fit-label scenarios. A complete label-Mondrian "
             "sensitivity redistributes resolved coverage from nondefault toward default but "
             "leaves 27 of 40 learner-window and 109 of 400 label-stratum upper endpoints below "

@@ -34,9 +34,9 @@ bounds rather than being dropped.
 5. **Identification:** paired common-outcome bounds and exact point-cap support
    determine which policy contrasts are signed and which cross zero.
 6. **Sensitivity:** endpoint availability, fit-label timing, missingness
-   encoding, equal quarter-level minimum follow-up at two origins,
+   encoding, equal 39-month administrative age at two origins,
    label-Mondrian calibration,
-   and portfolio structure are separate axes. The equal-follow-up grid has
+   and portfolio structure are separate axes. The individual-age grid has
    16/16 upper endpoints below nominal; label-Mondrian leaves 27/40 marginal
    and 109/400 category upper endpoints below nominal. These axes are not
    interchangeable replications and were not crossed factorially.

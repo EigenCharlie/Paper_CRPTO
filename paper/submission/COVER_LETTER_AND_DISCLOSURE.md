@@ -47,9 +47,9 @@ each fitting month. A separate complete evaluation-endpoint lag grid reports 0,
 3, 6, 8, and 12 months without selection; the six-month slice exactly
 reproduces the active endpoint evaluation. The below-target finite-archive
 finding also recurs across three feature-semantics-preserving missingness
-encodings and in all 16 CatBoost origin-window cells when both April--June
-origins use cutoffs 39 months after issue-quarter end, equalizing quarter-level
-minimum rather than exact loan-level follow-up. Neither exercise selects a
+encodings and in all 16 CatBoost origin-window cells when each April--June
+candidate uses a cutoff 39 months after its issue-month end, equalizing
+whole-month administrative age rather than exact day-level age. Neither exercise selects a
 representation or constitutes independent validation.
 
 A complete label-Mondrian sensitivity changes the 40 marginal states to 27

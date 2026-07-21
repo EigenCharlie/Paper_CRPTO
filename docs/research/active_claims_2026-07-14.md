@@ -20,7 +20,7 @@ pre-endpoint-correction evaluations are provenance only.
   diagnostic places 31 of 40 learner-window joint-block nulls past locked
   nominal Bonferroni--Holm thresholds without a post-selection FWER claim; and
   deterministic sensitivities show what
-  changes under label-Mondrian calibration, equal follow-up, fit labels, and
+  changes under label-Mondrian calibration, individual-age follow-up, fit labels, and
   comparator design. None of these layers identifies the cause of shift or a
   policy winner.
 - No OOT outcome selects a learner, window, taxonomy, gamma, ruler, coordinate,
@@ -110,20 +110,20 @@ pre-endpoint-correction evaluations are provenance only.
 
 ### Second temporal origin
 
-- Active equal-follow-up run:
-  `ijds-rolling-origin-equal-followup-2026-07-21-v1`, tag
-  `protocol/ijds-rolling-origin-equal-followup-2026-07-21-v1`, commit
-  `c9d30b02885bac516ae21eae32c56120cf7d296e`.
-- Both April--June issue quarters use a cutoff 39 months after quarter end,
-  equalizing minimum rather than exact loan-level follow-up: the 2016
-  origin is evaluated at September 30, 2019 (74,537 candidates; 74,120 resolved;
-  417 unresolved) and the 2017 origin at September 30, 2020 (77,105; 66,091;
-  11,014). Each contributes all eight declared CatBoost windows.
-- The earlier common-issue-month runs used unequal endpoint follow-up and are
-  replay provenance, not active evidence. The active comparison is still a
-  retrospective sensitivity, not an independent replication, prospective
-  validation, temporal invariance result, or claim of identical age for every
-  individual loan.
+- Active individual-age run:
+  `ijds-rolling-origin-individual-age-followup-2026-07-21-v1`, tag
+  `protocol/ijds-rolling-origin-individual-age-followup-2026-07-21-v1`, commit
+  `78a0a588c35f53daeeef526c3fbe53c10e664385`.
+- Every April--June candidate uses a cutoff 39 calendar months after its own
+  issue-month end. The 2016 origin has 74,537 candidates (73,934 resolved; 603
+  unresolved) and the 2017 origin has 77,105 (66,037; 11,068). Each contributes
+  all eight declared CatBoost windows.
+- Because `issue_d` has calendar-month resolution, this equalizes whole-month
+  administrative age, not exact day-level age. The parent equal-quarter run
+  (approximately 41/40/39 months for April/May/June) and earlier unequal-
+  follow-up runs are replay provenance. The active comparison remains a
+  retrospective sensitivity, not independent replication, prospective
+  validation, or temporal invariance.
 
 ### Conformal-set and resolved-label diagnostic
 
@@ -341,9 +341,9 @@ coverage upper bounds are below 0.90 for every model:
   active convention (maximum 0.882597), explicit indicators (0.884332), and
   native nullable features (0.880037). It neither identifies the missingness
   mechanism nor authorizes an encoding winner or portfolio claim.
-- With cutoffs 39 months after each issue-quarter end, all eight CatBoost
-  upper bounds are below 0.90 at both origins. The April--June 2016 maximum is
-  0.877685 and the April--June 2017 maximum is 0.874768. These 16 cells are two
+- With cutoffs 39 months after each candidate's issue-month end, all eight
+  CatBoost upper bounds are below 0.90 at both origins. The April--June 2016
+  maximum is 0.879120 and the April--June 2017 maximum is 0.875261. These 16 cells are two
   dependent retrospective origin-window families, not independent replications.
 - Across all five learners and eight windows, resolved-panel nondefault
   coverage ranges from 0.982982 to 0.992714, whereas resolved-panel default
@@ -504,7 +504,7 @@ The complete endpoint-availability sensitivity is:
   not a direct test of the usual one-future-point condition.
 - The same CatBoost coverage finding recurs under three feature-semantics-
   preserving missingness encodings and at one later retrospective origin on a
-  common April--June horizon with cutoffs 39 months after issue-quarter end,
+  common April--June horizon with cutoffs 39 months after issue-month end,
   without selecting an encoding or claiming
   independent replication.
 - Resolved-panel coverage is substantially lower for observed defaults than

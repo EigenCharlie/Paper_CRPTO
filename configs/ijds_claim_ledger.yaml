@@ -168,11 +168,11 @@ claims:
     rule: equals
     result_pointer: /sensitivity/rolling_origin/all_sixteen_upper_below_nominal
     expected: true
-    lineages: [binary_geometry.outcome_free, rolling_origin_equal_followup]
-    scope: two_retrospective_april_june_origins_with_cutoffs_39_months_after_quarter_end_equal_minimum_not_exact_loan_age
+    lineages: [binary_geometry.outcome_free, rolling_origin_individual_age_followup]
+    scope: two_retrospective_april_june_origins_with_cutoffs_39_months_after_each_issue_month_end_at_calendar_month_resolution
     forbidden_inference:
       [independent_replication, temporal_invariance, prospective_validation,
-       identical_loan_level_age, pooled_origin_estimand]
+       exact_day_level_loan_age, pooled_origin_estimand]
     surfaces:
       required: [body, supplement, registry, claim_matrix]
       allowed: [body, supplement, registry, claim_matrix]

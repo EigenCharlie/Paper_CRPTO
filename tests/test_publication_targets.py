@@ -136,7 +136,15 @@ def test_active_capsule_paths_exist() -> None:
     assert len(paper_artifact_paths) == 31
     assert len({path for path in paper_artifact_paths if path.endswith(".csv")}) == 25
     assert len({path for path in paper_artifact_paths if path.endswith((".pdf", ".png"))}) == 6
-    assert len(registry["dvc_pointers"]) == 45
+    assert len(registry["dvc_pointers"]) == 47
+    assert (
+        "reports/crpto/tables/crpto_ijds_v4_tableS7D_individual_age_endpoint_census.csv"
+        in active["required_artifacts"]
+    )
+    assert (
+        "reports/crpto/tables/crpto_ijds_v4_tableS7D_equal_followup_census.csv"
+        not in active["required_artifacts"]
+    )
     assert set(active["required_artifacts"]) == expected_artifacts
     for artifact in active["required_artifacts"]:
         assert Path(artifact).is_file(), artifact
@@ -153,6 +161,7 @@ def test_active_capsule_paths_exist() -> None:
     assert {
         "scripts/experiments/run_ijds_exchangeability_transport_test.py",
         "scripts/experiments/run_ijds_rolling_origin_equal_followup.py",
+        "scripts/experiments/run_ijds_rolling_origin_individual_age_followup.py",
         "scripts/experiments/run_ijds_label_mondrian_freeze.py",
         "scripts/experiments/run_ijds_label_mondrian_evaluation.py",
     }.issubset(code_surface["protocol_entrypoints"])

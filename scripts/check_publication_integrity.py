@@ -95,7 +95,7 @@ SURFACES = (
             "ethical and governance implications",
             "exact combined-rank",
             "label-mondrian",
-            "equal-follow-up",
+            "individual-age",
             "39-month",
         ),
     ),
@@ -111,7 +111,7 @@ SURFACES = (
             "second temporal origin",
             "exact combined-rank",
             "label-mondrian",
-            "equal-follow-up",
+            "individual-age",
             "39-month",
         ),
     ),
@@ -124,6 +124,7 @@ SURFACES = (
             "normalized-score",
             "exact combined-rank",
             "label-mondrian",
+            "individual-age",
         ),
     ),
     SurfaceCheck(
@@ -135,7 +136,7 @@ SURFACES = (
             "12,076",
             "no endpoint has a universal status-indexed outcome ordering",
             "31/40",
-            "0.877685",
+            "0.879120",
         ),
     ),
     SurfaceCheck(
@@ -147,6 +148,7 @@ SURFACES = (
             "policy_winner_allowed: false",
             "run_ijds_exchangeability_transport_test.py",
             "run_ijds_rolling_origin_equal_followup.py",
+            "run_ijds_rolling_origin_individual_age_followup.py",
             "run_ijds_label_mondrian_freeze.py",
             "run_ijds_label_mondrian_evaluation.py",
         ),
@@ -365,16 +367,33 @@ def _check_evidence_decision() -> list[str]:
         (
             rolling.get("primary_2016_periods") != ["2016-04", "2016-05", "2016-06"]
             or rolling.get("rolling_2017_periods") != ["2017-04", "2017-05", "2017-06"]
-            or rolling.get("common_followup_months_after_issue_quarter_end") != 39
-            or rolling.get("approximate_followup_months_by_issue_month")
-            != {"April": 41, "May": 40, "June": 39}
-            or rolling.get("exact_loan_level_age_matched") is not False
-            or rolling.get("evaluation_cutoffs")
-            != {"primary_2016": "2019-09-30", "rolling_2017": "2020-09-30"}
+            or rolling.get("individual_followup_months_after_issue_month_end") != 39
+            or rolling.get("exact_calendar_month_age_matched") is not True
+            or rolling.get("exact_day_level_age_matched") is not False
+            or rolling.get("cutoff_by_issue_period")
+            != {
+                "2016-04": "2019-07-31",
+                "2016-05": "2019-08-31",
+                "2016-06": "2019-09-30",
+                "2017-04": "2020-07-31",
+                "2017-05": "2020-08-31",
+                "2017-06": "2020-09-30",
+            }
             or rolling.get("primary_2016_census")
-            != {"candidate_rows": 74537, "resolved_rows": 74120, "unresolved_rows": 417}
+            != {"candidate_rows": 74537, "resolved_rows": 73934, "unresolved_rows": 603}
             or rolling.get("rolling_2017_census")
-            != {"candidate_rows": 77105, "resolved_rows": 66091, "unresolved_rows": 11014}
+            != {"candidate_rows": 77105, "resolved_rows": 66037, "unresolved_rows": 11068}
+            or rolling.get("coarser_equal_quarter_followup_retained_as_provenance")
+            != {
+                "run_tag": "ijds-rolling-origin-equal-followup-2026-07-21-v1",
+                "protocol_tag": "protocol/ijds-rolling-origin-equal-followup-2026-07-21-v1",
+                "all_sixteen_upper_below_nominal": True,
+                "approximate_followup_months_by_issue_month": {
+                    "April": 41,
+                    "May": 40,
+                    "June": 39,
+                },
+            }
             or rolling.get("unequal_followup_runs_retained_as_provenance")
             != {
                 "rolling_2017_run_tag": "ijds-rolling-origin-2017-2026-07-15-v4",
@@ -382,12 +401,32 @@ def _check_evidence_decision() -> list[str]:
                     "ijds-rolling-origin-primary-recovery-2026-07-21-v1"
                 ),
             }
+            or len(rolling.get("monthly_endpoint_census", [])) != 6
+            or {
+                (row.get("period"), row.get("individual_evaluation_cutoff"))
+                for row in rolling.get("monthly_endpoint_census", [])
+            }
+            != set(rolling.get("cutoff_by_issue_period", {}).items())
+            or any(
+                sum(
+                    int(row.get(field, -1))
+                    for field in (
+                        "charged_off_by_reconstructed_cutoff",
+                        "fully_paid_by_reconstructed_cutoff",
+                        "nonterminal_or_unresolved_status",
+                        "terminal_after_reconstructed_cutoff",
+                        "terminal_availability_date_missing",
+                    )
+                )
+                != row.get("candidate_rows")
+                for row in rolling.get("monthly_endpoint_census", [])
+            )
             or any(
                 row.get("candidate_rows") == 376890
                 for row in rolling.get("rows", [])
                 if row.get("origin_id") == "primary_2016"
             ),
-            "two-origin coverage comparison no longer uses cutoffs 39 months after quarter end",
+            "two-origin coverage comparison no longer uses individual-age 39-month follow-up",
         ),
         (
             rolling.get("independent_replication_claim_authorized") is not False,
@@ -529,12 +568,12 @@ def _check_lineage_sync() -> list[str]:
     }
     checks = (
         (
-            str(registry.get("schema_version")) != "2026-07-21.2",
-            "active source registry schema is not 2026-07-21.2",
+            str(registry.get("schema_version")) != "2026-07-21.3",
+            "active source registry schema is not 2026-07-21.3",
         ),
         (
-            len(registry.get("dvc_pointers", [])) != 45,
-            "active source registry does not contain exactly 45 DVC pointers",
+            len(registry.get("dvc_pointers", [])) != 47,
+            "active source registry does not contain exactly 47 DVC pointers",
         ),
         (
             len(
@@ -586,12 +625,12 @@ def _check_lineage_sync() -> list[str]:
             label="exact exchangeability diagnostic",
         )
     )
-    rolling_registry = registry["sensitivities"]["rolling_origin_equal_followup"]
+    rolling_registry = registry["sensitivities"]["rolling_origin_individual_age_followup"]
     failures.extend(
         _identity_mismatches(
             evidence.get("sensitivity", {}).get("rolling_origin", {}),
             rolling_registry,
-            label="equal-follow-up sensitivity",
+            label="individual-age follow-up sensitivity",
         )
     )
     label_registry = registry["sensitivities"]["label_mondrian"]
