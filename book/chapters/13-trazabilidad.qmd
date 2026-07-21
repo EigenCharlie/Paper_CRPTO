@@ -3,6 +3,16 @@ title: "Trazabilidad de Artefactos y Runbook"
 page-layout: article
 ---
 
+<!-- crpto-companion-status: retired-historical-source -->
+
+::: {.callout-warning title="Fuente histórica retirada"}
+Esta página no pertenece al companion activo. Se conserva solo como procedencia,
+puede contradecir el estimando y los claims vigentes y no debe citarse como
+evidencia del manuscrito activo. La autoridad está en las superficies
+registradas por `book/_quarto.yml`.
+:::
+
+
 ## Mapa Maestro Claim → Artefacto → Test {#sec-p1-artifact-traceability}
 
 Esta página es el **índice maestro** del CRPTO. Cumple un rol específico que ningún chapter narrativo cumple: dar a un revisor (académico, regulatorio o interno) la capacidad de tomar cualquier claim del paper, encontrar el artefacto exacto que lo soporta, identificar el script generador y verificar el guardrail que mantiene la coherencia. Es el contrato de trazabilidad operativa del proyecto.

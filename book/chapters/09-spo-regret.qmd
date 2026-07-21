@@ -3,6 +3,16 @@ title: "Protocolo SPO+ y Lectura del Regret"
 page-layout: article
 ---
 
+<!-- crpto-companion-status: retired-historical-source -->
+
+::: {.callout-warning title="Fuente histórica retirada"}
+Esta página no pertenece al companion activo. Se conserva solo como procedencia,
+puede contradecir el estimando y los claims vigentes y no debe citarse como
+evidencia del manuscrito activo. La autoridad está en las superficies
+registradas por `book/_quarto.yml`.
+:::
+
+
 ## Protocolo del Comparador SPO+ {#sec-p1-spo-protocol}
 
 El punto de referencia frente a CRPTO tiene dos superficies compatibles, pero no intercambiables: el artefacto local A19/Figura 15 reporta **49.09% de reducción de regret** (`0.425896` a `0.216837`), mientras el rerun pareado PyEPO 1.3.7 curado el 2026-05-28 reporta **48.51%** (`0.358073` a `0.184366`). El resultado histórico estaba cerca del 49%; el cierre final conserva la misma lectura editorial, pero deja el comparador trazado como evidencia de appendix, no como dependencia nueva del champion. Un revisor exigente preguntará lo correcto: *¿cómo se midió eso, con cuántas semillas, sobre qué arquitectura, con qué definición de regret y bajo qué distribución de costos?* Esta página documenta el protocolo completo para que ambos números sean defendibles y, sobre todo, para que la comparación con CRPTO se lea correctamente: SPO+ gana en regret porque está **diseñado para ganar en regret**, no porque sea un sustituto de la garantía conformal.

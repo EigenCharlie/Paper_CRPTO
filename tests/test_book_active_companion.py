@@ -11,6 +11,27 @@ from src.ijds_audit.publication_sources import load_source_registry
 
 REPO = Path(__file__).resolve().parents[1]
 BOOK = REPO / "book"
+ACTIVE_CHAPTERS = (
+    "chapters/06-blueprint-manuscrito.qmd",
+    "chapters/06b-guia-editorial-claims.qmd",
+)
+HISTORICAL_MARKER = "<!-- crpto-companion-status: retired-historical-source -->"
+SPANISH_ESTIMAND_BOUNDARY = (
+    "cobertura de $Y$ binario observado",
+    "PD latente individual",
+    "ECL",
+    "SICR",
+    "expected loss",
+    "policy seleccionada",
+)
+ENGLISH_ESTIMAND_BOUNDARY = (
+    "Coverage of observed binary $Y$",
+    "latent individual PD",
+    "ECL",
+    "SICR",
+    "expected loss",
+    "selected allocation policy",
+)
 
 
 def _config() -> dict:
@@ -22,14 +43,19 @@ def _assert_local_file(path: str) -> None:
     assert candidate.is_file(), candidate
 
 
-def test_active_companion_configuration_has_no_missing_local_dependencies() -> None:
-    config = _config()
-    chapters: list[str] = []
+def _registered_pages(config: dict) -> list[str]:
+    pages: list[str] = []
     for entry in config["book"]["chapters"]:
         if isinstance(entry, str):
-            chapters.append(entry)
+            pages.append(entry)
         else:
-            chapters.extend(entry["chapters"])
+            pages.extend(entry["chapters"])
+    return pages
+
+
+def test_active_companion_configuration_has_no_missing_local_dependencies() -> None:
+    config = _config()
+    chapters = _registered_pages(config)
     assert chapters == [
         "index.qmd",
         "chapters/06-blueprint-manuscrito.qmd",
@@ -52,6 +78,42 @@ def test_active_companion_configuration_has_no_missing_local_dependencies() -> N
     index = (BOOK / "index.qmd").read_text(encoding="utf-8")
     for include in re.findall(r"\{\{<\s+include\s+([^\s>]+)\s*>}}", index):
         _assert_local_file(include)
+
+
+def test_every_unregistered_chapter_is_marked_as_historical_source() -> None:
+    registered = set(_registered_pages(_config()))
+    active_chapters = {BOOK / path for path in ACTIVE_CHAPTERS}
+    assert active_chapters == {
+        path
+        for path in (BOOK / "chapters").glob("*.qmd")
+        if path.relative_to(BOOK).as_posix() in registered
+    }
+
+    inactive_chapters = sorted(set((BOOK / "chapters").glob("*.qmd")) - active_chapters)
+    assert inactive_chapters
+    contract = (BOOK / "chapters/README.md").read_text(encoding="utf-8")
+    for path in inactive_chapters:
+        text = path.read_text(encoding="utf-8")
+        assert text.count(HISTORICAL_MARKER) == 1, path
+        assert path.name in contract, path
+
+    for path in active_chapters:
+        assert HISTORICAL_MARKER not in path.read_text(encoding="utf-8"), path
+
+
+def test_active_surfaces_state_the_observed_outcome_estimand_boundary() -> None:
+    for path in (
+        BOOK / "index.qmd",
+        BOOK / "chapters/06-blueprint-manuscrito.qmd",
+        BOOK / "chapters/06b-guia-editorial-claims.qmd",
+    ):
+        text = path.read_text(encoding="utf-8")
+        for phrase in SPANISH_ESTIMAND_BOUNDARY:
+            assert phrase in text, (path, phrase)
+
+    body = (REPO / "paper/CRPTO_ijds.qmd").read_text(encoding="utf-8")
+    for phrase in ENGLISH_ESTIMAND_BOUNDARY:
+        assert phrase in body, phrase
 
 
 def test_active_companion_matches_supplement_and_registry_structure() -> None:

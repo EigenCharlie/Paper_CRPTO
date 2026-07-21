@@ -3,6 +3,16 @@ title: "Gobernanza y Aprobación MRM (SR 11-7)"
 page-layout: article
 ---
 
+<!-- crpto-companion-status: retired-historical-source -->
+
+::: {.callout-warning title="Fuente histórica retirada"}
+Esta página no pertenece al companion activo. Se conserva solo como procedencia,
+puede contradecir el estimando y los claims vigentes y no debe citarse como
+evidencia del manuscrito activo. La autoridad está en las superficies
+registradas por `book/_quarto.yml`.
+:::
+
+
 ## Aprobación de Model Risk Management {#sec-p1-mrm-approval}
 
 La diferencia editorial clave entre CRPTO y los métodos decision-focused puros (SPO+, end-to-end DFL) es que CRPTO está **construido para pasar una auditoría de Model Risk Management** según el marco SR 11-7 de la Reserva Federal y las expectativas equivalentes del BCE/EBA. Esta página documenta los gates aplicados al champion oficial y muestra los cuatro subsistemas pasando simultáneamente — la firma operativa de un sistema desplegable, no un modelo de paper aislado.

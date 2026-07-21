@@ -92,9 +92,12 @@ domain-constrained monotonic CatBoost, a platform-signal WOE/IV scorecard, and
 a pricing-excluded application WOE/IV scorecard. Each has its own Platt map and
 2011 taxonomy;
 none is selected from OOT outcomes or enters portfolio optimization. The
-resulting clipped residual interval $[\ell_i,u_i]$ predicts the observed binary outcome. It is
-neither a confidence interval for latent individual PD nor the convex hull of
-its intersection with $\{0,1\}$. Its upper endpoint enters a guardrail score
+resulting clipped residual interval $[\ell_i,u_i]$ predicts the observed binary
+outcome $Y$. Coverage of observed binary $Y$ does not by itself transport to an
+interval or calibration claim for latent individual PD, nor does it identify
+ECL, SICR, expected loss, or a selected allocation policy. Those objects require
+their own estimands, data, and validation. The interval is not the convex hull
+of its intersection with $\{0,1\}$. Its upper endpoint enters a guardrail score
 
 $$
 q_i(\gamma)=(1-\gamma)p_i+\gamma u_i,

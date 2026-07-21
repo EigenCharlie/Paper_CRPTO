@@ -1,3 +1,12 @@
+<!-- crpto-companion-status: retired-historical-source -->
+
+::: {.callout-warning title="Fuente histórica retirada"}
+Esta página no pertenece al companion activo. Se conserva solo como procedencia,
+puede contradecir el estimando y los claims vigentes y no debe citarse como
+evidencia del manuscrito activo. La autoridad está en las superficies
+registradas por `book/_quarto.yml`.
+:::
+
 # Discusión y Conclusiones {#sec-crpto-discussion}
 
 El CRPTO articula la tesis más ambiciosa del proyecto: convertir incertidumbre predictiva en un objeto directamente útil para optimización de decisión. La evidencia actual ya permite sostener tres conclusiones provisionales.

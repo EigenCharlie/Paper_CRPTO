@@ -5,6 +5,13 @@ saltos frecuentes: de calidad predictiva a calidad de decisión, de cobertura
 candidata a validez del selected set, y de una comparación bajo cierto ruler a
 dominancia universal.
 
+::: {.callout-warning title="Frontera de estimando"}
+La cobertura de $Y$ binario observado no se transporta por sí sola a un
+intervalo o claim de calibración para la PD latente individual, ni identifica
+ECL, SICR, expected loss o una policy seleccionada. Esos objetos exigirían
+estimandos, datos y validaciones propios.
+:::
+
 ## Regla de autoridad
 
 1. `docs/research/active_claims_2026-07-14.md` decide qué afirmaciones están
