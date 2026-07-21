@@ -1,4 +1,4 @@
-version: "2026-07-15"
+version: "2026-07-21"
 project: paper-crpto
 decision_status: prefreeze_active
 
@@ -54,6 +54,8 @@ active_scientific_contract:
       - scripts/experiments/run_ijds_portfolio_structure_sensitivity.py
       - scripts/experiments/run_ijds_allocation_granularity_sensitivity.py
       - scripts/experiments/run_ijds_policy_support_tie_audit.py
+      - scripts/experiments/run_ijds_conformal_set_diagnostics.py
+      - scripts/experiments/run_ijds_rolling_origin_primary_recovery.py
     support_tools:
       - scripts/build_ijds_policy_support_tie_evidence.py
       - scripts/manage_ijds_dvc_capsule.py
@@ -130,7 +132,8 @@ active_scientific_contract:
     - reports/crpto/tables/crpto_ijds_v4_tableS7_portfolio_structure_sensitivity.csv
     - reports/crpto/tables/crpto_ijds_v4_tableS8_endpoint_resolution.csv
     - reports/crpto/tables/crpto_ijds_v4_tableS9_missingness_encoding_sensitivity.csv
-    - reports/crpto/tables/crpto_ijds_v4_tableS10_rolling_origin_recurrence.csv
+    - reports/crpto/tables/crpto_ijds_v4_tableS7C_rolling_origin_recurrence.csv
+    - reports/crpto/tables/crpto_ijds_v4_tableS6A_conformal_set_diagnostics.csv
     - reports/crpto/tables/crpto_ijds_v4_tableS11_fit_label_completion.csv
     - reports/crpto/tables/crpto_ijds_v4_tableS12_allocation_granularity.csv
     - reports/crpto/figures/crpto_ijds_v4_fig1_coverage.pdf

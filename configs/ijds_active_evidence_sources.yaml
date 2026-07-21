@@ -1,4 +1,4 @@
-schema_version: "2026-07-15.4"
+schema_version: "2026-07-21.1"
 status: "active_ijds_paper_evidence_source_registry"
 
 lineages:
@@ -70,6 +70,13 @@ lineages:
       scientific_uv_lock_sha256: "d293ed325a3b25a13000560c8551d34937735ba8c9fe59ffeeed5d64f7120dd2"
       paper_role: "evaluated_cap_numerical_diagnostic"
       dvc_tracked: true
+    conformal_set_diagnostics:
+      run_tag: "ijds-conformal-set-diagnostics-2026-07-21-v1"
+      protocol_tag: "protocol/ijds-conformal-set-diagnostics-2026-07-21-v1"
+      protocol_commit: "5248099e2c02fa0340acb6d9c0ef5fbaa1b4e3cf"
+      scientific_uv_lock_sha256: "6c862cbad9ab7e3a07dd2823c775127403093d6ad59a789ee227d827165e4733"
+      paper_role: "complete_binary_set_and_resolved_label_diagnostic"
+      dvc_tracked: true
 
 sensitivities:
   endpoint_availability:
@@ -92,6 +99,13 @@ sensitivities:
     protocol_commit: "e2bba580a0b07c145bd64ff61440973d6e31349b"
     scientific_uv_lock_sha256: "d293ed325a3b25a13000560c8551d34937735ba8c9fe59ffeeed5d64f7120dd2"
     paper_role: "two_origin_retrospective_recurrence"
+    dvc_tracked: true
+  rolling_origin_primary_recovery:
+    run_tag: "ijds-rolling-origin-primary-recovery-2026-07-21-v1"
+    protocol_tag: "protocol/ijds-rolling-origin-primary-recovery-2026-07-21-v1"
+    protocol_commit: "8bb24b819f0559036a4723ba83bd2c50354bc435"
+    scientific_uv_lock_sha256: "6c862cbad9ab7e3a07dd2823c775127403093d6ad59a789ee227d827165e4733"
+    paper_role: "three_month_primary_origin_horizon_recovery"
     dvc_tracked: true
   missingness_encoding:
     run_tag: "ijds-missingness-sensitivity-2026-07-15-v3"
@@ -180,6 +194,10 @@ dvc_pointers:
   - "data/processed/experiments/ijds_audit/ijds-allocation-granularity-sensitivity-2026-07-16-v3.dvc"
   - "models/experiments/ijds_audit/ijds-allocation-granularity-sensitivity-2026-07-16-v3.dvc"
   - "data/processed/experiments/ijds_audit/ijds-portfolio-structure-sensitivity-2026-07-15-v5.dvc"
+  - "data/processed/experiments/ijds_audit/ijds-rolling-origin-primary-recovery-2026-07-21-v1.dvc"
+  - "models/experiments/ijds_audit/ijds-rolling-origin-primary-recovery-2026-07-21-v1.dvc"
+  - "data/processed/experiments/ijds_audit/ijds-conformal-set-diagnostics-2026-07-21-v1.dvc"
+  - "models/experiments/ijds_audit/ijds-conformal-set-diagnostics-2026-07-21-v1.dvc"
 
 sources:
   v4_config:
@@ -242,6 +260,22 @@ sources:
     path: "models/experiments/ijds_audit/ijds-rolling-origin-2017-2026-07-15-v4/execution_receipt.json"
     bytes: 1134
     sha256: "d64ef87ce6e1a2f7f0493ed17e009bf8349f68546ed137d0cafd74a6292edb0a"
+  rolling_primary_recovery_summary:
+    path: "models/experiments/ijds_audit/ijds-rolling-origin-primary-recovery-2026-07-21-v1/rolling_origin_primary_recovery_summary.json"
+    bytes: 20189
+    sha256: "f7e54a420a494187d64accc2c19369a5c9b13ddd47b79e83e5c8db3b0c8e516b"
+  rolling_primary_recovery_receipt:
+    path: "models/experiments/ijds_audit/ijds-rolling-origin-primary-recovery-2026-07-21-v1/execution_receipt.json"
+    bytes: 1473
+    sha256: "626e9a199bc5fc3d8aa240925a56616dbdb49ea9149b06cf78519034fa3f369d"
+  conformal_set_diagnostics_summary:
+    path: "models/experiments/ijds_audit/ijds-conformal-set-diagnostics-2026-07-21-v1/conformal_set_diagnostics_summary.json"
+    bytes: 9426
+    sha256: "01282b68631fd727fe278532249ddd0ef27752dac633968213f948e99feaa838"
+  conformal_set_diagnostics_receipt:
+    path: "models/experiments/ijds_audit/ijds-conformal-set-diagnostics-2026-07-21-v1/execution_receipt.json"
+    bytes: 1389
+    sha256: "de0ba04ff08a9bc16067fffd523ad9bfd2d088fc04ec98b55ea61f668ad1e473"
   missingness_summary:
     path: "models/experiments/ijds_audit/ijds-missingness-sensitivity-2026-07-15-v3/missingness_sensitivity_summary.json"
     bytes: 10170

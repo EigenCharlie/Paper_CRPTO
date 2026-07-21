@@ -276,6 +276,7 @@ def _check_evidence_decision() -> list[str]:
     endpoint = evidence.get("sensitivity", {}).get("evaluation_endpoint_availability", {})
     missingness = evidence.get("sensitivity", {}).get("missingness_encoding", {})
     rolling = evidence.get("sensitivity", {}).get("rolling_origin", {})
+    conformal_set = evidence.get("conformal_set_diagnostics", {})
 
     checks = [
         *(
@@ -344,8 +345,36 @@ def _check_evidence_decision() -> list[str]:
             "two-origin coverage recurrence no longer holds",
         ),
         (
+            rolling.get("primary_2016_periods") != ["2016-04", "2016-05", "2016-06"]
+            or rolling.get("rolling_2017_periods") != ["2017-04", "2017-05", "2017-06"]
+            or rolling.get("primary_2016_census")
+            != {"candidate_rows": 74537, "resolved_rows": 74443, "unresolved_rows": 94}
+            or rolling.get("rolling_2017_census")
+            != {"candidate_rows": 77105, "resolved_rows": 66091, "unresolved_rows": 11014}
+            or rolling.get("historical_primary_15_month_horizon_excluded") is not True
+            or any(
+                row.get("candidate_rows") == 376890
+                for row in rolling.get("rows", [])
+                if row.get("origin") == "primary_2016"
+            ),
+            "two-origin coverage comparison no longer uses the corrected common horizon",
+        ),
+        (
             rolling.get("independent_replication_claim_authorized") is not False,
             "second origin is incorrectly reported as an independent replication",
+        ),
+        (
+            conformal_set.get("learner_window_cells") != 40
+            or conformal_set.get("all_forty_resolved_y0_coverage_above_y1") is not True
+            or conformal_set.get("interpretation", {}).get("label_conditional_guarantee")
+            is not False
+            or conformal_set.get("interpretation", {}).get(
+                "all_candidate_label_conditional_coverage_estimated"
+            )
+            is not False
+            or conformal_set.get("interpretation", {}).get("fairness_or_equalized_coverage_claim")
+            is not False,
+            "complete conformal-set diagnostic or its claim boundary changed",
         ),
     ]
     failures = [message for failed, message in checks if failed]

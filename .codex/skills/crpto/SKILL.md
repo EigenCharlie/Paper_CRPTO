@@ -20,11 +20,13 @@ Read first:
 11. `docs/research/ijds_missingness_sensitivity_protocol_2026-07-15.md`
 12. `docs/research/ijds_fit_label_completion_sensitivity_protocol_2026-07-16.md`
 13. `docs/research/ijds_allocation_granularity_sensitivity_protocol_2026-07-16.md`
-14. `reports/crpto/ijds_binary_geometry_frontier_v4_evidence.json`
-15. `docs/ACADEMIC_CONTEXT.md`
-16. `docs/SCOPE_AND_GOVERNANCE.md`
-17. `CONTRIBUTING.md`
-18. `EXTRACTION_MANIFEST.md`
+14. `docs/research/ijds_rolling_origin_primary_recovery_protocol_2026-07-21.md`
+15. `docs/research/ijds_conformal_set_diagnostics_protocol_2026-07-21.md`
+16. `reports/crpto/ijds_binary_geometry_frontier_v4_evidence.json`
+17. `docs/ACADEMIC_CONTEXT.md`
+18. `docs/SCOPE_AND_GOVERNANCE.md`
+19. `CONTRIBUTING.md`
+20. `EXTRACTION_MANIFEST.md`
 
 Active evidence:
 
@@ -51,8 +53,13 @@ Active evidence:
 - endpoint resolution is partitioned exhaustively into 307,842 fully paid by
   cutoff, 56,972 charged off by cutoff, 11,551 nonterminal, 47 terminal after
   cutoff, and 478 terminal with missing availability date.
-- three missingness encodings and a second retrospective origin are complete,
-  bounded recurrences; neither selects a representation or model.
+- three missingness encodings and a horizon-corrected second retrospective
+  origin are complete, bounded recurrences; the origin comparison uses
+  April--June at both origins (74,537 versus 77,105 candidates), and neither
+  family selects a representation or model.
+- all 40 five-model/window binary-set cells report AvgC, OneC, empty/two-label
+  shares, and resolved-label coverage. The label stratification conditions on
+  administrative resolution and is not all-candidate label-conditional validity.
 - four declared fit-label scenarios are complete; they stress 215
   unavailable fitting labels but are not sharp bounds over all assignments.
 - USD 25 floor-with-cash rounding is complete for all 1,440 portfolios and 96
@@ -69,6 +76,12 @@ Headline evidence:
   declared 36-month population rather than forming a convenience sample;
 - all 45 OptBinning problems are optimal; WOE/IV, monotonicity, calibration,
   and PSI remain robustness controls rather than central novelty;
+- resolved-panel nondefault coverage is `0.982982`--`0.992714` and resolved
+  default coverage is `0.232570`--`0.363916` across all 40 cells; this is a
+  descriptive resolved-label diagnostic only;
+- on the common three-month origin horizon, the 2016 and 2017 maximum upper
+  bounds are `0.875364` and `0.874768`; the 15-month primary maximum remains a
+  separate main estimand;
 - CatBoost stratum 2 crosses prevalence alpha from W7 to W8 and its residual
   quantile changes from `0.888435` to `0.111801`;
 - C2 match residual is at most `8.33e-17` and reconciles weak plug-in dominance;
@@ -143,9 +156,10 @@ just ijds-dvc-status
 ```
 
 The active builder verifies the V4, two-ruler, raw-data, credit-control,
-endpoint, structural, fit-label completion, and allocation-granularity
+endpoint, structural, rolling-primary recovery, conformal-set diagnostic,
+fit-label completion, and allocation-granularity
 manifests/freezes and every artifact descriptor. The active capsule contains
-33 DVC pointers. It emits only
+37 DVC pointers. It emits only
 `crpto_ijds_v4_*` tables/figures and
 `ijds_binary_geometry_frontier_v4_evidence.json`. Consecutive builds must be
 byte-identical. The canonical body is `paper/CRPTO_ijds.qmd`; generate official

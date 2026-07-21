@@ -376,9 +376,48 @@ def test_endpoint_reasons_missingness_and_second_origin_are_bounded() -> None:
     rolling = evidence["sensitivity"]["rolling_origin"]
     assert rolling["origin_count"] == 2
     assert rolling["window_cells"] == 16
+    assert rolling["common_horizon_months"] == 3
+    assert rolling["primary_2016_periods"] == ["2016-04", "2016-05", "2016-06"]
+    assert rolling["rolling_2017_periods"] == ["2017-04", "2017-05", "2017-06"]
+    assert rolling["primary_2016_census"] == {
+        "candidate_rows": 74537,
+        "resolved_rows": 74443,
+        "unresolved_rows": 94,
+    }
+    assert rolling["rolling_2017_census"] == {
+        "candidate_rows": 77105,
+        "resolved_rows": 66091,
+        "unresolved_rows": 11014,
+    }
+    assert rolling["historical_primary_15_month_horizon_excluded"] is True
+    assert rolling["primary_2016_upper_max"] == pytest.approx(0.8753639132243047)
+    assert rolling["rolling_2017_upper_max"] == pytest.approx(0.8747681732702159)
+    assert all(
+        row["candidate_rows"] != 376890
+        for row in rolling["rows"]
+        if row["origin"] == "primary_2016"
+    )
+    assert {(row["origin"], row["window"]) for row in rolling["rows"]} == {
+        (origin, f"W{window}")
+        for origin in ("primary_2016", "rolling_2017")
+        for window in range(1, 9)
+    }
     assert rolling["all_sixteen_upper_below_nominal"] is True
     assert rolling["model_or_origin_selected"] is False
     assert rolling["independent_replication_claim_authorized"] is False
+
+    diagnostic = evidence["conformal_set_diagnostics"]
+    assert diagnostic["learner_window_cells"] == 40
+    assert diagnostic["all_forty_resolved_y0_coverage_above_y1"] is True
+    assert diagnostic["resolved_y0_coverage_min"] == pytest.approx(0.9829815294859051)
+    assert diagnostic["resolved_y0_coverage_max"] == pytest.approx(0.9927137947388596)
+    assert diagnostic["resolved_y1_coverage_min"] == pytest.approx(0.23257038545250297)
+    assert diagnostic["resolved_y1_coverage_max"] == pytest.approx(0.3639156076669241)
+    assert diagnostic["interpretation"]["label_conditional_guarantee"] is False
+    assert (
+        diagnostic["interpretation"]["all_candidate_label_conditional_coverage_estimated"] is False
+    )
+    assert diagnostic["interpretation"]["fairness_or_equalized_coverage_claim"] is False
 
 
 def test_fit_label_completion_and_allocation_granularity_are_bounded() -> None:
@@ -463,6 +502,7 @@ def test_manuscript_surfaces_share_v4_claims_and_retire_old_headlines() -> None:
         "216",
         "72",
         "0.884332",
+        "0.875364",
         "0.874768",
         "status-indexed",
         "selected-set",

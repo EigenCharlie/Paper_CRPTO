@@ -7,6 +7,7 @@ reviewer manuscript and does not authorize claims beyond the registry.
 <!-- claim:endpoint.not_verified_snapshot -->
 <!-- claim:endpoint.reason_census_partitions_candidates -->
 <!-- claim:coverage.five_models_all_windows_below_nominal -->
+<!-- claim:coverage.resolved_label_diagnostic_descriptive -->
 <!-- claim:geometry.prevalence_sensitive_mechanism -->
 <!-- claim:timing.endpoint_six_month_reconciles_active -->
 <!-- claim:timing.fit_and_endpoint_lags_not_factorial -->
@@ -27,6 +28,7 @@ reviewer manuscript and does not authorize claims beyond the registry.
 | Endpoint | 364,814 resolved; 12,076 unresolved among 376,890 primary candidates | Terminal status reconstructed as observable by the cutoff | Verified point-in-time archive snapshot |
 | Endpoint reasons | 307,842 fully paid and 56,972 charged off are resolved; 11,551 are nonterminal, 47 terminate after the cutoff, and 478 lack a reconstructible availability date | The five reasons partition every primary candidate | Identified missingness mechanism or observed operational event dates |
 | Coverage | Under the active six-month endpoint, all 40 model-window upper bounds are below 0.90; largest 0.897726 | Coverage does not transport here across five protocol-locked specifications | Universal conformal invalidity, endpoint-lag invariance, or selected-set validity |
+| Resolved-label coverage diagnostic | Across all 40 cells, observed-label coverage is 0.982982--0.992714 for resolved nondefaults and 0.232570--0.363916 for resolved defaults | Coverage stratified by observed label in the administratively resolved panel | All-candidate label-conditional validity, label-Mondrian calibration, fairness, or equalized coverage |
 | Binary geometry | W7 prevalence 0.101703 and quantile 0.888435; W8 prevalence 0.097147 and quantile 0.111801 | Pattern matches the constant-score phase mechanism | Finite-sample causal explanation |
 | Fit-label timing | Crossing persists at 0, 3, and 6 months; 8 and 12 months fail strict >99% retention | Stable across fit-label lags satisfying the rule | Invariance to arbitrary label delay |
 | Evaluation-endpoint timing | Coverage upper bounds below 0.90: 40/40 at lags 0, 3, 6, and 8; 39/40 at lag 12, maximum 0.900411 | The active six-month claim is contract-specific; the complete lag grid is reported without endpoint selection | Lag-universal 40/40 coverage failure or selection of the six-month endpoint |
@@ -40,7 +42,7 @@ reviewer manuscript and does not authorize claims beyond the registry.
 | Solver stability | 7,297 evaluated rows; 0 tie-sensitive reversed-order reruns | Deterministic stability at evaluated caps | Continuous-frontier uniqueness |
 | Credit controls | Five coverage specifications; one portfolio learner | Same below-target finding across the protocol-locked specifications under the active endpoint | Model promotion or WOE/IV novelty |
 | Missingness encoding | Active sentinels, explicit indicators, and native nullable features each have 8/8 upper bounds below 0.90; maxima 0.882597, 0.884332, and 0.880037 | Coverage finding recurs across three semantics-preserving encodings | Missingness mechanism, encoding winner, or portfolio robustness |
-| Second origin | Both retrospective origins have 8/8 upper bounds below 0.90; maxima 0.882597 and 0.874768 | Two-origin retrospective recurrence | Independent replication, temporal invariance, or prospective validation |
+| Second origin | On common April--June horizons, both retrospective origins have 8/8 upper bounds below 0.90; maxima 0.875364 and 0.874768 for 2016 and 2017 | Horizon-corrected two-origin retrospective recurrence; the 15-month 0.882597 main estimand remains separate | Independent replication, temporal invariance, or prospective validation |
 | Fit-label completion | All four scenarios have 8/8 upper bounds below 0.90; the W7--W8 crossing remains in three of four | Coverage nontransport survives the declared scenario family, while the geometric path is not scenario-invariant | Sharp bounds over all $2^{215}$ assignments, preregistration, or a universal phase transition |
 | Allocation granularity | USD 25 flooring changes any evaluated rate by at most 0.001284 percentage points over 1,440 portfolios | The continuous relaxation is numerically adequate for this archive and lot rule | Integer optimality, reoptimization, or robustness to another lot rule |
 | Payoff proxy | Plug-in `(1-p)r-p*LGD`; status-indexed `(1-Y)r-Y*LGD` | Coherent standardized proxy under the declared binary endpoint | IRR, cash-flow return, NPV, or welfare |

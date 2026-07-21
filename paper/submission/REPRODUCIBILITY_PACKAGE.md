@@ -18,8 +18,8 @@ instructions, and replay commands.
 | Environment | `pyproject.toml`, `uv.lock`, `justfile` |
 | Authority | Active claim registry, executable claim ledger, source registry, publication targets |
 | Method | Complete `src` package, active runners, evidence and paper builders |
-| Runs | 33 DVC pointers for active roots, sensitivities, and replay dependencies |
-| Evidence | One manifest, eighteen tables, three figures in PDF/PNG |
+| Runs | 37 DVC pointers for active roots, sensitivities, and replay dependencies |
+| Evidence | One manifest, nineteen tables, three figures in PDF/PNG |
 | Manuscript | QMD body/supplement, generated INFORMS TeX, bibliography |
 | Gates | Scientific tests, lint, typing, drift, claim sync, anonymity, PDF QA |
 
@@ -68,6 +68,17 @@ protocol tag, run tag, and fresh output paths. It must retain all declared cells
 may not overwrite an active or historical root, and cannot silently replace the
 paper contract after inspecting outcomes.
 
+For human replay, each of the two 2026-07-21 diagnostic runners must be invoked
+from a clean checkout at its registered protocol tag. Their exact commands are:
+
+```powershell
+uv run --locked python scripts/experiments/run_ijds_rolling_origin_primary_recovery.py --config configs/experiments/ijds_rolling_origin_primary_recovery_2026-07-21_v1.yaml
+uv run --locked python scripts/experiments/run_ijds_conformal_set_diagnostics.py --config configs/experiments/ijds_conformal_set_diagnostics_2026-07-21_v1.yaml
+```
+
+Both runners require fresh run-tag output paths and refuse a dirty or
+non-tagged scientific checkout.
+
 ## Official PDF Build
 
 ```powershell
@@ -81,7 +92,7 @@ graph, bibliography, cross-references, and stable pagination in that order.
 
 ## Acceptance QA
 
-1. Reproduce from a fresh clone and the 33 DVC pointers.
+1. Reproduce from a fresh clone and the 37 DVC pointers.
 2. Confirm evidence and QMD-to-TeX builders are byte-idempotent.
 3. Run scientific, lint, type, drift, publication, and protected-artifact checks.
 4. Compile and inspect body, supplement, and official PDF page by page.

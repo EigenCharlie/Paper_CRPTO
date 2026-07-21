@@ -47,7 +47,7 @@
   .supplement-ijds caption,
   .supplement-ijds figcaption,
   .supplement-ijds .quarto-float-caption {
-    break-after: avoid-page !important;
+    break-after: avoid !important;
     page-break-after: avoid !important;
   }
 
@@ -56,6 +56,12 @@
   .supplement-ijds h3 + *,
   .supplement-ijds h4 + * {
     break-before: avoid-page !important;
+    page-break-before: avoid !important;
+  }
+
+  .supplement-ijds table + p,
+  .supplement-ijds p:has(> img) + p {
+    break-before: avoid !important;
     page-break-before: avoid !important;
   }
 

@@ -85,22 +85,24 @@ These are estimand defects rather than presentation details.
 CRPTO studies this handoff after making timing, observability, geometry, and
 comparator contracts explicit. A temporally trained CatBoost model and Platt
 calibrator produce point score $p_i$. Score strata are fixed from all 2011
-predictions, independently of outcomes. We then report the complete set of
+predictions, without using residual-window or OOT outcomes. We then report the complete set of
 eight consecutive six-month residual windows beginning in 2012 and ending no
 later than January 2013. No result selects, weights, or removes a window. Four
 coverage-only controls span a separately fitted numeric logistic model,
 domain-constrained monotonic CatBoost, a platform-signal WOE/IV scorecard, and
 a pricing-excluded application WOE/IV scorecard. Each has its own Platt map and
 2011 taxonomy;
-none is selected from OOT outcomes or enters portfolio optimization. The same
-residual threshold defines a discrete binary prediction set $S_i$ and a clipped
-continuous interval $[\ell_i,u_i]$, with
+none is selected from OOT outcomes or enters portfolio optimization.
+Coverage of observed binary $Y$, not latent individual PD, is the conformal estimand.
+The same residual threshold defines a discrete binary prediction set $S_i$ and
+a clipped continuous interval $[\ell_i,u_i]$, with
 $S_i=[\ell_i,u_i]\cap\{0,1\}$. Their coverage events coincide for the observed
 binary outcome, but the interval is not constructed as the convex hull of
 $S_i$ and does not equal that hull in general: it is retained as a design
-embedding whose upper endpoint enters a guardrail score. Neither
-object is a confidence interval for latent individual PD, and candidate
-coverage supplies no selected- or funded-set guarantee. It also does not
+embedding whose upper endpoint enters a guardrail score. The prediction set is
+not a confidence interval for latent individual PD, nor is the continuous
+embedding; candidate coverage supplies no selected- or funded-set guarantee.
+It also does not
 identify ECL, SICR, expected loss, or a selected allocation policy; those
 objects require their own estimands, data, and validation.
 
@@ -395,16 +397,16 @@ administrative resolution, which is why 12,076 primary candidates remain
 unresolved. July--September 2017 is retained as a more heavily censored
 extension rather than silently discarded.
 
-| Block | Issue months | Rows | Labels available/read | Role |
-|---|---:|---:|---:|---|
-| PD development | 2007-06--2010-12 | 17,433 | 17,392 | train/validate |
-| Probability calibration | 2011-01--2011-12 | 14,101 | 14,077 | Platt fit and taxonomy |
-| Residual pool | 2012-01--2013-01 | 49,007 | 48,857 | eight overlapping six-month recipes |
-| Policy development | 2013-02--2013-12 | 94,885 | not read | common outcome-free frontier construction |
-| Primary OOT | 2016-04--2017-06 | 376,890 | post-freeze only | locked evaluation |
-| Censored extension | 2017-07--2017-09 | 88,227 | post-freeze only | stress only |
+| Block | Issue months | Rows | Information role |
+|---|---:|---:|---|
+| PD development | 2007-06--2010-12 | 17,433 | train/validate |
+| Platt/taxonomy | 2011 | 14,101 | calibration |
+| Residual recipes | 2012-01--2013-01 | 49,007 | overlapping fits |
+| Policy development | 2013-02--2013-12 | 94,885 | outcomes not read |
+| Primary OOT | 2016-04--2017-06 | 376,890 | post-freeze evaluation |
+| Extension | 2017-07--2017-09 | 88,227 | stress only |
 
-: Active data blocks. Residual-window rows overlap by construction and are not independent samples. {#tbl-protocol}
+: Active data blocks; residual windows overlap. {#tbl-protocol}
 
 ## Information boundary
 
@@ -516,6 +518,8 @@ $$ {#eq-binary-nonconformity}
 Five groups are defined by quantiles of all 2011 Platt-scaled scores, without
 using residual-window labels. The frozen CatBoost edges are
 $0.008219$, $0.050265$, $0.080369$, $0.111894$, $0.153262$, and $0.475854$.
+Assignment uses the four internal cutpoints; the two extreme strata extend
+beyond the observed 2011 range so that every valid later score is retained.
 Within fixed group $g$, the observed residual-window score is
 $s_i(Y_i)=|Y_i-p_i|$. The complete specification reports all eight
 consecutive six-month windows beginning January--August 2012. Every included
@@ -782,13 +786,18 @@ are sharp because each endpoint is attained by a joint assignment of all
 unresolved outcomes. This is partial identification under unrestricted binary
 completion, not a sampling confidence interval.
 
-For all-candidate coverage, let $m_i(0)$ and $m_i(1)$ be the two attainable
-miscoverage values. With $m_i^L=\min_y m_i(y)$ and
-$m_i^U=\max_y m_i(y)$, the sharp coverage interval is
+For all-candidate coverage, let $R$ and $U$ index resolved and unresolved
+candidates, respectively, and let $m_i(0)$ and $m_i(1)$ be the two attainable
+miscoverage values. Resolved candidates retain their observed $m_i(Y_i)$;
+only unresolved labels are completed. The sharp coverage interval is
 
 $$
-\left[1-\frac{1}{n}\sum_i m_i^U,
-      1-\frac{1}{n}\sum_i m_i^L\right].
+\left[
+1-\frac{1}{n}\left\{\sum_{i\in R}m_i(Y_i)+
+\sum_{i\in U}\max_{y\in\{0,1\}}m_i(y)\right\},
+1-\frac{1}{n}\left\{\sum_{i\in R}m_i(Y_i)+
+\sum_{i\in U}\min_{y\in\{0,1\}}m_i(y)\right\}
+\right].
 $$ {#eq-sharp-coverage}
 
 For paired policies, subtracting marginal intervals is not sharp. Instead, form
@@ -863,20 +872,26 @@ separately calibrated logistic control is closer to nominal: resolved
 coverage ranges from 0.8732 to 0.8931 and the largest upper bound is 0.8962.
 Nevertheless, all eight logistic upper bounds also remain below 0.90. The
 finding is therefore not unique to CatBoost, while its magnitude is
-learner-dependent. Four additional credit-risk specifications test that
+learner-dependent. Three additional credit-risk specifications test that
 conclusion more broadly below.
 
-![Resolved coverage (markers) and sharp all-candidate bounds (error bars) for the primary CatBoost and numeric-logistic specifications. The dashed line is nominal 90% coverage.](../reports/crpto/figures/crpto_ijds_v4_fig1_coverage.png){#fig-coverage width=94%}
+![Resolved coverage (markers) and sharp all-candidate bounds (error bars) for the primary CatBoost and numeric-logistic specifications. The dashed line is nominal 90% coverage.](../reports/crpto/figures/crpto_ijds_v4_fig1_coverage.png){#fig-coverage width=82%}
 
 Online Supplement Table S6 reports all eight exact window bounds and widths;
 the figure retains their complete nonselective pattern in the main text.
 
-Because continuous interval width is not binary-set cardinality, the audit also
-summarizes AvgC, OneC, and the empty- and two-label-set shares defined in
-@eq-set-efficiency. These quantities diagnose efficiency and degeneracy; they
-do not replace candidate coverage.
+Online Supplement Table S6A distinguishes candidate coverage from set
+efficiency. For CatBoost across W1--W8, AvgC is 1.128128--1.183942, OneC is
+0.789177--0.839736, and the empty- and two-label-set shares are
+0.012327--0.016068 and 0.144196--0.196736. These are not coverage guarantees.
 
-<!-- BUILDER-INJECT: registered W1--W8 AvgC, OneC, empty-set, and two-label-set values. -->
+<!-- claim:coverage.resolved_label_diagnostic_descriptive -->
+
+Across all 40 learner-window cells, coverage among administratively resolved
+nondefaults is 0.982982--0.992714 versus 0.232570--0.363916 among resolved
+defaults. This conditions on resolution and observed label; 12,076 classes are
+unknown, so it is not all-candidate label-conditional validity, label-Mondrian
+calibration, equalized coverage, or a fairness test.
 
 All five all-candidate sharp upper bounds remain below 0.90 in all eight windows,
 including the monotonic learner and the pricing-excluded application scorecard.
@@ -893,7 +908,7 @@ even this loan-wise best-case completion remains below 0.90.
 | Platform WOE | 0.6331 | 0.1295 | 0.9187 | 0.8949 |
 | Pricing-excluded WOE | 0.6129 | 0.1302 | 0.7098 | 0.8977 |
 
-: Five-model coverage-specification audit. $U_{\max}$ is the largest all-candidate coverage upper bound across eight windows. Predictive metrics use 364,814 resolved outcomes; coverage retains all 376,890 candidates. Full hulls are in Online Supplement Table S2. No OOT metric selects a model. {#tbl-credit-controls}
+: Five-model coverage audit; predictive metrics use 364,814 resolved outcomes and coverage retains all 376,890 candidates. {#tbl-credit-controls}
 
 All five scores underpredict later default on average and have calibration
 slopes below one. Their AUC, calibration, WOE/IV, and PSI diagnostics are
@@ -904,31 +919,20 @@ contest or an explanation of the coverage gap.
 <!-- claim:sensitivity.second_origin_coverage_recurrence -->
 <!-- claim:sensitivity.fit_label_completion_coverage_recurrence -->
 
-Two complete sensitivity families narrow the specification concern. The active
-sentinel encoding, explicit missing indicators, and native nullable CatBoost
-features each have all eight coverage upper bounds below 0.90, with maxima
-0.882597, 0.884332, and 0.880037. The registered rolling-origin comparison uses
-the same mechanically restricted three-month horizon at both feasible origins;
-all eight CatBoost upper bounds remain below 0.90 at each origin. Online
-Supplement Table S10 reports the exact origin-specific censuses and maxima from
-that recovery lineage. No encoding, model, or origin is selected. These are
-three semantics-preserving encoding paths and two retrospective origins, not
-evidence about the missingness mechanism, independent replications, or
-prospective temporal invariance.
+The sentinel, explicit-indicator, and native-null CatBoost encodings leave all
+eight upper bounds below 0.90 (maxima 0.882597, 0.884332, and 0.880037). On the
+common three-month horizon, April--June 2016 has 74,537 candidates
+(74,443/94 resolved/unresolved) and maximum 0.875364; April--June 2017 has
+77,105 (66,091/11,014) and maximum 0.874768. All eight bounds remain below
+0.90 at both retrospective origins. Table S7C gives the census; no encoding,
+model, or origin is selected, and these are not independent replications or a
+missingness-mechanism or prospective-invariance result.
 
-A separate four-scenario sensitivity addresses 215 labels unavailable at their
-own fitting cutoffs: 41 in PD development, 24 in Platt calibration, and 150 in
-conformal fitting. It refits the complete score-and-recipe pipeline after
-retaining only observed labels, completing every unavailable label as
-nondefault, completing every one as default, or using the later terminal
-archive. Across all four scenarios and eight windows, every overall coverage
-upper bound remains below 0.90; the scenario maxima range from 0.8826 to
-0.884669. No completion is selected.
-
-The result is specific to the declared archive and multi-year transport gap;
-it does not say that conformal prediction fails under exchangeability. It
-occurs before the optimizer selects a funded set and therefore cannot identify
-a preferred portfolio rule.
+A four-scenario refit addresses 215 cutoff-unavailable labels (41 PD, 24 Platt,
+150 conformal). Observed-only, all-nondefault, all-default, and later-terminal
+completion leave all 32 upper bounds below 0.90, with scenario maxima
+0.8826--0.884669; none is selected. This archive-specific transport result does
+not imply failure under exchangeability or identify a funded-set policy.
 
 ## A prevalence crossing coincides with a change in binary interval geometry
 
@@ -943,37 +947,25 @@ falls from 0.9843 to 0.2076. Its discrete intersection simultaneously moves
 from 0.96% $\{0,1\}$ and 99.04% $\{0\}$ in W7 to 0% $\{0,1\}$, 99.74%
 $\{0\}$, and 0.26% empty in W8.
 
-![CatBoost stratum-2 fit prevalence and residual quantile across all eight windows. The W7--W8 prevalence crossing coincides with a discontinuous quantile change.](../reports/crpto/figures/crpto_ijds_v4_fig2_phase_transition.png){#fig-phase width=94%}
+![CatBoost stratum-2 fit prevalence and residual quantile across all eight windows. The W7--W8 prevalence crossing coincides with a discontinuous quantile change.](../reports/crpto/figures/crpto_ijds_v4_fig2_phase_transition.png){#fig-phase width=82%}
 
-This empirical pattern matches the mechanism in Proposition 2, but scores vary
-within the stratum and the proposition is not used as a finite-sample proof.
-The retrospectively protocol-locked fit-label sensitivity gives the same threshold crossing at
-0, 3, and 6 months; their minimum monthly retention is 99.71%, 99.67%, and
-99.30%, respectively. At 8 and 12 months the W7 quantile also lies near 0.112,
-so the crossing disappears, but those specifications retain only 98.68% and
-97.45% in their weakest month and fail the strict greater-than-99% rule. The evidence thus
-supports stability across lags satisfying the strict retention rule, not a
-claim that prevalence causally produced the empirical change.
-Nor does the narrower W8 interval repair transport: stratum-2 all-candidate
-coverage is only [0.8225, 0.8547]. A narrower interval can simply expose more
-rare defaults as misses.
+The pattern matches Proposition 2's mechanism, but varying scores preclude a
+finite-sample proof. Fit-label lags 0, 3, and 6 months retain more than 99% in
+every month and preserve the crossing; 8 and 12 months retain only 98.68% and
+97.45% in their weakest month and fail the rule. This is stability within the
+retained lag family, not a causal claim. The narrower W8 interval also leaves
+stratum-2 coverage at only [0.8225, 0.8547].
 
-The fit-label scenario sensitivity separates this explanation from the coverage
-result. The observed-only, all-nondefault, and hindsight scenarios retain the
-W7--W8 crossing. Under the all-default scenario, however, W7 and W8 prevalences
-are 0.105974 and 0.100287 and both residual quantiles remain near 0.889, so the
-crossing disappears even though all eight overall coverage upper bounds remain
-below 0.90. Because model and calibration refits are nonlinear, these four
-scenarios are not sharp bounds over all $2^{215}$ label assignments. The phase
-mechanism explains one observed path; it is not invariant to every plausible
-fit-label completion.
+Observed-only, all-nondefault, and later-terminal completion retain the W7--W8
+crossing. All-default completion instead gives prevalences 0.105974/0.100287
+and quantiles near 0.889, removing the crossing while all eight overall upper
+bounds remain below 0.90. Nonlinear refits make these four scenarios declared
+stresses, not sharp bounds over $2^{215}$ assignments; the mechanism is not
+completion-invariant.
 
-This is the **fit-label timing** axis: it changes which 2012 labels enter
-conformal fitting and therefore refits the residual recipes. The
-**evaluation-endpoint availability** axis below instead holds scores, recipes,
-supports, and allocations fixed while changing which outcomes are observable at
-the September 2020 cutoff. The two one-factor sensitivities were not crossed
-factorially, so they do not establish joint lag robustness.
+Fit-label timing refits recipes; evaluation-endpoint availability instead holds
+scores, supports, and allocations fixed. The axes were not crossed, so they do
+not establish joint lag robustness.
 
 ## Endpoint direction changes with ruler and coordinate
 
@@ -1178,8 +1170,8 @@ neither a pristine lockbox nor a preregistration.
 
 # Reproducibility {#sec-reproducibility}
 
-One registry binds every active lineage and 33 DVC pointers. Publication replay
-verifies frozen artifacts and regenerates 18 tables and three figures
+One registry binds every active lineage and 37 DVC pointers. Publication replay
+verifies frozen artifacts and regenerates 19 tables and three figures
 transactionally; scientific replay uses each lineage's protocol commit and
 `uv.lock`, not the current source tree. Online Supplement Appendix F specifies
 both modes.
@@ -1188,8 +1180,8 @@ both modes.
 
 CRPTO shows why connecting machine learning, conformal prediction, and
 optimization creates an identification problem rather than a self-validating
-pipeline. Coverage nontransport persists across the declared learners and
-fit-label scenarios, but the observed geometric crossing is not
+pipeline. Coverage nontransport persists separately across five declared
+learner specifications and four CatBoost fit-label scenarios, but the observed geometric crossing is not
 scenario-invariant. Portfolio direction changes with the outcome-blind ruler
 and coordinate, and all 216 broad-support exact envelopes include zero.
 

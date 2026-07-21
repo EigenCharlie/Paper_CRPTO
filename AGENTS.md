@@ -32,13 +32,17 @@ order before changing scientific code or paper claims:
    - observed-only fit plus three completion rules and nonlinear interpretation boundary.
 15. [`docs/research/ijds_allocation_granularity_sensitivity_protocol_2026-07-16.md`](docs/research/ijds_allocation_granularity_sensitivity_protocol_2026-07-16.md)
    - USD 25 floor-with-cash diagnostic and fixed-capital estimands.
-16. [`configs/ijds_active_evidence_sources.yaml`](configs/ijds_active_evidence_sources.yaml)
+16. [`docs/research/ijds_rolling_origin_primary_recovery_protocol_2026-07-21.md`](docs/research/ijds_rolling_origin_primary_recovery_protocol_2026-07-21.md)
+   - common April--June horizon recovery and explicit rejection of the stale 15-month comparison.
+17. [`docs/research/ijds_conformal_set_diagnostics_protocol_2026-07-21.md`](docs/research/ijds_conformal_set_diagnostics_protocol_2026-07-21.md)
+   - complete binary-set efficiency and resolved-label diagnostic boundary.
+18. [`configs/ijds_active_evidence_sources.yaml`](configs/ijds_active_evidence_sources.yaml)
    - active lineage identities and exact DVC-pointer authority.
-17. [`configs/ijds_claim_ledger.yaml`](configs/ijds_claim_ledger.yaml)
+19. [`configs/ijds_claim_ledger.yaml`](configs/ijds_claim_ledger.yaml)
    - executable nonnumeric claim and surface contract.
-18. [`reports/crpto/ijds_binary_geometry_frontier_v4_evidence.json`](reports/crpto/ijds_binary_geometry_frontier_v4_evidence.json)
+20. [`reports/crpto/ijds_binary_geometry_frontier_v4_evidence.json`](reports/crpto/ijds_binary_geometry_frontier_v4_evidence.json)
    - the only active paper-facing evidence manifest.
-19. [`.codex/skills/crpto/SKILL.md`](.codex/skills/crpto/SKILL.md) - concise
+21. [`.codex/skills/crpto/SKILL.md`](.codex/skills/crpto/SKILL.md) - concise
    execution and writing guidance.
 
 Minimum rules:

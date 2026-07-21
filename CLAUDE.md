@@ -16,13 +16,15 @@ not active evidence.
 8. `docs/research/ijds_portfolio_structure_sensitivity_v6_protocol_2026-07-15.md`
 9. `docs/research/ijds_fit_label_completion_sensitivity_protocol_2026-07-16.md`
 10. `docs/research/ijds_allocation_granularity_sensitivity_protocol_2026-07-16.md`
-11. `configs/ijds_active_evidence_sources.yaml`
-12. `configs/ijds_claim_ledger.yaml`
-13. `reports/crpto/ijds_binary_geometry_frontier_v4_evidence.json`
-14. `.codex/skills/crpto/SKILL.md`
+11. `docs/research/ijds_rolling_origin_primary_recovery_protocol_2026-07-21.md`
+12. `docs/research/ijds_conformal_set_diagnostics_protocol_2026-07-21.md`
+13. `configs/ijds_active_evidence_sources.yaml`
+14. `configs/ijds_claim_ledger.yaml`
+15. `reports/crpto/ijds_binary_geometry_frontier_v4_evidence.json`
+16. `.codex/skills/crpto/SKILL.md`
 
 The claim registry is the editorial authority. The source registry owns exact
-lineage identities, artifact descriptors, and 33 DVC pointers. The V4 evidence
+lineage identities, artifact descriptors, and 37 DVC pointers. The V4 evidence
 JSON is the only numeric paper-facing manifest.
 
 ## Active Scientific Object
@@ -38,6 +40,11 @@ JSON is the only numeric paper-facing manifest.
 - Fifteen separate monthly allocations, sharp common-outcome bounds, exact
   point-cap support, and 36 structural scenarios.
 - All 40 six-month all-candidate coverage upper bounds are below 0.90.
+- All 40 resolved-panel cells have higher observed-label coverage for
+  nondefaults than defaults; this is descriptive conditioning on administrative
+  resolution, not label-conditional validity for all candidates.
+- The two-origin recurrence uses April--June at both origins; the historical
+  15-month primary panel is excluded from that comparison.
 - All 216 broad-support comparator envelopes cross zero.
 - All 32 overall cells across four declared fit-label scenarios remain
   below 0.90, but the W7--W8 geometry change is not scenario-invariant.

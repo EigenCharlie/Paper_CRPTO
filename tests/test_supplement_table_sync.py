@@ -223,7 +223,7 @@ def test_complete_portfolio_structure_grid_is_visible_in_supplement() -> None:
 def test_endpoint_reason_missingness_and_second_origin_tables_are_visible() -> None:
     endpoint = _rows("crpto_ijds_v4_tableS8_endpoint_resolution.csv")
     missingness = _rows("crpto_ijds_v4_tableS9_missingness_encoding_sensitivity.csv")
-    rolling = _rows("crpto_ijds_v4_tableS10_rolling_origin_recurrence.csv")
+    rolling = _rows("crpto_ijds_v4_tableS7C_rolling_origin_recurrence.csv")
     supplement = SUPPLEMENT.read_text(encoding="utf-8")
 
     assert len(endpoint) == 5
@@ -238,6 +238,24 @@ def test_endpoint_reason_missingness_and_second_origin_tables_are_visible() -> N
 
     assert len(rolling) == 16
     assert {row["origin"] for row in rolling} == {"primary_2016", "rolling_2017"}
+    assert {(row["origin"], row["window"]) for row in rolling} == {
+        (origin, f"W{window}")
+        for origin in ("primary_2016", "rolling_2017")
+        for window in range(1, 9)
+    }
+    assert {
+        (row["candidate_rows"], row["resolved_rows"], row["unresolved_rows"])
+        for row in rolling
+        if row["origin"] == "primary_2016"
+    } == {("74537", "74443", "94")}
+    assert {
+        (row["candidate_rows"], row["resolved_rows"], row["unresolved_rows"])
+        for row in rolling
+        if row["origin"] == "rolling_2017"
+    } == {("77105", "66091", "11014")}
+    assert not any(
+        int(row["candidate_rows"]) == 376890 for row in rolling if row["origin"] == "primary_2016"
+    )
     for row in rolling:
         assert f"{float(row['coverage_lower']):.6f}" in supplement
         assert f"{float(row['coverage_upper']):.6f}" in supplement
@@ -245,6 +263,31 @@ def test_endpoint_reason_missingness_and_second_origin_tables_are_visible() -> N
     normalized = re.sub(r"\s+", " ", supplement.lower())
     assert "not an independent replication" in normalized
     assert "does not identify a missingness mechanism" in normalized
+
+
+def test_complete_conformal_set_diagnostic_is_visible_and_bounded() -> None:
+    rows = _rows("crpto_ijds_v4_tableS6A_conformal_set_diagnostics.csv")
+    supplement = SUPPLEMENT.read_text(encoding="utf-8")
+    assert len(rows) == 40
+    assert len({row["learner"] for row in rows}) == 5
+    assert len({row["window_id"] for row in rows}) == 8
+    assert all(
+        float(row["coverage_resolved_y0"]) > float(row["coverage_resolved_y1"]) for row in rows
+    )
+    for row in rows:
+        for column in (
+            "coverage_resolved_y0",
+            "coverage_resolved_y1",
+            "average_set_size",
+            "singleton_share",
+            "set_empty_share",
+            "set_both_share",
+        ):
+            assert f"{float(row[column]):.6f}" in supplement
+    normalized = re.sub(r"\s+", " ", supplement.lower())
+    assert "condition on administrative resolution" in normalized
+    assert "does not estimate all-candidate label-conditional validity" in normalized
+    assert "fairness result" in normalized
 
 
 def test_fit_completion_and_allocation_granularity_tables_are_visible() -> None:

@@ -75,7 +75,10 @@ TABLE_TARGETS = {
     "missingness_encoding": (
         TABLE_DIR / "crpto_ijds_v4_tableS9_missingness_encoding_sensitivity.csv"
     ),
-    "rolling_origin": TABLE_DIR / "crpto_ijds_v4_tableS10_rolling_origin_recurrence.csv",
+    "rolling_origin": TABLE_DIR / "crpto_ijds_v4_tableS7C_rolling_origin_recurrence.csv",
+    "conformal_set_diagnostics": (
+        TABLE_DIR / "crpto_ijds_v4_tableS6A_conformal_set_diagnostics.csv"
+    ),
     "fit_label_completion": (TABLE_DIR / "crpto_ijds_v4_tableS11_fit_label_completion.csv"),
     "allocation_granularity": (TABLE_DIR / "crpto_ijds_v4_tableS12_allocation_granularity.csv"),
 }
@@ -119,6 +122,11 @@ ROLLING_WINDOW_IDS = (
     "w07_2013m07_m12",
     "w08_2013m08_2014m01",
 )
+WINDOW_ORDINALS = tuple(f"W{index}" for index in range(1, 9))
+PRIMARY_ROLLING_PERIODS = ("2016-04", "2016-05", "2016-06")
+LATER_ROLLING_PERIODS = ("2017-04", "2017-05", "2017-06")
+PRIMARY_ROLLING_CENSUS = (74537, 74443, 94)
+LATER_ROLLING_CENSUS = (77105, 66091, 11014)
 PREDICTION_ROLES = (
     "pd_development",
     "probability_calibration",
@@ -889,7 +897,7 @@ def _phase_figure(phase: pd.DataFrame, *, output_dir: Path) -> dict[str, Path]:
         arrowprops={"arrowstyle": "->", "color": MID},
         fontsize=8,
     )
-    figure.suptitle("Binary residual geometry changes discontinuously at the prevalence threshold")
+    figure.suptitle("Observed stratum-2 geometry changes near the nominal prevalence threshold")
     figure.tight_layout()
     return _save_figure(figure, FIGURE_STEMS["phase_transition"], output_dir=output_dir)
 
@@ -1044,6 +1052,8 @@ def _load_diagnostic_inputs(
 class RollingInputs:
     summary_path: Path
     receipt_path: Path
+    freeze_path: Path
+    score_path: Path
     summary: dict[str, Any]
     artifacts: dict[str, Path]
     coverage: pd.DataFrame
@@ -1067,6 +1077,30 @@ def _load_rolling_inputs(
     _require_clean_execution(summary, label="The rolling-origin run")
     if summary.get("endpoint_reason_recovery") is not None:
         raise RuntimeError("The rolling-origin run violates its fresh-run boundary.")
+    freeze_path = _verified_path(summary["outcome_free_freeze"])
+    freeze = _read_json(freeze_path, label="Rolling-origin outcome-free freeze")
+    if (
+        freeze.get("status") != "verified_outcome_free_freeze_imported_before_archive_outcome_join"
+        or freeze.get("run_tag") != lineage["run_tag"]
+        or freeze.get("protocol_tag") != lineage["protocol_tag"]
+        or freeze.get("protocol_commit") != lineage["protocol_commit"]
+    ):
+        raise RuntimeError("The rolling-origin outcome-free freeze identity changed.")
+    score_path = _verified_path(freeze["outcome_free_artifacts"]["scores"])
+    rolling_scores = pd.read_parquet(
+        score_path,
+        columns=["id", "issue_d", "design_split"],
+    )
+    primary_scores = rolling_scores.loc[rolling_scores["design_split"].eq("primary_oot")].copy()
+    periods = tuple(
+        sorted(pd.to_datetime(primary_scores["issue_d"]).dt.to_period("M").astype(str).unique())
+    )
+    if (
+        periods != LATER_ROLLING_PERIODS
+        or len(primary_scores) != LATER_ROLLING_CENSUS[0]
+        or primary_scores["id"].duplicated().any()
+    ):
+        raise RuntimeError("The 2017 rolling-origin April--June candidate horizon changed.")
     artifacts = _verified_artifact_paths(summary["artifacts"])
     coverage_all = pd.read_parquet(artifacts["temporal_coverage"])
     coverage = coverage_all.loc[
@@ -1085,12 +1119,234 @@ def _load_rolling_inputs(
         ("candidate_rows", "resolved_rows", "unresolved_rows", "coverage_lower", "coverage_upper"),
         label="rolling-origin primary coverage",
     )
+    for column, expected in zip(
+        ("candidate_rows", "resolved_rows", "unresolved_rows"),
+        LATER_ROLLING_CENSUS,
+        strict=True,
+    ):
+        if not coverage[column].eq(expected).all():
+            raise RuntimeError(f"The 2017 rolling-origin {column} census changed.")
+    if not coverage["coverage_upper"].lt(0.90).all():
+        raise RuntimeError("The complete 2017 rolling-origin coverage result changed.")
     return RollingInputs(
+        summary_path=summary_path,
+        receipt_path=receipt_path,
+        freeze_path=freeze_path,
+        score_path=score_path,
+        summary=summary,
+        artifacts=artifacts,
+        coverage=coverage,
+    )
+
+
+@dataclass(frozen=True)
+class RollingPrimaryRecoveryInputs:
+    summary_path: Path
+    receipt_path: Path
+    summary: dict[str, Any]
+    artifacts: dict[str, Path]
+    coverage: pd.DataFrame
+
+
+def _load_rolling_primary_recovery_inputs(
+    registered: Mapping[str, Path],
+    lineage: Mapping[str, Any],
+) -> RollingPrimaryRecoveryInputs:
+    summary_path = registered["rolling_primary_recovery_summary"]
+    receipt_path = registered["rolling_primary_recovery_receipt"]
+    summary = _read_json(summary_path, label="Primary rolling-origin recovery summary")
+    if summary.get("status") != "complete_retrospective_primary_origin_horizon_recovery":
+        raise RuntimeError("The primary rolling-origin horizon recovery is incomplete.")
+    _require_identity(summary, lineage, label="Primary rolling-origin horizon recovery")
+    receipt = _read_json(receipt_path, label="Primary rolling-origin recovery receipt")
+    _require_identity(receipt, lineage, label="Primary rolling-origin recovery receipt")
+    if receipt.get("summary") != relative_artifact_descriptor(summary_path, repo_root=ROOT):
+        raise RuntimeError("The primary rolling-origin receipt no longer binds its summary.")
+    _require_clean_execution(summary, label="The primary rolling-origin recovery")
+    _require_clean_execution(receipt, label="The primary rolling-origin recovery receipt")
+
+    horizon = summary.get("primary_horizon", {})
+    if (
+        tuple(horizon.get("periods", ())) != PRIMARY_ROLLING_PERIODS
+        or tuple(
+            int(horizon[field]) for field in ("candidate_rows", "resolved_rows", "unresolved_rows")
+        )
+        != PRIMARY_ROLLING_CENSUS
+        or int(horizon.get("historical_full_primary_rows_rejected", -1)) != 376890
+        or int(horizon.get("historical_full_primary_months_rejected", -1)) != 15
+    ):
+        raise RuntimeError("The recovered 2016 April--June rolling horizon changed.")
+    monthly = pd.DataFrame(summary.get("monthly_endpoint_census", []))
+    require_exact_grid(
+        monthly,
+        domains={"period": PRIMARY_ROLLING_PERIODS},
+        label="primary rolling-origin monthly census",
+    )
+    if (
+        tuple(monthly.sort_values("period")["candidate_rows"].astype(int)) != (28106, 21831, 24600)
+        or tuple(monthly.sort_values("period")["resolved_rows"].astype(int))
+        != (28071, 21803, 24569)
+        or tuple(monthly.sort_values("period")["unresolved_rows"].astype(int)) != (35, 28, 31)
+    ):
+        raise RuntimeError("The recovered 2016 monthly endpoint census changed.")
+    if summary.get("all_eight_upper_below_nominal") is not True:
+        raise RuntimeError("The recovered 2016 complete coverage result changed.")
+
+    artifacts = _verified_artifact_paths(summary["artifacts"])
+    coverage = pd.read_parquet(artifacts["primary_2016_temporal_coverage"]).sort_values("window_id")
+    require_exact_grid(
+        coverage,
+        domains={"window_id": WINDOW_IDS},
+        label="recovered primary rolling-origin coverage",
+    )
+    require_finite(
+        coverage,
+        (
+            "candidate_rows",
+            "resolved_rows",
+            "unresolved_rows",
+            "coverage_resolved",
+            "coverage_lower",
+            "coverage_upper",
+            "mean_width",
+        ),
+        label="recovered primary rolling-origin coverage",
+    )
+    for column, expected in zip(
+        ("candidate_rows", "resolved_rows", "unresolved_rows"),
+        PRIMARY_ROLLING_CENSUS,
+        strict=True,
+    ):
+        if not coverage[column].eq(expected).all():
+            raise RuntimeError(f"The recovered 2016 rolling-origin {column} census changed.")
+    if len(coverage) != 8 or not coverage["coverage_upper"].lt(0.90).all():
+        raise RuntimeError("The recovered 2016 eight-window coverage result changed.")
+    if np.isclose(float(summary["coverage_upper_max"]), 0.8825970442304121):
+        raise RuntimeError("The stale 15-month primary maximum entered the rolling recovery.")
+    if not np.isclose(
+        float(summary["coverage_upper_max"]),
+        float(coverage["coverage_upper"].max()),
+        atol=0.0,
+        rtol=0.0,
+    ):
+        raise RuntimeError("The recovered 2016 maximum no longer matches its complete table.")
+    return RollingPrimaryRecoveryInputs(
         summary_path=summary_path,
         receipt_path=receipt_path,
         summary=summary,
         artifacts=artifacts,
         coverage=coverage,
+    )
+
+
+@dataclass(frozen=True)
+class ConformalSetDiagnosticInputs:
+    summary_path: Path
+    receipt_path: Path
+    summary: dict[str, Any]
+    artifacts: dict[str, Path]
+    table: pd.DataFrame
+    publication_table: pd.DataFrame
+
+
+def _load_conformal_set_diagnostic_inputs(
+    registered: Mapping[str, Path],
+    lineage: Mapping[str, Any],
+) -> ConformalSetDiagnosticInputs:
+    summary_path = registered["conformal_set_diagnostics_summary"]
+    receipt_path = registered["conformal_set_diagnostics_receipt"]
+    summary = _read_json(summary_path, label="Conformal-set diagnostic summary")
+    if summary.get("status") != "complete_retrospective_conformal_set_diagnostic":
+        raise RuntimeError("The conformal-set diagnostic is incomplete.")
+    _require_identity(summary, lineage, label="Conformal-set diagnostic")
+    receipt = _read_json(receipt_path, label="Conformal-set diagnostic receipt")
+    _require_identity(receipt, lineage, label="Conformal-set diagnostic receipt")
+    if receipt.get("summary") != relative_artifact_descriptor(summary_path, repo_root=ROOT):
+        raise RuntimeError("The conformal-set diagnostic receipt no longer binds its summary.")
+    _require_clean_execution(summary, label="The conformal-set diagnostic")
+    _require_clean_execution(receipt, label="The conformal-set diagnostic receipt")
+    expected_interpretation = {
+        "learner_or_window_selected": False,
+        "label_conditional_guarantee": False,
+        "selected_set_guarantee": False,
+        "funded_set_guarantee": False,
+        "latent_pd_interval": False,
+    }
+    if summary.get("interpretation") != expected_interpretation:
+        raise RuntimeError("The conformal-set diagnostic interpretation boundary changed.")
+    expected_counts = {
+        "learner_window_cells": 40,
+        "learners": 5,
+        "windows_per_learner": 8,
+        "candidate_rows": 376890,
+        "resolved_rows": 364814,
+        "unresolved_rows": 12076,
+        "resolved_y0_rows": 307842,
+        "resolved_y1_rows": 56972,
+    }
+    if summary.get("counts") != expected_counts:
+        raise RuntimeError("The conformal-set diagnostic census changed.")
+    if (
+        summary.get("reference_reconciliation", {}).get("canonical_coverage_and_geometry_match")
+        is not True
+    ):
+        raise RuntimeError("The conformal-set diagnostic no longer reconciles to active coverage.")
+
+    artifacts = _verified_artifact_paths(summary["artifacts"])
+    table = pd.read_parquet(artifacts["conformal_set_diagnostics"])
+    require_exact_grid(
+        table,
+        domains={"learner": CREDIT_LEARNER_ORDER, "window_id": WINDOW_IDS},
+        label="complete conformal-set diagnostic",
+    )
+    numeric = (
+        "coverage_resolved",
+        "coverage_resolved_y0",
+        "coverage_resolved_y1",
+        "average_set_size",
+        "singleton_share",
+        "set_empty_share",
+        "set_zero_only_share",
+        "set_one_only_share",
+        "set_both_share",
+        "mean_width",
+    )
+    require_finite(table, numeric, label="complete conformal-set diagnostic")
+    if (
+        not table["candidate_rows"].eq(376890).all()
+        or not table["resolved_rows"].eq(364814).all()
+        or not table["unresolved_rows"].eq(12076).all()
+        or not table["resolved_y0_rows"].eq(307842).all()
+        or not table["resolved_y1_rows"].eq(56972).all()
+        or not table["coverage_resolved_y0"].gt(table["coverage_resolved_y1"]).all()
+    ):
+        raise RuntimeError("The complete resolved-label diagnostic pattern changed.")
+    if not np.allclose(
+        table["average_set_size"],
+        1.0 - table["set_empty_share"] + table["set_both_share"],
+        atol=5.0e-14,
+        rtol=5.0e-14,
+    ) or not np.allclose(
+        table["singleton_share"],
+        table["set_zero_only_share"] + table["set_one_only_share"],
+        atol=5.0e-14,
+        rtol=5.0e-14,
+    ):
+        raise RuntimeError("The conformal-set cardinality identities changed.")
+    publication = table.copy()
+    publication.insert(1, "learner_label", publication["learner"].map(CREDIT_LEARNER_LABELS))
+    publication.insert(
+        2,
+        "window",
+        publication["window_id"].map(dict(zip(WINDOW_IDS, WINDOW_ORDINALS, strict=True))),
+    )
+    return ConformalSetDiagnosticInputs(
+        summary_path=summary_path,
+        receipt_path=receipt_path,
+        summary=summary,
+        artifacts=artifacts,
+        table=table,
+        publication_table=publication,
     )
 
 
@@ -1230,9 +1486,9 @@ def _stage_publication_generation(
         *TABLE_TARGETS.values(),
         *(target for targets in figure_targets.values() for target in targets.values()),
     }
-    if len(outputs) != 24 or set(outputs) != expected_targets:
+    if len(outputs) != 25 or set(outputs) != expected_targets:
         raise RuntimeError(
-            "The staged publication generation is not exactly 18 CSVs and 6 figures."
+            "The staged publication generation is not exactly 19 CSVs and 6 figures."
         )
     return StagedPublicationGeneration(
         table_paths=table_paths,
@@ -1308,6 +1564,7 @@ def _build_evidence(staging_root: Path) -> Path:
     endpoint_lineage = cast(dict[str, Any], sensitivities["endpoint_availability"])
     structural_lineage = cast(dict[str, Any], sensitivities["portfolio_structure"])
     rolling_lineage = cast(dict[str, Any], sensitivities["rolling_origin"])
+    rolling_primary_lineage = cast(dict[str, Any], sensitivities["rolling_origin_primary_recovery"])
     missingness_lineage = cast(dict[str, Any], sensitivities["missingness_encoding"])
     fit_label_lineage = cast(dict[str, Any], sensitivities["fit_label_completion"])
     granularity_lineage = cast(dict[str, Any], sensitivities["allocation_granularity"])
@@ -1395,6 +1652,26 @@ def _build_evidence(staging_root: Path) -> Path:
     rolling_summary = rolling.summary
     rolling_artifacts = rolling.artifacts
     rolling_coverage = rolling.coverage
+    rolling_primary = _load_rolling_primary_recovery_inputs(
+        registered,
+        rolling_primary_lineage,
+    )
+    rolling_primary_summary_path = rolling_primary.summary_path
+    rolling_primary_receipt_path = rolling_primary.receipt_path
+    rolling_primary_summary = rolling_primary.summary
+    rolling_primary_artifacts = rolling_primary.artifacts
+    rolling_primary_coverage = rolling_primary.coverage
+
+    conformal_set_diagnostics = _load_conformal_set_diagnostic_inputs(
+        registered,
+        cast(dict[str, Any], diagnostic_lineage["conformal_set_diagnostics"]),
+    )
+    conformal_set_summary_path = conformal_set_diagnostics.summary_path
+    conformal_set_receipt_path = conformal_set_diagnostics.receipt_path
+    conformal_set_summary = conformal_set_diagnostics.summary
+    conformal_set_artifacts = conformal_set_diagnostics.artifacts
+    conformal_set_table = conformal_set_diagnostics.table
+    conformal_set_publication_table = conformal_set_diagnostics.publication_table
 
     missingness = _load_missingness_inputs(registered, missingness_lineage)
     missingness_summary_path = missingness.summary_path
@@ -1572,12 +1849,23 @@ def _build_evidence(staging_root: Path) -> Path:
     ):
         raise RuntimeError("The primary endpoint-reason census changed.")
 
-    primary_origin = coverage.loc[coverage["learner"].eq("catboost_platt")].copy()
+    primary_origin = rolling_primary_coverage.copy()
     primary_origin.insert(0, "origin", "primary_2016")
+    primary_origin.insert(
+        1,
+        "window",
+        primary_origin["window_id"].map(dict(zip(WINDOW_IDS, WINDOW_ORDINALS, strict=True))),
+    )
     later_origin = rolling_coverage.copy()
     later_origin.insert(0, "origin", "rolling_2017")
+    later_origin.insert(
+        1,
+        "window",
+        later_origin["window_id"].map(dict(zip(ROLLING_WINDOW_IDS, WINDOW_ORDINALS, strict=True))),
+    )
     rolling_table_columns = [
         "origin",
+        "window",
         "window_id",
         "candidate_rows",
         "resolved_rows",
@@ -1591,7 +1879,21 @@ def _build_evidence(staging_root: Path) -> Path:
         [primary_origin[rolling_table_columns], later_origin[rolling_table_columns]],
         ignore_index=True,
     )
-    if len(rolling_table) != 16 or not rolling_table["coverage_upper"].lt(0.90).all():
+    require_exact_grid(
+        rolling_table,
+        domains={
+            "origin": ("primary_2016", "rolling_2017"),
+            "window": WINDOW_ORDINALS,
+        },
+        label="horizon-corrected two-origin rolling coverage",
+    )
+    if (
+        len(rolling_table) != 16
+        or not rolling_table["coverage_upper"].lt(0.90).all()
+        or rolling_table.loc[rolling_table["origin"].eq("primary_2016"), "candidate_rows"]
+        .eq(376890)
+        .any()
+    ):
         raise RuntimeError("The two-origin retrospective recurrence contract changed.")
 
     fit_coverage = (
@@ -1601,7 +1903,38 @@ def _build_evidence(staging_root: Path) -> Path:
         .rename("fit_coverage")
         .reset_index()
     )
-    coverage_table = coverage.merge(fit_coverage, on=["learner", "window_id"], how="left")
+    diagnostic_columns = [
+        "learner",
+        "window_id",
+        "coverage_resolved_y0",
+        "coverage_resolved_y1",
+        "average_set_size",
+        "singleton_share",
+    ]
+    coverage_table = coverage.merge(
+        fit_coverage,
+        on=["learner", "window_id"],
+        how="left",
+        validate="one_to_one",
+    ).merge(
+        conformal_set_table.loc[
+            conformal_set_table["learner"].isin(("catboost_platt", "numeric_logistic_platt")),
+            diagnostic_columns,
+        ],
+        on=["learner", "window_id"],
+        how="left",
+        validate="one_to_one",
+    )
+    require_finite(
+        coverage_table,
+        (
+            "coverage_resolved_y0",
+            "coverage_resolved_y1",
+            "average_set_size",
+            "singleton_share",
+        ),
+        label="paper-facing coverage and set diagnostics",
+    )
     phase_table = phase[
         [
             "window_id",
@@ -1667,6 +2000,7 @@ def _build_evidence(staging_root: Path) -> Path:
             "endpoint_resolution": endpoint_resolution_table,
             "missingness_encoding": missingness_table,
             "rolling_origin": rolling_table,
+            "conformal_set_diagnostics": conformal_set_publication_table,
             "fit_label_completion": fit_label_table,
             "allocation_granularity": granularity_table,
         },
@@ -1749,6 +2083,12 @@ def _build_evidence(staging_root: Path) -> Path:
             "portfolio_structure_sensitivity/summary": structural_summary_path,
             "rolling_origin/summary": rolling_summary_path,
             "rolling_origin/execution_receipt": rolling_receipt_path,
+            "rolling_origin/outcome_free_freeze": rolling.freeze_path,
+            "rolling_origin/outcome_free_scores": rolling.score_path,
+            "rolling_origin_primary_recovery/summary": rolling_primary_summary_path,
+            "rolling_origin_primary_recovery/execution_receipt": (rolling_primary_receipt_path),
+            "conformal_set_diagnostics/summary": conformal_set_summary_path,
+            "conformal_set_diagnostics/execution_receipt": conformal_set_receipt_path,
             "missingness_encoding/summary": missingness_summary_path,
             "missingness_encoding/execution_receipt": missingness_receipt_path,
             "missingness_encoding/freeze": missingness_freeze_path,
@@ -1770,6 +2110,8 @@ def _build_evidence(staging_root: Path) -> Path:
             "endpoint_availability_sensitivity": endpoint_sensitivity_artifacts,
             "portfolio_structure_sensitivity": structural_artifacts,
             "rolling_origin": _without_simulation_artifacts(rolling_artifacts),
+            "rolling_origin_primary_recovery": rolling_primary_artifacts,
+            "conformal_set_diagnostics": conformal_set_artifacts,
             "missingness_encoding/evaluation": missingness_artifacts,
             "missingness_encoding/outcome_free": missingness_freeze_artifacts,
             "missingness_encoding/models": missingness_model_artifacts,
@@ -1781,7 +2123,7 @@ def _build_evidence(staging_root: Path) -> Path:
     )
     paper_artifact_descriptors = _paper_artifact_descriptors(publication_generation)
     evidence = {
-        "schema_version": "2026-07-15.4",
+        "schema_version": "2026-07-21.1",
         "status": "active_ijds_v5_endpoint_reason_audited_paper_facing_evidence",
         "source_registry": {
             "schema_version": str(registry["schema_version"]),
@@ -1857,6 +2199,33 @@ def _build_evidence(staging_root: Path) -> Path:
             ),
             "rows": coverage_table.to_dict(orient="records"),
         },
+        "conformal_set_diagnostics": {
+            "scope": "all_five_learners_all_eight_windows_primary_oot",
+            "run_tag": str(conformal_set_summary["run_tag"]),
+            "protocol_tag": str(conformal_set_summary["protocol_tag"]),
+            "protocol_commit": str(conformal_set_summary["protocol_commit"]),
+            "learner_window_cells": int(len(conformal_set_table)),
+            "all_forty_resolved_y0_coverage_above_y1": bool(
+                conformal_set_table["coverage_resolved_y0"]
+                .gt(conformal_set_table["coverage_resolved_y1"])
+                .all()
+            ),
+            "resolved_y0_coverage_min": float(conformal_set_table["coverage_resolved_y0"].min()),
+            "resolved_y0_coverage_max": float(conformal_set_table["coverage_resolved_y0"].max()),
+            "resolved_y1_coverage_min": float(conformal_set_table["coverage_resolved_y1"].min()),
+            "resolved_y1_coverage_max": float(conformal_set_table["coverage_resolved_y1"].max()),
+            "ranges": list(conformal_set_summary["ranges"]),
+            "reference_reconciliation": dict(conformal_set_summary["reference_reconciliation"]),
+            "interpretation": {
+                **dict(conformal_set_summary["interpretation"]),
+                "conditions_on_administrative_resolution": True,
+                "unresolved_classes_known": False,
+                "all_candidate_label_conditional_coverage_estimated": False,
+                "label_mondrian_method": False,
+                "fairness_or_equalized_coverage_claim": False,
+            },
+            "rows": conformal_set_publication_table.to_dict(orient="records"),
+        },
         "evaluation_endpoint": {
             **dict(config["target"]["evaluation_outcome_contract"]),
             "role": str(config["source"]["snapshot_date_role"]),
@@ -1931,7 +2300,25 @@ def _build_evidence(staging_root: Path) -> Path:
                 "run_tag": str(rolling_summary["run_tag"]),
                 "protocol_tag": str(rolling_summary["protocol_tag"]),
                 "protocol_commit": str(rolling_summary["protocol_commit"]),
+                "primary_recovery_run_tag": str(rolling_primary_summary["run_tag"]),
+                "primary_recovery_protocol_tag": str(rolling_primary_summary["protocol_tag"]),
+                "primary_recovery_protocol_commit": str(rolling_primary_summary["protocol_commit"]),
                 "origins": ["primary_2016", "rolling_2017"],
+                "primary_2016_periods": list(PRIMARY_ROLLING_PERIODS),
+                "rolling_2017_periods": list(LATER_ROLLING_PERIODS),
+                "primary_2016_census": {
+                    "candidate_rows": PRIMARY_ROLLING_CENSUS[0],
+                    "resolved_rows": PRIMARY_ROLLING_CENSUS[1],
+                    "unresolved_rows": PRIMARY_ROLLING_CENSUS[2],
+                },
+                "rolling_2017_census": {
+                    "candidate_rows": LATER_ROLLING_CENSUS[0],
+                    "resolved_rows": LATER_ROLLING_CENSUS[1],
+                    "unresolved_rows": LATER_ROLLING_CENSUS[2],
+                },
+                "common_horizon_months": 3,
+                "window_alignment": "ordinal_W1_through_W8_with_origin_specific_fit_dates",
+                "historical_primary_15_month_horizon_excluded": True,
                 "origin_count": 2,
                 "window_cells": int(len(rolling_table)),
                 "all_sixteen_upper_below_nominal": bool(
@@ -2220,9 +2607,12 @@ def _build_evidence(staging_root: Path) -> Path:
         },
         "audit_thesis": (
             "Binary absolute-residual conformal coverage does not transport to the later "
-            "archive under five declared credit-risk model specifications, recurs in the "
-            "only additional feasible origin, persists under three missing-value encodings, "
-            "and remains below nominal under four declared fit-label scenarios. A "
+            "archive under five declared credit-risk model specifications, recurs on the "
+            "common three-month horizon at the only additional feasible origin, persists "
+            "under three missing-value encodings, and remains below nominal under four "
+            "declared fit-label scenarios. Across all five models and windows, resolved-panel "
+            "coverage is descriptively lower for observed defaults than for observed "
+            "nondefaults; this is not a label-conditional conformal guarantee. A "
             "prevalence-threshold crossing explains one observed geometry change but is "
             "not invariant to every fit-label scenario. Portfolio direction is not identified "
             "without outcome-free comparator support and is not invariant to the declared "

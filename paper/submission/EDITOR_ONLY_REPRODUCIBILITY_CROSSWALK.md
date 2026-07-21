@@ -51,12 +51,16 @@ scenario and reconciles the baseline exactly to the active evaluation.
 Structural V1--V4 remain stopped provenance; V5 is a data-only replay
 dependency for V6 and is not paper-facing evidence.
 
-The later-origin recurrence is
+The common-three-month two-origin recurrence combines primary-origin recovery
+`ijds-rolling-origin-primary-recovery-2026-07-21-v1`, protocol-locked at commit
+`8bb24b819f0559036a4723ba83bd2c50354bc435`, with later-origin run
 `ijds-rolling-origin-2017-2026-07-15-v4`, protocol-locked at commit
-`e2bba580a0b07c145bd64ff61440973d6e31349b`. The missingness recurrence is
+`e2bba580a0b07c145bd64ff61440973d6e31349b`. The resolved-label and set-efficiency
+diagnostic is `ijds-conformal-set-diagnostics-2026-07-21-v1`, protocol-locked at
+commit `5248099e2c02fa0340acb6d9c0ef5fbaa1b4e3cf`. The missingness recurrence is
 `ijds-missingness-sensitivity-2026-07-15-v3`, protocol-locked at commit
-`199afb083da37af6a51d5ba9e3c4d6280b952fe9`. Both report their declared grids
-without selecting a model, encoding, or origin.
+`199afb083da37af6a51d5ba9e3c4d6280b952fe9`. These complete grids select no
+model, encoding, origin, or observed-label subgroup.
 
 The fit-label completion sensitivity is
 `ijds-fit-label-completion-sensitivity-2026-07-16-v2`, protocol-locked at
@@ -69,7 +73,7 @@ their freezes, summaries, and DVC roots are verified by the source registry.
 
 ## DVC Capsule
 
-The 33 DVC pointers are listed once in `configs/ijds_active_evidence_sources.yaml`.
+The 37 DVC pointers are listed once in `configs/ijds_active_evidence_sources.yaml`.
 They comprise data and model pointers for the active roots and sensitivities,
 plus the data-only structural replay dependency. Pull with:
 

@@ -1,4 +1,4 @@
-# CRPTO Active IJDS Claim Registry - 2026-07-15
+# CRPTO Active IJDS Claim Registry - 2026-07-21
 
 This is the sole claim registry for the active IJDS manuscript. Numerical
 statements must be traceable to
@@ -107,13 +107,32 @@ pre-endpoint-correction evaluations are provenance only.
 
 ### Second temporal origin
 
+- Primary-origin common-horizon recovery:
+  `ijds-rolling-origin-primary-recovery-2026-07-21-v1`, tag
+  `protocol/ijds-rolling-origin-primary-recovery-2026-07-21-v1`, commit
+  `8bb24b819f0559036a4723ba83bd2c50354bc435`.
 - Complete later-origin run:
   `ijds-rolling-origin-2017-2026-07-15-v4`, tag
   `protocol/ijds-rolling-origin-stability-2026-07-15-v4`, commit
   `e2bba580a0b07c145bd64ff61440973d6e31349b`.
-- The later origin repeats the declared CatBoost coverage audit over eight
-  shifted residual windows. It is a two-origin retrospective recurrence, not an
-  independent replication, prospective validation, or invariance result.
+- The recovery restricts the 2016 source mechanically to April--June
+  (74,537 candidates; 74,443 resolved; 94 unresolved), rather than reusing its
+  15-month primary panel. The later origin uses April--June 2017 (77,105;
+  66,091; 11,014). Each origin contributes all eight declared CatBoost windows.
+  This is a two-origin retrospective recurrence, not an independent
+  replication, prospective validation, or invariance result.
+
+### Conformal-set and resolved-label diagnostic
+
+- Complete five-model run:
+  `ijds-conformal-set-diagnostics-2026-07-21-v1`, tag
+  `protocol/ijds-conformal-set-diagnostics-2026-07-21-v1`, commit
+  `5248099e2c02fa0340acb6d9c0ef5fbaa1b4e3cf`.
+- It reports all 40 learner-window cells, reconciles their candidate coverage
+  and set geometry to the active evaluation at machine tolerance, and selects
+  no learner or window. Coverage stratified by observed label conditions on the
+  administratively resolved panel; it is not all-candidate label-conditional
+  validity, a label-Mondrian procedure, or a fairness result.
 
 ### Fit-label completion sensitivity
 
@@ -193,9 +212,14 @@ pre-endpoint-correction evaluations are provenance only.
   neither a confidence interval for individual latent PD nor constructed as the
   convex hull of a discrete prediction set; it does not equal that hull in
   general.
-- Exact all-candidate sharp coverage bounds are
-  `1 - mean(miss_high)` and `1 - mean(miss_low)`. Singleton, empty, and
-  `{0,1}` prediction sets are handled loan by loan.
+- The canonical binary prediction set is
+  `S_i = {y in {0,1}: |y-p_i| <= c_g} = [l_i,u_i] intersect {0,1}`. Average
+  cardinality (`AvgC`), singleton share (`OneC`), and the empty and two-label
+  shares are efficiency and degeneracy diagnostics, not coverage guarantees.
+- Exact all-candidate sharp coverage bounds keep each resolved candidate's
+  observed miss indicator fixed and extremize only each unresolved candidate's
+  two attainable miss indicators. Singleton, empty, and `{0,1}` prediction
+  sets are handled loan by loan.
 
 ## Active Exact Statements
 
@@ -231,6 +255,7 @@ pre-endpoint-correction evaluations are provenance only.
 ## Coverage and Geometry Evidence
 
 <!-- claim:coverage.five_models_all_windows_below_nominal -->
+<!-- claim:coverage.resolved_label_diagnostic_descriptive -->
 <!-- claim:timing.fit_label_crossing_retained -->
 <!-- claim:sensitivity.second_origin_coverage_recurrence -->
 <!-- claim:sensitivity.missingness_encoding_recurrence -->
@@ -261,9 +286,18 @@ coverage upper bounds are below 0.90 for every model:
   active convention (maximum 0.882597), explicit indicators (0.884332), and
   native nullable features (0.880037). It neither identifies the missingness
   mechanism nor authorizes an encoding winner or portfolio claim.
-- At the later temporal origin, all eight CatBoost upper bounds are also below
-  0.90 (maximum 0.874768), versus 0.882597 at the primary origin. These 16 cells
-  are two retrospective origin-window families, not independent replications.
+- On the common three-month horizon, all eight CatBoost upper bounds are below
+  0.90 at both origins. The corrected April--June 2016 maximum is 0.875364 and
+  the April--June 2017 maximum is 0.874768. The 15-month primary maximum
+  0.882597 remains the main coverage estimand and is not used in this origin
+  comparison. These 16 cells are two retrospective origin-window families,
+  not independent replications.
+- Across all five learners and eight windows, resolved-panel nondefault
+  coverage ranges from 0.982982 to 0.992714, whereas resolved-panel default
+  coverage ranges from 0.232570 to 0.363916. This 40-cell descriptive
+  stratification conditions on administrative resolution: unresolved classes
+  remain unknown, so it does not estimate label-conditional coverage for all
+  candidates or authorize a fairness claim.
 - Four declared fit-label scenarios cover 41 unavailable PD-development labels,
   24 Platt labels, and 150 conformal-fit labels. Every one of the 32 overall
   coverage upper bounds is below 0.90; scenario maxima range from 0.882594 to
@@ -392,8 +426,13 @@ The complete endpoint-availability sensitivity is:
   coverage fails after temporal transport before optimization for all five
   reported score specifications.
 - The same CatBoost coverage finding recurs under three feature-semantics-
-  preserving missingness encodings and at one later retrospective origin,
-  without selecting an encoding or claiming independent replication.
+  preserving missingness encodings and at one later retrospective origin on a
+  common April--June horizon, without selecting an encoding or claiming
+  independent replication.
+- Resolved-panel coverage is substantially lower for observed defaults than
+  observed nondefaults in every one of the 40 reported learner-window cells;
+  this is a descriptive resolved-label diagnostic, not all-candidate
+  label-conditional validity.
 - The coverage finding also survives all four declared fit-label scenarios;
   the W7--W8 geometric crossing survives only three of them.
 - Binary absolute-residual geometry is prevalence-sensitive but not invariant

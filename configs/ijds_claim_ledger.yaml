@@ -1,4 +1,4 @@
-schema_version: "2026-07-15.3"
+schema_version: "2026-07-21.1"
 status: active_ijds_claim_contract
 
 surfaces:
@@ -60,6 +60,21 @@ claims:
       required: [body, supplement, registry, claim_matrix]
       allowed: [body, supplement, registry, claim_matrix]
 
+  - id: coverage.resolved_label_diagnostic_descriptive
+    status: active
+    kind: empirical
+    rule: equals
+    result_pointer: /conformal_set_diagnostics/all_forty_resolved_y0_coverage_above_y1
+    expected: true
+    lineages: [credit_controls.evaluation, conformal_set_diagnostics]
+    scope: resolved_primary_oot_panel_all_five_learners_all_eight_windows
+    forbidden_inference:
+      [label_conditional_guarantee, all_candidate_class_coverage, label_mondrian_method,
+       fairness_or_equalized_coverage]
+    surfaces:
+      required: [body, supplement, registry, claim_matrix]
+      allowed: [body, supplement, registry, claim_matrix]
+
   - id: geometry.prevalence_sensitive_mechanism
     status: active
     kind: theorem
@@ -103,8 +118,8 @@ claims:
     rule: equals
     result_pointer: /sensitivity/rolling_origin/all_sixteen_upper_below_nominal
     expected: true
-    lineages: [binary_geometry.evaluation, rolling_origin]
-    scope: two_retrospective_origins_eight_windows_each
+    lineages: [binary_geometry.outcome_free, rolling_origin_primary_recovery, rolling_origin]
+    scope: two_retrospective_origins_common_april_june_horizon_eight_windows_each_excluding_primary_fifteen_month_panel
     forbidden_inference: [independent_replication, temporal_invariance, prospective_validation]
     surfaces:
       required: [body, supplement, registry, claim_matrix]

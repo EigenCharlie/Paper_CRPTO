@@ -32,11 +32,13 @@ def test_full_ty_scope_adds_only_sealed_compatibility_sources() -> None:
 def test_ty_command_pins_version_and_keeps_daily_scope_advisory() -> None:
     command = build_ty_command(
         uvx="uvx",
+        python_environment="C:/tmp/crpto-python",
         files=["src/example.py"],
         fail_on_diagnostics=False,
     )
 
     assert command[:4] == ["uvx", "--from", TY_REQUIREMENT, "ty"]
+    assert command[command.index("--python") + 1] == "C:/tmp/crpto-python"
     assert "--exit-zero" in command
     assert command[-1] == "src/example.py"
 
@@ -44,6 +46,7 @@ def test_ty_command_pins_version_and_keeps_daily_scope_advisory() -> None:
 def test_ty_command_can_block_the_submission_gate() -> None:
     command = build_ty_command(
         uvx="uvx",
+        python_environment="C:/tmp/crpto-python",
         files=["src/example.py"],
         fail_on_diagnostics=True,
     )

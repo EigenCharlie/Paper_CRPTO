@@ -178,8 +178,10 @@ def _validate_endpoint_census(outcomes: pd.DataFrame, endpoint_audit: pd.DataFra
             f"Primary-origin endpoint census changed: {observed_census} != {EXPECTED_CENSUS}."
         )
     reasons = {
-        str(row.snapshot_resolution): int(row.candidate_rows)
-        for row in endpoint_audit.itertuples(index=False)
+        str(snapshot_resolution): int(candidate_rows)
+        for snapshot_resolution, candidate_rows in endpoint_audit.loc[
+            :, ["snapshot_resolution", "candidate_rows"]
+        ].itertuples(index=False, name=None)
     }
     if reasons != EXPECTED_REASON_CENSUS:
         raise RuntimeError(

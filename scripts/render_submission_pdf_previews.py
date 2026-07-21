@@ -78,7 +78,10 @@ def _wsl_windows_path(path: Path) -> str:
 
 
 def _browser_paths(chrome: Path, html_path: Path, pdf_path: Path) -> tuple[str, str]:
-    if os.name != "nt" and chrome.suffix.lower() == ".exe":
+    is_wsl_windows_browser = (
+        chrome.suffix.lower() == ".exe" and chrome.as_posix().lower().startswith("/mnt/")
+    )
+    if is_wsl_windows_browser:
         html_windows = _wsl_windows_path(html_path).replace("\\", "/")
         html_uri = "file:///" + quote(html_windows, safe="/:")
         return html_uri, _wsl_windows_path(pdf_path)

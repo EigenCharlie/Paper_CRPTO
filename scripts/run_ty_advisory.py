@@ -6,6 +6,7 @@ import argparse
 import re
 import shutil
 import subprocess
+import sys
 from collections.abc import Sequence
 from pathlib import Path
 
@@ -59,7 +60,13 @@ def iter_python_files(*, scope: str) -> list[str]:
     ]
 
 
-def build_ty_command(*, uvx: str, files: Sequence[str], fail_on_diagnostics: bool) -> list[str]:
+def build_ty_command(
+    *,
+    uvx: str,
+    python_environment: str,
+    files: Sequence[str],
+    fail_on_diagnostics: bool,
+) -> list[str]:
     """Build the pinned ty command for advisory or blocking use."""
     command = [
         uvx,
@@ -68,7 +75,7 @@ def build_ty_command(*, uvx: str, files: Sequence[str], fail_on_diagnostics: boo
         "ty",
         "check",
         "--python",
-        ".venv",
+        python_environment,
         "--output-format",
         "concise",
         "--no-progress",
@@ -97,6 +104,7 @@ def run_ty(
     files = iter_python_files(scope=scope)
     command = build_ty_command(
         uvx=uvx,
+        python_environment=str(Path(sys.prefix).resolve()),
         files=files,
         fail_on_diagnostics=fail_on_diagnostics,
     )
