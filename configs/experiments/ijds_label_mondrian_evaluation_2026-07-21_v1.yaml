@@ -1,22 +1,21 @@
 schema_version: "2026-07-21.1"
-phase: "pending_outcome_free_freeze_descriptor"
+phase: "endpoint_evaluation_locked"
 run_tag: "ijds-label-mondrian-evaluation-2026-07-21-v1"
 protocol_tag: "protocol/ijds-label-mondrian-evaluation-2026-07-21-v1"
 
-# After the F1 freeze is produced, replace all PENDING values with its exact
-# descriptor and protocol commit, change phase to endpoint_evaluation_locked,
-# commit, and create the evaluation protocol tag before running E1.
+# F1 freeze and receipt descriptors were locked after the outcome-isolated run
+# and before the first endpoint evaluation.
 source:
   label_mondrian_freeze:
     path: "models/experiments/ijds_audit/ijds-label-mondrian-freeze-2026-07-21-v1/protocol_freeze.json"
-    bytes: -1
-    sha256: "PENDING_AFTER_OUTCOME_FREE_FREEZE"
+    bytes: 5909
+    sha256: "2e8e151bfb81b5451d1b944b60a3652ac866dd5c700ce3465df0e83f334c4766"
   label_mondrian_freeze_receipt:
     path: "models/experiments/ijds_audit/ijds-label-mondrian-freeze-2026-07-21-v1/execution_receipt.json"
-    bytes: -1
-    sha256: "PENDING_AFTER_OUTCOME_FREE_FREEZE"
+    bytes: 1432
+    sha256: "4867a70a5bcd30574b3f9ed12d1f748dc643270d276c0139d7a1bf42c0600f01"
   freeze_protocol_tag: "protocol/ijds-label-mondrian-freeze-2026-07-21-v1"
-  freeze_protocol_commit: "PENDING_AFTER_OUTCOME_FREE_FREEZE"
+  freeze_protocol_commit: "c9d30b02885bac516ae21eae32c56120cf7d296e"
   active_v5_config:
     path: "configs/experiments/ijds_binary_geometry_frontier_v4_2026-07-15_v5.yaml"
     bytes: 1371

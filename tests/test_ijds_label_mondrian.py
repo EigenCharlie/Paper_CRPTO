@@ -468,7 +468,7 @@ def test_two_strata_remain_visible_when_an_aggregate_hides_a_category_failure() 
     )
 
 
-def test_configs_lock_f1_and_keep_e1_blocked_until_the_freeze_is_hashed() -> None:
+def test_configs_lock_f1_and_hash_lock_e1_to_the_freeze_and_receipt() -> None:
     freeze = load_label_mondrian_config(FREEZE_CONFIG)
     learners, windows, groups, alpha = declared_grid(freeze)
     assert freeze["phase"] == "evaluation_outcome_free_threshold_freeze"
@@ -480,24 +480,20 @@ def test_configs_lock_f1_and_keep_e1_blocked_until_the_freeze_is_hashed() -> Non
     assert freeze["design"]["expected_threshold_cells"] == 400
 
     evaluation = load_label_mondrian_config(EVALUATION_CONFIG)
-    assert evaluation["phase"] == "pending_outcome_free_freeze_descriptor"
+    assert evaluation["phase"] == "endpoint_evaluation_locked"
     assert evaluation["design"]["expected_target_category_cells"] == 400
     assert evaluation["design"]["expected_target_stratum_cells"] == 200
     assert evaluation["output"]["category_evaluation"].endswith(".parquet")
     assert evaluation["output"]["stratum_evaluation"].endswith(".parquet")
-    with pytest.raises(RuntimeError, match="remains pending"):
-        require_locked_evaluation_source(evaluation)
+    require_locked_evaluation_source(evaluation)
 
     locked = deepcopy(evaluation)
-    locked["phase"] = "endpoint_evaluation_locked"
-    locked["source"]["freeze_protocol_commit"] = "a" * 40
-    locked["source"]["label_mondrian_freeze"]["bytes"] = 1
-    locked["source"]["label_mondrian_freeze"]["sha256"] = "b" * 64
+    locked["source"]["label_mondrian_freeze_receipt"]["bytes"] = -1
+    locked["source"]["label_mondrian_freeze_receipt"]["sha256"] = (
+        "PENDING_AFTER_OUTCOME_FREE_FREEZE"
+    )
     with pytest.raises(RuntimeError, match="still pending"):
         require_locked_evaluation_source(locked)
-    locked["source"]["label_mondrian_freeze_receipt"]["bytes"] = 1
-    locked["source"]["label_mondrian_freeze_receipt"]["sha256"] = "c" * 64
-    require_locked_evaluation_source(locked)
 
 
 def test_protocol_predeclares_exact_ranks_sharp_ratios_gap_and_claim_boundaries() -> None:
