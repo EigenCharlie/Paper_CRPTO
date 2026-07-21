@@ -83,6 +83,8 @@ def test_extra_scripts_are_only_sealed_path_bound_compatibility() -> None:
 
 def test_manual_full_workflow_runs_the_collected_suite() -> None:
     workflow = _text(".github/workflows/tests-full.yml")
+    assert "fetch-depth: 0" in workflow
+    assert "fetch-tags: true" in workflow
     assert "uses: extractions/setup-just@v4" in workflow
     assert 'just-version: "1.56.0"' in workflow
     assert "run: just coverage" in workflow
