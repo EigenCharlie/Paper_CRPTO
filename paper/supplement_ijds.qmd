@@ -195,6 +195,12 @@ Only the four internal five-stratum cutpoints assign groups; the extreme bins
 extend beyond the observed 2011 score range and therefore retain all later
 valid scores.
 
+The executable primary specification uses 500 trees, depth 6, learning rate
+0.04, `Balanced` automatic class weights, Bernoulli bootstrap with 0.80
+subsampling, `has_time=true`, and a temporal validation tail comprising the
+last 20% of PD-development months. These values and seed 42 are inherited from
+the locked design rather than selected on downstream outcomes.
+
 A numeric logistic regression provides the first coverage-only
 control. It uses median imputation, standard scaling, class balancing, and its
 own 2011 Platt map and fixed taxonomy. Three further controls use the same
@@ -224,6 +230,18 @@ taxonomy. None of the four controls enters the portfolio optimizer or is chosen
 from OOT outcomes. They ask whether coverage transport is specific to model
 class, unconstrained shape, or platform pricing; they are not a model-selection
 contest.
+
+| Learner | 2011 Platt-block AUC | 2011 Platt-block Brier |
+|---|---:|---:|
+| CatBoost | 0.676327 | 0.090206 |
+| Numeric logistic | 0.656880 | 0.091000 |
+| Monotonic CatBoost | 0.678091 | 0.090054 |
+| Platform-signal WOE scorecard | 0.660533 | 0.090773 |
+| Pricing-excluded application WOE scorecard | 0.662401 | 0.090760 |
+
+**Table S2A.** Frozen probability-calibration-block discrimination and Brier
+scores. These diagnostics describe the common 2011 role; they do not select a
+learner.
 
 The raw audit labels 30 origination fields as temporally eligible, whereas the
 frozen model consumes engineered predictors rather than every eligible raw
