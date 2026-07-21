@@ -1,4 +1,4 @@
-"""Portfolio optimization with native HiGHS and optional compatibility backends.
+"""Portfolio optimization with native and sparse HiGHS backends.
 
 Maximizes expected return net of expected loss under credit constraints.
 Supports multiple uncertainty policies for PD constraints:
@@ -6,8 +6,9 @@ Supports multiple uncertainty policies for PD constraints:
 - hard_worst_case: uses conformal upper bound
 - blended_uncertainty: interpolates between point and upper bound
 
-The active IJDS path uses the direct ``highspy`` formulation. Pyomo remains a
-lazy-loaded compatibility backend for historical replay and cross-solver tests.
+The active IJDS path uses the direct ``highspy`` formulation. SciPy's sparse
+HiGHS interface is the deterministic fallback and independent implementation
+check; no GPU or symbolic modeling layer is required.
 """
 
 from __future__ import annotations
@@ -35,18 +36,6 @@ class _PortfolioLpComponents:
     rhs: np.ndarray
     bounds: list[tuple[float, float]]
     use_pd_slack: bool
-
-
-def _require_pyomo() -> Any:
-    """Import the compatibility modeling layer only when explicitly requested."""
-    try:
-        import pyomo.environ as pyo
-    except ImportError as exc:  # pragma: no cover - exercised in minimal installs
-        raise RuntimeError(
-            "The Pyomo compatibility backend is not installed. "
-            "Run `uv sync --group compat` or use the native highspy backend."
-        ) from exc
-    return pyo
 
 
 def solution_allocation_vector(solution: Mapping[str, Any], n_items: int) -> np.ndarray:
@@ -203,244 +192,6 @@ def _segment_tail_delta(
     return local_delta
 
 
-def build_portfolio_model(
-    loans: pd.DataFrame,
-    pd_point: np.ndarray,
-    pd_low: np.ndarray,
-    pd_high: np.ndarray,
-    lgd: np.ndarray,
-    int_rates: np.ndarray,
-    total_budget: float = 1_000_000,
-    max_concentration: float = 0.25,
-    max_portfolio_pd: float = 0.10,
-    robust: bool = True,
-    uncertainty_aversion: float = 0.0,
-    min_budget_utilization: float = 0.0,
-    pd_cap_slack_penalty: float = 0.0,
-    pd_constraint_override: np.ndarray | None = None,
-) -> Any:
-    """Build Pyomo portfolio optimization model.
-
-    Args:
-        loans: DataFrame with loan features.
-        pd_point: Point PD estimates.
-        pd_low: Lower bound PD from conformal prediction.
-        pd_high: Upper bound PD from conformal prediction.
-        lgd: Loss Given Default estimates.
-        int_rates: Interest rates (expected return).
-        total_budget: Total capital to allocate.
-        max_concentration: Maximum fraction per purpose segment.
-        max_portfolio_pd: Maximum portfolio-level default rate.
-        robust: If True, use pd_high for risk constraints.
-        uncertainty_aversion: Linear penalty weight on PD uncertainty in the objective.
-        min_budget_utilization: Optional minimum budget utilization in [0, 1].
-        pd_cap_slack_penalty: Optional penalty for weighted-PD cap slack.
-
-    Returns:
-        Pyomo ConcreteModel ready to solve.
-    """
-    pyo = _require_pyomo()
-    n = len(loans)
-    model = pyo.ConcreteModel("CreditPortfolioOptimization")
-
-    model.I = pyo.RangeSet(0, n - 1)
-
-    model.int_rate = pyo.Param(model.I, initialize=dict(enumerate(int_rates)))
-    pd_constraint = (
-        np.asarray(pd_constraint_override, dtype=float)
-        if pd_constraint_override is not None
-        else (pd_high if robust else pd_point)
-    )
-    model.pd_point = pyo.Param(model.I, initialize=dict(enumerate(pd_point)))
-    model.pd_worst = pyo.Param(model.I, initialize=dict(enumerate(pd_constraint)))
-    pd_uncertainty = np.clip(pd_high - pd_point, 0.0, 1.0)
-    model.pd_uncertainty = pyo.Param(model.I, initialize=dict(enumerate(pd_uncertainty)))
-    model.lgd = pyo.Param(model.I, initialize=dict(enumerate(lgd)))
-    model.loan_amnt = pyo.Param(
-        model.I,
-        initialize=dict(
-            enumerate(loans["loan_amnt"].values if "loan_amnt" in loans.columns else np.ones(n))
-        ),
-    )
-
-    # x[i] = fraction of loan i to fund
-    model.x = pyo.Var(model.I, domain=pyo.NonNegativeReals, bounds=(0, 1))
-    use_pd_slack = pd_cap_slack_penalty > 0
-    if use_pd_slack:
-        # Slack in weighted-PD units to avoid degenerate zero-investment solutions.
-        model.pd_cap_slack = pyo.Var(domain=pyo.NonNegativeReals)
-
-    def objective_rule(m: Any) -> Any:
-        base = sum(
-            m.x[i]
-            * m.loan_amnt[i]
-            * (
-                m.int_rate[i]
-                - m.pd_point[i] * m.lgd[i]
-                - uncertainty_aversion * m.pd_uncertainty[i] * m.lgd[i]
-            )
-            for i in m.I
-        )
-        if use_pd_slack:
-            return base - pd_cap_slack_penalty * m.pd_cap_slack
-        return base
-
-    model.obj = pyo.Objective(rule=objective_rule, sense=pyo.maximize)
-
-    def budget_rule(m: Any) -> Any:
-        return sum(m.x[i] * m.loan_amnt[i] for i in m.I) <= total_budget
-
-    model.budget = pyo.Constraint(rule=budget_rule)
-
-    min_budget_utilization = float(np.clip(min_budget_utilization, 0.0, 1.0))
-    if min_budget_utilization > 0:
-
-        def min_budget_rule(m: Any) -> Any:
-            return (
-                sum(m.x[i] * m.loan_amnt[i] for i in m.I) >= min_budget_utilization * total_budget
-            )
-
-        model.min_budget = pyo.Constraint(rule=min_budget_rule)
-
-    def pd_cap_rule(m: Any) -> Any:
-        total_exposure = sum(m.x[i] * m.loan_amnt[i] for i in m.I) + 1e-6
-        weighted_pd = sum(m.x[i] * m.loan_amnt[i] * m.pd_worst[i] for i in m.I)
-        rhs = max_portfolio_pd * total_exposure
-        if use_pd_slack:
-            rhs = rhs + m.pd_cap_slack
-        return weighted_pd <= rhs
-
-    model.pd_cap = pyo.Constraint(rule=pd_cap_rule)
-
-    if "purpose" in loans.columns:
-        purposes = loans["purpose"].fillna("unknown").astype(str).unique()
-        loan_purpose = loans["purpose"].fillna("unknown").astype(str).values
-        for p_idx, purpose in enumerate(purposes):
-            mask = [i for i in range(n) if loan_purpose[i] == purpose]
-
-            def concentration_rule(m: Any, _idx: Any = None, _mask: list[int] = mask) -> Any:
-                total = sum(m.x[i] * m.loan_amnt[i] for i in m.I) + 1e-6
-                sector = sum(m.x[i] * m.loan_amnt[i] for i in _mask)
-                return sector <= max_concentration * total
-
-            setattr(model, f"concentration_{p_idx}", pyo.Constraint(rule=concentration_rule))
-
-    logger.info(
-        f"Built portfolio model: {n} loans, budget={total_budget:,.0f}, robust={robust}, "
-        f"uncertainty_aversion={uncertainty_aversion:.3f}, "
-        f"min_budget_utilization={min_budget_utilization:.3f}, "
-        f"pd_cap_slack_penalty={pd_cap_slack_penalty:.3f}"
-    )
-    return model
-
-
-def solve_portfolio(
-    model: Any,
-    time_limit: int = 300,
-    threads: int = 4,
-    solver_backend: str = "highs",
-) -> dict[str, Any]:
-    """Solve portfolio optimization with HiGHS (default) or optional cuOpt."""
-    backend = solver_backend.strip().lower()
-    results = _solve_pyomo_backend(
-        model,
-        backend=backend,
-        time_limit=time_limit,
-        threads=threads,
-    )
-    solution = _pyomo_portfolio_solution(model, backend=backend, results=results)
-    logger.info(
-        "Portfolio solved ({}): obj={:,.2f}, funded={}/{}, allocated={:,.0f}, pd_cap_slack={:.4f}",
-        backend,
-        solution["objective_value"],
-        solution["n_funded"],
-        len(solution["allocation"]),
-        solution["total_allocated"],
-        solution["pd_cap_slack"],
-    )
-    return solution
-
-
-def _solve_pyomo_backend(
-    model: Any,
-    *,
-    backend: str,
-    time_limit: int,
-    threads: int,
-) -> Any:
-    if backend == "highs":
-        return _solve_pyomo_highs(model, time_limit=time_limit, threads=threads)
-    if backend == "cuopt":
-        return _solve_pyomo_cuopt(model, time_limit=time_limit, threads=threads)
-    raise ValueError(f"Unsupported solver_backend={backend!r}. Use 'highs' or 'cuopt'.")
-
-
-def _solve_pyomo_highs(
-    model: Any,
-    *,
-    time_limit: int,
-    threads: int,
-) -> Any:
-    _require_pyomo()
-    from pyomo.contrib.appsi.solvers import Highs
-
-    solver = Highs()
-    solver.config.time_limit = time_limit
-    _ = threads  # reserved for future HiGHS appsi configuration
-    return solver.solve(model)
-
-
-def _solve_pyomo_cuopt(
-    model: Any,
-    *,
-    time_limit: int,
-    threads: int,
-) -> Any:
-    pyo = _require_pyomo()
-    solver = pyo.SolverFactory("cuopt")
-    if solver is None or not solver.available(False):
-        raise RuntimeError(
-            "solver_backend='cuopt' requested but Pyomo cuOpt solver is not available "
-            "in this environment."
-        )
-    _ = (time_limit, threads)  # backend-specific options vary by cuOpt deployment
-    return solver.solve(model)
-
-
-def _pyomo_portfolio_solution(
-    model: Any,
-    *,
-    backend: str,
-    results: Any,
-) -> dict[str, Any]:
-    pyo = _require_pyomo()
-    index_set = model.I
-    decision_vars = model.x
-    loan_amount_param = model.loan_amnt
-    allocation = {i: pyo.value(decision_vars[i]) for i in index_set}
-    obj_value = pyo.value(model.obj)
-    n_funded = sum(1 for v in allocation.values() if v > 0.01)
-    total_allocated = sum(allocation[i] * pyo.value(loan_amount_param[i]) for i in index_set)
-    pd_cap_slack = float(pyo.value(model.pd_cap_slack)) if hasattr(model, "pd_cap_slack") else 0.0
-
-    return {
-        "allocation": allocation,
-        "objective_value": float(obj_value),
-        "n_funded": int(n_funded),
-        "total_allocated": float(total_allocated),
-        "solver_status": _pyomo_termination_status(results),
-        "solver_backend": backend,
-        "pd_cap_slack": pd_cap_slack,
-    }
-
-
-def _pyomo_termination_status(results: Any) -> str:
-    termination = getattr(results, "termination_condition", None)
-    if termination is None and hasattr(results, "solver"):
-        termination = getattr(results.solver, "termination_condition", None)
-    return str(termination) if termination is not None else "unknown"
-
-
 def solve_portfolio_highs_sparse(
     *,
     loans: pd.DataFrame,
@@ -463,9 +214,9 @@ def solve_portfolio_highs_sparse(
 ) -> dict[str, Any]:
     """Solve the continuous portfolio LP through SciPy's sparse HiGHS interface.
 
-    This matches :func:`build_portfolio_model` algebraically but bypasses Pyomo
-    model construction. The CRPTO exact rerank solves thousands of very similar
-    large LPs, so avoiding per-check symbolic model creation is material.
+    This shares the same LP components as the native backend. The CRPTO exact
+    rerank solves thousands of similar large LPs, so direct sparse construction
+    avoids symbolic-model overhead.
     """
     components = _portfolio_lp_components(
         loans=loans,
@@ -550,10 +301,10 @@ def solve_portfolio_highspy_native(
 ) -> dict[str, Any]:
     """Solve the continuous portfolio LP through the native highspy API.
 
-    ``scipy.optimize.linprog(method="highs")`` is reliable and already avoids
-    Pyomo's symbolic-model overhead, but it only exposes a small documented
-    subset of HiGHS controls. The native binding lets the exact rerank set
-    HiGHS' own thread/parallel options while preserving the same LP algebra.
+    ``scipy.optimize.linprog(method="highs")`` is reliable but exposes only a
+    small documented subset of HiGHS controls. The native binding lets the
+    exact rerank set HiGHS' own thread and parallel options while preserving
+    the same LP algebra.
     """
     try:
         import highspy
@@ -862,11 +613,8 @@ def optimize_portfolio_allocation(
     time_limit: int = 300,
     threads: int = 4,
     solver_backend: str = "highs",
-    random_seed: int | None = None,
-    cuopt_presolve: int | None = 1,
-    cuopt_parameters: dict[str, Any] | None = None,
 ) -> dict[str, Any]:
-    """Unified portfolio solve entrypoint for CPU and native cuOpt backends."""
+    """Solve through native HiGHS or its SciPy sparse fallback."""
     backend = solver_backend.strip().lower()
     if backend in {"highs", "highs_sparse", "scipy_highs"}:
         return solve_portfolio_highs_sparse(
@@ -942,104 +690,6 @@ def optimize_portfolio_allocation(
             result["solver_backend"] = "highspy_fallback_highs_sparse"
             result["native_solver_error"] = str(exc)
             return result
-    if backend == "cuopt":
-        if objective_rate_override is not None:
-            raise ValueError("objective_rate_override is not supported by the cuOpt backend.")
-        from src.optimization.cuopt_adapter import solve_portfolio_cuopt_native
-
-        return solve_portfolio_cuopt_native(
-            loans=loans,
-            pd_point=pd_point,
-            pd_high=pd_high,
-            lgd=lgd,
-            int_rates=int_rates,
-            total_budget=total_budget,
-            max_concentration=max_concentration,
-            max_portfolio_pd=max_portfolio_pd,
-            robust=robust,
-            uncertainty_aversion=uncertainty_aversion,
-            min_budget_utilization=min_budget_utilization,
-            pd_cap_slack_penalty=pd_cap_slack_penalty,
-            pd_constraint_override=pd_constraint_override,
-            time_limit=time_limit,
-            random_seed=random_seed,
-            presolve=cuopt_presolve,
-            cuopt_parameters=cuopt_parameters,
-        )
-
-    if backend not in {"highs_pyomo", "pyomo_highs"}:
-        raise ValueError(
-            f"Unsupported solver_backend={solver_backend!r}. "
-            "Use 'highs', 'highs_sparse', 'highspy', 'highs_pyomo', or 'cuopt'."
-        )
-
-    if objective_rate_override is not None:
-        raise ValueError("objective_rate_override is not supported by the Pyomo backend.")
-
-    model = build_portfolio_model(
-        loans=loans,
-        pd_point=pd_point,
-        pd_low=pd_low,
-        pd_high=pd_high,
-        lgd=lgd,
-        int_rates=int_rates,
-        total_budget=total_budget,
-        max_concentration=max_concentration,
-        max_portfolio_pd=max_portfolio_pd,
-        robust=robust,
-        uncertainty_aversion=uncertainty_aversion,
-        min_budget_utilization=min_budget_utilization,
-        pd_cap_slack_penalty=pd_cap_slack_penalty,
-        pd_constraint_override=pd_constraint_override,
+    raise ValueError(
+        f"Unsupported solver_backend={solver_backend!r}. Use 'highs', 'highs_sparse', or 'highspy'."
     )
-    return solve_portfolio(
-        model,
-        time_limit=time_limit,
-        threads=threads,
-        solver_backend="highs",
-    )
-
-
-def build_binary_model(
-    loans: pd.DataFrame,
-    pd_point: np.ndarray,
-    pd_high: np.ndarray,
-    lgd: np.ndarray,
-    int_rates: np.ndarray,
-    total_budget: float = 1_000_000,
-    max_portfolio_pd: float = 0.10,
-) -> Any:
-    """Build MILP approve/reject model (binary decisions)."""
-    pyo = _require_pyomo()
-    n = len(loans)
-    model = pyo.ConcreteModel("CreditApprovalMILP")
-
-    model.I = pyo.RangeSet(0, n - 1)
-    model.int_rate = pyo.Param(model.I, initialize=dict(enumerate(int_rates)))
-    model.pd_point = pyo.Param(model.I, initialize=dict(enumerate(pd_point)))
-    model.pd_high = pyo.Param(model.I, initialize=dict(enumerate(pd_high)))
-    model.lgd = pyo.Param(model.I, initialize=dict(enumerate(lgd)))
-    model.loan_amnt = pyo.Param(model.I, initialize=dict(enumerate(loans["loan_amnt"].values)))
-    model.x = pyo.Var(model.I, domain=pyo.Binary)
-
-    def objective_rule(m: Any) -> Any:
-        return sum(
-            m.x[i] * m.loan_amnt[i] * (m.int_rate[i] - m.pd_point[i] * m.lgd[i]) for i in m.I
-        )
-
-    model.obj = pyo.Objective(rule=objective_rule, sense=pyo.maximize)
-
-    def budget_rule(m: Any) -> Any:
-        return sum(m.x[i] * m.loan_amnt[i] for i in m.I) <= total_budget
-
-    model.budget = pyo.Constraint(rule=budget_rule)
-
-    def pd_cap_rule(m: Any) -> Any:
-        total = sum(m.x[i] * m.loan_amnt[i] for i in m.I) + 1e-6
-        weighted = sum(m.x[i] * m.loan_amnt[i] * m.pd_high[i] for i in m.I)
-        return weighted <= max_portfolio_pd * total
-
-    model.pd_cap = pyo.Constraint(rule=pd_cap_rule)
-
-    logger.info(f"Built binary approval model: {n} loans")
-    return model

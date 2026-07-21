@@ -112,6 +112,9 @@ ijds-active-check: publication-integrity
 ijds-pull:
     uv run --locked python scripts/manage_ijds_dvc_capsule.py pull
 
+ijds-pull-publication:
+    uv run --locked python scripts/manage_ijds_dvc_capsule.py pull-publication
+
 ijds-push:
     uv run --locked python scripts/manage_ijds_dvc_capsule.py push
 

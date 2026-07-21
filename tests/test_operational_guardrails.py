@@ -81,14 +81,18 @@ def test_extra_scripts_are_only_sealed_path_bound_compatibility() -> None:
     assert actual == active | path_bound
 
 
-def test_manual_full_workflow_runs_the_collected_suite() -> None:
+def test_clean_clone_workflow_runs_the_publication_capsule_and_suite() -> None:
     workflow = _text(".github/workflows/tests-full.yml")
+    assert "name: clean-clone-reproducibility" in workflow
+    assert "runs-on: ubuntu-latest" in workflow
     assert "fetch-depth: 0" in workflow
     assert "fetch-tags: true" in workflow
     assert "uses: extractions/setup-just@v4" in workflow
     assert 'just-version: "1.56.0"' in workflow
     assert "uses: quarto-dev/quarto-actions/setup@v2" in workflow
     assert 'version: "1.9.38"' in workflow
+    assert "run: just ijds-pull-publication" in workflow
+    assert "dvc pull --no-run-cache" not in workflow
     assert "run: just coverage" in workflow
     assert "run: just dependency-audit" in workflow
     assert "run: just drift-gate" in workflow
@@ -126,14 +130,14 @@ def test_type_gates_cover_product_and_test_code() -> None:
     assert 'files = ["src", "scripts", "tests"]' in pyproject
 
 
-def test_runtime_dependencies_exclude_reproducibility_and_compatibility_tools() -> None:
+def test_runtime_and_author_dependencies_exclude_retired_solver_layers() -> None:
     pyproject = _text("pyproject.toml")
     runtime, groups = pyproject.split("[dependency-groups]", maxsplit=1)
 
     assert '"dvc[s3]>=3.60"' not in runtime
-    assert '"pyomo>=6.10"' not in runtime
     assert "repro = [" in groups
-    assert "compat = [" in groups
+    assert "pyomo" not in pyproject.lower()
+    assert "cuopt" not in pyproject.lower()
 
 
 def test_paper_owns_its_bibliography_and_citation_style() -> None:

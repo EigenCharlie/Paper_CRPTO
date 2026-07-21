@@ -15,7 +15,6 @@ def test_active_ty_scope_is_the_complete_current_code_surface() -> None:
     assert "scripts/build_ijds_binary_geometry_frontier_v4_evidence.py" in files
     assert "scripts/experiments/run_ijds_binary_geometry_frontier_v4.py" in files
     assert "src/models/binary_conformal_guardrail.py" in files
-    assert "src/optimization/cuopt_adapter.py" in files
     assert "src/optimization/policy_selection.py" in files
     assert "src/optimization/portfolio_model.py" in files
     assert all("/archive/" not in path and "/search/" not in path for path in files)

@@ -119,6 +119,14 @@ just submission-closeout    # build, check, and remote DVC verification
 just dependency-audit        # fail on unregistered dependency advisories
 ```
 
+The manual GitHub workflow named `clean-clone-reproducibility` (kept at
+`.github/workflows/tests-full.yml` to preserve its existing GitHub identity)
+reconstructs the locked publication capsule on a disposable Ubuntu CPU runner.
+Ubuntu is used as an
+independent portability check; CRPTO does not require WSL, CUDA, a GPU, or
+cuOpt. The workflow pulls only active evidence and strict-manifest DVC targets,
+then runs the same claim, drift, test, and coverage gates used locally.
+
 The manual fallback for official TeX compilation is intentionally
 `pdflatex -> bibtex -> pdflatex -> pdflatex`: the first pass writes citation
 and cross-reference metadata, BibTeX writes the bibliography, and the final two

@@ -153,3 +153,48 @@ def test_failed_manifest_promotion_restores_previous_generation(
 
     assert manifest.read_text(encoding="utf-8") == "old-manifest"
     assert [target.read_text(encoding="utf-8") for target in targets] == ["old-0", "old-1"]
+
+
+def test_promotion_retries_a_transient_windows_permission_error(
+    tmp_path: Path,
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    repo = tmp_path
+    transaction = repo / ".transaction"
+    target = repo / "reports/table.csv"
+    staged = staged_output_path(transaction, target, repo_root=repo)
+    staged.write_text("new-table", encoding="utf-8")
+    manifest = repo / "reports/evidence.json"
+    staged_manifest = staged_output_path(transaction, manifest, repo_root=repo)
+    staged_manifest.write_text("new-manifest", encoding="utf-8")
+
+    real_replace = os.replace
+    manifest_attempts = 0
+    delays: list[float] = []
+
+    def fail_first_manifest_replace(
+        source: str | os.PathLike[str],
+        destination: str | os.PathLike[str],
+    ) -> None:
+        nonlocal manifest_attempts
+        if Path(destination).resolve() == manifest.resolve():
+            manifest_attempts += 1
+            if manifest_attempts == 1:
+                raise PermissionError("injected transient Windows lock")
+        real_replace(source, destination)
+
+    monkeypatch.setattr(publication_generation.os, "replace", fail_first_manifest_replace)
+    monkeypatch.setattr(publication_generation.time, "sleep", delays.append)
+
+    promote_publication_generation(
+        {target: staged},
+        staged_manifest=staged_manifest,
+        manifest_target=manifest,
+        repo_root=repo,
+        transaction_root=transaction,
+    )
+
+    assert manifest_attempts == 2
+    assert delays == [0.05]
+    assert target.read_text(encoding="utf-8") == "new-table"
+    assert manifest.read_text(encoding="utf-8") == "new-manifest"

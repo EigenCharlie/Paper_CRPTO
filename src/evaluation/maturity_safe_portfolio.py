@@ -150,7 +150,6 @@ def solve_coherent_policy(
         time_limit=int(execution["solver_time_limit_seconds"]),
         threads=int(execution["threads"]),
         solver_backend=requested_backend,
-        random_seed=int(execution["random_seed"]),
     )
     _require_requested_solver_backend(
         requested=requested_backend,
@@ -191,9 +190,6 @@ def _require_requested_solver_backend(*, requested: str, actual: str, strict: bo
         "highspy": "highspy",
         "highs_native": "highspy",
         "native_highs": "highspy",
-        "highs_pyomo": "highs",
-        "pyomo_highs": "highs",
-        "cuopt": "cuopt",
     }.get(requested_normalized, requested_normalized)
     if actual_normalized != canonical_actual:
         raise RuntimeError(

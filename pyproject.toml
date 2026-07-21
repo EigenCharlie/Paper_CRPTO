@@ -54,7 +54,6 @@ dev = [
     { include-group = "test" },
     { include-group = "quality" },
     { include-group = "repro" },
-    { include-group = "compat" },
 ]
 test = [
     "pytest>=9.0",
@@ -69,9 +68,6 @@ quality = [
 ]
 repro = [
     "dvc[s3]>=3.60",
-]
-compat = [
-    "pyomo>=6.10",
 ]
 
 [project.urls]
@@ -236,7 +232,6 @@ disable_error_code = ["import-untyped"]
 module = [
     "catboost.*",
     "optbinning.*",
-    "pyomo.*",
     "highspy.*",
     "ortools.*",
     "dvc.*",
@@ -253,7 +248,6 @@ module = [
     "src.optimization.policy",
     "src.optimization.policy_evaluation",
     "src.optimization.policy_selection",
-    "src.optimization.cuopt_adapter",
     "src.optimization.portfolio_model",
     "src.models.binary_conformal_guardrail",
     "src.data.outcome_observability",

@@ -248,7 +248,6 @@ def _score_policy(
         gamma=float(row["gamma"]),
         delta_cap_quantile=float(row["delta_cap_quantile"]),
         tail_focus_quantile=float(row["tail_focus_quantile"]),
-        random_seed=42,
     )
     loan_amounts = (
         loans["loan_amnt"].to_numpy(dtype=float)

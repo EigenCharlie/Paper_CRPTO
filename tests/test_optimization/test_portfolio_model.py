@@ -1,8 +1,7 @@
 from __future__ import annotations
 
-import builtins
-from collections.abc import Mapping, Sequence
-from types import ModuleType
+import sys
+from types import SimpleNamespace
 
 import numpy as np
 import pandas as pd
@@ -94,55 +93,76 @@ def test_highs_sparse_respects_portfolio_constraints() -> None:
         assert exposure <= 0.60 * total + 1e-5
 
 
-def test_highs_sparse_matches_pyomo_highs_objective_on_toy_lp() -> None:
-    pytest.importorskip("pyomo")
+def test_highs_sparse_supports_minimum_utilization_slack_and_unit_amounts() -> None:
+    loans = pd.DataFrame({"purpose": ["a", "b", "c"]})
+    pd_point = np.full(3, 0.20)
+    pd_high = np.full(3, 0.30)
+    result = optimize_portfolio_allocation(
+        loans=loans,
+        pd_point=pd_point,
+        pd_low=np.full(3, 0.10),
+        pd_high=pd_high,
+        lgd=np.full(3, 0.45),
+        int_rates=np.full(3, 0.50),
+        total_budget=3.0,
+        max_concentration=1.0,
+        max_portfolio_pd=0.10,
+        robust=True,
+        min_budget_utilization=0.80,
+        pd_cap_slack_penalty=0.01,
+        solver_backend="highs_sparse",
+    )
+
+    assert float(result["total_allocated"]) >= 2.4 - 1e-7
+    assert float(result["pd_cap_slack"]) > 0.0
+
+
+@pytest.mark.parametrize(
+    ("loans", "objective", "match"),
+    [
+        (pd.DataFrame(), np.array([]), "empty portfolio"),
+        (pd.DataFrame({"loan_amnt": [1.0, 1.0]}), np.array([0.1]), "must align"),
+        (
+            pd.DataFrame({"loan_amnt": [1.0, 1.0]}),
+            np.array([0.1, np.nan]),
+            "finite values",
+        ),
+    ],
+)
+def test_portfolio_rejects_invalid_objective_inputs(
+    loans: pd.DataFrame,
+    objective: np.ndarray,
+    match: str,
+) -> None:
+    n = len(loans)
+    with pytest.raises(ValueError, match=match):
+        optimize_portfolio_allocation(
+            loans=loans,
+            pd_point=np.full(n, 0.10),
+            pd_low=np.full(n, 0.05),
+            pd_high=np.full(n, 0.15),
+            lgd=np.full(n, 0.45),
+            int_rates=np.full(n, 0.20),
+            objective_rate_override=objective,
+            solver_backend="highs_sparse",
+        )
+
+
+def test_sparse_solver_surfaces_nonoptimal_status(monkeypatch: pytest.MonkeyPatch) -> None:
     loans, pd_point, pd_low, pd_high, lgd, int_rates = _toy_loans()
-    kwargs = {
-        "loans": loans,
-        "pd_point": pd_point,
-        "pd_low": pd_low,
-        "pd_high": pd_high,
-        "lgd": lgd,
-        "int_rates": int_rates,
-        "total_budget": 3500,
-        "max_concentration": 0.60,
-        "max_portfolio_pd": 0.11,
-        "robust": True,
-        "pd_constraint_override": pd_high,
-    }
+    failed = SimpleNamespace(success=False, x=None, status=2, message="infeasible")
+    monkeypatch.setattr(portfolio_model, "linprog", lambda *args, **kwargs: failed)
 
-    sparse = optimize_portfolio_allocation(**kwargs, solver_backend="highs_sparse")
-    pyomo = optimize_portfolio_allocation(**kwargs, solver_backend="highs_pyomo")
-
-    assert sparse["objective_value"] == pytest.approx(pyomo["objective_value"], rel=1e-6)
-    assert sparse["total_allocated"] == pytest.approx(pyomo["total_allocated"], rel=1e-6)
-
-
-def test_highs_sparse_matches_pyomo_when_pd_slack_is_enabled() -> None:
-    pytest.importorskip("pyomo")
-    loans, pd_point, pd_low, pd_high, lgd, int_rates = _toy_loans()
-    kwargs = {
-        "loans": loans,
-        "pd_point": pd_point,
-        "pd_low": pd_low,
-        "pd_high": pd_high,
-        "lgd": lgd,
-        "int_rates": int_rates,
-        "total_budget": 3500,
-        "max_concentration": 0.75,
-        "max_portfolio_pd": 0.03,
-        "robust": True,
-        "min_budget_utilization": 0.80,
-        "pd_cap_slack_penalty": 0.01,
-        "pd_constraint_override": pd_high,
-    }
-
-    sparse = optimize_portfolio_allocation(**kwargs, solver_backend="highs_sparse")
-    pyomo = optimize_portfolio_allocation(**kwargs, solver_backend="highs_pyomo")
-
-    assert sparse["objective_value"] == pytest.approx(pyomo["objective_value"], rel=1e-6)
-    assert sparse["total_allocated"] == pytest.approx(pyomo["total_allocated"], rel=1e-6)
-    assert float(sparse["pd_cap_slack"]) == pytest.approx(float(pyomo["pd_cap_slack"]), rel=1e-6)
+    with pytest.raises(RuntimeError, match="status=2, message=infeasible"):
+        optimize_portfolio_allocation(
+            loans=loans,
+            pd_point=pd_point,
+            pd_low=pd_low,
+            pd_high=pd_high,
+            lgd=lgd,
+            int_rates=int_rates,
+            solver_backend="highs_sparse",
+        )
 
 
 def test_highspy_matches_sparse_highs_objective_on_toy_lp() -> None:
@@ -222,20 +242,129 @@ def test_highspy_falls_back_to_sparse_highs_when_native_solver_fails(
     assert result["native_solver_error"] == "native warning"
 
 
-def test_pyomo_compatibility_backend_reports_install_command(monkeypatch) -> None:
-    real_import = builtins.__import__
+def test_highspy_failure_is_not_hidden_when_fallback_is_disabled(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    loans, pd_point, pd_low, pd_high, lgd, int_rates = _toy_loans()
+    monkeypatch.setenv("HIGHS_NATIVE_FALLBACK_SCIPY", "0")
+    monkeypatch.setattr(
+        portfolio_model,
+        "solve_portfolio_highspy_native",
+        lambda **kwargs: (_ for _ in ()).throw(RuntimeError("native failure")),
+    )
 
-    def blocked_import(
-        name: str,
-        globals: Mapping[str, object] | None = None,
-        locals: Mapping[str, object] | None = None,
-        fromlist: Sequence[str] | None = (),
-        level: int = 0,
-    ) -> ModuleType:
-        if name == "pyomo.environ":
-            raise ImportError("simulated minimal environment")
-        return real_import(name, globals, locals, fromlist, level)
+    with pytest.raises(RuntimeError, match="native failure"):
+        optimize_portfolio_allocation(
+            loans=loans,
+            pd_point=pd_point,
+            pd_low=pd_low,
+            pd_high=pd_high,
+            lgd=lgd,
+            int_rates=int_rates,
+            solver_backend="highspy",
+        )
 
-    monkeypatch.setattr(builtins, "__import__", blocked_import)
-    with pytest.raises(RuntimeError, match=r"uv sync --group compat"):
-        portfolio_model._require_pyomo()
+
+def test_highspy_configuration_retries_threads_and_tolerates_optional_rejection(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    class FakeStatus:
+        kOk = "ok"
+
+    class FakeSolver:
+        def __init__(self) -> None:
+            self.options: list[str] = []
+            self.resets = 0
+
+        def resetGlobalScheduler(self, blocking: bool) -> None:
+            assert blocking is True
+            self.resets += 1
+
+        def setOptionValue(self, name: str, value: object) -> str:
+            self.options.append(name)
+            if name == "threads" and self.options.count("threads") == 1:
+                return "rejected"
+            if name == "parallel":
+                return "rejected"
+            return "ok"
+
+    solver = FakeSolver()
+    monkeypatch.setenv("HIGHS_SIMPLEX_STRATEGY", "invalid")
+    portfolio_model._configure_highspy_solver(
+        SimpleNamespace(HighsStatus=FakeStatus),
+        solver,
+        time_limit=10,
+        threads=2,
+    )
+
+    assert solver.options.count("threads") == 2
+    assert solver.resets == 2
+
+
+@pytest.mark.parametrize(
+    ("failure", "match"),
+    [
+        ("pass_model", "failed to accept"),
+        ("run", "failed while solving"),
+        ("model_status", "did not solve.*Infeasible"),
+        ("short_primal", "primal solution has length 0"),
+    ],
+)
+def test_highspy_native_rejects_invalid_solver_outcomes(
+    monkeypatch: pytest.MonkeyPatch,
+    failure: str,
+    match: str,
+) -> None:
+    class FakeStatus:
+        kOk = "ok"
+        kError = "error"
+
+    class FakeSolver:
+        def passModel(self, model: object) -> str:
+            assert model is not None
+            return "rejected" if failure == "pass_model" else "ok"
+
+        def run(self) -> str:
+            return "error" if failure == "run" else "ok"
+
+        def getModelStatus(self) -> str:
+            return "status"
+
+        def modelStatusToString(self, status: str) -> str:
+            assert status == "status"
+            return "Infeasible" if failure == "model_status" else "Optimal"
+
+        def getSolution(self) -> SimpleNamespace:
+            return SimpleNamespace(col_value=[])
+
+    fake_highspy = SimpleNamespace(HighsStatus=FakeStatus, Highs=FakeSolver)
+    monkeypatch.setitem(sys.modules, "highspy", fake_highspy)
+    monkeypatch.setattr(portfolio_model, "_build_highspy_lp", lambda *_: object())
+    monkeypatch.setattr(portfolio_model, "_configure_highspy_solver", lambda *_, **__: None)
+    loans, pd_point, pd_low, pd_high, lgd, int_rates = _toy_loans()
+
+    with pytest.raises(RuntimeError, match=match):
+        portfolio_model.solve_portfolio_highspy_native(
+            loans=loans,
+            pd_point=pd_point,
+            pd_low=pd_low,
+            pd_high=pd_high,
+            lgd=lgd,
+            int_rates=int_rates,
+        )
+
+
+@pytest.mark.parametrize("backend", ["cuopt", "highs_pyomo", "pyomo_highs"])
+def test_removed_compatibility_backends_fail_explicitly(backend: str) -> None:
+    loans, pd_point, pd_low, pd_high, lgd, int_rates = _toy_loans()
+
+    with pytest.raises(ValueError, match="Use 'highs', 'highs_sparse', or 'highspy'"):
+        optimize_portfolio_allocation(
+            loans=loans,
+            pd_point=pd_point,
+            pd_low=pd_low,
+            pd_high=pd_high,
+            lgd=lgd,
+            int_rates=int_rates,
+            solver_backend=backend,
+        )

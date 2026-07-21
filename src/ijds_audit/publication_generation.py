@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import os
 import shutil
+import time
 from collections.abc import Mapping
 from pathlib import Path
 from typing import Any
@@ -28,6 +29,21 @@ PUBLICATION_IMPLEMENTATION_PATHS: dict[str, str] = {
     "artifact_descriptor_helper": "src/utils/artifact_descriptor.py",
     "pipeline_runtime_helper": "src/utils/pipeline_runtime.py",
 }
+
+_WINDOWS_REPLACE_ATTEMPTS = 6
+_WINDOWS_REPLACE_INITIAL_DELAY_SECONDS = 0.05
+
+
+def _replace_with_retry(source: Path, destination: Path) -> None:
+    """Replace a file despite short-lived Windows scanner/share locks."""
+    for attempt in range(_WINDOWS_REPLACE_ATTEMPTS):
+        try:
+            os.replace(source, destination)
+            return
+        except PermissionError:
+            if attempt == _WINDOWS_REPLACE_ATTEMPTS - 1:
+                raise
+            time.sleep(_WINDOWS_REPLACE_INITIAL_DELAY_SECONDS * (2**attempt))
 
 
 def publication_implementation_descriptors(repo_root: Path) -> dict[str, dict[str, Any]]:
@@ -150,10 +166,10 @@ def promote_publication_generation(
     try:
         for target, staged in ordered:
             target.parent.mkdir(parents=True, exist_ok=True)
-            os.replace(staged, target)
+            _replace_with_retry(staged, target)
             promoted.append(target)
         manifest.parent.mkdir(parents=True, exist_ok=True)
-        os.replace(staged_manifest_resolved, manifest)
+        _replace_with_retry(staged_manifest_resolved, manifest)
         promoted.append(manifest)
     except BaseException as error:
         rollback_failures: list[str] = []
@@ -163,7 +179,7 @@ def promote_publication_generation(
                 if rollback_backup is None:
                     target.unlink(missing_ok=True)
                 else:
-                    os.replace(rollback_backup, target)
+                    _replace_with_retry(rollback_backup, target)
             except OSError as rollback_error:
                 rollback_failures.append(f"{target}: {rollback_error}")
         if rollback_failures:
