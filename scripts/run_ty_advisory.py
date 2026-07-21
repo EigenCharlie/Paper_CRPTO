@@ -13,7 +13,7 @@ import yaml
 
 ROOT = Path(__file__).resolve().parents[1]
 DEFAULT_OUTPUT = ROOT / "reports" / "ci" / "ty-advisory.txt"
-TY_REQUIREMENT = "ty==0.0.59"
+TY_REQUIREMENT = "ty==0.0.61"
 
 SOURCE_ROOTS = ("src", "scripts")
 COMPATIBILITY_SOURCE_FILES = {

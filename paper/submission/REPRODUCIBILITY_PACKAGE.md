@@ -46,11 +46,11 @@ historical diagnostics and are not required.
 ## Standard Reproduction
 
 ```powershell
-uv sync --frozen --extra dev
-uv run python scripts/manage_ijds_dvc_capsule.py pull
+uv sync --group dev --frozen
+uv run --locked python scripts/manage_ijds_dvc_capsule.py pull
 just submission-build
 just ijds-active-check
-uv run python scripts/manage_ijds_dvc_capsule.py status
+uv run --locked python scripts/manage_ijds_dvc_capsule.py status
 ```
 
 The DVC pull requires machine-local credentials. The official PDF additionally

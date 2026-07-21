@@ -10,7 +10,7 @@ Read `CLAUDE.md`, the active claim registry, the source registry, and the
 publication contract before changing scientific code or prose.
 
 ```powershell
-uv sync --extra dev
+uv sync --group dev --locked
 just smoke
 ```
 

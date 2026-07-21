@@ -5,6 +5,7 @@ from __future__ import annotations
 import json
 import re
 import sys
+from collections.abc import Mapping
 from dataclasses import dataclass
 from pathlib import Path
 
@@ -267,62 +268,101 @@ def _check_reviewer_anonymity() -> list[str]:
 
 def _check_evidence_decision() -> list[str]:
     evidence = _evidence()
-    failures: list[str] = []
     boundary = evidence["claim_boundary"]
-    for field in ("policy_winner", "confirmatory", "prospective", "causal"):
-        if boundary[field] is not False:
-            failures.append(f"active evidence unexpectedly allows {field}")
-    if evidence["design"]["archive_is_verified_point_in_time_snapshot"] is not False:
-        failures.append("active evidence misstates the archive as a point-in-time snapshot")
-    if not evidence["credit_risk_controls"]["all_five_all_eight_upper_below_nominal"]:
-        failures.append("five-model coverage result no longer holds")
-    if not evidence["portfolio"]["broad_stress_all_envelopes_cross_zero"]:
-        failures.append("broad comparator support no longer crosses zero everywhere")
     lag = evidence["binary_phase_transition"]["label_lag_sensitivity"]
-    if not lag["w7_to_w8_threshold_crossing_at_all_admissible_lags"]:
-        failures.append("phase crossing no longer survives all admissible reporting lags")
     tie = evidence["portfolio"]["evaluated_point_cap_solver_stability"]
-    if tie["near_zero_bases"] != 0 or tie["tie_sensitive_rows"] != 0:
-        failures.append("evaluated point-cap solver stability no longer holds")
     challenger = evidence["decision_challenger"]
     interpretation = challenger["interpretation"]
-    for field in ("preferred_gamma", "preferred_ruler", "preferred_coordinate", "policy_winner"):
-        if interpretation[field] is not None:
-            failures.append(f"two-ruler evidence unexpectedly selects {field}")
+    endpoint = evidence.get("sensitivity", {}).get("evaluation_endpoint_availability", {})
+    missingness = evidence.get("sensitivity", {}).get("missingness_encoding", {})
+    rolling = evidence.get("sensitivity", {}).get("rolling_origin", {})
+
+    checks = [
+        *(
+            (boundary[field] is not False, f"active evidence unexpectedly allows {field}")
+            for field in ("policy_winner", "confirmatory", "prospective", "causal")
+        ),
+        (
+            evidence["design"]["archive_is_verified_point_in_time_snapshot"] is not False,
+            "active evidence misstates the archive as a point-in-time snapshot",
+        ),
+        (
+            evidence["credit_risk_controls"]["all_five_all_eight_upper_below_nominal"] is not True,
+            "five-model coverage result no longer holds",
+        ),
+        (
+            evidence["portfolio"]["broad_stress_all_envelopes_cross_zero"] is not True,
+            "broad comparator support no longer crosses zero everywhere",
+        ),
+        (
+            lag["w7_to_w8_threshold_crossing_at_all_admissible_lags"] is not True,
+            "phase crossing no longer survives all admissible reporting lags",
+        ),
+        (
+            tie["near_zero_bases"] != 0 or tie["tie_sensitive_rows"] != 0,
+            "evaluated point-cap solver stability no longer holds",
+        ),
+        *(
+            (
+                interpretation[field] is not None,
+                f"two-ruler evidence unexpectedly selects {field}",
+            )
+            for field in (
+                "preferred_gamma",
+                "preferred_ruler",
+                "preferred_coordinate",
+                "policy_winner",
+            )
+        ),
+        (
+            evidence["evaluation_endpoint"].get("reason_census_partitions_primary_candidates")
+            is not True,
+            "endpoint reasons no longer partition the primary candidate census",
+        ),
+        (
+            endpoint.get("six_month_endpoint_reconciles_to_active_evaluation") is not True,
+            "endpoint sensitivity no longer reconciles to the active evaluation",
+        ),
+        (
+            endpoint.get("endpoint_or_result_selected") is not False,
+            "endpoint sensitivity unexpectedly selects an endpoint or result",
+        ),
+        (
+            endpoint.get("fit_label_lag_crossed_factorially") is not False,
+            "separate timing sensitivities are incorrectly reported as factorial",
+        ),
+        (
+            missingness.get("all_three_all_eight_upper_below_nominal") is not True,
+            "missingness-encoding coverage recurrence no longer holds",
+        ),
+        (
+            missingness.get("model_or_encoding_selected") is not False,
+            "missingness sensitivity unexpectedly selects a model or encoding",
+        ),
+        (
+            rolling.get("all_sixteen_upper_below_nominal") is not True,
+            "two-origin coverage recurrence no longer holds",
+        ),
+        (
+            rolling.get("independent_replication_claim_authorized") is not False,
+            "second origin is incorrectly reported as an independent replication",
+        ),
+    ]
+    failures = [message for failed, message in checks if failed]
     quarter = next(
         row
         for row in challenger["rows"]
         if row["ruler"] == "objective_matched" and row["coordinate"] == 0.25
     )
-    for field in (
-        "payoff_direction_pattern",
-        "default_direction_pattern",
-        "miscoverage_direction_pattern",
-    ):
-        if quarter[field] != "crosses_zero:8":
-            failures.append(f"objective-matched .25 unexpectedly changed: {field}")
-    if (
-        evidence["evaluation_endpoint"].get("reason_census_partitions_primary_candidates")
-        is not True
-    ):
-        failures.append("endpoint reasons no longer partition the primary candidate census")
-    endpoint = evidence.get("sensitivity", {}).get("evaluation_endpoint_availability", {})
-    if endpoint.get("six_month_endpoint_reconciles_to_active_evaluation") is not True:
-        failures.append("endpoint sensitivity no longer reconciles to the active evaluation")
-    if endpoint.get("endpoint_or_result_selected") is not False:
-        failures.append("endpoint sensitivity unexpectedly selects an endpoint or result")
-    if endpoint.get("fit_label_lag_crossed_factorially") is not False:
-        failures.append("separate timing sensitivities are incorrectly reported as factorial")
-    missingness = evidence.get("sensitivity", {}).get("missingness_encoding", {})
-    if missingness.get("all_three_all_eight_upper_below_nominal") is not True:
-        failures.append("missingness-encoding coverage recurrence no longer holds")
-    if missingness.get("model_or_encoding_selected") is not False:
-        failures.append("missingness sensitivity unexpectedly selects a model or encoding")
-    rolling = evidence.get("sensitivity", {}).get("rolling_origin", {})
-    if rolling.get("all_sixteen_upper_below_nominal") is not True:
-        failures.append("two-origin coverage recurrence no longer holds")
-    if rolling.get("independent_replication_claim_authorized") is not False:
-        failures.append("second origin is incorrectly reported as an independent replication")
+    failures.extend(
+        f"objective-matched .25 unexpectedly changed: {field}"
+        for field in (
+            "payoff_direction_pattern",
+            "default_direction_pattern",
+            "miscoverage_direction_pattern",
+        )
+        if quarter[field] != "crosses_zero:8"
+    )
     return failures
 
 
@@ -342,6 +382,19 @@ def _check_claim_ledger() -> list[str]:
     return []
 
 
+def _identity_mismatches(
+    actual: Mapping[str, object],
+    expected: Mapping[str, object],
+    *,
+    label: str,
+) -> list[str]:
+    return [
+        f"{label} {field} differs from the registry"
+        for field in ("run_tag", "protocol_tag", "protocol_commit")
+        if actual.get(field) != expected.get(field)
+    ]
+
+
 def _check_lineage_sync() -> list[str]:
     """Verify identities and DVC pointers against the single source registry."""
     failures: list[str] = []
@@ -356,43 +409,55 @@ def _check_lineage_sync() -> list[str]:
     targets = yaml.safe_load(PUBLICATION_TARGETS_PATH.read_text(encoding="utf-8"))
     contract = targets.get("active_scientific_contract", {}) if isinstance(targets, dict) else {}
     expected_registry_path = SOURCE_REGISTRY_PATH.relative_to(REPO).as_posix()
-    if contract.get("source_registry") != expected_registry_path:
-        failures.append("publication target does not consume the active source registry")
-    if contract.get("lineage_and_dvc_authority") != expected_registry_path:
-        failures.append("publication target duplicates or omits lineage/DVC authority")
-    if evidence.get("lineages") != registry["lineages"]:
-        failures.append("evidence manifest lineages differ from the active source registry")
-    if evidence.get("sensitivities") != registry.get("sensitivities"):
-        failures.append("evidence manifest sensitivities differ from the active source registry")
     expected_source_registry = {
         "schema_version": str(registry["schema_version"]),
         "status": str(registry["status"]),
         "sources": sorted(registered),
     }
-    if evidence.get("source_registry") != expected_source_registry:
-        failures.append("evidence manifest source-registry identity changed")
+    checks = (
+        (
+            contract.get("source_registry") != expected_registry_path,
+            "publication target does not consume the active source registry",
+        ),
+        (
+            contract.get("lineage_and_dvc_authority") != expected_registry_path,
+            "publication target duplicates or omits lineage/DVC authority",
+        ),
+        (
+            evidence.get("lineages") != registry["lineages"],
+            "evidence manifest lineages differ from the active source registry",
+        ),
+        (
+            evidence.get("sensitivities") != registry.get("sensitivities"),
+            "evidence manifest sensitivities differ from the active source registry",
+        ),
+        (
+            evidence.get("source_registry") != expected_source_registry,
+            "evidence manifest source-registry identity changed",
+        ),
+    )
+    failures.extend(message for failed, message in checks if failed)
+
     binary = registry["lineages"]["binary_geometry"]["evaluation"]
-    for field in ("run_tag", "protocol_tag", "protocol_commit"):
-        if evidence.get(field) != binary[field]:
-            failures.append(f"active binary evidence {field} differs from the registry")
+    failures.extend(_identity_mismatches(evidence, binary, label="active binary evidence"))
     two_ruler = registry["lineages"]["two_ruler"]["evaluation"]
     challenger = evidence.get("decision_challenger", {})
-    for field in ("run_tag", "protocol_tag", "protocol_commit"):
-        if challenger.get(field) != two_ruler[field]:
-            failures.append(f"two-ruler {field} differs from the registry")
+    failures.extend(_identity_mismatches(challenger, two_ruler, label="two-ruler"))
     endpoint = registry["sensitivities"]["endpoint_availability"]
     endpoint_evidence = evidence.get("sensitivity", {}).get("evaluation_endpoint_availability", {})
-    for field in ("run_tag", "protocol_tag", "protocol_commit"):
-        if endpoint_evidence.get(field) != endpoint[field]:
-            failures.append(f"endpoint sensitivity {field} differs from the registry")
+    failures.extend(_identity_mismatches(endpoint_evidence, endpoint, label="endpoint sensitivity"))
     expected_descriptors = publication_implementation_descriptors(REPO)
     evidence_sources = evidence.get("source_artifacts", {})
-    for name, descriptor in expected_descriptors.items():
-        if evidence_sources.get(name) != descriptor:
-            failures.append(f"evidence manifest does not bind the current {name}")
-    for pointer in registry["dvc_pointers"]:
-        if not (REPO / pointer).is_file():
-            failures.append(f"active DVC pointer is missing: {pointer}")
+    failures.extend(
+        f"evidence manifest does not bind the current {name}"
+        for name, descriptor in expected_descriptors.items()
+        if evidence_sources.get(name) != descriptor
+    )
+    failures.extend(
+        f"active DVC pointer is missing: {pointer}"
+        for pointer in registry["dvc_pointers"]
+        if not (REPO / pointer).is_file()
+    )
     return failures
 
 

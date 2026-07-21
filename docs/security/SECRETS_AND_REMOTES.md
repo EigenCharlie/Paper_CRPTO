@@ -43,8 +43,11 @@ The manual full workflow requires `DAGSHUB_USER`, `DAGSHUB_TOKEN`, and
 environment with:
 
 ```powershell
-uv sync --frozen --extra dev
+uv sync --group dev --frozen
 ```
 
 Secret scanning and dependency alerts should remain enabled. A leaked token
 must be revoked first, then removed from Git history if it was committed.
+Known transitive dependency exceptions are reviewed in
+`docs/security/DEPENDENCY_RISK_REGISTER.md`; unregistered advisories fail
+`just dependency-audit`.

@@ -1,5 +1,9 @@
 from __future__ import annotations
 
+import builtins
+from collections.abc import Mapping, Sequence
+from types import ModuleType
+
 import numpy as np
 import pandas as pd
 import pytest
@@ -91,6 +95,7 @@ def test_highs_sparse_respects_portfolio_constraints() -> None:
 
 
 def test_highs_sparse_matches_pyomo_highs_objective_on_toy_lp() -> None:
+    pytest.importorskip("pyomo")
     loans, pd_point, pd_low, pd_high, lgd, int_rates = _toy_loans()
     kwargs = {
         "loans": loans,
@@ -114,6 +119,7 @@ def test_highs_sparse_matches_pyomo_highs_objective_on_toy_lp() -> None:
 
 
 def test_highs_sparse_matches_pyomo_when_pd_slack_is_enabled() -> None:
+    pytest.importorskip("pyomo")
     loans, pd_point, pd_low, pd_high, lgd, int_rates = _toy_loans()
     kwargs = {
         "loans": loans,
@@ -214,3 +220,22 @@ def test_highspy_falls_back_to_sparse_highs_when_native_solver_fails(
 
     assert result["solver_backend"] == "highspy_fallback_highs_sparse"
     assert result["native_solver_error"] == "native warning"
+
+
+def test_pyomo_compatibility_backend_reports_install_command(monkeypatch) -> None:
+    real_import = builtins.__import__
+
+    def blocked_import(
+        name: str,
+        globals: Mapping[str, object] | None = None,
+        locals: Mapping[str, object] | None = None,
+        fromlist: Sequence[str] | None = (),
+        level: int = 0,
+    ) -> ModuleType:
+        if name == "pyomo.environ":
+            raise ImportError("simulated minimal environment")
+        return real_import(name, globals, locals, fromlist, level)
+
+    monkeypatch.setattr(builtins, "__import__", blocked_import)
+    with pytest.raises(RuntimeError, match=r"uv sync --group compat"):
+        portfolio_model._require_pyomo()

@@ -13,7 +13,7 @@ def _text(path: str) -> str:
 def test_one_shot_alias_is_read_only_and_current_only() -> None:
     justfile = _text("justfile")
 
-    assert "all: submission-check" in justfile
+    assert "all: test hooks-check dependency-audit submission-check" in justfile
     assert "submission-check: ijds-active-check drift-gate" in justfile
     assert "run_crpto_pipeline.py" not in justfile
     assert "dvc repro" not in justfile
@@ -83,16 +83,57 @@ def test_extra_scripts_are_only_sealed_path_bound_compatibility() -> None:
 
 def test_manual_full_workflow_runs_the_collected_suite() -> None:
     workflow = _text(".github/workflows/tests-full.yml")
-    assert "run: uv run pytest -q" in workflow
+    assert "fetch-depth: 0" in workflow
+    assert "fetch-tags: true" in workflow
+    assert "uses: extractions/setup-just@v4" in workflow
+    assert 'just-version: "1.56.0"' in workflow
+    assert "uses: quarto-dev/quarto-actions/setup@v2" in workflow
+    assert 'version: "1.9.38"' in workflow
+    assert "run: just coverage" in workflow
+    assert "run: just dependency-audit" in workflow
     assert "run: just drift-gate" in workflow
+
+
+def test_lint_workflow_installs_only_quality_tools() -> None:
+    workflow = _text(".github/workflows/lint.yml")
+
+    assert "uv sync --only-group quality --frozen" in workflow
+    assert "uv run --no-sync ruff check ." in workflow
+    assert "uv sync --group dev" not in workflow
+
+
+def test_dependency_audit_is_cross_platform() -> None:
+    justfile = _text("justfile")
+
+    assert "uv run --locked --with pip-audit==2.10.1 pip-audit" in justfile
+    assert r".venv\Lib\site-packages" not in justfile
+
+
+def test_strict_manifest_gate_has_windows_and_posix_environment_prefixes() -> None:
+    justfile = _text("justfile")
+
+    assert 'if os() == "windows"' in justfile
+    assert "$env:CRPTO_REQUIRE_DVC_ARTIFACTS = '1';" in justfile
+    assert '"CRPTO_REQUIRE_DVC_ARTIFACTS=1"' in justfile
+    assert "{{ strict-manifest-prefix }} uv run --locked pytest" in justfile
 
 
 def test_type_gates_cover_product_and_test_code() -> None:
     justfile = _text("justfile")
     pyproject = _text("pyproject.toml")
 
-    assert "uv run mypy src scripts tests" in justfile
+    assert "uv run --locked mypy src scripts tests" in justfile
     assert 'files = ["src", "scripts", "tests"]' in pyproject
+
+
+def test_runtime_dependencies_exclude_reproducibility_and_compatibility_tools() -> None:
+    pyproject = _text("pyproject.toml")
+    runtime, groups = pyproject.split("[dependency-groups]", maxsplit=1)
+
+    assert '"dvc[s3]>=3.60"' not in runtime
+    assert '"pyomo>=6.10"' not in runtime
+    assert "repro = [" in groups
+    assert "compat = [" in groups
 
 
 def test_paper_owns_its_bibliography_and_citation_style() -> None:
