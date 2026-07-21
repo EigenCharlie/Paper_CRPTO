@@ -87,6 +87,8 @@ def test_manual_full_workflow_runs_the_collected_suite() -> None:
     assert "fetch-tags: true" in workflow
     assert "uses: extractions/setup-just@v4" in workflow
     assert 'just-version: "1.56.0"' in workflow
+    assert "uses: quarto-dev/quarto-actions/setup@v2" in workflow
+    assert 'version: "1.9.38"' in workflow
     assert "run: just coverage" in workflow
     assert "run: just dependency-audit" in workflow
     assert "run: just drift-gate" in workflow

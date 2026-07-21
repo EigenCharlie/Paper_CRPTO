@@ -49,6 +49,11 @@ jobs:
         with:
           just-version: "1.56.0"
 
+      - name: Install Quarto
+        uses: quarto-dev/quarto-actions/setup@v2
+        with:
+          version: "1.9.38"
+
       - name: Set up Python
         run: uv python install 3.11
 
