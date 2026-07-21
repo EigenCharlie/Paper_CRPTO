@@ -88,6 +88,21 @@ def test_manual_full_workflow_runs_the_collected_suite() -> None:
     assert "run: just drift-gate" in workflow
 
 
+def test_lint_workflow_installs_only_quality_tools() -> None:
+    workflow = _text(".github/workflows/lint.yml")
+
+    assert "uv sync --only-group quality --frozen" in workflow
+    assert "uv run --no-sync ruff check ." in workflow
+    assert "uv sync --group dev" not in workflow
+
+
+def test_dependency_audit_is_cross_platform() -> None:
+    justfile = _text("justfile")
+
+    assert "uv run --locked --with pip-audit==2.10.1 pip-audit" in justfile
+    assert r".venv\Lib\site-packages" not in justfile
+
+
 def test_type_gates_cover_product_and_test_code() -> None:
     justfile = _text("justfile")
     pyproject = _text("pyproject.toml")

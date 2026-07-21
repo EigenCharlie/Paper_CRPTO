@@ -39,7 +39,7 @@ coverage:
 # Known exceptions are documented in docs/security/DEPENDENCY_RISK_REGISTER.md.
 # Any advisory not named here fails the audit.
 dependency-audit:
-    uvx --from pip-audit==2.10.1 pip-audit --path .venv\Lib\site-packages --progress-spinner off --ignore-vuln PYSEC-2026-2447 --ignore-vuln PYSEC-2026-1806 --ignore-vuln PYSEC-2026-1805
+    uv run --locked --with pip-audit==2.10.1 pip-audit --progress-spinner off --ignore-vuln PYSEC-2026-2447 --ignore-vuln PYSEC-2026-1806 --ignore-vuln PYSEC-2026-1805
 
 smoke:
     uv run --locked pytest tests/test_publication_integrity.py tests/test_ijds_active_claim_sync.py tests/test_publication_targets.py -q

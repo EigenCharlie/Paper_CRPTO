@@ -1,8 +1,8 @@
 name: tests-full
 
 # Manually-triggered full test suite. Pulls protected extraction artifacts from
-# the DagsHub DVC remote and runs their hash checks plus the active IJDS suite.
-# tests. NOT wired to push events; it would be too expensive (and add
+# the DagsHub DVC remote, checks their hashes, and runs the active IJDS suite.
+# It is NOT wired to push events; that would be too expensive (and add
 # zero value to a single-author academic project) to run on every commit.
 #
 # Trigger it from the GitHub UI (Actions tab > tests-full > Run workflow).
