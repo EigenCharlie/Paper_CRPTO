@@ -8,8 +8,6 @@ book:
   title: "CRPTO"
   subtitle: "Auditoría de identificación en ML, conformal prediction y asignación crediticia"
   author: "Carlos Alfredo Vergara Rojas"
-  date: today
-  date-format: long
   description: "Companion técnico del CRPTO activo: diseño temporal, geometría conformal binaria, asignación y evidencia reproducible sobre Lending Club."
   site-url: "https://eigencharlie.github.io/Paper_CRPTO/"
   favicon: assets/logo-small.svg
@@ -61,8 +59,8 @@ book:
     - references.qmd
 
 lang: es
-bibliography: references.bib
-csl: apa.csl
+bibliography: ../paper/references.bib
+csl: ../paper/apa.csl
 link-citations: true
 link-bibliography: true
 
@@ -130,17 +128,3 @@ format:
     linkcolor: NavyBlue
     urlcolor: NavyBlue
     citecolor: NavyBlue
-
-  # Typst output for fast preview iterations (Quarto 1.4+). Not the final journal
-  # PDF (that one keeps LuaLaTeX). Enable via: `quarto render book --to typst`.
-  typst:
-    toc: true
-    toc-depth: 3
-    number-sections: true
-    columns: 1
-    section-numbering: 1.1.1
-    margin:
-      x: 2.5cm
-      y: 2.5cm
-    fontsize: 11pt
-    bibliographystyle: apa

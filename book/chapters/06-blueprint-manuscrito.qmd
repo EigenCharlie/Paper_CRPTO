@@ -115,13 +115,13 @@ No hay freeze de submission. Este ledger es una restricción editorial móvil,
 
 | Elemento | Ubicación | Función | Fuente |
 |---|---|---|---|
-| Figura 1 | Body | Cobertura resuelta y sharp bounds por ventana. | `crpto_ijds_v4_fig1_coverage` |
-| Figura 2 | Body | Prevalencia y cuantil de stratum 2 en W1--W8. | `crpto_ijds_v4_fig2_phase_transition` |
-| Tabla de controles | Body | Cinco modelos como coverage controls, no leaderboard. | `crpto_ijds_v4_table6_credit_controls.csv` |
-| Tabla two-ruler | Body | Seis tracks y sus hulls endpoint-corrected. | `crpto_ijds_v4_table5_two_ruler_tracks.csv` |
-| Figura 3 | Supplement | Dirección de envelopes sobre development support. | `crpto_ijds_v4_fig3_envelopes` |
-| Tabla endpoint timing | Supplement | Sensibilidad separada del fit-label lag. | `crpto_ijds_v4_tableS6_endpoint_availability_sensitivity.csv` |
-| Tabla structural sensitivity | Supplement, resumen en body | Censo no selectivo de los 36 escenarios. | `crpto_ijds_v4_tableS7_portfolio_structure_sensitivity.csv` |
+| Figura 1 | Body | Cobertura resuelta y sharp bounds por ventana. | Manifest: coverage figure. |
+| Figura 2 | Body | Prevalencia y cuantil de stratum 2 en W1--W8. | Manifest: phase-transition figure. |
+| Tabla de controles | Body | Cinco modelos como coverage controls, no leaderboard. | Manifest: credit-controls table. |
+| Tabla two-ruler | Body | Seis tracks y sus hulls endpoint-corrected. | Manifest: two-ruler table. |
+| Figura 3 | Supplement | Dirección de envelopes sobre development support. | Manifest: development-envelopes figure. |
+| Tabla endpoint timing | Supplement | Sensibilidad separada del fit-label lag. | Manifest: endpoint-sensitivity table. |
+| Tabla structural sensitivity | Supplement, resumen en body | Censo no selectivo de los 36 escenarios. | Manifest: structure-sensitivity table. |
 
 : Selección activa de figuras y tablas.
 :::
@@ -140,33 +140,41 @@ figuras” confunde formatos con objetos visuales.
 | C | Payoff, LP, rulers y named comparators. | Definición exacta del contrafactual. |
 | D | Enunciados y pruebas. | Mantiene legible el body. |
 | E | Censo two-ruler, endpoint recovery, estructura y exact support. | Reporte completo sin elegir celdas o escenarios. |
-| F | Simulación de mecanismo. | Aísla explicación geométrica de claims empíricos de policy. |
-| G | Lineage, runs detenidos y replay. | Procedencia reproducible. |
-| H | Claim boundary y limitaciones. | Evita que una tabla favorable amplíe el claim. |
-| I | Closest-work positioning. | Delimita novedad sin afirmar que cada ingrediente es nuevo. |
+| F | Lineage, ejecución en dos fases y replay. | Procedencia reproducible. |
+| G | Claim boundary y limitaciones. | Evita que una tabla favorable amplíe el claim. |
+| H | Closest-work positioning. | Delimita novedad sin afirmar que cada ingrediente es nuevo. |
 
-: Paquetes A--I del online supplement.
+: Paquetes A--H del online supplement.
 :::
 
 ### Claim, artefacto y guardrail
 
 ::: {#tbl-crpto-claim-artifact-test-location}
 
-| Objeto | Autoridad | Guardrail principal | Uso |
-|---|---|---|---|
-| Claim registry | `docs/research/active_claims_2026-07-14.md` | `test_ijds_active_claim_sync.py` | Lenguaje permitido y prohibido. |
-| Claim ledger | `configs/ijds_claim_ledger.yaml` | `test_claim_ledger.py` | Alcance, superficies y forbidden inferences ejecutables. |
-| Evidence registry | `configs/ijds_active_evidence_sources.yaml` | `test_publication_sources.py` | Identidad, rol y DVC de cada lineage. |
-| Manifest numérico | `reports/crpto/ijds_binary_geometry_frontier_v4_evidence.json` | `test_ijds_v4_claim_sync.py` | Única autoridad paper-facing de números. |
-| Data contract | `ijds-raw-data-contract-2026-07-14-v2/evidence.json` | Publication integrity | Población, esquema y madurez. |
-| Credit controls | `ijds-credit-risk-controls-2026-07-14-v3/credit_risk_controls_summary.json` | Publication integrity | Cinco modelos, calibración, IV y PSI. |
-| Binary geometry | V4 summary + execution receipt | V4 scientific invariants | Cobertura, fase, support y solver. |
-| Two-ruler | V3 verified evaluation manifest | Endpoint reconciliation tests | Contrastes y sharp hulls. |
-| Endpoint sensitivity | V1 endpoint sensitivity summary | Sensitivity evidence tests | Timing del endpoint, separado de fit labels. |
-| Structural sensitivity | V6 freeze + evaluation summary | Structural evidence tests | 36 escenarios completos, baseline reconciliado y ningún selector. |
+| Objeto | Autoridad estable | Verificación y uso |
+|---|---|---|
+| Claim registry | Active claims memo | Claim sync; lenguaje permitido y prohibido. |
+| Claim ledger | Claim-ledger config | Alcance y forbidden inferences ejecutables. |
+| Evidence registry | Active source registry | Identidad, rol, hashes y DVC de cada lineage. |
+| Manifest numérico | V4 evidence manifest | Única autoridad paper-facing de números. |
+| Data contract | Registry: raw-data audit | Población, esquema y madurez. |
+| Credit controls | Registry: credit summary | Cinco modelos, calibración, IV y PSI. |
+| Binary geometry | Registry: V4 summary | Cobertura, fase, support y solver. |
+| Two-ruler | Registry: two-ruler manifest | Contrastes y sharp hulls. |
+| Endpoint sensitivity | Registry: endpoint summary | Timing del endpoint, separado de fit labels. |
+| Structural sensitivity | Registry: structure freeze and summary | 36 escenarios completos, baseline reconciliado y ningún selector. |
 
 : Mapa de autoridad y verificación.
 :::
+
+Las claves estables correspondientes son:
+
+- `lineages.credit_controls.evaluation`;
+- `lineages.binary_geometry.{outcome_free,evaluation}`;
+- `lineages.two_ruler.{outcome_free,evaluation}`;
+- `sources.credit_summary`;
+- `sources.v4_summary`; y
+- `sources.two_ruler_manifest`.
 
 ### Notación única
 

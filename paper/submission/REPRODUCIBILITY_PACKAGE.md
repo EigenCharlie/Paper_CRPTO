@@ -18,7 +18,7 @@ instructions, and replay commands.
 | Environment | `pyproject.toml`, `uv.lock`, `justfile` |
 | Authority | Active claim registry, executable claim ledger, source registry, publication targets |
 | Method | Complete `src` package, active runners, evidence and paper builders |
-| Runs | Thirty-one DVC pointers for active roots, sensitivities, and replay dependencies |
+| Runs | 33 DVC pointers for active roots, sensitivities, and replay dependencies |
 | Evidence | One manifest, eighteen tables, three figures in PDF/PNG |
 | Manuscript | QMD body/supplement, generated INFORMS TeX, bibliography |
 | Gates | Scientific tests, lint, typing, drift, claim sync, anonymity, PDF QA |
@@ -81,7 +81,7 @@ graph, bibliography, cross-references, and stable pagination in that order.
 
 ## Acceptance QA
 
-1. Reproduce from a fresh clone and the 31 DVC pointers.
+1. Reproduce from a fresh clone and the 33 DVC pointers.
 2. Confirm evidence and QMD-to-TeX builders are byte-idempotent.
 3. Run scientific, lint, type, drift, publication, and protected-artifact checks.
 4. Compile and inspect body, supplement, and official PDF page by page.

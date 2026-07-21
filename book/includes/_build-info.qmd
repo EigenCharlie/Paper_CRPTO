@@ -1,0 +1,3 @@
+::: {.build-info}
+La versión de esta entrega se vincula al registro de fuentes y al manifiesto de evidencia activos.
+:::

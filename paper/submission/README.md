@@ -70,7 +70,7 @@ and table or figure legibility.
 
 ## QA Record
 
-The pre-freeze closeout on 2026-07-16 produced the following current record:
+The pre-freeze closeout on 2026-07-20 produced the following current record:
 
 - official PDF pages: `29`;
 - pre-reference pages: `25` (references begin on page 26);

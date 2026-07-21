@@ -69,7 +69,7 @@ their freezes, summaries, and DVC roots are verified by the source registry.
 
 ## DVC Capsule
 
-The 31 pointers are listed once in `configs/ijds_active_evidence_sources.yaml`.
+The 33 DVC pointers are listed once in `configs/ijds_active_evidence_sources.yaml`.
 They comprise data and model pointers for the active roots and sensitivities,
 plus the data-only structural replay dependency. Pull with:
 

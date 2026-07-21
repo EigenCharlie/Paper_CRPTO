@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import json
+import re
 from pathlib import Path
 
 import yaml
@@ -30,9 +31,13 @@ def test_active_drift_gate_is_read_only_and_claim_bound() -> None:
 
 def test_compatibility_surfaces_are_not_active_recipes() -> None:
     justfile = _text("justfile").lower()
+    recipes = set(re.findall(r"(?m)^([a-z0-9_-]+)(?:\s+[^:]*)?:", justfile))
 
-    for retired_recipe in ("book", "dbt", "notebook", "scripts/search", "dvc repro"):
-        assert retired_recipe not in justfile
+    for retired_recipe in ("book", "dbt", "notebook"):
+        assert retired_recipe not in recipes
+    for retired_command in ("scripts/search", "dvc repro"):
+        assert retired_command not in justfile
+    assert {"companion-build", "companion-html", "companion-pdf"}.issubset(recipes)
 
 
 def test_publication_contract_names_every_executable_protocol() -> None:

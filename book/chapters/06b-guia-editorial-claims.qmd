@@ -129,7 +129,6 @@ Evitar:
 | WOE/IV, PSI, label lag y endpoint timing | Supplement | Controles y sensibilidades, no contribuciones autónomas. |
 | Structural sensitivity | Body y censo completo en supplement | Evita que el baseline estilizado cargue por sí solo la conclusión downstream. |
 | Named comparators y exact cap support | Supplement, resumen en body | Evita que la grid finita se lea como familia cerrada. |
-| Simulation | Supplement | Ilustra geometría; no sostiene claims de portafolio. |
 | Lineage y runs detenidos | Supplement/editor-only | Procedencia necesaria, no narrativa central. |
 
 : Destino editorial probable del material del libro {#tbl-crpto-paper-placement}
@@ -138,14 +137,14 @@ Evitar:
 
 | Capa | Objeto activo | Papel editorial |
 |---|---|---|
-| Body | `paper/CRPTO_ijds.qmd` | Argumento mínimo y resultados centrales. |
-| Supplement | `paper/supplement_ijds.qmd` | Pruebas, grids completas, sensibilidades y lineage. |
-| TeX | `scripts/build_ijds_submission_tex.py` | Genera la fuente oficial; no se edita a mano. |
-| Evidence | `ijds_binary_geometry_frontier_v4_evidence.json` | Autoridad numérica única. |
-| Claim ledger | `ijds_claim_ledger.yaml` | Claims cualitativos, alcance y forbidden inferences. |
-| Registry | `ijds_active_evidence_sources.yaml` | Identidades, roles, hashes y punteros DVC. |
-| Tables | `crpto_ijds_v4_table*.csv` | Exportaciones derivadas, nunca autoridad independiente. |
-| Figures | Tres objetos `crpto_ijds_v4_fig*` en PNG/PDF | Cobertura, geometría y envelopes. |
+| Body | Canonical body QMD | Argumento mínimo y resultados centrales. |
+| Supplement | Canonical supplement QMD | Pruebas, grids completas, sensibilidades y lineage. |
+| TeX | Submission-TeX builder | Genera la fuente oficial; no se edita a mano. |
+| Evidence | V4 evidence manifest | Autoridad numérica única. |
+| Claim ledger | Executable claim ledger | Claims cualitativos, alcance y forbidden inferences. |
+| Registry | Active source registry | Identidades, roles, hashes y punteros DVC. |
+| Tables | Eighteen derived tables | Exportaciones derivadas, nunca autoridad independiente. |
+| Figures | Tres objetos en PNG/PDF | Cobertura, geometría y envelopes. |
 | Tests | Active claim sync, V4 claim sync, publication integrity | Rechazan drift de texto, grids y fuentes. |
 
 : Material journal-ready activo del CRPTO {#tbl-crpto-journal-ready-package}

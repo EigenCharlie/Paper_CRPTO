@@ -145,7 +145,7 @@ just ijds-dvc-status
 The active builder verifies the V4, two-ruler, raw-data, credit-control,
 endpoint, structural, fit-label completion, and allocation-granularity
 manifests/freezes and every artifact descriptor. The active capsule contains
-31 DVC pointers. It emits only
+33 DVC pointers. It emits only
 `crpto_ijds_v4_*` tables/figures and
 `ijds_binary_geometry_frontier_v4_evidence.json`. Consecutive builds must be
 byte-identical. The canonical body is `paper/CRPTO_ijds.qmd`; generate official

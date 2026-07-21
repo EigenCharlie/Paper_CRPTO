@@ -1150,7 +1150,7 @@ silently substituted for historical scientific code.
 The shared contract requires:
 
 1. a lineage-specific environment locked by `uv`;
-2. immutable, hash-described outcome-free and evaluated roots tracked by 31
+2. immutable, hash-described outcome-free and evaluated roots tracked by 33
    DVC pointers across the primary audit, two-ruler diagnostic, credit controls,
    endpoint, structure, missingness, second-origin, fit-label completion, and
    allocation-granularity families;
