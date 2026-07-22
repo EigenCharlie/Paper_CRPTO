@@ -27,13 +27,15 @@ Read first:
 18. `docs/research/ijds_rolling_origin_individual_age_followup_protocol_2026-07-21.md`
 19. `docs/research/ijds_rolling_origin_equal_followup_protocol_2026-07-21.md` (parent provenance)
 20. `docs/research/ijds_label_mondrian_sensitivity_protocol_2026-07-21.md`
-21. `docs/research/applied_conformal_prediction_book_audit_2026-07-21.md`
-22. `docs/research/conformal_literature_corpus_audit_2026-07-21.md`
-23. `reports/crpto/ijds_binary_geometry_frontier_v4_evidence.json`
-24. `docs/ACADEMIC_CONTEXT.md`
-25. `docs/SCOPE_AND_GOVERNANCE.md`
-26. `CONTRIBUTING.md`
-26. `EXTRACTION_MANIFEST.md`
+21. `docs/research/ijds_policy_support_optimal_face_v2_protocol_2026-07-21.md`
+22. `docs/research/ijds_policy_support_rhs_semantics_recovery_v3_protocol_2026-07-21.md`
+23. `docs/research/applied_conformal_prediction_book_audit_2026-07-21.md`
+24. `docs/research/conformal_literature_corpus_audit_2026-07-21.md`
+25. `reports/crpto/ijds_binary_geometry_frontier_v4_evidence.json`
+26. `docs/ACADEMIC_CONTEXT.md`
+27. `docs/SCOPE_AND_GOVERNANCE.md`
+28. `CONTRIBUTING.md`
+29. `EXTRACTION_MANIFEST.md`
 
 Active evidence:
 
@@ -150,6 +152,10 @@ Preserve these distinctions:
 - sharp identification bounds versus sampling confidence intervals;
 - C2 plug-in dominance versus realized-outcome dominance;
 - exact declared comparator support versus universal baseline invariance;
+- active-upper-row RHS ranging versus basic slack-row activity ranging in
+  HiGHS; only a status-aware interval may support a coverage statement;
+- epsilon-near-optimal coordinate mobility versus a distinct exact optimum,
+  global optimal-face diameter, or continuous-frontier nonuniqueness;
 - tagged retrospective audit versus preregistration or confirmation.
 - deterministic finite-archive shortfall versus exact rank-reference
   inference;

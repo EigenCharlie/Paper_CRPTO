@@ -1232,12 +1232,19 @@ def _reconcile_breakpoint_comparisons(
             faces["epsilon_near_optimal_mobility_detected"].astype(bool)
         ].itertuples(index=False)
     }
-    compared["allocation_difference_cooccurs_with_same_cap_epsilon_mobility"] = [
-        (str(item.period), float(item.point_cap)) in mobile_keys
-        for item in compared.itertuples(index=False)
-    ]
+    same_cap_mobility = pd.Series(
+        [
+            (str(item.period), float(item.point_cap)) in mobile_keys
+            for item in compared.itertuples(index=False)
+        ],
+        index=compared.index,
+        dtype=bool,
+    )
     allocation_differs = compared["maximum_pairwise_allocation_distance"].gt(
         float(tolerances["allocation_distance"])
+    )
+    compared["allocation_difference_cooccurs_with_same_cap_epsilon_mobility"] = (
+        allocation_differs & same_cap_mobility
     )
     compared["allocation_difference_without_same_cap_epsilon_mobility"] = (
         allocation_differs

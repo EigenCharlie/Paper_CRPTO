@@ -51912,8 +51912,8 @@
     },
     "publication_targets_contract": {
       "path": "configs/crpto_publication_targets.yaml",
-      "bytes": 10746,
-      "sha256": "d0dce367e146fb928041adf0195d66e0d30d0fd4bc2d187f6811eea4f220ed80"
+      "bytes": 10827,
+      "sha256": "20d6f050f0b4f9ac6d3957f912bda6126414a24e0c7ea05ef3083e0657a22375"
     },
     "evidence_builder": {
       "path": "scripts/build_ijds_binary_geometry_frontier_v4_evidence.py",

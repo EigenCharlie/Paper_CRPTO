@@ -879,6 +879,20 @@ def test_lateral_allocation_difference_records_only_same_cap_mobility_cooccurren
         is True
     )
 
+    no_allocation_difference = comparisons.copy()
+    no_allocation_difference.loc[0, "maximum_pairwise_allocation_distance"] = 0.0
+    mobility_without_difference = _reconcile_breakpoint_comparisons(
+        no_allocation_difference, mobility, tolerances=config["tolerances"]
+    )
+    assert (
+        bool(
+            mobility_without_difference.loc[
+                0, "allocation_difference_cooccurs_with_same_cap_epsilon_mobility"
+            ]
+        )
+        is False
+    )
+
 
 def test_output_paths_are_contained_and_immutable(tmp_path: Path) -> None:
     config = copy.deepcopy(load_config(DEFAULT_CONFIG_PATH))

@@ -55,6 +55,7 @@ active_scientific_contract:
       - scripts/experiments/run_ijds_allocation_granularity_sensitivity.py
       - scripts/experiments/run_ijds_policy_support_tie_audit.py
       - scripts/experiments/run_ijds_policy_support_optimal_face_v2.py
+      - scripts/experiments/run_ijds_policy_support_rhs_semantics_recovery_v3.py
       - scripts/experiments/run_ijds_conformal_set_diagnostics.py
       - scripts/experiments/run_ijds_rolling_origin_primary_recovery.py
       - scripts/experiments/run_ijds_exchangeability_transport_test.py

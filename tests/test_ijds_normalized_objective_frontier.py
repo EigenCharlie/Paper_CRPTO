@@ -36,6 +36,9 @@ def _point_solution() -> PointPortfolioSolution:
         total_allocated=1.0,
         basis_cap_lower=0.0,
         basis_cap_upper=1.0,
+        basis_activity_lower=0.0,
+        basis_activity_upper=1.0,
+        risk_row_basis_status="kUpper",
         simplex_iterations=1,
     )
 

@@ -165,6 +165,7 @@ def test_active_capsule_paths_exist() -> None:
         "scripts/experiments/run_ijds_label_mondrian_freeze.py",
         "scripts/experiments/run_ijds_label_mondrian_evaluation.py",
         "scripts/experiments/run_ijds_policy_support_optimal_face_v2.py",
+        "scripts/experiments/run_ijds_policy_support_rhs_semantics_recovery_v3.py",
     }.issubset(code_surface["protocol_entrypoints"])
 
 

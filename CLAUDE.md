@@ -23,10 +23,12 @@ not active evidence.
 15. `docs/research/ijds_rolling_origin_individual_age_followup_protocol_2026-07-21.md`
 16. `docs/research/ijds_rolling_origin_equal_followup_protocol_2026-07-21.md` (parent provenance)
 17. `docs/research/ijds_label_mondrian_sensitivity_protocol_2026-07-21.md`
-18. `configs/ijds_active_evidence_sources.yaml`
-19. `configs/ijds_claim_ledger.yaml`
-20. `reports/crpto/ijds_binary_geometry_frontier_v4_evidence.json`
-21. `.codex/skills/crpto/SKILL.md`
+18. `docs/research/ijds_policy_support_optimal_face_v2_protocol_2026-07-21.md`
+19. `docs/research/ijds_policy_support_rhs_semantics_recovery_v3_protocol_2026-07-21.md`
+20. `configs/ijds_active_evidence_sources.yaml`
+21. `configs/ijds_claim_ledger.yaml`
+22. `reports/crpto/ijds_binary_geometry_frontier_v4_evidence.json`
+23. `.codex/skills/crpto/SKILL.md`
 
 The claim registry is the editorial authority. The source registry owns exact
 lineage identities, artifact descriptors, and 47 DVC pointers. The V4 evidence

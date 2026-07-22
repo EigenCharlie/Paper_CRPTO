@@ -46,13 +46,17 @@ order before changing scientific code or paper claims:
    - parent quarter-level minimum-follow-up provenance.
 22. [`docs/research/ijds_label_mondrian_sensitivity_protocol_2026-07-21.md`](docs/research/ijds_label_mondrian_sensitivity_protocol_2026-07-21.md)
    - outcome-free classwise thresholds and complete 40/200/400 evaluation boundary.
-23. [`configs/ijds_active_evidence_sources.yaml`](configs/ijds_active_evidence_sources.yaml)
+23. [`docs/research/ijds_policy_support_optimal_face_v2_protocol_2026-07-21.md`](docs/research/ijds_policy_support_optimal_face_v2_protocol_2026-07-21.md)
+   - immutable full-basis audit, conditional epsilon-near-optimal diagnostics, and failed-closed V2 boundary.
+24. [`docs/research/ijds_policy_support_rhs_semantics_recovery_v3_protocol_2026-07-21.md`](docs/research/ijds_policy_support_rhs_semantics_recovery_v3_protocol_2026-07-21.md)
+   - status-aware HiGHS upper-RHS interpretation and complete locked gap-seed replay.
+25. [`configs/ijds_active_evidence_sources.yaml`](configs/ijds_active_evidence_sources.yaml)
    - active lineage identities and exact DVC-pointer authority.
-24. [`configs/ijds_claim_ledger.yaml`](configs/ijds_claim_ledger.yaml)
+26. [`configs/ijds_claim_ledger.yaml`](configs/ijds_claim_ledger.yaml)
    - executable nonnumeric claim and surface contract.
-25. [`reports/crpto/ijds_binary_geometry_frontier_v4_evidence.json`](reports/crpto/ijds_binary_geometry_frontier_v4_evidence.json)
+27. [`reports/crpto/ijds_binary_geometry_frontier_v4_evidence.json`](reports/crpto/ijds_binary_geometry_frontier_v4_evidence.json)
    - the only active paper-facing evidence manifest.
-26. [`.codex/skills/crpto/SKILL.md`](.codex/skills/crpto/SKILL.md) - concise
+28. [`.codex/skills/crpto/SKILL.md`](.codex/skills/crpto/SKILL.md) - concise
    execution and writing guidance.
 
 Minimum rules:

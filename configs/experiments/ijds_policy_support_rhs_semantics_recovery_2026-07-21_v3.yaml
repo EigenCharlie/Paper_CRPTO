@@ -1,0 +1,179 @@
+schema_version: "2026-07-21.2"
+protocol_status: "locked_retrospective_outcome_free_rhs_semantics_recovery_v3_before_execution"
+protocol_tag: "protocol/ijds-policy-support-rhs-semantics-recovery-2026-07-21-v3"
+run_tag: "ijds-policy-support-rhs-semantics-recovery-2026-07-21-v3"
+hypothesis: >-
+  After interpreting HiGHS row ranging according to the risk-row basis status
+  and replaying every one of the 196 outcome-free midpoint seeds that occupies
+  an initial positive gap, the union of fresh basis intervals covers the locked
+  [0.05, 0.12] support at tolerance 1e-10; this does not imply exact symbolic
+  optimal-face uniqueness, allocation continuity, or a selected policy.
+
+v2_source:
+  run_tag: "ijds-policy-support-optimal-face-audit-2026-07-21-v2"
+  protocol_tag: "protocol/ijds-policy-support-optimal-face-audit-2026-07-21-v2"
+  protocol_commit: "86fddefdcf4d40a971866b2d9acf1d34f5c3bca2"
+  deterministic_summary:
+    path: "models/experiments/ijds_audit/ijds-policy-support-optimal-face-audit-2026-07-21-v2/optimal_face_audit_summary.json"
+    bytes: 31989
+    sha256: "22b4736e211ed18c42cccccee079d0f82fd2b7b30394f08b57bad90a2ecd3ae6"
+  required_artifact_basenames:
+    central_basis_diagnostics: "central_full_basis_diagnostics.parquet"
+    row_slack_details: "row_slack_basis_details.parquet"
+    lateral_probe_diagnostics: "breakpoint_lateral_probe_diagnostics.parquet"
+    breakpoint_comparisons: "breakpoint_allocation_comparisons.parquet"
+    optimal_face_ranges: "conditional_optimal_face_ranges.parquet"
+  expected:
+    central_rows: 7297
+    periods: 15
+    v2_lateral_probe_rows: 5874
+    v2_breakpoint_rows: 2952
+    v2_optimal_face_targets: 8
+    central_risk_upper_rows: 7228
+    central_risk_basic_rows: 69
+    v2_domain_clipped_cap_containment_failures: 66
+    corrected_cap_containment_passes: 7297
+    initial_positive_gaps: 196
+    unique_gap_seed_solves: 196
+    gap_midpoints_matching_registered_v2_seeds: 196
+
+source_ingest:
+  inherit_exact_v2_parent_and_allowlist: true
+  allowed_raw_columns: ["id", "loan_amnt", "int_rate", "purpose"]
+  outcome_columns_passed: []
+  forbidden_tokens:
+    - "loan_status"
+    - "default"
+    - "charged_off"
+    - "outcome"
+    - "label"
+    - "target"
+    - "evaluation"
+    - "coverage"
+    - "miscoverage"
+    - "payoff"
+
+rhs_semantics:
+  row_role: "point_risk_cap"
+  model_form: "negative_infinity_leq_row_activity_leq_upper_rhs"
+  budget_dollars: 1000000.0
+  normalized_cap_domain: [0.0, 1.0]
+  upper_nonbasic_rule: "raw_row_bound_dn_up_are_upper_rhs_range"
+  basic_rule: "upper_rhs_ray_from_raw_row_activity_to_normalized_domain_upper"
+  basic_requires_zero_row_dual: true
+  persist_raw_ranging_as_activity_range_for_basic_rows: true
+  fail_closed_statuses: ["lower", "zero", "nonbasic"]
+  official_highs_version: "1.15.1"
+  official_highs_githash: "04024d7"
+
+coverage:
+  registered_support: [0.05, 0.12]
+  gap_tolerance: 1.0e-10
+  seed_match_tolerance: 1.0e-12
+  cap_containment_tolerance: 1.0e-10
+  targeted_gap_coverage_tolerance: 1.0e-10
+  initial_gap_definition: "positive_components_of_registered_support_not_covered_by_status_aware_v2_central_intervals"
+  gap_seed: "exact_registered_v2_midpoint_seed_nearest_to_each_initial_gap_midpoint"
+  gap_fill_passes: 1
+  adaptive_additional_solves_after_registered_pass: false
+  require_every_initial_gap_targeted_once: true
+  require_every_gap_seed_strictly_inside_target_gap: true
+  require_final_connected_coverage: true
+  require_zero_final_positive_gaps: true
+  require_all_solved_caps_contained: true
+
+solver:
+  highspy_version: "1.15.1"
+  highs_native_version: "1.15.1"
+  highs_githash: "04024d7"
+  solver: "simplex"
+  presolve: "on"
+  threads: 1
+  time_limit_seconds: 300
+  dual_feasibility_tolerance: 1.0e-9
+  primal_feasibility_tolerance: 1.0e-9
+  reset_global_scheduler_if_available: true
+  zero_all_clocks_if_available: true
+  zero_all_clocks_required: false
+  session_scope: "one_fresh_highs_session_per_registered_gap_midpoint_seed"
+  deterministic_candidate_order: ["issue_d", "id"]
+  persist_get_run_time: true
+
+tolerances:
+  dual_near_zero_scaled_absolute: 1.0e-7
+  dual_near_zero_relative: 1.0e-12
+  dual_sign_scaled_violation: 1.0e-9
+  primal_degeneracy: 1.0e-9
+  objective_reconciliation_dollars: 1.0e-5
+  policy_constraint_normalized: 1.0e-8
+  allocation_distance: 1.0e-10
+  basic_row_dual: 1.0e-12
+  row_activity_normalized: 1.0e-10
+
+full_basis_gap_audit:
+  audit_every_gap_seed: true
+  persist_all_row_slack_details: true
+  persist_all_scale_aware_warnings: true
+  warnings_block_uniqueness_promotion: true
+  warnings_do_not_block_rhs_coverage: true
+  no_conditional_face_solves: true
+  no_global_l1_diameter_claim: true
+
+v2_corrections:
+  corrected_lateral_cooccurrence_definition: "allocation_differs_and_same_cap_epsilon_mobility"
+  preserve_v2_fields_without_overwrite: true
+  epsilon_mobility_interpretation: "epsilon_near_optimal_conditioning_not_exact_alternate_optimum"
+
+claim_boundary:
+  outcome_columns_passed: []
+  retrospective: true
+  preregistered: false
+  confirmatory: false
+  prospective: false
+  no_empirical_metric_or_direction: true
+  no_policy_or_cap_selection: true
+  no_tie_or_exact_alternate_optimum_claim: true
+  no_exact_symbolic_optimal_face_claim: true
+  no_global_optimal_face_diameter_claim: true
+  no_continuous_joint_frontier_uniqueness: true
+  no_allocation_continuity_or_seam_conditioning_claim: true
+  no_universal_comparator_support: true
+  no_selected_or_funded_set_claim: true
+  rhs_coverage_is_numerical_and_support_bounded: true
+  v2_remains_immutable_and_fail_closed: true
+  epsilon_mobility_is_not_nonuniqueness: true
+
+stop_rules:
+  stop_on_source_hash_mismatch: true
+  stop_on_dirty_or_untagged_head: true
+  stop_on_outcome_like_input: true
+  stop_on_preexisting_output_path: true
+  stop_on_solver_identity_or_option_drift: true
+  stop_on_implementation_drift: true
+  stop_on_v2_census_or_schema_drift: true
+  stop_on_unexpected_risk_row_status: true
+  stop_on_basic_row_nonzero_dual: true
+  stop_on_cap_containment_failure: true
+  stop_on_gap_seed_census_or_match_failure: true
+  stop_on_gap_seed_outside_target_gap: true
+  stop_on_nonoptimal_or_nonfinite_solve: true
+  stop_on_invalid_or_unsupported_gap_basis: true
+  stop_on_gap_basis_dual_sign_violation: true
+  stop_on_gap_basis_objective_reconciliation_failure: true
+  stop_on_gap_basis_policy_feasibility_failure: true
+  scientific_claim_gate_on_final_rhs_coverage_failure: true
+  scientific_claim_gate_on_any_scale_aware_warning_for_uniqueness: true
+  retain_complete_results_after_scientific_stop: true
+
+output:
+  data_root: "data/processed/experiments/ijds_audit"
+  model_root: "models/experiments/ijds_audit"
+  immutability: "hard_no_overwrite_choose_fresh_run_tag"
+  corrected_central_rhs_ranges: "corrected_central_rhs_ranges.parquet"
+  gap_fill_basis_diagnostics: "gap_fill_basis_diagnostics.parquet"
+  gap_fill_row_slack_details: "gap_fill_row_slack_details.parquet"
+  gap_fill_flagged_nonbasic_variables: "gap_fill_flagged_nonbasic_variables.parquet"
+  corrected_rhs_coverage: "corrected_rhs_coverage_by_period.parquet"
+  corrected_lateral_comparisons: "corrected_lateral_comparisons.parquet"
+  deterministic_result: "rhs_semantics_recovery_summary.json"
+  execution_receipt: "execution_receipt.json"

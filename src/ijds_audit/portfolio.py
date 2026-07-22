@@ -10,6 +10,8 @@ import numpy as np
 import pandas as pd
 from scipy.sparse import csc_matrix
 
+from src.ijds_audit.rhs_ranging import interpret_upper_only_rhs_ranging
+
 
 @dataclass(frozen=True)
 class PointPortfolioSolution:
@@ -22,6 +24,9 @@ class PointPortfolioSolution:
     total_allocated: float
     basis_cap_lower: float
     basis_cap_upper: float
+    basis_activity_lower: float
+    basis_activity_upper: float
+    risk_row_basis_status: str
     simplex_iterations: int
 
 
@@ -86,7 +91,8 @@ class PointPortfolioSession:
         model_status = self.solver.modelStatusToString(self.solver.getModelStatus())
         if "Optimal" not in str(model_status):
             raise RuntimeError(f"Point LP is not optimal: {model_status}.")
-        fraction = np.clip(np.asarray(self.solver.getSolution().col_value, dtype=float), 0.0, 1.0)
+        raw_solution = self.solver.getSolution()
+        fraction = np.clip(np.asarray(raw_solution.col_value, dtype=float), 0.0, 1.0)
         exposure = self.amount * fraction
         total = float(exposure.sum())
         if not np.isclose(total, self.budget, rtol=0.0, atol=1e-4):
@@ -98,6 +104,20 @@ class PointPortfolioSession:
             raise RuntimeError("HiGHS did not return basis ranging information.")
         lower_rhs = float(ranging.row_bound_dn.value_[self.risk_row])
         upper_rhs = float(ranging.row_bound_up.value_[self.risk_row])
+        basis = self.solver.getBasis()
+        rhs_range = interpret_upper_only_rhs_ranging(
+            row_status=basis.row_status[self.risk_row],
+            row_value=float(raw_solution.row_value[self.risk_row]),
+            row_dual=float(raw_solution.row_dual[self.risk_row]),
+            raw_bound_down=lower_rhs,
+            raw_bound_up=upper_rhs,
+            domain_upper=self.budget,
+            basic_dual_tolerance=1.0e-12,
+        )
+        effective_lower = float(np.clip(rhs_range.effective_rhs_lower / self.budget, 0.0, 1.0))
+        effective_upper = float(np.clip(rhs_range.effective_rhs_upper / self.budget, 0.0, 1.0))
+        if effective_lower > effective_upper:
+            raise RuntimeError("The domain-clipped point-risk RHS range is reversed.")
         info = self.solver.getInfo()
         return PointPortfolioSolution(
             allocation_fraction=fraction,
@@ -105,8 +125,11 @@ class PointPortfolioSession:
             objective_value=objective_value,
             weighted_point_score=weighted_point,
             total_allocated=total,
-            basis_cap_lower=max(0.0, lower_rhs / self.budget),
-            basis_cap_upper=min(1.0, upper_rhs / self.budget),
+            basis_cap_lower=effective_lower,
+            basis_cap_upper=effective_upper,
+            basis_activity_lower=rhs_range.raw_activity_lower / self.budget,
+            basis_activity_upper=rhs_range.raw_activity_upper / self.budget,
+            risk_row_basis_status=rhs_range.basis_status,
             simplex_iterations=int(getattr(info, "simplex_iteration_count", 0) or 0),
         )
 
