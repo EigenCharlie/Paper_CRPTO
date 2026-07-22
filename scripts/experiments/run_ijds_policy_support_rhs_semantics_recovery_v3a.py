@@ -8,7 +8,7 @@ import sys
 import time
 from collections.abc import Mapping, Sequence
 from pathlib import Path
-from typing import Any, cast
+from typing import Any, Protocol, cast
 
 import highspy
 import numpy as np
@@ -85,6 +85,20 @@ DATA_OUTPUT_KEYS = (
     "corrected_lateral_comparisons",
 )
 MODEL_OUTPUT_KEYS = ("deterministic_result", "execution_receipt")
+
+
+class _GapSeedTuple(Protocol):
+    """Typed view of the named tuples emitted by the locked gap census."""
+
+    period: Any
+    gap_index: Any
+    registered_seed_cap: Any
+    target_gap_lower: Any
+    target_gap_upper: Any
+    v2_seed_expected_objective: Any
+    v2_seed_weighted_point_score: Any
+
+    def _asdict(self) -> Mapping[str, Any]: ...
 
 
 def parse_args(argv: Sequence[str] | None = None) -> argparse.Namespace:
@@ -793,7 +807,8 @@ def run_gap_seed_audit(
     diagnostics: list[dict[str, Any]] = []
     row_rows: list[dict[str, Any]] = []
     flag_rows: list[dict[str, Any]] = []
-    for ordinal, gap in enumerate(gap_census.itertuples(index=False), start=1):
+    for ordinal, raw_gap in enumerate(gap_census.itertuples(index=False), start=1):
+        gap = cast(_GapSeedTuple, raw_gap)
         if ordinal == 1 or ordinal % 25 == 0 or ordinal == len(gap_census):
             logger.info("RHS recovery V3 gap seed {}/196: {}", ordinal, gap.period)
         month = months[str(gap.period)]

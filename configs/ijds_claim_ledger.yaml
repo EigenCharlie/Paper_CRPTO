@@ -1,4 +1,4 @@
-schema_version: "2026-07-21.3"
+schema_version: "2026-07-21.4"
 status: active_ijds_claim_contract
 
 surfaces:
@@ -358,6 +358,24 @@ claims:
     lineages: [two_ruler.outcome_free, allocation_granularity]
     scope: deterministic_usd25_floor_with_residual_cash_on_active_allocations
     forbidden_inference: [integer_optimality, discrete_policy_robustness, reoptimization]
+    surfaces:
+      required: [body, supplement, registry, claim_matrix]
+      allowed: [body, supplement, registry, claim_matrix]
+
+  - id: optimization.finite_rhs_coverage_without_uniqueness
+    status: active
+    kind: boundary
+    rule: equals
+    result_pointer: /portfolio/policy_support_rhs_semantics/rhs_coverage_recovered_without_uniqueness_promotion
+    expected: true
+    lineages: [policy_support_optimal_face_v2, policy_support_rhs_semantics_recovery]
+    scope: active_upper_solver_reported_rhs_ranges_plus_analytically_derived_zero_dual_basic_row_safe_rays_and_196_v2_midpoint_seeds_retrospectively_registered_in_v3a_over_support_0_05_to_0_12_at_absolute_tolerance_1e_10
+    forbidden_inference:
+      [exact_symbolic_optimal_face, global_optimal_face_diameter,
+       numerical_or_continuous_frontier_uniqueness, allocation_continuity,
+       seam_conditioning, all_optimal_allocations_enumerated, selected_cap,
+       exact_distinct_optimum, exact_nonuniqueness,
+       exact_continuous_outcome_envelope, universal_comparator_support]
     surfaces:
       required: [body, supplement, registry, claim_matrix]
       allowed: [body, supplement, registry, claim_matrix]

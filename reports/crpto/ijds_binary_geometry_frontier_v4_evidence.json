@@ -1,8 +1,8 @@
 {
-  "schema_version": "2026-07-21.4",
+  "schema_version": "2026-07-21.5",
   "status": "active_ijds_v5_endpoint_reason_audited_paper_facing_evidence",
   "source_registry": {
-    "schema_version": "2026-07-21.3",
+    "schema_version": "2026-07-21.4",
     "status": "active_ijds_paper_evidence_source_registry",
     "sources": [
       "allocation_granularity_freeze",
@@ -26,6 +26,7 @@
       "label_mondrian_freeze_receipt",
       "missingness_receipt",
       "missingness_summary",
+      "policy_support_optimal_face_evidence",
       "raw_data_audit",
       "rolling_equal_followup_config",
       "rolling_equal_followup_receipt",
@@ -126,6 +127,22 @@
         "protocol_commit": "115eaf1b81ed5f05ffe601e9c20079059c40c200",
         "scientific_uv_lock_sha256": "d293ed325a3b25a13000560c8551d34937735ba8c9fe59ffeeed5d64f7120dd2",
         "paper_role": "evaluated_cap_numerical_diagnostic",
+        "dvc_tracked": true
+      },
+      "policy_support_optimal_face_v2": {
+        "run_tag": "ijds-policy-support-optimal-face-audit-2026-07-21-v2",
+        "protocol_tag": "protocol/ijds-policy-support-optimal-face-audit-2026-07-21-v2",
+        "protocol_commit": "86fddefdcf4d40a971866b2d9acf1d34f5c3bca2",
+        "scientific_uv_lock_sha256": "6c862cbad9ab7e3a07dd2823c775127403093d6ad59a789ee227d827165e4733",
+        "paper_role": "immutable_failed_closed_full_basis_source_diagnostic",
+        "dvc_tracked": true
+      },
+      "policy_support_rhs_semantics_recovery": {
+        "run_tag": "ijds-policy-support-rhs-semantics-recovery-2026-07-21-v3a",
+        "protocol_tag": "protocol/ijds-policy-support-rhs-semantics-recovery-2026-07-21-v3a",
+        "protocol_commit": "388927ebfe34e872fc5d1085ece63300734d5b47",
+        "scientific_uv_lock_sha256": "6c862cbad9ab7e3a07dd2823c775127403093d6ad59a789ee227d827165e4733",
+        "paper_role": "finite_support_rhs_coverage_without_numerical_uniqueness_promotion_diagnostic",
         "dvc_tracked": true
       },
       "conformal_set_diagnostics": {
@@ -51653,18 +51670,57 @@
         "guardrail_higher": 47
       }
     ],
-    "evaluated_point_cap_solver_stability": {
-      "scope": "evaluated_point_caps_only_not_continuous_uniqueness",
-      "point_cap_rows": 7297,
-      "named_unique_cap_months": 2204,
-      "minimum_absolute_nonbasic_reduced_cost": 0.00038757301081204787,
-      "near_zero_bases": 0,
-      "primal_degenerate_bases": 2941,
-      "reversed_order_reruns": 2941,
-      "tie_sensitive_rows": 0,
-      "maximum_allocation_distance": 1.449778343358131e-14,
-      "maximum_absolute_objective_difference": 1.7171259969472885e-09,
-      "continuous_frontier_uniqueness_claim": false
+    "policy_support_rhs_semantics": {
+      "scope": "retrospective_outcome_free_active_upper_solver_reported_rhs_ranges_plus_analytically_derived_zero_dual_basic_row_safe_rays_and_196_v2_midpoint_seeds_retrospectively_registered_in_v3a_at_absolute_tolerance_1e_10",
+      "source_role": "registered_intermediate_source_for_single_primary_evidence_manifest",
+      "v2_run_tag": "ijds-policy-support-optimal-face-audit-2026-07-21-v2",
+      "v3a_run_tag": "ijds-policy-support-rhs-semantics-recovery-2026-07-21-v3a",
+      "central_rows": 7297,
+      "upper_status_rows": 7228,
+      "basic_status_rows": 69,
+      "v2_semantic_false_failures": 66,
+      "status_aware_cap_containment_passes": 7297,
+      "registered_support_lower": 0.05,
+      "registered_support_upper": 0.12,
+      "absolute_gap_tolerance": 1e-10,
+      "initial_positive_gaps": 196,
+      "registered_gap_seed_solves": 196,
+      "upper_status_gap_seed_solves": 196,
+      "basic_status_gap_seed_solves": 0,
+      "strictly_interior_gap_seed_solves": 196,
+      "maximum_seed_midpoint_match_distance": 1.3877787807814457e-16,
+      "maximum_v2_seed_expected_objective_difference": 0.0,
+      "maximum_v2_seed_weighted_point_difference": 0.0,
+      "status_aware_seed_cap_containment_passes": 196,
+      "recomputed_target_gap_coverage_passes": 196,
+      "covered_periods": 15,
+      "zero_tolerance_positive_seams": 465,
+      "maximum_zero_tolerance_seam_width": 1.6653345369377348e-16,
+      "total_zero_tolerance_seam_width": 6.6405214660392176e-15,
+      "positive_gaps_at_1e_15": 0,
+      "rhs_support_coverage_gate_passed": true,
+      "freeze_reconciliation_rows": 7297,
+      "freeze_reconciliation_passes": 7297,
+      "freeze_reconciliation_gate_passed": true,
+      "all_basis_dual_feasibility_contracts_passed": true,
+      "lateral_breakpoint_rows": 2952,
+      "lateral_probe_paths": 5874,
+      "lateral_allocation_difference_rows": 0,
+      "maximum_pairwise_allocation_distance": 3.078713590737436e-14,
+      "corrected_lateral_gate_passed": true,
+      "v2_warning_rows": 13,
+      "v2_unique_warning_targets": 8,
+      "v3a_gap_seed_warning_rows": 1,
+      "v3a_warning_repeats_same_v2_variable_at_both_neighbor_endpoints": true,
+      "maximum_coordinate_exposure_mobility_dollars": 0.9615019985630913,
+      "strict_numerical_uniqueness_gate_passed": false,
+      "rhs_coverage_recovered_without_uniqueness_promotion": true,
+      "epsilon_mobility_is_exact_nonuniqueness_evidence": false,
+      "exact_symbolic_optimal_face_claim_active": false,
+      "exact_nonuniqueness_claim_active": false,
+      "allocation_continuity_claim_active": false,
+      "continuous_outcome_envelope_claim_active": false,
+      "permissible_conclusion": "Solver-reported RHS ranges for active upper rows, analytically derived zero-dual safe rays for basic rows, and one nonadaptive replay of all 196 V2 midpoint seeds retrospectively registered in V3a leave no gap above 1e-10 on the locked [0.05, 0.12] support in all 15 months."
     }
   },
   "decision_challenger": {
@@ -51898,32 +51954,37 @@
       "permitted_conclusion": "Within the predeclared finite grid, the gamma endpoint allocation contrast is not invariant to the outcome-free ruler or interior coordinate."
     }
   },
-  "audit_thesis": "All 40 finite-archive sharp coverage upper endpoints are below 0.90 under the active six-month endpoint; this deterministic completion statement is not by itself a rejection of conformal validity. A separate retrospectively locked joint-block rank-reference diagnostic places 31 of 40 learner-window cells past the locked nominal Bonferroni--Holm thresholds. Its null is stronger than the usual single-future-point split-conformal condition, and the post-inspection family has no selective-FWER claim. The CatBoost shortfall recurs at two origins with cutoffs 39 months after each issue-month end, under three missing-value encodings, and under four declared fit-label scenarios. A complete label-Mondrian sensitivity redistributes resolved coverage from nondefault toward default but leaves 27 of 40 learner-window and 109 of 400 label-stratum upper endpoints below 0.90 while expanding two-label sets to 72.4%--78.5%; it is not a restored transport guarantee. A prevalence-threshold crossing explains one observed geometry change but is not invariant to every fit-label scenario. Portfolio direction is not identified without outcome-free comparator support and is not invariant to the declared ruler or interior coordinate; USD 25 floor rounding produces only negligible rate perturbations in the evaluated archive.",
+  "audit_thesis": "All 40 finite-archive sharp coverage upper endpoints are below 0.90 under the active six-month endpoint; this deterministic completion statement is not by itself a rejection of conformal validity. A separate retrospectively locked joint-block rank-reference diagnostic places 31 of 40 learner-window cells past the locked nominal Bonferroni--Holm thresholds. Its null is stronger than the usual single-future-point split-conformal condition, and the post-inspection family has no selective-FWER claim. The CatBoost shortfall recurs at two origins with cutoffs 39 months after each issue-month end, under three missing-value encodings, and under four declared fit-label scenarios. A complete label-Mondrian sensitivity redistributes resolved coverage from nondefault toward default but leaves 27 of 40 learner-window and 109 of 400 label-stratum upper endpoints below 0.90 while expanding two-label sets to 72.4%--78.5%; it is not a restored transport guarantee. A prevalence-threshold crossing explains one observed geometry change but is not invariant to every fit-label scenario. Portfolio direction is not identified without outcome-free comparator support and is not invariant to the declared ruler or interior coordinate; USD 25 floor rounding produces only negligible rate perturbations in the evaluated archive. Status-aware numerical basis intervals leave no registered support gap above 1e-10, but scale-aware warnings block any exact or strict numerical uniqueness conclusion.",
   "source_artifacts": {
     "active_source_registry": {
       "path": "configs/ijds_active_evidence_sources.yaml",
-      "bytes": 24972,
-      "sha256": "600bb392a9acdfdcb26fdbd56709a2d770c9a02694d1f38a3ddffca7804fa7cb"
+      "bytes": 26527,
+      "sha256": "b442c6af55a4d889ae02e7024de69a6d52404b5cbbc033574698a30ed2a95e6c"
     },
     "claim_ledger_contract": {
       "path": "configs/ijds_claim_ledger.yaml",
-      "bytes": 15957,
-      "sha256": "318c7c061b8f1f0504278dbd37425840f92f3e3f9cc13218434e069e9e28df98"
+      "bytes": 17008,
+      "sha256": "e0c9e9a3e7d941dccc05d28ba12c8e3dfeb26e01c3d3337f968a57303f2d6b82"
     },
     "publication_targets_contract": {
       "path": "configs/crpto_publication_targets.yaml",
-      "bytes": 10828,
-      "sha256": "7d9d7fd39bab87c3ff7b28073af4c6fcfd8c691c81ff0585fed6316e4be30199"
+      "bytes": 11242,
+      "sha256": "e113f2e4ec768574e920b7e4001f393925fd25cd2b484cffe19f0d61096eb690"
     },
     "evidence_builder": {
       "path": "scripts/build_ijds_binary_geometry_frontier_v4_evidence.py",
-      "bytes": 176992,
-      "sha256": "1a59bbfe403e48c4aaa915c30efa7a40ab843f784a57d25b735d22437e90eb93"
+      "bytes": 190250,
+      "sha256": "75c4e624e236f47cf544860f3db35476dfbc17a6724709a44fff23fdb919fc05"
+    },
+    "policy_support_evidence_builder": {
+      "path": "scripts/build_ijds_policy_support_optimal_face_evidence.py",
+      "bytes": 56991,
+      "sha256": "af8d57caf3b1304e63fcd2db9b0a6e7df3bae2c6dd922a5d3fe985a146dc9a7a"
     },
     "publication_integrity_checker": {
       "path": "scripts/check_publication_integrity.py",
-      "bytes": 28803,
-      "sha256": "b597362a22bdf3f5aced5cbb529075ff85974a16028941e7aa3a0324f5d928ac"
+      "bytes": 30979,
+      "sha256": "99a49309dde6aa1c64ac41e6829951f9dc781a7c74dc23b214de9f605f47afc0"
     },
     "paper_pdf_auditor": {
       "path": "scripts/inspect_ijds_pdfs.py",
@@ -51932,8 +51993,8 @@
     },
     "publication_generation_helper": {
       "path": "src/ijds_audit/publication_generation.py",
-      "bytes": 7675,
-      "sha256": "975e9953a2e4631baa364e89f951e35a18d954a4bc299399a4d853c52b87c736"
+      "bytes": 7792,
+      "sha256": "269fe82b4ee92a0f58d6c9d5876959ffa13686d643fd7da8273234db5592814e"
     },
     "v4_config_loader": {
       "path": "src/ijds_audit/config.py",
@@ -52229,6 +52290,11 @@
       "path": "reports/crpto/ijds_policy_support_tie_evidence.json",
       "bytes": 12845,
       "sha256": "2903694ee502e6144008bbbc5891e5932f88f8527e12686363c85a28fa78684e"
+    },
+    "policy_support_optimal_face/manifest": {
+      "path": "reports/crpto/ijds_policy_support_optimal_face_evidence.json",
+      "bytes": 17110,
+      "sha256": "29c8aeff29e10618aab1965fb7e754bf3ef23c990d89d736afac3e3bc7b6cb62"
     },
     "outcome_free/scores": {
       "path": "data/processed/experiments/ijds_audit/ijds-binary-geometry-frontier-v4-2026-07-12-v1/prediction/scores.parquet",
@@ -53016,13 +53082,13 @@
   "protected_stages_run": [],
   "protected_artifacts_written": [],
   "claim_ledger": {
-    "schema_version": "2026-07-21.3",
+    "schema_version": "2026-07-21.4",
     "status": "active_ijds_claim_contract",
     "numeric_authority": "parent_evidence_manifest_only",
     "contract": {
       "path": "configs/ijds_claim_ledger.yaml",
-      "bytes": 15957,
-      "sha256": "318c7c061b8f1f0504278dbd37425840f92f3e3f9cc13218434e069e9e28df98"
+      "bytes": 17008,
+      "sha256": "e0c9e9a3e7d941dccc05d28ba12c8e3dfeb26e01c3d3337f968a57303f2d6b82"
     },
     "claims": [
       {
@@ -53846,6 +53912,46 @@
           "integer_optimality",
           "discrete_policy_robustness",
           "reoptimization"
+        ],
+        "surfaces": {
+          "required": [
+            "body",
+            "supplement",
+            "registry",
+            "claim_matrix"
+          ],
+          "allowed": [
+            "body",
+            "supplement",
+            "registry",
+            "claim_matrix"
+          ]
+        }
+      },
+      {
+        "id": "optimization.finite_rhs_coverage_without_uniqueness",
+        "status": "active",
+        "kind": "boundary",
+        "lineages": [
+          "policy_support_optimal_face_v2",
+          "policy_support_rhs_semantics_recovery"
+        ],
+        "scope": "active_upper_solver_reported_rhs_ranges_plus_analytically_derived_zero_dual_basic_row_safe_rays_and_196_v2_midpoint_seeds_retrospectively_registered_in_v3a_over_support_0_05_to_0_12_at_absolute_tolerance_1e_10",
+        "rule": "equals",
+        "result_pointer": "/portfolio/policy_support_rhs_semantics/rhs_coverage_recovered_without_uniqueness_promotion",
+        "result": true,
+        "forbidden_inference": [
+          "exact_symbolic_optimal_face",
+          "global_optimal_face_diameter",
+          "numerical_or_continuous_frontier_uniqueness",
+          "allocation_continuity",
+          "seam_conditioning",
+          "all_optimal_allocations_enumerated",
+          "selected_cap",
+          "exact_distinct_optimum",
+          "exact_nonuniqueness",
+          "exact_continuous_outcome_envelope",
+          "universal_comparator_support"
         ],
         "surfaces": {
           "required": [

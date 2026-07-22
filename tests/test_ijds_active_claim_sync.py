@@ -77,7 +77,7 @@ def _normalize(text: str) -> str:
 def test_active_evidence_locks_v4_lineage_and_claim_boundary() -> None:
     evidence = _json(EVIDENCE)
 
-    assert evidence["schema_version"] == "2026-07-21.4"
+    assert evidence["schema_version"] == "2026-07-21.5"
     assert evidence["status"] == "active_ijds_v5_endpoint_reason_audited_paper_facing_evidence"
     assert evidence["run_tag"] == RUN
     assert evidence["protocol_commit"] == COMMIT
@@ -247,11 +247,54 @@ def test_phase_transition_and_portfolio_boundary_are_exact() -> None:
         ("standardized_payoff", "guardrail_lower"): 6,
         ("terminal_default", "crosses_zero"): 72,
     }
-    tie = portfolio["evaluated_point_cap_solver_stability"]
-    assert tie["point_cap_rows"] == 7297
-    assert tie["near_zero_bases"] == 0
-    assert tie["tie_sensitive_rows"] == 0
-    assert tie["continuous_frontier_uniqueness_claim"] is False
+    support = portfolio["policy_support_rhs_semantics"]
+    assert support["central_rows"] == 7_297
+    assert support["upper_status_rows"] == 7_228
+    assert support["basic_status_rows"] == 69
+    assert support["v2_semantic_false_failures"] == 66
+    assert support["status_aware_cap_containment_passes"] == 7_297
+    assert support["registered_support_lower"] == 0.05
+    assert support["registered_support_upper"] == 0.12
+    assert support["absolute_gap_tolerance"] == 1.0e-10
+    assert support["initial_positive_gaps"] == 196
+    assert support["registered_gap_seed_solves"] == 196
+    assert support["upper_status_gap_seed_solves"] == 196
+    assert support["basic_status_gap_seed_solves"] == 0
+    assert support["strictly_interior_gap_seed_solves"] == 196
+    assert support["maximum_seed_midpoint_match_distance"] < 1.0e-12
+    assert support["maximum_v2_seed_expected_objective_difference"] == 0.0
+    assert support["maximum_v2_seed_weighted_point_difference"] == 0.0
+    assert support["status_aware_seed_cap_containment_passes"] == 196
+    assert support["recomputed_target_gap_coverage_passes"] == 196
+    assert support["covered_periods"] == 15
+    assert support["zero_tolerance_positive_seams"] == 465
+    assert support["maximum_zero_tolerance_seam_width"] == pytest.approx(1.6653345369377348e-16)
+    assert support["total_zero_tolerance_seam_width"] == pytest.approx(6.6405214660392176e-15)
+    assert support["positive_gaps_at_1e_15"] == 0
+    assert support["rhs_support_coverage_gate_passed"] is True
+    assert support["freeze_reconciliation_rows"] == 7_297
+    assert support["freeze_reconciliation_passes"] == 7_297
+    assert support["freeze_reconciliation_gate_passed"] is True
+    assert support["all_basis_dual_feasibility_contracts_passed"] is True
+    assert support["lateral_breakpoint_rows"] == 2_952
+    assert support["lateral_probe_paths"] == 5_874
+    assert support["lateral_allocation_difference_rows"] == 0
+    assert support["maximum_pairwise_allocation_distance"] == pytest.approx(3.078713590737436e-14)
+    assert support["corrected_lateral_gate_passed"] is True
+    assert support["v2_warning_rows"] == 13
+    assert support["v2_unique_warning_targets"] == 8
+    assert support["v3a_gap_seed_warning_rows"] == 1
+    assert support["v3a_warning_repeats_same_v2_variable_at_both_neighbor_endpoints"] is True
+    assert support["maximum_coordinate_exposure_mobility_dollars"] == pytest.approx(
+        0.9615019985630913
+    )
+    assert support["strict_numerical_uniqueness_gate_passed"] is False
+    assert support["rhs_coverage_recovered_without_uniqueness_promotion"] is True
+    assert support["epsilon_mobility_is_exact_nonuniqueness_evidence"] is False
+    assert support["exact_symbolic_optimal_face_claim_active"] is False
+    assert support["exact_nonuniqueness_claim_active"] is False
+    assert support["allocation_continuity_claim_active"] is False
+    assert support["continuous_outcome_envelope_claim_active"] is False
 
 
 def test_two_ruler_diagnostic_is_finite_complete_and_nonselective() -> None:

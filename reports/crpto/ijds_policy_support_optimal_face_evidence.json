@@ -1,0 +1,307 @@
+{
+  "schema_version": "2026-07-21.1",
+  "status": "complete_outcome_free_policy_support_optimal_face_evidence",
+  "certification_status": "rhs_support_coverage_recovered_numerical_uniqueness_claim_blocked",
+  "publication_role": "registered_intermediate_source_for_single_primary_evidence_manifest",
+  "paper_facing_numeric_authority": false,
+  "lineage": {
+    "v2": {
+      "run_tag": "ijds-policy-support-optimal-face-audit-2026-07-21-v2",
+      "protocol_tag": "protocol/ijds-policy-support-optimal-face-audit-2026-07-21-v2",
+      "protocol_commit": "86fddefdcf4d40a971866b2d9acf1d34f5c3bca2",
+      "summary": {
+        "path": "models/experiments/ijds_audit/ijds-policy-support-optimal-face-audit-2026-07-21-v2/optimal_face_audit_summary.json",
+        "bytes": 31989,
+        "sha256": "22b4736e211ed18c42cccccee079d0f82fd2b7b30394f08b57bad90a2ecd3ae6"
+      },
+      "execution_receipt": {
+        "path": "models/experiments/ijds_audit/ijds-policy-support-optimal-face-audit-2026-07-21-v2/execution_receipt.json",
+        "bytes": 2071,
+        "sha256": "30904336b9201900686ae600c8d76602fb8245fba05d80c6bfdad583a08c6869"
+      },
+      "verified_artifacts": {
+        "data/processed/experiments/ijds_audit/ijds-policy-support-optimal-face-audit-2026-07-21-v2/breakpoint_allocation_comparisons.parquet": {
+          "path": "data/processed/experiments/ijds_audit/ijds-policy-support-optimal-face-audit-2026-07-21-v2/breakpoint_allocation_comparisons.parquet",
+          "bytes": 1343620,
+          "sha256": "545d8fc2b3a436bc08e50265dd858e208980b74fb3f478a2a16bc5632e43d859"
+        },
+        "data/processed/experiments/ijds_audit/ijds-policy-support-optimal-face-audit-2026-07-21-v2/breakpoint_lateral_probe_diagnostics.parquet": {
+          "path": "data/processed/experiments/ijds_audit/ijds-policy-support-optimal-face-audit-2026-07-21-v2/breakpoint_lateral_probe_diagnostics.parquet",
+          "bytes": 1584427,
+          "sha256": "d9459924c06ee631239134168346d8341e8ff0ddfa9448a30167ee93e70a22e2"
+        },
+        "data/processed/experiments/ijds_audit/ijds-policy-support-optimal-face-audit-2026-07-21-v2/central_full_basis_diagnostics.parquet": {
+          "path": "data/processed/experiments/ijds_audit/ijds-policy-support-optimal-face-audit-2026-07-21-v2/central_full_basis_diagnostics.parquet",
+          "bytes": 2381388,
+          "sha256": "3aa64b7d70b37c9dd8e34ebab9b7e3f12f09e5c4d771e7cff6beae9fc94ef279"
+        },
+        "data/processed/experiments/ijds_audit/ijds-policy-support-optimal-face-audit-2026-07-21-v2/column_registry.parquet": {
+          "path": "data/processed/experiments/ijds_audit/ijds-policy-support-optimal-face-audit-2026-07-21-v2/column_registry.parquet",
+          "bytes": 6731645,
+          "sha256": "76d090616a97f22224b5a80dbe2c11c9f559beb467037de2fb09c0334ed8e5ed"
+        },
+        "data/processed/experiments/ijds_audit/ijds-policy-support-optimal-face-audit-2026-07-21-v2/conditional_optimal_face_ranges.parquet": {
+          "path": "data/processed/experiments/ijds_audit/ijds-policy-support-optimal-face-audit-2026-07-21-v2/conditional_optimal_face_ranges.parquet",
+          "bytes": 25529,
+          "sha256": "79bc7cca3d7ed82e2b2c664ee55c808f7f8cc44fa31b2b2b34a824f3c7a862d6"
+        },
+        "data/processed/experiments/ijds_audit/ijds-policy-support-optimal-face-audit-2026-07-21-v2/flagged_nonbasic_variables.parquet": {
+          "path": "data/processed/experiments/ijds_audit/ijds-policy-support-optimal-face-audit-2026-07-21-v2/flagged_nonbasic_variables.parquet",
+          "bytes": 11400,
+          "sha256": "e8af4e39f5b09af8ec89ebd537c2e8730d46fe51a76bbaf6364a27df1eaa397e"
+        },
+        "data/processed/experiments/ijds_audit/ijds-policy-support-optimal-face-audit-2026-07-21-v2/fresh_rhs_basis_range_coverage.parquet": {
+          "path": "data/processed/experiments/ijds_audit/ijds-policy-support-optimal-face-audit-2026-07-21-v2/fresh_rhs_basis_range_coverage.parquet",
+          "bytes": 16615,
+          "sha256": "7647ce6ce8d687b6a469c4bc023ffa438f07d728d0ba9e544900389120291d9a"
+        },
+        "data/processed/experiments/ijds_audit/ijds-policy-support-optimal-face-audit-2026-07-21-v2/frozen_allocation_reconciliation.parquet": {
+          "path": "data/processed/experiments/ijds_audit/ijds-policy-support-optimal-face-audit-2026-07-21-v2/frozen_allocation_reconciliation.parquet",
+          "bytes": 401913,
+          "sha256": "a56c6bad53b84c477ec3c6c474fb983f5a76851e6cbbcd3e5cce30d5cbab87e6"
+        },
+        "data/processed/experiments/ijds_audit/ijds-policy-support-optimal-face-audit-2026-07-21-v2/row_slack_basis_details.parquet": {
+          "path": "data/processed/experiments/ijds_audit/ijds-policy-support-optimal-face-audit-2026-07-21-v2/row_slack_basis_details.parquet",
+          "bytes": 1122903,
+          "sha256": "3bab7bccfd1b4714938f86ec53d2bb916db7dfe8e5cbc8df4cac2d9fd8623770"
+        },
+        "models/experiments/ijds_audit/ijds-policy-support-optimal-face-audit-2026-07-21-v2/protocol_freeze.json": {
+          "path": "models/experiments/ijds_audit/ijds-policy-support-optimal-face-audit-2026-07-21-v2/protocol_freeze.json",
+          "bytes": 9611,
+          "sha256": "d98e141d0dc1b1a8c76809de3e182b255f9e941992604b5571b0c462ce4908c0"
+        }
+      }
+    },
+    "v3a": {
+      "run_tag": "ijds-policy-support-rhs-semantics-recovery-2026-07-21-v3a",
+      "protocol_tag": "protocol/ijds-policy-support-rhs-semantics-recovery-2026-07-21-v3a",
+      "protocol_commit": "388927ebfe34e872fc5d1085ece63300734d5b47",
+      "summary": {
+        "path": "models/experiments/ijds_audit/ijds-policy-support-rhs-semantics-recovery-2026-07-21-v3a/rhs_semantics_recovery_summary.json",
+        "bytes": 24918,
+        "sha256": "466d5822573e39f2435d57ca4088fab52bff12029c89283b208a8709dc76fbec"
+      },
+      "execution_receipt": {
+        "path": "models/experiments/ijds_audit/ijds-policy-support-rhs-semantics-recovery-2026-07-21-v3a/execution_receipt.json",
+        "bytes": 2066,
+        "sha256": "901e5fbbe7cc8a4338d5552737b2d434d9b96ebecee302739b972df09e76b92c"
+      },
+      "verified_artifacts": {
+        "data/processed/experiments/ijds_audit/ijds-policy-support-rhs-semantics-recovery-2026-07-21-v3a/corrected_central_rhs_ranges.parquet": {
+          "path": "data/processed/experiments/ijds_audit/ijds-policy-support-rhs-semantics-recovery-2026-07-21-v3a/corrected_central_rhs_ranges.parquet",
+          "bytes": 302030,
+          "sha256": "2a7118cd6f57e130ca9a5c937b8768658a6be3b32b7a446cfef74b39a3479588"
+        },
+        "data/processed/experiments/ijds_audit/ijds-policy-support-rhs-semantics-recovery-2026-07-21-v3a/corrected_lateral_comparisons.parquet": {
+          "path": "data/processed/experiments/ijds_audit/ijds-policy-support-rhs-semantics-recovery-2026-07-21-v3a/corrected_lateral_comparisons.parquet",
+          "bytes": 1343608,
+          "sha256": "47a0e6f455cd963d068a49772591fe55e868964df37e62695ae825bc47fa096c"
+        },
+        "data/processed/experiments/ijds_audit/ijds-policy-support-rhs-semantics-recovery-2026-07-21-v3a/corrected_rhs_coverage_by_period.parquet": {
+          "path": "data/processed/experiments/ijds_audit/ijds-policy-support-rhs-semantics-recovery-2026-07-21-v3a/corrected_rhs_coverage_by_period.parquet",
+          "bytes": 11117,
+          "sha256": "3b3fb35bc1dc809280493ba59774881e9da94cc8b715e6b09e130d67b4572db2"
+        },
+        "data/processed/experiments/ijds_audit/ijds-policy-support-rhs-semantics-recovery-2026-07-21-v3a/gap_fill_basis_diagnostics.parquet": {
+          "path": "data/processed/experiments/ijds_audit/ijds-policy-support-rhs-semantics-recovery-2026-07-21-v3a/gap_fill_basis_diagnostics.parquet",
+          "bytes": 133372,
+          "sha256": "debb921e373212af4c5ac5d55c63058259b6732dc7018c1aceaadcfe4f85c27e"
+        },
+        "data/processed/experiments/ijds_audit/ijds-policy-support-rhs-semantics-recovery-2026-07-21-v3a/gap_fill_flagged_nonbasic_variables.parquet": {
+          "path": "data/processed/experiments/ijds_audit/ijds-policy-support-rhs-semantics-recovery-2026-07-21-v3a/gap_fill_flagged_nonbasic_variables.parquet",
+          "bytes": 11795,
+          "sha256": "58123a381579cca810f42cfb0c42db7ea3f251e406e4db7ee52a6fa324af79bb"
+        },
+        "data/processed/experiments/ijds_audit/ijds-policy-support-rhs-semantics-recovery-2026-07-21-v3a/gap_fill_row_slack_details.parquet": {
+          "path": "data/processed/experiments/ijds_audit/ijds-policy-support-rhs-semantics-recovery-2026-07-21-v3a/gap_fill_row_slack_details.parquet",
+          "bytes": 51568,
+          "sha256": "29e8759bdc4f0d4535cffabbfeaa96ac02586132ebcfe6837288208b9fef4cb8"
+        },
+        "models/experiments/ijds_audit/ijds-policy-support-rhs-semantics-recovery-2026-07-21-v3a/protocol_freeze.json": {
+          "path": "models/experiments/ijds_audit/ijds-policy-support-rhs-semantics-recovery-2026-07-21-v3a/protocol_freeze.json",
+          "bytes": 9120,
+          "sha256": "ca4a77719d6cba66702a193e9df63df6d7bfe529bbb596d52355cc86e3f6f432"
+        }
+      }
+    },
+    "verified_result_artifact_descriptors": 17,
+    "verified_deterministic_summary_descriptors": 2,
+    "verified_execution_receipt_identity_contracts": 2,
+    "lineage_files_described": 21,
+    "protocol_tags_resolve_to_locked_commits": true,
+    "v3a_retains_exact_v2_descriptor_census": true
+  },
+  "results": {
+    "status_aware_rhs_semantics": {
+      "rows": 7297,
+      "periods": 15,
+      "upper_rows": 7228,
+      "basic_rows": 69,
+      "v2_reported_domain_clipped_cap_containment_failures": 66,
+      "status_aware_cap_containment_passes": 7297,
+      "maximum_status_aware_cap_containment_violation": 6.938893903907228e-17,
+      "basic_row_maximum_absolute_dual": 0.0,
+      "status_aware_semantics_gate_passed": true
+    },
+    "rhs_support_coverage": {
+      "periods": 15,
+      "registered_support_lower": 0.05,
+      "registered_support_upper": 0.12,
+      "absolute_gap_tolerance": 1e-10,
+      "initial_positive_gaps": 196,
+      "maximum_initial_positive_gap": 0.0014766337338472102,
+      "initial_total_uncovered_width": 0.04912420588404012,
+      "registered_gap_seed_solves": 196,
+      "upper_status_gap_seed_solves": 196,
+      "basic_status_gap_seed_solves": 0,
+      "strictly_interior_gap_seed_solves": 196,
+      "maximum_seed_midpoint_match_distance": 1.3877787807814457e-16,
+      "maximum_v2_seed_expected_objective_difference": 0.0,
+      "maximum_v2_seed_weighted_point_difference": 0.0,
+      "status_aware_seed_cap_containment_passes": 196,
+      "targeted_gap_coverage_passes": 196,
+      "recomputed_target_gap_coverage_passes": 196,
+      "final_positive_gaps": 0,
+      "maximum_final_positive_gap": 0.0,
+      "covered_periods": 15,
+      "zero_tolerance_positive_seams": 465,
+      "maximum_zero_tolerance_seam_width": 1.6653345369377348e-16,
+      "total_zero_tolerance_seam_width": 6.6405214660392176e-15,
+      "positive_gaps_at_1e_15": 0,
+      "maximum_gap_reconstruction_difference": 0.0,
+      "persisted_coverage_table_reconciled": true,
+      "rhs_support_coverage_gate_passed": true
+    },
+    "numerical_contracts": {
+      "v2_central": {
+        "rows": 7297,
+        "periods": 15,
+        "valid_basis_solution_rows": 7297,
+        "unsupported_nonbasic_statuses": 0,
+        "maximum_dual_sign_violation": 0.0,
+        "maximum_absolute_objective_reconciliation_error": 5.238689482212067e-10,
+        "maximum_normalized_policy_constraint_violation": 4.656612873077392e-16,
+        "maximum_primal_bound_violation": 4.656612873077393e-10,
+        "numerical_contract_passed": true
+      },
+      "v2_lateral_probes": {
+        "rows": 5874,
+        "periods": 15,
+        "valid_basis_solution_rows": 5874,
+        "unsupported_nonbasic_statuses": 0,
+        "maximum_dual_sign_violation": 0.0,
+        "maximum_absolute_objective_reconciliation_error": 2.35741026699543e-09,
+        "maximum_normalized_policy_constraint_violation": 2.6193447411060334e-16,
+        "maximum_primal_bound_violation": 2.6193447411060333e-10,
+        "numerical_contract_passed": true
+      },
+      "v3a_gap_replay": {
+        "rows": 196,
+        "periods": 15,
+        "valid_basis_solution_rows": 196,
+        "unsupported_nonbasic_statuses": 0,
+        "maximum_dual_sign_violation": 0.0,
+        "maximum_absolute_objective_reconciliation_error": 1.7462298274040222e-10,
+        "maximum_normalized_policy_constraint_violation": 0.0,
+        "maximum_primal_bound_violation": 0.0,
+        "numerical_contract_passed": true
+      },
+      "v2_all_row_slack_details": {
+        "rows": 186202,
+        "basis_statuses": [
+          "basic",
+          "upper"
+        ],
+        "near_zero_nonbasic_rows": 0,
+        "maximum_row_bound_violation": 4.656612873077393e-10,
+        "row_contract_passed": true
+      },
+      "v3a_all_gap_row_slack_details": {
+        "rows": 2786,
+        "basis_statuses": [
+          "basic",
+          "upper"
+        ],
+        "near_zero_nonbasic_rows": 0,
+        "maximum_row_bound_violation": 0.0,
+        "row_contract_passed": true
+      }
+    },
+    "frozen_allocation_reconciliation": {
+      "rows": 7297,
+      "passed_rows": 7297,
+      "maximum_l1_exposure_dollars": 2.2512267605634406e-08,
+      "maximum_normalized_l1_exposure": 1.1256133802817224e-14,
+      "maximum_absolute_objective_difference": 1.5425030142068863e-09,
+      "maximum_absolute_weighted_point_difference": 4.718447854656915e-16,
+      "frozen_allocation_reconciliation_gate_passed": true
+    },
+    "corrected_lateral_stability": {
+      "breakpoint_rows": 2952,
+      "allocation_difference_rows": 0,
+      "corrected_same_cap_mobility_cooccurrence_rows": 0,
+      "allocation_difference_without_same_cap_mobility_rows": 0,
+      "lateral_objective_discrepancy_rows": 0,
+      "lateral_weighted_point_discrepancy_rows": 0,
+      "maximum_pairwise_allocation_distance": 3.078713590737436e-14,
+      "maximum_pairwise_objective_difference": 3.2014213502407074e-10,
+      "maximum_pairwise_weighted_point_difference": 4.996003610813204e-16,
+      "v2_misreported_cooccurrence_rows": 7,
+      "corrected_lateral_gate_passed": true
+    },
+    "warnings_and_mobility": {
+      "v2_warning_rows": 13,
+      "v2_central_warning_rows": 5,
+      "v2_lateral_warning_rows": 8,
+      "v2_unique_cap_variable_targets": 8,
+      "v3a_gap_seed_warning_rows": 1,
+      "v3a_warning_repeats_same_v2_variable_at_both_neighbor_endpoints": true,
+      "v3a_warning_period": "2016-05",
+      "v3a_warning_variable_name": "79672779",
+      "v3a_warning_registered_seed_cap": 0.0772591347422286,
+      "combined_warning_rows": 14,
+      "v2_conditional_range_rows": 8,
+      "minimum_conditional_solver_run_time_seconds": 0.1253185000095982,
+      "maximum_conditional_solver_run_time_seconds": 0.17351290001533926,
+      "maximum_conditional_face_primal_bound_violation": 1.1641532182693481e-10,
+      "maximum_v2_normalized_coordinate_mobility": 9.615019985630913e-07,
+      "maximum_v2_coordinate_exposure_mobility_dollars": 0.9615019985630913,
+      "epsilon_near_optimal_mobility_is_exact_alternate_optimum": false,
+      "warnings_block_strict_numerical_uniqueness_promotion": true,
+      "strict_numerical_uniqueness_gate_passed": false
+    },
+    "rhs_coverage_recovered_without_uniqueness_promotion": true
+  },
+  "claim_boundary": {
+    "retrospective": true,
+    "preregistered": false,
+    "confirmatory": false,
+    "prospective": false,
+    "outcome_columns_passed": [],
+    "permissible_conclusion": "Solver-reported RHS ranges for active upper rows, analytically derived zero-dual safe rays for basic rows, and one nonadaptive replay of all 196 V2 midpoint seeds retrospectively registered in V3a leave no gap above 1e-10 on the locked [0.05, 0.12] support in all 15 months.",
+    "rhs_coverage_is_numerical_and_support_bounded": true,
+    "strict_numerical_uniqueness_claim_active": false,
+    "exact_symbolic_optimal_face_claim_active": false,
+    "exact_nonuniqueness_claim_active": false,
+    "global_optimal_face_diameter_claim_active": false,
+    "continuous_joint_frontier_uniqueness_claim_active": false,
+    "exact_continuous_outcome_envelope_over_all_optimal_allocations_claim_active": false,
+    "allocation_continuity_or_seam_conditioning_claim_active": false,
+    "epsilon_mobility_is_exact_nonuniqueness_evidence": false,
+    "policy_cap_or_tie_break_selected": false,
+    "empirical_outcome_direction_claim_active": false,
+    "selected_or_funded_set_conformal_claim_active": false,
+    "forbidden_inferences": [
+      "symbolic or continuous-frontier uniqueness",
+      "an exact alternate optimum from epsilon-near-optimal mobility",
+      "a global optimal-face diameter bound",
+      "an exact continuous outcome envelope over all optimal allocations",
+      "allocation continuity or seam conditioning",
+      "policy, cap, comparator, or tie-break selection",
+      "an empirical outcome direction or selected-set conformal validity"
+    ]
+  },
+  "outcome_columns_passed": [],
+  "protected_stages_run": [],
+  "protected_artifacts_written": []
+}

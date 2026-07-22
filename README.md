@@ -24,7 +24,7 @@ time roles before evaluation.
 | Individual-age origin sensitivity | 16 / 16 upper bounds below 0.90 |
 | Label-Mondrian sensitivity | 27 / 40 marginal and 109 / 400 category shortfalls |
 | Two-ruler optimization solves | 6,240 |
-| Exact point-cap frontier | 3,067 caps |
+| Registered finite point-cap support | 3,067 caps |
 | Broad-support comparator envelopes crossing zero | 216 / 216 |
 | Structural sensitivity | 36 complete scenarios |
 | Joint fit-label completion stress | 32 / 32 upper bounds below 0.90 |
@@ -64,7 +64,7 @@ Read these in order:
 5. [`paper/CRPTO_ijds.qmd`](paper/CRPTO_ijds.qmd)
 6. [`paper/supplement_ijds.qmd`](paper/supplement_ijds.qmd)
 
-The source registry owns lineage identities and 47 DVC pointers. The evidence
+The source registry owns lineage identities and 51 DVC pointers. The evidence
 manifest is the only numeric paper-facing manifest. The body QMD is the only
 editable source for the official submission TeX.
 

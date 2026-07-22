@@ -607,7 +607,7 @@ def _require_coverage_contract(
     denominator_variation = frame.groupby(list(constant_within), observed=True)[
         list(count_columns)
     ].nunique()
-    if bool(denominator_variation.gt(1).any().any()):
+    if bool(np.any(denominator_variation.to_numpy(dtype=int) > 1)):
         raise RuntimeError(
             f"{label} changes its candidate denominators within a declared cell family."
         )
@@ -1377,8 +1377,8 @@ class DiagnosticInputs:
     nonadmissible_lag_table: pd.DataFrame
     lag_w7_w8: pd.DataFrame
     tie_evidence_path: Path
-    tie_census: dict[str, Any]
-    tie_order: dict[str, Any]
+    policy_evidence_path: Path
+    policy_evidence: dict[str, Any]
 
 
 def _load_diagnostic_inputs(
@@ -1435,10 +1435,126 @@ def _load_diagnostic_inputs(
     if tie_evidence.get("status") != "complete_prefreeze_structural_evidence":
         raise RuntimeError("The solver-tie audit is incomplete.")
     _require_identity(tie_evidence, lineage["solver_tie_audit"], label="Solver-tie audit")
-    tie_census = tie_evidence["results"]["point_cap_census"]
-    tie_order = tie_evidence["results"]["order_sensitivity"]
-    if int(tie_census["near_zero_bases"]) != 0 or int(tie_order["tie_sensitive_rows"]) != 0:
-        raise RuntimeError("The evaluated point-cap census contains an unresolved solver tie.")
+    _require_clean_execution(tie_evidence, label="The legacy solver-tie audit")
+
+    policy_evidence_path = registered["policy_support_optimal_face_evidence"]
+    policy_evidence = _read_json(
+        policy_evidence_path,
+        label="Policy-support optimal-face evidence",
+    )
+    if (
+        policy_evidence.get("schema_version") != "2026-07-21.1"
+        or policy_evidence.get("status")
+        != "complete_outcome_free_policy_support_optimal_face_evidence"
+        or policy_evidence.get("certification_status")
+        != "rhs_support_coverage_recovered_numerical_uniqueness_claim_blocked"
+    ):
+        raise RuntimeError("The policy-support optimal-face evidence is incomplete.")
+    if (
+        policy_evidence.get("publication_role")
+        != "registered_intermediate_source_for_single_primary_evidence_manifest"
+        or policy_evidence.get("paper_facing_numeric_authority") is not False
+    ):
+        raise RuntimeError("The policy-support evidence publication role changed.")
+    _require_clean_execution(policy_evidence, label="The policy-support optimal-face evidence")
+    if policy_evidence.get("outcome_columns_passed") != []:
+        raise RuntimeError("The policy-support evidence is no longer outcome-free.")
+    policy_lineage = policy_evidence.get("lineage")
+    if not isinstance(policy_lineage, Mapping):
+        raise TypeError("The policy-support evidence lineage is not a mapping.")
+    for key, registry_key in (
+        ("v2", "policy_support_optimal_face_v2"),
+        ("v3a", "policy_support_rhs_semantics_recovery"),
+    ):
+        identity = policy_lineage.get(key)
+        if not isinstance(identity, Mapping):
+            raise TypeError(f"The policy-support {key} identity is not a mapping.")
+        _require_identity(identity, lineage[registry_key], label=f"Policy-support {key}")
+    policy_results = policy_evidence.get("results")
+    policy_boundary = policy_evidence.get("claim_boundary")
+    if not isinstance(policy_results, Mapping) or not isinstance(policy_boundary, Mapping):
+        raise TypeError("The policy-support results or claim boundary is not a mapping.")
+    coverage = policy_results.get("rhs_support_coverage")
+    warnings = policy_results.get("warnings_and_mobility")
+    status_aware = policy_results.get("status_aware_rhs_semantics")
+    frozen = policy_results.get("frozen_allocation_reconciliation")
+    lateral = policy_results.get("corrected_lateral_stability")
+    numerical = policy_results.get("numerical_contracts")
+    if not all(
+        isinstance(value, Mapping)
+        for value in (coverage, warnings, status_aware, frozen, lateral, numerical)
+    ):
+        raise TypeError("A policy-support result contract is not a mapping.")
+    assert isinstance(coverage, Mapping)
+    assert isinstance(warnings, Mapping)
+    assert isinstance(status_aware, Mapping)
+    assert isinstance(frozen, Mapping)
+    assert isinstance(lateral, Mapping)
+    assert isinstance(numerical, Mapping)
+    numerical_passes = all(
+        isinstance(contract, Mapping)
+        and contract.get(
+            "numerical_contract_passed",
+            contract.get("row_contract_passed"),
+        )
+        is True
+        for contract in numerical.values()
+    )
+    if (
+        status_aware.get("status_aware_semantics_gate_passed") is not True
+        or coverage.get("rhs_support_coverage_gate_passed") is not True
+        or float(coverage.get("absolute_gap_tolerance", -1.0)) != 1.0e-10
+        or int(coverage.get("registered_gap_seed_solves", -1)) != 196
+        or int(coverage.get("upper_status_gap_seed_solves", -1)) != 196
+        or int(coverage.get("basic_status_gap_seed_solves", -1)) != 0
+        or int(coverage.get("strictly_interior_gap_seed_solves", -1)) != 196
+        or float(coverage.get("maximum_seed_midpoint_match_distance", float("inf"))) > 1.0e-12
+        or float(coverage.get("maximum_v2_seed_expected_objective_difference", float("inf")))
+        > 1.0e-5
+        or float(coverage.get("maximum_v2_seed_weighted_point_difference", float("inf"))) > 1.0e-10
+        or int(coverage.get("status_aware_seed_cap_containment_passes", -1)) != 196
+        or int(coverage.get("recomputed_target_gap_coverage_passes", -1)) != 196
+        or int(coverage.get("zero_tolerance_positive_seams", -1)) != 465
+        or int(coverage.get("positive_gaps_at_1e_15", -1)) != 0
+        or frozen.get("frozen_allocation_reconciliation_gate_passed") is not True
+        or int(frozen.get("rows", -1)) != 7_297
+        or int(frozen.get("passed_rows", -1)) != 7_297
+        or lateral.get("corrected_lateral_gate_passed") is not True
+        or not numerical_passes
+        or warnings.get("strict_numerical_uniqueness_gate_passed") is not False
+        or warnings.get("epsilon_near_optimal_mobility_is_exact_alternate_optimum") is not False
+        or policy_results.get("rhs_coverage_recovered_without_uniqueness_promotion") is not True
+    ):
+        raise RuntimeError("The bounded policy-support conclusion changed.")
+    forbidden_promotions = (
+        "strict_numerical_uniqueness_claim_active",
+        "exact_symbolic_optimal_face_claim_active",
+        "exact_nonuniqueness_claim_active",
+        "global_optimal_face_diameter_claim_active",
+        "continuous_joint_frontier_uniqueness_claim_active",
+        "exact_continuous_outcome_envelope_over_all_optimal_allocations_claim_active",
+        "allocation_continuity_or_seam_conditioning_claim_active",
+    )
+    if any(policy_boundary.get(field) is not False for field in forbidden_promotions):
+        raise RuntimeError("The policy-support evidence promotes a forbidden inference.")
+    if policy_boundary.get("epsilon_mobility_is_exact_nonuniqueness_evidence") is not False:
+        raise RuntimeError("Epsilon mobility is promoted as exact nonuniqueness evidence.")
+    if (
+        policy_boundary.get("retrospective") is not True
+        or policy_boundary.get("rhs_coverage_is_numerical_and_support_bounded") is not True
+        or any(
+            policy_boundary.get(field) is not False
+            for field in (
+                "preregistered",
+                "confirmatory",
+                "prospective",
+                "policy_cap_or_tie_break_selected",
+                "empirical_outcome_direction_claim_active",
+                "selected_or_funded_set_conformal_claim_active",
+            )
+        )
+    ):
+        raise RuntimeError("The policy-support retrospective or selection boundary changed.")
     return DiagnosticInputs(
         raw_audit_path=raw_audit_path,
         raw_audit=raw_audit,
@@ -1452,8 +1568,8 @@ def _load_diagnostic_inputs(
         nonadmissible_lag_table=nonadmissible_lag_table,
         lag_w7_w8=lag_w7_w8,
         tie_evidence_path=tie_evidence_path,
-        tie_census=tie_census,
-        tie_order=tie_order,
+        policy_evidence_path=policy_evidence_path,
+        policy_evidence=policy_evidence,
     )
 
 
@@ -2149,8 +2265,10 @@ def _load_individual_age_followup_inputs(
         "2017-06": "2020-09-30",
     }
     observed_cutoffs = {
-        str(row.period): str(pd.Timestamp(row.individual_evaluation_cutoff).date())
-        for row in monthly.itertuples(index=False)
+        str(period): str(pd.Timestamp(cutoff).date())
+        for period, cutoff in zip(
+            monthly["period"], monthly["individual_evaluation_cutoff"], strict=True
+        )
     }
     if (
         len(monthly) != 6
@@ -2637,8 +2755,19 @@ def _build_evidence(staging_root: Path) -> Path:
     nonadmissible_lag_table = diagnostics.nonadmissible_lag_table
     lag_w7_w8 = diagnostics.lag_w7_w8
     tie_evidence_path = diagnostics.tie_evidence_path
-    tie_census = diagnostics.tie_census
-    tie_order = diagnostics.tie_order
+    policy_evidence_path = diagnostics.policy_evidence_path
+    policy_evidence = diagnostics.policy_evidence
+    policy_results = cast(dict[str, Any], policy_evidence["results"])
+    policy_status_aware = cast(dict[str, Any], policy_results["status_aware_rhs_semantics"])
+    policy_coverage = cast(dict[str, Any], policy_results["rhs_support_coverage"])
+    policy_numerical = cast(dict[str, Any], policy_results["numerical_contracts"])
+    policy_frozen = cast(
+        dict[str, Any],
+        policy_results["frozen_allocation_reconciliation"],
+    )
+    policy_lateral = cast(dict[str, Any], policy_results["corrected_lateral_stability"])
+    policy_warnings = cast(dict[str, Any], policy_results["warnings_and_mobility"])
+    policy_boundary = cast(dict[str, Any], policy_evidence["claim_boundary"])
 
     credit_prediction_metrics = credit.prediction_metrics
     credit_temporal_coverage = credit.temporal_coverage
@@ -3160,6 +3289,7 @@ def _build_evidence(staging_root: Path) -> Path:
             "allocation_granularity/freeze": granularity_freeze_path,
             "allocation_granularity/summary": granularity_summary_path,
             "solver_tie_audit/manifest": tie_evidence_path,
+            "policy_support_optimal_face/manifest": policy_evidence_path,
         },
         artifact_groups={
             "outcome_free": source_artifacts,
@@ -3216,7 +3346,7 @@ def _build_evidence(staging_root: Path) -> Path:
     )
     paper_artifact_descriptors = _paper_artifact_descriptors(publication_generation)
     evidence = {
-        "schema_version": "2026-07-21.4",
+        "schema_version": "2026-07-21.5",
         "status": "active_ijds_v5_endpoint_reason_audited_paper_facing_evidence",
         "source_registry": {
             "schema_version": str(registry["schema_version"]),
@@ -3826,22 +3956,129 @@ def _build_evidence(staging_root: Path) -> Path:
                 w8_development["direction"].eq("crosses_zero").all()
             ),
             "named_direction_counts": named_table.to_dict(orient="records"),
-            "evaluated_point_cap_solver_stability": {
-                "scope": "evaluated_point_caps_only_not_continuous_uniqueness",
-                "point_cap_rows": int(tie_census["rows"]),
-                "named_unique_cap_months": int(tie_census["named_unique_cap_months"]),
-                "minimum_absolute_nonbasic_reduced_cost": float(
-                    tie_census["minimum_absolute_nonbasic_reduced_cost"]
+            "policy_support_rhs_semantics": {
+                "scope": (
+                    "retrospective_outcome_free_active_upper_solver_reported_rhs_ranges_"
+                    "plus_analytically_derived_zero_dual_basic_row_safe_rays_and_196_"
+                    "v2_midpoint_seeds_retrospectively_registered_in_v3a_at_absolute_"
+                    "tolerance_1e_10"
                 ),
-                "near_zero_bases": int(tie_census["near_zero_bases"]),
-                "primal_degenerate_bases": int(tie_census["primal_degenerate_bases"]),
-                "reversed_order_reruns": int(tie_order["triggered_rows"]),
-                "tie_sensitive_rows": int(tie_order["tie_sensitive_rows"]),
-                "maximum_allocation_distance": float(tie_order["maximum_allocation_distance"]),
-                "maximum_absolute_objective_difference": float(
-                    tie_order["maximum_absolute_objective_difference"]
+                "source_role": str(policy_evidence["publication_role"]),
+                "v2_run_tag": str(policy_evidence["lineage"]["v2"]["run_tag"]),
+                "v3a_run_tag": str(policy_evidence["lineage"]["v3a"]["run_tag"]),
+                "central_rows": int(policy_status_aware["rows"]),
+                "upper_status_rows": int(policy_status_aware["upper_rows"]),
+                "basic_status_rows": int(policy_status_aware["basic_rows"]),
+                "v2_semantic_false_failures": int(
+                    policy_status_aware["v2_reported_domain_clipped_cap_containment_failures"]
                 ),
-                "continuous_frontier_uniqueness_claim": False,
+                "status_aware_cap_containment_passes": int(
+                    policy_status_aware["status_aware_cap_containment_passes"]
+                ),
+                "registered_support_lower": float(policy_coverage["registered_support_lower"]),
+                "registered_support_upper": float(policy_coverage["registered_support_upper"]),
+                "absolute_gap_tolerance": float(policy_coverage["absolute_gap_tolerance"]),
+                "initial_positive_gaps": int(policy_coverage["initial_positive_gaps"]),
+                "registered_gap_seed_solves": int(policy_coverage["registered_gap_seed_solves"]),
+                "upper_status_gap_seed_solves": int(
+                    policy_coverage["upper_status_gap_seed_solves"]
+                ),
+                "basic_status_gap_seed_solves": int(
+                    policy_coverage["basic_status_gap_seed_solves"]
+                ),
+                "strictly_interior_gap_seed_solves": int(
+                    policy_coverage["strictly_interior_gap_seed_solves"]
+                ),
+                "maximum_seed_midpoint_match_distance": float(
+                    policy_coverage["maximum_seed_midpoint_match_distance"]
+                ),
+                "maximum_v2_seed_expected_objective_difference": float(
+                    policy_coverage["maximum_v2_seed_expected_objective_difference"]
+                ),
+                "maximum_v2_seed_weighted_point_difference": float(
+                    policy_coverage["maximum_v2_seed_weighted_point_difference"]
+                ),
+                "status_aware_seed_cap_containment_passes": int(
+                    policy_coverage["status_aware_seed_cap_containment_passes"]
+                ),
+                "recomputed_target_gap_coverage_passes": int(
+                    policy_coverage["recomputed_target_gap_coverage_passes"]
+                ),
+                "covered_periods": int(policy_coverage["covered_periods"]),
+                "zero_tolerance_positive_seams": int(
+                    policy_coverage["zero_tolerance_positive_seams"]
+                ),
+                "maximum_zero_tolerance_seam_width": float(
+                    policy_coverage["maximum_zero_tolerance_seam_width"]
+                ),
+                "total_zero_tolerance_seam_width": float(
+                    policy_coverage["total_zero_tolerance_seam_width"]
+                ),
+                "positive_gaps_at_1e_15": int(policy_coverage["positive_gaps_at_1e_15"]),
+                "rhs_support_coverage_gate_passed": bool(
+                    policy_coverage["rhs_support_coverage_gate_passed"]
+                ),
+                "freeze_reconciliation_rows": int(policy_frozen["rows"]),
+                "freeze_reconciliation_passes": int(policy_frozen["passed_rows"]),
+                "freeze_reconciliation_gate_passed": bool(
+                    policy_frozen["frozen_allocation_reconciliation_gate_passed"]
+                ),
+                "all_basis_dual_feasibility_contracts_passed": bool(
+                    all(
+                        contract.get(
+                            "numerical_contract_passed",
+                            contract.get("row_contract_passed"),
+                        )
+                        is True
+                        for contract in policy_numerical.values()
+                    )
+                ),
+                "lateral_breakpoint_rows": int(policy_lateral["breakpoint_rows"]),
+                "lateral_probe_paths": int(policy_numerical["v2_lateral_probes"]["rows"]),
+                "lateral_allocation_difference_rows": int(
+                    policy_lateral["allocation_difference_rows"]
+                ),
+                "maximum_pairwise_allocation_distance": float(
+                    policy_lateral["maximum_pairwise_allocation_distance"]
+                ),
+                "corrected_lateral_gate_passed": bool(
+                    policy_lateral["corrected_lateral_gate_passed"]
+                ),
+                "v2_warning_rows": int(policy_warnings["v2_warning_rows"]),
+                "v2_unique_warning_targets": int(policy_warnings["v2_unique_cap_variable_targets"]),
+                "v3a_gap_seed_warning_rows": int(policy_warnings["v3a_gap_seed_warning_rows"]),
+                "v3a_warning_repeats_same_v2_variable_at_both_neighbor_endpoints": bool(
+                    policy_warnings[
+                        "v3a_warning_repeats_same_v2_variable_at_both_neighbor_endpoints"
+                    ]
+                ),
+                "maximum_coordinate_exposure_mobility_dollars": float(
+                    policy_warnings["maximum_v2_coordinate_exposure_mobility_dollars"]
+                ),
+                "strict_numerical_uniqueness_gate_passed": bool(
+                    policy_warnings["strict_numerical_uniqueness_gate_passed"]
+                ),
+                "rhs_coverage_recovered_without_uniqueness_promotion": bool(
+                    policy_results["rhs_coverage_recovered_without_uniqueness_promotion"]
+                ),
+                "epsilon_mobility_is_exact_nonuniqueness_evidence": bool(
+                    policy_boundary["epsilon_mobility_is_exact_nonuniqueness_evidence"]
+                ),
+                "exact_symbolic_optimal_face_claim_active": bool(
+                    policy_boundary["exact_symbolic_optimal_face_claim_active"]
+                ),
+                "exact_nonuniqueness_claim_active": bool(
+                    policy_boundary["exact_nonuniqueness_claim_active"]
+                ),
+                "allocation_continuity_claim_active": bool(
+                    policy_boundary["allocation_continuity_or_seam_conditioning_claim_active"]
+                ),
+                "continuous_outcome_envelope_claim_active": bool(
+                    policy_boundary[
+                        "exact_continuous_outcome_envelope_over_all_optimal_allocations_claim_active"
+                    ]
+                ),
+                "permissible_conclusion": str(policy_boundary["permissible_conclusion"]),
             },
         },
         "decision_challenger": {
@@ -3898,7 +4135,9 @@ def _build_evidence(staging_root: Path) -> Path:
             "not invariant to every fit-label scenario. Portfolio direction is not identified "
             "without outcome-free comparator support and is not invariant to the declared "
             "ruler or interior coordinate; USD 25 floor rounding produces only negligible "
-            "rate perturbations in the evaluated archive."
+            "rate perturbations in the evaluated archive. Status-aware numerical basis "
+            "intervals leave no registered support gap above 1e-10, but scale-aware warnings "
+            "block any exact or strict numerical uniqueness conclusion."
         ),
         "source_artifacts": source_artifact_descriptors,
         "paper_artifacts": paper_artifact_descriptors,

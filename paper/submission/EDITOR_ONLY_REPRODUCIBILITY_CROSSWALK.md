@@ -37,6 +37,17 @@ sensitivity is `ijds-label-lag-sensitivity-2026-07-14-v1`; and the evaluated-cap
 tie audit is `ijds-policy-support-tie-audit-2026-07-12-v1`. Their descriptors
 are hash-locked in `configs/ijds_active_evidence_sources.yaml`.
 
+The complete per-solve column-and-row basis source audit is
+`ijds-policy-support-optimal-face-audit-2026-07-21-v2`, protocol-locked at
+commit `86fddefdcf4d40a971866b2d9acf1d34f5c3bca2`. Its immutable stored RHS gate
+failed closed. The active status-aware recovery is
+`ijds-policy-support-rhs-semantics-recovery-2026-07-21-v3a`, protocol-locked at
+commit `388927ebfe34e872fc5d1085ece63300734d5b47`. It replays all 196 V2 gap
+midpoints retrospectively registered in V3a and authorizes numerical support
+coverage at tolerance `1e-10`, not
+optimal-face or continuous-frontier uniqueness. The V3 predecessor at
+`8508a339` created no outputs and remains failed implementation provenance.
+
 The complete evaluation-endpoint availability sensitivity is
 `ijds-endpoint-availability-sensitivity-2026-07-14-v1`, protocol-locked at
 commit `8865f1cfbd387576bdf805f3e52f030261e4b717`. It reports lags 0, 3, 6, 8,
@@ -93,7 +104,7 @@ their freezes, summaries, and DVC roots are verified by the source registry.
 
 ## DVC Capsule
 
-The 47 DVC pointers are listed once in `configs/ijds_active_evidence_sources.yaml`.
+The 51 DVC pointers are listed once in `configs/ijds_active_evidence_sources.yaml`.
 They comprise data and model pointers for the active roots and sensitivities,
 plus explicitly labeled replay dependencies, including the data-only
 structural V5 shard root and the unequal-follow-up origin roots. Pull with:

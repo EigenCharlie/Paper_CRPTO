@@ -47,7 +47,7 @@ living closeout checklist, not evidence that the package is final.
 - [ ] Data and code disclosure form.
 - [ ] Editor-only reproducibility crosswalk, if requested.
 - [ ] Sanitized reproducibility capsule, if requested.
-- [ ] Capsule inventory reconciles to exactly 47 DVC pointers and 27
+- [ ] Capsule inventory reconciles to exactly 51 DVC pointers and 27
       paper-facing CSV tables; unequal-follow-up roots appear only as replay
       provenance.
 

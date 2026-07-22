@@ -15,9 +15,9 @@ The contribution is an identification audit rather than a policy contest.
 First, the paper derives a prevalence-threshold discontinuity for constant-score
 binary absolute-residual intervals and separates that mechanism from the
 empirical varying-score path with a joint fit-label completion sensitivity.
-Second, it defines objective-matched and
-normalized-score rulers and an exact basis-endpoint support audit for comparing
-non-affine risk scores. It also gives an exact identity linking each contrast's
+Second, it defines objective-matched and normalized-score rulers and a
+status-aware finite-support numerical audit for comparing non-affine risk
+scores. It also gives an exact identity linking each contrast's
 identification width to the sum of unresolved loan-wise attainable
 contribution ranges. Third, it provides a status-independent, maturity-restricted
 evaluation with outcomes physically isolated until allocations are frozen and

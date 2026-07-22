@@ -643,8 +643,9 @@ that this retrospective sensitivity does not establish.
 40-cell label-Mondrian sensitivity. The sole lower-at-or-above cell is platform
 WOE W8, with bound $[0.900074,0.907015]$; it is not promoted.
 
-For a target class $y$, let $A_y$ and $B_y$ be covered and total resolved
-class-$y$ counts, and let $U_y^0,U_y^1$ count unresolved rows that would be
+For any fixed aggregate or score-stratum reporting cell, suppress its non-label
+indices. For a target class $y$, let $A_y$ and $B_y$ be covered and total
+resolved class-$y$ counts, and let $U_y^0,U_y^1$ count unresolved rows that would be
 missed or covered if assigned $y$. Its sharp ratio bounds are
 
 $$
@@ -994,8 +995,8 @@ guardrail allocation it evaluates.
 **Registered cap audit.** Each window-policy pair declares the closed
 minimum--maximum interval of its eleven monthly development point-score moments;
 their global hull is $[0.055573,0.099997]$. A secondary broad-stress interval is
-$[0.05,0.12]$. Named interval endpoints and HiGHS solver-reported basis-ranging
-endpoints produce 3,067 distinct registered point caps. The intervals and
+$[0.05,0.12]$. Named interval endpoints and HiGHS solver-reported range-record
+values produce 3,067 distinct registered point caps. The intervals and
 registered values are fixed without outcomes; the finite values are not an
 exhaustive continuous path.
 
@@ -1155,8 +1156,9 @@ different outcomes to the same unresolved loan under two policies. The bounds
 are sharp for the finite archive under unrestricted binary completion. They are
 not sampling confidence intervals.
 
-Class-specific coverage is a ratio rather than an additive endpoint. For class
-$y$, write $z_i=1$ when unresolved loan $i$ is assigned that class and
+Class-specific coverage is a ratio rather than an additive endpoint. Fix one
+aggregate or score-stratum reporting cell and suppress its non-label indices.
+For class $y$, write $z_i=1$ when unresolved loan $i$ is assigned that class and
 $c_i=C_i(y)$. Then
 
 $$
@@ -1174,8 +1176,8 @@ $m=\sum_i z_i$. Both denominators are then fixed. The gap is a constant plus
 a sum of $m$ loan-wise weights,
 
 $$
-\sum_i z_i\left{-\frac{C_i(0)}{B_0+|U|-m}
--\frac{C_i(1)}{B_1+m}\right}.
+\sum_i z_i\left\{-\frac{C_i(0)}{B_0+|U|-m}
+-\frac{C_i(1)}{B_1+m}\right\}.
 $$
 
 Selecting the $m$ smallest weights minimizes the gap and selecting the $m$
@@ -1230,8 +1232,8 @@ its endpoints.
 If an algorithm certifies an exhaustive partition of a cap interval into all
 relevant optimal-basis ranges, their endpoints are sufficient for the sharp
 interval-wide envelope, up to solver tolerance. The active empirical lineage
-instead evaluates registered support and solver-reported basis-ranging
-endpoints; it does not certify that its finite trace exhausts a continuous path.
+instead evaluates finite outcome-free solver-derived registered caps; it does
+not certify that its finite trace exhausts a continuous path.
 
 For support $\mathcal C$, if $[L(c),U(c)]$ is the paired sharp contrast at cap
 $c$, the declared comparator envelope is
@@ -1524,13 +1526,58 @@ continuous-support result.
 The 3,067 count refers to distinct scalar cap values; 7,297 refers to
 period-specific evaluated cap rows.
 
-The solver audit evaluates 7,297 point-cap rows across 15 periods, including
-2,204 named unique cap-months. The smallest absolute nonbasic reduced cost is
-$3.88\times10^{-4}$, so no evaluated basis is classified as near-tied. Of
-2,941 primal-degenerate bases, reversed-order reruns produce zero tie-sensitive
-rows; maximum allocation distance is $1.45\times10^{-14}$ and maximum absolute
-objective difference is $1.72\times10^{-9}$. This establishes deterministic
-stability at the evaluated caps, not continuous-frontier uniqueness.
+<!-- claim:optimization.finite_rhs_coverage_without_uniqueness -->
+
+The legacy evaluated-cap audit covers 7,297 rows across 15 periods, including
+2,204 named unique cap-months. Under its absolute $10^{-7}$ screen, the smallest
+absolute nonbasic reduced cost is $3.88\times10^{-4}$; 2,941 reversed-order
+reruns yield zero tie-sensitive rows, maximum allocation distance
+$1.45\times10^{-14}$, and maximum objective difference $1.72\times10^{-9}$.
+
+The later complete per-solve column-and-row V2 basis audit fresh-solves the
+same 7,297 rows with
+HiGHS/highspy 1.15.1 (native git hash `04024d7`, simplex, presolve on, one
+thread). Primal and dual feasibility tolerances are both $10^{-9}$. All
+allocations reconcile to the freeze; maximum normalized L1 exposure distance is
+$1.13\times10^{-14}$. HiGHS reports the risk row `upper` in 7,228 bases and
+`basic` in 69. For an active upper row, its ranging pair is an upper-RHS range.
+For a basic slack row with zero multiplier, the same primal--dual certificate
+supports the RHS ray from current activity to the domain upper bound. Treating
+that basic-row activity range as an active RHS interval caused 66 spurious
+solved-cap failures in the immutable V2 report.
+
+For a structural column, the scale-aware warning screen is
+$|\bar c_j|/\max_k|c_k|\le 10^{-7}+10^{-12}$. For a movable row slack, it is
+$|\pi_i|/s_i\le 10^{-7}+10^{-12}$ with
+$s_i=\max_k|c_k|/\max_k|A_{ik}|$; equality rows are excluded. Allocation
+distance is $\lVert a-b\rVert_1/(\sum_i a_i+\sum_i b_i)$, equal to
+$\lVert a-b\rVert_1/(2B)$ for two fully invested solutions, and its registered
+difference threshold is $10^{-10}$. Conditional probes allow objective loss
+$\max\{10^{-7},10^{-12}\max(1,|z^\star|)\}$ dollars.
+
+After this status-aware correction, all 7,297 central intervals contain their
+solved cap but leave 196 positive gaps over $[0.05,0.12]$, with maximum width
+0.001477. V3a re-solves in fresh HiGHS sessions all 196 V2 midpoint seeds
+retrospectively registered for this recovery. Every basis, dual-sign,
+objective, feasibility, seed-containment, and
+target-gap gate passes; their union leaves no gap above $10^{-10}$ in any of the
+15 periods. Bilateral breakpoint paths have zero allocation
+differences above $10^{-10}$ (maximum $3.08\times10^{-14}$), so the corrected
+same-cap mobility cooccurrence count is zero, not the seven reported by V2.
+At zero merge tolerance, 465 machine-precision seams remain, with maximum width
+$1.67\times10^{-16}$; none remains at $10^{-15}$. This is why the coverage
+statement is numerical rather than symbolic exactness.
+
+The stricter scale-aware screen nevertheless records 13 V2 warnings at eight
+cap-variable targets and one V3a midpoint warning that repeats a V2 target at
+both neighboring endpoints. All reduced costs retain the expected
+sign. The eight conditional programs use an epsilon-near-optimal objective band
+and move any one exposure by at most USD 0.962; this is not evidence of an
+exactly distinct optimum. Numerical support coverage therefore passes without
+promoting a numerical-uniqueness claim; the warnings prove neither numerical
+nor exact nonuniqueness. No exact symbolic face, global face
+diameter, allocation continuity, seam conditioning, or continuous-joint-
+frontier uniqueness claim is made.
 
 ## E.7 Why no policy is promoted
 
@@ -1577,11 +1624,11 @@ silently substituted for historical scientific code.
 The shared contract requires:
 
 1. a lineage-specific environment locked by `uv`;
-2. immutable, hash-described outcome-free and evaluated roots tracked by 47
+2. immutable, hash-described outcome-free and evaluated roots tracked by 51
    DVC pointers across the primary audit, two-ruler diagnostic, credit controls,
    endpoint, structure, missingness, individual-age second-origin, fit-label
    completion, allocation-granularity, joint-block rank-reference diagnostic, and
-   label-Mondrian families;
+   label-Mondrian, and policy-support optimal-face/RHS-recovery families;
 3. a separate freeze and evaluate command with no combined shortcut;
 4. exact ID alignment at the outcome join;
 5. byte-identical evidence builds;

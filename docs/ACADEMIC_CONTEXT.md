@@ -31,8 +31,9 @@ bounds rather than being dropped.
    a prevalence threshold can change interval width discontinuously.
 4. **Decision construction:** outcome-blind rulers and coordinates create
    comparable monthly allocation tracks without selecting a winner.
-5. **Identification:** paired common-outcome bounds and exact point-cap support
-   determine which policy contrasts are signed and which cross zero.
+5. **Identification:** paired common-outcome bounds over registered finite
+   point-cap evaluations determine which policy contrasts are signed and which
+   cross zero.
 6. **Sensitivity:** endpoint availability, fit-label timing, missingness
    encoding, equal 39-month administrative age at two origins,
    label-Mondrian calibration,

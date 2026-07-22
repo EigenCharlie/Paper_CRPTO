@@ -60,7 +60,10 @@ drift-gate: publication-integrity
 publication-integrity:
     uv run --locked python scripts/check_publication_integrity.py
 
-ijds-evidence:
+ijds-policy-support-evidence:
+    uv run --locked python scripts/build_ijds_policy_support_optimal_face_evidence.py
+
+ijds-evidence: ijds-policy-support-evidence
     uv run --locked python scripts/build_ijds_binary_geometry_frontier_v4_evidence.py
 
 ijds-tie-evidence:
@@ -105,7 +108,7 @@ ijds-tie-audit CONFIG="configs/experiments/ijds_policy_support_tie_audit_2026-07
 # Read-only gate over all registered lineages and current paper surfaces.
 ijds-active-check: publication-integrity
     uv run --locked pytest -q tests/test_ijds_anonymity.py tests/test_ijds_active_claim_sync.py tests/test_ijds_v4_claim_sync.py tests/test_ijds_rolling_origin_protocol.py tests/test_publication_targets.py tests/test_submission_preview_layout.py tests/test_supplement_table_sync.py tests/test_book_active_companion.py
-    uv run --locked pytest -q tests/test_ijds_audit tests/test_ijds_audit_core.py tests/test_ijds_normalized_objective_frontier.py tests/test_ijds_normalized_objective_frontier_v2.py tests/test_ijds_policy_support_tie_audit.py tests/test_ijds_policy_support_tie_evidence.py
+    uv run --locked pytest -q tests/test_ijds_audit tests/test_ijds_audit_core.py tests/test_ijds_normalized_objective_frontier.py tests/test_ijds_normalized_objective_frontier_v2.py tests/test_ijds_policy_support_tie_audit.py tests/test_ijds_policy_support_tie_evidence.py tests/test_ijds_policy_support_optimal_face_v2.py tests/test_ijds_policy_support_rhs_semantics_recovery_v3a.py tests/test_ijds_policy_support_optimal_face_evidence.py
 
 # --- DVC capsule ----------------------------------------------------------
 

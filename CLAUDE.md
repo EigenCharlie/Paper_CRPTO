@@ -31,7 +31,7 @@ not active evidence.
 23. `.codex/skills/crpto/SKILL.md`
 
 The claim registry is the editorial authority. The source registry owns exact
-lineage identities, artifact descriptors, and 47 DVC pointers. The V4 evidence
+lineage identities, artifact descriptors, and 51 DVC pointers. The V4 evidence
 JSON is the only numeric paper-facing manifest.
 
 ## Active Scientific Object
@@ -44,8 +44,8 @@ JSON is the only numeric paper-facing manifest.
   monotonic CatBoost, and two WOE/IV scorecards are coverage controls.
 - Five gamma values, two outcome-blind rulers, and three interior coordinates;
   none is selected.
-- Fifteen separate monthly allocations, sharp common-outcome bounds, exact
-  point-cap support, and 36 structural scenarios.
+- Fifteen separate monthly allocations, sharp common-outcome bounds, registered
+  finite point-cap support, and 36 structural scenarios.
 - All 40 six-month all-candidate coverage upper bounds are below 0.90.
 - A separate post-inspection joint-block combined-rank diagnostic places 31 of
   40 learner-window nulls past locked nominal Bonferroni--Holm thresholds. The

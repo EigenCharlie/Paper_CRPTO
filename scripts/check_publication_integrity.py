@@ -288,7 +288,7 @@ def _check_evidence_decision() -> list[str]:
     evidence = _evidence()
     boundary = evidence["claim_boundary"]
     lag = evidence["binary_phase_transition"]["label_lag_sensitivity"]
-    tie = evidence["portfolio"]["evaluated_point_cap_solver_stability"]
+    support = evidence["portfolio"]["policy_support_rhs_semantics"]
     challenger = evidence["decision_challenger"]
     interpretation = challenger["interpretation"]
     endpoint = evidence.get("sensitivity", {}).get("evaluation_endpoint_availability", {})
@@ -320,8 +320,52 @@ def _check_evidence_decision() -> list[str]:
             "phase crossing no longer survives all admissible reporting lags",
         ),
         (
-            tie["near_zero_bases"] != 0 or tie["tie_sensitive_rows"] != 0,
-            "evaluated point-cap solver stability no longer holds",
+            support["rhs_support_coverage_gate_passed"] is not True
+            or support["covered_periods"] != 15
+            or support["registered_gap_seed_solves"] != 196
+            or support["strictly_interior_gap_seed_solves"] != 196
+            or support["status_aware_seed_cap_containment_passes"] != 196
+            or support["recomputed_target_gap_coverage_passes"] != 196
+            or support["absolute_gap_tolerance"] != 1.0e-10,
+            "bounded numerical RHS support coverage no longer holds",
+        ),
+        (
+            support["zero_tolerance_positive_seams"] != 465
+            or support["positive_gaps_at_1e_15"] != 0
+            or support["maximum_zero_tolerance_seam_width"] > 1.0e-15,
+            "machine-precision RHS seam census changed",
+        ),
+        (
+            support["freeze_reconciliation_rows"] != 7_297
+            or support["freeze_reconciliation_passes"] != 7_297
+            or support["freeze_reconciliation_gate_passed"] is not True
+            or support["all_basis_dual_feasibility_contracts_passed"] is not True
+            or support["corrected_lateral_gate_passed"] is not True,
+            "policy-support bridge, basis, or lateral contract changed",
+        ),
+        (
+            support["strict_numerical_uniqueness_gate_passed"] is not False
+            or support["rhs_coverage_recovered_without_uniqueness_promotion"] is not True,
+            "RHS coverage is no longer coupled to the blocked uniqueness promotion",
+        ),
+        (
+            any(
+                support[field] is not False
+                for field in (
+                    "exact_symbolic_optimal_face_claim_active",
+                    "exact_nonuniqueness_claim_active",
+                    "allocation_continuity_claim_active",
+                    "continuous_outcome_envelope_claim_active",
+                    "epsilon_mobility_is_exact_nonuniqueness_evidence",
+                )
+            ),
+            "policy-support evidence promotes a forbidden exact or continuous inference",
+        ),
+        (
+            support["v2_warning_rows"] != 13
+            or support["v3a_gap_seed_warning_rows"] != 1
+            or not (0.0 < support["maximum_coordinate_exposure_mobility_dollars"] < 1.0),
+            "scale-aware policy-support warning census changed",
         ),
         *(
             (
@@ -568,12 +612,12 @@ def _check_lineage_sync() -> list[str]:
     }
     checks = (
         (
-            str(registry.get("schema_version")) != "2026-07-21.3",
-            "active source registry schema is not 2026-07-21.3",
+            str(registry.get("schema_version")) != "2026-07-21.4",
+            "active source registry schema is not 2026-07-21.4",
         ),
         (
-            len(registry.get("dvc_pointers", [])) != 47,
-            "active source registry does not contain exactly 47 DVC pointers",
+            len(registry.get("dvc_pointers", [])) != 51,
+            "active source registry does not contain exactly 51 DVC pointers",
         ),
         (
             len(

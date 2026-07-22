@@ -25,6 +25,7 @@ reviewer manuscript and does not authorize claims beyond the registry.
 <!-- claim:comparator.broad_support_all_cross_zero -->
 <!-- claim:sensitivity.structure_no_universal_direction -->
 <!-- claim:optimization.allocation_granularity_is_diagnostic -->
+<!-- claim:optimization.finite_rhs_coverage_without_uniqueness -->
 <!-- claim:boundary.no_selected_set_validity -->
 
 | Claim object | Active evidence | Permitted wording | Forbidden inference |
@@ -50,7 +51,7 @@ reviewer manuscript and does not authorize claims beyond the registry.
 | Normalized ruler | .25/.50 adverse; .75 payoff crosses in 1/8 | Same relative score relaxation, different opportunity cost | Neutral comparison or preferred ruler |
 | Portfolio structure | Complete 36-scenario budget--purpose-cap--LGD grid; every scenario has at least 17 adverse default and 21 adverse miscoverage cells; zero scenarios are uniformly favorable or adverse | Direction remains conditional after varying three active structural assumptions | Scenario winner, structural invariance, universal harm, or deployment guidance |
 | Registered point-cap support | 216/216 broad registered-support envelopes cross zero; default 72/72 development envelopes cross | No universal direction over the declared finite support | Universal comparator quantification or an exhaustive continuous point-cap envelope |
-| Solver stability | 7,297 evaluated rows; 0 tie-sensitive reversed-order reruns | Deterministic stability at evaluated caps | Continuous-frontier uniqueness |
+| Solver stability and RHS coverage | 7,228 active-upper RHS ranges, 69 zero-dual basic-row safe rays, and 196 V2 midpoint seeds retrospectively registered in V3a leave no gap above `1e-10` on `[0.05,0.12]` in 15/15 periods; 0 bilateral differences above `1e-10` (maximum `3.08e-14`); scale-aware warnings remain | Finite-support numerical coverage and solver-path stability without a selected cap or uniqueness promotion | Exact or symbolic optimal-face uniqueness or nonuniqueness, global face diameter, allocation continuity, seam conditioning, or continuous-joint-frontier uniqueness |
 | Credit controls | Five coverage specifications; one portfolio learner | Same below-target finding across the protocol-locked specifications under the active endpoint | Model promotion or WOE/IV novelty |
 | Missingness encoding | Active sentinels, explicit indicators, and native nullable features each have 8/8 upper bounds below 0.90; maxima 0.882597, 0.884332, and 0.880037 | Coverage finding recurs across three semantics-preserving encodings | Missingness mechanism, encoding winner, or portfolio robustness |
 | Individual-age origins | At 39 months after each candidate's issue-month end, both retrospective origins have 8/8 upper bounds below 0.90; maxima 0.879120 and 0.875261 for 2016 and 2017 | Complete 16-cell two-origin retrospective sensitivity at equal whole-month administrative age | Independent replication, temporal invariance, exact day-level loan age, a pooled-origin estimand, or prospective validation; promotion of the parent equal-quarter or earlier unequal-follow-up comparisons beyond replay provenance |

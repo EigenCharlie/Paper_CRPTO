@@ -131,7 +131,7 @@ def test_active_evidence_registry_verifies_every_source() -> None:
         ROOT / "configs/ijds_active_evidence_sources.yaml",
         repo_root=ROOT,
     )
-    assert payload["schema_version"] == "2026-07-21.3"
+    assert payload["schema_version"] == "2026-07-21.4"
     assert set(sources) == {
         "v4_config",
         "v4_summary",
@@ -142,6 +142,7 @@ def test_active_evidence_registry_verifies_every_source() -> None:
         "raw_data_audit",
         "label_lag_sensitivity",
         "solver_tie_audit",
+        "policy_support_optimal_face_evidence",
         "endpoint_sensitivity_summary",
         "structural_sensitivity_config",
         "structural_sensitivity_freeze",
@@ -174,7 +175,7 @@ def test_active_evidence_registry_verifies_every_source() -> None:
         "allocation_granularity_freeze",
         "allocation_granularity_summary",
     }
-    assert len(payload["dvc_pointers"]) == 47
+    assert len(payload["dvc_pointers"]) == 51
     assert payload["lineages"]["binary_geometry"]["evaluation"]["run_tag"].endswith("2026-07-15-v5")
     assert payload["sensitivities"]["rolling_origin_individual_age_followup"]["paper_role"] == (
         "individual_issue_month_age_equalized_two_origin_retrospective_sensitivity"
@@ -196,6 +197,8 @@ def test_active_registry_returns_all_dvc_run_tags_in_causal_config_order() -> No
         "ijds-credit-risk-controls-2026-07-13-v1b",
         "ijds-credit-risk-controls-2026-07-15-v5",
         "ijds-policy-support-tie-audit-2026-07-12-v1",
+        "ijds-policy-support-optimal-face-audit-2026-07-21-v2",
+        "ijds-policy-support-rhs-semantics-recovery-2026-07-21-v3a",
         "ijds-conformal-set-diagnostics-2026-07-21-v1",
         "ijds-exchangeability-transport-test-2026-07-21-v1",
         "ijds-endpoint-availability-sensitivity-2026-07-14-v1",

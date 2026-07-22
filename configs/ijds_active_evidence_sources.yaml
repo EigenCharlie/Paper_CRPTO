@@ -1,4 +1,4 @@
-schema_version: "2026-07-21.3"
+schema_version: "2026-07-21.4"
 status: "active_ijds_paper_evidence_source_registry"
 
 lineages:
@@ -69,6 +69,20 @@ lineages:
       protocol_commit: "115eaf1b81ed5f05ffe601e9c20079059c40c200"
       scientific_uv_lock_sha256: "d293ed325a3b25a13000560c8551d34937735ba8c9fe59ffeeed5d64f7120dd2"
       paper_role: "evaluated_cap_numerical_diagnostic"
+      dvc_tracked: true
+    policy_support_optimal_face_v2:
+      run_tag: "ijds-policy-support-optimal-face-audit-2026-07-21-v2"
+      protocol_tag: "protocol/ijds-policy-support-optimal-face-audit-2026-07-21-v2"
+      protocol_commit: "86fddefdcf4d40a971866b2d9acf1d34f5c3bca2"
+      scientific_uv_lock_sha256: "6c862cbad9ab7e3a07dd2823c775127403093d6ad59a789ee227d827165e4733"
+      paper_role: "immutable_failed_closed_full_basis_source_diagnostic"
+      dvc_tracked: true
+    policy_support_rhs_semantics_recovery:
+      run_tag: "ijds-policy-support-rhs-semantics-recovery-2026-07-21-v3a"
+      protocol_tag: "protocol/ijds-policy-support-rhs-semantics-recovery-2026-07-21-v3a"
+      protocol_commit: "388927ebfe34e872fc5d1085ece63300734d5b47"
+      scientific_uv_lock_sha256: "6c862cbad9ab7e3a07dd2823c775127403093d6ad59a789ee227d827165e4733"
+      paper_role: "finite_support_rhs_coverage_without_numerical_uniqueness_promotion_diagnostic"
       dvc_tracked: true
     conformal_set_diagnostics:
       run_tag: "ijds-conformal-set-diagnostics-2026-07-21-v1"
@@ -218,6 +232,10 @@ dvc_pointers:
   - "models/experiments/ijds_audit/ijds-credit-risk-controls-2026-07-14-v3.dvc"
   - "data/processed/experiments/ijds_audit/ijds-policy-support-tie-audit-2026-07-12-v1.dvc"
   - "models/experiments/ijds_audit/ijds-policy-support-tie-audit-2026-07-12-v1.dvc"
+  - "data/processed/experiments/ijds_audit/ijds-policy-support-optimal-face-audit-2026-07-21-v2.dvc"
+  - "models/experiments/ijds_audit/ijds-policy-support-optimal-face-audit-2026-07-21-v2.dvc"
+  - "data/processed/experiments/ijds_audit/ijds-policy-support-rhs-semantics-recovery-2026-07-21-v3a.dvc"
+  - "models/experiments/ijds_audit/ijds-policy-support-rhs-semantics-recovery-2026-07-21-v3a.dvc"
   - "data/processed/experiments/ijds_audit/ijds-endpoint-availability-sensitivity-2026-07-14-v1.dvc"
   - "models/experiments/ijds_audit/ijds-endpoint-availability-sensitivity-2026-07-14-v1.dvc"
   - "data/processed/experiments/ijds_audit/ijds-portfolio-structure-sensitivity-2026-07-15-v6.dvc"
@@ -283,6 +301,10 @@ sources:
     path: "reports/crpto/ijds_policy_support_tie_evidence.json"
     bytes: 12845
     sha256: "2903694ee502e6144008bbbc5891e5932f88f8527e12686363c85a28fa78684e"
+  policy_support_optimal_face_evidence:
+    path: "reports/crpto/ijds_policy_support_optimal_face_evidence.json"
+    bytes: 17110
+    sha256: "29c8aeff29e10618aab1965fb7e754bf3ef23c990d89d736afac3e3bc7b6cb62"
   endpoint_sensitivity_summary:
     path: "models/experiments/ijds_audit/ijds-endpoint-availability-sensitivity-2026-07-14-v1/endpoint_sensitivity_summary.json"
     bytes: 10692

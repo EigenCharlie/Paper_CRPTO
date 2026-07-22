@@ -689,7 +689,7 @@ def _load_frozen_allocation_reference(
             right_on="point_cap",
             by="period",
             direction="nearest",
-            tolerance=cap_tolerance,
+            tolerance=cast(Any, cap_tolerance),
         ).dropna(subset=["point_cap"])
         mapped["cap_match_distance"] = (mapped["frontier_cap"] - mapped["point_cap"]).abs()
         mappings.append(mapped)
@@ -772,7 +772,7 @@ def _load_frozen_allocation_reference(
     )
     source_count_series = mapping.groupby(["period", "point_cap"], sort=False).size()
     duplicate = duplicate.reset_index().merge(
-        source_count_series.rename("source_key_count").reset_index(),
+        source_count_series.to_frame(name="source_key_count").reset_index(),
         on=["period", "point_cap"],
         how="left",
         validate="many_to_one",
@@ -820,7 +820,8 @@ def _load_frozen_allocation_reference(
         raise RuntimeError("Canonical frozen allocation vector census is incomplete.")
     source_counts = source_count_series.to_dict()
     vectors: dict[tuple[str, float], FrozenAllocationVector] = {}
-    for (period, point_cap), group in canonical.groupby(["period", "point_cap"], sort=True):
+    for raw_key, group in canonical.groupby(["period", "point_cap"], sort=True):
+        period, point_cap = cast(tuple[Any, Any], raw_key)
         key = (str(period), float(point_cap))
         vectors[key] = FrozenAllocationVector(
             ids=tuple(group["id"].astype(str)),
@@ -926,7 +927,7 @@ def _new_session(
         threads=int(solver["threads"]),
     )
     if hasattr(session.solver, "zeroAllClocks"):
-        session.solver.zeroAllClocks()
+        cast(Any, session.solver.zeroAllClocks)()
     for option, value in (
         ("solver", str(solver["solver"])),
         ("presolve", str(solver["presolve"])),
@@ -1226,16 +1227,15 @@ def _reconcile_breakpoint_comparisons(
 ) -> pd.DataFrame:
     """Record same-cap cooccurrence without claiming the face range explains a gap."""
     compared = comparisons.copy()
+    mobile_faces = faces.loc[faces["epsilon_near_optimal_mobility_detected"].astype(bool)]
     mobile_keys = {
-        (str(item.period), float(item.point_cap))
-        for item in faces.loc[
-            faces["epsilon_near_optimal_mobility_detected"].astype(bool)
-        ].itertuples(index=False)
+        (str(period), float(point_cap))
+        for period, point_cap in zip(mobile_faces["period"], mobile_faces["point_cap"], strict=True)
     }
     same_cap_mobility = pd.Series(
         [
-            (str(item.period), float(item.point_cap)) in mobile_keys
-            for item in compared.itertuples(index=False)
+            (str(period), float(point_cap)) in mobile_keys
+            for period, point_cap in zip(compared["period"], compared["point_cap"], strict=True)
         ],
         index=compared.index,
         dtype=bool,

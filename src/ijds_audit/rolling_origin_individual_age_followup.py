@@ -5,7 +5,7 @@ from __future__ import annotations
 from collections.abc import Mapping, Sequence
 from dataclasses import dataclass
 from pathlib import Path
-from typing import Any
+from typing import Any, cast
 
 import pandas as pd
 import yaml
@@ -448,16 +448,24 @@ def build_individual_age_census_tables(
         raise RuntimeError(f"{spec.origin_id} monthly census does not partition candidates.")
     if int(monthly_reason["candidate_rows"].sum()) != len(outcomes):
         raise RuntimeError(f"{spec.origin_id} monthly reasons do not partition candidates.")
-    for row in reason.itertuples(index=False):
-        should_resolve = str(row.snapshot_resolution) in RESOLVED_REASONS
-        expected_resolved = int(row.candidate_rows) if should_resolve else 0
-        if int(row.resolved_rows) != expected_resolved:
+    reason_columns = [
+        "snapshot_resolution",
+        "candidate_rows",
+        "resolved_rows",
+        "unresolved_rows",
+    ]
+    for snapshot_resolution, candidate_rows, resolved_rows, unresolved_rows in reason.loc[
+        :, reason_columns
+    ].itertuples(index=False, name=None):
+        should_resolve = str(snapshot_resolution) in RESOLVED_REASONS
+        expected_resolved = int(candidate_rows) if should_resolve else 0
+        if int(resolved_rows) != expected_resolved:
             raise RuntimeError(
-                f"{spec.origin_id}/{row.snapshot_resolution} has inconsistent resolution."
+                f"{spec.origin_id}/{snapshot_resolution} has inconsistent resolution."
             )
-        if int(row.unresolved_rows) != int(row.candidate_rows) - expected_resolved:
+        if int(unresolved_rows) != int(candidate_rows) - expected_resolved:
             raise RuntimeError(
-                f"{spec.origin_id}/{row.snapshot_resolution} has inconsistent nonresolution."
+                f"{spec.origin_id}/{snapshot_resolution} has inconsistent nonresolution."
             )
     aggregate_from_months = (
         monthly_reason.groupby("snapshot_resolution", observed=True, sort=False)[
@@ -621,9 +629,8 @@ def _implementation(
 
 def _origin_coverage_summary(coverage: pd.DataFrame) -> list[dict[str, Any]]:
     rows: list[dict[str, Any]] = []
-    for (origin_id, origin_year), frame in coverage.groupby(
-        ["origin_id", "origin_year"], observed=True, sort=True
-    ):
+    for raw_key, frame in coverage.groupby(["origin_id", "origin_year"], observed=True, sort=True):
+        origin_id, origin_year = cast(tuple[str, int], raw_key)
         rows.append(
             {
                 "origin_id": str(origin_id),

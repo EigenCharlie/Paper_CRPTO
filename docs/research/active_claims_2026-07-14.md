@@ -66,6 +66,23 @@ pre-endpoint-correction evaluations are provenance only.
 - Label-lag sensitivity: `ijds-label-lag-sensitivity-2026-07-14-v1`.
 - Evaluated-cap solver audit: `ijds-policy-support-tie-audit-2026-07-12-v1`.
 
+### Policy-support numerical closure
+
+- Immutable full-basis source audit:
+  `ijds-policy-support-optimal-face-audit-2026-07-21-v2`, tag
+  `protocol/ijds-policy-support-optimal-face-audit-2026-07-21-v2`, commit
+  `86fddefdcf4d40a971866b2d9acf1d34f5c3bca2`. Its RHS gate remains failed
+  closed because the stored interpretation is immutable.
+- Active status-aware recovery:
+  `ijds-policy-support-rhs-semantics-recovery-2026-07-21-v3a`, tag
+  `protocol/ijds-policy-support-rhs-semantics-recovery-2026-07-21-v3a`, commit
+  `388927ebfe34e872fc5d1085ece63300734d5b47`. It inherits V2 without outcomes,
+  re-solves all 196 V2 gap midpoints retrospectively registered in V3a, and permits only numerical support
+  coverage at tolerance `1e-10` without numerical-uniqueness promotion.
+- The tagged V3 predecessor (`8508a339`) completed all 196 solves but failed in
+  post-solve lateral reporting before creating outputs. It is immutable failed
+  implementation provenance, not evidence.
+
 ### Evaluation-endpoint availability sensitivity
 
 - Complete nonselective run:
@@ -508,10 +525,20 @@ The complete endpoint-availability sensitivity is:
 - Over development-admissible support, terminal default crosses zero in 72/72
   cells, payoff is lower in 6 and crosses in 66, and miscoverage is higher in
   27 and crosses in 45. All 27 W8 envelopes cross zero.
-- The evaluated-cap audit contains 7,297 point-cap rows. It finds no near-zero
-  nonbasic reduced costs and no allocation sensitivity in 2,941 reversed-order
-  reruns; maximum allocation distance is `1.45e-14`. This supports numerical
-  stability at evaluated caps, not continuous-frontier uniqueness.
+<!-- claim:optimization.finite_rhs_coverage_without_uniqueness -->
+
+- A complete per-solve column-and-row basis audit fresh-solves and
+  freeze-reconciles all 7,297 point-cap rows. The 7,228 active-upper
+  solver-reported RHS ranges, 69 analytically derived zero-dual basic-row safe
+  rays, and all 196 V2 midpoint seeds retrospectively registered in V3a leave
+  no gap above `1e-10` on `[0.05,0.12]` in all 15 periods. No bilateral path
+  exceeds the registered `1e-10` normalized exposure-distance threshold
+  (`3.08e-14` maximum). Thirteen V2 scale-aware warning records at eight
+  targets and one repeating midpoint warning prevent promotion of numerical
+  uniqueness; they prove neither numerical nor exact nonuniqueness. The maximum
+  epsilon-near-optimal coordinate movement is USD `0.962`; it is not evidence
+  of a distinct exact optimum. No exact symbolic face, allocation continuity,
+  or continuous-frontier uniqueness is claimed.
 
 ## Permitted Claims
 

@@ -15,7 +15,7 @@ from __future__ import annotations
 import math
 from collections.abc import Iterable, Mapping, Sequence
 from itertools import product
-from typing import Any
+from typing import Any, cast
 
 import numpy as np
 import pandas as pd
@@ -566,7 +566,7 @@ def build_exchangeability_transport_test(
             for group in range(group_count):
                 key = (learner, window_id, group)
                 fit = _fit_stratum_audit(
-                    grouped_fit.get_group(key),
+                    cast(pd.DataFrame, grouped_fit.get_group(key)),
                     recipe=recipe,
                     group=group,
                 )
@@ -714,9 +714,8 @@ def build_exchangeability_transport_test(
         role=role,
     )
     cell_rows: list[dict[str, Any]] = []
-    for (learner, window_id), frame in strata.groupby(
-        ["learner", "window_id"], sort=False, observed=True
-    ):
+    for raw_key, frame in strata.groupby(["learner", "window_id"], sort=False, observed=True):
+        learner, window_id = cast(tuple[str, str], raw_key)
         if len(frame) != group_count:
             raise RuntimeError("A learner-window cell does not contain every frozen stratum.")
         minimum_log = float(frame["exact_log_p_value"].min())

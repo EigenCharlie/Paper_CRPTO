@@ -121,6 +121,7 @@ def test_active_capsule_paths_exist() -> None:
     evidence = _evidence()
     support_artifacts = {
         "reports/crpto/ijds_policy_support_tie_evidence.json",
+        "reports/crpto/ijds_policy_support_optimal_face_evidence.json",
         "reports/crpto/tables/crpto_ijds_comparator_support_domain.csv",
         "reports/crpto/tables/crpto_ijds_gamma_endpoint_audit.csv",
         "reports/crpto/tables/crpto_ijds_policy_family_domain.csv",
@@ -136,7 +137,7 @@ def test_active_capsule_paths_exist() -> None:
     assert len(paper_artifact_paths) == 33
     assert len({path for path in paper_artifact_paths if path.endswith(".csv")}) == 27
     assert len({path for path in paper_artifact_paths if path.endswith((".pdf", ".png"))}) == 6
-    assert len(registry["dvc_pointers"]) == 47
+    assert len(registry["dvc_pointers"]) == 51
     assert (
         "reports/crpto/tables/crpto_ijds_v4_tableS7D_individual_age_endpoint_census.csv"
         in active["required_artifacts"]

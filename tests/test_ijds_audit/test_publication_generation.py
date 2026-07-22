@@ -126,6 +126,7 @@ def test_implementation_inventory_binds_every_acceptance_dependency() -> None:
         "claim_ledger_contract",
         "publication_targets_contract",
         "evidence_builder",
+        "policy_support_evidence_builder",
         "publication_integrity_checker",
         "paper_pdf_auditor",
         "publication_generation_helper",

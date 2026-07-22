@@ -16,6 +16,9 @@ PUBLICATION_IMPLEMENTATION_PATHS: dict[str, str] = {
     "claim_ledger_contract": "configs/ijds_claim_ledger.yaml",
     "publication_targets_contract": "configs/crpto_publication_targets.yaml",
     "evidence_builder": "scripts/build_ijds_binary_geometry_frontier_v4_evidence.py",
+    "policy_support_evidence_builder": (
+        "scripts/build_ijds_policy_support_optimal_face_evidence.py"
+    ),
     "publication_integrity_checker": "scripts/check_publication_integrity.py",
     "paper_pdf_auditor": "scripts/inspect_ijds_pdfs.py",
     "publication_generation_helper": "src/ijds_audit/publication_generation.py",

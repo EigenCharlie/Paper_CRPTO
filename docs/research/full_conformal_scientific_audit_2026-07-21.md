@@ -203,7 +203,7 @@ registra en la sección “Cierre de optimización” al final de este documento
 | Fit labels | cuatro completaciones | 32/32 debajo de nominal | Bound sharp sobre `2^215` completaciones |
 | Endpoint lag | cinco lags administrativos | resultado 40/40 es específico del contrato; a 12 meses queda 39/40 | Selección retrospectiva del lag de seis meses |
 | Portfolio structure | 36 escenarios | no aparece dirección universal | Robustez a todo modelo económico o estructura |
-| Basis-derived point-cap support | soporte development y broad; exactness condicionada al cierre V2 | todos los 216 broad envelopes evaluados cruzan cero | Identificación de un comparador universal o unicidad aún no certificada |
+| Basis-derived point-cap support | 7.297 caps centrales + 196 midpoint seeds, 15 meses | cobertura numérica de `[0.05,0.12]` a `1e-10`; cero diferencias laterales materiales | Exactitud simbólica, unicidad, continuidad o enumeración de toda la cara óptima |
 
 ## Qué agregar, cambiar y quitar
 
@@ -295,14 +295,67 @@ registra en la sección “Cierre de optimización” al final de este documento
 
 ## Cierre de optimización
 
-_Pendiente de completar con el resultado del protocolo V2 de base completa,
-probes bilaterales y rangos condicionales. Hasta ese cierre, V1 solo certifica
-estabilidad al orden de IDs y reduced costs de columnas en caps evaluados; no
-debe interpretarse como prueba completa de unicidad sobre variables lógicas de
-fila._
+El V2 inmutable fresh-solved las 7.297 combinaciones mes--cap, auditó todas las
+variables estructurales y de holgura, reconcilió 7.297/7.297 asignaciones contra
+el freeze y ejecutó 5.874 probes bilaterales. La interpretación inicial de
+`row_bound_dn/up` era incorrecta para 69 filas de riesgo `basic`: en HiGHS esos
+registros describen actividad de la variable de fila, no el intervalo del RHS
+inactivo. Las 69 tienen multiplicador exactamente cero, por lo que el mismo
+certificado primal--dual sostiene el rayo seguro desde actividad actual hasta
+el upper bound del dominio. Esa corrección elimina 66 falsas fallas de
+contención, pero deja 196 huecos reales entre witnesses centrales.
+
+El predecesor V3 completó los 196 solves y falló después, antes de escribir
+outputs, por un `KeyError` en el adaptador de reporte lateral. El tag quedó
+inmutable. V3a declaró esa falla, añadió las dos tolerancias V2 omitidas y
+re-solved los 196 midpoints en sesiones frescas. Pasan 196/196 auditorías de
+base, signos duales, objetivo, factibilidad, contención y cobertura del hueco.
+La unión final cubre numéricamente `[0.05,0.12]` en 15/15 meses a tolerancia
+`1e-10`, con cero gaps; a tolerancia cero quedan 465 seams de redondeo de ancho
+máximo `1.67e-16`, por lo que no se afirma exactitud simbólica.
+
+Las rutas bilaterales muestran cero diferencias materiales de asignación
+(máximo `3.08e-14`) y cero coocurrencias corregidas, no siete. Sin embargo, los
+13 warnings scale-aware de V2 en ocho targets y un warning midpoint adicional
+mantienen bloqueada la unicidad numérica. Todos los reduced costs conservan el
+signo correcto; el mayor movimiento epsilon-near-optimal de una exposición es
+USD `0.962`. Esto no demuestra un óptimo exacto alternativo ni autoriza sumar
+rangos coordenados, inferir un diámetro global, continuidad de asignación,
+seam conditioning o unicidad de la frontera conjunta.
 
 ## Estado de validación
 
-_Se completa al cierre con tests, drift gate, build oficial, auditoría visual,
-estado DVC local/remoto y confirmación de que `EXTRACTION_MANIFEST.json` quedó
-intacto._
+La reconciliación independiente de V3a pasó sin P0/P1/P2: hashes, schemas,
+counts, summary, receipt, tag y commit coinciden; V2 y sus diez artefactos
+siguen byte-idénticos. El evidence intermedio se reconstruyó de forma
+determinista en 17.110 bytes y SHA-256
+`29c8aeff29e10618aab1965fb7e754bf3ef23c990d89d736afac3e3bc7b6cb62`;
+el manifiesto principal se regeneró después con SHA-256
+`ccdf19ddcea92c15fafc2a6a5b83e2acd5faaf87d6324311377b86857d96464b`
+y pasó todos sus contratos. Una reconstrucción consecutiva dejó ambos hashes
+idénticos.
+
+El cierre de repositorio pasó `just lint`, `just type-check`,
+`just type-check-fast`, `just test`, `just validate-champion`,
+`just ijds-active-check`, `just publication-integrity`, `just drift-gate` y
+`just submission-check`. La suite global contiene 538 tests. El gate estricto
+descubrió 41 incompatibilidades de tipado que el checker ordinario no veía;
+se corrigieron con vistas tipadas/casts sobre objetos dinámicos de pandas,
+SciPy y HiGHS, sin cambiar fórmulas, solver, protocolos ni outputs. Ambos
+checkers quedaron limpios sobre 172 archivos fuente.
+
+El PDF oficial tiene 28 páginas y `References` comienza en la 26: son
+exactamente 25 páginas pre-referencias. El abstract tiene 294 palabras y un
+solo párrafo. El preview del cuerpo tiene 19 páginas y el suplemento 33; los
+tres son US Letter, no tienen páginas vacías, fingerprint hits, identity hits
+ni tamaños anómalos. Se renderizaron e inspeccionaron visualmente las 80 páginas
+(28 + 19 + 33), además de páginas críticas a resolución completa: no se
+observaron recortes, solapamientos, tablas fuera de margen, fórmulas ilegibles
+o referencias rotas.
+
+La cápsula activa contiene 51 punteros DVC. El estado local estaba actualizado;
+la auditoría remota encontró 62 objetos activos aún no publicados —incluidos
+V2/V3a y runs recientes Mondrian, exchangeability y rolling-origin—, todos se
+subieron al remoto `dagshub`. `verify-remote` pasó y el estado final reporta
+cache y remoto sincronizados. `EXTRACTION_MANIFEST.json` permanece intacto y
+ningún artefacto histórico protegido fue reescrito.

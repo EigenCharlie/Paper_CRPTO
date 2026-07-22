@@ -50,9 +50,10 @@ Active evidence:
   gamma 0;
 - objective-matched primary and normalized-score secondary rulers at three
   interior coordinates; there is no selector;
-- the nine V4 fixed-cap policies are supporting exact-frontier diagnostics;
+- the nine V4 fixed-cap policies are supporting finite-grid diagnostics;
 - C2 comparator: contemporaneous frozen funded point-score cap;
-- exact point-cap frontier: 3,067 HiGHS basis/support endpoints;
+- registered cap support: 3,067 finite values assembled from named caps and
+  solver range records; outcome envelopes are exact only at those values;
 - unresolved outcomes: retained with sharp common-outcome bounds.
 - evaluation-endpoint availability: all lags 0, 3, 6, 8, and 12 months are
   reported without selection; the 6-month slice reconciles exactly to the
@@ -201,7 +202,7 @@ The active builder verifies the V4, two-ruler, raw-data, credit-control,
   joint-block rank reference, individual-age follow-up, label-Mondrian, fit-label completion,
 and allocation-granularity
 manifests/freezes and every artifact descriptor. The active capsule contains
-47 DVC pointers. It emits 27 paper-facing CSV tables, three figures under the
+51 DVC pointers. It emits 27 paper-facing CSV tables, three figures under the
 `crpto_ijds_v4_*` naming family, and
 `ijds_binary_geometry_frontier_v4_evidence.json`. Consecutive builds must be
 byte-identical. The canonical body is `paper/CRPTO_ijds.qmd`; generate official

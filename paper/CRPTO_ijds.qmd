@@ -28,7 +28,7 @@ abstract: |
   expanding two-label sets to 72.4%--78.5%. For decisions, two outcome-blind
   rulers and three coordinates compare point and full-upper scores. Sharp
   common-outcome bounds and registered-cap enumeration show comparator dependence: all
-  216 broad registered-cap envelopes include zero, so no model, ruler, coordinate, or
+  216 broad registered-cap envelopes include zero; no model, ruler, coordinate, or
   policy is selected. CRPTO contributes a reproducible audit that separates
   finite-archive identification, rank-reference diagnostics, design
   sensitivity, and comparator support before making portfolio claims.
@@ -130,10 +130,12 @@ invariant to positive affine score transformations but does not match
 opportunity cost. Both rulers are evaluated at coordinates
 $\{0.25,0.50,0.75\}$. A supporting audit checks these finite tracks against
 same-cap, development-matched, contemporaneous funded-moment, and registered
-point-cap comparators. HiGHS simplex basis ranging
-[@huangfu_parallelizing_2018] supplies additional solver-reported support
-endpoints. The active lineage does not certify an exhaustive continuous basis
-path.
+point-cap comparators. HiGHS 1.15.1 supplies 7,228 active-upper RHS ranges
+[@huangfu_parallelizing_2018], while zero duals justify 69 basic-row safe rays.
+With 196 V2 midpoint solves retrospectively registered in V3a, these effective
+RHS intervals leave no broad-support gap above $10^{-10}$. This is not
+symbolic exactness, allocation continuity, or uniqueness of an exhaustive
+continuous basis path.
 
 The empirical message is an identification result rather than a winner. Under
 the declared six-month availability rule, all 40 model-by-window all-candidate
@@ -611,12 +613,13 @@ be selected as winners. Every allocation is outcome-free; unresolved outcomes
 enter only through the common-outcome bounds after the freeze.
 
 A supporting audit compares the grid with same-cap C0, development-supported
-C1, funded-point-moment C2, and 3,067 HiGHS basis-ranging point caps over the
-development and [0.05,0.12] supports. C2 is a decomposition, not a deployable
-policy; the nine historical index pairs are neither a closed family nor
-promotion candidates. Appendix C defines every comparator. No evaluation
-outcome chooses a track, although this within-lineage isolation does not imply
-that the global analysis family preceded archive inspection.
+C1, funded-point-moment C2, and 3,067 registered point caps assembled from
+named values and solver-reported range records over the development and
+[0.05,0.12] supports. C2 is a decomposition, not a deployable policy; the nine
+historical index pairs are neither a closed family nor promotion candidates.
+Appendix C defines every comparator. No evaluation outcome chooses a track,
+although this within-lineage isolation does not imply that the global analysis
+family preceded archive inspection.
 
 # Audit Theory and Estimands {#sec-theory}
 
@@ -808,8 +811,8 @@ is concave and the upper bound convex on that basis range, so their adverse
 extrema occur at its endpoints. Consequently, an algorithm that certifies an
 exhaustive partition of a cap interval into all relevant optimal-basis ranges
 can recover the sharp interval-wide envelope from their endpoints, up to solver
-tolerance. The present empirical lineage evaluates registered support and
-solver-reported basis-ranging endpoints; the proposition does not make that
+tolerance. The present empirical lineage evaluates finite outcome-free
+solver-derived registered caps; the proposition does not make that
 finite trace an exhaustive continuous-path certificate.
 
 Together these statements separate exact algebra, finite-archive partial
@@ -1051,19 +1054,22 @@ development-admissible support is narrower: default still crosses zero in all
 72 cells; payoff is lower in 6 and crosses in 66; miscoverage is higher in 27
 and crosses in 45. All 27 W8 envelopes cross zero.
 
-The evaluated-cap numerical audit covers 7,297 point-cap rows. Although 2,941
-bases are primal-degenerate, none has a near-zero nonbasic reduced cost, and
-reversing candidate order changes no allocation beyond $1.45\times10^{-14}$.
-This supports deterministic stability at the evaluated caps; it is not a claim
-of uniqueness over an unenumerated continuous joint frontier.
+<!-- claim:optimization.finite_rhs_coverage_without_uniqueness -->
 
-The registered-cap audit is not a seventh track. It checks the finite
-two-ruler grid against a broader finite support of point-cap endpoints; it does
-not establish a continuous point-cap envelope. Together the analyses
-show that status-indexed direction depends on residual recipe, comparator support,
-ruler, frontier coordinate, and declared portfolio structure; none identifies
-a derived endpoint with universally higher status-indexed payoff proxy or lower
-default or miscoverage.
+A complete per-solve column-and-row basis audit reconciles 7,297 frozen rows.
+The 7,228 active-upper ranges, 69 zero-dual safe rays, and 196 V2 midpoint
+seeds retrospectively registered in V3a leave no gap above $10^{-10}$ on
+$[0.05,0.12]$ in all 15 periods. None of 5,874 bilateral paths exceeds the
+registered $10^{-10}$ normalized exposure-distance threshold (maximum
+$3.08\times10^{-14}$). Thirteen scale-aware V2 warnings at eight targets plus
+one V3a midpoint warning repeating a V2 target, with maximum epsilon-band
+mobility USD 0.962, prevent any strict numerical-uniqueness claim but prove
+neither nonuniqueness nor a distinct exact optimum. This is a finite solver-path
+diagnostic, not a seventh track, allocation-continuity claim, or continuous
+envelope. Together the analyses
+show that direction depends on residual recipe, comparator support, ruler,
+coordinate, and portfolio structure; none identifies a universally preferable
+endpoint.
 
 # Discussion {#sec-discussion}
 
@@ -1082,8 +1088,8 @@ C0 proves mechanical same-threshold nesting; C2 removes one funded point-score
 moment; and the registered-cap audit shows that neither is a unique
 counterfactual. None of the 216 broad-stress envelopes has a fixed sign. Some
 payoff and miscoverage signs survive the narrower development support, but
-default never does and all three metrics become unidentified in W8. This exact
-support result is the safeguard against overinterpreting a finite grid, not a
+default never does and all three metrics become unidentified in W8. This finite
+registered-support result is the safeguard against overinterpreting a finite grid, not a
 reason to privilege the broadest support after outcomes.
 
 The complete structural grid adds a different safeguard. It shows that the
@@ -1172,7 +1178,7 @@ neither a pristine lockbox nor a preregistration.
 
 # Reproducibility {#sec-reproducibility}
 
-One registry binds every active lineage and 47 DVC pointers. Publication replay
+One registry binds every active lineage and 51 DVC pointers. Publication replay
 verifies frozen artifacts and regenerates 27 tables and three figures
 transactionally; scientific replay uses each lineage's protocol commit and
 `uv.lock`, not the current source tree. Online Supplement Appendix F specifies

@@ -18,7 +18,7 @@ instructions, and replay commands.
 | Environment | `pyproject.toml`, `uv.lock`, `justfile` |
 | Authority | Active claim registry, executable claim ledger, source registry, publication targets |
 | Method | Complete `src` package, active runners, evidence and paper builders |
-| Runs | 47 DVC pointers for active roots, sensitivities, and replay dependencies |
+| Runs | 51 DVC pointers for active roots, sensitivities, and replay dependencies |
 | Evidence | One manifest, 27 CSV tables, three figures in PDF/PNG |
 | Manuscript | QMD body/supplement, generated INFORMS TeX, bibliography |
 | Gates | Scientific tests, lint, typing, drift, claim sync, anonymity, PDF QA |
@@ -78,6 +78,17 @@ uv run --locked python scripts/experiments/run_ijds_rolling_origin_equal_followu
 uv run --locked python scripts/experiments/run_ijds_rolling_origin_individual_age_followup.py --config configs/experiments/ijds_rolling_origin_individual_age_followup_2026-07-21_v1.yaml
 uv run --locked python scripts/experiments/run_ijds_label_mondrian_freeze.py --config configs/experiments/ijds_label_mondrian_freeze_2026-07-21_v1.yaml
 uv run --locked python scripts/experiments/run_ijds_label_mondrian_evaluation.py --config configs/experiments/ijds_label_mondrian_evaluation_2026-07-21_v1.yaml
+uv run --locked python scripts/experiments/run_ijds_policy_support_optimal_face_v2.py --config configs/experiments/ijds_policy_support_optimal_face_2026-07-21_v2.yaml
+uv run --locked python scripts/experiments/run_ijds_policy_support_rhs_semantics_recovery_v3a.py --config configs/experiments/ijds_policy_support_rhs_semantics_recovery_2026-07-21_v3a.yaml
+```
+
+After the immutable V2 and V3a artifacts are materialized, rebuild their
+registered intermediate evidence and then the single primary numerical
+manifest from the active release checkout:
+
+```powershell
+uv run --locked python scripts/build_ijds_policy_support_optimal_face_evidence.py
+uv run --locked python scripts/build_ijds_binary_geometry_frontier_v4_evidence.py
 ```
 
 Every runner requires fresh run-tag output paths and refuses a dirty or
@@ -100,7 +111,7 @@ graph, bibliography, cross-references, and stable pagination in that order.
 
 ## Acceptance QA
 
-1. Reproduce from a fresh clone and the 47 DVC pointers.
+1. Reproduce from a fresh clone and the 51 DVC pointers.
 2. Confirm evidence and QMD-to-TeX builders are byte-idempotent.
 3. Run scientific, lint, type, drift, publication, and protected-artifact checks.
 4. Compile and inspect body, supplement, and official PDF page by page.

@@ -65,6 +65,7 @@ active_scientific_contract:
       - scripts/experiments/run_ijds_label_mondrian_evaluation.py
     support_tools:
       - scripts/build_ijds_policy_support_tie_evidence.py
+      - scripts/build_ijds_policy_support_optimal_face_evidence.py
       - scripts/manage_ijds_dvc_capsule.py
       - scripts/run_complexity_report.py
       - scripts/run_ty_advisory.py
@@ -106,9 +107,13 @@ active_scientific_contract:
       normalized-score rulers at {.25,.50,.75}; gamma 1 minus gamma 0 is the
       frozen endpoint contrast, with no selector.
     comparator: >-
-      C0, C1, C2, exact development-admissible support, and broad [0.05,0.12]
-      support are outcome-free diagnostics. HiGHS basis endpoints give exact
-      sharp envelopes on each declared point-cap interval.
+      C0, C1, C2, registered finite development-admissible support, and broad [0.05,0.12]
+      support are outcome-free diagnostics. Registered outcome envelopes are
+      exact over their finite cap endpoints. Active-upper solver-reported RHS
+      ranges, zero-dual basic-row safe rays, and 196 V2 midpoint seeds
+      retrospectively registered in V3a numerically cover the broad RHS support
+      at tolerance 1e-10 without an optimal-face uniqueness or
+      continuous-allocation claim.
     endpoint: >-
       Terminal status is conservatively reconstructed as observable by the
       cutoff; later terminal statuses and nonterminal rows remain unresolved.
@@ -123,6 +128,7 @@ active_scientific_contract:
   required_artifacts:
     - reports/crpto/ijds_binary_geometry_frontier_v4_evidence.json
     - reports/crpto/ijds_policy_support_tie_evidence.json
+    - reports/crpto/ijds_policy_support_optimal_face_evidence.json
     - reports/crpto/tables/crpto_ijds_comparator_support_domain.csv
     - reports/crpto/tables/crpto_ijds_gamma_endpoint_audit.csv
     - reports/crpto/tables/crpto_ijds_policy_family_domain.csv

@@ -19,7 +19,7 @@ eligible design. It retains 376,890 primary OOT candidates, reconstructs
 364,814 outcomes as observable by the cutoff, and bounds 12,076 unresolved
 outcomes. Five retrospectively protocol-locked learner specifications support the coverage audit;
 only CatBoost enters optimization. The decision audit reports five gamma
-values, two rulers, three coordinates, exact declared point-cap supports, and
+values, two rulers, three coordinates, finite registered point-cap supports, and
 no winner. Evaluation-endpoint lags 0, 3, 6, 8, and 12 are reported without
 selection; conformal-fit label timing is a separate sensitivity. An
 observed-only fit and three declared stress rules vary the 215 labels that were
@@ -114,7 +114,7 @@ submission:
 - reviewer files contain no identity, local path, commit, tag, or hash;
 - the abstract stays below 300 words;
 - no retired endpoint or favorable `.25` claim returns; and
-- the package contains exactly 47 registered DVC pointers and 27 paper-facing
+- the package contains exactly 51 registered DVC pointers and 27 paper-facing
   CSV tables, with unequal-follow-up roots labeled only as replay provenance;
 - scientific, drift, publication, compilation, and visual gates pass.
 

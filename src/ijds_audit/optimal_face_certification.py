@@ -3,8 +3,9 @@
 from __future__ import annotations
 
 import hashlib
+from collections.abc import Callable
 from dataclasses import dataclass
-from typing import Any
+from typing import Any, cast
 
 import highspy
 import numpy as np
@@ -192,9 +193,10 @@ def audit_full_basis(
     row_supported_nonbasic = row_lower_nonbasic | row_upper_nonbasic
     row_unsupported = row_movable_nonbasic & ~row_supported_nonbasic
     row_matrix = _matrix_from_lp(lp)
-    row_coefficient_max = np.asarray(np.abs(row_matrix).max(axis=1).toarray(), dtype=float).reshape(
-        -1
-    )
+    sparse_row_magnitudes = cast(Any, np.abs(cast(Any, row_matrix)))
+    row_coefficient_max = np.asarray(
+        sparse_row_magnitudes.max(axis=1).toarray(), dtype=float
+    ).reshape(-1)
     if objective_reference <= 0.0 or bool(np.any(row_coefficient_max <= 0.0)):
         raise RuntimeError("Cannot define the registered row/slack dual scale.")
     # A row marginal has objective-units per row-activity unit. Dividing the
@@ -526,10 +528,12 @@ def _solve_secondary(
     primal_feasibility_tolerance: float,
 ) -> SecondarySolve:
     solver = highspy.Highs()
-    if hasattr(solver, "resetGlobalScheduler"):
-        solver.resetGlobalScheduler(True)
-    if hasattr(solver, "zeroAllClocks"):
-        solver.zeroAllClocks()
+    reset_scheduler = getattr(solver, "resetGlobalScheduler", None)
+    if callable(reset_scheduler):
+        cast(Callable[[bool], object], reset_scheduler)(True)
+    zero_clocks = getattr(solver, "zeroAllClocks", None)
+    if callable(zero_clocks):
+        cast(Callable[[], object], zero_clocks)()
     solver.setOptionValue("output_flag", False)
     solver.setOptionValue("log_to_console", False)
     for option, value in (
