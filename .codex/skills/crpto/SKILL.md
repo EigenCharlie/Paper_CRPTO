@@ -28,7 +28,7 @@ Read first:
 19. `docs/research/ijds_rolling_origin_equal_followup_protocol_2026-07-21.md` (parent provenance)
 20. `docs/research/ijds_label_mondrian_sensitivity_protocol_2026-07-21.md`
 21. `docs/research/ijds_policy_support_optimal_face_v2_protocol_2026-07-21.md`
-22. `docs/research/ijds_policy_support_rhs_semantics_recovery_v3_protocol_2026-07-21.md`
+22. `docs/research/ijds_policy_support_rhs_semantics_recovery_v3a_protocol_2026-07-21.md`
 23. `docs/research/applied_conformal_prediction_book_audit_2026-07-21.md`
 24. `docs/research/conformal_literature_corpus_audit_2026-07-21.md`
 25. `reports/crpto/ijds_binary_geometry_frontier_v4_evidence.json`

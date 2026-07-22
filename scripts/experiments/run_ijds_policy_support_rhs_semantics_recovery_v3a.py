@@ -1,4 +1,4 @@
-"""Run the locked outcome-free IJDS upper-RHS semantics recovery V3 audit."""
+"""Run the locked outcome-free IJDS upper-RHS semantics recovery V3a audit."""
 
 from __future__ import annotations
 
@@ -54,15 +54,15 @@ from src.utils.pipeline_runtime import (  # noqa: E402
 )
 
 CONFIG_RELATIVE_PATH = Path(
-    "configs/experiments/ijds_policy_support_rhs_semantics_recovery_2026-07-21_v3.yaml"
+    "configs/experiments/ijds_policy_support_rhs_semantics_recovery_2026-07-21_v3a.yaml"
 )
 DEFAULT_CONFIG_PATH = ROOT / CONFIG_RELATIVE_PATH
 ALLOWED_DATA_ROOT = Path("data/processed/experiments/ijds_audit")
 ALLOWED_MODEL_ROOT = Path("models/experiments/ijds_audit")
 IMPLEMENTATION_PATHS = (
     Path("configs/experiments/ijds_policy_support_optimal_face_2026-07-21_v2.yaml"),
-    Path("docs/research/ijds_policy_support_rhs_semantics_recovery_v3_protocol_2026-07-21.md"),
-    Path("scripts/experiments/run_ijds_policy_support_rhs_semantics_recovery_v3.py"),
+    Path("docs/research/ijds_policy_support_rhs_semantics_recovery_v3a_protocol_2026-07-21.md"),
+    Path("scripts/experiments/run_ijds_policy_support_rhs_semantics_recovery_v3a.py"),
     Path("scripts/experiments/run_ijds_policy_support_optimal_face_v2.py"),
     Path("src/evaluation/standardized_credit_payoff.py"),
     Path("src/ijds_audit/optimal_face_certification.py"),
@@ -71,7 +71,7 @@ IMPLEMENTATION_PATHS = (
     Path("src/ijds_challengers/archive.py"),
     Path("src/utils/isolated_experiment.py"),
     Path("src/utils/pipeline_runtime.py"),
-    Path("tests/test_ijds_policy_support_rhs_semantics_recovery_v3.py"),
+    Path("tests/test_ijds_policy_support_rhs_semantics_recovery_v3a.py"),
     Path("tests/test_ijds_rhs_ranging.py"),
     Path("pyproject.toml"),
     Path("uv.lock"),
@@ -113,6 +113,7 @@ def load_config(path: Path) -> dict[str, Any]:
         "protocol_tag",
         "run_tag",
         "hypothesis",
+        "failed_predecessor",
         "v2_source",
         "source_ingest",
         "rhs_semantics",
@@ -127,19 +128,30 @@ def load_config(path: Path) -> dict[str, Any]:
     }
     if missing := sorted(required.difference(payload)):
         raise ValueError(f"RHS recovery V3 config is missing sections: {missing}.")
-    if payload["schema_version"] != "2026-07-21.2":
-        raise ValueError("RHS recovery V3 schema version changed.")
-    expected_run = "ijds-policy-support-rhs-semantics-recovery-2026-07-21-v3"
+    if payload["schema_version"] != "2026-07-21.3":
+        raise ValueError("RHS recovery V3a schema version changed.")
+    expected_run = "ijds-policy-support-rhs-semantics-recovery-2026-07-21-v3a"
     if payload["run_tag"] != expected_run:
         raise ValueError("RHS recovery V3 run tag changed.")
     if payload["protocol_tag"] != f"protocol/{expected_run}":
         raise ValueError("RHS recovery V3 protocol tag changed.")
     if payload["protocol_status"] != (
-        "locked_retrospective_outcome_free_rhs_semantics_recovery_v3_before_execution"
+        "locked_retrospective_outcome_free_rhs_semantics_recovery_v3a_before_execution"
     ):
         raise ValueError("RHS recovery V3 protocol is not locked.")
     if not isinstance(payload["hypothesis"], str) or not payload["hypothesis"].strip():
         raise ValueError("RHS recovery V3 hypothesis must be nonempty.")
+
+    expected_failure = {
+        "protocol_tag": "protocol/ijds-policy-support-rhs-semantics-recovery-2026-07-21-v3",
+        "protocol_commit": "8508a339441e6d18084743f166c85d9e45ac0319",
+        "completed_gap_seed_solves": 196,
+        "failure_stage": "post_solve_lateral_reporting_before_output_materialization",
+        "exception": "KeyError:lateral_objective_difference_dollars",
+        "output_directories_materialized": False,
+    }
+    if payload["failed_predecessor"] != expected_failure:
+        raise ValueError("RHS recovery V3a failed-predecessor record changed.")
 
     source = payload["v2_source"]
     expected_source = {
@@ -273,6 +285,8 @@ def load_config(path: Path) -> dict[str, Any]:
         "objective_reconciliation_dollars": 1.0e-5,
         "policy_constraint_normalized": 1.0e-8,
         "allocation_distance": 1.0e-10,
+        "lateral_objective_difference_dollars": 1.0e-5,
+        "lateral_weighted_point_difference": 1.0e-10,
         "basic_row_dual": 1.0e-12,
         "row_activity_normalized": 1.0e-10,
     }
@@ -1203,7 +1217,7 @@ def run_audit(*, config_path: Path, repo_root: Path = ROOT) -> Path:
         paths.model_dir / "protocol_freeze.json",
         {
             "schema_version": str(config["schema_version"]),
-            "status": "outcome_free_rhs_semantics_recovery_v3_frozen",
+            "status": "outcome_free_rhs_semantics_recovery_v3a_frozen",
             "run_tag": str(config["run_tag"]),
             "protocol_tag": str(config["protocol_tag"]),
             "protocol_commit": protocol_commit,
@@ -1247,7 +1261,7 @@ def run_audit(*, config_path: Path, repo_root: Path = ROOT) -> Path:
     }
     summary = {
         "schema_version": str(config["schema_version"]),
-        "status": "complete_outcome_free_rhs_semantics_recovery_v3",
+        "status": "complete_outcome_free_rhs_semantics_recovery_v3a",
         "run_tag": str(config["run_tag"]),
         "protocol_tag": str(config["protocol_tag"]),
         "protocol_commit": protocol_commit,

@@ -6,8 +6,9 @@ from pathlib import Path
 import pandas as pd
 import pytest
 
-from scripts.experiments.run_ijds_policy_support_rhs_semantics_recovery_v3 import (
+from scripts.experiments.run_ijds_policy_support_rhs_semantics_recovery_v3a import (
     DEFAULT_CONFIG_PATH,
+    _correct_lateral_comparisons,
     corrected_central_rhs_ranges,
     coverage_by_period,
     initial_gap_census,
@@ -22,7 +23,7 @@ from scripts.experiments.run_ijds_policy_support_rhs_semantics_recovery_v3 impor
 def test_locked_v3_config_is_outcome_free_and_fail_closed() -> None:
     config = load_config(DEFAULT_CONFIG_PATH)
 
-    assert config["schema_version"] == "2026-07-21.2"
+    assert config["schema_version"] == "2026-07-21.3"
     assert config["source_ingest"]["outcome_columns_passed"] == []
     assert config["coverage"]["registered_support"] == [0.05, 0.12]
     assert config["coverage"]["gap_fill_passes"] == 1
@@ -172,9 +173,12 @@ def test_real_v2_source_hashes_and_gap_census_reconcile() -> None:
     central = pd.read_parquet(paths["central_basis_diagnostics"])
     rows = pd.read_parquet(paths["row_slack_details"])
     probes = pd.read_parquet(paths["lateral_probe_diagnostics"])
+    comparisons = pd.read_parquet(paths["breakpoint_comparisons"])
+    faces = pd.read_parquet(paths["optimal_face_ranges"])
 
     corrected = corrected_central_rhs_ranges(central, rows, config=config)
     gaps = initial_gap_census(corrected, probes, config=config)
+    lateral = _correct_lateral_comparisons(comparisons, faces, config=config)
 
     assert summary["results"]["certification_status"] == ("numerical_contract_failed_claim_blocked")
     assert len(corrected) == 7_297
@@ -184,6 +188,9 @@ def test_real_v2_source_hashes_and_gap_census_reconcile() -> None:
     assert gaps["period"].nunique() == 15
     assert gaps["target_gap_width"].max() == pytest.approx(0.0014766337338472102)
     assert gaps["seed_midpoint_match_distance"].max() <= 1.4e-16
+    assert len(lateral) == 2_952
+    assert not bool(lateral["allocation_difference_cooccurs_with_same_cap_epsilon_mobility"].any())
+    assert not bool(lateral["lateral_numerical_discrepancy"].any())
 
 
 def test_v3_output_paths_are_contained_and_immutable(tmp_path: Path) -> None:

@@ -1,13 +1,21 @@
-schema_version: "2026-07-21.2"
-protocol_status: "locked_retrospective_outcome_free_rhs_semantics_recovery_v3_before_execution"
-protocol_tag: "protocol/ijds-policy-support-rhs-semantics-recovery-2026-07-21-v3"
-run_tag: "ijds-policy-support-rhs-semantics-recovery-2026-07-21-v3"
+schema_version: "2026-07-21.3"
+protocol_status: "locked_retrospective_outcome_free_rhs_semantics_recovery_v3a_before_execution"
+protocol_tag: "protocol/ijds-policy-support-rhs-semantics-recovery-2026-07-21-v3a"
+run_tag: "ijds-policy-support-rhs-semantics-recovery-2026-07-21-v3a"
 hypothesis: >-
   After interpreting HiGHS row ranging according to the risk-row basis status
   and replaying every one of the 196 outcome-free midpoint seeds that occupies
   an initial positive gap, the union of fresh basis intervals covers the locked
   [0.05, 0.12] support at tolerance 1e-10; this does not imply exact symbolic
   optimal-face uniqueness, allocation continuity, or a selected policy.
+
+failed_predecessor:
+  protocol_tag: "protocol/ijds-policy-support-rhs-semantics-recovery-2026-07-21-v3"
+  protocol_commit: "8508a339441e6d18084743f166c85d9e45ac0319"
+  completed_gap_seed_solves: 196
+  failure_stage: "post_solve_lateral_reporting_before_output_materialization"
+  exception: "KeyError:lateral_objective_difference_dollars"
+  output_directories_materialized: false
 
 v2_source:
   run_tag: "ijds-policy-support-optimal-face-audit-2026-07-21-v2"
@@ -107,6 +115,8 @@ tolerances:
   objective_reconciliation_dollars: 1.0e-5
   policy_constraint_normalized: 1.0e-8
   allocation_distance: 1.0e-10
+  lateral_objective_difference_dollars: 1.0e-5
+  lateral_weighted_point_difference: 1.0e-10
   basic_row_dual: 1.0e-12
   row_activity_normalized: 1.0e-10
 

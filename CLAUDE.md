@@ -24,7 +24,7 @@ not active evidence.
 16. `docs/research/ijds_rolling_origin_equal_followup_protocol_2026-07-21.md` (parent provenance)
 17. `docs/research/ijds_label_mondrian_sensitivity_protocol_2026-07-21.md`
 18. `docs/research/ijds_policy_support_optimal_face_v2_protocol_2026-07-21.md`
-19. `docs/research/ijds_policy_support_rhs_semantics_recovery_v3_protocol_2026-07-21.md`
+19. `docs/research/ijds_policy_support_rhs_semantics_recovery_v3a_protocol_2026-07-21.md`
 20. `configs/ijds_active_evidence_sources.yaml`
 21. `configs/ijds_claim_ledger.yaml`
 22. `reports/crpto/ijds_binary_geometry_frontier_v4_evidence.json`
