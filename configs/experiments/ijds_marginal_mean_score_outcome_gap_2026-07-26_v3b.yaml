@@ -1,0 +1,402 @@
+schema_version: "2026-07-26.3b"
+protocol_status: "retrospectively_locked_runtime_lineage_recovery_before_v3b_execution"
+run_tag: "ijds-marginal-mean-score-outcome-gap-2026-07-26-v3b"
+protocol_tag: "protocol/ijds-marginal-mean-score-outcome-gap-2026-07-26-v3b"
+artifact_tag: "artifacts/ijds-marginal-mean-score-outcome-gap-2026-07-26-v3b"
+protocol_path: "docs/research/ijds_marginal_mean_score_outcome_gap_v3b_protocol_2026-07-26.md"
+estimand: "marginal_mean_score_outcome_gap"
+
+prior_lineage:
+  v2_run_tag: "ijds-marginal-mean-score-outcome-gap-2026-07-26-v2"
+  status: "quarantined_runtime_and_portability_lineage_not_a_scientific_refutation"
+  v2_outputs_are_inputs: false
+  v2_result_signs_already_inspected: true
+  v3_protocol_tag: "protocol/ijds-marginal-mean-score-outcome-gap-2026-07-26-v3"
+  v3_protocol_commit: "934cdb2f2a9418625eddf0f9bc4cb771d2654696"
+  v3_status: "aborted_precompute_runtime_path_not_git_ignored"
+  v3_outcomes_read: false
+  v3_outputs_exist: false
+  v3_outputs_are_inputs: false
+  v3a_protocol_tag: "protocol/ijds-marginal-mean-score-outcome-gap-2026-07-26-v3a"
+  v3a_protocol_commit: "88f71852db9d740e54d290e378a070f0a43b8541"
+  v3a_status: "aborted_pre_science_calibre_e_entrypoint_sys_path_mismatch"
+  v3a_outcomes_read: false
+  v3a_outputs_exist: false
+  v3a_outputs_are_inputs: false
+  v3b_role: "clean_row_identified_runtime_and_lineage_replay"
+
+source:
+  credit_control_freeze:
+    path: "models/experiments/ijds_audit/ijds-credit-risk-controls-2026-07-13-v1b/protocol_freeze.json"
+    bytes: 25908
+    sha256: "da4805e644bcf5decfbb0a67c0c81a5b9dd61f3ab2e17d3dc5264100e7eb4d35"
+  scores:
+    path: "data/processed/experiments/ijds_audit/ijds-credit-risk-controls-2026-07-13-v1b/prediction/scores.parquet"
+    bytes: 30407406
+    sha256: "5795bc0a75be90e86d37cf7d297f4b4fd6e6604b38f8179bc5042c024a53a8dc"
+  score_data_dvc_pointer:
+    path: "data/processed/experiments/ijds_audit/ijds-credit-risk-controls-2026-07-13-v1b.dvc"
+    bytes: 140
+    sha256: "d5434d537e477221b1632097dff22d891cb570ae1aa5ba1f49d63e55b6199a4b"
+  score_model_dvc_pointer:
+    path: "models/experiments/ijds_audit/ijds-credit-risk-controls-2026-07-13-v1b.dvc"
+    bytes: 140
+    sha256: "ed79b1054e5b6b37e212ef6f0cab03e7294d38c1f52e30bad9fbe16f60faa029"
+  raw_archive:
+    path: "data/raw/Loan_status_2007-2020Q3.csv"
+    bytes: 1773470505
+    sha256: "5878af2a088f8ab5214c9337289fb8b5eb6c6338fd3f417b6cdc18513dc6f35f"
+    dvc_md5: "65adade308f21d60b7213088a88e684d"
+  raw_dvc_pointer:
+    path: "data/raw/Loan_status_2007-2020Q3.csv.dvc"
+    bytes: 113
+    sha256: "6ef49f8108d5e5e2303d84fe3b79e1ee53fb7a39e68df8623f054bc74d756f6c"
+  raw_audit_evidence:
+    path: "reports/crpto/data_audit/ijds-raw-data-contract-2026-07-14-v2/evidence.json"
+    bytes: 3654
+    sha256: "ac3cda119d919006210435eb0ff2234ffd6281d46edf8d29f04157b5f64ba6a5"
+  raw_audit_config:
+    path: "configs/experiments/ijds_raw_data_contract_2026-07-14_v2.yaml"
+    bytes: 1268
+    sha256: "bb6f240caeb87999d7071590f851d5db886ba93baba5072c60e6f550c7d970e2"
+
+source_identity:
+  credit_control_freeze_status: "credit_control_scores_frozen_before_primary_oot_outcome_join"
+  credit_control_freeze_run_tag: "ijds-credit-risk-controls-2026-07-13-v1b"
+  credit_control_freeze_protocol_tag: "protocol/ijds-credit-risk-controls-2026-07-13-v1b"
+  credit_control_freeze_protocol_commit: "1776cbf8b201ae5b92756e5ea397a403d6cc7c9f"
+  credit_control_sampling: "none_all_eligible_rows"
+  credit_control_model_selection: "none_all_five_reported"
+  raw_audit_status: "complete_full_archive_data_contract_audit"
+  raw_audit_run_tag: "ijds-raw-data-contract-2026-07-14-v2"
+  raw_rows: 2925493
+  raw_dvc_size: 1773470505
+
+design:
+  role: "primary_oot"
+  term_months: 36
+  primary_oot_start_month: "2016-04"
+  primary_oot_end_month: "2017-06"
+  endpoint_cutoff: "2020-09-30"
+  charged_off_availability_lag_months: 6
+  csv_chunksize: 100000
+  raw_required_columns:
+    - "id"
+    - "issue_d"
+    - "term"
+    - "loan_status"
+    - "last_pymnt_d"
+  expected_raw_rows: 2925493
+  expected_candidates: 376890
+  expected_candidate_id_sha256: "72799b236a7e45d8746099adefba7da5683e8308959643d6ad341d3585e8fa74"
+  expected_endpoint_row_sha256: "04c4d182b1223dc1c92df0898d4cd25e0a44fedded46dc1f52af62ba3d9317b6"
+  hash_serialization:
+    identifier_order: "normalized_unique_ids_sorted_by_unicode_code_point"
+    identifier_record: "utf8_bytes_prefixed_by_unsigned_64_bit_little_endian_byte_length"
+    endpoint_order: "rows_sorted_by_normalized_id"
+    endpoint_record: "compact_utf8_json_array_id_role_period_reason_nullable_binary_outcome"
+    endpoint_record_prefix: "unsigned_64_bit_little_endian_json_byte_length"
+    identifier_literal_vector_sha256: "81f6992fb47d559c793c87786fe34a258f8a816b741079c8301d1af281d54e0d"
+    endpoint_literal_vector_sha256: "1e4d90031d9c00cabbb31dc16e591c3bcba0c7a2cbd1669f5778b37d091402c3"
+  expected_resolved: 364814
+  expected_unresolved: 12076
+  expected_resolved_y0: 307842
+  expected_resolved_y1: 56972
+  issue_months:
+    - "2016-04"
+    - "2016-05"
+    - "2016-06"
+    - "2016-07"
+    - "2016-08"
+    - "2016-09"
+    - "2016-10"
+    - "2016-11"
+    - "2016-12"
+    - "2017-01"
+    - "2017-02"
+    - "2017-03"
+    - "2017-04"
+    - "2017-05"
+    - "2017-06"
+  learners:
+    - "catboost_platt"
+    - "numeric_logistic_platt"
+    - "catboost_monotonic_platt"
+    - "woe_scorecard_platform_platt"
+    - "woe_scorecard_borrower_platt"
+  score_columns:
+    catboost_platt: "pd_catboost_platt"
+    numeric_logistic_platt: "pd_numeric_logistic_platt"
+    catboost_monotonic_platt: "pd_catboost_monotonic_platt"
+    woe_scorecard_platform_platt: "pd_woe_scorecard_platform_platt"
+    woe_scorecard_borrower_platt: "pd_woe_scorecard_borrower_platt"
+  endpoint_reason_census:
+    charged_off_by_reconstructed_cutoff:
+      candidate_rows: 56972
+      resolved_rows: 56972
+      unresolved_rows: 0
+    fully_paid_by_reconstructed_cutoff:
+      candidate_rows: 307842
+      resolved_rows: 307842
+      unresolved_rows: 0
+    nonterminal_or_unresolved_status:
+      candidate_rows: 11551
+      resolved_rows: 0
+      unresolved_rows: 11551
+    terminal_after_reconstructed_cutoff:
+      candidate_rows: 47
+      resolved_rows: 0
+      unresolved_rows: 47
+    terminal_availability_date_missing:
+      candidate_rows: 478
+      resolved_rows: 0
+      unresolved_rows: 478
+  monthly_reason_candidate_rows:
+    "2016-04":
+      charged_off_by_reconstructed_cutoff: 4636
+      fully_paid_by_reconstructed_cutoff: 23435
+      nonterminal_or_unresolved_status: 0
+      terminal_after_reconstructed_cutoff: 0
+      terminal_availability_date_missing: 35
+    "2016-05":
+      charged_off_by_reconstructed_cutoff: 3714
+      fully_paid_by_reconstructed_cutoff: 18089
+      nonterminal_or_unresolved_status: 0
+      terminal_after_reconstructed_cutoff: 0
+      terminal_availability_date_missing: 28
+    "2016-06":
+      charged_off_by_reconstructed_cutoff: 3595
+      fully_paid_by_reconstructed_cutoff: 20974
+      nonterminal_or_unresolved_status: 0
+      terminal_after_reconstructed_cutoff: 0
+      terminal_availability_date_missing: 31
+    "2016-07":
+      charged_off_by_reconstructed_cutoff: 4270
+      fully_paid_by_reconstructed_cutoff: 21068
+      nonterminal_or_unresolved_status: 0
+      terminal_after_reconstructed_cutoff: 0
+      terminal_availability_date_missing: 37
+    "2016-08":
+      charged_off_by_reconstructed_cutoff: 4504
+      fully_paid_by_reconstructed_cutoff: 22636
+      nonterminal_or_unresolved_status: 2
+      terminal_after_reconstructed_cutoff: 0
+      terminal_availability_date_missing: 39
+    "2016-09":
+      charged_off_by_reconstructed_cutoff: 3409
+      fully_paid_by_reconstructed_cutoff: 17899
+      nonterminal_or_unresolved_status: 6
+      terminal_after_reconstructed_cutoff: 0
+      terminal_availability_date_missing: 28
+    "2016-10":
+      charged_off_by_reconstructed_cutoff: 3571
+      fully_paid_by_reconstructed_cutoff: 21142
+      nonterminal_or_unresolved_status: 8
+      terminal_after_reconstructed_cutoff: 0
+      terminal_availability_date_missing: 25
+    "2016-11":
+      charged_off_by_reconstructed_cutoff: 3959
+      fully_paid_by_reconstructed_cutoff: 22184
+      nonterminal_or_unresolved_status: 30
+      terminal_after_reconstructed_cutoff: 2
+      terminal_availability_date_missing: 34
+    "2016-12":
+      charged_off_by_reconstructed_cutoff: 4388
+      fully_paid_by_reconstructed_cutoff: 23485
+      nonterminal_or_unresolved_status: 74
+      terminal_after_reconstructed_cutoff: 1
+      terminal_availability_date_missing: 37
+    "2017-01":
+      charged_off_by_reconstructed_cutoff: 3458
+      fully_paid_by_reconstructed_cutoff: 20475
+      nonterminal_or_unresolved_status: 187
+      terminal_after_reconstructed_cutoff: 3
+      terminal_availability_date_missing: 29
+    "2017-02":
+      charged_off_by_reconstructed_cutoff: 2916
+      fully_paid_by_reconstructed_cutoff: 17373
+      nonterminal_or_unresolved_status: 139
+      terminal_after_reconstructed_cutoff: 2
+      terminal_availability_date_missing: 23
+    "2017-03":
+      charged_off_by_reconstructed_cutoff: 3761
+      fully_paid_by_reconstructed_cutoff: 23782
+      nonterminal_or_unresolved_status: 217
+      terminal_after_reconstructed_cutoff: 7
+      terminal_availability_date_missing: 38
+    "2017-04":
+      charged_off_by_reconstructed_cutoff: 3085
+      fully_paid_by_reconstructed_cutoff: 18296
+      nonterminal_or_unresolved_status: 448
+      terminal_after_reconstructed_cutoff: 5
+      terminal_availability_date_missing: 30
+    "2017-05":
+      charged_off_by_reconstructed_cutoff: 3927
+      fully_paid_by_reconstructed_cutoff: 20555
+      nonterminal_or_unresolved_status: 2938
+      terminal_after_reconstructed_cutoff: 14
+      terminal_availability_date_missing: 22
+    "2017-06":
+      charged_off_by_reconstructed_cutoff: 3779
+      fully_paid_by_reconstructed_cutoff: 16449
+      nonterminal_or_unresolved_status: 7502
+      terminal_after_reconstructed_cutoff: 13
+      terminal_availability_date_missing: 42
+
+scientific_contract:
+  formula_lower: "mean_score - (resolved_defaults + unresolved_outcomes) / candidate_rows"
+  formula_upper: "mean_score - resolved_defaults / candidate_rows"
+  binary_completion_class: "all_independent_zero_or_one_assignments_to_unresolved_rows"
+  endpoints_jointly_attained: true
+  exact_identified_set: "finite_grid_with_unresolved_count_plus_one_points"
+  joint_exact_identified_set: "shared_completion_finite_grid_not_cartesian_product"
+  joint_exact_identified_set_formula: "mean_score_vector - ((resolved_defaults + k) / candidate_rows) * ones_5, k=0,...,unresolved_outcomes"
+  reported_interval_is_identified_set_hull: true
+  complete_five_learner_census: true
+  selection: "none"
+  result_sign_is_stop_condition: false
+
+execution:
+  launcher_kind: "stdlib_authenticated_calibre_bootstrap_then_scientific_runner"
+  bootstrap:
+    path: "scripts/experiments/bootstrap_ijds_marginal_mean_score_outcome_gap_v3b.py"
+    runtime_manifest: "configs/experiments/ijds_marginal_mean_score_outcome_gap_2026-07-26_v3b_runtime.json"
+    attestation_schema: "2026-07-26.3b-bootstrap-1"
+  executable:
+    path: "C:/Program Files/Calibre2/calibre-debug.exe"
+    bytes: 32368
+    sha256: "f06cbc79c233457bf8bf1c3603981f685a727e7f68c1381c5e56c9cdb592d36b"
+    calibre_version: "7.2.0"
+  python:
+    implementation: "CPython"
+    version: "3.11.5"
+    optimize: 2
+    debug: false
+    assert_statements_permitted_in_scientific_closure: false
+  project_site_packages: ".venv/Lib/site-packages"
+  calibre_config_directory: ".runtime_calibre/ijds-marginal-mean-score-outcome-gap-2026-07-26-v3b-config"
+  calibre_cache_directory: ".runtime_calibre/ijds-marginal-mean-score-outcome-gap-2026-07-26-v3b-calibre-cache"
+  uv_lock_sha256: "6c862cbad9ab7e3a07dd2823c775127403093d6ad59a789ee227d827165e4733"
+  required_packages:
+    numpy: "2.4.6"
+    pandas: "3.0.3"
+    pyarrow: "25.0.0"
+    PyYAML: "6.0.3"
+    python-dateutil: "2.9.0.post0"
+    six: "1.17.0"
+    tzdata: "2026.3"
+  authorized_orig_argv:
+    attest-only:
+      - "C:/Program Files/Calibre2/calibre-debug.exe"
+      - "-e"
+      - "scripts/experiments/bootstrap_ijds_marginal_mean_score_outcome_gap_v3b.py"
+      - "--"
+      - "--phase"
+      - "attest-only"
+      - "--config"
+      - "configs/experiments/ijds_marginal_mean_score_outcome_gap_2026-07-26_v3b.yaml"
+    compute:
+      - "C:/Program Files/Calibre2/calibre-debug.exe"
+      - "-e"
+      - "scripts/experiments/bootstrap_ijds_marginal_mean_score_outcome_gap_v3b.py"
+      - "--"
+      - "--phase"
+      - "compute"
+      - "--config"
+      - "configs/experiments/ijds_marginal_mean_score_outcome_gap_2026-07-26_v3b.yaml"
+    verify-artifact:
+      - "C:/Program Files/Calibre2/calibre-debug.exe"
+      - "-e"
+      - "scripts/experiments/bootstrap_ijds_marginal_mean_score_outcome_gap_v3b.py"
+      - "--"
+      - "--phase"
+      - "verify-artifact"
+      - "--config"
+      - "configs/experiments/ijds_marginal_mean_score_outcome_gap_2026-07-26_v3b.yaml"
+
+authority:
+  bootstrap_python_paths:
+    - "scripts/experiments/bootstrap_ijds_marginal_mean_score_outcome_gap_v3b.py"
+  transitive_python_paths:
+    - "scripts/__init__.py"
+    - "scripts/experiments/run_ijds_marginal_mean_score_outcome_gap_v3b.py"
+    - "src/__init__.py"
+    - "src/data/__init__.py"
+    - "src/data/outcome_observability.py"
+    - "src/ijds_audit/__init__.py"
+    - "src/ijds_audit/config.py"
+    - "src/ijds_audit/geometry.py"
+    - "src/ijds_audit/marginal_mean_score_outcome_gap_v3b.py"
+    - "src/ijds_audit/portfolio.py"
+    - "src/ijds_audit/rhs_ranging.py"
+    - "src/utils/__init__.py"
+    - "src/utils/artifact_descriptor.py"
+  nonpython_authority_paths:
+    - "docs/research/ijds_marginal_mean_score_outcome_gap_v3b_protocol_2026-07-26.md"
+    - "configs/experiments/ijds_marginal_mean_score_outcome_gap_2026-07-26_v3b_runtime.json"
+    - "configs/runtime/ijds_marginal_mean_score_outcome_gap_v3b_calibre_global.json"
+    - "tests/test_ijds_audit/test_marginal_mean_score_outcome_gap_v3b.py"
+    - "tests/test_experiments/test_ijds_marginal_mean_score_outcome_gap_v3b.py"
+    - ".gitignore"
+    - ".gitattributes"
+    - ".python-version"
+    - "pyproject.toml"
+    - "uv.lock"
+
+output:
+  data_root: "data/processed/experiments/ijds_audit"
+  model_root: "models/experiments/ijds_audit"
+  table: "evaluation/marginal_mean_score_outcome_gap.parquet"
+  endpoint_reason_census: "evaluation/endpoint_reason_census.parquet"
+  monthly_endpoint_reason_census: "evaluation/monthly_endpoint_reason_census.parquet"
+  summary: "marginal_mean_score_outcome_gap_summary.json"
+  execution_receipt: "execution_receipt.json"
+  execution_seal: "execution_seal.json"
+  immutability: "exclusive_create_no_overwrite_no_retry_same_run_tag"
+  artifact_registration:
+    performed_by_compute_phase: false
+    required_before_promotion: true
+    transport: "git_force_tracked_direct_child_commit"
+    dvc_tracked: false
+    expected_files: 6
+    max_total_bytes: 5000000
+    expected_paths:
+      - "data/processed/experiments/ijds_audit/ijds-marginal-mean-score-outcome-gap-2026-07-26-v3b/evaluation/marginal_mean_score_outcome_gap.parquet"
+      - "data/processed/experiments/ijds_audit/ijds-marginal-mean-score-outcome-gap-2026-07-26-v3b/evaluation/endpoint_reason_census.parquet"
+      - "data/processed/experiments/ijds_audit/ijds-marginal-mean-score-outcome-gap-2026-07-26-v3b/evaluation/monthly_endpoint_reason_census.parquet"
+      - "models/experiments/ijds_audit/ijds-marginal-mean-score-outcome-gap-2026-07-26-v3b/marginal_mean_score_outcome_gap_summary.json"
+      - "models/experiments/ijds_audit/ijds-marginal-mean-score-outcome-gap-2026-07-26-v3b/execution_receipt.json"
+      - "models/experiments/ijds_audit/ijds-marginal-mean-score-outcome-gap-2026-07-26-v3b/execution_seal.json"
+    clean_clone_required_source_pointers:
+      - "data/raw/Loan_status_2007-2020Q3.csv.dvc"
+      - "data/processed/experiments/ijds_audit/ijds-credit-risk-controls-2026-07-13-v1b.dvc"
+      - "models/experiments/ijds_audit/ijds-credit-risk-controls-2026-07-13-v1b.dvc"
+
+reporting_contract:
+  complete_five_learner_census: true
+  select_or_rank_learner: false
+  result_sign_is_stop_condition: false
+  binary_completion_bounds_are_sampling_intervals: false
+  verified_point_in_time_snapshot_claim: false
+  row_level_evaluation_outcomes_loaded: true
+  row_level_evaluation_outcomes_persisted: false
+  raw_membership_uses_outcome_status: false
+  refit_recalibrate_or_optimize: false
+  selected_or_funded_set_validity: false
+  causal_or_prospective_interpretation: false
+  active_before_dvc_verification: false
+
+stop_rules:
+  stop_on_dirty_or_non_strict_tagged_head: true
+  stop_on_noncanonical_config_or_git_blob_mismatch: true
+  stop_on_runtime_launcher_argv_environment_or_lock_drift: true
+  stop_on_transitive_authority_or_assert_statement_drift: true
+  stop_on_source_nested_descriptor_or_source_seal_drift: true
+  stop_on_raw_score_or_joined_candidate_id_drift: true
+  stop_on_nonbijective_join_or_issue_month_mismatch: true
+  stop_on_invalid_or_incomplete_score_census: true
+  stop_on_endpoint_reason_or_total_drift: true
+  stop_on_nonfinite_or_reversed_bound: true
+  stop_on_preexisting_racing_escaping_or_extra_output: true
+  stop_on_terminal_seal_or_dvc_pointer_mismatch: true
+  stop_on_result_sign_or_ordering: false
