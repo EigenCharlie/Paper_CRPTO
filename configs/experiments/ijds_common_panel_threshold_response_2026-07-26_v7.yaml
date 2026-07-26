@@ -1,0 +1,132 @@
+schema_version: "2026-07-26.1"
+protocol_status: "retrospectively_locked_before_first_eligible_clean_tagged_run"
+run_tag: "ijds-common-panel-threshold-response-2026-07-26-v7"
+protocol_tag: "protocol/ijds-common-panel-threshold-response-2026-07-26-v7"
+protocol_path: "docs/research/ijds_common_panel_threshold_response_v7_protocol_2026-07-26.md"
+
+source:
+  active_v5_config:
+    path: "configs/experiments/ijds_binary_geometry_frontier_v4_2026-07-15_v5.yaml"
+    bytes: 1371
+    sha256: "c749befbd0ab7e0f8d6fcded7e7c730cae998032f897f65c7e7673d2a12c3715"
+  credit_control_summary:
+    path: "models/experiments/ijds_audit/ijds-credit-risk-controls-2026-07-15-v5/credit_risk_controls_summary.json"
+    bytes: 23359
+    sha256: "37c0a5c224b62ee3f47259aea4231df26ea184d3666e7fab80431ad26d611715"
+  temporal_coverage:
+    path: "data/processed/experiments/ijds_audit/ijds-credit-risk-controls-2026-07-15-v5/evaluation/temporal_coverage.parquet"
+    bytes: 502111
+    sha256: "968872d3dd119cf89cebceb969d4d155fb3a75e010026e023ae10d1cede9e58c"
+  credit_control_freeze:
+    path: "models/experiments/ijds_audit/ijds-credit-risk-controls-2026-07-13-v1b/protocol_freeze.json"
+    bytes: 25908
+    sha256: "da4805e644bcf5decfbb0a67c0c81a5b9dd61f3ab2e17d3dc5264100e7eb4d35"
+  scores:
+    path: "data/processed/experiments/ijds_audit/ijds-credit-risk-controls-2026-07-13-v1b/prediction/scores.parquet"
+    bytes: 30407406
+    sha256: "5795bc0a75be90e86d37cf7d297f4b4fd6e6604b38f8179bc5042c024a53a8dc"
+  recipes:
+    path: "models/experiments/ijds_audit/ijds-credit-risk-controls-2026-07-13-v1b/prediction/residual_recipes.json"
+    bytes: 187689
+    sha256: "969ecbefe46bec4893a03be57385eda29b33dd291d73e7c0120f6d488a9e9936"
+  residual_fit_audit:
+    path: "data/processed/experiments/ijds_audit/ijds-credit-risk-controls-2026-07-13-v1b/prediction/residual_fit_audit.parquet"
+    bytes: 45955332
+    sha256: "396c30d9bec7d222220cfe6f9870ab4994cf5c33e6da8c9e4ebbd99153155353"
+  raw_archive:
+    path: "data/raw/Loan_status_2007-2020Q3.csv"
+    bytes: 1773470505
+    sha256: "5878af2a088f8ab5214c9337289fb8b5eb6c6338fd3f417b6cdc18513dc6f35f"
+  exchangeability_summary:
+    path: "models/experiments/ijds_audit/ijds-exchangeability-transport-test-2026-07-21-v1/exchangeability_transport_test_summary.json"
+    bytes: 9078
+    sha256: "72d9d39b2bef36a36440f1ccc720575d74005f1ad1932a774a91f73ed26c8af6"
+  exchangeability_strata:
+    path: "data/processed/experiments/ijds_audit/ijds-exchangeability-transport-test-2026-07-21-v1/evaluation/exchangeability_transport_strata.parquet"
+    bytes: 90676
+    sha256: "4d34a1de1d3d9556e9b9b74d0517b01b117030d7036a6911d5ad6807080601e3"
+
+design:
+  nominal_miscoverage: 0.10
+  taxonomy_groups: 5
+  role: "primary_oot"
+  expected_stratum_pairs: 175
+  expected_learner_pairs: 35
+  expected_candidates: 376890
+  expected_resolved: 364814
+  expected_unresolved: 12076
+  expected_resolved_y0: 307842
+  expected_resolved_y1: 56972
+  issue_months:
+    - "2016-04"
+    - "2016-05"
+    - "2016-06"
+    - "2016-07"
+    - "2016-08"
+    - "2016-09"
+    - "2016-10"
+    - "2016-11"
+    - "2016-12"
+    - "2017-01"
+    - "2017-02"
+    - "2017-03"
+    - "2017-04"
+    - "2017-05"
+    - "2017-06"
+  learners:
+    - "catboost_platt"
+    - "numeric_logistic_platt"
+    - "catboost_monotonic_platt"
+    - "woe_scorecard_platform_platt"
+    - "woe_scorecard_borrower_platt"
+  window_ids:
+    - "w01_2012m01_m06"
+    - "w02_2012m02_m07"
+    - "w03_2012m03_m08"
+    - "w04_2012m04_m09"
+    - "w05_2012m05_m10"
+    - "w06_2012m06_m11"
+    - "w07_2012m07_m12"
+    - "w08_2012m08_2013m01"
+  disclosed_illustration:
+    learner: "catboost_platt"
+    conformal_group: 2
+    from_window: "w07_2012m07_m12"
+    to_window: "w08_2012m08_2013m01"
+
+output:
+  data_root: "data/processed/experiments/ijds_audit"
+  model_root: "models/experiments/ijds_audit"
+  immutability: "hard_no_overwrite_choose_fresh_run_tag"
+  stratum_table: "adjacent_stratum_threshold_response.csv"
+  learner_table: "adjacent_learner_threshold_response.csv"
+  summary: "common_panel_threshold_response_v7_summary.json"
+  execution_receipt: "execution_receipt.json"
+
+interpretation:
+  retrospective_after_archive_and_v6_inspection: true
+  exhaustive_deterministic_replay: true
+  preregistered: false
+  confirmatory: false
+  common_fixed_target_panel: true
+  unresolved_outcomes_use_one_shared_completion: true
+  no_separate_interval_endpoint_subtraction: true
+  no_slope_continuity_or_regression: true
+  no_ranking_or_selection: true
+  no_exchangeability_test: true
+  no_temporal_validity_transfer: true
+  no_selected_or_funded_set_validity: true
+  no_causal_or_prospective_claim: true
+
+stop_rules:
+  stop_on_dirty_or_untagged_head: true
+  stop_on_source_or_nested_descriptor_mismatch: true
+  stop_on_preexisting_output_path: true
+  stop_on_unsafe_output_basename: true
+  stop_on_incomplete_or_duplicate_grid: true
+  stop_on_candidate_or_endpoint_census_drift: true
+  stop_on_noncommon_ids_scores_edges_or_assignments: true
+  stop_on_reference_reconciliation_failure: true
+  stop_on_integer_identity_failure: true
+  stop_on_sharp_bound_or_pooled_reconciliation_failure: true
+  stop_on_implementation_drift: true
