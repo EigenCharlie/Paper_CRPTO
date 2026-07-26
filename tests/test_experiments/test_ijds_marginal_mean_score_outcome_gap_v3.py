@@ -1,0 +1,1002 @@
+from __future__ import annotations
+
+import copy
+import importlib
+import importlib.util
+import json
+import subprocess
+import sys
+from pathlib import Path
+from types import ModuleType
+from typing import Any
+
+import pandas as pd
+import pytest
+import yaml
+
+ROOT = Path(__file__).resolve().parents[2]
+BOOTSTRAP_PATH = ROOT / "scripts/experiments/bootstrap_ijds_marginal_mean_score_outcome_gap_v3.py"
+RUNNER_PATH = ROOT / "scripts/experiments/run_ijds_marginal_mean_score_outcome_gap_v3.py"
+CONFIG_PATH = ROOT / "configs/experiments/ijds_marginal_mean_score_outcome_gap_2026-07-26_v3.yaml"
+PROTOCOL_PATH = (
+    ROOT / "docs/research/ijds_marginal_mean_score_outcome_gap_v3_protocol_2026-07-26.md"
+)
+RUNTIME_TEMPLATE_PATH = (
+    ROOT / "configs/runtime/ijds_marginal_mean_score_outcome_gap_v3_calibre_global.json"
+)
+LOCKED_V2_SCIENCE: dict[str, Any] = {
+    "role": "primary_oot",
+    "endpoint_cutoff": "2020-09-30",
+    "charged_off_availability_lag_months": 6,
+    "expected_candidates": 376890,
+    "expected_resolved": 364814,
+    "expected_unresolved": 12076,
+    "expected_resolved_y0": 307842,
+    "expected_resolved_y1": 56972,
+    "issue_months": [
+        "2016-04",
+        "2016-05",
+        "2016-06",
+        "2016-07",
+        "2016-08",
+        "2016-09",
+        "2016-10",
+        "2016-11",
+        "2016-12",
+        "2017-01",
+        "2017-02",
+        "2017-03",
+        "2017-04",
+        "2017-05",
+        "2017-06",
+    ],
+    "learners": [
+        "catboost_platt",
+        "numeric_logistic_platt",
+        "catboost_monotonic_platt",
+        "woe_scorecard_platform_platt",
+        "woe_scorecard_borrower_platt",
+    ],
+    "score_columns": {
+        "catboost_platt": "pd_catboost_platt",
+        "numeric_logistic_platt": "pd_numeric_logistic_platt",
+        "catboost_monotonic_platt": "pd_catboost_monotonic_platt",
+        "woe_scorecard_platform_platt": "pd_woe_scorecard_platform_platt",
+        "woe_scorecard_borrower_platt": "pd_woe_scorecard_borrower_platt",
+    },
+    "endpoint_reason_census": {
+        "charged_off_by_reconstructed_cutoff": {
+            "candidate_rows": 56972,
+            "resolved_rows": 56972,
+            "unresolved_rows": 0,
+        },
+        "fully_paid_by_reconstructed_cutoff": {
+            "candidate_rows": 307842,
+            "resolved_rows": 307842,
+            "unresolved_rows": 0,
+        },
+        "nonterminal_or_unresolved_status": {
+            "candidate_rows": 11551,
+            "resolved_rows": 0,
+            "unresolved_rows": 11551,
+        },
+        "terminal_after_reconstructed_cutoff": {
+            "candidate_rows": 47,
+            "resolved_rows": 0,
+            "unresolved_rows": 47,
+        },
+        "terminal_availability_date_missing": {
+            "candidate_rows": 478,
+            "resolved_rows": 0,
+            "unresolved_rows": 478,
+        },
+    },
+}
+
+
+def _require(condition: bool, message: str) -> None:
+    if not condition:
+        raise AssertionError(message)
+
+
+def _runner() -> ModuleType:
+    spec = importlib.util.spec_from_file_location("marginal_gap_v3_runner_test", RUNNER_PATH)
+    if spec is None or spec.loader is None:
+        raise RuntimeError("Unable to import the V3 runner for tests.")
+    module = importlib.util.module_from_spec(spec)
+    sys.modules[spec.name] = module
+    spec.loader.exec_module(module)
+    return module
+
+
+def _bootstrap() -> ModuleType:
+    spec = importlib.util.spec_from_file_location("marginal_gap_v3_bootstrap_test", BOOTSTRAP_PATH)
+    if spec is None or spec.loader is None:
+        raise RuntimeError("Unable to import the V3 bootstrap for tests.")
+    module = importlib.util.module_from_spec(spec)
+    sys.modules[spec.name] = module
+    spec.loader.exec_module(module)
+    return module
+
+
+def _config() -> dict[str, Any]:
+    payload = yaml.safe_load(CONFIG_PATH.read_text(encoding="utf-8"))
+    if not isinstance(payload, dict):
+        raise TypeError("V3 test config is not a mapping.")
+    return payload
+
+
+def _git(repo: Path, *args: str) -> str:
+    result = subprocess.run(["git", *args], cwd=repo, check=True, capture_output=True, text=True)
+    return result.stdout.strip()
+
+
+def _init_git(repo: Path) -> None:
+    _git(repo, "init")
+    _git(repo, "config", "user.email", "v3-test@example.invalid")
+    _git(repo, "config", "user.name", "V3 Test")
+
+
+def test_v3_config_preserves_v2_science_and_quarantines_v2_outputs() -> None:
+    runner = _runner()
+    config = runner._load_config(CONFIG_PATH)
+    for key, expected in LOCKED_V2_SCIENCE.items():
+        _require(config["design"][key] == expected, f"V3 changed locked science: {key}")
+    _require(config["prior_lineage"]["v2_outputs_are_inputs"] is False, "V2 output import enabled")
+    _require(
+        config["scientific_contract"]["result_sign_is_stop_condition"] is False,
+        "sign-based stop returned",
+    )
+    _require(
+        config["scientific_contract"]["reported_interval_is_identified_set_hull"] is True,
+        "finite-grid hull boundary missing",
+    )
+    _require(
+        config["scientific_contract"]["joint_exact_identified_set"]
+        == "shared_completion_finite_grid_not_cartesian_product",
+        "joint five-learner set reverted to an invalid Cartesian product",
+    )
+    artifact = config["output"]["artifact_registration"]
+    _require(artifact["dvc_tracked"] is False, "tiny aggregate outputs reverted to new DVC")
+    _require(len(artifact["expected_paths"]) == 6, "Git-native six-file census changed")
+
+
+@pytest.mark.parametrize(
+    ("family", "field", "replacement"),
+    [
+        ("scientific_contract", "formula_upper", "mean_score"),
+        ("reporting_contract", "causal_or_prospective_interpretation", True),
+        ("stop_rules", "stop_on_endpoint_reason_or_total_drift", False),
+        ("prior_lineage", "v2_outputs_are_inputs", True),
+        ("source_identity", "raw_rows", 1),
+    ],
+)
+def test_config_exact_contract_rejects_semantic_field_drift(
+    monkeypatch: pytest.MonkeyPatch,
+    family: str,
+    field: str,
+    replacement: Any,
+) -> None:
+    runner = _runner()
+    payload = _config()
+    payload[family][field] = replacement
+    monkeypatch.setattr(
+        runner,
+        "_SEALED_AUTHORITY_BYTES",
+        {runner.DEFAULT_CONFIG_PATH: yaml.safe_dump(payload, sort_keys=False).encode("utf-8")},
+    )
+    with pytest.raises(RuntimeError, match="changed"):
+        runner._load_config(CONFIG_PATH)
+
+
+def test_v3_ast_closure_is_exact_and_contains_no_assert_statements() -> None:
+    runner = _runner()
+    derived = runner.derive_local_python_closure(repo_root=ROOT)
+    expected = tuple(sorted(runner.TRANSITIVE_PYTHON_PATHS, key=lambda value: value.as_posix()))
+    _require(derived == expected, f"AST closure mismatch: {derived} != {expected}")
+    runner._require_no_assert_statements(derived, repo_root=ROOT)
+
+
+def test_bootstrap_import_adds_no_scientific_modules_and_direct_runner_is_rejected() -> None:
+    scientific_prefixes = ("dateutil", "numpy", "pandas", "pyarrow", "six", "src", "tzdata", "yaml")
+    before = set(sys.modules)
+    bootstrap = _bootstrap()
+    newly_loaded = set(sys.modules).difference(before)
+    leaked = sorted(
+        name
+        for name in newly_loaded
+        if any(name == prefix or name.startswith(prefix + ".") for prefix in scientific_prefixes)
+    )
+    _require(not leaked, f"bootstrap import loaded scientific modules: {leaked}")
+    _require(
+        bootstrap.derive_local_python_closure(repo_root=ROOT)
+        == tuple(sorted(bootstrap.EXPECTED_SCIENTIFIC_CLOSURE, key=lambda path: path.as_posix())),
+        "bootstrap closure omitted an initializer or relative import",
+    )
+    runner = _runner()
+    if hasattr(runner, "_IJDS_V3_BOOTSTRAP_ATTESTATION"):
+        delattr(runner, "_IJDS_V3_BOOTSTRAP_ATTESTATION")
+    with pytest.raises(RuntimeError, match="without the authenticated bootstrap"):
+        runner._require_bootstrap_attestation(phase="compute")
+
+
+def test_sealed_importer_resolves_namespace_and_blocks_local_disk_fallback(
+    tmp_path: Path,
+) -> None:
+    bootstrap = _bootstrap()
+    (tmp_path / "scripts/experiments").mkdir(parents=True)
+    (tmp_path / "scripts/experiments/unsealed.py").write_text("VALUE = 'disk'\n", encoding="utf-8")
+    sources = {
+        Path("scripts/__init__.py"): b"PACKAGE = 'sealed'\n",
+        Path("scripts/experiments/bootstrap_test.py"): b"VALUE = 'sealed'\n",
+    }
+    saved_modules = {
+        name: module for name, module in sys.modules.items() if name.startswith("scripts")
+    }
+    for name in list(saved_modules):
+        sys.modules.pop(name, None)
+    finder = bootstrap._install_sealed_importer(sources, repo_root=tmp_path)
+    try:
+        module = importlib.import_module("scripts.experiments.bootstrap_test")
+        _require(module.VALUE == "sealed", "sealed namespace import used disk bytes")
+        namespace = sys.modules["scripts.experiments"]
+        _require(
+            namespace.__spec__ is not None and namespace.__spec__.origin == "v3-sealed-namespace",
+            "intermediate scripts.experiments namespace was not sealed",
+        )
+        with pytest.raises(ImportError, match="escaped the sealed V3 census"):
+            importlib.import_module("scripts.experiments.unsealed")
+    finally:
+        if finder in sys.meta_path:
+            sys.meta_path.remove(finder)
+        for name in [value for value in sys.modules if value.startswith("scripts")]:
+            sys.modules.pop(name, None)
+        sys.modules.update(saved_modules)
+
+
+def test_protocol_commands_and_authorized_argv_require_the_bootstrap() -> None:
+    config = _config()
+    bootstrap_relative = "scripts/experiments/bootstrap_ijds_marginal_mean_score_outcome_gap_v3.py"
+    runner_relative = "scripts/experiments/run_ijds_marginal_mean_score_outcome_gap_v3.py"
+    for phase in ("compute", "verify-artifact"):
+        argv = config["execution"]["authorized_orig_argv"][phase]
+        _require(argv[2] == bootstrap_relative, f"{phase} bypasses the authenticated bootstrap")
+        _require(runner_relative not in argv, f"{phase} directly launches the scientific runner")
+    protocol = PROTOCOL_PATH.read_text(encoding="utf-8")
+    _require(
+        protocol.count(f"-e {bootstrap_relative}") == 2,
+        "protocol does not contain exactly two canonical bootstrap invocations",
+    )
+    _require(f"-e {runner_relative}" not in protocol, "protocol still documents a bootstrap bypass")
+
+
+def test_calibre_template_is_neutral_and_config_seal_rejects_personal_metadata(
+    tmp_path: Path,
+) -> None:
+    bootstrap = _bootstrap()
+    _require(
+        json.loads(RUNTIME_TEMPLATE_PATH.read_text(encoding="utf-8")) == {},
+        "Calibre template contains nonessential or personal state",
+    )
+    template = tmp_path / "template.json"
+    template.write_text("{}\n", encoding="utf-8")
+    directory = tmp_path / "config"
+    (directory / "caches").mkdir(parents=True)
+    (directory / "plugins").mkdir()
+    (directory / "global.py.json").write_bytes(template.read_bytes())
+    manifest = {
+        "bootstrap": {
+            "calibre_config_directory": "config",
+            "calibre_global_template": "template.json",
+        }
+    }
+    observed = bootstrap._calibre_config_seal(manifest, repo_root=tmp_path)
+    _require(observed["caches_empty"] is True, "empty Calibre cache was not certified")
+    (directory / "global.py.json").write_text(
+        json.dumps(
+            {
+                "database_path": "C:/Users/example/library.db",
+                "installation_uuid": "not-portable",
+            }
+        ),
+        encoding="utf-8",
+    )
+    with pytest.raises(RuntimeError, match="differs from its Git-bound template"):
+        bootstrap._calibre_config_seal(manifest, repo_root=tmp_path)
+
+
+def test_calibre_cache_is_dedicated_and_empty(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    bootstrap = _bootstrap()
+    cache = tmp_path / "calibre-cache"
+    cache.mkdir()
+    monkeypatch.setenv("CALIBRE_CACHE_DIRECTORY", str(cache))
+    manifest = {"bootstrap": {"calibre_cache_directory": "calibre-cache"}}
+    _require(
+        bootstrap._calibre_cache_seal(manifest, repo_root=tmp_path)["empty"] is True,
+        "empty dedicated Calibre cache was not certified",
+    )
+    (cache / "foreign-state.bin").write_bytes(b"state")
+    with pytest.raises(RuntimeError, match="not empty"):
+        bootstrap._calibre_cache_seal(manifest, repo_root=tmp_path)
+
+
+def test_distribution_seal_changes_after_recorded_file_mutation(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    bootstrap = _bootstrap()
+    site = tmp_path / ".venv/Lib/site-packages"
+    info = site / "demo-1.0.dist-info"
+    info.mkdir(parents=True)
+    module = site / "demo.py"
+    module.write_bytes(b"VALUE = 1\n")
+    record = info / "RECORD"
+    record.write_bytes(b"demo.py,,\ndemo-1.0.dist-info/RECORD,,\n")
+
+    class FakeDistribution:
+        def __init__(self) -> None:
+            self.metadata = {"Name": "demo"}
+            self.version = "1.0"
+            self.files = (Path("demo.py"), Path("demo-1.0.dist-info/RECORD"))
+
+        @staticmethod
+        def locate_file(entry: Path) -> Path:
+            return site / entry
+
+    monkeypatch.setattr(
+        bootstrap.importlib.metadata,
+        "distributions",
+        lambda **_kwargs: [FakeDistribution()],
+    )
+    initial = bootstrap._distribution_seal("demo", repo_root=tmp_path)
+    module.write_bytes(b"VALUE = 2\n")
+    mutated = bootstrap._distribution_seal("demo", repo_root=tmp_path)
+    _require(initial["bytes"] == mutated["bytes"], "mutation unexpectedly changed byte count")
+    _require(
+        initial["composite_sha256"] != mutated["composite_sha256"],
+        "recorded distribution mutation escaped the byte seal",
+    )
+
+
+def test_clean_clone_venv_materializer_copies_only_locked_record_closure(
+    tmp_path: Path,
+) -> None:
+    bootstrap = _bootstrap()
+    source_venv = tmp_path / "source-venv"
+    source_site = source_venv / "Lib/site-packages"
+    info = source_site / "demo-1.0.dist-info"
+    info.mkdir(parents=True)
+    (source_site / "demo.py").write_bytes(b"VALUE = 1\n")
+    (source_site / "unsealed.py").write_bytes(b"SHOULD_NOT_COPY = True\n")
+    (info / "METADATA").write_text(
+        "Metadata-Version: 2.1\nName: demo\nVersion: 1.0\n",
+        encoding="utf-8",
+    )
+    (info / "RECORD").write_text(
+        "demo.py,,\ndemo-1.0.dist-info/METADATA,,\ndemo-1.0.dist-info/RECORD,,\n",
+        encoding="utf-8",
+    )
+    expected = bootstrap._distribution_seal_at_venv("demo", venv=source_venv)
+    target = tmp_path / "target"
+    runtime_path = target / bootstrap.RUNTIME_MANIFEST_PATH
+    runtime_path.parent.mkdir(parents=True)
+    runtime_path.write_text(
+        json.dumps(
+            {
+                "schema_version": "2026-07-26.3-runtime-1",
+                "bootstrap": {},
+                "git": {},
+                "calibre": {},
+                "distributions": {"demo": expected},
+                "module_paths": {},
+            }
+        ),
+        encoding="utf-8",
+    )
+    receipt = bootstrap.materialize_locked_project_venv(source_venv, repo_root=target)
+    _require(receipt["distributions"] == {"demo": expected}, "venv seal changed")
+    _require(
+        not (target / ".venv/Lib/site-packages/unsealed.py").exists(),
+        "venv materializer copied an unsealed site-packages file",
+    )
+    _require(
+        (target / ".venv/Lib/site-packages/demo.py").read_bytes() == b"VALUE = 1\n",
+        "venv materializer changed recorded bytes",
+    )
+
+
+def test_loaded_native_module_must_belong_to_sealed_runtime_inventory(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    bootstrap = _bootstrap()
+    manifest = json.loads((ROOT / bootstrap.RUNTIME_MANIFEST_PATH).read_text(encoding="utf-8"))
+    evil_path = tmp_path / "unsealed_extension.pyd"
+    evil_path.write_bytes(b"not-a-real-extension")
+    evil = ModuleType("v3_unsealed_native_test")
+    evil.__file__ = str(evil_path)
+    monkeypatch.setitem(sys.modules, evil.__name__, evil)
+    with pytest.raises(RuntimeError, match="escaped the sealed V3 inventories"):
+        bootstrap.require_loaded_native_modules(manifest, repo_root=ROOT)
+
+
+def test_loaded_pure_python_site_module_must_belong_to_sealed_record_closure(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    bootstrap = _bootstrap()
+    manifest = json.loads((ROOT / bootstrap.RUNTIME_MANIFEST_PATH).read_text(encoding="utf-8"))
+    evil = ModuleType("v3_unsealed_pure_site_test")
+    evil.__file__ = str(ROOT / ".venv/Lib/site-packages/unsealed_optional_dependency.py")
+    monkeypatch.setitem(sys.modules, evil.__name__, evil)
+    with pytest.raises(RuntimeError, match="seven sealed RECORD closures"):
+        bootstrap.require_loaded_site_modules(manifest, repo_root=ROOT)
+
+
+def test_bootstrap_rejects_git_environment_and_nonempty_isolation_paths(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    bootstrap = _bootstrap()
+    monkeypatch.setenv("GIT_DIR", "C:/attacker/repository")
+    manifest = {
+        "bootstrap": {
+            "forbidden_environment": ["GIT_DIR", "PYTHONPATH"],
+            "forbidden_environment_names": ["TZ"],
+            "forbidden_environment_prefixes": ["OMP_"],
+        }
+    }
+    with pytest.raises(RuntimeError, match="forbidden environment"):
+        bootstrap._require_forbidden_environment(manifest)
+    monkeypatch.delenv("GIT_DIR")
+    monkeypatch.setenv("OMP_NUM_THREADS", "9")
+    with pytest.raises(RuntimeError, match="forbidden environment"):
+        bootstrap._require_forbidden_environment(manifest)
+    sanitized = bootstrap._git_environment()
+    _require("GIT_DIR" not in sanitized, "attacker GIT_DIR reached authenticated Git")
+    _require(sanitized["GIT_CONFIG_NOSYSTEM"] == "1", "system Git config was not disabled")
+    isolated = tmp_path / "isolated"
+    isolated.mkdir()
+    (isolated / "unexpected.pyc").write_bytes(b"bytecode")
+    with pytest.raises(RuntimeError, match="not empty"):
+        bootstrap._require_directory_empty(isolated, label="test isolation directory")
+
+
+def test_strict_tag_rejects_revision_expression_before_git_lookup(tmp_path: Path) -> None:
+    runner = _runner()
+    with pytest.raises(RuntimeError, match="safe tag name"):
+        runner._resolve_strict_tag(tmp_path, "protocol/example^{}")
+    with pytest.raises(RuntimeError, match="safe tag name"):
+        runner._resolve_strict_tag(tmp_path, "refs/tags/protocol/example")
+
+
+def test_runtime_contract_accepts_only_exact_calibre_argv_and_lock(
+    monkeypatch: pytest.MonkeyPatch,
+    tmp_path: Path,
+) -> None:
+    runner = _runner()
+    config = _config()
+    config["execution"]["calibre_config_directory"] = ".runtime_calibre/config"
+    cache = tmp_path / "calibre-cache"
+    cache.mkdir(parents=True, exist_ok=False)
+    config["execution"]["calibre_cache_directory"] = cache.relative_to(ROOT).as_posix()
+    monkeypatch.setenv("CALIBRE_CACHE_DIRECTORY", str(cache))
+    authority_paths = {
+        *runner.BOOTSTRAP_PYTHON_PATHS,
+        *runner.TRANSITIVE_PYTHON_PATHS,
+        *runner.NONPYTHON_AUTHORITY_PATHS,
+    }
+    sealed = {path: (ROOT / path).read_bytes() for path in authority_paths}
+    authority_descriptors = {
+        path.as_posix(): runner._descriptor_from_bytes(payload, relative_path=path.as_posix())
+        for path, payload in sealed.items()
+    }
+    monkeypatch.setattr(runner, "_SEALED_AUTHORITY_BYTES", sealed)
+    monkeypatch.setattr(runner, "_RUNNER_EXECUTED_FROM_SEALED_BYTES", True)
+    monkeypatch.setattr(runner, "_IJDS_V3_RUNNER_EXECUTED_FROM_SEALED_BYTES", True, raising=False)
+    monkeypatch.setattr(
+        runner,
+        "require_sealed_import_runtime",
+        lambda *_args, **_kwargs: {
+            "finder_composite_sha256": "f" * 64,
+            "loaded_sealed_modules": {},
+        },
+    )
+    monkeypatch.setattr(
+        runner,
+        "require_loaded_module_origins",
+        lambda *_args, **_kwargs: {},
+    )
+    monkeypatch.setattr(
+        runner,
+        "_IJDS_V3_BOOTSTRAP_ATTESTATION",
+        {
+            "schema_version": "2026-07-26.3-bootstrap-1",
+            "phase": "compute",
+            "head_tag": runner.PROTOCOL_TAG,
+            "authority": {"source_files": authority_descriptors},
+        },
+        raising=False,
+    )
+    for module_name in (
+        "src.data.outcome_observability",
+        "src.ijds_audit.marginal_mean_score_outcome_gap_v3",
+        "src.utils.artifact_descriptor",
+    ):
+        monkeypatch.setattr(sys.modules[module_name], "__cached__", None, raising=False)
+    monkeypatch.setattr(
+        runner.sys,
+        "path",
+        [str(ROOT.resolve()), str((ROOT / ".venv/Lib/site-packages").resolve())],
+    )
+    expected = list(config["execution"]["authorized_orig_argv"]["compute"])
+    expected[0] = str(Path(expected[0]))
+    monkeypatch.setattr(runner.sys, "orig_argv", expected)
+    observed = runner._runtime_observation(config, phase="compute")
+    _require(observed["python"]["optimize"] == 2, "Calibre optimize flag was hidden")
+    _require(observed["python"]["debug"] is False, "Calibre debug flag was hidden")
+    serialized_runtime = json.dumps(observed, ensure_ascii=False)
+    _require("C:/Users/" not in serialized_runtime, "runtime receipt leaked a user path")
+    _require("carlos" not in serialized_runtime.casefold(), "runtime receipt leaked a username")
+    bad_argv = list(expected)
+    bad_argv[-1] = "configs/experiments/not-canonical.yaml"
+    monkeypatch.setattr(runner.sys, "orig_argv", bad_argv)
+    with pytest.raises(RuntimeError, match="authorized argv"):
+        runner._runtime_observation(config, phase="compute")
+    monkeypatch.setattr(runner.sys, "orig_argv", expected)
+    bad_lock = copy.deepcopy(config)
+    bad_lock["execution"]["uv_lock_sha256"] = "0" * 64
+    with pytest.raises(RuntimeError, match=r"uv\.lock"):
+        runner._runtime_observation(bad_lock, phase="compute")
+    bad_optimize = copy.deepcopy(config)
+    bad_optimize["execution"]["python"]["optimize"] = 0
+    with pytest.raises(RuntimeError, match="optimize flags"):
+        runner._runtime_observation(bad_optimize, phase="compute")
+    cache.rmdir()
+
+
+def test_git_blob_check_detects_same_length_working_mutation(tmp_path: Path) -> None:
+    runner = _runner()
+    _init_git(tmp_path)
+    path = tmp_path / "config.yaml"
+    path.write_bytes(b"abcd\n")
+    _git(tmp_path, "add", "config.yaml")
+    _git(tmp_path, "commit", "-m", "lock")
+    commit = _git(tmp_path, "rev-parse", "HEAD")
+    runner.require_working_file_matches_git(path, commit=commit, repo_root=tmp_path)
+    path.write_bytes(b"abce\n")
+    with pytest.raises(RuntimeError, match="differs from Git blob"):
+        runner.require_working_file_matches_git(path, commit=commit, repo_root=tmp_path)
+
+
+def test_source_byte_seal_detects_same_length_mutation(tmp_path: Path) -> None:
+    runner = _runner()
+    path = tmp_path / "source.json"
+    original = b'{"x":1}\n'
+    path.write_bytes(original)
+    descriptor = {
+        "path": "source.json",
+        "bytes": len(original),
+        "sha256": runner.hashlib.sha256(original).hexdigest(),
+    }
+    _path, captured = runner._read_verified_bytes(
+        descriptor, label="test source", repo_root=tmp_path
+    )
+    _require(captured == original, "source was not parsed from its sealed bytes")
+    path.write_bytes(b'{"x":2}\n')
+    with pytest.raises(RuntimeError, match="sha256"):
+        runner._read_verified_bytes(descriptor, label="test source", repo_root=tmp_path)
+
+
+def test_output_preflight_and_exclusive_writes_are_no_overwrite(tmp_path: Path) -> None:
+    runner = _runner()
+    config = _config()
+    (tmp_path / "data/processed/experiments/ijds_audit").mkdir(parents=True)
+    (tmp_path / "models/experiments/ijds_audit").mkdir(parents=True)
+    runner._preflight_outputs(config, repo_root=tmp_path)
+    data_dir, _model_dir, _targets = runner.output_targets(config, repo_root=tmp_path)
+    data_dir.mkdir()
+    with pytest.raises(FileExistsError, match="occupied"):
+        runner._preflight_outputs(config, repo_root=tmp_path)
+    target = tmp_path / "exclusive.bin"
+    target.write_bytes(b"old")
+    with pytest.raises(FileExistsError):
+        runner._exclusive_write_bytes(target, b"new")
+    _require(target.read_bytes() == b"old", "exclusive write overwrote an existing target")
+    nan_target = tmp_path / "nan.json"
+    with pytest.raises(ValueError):
+        runner._exclusive_write_json(nan_target, {"x": float("nan")})
+    _require(not nan_target.exists(), "strict JSON failure left a final target")
+    parquet_target = tmp_path / "exclusive.parquet"
+    parquet_frame = pd.DataFrame({"x": pd.Series([1, 2], dtype="int64")})
+    runner._exclusive_write_parquet(parquet_target, parquet_frame)
+    _require(
+        pd.read_parquet(parquet_target).equals(parquet_frame),
+        "exclusive Parquet write changed the frame",
+    )
+    with pytest.raises(FileExistsError):
+        runner._exclusive_write_parquet(parquet_target, pd.DataFrame({"x": [3]}))
+    _require(
+        pd.read_parquet(parquet_target).equals(parquet_frame),
+        "exclusive Parquet write overwrote an existing target",
+    )
+
+
+def _build_sealed_output_fixture(
+    runner: ModuleType, config: dict[str, Any], root: Path
+) -> tuple[dict[str, Path], Path, dict[str, Any]]:
+    (root / "data/processed/experiments/ijds_audit").mkdir(parents=True)
+    (root / "models/experiments/ijds_audit").mkdir(parents=True)
+    data_dir, model_dir, targets = runner.output_targets(config, repo_root=root)
+    data_dir.mkdir()
+    model_dir.mkdir()
+    targets["table"].parent.mkdir(parents=True)
+    pd.DataFrame({"x": range(5)}).to_parquet(targets["table"], index=False)
+    pd.DataFrame({"x": range(5)}).to_parquet(targets["endpoint_reason_census"], index=False)
+    pd.DataFrame({"x": range(75)}).to_parquet(
+        targets["monthly_endpoint_reason_census"], index=False
+    )
+    artifacts = {
+        "marginal_mean_score_outcome_gap": runner.relative_artifact_descriptor(
+            targets["table"], repo_root=root
+        ),
+        "endpoint_reason_census": runner.relative_artifact_descriptor(
+            targets["endpoint_reason_census"], repo_root=root
+        ),
+        "monthly_endpoint_reason_census": runner.relative_artifact_descriptor(
+            targets["monthly_endpoint_reason_census"], repo_root=root
+        ),
+    }
+    protocol_git = {
+        "commit": "a" * 40,
+        "porcelain_v2_sha256": runner.hashlib.sha256(b"").hexdigest(),
+        "porcelain_v2_bytes": 0,
+        "clean": True,
+    }
+    implementation = {
+        "hash_algorithm": "sha256",
+        "protocol_commit": "a" * 40,
+        "source_files": {"sealed.py": {"bytes": 1, "sha256": "d" * 64}},
+        "executed_from_sealed_git_bytes": True,
+    }
+    runtime = {
+        "runner_executed_from_sealed_bytes": True,
+        "sealed_import_runtime": {"finder_composite_sha256": "e" * 64},
+        "loaded_native_modules": {},
+    }
+    bootstrap_attestation = {
+        "schema_version": "2026-07-26.3-bootstrap-1",
+        "phase": "compute",
+        "protocol_commit": "a" * 40,
+        "head_tag": runner.PROTOCOL_TAG,
+        "head": protocol_git,
+        "terminal_revalidated": True,
+    }
+    authenticated_context = {
+        "protocol_commit": "a" * 40,
+        "protocol_git": protocol_git,
+        "implementation_provenance": implementation,
+        "compute_runtime": runtime,
+        "compute_bootstrap_attestation": bootstrap_attestation,
+    }
+    summary = {
+        "schema_version": runner.SCHEMA_VERSION,
+        "status": "complete_clean_tagged_v3_pending_git_artifact_commit",
+        "run_tag": runner.RUN_TAG,
+        "protocol_tag": runner.PROTOCOL_TAG,
+        "protocol_commit": "a" * 40,
+        "artifact_tag_required_before_promotion": runner.ARTIFACT_TAG,
+        "estimand": runner.ESTIMAND,
+        "candidate_identity": {},
+        "endpoint_row_sha256": "b" * 64,
+        "issue_months": [],
+        "endpoint": {},
+        "identification": {},
+        "results": {},
+        "source_audit": {},
+        "source_seal": {"composite_sha256": "c" * 64},
+        "schemas": {},
+        "artifacts": artifacts,
+        "reporting_contract": {},
+        "git_artifact_commit_performed": False,
+        "protected_stages_run": [],
+        "protected_artifacts_written": [],
+    }
+    targets["summary"].write_text(json.dumps(summary), encoding="utf-8")
+    summary_descriptor = runner.relative_artifact_descriptor(targets["summary"], repo_root=root)
+    receipt = {
+        "schema_version": runner.SCHEMA_VERSION,
+        "status": "complete_clean_tagged_v3_receipt_pending_git_artifact_commit",
+        "run_tag": runner.RUN_TAG,
+        "protocol_tag": runner.PROTOCOL_TAG,
+        "protocol_commit": "a" * 40,
+        "artifact_tag_required_before_promotion": runner.ARTIFACT_TAG,
+        "started_at_utc": "2026-07-26T00:00:00+00:00",
+        "completed_at_utc": "2026-07-26T00:00:01+00:00",
+        "runtime_seconds": 1.0,
+        "initial_git": protocol_git,
+        "preterminal_git": protocol_git,
+        "implementation_provenance": implementation,
+        "runtime": runtime,
+        "initial_source_seal": {"composite_sha256": "c" * 64},
+        "preterminal_source_seal": {"composite_sha256": "c" * 64},
+        "summary": summary_descriptor,
+        "artifacts": artifacts,
+        "preterminal_implementation_provenance": implementation,
+        "preterminal_runtime": runtime,
+        "git_artifact_commit": {
+            "performed": False,
+            "required_before_promotion": True,
+            "transport": "git_force_tracked_direct_child_commit",
+            "dvc_tracked": False,
+            "expected_paths": config["output"]["artifact_registration"]["expected_paths"],
+        },
+        "protected_stages_run": [],
+        "protected_artifacts_written": [],
+    }
+    targets["execution_receipt"].write_text(json.dumps(receipt), encoding="utf-8")
+    receipt_descriptor = runner.relative_artifact_descriptor(
+        targets["execution_receipt"], repo_root=root
+    )
+    seal = {
+        "schema_version": runner.SCHEMA_VERSION,
+        "status": "terminal_v3_seal_pending_git_artifact_commit",
+        "run_tag": runner.RUN_TAG,
+        "protocol_tag": runner.PROTOCOL_TAG,
+        "protocol_commit": "a" * 40,
+        "artifact_tag_required_before_promotion": runner.ARTIFACT_TAG,
+        "git_artifact_commit_performed": False,
+        "active_evidence_authorized": False,
+        "summary": summary_descriptor,
+        "execution_receipt": receipt_descriptor,
+        "artifacts": artifacts,
+        "expected_data_inventory": list(runner._expected_inventories(config)[0]),
+        "expected_model_inventory": list(runner._expected_inventories(config)[1]),
+        "source_composite_sha256": "c" * 64,
+        "preterminal_source_composite_sha256": "c" * 64,
+        "final_source_seal": {"composite_sha256": "c" * 64},
+        "implementation_provenance": implementation,
+        "runtime": runtime,
+        "final_implementation_provenance": implementation,
+        "final_runtime": runtime,
+        "final_bootstrap_attestation": bootstrap_attestation,
+        "initial_git": protocol_git,
+        "preterminal_git": protocol_git,
+        "final_git": protocol_git,
+        "protected_stages_run": [],
+        "protected_artifacts_written": [],
+    }
+    targets["execution_seal"].write_text(json.dumps(seal), encoding="utf-8")
+    return targets, targets["execution_seal"], authenticated_context
+
+
+def test_terminal_execution_seal_detects_bit_flip_and_extra_file(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    runner = _runner()
+    config = _config()
+    targets, _seal_path, authenticated = _build_sealed_output_fixture(runner, config, tmp_path)
+    monkeypatch.setattr(
+        runner,
+        "_authenticated_seal_context",
+        lambda *_args, **_kwargs: copy.deepcopy(authenticated),
+    )
+    runner.validate_execution_seal(config, repo_root=tmp_path)
+    original = targets["table"].read_bytes()
+    targets["table"].write_bytes(original + b"x")
+    with pytest.raises(RuntimeError, match="no longer binds"):
+        runner.validate_execution_seal(config, repo_root=tmp_path)
+    targets["table"].write_bytes(original)
+    extra = targets["summary"].parent / "extra.json"
+    extra.write_text("{}", encoding="utf-8")
+    with pytest.raises(RuntimeError, match="inventory changed"):
+        runner.validate_execution_seal(config, repo_root=tmp_path)
+
+
+@pytest.mark.parametrize("family", ["implementation", "runtime", "bootstrap"])
+def test_terminal_seal_rejects_coherent_authority_erasure(
+    tmp_path: Path,
+    monkeypatch: pytest.MonkeyPatch,
+    family: str,
+) -> None:
+    runner = _runner()
+    config = _config()
+    targets, _seal_path, authenticated = _build_sealed_output_fixture(runner, config, tmp_path)
+    monkeypatch.setattr(
+        runner,
+        "_authenticated_seal_context",
+        lambda *_args, **_kwargs: copy.deepcopy(authenticated),
+    )
+    receipt = json.loads(targets["execution_receipt"].read_text(encoding="utf-8"))
+    seal = json.loads(targets["execution_seal"].read_text(encoding="utf-8"))
+    if family == "implementation":
+        receipt["implementation_provenance"] = {}
+        receipt["preterminal_implementation_provenance"] = {}
+        seal["implementation_provenance"] = {}
+        seal["final_implementation_provenance"] = {}
+    elif family == "runtime":
+        receipt["runtime"] = {}
+        receipt["preterminal_runtime"] = {}
+        seal["runtime"] = {}
+        seal["final_runtime"] = {}
+    else:
+        seal["final_bootstrap_attestation"] = {"schema_version": "2026-07-26.3-bootstrap-1"}
+    targets["execution_receipt"].write_text(json.dumps(receipt), encoding="utf-8")
+    seal["execution_receipt"] = runner.relative_artifact_descriptor(
+        targets["execution_receipt"], repo_root=tmp_path
+    )
+    targets["execution_seal"].write_text(json.dumps(seal), encoding="utf-8")
+    with pytest.raises(RuntimeError, match="summary or receipt disagrees"):
+        runner.validate_execution_seal(config, repo_root=tmp_path)
+
+
+def test_git_native_artifacts_are_small_aggregate_only_and_path_neutral(tmp_path: Path) -> None:
+    runner = _runner()
+    config = _config()
+    targets, _seal_path, _authenticated = _build_sealed_output_fixture(runner, config, tmp_path)
+    audit = runner.validate_aggregate_only_artifacts(config, repo_root=tmp_path)
+    _require(
+        audit["parquet_rows"]
+        == {"table": 5, "endpoint_reason_census": 5, "monthly_endpoint_reason_census": 75},
+        "aggregate row contract changed",
+    )
+    original_table = pd.read_parquet(targets["table"])
+    leaked_table = original_table.assign(id=[f"loan-{index}" for index in range(5)])
+    leaked_table.to_parquet(targets["table"], index=False)
+    with pytest.raises(RuntimeError, match="row-level columns"):
+        runner.validate_aggregate_only_artifacts(config, repo_root=tmp_path)
+    original_table.to_parquet(targets["table"], index=False)
+    summary = json.loads(targets["summary"].read_text(encoding="utf-8"))
+    summary["database_path"] = "C:/Users/example/library.db"
+    targets["summary"].write_text(json.dumps(summary), encoding="utf-8")
+    with pytest.raises(RuntimeError, match="personal or row-level keys"):
+        runner.validate_aggregate_only_artifacts(config, repo_root=tmp_path)
+
+
+def test_verify_recomputation_defeats_a_coherently_resealed_scientific_mutation(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    runner = _runner()
+    config = _config()
+    targets, _seal_path, authenticated = _build_sealed_output_fixture(runner, config, tmp_path)
+    monkeypatch.setattr(
+        runner,
+        "_authenticated_seal_context",
+        lambda *_args, **_kwargs: copy.deepcopy(authenticated),
+    )
+    expected_table = pd.read_parquet(targets["table"])
+    expected_endpoint = pd.read_parquet(targets["endpoint_reason_census"])
+    expected_monthly = pd.read_parquet(targets["monthly_endpoint_reason_census"])
+    result = runner.MarginalMeanScoreOutcomeGapV3Result(
+        table=expected_table,
+        endpoint_reason_census=expected_endpoint,
+        monthly_endpoint_reason_census=expected_monthly,
+        join_audit={},
+        issue_months=(),
+        endpoint_row_sha256="b" * 64,
+    )
+
+    pd.DataFrame({"x": [2]}).to_parquet(targets["table"], index=False)
+    artifacts = {
+        "marginal_mean_score_outcome_gap": runner.relative_artifact_descriptor(
+            targets["table"], repo_root=tmp_path
+        ),
+        "endpoint_reason_census": runner.relative_artifact_descriptor(
+            targets["endpoint_reason_census"], repo_root=tmp_path
+        ),
+        "monthly_endpoint_reason_census": runner.relative_artifact_descriptor(
+            targets["monthly_endpoint_reason_census"], repo_root=tmp_path
+        ),
+    }
+    summary = json.loads(targets["summary"].read_text(encoding="utf-8"))
+    summary["artifacts"] = artifacts
+    targets["summary"].write_text(json.dumps(summary), encoding="utf-8")
+    summary_descriptor = runner.relative_artifact_descriptor(targets["summary"], repo_root=tmp_path)
+    receipt = json.loads(targets["execution_receipt"].read_text(encoding="utf-8"))
+    receipt["artifacts"] = artifacts
+    receipt["summary"] = summary_descriptor
+    targets["execution_receipt"].write_text(json.dumps(receipt), encoding="utf-8")
+    receipt_descriptor = runner.relative_artifact_descriptor(
+        targets["execution_receipt"], repo_root=tmp_path
+    )
+    seal = json.loads(targets["execution_seal"].read_text(encoding="utf-8"))
+    seal["artifacts"] = artifacts
+    seal["summary"] = summary_descriptor
+    seal["execution_receipt"] = receipt_descriptor
+    targets["execution_seal"].write_text(json.dumps(seal), encoding="utf-8")
+
+    runner.validate_execution_seal(config, repo_root=tmp_path)
+    with pytest.raises(RuntimeError, match="differs from recomputation"):
+        runner.validate_recomputed_scientific_outputs(
+            config,
+            result=result,
+            source_seal={"composite_sha256": "c" * 64},
+            source_audit={},
+            protocol_commit="a" * 40,
+            repo_root=tmp_path,
+        )
+
+
+def test_source_dvc_directory_descriptor_rehashes_every_file(tmp_path: Path) -> None:
+    runner = _runner()
+    directory = tmp_path / "data/processed/experiments/ijds_audit" / runner.RUN_TAG
+    directory.mkdir(parents=True)
+    for index in range(3):
+        (directory / f"f{index}.bin").write_bytes(f"value-{index}".encode())
+    observed = runner._dvc_directory_descriptor(directory)
+    expected = {
+        "md5": "8ac93946d6c2b0a555990adea28cafe9.dir",
+        "size": 21,
+        "nfiles": 3,
+        "hash": "md5",
+        "file_inventory_sha256": (
+            "a40fcc800f6b2a1e96623e235cc5e94f9268ec2f266277b3bac97404b55b0cb6"
+        ),
+    }
+    _require(observed == expected, f"DVC directory serialization changed: {observed}")
+    (directory / "f0.bin").write_bytes(b"bit-flip")
+    mutated = runner._dvc_directory_descriptor(directory)
+    _require(mutated["md5"] != expected["md5"], "source DVC bit flip escaped directory MD5")
+    _require(
+        mutated["file_inventory_sha256"] != expected["file_inventory_sha256"],
+        "source DVC bit flip escaped SHA-256 inventory",
+    )
+
+
+def test_artifact_diff_and_git_blobs_require_exactly_six_outputs(tmp_path: Path) -> None:
+    runner = _runner()
+    config = _config()
+    _init_git(tmp_path)
+    (tmp_path / "protocol.txt").write_text("locked", encoding="utf-8")
+    _git(tmp_path, "add", "protocol.txt")
+    _git(tmp_path, "commit", "-m", "protocol")
+    protocol_commit = _git(tmp_path, "rev-parse", "HEAD")
+    (tmp_path / "data/processed/experiments/ijds_audit").mkdir(parents=True)
+    (tmp_path / "models/experiments/ijds_audit").mkdir(parents=True)
+    _data, _model, targets = runner.output_targets(config, repo_root=tmp_path)
+    for index, path in enumerate(targets.values()):
+        path.parent.mkdir(parents=True, exist_ok=True)
+        path.write_bytes(f"aggregate-{index}".encode())
+    relative_targets = tuple(
+        sorted(path.relative_to(tmp_path).as_posix() for path in targets.values())
+    )
+    _git(tmp_path, "add", "-f", *relative_targets)
+    _git(tmp_path, "commit", "-m", "six aggregate artifacts")
+    artifact_commit = _git(tmp_path, "rev-parse", "HEAD")
+    runner._require_direct_child_artifact_commit(
+        protocol_commit=protocol_commit,
+        artifact_commit=artifact_commit,
+        repo_root=tmp_path,
+    )
+    observed = runner._artifact_diff_paths(
+        protocol_commit=protocol_commit,
+        artifact_commit=artifact_commit,
+        repo_root=tmp_path,
+    )
+    _require(observed == relative_targets, "six-file Git-native artifact diff changed")
+    descriptors = runner._git_bound_artifact_descriptors(
+        targets, artifact_commit=artifact_commit, repo_root=tmp_path
+    )
+    _require(len(descriptors) == 6, "not all Git-native artifacts were blob-bound")
+    first = next(iter(targets.values()))
+    original = first.read_bytes()
+    first.write_bytes(original + b"mutation")
+    with pytest.raises(RuntimeError, match="differs from its artifact-tag Git blob"):
+        runner._git_bound_artifact_descriptors(
+            targets, artifact_commit=artifact_commit, repo_root=tmp_path
+        )
+    first.write_bytes(original)
+    (tmp_path / ".gitignore").write_text("extra\n", encoding="utf-8")
+    _git(tmp_path, "add", ".gitignore")
+    _git(tmp_path, "commit", "-m", "extra")
+    extra_commit = _git(tmp_path, "rev-parse", "HEAD")
+    with pytest.raises(RuntimeError, match="direct single-parent child"):
+        runner._require_direct_child_artifact_commit(
+            protocol_commit=protocol_commit,
+            artifact_commit=extra_commit,
+            repo_root=tmp_path,
+        )
+    with_extra = runner._artifact_diff_paths(
+        protocol_commit=protocol_commit,
+        artifact_commit=extra_commit,
+        repo_root=tmp_path,
+    )
+    _require(".gitignore" in with_extra, "artifact diff hid an extra tracked path")
