@@ -7,6 +7,7 @@ __pycache__/
 .venv/
 .venv-*/
 .venv-broken-posix/
+.runtime_calibre/
 
 # Quarto
 book/_book/

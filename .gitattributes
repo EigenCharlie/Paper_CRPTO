@@ -6,6 +6,7 @@ dvc.yaml text eol=lf
 dvc.lock text eol=lf
 pyproject.toml text eol=lf
 uv.lock text eol=lf
+.python-version text eol=lf
 *.yml text eol=lf
 *.yaml text eol=lf
 *.qmd text eol=lf
