@@ -1,0 +1,596 @@
+{
+  "schema_version": "2026-07-26.2",
+  "status": "complete_clean_tagged_common_panel_threshold_response_v8",
+  "run_tag": "ijds-common-panel-threshold-response-2026-07-26-v8",
+  "protocol_tag": "protocol/ijds-common-panel-threshold-response-2026-07-26-v8",
+  "protocol_commit": "06a7d864776247fbb5128105deb229de4476be65",
+  "protocol": {
+    "path": "docs/research/ijds_common_panel_threshold_response_v8_protocol_2026-07-26.md",
+    "bytes": 8674,
+    "sha256": "4aa76e33b20707807b6e4dd9eb72320015160f81a129d14254fb70e2c1216a2c"
+  },
+  "scope": "five_learners_by_five_score_strata_by_seven_adjacent_transitions",
+  "source_artifacts": {
+    "active_v5_config": {
+      "path": "configs/experiments/ijds_binary_geometry_frontier_v4_2026-07-15_v5.yaml",
+      "bytes": 1371,
+      "sha256": "c749befbd0ab7e0f8d6fcded7e7c730cae998032f897f65c7e7673d2a12c3715"
+    },
+    "credit_control_summary": {
+      "path": "models/experiments/ijds_audit/ijds-credit-risk-controls-2026-07-15-v5/credit_risk_controls_summary.json",
+      "bytes": 23359,
+      "sha256": "37c0a5c224b62ee3f47259aea4231df26ea184d3666e7fab80431ad26d611715"
+    },
+    "temporal_coverage": {
+      "path": "data/processed/experiments/ijds_audit/ijds-credit-risk-controls-2026-07-15-v5/evaluation/temporal_coverage.parquet",
+      "bytes": 502111,
+      "sha256": "968872d3dd119cf89cebceb969d4d155fb3a75e010026e023ae10d1cede9e58c"
+    },
+    "credit_control_freeze": {
+      "path": "models/experiments/ijds_audit/ijds-credit-risk-controls-2026-07-13-v1b/protocol_freeze.json",
+      "bytes": 25908,
+      "sha256": "da4805e644bcf5decfbb0a67c0c81a5b9dd61f3ab2e17d3dc5264100e7eb4d35"
+    },
+    "scores": {
+      "path": "data/processed/experiments/ijds_audit/ijds-credit-risk-controls-2026-07-13-v1b/prediction/scores.parquet",
+      "bytes": 30407406,
+      "sha256": "5795bc0a75be90e86d37cf7d297f4b4fd6e6604b38f8179bc5042c024a53a8dc"
+    },
+    "recipes": {
+      "path": "models/experiments/ijds_audit/ijds-credit-risk-controls-2026-07-13-v1b/prediction/residual_recipes.json",
+      "bytes": 187689,
+      "sha256": "969ecbefe46bec4893a03be57385eda29b33dd291d73e7c0120f6d488a9e9936"
+    },
+    "residual_fit_audit": {
+      "path": "data/processed/experiments/ijds_audit/ijds-credit-risk-controls-2026-07-13-v1b/prediction/residual_fit_audit.parquet",
+      "bytes": 45955332,
+      "sha256": "396c30d9bec7d222220cfe6f9870ab4994cf5c33e6da8c9e4ebbd99153155353"
+    },
+    "raw_archive": {
+      "path": "data/raw/Loan_status_2007-2020Q3.csv",
+      "bytes": 1773470505,
+      "sha256": "5878af2a088f8ab5214c9337289fb8b5eb6c6338fd3f417b6cdc18513dc6f35f"
+    },
+    "exchangeability_summary": {
+      "path": "models/experiments/ijds_audit/ijds-exchangeability-transport-test-2026-07-21-v1/exchangeability_transport_test_summary.json",
+      "bytes": 9078,
+      "sha256": "72d9d39b2bef36a36440f1ccc720575d74005f1ad1932a774a91f73ed26c8af6"
+    },
+    "exchangeability_strata": {
+      "path": "data/processed/experiments/ijds_audit/ijds-exchangeability-transport-test-2026-07-21-v1/evaluation/exchangeability_transport_strata.parquet",
+      "bytes": 90676,
+      "sha256": "4d34a1de1d3d9556e9b9b74d0517b01b117030d7036a6911d5ad6807080601e3"
+    }
+  },
+  "nested_source_reconciliation": {
+    "active_config_to_raw_archive": true,
+    "evaluation_to_freeze": true,
+    "evaluation_to_temporal_coverage": true,
+    "freeze_to_scores_recipes_and_fit_audit": true,
+    "exchangeability_to_upstream_sources_and_strata": true,
+    "temporal_coverage_to_exchangeability_strata": {
+      "rows": 200,
+      "key_grid_exact": true,
+      "integer_fields_exact": true,
+      "floating_tolerance": 1e-12,
+      "maximum_absolute_differences": {
+        "coverage_lower": 0.0,
+        "coverage_resolved": 0.0,
+        "coverage_upper": 0.0,
+        "fit_residual_quantile": 0.0,
+        "fit_score_max": 0.0,
+        "fit_score_min": 0.0,
+        "score_max": 0.0,
+        "score_min": 0.0
+      }
+    }
+  },
+  "census": {
+    "candidate_rows": 376890,
+    "resolved_rows": 364814,
+    "resolved_nondefaults": 307842,
+    "resolved_defaults": 56972,
+    "unresolved_rows": 12076,
+    "learners": 5,
+    "score_strata": 5,
+    "calibration_windows": 8,
+    "adjacent_transitions": 7,
+    "stratum_rows": 175,
+    "learner_rows": 35,
+    "full_census_reported_without_selection": true
+  },
+  "module_audit": {
+    "status": "candidate_module_only_no_active_evidence",
+    "candidate_rows": 376890,
+    "resolved_rows": 364814,
+    "unresolved_rows": 12076,
+    "learners": [
+      "catboost_platt",
+      "numeric_logistic_platt",
+      "catboost_monotonic_platt",
+      "woe_scorecard_platform_platt",
+      "woe_scorecard_borrower_platt"
+    ],
+    "window_ids": [
+      "w01_2012m01_m06",
+      "w02_2012m02_m07",
+      "w03_2012m03_m08",
+      "w04_2012m04_m09",
+      "w05_2012m05_m10",
+      "w06_2012m06_m11",
+      "w07_2012m07_m12",
+      "w08_2012m08_2013m01"
+    ],
+    "taxonomy_groups": 5,
+    "adjacent_pairs": 7,
+    "ids_sha256": "72799b236a7e45d8746099adefba7da5683e8308959643d6ad341d3585e8fa74",
+    "fit_audit": {
+      "fit_audit_rows": 909665,
+      "fit_audit_cells": 200,
+      "capped_cells": 0,
+      "tied_threshold_cells": 0
+    },
+    "panel_hashes": {
+      "catboost_platt": {
+        "edges_sha256": "91f2a0764cdbe70f477c707a620a2a713d7ca1df4542a2ca0d15da476460dac2",
+        "scores_sha256": "2e460c7c1c3e5ae7f8c175fbf08d498a5aad104cbe38b878cb77290b196eff16",
+        "assignments_sha256": "8210ef24be8c810ab121005a0a0c9f8fa4b59c3db05ec2dc93e759b03a688ab4",
+        "strata": {
+          "0": {
+            "ids_sha256": "42bedb4c3668d4d5e7189e70b5c2f5c55e1a9522900cf07b9d3f9706c6e422f2",
+            "scores_sha256": "375fe8d8a443a5d8ac7cf2da9253194ec64b71caeb88470ca603098d9aa4a4cc",
+            "assignments_sha256": "1a690b4cec6d6b6c3fb3340dacaff335c1eb67a8d74c9414a12df50466abaec5"
+          },
+          "1": {
+            "ids_sha256": "eab0eb47d329e329988ab0b96a639bcf1e312b4e17f4ca24c8c0723ccd13a2e8",
+            "scores_sha256": "b8cb266f3d604e8a4abf7f676e9c52a2643d25218fcd7881752f3b5a9cf6da88",
+            "assignments_sha256": "080524293dc58151b54ac1d7b503f409e980e34e765f0b8ac361a31bc1f6dca0"
+          },
+          "2": {
+            "ids_sha256": "c23db5872a049067a0cbbe57f6b7b5fba308f3ecdde5916011ccb305eb05f859",
+            "scores_sha256": "7a0d1de9eadc468307dd5173b75e7a25483d8cbd103689b84f1854f12fc43194",
+            "assignments_sha256": "ae7f5d7c1a202281b72c8a2bcf3498d9e33f805535dccd6a92c500c788f7ebee"
+          },
+          "3": {
+            "ids_sha256": "cbc89358ad150eea1b105f591aa926327a5214a81cc7372bf33d23d393e6a950",
+            "scores_sha256": "936f7185d092737c77be7700a773430ed8ecd974a059c0a4f47544e26a90f82f",
+            "assignments_sha256": "48504f0eeba9303c891c41f9d4bdc17375c167208d1274e23dc4cee6df380ce0"
+          },
+          "4": {
+            "ids_sha256": "475ae90ddefc3b0bb06a7cb8245775084f7e24e48661c8b81cba83677e1466fd",
+            "scores_sha256": "79de9092b631d37a5ba87868e0b8f2a54fb43116e93ecf1a3d5bbec635c6fc82",
+            "assignments_sha256": "0b7cc2d381db9e70a9684cdefc3d2ac8495796e12d55396f2053ec5fca547c8c"
+          }
+        }
+      },
+      "numeric_logistic_platt": {
+        "edges_sha256": "a6cb854c7de4e7d9fe56d5e94951ab5cff289ac08ee809296ac57bd2422791b8",
+        "scores_sha256": "feba0f1ac10f29b51251c1f0bbb23803e75ad419dd883e429b0b1b9e498c4cba",
+        "assignments_sha256": "803a303b0e2037093bb85051cfeae52279bfac9e29489338d6d5c82e026dcda7",
+        "strata": {
+          "0": {
+            "ids_sha256": "18c8d84b8385ec89081cfec8e0e4faba40d14e56d1fa61af3ba45980fbeb38e7",
+            "scores_sha256": "56f2d3ffcbd4f0fd1fbc948c2369e7f1b67faf49fdcab48e7db690e825a11525",
+            "assignments_sha256": "5cba251cbe398b7a0f307a13230958ecce81a14229387b8cc9fbd56810780550"
+          },
+          "1": {
+            "ids_sha256": "4c9c1f4fa77a5dcd8d44eb3e2fd1a08577eaa0b62068cb8de0001c9d402e1ebb",
+            "scores_sha256": "1525253e184bbfea97ea957d3c81ce879b6b2710fa4ed93dedfbe026843f2be5",
+            "assignments_sha256": "2fa5c2b9e6c5b1a56b966290030153a7624ff8ece837512dd2f60bc23e3c591f"
+          },
+          "2": {
+            "ids_sha256": "ec5f20992ba784c8e7d3021cc5f33b4996b4bf302999645c373c2c05995bdc51",
+            "scores_sha256": "b97cc8668ea99b432346e7acb324330bdabe69a76a725505fa73b2d5a9f0e8a7",
+            "assignments_sha256": "e7e52ac06b012f799830a7e829095b392d60caf6aa4f3cfa54e1922b6910a2ef"
+          },
+          "3": {
+            "ids_sha256": "b49874ac85ff28dee28fd14fe8bc88200fb7861d8955cbe0b283394690fd22b8",
+            "scores_sha256": "00a9ebc0e7efbe82977983b3b1886407f8abbb1ba3432c99a115dd976f63b9ed",
+            "assignments_sha256": "ee04cc8b59a9302b20600784dd91e71f858164d5eac0cd3e73aee13155df172f"
+          },
+          "4": {
+            "ids_sha256": "2d3f5cf90b355ceb39a0d22cf14cd79bafc493f65d08aafd44675d43deae9280",
+            "scores_sha256": "a7835d5327be1994a632dce71245d10d9daf82ff5faae3de6eeece602cc2d1e6",
+            "assignments_sha256": "a05456527c32cf8a83bbc37a909f3d9ae4e9276fe07c3d1fd0b54aace4eb96be"
+          }
+        }
+      },
+      "catboost_monotonic_platt": {
+        "edges_sha256": "146d0864ca8496c39b4262e0baccef709d4d2abeeffcc1b4abf0fc20db3e6b1e",
+        "scores_sha256": "af407b1b8510f0f73751f103123fd97ffc9203dd25acc8322caf2aee8472fa27",
+        "assignments_sha256": "c079f0c55cf21db517b128cd6c206cdd144c64fff262c108830d4499c0afb1db",
+        "strata": {
+          "0": {
+            "ids_sha256": "055165002d3d6e2385c8e62fd464ef0dd4fbccd50fb91a27578ff3bafb3b2893",
+            "scores_sha256": "c34f84a1fd3515374445bcb3f52167ac8d84d9d8fc6bfa91a60e5707389165fd",
+            "assignments_sha256": "3a7d4817e14b1c24f524670c0ba103c68a2ecb52c8c207c676d162fe3cf47f01"
+          },
+          "1": {
+            "ids_sha256": "9b376524e21cdb724fa7b63517a68295b40440f6e1dceb761887869da218800d",
+            "scores_sha256": "56cac1c3eb4d9e7ac9ab9be97cc937a76054fa0f64a9f1b75966d429b3e416d8",
+            "assignments_sha256": "0d4a01526d25300190cc63ad0c825e2a050668ecb95641ba80ee7e7eef75c453"
+          },
+          "2": {
+            "ids_sha256": "ed40d16a3dafa86451a43e87d1b58e53307c4b2e150620e1f56ff04fba0309ea",
+            "scores_sha256": "3563f9f333f55fe165ec97e6e32819567ff6be3984499b63ebbd05d2fd538e70",
+            "assignments_sha256": "dacc10b4203efb0007670df0e395d9684a0a1570afc17e3bfe8e0b1d542d4588"
+          },
+          "3": {
+            "ids_sha256": "ff5dbf36551cee79f169fdf04f7c84215d5959fac4cd2f53292668c82b7c7db3",
+            "scores_sha256": "251ec4e3446ceb2de175066b4066586021ebd001dc9aedc666fdc93b4c9c2084",
+            "assignments_sha256": "d92229158d4354c6d6bcafbe8c8b384c617269c7ce2ef327e99e2f31a61e9983"
+          },
+          "4": {
+            "ids_sha256": "ea834279298ef03f3c38d4c38430f31b1126aedf79ff56dd10ed823f45ecd0eb",
+            "scores_sha256": "ba2a33c5830169810ae3c74a86f8071ec922dfb66b98474f8a68681858902981",
+            "assignments_sha256": "78c56716620013d345718a7e83b5a5bd14ada62d7a8e02deacb942ee6240eec3"
+          }
+        }
+      },
+      "woe_scorecard_platform_platt": {
+        "edges_sha256": "c2be3dd3e4aacba5f27c36577e8bb95e1ebd863f7a622d18324da2bcea62156f",
+        "scores_sha256": "2bcc3f0b9ee8eda447af1fc61be66e47c837ecc90ef13acf9d754b35a688d27c",
+        "assignments_sha256": "5b548935832304e676ac0dd81227793a946d74c640ecff1147f8fa00a430babf",
+        "strata": {
+          "0": {
+            "ids_sha256": "f5f634087dc7a526e7f2e4c142dd31e281e42723971fbf38764b55cadbb48120",
+            "scores_sha256": "4ca53d54da7ce3628b3535241935ec7b4b079aeedc4abc9f497ffeb085765ce8",
+            "assignments_sha256": "54b2620b112bd194568e0be47659828bbe744a877c08f7fbc22c9e36024f23fb"
+          },
+          "1": {
+            "ids_sha256": "95720c82c16f1278d0e4197395599c0cac4f0154a69e2397e9ee494d9a49bbdb",
+            "scores_sha256": "c60012dbbe34e3cb2caf5bc4e9a4a5e32402742f857d6fc25a905c4005d806f7",
+            "assignments_sha256": "35da7e7cbc26decd2eac017d52dad7285ac26e4bae1b1f9cc88bbd21c37b57e8"
+          },
+          "2": {
+            "ids_sha256": "91cbf09b28810ec190afc902a9088bfb5d631b8fa6abc7008b415a0053997548",
+            "scores_sha256": "1993e2b1d3b21ee367f56e28b4831c568f54a59b2dba9e506ba4ec5cde031482",
+            "assignments_sha256": "c5a78394fd30975afc168a22f054c69d7681573fd5aee07d44d01ab28152aeae"
+          },
+          "3": {
+            "ids_sha256": "ef122c8af60b1952e334afa3ff4e2ab56ce203ee32d4aa32adb839299d76953d",
+            "scores_sha256": "6b1cd6998fc1dd851c59b06d056d702cb9a3b83275de81cc5edbb2aaf5b6b58d",
+            "assignments_sha256": "25edbd49dccb1d0612e27674c339dfac0247da5841f92f350c01b884fdf70904"
+          },
+          "4": {
+            "ids_sha256": "167ef009085bf5917a96caf8cdc461c2a3aa52855d4560a2ba26f869983c2349",
+            "scores_sha256": "757721f320faf6d5f4ca8a1726eaea66e4959aad441a1b9fc859574cd06d4b66",
+            "assignments_sha256": "39b8d9e96c409b0057608ee59d8a28ca1e3266af4778cb529274394f7c2bb167"
+          }
+        }
+      },
+      "woe_scorecard_borrower_platt": {
+        "edges_sha256": "a5b958639dffa05d551332e79cf2689d71a24b420ae6e7681f60cb823c8b4b14",
+        "scores_sha256": "d6155b7e773cac24c222404c180e58d8ca990aa9708c3f4f96137a19ad323c98",
+        "assignments_sha256": "55d5aa9beac95376bd60ea475bc5c3161626ce0b9e3845e777ff10ec9c40e29f",
+        "strata": {
+          "0": {
+            "ids_sha256": "0b738cdd3c6f1ddccb3e01d5b76ada597ab812c94659554f7f50e6924bce0173",
+            "scores_sha256": "da2ac410961434c6f33b7a6e2c70641c3c8623cee49cffe0095d67121472b00d",
+            "assignments_sha256": "0c0649553eab00afd265dfa2db45f1ee6f8a5102a761ffaeb4c88e3efdf41a41"
+          },
+          "1": {
+            "ids_sha256": "f4a36f53d659bea13294e5346a89a5ccf59ee407998cddf918542ef470d78832",
+            "scores_sha256": "ad19ffaf926286a53fe22a5517c0ae16b9f62fad7aa59e0539d0117863350bba",
+            "assignments_sha256": "5f4c215f514957b7197e969af57ab34947c008d0c03b08a9e2b4dd1c8fecbe1e"
+          },
+          "2": {
+            "ids_sha256": "6fb0217045d749045c2b4921a96d00bb2f9e92b8afd38d06ce37f2f860c65c0e",
+            "scores_sha256": "d229ab02a52a6cdd3dfe508874706c5c2163cbb70b02f1f390b090ef9cdae2cc",
+            "assignments_sha256": "6bba6873309a77dd0355d065c3c3fa1a8729176f686f3b637908e57bb5d52e18"
+          },
+          "3": {
+            "ids_sha256": "6c8fd6e95422165cc30a0e4bc0c733919a9a9d647049fcfc09ed427be1ad7634",
+            "scores_sha256": "cbc154638bffd669109c2dbfc3ad3aa1f567a9fb3ba65008306847f9fc4d4ce2",
+            "assignments_sha256": "3c01eddd76a862ee062dfd41134591128fd0e5b13d1c6705c2b6eee0916f1e80"
+          },
+          "4": {
+            "ids_sha256": "3f07ecf7c47ba92f8e1cf8909216e5004f3995246a438e3cbae2fffe96235d47",
+            "scores_sha256": "2143bd491735e2d74b6ec88aed9732e9823d84a5c7fbef6cbc9089081bfc6163",
+            "assignments_sha256": "b661e8a616d6c76def29c1fb62018062daedd448d486ab7227edc3824601a022"
+          }
+        }
+      }
+    },
+    "strata_rows": 175,
+    "pooled_rows": 35
+  },
+  "identities": {
+    "resolved_signed_crossed_band_integer_identity_all_rows": true,
+    "sharp_shared_completion_bounds_all_rows": true,
+    "sharp_width_integer_identity_all_rows": true,
+    "learner_aggregates_sum_integer_numerators_before_division": true,
+    "separately_extremized_coverage_intervals_subtracted": false
+  },
+  "results": {
+    "resolved_delta_rate_range": [
+      -0.012264499445881049,
+      0.010154969059078648
+    ],
+    "all_candidate_delta_lower_range": [
+      -0.0142093164520778,
+      0.00983430225113325
+    ],
+    "all_candidate_delta_upper_range": [
+      -0.011862933098297978,
+      0.01016723435859349
+    ],
+    "threshold_increase_rows": 49,
+    "threshold_equal_rows": 4,
+    "threshold_decrease_rows": 122,
+    "disclosed_w7_w8_catboost_stratum_2": {
+      "learner": "catboost_platt",
+      "pair_id": "06:w07_2012m07_m12->w08_2012m08_2013m01",
+      "pair_index": 6,
+      "window_from": "w07_2012m07_m12",
+      "window_to": "w08_2012m08_2013m01",
+      "taxonomy_groups": 5,
+      "conformal_group": 2,
+      "score_stratum": 3,
+      "candidate_rows": 79047,
+      "resolved_rows": 76495,
+      "unresolved_rows": 2552,
+      "threshold_from": 0.8884345991499274,
+      "threshold_to": 0.1118010883671265,
+      "threshold_low": 0.1118010883671265,
+      "threshold_high": 0.8884345991499274,
+      "threshold_delta": -0.7766335107828009,
+      "threshold_sign": -1,
+      "potential_y0_crossed_rows": 207,
+      "potential_y1_crossed_rows": 756,
+      "resolved_y0_crossed_rows": 164,
+      "resolved_y1_crossed_rows": 117,
+      "resolved_y0_delta_numerator": -164,
+      "resolved_y1_delta_numerator": -117,
+      "resolved_delta_numerator": -281,
+      "resolved_covered_from_numerator": 65300,
+      "resolved_covered_to_numerator": 65019,
+      "resolved_delta_rate": -0.0036734427086737697,
+      "delta_lower_numerator": -312,
+      "delta_upper_numerator": -290,
+      "delta_width_numerator": 22,
+      "delta_lower": -0.0039470188621959085,
+      "delta_upper": -0.0036687034296051715,
+      "delta_width": 0.00027831543259073717,
+      "ids_sha256": "c23db5872a049067a0cbbe57f6b7b5fba308f3ecdde5916011ccb305eb05f859",
+      "scores_sha256": "7a0d1de9eadc468307dd5173b75e7a25483d8cbd103689b84f1854f12fc43194",
+      "assignments_sha256": "ae7f5d7c1a202281b72c8a2bcf3498d9e33f805535dccd6a92c500c788f7ebee"
+    },
+    "disclosed_pair_role": "previously_inspected_illustration_not_winner_extreme_or_inferential_test"
+  },
+  "interpretation": {
+    "retrospective_after_archive_and_v6_inspection": true,
+    "v7_outputs_already_inspected": true,
+    "exhaustive_deterministic_replay": true,
+    "preregistered": false,
+    "confirmatory": false,
+    "common_fixed_target_panel": true,
+    "unresolved_outcomes_use_one_shared_completion": true,
+    "no_separate_interval_endpoint_subtraction": true,
+    "no_slope_continuity_or_regression": true,
+    "no_ranking_or_selection": true,
+    "no_exchangeability_test": true,
+    "no_temporal_validity_transfer": true,
+    "no_selected_or_funded_set_validity": true,
+    "no_causal_or_prospective_claim": true,
+    "protected_raw_archive_read_only": true,
+    "cellwise_sign_is_monotonicity_consistency_check": true,
+    "sharpness_is_cellwise_not_joint": true
+  },
+  "stop_rules": {
+    "stop_on_dirty_or_untagged_head": true,
+    "stop_on_source_or_nested_descriptor_mismatch": true,
+    "stop_on_preexisting_output_path": true,
+    "stop_on_unsafe_output_basename": true,
+    "stop_on_incomplete_or_duplicate_grid": true,
+    "stop_on_candidate_or_endpoint_census_drift": true,
+    "stop_on_noncommon_ids_scores_edges_or_assignments": true,
+    "stop_on_reference_reconciliation_failure": true,
+    "stop_on_integer_identity_failure": true,
+    "stop_on_sharp_bound_or_pooled_reconciliation_failure": true,
+    "stop_on_implementation_drift": true
+  },
+  "stratum_schema": {
+    "rows": 175,
+    "columns": 36,
+    "dtypes": {
+      "learner": "str",
+      "pair_id": "str",
+      "pair_index": "int64",
+      "window_from": "str",
+      "window_to": "str",
+      "taxonomy_groups": "int64",
+      "conformal_group": "int64",
+      "score_stratum": "int64",
+      "candidate_rows": "int64",
+      "resolved_rows": "int64",
+      "unresolved_rows": "int64",
+      "threshold_from": "float64",
+      "threshold_to": "float64",
+      "threshold_low": "float64",
+      "threshold_high": "float64",
+      "threshold_delta": "float64",
+      "threshold_sign": "int64",
+      "potential_y0_crossed_rows": "int64",
+      "potential_y1_crossed_rows": "int64",
+      "resolved_y0_crossed_rows": "int64",
+      "resolved_y1_crossed_rows": "int64",
+      "resolved_y0_delta_numerator": "int64",
+      "resolved_y1_delta_numerator": "int64",
+      "resolved_delta_numerator": "int64",
+      "resolved_covered_from_numerator": "int64",
+      "resolved_covered_to_numerator": "int64",
+      "resolved_delta_rate": "float64",
+      "delta_lower_numerator": "int64",
+      "delta_upper_numerator": "int64",
+      "delta_width_numerator": "int64",
+      "delta_lower": "float64",
+      "delta_upper": "float64",
+      "delta_width": "float64",
+      "ids_sha256": "str",
+      "scores_sha256": "str",
+      "assignments_sha256": "str"
+    }
+  },
+  "learner_schema": {
+    "rows": 35,
+    "columns": 29,
+    "dtypes": {
+      "learner": "str",
+      "pair_id": "str",
+      "pair_index": "int64",
+      "window_from": "str",
+      "window_to": "str",
+      "taxonomy_groups": "int64",
+      "strata_rows": "int64",
+      "candidate_rows": "int64",
+      "resolved_rows": "int64",
+      "unresolved_rows": "int64",
+      "potential_y0_crossed_rows": "int64",
+      "potential_y1_crossed_rows": "int64",
+      "resolved_y0_crossed_rows": "int64",
+      "resolved_y1_crossed_rows": "int64",
+      "resolved_y0_delta_numerator": "int64",
+      "resolved_y1_delta_numerator": "int64",
+      "resolved_delta_numerator": "int64",
+      "resolved_covered_from_numerator": "int64",
+      "resolved_covered_to_numerator": "int64",
+      "delta_lower_numerator": "int64",
+      "delta_upper_numerator": "int64",
+      "delta_width_numerator": "int64",
+      "threshold_decrease_strata": "int64",
+      "threshold_equal_strata": "int64",
+      "threshold_increase_strata": "int64",
+      "resolved_delta_rate": "float64",
+      "delta_lower": "float64",
+      "delta_upper": "float64",
+      "delta_width": "float64"
+    }
+  },
+  "artifacts": {
+    "adjacent_stratum_threshold_response": {
+      "path": "data/processed/experiments/ijds_audit/ijds-common-panel-threshold-response-2026-07-26-v8/adjacent_stratum_threshold_response.csv",
+      "bytes": 96602,
+      "sha256": "e001c84f0c2b098e8d7d8a1dcc114ca47cd5ccb9e79e7473d52a8e0a944470f5"
+    },
+    "adjacent_learner_threshold_response": {
+      "path": "data/processed/experiments/ijds_audit/ijds-common-panel-threshold-response-2026-07-26-v8/adjacent_learner_threshold_response.csv",
+      "bytes": 10202,
+      "sha256": "287fc78ba99547f8b16f240ad395c3bca95c0581373d01cf58ade964b874173b"
+    }
+  },
+  "implementation_provenance": {
+    "source_files": {
+      "configs/experiments/ijds_common_panel_threshold_response_2026-07-26_v8.yaml": {
+        "path": "configs/experiments/ijds_common_panel_threshold_response_2026-07-26_v8.yaml",
+        "bytes": 5350,
+        "sha256": "788c658a4517fea5f942d0e6a3cd75d170256cccb73d2b7bb9a94c326984385e"
+      },
+      "scripts/experiments/run_ijds_common_panel_threshold_response_v8.py": {
+        "path": "scripts/experiments/run_ijds_common_panel_threshold_response_v8.py",
+        "bytes": 28742,
+        "sha256": "0b5f85283494ea91195be594233be8b9b41d8207dbe9320253d9521b02278ba9"
+      },
+      "src/ijds_audit/common_panel_threshold_response.py": {
+        "path": "src/ijds_audit/common_panel_threshold_response.py",
+        "bytes": 40587,
+        "sha256": "0480be880d8afdcd2da4f3226938574ec876f61e488fafadda42709eb8b5978b"
+      },
+      "src/ijds_audit/grid_contracts.py": {
+        "path": "src/ijds_audit/grid_contracts.py",
+        "bytes": 5258,
+        "sha256": "439e08405a4c1e58e21fe2fe84e02cdfd1d8a88bbbc88b550ae395ace5948a8b"
+      },
+      "src/ijds_audit/protocol.py": {
+        "path": "src/ijds_audit/protocol.py",
+        "bytes": 28380,
+        "sha256": "ad6c9e67b1ea268ace799e042aeddbdabc99a25c8c774dfc3ff34217a39a8cbe"
+      },
+      "src/ijds_audit/config.py": {
+        "path": "src/ijds_audit/config.py",
+        "bytes": 25008,
+        "sha256": "a13cadec6a16267cfe80c3bfce986e6d6bbd6461b61d605036d3a917c4308f8e"
+      },
+      "src/ijds_audit/evaluation.py": {
+        "path": "src/ijds_audit/evaluation.py",
+        "bytes": 30728,
+        "sha256": "0e518fece3cb672965f437c7043993a6bffc8ce8a0ec6d5f42bdc9889b1d9046"
+      },
+      "src/data/outcome_observability.py": {
+        "path": "src/data/outcome_observability.py",
+        "bytes": 21985,
+        "sha256": "d54d9ccf7d54a27bb31a5f8a47e9351ca7201bed7683e9b069299f1501f80d87"
+      },
+      "src/models/binary_conformal_guardrail.py": {
+        "path": "src/models/binary_conformal_guardrail.py",
+        "bytes": 6629,
+        "sha256": "ce4b32ce27202d5cd8b2b58792aa31b6693f0da9f11b22fbbdceb7240324a0cb"
+      },
+      "src/utils/artifact_descriptor.py": {
+        "path": "src/utils/artifact_descriptor.py",
+        "bytes": 1705,
+        "sha256": "ef8f6df7cf311e2173659518370cfde5ed5de4380b444aaad35dcd794cd620f8"
+      },
+      "src/utils/isolated_experiment.py": {
+        "path": "src/utils/isolated_experiment.py",
+        "bytes": 9288,
+        "sha256": "a237249e71ab20b1ced0060397e06decaebc90a4a45d8d07913c49f7eca1e8eb"
+      },
+      "src/utils/pipeline_runtime.py": {
+        "path": "src/utils/pipeline_runtime.py",
+        "bytes": 4402,
+        "sha256": "7c350fdf6736d210418e8cefec5dc8d85c7f1bc2a1bf94aa6ae44a12d4948cde"
+      },
+      "uv.lock": {
+        "path": "uv.lock",
+        "bytes": 428110,
+        "sha256": "6c862cbad9ab7e3a07dd2823c775127403093d6ad59a789ee227d827165e4733"
+      },
+      "docs/research/ijds_common_panel_threshold_response_v8_protocol_2026-07-26.md": {
+        "path": "docs/research/ijds_common_panel_threshold_response_v8_protocol_2026-07-26.md",
+        "bytes": 8674,
+        "sha256": "4aa76e33b20707807b6e4dd9eb72320015160f81a129d14254fb70e2c1216a2c"
+      }
+    },
+    "hash_algorithm": "sha256"
+  },
+  "environment": {
+    "python": "3.11.5 (main, Oct  9 2023, 08:50:02) [MSC v.1937 64 bit (AMD64)]",
+    "executable": "C:\\Program Files\\Calibre2\\calibre-debug.exe",
+    "platform": "Windows-10-10.0.26200-SP0",
+    "packages": {
+      "catboost": "1.2.10",
+      "highspy": "1.15.1",
+      "numpy": "2.4.6",
+      "optbinning": "0.21.0",
+      "pandas": "3.0.3",
+      "pyarrow": "25.0.0",
+      "scikit-learn": "1.9.0",
+      "scipy": "1.17.1"
+    },
+    "solver_environment": {
+      "HIGHS_NATIVE_FALLBACK_SCIPY": null,
+      "HIGHS_PARALLEL": null,
+      "HIGHS_PRESOLVE": null,
+      "HIGHS_RESET_GLOBAL_SCHEDULER": null,
+      "HIGHS_SIMPLEX_STRATEGY": null,
+      "HIGHS_SOLVER": null
+    },
+    "uv_lock_sha256": "6c862cbad9ab7e3a07dd2823c775127403093d6ad59a789ee227d827165e4733"
+  },
+  "initial_git": {
+    "commit": "06a7d864776247fbb5128105deb229de4476be65",
+    "dirty": false,
+    "dirty_entries": 0,
+    "dirty_paths": []
+  },
+  "protected_stages_run": [],
+  "protected_artifacts_read": [
+    {
+      "path": "data/raw/Loan_status_2007-2020Q3.csv",
+      "bytes": 1773470505,
+      "sha256": "5878af2a088f8ab5214c9337289fb8b5eb6c6338fd3f417b6cdc18513dc6f35f"
+    }
+  ],
+  "protected_artifacts_written": []
+}

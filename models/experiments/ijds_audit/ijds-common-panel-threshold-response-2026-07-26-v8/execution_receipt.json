@@ -1,0 +1,204 @@
+{
+  "schema_version": "2026-07-26.2",
+  "status": "complete_clean_tagged_common_panel_threshold_response_v8_receipt",
+  "run_tag": "ijds-common-panel-threshold-response-2026-07-26-v8",
+  "protocol_tag": "protocol/ijds-common-panel-threshold-response-2026-07-26-v8",
+  "protocol_commit": "06a7d864776247fbb5128105deb229de4476be65",
+  "started_at_utc": "2026-07-26T16:13:47.749125+00:00",
+  "completed_at_utc": "2026-07-26T16:14:47.804411+00:00",
+  "runtime_seconds": 60.05442559999938,
+  "protocol": {
+    "path": "docs/research/ijds_common_panel_threshold_response_v8_protocol_2026-07-26.md",
+    "bytes": 8674,
+    "sha256": "4aa76e33b20707807b6e4dd9eb72320015160f81a129d14254fb70e2c1216a2c"
+  },
+  "implementation_provenance": {
+    "source_files": {
+      "configs/experiments/ijds_common_panel_threshold_response_2026-07-26_v8.yaml": {
+        "path": "configs/experiments/ijds_common_panel_threshold_response_2026-07-26_v8.yaml",
+        "bytes": 5350,
+        "sha256": "788c658a4517fea5f942d0e6a3cd75d170256cccb73d2b7bb9a94c326984385e"
+      },
+      "scripts/experiments/run_ijds_common_panel_threshold_response_v8.py": {
+        "path": "scripts/experiments/run_ijds_common_panel_threshold_response_v8.py",
+        "bytes": 28742,
+        "sha256": "0b5f85283494ea91195be594233be8b9b41d8207dbe9320253d9521b02278ba9"
+      },
+      "src/ijds_audit/common_panel_threshold_response.py": {
+        "path": "src/ijds_audit/common_panel_threshold_response.py",
+        "bytes": 40587,
+        "sha256": "0480be880d8afdcd2da4f3226938574ec876f61e488fafadda42709eb8b5978b"
+      },
+      "src/ijds_audit/grid_contracts.py": {
+        "path": "src/ijds_audit/grid_contracts.py",
+        "bytes": 5258,
+        "sha256": "439e08405a4c1e58e21fe2fe84e02cdfd1d8a88bbbc88b550ae395ace5948a8b"
+      },
+      "src/ijds_audit/protocol.py": {
+        "path": "src/ijds_audit/protocol.py",
+        "bytes": 28380,
+        "sha256": "ad6c9e67b1ea268ace799e042aeddbdabc99a25c8c774dfc3ff34217a39a8cbe"
+      },
+      "src/ijds_audit/config.py": {
+        "path": "src/ijds_audit/config.py",
+        "bytes": 25008,
+        "sha256": "a13cadec6a16267cfe80c3bfce986e6d6bbd6461b61d605036d3a917c4308f8e"
+      },
+      "src/ijds_audit/evaluation.py": {
+        "path": "src/ijds_audit/evaluation.py",
+        "bytes": 30728,
+        "sha256": "0e518fece3cb672965f437c7043993a6bffc8ce8a0ec6d5f42bdc9889b1d9046"
+      },
+      "src/data/outcome_observability.py": {
+        "path": "src/data/outcome_observability.py",
+        "bytes": 21985,
+        "sha256": "d54d9ccf7d54a27bb31a5f8a47e9351ca7201bed7683e9b069299f1501f80d87"
+      },
+      "src/models/binary_conformal_guardrail.py": {
+        "path": "src/models/binary_conformal_guardrail.py",
+        "bytes": 6629,
+        "sha256": "ce4b32ce27202d5cd8b2b58792aa31b6693f0da9f11b22fbbdceb7240324a0cb"
+      },
+      "src/utils/artifact_descriptor.py": {
+        "path": "src/utils/artifact_descriptor.py",
+        "bytes": 1705,
+        "sha256": "ef8f6df7cf311e2173659518370cfde5ed5de4380b444aaad35dcd794cd620f8"
+      },
+      "src/utils/isolated_experiment.py": {
+        "path": "src/utils/isolated_experiment.py",
+        "bytes": 9288,
+        "sha256": "a237249e71ab20b1ced0060397e06decaebc90a4a45d8d07913c49f7eca1e8eb"
+      },
+      "src/utils/pipeline_runtime.py": {
+        "path": "src/utils/pipeline_runtime.py",
+        "bytes": 4402,
+        "sha256": "7c350fdf6736d210418e8cefec5dc8d85c7f1bc2a1bf94aa6ae44a12d4948cde"
+      },
+      "uv.lock": {
+        "path": "uv.lock",
+        "bytes": 428110,
+        "sha256": "6c862cbad9ab7e3a07dd2823c775127403093d6ad59a789ee227d827165e4733"
+      },
+      "docs/research/ijds_common_panel_threshold_response_v8_protocol_2026-07-26.md": {
+        "path": "docs/research/ijds_common_panel_threshold_response_v8_protocol_2026-07-26.md",
+        "bytes": 8674,
+        "sha256": "4aa76e33b20707807b6e4dd9eb72320015160f81a129d14254fb70e2c1216a2c"
+      }
+    },
+    "hash_algorithm": "sha256"
+  },
+  "sources": {
+    "active_v5_config": {
+      "path": "configs/experiments/ijds_binary_geometry_frontier_v4_2026-07-15_v5.yaml",
+      "bytes": 1371,
+      "sha256": "c749befbd0ab7e0f8d6fcded7e7c730cae998032f897f65c7e7673d2a12c3715"
+    },
+    "credit_control_summary": {
+      "path": "models/experiments/ijds_audit/ijds-credit-risk-controls-2026-07-15-v5/credit_risk_controls_summary.json",
+      "bytes": 23359,
+      "sha256": "37c0a5c224b62ee3f47259aea4231df26ea184d3666e7fab80431ad26d611715"
+    },
+    "temporal_coverage": {
+      "path": "data/processed/experiments/ijds_audit/ijds-credit-risk-controls-2026-07-15-v5/evaluation/temporal_coverage.parquet",
+      "bytes": 502111,
+      "sha256": "968872d3dd119cf89cebceb969d4d155fb3a75e010026e023ae10d1cede9e58c"
+    },
+    "credit_control_freeze": {
+      "path": "models/experiments/ijds_audit/ijds-credit-risk-controls-2026-07-13-v1b/protocol_freeze.json",
+      "bytes": 25908,
+      "sha256": "da4805e644bcf5decfbb0a67c0c81a5b9dd61f3ab2e17d3dc5264100e7eb4d35"
+    },
+    "scores": {
+      "path": "data/processed/experiments/ijds_audit/ijds-credit-risk-controls-2026-07-13-v1b/prediction/scores.parquet",
+      "bytes": 30407406,
+      "sha256": "5795bc0a75be90e86d37cf7d297f4b4fd6e6604b38f8179bc5042c024a53a8dc"
+    },
+    "recipes": {
+      "path": "models/experiments/ijds_audit/ijds-credit-risk-controls-2026-07-13-v1b/prediction/residual_recipes.json",
+      "bytes": 187689,
+      "sha256": "969ecbefe46bec4893a03be57385eda29b33dd291d73e7c0120f6d488a9e9936"
+    },
+    "residual_fit_audit": {
+      "path": "data/processed/experiments/ijds_audit/ijds-credit-risk-controls-2026-07-13-v1b/prediction/residual_fit_audit.parquet",
+      "bytes": 45955332,
+      "sha256": "396c30d9bec7d222220cfe6f9870ab4994cf5c33e6da8c9e4ebbd99153155353"
+    },
+    "raw_archive": {
+      "path": "data/raw/Loan_status_2007-2020Q3.csv",
+      "bytes": 1773470505,
+      "sha256": "5878af2a088f8ab5214c9337289fb8b5eb6c6338fd3f417b6cdc18513dc6f35f"
+    },
+    "exchangeability_summary": {
+      "path": "models/experiments/ijds_audit/ijds-exchangeability-transport-test-2026-07-21-v1/exchangeability_transport_test_summary.json",
+      "bytes": 9078,
+      "sha256": "72d9d39b2bef36a36440f1ccc720575d74005f1ad1932a774a91f73ed26c8af6"
+    },
+    "exchangeability_strata": {
+      "path": "data/processed/experiments/ijds_audit/ijds-exchangeability-transport-test-2026-07-21-v1/evaluation/exchangeability_transport_strata.parquet",
+      "bytes": 90676,
+      "sha256": "4d34a1de1d3d9556e9b9b74d0517b01b117030d7036a6911d5ad6807080601e3"
+    }
+  },
+  "summary": {
+    "path": "models/experiments/ijds_audit/ijds-common-panel-threshold-response-2026-07-26-v8/common_panel_threshold_response_v8_summary.json",
+    "bytes": 26661,
+    "sha256": "5364d942cbcaccaf6391c8a6dd07b4a54efda4d5701ae923f9cafa465c5d68a7"
+  },
+  "artifacts": {
+    "adjacent_stratum_threshold_response": {
+      "path": "data/processed/experiments/ijds_audit/ijds-common-panel-threshold-response-2026-07-26-v8/adjacent_stratum_threshold_response.csv",
+      "bytes": 96602,
+      "sha256": "e001c84f0c2b098e8d7d8a1dcc114ca47cd5ccb9e79e7473d52a8e0a944470f5"
+    },
+    "adjacent_learner_threshold_response": {
+      "path": "data/processed/experiments/ijds_audit/ijds-common-panel-threshold-response-2026-07-26-v8/adjacent_learner_threshold_response.csv",
+      "bytes": 10202,
+      "sha256": "287fc78ba99547f8b16f240ad395c3bca95c0581373d01cf58ade964b874173b"
+    }
+  },
+  "initial_git": {
+    "commit": "06a7d864776247fbb5128105deb229de4476be65",
+    "dirty": false,
+    "dirty_entries": 0,
+    "dirty_paths": []
+  },
+  "final_git": {
+    "commit": "06a7d864776247fbb5128105deb229de4476be65",
+    "dirty": false,
+    "dirty_entries": 0,
+    "dirty_paths": []
+  },
+  "environment": {
+    "python": "3.11.5 (main, Oct  9 2023, 08:50:02) [MSC v.1937 64 bit (AMD64)]",
+    "executable": "C:\\Program Files\\Calibre2\\calibre-debug.exe",
+    "platform": "Windows-10-10.0.26200-SP0",
+    "packages": {
+      "catboost": "1.2.10",
+      "highspy": "1.15.1",
+      "numpy": "2.4.6",
+      "optbinning": "0.21.0",
+      "pandas": "3.0.3",
+      "pyarrow": "25.0.0",
+      "scikit-learn": "1.9.0",
+      "scipy": "1.17.1"
+    },
+    "solver_environment": {
+      "HIGHS_NATIVE_FALLBACK_SCIPY": null,
+      "HIGHS_PARALLEL": null,
+      "HIGHS_PRESOLVE": null,
+      "HIGHS_RESET_GLOBAL_SCHEDULER": null,
+      "HIGHS_SIMPLEX_STRATEGY": null,
+      "HIGHS_SOLVER": null
+    },
+    "uv_lock_sha256": "6c862cbad9ab7e3a07dd2823c775127403093d6ad59a789ee227d827165e4733"
+  },
+  "protected_stages_run": [],
+  "protected_artifacts_read": [
+    {
+      "path": "data/raw/Loan_status_2007-2020Q3.csv",
+      "bytes": 1773470505,
+      "sha256": "5878af2a088f8ab5214c9337289fb8b5eb6c6338fd3f417b6cdc18513dc6f35f"
+    }
+  ],
+  "protected_artifacts_written": []
+}
