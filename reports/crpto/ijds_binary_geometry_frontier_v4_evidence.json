@@ -59765,8 +59765,8 @@
     },
     "evidence_builder": {
       "path": "scripts/build_ijds_binary_geometry_frontier_v4_evidence.py",
-      "bytes": 241726,
-      "sha256": "64751960aae938387172d2067bd17cee29c5458d769b35c1aacd2cbeaccafbe6"
+      "bytes": 241801,
+      "sha256": "17fb5d70be61083f4579ef24e3ea462242dcaaf90cc7f373b9d8ae2709b887b9"
     },
     "policy_support_evidence_builder": {
       "path": "scripts/build_ijds_policy_support_optimal_face_evidence.py",
@@ -60927,13 +60927,13 @@
     },
     "figure/common_panel_threshold_response/png": {
       "path": "reports/crpto/figures/crpto_ijds_v4_fig4_common_panel_threshold_response.png",
-      "bytes": 357675,
-      "sha256": "d61b8c6882eda6cb0c572ca751bfd6056d90424cdf83f4c3b4a6231866dddfeb"
+      "bytes": 360754,
+      "sha256": "c423b585250883e6866c820c67e02317253232482856c329dd1f1195a881d992"
     },
     "figure/common_panel_threshold_response/pdf": {
       "path": "reports/crpto/figures/crpto_ijds_v4_fig4_common_panel_threshold_response.pdf",
-      "bytes": 46788,
-      "sha256": "0b010db890af99420e992542aedab954a4cc8f5b771b3e606eaa32ccb0e501d6"
+      "bytes": 46993,
+      "sha256": "4a1e5f691326293c7e1cd1a4bef2a8a3cdf85cc3bf6217c4d2bed90924db5832"
     },
     "figure/common_panel_threshold_response_census/png": {
       "path": "reports/crpto/figures/crpto_ijds_v4_figS1_common_panel_threshold_response_census.png",

@@ -60,6 +60,8 @@ from src.ijds_audit.structural_evidence import (
 from src.utils.artifact_descriptor import relative_artifact_descriptor
 from src.utils.pipeline_runtime import atomic_write_strict_json, atomic_write_text
 
+plt.switch_backend("Agg")
+
 ROOT = Path(__file__).resolve().parents[1]
 SOURCE_REGISTRY_PATH = ROOT / "configs/ijds_active_evidence_sources.yaml"
 CLAIM_LEDGER_PATH = ROOT / "configs/ijds_claim_ledger.yaml"
@@ -1739,7 +1741,7 @@ def _common_panel_threshold_response_figure(
             zorder=6,
         )
     resolved_axis.annotate(
-        "Previously disclosed illustration\nCatBoost S3, W7\N{RIGHTWARDS ARROW}W8",
+        "Post-inspection illustration\nCatBoost S3, W7\N{RIGHTWARDS ARROW}W8",
         xy=(float(focal["threshold_delta"]), float(focal["resolved_pp"])),
         xytext=(48, 76),
         textcoords="offset points",
@@ -1818,7 +1820,8 @@ def _common_panel_threshold_response_figure(
         0.105,
         0.937,
         "Complete 175-cell census in both panels; different denominators are shown separately.\n"
-        "No fitted line, ranking, or selected comparison is shown.",
+        "One post-inspection illustration is disclosed; no fitted line, ranking, "
+        "or confirmatory comparison.",
         ha="left",
         va="top",
         color=MID,

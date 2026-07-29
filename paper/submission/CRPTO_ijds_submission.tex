@@ -81,27 +81,22 @@ two-threshold coverage change equals class mass crossing decision
 boundaries, not threshold distance. The induced binary set identifies
 boundary membership; coverage alone does not identify the subunit upper
 endpoint used by the LP, and set-equivalent embeddings can change that
-coefficient. In the highlighted CatBoost stratum, the fitted threshold
-moves from 0.8884 to 0.1118 between the final two overlapping windows.
-There, resolved coverage changes by -0.00367; assigning each unresolved
-outcome once across both thresholds gives the sharp all-candidate
-response {[}-0.00395,-0.00367{]}. Our retrospectively locked audit uses
-all 640,543 eligible 36-month loans and freezes allocations before
-evaluation outcomes, reconstructs endpoint availability because the
-archive is not a verified point-in-time snapshot, and retains 12,076 of
-376,890 primary candidates as unresolved. Under the declared six-month
-Charged Off availability rule, all 40 sharp all-candidate coverage upper
-bounds across five frozen learner specifications and eight residual
-windows are below 0.90 (maximum 0.8977). A post-inspection joint-block
-rank reference places 31 of 40 cells past locked nominal thresholds,
-without post-selection familywise-error control or a one-future-point
-theorem-failure claim. Two outcome-blind rulers and sharp common-outcome
-bounds show comparator dependence: all 216 endpoint envelopes over the
-finite registered cap values spanning \([0.05,0.12]\) include zero,
-without computing continuous-support extrema; no learner, ruler,
-coordinate, or policy is selected. CRPTO contributes an executable
-identification audit of the prediction-to-decision interface, not a
-deployment certificate.%
+coefficient. Our retrospectively locked audit uses 640,543 eligible
+36-month loans and freezes allocations before evaluation outcomes,
+reconstructs endpoint availability because the archive is not a verified
+point-in-time snapshot, and retains 12,076 of 376,890 primary candidates
+as unresolved. Under the declared six-month Charged Off availability
+rule, all 40 sharp all-candidate coverage upper bounds across five
+frozen learner specifications and eight residual windows are below 0.90
+(maximum 0.8977). Assigning each unresolved loan the same label across
+both thresholds yields sharp adjacent-threshold response bounds on the
+fixed target panel without separately extremizing endpoints. Two
+outcome-blind rulers and sharp common-outcome bounds show comparator
+dependence: all 216 endpoint envelopes over the finite registered cap
+values spanning \([0.05,0.12]\) include zero, without computing
+continuous-support extrema; no learner, ruler, coordinate, or policy is
+selected. CRPTO contributes an executable identification audit of the
+prediction-to-decision interface, not a deployment certificate.%
 }
 
 \KEYWORDS{conformal prediction; predict-then-optimize; comparator
@@ -233,12 +228,12 @@ contributions are:
   coefficient: a continuum of set-equivalent embeddings preserves every
   coverage event.
 \item
-  \textbf{Complete fixed-panel and transport evidence.} A common target
-  panel and one shared unresolved-label completion identify every
-  adjacent-threshold response; sharp contrast bounds include an exact
-  width decomposition. A tie-safe, completion-robust use of the known
-  finite-batch Beta--Binomial law supplies a separate retrospective
-  joint-block rank reference, without converting it into a
+  \textbf{Complete fixed-panel and transport evidence.} On a common
+  target panel, holding each unresolved loan's label fixed under both
+  thresholds yields sharp bounds for every adjacent-threshold response,
+  with an exact width decomposition. A tie-safe, completion-robust use
+  of the known finite-batch Beta--Binomial law supplies a separate
+  retrospective joint-block rank reference, without converting it into a
   one-future-point theorem test or mechanism claim.
 \item
   \textbf{Partial identification at the decision interface.} Two
@@ -246,10 +241,9 @@ contributions are:
   registered point-cap support show why score, ruler, coordinate, and
   comparator support jointly define the portfolio estimand.
   Constructively, all 40 declared six-month learner--window cells have
-  finite-archive upper endpoints below nominal, most frozen
-  learner-window joint-block reference tail areas meet the locked
-  nominal reporting thresholds, and no universal portfolio direction is
-  identified.
+  finite-archive upper endpoints below nominal, the post-inspection
+  joint-block reference remains explicitly exploratory, and no universal
+  portfolio direction is identified.
 \end{enumerate}
 
 This audit was retrospectively protocol-locked and hash-verified after
@@ -1156,9 +1150,8 @@ boundaries.
 
 \section{Results}\label{sec-results}
 
-\subsection{All 40 finite-archive upper endpoints are below nominal;
-31/40 rank-reference rows meet the locked
-threshold}\label{all-40-finite-archive-upper-endpoints-are-below-nominal-3140-rank-reference-rows-meet-the-locked-threshold}
+\subsection{All 40 finite-archive upper endpoints are below
+nominal}\label{all-40-finite-archive-upper-endpoints-are-below-nominal}
 
 All 40 learner-window sharp coverage upper endpoints are below 0.90
 under the declared six-month rule. CatBoost bounds range from
@@ -1225,6 +1218,9 @@ Brier, and calibration summaries condition on resolution; WOE/IV and PSI
 are descriptive for separate design reasons and are not validity tests,
 a model contest, or an identified explanation of the coverage gap.
 
+\subsubsection{Secondary post-inspection joint-block
+reference}\label{secondary-post-inspection-joint-block-reference}
+
 A secondary combined-rank diagnostic has 31 of 40 cell-level reference
 tail areas meeting the locked nominal reporting thresholds. Its null is
 stronger than the condition split conformal needs and its family was
@@ -1265,9 +1261,10 @@ between two class maxima. The fitted residual quantile falls from 0.8884
 to 0.1118; mean OOT width in the stratum falls from 0.9843 to 0.2076.
 Its discrete intersection simultaneously moves from 0.96\% \(\{0,1\}\)
 and 99.04\% \(\{0\}\) in W7 to 0\% \(\{0,1\}\), 99.74\% \(\{0\}\), and
-0.26\% empty in W8. This stratum and transition are retrospectively
-highlighted as a descriptive geometric illustration; they were not a
-predeclared hypothesis, a selected window, or a learner/stratum winner.
+0.26\% empty in W8. This stratum and transition were selected after
+inspection solely as a descriptive geometric illustration; they are
+neither a confirmatory hypothesis nor a learner, stratum, or window
+winner. All 175 adjacent contrasts remain reported.
 
 \begin{figure}
 
@@ -1279,25 +1276,26 @@ predeclared hypothesis, a selected window, or a learner/stratum winner.
 
 \caption{\label{fig-phase}CatBoost S3 fit prevalence, exact finite
 boundary, and fitted residual threshold across eight overlapping
-windows, shown on focused scales. The retrospectively highlighted pair
-changes from phase margin +11 in W7 to -16 in W8 and coincides with the
-large threshold step described by Proposition 2's conditional
-order-statistic characterization; it is not a predeclared comparison or
-selected winner.}
+windows, shown on focused scales. The pair selected after inspection for
+illustration changes from phase margin +11 in W7 to -16 in W8 and
+coincides with the large threshold step described by Proposition 2's
+conditional order-statistic characterization; it is not confirmatory or
+a winner, and the complete 175-contrast census remains reported.}
 
 \end{figure}%
 
 The common-panel replay evaluates the target response directly. In the
 highlighted S3, the same 79,047 loans appear under both thresholds.
 Among 76,495 resolved loans, 164 nondefaults and 117 defaults cross out
-of coverage, so the exact response is \(-281/76{,}495=-0.003673\). Under
-one shared completion of the 2,552 unresolved labels, the all-candidate
-response is sharply \([-312,-290]/79{,}047=[-0.003947,-0.003669]\). Thus
-the large threshold step and the much smaller realized coverage response
-are compatible because only target mass in the crossed bands matters. In
-the unresolved subset, 9 loans lie in both signed bands and leave
-coverage under either label, while 22 lie in exactly one and generate
-the identification width.
+of coverage, so the exact response is \(-281/76{,}495=-0.003673\).
+Optimizing over assignments that give each of the 2,552 unresolved loans
+the same label under both thresholds, the all-candidate response is
+sharply \([-312,-290]/79{,}047=[-0.003947,-0.003669]\). Thus the large
+threshold step and the much smaller realized coverage response are
+compatible because only target mass in the crossed bands matters. In the
+unresolved subset, 9 loans lie in both signed bands and leave coverage
+under either label, while 22 lie in exactly one and generate the
+identification width.
 
 At stratum level, fixed-target coverage is monotone in \(c\), so the
 response sign is mechanically determined by the threshold direction; its
@@ -1309,14 +1307,14 @@ magnitude, and sharp width. At learner level the five stratum thresholds
 can move in different directions; after summing their integer numerators
 before division, all 35 transition intervals exclude zero: 31 are
 negative and 4 positive. These are deterministic finite-archive
-descriptions under unrestricted shared completion, not hypothesis tests,
-temporal-validity guarantees, independent replications, or a
-learner/window/stratum ranking. Sharpness is cellwise: the manuscript
-does not claim that every endpoint across all 175 overlapping contrasts
-is jointly attained by one global completion.
-Figure~\ref{fig-common-panel} therefore places the resolved and
-all-candidate quantities in separate aligned panels: they share axes but
-not denominators, and the all-candidate segments are identification
+descriptions after optimizing over loan-level labels shared within each
+contrast, not hypothesis tests, temporal-validity guarantees,
+independent replications, or a learner/window/stratum ranking. Sharpness
+is cellwise: the manuscript does not claim that every endpoint across
+all 175 overlapping contrasts is jointly attained by one global
+completion. Figure~\ref{fig-common-panel} therefore places the resolved
+and all-candidate quantities in separate aligned panels: they share axes
+but not denominators, and the all-candidate segments are identification
 bounds rather than uncertainty intervals around the resolved response.
 
 Proposition 2 gives the exact conditional order-statistic
@@ -1340,22 +1338,22 @@ integer identities and tables.
 
 \centering{
 
-\includegraphics[width=1\linewidth,height=\textheight,keepaspectratio]{../../reports/crpto/figures/crpto_ijds_v4_fig4_common_panel_threshold_response.png}
+\includegraphics[width=0.92\linewidth,height=\textheight,keepaspectratio]{../../reports/crpto/figures/crpto_ijds_v4_fig4_common_panel_threshold_response.png}
 
 }
 
 \caption{\label{fig-common-panel}Complete fixed-panel adjacent-threshold
 response. Panel A gives the exact resolved-panel response; Panel B gives
-sharp all-candidate response bounds under one shared completion of
-unresolved labels. Both panels retain all 175
-learner--stratum--transition cells on identical linear response axes and
-a common symmetric-log threshold-change axis, but they are separated
-because their denominators differ. Capped segments in Panel B mark
-identification endpoints, not confidence intervals or error bars around
-Panel A. Orange marks the previously disclosed CatBoost S3 W7--W8
-illustration; black crosses mark the five exact \([0,0]\) cells. No
-regression, ranking, selected comparison, continuity, or joint
-endpoint-attainability claim is made.}
+sharp all-candidate response bounds by optimizing over assignments that
+give each unresolved loan the same label under both thresholds. Both
+panels retain all 175 learner--stratum--transition cells on identical
+linear response axes and a common symmetric-log threshold-change axis,
+but they are separated because their denominators differ. Capped
+segments in Panel B mark identification endpoints, not confidence
+intervals or error bars around Panel A. Orange marks CatBoost S3 W7--W8,
+selected after inspection solely for illustration; black crosses mark
+the five exact \([0,0]\) cells. No regression, ranking, confirmatory
+comparison, continuity, or joint endpoint-attainability claim is made.}
 
 \end{figure}%
 
@@ -1657,15 +1655,14 @@ CRPTO shows why connecting machine learning, conformal prediction, and
 optimization creates an identification problem rather than a
 self-validating pipeline. Under the declared six-month Charged Off
 availability rule, all 40 finite-archive sharp coverage upper endpoints
-are below nominal, and 31/40 frozen learner-window joint-block reference
-tail areas meet the locked nominal reporting thresholds under their
-explicitly post-inspection scope. Exact binary geometry identifies the
-calibration threshold and the target mass crossed between thresholds,
-but does not supply a universal degeneracy or transport claim.
-Label-Mondrian redistributes class coverage without uniformly restoring
-nominal coverage. Portfolio direction changes with the outcome-blind
-ruler and coordinate, and all 216 endpoint envelopes over the finite
-registered cap values spanning \([0.05,0.12]\) include zero;
+are below nominal; this deterministic archive fact is not by itself a
+rejection of split-conformal validity. Exact binary geometry identifies
+the calibration threshold and the target mass crossed between
+thresholds, but does not supply a universal degeneracy or transport
+claim. Label-Mondrian redistributes class coverage without uniformly
+restoring nominal coverage. Portfolio direction changes with the
+outcome-blind ruler and coordinate, and all 216 endpoint envelopes over
+the finite registered cap values spanning \([0.05,0.12]\) include zero;
 continuous-support extrema are not computed.
 
 CRPTO therefore selects no learner or policy. Its executable

@@ -9,6 +9,10 @@ import pytest
 import scripts.build_ijds_binary_geometry_frontier_v4_evidence as builder
 
 
+def test_publication_figures_pin_headless_backend() -> None:
+    assert builder.plt.get_backend().casefold() == "agg"
+
+
 def test_phase_figure_uses_independent_axes_and_exact_window_ordinals(
     tmp_path: Path,
     monkeypatch: pytest.MonkeyPatch,

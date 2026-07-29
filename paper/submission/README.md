@@ -130,11 +130,14 @@ last substantive source and evidence changes:
   pre-reference pages; the final-freeze page cap was deliberately not run);
 - browser body preview: 26 pages;
 - browser supplement preview: 52 pages;
-- abstract: exactly 300 words in one paragraph, with normalized source-to-PDF
+- abstract: exactly 255 words in one paragraph, with normalized source-to-PDF
   equality;
 - all 114 rendered pages: US Letter, no blank pages, no identity or artifact
   fingerprints, and visually inspected for clipping, overlap, formula rendering,
   and table/figure legibility;
+- headless figure replay: the builder pins `Agg`; two independent 40-file
+  staging builds were byte-identical, and promotion changed only the expected
+  builder and regenerated Figure 4 descriptors in the evidence manifest;
 - official compiler scan: converged, with no undefined citation, reference, or
   rerun request; and
 - machine-readable supplement: rebuilt from the active evidence surface and

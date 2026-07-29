@@ -241,6 +241,10 @@ in PNG and PDF under the `crpto_ijds_v4_*` naming family, and
 byte-identical. The canonical body is `paper/CRPTO_ijds.qmd`; generate official
 TeX with `scripts/build_ijds_submission_tex.py` and never edit it by hand.
 
+The executable registry and its tests own the pointer census. The active count
+is 53; it supersedes any stale 51-pointer count in environment-level PDF-intake
+references or historical candidate-status notes.
+
 Manual LaTeX fallback:
 
 ```text

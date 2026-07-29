@@ -795,8 +795,8 @@ label can be covered; this is a conditional finite-block consequence, not a
 transport guarantee. The separately evaluated W8 S3
 all-candidate upper bound is 0.854707; because subtraction of separately
 extremized intervals is not a valid change bound, Section B.5.1 evaluates both
-fitted thresholds on the same fixed candidate panel with one shared completion
-of every unresolved label.
+fitted thresholds on the same fixed candidate panel, optimizes over all label
+assignments, and gives each unresolved loan the same label under both thresholds.
 
 For any binary outcome, interval miscoverage has the exact identity
 
@@ -899,7 +899,8 @@ S6J contains the exact cell values.
 
 **Table S7A.** Complete pooled sign census over the seven adjacent transitions.
 Ranges describe resolved-label changes on the common panel; signs classify the
-sharp all-candidate bounds under one shared unresolved-label completion. The
+sharp all-candidate bounds after each unresolved loan's label is held fixed under
+both thresholds within a contrast. The
 last column reports the largest sharp identification width among that learner's
 seven pooled transitions.
 
@@ -1004,8 +1005,8 @@ been inspected, the retrospective sensitivity protocol locked the complete
 preregistration. The inherited rule requires more than 99% retention in every fitting month.
 Scores, strata, OOT candidates, and outcomes are unchanged; only fitting-label
 availability and the resulting residual recipes vary. The table below focuses
-on the retrospectively highlighted S3 rather than asserting that other
-stratum quantiles are invariant.
+on S3, selected after inspection solely for illustration, rather than asserting
+that other stratum quantiles are invariant.
 
 | Charged-off lag (months) | Minimum monthly retention | Passes >99% rule | W7 prevalence | W7 quantile | W8 prevalence | W8 quantile |
 |---:|---:|:---:|---:|---:|---:|---:|
@@ -2117,8 +2118,8 @@ compatible iid/exchangeability contract. They therefore do not satisfy the
 conditions needed to import a CROMS, inverse conformal risk-control, or
 decision-calibration guarantee.
 
-The active conclusion is deliberately narrow. In the retrospectively highlighted
-CatBoost stratum,
+The active conclusion is deliberately narrow. In the CatBoost stratum selected
+after inspection solely for illustration,
 the fitted threshold and binary-set composition change sharply across the final
 two calibration blocks, but that path is not invariant to every fit-label completion and
 does not generalize to all score bins. All 40 sharp
