@@ -1,0 +1,45 @@
+name: Exact CRPTO Git-history transport
+on:
+  push:
+    branches:
+      - codex/exact-history-transport-20260729
+  pull_request:
+    branches:
+      - main
+  workflow_dispatch:
+permissions:
+  contents: write
+jobs:
+  transport:
+    runs-on: ubuntu-latest
+    steps:
+      - uses actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Reassemble and import exact Git objects
+        shell: bash
+        run: |
+          set -euo pipefail
+          cat .git-sync/pack-*.b64 | tr -d '\r\n' | base64 --decode > /tmp/crpto-exact.pack
+          echo "3afe3ff872661d9048c57942c292464ce0ec947d2a233fa5331a32090b3522a9  /tmp/crpto-exact.pack" | sha256sum -c -
+          git index-pack --strict /tmp/crpto-exact.pack
+          git cat-file -e "677537d2416bfdfc36877fdb60bcb7be371fe4ee^{commit}"
+          git cat-file -e "917ff6f0d6156433dcf61c81fe1fadb64a3c1a83^{tag}"
+          git cat-file -e "135e58b415d7660721c2f10cfe7668443a12faf4^{tag}"
+          git cat-file -e "2ba79623bcf7cb5eeae5dde1d4a28845928cb806^{tag}"
+          git cat-file -e "ca8828e68c7fa237a8de92fd95957bb20ea4d13a^{tag}"
+          git merge-base --is-ancestor 69095e05beae282701b4ea38aa69da26a209106f 677537d2416bfdfc36877fdb60bcb7be371fe4ee
+      - name: Fast-forward main and publish scientific tags
+        shell: bash
+        run: |
+          set -euo pipefail
+          remote_main="$(git ls-remote origin refs/heads/main | awk '{print $1}')"
+          test -n "$remote_main"
+          git merge-base --is-ancestor 69095e05beae282701b4ea38aa69da26a209106f "$remote_main"
+          git push --force-with-lease=refs/heads/main:"$remote_main" origin "677537d2416bfdfc36877fdb60bcb7be371fe4ee:refs/heads/main"
+          git push origin \
+            "917ff6f0d6156433dcf61c81fe1fadb64a3c1a83:refs/tags/protocol/ijds-marginal-mean-score-outcome-gap-2026-07-29-v3h" \
+            "135e58b415d7660721c2f10cfe7668443a12faf4:refs/tags/artifacts/ijds-marginal-mean-score-outcome-gap-2026-07-29-v3h" \
+            "2ba79623bcf7cb5eeae5dde1d4a28845928cb806:refs/tags/protocol/ijds-set-preserving-embedding-sensitivity-2026-07-29-v1a" \
+            "ca8828e68c7fa237a8de92fd95957bb20ea4d13a:refs/tags/interpretation/ijds-set-preserving-embedding-sensitivity-2026-07-29-v1a-preresult-v2"
+          echo "Exact CRPTO history transported and refs verified." >> "$GITHUB_STEP_SUMMARY"
