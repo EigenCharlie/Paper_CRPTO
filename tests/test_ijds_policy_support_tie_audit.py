@@ -2,7 +2,9 @@ from __future__ import annotations
 
 import copy
 from pathlib import Path
+from types import SimpleNamespace
 
+import highspy
 import numpy as np
 import pandas as pd
 import pytest
@@ -129,6 +131,43 @@ def test_basis_diagnostics_reconcile_a_small_point_lp() -> None:
     assert diagnostics["near_zero_nonbasic_reduced_costs"] == 0
     assert abs(diagnostics["objective_reconciliation_error"]) < 1e-12
     assert diagnostics["maximum_dual_sign_violation"] <= 1e-12
+
+
+def test_basis_diagnostics_reject_nonfinite_row_dual() -> None:
+    raw = SimpleNamespace(
+        col_value=[0.5, 0.0],
+        col_dual=[0.0, -1.0],
+        row_value=[0.5],
+        row_dual=[float("nan")],
+    )
+    basis = SimpleNamespace(
+        valid=True,
+        col_status=[highspy.HighsBasisStatus.kBasic, highspy.HighsBasisStatus.kLower],
+        row_status=[highspy.HighsBasisStatus.kBasic],
+    )
+    lp = SimpleNamespace(
+        col_cost_=[1.0, 2.0],
+        row_lower_=[-highspy.kHighsInf],
+        row_upper_=[1.0],
+    )
+    solver = SimpleNamespace(
+        getSolution=lambda: raw,
+        getBasis=lambda: basis,
+        getLp=lambda: lp,
+    )
+    session = SimpleNamespace(
+        solver=solver,
+        amount=np.array([1.0, 1.0]),
+        objective=np.array([1.0, 2.0]),
+    )
+    solution = SimpleNamespace(objective_value=0.5)
+    with pytest.raises(RuntimeError, match="invalid or contains a non-finite"):
+        point_basis_diagnostics(
+            session,
+            solution,
+            dual_tolerance=1e-7,
+            primal_tolerance=1e-9,
+        )
 
 
 def test_output_paths_are_contained_and_no_overwrite(tmp_path: Path) -> None:

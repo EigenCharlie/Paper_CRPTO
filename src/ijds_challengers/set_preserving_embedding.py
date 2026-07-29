@@ -149,6 +149,7 @@ def load_set_preserving_config(path: Path) -> dict[str, Any]:
         "parent",
         "source_ingest",
         "outcomes",
+        "normalization",
         "embedding",
         "frontier",
         "solver",
@@ -172,7 +173,7 @@ def load_set_preserving_config(path: Path) -> dict[str, Any]:
         raise ValueError("The set-preserving candidate has an unsupported protocol status.")
     expected_phase_authority = {
         "tag_resolution": "explicit_refs_tags_commit_only",
-        "ancestry": "parent_to_v1_and_v1_to_v2_required",
+        "ancestry": "parent_to_v1a_to_artifact_tag_to_direct_child_v1b_required",
         "v2_delta_whitelist": [
             "schema_version",
             "protocol_status",
@@ -185,6 +186,18 @@ def load_set_preserving_config(path: Path) -> dict[str, Any]:
         "exact_environment": True,
         "candidate_identity": ("utf8_length_prefixed_json_role_period_id_sorted_mergesort_sha256"),
         "verify_source_summary_and_receipt": True,
+        "require_phase_a_artifact_tag": True,
+        "require_phase_a_dvc_pointer_descriptors": True,
+        "clean_clone_transport_receipt": {
+            "schema": "canonical_tamper_evident_reconciliation_2026_07_29_2",
+            "required_in_source_frontier": True,
+            "dvc_pull_required": True,
+            "exact_materialized_file_census": 11,
+            "post_phase_b_clean_clone_gate": True,
+            "post_phase_b_materialized_file_census": 9,
+            "dvc_version": "3.67.1",
+            "isolated_python_module_execution": True,
+        },
     }
     if payload["phase_authority"] != expected_phase_authority:
         raise ValueError("The locked V1/V2 authority contract changed.")
@@ -199,21 +212,38 @@ def load_set_preserving_config(path: Path) -> dict[str, Any]:
             "run_tag",
             "protocol_tag",
             "protocol_commit",
+            "artifact_tag",
+            "artifact_commit",
+            "dvc_pointers",
+            "clean_clone_transport_receipt",
             "config",
             "freeze",
         }:
             raise ValueError("The post-freeze source authority fields changed.")
         _validate_hash_descriptor(source_frontier["config"], label="The source V1 config")
         _validate_hash_descriptor(source_frontier["freeze"], label="The source freeze")
+        pointers = source_frontier["dvc_pointers"]
+        if not isinstance(pointers, dict) or set(pointers) != {"data", "model"}:
+            raise ValueError("Post-freeze evaluation requires data/model DVC pointer authority.")
+        for label, descriptor in pointers.items():
+            _validate_hash_descriptor(descriptor, label=f"The source {label} DVC pointer")
+        _validate_hash_descriptor(
+            source_frontier["clean_clone_transport_receipt"],
+            label="The clean-clone Phase-A transport receipt",
+        )
         protocol_commit = str(source_frontier["protocol_commit"])
+        artifact_commit = str(source_frontier["artifact_commit"])
         try:
             int(protocol_commit, 16)
+            int(artifact_commit, 16)
         except ValueError as error:
-            raise ValueError("The source protocol commit is not hexadecimal.") from error
+            raise ValueError("A source protocol/artifact commit is not hexadecimal.") from error
         if (
             not str(source_frontier["run_tag"])
             or not str(source_frontier["protocol_tag"])
+            or not str(source_frontier["artifact_tag"])
             or len(protocol_commit) != 40
+            or len(artifact_commit) != 40
         ):
             raise ValueError("The source freeze authority contains an invalid identity.")
     embedding = payload["embedding"]
@@ -366,6 +396,17 @@ def load_set_preserving_config(path: Path) -> dict[str, Any]:
         ]
     ):
         raise ValueError("Only the locked primary endpoint columns may be evaluated.")
+    normalization = payload["normalization"]
+    expected_normalization = {
+        "capital_source": "parent_policy_budget",
+        "committed_budget_per_period": 1_000_000.0,
+        "monthly": "parent_committed_budget",
+        "pooled": "period_count_times_parent_committed_budget",
+        "common_across_policies": True,
+        "solver_allocated_capital_renormalization": "forbidden",
+    }
+    if normalization != expected_normalization:
+        raise ValueError("The common-capital rate-normalization estimand changed.")
 
     solver = payload["solver"]
     independent = solver["independent_validation"]
@@ -1092,7 +1133,7 @@ def validate_complete_frontier(
 ) -> None:
     """Fail closed on census, grid, set, budget, and numerical reconciliation."""
     expected = config["expected_census"]
-    frames = {
+    census_frames = {
         "frontier_solves": build.solve_records,
         "embedding_diagnostics": build.embedding_diagnostics,
         "minimum_score_endpoints": build.minimum_endpoint_diagnostics,
@@ -1101,9 +1142,61 @@ def validate_complete_frontier(
         "independent_solver_cells": build.independent_validation,
         "outcome_free_allocation_contrasts": build.allocation_contrasts,
     }
-    for key, frame in frames.items():
+    for key, frame in census_frames.items():
         if len(frame) != int(expected[key]):
             raise RuntimeError(f"{key} census is {len(frame)}, not {expected[key]}.")
+    numerical_frames = {**census_frames, "allocations": build.allocations}
+    structural_not_applicable = {
+        "frontier_solves": {"frontier_cap", "objective_target", "risk_tolerance"},
+        "allocations": {"frontier_cap", "objective_target"},
+    }
+    for key, frame in numerical_frames.items():
+        numeric = frame.select_dtypes(include=[np.number])
+        checked = numeric.drop(
+            columns=list(structural_not_applicable.get(key, set())), errors="ignore"
+        )
+        try:
+            finite = np.isfinite(checked.to_numpy(dtype=float)).all()
+        except (TypeError, ValueError) as error:
+            raise RuntimeError(
+                f"{key} contains a non-numeric value in a numeric column."
+            ) from error
+        if not bool(finite):
+            raise RuntimeError(f"{key} contains a non-finite numerical value.")
+    for key, frame, nullable in (
+        (
+            "frontier_solves",
+            build.solve_records,
+            ("frontier_cap", "objective_target", "risk_tolerance"),
+        ),
+        ("allocations", build.allocations, ("frontier_cap", "objective_target")),
+    ):
+        required = {"frontier_ruler", *nullable}
+        if not required.issubset(frame):
+            raise RuntimeError(f"{key} omits its explicit ruler/nullability contract.")
+        ruler = frame["frontier_ruler"].astype(str)
+        objective = ruler.eq("objective_matched")
+        normalized = ruler.eq("normalized_score")
+        if not bool((objective | normalized).all()):
+            raise RuntimeError(f"{key} contains an unknown frontier ruler.")
+        for column in nullable:
+            values = frame[column].to_numpy(dtype=float)
+            if bool(np.isinf(values).any()):
+                raise RuntimeError(f"{key}.{column} contains an infinite value.")
+            applicable = normalized if column != "objective_target" else objective
+            if not bool(np.isfinite(values[applicable]).all()) or not bool(
+                np.isnan(values[~applicable]).all()
+            ):
+                raise RuntimeError(
+                    f"{key}.{column} violates the exact ruler-specific not-applicable pattern."
+                )
+    optimum = build.objective_optimum_diagnostics
+    if (
+        "basis_valid" not in optimum
+        or not pd.api.types.is_bool_dtype(optimum["basis_valid"])
+        or not bool(optimum["basis_valid"].all())
+    ):
+        raise RuntimeError("An objective-optimum point basis is absent or invalid.")
     records = build.solve_records
     key_columns = ["window_id", "role", "period", "policy_label", "comparator_rule"]
     if bool(records.duplicated(key_columns).any()):
@@ -1547,7 +1640,22 @@ def _sharp_rows(
     window_id: str,
     period: str | None,
     lgd: float,
+    committed_budget_per_period: float,
+    normalization_periods: int,
 ) -> list[dict[str, Any]]:
+    if (
+        not np.isfinite(committed_budget_per_period)
+        or committed_budget_per_period <= 0.0
+        or isinstance(normalization_periods, bool)
+        or normalization_periods <= 0
+    ):
+        raise ValueError("Sharp-bound normalization requires a positive budget and period count.")
+    normalization_capital = float(committed_budget_per_period) * int(normalization_periods)
+    normalization_rule = (
+        "monthly_parent_committed_budget"
+        if normalization_periods == 1
+        else "pooled_period_count_times_parent_committed_budget"
+    )
     index = PolicyContrastIndex(allocations, role="primary_oot")
     rows: list[dict[str, Any]] = []
     for spec in _contrast_specs():
@@ -1563,8 +1671,17 @@ def _sharp_rows(
                 "scope": scope,
                 "window_id": str(window_id),
                 "period": period,
+                "normalization_rule": normalization_rule,
+                "normalization_periods": int(normalization_periods),
+                "committed_budget_per_period": float(committed_budget_per_period),
                 **spec,
-                **index.sharp_bounds(policy_a=policy_a, policy_b=policy_b, lgd=float(lgd)),
+                **index.sharp_bounds(
+                    policy_a=policy_a,
+                    policy_b=policy_b,
+                    lgd=float(lgd),
+                    normalization_capital_a=normalization_capital,
+                    normalization_capital_b=normalization_capital,
+                ),
             }
         )
     return rows
@@ -1575,6 +1692,7 @@ def build_sharp_embedding_contrasts(
     *,
     config: Mapping[str, Any],
     lgd: float,
+    budget: float,
 ) -> tuple[pd.DataFrame, pd.DataFrame, pd.DataFrame]:
     """Build monthly and pooled-window common-outcome sharp bounds without selection."""
     if set(joined_primary_allocations["role"].astype(str)) != {"primary_oot"}:
@@ -1594,6 +1712,8 @@ def build_sharp_embedding_contrasts(
                 window_id=str(window_id),
                 period=None,
                 lgd=lgd,
+                committed_budget_per_period=budget,
+                normalization_periods=len(periods),
             )
         )
         for period, month in window.groupby("period", observed=True, sort=True):
@@ -1604,6 +1724,8 @@ def build_sharp_embedding_contrasts(
                     window_id=str(window_id),
                     period=str(period),
                     lgd=lgd,
+                    committed_budget_per_period=budget,
+                    normalization_periods=1,
                 )
             )
     monthly = pd.DataFrame(monthly_rows)
@@ -1689,6 +1811,18 @@ def validate_complete_evaluation(
     for key, value in observed.items():
         if value != int(expected[key]):
             raise RuntimeError(f"{key} census is {value}, not {expected[key]}.")
+    for label, frame in (
+        ("monthly sharp contrasts", monthly),
+        ("pooled sharp contrasts", window),
+        ("metric direction census", directions),
+    ):
+        numeric = frame.select_dtypes(include=[np.number])
+        try:
+            finite = np.isfinite(numeric.to_numpy(dtype=float)).all()
+        except (TypeError, ValueError) as error:
+            raise RuntimeError(f"{label} contains a non-numeric numeric-field value.") from error
+        if not bool(finite):
+            raise RuntimeError(f"{label} contains a non-finite numerical value.")
     identity = [
         "window_id",
         "contrast_family",
@@ -1727,6 +1861,20 @@ def validate_complete_evaluation(
         label="Pooled-window sharp contrasts",
     )
     for frame in (monthly, window):
+        finite_columns = [
+            "normalization_periods",
+            "committed_budget_per_period",
+            "policy_a_capital",
+            "policy_b_capital",
+            "policy_a_normalization_capital",
+            "policy_b_normalization_capital",
+            "expected_objective_difference",
+            "realized_payoff_rate_difference_lower",
+            "realized_payoff_rate_difference_upper",
+        ]
+        finite_values = frame[finite_columns].to_numpy(dtype=float)
+        if not bool(np.isfinite(finite_values).all()):
+            raise RuntimeError("Sharp contrast normalization contains a non-finite value.")
         for lower_name, upper_name in _WINDOW_METRICS.values():
             values = frame[[lower_name, upper_name]].to_numpy(dtype=float)
             if not bool(np.isfinite(values).all()):
@@ -1735,6 +1883,50 @@ def validate_complete_evaluation(
                 raise RuntimeError(f"Sharp bounds are reversed for {lower_name}.")
         if set(frame["contrast_family"].astype(str)) != {CONTRAST_GAMMA, CONTRAST_THETA}:
             raise RuntimeError("A locked contrast family is missing from evaluation.")
+    budget = float(config["normalization"]["committed_budget_per_period"])
+    budget_tolerance = float(config["solver"]["budget_residual_tolerance_dollars"])
+    normalization_checks = (
+        (
+            monthly,
+            1,
+            "monthly_parent_committed_budget",
+        ),
+        (
+            window,
+            expected_months,
+            "pooled_period_count_times_parent_committed_budget",
+        ),
+    )
+    for frame, periods, rule in normalization_checks:
+        expected_normalizer = periods * budget
+        if (
+            set(frame["normalization_rule"].astype(str)) != {rule}
+            or not bool(frame["normalization_periods"].eq(periods).all())
+            or not bool(frame["committed_budget_per_period"].eq(budget).all())
+            or not bool(frame["policy_a_normalization_capital"].eq(expected_normalizer).all())
+            or not bool(frame["policy_b_normalization_capital"].eq(expected_normalizer).all())
+        ):
+            raise RuntimeError(
+                "A sharp contrast used solver capital instead of the locked common capital."
+            )
+        allowed_residual = periods * budget_tolerance
+        for column in ("policy_a_capital", "policy_b_capital"):
+            if float((frame[column] - expected_normalizer).abs().max()) > allowed_residual:
+                raise RuntimeError(
+                    f"{column} does not reconcile to the committed common-capital normalizer."
+                )
+        for suffix in ("lower", "upper"):
+            dollar = frame[f"realized_payoff_difference_{suffix}"].to_numpy(dtype=float)
+            rate = frame[f"realized_payoff_rate_difference_{suffix}"].to_numpy(dtype=float)
+            if not bool(
+                np.allclose(
+                    rate,
+                    dollar / expected_normalizer,
+                    rtol=1.0e-12,
+                    atol=1.0e-12,
+                )
+            ):
+                raise RuntimeError("Payoff-rate bounds do not equal dollars over locked capital.")
     negative = window.loc[window["contrast_family"].eq(CONTRAST_THETA) & window["gamma"].eq(0.0)]
     if len(negative) != int(expected["window_negative_controls"]):
         raise RuntimeError("The pooled-window negative-control census is incomplete.")

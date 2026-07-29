@@ -370,6 +370,19 @@ def _solve_objective_optimum(
         dual_tolerance=float(optimum_config["dual_tolerance"]),
         primal_tolerance=float(optimum_config["primal_tolerance"]),
     )
+    basis_numeric = np.asarray(
+        [
+            basis["minimum_absolute_nonbasic_reduced_cost"],
+            basis["minimum_scaled_nonbasic_reduced_cost"],
+            basis["maximum_dual_sign_violation"],
+            basis["objective_reconciliation_error"],
+        ],
+        dtype=float,
+    )
+    if basis.get("basis_valid") is not True or not bool(np.isfinite(basis_numeric).all()):
+        raise RuntimeError(
+            f"Objective optimum has an invalid or non-finite basis for {role} {period}."
+        )
     minimum_reduced_cost = float(basis["minimum_absolute_nonbasic_reduced_cost"])
     near_zero = int(basis["near_zero_nonbasic_reduced_costs"])
     if near_zero > 0 or minimum_reduced_cost <= float(optimum_config["dual_tolerance"]):
@@ -409,6 +422,7 @@ def _solve_objective_optimum(
         diagnostics={
             "role": role,
             "period": period,
+            "basis_valid": True,
             "n_candidates": int(len(month)),
             "objective_value": float(solution.objective_value),
             "weighted_point_score": float(solution.weighted_score),

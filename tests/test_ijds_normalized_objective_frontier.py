@@ -8,6 +8,7 @@ import numpy as np
 import pandas as pd
 import pytest
 
+import src.ijds_challengers.normalized_frontier as normalized_frontier_module
 from scripts.experiments.run_ijds_normalized_objective_frontier import prepare_output_paths
 from src.ijds_audit.portfolio import PointPortfolioSession, PointPortfolioSolution
 from src.ijds_challengers.config import load_frontier_config
@@ -356,6 +357,7 @@ def test_objective_optimum_uses_basis_and_order_diagnostics() -> None:
         optimum_config=config["frontier"]["objective_optimum"],
         solver_config=config["solver"],
     )
+    assert optimum.diagnostics["basis_valid"] is True
     assert optimum.diagnostics["near_zero_nonbasic_reduced_costs"] == 0
     assert optimum.diagnostics["reversed_id_exposure_distance"] < 1e-10
 
@@ -365,6 +367,39 @@ def test_objective_optimum_rejects_alternate_optimum() -> None:
     frame, score, objective = _small_menu()
     objective[:] = 0.1
     with pytest.raises(RuntimeError, match="near-zero nonbasic reduced cost"):
+        _solve_objective_optimum(
+            frame,
+            point_score=score,
+            objective_rate=objective,
+            budget=2.0,
+            purpose_cap=0.75,
+            time_limit=30,
+            threads=1,
+            role="primary_oot",
+            period="2016-04",
+            optimum_config=config["frontier"]["objective_optimum"],
+            solver_config=config["solver"],
+        )
+
+
+@pytest.mark.parametrize("fault", ["invalid", "nonfinite"])
+def test_objective_optimum_rejects_invalid_or_nonfinite_basis(
+    monkeypatch: pytest.MonkeyPatch, fault: str
+) -> None:
+    config = load_frontier_config(CONFIG)
+    frame, score, objective = _small_menu()
+    original = normalized_frontier_module.point_basis_diagnostics
+
+    def faulty_basis(*args: object, **kwargs: object) -> dict[str, object]:
+        result = original(*args, **kwargs)
+        if fault == "invalid":
+            result["basis_valid"] = False
+        else:
+            result["objective_reconciliation_error"] = float("nan")
+        return result
+
+    monkeypatch.setattr(normalized_frontier_module, "point_basis_diagnostics", faulty_basis)
+    with pytest.raises(RuntimeError, match="invalid or non-finite basis"):
         _solve_objective_optimum(
             frame,
             point_score=score,

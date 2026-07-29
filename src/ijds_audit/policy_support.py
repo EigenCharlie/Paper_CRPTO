@@ -58,6 +58,10 @@ def point_basis_diagnostics(
     values = np.asarray(raw.col_value, dtype=float)
     reduced = np.asarray(raw.col_dual, dtype=float)
     costs = np.asarray(lp.col_cost_, dtype=float)
+    if not bool(basis.valid) or not all(
+        bool(np.isfinite(item).all()) for item in (values, reduced, costs)
+    ):
+        raise RuntimeError("Point LP basis is invalid or contains a non-finite numerical value.")
     statuses = np.asarray(basis.col_status, dtype=object)
     basic = statuses == highspy.HighsBasisStatus.kBasic
     lower = statuses == highspy.HighsBasisStatus.kLower
@@ -74,8 +78,15 @@ def point_basis_diagnostics(
 
     row_statuses = np.asarray(basis.row_status, dtype=object)
     row_values = np.asarray(raw.row_value, dtype=float)
+    row_duals = np.asarray(raw.row_dual, dtype=float)
     row_lower = np.asarray(lp.row_lower_, dtype=float)
     row_upper = np.asarray(lp.row_upper_, dtype=float)
+    if (
+        not bool(np.isfinite(row_values).all())
+        or not bool(np.isfinite(row_duals).all())
+        or not np.isfinite(solution.objective_value)
+    ):
+        raise RuntimeError("Point LP basis is invalid or contains a non-finite numerical value.")
     basic_rows = row_statuses == highspy.HighsBasisStatus.kBasic
     inequality_rows = np.abs(row_upper - row_lower) > float(primal_tolerance)
     lower_distance = np.where(np.isfinite(row_lower), np.abs(row_values - row_lower), np.inf)
