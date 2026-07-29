@@ -33,7 +33,10 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-          git push origin "677537d2416bfdfc36877fdb60bcb7be371fe4ee:refs/heads/main"
+          remote_main="$(git ls-remote origin refs/heads/main | awk '{print $1}')"
+          test -n "$remote_main"
+          git merge-base --is-ancestor 69095e05beae282701b4ea38aa69da26a209106f "$remote_main"
+          git push --force-with-lease=refs/heads/main:"$remote_main" origin "677537d2416bfdfc36877fdb60bcb7be371fe4ee:refs/heads/main"
           git push origin \
             "917ff6f0d6156433dcf61c81fe1fadb64a3c1a83:refs/tags/protocol/ijds-marginal-mean-score-outcome-gap-2026-07-29-v3h" \
             "135e58b415d7660721c2f10cfe7668443a12faf4:refs/tags/artifacts/ijds-marginal-mean-score-outcome-gap-2026-07-29-v3h" \
