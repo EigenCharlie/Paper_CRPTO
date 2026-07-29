@@ -1,0 +1,338 @@
+{
+  "artifact_tag_required_before_promotion": "artifacts/ijds-marginal-mean-score-outcome-gap-2026-07-29-v3h",
+  "artifacts": {
+    "endpoint_reason_census": {
+      "bytes": 3922,
+      "path": "data/processed/experiments/ijds_audit/ijds-marginal-mean-score-outcome-gap-2026-07-29-v3h/evaluation/endpoint_reason_census.parquet",
+      "sha256": "cd89e18c93e1f486ce5731d5c4f62726939fe23aeb2dcfee13843c6b759a772d"
+    },
+    "marginal_mean_score_outcome_gap": {
+      "bytes": 19786,
+      "path": "data/processed/experiments/ijds_audit/ijds-marginal-mean-score-outcome-gap-2026-07-29-v3h/evaluation/marginal_mean_score_outcome_gap.parquet",
+      "sha256": "2d322613a27b780716d4692590996ecc587efcd603e320471cde38a29b27fd2e"
+    },
+    "monthly_endpoint_reason_census": {
+      "bytes": 5213,
+      "path": "data/processed/experiments/ijds_audit/ijds-marginal-mean-score-outcome-gap-2026-07-29-v3h/evaluation/monthly_endpoint_reason_census.parquet",
+      "sha256": "6fb2814cd212ed90fb01529c07e74cb30410a58592ecf1b25b1a4ed68fd68ca9"
+    }
+  },
+  "candidate_identity": {
+    "all_three_id_hashes_equal_locked_hash": true,
+    "both_rows": 376890,
+    "joined_candidate_id_sha256": "72799b236a7e45d8746099adefba7da5683e8308959643d6ad341d3585e8fa74",
+    "joined_rows": 376890,
+    "one_to_one_outer_join": true,
+    "outcome_candidate_id_sha256": "72799b236a7e45d8746099adefba7da5683e8308959643d6ad341d3585e8fa74",
+    "outcome_only_rows": 0,
+    "outcome_rows": 376890,
+    "period_mismatch_rows": 0,
+    "score_candidate_id_sha256": "72799b236a7e45d8746099adefba7da5683e8308959643d6ad341d3585e8fa74",
+    "score_only_rows": 0,
+    "score_rows": 376890
+  },
+  "endpoint": {
+    "charged_off_availability_lag_months": 6,
+    "cutoff": "2020-09-30",
+    "reason_census": [
+      {
+        "candidate_rows": 56972,
+        "resolved_rows": 56972,
+        "role": "primary_oot",
+        "snapshot_resolution": "charged_off_by_reconstructed_cutoff",
+        "unresolved_rows": 0
+      },
+      {
+        "candidate_rows": 307842,
+        "resolved_rows": 307842,
+        "role": "primary_oot",
+        "snapshot_resolution": "fully_paid_by_reconstructed_cutoff",
+        "unresolved_rows": 0
+      },
+      {
+        "candidate_rows": 11551,
+        "resolved_rows": 0,
+        "role": "primary_oot",
+        "snapshot_resolution": "nonterminal_or_unresolved_status",
+        "unresolved_rows": 11551
+      },
+      {
+        "candidate_rows": 47,
+        "resolved_rows": 0,
+        "role": "primary_oot",
+        "snapshot_resolution": "terminal_after_reconstructed_cutoff",
+        "unresolved_rows": 47
+      },
+      {
+        "candidate_rows": 478,
+        "resolved_rows": 0,
+        "role": "primary_oot",
+        "snapshot_resolution": "terminal_availability_date_missing",
+        "unresolved_rows": 478
+      }
+    ],
+    "resolved_defaults": 56972,
+    "resolved_nondefaults": 307842,
+    "resolved_rows": 364814,
+    "unresolved_rows": 12076
+  },
+  "endpoint_row_sha256": "04c4d182b1223dc1c92df0898d4cd25e0a44fedded46dc1f52af62ba3d9317b6",
+  "estimand": "marginal_mean_score_outcome_gap",
+  "git_artifact_commit_performed": false,
+  "identification": {
+    "completion_class": "all_independent_zero_or_one_assignments_to_unresolved_rows",
+    "exact_identified_set": "finite_grid_with_unresolved_count_plus_one_points",
+    "identified_grid_points": 12077,
+    "identified_grid_step": 2.6532940645811774e-06,
+    "joint_endpoint_attainment": true,
+    "joint_exact_identified_set": "shared_completion_finite_grid_not_cartesian_product",
+    "joint_exact_identified_set_formula": "mean_score_vector - ((resolved_defaults + k) / candidate_rows) * ones_5, k=0,...,unresolved_outcomes",
+    "lower_formula": "mean_score - (resolved_defaults + unresolved_outcomes) / candidate_rows",
+    "reported_interval_is_identified_set_hull": true,
+    "sampling_interval": false,
+    "sharp_binary_completions": true,
+    "upper_formula": "mean_score - resolved_defaults / candidate_rows"
+  },
+  "issue_months": [
+    "2016-04",
+    "2016-05",
+    "2016-06",
+    "2016-07",
+    "2016-08",
+    "2016-09",
+    "2016-10",
+    "2016-11",
+    "2016-12",
+    "2017-01",
+    "2017-02",
+    "2017-03",
+    "2017-04",
+    "2017-05",
+    "2017-06"
+  ],
+  "protected_artifacts_written": [],
+  "protected_stages_run": [],
+  "protocol_commit": "1e608bcc4006766e5c65f4bd56d2ca1cdb704a48",
+  "protocol_tag": "protocol/ijds-marginal-mean-score-outcome-gap-2026-07-29-v3h",
+  "reporting_contract": {
+    "active_before_dvc_verification": false,
+    "binary_completion_bounds_are_sampling_intervals": false,
+    "causal_or_prospective_interpretation": false,
+    "complete_five_learner_census": true,
+    "raw_membership_uses_outcome_status": false,
+    "refit_recalibrate_or_optimize": false,
+    "result_sign_is_stop_condition": false,
+    "row_level_evaluation_outcomes_loaded": true,
+    "row_level_evaluation_outcomes_persisted": false,
+    "select_or_rank_learner": false,
+    "selected_or_funded_set_validity": false,
+    "verified_point_in_time_snapshot_claim": false
+  },
+  "results": {
+    "all_results_reported_without_sign_condition": true,
+    "gap_lower_range": [
+      -0.07423683364578992,
+      -0.05597478511236986
+    ],
+    "gap_upper_range": [
+      -0.04219565452190763,
+      -0.023933605988487566
+    ],
+    "identification_width": 0.0320411791238823,
+    "learner_order": [
+      "catboost_platt",
+      "numeric_logistic_platt",
+      "catboost_monotonic_platt",
+      "woe_scorecard_platform_platt",
+      "woe_scorecard_borrower_platt"
+    ],
+    "learners": 5,
+    "mean_score_range": [
+      0.10896781492541122,
+      0.12722986345883128
+    ],
+    "outcome_mean_identification_interval": [
+      0.15116346944731884,
+      0.18320464857120114
+    ]
+  },
+  "run_tag": "ijds-marginal-mean-score-outcome-gap-2026-07-29-v3h",
+  "schema_version": "2026-07-29.3h",
+  "schemas": {
+    "endpoint_reason_census": {
+      "columns": 5,
+      "dtypes": {
+        "candidate_rows": "int64",
+        "resolved_rows": "int64",
+        "role": "string",
+        "snapshot_resolution": "string",
+        "unresolved_rows": "int64"
+      },
+      "rows": 5
+    },
+    "marginal_mean_score_outcome_gap": {
+      "columns": 27,
+      "dtypes": {
+        "candidate_rows": "int64",
+        "endpoint_row_sha256": "str",
+        "estimand": "str",
+        "identification_width": "float64",
+        "identified_grid_points": "int64",
+        "identified_grid_step": "float64",
+        "joined_candidate_id_sha256": "str",
+        "joint_endpoint_attainment": "bool",
+        "learner": "str",
+        "learner_order": "int64",
+        "lower_endpoint_completion": "str",
+        "marginal_mean_score_outcome_gap_lower": "float64",
+        "marginal_mean_score_outcome_gap_upper": "float64",
+        "mean_score": "float64",
+        "outcome_candidate_id_sha256": "str",
+        "outcome_mean_lower": "float64",
+        "outcome_mean_upper": "float64",
+        "reported_interval_is_identified_set_hull": "bool",
+        "resolved_defaults": "int64",
+        "resolved_nondefaults": "int64",
+        "resolved_rows": "int64",
+        "score_candidate_id_sha256": "str",
+        "score_column": "str",
+        "score_sum": "float64",
+        "sharp_binary_completion": "bool",
+        "unresolved_outcomes": "int64",
+        "upper_endpoint_completion": "str"
+      },
+      "rows": 5
+    },
+    "monthly_endpoint_reason_census": {
+      "columns": 6,
+      "dtypes": {
+        "candidate_rows": "int64",
+        "period": "str",
+        "resolved_rows": "int64",
+        "role": "str",
+        "snapshot_resolution": "str",
+        "unresolved_rows": "int64"
+      },
+      "rows": 75
+    }
+  },
+  "source_audit": {
+    "lineage": {
+      "credit_control_dvc_directories": {
+        "data": {
+          "directory": "data/processed/experiments/ijds_audit/ijds-credit-risk-controls-2026-07-13-v1b",
+          "file_inventory_sha256": "aa2f75c95c5ad7979daf59e60cb037b8b56978ce85dba4d5742b137acfc6d9f0",
+          "hash": "md5",
+          "md5": "410a84cf6cacd7c077b4bc74bedd45ee.dir",
+          "nfiles": 9,
+          "size": 76783301
+        },
+        "model": {
+          "directory": "models/experiments/ijds_audit/ijds-credit-risk-controls-2026-07-13-v1b",
+          "file_inventory_sha256": "481187fc59da182e5025b340e6b86a2f75bd105d8994c56a384e6fc00415400c",
+          "hash": "md5",
+          "md5": "68eb29c042c46be7d1ada5cdb74d004f.dir",
+          "nfiles": 12,
+          "size": 2024800
+        }
+      },
+      "credit_control_dvc_pointers": true,
+      "credit_control_freeze_identity": {
+        "protocol_commit": "1776cbf8b201ae5b92756e5ea397a403d6cc7c9f",
+        "protocol_tag": "protocol/ijds-credit-risk-controls-2026-07-13-v1b",
+        "run_tag": "ijds-credit-risk-controls-2026-07-13-v1b",
+        "status": "credit_control_scores_frozen_before_primary_oot_outcome_join"
+      },
+      "credit_control_tag_and_ancestry": true,
+      "freeze_primary_oot_census": 376890,
+      "freeze_to_scores_descriptor": true,
+      "raw_audit_to_archive_descriptor": true,
+      "raw_audit_to_config_descriptor": true,
+      "raw_dvc_pointer_to_archive": true,
+      "score_and_freeze_inside_verified_dvc_directories": true
+    },
+    "raw_scan": {
+      "candidate_id_sha256": "72799b236a7e45d8746099adefba7da5683e8308959643d6ad341d3585e8fa74",
+      "candidate_rows": 376890,
+      "issue_months": [
+        "2016-04",
+        "2016-05",
+        "2016-06",
+        "2016-07",
+        "2016-08",
+        "2016-09",
+        "2016-10",
+        "2016-11",
+        "2016-12",
+        "2017-01",
+        "2017-02",
+        "2017-03",
+        "2017-04",
+        "2017-05",
+        "2017-06"
+      ],
+      "membership_uses_loan_status": false,
+      "raw_rows_seen": 2925493,
+      "raw_score_id_lookup": {
+        "candidate_id_sha256": "72799b236a7e45d8746099adefba7da5683e8308959643d6ad341d3585e8fa74",
+        "equals_raw_primary_ids": true,
+        "non_36_month_rows": 0,
+        "performed": true,
+        "period_mismatch_rows": 0,
+        "rows": 376890
+      },
+      "selection_columns": [
+        "term",
+        "issue_d"
+      ]
+    }
+  },
+  "source_seal": {
+    "artifacts": {
+      "credit_control_freeze": {
+        "bytes": 25908,
+        "path": "models/experiments/ijds_audit/ijds-credit-risk-controls-2026-07-13-v1b/protocol_freeze.json",
+        "sha256": "da4805e644bcf5decfbb0a67c0c81a5b9dd61f3ab2e17d3dc5264100e7eb4d35"
+      },
+      "raw_archive": {
+        "bytes": 1773470505,
+        "dvc_md5": "65adade308f21d60b7213088a88e684d",
+        "path": "data/raw/Loan_status_2007-2020Q3.csv",
+        "sha256": "5878af2a088f8ab5214c9337289fb8b5eb6c6338fd3f417b6cdc18513dc6f35f"
+      },
+      "raw_audit_config": {
+        "bytes": 1268,
+        "path": "configs/experiments/ijds_raw_data_contract_2026-07-14_v2.yaml",
+        "sha256": "bb6f240caeb87999d7071590f851d5db886ba93baba5072c60e6f550c7d970e2"
+      },
+      "raw_audit_evidence": {
+        "bytes": 3654,
+        "path": "reports/crpto/data_audit/ijds-raw-data-contract-2026-07-14-v2/evidence.json",
+        "sha256": "ac3cda119d919006210435eb0ff2234ffd6281d46edf8d29f04157b5f64ba6a5"
+      },
+      "raw_dvc_pointer": {
+        "bytes": 113,
+        "path": "data/raw/Loan_status_2007-2020Q3.csv.dvc",
+        "sha256": "6ef49f8108d5e5e2303d84fe3b79e1ee53fb7a39e68df8623f054bc74d756f6c"
+      },
+      "score_data_dvc_pointer": {
+        "bytes": 140,
+        "path": "data/processed/experiments/ijds_audit/ijds-credit-risk-controls-2026-07-13-v1b.dvc",
+        "sha256": "d5434d537e477221b1632097dff22d891cb570ae1aa5ba1f49d63e55b6199a4b"
+      },
+      "score_model_dvc_pointer": {
+        "bytes": 140,
+        "path": "models/experiments/ijds_audit/ijds-credit-risk-controls-2026-07-13-v1b.dvc",
+        "sha256": "ed79b1054e5b6b37e212ef6f0cab03e7294d38c1f52e30bad9fbe16f60faa029"
+      },
+      "scores": {
+        "bytes": 30407406,
+        "path": "data/processed/experiments/ijds_audit/ijds-credit-risk-controls-2026-07-13-v1b/prediction/scores.parquet",
+        "sha256": "5795bc0a75be90e86d37cf7d297f4b4fd6e6604b38f8179bc5042c024a53a8dc"
+      }
+    },
+    "composite_sha256": "3607b2f5a18d41542b112836bf057424404667d66ee7bd8b659bedbc287805de",
+    "hash_algorithm": "sha256"
+  },
+  "status": "complete_clean_tagged_v3h_pending_git_artifact_commit"
+}

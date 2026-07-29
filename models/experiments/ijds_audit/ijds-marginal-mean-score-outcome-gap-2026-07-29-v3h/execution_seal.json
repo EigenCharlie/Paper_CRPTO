@@ -1,0 +1,3156 @@
+{
+  "active_evidence_authorized": false,
+  "artifact_tag_required_before_promotion": "artifacts/ijds-marginal-mean-score-outcome-gap-2026-07-29-v3h",
+  "artifacts": {
+    "endpoint_reason_census": {
+      "bytes": 3922,
+      "path": "data/processed/experiments/ijds_audit/ijds-marginal-mean-score-outcome-gap-2026-07-29-v3h/evaluation/endpoint_reason_census.parquet",
+      "sha256": "cd89e18c93e1f486ce5731d5c4f62726939fe23aeb2dcfee13843c6b759a772d"
+    },
+    "marginal_mean_score_outcome_gap": {
+      "bytes": 19786,
+      "path": "data/processed/experiments/ijds_audit/ijds-marginal-mean-score-outcome-gap-2026-07-29-v3h/evaluation/marginal_mean_score_outcome_gap.parquet",
+      "sha256": "2d322613a27b780716d4692590996ecc587efcd603e320471cde38a29b27fd2e"
+    },
+    "monthly_endpoint_reason_census": {
+      "bytes": 5213,
+      "path": "data/processed/experiments/ijds_audit/ijds-marginal-mean-score-outcome-gap-2026-07-29-v3h/evaluation/monthly_endpoint_reason_census.parquet",
+      "sha256": "6fb2814cd212ed90fb01529c07e74cb30410a58592ecf1b25b1a4ed68fd68ca9"
+    }
+  },
+  "execution_receipt": {
+    "bytes": 73294,
+    "path": "models/experiments/ijds_audit/ijds-marginal-mean-score-outcome-gap-2026-07-29-v3h/execution_receipt.json",
+    "sha256": "16b11f59385546dc97e02b725f774be9b4c335bf40ed956b04e4838bd8696b6c"
+  },
+  "expected_data_inventory": [
+    "evaluation/endpoint_reason_census.parquet",
+    "evaluation/marginal_mean_score_outcome_gap.parquet",
+    "evaluation/monthly_endpoint_reason_census.parquet"
+  ],
+  "expected_model_inventory": [
+    "execution_receipt.json",
+    "execution_seal.json",
+    "marginal_mean_score_outcome_gap_summary.json"
+  ],
+  "final_bootstrap_attestation": {
+    "authority": {
+      "assert_statements": 0,
+      "dynamic_imports": 0,
+      "executed_from_sealed_git_bytes": true,
+      "protocol_commit": "1e608bcc4006766e5c65f4bd56d2ca1cdb704a48",
+      "scientific_closure": [
+        "scripts/__init__.py",
+        "scripts/experiments/run_ijds_marginal_mean_score_outcome_gap_v3h.py",
+        "src/__init__.py",
+        "src/data/__init__.py",
+        "src/data/outcome_observability.py",
+        "src/ijds_audit/__init__.py",
+        "src/ijds_audit/config.py",
+        "src/ijds_audit/geometry.py",
+        "src/ijds_audit/marginal_mean_score_outcome_gap_v3h.py",
+        "src/ijds_audit/portfolio.py",
+        "src/ijds_audit/rhs_ranging.py",
+        "src/utils/__init__.py",
+        "src/utils/artifact_descriptor.py"
+      ],
+      "source_files": {
+        ".gitattributes": {
+          "bytes": 599,
+          "path": ".gitattributes",
+          "sha256": "9d9d15bcde3b020caceae4bd750a555bb4ad98f8f10ee6ed68b2ffc9a4d3052a"
+        },
+        ".gitignore": {
+          "bytes": 5051,
+          "path": ".gitignore",
+          "sha256": "d1d0a2a9e588c11377c28371f6ddbcce282d840a3613a24cfe220b354a25deea"
+        },
+        ".python-version": {
+          "bytes": 5,
+          "path": ".python-version",
+          "sha256": "49a506dd32096b010d75205acf3430c9ae6c40351888129499e5a5e487126c93"
+        },
+        "configs/experiments/ijds_marginal_mean_score_outcome_gap_2026-07-29_v3h.yaml": {
+          "bytes": 27626,
+          "path": "configs/experiments/ijds_marginal_mean_score_outcome_gap_2026-07-29_v3h.yaml",
+          "sha256": "0532d18c1ebcaaf5f97456da894dbd0bdfce912ce1a1f00a565319230d80aabe"
+        },
+        "configs/experiments/ijds_marginal_mean_score_outcome_gap_2026-07-29_v3h_runtime.json": {
+          "bytes": 7363,
+          "path": "configs/experiments/ijds_marginal_mean_score_outcome_gap_2026-07-29_v3h_runtime.json",
+          "sha256": "ad172684463edf3ff7ba926c3880e3955134b445e51c2b0b330e9714b7df1961"
+        },
+        "configs/runtime/ijds_marginal_mean_score_outcome_gap_v3h_calibre_global.json": {
+          "bytes": 91,
+          "path": "configs/runtime/ijds_marginal_mean_score_outcome_gap_v3h_calibre_global.json",
+          "sha256": "7e8c7cdace709da838ca523f61bab5f7919d1973fb086938d045231e7195ae98"
+        },
+        "docs/research/ijds_marginal_mean_score_outcome_gap_v3h_protocol_2026-07-29.md": {
+          "bytes": 46934,
+          "path": "docs/research/ijds_marginal_mean_score_outcome_gap_v3h_protocol_2026-07-29.md",
+          "sha256": "114c531dad1792a22a394fd17bc61d6ba663205b3b092f38659d36613853f530"
+        },
+        "pyproject.toml": {
+          "bytes": 9611,
+          "path": "pyproject.toml",
+          "sha256": "ea8a73b429286b8ba350a15ab01d195613ffcac7ada89d0a83478767b2ff9c03"
+        },
+        "scripts/__init__.py": {
+          "bytes": 0,
+          "path": "scripts/__init__.py",
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "scripts/experiments/bootstrap_ijds_marginal_mean_score_outcome_gap_v3h.py": {
+          "bytes": 68425,
+          "path": "scripts/experiments/bootstrap_ijds_marginal_mean_score_outcome_gap_v3h.py",
+          "sha256": "3d4efed83c260486c82ae49deeee6a05d5f6973379d2d8c5c1109d05da265abf"
+        },
+        "scripts/experiments/run_ijds_marginal_mean_score_outcome_gap_v3h.py": {
+          "bytes": 143546,
+          "path": "scripts/experiments/run_ijds_marginal_mean_score_outcome_gap_v3h.py",
+          "sha256": "6a00368cd47433a8fbe8621da01903cec318e135c79193ee72e9ed555832599d"
+        },
+        "src/__init__.py": {
+          "bytes": 41,
+          "path": "src/__init__.py",
+          "sha256": "81e8d28860cb56c4efbb02c2d96a7e064f704fe7e5260db47a60d4ff64188a69"
+        },
+        "src/data/__init__.py": {
+          "bytes": 52,
+          "path": "src/data/__init__.py",
+          "sha256": "013415c30216ba3deba074c3dc05af225dcdbf7ae49f59dd404268eab6eeb0ed"
+        },
+        "src/data/outcome_observability.py": {
+          "bytes": 21985,
+          "path": "src/data/outcome_observability.py",
+          "sha256": "d54d9ccf7d54a27bb31a5f8a47e9351ca7201bed7683e9b069299f1501f80d87"
+        },
+        "src/ijds_audit/__init__.py": {
+          "bytes": 823,
+          "path": "src/ijds_audit/__init__.py",
+          "sha256": "6fd3c9fa8147b568db7038d61a8f85dc978b706a08834113ee6b01c334e1e7e9"
+        },
+        "src/ijds_audit/config.py": {
+          "bytes": 25008,
+          "path": "src/ijds_audit/config.py",
+          "sha256": "a13cadec6a16267cfe80c3bfce986e6d6bbd6461b61d605036d3a917c4308f8e"
+        },
+        "src/ijds_audit/geometry.py": {
+          "bytes": 3936,
+          "path": "src/ijds_audit/geometry.py",
+          "sha256": "30929e9ec4aeb558548b1b921ef90012fa26844fefedfb3fc3cf9093fd81db02"
+        },
+        "src/ijds_audit/marginal_mean_score_outcome_gap_v3h.py": {
+          "bytes": 32689,
+          "path": "src/ijds_audit/marginal_mean_score_outcome_gap_v3h.py",
+          "sha256": "1edcd8548698a6af29700e6eed8c8c25223b13df38a764103e7944ddba9d50d7"
+        },
+        "src/ijds_audit/portfolio.py": {
+          "bytes": 13054,
+          "path": "src/ijds_audit/portfolio.py",
+          "sha256": "65f1032856f498376b37f2623e0b2edd7ed4040fed1652c25becae100808850e"
+        },
+        "src/ijds_audit/rhs_ranging.py": {
+          "bytes": 3203,
+          "path": "src/ijds_audit/rhs_ranging.py",
+          "sha256": "422c33822eee9ba301eb73b04c7447814b5e593d2e407435561fe50e49d89b85"
+        },
+        "src/utils/__init__.py": {
+          "bytes": 58,
+          "path": "src/utils/__init__.py",
+          "sha256": "bba60b51576909e33a4cca2d4b7ab1033ec76772da6d27c1be0bf683a3a91db9"
+        },
+        "src/utils/artifact_descriptor.py": {
+          "bytes": 1705,
+          "path": "src/utils/artifact_descriptor.py",
+          "sha256": "ef8f6df7cf311e2173659518370cfde5ed5de4380b444aaad35dcd794cd620f8"
+        },
+        "tests/test_experiments/test_ijds_marginal_mean_score_outcome_gap_v3h.py": {
+          "bytes": 106583,
+          "path": "tests/test_experiments/test_ijds_marginal_mean_score_outcome_gap_v3h.py",
+          "sha256": "c4bf104ad2b17d76570e09eefff7446577c74388d22506b5a59d749966cc4663"
+        },
+        "tests/test_ijds_audit/test_marginal_mean_score_outcome_gap_v3h.py": {
+          "bytes": 12532,
+          "path": "tests/test_ijds_audit/test_marginal_mean_score_outcome_gap_v3h.py",
+          "sha256": "aaa7972ca839dad25227d9e0ce349e062a9b5bf85c848404f49d8cfd49c5ea93"
+        },
+        "uv.lock": {
+          "bytes": 428110,
+          "path": "uv.lock",
+          "sha256": "6c862cbad9ab7e3a07dd2823c775127403093d6ad59a789ee227d827165e4733"
+        }
+      }
+    },
+    "calibre_cache": {
+      "directory": ".runtime_calibre/ijds-marginal-mean-score-outcome-gap-2026-07-29-v3h-calibre-cache",
+      "empty": true
+    },
+    "calibre_config": {
+      "caches_empty": true,
+      "directory": ".runtime_calibre/ijds-marginal-mean-score-outcome-gap-2026-07-29-v3h-config",
+      "global": {
+        "bytes": 91,
+        "path": ".runtime_calibre/ijds-marginal-mean-score-outcome-gap-2026-07-29-v3h-config/global.py.json",
+        "sha256": "7e8c7cdace709da838ca523f61bab5f7919d1973fb086938d045231e7195ae98"
+      },
+      "inventory": [
+        "caches/",
+        "global.py.json",
+        "plugins/"
+      ],
+      "plugins_empty": true
+    },
+    "calibre_native_directory": {
+      "bytes": 379912649,
+      "composite_sha256": "1cfe38b2da5bf2edfc3781dba7dca5a6b51e0346c6a01f4fe43277932ff16ad5",
+      "files": 276,
+      "path": "C:/Program Files/Calibre2/app/bin"
+    },
+    "distributions": {
+      "PyYAML": {
+        "bytes": 483051,
+        "composite_sha256": "ac6d22e82c74dec65e91f7860c7eb7fcc807b496b11fdf28779c938a2c479960",
+        "files": 26,
+        "version": "6.0.3"
+      },
+      "numpy": {
+        "bytes": 41903829,
+        "composite_sha256": "7f96fc979c7996257b9ef96cf08595893a0a00ccfa18406d11fbcc70bbe80419",
+        "files": 1065,
+        "version": "2.4.6"
+      },
+      "pandas": {
+        "bytes": 35350076,
+        "composite_sha256": "15a38600cef4c2a331f97f9f3664a21b74d5ffd55ee159125b16f17eb0ba5e3c",
+        "files": 1570,
+        "version": "3.0.3"
+      },
+      "pyarrow": {
+        "bytes": 85942377,
+        "composite_sha256": "5ec5776907eda4d2993916013ce285cf2ec8340f1637ab852b8e86c18008b179",
+        "files": 762,
+        "version": "25.0.0"
+      },
+      "python-dateutil": {
+        "bytes": 441783,
+        "composite_sha256": "d3e2f376018b3c037cc43f44584f8606efb359986b5630f142a50582aa8f35db",
+        "files": 27,
+        "version": "2.9.0.post0"
+      },
+      "six": {
+        "bytes": 38145,
+        "composite_sha256": "006ad0b1f8fb38a61e639d007e8fe35ee1215eda0ca2e504495e7742b697dd5b",
+        "files": 8,
+        "version": "1.17.0"
+      },
+      "tzdata": {
+        "bytes": 582216,
+        "composite_sha256": "76612c63d433dc57053e0d01840472809ccfcd4be2ae2ced8fa36c0cf3663be6",
+        "files": 635,
+        "version": "2026.3"
+      }
+    },
+    "environment": {
+      "forbidden_names_absent": [
+        "LANG",
+        "LANGUAGE",
+        "TZ"
+      ],
+      "forbidden_prefixes_absent": [
+        "ARROW_",
+        "DVC_",
+        "LC_",
+        "MKL_",
+        "NUMEXPR_",
+        "NUMPY_",
+        "OMP_",
+        "OPENBLAS_",
+        "PANDAS_",
+        "PYARROW_"
+      ],
+      "forbidden_variables_absent": [
+        "CONDA_PREFIX",
+        "CRPTO_V3H_DVC_SITE_PACKAGES",
+        "CRPTO_V3H_SOURCE_VENV",
+        "GIT_ALTERNATE_OBJECT_DIRECTORIES",
+        "GIT_CEILING_DIRECTORIES",
+        "GIT_CONFIG",
+        "GIT_CONFIG_COUNT",
+        "GIT_DIR",
+        "GIT_DISCOVERY_ACROSS_FILESYSTEM",
+        "GIT_INDEX_FILE",
+        "GIT_OBJECT_DIRECTORY",
+        "GIT_REPLACE_REF_BASE",
+        "GIT_WORK_TREE",
+        "PYTHONHOME",
+        "PYTHONINSPECT",
+        "PYTHONPATH",
+        "PYTHONSTARTUP",
+        "VIRTUAL_ENV"
+      ]
+    },
+    "flags": {
+      "debug": 0,
+      "dont_write_bytecode": 1,
+      "ignore_environment": 1,
+      "isolated": 1,
+      "no_user_site": 1,
+      "optimize": 2,
+      "safe_path": true,
+      "utf8_mode": 1
+    },
+    "git_root": {
+      "environment_sanitized": true,
+      "executable": {
+        "bytes": 4321168,
+        "path": "C:/Program Files/Git/mingw64/bin/git.exe",
+        "sha256": "fc0f1cae1304fcdcf4d0749f421c5ed21471efc856301f92f56d4b844be84363"
+      },
+      "git_dir": ".git",
+      "object_format": "sha1",
+      "replace_refs": [],
+      "top_level": ".",
+      "version": "git version 2.52.0.windows.1"
+    },
+    "head": {
+      "clean": true,
+      "commit": "1e608bcc4006766e5c65f4bd56d2ca1cdb704a48",
+      "porcelain_v2_bytes": 0,
+      "porcelain_v2_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "head_tag": "protocol/ijds-marginal-mean-score-outcome-gap-2026-07-29-v3h",
+    "initial_module_origins": {
+      "all_loaded_repo_and_site_modules_sealed": true,
+      "calibre_entrypoint_carrier": {
+        "aliases": [
+          "calibre.debug"
+        ],
+        "bootstrap_path": "scripts/experiments/bootstrap_ijds_marginal_mean_score_outcome_gap_v3h.py",
+        "bootstrap_sha256": "3d4efed83c260486c82ae49deeee6a05d5f6973379d2d8c5c1109d05da265abf",
+        "cached": null,
+        "carrier_is_executing_globals": true,
+        "loader_class": "FrozenByteCodeLoader",
+        "loader_module": "bypy_importer",
+        "module_key": "calibre.debug",
+        "module_name": "__main__",
+        "package": "calibre",
+        "spec_has_location": false,
+        "spec_loader_is_module_loader": true,
+        "spec_name": "calibre.debug",
+        "spec_origin": "C:/Program Files/Calibre2/app/bin/python-lib.bypy.frozen/calibre/debug.pyc",
+        "spec_submodule_search_locations": null
+      },
+      "loaded_local_modules": [
+        "calibre.debug"
+      ],
+      "loaded_site_modules": []
+    },
+    "initial_native_modules": {
+      "_bz2": {
+        "bytes": 72704,
+        "path": "C:/Program Files/Calibre2/app/bin/_bz2.pyd",
+        "sha256": "237ef011a685a205b0595a4a03ffa385e6e3b85cbecc2aa368a3a0ab07190162"
+      },
+      "_ctypes": {
+        "bytes": 111616,
+        "path": "C:/Program Files/Calibre2/app/bin/_ctypes.pyd",
+        "sha256": "e458e00b42b3f2feb3f523f223235021393afd502e78429322e8998506f48728"
+      },
+      "_hashlib": {
+        "bytes": 53248,
+        "path": "C:/Program Files/Calibre2/app/bin/_hashlib.pyd",
+        "sha256": "78a39ecfdcd85a54a43c6b81a1f331e0677a46acdb4cf83e79a50f2b808a718d"
+      },
+      "_lzma": {
+        "bytes": 146944,
+        "path": "C:/Program Files/Calibre2/app/bin/_lzma.pyd",
+        "sha256": "49c282894d0b3ed960e3080bd0a5fe975a2680dcc5383bd533fd29e8a08c6e2b"
+      },
+      "_queue": {
+        "bytes": 20480,
+        "path": "C:/Program Files/Calibre2/app/bin/_queue.pyd",
+        "sha256": "e5cc1c7a44073cf9a82e565bd983c5b1f35f23ab4e257e59588952fbd80f2b05"
+      },
+      "_socket": {
+        "bytes": 67584,
+        "path": "C:/Program Files/Calibre2/app/bin/_socket.pyd",
+        "sha256": "21af3ee504ea307a78ba5c680eec44294a1ac23a29818e9222b6ca18116a3881"
+      },
+      "_ssl": {
+        "bytes": 164864,
+        "path": "C:/Program Files/Calibre2/app/bin/_ssl.pyd",
+        "sha256": "985ae13c73b2f93070b46b32ab92984fddf6b490964d1c5a5d43a47153e918fe"
+      },
+      "_uuid": {
+        "bytes": 13312,
+        "path": "C:/Program Files/Calibre2/app/bin/_uuid.pyd",
+        "sha256": "5a0440e8c177f5161c04f3df384cc3a9ab8bbf5a07c98e569d225cc5430ae7b4"
+      },
+      "lxml._elementpath": {
+        "bytes": 130048,
+        "path": "C:/Program Files/Calibre2/app/bin/lxml._elementpath.pyd",
+        "sha256": "25ba4f9719189906fe8c8687dcd1bda78a1fd2e622750a0524d30ac0f0944315"
+      },
+      "lxml.etree": {
+        "bytes": 1470976,
+        "path": "C:/Program Files/Calibre2/app/bin/lxml.etree.pyd",
+        "sha256": "e87994e7b1e1cb8bdb5cfcf4b061dd01b0984f6f5768b7dc36809af13f18b8d2"
+      },
+      "msgpack._cmsgpack": {
+        "bytes": 135168,
+        "path": "C:/Program Files/Calibre2/app/bin/msgpack._cmsgpack.pyd",
+        "sha256": "eeac688a6adff449d18f84923e82f665ed96317afbb12cfa3d4a5d6c916b22a4"
+      },
+      "regex._regex": {
+        "bytes": 670720,
+        "path": "C:/Program Files/Calibre2/app/bin/regex._regex.pyd",
+        "sha256": "cdc32fb55463a84d20e3b7fc9b9dc7b2d84dbde72e3d4ce21e2e7248122ba55e"
+      },
+      "select": {
+        "bytes": 18432,
+        "path": "C:/Program Files/Calibre2/app/bin/select.pyd",
+        "sha256": "ac70d4afc85c496c33e167c2c5754dd7f9aec846a313080198685e52ea0c9444"
+      },
+      "unicodedata": {
+        "bytes": 1128960,
+        "path": "C:/Program Files/Calibre2/app/bin/unicodedata.pyd",
+        "sha256": "51edd1a6855bf09fb68da3e74701b3fdccaf998d555a5531f94efb39000e1409"
+      }
+    },
+    "initial_scientific_modules": [],
+    "locale": {
+      "lc_numeric": "C",
+      "lc_time": "C",
+      "timezone_names": [
+        "Hora est. Pacífico, Sudamérica",
+        "Hora verano Pacífico Sudamérica"
+      ]
+    },
+    "orig_argv": [
+      "C:\\Program Files\\Calibre2\\calibre-debug.exe",
+      "-e",
+      "scripts/experiments/bootstrap_ijds_marginal_mean_score_outcome_gap_v3h.py",
+      "--",
+      "--phase",
+      "compute",
+      "--config",
+      "configs/experiments/ijds_marginal_mean_score_outcome_gap_2026-07-29_v3h.yaml"
+    ],
+    "path_activation": {
+      "meta_path_standard_precedence": [
+        "BuiltinImporter",
+        "FrozenImporter",
+        "PathFinder"
+      ],
+      "preimport_sys_path": [
+        "scripts/experiments"
+      ],
+      "pycache_directory": ".runtime_calibre/ijds-marginal-mean-score-outcome-gap-2026-07-29-v3h-pycache",
+      "pycache_empty": true,
+      "scientific_sys_path": [
+        ".",
+        ".venv/Lib/site-packages"
+      ]
+    },
+    "phase": "compute",
+    "protocol_commit": "1e608bcc4006766e5c65f4bd56d2ca1cdb704a48",
+    "runtime_files": {
+      "files": {
+        "C:/Program Files/Calibre2/app/bin/_hashlib.pyd": {
+          "bytes": 53248,
+          "path": "C:/Program Files/Calibre2/app/bin/_hashlib.pyd",
+          "sha256": "78a39ecfdcd85a54a43c6b81a1f331e0677a46acdb4cf83e79a50f2b808a718d"
+        },
+        "C:/Program Files/Calibre2/app/bin/calibre-launcher.dll": {
+          "bytes": 429168,
+          "path": "C:/Program Files/Calibre2/app/bin/calibre-launcher.dll",
+          "sha256": "a6037891c67e6d26be656ab7d8ef5dd03a45cbbce1e82bcce12c5f93b825ad73"
+        },
+        "C:/Program Files/Calibre2/app/bin/libcrypto-3-x64.dll": {
+          "bytes": 6169712,
+          "path": "C:/Program Files/Calibre2/app/bin/libcrypto-3-x64.dll",
+          "sha256": "823d99212253c389ca6c34a35f373b3e6c3c048fac38f2ee5155fc005054224b"
+        },
+        "C:/Program Files/Calibre2/app/bin/python-lib.bypy.frozen": {
+          "bytes": 65192617,
+          "path": "C:/Program Files/Calibre2/app/bin/python-lib.bypy.frozen",
+          "sha256": "fe1e602f84baeb10702f85f847019ea424fa10e7f9a38c7b3159e987c76b6d84"
+        },
+        "C:/Program Files/Calibre2/app/bin/python3.dll": {
+          "bytes": 63600,
+          "path": "C:/Program Files/Calibre2/app/bin/python3.dll",
+          "sha256": "ee505b8f9757e92c8e0428105f548e4b030074e3337af8edf0ee08c48dd13568"
+        },
+        "C:/Program Files/Calibre2/app/bin/python311.dll": {
+          "bytes": 5780080,
+          "path": "C:/Program Files/Calibre2/app/bin/python311.dll",
+          "sha256": "38373701aa805509e79e35a1ce61435b40e04fdc0572dfe459bc512bfdf74d23"
+        },
+        "C:/Program Files/Calibre2/calibre-debug.exe": {
+          "bytes": 32368,
+          "path": "C:/Program Files/Calibre2/calibre-debug.exe",
+          "sha256": "f06cbc79c233457bf8bf1c3603981f685a727e7f68c1381c5e56c9cdb592d36b"
+        },
+        "C:/Program Files/Git/mingw64/bin/git.exe": {
+          "bytes": 4321168,
+          "path": "C:/Program Files/Git/mingw64/bin/git.exe",
+          "sha256": "fc0f1cae1304fcdcf4d0749f421c5ed21471efc856301f92f56d4b844be84363"
+        },
+        "C:/Program Files/Git/mingw64/bin/libiconv-2.dll": {
+          "bytes": 1136529,
+          "path": "C:/Program Files/Git/mingw64/bin/libiconv-2.dll",
+          "sha256": "ff31fa811f9c07cc7fdaa68c9e8bca3a7b4fdf6e0a079a58175ea58ba139c7ae"
+        },
+        "C:/Program Files/Git/mingw64/bin/libintl-8.dll": {
+          "bytes": 298055,
+          "path": "C:/Program Files/Git/mingw64/bin/libintl-8.dll",
+          "sha256": "7744fde3df3320fda0e3b599b4aa5349b1281f93d1e5c52865a52d0d3e4a7d39"
+        },
+        "C:/Program Files/Git/mingw64/bin/libpcre2-8-0.dll": {
+          "bytes": 717955,
+          "path": "C:/Program Files/Git/mingw64/bin/libpcre2-8-0.dll",
+          "sha256": "c135a87ed0f11eae8ffc4cb469671ff0b3f5d71fab5fb024e9b1e7241ca25b52"
+        },
+        "C:/Program Files/Git/mingw64/bin/libzstd.dll": {
+          "bytes": 1196744,
+          "path": "C:/Program Files/Git/mingw64/bin/libzstd.dll",
+          "sha256": "b13d4f30b93c96823473d742dda0075f7334cba03a40c33d8a7dc282e37b1500"
+        },
+        "C:/Program Files/Git/mingw64/bin/zlib1.dll": {
+          "bytes": 120814,
+          "path": "C:/Program Files/Git/mingw64/bin/zlib1.dll",
+          "sha256": "cb7ab3788d10940df874acd97b1821bbb5ee4a91f3eec11982bb5bf7a3c96443"
+        }
+      },
+      "git_version": "git version 2.52.0.windows.1"
+    },
+    "runtime_manifest": {
+      "bytes": 7363,
+      "path": "configs/experiments/ijds_marginal_mean_score_outcome_gap_2026-07-29_v3h_runtime.json",
+      "sha256": "ad172684463edf3ff7ba926c3880e3955134b445e51c2b0b330e9714b7df1961"
+    },
+    "schema_version": "2026-07-29.3h-bootstrap-1",
+    "sealed_importer": {
+      "finder_composite_sha256": "1d274219db29d0627da5f7ce3ff7b3e1384b22c92fac465d08ea6f3559952cd9",
+      "loaded_sealed_modules": {}
+    },
+    "terminal_module_origins": {
+      "all_loaded_repo_and_site_modules_sealed": true,
+      "calibre_entrypoint_carrier": {
+        "aliases": [
+          "calibre.debug"
+        ],
+        "bootstrap_path": "scripts/experiments/bootstrap_ijds_marginal_mean_score_outcome_gap_v3h.py",
+        "bootstrap_sha256": "3d4efed83c260486c82ae49deeee6a05d5f6973379d2d8c5c1109d05da265abf",
+        "cached": null,
+        "carrier_is_executing_globals": true,
+        "loader_class": "FrozenByteCodeLoader",
+        "loader_module": "bypy_importer",
+        "module_key": "calibre.debug",
+        "module_name": "__main__",
+        "package": "calibre",
+        "spec_has_location": false,
+        "spec_loader_is_module_loader": true,
+        "spec_name": "calibre.debug",
+        "spec_origin": "C:/Program Files/Calibre2/app/bin/python-lib.bypy.frozen/calibre/debug.pyc",
+        "spec_submodule_search_locations": null
+      },
+      "loaded_local_modules": [
+        "calibre.debug",
+        "scripts",
+        "scripts.experiments.bootstrap_ijds_marginal_mean_score_outcome_gap_v3h",
+        "src",
+        "src.data",
+        "src.data.outcome_observability",
+        "src.ijds_audit",
+        "src.ijds_audit.marginal_mean_score_outcome_gap_v3h",
+        "src.utils",
+        "src.utils.artifact_descriptor"
+      ],
+      "loaded_site_modules": [
+        "_cyutility",
+        "dateutil",
+        "dateutil._common",
+        "dateutil._version",
+        "dateutil.easter",
+        "dateutil.parser",
+        "dateutil.parser._parser",
+        "dateutil.parser.isoparser",
+        "dateutil.relativedelta",
+        "dateutil.tz",
+        "dateutil.tz._common",
+        "dateutil.tz._factories",
+        "dateutil.tz.tz",
+        "dateutil.tz.win",
+        "numpy",
+        "numpy.__config__",
+        "numpy._array_api_info",
+        "numpy._core",
+        "numpy._core._add_newdocs",
+        "numpy._core._add_newdocs_scalars",
+        "numpy._core._asarray",
+        "numpy._core._dtype",
+        "numpy._core._dtype_ctypes",
+        "numpy._core._exceptions",
+        "numpy._core._internal",
+        "numpy._core._methods",
+        "numpy._core._multiarray_umath",
+        "numpy._core._string_helpers",
+        "numpy._core._type_aliases",
+        "numpy._core._ufunc_config",
+        "numpy._core.arrayprint",
+        "numpy._core.einsumfunc",
+        "numpy._core.fromnumeric",
+        "numpy._core.function_base",
+        "numpy._core.getlimits",
+        "numpy._core.memmap",
+        "numpy._core.multiarray",
+        "numpy._core.numeric",
+        "numpy._core.numerictypes",
+        "numpy._core.overrides",
+        "numpy._core.printoptions",
+        "numpy._core.records",
+        "numpy._core.shape_base",
+        "numpy._core.umath",
+        "numpy._distributor_init",
+        "numpy._expired_attrs_2_0",
+        "numpy._globals",
+        "numpy._pytesttester",
+        "numpy._typing",
+        "numpy._typing._array_like",
+        "numpy._typing._char_codes",
+        "numpy._typing._dtype_like",
+        "numpy._typing._nbit",
+        "numpy._typing._nbit_base",
+        "numpy._typing._nested_sequence",
+        "numpy._typing._scalars",
+        "numpy._typing._shape",
+        "numpy._typing._ufunc",
+        "numpy._utils",
+        "numpy._utils._convertions",
+        "numpy._utils._inspect",
+        "numpy.dtypes",
+        "numpy.exceptions",
+        "numpy.lib",
+        "numpy.lib._array_utils_impl",
+        "numpy.lib._arraypad_impl",
+        "numpy.lib._arraysetops_impl",
+        "numpy.lib._arrayterator_impl",
+        "numpy.lib._datasource",
+        "numpy.lib._format_impl",
+        "numpy.lib._function_base_impl",
+        "numpy.lib._histograms_impl",
+        "numpy.lib._index_tricks_impl",
+        "numpy.lib._iotools",
+        "numpy.lib._nanfunctions_impl",
+        "numpy.lib._npyio_impl",
+        "numpy.lib._polynomial_impl",
+        "numpy.lib._scimath_impl",
+        "numpy.lib._shape_base_impl",
+        "numpy.lib._stride_tricks_impl",
+        "numpy.lib._twodim_base_impl",
+        "numpy.lib._type_check_impl",
+        "numpy.lib._ufunclike_impl",
+        "numpy.lib._utils_impl",
+        "numpy.lib._version",
+        "numpy.lib.array_utils",
+        "numpy.lib.format",
+        "numpy.lib.introspect",
+        "numpy.lib.mixins",
+        "numpy.lib.npyio",
+        "numpy.lib.scimath",
+        "numpy.lib.stride_tricks",
+        "numpy.linalg",
+        "numpy.linalg._linalg",
+        "numpy.linalg._umath_linalg",
+        "numpy.ma",
+        "numpy.ma.core",
+        "numpy.ma.extras",
+        "numpy.matrixlib",
+        "numpy.matrixlib.defmatrix",
+        "numpy.random",
+        "numpy.random._bounded_integers",
+        "numpy.random._common",
+        "numpy.random._generator",
+        "numpy.random._mt19937",
+        "numpy.random._pcg64",
+        "numpy.random._philox",
+        "numpy.random._pickle",
+        "numpy.random._sfc64",
+        "numpy.random.bit_generator",
+        "numpy.random.mtrand",
+        "numpy.rec",
+        "numpy.typing",
+        "numpy.version",
+        "pandas",
+        "pandas._config",
+        "pandas._config.config",
+        "pandas._config.dates",
+        "pandas._config.display",
+        "pandas._config.localization",
+        "pandas._libs",
+        "pandas._libs._cyutility",
+        "pandas._libs.algos",
+        "pandas._libs.arrays",
+        "pandas._libs.groupby",
+        "pandas._libs.hashing",
+        "pandas._libs.hashtable",
+        "pandas._libs.index",
+        "pandas._libs.indexing",
+        "pandas._libs.internals",
+        "pandas._libs.interval",
+        "pandas._libs.join",
+        "pandas._libs.json",
+        "pandas._libs.lib",
+        "pandas._libs.missing",
+        "pandas._libs.ops",
+        "pandas._libs.ops_dispatch",
+        "pandas._libs.pandas_datetime",
+        "pandas._libs.pandas_parser",
+        "pandas._libs.parsers",
+        "pandas._libs.properties",
+        "pandas._libs.reshape",
+        "pandas._libs.sparse",
+        "pandas._libs.testing",
+        "pandas._libs.tslib",
+        "pandas._libs.tslibs",
+        "pandas._libs.tslibs.base",
+        "pandas._libs.tslibs.ccalendar",
+        "pandas._libs.tslibs.conversion",
+        "pandas._libs.tslibs.dtypes",
+        "pandas._libs.tslibs.fields",
+        "pandas._libs.tslibs.nattype",
+        "pandas._libs.tslibs.np_datetime",
+        "pandas._libs.tslibs.offsets",
+        "pandas._libs.tslibs.parsing",
+        "pandas._libs.tslibs.period",
+        "pandas._libs.tslibs.strptime",
+        "pandas._libs.tslibs.timedeltas",
+        "pandas._libs.tslibs.timestamps",
+        "pandas._libs.tslibs.timezones",
+        "pandas._libs.tslibs.tzconversion",
+        "pandas._libs.tslibs.vectorized",
+        "pandas._libs.window",
+        "pandas._libs.window.aggregations",
+        "pandas._libs.window.indexers",
+        "pandas._libs.writers",
+        "pandas._testing",
+        "pandas._testing._io",
+        "pandas._testing._warnings",
+        "pandas._testing.asserters",
+        "pandas._testing.compat",
+        "pandas._testing.contexts",
+        "pandas._typing",
+        "pandas._version_meson",
+        "pandas.api",
+        "pandas.api.executors",
+        "pandas.api.extensions",
+        "pandas.api.indexers",
+        "pandas.api.interchange",
+        "pandas.api.internals",
+        "pandas.api.types",
+        "pandas.api.typing",
+        "pandas.arrays",
+        "pandas.compat",
+        "pandas.compat._constants",
+        "pandas.compat._optional",
+        "pandas.compat.numpy",
+        "pandas.compat.numpy.function",
+        "pandas.compat.pickle_compat",
+        "pandas.compat.pyarrow",
+        "pandas.core",
+        "pandas.core._numba",
+        "pandas.core._numba.executor",
+        "pandas.core.accessor",
+        "pandas.core.algorithms",
+        "pandas.core.api",
+        "pandas.core.apply",
+        "pandas.core.array_algos",
+        "pandas.core.array_algos.datetimelike_accumulations",
+        "pandas.core.array_algos.masked_accumulations",
+        "pandas.core.array_algos.masked_reductions",
+        "pandas.core.array_algos.putmask",
+        "pandas.core.array_algos.quantile",
+        "pandas.core.array_algos.replace",
+        "pandas.core.array_algos.take",
+        "pandas.core.array_algos.transforms",
+        "pandas.core.arraylike",
+        "pandas.core.arrays",
+        "pandas.core.arrays._arrow_string_mixins",
+        "pandas.core.arrays._mixins",
+        "pandas.core.arrays._ranges",
+        "pandas.core.arrays._utils",
+        "pandas.core.arrays.arrow",
+        "pandas.core.arrays.arrow.accessors",
+        "pandas.core.arrays.arrow.array",
+        "pandas.core.arrays.arrow.extension_types",
+        "pandas.core.arrays.base",
+        "pandas.core.arrays.boolean",
+        "pandas.core.arrays.categorical",
+        "pandas.core.arrays.datetimelike",
+        "pandas.core.arrays.datetimes",
+        "pandas.core.arrays.floating",
+        "pandas.core.arrays.integer",
+        "pandas.core.arrays.interval",
+        "pandas.core.arrays.masked",
+        "pandas.core.arrays.numeric",
+        "pandas.core.arrays.numpy_",
+        "pandas.core.arrays.period",
+        "pandas.core.arrays.sparse",
+        "pandas.core.arrays.sparse.accessor",
+        "pandas.core.arrays.sparse.array",
+        "pandas.core.arrays.string_",
+        "pandas.core.arrays.string_arrow",
+        "pandas.core.arrays.timedeltas",
+        "pandas.core.base",
+        "pandas.core.col",
+        "pandas.core.common",
+        "pandas.core.computation",
+        "pandas.core.computation.align",
+        "pandas.core.computation.api",
+        "pandas.core.computation.check",
+        "pandas.core.computation.common",
+        "pandas.core.computation.engines",
+        "pandas.core.computation.eval",
+        "pandas.core.computation.expr",
+        "pandas.core.computation.expressions",
+        "pandas.core.computation.ops",
+        "pandas.core.computation.parsing",
+        "pandas.core.computation.pytables",
+        "pandas.core.computation.scope",
+        "pandas.core.config_init",
+        "pandas.core.construction",
+        "pandas.core.dtypes",
+        "pandas.core.dtypes.api",
+        "pandas.core.dtypes.astype",
+        "pandas.core.dtypes.base",
+        "pandas.core.dtypes.cast",
+        "pandas.core.dtypes.common",
+        "pandas.core.dtypes.concat",
+        "pandas.core.dtypes.dtypes",
+        "pandas.core.dtypes.generic",
+        "pandas.core.dtypes.inference",
+        "pandas.core.dtypes.missing",
+        "pandas.core.flags",
+        "pandas.core.frame",
+        "pandas.core.generic",
+        "pandas.core.groupby",
+        "pandas.core.groupby.base",
+        "pandas.core.groupby.categorical",
+        "pandas.core.groupby.generic",
+        "pandas.core.groupby.groupby",
+        "pandas.core.groupby.grouper",
+        "pandas.core.groupby.indexing",
+        "pandas.core.groupby.numba_",
+        "pandas.core.groupby.ops",
+        "pandas.core.indexers",
+        "pandas.core.indexers.objects",
+        "pandas.core.indexers.utils",
+        "pandas.core.indexes",
+        "pandas.core.indexes.accessors",
+        "pandas.core.indexes.api",
+        "pandas.core.indexes.base",
+        "pandas.core.indexes.category",
+        "pandas.core.indexes.datetimelike",
+        "pandas.core.indexes.datetimes",
+        "pandas.core.indexes.extension",
+        "pandas.core.indexes.frozen",
+        "pandas.core.indexes.interval",
+        "pandas.core.indexes.multi",
+        "pandas.core.indexes.period",
+        "pandas.core.indexes.range",
+        "pandas.core.indexes.timedeltas",
+        "pandas.core.indexing",
+        "pandas.core.interchange",
+        "pandas.core.interchange.dataframe_protocol",
+        "pandas.core.interchange.from_dataframe",
+        "pandas.core.interchange.utils",
+        "pandas.core.internals",
+        "pandas.core.internals.api",
+        "pandas.core.internals.blocks",
+        "pandas.core.internals.concat",
+        "pandas.core.internals.construction",
+        "pandas.core.internals.managers",
+        "pandas.core.internals.ops",
+        "pandas.core.methods",
+        "pandas.core.methods.describe",
+        "pandas.core.methods.selectn",
+        "pandas.core.methods.to_dict",
+        "pandas.core.missing",
+        "pandas.core.nanops",
+        "pandas.core.ops",
+        "pandas.core.ops.array_ops",
+        "pandas.core.ops.common",
+        "pandas.core.ops.dispatch",
+        "pandas.core.ops.docstrings",
+        "pandas.core.ops.invalid",
+        "pandas.core.ops.mask_ops",
+        "pandas.core.ops.missing",
+        "pandas.core.resample",
+        "pandas.core.reshape",
+        "pandas.core.reshape.api",
+        "pandas.core.reshape.concat",
+        "pandas.core.reshape.encoding",
+        "pandas.core.reshape.melt",
+        "pandas.core.reshape.merge",
+        "pandas.core.reshape.pivot",
+        "pandas.core.reshape.tile",
+        "pandas.core.roperator",
+        "pandas.core.sample",
+        "pandas.core.series",
+        "pandas.core.shared_docs",
+        "pandas.core.sorting",
+        "pandas.core.strings",
+        "pandas.core.strings.accessor",
+        "pandas.core.strings.object_array",
+        "pandas.core.tools",
+        "pandas.core.tools.datetimes",
+        "pandas.core.tools.numeric",
+        "pandas.core.tools.timedeltas",
+        "pandas.core.tools.times",
+        "pandas.core.util",
+        "pandas.core.util.hashing",
+        "pandas.core.util.numba_",
+        "pandas.core.window",
+        "pandas.core.window.common",
+        "pandas.core.window.ewm",
+        "pandas.core.window.expanding",
+        "pandas.core.window.numba_",
+        "pandas.core.window.online",
+        "pandas.core.window.rolling",
+        "pandas.errors",
+        "pandas.errors.cow",
+        "pandas.io",
+        "pandas.io._util",
+        "pandas.io.api",
+        "pandas.io.clipboards",
+        "pandas.io.common",
+        "pandas.io.excel",
+        "pandas.io.excel._base",
+        "pandas.io.excel._calamine",
+        "pandas.io.excel._odfreader",
+        "pandas.io.excel._odswriter",
+        "pandas.io.excel._openpyxl",
+        "pandas.io.excel._pyxlsb",
+        "pandas.io.excel._util",
+        "pandas.io.excel._xlrd",
+        "pandas.io.excel._xlsxwriter",
+        "pandas.io.feather_format",
+        "pandas.io.formats",
+        "pandas.io.formats.console",
+        "pandas.io.formats.format",
+        "pandas.io.formats.info",
+        "pandas.io.formats.printing",
+        "pandas.io.html",
+        "pandas.io.iceberg",
+        "pandas.io.json",
+        "pandas.io.json._json",
+        "pandas.io.json._normalize",
+        "pandas.io.json._table_schema",
+        "pandas.io.orc",
+        "pandas.io.parquet",
+        "pandas.io.parsers",
+        "pandas.io.parsers.arrow_parser_wrapper",
+        "pandas.io.parsers.base_parser",
+        "pandas.io.parsers.c_parser_wrapper",
+        "pandas.io.parsers.python_parser",
+        "pandas.io.parsers.readers",
+        "pandas.io.pickle",
+        "pandas.io.pytables",
+        "pandas.io.sas",
+        "pandas.io.sas.sasreader",
+        "pandas.io.spss",
+        "pandas.io.sql",
+        "pandas.io.stata",
+        "pandas.io.xml",
+        "pandas.plotting",
+        "pandas.plotting._core",
+        "pandas.plotting._misc",
+        "pandas.testing",
+        "pandas.tseries",
+        "pandas.tseries.api",
+        "pandas.tseries.frequencies",
+        "pandas.tseries.offsets",
+        "pandas.util",
+        "pandas.util._decorators",
+        "pandas.util._exceptions",
+        "pandas.util._print_versions",
+        "pandas.util._tester",
+        "pandas.util._validators",
+        "pandas.util.version",
+        "pyarrow",
+        "pyarrow._acero",
+        "pyarrow._azurefs",
+        "pyarrow._compute",
+        "pyarrow._compute_docstrings",
+        "pyarrow._csv",
+        "pyarrow._dataset",
+        "pyarrow._dataset_orc",
+        "pyarrow._dataset_parquet",
+        "pyarrow._dataset_parquet_encryption",
+        "pyarrow._fs",
+        "pyarrow._gcsfs",
+        "pyarrow._generated_version",
+        "pyarrow._hdfs",
+        "pyarrow._json",
+        "pyarrow._parquet",
+        "pyarrow._parquet_encryption",
+        "pyarrow._s3fs",
+        "pyarrow._substrait",
+        "pyarrow.compute",
+        "pyarrow.dataset",
+        "pyarrow.fs",
+        "pyarrow.ipc",
+        "pyarrow.lib",
+        "pyarrow.pandas_compat",
+        "pyarrow.parquet",
+        "pyarrow.parquet.core",
+        "pyarrow.substrait",
+        "pyarrow.types",
+        "pyarrow.util",
+        "pyarrow.vendored",
+        "pyarrow.vendored.docscrape",
+        "pyarrow.vendored.version",
+        "six",
+        "tzdata",
+        "yaml",
+        "yaml._yaml",
+        "yaml.composer",
+        "yaml.constructor",
+        "yaml.cyaml",
+        "yaml.dumper",
+        "yaml.emitter",
+        "yaml.error",
+        "yaml.events",
+        "yaml.loader",
+        "yaml.nodes",
+        "yaml.parser",
+        "yaml.reader",
+        "yaml.representer",
+        "yaml.resolver",
+        "yaml.scanner",
+        "yaml.serializer",
+        "yaml.tokens"
+      ]
+    },
+    "terminal_native_modules": {
+      "_bz2": {
+        "bytes": 72704,
+        "path": "C:/Program Files/Calibre2/app/bin/_bz2.pyd",
+        "sha256": "237ef011a685a205b0595a4a03ffa385e6e3b85cbecc2aa368a3a0ab07190162"
+      },
+      "_ctypes": {
+        "bytes": 111616,
+        "path": "C:/Program Files/Calibre2/app/bin/_ctypes.pyd",
+        "sha256": "e458e00b42b3f2feb3f523f223235021393afd502e78429322e8998506f48728"
+      },
+      "_cyutility": {
+        "bytes": 123904,
+        "path": ".venv/Lib/site-packages/pandas/_libs/_cyutility.cp311-win_amd64.pyd",
+        "sha256": "d3d3e533ae53e107838ec4c936f419ca97c4f9ca4d1201dd1db0d9a45f3839cd"
+      },
+      "_decimal": {
+        "bytes": 241664,
+        "path": "C:/Program Files/Calibre2/app/bin/_decimal.pyd",
+        "sha256": "f336dc2cf18e697df43657be3f3091d954fa34f9877aaa66bd6bde1cf5d339fe"
+      },
+      "_hashlib": {
+        "bytes": 53248,
+        "path": "C:/Program Files/Calibre2/app/bin/_hashlib.pyd",
+        "sha256": "78a39ecfdcd85a54a43c6b81a1f331e0677a46acdb4cf83e79a50f2b808a718d"
+      },
+      "_lzma": {
+        "bytes": 146944,
+        "path": "C:/Program Files/Calibre2/app/bin/_lzma.pyd",
+        "sha256": "49c282894d0b3ed960e3080bd0a5fe975a2680dcc5383bd533fd29e8a08c6e2b"
+      },
+      "_queue": {
+        "bytes": 20480,
+        "path": "C:/Program Files/Calibre2/app/bin/_queue.pyd",
+        "sha256": "e5cc1c7a44073cf9a82e565bd983c5b1f35f23ab4e257e59588952fbd80f2b05"
+      },
+      "_socket": {
+        "bytes": 67584,
+        "path": "C:/Program Files/Calibre2/app/bin/_socket.pyd",
+        "sha256": "21af3ee504ea307a78ba5c680eec44294a1ac23a29818e9222b6ca18116a3881"
+      },
+      "_ssl": {
+        "bytes": 164864,
+        "path": "C:/Program Files/Calibre2/app/bin/_ssl.pyd",
+        "sha256": "985ae13c73b2f93070b46b32ab92984fddf6b490964d1c5a5d43a47153e918fe"
+      },
+      "_uuid": {
+        "bytes": 13312,
+        "path": "C:/Program Files/Calibre2/app/bin/_uuid.pyd",
+        "sha256": "5a0440e8c177f5161c04f3df384cc3a9ab8bbf5a07c98e569d225cc5430ae7b4"
+      },
+      "_zoneinfo": {
+        "bytes": 33280,
+        "path": "C:/Program Files/Calibre2/app/bin/_zoneinfo.pyd",
+        "sha256": "b3dccf7a6c623dc2e55cdb69f0e10df3132381c6294130ffa60c0b3545ba3e04"
+      },
+      "lxml._elementpath": {
+        "bytes": 130048,
+        "path": "C:/Program Files/Calibre2/app/bin/lxml._elementpath.pyd",
+        "sha256": "25ba4f9719189906fe8c8687dcd1bda78a1fd2e622750a0524d30ac0f0944315"
+      },
+      "lxml.etree": {
+        "bytes": 1470976,
+        "path": "C:/Program Files/Calibre2/app/bin/lxml.etree.pyd",
+        "sha256": "e87994e7b1e1cb8bdb5cfcf4b061dd01b0984f6f5768b7dc36809af13f18b8d2"
+      },
+      "msgpack._cmsgpack": {
+        "bytes": 135168,
+        "path": "C:/Program Files/Calibre2/app/bin/msgpack._cmsgpack.pyd",
+        "sha256": "eeac688a6adff449d18f84923e82f665ed96317afbb12cfa3d4a5d6c916b22a4"
+      },
+      "numpy._core._multiarray_umath": {
+        "bytes": 3703296,
+        "path": ".venv/Lib/site-packages/numpy/_core/_multiarray_umath.cp311-win_amd64.pyd",
+        "sha256": "4fb4c5d62a6bd766eea716350eaf5396580e33cf7dc159e305488d1b7d72dad2"
+      },
+      "numpy.linalg._umath_linalg": {
+        "bytes": 112128,
+        "path": ".venv/Lib/site-packages/numpy/linalg/_umath_linalg.cp311-win_amd64.pyd",
+        "sha256": "8742391ee3d6dfb4a6e41418626bb45048b102e05229d424279ddefb877d9cd6"
+      },
+      "numpy.random._bounded_integers": {
+        "bytes": 220160,
+        "path": ".venv/Lib/site-packages/numpy/random/_bounded_integers.cp311-win_amd64.pyd",
+        "sha256": "418dc5293b11f83a70c63ef77c3c9ca0dc4b9f20c7fadb4625805480305ddcef"
+      },
+      "numpy.random._common": {
+        "bytes": 169984,
+        "path": ".venv/Lib/site-packages/numpy/random/_common.cp311-win_amd64.pyd",
+        "sha256": "f2cdbaa3d3d0dd8f5b74b7b4630470d609be4e4d31f8e37f8681e6c3c5aca895"
+      },
+      "numpy.random._generator": {
+        "bytes": 608768,
+        "path": ".venv/Lib/site-packages/numpy/random/_generator.cp311-win_amd64.pyd",
+        "sha256": "91f53ff9a803213ea5fa38b73be057b448be1728b4a353586d10f08d4f2c021c"
+      },
+      "numpy.random._mt19937": {
+        "bytes": 84992,
+        "path": ".venv/Lib/site-packages/numpy/random/_mt19937.cp311-win_amd64.pyd",
+        "sha256": "e66de88dbf0b9a2ae67576cf2f4e7c220e10729d445403787bc8b58f4e8a6750"
+      },
+      "numpy.random._pcg64": {
+        "bytes": 96768,
+        "path": ".venv/Lib/site-packages/numpy/random/_pcg64.cp311-win_amd64.pyd",
+        "sha256": "16e4f9401783c502d82bce06263d98c985c841f3115d301741b22413bbbff851"
+      },
+      "numpy.random._philox": {
+        "bytes": 79872,
+        "path": ".venv/Lib/site-packages/numpy/random/_philox.cp311-win_amd64.pyd",
+        "sha256": "56c44540e500dfb820e5a75004b5cf9945a648a87d0e40d64672325dd22fa3c1"
+      },
+      "numpy.random._sfc64": {
+        "bytes": 59392,
+        "path": ".venv/Lib/site-packages/numpy/random/_sfc64.cp311-win_amd64.pyd",
+        "sha256": "23f03f25c5528ca51c11846bcbb5aaaee7c1c518897249865c47dca913c43863"
+      },
+      "numpy.random.bit_generator": {
+        "bytes": 165888,
+        "path": ".venv/Lib/site-packages/numpy/random/bit_generator.cp311-win_amd64.pyd",
+        "sha256": "eafa63966c1b3e34397bec8fef991dee5a7944b09058b38afd9f2de40acfd141"
+      },
+      "numpy.random.mtrand": {
+        "bytes": 512512,
+        "path": ".venv/Lib/site-packages/numpy/random/mtrand.cp311-win_amd64.pyd",
+        "sha256": "6f8a3d3ce835c6cd4fea9e4425b757b268ad69b0cef201a225f6cbd1b453182a"
+      },
+      "pandas._libs._cyutility": {
+        "bytes": 123904,
+        "path": ".venv/Lib/site-packages/pandas/_libs/_cyutility.cp311-win_amd64.pyd",
+        "sha256": "d3d3e533ae53e107838ec4c936f419ca97c4f9ca4d1201dd1db0d9a45f3839cd"
+      },
+      "pandas._libs.algos": {
+        "bytes": 1431040,
+        "path": ".venv/Lib/site-packages/pandas/_libs/algos.cp311-win_amd64.pyd",
+        "sha256": "dfa7890ec39db43c086e8726c886d4388a2dc67984d593aa9366199bb5467a17"
+      },
+      "pandas._libs.arrays": {
+        "bytes": 79872,
+        "path": ".venv/Lib/site-packages/pandas/_libs/arrays.cp311-win_amd64.pyd",
+        "sha256": "8e07ae52a76b56108d6c7198b5bb6a95be886db3e0c9be586233acd339ac2dd1"
+      },
+      "pandas._libs.groupby": {
+        "bytes": 1704448,
+        "path": ".venv/Lib/site-packages/pandas/_libs/groupby.cp311-win_amd64.pyd",
+        "sha256": "809bb1562def22848c5fe0130673490f6ce0ca5e1fed7c22d4a0494330421d29"
+      },
+      "pandas._libs.hashing": {
+        "bytes": 66560,
+        "path": ".venv/Lib/site-packages/pandas/_libs/hashing.cp311-win_amd64.pyd",
+        "sha256": "aafb2a32912570f1ec02181519bb4e1a98045383327fc797423f4e88728dcfff"
+      },
+      "pandas._libs.hashtable": {
+        "bytes": 1543680,
+        "path": ".venv/Lib/site-packages/pandas/_libs/hashtable.cp311-win_amd64.pyd",
+        "sha256": "c0995d24a4f84e8b25a12c1b2308f31654d867e1cd4197f296c4cacd7b38e32d"
+      },
+      "pandas._libs.index": {
+        "bytes": 515584,
+        "path": ".venv/Lib/site-packages/pandas/_libs/index.cp311-win_amd64.pyd",
+        "sha256": "a89977d25b82ee1cc2d0875b17607598a302cf2e619d40fbc0cec94575d3f40d"
+      },
+      "pandas._libs.indexing": {
+        "bytes": 45568,
+        "path": ".venv/Lib/site-packages/pandas/_libs/indexing.cp311-win_amd64.pyd",
+        "sha256": "0ec71cf0f2f0b2095a57887be1ef7b52563eaae8c636acac7da071724aae4bea"
+      },
+      "pandas._libs.internals": {
+        "bytes": 200192,
+        "path": ".venv/Lib/site-packages/pandas/_libs/internals.cp311-win_amd64.pyd",
+        "sha256": "c4f964fdb68ed3460870fb0625dc739b14c39dfefb0444786a4fa9e9aa1fe175"
+      },
+      "pandas._libs.interval": {
+        "bytes": 764416,
+        "path": ".venv/Lib/site-packages/pandas/_libs/interval.cp311-win_amd64.pyd",
+        "sha256": "15e0a19f0553f370125edb86bc51ea0c1292fca4c3260182938fec2a3b822302"
+      },
+      "pandas._libs.join": {
+        "bytes": 761856,
+        "path": ".venv/Lib/site-packages/pandas/_libs/join.cp311-win_amd64.pyd",
+        "sha256": "0fe88422a0bbababdc2c292030ff3611f36966d53fbead450b30dd6e04fdb50d"
+      },
+      "pandas._libs.json": {
+        "bytes": 51712,
+        "path": ".venv/Lib/site-packages/pandas/_libs/json.cp311-win_amd64.pyd",
+        "sha256": "3b82bd64a577337ce93737d50532399910c1bb648cf8ee505d4f44712b20852e"
+      },
+      "pandas._libs.lib": {
+        "bytes": 442880,
+        "path": ".venv/Lib/site-packages/pandas/_libs/lib.cp311-win_amd64.pyd",
+        "sha256": "f7bad59a66321d46e147146e352f34bbadb3ccd54450abb1d8f6536b038a9d64"
+      },
+      "pandas._libs.missing": {
+        "bytes": 145920,
+        "path": ".venv/Lib/site-packages/pandas/_libs/missing.cp311-win_amd64.pyd",
+        "sha256": "0c9d3b4b43eb673f368c3d085170954a249e7cb2f5a8d4830cd7f44021cd5e61"
+      },
+      "pandas._libs.ops": {
+        "bytes": 96256,
+        "path": ".venv/Lib/site-packages/pandas/_libs/ops.cp311-win_amd64.pyd",
+        "sha256": "5876f605e85eeac012491fd7c6d4b63984edcea181cb8567b0bf78d97d67d9cb"
+      },
+      "pandas._libs.ops_dispatch": {
+        "bytes": 42496,
+        "path": ".venv/Lib/site-packages/pandas/_libs/ops_dispatch.cp311-win_amd64.pyd",
+        "sha256": "0f488b84870fb2d1e1daaed31bb5090787a2f123003e1a1006475d1923ffe569"
+      },
+      "pandas._libs.pandas_datetime": {
+        "bytes": 35840,
+        "path": ".venv/Lib/site-packages/pandas/_libs/pandas_datetime.cp311-win_amd64.pyd",
+        "sha256": "1c7af0f0b21d98c02de84d6a06e6b8e15b5547a611737783fa834230ea570cb1"
+      },
+      "pandas._libs.pandas_parser": {
+        "bytes": 30720,
+        "path": ".venv/Lib/site-packages/pandas/_libs/pandas_parser.cp311-win_amd64.pyd",
+        "sha256": "3a152adb4381a37c0f72edcf2ec88c0dcdd5ceeb8a25ac70348da7c5cd320815"
+      },
+      "pandas._libs.parsers": {
+        "bytes": 271872,
+        "path": ".venv/Lib/site-packages/pandas/_libs/parsers.cp311-win_amd64.pyd",
+        "sha256": "57d5ca611c5c59ffa270e577c80ab405a34ec9c9e8529e3057ffc265349645d0"
+      },
+      "pandas._libs.properties": {
+        "bytes": 55296,
+        "path": ".venv/Lib/site-packages/pandas/_libs/properties.cp311-win_amd64.pyd",
+        "sha256": "6965741f1955d6cb9ea2c4828ec49bf6b48cc5d28cd649d6d60e1cbca8efeb1c"
+      },
+      "pandas._libs.reshape": {
+        "bytes": 126976,
+        "path": ".venv/Lib/site-packages/pandas/_libs/reshape.cp311-win_amd64.pyd",
+        "sha256": "42fea3658c3c5279213f6d5ffb129ae1a989134c2e9a55513ce67c6096bf7cf0"
+      },
+      "pandas._libs.sparse": {
+        "bytes": 608768,
+        "path": ".venv/Lib/site-packages/pandas/_libs/sparse.cp311-win_amd64.pyd",
+        "sha256": "6f590b142212a487d1bdcc061be6f1ed7ac5dde47cb786b5651a6af88d95061e"
+      },
+      "pandas._libs.testing": {
+        "bytes": 71168,
+        "path": ".venv/Lib/site-packages/pandas/_libs/testing.cp311-win_amd64.pyd",
+        "sha256": "4c3da33eb85600b136805054126e733eb7ad8f73a8be2759fe697b696e730bba"
+      },
+      "pandas._libs.tslib": {
+        "bytes": 104960,
+        "path": ".venv/Lib/site-packages/pandas/_libs/tslib.cp311-win_amd64.pyd",
+        "sha256": "315609be30dd1351292221d5a6cd48d50457ee64cf314a50a84e78d4efdce4dc"
+      },
+      "pandas._libs.tslibs.base": {
+        "bytes": 41984,
+        "path": ".venv/Lib/site-packages/pandas/_libs/tslibs/base.cp311-win_amd64.pyd",
+        "sha256": "03a6087a5c7728dfc4bba9af00292c0f3ecb011e339e427042210fb640dd975d"
+      },
+      "pandas._libs.tslibs.ccalendar": {
+        "bytes": 57344,
+        "path": ".venv/Lib/site-packages/pandas/_libs/tslibs/ccalendar.cp311-win_amd64.pyd",
+        "sha256": "35b0098162d7de8f1a9e4a5ce5a80b1d502f504d5cb7a39250809d6f45e4edf5"
+      },
+      "pandas._libs.tslibs.conversion": {
+        "bytes": 123904,
+        "path": ".venv/Lib/site-packages/pandas/_libs/tslibs/conversion.cp311-win_amd64.pyd",
+        "sha256": "6bad0b5a1c208eac94d7d09148406e3582d16e91252ef941b9a12b0a37edc49c"
+      },
+      "pandas._libs.tslibs.dtypes": {
+        "bytes": 112128,
+        "path": ".venv/Lib/site-packages/pandas/_libs/tslibs/dtypes.cp311-win_amd64.pyd",
+        "sha256": "f7ac5772deb4cb541b2b9726c05b3ecbc1a32a95873d4e78798ace5bf23bdc33"
+      },
+      "pandas._libs.tslibs.fields": {
+        "bytes": 150016,
+        "path": ".venv/Lib/site-packages/pandas/_libs/tslibs/fields.cp311-win_amd64.pyd",
+        "sha256": "94567a1271bb79977f25fadb6140eec85a9ec6d1389db61f60ff4bea6f9ad374"
+      },
+      "pandas._libs.tslibs.nattype": {
+        "bytes": 154624,
+        "path": ".venv/Lib/site-packages/pandas/_libs/tslibs/nattype.cp311-win_amd64.pyd",
+        "sha256": "f3aa3cd625ea55615e1c47cc7a5733bf5d1c7297154de79f06f4b0076fa6e772"
+      },
+      "pandas._libs.tslibs.np_datetime": {
+        "bytes": 92160,
+        "path": ".venv/Lib/site-packages/pandas/_libs/tslibs/np_datetime.cp311-win_amd64.pyd",
+        "sha256": "2340370f7257963c723aeaf1edeb1fe0701383d4cfbca1321d9bd2e69e69b642"
+      },
+      "pandas._libs.tslibs.offsets": {
+        "bytes": 733184,
+        "path": ".venv/Lib/site-packages/pandas/_libs/tslibs/offsets.cp311-win_amd64.pyd",
+        "sha256": "a88cdb5dfa66665f2d2adbe6ce2cdc81870b9bc519cd70d8d96c1233dd82f342"
+      },
+      "pandas._libs.tslibs.parsing": {
+        "bytes": 157696,
+        "path": ".venv/Lib/site-packages/pandas/_libs/tslibs/parsing.cp311-win_amd64.pyd",
+        "sha256": "4ca57ea694f07ab1f8b7617571f7abdf89fcfce5ac388a179d1fe508aaadf15b"
+      },
+      "pandas._libs.tslibs.period": {
+        "bytes": 266752,
+        "path": ".venv/Lib/site-packages/pandas/_libs/tslibs/period.cp311-win_amd64.pyd",
+        "sha256": "d0a4ef214eb46fa6c5f5cbfb97941737e7b40395930db1a4dfe8df8966fc88b0"
+      },
+      "pandas._libs.tslibs.strptime": {
+        "bytes": 156160,
+        "path": ".venv/Lib/site-packages/pandas/_libs/tslibs/strptime.cp311-win_amd64.pyd",
+        "sha256": "a59db8e4a3c84f8c38f423fb3c1eb55233933619f9ac89385bef06f38f9b8b39"
+      },
+      "pandas._libs.tslibs.timedeltas": {
+        "bytes": 339968,
+        "path": ".venv/Lib/site-packages/pandas/_libs/tslibs/timedeltas.cp311-win_amd64.pyd",
+        "sha256": "f3cfc4e0ab949fd44b21eabcf93bb74fc51240d5cfffc5b693a0e4d6f15921a5"
+      },
+      "pandas._libs.tslibs.timestamps": {
+        "bytes": 362496,
+        "path": ".venv/Lib/site-packages/pandas/_libs/tslibs/timestamps.cp311-win_amd64.pyd",
+        "sha256": "1b75945941d3759024606be388d8a2ae8e3fcef91b99213024c7abd818171edd"
+      },
+      "pandas._libs.tslibs.timezones": {
+        "bytes": 116736,
+        "path": ".venv/Lib/site-packages/pandas/_libs/tslibs/timezones.cp311-win_amd64.pyd",
+        "sha256": "3cdbd99bc07db9cf2f2b89ef88a6743d4c9e700ea76c8e7001b3619a20e4a419"
+      },
+      "pandas._libs.tslibs.tzconversion": {
+        "bytes": 132096,
+        "path": ".venv/Lib/site-packages/pandas/_libs/tslibs/tzconversion.cp311-win_amd64.pyd",
+        "sha256": "c6b9df77728c71529d323608bb06fc62e89a4a4ed29ef09a2d45875c96a318f4"
+      },
+      "pandas._libs.tslibs.vectorized": {
+        "bytes": 74752,
+        "path": ".venv/Lib/site-packages/pandas/_libs/tslibs/vectorized.cp311-win_amd64.pyd",
+        "sha256": "9f74456a859535333c5a0ea767d3cff753cb8303a9627d7d4eecae70b403f615"
+      },
+      "pandas._libs.window.aggregations": {
+        "bytes": 346624,
+        "path": ".venv/Lib/site-packages/pandas/_libs/window/aggregations.cp311-win_amd64.pyd",
+        "sha256": "6aff6af9eda862f498f283276c8e37f0b2ab1205b604119ad051b4008cc4266a"
+      },
+      "pandas._libs.window.indexers": {
+        "bytes": 144896,
+        "path": ".venv/Lib/site-packages/pandas/_libs/window/indexers.cp311-win_amd64.pyd",
+        "sha256": "86cbbd026799bbd01d1e64c241492aea275a638f95b3a1087f378217b169c995"
+      },
+      "pandas._libs.writers": {
+        "bytes": 86528,
+        "path": ".venv/Lib/site-packages/pandas/_libs/writers.cp311-win_amd64.pyd",
+        "sha256": "40cac8c8e5043b97727311abe6ff7ef2c96663c919e96eddc9bcc167ed4600e7"
+      },
+      "pyarrow._acero": {
+        "bytes": 180736,
+        "path": ".venv/Lib/site-packages/pyarrow/_acero.cp311-win_amd64.pyd",
+        "sha256": "40711822c21facada803b3c5e4489424518ec0c79625a25d88a7b7be3c27e4d2"
+      },
+      "pyarrow._azurefs": {
+        "bytes": 91136,
+        "path": ".venv/Lib/site-packages/pyarrow/_azurefs.cp311-win_amd64.pyd",
+        "sha256": "706640c37d8387b13934f1314964cd83bfd6ab59902081a3cd3eeb1890156325"
+      },
+      "pyarrow._compute": {
+        "bytes": 734720,
+        "path": ".venv/Lib/site-packages/pyarrow/_compute.cp311-win_amd64.pyd",
+        "sha256": "2d227213f7927f3e7455ef3d59c4daef5f4ec2c15e1cd179fa46cf89162fbe7c"
+      },
+      "pyarrow._csv": {
+        "bytes": 266240,
+        "path": ".venv/Lib/site-packages/pyarrow/_csv.cp311-win_amd64.pyd",
+        "sha256": "1a3aea41afe0d4907ac3701e6f53197d7ab41467d270f001196a4120f8aee928"
+      },
+      "pyarrow._dataset": {
+        "bytes": 665600,
+        "path": ".venv/Lib/site-packages/pyarrow/_dataset.cp311-win_amd64.pyd",
+        "sha256": "303e85ba7704a6b923582ff237e6491d50b2ea79536b038605f5bd69126f23e6"
+      },
+      "pyarrow._dataset_orc": {
+        "bytes": 67584,
+        "path": ".venv/Lib/site-packages/pyarrow/_dataset_orc.cp311-win_amd64.pyd",
+        "sha256": "fa1a6012c2952794cc860c6ee2eb42e79940d0f8d45c8dd434c0d15232797e4d"
+      },
+      "pyarrow._dataset_parquet": {
+        "bytes": 237568,
+        "path": ".venv/Lib/site-packages/pyarrow/_dataset_parquet.cp311-win_amd64.pyd",
+        "sha256": "5be7000d6649e7632167054534d1a9d92ef56504a83639b0e238ddae1798ff2c"
+      },
+      "pyarrow._dataset_parquet_encryption": {
+        "bytes": 90624,
+        "path": ".venv/Lib/site-packages/pyarrow/_dataset_parquet_encryption.cp311-win_amd64.pyd",
+        "sha256": "240bbeb753d6fc4c3d54c2af349d67662ce792b28ce33c70b323581717a9d864"
+      },
+      "pyarrow._fs": {
+        "bytes": 297984,
+        "path": ".venv/Lib/site-packages/pyarrow/_fs.cp311-win_amd64.pyd",
+        "sha256": "2ffc3e8247a1eefb0e59e8b6f020665ff0691896a427bc13595716ed378d15c6"
+      },
+      "pyarrow._gcsfs": {
+        "bytes": 93184,
+        "path": ".venv/Lib/site-packages/pyarrow/_gcsfs.cp311-win_amd64.pyd",
+        "sha256": "41d57f5cf7e76070b65971306de8be8fcedfc2353ac8be380feede378d28d767"
+      },
+      "pyarrow._hdfs": {
+        "bytes": 90624,
+        "path": ".venv/Lib/site-packages/pyarrow/_hdfs.cp311-win_amd64.pyd",
+        "sha256": "8c8e982d6ff67bbad8eef496bd28c5d14b3f4c0f085aa02e37f79efe00a97c67"
+      },
+      "pyarrow._json": {
+        "bytes": 99328,
+        "path": ".venv/Lib/site-packages/pyarrow/_json.cp311-win_amd64.pyd",
+        "sha256": "a74566b39b9ca68dbedb505ca5b4ee15c90a79730c232a4e24b71aa63e6b911c"
+      },
+      "pyarrow._parquet": {
+        "bytes": 391680,
+        "path": ".venv/Lib/site-packages/pyarrow/_parquet.cp311-win_amd64.pyd",
+        "sha256": "30a79d53623666958edfa0498df075b85e08d653065ae760edc2293a2064aa32"
+      },
+      "pyarrow._parquet_encryption": {
+        "bytes": 236032,
+        "path": ".venv/Lib/site-packages/pyarrow/_parquet_encryption.cp311-win_amd64.pyd",
+        "sha256": "0d69140995d8066fffafa22248ef4d269db43d2656e69e028e3b4896da985133"
+      },
+      "pyarrow._s3fs": {
+        "bytes": 135168,
+        "path": ".venv/Lib/site-packages/pyarrow/_s3fs.cp311-win_amd64.pyd",
+        "sha256": "b15726b5e550e38a5a6eaf875af64862c3235e0cfab3562b43ce2f3a746da8b9"
+      },
+      "pyarrow._substrait": {
+        "bytes": 139264,
+        "path": ".venv/Lib/site-packages/pyarrow/_substrait.cp311-win_amd64.pyd",
+        "sha256": "d5c4672fe0dbc8c8f819a2a0163112197810d06d8d13fc1574e41154a9af8b30"
+      },
+      "pyarrow.lib": {
+        "bytes": 3287040,
+        "path": ".venv/Lib/site-packages/pyarrow/lib.cp311-win_amd64.pyd",
+        "sha256": "ff1592ce7dd730006ed8f7fccb0792e6ee356673353a1bc5d346e418bcacd0bf"
+      },
+      "regex._regex": {
+        "bytes": 670720,
+        "path": "C:/Program Files/Calibre2/app/bin/regex._regex.pyd",
+        "sha256": "cdc32fb55463a84d20e3b7fc9b9dc7b2d84dbde72e3d4ce21e2e7248122ba55e"
+      },
+      "select": {
+        "bytes": 18432,
+        "path": "C:/Program Files/Calibre2/app/bin/select.pyd",
+        "sha256": "ac70d4afc85c496c33e167c2c5754dd7f9aec846a313080198685e52ea0c9444"
+      },
+      "unicodedata": {
+        "bytes": 1128960,
+        "path": "C:/Program Files/Calibre2/app/bin/unicodedata.pyd",
+        "sha256": "51edd1a6855bf09fb68da3e74701b3fdccaf998d555a5531f94efb39000e1409"
+      },
+      "yaml._yaml": {
+        "bytes": 258560,
+        "path": ".venv/Lib/site-packages/yaml/_yaml.cp311-win_amd64.pyd",
+        "sha256": "ee7df83fa5dca1467bfd841dc08189b10361f31700cf57a6aacddaf0c05706f4"
+      }
+    },
+    "terminal_revalidated": true,
+    "terminal_sealed_importer": {
+      "finder_composite_sha256": "1d274219db29d0627da5f7ce3ff7b3e1384b22c92fac465d08ea6f3559952cd9",
+      "loaded_sealed_modules": {
+        "scripts": "scripts/__init__.py",
+        "scripts.experiments.bootstrap_ijds_marginal_mean_score_outcome_gap_v3h": "scripts/experiments/bootstrap_ijds_marginal_mean_score_outcome_gap_v3h.py",
+        "src": "src/__init__.py",
+        "src.data": "src/data/__init__.py",
+        "src.data.outcome_observability": "src/data/outcome_observability.py",
+        "src.ijds_audit": "src/ijds_audit/__init__.py",
+        "src.ijds_audit.marginal_mean_score_outcome_gap_v3h": "src/ijds_audit/marginal_mean_score_outcome_gap_v3h.py",
+        "src.utils": "src/utils/__init__.py",
+        "src.utils.artifact_descriptor": "src/utils/artifact_descriptor.py"
+      }
+    }
+  },
+  "final_git": {
+    "clean": true,
+    "commit": "1e608bcc4006766e5c65f4bd56d2ca1cdb704a48",
+    "porcelain_v2_bytes": 0,
+    "porcelain_v2_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "final_implementation_provenance": {
+    "assert_statements": 0,
+    "bootstrap_python_paths": [
+      "scripts/experiments/bootstrap_ijds_marginal_mean_score_outcome_gap_v3h.py"
+    ],
+    "executed_from_sealed_git_bytes": true,
+    "hash_algorithm": "sha256",
+    "protocol_commit": "1e608bcc4006766e5c65f4bd56d2ca1cdb704a48",
+    "source_files": {
+      ".gitattributes": {
+        "bytes": 599,
+        "path": ".gitattributes",
+        "sha256": "9d9d15bcde3b020caceae4bd750a555bb4ad98f8f10ee6ed68b2ffc9a4d3052a"
+      },
+      ".gitignore": {
+        "bytes": 5051,
+        "path": ".gitignore",
+        "sha256": "d1d0a2a9e588c11377c28371f6ddbcce282d840a3613a24cfe220b354a25deea"
+      },
+      ".python-version": {
+        "bytes": 5,
+        "path": ".python-version",
+        "sha256": "49a506dd32096b010d75205acf3430c9ae6c40351888129499e5a5e487126c93"
+      },
+      "configs/experiments/ijds_marginal_mean_score_outcome_gap_2026-07-29_v3h.yaml": {
+        "bytes": 27626,
+        "path": "configs/experiments/ijds_marginal_mean_score_outcome_gap_2026-07-29_v3h.yaml",
+        "sha256": "0532d18c1ebcaaf5f97456da894dbd0bdfce912ce1a1f00a565319230d80aabe"
+      },
+      "configs/experiments/ijds_marginal_mean_score_outcome_gap_2026-07-29_v3h_runtime.json": {
+        "bytes": 7363,
+        "path": "configs/experiments/ijds_marginal_mean_score_outcome_gap_2026-07-29_v3h_runtime.json",
+        "sha256": "ad172684463edf3ff7ba926c3880e3955134b445e51c2b0b330e9714b7df1961"
+      },
+      "configs/runtime/ijds_marginal_mean_score_outcome_gap_v3h_calibre_global.json": {
+        "bytes": 91,
+        "path": "configs/runtime/ijds_marginal_mean_score_outcome_gap_v3h_calibre_global.json",
+        "sha256": "7e8c7cdace709da838ca523f61bab5f7919d1973fb086938d045231e7195ae98"
+      },
+      "docs/research/ijds_marginal_mean_score_outcome_gap_v3h_protocol_2026-07-29.md": {
+        "bytes": 46934,
+        "path": "docs/research/ijds_marginal_mean_score_outcome_gap_v3h_protocol_2026-07-29.md",
+        "sha256": "114c531dad1792a22a394fd17bc61d6ba663205b3b092f38659d36613853f530"
+      },
+      "pyproject.toml": {
+        "bytes": 9611,
+        "path": "pyproject.toml",
+        "sha256": "ea8a73b429286b8ba350a15ab01d195613ffcac7ada89d0a83478767b2ff9c03"
+      },
+      "scripts/__init__.py": {
+        "bytes": 0,
+        "path": "scripts/__init__.py",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "scripts/experiments/bootstrap_ijds_marginal_mean_score_outcome_gap_v3h.py": {
+        "bytes": 68425,
+        "path": "scripts/experiments/bootstrap_ijds_marginal_mean_score_outcome_gap_v3h.py",
+        "sha256": "3d4efed83c260486c82ae49deeee6a05d5f6973379d2d8c5c1109d05da265abf"
+      },
+      "scripts/experiments/run_ijds_marginal_mean_score_outcome_gap_v3h.py": {
+        "bytes": 143546,
+        "path": "scripts/experiments/run_ijds_marginal_mean_score_outcome_gap_v3h.py",
+        "sha256": "6a00368cd47433a8fbe8621da01903cec318e135c79193ee72e9ed555832599d"
+      },
+      "src/__init__.py": {
+        "bytes": 41,
+        "path": "src/__init__.py",
+        "sha256": "81e8d28860cb56c4efbb02c2d96a7e064f704fe7e5260db47a60d4ff64188a69"
+      },
+      "src/data/__init__.py": {
+        "bytes": 52,
+        "path": "src/data/__init__.py",
+        "sha256": "013415c30216ba3deba074c3dc05af225dcdbf7ae49f59dd404268eab6eeb0ed"
+      },
+      "src/data/outcome_observability.py": {
+        "bytes": 21985,
+        "path": "src/data/outcome_observability.py",
+        "sha256": "d54d9ccf7d54a27bb31a5f8a47e9351ca7201bed7683e9b069299f1501f80d87"
+      },
+      "src/ijds_audit/__init__.py": {
+        "bytes": 823,
+        "path": "src/ijds_audit/__init__.py",
+        "sha256": "6fd3c9fa8147b568db7038d61a8f85dc978b706a08834113ee6b01c334e1e7e9"
+      },
+      "src/ijds_audit/config.py": {
+        "bytes": 25008,
+        "path": "src/ijds_audit/config.py",
+        "sha256": "a13cadec6a16267cfe80c3bfce986e6d6bbd6461b61d605036d3a917c4308f8e"
+      },
+      "src/ijds_audit/geometry.py": {
+        "bytes": 3936,
+        "path": "src/ijds_audit/geometry.py",
+        "sha256": "30929e9ec4aeb558548b1b921ef90012fa26844fefedfb3fc3cf9093fd81db02"
+      },
+      "src/ijds_audit/marginal_mean_score_outcome_gap_v3h.py": {
+        "bytes": 32689,
+        "path": "src/ijds_audit/marginal_mean_score_outcome_gap_v3h.py",
+        "sha256": "1edcd8548698a6af29700e6eed8c8c25223b13df38a764103e7944ddba9d50d7"
+      },
+      "src/ijds_audit/portfolio.py": {
+        "bytes": 13054,
+        "path": "src/ijds_audit/portfolio.py",
+        "sha256": "65f1032856f498376b37f2623e0b2edd7ed4040fed1652c25becae100808850e"
+      },
+      "src/ijds_audit/rhs_ranging.py": {
+        "bytes": 3203,
+        "path": "src/ijds_audit/rhs_ranging.py",
+        "sha256": "422c33822eee9ba301eb73b04c7447814b5e593d2e407435561fe50e49d89b85"
+      },
+      "src/utils/__init__.py": {
+        "bytes": 58,
+        "path": "src/utils/__init__.py",
+        "sha256": "bba60b51576909e33a4cca2d4b7ab1033ec76772da6d27c1be0bf683a3a91db9"
+      },
+      "src/utils/artifact_descriptor.py": {
+        "bytes": 1705,
+        "path": "src/utils/artifact_descriptor.py",
+        "sha256": "ef8f6df7cf311e2173659518370cfde5ed5de4380b444aaad35dcd794cd620f8"
+      },
+      "tests/test_experiments/test_ijds_marginal_mean_score_outcome_gap_v3h.py": {
+        "bytes": 106583,
+        "path": "tests/test_experiments/test_ijds_marginal_mean_score_outcome_gap_v3h.py",
+        "sha256": "c4bf104ad2b17d76570e09eefff7446577c74388d22506b5a59d749966cc4663"
+      },
+      "tests/test_ijds_audit/test_marginal_mean_score_outcome_gap_v3h.py": {
+        "bytes": 12532,
+        "path": "tests/test_ijds_audit/test_marginal_mean_score_outcome_gap_v3h.py",
+        "sha256": "aaa7972ca839dad25227d9e0ce349e062a9b5bf85c848404f49d8cfd49c5ea93"
+      },
+      "uv.lock": {
+        "bytes": 428110,
+        "path": "uv.lock",
+        "sha256": "6c862cbad9ab7e3a07dd2823c775127403093d6ad59a789ee227d827165e4733"
+      }
+    },
+    "transitive_python_paths": [
+      "scripts/__init__.py",
+      "scripts/experiments/run_ijds_marginal_mean_score_outcome_gap_v3h.py",
+      "src/__init__.py",
+      "src/data/__init__.py",
+      "src/data/outcome_observability.py",
+      "src/ijds_audit/__init__.py",
+      "src/ijds_audit/config.py",
+      "src/ijds_audit/geometry.py",
+      "src/ijds_audit/marginal_mean_score_outcome_gap_v3h.py",
+      "src/ijds_audit/portfolio.py",
+      "src/ijds_audit/rhs_ranging.py",
+      "src/utils/__init__.py",
+      "src/utils/artifact_descriptor.py"
+    ]
+  },
+  "final_runtime": {
+    "bootstrap_attestation": {
+      "authority": {
+        "assert_statements": 0,
+        "dynamic_imports": 0,
+        "executed_from_sealed_git_bytes": true,
+        "protocol_commit": "1e608bcc4006766e5c65f4bd56d2ca1cdb704a48",
+        "scientific_closure": [
+          "scripts/__init__.py",
+          "scripts/experiments/run_ijds_marginal_mean_score_outcome_gap_v3h.py",
+          "src/__init__.py",
+          "src/data/__init__.py",
+          "src/data/outcome_observability.py",
+          "src/ijds_audit/__init__.py",
+          "src/ijds_audit/config.py",
+          "src/ijds_audit/geometry.py",
+          "src/ijds_audit/marginal_mean_score_outcome_gap_v3h.py",
+          "src/ijds_audit/portfolio.py",
+          "src/ijds_audit/rhs_ranging.py",
+          "src/utils/__init__.py",
+          "src/utils/artifact_descriptor.py"
+        ],
+        "source_files": {
+          ".gitattributes": {
+            "bytes": 599,
+            "path": ".gitattributes",
+            "sha256": "9d9d15bcde3b020caceae4bd750a555bb4ad98f8f10ee6ed68b2ffc9a4d3052a"
+          },
+          ".gitignore": {
+            "bytes": 5051,
+            "path": ".gitignore",
+            "sha256": "d1d0a2a9e588c11377c28371f6ddbcce282d840a3613a24cfe220b354a25deea"
+          },
+          ".python-version": {
+            "bytes": 5,
+            "path": ".python-version",
+            "sha256": "49a506dd32096b010d75205acf3430c9ae6c40351888129499e5a5e487126c93"
+          },
+          "configs/experiments/ijds_marginal_mean_score_outcome_gap_2026-07-29_v3h.yaml": {
+            "bytes": 27626,
+            "path": "configs/experiments/ijds_marginal_mean_score_outcome_gap_2026-07-29_v3h.yaml",
+            "sha256": "0532d18c1ebcaaf5f97456da894dbd0bdfce912ce1a1f00a565319230d80aabe"
+          },
+          "configs/experiments/ijds_marginal_mean_score_outcome_gap_2026-07-29_v3h_runtime.json": {
+            "bytes": 7363,
+            "path": "configs/experiments/ijds_marginal_mean_score_outcome_gap_2026-07-29_v3h_runtime.json",
+            "sha256": "ad172684463edf3ff7ba926c3880e3955134b445e51c2b0b330e9714b7df1961"
+          },
+          "configs/runtime/ijds_marginal_mean_score_outcome_gap_v3h_calibre_global.json": {
+            "bytes": 91,
+            "path": "configs/runtime/ijds_marginal_mean_score_outcome_gap_v3h_calibre_global.json",
+            "sha256": "7e8c7cdace709da838ca523f61bab5f7919d1973fb086938d045231e7195ae98"
+          },
+          "docs/research/ijds_marginal_mean_score_outcome_gap_v3h_protocol_2026-07-29.md": {
+            "bytes": 46934,
+            "path": "docs/research/ijds_marginal_mean_score_outcome_gap_v3h_protocol_2026-07-29.md",
+            "sha256": "114c531dad1792a22a394fd17bc61d6ba663205b3b092f38659d36613853f530"
+          },
+          "pyproject.toml": {
+            "bytes": 9611,
+            "path": "pyproject.toml",
+            "sha256": "ea8a73b429286b8ba350a15ab01d195613ffcac7ada89d0a83478767b2ff9c03"
+          },
+          "scripts/__init__.py": {
+            "bytes": 0,
+            "path": "scripts/__init__.py",
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          },
+          "scripts/experiments/bootstrap_ijds_marginal_mean_score_outcome_gap_v3h.py": {
+            "bytes": 68425,
+            "path": "scripts/experiments/bootstrap_ijds_marginal_mean_score_outcome_gap_v3h.py",
+            "sha256": "3d4efed83c260486c82ae49deeee6a05d5f6973379d2d8c5c1109d05da265abf"
+          },
+          "scripts/experiments/run_ijds_marginal_mean_score_outcome_gap_v3h.py": {
+            "bytes": 143546,
+            "path": "scripts/experiments/run_ijds_marginal_mean_score_outcome_gap_v3h.py",
+            "sha256": "6a00368cd47433a8fbe8621da01903cec318e135c79193ee72e9ed555832599d"
+          },
+          "src/__init__.py": {
+            "bytes": 41,
+            "path": "src/__init__.py",
+            "sha256": "81e8d28860cb56c4efbb02c2d96a7e064f704fe7e5260db47a60d4ff64188a69"
+          },
+          "src/data/__init__.py": {
+            "bytes": 52,
+            "path": "src/data/__init__.py",
+            "sha256": "013415c30216ba3deba074c3dc05af225dcdbf7ae49f59dd404268eab6eeb0ed"
+          },
+          "src/data/outcome_observability.py": {
+            "bytes": 21985,
+            "path": "src/data/outcome_observability.py",
+            "sha256": "d54d9ccf7d54a27bb31a5f8a47e9351ca7201bed7683e9b069299f1501f80d87"
+          },
+          "src/ijds_audit/__init__.py": {
+            "bytes": 823,
+            "path": "src/ijds_audit/__init__.py",
+            "sha256": "6fd3c9fa8147b568db7038d61a8f85dc978b706a08834113ee6b01c334e1e7e9"
+          },
+          "src/ijds_audit/config.py": {
+            "bytes": 25008,
+            "path": "src/ijds_audit/config.py",
+            "sha256": "a13cadec6a16267cfe80c3bfce986e6d6bbd6461b61d605036d3a917c4308f8e"
+          },
+          "src/ijds_audit/geometry.py": {
+            "bytes": 3936,
+            "path": "src/ijds_audit/geometry.py",
+            "sha256": "30929e9ec4aeb558548b1b921ef90012fa26844fefedfb3fc3cf9093fd81db02"
+          },
+          "src/ijds_audit/marginal_mean_score_outcome_gap_v3h.py": {
+            "bytes": 32689,
+            "path": "src/ijds_audit/marginal_mean_score_outcome_gap_v3h.py",
+            "sha256": "1edcd8548698a6af29700e6eed8c8c25223b13df38a764103e7944ddba9d50d7"
+          },
+          "src/ijds_audit/portfolio.py": {
+            "bytes": 13054,
+            "path": "src/ijds_audit/portfolio.py",
+            "sha256": "65f1032856f498376b37f2623e0b2edd7ed4040fed1652c25becae100808850e"
+          },
+          "src/ijds_audit/rhs_ranging.py": {
+            "bytes": 3203,
+            "path": "src/ijds_audit/rhs_ranging.py",
+            "sha256": "422c33822eee9ba301eb73b04c7447814b5e593d2e407435561fe50e49d89b85"
+          },
+          "src/utils/__init__.py": {
+            "bytes": 58,
+            "path": "src/utils/__init__.py",
+            "sha256": "bba60b51576909e33a4cca2d4b7ab1033ec76772da6d27c1be0bf683a3a91db9"
+          },
+          "src/utils/artifact_descriptor.py": {
+            "bytes": 1705,
+            "path": "src/utils/artifact_descriptor.py",
+            "sha256": "ef8f6df7cf311e2173659518370cfde5ed5de4380b444aaad35dcd794cd620f8"
+          },
+          "tests/test_experiments/test_ijds_marginal_mean_score_outcome_gap_v3h.py": {
+            "bytes": 106583,
+            "path": "tests/test_experiments/test_ijds_marginal_mean_score_outcome_gap_v3h.py",
+            "sha256": "c4bf104ad2b17d76570e09eefff7446577c74388d22506b5a59d749966cc4663"
+          },
+          "tests/test_ijds_audit/test_marginal_mean_score_outcome_gap_v3h.py": {
+            "bytes": 12532,
+            "path": "tests/test_ijds_audit/test_marginal_mean_score_outcome_gap_v3h.py",
+            "sha256": "aaa7972ca839dad25227d9e0ce349e062a9b5bf85c848404f49d8cfd49c5ea93"
+          },
+          "uv.lock": {
+            "bytes": 428110,
+            "path": "uv.lock",
+            "sha256": "6c862cbad9ab7e3a07dd2823c775127403093d6ad59a789ee227d827165e4733"
+          }
+        }
+      },
+      "calibre_cache": {
+        "directory": ".runtime_calibre/ijds-marginal-mean-score-outcome-gap-2026-07-29-v3h-calibre-cache",
+        "empty": true
+      },
+      "calibre_config": {
+        "caches_empty": true,
+        "directory": ".runtime_calibre/ijds-marginal-mean-score-outcome-gap-2026-07-29-v3h-config",
+        "global": {
+          "bytes": 91,
+          "path": ".runtime_calibre/ijds-marginal-mean-score-outcome-gap-2026-07-29-v3h-config/global.py.json",
+          "sha256": "7e8c7cdace709da838ca523f61bab5f7919d1973fb086938d045231e7195ae98"
+        },
+        "inventory": [
+          "caches/",
+          "global.py.json",
+          "plugins/"
+        ],
+        "plugins_empty": true
+      },
+      "calibre_native_directory": {
+        "bytes": 379912649,
+        "composite_sha256": "1cfe38b2da5bf2edfc3781dba7dca5a6b51e0346c6a01f4fe43277932ff16ad5",
+        "files": 276,
+        "path": "C:/Program Files/Calibre2/app/bin"
+      },
+      "distributions": {
+        "PyYAML": {
+          "bytes": 483051,
+          "composite_sha256": "ac6d22e82c74dec65e91f7860c7eb7fcc807b496b11fdf28779c938a2c479960",
+          "files": 26,
+          "version": "6.0.3"
+        },
+        "numpy": {
+          "bytes": 41903829,
+          "composite_sha256": "7f96fc979c7996257b9ef96cf08595893a0a00ccfa18406d11fbcc70bbe80419",
+          "files": 1065,
+          "version": "2.4.6"
+        },
+        "pandas": {
+          "bytes": 35350076,
+          "composite_sha256": "15a38600cef4c2a331f97f9f3664a21b74d5ffd55ee159125b16f17eb0ba5e3c",
+          "files": 1570,
+          "version": "3.0.3"
+        },
+        "pyarrow": {
+          "bytes": 85942377,
+          "composite_sha256": "5ec5776907eda4d2993916013ce285cf2ec8340f1637ab852b8e86c18008b179",
+          "files": 762,
+          "version": "25.0.0"
+        },
+        "python-dateutil": {
+          "bytes": 441783,
+          "composite_sha256": "d3e2f376018b3c037cc43f44584f8606efb359986b5630f142a50582aa8f35db",
+          "files": 27,
+          "version": "2.9.0.post0"
+        },
+        "six": {
+          "bytes": 38145,
+          "composite_sha256": "006ad0b1f8fb38a61e639d007e8fe35ee1215eda0ca2e504495e7742b697dd5b",
+          "files": 8,
+          "version": "1.17.0"
+        },
+        "tzdata": {
+          "bytes": 582216,
+          "composite_sha256": "76612c63d433dc57053e0d01840472809ccfcd4be2ae2ced8fa36c0cf3663be6",
+          "files": 635,
+          "version": "2026.3"
+        }
+      },
+      "environment": {
+        "forbidden_names_absent": [
+          "LANG",
+          "LANGUAGE",
+          "TZ"
+        ],
+        "forbidden_prefixes_absent": [
+          "ARROW_",
+          "DVC_",
+          "LC_",
+          "MKL_",
+          "NUMEXPR_",
+          "NUMPY_",
+          "OMP_",
+          "OPENBLAS_",
+          "PANDAS_",
+          "PYARROW_"
+        ],
+        "forbidden_variables_absent": [
+          "CONDA_PREFIX",
+          "CRPTO_V3H_DVC_SITE_PACKAGES",
+          "CRPTO_V3H_SOURCE_VENV",
+          "GIT_ALTERNATE_OBJECT_DIRECTORIES",
+          "GIT_CEILING_DIRECTORIES",
+          "GIT_CONFIG",
+          "GIT_CONFIG_COUNT",
+          "GIT_DIR",
+          "GIT_DISCOVERY_ACROSS_FILESYSTEM",
+          "GIT_INDEX_FILE",
+          "GIT_OBJECT_DIRECTORY",
+          "GIT_REPLACE_REF_BASE",
+          "GIT_WORK_TREE",
+          "PYTHONHOME",
+          "PYTHONINSPECT",
+          "PYTHONPATH",
+          "PYTHONSTARTUP",
+          "VIRTUAL_ENV"
+        ]
+      },
+      "flags": {
+        "debug": 0,
+        "dont_write_bytecode": 1,
+        "ignore_environment": 1,
+        "isolated": 1,
+        "no_user_site": 1,
+        "optimize": 2,
+        "safe_path": true,
+        "utf8_mode": 1
+      },
+      "git_root": {
+        "environment_sanitized": true,
+        "executable": {
+          "bytes": 4321168,
+          "path": "C:/Program Files/Git/mingw64/bin/git.exe",
+          "sha256": "fc0f1cae1304fcdcf4d0749f421c5ed21471efc856301f92f56d4b844be84363"
+        },
+        "git_dir": ".git",
+        "object_format": "sha1",
+        "replace_refs": [],
+        "top_level": ".",
+        "version": "git version 2.52.0.windows.1"
+      },
+      "head": {
+        "clean": true,
+        "commit": "1e608bcc4006766e5c65f4bd56d2ca1cdb704a48",
+        "porcelain_v2_bytes": 0,
+        "porcelain_v2_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "head_tag": "protocol/ijds-marginal-mean-score-outcome-gap-2026-07-29-v3h",
+      "initial_module_origins": {
+        "all_loaded_repo_and_site_modules_sealed": true,
+        "calibre_entrypoint_carrier": {
+          "aliases": [
+            "calibre.debug"
+          ],
+          "bootstrap_path": "scripts/experiments/bootstrap_ijds_marginal_mean_score_outcome_gap_v3h.py",
+          "bootstrap_sha256": "3d4efed83c260486c82ae49deeee6a05d5f6973379d2d8c5c1109d05da265abf",
+          "cached": null,
+          "carrier_is_executing_globals": true,
+          "loader_class": "FrozenByteCodeLoader",
+          "loader_module": "bypy_importer",
+          "module_key": "calibre.debug",
+          "module_name": "__main__",
+          "package": "calibre",
+          "spec_has_location": false,
+          "spec_loader_is_module_loader": true,
+          "spec_name": "calibre.debug",
+          "spec_origin": "C:/Program Files/Calibre2/app/bin/python-lib.bypy.frozen/calibre/debug.pyc",
+          "spec_submodule_search_locations": null
+        },
+        "loaded_local_modules": [
+          "calibre.debug"
+        ],
+        "loaded_site_modules": []
+      },
+      "initial_native_modules": {
+        "_bz2": {
+          "bytes": 72704,
+          "path": "C:/Program Files/Calibre2/app/bin/_bz2.pyd",
+          "sha256": "237ef011a685a205b0595a4a03ffa385e6e3b85cbecc2aa368a3a0ab07190162"
+        },
+        "_ctypes": {
+          "bytes": 111616,
+          "path": "C:/Program Files/Calibre2/app/bin/_ctypes.pyd",
+          "sha256": "e458e00b42b3f2feb3f523f223235021393afd502e78429322e8998506f48728"
+        },
+        "_hashlib": {
+          "bytes": 53248,
+          "path": "C:/Program Files/Calibre2/app/bin/_hashlib.pyd",
+          "sha256": "78a39ecfdcd85a54a43c6b81a1f331e0677a46acdb4cf83e79a50f2b808a718d"
+        },
+        "_lzma": {
+          "bytes": 146944,
+          "path": "C:/Program Files/Calibre2/app/bin/_lzma.pyd",
+          "sha256": "49c282894d0b3ed960e3080bd0a5fe975a2680dcc5383bd533fd29e8a08c6e2b"
+        },
+        "_queue": {
+          "bytes": 20480,
+          "path": "C:/Program Files/Calibre2/app/bin/_queue.pyd",
+          "sha256": "e5cc1c7a44073cf9a82e565bd983c5b1f35f23ab4e257e59588952fbd80f2b05"
+        },
+        "_socket": {
+          "bytes": 67584,
+          "path": "C:/Program Files/Calibre2/app/bin/_socket.pyd",
+          "sha256": "21af3ee504ea307a78ba5c680eec44294a1ac23a29818e9222b6ca18116a3881"
+        },
+        "_ssl": {
+          "bytes": 164864,
+          "path": "C:/Program Files/Calibre2/app/bin/_ssl.pyd",
+          "sha256": "985ae13c73b2f93070b46b32ab92984fddf6b490964d1c5a5d43a47153e918fe"
+        },
+        "_uuid": {
+          "bytes": 13312,
+          "path": "C:/Program Files/Calibre2/app/bin/_uuid.pyd",
+          "sha256": "5a0440e8c177f5161c04f3df384cc3a9ab8bbf5a07c98e569d225cc5430ae7b4"
+        },
+        "lxml._elementpath": {
+          "bytes": 130048,
+          "path": "C:/Program Files/Calibre2/app/bin/lxml._elementpath.pyd",
+          "sha256": "25ba4f9719189906fe8c8687dcd1bda78a1fd2e622750a0524d30ac0f0944315"
+        },
+        "lxml.etree": {
+          "bytes": 1470976,
+          "path": "C:/Program Files/Calibre2/app/bin/lxml.etree.pyd",
+          "sha256": "e87994e7b1e1cb8bdb5cfcf4b061dd01b0984f6f5768b7dc36809af13f18b8d2"
+        },
+        "msgpack._cmsgpack": {
+          "bytes": 135168,
+          "path": "C:/Program Files/Calibre2/app/bin/msgpack._cmsgpack.pyd",
+          "sha256": "eeac688a6adff449d18f84923e82f665ed96317afbb12cfa3d4a5d6c916b22a4"
+        },
+        "regex._regex": {
+          "bytes": 670720,
+          "path": "C:/Program Files/Calibre2/app/bin/regex._regex.pyd",
+          "sha256": "cdc32fb55463a84d20e3b7fc9b9dc7b2d84dbde72e3d4ce21e2e7248122ba55e"
+        },
+        "select": {
+          "bytes": 18432,
+          "path": "C:/Program Files/Calibre2/app/bin/select.pyd",
+          "sha256": "ac70d4afc85c496c33e167c2c5754dd7f9aec846a313080198685e52ea0c9444"
+        },
+        "unicodedata": {
+          "bytes": 1128960,
+          "path": "C:/Program Files/Calibre2/app/bin/unicodedata.pyd",
+          "sha256": "51edd1a6855bf09fb68da3e74701b3fdccaf998d555a5531f94efb39000e1409"
+        }
+      },
+      "initial_scientific_modules": [],
+      "locale": {
+        "lc_numeric": "C",
+        "lc_time": "C",
+        "timezone_names": [
+          "Hora est. Pacífico, Sudamérica",
+          "Hora verano Pacífico Sudamérica"
+        ]
+      },
+      "orig_argv": [
+        "C:\\Program Files\\Calibre2\\calibre-debug.exe",
+        "-e",
+        "scripts/experiments/bootstrap_ijds_marginal_mean_score_outcome_gap_v3h.py",
+        "--",
+        "--phase",
+        "compute",
+        "--config",
+        "configs/experiments/ijds_marginal_mean_score_outcome_gap_2026-07-29_v3h.yaml"
+      ],
+      "path_activation": {
+        "meta_path_standard_precedence": [
+          "BuiltinImporter",
+          "FrozenImporter",
+          "PathFinder"
+        ],
+        "preimport_sys_path": [
+          "scripts/experiments"
+        ],
+        "pycache_directory": ".runtime_calibre/ijds-marginal-mean-score-outcome-gap-2026-07-29-v3h-pycache",
+        "pycache_empty": true,
+        "scientific_sys_path": [
+          ".",
+          ".venv/Lib/site-packages"
+        ]
+      },
+      "phase": "compute",
+      "protocol_commit": "1e608bcc4006766e5c65f4bd56d2ca1cdb704a48",
+      "runtime_files": {
+        "files": {
+          "C:/Program Files/Calibre2/app/bin/_hashlib.pyd": {
+            "bytes": 53248,
+            "path": "C:/Program Files/Calibre2/app/bin/_hashlib.pyd",
+            "sha256": "78a39ecfdcd85a54a43c6b81a1f331e0677a46acdb4cf83e79a50f2b808a718d"
+          },
+          "C:/Program Files/Calibre2/app/bin/calibre-launcher.dll": {
+            "bytes": 429168,
+            "path": "C:/Program Files/Calibre2/app/bin/calibre-launcher.dll",
+            "sha256": "a6037891c67e6d26be656ab7d8ef5dd03a45cbbce1e82bcce12c5f93b825ad73"
+          },
+          "C:/Program Files/Calibre2/app/bin/libcrypto-3-x64.dll": {
+            "bytes": 6169712,
+            "path": "C:/Program Files/Calibre2/app/bin/libcrypto-3-x64.dll",
+            "sha256": "823d99212253c389ca6c34a35f373b3e6c3c048fac38f2ee5155fc005054224b"
+          },
+          "C:/Program Files/Calibre2/app/bin/python-lib.bypy.frozen": {
+            "bytes": 65192617,
+            "path": "C:/Program Files/Calibre2/app/bin/python-lib.bypy.frozen",
+            "sha256": "fe1e602f84baeb10702f85f847019ea424fa10e7f9a38c7b3159e987c76b6d84"
+          },
+          "C:/Program Files/Calibre2/app/bin/python3.dll": {
+            "bytes": 63600,
+            "path": "C:/Program Files/Calibre2/app/bin/python3.dll",
+            "sha256": "ee505b8f9757e92c8e0428105f548e4b030074e3337af8edf0ee08c48dd13568"
+          },
+          "C:/Program Files/Calibre2/app/bin/python311.dll": {
+            "bytes": 5780080,
+            "path": "C:/Program Files/Calibre2/app/bin/python311.dll",
+            "sha256": "38373701aa805509e79e35a1ce61435b40e04fdc0572dfe459bc512bfdf74d23"
+          },
+          "C:/Program Files/Calibre2/calibre-debug.exe": {
+            "bytes": 32368,
+            "path": "C:/Program Files/Calibre2/calibre-debug.exe",
+            "sha256": "f06cbc79c233457bf8bf1c3603981f685a727e7f68c1381c5e56c9cdb592d36b"
+          },
+          "C:/Program Files/Git/mingw64/bin/git.exe": {
+            "bytes": 4321168,
+            "path": "C:/Program Files/Git/mingw64/bin/git.exe",
+            "sha256": "fc0f1cae1304fcdcf4d0749f421c5ed21471efc856301f92f56d4b844be84363"
+          },
+          "C:/Program Files/Git/mingw64/bin/libiconv-2.dll": {
+            "bytes": 1136529,
+            "path": "C:/Program Files/Git/mingw64/bin/libiconv-2.dll",
+            "sha256": "ff31fa811f9c07cc7fdaa68c9e8bca3a7b4fdf6e0a079a58175ea58ba139c7ae"
+          },
+          "C:/Program Files/Git/mingw64/bin/libintl-8.dll": {
+            "bytes": 298055,
+            "path": "C:/Program Files/Git/mingw64/bin/libintl-8.dll",
+            "sha256": "7744fde3df3320fda0e3b599b4aa5349b1281f93d1e5c52865a52d0d3e4a7d39"
+          },
+          "C:/Program Files/Git/mingw64/bin/libpcre2-8-0.dll": {
+            "bytes": 717955,
+            "path": "C:/Program Files/Git/mingw64/bin/libpcre2-8-0.dll",
+            "sha256": "c135a87ed0f11eae8ffc4cb469671ff0b3f5d71fab5fb024e9b1e7241ca25b52"
+          },
+          "C:/Program Files/Git/mingw64/bin/libzstd.dll": {
+            "bytes": 1196744,
+            "path": "C:/Program Files/Git/mingw64/bin/libzstd.dll",
+            "sha256": "b13d4f30b93c96823473d742dda0075f7334cba03a40c33d8a7dc282e37b1500"
+          },
+          "C:/Program Files/Git/mingw64/bin/zlib1.dll": {
+            "bytes": 120814,
+            "path": "C:/Program Files/Git/mingw64/bin/zlib1.dll",
+            "sha256": "cb7ab3788d10940df874acd97b1821bbb5ee4a91f3eec11982bb5bf7a3c96443"
+          }
+        },
+        "git_version": "git version 2.52.0.windows.1"
+      },
+      "runtime_manifest": {
+        "bytes": 7363,
+        "path": "configs/experiments/ijds_marginal_mean_score_outcome_gap_2026-07-29_v3h_runtime.json",
+        "sha256": "ad172684463edf3ff7ba926c3880e3955134b445e51c2b0b330e9714b7df1961"
+      },
+      "schema_version": "2026-07-29.3h-bootstrap-1",
+      "sealed_importer": {
+        "finder_composite_sha256": "1d274219db29d0627da5f7ce3ff7b3e1384b22c92fac465d08ea6f3559952cd9",
+        "loaded_sealed_modules": {}
+      }
+    },
+    "calibre_cache_directory": ".runtime_calibre/ijds-marginal-mean-score-outcome-gap-2026-07-29-v3h-calibre-cache",
+    "calibre_config_directory": ".runtime_calibre/ijds-marginal-mean-score-outcome-gap-2026-07-29-v3h-config",
+    "calibre_version": "7.2.0",
+    "executable": {
+      "bytes": 32368,
+      "path": "C:/Program Files/Calibre2/calibre-debug.exe",
+      "sha256": "f06cbc79c233457bf8bf1c3603981f685a727e7f68c1381c5e56c9cdb592d36b"
+    },
+    "launcher_kind": "stdlib_authenticated_calibre_bootstrap_then_scientific_runner",
+    "local_module_paths": {
+      "src.data.outcome_observability": "src/data/outcome_observability.py",
+      "src.ijds_audit.marginal_mean_score_outcome_gap_v3h": "src/ijds_audit/marginal_mean_score_outcome_gap_v3h.py",
+      "src.utils.artifact_descriptor": "src/utils/artifact_descriptor.py"
+    },
+    "module_paths": {
+      "PyYAML": ".venv/Lib/site-packages/yaml/__init__.py",
+      "dateutil": ".venv/Lib/site-packages/dateutil/__init__.py",
+      "numpy": ".venv/Lib/site-packages/numpy/__init__.py",
+      "pandas": ".venv/Lib/site-packages/pandas/__init__.py",
+      "pyarrow": ".venv/Lib/site-packages/pyarrow/__init__.py",
+      "six": ".venv/Lib/site-packages/six.py",
+      "tzdata": ".venv/Lib/site-packages/tzdata/__init__.py"
+    },
+    "native_module_policy": {
+      "all_loaded_extensions_within_sealed_inventories": true,
+      "calibre_native_directory": {
+        "bytes": 379912649,
+        "composite_sha256": "1cfe38b2da5bf2edfc3781dba7dca5a6b51e0346c6a01f4fe43277932ff16ad5",
+        "files": 276,
+        "path": "C:/Program Files/Calibre2/app/bin"
+      },
+      "venv_distribution_composites": {
+        "PyYAML": {
+          "bytes": 483051,
+          "composite_sha256": "ac6d22e82c74dec65e91f7860c7eb7fcc807b496b11fdf28779c938a2c479960",
+          "files": 26,
+          "version": "6.0.3"
+        },
+        "numpy": {
+          "bytes": 41903829,
+          "composite_sha256": "7f96fc979c7996257b9ef96cf08595893a0a00ccfa18406d11fbcc70bbe80419",
+          "files": 1065,
+          "version": "2.4.6"
+        },
+        "pandas": {
+          "bytes": 35350076,
+          "composite_sha256": "15a38600cef4c2a331f97f9f3664a21b74d5ffd55ee159125b16f17eb0ba5e3c",
+          "files": 1570,
+          "version": "3.0.3"
+        },
+        "pyarrow": {
+          "bytes": 85942377,
+          "composite_sha256": "5ec5776907eda4d2993916013ce285cf2ec8340f1637ab852b8e86c18008b179",
+          "files": 762,
+          "version": "25.0.0"
+        },
+        "python-dateutil": {
+          "bytes": 441783,
+          "composite_sha256": "d3e2f376018b3c037cc43f44584f8606efb359986b5630f142a50582aa8f35db",
+          "files": 27,
+          "version": "2.9.0.post0"
+        },
+        "six": {
+          "bytes": 38145,
+          "composite_sha256": "006ad0b1f8fb38a61e639d007e8fe35ee1215eda0ca2e504495e7742b697dd5b",
+          "files": 8,
+          "version": "1.17.0"
+        },
+        "tzdata": {
+          "bytes": 582216,
+          "composite_sha256": "76612c63d433dc57053e0d01840472809ccfcd4be2ae2ced8fa36c0cf3663be6",
+          "files": 635,
+          "version": "2026.3"
+        }
+      }
+    },
+    "orig_argv": [
+      "C:\\Program Files\\Calibre2\\calibre-debug.exe",
+      "-e",
+      "scripts/experiments/bootstrap_ijds_marginal_mean_score_outcome_gap_v3h.py",
+      "--",
+      "--phase",
+      "compute",
+      "--config",
+      "configs/experiments/ijds_marginal_mean_score_outcome_gap_2026-07-29_v3h.yaml"
+    ],
+    "packages": {
+      "PyYAML": "6.0.3",
+      "numpy": "2.4.6",
+      "pandas": "3.0.3",
+      "pyarrow": "25.0.0",
+      "python-dateutil": "2.9.0.post0",
+      "six": "1.17.0",
+      "tzdata": "2026.3"
+    },
+    "platform": "Windows-10-10.0.26200-SP0",
+    "project_site_packages": ".venv/Lib/site-packages",
+    "python": {
+      "debug": false,
+      "full_version": "3.11.5 (main, Oct  9 2023, 08:50:02) [MSC v.1937 64 bit (AMD64)]",
+      "implementation": "CPython",
+      "optimize": 2,
+      "version": "3.11.5"
+    },
+    "pythonoptimize_environment": null,
+    "runner_executed_from_sealed_bytes": true,
+    "scientific_sys_path": [
+      ".",
+      ".venv/Lib/site-packages"
+    ],
+    "sealed_import_runtime": {
+      "finder_composite_sha256": "1d274219db29d0627da5f7ce3ff7b3e1384b22c92fac465d08ea6f3559952cd9",
+      "loaded_sealed_modules": {
+        "scripts": "scripts/__init__.py",
+        "scripts.experiments.bootstrap_ijds_marginal_mean_score_outcome_gap_v3h": "scripts/experiments/bootstrap_ijds_marginal_mean_score_outcome_gap_v3h.py",
+        "src": "src/__init__.py",
+        "src.data": "src/data/__init__.py",
+        "src.data.outcome_observability": "src/data/outcome_observability.py",
+        "src.ijds_audit": "src/ijds_audit/__init__.py",
+        "src.ijds_audit.marginal_mean_score_outcome_gap_v3h": "src/ijds_audit/marginal_mean_score_outcome_gap_v3h.py",
+        "src.utils": "src/utils/__init__.py",
+        "src.utils.artifact_descriptor": "src/utils/artifact_descriptor.py"
+      }
+    },
+    "sys_argv": [
+      "scripts/experiments/run_ijds_marginal_mean_score_outcome_gap_v3h.py",
+      "--phase",
+      "compute",
+      "--config",
+      "configs/experiments/ijds_marginal_mean_score_outcome_gap_2026-07-29_v3h.yaml"
+    ],
+    "uv_lock_sha256": "6c862cbad9ab7e3a07dd2823c775127403093d6ad59a789ee227d827165e4733"
+  },
+  "final_source_seal": {
+    "artifacts": {
+      "credit_control_freeze": {
+        "bytes": 25908,
+        "path": "models/experiments/ijds_audit/ijds-credit-risk-controls-2026-07-13-v1b/protocol_freeze.json",
+        "sha256": "da4805e644bcf5decfbb0a67c0c81a5b9dd61f3ab2e17d3dc5264100e7eb4d35"
+      },
+      "raw_archive": {
+        "bytes": 1773470505,
+        "dvc_md5": "65adade308f21d60b7213088a88e684d",
+        "path": "data/raw/Loan_status_2007-2020Q3.csv",
+        "sha256": "5878af2a088f8ab5214c9337289fb8b5eb6c6338fd3f417b6cdc18513dc6f35f"
+      },
+      "raw_audit_config": {
+        "bytes": 1268,
+        "path": "configs/experiments/ijds_raw_data_contract_2026-07-14_v2.yaml",
+        "sha256": "bb6f240caeb87999d7071590f851d5db886ba93baba5072c60e6f550c7d970e2"
+      },
+      "raw_audit_evidence": {
+        "bytes": 3654,
+        "path": "reports/crpto/data_audit/ijds-raw-data-contract-2026-07-14-v2/evidence.json",
+        "sha256": "ac3cda119d919006210435eb0ff2234ffd6281d46edf8d29f04157b5f64ba6a5"
+      },
+      "raw_dvc_pointer": {
+        "bytes": 113,
+        "path": "data/raw/Loan_status_2007-2020Q3.csv.dvc",
+        "sha256": "6ef49f8108d5e5e2303d84fe3b79e1ee53fb7a39e68df8623f054bc74d756f6c"
+      },
+      "score_data_dvc_pointer": {
+        "bytes": 140,
+        "path": "data/processed/experiments/ijds_audit/ijds-credit-risk-controls-2026-07-13-v1b.dvc",
+        "sha256": "d5434d537e477221b1632097dff22d891cb570ae1aa5ba1f49d63e55b6199a4b"
+      },
+      "score_model_dvc_pointer": {
+        "bytes": 140,
+        "path": "models/experiments/ijds_audit/ijds-credit-risk-controls-2026-07-13-v1b.dvc",
+        "sha256": "ed79b1054e5b6b37e212ef6f0cab03e7294d38c1f52e30bad9fbe16f60faa029"
+      },
+      "scores": {
+        "bytes": 30407406,
+        "path": "data/processed/experiments/ijds_audit/ijds-credit-risk-controls-2026-07-13-v1b/prediction/scores.parquet",
+        "sha256": "5795bc0a75be90e86d37cf7d297f4b4fd6e6604b38f8179bc5042c024a53a8dc"
+      }
+    },
+    "composite_sha256": "3607b2f5a18d41542b112836bf057424404667d66ee7bd8b659bedbc287805de",
+    "hash_algorithm": "sha256"
+  },
+  "git_artifact_commit_performed": false,
+  "implementation_provenance": {
+    "assert_statements": 0,
+    "bootstrap_python_paths": [
+      "scripts/experiments/bootstrap_ijds_marginal_mean_score_outcome_gap_v3h.py"
+    ],
+    "executed_from_sealed_git_bytes": true,
+    "hash_algorithm": "sha256",
+    "protocol_commit": "1e608bcc4006766e5c65f4bd56d2ca1cdb704a48",
+    "source_files": {
+      ".gitattributes": {
+        "bytes": 599,
+        "path": ".gitattributes",
+        "sha256": "9d9d15bcde3b020caceae4bd750a555bb4ad98f8f10ee6ed68b2ffc9a4d3052a"
+      },
+      ".gitignore": {
+        "bytes": 5051,
+        "path": ".gitignore",
+        "sha256": "d1d0a2a9e588c11377c28371f6ddbcce282d840a3613a24cfe220b354a25deea"
+      },
+      ".python-version": {
+        "bytes": 5,
+        "path": ".python-version",
+        "sha256": "49a506dd32096b010d75205acf3430c9ae6c40351888129499e5a5e487126c93"
+      },
+      "configs/experiments/ijds_marginal_mean_score_outcome_gap_2026-07-29_v3h.yaml": {
+        "bytes": 27626,
+        "path": "configs/experiments/ijds_marginal_mean_score_outcome_gap_2026-07-29_v3h.yaml",
+        "sha256": "0532d18c1ebcaaf5f97456da894dbd0bdfce912ce1a1f00a565319230d80aabe"
+      },
+      "configs/experiments/ijds_marginal_mean_score_outcome_gap_2026-07-29_v3h_runtime.json": {
+        "bytes": 7363,
+        "path": "configs/experiments/ijds_marginal_mean_score_outcome_gap_2026-07-29_v3h_runtime.json",
+        "sha256": "ad172684463edf3ff7ba926c3880e3955134b445e51c2b0b330e9714b7df1961"
+      },
+      "configs/runtime/ijds_marginal_mean_score_outcome_gap_v3h_calibre_global.json": {
+        "bytes": 91,
+        "path": "configs/runtime/ijds_marginal_mean_score_outcome_gap_v3h_calibre_global.json",
+        "sha256": "7e8c7cdace709da838ca523f61bab5f7919d1973fb086938d045231e7195ae98"
+      },
+      "docs/research/ijds_marginal_mean_score_outcome_gap_v3h_protocol_2026-07-29.md": {
+        "bytes": 46934,
+        "path": "docs/research/ijds_marginal_mean_score_outcome_gap_v3h_protocol_2026-07-29.md",
+        "sha256": "114c531dad1792a22a394fd17bc61d6ba663205b3b092f38659d36613853f530"
+      },
+      "pyproject.toml": {
+        "bytes": 9611,
+        "path": "pyproject.toml",
+        "sha256": "ea8a73b429286b8ba350a15ab01d195613ffcac7ada89d0a83478767b2ff9c03"
+      },
+      "scripts/__init__.py": {
+        "bytes": 0,
+        "path": "scripts/__init__.py",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "scripts/experiments/bootstrap_ijds_marginal_mean_score_outcome_gap_v3h.py": {
+        "bytes": 68425,
+        "path": "scripts/experiments/bootstrap_ijds_marginal_mean_score_outcome_gap_v3h.py",
+        "sha256": "3d4efed83c260486c82ae49deeee6a05d5f6973379d2d8c5c1109d05da265abf"
+      },
+      "scripts/experiments/run_ijds_marginal_mean_score_outcome_gap_v3h.py": {
+        "bytes": 143546,
+        "path": "scripts/experiments/run_ijds_marginal_mean_score_outcome_gap_v3h.py",
+        "sha256": "6a00368cd47433a8fbe8621da01903cec318e135c79193ee72e9ed555832599d"
+      },
+      "src/__init__.py": {
+        "bytes": 41,
+        "path": "src/__init__.py",
+        "sha256": "81e8d28860cb56c4efbb02c2d96a7e064f704fe7e5260db47a60d4ff64188a69"
+      },
+      "src/data/__init__.py": {
+        "bytes": 52,
+        "path": "src/data/__init__.py",
+        "sha256": "013415c30216ba3deba074c3dc05af225dcdbf7ae49f59dd404268eab6eeb0ed"
+      },
+      "src/data/outcome_observability.py": {
+        "bytes": 21985,
+        "path": "src/data/outcome_observability.py",
+        "sha256": "d54d9ccf7d54a27bb31a5f8a47e9351ca7201bed7683e9b069299f1501f80d87"
+      },
+      "src/ijds_audit/__init__.py": {
+        "bytes": 823,
+        "path": "src/ijds_audit/__init__.py",
+        "sha256": "6fd3c9fa8147b568db7038d61a8f85dc978b706a08834113ee6b01c334e1e7e9"
+      },
+      "src/ijds_audit/config.py": {
+        "bytes": 25008,
+        "path": "src/ijds_audit/config.py",
+        "sha256": "a13cadec6a16267cfe80c3bfce986e6d6bbd6461b61d605036d3a917c4308f8e"
+      },
+      "src/ijds_audit/geometry.py": {
+        "bytes": 3936,
+        "path": "src/ijds_audit/geometry.py",
+        "sha256": "30929e9ec4aeb558548b1b921ef90012fa26844fefedfb3fc3cf9093fd81db02"
+      },
+      "src/ijds_audit/marginal_mean_score_outcome_gap_v3h.py": {
+        "bytes": 32689,
+        "path": "src/ijds_audit/marginal_mean_score_outcome_gap_v3h.py",
+        "sha256": "1edcd8548698a6af29700e6eed8c8c25223b13df38a764103e7944ddba9d50d7"
+      },
+      "src/ijds_audit/portfolio.py": {
+        "bytes": 13054,
+        "path": "src/ijds_audit/portfolio.py",
+        "sha256": "65f1032856f498376b37f2623e0b2edd7ed4040fed1652c25becae100808850e"
+      },
+      "src/ijds_audit/rhs_ranging.py": {
+        "bytes": 3203,
+        "path": "src/ijds_audit/rhs_ranging.py",
+        "sha256": "422c33822eee9ba301eb73b04c7447814b5e593d2e407435561fe50e49d89b85"
+      },
+      "src/utils/__init__.py": {
+        "bytes": 58,
+        "path": "src/utils/__init__.py",
+        "sha256": "bba60b51576909e33a4cca2d4b7ab1033ec76772da6d27c1be0bf683a3a91db9"
+      },
+      "src/utils/artifact_descriptor.py": {
+        "bytes": 1705,
+        "path": "src/utils/artifact_descriptor.py",
+        "sha256": "ef8f6df7cf311e2173659518370cfde5ed5de4380b444aaad35dcd794cd620f8"
+      },
+      "tests/test_experiments/test_ijds_marginal_mean_score_outcome_gap_v3h.py": {
+        "bytes": 106583,
+        "path": "tests/test_experiments/test_ijds_marginal_mean_score_outcome_gap_v3h.py",
+        "sha256": "c4bf104ad2b17d76570e09eefff7446577c74388d22506b5a59d749966cc4663"
+      },
+      "tests/test_ijds_audit/test_marginal_mean_score_outcome_gap_v3h.py": {
+        "bytes": 12532,
+        "path": "tests/test_ijds_audit/test_marginal_mean_score_outcome_gap_v3h.py",
+        "sha256": "aaa7972ca839dad25227d9e0ce349e062a9b5bf85c848404f49d8cfd49c5ea93"
+      },
+      "uv.lock": {
+        "bytes": 428110,
+        "path": "uv.lock",
+        "sha256": "6c862cbad9ab7e3a07dd2823c775127403093d6ad59a789ee227d827165e4733"
+      }
+    },
+    "transitive_python_paths": [
+      "scripts/__init__.py",
+      "scripts/experiments/run_ijds_marginal_mean_score_outcome_gap_v3h.py",
+      "src/__init__.py",
+      "src/data/__init__.py",
+      "src/data/outcome_observability.py",
+      "src/ijds_audit/__init__.py",
+      "src/ijds_audit/config.py",
+      "src/ijds_audit/geometry.py",
+      "src/ijds_audit/marginal_mean_score_outcome_gap_v3h.py",
+      "src/ijds_audit/portfolio.py",
+      "src/ijds_audit/rhs_ranging.py",
+      "src/utils/__init__.py",
+      "src/utils/artifact_descriptor.py"
+    ]
+  },
+  "initial_git": {
+    "clean": true,
+    "commit": "1e608bcc4006766e5c65f4bd56d2ca1cdb704a48",
+    "porcelain_v2_bytes": 0,
+    "porcelain_v2_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "preterminal_git": {
+    "clean": true,
+    "commit": "1e608bcc4006766e5c65f4bd56d2ca1cdb704a48",
+    "porcelain_v2_bytes": 0,
+    "porcelain_v2_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "preterminal_source_composite_sha256": "3607b2f5a18d41542b112836bf057424404667d66ee7bd8b659bedbc287805de",
+  "protected_artifacts_written": [],
+  "protected_stages_run": [],
+  "protocol_commit": "1e608bcc4006766e5c65f4bd56d2ca1cdb704a48",
+  "protocol_tag": "protocol/ijds-marginal-mean-score-outcome-gap-2026-07-29-v3h",
+  "run_tag": "ijds-marginal-mean-score-outcome-gap-2026-07-29-v3h",
+  "runtime": {
+    "bootstrap_attestation": {
+      "authority": {
+        "assert_statements": 0,
+        "dynamic_imports": 0,
+        "executed_from_sealed_git_bytes": true,
+        "protocol_commit": "1e608bcc4006766e5c65f4bd56d2ca1cdb704a48",
+        "scientific_closure": [
+          "scripts/__init__.py",
+          "scripts/experiments/run_ijds_marginal_mean_score_outcome_gap_v3h.py",
+          "src/__init__.py",
+          "src/data/__init__.py",
+          "src/data/outcome_observability.py",
+          "src/ijds_audit/__init__.py",
+          "src/ijds_audit/config.py",
+          "src/ijds_audit/geometry.py",
+          "src/ijds_audit/marginal_mean_score_outcome_gap_v3h.py",
+          "src/ijds_audit/portfolio.py",
+          "src/ijds_audit/rhs_ranging.py",
+          "src/utils/__init__.py",
+          "src/utils/artifact_descriptor.py"
+        ],
+        "source_files": {
+          ".gitattributes": {
+            "bytes": 599,
+            "path": ".gitattributes",
+            "sha256": "9d9d15bcde3b020caceae4bd750a555bb4ad98f8f10ee6ed68b2ffc9a4d3052a"
+          },
+          ".gitignore": {
+            "bytes": 5051,
+            "path": ".gitignore",
+            "sha256": "d1d0a2a9e588c11377c28371f6ddbcce282d840a3613a24cfe220b354a25deea"
+          },
+          ".python-version": {
+            "bytes": 5,
+            "path": ".python-version",
+            "sha256": "49a506dd32096b010d75205acf3430c9ae6c40351888129499e5a5e487126c93"
+          },
+          "configs/experiments/ijds_marginal_mean_score_outcome_gap_2026-07-29_v3h.yaml": {
+            "bytes": 27626,
+            "path": "configs/experiments/ijds_marginal_mean_score_outcome_gap_2026-07-29_v3h.yaml",
+            "sha256": "0532d18c1ebcaaf5f97456da894dbd0bdfce912ce1a1f00a565319230d80aabe"
+          },
+          "configs/experiments/ijds_marginal_mean_score_outcome_gap_2026-07-29_v3h_runtime.json": {
+            "bytes": 7363,
+            "path": "configs/experiments/ijds_marginal_mean_score_outcome_gap_2026-07-29_v3h_runtime.json",
+            "sha256": "ad172684463edf3ff7ba926c3880e3955134b445e51c2b0b330e9714b7df1961"
+          },
+          "configs/runtime/ijds_marginal_mean_score_outcome_gap_v3h_calibre_global.json": {
+            "bytes": 91,
+            "path": "configs/runtime/ijds_marginal_mean_score_outcome_gap_v3h_calibre_global.json",
+            "sha256": "7e8c7cdace709da838ca523f61bab5f7919d1973fb086938d045231e7195ae98"
+          },
+          "docs/research/ijds_marginal_mean_score_outcome_gap_v3h_protocol_2026-07-29.md": {
+            "bytes": 46934,
+            "path": "docs/research/ijds_marginal_mean_score_outcome_gap_v3h_protocol_2026-07-29.md",
+            "sha256": "114c531dad1792a22a394fd17bc61d6ba663205b3b092f38659d36613853f530"
+          },
+          "pyproject.toml": {
+            "bytes": 9611,
+            "path": "pyproject.toml",
+            "sha256": "ea8a73b429286b8ba350a15ab01d195613ffcac7ada89d0a83478767b2ff9c03"
+          },
+          "scripts/__init__.py": {
+            "bytes": 0,
+            "path": "scripts/__init__.py",
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          },
+          "scripts/experiments/bootstrap_ijds_marginal_mean_score_outcome_gap_v3h.py": {
+            "bytes": 68425,
+            "path": "scripts/experiments/bootstrap_ijds_marginal_mean_score_outcome_gap_v3h.py",
+            "sha256": "3d4efed83c260486c82ae49deeee6a05d5f6973379d2d8c5c1109d05da265abf"
+          },
+          "scripts/experiments/run_ijds_marginal_mean_score_outcome_gap_v3h.py": {
+            "bytes": 143546,
+            "path": "scripts/experiments/run_ijds_marginal_mean_score_outcome_gap_v3h.py",
+            "sha256": "6a00368cd47433a8fbe8621da01903cec318e135c79193ee72e9ed555832599d"
+          },
+          "src/__init__.py": {
+            "bytes": 41,
+            "path": "src/__init__.py",
+            "sha256": "81e8d28860cb56c4efbb02c2d96a7e064f704fe7e5260db47a60d4ff64188a69"
+          },
+          "src/data/__init__.py": {
+            "bytes": 52,
+            "path": "src/data/__init__.py",
+            "sha256": "013415c30216ba3deba074c3dc05af225dcdbf7ae49f59dd404268eab6eeb0ed"
+          },
+          "src/data/outcome_observability.py": {
+            "bytes": 21985,
+            "path": "src/data/outcome_observability.py",
+            "sha256": "d54d9ccf7d54a27bb31a5f8a47e9351ca7201bed7683e9b069299f1501f80d87"
+          },
+          "src/ijds_audit/__init__.py": {
+            "bytes": 823,
+            "path": "src/ijds_audit/__init__.py",
+            "sha256": "6fd3c9fa8147b568db7038d61a8f85dc978b706a08834113ee6b01c334e1e7e9"
+          },
+          "src/ijds_audit/config.py": {
+            "bytes": 25008,
+            "path": "src/ijds_audit/config.py",
+            "sha256": "a13cadec6a16267cfe80c3bfce986e6d6bbd6461b61d605036d3a917c4308f8e"
+          },
+          "src/ijds_audit/geometry.py": {
+            "bytes": 3936,
+            "path": "src/ijds_audit/geometry.py",
+            "sha256": "30929e9ec4aeb558548b1b921ef90012fa26844fefedfb3fc3cf9093fd81db02"
+          },
+          "src/ijds_audit/marginal_mean_score_outcome_gap_v3h.py": {
+            "bytes": 32689,
+            "path": "src/ijds_audit/marginal_mean_score_outcome_gap_v3h.py",
+            "sha256": "1edcd8548698a6af29700e6eed8c8c25223b13df38a764103e7944ddba9d50d7"
+          },
+          "src/ijds_audit/portfolio.py": {
+            "bytes": 13054,
+            "path": "src/ijds_audit/portfolio.py",
+            "sha256": "65f1032856f498376b37f2623e0b2edd7ed4040fed1652c25becae100808850e"
+          },
+          "src/ijds_audit/rhs_ranging.py": {
+            "bytes": 3203,
+            "path": "src/ijds_audit/rhs_ranging.py",
+            "sha256": "422c33822eee9ba301eb73b04c7447814b5e593d2e407435561fe50e49d89b85"
+          },
+          "src/utils/__init__.py": {
+            "bytes": 58,
+            "path": "src/utils/__init__.py",
+            "sha256": "bba60b51576909e33a4cca2d4b7ab1033ec76772da6d27c1be0bf683a3a91db9"
+          },
+          "src/utils/artifact_descriptor.py": {
+            "bytes": 1705,
+            "path": "src/utils/artifact_descriptor.py",
+            "sha256": "ef8f6df7cf311e2173659518370cfde5ed5de4380b444aaad35dcd794cd620f8"
+          },
+          "tests/test_experiments/test_ijds_marginal_mean_score_outcome_gap_v3h.py": {
+            "bytes": 106583,
+            "path": "tests/test_experiments/test_ijds_marginal_mean_score_outcome_gap_v3h.py",
+            "sha256": "c4bf104ad2b17d76570e09eefff7446577c74388d22506b5a59d749966cc4663"
+          },
+          "tests/test_ijds_audit/test_marginal_mean_score_outcome_gap_v3h.py": {
+            "bytes": 12532,
+            "path": "tests/test_ijds_audit/test_marginal_mean_score_outcome_gap_v3h.py",
+            "sha256": "aaa7972ca839dad25227d9e0ce349e062a9b5bf85c848404f49d8cfd49c5ea93"
+          },
+          "uv.lock": {
+            "bytes": 428110,
+            "path": "uv.lock",
+            "sha256": "6c862cbad9ab7e3a07dd2823c775127403093d6ad59a789ee227d827165e4733"
+          }
+        }
+      },
+      "calibre_cache": {
+        "directory": ".runtime_calibre/ijds-marginal-mean-score-outcome-gap-2026-07-29-v3h-calibre-cache",
+        "empty": true
+      },
+      "calibre_config": {
+        "caches_empty": true,
+        "directory": ".runtime_calibre/ijds-marginal-mean-score-outcome-gap-2026-07-29-v3h-config",
+        "global": {
+          "bytes": 91,
+          "path": ".runtime_calibre/ijds-marginal-mean-score-outcome-gap-2026-07-29-v3h-config/global.py.json",
+          "sha256": "7e8c7cdace709da838ca523f61bab5f7919d1973fb086938d045231e7195ae98"
+        },
+        "inventory": [
+          "caches/",
+          "global.py.json",
+          "plugins/"
+        ],
+        "plugins_empty": true
+      },
+      "calibre_native_directory": {
+        "bytes": 379912649,
+        "composite_sha256": "1cfe38b2da5bf2edfc3781dba7dca5a6b51e0346c6a01f4fe43277932ff16ad5",
+        "files": 276,
+        "path": "C:/Program Files/Calibre2/app/bin"
+      },
+      "distributions": {
+        "PyYAML": {
+          "bytes": 483051,
+          "composite_sha256": "ac6d22e82c74dec65e91f7860c7eb7fcc807b496b11fdf28779c938a2c479960",
+          "files": 26,
+          "version": "6.0.3"
+        },
+        "numpy": {
+          "bytes": 41903829,
+          "composite_sha256": "7f96fc979c7996257b9ef96cf08595893a0a00ccfa18406d11fbcc70bbe80419",
+          "files": 1065,
+          "version": "2.4.6"
+        },
+        "pandas": {
+          "bytes": 35350076,
+          "composite_sha256": "15a38600cef4c2a331f97f9f3664a21b74d5ffd55ee159125b16f17eb0ba5e3c",
+          "files": 1570,
+          "version": "3.0.3"
+        },
+        "pyarrow": {
+          "bytes": 85942377,
+          "composite_sha256": "5ec5776907eda4d2993916013ce285cf2ec8340f1637ab852b8e86c18008b179",
+          "files": 762,
+          "version": "25.0.0"
+        },
+        "python-dateutil": {
+          "bytes": 441783,
+          "composite_sha256": "d3e2f376018b3c037cc43f44584f8606efb359986b5630f142a50582aa8f35db",
+          "files": 27,
+          "version": "2.9.0.post0"
+        },
+        "six": {
+          "bytes": 38145,
+          "composite_sha256": "006ad0b1f8fb38a61e639d007e8fe35ee1215eda0ca2e504495e7742b697dd5b",
+          "files": 8,
+          "version": "1.17.0"
+        },
+        "tzdata": {
+          "bytes": 582216,
+          "composite_sha256": "76612c63d433dc57053e0d01840472809ccfcd4be2ae2ced8fa36c0cf3663be6",
+          "files": 635,
+          "version": "2026.3"
+        }
+      },
+      "environment": {
+        "forbidden_names_absent": [
+          "LANG",
+          "LANGUAGE",
+          "TZ"
+        ],
+        "forbidden_prefixes_absent": [
+          "ARROW_",
+          "DVC_",
+          "LC_",
+          "MKL_",
+          "NUMEXPR_",
+          "NUMPY_",
+          "OMP_",
+          "OPENBLAS_",
+          "PANDAS_",
+          "PYARROW_"
+        ],
+        "forbidden_variables_absent": [
+          "CONDA_PREFIX",
+          "CRPTO_V3H_DVC_SITE_PACKAGES",
+          "CRPTO_V3H_SOURCE_VENV",
+          "GIT_ALTERNATE_OBJECT_DIRECTORIES",
+          "GIT_CEILING_DIRECTORIES",
+          "GIT_CONFIG",
+          "GIT_CONFIG_COUNT",
+          "GIT_DIR",
+          "GIT_DISCOVERY_ACROSS_FILESYSTEM",
+          "GIT_INDEX_FILE",
+          "GIT_OBJECT_DIRECTORY",
+          "GIT_REPLACE_REF_BASE",
+          "GIT_WORK_TREE",
+          "PYTHONHOME",
+          "PYTHONINSPECT",
+          "PYTHONPATH",
+          "PYTHONSTARTUP",
+          "VIRTUAL_ENV"
+        ]
+      },
+      "flags": {
+        "debug": 0,
+        "dont_write_bytecode": 1,
+        "ignore_environment": 1,
+        "isolated": 1,
+        "no_user_site": 1,
+        "optimize": 2,
+        "safe_path": true,
+        "utf8_mode": 1
+      },
+      "git_root": {
+        "environment_sanitized": true,
+        "executable": {
+          "bytes": 4321168,
+          "path": "C:/Program Files/Git/mingw64/bin/git.exe",
+          "sha256": "fc0f1cae1304fcdcf4d0749f421c5ed21471efc856301f92f56d4b844be84363"
+        },
+        "git_dir": ".git",
+        "object_format": "sha1",
+        "replace_refs": [],
+        "top_level": ".",
+        "version": "git version 2.52.0.windows.1"
+      },
+      "head": {
+        "clean": true,
+        "commit": "1e608bcc4006766e5c65f4bd56d2ca1cdb704a48",
+        "porcelain_v2_bytes": 0,
+        "porcelain_v2_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "head_tag": "protocol/ijds-marginal-mean-score-outcome-gap-2026-07-29-v3h",
+      "initial_module_origins": {
+        "all_loaded_repo_and_site_modules_sealed": true,
+        "calibre_entrypoint_carrier": {
+          "aliases": [
+            "calibre.debug"
+          ],
+          "bootstrap_path": "scripts/experiments/bootstrap_ijds_marginal_mean_score_outcome_gap_v3h.py",
+          "bootstrap_sha256": "3d4efed83c260486c82ae49deeee6a05d5f6973379d2d8c5c1109d05da265abf",
+          "cached": null,
+          "carrier_is_executing_globals": true,
+          "loader_class": "FrozenByteCodeLoader",
+          "loader_module": "bypy_importer",
+          "module_key": "calibre.debug",
+          "module_name": "__main__",
+          "package": "calibre",
+          "spec_has_location": false,
+          "spec_loader_is_module_loader": true,
+          "spec_name": "calibre.debug",
+          "spec_origin": "C:/Program Files/Calibre2/app/bin/python-lib.bypy.frozen/calibre/debug.pyc",
+          "spec_submodule_search_locations": null
+        },
+        "loaded_local_modules": [
+          "calibre.debug"
+        ],
+        "loaded_site_modules": []
+      },
+      "initial_native_modules": {
+        "_bz2": {
+          "bytes": 72704,
+          "path": "C:/Program Files/Calibre2/app/bin/_bz2.pyd",
+          "sha256": "237ef011a685a205b0595a4a03ffa385e6e3b85cbecc2aa368a3a0ab07190162"
+        },
+        "_ctypes": {
+          "bytes": 111616,
+          "path": "C:/Program Files/Calibre2/app/bin/_ctypes.pyd",
+          "sha256": "e458e00b42b3f2feb3f523f223235021393afd502e78429322e8998506f48728"
+        },
+        "_hashlib": {
+          "bytes": 53248,
+          "path": "C:/Program Files/Calibre2/app/bin/_hashlib.pyd",
+          "sha256": "78a39ecfdcd85a54a43c6b81a1f331e0677a46acdb4cf83e79a50f2b808a718d"
+        },
+        "_lzma": {
+          "bytes": 146944,
+          "path": "C:/Program Files/Calibre2/app/bin/_lzma.pyd",
+          "sha256": "49c282894d0b3ed960e3080bd0a5fe975a2680dcc5383bd533fd29e8a08c6e2b"
+        },
+        "_queue": {
+          "bytes": 20480,
+          "path": "C:/Program Files/Calibre2/app/bin/_queue.pyd",
+          "sha256": "e5cc1c7a44073cf9a82e565bd983c5b1f35f23ab4e257e59588952fbd80f2b05"
+        },
+        "_socket": {
+          "bytes": 67584,
+          "path": "C:/Program Files/Calibre2/app/bin/_socket.pyd",
+          "sha256": "21af3ee504ea307a78ba5c680eec44294a1ac23a29818e9222b6ca18116a3881"
+        },
+        "_ssl": {
+          "bytes": 164864,
+          "path": "C:/Program Files/Calibre2/app/bin/_ssl.pyd",
+          "sha256": "985ae13c73b2f93070b46b32ab92984fddf6b490964d1c5a5d43a47153e918fe"
+        },
+        "_uuid": {
+          "bytes": 13312,
+          "path": "C:/Program Files/Calibre2/app/bin/_uuid.pyd",
+          "sha256": "5a0440e8c177f5161c04f3df384cc3a9ab8bbf5a07c98e569d225cc5430ae7b4"
+        },
+        "lxml._elementpath": {
+          "bytes": 130048,
+          "path": "C:/Program Files/Calibre2/app/bin/lxml._elementpath.pyd",
+          "sha256": "25ba4f9719189906fe8c8687dcd1bda78a1fd2e622750a0524d30ac0f0944315"
+        },
+        "lxml.etree": {
+          "bytes": 1470976,
+          "path": "C:/Program Files/Calibre2/app/bin/lxml.etree.pyd",
+          "sha256": "e87994e7b1e1cb8bdb5cfcf4b061dd01b0984f6f5768b7dc36809af13f18b8d2"
+        },
+        "msgpack._cmsgpack": {
+          "bytes": 135168,
+          "path": "C:/Program Files/Calibre2/app/bin/msgpack._cmsgpack.pyd",
+          "sha256": "eeac688a6adff449d18f84923e82f665ed96317afbb12cfa3d4a5d6c916b22a4"
+        },
+        "regex._regex": {
+          "bytes": 670720,
+          "path": "C:/Program Files/Calibre2/app/bin/regex._regex.pyd",
+          "sha256": "cdc32fb55463a84d20e3b7fc9b9dc7b2d84dbde72e3d4ce21e2e7248122ba55e"
+        },
+        "select": {
+          "bytes": 18432,
+          "path": "C:/Program Files/Calibre2/app/bin/select.pyd",
+          "sha256": "ac70d4afc85c496c33e167c2c5754dd7f9aec846a313080198685e52ea0c9444"
+        },
+        "unicodedata": {
+          "bytes": 1128960,
+          "path": "C:/Program Files/Calibre2/app/bin/unicodedata.pyd",
+          "sha256": "51edd1a6855bf09fb68da3e74701b3fdccaf998d555a5531f94efb39000e1409"
+        }
+      },
+      "initial_scientific_modules": [],
+      "locale": {
+        "lc_numeric": "C",
+        "lc_time": "C",
+        "timezone_names": [
+          "Hora est. Pacífico, Sudamérica",
+          "Hora verano Pacífico Sudamérica"
+        ]
+      },
+      "orig_argv": [
+        "C:\\Program Files\\Calibre2\\calibre-debug.exe",
+        "-e",
+        "scripts/experiments/bootstrap_ijds_marginal_mean_score_outcome_gap_v3h.py",
+        "--",
+        "--phase",
+        "compute",
+        "--config",
+        "configs/experiments/ijds_marginal_mean_score_outcome_gap_2026-07-29_v3h.yaml"
+      ],
+      "path_activation": {
+        "meta_path_standard_precedence": [
+          "BuiltinImporter",
+          "FrozenImporter",
+          "PathFinder"
+        ],
+        "preimport_sys_path": [
+          "scripts/experiments"
+        ],
+        "pycache_directory": ".runtime_calibre/ijds-marginal-mean-score-outcome-gap-2026-07-29-v3h-pycache",
+        "pycache_empty": true,
+        "scientific_sys_path": [
+          ".",
+          ".venv/Lib/site-packages"
+        ]
+      },
+      "phase": "compute",
+      "protocol_commit": "1e608bcc4006766e5c65f4bd56d2ca1cdb704a48",
+      "runtime_files": {
+        "files": {
+          "C:/Program Files/Calibre2/app/bin/_hashlib.pyd": {
+            "bytes": 53248,
+            "path": "C:/Program Files/Calibre2/app/bin/_hashlib.pyd",
+            "sha256": "78a39ecfdcd85a54a43c6b81a1f331e0677a46acdb4cf83e79a50f2b808a718d"
+          },
+          "C:/Program Files/Calibre2/app/bin/calibre-launcher.dll": {
+            "bytes": 429168,
+            "path": "C:/Program Files/Calibre2/app/bin/calibre-launcher.dll",
+            "sha256": "a6037891c67e6d26be656ab7d8ef5dd03a45cbbce1e82bcce12c5f93b825ad73"
+          },
+          "C:/Program Files/Calibre2/app/bin/libcrypto-3-x64.dll": {
+            "bytes": 6169712,
+            "path": "C:/Program Files/Calibre2/app/bin/libcrypto-3-x64.dll",
+            "sha256": "823d99212253c389ca6c34a35f373b3e6c3c048fac38f2ee5155fc005054224b"
+          },
+          "C:/Program Files/Calibre2/app/bin/python-lib.bypy.frozen": {
+            "bytes": 65192617,
+            "path": "C:/Program Files/Calibre2/app/bin/python-lib.bypy.frozen",
+            "sha256": "fe1e602f84baeb10702f85f847019ea424fa10e7f9a38c7b3159e987c76b6d84"
+          },
+          "C:/Program Files/Calibre2/app/bin/python3.dll": {
+            "bytes": 63600,
+            "path": "C:/Program Files/Calibre2/app/bin/python3.dll",
+            "sha256": "ee505b8f9757e92c8e0428105f548e4b030074e3337af8edf0ee08c48dd13568"
+          },
+          "C:/Program Files/Calibre2/app/bin/python311.dll": {
+            "bytes": 5780080,
+            "path": "C:/Program Files/Calibre2/app/bin/python311.dll",
+            "sha256": "38373701aa805509e79e35a1ce61435b40e04fdc0572dfe459bc512bfdf74d23"
+          },
+          "C:/Program Files/Calibre2/calibre-debug.exe": {
+            "bytes": 32368,
+            "path": "C:/Program Files/Calibre2/calibre-debug.exe",
+            "sha256": "f06cbc79c233457bf8bf1c3603981f685a727e7f68c1381c5e56c9cdb592d36b"
+          },
+          "C:/Program Files/Git/mingw64/bin/git.exe": {
+            "bytes": 4321168,
+            "path": "C:/Program Files/Git/mingw64/bin/git.exe",
+            "sha256": "fc0f1cae1304fcdcf4d0749f421c5ed21471efc856301f92f56d4b844be84363"
+          },
+          "C:/Program Files/Git/mingw64/bin/libiconv-2.dll": {
+            "bytes": 1136529,
+            "path": "C:/Program Files/Git/mingw64/bin/libiconv-2.dll",
+            "sha256": "ff31fa811f9c07cc7fdaa68c9e8bca3a7b4fdf6e0a079a58175ea58ba139c7ae"
+          },
+          "C:/Program Files/Git/mingw64/bin/libintl-8.dll": {
+            "bytes": 298055,
+            "path": "C:/Program Files/Git/mingw64/bin/libintl-8.dll",
+            "sha256": "7744fde3df3320fda0e3b599b4aa5349b1281f93d1e5c52865a52d0d3e4a7d39"
+          },
+          "C:/Program Files/Git/mingw64/bin/libpcre2-8-0.dll": {
+            "bytes": 717955,
+            "path": "C:/Program Files/Git/mingw64/bin/libpcre2-8-0.dll",
+            "sha256": "c135a87ed0f11eae8ffc4cb469671ff0b3f5d71fab5fb024e9b1e7241ca25b52"
+          },
+          "C:/Program Files/Git/mingw64/bin/libzstd.dll": {
+            "bytes": 1196744,
+            "path": "C:/Program Files/Git/mingw64/bin/libzstd.dll",
+            "sha256": "b13d4f30b93c96823473d742dda0075f7334cba03a40c33d8a7dc282e37b1500"
+          },
+          "C:/Program Files/Git/mingw64/bin/zlib1.dll": {
+            "bytes": 120814,
+            "path": "C:/Program Files/Git/mingw64/bin/zlib1.dll",
+            "sha256": "cb7ab3788d10940df874acd97b1821bbb5ee4a91f3eec11982bb5bf7a3c96443"
+          }
+        },
+        "git_version": "git version 2.52.0.windows.1"
+      },
+      "runtime_manifest": {
+        "bytes": 7363,
+        "path": "configs/experiments/ijds_marginal_mean_score_outcome_gap_2026-07-29_v3h_runtime.json",
+        "sha256": "ad172684463edf3ff7ba926c3880e3955134b445e51c2b0b330e9714b7df1961"
+      },
+      "schema_version": "2026-07-29.3h-bootstrap-1",
+      "sealed_importer": {
+        "finder_composite_sha256": "1d274219db29d0627da5f7ce3ff7b3e1384b22c92fac465d08ea6f3559952cd9",
+        "loaded_sealed_modules": {}
+      }
+    },
+    "calibre_cache_directory": ".runtime_calibre/ijds-marginal-mean-score-outcome-gap-2026-07-29-v3h-calibre-cache",
+    "calibre_config_directory": ".runtime_calibre/ijds-marginal-mean-score-outcome-gap-2026-07-29-v3h-config",
+    "calibre_version": "7.2.0",
+    "executable": {
+      "bytes": 32368,
+      "path": "C:/Program Files/Calibre2/calibre-debug.exe",
+      "sha256": "f06cbc79c233457bf8bf1c3603981f685a727e7f68c1381c5e56c9cdb592d36b"
+    },
+    "launcher_kind": "stdlib_authenticated_calibre_bootstrap_then_scientific_runner",
+    "local_module_paths": {
+      "src.data.outcome_observability": "src/data/outcome_observability.py",
+      "src.ijds_audit.marginal_mean_score_outcome_gap_v3h": "src/ijds_audit/marginal_mean_score_outcome_gap_v3h.py",
+      "src.utils.artifact_descriptor": "src/utils/artifact_descriptor.py"
+    },
+    "module_paths": {
+      "PyYAML": ".venv/Lib/site-packages/yaml/__init__.py",
+      "dateutil": ".venv/Lib/site-packages/dateutil/__init__.py",
+      "numpy": ".venv/Lib/site-packages/numpy/__init__.py",
+      "pandas": ".venv/Lib/site-packages/pandas/__init__.py",
+      "pyarrow": ".venv/Lib/site-packages/pyarrow/__init__.py",
+      "six": ".venv/Lib/site-packages/six.py",
+      "tzdata": ".venv/Lib/site-packages/tzdata/__init__.py"
+    },
+    "native_module_policy": {
+      "all_loaded_extensions_within_sealed_inventories": true,
+      "calibre_native_directory": {
+        "bytes": 379912649,
+        "composite_sha256": "1cfe38b2da5bf2edfc3781dba7dca5a6b51e0346c6a01f4fe43277932ff16ad5",
+        "files": 276,
+        "path": "C:/Program Files/Calibre2/app/bin"
+      },
+      "venv_distribution_composites": {
+        "PyYAML": {
+          "bytes": 483051,
+          "composite_sha256": "ac6d22e82c74dec65e91f7860c7eb7fcc807b496b11fdf28779c938a2c479960",
+          "files": 26,
+          "version": "6.0.3"
+        },
+        "numpy": {
+          "bytes": 41903829,
+          "composite_sha256": "7f96fc979c7996257b9ef96cf08595893a0a00ccfa18406d11fbcc70bbe80419",
+          "files": 1065,
+          "version": "2.4.6"
+        },
+        "pandas": {
+          "bytes": 35350076,
+          "composite_sha256": "15a38600cef4c2a331f97f9f3664a21b74d5ffd55ee159125b16f17eb0ba5e3c",
+          "files": 1570,
+          "version": "3.0.3"
+        },
+        "pyarrow": {
+          "bytes": 85942377,
+          "composite_sha256": "5ec5776907eda4d2993916013ce285cf2ec8340f1637ab852b8e86c18008b179",
+          "files": 762,
+          "version": "25.0.0"
+        },
+        "python-dateutil": {
+          "bytes": 441783,
+          "composite_sha256": "d3e2f376018b3c037cc43f44584f8606efb359986b5630f142a50582aa8f35db",
+          "files": 27,
+          "version": "2.9.0.post0"
+        },
+        "six": {
+          "bytes": 38145,
+          "composite_sha256": "006ad0b1f8fb38a61e639d007e8fe35ee1215eda0ca2e504495e7742b697dd5b",
+          "files": 8,
+          "version": "1.17.0"
+        },
+        "tzdata": {
+          "bytes": 582216,
+          "composite_sha256": "76612c63d433dc57053e0d01840472809ccfcd4be2ae2ced8fa36c0cf3663be6",
+          "files": 635,
+          "version": "2026.3"
+        }
+      }
+    },
+    "orig_argv": [
+      "C:\\Program Files\\Calibre2\\calibre-debug.exe",
+      "-e",
+      "scripts/experiments/bootstrap_ijds_marginal_mean_score_outcome_gap_v3h.py",
+      "--",
+      "--phase",
+      "compute",
+      "--config",
+      "configs/experiments/ijds_marginal_mean_score_outcome_gap_2026-07-29_v3h.yaml"
+    ],
+    "packages": {
+      "PyYAML": "6.0.3",
+      "numpy": "2.4.6",
+      "pandas": "3.0.3",
+      "pyarrow": "25.0.0",
+      "python-dateutil": "2.9.0.post0",
+      "six": "1.17.0",
+      "tzdata": "2026.3"
+    },
+    "platform": "Windows-10-10.0.26200-SP0",
+    "project_site_packages": ".venv/Lib/site-packages",
+    "python": {
+      "debug": false,
+      "full_version": "3.11.5 (main, Oct  9 2023, 08:50:02) [MSC v.1937 64 bit (AMD64)]",
+      "implementation": "CPython",
+      "optimize": 2,
+      "version": "3.11.5"
+    },
+    "pythonoptimize_environment": null,
+    "runner_executed_from_sealed_bytes": true,
+    "scientific_sys_path": [
+      ".",
+      ".venv/Lib/site-packages"
+    ],
+    "sealed_import_runtime": {
+      "finder_composite_sha256": "1d274219db29d0627da5f7ce3ff7b3e1384b22c92fac465d08ea6f3559952cd9",
+      "loaded_sealed_modules": {
+        "scripts": "scripts/__init__.py",
+        "scripts.experiments.bootstrap_ijds_marginal_mean_score_outcome_gap_v3h": "scripts/experiments/bootstrap_ijds_marginal_mean_score_outcome_gap_v3h.py",
+        "src": "src/__init__.py",
+        "src.data": "src/data/__init__.py",
+        "src.data.outcome_observability": "src/data/outcome_observability.py",
+        "src.ijds_audit": "src/ijds_audit/__init__.py",
+        "src.ijds_audit.marginal_mean_score_outcome_gap_v3h": "src/ijds_audit/marginal_mean_score_outcome_gap_v3h.py",
+        "src.utils": "src/utils/__init__.py",
+        "src.utils.artifact_descriptor": "src/utils/artifact_descriptor.py"
+      }
+    },
+    "sys_argv": [
+      "scripts/experiments/run_ijds_marginal_mean_score_outcome_gap_v3h.py",
+      "--phase",
+      "compute",
+      "--config",
+      "configs/experiments/ijds_marginal_mean_score_outcome_gap_2026-07-29_v3h.yaml"
+    ],
+    "uv_lock_sha256": "6c862cbad9ab7e3a07dd2823c775127403093d6ad59a789ee227d827165e4733"
+  },
+  "schema_version": "2026-07-29.3h",
+  "source_composite_sha256": "3607b2f5a18d41542b112836bf057424404667d66ee7bd8b659bedbc287805de",
+  "status": "terminal_v3h_seal_pending_git_artifact_commit",
+  "summary": {
+    "bytes": 12331,
+    "path": "models/experiments/ijds_audit/ijds-marginal-mean-score-outcome-gap-2026-07-29-v3h/marginal_mean_score_outcome_gap_summary.json",
+    "sha256": "4e0f393f8cbbd471901974b1a47463159e9a7f6c90bfcc37641d1a68d6d0b5bf"
+  }
+}
