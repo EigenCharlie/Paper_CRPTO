@@ -55,6 +55,7 @@
 
 
 \begin{document}
+\raggedbottom
 
 \RUNAUTHOR{Anonymous}
 \RUNTITLE{Binary Conformal Portfolio Audit}
@@ -1312,11 +1313,28 @@ descriptions under unrestricted shared completion, not hypothesis tests,
 temporal-validity guarantees, independent replications, or a
 learner/window/stratum ranking. Sharpness is cellwise: the manuscript
 does not claim that every endpoint across all 175 overlapping contrasts
-is jointly attained by one global completion. Figure
+is jointly attained by one global completion.
 Figure~\ref{fig-common-panel} therefore places the resolved and
 all-candidate quantities in separate aligned panels: they share axes but
 not denominators, and the all-candidate segments are identification
 bounds rather than uncertainty intervals around the resolved response.
+
+Proposition 2 gives the exact conditional order-statistic
+characterization of each frozen block, but score binning itself does not
+guarantee ordered finite-bin prevalences, a crossing of \(\alpha\), or
+any low-regime stratum. A phase-margin statement is calibration-side;
+zero positive-class target coverage additionally requires the stated
+target condition. W7 and W8 are overlapping but distinct calibration
+blocks, so their thresholds cannot be represented as the two sides of
+one fixed block with a shared pair of class maxima. The narrower W8
+interval still leaves S3 coverage at {[}0.8225, 0.8547{]}. The
+common-panel response calculation shows what changed on the frozen
+target set, but it does not identify why the calibration threshold moved
+or why the target mass occupies those bands. In W8, \(1-c=0.888199\)
+exceeds the maximum target S3 score 0.111893, so no positive label can
+be covered; this conditional support fact still supplies neither a
+transport guarantee nor a cause. Online Supplement B.5.1 gives the full
+integer identities and tables.
 
 \begin{figure}
 
@@ -1340,23 +1358,6 @@ regression, ranking, selected comparison, continuity, or joint
 endpoint-attainability claim is made.}
 
 \end{figure}%
-
-Proposition 2 gives the exact conditional order-statistic
-characterization of each frozen block, but score binning itself does not
-guarantee ordered finite-bin prevalences, a crossing of \(\alpha\), or
-any low-regime stratum. A phase-margin statement is calibration-side;
-zero positive-class target coverage additionally requires the stated
-target condition. W7 and W8 are overlapping but distinct calibration
-blocks, so their thresholds cannot be represented as the two sides of
-one fixed block with a shared pair of class maxima. The narrower W8
-interval still leaves S3 coverage at {[}0.8225, 0.8547{]}. The
-common-panel response calculation shows what changed on the frozen
-target set, but it does not identify why the calibration threshold moved
-or why the target mass occupies those bands. In W8, \(1-c=0.888199\)
-exceeds the maximum target S3 score 0.111893, so no positive label can
-be covered; this conditional support fact still supplies neither a
-transport guarantee nor a cause. Online Supplement B.5.1 gives the full
-integer identities and tables.
 
 Fit-label lags 0, 3, and 6 months retain more than 99\% in every month
 and preserve the crossing; 8 and 12 months retain only 98.68\% and

@@ -4,7 +4,7 @@ from itertools import product
 
 import numpy as np
 import pytest
-from hypothesis import given, strategies as st
+from hypothesis import HealthCheck, given, settings, strategies as st
 
 from src.evaluation.policy_contrast_bounds import (
     _binary_identification_width,
@@ -41,6 +41,7 @@ def binary_sum_cases(
 
 
 @given(binary_sum_cases())
+@settings(suppress_health_check=[HealthCheck.too_slow])
 def test_sharp_binary_bounds_equal_exhaustive_completion_extrema(
     case: tuple[np.ndarray, np.ndarray, np.ndarray],
 ) -> None:
@@ -60,6 +61,7 @@ def test_sharp_binary_bounds_equal_exhaustive_completion_extrema(
 
 
 @given(binary_sum_cases())
+@settings(suppress_health_check=[HealthCheck.too_slow])
 def test_identification_width_reconciles_with_sharp_interval(
     case: tuple[np.ndarray, np.ndarray, np.ndarray],
 ) -> None:

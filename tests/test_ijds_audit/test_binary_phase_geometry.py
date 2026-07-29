@@ -733,6 +733,8 @@ def test_phase_evidence_rejects_an_entire_missing_fit_audit_domain(
     domain: str,
 ):
     fit_path, frozen = _phase_evidence_inputs(tmp_path)
+    expected_learners: tuple[str, ...]
+    expected_windows: tuple[str, ...]
     if domain == "learner":
         extra = frozen.assign(learner="numeric_logistic_platt")
         complete_frozen = pd.concat([frozen, extra], ignore_index=True)

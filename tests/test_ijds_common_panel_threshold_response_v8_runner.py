@@ -1,11 +1,13 @@
 from __future__ import annotations
 
+import hashlib
 import json
 from copy import deepcopy
 from pathlib import Path
 
 import pandas as pd
 import pytest
+import yaml
 
 import scripts.experiments.run_ijds_common_panel_threshold_response_v8 as runner
 from scripts.experiments.run_ijds_common_panel_threshold_response_v8 import (
@@ -24,10 +26,7 @@ V8_DATA_DIR = (
     ROOT
     / "data/processed/experiments/ijds_audit/ijds-common-panel-threshold-response-2026-07-26-v8"
 )
-V7_DATA_DIR = (
-    ROOT
-    / "data/processed/experiments/ijds_audit/ijds-common-panel-threshold-response-2026-07-26-v7"
-)
+PUBLICATION_TARGETS = ROOT / "configs/crpto_publication_targets.yaml"
 
 
 def test_canonical_v8_config_is_complete_and_locked() -> None:
@@ -72,11 +71,17 @@ def test_completed_v8_replay_is_clean_truthful_and_scientifically_identical_to_v
     assert receipt["protected_artifacts_read"] == [raw_descriptor]
     assert summary["protected_artifacts_written"] == receipt["protected_artifacts_written"] == []
 
-    for filename in (
+    publication_targets = yaml.safe_load(PUBLICATION_TARGETS.read_text(encoding="utf-8"))
+    frozen_v7_hashes = publication_targets["superseded_common_panel_protocol_capsule"][
+        "frozen_v7_artifact_sha256"
+    ]
+    assert set(frozen_v7_hashes) == {
         "adjacent_stratum_threshold_response.csv",
         "adjacent_learner_threshold_response.csv",
-    ):
-        assert (V8_DATA_DIR / filename).read_bytes() == (V7_DATA_DIR / filename).read_bytes()
+    }
+    for filename, v7_sha256 in frozen_v7_hashes.items():
+        v8_bytes = (V8_DATA_DIR / filename).read_bytes()
+        assert hashlib.sha256(v8_bytes).hexdigest() == v7_sha256
 
 
 @pytest.mark.parametrize(

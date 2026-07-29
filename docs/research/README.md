@@ -65,6 +65,17 @@ boundaries are recorded in
 `conformal_decision_sota_lastmile_2026-07-26.md`. They do not enter the local
 PDF checksum until their bytes can be acquired and hashed.
 
+## Transport-blocked candidate
+
+The V3H marginal mean-score--outcome-gap lineage is retained under annotated
+tags as Git-native candidate provenance, not as files in the current tree. Its
+local calculation and artifact verification passed, but the mandatory
+separate-clean-clone DVC pull failed for missing credentials before
+materializing any source. It supports no active claim, manuscript number,
+Table S2B, evidence-manifest entry, or reviewer-ZIP file. The exact boundary,
+structured failed-gate receipt, and only valid promotion path are recorded in
+`ijds_marginal_mean_score_outcome_gap_v3h_candidate_status_2026-07-29.md`.
+
 ## Historical Boundary
 
 Earlier paper versions, search results, policy promotions, and development

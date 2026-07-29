@@ -52,6 +52,7 @@ format:
   html:
     toc: true
     number-sections: true
+    html-math-method: mathml
     css: ijds.css
     code-fold: true
   pdf:
@@ -1126,12 +1127,10 @@ temporal-validity guarantees, independent replications, or a
 learner/window/stratum ranking.
 Sharpness is cellwise: the manuscript does not claim that every endpoint across
 all 175 overlapping contrasts is jointly attained by one global completion.
-Figure @fig-common-panel therefore places the resolved and all-candidate
+@fig-common-panel therefore places the resolved and all-candidate
 quantities in separate aligned panels: they share axes but not denominators, and
 the all-candidate segments are identification bounds rather than uncertainty
 intervals around the resolved response.
-
-![Complete fixed-panel adjacent-threshold response. Panel A gives the exact resolved-panel response; Panel B gives sharp all-candidate response bounds under one shared completion of unresolved labels. Both panels retain all 175 learner--stratum--transition cells on identical linear response axes and a common symmetric-log threshold-change axis, but they are separated because their denominators differ. Capped segments in Panel B mark identification endpoints, not confidence intervals or error bars around Panel A. Orange marks the previously disclosed CatBoost S3 W7--W8 illustration; black crosses mark the five exact $[0,0]$ cells. No regression, ranking, selected comparison, continuity, or joint endpoint-attainability claim is made.](../reports/crpto/figures/crpto_ijds_v4_fig4_common_panel_threshold_response.png){#fig-common-panel width=100%}
 
 Proposition 2 gives the exact conditional order-statistic characterization of
 each frozen block, but score binning itself does not guarantee ordered finite-bin
@@ -1147,6 +1146,8 @@ bands. In W8, $1-c=0.888199$ exceeds the maximum target S3 score 0.111893, so
 no positive label can be covered; this conditional support fact still supplies
 neither a transport guarantee nor a cause. Online Supplement B.5.1 gives the
 full integer identities and tables.
+
+![Complete fixed-panel adjacent-threshold response. Panel A gives the exact resolved-panel response; Panel B gives sharp all-candidate response bounds under one shared completion of unresolved labels. Both panels retain all 175 learner--stratum--transition cells on identical linear response axes and a common symmetric-log threshold-change axis, but they are separated because their denominators differ. Capped segments in Panel B mark identification endpoints, not confidence intervals or error bars around Panel A. Orange marks the previously disclosed CatBoost S3 W7--W8 illustration; black crosses mark the five exact $[0,0]$ cells. No regression, ranking, selected comparison, continuity, or joint endpoint-attainability claim is made.](../reports/crpto/figures/crpto_ijds_v4_fig4_common_panel_threshold_response.png){#fig-common-panel width=100%}
 
 Fit-label lags 0, 3, and 6 months retain more than 99% in every month and preserve
 the crossing; 8 and 12 months retain only 98.68% and 97.45% in their weakest month

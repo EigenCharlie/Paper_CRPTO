@@ -344,7 +344,7 @@ def test_registry_verifies_exact_direct_child_git_artifact_commit(tmp_path: Path
     artifact_tag = "artifacts/artifact-fixture"
     subprocess.run(["git", "tag", artifact_tag], cwd=tmp_path, check=True)
 
-    payload = {
+    payload: dict[str, Any] = {
         "schema_version": "artifact-fixture-v1",
         "status": "active_ijds_paper_evidence_source_registry",
         "lineages": {

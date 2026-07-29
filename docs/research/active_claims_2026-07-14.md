@@ -25,11 +25,14 @@ pre-endpoint-correction evaluations are provenance only.
   policy winner.
 - No OOT outcome selects a learner, window, taxonomy, gamma, ruler, coordinate,
   cap, comparator, or policy.
-- The V2 marginal mean-score--outcome-gap arithmetic is quarantine provenance,
-  not active evidence: its executed runtime and row-identity/transport contract
-  do not satisfy the current gate. No marginal-gap claim or Table S2B is active
-  unless a fresh V3 protocol and exact direct-child artifact replay are both
-  verified and promoted.
+- The V2--V3G marginal mean-score--outcome-gap lineages are quarantine
+  provenance. V3H completed its local calculation and exact direct-child
+  Git-native artifact seal, but the mandatory separate-clean-clone DVC pull
+  failed for missing credentials before any source was materialized. V3H is a
+  transport-blocked candidate, not active evidence: no marginal-gap claim,
+  Table S2B, manifest entry, manuscript number, or reviewer-ZIP file is active.
+  Promotion requires a new clean clone that passes V3H unchanged; any changed
+  transport or calculation requires a newly frozen V3I.
 
 ## Active Lineages
 
@@ -655,8 +658,9 @@ The complete endpoint-availability sensitivity is:
   substantially increases two-label sets.
 - The coverage finding also survives all four declared fit-label scenarios;
   the W7--W8 geometric crossing survives only three of them.
-- Binary absolute-residual geometry is prevalence-sensitive but not invariant
-  to every fit-label completion.
+- Binary absolute-residual geometry can be prevalence-sensitive under the
+  stated calibration conditions but is not invariant to every fit-label
+  completion.
 - The score, ruler, and coordinate jointly define the portfolio comparison.
 - Within the finite protocol-locked grid, direction is not invariant to ruler or
   coordinate and no endpoint has a universal status-indexed outcome ordering.

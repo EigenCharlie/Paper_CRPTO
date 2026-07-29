@@ -1176,7 +1176,7 @@ def _validate_cross_table_contract(
             ),
         }
         for cell_column, (stratum_column, weight_column, denominator) in weighted_metrics.items():
-            expected = (
+            expected_weighted = (
                 sum(
                     float(stratum[stratum_column]) * int(stratum[weight_column])
                     for stratum in strata
@@ -1189,19 +1189,19 @@ def _validate_cross_table_contract(
                 row_number,
                 f"S6D-to-S6E weighted {cell_column}",
                 float(cell[cell_column]),
-                expected,
+                expected_weighted,
             )
 
         for prefix in ("", "baseline_"):
             for set_name in ("empty", "zero_only", "one_only", "both"):
-                expected = int(cell[f"{prefix}set_{set_name}_count"]) / candidate_rows
+                expected_share = int(cell[f"{prefix}set_{set_name}_count"]) / candidate_rows
                 _require_close(
                     s6d_name,
                     paths[s6d_name],
                     row_number,
                     f"S6D {prefix}set share {set_name}",
                     float(cell[f"{prefix}set_{set_name}_share"]),
-                    expected,
+                    expected_share,
                 )
 
         categories_by_label = {
@@ -1224,14 +1224,14 @@ def _validate_cross_table_contract(
                     covered / resolved_label_rows,
                 )
                 for disposition in ("covered", "missed"):
-                    expected = sum(
+                    expected_unresolved = sum(
                         int(row[f"{prefix}unresolved_label_{disposition}_if_assigned_rows"])
                         for row in label_rows
                     )
                     column = (
                         f"{prefix}unresolved_{'zero' if label == '0' else 'one'}_{disposition}_rows"
                     )
-                    if int(cell[column]) != expected:
+                    if int(cell[column]) != expected_unresolved:
                         _fail(
                             s6d_name,
                             paths[s6d_name],
@@ -1260,14 +1260,14 @@ def _validate_cross_table_contract(
             "average_set_size_delta_label_mondrian_minus_baseline": float(cell["average_set_size"])
             - float(cell["baseline_average_set_size"]),
         }
-        for column, expected in metric_identities.items():
+        for column, expected_metric in metric_identities.items():
             _require_close(
                 s6d_name,
                 paths[s6d_name],
                 row_number,
                 f"S6D identity {column}",
                 float(cell[column]),
-                expected,
+                expected_metric,
             )
 
     s6c_thresholds = {

@@ -123,13 +123,27 @@ overlap, and table or figure legibility.
 
 ## QA Record
 
-The 2026-07-22 counts belong to a superseded release candidate. Current QMD,
-generated TeX, PDFs, tables, and machine-readable supplement must be rebuilt and
-audited together before any page count or visual-inspection total is reported.
-During pre-freeze work, no page limit is evaluated, so scientifically useful
-material is not removed to satisfy formatting. A later explicit final freeze
-must run `just submission-freeze-check`, record the new
-page/abstract/build counts, and visually inspect every regenerated reviewer page.
+The current pre-freeze bundle was rebuilt and audited on 2026-07-29 after the
+last substantive source and evidence changes:
+
+- official INFORMS PDF: 36 pages, with references beginning on page 32 (31
+  pre-reference pages; the final-freeze page cap was deliberately not run);
+- browser body preview: 26 pages;
+- browser supplement preview: 52 pages;
+- abstract: exactly 300 words in one paragraph, with normalized source-to-PDF
+  equality;
+- all 114 rendered pages: US Letter, no blank pages, no identity or artifact
+  fingerprints, and visually inspected for clipping, overlap, formula rendering,
+  and table/figure legibility;
+- official compiler scan: converged, with no undefined citation, reference, or
+  rerun request; and
+- machine-readable supplement: rebuilt from the active evidence surface and
+  passed its exact-content check.
+
+This remains a pre-freeze record. Scientifically useful material was not removed
+to meet a page target. A later explicit final freeze must rebuild all outputs,
+run `just submission-freeze-check`, replace these counts, and visually inspect
+every regenerated reviewer page again.
 
 ## Acceptance Criteria
 

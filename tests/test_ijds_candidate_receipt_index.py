@@ -26,7 +26,9 @@ def _assert_descriptor(descriptor: dict[str, object]) -> None:
     path = (ROOT / relative).resolve()
     path.relative_to(ROOT.resolve())
     assert path.is_file()
-    assert path.stat().st_size == int(descriptor["bytes"])
+    byte_count = descriptor["bytes"]
+    assert type(byte_count) is int
+    assert path.stat().st_size == byte_count
     assert _sha256(path) == str(descriptor["sha256"])
 
 

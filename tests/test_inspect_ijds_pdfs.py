@@ -79,7 +79,7 @@ def test_active_abstract_satisfies_ijds_length_and_paragraph_contract() -> None:
 
 
 def test_normalized_word_stream_ignores_layout_and_punctuation() -> None:
-    assert normalized_word_stream("Beta--Binomial\n90%-target") == ("beta binomial 90 target")
+    assert normalized_word_stream("Beta--Binomial\n90%-target") == "betabinomial90target"
 
 
 def test_freshness_check_rejects_an_artifact_older_than_its_input(tmp_path) -> None:

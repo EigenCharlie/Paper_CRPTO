@@ -240,7 +240,7 @@ def test_complete_portfolio_structure_grid_is_visible_in_supplement() -> None:
     normalized = re.sub(r"\s+", " ", supplement.lower())
     assert "zero scenarios are favorable on all three metrics" in normalized
     assert "zero are adverse on all three metrics" in normalized
-    assert "share of the 1,440 portfolios" in normalized
+    assert "share of the 1,440 endpoint portfolios per scenario" in normalized
     assert "baseline scenario reproduces the active two-ruler bounds exactly" in normalized
 
 

@@ -3,6 +3,8 @@ from __future__ import annotations
 from pathlib import Path
 
 import pytest
+from pypdf import PdfReader, PdfWriter
+from pypdf.generic import DecodedStreamObject, NameObject
 
 from scripts import render_submission_pdf_previews as previews
 
@@ -74,6 +76,7 @@ def test_render_pdf_replaces_output_only_after_browser_creates_pdf(
         Path(target).write_bytes(b"new-pdf")
 
     monkeypatch.setattr(previews.subprocess, "run", fake_run)
+    monkeypatch.setattr(previews, "_trim_trailing_blank_pages", lambda _path: 0)
 
     previews.render_pdf(tmp_path / "chrome", html, pdf)
 
@@ -95,3 +98,64 @@ def test_render_pdf_preserves_previous_output_when_browser_writes_nothing(
         previews.render_pdf(tmp_path / "chrome", html, pdf)
 
     assert pdf.read_bytes() == b"old"
+
+
+def test_trailing_blank_pages_are_removed_but_one_page_is_retained(tmp_path: Path) -> None:
+    pdf = tmp_path / "blank-tail.pdf"
+    writer = PdfWriter()
+    for _ in range(3):
+        writer.add_blank_page(width=612, height=792)
+    with pdf.open("wb") as handle:
+        writer.write(handle)
+
+    removed = previews._trim_trailing_blank_pages(pdf)
+
+    assert removed == 2
+    assert len(PdfReader(pdf).pages) == 1
+
+
+@pytest.mark.parametrize(
+    "content",
+    [
+        b"q 0 0 10 10 re f Q",
+        b"BT (OK) Tj ET",
+    ],
+)
+def test_trailing_graphic_or_short_text_page_is_never_trimmed(
+    tmp_path: Path,
+    content: bytes,
+) -> None:
+    pdf = tmp_path / "meaningful-tail.pdf"
+    writer = PdfWriter()
+    writer.add_blank_page(width=612, height=792)
+    meaningful = writer.add_blank_page(width=612, height=792)
+    stream = DecodedStreamObject()
+    stream.set_data(content)
+    meaningful[NameObject("/Contents")] = writer._add_object(stream)
+    with pdf.open("wb") as handle:
+        writer.write(handle)
+
+    removed = previews._trim_trailing_blank_pages(pdf)
+
+    assert removed == 0
+    assert len(PdfReader(pdf).pages) == 2
+
+
+def test_chrome_white_background_only_tail_is_trimmed(tmp_path: Path) -> None:
+    pdf = tmp_path / "chrome-blank-tail.pdf"
+    writer = PdfWriter()
+    writer.add_blank_page(width=612, height=792)
+    tail = writer.add_blank_page(width=612, height=792)
+    stream = DecodedStreamObject()
+    stream.set_data(
+        b"q 1 1 1 RG 1 1 1 rg 0 0 612 792 re f Q "
+        b"/NonStruct <</MCID 0>> BDC q 1 1 1 rg 0 0 612 10 re f Q EMC"
+    )
+    tail[NameObject("/Contents")] = writer._add_object(stream)
+    with pdf.open("wb") as handle:
+        writer.write(handle)
+
+    removed = previews._trim_trailing_blank_pages(pdf)
+
+    assert removed == 1
+    assert len(PdfReader(pdf).pages) == 1

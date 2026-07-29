@@ -29,7 +29,7 @@ not active evidence.
 19b. `docs/research/ijds_binary_phase_geometry_v5_protocol_2026-07-24.md`
 19c. `docs/research/ijds_external_phase_replication_v1_quarantine_2026-07-26.md`
 19c1. `docs/research/ijds_common_panel_threshold_response_v8_protocol_2026-07-26.md`
-19c2. `docs/research/ijds_marginal_mean_score_outcome_gap_v3_protocol_2026-07-26.md`
+19c2. `docs/research/ijds_marginal_mean_score_outcome_gap_v3h_candidate_status_2026-07-29.md`
 19d. `docs/research/ijds_raw_data_acquisition_provenance_2026-07-21.md`
 19e. `docs/research/ijds_submission_rights_anonymity_audit_2026-07-21.md`
 20. `configs/ijds_active_evidence_sources.yaml`
@@ -50,11 +50,17 @@ implementation includes an undeclared selected CatBoost-stratum path. Do not
 use their S6I, S2B, breakeven, ranking, or selected-magnitude outputs as active
 evidence without a new protocol and clean tagged replay.
 
-The marginal mean-score--outcome-gap V2 arithmetic is also quarantine
-provenance: its executed runtime and row-identity/artifact-transport contract do
-not satisfy the current gate. No marginal claim or Table S2B is active unless a
-fresh V3 protocol and exact direct-child artifact replay both pass and are
-promoted.
+The marginal mean-score--outcome-gap V2--V3G lineages are quarantine
+provenance. V3H completed a local compute and exact direct-child Git-native
+artifact seal, but its mandatory separate-clean-clone DVC pull failed for
+missing remote credentials before any source was materialized. V3H is a
+transport-blocked candidate, not active evidence: it supports no manuscript
+number, claim, Table S2B, manifest entry, or reviewer-ZIP file. Promotion
+requires a fresh clean clone that passes the unchanged V3H gate; a changed
+transport or computation requires a newly frozen V3I. V3H protocol and
+artifact bytes remain under annotated tags, not in the current `main` tree;
+the status record and structured transport receipt are the only current-tree
+records.
 
 The claim registry is the editorial authority. The source registry owns exact
 lineage identities, artifact descriptors, and 53 DVC pointers. The V4 evidence

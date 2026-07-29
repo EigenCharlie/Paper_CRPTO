@@ -256,22 +256,81 @@ stopped_tagged_candidate_capsule:
   forbidden_run_tags_in_manuscript:
     - ijds-set-preserving-embedding-sensitivity-2026-07-26-v1
 
-superseded_protocol_capsule:
+superseded_common_panel_protocol_capsule:
   status: "retained_reproducible_provenance_not_active_evidence"
   active_paper_evidence_allowed: false
   active_claim_support_allowed: false
   protocol_entrypoints:
     - scripts/experiments/run_ijds_common_panel_threshold_response_v7.py
-    - scripts/experiments/run_ijds_marginal_mean_score_outcome_gap_v2.py
   protocols:
     - docs/research/ijds_common_panel_threshold_response_v7_protocol_2026-07-26.md
-    - docs/research/ijds_marginal_mean_score_outcome_gap_v2_protocol_2026-07-26.md
   configs:
     - configs/experiments/ijds_common_panel_threshold_response_2026-07-26_v7.yaml
-    - configs/experiments/ijds_marginal_mean_score_outcome_gap_2026-07-26_v2.yaml
   supersession:
     run_tag: "ijds-common-panel-threshold-response-2026-07-26-v8"
     reason: "V8 truthfully records the manifest-protected raw-archive read; its scientific CSVs are byte-identical to V7."
+  frozen_v7_artifact_sha256:
+    adjacent_stratum_threshold_response.csv: "e001c84f0c2b098e8d7d8a1dcc114ca47cd5ccb9e79e7473d52a8e0a944470f5"
+    adjacent_learner_threshold_response.csv: "287fc78ba99547f8b16f240ad395c3bca95c0581373d01cf58ade964b874173b"
+
+superseded_marginal_gap_protocol_capsule:
+  status: "git_history_and_tags_only_not_active_evidence"
+  active_paper_evidence_allowed: false
+  active_claim_support_allowed: false
+  machine_readable_supplement_allowed: false
+  retained_in_current_tree: false
+  retained_in_git_history: true
+  historical_range: "V2--V3G"
+  successor_candidate:
+    run_tag: "ijds-marginal-mean-score-outcome-gap-2026-07-29-v3h"
+    status: "transport_blocked_not_active"
+    reason: >-
+      V3H completed its local compute and Git-native artifact seal, but its
+      mandatory separate-clean-clone DVC pull failed before source
+      materialization because the remote credentials were unavailable.
+
+transport_blocked_tagged_candidate_capsule:
+  status: "clean_tagged_candidate_blocked_before_active_promotion"
+  active_paper_evidence_allowed: false
+  active_claim_support_allowed: false
+  machine_readable_supplement_allowed: false
+  dvc_pointer_count_change_allowed: false
+  retained_in_current_tree: false
+  retained_in_git_tags: true
+  run_scope:
+    - ijds-marginal-mean-score-outcome-gap-2026-07-29-v3h
+  tagged_protocol_surface:
+    - configs/experiments/ijds_marginal_mean_score_outcome_gap_2026-07-29_v3h.yaml
+    - configs/experiments/ijds_marginal_mean_score_outcome_gap_2026-07-29_v3h_runtime.json
+    - configs/runtime/ijds_marginal_mean_score_outcome_gap_v3h_calibre_global.json
+    - docs/research/ijds_marginal_mean_score_outcome_gap_v3h_protocol_2026-07-29.md
+    - scripts/experiments/bootstrap_ijds_marginal_mean_score_outcome_gap_v3h.py
+    - scripts/experiments/run_ijds_marginal_mean_score_outcome_gap_v3h.py
+    - src/ijds_audit/marginal_mean_score_outcome_gap_v3h.py
+    - tests/test_experiments/test_ijds_marginal_mean_score_outcome_gap_v3h.py
+    - tests/test_ijds_audit/test_marginal_mean_score_outcome_gap_v3h.py
+  status_records:
+    - docs/research/ijds_marginal_mean_score_outcome_gap_v3h_candidate_status_2026-07-29.md
+    - docs/research/ijds_marginal_mean_score_outcome_gap_v3h_transport_receipt_2026-07-29.json
+  protocol_tag: "protocol/ijds-marginal-mean-score-outcome-gap-2026-07-29-v3h"
+  protocol_commit: "1e608bcc4006766e5c65f4bd56d2ca1cdb704a48"
+  artifact_tag: "artifacts/ijds-marginal-mean-score-outcome-gap-2026-07-29-v3h"
+  artifact_commit: "359562e79c952b9cb27a0ecd5d8f20c0ad8095fb"
+  artifact_parent_commit: "1e608bcc4006766e5c65f4bd56d2ca1cdb704a48"
+  tagged_artifact_paths:
+    - data/processed/experiments/ijds_audit/ijds-marginal-mean-score-outcome-gap-2026-07-29-v3h/evaluation/marginal_mean_score_outcome_gap.parquet
+    - data/processed/experiments/ijds_audit/ijds-marginal-mean-score-outcome-gap-2026-07-29-v3h/evaluation/endpoint_reason_census.parquet
+    - data/processed/experiments/ijds_audit/ijds-marginal-mean-score-outcome-gap-2026-07-29-v3h/evaluation/monthly_endpoint_reason_census.parquet
+    - models/experiments/ijds_audit/ijds-marginal-mean-score-outcome-gap-2026-07-29-v3h/marginal_mean_score_outcome_gap_summary.json
+    - models/experiments/ijds_audit/ijds-marginal-mean-score-outcome-gap-2026-07-29-v3h/execution_receipt.json
+    - models/experiments/ijds_audit/ijds-marginal-mean-score-outcome-gap-2026-07-29-v3h/execution_seal.json
+  clean_clone_gate:
+    status: "failed_before_source_materialization"
+    failure: "missing_dvc_remote_credentials"
+    requested_targets: 3
+    targets_materialized: 0
+    verify_artifact_executed: false
+    active_promotion_allowed: false
 
 claim_boundaries:
   required:

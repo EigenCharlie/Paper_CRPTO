@@ -1,0 +1,54 @@
+{
+  "schema_version": 1,
+  "candidate": "ijds-marginal-mean-score-outcome-gap-2026-07-29-v3h",
+  "decision": "transport_blocked_not_active_evidence",
+  "promotion_allowed": false,
+  "clean_clone": {
+    "checkout": "detached_clean_artifact_tag",
+    "artifact_tag_object": "135e58b415d7660721c2f10cfe7668443a12faf4",
+    "artifact_commit": "359562e79c952b9cb27a0ecd5d8f20c0ad8095fb",
+    "protocol_tag_object": "917ff6f0d6156433dcf61c81fe1fadb64a3c1a83",
+    "protocol_commit": "1e608bcc4006766e5c65f4bd56d2ca1cdb704a48",
+    "artifact_parent_commit": "1e608bcc4006766e5c65f4bd56d2ca1cdb704a48",
+    "artifact_diff_exact_six_paths": true,
+    "final_git_clean": true
+  },
+  "environment_materialization": {
+    "exit_code": 0,
+    "record_distributions": 7,
+    "files": 4093,
+    "bytes": 164741477,
+    "transcript_sha256": "f5dd60a4aac57ad0974f12eea7625c87b053660affa13709b299037b7222ca09"
+  },
+  "dvc_transport": {
+    "calibre_version": "7.2",
+    "dvc_version": "3.67.1",
+    "requested_targets": 3,
+    "exit_code": 1,
+    "targets_materialized": 0,
+    "sources_copied_by_alternate_route": false,
+    "observed_error": "Unable to locate credentials",
+    "failure_class": "missing_dvc_remote_credentials",
+    "transcript_sha256": "e6573d211c883943c896e601118ae163af2ceef180a1a7b0219638481dc6151b",
+    "stderr_captured_inside_powershell_transcript": false
+  },
+  "downstream_gates": {
+    "canonical_scientific_runtime_prepared": false,
+    "verify_artifact_executed": false
+  },
+  "tagged_artifact_sha256": {
+    "endpoint_reason_census.parquet": "cd89e18c93e1f486ce5731d5c4f62726939fe23aeb2dcfee13843c6b759a772d",
+    "marginal_mean_score_outcome_gap.parquet": "2d322613a27b780716d4692590996ecc587efcd603e320471cde38a29b27fd2e",
+    "monthly_endpoint_reason_census.parquet": "6fb2814cd212ed90fb01529c07e74cb30410a58592ecf1b25b1a4ed68fd68ca9",
+    "execution_receipt.json": "16b11f59385546dc97e02b725f774be9b4c335bf40ed956b04e4838bd8696b6c",
+    "execution_seal.json": "d58be5c81a40e0739aa47bdb7eabfe44f4984496eabf406fa4ef2b117c92a309",
+    "marginal_mean_score_outcome_gap_summary.json": "4e0f393f8cbbd471901974b1a47463159e9a7f6c90bfcc37641d1a68d6d0b5bf"
+  },
+  "source_pointer_sha256": {
+    "raw_archive": "6ef49f8108d5e5e2303d84fe3b79e1ee53fb7a39e68df8623f054bc74d756f6c",
+    "processed_v1b": "d5434d537e477221b1632097dff22d891cb570ae1aa5ba1f49d63e55b6199a4b",
+    "model_v1b": "ed79b1054e5b6b37e212ef6f0cab03e7294d38c1f52e30bad9fbe16f60faa029"
+  },
+  "sanitized_verification_result_sha256": "78fb585068177498663bc80e41b6fd18c337ce878007093a4494d297ccb83a33",
+  "evidentiary_limit": "The transcript proves a failing DVC exit and zero promotion, but did not capture the child-process credential stderr; the observed error class is diagnostic and cannot replace a passing clean-clone transport and recomputation gate."
+}

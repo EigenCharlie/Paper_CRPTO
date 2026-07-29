@@ -31,6 +31,18 @@ def _registry() -> dict:
     return load_source_registry(REGISTRY_PATH, repo_root=ROOT)
 
 
+def _git_output(*args: str) -> str:
+    result = subprocess.run(
+        ["git", *args],
+        cwd=ROOT,
+        check=False,
+        capture_output=True,
+        text=True,
+    )
+    assert result.returncode == 0, result.stderr
+    return result.stdout.strip()
+
+
 def test_publication_target_points_to_active_sources() -> None:
     cfg = _config()
     primary = cfg["primary_target"]
@@ -192,20 +204,28 @@ def test_hash_bound_candidate_replays_cannot_leak_into_active_surfaces() -> None
     active = config["active_scientific_contract"]
     quarantine = config["executed_quarantine_capsule"]
     stopped = config["stopped_tagged_candidate_capsule"]
+    transport_blocked = config["transport_blocked_tagged_candidate_capsule"]
     # Structural loading is sufficient here: the registry's protocol-tag and
     # DVC replay checks are covered separately, and this quarantine test must
     # also run in constrained Windows runtimes without inheritable git handles.
     registry = load_source_registry(REGISTRY_PATH)
 
-    for capsule in (quarantine, stopped):
+    for capsule in (quarantine, stopped, transport_blocked):
         assert capsule["active_paper_evidence_allowed"] is False
         assert capsule["active_claim_support_allowed"] is False
         assert capsule["machine_readable_supplement_allowed"] is False
         assert capsule["dvc_pointer_count_change_allowed"] is False
-        assert set(capsule["replay_entrypoints"]).isdisjoint(
+        assert set(capsule.get("replay_entrypoints", ())).isdisjoint(
             active["active_code_surface"]["protocol_entrypoints"]
         )
-    assert set(quarantine["replay_entrypoints"]).isdisjoint(stopped["replay_entrypoints"])
+    inactive_entrypoints: tuple[set[str], ...] = (
+        set(quarantine["replay_entrypoints"]),
+        set(stopped["replay_entrypoints"]),
+        set(),
+    )
+    for index, left in enumerate(inactive_entrypoints):
+        for right in inactive_entrypoints[index + 1 :]:
+            assert left.isdisjoint(right)
     assert set(quarantine["local_candidate_artifacts_not_required"]).isdisjoint(
         active["required_artifacts"]
     )
@@ -226,6 +246,46 @@ def test_hash_bound_candidate_replays_cannot_leak_into_active_surfaces() -> None
     for group in ("replay_entrypoints", "protocols", "configs", "implementations"):
         for path in stopped[group]:
             assert Path(path).is_file(), path
+    assert transport_blocked["retained_in_current_tree"] is False
+    assert transport_blocked["retained_in_git_tags"] is True
+    for path in transport_blocked["status_records"]:
+        assert Path(path).is_file(), path
+    tagged_paths = {
+        *transport_blocked["tagged_protocol_surface"],
+        *transport_blocked["tagged_artifact_paths"],
+    }
+    for path in tagged_paths:
+        assert not Path(path).exists(), path
+    assert set(transport_blocked["tagged_artifact_paths"]).isdisjoint(active["required_artifacts"])
+    assert transport_blocked["clean_clone_gate"] == {
+        "status": "failed_before_source_materialization",
+        "failure": "missing_dvc_remote_credentials",
+        "requested_targets": 3,
+        "targets_materialized": 0,
+        "verify_artifact_executed": False,
+        "active_promotion_allowed": False,
+    }
+    transport_receipt = json.loads(
+        Path(transport_blocked["status_records"][1]).read_text(encoding="utf-8")
+    )
+    assert transport_receipt["decision"] == "transport_blocked_not_active_evidence"
+    assert transport_receipt["promotion_allowed"] is False
+    assert transport_receipt["dvc_transport"] == {
+        "calibre_version": "7.2",
+        "dvc_version": "3.67.1",
+        "requested_targets": 3,
+        "exit_code": 1,
+        "targets_materialized": 0,
+        "sources_copied_by_alternate_route": False,
+        "observed_error": "Unable to locate credentials",
+        "failure_class": "missing_dvc_remote_credentials",
+        "transcript_sha256": ("e6573d211c883943c896e601118ae163af2ceef180a1a7b0219638481dc6151b"),
+        "stderr_captured_inside_powershell_transcript": False,
+    }
+    assert transport_receipt["downstream_gates"] == {
+        "canonical_scientific_runtime_prepared": False,
+        "verify_artifact_executed": False,
+    }
 
     manuscript_text = "\n".join(
         Path(path).read_text(encoding="utf-8")
@@ -234,26 +294,107 @@ def test_hash_bound_candidate_replays_cannot_leak_into_active_surfaces() -> None
     forbidden_run_tags = {
         *quarantine["quarantined_run_scope"],
         *stopped["forbidden_run_tags_in_manuscript"],
+        *transport_blocked["run_scope"],
     }
     for run_tag in forbidden_run_tags:
         assert run_tag not in manuscript_text
 
 
-def test_superseded_v7_runner_is_classified_but_cannot_support_active_evidence() -> None:
+def test_superseded_and_transport_blocked_runners_cannot_support_active_evidence() -> None:
     config = _config()
     active = set(
         config["active_scientific_contract"]["active_code_surface"]["protocol_entrypoints"]
     )
     quarantine = set(config["executed_quarantine_capsule"]["replay_entrypoints"])
     stopped = set(config["stopped_tagged_candidate_capsule"]["replay_entrypoints"])
-    superseded = config["superseded_protocol_capsule"]
+    common_panel = config["superseded_common_panel_protocol_capsule"]
+    marginal_gap = config["superseded_marginal_gap_protocol_capsule"]
+    transport_blocked = config["transport_blocked_tagged_candidate_capsule"]
 
-    assert superseded["active_paper_evidence_allowed"] is False
-    assert superseded["active_claim_support_allowed"] is False
-    assert set(superseded["protocol_entrypoints"]).isdisjoint(active | quarantine | stopped)
+    prior = active | quarantine | stopped
+    assert common_panel["active_paper_evidence_allowed"] is False
+    assert common_panel["active_claim_support_allowed"] is False
+    entrypoints = set(common_panel["protocol_entrypoints"])
+    assert entrypoints.isdisjoint(prior)
+    prior |= entrypoints
     for group in ("protocol_entrypoints", "protocols", "configs"):
-        for path in superseded[group]:
+        for path in common_panel[group]:
             assert Path(path).is_file(), path
+
+    assert marginal_gap == {
+        "status": "git_history_and_tags_only_not_active_evidence",
+        "active_paper_evidence_allowed": False,
+        "active_claim_support_allowed": False,
+        "machine_readable_supplement_allowed": False,
+        "retained_in_current_tree": False,
+        "retained_in_git_history": True,
+        "historical_range": "V2--V3G",
+        "successor_candidate": {
+            "run_tag": "ijds-marginal-mean-score-outcome-gap-2026-07-29-v3h",
+            "status": "transport_blocked_not_active",
+            "reason": (
+                "V3H completed its local compute and Git-native artifact seal, but its "
+                "mandatory separate-clean-clone DVC pull failed before source "
+                "materialization because the remote credentials were unavailable."
+            ),
+        },
+    }
+
+    assert transport_blocked["active_paper_evidence_allowed"] is False
+    assert transport_blocked["active_claim_support_allowed"] is False
+    assert transport_blocked["machine_readable_supplement_allowed"] is False
+    frozen_protocol_surface = set(transport_blocked["tagged_protocol_surface"])
+    assert frozen_protocol_surface == {
+        "configs/experiments/ijds_marginal_mean_score_outcome_gap_2026-07-29_v3h.yaml",
+        "configs/experiments/ijds_marginal_mean_score_outcome_gap_2026-07-29_v3h_runtime.json",
+        "configs/runtime/ijds_marginal_mean_score_outcome_gap_v3h_calibre_global.json",
+        "docs/research/ijds_marginal_mean_score_outcome_gap_v3h_protocol_2026-07-29.md",
+        "scripts/experiments/bootstrap_ijds_marginal_mean_score_outcome_gap_v3h.py",
+        "scripts/experiments/run_ijds_marginal_mean_score_outcome_gap_v3h.py",
+        "src/ijds_audit/marginal_mean_score_outcome_gap_v3h.py",
+        "tests/test_experiments/test_ijds_marginal_mean_score_outcome_gap_v3h.py",
+        "tests/test_ijds_audit/test_marginal_mean_score_outcome_gap_v3h.py",
+    }
+    assert transport_blocked["protocol_commit"] == transport_blocked["artifact_parent_commit"]
+    assert _git_output("cat-file", "-t", transport_blocked["protocol_tag"]) == "tag"
+    assert _git_output("cat-file", "-t", transport_blocked["artifact_tag"]) == "tag"
+    assert (
+        _git_output("rev-parse", f"{transport_blocked['protocol_tag']}^{{}}")
+        == transport_blocked["protocol_commit"]
+    )
+    assert (
+        _git_output("rev-parse", f"{transport_blocked['artifact_tag']}^{{}}")
+        == transport_blocked["artifact_commit"]
+    )
+    assert (
+        _git_output("rev-parse", f"{transport_blocked['artifact_tag']}^{{}}^")
+        == transport_blocked["artifact_parent_commit"]
+    )
+    artifact_diff = {
+        line
+        for line in _git_output(
+            "diff-tree",
+            "--no-commit-id",
+            "--name-only",
+            "-r",
+            transport_blocked["artifact_commit"],
+        ).splitlines()
+        if line
+    }
+    assert artifact_diff == set(transport_blocked["tagged_artifact_paths"])
+    protocol_tree = {
+        line
+        for line in _git_output(
+            "ls-tree",
+            "-r",
+            "--name-only",
+            transport_blocked["protocol_commit"],
+            "--",
+            *sorted(frozen_protocol_surface),
+        ).splitlines()
+        if line
+    }
+    assert protocol_tree == frozen_protocol_surface
 
 
 def test_reviewer_zip_is_tracked() -> None:

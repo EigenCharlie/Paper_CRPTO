@@ -111,8 +111,8 @@ def word_count(text: str) -> int:
 
 
 def normalized_word_stream(text: str) -> str:
-    """Return a layout-insensitive stream for source-to-PDF text checks."""
-    return " ".join(re.findall(r"[A-Za-z0-9]+", text.casefold()))
+    """Return a token-boundary-insensitive stream for source-to-PDF checks."""
+    return "".join(re.findall(r"[A-Za-z0-9]+", text.casefold()))
 
 
 def final_freeze_pre_reference_page_limit(

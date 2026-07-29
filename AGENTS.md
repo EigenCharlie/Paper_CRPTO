@@ -37,14 +37,19 @@ order before changing scientific code or paper claims:
 16a. [`docs/research/ijds_exact_binary_conformal_theory_2026-07-24.md`](docs/research/ijds_exact_binary_conformal_theory_2026-07-24.md)
    - exact order-statistic threshold characterization, its stated conditions, and the refutations recorded against earlier revisions.
 16b. [`docs/research/ijds_binary_phase_geometry_v5_protocol_2026-07-24.md`](docs/research/ijds_binary_phase_geometry_v5_protocol_2026-07-24.md)
-   - phase-table recomputation from frozen calibration rows, with stop rules.
+   - stopped theory/refutation provenance; it is not an active protocol or
+     evidence source.
 16c. [`docs/research/ijds_external_phase_replication_v1_quarantine_2026-07-26.md`](docs/research/ijds_external_phase_replication_v1_quarantine_2026-07-26.md)
    - failed provenance/chronology audit for the external V1; it supports no active claim.
 16c1. [`docs/research/ijds_common_panel_threshold_response_v8_protocol_2026-07-26.md`](docs/research/ijds_common_panel_threshold_response_v8_protocol_2026-07-26.md)
    - active complete fixed-panel adjacent-threshold response with shared binary completions and truthful protected-read provenance.
-16c2. [`docs/research/ijds_marginal_mean_score_outcome_gap_v3_protocol_2026-07-26.md`](docs/research/ijds_marginal_mean_score_outcome_gap_v3_protocol_2026-07-26.md)
-   - quarantined clean-replay contract; no marginal claim is active unless its
-     protocol and exact artifact-transport gates both pass and are promoted.
+16c2. [`docs/research/ijds_marginal_mean_score_outcome_gap_v3h_candidate_status_2026-07-29.md`](docs/research/ijds_marginal_mean_score_outcome_gap_v3h_candidate_status_2026-07-29.md)
+   - V3H is a transport-blocked tagged candidate: local compute and artifact
+     verification passed, but the separate-clean-clone DVC pull failed for
+     missing credentials before materializing sources; it supports no active
+     claim, Table S2B, manifest entry, or manuscript number. Protocol and
+     artifact files remain under annotated tags rather than the current tree;
+     the adjacent structured transport receipt records the failed gate.
 16d. [`docs/research/ijds_raw_data_acquisition_provenance_2026-07-21.md`](docs/research/ijds_raw_data_acquisition_provenance_2026-07-21.md)
    - verified local file identity versus unconfirmed acquisition history.
 16e. [`docs/research/ijds_submission_rights_anonymity_audit_2026-07-21.md`](docs/research/ijds_submission_rights_anonymity_audit_2026-07-21.md)

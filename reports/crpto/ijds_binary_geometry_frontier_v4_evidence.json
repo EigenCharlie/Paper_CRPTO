@@ -59760,13 +59760,13 @@
     },
     "publication_targets_contract": {
       "path": "configs/crpto_publication_targets.yaml",
-      "bytes": 17734,
-      "sha256": "edc1454403aa9b9ba8ab8c51f0c6f1c78b28125003c6a7a76fc295151485e323"
+      "bytes": 21192,
+      "sha256": "f2efae0dbe09c581762ac0b1b7ed017a4d6a695b753e33b10bbf915a53f857b4"
     },
     "evidence_builder": {
       "path": "scripts/build_ijds_binary_geometry_frontier_v4_evidence.py",
-      "bytes": 250424,
-      "sha256": "dca795cb291b642cbbcf121a1ddefbbd03f2bdc5a49e3698cd71803c5d73cc8d"
+      "bytes": 241726,
+      "sha256": "64751960aae938387172d2067bd17cee29c5458d769b35c1aacd2cbeaccafbe6"
     },
     "policy_support_evidence_builder": {
       "path": "scripts/build_ijds_policy_support_optimal_face_evidence.py",
@@ -59780,8 +59780,8 @@
     },
     "paper_pdf_auditor": {
       "path": "scripts/inspect_ijds_pdfs.py",
-      "bytes": 12840,
-      "sha256": "d13e635d8688a8f893a9d7860902711930654232610fa4034797b6254298d3cc"
+      "bytes": 12842,
+      "sha256": "797432a2a4a276ce250535ddf0644c38fc33cca64b010f7e8c64974505569848"
     },
     "publication_generation_helper": {
       "path": "src/ijds_audit/publication_generation.py",
@@ -60002,6 +60002,21 @@
       "path": "models/experiments/ijds_audit/ijds-common-panel-threshold-response-2026-07-26-v8/execution_receipt.json",
       "bytes": 8843,
       "sha256": "b43fb2930d34a9e3bd3107a479dffaef3f0db00e97aca37e86daa6955d240203"
+    },
+    "common_panel_threshold_response/protocol": {
+      "path": "docs/research/ijds_common_panel_threshold_response_v8_protocol_2026-07-26.md",
+      "bytes": 8674,
+      "sha256": "4aa76e33b20707807b6e4dd9eb72320015160f81a129d14254fb70e2c1216a2c"
+    },
+    "common_panel_threshold_response/runner": {
+      "path": "scripts/experiments/run_ijds_common_panel_threshold_response_v8.py",
+      "bytes": 28742,
+      "sha256": "0b5f85283494ea91195be594233be8b9b41d8207dbe9320253d9521b02278ba9"
+    },
+    "common_panel_threshold_response/implementation": {
+      "path": "src/ijds_audit/common_panel_threshold_response.py",
+      "bytes": 40587,
+      "sha256": "0480be880d8afdcd2da4f3226938574ec876f61e488fafadda42709eb8b5978b"
     },
     "rolling_origin_equal_followup/summary": {
       "path": "models/experiments/ijds_audit/ijds-rolling-origin-equal-followup-2026-07-21-v1/rolling_origin_equal_followup_summary.json",
@@ -60882,18 +60897,18 @@
     },
     "figure/coverage/png": {
       "path": "reports/crpto/figures/crpto_ijds_v4_fig1_coverage.png",
-      "bytes": 346610,
-      "sha256": "7d8b0f2a8bcff16b45fc94bb159110a47072c6b20b6d42cb8ab263fb20f1e547"
+      "bytes": 320332,
+      "sha256": "14e0421b362628d739a3d18ec871b166d6fd61f855c181b2d0e443db5e771d8b"
     },
     "figure/coverage/pdf": {
       "path": "reports/crpto/figures/crpto_ijds_v4_fig1_coverage.pdf",
-      "bytes": 35353,
-      "sha256": "06cf726cff3de63b3a79ddad3d92fbdeeff3ade5f734b8ede4c47e57b9c1b9d9"
+      "bytes": 35583,
+      "sha256": "264efd72aa4b2c75c86b5d6a91e6a48701322dab7cf36d9caf1f4d06177def42"
     },
     "figure/phase_transition/png": {
       "path": "reports/crpto/figures/crpto_ijds_v4_fig2_phase_transition.png",
-      "bytes": 186321,
-      "sha256": "a3b29cdba6a155963f07f3461f4a256433582fa1753cd68df9685e211a11e8a5"
+      "bytes": 174190,
+      "sha256": "7a1a531a246900724d2c58dc032c7082eca53d68d85ad45862997a63a478bdeb"
     },
     "figure/phase_transition/pdf": {
       "path": "reports/crpto/figures/crpto_ijds_v4_fig2_phase_transition.pdf",
@@ -60902,18 +60917,18 @@
     },
     "figure/development_envelopes/png": {
       "path": "reports/crpto/figures/crpto_ijds_v4_fig3_envelopes.png",
-      "bytes": 222969,
-      "sha256": "2d7f312a04864594e475027b012ee50677802bdb336e787b574a064eb6a492a0"
+      "bytes": 205625,
+      "sha256": "fc331a1b2206759df5b92d139717cbdc4d7302cee517dbcbe6b1045743e84a3c"
     },
     "figure/development_envelopes/pdf": {
       "path": "reports/crpto/figures/crpto_ijds_v4_fig3_envelopes.pdf",
-      "bytes": 22845,
-      "sha256": "0ccb0cc7f284868654cd0836e448d7943e4af3c1f802c656163408501cb20b18"
+      "bytes": 22958,
+      "sha256": "15509730d72b304afe710330f1ba133f3247ac06705781aa0353fa03e6b89772"
     },
     "figure/common_panel_threshold_response/png": {
       "path": "reports/crpto/figures/crpto_ijds_v4_fig4_common_panel_threshold_response.png",
-      "bytes": 388308,
-      "sha256": "0fb6ea0b9d968228e9303bed43baeac59453c51fb1af0685b526c346403f4dcc"
+      "bytes": 357675,
+      "sha256": "d61b8c6882eda6cb0c572ca751bfd6056d90424cdf83f4c3b4a6231866dddfeb"
     },
     "figure/common_panel_threshold_response/pdf": {
       "path": "reports/crpto/figures/crpto_ijds_v4_fig4_common_panel_threshold_response.pdf",
@@ -60922,13 +60937,13 @@
     },
     "figure/common_panel_threshold_response_census/png": {
       "path": "reports/crpto/figures/crpto_ijds_v4_figS1_common_panel_threshold_response_census.png",
-      "bytes": 555055,
-      "sha256": "22ba82733da6b2ea63a1d436b1c8806b187e2ae5cc5899a8d023bc706130d8a4"
+      "bytes": 511005,
+      "sha256": "f6488c52186670b0d2a8ba13adb820fd621b4ae78960f9e22a140d9f5b8a7168"
     },
     "figure/common_panel_threshold_response_census/pdf": {
       "path": "reports/crpto/figures/crpto_ijds_v4_figS1_common_panel_threshold_response_census.pdf",
-      "bytes": 34071,
-      "sha256": "06c6914443e9c6ede304de87913383429a83e00b4dab7bf404bb1cfe4c875519"
+      "bytes": 35816,
+      "sha256": "9b8fe9927cef57ca420c94daea11b0ed1ae8a8b5d2caa4564facc1bd159beb3e"
     }
   },
   "protected_stages_run": [],

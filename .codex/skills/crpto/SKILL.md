@@ -36,7 +36,7 @@ Read first:
 22. `docs/research/ijds_policy_support_rhs_semantics_recovery_v3a_protocol_2026-07-21.md`
 23. `docs/research/ijds_exact_binary_conformal_theory_2026-07-24.md`
 24. `docs/research/ijds_common_panel_threshold_response_v8_protocol_2026-07-26.md`
-25. `docs/research/ijds_marginal_mean_score_outcome_gap_v3_protocol_2026-07-26.md`
+25. `docs/research/ijds_marginal_mean_score_outcome_gap_v3h_candidate_status_2026-07-29.md`
 26. `docs/research/ijds_set_preserving_embedding_sensitivity_v1_protocol_2026-07-26.md`
 27. `docs/research/applied_conformal_prediction_book_audit_2026-07-21.md`
 28. `docs/research/conformal_literature_corpus_audit_2026-07-21.md`
@@ -96,9 +96,14 @@ Active evidence:
   learner adjacent-window responses using one shared unresolved-label
   completion per contrast; sharpness is cellwise, not jointly attainable over
   the overlapping family.
-- V2 marginal mean-score--outcome-gap outputs are quarantine provenance. No
-  marginal claim or Table S2B is active unless a fresh V3 protocol and exact
-  direct-child artifact replay both pass and are promoted.
+- V2--V3G marginal mean-score--outcome-gap outputs are quarantine provenance.
+  V3H completed a local compute and direct-child artifact seal, but its
+  mandatory separate-clean-clone DVC pull failed for missing credentials
+  before source materialization. It supports no active claim, Table S2B,
+  manifest entry, manuscript number, or reviewer-ZIP file. Its protocol and
+  artifacts live under annotated tags, not in the current `main` tree.
+  Promotion requires a fresh clean clone that passes V3H unchanged; a
+  transport or computation change requires a newly frozen V3I.
 - Calibre runs optimized Python (`sys.flags.optimize == 2`): never use
   `assert` as a runtime or scientific guard in `src/**` or `scripts/**`;
   raise an explicit exception so the check survives execution.

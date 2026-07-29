@@ -3,20 +3,69 @@
 from __future__ import annotations
 
 import argparse
+import io
 import os
+import re
 import shutil
 import subprocess
 import tempfile
 from pathlib import Path
+from typing import Any
 from urllib.parse import quote
 
 from loguru import logger
+from pypdf import PdfReader, PdfWriter
 
 ROOT = Path(__file__).resolve().parents[1]
 BODY_HTML = ROOT / "paper" / "CRPTO_ijds.html"
 BODY_PDF = ROOT / "paper" / "CRPTO_ijds.pdf"
 SUPPLEMENT_HTML = ROOT / "paper" / "supplement_ijds.html"
 SUPPLEMENT_PDF = ROOT / "paper" / "supplement_ijds.pdf"
+
+
+def _is_chrome_white_background_only(page: Any) -> bool:
+    """Recognize Chrome's nonempty but visually blank white tail-page stream."""
+    contents = page.get_contents()
+    if contents is None:
+        return False
+    allowed = {
+        b"cm",
+        b"q",
+        b"Q",
+        b"RG",
+        b"rg",
+        b"G",
+        b"g",
+        b"K",
+        b"k",
+        b"gs",
+        b"re",
+        b"f",
+        b"F",
+        b"f*",
+        b"W",
+        b"W*",
+        b"n",
+        b"BDC",
+        b"BMC",
+        b"EMC",
+    }
+    fill_is_white = False
+    saw_white_fill = False
+    for operands, operator in contents.operations:
+        if operator not in allowed:
+            return False
+        if operator == b"rg":
+            fill_is_white = len(operands) == 3 and all(float(value) == 1.0 for value in operands)
+        elif operator == b"g":
+            fill_is_white = len(operands) == 1 and float(operands[0]) == 1.0
+        elif operator == b"k":
+            fill_is_white = len(operands) == 4 and all(float(value) == 0.0 for value in operands)
+        elif operator in {b"f", b"F", b"f*"}:
+            if not fill_is_white:
+                return False
+            saw_white_fill = True
+    return saw_white_fill
 
 
 def _chrome_candidates() -> list[Path]:
@@ -88,6 +137,54 @@ def _browser_paths(chrome: Path, html_path: Path, pdf_path: Path) -> tuple[str, 
     return html_path.resolve().as_uri(), str(pdf_path)
 
 
+def _page_has_renderable_content(page: Any) -> bool:
+    """Conservatively retain any text, XObject, or nonempty content stream."""
+    text = page.extract_text() or ""
+    if re.search(r"[A-Za-z0-9]", text):
+        return True
+
+    resources = page.get("/Resources")
+    if resources is not None and resources.get("/XObject"):
+        return True
+
+    contents = page.get_contents()
+    if contents is None:
+        return False
+    if _is_chrome_white_background_only(page):
+        return False
+    raw = contents.get_data()
+    if isinstance(raw, str):
+        raw = raw.encode("latin-1", errors="ignore")
+    return bool(re.sub(rb"\s+", b"", bytes(raw)))
+
+
+def _trim_trailing_blank_pages(pdf_path: Path) -> int:
+    """Remove only provably empty browser tail pages, retaining at least one page."""
+    reader = PdfReader(io.BytesIO(pdf_path.read_bytes()))
+    keep = len(reader.pages)
+    while keep > 1:
+        if _page_has_renderable_content(reader.pages[keep - 1]):
+            break
+        keep -= 1
+    removed = len(reader.pages) - keep
+    if removed == 0:
+        return 0
+
+    writer = PdfWriter()
+    for page in reader.pages[:keep]:
+        writer.add_page(page)
+    metadata = {
+        str(key): str(value) for key, value in (reader.metadata or {}).items() if value is not None
+    }
+    if metadata:
+        writer.add_metadata(metadata)
+    trimmed = pdf_path.with_name(f"{pdf_path.stem}.trimmed.pdf")
+    with trimmed.open("wb") as handle:
+        writer.write(handle)
+    trimmed.replace(pdf_path)
+    return removed
+
+
 def render_pdf(chrome: Path, html_path: Path, pdf_path: Path) -> None:
     """Print one local HTML preview to PDF with Chrome headless."""
     if not html_path.exists():
@@ -116,6 +213,13 @@ def render_pdf(chrome: Path, html_path: Path, pdf_path: Path) -> None:
         if not temp_pdf.is_file() or temp_pdf.stat().st_size == 0:
             msg = f"Browser exited without creating {pdf_path.relative_to(ROOT)}"
             raise RuntimeError(msg)
+        removed = _trim_trailing_blank_pages(temp_pdf)
+        if removed:
+            logger.info(
+                "Removed {} browser-generated blank tail page(s) from {}",
+                removed,
+                pdf_path.relative_to(ROOT),
+            )
         temp_pdf.replace(pdf_path)
     logger.info("Rendered {}", pdf_path.relative_to(ROOT))
 

@@ -4,6 +4,7 @@ import ast
 import json
 import re
 from pathlib import Path
+from typing import Any
 
 import pytest
 import yaml
@@ -13,19 +14,22 @@ def _text(path: str) -> str:
     return Path(path).read_text(encoding="utf-8")
 
 
+def _inactive_protocol_entrypoints(config: dict[str, Any]) -> set[str]:
+    return set(config["superseded_common_panel_protocol_capsule"]["protocol_entrypoints"])
+
+
 def test_runtime_python_has_no_optimized_away_assert_guards() -> None:
     config = yaml.safe_load(_text("configs/crpto_publication_targets.yaml"))
     surface = config["active_scientific_contract"]["active_code_surface"]
     quarantine = config["executed_quarantine_capsule"]
     stopped = config["stopped_tagged_candidate_capsule"]
-    superseded = config["superseded_protocol_capsule"]
     declared_scripts = {
         *surface["paper_pipeline"],
         *surface["protocol_entrypoints"],
         *surface["support_tools"],
         *quarantine["replay_entrypoints"],
         *stopped["replay_entrypoints"],
-        *superseded["protocol_entrypoints"],
+        *_inactive_protocol_entrypoints(config),
     }
     runtime_paths = {
         *Path("src").rglob("*.py"),
@@ -101,22 +105,24 @@ def test_publication_contract_names_every_executable_protocol() -> None:
     surface = config["active_scientific_contract"]["active_code_surface"]
     quarantine = config["executed_quarantine_capsule"]
     stopped = config["stopped_tagged_candidate_capsule"]
-    superseded = config["superseded_protocol_capsule"]
     active_protocols = set(surface["protocol_entrypoints"])
     quarantine_protocols = set(quarantine["replay_entrypoints"])
     stopped_protocols = set(stopped["replay_entrypoints"])
-    superseded_protocols = set(superseded["protocol_entrypoints"])
-    assert active_protocols.isdisjoint(quarantine_protocols)
-    assert active_protocols.isdisjoint(stopped_protocols)
-    assert active_protocols.isdisjoint(superseded_protocols)
-    assert quarantine_protocols.isdisjoint(stopped_protocols)
-    assert quarantine_protocols.isdisjoint(superseded_protocols)
-    assert stopped_protocols.isdisjoint(superseded_protocols)
+    inactive_protocols = _inactive_protocol_entrypoints(config)
+    classified_groups = (
+        active_protocols,
+        quarantine_protocols,
+        stopped_protocols,
+        inactive_protocols,
+    )
+    for index, left in enumerate(classified_groups):
+        for right in classified_groups[index + 1 :]:
+            assert left.isdisjoint(right)
     protocol_entrypoints = {
         *active_protocols,
         *quarantine_protocols,
         *stopped_protocols,
-        *superseded_protocols,
+        *inactive_protocols,
     }
     declared = {
         *surface["paper_pipeline"],
@@ -133,10 +139,10 @@ def test_publication_contract_names_every_executable_protocol() -> None:
     multiply_classified = sorted(
         (active_protocols & quarantine_protocols)
         | (active_protocols & stopped_protocols)
-        | (active_protocols & superseded_protocols)
+        | (active_protocols & inactive_protocols)
         | (quarantine_protocols & stopped_protocols)
-        | (quarantine_protocols & superseded_protocols)
-        | (stopped_protocols & superseded_protocols)
+        | (quarantine_protocols & inactive_protocols)
+        | (stopped_protocols & inactive_protocols)
     )
     missing = sorted(protocol_entrypoints.difference(actual_experiments))
     assert not unclassified, f"unclassified experiment entrypoints: {unclassified}"
@@ -150,15 +156,15 @@ def test_extra_scripts_are_only_sealed_path_bound_compatibility() -> None:
     surface = config["active_scientific_contract"]["active_code_surface"]
     quarantine = config["executed_quarantine_capsule"]
     stopped = config["stopped_tagged_candidate_capsule"]
-    superseded = config["superseded_protocol_capsule"]
     active = {
         *surface["paper_pipeline"],
         *surface["protocol_entrypoints"],
         *quarantine["replay_entrypoints"],
         *stopped["replay_entrypoints"],
-        *superseded["protocol_entrypoints"],
+        *_inactive_protocol_entrypoints(config),
         *surface["support_tools"],
     }
+    active_python = {path for path in active if Path(path).suffix.lower() == ".py"}
     dvc = yaml.safe_load(_text("dvc.yaml"))
     path_bound = {
         item
@@ -176,7 +182,7 @@ def test_extra_scripts_are_only_sealed_path_bound_compatibility() -> None:
         path.as_posix() for path in Path("scripts").rglob("*.py") if path.name != "__init__.py"
     }
 
-    assert actual == active | path_bound
+    assert actual == active_python | path_bound
 
 
 def test_clean_clone_workflow_runs_the_publication_capsule_and_suite() -> None:
@@ -263,9 +269,9 @@ def test_paper_owns_its_bibliography_and_citation_style() -> None:
     assert r"\bibliography{../references}" in template
 
 
-def test_marginal_gap_publication_loader_never_conditions_on_result_sign() -> None:
+def test_inactive_marginal_gap_has_no_publication_loader() -> None:
     builder = _text("scripts/build_ijds_binary_geometry_frontier_v4_evidence.py")
 
-    assert "table[upper_column].lt(0.0).all()" not in builder
-    assert "table[lower_column].gt(0.0).all()" not in builder
-    assert 'reporting.get("result_sign_is_stop_condition") is not False' in builder
+    assert "MarginalMeanScoreOutcomeGapInputs" not in builder
+    assert "_load_marginal_mean_score_outcome_gap_inputs" not in builder
+    assert "marginal_mean_score_outcome_gap" not in builder
