@@ -1,0 +1,129 @@
+schema_version: "2026-07-26.2"
+protocol_status: "retrospectively_locked_before_v2_execution"
+run_tag: "ijds-marginal-mean-score-outcome-gap-2026-07-26-v2"
+protocol_tag: "protocol/ijds-marginal-mean-score-outcome-gap-2026-07-26-v2"
+protocol_path: "docs/research/ijds_marginal_mean_score_outcome_gap_v2_protocol_2026-07-26.md"
+estimand: "marginal_mean_score_outcome_gap"
+
+source:
+  credit_control_receipt:
+    path: "models/experiments/ijds_audit/ijds-credit-risk-controls-2026-07-15-v5/execution_receipt.json"
+    bytes: 826
+    sha256: "179016a1c064318502cc11a7f197db0656eff8cf3f896e0e1905ddc1a9f994db"
+  credit_control_summary:
+    path: "models/experiments/ijds_audit/ijds-credit-risk-controls-2026-07-15-v5/credit_risk_controls_summary.json"
+    bytes: 23359
+    sha256: "37c0a5c224b62ee3f47259aea4231df26ea184d3666e7fab80431ad26d611715"
+  credit_control_freeze:
+    path: "models/experiments/ijds_audit/ijds-credit-risk-controls-2026-07-13-v1b/protocol_freeze.json"
+    bytes: 25908
+    sha256: "da4805e644bcf5decfbb0a67c0c81a5b9dd61f3ab2e17d3dc5264100e7eb4d35"
+  scores:
+    path: "data/processed/experiments/ijds_audit/ijds-credit-risk-controls-2026-07-13-v1b/prediction/scores.parquet"
+    bytes: 30407406
+    sha256: "5795bc0a75be90e86d37cf7d297f4b4fd6e6604b38f8179bc5042c024a53a8dc"
+  endpoint_resolution_audit:
+    path: "data/processed/experiments/ijds_audit/ijds-credit-risk-controls-2026-07-15-v5/evaluation/endpoint_resolution_audit.parquet"
+    bytes: 4278
+    sha256: "fe9544b2929f4ff5ba458cbe0e3b2c7632fd0385f0c8101eac2538a343a477a8"
+
+source_identity:
+  credit_control_receipt_status: "credit_risk_control_evaluation_complete"
+  credit_control_summary_status: "complete_no_model_selection_credit_risk_control_evaluation"
+  credit_control_summary_run_tag: "ijds-credit-risk-controls-2026-07-15-v5"
+  credit_control_protocol_tag: "protocol/ijds-credit-risk-controls-2026-07-15-v5"
+  credit_control_protocol_commit: "e2bba580a0b07c145bd64ff61440973d6e31349b"
+  credit_control_freeze_status: "credit_control_scores_frozen_before_primary_oot_outcome_join"
+  credit_control_freeze_run_tag: "ijds-credit-risk-controls-2026-07-13-v1b"
+  credit_control_freeze_protocol_tag: "protocol/ijds-credit-risk-controls-2026-07-13-v1b"
+  credit_control_freeze_protocol_commit: "1776cbf8b201ae5b92756e5ea397a403d6cc7c9f"
+
+design:
+  role: "primary_oot"
+  endpoint_cutoff: "2020-09-30"
+  charged_off_availability_lag_months: 6
+  expected_candidates: 376890
+  expected_resolved: 364814
+  expected_unresolved: 12076
+  expected_resolved_y0: 307842
+  expected_resolved_y1: 56972
+  issue_months:
+    - "2016-04"
+    - "2016-05"
+    - "2016-06"
+    - "2016-07"
+    - "2016-08"
+    - "2016-09"
+    - "2016-10"
+    - "2016-11"
+    - "2016-12"
+    - "2017-01"
+    - "2017-02"
+    - "2017-03"
+    - "2017-04"
+    - "2017-05"
+    - "2017-06"
+  learners:
+    - "catboost_platt"
+    - "numeric_logistic_platt"
+    - "catboost_monotonic_platt"
+    - "woe_scorecard_platform_platt"
+    - "woe_scorecard_borrower_platt"
+  score_columns:
+    catboost_platt: "pd_catboost_platt"
+    numeric_logistic_platt: "pd_numeric_logistic_platt"
+    catboost_monotonic_platt: "pd_catboost_monotonic_platt"
+    woe_scorecard_platform_platt: "pd_woe_scorecard_platform_platt"
+    woe_scorecard_borrower_platt: "pd_woe_scorecard_borrower_platt"
+  endpoint_reason_census:
+    charged_off_by_reconstructed_cutoff:
+      candidate_rows: 56972
+      resolved_rows: 56972
+      unresolved_rows: 0
+    fully_paid_by_reconstructed_cutoff:
+      candidate_rows: 307842
+      resolved_rows: 307842
+      unresolved_rows: 0
+    nonterminal_or_unresolved_status:
+      candidate_rows: 11551
+      resolved_rows: 0
+      unresolved_rows: 11551
+    terminal_after_reconstructed_cutoff:
+      candidate_rows: 47
+      resolved_rows: 0
+      unresolved_rows: 47
+    terminal_availability_date_missing:
+      candidate_rows: 478
+      resolved_rows: 0
+      unresolved_rows: 478
+
+output:
+  data_root: "data/processed/experiments/ijds_audit"
+  model_root: "models/experiments/ijds_audit"
+  table: "evaluation/marginal_mean_score_outcome_gap.parquet"
+  summary: "marginal_mean_score_outcome_gap_summary.json"
+  execution_receipt: "execution_receipt.json"
+  immutability: "hard_no_overwrite_choose_fresh_run_tag"
+
+reporting_contract:
+  complete_five_learner_census: true
+  select_or_rank_learner: false
+  result_sign_is_stop_condition: false
+  binary_completion_bounds_are_sampling_intervals: false
+  verified_point_in_time_snapshot_claim: false
+  row_level_evaluation_outcomes_loaded: false
+  refit_recalibrate_or_optimize: false
+  selected_or_funded_set_validity: false
+  causal_or_prospective_interpretation: false
+
+stop_rules:
+  stop_on_dirty_or_untagged_head: true
+  stop_on_noncanonical_config: true
+  stop_on_source_or_nested_descriptor_mismatch: true
+  stop_on_implementation_drift: true
+  stop_on_candidate_id_or_issue_month_drift: true
+  stop_on_invalid_or_incomplete_score_census: true
+  stop_on_endpoint_reason_or_total_drift: true
+  stop_on_nonfinite_or_reversed_bound: true
+  stop_on_preexisting_or_escaping_output_path: true
+  stop_on_result_sign_or_ordering: false

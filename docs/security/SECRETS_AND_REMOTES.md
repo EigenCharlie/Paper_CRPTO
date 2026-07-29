@@ -23,7 +23,7 @@ in ignored `.dvc/config.local`.
 
 ## Active DVC Capsule
 
-The source registry declares exactly 51 DVC pointer files. Use the capsule manager
+The source registry declares exactly 53 DVC pointer files. Use the capsule manager
 instead of an unrestricted historical replay:
 
 ```powershell
@@ -43,7 +43,7 @@ The manual full workflow requires `DAGSHUB_USER`, `DAGSHUB_TOKEN`, and
 environment with:
 
 ```powershell
-uv sync --group dev --frozen
+uv sync --group dev --locked
 ```
 
 Secret scanning and dependency alerts should remain enabled. A leaked token

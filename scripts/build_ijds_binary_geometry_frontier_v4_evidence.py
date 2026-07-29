@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import argparse
 import json
 from collections.abc import Mapping
 from dataclasses import dataclass
@@ -13,6 +14,14 @@ import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
 from loguru import logger
+from matplotlib.colors import (
+    BoundaryNorm,
+    LinearSegmentedColormap,
+    ListedColormap,
+    SymLogNorm,
+    TwoSlopeNorm,
+)
+from matplotlib.ticker import FixedFormatter, FixedLocator
 
 from src.ijds_audit.claim_ledger import materialize_claim_ledger
 from src.ijds_audit.config import load_v4_config
@@ -27,6 +36,11 @@ from src.ijds_audit.publication_generation import (
     publication_implementation_descriptors,
     staged_artifact_descriptor,
     staged_output_path,
+)
+from src.ijds_audit.publication_schemas import (
+    S6B_PUBLICATION_COLUMNS,
+    S6B_QUARANTINED_COLUMNS,
+    S6B_RETIRED_COLUMNS,
 )
 from src.ijds_audit.publication_sources import load_verified_source_registry
 from src.ijds_audit.robustness_evidence import (
@@ -95,11 +109,21 @@ TABLE_TARGETS = {
     ),
     "fit_label_completion": (TABLE_DIR / "crpto_ijds_v4_tableS11_fit_label_completion.csv"),
     "allocation_granularity": (TABLE_DIR / "crpto_ijds_v4_tableS12_allocation_granularity.csv"),
+    "common_panel_threshold_response_strata": (
+        TABLE_DIR / "crpto_ijds_v4_tableS6J_common_panel_threshold_response_strata.csv"
+    ),
+    "common_panel_threshold_response_learners": (
+        TABLE_DIR / "crpto_ijds_v4_tableS6K_common_panel_threshold_response_learners.csv"
+    ),
 }
 FIGURE_STEMS = {
     "coverage": "crpto_ijds_v4_fig1_coverage",
     "phase_transition": "crpto_ijds_v4_fig2_phase_transition",
     "development_envelopes": "crpto_ijds_v4_fig3_envelopes",
+    "common_panel_threshold_response": "crpto_ijds_v4_fig4_common_panel_threshold_response",
+    "common_panel_threshold_response_census": (
+        "crpto_ijds_v4_figS1_common_panel_threshold_response_census"
+    ),
 }
 
 CREDIT_LEARNER_ORDER = (
@@ -121,7 +145,7 @@ CREDIT_LEARNER_SHORT_LABELS = {
     "numeric_logistic_platt": "Logistic",
     "catboost_monotonic_platt": "Monotonic CB",
     "woe_scorecard_platform_platt": "Platform WOE",
-    "woe_scorecard_borrower_platt": "Borrower WOE",
+    "woe_scorecard_borrower_platt": "Pricing-excl. WOE",
 }
 WINDOW_IDS = (
     "w01_2012m01_m06",
@@ -1205,7 +1229,8 @@ def _coverage_figure(
             "window_id"
         )
         decisions[row_index, :] = frame["holm_reject_exchangeability_null"].astype(int)
-    heat_axis.imshow(decisions, cmap="RdYlGn_r", vmin=0, vmax=1, aspect="auto")
+    flag_cmap = ListedColormap(("#E5E7EB", "#8B1E3F"))
+    heat_axis.imshow(decisions, cmap=flag_cmap, vmin=0, vmax=1, aspect="auto")
     for row_index in range(5):
         for column_index in range(8):
             flagged = bool(decisions[row_index, column_index])
@@ -1225,7 +1250,7 @@ def _coverage_figure(
         [CREDIT_LEARNER_SHORT_LABELS[learner] for learner in CREDIT_LEARNER_ORDER],
     )
     heat_axis.set_xlabel("Six-month residual window")
-    heat_axis.set_title("B. Locked nominal thresholds for 40 joint-block nulls", loc="left")
+    heat_axis.set_title("B. Cells meeting locked nominal reporting thresholds", loc="left")
     heat_axis.tick_params(length=0)
     figure.suptitle(
         "Finite-archive coverage and joint-block rank-reference flags",
@@ -1246,6 +1271,100 @@ def _coverage_figure(
     return _save_figure(figure, FIGURE_STEMS["coverage"], output_dir=output_dir)
 
 
+def _phase_transition_publication_table(
+    phase: pd.DataFrame,
+    *,
+    alpha: float,
+) -> pd.DataFrame:
+    """Add the exact finite-sample phase coordinate to the S3 path."""
+    if not np.isfinite(alpha) or not 0.0 < alpha < 1.0:
+        raise ValueError("The phase-transition alpha must lie strictly between zero and one.")
+    columns = [
+        "window_id",
+        "fit_rows",
+        "fit_prevalence",
+        "fit_score_min",
+        "fit_score_max",
+        "score_min",
+        "score_max",
+        "fit_residual_quantile",
+        "coverage_lower",
+        "coverage_upper",
+        "mean_width",
+        "set_empty_share",
+        "set_zero_only_share",
+        "set_both_share",
+    ]
+    missing = sorted(set(columns).difference(phase.columns))
+    if missing:
+        raise KeyError(f"The phase-transition source omits columns: {missing}.")
+    table = phase.loc[:, columns].copy()
+    require_finite(
+        table,
+        tuple(column for column in columns if column != "window_id"),
+        label="phase-transition publication table",
+    )
+
+    fit_rows_float = table["fit_rows"].to_numpy(dtype=float)
+    fit_rows = np.rint(fit_rows_float).astype(np.int64)
+    if (fit_rows <= 0).any() or not np.array_equal(fit_rows_float, fit_rows.astype(float)):
+        raise RuntimeError("The phase-transition fit-row counts are not positive integers.")
+    prevalence = table["fit_prevalence"].to_numpy(dtype=float)
+    if ((prevalence < 0.0) | (prevalence > 1.0)).any():
+        raise RuntimeError("The phase-transition fit prevalence leaves [0, 1].")
+    default_rows_float = fit_rows * prevalence
+    default_rows = np.rint(default_rows_float).astype(np.int64)
+    if not np.allclose(default_rows_float, default_rows, rtol=0.0, atol=1.0e-8):
+        raise RuntimeError("Fit prevalence does not reconstruct an integer default count.")
+    if ((default_rows < 0) | (default_rows > fit_rows)).any():
+        raise RuntimeError("The reconstructed default count leaves its fit block.")
+    finite_sample_rank = np.ceil((fit_rows + 1) * (1.0 - alpha)).astype(np.int64)
+    if ((finite_sample_rank < 1) | (finite_sample_rank > fit_rows)).any():
+        raise RuntimeError("The phase-transition finite-sample rank leaves [1, n].")
+    finite_phase_allowance = fit_rows - finite_sample_rank
+    phase_margin = default_rows - finite_phase_allowance
+    bounded_columns = (
+        "fit_score_min",
+        "fit_score_max",
+        "score_min",
+        "score_max",
+        "fit_residual_quantile",
+    )
+    if any(
+        (
+            (table[column].to_numpy(dtype=float) < 0.0)
+            | (table[column].to_numpy(dtype=float) > 1.0)
+        ).any()
+        for column in bounded_columns
+    ):
+        raise RuntimeError("The phase-transition scores or threshold leave [0, 1].")
+    if (table["fit_score_min"] > table["fit_score_max"]).any() or (
+        table["score_min"] > table["score_max"]
+    ).any():
+        raise RuntimeError("The phase-transition score minima exceed their maxima.")
+    calibration_scores_below_half = table["fit_score_max"].to_numpy(dtype=float) < 0.5
+    if not calibration_scores_below_half.all():
+        raise RuntimeError(
+            "The CatBoost S3 phase path no longer satisfies the below-half calibration condition."
+        )
+    observed_low_regime = table["fit_residual_quantile"].to_numpy(dtype=float) < 0.5
+    if not np.array_equal(observed_low_regime, phase_margin <= 0):
+        raise RuntimeError("The exact phase margin no longer matches the fitted threshold regime.")
+
+    insert_at = table.columns.get_loc("fit_prevalence") + 1
+    derived = (
+        ("fit_default_rows", default_rows),
+        ("finite_sample_rank", finite_sample_rank),
+        ("finite_phase_allowance", finite_phase_allowance),
+        ("phase_margin", phase_margin),
+        ("phase_boundary_rate", finite_phase_allowance / fit_rows),
+        ("calibration_scores_below_half", calibration_scores_below_half),
+    )
+    for offset, (name, values) in enumerate(derived):
+        table.insert(insert_at + offset, name, values)
+    return table
+
+
 def _phase_figure(phase: pd.DataFrame, *, output_dir: Path) -> dict[str, Path]:
     _style()
     frame = phase.sort_values("window_id")
@@ -1264,14 +1383,36 @@ def _phase_figure(phase: pd.DataFrame, *, output_dir: Path) -> dict[str, Path]:
         key={"window_id": "w08_2012m08_2013m01"},
         label="phase-transition W8",
     )
-    x = np.arange(len(frame), dtype=float)
-    labels = [f"W{index}" for index in range(1, 9)]
-    figure, axes = plt.subplots(1, 2, figsize=(7.2, 3.35), sharex=True)
+    x = np.arange(1, len(frame) + 1, dtype=float)
+    # Keep the two x axes independent.  With a shared Matplotlib axis, assigning
+    # the same formatted labels to both panels can overprint one raster label
+    # (observed as W3 rendered on top of W5 in the left-hand PNG).
+    figure, axes = plt.subplots(1, 2, figsize=(7.2, 3.35), sharex=False)
     axes[0].plot(x, frame["fit_prevalence"], color=BLUE, marker="o", linewidth=1.5)
-    axes[0].axhline(0.10, color=INK, linestyle="--", linewidth=1.1, label=r"$\alpha=0.10$")
+    axes[0].plot(
+        x,
+        frame["phase_boundary_rate"],
+        color=ORANGE,
+        linestyle="--",
+        linewidth=1.3,
+        label=r"finite boundary $(n-k)/n$",
+    )
+    axes[0].axhline(
+        0.10,
+        color=MID,
+        linestyle=":",
+        linewidth=1.0,
+        label=r"nominal $\alpha=0.10$",
+    )
     axes[0].set_ylabel("Fit default prevalence")
-    axes[0].set_title("Stratum-2 prevalence")
-    axes[0].legend(loc="lower left")
+    axes[0].set_title("CatBoost S3 prevalence and phase boundary")
+    axes[0].legend(
+        loc="lower left",
+        frameon=True,
+        facecolor="white",
+        edgecolor="none",
+        framealpha=0.92,
+    )
     axes[1].plot(
         x,
         frame["fit_residual_quantile"],
@@ -1282,31 +1423,31 @@ def _phase_figure(phase: pd.DataFrame, *, output_dir: Path) -> dict[str, Path]:
     axes[1].set_ylabel("Residual quantile")
     axes[1].set_title("Applied conformal quantile")
     for axis in axes:
-        axis.set_xticks(x, labels)
-        axis.set_xlabel("Residual window")
+        axis.set_xticks(x)
+        axis.set_xlabel("Window index (W)")
         axis.spines[["top", "right"]].set_visible(False)
     axes[0].annotate(
-        "W7: 0.1017",
-        xy=(6, float(w7["fit_prevalence"])),
-        xytext=(4.6, 0.111),
+        f"W7: 0.1017; m={int(w7['phase_margin']):+d}",
+        xy=(7, float(w7["fit_prevalence"])),
+        xytext=(5.6, 0.111),
         arrowprops={"arrowstyle": "-", "color": MID},
         fontsize=8,
     )
     axes[0].annotate(
-        "W8: 0.0971",
-        xy=(7, float(w8["fit_prevalence"])),
-        xytext=(5.5, 0.0975),
+        f"W8: 0.0971; m={int(w8['phase_margin']):+d}",
+        xy=(8, float(w8["fit_prevalence"])),
+        xytext=(6.5, 0.0975),
         arrowprops={"arrowstyle": "-", "color": MID},
         fontsize=8,
     )
     axes[1].annotate(
         "0.8884 to 0.1118",
-        xy=(7, float(w8["fit_residual_quantile"])),
-        xytext=(3.8, 0.35),
+        xy=(8, float(w8["fit_residual_quantile"])),
+        xytext=(4.8, 0.35),
         arrowprops={"arrowstyle": "->", "color": MID},
         fontsize=8,
     )
-    figure.suptitle("Observed stratum-2 geometry changes near the nominal prevalence threshold")
+    figure.suptitle("Observed CatBoost S3 finite-sample phase coordinate")
     figure.tight_layout()
     return _save_figure(figure, FIGURE_STEMS["phase_transition"], output_dir=output_dir)
 
@@ -1316,8 +1457,6 @@ def _envelope_figure(envelopes: pd.DataFrame, *, output_dir: Path) -> dict[str, 
     metrics = ("standardized_payoff", "funded_miscoverage")
     direction_code = {"guardrail_lower": -1, "crosses_zero": 0, "guardrail_higher": 1}
     colors = [BLUE, "#F3F4F6", ORANGE]
-    from matplotlib.colors import BoundaryNorm, ListedColormap
-
     cmap = ListedColormap(colors)
     norm = BoundaryNorm([-1.5, -0.5, 0.5, 1.5], cmap.N)
     figure, axes = plt.subplots(2, 1, figsize=(7.2, 5.2), sharex=True)
@@ -1332,7 +1471,9 @@ def _envelope_figure(envelopes: pd.DataFrame, *, output_dir: Path) -> dict[str, 
         axis.set_yticks(np.arange(9), [f"P{index}" for index in range(1, 10)])
         axis.set_ylabel("Policy")
         axis.set_title(
-            "Standardized payoff" if metric == "standardized_payoff" else "Funded miscoverage"
+            "Status-indexed payoff proxy"
+            if metric == "standardized_payoff"
+            else "Funded miscoverage"
         )
         axis.grid(False)
         for row in range(matrix.shape[0]):
@@ -1350,7 +1491,9 @@ def _envelope_figure(envelopes: pd.DataFrame, *, output_dir: Path) -> dict[str, 
                 )
     axes[-1].set_xticks(np.arange(8), [f"W{index}" for index in range(1, 9)])
     axes[-1].set_xlabel("Residual window")
-    figure.suptitle("Guardrail-minus-point envelopes over the development-admissible cap frontier")
+    figure.suptitle(
+        "Guardrail-minus-point envelopes at registered development-admissible cap values"
+    )
     figure.text(
         0.5,
         0.015,
@@ -1361,6 +1504,493 @@ def _envelope_figure(envelopes: pd.DataFrame, *, output_dir: Path) -> dict[str, 
     )
     figure.tight_layout(rect=(0, 0.04, 1, 0.96))
     return _save_figure(figure, FIGURE_STEMS["development_envelopes"], output_dir=output_dir)
+
+
+@dataclass(frozen=True)
+class CommonPanelFigureData:
+    """Validated common-panel values shared by the main and supplemental figures."""
+
+    frame: pd.DataFrame
+    ordered_rows: tuple[tuple[str, int], ...]
+    threshold: np.ndarray
+    resolved_pp: np.ndarray
+    sharp_width_pp: np.ndarray
+    focal: pd.Series
+    exact_zero_cells: pd.DataFrame
+    fixed_candidate_rows: int
+    fixed_resolved_rows: int
+
+
+def _prepare_common_panel_figure_data(strata: pd.DataFrame) -> CommonPanelFigureData:
+    """Validate and arrange the exact 175-cell response census once."""
+    require_exact_grid(
+        strata,
+        domains={
+            "learner": CREDIT_LEARNER_ORDER,
+            "pair_index": tuple(range(7)),
+            "conformal_group": tuple(range(5)),
+        },
+        label="common-panel threshold-response figure",
+    )
+    numeric_columns = (
+        "candidate_rows",
+        "resolved_rows",
+        "unresolved_rows",
+        "threshold_delta",
+        "resolved_delta_rate",
+        "delta_lower",
+        "delta_upper",
+        "delta_width",
+    )
+    missing = sorted(set(numeric_columns).difference(strata.columns))
+    if missing:
+        raise RuntimeError(f"The common-panel figure is missing columns: {missing}.")
+    require_finite(strata, numeric_columns, label="common-panel threshold-response figure")
+    frame = strata.copy()
+    counts = frame.loc[:, ["candidate_rows", "resolved_rows", "unresolved_rows"]]
+    if (
+        bool(np.any(counts.to_numpy(dtype=float) < 0.0))
+        or not np.allclose(counts.to_numpy(dtype=float), np.rint(counts.to_numpy(dtype=float)))
+        or bool(frame["candidate_rows"].le(0).any())
+        or bool(frame["resolved_rows"].le(0).any())
+        or not frame["resolved_rows"]
+        .add(frame["unresolved_rows"])
+        .eq(frame["candidate_rows"])
+        .all()
+    ):
+        raise RuntimeError("The common-panel figure has invalid candidate denominators.")
+    if (
+        bool(frame["delta_lower"].gt(frame["delta_upper"]).any())
+        or bool(frame["delta_width"].lt(0.0).any())
+        or not np.allclose(
+            frame["delta_upper"].sub(frame["delta_lower"]).to_numpy(dtype=float),
+            frame["delta_width"].to_numpy(dtype=float),
+            rtol=1e-9,
+            atol=1e-12,
+        )
+    ):
+        raise RuntimeError("The common-panel sharp-response bounds are inconsistent.")
+
+    totals = (
+        frame.groupby(["learner", "pair_index"], observed=True)[
+            ["candidate_rows", "resolved_rows", "unresolved_rows"]
+        ]
+        .sum()
+        .reset_index(drop=True)
+    )
+    if any(totals[column].nunique(dropna=False) != 1 for column in totals.columns):
+        raise RuntimeError("The common-panel fixed-panel denominators changed across contrasts.")
+    fixed_candidate_rows = int(totals["candidate_rows"].iloc[0])
+    fixed_resolved_rows = int(totals["resolved_rows"].iloc[0])
+
+    learner_rank = {learner: rank for rank, learner in enumerate(CREDIT_LEARNER_ORDER)}
+    frame["_learner_rank"] = frame["learner"].map(learner_rank)
+    frame = frame.sort_values(["_learner_rank", "conformal_group", "pair_index"]).drop(
+        columns="_learner_rank"
+    )
+    ordered_rows = tuple((learner, group) for learner in CREDIT_LEARNER_ORDER for group in range(5))
+    threshold = np.empty((len(ordered_rows), 7), dtype=float)
+    response = np.empty_like(threshold)
+    sharp_width = np.empty_like(threshold)
+    for row_index, (learner, group) in enumerate(ordered_rows):
+        cell_frame = frame.loc[
+            frame["learner"].eq(learner) & frame["conformal_group"].eq(group)
+        ].sort_values("pair_index")
+        threshold[row_index, :] = cell_frame["threshold_delta"].to_numpy(dtype=float)
+        response[row_index, :] = 100.0 * cell_frame["resolved_delta_rate"].to_numpy(dtype=float)
+        sharp_width[row_index, :] = 100.0 * cell_frame["delta_width"].to_numpy(dtype=float)
+    if (
+        not np.isfinite(threshold).all()
+        or not np.isfinite(response).all()
+        or not np.isfinite(sharp_width).all()
+        or np.any(sharp_width < 0.0)
+    ):
+        raise RuntimeError("The common-panel figure contains invalid arranged values.")
+    focal = require_unique_row(
+        frame,
+        key={"learner": "catboost_platt", "conformal_group": 2, "pair_index": 6},
+        label="previously disclosed common-panel illustration",
+    )
+    exact_zero_cells = frame.loc[
+        frame["resolved_delta_rate"].eq(0.0)
+        & frame["delta_lower"].eq(0.0)
+        & frame["delta_upper"].eq(0.0)
+    ].copy()
+    if len(exact_zero_cells) != 5:
+        raise RuntimeError("The common-panel five-cell exact-zero census changed.")
+    return CommonPanelFigureData(
+        frame=frame,
+        ordered_rows=ordered_rows,
+        threshold=threshold,
+        resolved_pp=response,
+        sharp_width_pp=sharp_width,
+        focal=focal,
+        exact_zero_cells=exact_zero_cells,
+        fixed_candidate_rows=fixed_candidate_rows,
+        fixed_resolved_rows=fixed_resolved_rows,
+    )
+
+
+def _common_panel_threshold_response_figure(
+    strata: pd.DataFrame, *, output_dir: Path
+) -> dict[str, Path]:
+    """Plot detached resolved and all-candidate responses for all 175 cells."""
+    _style()
+    data = _prepare_common_panel_figure_data(strata)
+    frame = data.frame.assign(
+        resolved_pp=100.0 * data.frame["resolved_delta_rate"],
+        lower_pp=100.0 * data.frame["delta_lower"],
+        upper_pp=100.0 * data.frame["delta_upper"],
+    )
+    if frame["threshold_delta"].min() < -1.08 or frame["threshold_delta"].max() > 0.00225:
+        raise RuntimeError("The common-panel threshold axis would clip a census cell.")
+    focal_mask = (
+        frame["learner"].eq("catboost_platt")
+        & frame["conformal_group"].eq(2)
+        & frame["pair_index"].eq(6)
+    )
+    zero_mask = frame.index.isin(data.exact_zero_cells.index)
+    context = frame.loc[~focal_mask & ~zero_mask]
+    focal = frame.loc[focal_mask].iloc[0]
+    zero_positions = frame.loc[zero_mask, "threshold_delta"].value_counts().sort_index()
+
+    figure, axes = plt.subplots(2, 1, figsize=(6.6, 8.4), sharex=True, sharey=True)
+    y_abs = float(
+        np.max(np.abs(frame.loc[:, ["resolved_pp", "lower_pp", "upper_pp"]].to_numpy(dtype=float)))
+    )
+    y_limit = max(0.5, np.ceil((y_abs + 0.05) * 2.0) / 2.0)
+    for axis in axes:
+        axis.set_xscale("symlog", linthresh=1e-5, linscale=0.8, base=10)
+        axis.set_xlim(-1.08, 0.00225)
+        axis.set_ylim(-y_limit, y_limit)
+        axis.grid(False)
+        axis.grid(axis="y", color=LIGHT, linewidth=0.7, alpha=0.8)
+        axis.axhline(0.0, color=INK, linewidth=0.9, zorder=0)
+        axis.axvline(0.0, color=INK, linewidth=0.9, zorder=0)
+        axis.spines["top"].set_visible(False)
+        axis.spines["right"].set_visible(False)
+    resolved_axis, bounds_axis = axes
+    resolved_axis.scatter(
+        context["threshold_delta"],
+        context["resolved_pp"],
+        s=22,
+        facecolor="white",
+        edgecolor=BLUE,
+        linewidth=0.9,
+        alpha=0.84,
+        zorder=2,
+    )
+    resolved_axis.scatter(
+        [float(focal["threshold_delta"])],
+        [float(focal["resolved_pp"])],
+        marker="D",
+        s=66,
+        facecolor=ORANGE,
+        edgecolor=INK,
+        linewidth=1.0,
+        zorder=5,
+    )
+    bounds_axis.vlines(
+        context["threshold_delta"],
+        context["lower_pp"],
+        context["upper_pp"],
+        color=BLUE,
+        alpha=0.52,
+        linewidth=0.95,
+        zorder=1,
+    )
+    for endpoint in ("lower_pp", "upper_pp"):
+        bounds_axis.scatter(
+            context["threshold_delta"],
+            context[endpoint],
+            marker="_",
+            s=24,
+            color=BLUE,
+            linewidth=0.8,
+            alpha=0.68,
+            zorder=2,
+        )
+    bounds_axis.vlines(
+        float(focal["threshold_delta"]),
+        float(focal["lower_pp"]),
+        float(focal["upper_pp"]),
+        color=ORANGE,
+        linewidth=2.2,
+        zorder=4,
+    )
+    bounds_axis.scatter(
+        [float(focal["threshold_delta"]), float(focal["threshold_delta"])],
+        [float(focal["lower_pp"]), float(focal["upper_pp"])],
+        marker="_",
+        s=55,
+        color=ORANGE,
+        linewidth=1.5,
+        zorder=5,
+    )
+    for axis in axes:
+        axis.scatter(
+            zero_positions.index.to_numpy(dtype=float),
+            np.zeros(len(zero_positions), dtype=float),
+            marker="P",
+            s=58,
+            facecolor=INK,
+            edgecolor="white",
+            linewidth=0.8,
+            zorder=6,
+        )
+    resolved_axis.annotate(
+        "Previously disclosed illustration\nCatBoost S3, W7\N{RIGHTWARDS ARROW}W8",
+        xy=(float(focal["threshold_delta"]), float(focal["resolved_pp"])),
+        xytext=(48, 76),
+        textcoords="offset points",
+        fontsize=8.2,
+        ha="left",
+        va="bottom",
+        linespacing=1.2,
+        arrowprops={"arrowstyle": "-", "color": ORANGE, "linewidth": 1.1},
+        bbox={"boxstyle": "round,pad=0.2", "facecolor": "white", "edgecolor": "#FED7AA"},
+        zorder=7,
+    )
+    bounds_axis.annotate(
+        "5 exact [0,0] cells",
+        xy=(float(zero_positions.index.max()), 0.0),
+        xytext=(20, -18),
+        textcoords="offset points",
+        fontsize=8.1,
+        ha="left",
+        va="top",
+        arrowprops={"arrowstyle": "-", "color": MID, "linewidth": 0.8},
+        zorder=7,
+    )
+    resolved_axis.text(
+        0.012,
+        0.965,
+        "A. Exact resolved-panel response",
+        transform=resolved_axis.transAxes,
+        ha="left",
+        va="top",
+        fontsize=10.2,
+        fontweight="bold",
+        bbox={"facecolor": "white", "edgecolor": "none", "pad": 0.1},
+        zorder=10,
+    )
+    bounds_axis.text(
+        0.012,
+        0.965,
+        "B. Sharp all-candidate response bounds (not CIs)",
+        transform=bounds_axis.transAxes,
+        ha="left",
+        va="top",
+        fontsize=10.2,
+        fontweight="bold",
+        bbox={"facecolor": "white", "edgecolor": "none", "pad": 0.1},
+        zorder=10,
+    )
+    resolved_axis.set_ylabel("Resolved response (percentage points)", labelpad=9)
+    bounds_axis.set_ylabel("All-candidate response (percentage points)", labelpad=9)
+    bounds_axis.set_xlabel(
+        "Fitted-threshold change, \N{GREEK CAPITAL LETTER DELTA}c  (symmetric-log x scale)",
+        labelpad=9,
+    )
+    xticks = (-1.0, -0.1, -0.01, -0.001, -0.0001, 0.0, 0.0001, 0.001)
+    xlabels = (
+        "\N{MINUS SIGN}1",
+        "\N{MINUS SIGN}0.1",
+        "\N{MINUS SIGN}0.01",
+        "\N{MINUS SIGN}0.001",
+        "\N{MINUS SIGN}10\N{SUPERSCRIPT MINUS}\N{SUPERSCRIPT FOUR}",
+        "0",
+        "10\N{SUPERSCRIPT MINUS}\N{SUPERSCRIPT FOUR}",
+        "0.001",
+    )
+    bounds_axis.xaxis.set_major_locator(FixedLocator(xticks))
+    bounds_axis.xaxis.set_major_formatter(FixedFormatter(xlabels))
+    resolved_axis.tick_params(labelbottom=False)
+    figure.suptitle(
+        "Common-panel response to adjacent thresholds",
+        x=0.105,
+        y=0.975,
+        ha="left",
+        fontsize=14.5,
+        fontweight="bold",
+    )
+    figure.text(
+        0.105,
+        0.937,
+        "Complete 175-cell census in both panels; different denominators are shown separately.\n"
+        "No fitted line, ranking, or selected comparison is shown.",
+        ha="left",
+        va="top",
+        color=MID,
+        fontsize=8.8,
+        linespacing=1.3,
+    )
+    resolved_range = (
+        int(frame["resolved_rows"].min()),
+        int(frame["resolved_rows"].max()),
+    )
+    candidate_range = (
+        int(frame["candidate_rows"].min()),
+        int(frame["candidate_rows"].max()),
+    )
+    figure.text(
+        0.105,
+        0.014,
+        f"The fixed panel contains {data.fixed_candidate_rows:,} candidates "
+        f"({data.fixed_resolved_rows:,} resolved). Panel A uses cellwise resolved denominators "
+        f"({resolved_range[0]:,}\N{EN DASH}{resolved_range[1]:,});\nPanel B uses cellwise "
+        f"candidate denominators ({candidate_range[0]:,}\N{EN DASH}{candidate_range[1]:,}) and "
+        "gives identification bounds, not uncertainty around Panel A.\n"
+        "Sharpness is cellwise; endpoints need not be jointly attainable across contrasts.",
+        ha="left",
+        va="bottom",
+        color=MID,
+        fontsize=7.2,
+        linespacing=1.22,
+    )
+    figure.subplots_adjust(left=0.16, right=0.965, top=0.865, bottom=0.145, hspace=0.14)
+    return _save_figure(
+        figure,
+        FIGURE_STEMS["common_panel_threshold_response"],
+        output_dir=output_dir,
+    )
+
+
+def _common_panel_threshold_response_census_figure(
+    strata: pd.DataFrame, *, output_dir: Path
+) -> dict[str, Path]:
+    """Plot the full locked-order 25-by-7 census as a supplemental index."""
+    _style()
+    data = _prepare_common_panel_figure_data(strata)
+    threshold = data.threshold
+    response = data.resolved_pp
+    sharp_width = data.sharp_width_pp
+    diverging = LinearSegmentedColormap.from_list(
+        "blue_orange", [BLUE, "#BFDBFE", "#F8FAFC", "#FED7AA", ORANGE]
+    )
+    sequential = LinearSegmentedColormap.from_list(
+        "blue_width", ["#F8FAFC", "#BFDBFE", BLUE, "#1E3A8A"]
+    )
+    threshold_limit = float(np.max(np.abs(threshold)))
+    response_limit = float(np.max(np.abs(response)))
+    width_limit = float(np.max(sharp_width))
+    if min(threshold_limit, response_limit, width_limit) <= 0.0:
+        raise RuntimeError("The common-panel supplemental color scale is degenerate.")
+    figure, axes = plt.subplots(1, 3, figsize=(11.0, 7.3), sharey=True)
+    threshold_image = axes[0].imshow(
+        threshold,
+        aspect="auto",
+        cmap=diverging,
+        norm=SymLogNorm(
+            linthresh=1.0e-6,
+            linscale=0.7,
+            vmin=-threshold_limit,
+            vmax=threshold_limit,
+            base=10,
+        ),
+    )
+    response_image = axes[1].imshow(
+        response,
+        aspect="auto",
+        cmap=diverging,
+        norm=TwoSlopeNorm(vmin=-response_limit, vcenter=0.0, vmax=response_limit),
+    )
+    width_image = axes[2].imshow(
+        sharp_width,
+        aspect="auto",
+        cmap=sequential,
+        vmin=0.0,
+        vmax=width_limit,
+    )
+    transitions = [f"W{index}\u2192W{index + 1}" for index in range(1, 8)]
+    row_labels = [
+        f"{CREDIT_LEARNER_SHORT_LABELS[learner]}  S{group + 1}"
+        for learner, group in data.ordered_rows
+    ]
+    for axis in axes:
+        axis.set_xticks(range(7), transitions, rotation=45, ha="right")
+        axis.set_yticks(range(len(row_labels)), row_labels)
+        axis.set_xticks(np.arange(-0.5, 7, 1), minor=True)
+        axis.set_yticks(np.arange(-0.5, len(row_labels), 1), minor=True)
+        axis.grid(False)
+        axis.grid(which="minor", color="white", linewidth=0.45, alpha=0.85)
+        axis.tick_params(which="minor", bottom=False, left=False)
+        for boundary in (4.5, 9.5, 14.5, 19.5):
+            axis.axhline(boundary, color="#111827", linewidth=0.9)
+        axis.add_patch(
+            plt.Rectangle(
+                (5.5, 1.5),
+                1.0,
+                1.0,
+                fill=False,
+                edgecolor="#111827",
+                linewidth=2.0,
+            )
+        )
+    axes[0].set_title("A. Threshold change", loc="left")
+    axes[1].set_title("B. Resolved response (pp)", loc="left")
+    axes[2].set_title("C. Sharp width (pp)", loc="left")
+    axes[0].set_ylabel("Learner and fixed score stratum")
+    interior_threshold_ticks = (1.0e-6, 1.0e-5, 1.0e-4, 1.0e-3, 1.0e-2, 1.0e-1)
+    positive_threshold_ticks = {
+        threshold_limit,
+        *(tick for tick in interior_threshold_ticks if tick < threshold_limit),
+    }
+    threshold_ticks = sorted(
+        {-value for value in positive_threshold_ticks} | {0.0} | positive_threshold_ticks
+    )
+    threshold_colorbar = figure.colorbar(
+        threshold_image,
+        ax=axes[0],
+        fraction=0.046,
+        pad=0.04,
+        label="Threshold change (symmetric log)",
+        ticks=threshold_ticks,
+    )
+    threshold_colorbar.ax.set_yticklabels(
+        [
+            "0"
+            if value == 0.0
+            else (
+                f"{value:.3g}"
+                if np.isclose(abs(value), threshold_limit)
+                else f"{value:.0e}".replace("e-0", "e-").replace("e+0", "e+")
+            )
+            for value in threshold_ticks
+        ]
+    )
+    figure.colorbar(
+        response_image,
+        ax=axes[1],
+        fraction=0.046,
+        pad=0.04,
+        label="Resolved coverage change (pp)",
+    )
+    figure.colorbar(
+        width_image,
+        ax=axes[2],
+        fraction=0.046,
+        pad=0.04,
+        label="Identification width (pp)",
+    )
+    figure.suptitle("Locked-order common-panel census (supplemental index)", y=0.995)
+    figure.text(
+        0.5,
+        0.008,
+        "All 175 cells are retained. Panel A uses a symmetric-log color scale, linear within "
+        f"±1e-6 and spanning ±{threshold_limit:.3f}. "
+        "The outline marks the previously disclosed CatBoost S3 "
+        "W7\N{RIGHTWARDS ARROW}W8 illustration; Table S6J provides exact values.",
+        ha="center",
+        va="bottom",
+        fontsize=8.5,
+    )
+    figure.tight_layout(rect=(0.0, 0.03, 1.0, 0.98))
+    return _save_figure(
+        figure,
+        FIGURE_STEMS["common_panel_threshold_response_census"],
+        output_dir=output_dir,
+    )
 
 
 @dataclass(frozen=True)
@@ -1485,12 +2115,12 @@ def _load_diagnostic_inputs(
         for value in (coverage, warnings, status_aware, frozen, lateral, numerical)
     ):
         raise TypeError("A policy-support result contract is not a mapping.")
-    assert isinstance(coverage, Mapping)
-    assert isinstance(warnings, Mapping)
-    assert isinstance(status_aware, Mapping)
-    assert isinstance(frozen, Mapping)
-    assert isinstance(lateral, Mapping)
-    assert isinstance(numerical, Mapping)
+    coverage = cast(Mapping[str, Any], coverage)
+    warnings = cast(Mapping[str, Any], warnings)
+    status_aware = cast(Mapping[str, Any], status_aware)
+    frozen = cast(Mapping[str, Any], frozen)
+    lateral = cast(Mapping[str, Any], lateral)
+    numerical = cast(Mapping[str, Any], numerical)
     numerical_passes = all(
         isinstance(contract, Mapping)
         and contract.get(
@@ -1980,6 +2610,28 @@ def _load_exchangeability_transport_inputs(
         1, "learner_label", publication_cells["learner"].map(CREDIT_LEARNER_LABELS)
     )
     publication_cells.insert(2, "window", publication_cells["window_id"].map(window_map))
+    quarantined = S6B_QUARANTINED_COLUMNS.intersection(publication_cells.columns)
+    if quarantined:
+        raise RuntimeError(f"Quarantined candidate fields entered S6B: {sorted(quarantined)}.")
+    publication_cells = publication_cells.drop(
+        columns=sorted(S6B_RETIRED_COLUMNS),
+        errors="raise",
+    )
+    if tuple(publication_cells.columns) != S6B_PUBLICATION_COLUMNS:
+        raise RuntimeError(
+            f"Unexpected S6B publication schema: {tuple(publication_cells.columns)!r}."
+        )
+    if (
+        len(publication_cells) != 40
+        or publication_cells["source_holm_rank"].astype(int).nunique() != 40
+        or set(publication_cells["source_holm_rank"].astype(int)) != set(range(1, 41))
+        or int(publication_cells["meets_locked_nominal_holm_threshold"].sum()) != 31
+        or int(publication_cells["strata_with_non_singleton_calibration_threshold_ties"].sum()) != 0
+        or not bool(
+            publication_cells["all_calibration_threshold_ties_singleton"].astype(bool).all()
+        )
+    ):
+        raise RuntimeError("The exact S6B publication census or decision audit changed.")
     publication_strata = strata.rename(
         columns={
             "exact_log_p_value": "joint_block_reference_exact_log_p_value",
@@ -2008,6 +2660,428 @@ def _load_exchangeability_transport_inputs(
         cells=cells,
         publication_strata=publication_strata,
         publication_cells=publication_cells,
+    )
+
+
+@dataclass(frozen=True)
+class CommonPanelThresholdResponseInputs:
+    summary_path: Path
+    receipt_path: Path
+    config_path: Path
+    summary: dict[str, Any]
+    artifacts: dict[str, Path]
+    strata: pd.DataFrame
+    learners: pd.DataFrame
+    publication_strata: pd.DataFrame
+    publication_learners: pd.DataFrame
+
+
+def _load_common_panel_threshold_response_inputs(
+    registered: Mapping[str, Path],
+    lineage: Mapping[str, Any],
+) -> CommonPanelThresholdResponseInputs:
+    """Load the complete clean-tagged V8 fixed-panel adjacent response."""
+    summary_path = registered["common_panel_threshold_response_summary"]
+    receipt_path = registered["common_panel_threshold_response_receipt"]
+    config_path = registered["common_panel_threshold_response_config"]
+    summary = _read_json(summary_path, label="Common-panel threshold-response summary")
+    if summary.get("status") != "complete_clean_tagged_common_panel_threshold_response_v8":
+        raise RuntimeError("The common-panel threshold-response replay is incomplete.")
+    _require_identity(summary, lineage, label="Common-panel threshold-response replay")
+    receipt = _read_json(receipt_path, label="Common-panel threshold-response receipt")
+    _require_identity(receipt, lineage, label="Common-panel threshold-response receipt")
+    if receipt.get("summary") != relative_artifact_descriptor(summary_path, repo_root=ROOT):
+        raise RuntimeError("The common-panel receipt no longer binds its summary.")
+    _require_clean_execution(summary, label="The common-panel threshold-response replay")
+    _require_clean_execution(receipt, label="The common-panel threshold-response receipt")
+    if receipt.get("artifacts") != summary.get("artifacts"):
+        raise RuntimeError("The common-panel summary and receipt bind different artifacts.")
+    raw_archive = relative_artifact_descriptor(
+        ROOT / "data/raw/Loan_status_2007-2020Q3.csv", repo_root=ROOT
+    )
+    if summary.get("protected_artifacts_read") != [raw_archive]:
+        raise RuntimeError("The V8 summary does not disclose its protected raw-archive read.")
+    if receipt.get("protected_artifacts_read") != [raw_archive]:
+        raise RuntimeError("The V8 receipt does not disclose its protected raw-archive read.")
+    if (
+        summary.get("protected_artifacts_written") != []
+        or receipt.get("protected_artifacts_written") != []
+    ):
+        raise RuntimeError("The V8 replay wrote a protected artifact.")
+
+    census = summary.get("census", {})
+    identities = summary.get("identities", {})
+    results = summary.get("results", {})
+    module_audit = summary.get("module_audit", {})
+    if (
+        census.get("candidate_rows") != 376890
+        or census.get("resolved_rows") != 364814
+        or census.get("unresolved_rows") != 12076
+        or census.get("stratum_rows") != 175
+        or census.get("learner_rows") != 35
+        or census.get("full_census_reported_without_selection") is not True
+        or identities.get("resolved_signed_crossed_band_integer_identity_all_rows") is not True
+        or identities.get("sharp_shared_completion_bounds_all_rows") is not True
+        or identities.get("sharp_width_integer_identity_all_rows") is not True
+        or identities.get("learner_aggregates_sum_integer_numerators_before_division") is not True
+        or identities.get("separately_extremized_coverage_intervals_subtracted") is not False
+        or results.get("threshold_increase_rows") != 49
+        or results.get("threshold_equal_rows") != 4
+        or results.get("threshold_decrease_rows") != 122
+        or module_audit.get("fit_audit", {}).get("fit_audit_cells") != 200
+        or module_audit.get("fit_audit", {}).get("fit_audit_rows") != 909665
+        or module_audit.get("fit_audit", {}).get("capped_cells") != 0
+        or module_audit.get("fit_audit", {}).get("tied_threshold_cells") != 0
+    ):
+        raise RuntimeError("The exact V8 census, identity, or fit-threshold audit changed.")
+
+    implementation = summary.get("implementation_provenance", {}).get("source_files")
+    if not isinstance(implementation, Mapping):
+        raise TypeError("The V8 summary omits implementation provenance.")
+    required_implementation = {
+        "configs/experiments/ijds_common_panel_threshold_response_2026-07-26_v8.yaml",
+        "docs/research/ijds_common_panel_threshold_response_v8_protocol_2026-07-26.md",
+        "scripts/experiments/run_ijds_common_panel_threshold_response_v8.py",
+        "src/ijds_audit/common_panel_threshold_response.py",
+        "src/models/binary_conformal_guardrail.py",
+        "src/ijds_audit/grid_contracts.py",
+        "uv.lock",
+    }
+    if not required_implementation.issubset(implementation):
+        raise RuntimeError("The V8 implementation-provenance surface is incomplete.")
+    for relative in required_implementation:
+        descriptor = implementation[relative]
+        if not isinstance(descriptor, Mapping):
+            raise TypeError(f"The V8 implementation descriptor is invalid: {relative!r}.")
+        path = (ROOT / relative).resolve()
+        if relative_artifact_descriptor(path, repo_root=ROOT) != dict(descriptor):
+            raise RuntimeError(f"A V8 implementation dependency drifted: {relative!r}.")
+    if implementation[
+        "configs/experiments/ijds_common_panel_threshold_response_2026-07-26_v8.yaml"
+    ] != relative_artifact_descriptor(config_path, repo_root=ROOT):
+        raise RuntimeError("The registered V8 config differs from the executed config.")
+
+    artifacts = _verified_artifact_paths(
+        cast(Mapping[str, Mapping[str, Any]], summary["artifacts"])
+    )
+    registered_artifacts = {
+        "adjacent_stratum_threshold_response": registered["common_panel_threshold_response_strata"],
+        "adjacent_learner_threshold_response": registered[
+            "common_panel_threshold_response_learners"
+        ],
+    }
+    if artifacts != registered_artifacts:
+        raise RuntimeError("The registered V8 table paths differ from the executed artifacts.")
+    strata = pd.read_csv(artifacts["adjacent_stratum_threshold_response"])
+    learners = pd.read_csv(artifacts["adjacent_learner_threshold_response"])
+    require_exact_grid(
+        strata,
+        domains={
+            "learner": CREDIT_LEARNER_ORDER,
+            "pair_index": tuple(range(7)),
+            "conformal_group": tuple(range(5)),
+        },
+        label="common-panel threshold-response strata",
+    )
+    require_exact_grid(
+        learners,
+        domains={"learner": CREDIT_LEARNER_ORDER, "pair_index": tuple(range(7))},
+        label="common-panel threshold-response learners",
+    )
+    require_finite(
+        strata,
+        (
+            "threshold_from",
+            "threshold_to",
+            "threshold_delta",
+            "resolved_delta_numerator",
+            "resolved_delta_rate",
+            "delta_lower_numerator",
+            "delta_upper_numerator",
+            "delta_width_numerator",
+            "delta_lower",
+            "delta_upper",
+            "delta_width",
+        ),
+        label="common-panel threshold-response strata",
+    )
+    require_finite(
+        learners,
+        (
+            "resolved_delta_numerator",
+            "resolved_delta_rate",
+            "delta_lower_numerator",
+            "delta_upper_numerator",
+            "delta_width_numerator",
+            "delta_lower",
+            "delta_upper",
+            "delta_width",
+        ),
+        label="common-panel threshold-response learners",
+    )
+    if (
+        not strata["resolved_delta_numerator"]
+        .eq(
+            strata["threshold_sign"]
+            * (strata["resolved_y0_crossed_rows"] + strata["resolved_y1_crossed_rows"])
+        )
+        .all()
+        or not (strata["delta_upper_numerator"] - strata["delta_lower_numerator"])
+        .eq(strata["delta_width_numerator"])
+        .all()
+        or int(strata["delta_upper"].lt(0.0).sum()) != 122
+        or int(strata["delta_lower"].gt(0.0).sum()) != 48
+        or int((strata["delta_lower"].eq(0.0) & strata["delta_upper"].eq(0.0)).sum()) != 5
+        or int((strata["delta_lower"].lt(0.0) & strata["delta_upper"].gt(0.0)).sum()) != 0
+        or int(
+            (
+                (strata["delta_lower"].eq(0.0) & strata["delta_upper"].gt(0.0))
+                | (strata["delta_lower"].lt(0.0) & strata["delta_upper"].eq(0.0))
+            ).sum()
+        )
+        != 0
+        or int(learners["delta_upper"].lt(0.0).sum()) != 31
+        or int(learners["delta_lower"].gt(0.0).sum()) != 4
+        or bool((learners["delta_lower"].le(0.0) & learners["delta_upper"].ge(0.0)).any())
+    ):
+        raise RuntimeError("The V8 exact response identities or sign census changed.")
+    disclosed = require_unique_row(
+        strata,
+        key={
+            "learner": "catboost_platt",
+            "pair_index": 6,
+            "conformal_group": 2,
+        },
+        label="V8 disclosed W7--W8 CatBoost stratum",
+    )
+    if (
+        int(disclosed["resolved_delta_numerator"]) != -281
+        or int(disclosed["delta_lower_numerator"]) != -312
+        or int(disclosed["delta_upper_numerator"]) != -290
+        or not np.isclose(float(disclosed["threshold_from"]), 0.8884345991499274)
+        or not np.isclose(float(disclosed["threshold_to"]), 0.1118010883671265)
+    ):
+        raise RuntimeError("The disclosed V8 fixed-panel response changed.")
+
+    transition_labels = {index: f"W{index + 1}--W{index + 2}" for index in range(7)}
+    publication_strata = strata.copy()
+    publication_strata.insert(
+        1, "learner_label", publication_strata["learner"].map(CREDIT_LEARNER_LABELS)
+    )
+    publication_strata.insert(
+        3, "transition", publication_strata["pair_index"].map(transition_labels)
+    )
+    publication_strata = publication_strata.drop(
+        columns=["ids_sha256", "scores_sha256", "assignments_sha256"],
+        errors="raise",
+    )
+    publication_learners = learners.copy()
+    publication_learners.insert(
+        1, "learner_label", publication_learners["learner"].map(CREDIT_LEARNER_LABELS)
+    )
+    publication_learners.insert(
+        3, "transition", publication_learners["pair_index"].map(transition_labels)
+    )
+    return CommonPanelThresholdResponseInputs(
+        summary_path=summary_path,
+        receipt_path=receipt_path,
+        config_path=config_path,
+        summary=summary,
+        artifacts=artifacts,
+        strata=strata,
+        learners=learners,
+        publication_strata=publication_strata,
+        publication_learners=publication_learners,
+    )
+
+
+@dataclass(frozen=True)
+class MarginalMeanScoreOutcomeGapInputs:
+    summary_path: Path
+    receipt_path: Path
+    config_path: Path
+    summary: dict[str, Any]
+    artifacts: dict[str, Path]
+    table: pd.DataFrame
+    publication_table: pd.DataFrame
+
+
+def _load_marginal_mean_score_outcome_gap_inputs(
+    registered: Mapping[str, Path],
+    lineage: Mapping[str, Any],
+) -> MarginalMeanScoreOutcomeGapInputs:
+    """Load the clean-tagged five-learner marginal calibration-gap census."""
+    summary_path = registered["marginal_mean_score_outcome_gap_summary"]
+    receipt_path = registered["marginal_mean_score_outcome_gap_receipt"]
+    config_path = registered["marginal_mean_score_outcome_gap_config"]
+    summary = _read_json(summary_path, label="Marginal mean-score outcome-gap summary")
+    receipt = _read_json(receipt_path, label="Marginal mean-score outcome-gap receipt")
+    expected_summary_status = "complete_clean_tagged_marginal_mean_score_outcome_gap_v2"
+    expected_receipt_status = "complete_clean_tagged_marginal_mean_score_outcome_gap_v2_receipt"
+    if summary.get("status") != expected_summary_status:
+        raise RuntimeError("The marginal mean-score outcome-gap replay is incomplete.")
+    if receipt.get("status") != expected_receipt_status:
+        raise RuntimeError("The marginal mean-score outcome-gap receipt is incomplete.")
+    _require_identity(summary, lineage, label="Marginal mean-score outcome-gap replay")
+    _require_identity(receipt, lineage, label="Marginal mean-score outcome-gap receipt")
+    if receipt.get("summary") != relative_artifact_descriptor(summary_path, repo_root=ROOT):
+        raise RuntimeError("The marginal-gap receipt no longer binds its summary.")
+    if receipt.get("artifacts") != summary.get("artifacts"):
+        raise RuntimeError("The marginal-gap summary and receipt bind different artifacts.")
+    _require_clean_execution(summary, label="The marginal mean-score outcome-gap replay")
+    _require_clean_execution(receipt, label="The marginal mean-score outcome-gap receipt")
+    for field in ("initial_git", "final_git"):
+        git_state = receipt.get(field)
+        if (
+            not isinstance(git_state, Mapping)
+            or git_state.get("commit") != lineage.get("protocol_commit")
+            or git_state.get("dirty") is not False
+            or git_state.get("dirty_entries") != 0
+            or git_state.get("dirty_paths") != []
+        ):
+            raise RuntimeError(f"The marginal-gap receipt has a nonclean {field} state.")
+    environment = receipt.get("environment")
+    if not isinstance(environment, Mapping) or environment.get("uv_lock_sha256") != lineage.get(
+        "scientific_uv_lock_sha256"
+    ):
+        raise RuntimeError("The marginal-gap scientific environment lock changed.")
+
+    implementation = summary.get("implementation_provenance", {}).get("source_files")
+    if not isinstance(implementation, Mapping):
+        raise TypeError("The marginal-gap summary omits implementation provenance.")
+    required_implementation = {
+        "configs/experiments/ijds_marginal_mean_score_outcome_gap_2026-07-26_v2.yaml",
+        "docs/research/ijds_marginal_mean_score_outcome_gap_v2_protocol_2026-07-26.md",
+        "scripts/experiments/run_ijds_marginal_mean_score_outcome_gap_v2.py",
+        "src/ijds_audit/marginal_mean_score_outcome_gap.py",
+    }
+    if set(implementation) != required_implementation:
+        raise RuntimeError("The marginal-gap implementation-provenance surface changed.")
+    for relative in required_implementation:
+        descriptor = implementation[relative]
+        if not isinstance(descriptor, Mapping):
+            raise TypeError(f"The marginal-gap descriptor is invalid: {relative!r}.")
+        if relative_artifact_descriptor(ROOT / relative, repo_root=ROOT) != dict(descriptor):
+            raise RuntimeError(f"A marginal-gap implementation file drifted: {relative!r}.")
+    if implementation[
+        "configs/experiments/ijds_marginal_mean_score_outcome_gap_2026-07-26_v2.yaml"
+    ] != relative_artifact_descriptor(config_path, repo_root=ROOT):
+        raise RuntimeError("The registered marginal-gap config differs from the executed config.")
+
+    artifacts = _verified_artifact_paths(
+        cast(Mapping[str, Mapping[str, Any]], summary["artifacts"])
+    )
+    registered_artifacts = {
+        "marginal_mean_score_outcome_gap": registered["marginal_mean_score_outcome_gap_table"]
+    }
+    if artifacts != registered_artifacts:
+        raise RuntimeError("The registered marginal-gap table differs from the executed artifact.")
+    table = pd.read_parquet(artifacts["marginal_mean_score_outcome_gap"])
+    require_exact_grid(
+        table,
+        domains={"learner": CREDIT_LEARNER_ORDER},
+        label="marginal mean-score outcome-gap table",
+    )
+    require_finite(
+        table,
+        (
+            "score_sum",
+            "mean_score",
+            "outcome_mean_lower",
+            "outcome_mean_upper",
+            "marginal_mean_score_outcome_gap_lower",
+            "marginal_mean_score_outcome_gap_upper",
+            "identification_width",
+        ),
+        label="marginal mean-score outcome-gap table",
+    )
+    expected_n = 376890
+    expected_r = 364814
+    expected_y0 = 307842
+    expected_y1 = 56972
+    expected_u = 12076
+    outcome_lower = expected_y1 / expected_n
+    outcome_upper = (expected_y1 + expected_u) / expected_n
+    lower_column = "marginal_mean_score_outcome_gap_lower"
+    upper_column = "marginal_mean_score_outcome_gap_upper"
+    learner_order = table.set_index("learner")["learner_order"].to_dict()
+    if (
+        learner_order != {learner: index for index, learner in enumerate(CREDIT_LEARNER_ORDER, 1)}
+        or not table["estimand"].eq("marginal_mean_score_outcome_gap").all()
+        or not table["candidate_rows"].eq(expected_n).all()
+        or not table["resolved_rows"].eq(expected_r).all()
+        or not table["resolved_nondefaults"].eq(expected_y0).all()
+        or not table["resolved_defaults"].eq(expected_y1).all()
+        or not table["unresolved_outcomes"].eq(expected_u).all()
+        or not table["outcome_mean_lower"].eq(outcome_lower).all()
+        or not table["outcome_mean_upper"].eq(outcome_upper).all()
+        or not np.allclose(
+            table[lower_column].to_numpy(dtype=float),
+            table["mean_score"].to_numpy(dtype=float) - outcome_upper,
+            rtol=0.0,
+            atol=1.0e-15,
+        )
+        or not np.allclose(
+            table[upper_column].to_numpy(dtype=float),
+            table["mean_score"].to_numpy(dtype=float) - outcome_lower,
+            rtol=0.0,
+            atol=1.0e-15,
+        )
+        or not np.allclose(
+            table["identification_width"].to_numpy(dtype=float),
+            expected_u / expected_n,
+            rtol=0.0,
+            atol=1.0e-15,
+        )
+        or not bool(table["sharp_binary_completion"].all())
+        or not table["lower_endpoint_completion"].eq("all_unresolved_outcomes_one").all()
+        or not table["upper_endpoint_completion"].eq("all_unresolved_outcomes_zero").all()
+    ):
+        raise RuntimeError("The marginal-gap census or sharp identities changed.")
+
+    candidate = summary.get("candidate_census", {})
+    endpoint = summary.get("endpoint_census", {})
+    results = summary.get("results", {})
+    identification = summary.get("identification", {})
+    reporting = summary.get("reporting_contract", {})
+    if (
+        candidate.get("rows") != expected_n
+        or candidate.get("unique_nonmissing_ids") != expected_n
+        or candidate.get("all_five_scores_share_the_same_rows") is not True
+        or endpoint.get("resolved_rows") != expected_r
+        or endpoint.get("resolved_nondefaults") != expected_y0
+        or endpoint.get("resolved_defaults") != expected_y1
+        or endpoint.get("unresolved_rows") != expected_u
+        or results.get("learners") != 5
+        or results.get("all_results_reported_without_sign_condition") is not True
+        or identification.get("sharp_binary_completions") is not True
+        or identification.get("sampling_interval") is not False
+        or reporting.get("complete_five_learner_census") is not True
+        or reporting.get("select_or_rank_learner") is not False
+        or reporting.get("result_sign_is_stop_condition") is not False
+        or reporting.get("verified_point_in_time_snapshot_claim") is not False
+        or reporting.get("causal_or_prospective_interpretation") is not False
+    ):
+        raise RuntimeError("The marginal-gap summary boundary changed.")
+
+    publication_table = table.copy()
+    publication_table.insert(
+        3,
+        "learner_label",
+        publication_table["learner"].map(CREDIT_LEARNER_LABELS),
+    )
+    publication_table = publication_table.drop(
+        columns=["candidate_id_sha256"],
+        errors="raise",
+    )
+    return MarginalMeanScoreOutcomeGapInputs(
+        summary_path=summary_path,
+        receipt_path=receipt_path,
+        config_path=config_path,
+        summary=summary,
+        artifacts=artifacts,
+        table=table,
+        publication_table=publication_table,
     )
 
 
@@ -2572,6 +3646,7 @@ def _stage_publication_generation(
     exchangeability_cells: pd.DataFrame,
     phase: pd.DataFrame,
     development_envelopes: pd.DataFrame,
+    common_panel_threshold_response: pd.DataFrame,
 ) -> StagedPublicationGeneration:
     """Write one complete staged generation and validate its exact surface."""
     if set(tables) != set(TABLE_TARGETS):
@@ -2599,6 +3674,16 @@ def _stage_publication_generation(
             development_envelopes,
             output_dir=staged_figure_dir,
         ),
+        "common_panel_threshold_response": _common_panel_threshold_response_figure(
+            common_panel_threshold_response,
+            output_dir=staged_figure_dir,
+        ),
+        "common_panel_threshold_response_census": (
+            _common_panel_threshold_response_census_figure(
+                common_panel_threshold_response,
+                output_dir=staged_figure_dir,
+            )
+        ),
     }
     figure_targets = {
         name: {kind: FIGURE_DIR / f"{FIGURE_STEMS[name]}.{kind}" for kind in ("png", "pdf")}
@@ -2616,9 +3701,12 @@ def _stage_publication_generation(
         *TABLE_TARGETS.values(),
         *(target for targets in figure_targets.values() for target in targets.values()),
     }
-    if len(outputs) != 33 or set(outputs) != expected_targets:
+    expected_artifact_count = len(TABLE_TARGETS) + 2 * len(FIGURE_STEMS)
+    expected_figure_files = 2 * len(FIGURE_STEMS)
+    if len(outputs) != expected_artifact_count or set(outputs) != expected_targets:
         raise RuntimeError(
-            "The staged publication generation is not exactly 27 CSVs and 6 figures."
+            "The staged publication generation is not exactly "
+            f"{len(TABLE_TARGETS)} CSVs and {expected_figure_files} figure files."
         )
     return StagedPublicationGeneration(
         table_paths=table_paths,
@@ -2680,7 +3768,7 @@ def _paper_artifact_descriptors(
     return descriptors
 
 
-def _build_evidence(staging_root: Path) -> Path:
+def _build_evidence(staging_root: Path, *, promote: bool = True) -> Path:
     registry, registered = load_verified_source_registry(
         SOURCE_REGISTRY_PATH,
         repo_root=ROOT,
@@ -2832,7 +3920,17 @@ def _build_evidence(staging_root: Path) -> Path:
     exchangeability_summary = exchangeability.summary
     exchangeability_artifacts = exchangeability.artifacts
     exchangeability_cells = exchangeability.cells
-
+    common_panel = _load_common_panel_threshold_response_inputs(
+        registered,
+        cast(dict[str, Any], diagnostic_lineage["common_panel_threshold_response"]),
+    )
+    common_panel_summary_path = common_panel.summary_path
+    common_panel_receipt_path = common_panel.receipt_path
+    common_panel_config_path = common_panel.config_path
+    common_panel_summary = common_panel.summary
+    common_panel_artifacts = common_panel.artifacts
+    common_panel_strata = common_panel.strata
+    common_panel_learners = common_panel.learners
     equal_followup = _load_equal_followup_inputs(registered, rolling_equal_lineage)
     equal_followup_summary_path = equal_followup.summary_path
     equal_followup_receipt_path = equal_followup.receipt_path
@@ -2945,6 +4043,7 @@ def _build_evidence(staging_root: Path) -> Path:
         (
             "fit_prevalence",
             "fit_residual_quantile",
+            "fit_score_max",
             "mean_width",
             "coverage_lower",
             "coverage_upper",
@@ -3025,7 +4124,6 @@ def _build_evidence(staging_root: Path) -> Path:
         or int(endpoint_resolution_table["unresolved_rows"].sum()) != 12076
     ):
         raise RuntimeError("The primary endpoint-reason census changed.")
-
     rolling_individual_coverage = individual_followup.publication_coverage.copy()
     rolling_table_columns = [
         "origin_id",
@@ -3099,20 +4197,13 @@ def _build_evidence(staging_root: Path) -> Path:
         ),
         label="paper-facing coverage and set diagnostics",
     )
-    phase_table = phase[
-        [
-            "window_id",
-            "fit_rows",
-            "fit_prevalence",
-            "fit_residual_quantile",
-            "coverage_lower",
-            "coverage_upper",
-            "mean_width",
-            "set_empty_share",
-            "set_zero_only_share",
-            "set_both_share",
-        ]
-    ].copy()
+    conformal_config = v4.config.get("conformal")
+    if not isinstance(conformal_config, Mapping):
+        raise TypeError("The active V4 conformal configuration is not a mapping.")
+    phase_table = _phase_transition_publication_table(
+        phase,
+        alpha=float(conformal_config["alpha"]),
+    )
     direction_table = (
         development_envelopes.groupby(["metric", "direction"], observed=True)
         .size()
@@ -3175,11 +4266,14 @@ def _build_evidence(staging_root: Path) -> Path:
             "rolling_individual_age_census": individual_followup.publication_census,
             "fit_label_completion": fit_label_table,
             "allocation_granularity": granularity_table,
+            "common_panel_threshold_response_strata": common_panel.publication_strata,
+            "common_panel_threshold_response_learners": common_panel.publication_learners,
         },
         coverage=credit_temporal_coverage,
         exchangeability_cells=exchangeability_cells,
-        phase=phase,
+        phase=phase_table,
         development_envelopes=development_envelopes,
+        common_panel_threshold_response=common_panel_strata,
     )
 
     c2 = solve_records.loc[solve_records["comparator_rule"].eq("c2_contemporaneous")]
@@ -3220,12 +4314,12 @@ def _build_evidence(staging_root: Path) -> Path:
         require_unique_value(coverage, "unresolved_rows", label="detailed V4 canonical coverage")
     )
     phase_w7 = require_unique_row(
-        phase,
+        phase_table,
         key={"window_id": "w07_2012m07_m12"},
         label="binary phase transition W7",
     )
     phase_w8 = require_unique_row(
-        phase,
+        phase_table,
         key={"window_id": "w08_2012m08_2013m01"},
         label="binary phase transition W8",
     )
@@ -3265,6 +4359,9 @@ def _build_evidence(staging_root: Path) -> Path:
             "exchangeability_transport/summary": exchangeability_summary_path,
             "exchangeability_transport/config": registered["exchangeability_transport_config"],
             "exchangeability_transport/execution_receipt": exchangeability_receipt_path,
+            "common_panel_threshold_response/summary": common_panel_summary_path,
+            "common_panel_threshold_response/config": common_panel_config_path,
+            "common_panel_threshold_response/execution_receipt": common_panel_receipt_path,
             "rolling_origin_equal_followup/summary": equal_followup_summary_path,
             "rolling_origin_equal_followup/config": registered["rolling_equal_followup_config"],
             "rolling_origin_equal_followup/execution_receipt": equal_followup_receipt_path,
@@ -3306,6 +4403,7 @@ def _build_evidence(staging_root: Path) -> Path:
             "rolling_origin_primary_recovery": rolling_primary_artifacts,
             "conformal_set_diagnostics": conformal_set_artifacts,
             "exchangeability_transport": exchangeability_artifacts,
+            "common_panel_threshold_response": common_panel_artifacts,
             "rolling_origin_equal_followup": equal_followup_artifacts,
             "rolling_origin_individual_age_followup": individual_followup_artifacts,
             "label_mondrian/outcome_free": label_mondrian.freeze_artifacts,
@@ -3346,7 +4444,7 @@ def _build_evidence(staging_root: Path) -> Path:
     )
     paper_artifact_descriptors = _paper_artifact_descriptors(publication_generation)
     evidence = {
-        "schema_version": "2026-07-21.5",
+        "schema_version": "2026-07-26.2",
         "status": "active_ijds_v5_endpoint_reason_audited_paper_facing_evidence",
         "source_registry": {
             "schema_version": str(registry["schema_version"]),
@@ -3539,6 +4637,76 @@ def _build_evidence(staging_root: Path) -> Path:
             },
             "cell_rows": exchangeability.publication_cells.to_dict(orient="records"),
             "stratum_rows": exchangeability.publication_strata.to_dict(orient="records"),
+        },
+        "common_panel_threshold_response": {
+            "scope": "five_learners_by_five_score_strata_by_seven_adjacent_transitions",
+            "run_tag": str(common_panel_summary["run_tag"]),
+            "protocol_tag": str(common_panel_summary["protocol_tag"]),
+            "protocol_commit": str(common_panel_summary["protocol_commit"]),
+            "retrospective_after_archive_and_v6_inspection": True,
+            "preregistered": False,
+            "confirmatory": False,
+            "fixed_target_panel": True,
+            "stratum_rows": int(len(common_panel_strata)),
+            "learner_rows": int(len(common_panel_learners)),
+            "full_census_and_identities_verified": bool(
+                len(common_panel_strata) == 175
+                and len(common_panel_learners) == 35
+                and common_panel_summary["census"]["full_census_reported_without_selection"] is True
+                and common_panel_summary["identities"][
+                    "resolved_signed_crossed_band_integer_identity_all_rows"
+                ]
+                is True
+                and common_panel_summary["identities"]["sharp_shared_completion_bounds_all_rows"]
+                is True
+            ),
+            "stratum_sharp_sign_census": {
+                "negative": int(common_panel_strata["delta_upper"].lt(0.0).sum()),
+                "exactly_zero": int(
+                    (
+                        common_panel_strata["delta_lower"].eq(0.0)
+                        & common_panel_strata["delta_upper"].eq(0.0)
+                    ).sum()
+                ),
+                "positive": int(common_panel_strata["delta_lower"].gt(0.0).sum()),
+            },
+            "learner_transition_sharp_sign_census": {
+                "negative": int(common_panel_learners["delta_upper"].lt(0.0).sum()),
+                "exactly_zero": int(
+                    (
+                        common_panel_learners["delta_lower"].eq(0.0)
+                        & common_panel_learners["delta_upper"].eq(0.0)
+                    ).sum()
+                ),
+                "positive": int(common_panel_learners["delta_lower"].gt(0.0).sum()),
+            },
+            "resolved_delta_rate_range": [
+                float(common_panel_strata["resolved_delta_rate"].min()),
+                float(common_panel_strata["resolved_delta_rate"].max()),
+            ],
+            "cellwise_identification_width": {
+                "median": float(common_panel_strata["delta_width"].quantile(0.5)),
+                "p90": float(common_panel_strata["delta_width"].quantile(0.9)),
+                "maximum": float(common_panel_strata["delta_width"].max()),
+            },
+            "disclosed_w7_w8_catboost_zero_based_group_2": dict(
+                common_panel_summary["results"]["disclosed_w7_w8_catboost_stratum_2"]
+            ),
+            "interpretation": {
+                **dict(common_panel_summary["interpretation"]),
+                "all_candidate_bounds_use_one_shared_completion_per_loan": True,
+                "sharpness_is_cellwise": True,
+                "joint_attainability_of_all_cell_endpoints_claimed": False,
+                "separate_coverage_bound_subtraction_used": False,
+                "stratum_sign_census_is_substantive_discovery": False,
+                "threshold_distance_is_a_coverage_bound": False,
+                "slope_or_continuity_claimed": False,
+                "learner_window_or_stratum_winner_claimed": False,
+                "temporal_validity_transferred": False,
+                "selected_or_funded_set_validity": False,
+            },
+            "learner_rows_data": common_panel.publication_learners.to_dict(orient="records"),
+            "stratum_rows_data": common_panel.publication_strata.to_dict(orient="records"),
         },
         "evaluation_endpoint": {
             **dict(config["target"]["evaluation_outcome_contract"]),
@@ -3767,7 +4935,7 @@ def _build_evidence(staging_root: Path) -> Path:
                     "labels that were unavailable at their information cutoffs. Every "
                     "scenario retains "
                     "all eight overall coverage upper bounds below 0.90, but the W7--W8 "
-                    "stratum-2 crossing fails under the all-default scenario. Nonlinear "
+                    "CatBoost S3 crossing fails under the all-default scenario. Nonlinear "
                     "refitting means these scenarios are not sharp bounds over all 2^215 "
                     "label assignments."
                 ),
@@ -3893,8 +5061,40 @@ def _build_evidence(staging_root: Path) -> Path:
         },
         "binary_phase_transition": {
             "stratum": 2,
+            "alpha": float(conformal_config["alpha"]),
+            "w7_fit_rows": int(phase_w7["fit_rows"]),
+            "w8_fit_rows": int(phase_w8["fit_rows"]),
+            "w7_fit_default_rows": int(phase_w7["fit_default_rows"]),
+            "w8_fit_default_rows": int(phase_w8["fit_default_rows"]),
             "w7_fit_prevalence": float(phase_w7["fit_prevalence"]),
             "w8_fit_prevalence": float(phase_w8["fit_prevalence"]),
+            "w7_finite_sample_rank": int(phase_w7["finite_sample_rank"]),
+            "w8_finite_sample_rank": int(phase_w8["finite_sample_rank"]),
+            "w7_finite_phase_allowance": int(phase_w7["finite_phase_allowance"]),
+            "w8_finite_phase_allowance": int(phase_w8["finite_phase_allowance"]),
+            "w7_phase_margin": int(phase_w7["phase_margin"]),
+            "w8_phase_margin": int(phase_w8["phase_margin"]),
+            "w7_phase_boundary_rate": float(phase_w7["phase_boundary_rate"]),
+            "w8_phase_boundary_rate": float(phase_w8["phase_boundary_rate"]),
+            "calibration_scores_below_half_all_windows": bool(
+                phase_table["calibration_scores_below_half"].all()
+            ),
+            "w7_calibration_score_max": float(phase_w7["fit_score_max"]),
+            "w8_calibration_score_max": float(phase_w8["fit_score_max"]),
+            "w7_threshold_branch": (
+                f"one_minus_{int(phase_w7['phase_margin'])}th_largest_default_score"
+            ),
+            "w8_fit_nondefault_rows": int(phase_w8["fit_rows"] - phase_w8["fit_default_rows"]),
+            "w8_threshold_branch": (
+                f"{int(phase_w8['finite_sample_rank'])}th_smallest_of_"
+                f"{int(phase_w8['fit_rows'] - phase_w8['fit_default_rows'])}_"
+                "nondefault_scores"
+            ),
+            "w8_target_score_max": float(phase_w8["score_max"]),
+            "w8_positive_label_coverage_boundary": float(1.0 - phase_w8["fit_residual_quantile"]),
+            "w8_all_target_scores_below_positive_label_coverage_boundary": bool(
+                phase_w8["score_max"] < 1.0 - phase_w8["fit_residual_quantile"]
+            ),
             "w7_residual_quantile": float(phase_w7["fit_residual_quantile"]),
             "w8_residual_quantile": float(phase_w8["fit_residual_quantile"]),
             "w7_mean_width": float(phase_w7["mean_width"]),
@@ -3947,7 +5147,7 @@ def _build_evidence(staging_root: Path) -> Path:
             "c2_point_minus_guardrail_objective_min": float(
                 c2["point_minus_guardrail_objective"].min()
             ),
-            "broad_stress_all_envelopes_cross_zero": bool(
+            "registered_cap_values_all_envelopes_include_zero": bool(
                 broad["direction"].eq("crosses_zero").all()
             ),
             "broad_stress_cells": int(len(broad)),
@@ -4151,24 +5351,217 @@ def _build_evidence(staging_root: Path) -> Path:
     )
     staged_manifest = staged_output_path(staging_root, EVIDENCE_PATH, repo_root=ROOT)
     atomic_write_strict_json(staged_manifest, evidence)
-    promote_publication_generation(
-        publication_generation.outputs,
-        staged_manifest=staged_manifest,
-        manifest_target=EVIDENCE_PATH,
-        repo_root=ROOT,
-        transaction_root=staging_root,
-    )
-    logger.info("Built one transactional active IJDS evidence generation: {}", EVIDENCE_PATH)
-    return EVIDENCE_PATH
+    if promote:
+        promote_publication_generation(
+            publication_generation.outputs,
+            staged_manifest=staged_manifest,
+            manifest_target=EVIDENCE_PATH,
+            repo_root=ROOT,
+            transaction_root=staging_root,
+        )
+        logger.info("Built one transactional active IJDS evidence generation: {}", EVIDENCE_PATH)
+        return EVIDENCE_PATH
+    logger.info("Staged active IJDS evidence without promotion: {}", staged_manifest)
+    return staged_manifest
 
 
-def build_evidence() -> Path:
-    """Build and atomically promote one complete paper-facing generation."""
+def build_evidence(*, stage_only_root: Path | None = None) -> Path:
+    """Build one complete generation, optionally without promoting it."""
+    if stage_only_root is not None:
+        resolved = stage_only_root.resolve()
+        try:
+            resolved.relative_to(ROOT)
+        except ValueError as exc:
+            raise ValueError("Stage-only output must remain inside the repository.") from exc
+        if resolved.exists() and any(resolved.iterdir()):
+            raise FileExistsError(f"Stage-only output is not empty: {resolved}")
+        resolved.mkdir(parents=True, exist_ok=True)
+        return _build_evidence(resolved, promote=False)
+
     staging_parent = ROOT / "reports/crpto"
     staging_parent.mkdir(parents=True, exist_ok=True)
     with TemporaryDirectory(prefix=".ijds-v4-generation-", dir=staging_parent) as staging:
         return _build_evidence(Path(staging))
 
 
+def promote_staged_evidence(stage_root: Path) -> Path:
+    """Promote a verified retained generation while preserving target DACLs."""
+    resolved = stage_root.resolve()
+    try:
+        resolved.relative_to(ROOT)
+    except ValueError as exc:
+        raise ValueError("Staged promotion input must remain inside the repository.") from exc
+    staged_manifest = resolved / "outputs" / EVIDENCE_PATH.relative_to(ROOT)
+    if not staged_manifest.is_file():
+        raise FileNotFoundError(f"Staged publication manifest is missing: {staged_manifest}")
+    manifest = _read_json(staged_manifest, label="Staged publication manifest")
+    paper_artifacts = manifest.get("paper_artifacts")
+    source_artifacts = manifest.get("source_artifacts")
+    if not isinstance(paper_artifacts, Mapping) or not isinstance(source_artifacts, Mapping):
+        raise TypeError("Staged publication manifest omits artifact descriptor mappings.")
+
+    figure_targets = {
+        name: {kind: FIGURE_DIR / f"{FIGURE_STEMS[name]}.{kind}" for kind in ("png", "pdf")}
+        for name in FIGURE_STEMS
+    }
+    targets = (
+        *TABLE_TARGETS.values(),
+        *(target for group in figure_targets.values() for target in group.values()),
+    )
+    expected_artifact_count = len(TABLE_TARGETS) + 2 * len(FIGURE_STEMS)
+    if len(targets) != expected_artifact_count or len(set(targets)) != expected_artifact_count:
+        raise RuntimeError("The canonical staged-promotion inventory changed.")
+    outputs = {target: resolved / "outputs" / target.relative_to(ROOT) for target in targets}
+    expected_paths = {target.relative_to(ROOT).as_posix() for target in targets}
+    actual_paths = {
+        str(descriptor.get("path"))
+        for descriptor in paper_artifacts.values()
+        if isinstance(descriptor, Mapping)
+    }
+    if actual_paths != expected_paths or len(paper_artifacts) != expected_artifact_count:
+        raise RuntimeError(
+            "The staged manifest left the exact "
+            f"{expected_artifact_count}-artifact paper inventory."
+        )
+    descriptors_by_path = {
+        str(descriptor["path"]): descriptor
+        for descriptor in paper_artifacts.values()
+        if isinstance(descriptor, Mapping)
+    }
+    for target, staged in outputs.items():
+        actual = staged_artifact_descriptor(staged, target, repo_root=ROOT)
+        if actual != descriptors_by_path[actual["path"]]:
+            raise RuntimeError(f"Staged paper artifact drifted after generation: {staged}")
+
+    for name, descriptor in source_artifacts.items():
+        if not isinstance(descriptor, Mapping) or not {"path", "bytes", "sha256"}.issubset(
+            descriptor
+        ):
+            raise TypeError(f"Staged source descriptor is invalid: {name!r}.")
+        source = (ROOT / str(descriptor["path"])).resolve()
+        source.relative_to(ROOT)
+        if relative_artifact_descriptor(source, repo_root=ROOT) != dict(descriptor):
+            raise RuntimeError(f"A staged-evidence source drifted before promotion: {name!r}.")
+
+    promote_publication_generation(
+        outputs,
+        staged_manifest=staged_manifest,
+        manifest_target=EVIDENCE_PATH,
+        repo_root=ROOT,
+        transaction_root=resolved,
+        preserve_target_permissions=True,
+    )
+    logger.info("Promoted retained IJDS evidence while preserving target permissions: {}", resolved)
+    return EVIDENCE_PATH
+
+
+def verify_staged_evidence_matches_canonical(stage_root: Path) -> Path:
+    """Require a clean rebuild to match every canonical publication byte."""
+    resolved = stage_root.resolve()
+    try:
+        resolved.relative_to(ROOT)
+    except ValueError as exc:
+        raise ValueError("Staged verification input must remain inside the repository.") from exc
+    staged_outputs = resolved / "outputs"
+    staged_manifest = staged_outputs / EVIDENCE_PATH.relative_to(ROOT)
+    if not staged_manifest.is_file():
+        raise FileNotFoundError(f"Staged publication manifest is missing: {staged_manifest}")
+    if not EVIDENCE_PATH.is_file():
+        raise FileNotFoundError(f"Canonical publication manifest is missing: {EVIDENCE_PATH}")
+    if staged_manifest.read_bytes() != EVIDENCE_PATH.read_bytes():
+        raise RuntimeError(
+            "The clean rebuild manifest is not byte-identical to the canonical manifest."
+        )
+
+    manifest = _read_json(staged_manifest, label="Staged publication manifest")
+    paper_artifacts = manifest.get("paper_artifacts")
+    if not isinstance(paper_artifacts, Mapping):
+        raise TypeError("Staged publication manifest omits paper-artifact descriptors.")
+    figure_targets = {
+        name: {kind: FIGURE_DIR / f"{FIGURE_STEMS[name]}.{kind}" for kind in ("png", "pdf")}
+        for name in FIGURE_STEMS
+    }
+    targets = (
+        *TABLE_TARGETS.values(),
+        *(target for group in figure_targets.values() for target in group.values()),
+    )
+    expected_paths = {target.relative_to(ROOT).as_posix() for target in targets}
+    described_paths = {
+        str(descriptor.get("path"))
+        for descriptor in paper_artifacts.values()
+        if isinstance(descriptor, Mapping)
+    }
+    if described_paths != expected_paths or len(paper_artifacts) != len(expected_paths):
+        raise RuntimeError("The clean rebuild manifest has a different publication inventory.")
+
+    expected_staged_files = {
+        EVIDENCE_PATH.relative_to(ROOT).as_posix(),
+        *expected_paths,
+    }
+    actual_staged_files = {
+        path.relative_to(staged_outputs).as_posix()
+        for path in staged_outputs.rglob("*")
+        if path.is_file()
+    }
+    if actual_staged_files != expected_staged_files:
+        missing = sorted(expected_staged_files.difference(actual_staged_files))
+        unexpected = sorted(actual_staged_files.difference(expected_staged_files))
+        raise RuntimeError(
+            f"The clean rebuild output inventory changed: missing={missing}, unexpected={unexpected}."
+        )
+    for target in targets:
+        staged = staged_outputs / target.relative_to(ROOT)
+        if not target.is_file():
+            raise FileNotFoundError(f"Canonical publication artifact is missing: {target}")
+        if staged.read_bytes() != target.read_bytes():
+            raise RuntimeError(f"Clean rebuild differs from canonical artifact: {target}")
+    logger.info(
+        "Clean rebuild is byte-identical to all canonical publication evidence: {}", resolved
+    )
+    return staged_manifest
+
+
+def main(argv: list[str] | None = None) -> int:
+    """Build and promote active evidence, or retain a nonpromoted generation."""
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument(
+        "--stage-only",
+        type=Path,
+        help="Write a complete generation under this repository-local directory without promotion.",
+    )
+    parser.add_argument(
+        "--promote-from-stage",
+        type=Path,
+        help="Verify and promote a retained generation while preserving existing target permissions.",
+    )
+    parser.add_argument(
+        "--verify-stage-against-canonical",
+        type=Path,
+        help="Verify that a retained clean rebuild is byte-identical to the canonical package.",
+    )
+    args = parser.parse_args(argv)
+    selected_modes = sum(
+        value is not None
+        for value in (
+            args.stage_only,
+            args.promote_from_stage,
+            args.verify_stage_against_canonical,
+        )
+    )
+    if selected_modes > 1:
+        parser.error(
+            "--stage-only, --promote-from-stage, and --verify-stage-against-canonical "
+            "are mutually exclusive"
+        )
+    if args.promote_from_stage is not None:
+        output = promote_staged_evidence(args.promote_from_stage)
+    elif args.verify_stage_against_canonical is not None:
+        output = verify_staged_evidence_matches_canonical(args.verify_stage_against_canonical)
+    else:
+        output = build_evidence(stage_only_root=args.stage_only)
+    print(output.relative_to(ROOT))
+    return 0
+
+
 if __name__ == "__main__":
-    build_evidence()
+    raise SystemExit(main())

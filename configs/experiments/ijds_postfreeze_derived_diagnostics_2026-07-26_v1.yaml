@@ -1,0 +1,105 @@
+schema_version: "2026-07-26.1"
+protocol_status: "retrospectively_locked_before_first_contained_replay"
+run_tag: "ijds-postfreeze-derived-diagnostics-2026-07-26-v1"
+protocol_path: "docs/research/ijds_postfreeze_derived_diagnostics_v1_protocol_2026-07-26.md"
+
+source:
+  credit_control_freeze:
+    path: "models/experiments/ijds_audit/ijds-credit-risk-controls-2026-07-13-v1b/protocol_freeze.json"
+    bytes: 25908
+    sha256: "da4805e644bcf5decfbb0a67c0c81a5b9dd61f3ab2e17d3dc5264100e7eb4d35"
+  scores:
+    path: "data/processed/experiments/ijds_audit/ijds-credit-risk-controls-2026-07-13-v1b/prediction/scores.parquet"
+    bytes: 30407406
+    sha256: "5795bc0a75be90e86d37cf7d297f4b4fd6e6604b38f8179bc5042c024a53a8dc"
+  v4_summary:
+    path: "models/experiments/ijds_audit/ijds-binary-geometry-frontier-v4-2026-07-15-v5/binary_geometry_frontier_v4_summary.json"
+    bytes: 58584
+    sha256: "07e793df7e457c6afa946e04d3e95d30307faa48424249659ae8d921ea060a3f"
+  conformal_set_summary:
+    path: "models/experiments/ijds_audit/ijds-conformal-set-diagnostics-2026-07-21-v1/conformal_set_diagnostics_summary.json"
+    bytes: 9426
+    sha256: "01282b68631fd727fe278532249ddd0ef27752dac633968213f948e99feaa838"
+  conformal_set_diagnostics:
+    path: "data/processed/experiments/ijds_audit/ijds-conformal-set-diagnostics-2026-07-21-v1/evaluation/conformal_set_diagnostics.parquet"
+    bytes: 15717
+    sha256: "458bd1233ef83e50392082d02f41cf1e1d01c8b9b5435ab00b61b53211cd6b67"
+  exchangeability_summary:
+    path: "models/experiments/ijds_audit/ijds-exchangeability-transport-test-2026-07-21-v1/exchangeability_transport_test_summary.json"
+    bytes: 9078
+    sha256: "72d9d39b2bef36a36440f1ccc720575d74005f1ad1932a774a91f73ed26c8af6"
+  exchangeability_strata:
+    path: "data/processed/experiments/ijds_audit/ijds-exchangeability-transport-test-2026-07-21-v1/evaluation/exchangeability_transport_strata.parquet"
+    bytes: 90676
+    sha256: "4d34a1de1d3d9556e9b9b74d0517b01b117030d7036a6911d5ad6807080601e3"
+  exchangeability_cells:
+    path: "data/processed/experiments/ijds_audit/ijds-exchangeability-transport-test-2026-07-21-v1/evaluation/exchangeability_transport_cells.parquet"
+    bytes: 14547
+    sha256: "8ee6301803504db10accaa4d830034725e1f76105aa84837974ca8f7957e90cb"
+
+design:
+  alpha: 0.10
+  taxonomy_groups: 5
+  expected_candidates: 376890
+  expected_resolved: 364814
+  expected_unresolved: 12076
+  expected_resolved_y0: 307842
+  expected_resolved_y1: 56972
+  expected_holm_flags: 31
+  learners:
+    - "catboost_platt"
+    - "numeric_logistic_platt"
+    - "catboost_monotonic_platt"
+    - "woe_scorecard_platform_platt"
+    - "woe_scorecard_borrower_platt"
+  score_columns:
+    catboost_platt: "pd_catboost_platt"
+    numeric_logistic_platt: "pd_numeric_logistic_platt"
+    catboost_monotonic_platt: "pd_catboost_monotonic_platt"
+    woe_scorecard_platform_platt: "pd_woe_scorecard_platform_platt"
+    woe_scorecard_borrower_platt: "pd_woe_scorecard_borrower_platt"
+  window_ids:
+    - "w01_2012m01_m06"
+    - "w02_2012m02_m07"
+    - "w03_2012m03_m08"
+    - "w04_2012m04_m09"
+    - "w05_2012m05_m10"
+    - "w06_2012m06_m11"
+    - "w07_2012m07_m12"
+    - "w08_2012m08_2013m01"
+
+output:
+  data_root: "data/processed/experiments/ijds_audit"
+  model_root: "models/experiments/ijds_audit"
+  immutability: "hard_no_overwrite_choose_fresh_run_tag"
+  calibration_bias: "all_candidate_calibration_bias.csv"
+  breakeven: "resolved_coverage_breakeven.csv"
+  minimum_stratum_effect: "minimum_reference_stratum_effect.csv"
+  summary: "postfreeze_derived_diagnostics_summary.json"
+  execution_receipt: "execution_receipt.json"
+
+claim_boundary:
+  retrospective: true
+  preregistered: false
+  confirmatory: false
+  protocol_commit_available_at_execution: false
+  no_selection_or_winner: true
+  no_causal_label_shift_or_intervention: true
+  no_completion_invariant_breakeven: true
+  minimum_stratum_magnitude_is_p_value_selected: true
+  no_new_test_family_or_selective_inference: true
+  no_selected_or_funded_set_validity: true
+
+stop_rules:
+  stop_on_source_hash_mismatch: true
+  stop_on_nested_descriptor_mismatch: true
+  stop_on_preexisting_output_path: true
+  stop_on_implementation_drift: true
+  stop_on_incomplete_grid: true
+  stop_on_duplicate_key: true
+  stop_on_invalid_score_or_coverage: true
+  stop_on_endpoint_census_drift: true
+  stop_on_mixture_identity_failure: true
+  stop_on_unattainable_breakeven: true
+  stop_on_changed_holm_flag_census: true
+  stop_on_nonnegative_calibration_upper_endpoint: true

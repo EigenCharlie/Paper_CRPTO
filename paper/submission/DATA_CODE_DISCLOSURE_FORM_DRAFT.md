@@ -6,8 +6,8 @@ is a field map, not a substitute for the signed official form.
 
 ## Page 1
 
-**Title of manuscript:** CRPTO: An Identification Audit of Binary Conformal
-Credit Portfolio Optimization
+**Title of manuscript:** Auditing Binary Conformal Prediction in Credit
+Allocation: Exact Geometry, Temporal-Transport Diagnostics, and Comparator Dependence
 
 **Policy confirmation:** Check the box confirming familiarity with and
 agreement to comply with the IJDS Data and Code Disclosure Policy.
@@ -15,7 +15,9 @@ agreement to comply with the IJDS Data and Code Disclosure Policy.
 **Legitimate access confirmation:** Check the box confirming legitimate access
 to the Lending Club research archive and that the provisions governing its use
 do not prohibit this research. Reconfirm this statement against the actual
-acquisition source before submission.
+acquisition source before submission; the candidate Kaggle name/size match in
+`docs/research/ijds_raw_data_acquisition_provenance_2026-07-21.md` is not proof
+of acquisition or license.
 
 **Data-use ethics:** Select **Yes, considerations should be highlighted** and
 enter:
@@ -45,9 +47,12 @@ public. The author agrees to complete the IJDS reproducibility report.
 > reconstructing every result from the source archive. It will also release
 > non-row-level schema, census, and audit summaries. (b) The 1.7 GB Lending Club
 > CSV and row-level derived score, allocation, and outcome artifacts will not be
-> redistributed by the authors. The original file was acquired as a historical
-> public research archive, but there is no stable issuer-maintained download and
-> redistribution terms for copies and row-level derivatives must be respected.
+> redistributed by the authors. The actual acquisition source and governing
+> terms must be author-confirmed before this form is signed; a candidate Kaggle
+> distribution matches the local filename and size but does not establish
+> provenance or redistribution rights. There is no verified stable
+> issuer-maintained download, and terms for copies and row-level derivatives
+> must be respected.
 > The package records the exact raw-file SHA-256, dimensions, schema checks, and
 > acquisition/reconstruction instructions so a reader with a lawful copy can
 > reproduce the analysis. The distinction is therefore complete code plus
@@ -56,6 +61,7 @@ public. The author agrees to complete the IJDS reproducibility report.
 ## Verified Data Facts
 
 - Raw identity: `Loan_status_2007-2020Q3.csv`, 2,925,493 rows, 142 columns,
+  1,773,470,505 bytes,
   SHA-256 `5878af2a088f8ab5214c9337289fb8b5eb6c6338fd3f417b6cdc18513dc6f35f`.
 - Active population: 640,543 eligible 36-month loans under the declared dates,
   schema, horizon, and origination-observability rules; no sampling.
@@ -73,13 +79,13 @@ public. The author agrees to complete the IJDS reproducibility report.
 
 The release includes `pyproject.toml`, `uv.lock`, active source and claim
 registries and executable claim ledger, the complete `src` package,
-active experiment/build scripts, 51 DVC pointers, the evidence manifest and 27
+active experiment/build scripts, 53 DVC pointers, the evidence manifest and 29
 aggregate publication CSV tables, canonical QMD, generated TeX, bibliography,
 and the scientific, type, drift, anonymity, compilation, and visual-QA gates.
 Credentials, local DVC configuration, absolute paths, protected extraction
 artifacts, and copyrighted publisher assets are excluded.
 
-Recheck the selected option, acquisition rights, repository destination, and
+Recheck the selected option, author-confirmed acquisition rights, repository destination, and
 the exact set of releasable data immediately before the official form is
 signed. A change in what can legally be shared requires changing Option 6 and
 its explanation, not silently changing the release package.

@@ -2,103 +2,90 @@
 
 Dear Editor,
 
-Please consider **"CRPTO: An Identification Audit of Binary Conformal Credit
-Portfolio Optimization"** for publication in *INFORMS Journal on Data Science*.
+Please consider **“Auditing Binary Conformal Prediction in Credit Allocation:
+Exact Geometry, Temporal-Transport Diagnostics, and Comparator Dependence”** for publication in
+*INFORMS Journal on Data Science*.
 
-The paper studies a common but under-audited handoff: a predictive uncertainty
-object becomes a coefficient in a constrained optimization problem. CRPTO keeps
-credit-risk prediction, binary conformal intervals, and monthly portfolio
-optimization in one system, then asks which conclusions survive explicit
-timing, outcome-observability, and comparator contracts.
+The paper studies a predictive-to-prescriptive interface: binary conformal
+prediction sets are converted to a continuous upper-score embedding and then
+used in monthly credit-allocation linear programs. The contribution is an
+identification audit, not a policy contest or a new conformal validity theorem.
+It freezes the population, information set, score taxonomies, candidate menus,
+and allocations before joining evaluation outcomes; derives sharp
+common-outcome bounds; and defines outcome-blind rulers that expose when a
+portfolio comparison changes with score, opportunity-cost coordinate, or cap
+support.
 
-The contribution is an identification audit rather than a policy contest.
-First, the paper derives a prevalence-threshold discontinuity for constant-score
-binary absolute-residual intervals and separates that mechanism from the
-empirical varying-score path with a joint fit-label completion sensitivity.
-Second, it defines objective-matched and normalized-score rulers and a
-status-aware finite-support numerical audit for comparing non-affine risk
-scores. It also gives an exact identity linking each contrast's
-identification width to the sum of unresolved loan-wise attainable
-contribution ranges. Third, it provides a status-independent, maturity-restricted
-evaluation with outcomes physically isolated until allocations are frozen and
-with sharp common-outcome bounds for unresolved loans.
+The analysis scans 2,925,493 rows and uses every one of the 640,543 eligible
+36-month loans in the declared temporal roles. The primary OOT panel contains
+376,890 candidates, including 12,076 outcomes unresolved at the reconstructed
+September 30, 2020 cutoff. Under the declared six-month Charged Off rule, all
+40 sharp all-candidate coverage upper bounds across five frozen credit-risk
+specifications and eight residual windows are below 0.90 (maximum 0.8977).
+These are finite-archive identification facts, not by themselves a rejection of
+split conformal.
 
-The full archive audit covers 2,925,493 rows and an exhaustive 640,543-loan
-eligible design. The primary OOT panel contains 376,890 candidates: 364,814
-outcomes are reconstructed as observable by the evaluation cutoff and 12,076
-remain unresolved. Under the declared six-month endpoint, all 40 sharp
-all-candidate coverage upper bounds are below 0.90 across five retrospectively
-protocol-locked learner specifications; the largest is 0.8977. These 40
-endpoints are finite-archive identification facts, not by themselves a
-rejection of split conformal. In a separate post-inspection combined-rank
-reference diagnostic, 31/40 frozen learner-window cell reference tail areas
-meet the locked Bonferroni-within-cell and Holm-across-cell nominal reporting
-thresholds. Its reference
-law assumes the stronger joint exchangeability of each calibration stratum and
-its entire target block, so it does not test or refute the ordinary
-one-future-point marginal split-conformal guarantee. Because the family and
-pattern were inspected before locking, the flags do not carry post-selection
-or study-wide FWER control; they identify neither a shift
-mechanism nor exchangeability in the nine unflagged cells. The endpoint
-census partitions all candidates into 307,842 fully paid and 56,972 charged off
-by the cutoff, 11,551 nonterminal, 47 terminal after the cutoff, and 478
-terminal with no reconstructible availability date. The stratum-level W7--W8
-quantile change persists under every fit-label lag retaining more than 99% of
-each fitting month. A separate complete evaluation-endpoint lag grid reports 0,
-3, 6, 8, and 12 months without selection; the six-month slice exactly
-reproduces the active endpoint evaluation. The below-target finite-archive
-finding also recurs across three feature-semantics-preserving missingness
-encodings and in all 16 CatBoost origin-window cells when each April--June
-candidate uses a cutoff 39 months after its issue-month end, equalizing
-whole-month administrative age rather than exact day-level age. Neither exercise selects a
-representation or constitutes independent validation.
+The paper also derives the binary absolute-residual threshold as an exact order
+statistic of two mirror calibration samples. It separates the calibration phase
+condition from the target-support condition and proves an exact two-threshold
+identity: the coverage response equals target mass in the crossed score bands.
+This is an audit tool, not a continuity, universal-degeneracy, or external-validity
+claim.
 
-A complete label-Mondrian sensitivity changes the 40 marginal states to 27
-shortfalls, 12 crossings, and one lower endpoint at or above 0.90; 109 of 400
-score-stratum-by-label category upper endpoints remain below 0.90. All 40
-aggregate class-gap bounds cross zero under a common unresolved completion,
-while two-label sets rise to 72.37%--78.55%. The paper treats this as a
-descriptive sensitivity, not restored conditional validity, a selected repair,
-or a fairness result.
-All four declared scenarios for 215 labels unavailable at fitting retain
-8/8 below-target coverage upper bounds. The all-default scenario removes the
-W7--W8 geometric crossing, so the paper reports that mechanism as diagnostic
-rather than universal.
+A secondary post-inspection diagnostic uses the known finite-batch
+Beta--Binomial coverage law under the stronger null that each calibration
+stratum and its entire target block are jointly exchangeable. Thirty-one of 40
+cell reference tail areas meet locked nominal Bonferroni--Holm reporting
+thresholds. The manuscript treats them as reporting flags without
+post-selection FWER control and does not claim to test the ordinary
+calibration-plus-one-future-point condition. A retrospective Label-Mondrian benchmark and
+timing, fit-label, taxonomy, and missingness sensitivities are reported as
+separate complete grids; none selects a learner or repair.
 
-The decision result has a narrow interpretation. Objective-matched coordinate .25
-crosses zero for payoff, default, and miscoverage in all eight windows; .50 is
-adverse; and .75 is mostly unidentified. Normalized-score comparisons answer a
-different opportunity-cost question. A registered point-cap audit places zero
-in all 216 broad-support envelopes without claiming an exhaustive continuous
-path. No model, window, gamma, ruler, coordinate,
-comparator, or policy is selected.
-The complete 36-scenario budget--concentration--LGD grid restores neither a
-universally favorable nor a universally adverse ordering. A deterministic USD
-25 floor-with-cash diagnostic changes evaluated rates by at most 0.0013
-percentage points; it supports the continuous relaxation without claiming an
-optimized integer policy.
+For decisions, sharp paired bounds and registered-cap enumeration show that
+portfolio direction depends on the declared ruler and finite evaluated support.
+All 216 endpoint envelopes over the registered cap values spanning
+`[0.05, 0.12]` include zero; this finite census does not compute
+continuous-support extrema. No model, window, gamma, ruler,
+coordinate, comparator, or policy is selected. The USD 25
+floor-with-residual-cash diagnostic only shows that this declared
+transformation negligibly perturbs evaluated rates; it does not establish
+adequacy or optimality of the continuous relaxation or integer-policy behavior.
 
-The manuscript addresses a decision-making problem at the
-predictive-to-prescriptive interface. It combines executable information
-boundaries, exact optimization geometry, partial identification, and complete
-reporting of the protocol-locked paths. It makes no causal, selected-set,
-prospective, deployment, or fair-lending claim. The distributed archive is
-explicitly not described as a verified point-in-time snapshot, and standardized
-payoff is not presented as investor return.
+The paper's reusable contribution is an executable audit pattern for the
+predictive-to-prescriptive handoff: freeze, isolate outcomes, identify what
+unresolved labels permit, distinguish known rank references from deterministic
+bounds, and gate decision claims on comparator support. It makes no causal,
+selected-set, prospective, deployment, or fair-lending claim.
 
-The submission is original, is not under review elsewhere, and uses a separate
-online supplement. Code, environment lock, immutable evidence metadata, and
-raw-data reconstruction instructions are prepared under the journal's data and
-code policy.
-
-## Generative AI Disclosure
-
-OpenAI Codex was used for code review, test generation, editorial revision, and
-reproducibility checks under author direction. The author independently
-verified the analysis, citations, numerical evidence, and final wording and
-accepts full responsibility for the submitted work. Generative AI is not an
-author and did not determine the scientific conclusions.
+[AUTHOR CONFIRMATION REQUIRED BEFORE UPLOAD: The manuscript is original, is
+not under review elsewhere, and all overlap with any thesis, website, preprint,
+book, or prior submission has been disclosed to the editor.]
 
 Sincerely,
 
 The Author
+
+## Generative AI Disclosure
+
+OpenAI Codex assisted with code review and refactoring, test scaffolding,
+literature triage and summarization, consistency checks, and language editing
+under author direction. It was not treated as evidence or an author. The author
+must verify all primary sources, analyses, citations, numbers, code, claims, and
+prose and accept full responsibility before submission.
+
+## Author sign-off required before upload
+
+- Confirm originality, no simultaneous review, and any previous IJDS
+  submission.
+- Describe overlap and incremental contribution relative to any thesis,
+  preprint, book, public website, or other manuscript.
+- Confirm the complete author list, order, consent, CRediT roles, ORCIDs,
+  affiliation, funding, conflicts, acknowledgements, and corresponding author.
+- Confirm legitimate raw-data access and the accuracy of
+  `docs/research/ijds_raw_data_acquisition_provenance_2026-07-21.md`.
+- Resolve with INFORMS whether the existing CC BY 4.0 grant over `paper/**`
+  requires the Open Option or another rights arrangement; do not certify clean
+  conventional copyright transfer until INFORMS confirms it.
+- Reconcile this AI disclosure verbatim with the title page and ScholarOne
+  fields after human verification.

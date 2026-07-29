@@ -6,6 +6,7 @@ from pathlib import Path
 import pytest
 
 from src.utils.pipeline_runtime import (
+    atomic_write_bytes,
     atomic_write_json,
     atomic_write_strict_json,
     load_runtime_status,
@@ -41,6 +42,24 @@ def test_atomic_write_strict_json_rejects_nan_and_unsupported_values(tmp_path: P
     with pytest.raises(TypeError, match="not JSON serializable"):
         atomic_write_strict_json(target, {"value": tmp_path})
     assert not target.exists()
+
+
+def test_atomic_write_bytes_preserves_destination_when_replace_fails(
+    tmp_path: Path,
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    target = tmp_path / "supplement.zip"
+    target.write_bytes(b"old")
+
+    def fail_replace(source: str | Path, destination: str | Path) -> None:
+        raise OSError(f"injected replace failure: {source} -> {destination}")
+
+    monkeypatch.setattr("src.utils.pipeline_runtime.os.replace", fail_replace)
+    with pytest.raises(OSError, match="injected replace failure"):
+        atomic_write_bytes(target, b"new")
+
+    assert target.read_bytes() == b"old"
+    assert _tmp_files(target) == []
 
 
 def test_runtime_status_helpers_write_named_artifacts(tmp_path: Path) -> None:

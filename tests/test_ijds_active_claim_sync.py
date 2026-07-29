@@ -77,7 +77,7 @@ def _normalize(text: str) -> str:
 def test_active_evidence_locks_v4_lineage_and_claim_boundary() -> None:
     evidence = _json(EVIDENCE)
 
-    assert evidence["schema_version"] == "2026-07-21.5"
+    assert evidence["schema_version"] == "2026-07-26.2"
     assert evidence["status"] == "active_ijds_v5_endpoint_reason_audited_paper_facing_evidence"
     assert evidence["run_tag"] == RUN
     assert evidence["protocol_commit"] == COMMIT
@@ -216,8 +216,28 @@ def test_phase_transition_and_portfolio_boundary_are_exact() -> None:
     portfolio = evidence["portfolio"]
 
     assert phase["stratum"] == 2
+    assert phase["alpha"] == pytest.approx(0.10)
+    assert phase["w7_fit_rows"] == 5929
+    assert phase["w8_fit_rows"] == 6238
+    assert phase["w7_fit_default_rows"] == 603
+    assert phase["w8_fit_default_rows"] == 606
     assert phase["w7_fit_prevalence"] == pytest.approx(0.10170349131388093)
     assert phase["w8_fit_prevalence"] == pytest.approx(0.0971465213209362)
+    assert phase["w7_finite_sample_rank"] == 5337
+    assert phase["w8_finite_sample_rank"] == 5616
+    assert phase["w7_finite_phase_allowance"] == 592
+    assert phase["w8_finite_phase_allowance"] == 622
+    assert phase["w7_phase_margin"] == 11
+    assert phase["w8_phase_margin"] == -16
+    assert phase["w7_phase_boundary_rate"] == pytest.approx(592 / 5929)
+    assert phase["w8_phase_boundary_rate"] == pytest.approx(622 / 6238)
+    assert phase["calibration_scores_below_half_all_windows"] is True
+    assert phase["w7_threshold_branch"] == "one_minus_11th_largest_default_score"
+    assert phase["w8_fit_nondefault_rows"] == 5632
+    assert phase["w8_threshold_branch"] == "5616th_smallest_of_5632_nondefault_scores"
+    assert phase["w8_target_score_max"] == pytest.approx(0.11189296397180755)
+    assert phase["w8_positive_label_coverage_boundary"] == pytest.approx(1 - 0.1118010883671265)
+    assert phase["w8_all_target_scores_below_positive_label_coverage_boundary"] is True
     assert phase["w7_residual_quantile"] == pytest.approx(0.8884345991499274)
     assert phase["w8_residual_quantile"] == pytest.approx(0.1118010883671265)
     assert phase["w7_mean_width"] == pytest.approx(0.9842633701640714)
@@ -233,7 +253,7 @@ def test_phase_transition_and_portfolio_boundary_are_exact() -> None:
     assert portfolio["c2_cells"] == 1080
     assert portfolio["c2_match_residual_abs_max"] < 1e-16
     assert portfolio["c2_point_minus_guardrail_objective_min"] > -1e-5
-    assert portfolio["broad_stress_all_envelopes_cross_zero"] is True
+    assert portfolio["registered_cap_values_all_envelopes_include_zero"] is True
     assert portfolio["broad_stress_cells"] == 216
     assert portfolio["w8_development_all_envelopes_cross_zero"] is True
     counts = {
@@ -295,6 +315,33 @@ def test_phase_transition_and_portfolio_boundary_are_exact() -> None:
     assert support["exact_nonuniqueness_claim_active"] is False
     assert support["allocation_continuity_claim_active"] is False
     assert support["continuous_outcome_envelope_claim_active"] is False
+
+
+def test_common_panel_response_is_exact_and_bounded() -> None:
+    evidence = _json(EVIDENCE)
+    common = evidence["common_panel_threshold_response"]
+
+    assert common["full_census_and_identities_verified"] is True
+    assert common["stratum_rows"] == 175
+    assert common["learner_rows"] == 35
+    assert common["stratum_sharp_sign_census"] == {
+        "negative": 122,
+        "exactly_zero": 5,
+        "positive": 48,
+    }
+    assert common["learner_transition_sharp_sign_census"] == {
+        "negative": 31,
+        "exactly_zero": 0,
+        "positive": 4,
+    }
+    assert common["cellwise_identification_width"]["median"] == pytest.approx(
+        0.00018501007277062863
+    )
+    assert common["cellwise_identification_width"]["p90"] == pytest.approx(0.0010631809232049042)
+    assert common["cellwise_identification_width"]["maximum"] == pytest.approx(0.002346383353779821)
+    assert common["interpretation"]["sharpness_is_cellwise"] is True
+    assert common["interpretation"]["joint_attainability_of_all_cell_endpoints_claimed"] is False
+    assert common["interpretation"]["stratum_sign_census_is_substantive_discovery"] is False
 
 
 def test_two_ruler_diagnostic_is_finite_complete_and_nonselective() -> None:
@@ -686,6 +733,12 @@ def test_evidence_manifest_hashes_every_active_output() -> None:
         "exchangeability_transport/config",
         "exchangeability_transport/stratum_tests",
         "exchangeability_transport/learner_window_cells",
+        "common_panel_threshold_response/summary",
+        "common_panel_threshold_response/config",
+        "common_panel_threshold_response/execution_receipt",
+        "common_panel_threshold_response/protocol_bundle",
+        "common_panel_threshold_response/adjacent_stratum_threshold_response",
+        "common_panel_threshold_response/adjacent_learner_threshold_response",
         "rolling_origin_equal_followup/summary",
         "rolling_origin_equal_followup/config",
         "rolling_origin_equal_followup/temporal_coverage",

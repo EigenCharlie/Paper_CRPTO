@@ -6,6 +6,8 @@ import csv
 import re
 from pathlib import Path
 
+from src.ijds_audit.publication_schemas import S6B_PUBLICATION_COLUMNS
+
 REPO = Path(__file__).resolve().parents[1]
 TABLES = REPO / "reports/crpto/tables"
 SUPPLEMENT = REPO / "paper/supplement_ijds.qmd"
@@ -43,6 +45,24 @@ def test_complete_phase_path_is_visible_in_supplement() -> None:
     for row in rows:
         for field in ("fit_prevalence", "fit_residual_quantile", "mean_width"):
             assert f"{float(row[field]):.6f}" in supplement
+        for field in (
+            "fit_rows",
+            "fit_default_rows",
+            "finite_sample_rank",
+            "finite_phase_allowance",
+        ):
+            assert f"{int(row[field]):,}" in supplement
+        assert f"{float(row['phase_boundary_rate']):.6f}" in supplement
+        assert f"{int(row['phase_margin']):+d}" in supplement
+    by_window = {row["window_id"]: row for row in rows}
+    w7 = by_window["w07_2012m07_m12"]
+    w8 = by_window["w08_2012m08_2013m01"]
+    assert (int(w7["fit_default_rows"]), int(w7["finite_sample_rank"])) == (603, 5337)
+    assert (int(w7["finite_phase_allowance"]), int(w7["phase_margin"])) == (592, 11)
+    assert (int(w8["fit_default_rows"]), int(w8["finite_sample_rank"])) == (606, 5616)
+    assert (int(w8["finite_phase_allowance"]), int(w8["phase_margin"])) == (622, -16)
+    for token in ("5,337", "5,616", "0.099848", "0.099711", "+11", "-16"):
+        assert token in supplement
 
 
 def test_credit_control_metrics_and_shift_diagnostics_are_visible() -> None:
@@ -391,10 +411,26 @@ def test_exact_exchangeability_tables_are_complete_and_scoped() -> None:
     supplement = _normalize(SUPPLEMENT.read_text(encoding="utf-8"))
 
     assert len(cells) == 40
+    assert tuple(cells[0]) == S6B_PUBLICATION_COLUMNS
     assert len(strata) == 200
     assert len({row["learner"] for row in cells}) == 5
     assert len({row["window"] for row in cells}) == 8
     assert sum(row["meets_locked_nominal_holm_threshold"] == "True" for row in cells) == 31
+    flagged = {
+        learner: [
+            row["window"]
+            for row in cells
+            if row["learner"] == learner and row["meets_locked_nominal_holm_threshold"] == "True"
+        ]
+        for learner in {row["learner"] for row in cells}
+    }
+    assert flagged == {
+        "catboost_platt": [f"W{index}" for index in range(1, 9)],
+        "numeric_logistic_platt": [f"W{index}" for index in range(5, 9)],
+        "catboost_monotonic_platt": [f"W{index}" for index in range(1, 9)],
+        "woe_scorecard_platform_platt": [f"W{index}" for index in range(3, 9)],
+        "woe_scorecard_borrower_platt": [f"W{index}" for index in range(4, 9)],
+    }
     assert {int(row["score_stratum"]) for row in strata} == {1, 2, 3, 4, 5}
     assert all(row["continuous_threshold_tie_singleton"] == "True" for row in strata)
     assert all(int(row["resolved_target_residual_equal_threshold"]) == 0 for row in strata)

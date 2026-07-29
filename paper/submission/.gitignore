@@ -24,6 +24,7 @@ IJDS_Reproducibility*.docx
 *.synctex.gz
 *.fls
 *.fdb_latexmk
+*.latexmk.txt
 # Compiled submission PDF (regenerate locally)
 CRPTO_ijds_submission.pdf
 TITLE_PAGE_PRIVATE.md

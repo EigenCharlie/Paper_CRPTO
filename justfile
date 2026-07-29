@@ -107,7 +107,7 @@ ijds-tie-audit CONFIG="configs/experiments/ijds_policy_support_tie_audit_2026-07
 
 # Read-only gate over all registered lineages and current paper surfaces.
 ijds-active-check: publication-integrity
-    uv run --locked pytest -q tests/test_ijds_anonymity.py tests/test_ijds_active_claim_sync.py tests/test_ijds_v4_claim_sync.py tests/test_ijds_rolling_origin_protocol.py tests/test_publication_targets.py tests/test_submission_preview_layout.py tests/test_supplement_table_sync.py tests/test_book_active_companion.py
+    uv run --locked pytest -q tests/test_ijds_anonymity.py tests/test_ijds_active_claim_sync.py tests/test_ijds_v4_claim_sync.py tests/test_ijds_rolling_origin_protocol.py tests/test_publication_targets.py tests/test_submission_preview_layout.py tests/test_supplement_table_sync.py tests/test_book_active_companion.py tests/test_ijds_machine_readable_supplement.py tests/test_ijds_candidate_receipt_index.py
     uv run --locked pytest -q tests/test_ijds_audit tests/test_ijds_audit_core.py tests/test_ijds_normalized_objective_frontier.py tests/test_ijds_normalized_objective_frontier_v2.py tests/test_ijds_policy_support_tie_audit.py tests/test_ijds_policy_support_tie_evidence.py tests/test_ijds_policy_support_optimal_face_v2.py tests/test_ijds_policy_support_rhs_semantics_recovery_v3a.py tests/test_ijds_policy_support_optimal_face_evidence.py
 
 # --- DVC capsule ----------------------------------------------------------
@@ -156,16 +156,33 @@ paper-tex-check:
 paper-official: paper-tex
     @uv run --locked python scripts/compile_ijds_submission.py --skip-render
 
+# Windows-first, non-freeze compiler for hosts where TeX Live cannot
+# canonicalize the sandboxed AppData path. The launcher uses a transient drive
+# alias and bundled Perl/latexmk, then verifies convergence and always unmaps.
+paper-official-windows: paper-tex
+    powershell.exe -NoLogo -NoProfile -ExecutionPolicy Bypass -File scripts/compile_ijds_submission_windows.ps1 -TexFile paper/submission/CRPTO_ijds_submission.tex -OutputDirectory paper/submission
+
 paper-official-scan:
     @uv run --locked python scripts/compile_ijds_submission.py --scan-only
 
 paper-pdf-audit:
     @uv run --locked python scripts/inspect_ijds_pdfs.py
 
+# Explicit final-freeze-only page gate. Ordinary development and submission
+# checks deliberately retain all scientific material without a page cap.
+paper-pdf-audit-freeze:
+    @uv run --locked python scripts/inspect_ijds_pdfs.py --enforce-freeze-page-limit
+
 paper-previews: paper-body paper-supplement
     uv run --locked python scripts/render_submission_pdf_previews.py
 
-submission-build: ijds-tie-evidence ijds-evidence paper-body paper-supplement paper-official paper-previews
+paper-machine-supplement:
+    uv run --locked python scripts/build_ijds_machine_readable_supplement.py
+
+paper-machine-supplement-check:
+    uv run --locked python scripts/build_ijds_machine_readable_supplement.py --check
+
+submission-build: ijds-tie-evidence ijds-evidence paper-body paper-supplement paper-official paper-previews paper-machine-supplement
 
 validate-champion:
     uv run --locked pytest tests/test_manifest_regression.py -q
@@ -173,7 +190,9 @@ validate-champion:
 validate-champion-strict:
     {{ strict-manifest-prefix }} uv run --locked pytest tests/test_manifest_regression.py -q
 
-submission-check: ijds-active-check drift-gate paper-tex-check paper-official-scan paper-pdf-audit lint type-check type-check-fast validate-champion-strict
+submission-check: ijds-active-check drift-gate paper-tex-check paper-official-scan paper-pdf-audit paper-machine-supplement-check lint type-check type-check-fast validate-champion-strict
+
+submission-freeze-check: ijds-active-check drift-gate paper-tex-check paper-official-scan paper-pdf-audit-freeze paper-machine-supplement-check lint type-check type-check-fast validate-champion-strict
 
 submission-closeout: test hooks-check dependency-audit submission-build submission-check ijds-dvc-verify-remote
 

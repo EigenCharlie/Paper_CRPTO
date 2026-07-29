@@ -1,0 +1,71 @@
+schema_version: "2026-07-26.1"
+protocol_status: "retrospectively_locked_before_first_contained_replay"
+run_tag: "ijds-binary-phase-geometry-2026-07-26-v6"
+protocol_path: "docs/research/ijds_binary_phase_geometry_v6_protocol_2026-07-26.md"
+
+source:
+  credit_control_freeze:
+    path: "models/experiments/ijds_audit/ijds-credit-risk-controls-2026-07-13-v1b/protocol_freeze.json"
+    bytes: 25908
+    sha256: "da4805e644bcf5decfbb0a67c0c81a5b9dd61f3ab2e17d3dc5264100e7eb4d35"
+  residual_fit_audit:
+    path: "data/processed/experiments/ijds_audit/ijds-credit-risk-controls-2026-07-13-v1b/prediction/residual_fit_audit.parquet"
+    bytes: 45955332
+    sha256: "396c30d9bec7d222220cfe6f9870ab4994cf5c33e6da8c9e4ebbd99153155353"
+  exchangeability_summary:
+    path: "models/experiments/ijds_audit/ijds-exchangeability-transport-test-2026-07-21-v1/exchangeability_transport_test_summary.json"
+    bytes: 9078
+    sha256: "72d9d39b2bef36a36440f1ccc720575d74005f1ad1932a774a91f73ed26c8af6"
+  exchangeability_strata:
+    path: "data/processed/experiments/ijds_audit/ijds-exchangeability-transport-test-2026-07-21-v1/evaluation/exchangeability_transport_strata.parquet"
+    bytes: 90676
+    sha256: "4d34a1de1d3d9556e9b9b74d0517b01b117030d7036a6911d5ad6807080601e3"
+
+design:
+  alpha: 0.10
+  taxonomy_groups: 5
+  expected_strata: 200
+  learners:
+    - "catboost_platt"
+    - "numeric_logistic_platt"
+    - "catboost_monotonic_platt"
+    - "woe_scorecard_platform_platt"
+    - "woe_scorecard_borrower_platt"
+  window_ids:
+    - "w01_2012m01_m06"
+    - "w02_2012m02_m07"
+    - "w03_2012m03_m08"
+    - "w04_2012m04_m09"
+    - "w05_2012m05_m10"
+    - "w06_2012m06_m11"
+    - "w07_2012m07_m12"
+    - "w08_2012m08_2013m01"
+
+output:
+  data_root: "data/processed/experiments/ijds_audit"
+  model_root: "models/experiments/ijds_audit"
+  immutability: "hard_no_overwrite_choose_fresh_run_tag"
+  phase_table: "stratum_phase_margins.csv"
+  summary: "binary_phase_geometry_v6_summary.json"
+  execution_receipt: "execution_receipt.json"
+
+claim_boundary:
+  retrospective: true
+  preregistered: false
+  confirmatory: false
+  protocol_commit_available_at_execution: false
+  no_score_bin_universality: true
+  no_continuity_claim: true
+  no_target_support_inference_from_calibration: true
+  no_learner_window_or_stratum_selection: true
+  no_selected_or_funded_set_validity: true
+
+stop_rules:
+  stop_on_source_hash_mismatch: true
+  stop_on_preexisting_output_path: true
+  stop_on_implementation_drift: true
+  stop_on_incomplete_grid: true
+  stop_on_duplicate_key: true
+  stop_on_domain_or_rank_failure: true
+  stop_on_threshold_reconciliation_failure: true
+  stop_on_publication_contract_omission: true

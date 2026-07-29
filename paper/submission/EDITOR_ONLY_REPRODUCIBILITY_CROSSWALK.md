@@ -93,6 +93,22 @@ sensitivity is `ijds-missingness-sensitivity-2026-07-15-v3`, protocol-locked at
 commit `199afb083da37af6a51d5ba9e3c4d6280b952fe9`. These complete grids select no
 model, encoding, origin, or observed-label subgroup.
 
+The complete common-panel threshold-response diagnostic is
+`ijds-common-panel-threshold-response-2026-07-26-v8`, protocol-locked by tag
+`protocol/ijds-common-panel-threshold-response-2026-07-26-v8` at commit
+`06a7d864776247fbb5128105deb229de4476be65`. It reuses one fixed
+376,890-candidate panel and reports all 175 stratum transitions and all 35
+integer-pooled learner transitions, with a shared unresolved-label completion
+in each from/to contrast. Its four result files are the exact diff of artifact
+tag `artifacts/ijds-common-panel-threshold-response-2026-07-26-v8` at commit
+`526a71bd0a0a7663a313dc12b0ce0eb3307719d9`, whose sole parent is the protocol
+commit. The source registry verifies both tags, that parent relation, the exact
+four-path diff, the current Git transport, and every file hash. V8
+supersedes V7 because its receipt discloses the protected raw-archive read; the
+scientific CSV outputs are byte-identical. This is
+a retrospective descriptive replay, not a selected transition, temporal
+transport result, or explanation of threshold movement.
+
 The fit-label completion sensitivity is
 `ijds-fit-label-completion-sensitivity-2026-07-16-v2`, protocol-locked at
 commit `fbcafcf84645024b9753aba2f04a4263b8e76236`. The allocation-granularity
@@ -104,7 +120,7 @@ their freezes, summaries, and DVC roots are verified by the source registry.
 
 ## DVC Capsule
 
-The 51 DVC pointers are listed once in `configs/ijds_active_evidence_sources.yaml`.
+The 53 DVC pointers are listed once in `configs/ijds_active_evidence_sources.yaml`.
 They comprise data and model pointers for the active roots and sensitivities,
 plus explicitly labeled replay dependencies, including the data-only
 structural V5 shard root and the unequal-follow-up origin roots. Pull with:
@@ -113,8 +129,8 @@ structural V5 shard root and the unequal-follow-up origin roots. Pull with:
 uv run --locked python scripts/manage_ijds_dvc_capsule.py pull
 ```
 
-The registered evidence builder emits one paper-facing manifest, 27 CSV
-tables, and three figure families in both PDF and PNG.
+The registered evidence builder emits one paper-facing manifest, 29 CSV
+tables, and five figure families in both PDF and PNG.
 
 Machine-local DVC credentials belong in `.dvc/config.local` and are never
 committed.
@@ -128,7 +144,7 @@ These are complementary contracts; current source code is not treated as a
 substitute for a historical scientific environment.
 
 ```powershell
-uv sync --group dev --frozen
+uv sync --group dev --locked
 just submission-build
 just ijds-active-check
 uv run --locked python scripts/manage_ijds_dvc_capsule.py status

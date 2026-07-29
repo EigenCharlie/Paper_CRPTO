@@ -1,10 +1,12 @@
 from __future__ import annotations
 
 import json
+import subprocess
 from pathlib import Path
 
 import yaml
 
+from scripts.build_ijds_binary_geometry_frontier_v4_evidence import FIGURE_STEMS, TABLE_TARGETS
 from src.ijds_audit.publication_sources import load_source_registry
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -38,9 +40,18 @@ def test_publication_target_points_to_active_sources() -> None:
     assert cfg["version"] == str(registry["schema_version"]).rsplit(".", maxsplit=1)[0]
     assert cfg["decision_status"] == "prefreeze_active"
     assert primary["id"] == "informs_ijds"
+    assert primary["constraints"]["prefreeze_page_limit"] is None
+    assert primary["constraints"]["final_freeze_pre_reference_page_limit"] == 25
+    assert primary["constraints"]["page_limit_excludes"] == ["references"]
+    assert "initial_submission_pages" not in primary["constraints"]
     assert cfg["current_decision"]["write_first_for"] == "informs_ijds"
     assert cfg["current_decision"]["keep_second_ready_for"] == "ejor"
-    for key in ("manuscript_source", "supplement_source", "official_tex_source"):
+    for key in (
+        "manuscript_source",
+        "supplement_source",
+        "machine_readable_supplement",
+        "official_tex_source",
+    ):
         assert Path(primary[key]).is_file()
     for key in ("claim_registry", "source_registry", "evidence_manifest"):
         assert Path(active[key]).is_file()
@@ -112,7 +123,7 @@ def test_active_contract_has_one_numeric_source_and_current_lineages() -> None:
     assert evidence["decision_challenger"]["counts"]["evaluated_portfolios"] == 6240
     assert evidence["decision_challenger"]["interpretation"]["policy_winner"] is None
     assert evidence["portfolio"]["broad_stress_cells"] == 216
-    assert evidence["portfolio"]["broad_stress_all_envelopes_cross_zero"] is True
+    assert evidence["portfolio"]["registered_cap_values_all_envelopes_include_zero"] is True
 
 
 def test_active_capsule_paths_exist() -> None:
@@ -134,10 +145,15 @@ def test_active_capsule_paths_exist() -> None:
     paper_artifact_paths = {
         descriptor["path"] for descriptor in evidence["paper_artifacts"].values()
     }
-    assert len(paper_artifact_paths) == 33
-    assert len({path for path in paper_artifact_paths if path.endswith(".csv")}) == 27
-    assert len({path for path in paper_artifact_paths if path.endswith((".pdf", ".png"))}) == 6
-    assert len(registry["dvc_pointers"]) == 51
+    expected_artifact_count = len(TABLE_TARGETS) + 2 * len(FIGURE_STEMS)
+    assert len(paper_artifact_paths) == expected_artifact_count
+    assert len({path for path in paper_artifact_paths if path.endswith(".csv")}) == len(
+        TABLE_TARGETS
+    )
+    assert len(
+        {path for path in paper_artifact_paths if path.endswith((".pdf", ".png"))}
+    ) == 2 * len(FIGURE_STEMS)
+    assert len(registry["dvc_pointers"]) == 53
     assert (
         "reports/crpto/tables/crpto_ijds_v4_tableS7D_individual_age_endpoint_census.csv"
         in active["required_artifacts"]
@@ -161,6 +177,7 @@ def test_active_capsule_paths_exist() -> None:
             assert Path(path).is_file(), path
     assert {
         "scripts/experiments/run_ijds_exchangeability_transport_test.py",
+        "scripts/experiments/run_ijds_common_panel_threshold_response_v8.py",
         "scripts/experiments/run_ijds_rolling_origin_equal_followup.py",
         "scripts/experiments/run_ijds_rolling_origin_individual_age_followup.py",
         "scripts/experiments/run_ijds_label_mondrian_freeze.py",
@@ -168,6 +185,101 @@ def test_active_capsule_paths_exist() -> None:
         "scripts/experiments/run_ijds_policy_support_optimal_face_v2.py",
         "scripts/experiments/run_ijds_policy_support_rhs_semantics_recovery_v3a.py",
     }.issubset(code_surface["protocol_entrypoints"])
+
+
+def test_hash_bound_candidate_replays_cannot_leak_into_active_surfaces() -> None:
+    config = _config()
+    active = config["active_scientific_contract"]
+    quarantine = config["executed_quarantine_capsule"]
+    stopped = config["stopped_tagged_candidate_capsule"]
+    # Structural loading is sufficient here: the registry's protocol-tag and
+    # DVC replay checks are covered separately, and this quarantine test must
+    # also run in constrained Windows runtimes without inheritable git handles.
+    registry = load_source_registry(REGISTRY_PATH)
+
+    for capsule in (quarantine, stopped):
+        assert capsule["active_paper_evidence_allowed"] is False
+        assert capsule["active_claim_support_allowed"] is False
+        assert capsule["machine_readable_supplement_allowed"] is False
+        assert capsule["dvc_pointer_count_change_allowed"] is False
+        assert set(capsule["replay_entrypoints"]).isdisjoint(
+            active["active_code_surface"]["protocol_entrypoints"]
+        )
+    assert set(quarantine["replay_entrypoints"]).isdisjoint(stopped["replay_entrypoints"])
+    assert set(quarantine["local_candidate_artifacts_not_required"]).isdisjoint(
+        active["required_artifacts"]
+    )
+    assert set(quarantine["forbidden_active_paper_artifacts_until_promotion"]).isdisjoint(
+        active["required_artifacts"]
+    )
+    assert len(registry["dvc_pointers"]) == 53
+
+    for group in (
+        "replay_entrypoints",
+        "protocols",
+        "configs",
+        "implementations",
+        "receipt_indexes",
+    ):
+        for path in quarantine[group]:
+            assert Path(path).is_file(), path
+    for group in ("replay_entrypoints", "protocols", "configs", "implementations"):
+        for path in stopped[group]:
+            assert Path(path).is_file(), path
+
+    manuscript_text = "\n".join(
+        Path(path).read_text(encoding="utf-8")
+        for path in ("paper/CRPTO_ijds.qmd", "paper/supplement_ijds.qmd")
+    )
+    forbidden_run_tags = {
+        *quarantine["quarantined_run_scope"],
+        *stopped["forbidden_run_tags_in_manuscript"],
+    }
+    for run_tag in forbidden_run_tags:
+        assert run_tag not in manuscript_text
+
+
+def test_superseded_v7_runner_is_classified_but_cannot_support_active_evidence() -> None:
+    config = _config()
+    active = set(
+        config["active_scientific_contract"]["active_code_surface"]["protocol_entrypoints"]
+    )
+    quarantine = set(config["executed_quarantine_capsule"]["replay_entrypoints"])
+    stopped = set(config["stopped_tagged_candidate_capsule"]["replay_entrypoints"])
+    superseded = config["superseded_protocol_capsule"]
+
+    assert superseded["active_paper_evidence_allowed"] is False
+    assert superseded["active_claim_support_allowed"] is False
+    assert set(superseded["protocol_entrypoints"]).isdisjoint(active | quarantine | stopped)
+    for group in ("protocol_entrypoints", "protocols", "configs"):
+        for path in superseded[group]:
+            assert Path(path).is_file(), path
+
+
+def test_reviewer_zip_is_tracked() -> None:
+    config = _config()
+    reviewer_zip = config["primary_target"]["machine_readable_supplement"]
+    tracked = subprocess.run(
+        ["git", "ls-files", "--error-unmatch", "--", reviewer_zip],
+        cwd=ROOT,
+        check=False,
+        capture_output=True,
+        text=True,
+    )
+
+    assert tracked.returncode == 0, (
+        f"reviewer ZIP must be committed, not merely present: {reviewer_zip}"
+    )
+
+
+def test_quarantined_publication_aliases_are_absent() -> None:
+    config = _config()
+    forbidden = config["executed_quarantine_capsule"][
+        "forbidden_active_paper_artifacts_until_promotion"
+    ]
+    present = [path for path in forbidden if (ROOT / path).exists()]
+
+    assert not present, f"quarantined publication aliases exist: {present}"
 
 
 def test_active_capsule_does_not_advertise_retired_result_families() -> None:

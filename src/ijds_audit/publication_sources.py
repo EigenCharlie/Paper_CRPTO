@@ -9,6 +9,7 @@ import subprocess
 from collections.abc import Iterator, Mapping
 from dataclasses import dataclass
 from pathlib import Path, PurePosixPath
+from tempfile import TemporaryDirectory
 from typing import Any
 
 import yaml
@@ -21,12 +22,18 @@ _IDENTITY_MARKERS = frozenset(
         "run_tag",
         "protocol_tag",
         "protocol_commit",
+        "protocol_bundle",
         "scientific_uv_lock_sha256",
         "status",
         "paper_role",
         "dvc_tracked",
         "dvc_roots",
         "freeze_sha256",
+        "artifact_tag",
+        "artifact_commit",
+        "artifact_parent_commit",
+        "artifact_transport",
+        "artifact_paths",
     }
 )
 _LEGACY_DVC_PHASES = frozenset({"outcome_free", "evaluation"})
@@ -34,6 +41,7 @@ _DVC_ROOTS = ("data/processed", "models")
 _PROTOCOL_COMMIT_PATTERN = re.compile(r"[0-9a-f]{40}")
 _SHA256_PATTERN = re.compile(r"[0-9a-f]{64}")
 _DVC_DIRECTORY_MD5_PATTERN = re.compile(r"[0-9a-f]{32}\.dir")
+_GIT_ARTIFACT_TRANSPORT = "git_force_tracked_direct_child_commit"
 
 
 @dataclass(frozen=True)
@@ -42,10 +50,16 @@ class _RegistryUnit:
     run_tag: str
     protocol_tag: str | None
     protocol_commit: str | None
+    protocol_bundle: str | None
     scientific_uv_lock_sha256: str | None
     paper_role: str | None
     declared_dvc_tracked: bool | None
     dvc_roots: tuple[str, ...] | None
+    artifact_tag: str | None
+    artifact_commit: str | None
+    artifact_parent_commit: str | None
+    artifact_transport: str | None
+    artifact_paths: tuple[str, ...] | None
 
 
 def load_source_registry(
@@ -128,7 +142,87 @@ def load_verified_source_registry(
             raise ValueError(f"Duplicate active evidence source path: {actual['path']}")
         seen_paths.add(str(actual["path"]))
         verified[str(name)] = source_path
+    _verify_source_transport(
+        source_paths=tuple(seen_paths),
+        dvc_pointers=payload["dvc_pointers"],
+        git_artifact_paths=tuple(
+            path
+            for unit in _validated_registry_units(payload)
+            for path in (unit.artifact_paths or ())
+        ),
+        repo_root=repo_root,
+    )
     return payload, verified
+
+
+def _verify_source_transport(
+    *,
+    source_paths: tuple[str, ...],
+    dvc_pointers: list[str],
+    git_artifact_paths: tuple[str, ...],
+    repo_root: Path,
+) -> None:
+    """Require every active source to travel through Git or an active DVC output.
+
+    Hash verification proves that the local bytes are the declared bytes.  This
+    second gate proves that a fresh checkout has a declared transport for those
+    bytes, preventing a locally present ignored artifact from becoming active
+    paper evidence.
+    """
+    resolved_root = repo_root.resolve()
+    probe = subprocess.run(
+        ["git", "rev-parse", "--show-toplevel"],
+        cwd=resolved_root,
+        check=False,
+        capture_output=True,
+        text=True,
+    )
+    if probe.returncode != 0:
+        return
+    git_root = Path(probe.stdout.strip()).resolve()
+    if git_root != resolved_root:
+        raise RuntimeError(
+            f"Evidence registry root {resolved_root} is not the Git root {git_root}."
+        )
+
+    listing = subprocess.run(
+        ["git", "ls-files", "-z"],
+        cwd=resolved_root,
+        check=True,
+        capture_output=True,
+    ).stdout
+    tracked = {
+        item.decode("utf-8", errors="surrogateescape").replace("\\", "/")
+        for item in listing.split(b"\0")
+        if item
+    }
+    missing_pointers = sorted(set(dvc_pointers).difference(tracked))
+    if missing_pointers:
+        raise RuntimeError(
+            "Active DVC pointers are not Git-tracked: " + ", ".join(missing_pointers)
+        )
+
+    undescribed_artifacts = sorted(set(git_artifact_paths).difference(source_paths))
+    if undescribed_artifacts:
+        raise RuntimeError(
+            "Git artifact contract paths lack active hash descriptors: "
+            + ", ".join(undescribed_artifacts)
+        )
+
+    dvc_roots = tuple(
+        PurePosixPath(pointer).parent.joinpath(PurePosixPath(pointer).stem).as_posix()
+        for pointer in dvc_pointers
+    )
+    undeliverable = sorted(
+        source
+        for source in source_paths
+        if source not in tracked
+        and not any(source == root or source.startswith(f"{root}/") for root in dvc_roots)
+    )
+    if undeliverable:
+        raise RuntimeError(
+            "Active evidence sources lack Git or active-DVC transport: " + ", ".join(undeliverable)
+        )
 
 
 def _validated_registry_units(payload: Mapping[str, Any]) -> tuple[_RegistryUnit, ...]:
@@ -238,9 +332,11 @@ def _parse_registry_unit(
             f"Registry identity {_format_location(location)}.run_tag must name one directory."
         )
 
-    protocol_tag, protocol_commit, scientific_uv_lock_sha256 = _parse_protocol_identity(
-        identity,
-        location=location,
+    protocol_tag, protocol_commit, protocol_bundle, scientific_uv_lock_sha256 = (
+        _parse_protocol_identity(
+            identity,
+            location=location,
+        )
     )
     if "status" in identity:
         _required_text(identity, "status", location=location)
@@ -250,23 +346,131 @@ def _parse_registry_unit(
         else None
     )
     declared_dvc_tracked, dvc_roots = _parse_dvc_metadata(identity, location=location)
+    (
+        artifact_tag,
+        artifact_commit,
+        artifact_parent_commit,
+        artifact_transport,
+        artifact_paths,
+    ) = _parse_git_artifact_identity(
+        identity,
+        protocol_commit=protocol_commit,
+        location=location,
+    )
     return _RegistryUnit(
         location=location,
         run_tag=run_tag,
         protocol_tag=protocol_tag,
         protocol_commit=protocol_commit,
+        protocol_bundle=protocol_bundle,
         scientific_uv_lock_sha256=scientific_uv_lock_sha256,
         paper_role=paper_role,
         declared_dvc_tracked=declared_dvc_tracked,
         dvc_roots=dvc_roots,
+        artifact_tag=artifact_tag,
+        artifact_commit=artifact_commit,
+        artifact_parent_commit=artifact_parent_commit,
+        artifact_transport=artifact_transport,
+        artifact_paths=artifact_paths,
     )
+
+
+def _parse_git_artifact_identity(
+    identity: Mapping[str, Any],
+    *,
+    protocol_commit: str | None,
+    location: tuple[str, ...],
+) -> tuple[str | None, str | None, str | None, str | None, tuple[str, ...] | None]:
+    fields = {
+        "artifact_tag",
+        "artifact_commit",
+        "artifact_parent_commit",
+        "artifact_transport",
+        "artifact_paths",
+    }
+    present = fields.intersection(identity)
+    if not present:
+        return None, None, None, None, None
+    if present != fields:
+        missing = sorted(fields.difference(present))
+        raise TypeError(
+            f"Registry identity {_format_location(location)} has an incomplete Git artifact "
+            f"contract; missing {missing}."
+        )
+    if protocol_commit is None:
+        raise ValueError(
+            f"Registry identity {_format_location(location)} cannot pin artifacts without "
+            "a protocol commit."
+        )
+    if identity.get("dvc_tracked") is not False:
+        raise ValueError(
+            f"Registry identity {_format_location(location)} Git artifacts require "
+            "dvc_tracked=false."
+        )
+    if "protocol_bundle" in identity:
+        raise ValueError(
+            f"Registry identity {_format_location(location)} cannot combine a local exact "
+            "Git artifact commit with a protocol bundle."
+        )
+
+    tag = _required_text(identity, "artifact_tag", location=location)
+    commit = _required_text(identity, "artifact_commit", location=location)
+    parent = _required_text(identity, "artifact_parent_commit", location=location)
+    transport = _required_text(identity, "artifact_transport", location=location)
+    if _PROTOCOL_COMMIT_PATTERN.fullmatch(commit) is None:
+        raise ValueError(
+            f"Registry identity {_format_location(location)}.artifact_commit must be a "
+            "40-character lowercase hexadecimal commit."
+        )
+    if _PROTOCOL_COMMIT_PATTERN.fullmatch(parent) is None:
+        raise ValueError(
+            f"Registry identity {_format_location(location)}.artifact_parent_commit must be a "
+            "40-character lowercase hexadecimal commit."
+        )
+    if parent != protocol_commit:
+        raise ValueError(
+            f"Registry identity {_format_location(location)} must pin its protocol commit as "
+            "the artifact commit's sole parent."
+        )
+    if transport != _GIT_ARTIFACT_TRANSPORT:
+        raise ValueError(
+            f"Registry identity {_format_location(location)}.artifact_transport must be "
+            f"{_GIT_ARTIFACT_TRANSPORT!r}."
+        )
+
+    raw_paths = identity["artifact_paths"]
+    if (
+        not isinstance(raw_paths, list)
+        or not raw_paths
+        or not all(isinstance(path, str) and path for path in raw_paths)
+        or raw_paths != sorted(set(raw_paths))
+    ):
+        raise TypeError(
+            f"Registry identity {_format_location(location)}.artifact_paths must be a "
+            "nonempty sorted unique string list."
+        )
+    paths: list[str] = []
+    for raw_path in raw_paths:
+        normalized = PurePosixPath(posixpath.normpath(raw_path.replace("\\", "/")))
+        if (
+            normalized.is_absolute()
+            or str(normalized) in {"", ".", ".."}
+            or str(normalized).startswith("../")
+            or normalized.as_posix() != raw_path
+        ):
+            raise ValueError(
+                f"Registry identity {_format_location(location)}.artifact_paths contains an "
+                f"unsafe or non-normalized path: {raw_path!r}."
+            )
+        paths.append(raw_path)
+    return tag, commit, parent, transport, tuple(paths)
 
 
 def _parse_protocol_identity(
     identity: Mapping[str, Any],
     *,
     location: tuple[str, ...],
-) -> tuple[str | None, str | None, str | None]:
+) -> tuple[str | None, str | None, str | None, str | None]:
     has_protocol_tag = "protocol_tag" in identity
     has_protocol_commit = "protocol_commit" in identity
     if has_protocol_tag != has_protocol_commit:
@@ -282,7 +486,12 @@ def _parse_protocol_identity(
                 f"Registry identity {_format_location(location)} cannot declare a scientific "
                 "lock without a protocol commit."
             )
-        return None, None, None
+        if "protocol_bundle" in identity:
+            raise ValueError(
+                f"Registry identity {_format_location(location)} cannot declare a protocol "
+                "bundle without a protocol commit."
+            )
+        return None, None, None, None
 
     protocol_tag = _required_text(identity, "protocol_tag", location=location)
     protocol_commit = _required_text(identity, "protocol_commit", location=location)
@@ -291,6 +500,21 @@ def _parse_protocol_identity(
             f"Registry identity {_format_location(location)}.protocol_commit "
             "must be a 40-character lowercase hexadecimal commit."
         )
+    protocol_bundle: str | None = None
+    if "protocol_bundle" in identity:
+        protocol_bundle = _required_text(identity, "protocol_bundle", location=location)
+        normalized = PurePosixPath(posixpath.normpath(protocol_bundle.replace("\\", "/")))
+        if (
+            normalized.is_absolute()
+            or str(normalized) in {"", ".", ".."}
+            or str(normalized).startswith("../")
+            or normalized.suffix != ".bundle"
+            or normalized.as_posix() != protocol_bundle
+        ):
+            raise ValueError(
+                f"Registry identity {_format_location(location)}.protocol_bundle must be a "
+                "normalized repository-relative .bundle path."
+            )
     scientific_uv_lock_sha256 = _required_text(
         identity,
         "scientific_uv_lock_sha256",
@@ -301,7 +525,7 @@ def _parse_protocol_identity(
             f"Registry identity {_format_location(location)}.scientific_uv_lock_sha256 "
             "must be a 64-character lowercase hexadecimal digest."
         )
-    return protocol_tag, protocol_commit, scientific_uv_lock_sha256
+    return protocol_tag, protocol_commit, protocol_bundle, scientific_uv_lock_sha256
 
 
 def _parse_dvc_metadata(
@@ -390,36 +614,201 @@ def _verify_protocol_replay_contracts(units: tuple[_RegistryUnit, ...], *, repo_
             or unit.scientific_uv_lock_sha256 is None
         ):
             continue
-        tag_result = subprocess.run(
-            ["git", "rev-list", "-n", "1", unit.protocol_tag],
-            cwd=repo_root,
-            check=False,
-            capture_output=True,
-            text=True,
-        )
-        resolved = tag_result.stdout.strip()
-        if tag_result.returncode != 0 or resolved != unit.protocol_commit:
+        resolved = _resolve_local_tag_commit(unit.protocol_tag, repo_root=repo_root)
+        if resolved is not None and resolved != unit.protocol_commit:
             raise RuntimeError(
                 f"Registry protocol tag {unit.protocol_tag!r} does not resolve to "
                 f"declared commit {unit.protocol_commit}."
             )
-        lock_result = subprocess.run(
-            ["git", "show", f"{unit.protocol_commit}:uv.lock"],
-            cwd=repo_root,
-            check=False,
-            capture_output=True,
-        )
-        if lock_result.returncode != 0:
-            raise RuntimeError(
-                f"Registry protocol commit {unit.protocol_commit} does not contain uv.lock."
+        if resolved is not None:
+            lock_result = subprocess.run(
+                ["git", "show", f"{unit.protocol_commit}:uv.lock"],
+                cwd=repo_root,
+                check=False,
+                capture_output=True,
             )
-        actual_lock_sha256 = hashlib.sha256(lock_result.stdout).hexdigest()
+            if lock_result.returncode != 0:
+                raise RuntimeError(
+                    f"Registry protocol commit {unit.protocol_commit} does not contain uv.lock."
+                )
+            lock_bytes = lock_result.stdout
+        elif unit.protocol_bundle is not None:
+            lock_bytes = _verify_protocol_bundle(unit, repo_root=repo_root)
+        else:
+            raise RuntimeError(
+                f"Registry protocol tag {unit.protocol_tag!r} does not resolve to "
+                f"declared commit {unit.protocol_commit}."
+            )
+        actual_lock_sha256 = hashlib.sha256(lock_bytes).hexdigest()
         if actual_lock_sha256 != unit.scientific_uv_lock_sha256:
             raise RuntimeError(
                 f"Registry protocol tag {unit.protocol_tag!r} declares uv.lock "
                 f"{unit.scientific_uv_lock_sha256}, but its commit contains "
                 f"{actual_lock_sha256}."
             )
+        _verify_git_artifact_contract(unit, repo_root=repo_root)
+
+
+def _verify_git_artifact_contract(unit: _RegistryUnit, *, repo_root: Path) -> None:
+    if unit.artifact_tag is None:
+        return
+    if (
+        unit.protocol_commit is None
+        or unit.artifact_commit is None
+        or unit.artifact_parent_commit is None
+        or unit.artifact_transport != _GIT_ARTIFACT_TRANSPORT
+        or unit.artifact_paths is None
+    ):
+        raise RuntimeError("Parsed Git artifact identity is incomplete.")
+
+    resolved = _resolve_local_tag_commit(unit.artifact_tag, repo_root=repo_root)
+    if resolved != unit.artifact_commit:
+        raise RuntimeError(
+            f"Registry artifact tag {unit.artifact_tag!r} does not resolve to declared "
+            f"commit {unit.artifact_commit}."
+        )
+
+    parents = (
+        subprocess.run(
+            ["git", "rev-list", "--parents", "-n", "1", unit.artifact_commit],
+            cwd=repo_root,
+            check=True,
+            capture_output=True,
+            text=True,
+        )
+        .stdout.strip()
+        .split()
+    )
+    if parents != [unit.artifact_commit, unit.artifact_parent_commit]:
+        raise RuntimeError(
+            f"Registry artifact commit {unit.artifact_commit} is not the declared direct child "
+            f"of protocol commit {unit.artifact_parent_commit}."
+        )
+
+    changed = subprocess.run(
+        [
+            "git",
+            "diff-tree",
+            "--no-commit-id",
+            "--name-only",
+            "--no-renames",
+            "-r",
+            unit.artifact_commit,
+        ],
+        cwd=repo_root,
+        check=True,
+        capture_output=True,
+        text=True,
+    ).stdout.splitlines()
+    if changed != list(unit.artifact_paths):
+        raise RuntimeError(
+            f"Registry artifact commit {unit.artifact_commit} changed {changed}, not the "
+            f"declared exact artifact paths {list(unit.artifact_paths)}."
+        )
+    for path in unit.artifact_paths:
+        exists = subprocess.run(
+            ["git", "cat-file", "-e", f"{unit.artifact_commit}:{path}"],
+            cwd=repo_root,
+            check=False,
+            capture_output=True,
+        )
+        if exists.returncode != 0:
+            raise RuntimeError(
+                f"Registry artifact commit {unit.artifact_commit} does not contain {path}."
+            )
+
+
+def _resolve_local_tag_commit(tag: str, *, repo_root: Path) -> str | None:
+    """Resolve one explicit local tag ref, peeling annotated tags to a commit."""
+    reference = f"refs/tags/{tag}"
+    valid = subprocess.run(
+        ["git", "check-ref-format", reference],
+        cwd=repo_root,
+        check=False,
+        capture_output=True,
+        text=True,
+    )
+    if valid.returncode != 0:
+        raise RuntimeError(f"Registry tag is not an explicit valid tag ref: {tag!r}.")
+    resolved = subprocess.run(
+        ["git", "rev-parse", "--verify", "--end-of-options", f"{reference}^{{commit}}"],
+        cwd=repo_root,
+        check=False,
+        capture_output=True,
+        text=True,
+    )
+    if resolved.returncode != 0:
+        return None
+    commit = resolved.stdout.strip()
+    if _PROTOCOL_COMMIT_PATTERN.fullmatch(commit) is None:
+        raise RuntimeError(f"Registry tag {tag!r} did not resolve to a full commit.")
+    return commit
+
+
+def _verify_protocol_bundle(unit: _RegistryUnit, *, repo_root: Path) -> bytes:
+    """Verify a portable clean-tag commit when the current checkout lacks its ref."""
+    if unit.protocol_bundle is None or unit.protocol_tag is None or unit.protocol_commit is None:
+        raise RuntimeError("Protocol-bundle verification requires a complete protocol identity.")
+    root = repo_root.resolve()
+    bundle = (root / unit.protocol_bundle).resolve()
+    try:
+        bundle.relative_to(root)
+    except ValueError as exc:
+        raise ValueError(f"Protocol bundle escapes the repository: {bundle}") from exc
+    if not bundle.is_file():
+        raise FileNotFoundError(f"Protocol bundle is missing: {bundle}")
+    verified = subprocess.run(
+        ["git", "bundle", "verify", str(bundle)],
+        cwd=root,
+        check=False,
+        capture_output=True,
+        text=True,
+    )
+    if verified.returncode != 0:
+        raise RuntimeError(f"Protocol bundle failed Git verification: {bundle}")
+    with TemporaryDirectory(prefix=".protocol-bundle-verify-", dir=root) as temporary:
+        repository = Path(temporary)
+        subprocess.run(
+            ["git", "init", "--bare", "--quiet", str(repository)],
+            cwd=root,
+            check=True,
+            capture_output=True,
+        )
+        ref = f"refs/tags/{unit.protocol_tag}"
+        fetched = subprocess.run(
+            ["git", "--git-dir", str(repository), "fetch", "--quiet", str(bundle), f"{ref}:{ref}"],
+            cwd=root,
+            check=False,
+            capture_output=True,
+            text=True,
+        )
+        if fetched.returncode != 0:
+            raise RuntimeError(
+                f"Protocol bundle does not expose declared tag {unit.protocol_tag!r}."
+            )
+        resolved = subprocess.run(
+            ["git", "--git-dir", str(repository), "rev-list", "-n", "1", unit.protocol_tag],
+            cwd=root,
+            check=True,
+            capture_output=True,
+            text=True,
+        ).stdout.strip()
+        if resolved != unit.protocol_commit:
+            raise RuntimeError(
+                f"Protocol bundle tag {unit.protocol_tag!r} resolves to {resolved!r}, "
+                f"not {unit.protocol_commit!r}."
+            )
+        lock = subprocess.run(
+            ["git", "--git-dir", str(repository), "show", f"{unit.protocol_commit}:uv.lock"],
+            cwd=root,
+            check=False,
+            capture_output=True,
+        )
+        if lock.returncode != 0:
+            raise RuntimeError(
+                f"Protocol-bundle commit {unit.protocol_commit} does not contain uv.lock."
+            )
+        return lock.stdout
 
 
 def _verify_dvc_pointer(path: Path, *, display_path: str) -> None:

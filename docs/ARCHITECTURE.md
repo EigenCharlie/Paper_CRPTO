@@ -96,12 +96,16 @@ duplicate a working boundary without improving an active estimand or gate.
 ## Clean-Clone Boundary
 
 Windows PowerShell is the author environment and owns the complete PDF build.
-The manual GitHub clean-clone workflow uses a disposable Ubuntu CPU runner to
-verify that Git history, protocol tags, the locked Python environment, Quarto
-generation, and DVC artifacts can be reconstructed independently. It does not
-run scientific stages, compile with CUDA, or introduce a second production
-platform. Its DVC target set is the union of the active registry and the files
-required by the strict protected-manifest gate; the raw archive is not pulled.
+The manual GitHub clean-clone workflow uses a disposable Windows CPU runner to
+verify that Git history, protocol tags, the locked Python environment, derived
+evidence, Quarto generation, and DVC artifacts can be reconstructed
+independently. Matching the author operating system makes byte-level comparison
+of Matplotlib PNG/PDF evidence meaningful; the separate lightweight Ubuntu lint
+job retains a cross-platform source check. The clean-clone job does not rerun
+protected historical stages, compile with CUDA, or introduce a second
+production platform. Its DVC target set is the union of the active registry and
+the files required by the strict protected-manifest gate; the raw archive is not
+pulled.
 
 ## Publication Boundary
 

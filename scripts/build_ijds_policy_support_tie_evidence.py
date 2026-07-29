@@ -10,7 +10,7 @@ from typing import Any
 import pandas as pd
 
 from src.utils.isolated_experiment import relative_artifact_descriptor, write_csv_atomic
-from src.utils.pipeline_runtime import atomic_write_json, atomic_write_text
+from src.utils.pipeline_runtime import atomic_write_strict_json, atomic_write_text
 
 ROOT = Path(__file__).resolve().parents[1]
 RUN_TAG = "ijds-policy-support-tie-audit-2026-07-12-v1"
@@ -300,7 +300,7 @@ def build() -> Path:
         "protected_stages_run": [],
         "protected_artifacts_written": [],
     }
-    atomic_write_json(EVIDENCE_PATH, evidence)
+    atomic_write_strict_json(EVIDENCE_PATH, evidence)
     atomic_write_text(MEMO_PATH, _memo(evidence))
     return EVIDENCE_PATH
 

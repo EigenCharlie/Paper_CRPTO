@@ -23,6 +23,22 @@ def atomic_write_text(path: str | Path, content: str, *, encoding: str = "utf-8"
     return target
 
 
+def atomic_write_bytes(path: str | Path, payload: bytes) -> Path:
+    """Durably stage bytes before atomically replacing the destination."""
+    target = Path(path)
+    target.parent.mkdir(parents=True, exist_ok=True)
+    tmp = target.with_name(f".{target.name}.tmp-{os.getpid()}")
+    try:
+        with tmp.open("wb") as handle:
+            handle.write(payload)
+            handle.flush()
+            os.fsync(handle.fileno())
+        os.replace(tmp, target)
+    finally:
+        tmp.unlink(missing_ok=True)
+    return target
+
+
 def atomic_write_json(path: str | Path, payload: dict[str, Any]) -> Path:
     return atomic_write_text(
         path,

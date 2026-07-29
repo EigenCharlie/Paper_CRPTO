@@ -34,6 +34,21 @@ order before changing scientific code or paper claims:
    - USD 25 floor-with-cash diagnostic and fixed-capital estimands.
 16. [`docs/research/ijds_rolling_origin_primary_recovery_protocol_2026-07-21.md`](docs/research/ijds_rolling_origin_primary_recovery_protocol_2026-07-21.md)
    - common April--June horizon recovery and explicit rejection of the stale 15-month comparison.
+16a. [`docs/research/ijds_exact_binary_conformal_theory_2026-07-24.md`](docs/research/ijds_exact_binary_conformal_theory_2026-07-24.md)
+   - exact order-statistic threshold characterization, its stated conditions, and the refutations recorded against earlier revisions.
+16b. [`docs/research/ijds_binary_phase_geometry_v5_protocol_2026-07-24.md`](docs/research/ijds_binary_phase_geometry_v5_protocol_2026-07-24.md)
+   - phase-table recomputation from frozen calibration rows, with stop rules.
+16c. [`docs/research/ijds_external_phase_replication_v1_quarantine_2026-07-26.md`](docs/research/ijds_external_phase_replication_v1_quarantine_2026-07-26.md)
+   - failed provenance/chronology audit for the external V1; it supports no active claim.
+16c1. [`docs/research/ijds_common_panel_threshold_response_v8_protocol_2026-07-26.md`](docs/research/ijds_common_panel_threshold_response_v8_protocol_2026-07-26.md)
+   - active complete fixed-panel adjacent-threshold response with shared binary completions and truthful protected-read provenance.
+16c2. [`docs/research/ijds_marginal_mean_score_outcome_gap_v3_protocol_2026-07-26.md`](docs/research/ijds_marginal_mean_score_outcome_gap_v3_protocol_2026-07-26.md)
+   - quarantined clean-replay contract; no marginal claim is active unless its
+     protocol and exact artifact-transport gates both pass and are promoted.
+16d. [`docs/research/ijds_raw_data_acquisition_provenance_2026-07-21.md`](docs/research/ijds_raw_data_acquisition_provenance_2026-07-21.md)
+   - verified local file identity versus unconfirmed acquisition history.
+16e. [`docs/research/ijds_submission_rights_anonymity_audit_2026-07-21.md`](docs/research/ijds_submission_rights_anonymity_audit_2026-07-21.md)
+   - anonymity, licensing, and human-confirmation blockers.
 17. [`docs/research/ijds_conformal_set_diagnostics_protocol_2026-07-21.md`](docs/research/ijds_conformal_set_diagnostics_protocol_2026-07-21.md)
    - complete binary-set efficiency and resolved-label diagnostic boundary.
 18. [`docs/research/ijds_exchangeability_transport_test_protocol_2026-07-21.md`](docs/research/ijds_exchangeability_transport_test_protocol_2026-07-21.md)
@@ -58,6 +73,19 @@ order before changing scientific code or paper claims:
    - the only active paper-facing evidence manifest.
 28. [`.codex/skills/crpto/SKILL.md`](.codex/skills/crpto/SKILL.md) - concise
    execution and writing guidance.
+
+Theory precedence note (2026-07-26): the exact statements in the active claim
+registry and exact-theory note override any older summary in
+the CRPTO skill. In particular, do not infer continuity, a common-maxima unit
+crossing, universal low score bins, or a miscoverage floor from `l>0` alone.
+The exact two-threshold coverage change is target mass in the crossed score
+bands; calibration support alone does not bound it.
+
+The V6 geometry and post-freeze diagnostic replays dated 2026-07-26 are
+non-active candidates in quarantine. Their protocols/configurations were not
+committed and tagged before execution, and V6 contains an undeclared selected
+CatBoost-stratum path. They cannot support paper claims without a new protocol,
+new run tags, and a clean tagged replay.
 
 Minimum rules:
 

@@ -3,7 +3,7 @@
 ## Status, scope, and evidentiary boundary
 
 This audit records the literature-intake state as of 2026-07-21. It covers the
-complete local corpus under `Papers_tesis`, the twenty-one-paper conformal frontier
+complete local corpus under `Papers_tesis`, the twenty-three-paper conformal frontier
 intake, one foundational learner paper, and the separately supplied book
 *Applied Conformal Prediction*. Its purpose is
 to decide what the active IJDS manuscript may cite, what ideas are technically
@@ -30,17 +30,50 @@ The audit reached three central conclusions:
    require assumptions or data structures that are absent from the active
    design.
 
+A targeted current-version follow-up for Zhao et al. v3 and Zhou--Zhu v3 is
+recorded in
+`conformal_optimization_v3_corpus_addendum_2026-07-26.md`. That addendum audits
+the complete official HTML theorem and assumption surfaces, tightens the
+manuscript's adjacent-work wording, and records why neither construction
+transfers a certificate to CRPTO. Because the two current PDFs could not be
+materialized in this execution environment, it does not change the local PDF
+inventory or its page checksum.
+
+## Locked active-method disposition
+
+The active paper therefore retains score-Mondrian as its primary recipe,
+Label-Mondrian as a complete retrospective benchmark, both outcome-free
+rulers, five learners as coverage controls, and only the primary CatBoost score
+in the LP. This is a scope decision, not a claim that the retained recipe is
+universally preferable.
+
+APS/RAPS, Venn--Abers, adaptive conformal inference, and weighted conformal
+must not be retrofitted post hoc. They respectively target prediction-set
+efficiency, probability calibration, sequential feedback, or a specified
+source-to-target reweighting law. None recovers the unresolved terminal
+endpoint or establishes temporal transport and optimizer-selected coverage in
+this archive. They may be discussed as boundaries or future protocols, but a
+methodological use requires a new outcome-free freeze plus the relevant data,
+overlap, feedback, dependence, and selection audits.
+
+Farina et al. and Alberge et al. are not relied upon as methodological support
+pending resolution or re-audit of the documented theorem-to-algorithm
+concerns below. The next material study is instead a prospective or externally
+validated design with a verified point-in-time snapshot, rejected applicants,
+exact event/censoring histories, competing-risk semantics, and discounted
+cash-flow inputs.
+
 ## Corpus inventory and provenance
 
-The inventory checksum for `Papers_tesis` is **120 PDFs and 4,636 pages**.
+The inventory checksum for `Papers_tesis` is **122 PDFs and 4,673 pages**.
 Derived manuscript PDFs are not included in this count.
 
 | Intake layer | PDFs | Pages | Composition |
 |---|---:|---:|---|
 | Existing corpus | 97 | 3,855 | 28 `paper`, 57 `supplement`, and 12 `tesis` objects |
-| Conformal frontier intake | 22 | 770 | Twenty-one papers on classwise, shift, selection, censoring, batch, competing-risk, and action-conditional inference; Gui et al. has a separate supplement |
+| Conformal frontier intake | 24 | 807 | Twenty-three papers on classwise, shift, selection, censoring, batch, empirical/sample-conditional coverage, competing-risk, and action-conditional inference; Gui et al. has a separate supplement |
 | Foundational learner intake | 1 | 11 | Prokhorenkova et al. (2018), the primary CatBoost paper |
-| Total | 120 | 4,636 | Complete local literature corpus |
+| Total | 122 | 4,673 | Complete local literature corpus |
 
 The existing 97-document corpus spans six connected literatures:
 
@@ -61,15 +94,19 @@ frontier intake was therefore targeted rather than indiscriminate: classwise
 coverage, temporal non-exchangeability, selection after conformalization,
 partially observed outcomes, and decision-dependent coverage.
 
-The book is outside `Papers_tesis` and is not included in the 120/4,636
+The book is outside `Papers_tesis` and is not included in the 122/4,673
 checksum:
 
-- source: `C:\Users\carlos\Downloads\Applied_Conformal_Prediction (3).pdf`;
+- source filename: `Applied_Conformal_Prediction (3).pdf` (supplied outside the
+  repository; the machine-local directory is intentionally not serialized);
 - extent: 168 pages;
 - SHA-256:
   `5340A494E689427264A8E67389F11AD332569A19E5CB0E9205198016DD9D506F`;
 - durable assessment:
   `docs/research/applied_conformal_prediction_book_audit_2026-07-21.md`.
+
+Including that external book, the completed review covers **123 documents and
+4,841 pages**.
 
 ## Extraction and quality-assurance method
 
@@ -161,6 +198,34 @@ adverse findings are paper defects rather than parser artifacts. This second
 intake is why p18/p19 are quarantined even though their abstract-level topics
 initially appeared to close important corpus gaps.
 
+### Finite-batch and sample-conditional prior-law intake
+
+Two additional born-digital primary papers (37 pages total) were read in full
+after the adversarial theory review identified a missing closest-work link.
+Marques (2025) proves the exact Beta--Binomial distribution of empirical
+finite-batch coverage under exchangeable tie-free scores. Its complementary
+miss-count parametrization is exactly the reference law used in CRPTO. Duchi
+(2025) establishes high-probability sample-conditional and approximate
+group-conditional guarantees under iid sampling and therefore marks an
+important boundary between marginal and exact feature-conditional coverage.
+
+Both objects were checked with local text extraction and page rendering. They
+are stored as:
+
+- `Papers_tesis/Marques 2025 - Universal Distribution of the Empirical Coverage in Split Conformal Prediction.pdf`
+  (6 pages; SHA-256
+  `3B864828F5C2A57CA07E9B6D044C66CF25DAD0EA1C1A8A6E91516DA29DEB799E`);
+- `Papers_tesis/Duchi 2025 - Sample-Conditional Coverage in Split-Conformal Prediction.pdf`
+  (31 pages; SHA-256
+  `727B1F7C39877AEBD4EA4F65ADBD5BC9B8A0720FBB126206E0CC202430F2FA8B`).
+
+This intake changes attribution, not the active statistic. The Beta--Binomial
+law is established prior art. CRPTO's incremental pieces are deterministic
+tie-safe upper-tail domination, worst-case completion of unresolved binary
+labels, and the explicit post-inspection multiplicity boundary. Duchi's iid
+contract does not support a new run or retroactive guarantee for the
+chronological archive.
+
 ### Foundational learner intake
 
 The audit also recovered the missing primary source for the portfolio learner:
@@ -193,7 +258,7 @@ should be cited instead.
 
 | Grade | Meaning | Frontier objects |
 |---|---|---|
-| A: cite and use for a stated boundary | Primary result is relevant and its assumptions can be stated without implying that CRPTO already implements the method | p01, p03, p04, p05, p07, p16, p20, p21 |
+| A: cite and use for a stated boundary | Primary result is relevant and its assumptions can be stated without implying that CRPTO already implements the method | p01, p03, p04, p05, p07, p16, p20, p21, p22, p23 |
 | B: retain for a predeclared future extension | Technically informative, but its estimand, data structure, or assumptions do not match the active design | p02, p06, p10, p11, p12, p13, p14, p17 |
 | C: do not use as methodological support | The supplied version contains a material internal inconsistency or empirical contradiction that prevents safe reliance | p08, p09, p15, p18, p19 |
 
@@ -562,8 +627,10 @@ separate competing-event contract.
 
 ### p18 — Farina, Tchetgen Tchetgen, and Kuchibhotla, *Doubly Robust and Efficient Calibration of Prediction Sets for Right-Censored Time-to-Event Outcomes*
 
-**Object.** Accepted Biometrika manuscript, arXiv:2501.04615v4 (2026), 48
-pages including its supplement. It proposes outcome-regression, IPCW, and
+**Object.** Biometrika advance article `asag036`, DOI
+`10.1093/biomet/asag036`, accepted June 1 and published June 11, 2026; the
+audited object is the 48-page accepted manuscript corresponding to
+arXiv:2501.04615v4, including its supplement. It proposes outcome-regression, IPCW, and
 augmented-IPCW calibration of lower time-to-event bounds under ordinary right
 censoring, rather than Type-I censoring.
 
@@ -670,6 +737,43 @@ stationarity model, and defensible beta-mixing bound, the paper supplies no
 numerical penalty for the current archive and no batch, missing-endpoint, or
 funded-set guarantee.
 
+### p22 — Marques, *Universal Distribution of the Empirical Coverage in Split Conformal Prediction*
+
+**Object.** *Statistics & Probability Letters* 219 (2025), article 110350, six
+pages. For calibration size $n$, target batch size $m$, and
+$r=\lceil(n+1)(1-\alpha)\rceil$, the paper proves that the number $K$ of covered
+targets under a shared split-conformal threshold satisfies
+$K\sim\operatorname{BetaBinomial}(m,r,n+1-r)$ under exchangeable, tie-free
+scores.
+
+**Technical assessment.** The result is mathematically sound and exactly
+matches CRPTO's distribution after the transformation $M=m-K$:
+$M\sim\operatorname{BetaBinomial}(m,n+1-r,r)$. The paper assumes regularity
+that excludes ties and observes a complete labeled target batch; it does not
+address unresolved binary outcomes or post-inspection multiplicity.
+
+**CRPTO decision.** **Cite adjacent to every use of the law and do not claim the
+law as novel.** Retain CRPTO's combined-rank derivation only to expose the
+parameter order and its extensions: deterministic tie-safe domination and the
+supremum tail area over unresolved-label completions.
+
+### p23 — Duchi, *Sample-Conditional Coverage in Split-Conformal Prediction*
+
+**Object.** NeurIPS 2025, volume 38, 31 pages. The paper studies coverage with
+high probability conditional on a random validation sample and develops
+approximate group-conditional guarantees under iid sampling.
+
+**Technical assessment.** This is a rigorous middle ground between ordinary
+marginal coverage and generally impossible exact feature-conditional coverage.
+Its probability statement and rates depend on an iid validation/future-sample
+law; they are not deterministic guarantees for an inspected chronological
+archive and do not address downstream LP selection.
+
+**CRPTO decision.** **Cite in Related Work as a boundary, not an implemented
+method.** The paper clarifies that stronger conditional targets are possible
+under stronger sampling contracts, but it neither repairs nor directly tests
+CRPTO's temporal transport setting.
+
 ## Book disposition
 
 The book's durable audit should be read together with this corpus record. Its
@@ -726,6 +830,7 @@ candidate to the same theorem-to-code and endpoint audit used here.
 
 | Manuscript surface | Add or retain | Do not infer |
 |---|---|---|
+| Related work and theory: finite-batch/sample-conditional coverage | Cite `marques2025universal` next to the Beta--Binomial law and `duchi2025sampleconditional` as an iid conditional-coverage boundary | Novelty of the law, a jointly valid label-vector set, or sample-conditional validity for this archive |
 | Related work: class-conditional coverage | Cite `ding2023`; distinguish direct CLASSWISE/Mondrian calibration from clustered many-class pooling | That resolved-label diagnostics are all-candidate class-conditional validity |
 | Related work: temporal shift | Cite `gibbs2024online`, `oliveira2024split`, and `barber2026timeseries` as distinct replacement frameworks | That any applies without online feedback, a defined stationary sequence, or a quantified dependence/drift penalty |
 | Related work: joint batch | Cite `gazin2025batch`; state that the combined-rank statistic constructs no vector-label prediction set | Joint batch coverage, funded-set coverage, or iid labels for the active monthly menus |
@@ -735,7 +840,7 @@ candidate to the same theorem-to-code and endpoint audit used here.
 | Identification and theory | Separate deterministic all-candidate completion bounds, the stronger joint-block rank reference, and deterministic design sensitivities | That either a sharp upper bound below 0.90 or the block diagnostic refutes the usual marginal split-conformal guarantee |
 | Results | Report finite-archive set geometry and label-Mondrian comparisons descriptively; report 31/40 cells as meeting locked nominal Bonferroni--Holm thresholds for the joint-block reference | Rejection/significance language, post-selection or study-wide FWER, causal source of drift, prospective guarantee, or universal learner winner |
 | Discussion/future work | Mention delayed-feedback ACI, quantified non-exchangeable penalties, JOMI/FCR selection, interval/censoring methods, and weighted shift as distinct protocols | That naming a method repairs the present archive |
-| References | Use the eleven verified primary records added or refreshed in this audit, including CatBoost, corrected Platt, the two credible survival papers, joint-batch CP, and dependent-sequence CP | Cite p08, p09, p15, p18, or p19 as methodological support |
+| References | Use the thirteen verified primary records added or refreshed in this audit, including CatBoost, corrected Platt, Marques, Duchi, the two credible survival papers, joint-batch CP, and dependent-sequence CP | Cite p08, p09, p15, p18, or p19 as methodological support |
 
 ## Bibliographic changes made by this audit
 
@@ -743,7 +848,7 @@ candidate to the same theorem-to-code and endpoint audit used here.
 `ding2023`; its URL was changed from the arXiv abstract to the official NeurIPS
 proceedings page. The incomplete `platt1999` record was corrected to
 `platt2000`, with the complete chapter title, editors, pages, publication year,
-and MIT Press source. Nine nonduplicative primary records were added:
+and MIT Press source. Eleven nonduplicative primary records were added:
 
 - `gibbs2024online` — JMLR 25(162), 1--36;
 - `oliveira2024split` — JMLR 25(225), 1--38;
@@ -752,11 +857,27 @@ and MIT Press source. Nine nonduplicative primary records were added:
 - `prokhorenkova2018catboost` — NeurIPS 31, official proceedings record;
 - `candes2023survival` — JRSS B 85(1), 24--45, DOI qkac004;
 - `gui2024adaptive` — Biometrika 111(2), 459--477, DOI asad076;
-- `gazin2025batch` — AISTATS 2025, PMLR 258:3250--3258; and
-- `barber2026timeseries` — ALT 2026, PMLR 313:1--24.
+- `gazin2025batch` — AISTATS 2025, PMLR 258:3250--3258;
+- `barber2026timeseries` — ALT 2026, PMLR 313:1--24;
+- `marques2025universal` — *Statistics & Probability Letters* 219, 110350,
+  DOI 10.1016/j.spl.2024.110350; and
+- `duchi2025sampleconditional` — NeurIPS 2025, volume 38, official proceedings
+  record.
 
 No bibliographic entry was added for a quarantined paper or for a future-work
 paper that the active manuscript does not need to cite.
+
+## 2026-07-26 decision-calibration last-mile addendum
+
+A subsequent primary-source search found two nonduplicative papers not present
+in the 122 local PDFs: Shekhar and Howard (arXiv:2606.10187v1, 29 pages) and
+Lützow et al. (arXiv:2605.12341v1, 23 pages). Both were read completely through
+the primary document interface and are now cited because they sharpen the
+decision-calibration and prediction-set-design boundary. Network policy blocked
+local PDF acquisition, so they have no local checksum and do not change the
+verified 122-PDF/4,673-page inventory. Their theorem-level audit and the exact
+novelty boundary are recorded in
+`conformal_decision_sota_lastmile_2026-07-26.md`.
 
 ## Frontier object checksum table
 
@@ -784,4 +905,6 @@ paper that the active manuscript does not need to cite.
 | p19 | 26 | `90e2daa0797817951c2687311be764420d1478dd` | Calibration with Competing Risks | C |
 | p20 | 31 | `52c8d676014a0f802b265cbe6f816139968ab02a` | Powerful Batch CP for Classification | A / boundary only |
 | p21 | 24 | `fd0fc641882dc84fbf823967de81bbffa062a02f` | Split CP under Temporal Dependence | A / boundary only |
+| p22 | 6 | `2bb76e01b179e57f34c9e5cf90f63f71a044f4c6` | Universal Distribution of Empirical Coverage | A / direct prior law |
+| p23 | 31 | `07f417738b88863ef4d980ff9778fab61d20dd3b` | Sample-Conditional Coverage in Split Conformal | A / boundary only |
 | f01 | 11 | `ee0a0f04d45f86bf50b24d7258e884725fcaa621` | CatBoost: Unbiased Boosting with Categorical Features | Foundational learner |

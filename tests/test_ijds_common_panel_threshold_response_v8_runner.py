@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import json
 from copy import deepcopy
 from pathlib import Path
 
@@ -16,6 +17,17 @@ from scripts.experiments.run_ijds_common_panel_threshold_response_v8 import (
 )
 
 ROOT = Path(__file__).resolve().parents[1]
+V8_MODEL_DIR = (
+    ROOT / "models/experiments/ijds_audit/ijds-common-panel-threshold-response-2026-07-26-v8"
+)
+V8_DATA_DIR = (
+    ROOT
+    / "data/processed/experiments/ijds_audit/ijds-common-panel-threshold-response-2026-07-26-v8"
+)
+V7_DATA_DIR = (
+    ROOT
+    / "data/processed/experiments/ijds_audit/ijds-common-panel-threshold-response-2026-07-26-v7"
+)
 
 
 def test_canonical_v8_config_is_complete_and_locked() -> None:
@@ -28,6 +40,43 @@ def test_canonical_v8_config_is_complete_and_locked() -> None:
     assert config["interpretation"]["v7_outputs_already_inspected"] is True
     assert config["interpretation"]["protected_raw_archive_read_only"] is True
     assert config["interpretation"]["sharpness_is_cellwise_not_joint"] is True
+
+
+def test_completed_v8_replay_is_clean_truthful_and_scientifically_identical_to_v7() -> None:
+    summary = json.loads(
+        (V8_MODEL_DIR / "common_panel_threshold_response_v8_summary.json").read_text(
+            encoding="utf-8"
+        )
+    )
+    receipt = json.loads((V8_MODEL_DIR / "execution_receipt.json").read_text(encoding="utf-8"))
+    expected_commit = "06a7d864776247fbb5128105deb229de4476be65"
+    expected_tag = "protocol/ijds-common-panel-threshold-response-2026-07-26-v8"
+    raw_descriptor = summary["source_artifacts"]["raw_archive"]
+
+    assert summary["status"] == "complete_clean_tagged_common_panel_threshold_response_v8"
+    assert receipt["status"] == "complete_clean_tagged_common_panel_threshold_response_v8_receipt"
+    assert summary["protocol_commit"] == receipt["protocol_commit"] == expected_commit
+    assert summary["protocol_tag"] == receipt["protocol_tag"] == expected_tag
+    assert (
+        summary["initial_git"]
+        == receipt["initial_git"]
+        == {
+            "commit": expected_commit,
+            "dirty": False,
+            "dirty_entries": 0,
+            "dirty_paths": [],
+        }
+    )
+    assert receipt["final_git"] == summary["initial_git"]
+    assert summary["protected_artifacts_read"] == [raw_descriptor]
+    assert receipt["protected_artifacts_read"] == [raw_descriptor]
+    assert summary["protected_artifacts_written"] == receipt["protected_artifacts_written"] == []
+
+    for filename in (
+        "adjacent_stratum_threshold_response.csv",
+        "adjacent_learner_threshold_response.csv",
+    ):
+        assert (V8_DATA_DIR / filename).read_bytes() == (V7_DATA_DIR / filename).read_bytes()
 
 
 @pytest.mark.parametrize(

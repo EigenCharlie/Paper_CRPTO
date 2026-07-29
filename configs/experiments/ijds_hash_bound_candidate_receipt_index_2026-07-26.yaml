@@ -1,0 +1,98 @@
+schema_version: "2026-07-26.1"
+status: "hash_bound_candidate_receipt_index_not_active_paper_evidence"
+paper_evidence_allowed: false
+protocol_commit_available_at_execution: false
+dvc_tracked: false
+base_git_commit: "087fab6ee586143940eb0efa6d512db628cdcd86"
+working_tree_dirty_at_execution: true
+scientific_uv_lock_sha256: "6c862cbad9ab7e3a07dd2823c775127403093d6ad59a789ee227d827165e4733"
+local_artifact_policy: >-
+  The descriptors below identify locally retained, gitignored candidate outputs.
+  They are neither Git nor DVC publication artifacts. This tracked index preserves
+  their execution hashes without making a clean clone depend on those local files.
+  A recorded hash does not imply artifact availability or replay reproducibility
+  in a clean clone and does not confer active-paper promotion.
+
+runs:
+  binary_phase_geometry_v6:
+    run_tag: "ijds-binary-phase-geometry-2026-07-26-v6"
+    started_at_utc: "2026-07-26T08:48:18.406820+00:00"
+    completed_at_utc: "2026-07-26T08:48:19.686509+00:00"
+    protocol:
+      path: "docs/research/ijds_binary_phase_geometry_v6_protocol_2026-07-26.md"
+      bytes: 6066
+      sha256: "64051f184ab77a7fa429d21a01740f1c8b028f37cc0b751f53a3f59db8e1b552"
+    execution_implementation:
+      config:
+        path: "configs/experiments/ijds_binary_phase_geometry_2026-07-26_v6.yaml"
+        bytes: 2670
+        sha256: "710a2421a7e7dcf93487260b825443f740cbc8ba62b73926f4c2194a3c941fff"
+      runner:
+        path: "scripts/experiments/run_ijds_binary_phase_geometry_v6.py"
+        bytes: 10626
+        sha256: "b2c7a0a693a5ab87f15307c67324527a24c7e623d24631b5741ec7be801595df"
+      module:
+        path: "src/ijds_audit/binary_phase_geometry.py"
+        bytes: 43727
+        sha256: "1d6c9ecf6356c687c39992060def4ad98431ad69fc767d91b41d80e26c96cf9a"
+    local_summary:
+      path: "models/experiments/ijds_audit/ijds-binary-phase-geometry-2026-07-26-v6/binary_phase_geometry_v6_summary.json"
+      bytes: 11629
+      sha256: "3f61bd3dc807635b2426d9e1dc5021fb66167fc5c9ff6c1642ce3a1c9f63f19f"
+    local_receipt:
+      path: "models/experiments/ijds_audit/ijds-binary-phase-geometry-2026-07-26-v6/execution_receipt.json"
+      bytes: 12599
+      sha256: "73a34a52d1f71f1267b2e451ea5271573622bd0df51ab03dd3f48b60b27b9a13"
+    local_artifacts:
+      stratum_phase_margins:
+        path: "data/processed/experiments/ijds_audit/ijds-binary-phase-geometry-2026-07-26-v6/stratum_phase_margins.csv"
+        bytes: 48646
+        sha256: "726119da4cf7b9b1857066fccfe0fb318e0207324c346f25b4a9ea8ce37dbfda"
+
+  postfreeze_derived_diagnostics_v1:
+    run_tag: "ijds-postfreeze-derived-diagnostics-2026-07-26-v1"
+    started_at_utc: "2026-07-26T08:49:05.950686+00:00"
+    completed_at_utc: "2026-07-26T08:49:06.812894+00:00"
+    protocol:
+      path: "docs/research/ijds_postfreeze_derived_diagnostics_v1_protocol_2026-07-26.md"
+      bytes: 5043
+      sha256: "9de572399ee9603cd07dae3a730c66398948c3972bbfc5275cc9ddd6dbcf7083"
+    execution_implementation:
+      config:
+        path: "configs/experiments/ijds_postfreeze_derived_diagnostics_2026-07-26_v1.yaml"
+        bytes: 4505
+        sha256: "41909d6588cf03a9db0a141c6145908e287a14255e2a4186157c7f811c7a286d"
+      runner:
+        path: "scripts/experiments/run_ijds_postfreeze_derived_diagnostics_v1.py"
+        bytes: 14991
+        sha256: "7a3b545186c6b94215c01ab662b76a053850791c5451d526d28169f3d06e417e"
+      module:
+        path: "src/ijds_audit/postfreeze_derived_diagnostics.py"
+        bytes: 13015
+        sha256: "c7e4451dfb6ae001831c6a32520af43f14f9dd7d939a04c1ff4be49359737ded"
+    local_summary:
+      path: "models/experiments/ijds_audit/ijds-postfreeze-derived-diagnostics-2026-07-26-v1/postfreeze_derived_diagnostics_summary.json"
+      bytes: 13199
+      sha256: "00ec67641bf3adad0e359c5567e36e9baf4a2fd272e6fd7ef3fa9f0fda57b387"
+    local_receipt:
+      path: "models/experiments/ijds_audit/ijds-postfreeze-derived-diagnostics-2026-07-26-v1/execution_receipt.json"
+      bytes: 14416
+      sha256: "288ff00dccb29bad8dac4ae90cb006cf3389319d729eba3e601ff2d7a35f419e"
+    local_artifacts:
+      all_candidate_calibration_bias:
+        path: "data/processed/experiments/ijds_audit/ijds-postfreeze-derived-diagnostics-2026-07-26-v1/all_candidate_calibration_bias.csv"
+        bytes: 914
+        sha256: "b5b5ef1f2f52c2ccd3ce3d796ae5a22b73c93b161e8b6955ee4ab5a6aadc063b"
+      resolved_coverage_breakeven:
+        path: "data/processed/experiments/ijds_audit/ijds-postfreeze-derived-diagnostics-2026-07-26-v1/resolved_coverage_breakeven.csv"
+        bytes: 7363
+        sha256: "2249c09ec5e7a2408747deea868cf86a225c98d63bff4c42ea2154853190a890"
+      minimum_reference_stratum_effect:
+        path: "data/processed/experiments/ijds_audit/ijds-postfreeze-derived-diagnostics-2026-07-26-v1/minimum_reference_stratum_effect.csv"
+        bytes: 5150
+        sha256: "882d5c29e7ec0ccb27b5caa28819189254a841b77ffe2da2ac5e113dd6b0ad2a"
+
+promotion_boundary: >-
+  A clean tagged promotion requires new run tags, new immutable output paths,
+  and fresh replays after the protocol/configuration/code surface is committed
+  and tagged. No protocol commit or active-paper status is asserted here.

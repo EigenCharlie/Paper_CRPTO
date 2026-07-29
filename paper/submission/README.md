@@ -24,9 +24,10 @@ no winner. Evaluation-endpoint lags 0, 3, 6, 8, and 12 are reported without
 selection; conformal-fit label timing is a separate sensitivity. An
 observed-only fit and three declared stress rules vary the 215 labels that were
 unavailable at their fitting cutoffs, without claiming sharp bounds over all
-possible assignments. A USD 25 floor-with-residual-cash diagnostic checks the
-numerical adequacy of the continuous allocation without claiming integer
-optimality.
+possible assignments. A USD 25 floor-with-residual-cash diagnostic shows that
+the declared transformation negligibly perturbs evaluated rates; it does not
+establish adequacy or optimality of the continuous relaxation or integer-policy
+behavior.
 
 All 40 sharp six-month coverage upper endpoints are below 0.90 as a
 finite-archive descriptive result. Separately, 31/40 learner-window cells in an
@@ -37,7 +38,7 @@ one-future-point marginal guarantee; prior inspection precludes a
 post-selection or study-wide FWER claim. The individual-age sensitivity
 reports all 16 CatBoost origin-window cells at 39 months after each candidate's
 issue-month end; that matches whole-month administrative age, not exact day-level
-exact age.
+age.
 The label-Mondrian sensitivity reports all 40/200/400 cells: 27/40 marginal
 and 109/400 category upper endpoints remain below 0.90. None of these results
 selects a model or method, rejects the marginal split-conformal guarantee,
@@ -49,13 +50,27 @@ fairness claim.
 - IJDS-template PDF;
 - at most 25 pages excluding references and appendices;
 - separate online supplement;
+- separate anonymous machine-readable supplement for full stratum tables;
 - double-anonymous review;
 - abstract no longer than 300 words;
 - 1--10 keywords; and
 - data/code disclosure at submission.
 
-Recheck the official guidelines during submission week. Current links are in
+The repository-content license and the journal copyright route must also be
+resolved with INFORMS before certifying transfer; the existing CC BY 4.0 grant
+cannot be treated as undone by deleting a file. Recheck the official guidelines during submission week. Current links are in
 `configs/crpto_publication_targets.yaml`.
+
+## Upload whitelist
+
+Do not archive or upload this directory wholesale. Reviewer-facing uploads are
+limited to `CRPTO_ijds_submission.pdf`, `../supplement_ijds.pdf`, and
+`CRPTO_ijds_machine_readable_supplement.zip`. Upload the title page, cover/AI
+disclosure, and data/code form only in their designated non-reviewer fields.
+Provide `EDITOR_ONLY_REPRODUCIBILITY_CROSSWALK.md` only to the editor when
+requested. Never upload LaTeX working files such as `.fls`, `.aux`, `.log`,
+`.blg`, `.bbl`, or `*.latexmk.txt`: they can contain local paths or internal
+provenance.
 
 ## Build
 
@@ -64,57 +79,70 @@ just submission-build
 just submission-check
 ```
 
+On a Windows host where TinyTeX under `AppData` fails with `Can't get long
+name`, compile the already generated official TeX with:
+
+```powershell
+just paper-official-windows
+```
+
+That non-freeze target uses `scripts/compile_ijds_submission_windows.ps1` to
+mount the existing TinyTeX root behind a temporary drive alias, invoke the
+bundled Perl and `latexmk.pl` until references and pagination converge, scan
+the final log and BibTeX outputs, and restore the process path, location, and
+drive mapping in a `finally` block. It neither installs packages nor copies the
+TinyTeX tree. Use `-TexFile`, `-TinyTexRoot`, and `-OutputDirectory` when
+calling the script directly; `-PlanOnly` prints the exact command and cleanup
+plan without mounting or compiling.
+
 The first command writes active evidence and document outputs in causal order;
-the second verifies them without replaying scientific evidence.
+the second verifies them without replaying scientific evidence and does not
+enforce a page cap during the active scientific-editing phase. Page reduction
+is intentionally deferred. Only when the manuscript enters an explicit final
+freeze should `just submission-freeze-check` activate the journal page gate.
 `build_ijds_submission_tex.py --check` rejects stale generated TeX.
-`informs_style_assets.json` pins the local publisher kit. The compiler attempts
-`latexmk`; when the Windows TinyTeX wrapper is unavailable it runs:
+`informs_style_assets.json` pins the local publisher kit. The generic Python
+compiler attempts `latexmk`; when it is unavailable it retains the bounded
+manual fallback:
 
 ```text
 pdflatex -> bibtex -> pdflatex -> pdflatex
 ```
 
-The first `pdflatex` creates `.aux`, BibTeX creates `.bbl`, the second LaTeX
-pass resolves citations and cross-references, and the final pass stabilizes
-labels, floats, and pagination.
+The first `pdflatex` creates `.aux`, BibTeX creates `.bbl`, and the remaining
+passes resolve citations, labels, floats, and pagination. Its post-build scan
+fails closed if another pass is still requested. On the affected Windows host,
+prefer `paper-official-windows`: `latexmk.pl` repeats the dependency graph to a
+fixed point instead of assuming that a bounded pass count is sufficient.
 
 `just paper-pdf-audit` then verifies the three generated reviewer PDFs: Letter
-page size, no blank pages, no identity or artifact fingerprints, a one-paragraph
-abstract of at most 300 words, and no more than 25 official pages before the
-References heading. Visual inspection remains required for clipping, overlap,
-and table or figure legibility.
+page size, no blank pages, no identity or artifact fingerprints, and a
+one-paragraph abstract of at most 300 words. It deliberately does not constrain
+pages during development. Visual inspection remains required for clipping,
+overlap, and table or figure legibility.
 
 ## QA Record
 
-The pre-freeze closeout on 2026-07-20 produced the following historical
-baseline. The 2026-07-21 scientific revision supersedes it; every page and word
-count below must be refreshed by a new full build and visual inspection before
-submission:
-
-- official PDF pages: `29`;
-- pre-reference pages: `25` (references begin on page 26);
-- body preview pages: `21`;
-- supplement preview pages: `31`;
-- abstract words: `267`;
-- `.blg` warnings: `0`;
-- undefined citations/references: `0`;
-- page-level visual inspection: `81/81` pages across the official, body, and
-  supplement PDFs; transient page renders were discarded after inspection;
-- automated PDF inspection: one Letter page size per document, no blank page,
-  no reviewer identity or artifact fingerprint in text or metadata, and the
-  IJDS page and abstract limits satisfied.
+The 2026-07-22 counts belong to a superseded release candidate. Current QMD,
+generated TeX, PDFs, tables, and machine-readable supplement must be rebuilt and
+audited together before any page count or visual-inspection total is reported.
+During pre-freeze work, no page limit is evaluated, so scientifically useful
+material is not removed to satisfy formatting. A later explicit final freeze
+must run `just submission-freeze-check`, record the new
+page/abstract/build counts, and visually inspect every regenerated reviewer page.
 
 ## Acceptance Criteria
 
 - the evidence source registry and manifest verify by hash;
 - generated TeX is current with QMD;
 - `.blg` has no warnings and `.log` has no undefined citations or labels;
-- the pre-reference body is within the IJDS limit;
+- the pre-reference body is within the IJDS limit at final freeze (deferred during
+  active scientific editing);
 - all tables and figures are legible and inside margins;
 - reviewer files contain no identity, local path, commit, tag, or hash;
 - the abstract stays below 300 words;
 - no retired endpoint or favorable `.25` claim returns; and
-- the package contains exactly 51 registered DVC pointers and 27 paper-facing
+- the package contains exactly 53 registered DVC pointers and 29 paper-facing
   CSV tables, with unequal-follow-up roots labeled only as replay provenance;
 - scientific, drift, publication, compilation, and visual gates pass.
 

@@ -25,14 +25,45 @@ not active evidence.
 17. `docs/research/ijds_label_mondrian_sensitivity_protocol_2026-07-21.md`
 18. `docs/research/ijds_policy_support_optimal_face_v2_protocol_2026-07-21.md`
 19. `docs/research/ijds_policy_support_rhs_semantics_recovery_v3a_protocol_2026-07-21.md`
+19a. `docs/research/ijds_exact_binary_conformal_theory_2026-07-24.md`
+19b. `docs/research/ijds_binary_phase_geometry_v5_protocol_2026-07-24.md`
+19c. `docs/research/ijds_external_phase_replication_v1_quarantine_2026-07-26.md`
+19c1. `docs/research/ijds_common_panel_threshold_response_v8_protocol_2026-07-26.md`
+19c2. `docs/research/ijds_marginal_mean_score_outcome_gap_v3_protocol_2026-07-26.md`
+19d. `docs/research/ijds_raw_data_acquisition_provenance_2026-07-21.md`
+19e. `docs/research/ijds_submission_rights_anonymity_audit_2026-07-21.md`
 20. `configs/ijds_active_evidence_sources.yaml`
 21. `configs/ijds_claim_ledger.yaml`
 22. `reports/crpto/ijds_binary_geometry_frontier_v4_evidence.json`
 23. `.codex/skills/crpto/SKILL.md`
 
+The active claim registry and exact-theory note have theory
+precedence over a conflicting skill summary: there is no universal continuity,
+common-maxima unit-crossing, guaranteed low score bin, or `l>0`-only
+miscoverage-floor claim. Coverage change between two thresholds is exactly the
+target mass in the crossed score bands; calibration support alone supplies no
+coverage-continuity bound.
+
+The V6 geometry and post-freeze diagnostic replays dated 2026-07-26 remain
+non-active candidates. They were not run from a precommitted tag, and the V6
+implementation includes an undeclared selected CatBoost-stratum path. Do not
+use their S6I, S2B, breakeven, ranking, or selected-magnitude outputs as active
+evidence without a new protocol and clean tagged replay.
+
+The marginal mean-score--outcome-gap V2 arithmetic is also quarantine
+provenance: its executed runtime and row-identity/artifact-transport contract do
+not satisfy the current gate. No marginal claim or Table S2B is active unless a
+fresh V3 protocol and exact direct-child artifact replay both pass and are
+promoted.
+
 The claim registry is the editorial authority. The source registry owns exact
-lineage identities, artifact descriptors, and 51 DVC pointers. The V4 evidence
+lineage identities, artifact descriptors, and 53 DVC pointers. The V4 evidence
 JSON is the only numeric paper-facing manifest.
+
+The audited Calibre runtime uses `sys.flags.optimize == 2`, so it removes
+Python `assert` statements. Every runtime, scientific, provenance, and
+publication guard in `src/**` or `scripts/**` must raise an explicit
+exception; `assert` is test syntax only.
 
 ## Active Scientific Object
 
@@ -61,7 +92,9 @@ JSON is the only numeric paper-facing manifest.
 - The complete label-Mondrian sensitivity reports 400 label-stratum
   categories. It reduces but does not eliminate finite-archive shortfalls and
   expands two-label sets; it is not restored conditional validity.
-- All 216 broad-support comparator envelopes cross zero.
+- All 216 endpoint envelopes over the finite registered cap values spanning
+  `[0.05, 0.12]` include zero; this finite census does not compute
+  continuous-support extrema.
 - All 32 overall cells across four declared fit-label scenarios remain
   below 0.90, but the W7--W8 geometry change is not scenario-invariant.
 - USD 25 floor rounding is numerically negligible in the declared archive; it

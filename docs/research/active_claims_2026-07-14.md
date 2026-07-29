@@ -1,4 +1,4 @@
-# CRPTO Active IJDS Claim Registry - 2026-07-21
+# CRPTO Active IJDS Claim Registry - 2026-07-26
 
 This is the sole claim registry for the active IJDS manuscript. Numerical
 statements must be traceable to
@@ -25,6 +25,11 @@ pre-endpoint-correction evaluations are provenance only.
   policy winner.
 - No OOT outcome selects a learner, window, taxonomy, gamma, ruler, coordinate,
   cap, comparator, or policy.
+- The V2 marginal mean-score--outcome-gap arithmetic is quarantine provenance,
+  not active evidence: its executed runtime and row-identity/transport contract
+  do not satisfy the current gate. No marginal-gap claim or Table S2B is active
+  unless a fresh V3 protocol and exact direct-child artifact replay are both
+  verified and promoted.
 
 ## Active Lineages
 
@@ -183,6 +188,46 @@ pre-endpoint-correction evaluations are provenance only.
   interpreted through
   `ijds_exchangeability_transport_test_interpretive_addendum_2026-07-21.md`.
 
+### Common-panel adjacent-threshold response
+
+- Complete clean-tagged run:
+  `ijds-common-panel-threshold-response-2026-07-26-v8`, tag
+  `protocol/ijds-common-panel-threshold-response-2026-07-26-v8`, commit
+  `06a7d864776247fbb5128105deb229de4476be65`. V8 supersedes V7 as the
+  active lineage because it truthfully records the read-only access to the
+  manifest-protected raw archive; its two scientific CSVs are byte-identical
+  to V7. Artifact tag
+  `artifacts/ijds-common-panel-threshold-response-2026-07-26-v8` resolves to
+  direct child `526a71bd0a0a7663a313dc12b0ce0eb3307719d9`; its exact diff is the
+  two CSVs, summary, and execution receipt, all Git-transported and hash-bound
+  by the active source registry.
+- The run reports all 175 learner--stratum adjacent-window contrasts and all 35
+  learner-level aggregates on the same 376,890 target loans. It recomputes all
+  200 thresholds from 909,665 calibration row-instances across overlapping
+  learner--window cells, verifies the exact signed crossed-band integer identity,
+  and sums stratum numerators before division.
+- For each unresolved loan the two attainable contributions are evaluated once
+  and shared across both thresholds. The resulting all-candidate response
+  interval is sharp over unrestricted loan-wise binary completions; it is not
+  the difference of separately extremized coverage intervals.
+- Across the 175 stratum contrasts, 122 sharp response intervals are negative,
+  48 positive, and 5 are exactly $[0,0]$; none strictly straddles or merely
+  touches zero. Since fixed-target coverage is monotone in the stratum
+  threshold, that sign census is a consistency check; the informative outputs
+  are crossed class mass, magnitude, and sharp width. Across the 35
+  learner-transition aggregates, where strata can move in different directions,
+  31 are negative and 4 positive; none contains zero. These are complete
+  deterministic finite-archive descriptions, not temporal-validity tests,
+  slopes, rankings, or independent replications.
+- In the previously disclosed CatBoost S3 (the third score stratum; internal
+  zero-based group 2) W7--W8 illustration, the fitted threshold falls from 0.888435 to
+  0.111801. On the same 76,495 resolved loans, coverage changes by
+  `-281/76,495 = -0.00367344`; over all 79,047 loans the sharp shared-completion
+  response is `[-312,-290]/79,047 = [-0.00394702,-0.00366870]`. The pair was
+  inspected before V7/V8 and is neither a winner, an extreme, nor an inferential
+  test. These sharp endpoints are cellwise; no joint attainability claim is
+  made across the overlapping 175-cell family.
+
 ### Label-Mondrian sensitivity
 
 - Outcome-free threshold freeze:
@@ -214,7 +259,7 @@ pre-endpoint-correction evaluations are provenance only.
   unavailable at their fitting cutoffs. Evaluation outcomes remain isolated
   until the score-and-recipe freeze.
 - All 32 overall scenario-window coverage upper bounds remain below 0.90. The
-  W7--W8 stratum-2 crossing remains in three scenarios but disappears when all
+  W7--W8 CatBoost S3 crossing remains in three scenarios but disappears when all
   unavailable labels are completed as default. These are nonlinear stress
   scenarios, not sharp bounds over all label assignments.
 
@@ -292,7 +337,10 @@ pre-endpoint-correction evaluations are provenance only.
 
 ## Active Exact Statements
 
-<!-- claim:geometry.prevalence_sensitive_mechanism -->
+<!-- claim:geometry.binary_threshold_phase_characterization -->
+<!-- claim:theory.coverage_band_identity -->
+<!-- claim:theory.outcome_free_binary_set_bounds -->
+<!-- claim:theory.binary_set_embedding_nonidentification -->
 <!-- claim:theory.sharp_common_outcome_bounds -->
 <!-- claim:theory.basis_endpoint_sufficiency -->
 
@@ -300,10 +348,39 @@ pre-endpoint-correction evaluations are provenance only.
    normalized coordinates preserve positive-affine units; same-cap nesting and
    C2 funded-moment matching mechanically order only the plug-in objective.
    None of these facts orders status-indexed payoff, default, or miscoverage.
-2. **Binary threshold geometry.** For fixed `0 <= p < 1/2`, the population
-   residual quantile changes from `p` to `1-p` when prevalence crosses alpha,
-   while miscoverage is exactly `1{Y=0,l>0} + 1{Y=1,u<1}`. Varying empirical
-   scores make this a mechanism rather than a finite-sample explanation.
+2. **Binary threshold geometry.** The calibration residuals of a stratum are the
+   multiset sum of the two mirror samples `{{p_i : Y_i=0}}` and
+   `{{1-p_i : Y_i=1}}`, so the fitted threshold is exactly the `k`-th order
+   statistic of that union whenever `p_i` lies in `[0,1]` and `k <= n`. With
+   `A = #{Y_i=0, p_i<1/2}` and `B = #{Y_i=1, p_i>1/2}`, `c < 1/2` if and only if
+   `A + B >= k`, and `n - k = floor(alpha*(n+1)) - 1` exactly. Under the
+   calibration condition `max_i p_i < 1/2` this reduces to the phase margin
+   `m = D - (n-k)` being nonpositive. The weaker no-interleaving condition
+   `max_{Y=0} p + max_{Y=1} p < 1` fixes only which mirror sample supplies the
+   threshold and does not place it below one half. Target-side statements need
+   their own support condition, because neither calibration condition constrains
+   target scores. Miscoverage remains exactly `1{Y=0,l>0} + 1{Y=1,u<1}`.
+2a. **Coverage response depends on crossed target mass.** For any fixed target
+   distribution and `0 <= c_L < c_H <= 1`,
+   `Cov(c_H)-Cov(c_L) = P(Y=0,c_L<p<=c_H) +
+   P(Y=1,1-c_H<=p<1-c_L)`. The identity is exact and nonnegative. It says that
+   the change depends on target probability mass in the two crossed score
+   bands, not on threshold distance alone; it does not imply continuity or
+   preclude an order-one coverage change.
+2b. **Sharp outcome-free fixed-allocation bounds.** For a fixed nonnegative
+   allocation normalized by positive total funded exposure, exposure in empty
+   binary sets is the sharp lower bound on miscoverage over unrestricted binary
+   outcomes; all exposure except that in full `{0,1}` sets is the sharp upper
+   bound. A positive lower endpoint alone is not an outcome-free miss, and
+   exposure with `u=1` is only total-capital-normalized mass capable of covering
+   `Y=1`, not conditional positive-class coverage.
+2c. **Binary-set coverage does not identify the continuous LP endpoint.** For
+   `0<=l<=u<=1`, the induced set identifies whether `l=0` and whether `u=1`,
+   but when label one is absent it identifies only `u<1`. In the active
+   embedding, replacing `u` by `(1-theta)u+theta*p` on those loans and retaining
+   `u=1` otherwise preserves every binary set and coverage event for
+   `0<=theta<=1`, while it can change the LP coefficient. The theorem neither
+   selects an embedding nor proves an allocation change.
 3. **Sharp common-outcome identification.** Candidate and fixed-allocation
    bounds use binary loan-wise extrema; paired-policy bounds assign each
    unresolved endpoint once over the funded union.
@@ -316,13 +393,13 @@ pre-endpoint-correction evaluations are provenance only.
    missingness model. Rate metrics use declared capital normalizers; the
    floor-with-cash diagnostic retains committed capital rather than
    renormalizing away residual cash.
-4. **Conditional within-basis endpoint lemma.** On each fixed optimal LP basis,
-   allocations are affine in the cap and sharp endpoints are concave/convex,
-   so that basis range's endpoints suffice for its adverse extrema. Exactness
-   over a continuous interval additionally requires a certified exhaustive
-   partition into all relevant optimal-basis ranges. The active empirical
-   lineage audits registered support and solver-reported endpoints, not such an
-   exhaustive continuous path.
+4. **Conditional within-basis endpoint lemma.** If the optimal allocation is
+   unique and a fixed optimal basis remains valid on a cap range, allocations
+   are affine in the cap and sharp endpoints are concave/convex, so that range's
+   endpoints suffice for its adverse extrema. Exactness over a continuous
+   interval additionally requires uniqueness throughout and a certified
+   exhaustive partition into all relevant optimal-basis ranges. The active
+   empirical lineage establishes neither condition.
 
 ## Coverage and Geometry Evidence
 
@@ -330,6 +407,7 @@ pre-endpoint-correction evaluations are provenance only.
 <!-- claim:coverage.closed_taxonomies_primary_below_nominal -->
 <!-- claim:coverage.censored_extension_mixed_stress -->
 <!-- claim:coverage.joint_block_rank_reference_nominal_flags -->
+<!-- claim:coverage.common_panel_adjacent_response -->
 <!-- claim:coverage.resolved_label_diagnostic_descriptive -->
 <!-- claim:sensitivity.label_mondrian_complete_mixed -->
 <!-- claim:sensitivity.label_mondrian_common_completion_gap -->
@@ -413,9 +491,21 @@ coverage upper bounds are below 0.90 for every model:
   coverage upper bounds is below 0.90; scenario maxima range from 0.882594 to
   0.884669. The four scenarios are declared stresses, not a sharp nonlinear
   identification region.
-- In CatBoost stratum 2, prevalence changes from 0.101703 in W7 to 0.097147 in
-  W8; the fitted residual quantile changes from 0.888435 to 0.111801 and mean
-  OOT width from 0.984263 to 0.207631.
+- In CatBoost S3, the exact finite coordinate changes from
+  `n=5,929, D=603, k=5,337, n-k=592, m=+11` in W7 to
+  `n=6,238, D=606, k=5,616, n-k=622, m=-16` in W8. The corresponding boundary
+  rates are 0.099848 and 0.099711. Prevalence changes from 0.101703 to 0.097147,
+  the fitted residual quantile from 0.888435 to 0.111801, and mean OOT width
+  from 0.984263 to 0.207631. The nominal 0.10 crossing is descriptive shorthand;
+  the phase margins are the exact block-specific coordinates.
+- The complete common-panel response resolves the earlier denominator
+  ambiguity. For that same fixed target stratum, resolved coverage changes by
+  -0.003673 and the all-candidate sharp shared-completion response is
+  [-0.003947,-0.003669]. Across the complete five-learner adjacent grid, all 35
+  learner-level response intervals exclude zero (31 negative, 4 positive).
+  This is descriptive temporal response on one frozen panel, not evidence that
+  threshold distance controls coverage, a continuity statement, or a temporal
+  validity guarantee.
 - The W7--W8 threshold crossing persists for the retrospectively
   protocol-locked 0-, 3-, and 6-month fit-label lags, each retaining more than 99% in every
   fitting month. It disappears at 8 and 12 months, which fail the locked
@@ -424,7 +514,7 @@ coverage upper bounds are below 0.90 for every model:
   hindsight-terminal completion scenarios. It disappears under all-default:
   W7/W8 prevalence is 0.105974/0.100287 and both quantiles remain near 0.889.
   The observed phase path is therefore not scenario-invariant.
-- W8 stratum-2 coverage remains bounded by [0.822536, 0.854707]. Narrower
+- W8 CatBoost S3 coverage remains bounded by [0.822536, 0.854707]. Narrower
   intervals do not restore transport.
 
 ## Decision and Comparator Evidence
@@ -432,7 +522,7 @@ coverage upper bounds are below 0.90 for every model:
 <!-- claim:timing.endpoint_six_month_reconciles_active -->
 <!-- claim:timing.fit_and_endpoint_lags_not_factorial -->
 <!-- claim:decision.no_selected_policy -->
-<!-- claim:comparator.broad_support_all_cross_zero -->
+<!-- claim:comparator.registered_cap_values_all_include_zero -->
 <!-- claim:sensitivity.structure_no_universal_direction -->
 <!-- claim:optimization.allocation_granularity_is_diagnostic -->
 
@@ -441,7 +531,7 @@ the common plug-in objective floor fixed; the normalized-score ruler holds a
 positive-affine-invariant relative score relaxation fixed but does not equalize
 opportunity cost.
 
-| Ruler / coordinate | Payoff hull (USD) | Default hull (pp) | Miscoverage hull (pp) |
+| Ruler / coordinate | Payoff endpoint envelope (USD) | Default endpoint envelope (pp) | Miscoverage endpoint envelope (pp) |
 |---|---:|---:|---:|
 | Objective matched .25 | [-9,134.34, 5,603.66] | [-0.0068, 0.1265] | [-0.0068, 0.1265] |
 | Objective matched .50 | [-82,616.17, -27,958.37] | [0.4572, 1.0973] | [1.0154, 1.9321] |
@@ -472,12 +562,14 @@ The complete endpoint-availability sensitivity is:
   six-month contract and lags 0, 3, and 8, but not universally over all tested
   endpoint lags.
 - After removing the lag column, the six-month row is value-identical to the
-  active evaluation for 120 coverage cells, 48 two-ruler contrasts, and 648 registered-support
-  envelopes.
+  active evaluation for 120 coverage cells, 48 two-ruler contrasts, and 648
+  finite registered-cap endpoint envelopes.
 - No opposite one-sided decision direction appears at 12 months. Payoff and
   default each move one cell from adverse to crossing zero; miscoverage is
   unchanged.
-- Broad stress places zero in all 216 registered-support envelopes at every endpoint lag.
+- The endpoint envelope over the finite registered cap values spanning
+  `[0.05,0.12]` includes zero in all 216 cells at every endpoint lag; no
+  continuous-support extrema are computed.
   Development-support payoff is 6 lower/66 crossing at lags 0, 3, 6, and 8 and 72
   crossing at lag 12; default is 72 crossing at every lag; miscoverage changes
   from 27 higher/45 crossing at lags 0, 3, 6, and 8 to 26/46 at lag 12.
@@ -521,7 +613,9 @@ The complete endpoint-availability sensitivity is:
 - Across all 48 cells, payoff is lower in 32 and crosses zero in 16; default is
   higher in 33 and crosses zero in 15; miscoverage is higher in 40 and crosses
   zero in 8. No opposite one-sided direction survives.
-- Broad stress `[0.05,0.12]` places zero in all 216 registered-support envelopes.
+- The endpoint envelope over the finite registered cap values spanning
+  `[0.05,0.12]` includes zero in all 216 cells; these witnesses do not compute
+  continuous-support extrema.
 - Over development-admissible support, terminal default crosses zero in 72/72
   cells, payoff is lower in 6 and crosses in 66, and miscoverage is higher in
   27 and crosses in 45. All 27 W8 envelopes cross zero.

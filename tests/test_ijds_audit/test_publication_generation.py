@@ -9,6 +9,13 @@ import pandas as pd
 import pytest
 
 from scripts.build_ijds_binary_geometry_frontier_v4_evidence import (
+    CREDIT_LEARNER_ORDER,
+    FIGURE_STEMS,
+    TABLE_TARGETS,
+    _common_panel_threshold_response_census_figure,
+    _common_panel_threshold_response_figure,
+    _phase_transition_publication_table,
+    _prepare_common_panel_figure_data,
     _require_coverage_aggregate_reconciliation,
     _require_coverage_contract,
 )
@@ -22,6 +29,156 @@ from src.ijds_audit.publication_generation import (
 )
 
 REPO = Path(__file__).resolve().parents[2]
+
+
+def _synthetic_common_panel_census() -> pd.DataFrame:
+    rows: list[dict[str, object]] = []
+    for learner_index, learner in enumerate(CREDIT_LEARNER_ORDER):
+        for group in range(5):
+            for pair_index in range(7):
+                exact_zero = group == 0 and pair_index == 0
+                positive = (learner_index + group + pair_index) % 2 == 0
+                threshold_delta = (0.0001 if positive else -0.001) * (pair_index + 1)
+                if exact_zero:
+                    threshold_delta = 0.0
+                    resolved_delta_rate = 0.0
+                    delta_lower = 0.0
+                    delta_upper = 0.0
+                elif positive:
+                    resolved_delta_rate = 0.001
+                    delta_lower = 0.0008
+                    delta_upper = 0.0012
+                else:
+                    resolved_delta_rate = -0.001
+                    delta_lower = -0.0012
+                    delta_upper = -0.0008
+                rows.append(
+                    {
+                        "learner": learner,
+                        "pair_index": pair_index,
+                        "conformal_group": group,
+                        "candidate_rows": 100,
+                        "resolved_rows": 90,
+                        "unresolved_rows": 10,
+                        "threshold_delta": threshold_delta,
+                        "resolved_delta_rate": resolved_delta_rate,
+                        "delta_lower": delta_lower,
+                        "delta_upper": delta_upper,
+                        "delta_width": delta_upper - delta_lower,
+                    }
+                )
+    return pd.DataFrame(rows)
+
+
+def test_common_panel_figures_share_one_fail_closed_175_cell_contract(tmp_path: Path) -> None:
+    census = _synthetic_common_panel_census()
+    prepared = _prepare_common_panel_figure_data(census)
+
+    assert prepared.threshold.shape == (25, 7)
+    assert prepared.resolved_pp.shape == (25, 7)
+    assert prepared.sharp_width_pp.shape == (25, 7)
+    assert len(prepared.exact_zero_cells) == 5
+    assert prepared.fixed_candidate_rows == 500
+    assert prepared.fixed_resolved_rows == 450
+
+    main = _common_panel_threshold_response_figure(census, output_dir=tmp_path)
+    supplemental = _common_panel_threshold_response_census_figure(census, output_dir=tmp_path)
+    assert set(main) == {"png", "pdf"}
+    assert set(supplemental) == {"png", "pdf"}
+    assert all(
+        path.is_file() and path.stat().st_size > 0
+        for path in (*main.values(), *supplemental.values())
+    )
+    assert main["png"].stem == FIGURE_STEMS["common_panel_threshold_response"]
+    assert supplemental["png"].stem == FIGURE_STEMS["common_panel_threshold_response_census"]
+
+
+def test_common_panel_figure_contract_rejects_inconsistent_sharp_width() -> None:
+    census = _synthetic_common_panel_census()
+    census.loc[10, "delta_width"] += 0.01
+
+    with pytest.raises(RuntimeError, match="sharp-response bounds are inconsistent"):
+        _prepare_common_panel_figure_data(census)
+
+
+def test_phase_table_reports_the_exact_finite_sample_coordinate() -> None:
+    phase = pd.DataFrame(
+        {
+            "window_id": ["high", "low"],
+            "fit_rows": [20, 20],
+            "fit_prevalence": [0.10, 0.05],
+            "fit_score_min": [0.01, 0.01],
+            "fit_score_max": [0.20, 0.20],
+            "score_min": [0.01, 0.01],
+            "score_max": [0.25, 0.25],
+            "fit_residual_quantile": [0.80, 0.20],
+            "coverage_lower": [0.80, 0.80],
+            "coverage_upper": [0.90, 0.90],
+            "mean_width": [0.90, 0.20],
+            "set_empty_share": [0.0, 0.1],
+            "set_zero_only_share": [0.9, 0.9],
+            "set_both_share": [0.1, 0.0],
+        }
+    )
+
+    table = _phase_transition_publication_table(phase, alpha=0.10).set_index("window_id")
+
+    assert table.loc["high", "finite_sample_rank"] == 19
+    assert table.loc["high", "finite_phase_allowance"] == 1
+    assert table.loc["high", "fit_default_rows"] == 2
+    assert table.loc["high", "phase_margin"] == 1
+    assert table.loc["low", "phase_margin"] == 0
+    assert table["phase_boundary_rate"].tolist() == pytest.approx([0.05, 0.05])
+    assert table["calibration_scores_below_half"].all()
+
+    inconsistent = phase.copy()
+    inconsistent.loc[1, "fit_residual_quantile"] = 0.80
+    with pytest.raises(RuntimeError, match="phase margin"):
+        _phase_transition_publication_table(inconsistent, alpha=0.10)
+
+    negative_score = phase.copy()
+    negative_score.loc[0, "fit_score_min"] = -0.01
+    with pytest.raises(RuntimeError, match=r"leave \[0, 1\]"):
+        _phase_transition_publication_table(negative_score, alpha=0.10)
+
+    invalid_prevalence = phase.copy()
+    invalid_prevalence.loc[0, "fit_prevalence"] = 1.05
+    with pytest.raises(RuntimeError, match="prevalence"):
+        _phase_transition_publication_table(invalid_prevalence, alpha=0.10)
+
+
+def test_phase_table_handles_alpha_boundary_when_n_plus_one_is_a_multiple_of_ten() -> None:
+    phase = pd.DataFrame(
+        {
+            "window_id": ["boundary"],
+            "fit_rows": [19],
+            "fit_prevalence": [1 / 19],
+            "fit_score_min": [0.01],
+            "fit_score_max": [0.20],
+            "score_min": [0.01],
+            "score_max": [0.25],
+            "fit_residual_quantile": [0.20],
+            "coverage_lower": [0.80],
+            "coverage_upper": [0.90],
+            "mean_width": [0.20],
+            "set_empty_share": [0.0],
+            "set_zero_only_share": [1.0],
+            "set_both_share": [0.0],
+        }
+    )
+
+    table = _phase_transition_publication_table(phase, alpha=0.10).iloc[0]
+
+    assert table["finite_sample_rank"] == 18
+    assert table["finite_phase_allowance"] == 1
+    assert table["fit_default_rows"] == 1
+    assert table["phase_margin"] == 0
+
+
+def test_publication_inventory_is_derived_from_declared_targets() -> None:
+    assert len(TABLE_TARGETS) == 29
+    assert len(FIGURE_STEMS) == 5
+    assert len(TABLE_TARGETS) + 2 * len(FIGURE_STEMS) == 39
 
 
 def test_closed_coverage_contract_fails_on_invalid_bounds_or_denominators() -> None:
@@ -130,6 +287,7 @@ def test_implementation_inventory_binds_every_acceptance_dependency() -> None:
         "publication_integrity_checker",
         "paper_pdf_auditor",
         "publication_generation_helper",
+        "publication_table_schemas",
         "v4_config_loader",
         "grid_contracts",
         "endpoint_availability_sensitivity/loader",
@@ -300,3 +458,132 @@ def test_promotion_retries_a_transient_windows_permission_error(
     assert delays == [0.05]
     assert target.read_text(encoding="utf-8") == "new-table"
     assert manifest.read_text(encoding="utf-8") == "new-manifest"
+
+
+def test_copy_promotion_preserves_stage_and_promotes_manifest_last(
+    tmp_path: Path,
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    repo = tmp_path
+    transaction = repo / ".transaction"
+    target = repo / "reports/table.csv"
+    target.parent.mkdir(parents=True)
+    target.write_text("old-table", encoding="utf-8")
+    staged = staged_output_path(transaction, target, repo_root=repo)
+    staged.write_text("new-table", encoding="utf-8")
+    manifest = repo / "reports/evidence.json"
+    manifest.write_text("old-manifest", encoding="utf-8")
+    staged_manifest = staged_output_path(transaction, manifest, repo_root=repo)
+    staged_manifest.write_text("new-manifest", encoding="utf-8")
+
+    real_copy = publication_generation._copy_bytes_with_retry
+    calls: list[Path] = []
+
+    def recording_copy(source: Path, destination: Path) -> None:
+        calls.append(destination.resolve())
+        real_copy(source, destination)
+
+    monkeypatch.setattr(publication_generation, "_copy_bytes_with_retry", recording_copy)
+    promoted = promote_publication_generation(
+        {target: staged},
+        staged_manifest=staged_manifest,
+        manifest_target=manifest,
+        repo_root=repo,
+        transaction_root=transaction,
+        preserve_target_permissions=True,
+    )
+
+    assert calls == [target.resolve(), manifest.resolve()]
+    assert promoted == (target.resolve(), manifest.resolve())
+    assert target.read_text(encoding="utf-8") == "new-table"
+    assert manifest.read_text(encoding="utf-8") == "new-manifest"
+    assert staged.read_text(encoding="utf-8") == "new-table"
+    assert staged_manifest.read_text(encoding="utf-8") == "new-manifest"
+
+
+def test_failed_copy_promotion_rolls_back_existing_bytes(
+    tmp_path: Path,
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    repo = tmp_path
+    transaction = repo / ".transaction"
+    target = repo / "reports/table.csv"
+    target.parent.mkdir(parents=True)
+    target.write_text("old-table", encoding="utf-8")
+    staged = staged_output_path(transaction, target, repo_root=repo)
+    staged.write_text("new-table", encoding="utf-8")
+    manifest = repo / "reports/evidence.json"
+    manifest.write_text("old-manifest", encoding="utf-8")
+    staged_manifest = staged_output_path(transaction, manifest, repo_root=repo)
+    staged_manifest.write_text("new-manifest", encoding="utf-8")
+
+    real_copy = publication_generation._copy_bytes_with_retry
+    injected = False
+
+    def fail_manifest_once(source: Path, destination: Path) -> None:
+        nonlocal injected
+        if destination.resolve() == manifest.resolve() and not injected:
+            injected = True
+            destination.write_text("partial-manifest", encoding="utf-8")
+            raise OSError("injected copy promotion failure")
+        real_copy(source, destination)
+
+    monkeypatch.setattr(publication_generation, "_copy_bytes_with_retry", fail_manifest_once)
+    with pytest.raises(OSError, match="injected copy promotion failure"):
+        promote_publication_generation(
+            {target: staged},
+            staged_manifest=staged_manifest,
+            manifest_target=manifest,
+            repo_root=repo,
+            transaction_root=transaction,
+            preserve_target_permissions=True,
+        )
+
+    assert target.read_text(encoding="utf-8") == "old-table"
+    assert manifest.read_text(encoding="utf-8") == "old-manifest"
+
+
+def test_mid_copy_failure_rolls_back_the_current_partially_written_target(
+    tmp_path: Path,
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    repo = tmp_path
+    transaction = repo / ".transaction"
+    target = repo / "reports/table.csv"
+    target.parent.mkdir(parents=True)
+    target.write_text("old-table", encoding="utf-8")
+    staged = staged_output_path(transaction, target, repo_root=repo)
+    staged.write_text("new-table", encoding="utf-8")
+    manifest = repo / "reports/evidence.json"
+    manifest.write_text("old-manifest", encoding="utf-8")
+    staged_manifest = staged_output_path(transaction, manifest, repo_root=repo)
+    staged_manifest.write_text("new-manifest", encoding="utf-8")
+
+    real_copy = publication_generation._copy_bytes_with_retry
+    injected = False
+
+    def corrupt_current_target_then_fail(source: Path, destination: Path) -> None:
+        nonlocal injected
+        if destination.resolve() == target.resolve() and not injected:
+            injected = True
+            destination.write_text("partial", encoding="utf-8")
+            raise OSError("injected mid-copy failure")
+        real_copy(source, destination)
+
+    monkeypatch.setattr(
+        publication_generation,
+        "_copy_bytes_with_retry",
+        corrupt_current_target_then_fail,
+    )
+    with pytest.raises(OSError, match="injected mid-copy failure"):
+        promote_publication_generation(
+            {target: staged},
+            staged_manifest=staged_manifest,
+            manifest_target=manifest,
+            repo_root=repo,
+            transaction_root=transaction,
+            preserve_target_permissions=True,
+        )
+
+    assert target.read_text(encoding="utf-8") == "old-table"
+    assert manifest.read_text(encoding="utf-8") == "old-manifest"

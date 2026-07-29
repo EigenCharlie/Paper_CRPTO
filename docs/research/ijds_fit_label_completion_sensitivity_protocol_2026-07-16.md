@@ -32,7 +32,7 @@ constructed?
   evaluation row or use an OOT outcome to choose a scenario.
 - Freeze scores, recipes, fit audits, and scenario counts before the primary
   OOT endpoint join. Evaluate every scenario over every window, overall and in
-  the declared phase stratum 2.
+  the declared phase S3 (the third score stratum; internal zero-based group 2).
 - Require the `observed_only` score and recipe replay to match the active
   outcome-free freeze within the V2 numerical recovery tolerances. After the
   endpoint join, separately reconcile all 16 overall/phase coverage cells with

@@ -1,4 +1,4 @@
-schema_version: "2026-07-21.4"
+schema_version: "2026-07-26.2"
 status: active_ijds_claim_contract
 
 surfaces:
@@ -158,13 +158,91 @@ claims:
       required: [body, supplement, registry]
       allowed: [body, supplement, registry, claim_matrix]
 
-  - id: geometry.prevalence_sensitive_mechanism
+  - id: geometry.binary_threshold_phase_characterization
     status: active
     kind: theorem
     rule: documented
-    lineages: [binary_geometry.outcome_free, label_lag_sensitivity]
-    scope: constant_score_binary_threshold_and_observed_stratum_path
-    forbidden_inference: [finite_sample_causal_explanation, universal_threshold_transition]
+    lineages: [binary_geometry.outcome_free, credit_controls.outcome_free, label_lag_sensitivity]
+    scope: >-
+      exact_order_statistic_of_the_two_mirror_calibration_samples_with_stated
+      _calibration_and_target_support_conditions
+    forbidden_inference:
+      [finite_sample_causal_explanation, universal_threshold_transition,
+       regime_criterion_without_the_below_half_calibration_condition,
+       target_side_statement_without_a_target_support_condition,
+       binomial_crossing_law]
+    surfaces:
+      required: [body, supplement, registry, claim_matrix]
+      allowed: [body, supplement, registry, claim_matrix]
+
+  - id: theory.coverage_band_identity
+    status: active
+    kind: theorem
+    rule: documented
+    lineages: [binary_geometry.outcome_free]
+    scope: >-
+      exact_two_threshold_coverage_band_identity_on_one_common_fixed
+      _target_distribution_with_declared_endpoint_conventions
+    forbidden_inference:
+      [universal_continuity, threshold_distance_controls_coverage_change,
+       geometric_explanation_of_the_finite_archive_shortfall,
+       identified_shift_mechanism, restored_transport,
+       comparison_across_different_target_panels]
+    surfaces:
+      required: [body, supplement, registry]
+      allowed: [body, supplement, registry, claim_matrix]
+
+  - id: coverage.common_panel_adjacent_response
+    status: active
+    kind: empirical
+    rule: equals
+    result_pointer: /common_panel_threshold_response/full_census_and_identities_verified
+    expected: true
+    lineages: [credit_controls.outcome_free, credit_controls.evaluation,
+               common_panel_threshold_response]
+    scope: >-
+      fixed_primary_oot_panel_five_learners_by_five_score_strata_by_seven
+      _adjacent_threshold_pairs_with_one_shared_binary_completion_per_unresolved_loan
+    forbidden_inference:
+      [preregistration, confirmation, temporal_validity_transfer,
+       slope_or_continuity, threshold_distance_is_coverage_bound,
+       selected_transition_or_winner, causal_mechanism,
+       separate_coverage_bound_endpoint_subtraction,
+       joint_attainability_of_all_cellwise_endpoints,
+       stratum_sign_census_as_substantive_discovery,
+       selected_or_funded_set_validity]
+    surfaces:
+      required: [body, supplement, registry, claim_matrix]
+      allowed: [body, supplement, registry, claim_matrix]
+
+  - id: theory.outcome_free_binary_set_bounds
+    status: active
+    kind: theorem
+    rule: documented
+    lineages: [binary_geometry.outcome_free]
+    scope: >-
+      fixed_nonnegative_allocation_binary_prediction_sets_normalized_by
+      _positive_total_funded_exposure_under_unrestricted_loanwise_binary_outcomes
+    forbidden_inference:
+      [lower_endpoint_alone_is_a_miscoverage_floor,
+       conditional_positive_class_coverage, selected_set_validity,
+       funded_set_conformal_validity, optimizer_direction, policy_dominance]
+    surfaces:
+      required: [body, supplement, registry, claim_matrix]
+      allowed: [body, supplement, registry, claim_matrix]
+
+  - id: theory.binary_set_embedding_nonidentification
+    status: active
+    kind: theorem
+    rule: documented
+    lineages: [binary_geometry.outcome_free]
+    scope: >-
+      exact_endpoint_equivalence_classes_of_bounded_continuous_intervals
+      _under_intersection_with_the_binary_label_space
+    forbidden_inference:
+      [preferred_embedding, calibrated_upper_endpoint_magnitude,
+       optimizer_or_policy_direction, allocation_change_without_experiment,
+       selected_or_funded_set_validity]
     surfaces:
       required: [body, supplement, registry, claim_matrix]
       allowed: [body, supplement, registry, claim_matrix]
@@ -275,11 +353,11 @@ claims:
       required: [body, supplement, registry, claim_matrix]
       allowed: [body, supplement, registry, claim_matrix]
 
-  - id: comparator.broad_support_all_cross_zero
+  - id: comparator.registered_cap_values_all_include_zero
     status: active
     kind: empirical
     rule: equals
-    result_pointer: /portfolio/broad_stress_all_envelopes_cross_zero
+    result_pointer: /portfolio/registered_cap_values_all_envelopes_include_zero
     expected: true
     lineages: [binary_geometry.outcome_free, binary_geometry.evaluation]
     scope: registered_point_cap_endpoints_with_values_in_0_05_to_0_12

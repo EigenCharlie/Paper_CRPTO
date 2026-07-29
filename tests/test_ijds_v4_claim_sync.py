@@ -45,7 +45,7 @@ def test_body_and_generated_tex_share_architecture_citations_and_displays() -> N
     body_table_ids = set(re.findall(r"\{#(tbl-[A-Za-z0-9_-]+)\}", body))
     assert body_table_ids == {"tbl-protocol", "tbl-credit-controls", "tbl-two-ruler"}
     assert official.count(r"\begin{longtable}") == len(body_table_ids)
-    assert body.count("{#fig-") == official.count(r"\begin{figure}") == 2
+    assert body.count("{#fig-") == official.count(r"\begin{figure}") == 3
 
 
 def test_v4_wording_keeps_theory_and_empirical_scope_separate() -> None:
@@ -55,16 +55,21 @@ def test_v4_wording_keeps_theory_and_empirical_scope_separate() -> None:
     supplement_normalized = re.sub(r"\s+", " ", supplement)
 
     for surface in (body_normalized, supplement_normalized):
-        assert "constant-score" in surface
+        assert "constant-score" not in surface
         assert re.search(r"varying scores|scores vary", surface)
         assert "not a confidence interval" in surface
-        assert "not a deployable" in surface
+        assert "not a promoted operating policy" in surface
         assert "not independent replications" in surface
     assert "not a prospective trial, preregistration, or causal estimate" in body_normalized
     assert "not a causal identified set" in supplement
-    assert (
-        "constant-score theorem identifies a mechanism rather than the varying-score empirical path"
-    ) in body_normalized
+    # The exact threshold characterization and target-side implication have
+    # separate conditions. The two-threshold result is a band-mass identity, not
+    # a universal continuity or constant-score argument.
+    assert "target-support condition" in body_normalized
+    for surface in (body_normalized, supplement_normalized):
+        assert "coverage response" in surface or "coverage change" in surface
+        assert "does not imply continuity" in surface
+        assert "artifact of a degenerate score" not in surface
     for surface in (body_normalized, supplement_normalized):
         assert "simulation claim" not in surface
         assert "no portfolio claim uses this simulation" not in surface

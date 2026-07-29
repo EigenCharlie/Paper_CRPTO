@@ -133,7 +133,7 @@ Roadmap tesis a 12 meses.
 | Prioridad | Trabajo | Salida esperada |
 |---:|---|---|
 | P0 | Mantener evidence spine C1--C7 con tablas, figuras, scripts y tests (ver cap. 13). | Supplement y defensa. |
-| P0 | Sostener el page-budget ledger del cuerpo IJDS (ver cap. 06). | Control de 25 páginas. |
+| Freeze final | Activar el page-budget ledger del cuerpo IJDS (ver cap. 06) solo cuando se cierre la ciencia. | Control pre-References de 25 páginas; no limita el trabajo pre-freeze. |
 | P0 | Conservar Fig. 12--14 y Tables 0--2/A18 como paquete visual decisivo. | Draft IJDS. |
 | P1 | Mantener el reviewer-defense bank de 13 objeciones (ver cap. 06b). | Rebuttal y tesis. |
 | P1 | Sostener el checklist de anonimización y data/code disclosure (ver cap. 14). | Submission package. |

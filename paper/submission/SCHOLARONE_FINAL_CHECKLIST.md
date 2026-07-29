@@ -26,13 +26,24 @@ living closeout checklist, not evidence that the package is final.
 - [ ] Missingness encodings and the individual-age origin sensitivity are
       bounded recurrences, not winners or independent validation; all 16
       origin-window upper bounds use cutoffs 39 months after issue-month end, which
-      equalizes minimum rather than exact loan-level follow-up.
+      gives every candidate exactly 39 whole calendar months after its
+      issue-month end, but not exact day-level age.
+- [ ] The missingness-encoding sensitivity is described as varying two declared
+      fields, not as general robustness to every incomplete predictor.
 - [ ] Label-Mondrian is reported as 27/40 shortfalls, 12/40 crossings, and
       1/40 at-or-above nominal, with 109/400 category shortfalls and all 40
       aggregate gap bounds crossing zero; each endpoint uses completions that
       assign every unresolved loan once and share it across both class ratios,
       although the two endpoint completions may differ. It is not a repair,
       hypothesis-test family, or fairness result.
+- [ ] Binary geometry is stated conditionally: score binning does not guarantee
+      a low regime; zero positive coverage needs target support; W7 and W8 do not
+      share one pair of calibration maxima; and the exact two-threshold identity
+      is not described as continuity.
+- [ ] No lower-endpoint-only funded-miscoverage floor or universal optimizer
+      anti-selection mechanism appears; outcome-free bounds use empty/full sets.
+- [ ] The quarantined external V1 contributes no archive name, number, method,
+      citation, table, runner, or evidence claim to reviewer-facing surfaces.
 - [ ] Identification-width statements match the exact unresolved-row identity and the six reported tracks.
 - [ ] No learner, window, gamma, ruler, coordinate, cap, comparator, or policy is selected.
 - [ ] No selected-set, causal, prospective, confirmatory, deployment, Markov,
@@ -40,14 +51,19 @@ living closeout checklist, not evidence that the package is final.
 
 ## Files
 
+- [ ] Upload from the explicit whitelist; do not zip or upload
+      `paper/submission` as a directory.
 - [ ] Anonymous official IJDS PDF.
 - [ ] Anonymous online supplement PDF.
 - [ ] Separate title-page metadata form.
 - [ ] Optional cover letter and generative-AI disclosure, if uploaded.
+- [ ] Anonymous machine-readable supplement containing full S6C and S6E strata.
 - [ ] Data and code disclosure form.
 - [ ] Editor-only reproducibility crosswalk, if requested.
 - [ ] Sanitized reproducibility capsule, if requested.
-- [ ] Capsule inventory reconciles to exactly 51 DVC pointers and 27
+- [ ] LaTeX `.fls`, `.aux`, `.log`, `.blg`, and `.bbl` files are excluded from
+      every reviewer upload; the editor-only crosswalk is not reviewer-facing.
+- [ ] Capsule inventory reconciles to exactly 53 DVC pointers and 29
       paper-facing CSV tables; unequal-follow-up roots appear only as replay
       provenance.
 
@@ -70,8 +86,31 @@ living closeout checklist, not evidence that the package is final.
 - [ ] Reviewer files contain no author name, email, local path, repository URL,
       protocol tag, commit, hash, DVC coordinate, or acknowledgments.
 - [ ] Public/searchable code does not create an identity leak in reviewer files.
-- [ ] Raw-data acquisition and hash instructions are accurate.
+- [ ] The public repository is private and GitHub Pages is disabled for the
+      double-anonymous review period; verify title, acronym, and distinctive
+      phrases in a signed-out search.
+- [ ] Raw-data acquisition source, date, governing terms, local filename,
+      transformation, size, and SHA-256 are author-confirmed; the candidate
+      Kaggle match is not represented as proven provenance.
+- [ ] The DVC remote and release capsule do not redistribute raw or row-level
+      derivatives without confirmed rights.
 - [ ] No secrets or `.dvc/config.local` contents are included.
+- [ ] `.dvc/config.local` remains ignored and absent from reachable Git history;
+      credentials are stored outside tracked files.
+
+## Human and Rights Sign-off
+
+- [ ] Every author confirms authorship, order, consent, CRediT roles, current
+      affiliation, ORCID, corresponding-author details, funding, conflicts,
+      acknowledgements, and full responsibility for the submission.
+- [ ] Originality, no simultaneous review, prior IJDS submission, and overlap
+      with any thesis, preprint, book, site, or other manuscript are confirmed
+      and disclosed where required.
+- [ ] The author has resolved with INFORMS whether the prior CC BY 4.0 grant over
+      `paper/**` requires Open Option or another rights arrangement; do not
+      certify conventional copyright transfer until confirmed.
+- [ ] The final generative-AI disclosure is accurate, consistent across all
+      forms, and human-verified.
 
 ## Final ScholarOne Proof
 

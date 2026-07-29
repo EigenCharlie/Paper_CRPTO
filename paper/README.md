@@ -11,7 +11,7 @@ This directory contains one active IJDS manuscript and one online supplement.
 - Canonical supplement: `supplement_ijds.qmd`.
 - Generated official TeX: `submission/CRPTO_ijds_submission.tex`.
 
-The paper is a retrospective identification audit of one integrated
+The paper is an exact geometric analysis and retrospective identification audit of one integrated
 ML--conformal--optimization pipeline. The distributed archive is not a verified
 point-in-time snapshot, so the endpoint is reconstructed as observable by the
 declared cutoff. All 376,890 primary candidates remain in the menus; 364,814
@@ -28,10 +28,11 @@ never edit generated TeX directly.
 just submission-build
 ```
 
-The official compiler attempts `latexmk`; its robust fallback is
-`pdflatex -> bibtex -> pdflatex -> pdflatex`. The first LaTeX pass writes the
-auxiliary graph, BibTeX writes the bibliography, and the final two passes
-resolve citations, labels, floats, and pagination.
+The generic official compiler attempts `latexmk` and retains a scan-gated
+`pdflatex -> bibtex -> pdflatex -> pdflatex` fallback. On Windows hosts where
+TinyTeX cannot canonicalize its `AppData` path, use
+`just paper-official-windows`; the transient-drive launcher calls the bundled
+Perl and `latexmk.pl` until the dependency graph reaches a fixed point.
 
 ## Validation
 

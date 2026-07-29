@@ -46,8 +46,10 @@ below nominal. Label-Mondrian changes the marginal states to 27 shortfalls, 12
 crossings, and one at-or-above-nominal cell, with 109/400 category shortfalls;
 it is not a conditional-validity repair. Binary residual geometry changes
 sharply near a prevalence threshold. Portfolio contrast signs depend on the
-outcome-blind ruler, coordinate, and comparator support; exact broad-support
-envelopes all cross zero. No learner, missingness encoding, conformal method,
+outcome-blind ruler, coordinate, and finite evaluated comparator support. All
+216 endpoint envelopes over registered cap values spanning `[0.05, 0.12]`
+include zero; this does not compute continuous-support extrema. No learner,
+missingness encoding, conformal method,
 gamma, ruler, coordinate, scenario, or policy is selected.
 
 ## Literature
@@ -56,6 +58,12 @@ Bibliographic metadata belongs in `paper/references.bib`. The local
 `Papers_tesis/` directory contains the working PDF corpus and is ignored by
 Git. Do not commit copyrighted PDFs. Literature supports positioning and
 assumptions; it does not override the registered empirical evidence.
+The complete local-corpus audit is
+`conformal_literature_corpus_audit_2026-07-21.md`; the two nonlocal 2026
+decision-calibration papers found in the final search and their theorem-level
+boundaries are recorded in
+`conformal_decision_sota_lastmile_2026-07-26.md`. They do not enter the local
+PDF checksum until their bytes can be acquired and hashed.
 
 ## Historical Boundary
 

@@ -22,6 +22,7 @@ PUBLICATION_IMPLEMENTATION_PATHS: dict[str, str] = {
     "publication_integrity_checker": "scripts/check_publication_integrity.py",
     "paper_pdf_auditor": "scripts/inspect_ijds_pdfs.py",
     "publication_generation_helper": "src/ijds_audit/publication_generation.py",
+    "publication_table_schemas": "src/ijds_audit/publication_schemas.py",
     "v4_config_loader": "src/ijds_audit/config.py",
     "grid_contracts": "src/ijds_audit/grid_contracts.py",
     "endpoint_availability_sensitivity/loader": "src/ijds_audit/sensitivity_evidence.py",
@@ -42,6 +43,25 @@ def _replace_with_retry(source: Path, destination: Path) -> None:
     for attempt in range(_WINDOWS_REPLACE_ATTEMPTS):
         try:
             os.replace(source, destination)
+            return
+        except PermissionError:
+            if attempt == _WINDOWS_REPLACE_ATTEMPTS - 1:
+                raise
+            time.sleep(_WINDOWS_REPLACE_INITIAL_DELAY_SECONDS * (2**attempt))
+
+
+def _copy_bytes_with_retry(source: Path, destination: Path) -> None:
+    """Copy bytes into a target while retaining an existing Windows DACL."""
+    for attempt in range(_WINDOWS_REPLACE_ATTEMPTS):
+        try:
+            with source.open("rb") as input_handle, destination.open("wb") as output_handle:
+                shutil.copyfileobj(input_handle, output_handle, length=1024 * 1024)
+                output_handle.flush()
+                os.fsync(output_handle.fileno())
+            if source.stat().st_size != destination.stat().st_size or sha256_file(
+                source
+            ) != sha256_file(destination):
+                raise OSError(f"Publication byte copy did not verify: {destination}")
             return
         except PermissionError:
             if attempt == _WINDOWS_REPLACE_ATTEMPTS - 1:
@@ -132,13 +152,18 @@ def promote_publication_generation(
     manifest_target: Path,
     repo_root: Path,
     transaction_root: Path,
+    preserve_target_permissions: bool = False,
 ) -> tuple[Path, ...]:
-    """Promote one validated generation and roll back every target on failure.
+    """Promote one validated generation with in-process rollback on failure.
 
     ``artifacts`` maps canonical targets to staged files. Existing targets are
     copied to a rollback area before any replacement. The manifest is always
-    replaced after every other artifact, so it never advertises an incomplete
-    generation.
+    written after every other artifact, so successful completion cannot leave it
+    advertising a partial generation. ``preserve_target_permissions`` copies
+    bytes into existing targets instead of moving staged files, preventing a
+    staging DACL from following an ``os.replace`` on Windows. That permission-
+    preserving mode is exception-safe, but it is not crash-atomic for concurrent
+    readers because an existing target is updated in place.
     """
     ordered = _validate_promotion_inputs(
         artifacts,
@@ -166,14 +191,21 @@ def promote_publication_generation(
             backups[target] = None
 
     promoted: list[Path] = []
+    promote_one = _copy_bytes_with_retry if preserve_target_permissions else _replace_with_retry
     try:
         for target, staged in ordered:
             target.parent.mkdir(parents=True, exist_ok=True)
-            _replace_with_retry(staged, target)
             promoted.append(target)
+            # Enter the target into the rollback set before any byte-level copy.
+            # Permission-preserving promotion opens an existing Windows target
+            # with ``wb``; a mid-copy or post-copy verification failure can
+            # therefore corrupt the current target before ``promote_one``
+            # returns.  Recording it afterwards would omit exactly that target
+            # from rollback.
+            promote_one(staged, target)
         manifest.parent.mkdir(parents=True, exist_ok=True)
-        _replace_with_retry(staged_manifest_resolved, manifest)
         promoted.append(manifest)
+        promote_one(staged_manifest_resolved, manifest)
     except BaseException as error:
         rollback_failures: list[str] = []
         for target in reversed(promoted):
@@ -182,7 +214,10 @@ def promote_publication_generation(
                 if rollback_backup is None:
                     target.unlink(missing_ok=True)
                 else:
-                    _replace_with_retry(rollback_backup, target)
+                    if preserve_target_permissions:
+                        _copy_bytes_with_retry(rollback_backup, target)
+                    else:
+                        _replace_with_retry(rollback_backup, target)
             except OSError as rollback_error:
                 rollback_failures.append(f"{target}: {rollback_error}")
         if rollback_failures:

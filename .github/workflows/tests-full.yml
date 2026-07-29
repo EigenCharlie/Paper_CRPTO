@@ -1,16 +1,20 @@
 name: clean-clone-reproducibility
 
-# Manually triggered clean-clone audit. It reconstructs the publication capsule
-# on a disposable CPU runner; Linux is a portability check, not a scientific or
-# GPU requirement.
+# Manually triggered clean-clone audit. It reconstructs the evidence and
+# reviewer surfaces on a disposable Windows CPU runner. The evidence figures
+# are compared byte-for-byte, so the runner deliberately matches the operating
+# system on which the canonical publication generation is produced.
 # It remains manual because it downloads authenticated DVC artifacts and runs
 # the complete suite; the lightweight lint workflow covers ordinary pushes.
 #
 # Trigger it from the GitHub UI (Actions > clean-clone-reproducibility).
-# Use it before a paper submission or after a major scientific refactor.
+# Use it after a major scientific refactor and as a pre-freeze reproducibility
+# audit. It does not compile or enforce the final reviewer-PDF page budget;
+# `just submission-freeze-check` remains the explicit final-only gate.
 #
 # Required repository secrets:
 # - DAGSHUB_USER_TOKEN
+# - DAGSHUB_TOKEN
 # - DAGSHUB_USER
 # - DAGSHUB_REPO (= Paper_CRPTO)
 
@@ -23,7 +27,7 @@ concurrency:
 
 jobs:
   clean-clone:
-    runs-on: ubuntu-latest
+    runs-on: windows-latest
     timeout-minutes: 60
     env:
       DAGSHUB_USER_TOKEN: ${{ secrets.DAGSHUB_USER_TOKEN }}
@@ -59,7 +63,7 @@ jobs:
         run: uv python install 3.11
 
       - name: Sync deps
-        run: uv sync --group dev --frozen
+        run: uv sync --group dev --locked
 
       - name: Dependency audit
         run: just dependency-audit
@@ -72,6 +76,41 @@ jobs:
 
       - name: Strict protected-artifact gate
         run: just validate-champion-strict
+
+      - name: Rebuild derived policy-support evidence
+        run: |
+          just ijds-tie-evidence ijds-policy-support-evidence
+          git diff --exit-code -- `
+            reports/crpto/ijds_policy_support_tie_evidence.json `
+            reports/crpto/ijds_policy_support_optimal_face_evidence.json `
+            reports/crpto/tables/crpto_ijds_policy_family_domain.csv `
+            reports/crpto/tables/crpto_ijds_gamma_endpoint_audit.csv `
+            reports/crpto/tables/crpto_ijds_comparator_support_domain.csv `
+            docs/research/ijds_policy_support_tie_results_2026-07-12.md
+
+      - name: Rebuild publication evidence from the pulled DVC capsule
+        run: |
+          uv run --locked python scripts/build_ijds_binary_geometry_frontier_v4_evidence.py `
+            --stage-only staging/ci-active-evidence
+          uv run --locked python scripts/build_ijds_binary_geometry_frontier_v4_evidence.py `
+            --verify-stage-against-canonical staging/ci-active-evidence
+
+      - name: Rebuild deterministic reviewer surfaces
+        run: just paper-body paper-supplement paper-tex paper-machine-supplement
+
+      - name: Generated-surface freshness and committed-TeX gate
+        run: |
+          just paper-tex-check paper-machine-supplement-check
+          git ls-files --error-unmatch -- `
+            paper/submission/CRPTO_ijds_machine_readable_supplement.zip
+          git diff --exit-code -- `
+            paper/submission/CRPTO_ijds_submission.tex `
+            paper/submission/CRPTO_ijds_machine_readable_supplement.zip
+
+      - name: Optimized-runtime guard
+        run: |
+          $env:PYTHONOPTIMIZE = "2"
+          uv run --locked pytest tests/test_operational_guardrails.py::test_runtime_python_has_no_optimized_away_assert_guards -v
 
       - name: Active IJDS contract
         run: just ijds-active-check

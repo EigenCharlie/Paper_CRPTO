@@ -1,4 +1,4 @@
-version: "2026-07-21"
+version: "2026-07-26"
 project: paper-crpto
 decision_status: prefreeze_active
 
@@ -9,6 +9,7 @@ primary_target:
   publisher: INFORMS
   manuscript_source: paper/CRPTO_ijds.qmd
   supplement_source: paper/supplement_ijds.qmd
+  machine_readable_supplement: paper/submission/CRPTO_ijds_machine_readable_supplement.zip
   official_tex_source: paper/submission/CRPTO_ijds_submission.tex
   template_family: "INFORMS IJDS LaTeX"
   official_urls:
@@ -17,8 +18,9 @@ primary_target:
     reviewer_guidelines: "https://pubsonline.informs.org/page/ijds/reviewer-guidelines"
     latex_style_files: "https://pubsonline.informs.org/authorportal/latex-style-files"
   constraints:
-    initial_submission_pages: 25
-    page_limit_excludes: [references, appendices]
+    prefreeze_page_limit: null
+    final_freeze_pre_reference_page_limit: 25
+    page_limit_excludes: [references]
     online_supplement: separate_file
     review_model: double_anonymous
     submission_file: pdf_from_ijds_latex_template
@@ -38,7 +40,9 @@ active_scientific_contract:
       - scripts/build_ijds_binary_geometry_frontier_v4_evidence.py
       - scripts/check_publication_integrity.py
       - scripts/build_ijds_submission_tex.py
+      - scripts/build_ijds_machine_readable_supplement.py
       - scripts/compile_ijds_submission.py
+      - scripts/compile_ijds_submission_windows.ps1
       - scripts/inspect_ijds_pdfs.py
       - scripts/render_submission_pdf_previews.py
     protocol_entrypoints:
@@ -59,6 +63,7 @@ active_scientific_contract:
       - scripts/experiments/run_ijds_conformal_set_diagnostics.py
       - scripts/experiments/run_ijds_rolling_origin_primary_recovery.py
       - scripts/experiments/run_ijds_exchangeability_transport_test.py
+      - scripts/experiments/run_ijds_common_panel_threshold_response_v8.py
       - scripts/experiments/run_ijds_rolling_origin_equal_followup.py
       - scripts/experiments/run_ijds_rolling_origin_individual_age_followup.py
       - scripts/experiments/run_ijds_label_mondrian_freeze.py
@@ -98,8 +103,12 @@ active_scientific_contract:
     conformal: >-
       Five score strata are fixed from 2011 scores. Exact binary-outcome
       residual ranks are reported for all eight eligible six-month windows;
+      the complete 175-cell adjacent-threshold response is evaluated on one
+      common fixed target panel with sharp shared-completion bounds;
       a separate combined-rank diagnostic audits the stronger within-stratum
-      joint-block exchangeability null, and a complete label-Mondrian sensitivity reports all
+      joint-block exchangeability null using the known finite-batch
+      Beta--Binomial law with tie-safe and unresolved-completion adaptations,
+      and a complete label-Mondrian sensitivity reports all
       400 score-stratum-by-label categories. An observed-only fit and three
       declared completion rules stress labels unavailable at fit time.
     decision: >-
@@ -107,11 +116,12 @@ active_scientific_contract:
       normalized-score rulers at {.25,.50,.75}; gamma 1 minus gamma 0 is the
       frozen endpoint contrast, with no selector.
     comparator: >-
-      C0, C1, C2, registered finite development-admissible support, and broad [0.05,0.12]
-      support are outcome-free diagnostics. Registered outcome envelopes are
+      C0, C1, C2, registered finite development-admissible support, and the
+      registered [0.05,0.12] audit range are outcome-free diagnostics. Outcome
+      envelopes are
       exact over their finite cap endpoints. Active-upper solver-reported RHS
       ranges, zero-dual basic-row safe rays, and 196 V2 midpoint seeds
-      retrospectively registered in V3a numerically cover the broad RHS support
+      retrospectively registered in V3a numerically cover the declared RHS range
       at tolerance 1e-10 without an optimal-face uniqueness or
       continuous-allocation claim.
     endpoint: >-
@@ -159,12 +169,109 @@ active_scientific_contract:
     - reports/crpto/tables/crpto_ijds_v4_tableS7D_individual_age_endpoint_census.csv
     - reports/crpto/tables/crpto_ijds_v4_tableS11_fit_label_completion.csv
     - reports/crpto/tables/crpto_ijds_v4_tableS12_allocation_granularity.csv
+    - reports/crpto/tables/crpto_ijds_v4_tableS6J_common_panel_threshold_response_strata.csv
+    - reports/crpto/tables/crpto_ijds_v4_tableS6K_common_panel_threshold_response_learners.csv
     - reports/crpto/figures/crpto_ijds_v4_fig1_coverage.pdf
     - reports/crpto/figures/crpto_ijds_v4_fig1_coverage.png
     - reports/crpto/figures/crpto_ijds_v4_fig2_phase_transition.pdf
     - reports/crpto/figures/crpto_ijds_v4_fig2_phase_transition.png
     - reports/crpto/figures/crpto_ijds_v4_fig3_envelopes.pdf
     - reports/crpto/figures/crpto_ijds_v4_fig3_envelopes.png
+    - reports/crpto/figures/crpto_ijds_v4_fig4_common_panel_threshold_response.pdf
+    - reports/crpto/figures/crpto_ijds_v4_fig4_common_panel_threshold_response.png
+    - reports/crpto/figures/crpto_ijds_v4_figS1_common_panel_threshold_response_census.pdf
+    - reports/crpto/figures/crpto_ijds_v4_figS1_common_panel_threshold_response_census.png
+
+executed_quarantine_capsule:
+  status: "hash_bound_dirty_tree_executions_never_active_paper_evidence"
+  active_paper_evidence_allowed: false
+  active_claim_support_allowed: false
+  machine_readable_supplement_allowed: false
+  dvc_pointer_count_change_allowed: false
+  promotion_rule: >-
+    Commit and tag the protocol, configuration, runner, and implementation first;
+    then execute fresh run tags into new immutable output paths from a clean tree.
+    Only that fresh lineage may be considered for active-paper promotion.
+  known_reuse_blockers:
+    - output_filenames_are_not_contained_or_unique_in_the_executed_runners
+    - one_class_no_interleaving_is_marked_true_in_the_executed_v6_helper
+    - conformal_group_is_cast_before_exact_integrality_validation
+    - v6_selects_a_catboost_stratum_transition_not_declared_by_its_protocol
+    - poisson_binomial_reference_omits_a_joint_conditional_independence_assumption
+    - shared_io_and_provenance_helpers_were_not_fully_hash_bound_at_execution
+  known_reuse_blocker_scope:
+    - ijds-binary-phase-geometry-2026-07-26-v6
+    - ijds-postfreeze-derived-diagnostics-2026-07-26-v1
+  quarantined_run_scope:
+    - ijds-binary-phase-geometry-2026-07-26-v6
+    - ijds-postfreeze-derived-diagnostics-2026-07-26-v1
+  replay_entrypoints:
+    - scripts/experiments/run_ijds_binary_phase_geometry_v6.py
+    - scripts/experiments/run_ijds_postfreeze_derived_diagnostics_v1.py
+  protocols:
+    - docs/research/ijds_binary_phase_geometry_v6_protocol_2026-07-26.md
+    - docs/research/ijds_postfreeze_derived_diagnostics_v1_protocol_2026-07-26.md
+  configs:
+    - configs/experiments/ijds_binary_phase_geometry_2026-07-26_v6.yaml
+    - configs/experiments/ijds_postfreeze_derived_diagnostics_2026-07-26_v1.yaml
+  implementations:
+    - src/ijds_audit/binary_phase_geometry.py
+    - src/ijds_audit/postfreeze_derived_diagnostics.py
+  receipt_indexes:
+    - configs/experiments/ijds_hash_bound_candidate_receipt_index_2026-07-26.yaml
+  local_candidate_artifacts_not_required:
+    - data/processed/experiments/ijds_audit/ijds-binary-phase-geometry-2026-07-26-v6/stratum_phase_margins.csv
+    - models/experiments/ijds_audit/ijds-binary-phase-geometry-2026-07-26-v6/binary_phase_geometry_v6_summary.json
+    - models/experiments/ijds_audit/ijds-binary-phase-geometry-2026-07-26-v6/execution_receipt.json
+    - data/processed/experiments/ijds_audit/ijds-postfreeze-derived-diagnostics-2026-07-26-v1/all_candidate_calibration_bias.csv
+    - data/processed/experiments/ijds_audit/ijds-postfreeze-derived-diagnostics-2026-07-26-v1/resolved_coverage_breakeven.csv
+    - data/processed/experiments/ijds_audit/ijds-postfreeze-derived-diagnostics-2026-07-26-v1/minimum_reference_stratum_effect.csv
+    - models/experiments/ijds_audit/ijds-postfreeze-derived-diagnostics-2026-07-26-v1/postfreeze_derived_diagnostics_summary.json
+    - models/experiments/ijds_audit/ijds-postfreeze-derived-diagnostics-2026-07-26-v1/execution_receipt.json
+  forbidden_active_paper_artifacts_until_promotion:
+    - reports/crpto/tables/crpto_ijds_v4_tableS6I_stratum_phase_margins.csv
+    - reports/crpto/tables/crpto_ijds_v4_tableS2B_all_candidate_calibration_bias.csv
+
+stopped_tagged_candidate_capsule:
+  status: "protocol_tagged_candidate_stopped_before_scientific_output"
+  active_paper_evidence_allowed: false
+  active_claim_support_allowed: false
+  machine_readable_supplement_allowed: false
+  dvc_pointer_count_change_allowed: false
+  stop_reason: >-
+    The V1 embedding protocol was frozen before execution, but its sharp-rate
+    normalization used policy-specific deployed capital instead of the common
+    monthly B and pooled TB denominators required by the estimand.  It produced
+    no scientific outputs and must never be executed or cited.
+  run_scope:
+    - ijds-set-preserving-embedding-sensitivity-2026-07-26-v1
+  replay_entrypoints:
+    - scripts/experiments/run_ijds_set_preserving_embedding_sensitivity_v1.py
+  protocols:
+    - docs/research/ijds_set_preserving_embedding_sensitivity_v1_protocol_2026-07-26.md
+  configs:
+    - configs/experiments/ijds_set_preserving_embedding_sensitivity_2026-07-26_v1.yaml
+  implementations:
+    - src/ijds_challengers/set_preserving_embedding.py
+  forbidden_run_tags_in_manuscript:
+    - ijds-set-preserving-embedding-sensitivity-2026-07-26-v1
+
+superseded_protocol_capsule:
+  status: "retained_reproducible_provenance_not_active_evidence"
+  active_paper_evidence_allowed: false
+  active_claim_support_allowed: false
+  protocol_entrypoints:
+    - scripts/experiments/run_ijds_common_panel_threshold_response_v7.py
+    - scripts/experiments/run_ijds_marginal_mean_score_outcome_gap_v2.py
+  protocols:
+    - docs/research/ijds_common_panel_threshold_response_v7_protocol_2026-07-26.md
+    - docs/research/ijds_marginal_mean_score_outcome_gap_v2_protocol_2026-07-26.md
+  configs:
+    - configs/experiments/ijds_common_panel_threshold_response_2026-07-26_v7.yaml
+    - configs/experiments/ijds_marginal_mean_score_outcome_gap_2026-07-26_v2.yaml
+  supersession:
+    run_tag: "ijds-common-panel-threshold-response-2026-07-26-v8"
+    reason: "V8 truthfully records the manifest-protected raw-archive read; its scientific CSVs are byte-identical to V7."
 
 claim_boundaries:
   required:
@@ -181,6 +288,7 @@ claim_boundaries:
     - "The exact rank tail is retrospective and post-inspection; its locked Bonferroni--Holm cutoffs are nominal reporting thresholds, not post-selection FWER control."
     - "Joint-block exchangeability is stronger than the usual calibration-plus-one-future-point split-conformal condition."
     - "Label-Mondrian is a complete sensitivity, not restored temporal validity."
+    - "Adjacent threshold response uses one common target panel and one shared unresolved completion per loan; separately extremized coverage bounds are not subtracted."
   forbidden:
     - "Selected model, gamma, ruler, coordinate, cap, comparator, or policy."
     - "Universal portfolio direction or selected-set conformal guarantee."

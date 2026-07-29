@@ -1,3 +1,8 @@
 book/.quarto/
 .venv/
 .pytest_cache/
+.runtime_calibre/
+.test_tmp_*/
+.tmp_*/
+staging/
+tmp/

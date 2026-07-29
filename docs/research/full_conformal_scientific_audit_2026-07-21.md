@@ -1,5 +1,11 @@
 # Auditoría científica integral de CRPTO y conformal prediction
 
+> **Nota de estado (2026-07-26).** Los conteos de páginas, artefactos y tests
+> registrados al final de este documento describen el snapshot auditado el
+> 2026-07-21 y no la versión activa. Durante el trabajo pre-freeze no se aplica
+> ningún límite de páginas; el control editorial de 25 páginas se reactivará
+> únicamente al declarar un freeze final explícito.
+
 ## Veredicto ejecutivo
 
 CRPTO es defendible y más interesante como **auditoría de una interfaz
@@ -37,10 +43,11 @@ Sí conviene presentarlas como protocolos futuros claramente separados.
 
 La revisión cubrió código científico, protocolos, registros de claims,
 evidencia activa, manuscrito, suplemento, tablas, figuras, DVC y superficies de
-reproducibilidad. El corpus local inventariado contiene 120 PDFs y 4.636 páginas.
-La frontera contiene 22 objetos PDF correspondientes a 21 trabajos (770
-páginas; un artículo tiene suplemento separado), además del paper fundacional
-de CatBoost (11 páginas). Todos se
+reproducibilidad. El inventario inicial contenía 120 PDFs y 4.636 páginas; la
+incorporación posterior de Marques (2025) y Duchi (2025) elevó el checksum
+vigente a 122 PDFs y 4.673 páginas. La frontera contiene ahora 24 objetos PDF
+correspondientes a 23 trabajos (807 páginas; un artículo tiene suplemento
+separado), además del paper fundacional de CatBoost (11 páginas). Todos se
 extrajeron con el pipeline académico y se auditaron por teorema, estimando,
 endpoint y posibilidad real de transferencia a CRPTO.
 
@@ -172,7 +179,7 @@ asignaciones simuladas sobre outcomes observados, no treatment effects.
 ### 6. Economía y optimización
 
 El coeficiente `(1-p)r-p*LGD` y el endpoint `(1-Y)r-Y*LGD` forman una pareja
-coherente como **proxy estandarizado**, pero la tasa anual y un label terminal
+algebraicamente alineada como **proxy estandarizado**, pero la tasa anual y un label terminal
 de 36 meses no comparten escala de cash flow. No debe llamarse profit, NPV,
 IRR, welfare o true expected return. Multiplicar todas las tasas por `k>0` es,
 tras reescalar positivamente el objetivo, equivalente a usar `LGD/k`; por ello

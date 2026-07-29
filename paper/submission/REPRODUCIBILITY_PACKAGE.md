@@ -18,8 +18,8 @@ instructions, and replay commands.
 | Environment | `pyproject.toml`, `uv.lock`, `justfile` |
 | Authority | Active claim registry, executable claim ledger, source registry, publication targets |
 | Method | Complete `src` package, active runners, evidence and paper builders |
-| Runs | 51 DVC pointers for active roots, sensitivities, and replay dependencies |
-| Evidence | One manifest, 27 CSV tables, three figures in PDF/PNG |
+| Runs | 53 DVC pointers for active roots, sensitivities, and replay dependencies |
+| Evidence | One manifest, 29 CSV tables, five figure families in PDF/PNG |
 | Manuscript | QMD body/supplement, generated INFORMS TeX, bibliography |
 | Gates | Scientific tests, lint, typing, drift, claim sync, anonymity, PDF QA |
 
@@ -33,20 +33,23 @@ The active raw source is `Loan_status_2007-2020Q3.csv`, expected size
 `5878af2a088f8ab5214c9337289fb8b5eb6c6338fd3f417b6cdc18513dc6f35f`.
 It is ignored by Git and referenced by DVC metadata. Public community or
 repository mirrors have existed, but no single issuer-maintained permanent URL
-is guaranteed. The package therefore supplies file identity, schema and
+is guaranteed. A Kaggle distribution matches the local filename and byte size,
+but that match does not prove the author's acquisition source or governing
+license. The durable boundary and required author confirmations are recorded in
+`docs/research/ijds_raw_data_acquisition_provenance_2026-07-21.md`. The package therefore supplies file identity, schema and
 cleaning code, full-file audit artifacts, and reconstruction instructions
 rather than depending on one URL or rehosting the raw CSV.
 
 The code scans 2,925,493 rows and 142 columns. The active design uses every
 eligible 36-month loan under the declared chronology and schema. The archive is
 not a verified point-in-time snapshot; endpoint availability is reconstructed
-from servicing dates. Prosper, Freddie/Mendeley, and Home Credit files are
-historical diagnostics and are not required.
+from servicing dates. No external credit archive is an active input or evidence
+source for this submission.
 
 ## Standard Reproduction
 
 ```powershell
-uv sync --group dev --frozen
+uv sync --group dev --locked
 uv run --locked python scripts/manage_ijds_dvc_capsule.py pull
 just submission-build
 just ijds-active-check
@@ -111,13 +114,18 @@ graph, bibliography, cross-references, and stable pagination in that order.
 
 ## Acceptance QA
 
-1. Reproduce from a fresh clone and the 51 DVC pointers.
+1. Reproduce from a fresh clone and the 53 DVC pointers.
 2. Confirm evidence and QMD-to-TeX builders are byte-idempotent.
 3. Run scientific, lint, type, drift, publication, and protected-artifact checks.
 4. Compile and inspect body, supplement, and official PDF page by page.
 5. Confirm identity, path, tag, commit, and hash sanitization for reviewers.
 6. Publish data acquisition, dictionary, environment, and artifact hashes.
 7. Document platform-level numerical differences without retuning evidence.
+8. Confirm that public repositories, DVC remotes, and capsules do not distribute
+   raw or row-level derivatives without explicit rights.
 
-Exact immutable identifiers live only in
-`EDITOR_ONLY_REPRODUCIBILITY_CROSSWALK.md`.
+Exact immutable source and artifact identifiers are pinned in
+`configs/ijds_active_evidence_sources.yaml` and the corresponding DVC pointers.
+`EDITOR_ONLY_REPRODUCIBILITY_CROSSWALK.md` provides the reviewer-facing mapping
+needed to reconstruct those registered lineages without exposing restricted
+row-level data.

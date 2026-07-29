@@ -7,24 +7,39 @@ format: html
 
 # Active IJDS Manuscript
 
-The single active paper is
-`CRPTO_ijds.qmd`, with online supplement `supplement_ijds.qmd` and official
-INFORMS source `submission/CRPTO_ijds_submission.tex`.
+The single active manuscript is `CRPTO_ijds.qmd`, with online supplement
+`supplement_ijds.qmd`. The anonymous INFORMS TeX in
+`submission/CRPTO_ijds_submission.tex` is generated from the QMD and must not be
+edited directly.
 
-The active claim registry is
-`../docs/research/active_claims_2026-07-10.md`. The experiment uses a
-status-independent 540,121-loan universe, a 2012-selected conformal upper-score
-guardrail, and 15 separate monthly 2016--2017 decisions. It finds a genuine
-trade-off: lower default, lower standardized payoff, and worse funded-set
-miscoverage relative to point PD.
+The active authorities are:
 
-Compact-v7, A1--A40, and external-dataset experiments are historical
-provenance. They do not define or validate the active paper.
+- claim registry: `../docs/research/active_claims_2026-07-14.md`;
+- source registry: `../configs/ijds_active_evidence_sources.yaml`;
+- executable claim ledger: `../configs/ijds_claim_ledger.yaml`; and
+- paper-facing evidence manifest:
+  `../reports/crpto/ijds_binary_geometry_frontier_v4_evidence.json`.
 
-# Build
+The study uses the exhaustive 640,543-loan eligible design. The primary OOT
+panel has 376,890 candidates, including 12,076 outcomes unresolved at the
+reconstructed cutoff. Five frozen learner specifications provide coverage
+controls; only the primary CatBoost score enters portfolio optimization. The
+paper reports all declared windows, rulers, coordinates, sensitivities, and
+registered comparator supports. It selects no learner, window, gamma, ruler,
+coordinate, cap, comparator, or policy and makes no causal, selected-set,
+prospective, or deployment claim.
+
+Compact-v7, pool93, A1--A40, selected-policy, external-transfer, and historical
+V1--V3 materials are provenance only and do not support the active manuscript.
+
+# Build and Validation
 
 ```powershell
-just ijds-evidence
-just paper-submission
-just paper-submission-official
+just submission-build
+just ijds-active-check
+just submission-check
 ```
+
+The first command regenerates the active aggregate evidence and all reviewer
+documents. The latter commands verify scientific, lineage, hash, anonymity,
+compilation, and PDF contracts without promoting a result or policy.

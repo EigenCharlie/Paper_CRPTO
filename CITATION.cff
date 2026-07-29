@@ -1,36 +1,30 @@
 cff-version: 1.2.0
-title: "CRPTO: Conformal Robust Predict-Then-Optimize aplicado a credit risk"
-message: "If you use this software or the accompanying paper, please cite the work below."
+title: "CRPTO research code and reproducibility package"
+message: >
+  If you use this software, cite the repository and the current manuscript.
+  Source code is MIT-licensed; narrative content, figures, tables, and
+  documentation identified in LICENSE-CONTENT are CC BY 4.0.
 type: software
 authors:
   - given-names: Carlos Alfredo
     family-names: Vergara Rojas
     email: cavr94@gmail.com
 abstract: >
-  CRPTO is an end-to-end research pipeline that integrates calibrated probability-of-default
-  modeling, Mondrian conformal prediction intervals, and robust portfolio optimization on
-  Lending Club loan-level data. The accompanying Quarto book documents the methodology, the
-  paper-final champion (run tag paper-thesis-final-economic-2026-04-06), and an extended
-  dossier of regulatory, fairness, and MRM evidence.
+  Reproducible code, protocols, tests, and aggregate evidence for an exact
+  geometric analysis and identification audit of binary conformal prediction
+  sets at the interface with credit portfolio optimization. The active
+  manuscript reports the exact threshold characterization, complete
+  finite-archive bounds, and comparator-support diagnostics without selecting a
+  learner, conformal recipe, ruler, coordinate, or portfolio policy.
 keywords:
   - credit risk
-  - probability of default
   - conformal prediction
   - predict-then-optimize
-  - robust optimization
   - portfolio optimization
-  - model risk management
-  - lending club
+  - partial identification
+  - reproducibility
 license: MIT
-version: "0.1.0"
-date-released: "2026-04-06"
+version: "0.2.0"
+date-released: "2026-07-21"
 url: "https://github.com/EigenCharlie/Paper_CRPTO"
 repository-code: "https://github.com/EigenCharlie/Paper_CRPTO"
-preferred-citation:
-  type: thesis
-  authors:
-    - given-names: Carlos Alfredo
-      family-names: Vergara Rojas
-  title: "CRPTO: predict-then-optimize con conformal prediction para riesgo de crédito"
-  year: 2026
-  thesis-type: "Master's thesis"

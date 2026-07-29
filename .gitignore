@@ -7,6 +7,9 @@ __pycache__/
 .venv/
 .venv-*/
 .venv-broken-posix/
+.runtime_calibre/
+.test_tmp_*/
+.tmp_*.dll
 
 # Quarto
 book/_book/
@@ -142,6 +145,7 @@ mlartifacts/
 # Scratch runtime checkpoints are observability, not canonical deliverables.
 models/*_runtime_checkpoints/
 tmp/
+/staging/
 
 # Optuna local
 optuna.db

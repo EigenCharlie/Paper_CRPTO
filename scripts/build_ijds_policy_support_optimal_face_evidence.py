@@ -6,7 +6,7 @@ import json
 import subprocess
 from collections.abc import Mapping, Sequence
 from pathlib import Path
-from typing import Any
+from typing import Any, cast
 
 import numpy as np
 import pandas as pd
@@ -217,8 +217,7 @@ def _require_solver_contract(
         raise TypeError("A solver contract is not a mapping.")
     if contracts[0] != contracts[1] or contracts[0] != contracts[2]:
         raise RuntimeError("Solver contracts disagree within a run.")
-    contract = contracts[0]
-    assert isinstance(contract, Mapping)
+    contract = cast(Mapping[str, Any], contracts[0])
     expected = {
         "highspy_version": "1.15.1",
         "highs_native_version": "1.15.1",

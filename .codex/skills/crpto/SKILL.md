@@ -1,7 +1,12 @@
+---
+name: crpto
+description: Audit, build, and verify the active CRPTO IJDS manuscript, exact binary-conformal theory, evidence registry, experiments, and submission artifacts without promoting quarantined claims.
+---
+
 # CRPTO Skill
 
-Use this skill in `C:\Users\carlos\Documents\Paper_CRPTO`. CRPTO is one
-single-author IJDS paper and reproducibility bundle, not a production service.
+Use this skill from the CRPTO repository root. CRPTO is one single-author IJDS
+paper and reproducibility bundle, not a production service.
 
 ## Active Contract
 
@@ -29,13 +34,17 @@ Read first:
 20. `docs/research/ijds_label_mondrian_sensitivity_protocol_2026-07-21.md`
 21. `docs/research/ijds_policy_support_optimal_face_v2_protocol_2026-07-21.md`
 22. `docs/research/ijds_policy_support_rhs_semantics_recovery_v3a_protocol_2026-07-21.md`
-23. `docs/research/applied_conformal_prediction_book_audit_2026-07-21.md`
-24. `docs/research/conformal_literature_corpus_audit_2026-07-21.md`
-25. `reports/crpto/ijds_binary_geometry_frontier_v4_evidence.json`
-26. `docs/ACADEMIC_CONTEXT.md`
-27. `docs/SCOPE_AND_GOVERNANCE.md`
-28. `CONTRIBUTING.md`
-29. `EXTRACTION_MANIFEST.md`
+23. `docs/research/ijds_exact_binary_conformal_theory_2026-07-24.md`
+24. `docs/research/ijds_common_panel_threshold_response_v8_protocol_2026-07-26.md`
+25. `docs/research/ijds_marginal_mean_score_outcome_gap_v3_protocol_2026-07-26.md`
+26. `docs/research/ijds_set_preserving_embedding_sensitivity_v1_protocol_2026-07-26.md`
+27. `docs/research/applied_conformal_prediction_book_audit_2026-07-21.md`
+28. `docs/research/conformal_literature_corpus_audit_2026-07-21.md`
+29. `reports/crpto/ijds_binary_geometry_frontier_v4_evidence.json`
+30. `docs/ACADEMIC_CONTEXT.md`
+31. `docs/SCOPE_AND_GOVERNANCE.md`
+32. `CONTRIBUTING.md`
+33. `EXTRACTION_MANIFEST.md`
 
 Active evidence:
 
@@ -83,6 +92,16 @@ Active evidence:
   unavailable fitting labels but are not sharp bounds over all assignments.
 - USD 25 floor-with-cash rounding is complete for all 1,440 portfolios and 96
   tracks; it is not an optimized integer policy.
+- the active V8 common-panel replay reports every one of 175 stratum and 35
+  learner adjacent-window responses using one shared unresolved-label
+  completion per contrast; sharpness is cellwise, not jointly attainable over
+  the overlapping family.
+- V2 marginal mean-score--outcome-gap outputs are quarantine provenance. No
+  marginal claim or Table S2B is active unless a fresh V3 protocol and exact
+  direct-child artifact replay both pass and are promoted.
+- Calibre runs optimized Python (`sys.flags.optimize == 2`): never use
+  `assert` as a runtime or scientific guard in `src/**` or `scripts/**`;
+  raise an explicit exception so the check survives execution.
 
 Headline evidence:
 
@@ -109,10 +128,16 @@ Headline evidence:
 - label-Mondrian leaves `27/40` marginal and `109/400` category upper endpoints
   below 0.90; AvgC becomes `1.723718`--`1.785468` and `{0,1}` shares
   `0.723718`--`0.785468`. All 40 aggregate class-gap bounds cross zero;
-- CatBoost stratum 2 crosses prevalence alpha from W7 to W8 and its residual
-  quantile changes from `0.888435` to `0.111801`;
+- CatBoost S3 (the third score stratum; internal zero-based group 2) crosses
+  prevalence alpha from W7 to W8 and its residual quantile changes from
+  `0.888435` to `0.111801`;
+- on the same fixed S3 target panel, the resolved W7--W8 coverage response is
+  `-281/76,495`, and the sharp all-candidate shared-completion endpoint hull is
+  `[-312,-290]/79,047`; this retrospectively highlighted cell is neither a
+  selected winner nor an inferential test;
 - C2 match residual is at most `8.33e-17` and reconciles weak plug-in dominance;
-- all 216 broad-stress envelopes cross zero;
+- all 216 endpoint envelopes over the finite registered cap values spanning
+  `[0.05,0.12]` include zero; this does not compute continuous-support extrema;
 - default crosses zero in all 72 development-support cells;
 - all 27 W8 development-support envelopes cross zero;
 - the objective-matched endpoint contrast crosses zero at `.25`, is adverse at
@@ -151,6 +176,7 @@ Preserve these distinctions:
 - finite three-coordinate diagnostics versus a continuous joint frontier;
 - standardized payoff versus cash-flow return, IRR, NPV, or welfare;
 - sharp identification bounds versus sampling confidence intervals;
+- sharp endpoint hull versus a claim that every interior value is attainable;
 - C2 plug-in dominance versus realized-outcome dominance;
 - exact declared comparator support versus universal baseline invariance;
 - active-upper-row RHS ranging versus basic slack-row activity ranging in
@@ -184,7 +210,9 @@ repair/equalized coverage.
 ## Evidence Workflow
 
 ```powershell
-uv run python scripts/build_ijds_binary_geometry_frontier_v4_evidence.py
+$stage = 'staging/active-evidence-generation-YYYYMMDD'
+uv run python scripts/build_ijds_binary_geometry_frontier_v4_evidence.py --stage-only $stage
+uv run python scripts/build_ijds_binary_geometry_frontier_v4_evidence.py --promote-from-stage $stage
 just publication-integrity
 just lint
 just type-check
@@ -198,12 +226,12 @@ just ijds-dvc-status
 ```
 
 The active builder verifies the V4, two-ruler, raw-data, credit-control,
-  endpoint, structural, rolling-primary recovery, conformal-set diagnostic,
-  joint-block rank reference, individual-age follow-up, label-Mondrian, fit-label completion,
-and allocation-granularity
+endpoint, structural, rolling-primary recovery, conformal-set diagnostic,
+joint-block rank reference, common-panel V8, individual-age follow-up,
+label-Mondrian, fit-label completion, and allocation-granularity
 manifests/freezes and every artifact descriptor. The active capsule contains
-51 DVC pointers. It emits 27 paper-facing CSV tables, three figures under the
-`crpto_ijds_v4_*` naming family, and
+53 DVC pointers. It emits 29 paper-facing CSV tables and five figure families
+in PNG and PDF under the `crpto_ijds_v4_*` naming family, and
 `ijds_binary_geometry_frontier_v4_evidence.json`. Consecutive builds must be
 byte-identical. The canonical body is `paper/CRPTO_ijds.qmd`; generate official
 TeX with `scripts/build_ijds_submission_tex.py` and never edit it by hand.

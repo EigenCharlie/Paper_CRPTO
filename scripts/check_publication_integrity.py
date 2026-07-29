@@ -5,7 +5,7 @@ from __future__ import annotations
 import json
 import re
 import sys
-from collections.abc import Mapping
+from collections.abc import Callable, Mapping
 from dataclasses import dataclass
 from pathlib import Path
 
@@ -15,6 +15,7 @@ from loguru import logger
 from src.ijds_audit.claim_ledger import materialize_claim_ledger
 from src.ijds_audit.publication_generation import publication_implementation_descriptors
 from src.ijds_audit.publication_sources import load_verified_source_registry
+from src.utils.artifact_descriptor import verified_artifact_path
 
 REPO = Path(__file__).resolve().parents[1]
 EVIDENCE_PATH = REPO / "reports/crpto/ijds_binary_geometry_frontier_v4_evidence.json"
@@ -29,7 +30,10 @@ class SurfaceCheck:
     required: tuple[str, ...]
 
 
-TITLE = "crpto: an identification audit of binary conformal credit portfolio optimization"
+TITLE = (
+    "auditing binary conformal prediction in credit allocation: exact geometry, "
+    "temporal-transport diagnostics, and comparator dependence"
+)
 
 REVIEWER_SURFACES = (
     REPO / "paper/CRPTO_ijds.qmd",
@@ -88,6 +92,13 @@ SURFACES = (
             "reconstructed",
             "not a verified point-in-time snapshot",
             "two rulers constructed without policy-development or OOT evaluation outcomes",
+            "finite-archive shortfall",
+            "only primary CatBoost enters optimization",
+            "score-Mondrian",
+            "retrospective Label-Mondrian sensitivity",
+            "model-implied plug-in objective",
+            "status-indexed standardized payoff proxy",
+            "sharp common-outcome bounds",
             "objective-matched",
             "normalized-score",
             "crosses zero",
@@ -109,6 +120,12 @@ SURFACES = (
             "coordinate one",
             "missingness-encoding sensitivity",
             "second temporal origin",
+            "only the primary CatBoost enters optimization",
+            "active recipe is score-Mondrian",
+            "label-Mondrian sensitivity",
+            "model-implied plug-in objective",
+            "status-indexed standardized payoff proxy",
+            "sharp common-outcome bounds",
             "exact combined-rank",
             "label-mondrian",
             "individual-age",
@@ -297,6 +314,8 @@ def _check_evidence_decision() -> list[str]:
     conformal_set = evidence.get("conformal_set_diagnostics", {})
     exact = evidence.get("exchangeability_transport_test", {})
     label_mondrian = evidence.get("sensitivity", {}).get("label_mondrian", {})
+    controls = evidence.get("credit_risk_controls", {})
+    common_panel = evidence.get("common_panel_threshold_response", {})
 
     checks = [
         *(
@@ -308,11 +327,50 @@ def _check_evidence_decision() -> list[str]:
             "active evidence misstates the archive as a point-in-time snapshot",
         ),
         (
-            evidence["credit_risk_controls"]["all_five_all_eight_upper_below_nominal"] is not True,
+            controls.get("all_five_all_eight_upper_below_nominal") is not True,
             "five-model coverage result no longer holds",
         ),
         (
-            evidence["portfolio"]["broad_stress_all_envelopes_cross_zero"] is not True,
+            controls.get("learners_reported")
+            != [
+                "catboost_platt",
+                "numeric_logistic_platt",
+                "catboost_monotonic_platt",
+                "woe_scorecard_platform_platt",
+                "woe_scorecard_borrower_platt",
+            ]
+            or controls.get("portfolio_learner") != "catboost_platt"
+            or controls.get("controls_enter_portfolio_optimization") is not False
+            or controls.get("model_or_feature_selected_from_oot") is not False,
+            "five coverage-control learners or the CatBoost-only LP role changed",
+        ),
+        (
+            common_panel.get("full_census_and_identities_verified") is not True
+            or common_panel.get("stratum_rows") != 175
+            or common_panel.get("learner_rows") != 35
+            or common_panel.get("stratum_sharp_sign_census")
+            != {"negative": 122, "exactly_zero": 5, "positive": 48}
+            or common_panel.get("learner_transition_sharp_sign_census")
+            != {"negative": 31, "exactly_zero": 0, "positive": 4}
+            or common_panel.get("interpretation", {}).get("sharpness_is_cellwise") is not True
+            or common_panel.get("interpretation", {}).get(
+                "joint_attainability_of_all_cell_endpoints_claimed"
+            )
+            is not False
+            or common_panel.get("interpretation", {}).get(
+                "stratum_sign_census_is_substantive_discovery"
+            )
+            is not False,
+            "common-panel threshold response or its cellwise boundary changed",
+        ),
+        (
+            challenger.get("primary_ruler") != "objective_matched"
+            or challenger.get("secondary_ruler") != "normalized_score"
+            or challenger.get("continuous_frontier_claim") is not False,
+            "two-ruler hierarchy or finite-grid boundary changed",
+        ),
+        (
+            evidence["portfolio"]["registered_cap_values_all_envelopes_include_zero"] is not True,
             "broad comparator support no longer crosses zero everywhere",
         ),
         (
@@ -485,6 +543,9 @@ def _check_evidence_decision() -> list[str]:
                 "all_candidate_label_conditional_coverage_estimated"
             )
             is not False
+            or conformal_set.get("interpretation", {}).get("label_mondrian_method") is not False
+            or conformal_set.get("interpretation", {}).get("selected_set_guarantee") is not False
+            or conformal_set.get("interpretation", {}).get("funded_set_guarantee") is not False
             or conformal_set.get("interpretation", {}).get("fairness_or_equalized_coverage_claim")
             is not False,
             "complete conformal-set diagnostic or its claim boundary changed",
@@ -538,8 +599,13 @@ def _check_evidence_decision() -> list[str]:
             }
             or label_mondrian.get("mixed_category_identification_states") is not True
             or label_mondrian.get("all_forty_aggregate_class_gap_bounds_cross_zero") is not True
+            or label_mondrian.get("interpretation", {}).get("retrospective_sensitivity") is not True
+            or label_mondrian.get("interpretation", {}).get("learner_or_window_selected")
+            is not False
             or label_mondrian.get("interpretation", {}).get("label_conditional_transport_guarantee")
             is not False
+            or label_mondrian.get("interpretation", {}).get("selected_set_guarantee") is not False
+            or label_mondrian.get("interpretation", {}).get("funded_set_guarantee") is not False
             or label_mondrian.get("interpretation", {}).get("fairness_claim") is not False,
             "label-Mondrian sensitivity or its interpretation boundary changed",
         ),
@@ -591,6 +657,34 @@ def _identity_mismatches(
     ]
 
 
+def _paper_artifact_failures(
+    artifacts: object,
+    *,
+    repo_root: Path = REPO,
+) -> list[str]:
+    """Verify every paper-facing descriptor against the bytes on disk."""
+    if not isinstance(artifacts, Mapping):
+        return ["paper evidence manifest omits its artifact descriptor mapping"]
+    failures: list[str] = []
+    seen_paths: dict[str, str] = {}
+    for name, raw_descriptor in artifacts.items():
+        label = f"paper artifact {name}"
+        if not isinstance(name, str) or not isinstance(raw_descriptor, Mapping):
+            failures.append(f"{label} has an invalid descriptor")
+            continue
+        raw_path = raw_descriptor.get("path")
+        if isinstance(raw_path, str):
+            if previous := seen_paths.get(raw_path):
+                failures.append(f"{label} duplicates the path bound by {previous}")
+            else:
+                seen_paths[raw_path] = name
+        try:
+            verified_artifact_path(raw_descriptor, repo_root=repo_root, label=label)
+        except (KeyError, OSError, TypeError, ValueError, RuntimeError) as error:
+            failures.append(f"{label} failed verification: {error}")
+    return failures
+
+
 def _check_lineage_sync() -> list[str]:
     """Verify identities and DVC pointers against the single source registry."""
     failures: list[str] = []
@@ -612,12 +706,12 @@ def _check_lineage_sync() -> list[str]:
     }
     checks = (
         (
-            str(registry.get("schema_version")) != "2026-07-21.4",
-            "active source registry schema is not 2026-07-21.4",
+            str(registry.get("schema_version")) != "2026-07-26.4",
+            "active source registry schema is not 2026-07-26.4",
         ),
         (
-            len(registry.get("dvc_pointers", [])) != 51,
-            "active source registry does not contain exactly 51 DVC pointers",
+            len(registry.get("dvc_pointers", [])) != 53,
+            "active source registry does not contain exactly 53 DVC pointers",
         ),
         (
             len(
@@ -627,8 +721,8 @@ def _check_lineage_sync() -> list[str]:
                     if str(descriptor.get("path", "")).endswith(".csv")
                 ]
             )
-            != 27,
-            "paper evidence manifest does not contain exactly 27 CSV tables",
+            != 29,
+            "paper evidence manifest does not contain exactly 29 CSV tables",
         ),
         (
             contract.get("source_registry") != expected_registry_path,
@@ -695,6 +789,7 @@ def _check_lineage_sync() -> list[str]:
         for name, descriptor in expected_descriptors.items()
         if evidence_sources.get(name) != descriptor
     )
+    failures.extend(_paper_artifact_failures(evidence.get("paper_artifacts")))
     failures.extend(
         f"active DVC pointer is missing: {pointer}"
         for pointer in registry["dvc_pointers"]
@@ -725,8 +820,14 @@ def _check_inventory_count_sync() -> list[str]:
         REPO / "paper/submission/REPRODUCIBILITY_PACKAGE.md",
         REPO / "paper/submission/SCHOLARONE_FINAL_CHECKLIST.md",
     )
+    # The manuscript surfaces state the same count as "tables" rather than "CSV",
+    # so they are scanned with the widened pattern below. Omitting them let a
+    # stale table count reach the generated TeX.
     csv_surfaces = (
         REPO / ".codex/skills/crpto/SKILL.md",
+        REPO / "paper/CRPTO_ijds.qmd",
+        REPO / "paper/supplement_ijds.qmd",
+        REPO / "paper/submission/CRPTO_ijds_submission.tex",
         REPO / "paper/submission/DATA_CODE_DISCLOSURE_FORM_DRAFT.md",
         REPO / "paper/submission/EDITOR_ONLY_REPRODUCIBILITY_CROSSWALK.md",
         REPO / "paper/submission/README.md",
@@ -742,7 +843,7 @@ def _check_inventory_count_sync() -> list[str]:
                 f"manual DVC inventory count is stale in {path.relative_to(REPO).as_posix()}"
             )
     csv_pattern = re.compile(
-        rf"\b{csv_count}\s+(?:(?:paper-facing|aggregate|publication)\s+)*csv\b",
+        rf"\b{csv_count}\s+(?:(?:paper-facing|aggregate|publication)\s+)*(?:csv\b|tables\b)",
         re.IGNORECASE,
     )
     for path in csv_surfaces:
@@ -754,18 +855,27 @@ def _check_inventory_count_sync() -> list[str]:
     return failures
 
 
+def _guarded_check(label: str, check: Callable[[], list[str]]) -> list[str]:
+    """Fail closed with an actionable message instead of aborting the full audit."""
+    try:
+        return check()
+    except (KeyError, OSError, TypeError, ValueError, RuntimeError) as error:
+        return [f"{label} failed closed: {error}"]
+
+
 def check_publication_integrity() -> list[str]:
-    return [
-        *_check_surface_contracts(),
-        *_check_numeric_sync(),
-        *_check_endpoint_reason_partition(),
-        *_check_retired_claims(),
-        *_check_reviewer_anonymity(),
-        *_check_evidence_decision(),
-        *_check_claim_ledger(),
-        *_check_lineage_sync(),
-        *_check_inventory_count_sync(),
-    ]
+    checks = (
+        ("surface contracts", _check_surface_contracts),
+        ("numeric synchronization", _check_numeric_sync),
+        ("endpoint-reason partition", _check_endpoint_reason_partition),
+        ("retired-claim scan", _check_retired_claims),
+        ("reviewer anonymity", _check_reviewer_anonymity),
+        ("evidence decision contract", _check_evidence_decision),
+        ("claim ledger", _check_claim_ledger),
+        ("lineage synchronization", _check_lineage_sync),
+        ("inventory-count synchronization", _check_inventory_count_sync),
+    )
+    return [failure for label, check in checks for failure in _guarded_check(label, check)]
 
 
 def main() -> int:

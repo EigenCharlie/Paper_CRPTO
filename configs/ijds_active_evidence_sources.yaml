@@ -1,4 +1,4 @@
-schema_version: "2026-07-21.4"
+schema_version: "2026-07-26.4"
 status: "active_ijds_paper_evidence_source_registry"
 
 lineages:
@@ -98,6 +98,22 @@ lineages:
       scientific_uv_lock_sha256: "6c862cbad9ab7e3a07dd2823c775127403093d6ad59a789ee227d827165e4733"
       paper_role: "retrospective_joint_block_rank_reference_diagnostic"
       dvc_tracked: true
+    common_panel_threshold_response:
+      run_tag: "ijds-common-panel-threshold-response-2026-07-26-v8"
+      protocol_tag: "protocol/ijds-common-panel-threshold-response-2026-07-26-v8"
+      protocol_commit: "06a7d864776247fbb5128105deb229de4476be65"
+      scientific_uv_lock_sha256: "6c862cbad9ab7e3a07dd2823c775127403093d6ad59a789ee227d827165e4733"
+      paper_role: "complete_retrospective_common_fixed_panel_adjacent_threshold_response"
+      dvc_tracked: false
+      artifact_tag: "artifacts/ijds-common-panel-threshold-response-2026-07-26-v8"
+      artifact_commit: "526a71bd0a0a7663a313dc12b0ce0eb3307719d9"
+      artifact_parent_commit: "06a7d864776247fbb5128105deb229de4476be65"
+      artifact_transport: "git_force_tracked_direct_child_commit"
+      artifact_paths:
+        - "data/processed/experiments/ijds_audit/ijds-common-panel-threshold-response-2026-07-26-v8/adjacent_learner_threshold_response.csv"
+        - "data/processed/experiments/ijds_audit/ijds-common-panel-threshold-response-2026-07-26-v8/adjacent_stratum_threshold_response.csv"
+        - "models/experiments/ijds_audit/ijds-common-panel-threshold-response-2026-07-26-v8/common_panel_threshold_response_v8_summary.json"
+        - "models/experiments/ijds_audit/ijds-common-panel-threshold-response-2026-07-26-v8/execution_receipt.json"
 
 sensitivities:
   endpoint_availability:
@@ -160,6 +176,14 @@ sensitivities:
       dvc_tracked: true
 
 replay_dependencies:
+  rolling_origin_2017_outcome_free_parent:
+    run_tag: "ijds-rolling-origin-2017-2026-07-12-v2"
+    protocol_tag: "protocol/ijds-rolling-origin-stability-2026-07-12-v2"
+    protocol_commit: "9e689b2e3ca18aae5a2a967cc186da5dcd140891"
+    scientific_uv_lock_sha256: "d293ed325a3b25a13000560c8551d34937735ba8c9fe59ffeeed5d64f7120dd2"
+    freeze_sha256: "e224e1ae534435d1b166a07c50fb1ce907b07d36257f37e826ee41a0cb086759"
+    paper_role: "outcome_free_parent_for_equal_followup_replays"
+    dvc_tracked: true
   rolling_origin_equal_followup_parent:
     run_tag: "ijds-rolling-origin-equal-followup-2026-07-21-v1"
     protocol_tag: "protocol/ijds-rolling-origin-equal-followup-2026-07-21-v1"
@@ -249,6 +273,8 @@ dvc_pointers:
   - "data/processed/experiments/ijds_audit/ijds-allocation-granularity-sensitivity-2026-07-16-v3.dvc"
   - "models/experiments/ijds_audit/ijds-allocation-granularity-sensitivity-2026-07-16-v3.dvc"
   - "data/processed/experiments/ijds_audit/ijds-portfolio-structure-sensitivity-2026-07-15-v5.dvc"
+  - "data/processed/experiments/ijds_audit/ijds-rolling-origin-2017-2026-07-12-v2.dvc"
+  - "models/experiments/ijds_audit/ijds-rolling-origin-2017-2026-07-12-v2.dvc"
   - "data/processed/experiments/ijds_audit/ijds-rolling-origin-primary-recovery-2026-07-21-v1.dvc"
   - "models/experiments/ijds_audit/ijds-rolling-origin-primary-recovery-2026-07-21-v1.dvc"
   - "data/processed/experiments/ijds_audit/ijds-conformal-set-diagnostics-2026-07-21-v1.dvc"
@@ -329,6 +355,26 @@ sources:
     path: "models/experiments/ijds_audit/ijds-rolling-origin-2017-2026-07-15-v4/execution_receipt.json"
     bytes: 1134
     sha256: "d64ef87ce6e1a2f7f0493ed17e009bf8349f68546ed137d0cafd74a6292edb0a"
+  rolling_origin_2017_v2_config:
+    path: "configs/experiments/ijds_rolling_origin_2017_2026-07-12_v2.yaml"
+    bytes: 661
+    sha256: "b1357951f5158d4b950141a17d65b6422f7708c9e0bb51242d2e68bee269a993"
+  rolling_origin_2017_v2_freeze:
+    path: "models/experiments/ijds_audit/ijds-rolling-origin-2017-2026-07-12-v2/protocol_freeze.json"
+    bytes: 21068
+    sha256: "e224e1ae534435d1b166a07c50fb1ce907b07d36257f37e826ee41a0cb086759"
+  rolling_origin_2017_v2_scores:
+    path: "data/processed/experiments/ijds_audit/ijds-rolling-origin-2017-2026-07-12-v2/prediction/scores.parquet"
+    bytes: 11305405
+    sha256: "38c8ce704f9fc332e72c84c69864b4f8929fd4e46c47db9ec50dd015482b6e75"
+  rolling_origin_2017_v2_residual_recipes:
+    path: "models/experiments/ijds_audit/ijds-rolling-origin-2017-2026-07-12-v2/prediction/residual_recipes.json"
+    bytes: 74912
+    sha256: "087fff482122b4d984798b324d906dbfb2e68f861a0df97d6fe5622876c16be2"
+  rolling_origin_2017_v2_fit_audit:
+    path: "data/processed/experiments/ijds_audit/ijds-rolling-origin-2017-2026-07-12-v2/prediction/residual_fit_audit.parquet"
+    bytes: 46903218
+    sha256: "74e00eff213efc2b21d7e311d30edeb85fb53864f7f0250e23fe01270a5cc38b"
   rolling_primary_recovery_summary:
     path: "models/experiments/ijds_audit/ijds-rolling-origin-primary-recovery-2026-07-21-v1/rolling_origin_primary_recovery_summary.json"
     bytes: 20189
@@ -357,6 +403,26 @@ sources:
     path: "models/experiments/ijds_audit/ijds-exchangeability-transport-test-2026-07-21-v1/execution_receipt.json"
     bytes: 1409
     sha256: "35d09ca9fa9bdddd879a485394c9aa491a41ee7a7cf2b294fab17af69ffe5758"
+  common_panel_threshold_response_config:
+    path: "configs/experiments/ijds_common_panel_threshold_response_2026-07-26_v8.yaml"
+    bytes: 5350
+    sha256: "788c658a4517fea5f942d0e6a3cd75d170256cccb73d2b7bb9a94c326984385e"
+  common_panel_threshold_response_summary:
+    path: "models/experiments/ijds_audit/ijds-common-panel-threshold-response-2026-07-26-v8/common_panel_threshold_response_v8_summary.json"
+    bytes: 26661
+    sha256: "5364d942cbcaccaf6391c8a6dd07b4a54efda4d5701ae923f9cafa465c5d68a7"
+  common_panel_threshold_response_receipt:
+    path: "models/experiments/ijds_audit/ijds-common-panel-threshold-response-2026-07-26-v8/execution_receipt.json"
+    bytes: 8843
+    sha256: "b43fb2930d34a9e3bd3107a479dffaef3f0db00e97aca37e86daa6955d240203"
+  common_panel_threshold_response_strata:
+    path: "data/processed/experiments/ijds_audit/ijds-common-panel-threshold-response-2026-07-26-v8/adjacent_stratum_threshold_response.csv"
+    bytes: 96602
+    sha256: "e001c84f0c2b098e8d7d8a1dcc114ca47cd5ccb9e79e7473d52a8e0a944470f5"
+  common_panel_threshold_response_learners:
+    path: "data/processed/experiments/ijds_audit/ijds-common-panel-threshold-response-2026-07-26-v8/adjacent_learner_threshold_response.csv"
+    bytes: 10202
+    sha256: "287fc78ba99547f8b16f240ad395c3bca95c0581373d01cf58ade964b874173b"
   rolling_equal_followup_summary:
     path: "models/experiments/ijds_audit/ijds-rolling-origin-equal-followup-2026-07-21-v1/rolling_origin_equal_followup_summary.json"
     bytes: 55027

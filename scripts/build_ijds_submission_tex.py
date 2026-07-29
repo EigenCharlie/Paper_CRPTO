@@ -3,9 +3,14 @@
 from __future__ import annotations
 
 import argparse
+import base64
 import hashlib
+import os
+import re
 import subprocess
 import tempfile
+from collections.abc import Iterator
+from contextlib import contextmanager
 from pathlib import Path
 
 from src.utils.pipeline_runtime import atomic_write_text
@@ -23,19 +28,69 @@ GENERATED_BANNER = """%% =======================================================
 %% =====================================================================
 """
 
+REPORT_PNG_PATTERN = re.compile(r"(?<=\]\()(\.\./reports/[^)\s]+\.png)(?=\))")
+PLACEHOLDER_PNG = base64.b64decode(
+    "iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNk+A8AAQUBAScY42YAAAAASUVORK5CYII="
+)
+
 
 def _sha256(payload: bytes) -> str:
     return hashlib.sha256(payload).hexdigest()
 
 
+@contextmanager
+def _renderable_source() -> Iterator[tuple[Path, dict[str, str]]]:
+    """Yield a same-directory QMD whose report PNGs use temporary stand-ins.
+
+    Quarto scans image bytes even though a LaTeX render only needs their paths.
+    Publication integrity verifies the real figure descriptors separately. Small
+    stand-ins keep TeX generation deterministic in read-restricted capsules; the
+    original paths are restored in the generated TeX before it is written.
+    """
+    text = SOURCE.read_text(encoding="utf-8")
+    originals = tuple(dict.fromkeys(REPORT_PNG_PATTERN.findall(text)))
+    temporary_paths: list[Path] = []
+    replacements: dict[str, str] = {}
+    try:
+        for original in originals:
+            descriptor, raw_path = tempfile.mkstemp(
+                prefix=".crpto-tex-placeholder-",
+                suffix=".png",
+                dir=SOURCE.parent,
+            )
+            os.close(descriptor)
+            placeholder = Path(raw_path)
+            placeholder.write_bytes(PLACEHOLDER_PNG)
+            temporary_paths.append(placeholder)
+            replacements[placeholder.name] = original
+            text = text.replace(original, placeholder.name)
+
+        descriptor, raw_source = tempfile.mkstemp(
+            prefix=".crpto-tex-source-",
+            suffix=".qmd",
+            dir=SOURCE.parent,
+        )
+        os.close(descriptor)
+        render_source = Path(raw_source)
+        render_source.write_text(text, encoding="utf-8", newline="\n")
+        temporary_paths.append(render_source)
+        yield render_source, replacements
+    finally:
+        for path in reversed(temporary_paths):
+            path.unlink(missing_ok=True)
+
+
 def render_submission_tex(*, check: bool = False) -> bool:
     """Render the source and return whether the checked output was current."""
-    with tempfile.TemporaryDirectory(prefix=".crpto-ijds-", dir=SOURCE.parent) as temporary:
-        rendered = Path(temporary) / SOURCE.with_suffix(".tex").name
+    with (
+        _renderable_source() as (render_source, replacements),
+        tempfile.TemporaryDirectory(prefix=".crpto-ijds-", dir=SOURCE.parent) as temporary,
+    ):
+        rendered = Path(temporary) / render_source.with_suffix(".tex").name
         command = [
             "quarto",
             "render",
-            str(SOURCE),
+            str(render_source),
             "--to",
             "latex",
             "--metadata",
@@ -47,6 +102,9 @@ def render_submission_tex(*, check: bool = False) -> bool:
         ]
         subprocess.run(command, cwd=ROOT, check=True)
         body = rendered.read_text(encoding="utf-8")
+
+    for placeholder, original in replacements.items():
+        body = body.replace(placeholder, original)
 
     # The source is one directory above the official output. Quarto preserves
     # source-relative image paths, so adjust them deterministically for TeX.

@@ -3,7 +3,7 @@
 CRPTO is a research repository for one manuscript targeted to the **INFORMS
 Journal on Data Science**. It studies what happens when a binary conformal
 score is used as a coefficient in a monthly credit-allocation linear program.
-The contribution is an identification audit of the
+The contribution is an exact geometric analysis and identification audit of the
 machine-learning--conformal--optimization interface, not a promoted lending
 policy or a new credit-scoring leaderboard.
 
@@ -25,7 +25,7 @@ time roles before evaluation.
 | Label-Mondrian sensitivity | 27 / 40 marginal and 109 / 400 category shortfalls |
 | Two-ruler optimization solves | 6,240 |
 | Registered finite point-cap support | 3,067 caps |
-| Broad-support comparator envelopes crossing zero | 216 / 216 |
+| Finite registered-cap endpoint envelopes including zero | 216 / 216 |
 | Structural sensitivity | 36 complete scenarios |
 | Joint fit-label completion stress | 32 / 32 upper bounds below 0.90 |
 | USD 25 floor diagnostic | maximum rate perturbation 0.001284 pp |
@@ -64,7 +64,7 @@ Read these in order:
 5. [`paper/CRPTO_ijds.qmd`](paper/CRPTO_ijds.qmd)
 6. [`paper/supplement_ijds.qmd`](paper/supplement_ijds.qmd)
 
-The source registry owns lineage identities and 51 DVC pointers. The evidence
+The source registry owns lineage identities and 53 DVC pointers. The evidence
 manifest is the only numeric paper-facing manifest. The body QMD is the only
 editable source for the official submission TeX.
 
@@ -129,18 +129,26 @@ just publication-integrity   # source, claim, and artifact contracts
 just drift-gate              # read-only PD/conformal/evidence regression
 just ijds-active-check       # scientific and manuscript synchronization
 just submission-build       # evidence, HTML, TeX, PDFs, previews
-just submission-check       # all read-only submission gates
+just submission-check       # pre-freeze read-only gates; no page cap
+just submission-freeze-check # final-only gate; enforces configured page cap
 just submission-closeout    # build, check, and remote DVC verification
 just dependency-audit        # fail on unregistered dependency advisories
 ```
 
 The manual GitHub workflow named `clean-clone-reproducibility` (kept at
 `.github/workflows/tests-full.yml` to preserve its existing GitHub identity)
-reconstructs the locked publication capsule on a disposable Ubuntu CPU runner.
-Ubuntu is used as an
-independent portability check; CRPTO does not require WSL, CUDA, a GPU, or
-cuOpt. The workflow pulls only active evidence and strict-manifest DVC targets,
-then runs the same claim, drift, test, and coverage gates used locally.
+reconstructs the locked publication capsule on a disposable Windows CPU runner.
+That operating system deliberately matches the canonical figure-generation
+surface because the workflow compares PNG and PDF evidence byte for byte. The
+lightweight lint workflow remains an independent Ubuntu portability check;
+CRPTO does not require WSL, CUDA, a GPU, or cuOpt. The clean-clone workflow pulls
+only active evidence and strict-manifest DVC targets,
+then runs the same claim, drift, test, and coverage gates used locally. It is a
+reproducibility audit, not the final reviewer-PDF page freeze. It also
+rebuilds the reviewer HTML, generated TeX, and deterministic machine-readable
+supplement. The official publisher PDF and browser-printed preview PDFs remain
+the Windows closeout surface because the INFORMS style kit and local Chromium
+installation are not distributed by this repository.
 
 The manual fallback for official TeX compilation is intentionally
 `pdflatex -> bibtex -> pdflatex -> pdflatex`: the first pass writes citation
@@ -181,4 +189,10 @@ PDFs; bibliographic metadata belongs in `paper/references.bib`.
 
 ## License And Citation
 
-Code is MIT licensed. See [`CITATION.cff`](CITATION.cff) for citation metadata.
+Code is MIT licensed. Narrative text, figures, tables, and documentation are
+currently governed by [`LICENSE-CONTENT`](LICENSE-CONTENT). Because that prior
+public grant may conflict with a journal copyright transfer, publication rights
+remain a human-confirmation blocker rather than a resolved repository setting;
+see
+[`docs/research/ijds_submission_rights_anonymity_audit_2026-07-21.md`](docs/research/ijds_submission_rights_anonymity_audit_2026-07-21.md).
+See [`CITATION.cff`](CITATION.cff) for citation metadata.

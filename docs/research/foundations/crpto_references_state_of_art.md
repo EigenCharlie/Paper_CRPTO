@@ -1,18 +1,22 @@
 # CRPTO references: active state of the art
 
-Last audited: 2026-07-21.
+Last audited: 2026-07-26.
 
 This note is a concise routing document. The complete paper-by-paper corpus
 audit, extraction QA, and inclusion decisions are in
 `docs/research/conformal_literature_corpus_audit_2026-07-21.md`. The separate
 book audit is in
 `docs/research/applied_conformal_prediction_book_audit_2026-07-21.md`.
+The primary-source decision-calibration last-mile audit is in
+`docs/research/conformal_decision_sota_lastmile_2026-07-26.md`.
 
 ## Corpus status
 
-- `Papers_tesis` contains 120 PDFs and 4,636 pages.
-- The 2026-07-21 frontier addition contains 22 PDF objects representing 21
-  papers and 770 pages; one paper has a separate supplement.
+- The initial 2026-07-21 snapshot contained 120 PDFs and 4,636 pages. After the
+  Marques and Duchi prior-law intake, `Papers_tesis` contains 122 PDFs and
+  4,673 pages.
+- The extended frontier contains 24 PDF objects representing 23 papers and 807
+  pages; one paper has a separate supplement.
 - One additional 11-page foundational learner paper documents CatBoost; its
   presence identifies the algorithmic source and does not promote a model.
 - Every frontier PDF was read completely, including appendices, proofs,
@@ -22,6 +26,10 @@ book audit is in
   extracted and audited. It is useful pedagogically but is not an authority for
   several claims about ordering, conditional coverage, calibration, and
   empirical validation.
+- Two additional primary 2026 papers (52 pages total) were read through the
+  publisher document interface but could not be materialized locally because
+  network policy blocked the PDF bytes. They are excluded from the verified
+  122-PDF/4,673-page checksum until a later hash-verified intake.
 
 ## Theory that directly governs CRPTO
 
@@ -101,6 +109,17 @@ Gazin et al. (2025) and related FCR methods control a different target: the
 expected proportion of erroneous sets among selected informative sets. Their
 selection rules do not automatically cover a budget-coupled knapsack or LP.
 
+Shekhar and Howard (2026) calibrate the maximum affine forecast-error impact
+over a finite pacing-policy catalog. This is the closest decision-calibrated
+neighbor, but its split-conformal score uses exchangeable planning blocks and
+its selected-policy result additionally assumes a simultaneous catalog-wide
+uncertainty event. It constructs a new catalog-uniform score; it does not
+identify the continuous endpoint of a fixed binary label set. Lützow et al.
+(2026) instead optimize prediction-set geometry and calibration parameters
+through scenario optimization. That adds an explicit design objective and
+regularity assumptions; it is not identification supplied by binary-set
+coverage. The theorem-specific limitations are recorded in the last-mile audit.
+
 ### Online and distribution-shift methods
 
 Gibbs and Candes (2024) motivates adaptive online calibration under shift, but
@@ -144,6 +163,11 @@ rather than an active repair.
 - Li et al. (2023): default and prepayment as event-specific competing risks.
 - Gazin et al. (2025) and Barber and Pananjady (2026): joint-batch and
   dependent-sequence targets that the active rank diagnostic does not claim.
+- Shekhar and Howard (2026): catalog-uniform decision-calibrated pacing as the
+  closest decision-optimization boundary, without transferring its policy
+  certificate.
+- Lützow et al. (2026): multi-variable conformal set design as a replacement
+  construction, not an embedding-identification result.
 
 ### Future work only
 

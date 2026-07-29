@@ -146,6 +146,14 @@ combine-as-imports = true
 quote-style = "double"
 indent-style = "space"
 docstring-code-format = true
+# These quarantined replay sources are hash-bound historical objects. Preserve
+# their exact bytes; `ruff check` still lints them because this exclusion is
+# formatter-specific.
+exclude = [
+    "scripts/experiments/run_ijds_binary_phase_geometry_v6.py",
+    "scripts/experiments/run_ijds_postfreeze_derived_diagnostics_v1.py",
+    "src/ijds_audit/postfreeze_derived_diagnostics.py",
+]
 
 # ---------------------------------------------------------------------------
 # Pytest
