@@ -130,6 +130,7 @@ def _init_git(root: Path) -> None:
     subprocess.run(["git", "init", "--quiet"], cwd=root, check=True)
     subprocess.run(["git", "config", "user.email", "test@example.com"], cwd=root, check=True)
     subprocess.run(["git", "config", "user.name", "Test"], cwd=root, check=True)
+    subprocess.run(["git", "config", "core.autocrlf", "false"], cwd=root, check=True)
 
 
 def _transport_payload(root: Path, *, dvc_tracked: bool) -> dict[str, Any]:
@@ -159,6 +160,116 @@ def _transport_payload(root: Path, *, dvc_tracked: bool) -> dict[str, Any]:
         "dvc_pointers": pointers,
         "sources": {"fixture": relative_artifact_descriptor(source, repo_root=root)},
     }
+
+
+def _two_stage_artifact_payload(root: Path) -> tuple[dict[str, Any], dict[str, str]]:
+    _init_git(root)
+    lock = b"version = 1\n"
+    (root / "uv.lock").write_bytes(lock)
+    subprocess.run(["git", "add", "uv.lock"], cwd=root, check=True)
+    subprocess.run(["git", "commit", "--quiet", "-m", "protocol"], cwd=root, check=True)
+    protocol_commit = subprocess.run(
+        ["git", "rev-parse", "HEAD"],
+        cwd=root,
+        check=True,
+        capture_output=True,
+        text=True,
+    ).stdout.strip()
+    protocol_tag = "protocol/two-stage-fixture"
+    subprocess.run(
+        ["git", "tag", "-a", protocol_tag, "-m", "protocol"],
+        cwd=root,
+        check=True,
+    )
+
+    source_config = root / "evidence" / "source" / "config.yaml"
+    source_rows = root / "evidence" / "source" / "rows.csv"
+    source_config.parent.mkdir(parents=True)
+    source_config.write_text("status: frozen\n", encoding="utf-8")
+    source_rows.write_text("row_id,value\n1,2\n", encoding="utf-8")
+    source_paths = ["evidence/source/config.yaml", "evidence/source/rows.csv"]
+    subprocess.run(["git", "add", "--", *source_paths], cwd=root, check=True)
+    subprocess.run(
+        ["git", "commit", "--quiet", "-m", "source artifact"],
+        cwd=root,
+        check=True,
+    )
+    source_commit = subprocess.run(
+        ["git", "rev-parse", "HEAD"],
+        cwd=root,
+        check=True,
+        capture_output=True,
+        text=True,
+    ).stdout.strip()
+    source_tag = "artifacts/two-stage-source"
+    subprocess.run(
+        ["git", "tag", "-a", source_tag, "-m", "source artifact"],
+        cwd=root,
+        check=True,
+    )
+
+    result = root / "evidence" / "evaluation" / "result.json"
+    receipt = root / "evidence" / "evaluation" / "receipt.json"
+    result.parent.mkdir(parents=True)
+    result.write_text('{"status": "complete"}\n', encoding="utf-8")
+    receipt.write_text('{"status": "verified"}\n', encoding="utf-8")
+    artifact_paths = ["evidence/evaluation/receipt.json", "evidence/evaluation/result.json"]
+    subprocess.run(["git", "add", "--", *artifact_paths], cwd=root, check=True)
+    subprocess.run(
+        ["git", "commit", "--quiet", "-m", "evaluation artifact"],
+        cwd=root,
+        check=True,
+    )
+    artifact_commit = subprocess.run(
+        ["git", "rev-parse", "HEAD"],
+        cwd=root,
+        check=True,
+        capture_output=True,
+        text=True,
+    ).stdout.strip()
+    artifact_tag = "artifacts/two-stage-evaluation"
+    subprocess.run(
+        ["git", "tag", "-a", artifact_tag, "-m", "evaluation artifact"],
+        cwd=root,
+        check=True,
+    )
+
+    identity = {
+        "run_tag": "two-stage-fixture",
+        "protocol_tag": protocol_tag,
+        "protocol_commit": protocol_commit,
+        "scientific_uv_lock_sha256": hashlib.sha256(lock).hexdigest(),
+        "paper_role": "two_stage_git_artifact_fixture",
+        "dvc_tracked": False,
+        "source_artifact_tag": source_tag,
+        "source_artifact_commit": source_commit,
+        "source_artifact_parent_commit": protocol_commit,
+        "source_artifact_transport": "git_force_tracked_direct_child_commit",
+        "source_artifact_paths": source_paths,
+        "artifact_tag": artifact_tag,
+        "artifact_commit": artifact_commit,
+        "artifact_parent_commit": source_commit,
+        "artifact_transport": "git_force_tracked_direct_child_commit",
+        "artifact_paths": artifact_paths,
+    }
+    payload: dict[str, Any] = {
+        "schema_version": "two-stage-artifact-fixture-v1",
+        "status": "active_ijds_paper_evidence_source_registry",
+        "lineages": {"fixture": identity},
+        "dvc_pointers": [],
+        "sources": {
+            "source_config": relative_artifact_descriptor(source_config, repo_root=root),
+            "source_rows": relative_artifact_descriptor(source_rows, repo_root=root),
+            "result": relative_artifact_descriptor(result, repo_root=root),
+            "receipt": relative_artifact_descriptor(receipt, repo_root=root),
+        },
+    }
+    commits = {
+        "protocol": protocol_commit,
+        "source": source_commit,
+        "artifact": artifact_commit,
+    }
+    return payload, commits
 
 
 def test_active_evidence_registry_verifies_every_source() -> None:
@@ -433,6 +544,273 @@ def test_registry_rejects_incomplete_git_artifact_contract(tmp_path: Path) -> No
 
     with pytest.raises(TypeError, match="incomplete Git artifact contract"):
         load_source_registry(registry_path)
+
+
+def test_registry_verifies_exact_two_stage_git_artifact_chain(tmp_path: Path) -> None:
+    payload, commits = _two_stage_artifact_payload(tmp_path)
+    registry_path = _write_registry(tmp_path, payload)
+
+    loaded, verified = load_verified_source_registry(registry_path, repo_root=tmp_path)
+
+    identity = loaded["lineages"]["fixture"]
+    assert identity["source_artifact_parent_commit"] == commits["protocol"]
+    assert identity["artifact_parent_commit"] == commits["source"]
+    assert set(verified) == {"source_config", "source_rows", "result", "receipt"}
+
+
+@pytest.mark.parametrize(
+    "field",
+    [
+        "source_artifact_tag",
+        "source_artifact_commit",
+        "source_artifact_parent_commit",
+        "source_artifact_transport",
+        "source_artifact_paths",
+    ],
+)
+def test_registry_rejects_partial_source_artifact_contract(
+    tmp_path: Path,
+    field: str,
+) -> None:
+    payload, _ = _two_stage_artifact_payload(tmp_path)
+    del payload["lineages"]["fixture"][field]
+    registry_path = _write_registry(tmp_path, payload)
+
+    with pytest.raises(TypeError, match="incomplete source Git artifact contract"):
+        load_source_registry(registry_path)
+
+
+def test_registry_rejects_source_artifact_without_evaluation_artifact(tmp_path: Path) -> None:
+    payload, _ = _two_stage_artifact_payload(tmp_path)
+    identity = payload["lineages"]["fixture"]
+    for field in (
+        "artifact_tag",
+        "artifact_commit",
+        "artifact_parent_commit",
+        "artifact_transport",
+        "artifact_paths",
+    ):
+        del identity[field]
+    registry_path = _write_registry(tmp_path, payload)
+
+    with pytest.raises(TypeError, match="without a complete evaluation Git artifact"):
+        load_source_registry(registry_path)
+
+
+@pytest.mark.parametrize(
+    ("field", "bad_parent", "message"),
+    [
+        (
+            "source_artifact_parent_commit",
+            "0" * 40,
+            "protocol commit as the source artifact commit's sole parent",
+        ),
+        (
+            "artifact_parent_commit",
+            "0" * 40,
+            "source artifact commit as the evaluation artifact commit's sole parent",
+        ),
+    ],
+)
+def test_registry_rejects_wrong_declared_two_stage_parent(
+    tmp_path: Path,
+    field: str,
+    bad_parent: str,
+    message: str,
+) -> None:
+    payload, _ = _two_stage_artifact_payload(tmp_path)
+    payload["lineages"]["fixture"][field] = bad_parent
+    registry_path = _write_registry(tmp_path, payload)
+
+    with pytest.raises(ValueError, match=message):
+        load_source_registry(registry_path)
+
+
+@pytest.mark.parametrize(
+    "field",
+    ["source_artifact_transport", "artifact_transport"],
+)
+def test_registry_rejects_unknown_two_stage_transport(tmp_path: Path, field: str) -> None:
+    payload, _ = _two_stage_artifact_payload(tmp_path)
+    payload["lineages"]["fixture"][field] = "implicit_local_checkout"
+    registry_path = _write_registry(tmp_path, payload)
+
+    with pytest.raises(ValueError, match=field):
+        load_source_registry(registry_path)
+
+
+@pytest.mark.parametrize(
+    ("field", "declared_paths", "message"),
+    [
+        (
+            "source_artifact_paths",
+            ["evidence/source/config.yaml"],
+            "declared exact source artifact paths",
+        ),
+        (
+            "artifact_paths",
+            ["evidence/evaluation/receipt.json"],
+            "declared exact evaluation artifact paths",
+        ),
+    ],
+)
+def test_registry_rejects_inexact_two_stage_commit_diff(
+    tmp_path: Path,
+    field: str,
+    declared_paths: list[str],
+    message: str,
+) -> None:
+    payload, _ = _two_stage_artifact_payload(tmp_path)
+    payload["lineages"]["fixture"][field] = declared_paths
+    registry_path = _write_registry(tmp_path, payload)
+
+    with pytest.raises(RuntimeError, match=message):
+        load_source_registry(registry_path, repo_root=tmp_path)
+
+
+@pytest.mark.parametrize(
+    ("tag_field", "commit_field"),
+    [
+        ("source_artifact_tag", "source_artifact_commit"),
+        ("artifact_tag", "artifact_commit"),
+    ],
+)
+def test_registry_requires_annotated_tags_for_both_two_stage_commits(
+    tmp_path: Path,
+    tag_field: str,
+    commit_field: str,
+) -> None:
+    payload, _ = _two_stage_artifact_payload(tmp_path)
+    identity = payload["lineages"]["fixture"]
+    tag = identity[tag_field]
+    subprocess.run(["git", "tag", "-d", tag], cwd=tmp_path, check=True, capture_output=True)
+    subprocess.run(["git", "tag", tag, identity[commit_field]], cwd=tmp_path, check=True)
+    registry_path = _write_registry(tmp_path, payload)
+
+    with pytest.raises(RuntimeError, match="must be annotated"):
+        load_source_registry(registry_path, repo_root=tmp_path)
+
+
+@pytest.mark.parametrize(
+    ("descriptor", "message"),
+    [
+        ("source_rows", "evidence/source/rows.csv"),
+        ("result", "evidence/evaluation/result.json"),
+    ],
+)
+def test_registry_requires_hash_descriptors_for_both_two_stage_commits(
+    tmp_path: Path,
+    descriptor: str,
+    message: str,
+) -> None:
+    payload, _ = _two_stage_artifact_payload(tmp_path)
+    del payload["sources"][descriptor]
+    registry_path = _write_registry(tmp_path, payload)
+
+    with pytest.raises(RuntimeError, match=message):
+        load_verified_source_registry(registry_path, repo_root=tmp_path)
+
+
+@pytest.mark.parametrize(
+    ("descriptor", "relative_path"),
+    [
+        ("source_rows", "evidence/source/rows.csv"),
+        ("result", "evidence/evaluation/result.json"),
+    ],
+)
+def test_registry_ties_two_stage_hashes_to_each_pinned_git_blob(
+    tmp_path: Path,
+    descriptor: str,
+    relative_path: str,
+) -> None:
+    payload, _ = _two_stage_artifact_payload(tmp_path)
+    changed = tmp_path / relative_path
+    changed.write_text("locally changed after the tagged chain\n", encoding="utf-8")
+    payload["sources"][descriptor] = relative_artifact_descriptor(changed, repo_root=tmp_path)
+    registry_path = _write_registry(tmp_path, payload)
+
+    with pytest.raises(RuntimeError, match="does not match the pinned Git blob"):
+        load_verified_source_registry(registry_path, repo_root=tmp_path)
+
+
+@pytest.mark.parametrize(
+    ("tag_field", "wrong_commit"),
+    [
+        ("source_artifact_tag", "protocol"),
+        ("artifact_tag", "source"),
+    ],
+)
+def test_registry_rejects_annotated_two_stage_tag_at_wrong_commit(
+    tmp_path: Path,
+    tag_field: str,
+    wrong_commit: str,
+) -> None:
+    payload, commits = _two_stage_artifact_payload(tmp_path)
+    identity = payload["lineages"]["fixture"]
+    tag = identity[tag_field]
+    subprocess.run(["git", "tag", "-d", tag], cwd=tmp_path, check=True, capture_output=True)
+    subprocess.run(
+        ["git", "tag", "-a", tag, commits[wrong_commit], "-m", "wrong target"],
+        cwd=tmp_path,
+        check=True,
+    )
+    registry_path = _write_registry(tmp_path, payload)
+
+    with pytest.raises(RuntimeError, match="does not resolve to declared commit"):
+        load_source_registry(registry_path, repo_root=tmp_path)
+
+
+def test_registry_rejects_multi_parent_two_stage_evaluation_commit(tmp_path: Path) -> None:
+    payload, commits = _two_stage_artifact_payload(tmp_path)
+    tree = subprocess.run(
+        ["git", "rev-parse", f"{commits['artifact']}^{{tree}}"],
+        cwd=tmp_path,
+        check=True,
+        capture_output=True,
+        text=True,
+    ).stdout.strip()
+    merge_commit = subprocess.run(
+        [
+            "git",
+            "commit-tree",
+            tree,
+            "-p",
+            commits["source"],
+            "-p",
+            commits["protocol"],
+            "-m",
+            "invalid merge artifact",
+        ],
+        cwd=tmp_path,
+        check=True,
+        capture_output=True,
+        text=True,
+    ).stdout.strip()
+    identity = payload["lineages"]["fixture"]
+    subprocess.run(
+        ["git", "tag", "-d", identity["artifact_tag"]],
+        cwd=tmp_path,
+        check=True,
+        capture_output=True,
+    )
+    subprocess.run(
+        [
+            "git",
+            "tag",
+            "-a",
+            identity["artifact_tag"],
+            merge_commit,
+            "-m",
+            "invalid merge artifact",
+        ],
+        cwd=tmp_path,
+        check=True,
+    )
+    identity["artifact_commit"] = merge_commit
+    registry_path = _write_registry(tmp_path, payload)
+
+    with pytest.raises(RuntimeError, match="not the declared direct child"):
+        load_source_registry(registry_path, repo_root=tmp_path)
 
 
 def test_tracked_unit_can_declare_one_dvc_root(tmp_path: Path) -> None:

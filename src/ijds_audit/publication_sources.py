@@ -34,6 +34,11 @@ _IDENTITY_MARKERS = frozenset(
         "artifact_parent_commit",
         "artifact_transport",
         "artifact_paths",
+        "source_artifact_tag",
+        "source_artifact_commit",
+        "source_artifact_parent_commit",
+        "source_artifact_transport",
+        "source_artifact_paths",
     }
 )
 _LEGACY_DVC_PHASES = frozenset({"outcome_free", "evaluation"})
@@ -55,6 +60,11 @@ class _RegistryUnit:
     paper_role: str | None
     declared_dvc_tracked: bool | None
     dvc_roots: tuple[str, ...] | None
+    source_artifact_tag: str | None
+    source_artifact_commit: str | None
+    source_artifact_parent_commit: str | None
+    source_artifact_transport: str | None
+    source_artifact_paths: tuple[str, ...] | None
     artifact_tag: str | None
     artifact_commit: str | None
     artifact_parent_commit: str | None
@@ -125,6 +135,7 @@ def load_verified_source_registry(
         raise ValueError("Active evidence source registry is empty.")
     verified: dict[str, Path] = {}
     seen_paths: set[str] = set()
+    descriptors_by_path: dict[str, Mapping[str, Any]] = {}
     for name, raw_descriptor in sources.items():
         if not isinstance(raw_descriptor, Mapping):
             raise TypeError(f"Evidence source descriptor {name!r} must be a mapping.")
@@ -141,15 +152,22 @@ def load_verified_source_registry(
         if actual["path"] in seen_paths:
             raise ValueError(f"Duplicate active evidence source path: {actual['path']}")
         seen_paths.add(str(actual["path"]))
+        descriptors_by_path[str(actual["path"])] = descriptor
         verified[str(name)] = source_path
+    units = _validated_registry_units(payload)
     _verify_source_transport(
         source_paths=tuple(seen_paths),
         dvc_pointers=payload["dvc_pointers"],
         git_artifact_paths=tuple(
             path
-            for unit in _validated_registry_units(payload)
-            for path in (unit.artifact_paths or ())
+            for unit in units
+            for path in (*(unit.source_artifact_paths or ()), *(unit.artifact_paths or ()))
         ),
+        repo_root=repo_root,
+    )
+    _verify_two_stage_git_blob_descriptors(
+        units=units,
+        descriptors_by_path=descriptors_by_path,
         repo_root=repo_root,
     )
     return payload, verified
@@ -223,6 +241,55 @@ def _verify_source_transport(
         raise RuntimeError(
             "Active evidence sources lack Git or active-DVC transport: " + ", ".join(undeliverable)
         )
+
+
+def _verify_two_stage_git_blob_descriptors(
+    *,
+    units: tuple[_RegistryUnit, ...],
+    descriptors_by_path: Mapping[str, Mapping[str, Any]],
+    repo_root: Path,
+) -> None:
+    """Tie every two-stage hash descriptor to the bytes at its pinned Git stage."""
+    for unit in units:
+        if unit.source_artifact_commit is None:
+            continue
+        if (
+            unit.source_artifact_paths is None
+            or unit.artifact_commit is None
+            or unit.artifact_paths is None
+        ):
+            raise RuntimeError("Parsed two-stage Git artifact identity is incomplete.")
+        stages = (
+            ("source artifact", unit.source_artifact_commit, unit.source_artifact_paths),
+            ("evaluation artifact", unit.artifact_commit, unit.artifact_paths),
+        )
+        for stage_label, commit, paths in stages:
+            for path in paths:
+                descriptor = descriptors_by_path.get(path)
+                if descriptor is None:
+                    raise RuntimeError(
+                        f"Two-stage {stage_label} path {path} lacks an active hash descriptor."
+                    )
+                blob = subprocess.run(
+                    ["git", "cat-file", "blob", f"{commit}:{path}"],
+                    cwd=repo_root,
+                    check=False,
+                    capture_output=True,
+                )
+                if blob.returncode != 0:
+                    raise RuntimeError(
+                        f"Cannot read two-stage {stage_label} path {path} from commit {commit}."
+                    )
+                actual_bytes = len(blob.stdout)
+                actual_sha256 = hashlib.sha256(blob.stdout).hexdigest()
+                if (
+                    descriptor.get("bytes") != actual_bytes
+                    or descriptor.get("sha256") != actual_sha256
+                ):
+                    raise RuntimeError(
+                        f"Two-stage {stage_label} path {path} hash descriptor does not match "
+                        f"the pinned Git blob at {commit}."
+                    )
 
 
 def _validated_registry_units(payload: Mapping[str, Any]) -> tuple[_RegistryUnit, ...]:
@@ -347,6 +414,17 @@ def _parse_registry_unit(
     )
     declared_dvc_tracked, dvc_roots = _parse_dvc_metadata(identity, location=location)
     (
+        source_artifact_tag,
+        source_artifact_commit,
+        source_artifact_parent_commit,
+        source_artifact_transport,
+        source_artifact_paths,
+    ) = _parse_source_git_artifact_identity(
+        identity,
+        protocol_commit=protocol_commit,
+        location=location,
+    )
+    (
         artifact_tag,
         artifact_commit,
         artifact_parent_commit,
@@ -355,8 +433,21 @@ def _parse_registry_unit(
     ) = _parse_git_artifact_identity(
         identity,
         protocol_commit=protocol_commit,
+        source_artifact_commit=source_artifact_commit,
         location=location,
     )
+    if source_artifact_tag is not None and artifact_tag is None:
+        raise TypeError(
+            f"Registry identity {_format_location(location)} cannot declare a source Git "
+            "artifact without a complete evaluation Git artifact contract."
+        )
+    if source_artifact_paths is not None and artifact_paths is not None:
+        overlap = sorted(set(source_artifact_paths).intersection(artifact_paths))
+        if overlap:
+            raise ValueError(
+                f"Registry identity {_format_location(location)} source and evaluation Git "
+                f"artifact paths must be disjoint; overlap {overlap}."
+            )
     return _RegistryUnit(
         location=location,
         run_tag=run_tag,
@@ -367,6 +458,11 @@ def _parse_registry_unit(
         paper_role=paper_role,
         declared_dvc_tracked=declared_dvc_tracked,
         dvc_roots=dvc_roots,
+        source_artifact_tag=source_artifact_tag,
+        source_artifact_commit=source_artifact_commit,
+        source_artifact_parent_commit=source_artifact_parent_commit,
+        source_artifact_transport=source_artifact_transport,
+        source_artifact_paths=source_artifact_paths,
         artifact_tag=artifact_tag,
         artifact_commit=artifact_commit,
         artifact_parent_commit=artifact_parent_commit,
@@ -379,6 +475,7 @@ def _parse_git_artifact_identity(
     identity: Mapping[str, Any],
     *,
     protocol_commit: str | None,
+    source_artifact_commit: str | None,
     location: tuple[str, ...],
 ) -> tuple[str | None, str | None, str | None, str | None, tuple[str, ...] | None]:
     fields = {
@@ -427,10 +524,16 @@ def _parse_git_artifact_identity(
             f"Registry identity {_format_location(location)}.artifact_parent_commit must be a "
             "40-character lowercase hexadecimal commit."
         )
-    if parent != protocol_commit:
+    expected_parent = source_artifact_commit or protocol_commit
+    if parent != expected_parent:
+        if source_artifact_commit is None:
+            raise ValueError(
+                f"Registry identity {_format_location(location)} must pin its protocol "
+                "commit as the artifact commit's sole parent."
+            )
         raise ValueError(
-            f"Registry identity {_format_location(location)} must pin its protocol commit as "
-            "the artifact commit's sole parent."
+            f"Registry identity {_format_location(location)} must pin its source artifact commit as "
+            "the evaluation artifact commit's sole parent."
         )
     if transport != _GIT_ARTIFACT_TRANSPORT:
         raise ValueError(
@@ -438,7 +541,90 @@ def _parse_git_artifact_identity(
             f"{_GIT_ARTIFACT_TRANSPORT!r}."
         )
 
-    raw_paths = identity["artifact_paths"]
+    paths = _parse_git_artifact_paths(
+        identity["artifact_paths"],
+        field="artifact_paths",
+        location=location,
+    )
+    return tag, commit, parent, transport, paths
+
+
+def _parse_source_git_artifact_identity(
+    identity: Mapping[str, Any],
+    *,
+    protocol_commit: str | None,
+    location: tuple[str, ...],
+) -> tuple[str | None, str | None, str | None, str | None, tuple[str, ...] | None]:
+    fields = {
+        "source_artifact_tag",
+        "source_artifact_commit",
+        "source_artifact_parent_commit",
+        "source_artifact_transport",
+        "source_artifact_paths",
+    }
+    present = fields.intersection(identity)
+    if not present:
+        return None, None, None, None, None
+    if present != fields:
+        missing = sorted(fields.difference(present))
+        raise TypeError(
+            f"Registry identity {_format_location(location)} has an incomplete source Git "
+            f"artifact contract; missing {missing}."
+        )
+    if protocol_commit is None:
+        raise ValueError(
+            f"Registry identity {_format_location(location)} cannot pin source artifacts "
+            "without a protocol commit."
+        )
+    if identity.get("dvc_tracked") is not False:
+        raise ValueError(
+            f"Registry identity {_format_location(location)} source Git artifacts require "
+            "dvc_tracked=false."
+        )
+    if "protocol_bundle" in identity:
+        raise ValueError(
+            f"Registry identity {_format_location(location)} cannot combine a local exact "
+            "source Git artifact commit with a protocol bundle."
+        )
+
+    tag = _required_text(identity, "source_artifact_tag", location=location)
+    commit = _required_text(identity, "source_artifact_commit", location=location)
+    parent = _required_text(identity, "source_artifact_parent_commit", location=location)
+    transport = _required_text(identity, "source_artifact_transport", location=location)
+    if _PROTOCOL_COMMIT_PATTERN.fullmatch(commit) is None:
+        raise ValueError(
+            f"Registry identity {_format_location(location)}.source_artifact_commit must be a "
+            "40-character lowercase hexadecimal commit."
+        )
+    if _PROTOCOL_COMMIT_PATTERN.fullmatch(parent) is None:
+        raise ValueError(
+            f"Registry identity {_format_location(location)}.source_artifact_parent_commit "
+            "must be a 40-character lowercase hexadecimal commit."
+        )
+    if parent != protocol_commit:
+        raise ValueError(
+            f"Registry identity {_format_location(location)} must pin its protocol commit as "
+            "the source artifact commit's sole parent."
+        )
+    if transport != _GIT_ARTIFACT_TRANSPORT:
+        raise ValueError(
+            f"Registry identity {_format_location(location)}.source_artifact_transport must "
+            f"be {_GIT_ARTIFACT_TRANSPORT!r}."
+        )
+    paths = _parse_git_artifact_paths(
+        identity["source_artifact_paths"],
+        field="source_artifact_paths",
+        location=location,
+    )
+    return tag, commit, parent, transport, paths
+
+
+def _parse_git_artifact_paths(
+    raw_paths: Any,
+    *,
+    field: str,
+    location: tuple[str, ...],
+) -> tuple[str, ...]:
     if (
         not isinstance(raw_paths, list)
         or not raw_paths
@@ -446,7 +632,7 @@ def _parse_git_artifact_identity(
         or raw_paths != sorted(set(raw_paths))
     ):
         raise TypeError(
-            f"Registry identity {_format_location(location)}.artifact_paths must be a "
+            f"Registry identity {_format_location(location)}.{field} must be a "
             "nonempty sorted unique string list."
         )
     paths: list[str] = []
@@ -459,11 +645,11 @@ def _parse_git_artifact_identity(
             or normalized.as_posix() != raw_path
         ):
             raise ValueError(
-                f"Registry identity {_format_location(location)}.artifact_paths contains an "
+                f"Registry identity {_format_location(location)}.{field} contains an "
                 f"unsafe or non-normalized path: {raw_path!r}."
             )
         paths.append(raw_path)
-    return tag, commit, parent, transport, tuple(paths)
+    return tuple(paths)
 
 
 def _parse_protocol_identity(
@@ -661,16 +847,70 @@ def _verify_git_artifact_contract(unit: _RegistryUnit, *, repo_root: Path) -> No
     ):
         raise RuntimeError("Parsed Git artifact identity is incomplete.")
 
-    resolved = _resolve_local_tag_commit(unit.artifact_tag, repo_root=repo_root)
-    if resolved != unit.artifact_commit:
+    if unit.source_artifact_tag is None:
+        _verify_exact_git_artifact_stage(
+            tag=unit.artifact_tag,
+            commit=unit.artifact_commit,
+            parent_commit=unit.artifact_parent_commit,
+            paths=unit.artifact_paths,
+            stage_label="artifact",
+            parent_label="protocol commit",
+            require_annotated_tag=False,
+            repo_root=repo_root,
+        )
+        return
+
+    if (
+        unit.source_artifact_commit is None
+        or unit.source_artifact_parent_commit is None
+        or unit.source_artifact_transport != _GIT_ARTIFACT_TRANSPORT
+        or unit.source_artifact_paths is None
+    ):
+        raise RuntimeError("Parsed source Git artifact identity is incomplete.")
+    _verify_exact_git_artifact_stage(
+        tag=unit.source_artifact_tag,
+        commit=unit.source_artifact_commit,
+        parent_commit=unit.source_artifact_parent_commit,
+        paths=unit.source_artifact_paths,
+        stage_label="source artifact",
+        parent_label="protocol commit",
+        require_annotated_tag=True,
+        repo_root=repo_root,
+    )
+    _verify_exact_git_artifact_stage(
+        tag=unit.artifact_tag,
+        commit=unit.artifact_commit,
+        parent_commit=unit.artifact_parent_commit,
+        paths=unit.artifact_paths,
+        stage_label="evaluation artifact",
+        parent_label="source artifact commit",
+        require_annotated_tag=True,
+        repo_root=repo_root,
+    )
+
+
+def _verify_exact_git_artifact_stage(
+    *,
+    tag: str,
+    commit: str,
+    parent_commit: str,
+    paths: tuple[str, ...],
+    stage_label: str,
+    parent_label: str,
+    require_annotated_tag: bool,
+    repo_root: Path,
+) -> None:
+    if require_annotated_tag:
+        _require_annotated_tag(tag, repo_root=repo_root)
+    resolved = _resolve_local_tag_commit(tag, repo_root=repo_root)
+    if resolved != commit:
         raise RuntimeError(
-            f"Registry artifact tag {unit.artifact_tag!r} does not resolve to declared "
-            f"commit {unit.artifact_commit}."
+            f"Registry {stage_label} tag {tag!r} does not resolve to declared commit {commit}."
         )
 
     parents = (
         subprocess.run(
-            ["git", "rev-list", "--parents", "-n", "1", unit.artifact_commit],
+            ["git", "rev-list", "--parents", "-n", "1", commit],
             cwd=repo_root,
             check=True,
             capture_output=True,
@@ -679,10 +919,10 @@ def _verify_git_artifact_contract(unit: _RegistryUnit, *, repo_root: Path) -> No
         .stdout.strip()
         .split()
     )
-    if parents != [unit.artifact_commit, unit.artifact_parent_commit]:
+    if parents != [commit, parent_commit]:
         raise RuntimeError(
-            f"Registry artifact commit {unit.artifact_commit} is not the declared direct child "
-            f"of protocol commit {unit.artifact_parent_commit}."
+            f"Registry {stage_label} commit {commit} is not the declared direct child of "
+            f"{parent_label} {parent_commit}."
         )
 
     changed = subprocess.run(
@@ -693,29 +933,41 @@ def _verify_git_artifact_contract(unit: _RegistryUnit, *, repo_root: Path) -> No
             "--name-only",
             "--no-renames",
             "-r",
-            unit.artifact_commit,
+            commit,
         ],
         cwd=repo_root,
         check=True,
         capture_output=True,
         text=True,
     ).stdout.splitlines()
-    if changed != list(unit.artifact_paths):
+    if changed != list(paths):
         raise RuntimeError(
-            f"Registry artifact commit {unit.artifact_commit} changed {changed}, not the "
-            f"declared exact artifact paths {list(unit.artifact_paths)}."
+            f"Registry {stage_label} commit {commit} changed {changed}, not the declared "
+            f"exact {stage_label} paths {list(paths)}."
         )
-    for path in unit.artifact_paths:
+    for path in paths:
         exists = subprocess.run(
-            ["git", "cat-file", "-e", f"{unit.artifact_commit}:{path}"],
+            ["git", "cat-file", "-e", f"{commit}:{path}"],
             cwd=repo_root,
             check=False,
             capture_output=True,
         )
         if exists.returncode != 0:
-            raise RuntimeError(
-                f"Registry artifact commit {unit.artifact_commit} does not contain {path}."
-            )
+            raise RuntimeError(f"Registry {stage_label} commit {commit} does not contain {path}.")
+
+
+def _require_annotated_tag(tag: str, *, repo_root: Path) -> None:
+    """Reject a missing or lightweight tag for a two-stage Git artifact edge."""
+    reference = f"refs/tags/{tag}"
+    tag_type = subprocess.run(
+        ["git", "cat-file", "-t", reference],
+        cwd=repo_root,
+        check=False,
+        capture_output=True,
+        text=True,
+    )
+    if tag_type.returncode != 0 or tag_type.stdout.strip() != "tag":
+        raise RuntimeError(f"Registry two-stage artifact tag {tag!r} must be annotated.")
 
 
 def _resolve_local_tag_commit(tag: str, *, repo_root: Path) -> str | None:
