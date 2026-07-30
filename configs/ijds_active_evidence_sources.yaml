@@ -1,4 +1,4 @@
-schema_version: "2026-07-26.4"
+schema_version: "2026-07-29.1"
 status: "active_ijds_paper_evidence_source_registry"
 
 lineages:
@@ -114,6 +114,76 @@ lineages:
         - "data/processed/experiments/ijds_audit/ijds-common-panel-threshold-response-2026-07-26-v8/adjacent_stratum_threshold_response.csv"
         - "models/experiments/ijds_audit/ijds-common-panel-threshold-response-2026-07-26-v8/common_panel_threshold_response_v8_summary.json"
         - "models/experiments/ijds_audit/ijds-common-panel-threshold-response-2026-07-26-v8/execution_receipt.json"
+    residual_transport_frontier:
+      run_tag: "ijds-residual-transport-frontier-2026-07-29-v1"
+      protocol_tag: "protocol/ijds-residual-transport-frontier-2026-07-29-v1"
+      protocol_commit: "9c4b082ce68eb88bf60666b4cb794348bf57a40d"
+      scientific_uv_lock_sha256: "6c862cbad9ab7e3a07dd2823c775127403093d6ad59a789ee227d827165e4733"
+      paper_role: "complete_retrospective_finite_archive_residual_distribution_frontier"
+      dvc_tracked: false
+      artifact_tag: "artifacts/ijds-residual-transport-frontier-2026-07-29-v1"
+      artifact_commit: "e6dd6422e853728a9880affbf61d8819728a1efb"
+      artifact_parent_commit: "9c4b082ce68eb88bf60666b4cb794348bf57a40d"
+      artifact_transport: "git_force_tracked_direct_child_commit"
+      artifact_paths:
+        - "data/processed/experiments/ijds_audit/ijds-residual-transport-frontier-2026-07-29-v1/monthly_residual_transport_frontier.csv"
+        - "data/processed/experiments/ijds_audit/ijds-residual-transport-frontier-2026-07-29-v1/pooled_residual_transport_frontier.csv"
+        - "models/experiments/ijds_audit/ijds-residual-transport-frontier-2026-07-29-v1/execution_receipt.json"
+        - "models/experiments/ijds_audit/ijds-residual-transport-frontier-2026-07-29-v1/residual_transport_frontier_summary.json"
+    decision_catalog_transport:
+      run_tag: "ijds-decision-catalog-transport-2026-07-29-v1"
+      protocol_tag: "protocol/ijds-decision-catalog-transport-2026-07-29-v1"
+      protocol_commit: "9c4b082ce68eb88bf60666b4cb794348bf57a40d"
+      scientific_uv_lock_sha256: "6c862cbad9ab7e3a07dd2823c775127403093d6ad59a789ee227d827165e4733"
+      paper_role: "complete_retrospective_worst_catalog_block_transport_diagnostic"
+      dvc_tracked: false
+      artifact_tag: "artifacts/ijds-decision-catalog-transport-2026-07-29-v1"
+      artifact_commit: "0a016e87074d7e92ce57b2d83aaf30b8b31b7e5a"
+      artifact_parent_commit: "9c4b082ce68eb88bf60666b4cb794348bf57a40d"
+      artifact_transport: "git_force_tracked_direct_child_commit"
+      artifact_paths:
+        - "data/processed/experiments/ijds_audit/ijds-decision-catalog-transport-2026-07-29-v1/block_score_bounds.csv"
+        - "data/processed/experiments/ijds_audit/ijds-decision-catalog-transport-2026-07-29-v1/calibration_thresholds.csv"
+        - "data/processed/experiments/ijds_audit/ijds-decision-catalog-transport-2026-07-29-v1/policy_score_bounds.csv"
+        - "data/processed/experiments/ijds_audit/ijds-decision-catalog-transport-2026-07-29-v1/target_classification.csv"
+        - "models/experiments/ijds_audit/ijds-decision-catalog-transport-2026-07-29-v1/decision_catalog_transport_summary.json"
+        - "models/experiments/ijds_audit/ijds-decision-catalog-transport-2026-07-29-v1/execution_receipt.json"
+    funded_selection_estimands:
+      run_tag: "ijds-funded-selection-estimand-audit-2026-07-29-v1"
+      protocol_tag: "protocol/ijds-funded-selection-estimand-audit-2026-07-29-v1"
+      protocol_commit: "9c4b082ce68eb88bf60666b4cb794348bf57a40d"
+      scientific_uv_lock_sha256: "6c862cbad9ab7e3a07dd2823c775127403093d6ad59a789ee227d827165e4733"
+      paper_role: "complete_retrospective_funded_estimand_weighting_audit"
+      dvc_tracked: false
+      artifact_tag: "artifacts/ijds-funded-selection-estimand-audit-2026-07-29-v1"
+      artifact_commit: "0d26e0247d41ae4ff1c9ad8ca230b0a627303190"
+      artifact_parent_commit: "9c4b082ce68eb88bf60666b4cb794348bf57a40d"
+      artifact_transport: "git_force_tracked_direct_child_commit"
+      artifact_paths:
+        - "data/processed/experiments/ijds_audit/ijds-funded-selection-estimand-audit-2026-07-29-v1/monthly_three_estimand_funded_selection_bounds.parquet"
+        - "data/processed/experiments/ijds_audit/ijds-funded-selection-estimand-audit-2026-07-29-v1/monthly_three_estimand_gamma1_minus_gamma0_contrasts.parquet"
+        - "data/processed/experiments/ijds_audit/ijds-funded-selection-estimand-audit-2026-07-29-v1/support_and_fixed_capital_v3_reconciliation.parquet"
+        - "data/processed/experiments/ijds_audit/ijds-funded-selection-estimand-audit-2026-07-29-v1/track_three_estimand_funded_selection_bounds.parquet"
+        - "data/processed/experiments/ijds_audit/ijds-funded-selection-estimand-audit-2026-07-29-v1/track_three_estimand_gamma1_minus_gamma0_contrasts.parquet"
+        - "models/experiments/ijds_audit/ijds-funded-selection-estimand-audit-2026-07-29-v1/execution_receipt.json"
+        - "models/experiments/ijds_audit/ijds-funded-selection-estimand-audit-2026-07-29-v1/funded_selection_estimand_audit_summary.json"
+    marginal_score_outcome_gap:
+      run_tag: "ijds-marginal-mean-score-outcome-gap-2026-07-29-v3i"
+      protocol_tag: "protocol/ijds-marginal-mean-score-outcome-gap-2026-07-29-v3i"
+      protocol_commit: "9c4b082ce68eb88bf60666b4cb794348bf57a40d"
+      scientific_uv_lock_sha256: "6c862cbad9ab7e3a07dd2823c775127403093d6ad59a789ee227d827165e4733"
+      paper_role: "complete_postinspection_marginal_score_outcome_partial_identification"
+      dvc_tracked: false
+      artifact_tag: "artifacts/ijds-marginal-mean-score-outcome-gap-2026-07-29-v3i"
+      artifact_commit: "8fff4834aa5443150b5c2d82d07723b0de75d76e"
+      artifact_parent_commit: "9c4b082ce68eb88bf60666b4cb794348bf57a40d"
+      artifact_transport: "git_force_tracked_direct_child_commit"
+      artifact_paths:
+        - "data/processed/experiments/ijds_audit/ijds-marginal-mean-score-outcome-gap-2026-07-29-v3i/endpoint_reason_census.csv"
+        - "data/processed/experiments/ijds_audit/ijds-marginal-mean-score-outcome-gap-2026-07-29-v3i/marginal_mean_score_outcome_gap.csv"
+        - "data/processed/experiments/ijds_audit/ijds-marginal-mean-score-outcome-gap-2026-07-29-v3i/monthly_endpoint_reason_census.csv"
+        - "models/experiments/ijds_audit/ijds-marginal-mean-score-outcome-gap-2026-07-29-v3i/execution_receipt.json"
+        - "models/experiments/ijds_audit/ijds-marginal-mean-score-outcome-gap-2026-07-29-v3i/marginal_mean_score_outcome_gap_summary.json"
 
 sensitivities:
   endpoint_availability:
@@ -423,6 +493,110 @@ sources:
     path: "data/processed/experiments/ijds_audit/ijds-common-panel-threshold-response-2026-07-26-v8/adjacent_learner_threshold_response.csv"
     bytes: 10202
     sha256: "287fc78ba99547f8b16f240ad395c3bca95c0581373d01cf58ade964b874173b"
+  residual_transport_frontier_config:
+    path: "configs/experiments/ijds_residual_transport_frontier_2026-07-29_v1.yaml"
+    bytes: 7346
+    sha256: "425dac935bd59a36886540a504c6a54ae7677e3a2c6f27c049a572c75f7762e0"
+  residual_transport_frontier_summary:
+    path: "models/experiments/ijds_audit/ijds-residual-transport-frontier-2026-07-29-v1/residual_transport_frontier_summary.json"
+    bytes: 22863
+    sha256: "4661797891e1513b7d294e18f7aaefc52d91069768605732889be60d9faf8f90"
+  residual_transport_frontier_receipt:
+    path: "models/experiments/ijds_audit/ijds-residual-transport-frontier-2026-07-29-v1/execution_receipt.json"
+    bytes: 11867
+    sha256: "0335d0325a20f59ce7d9982bd744fb51ba7ec179096ba494e418ab32d2f04b2c"
+  residual_transport_frontier_monthly_residual_transport_frontier:
+    path: "data/processed/experiments/ijds_audit/ijds-residual-transport-frontier-2026-07-29-v1/monthly_residual_transport_frontier.csv"
+    bytes: 2290033
+    sha256: "78ddfc1b858e9ca0089d5e7c45612e737184a183a0917e2b520cbcd97f777239"
+  residual_transport_frontier_pooled_residual_transport_frontier:
+    path: "data/processed/experiments/ijds_audit/ijds-residual-transport-frontier-2026-07-29-v1/pooled_residual_transport_frontier.csv"
+    bytes: 159771
+    sha256: "f45e35be1f9b7085cea640d23431478e5a18d676acda3c4f8aa57c1b0f6e2dd3"
+  decision_catalog_transport_config:
+    path: "configs/experiments/ijds_decision_catalog_transport_2026-07-29_v1.yaml"
+    bytes: 6086
+    sha256: "4bf0cd522283cf909d5a389638044ddba6ee709c781f7172fe6e2243d5a97804"
+  decision_catalog_transport_summary:
+    path: "models/experiments/ijds_audit/ijds-decision-catalog-transport-2026-07-29-v1/decision_catalog_transport_summary.json"
+    bytes: 13929
+    sha256: "b28fcfc9dd8f787a417a7fcce7032ae105b038cfdc7a418d016fe601b3b17c45"
+  decision_catalog_transport_receipt:
+    path: "models/experiments/ijds_audit/ijds-decision-catalog-transport-2026-07-29-v1/execution_receipt.json"
+    bytes: 8395
+    sha256: "add18c667647633b62cd33abcc96de1e1b24dd94d8cdab3070be5bb33d158e77"
+  decision_catalog_transport_policy_score_bounds:
+    path: "data/processed/experiments/ijds_audit/ijds-decision-catalog-transport-2026-07-29-v1/policy_score_bounds.csv"
+    bytes: 4392576
+    sha256: "7630518b614b722279bd9e973cf3d36997fc7e3cd0497228a3830ea6380591f5"
+  decision_catalog_transport_block_score_bounds:
+    path: "data/processed/experiments/ijds_audit/ijds-decision-catalog-transport-2026-07-29-v1/block_score_bounds.csv"
+    bytes: 6361
+    sha256: "fabb8c2c1a66c489c7ed51a1efbe7cbee9e24911c1f179e778e20fce60fbadb7"
+  decision_catalog_transport_calibration_thresholds:
+    path: "data/processed/experiments/ijds_audit/ijds-decision-catalog-transport-2026-07-29-v1/calibration_thresholds.csv"
+    bytes: 383
+    sha256: "ae340d2f07342551468eb2e4b24386313df557491c8d517247269d4736afcb07"
+  decision_catalog_transport_target_classification:
+    path: "data/processed/experiments/ijds_audit/ijds-decision-catalog-transport-2026-07-29-v1/target_classification.csv"
+    bytes: 7481
+    sha256: "270df28616e8f2aee510ae3b3bbc6c5e0a77d4f9ab973c967ebe4e64fcba18d9"
+  funded_selection_estimands_config:
+    path: "configs/experiments/ijds_funded_selection_estimand_audit_2026-07-29_v1.yaml"
+    bytes: 7379
+    sha256: "91f62394564be8ac41d0f73997247cf2f5d4b79370fbf0f34c3fe4884a01516c"
+  funded_selection_estimands_summary:
+    path: "models/experiments/ijds_audit/ijds-funded-selection-estimand-audit-2026-07-29-v1/funded_selection_estimand_audit_summary.json"
+    bytes: 15723
+    sha256: "40a0a137f40b412984523f95045455279bb686ab111b88c63c546ea3ec1d17c9"
+  funded_selection_estimands_receipt:
+    path: "models/experiments/ijds_audit/ijds-funded-selection-estimand-audit-2026-07-29-v1/execution_receipt.json"
+    bytes: 3660
+    sha256: "e9d9db9659fc897fca6ebf5e7007d1997f1a7eb4fd0f31e534d8c7abec49fb2f"
+  funded_selection_estimands_monthly_bounds:
+    path: "data/processed/experiments/ijds_audit/ijds-funded-selection-estimand-audit-2026-07-29-v1/monthly_three_estimand_funded_selection_bounds.parquet"
+    bytes: 133251
+    sha256: "0e81df673094a5537e9205a60c48abc773fdb91dc3baf5f4f92cd7b44182dd1b"
+  funded_selection_estimands_track_bounds:
+    path: "data/processed/experiments/ijds_audit/ijds-funded-selection-estimand-audit-2026-07-29-v1/track_three_estimand_funded_selection_bounds.parquet"
+    bytes: 43572
+    sha256: "6e497ec7cb1d4d4c59a6121b0550e8e747e2829daf916eb9362f5020452ac626"
+  funded_selection_estimands_monthly_gamma_contrasts:
+    path: "data/processed/experiments/ijds_audit/ijds-funded-selection-estimand-audit-2026-07-29-v1/monthly_three_estimand_gamma1_minus_gamma0_contrasts.parquet"
+    bytes: 61063
+    sha256: "03190812ab84ff0f6eedaa8cabcda717bdbe6b9853c72a69a855c50da726b7f8"
+  funded_selection_estimands_track_gamma_contrasts:
+    path: "data/processed/experiments/ijds_audit/ijds-funded-selection-estimand-audit-2026-07-29-v1/track_three_estimand_gamma1_minus_gamma0_contrasts.parquet"
+    bytes: 29716
+    sha256: "f2eeb832f7a1db125c7029e48c6660995c2ffa6f1995f8c5a0281e982d548ceb"
+  funded_selection_estimands_support_and_fixed_capital_reconciliation:
+    path: "data/processed/experiments/ijds_audit/ijds-funded-selection-estimand-audit-2026-07-29-v1/support_and_fixed_capital_v3_reconciliation.parquet"
+    bytes: 24208
+    sha256: "ebabe5ecfc2636e97d126a2c7517cfa62e6c54910cc82baa85e6d246970d81f6"
+  marginal_score_outcome_gap_config:
+    path: "configs/experiments/ijds_marginal_mean_score_outcome_gap_2026-07-29_v3i.yaml"
+    bytes: 10867
+    sha256: "344efcbaffb42ea12e660f4d8ba3fc4908edc7d6d0a7c01e2005a2d032e73116"
+  marginal_score_outcome_gap_summary:
+    path: "models/experiments/ijds_audit/ijds-marginal-mean-score-outcome-gap-2026-07-29-v3i/marginal_mean_score_outcome_gap_summary.json"
+    bytes: 13523
+    sha256: "ac3b914fe94ee786d9d9a2a049d3bcb15c9f7127b15b53080e61e867297d1db7"
+  marginal_score_outcome_gap_receipt:
+    path: "models/experiments/ijds_audit/ijds-marginal-mean-score-outcome-gap-2026-07-29-v3i/execution_receipt.json"
+    bytes: 2953
+    sha256: "3e1b4f760c640047cada75a9a5bd314127f2182db2db716bacad9d6ca2057021"
+  marginal_score_outcome_gap_table:
+    path: "data/processed/experiments/ijds_audit/ijds-marginal-mean-score-outcome-gap-2026-07-29-v3i/marginal_mean_score_outcome_gap.csv"
+    bytes: 3674
+    sha256: "a49c2362f0f03a864cb7a94adac713264b9a2652ea31b76a0cb040c3afe1a79c"
+  marginal_score_outcome_gap_endpoint_reason_census:
+    path: "data/processed/experiments/ijds_audit/ijds-marginal-mean-score-outcome-gap-2026-07-29-v3i/endpoint_reason_census.csv"
+    bytes: 367
+    sha256: "435e313836f3c703242fad44d28aa1dc31a943d3bcbf6e3c3d4974543e2ff732"
+  marginal_score_outcome_gap_monthly_endpoint_reason_census:
+    path: "data/processed/experiments/ijds_audit/ijds-marginal-mean-score-outcome-gap-2026-07-29-v3i/monthly_endpoint_reason_census.csv"
+    bytes: 4928
+    sha256: "cbfcb323b55ff98d5cd0354fbcd34fc490f7c13bc070e7c109e2c459f20235d2"
   rolling_equal_followup_summary:
     path: "models/experiments/ijds_audit/ijds-rolling-origin-equal-followup-2026-07-21-v1/rolling_origin_equal_followup_summary.json"
     bytes: 55027

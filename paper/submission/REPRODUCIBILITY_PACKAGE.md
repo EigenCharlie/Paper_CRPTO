@@ -19,7 +19,7 @@ instructions, and replay commands.
 | Authority | Active claim registry, executable claim ledger, source registry, publication targets |
 | Method | Complete `src` package, active runners, evidence and paper builders |
 | Runs | 53 DVC pointers for active roots, sensitivities, and replay dependencies |
-| Evidence | One manifest, 29 CSV tables, five figure families in PDF/PNG |
+| Evidence | One manifest, 36 CSV tables, five figure families in PDF/PNG |
 | Manuscript | QMD body/supplement, generated INFORMS TeX, bibliography |
 | Gates | Scientific tests, lint, typing, drift, claim sync, anonymity, PDF QA |
 

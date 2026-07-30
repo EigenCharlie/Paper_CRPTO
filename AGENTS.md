@@ -43,13 +43,15 @@ order before changing scientific code or paper claims:
    - failed provenance/chronology audit for the external V1; it supports no active claim.
 16c1. [`docs/research/ijds_common_panel_threshold_response_v8_protocol_2026-07-26.md`](docs/research/ijds_common_panel_threshold_response_v8_protocol_2026-07-26.md)
    - active complete fixed-panel adjacent-threshold response with shared binary completions and truthful protected-read provenance.
-16c2. [`docs/research/ijds_marginal_mean_score_outcome_gap_v3h_candidate_status_2026-07-29.md`](docs/research/ijds_marginal_mean_score_outcome_gap_v3h_candidate_status_2026-07-29.md)
-   - V3H is a transport-blocked tagged candidate: local compute and artifact
-     verification passed, but the separate-clean-clone DVC pull failed for
-     missing credentials before materializing sources; it supports no active
-     claim, Table S2B, manifest entry, or manuscript number. Protocol and
-     artifact files remain under annotated tags rather than the current tree;
-     the adjacent structured transport receipt records the failed gate.
+16c2. [`docs/research/ijds_marginal_mean_score_outcome_gap_v3i_protocol_2026-07-29.md`](docs/research/ijds_marginal_mean_score_outcome_gap_v3i_protocol_2026-07-29.md)
+   - active clean-replay marginal level-gap lineage; V3H and earlier versions
+     are historical provenance only.
+16c3. [`docs/research/ijds_residual_transport_frontier_v1_protocol_2026-07-29.md`](docs/research/ijds_residual_transport_frontier_v1_protocol_2026-07-29.md)
+   - active complete directional empirical-CDF frontier and census.
+16c4. [`docs/research/ijds_decision_catalog_transport_v1_protocol_2026-07-29.md`](docs/research/ijds_decision_catalog_transport_v1_protocol_2026-07-29.md)
+   - active fixed-catalog worst-loss temporal diagnostic.
+16c5. [`docs/research/ijds_funded_selection_estimand_audit_v1_protocol_2026-07-29.md`](docs/research/ijds_funded_selection_estimand_audit_v1_protocol_2026-07-29.md)
+   - active count-, invested-dollar-, and fixed-capital funded-estimand audit.
 16d. [`docs/research/ijds_raw_data_acquisition_provenance_2026-07-21.md`](docs/research/ijds_raw_data_acquisition_provenance_2026-07-21.md)
    - verified local file identity versus unconfirmed acquisition history.
 16e. [`docs/research/ijds_submission_rights_anonymity_audit_2026-07-21.md`](docs/research/ijds_submission_rights_anonymity_audit_2026-07-21.md)
@@ -79,12 +81,15 @@ order before changing scientific code or paper claims:
 28. [`.codex/skills/crpto/SKILL.md`](.codex/skills/crpto/SKILL.md) - concise
    execution and writing guidance.
 
-Theory precedence note (2026-07-26): the exact statements in the active claim
+Theory precedence note (2026-07-29): the exact statements in the active claim
 registry and exact-theory note override any older summary in
 the CRPTO skill. In particular, do not infer continuity, a common-maxima unit
 crossing, universal low score bins, or a miscoverage floor from `l>0` alone.
 The exact two-threshold coverage change is target mass in the crossed score
-bands; calibration support alone does not bound it.
+bands; calibration support alone does not bound it. The residual frontier is
+not a KS test or stochastic-dominance claim; the marginal gap is not individual
+calibration; the worst-catalog ordering does not apply to every policy; and a
+count-minus-dollar coverage gap supplies no funded-set conformal validity.
 
 The V6 geometry and post-freeze diagnostic replays dated 2026-07-26 are
 non-active candidates in quarantine. Their protocols/configurations were not

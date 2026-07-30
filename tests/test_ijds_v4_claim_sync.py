@@ -43,7 +43,12 @@ def test_body_and_generated_tex_share_architecture_citations_and_displays() -> N
         tex_citations.update(key.strip() for key in group.split(","))
     assert body_citations == tex_citations
     body_table_ids = set(re.findall(r"\{#(tbl-[A-Za-z0-9_-]+)\}", body))
-    assert body_table_ids == {"tbl-protocol", "tbl-credit-controls", "tbl-two-ruler"}
+    assert body_table_ids == {
+        "tbl-protocol",
+        "tbl-credit-controls",
+        "tbl-two-ruler",
+        "tbl-catalog-transport",
+    }
     assert official.count(r"\begin{longtable}") == len(body_table_ids)
     assert body.count("{#fig-") == official.count(r"\begin{figure}") == 3
 

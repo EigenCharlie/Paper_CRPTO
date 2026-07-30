@@ -36,15 +36,18 @@ Read first:
 22. `docs/research/ijds_policy_support_rhs_semantics_recovery_v3a_protocol_2026-07-21.md`
 23. `docs/research/ijds_exact_binary_conformal_theory_2026-07-24.md`
 24. `docs/research/ijds_common_panel_threshold_response_v8_protocol_2026-07-26.md`
-25. `docs/research/ijds_marginal_mean_score_outcome_gap_v3h_candidate_status_2026-07-29.md`
-26. `docs/research/ijds_set_preserving_embedding_sensitivity_v1_protocol_2026-07-26.md`
-27. `docs/research/applied_conformal_prediction_book_audit_2026-07-21.md`
-28. `docs/research/conformal_literature_corpus_audit_2026-07-21.md`
-29. `reports/crpto/ijds_binary_geometry_frontier_v4_evidence.json`
-30. `docs/ACADEMIC_CONTEXT.md`
-31. `docs/SCOPE_AND_GOVERNANCE.md`
-32. `CONTRIBUTING.md`
-33. `EXTRACTION_MANIFEST.md`
+25. `docs/research/ijds_marginal_mean_score_outcome_gap_v3i_protocol_2026-07-29.md`
+26. `docs/research/ijds_residual_transport_frontier_v1_protocol_2026-07-29.md`
+27. `docs/research/ijds_decision_catalog_transport_v1_protocol_2026-07-29.md`
+28. `docs/research/ijds_funded_selection_estimand_audit_v1_protocol_2026-07-29.md`
+29. `docs/research/ijds_set_preserving_embedding_sensitivity_v1_protocol_2026-07-26.md`
+30. `docs/research/applied_conformal_prediction_book_audit_2026-07-21.md`
+31. `docs/research/conformal_literature_corpus_audit_2026-07-21.md`
+32. `reports/crpto/ijds_binary_geometry_frontier_v4_evidence.json`
+33. `docs/ACADEMIC_CONTEXT.md`
+34. `docs/SCOPE_AND_GOVERNANCE.md`
+35. `CONTRIBUTING.md`
+36. `EXTRACTION_MANIFEST.md`
 
 Active evidence:
 
@@ -96,14 +99,11 @@ Active evidence:
   learner adjacent-window responses using one shared unresolved-label
   completion per contrast; sharpness is cellwise, not jointly attainable over
   the overlapping family.
-- V2--V3G marginal mean-score--outcome-gap outputs are quarantine provenance.
-  V3H completed a local compute and direct-child artifact seal, but its
-  mandatory separate-clean-clone DVC pull failed for missing credentials
-  before source materialization. It supports no active claim, Table S2B,
-  manifest entry, manuscript number, or reviewer-ZIP file. Its protocol and
-  artifacts live under annotated tags, not in the current `main` tree.
-  Promotion requires a fresh clean clone that passes V3H unchanged; a
-  transport or computation change requires a newly frozen V3I.
+- V2--V3H marginal mean-score--outcome-gap outputs are historical provenance.
+  The separately frozen V3I clean replay is active. The residual frontier,
+  decision-catalog, and funded-estimand V1 runs are also active through their
+  exact registered direct-child Git artifact commits; none may borrow a broader
+  inference than its protocol and claim-ledger boundary.
 - Calibre runs optimized Python (`sys.flags.optimize == 2`): never use
   `assert` as a runtime or scientific guard in `src/**` or `scripts/**`;
   raise an explicit exception so the check survives execution.
@@ -140,6 +140,18 @@ Headline evidence:
   `-281/76,495`, and the sharp all-candidate shared-completion endpoint hull is
   `[-312,-290]/79,047`; this retrospectively highlighted cell is neither a
   selected winner nor an inferential test;
+- all five sharp marginal mean-score-minus-prevalence intervals are negative;
+  the least-negative upper endpoint is `-0.023934`, without an individual-
+  calibration or learner-ranking claim;
+- the complete residual-distribution frontier has 200 pooled cells with
+  `158/8/34` strict-direction labels; it is not a KS test, stochastic dominance,
+  or an identified shift mechanism;
+- all 15 target worst-catalog lower endpoints exceed all 11 development upper
+  endpoints for each of three losses; this says nothing universal about each
+  policy;
+- count-minus-invested-dollar coverage is positive in all `96/96` fixed funded
+  tracks; count-coverage upper endpoints are below 0.90 in `80/96`, while all
+  `96/96` lower endpoints are below it. No funded-set guarantee follows;
 - C2 match residual is at most `8.33e-17` and reconciles weak plug-in dominance;
 - all 216 endpoint envelopes over the finite registered cap values spanning
   `[0.05,0.12]` include zero; this does not compute continuous-support extrema;
@@ -235,7 +247,7 @@ endpoint, structural, rolling-primary recovery, conformal-set diagnostic,
 joint-block rank reference, common-panel V8, individual-age follow-up,
 label-Mondrian, fit-label completion, and allocation-granularity
 manifests/freezes and every artifact descriptor. The active capsule contains
-53 DVC pointers. It emits 29 paper-facing CSV tables and five figure families
+53 DVC pointers. It emits 36 paper-facing CSV tables and five figure families
 in PNG and PDF under the `crpto_ijds_v4_*` naming family, and
 `ijds_binary_geometry_frontier_v4_evidence.json`. Consecutive builds must be
 byte-identical. The canonical body is `paper/CRPTO_ijds.qmd`; generate official

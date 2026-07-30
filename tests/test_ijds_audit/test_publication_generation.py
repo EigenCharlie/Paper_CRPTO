@@ -176,9 +176,9 @@ def test_phase_table_handles_alpha_boundary_when_n_plus_one_is_a_multiple_of_ten
 
 
 def test_publication_inventory_is_derived_from_declared_targets() -> None:
-    assert len(TABLE_TARGETS) == 29
+    assert len(TABLE_TARGETS) == 36
     assert len(FIGURE_STEMS) == 5
-    assert len(TABLE_TARGETS) + 2 * len(FIGURE_STEMS) == 39
+    assert len(TABLE_TARGETS) + 2 * len(FIGURE_STEMS) == 46
 
 
 def test_closed_coverage_contract_fails_on_invalid_bounds_or_denominators() -> None:
@@ -293,6 +293,7 @@ def test_implementation_inventory_binds_every_acceptance_dependency() -> None:
         "endpoint_availability_sensitivity/loader",
         "portfolio_structure_sensitivity/loader",
         "robustness_sensitivities/loader",
+        "scientific_frontiers/loader",
         "claim_ledger_loader",
         "source_registry_loader",
         "artifact_descriptor_helper",

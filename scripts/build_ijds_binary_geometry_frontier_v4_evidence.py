@@ -25,6 +25,7 @@ from matplotlib.ticker import FixedFormatter, FixedLocator
 
 from src.ijds_audit.claim_ledger import materialize_claim_ledger
 from src.ijds_audit.config import load_v4_config
+from src.ijds_audit.frontier_evidence import load_frontier_evidence
 from src.ijds_audit.grid_contracts import (
     require_exact_grid,
     require_finite,
@@ -116,6 +117,27 @@ TABLE_TARGETS = {
     ),
     "common_panel_threshold_response_learners": (
         TABLE_DIR / "crpto_ijds_v4_tableS6K_common_panel_threshold_response_learners.csv"
+    ),
+    "residual_transport_summary": (
+        TABLE_DIR / "crpto_ijds_v4_tableS6L_residual_transport_summary.csv"
+    ),
+    "residual_transport_pooled": (
+        TABLE_DIR / "crpto_ijds_v4_tableS6M_residual_transport_pooled.csv"
+    ),
+    "marginal_score_outcome_gap": (
+        TABLE_DIR / "crpto_ijds_v4_tableS6N_marginal_score_outcome_gap.csv"
+    ),
+    "decision_catalog_metric_separation": (
+        TABLE_DIR / "crpto_ijds_v4_tableS9G_decision_catalog_metric_separation.csv"
+    ),
+    "decision_catalog_target_blocks": (
+        TABLE_DIR / "crpto_ijds_v4_tableS9H_decision_catalog_target_blocks.csv"
+    ),
+    "funded_selection_track_estimands": (
+        TABLE_DIR / "crpto_ijds_v4_tableS9I_funded_selection_track_estimands.csv"
+    ),
+    "funded_selection_gamma_contrasts": (
+        TABLE_DIR / "crpto_ijds_v4_tableS9J_funded_selection_gamma_contrasts.csv"
     ),
 }
 FIGURE_STEMS = {
@@ -3744,6 +3766,11 @@ def _build_evidence(staging_root: Path, *, promote: bool = True) -> Path:
     common_panel_artifacts = common_panel.artifacts
     common_panel_strata = common_panel.strata
     common_panel_learners = common_panel.learners
+    frontiers = load_frontier_evidence(
+        registered,
+        diagnostic_lineage,
+        repo_root=ROOT,
+    )
     equal_followup = _load_equal_followup_inputs(registered, rolling_equal_lineage)
     equal_followup_summary_path = equal_followup.summary_path
     equal_followup_receipt_path = equal_followup.receipt_path
@@ -4081,6 +4108,27 @@ def _build_evidence(staging_root: Path, *, promote: bool = True) -> Path:
             "allocation_granularity": granularity_table,
             "common_panel_threshold_response_strata": common_panel.publication_strata,
             "common_panel_threshold_response_learners": common_panel.publication_learners,
+            "residual_transport_summary": (
+                frontiers.residual_transport.publication_tables["summary"]
+            ),
+            "residual_transport_pooled": (
+                frontiers.residual_transport.publication_tables["pooled"]
+            ),
+            "marginal_score_outcome_gap": (
+                frontiers.marginal_score_outcome_gap.publication_tables["gap"]
+            ),
+            "decision_catalog_metric_separation": (
+                frontiers.decision_catalog_transport.publication_tables["metric_separation"]
+            ),
+            "decision_catalog_target_blocks": (
+                frontiers.decision_catalog_transport.publication_tables["target_blocks"]
+            ),
+            "funded_selection_track_estimands": (
+                frontiers.funded_selection_estimands.publication_tables["track_estimands"]
+            ),
+            "funded_selection_gamma_contrasts": (
+                frontiers.funded_selection_estimands.publication_tables["gamma_contrasts"]
+            ),
         },
         coverage=credit_temporal_coverage,
         exchangeability_cells=exchangeability_cells,
@@ -4181,6 +4229,58 @@ def _build_evidence(staging_root: Path, *, promote: bool = True) -> Path:
             / "scripts/experiments/run_ijds_common_panel_threshold_response_v8.py",
             "common_panel_threshold_response/implementation": ROOT
             / "src/ijds_audit/common_panel_threshold_response.py",
+            "residual_transport_frontier/config": (frontiers.residual_transport.config_path),
+            "residual_transport_frontier/summary": (frontiers.residual_transport.summary_path),
+            "residual_transport_frontier/execution_receipt": (
+                frontiers.residual_transport.receipt_path
+            ),
+            "residual_transport_frontier/protocol": (frontiers.residual_transport.protocol_path),
+            "residual_transport_frontier/runner": (frontiers.residual_transport.runner_path),
+            "residual_transport_frontier/implementation": (
+                frontiers.residual_transport.implementation_path
+            ),
+            "marginal_score_outcome_gap/config": (frontiers.marginal_score_outcome_gap.config_path),
+            "marginal_score_outcome_gap/summary": (
+                frontiers.marginal_score_outcome_gap.summary_path
+            ),
+            "marginal_score_outcome_gap/execution_receipt": (
+                frontiers.marginal_score_outcome_gap.receipt_path
+            ),
+            "marginal_score_outcome_gap/protocol": (
+                frontiers.marginal_score_outcome_gap.protocol_path
+            ),
+            "marginal_score_outcome_gap/runner": (frontiers.marginal_score_outcome_gap.runner_path),
+            "marginal_score_outcome_gap/implementation": (
+                frontiers.marginal_score_outcome_gap.implementation_path
+            ),
+            "decision_catalog_transport/config": (frontiers.decision_catalog_transport.config_path),
+            "decision_catalog_transport/summary": (
+                frontiers.decision_catalog_transport.summary_path
+            ),
+            "decision_catalog_transport/execution_receipt": (
+                frontiers.decision_catalog_transport.receipt_path
+            ),
+            "decision_catalog_transport/protocol": (
+                frontiers.decision_catalog_transport.protocol_path
+            ),
+            "decision_catalog_transport/runner": (frontiers.decision_catalog_transport.runner_path),
+            "decision_catalog_transport/implementation": (
+                frontiers.decision_catalog_transport.implementation_path
+            ),
+            "funded_selection_estimands/config": (frontiers.funded_selection_estimands.config_path),
+            "funded_selection_estimands/summary": (
+                frontiers.funded_selection_estimands.summary_path
+            ),
+            "funded_selection_estimands/execution_receipt": (
+                frontiers.funded_selection_estimands.receipt_path
+            ),
+            "funded_selection_estimands/protocol": (
+                frontiers.funded_selection_estimands.protocol_path
+            ),
+            "funded_selection_estimands/runner": (frontiers.funded_selection_estimands.runner_path),
+            "funded_selection_estimands/implementation": (
+                frontiers.funded_selection_estimands.implementation_path
+            ),
             "rolling_origin_equal_followup/summary": equal_followup_summary_path,
             "rolling_origin_equal_followup/config": registered["rolling_equal_followup_config"],
             "rolling_origin_equal_followup/execution_receipt": equal_followup_receipt_path,
@@ -4223,6 +4323,10 @@ def _build_evidence(staging_root: Path, *, promote: bool = True) -> Path:
             "conformal_set_diagnostics": conformal_set_artifacts,
             "exchangeability_transport": exchangeability_artifacts,
             "common_panel_threshold_response": common_panel_artifacts,
+            "residual_transport_frontier": frontiers.residual_transport.artifacts,
+            "marginal_score_outcome_gap": (frontiers.marginal_score_outcome_gap.artifacts),
+            "decision_catalog_transport": (frontiers.decision_catalog_transport.artifacts),
+            "funded_selection_estimands": frontiers.funded_selection_estimands.artifacts,
             "rolling_origin_equal_followup": equal_followup_artifacts,
             "rolling_origin_individual_age_followup": individual_followup_artifacts,
             "label_mondrian/outcome_free": label_mondrian.freeze_artifacts,
@@ -4526,6 +4630,85 @@ def _build_evidence(staging_root: Path, *, promote: bool = True) -> Path:
             },
             "learner_rows_data": common_panel.publication_learners.to_dict(orient="records"),
             "stratum_rows_data": common_panel.publication_strata.to_dict(orient="records"),
+        },
+        "residual_transport_frontier": {
+            "scope": "five_learners_by_eight_windows_by_five_strata_primary_oot",
+            "run_tag": frontiers.residual_transport.summary["run_tag"],
+            "protocol_tag": frontiers.residual_transport.summary["protocol_tag"],
+            "protocol_commit": frontiers.residual_transport.summary["protocol_commit"],
+            **frontiers.residual_transport.findings,
+            "learner_census_rows": frontiers.residual_transport.publication_tables[
+                "summary"
+            ].to_dict(orient="records"),
+            "interpretation": {
+                "finite_archive_retrospective_full_census": True,
+                "unresolved_completion_extrema_are_cellwise_sharp": True,
+                "stochastic_dominance_claimed": False,
+                "ks_test_or_p_value_reported": False,
+                "exchangeability_or_mechanism_claimed": False,
+                "model_ranking_or_winner_claimed": False,
+                "joint_endpoint_attainability_claimed": False,
+            },
+        },
+        "marginal_score_outcome_gap": {
+            "scope": "five_frozen_learners_complete_primary_oot_candidate_panel",
+            "run_tag": frontiers.marginal_score_outcome_gap.summary["run_tag"],
+            "protocol_tag": frontiers.marginal_score_outcome_gap.summary["protocol_tag"],
+            "protocol_commit": frontiers.marginal_score_outcome_gap.summary["protocol_commit"],
+            **frontiers.marginal_score_outcome_gap.findings,
+            "learner_rows": frontiers.marginal_score_outcome_gap.publication_tables["gap"].to_dict(
+                orient="records"
+            ),
+            "interpretation": {
+                "finite_archive_partial_identification": True,
+                "shared_collinear_binary_completion_grid": True,
+                "sampling_confidence_interval": False,
+                "individual_or_conditional_calibration_claimed": False,
+                "model_ranking_or_winner_claimed": False,
+                "conformal_mechanism_claimed": False,
+                "causal_or_prospective_claimed": False,
+            },
+        },
+        "decision_catalog_transport": {
+            "scope": "eleven_development_and_fifteen_target_blocks_by_three_losses",
+            "run_tag": frontiers.decision_catalog_transport.summary["run_tag"],
+            "protocol_tag": frontiers.decision_catalog_transport.summary["protocol_tag"],
+            "protocol_commit": frontiers.decision_catalog_transport.summary["protocol_commit"],
+            **frontiers.decision_catalog_transport.findings,
+            "metric_rows": frontiers.decision_catalog_transport.publication_tables[
+                "metric_separation"
+            ].to_dict(orient="records"),
+            "target_block_rows": frontiers.decision_catalog_transport.publication_tables[
+                "target_blocks"
+            ].to_dict(orient="records"),
+            "interpretation": {
+                "complete_frozen_catalog_retrospective_diagnostic": True,
+                "block_object_is_maximum_over_240_policies": True,
+                "every_policy_deteriorated_claimed": False,
+                "ordering_probability_or_p_value_reported": False,
+                "exchangeability_or_temporal_validity_claimed": False,
+                "selected_policy_or_winner_claimed": False,
+                "causal_or_prospective_claimed": False,
+            },
+        },
+        "funded_selection_estimands": {
+            "scope": "ninety_six_fixed_usd25_support_policy_tracks",
+            "run_tag": frontiers.funded_selection_estimands.summary["run_tag"],
+            "protocol_tag": frontiers.funded_selection_estimands.summary["protocol_tag"],
+            "protocol_commit": frontiers.funded_selection_estimands.summary["protocol_commit"],
+            **frontiers.funded_selection_estimands.findings,
+            "coverage_and_contrast_ranges": dict(
+                frontiers.funded_selection_estimands.summary["results"]
+            ),
+            "interpretation": {
+                "fixed_support_shared_completion_contrasts": True,
+                "count_vs_dollar_gap_uses_covariance_identity": True,
+                "invested_dollar_and_fixed_capital_are_distinct_estimands": True,
+                "selected_set_or_funded_set_validity_claimed": False,
+                "fcr_or_jomi_guarantee_claimed": False,
+                "preferred_weighting_or_policy_claimed": False,
+                "joint_sharpness_across_tracks_claimed": False,
+            },
         },
         "evaluation_endpoint": {
             **dict(config["target"]["evaluation_outcome_contract"]),

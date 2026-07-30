@@ -166,7 +166,7 @@ def test_active_evidence_registry_verifies_every_source() -> None:
         ROOT / "configs/ijds_active_evidence_sources.yaml",
         repo_root=ROOT,
     )
-    assert payload["schema_version"] == "2026-07-26.4"
+    assert payload["schema_version"] == "2026-07-29.1"
     assert set(sources) == {
         "v4_config",
         "v4_summary",
@@ -201,6 +201,32 @@ def test_active_evidence_registry_verifies_every_source() -> None:
         "common_panel_threshold_response_receipt",
         "common_panel_threshold_response_strata",
         "common_panel_threshold_response_learners",
+        "residual_transport_frontier_config",
+        "residual_transport_frontier_summary",
+        "residual_transport_frontier_receipt",
+        "residual_transport_frontier_monthly_residual_transport_frontier",
+        "residual_transport_frontier_pooled_residual_transport_frontier",
+        "decision_catalog_transport_config",
+        "decision_catalog_transport_summary",
+        "decision_catalog_transport_receipt",
+        "decision_catalog_transport_policy_score_bounds",
+        "decision_catalog_transport_block_score_bounds",
+        "decision_catalog_transport_calibration_thresholds",
+        "decision_catalog_transport_target_classification",
+        "funded_selection_estimands_config",
+        "funded_selection_estimands_summary",
+        "funded_selection_estimands_receipt",
+        "funded_selection_estimands_monthly_bounds",
+        "funded_selection_estimands_track_bounds",
+        "funded_selection_estimands_monthly_gamma_contrasts",
+        "funded_selection_estimands_track_gamma_contrasts",
+        "funded_selection_estimands_support_and_fixed_capital_reconciliation",
+        "marginal_score_outcome_gap_config",
+        "marginal_score_outcome_gap_summary",
+        "marginal_score_outcome_gap_receipt",
+        "marginal_score_outcome_gap_table",
+        "marginal_score_outcome_gap_endpoint_reason_census",
+        "marginal_score_outcome_gap_monthly_endpoint_reason_census",
         "rolling_equal_followup_summary",
         "rolling_equal_followup_config",
         "rolling_equal_followup_receipt",
@@ -230,6 +256,18 @@ def test_active_evidence_registry_verifies_every_source() -> None:
     assert common_panel["artifact_parent_commit"] == common_panel["protocol_commit"]
     assert len(common_panel["artifact_paths"]) == 4
     assert "protocol_bundle" not in common_panel
+    new_git_artifacts = {
+        "residual_transport_frontier": 4,
+        "decision_catalog_transport": 6,
+        "funded_selection_estimands": 7,
+        "marginal_score_outcome_gap": 5,
+    }
+    for name, path_count in new_git_artifacts.items():
+        identity = payload["lineages"]["diagnostics"][name]
+        assert identity["dvc_tracked"] is False
+        assert identity["artifact_parent_commit"] == identity["protocol_commit"]
+        assert identity["artifact_transport"] == "git_force_tracked_direct_child_commit"
+        assert len(identity["artifact_paths"]) == path_count
     assert (
         payload["replay_dependencies"]["rolling_origin_equal_followup_parent"]["paper_role"]
         == "non_primary_equal_quarter_level_minimum_followup_parent_provenance"

@@ -1,0 +1,6 @@
+learner,learner_label,pooled_cells,larger_target_residual_discrepancy_dominates,smaller_target_residual_discrepancy_dominates,directional_discrepancies_not_robustly_ordered
+catboost_platt,CatBoost,40,34,0,6
+numeric_logistic_platt,Numeric logistic,40,24,8,8
+catboost_monotonic_platt,Monotonic CatBoost,40,28,0,12
+woe_scorecard_platform_platt,Platform-signal WOE scorecard,40,35,0,5
+woe_scorecard_borrower_platt,Pricing-excluded application WOE scorecard,40,37,0,3

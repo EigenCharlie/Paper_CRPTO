@@ -995,6 +995,54 @@ $1\notin S$ and $u>p$. Whether the LP allocation or its outcome bounds change
 is empirical and must be reported over a complete outcome-free-frozen
 sensitivity; the algebra alone selects no $\theta$.
 
+### B.5.4 Marginal score and residual-distribution diagnostics
+
+<!-- claim:transport.residual_directional_frontier_complete -->
+<!-- claim:calibration.marginal_score_outcome_gap_all_five_negative -->
+
+The residual-distribution lineage compares both maximum one-sided empirical-CDF
+discrepancies for every learner, residual window, and frozen score stratum. Its
+3,000 monthly rows aggregate exactly to 200 pooled rows; every pooled row also
+reconciles the frozen quantile, counts, and coverage endpoints to the active V5
+lineage. Over the shared binary-completion class within each cell, the four
+directional extrema are those proved in Appendix D.5.1; the two endpoint
+completions each attain a different pair of extrema.
+
+| Learner | Pooled cells | Calibration-minus-target range larger | Reverse range larger | Not robustly ordered |
+|---|---:|---:|---:|---:|
+| CatBoost | 40 | 34 | 0 | 6 |
+| Numeric logistic | 40 | 24 | 8 | 8 |
+| Monotonic CatBoost | 40 | 28 | 0 | 12 |
+| Platform-signal WOE | 40 | 35 | 0 | 5 |
+| Pricing-excluded application WOE | 40 | 37 | 0 | 3 |
+| **Total** | **200** | **158** | **8** | **34** |
+
+**Table S6L.** Complete pooled direction census. “Larger” means that the lower
+endpoint of one maximum one-sided CDF-discrepancy range strictly exceeds the
+upper endpoint of the reverse range. It does not mean stochastic dominance or
+that every target residual is larger. The complete 200 rows are Table S6M in
+the machine-readable supplement; its 3,000 monthly antecedents give counts
+2,140, 488, and 372.
+
+The separate marginal audit uses the same 376,890 target rows for every frozen
+learner. The 364,814 resolved outcomes and 12,076 unrestricted unresolved
+binary outcomes identify prevalence as [0.151163, 0.183205]. Because the mean
+score is fixed, subtraction gives the sharp gap directly.
+
+| Learner | Mean score | Mean-score minus prevalence | Width |
+|---|---:|---:|---:|
+| CatBoost | 0.108968 | [-0.074237, -0.042196] | 0.032041 |
+| Numeric logistic | 0.127230 | [-0.055975, -0.023934] | 0.032041 |
+| Monotonic CatBoost | 0.114831 | [-0.068374, -0.036333] | 0.032041 |
+| Platform-signal WOE | 0.120590 | [-0.062615, -0.030574] | 0.032041 |
+| Pricing-excluded application WOE | 0.126402 | [-0.056802, -0.024761] | 0.032041 |
+
+**Table S6N.** Sharp marginal mean-score--outcome-prevalence bounds. The two
+prevalence endpoints are jointly attainable across learners because all five
+use the same target outcome vector. The table does not provide individual or
+conditional calibration, sampling uncertainty, a learner ranking, or an
+explanation of the conformal-coverage result.
+
 ## B.6 Label-lag sensitivity
 
 <!-- claim:timing.fit_label_crossing_retained -->
@@ -1532,6 +1580,8 @@ binary set geometry, not by the unresolved count alone.
 
 ### D.5.1 Directional residual-distribution frontier
 
+<!-- claim:theory.sharp_directional_residual_frontier -->
+
 Fix a calibration empirical CDF $F^{\mathrm{cal}}$. For unresolved target row
 $i$, binary completion permits residual $p_i$ or $1-p_i$. At every threshold
 $t$,
@@ -1553,6 +1603,8 @@ values is exact and the smallest maximizing value supplies a finite witness.
 No stochastic null or asymptotic KS reference is used.
 
 ### D.5.2 Selected-count, invested-dollar, and fixed-capital estimands
+
+<!-- claim:theory.selection_weight_covariance_identity -->
 
 On a fixed positive support, use divisor $N$ for empirical moments and write
 $\bar a=A/N$ and $\bar m=N^{-1}\sum_i m_i$. Direct expansion gives
@@ -1580,6 +1632,8 @@ policies. The fixed-capital coverage complement is accounting notation; cash
 is not itself a conformal observation.
 
 ### D.5.3 Monotone worst-catalog completion
+
+<!-- claim:theory.monotone_catalog_completion -->
 
 If $Y\le Y'$ coordinatewise and every fixed-policy loss obeys
 $L_j(Y)\le L_j(Y')$, taking a maximum preserves the inequality:
@@ -1871,6 +1925,75 @@ does not establish adequacy or optimality of the continuous relaxation,
 robustness to another rounding rule, or the outcome of a discrete
 reoptimization.
 
+### E.4.1 Worst-catalog transport
+
+<!-- claim:decision.catalog_all_target_blocks_exceed_development -->
+
+The catalog lineage fixes 240 policies per month before evaluation and defines
+three coordinatewise nondecreasing losses: payoff shortfall, default gap, and
+miscoverage excess. For each loss and month it applies the same unresolved
+outcome vector to every policy before taking the catalog maximum. The empirical
+no-$\{1\}$ funded-set gate needed for miscoverage monotonicity passes throughout.
+
+| Catalog loss | Development blocks | Maximum development upper | Target blocks | Minimum target lower | Separation |
+|---|---:|---:|---:|---:|---:|
+| Payoff shortfall | 11 | 0.139134 | 15 | 0.153547 | 0.014413 |
+| Default gap | 11 | 0.209901 | 15 | 0.219446 | 0.009545 |
+| Miscoverage excess | 11 | 0.203775 | 15 | 0.210600 | 0.006825 |
+
+**Table S9G.** Separation of every primary-OOT worst-catalog block from all
+development blocks. The bounds are sharp under one common all-zero or all-one
+completion within a block; the table neither compares individually selected
+policies nor supplies a probability of ordering.
+
+| Loss | Target blocks definitely exceeding every development upper | Crossing | Not exceeding |
+|---|---:|---:|---:|
+| Payoff shortfall | 15 | 0 | 0 |
+| Default gap | 15 | 0 | 0 |
+| Miscoverage excess | 15 | 0 | 0 |
+
+**Table S9H (summary view).** Complete 45-block classification. The
+machine-readable table retains each target block's exact lower and upper bound,
+the 240-policy census, and its development reference. A result for the maximum
+loss in the fixed catalog does not imply that every policy deteriorated, select
+a policy, identify a causal effect, or establish prospective transport.
+
+### E.4.2 Funded count, dollar, and fixed-capital estimands
+
+<!-- claim:allocation.count_vs_dollar_coverage_gap_all_tracks -->
+
+The estimand audit starts from the USD 25 rounded positive supports in Section
+E.4 and does not reoptimize them. Its 96 rows span eight windows, two rulers,
+three coordinates, and the point/full-upper score endpoints. Within each row,
+one binary completion is shared by count-, invested-dollar-, and fixed-capital
+functionals.
+
+| Coverage estimand | Range of lower endpoints | Range of upper endpoints | Upper $<.90$ | Lower $<.90$ |
+|---|---:|---:|---:|---:|
+| Selected-position count | [0.680055, 0.894872] | [0.705679, 0.926923] | 80/96 | 96/96 |
+| Invested dollars | [0.636968, 0.875324] | [0.657107, 0.910004] | 80/96 | 96/96 |
+| Fixed committed capital | [0.636978, 0.875327] | [0.657117, 0.910007] | 80/96 | 96/96 |
+
+**Table S9I (summary view).** Three sharp coverage estimands on every fixed
+funded support. Count-minus-invested-dollar coverage is positive in all 96
+tracks, with lower endpoints 0.008537--0.051030; count-minus-fixed-capital
+coverage is also positive throughout, with lower endpoints
+0.008534--0.051020. For each estimand, the remaining 16 coverage intervals cross
+0.90; only 80 have upper endpoints below it. The machine-readable table contains all 96 rows,
+set-composition counts, cash reconciliation, and both gap bounds.
+
+| Full-upper minus point-score FCP | Higher | Crosses zero | Lower |
+|---|---:|---:|---:|
+| Selected-position count | 40 | 0 | 8 |
+| Invested dollars | 40 | 8 | 0 |
+| Fixed committed capital | 40 | 8 | 0 |
+
+**Table S9J.** Complete 48-track gamma-contrast census. Coverage has the exact
+opposite sign after reversing endpoints. These contrasts use the support union
+and one outcome assignment per unresolved loan; they establish neither a
+preferred weighting nor selected- or funded-set conformal validity, FCR control,
+or a JOMI guarantee.
+
 ## E.5 Named-comparator census
 
 The table counts the sign of the guardrail-minus-point sharp contrast over 72
@@ -2021,9 +2144,11 @@ coverage rows, 5,112 monthly evaluations, 360 aggregates, 221,040 paired sharp
 contrasts, and 648 comparator envelopes. Separate complete families cover five
 credit learners, endpoint lag, portfolio structure, missingness encoding, and
 a second temporal origin. The evidence builder checks hashes, contracts, and
-cardinalities before producing 29 tables, five figure families in PNG and PDF, and one
-paper-facing manifest. Additional outcome-isolated families cover joint
-fit-label completion and deterministic allocation granularity.
+cardinalities before producing 36 tables, five figure families in PNG and PDF,
+and one paper-facing manifest. Additional outcome-isolated families cover joint
+fit-label completion, deterministic allocation granularity, marginal score and
+residual-distribution diagnostics, complete-catalog transport, and funded
+estimand dependence.
 
 ## F.2 Replay contract
 
@@ -2041,9 +2166,10 @@ The shared contract requires:
    DVC pointers across the primary audit, two-ruler diagnostic, credit controls,
    endpoint, structure, missingness, individual-age second-origin, fit-label
    completion, allocation-granularity, joint-block rank-reference diagnostic, and
-   label-Mondrian, and policy-support optimal-face/RHS-recovery families, plus
-   the V8 two-CSV summary/receipt bundle transported by an exact four-file,
-   direct-child Git artifact commit;
+   label-Mondrian, and policy-support optimal-face/RHS-recovery families; plus
+   five hash-described, direct-child Git artifact bundles: the V8 common-panel
+   response, V3I marginal gap, residual-distribution frontier, decision catalog,
+   and funded-estimand audit, each verified against its exact registered path set;
 3. a separate freeze and evaluate command with no combined shortcut;
 4. exact ID alignment at the outcome join;
 5. byte-identical evidence builds;
@@ -2092,6 +2218,10 @@ and code policy.
 | Four fit-label scenarios | All 32 overall coverage upper bounds are below 0.90; the W7--W8 crossing remains in three scenarios | Sharp bounds over all label assignments, geometry invariance, or preregistration |
 | Exact binary geometry | The threshold is the stated mirror-sample order statistic and, on a common fixed target distribution, a two-threshold coverage change equals crossed target mass | An archive-wide phase-table certification, a universal low-bin regime, continuity, or an identified cause of the shortfall |
 | Common-panel adjacent-threshold replay | Cellwise shared-completion response bounds and crossed-band counts are exact on the fixed target panel | Preregistration, a causal mechanism, slope or continuity, a threshold-distance bound, temporal-validity transfer, a selected transition, or joint attainability across the 175 overlapping cells |
+| Residual-distribution frontier | The complete 200 pooled-cell direction census is 158 calibration-minus-target ranges larger, 8 reverse ranges larger, and 34 not robustly ordered under cellwise shared completion | Stochastic dominance, a KS test or p-value, exchangeability, a transport mechanism, independent replications, or joint attainability across cells |
+| Marginal score--outcome gap | All five sharp mean-score-minus-prevalence intervals are below zero on the common primary-OOT panel | Individual or conditional calibration, a sampling interval, learner ranking, a cause of conformal shortfall, or prospective validity |
+| Worst-catalog temporal diagnostic | For all three losses, each of 15 target worst-catalog lower endpoints exceeds every development upper endpoint | Every policy deteriorated, an ordering probability or p-value, policy selection, a causal effect, or prospective transport |
+| Funded count and exposure estimands | Count-minus-invested-dollar coverage is positive under every completion in all 96 fixed tracks; 80/96 count-coverage upper endpoints are below 0.90 and all 96 lower endpoints are below it | Funded- or selected-set conformal validity, FCR control, a JOMI guarantee, preferred weighting or policy, invested dollars equaling fixed capital, or joint sharpness across tracks |
 | Fit-label sensitivity | The W7--W8 crossing persists at every lag passing the 99% retention rule | Invariance to arbitrarily delayed fit labels or a causal explanation |
 | Evaluation-endpoint sensitivity | Coverage is below 0.90 in 40/40 cells at lags 0, 3, 6, and 8 and in 39/40 at lag 12; all endpoint envelopes over the finite registered cap values spanning $[0.05,0.12]$ include zero at every lag, without computing continuous-support extrema | Lag-universal coverage failure or an endpoint selected from outcomes |
 | Timing design | Fit-label and evaluation-endpoint lags are separate one-factor sensitivities | Joint or full-factorial lag robustness |

@@ -1,4 +1,4 @@
-# CRPTO Active IJDS Claim Registry - 2026-07-26
+# CRPTO Active IJDS Claim Registry - 2026-07-29
 
 This is the sole claim registry for the active IJDS manuscript. Numerical
 statements must be traceable to
@@ -15,24 +15,23 @@ pre-endpoint-correction evaluations are provenance only.
 - **NO-GO:** model or policy superiority, selected-set conformal validity,
   causal effects, a universal guardrail direction, prospective confirmation,
   or deployment claims.
-- The strongest result separates three evidential layers. All 40 finite-archive
-  sharp upper coverage endpoints are below 0.90; a separate combined-rank
-  diagnostic has 31 of 40 learner-window joint-block reference tail areas meet
-  locked nominal Bonferroni--Holm reporting thresholds without a post-selection FWER claim; and
-  deterministic sensitivities show what
-  changes under label-Mondrian calibration, individual-age follow-up, fit labels, and
-  comparator design. None of these layers identifies the cause of shift or a
-  policy winner.
+- The audit separates four noninterchangeable objects: marginal score level,
+  residual distribution, candidate-set coverage, and the funded decision. All
+  40 finite-archive sharp upper coverage endpoints are below 0.90; separate
+  marginal-gap and residual-distribution lineages describe the fixed panel; a
+  combined-rank diagnostic has 31 of 40 learner-window joint-block reference
+  tail areas meet locked nominal Bonferroni--Holm reporting thresholds without
+  a post-selection FWER claim; and catalog and funded-estimand diagnostics audit
+  the decision handoff. None identifies the cause of another layer or a policy
+  winner.
 - No OOT outcome selects a learner, window, taxonomy, gamma, ruler, coordinate,
   cap, comparator, or policy.
-- The V2--V3G marginal mean-score--outcome-gap lineages are quarantine
-  provenance. V3H completed its local calculation and exact direct-child
-  Git-native artifact seal, but the mandatory separate-clean-clone DVC pull
-  failed for missing credentials before any source was materialized. V3H is a
-  transport-blocked candidate, not active evidence: no marginal-gap claim,
-  Table S2B, manifest entry, manuscript number, or reviewer-ZIP file is active.
-  Promotion requires a new clean clone that passes V3H unchanged; any changed
-  transport or calculation requires a newly frozen V3I.
+- The V2--V3H marginal mean-score--outcome-gap lineages remain historical
+  provenance. V3H was transport-blocked by its mandatory clean-clone DVC pull.
+  The separately frozen V3I reran the full calculation in a clean tagged clone
+  with truthful protected-read provenance and an exact direct-child Git artifact
+  seal; V3I alone is active. No claim is inherited from V3H merely because its
+  local numerical output existed.
 
 ## Active Lineages
 
@@ -231,6 +230,75 @@ pre-endpoint-correction evaluations are provenance only.
   test. These sharp endpoints are cellwise; no joint attainability claim is
   made across the overlapping 175-cell family.
 
+### Residual-distribution frontier
+
+- Complete clean-tagged run:
+  `ijds-residual-transport-frontier-2026-07-29-v1`, protocol tag
+  `protocol/ijds-residual-transport-frontier-2026-07-29-v1`, protocol commit
+  `9c4b082ce68eb88bf60666b4cb794348bf57a40d`. Artifact tag
+  `artifacts/ijds-residual-transport-frontier-2026-07-29-v1` resolves to direct
+  child `e6dd6422e853728a9880affbf61d8819728a1efb`; its exact four-path diff is
+  Git-transported and hash-bound by the active source registry.
+- The complete 3,000 monthly-cell grid aggregates exactly to 200
+  learner--window--stratum rows and reconciles every frozen count, quantile, and
+  coverage endpoint to V5. Under sharp cellwise binary completion, 158 pooled
+  cells have the calibration-minus-target maximum one-sided CDF-discrepancy
+  range wholly above the reverse range, 8 have the reverse ordering, and 34 are
+  not robustly ordered; the monthly census is 2,140/488/372.
+- These compare two directional empirical-CDF suprema. They are not KS tests,
+  stochastic-dominance claims, independent replications, exchangeability tests,
+  mechanisms, or prospective validation. Sharpness is cellwise and supplies no
+  joint attainability across the 200 overlapping cells.
+
+### Marginal mean-score--outcome gap
+
+- Active clean-tagged recovery:
+  `ijds-marginal-mean-score-outcome-gap-2026-07-29-v3i`, protocol tag
+  `protocol/ijds-marginal-mean-score-outcome-gap-2026-07-29-v3i`, protocol
+  commit `9c4b082ce68eb88bf60666b4cb794348bf57a40d`. Artifact tag
+  `artifacts/ijds-marginal-mean-score-outcome-gap-2026-07-29-v3i` resolves to
+  direct child `8fff4834aa5443150b5c2d82d07723b0de75d76e`; its exact five-path
+  diff is Git-transported and hash-bound.
+- On the common 376,890-row primary-OOT panel, unrestricted completion of
+  12,076 unresolved binary outcomes sharply identifies prevalence as
+  [0.151163, 0.183205]. All five frozen mean-score-minus-prevalence intervals
+  lie below zero; the least-negative upper endpoint is -0.023934 and their
+  common width is 0.032041.
+- This is marginal finite-panel level partial identification, not individual or
+  conditional calibration, a sampling interval, a model ranking, a conformal
+  mechanism, or a prospective guarantee.
+
+### Decision-catalog transport and funded estimands
+
+- Complete clean-tagged catalog run:
+  `ijds-decision-catalog-transport-2026-07-29-v1`, protocol tag
+  `protocol/ijds-decision-catalog-transport-2026-07-29-v1`, protocol commit
+  `9c4b082ce68eb88bf60666b4cb794348bf57a40d`. Artifact tag
+  `artifacts/ijds-decision-catalog-transport-2026-07-29-v1` resolves to direct
+  child `0a016e87074d7e92ce57b2d83aaf30b8b31b7e5a`; its exact six-path diff is
+  Git-transported and hash-bound.
+- For each of three monotone losses, all 15 primary-OOT lower endpoints for the
+  maximum over the fixed 240-policy catalog exceed every one of 11 development
+  upper endpoints. The minimum separation margins are 0.014413 for payoff
+  shortfall, 0.009545 for default gap, and 0.006825 for miscoverage excess. This
+  is a deterministic finite-archive worst-catalog ordering diagnostic; it does
+  not say every policy deteriorated, select a policy, or estimate an ordering
+  probability or prospective guarantee.
+- Complete clean-tagged estimand run:
+  `ijds-funded-selection-estimand-audit-2026-07-29-v1`, protocol tag
+  `protocol/ijds-funded-selection-estimand-audit-2026-07-29-v1`, protocol
+  commit `9c4b082ce68eb88bf60666b4cb794348bf57a40d`. Artifact tag
+  `artifacts/ijds-funded-selection-estimand-audit-2026-07-29-v1` resolves to
+  direct child `0d26e0247d41ae4ff1c9ad8ca230b0a627303190`; its exact seven-path
+  diff is Git-transported and hash-bound.
+- On all 96 fixed rounded positive supports, count-minus-invested-dollar
+  coverage has a positive sharp lower endpoint (minimum 0.008537), as does
+  count-minus-fixed-capital coverage (minimum 0.008534). Count-weighted coverage
+  has an upper endpoint below 0.90 in 80/96 tracks, while all 96 lower endpoints
+  lie below 0.90; the other 16 intervals cross. These are estimand differences,
+  not selected- or funded-set conformal validity, FCR control, a JOMI guarantee,
+  or a preferred weighting or policy.
+
 ### Label-Mondrian sensitivity
 
 - Outcome-free threshold freeze:
@@ -345,6 +413,9 @@ pre-endpoint-correction evaluations are provenance only.
 <!-- claim:theory.outcome_free_binary_set_bounds -->
 <!-- claim:theory.binary_set_embedding_nonidentification -->
 <!-- claim:theory.sharp_common_outcome_bounds -->
+<!-- claim:theory.sharp_directional_residual_frontier -->
+<!-- claim:theory.selection_weight_covariance_identity -->
+<!-- claim:theory.monotone_catalog_completion -->
 <!-- claim:theory.basis_endpoint_sufficiency -->
 
 1. **Comparator map.** Positive-affine scores admit translated caps;
@@ -396,6 +467,27 @@ pre-endpoint-correction evaluations are provenance only.
    missingness model. Rate metrics use declared capital normalizers; the
    floor-with-cash diagnostic retains committed capital rather than
    renormalizing away residual cash.
+3a. **Sharp directional residual-distribution frontier.** With one fixed
+   calibration empirical CDF, complete every unresolved target residual as
+   either `min(p,1-p)` or `max(p,1-p)`. These two attainable empirical CDFs are
+   respectively the pointwise largest and smallest target CDFs. Monotonicity
+   then gives the four exact extrema of `sup(F_cal-F_target)` and
+   `sup(F_target-F_cal)`. This is cellwise finite-archive identification, not a
+   KS test, stochastic dominance, exchangeability, or a shift mechanism.
+3b. **Count--exposure covariance identity.** On one fixed nonempty support with
+   positive exposures, dollar-minus-count FCP---equivalently count-minus-dollar
+   coverage---equals empirical exposure--miss covariance divided by mean
+   exposure. Fixed-capital FCP equals invested-dollar FCP times the invested
+   share. These identities select no weighting and do not apply directly when
+   the contrast changes support; support-changing contrasts require the union
+   construction in statement 3.
+3c. **Monotone finite-catalog completion.** The maximum over a fixed finite
+   catalog of coordinatewise nondecreasing binary-completion losses is itself
+   nondecreasing, so the common all-zero and all-one unresolved assignments
+   attain its sharp endpoints. Funded miscoverage satisfies the condition here
+   only because the complete frozen catalog contains no `{1}`-only set. The
+   statement neither extends to arbitrary catalogs nor says that every policy
+   deteriorated.
 4. **Conditional within-basis endpoint lemma.** If the optimal allocation is
    unique and a fixed optimal basis remains valid on a cap range, allocations
    are affine in the cap and sharp endpoints are concave/convex, so that range's
@@ -412,6 +504,8 @@ pre-endpoint-correction evaluations are provenance only.
 <!-- claim:coverage.joint_block_rank_reference_nominal_flags -->
 <!-- claim:coverage.common_panel_adjacent_response -->
 <!-- claim:coverage.resolved_label_diagnostic_descriptive -->
+<!-- claim:transport.residual_directional_frontier_complete -->
+<!-- claim:calibration.marginal_score_outcome_gap_all_five_negative -->
 <!-- claim:sensitivity.label_mondrian_complete_mixed -->
 <!-- claim:sensitivity.label_mondrian_common_completion_gap -->
 <!-- claim:timing.fit_label_crossing_retained -->
@@ -433,6 +527,11 @@ coverage upper bounds are below 0.90 for every model:
 
 - Mean calibration error is negative for all five models (-0.047109 to
   -0.028923), and every calibration slope is below one (0.543210--0.918655).
+  These are resolved-panel summaries. Separately, the sharp all-candidate
+  marginal mean-score-minus-prevalence intervals are wholly negative for all
+  five learners, from [-0.074237,-0.042196] to
+  [-0.055975,-0.023934]. They establish neither individual nor conditional
+  calibration and do not rank the learners.
 - All 45 OptBinning fits are optimal. The WOE/IV and monotonic specifications
   challenge model-class and platform-pricing explanations; they are not the
   paper's methodological novelty and cannot promote a model.
@@ -478,6 +577,11 @@ coverage upper bounds are below 0.90 for every model:
   W1--W4, platform WOE W1--W2, and pricing-excluded WOE W1--W3. This
   post-inspection lineage has no selective-FWER claim, does not directly test
   the usual one-future-point condition, and identifies no departure mechanism.
+- The complete residual-distribution frontier has 200 pooled cells and 3,000
+  monthly cells. The pooled strict direction census is 158/8/34 and the monthly
+  census 2,140/488/372 for calibration-minus-target discrepancy range larger,
+  reverse range larger, and not robustly ordered. These are exact descriptive
+  CDF-discrepancy bounds, not stochastic ordering, KS inference, or a mechanism.
 - Label-Mondrian changes the 40 marginal states from 40 robust shortfalls to 27
   shortfalls, 12 crossings, and one lower bound at or above 0.90. Across 400
   label-stratum categories, 109 are robust shortfalls, 185 cross, and 106 have
@@ -528,6 +632,8 @@ coverage upper bounds are below 0.90 for every model:
 <!-- claim:comparator.registered_cap_values_all_include_zero -->
 <!-- claim:sensitivity.structure_no_universal_direction -->
 <!-- claim:optimization.allocation_granularity_is_diagnostic -->
+<!-- claim:decision.catalog_all_target_blocks_exceed_development -->
+<!-- claim:allocation.count_vs_dollar_coverage_gap_all_tracks -->
 
 The frozen contrast is gamma 1 minus gamma 0. The objective-matched ruler holds
 the common plug-in objective floor fixed; the normalized-score ruler holds a
@@ -603,6 +709,15 @@ The complete endpoint-availability sensitivity is:
   exposures, leaves at most USD 75 cash per month, and perturbs any evaluated
   rate by at most 0.001284 percentage points. It is not an integer
   reoptimization or a discrete-policy claim.
+- For each of payoff shortfall, default gap, and miscoverage excess, all 15
+  target lower endpoints of the maximum loss over the frozen 240-policy catalog
+  exceed the corresponding maximum upper endpoint across 11 development
+  blocks. This does not imply that every catalog policy deteriorated.
+- Across all 96 fixed rounded supports, the sharp count-minus-invested-dollar
+  coverage lower endpoint is positive, with minimum 0.008537. Count-minus-fixed-
+  capital coverage is also positive, with minimum 0.008534. Count coverage has
+  an upper endpoint below 0.90 in 80/96 tracks and a lower endpoint below 0.90
+  in all 96; the other 16 cross nominal. No funded-set guarantee follows.
 
 - Objective-matched .25 crosses zero for all three metrics in all eight
   windows. Its repeated allocation remains identical across windows, but the
@@ -656,6 +771,10 @@ The complete endpoint-availability sensitivity is:
 - Complete label-Mondrian reporting redistributes coverage toward observed
   defaults but does not uniformly restore nominal finite-archive coverage and
   substantially increases two-label sets.
+- All five sharp marginal mean-score-minus-prevalence intervals are negative,
+  and the complete residual-distribution frontier reports all 200 pooled cells;
+  these are separate level and distribution diagnostics, not causes of the
+  conformal-coverage pattern.
 - The coverage finding also survives all four declared fit-label scenarios;
   the W7--W8 geometric crossing survives only three of them.
 - Binary absolute-residual geometry can be prevalence-sensitive under the
@@ -672,6 +791,14 @@ The complete endpoint-availability sensitivity is:
   certificate is active.
 - USD 25 floor-with-cash rounding negligibly perturbs rates in the evaluated
   baseline family; this is a continuous-relaxation diagnostic only.
+- The worst loss over the complete fixed policy catalog is separated between
+  development and every primary-OOT block for all three declared losses; this
+  is a finite-archive ordering diagnostic for the catalog maximum, not every
+  policy.
+- Count-, invested-dollar-, and fixed-capital funded coverage are distinct
+  estimands. Count-minus-invested-dollar coverage is positive in all 96 fixed
+  tracks under shared binary completion, without conferring funded-set validity
+  or choosing a weighting.
 - CRPTO remains one integrated ML--conformal--optimization object; its result is
   an audit of the handoff, not abandonment of any component.
 
@@ -699,6 +826,15 @@ The complete endpoint-availability sensitivity is:
 - Sharp fit-label completion bounds or a phase transition invariant to all
   fit-label assignments.
 - Integer-policy optimality or robustness to untested allocation lot rules.
+- Stochastic dominance, KS significance, exchangeability, or a transport
+  mechanism inferred from the residual-distribution frontier.
+- Individual or conditional calibration, a learner ranking, or a cause of the
+  coverage gap inferred from the marginal level audit.
+- Every policy deteriorated, an ordering probability, or prospective transport
+  inferred from the worst-catalog block ordering.
+- FCR control, a JOMI guarantee, a preferred weighting, or a preferred policy
+  inferred from differences among funded count, dollar, and fixed-capital
+  estimands.
 
 ## Pre-Freeze Boundary
 

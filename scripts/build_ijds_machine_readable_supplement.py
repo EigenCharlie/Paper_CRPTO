@@ -38,6 +38,27 @@ SOURCE_FILENAMES = {
     "Table_S6K_common_panel_threshold_response_learners.csv": (
         "crpto_ijds_v4_tableS6K_common_panel_threshold_response_learners.csv"
     ),
+    "Table_S6L_residual_transport_summary.csv": (
+        "crpto_ijds_v4_tableS6L_residual_transport_summary.csv"
+    ),
+    "Table_S6M_residual_transport_pooled.csv": (
+        "crpto_ijds_v4_tableS6M_residual_transport_pooled.csv"
+    ),
+    "Table_S6N_marginal_score_outcome_gap.csv": (
+        "crpto_ijds_v4_tableS6N_marginal_score_outcome_gap.csv"
+    ),
+    "Table_S9G_decision_catalog_metric_separation.csv": (
+        "crpto_ijds_v4_tableS9G_decision_catalog_metric_separation.csv"
+    ),
+    "Table_S9H_decision_catalog_target_blocks.csv": (
+        "crpto_ijds_v4_tableS9H_decision_catalog_target_blocks.csv"
+    ),
+    "Table_S9I_funded_selection_track_estimands.csv": (
+        "crpto_ijds_v4_tableS9I_funded_selection_track_estimands.csv"
+    ),
+    "Table_S9J_funded_selection_gamma_contrasts.csv": (
+        "crpto_ijds_v4_tableS9J_funded_selection_gamma_contrasts.csv"
+    ),
 }
 SOURCES = {name: TABLE_DIR / filename for name, filename in SOURCE_FILENAMES.items()}
 
@@ -167,6 +188,78 @@ S6K_COLUMNS: Final = _columns(
     "delta_width_numerator,threshold_decrease_strata,threshold_equal_strata,",
     "threshold_increase_strata,resolved_delta_rate,delta_lower,delta_upper,delta_width",
 )
+S6L_COLUMNS: Final = _columns(
+    "learner,learner_label,pooled_cells,",
+    "larger_target_residual_discrepancy_dominates,",
+    "smaller_target_residual_discrepancy_dominates,",
+    "directional_discrepancies_not_robustly_ordered",
+)
+S6M_COLUMNS: Final = _columns(
+    "learner,learner_label,window_id,score_stratum,fit_rows,target_rows,resolved_rows,",
+    "unresolved_rows,completion_directional_ks_denominator,",
+    "calibration_minus_target_ks_min,calibration_minus_target_ks_max,",
+    "target_minus_calibration_ks_min,target_minus_calibration_ks_max,",
+    "calibration_minus_target_ks_min_numerator,",
+    "calibration_minus_target_ks_max_numerator,",
+    "target_minus_calibration_ks_min_numerator,target_minus_calibration_ks_max_numerator,",
+    "sharp_directional_discrepancy_comparison,v5_q_and_coverage_reconciled",
+)
+S6N_COLUMNS: Final = _columns(
+    "learner_order,learner,learner_label,candidate_rows,resolved_rows,unresolved_outcomes,",
+    "mean_score,outcome_mean_lower,outcome_mean_upper,",
+    "marginal_mean_score_outcome_gap_lower,marginal_mean_score_outcome_gap_upper,",
+    "identification_width,identified_grid_points,identified_grid_step,",
+    "joint_endpoint_attainment",
+)
+S9G_COLUMNS: Final = _columns(
+    "metric,target_blocks,minimum_target_lower,development_maximum_upper,",
+    "all_target_blocks_exceed_development,minimum_separation_margin",
+)
+S9H_COLUMNS: Final = _columns(
+    "period,metric,score_lower,score_upper,policies,development_max_upper,",
+    "classification,exceeds_all_development_upper",
+)
+S9I_COLUMNS: Final = _columns(
+    "window_id,role,frontier_ruler,frontier_coordinate,gamma,candidate_id,",
+    "selected_positions,funded_dollars,committed_capital_usd,cash_residual_usd,",
+    "resolved_positions,unresolved_positions,empty_set_positions,full_set_positions,",
+    "singleton_zero_positions,singleton_one_positions,count_selected_fcp_lower,",
+    "count_selected_fcp_upper,count_selected_coverage_lower,",
+    "count_selected_coverage_upper,invested_dollar_selected_fcp_lower,",
+    "invested_dollar_selected_fcp_upper,invested_dollar_selected_coverage_lower,",
+    "invested_dollar_selected_coverage_upper,fixed_capital_decision_fcp_lower,",
+    "fixed_capital_decision_fcp_upper,fixed_capital_decision_coverage_lower,",
+    "fixed_capital_decision_coverage_upper,",
+    "count_selected_minus_invested_dollar_selected_fcp_lower,",
+    "count_selected_minus_invested_dollar_selected_fcp_upper,",
+    "count_selected_minus_invested_dollar_selected_coverage_lower,",
+    "count_selected_minus_invested_dollar_selected_coverage_upper,",
+    "count_selected_minus_fixed_capital_decision_fcp_lower,",
+    "count_selected_minus_fixed_capital_decision_fcp_upper,",
+    "count_selected_minus_fixed_capital_decision_coverage_lower,",
+    "count_selected_minus_fixed_capital_decision_coverage_upper,sharpness,periods",
+)
+S9J_COLUMNS: Final = _columns(
+    "window_id,role,frontier_ruler,frontier_coordinate,gamma0_candidate_id,",
+    "gamma1_candidate_id,gamma0_selected_positions,gamma1_selected_positions,",
+    "gamma0_funded_dollars,gamma1_funded_dollars,committed_capital_usd,",
+    "funded_union_positions,funded_overlap_positions,unresolved_union_positions,",
+    "gamma1_minus_gamma0_count_selected_fcp_lower,",
+    "gamma1_minus_gamma0_count_selected_fcp_upper,",
+    "gamma1_minus_gamma0_count_selected_coverage_lower,",
+    "gamma1_minus_gamma0_count_selected_coverage_upper,",
+    "gamma1_minus_gamma0_count_selected_fcp_direction,",
+    "gamma1_minus_gamma0_invested_dollar_selected_fcp_lower,",
+    "gamma1_minus_gamma0_invested_dollar_selected_fcp_upper,",
+    "gamma1_minus_gamma0_invested_dollar_selected_coverage_lower,",
+    "gamma1_minus_gamma0_invested_dollar_selected_coverage_upper,",
+    "gamma1_minus_gamma0_invested_dollar_selected_fcp_direction,",
+    "gamma1_minus_gamma0_fixed_capital_decision_fcp_lower,",
+    "gamma1_minus_gamma0_fixed_capital_decision_fcp_upper,",
+    "gamma1_minus_gamma0_fixed_capital_decision_coverage_lower,",
+    "gamma1_minus_gamma0_fixed_capital_decision_coverage_upper,",
+    "gamma1_minus_gamma0_fixed_capital_decision_fcp_direction,sharpness,periods",
+)
 
 LEARNER_METADATA: Final = {
     "catboost_platt": ("CatBoost", "pd_catboost_platt", "1"),
@@ -210,6 +303,27 @@ PAIR_METADATA: Final = {
 PRIMARY_CANDIDATES: Final = 376_890
 PRIMARY_RESOLVED: Final = 364_814
 PRIMARY_UNRESOLVED: Final = 12_076
+ISSUE_MONTHS: Final = (
+    "2016-04",
+    "2016-05",
+    "2016-06",
+    "2016-07",
+    "2016-08",
+    "2016-09",
+    "2016-10",
+    "2016-11",
+    "2016-12",
+    "2017-01",
+    "2017-02",
+    "2017-03",
+    "2017-04",
+    "2017-05",
+    "2017-06",
+)
+RULERS: Final = ("objective_matched", "normalized_score")
+COORDINATES: Final = ("0.25", "0.5", "0.75")
+GAMMAS: Final = ("0.0", "1.0")
+METRICS: Final = ("payoff_shortfall", "default_gap", "miscoverage_excess")
 
 
 @dataclass(frozen=True)
@@ -330,14 +444,107 @@ TABLE_CONTRACTS: Final = {
             "pair_index": frozenset(PAIRS),
         },
     ),
+    "Table_S6L_residual_transport_summary.csv": CsvContract(
+        columns=S6L_COLUMNS,
+        rows=5,
+        key_columns=("learner",),
+        expected_keys=_grid(LEARNERS),
+        exact_domains={"pooled_cells": frozenset({"40"})},
+    ),
+    "Table_S6M_residual_transport_pooled.csv": CsvContract(
+        columns=S6M_COLUMNS,
+        rows=200,
+        key_columns=("learner", "window_id", "score_stratum"),
+        expected_keys=_grid(LEARNERS, WINDOWS, STRATA_ONE_BASED),
+        exact_domains={
+            "score_stratum": frozenset(STRATA_ONE_BASED),
+            "sharp_directional_discrepancy_comparison": frozenset(
+                {
+                    "larger_target_residual_discrepancy_dominates",
+                    "smaller_target_residual_discrepancy_dominates",
+                    "directional_discrepancies_not_robustly_ordered",
+                }
+            ),
+            "v5_q_and_coverage_reconciled": frozenset({"True"}),
+        },
+    ),
+    "Table_S6N_marginal_score_outcome_gap.csv": CsvContract(
+        columns=S6N_COLUMNS,
+        rows=5,
+        key_columns=("learner",),
+        expected_keys=_grid(LEARNERS),
+        exact_domains={
+            "candidate_rows": frozenset({str(PRIMARY_CANDIDATES)}),
+            "resolved_rows": frozenset({str(PRIMARY_RESOLVED)}),
+            "unresolved_outcomes": frozenset({str(PRIMARY_UNRESOLVED)}),
+            "joint_endpoint_attainment": frozenset({"True"}),
+        },
+    ),
+    "Table_S9G_decision_catalog_metric_separation.csv": CsvContract(
+        columns=S9G_COLUMNS,
+        rows=3,
+        key_columns=("metric",),
+        expected_keys=_grid(METRICS),
+        exact_domains={
+            "target_blocks": frozenset({"15"}),
+            "all_target_blocks_exceed_development": frozenset({"True"}),
+        },
+    ),
+    "Table_S9H_decision_catalog_target_blocks.csv": CsvContract(
+        columns=S9H_COLUMNS,
+        rows=45,
+        key_columns=("period", "metric"),
+        expected_keys=_grid(ISSUE_MONTHS, METRICS),
+        exact_domains={
+            "policies": frozenset({"240"}),
+            "classification": frozenset({"definitely_exceeds"}),
+            "exceeds_all_development_upper": frozenset({"True"}),
+        },
+    ),
+    "Table_S9I_funded_selection_track_estimands.csv": CsvContract(
+        columns=S9I_COLUMNS,
+        rows=96,
+        key_columns=("window_id", "frontier_ruler", "frontier_coordinate", "gamma"),
+        expected_keys=_grid(WINDOWS, RULERS, COORDINATES, GAMMAS),
+        exact_domains={
+            "role": frozenset({"primary_oot"}),
+            "frontier_ruler": frozenset(RULERS),
+            "frontier_coordinate": frozenset(COORDINATES),
+            "gamma": frozenset(GAMMAS),
+            "singleton_one_positions": frozenset({"0"}),
+            "sharpness": frozenset({"cellwise_shared_binary_completion"}),
+            "periods": frozenset({"15"}),
+        },
+    ),
+    "Table_S9J_funded_selection_gamma_contrasts.csv": CsvContract(
+        columns=S9J_COLUMNS,
+        rows=48,
+        key_columns=("window_id", "frontier_ruler", "frontier_coordinate"),
+        expected_keys=_grid(WINDOWS, RULERS, COORDINATES),
+        exact_domains={
+            "role": frozenset({"primary_oot"}),
+            "frontier_ruler": frozenset(RULERS),
+            "frontier_coordinate": frozenset(COORDINATES),
+            "gamma1_minus_gamma0_count_selected_fcp_direction": frozenset({"higher", "lower"}),
+            "gamma1_minus_gamma0_invested_dollar_selected_fcp_direction": frozenset(
+                {"higher", "crossing"}
+            ),
+            "gamma1_minus_gamma0_fixed_capital_decision_fcp_direction": frozenset(
+                {"higher", "crossing"}
+            ),
+            "sharpness": frozenset({"cellwise_shared_binary_completion"}),
+            "periods": frozenset({"15"}),
+        },
+    ),
 }
 README = """Anonymous machine-readable online supplement
 
-These seven aggregate CSV files provide the complete cell, score-stratum,
-label-category, and common-panel adjacent-threshold rows summarized by PDF
-Tables S6B, S6D, S6F, S6J, and S6K. S6C and S6E are machine-readable-only
-tables because their 200-row
-layouts are unsuitable for a reviewer PDF.
+These fourteen aggregate CSV files provide the complete cell, score-stratum,
+label-category, common-panel adjacent-threshold, residual-distribution,
+marginal score-outcome, decision-catalog, and funded-estimand rows summarized
+by PDF Tables S6B, S6D, S6F, S6J--S6N, and S9G--S9J. S6C, S6E, and S6M are
+machine-readable-only tables because their 200-row layouts are unsuitable for
+a reviewer PDF.
 
 The joint-block columns preserve the executed calculation while using active
 reporting names. A threshold flag is a retrospective nominal reporting flag,
@@ -352,6 +559,14 @@ learner-level aggregates. Their sharp all-candidate response bounds assign each
 unresolved loan once and share that completion across both thresholds. They are
 descriptive finite-archive identities, not temporal-validity tests, slopes,
 rankings, or selected-transition evidence.
+
+The residual tables report cellwise sharp ranges for two one-sided empirical
+CDF discrepancies, not a KS test or global stochastic ordering. The marginal
+table is finite-archive partial identification, not individual or conditional
+calibration. Decision-catalog rows concern the worst loss over the fixed
+catalog, not every policy. Funded-estimand rows keep count, invested-dollar,
+and fixed-capital weightings distinct and do not establish FCR or selected-set
+validity.
 
 """
 FIXED_TIME = (1980, 1, 1, 0, 0, 0)
@@ -409,6 +624,18 @@ TEXT_COLUMNS: Final = frozenset(
         "window_to",
         "identification_state_at_nominal",
         "baseline_identification_state_at_nominal",
+        "period",
+        "metric",
+        "classification",
+        "frontier_ruler",
+        "candidate_id",
+        "gamma0_candidate_id",
+        "gamma1_candidate_id",
+        "sharpness",
+        "sharp_directional_discrepancy_comparison",
+        "gamma1_minus_gamma0_count_selected_fcp_direction",
+        "gamma1_minus_gamma0_invested_dollar_selected_fcp_direction",
+        "gamma1_minus_gamma0_fixed_capital_decision_fcp_direction",
     }
 )
 BOOLEAN_COLUMNS: Final = frozenset(
@@ -424,6 +651,10 @@ BOOLEAN_COLUMNS: Final = frozenset(
         "score_stratum_present",
         "conditional_coverage_defined",
         "coverage_upper_below_nominal",
+        "v5_q_and_coverage_reconciled",
+        "joint_endpoint_attainment",
+        "all_target_blocks_exceed_development",
+        "exceeds_all_development_upper",
     }
 )
 EXPLICIT_INTEGER_COLUMNS: Final = frozenset(
@@ -454,6 +685,24 @@ EXPLICIT_INTEGER_COLUMNS: Final = frozenset(
         "threshold_equal_strata",
         "threshold_increase_strata",
         "strata_with_non_singleton_calibration_threshold_ties",
+        "pooled_cells",
+        "unresolved_outcomes",
+        "identified_grid_points",
+        "target_blocks",
+        "policies",
+        "periods",
+        "selected_positions",
+        "resolved_positions",
+        "unresolved_positions",
+        "empty_set_positions",
+        "full_set_positions",
+        "singleton_zero_positions",
+        "singleton_one_positions",
+        "funded_union_positions",
+        "funded_overlap_positions",
+        "unresolved_union_positions",
+        "gamma0_selected_positions",
+        "gamma1_selected_positions",
     }
 )
 
@@ -504,7 +753,7 @@ def _validate_numeric_domain(
     elif "p_value" in column or column.endswith("_share") or "critical_value" in column:
         lower, upper = 0.0, 1.0
     elif "coverage" in column:
-        if any(token in column for token in ("_gap_", "_delta_", "_difference")):
+        if any(token in column for token in ("_gap_", "_delta_", "_difference", "_minus_")):
             lower, upper = -1.0, 1.0
         else:
             lower, upper = 0.0, 1.0
@@ -566,7 +815,7 @@ def _validate_metadata(
         if "learner_order" in row and row["learner_order"] != expected_order:
             _fail(name, path, f"row {row_number} learner order does not match {learner!r}.")
 
-    if "window_id" in row:
+    if "window_id" in row and "window" in row:
         expected_window = WINDOW_METADATA[row["window_id"]]
         if row["window"] != expected_window:
             _fail(name, path, f"row {row_number} window label and ID disagree.")
@@ -1337,6 +1586,182 @@ def _validate_cross_table_contract(
                 s6k_name,
                 paths[s6k_name],
                 f"S6J-to-S6K threshold directions fail at {pair_key!r}.",
+            )
+
+    s6l_name = "Table_S6L_residual_transport_summary.csv"
+    s6m_name = "Table_S6M_residual_transport_pooled.csv"
+    residual_by_learner: dict[str, Counter[str]] = defaultdict(Counter)
+    for row in rows_by_name[s6m_name]:
+        residual_by_learner[row["learner"]][row["sharp_directional_discrepancy_comparison"]] += 1
+    residual_columns = (
+        "larger_target_residual_discrepancy_dominates",
+        "smaller_target_residual_discrepancy_dominates",
+        "directional_discrepancies_not_robustly_ordered",
+    )
+    for row in rows_by_name[s6l_name]:
+        learner = row["learner"]
+        counts = residual_by_learner[learner]
+        if int(row["pooled_cells"]) != sum(counts.values()):
+            _fail(s6l_name, paths[s6l_name], f"pooled cell count fails for {learner!r}.")
+        for column in residual_columns:
+            if int(row[column]) != counts[column]:
+                _fail(
+                    s6l_name,
+                    paths[s6l_name],
+                    f"S6L-to-S6M direction census fails for {learner!r} and {column!r}.",
+                )
+    aggregate_residual = Counter(
+        row["sharp_directional_discrepancy_comparison"] for row in rows_by_name[s6m_name]
+    )
+    if aggregate_residual != Counter(
+        {
+            "larger_target_residual_discrepancy_dominates": 158,
+            "smaller_target_residual_discrepancy_dominates": 8,
+            "directional_discrepancies_not_robustly_ordered": 34,
+        }
+    ):
+        _fail(s6m_name, paths[s6m_name], "the exact pooled residual census changed.")
+
+    s6n_name = "Table_S6N_marginal_score_outcome_gap.csv"
+    for row_number, row in enumerate(rows_by_name[s6n_name], start=2):
+        mean_score = float(row["mean_score"])
+        outcome_lower = float(row["outcome_mean_lower"])
+        outcome_upper = float(row["outcome_mean_upper"])
+        gap_lower = float(row["marginal_mean_score_outcome_gap_lower"])
+        gap_upper = float(row["marginal_mean_score_outcome_gap_upper"])
+        _require_close(
+            s6n_name,
+            paths[s6n_name],
+            row_number,
+            "marginal gap lower identity",
+            gap_lower,
+            mean_score - outcome_upper,
+        )
+        _require_close(
+            s6n_name,
+            paths[s6n_name],
+            row_number,
+            "marginal gap upper identity",
+            gap_upper,
+            mean_score - outcome_lower,
+        )
+        if gap_upper >= 0.0:
+            _fail(s6n_name, paths[s6n_name], "a marginal gap upper endpoint is nonnegative.")
+
+    s9g_name = "Table_S9G_decision_catalog_metric_separation.csv"
+    s9h_name = "Table_S9H_decision_catalog_target_blocks.csv"
+    blocks_by_metric: dict[str, list[dict[str, str]]] = defaultdict(list)
+    for row in rows_by_name[s9h_name]:
+        blocks_by_metric[row["metric"]].append(row)
+    for row_number, row in enumerate(rows_by_name[s9g_name], start=2):
+        metric = row["metric"]
+        blocks = blocks_by_metric[metric]
+        minimum_target = min(float(block["score_lower"]) for block in blocks)
+        development_upper = max(float(block["development_max_upper"]) for block in blocks)
+        if len(blocks) != int(row["target_blocks"]):
+            _fail(s9g_name, paths[s9g_name], f"target block census fails for {metric!r}.")
+        for column, expected in (
+            ("minimum_target_lower", minimum_target),
+            ("development_maximum_upper", development_upper),
+            ("minimum_separation_margin", minimum_target - development_upper),
+        ):
+            _require_close(
+                s9g_name,
+                paths[s9g_name],
+                row_number,
+                f"S9G-to-S9H {column}",
+                float(row[column]),
+                expected,
+            )
+        if minimum_target <= development_upper:
+            _fail(s9g_name, paths[s9g_name], f"separation fails for {metric!r}.")
+
+    s9i_name = "Table_S9I_funded_selection_track_estimands.csv"
+    s9i_rows = rows_by_name[s9i_name]
+    if sum(float(row["count_selected_coverage_upper"]) < 0.90 for row in s9i_rows) != 80:
+        _fail(s9i_name, paths[s9i_name], "count coverage upper endpoint census changed.")
+    if sum(float(row["count_selected_coverage_lower"]) < 0.90 for row in s9i_rows) != 96:
+        _fail(s9i_name, paths[s9i_name], "count coverage lower endpoint census changed.")
+    for row_number, row in enumerate(s9i_rows, start=2):
+        for prefix in (
+            "count_selected",
+            "invested_dollar_selected",
+            "fixed_capital_decision",
+        ):
+            _require_close(
+                s9i_name,
+                paths[s9i_name],
+                row_number,
+                f"{prefix} coverage lower complement",
+                float(row[f"{prefix}_coverage_lower"]),
+                1.0 - float(row[f"{prefix}_fcp_upper"]),
+            )
+            _require_close(
+                s9i_name,
+                paths[s9i_name],
+                row_number,
+                f"{prefix} coverage upper complement",
+                float(row[f"{prefix}_coverage_upper"]),
+                1.0 - float(row[f"{prefix}_fcp_lower"]),
+            )
+        for contrast in (
+            "count_selected_minus_invested_dollar_selected",
+            "count_selected_minus_fixed_capital_decision",
+        ):
+            if float(row[f"{contrast}_coverage_lower"]) <= 0.0:
+                _fail(s9i_name, paths[s9i_name], f"{contrast} lower endpoint is not positive.")
+            _require_close(
+                s9i_name,
+                paths[s9i_name],
+                row_number,
+                f"{contrast} lower sign reversal",
+                float(row[f"{contrast}_coverage_lower"]),
+                -float(row[f"{contrast}_fcp_upper"]),
+            )
+            _require_close(
+                s9i_name,
+                paths[s9i_name],
+                row_number,
+                f"{contrast} upper sign reversal",
+                float(row[f"{contrast}_coverage_upper"]),
+                -float(row[f"{contrast}_fcp_lower"]),
+            )
+
+    s9j_name = "Table_S9J_funded_selection_gamma_contrasts.csv"
+    s9j_rows = rows_by_name[s9j_name]
+    expected_gamma_directions = {
+        "gamma1_minus_gamma0_count_selected_fcp_direction": Counter({"higher": 40, "lower": 8}),
+        "gamma1_minus_gamma0_invested_dollar_selected_fcp_direction": Counter(
+            {"higher": 40, "crossing": 8}
+        ),
+        "gamma1_minus_gamma0_fixed_capital_decision_fcp_direction": Counter(
+            {"higher": 40, "crossing": 8}
+        ),
+    }
+    for column, expected in expected_gamma_directions.items():
+        if Counter(row[column] for row in s9j_rows) != expected:
+            _fail(s9j_name, paths[s9j_name], f"gamma direction census changed for {column!r}.")
+    for row_number, row in enumerate(s9j_rows, start=2):
+        for prefix in (
+            "gamma1_minus_gamma0_count_selected",
+            "gamma1_minus_gamma0_invested_dollar_selected",
+            "gamma1_minus_gamma0_fixed_capital_decision",
+        ):
+            _require_close(
+                s9j_name,
+                paths[s9j_name],
+                row_number,
+                f"{prefix} coverage lower sign reversal",
+                float(row[f"{prefix}_coverage_lower"]),
+                -float(row[f"{prefix}_fcp_upper"]),
+            )
+            _require_close(
+                s9j_name,
+                paths[s9j_name],
+                row_number,
+                f"{prefix} coverage upper sign reversal",
+                float(row[f"{prefix}_coverage_upper"]),
+                -float(row[f"{prefix}_fcp_lower"]),
             )
 
 

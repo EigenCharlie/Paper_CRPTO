@@ -708,8 +708,8 @@ def _check_lineage_sync() -> list[str]:
     }
     checks = (
         (
-            str(registry.get("schema_version")) != "2026-07-26.4",
-            "active source registry schema is not 2026-07-26.4",
+            str(registry.get("schema_version")) != "2026-07-29.1",
+            "active source registry schema is not 2026-07-29.1",
         ),
         (
             len(registry.get("dvc_pointers", [])) != 53,
@@ -723,8 +723,8 @@ def _check_lineage_sync() -> list[str]:
                     if str(descriptor.get("path", "")).endswith(".csv")
                 ]
             )
-            != 29,
-            "paper evidence manifest does not contain exactly 29 CSV tables",
+            != 36,
+            "paper evidence manifest does not contain exactly 36 CSV tables",
         ),
         (
             contract.get("source_registry") != expected_registry_path,

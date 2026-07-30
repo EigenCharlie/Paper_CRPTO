@@ -129,7 +129,7 @@ structural V5 shard root and the unequal-follow-up origin roots. Pull with:
 uv run --locked python scripts/manage_ijds_dvc_capsule.py pull
 ```
 
-The registered evidence builder emits one paper-facing manifest, 29 CSV
+The registered evidence builder emits one paper-facing manifest, 36 CSV
 tables, and five figure families in both PDF and PNG.
 
 Machine-local DVC credentials belong in `.dvc/config.local` and are never

@@ -1,4 +1,4 @@
-schema_version: "2026-07-26.2"
+schema_version: "2026-07-29.1"
 status: active_ijds_claim_contract
 
 surfaces:
@@ -444,6 +444,110 @@ claims:
        seam_conditioning, all_optimal_allocations_enumerated, selected_cap,
        exact_distinct_optimum, exact_nonuniqueness,
        exact_continuous_outcome_envelope, universal_comparator_support]
+    surfaces:
+      required: [body, supplement, registry, claim_matrix]
+      allowed: [body, supplement, registry, claim_matrix]
+
+  - id: theory.sharp_directional_residual_frontier
+    status: active
+    kind: theorem
+    rule: documented
+    lineages: [residual_transport_frontier]
+    scope: cellwise_extrema_of_two_one_sided_empirical_cdf_discrepancies_under_shared_binary_completion_with_strict_range_separation
+    forbidden_inference:
+      [global_stochastic_dominance, ks_test, p_value, exchangeability,
+       transport_mechanism, joint_attainability_across_cells]
+    surfaces:
+      required: [body, supplement, registry, claim_matrix]
+      allowed: [body, supplement, registry, claim_matrix]
+
+  - id: theory.selection_weight_covariance_identity
+    status: active
+    kind: theorem
+    rule: documented
+    lineages: [funded_selection_estimands]
+    scope: exposure_weighted_minus_count_weighted_miscoverage_equivalently_count_minus_exposure_coverage_on_one_fixed_positive_support
+    forbidden_inference:
+      [support_changing_contrast_without_union_construction, preferred_weighting,
+       selected_set_conformal_validity, false_coverage_rate_control,
+       causal_exposure_effect]
+    surfaces:
+      required: [body, supplement, registry, claim_matrix]
+      allowed: [body, supplement, registry, claim_matrix]
+
+  - id: theory.monotone_catalog_completion
+    status: active
+    kind: theorem
+    rule: documented
+    lineages: [decision_catalog_transport]
+    scope: finite_fixed_catalog_maximum_of_coordinatewise_nondecreasing_binary_completion_losses_when_one_only_sets_are_absent
+    forbidden_inference:
+      [arbitrary_catalog_monotonicity, selected_policy, every_policy_deteriorated,
+       ordering_probability, exchangeability, prospective_transport]
+    surfaces:
+      required: [body, supplement, registry, claim_matrix]
+      allowed: [body, supplement, registry, claim_matrix]
+
+  - id: transport.residual_directional_frontier_complete
+    status: active
+    kind: empirical
+    rule: equals
+    result_pointer: /residual_transport_frontier/full_pooled_census_and_sharp_frontier_verified
+    expected: true
+    lineages: [residual_transport_frontier]
+    scope: primary_oot_five_learners_by_eight_windows_by_five_frozen_score_strata_with_shared_binary_completion
+    forbidden_inference:
+      [stochastic_dominance, ks_test, p_value, independent_replications,
+       exchangeability, mechanism, model_winner, prospective_validity]
+    surfaces:
+      required: [body, supplement, registry, claim_matrix]
+      allowed: [body, supplement, registry, claim_matrix]
+
+  - id: calibration.marginal_score_outcome_gap_all_five_negative
+    status: active
+    kind: empirical
+    rule: equals
+    result_pointer: /marginal_score_outcome_gap/all_five_gap_upper_endpoints_negative
+    expected: true
+    lineages: [marginal_score_outcome_gap]
+    scope: complete_five_frozen_learner_primary_oot_panel_under_unrestricted_unresolved_binary_completion
+    forbidden_inference:
+      [individual_calibration, conditional_calibration, model_ranking,
+       model_winner, conformal_mechanism, sampling_interval, causal_effect,
+       prospective_validity]
+    surfaces:
+      required: [body, supplement, registry, claim_matrix]
+      allowed: [body, supplement, registry, claim_matrix]
+
+  - id: decision.catalog_all_target_blocks_exceed_development
+    status: active
+    kind: empirical
+    rule: equals
+    result_pointer: /decision_catalog_transport/all_three_metrics_all_fifteen_target_lower_exceed_all_development_upper
+    expected: true
+    lineages: [decision_catalog_transport]
+    scope: eleven_development_and_fifteen_primary_oot_months_three_losses_and_maximum_over_240_fixed_policies_per_block
+    forbidden_inference:
+      [every_policy_deteriorated, ordering_probability, p_value,
+       exchangeability, selected_policy, policy_winner, causal_effect,
+       prospective_transport]
+    surfaces:
+      required: [body, supplement, registry, claim_matrix]
+      allowed: [body, supplement, registry, claim_matrix]
+
+  - id: allocation.count_vs_dollar_coverage_gap_all_tracks
+    status: active
+    kind: empirical
+    rule: equals
+    result_pointer: /funded_selection_estimands/all_ninety_six_count_minus_invested_dollar_coverage_lower_endpoints_positive
+    expected: true
+    lineages: [funded_selection_estimands]
+    scope: ninety_six_fixed_usd25_positive_support_tracks_with_shared_binary_completion_within_each_track
+    forbidden_inference:
+      [selected_set_conformal_validity, funded_set_conformal_validity,
+       false_coverage_rate_control, jomi_guarantee, preferred_weighting,
+       preferred_policy, invested_dollar_equals_fixed_capital,
+       joint_sharpness_across_tracks]
     surfaces:
       required: [body, supplement, registry, claim_matrix]
       allowed: [body, supplement, registry, claim_matrix]

@@ -1,0 +1,4 @@
+metric,target_blocks,minimum_target_lower,development_maximum_upper,all_target_blocks_exceed_development,minimum_separation_margin
+payoff_shortfall,15,0.1535469866823687,0.1391344600038786,True,0.014412526678490106
+default_gap,15,0.2194462494162241,0.2099011220405951,True,0.009545127375628987
+miscoverage_excess,15,0.2106000000000006,0.203775,True,0.006825000000000581

@@ -2,7 +2,7 @@
   "schema_version": "2026-07-26.2",
   "status": "active_ijds_v5_endpoint_reason_audited_paper_facing_evidence",
   "source_registry": {
-    "schema_version": "2026-07-26.4",
+    "schema_version": "2026-07-29.1",
     "status": "active_ijds_paper_evidence_source_registry",
     "sources": [
       "allocation_granularity_freeze",
@@ -16,12 +16,27 @@
       "conformal_set_diagnostics_summary",
       "credit_receipt",
       "credit_summary",
+      "decision_catalog_transport_block_score_bounds",
+      "decision_catalog_transport_calibration_thresholds",
+      "decision_catalog_transport_config",
+      "decision_catalog_transport_policy_score_bounds",
+      "decision_catalog_transport_receipt",
+      "decision_catalog_transport_summary",
+      "decision_catalog_transport_target_classification",
       "endpoint_sensitivity_summary",
       "exchangeability_transport_config",
       "exchangeability_transport_receipt",
       "exchangeability_transport_summary",
       "fit_label_completion_freeze",
       "fit_label_completion_summary",
+      "funded_selection_estimands_config",
+      "funded_selection_estimands_monthly_bounds",
+      "funded_selection_estimands_monthly_gamma_contrasts",
+      "funded_selection_estimands_receipt",
+      "funded_selection_estimands_summary",
+      "funded_selection_estimands_support_and_fixed_capital_reconciliation",
+      "funded_selection_estimands_track_bounds",
+      "funded_selection_estimands_track_gamma_contrasts",
       "label_lag_sensitivity",
       "label_mondrian_evaluation_config",
       "label_mondrian_evaluation_receipt",
@@ -29,10 +44,21 @@
       "label_mondrian_freeze",
       "label_mondrian_freeze_config",
       "label_mondrian_freeze_receipt",
+      "marginal_score_outcome_gap_config",
+      "marginal_score_outcome_gap_endpoint_reason_census",
+      "marginal_score_outcome_gap_monthly_endpoint_reason_census",
+      "marginal_score_outcome_gap_receipt",
+      "marginal_score_outcome_gap_summary",
+      "marginal_score_outcome_gap_table",
       "missingness_receipt",
       "missingness_summary",
       "policy_support_optimal_face_evidence",
       "raw_data_audit",
+      "residual_transport_frontier_config",
+      "residual_transport_frontier_monthly_residual_transport_frontier",
+      "residual_transport_frontier_pooled_residual_transport_frontier",
+      "residual_transport_frontier_receipt",
+      "residual_transport_frontier_summary",
       "rolling_equal_followup_config",
       "rolling_equal_followup_receipt",
       "rolling_equal_followup_summary",
@@ -187,6 +213,84 @@
           "data/processed/experiments/ijds_audit/ijds-common-panel-threshold-response-2026-07-26-v8/adjacent_stratum_threshold_response.csv",
           "models/experiments/ijds_audit/ijds-common-panel-threshold-response-2026-07-26-v8/common_panel_threshold_response_v8_summary.json",
           "models/experiments/ijds_audit/ijds-common-panel-threshold-response-2026-07-26-v8/execution_receipt.json"
+        ]
+      },
+      "residual_transport_frontier": {
+        "run_tag": "ijds-residual-transport-frontier-2026-07-29-v1",
+        "protocol_tag": "protocol/ijds-residual-transport-frontier-2026-07-29-v1",
+        "protocol_commit": "9c4b082ce68eb88bf60666b4cb794348bf57a40d",
+        "scientific_uv_lock_sha256": "6c862cbad9ab7e3a07dd2823c775127403093d6ad59a789ee227d827165e4733",
+        "paper_role": "complete_retrospective_finite_archive_residual_distribution_frontier",
+        "dvc_tracked": false,
+        "artifact_tag": "artifacts/ijds-residual-transport-frontier-2026-07-29-v1",
+        "artifact_commit": "e6dd6422e853728a9880affbf61d8819728a1efb",
+        "artifact_parent_commit": "9c4b082ce68eb88bf60666b4cb794348bf57a40d",
+        "artifact_transport": "git_force_tracked_direct_child_commit",
+        "artifact_paths": [
+          "data/processed/experiments/ijds_audit/ijds-residual-transport-frontier-2026-07-29-v1/monthly_residual_transport_frontier.csv",
+          "data/processed/experiments/ijds_audit/ijds-residual-transport-frontier-2026-07-29-v1/pooled_residual_transport_frontier.csv",
+          "models/experiments/ijds_audit/ijds-residual-transport-frontier-2026-07-29-v1/execution_receipt.json",
+          "models/experiments/ijds_audit/ijds-residual-transport-frontier-2026-07-29-v1/residual_transport_frontier_summary.json"
+        ]
+      },
+      "decision_catalog_transport": {
+        "run_tag": "ijds-decision-catalog-transport-2026-07-29-v1",
+        "protocol_tag": "protocol/ijds-decision-catalog-transport-2026-07-29-v1",
+        "protocol_commit": "9c4b082ce68eb88bf60666b4cb794348bf57a40d",
+        "scientific_uv_lock_sha256": "6c862cbad9ab7e3a07dd2823c775127403093d6ad59a789ee227d827165e4733",
+        "paper_role": "complete_retrospective_worst_catalog_block_transport_diagnostic",
+        "dvc_tracked": false,
+        "artifact_tag": "artifacts/ijds-decision-catalog-transport-2026-07-29-v1",
+        "artifact_commit": "0a016e87074d7e92ce57b2d83aaf30b8b31b7e5a",
+        "artifact_parent_commit": "9c4b082ce68eb88bf60666b4cb794348bf57a40d",
+        "artifact_transport": "git_force_tracked_direct_child_commit",
+        "artifact_paths": [
+          "data/processed/experiments/ijds_audit/ijds-decision-catalog-transport-2026-07-29-v1/block_score_bounds.csv",
+          "data/processed/experiments/ijds_audit/ijds-decision-catalog-transport-2026-07-29-v1/calibration_thresholds.csv",
+          "data/processed/experiments/ijds_audit/ijds-decision-catalog-transport-2026-07-29-v1/policy_score_bounds.csv",
+          "data/processed/experiments/ijds_audit/ijds-decision-catalog-transport-2026-07-29-v1/target_classification.csv",
+          "models/experiments/ijds_audit/ijds-decision-catalog-transport-2026-07-29-v1/decision_catalog_transport_summary.json",
+          "models/experiments/ijds_audit/ijds-decision-catalog-transport-2026-07-29-v1/execution_receipt.json"
+        ]
+      },
+      "funded_selection_estimands": {
+        "run_tag": "ijds-funded-selection-estimand-audit-2026-07-29-v1",
+        "protocol_tag": "protocol/ijds-funded-selection-estimand-audit-2026-07-29-v1",
+        "protocol_commit": "9c4b082ce68eb88bf60666b4cb794348bf57a40d",
+        "scientific_uv_lock_sha256": "6c862cbad9ab7e3a07dd2823c775127403093d6ad59a789ee227d827165e4733",
+        "paper_role": "complete_retrospective_funded_estimand_weighting_audit",
+        "dvc_tracked": false,
+        "artifact_tag": "artifacts/ijds-funded-selection-estimand-audit-2026-07-29-v1",
+        "artifact_commit": "0d26e0247d41ae4ff1c9ad8ca230b0a627303190",
+        "artifact_parent_commit": "9c4b082ce68eb88bf60666b4cb794348bf57a40d",
+        "artifact_transport": "git_force_tracked_direct_child_commit",
+        "artifact_paths": [
+          "data/processed/experiments/ijds_audit/ijds-funded-selection-estimand-audit-2026-07-29-v1/monthly_three_estimand_funded_selection_bounds.parquet",
+          "data/processed/experiments/ijds_audit/ijds-funded-selection-estimand-audit-2026-07-29-v1/monthly_three_estimand_gamma1_minus_gamma0_contrasts.parquet",
+          "data/processed/experiments/ijds_audit/ijds-funded-selection-estimand-audit-2026-07-29-v1/support_and_fixed_capital_v3_reconciliation.parquet",
+          "data/processed/experiments/ijds_audit/ijds-funded-selection-estimand-audit-2026-07-29-v1/track_three_estimand_funded_selection_bounds.parquet",
+          "data/processed/experiments/ijds_audit/ijds-funded-selection-estimand-audit-2026-07-29-v1/track_three_estimand_gamma1_minus_gamma0_contrasts.parquet",
+          "models/experiments/ijds_audit/ijds-funded-selection-estimand-audit-2026-07-29-v1/execution_receipt.json",
+          "models/experiments/ijds_audit/ijds-funded-selection-estimand-audit-2026-07-29-v1/funded_selection_estimand_audit_summary.json"
+        ]
+      },
+      "marginal_score_outcome_gap": {
+        "run_tag": "ijds-marginal-mean-score-outcome-gap-2026-07-29-v3i",
+        "protocol_tag": "protocol/ijds-marginal-mean-score-outcome-gap-2026-07-29-v3i",
+        "protocol_commit": "9c4b082ce68eb88bf60666b4cb794348bf57a40d",
+        "scientific_uv_lock_sha256": "6c862cbad9ab7e3a07dd2823c775127403093d6ad59a789ee227d827165e4733",
+        "paper_role": "complete_postinspection_marginal_score_outcome_partial_identification",
+        "dvc_tracked": false,
+        "artifact_tag": "artifacts/ijds-marginal-mean-score-outcome-gap-2026-07-29-v3i",
+        "artifact_commit": "8fff4834aa5443150b5c2d82d07723b0de75d76e",
+        "artifact_parent_commit": "9c4b082ce68eb88bf60666b4cb794348bf57a40d",
+        "artifact_transport": "git_force_tracked_direct_child_commit",
+        "artifact_paths": [
+          "data/processed/experiments/ijds_audit/ijds-marginal-mean-score-outcome-gap-2026-07-29-v3i/endpoint_reason_census.csv",
+          "data/processed/experiments/ijds_audit/ijds-marginal-mean-score-outcome-gap-2026-07-29-v3i/marginal_mean_score_outcome_gap.csv",
+          "data/processed/experiments/ijds_audit/ijds-marginal-mean-score-outcome-gap-2026-07-29-v3i/monthly_endpoint_reason_census.csv",
+          "models/experiments/ijds_audit/ijds-marginal-mean-score-outcome-gap-2026-07-29-v3i/execution_receipt.json",
+          "models/experiments/ijds_audit/ijds-marginal-mean-score-outcome-gap-2026-07-29-v3i/marginal_mean_score_outcome_gap_summary.json"
         ]
       }
     }
@@ -25790,6 +25894,794 @@
         "delta_width": 0.0014692868949626
       }
     ]
+  },
+  "residual_transport_frontier": {
+    "scope": "five_learners_by_eight_windows_by_five_strata_primary_oot",
+    "run_tag": "ijds-residual-transport-frontier-2026-07-29-v1",
+    "protocol_tag": "protocol/ijds-residual-transport-frontier-2026-07-29-v1",
+    "protocol_commit": "9c4b082ce68eb88bf60666b4cb794348bf57a40d",
+    "full_pooled_census_and_sharp_frontier_verified": true,
+    "monthly_cells": 3000,
+    "pooled_cells": 200,
+    "monthly_direction_census": {
+      "larger_target_residual_discrepancy_dominates": 2140,
+      "smaller_target_residual_discrepancy_dominates": 488,
+      "directional_discrepancies_not_robustly_ordered": 372
+    },
+    "pooled_direction_census": {
+      "larger_target_residual_discrepancy_dominates": 158,
+      "smaller_target_residual_discrepancy_dominates": 8,
+      "directional_discrepancies_not_robustly_ordered": 34
+    },
+    "cellwise_sharp_not_joint_stochastic_order": true,
+    "p_values_computed": false,
+    "learner_census_rows": [
+      {
+        "learner": "catboost_platt",
+        "learner_label": "CatBoost",
+        "pooled_cells": 40,
+        "larger_target_residual_discrepancy_dominates": 34,
+        "smaller_target_residual_discrepancy_dominates": 0,
+        "directional_discrepancies_not_robustly_ordered": 6
+      },
+      {
+        "learner": "numeric_logistic_platt",
+        "learner_label": "Numeric logistic",
+        "pooled_cells": 40,
+        "larger_target_residual_discrepancy_dominates": 24,
+        "smaller_target_residual_discrepancy_dominates": 8,
+        "directional_discrepancies_not_robustly_ordered": 8
+      },
+      {
+        "learner": "catboost_monotonic_platt",
+        "learner_label": "Monotonic CatBoost",
+        "pooled_cells": 40,
+        "larger_target_residual_discrepancy_dominates": 28,
+        "smaller_target_residual_discrepancy_dominates": 0,
+        "directional_discrepancies_not_robustly_ordered": 12
+      },
+      {
+        "learner": "woe_scorecard_platform_platt",
+        "learner_label": "Platform-signal WOE scorecard",
+        "pooled_cells": 40,
+        "larger_target_residual_discrepancy_dominates": 35,
+        "smaller_target_residual_discrepancy_dominates": 0,
+        "directional_discrepancies_not_robustly_ordered": 5
+      },
+      {
+        "learner": "woe_scorecard_borrower_platt",
+        "learner_label": "Pricing-excluded application WOE scorecard",
+        "pooled_cells": 40,
+        "larger_target_residual_discrepancy_dominates": 37,
+        "smaller_target_residual_discrepancy_dominates": 0,
+        "directional_discrepancies_not_robustly_ordered": 3
+      }
+    ],
+    "interpretation": {
+      "finite_archive_retrospective_full_census": true,
+      "unresolved_completion_extrema_are_cellwise_sharp": true,
+      "stochastic_dominance_claimed": false,
+      "ks_test_or_p_value_reported": false,
+      "exchangeability_or_mechanism_claimed": false,
+      "model_ranking_or_winner_claimed": false,
+      "joint_endpoint_attainability_claimed": false
+    }
+  },
+  "marginal_score_outcome_gap": {
+    "scope": "five_frozen_learners_complete_primary_oot_candidate_panel",
+    "run_tag": "ijds-marginal-mean-score-outcome-gap-2026-07-29-v3i",
+    "protocol_tag": "protocol/ijds-marginal-mean-score-outcome-gap-2026-07-29-v3i",
+    "protocol_commit": "9c4b082ce68eb88bf60666b4cb794348bf57a40d",
+    "all_five_gap_upper_endpoints_negative": true,
+    "outcome_prevalence_sharp_interval": [
+      0.1511634694473188,
+      0.1832046485712011
+    ],
+    "least_negative_gap_upper_endpoint": -0.0239336059884875,
+    "shared_collinear_completion_grid_not_cartesian_product": true,
+    "individual_or_conditional_calibration_claimed": false,
+    "learner_rows": [
+      {
+        "learner_order": 1,
+        "learner": "catboost_platt",
+        "learner_label": "CatBoost",
+        "candidate_rows": 376890,
+        "resolved_rows": 364814,
+        "unresolved_outcomes": 12076,
+        "mean_score": 0.1089678149254112,
+        "outcome_mean_lower": 0.1511634694473188,
+        "outcome_mean_upper": 0.1832046485712011,
+        "marginal_mean_score_outcome_gap_lower": -0.0742368336457899,
+        "marginal_mean_score_outcome_gap_upper": -0.0421956545219076,
+        "identification_width": 0.0320411791238823,
+        "identified_grid_points": 12077,
+        "identified_grid_step": 2.6532940645811774e-06,
+        "joint_endpoint_attainment": true
+      },
+      {
+        "learner_order": 2,
+        "learner": "numeric_logistic_platt",
+        "learner_label": "Numeric logistic",
+        "candidate_rows": 376890,
+        "resolved_rows": 364814,
+        "unresolved_outcomes": 12076,
+        "mean_score": 0.1272298634588312,
+        "outcome_mean_lower": 0.1511634694473188,
+        "outcome_mean_upper": 0.1832046485712011,
+        "marginal_mean_score_outcome_gap_lower": -0.0559747851123698,
+        "marginal_mean_score_outcome_gap_upper": -0.0239336059884875,
+        "identification_width": 0.0320411791238823,
+        "identified_grid_points": 12077,
+        "identified_grid_step": 2.6532940645811774e-06,
+        "joint_endpoint_attainment": true
+      },
+      {
+        "learner_order": 3,
+        "learner": "catboost_monotonic_platt",
+        "learner_label": "Monotonic CatBoost",
+        "candidate_rows": 376890,
+        "resolved_rows": 364814,
+        "unresolved_outcomes": 12076,
+        "mean_score": 0.1148307302891225,
+        "outcome_mean_lower": 0.1511634694473188,
+        "outcome_mean_upper": 0.1832046485712011,
+        "marginal_mean_score_outcome_gap_lower": -0.0683739182820785,
+        "marginal_mean_score_outcome_gap_upper": -0.0363327391581962,
+        "identification_width": 0.0320411791238823,
+        "identified_grid_points": 12077,
+        "identified_grid_step": 2.6532940645811774e-06,
+        "joint_endpoint_attainment": true
+      },
+      {
+        "learner_order": 4,
+        "learner": "woe_scorecard_platform_platt",
+        "learner_label": "Platform-signal WOE scorecard",
+        "candidate_rows": 376890,
+        "resolved_rows": 364814,
+        "unresolved_outcomes": 12076,
+        "mean_score": 0.1205898335784216,
+        "outcome_mean_lower": 0.1511634694473188,
+        "outcome_mean_upper": 0.1832046485712011,
+        "marginal_mean_score_outcome_gap_lower": -0.0626148149927795,
+        "marginal_mean_score_outcome_gap_upper": -0.0305736358688972,
+        "identification_width": 0.0320411791238823,
+        "identified_grid_points": 12077,
+        "identified_grid_step": 2.6532940645811774e-06,
+        "joint_endpoint_attainment": true
+      },
+      {
+        "learner_order": 5,
+        "learner": "woe_scorecard_borrower_platt",
+        "learner_label": "Pricing-excluded application WOE scorecard",
+        "candidate_rows": 376890,
+        "resolved_rows": 364814,
+        "unresolved_outcomes": 12076,
+        "mean_score": 0.1264022906033463,
+        "outcome_mean_lower": 0.1511634694473188,
+        "outcome_mean_upper": 0.1832046485712011,
+        "marginal_mean_score_outcome_gap_lower": -0.0568023579678547,
+        "marginal_mean_score_outcome_gap_upper": -0.0247611788439724,
+        "identification_width": 0.0320411791238823,
+        "identified_grid_points": 12077,
+        "identified_grid_step": 2.6532940645811774e-06,
+        "joint_endpoint_attainment": true
+      }
+    ],
+    "interpretation": {
+      "finite_archive_partial_identification": true,
+      "shared_collinear_binary_completion_grid": true,
+      "sampling_confidence_interval": false,
+      "individual_or_conditional_calibration_claimed": false,
+      "model_ranking_or_winner_claimed": false,
+      "conformal_mechanism_claimed": false,
+      "causal_or_prospective_claimed": false
+    }
+  },
+  "decision_catalog_transport": {
+    "scope": "eleven_development_and_fifteen_target_blocks_by_three_losses",
+    "run_tag": "ijds-decision-catalog-transport-2026-07-29-v1",
+    "protocol_tag": "protocol/ijds-decision-catalog-transport-2026-07-29-v1",
+    "protocol_commit": "9c4b082ce68eb88bf60666b4cb794348bf57a40d",
+    "all_three_metrics_all_fifteen_target_lower_exceed_all_development_upper": true,
+    "target_metric_blocks": 45,
+    "policies_per_block": 240,
+    "minimum_separation_margins": {
+      "payoff_shortfall": 0.014412526678490106,
+      "default_gap": 0.009545127375628987,
+      "miscoverage_excess": 0.006825000000000581
+    },
+    "object_is_worst_catalog_maximum_not_every_policy": true,
+    "ordering_probability_reported": false,
+    "metric_rows": [
+      {
+        "metric": "payoff_shortfall",
+        "target_blocks": 15,
+        "minimum_target_lower": 0.1535469866823687,
+        "development_maximum_upper": 0.1391344600038786,
+        "all_target_blocks_exceed_development": true,
+        "minimum_separation_margin": 0.014412526678490106
+      },
+      {
+        "metric": "default_gap",
+        "target_blocks": 15,
+        "minimum_target_lower": 0.2194462494162241,
+        "development_maximum_upper": 0.2099011220405951,
+        "all_target_blocks_exceed_development": true,
+        "minimum_separation_margin": 0.009545127375628987
+      },
+      {
+        "metric": "miscoverage_excess",
+        "target_blocks": 15,
+        "minimum_target_lower": 0.2106000000000006,
+        "development_maximum_upper": 0.203775,
+        "all_target_blocks_exceed_development": true,
+        "minimum_separation_margin": 0.006825000000000581
+      }
+    ],
+    "target_block_rows": [
+      {
+        "period": "2016-04",
+        "metric": "default_gap",
+        "score_lower": 0.3736178179919768,
+        "score_upper": 0.3736178179919768,
+        "policies": 240,
+        "development_max_upper": 0.2099011220405951,
+        "classification": "definitely_exceeds",
+        "exceeds_all_development_upper": true
+      },
+      {
+        "period": "2016-04",
+        "metric": "miscoverage_excess",
+        "score_lower": 0.33945000000001,
+        "score_upper": 0.33945000000001,
+        "policies": 240,
+        "development_max_upper": 0.203775,
+        "classification": "definitely_exceeds",
+        "exceeds_all_development_upper": true
+      },
+      {
+        "period": "2016-04",
+        "metric": "payoff_shortfall",
+        "score_lower": 0.252513249005255,
+        "score_upper": 0.252513249005255,
+        "policies": 240,
+        "development_max_upper": 0.1391344600038786,
+        "classification": "definitely_exceeds",
+        "exceeds_all_development_upper": true
+      },
+      {
+        "period": "2016-05",
+        "metric": "default_gap",
+        "score_lower": 0.2755830279778666,
+        "score_upper": 0.2755830279778666,
+        "policies": 240,
+        "development_max_upper": 0.2099011220405951,
+        "classification": "definitely_exceeds",
+        "exceeds_all_development_upper": true
+      },
+      {
+        "period": "2016-05",
+        "metric": "miscoverage_excess",
+        "score_lower": 0.2545749999999999,
+        "score_upper": 0.2545749999999999,
+        "policies": 240,
+        "development_max_upper": 0.203775,
+        "classification": "definitely_exceeds",
+        "exceeds_all_development_upper": true
+      },
+      {
+        "period": "2016-05",
+        "metric": "payoff_shortfall",
+        "score_lower": 0.1844615438772587,
+        "score_upper": 0.1844615438772587,
+        "policies": 240,
+        "development_max_upper": 0.1391344600038786,
+        "classification": "definitely_exceeds",
+        "exceeds_all_development_upper": true
+      },
+      {
+        "period": "2016-06",
+        "metric": "default_gap",
+        "score_lower": 0.250224870138526,
+        "score_upper": 0.250224870138526,
+        "policies": 240,
+        "development_max_upper": 0.2099011220405951,
+        "classification": "definitely_exceeds",
+        "exceeds_all_development_upper": true
+      },
+      {
+        "period": "2016-06",
+        "metric": "miscoverage_excess",
+        "score_lower": 0.3182250000000004,
+        "score_upper": 0.3182250000000004,
+        "policies": 240,
+        "development_max_upper": 0.203775,
+        "classification": "definitely_exceeds",
+        "exceeds_all_development_upper": true
+      },
+      {
+        "period": "2016-06",
+        "metric": "payoff_shortfall",
+        "score_lower": 0.1581419995013049,
+        "score_upper": 0.1581419995013049,
+        "policies": 240,
+        "development_max_upper": 0.1391344600038786,
+        "classification": "definitely_exceeds",
+        "exceeds_all_development_upper": true
+      },
+      {
+        "period": "2016-07",
+        "metric": "default_gap",
+        "score_lower": 0.2194462494162241,
+        "score_upper": 0.2194462494162241,
+        "policies": 240,
+        "development_max_upper": 0.2099011220405951,
+        "classification": "definitely_exceeds",
+        "exceeds_all_development_upper": true
+      },
+      {
+        "period": "2016-07",
+        "metric": "miscoverage_excess",
+        "score_lower": 0.2445749999999999,
+        "score_upper": 0.2445749999999999,
+        "policies": 240,
+        "development_max_upper": 0.203775,
+        "classification": "definitely_exceeds",
+        "exceeds_all_development_upper": true
+      },
+      {
+        "period": "2016-07",
+        "metric": "payoff_shortfall",
+        "score_lower": 0.1535469866823687,
+        "score_upper": 0.1535469866823687,
+        "policies": 240,
+        "development_max_upper": 0.1391344600038786,
+        "classification": "definitely_exceeds",
+        "exceeds_all_development_upper": true
+      },
+      {
+        "period": "2016-08",
+        "metric": "default_gap",
+        "score_lower": 0.3424435318944032,
+        "score_upper": 0.3424435318944032,
+        "policies": 240,
+        "development_max_upper": 0.2099011220405951,
+        "classification": "definitely_exceeds",
+        "exceeds_all_development_upper": true
+      },
+      {
+        "period": "2016-08",
+        "metric": "miscoverage_excess",
+        "score_lower": 0.3316999999999981,
+        "score_upper": 0.3316999999999981,
+        "policies": 240,
+        "development_max_upper": 0.203775,
+        "classification": "definitely_exceeds",
+        "exceeds_all_development_upper": true
+      },
+      {
+        "period": "2016-08",
+        "metric": "payoff_shortfall",
+        "score_lower": 0.2385453001031754,
+        "score_upper": 0.2385453001031754,
+        "policies": 240,
+        "development_max_upper": 0.1391344600038786,
+        "classification": "definitely_exceeds",
+        "exceeds_all_development_upper": true
+      },
+      {
+        "period": "2016-09",
+        "metric": "default_gap",
+        "score_lower": 0.2882423960253481,
+        "score_upper": 0.3032423960253481,
+        "policies": 240,
+        "development_max_upper": 0.2099011220405951,
+        "classification": "definitely_exceeds",
+        "exceeds_all_development_upper": true
+      },
+      {
+        "period": "2016-09",
+        "metric": "miscoverage_excess",
+        "score_lower": 0.2722064244846351,
+        "score_upper": 0.275475,
+        "policies": 240,
+        "development_max_upper": 0.203775,
+        "classification": "definitely_exceeds",
+        "exceeds_all_development_upper": true
+      },
+      {
+        "period": "2016-09",
+        "metric": "payoff_shortfall",
+        "score_lower": 0.1902995933616911,
+        "score_upper": 0.1957372345771117,
+        "policies": 240,
+        "development_max_upper": 0.1391344600038786,
+        "classification": "definitely_exceeds",
+        "exceeds_all_development_upper": true
+      },
+      {
+        "period": "2016-10",
+        "metric": "default_gap",
+        "score_lower": 0.2976166033916033,
+        "score_upper": 0.2976166033916033,
+        "policies": 240,
+        "development_max_upper": 0.2099011220405951,
+        "classification": "definitely_exceeds",
+        "exceeds_all_development_upper": true
+      },
+      {
+        "period": "2016-10",
+        "metric": "miscoverage_excess",
+        "score_lower": 0.2697688616351071,
+        "score_upper": 0.2697688616351071,
+        "policies": 240,
+        "development_max_upper": 0.203775,
+        "classification": "definitely_exceeds",
+        "exceeds_all_development_upper": true
+      },
+      {
+        "period": "2016-10",
+        "metric": "payoff_shortfall",
+        "score_lower": 0.1953682601798066,
+        "score_upper": 0.1953682601798066,
+        "policies": 240,
+        "development_max_upper": 0.1391344600038786,
+        "classification": "definitely_exceeds",
+        "exceeds_all_development_upper": true
+      },
+      {
+        "period": "2016-11",
+        "metric": "default_gap",
+        "score_lower": 0.3865578944650413,
+        "score_upper": 0.3935332144157901,
+        "policies": 240,
+        "development_max_upper": 0.2099011220405951,
+        "classification": "definitely_exceeds",
+        "exceeds_all_development_upper": true
+      },
+      {
+        "period": "2016-11",
+        "metric": "miscoverage_excess",
+        "score_lower": 0.3676816459292479,
+        "score_upper": 0.3676816459292479,
+        "policies": 240,
+        "development_max_upper": 0.203775,
+        "classification": "definitely_exceeds",
+        "exceeds_all_development_upper": true
+      },
+      {
+        "period": "2016-11",
+        "metric": "payoff_shortfall",
+        "score_lower": 0.2775869871631763,
+        "score_upper": 0.2824687871631763,
+        "policies": 240,
+        "development_max_upper": 0.1391344600038786,
+        "classification": "definitely_exceeds",
+        "exceeds_all_development_upper": true
+      },
+      {
+        "period": "2016-12",
+        "metric": "default_gap",
+        "score_lower": 0.4339252366471307,
+        "score_upper": 0.4339252366471307,
+        "policies": 240,
+        "development_max_upper": 0.2099011220405951,
+        "classification": "definitely_exceeds",
+        "exceeds_all_development_upper": true
+      },
+      {
+        "period": "2016-12",
+        "metric": "miscoverage_excess",
+        "score_lower": 0.422275,
+        "score_upper": 0.422275,
+        "policies": 240,
+        "development_max_upper": 0.203775,
+        "classification": "definitely_exceeds",
+        "exceeds_all_development_upper": true
+      },
+      {
+        "period": "2016-12",
+        "metric": "payoff_shortfall",
+        "score_lower": 0.3157690389659338,
+        "score_upper": 0.3157690389659338,
+        "policies": 240,
+        "development_max_upper": 0.1391344600038786,
+        "classification": "definitely_exceeds",
+        "exceeds_all_development_upper": true
+      },
+      {
+        "period": "2017-01",
+        "metric": "default_gap",
+        "score_lower": 0.2299822058058433,
+        "score_upper": 0.2299822058058433,
+        "policies": 240,
+        "development_max_upper": 0.2099011220405951,
+        "classification": "definitely_exceeds",
+        "exceeds_all_development_upper": true
+      },
+      {
+        "period": "2017-01",
+        "metric": "miscoverage_excess",
+        "score_lower": 0.2106000000000006,
+        "score_upper": 0.2106000000000006,
+        "policies": 240,
+        "development_max_upper": 0.203775,
+        "classification": "definitely_exceeds",
+        "exceeds_all_development_upper": true
+      },
+      {
+        "period": "2017-01",
+        "metric": "payoff_shortfall",
+        "score_lower": 0.1581469442705535,
+        "score_upper": 0.1581469442705535,
+        "policies": 240,
+        "development_max_upper": 0.1391344600038786,
+        "classification": "definitely_exceeds",
+        "exceeds_all_development_upper": true
+      },
+      {
+        "period": "2017-02",
+        "metric": "default_gap",
+        "score_lower": 0.3194225611953543,
+        "score_upper": 0.3494225611953543,
+        "policies": 240,
+        "development_max_upper": 0.2099011220405951,
+        "classification": "definitely_exceeds",
+        "exceeds_all_development_upper": true
+      },
+      {
+        "period": "2017-02",
+        "metric": "miscoverage_excess",
+        "score_lower": 0.281725000000024,
+        "score_upper": 0.311725000000024,
+        "policies": 240,
+        "development_max_upper": 0.203775,
+        "classification": "definitely_exceeds",
+        "exceeds_all_development_upper": true
+      },
+      {
+        "period": "2017-02",
+        "metric": "payoff_shortfall",
+        "score_lower": 0.2163120925251329,
+        "score_upper": 0.2378240925251329,
+        "policies": 240,
+        "development_max_upper": 0.1391344600038786,
+        "classification": "definitely_exceeds",
+        "exceeds_all_development_upper": true
+      },
+      {
+        "period": "2017-03",
+        "metric": "default_gap",
+        "score_lower": 0.255383501415063,
+        "score_upper": 0.271383501415063,
+        "policies": 240,
+        "development_max_upper": 0.2099011220405951,
+        "classification": "definitely_exceeds",
+        "exceeds_all_development_upper": true
+      },
+      {
+        "period": "2017-03",
+        "metric": "miscoverage_excess",
+        "score_lower": 0.22595,
+        "score_upper": 0.2419499999999999,
+        "policies": 240,
+        "development_max_upper": 0.203775,
+        "classification": "definitely_exceeds",
+        "exceeds_all_development_upper": true
+      },
+      {
+        "period": "2017-03",
+        "metric": "payoff_shortfall",
+        "score_lower": 0.1790564268273494,
+        "score_upper": 0.1908468268273494,
+        "policies": 240,
+        "development_max_upper": 0.1391344600038786,
+        "classification": "definitely_exceeds",
+        "exceeds_all_development_upper": true
+      },
+      {
+        "period": "2017-04",
+        "metric": "default_gap",
+        "score_lower": 0.3192262456874646,
+        "score_upper": 0.3432262456874646,
+        "policies": 240,
+        "development_max_upper": 0.2099011220405951,
+        "classification": "definitely_exceeds",
+        "exceeds_all_development_upper": true
+      },
+      {
+        "period": "2017-04",
+        "metric": "miscoverage_excess",
+        "score_lower": 0.2977999999999999,
+        "score_upper": 0.3218,
+        "policies": 240,
+        "development_max_upper": 0.203775,
+        "classification": "definitely_exceeds",
+        "exceeds_all_development_upper": true
+      },
+      {
+        "period": "2017-04",
+        "metric": "payoff_shortfall",
+        "score_lower": 0.2215751640667786,
+        "score_upper": 0.2368427640667786,
+        "policies": 240,
+        "development_max_upper": 0.1391344600038786,
+        "classification": "definitely_exceeds",
+        "exceeds_all_development_upper": true
+      },
+      {
+        "period": "2017-05",
+        "metric": "default_gap",
+        "score_lower": 0.2953710571150545,
+        "score_upper": 0.4244459295690254,
+        "policies": 240,
+        "development_max_upper": 0.2099011220405951,
+        "classification": "definitely_exceeds",
+        "exceeds_all_development_upper": true
+      },
+      {
+        "period": "2017-05",
+        "metric": "miscoverage_excess",
+        "score_lower": 0.2704796928199073,
+        "score_upper": 0.38485,
+        "policies": 240,
+        "development_max_upper": 0.203775,
+        "classification": "definitely_exceeds",
+        "exceeds_all_development_upper": true
+      },
+      {
+        "period": "2017-05",
+        "metric": "payoff_shortfall",
+        "score_lower": 0.2103469967437252,
+        "score_upper": 0.2866539812654132,
+        "policies": 240,
+        "development_max_upper": 0.1391344600038786,
+        "classification": "definitely_exceeds",
+        "exceeds_all_development_upper": true
+      },
+      {
+        "period": "2017-06",
+        "metric": "default_gap",
+        "score_lower": 0.3210511861467167,
+        "score_upper": 0.5279537710099754,
+        "policies": 240,
+        "development_max_upper": 0.2099011220405951,
+        "classification": "definitely_exceeds",
+        "exceeds_all_development_upper": true
+      },
+      {
+        "period": "2017-06",
+        "metric": "miscoverage_excess",
+        "score_lower": 0.2901055323515075,
+        "score_upper": 0.4814812558473303,
+        "policies": 240,
+        "development_max_upper": 0.203775,
+        "classification": "definitely_exceeds",
+        "exceeds_all_development_upper": true
+      },
+      {
+        "period": "2017-06",
+        "metric": "payoff_shortfall",
+        "score_lower": 0.2135618473008654,
+        "score_upper": 0.3411428500082589,
+        "policies": 240,
+        "development_max_upper": 0.1391344600038786,
+        "classification": "definitely_exceeds",
+        "exceeds_all_development_upper": true
+      }
+    ],
+    "interpretation": {
+      "complete_frozen_catalog_retrospective_diagnostic": true,
+      "block_object_is_maximum_over_240_policies": true,
+      "every_policy_deteriorated_claimed": false,
+      "ordering_probability_or_p_value_reported": false,
+      "exchangeability_or_temporal_validity_claimed": false,
+      "selected_policy_or_winner_claimed": false,
+      "causal_or_prospective_claimed": false
+    }
+  },
+  "funded_selection_estimands": {
+    "scope": "ninety_six_fixed_usd25_support_policy_tracks",
+    "run_tag": "ijds-funded-selection-estimand-audit-2026-07-29-v1",
+    "protocol_tag": "protocol/ijds-funded-selection-estimand-audit-2026-07-29-v1",
+    "protocol_commit": "9c4b082ce68eb88bf60666b4cb794348bf57a40d",
+    "all_ninety_six_count_minus_invested_dollar_coverage_lower_endpoints_positive": true,
+    "all_ninety_six_count_minus_fixed_capital_coverage_lower_endpoints_positive": true,
+    "minimum_count_minus_invested_dollar_coverage_lower": 0.008536795630709675,
+    "minimum_count_minus_fixed_capital_coverage_lower": 0.008534305110113329,
+    "count_selected_upper_below_point90_tracks": 80,
+    "count_selected_lower_below_point90_tracks": 96,
+    "gamma_direction_census": {
+      "count_selected": {
+        "higher": 40,
+        "lower": 8
+      },
+      "invested_dollar_selected": {
+        "crossing": 8,
+        "higher": 40
+      },
+      "fixed_capital_decision": {
+        "crossing": 8,
+        "higher": 40
+      }
+    },
+    "cellwise_not_joint_across_tracks": true,
+    "selected_set_or_fcr_validity_claimed": false,
+    "coverage_and_contrast_ranges": {
+      "count_selected_coverage_lower_range": [
+        0.6800554016620499,
+        0.8948717948717949
+      ],
+      "count_selected_coverage_upper_range": [
+        0.7056786703601108,
+        0.926923076923077
+      ],
+      "invested_dollar_selected_coverage_lower_range": [
+        0.6369680474280104,
+        0.8753235497554106
+      ],
+      "invested_dollar_selected_coverage_upper_range": [
+        0.657106951363622,
+        0.9100044167770861
+      ],
+      "fixed_capital_decision_coverage_lower_range": [
+        0.6369783333333333,
+        0.8753266666666667
+      ],
+      "fixed_capital_decision_coverage_upper_range": [
+        0.6571166666666667,
+        0.9100066666666666
+      ],
+      "count_selected_minus_invested_dollar_selected_coverage_lower_range": [
+        0.008536795630709675,
+        0.05102965228733608
+      ],
+      "count_selected_minus_invested_dollar_selected_coverage_upper_range": [
+        0.025958160179148808,
+        0.0623285252341409
+      ],
+      "count_selected_minus_fixed_capital_decision_coverage_lower_range": [
+        0.008534305110113329,
+        0.05102010288065846
+      ],
+      "count_selected_minus_fixed_capital_decision_coverage_upper_range": [
+        0.025955282232200137,
+        0.06231888888888891
+      ],
+      "count_selected_upper_below_point90_tracks": 80,
+      "count_selected_lower_below_point90_tracks": 96,
+      "gamma_count_selected_fcp_direction_census": {
+        "higher": 40,
+        "lower": 8
+      },
+      "gamma_invested_dollar_selected_fcp_direction_census": {
+        "crossing": 8,
+        "higher": 40
+      },
+      "gamma_fixed_capital_decision_fcp_direction_census": {
+        "crossing": 8,
+        "higher": 40
+      },
+      "v3_fixed_capital_reconciliation_maximum_absolute_difference": 7.724940478959219e-19,
+      "source_positive_positions": 143175,
+      "rounded_positive_positions": 143167,
+      "removed_positions": 8,
+      "added_positions": 0,
+      "rounding_changed_positions_at_source_tolerance": 2985,
+      "rounded_minus_continuous_count_selected_fcp_direction_census": {
+        "higher": 8,
+        "zero": 88
+      }
+    },
+    "interpretation": {
+      "fixed_support_shared_completion_contrasts": true,
+      "count_vs_dollar_gap_uses_covariance_identity": true,
+      "invested_dollar_and_fixed_capital_are_distinct_estimands": true,
+      "selected_set_or_funded_set_validity_claimed": false,
+      "fcr_or_jomi_guarantee_claimed": false,
+      "preferred_weighting_or_policy_claimed": false,
+      "joint_sharpness_across_tracks_claimed": false
+    }
   },
   "evaluation_endpoint": {
     "mode": "conservative_terminal_status_reconstruction",
@@ -59750,23 +60642,23 @@
   "source_artifacts": {
     "active_source_registry": {
       "path": "configs/ijds_active_evidence_sources.yaml",
-      "bytes": 31030,
-      "sha256": "16a5e276d602189562c4c300fb0ff6a861b6d8cdfc69242265068485b89d16bb"
+      "bytes": 43990,
+      "sha256": "9b1cb8df7ebd324d74449eb866a7968cb52a09858033b266d9667b658b191b07"
     },
     "claim_ledger_contract": {
       "path": "configs/ijds_claim_ledger.yaml",
-      "bytes": 20271,
-      "sha256": "3aed6efb2b420b86444ca3d99c931219b62ee8b0ae77091bed94ba8db00886a6"
+      "bytes": 25000,
+      "sha256": "00c35a79a4e9ad7dcb3f183c45f9ca0abfe15a75745ba76b196ea30527caf80f"
     },
     "publication_targets_contract": {
       "path": "configs/crpto_publication_targets.yaml",
-      "bytes": 21192,
-      "sha256": "f2efae0dbe09c581762ac0b1b7ed017a4d6a695b753e33b10bbf915a53f857b4"
+      "bytes": 22851,
+      "sha256": "cde0f4ee20389207515f046cdba262d4d8bdb8494028be0128de7cc0384d8367"
     },
     "evidence_builder": {
       "path": "scripts/build_ijds_binary_geometry_frontier_v4_evidence.py",
-      "bytes": 241801,
-      "sha256": "17fb5d70be61083f4579ef24e3ea462242dcaaf90cc7f373b9d8ae2709b887b9"
+      "bytes": 251720,
+      "sha256": "55977debfa8a381df0e5299b1613b29a3e30fa1bb1551ed873be0a1432b98800"
     },
     "policy_support_evidence_builder": {
       "path": "scripts/build_ijds_policy_support_optimal_face_evidence.py",
@@ -59776,7 +60668,7 @@
     "publication_integrity_checker": {
       "path": "scripts/check_publication_integrity.py",
       "bytes": 36821,
-      "sha256": "19ceb464f0dbb04b9c1c04adabdd428c1ce261bf9258331dbc7b8d6cf5beef2d"
+      "sha256": "207f83bc17d2898a4416e7d45c803156e00762f959594608f9c60ce73cc21979"
     },
     "paper_pdf_auditor": {
       "path": "scripts/inspect_ijds_pdfs.py",
@@ -59785,8 +60677,8 @@
     },
     "publication_generation_helper": {
       "path": "src/ijds_audit/publication_generation.py",
-      "bytes": 9846,
-      "sha256": "3cb8b9be70acd29f26c257cbec778302747470bedb9a9b47c830bd90f212e2d5"
+      "bytes": 9920,
+      "sha256": "4d1f2fbc938c3146890523e1feb4a474ceebb2456d51006cc77da4e6d42a0e75"
     },
     "publication_table_schemas": {
       "path": "src/ijds_audit/publication_schemas.py",
@@ -59817,6 +60709,11 @@
       "path": "src/ijds_audit/robustness_evidence.py",
       "bytes": 21066,
       "sha256": "afda7c916742e8257bb6efe515aabaa6ef823b2b594df7d212e1fbd1d5ce5074"
+    },
+    "scientific_frontiers/loader": {
+      "path": "src/ijds_audit/frontier_evidence.py",
+      "bytes": 36493,
+      "sha256": "0c520b66a48c24a1799ccd8668c99f5fcd6b8e9c2e553f7fb5e4f330888f67cb"
     },
     "claim_ledger_loader": {
       "path": "src/ijds_audit/claim_ledger.py",
@@ -60017,6 +60914,126 @@
       "path": "src/ijds_audit/common_panel_threshold_response.py",
       "bytes": 40587,
       "sha256": "0480be880d8afdcd2da4f3226938574ec876f61e488fafadda42709eb8b5978b"
+    },
+    "residual_transport_frontier/config": {
+      "path": "configs/experiments/ijds_residual_transport_frontier_2026-07-29_v1.yaml",
+      "bytes": 7346,
+      "sha256": "425dac935bd59a36886540a504c6a54ae7677e3a2c6f27c049a572c75f7762e0"
+    },
+    "residual_transport_frontier/summary": {
+      "path": "models/experiments/ijds_audit/ijds-residual-transport-frontier-2026-07-29-v1/residual_transport_frontier_summary.json",
+      "bytes": 22863,
+      "sha256": "4661797891e1513b7d294e18f7aaefc52d91069768605732889be60d9faf8f90"
+    },
+    "residual_transport_frontier/execution_receipt": {
+      "path": "models/experiments/ijds_audit/ijds-residual-transport-frontier-2026-07-29-v1/execution_receipt.json",
+      "bytes": 11867,
+      "sha256": "0335d0325a20f59ce7d9982bd744fb51ba7ec179096ba494e418ab32d2f04b2c"
+    },
+    "residual_transport_frontier/protocol": {
+      "path": "docs/research/ijds_residual_transport_frontier_v1_protocol_2026-07-29.md",
+      "bytes": 10706,
+      "sha256": "3eb265b1d6ed0a2c90d362cd7c5a7be32dbc9a33b823dcec44e9e2be1e05bb63"
+    },
+    "residual_transport_frontier/runner": {
+      "path": "scripts/experiments/run_ijds_residual_transport_frontier.py",
+      "bytes": 40209,
+      "sha256": "9ee500b8837b27d16006033811955a27c20b2eee70ab6a7f4d4f9e696e9be98f"
+    },
+    "residual_transport_frontier/implementation": {
+      "path": "src/ijds_audit/residual_transport_frontier.py",
+      "bytes": 30021,
+      "sha256": "2e04e034730fac7acfb8e91c0a6ec54366fe74f7159ebea23ac8307fe710ad6d"
+    },
+    "marginal_score_outcome_gap/config": {
+      "path": "configs/experiments/ijds_marginal_mean_score_outcome_gap_2026-07-29_v3i.yaml",
+      "bytes": 10867,
+      "sha256": "344efcbaffb42ea12e660f4d8ba3fc4908edc7d6d0a7c01e2005a2d032e73116"
+    },
+    "marginal_score_outcome_gap/summary": {
+      "path": "models/experiments/ijds_audit/ijds-marginal-mean-score-outcome-gap-2026-07-29-v3i/marginal_mean_score_outcome_gap_summary.json",
+      "bytes": 13523,
+      "sha256": "ac3b914fe94ee786d9d9a2a049d3bcb15c9f7127b15b53080e61e867297d1db7"
+    },
+    "marginal_score_outcome_gap/execution_receipt": {
+      "path": "models/experiments/ijds_audit/ijds-marginal-mean-score-outcome-gap-2026-07-29-v3i/execution_receipt.json",
+      "bytes": 2953,
+      "sha256": "3e1b4f760c640047cada75a9a5bd314127f2182db2db716bacad9d6ca2057021"
+    },
+    "marginal_score_outcome_gap/protocol": {
+      "path": "docs/research/ijds_marginal_mean_score_outcome_gap_v3i_protocol_2026-07-29.md",
+      "bytes": 8569,
+      "sha256": "41461278f713971deba33fc7132f66db680412324dba8ebaf79db40ab7c9716c"
+    },
+    "marginal_score_outcome_gap/runner": {
+      "path": "scripts/experiments/run_ijds_marginal_mean_score_outcome_gap_v3i.py",
+      "bytes": 33795,
+      "sha256": "f614fa89172017745802ee4b2f85a5ee86fb4c6e5059708e58874977de078d0f"
+    },
+    "marginal_score_outcome_gap/implementation": {
+      "path": "src/ijds_audit/marginal_mean_score_outcome_gap_v3i.py",
+      "bytes": 30205,
+      "sha256": "842b7a53b5b4ee43cf7e5654b1fb5559cd00032a6fb060fab25d1a30f5a0522f"
+    },
+    "decision_catalog_transport/config": {
+      "path": "configs/experiments/ijds_decision_catalog_transport_2026-07-29_v1.yaml",
+      "bytes": 6086,
+      "sha256": "4bf0cd522283cf909d5a389638044ddba6ee709c781f7172fe6e2243d5a97804"
+    },
+    "decision_catalog_transport/summary": {
+      "path": "models/experiments/ijds_audit/ijds-decision-catalog-transport-2026-07-29-v1/decision_catalog_transport_summary.json",
+      "bytes": 13929,
+      "sha256": "b28fcfc9dd8f787a417a7fcce7032ae105b038cfdc7a418d016fe601b3b17c45"
+    },
+    "decision_catalog_transport/execution_receipt": {
+      "path": "models/experiments/ijds_audit/ijds-decision-catalog-transport-2026-07-29-v1/execution_receipt.json",
+      "bytes": 8395,
+      "sha256": "add18c667647633b62cd33abcc96de1e1b24dd94d8cdab3070be5bb33d158e77"
+    },
+    "decision_catalog_transport/protocol": {
+      "path": "docs/research/ijds_decision_catalog_transport_v1_protocol_2026-07-29.md",
+      "bytes": 9833,
+      "sha256": "7d8ef3615cb8cb8865ddba06a8aa2d65c1a9d6f13464c9525ba8c311d09d056e"
+    },
+    "decision_catalog_transport/runner": {
+      "path": "scripts/experiments/run_ijds_decision_catalog_transport_v1.py",
+      "bytes": 25609,
+      "sha256": "fc55dbca5b544ecfbb2e7a10b9b5a11839cf1207cbaee88456c8056fd5047cce"
+    },
+    "decision_catalog_transport/implementation": {
+      "path": "src/ijds_audit/decision_catalog_transport.py",
+      "bytes": 33635,
+      "sha256": "4628cbb29107b555d5f98e3da9eb58198d97922b3d9a43795412abe6e80a9198"
+    },
+    "funded_selection_estimands/config": {
+      "path": "configs/experiments/ijds_funded_selection_estimand_audit_2026-07-29_v1.yaml",
+      "bytes": 7379,
+      "sha256": "91f62394564be8ac41d0f73997247cf2f5d4b79370fbf0f34c3fe4884a01516c"
+    },
+    "funded_selection_estimands/summary": {
+      "path": "models/experiments/ijds_audit/ijds-funded-selection-estimand-audit-2026-07-29-v1/funded_selection_estimand_audit_summary.json",
+      "bytes": 15723,
+      "sha256": "40a0a137f40b412984523f95045455279bb686ab111b88c63c546ea3ec1d17c9"
+    },
+    "funded_selection_estimands/execution_receipt": {
+      "path": "models/experiments/ijds_audit/ijds-funded-selection-estimand-audit-2026-07-29-v1/execution_receipt.json",
+      "bytes": 3660,
+      "sha256": "e9d9db9659fc897fca6ebf5e7007d1997f1a7eb4fd0f31e534d8c7abec49fb2f"
+    },
+    "funded_selection_estimands/protocol": {
+      "path": "docs/research/ijds_funded_selection_estimand_audit_v1_protocol_2026-07-29.md",
+      "bytes": 13592,
+      "sha256": "4514b0efcd424a0916ff6d32b2baecd024c82649f21d596192942d9339828e90"
+    },
+    "funded_selection_estimands/runner": {
+      "path": "scripts/experiments/run_ijds_funded_selection_estimand_audit_v1.py",
+      "bytes": 36306,
+      "sha256": "8acca5a05f734914cb67e87ad0967f2ceb0966655b5752a80771ef2f6773c349"
+    },
+    "funded_selection_estimands/implementation": {
+      "path": "src/ijds_audit/funded_selection_estimand.py",
+      "bytes": 43871,
+      "sha256": "3a66bf03608d38c4cd3dc28bfb9f978cc4bbdf7d3cf945bca1b41ac24fca8af1"
     },
     "rolling_origin_equal_followup/summary": {
       "path": "models/experiments/ijds_audit/ijds-rolling-origin-equal-followup-2026-07-21-v1/rolling_origin_equal_followup_summary.json",
@@ -60563,6 +61580,76 @@
       "bytes": 10202,
       "sha256": "287fc78ba99547f8b16f240ad395c3bca95c0581373d01cf58ade964b874173b"
     },
+    "residual_transport_frontier/monthly_residual_transport_frontier": {
+      "path": "data/processed/experiments/ijds_audit/ijds-residual-transport-frontier-2026-07-29-v1/monthly_residual_transport_frontier.csv",
+      "bytes": 2290033,
+      "sha256": "78ddfc1b858e9ca0089d5e7c45612e737184a183a0917e2b520cbcd97f777239"
+    },
+    "residual_transport_frontier/pooled_residual_transport_frontier": {
+      "path": "data/processed/experiments/ijds_audit/ijds-residual-transport-frontier-2026-07-29-v1/pooled_residual_transport_frontier.csv",
+      "bytes": 159771,
+      "sha256": "f45e35be1f9b7085cea640d23431478e5a18d676acda3c4f8aa57c1b0f6e2dd3"
+    },
+    "marginal_score_outcome_gap/table": {
+      "path": "data/processed/experiments/ijds_audit/ijds-marginal-mean-score-outcome-gap-2026-07-29-v3i/marginal_mean_score_outcome_gap.csv",
+      "bytes": 3674,
+      "sha256": "a49c2362f0f03a864cb7a94adac713264b9a2652ea31b76a0cb040c3afe1a79c"
+    },
+    "marginal_score_outcome_gap/endpoint_reason_census": {
+      "path": "data/processed/experiments/ijds_audit/ijds-marginal-mean-score-outcome-gap-2026-07-29-v3i/endpoint_reason_census.csv",
+      "bytes": 367,
+      "sha256": "435e313836f3c703242fad44d28aa1dc31a943d3bcbf6e3c3d4974543e2ff732"
+    },
+    "marginal_score_outcome_gap/monthly_endpoint_reason_census": {
+      "path": "data/processed/experiments/ijds_audit/ijds-marginal-mean-score-outcome-gap-2026-07-29-v3i/monthly_endpoint_reason_census.csv",
+      "bytes": 4928,
+      "sha256": "cbfcb323b55ff98d5cd0354fbcd34fc490f7c13bc070e7c109e2c459f20235d2"
+    },
+    "decision_catalog_transport/policy_score_bounds": {
+      "path": "data/processed/experiments/ijds_audit/ijds-decision-catalog-transport-2026-07-29-v1/policy_score_bounds.csv",
+      "bytes": 4392576,
+      "sha256": "7630518b614b722279bd9e973cf3d36997fc7e3cd0497228a3830ea6380591f5"
+    },
+    "decision_catalog_transport/block_score_bounds": {
+      "path": "data/processed/experiments/ijds_audit/ijds-decision-catalog-transport-2026-07-29-v1/block_score_bounds.csv",
+      "bytes": 6361,
+      "sha256": "fabb8c2c1a66c489c7ed51a1efbe7cbee9e24911c1f179e778e20fce60fbadb7"
+    },
+    "decision_catalog_transport/calibration_thresholds": {
+      "path": "data/processed/experiments/ijds_audit/ijds-decision-catalog-transport-2026-07-29-v1/calibration_thresholds.csv",
+      "bytes": 383,
+      "sha256": "ae340d2f07342551468eb2e4b24386313df557491c8d517247269d4736afcb07"
+    },
+    "decision_catalog_transport/target_classification": {
+      "path": "data/processed/experiments/ijds_audit/ijds-decision-catalog-transport-2026-07-29-v1/target_classification.csv",
+      "bytes": 7481,
+      "sha256": "270df28616e8f2aee510ae3b3bbc6c5e0a77d4f9ab973c967ebe4e64fcba18d9"
+    },
+    "funded_selection_estimands/monthly_bounds": {
+      "path": "data/processed/experiments/ijds_audit/ijds-funded-selection-estimand-audit-2026-07-29-v1/monthly_three_estimand_funded_selection_bounds.parquet",
+      "bytes": 133251,
+      "sha256": "0e81df673094a5537e9205a60c48abc773fdb91dc3baf5f4f92cd7b44182dd1b"
+    },
+    "funded_selection_estimands/track_bounds": {
+      "path": "data/processed/experiments/ijds_audit/ijds-funded-selection-estimand-audit-2026-07-29-v1/track_three_estimand_funded_selection_bounds.parquet",
+      "bytes": 43572,
+      "sha256": "6e497ec7cb1d4d4c59a6121b0550e8e747e2829daf916eb9362f5020452ac626"
+    },
+    "funded_selection_estimands/monthly_gamma_contrasts": {
+      "path": "data/processed/experiments/ijds_audit/ijds-funded-selection-estimand-audit-2026-07-29-v1/monthly_three_estimand_gamma1_minus_gamma0_contrasts.parquet",
+      "bytes": 61063,
+      "sha256": "03190812ab84ff0f6eedaa8cabcda717bdbe6b9853c72a69a855c50da726b7f8"
+    },
+    "funded_selection_estimands/track_gamma_contrasts": {
+      "path": "data/processed/experiments/ijds_audit/ijds-funded-selection-estimand-audit-2026-07-29-v1/track_three_estimand_gamma1_minus_gamma0_contrasts.parquet",
+      "bytes": 29716,
+      "sha256": "f2eeb832f7a1db125c7029e48c6660995c2ffa6f1995f8c5a0281e982d548ceb"
+    },
+    "funded_selection_estimands/support_and_fixed_capital_reconciliation": {
+      "path": "data/processed/experiments/ijds_audit/ijds-funded-selection-estimand-audit-2026-07-29-v1/support_and_fixed_capital_v3_reconciliation.parquet",
+      "bytes": 24208,
+      "sha256": "ebabe5ecfc2636e97d126a2c7517cfa62e6c54910cc82baa85e6d246970d81f6"
+    },
     "rolling_origin_equal_followup/temporal_coverage": {
       "path": "data/processed/experiments/ijds_audit/ijds-rolling-origin-equal-followup-2026-07-21-v1/evaluation/equal_followup_temporal_coverage.parquet",
       "bytes": 31960,
@@ -60895,6 +61982,41 @@
       "bytes": 10895,
       "sha256": "56fcd550c9627c16515b0c9b1d9dd14cf3c135cfb261002621fb35a8f6261ba9"
     },
+    "table/residual_transport_summary": {
+      "path": "reports/crpto/tables/crpto_ijds_v4_tableS6L_residual_transport_summary.csv",
+      "bytes": 463,
+      "sha256": "895b2902a8d13ef86fc71a1a42210950da03730fa699410357e4a4a01e6e1150"
+    },
+    "table/residual_transport_pooled": {
+      "path": "reports/crpto/tables/crpto_ijds_v4_tableS6M_residual_transport_pooled.csv",
+      "bytes": 51894,
+      "sha256": "f9f8ec64ee4e9eb8aa653e2a97a9441de045c7ccd727bc90bf7ba403fba222b4"
+    },
+    "table/marginal_score_outcome_gap": {
+      "path": "reports/crpto/tables/crpto_ijds_v4_tableS6N_marginal_score_outcome_gap.csv",
+      "bytes": 1400,
+      "sha256": "74214c1b07791b02a8545dca1cf4bbf9c7f47d9ee5c6758c584ba38b33692af9"
+    },
+    "table/decision_catalog_metric_separation": {
+      "path": "reports/crpto/tables/crpto_ijds_v4_tableS9G_decision_catalog_metric_separation.csv",
+      "bytes": 370,
+      "sha256": "7ffd9945f33e78e6a0598e6dd30b1d8abae05c358058d87987a9a3c29b9affd4"
+    },
+    "table/decision_catalog_target_blocks": {
+      "path": "reports/crpto/tables/crpto_ijds_v4_tableS9H_decision_catalog_target_blocks.csv",
+      "bytes": 4793,
+      "sha256": "15b4cf42274c803bd3d756daf0d95f9b7866a2aec98bfe53e4f55d07f680a65d"
+    },
+    "table/funded_selection_track_estimands": {
+      "path": "reports/crpto/tables/crpto_ijds_v4_tableS9I_funded_selection_track_estimands.csv",
+      "bytes": 54243,
+      "sha256": "d7e51e44cb0810cb5999b13a57904fe66c283d57924217d5f27791cbddcd9835"
+    },
+    "table/funded_selection_gamma_contrasts": {
+      "path": "reports/crpto/tables/crpto_ijds_v4_tableS9J_funded_selection_gamma_contrasts.csv",
+      "bytes": 23564,
+      "sha256": "5f0103f2f00f445cd230f1065ffc97f8751faf1457b5bc33ba4132d10d17adaa"
+    },
     "figure/coverage/png": {
       "path": "reports/crpto/figures/crpto_ijds_v4_fig1_coverage.png",
       "bytes": 320332,
@@ -60949,13 +62071,13 @@
   "protected_stages_run": [],
   "protected_artifacts_written": [],
   "claim_ledger": {
-    "schema_version": "2026-07-26.2",
+    "schema_version": "2026-07-29.1",
     "status": "active_ijds_claim_contract",
     "numeric_authority": "parent_evidence_manifest_only",
     "contract": {
       "path": "configs/ijds_claim_ledger.yaml",
-      "bytes": 20271,
-      "sha256": "3aed6efb2b420b86444ca3d99c931219b62ee8b0ae77091bed94ba8db00886a6"
+      "bytes": 25000,
+      "sha256": "00c35a79a4e9ad7dcb3f183c45f9ca0abfe15a75745ba76b196ea30527caf80f"
     },
     "claims": [
       {
@@ -61966,6 +63088,251 @@
           "exact_nonuniqueness",
           "exact_continuous_outcome_envelope",
           "universal_comparator_support"
+        ],
+        "surfaces": {
+          "required": [
+            "body",
+            "supplement",
+            "registry",
+            "claim_matrix"
+          ],
+          "allowed": [
+            "body",
+            "supplement",
+            "registry",
+            "claim_matrix"
+          ]
+        }
+      },
+      {
+        "id": "theory.sharp_directional_residual_frontier",
+        "status": "active",
+        "kind": "theorem",
+        "lineages": [
+          "residual_transport_frontier"
+        ],
+        "scope": "cellwise_extrema_of_two_one_sided_empirical_cdf_discrepancies_under_shared_binary_completion_with_strict_range_separation",
+        "rule": "documented",
+        "result_pointer": null,
+        "result": null,
+        "forbidden_inference": [
+          "global_stochastic_dominance",
+          "ks_test",
+          "p_value",
+          "exchangeability",
+          "transport_mechanism",
+          "joint_attainability_across_cells"
+        ],
+        "surfaces": {
+          "required": [
+            "body",
+            "supplement",
+            "registry",
+            "claim_matrix"
+          ],
+          "allowed": [
+            "body",
+            "supplement",
+            "registry",
+            "claim_matrix"
+          ]
+        }
+      },
+      {
+        "id": "theory.selection_weight_covariance_identity",
+        "status": "active",
+        "kind": "theorem",
+        "lineages": [
+          "funded_selection_estimands"
+        ],
+        "scope": "exposure_weighted_minus_count_weighted_miscoverage_equivalently_count_minus_exposure_coverage_on_one_fixed_positive_support",
+        "rule": "documented",
+        "result_pointer": null,
+        "result": null,
+        "forbidden_inference": [
+          "support_changing_contrast_without_union_construction",
+          "preferred_weighting",
+          "selected_set_conformal_validity",
+          "false_coverage_rate_control",
+          "causal_exposure_effect"
+        ],
+        "surfaces": {
+          "required": [
+            "body",
+            "supplement",
+            "registry",
+            "claim_matrix"
+          ],
+          "allowed": [
+            "body",
+            "supplement",
+            "registry",
+            "claim_matrix"
+          ]
+        }
+      },
+      {
+        "id": "theory.monotone_catalog_completion",
+        "status": "active",
+        "kind": "theorem",
+        "lineages": [
+          "decision_catalog_transport"
+        ],
+        "scope": "finite_fixed_catalog_maximum_of_coordinatewise_nondecreasing_binary_completion_losses_when_one_only_sets_are_absent",
+        "rule": "documented",
+        "result_pointer": null,
+        "result": null,
+        "forbidden_inference": [
+          "arbitrary_catalog_monotonicity",
+          "selected_policy",
+          "every_policy_deteriorated",
+          "ordering_probability",
+          "exchangeability",
+          "prospective_transport"
+        ],
+        "surfaces": {
+          "required": [
+            "body",
+            "supplement",
+            "registry",
+            "claim_matrix"
+          ],
+          "allowed": [
+            "body",
+            "supplement",
+            "registry",
+            "claim_matrix"
+          ]
+        }
+      },
+      {
+        "id": "transport.residual_directional_frontier_complete",
+        "status": "active",
+        "kind": "empirical",
+        "lineages": [
+          "residual_transport_frontier"
+        ],
+        "scope": "primary_oot_five_learners_by_eight_windows_by_five_frozen_score_strata_with_shared_binary_completion",
+        "rule": "equals",
+        "result_pointer": "/residual_transport_frontier/full_pooled_census_and_sharp_frontier_verified",
+        "result": true,
+        "forbidden_inference": [
+          "stochastic_dominance",
+          "ks_test",
+          "p_value",
+          "independent_replications",
+          "exchangeability",
+          "mechanism",
+          "model_winner",
+          "prospective_validity"
+        ],
+        "surfaces": {
+          "required": [
+            "body",
+            "supplement",
+            "registry",
+            "claim_matrix"
+          ],
+          "allowed": [
+            "body",
+            "supplement",
+            "registry",
+            "claim_matrix"
+          ]
+        }
+      },
+      {
+        "id": "calibration.marginal_score_outcome_gap_all_five_negative",
+        "status": "active",
+        "kind": "empirical",
+        "lineages": [
+          "marginal_score_outcome_gap"
+        ],
+        "scope": "complete_five_frozen_learner_primary_oot_panel_under_unrestricted_unresolved_binary_completion",
+        "rule": "equals",
+        "result_pointer": "/marginal_score_outcome_gap/all_five_gap_upper_endpoints_negative",
+        "result": true,
+        "forbidden_inference": [
+          "individual_calibration",
+          "conditional_calibration",
+          "model_ranking",
+          "model_winner",
+          "conformal_mechanism",
+          "sampling_interval",
+          "causal_effect",
+          "prospective_validity"
+        ],
+        "surfaces": {
+          "required": [
+            "body",
+            "supplement",
+            "registry",
+            "claim_matrix"
+          ],
+          "allowed": [
+            "body",
+            "supplement",
+            "registry",
+            "claim_matrix"
+          ]
+        }
+      },
+      {
+        "id": "decision.catalog_all_target_blocks_exceed_development",
+        "status": "active",
+        "kind": "empirical",
+        "lineages": [
+          "decision_catalog_transport"
+        ],
+        "scope": "eleven_development_and_fifteen_primary_oot_months_three_losses_and_maximum_over_240_fixed_policies_per_block",
+        "rule": "equals",
+        "result_pointer": "/decision_catalog_transport/all_three_metrics_all_fifteen_target_lower_exceed_all_development_upper",
+        "result": true,
+        "forbidden_inference": [
+          "every_policy_deteriorated",
+          "ordering_probability",
+          "p_value",
+          "exchangeability",
+          "selected_policy",
+          "policy_winner",
+          "causal_effect",
+          "prospective_transport"
+        ],
+        "surfaces": {
+          "required": [
+            "body",
+            "supplement",
+            "registry",
+            "claim_matrix"
+          ],
+          "allowed": [
+            "body",
+            "supplement",
+            "registry",
+            "claim_matrix"
+          ]
+        }
+      },
+      {
+        "id": "allocation.count_vs_dollar_coverage_gap_all_tracks",
+        "status": "active",
+        "kind": "empirical",
+        "lineages": [
+          "funded_selection_estimands"
+        ],
+        "scope": "ninety_six_fixed_usd25_positive_support_tracks_with_shared_binary_completion_within_each_track",
+        "rule": "equals",
+        "result_pointer": "/funded_selection_estimands/all_ninety_six_count_minus_invested_dollar_coverage_lower_endpoints_positive",
+        "result": true,
+        "forbidden_inference": [
+          "selected_set_conformal_validity",
+          "funded_set_conformal_validity",
+          "false_coverage_rate_control",
+          "jomi_guarantee",
+          "preferred_weighting",
+          "preferred_policy",
+          "invested_dollar_equals_fixed_capital",
+          "joint_sharpness_across_tracks"
         ],
         "surfaces": {
           "required": [

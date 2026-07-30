@@ -1,4 +1,4 @@
-version: "2026-07-26"
+version: "2026-07-29"
 project: paper-crpto
 decision_status: prefreeze_active
 
@@ -64,6 +64,10 @@ active_scientific_contract:
       - scripts/experiments/run_ijds_rolling_origin_primary_recovery.py
       - scripts/experiments/run_ijds_exchangeability_transport_test.py
       - scripts/experiments/run_ijds_common_panel_threshold_response_v8.py
+      - scripts/experiments/run_ijds_residual_transport_frontier.py
+      - scripts/experiments/run_ijds_marginal_mean_score_outcome_gap_v3i.py
+      - scripts/experiments/run_ijds_decision_catalog_transport_v1.py
+      - scripts/experiments/run_ijds_funded_selection_estimand_audit_v1.py
       - scripts/experiments/run_ijds_rolling_origin_equal_followup.py
       - scripts/experiments/run_ijds_rolling_origin_individual_age_followup.py
       - scripts/experiments/run_ijds_label_mondrian_freeze.py
@@ -111,10 +115,17 @@ active_scientific_contract:
       and a complete label-Mondrian sensitivity reports all
       400 score-stratum-by-label categories. An observed-only fit and three
       declared completion rules stress labels unavailable at fit time.
+      A complete residual-ECDF frontier compares both one-sided discrepancies
+      cellwise under shared binary endpoint completions, without a KS test or
+      stochastic-order claim. Five marginal score-minus-prevalence identified
+      sets are reported without ranking the learners.
     decision: >-
       Gamma {0,.25,.50,.75,1} is evaluated under objective-matched and
       normalized-score rulers at {.25,.50,.75}; gamma 1 minus gamma 0 is the
-      frozen endpoint contrast, with no selector.
+      frozen endpoint contrast, with no selector. A separate complete-catalog
+      audit compares the maximum loss over all 240 frozen policies in each
+      development and target block; it does not assert that every policy
+      deteriorates.
     comparator: >-
       C0, C1, C2, registered finite development-admissible support, and the
       registered [0.05,0.12] audit range are outcome-free diagnostics. Outcome
@@ -134,6 +145,11 @@ active_scientific_contract:
       The portfolio is a continuous linear-program relaxation. A deterministic
       USD 25 floor-with-cash diagnostic measures implementation granularity but
       does not define or optimize an integer policy.
+    funded_selection_estimands: >-
+      Count-selected, invested-dollar-selected, and fixed-capital coverage are
+      kept as distinct fixed-support estimands. Their sharp shared-completion
+      contrasts do not establish funded-set validity, FCR control, or a
+      preferred weighting rule.
 
   required_artifacts:
     - reports/crpto/ijds_binary_geometry_frontier_v4_evidence.json
@@ -171,6 +187,13 @@ active_scientific_contract:
     - reports/crpto/tables/crpto_ijds_v4_tableS12_allocation_granularity.csv
     - reports/crpto/tables/crpto_ijds_v4_tableS6J_common_panel_threshold_response_strata.csv
     - reports/crpto/tables/crpto_ijds_v4_tableS6K_common_panel_threshold_response_learners.csv
+    - reports/crpto/tables/crpto_ijds_v4_tableS6L_residual_transport_summary.csv
+    - reports/crpto/tables/crpto_ijds_v4_tableS6M_residual_transport_pooled.csv
+    - reports/crpto/tables/crpto_ijds_v4_tableS6N_marginal_score_outcome_gap.csv
+    - reports/crpto/tables/crpto_ijds_v4_tableS9G_decision_catalog_metric_separation.csv
+    - reports/crpto/tables/crpto_ijds_v4_tableS9H_decision_catalog_target_blocks.csv
+    - reports/crpto/tables/crpto_ijds_v4_tableS9I_funded_selection_track_estimands.csv
+    - reports/crpto/tables/crpto_ijds_v4_tableS9J_funded_selection_gamma_contrasts.csv
     - reports/crpto/figures/crpto_ijds_v4_fig1_coverage.pdf
     - reports/crpto/figures/crpto_ijds_v4_fig1_coverage.png
     - reports/crpto/figures/crpto_ijds_v4_fig2_phase_transition.pdf

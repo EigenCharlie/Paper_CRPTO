@@ -67,6 +67,13 @@ def test_current_zip_has_fixed_metadata_and_complete_table_censuses() -> None:
         "Table_S6F_label_mondrian_categories.csv": 400,
         "Table_S6J_common_panel_threshold_response_strata.csv": 175,
         "Table_S6K_common_panel_threshold_response_learners.csv": 35,
+        "Table_S6L_residual_transport_summary.csv": 5,
+        "Table_S6M_residual_transport_pooled.csv": 200,
+        "Table_S6N_marginal_score_outcome_gap.csv": 5,
+        "Table_S9G_decision_catalog_metric_separation.csv": 3,
+        "Table_S9H_decision_catalog_target_blocks.csv": 45,
+        "Table_S9I_funded_selection_track_estimands.csv": 96,
+        "Table_S9J_funded_selection_gamma_contrasts.csv": 48,
     }
     with zipfile.ZipFile(OUTPUT) as archive:
         assert archive.namelist() == sorted(archive.namelist())
@@ -117,16 +124,7 @@ def test_machine_readable_supplement_is_current_and_anonymous() -> None:
     assert OUTPUT.read_bytes() == payload
 
     with zipfile.ZipFile(io.BytesIO(payload)) as archive:
-        assert archive.namelist() == [
-            "README.txt",
-            "Table_S6B_exchangeability_cells.csv",
-            "Table_S6C_exchangeability_strata.csv",
-            "Table_S6D_label_mondrian_cells.csv",
-            "Table_S6E_label_mondrian_strata.csv",
-            "Table_S6F_label_mondrian_categories.csv",
-            "Table_S6J_common_panel_threshold_response_strata.csv",
-            "Table_S6K_common_panel_threshold_response_learners.csv",
-        ]
+        assert archive.namelist() == sorted(["README.txt", *SOURCE_FILENAMES])
         combined = b"\n".join(archive.read(name).lower() for name in archive.namelist())
 
     for forbidden in FORBIDDEN_FINGERPRINTS:
@@ -175,7 +173,7 @@ def test_common_panel_tables_have_complete_fixed_adjacent_grids() -> None:
         )
 
 
-def test_all_seven_source_contracts_validate_and_preserve_csv_bytes(
+def test_all_fourteen_source_contracts_validate_and_preserve_csv_bytes(
     valid_sources: dict[str, Path],
 ) -> None:
     assert set(valid_sources) == set(TABLE_CONTRACTS) == set(SOURCE_FILENAMES)
@@ -237,6 +235,25 @@ def test_every_source_rejects_duplicate_composite_keys(
         ("Table_S6F_label_mondrian_categories.csv", "alpha", "0.05"),
         ("Table_S6J_common_panel_threshold_response_strata.csv", "threshold_sign", "2"),
         ("Table_S6K_common_panel_threshold_response_learners.csv", "strata_rows", "4"),
+        ("Table_S6L_residual_transport_summary.csv", "pooled_cells", "39"),
+        (
+            "Table_S6M_residual_transport_pooled.csv",
+            "v5_q_and_coverage_reconciled",
+            "False",
+        ),
+        ("Table_S6N_marginal_score_outcome_gap.csv", "joint_endpoint_attainment", "False"),
+        (
+            "Table_S9G_decision_catalog_metric_separation.csv",
+            "all_target_blocks_exceed_development",
+            "False",
+        ),
+        ("Table_S9H_decision_catalog_target_blocks.csv", "classification", "crossing"),
+        ("Table_S9I_funded_selection_track_estimands.csv", "role", "secondary"),
+        (
+            "Table_S9J_funded_selection_gamma_contrasts.csv",
+            "gamma1_minus_gamma0_count_selected_fcp_direction",
+            "crossing",
+        ),
     ],
 )
 def test_every_source_rejects_a_locked_domain_violation(
@@ -318,6 +335,48 @@ def test_cross_table_s6f_to_s6e_covered_count_drift_is_rejected(
     _write_csv_matrix(path, matrix)
 
     with pytest.raises(RuntimeError, match="resolved covered rows disagree with S6E"):
+        _zip_payload(valid_sources)
+
+
+def test_cross_table_s6l_to_s6m_direction_drift_is_rejected(
+    valid_sources: dict[str, Path],
+) -> None:
+    name = "Table_S6L_residual_transport_summary.csv"
+    path = valid_sources[name]
+    matrix = _csv_matrix(path)
+    column = matrix[0].index("larger_target_residual_discrepancy_dominates")
+    matrix[1][column] = str(int(matrix[1][column]) + 1)
+    _write_csv_matrix(path, matrix)
+
+    with pytest.raises(RuntimeError, match="S6L-to-S6M direction census"):
+        _zip_payload(valid_sources)
+
+
+def test_cross_table_s9g_to_s9h_margin_drift_is_rejected(
+    valid_sources: dict[str, Path],
+) -> None:
+    name = "Table_S9G_decision_catalog_metric_separation.csv"
+    path = valid_sources[name]
+    matrix = _csv_matrix(path)
+    column = matrix[0].index("minimum_separation_margin")
+    matrix[1][column] = str(float(matrix[1][column]) + 0.01)
+    _write_csv_matrix(path, matrix)
+
+    with pytest.raises(RuntimeError, match="S9G-to-S9H minimum_separation_margin"):
+        _zip_payload(valid_sources)
+
+
+def test_funded_estimand_positive_gap_drift_is_rejected(
+    valid_sources: dict[str, Path],
+) -> None:
+    name = "Table_S9I_funded_selection_track_estimands.csv"
+    path = valid_sources[name]
+    matrix = _csv_matrix(path)
+    column = matrix[0].index("count_selected_minus_invested_dollar_selected_coverage_lower")
+    matrix[1][column] = "0.0"
+    _write_csv_matrix(path, matrix)
+
+    with pytest.raises(RuntimeError, match="lower endpoint is not positive"):
         _zip_payload(valid_sources)
 
 
