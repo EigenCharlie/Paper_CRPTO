@@ -1,0 +1,229 @@
+{
+  "schema_version": "2026-07-30.v1d.1",
+  "status": "retrospective_post_inspection_v1d_phase_b_complete_not_confirmatory",
+  "artifact_status": "pending_git_artifact_commit_and_annotated_tag",
+  "run_tag": "ijds-set-preserving-embedding-sensitivity-2026-07-30-v1d",
+  "protocol_tag": "protocol/ijds-set-preserving-embedding-sensitivity-2026-07-30-v1d",
+  "protocol_commit": "174c4e3d894829473a787e6d34bfc3bbab2f8ef2",
+  "source_artifact_tag": "artifacts/ijds-set-preserving-embedding-sensitivity-2026-07-30-v1a-recovery-v1d",
+  "source_artifact_commit": "95e39f05bb990429025d0115a0e55c53b1fb1ea8",
+  "expected_evaluation_artifact_tag": "artifacts/ijds-set-preserving-embedding-sensitivity-2026-07-30-v1d",
+  "classification": "retrospective_post_inspection_v1c_no_go_recovery",
+  "replay_clean": false,
+  "confirmatory": false,
+  "v1a_is_evidence": false,
+  "v1c_is_evidence": false,
+  "v1c_phase_b_outputs_reused": false,
+  "v1c_no_go": {
+    "status_note": "docs/research/ijds_set_preserving_embedding_sensitivity_v1c_no_go_2026-07-30.md",
+    "classification": "retrospective_post_inspection_non_evidence",
+    "first_launch": "windows_max_path_pre_outcome_prewrite",
+    "retry": "ephemeral_windows_longpaths_then_phase_b_materialized",
+    "elapsed_seconds": 167.8,
+    "materialized_output_files": 9,
+    "evaluation_rows": 18000,
+    "evaluation_columns": 50,
+    "undeclared_nonfinite_field": "realized_payoff_exact",
+    "undeclared_missing_rows": 8325,
+    "missing_iff": "n_unresolved_positive_exposure_gt_zero",
+    "resolved_exact_rows": 9675,
+    "outputs_committed": false,
+    "artifact_tag_created": false,
+    "outputs_are_evidence": false
+  },
+  "counts": {
+    "evaluated_primary_portfolios": 18000,
+    "evaluated_persisted_columns": 49,
+    "joined_primary_funded_rows_in_memory": 1783274,
+    "monthly_sharp_contrasts": 18000,
+    "window_sharp_contrasts": 1200,
+    "metric_direction_rows": 3600,
+    "outcome_audit_rows": 15
+  },
+  "persistence_repair": {
+    "dropped_by_output": {
+      "evaluated_portfolios": [
+        "realized_payoff_exact"
+      ],
+      "window_sharp_contrasts": [
+        "period"
+      ]
+    },
+    "retained": [
+      "realized_payoff_lower",
+      "realized_payoff_upper"
+    ],
+    "all_other_persisted_numeric_finite": true,
+    "all_other_persisted_values_nonmissing": true,
+    "ruler_structural_na_fields": [
+      "frontier_cap",
+      "objective_target",
+      "risk_tolerance"
+    ]
+  },
+  "normalization": {
+    "committed_budget_B_dollars": 1000000.0,
+    "primary_periods_T": 15,
+    "pooled_capital_TB_dollars": 15000000.0,
+    "common_across_policies": true,
+    "solver_capital_renormalization": false
+  },
+  "negative_control": {
+    "cells": 192,
+    "maximum_absolute_expected_objective_difference": 0.0,
+    "maximum_absolute_realized_payoff_bound_dollars": 0.0,
+    "maximum_absolute_weighted_default_bound": 0.0,
+    "maximum_absolute_weighted_miscoverage_bound": 0.0
+  },
+  "direction_counts": [
+    {
+      "metric": "funded_binary_miscoverage",
+      "direction_at_tolerance": "negative",
+      "cells": 340
+    },
+    {
+      "metric": "funded_binary_miscoverage",
+      "direction_at_tolerance": "not_directionally_separated_at_tolerance",
+      "cells": 113
+    },
+    {
+      "metric": "funded_binary_miscoverage",
+      "direction_at_tolerance": "positive",
+      "cells": 450
+    },
+    {
+      "metric": "funded_binary_miscoverage",
+      "direction_at_tolerance": "within_tolerance",
+      "cells": 297
+    },
+    {
+      "metric": "funded_default",
+      "direction_at_tolerance": "negative",
+      "cells": 350
+    },
+    {
+      "metric": "funded_default",
+      "direction_at_tolerance": "not_directionally_separated_at_tolerance",
+      "cells": 243
+    },
+    {
+      "metric": "funded_default",
+      "direction_at_tolerance": "positive",
+      "cells": 310
+    },
+    {
+      "metric": "funded_default",
+      "direction_at_tolerance": "within_tolerance",
+      "cells": 297
+    },
+    {
+      "metric": "standardized_payoff",
+      "direction_at_tolerance": "negative",
+      "cells": 277
+    },
+    {
+      "metric": "standardized_payoff",
+      "direction_at_tolerance": "not_directionally_separated_at_tolerance",
+      "cells": 304
+    },
+    {
+      "metric": "standardized_payoff",
+      "direction_at_tolerance": "positive",
+      "cells": 338
+    },
+    {
+      "metric": "standardized_payoff",
+      "direction_at_tolerance": "within_tolerance",
+      "cells": 281
+    }
+  ],
+  "geometric_direction_counts": [
+    {
+      "metric": "funded_binary_miscoverage",
+      "geometric_direction": "contains_zero",
+      "cells": 113
+    },
+    {
+      "metric": "funded_binary_miscoverage",
+      "geometric_direction": "exact_zero",
+      "cells": 272
+    },
+    {
+      "metric": "funded_binary_miscoverage",
+      "geometric_direction": "negative",
+      "cells": 351
+    },
+    {
+      "metric": "funded_binary_miscoverage",
+      "geometric_direction": "positive",
+      "cells": 464
+    },
+    {
+      "metric": "funded_default",
+      "geometric_direction": "contains_zero",
+      "cells": 243
+    },
+    {
+      "metric": "funded_default",
+      "geometric_direction": "exact_zero",
+      "cells": 272
+    },
+    {
+      "metric": "funded_default",
+      "geometric_direction": "negative",
+      "cells": 361
+    },
+    {
+      "metric": "funded_default",
+      "geometric_direction": "positive",
+      "cells": 324
+    },
+    {
+      "metric": "standardized_payoff",
+      "geometric_direction": "contains_zero",
+      "cells": 304
+    },
+    {
+      "metric": "standardized_payoff",
+      "geometric_direction": "exact_zero",
+      "cells": 200
+    },
+    {
+      "metric": "standardized_payoff",
+      "geometric_direction": "negative",
+      "cells": 337
+    },
+    {
+      "metric": "standardized_payoff",
+      "geometric_direction": "positive",
+      "cells": 359
+    }
+  ],
+  "windows_longpaths_preflight": {
+    "platform": "windows",
+    "status": "effective_git_core_longpaths_true",
+    "checked_before_outcomes": true
+  },
+  "joined_row_level_table_persisted": false,
+  "selection": {
+    "theta": null,
+    "gamma": null,
+    "ruler": null,
+    "coordinate": null,
+    "window": null,
+    "policy": null
+  },
+  "policy_winner": null,
+  "p_values_computed": false,
+  "protected_source_root_binding": "explicit_distinct_hash_bound_source_root",
+  "protected_source_root_distinct_from_execution_checkout": true,
+  "protected_stages_run": [],
+  "protected_artifacts_read": [
+    {
+      "path": "data/raw/Loan_status_2007-2020Q3.csv",
+      "bytes": 1773470505,
+      "sha256": "5878af2a088f8ab5214c9337289fb8b5eb6c6338fd3f417b6cdc18513dc6f35f"
+    }
+  ],
+  "protected_artifacts_written": []
+}
