@@ -1,0 +1,20 @@
+{
+  "schema_version": "2026-07-29.2",
+  "status": "outcome_free_set_preserving_allocations_frozen_before_outcomes",
+  "run_tag": "ijds-set-preserving-embedding-sensitivity-2026-07-29-v1a",
+  "protocol_tag": "protocol/ijds-set-preserving-embedding-sensitivity-2026-07-29-v1a",
+  "protocol_commit": "3de1f3c27261d0c8d6a92c9c7328a5bedd2a79f3",
+  "started_at_utc": "2026-07-29T16:39:16.177782+00:00",
+  "completed_at_utc": "2026-07-30T00:13:01.291606+00:00",
+  "elapsed_seconds": 27224.097751700003,
+  "outcome_columns_passed": [],
+  "protected_stages_run": [],
+  "protected_artifacts_read": [
+    {
+      "path": "data/raw/Loan_status_2007-2020Q3.csv",
+      "bytes": 1773470505,
+      "sha256": "5878af2a088f8ab5214c9337289fb8b5eb6c6338fd3f417b6cdc18513dc6f35f"
+    }
+  ],
+  "protected_artifacts_written": []
+}

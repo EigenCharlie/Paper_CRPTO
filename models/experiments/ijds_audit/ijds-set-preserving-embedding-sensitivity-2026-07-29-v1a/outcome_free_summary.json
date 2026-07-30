@@ -1,0 +1,74 @@
+{
+  "schema_version": "2026-07-29.2",
+  "status": "outcome_free_set_preserving_allocations_frozen_before_outcomes",
+  "run_tag": "ijds-set-preserving-embedding-sensitivity-2026-07-29-v1a",
+  "protocol_tag": "protocol/ijds-set-preserving-embedding-sensitivity-2026-07-29-v1a",
+  "protocol_commit": "3de1f3c27261d0c8d6a92c9c7328a5bedd2a79f3",
+  "parent_status": "outcome_free_allocations_frozen_before_archive_outcome_join",
+  "parent_freeze_sha256": "c2b3dc2d18c9fed80708682d5a0369c80c89643e2d28024418522d954ebe667c",
+  "counts": {
+    "solve_records": 31200,
+    "funded_rows": 3120241,
+    "embedding_diagnostics": 80,
+    "minimum_score_endpoints": 5200,
+    "objective_optima": 26,
+    "allocation_contrasts": 18000,
+    "order_replays": 18000,
+    "independent_solver_cells": 3600,
+    "windows": 8,
+    "role_periods": 26,
+    "thetas": 5,
+    "gammas": 5,
+    "coordinates": 3,
+    "rulers": 2
+  },
+  "embedding_contract": {
+    "sets_changed": 0,
+    "maximum_upper_contraction": 0.8920116585417792,
+    "theta_zero_maximum_recovery_error": 0.0
+  },
+  "common_objective_ruler": {
+    "lower_endpoint_scope": "one_z_L_over_all_25_theta_gamma_scores_per_cell",
+    "minimum_range_dollars": 66857.09683489159,
+    "maximum_range_dollars": 151229.07039304945
+  },
+  "negative_control": {
+    "cells": 2880,
+    "maximum_exposure_distance": 0.0,
+    "maximum_absolute_objective_difference": 0.0
+  },
+  "normalization": {
+    "committed_budget_B_dollars": 1000000.0,
+    "primary_periods_T": 15,
+    "pooled_capital_TB_dollars": 15000000.0,
+    "monthly_budget_residual_tolerance_dollars": 0.0001,
+    "pooled_budget_residual_tolerance_dollars": 0.0015,
+    "maximum_absolute_solver_budget_residual_dollars": 7.147784344851971e-06,
+    "solver_capital_reconciles_to_B": true,
+    "common_across_policies": true,
+    "solver_capital_renormalization": false
+  },
+  "maximum_budget_residual_dollars": 7.147784344851971e-06,
+  "maximum_id_reversal_exposure_distance": 1.152177702579138e-11,
+  "maximum_glop_objective_rate_difference": 1.29814725369215e-12,
+  "outcome_columns_passed": [],
+  "selection": {
+    "theta": null,
+    "gamma": null,
+    "ruler": null,
+    "coordinate": null,
+    "window": null,
+    "policy": null
+  },
+  "policy_winner": null,
+  "causal_interpretation": false,
+  "protected_stages_run": [],
+  "protected_artifacts_read": [
+    {
+      "path": "data/raw/Loan_status_2007-2020Q3.csv",
+      "bytes": 1773470505,
+      "sha256": "5878af2a088f8ab5214c9337289fb8b5eb6c6338fd3f417b6cdc18513dc6f35f"
+    }
+  ],
+  "protected_artifacts_written": []
+}
