@@ -1,0 +1,59 @@
+{
+  "schema_version": "2026-07-29.1",
+  "status": "complete_calculation_pending_git_artifact_commit",
+  "run_tag": "ijds-funded-selection-estimand-audit-2026-07-29-v1",
+  "protocol_tag": "protocol/ijds-funded-selection-estimand-audit-2026-07-29-v1",
+  "protocol_commit": "9c4b082ce68eb88bf60666b4cb794348bf57a40d",
+  "started_at_utc": "2026-07-30T03:43:19.115457+00:00",
+  "completed_at_utc": "2026-07-30T03:43:44.583754+00:00",
+  "elapsed_seconds": 25.467928400001256,
+  "summary": {
+    "path": "models/experiments/ijds_audit/ijds-funded-selection-estimand-audit-2026-07-29-v1/funded_selection_estimand_audit_summary.json",
+    "bytes": 15723,
+    "sha256": "40a0a137f40b412984523f95045455279bb686ab111b88c63c546ea3ec1d17c9"
+  },
+  "artifacts": {
+    "monthly_bounds": {
+      "path": "data/processed/experiments/ijds_audit/ijds-funded-selection-estimand-audit-2026-07-29-v1/monthly_three_estimand_funded_selection_bounds.parquet",
+      "bytes": 133251,
+      "sha256": "0e81df673094a5537e9205a60c48abc773fdb91dc3baf5f4f92cd7b44182dd1b"
+    },
+    "track_bounds": {
+      "path": "data/processed/experiments/ijds_audit/ijds-funded-selection-estimand-audit-2026-07-29-v1/track_three_estimand_funded_selection_bounds.parquet",
+      "bytes": 43572,
+      "sha256": "6e497ec7cb1d4d4c59a6121b0550e8e747e2829daf916eb9362f5020452ac626"
+    },
+    "monthly_gamma_contrasts": {
+      "path": "data/processed/experiments/ijds_audit/ijds-funded-selection-estimand-audit-2026-07-29-v1/monthly_three_estimand_gamma1_minus_gamma0_contrasts.parquet",
+      "bytes": 61063,
+      "sha256": "03190812ab84ff0f6eedaa8cabcda717bdbe6b9853c72a69a855c50da726b7f8"
+    },
+    "track_gamma_contrasts": {
+      "path": "data/processed/experiments/ijds_audit/ijds-funded-selection-estimand-audit-2026-07-29-v1/track_three_estimand_gamma1_minus_gamma0_contrasts.parquet",
+      "bytes": 29716,
+      "sha256": "f2eeb832f7a1db125c7029e48c6660995c2ffa6f1995f8c5a0281e982d548ceb"
+    },
+    "support_and_fixed_capital_reconciliation": {
+      "path": "data/processed/experiments/ijds_audit/ijds-funded-selection-estimand-audit-2026-07-29-v1/support_and_fixed_capital_v3_reconciliation.parquet",
+      "bytes": 24208,
+      "sha256": "ebabe5ecfc2636e97d126a2c7517cfa62e6c54910cc82baa85e6d246970d81f6"
+    }
+  },
+  "artifact_transport": {
+    "artifact_tag": "artifacts/ijds-funded-selection-estimand-audit-2026-07-29-v1",
+    "artifact_commit_relationship": "single_direct_child_of_protocol_commit",
+    "exact_tracked_paths": [
+      "data/processed/experiments/ijds_audit/ijds-funded-selection-estimand-audit-2026-07-29-v1/monthly_three_estimand_funded_selection_bounds.parquet",
+      "data/processed/experiments/ijds_audit/ijds-funded-selection-estimand-audit-2026-07-29-v1/track_three_estimand_funded_selection_bounds.parquet",
+      "data/processed/experiments/ijds_audit/ijds-funded-selection-estimand-audit-2026-07-29-v1/monthly_three_estimand_gamma1_minus_gamma0_contrasts.parquet",
+      "data/processed/experiments/ijds_audit/ijds-funded-selection-estimand-audit-2026-07-29-v1/track_three_estimand_gamma1_minus_gamma0_contrasts.parquet",
+      "data/processed/experiments/ijds_audit/ijds-funded-selection-estimand-audit-2026-07-29-v1/support_and_fixed_capital_v3_reconciliation.parquet",
+      "models/experiments/ijds_audit/ijds-funded-selection-estimand-audit-2026-07-29-v1/funded_selection_estimand_audit_summary.json",
+      "models/experiments/ijds_audit/ijds-funded-selection-estimand-audit-2026-07-29-v1/execution_receipt.json"
+    ],
+    "pending_at_runner_exit": true,
+    "dvc_required": false
+  },
+  "protected_stages_run": [],
+  "protected_artifacts_written": []
+}
