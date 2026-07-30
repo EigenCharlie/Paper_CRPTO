@@ -1,0 +1,348 @@
+{
+  "schema_version": "2026-07-29.1",
+  "status": "complete_clean_tagged_calculation_pending_git_artifact_commit_v1",
+  "run_tag": "ijds-funded-selection-estimand-audit-2026-07-29-v1",
+  "protocol_tag": "protocol/ijds-funded-selection-estimand-audit-2026-07-29-v1",
+  "protocol_commit": "9c4b082ce68eb88bf60666b4cb794348bf57a40d",
+  "protocol": {
+    "path": "docs/research/ijds_funded_selection_estimand_audit_v1_protocol_2026-07-29.md",
+    "bytes": 13592,
+    "sha256": "4514b0efcd424a0916ff6d32b2baecd024c82649f21d596192942d9339828e90"
+  },
+  "retrospective_lock": {
+    "complete_results_previously_inspected": true,
+    "confirmatory": false,
+    "preregistered": false,
+    "all_96_tracks_and_48_gamma_pairs_retained": true
+  },
+  "source_artifacts": {
+    "allocation_freeze": {
+      "path": "models/experiments/ijds_audit/ijds-allocation-granularity-sensitivity-2026-07-16-v3/protocol_freeze.json",
+      "bytes": 4677,
+      "sha256": "cb66f9eedcd130d5d8f57cd182bcb83603df3fb2bdd8292244ec6a5f77d78c1d"
+    },
+    "continuous_parent_allocations": {
+      "path": "data/processed/experiments/ijds_audit/ijds-portfolio-structure-sensitivity-2026-07-15-v6/scenarios/b1000k_p025_l045/frontier/allocations.parquet",
+      "bytes": 3180848,
+      "sha256": "83870a9e0234289a46641f53f8857eeba5937ebdb8cd19b25eb56f7e8a8dfa81"
+    },
+    "rounded_allocations": {
+      "path": "data/processed/experiments/ijds_audit/ijds-allocation-granularity-sensitivity-2026-07-16-v3/outcome_free/rounded_allocations.parquet",
+      "bytes": 3209311,
+      "sha256": "16b1e6496f86c3ea6f5cab7d6e32c68601cbcc448ab1fccfb5e83f75c610b7a2"
+    },
+    "granularity_summary": {
+      "path": "models/experiments/ijds_audit/ijds-allocation-granularity-sensitivity-2026-07-16-v3/allocation_granularity_summary.json",
+      "bytes": 2226,
+      "sha256": "7e8d9609367ae2cb07e9d0d56e676d7af5486258f7f36a2680d66d2f90d4b51a"
+    },
+    "granularity_contrasts": {
+      "path": "data/processed/experiments/ijds_audit/ijds-allocation-granularity-sensitivity-2026-07-16-v3/evaluation/granularity_contrasts.parquet",
+      "bytes": 33656,
+      "sha256": "12a91dbc69b4f666a16a6fe51524f13fb192a1122f8eab2f40fe38b50cd191a4"
+    },
+    "evaluation_manifest": {
+      "path": "models/experiments/ijds_audit/ijds-normalized-objective-frontier-2026-07-15-v5/verified_evaluation_manifest.json",
+      "bytes": 18231,
+      "sha256": "9ee55a2522349c8520f308bc69273774dd48964847dfd340b78a7be46474cd7f"
+    },
+    "joined_funded_allocations": {
+      "path": "data/processed/experiments/ijds_audit/ijds-normalized-objective-frontier-2026-07-15-v5/evaluation/joined_funded_allocations.parquet",
+      "bytes": 15289032,
+      "sha256": "2c95e0c8cec52f5be8d52084e7842f253e6a297a70cd6f413acde4065ec95d04"
+    }
+  },
+  "nested_source_lineage_verified": {
+    "v3_freeze_to_rounded_support": true,
+    "v3_summary_to_freeze_and_granularity_contrasts": true,
+    "v5_manifest_to_joined_funded_allocations": true,
+    "source_manifests": {
+      "v3_freeze": {
+        "schema_version": "2026-07-16.3",
+        "status": "allocation_granularity_frozen_before_outcome_join",
+        "run_tag": "ijds-allocation-granularity-sensitivity-2026-07-16-v3",
+        "protocol_tag": "protocol/ijds-allocation-granularity-sensitivity-2026-07-16-v3",
+        "protocol_commit": "fb1a7b1837d1f8ab2b81239533f51c996f41671c"
+      },
+      "v3_evaluation_summary": {
+        "schema_version": "2026-07-16.3",
+        "status": "complete_allocation_granularity_sensitivity",
+        "run_tag": "ijds-allocation-granularity-sensitivity-2026-07-16-v3",
+        "protocol_tag": "protocol/ijds-allocation-granularity-sensitivity-2026-07-16-v3",
+        "protocol_commit": "fb1a7b1837d1f8ab2b81239533f51c996f41671c"
+      },
+      "v5_evaluation_manifest": {
+        "schema_version": "2026-07-15.4",
+        "status": "verified_post_freeze_outcome_evaluation_complete",
+        "run_tag": "ijds-normalized-objective-frontier-2026-07-15-v5",
+        "protocol_tag": "protocol/ijds-normalized-objective-frontier-2026-07-15-v5",
+        "protocol_commit": "e2bba580a0b07c145bd64ff61440973d6e31349b"
+      },
+      "nested_descriptors_verified": true,
+      "absolute_source_manifest_payloads_serialized": false
+    }
+  },
+  "estimands": {
+    "count_selected": "equal_weight_per_funded_loan_month_position",
+    "invested_dollar_selected": "exposure_weight_conditional_on_invested_dollars",
+    "fixed_capital_decision": "exposure_weight_over_common_committed_capital_with_cash_retained",
+    "active_granularity_estimand": "fixed_capital_decision"
+  },
+  "census": {
+    "rounded_positive_positions": 143167,
+    "monthly_policy_rows": 1440,
+    "pooled_track_rows": 96,
+    "monthly_gamma_contrast_rows": 720,
+    "pooled_gamma_contrast_rows": 48,
+    "support_and_fixed_capital_reconciliation_rows": 96,
+    "all_cells_reported_without_selection": true
+  },
+  "results": {
+    "count_selected_coverage_lower_range": [
+      0.6800554016620499,
+      0.8948717948717949
+    ],
+    "count_selected_coverage_upper_range": [
+      0.7056786703601108,
+      0.926923076923077
+    ],
+    "invested_dollar_selected_coverage_lower_range": [
+      0.6369680474280104,
+      0.8753235497554106
+    ],
+    "invested_dollar_selected_coverage_upper_range": [
+      0.657106951363622,
+      0.9100044167770861
+    ],
+    "fixed_capital_decision_coverage_lower_range": [
+      0.6369783333333333,
+      0.8753266666666667
+    ],
+    "fixed_capital_decision_coverage_upper_range": [
+      0.6571166666666667,
+      0.9100066666666666
+    ],
+    "count_selected_minus_invested_dollar_selected_coverage_lower_range": [
+      0.008536795630709675,
+      0.05102965228733608
+    ],
+    "count_selected_minus_invested_dollar_selected_coverage_upper_range": [
+      0.025958160179148808,
+      0.0623285252341409
+    ],
+    "count_selected_minus_fixed_capital_decision_coverage_lower_range": [
+      0.008534305110113329,
+      0.05102010288065846
+    ],
+    "count_selected_minus_fixed_capital_decision_coverage_upper_range": [
+      0.025955282232200137,
+      0.06231888888888891
+    ],
+    "count_selected_upper_below_point90_tracks": 80,
+    "count_selected_lower_below_point90_tracks": 96,
+    "gamma_count_selected_fcp_direction_census": {
+      "higher": 40,
+      "lower": 8
+    },
+    "gamma_invested_dollar_selected_fcp_direction_census": {
+      "crossing": 8,
+      "higher": 40
+    },
+    "gamma_fixed_capital_decision_fcp_direction_census": {
+      "crossing": 8,
+      "higher": 40
+    },
+    "v3_fixed_capital_reconciliation_maximum_absolute_difference": 7.724940478959219e-19,
+    "source_positive_positions": 143175,
+    "rounded_positive_positions": 143167,
+    "removed_positions": 8,
+    "added_positions": 0,
+    "rounding_changed_positions_at_source_tolerance": 2985,
+    "rounded_minus_continuous_count_selected_fcp_direction_census": {
+      "higher": 8,
+      "zero": 88
+    }
+  },
+  "interpretation": {
+    "finite_archive_fixed_support_audit": true,
+    "fcp_compatible_binary_estimand": true,
+    "invested_dollar_selected_weighting_is_a_distinct_estimand": true,
+    "fixed_capital_decision_weighting_is_the_active_granularity_estimand": true,
+    "fixed_capital_is_not_silently_renamed_invested_dollar_coverage": true,
+    "unresolved_outcomes_are_sharply_bounded": true,
+    "continuous_parent_and_outcome_join_are_exactly_reconciled": true,
+    "selected_set_conformal_validity": false,
+    "false_coverage_rate_control": false,
+    "jomi_guarantee": false,
+    "exchangeability_claim": false,
+    "prospective_deployment_claim": false,
+    "causal_claim": false,
+    "policy_or_track_selection": false
+  },
+  "sharpness": {
+    "unresolved_labels_shared_within_every_reported_contrast": true,
+    "cellwise_not_joint_across_tracks": true,
+    "separately_extremized_intervals_subtracted": false
+  },
+  "artifacts": {
+    "monthly_bounds": {
+      "path": "data/processed/experiments/ijds_audit/ijds-funded-selection-estimand-audit-2026-07-29-v1/monthly_three_estimand_funded_selection_bounds.parquet",
+      "bytes": 133251,
+      "sha256": "0e81df673094a5537e9205a60c48abc773fdb91dc3baf5f4f92cd7b44182dd1b"
+    },
+    "track_bounds": {
+      "path": "data/processed/experiments/ijds_audit/ijds-funded-selection-estimand-audit-2026-07-29-v1/track_three_estimand_funded_selection_bounds.parquet",
+      "bytes": 43572,
+      "sha256": "6e497ec7cb1d4d4c59a6121b0550e8e747e2829daf916eb9362f5020452ac626"
+    },
+    "monthly_gamma_contrasts": {
+      "path": "data/processed/experiments/ijds_audit/ijds-funded-selection-estimand-audit-2026-07-29-v1/monthly_three_estimand_gamma1_minus_gamma0_contrasts.parquet",
+      "bytes": 61063,
+      "sha256": "03190812ab84ff0f6eedaa8cabcda717bdbe6b9853c72a69a855c50da726b7f8"
+    },
+    "track_gamma_contrasts": {
+      "path": "data/processed/experiments/ijds_audit/ijds-funded-selection-estimand-audit-2026-07-29-v1/track_three_estimand_gamma1_minus_gamma0_contrasts.parquet",
+      "bytes": 29716,
+      "sha256": "f2eeb832f7a1db125c7029e48c6660995c2ffa6f1995f8c5a0281e982d548ceb"
+    },
+    "support_and_fixed_capital_reconciliation": {
+      "path": "data/processed/experiments/ijds_audit/ijds-funded-selection-estimand-audit-2026-07-29-v1/support_and_fixed_capital_v3_reconciliation.parquet",
+      "bytes": 24208,
+      "sha256": "ebabe5ecfc2636e97d126a2c7517cfa62e6c54910cc82baa85e6d246970d81f6"
+    }
+  },
+  "artifact_transport": {
+    "artifact_tag": "artifacts/ijds-funded-selection-estimand-audit-2026-07-29-v1",
+    "artifact_commit_relationship": "single_direct_child_of_protocol_commit",
+    "exact_tracked_paths": [
+      "data/processed/experiments/ijds_audit/ijds-funded-selection-estimand-audit-2026-07-29-v1/monthly_three_estimand_funded_selection_bounds.parquet",
+      "data/processed/experiments/ijds_audit/ijds-funded-selection-estimand-audit-2026-07-29-v1/track_three_estimand_funded_selection_bounds.parquet",
+      "data/processed/experiments/ijds_audit/ijds-funded-selection-estimand-audit-2026-07-29-v1/monthly_three_estimand_gamma1_minus_gamma0_contrasts.parquet",
+      "data/processed/experiments/ijds_audit/ijds-funded-selection-estimand-audit-2026-07-29-v1/track_three_estimand_gamma1_minus_gamma0_contrasts.parquet",
+      "data/processed/experiments/ijds_audit/ijds-funded-selection-estimand-audit-2026-07-29-v1/support_and_fixed_capital_v3_reconciliation.parquet",
+      "models/experiments/ijds_audit/ijds-funded-selection-estimand-audit-2026-07-29-v1/funded_selection_estimand_audit_summary.json",
+      "models/experiments/ijds_audit/ijds-funded-selection-estimand-audit-2026-07-29-v1/execution_receipt.json"
+    ],
+    "pending_at_runner_exit": true,
+    "dvc_required": false
+  },
+  "implementation": {
+    "source_files": {
+      "configs/experiments/ijds_funded_selection_estimand_audit_2026-07-29_v1.yaml": {
+        "path": "configs/experiments/ijds_funded_selection_estimand_audit_2026-07-29_v1.yaml",
+        "bytes": 7379,
+        "sha256": "91f62394564be8ac41d0f73997247cf2f5d4b79370fbf0f34c3fe4884a01516c"
+      },
+      "docs/research/ijds_funded_selection_estimand_audit_v1_protocol_2026-07-29.md": {
+        "path": "docs/research/ijds_funded_selection_estimand_audit_v1_protocol_2026-07-29.md",
+        "bytes": 13592,
+        "sha256": "4514b0efcd424a0916ff6d32b2baecd024c82649f21d596192942d9339828e90"
+      },
+      "src/ijds_audit/funded_selection_estimand.py": {
+        "path": "src/ijds_audit/funded_selection_estimand.py",
+        "bytes": 43871,
+        "sha256": "3a66bf03608d38c4cd3dc28bfb9f978cc4bbdf7d3cf945bca1b41ac24fca8af1"
+      },
+      "src/evaluation/coverage_transport.py": {
+        "path": "src/evaluation/coverage_transport.py",
+        "bytes": 15685,
+        "sha256": "948e47916935ce92671413824fdc25ca34b7c2c6db13eaadb5eb953266f1673d"
+      },
+      "scripts/experiments/run_ijds_funded_selection_estimand_audit_v1.py": {
+        "path": "scripts/experiments/run_ijds_funded_selection_estimand_audit_v1.py",
+        "bytes": 36306,
+        "sha256": "8acca5a05f734914cb67e87ad0967f2ceb0966655b5752a80771ef2f6773c349"
+      },
+      "src/utils/isolated_experiment.py": {
+        "path": "src/utils/isolated_experiment.py",
+        "bytes": 9288,
+        "sha256": "a237249e71ab20b1ced0060397e06decaebc90a4a45d8d07913c49f7eca1e8eb"
+      },
+      "src/utils/pipeline_runtime.py": {
+        "path": "src/utils/pipeline_runtime.py",
+        "bytes": 4932,
+        "sha256": "8b3f447cb56dba68c806fa08e79f1d1c619f9e12c70c51558f50309a177d5285"
+      },
+      "uv.lock": {
+        "path": "uv.lock",
+        "bytes": 428110,
+        "sha256": "6c862cbad9ab7e3a07dd2823c775127403093d6ad59a789ee227d827165e4733"
+      }
+    },
+    "hash_algorithm": "sha256"
+  },
+  "environment": {
+    "python": "3.11.14 (main, Feb  3 2026, 22:51:29) [MSC v.1944 64 bit (AMD64)]",
+    "platform": "Windows-10-10.0.26200-SP0",
+    "packages": {
+      "catboost": "1.2.10",
+      "highspy": "1.15.1",
+      "numpy": "2.4.6",
+      "optbinning": "0.21.0",
+      "pandas": "3.0.3",
+      "pyarrow": "25.0.0",
+      "scikit-learn": "1.9.0",
+      "scipy": "1.17.1"
+    },
+    "solver_environment": {
+      "HIGHS_NATIVE_FALLBACK_SCIPY": null,
+      "HIGHS_PARALLEL": null,
+      "HIGHS_PRESOLVE": null,
+      "HIGHS_RESET_GLOBAL_SCHEDULER": null,
+      "HIGHS_SIMPLEX_STRATEGY": null,
+      "HIGHS_SOLVER": null
+    },
+    "uv_lock_sha256": "6c862cbad9ab7e3a07dd2823c775127403093d6ad59a789ee227d827165e4733",
+    "executable": {
+      "basename": "python.exe",
+      "bytes": 45568,
+      "sha256": "c30a909db10e2e5c88d1b2d6c6cbd95ac64e63033c6a0cbd06f6ee2621534a10"
+    },
+    "absolute_paths_recorded": false
+  },
+  "git": {
+    "commit": "9c4b082ce68eb88bf60666b4cb794348bf57a40d",
+    "dirty": false,
+    "dirty_entries": 0,
+    "dirty_paths": []
+  },
+  "protected_artifacts_read": [
+    {
+      "path": "models/experiments/ijds_audit/ijds-allocation-granularity-sensitivity-2026-07-16-v3/protocol_freeze.json",
+      "bytes": 4677,
+      "sha256": "cb66f9eedcd130d5d8f57cd182bcb83603df3fb2bdd8292244ec6a5f77d78c1d"
+    },
+    {
+      "path": "data/processed/experiments/ijds_audit/ijds-portfolio-structure-sensitivity-2026-07-15-v6/scenarios/b1000k_p025_l045/frontier/allocations.parquet",
+      "bytes": 3180848,
+      "sha256": "83870a9e0234289a46641f53f8857eeba5937ebdb8cd19b25eb56f7e8a8dfa81"
+    },
+    {
+      "path": "data/processed/experiments/ijds_audit/ijds-allocation-granularity-sensitivity-2026-07-16-v3/outcome_free/rounded_allocations.parquet",
+      "bytes": 3209311,
+      "sha256": "16b1e6496f86c3ea6f5cab7d6e32c68601cbcc448ab1fccfb5e83f75c610b7a2"
+    },
+    {
+      "path": "models/experiments/ijds_audit/ijds-allocation-granularity-sensitivity-2026-07-16-v3/allocation_granularity_summary.json",
+      "bytes": 2226,
+      "sha256": "7e8d9609367ae2cb07e9d0d56e676d7af5486258f7f36a2680d66d2f90d4b51a"
+    },
+    {
+      "path": "data/processed/experiments/ijds_audit/ijds-allocation-granularity-sensitivity-2026-07-16-v3/evaluation/granularity_contrasts.parquet",
+      "bytes": 33656,
+      "sha256": "12a91dbc69b4f666a16a6fe51524f13fb192a1122f8eab2f40fe38b50cd191a4"
+    },
+    {
+      "path": "models/experiments/ijds_audit/ijds-normalized-objective-frontier-2026-07-15-v5/verified_evaluation_manifest.json",
+      "bytes": 18231,
+      "sha256": "9ee55a2522349c8520f308bc69273774dd48964847dfd340b78a7be46474cd7f"
+    },
+    {
+      "path": "data/processed/experiments/ijds_audit/ijds-normalized-objective-frontier-2026-07-15-v5/evaluation/joined_funded_allocations.parquet",
+      "bytes": 15289032,
+      "sha256": "2c95e0c8cec52f5be8d52084e7842f253e6a297a70cd6f413acde4065ec95d04"
+    }
+  ],
+  "protected_stages_run": [],
+  "protected_artifacts_written": []
+}
