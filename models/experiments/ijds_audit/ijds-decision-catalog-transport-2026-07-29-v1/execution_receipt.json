@@ -1,0 +1,181 @@
+{
+  "schema_version": "2026-07-29.1",
+  "status": "complete_calculation_pending_git_artifact_commit",
+  "run_tag": "ijds-decision-catalog-transport-2026-07-29-v1",
+  "protocol_tag": "protocol/ijds-decision-catalog-transport-2026-07-29-v1",
+  "protocol_commit": "9c4b082ce68eb88bf60666b4cb794348bf57a40d",
+  "started_at_utc": "2026-07-30T03:42:32.350236+00:00",
+  "completed_at_utc": "2026-07-30T03:42:40.693549+00:00",
+  "runtime_seconds": 8.342485699999088,
+  "protocol": {
+    "path": "docs/research/ijds_decision_catalog_transport_v1_protocol_2026-07-29.md",
+    "bytes": 9833,
+    "sha256": "7d8ef3615cb8cb8865ddba06a8aa2d65c1a9d6f13464c9525ba8c311d09d056e"
+  },
+  "implementation_provenance": {
+    "source_files": {
+      "configs/experiments/ijds_decision_catalog_transport_2026-07-29_v1.yaml": {
+        "path": "configs/experiments/ijds_decision_catalog_transport_2026-07-29_v1.yaml",
+        "bytes": 6086,
+        "sha256": "4bf0cd522283cf909d5a389638044ddba6ee709c781f7172fe6e2243d5a97804"
+      },
+      "docs/research/ijds_decision_catalog_transport_v1_protocol_2026-07-29.md": {
+        "path": "docs/research/ijds_decision_catalog_transport_v1_protocol_2026-07-29.md",
+        "bytes": 9833,
+        "sha256": "7d8ef3615cb8cb8865ddba06a8aa2d65c1a9d6f13464c9525ba8c311d09d056e"
+      },
+      "src/ijds_audit/decision_catalog_transport.py": {
+        "path": "src/ijds_audit/decision_catalog_transport.py",
+        "bytes": 33635,
+        "sha256": "4628cbb29107b555d5f98e3da9eb58198d97922b3d9a43795412abe6e80a9198"
+      },
+      "scripts/experiments/run_ijds_decision_catalog_transport_v1.py": {
+        "path": "scripts/experiments/run_ijds_decision_catalog_transport_v1.py",
+        "bytes": 25609,
+        "sha256": "fc55dbca5b544ecfbb2e7a10b9b5a11839cf1207cbaee88456c8056fd5047cce"
+      }
+    },
+    "hash_algorithm": "sha256"
+  },
+  "sources": {
+    "v1c_protocol_freeze": {
+      "path": "models/experiments/ijds_audit/ijds-normalized-objective-frontier-2026-07-13-v1c/protocol_freeze.json",
+      "bytes": 15192,
+      "sha256": "7877c5e460772a0093e4132eaa542e9049f7ec15d2ddaa35c2df389892a0e185"
+    },
+    "outcome_free_allocations": {
+      "path": "data/processed/experiments/ijds_audit/ijds-normalized-objective-frontier-2026-07-13-v1c/frontier/frontier_funded_allocations.parquet",
+      "bytes": 12532305,
+      "sha256": "57301665dafe2e18cd6a7abe6338067fa99adb12d680401af8f0c9c7f7f7c26d"
+    },
+    "v5_verified_manifest": {
+      "path": "models/experiments/ijds_audit/ijds-normalized-objective-frontier-2026-07-15-v5/verified_evaluation_manifest.json",
+      "bytes": 18231,
+      "sha256": "9ee55a2522349c8520f308bc69273774dd48964847dfd340b78a7be46474cd7f"
+    },
+    "evaluated_portfolios": {
+      "path": "data/processed/experiments/ijds_audit/ijds-normalized-objective-frontier-2026-07-15-v5/evaluation/evaluated_portfolios.parquet",
+      "bytes": 658119,
+      "sha256": "7cf4ecbb86d427852793bc2da08c3ac95fb123970b00784580b9995a1bec4464"
+    },
+    "joined_funded_allocations": {
+      "path": "data/processed/experiments/ijds_audit/ijds-normalized-objective-frontier-2026-07-15-v5/evaluation/joined_funded_allocations.parquet",
+      "bytes": 15289032,
+      "sha256": "2c95e0c8cec52f5be8d52084e7842f253e6a297a70cd6f413acde4065ec95d04"
+    }
+  },
+  "artifacts": {
+    "policy_score_bounds": {
+      "path": "data/processed/experiments/ijds_audit/ijds-decision-catalog-transport-2026-07-29-v1/policy_score_bounds.csv",
+      "bytes": 4392576,
+      "sha256": "7630518b614b722279bd9e973cf3d36997fc7e3cd0497228a3830ea6380591f5"
+    },
+    "block_score_bounds": {
+      "path": "data/processed/experiments/ijds_audit/ijds-decision-catalog-transport-2026-07-29-v1/block_score_bounds.csv",
+      "bytes": 6361,
+      "sha256": "fabb8c2c1a66c489c7ed51a1efbe7cbee9e24911c1f179e778e20fce60fbadb7"
+    },
+    "calibration_thresholds": {
+      "path": "data/processed/experiments/ijds_audit/ijds-decision-catalog-transport-2026-07-29-v1/calibration_thresholds.csv",
+      "bytes": 383,
+      "sha256": "ae340d2f07342551468eb2e4b24386313df557491c8d517247269d4736afcb07"
+    },
+    "target_classification": {
+      "path": "data/processed/experiments/ijds_audit/ijds-decision-catalog-transport-2026-07-29-v1/target_classification.csv",
+      "bytes": 7481,
+      "sha256": "270df28616e8f2aee510ae3b3bbc6c5e0a77d4f9ab973c967ebe4e64fcba18d9"
+    }
+  },
+  "artifact_transport": {
+    "artifact_tag": "artifacts/ijds-decision-catalog-transport-2026-07-29-v1",
+    "artifact_commit_relationship": "single_direct_child_of_protocol_commit",
+    "exact_tracked_paths": [
+      "data/processed/experiments/ijds_audit/ijds-decision-catalog-transport-2026-07-29-v1/policy_score_bounds.csv",
+      "data/processed/experiments/ijds_audit/ijds-decision-catalog-transport-2026-07-29-v1/block_score_bounds.csv",
+      "data/processed/experiments/ijds_audit/ijds-decision-catalog-transport-2026-07-29-v1/calibration_thresholds.csv",
+      "data/processed/experiments/ijds_audit/ijds-decision-catalog-transport-2026-07-29-v1/target_classification.csv",
+      "models/experiments/ijds_audit/ijds-decision-catalog-transport-2026-07-29-v1/decision_catalog_transport_summary.json",
+      "models/experiments/ijds_audit/ijds-decision-catalog-transport-2026-07-29-v1/execution_receipt.json"
+    ],
+    "pending_at_runner_exit": true,
+    "dvc_required": false
+  },
+  "summary": {
+    "path": "models/experiments/ijds_audit/ijds-decision-catalog-transport-2026-07-29-v1/decision_catalog_transport_summary.json",
+    "bytes": 13929,
+    "sha256": "b28fcfc9dd8f787a417a7fcce7032ae105b038cfdc7a418d016fe601b3b17c45"
+  },
+  "initial_git": {
+    "commit": "9c4b082ce68eb88bf60666b4cb794348bf57a40d",
+    "dirty": false,
+    "dirty_entries": 0,
+    "dirty_paths": []
+  },
+  "final_git": {
+    "commit": "9c4b082ce68eb88bf60666b4cb794348bf57a40d",
+    "dirty": false,
+    "dirty_entries": 0,
+    "dirty_paths": []
+  },
+  "environment": {
+    "python": "3.11.14 (main, Feb  3 2026, 22:51:29) [MSC v.1944 64 bit (AMD64)]",
+    "platform": "Windows-10-10.0.26200-SP0",
+    "packages": {
+      "catboost": "1.2.10",
+      "highspy": "1.15.1",
+      "numpy": "2.4.6",
+      "optbinning": "0.21.0",
+      "pandas": "3.0.3",
+      "pyarrow": "25.0.0",
+      "scikit-learn": "1.9.0",
+      "scipy": "1.17.1"
+    },
+    "solver_environment": {
+      "HIGHS_NATIVE_FALLBACK_SCIPY": null,
+      "HIGHS_PARALLEL": null,
+      "HIGHS_PRESOLVE": null,
+      "HIGHS_RESET_GLOBAL_SCHEDULER": null,
+      "HIGHS_SIMPLEX_STRATEGY": null,
+      "HIGHS_SOLVER": null
+    },
+    "uv_lock_sha256": "6c862cbad9ab7e3a07dd2823c775127403093d6ad59a789ee227d827165e4733",
+    "executable": {
+      "basename": "python.exe",
+      "bytes": 45568,
+      "sha256": "c30a909db10e2e5c88d1b2d6c6cbd95ac64e63033c6a0cbd06f6ee2621534a10"
+    },
+    "absolute_paths_recorded": false
+  },
+  "protected_read_root_supplied": true,
+  "protected_read_root_separate_from_execution_checkout": true,
+  "absolute_materialization_paths_recorded": false,
+  "protected_stages_run": [],
+  "protected_artifacts_read": [
+    {
+      "path": "models/experiments/ijds_audit/ijds-normalized-objective-frontier-2026-07-13-v1c/protocol_freeze.json",
+      "bytes": 15192,
+      "sha256": "7877c5e460772a0093e4132eaa542e9049f7ec15d2ddaa35c2df389892a0e185"
+    },
+    {
+      "path": "data/processed/experiments/ijds_audit/ijds-normalized-objective-frontier-2026-07-13-v1c/frontier/frontier_funded_allocations.parquet",
+      "bytes": 12532305,
+      "sha256": "57301665dafe2e18cd6a7abe6338067fa99adb12d680401af8f0c9c7f7f7c26d"
+    },
+    {
+      "path": "models/experiments/ijds_audit/ijds-normalized-objective-frontier-2026-07-15-v5/verified_evaluation_manifest.json",
+      "bytes": 18231,
+      "sha256": "9ee55a2522349c8520f308bc69273774dd48964847dfd340b78a7be46474cd7f"
+    },
+    {
+      "path": "data/processed/experiments/ijds_audit/ijds-normalized-objective-frontier-2026-07-15-v5/evaluation/evaluated_portfolios.parquet",
+      "bytes": 658119,
+      "sha256": "7cf4ecbb86d427852793bc2da08c3ac95fb123970b00784580b9995a1bec4464"
+    },
+    {
+      "path": "data/processed/experiments/ijds_audit/ijds-normalized-objective-frontier-2026-07-15-v5/evaluation/joined_funded_allocations.parquet",
+      "bytes": 15289032,
+      "sha256": "2c95e0c8cec52f5be8d52084e7842f253e6a297a70cd6f413acde4065ec95d04"
+    }
+  ],
+  "protected_artifacts_written": []
+}
