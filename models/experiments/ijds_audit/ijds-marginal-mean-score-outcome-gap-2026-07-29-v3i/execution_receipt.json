@@ -1,0 +1,56 @@
+{
+  "schema_version": "2026-07-29.3i",
+  "status": "complete_calculation_pending_git_artifact_commit",
+  "run_tag": "ijds-marginal-mean-score-outcome-gap-2026-07-29-v3i",
+  "protocol_tag": "protocol/ijds-marginal-mean-score-outcome-gap-2026-07-29-v3i",
+  "protocol_commit": "9c4b082ce68eb88bf60666b4cb794348bf57a40d",
+  "started_at_utc": "2026-07-30T03:44:25.432882+00:00",
+  "completed_at_utc": "2026-07-30T03:46:23.167334+00:00",
+  "elapsed_seconds": 117.73474059999717,
+  "summary": {
+    "path": "models/experiments/ijds_audit/ijds-marginal-mean-score-outcome-gap-2026-07-29-v3i/marginal_mean_score_outcome_gap_summary.json",
+    "bytes": 13523,
+    "sha256": "ac3b914fe94ee786d9d9a2a049d3bcb15c9f7127b15b53080e61e867297d1db7"
+  },
+  "artifacts": {
+    "table": {
+      "path": "data/processed/experiments/ijds_audit/ijds-marginal-mean-score-outcome-gap-2026-07-29-v3i/marginal_mean_score_outcome_gap.csv",
+      "bytes": 3674,
+      "sha256": "a49c2362f0f03a864cb7a94adac713264b9a2652ea31b76a0cb040c3afe1a79c"
+    },
+    "endpoint_reason_census": {
+      "path": "data/processed/experiments/ijds_audit/ijds-marginal-mean-score-outcome-gap-2026-07-29-v3i/endpoint_reason_census.csv",
+      "bytes": 367,
+      "sha256": "435e313836f3c703242fad44d28aa1dc31a943d3bcbf6e3c3d4974543e2ff732"
+    },
+    "monthly_endpoint_reason_census": {
+      "path": "data/processed/experiments/ijds_audit/ijds-marginal-mean-score-outcome-gap-2026-07-29-v3i/monthly_endpoint_reason_census.csv",
+      "bytes": 4928,
+      "sha256": "cbfcb323b55ff98d5cd0354fbcd34fc490f7c13bc070e7c109e2c459f20235d2"
+    }
+  },
+  "artifact_transport": {
+    "artifact_tag": "artifacts/ijds-marginal-mean-score-outcome-gap-2026-07-29-v3i",
+    "artifact_commit_relationship": "single_direct_child_of_protocol_commit",
+    "exact_tracked_paths": [
+      "data/processed/experiments/ijds_audit/ijds-marginal-mean-score-outcome-gap-2026-07-29-v3i/marginal_mean_score_outcome_gap.csv",
+      "data/processed/experiments/ijds_audit/ijds-marginal-mean-score-outcome-gap-2026-07-29-v3i/endpoint_reason_census.csv",
+      "data/processed/experiments/ijds_audit/ijds-marginal-mean-score-outcome-gap-2026-07-29-v3i/monthly_endpoint_reason_census.csv",
+      "models/experiments/ijds_audit/ijds-marginal-mean-score-outcome-gap-2026-07-29-v3i/marginal_mean_score_outcome_gap_summary.json",
+      "models/experiments/ijds_audit/ijds-marginal-mean-score-outcome-gap-2026-07-29-v3i/execution_receipt.json"
+    ],
+    "pending_at_runner_exit": true,
+    "dvc_required": false
+  },
+  "v3h_arithmetic_reconciliation": {
+    "prior_lineage": "v3h_complete_local_arithmetic_transport_blocked_not_active",
+    "all_five_rows_reconciled": true,
+    "absolute_tolerance": 1e-15,
+    "maximum_absolute_difference": 0.0,
+    "identity_gate_not_sign_or_model_selection": true
+  },
+  "dvc_commands_run": [],
+  "protected_stages_run": [],
+  "protected_artifacts_written": [],
+  "absolute_paths_serialized": false
+}

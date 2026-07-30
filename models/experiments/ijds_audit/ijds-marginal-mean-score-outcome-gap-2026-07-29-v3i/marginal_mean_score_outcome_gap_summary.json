@@ -1,0 +1,372 @@
+{
+  "schema_version": "2026-07-29.3i",
+  "status": "complete_clean_tagged_calculation_pending_git_artifact_commit_v3i",
+  "run_tag": "ijds-marginal-mean-score-outcome-gap-2026-07-29-v3i",
+  "protocol_tag": "protocol/ijds-marginal-mean-score-outcome-gap-2026-07-29-v3i",
+  "protocol_commit": "9c4b082ce68eb88bf60666b4cb794348bf57a40d",
+  "protocol": {
+    "path": "docs/research/ijds_marginal_mean_score_outcome_gap_v3i_protocol_2026-07-29.md",
+    "bytes": 8569,
+    "sha256": "41461278f713971deba33fc7132f66db680412324dba8ebaf79db40ab7c9716c"
+  },
+  "post_inspection": {
+    "preregistered": false,
+    "confirmatory": false,
+    "independent_replication": false,
+    "v3h_results_disclosed_before_v3i_execution": true
+  },
+  "source_artifacts": {
+    "credit_control_freeze": {
+      "path": "models/experiments/ijds_audit/ijds-credit-risk-controls-2026-07-13-v1b/protocol_freeze.json",
+      "bytes": 25908,
+      "sha256": "da4805e644bcf5decfbb0a67c0c81a5b9dd61f3ab2e17d3dc5264100e7eb4d35"
+    },
+    "scores": {
+      "path": "data/processed/experiments/ijds_audit/ijds-credit-risk-controls-2026-07-13-v1b/prediction/scores.parquet",
+      "bytes": 30407406,
+      "sha256": "5795bc0a75be90e86d37cf7d297f4b4fd6e6604b38f8179bc5042c024a53a8dc"
+    },
+    "raw_archive": {
+      "path": "data/raw/Loan_status_2007-2020Q3.csv",
+      "bytes": 1773470505,
+      "sha256": "5878af2a088f8ab5214c9337289fb8b5eb6c6338fd3f417b6cdc18513dc6f35f"
+    },
+    "raw_audit_evidence": {
+      "path": "reports/crpto/data_audit/ijds-raw-data-contract-2026-07-14-v2/evidence.json",
+      "bytes": 3654,
+      "sha256": "ac3cda119d919006210435eb0ff2234ffd6281d46edf8d29f04157b5f64ba6a5"
+    },
+    "raw_audit_config": {
+      "path": "configs/experiments/ijds_raw_data_contract_2026-07-14_v2.yaml",
+      "bytes": 1268,
+      "sha256": "bb6f240caeb87999d7071590f851d5db886ba93baba5072c60e6f550c7d970e2"
+    }
+  },
+  "source_lineage": {
+    "credit_control_freeze_verified": true,
+    "freeze_to_scores_descriptor_verified": true,
+    "raw_audit_to_config_and_archive_verified": true,
+    "git_lineage": {
+      "source_protocol_tag": "protocol/ijds-credit-risk-controls-2026-07-13-v1b",
+      "source_protocol_commit": "1776cbf8b201ae5b92756e5ea397a403d6cc7c9f",
+      "source_commit_is_ancestor": true
+    },
+    "dvc_required": false
+  },
+  "raw_scan": {
+    "raw_rows_seen": 2925493,
+    "selection_columns": [
+      "term",
+      "issue_d"
+    ],
+    "membership_uses_loan_status": false,
+    "candidate_rows": 376890,
+    "candidate_id_sha256": "72799b236a7e45d8746099adefba7da5683e8308959643d6ad341d3585e8fa74",
+    "issue_months": [
+      "2016-04",
+      "2016-05",
+      "2016-06",
+      "2016-07",
+      "2016-08",
+      "2016-09",
+      "2016-10",
+      "2016-11",
+      "2016-12",
+      "2017-01",
+      "2017-02",
+      "2017-03",
+      "2017-04",
+      "2017-05",
+      "2017-06"
+    ],
+    "raw_score_id_lookup": {
+      "performed": true,
+      "rows": 376890,
+      "candidate_id_sha256": "72799b236a7e45d8746099adefba7da5683e8308959643d6ad341d3585e8fa74",
+      "equals_raw_primary_ids": true,
+      "period_mismatch_rows": 0,
+      "non_36_month_rows": 0
+    }
+  },
+  "candidate_identity": {
+    "score_rows": 376890,
+    "outcome_rows": 376890,
+    "joined_rows": 376890,
+    "both_rows": 376890,
+    "score_only_rows": 0,
+    "outcome_only_rows": 0,
+    "period_mismatch_rows": 0,
+    "score_candidate_id_sha256": "72799b236a7e45d8746099adefba7da5683e8308959643d6ad341d3585e8fa74",
+    "outcome_candidate_id_sha256": "72799b236a7e45d8746099adefba7da5683e8308959643d6ad341d3585e8fa74",
+    "joined_candidate_id_sha256": "72799b236a7e45d8746099adefba7da5683e8308959643d6ad341d3585e8fa74",
+    "all_three_id_hashes_equal_locked_hash": true,
+    "one_to_one_outer_join": true
+  },
+  "endpoint": {
+    "cutoff": "2020-09-30",
+    "charged_off_availability_lag_months": 6,
+    "endpoint_row_sha256": "04c4d182b1223dc1c92df0898d4cd25e0a44fedded46dc1f52af62ba3d9317b6",
+    "reason_census": [
+      {
+        "role": "primary_oot",
+        "snapshot_resolution": "charged_off_by_reconstructed_cutoff",
+        "candidate_rows": 56972,
+        "resolved_rows": 56972,
+        "unresolved_rows": 0
+      },
+      {
+        "role": "primary_oot",
+        "snapshot_resolution": "fully_paid_by_reconstructed_cutoff",
+        "candidate_rows": 307842,
+        "resolved_rows": 307842,
+        "unresolved_rows": 0
+      },
+      {
+        "role": "primary_oot",
+        "snapshot_resolution": "nonterminal_or_unresolved_status",
+        "candidate_rows": 11551,
+        "resolved_rows": 0,
+        "unresolved_rows": 11551
+      },
+      {
+        "role": "primary_oot",
+        "snapshot_resolution": "terminal_after_reconstructed_cutoff",
+        "candidate_rows": 47,
+        "resolved_rows": 0,
+        "unresolved_rows": 47
+      },
+      {
+        "role": "primary_oot",
+        "snapshot_resolution": "terminal_availability_date_missing",
+        "candidate_rows": 478,
+        "resolved_rows": 0,
+        "unresolved_rows": 478
+      }
+    ],
+    "resolved_rows": 364814,
+    "resolved_nondefaults": 307842,
+    "resolved_defaults": 56972,
+    "unresolved_rows": 12076
+  },
+  "identification": {
+    "estimand": "marginal_mean_score_outcome_gap",
+    "completion_class": "unrestricted_binary_assignments_to_unresolved_rows",
+    "outcome_mean_interval": [
+      0.15116346944731884,
+      0.18320464857120114
+    ],
+    "identification_width": 0.0320411791238823,
+    "identified_grid_points": 12077,
+    "identified_grid_step": 2.6532940645811774e-06,
+    "reported_interval_is_hull": true,
+    "joint_exact_set_is_shared_collinear_grid_not_cartesian_product": true
+  },
+  "results": {
+    "learners": 5,
+    "learner_order": [
+      "catboost_platt",
+      "numeric_logistic_platt",
+      "catboost_monotonic_platt",
+      "woe_scorecard_platform_platt",
+      "woe_scorecard_borrower_platt"
+    ],
+    "mean_score_range": [
+      0.10896781492541122,
+      0.12722986345883128
+    ],
+    "gap_lower_range": [
+      -0.07423683364578992,
+      -0.05597478511236986
+    ],
+    "gap_upper_range": [
+      -0.04219565452190763,
+      -0.023933605988487566
+    ],
+    "all_rows_reported_without_sign_or_ranking_selection": true
+  },
+  "v3h_arithmetic_reconciliation": {
+    "prior_lineage": "v3h_complete_local_arithmetic_transport_blocked_not_active",
+    "all_five_rows_reconciled": true,
+    "absolute_tolerance": 1e-15,
+    "maximum_absolute_difference": 0.0,
+    "identity_gate_not_sign_or_model_selection": true
+  },
+  "schemas": {
+    "table": {
+      "rows": 5,
+      "columns": 27,
+      "dtypes": {
+        "estimand": "str",
+        "learner_order": "int64",
+        "learner": "str",
+        "score_column": "str",
+        "candidate_rows": "int64",
+        "resolved_rows": "int64",
+        "resolved_nondefaults": "int64",
+        "resolved_defaults": "int64",
+        "unresolved_outcomes": "int64",
+        "score_candidate_id_sha256": "str",
+        "outcome_candidate_id_sha256": "str",
+        "joined_candidate_id_sha256": "str",
+        "endpoint_row_sha256": "str",
+        "score_sum": "float64",
+        "mean_score": "float64",
+        "outcome_mean_lower": "float64",
+        "outcome_mean_upper": "float64",
+        "marginal_mean_score_outcome_gap_lower": "float64",
+        "marginal_mean_score_outcome_gap_upper": "float64",
+        "identification_width": "float64",
+        "identified_grid_points": "int64",
+        "identified_grid_step": "float64",
+        "reported_interval_is_identified_set_hull": "bool",
+        "sharp_binary_completion": "bool",
+        "joint_endpoint_attainment": "bool",
+        "lower_endpoint_completion": "str",
+        "upper_endpoint_completion": "str"
+      }
+    },
+    "endpoint_reason_census": {
+      "rows": 5,
+      "columns": 5,
+      "dtypes": {
+        "role": "string",
+        "snapshot_resolution": "string",
+        "candidate_rows": "int64",
+        "resolved_rows": "int64",
+        "unresolved_rows": "int64"
+      }
+    },
+    "monthly_endpoint_reason_census": {
+      "rows": 75,
+      "columns": 6,
+      "dtypes": {
+        "role": "str",
+        "period": "str",
+        "snapshot_resolution": "str",
+        "candidate_rows": "int64",
+        "resolved_rows": "int64",
+        "unresolved_rows": "int64"
+      }
+    }
+  },
+  "artifacts": {
+    "table": {
+      "path": "data/processed/experiments/ijds_audit/ijds-marginal-mean-score-outcome-gap-2026-07-29-v3i/marginal_mean_score_outcome_gap.csv",
+      "bytes": 3674,
+      "sha256": "a49c2362f0f03a864cb7a94adac713264b9a2652ea31b76a0cb040c3afe1a79c"
+    },
+    "endpoint_reason_census": {
+      "path": "data/processed/experiments/ijds_audit/ijds-marginal-mean-score-outcome-gap-2026-07-29-v3i/endpoint_reason_census.csv",
+      "bytes": 367,
+      "sha256": "435e313836f3c703242fad44d28aa1dc31a943d3bcbf6e3c3d4974543e2ff732"
+    },
+    "monthly_endpoint_reason_census": {
+      "path": "data/processed/experiments/ijds_audit/ijds-marginal-mean-score-outcome-gap-2026-07-29-v3i/monthly_endpoint_reason_census.csv",
+      "bytes": 4928,
+      "sha256": "cbfcb323b55ff98d5cd0354fbcd34fc490f7c13bc070e7c109e2c459f20235d2"
+    }
+  },
+  "artifact_transport": {
+    "artifact_tag": "artifacts/ijds-marginal-mean-score-outcome-gap-2026-07-29-v3i",
+    "artifact_commit_relationship": "single_direct_child_of_protocol_commit",
+    "exact_tracked_paths": [
+      "data/processed/experiments/ijds_audit/ijds-marginal-mean-score-outcome-gap-2026-07-29-v3i/marginal_mean_score_outcome_gap.csv",
+      "data/processed/experiments/ijds_audit/ijds-marginal-mean-score-outcome-gap-2026-07-29-v3i/endpoint_reason_census.csv",
+      "data/processed/experiments/ijds_audit/ijds-marginal-mean-score-outcome-gap-2026-07-29-v3i/monthly_endpoint_reason_census.csv",
+      "models/experiments/ijds_audit/ijds-marginal-mean-score-outcome-gap-2026-07-29-v3i/marginal_mean_score_outcome_gap_summary.json",
+      "models/experiments/ijds_audit/ijds-marginal-mean-score-outcome-gap-2026-07-29-v3i/execution_receipt.json"
+    ],
+    "pending_at_runner_exit": true,
+    "dvc_required": false
+  },
+  "interpretation": {
+    "post_inspection": true,
+    "preregistered": false,
+    "confirmatory": false,
+    "independent_replication": false,
+    "deterministic_finite_archive_partial_identification": true,
+    "complete_five_learner_census": true,
+    "row_level_outcomes_persisted": false,
+    "no_p_values": true,
+    "no_causal_or_mechanism_claim": true,
+    "no_mar_mnar_claim": true,
+    "no_conformal_validity_claim": true,
+    "no_selected_or_funded_set_claim": true,
+    "no_prospective_claim": true,
+    "no_model_winner_or_ranking": true,
+    "no_dvc_requirement": true,
+    "protected_sources_read_only": true,
+    "absolute_paths_serialized": false
+  },
+  "implementation": {
+    "source_files": {
+      "configs/experiments/ijds_marginal_mean_score_outcome_gap_2026-07-29_v3i.yaml": {
+        "path": "configs/experiments/ijds_marginal_mean_score_outcome_gap_2026-07-29_v3i.yaml",
+        "bytes": 10867,
+        "sha256": "344efcbaffb42ea12e660f4d8ba3fc4908edc7d6d0a7c01e2005a2d032e73116"
+      },
+      "docs/research/ijds_marginal_mean_score_outcome_gap_v3i_protocol_2026-07-29.md": {
+        "path": "docs/research/ijds_marginal_mean_score_outcome_gap_v3i_protocol_2026-07-29.md",
+        "bytes": 8569,
+        "sha256": "41461278f713971deba33fc7132f66db680412324dba8ebaf79db40ab7c9716c"
+      },
+      "scripts/experiments/run_ijds_marginal_mean_score_outcome_gap_v3i.py": {
+        "path": "scripts/experiments/run_ijds_marginal_mean_score_outcome_gap_v3i.py",
+        "bytes": 33795,
+        "sha256": "f614fa89172017745802ee4b2f85a5ee86fb4c6e5059708e58874977de078d0f"
+      },
+      "src/ijds_audit/marginal_mean_score_outcome_gap_v3i.py": {
+        "path": "src/ijds_audit/marginal_mean_score_outcome_gap_v3i.py",
+        "bytes": 30205,
+        "sha256": "842b7a53b5b4ee43cf7e5654b1fb5559cd00032a6fb060fab25d1a30f5a0522f"
+      },
+      "src/data/outcome_observability.py": {
+        "path": "src/data/outcome_observability.py",
+        "bytes": 21985,
+        "sha256": "d54d9ccf7d54a27bb31a5f8a47e9351ca7201bed7683e9b069299f1501f80d87"
+      },
+      "src/utils/isolated_experiment.py": {
+        "path": "src/utils/isolated_experiment.py",
+        "bytes": 9288,
+        "sha256": "a237249e71ab20b1ced0060397e06decaebc90a4a45d8d07913c49f7eca1e8eb"
+      },
+      "src/utils/pipeline_runtime.py": {
+        "path": "src/utils/pipeline_runtime.py",
+        "bytes": 4932,
+        "sha256": "8b3f447cb56dba68c806fa08e79f1d1c619f9e12c70c51558f50309a177d5285"
+      },
+      "uv.lock": {
+        "path": "uv.lock",
+        "bytes": 428110,
+        "sha256": "6c862cbad9ab7e3a07dd2823c775127403093d6ad59a789ee227d827165e4733"
+      }
+    },
+    "hash_algorithm": "sha256"
+  },
+  "environment": {
+    "python_version": "3.11.14",
+    "python_implementation": "CPython",
+    "platform": "Windows-10-10.0.26200-SP0",
+    "packages": {
+      "numpy": "2.4.6",
+      "pandas": "3.0.3",
+      "pyarrow": "25.0.0",
+      "PyYAML": "6.0.3"
+    },
+    "absolute_executable_path_serialized": false
+  },
+  "git": {
+    "commit": "9c4b082ce68eb88bf60666b4cb794348bf57a40d",
+    "dirty": false,
+    "dirty_entries": 0,
+    "dirty_paths": []
+  },
+  "transport": {
+    "source_materialization": "explicit_distinct_hash_bound_source_root",
+    "dvc_required": false,
+    "git_small_outputs": true,
+    "absolute_paths_serialized": false
+  },
+  "protected_stages_run": [],
+  "protected_artifacts_written": []
+}
