@@ -1,0 +1,574 @@
+{
+  "schema_version": "2026-07-30.v1d.1",
+  "status": "retrospective_post_inspection_v1d_phase_b_complete_not_confirmatory",
+  "artifact_status": "pending_git_artifact_commit_and_annotated_tag",
+  "run_tag": "ijds-set-preserving-embedding-sensitivity-2026-07-30-v1d",
+  "protocol": {
+    "tag": "protocol/ijds-set-preserving-embedding-sensitivity-2026-07-30-v1d",
+    "tag_object": "20a164bb141aa0791d1660f87a9d981ab062a97c",
+    "commit": "174c4e3d894829473a787e6d34bfc3bbab2f8ef2"
+  },
+  "source_artifact": {
+    "tag": "artifacts/ijds-set-preserving-embedding-sensitivity-2026-07-30-v1a-recovery-v1d",
+    "tag_object": "12be770dbb137120528f0d3641ef2c1f6e04f047",
+    "commit": "95e39f05bb990429025d0115a0e55c53b1fb1ea8"
+  },
+  "original_v1a": {
+    "tag": "protocol/ijds-set-preserving-embedding-sensitivity-2026-07-29-v1a",
+    "tag_object": "2ba79623bcf7cb5eeae5dde1d4a28845928cb806",
+    "commit": "3de1f3c27261d0c8d6a92c9c7328a5bedd2a79f3"
+  },
+  "base_v1c_contract": {
+    "path": "configs/experiments/ijds_set_preserving_embedding_sensitivity_2026-07-29_v1c.yaml",
+    "bytes": 14468,
+    "sha256": "60fc48e82f8c7be6431212085cb0e573a2f32376618970b9a66d7519e9100661",
+    "reuse": "scientific_sections_and_git_native_source_contract_only"
+  },
+  "v1c_no_go": {
+    "status_note": "docs/research/ijds_set_preserving_embedding_sensitivity_v1c_no_go_2026-07-30.md",
+    "classification": "retrospective_post_inspection_non_evidence",
+    "first_launch": "windows_max_path_pre_outcome_prewrite",
+    "retry": "ephemeral_windows_longpaths_then_phase_b_materialized",
+    "elapsed_seconds": 167.8,
+    "materialized_output_files": 9,
+    "evaluation_rows": 18000,
+    "evaluation_columns": 50,
+    "undeclared_nonfinite_field": "realized_payoff_exact",
+    "undeclared_missing_rows": 8325,
+    "missing_iff": "n_unresolved_positive_exposure_gt_zero",
+    "resolved_exact_rows": 9675,
+    "outputs_committed": false,
+    "artifact_tag_created": false,
+    "outputs_are_evidence": false
+  },
+  "source_v1a_artifacts": {
+    "solve_records": {
+      "path": "data/processed/experiments/ijds_audit/ijds-set-preserving-embedding-sensitivity-2026-07-29-v1a/frontier/frontier_solve_records.parquet",
+      "bytes": 1782252,
+      "sha256": "c89bad6e9a7f9513f871be66da3950b3b690051915c51963936718314ea6598a"
+    },
+    "allocations": {
+      "path": "data/processed/experiments/ijds_audit/ijds-set-preserving-embedding-sensitivity-2026-07-29-v1a/frontier/frontier_funded_allocations.parquet",
+      "bytes": 49246668,
+      "sha256": "f192a70512f2fed01bb64c2b302cb47ecfd264648b7407b9b5aa50c5d666cf51"
+    },
+    "embedding_diagnostics": {
+      "path": "data/processed/experiments/ijds_audit/ijds-set-preserving-embedding-sensitivity-2026-07-29-v1a/frontier/embedding_set_preservation.parquet",
+      "bytes": 11160,
+      "sha256": "cc7d752488ef0657c94df5985de8fc2eb6a020132440b07f49b68ee65e639f69"
+    },
+    "minimum_endpoint_diagnostics": {
+      "path": "data/processed/experiments/ijds_audit/ijds-set-preserving-embedding-sensitivity-2026-07-29-v1a/frontier/minimum_endpoint_diagnostics.parquet",
+      "bytes": 55526,
+      "sha256": "5538e1e752cfbfc4102fe76c068402e93c6c68fada9d9c346a4dcd87752e55bb"
+    },
+    "objective_optimum_diagnostics": {
+      "path": "data/processed/experiments/ijds_audit/ijds-set-preserving-embedding-sensitivity-2026-07-29-v1a/frontier/objective_optimum_diagnostics.parquet",
+      "bytes": 13552,
+      "sha256": "f9527e361865dfa63d72e552e190cb2e06f89f120015d23095a082d59b531a29"
+    },
+    "allocation_contrasts": {
+      "path": "data/processed/experiments/ijds_audit/ijds-set-preserving-embedding-sensitivity-2026-07-29-v1a/frontier/outcome_free_allocation_contrasts.parquet",
+      "bytes": 464038,
+      "sha256": "1e9a8f5b3aead21238d984389f4f33505ef28786fdd09d9b0c0193672ced84bf"
+    },
+    "order_sensitivity": {
+      "path": "data/processed/experiments/ijds_audit/ijds-set-preserving-embedding-sensitivity-2026-07-29-v1a/frontier/frontier_order_sensitivity.parquet",
+      "bytes": 230087,
+      "sha256": "eb93a2892346966038dd4ff70377cac213d93faf39e7fb50a45bec30d6d35f7a"
+    },
+    "independent_validation": {
+      "path": "data/processed/experiments/ijds_audit/ijds-set-preserving-embedding-sensitivity-2026-07-29-v1a/frontier/frontier_independent_solver_validation.parquet",
+      "bytes": 121437,
+      "sha256": "6ccd5d776fb5044f011eaf5d4bc76257d920de14fd3ef423654070434b397a21"
+    },
+    "freeze": {
+      "path": "models/experiments/ijds_audit/ijds-set-preserving-embedding-sensitivity-2026-07-29-v1a/protocol_freeze.json",
+      "bytes": 32026,
+      "sha256": "1a4b88b0db256c9819fe24973abecef161b3f1a61c4f4c769a6a2f1c9ca037cf"
+    },
+    "summary": {
+      "path": "models/experiments/ijds_audit/ijds-set-preserving-embedding-sensitivity-2026-07-29-v1a/outcome_free_summary.json",
+      "bytes": 2568,
+      "sha256": "676c5fa388f5f7f38847632b941746183b488356f440db11acdf1803ef7819f4"
+    },
+    "receipt": {
+      "path": "models/experiments/ijds_audit/ijds-set-preserving-embedding-sensitivity-2026-07-29-v1a/outcome_free_execution_receipt.json",
+      "bytes": 809,
+      "sha256": "2841daa09a1bec9e24ce7072fa9d81cce59c63d94ae8afc21d11a6edb0972604"
+    }
+  },
+  "outcome_source": {
+    "config": {
+      "path": "configs/experiments/ijds_binary_geometry_frontier_v4_2026-07-15_v5.yaml",
+      "bytes": 1371,
+      "sha256": "c749befbd0ab7e0f8d6fcded7e7c730cae998032f897f65c7e7673d2a12c3715"
+    },
+    "protected_artifact": {
+      "path": "data/raw/Loan_status_2007-2020Q3.csv",
+      "bytes": 1773470505,
+      "sha256": "5878af2a088f8ab5214c9337289fb8b5eb6c6338fd3f417b6cdc18513dc6f35f"
+    },
+    "columns_joined_after_freeze": [
+      "snapshot_default",
+      "snapshot_resolution"
+    ]
+  },
+  "schemas": {
+    "evaluated_portfolios": {
+      "rows": 18000,
+      "columns": 49,
+      "dtypes": {
+        "candidate_id": "str",
+        "paired_policy_id": "str",
+        "frontier_ruler": "str",
+        "frontier_coordinate": "float64",
+        "frontier_cap": "float64",
+        "objective_target": "float64",
+        "theta": "float64",
+        "gamma": "float64",
+        "risk_tolerance": "float64",
+        "uncertainty_aversion": "float64",
+        "embedding_contraction": "float64",
+        "policy_mode": "str",
+        "robust_guardrail": "bool",
+        "solver_status": "str",
+        "solver_backend_actual": "str",
+        "expected_objective": "float64",
+        "n_candidates": "int64",
+        "n_positive_exposure": "int64",
+        "n_exposure_above_reporting_tolerance": "int64",
+        "total_allocated": "float64",
+        "budget_residual": "float64",
+        "weighted_pd_point": "float64",
+        "weighted_pd_effective": "float64",
+        "weighted_conformal_upper": "float64",
+        "weighted_embedding_upper": "float64",
+        "minimum_score": "float64",
+        "score_at_objective": "float64",
+        "score_range": "float64",
+        "minimum_score_portfolio_objective": "float64",
+        "common_objective_lower": "float64",
+        "unconstrained_objective": "float64",
+        "objective_retention": "float64",
+        "constraint_slack": "float64",
+        "highs_simplex_iterations": "int64",
+        "window_id": "str",
+        "role": "str",
+        "period": "str",
+        "policy_label": "str",
+        "comparator_rule": "str",
+        "n_unresolved_candidates": "int64",
+        "n_unresolved_positive_exposure": "int64",
+        "unresolved_exposure_share": "float64",
+        "realized_payoff_lower": "float64",
+        "realized_payoff_upper": "float64",
+        "weighted_default_lower": "float64",
+        "weighted_default_upper": "float64",
+        "weighted_miscoverage_lower": "float64",
+        "weighted_miscoverage_upper": "float64",
+        "full_budget": "bool"
+      }
+    },
+    "monthly_sharp_contrasts": {
+      "rows": 18000,
+      "columns": 40,
+      "dtypes": {
+        "scope": "str",
+        "window_id": "str",
+        "period": "str",
+        "normalization_rule": "str",
+        "normalization_periods": "int64",
+        "committed_budget_per_period": "float64",
+        "contrast_family": "str",
+        "ruler": "str",
+        "coordinate": "float64",
+        "theta": "float64",
+        "theta_reference": "float64",
+        "gamma": "float64",
+        "gamma_reference": "float64",
+        "contrast": "str",
+        "role": "str",
+        "policy_a": "str",
+        "policy_b": "str",
+        "policy_a_capital": "float64",
+        "policy_b_capital": "float64",
+        "policy_a_normalization_capital": "float64",
+        "policy_b_normalization_capital": "float64",
+        "funded_union_loans": "int64",
+        "unresolved_union_loans": "int64",
+        "expected_objective_difference": "float64",
+        "realized_payoff_difference_lower": "float64",
+        "realized_payoff_difference_upper": "float64",
+        "realized_payoff_rate_difference_lower": "float64",
+        "realized_payoff_rate_difference_upper": "float64",
+        "weighted_default_difference_lower": "float64",
+        "weighted_default_difference_upper": "float64",
+        "weighted_miscoverage_difference_lower": "float64",
+        "weighted_miscoverage_difference_upper": "float64",
+        "realized_payoff_identification_width": "float64",
+        "realized_payoff_rate_identification_width": "float64",
+        "weighted_default_identification_width": "float64",
+        "weighted_miscoverage_identification_width": "float64",
+        "payoff_direction_sign_robust": "bool",
+        "default_direction_sign_robust": "bool",
+        "miscoverage_direction_sign_robust": "bool",
+        "causal_interpretation": "bool"
+      }
+    },
+    "window_sharp_contrasts": {
+      "rows": 1200,
+      "columns": 39,
+      "dtypes": {
+        "scope": "str",
+        "window_id": "str",
+        "normalization_rule": "str",
+        "normalization_periods": "int64",
+        "committed_budget_per_period": "float64",
+        "contrast_family": "str",
+        "ruler": "str",
+        "coordinate": "float64",
+        "theta": "float64",
+        "theta_reference": "float64",
+        "gamma": "float64",
+        "gamma_reference": "float64",
+        "contrast": "str",
+        "role": "str",
+        "policy_a": "str",
+        "policy_b": "str",
+        "policy_a_capital": "float64",
+        "policy_b_capital": "float64",
+        "policy_a_normalization_capital": "float64",
+        "policy_b_normalization_capital": "float64",
+        "funded_union_loans": "int64",
+        "unresolved_union_loans": "int64",
+        "expected_objective_difference": "float64",
+        "realized_payoff_difference_lower": "float64",
+        "realized_payoff_difference_upper": "float64",
+        "realized_payoff_rate_difference_lower": "float64",
+        "realized_payoff_rate_difference_upper": "float64",
+        "weighted_default_difference_lower": "float64",
+        "weighted_default_difference_upper": "float64",
+        "weighted_miscoverage_difference_lower": "float64",
+        "weighted_miscoverage_difference_upper": "float64",
+        "realized_payoff_identification_width": "float64",
+        "realized_payoff_rate_identification_width": "float64",
+        "weighted_default_identification_width": "float64",
+        "weighted_miscoverage_identification_width": "float64",
+        "payoff_direction_sign_robust": "bool",
+        "default_direction_sign_robust": "bool",
+        "miscoverage_direction_sign_robust": "bool",
+        "causal_interpretation": "bool"
+      }
+    },
+    "metric_direction_census": {
+      "rows": 3600,
+      "columns": 16,
+      "dtypes": {
+        "window_id": "str",
+        "contrast_family": "str",
+        "ruler": "str",
+        "coordinate": "float64",
+        "theta": "float64",
+        "theta_reference": "float64",
+        "gamma": "float64",
+        "gamma_reference": "float64",
+        "policy_a": "str",
+        "policy_b": "str",
+        "metric": "str",
+        "lower": "float64",
+        "upper": "float64",
+        "geometric_direction": "str",
+        "direction_at_tolerance": "str",
+        "direction_tolerance": "float64"
+      }
+    },
+    "outcome_join_audit": {
+      "rows": 15,
+      "columns": 7,
+      "dtypes": {
+        "role": "str",
+        "period": "str",
+        "candidate_rows": "int64",
+        "unresolved_rows": "int64",
+        "funded_allocation_rows": "int64",
+        "funded_unique_ids": "int64",
+        "policies": "int64"
+      }
+    }
+  },
+  "evaluation_artifacts": {
+    "evaluated_portfolios": {
+      "path": "data/processed/experiments/ijds_audit/ijds-set-preserving-embedding-sensitivity-2026-07-30-v1d/evaluation/evaluated_primary_portfolios.parquet",
+      "bytes": 1629139,
+      "sha256": "38c977e63affd7b4a37bec5d39027a401b97d7d4ac5d0fe40c5e8c27a5ab2fe3"
+    },
+    "evaluation_receipt": {
+      "path": "models/experiments/ijds_audit/ijds-set-preserving-embedding-sensitivity-2026-07-30-v1d/evaluation_execution_receipt.json",
+      "bytes": 1598,
+      "sha256": "c06c04c8677e888ea0279852210fd1e2936c9a8fe7e247045091933670d90349"
+    },
+    "evaluation_summary": {
+      "path": "models/experiments/ijds_audit/ijds-set-preserving-embedding-sensitivity-2026-07-30-v1d/evaluation_summary.json",
+      "bytes": 6710,
+      "sha256": "a5c98d83435121594928b364fc13f91f9f9fb48b72f44080c1d56111bafc4864"
+    },
+    "join_identity": {
+      "path": "models/experiments/ijds_audit/ijds-set-preserving-embedding-sensitivity-2026-07-30-v1d/join_identity.json",
+      "bytes": 6993,
+      "sha256": "851ac60aa128f9b4f413d8e729a8dec8c58bbb25eb61f328db8f2f0f22619d5e"
+    },
+    "metric_direction_census": {
+      "path": "data/processed/experiments/ijds_audit/ijds-set-preserving-embedding-sensitivity-2026-07-30-v1d/evaluation/metric_direction_census.parquet",
+      "bytes": 68619,
+      "sha256": "30f2b2f023aad9a26ee7b39b61a3451848ec7cebc766d60be36219fbce2831f6"
+    },
+    "monthly_sharp_contrasts": {
+      "path": "data/processed/experiments/ijds_audit/ijds-set-preserving-embedding-sensitivity-2026-07-30-v1d/evaluation/monthly_sharp_contrasts.parquet",
+      "bytes": 1142100,
+      "sha256": "87fb90ba5cf054408a5818dc2046161c1524c26067b40d409495e2780ffe43db"
+    },
+    "outcome_join_audit": {
+      "path": "data/processed/experiments/ijds_audit/ijds-set-preserving-embedding-sensitivity-2026-07-30-v1d/evaluation/outcome_join_audit.parquet",
+      "bytes": 5155,
+      "sha256": "edf418f93146b4fbc1286ac34e34b640d82d5c20eba9fdd5d148840a3e1eb18e"
+    },
+    "window_sharp_contrasts": {
+      "path": "data/processed/experiments/ijds_audit/ijds-set-preserving-embedding-sensitivity-2026-07-30-v1d/evaluation/window_sharp_contrasts.parquet",
+      "bytes": 143876,
+      "sha256": "15cc4cb84d6339471d7c7a4de52bc3c9d25ff411cf8902aa46d87abafb36b4b7"
+    }
+  },
+  "artifact_contract": {
+    "expected_tag": "artifacts/ijds-set-preserving-embedding-sensitivity-2026-07-30-v1d",
+    "expected_parent": "95e39f05bb990429025d0115a0e55c53b1fb1ea8",
+    "exact_added_paths": [
+      "data/processed/experiments/ijds_audit/ijds-set-preserving-embedding-sensitivity-2026-07-30-v1d/evaluation/evaluated_primary_portfolios.parquet",
+      "data/processed/experiments/ijds_audit/ijds-set-preserving-embedding-sensitivity-2026-07-30-v1d/evaluation/monthly_sharp_contrasts.parquet",
+      "data/processed/experiments/ijds_audit/ijds-set-preserving-embedding-sensitivity-2026-07-30-v1d/evaluation/window_sharp_contrasts.parquet",
+      "data/processed/experiments/ijds_audit/ijds-set-preserving-embedding-sensitivity-2026-07-30-v1d/evaluation/metric_direction_census.parquet",
+      "data/processed/experiments/ijds_audit/ijds-set-preserving-embedding-sensitivity-2026-07-30-v1d/evaluation/outcome_join_audit.parquet",
+      "models/experiments/ijds_audit/ijds-set-preserving-embedding-sensitivity-2026-07-30-v1d/join_identity.json",
+      "models/experiments/ijds_audit/ijds-set-preserving-embedding-sensitivity-2026-07-30-v1d/evaluation_summary.json",
+      "models/experiments/ijds_audit/ijds-set-preserving-embedding-sensitivity-2026-07-30-v1d/evaluation_execution_receipt.json",
+      "models/experiments/ijds_audit/ijds-set-preserving-embedding-sensitivity-2026-07-30-v1d/verified_evaluation_manifest.json"
+    ],
+    "direct_child_required": true,
+    "annotated_tag_required": true,
+    "dvc_required": false
+  },
+  "implementation": {
+    "configs/experiments/ijds_set_preserving_embedding_sensitivity_2026-07-29_v1c.yaml": {
+      "path": "configs/experiments/ijds_set_preserving_embedding_sensitivity_2026-07-29_v1c.yaml",
+      "bytes": 14468,
+      "sha256": "60fc48e82f8c7be6431212085cb0e573a2f32376618970b9a66d7519e9100661"
+    },
+    "docs/research/ijds_set_preserving_embedding_sensitivity_v1c_protocol_2026-07-29.md": {
+      "path": "docs/research/ijds_set_preserving_embedding_sensitivity_v1c_protocol_2026-07-29.md",
+      "bytes": 8152,
+      "sha256": "a35e5436bd4435cbeba41cb8ef77045d11822dece93deb1c76f6976142024678"
+    },
+    "docs/research/ijds_set_preserving_embedding_sensitivity_v1a_stop_2026-07-29.md": {
+      "path": "docs/research/ijds_set_preserving_embedding_sensitivity_v1a_stop_2026-07-29.md",
+      "bytes": 2776,
+      "sha256": "daa4b58ea18fa7b0c9cab248355eb9f36c219635c83e1a58a7d33f54dc6a33fb"
+    },
+    "scripts/experiments/run_ijds_set_preserving_embedding_sensitivity_v1c.py": {
+      "path": "scripts/experiments/run_ijds_set_preserving_embedding_sensitivity_v1c.py",
+      "bytes": 62716,
+      "sha256": "b89699697cc3fb2d28e9f5f5450b7336d45e799d1493c1813269cd9e372341f4"
+    },
+    "src/evaluation/policy_contrast_bounds.py": {
+      "path": "src/evaluation/policy_contrast_bounds.py",
+      "bytes": 19317,
+      "sha256": "ed86a1df7545dfd4128e624dc4f6c0e1e79452e6d64e3acec88b60a6689868d0"
+    },
+    "src/ijds_audit/evaluation.py": {
+      "path": "src/ijds_audit/evaluation.py",
+      "bytes": 30728,
+      "sha256": "0e518fece3cb672965f437c7043993a6bffc8ce8a0ec6d5f42bdc9889b1d9046"
+    },
+    "src/ijds_audit/policy_support.py": {
+      "path": "src/ijds_audit/policy_support.py",
+      "bytes": 7810,
+      "sha256": "4bcc7c30d41e2d81d2f104d17d7d96c50059823335c600ab5bc973e51830d3e3"
+    },
+    "src/ijds_audit/protocol.py": {
+      "path": "src/ijds_audit/protocol.py",
+      "bytes": 28380,
+      "sha256": "ad6c9e67b1ea268ace799e042aeddbdabc99a25c8c774dfc3ff34217a39a8cbe"
+    },
+    "src/ijds_challengers/normalized_frontier.py": {
+      "path": "src/ijds_challengers/normalized_frontier.py",
+      "bytes": 40907,
+      "sha256": "a42b8d4128a4165067a93c37fbe83fa021e37ea788bbf1b689786ce7f826fd05"
+    },
+    "src/ijds_challengers/set_preserving_embedding.py": {
+      "path": "src/ijds_challengers/set_preserving_embedding.py",
+      "bytes": 81022,
+      "sha256": "78f4d31947654c004958d2bd2e355e9647b6400d26fdf5908199f680a0172710"
+    },
+    "src/ijds_challengers/set_preserving_embedding_v1c.py": {
+      "path": "src/ijds_challengers/set_preserving_embedding_v1c.py",
+      "bytes": 12586,
+      "sha256": "45d693eb945b8a84d108a9f17c36220161240e9ff7966c6adf17aec1d90fba31"
+    },
+    "src/utils/isolated_experiment.py": {
+      "path": "src/utils/isolated_experiment.py",
+      "bytes": 9288,
+      "sha256": "a237249e71ab20b1ced0060397e06decaebc90a4a45d8d07913c49f7eca1e8eb"
+    },
+    "src/utils/pipeline_runtime.py": {
+      "path": "src/utils/pipeline_runtime.py",
+      "bytes": 4932,
+      "sha256": "8b3f447cb56dba68c806fa08e79f1d1c619f9e12c70c51558f50309a177d5285"
+    },
+    "pyproject.toml": {
+      "path": "pyproject.toml",
+      "bytes": 10549,
+      "sha256": "7f6e0b84e8d36e5b5ef963c2b0babb446b74cd17f879faee990c9e230dc23bea"
+    },
+    "uv.lock": {
+      "path": "uv.lock",
+      "bytes": 428110,
+      "sha256": "6c862cbad9ab7e3a07dd2823c775127403093d6ad59a789ee227d827165e4733"
+    },
+    "configs/experiments/ijds_set_preserving_embedding_sensitivity_2026-07-30_v1d.yaml": {
+      "path": "configs/experiments/ijds_set_preserving_embedding_sensitivity_2026-07-30_v1d.yaml",
+      "bytes": 3821,
+      "sha256": "9c183a594e3f283cc35f0e67fb3f2a4a3a05e1b34b0f314d4489190745642599"
+    },
+    "docs/research/ijds_set_preserving_embedding_sensitivity_v1d_protocol_2026-07-30.md": {
+      "path": "docs/research/ijds_set_preserving_embedding_sensitivity_v1d_protocol_2026-07-30.md",
+      "bytes": 5627,
+      "sha256": "8a198d7c7696cc5b027ee62ea5fde7746ad912acad007295ee37c4fe7dc34c79"
+    },
+    "docs/research/ijds_set_preserving_embedding_sensitivity_v1c_no_go_2026-07-30.md": {
+      "path": "docs/research/ijds_set_preserving_embedding_sensitivity_v1c_no_go_2026-07-30.md",
+      "bytes": 2972,
+      "sha256": "163c3140836b54a07341033d8313fe4bee07956e867a727a2d4df42a82ad3fb7"
+    },
+    "scripts/experiments/run_ijds_set_preserving_embedding_sensitivity_v1d.py": {
+      "path": "scripts/experiments/run_ijds_set_preserving_embedding_sensitivity_v1d.py",
+      "bytes": 40613,
+      "sha256": "722caf57a474e78bc556e02bfb209fba5e480862da3d6f97e3d049c1c46459d9"
+    },
+    "src/ijds_challengers/set_preserving_embedding_v1d.py": {
+      "path": "src/ijds_challengers/set_preserving_embedding_v1d.py",
+      "bytes": 17950,
+      "sha256": "39659f41f705561e34c650b6f4d9095978c8780c425fb5131cb248e4dac65378"
+    }
+  },
+  "environment": {
+    "python": "3.11.14 (main, Feb  3 2026, 22:51:29) [MSC v.1944 64 bit (AMD64)]",
+    "platform": "Windows-10-10.0.26200-SP0",
+    "packages": {
+      "catboost": "1.2.10",
+      "highspy": "1.15.1",
+      "numpy": "2.4.6",
+      "optbinning": "0.21.0",
+      "pandas": "3.0.3",
+      "pyarrow": "25.0.0",
+      "scikit-learn": "1.9.0",
+      "scipy": "1.17.1",
+      "ortools": "9.11.4210",
+      "PyYAML": "6.0.3",
+      "loguru": "0.7.3"
+    },
+    "solver_environment": {
+      "HIGHS_NATIVE_FALLBACK_SCIPY": null,
+      "HIGHS_PARALLEL": null,
+      "HIGHS_PRESOLVE": null,
+      "HIGHS_RESET_GLOBAL_SCHEDULER": null,
+      "HIGHS_SIMPLEX_STRATEGY": null,
+      "HIGHS_SOLVER": null
+    },
+    "uv_lock_sha256": "6c862cbad9ab7e3a07dd2823c775127403093d6ad59a789ee227d827165e4733",
+    "executable": {
+      "binding": "sys.executable",
+      "bytes": 45568,
+      "sha256": "c30a909db10e2e5c88d1b2d6c6cbd95ac64e63033c6a0cbd06f6ee2621534a10"
+    }
+  },
+  "classification": "retrospective_post_inspection_v1c_no_go_recovery",
+  "replay_clean": false,
+  "confirmatory": false,
+  "v1a_is_evidence": false,
+  "v1c_is_evidence": false,
+  "v1c_phase_b_outputs_reused": false,
+  "persistence_repair": {
+    "evaluated_portfolios": {
+      "source_columns": 50,
+      "persisted_columns": 49,
+      "drop_columns": [
+        "realized_payoff_exact"
+      ],
+      "retained_identified_set": [
+        "realized_payoff_lower",
+        "realized_payoff_upper"
+      ],
+      "exact_missing_rows_observed_in_v1c": 8325,
+      "exact_resolved_rows_observed_in_v1c": 9675
+    },
+    "pooled_window_contrasts": {
+      "source_columns": 40,
+      "persisted_columns": 39,
+      "drop_columns": [
+        "period"
+      ],
+      "source_period_missing_rows_observed_in_v1c": 1200,
+      "period_semantics": "pooled_scope_has_no_single_month_period"
+    },
+    "exact_persisted_schema_columns": {
+      "evaluated_portfolios": 49,
+      "monthly_sharp_contrasts": 40,
+      "window_sharp_contrasts": 39,
+      "metric_direction_census": 16,
+      "outcome_join_audit": 7
+    },
+    "exact_persisted_schema_rows": {
+      "evaluated_portfolios": 18000,
+      "monthly_sharp_contrasts": 18000,
+      "window_sharp_contrasts": 1200,
+      "metric_direction_census": 3600,
+      "outcome_join_audit": 15
+    },
+    "numeric_finiteness": {
+      "all_persisted_numeric_finite": true,
+      "all_other_persisted_values_nonmissing": true,
+      "sole_exceptions": {
+        "frontier_cap": "missing_exactly_for_objective_matched",
+        "objective_target": "missing_exactly_for_normalized_score",
+        "risk_tolerance": "missing_exactly_for_objective_matched"
+      },
+      "expected_missing_each": 9000,
+      "snapshot_default_unresolved_allowed_only_in_memory": true
+    }
+  },
+  "windows_longpaths_preflight": {
+    "platform": "windows",
+    "status": "effective_git_core_longpaths_true",
+    "checked_before_outcomes": true
+  },
+  "selection": {
+    "theta": null,
+    "gamma": null,
+    "ruler": null,
+    "coordinate": null,
+    "window": null,
+    "policy": null
+  },
+  "policy_winner": null,
+  "p_values_computed": false,
+  "protected_source_root_binding": "explicit_distinct_hash_bound_source_root",
+  "protected_source_root_distinct_from_execution_checkout": true,
+  "protected_stages_run": [],
+  "protected_artifacts_read": [
+    {
+      "path": "data/raw/Loan_status_2007-2020Q3.csv",
+      "bytes": 1773470505,
+      "sha256": "5878af2a088f8ab5214c9337289fb8b5eb6c6338fd3f417b6cdc18513dc6f35f"
+    }
+  ],
+  "protected_artifacts_written": []
+}

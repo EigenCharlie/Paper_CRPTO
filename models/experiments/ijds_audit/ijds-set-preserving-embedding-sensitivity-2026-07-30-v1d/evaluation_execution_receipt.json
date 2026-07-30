@@ -1,0 +1,33 @@
+{
+  "schema_version": "2026-07-30.v1d.1",
+  "status": "retrospective_post_inspection_v1d_phase_b_complete_not_confirmatory",
+  "artifact_status": "pending_git_artifact_commit_and_annotated_tag",
+  "run_tag": "ijds-set-preserving-embedding-sensitivity-2026-07-30-v1d",
+  "protocol_tag": "protocol/ijds-set-preserving-embedding-sensitivity-2026-07-30-v1d",
+  "protocol_commit": "174c4e3d894829473a787e6d34bfc3bbab2f8ef2",
+  "source_artifact_tag": "artifacts/ijds-set-preserving-embedding-sensitivity-2026-07-30-v1a-recovery-v1d",
+  "source_artifact_commit": "95e39f05bb990429025d0115a0e55c53b1fb1ea8",
+  "started_at_utc": "2026-07-30T22:37:17.396314+00:00",
+  "scientific_calculation_completed_at_utc": "2026-07-30T22:40:05.192005+00:00",
+  "elapsed_seconds": 167.79514280000149,
+  "classification": "retrospective_post_inspection_v1c_no_go_recovery",
+  "v1c_phase_b_outputs_reused": false,
+  "persistence_repair": "drop_realized_payoff_exact_and_pooled_period_retain_payoff_lower_upper",
+  "windows_longpaths_preflight": {
+    "platform": "windows",
+    "status": "effective_git_core_longpaths_true",
+    "checked_before_outcomes": true
+  },
+  "source_files_verified": 11,
+  "protected_source_root_binding": "explicit_distinct_hash_bound_source_root",
+  "protected_source_root_distinct_from_execution_checkout": true,
+  "protected_stages_run": [],
+  "protected_artifacts_read": [
+    {
+      "path": "data/raw/Loan_status_2007-2020Q3.csv",
+      "bytes": 1773470505,
+      "sha256": "5878af2a088f8ab5214c9337289fb8b5eb6c6338fd3f417b6cdc18513dc6f35f"
+    }
+  ],
+  "protected_artifacts_written": []
+}

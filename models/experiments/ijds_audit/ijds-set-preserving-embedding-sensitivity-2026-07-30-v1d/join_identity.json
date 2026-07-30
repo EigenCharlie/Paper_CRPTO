@@ -1,0 +1,219 @@
+{
+  "schema_version": "2026-07-30.v1d.1",
+  "status": "retrospective_post_inspection_v1d_phase_b_complete_not_confirmatory",
+  "artifact_status": "pending_git_artifact_commit_and_annotated_tag",
+  "run_tag": "ijds-set-preserving-embedding-sensitivity-2026-07-30-v1d",
+  "joined_table": {
+    "rows": 1783274,
+    "columns": [
+      "allocation_fraction",
+      "candidate_id",
+      "comparator_rule",
+      "conformal_group",
+      "conformal_lower",
+      "conformal_upper",
+      "contractual_rate",
+      "design_split",
+      "embedding_upper",
+      "expected_payoff_contribution",
+      "expected_payoff_rate",
+      "exposure",
+      "frontier_cap",
+      "frontier_coordinate",
+      "frontier_ruler",
+      "gamma",
+      "id",
+      "issue_d",
+      "loan_amnt",
+      "miscoverage_lower",
+      "miscoverage_upper",
+      "objective_target",
+      "paired_policy_id",
+      "pd_effective",
+      "pd_point",
+      "period",
+      "policy_label",
+      "purpose",
+      "realized_payoff_lower",
+      "realized_payoff_rate_lower",
+      "realized_payoff_rate_upper",
+      "realized_payoff_upper",
+      "role",
+      "snapshot_default",
+      "snapshot_resolution",
+      "theta",
+      "weight",
+      "window_id"
+    ],
+    "schema": {
+      "rows": 1783274,
+      "columns": 38,
+      "dtypes": {
+        "id": "string",
+        "issue_d": "datetime64[ns]",
+        "design_split": "string",
+        "pd_point": "float64",
+        "loan_amnt": "float64",
+        "purpose": "string",
+        "contractual_rate": "float64",
+        "conformal_group": "int64",
+        "conformal_lower": "float64",
+        "conformal_upper": "float64",
+        "allocation_fraction": "float64",
+        "exposure": "float64",
+        "weight": "float64",
+        "embedding_upper": "float64",
+        "pd_effective": "float64",
+        "expected_payoff_rate": "float64",
+        "expected_payoff_contribution": "float64",
+        "window_id": "str",
+        "role": "str",
+        "period": "str",
+        "policy_label": "str",
+        "candidate_id": "str",
+        "comparator_rule": "str",
+        "paired_policy_id": "str",
+        "frontier_ruler": "str",
+        "frontier_coordinate": "float64",
+        "frontier_cap": "float64",
+        "objective_target": "float64",
+        "theta": "float64",
+        "gamma": "float64",
+        "snapshot_default": "Int8",
+        "snapshot_resolution": "string",
+        "realized_payoff_rate_lower": "float64",
+        "realized_payoff_rate_upper": "float64",
+        "realized_payoff_lower": "float64",
+        "realized_payoff_upper": "float64",
+        "miscoverage_lower": "float64",
+        "miscoverage_upper": "float64"
+      }
+    },
+    "sha256": "35d459ba6d28edec3e6e9ee86146af7316a25b51f5c0348603fae1560820b1b5",
+    "canonicalization": "pandas_hash_pandas_object_index_false_categorize_true_uint64_le_after_window_period_policy_id_mergesort_all_columns_lexicographic",
+    "pandas_version": "3.0.3"
+  },
+  "source_allocation": {
+    "path": "data/processed/experiments/ijds_audit/ijds-set-preserving-embedding-sensitivity-2026-07-29-v1a/frontier/frontier_funded_allocations.parquet",
+    "bytes": 49246668,
+    "sha256": "f192a70512f2fed01bb64c2b302cb47ecfd264648b7407b9b5aa50c5d666cf51"
+  },
+  "outcome_source": {
+    "path": "data/raw/Loan_status_2007-2020Q3.csv",
+    "bytes": 1773470505,
+    "sha256": "5878af2a088f8ab5214c9337289fb8b5eb6c6338fd3f417b6cdc18513dc6f35f"
+  },
+  "primary_candidate_identity": {
+    "rows": 376890,
+    "groups": [
+      {
+        "role": "primary_oot",
+        "period": "2016-04",
+        "rows": 28106,
+        "sha256": "2429065cf6645bb5340ae0c7bf82846bb300540f50d2a16633273cc6ccb820f8"
+      },
+      {
+        "role": "primary_oot",
+        "period": "2016-05",
+        "rows": 21831,
+        "sha256": "802063549dd3ecc5aebcacec9a9328a66d5da2184ec39d2bceee0ff6151c9805"
+      },
+      {
+        "role": "primary_oot",
+        "period": "2016-06",
+        "rows": 24600,
+        "sha256": "d9f5a33983f76b2c9fb3c538ca28af86db01243ad4e402fddb90ad99a6adc949"
+      },
+      {
+        "role": "primary_oot",
+        "period": "2016-07",
+        "rows": 25375,
+        "sha256": "16207ca44e8b2d372fc5ba06fa93b8df74d3c607d211bb0b514bbc6467555825"
+      },
+      {
+        "role": "primary_oot",
+        "period": "2016-08",
+        "rows": 27181,
+        "sha256": "41d776cf13bb9d45e2d14022eee02508ec9143bc80cac8057d7bb14f68105b44"
+      },
+      {
+        "role": "primary_oot",
+        "period": "2016-09",
+        "rows": 21342,
+        "sha256": "24913c46ea1fcb7be9b9437211ab2f317ebf95ed64469d7204b457db1f7491de"
+      },
+      {
+        "role": "primary_oot",
+        "period": "2016-10",
+        "rows": 24746,
+        "sha256": "d0ba97c0b0e88b400cb67135088ab2adeceae18410d1c80f530da21d4ba6f2e3"
+      },
+      {
+        "role": "primary_oot",
+        "period": "2016-11",
+        "rows": 26209,
+        "sha256": "cf830759dc639dc008481facf52a0ce22b0f975c4789e9e4d4a60cba6658fd21"
+      },
+      {
+        "role": "primary_oot",
+        "period": "2016-12",
+        "rows": 27985,
+        "sha256": "0d1747f8a2917b74dff6943440378e04ebb2f9890c349d13aed3c8dfe74c2efa"
+      },
+      {
+        "role": "primary_oot",
+        "period": "2017-01",
+        "rows": 24152,
+        "sha256": "579bc2a2d731b8375cf6c789373717f54da2ce99c5f3506bcbd605e1a1409b4e"
+      },
+      {
+        "role": "primary_oot",
+        "period": "2017-02",
+        "rows": 20453,
+        "sha256": "f4984c0b8b921e512c3752bee25f140edc441b87a71f9f1c85267fce8467e2d6"
+      },
+      {
+        "role": "primary_oot",
+        "period": "2017-03",
+        "rows": 27805,
+        "sha256": "80603de814dff984f88c1411a0026c96cc5fa6d312dd42a31825f6231a9f53ee"
+      },
+      {
+        "role": "primary_oot",
+        "period": "2017-04",
+        "rows": 21864,
+        "sha256": "97511c0a600ecc1cbca8568b37253a607a83e134f26386fd944916a7cc24347c"
+      },
+      {
+        "role": "primary_oot",
+        "period": "2017-05",
+        "rows": 27456,
+        "sha256": "2100ff562d67648b755cdf9b1294f245c41ababea43176fd0cd7cd7607c6d13b"
+      },
+      {
+        "role": "primary_oot",
+        "period": "2017-06",
+        "rows": 27785,
+        "sha256": "2d00c9a2bfa98e71f6edddfccce39b4b024163a9c9d420eb828ea63aded7e531"
+      }
+    ],
+    "sha256": "bd416940ad00fe0d349bd66469f97f97eb343b7a8b831d2bf53056f84b142111",
+    "canonicalization": "utf8_length_prefixed_json_role_period_id_sorted_mergesort_sha256"
+  },
+  "endpoint_value_audit": {
+    "rows": 640543,
+    "resolved_rows": 599335,
+    "unresolved_rows": 41208
+  },
+  "joined_endpoint_value_audit": {
+    "rows": 1783274,
+    "resolved_rows": 1733059,
+    "unresolved_rows": 50215
+  },
+  "joined_row_level_table_persisted": false,
+  "v1c_phase_b_outputs_reused": false,
+  "protected_source_root_binding": "explicit_distinct_hash_bound_source_root",
+  "protected_source_root_distinct_from_execution_checkout": true,
+  "protected_stages_run": [],
+  "protected_artifacts_written": []
+}
