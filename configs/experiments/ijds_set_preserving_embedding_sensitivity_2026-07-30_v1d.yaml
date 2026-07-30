@@ -1,0 +1,92 @@
+schema_version: "2026-07-30.v1d.1"
+protocol_status: "retrospective_post_inspection_v1c_no_go_recovery_phase_b_only"
+protocol_tag: "protocol/ijds-set-preserving-embedding-sensitivity-2026-07-30-v1d"
+run_tag: "ijds-set-preserving-embedding-sensitivity-2026-07-30-v1d"
+
+base_v1c_contract:
+  path: "configs/experiments/ijds_set_preserving_embedding_sensitivity_2026-07-29_v1c.yaml"
+  bytes: 14468
+  sha256: "60fc48e82f8c7be6431212085cb0e573a2f32376618970b9a66d7519e9100661"
+  reuse: "scientific_sections_and_git_native_source_contract_only"
+
+v1c_no_go:
+  status_note: "docs/research/ijds_set_preserving_embedding_sensitivity_v1c_no_go_2026-07-30.md"
+  classification: "retrospective_post_inspection_non_evidence"
+  first_launch: "windows_max_path_pre_outcome_prewrite"
+  retry: "ephemeral_windows_longpaths_then_phase_b_materialized"
+  elapsed_seconds: 167.8
+  materialized_output_files: 9
+  evaluation_rows: 18000
+  evaluation_columns: 50
+  undeclared_nonfinite_field: "realized_payoff_exact"
+  undeclared_missing_rows: 8325
+  missing_iff: "n_unresolved_positive_exposure_gt_zero"
+  resolved_exact_rows: 9675
+  outputs_committed: false
+  artifact_tag_created: false
+  outputs_are_evidence: false
+
+git_transport:
+  topology: "annotated_protocol_P2_to_direct_child_source_A2_to_direct_child_evaluation_B2"
+  source_artifact_tag: "artifacts/ijds-set-preserving-embedding-sensitivity-2026-07-30-v1a-recovery-v1d"
+  evaluation_artifact_tag: "artifacts/ijds-set-preserving-embedding-sensitivity-2026-07-30-v1d"
+  source_paths: "inherit_exact_eleven_v1a_descriptors_from_v1c"
+  evaluation_paths: "derive_exact_nine_compact_paths_from_v1d_run_tag"
+  annotated_tags_required: true
+  single_parent_required: true
+  exact_diff_required: true
+  paths_absent_in_parent_required: true
+  dvc_required: false
+
+persistence_contract:
+  evaluated_portfolios:
+    source_columns: 50
+    persisted_columns: 49
+    drop_columns: ["realized_payoff_exact"]
+    retained_identified_set: ["realized_payoff_lower", "realized_payoff_upper"]
+    exact_missing_rows_observed_in_v1c: 8325
+    exact_resolved_rows_observed_in_v1c: 9675
+  pooled_window_contrasts:
+    source_columns: 40
+    persisted_columns: 39
+    drop_columns: ["period"]
+    source_period_missing_rows_observed_in_v1c: 1200
+    period_semantics: "pooled_scope_has_no_single_month_period"
+  exact_persisted_schema_columns:
+    evaluated_portfolios: 49
+    monthly_sharp_contrasts: 40
+    window_sharp_contrasts: 39
+    metric_direction_census: 16
+    outcome_join_audit: 7
+  exact_persisted_schema_rows:
+    evaluated_portfolios: 18000
+    monthly_sharp_contrasts: 18000
+    window_sharp_contrasts: 1200
+    metric_direction_census: 3600
+    outcome_join_audit: 15
+  numeric_finiteness:
+    all_persisted_numeric_finite: true
+    all_other_persisted_values_nonmissing: true
+    sole_exceptions:
+      frontier_cap: "missing_exactly_for_objective_matched"
+      objective_target: "missing_exactly_for_normalized_score"
+      risk_tolerance: "missing_exactly_for_objective_matched"
+    expected_missing_each: 9000
+    snapshot_default_unresolved_allowed_only_in_memory: true
+
+windows_preflight:
+  timing: "before_protected_archive_read_and_before_outcomes"
+  windows_requirement: "effective_git_core_longpaths_true"
+  non_windows: "not_applicable"
+  serialize_absolute_paths: false
+
+output:
+  evaluated_portfolios: "evaluated_primary_portfolios.parquet"
+  monthly_sharp_contrasts: "monthly_sharp_contrasts.parquet"
+  window_sharp_contrasts: "window_sharp_contrasts.parquet"
+  metric_direction_census: "metric_direction_census.parquet"
+  outcome_join_audit: "outcome_join_audit.parquet"
+  join_identity: "join_identity.json"
+  evaluation_summary: "evaluation_summary.json"
+  evaluation_receipt: "evaluation_execution_receipt.json"
+  evaluation_manifest: "verified_evaluation_manifest.json"
