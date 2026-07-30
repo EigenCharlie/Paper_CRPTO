@@ -1,0 +1,280 @@
+schema_version: "2026-07-29.3i"
+status: "post_inspection_direct_git_recovery_locked_before_v3i_execution"
+protocol_tag: "protocol/ijds-marginal-mean-score-outcome-gap-2026-07-29-v3i"
+run_tag: "ijds-marginal-mean-score-outcome-gap-2026-07-29-v3i"
+protocol_path: "docs/research/ijds_marginal_mean_score_outcome_gap_v3i_protocol_2026-07-29.md"
+
+artifact_transport:
+  artifact_tag: "artifacts/ijds-marginal-mean-score-outcome-gap-2026-07-29-v3i"
+  artifact_commit_relationship: "single_direct_child_of_protocol_commit"
+  exact_tracked_paths:
+    - "data/processed/experiments/ijds_audit/ijds-marginal-mean-score-outcome-gap-2026-07-29-v3i/marginal_mean_score_outcome_gap.csv"
+    - "data/processed/experiments/ijds_audit/ijds-marginal-mean-score-outcome-gap-2026-07-29-v3i/endpoint_reason_census.csv"
+    - "data/processed/experiments/ijds_audit/ijds-marginal-mean-score-outcome-gap-2026-07-29-v3i/monthly_endpoint_reason_census.csv"
+    - "models/experiments/ijds_audit/ijds-marginal-mean-score-outcome-gap-2026-07-29-v3i/marginal_mean_score_outcome_gap_summary.json"
+    - "models/experiments/ijds_audit/ijds-marginal-mean-score-outcome-gap-2026-07-29-v3i/execution_receipt.json"
+  pending_at_runner_exit: true
+  dvc_required: false
+
+source:
+  credit_control_freeze:
+    path: "models/experiments/ijds_audit/ijds-credit-risk-controls-2026-07-13-v1b/protocol_freeze.json"
+    bytes: 25908
+    sha256: "da4805e644bcf5decfbb0a67c0c81a5b9dd61f3ab2e17d3dc5264100e7eb4d35"
+  scores:
+    path: "data/processed/experiments/ijds_audit/ijds-credit-risk-controls-2026-07-13-v1b/prediction/scores.parquet"
+    bytes: 30407406
+    sha256: "5795bc0a75be90e86d37cf7d297f4b4fd6e6604b38f8179bc5042c024a53a8dc"
+  raw_archive:
+    path: "data/raw/Loan_status_2007-2020Q3.csv"
+    bytes: 1773470505
+    sha256: "5878af2a088f8ab5214c9337289fb8b5eb6c6338fd3f417b6cdc18513dc6f35f"
+  raw_audit_evidence:
+    path: "reports/crpto/data_audit/ijds-raw-data-contract-2026-07-14-v2/evidence.json"
+    bytes: 3654
+    sha256: "ac3cda119d919006210435eb0ff2234ffd6281d46edf8d29f04157b5f64ba6a5"
+  raw_audit_config:
+    path: "configs/experiments/ijds_raw_data_contract_2026-07-14_v2.yaml"
+    bytes: 1268
+    sha256: "bb6f240caeb87999d7071590f851d5db886ba93baba5072c60e6f550c7d970e2"
+
+design:
+  role: "primary_oot"
+  term_months: 36
+  primary_oot_start_month: "2016-04"
+  primary_oot_end_month: "2017-06"
+  endpoint_cutoff: "2020-09-30"
+  charged_off_availability_lag_months: 6
+  csv_chunksize: 100000
+  raw_required_columns:
+    - "id"
+    - "issue_d"
+    - "term"
+    - "loan_status"
+    - "last_pymnt_d"
+  expected_raw_rows: 2925493
+  expected_candidates: 376890
+  expected_candidate_id_sha256: "72799b236a7e45d8746099adefba7da5683e8308959643d6ad341d3585e8fa74"
+  expected_endpoint_row_sha256: "04c4d182b1223dc1c92df0898d4cd25e0a44fedded46dc1f52af62ba3d9317b6"
+  expected_resolved: 364814
+  expected_unresolved: 12076
+  expected_resolved_y0: 307842
+  expected_resolved_y1: 56972
+  issue_months:
+    - "2016-04"
+    - "2016-05"
+    - "2016-06"
+    - "2016-07"
+    - "2016-08"
+    - "2016-09"
+    - "2016-10"
+    - "2016-11"
+    - "2016-12"
+    - "2017-01"
+    - "2017-02"
+    - "2017-03"
+    - "2017-04"
+    - "2017-05"
+    - "2017-06"
+  learners:
+    - "catboost_platt"
+    - "numeric_logistic_platt"
+    - "catboost_monotonic_platt"
+    - "woe_scorecard_platform_platt"
+    - "woe_scorecard_borrower_platt"
+  score_columns:
+    catboost_platt: "pd_catboost_platt"
+    numeric_logistic_platt: "pd_numeric_logistic_platt"
+    catboost_monotonic_platt: "pd_catboost_monotonic_platt"
+    woe_scorecard_platform_platt: "pd_woe_scorecard_platform_platt"
+    woe_scorecard_borrower_platt: "pd_woe_scorecard_borrower_platt"
+  endpoint_reason_census:
+    charged_off_by_reconstructed_cutoff:
+      candidate_rows: 56972
+      resolved_rows: 56972
+      unresolved_rows: 0
+    fully_paid_by_reconstructed_cutoff:
+      candidate_rows: 307842
+      resolved_rows: 307842
+      unresolved_rows: 0
+    nonterminal_or_unresolved_status:
+      candidate_rows: 11551
+      resolved_rows: 0
+      unresolved_rows: 11551
+    terminal_after_reconstructed_cutoff:
+      candidate_rows: 47
+      resolved_rows: 0
+      unresolved_rows: 47
+    terminal_availability_date_missing:
+      candidate_rows: 478
+      resolved_rows: 0
+      unresolved_rows: 478
+  monthly_reason_candidate_rows:
+    "2016-04":
+      charged_off_by_reconstructed_cutoff: 4636
+      fully_paid_by_reconstructed_cutoff: 23435
+      nonterminal_or_unresolved_status: 0
+      terminal_after_reconstructed_cutoff: 0
+      terminal_availability_date_missing: 35
+    "2016-05":
+      charged_off_by_reconstructed_cutoff: 3714
+      fully_paid_by_reconstructed_cutoff: 18089
+      nonterminal_or_unresolved_status: 0
+      terminal_after_reconstructed_cutoff: 0
+      terminal_availability_date_missing: 28
+    "2016-06":
+      charged_off_by_reconstructed_cutoff: 3595
+      fully_paid_by_reconstructed_cutoff: 20974
+      nonterminal_or_unresolved_status: 0
+      terminal_after_reconstructed_cutoff: 0
+      terminal_availability_date_missing: 31
+    "2016-07":
+      charged_off_by_reconstructed_cutoff: 4270
+      fully_paid_by_reconstructed_cutoff: 21068
+      nonterminal_or_unresolved_status: 0
+      terminal_after_reconstructed_cutoff: 0
+      terminal_availability_date_missing: 37
+    "2016-08":
+      charged_off_by_reconstructed_cutoff: 4504
+      fully_paid_by_reconstructed_cutoff: 22636
+      nonterminal_or_unresolved_status: 2
+      terminal_after_reconstructed_cutoff: 0
+      terminal_availability_date_missing: 39
+    "2016-09":
+      charged_off_by_reconstructed_cutoff: 3409
+      fully_paid_by_reconstructed_cutoff: 17899
+      nonterminal_or_unresolved_status: 6
+      terminal_after_reconstructed_cutoff: 0
+      terminal_availability_date_missing: 28
+    "2016-10":
+      charged_off_by_reconstructed_cutoff: 3571
+      fully_paid_by_reconstructed_cutoff: 21142
+      nonterminal_or_unresolved_status: 8
+      terminal_after_reconstructed_cutoff: 0
+      terminal_availability_date_missing: 25
+    "2016-11":
+      charged_off_by_reconstructed_cutoff: 3959
+      fully_paid_by_reconstructed_cutoff: 22184
+      nonterminal_or_unresolved_status: 30
+      terminal_after_reconstructed_cutoff: 2
+      terminal_availability_date_missing: 34
+    "2016-12":
+      charged_off_by_reconstructed_cutoff: 4388
+      fully_paid_by_reconstructed_cutoff: 23485
+      nonterminal_or_unresolved_status: 74
+      terminal_after_reconstructed_cutoff: 1
+      terminal_availability_date_missing: 37
+    "2017-01":
+      charged_off_by_reconstructed_cutoff: 3458
+      fully_paid_by_reconstructed_cutoff: 20475
+      nonterminal_or_unresolved_status: 187
+      terminal_after_reconstructed_cutoff: 3
+      terminal_availability_date_missing: 29
+    "2017-02":
+      charged_off_by_reconstructed_cutoff: 2916
+      fully_paid_by_reconstructed_cutoff: 17373
+      nonterminal_or_unresolved_status: 139
+      terminal_after_reconstructed_cutoff: 2
+      terminal_availability_date_missing: 23
+    "2017-03":
+      charged_off_by_reconstructed_cutoff: 3761
+      fully_paid_by_reconstructed_cutoff: 23782
+      nonterminal_or_unresolved_status: 217
+      terminal_after_reconstructed_cutoff: 7
+      terminal_availability_date_missing: 38
+    "2017-04":
+      charged_off_by_reconstructed_cutoff: 3085
+      fully_paid_by_reconstructed_cutoff: 18296
+      nonterminal_or_unresolved_status: 448
+      terminal_after_reconstructed_cutoff: 5
+      terminal_availability_date_missing: 30
+    "2017-05":
+      charged_off_by_reconstructed_cutoff: 3927
+      fully_paid_by_reconstructed_cutoff: 20555
+      nonterminal_or_unresolved_status: 2938
+      terminal_after_reconstructed_cutoff: 14
+      terminal_availability_date_missing: 22
+    "2017-06":
+      charged_off_by_reconstructed_cutoff: 3779
+      fully_paid_by_reconstructed_cutoff: 16449
+      nonterminal_or_unresolved_status: 7502
+      terminal_after_reconstructed_cutoff: 13
+      terminal_availability_date_missing: 42
+
+prior_inspection:
+  lineage: "v3h_complete_local_arithmetic_transport_blocked_not_active"
+  reconciliation_absolute_tolerance: 1.0e-15
+  outcome_mean_lower: 0.15116346944731884
+  outcome_mean_upper: 0.18320464857120114
+  identification_width: 0.03204117912388230
+  learner_rows:
+    catboost_platt:
+      score_sum: 41068.879767238235
+      mean_score: 0.10896781492541122
+      gap_lower: -0.07423683364578992
+      gap_upper: -0.04219565452190763
+    numeric_logistic_platt:
+      score_sum: 47951.66323899892
+      mean_score: 0.12722986345883128
+      gap_lower: -0.05597478511236986
+      gap_upper: -0.023933605988487566
+    catboost_monotonic_platt:
+      score_sum: 43278.553938667406
+      mean_score: 0.11483073028912258
+      gap_lower: -0.06837391828207856
+      gap_upper: -0.036332739158196264
+    woe_scorecard_platform_platt:
+      score_sum: 45449.10237737132
+      mean_score: 0.12058983357842160
+      gap_lower: -0.06261481499277954
+      gap_upper: -0.030573635868897248
+    woe_scorecard_borrower_platt:
+      score_sum: 47639.75930549521
+      mean_score: 0.12640229060334635
+      gap_lower: -0.056802357967854794
+      gap_upper: -0.024761178843972498
+
+interpretation:
+  post_inspection: true
+  preregistered: false
+  confirmatory: false
+  independent_replication: false
+  deterministic_finite_archive_partial_identification: true
+  complete_five_learner_census: true
+  row_level_outcomes_persisted: false
+  no_p_values: true
+  no_causal_or_mechanism_claim: true
+  no_mar_mnar_claim: true
+  no_conformal_validity_claim: true
+  no_selected_or_funded_set_claim: true
+  no_prospective_claim: true
+  no_model_winner_or_ranking: true
+  no_dvc_requirement: true
+  protected_sources_read_only: true
+  absolute_paths_serialized: false
+
+stop_rules:
+  stop_on_dirty_or_untagged_head: true
+  stop_on_protected_read_root_equals_execution_root: true
+  stop_on_unsafe_path_or_root_escape: true
+  stop_on_source_hash_or_byte_drift: true
+  stop_on_frozen_lineage_or_nested_descriptor_drift: true
+  stop_on_score_schema_or_census_drift: true
+  stop_on_raw_archive_or_candidate_census_drift: true
+  stop_on_nonbijective_join_or_month_mismatch: true
+  stop_on_endpoint_reason_month_or_hash_drift: true
+  stop_on_nonfinite_score_or_invalid_bound: true
+  stop_on_v3h_arithmetic_nonreconciliation: true
+  stop_on_implementation_drift: true
+  stop_on_preexisting_output: true
+  stop_on_result_sign_or_learner_order: false
+
+output:
+  data_root: "data/processed/experiments/ijds_audit"
+  model_root: "models/experiments/ijds_audit"
+  immutability: "hard_no_overwrite_choose_fresh_run_tag"
+  table: "marginal_mean_score_outcome_gap.csv"
+  endpoint_reason_census: "endpoint_reason_census.csv"
+  monthly_endpoint_reason_census: "monthly_endpoint_reason_census.csv"
+  summary: "marginal_mean_score_outcome_gap_summary.json"
+  execution_receipt: "execution_receipt.json"

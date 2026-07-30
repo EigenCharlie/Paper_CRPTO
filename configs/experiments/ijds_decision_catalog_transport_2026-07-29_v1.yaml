@@ -1,0 +1,159 @@
+schema_version: "2026-07-29.1"
+protocol_status: "locked_postinspection_decision_catalog_transport_candidate"
+protocol_tag: "protocol/ijds-decision-catalog-transport-2026-07-29-v1"
+run_tag: "ijds-decision-catalog-transport-2026-07-29-v1"
+protocol_path: "docs/research/ijds_decision_catalog_transport_v1_protocol_2026-07-29.md"
+
+artifact_transport:
+  artifact_tag: "artifacts/ijds-decision-catalog-transport-2026-07-29-v1"
+  artifact_commit_relationship: "single_direct_child_of_protocol_commit"
+  exact_tracked_paths:
+    - "data/processed/experiments/ijds_audit/ijds-decision-catalog-transport-2026-07-29-v1/policy_score_bounds.csv"
+    - "data/processed/experiments/ijds_audit/ijds-decision-catalog-transport-2026-07-29-v1/block_score_bounds.csv"
+    - "data/processed/experiments/ijds_audit/ijds-decision-catalog-transport-2026-07-29-v1/calibration_thresholds.csv"
+    - "data/processed/experiments/ijds_audit/ijds-decision-catalog-transport-2026-07-29-v1/target_classification.csv"
+    - "models/experiments/ijds_audit/ijds-decision-catalog-transport-2026-07-29-v1/decision_catalog_transport_summary.json"
+    - "models/experiments/ijds_audit/ijds-decision-catalog-transport-2026-07-29-v1/execution_receipt.json"
+  pending_at_runner_exit: true
+  dvc_required: false
+
+sources:
+  v1c_protocol_freeze:
+    path: "models/experiments/ijds_audit/ijds-normalized-objective-frontier-2026-07-13-v1c/protocol_freeze.json"
+    bytes: 15192
+    sha256: "7877c5e460772a0093e4132eaa542e9049f7ec15d2ddaa35c2df389892a0e185"
+  outcome_free_allocations:
+    path: "data/processed/experiments/ijds_audit/ijds-normalized-objective-frontier-2026-07-13-v1c/frontier/frontier_funded_allocations.parquet"
+    bytes: 12532305
+    sha256: "57301665dafe2e18cd6a7abe6338067fa99adb12d680401af8f0c9c7f7f7c26d"
+  v5_verified_manifest:
+    path: "models/experiments/ijds_audit/ijds-normalized-objective-frontier-2026-07-15-v5/verified_evaluation_manifest.json"
+    bytes: 18231
+    sha256: "9ee55a2522349c8520f308bc69273774dd48964847dfd340b78a7be46474cd7f"
+  evaluated_portfolios:
+    path: "data/processed/experiments/ijds_audit/ijds-normalized-objective-frontier-2026-07-15-v5/evaluation/evaluated_portfolios.parquet"
+    bytes: 658119
+    sha256: "7cf4ecbb86d427852793bc2da08c3ac95fb123970b00784580b9995a1bec4464"
+  joined_funded_allocations:
+    path: "data/processed/experiments/ijds_audit/ijds-normalized-objective-frontier-2026-07-15-v5/evaluation/joined_funded_allocations.parquet"
+    bytes: 15289032
+    sha256: "2c95e0c8cec52f5be8d52084e7842f253e6a297a70cd6f413acde4065ec95d04"
+
+design:
+  budget_dollars: 1000000.0
+  budget_tolerance_dollars: 0.0001
+  lgd: 0.45
+  nominal_miscoverage: 0.10
+  alpha: 0.10
+  numeric_tolerance: 1.0e-12
+  payoff_contribution_tolerance_dollars: 1.0e-8
+  calibration_role: "policy_development"
+  target_role: "primary_oot"
+  calibration_periods:
+    - "2013-02"
+    - "2013-03"
+    - "2013-04"
+    - "2013-05"
+    - "2013-06"
+    - "2013-07"
+    - "2013-08"
+    - "2013-09"
+    - "2013-10"
+    - "2013-11"
+    - "2013-12"
+  target_periods:
+    - "2016-04"
+    - "2016-05"
+    - "2016-06"
+    - "2016-07"
+    - "2016-08"
+    - "2016-09"
+    - "2016-10"
+    - "2016-11"
+    - "2016-12"
+    - "2017-01"
+    - "2017-02"
+    - "2017-03"
+    - "2017-04"
+    - "2017-05"
+    - "2017-06"
+  window_ids:
+    - "w01_2012m01_m06"
+    - "w02_2012m02_m07"
+    - "w03_2012m03_m08"
+    - "w04_2012m04_m09"
+    - "w05_2012m05_m10"
+    - "w06_2012m06_m11"
+    - "w07_2012m07_m12"
+    - "w08_2012m08_2013m01"
+  rulers: ["objective_matched", "normalized_score"]
+  coordinates: [0.25, 0.50, 0.75]
+  gamma_grid: [0.0, 0.25, 0.50, 0.75, 1.0]
+  metrics: ["payoff_shortfall", "default_gap", "miscoverage_excess"]
+  expected_calibration_blocks: 11
+  expected_target_blocks: 15
+  expected_blocks: 26
+  expected_policies_per_block: 240
+  expected_policy_rows: 6240
+  expected_policy_metric_rows: 18720
+  expected_block_metric_rows: 78
+  expected_threshold_rows: 3
+  expected_target_metric_rows: 45
+  expected_allocation_rows: 622455
+  expected_set_type_counts:
+    empty: 13463
+    zero_only: 599371
+    one_only: 0
+    both: 9621
+  rank_rule: "ceil((n_calibration_blocks + 1) * (1 - alpha))"
+  expected_rank: 11
+  shared_unresolved_completion: true
+
+post_inspection_disclosure:
+  outcomes_and_exploratory_scores_already_inspected: true
+  preregistered: false
+  confirmatory: false
+  expected_results_must_not_gate_execution: true
+  exploratory_complete_separation_seen_for_all_metrics: true
+  joint_three_metric_ordering_probability_reported: false
+  reason: "one_over_choose_26_11_applies_to_one_prespecified_scalar_ranking_not_the_postinspection_intersection_of_three_metric_rankings"
+
+stop_rules:
+  require_clean_exact_protocol_tagged_head: true
+  require_explicit_protected_read_root: true
+  stop_on_source_hash_or_byte_drift: true
+  stop_on_nested_manifest_mismatch: true
+  stop_on_outcome_free_leakage: true
+  stop_on_decision_alignment_failure: true
+  stop_on_incomplete_or_extra_catalog_cell: true
+  stop_on_duplicate_funded_id_within_policy: true
+  stop_on_non_full_budget: true
+  stop_on_invalid_binary_set: true
+  stop_on_one_only_set: true
+  stop_on_nonmonotone_metric: true
+  stop_on_rank_or_output_census_mismatch: true
+  hard_no_overwrite: true
+
+output:
+  data_root: "data/processed/experiments/ijds_audit"
+  model_root: "models/experiments/ijds_audit"
+  immutability: "hard_no_overwrite_choose_fresh_run_tag"
+  policy_score_bounds: "policy_score_bounds.csv"
+  block_score_bounds: "block_score_bounds.csv"
+  calibration_thresholds: "calibration_thresholds.csv"
+  target_classification: "target_classification.csv"
+  summary: "decision_catalog_transport_summary.json"
+  execution_receipt: "execution_receipt.json"
+
+claim_boundary:
+  diagnostic_candidate_only: true
+  active_claim: false
+  no_policy_selection: true
+  no_policy_winner: true
+  no_temporal_validity_transfer: true
+  no_selected_or_funded_set_conformal_guarantee: true
+  no_exchangeability_establishment: true
+  no_familywise_error_control: true
+  no_causal_claim: true
+  no_submission_freeze: true
+  protected_stages_run: []

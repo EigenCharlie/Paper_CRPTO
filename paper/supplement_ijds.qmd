@@ -1530,6 +1530,73 @@ indicator at both binary outcomes.
 Identification loss is consequently governed by exposure disagreement and
 binary set geometry, not by the unresolved count alone.
 
+### D.5.1 Directional residual-distribution frontier
+
+Fix a calibration empirical CDF $F^{\mathrm{cal}}$. For unresolved target row
+$i$, binary completion permits residual $p_i$ or $1-p_i$. At every threshold
+$t$,
+
+$$
+1\{\min(p_i,1-p_i)\le t\}\ge
+1\{|Y_i-p_i|\le t\}\ge
+1\{\max(p_i,1-p_i)\le t\}.
+$$
+
+Summing this inequality with the resolved-row indicators proves the pointwise
+CDF sandwich $F^-\ge F_Y\ge F^+$. The functional
+$\sup_t(F^{\mathrm{cal}}-F)$ is antitone in $F$, whereas
+$\sup_t(F-F^{\mathrm{cal}})$ is monotone. Substituting the two attainable CDF
+envelopes therefore gives all four extrema in
+the main-text directional frontier. Because empirical CDF differences change only
+at observed residuals, evaluating the union of calibration and target residual
+values is exact and the smallest maximizing value supplies a finite witness.
+No stochastic null or asymptotic KS reference is used.
+
+### D.5.2 Selected-count, invested-dollar, and fixed-capital estimands
+
+On a fixed positive support, use divisor $N$ for empirical moments and write
+$\bar a=A/N$ and $\bar m=N^{-1}\sum_i m_i$. Direct expansion gives
+
+$$
+\frac{\operatorname{Cov}_{N}(a,m)}{\bar a}
+=\frac{N^{-1}\sum_i a_i m_i-\bar a\bar m}{\bar a}
+=\frac{\sum_i a_i m_i}{A}-\frac{\sum_i m_i}{N}.
+$$
+
+This identity is internal to one fixed support and one policy; it does not
+compare different selected supports. It proves the main-text statement and
+shows why count and dollar coverage answer distinct questions. With fixed capital $B$, multiplying the
+invested-dollar FCP by $A/B$ gives the decision FCP; the remaining share
+$1-A/B$ is cash and has no loan-level miss. For an unresolved outcome, the
+invested-dollar-minus-count FCP contribution---equivalently, the
+count-minus-invested-dollar coverage contribution---has coefficient
+$a_i/A-1/N$. Reversing that contrast, count-minus-invested-dollar FCP uses
+$1/N-a_i/A$. Likewise, count-minus-fixed-capital FCP uses $1/N-a_i/B$, while the contrast
+between two policies (A) and (B) with a common fixed-capital denominator
+uses $(a_i^A-a_i^B)/B$ on their support union. Rowwise minimization and
+maximization under one shared binary label then follow from Proposition 3. The
+bounds are exact within a reporting cell, not jointly across overlapping
+policies. The fixed-capital coverage complement is accounting notation; cash
+is not itself a conformal observation.
+
+### D.5.3 Monotone worst-catalog completion
+
+If $Y\le Y'$ coordinatewise and every fixed-policy loss obeys
+$L_j(Y)\le L_j(Y')$, taking a maximum preserves the inequality:
+
+$$
+\max_j L_j(Y)\le\max_j L_j(Y').
+$$
+
+The all-zero and all-one unresolved vectors are respectively the least and
+greatest elements of the binary product order, proving the main-text catalog
+bound. Positive-part truncation also preserves
+monotonicity. For funded binary-set miscoverage, changing an unresolved label
+from zero to one changes the miss indicator by $0$ for empty or full sets, by
+$+1$ for a $\{0\}$ singleton, and by $-1$ for a $\{1\}$ singleton. The last
+case is why the empirical no-$\{1\}$ catalog gate is required; it is not a
+generic property of conformal prediction.
+
 ## D.6 Basis-endpoint sufficiency
 
 <!-- claim:theory.basis_endpoint_sufficiency -->

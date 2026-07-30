@@ -1113,6 +1113,96 @@ policy-specific sets, the general identity remains valid after defining
 factorization need not. Identification loss therefore depends on
 exposure disagreement and set geometry, not merely the unresolved count.
 
+\subsection{Distributional, selection-weight, and catalog
+bounds}\label{distributional-selection-weight-and-catalog-bounds}
+
+The next three statements extend the same finite-archive logic without
+adding a sampling guarantee. They are useful because a threshold-level
+coverage gap, a binary selected-set estimand, and a worst-catalog
+decision loss are different objects even when they use the same scores
+and outcomes.
+
+\textbf{Proposition 3A (sharp directional residual-distribution
+bounds).} Let \(F^{\mathrm{cal}}\) be the empirical CDF of a fixed
+nonempty calibration-residual sample, and let the target sample also be
+nonempty. Resolved target residuals are fixed, while unresolved score
+\(p_i\in[0,1]\) permits only \(p_i\) or \(1-p_i\). Put
+\(r_i^- = \min(p_i,1-p_i)\) and \(r_i^+ = \max(p_i,1-p_i)\), and let
+\(F^-\) and \(F^+\) denote the target empirical CDFs obtained by using
+every \(r_i^-\) and every \(r_i^+\), respectively. Then
+\(F^-\ge F_Y\ge F^+\) pointwise for every binary completion \(Y\), and
+
+\begin{equation}\protect\phantomsection\label{eq-residual-transport-frontier}{
+\begin{aligned}
+\min_Y\sup_t\{F^{\mathrm{cal}}(t)-F_Y(t)\}
+ &=\sup_t\{F^{\mathrm{cal}}(t)-F^-(t)\},\\
+\max_Y\sup_t\{F^{\mathrm{cal}}(t)-F_Y(t)\}
+ &=\sup_t\{F^{\mathrm{cal}}(t)-F^+(t)\},\\
+\min_Y\sup_t\{F_Y(t)-F^{\mathrm{cal}}(t)\}
+ &=\sup_t\{F^+(t)-F^{\mathrm{cal}}(t)\},\\
+\max_Y\sup_t\{F_Y(t)-F^{\mathrm{cal}}(t)\}
+ &=\sup_t\{F^-(t)-F^{\mathrm{cal}}(t)\}.
+\end{aligned}
+}\end{equation}
+
+The \(F^-\) completion attains the first minimum and fourth maximum,
+while the \(F^+\) completion attains the second maximum and third
+minimum. These are sharp directional empirical-CDF discrepancies, not KS
+tests or evidence of a particular shift mechanism; their sharpness is
+cellwise and does not imply that every interior value is attainable.
+
+\textbf{Identity 3B (count versus exposure weighting).} For one fixed
+nonempty binary selected support with \(N\) positions, positive
+exposures \(a_i\), total \(A=\sum_i a_i\), and miss indicators \(m_i\),
+let \(\operatorname{FCP}^{N}=N^{-1}\sum_i m_i\) and
+\(\operatorname{FCP}^{\$}=A^{-1}\sum_i a_i m_i\). With empirical
+covariance defined using divisor \(N\), define each matching coverage
+complement by \(\operatorname{Coverage}^{d}=1-\operatorname{FCP}^{d}\),
+\(d\in\{N,\$\}\).
+
+\begin{equation}\protect\phantomsection\label{eq-selection-weight-covariance}{
+\operatorname{FCP}^{\$}-\operatorname{FCP}^{N}
+=\frac{\operatorname{Cov}_{N}(a,m)}{\bar a},
+\qquad
+\operatorname{Coverage}^{N}-\operatorname{Coverage}^{\$}
+=\frac{\operatorname{Cov}_{N}(a,m)}{\bar a}.
+}\end{equation}
+
+Thus a positive count-minus-dollar coverage gap means that misses
+receive more exposure on average; it is not a contradiction between two
+coverage estimates. If residual cash is retained and the decision
+estimand instead normalizes by a fixed capital \(B\ge A\), then
+\(\operatorname{FCP}^{B}=(A/B)\operatorname{FCP}^{\$}\) and
+\(\operatorname{Coverage}^{B}=1-A/B+(A/B)\operatorname{Coverage}^{\$}\).
+Here \(\operatorname{Coverage}^{B}\) is only the arithmetic complement
+of a capital-normalized loss: cash is not a conformal observation
+declared covered, and the identity supplies neither FCR nor funded-set
+validity. For unresolved outcomes on this fixed support, Proposition 3
+applied to coefficients \(a_i/A-1/N\) gives sharp common-completion
+bounds for the weighting gap. Contrasts that change support---including
+gamma or rounded-versus-continuous comparisons---must instead be formed
+on the support union using the general paired-policy coefficients in
+Proposition 3.
+
+\textbf{Lemma 3C (monotone finite-catalog completion).} Let \(U\) index
+the unresolved binary outcomes and let every policy loss \(L_j(Y_U)\) in
+a fixed finite nonempty catalog be coordinatewise nondecreasing. Then
+the catalog loss \(L_{\max}(Y_U)=\max_j L_j(Y_U)\) is also
+coordinatewise nondecreasing, and its sharp completion bounds are
+
+\begin{equation}\protect\phantomsection\label{eq-monotone-catalog-completion}{
+L_{\max}(0_U)\le L_{\max}(Y_U)\le L_{\max}(1_U).
+}\end{equation}
+
+The endpoints are exact because the two common assignments apply
+simultaneously to every policy. In the application below, payoff
+shortfall and default gap have nonnegative outcome coefficients.
+Miscoverage excess satisfies the condition only after verifying that the
+frozen funded catalog contains no \(\{1\}\)-only binary prediction set;
+empty and full sets have zero increment and \(\{0\}\)-only sets have a
+nonnegative increment. The result calibrates no loss quantile and
+selects no policy.
+
 \subsection{Declared comparator sensitivity
 envelope}\label{declared-comparator-sensitivity-envelope}
 

@@ -1,0 +1,148 @@
+schema_version: "2026-07-29.1"
+status: "retrospectively_locked_after_complete_result_inspection_before_clean_tagged_execution"
+protocol_tag: "protocol/ijds-funded-selection-estimand-audit-2026-07-29-v1"
+run_tag: "ijds-funded-selection-estimand-audit-2026-07-29-v1"
+
+artifact_transport:
+  artifact_tag: "artifacts/ijds-funded-selection-estimand-audit-2026-07-29-v1"
+  artifact_commit_relationship: "single_direct_child_of_protocol_commit"
+  exact_tracked_paths:
+    - "data/processed/experiments/ijds_audit/ijds-funded-selection-estimand-audit-2026-07-29-v1/monthly_three_estimand_funded_selection_bounds.parquet"
+    - "data/processed/experiments/ijds_audit/ijds-funded-selection-estimand-audit-2026-07-29-v1/track_three_estimand_funded_selection_bounds.parquet"
+    - "data/processed/experiments/ijds_audit/ijds-funded-selection-estimand-audit-2026-07-29-v1/monthly_three_estimand_gamma1_minus_gamma0_contrasts.parquet"
+    - "data/processed/experiments/ijds_audit/ijds-funded-selection-estimand-audit-2026-07-29-v1/track_three_estimand_gamma1_minus_gamma0_contrasts.parquet"
+    - "data/processed/experiments/ijds_audit/ijds-funded-selection-estimand-audit-2026-07-29-v1/support_and_fixed_capital_v3_reconciliation.parquet"
+    - "models/experiments/ijds_audit/ijds-funded-selection-estimand-audit-2026-07-29-v1/funded_selection_estimand_audit_summary.json"
+    - "models/experiments/ijds_audit/ijds-funded-selection-estimand-audit-2026-07-29-v1/execution_receipt.json"
+  pending_at_runner_exit: true
+  dvc_required: false
+
+source:
+  allocation_freeze:
+    path: "models/experiments/ijds_audit/ijds-allocation-granularity-sensitivity-2026-07-16-v3/protocol_freeze.json"
+    bytes: 4677
+    sha256: "cb66f9eedcd130d5d8f57cd182bcb83603df3fb2bdd8292244ec6a5f77d78c1d"
+  continuous_parent_allocations:
+    path: "data/processed/experiments/ijds_audit/ijds-portfolio-structure-sensitivity-2026-07-15-v6/scenarios/b1000k_p025_l045/frontier/allocations.parquet"
+    bytes: 3180848
+    sha256: "83870a9e0234289a46641f53f8857eeba5937ebdb8cd19b25eb56f7e8a8dfa81"
+  rounded_allocations:
+    path: "data/processed/experiments/ijds_audit/ijds-allocation-granularity-sensitivity-2026-07-16-v3/outcome_free/rounded_allocations.parquet"
+    bytes: 3209311
+    sha256: "16b1e6496f86c3ea6f5cab7d6e32c68601cbcc448ab1fccfb5e83f75c610b7a2"
+  granularity_summary:
+    path: "models/experiments/ijds_audit/ijds-allocation-granularity-sensitivity-2026-07-16-v3/allocation_granularity_summary.json"
+    bytes: 2226
+    sha256: "7e8d9609367ae2cb07e9d0d56e676d7af5486258f7f36a2680d66d2f90d4b51a"
+  granularity_contrasts:
+    path: "data/processed/experiments/ijds_audit/ijds-allocation-granularity-sensitivity-2026-07-16-v3/evaluation/granularity_contrasts.parquet"
+    bytes: 33656
+    sha256: "12a91dbc69b4f666a16a6fe51524f13fb192a1122f8eab2f40fe38b50cd191a4"
+  evaluation_manifest:
+    path: "models/experiments/ijds_audit/ijds-normalized-objective-frontier-2026-07-15-v5/verified_evaluation_manifest.json"
+    bytes: 18231
+    sha256: "9ee55a2522349c8520f308bc69273774dd48964847dfd340b78a7be46474cd7f"
+  joined_funded_allocations:
+    path: "data/processed/experiments/ijds_audit/ijds-normalized-objective-frontier-2026-07-15-v5/evaluation/joined_funded_allocations.parquet"
+    bytes: 15289032
+    sha256: "2c95e0c8cec52f5be8d52084e7842f253e6a297a70cd6f413acde4065ec95d04"
+
+design:
+  estimand_population: "fixed_usd25_positive_funded_loan_positions"
+  binary_selection_unit: "unique_loan_within_issue_month_and_policy"
+  role: "primary_oot"
+  lot_size_usd: 25.0
+  committed_budget_usd_per_month: 1000000.0
+  pooling: "pool_selected_loan_positions_over_all_15_months_before_division"
+  count_minus_invested_dollar_contrast: "shared_binary_completion_within_each_policy_track"
+  count_minus_fixed_capital_contrast: "shared_binary_completion_within_each_policy_track"
+  support_and_fixed_capital_reconciliation: "exact_support_lineage_plus_shared_completion_fixed_capital_reconciliation"
+  gamma_contrast: "gamma1_minus_gamma0_shared_binary_completion"
+  sharpness_scope: "cellwise_not_joint_across_tracks"
+  periods:
+    - "2016-04"
+    - "2016-05"
+    - "2016-06"
+    - "2016-07"
+    - "2016-08"
+    - "2016-09"
+    - "2016-10"
+    - "2016-11"
+    - "2016-12"
+    - "2017-01"
+    - "2017-02"
+    - "2017-03"
+    - "2017-04"
+    - "2017-05"
+    - "2017-06"
+  window_ids:
+    - "w01_2012m01_m06"
+    - "w02_2012m02_m07"
+    - "w03_2012m03_m08"
+    - "w04_2012m04_m09"
+    - "w05_2012m05_m10"
+    - "w06_2012m06_m11"
+    - "w07_2012m07_m12"
+    - "w08_2012m08_2013m01"
+  rulers: ["objective_matched", "normalized_score"]
+  coordinates: [0.25, 0.50, 0.75]
+  gamma_endpoints: [0.0, 1.0]
+  expected_source_positive_positions: 143175
+  expected_rounded_positive_positions: 143167
+  expected_removed_positions: 8
+  expected_changed_positions: 2985
+  expected_monthly_portfolios: 1440
+  expected_policy_tracks: 96
+  expected_monthly_gamma_contrasts: 720
+  expected_track_gamma_contrasts: 48
+  expected_support_and_fixed_capital_reconciliation_tracks: 96
+  numerical_tolerance: 1.0e-12
+  source_rounding_tolerance: 1.0e-8
+  descriptive_coverage_reference: 0.90
+  all_cells_reported_without_selection: true
+  historical_results_previously_inspected: true
+
+interpretation:
+  finite_archive_fixed_support_audit: true
+  fcp_compatible_binary_estimand: true
+  invested_dollar_selected_weighting_is_a_distinct_estimand: true
+  fixed_capital_decision_weighting_is_the_active_granularity_estimand: true
+  fixed_capital_is_not_silently_renamed_invested_dollar_coverage: true
+  unresolved_outcomes_are_sharply_bounded: true
+  continuous_parent_and_outcome_join_are_exactly_reconciled: true
+  selected_set_conformal_validity: false
+  false_coverage_rate_control: false
+  jomi_guarantee: false
+  exchangeability_claim: false
+  prospective_deployment_claim: false
+  causal_claim: false
+  policy_or_track_selection: false
+
+stop_rules:
+  fail_if_protocol_tag_not_clean_current_head: true
+  fail_if_any_source_descriptor_differs: true
+  fail_if_nested_source_lineage_differs: true
+  fail_if_protected_source_changes_during_execution: true
+  fail_if_usd25_support_contract_differs: true
+  fail_if_v3_parent_and_v5_join_differ: true
+  fail_if_removed_position_does_not_floor_to_zero: true
+  fail_if_any_policy_track_or_month_is_missing: true
+  fail_if_any_gamma_pair_is_missing_or_duplicated: true
+  fail_if_binary_miscoverage_does_not_reconcile: true
+  fail_if_fixed_capital_recomputation_differs_from_registered_v3: true
+  fail_if_any_expected_census_differs: true
+  fail_if_implementation_or_git_state_changes_during_execution: true
+  fail_if_output_directory_already_exists: true
+  never_select_suppress_or_promote_a_result_cell: true
+
+output:
+  data_root: "data/processed/experiments/ijds_audit"
+  model_root: "models/experiments/ijds_audit"
+  immutability: "hard_no_overwrite_choose_fresh_run_tag"
+  monthly_bounds: "monthly_three_estimand_funded_selection_bounds.parquet"
+  track_bounds: "track_three_estimand_funded_selection_bounds.parquet"
+  monthly_gamma_contrasts: "monthly_three_estimand_gamma1_minus_gamma0_contrasts.parquet"
+  track_gamma_contrasts: "track_three_estimand_gamma1_minus_gamma0_contrasts.parquet"
+  support_and_fixed_capital_reconciliation: "support_and_fixed_capital_v3_reconciliation.parquet"
+  summary: "funded_selection_estimand_audit_summary.json"
+  execution_receipt: "execution_receipt.json"

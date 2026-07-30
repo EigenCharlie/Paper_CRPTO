@@ -1,0 +1,168 @@
+schema_version: "2026-07-29.1"
+protocol_status: "retrospectively_locked_after_archive_and_prior_transport_inspection_before_v1_execution"
+run_tag: "ijds-residual-transport-frontier-2026-07-29-v1"
+protocol_tag: "protocol/ijds-residual-transport-frontier-2026-07-29-v1"
+protocol_path: "docs/research/ijds_residual_transport_frontier_v1_protocol_2026-07-29.md"
+
+artifact_transport:
+  artifact_tag: "artifacts/ijds-residual-transport-frontier-2026-07-29-v1"
+  artifact_commit_relationship: "single_direct_child_of_protocol_commit"
+  exact_tracked_paths:
+    - "data/processed/experiments/ijds_audit/ijds-residual-transport-frontier-2026-07-29-v1/monthly_residual_transport_frontier.csv"
+    - "data/processed/experiments/ijds_audit/ijds-residual-transport-frontier-2026-07-29-v1/pooled_residual_transport_frontier.csv"
+    - "models/experiments/ijds_audit/ijds-residual-transport-frontier-2026-07-29-v1/residual_transport_frontier_summary.json"
+    - "models/experiments/ijds_audit/ijds-residual-transport-frontier-2026-07-29-v1/execution_receipt.json"
+  pending_at_runner_exit: true
+  dvc_required: false
+
+source:
+  active_v5_config:
+    path: "configs/experiments/ijds_binary_geometry_frontier_v4_2026-07-15_v5.yaml"
+    bytes: 1371
+    sha256: "c749befbd0ab7e0f8d6fcded7e7c730cae998032f897f65c7e7673d2a12c3715"
+  active_v4_config:
+    path: "configs/experiments/ijds_binary_geometry_frontier_v4_2026-07-15_v4.yaml"
+    bytes: 1189
+    sha256: "252be553d49cef114dee64eca8359e042f12a0b0e8ea37d91d43fd932f711828"
+  active_v3_config:
+    path: "configs/experiments/ijds_binary_geometry_frontier_v4_2026-07-14_v3.yaml"
+    bytes: 1232
+    sha256: "5123698bd6d21a0531f81ce7b26edc093dc49452e13aa531166c5ccc36400eca"
+  active_v2_config:
+    path: "configs/experiments/ijds_binary_geometry_frontier_v4_2026-07-12_v2.yaml"
+    bytes: 945
+    sha256: "1cad054433cbfc26d846cf6df81a4a2bb9929ab457a6ef80e7747d6e003910d6"
+  active_v1_config:
+    path: "configs/experiments/ijds_binary_geometry_frontier_v4_2026-07-12.yaml"
+    bytes: 4136
+    sha256: "fc340e75df0db016a7caf857baa236e559ef5ef34f5dc212fa1b0ab0b842c953"
+  fixed_taxonomy_config:
+    path: "configs/experiments/ijds_fixed_taxonomy_c2_2026-07-11.yaml"
+    bytes: 6541
+    sha256: "5e2ee58760cfdec94a003525f2aafc186e3241fad23ef62442a19ca8c58cf378"
+  credit_control_summary:
+    path: "models/experiments/ijds_audit/ijds-credit-risk-controls-2026-07-15-v5/credit_risk_controls_summary.json"
+    bytes: 23359
+    sha256: "37c0a5c224b62ee3f47259aea4231df26ea184d3666e7fab80431ad26d611715"
+  temporal_coverage:
+    path: "data/processed/experiments/ijds_audit/ijds-credit-risk-controls-2026-07-15-v5/evaluation/temporal_coverage.parquet"
+    bytes: 502111
+    sha256: "968872d3dd119cf89cebceb969d4d155fb3a75e010026e023ae10d1cede9e58c"
+  credit_control_freeze:
+    path: "models/experiments/ijds_audit/ijds-credit-risk-controls-2026-07-13-v1b/protocol_freeze.json"
+    bytes: 25908
+    sha256: "da4805e644bcf5decfbb0a67c0c81a5b9dd61f3ab2e17d3dc5264100e7eb4d35"
+  scores:
+    path: "data/processed/experiments/ijds_audit/ijds-credit-risk-controls-2026-07-13-v1b/prediction/scores.parquet"
+    bytes: 30407406
+    sha256: "5795bc0a75be90e86d37cf7d297f4b4fd6e6604b38f8179bc5042c024a53a8dc"
+  recipes:
+    path: "models/experiments/ijds_audit/ijds-credit-risk-controls-2026-07-13-v1b/prediction/residual_recipes.json"
+    bytes: 187689
+    sha256: "969ecbefe46bec4893a03be57385eda29b33dd291d73e7c0120f6d488a9e9936"
+  residual_fit_audit:
+    path: "data/processed/experiments/ijds_audit/ijds-credit-risk-controls-2026-07-13-v1b/prediction/residual_fit_audit.parquet"
+    bytes: 45955332
+    sha256: "396c30d9bec7d222220cfe6f9870ab4994cf5c33e6da8c9e4ebbd99153155353"
+  raw_archive:
+    path: "data/raw/Loan_status_2007-2020Q3.csv"
+    bytes: 1773470505
+    sha256: "5878af2a088f8ab5214c9337289fb8b5eb6c6338fd3f417b6cdc18513dc6f35f"
+  exchangeability_summary:
+    path: "models/experiments/ijds_audit/ijds-exchangeability-transport-test-2026-07-21-v1/exchangeability_transport_test_summary.json"
+    bytes: 9078
+    sha256: "72d9d39b2bef36a36440f1ccc720575d74005f1ad1932a774a91f73ed26c8af6"
+  exchangeability_strata:
+    path: "data/processed/experiments/ijds_audit/ijds-exchangeability-transport-test-2026-07-21-v1/evaluation/exchangeability_transport_strata.parquet"
+    bytes: 90676
+    sha256: "4d34a1de1d3d9556e9b9b74d0517b01b117030d7036a6911d5ad6807080601e3"
+
+design:
+  nominal_miscoverage: 0.10
+  taxonomy_groups: 5
+  role: "primary_oot"
+  expected_monthly_rows: 3000
+  expected_pooled_rows: 200
+  expected_candidates: 376890
+  expected_resolved: 364814
+  expected_unresolved: 12076
+  expected_resolved_y0: 307842
+  expected_resolved_y1: 56972
+  issue_months:
+    - "2016-04"
+    - "2016-05"
+    - "2016-06"
+    - "2016-07"
+    - "2016-08"
+    - "2016-09"
+    - "2016-10"
+    - "2016-11"
+    - "2016-12"
+    - "2017-01"
+    - "2017-02"
+    - "2017-03"
+    - "2017-04"
+    - "2017-05"
+    - "2017-06"
+  learners:
+    - "catboost_platt"
+    - "numeric_logistic_platt"
+    - "catboost_monotonic_platt"
+    - "woe_scorecard_platform_platt"
+    - "woe_scorecard_borrower_platt"
+  window_ids:
+    - "w01_2012m01_m06"
+    - "w02_2012m02_m07"
+    - "w03_2012m03_m08"
+    - "w04_2012m04_m09"
+    - "w05_2012m05_m10"
+    - "w06_2012m06_m11"
+    - "w07_2012m07_m12"
+    - "w08_2012m08_2013m01"
+
+output:
+  data_root: "data/processed/experiments/ijds_audit"
+  model_root: "models/experiments/ijds_audit"
+  immutability: "hard_no_overwrite_choose_fresh_run_tag"
+  monthly_table: "monthly_residual_transport_frontier.csv"
+  pooled_table: "pooled_residual_transport_frontier.csv"
+  summary: "residual_transport_frontier_summary.json"
+  execution_receipt: "execution_receipt.json"
+
+interpretation:
+  retrospective_after_archive_and_prior_transport_inspection: true
+  exhaustive_deterministic_full_census: true
+  preregistered: false
+  confirmatory: false
+  directional_ks_is_descriptive_only: true
+  directional_ks_uses_exact_integer_cross_products: true
+  no_p_values_or_multiplicity_claim: true
+  no_exchangeability_test: true
+  no_temporal_validity_transfer: true
+  no_selected_or_funded_set_validity: true
+  no_causal_or_prospective_claim: true
+  no_ranking_or_selection: true
+  no_two_origin_sensitivity: true
+  unresolved_binary_completion_extrema_are_cellwise_sharp: true
+  directional_discrepancy_comparison_requires_strict_sharp_range_separation: true
+  directional_discrepancy_ties_are_not_robustly_ordered: true
+  no_interior_attainability_claim: true
+  pooled_q_reconciles_active_v5_and_exchangeability_lineage: true
+  protected_sources_are_read_only: true
+  protected_read_root_is_materialization_only: true
+
+stop_rules:
+  stop_on_dirty_or_untagged_head: true
+  stop_on_source_or_nested_descriptor_mismatch: true
+  stop_on_protected_read_path_escape: true
+  stop_on_preexisting_output_path: true
+  stop_on_unsafe_output_basename: true
+  stop_on_incomplete_or_duplicate_grid: true
+  stop_on_monthly_cell_without_resolved_target_rows: true
+  stop_on_candidate_or_endpoint_census_drift: true
+  stop_on_fit_order_statistic_or_recipe_drift: true
+  stop_on_target_score_edge_or_assignment_drift: true
+  stop_on_v5_q_or_coverage_reconciliation_failure: true
+  stop_on_directional_ks_or_completion_order_failure: true
+  stop_on_monthly_to_pooled_count_reconciliation_failure: true
+  stop_on_implementation_drift: true
