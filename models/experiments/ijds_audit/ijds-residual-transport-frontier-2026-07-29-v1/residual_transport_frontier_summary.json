@@ -1,0 +1,567 @@
+{
+  "schema_version": "2026-07-29.1",
+  "status": "complete_clean_tagged_calculation_pending_git_artifact_commit_v1",
+  "activation_status": "candidate_only_no_active_claim",
+  "run_tag": "ijds-residual-transport-frontier-2026-07-29-v1",
+  "protocol_tag": "protocol/ijds-residual-transport-frontier-2026-07-29-v1",
+  "protocol_commit": "9c4b082ce68eb88bf60666b4cb794348bf57a40d",
+  "protocol": {
+    "path": "docs/research/ijds_residual_transport_frontier_v1_protocol_2026-07-29.md",
+    "bytes": 10706,
+    "sha256": "3eb265b1d6ed0a2c90d362cd7c5a7be32dbc9a33b823dcec44e9e2be1e05bb63"
+  },
+  "scope": "five_learners_by_eight_windows_by_five_strata_by_fifteen_months_plus_pooled",
+  "source_artifacts": {
+    "active_v5_config": {
+      "path": "configs/experiments/ijds_binary_geometry_frontier_v4_2026-07-15_v5.yaml",
+      "bytes": 1371,
+      "sha256": "c749befbd0ab7e0f8d6fcded7e7c730cae998032f897f65c7e7673d2a12c3715"
+    },
+    "active_v4_config": {
+      "path": "configs/experiments/ijds_binary_geometry_frontier_v4_2026-07-15_v4.yaml",
+      "bytes": 1189,
+      "sha256": "252be553d49cef114dee64eca8359e042f12a0b0e8ea37d91d43fd932f711828"
+    },
+    "active_v3_config": {
+      "path": "configs/experiments/ijds_binary_geometry_frontier_v4_2026-07-14_v3.yaml",
+      "bytes": 1232,
+      "sha256": "5123698bd6d21a0531f81ce7b26edc093dc49452e13aa531166c5ccc36400eca"
+    },
+    "active_v2_config": {
+      "path": "configs/experiments/ijds_binary_geometry_frontier_v4_2026-07-12_v2.yaml",
+      "bytes": 945,
+      "sha256": "1cad054433cbfc26d846cf6df81a4a2bb9929ab457a6ef80e7747d6e003910d6"
+    },
+    "active_v1_config": {
+      "path": "configs/experiments/ijds_binary_geometry_frontier_v4_2026-07-12.yaml",
+      "bytes": 4136,
+      "sha256": "fc340e75df0db016a7caf857baa236e559ef5ef34f5dc212fa1b0ab0b842c953"
+    },
+    "fixed_taxonomy_config": {
+      "path": "configs/experiments/ijds_fixed_taxonomy_c2_2026-07-11.yaml",
+      "bytes": 6541,
+      "sha256": "5e2ee58760cfdec94a003525f2aafc186e3241fad23ef62442a19ca8c58cf378"
+    },
+    "credit_control_summary": {
+      "path": "models/experiments/ijds_audit/ijds-credit-risk-controls-2026-07-15-v5/credit_risk_controls_summary.json",
+      "bytes": 23359,
+      "sha256": "37c0a5c224b62ee3f47259aea4231df26ea184d3666e7fab80431ad26d611715"
+    },
+    "temporal_coverage": {
+      "path": "data/processed/experiments/ijds_audit/ijds-credit-risk-controls-2026-07-15-v5/evaluation/temporal_coverage.parquet",
+      "bytes": 502111,
+      "sha256": "968872d3dd119cf89cebceb969d4d155fb3a75e010026e023ae10d1cede9e58c"
+    },
+    "credit_control_freeze": {
+      "path": "models/experiments/ijds_audit/ijds-credit-risk-controls-2026-07-13-v1b/protocol_freeze.json",
+      "bytes": 25908,
+      "sha256": "da4805e644bcf5decfbb0a67c0c81a5b9dd61f3ab2e17d3dc5264100e7eb4d35"
+    },
+    "scores": {
+      "path": "data/processed/experiments/ijds_audit/ijds-credit-risk-controls-2026-07-13-v1b/prediction/scores.parquet",
+      "bytes": 30407406,
+      "sha256": "5795bc0a75be90e86d37cf7d297f4b4fd6e6604b38f8179bc5042c024a53a8dc"
+    },
+    "recipes": {
+      "path": "models/experiments/ijds_audit/ijds-credit-risk-controls-2026-07-13-v1b/prediction/residual_recipes.json",
+      "bytes": 187689,
+      "sha256": "969ecbefe46bec4893a03be57385eda29b33dd291d73e7c0120f6d488a9e9936"
+    },
+    "residual_fit_audit": {
+      "path": "data/processed/experiments/ijds_audit/ijds-credit-risk-controls-2026-07-13-v1b/prediction/residual_fit_audit.parquet",
+      "bytes": 45955332,
+      "sha256": "396c30d9bec7d222220cfe6f9870ab4994cf5c33e6da8c9e4ebbd99153155353"
+    },
+    "raw_archive": {
+      "path": "data/raw/Loan_status_2007-2020Q3.csv",
+      "bytes": 1773470505,
+      "sha256": "5878af2a088f8ab5214c9337289fb8b5eb6c6338fd3f417b6cdc18513dc6f35f"
+    },
+    "exchangeability_summary": {
+      "path": "models/experiments/ijds_audit/ijds-exchangeability-transport-test-2026-07-21-v1/exchangeability_transport_test_summary.json",
+      "bytes": 9078,
+      "sha256": "72d9d39b2bef36a36440f1ccc720575d74005f1ad1932a774a91f73ed26c8af6"
+    },
+    "exchangeability_strata": {
+      "path": "data/processed/experiments/ijds_audit/ijds-exchangeability-transport-test-2026-07-21-v1/evaluation/exchangeability_transport_strata.parquet",
+      "bytes": 90676,
+      "sha256": "4d34a1de1d3d9556e9b9b74d0517b01b117030d7036a6911d5ad6807080601e3"
+    }
+  },
+  "source_materialization": {
+    "protected_read_root_supplied": true,
+    "roles": {
+      "active_v1_config": "repository",
+      "active_v2_config": "repository",
+      "active_v3_config": "repository",
+      "active_v4_config": "repository",
+      "active_v5_config": "repository",
+      "credit_control_freeze": "repository",
+      "credit_control_summary": "repository",
+      "exchangeability_strata": "repository",
+      "exchangeability_summary": "repository",
+      "fixed_taxonomy_config": "repository",
+      "raw_archive": "repository",
+      "recipes": "repository",
+      "residual_fit_audit": "repository",
+      "scores": "repository",
+      "temporal_coverage": "repository"
+    },
+    "absolute_materialization_paths_recorded": false
+  },
+  "nested_source_reconciliation": {
+    "active_config_to_raw_archive": true,
+    "complete_six_file_active_config_chain_hash_bound": true,
+    "evaluation_to_freeze": true,
+    "evaluation_to_temporal_coverage": true,
+    "freeze_to_scores_recipes_and_fit_audit": true,
+    "exchangeability_to_upstream_sources_and_strata": true,
+    "temporal_coverage_to_exchangeability_strata": {
+      "rows": 200,
+      "key_grid_exact": true,
+      "integer_fields_exact": true,
+      "floating_tolerance": 1e-12,
+      "maximum_absolute_differences": {
+        "coverage_lower": 0.0,
+        "coverage_resolved": 0.0,
+        "coverage_upper": 0.0,
+        "fit_residual_quantile": 0.0,
+        "fit_score_max": 0.0,
+        "fit_score_min": 0.0,
+        "score_max": 0.0,
+        "score_min": 0.0
+      }
+    }
+  },
+  "census": {
+    "candidate_rows": 376890,
+    "resolved_rows": 364814,
+    "resolved_nondefaults": 307842,
+    "resolved_defaults": 56972,
+    "unresolved_rows": 12076,
+    "learners": 5,
+    "calibration_windows": 8,
+    "score_strata": 5,
+    "issue_months": 15,
+    "monthly_rows": 3000,
+    "pooled_rows": 200,
+    "full_census_reported_without_selection": true
+  },
+  "module_audit": {
+    "status": "candidate_module_only_no_active_evidence",
+    "candidate_rows": 376890,
+    "resolved_rows": 364814,
+    "unresolved_rows": 12076,
+    "learners": [
+      "catboost_platt",
+      "numeric_logistic_platt",
+      "catboost_monotonic_platt",
+      "woe_scorecard_platform_platt",
+      "woe_scorecard_borrower_platt"
+    ],
+    "window_ids": [
+      "w01_2012m01_m06",
+      "w02_2012m02_m07",
+      "w03_2012m03_m08",
+      "w04_2012m04_m09",
+      "w05_2012m05_m10",
+      "w06_2012m06_m11",
+      "w07_2012m07_m12",
+      "w08_2012m08_2013m01"
+    ],
+    "taxonomy_groups": 5,
+    "issue_months": [
+      "2016-04",
+      "2016-05",
+      "2016-06",
+      "2016-07",
+      "2016-08",
+      "2016-09",
+      "2016-10",
+      "2016-11",
+      "2016-12",
+      "2017-01",
+      "2017-02",
+      "2017-03",
+      "2017-04",
+      "2017-05",
+      "2017-06"
+    ],
+    "monthly_rows": 3000,
+    "pooled_rows": 200,
+    "panel_ids_sha256": "72799b236a7e45d8746099adefba7da5683e8308959643d6ad341d3585e8fa74",
+    "fit_audit": {
+      "fit_audit_rows": 909665,
+      "fit_audit_cells": 200,
+      "capped_cells": 0,
+      "tied_threshold_cells": 0
+    },
+    "directional_ks_p_values_computed": false,
+    "completion_extrema_are_sharp_endpoints": true,
+    "directional_discrepancy_comparison_uses_strict_separation": true,
+    "directional_discrepancy_ties_are_not_robustly_ordered": true,
+    "interior_attainability_claimed": false,
+    "monthly_to_pooled_q_counts_reconciled": true,
+    "pooled_v5_q_and_coverage_reconciled": true
+  },
+  "identities": {
+    "resolved_directional_ks_on_union_grid": true,
+    "directional_ks_uses_exact_integer_cross_products": true,
+    "unresolved_completion_extrema_are_cellwise_sharp": true,
+    "directional_discrepancy_comparison_requires_strict_sharp_range_separation": true,
+    "directional_discrepancy_ties_are_not_robustly_ordered": true,
+    "interior_attainability_claimed": false,
+    "pooled_q_counts_and_coverage_reconcile_v5": true,
+    "monthly_q_counts_sum_to_pooled": true,
+    "p_values_computed": false
+  },
+  "descriptive_ranges": {
+    "monthly_resolved_calibration_minus_target_ks": [
+      0.0,
+      0.1607039617724301
+    ],
+    "monthly_resolved_target_minus_calibration_ks": [
+      0.0,
+      0.1679390931840353
+    ],
+    "monthly_calibration_minus_target_ks_extrema": [
+      0.0,
+      0.321444329476625
+    ],
+    "monthly_target_minus_calibration_ks_extrema": [
+      0.0,
+      0.16844018816937362
+    ],
+    "pooled_resolved_calibration_minus_target_ks": [
+      0.007701110677312928,
+      0.10316216456498042
+    ],
+    "pooled_resolved_target_minus_calibration_ks": [
+      6.39688705264504e-05,
+      0.1474725739705009
+    ],
+    "monthly_sharp_directional_discrepancy_counts": {
+      "directional_discrepancies_not_robustly_ordered": 372,
+      "larger_target_residual_discrepancy_dominates": 2140,
+      "smaller_target_residual_discrepancy_dominates": 488
+    },
+    "pooled_sharp_directional_discrepancy_counts": {
+      "directional_discrepancies_not_robustly_ordered": 34,
+      "larger_target_residual_discrepancy_dominates": 158,
+      "smaller_target_residual_discrepancy_dominates": 8
+    }
+  },
+  "interpretation": {
+    "retrospective_after_archive_and_prior_transport_inspection": true,
+    "exhaustive_deterministic_full_census": true,
+    "preregistered": false,
+    "confirmatory": false,
+    "directional_ks_is_descriptive_only": true,
+    "directional_ks_uses_exact_integer_cross_products": true,
+    "no_p_values_or_multiplicity_claim": true,
+    "no_exchangeability_test": true,
+    "no_temporal_validity_transfer": true,
+    "no_selected_or_funded_set_validity": true,
+    "no_causal_or_prospective_claim": true,
+    "no_ranking_or_selection": true,
+    "no_two_origin_sensitivity": true,
+    "unresolved_binary_completion_extrema_are_cellwise_sharp": true,
+    "directional_discrepancy_comparison_requires_strict_sharp_range_separation": true,
+    "directional_discrepancy_ties_are_not_robustly_ordered": true,
+    "no_interior_attainability_claim": true,
+    "pooled_q_reconciles_active_v5_and_exchangeability_lineage": true,
+    "protected_sources_are_read_only": true,
+    "protected_read_root_is_materialization_only": true
+  },
+  "stop_rules": {
+    "stop_on_dirty_or_untagged_head": true,
+    "stop_on_source_or_nested_descriptor_mismatch": true,
+    "stop_on_protected_read_path_escape": true,
+    "stop_on_preexisting_output_path": true,
+    "stop_on_unsafe_output_basename": true,
+    "stop_on_incomplete_or_duplicate_grid": true,
+    "stop_on_monthly_cell_without_resolved_target_rows": true,
+    "stop_on_candidate_or_endpoint_census_drift": true,
+    "stop_on_fit_order_statistic_or_recipe_drift": true,
+    "stop_on_target_score_edge_or_assignment_drift": true,
+    "stop_on_v5_q_or_coverage_reconciliation_failure": true,
+    "stop_on_directional_ks_or_completion_order_failure": true,
+    "stop_on_monthly_to_pooled_count_reconciliation_failure": true,
+    "stop_on_implementation_drift": true
+  },
+  "monthly_schema": {
+    "rows": 3000,
+    "columns": 57,
+    "dtypes": {
+      "learner": "str",
+      "window_id": "str",
+      "taxonomy_groups": "int64",
+      "conformal_group": "int64",
+      "score_stratum": "int64",
+      "role": "str",
+      "fit_rows": "int64",
+      "finite_sample_rank": "int64",
+      "raw_finite_sample_rank": "int64",
+      "fit_score_min": "float64",
+      "fit_score_max": "float64",
+      "fit_residual_min": "float64",
+      "fit_residual_max": "float64",
+      "target_scope": "str",
+      "issue_month": "str",
+      "target_rows": "int64",
+      "resolved_rows": "int64",
+      "unresolved_rows": "int64",
+      "score_min": "float64",
+      "score_max": "float64",
+      "fit_residual_quantile": "float64",
+      "fit_cdf_at_quantile": "float64",
+      "resolved_target_cdf_at_quantile": "float64",
+      "all_target_cdf_at_quantile_min": "float64",
+      "all_target_cdf_at_quantile_max": "float64",
+      "resolved_misses": "int64",
+      "unresolved_misses_min": "int64",
+      "unresolved_misses_max": "int64",
+      "misses_min": "int64",
+      "misses_max": "int64",
+      "coverage_resolved": "float64",
+      "coverage_lower": "float64",
+      "coverage_upper": "float64",
+      "resolved_calibration_minus_target_ks": "float64",
+      "resolved_calibration_minus_target_witness": "float64",
+      "resolved_calibration_minus_target_numerator": "int64",
+      "resolved_target_minus_calibration_ks": "float64",
+      "resolved_target_minus_calibration_witness": "float64",
+      "resolved_target_minus_calibration_numerator": "int64",
+      "resolved_directional_ks_denominator": "int64",
+      "resolved_ks_grid_points": "int64",
+      "calibration_minus_target_ks_min": "float64",
+      "calibration_minus_target_ks_min_numerator": "int64",
+      "calibration_minus_target_ks_min_witness": "float64",
+      "calibration_minus_target_ks_max": "float64",
+      "calibration_minus_target_ks_max_numerator": "int64",
+      "calibration_minus_target_ks_max_witness": "float64",
+      "target_minus_calibration_ks_min": "float64",
+      "target_minus_calibration_ks_min_numerator": "int64",
+      "target_minus_calibration_ks_min_witness": "float64",
+      "target_minus_calibration_ks_max": "float64",
+      "target_minus_calibration_ks_max_numerator": "int64",
+      "target_minus_calibration_ks_max_witness": "float64",
+      "sharp_directional_discrepancy_comparison": "str",
+      "completion_directional_ks_denominator": "int64",
+      "low_completion_grid_points": "int64",
+      "high_completion_grid_points": "int64"
+    }
+  },
+  "pooled_schema": {
+    "rows": 200,
+    "columns": 58,
+    "dtypes": {
+      "learner": "str",
+      "window_id": "str",
+      "taxonomy_groups": "int64",
+      "conformal_group": "int64",
+      "score_stratum": "int64",
+      "role": "str",
+      "fit_rows": "int64",
+      "finite_sample_rank": "int64",
+      "raw_finite_sample_rank": "int64",
+      "fit_score_min": "float64",
+      "fit_score_max": "float64",
+      "fit_residual_min": "float64",
+      "fit_residual_max": "float64",
+      "target_scope": "str",
+      "issue_month": "str",
+      "target_rows": "int64",
+      "resolved_rows": "int64",
+      "unresolved_rows": "int64",
+      "score_min": "float64",
+      "score_max": "float64",
+      "fit_residual_quantile": "float64",
+      "fit_cdf_at_quantile": "float64",
+      "resolved_target_cdf_at_quantile": "float64",
+      "all_target_cdf_at_quantile_min": "float64",
+      "all_target_cdf_at_quantile_max": "float64",
+      "resolved_misses": "int64",
+      "unresolved_misses_min": "int64",
+      "unresolved_misses_max": "int64",
+      "misses_min": "int64",
+      "misses_max": "int64",
+      "coverage_resolved": "float64",
+      "coverage_lower": "float64",
+      "coverage_upper": "float64",
+      "resolved_calibration_minus_target_ks": "float64",
+      "resolved_calibration_minus_target_witness": "float64",
+      "resolved_calibration_minus_target_numerator": "int64",
+      "resolved_target_minus_calibration_ks": "float64",
+      "resolved_target_minus_calibration_witness": "float64",
+      "resolved_target_minus_calibration_numerator": "int64",
+      "resolved_directional_ks_denominator": "int64",
+      "resolved_ks_grid_points": "int64",
+      "calibration_minus_target_ks_min": "float64",
+      "calibration_minus_target_ks_min_numerator": "int64",
+      "calibration_minus_target_ks_min_witness": "float64",
+      "calibration_minus_target_ks_max": "float64",
+      "calibration_minus_target_ks_max_numerator": "int64",
+      "calibration_minus_target_ks_max_witness": "float64",
+      "target_minus_calibration_ks_min": "float64",
+      "target_minus_calibration_ks_min_numerator": "int64",
+      "target_minus_calibration_ks_min_witness": "float64",
+      "target_minus_calibration_ks_max": "float64",
+      "target_minus_calibration_ks_max_numerator": "int64",
+      "target_minus_calibration_ks_max_witness": "float64",
+      "sharp_directional_discrepancy_comparison": "str",
+      "completion_directional_ks_denominator": "int64",
+      "low_completion_grid_points": "int64",
+      "high_completion_grid_points": "int64",
+      "v5_q_and_coverage_reconciled": "bool"
+    }
+  },
+  "artifacts": {
+    "monthly_residual_transport_frontier": {
+      "path": "data/processed/experiments/ijds_audit/ijds-residual-transport-frontier-2026-07-29-v1/monthly_residual_transport_frontier.csv",
+      "bytes": 2290033,
+      "sha256": "78ddfc1b858e9ca0089d5e7c45612e737184a183a0917e2b520cbcd97f777239"
+    },
+    "pooled_residual_transport_frontier": {
+      "path": "data/processed/experiments/ijds_audit/ijds-residual-transport-frontier-2026-07-29-v1/pooled_residual_transport_frontier.csv",
+      "bytes": 159771,
+      "sha256": "f45e35be1f9b7085cea640d23431478e5a18d676acda3c4f8aa57c1b0f6e2dd3"
+    }
+  },
+  "artifact_transport": {
+    "artifact_tag": "artifacts/ijds-residual-transport-frontier-2026-07-29-v1",
+    "artifact_commit_relationship": "single_direct_child_of_protocol_commit",
+    "exact_tracked_paths": [
+      "data/processed/experiments/ijds_audit/ijds-residual-transport-frontier-2026-07-29-v1/monthly_residual_transport_frontier.csv",
+      "data/processed/experiments/ijds_audit/ijds-residual-transport-frontier-2026-07-29-v1/pooled_residual_transport_frontier.csv",
+      "models/experiments/ijds_audit/ijds-residual-transport-frontier-2026-07-29-v1/residual_transport_frontier_summary.json",
+      "models/experiments/ijds_audit/ijds-residual-transport-frontier-2026-07-29-v1/execution_receipt.json"
+    ],
+    "pending_at_runner_exit": true,
+    "dvc_required": false
+  },
+  "implementation_provenance": {
+    "source_files": {
+      "configs/experiments/ijds_residual_transport_frontier_2026-07-29_v1.yaml": {
+        "path": "configs/experiments/ijds_residual_transport_frontier_2026-07-29_v1.yaml",
+        "bytes": 7346,
+        "sha256": "425dac935bd59a36886540a504c6a54ae7677e3a2c6f27c049a572c75f7762e0"
+      },
+      "scripts/experiments/run_ijds_residual_transport_frontier.py": {
+        "path": "scripts/experiments/run_ijds_residual_transport_frontier.py",
+        "bytes": 40209,
+        "sha256": "9ee500b8837b27d16006033811955a27c20b2eee70ab6a7f4d4f9e696e9be98f"
+      },
+      "src/ijds_audit/residual_transport_frontier.py": {
+        "path": "src/ijds_audit/residual_transport_frontier.py",
+        "bytes": 30021,
+        "sha256": "2e04e034730fac7acfb8e91c0a6ec54366fe74f7159ebea23ac8307fe710ad6d"
+      },
+      "src/ijds_audit/common_panel_threshold_response.py": {
+        "path": "src/ijds_audit/common_panel_threshold_response.py",
+        "bytes": 40587,
+        "sha256": "0480be880d8afdcd2da4f3226938574ec876f61e488fafadda42709eb8b5978b"
+      },
+      "src/ijds_audit/grid_contracts.py": {
+        "path": "src/ijds_audit/grid_contracts.py",
+        "bytes": 5258,
+        "sha256": "439e08405a4c1e58e21fe2fe84e02cdfd1d8a88bbbc88b550ae395ace5948a8b"
+      },
+      "src/ijds_audit/protocol.py": {
+        "path": "src/ijds_audit/protocol.py",
+        "bytes": 28380,
+        "sha256": "ad6c9e67b1ea268ace799e042aeddbdabc99a25c8c774dfc3ff34217a39a8cbe"
+      },
+      "src/ijds_audit/config.py": {
+        "path": "src/ijds_audit/config.py",
+        "bytes": 25008,
+        "sha256": "a13cadec6a16267cfe80c3bfce986e6d6bbd6461b61d605036d3a917c4308f8e"
+      },
+      "src/ijds_audit/evaluation.py": {
+        "path": "src/ijds_audit/evaluation.py",
+        "bytes": 30728,
+        "sha256": "0e518fece3cb672965f437c7043993a6bffc8ce8a0ec6d5f42bdc9889b1d9046"
+      },
+      "src/data/outcome_observability.py": {
+        "path": "src/data/outcome_observability.py",
+        "bytes": 21985,
+        "sha256": "d54d9ccf7d54a27bb31a5f8a47e9351ca7201bed7683e9b069299f1501f80d87"
+      },
+      "src/models/binary_conformal_guardrail.py": {
+        "path": "src/models/binary_conformal_guardrail.py",
+        "bytes": 6629,
+        "sha256": "ce4b32ce27202d5cd8b2b58792aa31b6693f0da9f11b22fbbdceb7240324a0cb"
+      },
+      "src/utils/artifact_descriptor.py": {
+        "path": "src/utils/artifact_descriptor.py",
+        "bytes": 1705,
+        "sha256": "ef8f6df7cf311e2173659518370cfde5ed5de4380b444aaad35dcd794cd620f8"
+      },
+      "src/utils/isolated_experiment.py": {
+        "path": "src/utils/isolated_experiment.py",
+        "bytes": 9288,
+        "sha256": "a237249e71ab20b1ced0060397e06decaebc90a4a45d8d07913c49f7eca1e8eb"
+      },
+      "src/utils/pipeline_runtime.py": {
+        "path": "src/utils/pipeline_runtime.py",
+        "bytes": 4932,
+        "sha256": "8b3f447cb56dba68c806fa08e79f1d1c619f9e12c70c51558f50309a177d5285"
+      },
+      "uv.lock": {
+        "path": "uv.lock",
+        "bytes": 428110,
+        "sha256": "6c862cbad9ab7e3a07dd2823c775127403093d6ad59a789ee227d827165e4733"
+      },
+      "docs/research/ijds_residual_transport_frontier_v1_protocol_2026-07-29.md": {
+        "path": "docs/research/ijds_residual_transport_frontier_v1_protocol_2026-07-29.md",
+        "bytes": 10706,
+        "sha256": "3eb265b1d6ed0a2c90d362cd7c5a7be32dbc9a33b823dcec44e9e2be1e05bb63"
+      }
+    },
+    "hash_algorithm": "sha256"
+  },
+  "environment": {
+    "python": "3.11.14 (main, Feb  3 2026, 22:51:29) [MSC v.1944 64 bit (AMD64)]",
+    "platform": "Windows-10-10.0.26200-SP0",
+    "packages": {
+      "catboost": "1.2.10",
+      "highspy": "1.15.1",
+      "numpy": "2.4.6",
+      "optbinning": "0.21.0",
+      "pandas": "3.0.3",
+      "pyarrow": "25.0.0",
+      "scikit-learn": "1.9.0",
+      "scipy": "1.17.1"
+    },
+    "solver_environment": {
+      "HIGHS_NATIVE_FALLBACK_SCIPY": null,
+      "HIGHS_PARALLEL": null,
+      "HIGHS_PRESOLVE": null,
+      "HIGHS_RESET_GLOBAL_SCHEDULER": null,
+      "HIGHS_SIMPLEX_STRATEGY": null,
+      "HIGHS_SOLVER": null
+    },
+    "uv_lock_sha256": "6c862cbad9ab7e3a07dd2823c775127403093d6ad59a789ee227d827165e4733",
+    "executable": {
+      "basename": "python.exe",
+      "bytes": 45568,
+      "sha256": "c30a909db10e2e5c88d1b2d6c6cbd95ac64e63033c6a0cbd06f6ee2621534a10"
+    },
+    "absolute_paths_recorded": false
+  },
+  "initial_git": {
+    "commit": "9c4b082ce68eb88bf60666b4cb794348bf57a40d",
+    "dirty": false,
+    "dirty_entries": 0,
+    "dirty_paths": []
+  },
+  "protected_stages_run": [],
+  "protected_artifacts_read": [
+    {
+      "path": "data/raw/Loan_status_2007-2020Q3.csv",
+      "bytes": 1773470505,
+      "sha256": "5878af2a088f8ab5214c9337289fb8b5eb6c6338fd3f417b6cdc18513dc6f35f"
+    }
+  ],
+  "protected_artifacts_written": []
+}
