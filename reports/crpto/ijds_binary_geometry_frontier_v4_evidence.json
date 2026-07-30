@@ -59755,8 +59755,8 @@
     },
     "claim_ledger_contract": {
       "path": "configs/ijds_claim_ledger.yaml",
-      "bytes": 20339,
-      "sha256": "6ac4a22514db4d9ba7e4665ef23f781e92d1b507a08ed0e67dd88f9f96f73904"
+      "bytes": 20271,
+      "sha256": "3aed6efb2b420b86444ca3d99c931219b62ee8b0ae77091bed94ba8db00886a6"
     },
     "publication_targets_contract": {
       "path": "configs/crpto_publication_targets.yaml",
@@ -59775,8 +59775,8 @@
     },
     "publication_integrity_checker": {
       "path": "scripts/check_publication_integrity.py",
-      "bytes": 36739,
-      "sha256": "d9b59f059c8ebb41acb5e59cfb250907f1c1c710d68778127a8029d83cb5c320"
+      "bytes": 36821,
+      "sha256": "19ceb464f0dbb04b9c1c04adabdd428c1ce261bf9258331dbc7b8d6cf5beef2d"
     },
     "paper_pdf_auditor": {
       "path": "scripts/inspect_ijds_pdfs.py",
@@ -60954,8 +60954,8 @@
     "numeric_authority": "parent_evidence_manifest_only",
     "contract": {
       "path": "configs/ijds_claim_ledger.yaml",
-      "bytes": 20339,
-      "sha256": "6ac4a22514db4d9ba7e4665ef23f781e92d1b507a08ed0e67dd88f9f96f73904"
+      "bytes": 20271,
+      "sha256": "3aed6efb2b420b86444ca3d99c931219b62ee8b0ae77091bed94ba8db00886a6"
     },
     "claims": [
       {
@@ -61111,6 +61111,7 @@
             "claim_matrix"
           ],
           "allowed": [
+            "body",
             "supplement",
             "registry",
             "claim_matrix"
@@ -61146,6 +61147,7 @@
             "claim_matrix"
           ],
           "allowed": [
+            "body",
             "supplement",
             "registry",
             "claim_matrix"
@@ -61297,7 +61299,7 @@
           "credit_controls.outcome_free",
           "label_lag_sensitivity"
         ],
-        "scope": "exact_order_statistic_of_the_two_mirror_calibration_samples_with_stated _calibration_and_target_support_conditions",
+        "scope": "exact_order_statistic_of_the_two_mirror_calibration_samples_with_stated_calibration_and_target_support_conditions",
         "rule": "documented",
         "result_pointer": null,
         "result": null,
@@ -61330,7 +61332,7 @@
         "lineages": [
           "binary_geometry.outcome_free"
         ],
-        "scope": "exact_two_threshold_coverage_band_identity_on_one_common_fixed _target_distribution_with_declared_endpoint_conventions",
+        "scope": "exact_two_threshold_coverage_band_identity_on_one_common_fixed_target_distribution_with_declared_endpoint_conventions",
         "rule": "documented",
         "result_pointer": null,
         "result": null,
@@ -61365,7 +61367,7 @@
           "credit_controls.evaluation",
           "common_panel_threshold_response"
         ],
-        "scope": "fixed_primary_oot_panel_five_learners_by_five_score_strata_by_seven _adjacent_threshold_pairs_with_one_shared_binary_completion_per_unresolved_loan",
+        "scope": "fixed_primary_oot_panel_five_learners_by_five_score_strata_by_seven_adjacent_threshold_pairs_with_one_shared_binary_completion_per_unresolved_loan",
         "rule": "equals",
         "result_pointer": "/common_panel_threshold_response/full_census_and_identities_verified",
         "result": true,
@@ -61404,7 +61406,7 @@
         "lineages": [
           "binary_geometry.outcome_free"
         ],
-        "scope": "fixed_nonnegative_allocation_binary_prediction_sets_normalized_by _positive_total_funded_exposure_under_unrestricted_loanwise_binary_outcomes",
+        "scope": "fixed_nonnegative_allocation_binary_prediction_sets_normalized_by_positive_total_funded_exposure_under_unrestricted_loanwise_binary_outcomes",
         "rule": "documented",
         "result_pointer": null,
         "result": null,
@@ -61438,7 +61440,7 @@
         "lineages": [
           "binary_geometry.outcome_free"
         ],
-        "scope": "exact_endpoint_equivalence_classes_of_bounded_continuous_intervals _under_intersection_with_the_binary_label_space",
+        "scope": "exact_endpoint_equivalence_classes_of_bounded_continuous_intervals_under_intersection_with_the_binary_label_space",
         "rule": "documented",
         "result_pointer": null,
         "result": null,

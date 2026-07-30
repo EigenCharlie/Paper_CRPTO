@@ -77,7 +77,7 @@ claims:
        joint_block_rank_reference_extension, selected_set_validity]
     surfaces:
       required: [supplement, registry, claim_matrix]
-      allowed: [supplement, registry, claim_matrix]
+      allowed: [body, supplement, registry, claim_matrix]
 
   - id: coverage.censored_extension_mixed_stress
     status: active
@@ -94,7 +94,7 @@ claims:
        conformal_theorem_failure, exchangeability_rejection_without_formal_test]
     surfaces:
       required: [supplement, registry, claim_matrix]
-      allowed: [supplement, registry, claim_matrix]
+      allowed: [body, supplement, registry, claim_matrix]
 
   - id: coverage.joint_block_rank_reference_nominal_flags
     status: active
@@ -163,9 +163,7 @@ claims:
     kind: theorem
     rule: documented
     lineages: [binary_geometry.outcome_free, credit_controls.outcome_free, label_lag_sensitivity]
-    scope: >-
-      exact_order_statistic_of_the_two_mirror_calibration_samples_with_stated
-      _calibration_and_target_support_conditions
+    scope: exact_order_statistic_of_the_two_mirror_calibration_samples_with_stated_calibration_and_target_support_conditions
     forbidden_inference:
       [finite_sample_causal_explanation, universal_threshold_transition,
        regime_criterion_without_the_below_half_calibration_condition,
@@ -180,9 +178,7 @@ claims:
     kind: theorem
     rule: documented
     lineages: [binary_geometry.outcome_free]
-    scope: >-
-      exact_two_threshold_coverage_band_identity_on_one_common_fixed
-      _target_distribution_with_declared_endpoint_conventions
+    scope: exact_two_threshold_coverage_band_identity_on_one_common_fixed_target_distribution_with_declared_endpoint_conventions
     forbidden_inference:
       [universal_continuity, threshold_distance_controls_coverage_change,
        geometric_explanation_of_the_finite_archive_shortfall,
@@ -200,9 +196,7 @@ claims:
     expected: true
     lineages: [credit_controls.outcome_free, credit_controls.evaluation,
                common_panel_threshold_response]
-    scope: >-
-      fixed_primary_oot_panel_five_learners_by_five_score_strata_by_seven
-      _adjacent_threshold_pairs_with_one_shared_binary_completion_per_unresolved_loan
+    scope: fixed_primary_oot_panel_five_learners_by_five_score_strata_by_seven_adjacent_threshold_pairs_with_one_shared_binary_completion_per_unresolved_loan
     forbidden_inference:
       [preregistration, confirmation, temporal_validity_transfer,
        slope_or_continuity, threshold_distance_is_coverage_bound,
@@ -220,9 +214,7 @@ claims:
     kind: theorem
     rule: documented
     lineages: [binary_geometry.outcome_free]
-    scope: >-
-      fixed_nonnegative_allocation_binary_prediction_sets_normalized_by
-      _positive_total_funded_exposure_under_unrestricted_loanwise_binary_outcomes
+    scope: fixed_nonnegative_allocation_binary_prediction_sets_normalized_by_positive_total_funded_exposure_under_unrestricted_loanwise_binary_outcomes
     forbidden_inference:
       [lower_endpoint_alone_is_a_miscoverage_floor,
        conditional_positive_class_coverage, selected_set_validity,
@@ -236,9 +228,7 @@ claims:
     kind: theorem
     rule: documented
     lineages: [binary_geometry.outcome_free]
-    scope: >-
-      exact_endpoint_equivalence_classes_of_bounded_continuous_intervals
-      _under_intersection_with_the_binary_label_space
+    scope: exact_endpoint_equivalence_classes_of_bounded_continuous_intervals_under_intersection_with_the_binary_label_space
     forbidden_inference:
       [preferred_embedding, calibrated_upper_endpoint_magnitude,
        optimizer_or_policy_direction, allocation_change_without_experiment,

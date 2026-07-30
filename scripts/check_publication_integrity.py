@@ -8,6 +8,7 @@ import sys
 from collections.abc import Callable, Mapping
 from dataclasses import dataclass
 from pathlib import Path
+from typing import Any, cast
 
 import yaml
 from loguru import logger
@@ -672,14 +673,15 @@ def _paper_artifact_failures(
         if not isinstance(name, str) or not isinstance(raw_descriptor, Mapping):
             failures.append(f"{label} has an invalid descriptor")
             continue
-        raw_path = raw_descriptor.get("path")
+        descriptor = cast(Mapping[str, Any], raw_descriptor)
+        raw_path = descriptor.get("path")
         if isinstance(raw_path, str):
             if previous := seen_paths.get(raw_path):
                 failures.append(f"{label} duplicates the path bound by {previous}")
             else:
                 seen_paths[raw_path] = name
         try:
-            verified_artifact_path(raw_descriptor, repo_root=repo_root, label=label)
+            verified_artifact_path(descriptor, repo_root=repo_root, label=label)
         except (KeyError, OSError, TypeError, ValueError, RuntimeError) as error:
             failures.append(f"{label} failed verification: {error}")
     return failures

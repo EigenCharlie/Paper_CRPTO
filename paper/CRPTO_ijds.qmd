@@ -168,7 +168,7 @@ result. Its three scientific contributions are:
    that a binary set identifies boundary membership but not the subunit endpoint
    used as an LP coefficient: a continuum of set-equivalent embeddings preserves
    every coverage event.
-2. **Complete fixed-panel and transport evidence.** On a common target panel,
+2. **Complete fixed-panel response and transport diagnostics.** On a common target panel,
    holding each unresolved loan's label fixed under both thresholds yields sharp
    bounds for every adjacent-threshold response, with an exact width decomposition. A tie-safe,
    completion-robust use of the known finite-batch Beta--Binomial law supplies a
@@ -260,9 +260,7 @@ do not certify the original zero-threshold chance constraint unless the
 additional zero-threshold conditions hold. CRPTO instead inserts a
 prediction-set *upper endpoint* as a per-unit risk-budget coefficient and asks
 what that substitution costs, inheriting no guarantee from the first. Comparator
-design is itself a first-class object here: in an adjacent machine-learning
-domain, weak baselines are a documented source of overoptimism
-[@mcgreivy2024weakbaselines]. Under confounding, comparison with an
+design is itself a first-class object here. Under confounding, comparison with an
 underspecified status-quo policy can become a partial-identification problem
 [@guerdan2024policy_comparison].
 
@@ -312,7 +310,8 @@ P2P portfolio studies already establish that protection and portfolio design
 have costs [@bertsimas2004; @guo2016p2p]. The contribution here is the audited
 interface: complete residual-window reporting, binary-threshold geometry,
 common-outcome identification, and comparator-support diagnostics. Online
-Supplement Table S13 gives the detailed closest-work matrix and claim boundary.
+Supplement Tables S13A--S13B give the detailed closest-work matrix and claim
+boundary.
 
 # Data and Locked Evaluation Design {#sec-data}
 
@@ -456,20 +455,24 @@ hyperparameters, mappings, fit diagnostics, and WOE/IV controls.
 
 Let $Y_i\in\{0,1\}$ denote terminal default and $p_i$ the Platt-scaled score.
 Write $\widehat p_i(1)=p_i$ and $\widehat p_i(0)=1-p_i$. For either candidate
-label $y\in\{0,1\}$, the absolute-residual nonconformity score is exactly the
-probability-complement classification nonconformity of the least-ambiguous
-set-valued classifier [@sadinle2019lac],
+label $y\in\{0,1\}$, the absolute-residual score is the standard
+probability-complement classification score,
 
 $$
 s_i(y)=|y-p_i|=1-\widehat p_i(y).
 $$ {#eq-binary-nonconformity}
+
+Thresholding this score yields the same binary set form as least-ambiguous
+set-valued classification [@sadinle2019lac]. This algebraic equivalence does not
+transfer oracle expected-size optimality to estimated Platt scores or to the
+temporal, score-stratified construction used here.
 
 Five groups are fixed from 2011 score quantiles, without residual-window labels;
 extreme strata are open-ended so every later score is retained. Conditioning a
 split-conformal threshold on a frozen category in this way is the Mondrian
 construction [@vovk2003mondrian; @vovk2012conditional]; here the category is the
 outcome-free score stratum, not the label. Label-conditional calibration is a
-standard alternative for severe class imbalance [@norinder2017imbalanced]; we
+standard alternative for severe class imbalance [@ding2023]; we
 report it retrospectively as a sensitivity, not as a proved repair for temporal
 nonexchangeability or as the active recipe. The
 specification
@@ -561,17 +564,32 @@ never-covered empty sets or uninformative two-label sets, and neither metric is 
 coverage guarantee.
 
 The baseline above is Mondrian only with respect to the outcome-free score
-stratum; it uses one marginal residual threshold within each stratum. A separate
-retrospective label-Mondrian sensitivity instead freezes a separate rank and
-threshold for each label within each stratum before the OOT outcome join, and
-builds the classification set from the two class-specific comparisons directly,
-so the resulting set need not be symmetric around $p_i$. Class-specific coverage
-is a ratio rather than an additive endpoint, so its sharp bounds assign the
-unresolved candidates whose sets contain or omit the class, and bounds on the
-class gap share each unresolved assignment across both ratios; subtracting
-separately optimized intervals is not sharp. Online Supplement Appendix B.4.2
-gives every definition and bound. The 400 label-stratum rows are identification
-diagnostics, not tests.
+stratum; it uses one marginal residual threshold within each stratum. The
+retrospective label-Mondrian sensitivity instead freezes, for each label $y$ in
+each stratum $g$,
+
+$$
+k_{g,y}=\left\lceil(n_{g,y}+1)(1-\alpha)\right\rceil,
+\qquad q_{g,y}=R^{(k_{g,y})}_{g,y},
+$$ {#eq-label-rank}
+
+where residuals are ordered ascending and the binary implementation uses the
+equivalent cap $q_{g,y}=1$ when $k_{g,y}=n_{g,y}+1$. Before the OOT outcome join,
+it then constructs
+
+$$
+S_i^{\mathrm{LM}}=
+\{0:p_i\le q_{g(i),0}\}\cup
+\{1:1-p_i\le q_{g(i),1}\}.
+$$ {#eq-label-mondrian}
+
+The set need not be symmetric around $p_i$. Class-specific coverage is a ratio
+rather than an additive endpoint, so its sharp bounds assign unresolved
+candidates according to whether the class is contained in the set. Bounds on the
+class gap give each unresolved loan one label shared by both class ratios within
+an endpoint; subtracting separately optimized intervals is not sharp. Online
+Supplement Appendix B.4.2 gives the ratio formulas and all 40/200/400 rows. They
+are identification diagnostics, not tests.
 
 <!-- claim:boundary.no_selected_set_validity -->
 
@@ -803,7 +821,7 @@ The protocol-locked and hash-verified common-panel replay applies this identity 
 pair: five learners by five fixed score strata by seven transitions, or 175
 contrasts, plus 35 learner-level aggregates. It recomputes all 200 calibration
 thresholds from their frozen order statistics. For unresolved loan $i$, it uses
-one shared label in both coverage indicators, so the sharp endpoints add
+the same loan-specific label under both thresholds, so the sharp endpoints add
 $\min_y d_i(y)$ and $\max_y d_i(y)$ loan by loan. Subtracting two separately
 extremized coverage intervals would answer a different, incoherent question.
 
@@ -868,11 +886,13 @@ observed absence of threshold ties does not prove continuity.
 Minimizing attainable strict misses gives the supremum upper-tail p-value over
 all unrestricted binary completions. The locked calculation uses Bonferroni
 across five strata and Holm [@holm1979] across 40 learner-window intersections.
-The joint law of several conformal p-values within one calibration block is a
-Pólya urn rather than a product [@gazin2024transductive], and
-calibration-conditional coverage has its own exact reference law
-[@vovk2012conditional; @bian2023training_conditional]. We retain the batch rank
-reference because its finite-batch null is explicit and legible. Holm already
+The shared calibration block induces dependent conformal p-values rather than a
+product law [@gazin2024transductive]. Training- or calibration-conditional
+coverage is a distinct target studied through PAC or high-probability guarantees
+under stronger sampling contracts
+[@vovk2012conditional; @bian2023training_conditional;
+@duchi2025sampleconditional]. We retain the batch rank reference because its
+finite-batch null is explicit and legible. Holm already
 allows arbitrary dependence among valid p-values; changing the evidence currency
 would not repair inspection of the family or flag pattern. Because an
 exploratory implementation and pattern were inspected before the diagnostic was locked, these are
@@ -907,13 +927,13 @@ $$ {#eq-sharp-bounds}
 
 are sharp because each endpoint is attained by a joint assignment of all
 unresolved outcomes. This is partial identification under unrestricted binary
-completion in the sense of @manski1990bounds and @manski2003partial, not a
+completion in the sense of @manski2003partial, not a
 sampling confidence interval. The unresolved endpoints here arise from an
 administrative availability rule rather than from a decision, so this is the
 binary-completion problem rather than the selective-labels problem
 [@lakkaraju2017selective; @kleinberg2018human]. The estimands are finite-archive
-coverage and frozen-policy outcome functionals
-[@rambachan2022robust_eval; @maiapolo2024partial_id_eval]; unlike reject
+coverage and frozen-policy outcome functionals [@maiapolo2024partial_id_eval];
+unlike reject
 inference, the design imputes no point labels.
 
 For candidate coverage, resolved $R$ retain observed miscoverage and only
@@ -1017,9 +1037,21 @@ identification results, not sampling confidence intervals and not, by itself,
 a rejection of conformal validity. Figure 1 therefore displays the 40 bounds
 separately from the joint-block rank-reference flags.
 
-![Resolved coverage and sharp completion bounds appear in Panel A. Panel B marks cells meeting the locked nominal reporting thresholds for the stronger joint-block reference. Segments are identification bounds, not error bars; flags have no post-selection FWER interpretation.](../reports/crpto/figures/crpto_ijds_v4_fig1_coverage.png){#fig-coverage width=76%}
+![Resolved coverage and sharp completion bounds appear in Panel A. Panel B marks cells meeting the locked nominal reporting thresholds for the stronger joint-block reference. Segments are identification bounds, not error bars; flags have no post-selection FWER interpretation.](../reports/crpto/figures/crpto_ijds_v4_fig1_coverage.png){#fig-coverage width=95%}
 
 Supplement Tables S6--S6A report every bound and set-geometry component.
+
+<!-- claim:coverage.closed_taxonomies_primary_below_nominal -->
+<!-- claim:coverage.censored_extension_mixed_stress -->
+
+The closed 1-, 2-, 5-, and 10-stratum grid leaves all 64 CatBoost and numeric-
+logistic primary-window upper endpoints below 0.90 (maximum 0.897294), so the
+five-stratum taxonomy is not selected as a favorable exception. A deliberately
+more censored 2017 extension is mixed: CatBoost remains below nominal in 8/8
+windows (maximum 0.895157), whereas numeric logistic is below in 2/8 and its
+other six sharp intervals contain 0.90 (maximum 0.908928). The extension is a
+stress with 28,936 unresolved outcomes, not primary OOT evidence, an independent
+replication, or a transport repair.
 
 <!-- claim:coverage.resolved_label_diagnostic_descriptive -->
 
@@ -1027,6 +1059,12 @@ Across all 40 cells, coverage among administratively resolved nondefaults is
 0.982982--0.992714 versus 0.232570--0.363916 among resolved defaults. This
 conditions on resolution and observed label, so it is not all-candidate
 label-conditional validity, equalized coverage, or a fairness test.
+
+Set efficiency supplies a different view over all 376,890 candidates. Across the
+same 40 cells, AvgC is 1.128128--1.268134, empty sets account for
+0.67%--1.61%, two-label sets for 14.42%--27.48%, and singletons for
+71.85%--83.97%. These components show that mean cardinality alone would hide
+both never-covered and uninformative cases; none is a validity guarantee.
 
 | Score | OOT AUC | Brier | Slope | $U_{\max}$ |
 |---|---:|---:|---:|---:|
@@ -1059,28 +1097,40 @@ establish no exchangeability. Online Supplement B.4.1 reports it in full.
 
 The retrospective Label-Mondrian sensitivity [@vovk2012conditional; @ding2023]
 raises observed default coverage in the resolved panel, yet still leaves 27/40
-marginal and 109 of 400 label-stratum endpoints below nominal while AvgC rises to
-1.724--1.785; all 40 aggregate class-gap bounds cross zero, so it neither
-uniformly repairs coverage nor establishes within-label exchangeability.
+marginal and 109 of 400 label-stratum endpoints below nominal. Relative to the
+baseline ranges above, AvgC rises to 1.724--1.785 and two-label sets to
+72.37%--78.55%; all 40 aggregate class-gap bounds cross zero. It therefore
+neither uniformly repairs coverage nor establishes within-label exchangeability.
 
 <!-- claim:sensitivity.missingness_encoding_recurrence -->
 <!-- claim:sensitivity.second_origin_coverage_recurrence -->
 <!-- claim:sensitivity.fit_label_completion_coverage_recurrence -->
 
-All eight upper endpoints remain below 0.90 for sentinel, indicator, and
-native-null encodings (maxima 0.8826, 0.8843, 0.8800) and at individual
-39-calendar-month cutoffs for the 2016 and 2017 origins (maxima 0.8791 and
-0.8753), and four declared completions of 215 cutoff-unavailable fit labels leave
-all 32 upper bounds below 0.90. These shared-chronology sensitivities are neither
-independent replications nor exact day-age matches.
+All 24 encoding cells remain below 0.90 across sentinel, indicator, and
+native-null variants (maxima 0.8826, 0.8843, 0.8800). The 16 individual-age
+cells at 39-calendar-month cutoffs for the 2016 and 2017 origins also remain
+below (maxima 0.8791 and 0.8753), as do all 32 cells from four declared
+completions of 215 cutoff-unavailable fit labels. These shared-chronology
+sensitivities are neither independent replications nor exact day-age matches.
 
-## An exact phase-margin crossing coincides with a change in binary interval geometry
+## Complete fixed-panel response and an illustrative phase-margin crossing
 
 <!-- claim:timing.fit_label_crossing_retained -->
 <!-- claim:geometry.fit_label_completion_crossing_not_universal -->
 <!-- claim:coverage.common_panel_adjacent_response -->
 
-CatBoost S3 exhibits the retrospectively highlighted W8 width change. It is the
+The common-panel replay reports all 175 learner--stratum--transition contrasts
+and 35 learner-level aggregates. Resolved-panel responses range from -1.22645 to
++1.01550 percentage points. Sharp all-candidate identification widths have
+median 0.0185, 90th percentile 0.1063, and maximum 0.2346 percentage points.
+Among the 175 stratum rows, 122 sharp intervals are strictly negative, 48 are
+strictly positive, and five equal $[0,0]$; those signs mechanically follow
+threshold direction, whereas
+the crossed mass, response magnitude, and identification width quantify the
+finite target response.
+
+Against that complete census, CatBoost S3 supplies an illustration selected
+after inspection solely for that purpose. It is the
 third score stratum (internal zero-based group 2), which the published tables encode as
 `score_stratum` 3. Fit prevalence
 declines from 0.1167 in W1 to 0.1017 in W7, then to 0.0971 in W8. The nominal
@@ -1098,7 +1148,7 @@ inspection solely as a descriptive geometric illustration; they are neither a
 confirmatory hypothesis nor a learner, stratum, or window winner. All 175
 adjacent contrasts remain reported.
 
-![CatBoost S3 fit prevalence, exact finite boundary, and fitted residual threshold across eight overlapping windows, shown on focused scales. The pair selected after inspection for illustration changes from phase margin +11 in W7 to -16 in W8 and coincides with the large threshold step described by Proposition 2's conditional order-statistic characterization; it is not confirmatory or a winner, and the complete 175-contrast census remains reported.](../reports/crpto/figures/crpto_ijds_v4_fig2_phase_transition.png){#fig-phase width=64%}
+![CatBoost S3 fit prevalence, exact finite boundary, and fitted residual threshold across eight overlapping windows, shown on focused scales. The pair selected after inspection for illustration changes from phase margin +11 in W7 to -16 in W8 and coincides with the large threshold step described by Proposition 2's conditional order-statistic characterization; it is not confirmatory or a winner, and the complete 175-contrast census remains reported.](../reports/crpto/figures/crpto_ijds_v4_fig2_phase_transition.png){#fig-phase width=82%}
 
 The common-panel replay evaluates the target response directly. In the
 highlighted S3, the same 79,047 loans
@@ -1114,11 +1164,9 @@ one and generate the identification width.
 
 At stratum level, fixed-target coverage is monotone in $c$, so the response sign
 is mechanically determined by the threshold direction; its census is an
-implementation-consistency check, not a discovery. The 175 rows comprise 122
-negative responses, 48 positive responses, and 5 exact $[0,0]$ responses, with
-no strict straddle or one-sided zero touch. The substantive quantities are the
-crossed class mass, response magnitude, and sharp width. At learner level the
-five stratum thresholds can move in different directions; after summing their
+implementation-consistency check, not a discovery. No stratum interval strictly
+straddles or one-sidedly touches zero. At learner level the five stratum
+thresholds can move in different directions; after summing their
 integer numerators before division, all 35 transition intervals exclude zero:
 31 are negative and 4 positive. These are deterministic finite-archive
 descriptions after optimizing over loan-level labels shared within each contrast,
@@ -1131,6 +1179,8 @@ all 175 overlapping contrasts is jointly attained by one global completion.
 quantities in separate aligned panels: they share axes but not denominators, and
 the all-candidate segments are identification bounds rather than uncertainty
 intervals around the resolved response.
+
+![Complete fixed-panel response for all 175 learner--stratum--transition cells. Panel A gives exact resolved-panel changes; Panel B gives sharp all-candidate bounds with each unresolved loan's label held fixed under both thresholds. The aligned panels have different denominators. Capped segments are identification bounds, orange marks the post-inspection S3 illustration, and black crosses mark the five exact $[0,0]$ cells; no regression, ranking, confirmatory, continuity, or joint-attainability claim is made.](../reports/crpto/figures/crpto_ijds_v4_fig4_common_panel_threshold_response.png){#fig-common-panel width=92%}
 
 Proposition 2 gives the exact conditional order-statistic characterization of
 each frozen block, but score binning itself does not guarantee ordered finite-bin
@@ -1146,8 +1196,6 @@ bands. In W8, $1-c=0.888199$ exceeds the maximum target S3 score 0.111893, so
 no positive label can be covered; this conditional support fact still supplies
 neither a transport guarantee nor a cause. Online Supplement B.5.1 gives the
 full integer identities and tables.
-
-![Complete fixed-panel adjacent-threshold response. Panel A gives the exact resolved-panel response; Panel B gives sharp all-candidate response bounds by optimizing over assignments that give each unresolved loan the same label under both thresholds. Both panels retain all 175 learner--stratum--transition cells on identical linear response axes and a common symmetric-log threshold-change axis, but they are separated because their denominators differ. Capped segments in Panel B mark identification endpoints, not confidence intervals or error bars around Panel A. Orange marks CatBoost S3 W7--W8, selected after inspection solely for illustration; black crosses mark the five exact $[0,0]$ cells. No regression, ranking, confirmatory comparison, continuity, or joint endpoint-attainability claim is made.](../reports/crpto/figures/crpto_ijds_v4_fig4_common_panel_threshold_response.png){#fig-common-panel width=92%}
 
 Fit-label lags 0, 3, and 6 months retain more than 99% in every month and preserve
 the crossing; 8 and 12 months retain only 98.68% and 97.45% in their weakest month
@@ -1249,15 +1297,19 @@ yet named C0/C1/C2 directions still disagree. The registered point-cap audit
 evaluates 3,067 distinct cap values. In each of the 216
 window--policy--metric cells, the endpoint envelope over the evaluated values
 spanning $[0.05,0.12]$ includes zero; on the narrower development-admissible
-finite set, default includes zero in all 72 cells. These finite witnesses rule
-out a sign robust over the whole interval, but they do not compute
+finite set, payoff is lower in 6 cells and includes zero in 66, default includes
+zero in all 72, and miscoverage is higher in 27 and includes zero in 45. All 27
+W8 envelopes include zero. These finite witnesses rule out a sign robust over
+the whole interval, but they do not compute
 continuous-support extrema. A per-solve basis audit reconciles 7,297
 frozen rows whose ranges, safe rays, and midpoint seeds leave no gap above
 $10^{-10}$ in all 15 periods. Because basis ranging intervals are not
 optimal-partition invariancy intervals under degeneracy, and the probe sequence
 warm-starts, that is a solver-path-dependent numerical cover of one locked support
-rather than a partition, and retained warnings prevent any uniqueness claim while
-proving no nonuniqueness either. Together the analyses show that direction depends
+rather than a partition. Thirteen scale-aware V2 warnings occur at eight targets;
+one V3a midpoint warning repeats a V2 target, and the largest epsilon-near-optimal
+coordinate movement is USD 0.962. Those warnings prevent any uniqueness claim
+while proving no nonuniqueness either. Together the analyses show that direction depends
 on residual recipe, comparator support, ruler, coordinate, and portfolio
 structure; none identifies a universally preferable endpoint.
 
@@ -1323,6 +1375,19 @@ unresolved-outcome bounds prevent later status from redefining an earlier choice
 Third, separate predictive, geometric, and decision claims: marginal coverage is
 not funded-set validity, narrower binary intervals need not improve decisions,
 controls are not a leaderboard, and optimized and evaluated payoffs must agree.
+
+A constructive next phase would require a new protocol rather than another
+interpretation of this archive. One route would predeclare a dependence or shift
+contract and collect the chronology needed to estimate it. A second would choose
+a selection-compatible binary funded-set estimand and implement JOMI or
+false-coverage-rate control under its own reference-set contract
+[@jin2025focal; @gazin2025informative]. Fractional exposure-weighted coverage
+would instead require a new validity construction. A third would optimize the
+conformal object against a
+declared decision loss using an independent calibration design, as in predictive
+programming, multi-variable set design, or catalog-uniform decision calibration
+[@zhao2024cpp; @lutzow2026mcp; @shekhar2026decision_calibrated_pacing]. None of
+those guarantees can be retrofitted to the present temporal audit.
 
 ## Ethical and governance implications
 

@@ -323,3 +323,19 @@ include = ["src/ijds_audit/raw_data_audit.py"]
 
 [tool.ty.overrides.rules]
 unresolved-attribute = "ignore"
+
+# These scientific implementation files are hash-bound to completed historical
+# runs. Pandas' dynamic groupby keys and itertuples namedtuples are verified by
+# runtime contracts and strict mypy; ty cannot currently express their shapes.
+[[tool.ty.overrides]]
+include = ["src/ijds_audit/common_panel_threshold_response.py"]
+
+[tool.ty.overrides.rules]
+no-matching-overload = "ignore"
+invalid-argument-type = "ignore"
+
+[[tool.ty.overrides]]
+include = ["src/ijds_audit/binary_phase_geometry.py"]
+
+[tool.ty.overrides.rules]
+unresolved-attribute = "ignore"

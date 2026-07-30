@@ -58,7 +58,7 @@ specification paths, not independent replications or votes.
 | What does the conformal object predict? | Appendix B | The observed binary terminal label, not latent individual PD |
 | Why can interval geometry change abruptly? | Appendix B | An exact rank-count condition can switch which mirror calibration sample supplies the binary residual order statistic |
 | What is held fixed in portfolio comparisons? | Appendix C | Menu, budget, payoff, loan bounds, purpose cap, solver, and one declared ruler |
-| What is exact? | Appendix D | Score-ruler algebra, C2 feasibility, binary-outcome bounds, and the conditional within-basis endpoint lemma |
+| What is exact? | Appendices B and D | Mirror-order-statistic threshold geometry, the crossed-band coverage identity, score-ruler algebra, C2 feasibility, binary-outcome bounds, and the conditional within-basis endpoint lemma |
 | Which empirical signs survive? | Appendix E | The endpoint sign changes by ruler/coordinate and no sign survives the finite registered cap values spanning $[0.05,0.12]$; continuous-support extrema are not computed |
 | Can the evidence be replayed? | Appendix F | Yes, conditional on authorized access to the hash-identified raw and DVC inputs, using the active source registry and full raw-data audit |
 | What may the paper claim? | Appendix G | Finite-archive facts and joint-block rank-reference flags at locked nominal thresholds, not significance, superiority, causality, or selected-set validity |
@@ -884,10 +884,10 @@ predeclared uncertainty targets.
 
 **Figure S1.** Complete locked-order index of all 175 learner--stratum--transition
 cells. Blue--orange scales in Panels A--B are centered at zero; Panel C uses a
-nonnegative sequential scale. The outline marks the previously disclosed
-CatBoost S3 W7--W8 illustration. This index supplies no regression, ranking,
-selected comparison, continuity, or joint endpoint-attainability claim; Table
-S6J contains the exact cell values.
+nonnegative sequential scale. The outline marks CatBoost S3 W7--W8, selected
+after inspection solely for illustration. Neither that selection nor this index
+supplies an inferential comparison, regression, ranking, continuity, or joint
+endpoint-attainability claim; Table S6J contains the exact cell values.
 
 | Learner | Negative | Exactly zero | Positive | Resolved response range | Max sharp width |
 |---|---:|---:|---:|---:|---:|
@@ -904,7 +904,8 @@ both thresholds within a contrast. The
 last column reports the largest sharp identification width among that learner's
 seven pooled transitions.
 
-For the previously disclosed CatBoost S3 comparison, W7 and W8
+For the CatBoost S3 comparison selected after inspection solely for illustration,
+W7 and W8
 use thresholds 0.888435 and 0.111801 on the same $N=79{,}047$ candidates
 ($R=76{,}495$, $U=2{,}552$). Among resolved candidates, 164 nondefaults and 117
 defaults cross out of coverage, giving numerator $-281$ and response
@@ -1856,7 +1857,7 @@ The six lower-payoff cells occur before W8; in W8, all 27 policy-metric
 envelopes cross zero. The W8 geometry change coincides with the disappearance
 of directions that survive some earlier development supports; the registered
 results do not identify it as the unique cause. They do not prove W8 is
-correct or earlier windows are false; it shows the direction is not invariant
+correct or earlier windows are false; they show the direction is not invariant
 over the complete residual specification.
 
 Default crosses zero in all 72 development-support cells. This is stronger
@@ -2151,11 +2152,21 @@ credit scoring, conformal prediction, or linear programming separately.
 | Censoring-aware and competing-risk prediction [@candes2023survival; @gui2024adaptive; @li2023online_loans] | Lower prediction bounds for time-to-event outcomes under explicit censoring contracts, and event-specific default/prepayment modeling | Uses a partially identified terminal binary label; it has neither exact event/censoring times nor a competing-risk estimand, overlap audit, or funded-set guarantee |
 | Conformal portfolio and contextual optimization [@kato2025; @sun2024ptc; @johnstone2021; @patel2024; @hu2026crc] | Per-candidate conformal intervals used to rank portfolios, conformal or coverage-calibrated uncertainty sets for contextual robust optimization, and direct decision-risk or robustness calibration | Audits a frozen binary credit score, endpoint reconstruction, and matched comparators; no post-selection asset-return, contextual-LP, or selected-set guarantee is inherited |
 | Selection-conditional coverage and false-coverage-rate control [@jin2025focal; @gazin2025informative] | Validity targets tailored to black-box or informative selection under their own reference-set and multiplicity contracts | Candidate-level coverage is not transferred to budget-selected loans; neither procedure is implemented by the monthly optimizer |
+| Chance-constrained conformal predictive programming [@zhao2024cpp] | Calibrates a constraint-function quantile; its general a-posteriori guarantee uses a second i.i.d. calibration sample and covers an offset event | CRPTO inserts a prediction-set endpoint as an LP coefficient; no funded-set, zero-threshold, or temporal-transport certificate transfers |
 | Decision-optimal and counterfactual prediction sets [@wang2026optimal_decision_prediction_sets; @zheng2026counterfactual_decision_sets] | Couple set construction or coverage to an explicit downstream loss or induced action | Audits an observational accepted-loan archive; no counterfactual funding effect or policy-coupled validity |
+
+**Table S13A.** Closest-work boundary for predictive, transport, and selection
+methods.
+
+<div style="page-break-before: always;"></div>
+
+| Literature family | Established contribution | Active CRPTO boundary |
+|---|---|---|
 | Multi-variable conformal set design [@lutzow2026mcp] | Jointly optimizes prediction-set shape and calibration through scenario optimization; RemMCP provides expected coverage under exchangeability and optimizer regularity, with a dimension-dependent calibration cost | MCP adds an explicit set-design objective and a new algorithm; CRPTO instead audits the endpoint of a fixed binary set and inherits no MCP certificate for temporal transport or the selected credit portfolio |
 | Catalog-uniform decision-calibrated conformal pacing [@shekhar2026decision_calibrated_pacing] | Calibrates the support function of forecast errors over a finite policy-sensitivity catalog and selects a robust pacing policy under exchangeable blocks, affine effects, and simultaneous catalog-wide uncertainty contracts | Their method uses neither a binary label set nor a set-equivalent per-loan endpoint; CRPTO's chronological archive does not establish those contracts and inherits no selected-policy or funded-loan coverage guarantee |
 | Valid selection and decision-risk calibration [@hegazy2025valid_selection_conformal_sets; @bao2025croms; @yeh2025training; @zhou2026creme] | Stability for selection among conformal sets (Hegazy et al.), conformal-risk model selection in CRO (Bao et al.), optimized-certainty-equivalent/tail-risk training (Yeh et al.), and expected miscoverage--regret assessment with split recalibration after selection (Zhou and Zhu) | Uses ruler sensitivity as a diagnostic; its coupled chronological contexts lack an independent selection/recalibration split, complete decision outcomes, and a compatible iid/exchangeability contract |
 | Decision-focused learning [@donti2017; @elmachtoub2022; @mandi2024] | Training predictions against downstream loss | Preserves the predictor for governance and audits a post-hoc decision layer |
 | CRPTO comparator-design principle | Holding the decision problem fixed while changing one ingredient | Shows that a shared numeric cap does not hold decision stringency fixed |
 
-**Table S13.** Closest-work boundary for the active CRPTO contribution.
+**Table S13B.** Closest-work boundary for decision-oriented neighboring methods
+and comparator design.
