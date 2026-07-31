@@ -1,0 +1,281 @@
+{
+  "schema_version": "2026-07-30.1",
+  "status": "calibrator_maps_and_common_taxonomy_frozen_before_primary_oot_outcome_evaluation",
+  "run_tag": "ijds-calibrator-sensitivity-2026-07-30-v1-source",
+  "protocol_tag": "protocol/ijds-calibrator-sensitivity-2026-07-30-v1",
+  "protocol_commit": "808827926eff5030b3cb28d2b89a87a0e6210b2e",
+  "source_artifacts": {
+    "active_v4_config": {
+      "path": "configs/experiments/ijds_binary_geometry_frontier_v4_2026-07-12.yaml",
+      "bytes": 4136,
+      "sha256": "fc340e75df0db016a7caf857baa236e559ef5ef34f5dc212fa1b0ab0b842c953"
+    },
+    "active_v4_freeze": {
+      "path": "models/experiments/ijds_audit/ijds-binary-geometry-frontier-v4-2026-07-12-v1/protocol_freeze.json",
+      "bytes": 20362,
+      "sha256": "c2b3dc2d18c9fed80708682d5a0369c80c89643e2d28024418522d954ebe667c"
+    },
+    "scores": {
+      "path": "data/processed/experiments/ijds_audit/ijds-binary-geometry-frontier-v4-2026-07-12-v1/prediction/scores.parquet",
+      "bytes": 14212211,
+      "sha256": "4053efdbf13066355bb772233231e5fe4ccb436ca75aaf873fb14e213c1e319c"
+    },
+    "residual_recipes": {
+      "path": "models/experiments/ijds_audit/ijds-binary-geometry-frontier-v4-2026-07-12-v1/prediction/residual_recipes.json",
+      "bytes": 74218,
+      "sha256": "0874a5e9eea37adce302f4a059d4ccde5570230a7fdabcc29ceab410988f207a"
+    },
+    "fit_audit": {
+      "path": "data/processed/experiments/ijds_audit/ijds-binary-geometry-frontier-v4-2026-07-12-v1/prediction/residual_fit_audit.parquet",
+      "bytes": 18436852,
+      "sha256": "a80efcedfe749c52c0624536d361a8b1e9e5121901ee9b91ad4c746c68da107c"
+    },
+    "catboost_model": {
+      "path": "models/experiments/ijds_audit/ijds-binary-geometry-frontier-v4-2026-07-12-v1/prediction/catboost_seed42.cbm",
+      "bytes": 836640,
+      "sha256": "5c90e16a06827aa634442aeda7ee3bb4b021a8632c17a96c9e4a44be763e0224"
+    },
+    "platt_calibrator": {
+      "path": "models/experiments/ijds_audit/ijds-binary-geometry-frontier-v4-2026-07-12-v1/prediction/catboost_platt.pkl",
+      "bytes": 678,
+      "sha256": "9391c1c918e0707f61ae59c433c312f38668661edd90af5a44cfb29588a07594"
+    },
+    "raw_archive": {
+      "path": "data/raw/Loan_status_2007-2020Q3.csv",
+      "bytes": 1773470505,
+      "sha256": "5878af2a088f8ab5214c9337289fb8b5eb6c6338fd3f417b6cdc18513dc6f35f"
+    }
+  },
+  "design": {
+    "methods": [
+      "platt",
+      "isotonic",
+      "beta",
+      "venn_abers"
+    ],
+    "window_ids": [
+      "w01_2012m01_m06",
+      "w02_2012m02_m07",
+      "w03_2012m03_m08",
+      "w04_2012m04_m09",
+      "w05_2012m05_m10",
+      "w06_2012m06_m11",
+      "w07_2012m07_m12",
+      "w08_2012m08_2013m01"
+    ],
+    "taxonomy_groups": 5,
+    "alpha": 0.1,
+    "score_rows": 640543,
+    "calibrator_fit_rows": 14077,
+    "recipe_cells": 160,
+    "geometry_cells": 960
+  },
+  "gates": {
+    "platt_roundtrip_max_abs_difference": 1.1102230246251565e-16,
+    "platt_roundtrip_tolerance": 5e-14,
+    "q_raw_expit_margin_max_abs_difference": 0.0,
+    "full_panel_common_taxonomy_assignment_changes": 0,
+    "platt_v4_recipe_integer_fields_exact": true,
+    "platt_v4_recipe_max_residual_quantile_difference": 0.0,
+    "platt_v4_recipe_float_tolerance": 1e-12,
+    "minimum_adjacent_map_changes": {
+      "platt": 8.399392292801622e-13,
+      "isotonic": 0.0,
+      "beta": 8.571476861618521e-13,
+      "venn_abers": 0.0
+    },
+    "venn_abers_standard_p_prime_verified": true,
+    "venn_abers_precision": null,
+    "calibrator_state": {
+      "platt_classes": [
+        0,
+        1
+      ],
+      "isotonic_thresholds": 60,
+      "beta_parameters": {
+        "a": 0.833160201506739,
+        "b": 0.7227824755047424,
+        "m": 0.876008676347382
+      },
+      "beta_iterations": [
+        17
+      ],
+      "beta_max_iter": 100,
+      "venn_abers_state_rows": 14078,
+      "venn_abers_knots": 14077
+    },
+    "calibrator_fit_input_columns": [
+      "id",
+      "pd_catboost_platt",
+      "terminal_default"
+    ],
+    "calibrator_fit_input_design_split": "probability_calibration",
+    "active_platt_fit_reconciliation": {
+      "ordered_id_contract": "utf8_length_prefixed_sha256_v1",
+      "ordered_id_sha256": "81045766e24eb4039c922437a92fb7e37c2715bbe67c5fd95cfd0386d07563de",
+      "ordered_label_contract": "little_endian_float64_c_order_sha256_v1",
+      "ordered_label_sha256": "24e74d0ef1f29c60ee9b45c75741eeecb7623f8d7036a6219684df39260237c4",
+      "platt_probability_contract": "little_endian_float64_c_order_sha256_v1",
+      "platt_probability_sha256": "3ce39046141dec723ffe080d3eb41857bbcb1f4f0e8d4a915472380a758daf57",
+      "y0": 12602,
+      "y1": 1475,
+      "metrics": {
+        "rows": 14077,
+        "default_rate": 0.10478084819208638,
+        "roc_auc": 0.6763269214733201,
+        "brier": 0.09020572858912285,
+        "log_loss": 0.3165431267613625,
+        "ece_10": 0.003272660824190425
+      },
+      "metric_tolerance": 0.0,
+      "metric_max_abs_difference": 0.0
+    }
+  },
+  "score_vector_hashes": {
+    "contract": "little_endian_float64_c_order_sha256_v1",
+    "id_contract": "utf8_length_prefixed_sha256_v1",
+    "id": "1b2f316412139b50b6eae11ac7fdefafa5ae0587456543b6e7c1d1fc4803e142",
+    "q_raw": "ce5b493565d8eb469e60005fdd504323dff9f12ff7b74b8136067d8ac4c2fa6c",
+    "probability_platt": "183587feb5ba1fc16ab0ca9027c0277b8f0337ed0700c8b4c05493b821e2a036",
+    "probability_isotonic": "67cb4576531ab51681595cdab4ea07814fa3552dc005d8eea4d3f1a922ffbfbc",
+    "probability_beta": "9fbec30382029761e266a7b4dfd0b2647894a23f033161fa2c2026ae2cdc790c",
+    "probability_venn_abers": "58545c679e23a4acc73e8d2e6ef2ffcd99df1823e9c7cde5bff94d38270d3e42",
+    "venn_abers_p0": "8061b3c52f3c602ef471bdb59a1f06d961b2dcbca458b69c62b6b31d377ad1e4",
+    "venn_abers_p1": "1a2c9503cada8970029c6c3686da923b404a965336525f122440bf61d0d5d98b"
+  },
+  "outcome_free_artifacts": {
+    "calibrator_family": {
+      "path": "models/experiments/ijds_audit/ijds-calibrator-sensitivity-2026-07-30-v1-source/prediction/calibrator_family.pkl",
+      "bytes": 566016,
+      "sha256": "dab0b1207559118ab63742e51d0d7085e9d9d0d7e3a103802dae57f05ddeabce"
+    },
+    "taxonomy": {
+      "path": "models/experiments/ijds_audit/ijds-calibrator-sensitivity-2026-07-30-v1-source/prediction/common_q_raw_taxonomy.json",
+      "bytes": 485,
+      "sha256": "fb1bea3f4c64985d9ab4db078bf668466f6af17d4b39da11c680edfd46309607"
+    },
+    "residual_recipes": {
+      "path": "models/experiments/ijds_audit/ijds-calibrator-sensitivity-2026-07-30-v1-source/prediction/calibrator_residual_recipes.json",
+      "bytes": 35852,
+      "sha256": "4f1f9f8a1680eb3b2af27eaa0bdeb55088530917336863a5b60b5b34bcf2e360"
+    },
+    "calibration_fit_diagnostics": {
+      "path": "data/processed/experiments/ijds_audit/ijds-calibrator-sensitivity-2026-07-30-v1-source/prediction/calibration_fit_diagnostics.parquet",
+      "bytes": 6511,
+      "sha256": "ebd11f6c8ad708700fb00d1d95ce1e09073cf29b3ca75ec4cded95ddd4cb3670"
+    },
+    "recipe_audit": {
+      "path": "data/processed/experiments/ijds_audit/ijds-calibrator-sensitivity-2026-07-30-v1-source/prediction/recipe_audit.parquet",
+      "bytes": 8265,
+      "sha256": "ac554c8e0a18729bf8be4601eb44528d2e84e36eb14466ef4ec8356b3ef664c2"
+    },
+    "outcome_free_geometry": {
+      "path": "data/processed/experiments/ijds_audit/ijds-calibrator-sensitivity-2026-07-30-v1-source/prediction/outcome_free_geometry.parquet",
+      "bytes": 74570,
+      "sha256": "e9631502a2a204478f611831ded7ab41240fe1323d3d1274a05c1f5993cebae0"
+    }
+  },
+  "information_contract": {
+    "retrospective_archive_previously_inspected": true,
+    "raw_archive_physically_read_during_phase_a": true,
+    "primary_oot_status_values_may_be_read_in_underlying_csv_chunks": true,
+    "primary_oot_outcomes_retained_or_used": false,
+    "primary_oot_outcomes_passed_to_calibrator_or_recipe": false,
+    "only_2011_probability_calibration_rows_retained_for_calibrator_fit": true,
+    "learner_calibrator_window_or_result_selected": false,
+    "portfolio_optimization_run": false
+  },
+  "git_transport": {
+    "protocol_commit_role": "P",
+    "required_phase_a_source_tag": "artifacts/ijds-calibrator-sensitivity-2026-07-30-v1-source",
+    "phase_a_source_commit_role": "A_single_direct_child_of_P",
+    "required_phase_b_protocol_tag": "protocol/ijds-calibrator-sensitivity-evaluation-2026-07-30-v1",
+    "phase_b_protocol_commit_role": "B_single_direct_child_of_A",
+    "required_final_artifact_tag": "artifacts/ijds-calibrator-sensitivity-2026-07-30-v1",
+    "final_output_commit_role": "C_single_direct_child_of_B",
+    "annotated_tags_required": true
+  },
+  "implementation_provenance": {
+    "source_files": {
+      "configs/experiments/ijds_calibrator_sensitivity_freeze_2026-07-30_v1.yaml": {
+        "path": "configs/experiments/ijds_calibrator_sensitivity_freeze_2026-07-30_v1.yaml",
+        "bytes": 4633,
+        "sha256": "670308c36afb8e01f6ed71f5b1bde6a2afd4b048d9abc2b2036415140f6c9664"
+      },
+      "scripts/experiments/run_ijds_calibrator_sensitivity_v1.py": {
+        "path": "scripts/experiments/run_ijds_calibrator_sensitivity_v1.py",
+        "bytes": 1181,
+        "sha256": "5680c6009f335a357d6d4f5a6f20d801d9251a63dc2c2aa8ce206c5ed7682acf"
+      },
+      "src/ijds_audit/calibrator_sensitivity.py": {
+        "path": "src/ijds_audit/calibrator_sensitivity.py",
+        "bytes": 30920,
+        "sha256": "d34bf09775bd5f79ffb893fcafb18681f81c2c6dcf693afa79955aee6357f98c"
+      },
+      "src/ijds_audit/calibrator_sensitivity_protocol.py": {
+        "path": "src/ijds_audit/calibrator_sensitivity_protocol.py",
+        "bytes": 73144,
+        "sha256": "f288066304a2476e2f271b85851510597a32c1b7086e835ec0b700a41abf64c6"
+      },
+      "src/ijds_audit/geometry.py": {
+        "path": "src/ijds_audit/geometry.py",
+        "bytes": 3936,
+        "sha256": "30929e9ec4aeb558548b1b921ef90012fa26844fefedfb3fc3cf9093fd81db02"
+      },
+      "src/ijds_audit/protocol.py": {
+        "path": "src/ijds_audit/protocol.py",
+        "bytes": 28380,
+        "sha256": "ad6c9e67b1ea268ace799e042aeddbdabc99a25c8c774dfc3ff34217a39a8cbe"
+      },
+      "src/data/outcome_observability.py": {
+        "path": "src/data/outcome_observability.py",
+        "bytes": 21985,
+        "sha256": "d54d9ccf7d54a27bb31a5f8a47e9351ca7201bed7683e9b069299f1501f80d87"
+      },
+      "src/evaluation/coverage_transport.py": {
+        "path": "src/evaluation/coverage_transport.py",
+        "bytes": 15685,
+        "sha256": "948e47916935ce92671413824fdc25ca34b7c2c6db13eaadb5eb953266f1673d"
+      },
+      "src/models/binary_conformal_guardrail.py": {
+        "path": "src/models/binary_conformal_guardrail.py",
+        "bytes": 6629,
+        "sha256": "ce4b32ce27202d5cd8b2b58792aa31b6693f0da9f11b22fbbdceb7240324a0cb"
+      },
+      "docs/research/ijds_calibrator_sensitivity_v1_protocol_2026-07-30.md": {
+        "path": "docs/research/ijds_calibrator_sensitivity_v1_protocol_2026-07-30.md",
+        "bytes": 14003,
+        "sha256": "123bdf79489b42953c1fc78e2dd3965c9473aaa0f2b39fd565f3a12f6dcdb76f"
+      }
+    },
+    "hash_algorithm": "sha256"
+  },
+  "environment": {
+    "python": "3.11.14 (main, Feb  3 2026, 22:51:29) [MSC v.1944 64 bit (AMD64)]",
+    "executable": "C:\\Users\\carlos\\Documents\\Paper_CRPTO\\tmp\\crpto-final-integration-20260726\\.venv\\Scripts\\python.exe",
+    "platform": "Windows-10-10.0.26200-SP0",
+    "packages": {
+      "betacal": "1.1.0",
+      "catboost": "1.2.10",
+      "highspy": "1.15.1",
+      "numpy": "2.4.6",
+      "optbinning": "0.21.0",
+      "pandas": "3.0.3",
+      "pyarrow": "25.0.0",
+      "scikit-learn": "1.9.0",
+      "scipy": "1.17.1",
+      "venn-abers": "1.5.3"
+    },
+    "solver_environment": {
+      "HIGHS_NATIVE_FALLBACK_SCIPY": null,
+      "HIGHS_PARALLEL": null,
+      "HIGHS_PRESOLVE": null,
+      "HIGHS_RESET_GLOBAL_SCHEDULER": null,
+      "HIGHS_SIMPLEX_STRATEGY": null,
+      "HIGHS_SOLVER": null
+    },
+    "uv_lock_sha256": "83a10656fcad1af30b42659df24924614576e9eaa727f83e8bb10043da236149"
+  },
+  "protected_stages_run": [],
+  "protected_artifacts_written": []
+}

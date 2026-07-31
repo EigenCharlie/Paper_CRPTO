@@ -1,0 +1,1450 @@
+{
+  "platt": {
+    "w01_2012m01_m06": {
+      "method": "platt",
+      "window_id": "w01_2012m01_m06",
+      "alpha": 0.1,
+      "taxonomy_edges_q_raw": [
+        0.015333023912078666,
+        0.13750428201043832,
+        0.23023085235305357,
+        0.3212354881893141,
+        0.4271249568353849,
+        0.8493386923407635
+      ],
+      "residual_quantiles": [
+        0.049113187946657616,
+        0.07964589698302632,
+        0.8919735883395368,
+        0.8617614186932525,
+        0.8095744723631617
+      ],
+      "group_counts": [
+        1829,
+        2437,
+        3249,
+        3603,
+        3830
+      ],
+      "finite_sample_ranks": [
+        1647,
+        2195,
+        2925,
+        3244,
+        3448
+      ],
+      "raw_finite_sample_ranks": [
+        1647,
+        2195,
+        2925,
+        3244,
+        3448
+      ],
+      "taxonomy_provenance": "active_2011_platt_edges_exactly_transformed_through_frozen_platt_inverse",
+      "taxonomy_method": "fixed_common_catboost_q_raw_edges",
+      "residual_method": "exact_split_mondrian_absolute_residual",
+      "estimand": "binary_outcome_prediction_set"
+    },
+    "w02_2012m02_m07": {
+      "method": "platt",
+      "window_id": "w02_2012m02_m07",
+      "alpha": 0.1,
+      "taxonomy_edges_q_raw": [
+        0.015333023912078666,
+        0.13750428201043832,
+        0.23023085235305357,
+        0.3212354881893141,
+        0.4271249568353849,
+        0.8493386923407635
+      ],
+      "residual_quantiles": [
+        0.04900395264617657,
+        0.07978766496058752,
+        0.8920116585417792,
+        0.862876020574146,
+        0.8111630187017316
+      ],
+      "group_counts": [
+        1943,
+        2647,
+        3621,
+        4098,
+        4365
+      ],
+      "finite_sample_ranks": [
+        1750,
+        2384,
+        3260,
+        3690,
+        3930
+      ],
+      "raw_finite_sample_ranks": [
+        1750,
+        2384,
+        3260,
+        3690,
+        3930
+      ],
+      "taxonomy_provenance": "active_2011_platt_edges_exactly_transformed_through_frozen_platt_inverse",
+      "taxonomy_method": "fixed_common_catboost_q_raw_edges",
+      "residual_method": "exact_split_mondrian_absolute_residual",
+      "estimand": "binary_outcome_prediction_set"
+    },
+    "w03_2012m03_m08": {
+      "method": "platt",
+      "window_id": "w03_2012m03_m08",
+      "alpha": 0.1,
+      "taxonomy_edges_q_raw": [
+        0.015333023912078666,
+        0.13750428201043832,
+        0.23023085235305357,
+        0.3212354881893141,
+        0.4271249568353849,
+        0.8493386923407635
+      ],
+      "residual_quantiles": [
+        0.048815440069822844,
+        0.07970959229097281,
+        0.8916085888119072,
+        0.863313952320159,
+        0.8115631424920364
+      ],
+      "group_counts": [
+        2182,
+        2931,
+        4018,
+        4806,
+        5112
+      ],
+      "finite_sample_ranks": [
+        1965,
+        2639,
+        3618,
+        4327,
+        4602
+      ],
+      "raw_finite_sample_ranks": [
+        1965,
+        2639,
+        3618,
+        4327,
+        4602
+      ],
+      "taxonomy_provenance": "active_2011_platt_edges_exactly_transformed_through_frozen_platt_inverse",
+      "taxonomy_method": "fixed_common_catboost_q_raw_edges",
+      "residual_method": "exact_split_mondrian_absolute_residual",
+      "estimand": "binary_outcome_prediction_set"
+    },
+    "w04_2012m04_m09": {
+      "method": "platt",
+      "window_id": "w04_2012m04_m09",
+      "alpha": 0.1,
+      "taxonomy_edges_q_raw": [
+        0.015333023912078666,
+        0.13750428201043832,
+        0.23023085235305357,
+        0.3212354881893141,
+        0.4271249568353849,
+        0.8493386923407635
+      ],
+      "residual_quantiles": [
+        0.04853565085847877,
+        0.07978766496058752,
+        0.890281077239412,
+        0.8624583885207028,
+        0.8127065501276763
+      ],
+      "group_counts": [
+        2320,
+        3199,
+        4511,
+        5643,
+        6094
+      ],
+      "finite_sample_ranks": [
+        2089,
+        2880,
+        4061,
+        5080,
+        5486
+      ],
+      "raw_finite_sample_ranks": [
+        2089,
+        2880,
+        4061,
+        5080,
+        5486
+      ],
+      "taxonomy_provenance": "active_2011_platt_edges_exactly_transformed_through_frozen_platt_inverse",
+      "taxonomy_method": "fixed_common_catboost_q_raw_edges",
+      "residual_method": "exact_split_mondrian_absolute_residual",
+      "estimand": "binary_outcome_prediction_set"
+    },
+    "w05_2012m05_m10": {
+      "method": "platt",
+      "window_id": "w05_2012m05_m10",
+      "alpha": 0.1,
+      "taxonomy_edges_q_raw": [
+        0.015333023912078666,
+        0.13750428201043832,
+        0.23023085235305357,
+        0.3212354881893141,
+        0.4271249568353849,
+        0.8493386923407635
+      ],
+      "residual_quantiles": [
+        0.048438468365525386,
+        0.07978673631620159,
+        0.8894148014498154,
+        0.8616959042825142,
+        0.8124732989633325
+      ],
+      "group_counts": [
+        2456,
+        3483,
+        5001,
+        6360,
+        6970
+      ],
+      "finite_sample_ranks": [
+        2212,
+        3136,
+        4502,
+        5725,
+        6274
+      ],
+      "raw_finite_sample_ranks": [
+        2212,
+        3136,
+        4502,
+        5725,
+        6274
+      ],
+      "taxonomy_provenance": "active_2011_platt_edges_exactly_transformed_through_frozen_platt_inverse",
+      "taxonomy_method": "fixed_common_catboost_q_raw_edges",
+      "residual_method": "exact_split_mondrian_absolute_residual",
+      "estimand": "binary_outcome_prediction_set"
+    },
+    "w06_2012m06_m11": {
+      "method": "platt",
+      "window_id": "w06_2012m06_m11",
+      "alpha": 0.1,
+      "taxonomy_edges_q_raw": [
+        0.015333023912078666,
+        0.13750428201043832,
+        0.23023085235305357,
+        0.3212354881893141,
+        0.4271249568353849,
+        0.8493386923407635
+      ],
+      "residual_quantiles": [
+        0.04846688140870716,
+        0.07984407970071351,
+        0.8892521057704302,
+        0.8612148729915213,
+        0.8119678361988626
+      ],
+      "group_counts": [
+        2551,
+        3783,
+        5502,
+        7126,
+        7723
+      ],
+      "finite_sample_ranks": [
+        2297,
+        3406,
+        4953,
+        6415,
+        6952
+      ],
+      "raw_finite_sample_ranks": [
+        2297,
+        3406,
+        4953,
+        6415,
+        6952
+      ],
+      "taxonomy_provenance": "active_2011_platt_edges_exactly_transformed_through_frozen_platt_inverse",
+      "taxonomy_method": "fixed_common_catboost_q_raw_edges",
+      "residual_method": "exact_split_mondrian_absolute_residual",
+      "estimand": "binary_outcome_prediction_set"
+    },
+    "w07_2012m07_m12": {
+      "method": "platt",
+      "window_id": "w07_2012m07_m12",
+      "alpha": 0.1,
+      "taxonomy_edges_q_raw": [
+        0.015333023912078666,
+        0.13750428201043832,
+        0.23023085235305357,
+        0.3212354881893141,
+        0.4271249568353849,
+        0.8493386923407635
+      ],
+      "residual_quantiles": [
+        0.04848050129381764,
+        0.07973976715411543,
+        0.8884345991499274,
+        0.8604327334944422,
+        0.8109305281057975
+      ],
+      "group_counts": [
+        2733,
+        4268,
+        5929,
+        7430,
+        8051
+      ],
+      "finite_sample_ranks": [
+        2461,
+        3843,
+        5337,
+        6688,
+        7247
+      ],
+      "raw_finite_sample_ranks": [
+        2461,
+        3843,
+        5337,
+        6688,
+        7247
+      ],
+      "taxonomy_provenance": "active_2011_platt_edges_exactly_transformed_through_frozen_platt_inverse",
+      "taxonomy_method": "fixed_common_catboost_q_raw_edges",
+      "residual_method": "exact_split_mondrian_absolute_residual",
+      "estimand": "binary_outcome_prediction_set"
+    },
+    "w08_2012m08_2013m01": {
+      "method": "platt",
+      "window_id": "w08_2012m08_2013m01",
+      "alpha": 0.1,
+      "taxonomy_edges_q_raw": [
+        0.015333023912078666,
+        0.13750428201043832,
+        0.23023085235305357,
+        0.3212354881893141,
+        0.4271249568353849,
+        0.8493386923407635
+      ],
+      "residual_quantiles": [
+        0.04865841409254095,
+        0.07964354119226134,
+        0.1118010883671265,
+        0.8592335766105592,
+        0.8061960123826506
+      ],
+      "group_counts": [
+        2847,
+        4572,
+        6238,
+        7820,
+        8652
+      ],
+      "finite_sample_ranks": [
+        2564,
+        4116,
+        5616,
+        7039,
+        7788
+      ],
+      "raw_finite_sample_ranks": [
+        2564,
+        4116,
+        5616,
+        7039,
+        7788
+      ],
+      "taxonomy_provenance": "active_2011_platt_edges_exactly_transformed_through_frozen_platt_inverse",
+      "taxonomy_method": "fixed_common_catboost_q_raw_edges",
+      "residual_method": "exact_split_mondrian_absolute_residual",
+      "estimand": "binary_outcome_prediction_set"
+    }
+  },
+  "isotonic": {
+    "w01_2012m01_m06": {
+      "method": "isotonic",
+      "window_id": "w01_2012m01_m06",
+      "alpha": 0.1,
+      "taxonomy_edges_q_raw": [
+        0.015333023912078666,
+        0.13750428201043832,
+        0.23023085235305357,
+        0.3212354881893141,
+        0.4271249568353849,
+        0.8493386923407635
+      ],
+      "residual_quantiles": [
+        0.056291390728476824,
+        0.07567185289957568,
+        0.8914582350165172,
+        0.8610478359908884,
+        0.8262195121951219
+      ],
+      "group_counts": [
+        1829,
+        2437,
+        3249,
+        3603,
+        3830
+      ],
+      "finite_sample_ranks": [
+        1647,
+        2195,
+        2925,
+        3244,
+        3448
+      ],
+      "raw_finite_sample_ranks": [
+        1647,
+        2195,
+        2925,
+        3244,
+        3448
+      ],
+      "taxonomy_provenance": "active_2011_platt_edges_exactly_transformed_through_frozen_platt_inverse",
+      "taxonomy_method": "fixed_common_catboost_q_raw_edges",
+      "residual_method": "exact_split_mondrian_absolute_residual",
+      "estimand": "binary_outcome_prediction_set"
+    },
+    "w02_2012m02_m07": {
+      "method": "isotonic",
+      "window_id": "w02_2012m02_m07",
+      "alpha": 0.1,
+      "taxonomy_edges_q_raw": [
+        0.015333023912078666,
+        0.13750428201043832,
+        0.23023085235305357,
+        0.3212354881893141,
+        0.4271249568353849,
+        0.8493386923407635
+      ],
+      "residual_quantiles": [
+        0.056291390728476824,
+        0.07567185289957568,
+        0.8914582350165172,
+        0.8615794143744454,
+        0.8262195121951219
+      ],
+      "group_counts": [
+        1943,
+        2647,
+        3621,
+        4098,
+        4365
+      ],
+      "finite_sample_ranks": [
+        1750,
+        2384,
+        3260,
+        3690,
+        3930
+      ],
+      "raw_finite_sample_ranks": [
+        1750,
+        2384,
+        3260,
+        3690,
+        3930
+      ],
+      "taxonomy_provenance": "active_2011_platt_edges_exactly_transformed_through_frozen_platt_inverse",
+      "taxonomy_method": "fixed_common_catboost_q_raw_edges",
+      "residual_method": "exact_split_mondrian_absolute_residual",
+      "estimand": "binary_outcome_prediction_set"
+    },
+    "w03_2012m03_m08": {
+      "method": "isotonic",
+      "window_id": "w03_2012m03_m08",
+      "alpha": 0.1,
+      "taxonomy_edges_q_raw": [
+        0.015333023912078666,
+        0.13750428201043832,
+        0.23023085235305357,
+        0.3212354881893141,
+        0.4271249568353849,
+        0.8493386923407635
+      ],
+      "residual_quantiles": [
+        0.056291390728476824,
+        0.07567185289957568,
+        0.8914582350165172,
+        0.8615794143744454,
+        0.8262195121951219
+      ],
+      "group_counts": [
+        2182,
+        2931,
+        4018,
+        4806,
+        5112
+      ],
+      "finite_sample_ranks": [
+        1965,
+        2639,
+        3618,
+        4327,
+        4602
+      ],
+      "raw_finite_sample_ranks": [
+        1965,
+        2639,
+        3618,
+        4327,
+        4602
+      ],
+      "taxonomy_provenance": "active_2011_platt_edges_exactly_transformed_through_frozen_platt_inverse",
+      "taxonomy_method": "fixed_common_catboost_q_raw_edges",
+      "residual_method": "exact_split_mondrian_absolute_residual",
+      "estimand": "binary_outcome_prediction_set"
+    },
+    "w04_2012m04_m09": {
+      "method": "isotonic",
+      "window_id": "w04_2012m04_m09",
+      "alpha": 0.1,
+      "taxonomy_edges_q_raw": [
+        0.015333023912078666,
+        0.13750428201043832,
+        0.23023085235305357,
+        0.3212354881893141,
+        0.4271249568353849,
+        0.8493386923407635
+      ],
+      "residual_quantiles": [
+        0.056291390728476824,
+        0.07567185289957568,
+        0.8914582350165172,
+        0.8615794143744454,
+        0.8262195121951219
+      ],
+      "group_counts": [
+        2320,
+        3199,
+        4511,
+        5643,
+        6094
+      ],
+      "finite_sample_ranks": [
+        2089,
+        2880,
+        4061,
+        5080,
+        5486
+      ],
+      "raw_finite_sample_ranks": [
+        2089,
+        2880,
+        4061,
+        5080,
+        5486
+      ],
+      "taxonomy_provenance": "active_2011_platt_edges_exactly_transformed_through_frozen_platt_inverse",
+      "taxonomy_method": "fixed_common_catboost_q_raw_edges",
+      "residual_method": "exact_split_mondrian_absolute_residual",
+      "estimand": "binary_outcome_prediction_set"
+    },
+    "w05_2012m05_m10": {
+      "method": "isotonic",
+      "window_id": "w05_2012m05_m10",
+      "alpha": 0.1,
+      "taxonomy_edges_q_raw": [
+        0.015333023912078666,
+        0.13750428201043832,
+        0.23023085235305357,
+        0.3212354881893141,
+        0.4271249568353849,
+        0.8493386923407635
+      ],
+      "residual_quantiles": [
+        0.056291390728476824,
+        0.07567185289957568,
+        0.8914582350165172,
+        0.8610478359908884,
+        0.8262195121951219
+      ],
+      "group_counts": [
+        2456,
+        3483,
+        5001,
+        6360,
+        6970
+      ],
+      "finite_sample_ranks": [
+        2212,
+        3136,
+        4502,
+        5725,
+        6274
+      ],
+      "raw_finite_sample_ranks": [
+        2212,
+        3136,
+        4502,
+        5725,
+        6274
+      ],
+      "taxonomy_provenance": "active_2011_platt_edges_exactly_transformed_through_frozen_platt_inverse",
+      "taxonomy_method": "fixed_common_catboost_q_raw_edges",
+      "residual_method": "exact_split_mondrian_absolute_residual",
+      "estimand": "binary_outcome_prediction_set"
+    },
+    "w06_2012m06_m11": {
+      "method": "isotonic",
+      "window_id": "w06_2012m06_m11",
+      "alpha": 0.1,
+      "taxonomy_edges_q_raw": [
+        0.015333023912078666,
+        0.13750428201043832,
+        0.23023085235305357,
+        0.3212354881893141,
+        0.4271249568353849,
+        0.8493386923407635
+      ],
+      "residual_quantiles": [
+        0.056291390728476824,
+        0.07567185289957568,
+        0.8914582350165172,
+        0.8610478359908884,
+        0.8262195121951219
+      ],
+      "group_counts": [
+        2551,
+        3783,
+        5502,
+        7126,
+        7723
+      ],
+      "finite_sample_ranks": [
+        2297,
+        3406,
+        4953,
+        6415,
+        6952
+      ],
+      "raw_finite_sample_ranks": [
+        2297,
+        3406,
+        4953,
+        6415,
+        6952
+      ],
+      "taxonomy_provenance": "active_2011_platt_edges_exactly_transformed_through_frozen_platt_inverse",
+      "taxonomy_method": "fixed_common_catboost_q_raw_edges",
+      "residual_method": "exact_split_mondrian_absolute_residual",
+      "estimand": "binary_outcome_prediction_set"
+    },
+    "w07_2012m07_m12": {
+      "method": "isotonic",
+      "window_id": "w07_2012m07_m12",
+      "alpha": 0.1,
+      "taxonomy_edges_q_raw": [
+        0.015333023912078666,
+        0.13750428201043832,
+        0.23023085235305357,
+        0.3212354881893141,
+        0.4271249568353849,
+        0.8493386923407635
+      ],
+      "residual_quantiles": [
+        0.056291390728476824,
+        0.07567185289957568,
+        0.8914582350165172,
+        0.8610478359908884,
+        0.8262195121951219
+      ],
+      "group_counts": [
+        2733,
+        4268,
+        5929,
+        7430,
+        8051
+      ],
+      "finite_sample_ranks": [
+        2461,
+        3843,
+        5337,
+        6688,
+        7247
+      ],
+      "raw_finite_sample_ranks": [
+        2461,
+        3843,
+        5337,
+        6688,
+        7247
+      ],
+      "taxonomy_provenance": "active_2011_platt_edges_exactly_transformed_through_frozen_platt_inverse",
+      "taxonomy_method": "fixed_common_catboost_q_raw_edges",
+      "residual_method": "exact_split_mondrian_absolute_residual",
+      "estimand": "binary_outcome_prediction_set"
+    },
+    "w08_2012m08_2013m01": {
+      "method": "isotonic",
+      "window_id": "w08_2012m08_2013m01",
+      "alpha": 0.1,
+      "taxonomy_edges_q_raw": [
+        0.015333023912078666,
+        0.13750428201043832,
+        0.23023085235305357,
+        0.3212354881893141,
+        0.4271249568353849,
+        0.8493386923407635
+      ],
+      "residual_quantiles": [
+        0.056291390728476824,
+        0.07567185289957568,
+        0.10854176498348278,
+        0.8610478359908884,
+        0.8262195121951219
+      ],
+      "group_counts": [
+        2847,
+        4572,
+        6238,
+        7820,
+        8652
+      ],
+      "finite_sample_ranks": [
+        2564,
+        4116,
+        5616,
+        7039,
+        7788
+      ],
+      "raw_finite_sample_ranks": [
+        2564,
+        4116,
+        5616,
+        7039,
+        7788
+      ],
+      "taxonomy_provenance": "active_2011_platt_edges_exactly_transformed_through_frozen_platt_inverse",
+      "taxonomy_method": "fixed_common_catboost_q_raw_edges",
+      "residual_method": "exact_split_mondrian_absolute_residual",
+      "estimand": "binary_outcome_prediction_set"
+    }
+  },
+  "beta": {
+    "w01_2012m01_m06": {
+      "method": "beta",
+      "window_id": "w01_2012m01_m06",
+      "alpha": 0.1,
+      "taxonomy_edges_q_raw": [
+        0.015333023912078666,
+        0.13750428201043832,
+        0.23023085235305357,
+        0.3212354881893141,
+        0.4271249568353849,
+        0.8493386923407635
+      ],
+      "residual_quantiles": [
+        0.04881131200865186,
+        0.0799507525632517,
+        0.8913090191380324,
+        0.8610484334824825,
+        0.8096557998311447
+      ],
+      "group_counts": [
+        1829,
+        2437,
+        3249,
+        3603,
+        3830
+      ],
+      "finite_sample_ranks": [
+        1647,
+        2195,
+        2925,
+        3244,
+        3448
+      ],
+      "raw_finite_sample_ranks": [
+        1647,
+        2195,
+        2925,
+        3244,
+        3448
+      ],
+      "taxonomy_provenance": "active_2011_platt_edges_exactly_transformed_through_frozen_platt_inverse",
+      "taxonomy_method": "fixed_common_catboost_q_raw_edges",
+      "residual_method": "exact_split_mondrian_absolute_residual",
+      "estimand": "binary_outcome_prediction_set"
+    },
+    "w02_2012m02_m07": {
+      "method": "beta",
+      "window_id": "w02_2012m02_m07",
+      "alpha": 0.1,
+      "taxonomy_edges_q_raw": [
+        0.015333023912078666,
+        0.13750428201043832,
+        0.23023085235305357,
+        0.3212354881893141,
+        0.4271249568353849,
+        0.8493386923407635
+      ],
+      "residual_quantiles": [
+        0.04869981775183909,
+        0.08009495333865742,
+        0.8913473801498191,
+        0.862158194250471,
+        0.8112042335250045
+      ],
+      "group_counts": [
+        1943,
+        2647,
+        3621,
+        4098,
+        4365
+      ],
+      "finite_sample_ranks": [
+        1750,
+        2384,
+        3260,
+        3690,
+        3930
+      ],
+      "raw_finite_sample_ranks": [
+        1750,
+        2384,
+        3260,
+        3690,
+        3930
+      ],
+      "taxonomy_provenance": "active_2011_platt_edges_exactly_transformed_through_frozen_platt_inverse",
+      "taxonomy_method": "fixed_common_catboost_q_raw_edges",
+      "residual_method": "exact_split_mondrian_absolute_residual",
+      "estimand": "binary_outcome_prediction_set"
+    },
+    "w03_2012m03_m08": {
+      "method": "beta",
+      "window_id": "w03_2012m03_m08",
+      "alpha": 0.1,
+      "taxonomy_edges_q_raw": [
+        0.015333023912078666,
+        0.13750428201043832,
+        0.23023085235305357,
+        0.3212354881893141,
+        0.4271249568353849,
+        0.8493386923407635
+      ],
+      "residual_quantiles": [
+        0.04850740996455033,
+        0.08001554157720477,
+        0.8909412597138415,
+        0.8625943645908193,
+        0.8115944051703142
+      ],
+      "group_counts": [
+        2182,
+        2931,
+        4018,
+        4806,
+        5112
+      ],
+      "finite_sample_ranks": [
+        1965,
+        2639,
+        3618,
+        4327,
+        4602
+      ],
+      "raw_finite_sample_ranks": [
+        1965,
+        2639,
+        3618,
+        4327,
+        4602
+      ],
+      "taxonomy_provenance": "active_2011_platt_edges_exactly_transformed_through_frozen_platt_inverse",
+      "taxonomy_method": "fixed_common_catboost_q_raw_edges",
+      "residual_method": "exact_split_mondrian_absolute_residual",
+      "estimand": "binary_outcome_prediction_set"
+    },
+    "w04_2012m04_m09": {
+      "method": "beta",
+      "window_id": "w04_2012m04_m09",
+      "alpha": 0.1,
+      "taxonomy_edges_q_raw": [
+        0.015333023912078666,
+        0.13750428201043832,
+        0.23023085235305357,
+        0.3212354881893141,
+        0.4271249568353849,
+        0.8493386923407635
+      ],
+      "residual_quantiles": [
+        0.048221847195363474,
+        0.08009495333865742,
+        0.8896041431552151,
+        0.8617423158850721,
+        0.812709710169622
+      ],
+      "group_counts": [
+        2320,
+        3199,
+        4511,
+        5643,
+        6094
+      ],
+      "finite_sample_ranks": [
+        2089,
+        2880,
+        4061,
+        5080,
+        5486
+      ],
+      "raw_finite_sample_ranks": [
+        2089,
+        2880,
+        4061,
+        5080,
+        5486
+      ],
+      "taxonomy_provenance": "active_2011_platt_edges_exactly_transformed_through_frozen_platt_inverse",
+      "taxonomy_method": "fixed_common_catboost_q_raw_edges",
+      "residual_method": "exact_split_mondrian_absolute_residual",
+      "estimand": "binary_outcome_prediction_set"
+    },
+    "w05_2012m05_m10": {
+      "method": "beta",
+      "window_id": "w05_2012m05_m10",
+      "alpha": 0.1,
+      "taxonomy_edges_q_raw": [
+        0.015333023912078666,
+        0.13750428201043832,
+        0.23023085235305357,
+        0.3212354881893141,
+        0.4271249568353849,
+        0.8493386923407635
+      ],
+      "residual_quantiles": [
+        0.04812266152957956,
+        0.0800940087759213,
+        0.888731967323169,
+        0.8609832196252457,
+        0.8124821512602273
+      ],
+      "group_counts": [
+        2456,
+        3483,
+        5001,
+        6360,
+        6970
+      ],
+      "finite_sample_ranks": [
+        2212,
+        3136,
+        4502,
+        5725,
+        6274
+      ],
+      "raw_finite_sample_ranks": [
+        2212,
+        3136,
+        4502,
+        5725,
+        6274
+      ],
+      "taxonomy_provenance": "active_2011_platt_edges_exactly_transformed_through_frozen_platt_inverse",
+      "taxonomy_method": "fixed_common_catboost_q_raw_edges",
+      "residual_method": "exact_split_mondrian_absolute_residual",
+      "estimand": "binary_outcome_prediction_set"
+    },
+    "w06_2012m06_m11": {
+      "method": "beta",
+      "window_id": "w06_2012m06_m11",
+      "alpha": 0.1,
+      "taxonomy_edges_q_raw": [
+        0.015333023912078666,
+        0.13750428201043832,
+        0.23023085235305357,
+        0.3212354881893141,
+        0.4271249568353849,
+        0.8493386923407635
+      ],
+      "residual_quantiles": [
+        0.0481516601150681,
+        0.08015233467614688,
+        0.8885681960795102,
+        0.8605044495299043,
+        0.811989095205418
+      ],
+      "group_counts": [
+        2551,
+        3783,
+        5502,
+        7126,
+        7723
+      ],
+      "finite_sample_ranks": [
+        2297,
+        3406,
+        4953,
+        6415,
+        6952
+      ],
+      "raw_finite_sample_ranks": [
+        2297,
+        3406,
+        4953,
+        6415,
+        6952
+      ],
+      "taxonomy_provenance": "active_2011_platt_edges_exactly_transformed_through_frozen_platt_inverse",
+      "taxonomy_method": "fixed_common_catboost_q_raw_edges",
+      "residual_method": "exact_split_mondrian_absolute_residual",
+      "estimand": "binary_outcome_prediction_set"
+    },
+    "w07_2012m07_m12": {
+      "method": "beta",
+      "window_id": "w07_2012m07_m12",
+      "alpha": 0.1,
+      "taxonomy_edges_q_raw": [
+        0.015333023912078666,
+        0.13750428201043832,
+        0.23023085235305357,
+        0.3212354881893141,
+        0.4271249568353849,
+        0.8493386923407635
+      ],
+      "residual_quantiles": [
+        0.04816556071741202,
+        0.08004623418976194,
+        0.8877454411650971,
+        0.8597261911782409,
+        0.8109775536207378
+      ],
+      "group_counts": [
+        2733,
+        4268,
+        5929,
+        7430,
+        8051
+      ],
+      "finite_sample_ranks": [
+        2461,
+        3843,
+        5337,
+        6688,
+        7247
+      ],
+      "raw_finite_sample_ranks": [
+        2461,
+        3843,
+        5337,
+        6688,
+        7247
+      ],
+      "taxonomy_provenance": "active_2011_platt_edges_exactly_transformed_through_frozen_platt_inverse",
+      "taxonomy_method": "fixed_common_catboost_q_raw_edges",
+      "residual_method": "exact_split_mondrian_absolute_residual",
+      "estimand": "binary_outcome_prediction_set"
+    },
+    "w08_2012m08_2013m01": {
+      "method": "beta",
+      "window_id": "w08_2012m08_2013m01",
+      "alpha": 0.1,
+      "taxonomy_edges_q_raw": [
+        0.015333023912078666,
+        0.13750428201043832,
+        0.23023085235305357,
+        0.3212354881893141,
+        0.4271249568353849,
+        0.8493386923407635
+      ],
+      "residual_quantiles": [
+        0.048347142540420114,
+        0.07994835630055744,
+        0.11249171097103164,
+        0.8585334766669249,
+        0.8063658263390706
+      ],
+      "group_counts": [
+        2847,
+        4572,
+        6238,
+        7820,
+        8652
+      ],
+      "finite_sample_ranks": [
+        2564,
+        4116,
+        5616,
+        7039,
+        7788
+      ],
+      "raw_finite_sample_ranks": [
+        2564,
+        4116,
+        5616,
+        7039,
+        7788
+      ],
+      "taxonomy_provenance": "active_2011_platt_edges_exactly_transformed_through_frozen_platt_inverse",
+      "taxonomy_method": "fixed_common_catboost_q_raw_edges",
+      "residual_method": "exact_split_mondrian_absolute_residual",
+      "estimand": "binary_outcome_prediction_set"
+    }
+  },
+  "venn_abers": {
+    "w01_2012m01_m06": {
+      "method": "venn_abers",
+      "window_id": "w01_2012m01_m06",
+      "alpha": 0.1,
+      "taxonomy_edges_q_raw": [
+        0.015333023912078666,
+        0.13750428201043832,
+        0.23023085235305357,
+        0.3212354881893141,
+        0.4271249568353849,
+        0.8493386923407635
+      ],
+      "residual_quantiles": [
+        0.05726416955470689,
+        0.07627118644067797,
+        0.8910891089108911,
+        0.8594104308390023,
+        0.8251943363799141
+      ],
+      "group_counts": [
+        1829,
+        2437,
+        3249,
+        3603,
+        3830
+      ],
+      "finite_sample_ranks": [
+        1647,
+        2195,
+        2925,
+        3244,
+        3448
+      ],
+      "raw_finite_sample_ranks": [
+        1647,
+        2195,
+        2925,
+        3244,
+        3448
+      ],
+      "taxonomy_provenance": "active_2011_platt_edges_exactly_transformed_through_frozen_platt_inverse",
+      "taxonomy_method": "fixed_common_catboost_q_raw_edges",
+      "residual_method": "exact_split_mondrian_absolute_residual",
+      "estimand": "binary_outcome_prediction_set"
+    },
+    "w02_2012m02_m07": {
+      "method": "venn_abers",
+      "window_id": "w02_2012m02_m07",
+      "alpha": 0.1,
+      "taxonomy_edges_q_raw": [
+        0.015333023912078666,
+        0.13750428201043832,
+        0.23023085235305357,
+        0.3212354881893141,
+        0.4271249568353849,
+        0.8493386923407635
+      ],
+      "residual_quantiles": [
+        0.05726416955470689,
+        0.07627118644067797,
+        0.8910891089108911,
+        0.8608995395235068,
+        0.8251943363799141
+      ],
+      "group_counts": [
+        1943,
+        2647,
+        3621,
+        4098,
+        4365
+      ],
+      "finite_sample_ranks": [
+        1750,
+        2384,
+        3260,
+        3690,
+        3930
+      ],
+      "raw_finite_sample_ranks": [
+        1750,
+        2384,
+        3260,
+        3690,
+        3930
+      ],
+      "taxonomy_provenance": "active_2011_platt_edges_exactly_transformed_through_frozen_platt_inverse",
+      "taxonomy_method": "fixed_common_catboost_q_raw_edges",
+      "residual_method": "exact_split_mondrian_absolute_residual",
+      "estimand": "binary_outcome_prediction_set"
+    },
+    "w03_2012m03_m08": {
+      "method": "venn_abers",
+      "window_id": "w03_2012m03_m08",
+      "alpha": 0.1,
+      "taxonomy_edges_q_raw": [
+        0.015333023912078666,
+        0.13750428201043832,
+        0.23023085235305357,
+        0.3212354881893141,
+        0.4271249568353849,
+        0.8493386923407635
+      ],
+      "residual_quantiles": [
+        0.05726416955470689,
+        0.07627118644067797,
+        0.8910891089108911,
+        0.8608995395235068,
+        0.8251943363799141
+      ],
+      "group_counts": [
+        2182,
+        2931,
+        4018,
+        4806,
+        5112
+      ],
+      "finite_sample_ranks": [
+        1965,
+        2639,
+        3618,
+        4327,
+        4602
+      ],
+      "raw_finite_sample_ranks": [
+        1965,
+        2639,
+        3618,
+        4327,
+        4602
+      ],
+      "taxonomy_provenance": "active_2011_platt_edges_exactly_transformed_through_frozen_platt_inverse",
+      "taxonomy_method": "fixed_common_catboost_q_raw_edges",
+      "residual_method": "exact_split_mondrian_absolute_residual",
+      "estimand": "binary_outcome_prediction_set"
+    },
+    "w04_2012m04_m09": {
+      "method": "venn_abers",
+      "window_id": "w04_2012m04_m09",
+      "alpha": 0.1,
+      "taxonomy_edges_q_raw": [
+        0.015333023912078666,
+        0.13750428201043832,
+        0.23023085235305357,
+        0.3212354881893141,
+        0.4271249568353849,
+        0.8493386923407635
+      ],
+      "residual_quantiles": [
+        0.05726416955470689,
+        0.07627118644067797,
+        0.8910891089108911,
+        0.8608995395235068,
+        0.8251943363799141
+      ],
+      "group_counts": [
+        2320,
+        3199,
+        4511,
+        5643,
+        6094
+      ],
+      "finite_sample_ranks": [
+        2089,
+        2880,
+        4061,
+        5080,
+        5486
+      ],
+      "raw_finite_sample_ranks": [
+        2089,
+        2880,
+        4061,
+        5080,
+        5486
+      ],
+      "taxonomy_provenance": "active_2011_platt_edges_exactly_transformed_through_frozen_platt_inverse",
+      "taxonomy_method": "fixed_common_catboost_q_raw_edges",
+      "residual_method": "exact_split_mondrian_absolute_residual",
+      "estimand": "binary_outcome_prediction_set"
+    },
+    "w05_2012m05_m10": {
+      "method": "venn_abers",
+      "window_id": "w05_2012m05_m10",
+      "alpha": 0.1,
+      "taxonomy_edges_q_raw": [
+        0.015333023912078666,
+        0.13750428201043832,
+        0.23023085235305357,
+        0.3212354881893141,
+        0.4271249568353849,
+        0.8493386923407635
+      ],
+      "residual_quantiles": [
+        0.05726416955470689,
+        0.07627118644067797,
+        0.8910891089108911,
+        0.8594104308390023,
+        0.8251943363799141
+      ],
+      "group_counts": [
+        2456,
+        3483,
+        5001,
+        6360,
+        6970
+      ],
+      "finite_sample_ranks": [
+        2212,
+        3136,
+        4502,
+        5725,
+        6274
+      ],
+      "raw_finite_sample_ranks": [
+        2212,
+        3136,
+        4502,
+        5725,
+        6274
+      ],
+      "taxonomy_provenance": "active_2011_platt_edges_exactly_transformed_through_frozen_platt_inverse",
+      "taxonomy_method": "fixed_common_catboost_q_raw_edges",
+      "residual_method": "exact_split_mondrian_absolute_residual",
+      "estimand": "binary_outcome_prediction_set"
+    },
+    "w06_2012m06_m11": {
+      "method": "venn_abers",
+      "window_id": "w06_2012m06_m11",
+      "alpha": 0.1,
+      "taxonomy_edges_q_raw": [
+        0.015333023912078666,
+        0.13750428201043832,
+        0.23023085235305357,
+        0.3212354881893141,
+        0.4271249568353849,
+        0.8493386923407635
+      ],
+      "residual_quantiles": [
+        0.05726416955470689,
+        0.07627118644067797,
+        0.8910891089108911,
+        0.8594104308390023,
+        0.8251943363799141
+      ],
+      "group_counts": [
+        2551,
+        3783,
+        5502,
+        7126,
+        7723
+      ],
+      "finite_sample_ranks": [
+        2297,
+        3406,
+        4953,
+        6415,
+        6952
+      ],
+      "raw_finite_sample_ranks": [
+        2297,
+        3406,
+        4953,
+        6415,
+        6952
+      ],
+      "taxonomy_provenance": "active_2011_platt_edges_exactly_transformed_through_frozen_platt_inverse",
+      "taxonomy_method": "fixed_common_catboost_q_raw_edges",
+      "residual_method": "exact_split_mondrian_absolute_residual",
+      "estimand": "binary_outcome_prediction_set"
+    },
+    "w07_2012m07_m12": {
+      "method": "venn_abers",
+      "window_id": "w07_2012m07_m12",
+      "alpha": 0.1,
+      "taxonomy_edges_q_raw": [
+        0.015333023912078666,
+        0.13750428201043832,
+        0.23023085235305357,
+        0.3212354881893141,
+        0.4271249568353849,
+        0.8493386923407635
+      ],
+      "residual_quantiles": [
+        0.05726416955470689,
+        0.07627118644067797,
+        0.8910891089108911,
+        0.8594104308390023,
+        0.8251943363799141
+      ],
+      "group_counts": [
+        2733,
+        4268,
+        5929,
+        7430,
+        8051
+      ],
+      "finite_sample_ranks": [
+        2461,
+        3843,
+        5337,
+        6688,
+        7247
+      ],
+      "raw_finite_sample_ranks": [
+        2461,
+        3843,
+        5337,
+        6688,
+        7247
+      ],
+      "taxonomy_provenance": "active_2011_platt_edges_exactly_transformed_through_frozen_platt_inverse",
+      "taxonomy_method": "fixed_common_catboost_q_raw_edges",
+      "residual_method": "exact_split_mondrian_absolute_residual",
+      "estimand": "binary_outcome_prediction_set"
+    },
+    "w08_2012m08_2013m01": {
+      "method": "venn_abers",
+      "window_id": "w08_2012m08_2013m01",
+      "alpha": 0.1,
+      "taxonomy_edges_q_raw": [
+        0.015333023912078666,
+        0.13750428201043832,
+        0.23023085235305357,
+        0.3212354881893141,
+        0.4271249568353849,
+        0.8493386923407635
+      ],
+      "residual_quantiles": [
+        0.05726416955470689,
+        0.07627118644067797,
+        0.10891089108910891,
+        0.8594104308390023,
+        0.8251943363799141
+      ],
+      "group_counts": [
+        2847,
+        4572,
+        6238,
+        7820,
+        8652
+      ],
+      "finite_sample_ranks": [
+        2564,
+        4116,
+        5616,
+        7039,
+        7788
+      ],
+      "raw_finite_sample_ranks": [
+        2564,
+        4116,
+        5616,
+        7039,
+        7788
+      ],
+      "taxonomy_provenance": "active_2011_platt_edges_exactly_transformed_through_frozen_platt_inverse",
+      "taxonomy_method": "fixed_common_catboost_q_raw_edges",
+      "residual_method": "exact_split_mondrian_absolute_residual",
+      "estimand": "binary_outcome_prediction_set"
+    }
+  }
+}
