@@ -453,6 +453,7 @@ pre-endpoint-correction evaluations are provenance only.
 <!-- claim:theory.coverage_band_identity -->
 <!-- claim:theory.outcome_free_binary_set_bounds -->
 <!-- claim:theory.binary_set_embedding_nonidentification -->
+<!-- claim:theory.feasible_difference_score_order_equivalence -->
 <!-- claim:theory.sharp_common_outcome_bounds -->
 <!-- claim:theory.sharp_directional_residual_frontier -->
 <!-- claim:theory.selection_weight_covariance_identity -->
@@ -463,6 +464,17 @@ pre-endpoint-correction evaluations are provenance only.
    normalized coordinates preserve positive-affine units; same-cap nesting and
    C2 funded-moment matching mechanically order only the plug-in objective.
    None of these facts orders status-indexed payoff, default, or miscoverage.
+1a. **Feasible-difference score equivalence.** On a fixed nonempty convex
+   allocation set, two score vectors induce the same weak ordering of every
+   feasible allocation if and only if their restrictions to the
+   feasible-difference span are positive multiples. Equivalently,
+   `t = kappa*s + h`, with `kappa > 0` and `h` orthogonal to every feasible
+   allocation difference. This gives exact translated-cap, objective-matched,
+   and normalized-ruler invariance under their stated common-floor and
+   common-anchor conditions. Binary-set equality and coordinatewise loan
+   ranking do not imply this relation. Failure of the relation permits but
+   does not require a change at a fixed cell; a common solver output does not
+   establish equality of optimal faces.
 2. **Binary threshold geometry.** The calibration residuals of a stratum are the
    multiset sum of the two mirror samples `{{p_i : Y_i=0}}` and
    `{{1-p_i : Y_i=1}}`, so the fitted threshold is exactly the `k`-th order
@@ -860,6 +872,9 @@ The complete endpoint-availability sensitivity is:
   preserve allocations or descriptive outcome direction on the complete
   declared grid. This neither selects an embedding nor repairs selected- or
   funded-set validity.
+- Global score-order invariance on a declared convex allocation set is
+  characterized by positive-affine equivalence modulo normals of its affine
+  hull; it is not inferred from binary-set preservation or loan-level ranking.
 - CRPTO remains one integrated ML--conformal--optimization object; its result is
   an audit of the handoff, not abandonment of any component.
 
@@ -900,6 +915,10 @@ The complete endpoint-availability sensitivity is:
   validity repair, universal allocation sensitivity, universal outcome
   direction, causal or prospective effects, or joint sharpness inferred from
   the set-preserving-embedding sensitivity.
+- Binary-set or loan-ranking equivalence described as global LP decision
+  invariance; non-affinity described as proof that every fixed cell changes; or
+  one shared solver allocation described as equality of optimal faces or
+  optimizer uniqueness.
 
 ## Pre-Freeze Boundary
 

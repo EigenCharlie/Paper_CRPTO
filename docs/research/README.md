@@ -25,9 +25,10 @@ claim or source registry names it.
 17. `ijds_rolling_origin_equal_followup_protocol_2026-07-21.md` (parent provenance)
 18. `ijds_label_mondrian_sensitivity_protocol_2026-07-21.md`
 19. `ijds_set_preserving_embedding_sensitivity_v1d_protocol_2026-07-30.md`
-20. `../../configs/ijds_active_evidence_sources.yaml`
-21. `../../configs/ijds_claim_ledger.yaml`
-22. `../../reports/crpto/ijds_binary_geometry_frontier_v4_evidence.json`
+20. `ijds_decision_invariance_theory_2026-07-30.md`
+21. `../../configs/ijds_active_evidence_sources.yaml`
+22. `../../configs/ijds_claim_ledger.yaml`
+23. `../../reports/crpto/ijds_binary_geometry_frontier_v4_evidence.json`
 
 ## Active Interpretation
 
@@ -57,6 +58,25 @@ The active set-preserving-embedding sensitivity keeps every binary set fixed in
 77/576 fixed pooled tracks contain both tolerance-separated outcome signs over
 theta. This is a retrospective finite-grid noninvariance result, not a preferred
 embedding, set-native optimizer, conformal-validity repair, or policy winner.
+The exact decision theorem identifies the stronger condition that would
+preserve every feasible portfolio ordering: positive-affine equivalence on the
+span of feasible allocation differences. Binary-set equality and loan ranking
+do not imply it; failure of the condition permits but does not force a change
+in one fixed cell.
+
+## Future Design Contracts
+
+The following documents preserve the highest-value next steps without
+pretending that the inspected archive can supply their assumptions:
+
+- `ijds_temporal_transport_dependence_contract_2026-07-30.md`;
+- `ijds_selected_exposure_validity_design_2026-07-30.md`;
+- `ijds_decision_loss_aligned_conformal_design_2026-07-30.md`; and
+- `ijds_long_run_observability_contract_2026-07-30.md`.
+
+They are design notes only. They authorize no current-archive run and are not
+active empirical evidence. Any successor needs its own pre-execution protocol,
+tag, complete reporting family, and promotion audit.
 
 ## Literature
 

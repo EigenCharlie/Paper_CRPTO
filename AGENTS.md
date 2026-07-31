@@ -56,6 +56,10 @@ order before changing scientific code or paper claims:
    - active two-stage Git-native recovery: exact binary-set preservation,
      complete allocation-change census, and pooled outcome-direction
      noninvariance without selecting an embedding.
+16c7. [`docs/research/ijds_decision_invariance_theory_2026-07-30.md`](docs/research/ijds_decision_invariance_theory_2026-07-30.md)
+   - exact feasible-difference score-order equivalence, two-ruler
+     consequences, set-preserving counterexample, and local optimal-face
+     boundary.
 16d. [`docs/research/ijds_raw_data_acquisition_provenance_2026-07-21.md`](docs/research/ijds_raw_data_acquisition_provenance_2026-07-21.md)
    - verified local file identity versus unconfirmed acquisition history.
 16e. [`docs/research/ijds_submission_rights_anonymity_audit_2026-07-21.md`](docs/research/ijds_submission_rights_anonymity_audit_2026-07-21.md)
@@ -85,8 +89,8 @@ order before changing scientific code or paper claims:
 28. [`.codex/skills/crpto/SKILL.md`](.codex/skills/crpto/SKILL.md) - concise
    execution and writing guidance.
 
-Theory precedence note (2026-07-29): the exact statements in the active claim
-registry and exact-theory note override any older summary in
+Theory precedence note (2026-07-30): the exact statements in the active claim
+registry and exact-theory notes override any older summary in
 the CRPTO skill. In particular, do not infer continuity, a common-maxima unit
 crossing, universal low score bins, or a miscoverage floor from `l>0` alone.
 The exact two-threshold coverage change is target mass in the crossed score
@@ -97,6 +101,11 @@ count-minus-dollar coverage gap supplies no funded-set conformal validity.
 The binary-set embedding theorem alone does not prove an allocation change;
 the separate active V1d finite-grid census supplies that empirical result and
 does not select a theta, embedding, ruler, coordinate, or policy.
+Binary-set preservation and coordinatewise loan ranking are not global
+decision invariance. The exact invariant is positive-affine equivalence modulo
+the orthogonal complement of feasible allocation differences. Failure permits
+but does not force a change at a fixed cell, and one common solver output does
+not certify equal optimal faces.
 
 The V6 geometry and post-freeze diagnostic replays dated 2026-07-26 are
 non-active candidates in quarantine. Their protocols/configurations were not
@@ -124,3 +133,12 @@ Minimum rules:
   the active manuscript.
 - Edit `paper/CRPTO_ijds.qmd`; generate the official TeX with
   `scripts/build_ijds_submission_tex.py` rather than editing it directly.
+- For a future run expected to exceed 30 minutes, keep status, stop markers,
+  and resumable shards outside the repository and protected roots; declare
+  atomic units, heartbeat, throughput, deadline, and resume checks before
+  execution.
+
+Future-design documents dated 2026-07-30 for temporal transport,
+selected/exposure validity, decision-loss alignment, and long-run
+observability are planning contracts only. They authorize no current-archive
+run and support no active empirical claim.

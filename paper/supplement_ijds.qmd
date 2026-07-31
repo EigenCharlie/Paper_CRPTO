@@ -996,6 +996,29 @@ is empirical and must be reported over a complete outcome-free-frozen
 sensitivity; the algebra alone neither proves an allocation change nor selects
 a $\theta$. Appendix E.4.3 reports that separate empirical census.
 
+For the active score
+$q_i^{(\theta)}=(1-\gamma)p_i+\gamma u_i^{(\theta)}$, the contraction has the
+more explicit form
+
+$$
+q_i^{(\theta)}-q_i^{(0)}
+=-\gamma\theta c_{g(i)}\mathbf1\{1\notin S_i\}.
+$$
+
+This preserves the loan-wise miss map
+$m_i(y)=\mathbf1\{y\notin S_i\}$ but need not be positive-affine on the
+allocation space. Consequently, for any two fully invested allocations
+$a^\theta,a^0$ and every common binary outcome completion $Y$,
+
+$$
+\operatorname{MC}_{\theta}(Y)-\operatorname{MC}_{0}(Y)
+=B^{-1}(a^\theta-a^0)^\top m(Y).
+$$
+
+There is no direct prediction-set term: any funded-miscoverage change comes
+from reweighting an unchanged miss map. The identity supplies neither a
+universal sign nor funded-set conformal validity.
+
 ### B.5.4 Marginal score and residual-distribution diagnostics
 
 <!-- claim:transport.residual_directional_frontier_complete -->
@@ -1409,50 +1432,146 @@ the declared familywise level without an independence assumption. Because this
 family and an exploratory flag pattern were inspected before locking, the
 reported cutoffs have no post-selection FWER guarantee.
 
-## D.2 Positive affine cap equivalence and same-cap nesting
+## D.2 Feasible-difference score equivalence and cap consequences
 
-Suppose a score is globally $s_i=\kappa p_i+b$ with $\kappa>0$ and every feasible
-portfolio fills budget $B$. Then
+<!-- claim:theory.feasible_difference_score_order_equivalence -->
+
+Let $\mathcal A\subset\mathbb R^n$ be the fixed nonempty convex allocation set
+before adding a score constraint and define
 
 $$
-\sum_i a_i s_i\le\tau B
-\quad\Longleftrightarrow\quad
-\sum_i a_i p_i\le\frac{\tau-b}{\kappa}B.
+D=\operatorname{span}(\mathcal A-\mathcal A).
 $$
 
-Thus a positive affine score admits an exactly translated point cap. The
-empirical guardrail is not globally affine because clipping and stratum-specific
-residual quantiles change its slope and intercept.
+Call scores $s,t$ *order-equivalent on $\mathcal A$* when
+$s^\top a\le s^\top b$ if and only if $t^\top a\le t^\top b$ for every
+$a,b\in\mathcal A$.
 
-For the qualified converse, work on the full-budget affine hull
-$H=\{a:\mathbf 1^\top a=B\}$. If the two cap constraints are proper and
-nonredundant and their boundaries agree on a relatively open subset of $H$,
-their projected normals must be positively collinear. Equivalently,
-$s=\kappa p+b\mathbf 1$ on that affine hull for some $\kappa>0$. This converse
-does not follow from equality over a lower-dimensional feasible polytope or
-from two formulations returning the same optimizer at one cap.
+**Theorem.** The scores are order-equivalent on $\mathcal A$ if and only if
+there are $\kappa>0$ and $h\in D^\perp$ such that
 
-Because $u_i\ge p_i$ and $\gamma\in[0,1]$, $q_i\ge p_i$. At the same numerical
-cap, every guardrail-feasible allocation is point-feasible. The point optimum
-therefore weakly dominates in the shared plug-in objective. Neither statement
-orders status-indexed outcomes.
+$$
+t=\kappa s+h.
+$$
+
+Equivalently, for any fixed $a_0\in\mathcal A$, there is a constant
+$\delta=t^\top a_0-\kappa s^\top a_0$ such that
+$t^\top a=\kappa s^\top a+\delta$ for every $a\in\mathcal A$.
+
+The forward direction is immediate because
+$h^\top(a-b)=0$ on $\mathcal A$. For the converse, choose $a_0$ in the
+relative interior of $\mathcal A$. A sufficiently small displacement from
+$a_0$ in either direction of any $d\in D$ remains in $\mathcal A$. Equality
+of weak orders therefore forces the restrictions of
+$d\mapsto s^\top d$ and $d\mapsto t^\top d$ to have the same kernel and sign
+on $D$. If the first functional vanishes on $D$, so does the second; taking
+any $\kappa>0$, for example $\kappa=1$, then gives
+$t-\kappa s\in D^\perp$. Otherwise choose $d_0\in D$ with
+$s^\top d_0=1$. For every $d\in D$,
+$d-(s^\top d)d_0$ is in the common kernel, so
+
+$$
+t^\top d=(t^\top d_0)s^\top d.
+$$
+
+The common sign gives $\kappa=t^\top d_0>0$, and hence
+$t-\kappa s\in D^\perp$.
+
+If the affine hull is exactly the full-budget hyperplane
+$\mathbf1^\top a=B$, then $D=\mathbf1^\perp$ and
+$t=\kappa s+b\mathbf1$. More generally, if
+$\operatorname{aff}(\mathcal A)=\{a:Ea=d\}$, then
+$D^\perp=\operatorname{range}(E^\top)$. Only equalities defining the complete
+affine hull belong in this global normal term; a constraint active at one
+solution provides at most a local condition.
+
+For any total-score cap $K_s$, let $K_t=\kappa K_s+\delta$. The theorem gives
+
+$$
+\mathcal A\cap\{a:s^\top a\le K_s\}
+=
+\mathcal A\cap\{a:t^\top a\le K_t\}.
+$$
+
+With a common full budget $B$, the corresponding per-dollar caps
+$\tau_s=K_s/B$ and $\tau_t=K_t/B$ satisfy
+$\tau_t=\kappa\tau_s+\delta/B$. In the full-budget special case
+$t=\kappa s+b\mathbf1$, this becomes $\tau_t=\kappa\tau_s+b$ because
+$\delta=bB$.
+
+Thus translated caps preserve the feasible set. For the optimizer corollaries,
+assume that the invoked feasible sets are nonempty and the stated optima are
+attained, as they are on the bounded CRPTO allocation polytope. For any common
+plug-in objective floor $z$, the restrictions of the two scores to
+$\mathcal A_z=\mathcal A\cap\{a:v^\top a\ge z\}$ differ only by the same positive
+affine transformation, and therefore
+
+$$
+\arg\min_{a\in\mathcal A_z}s^\top a
+=
+\arg\min_{a\in\mathcal A_z}t^\top a.
+$$
+
+Section D.3 gives the normalized-coordinate corollary. Copying the same
+numerical cap is not the required translation unless both scale and offset
+make it so.
+
+The theorem concerns portfolio functionals, not only loan rankings. On the
+unit simplex, $s=(0,.6,1)$ and $t=s^2=(0,.36,1)$ rank all three loans in the
+same order, but they reverse the portfolio order between $e_2$ and
+$.5(e_1+e_3)$. Binary-set preservation is weaker still. Take
+$p=(.3,.1,.8)$ and thresholds $c=(.3,.6,.3)$. The original intervals are
+$[0,.6]$, $[0,.7]$, and $[.5,1]$; full contraction gives $[0,.3]$,
+$[0,.1]$, and $[.5,1]$. Both constructions induce
+$\{0\},\{0\},\{1\}$, while at $\gamma=1$ their score vectors are
+
+$$
+q^{(0)}=(.6,.7,1),\qquad
+q^{(1)}=(.3,.1,1).
+$$
+
+With plug-in objective $v=(0,0,1)$, the normalized ruler at $\eta=.5$ chooses
+$(.5,0,.5)$ under $q^{(0)}$ and $(0,.5,.5)$ under $q^{(1)}$. At the common
+objective floor $v^\top a\ge.25$, the objective-matched score minima are
+$(.75,0,.25)$ and $(0,.75,.25)$. The attained plug-in objective is unchanged
+in the latter pair, but the allocation is not.
+
+Failure of the global condition permits rather than requires a change at one
+fixed cell. For arbitrary fixed total-score caps $K_s,K_t$, let
+$F_s=\mathcal A\cap\{a:s^\top a\le K_s\}$ and
+$F_t=\mathcal A\cap\{a:t^\top a\le K_t\}$. Invariance for every linear
+objective is equivalent to $F_s=F_t$. For one declared objective $v$, only
+equality of its exposed optimal faces is required. A point
+$a^\star\in F_s\cap F_t$ is optimal for both problems when $v$ belongs to both
+relevant normal cones. One common numerical solver output therefore proves
+neither equality of faces nor optimizer uniqueness.
+
+Finally, because $u_i\ge p_i$ and $\gamma\in[0,1]$, $q_i\ge p_i$. At the same
+numerical cap, every guardrail-feasible allocation is point-feasible. The
+point optimum therefore weakly dominates in the shared plug-in objective.
+Neither nesting nor the equivalence theorem orders status-indexed outcomes.
 
 ## D.3 Positive-affine invariance of normalized coordinates
 
-Let $\widetilde s=\kappa s+b$ for $\kappa>0$. The score minimum and score of the common
-plug-in optimum transform as
-$m_{\widetilde s}=\kappa m_s+b$ and $o_{\widetilde s}=\kappa o_s+b$. Hence
+Under the theorem in D.2, let the total portfolio score satisfy
+$t^\top a=\kappa s^\top a+\delta$ on $\mathcal A$. The minimum total score and
+the score of a common plug-in optimum transform as
+$M_t=\kappa M_s+\delta$ and $O_t=\kappa O_s+\delta$. Hence
 
 $$
-c_{\widetilde s}(\eta)=\kappa c_s(\eta)+b.
+K_t(\eta)
+=M_t+\eta(O_t-M_t)
+=\kappa K_s(\eta)+\delta.
 $$
 
-Using the full-budget equality,
-$\widetilde s^\top a\le Bc_{\widetilde s}(\eta)$ if and only if
-$s^\top a\le Bc_s(\eta)$. The normalized ruler therefore defines the same
-feasible set after a positive affine change of score units. The result does not
-extend to the non-affine point-versus-upper score map and does not equalize
-plug-in opportunity cost.
+Therefore $t^\top a\le K_t(\eta)$ if and only if
+$s^\top a\le K_s(\eta)$. With a full budget and
+$t=\kappa s+b\mathbf1$, division by $B$ recovers the paper's per-dollar
+formula $c_t(\eta)=\kappa c_s(\eta)+b$. The normalized ruler defines the same
+feasible set and optimizer correspondence under a common anchor. The result
+does not extend to an unverified non-affine point-versus-upper score map, to a
+different allocation affine hull, or to a different anchor; it also does not
+equalize plug-in opportunity cost across arbitrary scores.
 
 ## D.4 C2 plug-in objective dominance
 
@@ -2294,6 +2413,7 @@ and code policy.
 | Timing design | Fit-label and evaluation-endpoint lags are separate one-factor sensitivities | Joint or full-factorial lag robustness |
 | Two rulers and three interior coordinates | Endpoint direction is not ruler- or coordinate-invariant on the declared grid | A continuous-frontier ordering or preferred gamma/ruler/coordinate |
 | Continuous interval embedding | Binary-outcome coverage of the embedding equals coverage of its induced binary set | A set-native optimizer, a calibrated probability magnitude for $u_i$, or an ordering of $u_i$ among loans with the same binary set |
+| Feasible-difference score equivalence | Positive-affine equivalence modulo normals of the allocation affine hull is necessary and sufficient for preserving every feasible portfolio ordering | Binary-set equality or loan ranking as sufficient; mandatory change under non-equivalence; equality of optimal faces or uniqueness from one common solver output |
 | Set-preserving embedding allocation census | All 80 set diagnostics are unchanged; 9,659/11,520 positive-$\gamma$ monthly $\theta$ contrasts change allocation beyond $10^{-10}$. All 2,880 monthly $\gamma=0$ allocation contrasts are zero; the corresponding 2,880 monthly and 192 pooled objective/outcome contrasts are also zero | A preferred embedding, $\theta$, ruler, coordinate, or policy; allocation change inferred from the theorem alone; set-native optimization; validity repair; generalization beyond the declared finite grid |
 | Set-preserving embedding direction census | Among 576 fixed four-$\theta$ tracks, 324 change tolerance category and 77 contain both separated signs; the complete metric counts appear in Table S9L | A universal favorable or adverse direction, causal or prospective effects, confirmation, independent replications, or joint attainability across overlapping tracks |
 | Complete portfolio-structure grid | Every scenario retains adverse default and miscoverage cells; zero scenarios are uniformly favorable or adverse | A scenario winner, structural invariance, universal harm, or deployment guidance |
@@ -2316,6 +2436,27 @@ and code policy.
 | Provenance and use rights | Local file identity and evidence hashes are verified | Acquisition history, redistribution rights, journal-license compatibility, and anonymous-repository remediation require human confirmation |
 
 **Table S12A.** Archive-specific threats, mitigations, and residual claim boundaries.
+
+## G.1 Prospective designs that would answer different questions
+
+The following designs are future contracts, not reanalyses authorized on the
+inspected archive.
+
+| Target estimand | First viable design | Required validity bridge | Stop condition |
+|---|---|---|---|
+| Marginal coverage of one future loan | Freeze chronology, score, taxonomy, temporal weights, and one nonexchangeable-conformal theorem before the target outcome | An external, independent, or design-based upper bound on the theorem's swap, decoupling, or dependence penalty, with any confidence-bound failure probability propagated | The penalty is unbounded, postselected, or vacuous, or its estimation failure probability is omitted; current KS-like distances, PSI, rolling origins, and joint-block flags cannot substitute for it |
+| Selection-conditional coverage and FCR | JOMI with exactly $K$ selected loans and equal exposure $B/K$ [@jin2025focal] | Same-population exchangeability or a proved replacement, permutation-equivariant selection, disjoint policy construction and final calibration, and complete reference sets | Calibration-row permutations or irrelevant ID reversals change the rule, reference sets are too small, or historical target outcomes influence the policy |
+| Expected fractional exposure-weighted FCP | Exactly $K$ positive exposures, $A=\sum_j a_j>0$, and a predeclared hard concentration bound $a_i/A\le\kappa/K$ | Count FCR calibrated at $\alpha/\kappa$, using the deterministic inequality $\operatorname{FCP}^{\$}\le\kappa\operatorname{FCP}^{N}$ | $\kappa$ is selected post hoc, the portfolio denominator is ambiguous, the bound is written relative to $B$ while cash makes $A<B$, or the adjusted sets are uninformative |
+| Next-month portfolio decision risk | Complete issue month as the sampling unit, complete eligible endpoints, bounded loss, and a finite policy catalog frozen before risk calibration | Conformal Risk Control for an exchangeable monotone loss family with its finite-sample safe-terminal correction, or Learn-Then-Test for a finite reoptimized/nonmonotone catalog evaluated on i.i.d. contexts [@angelopoulos2024risk; @angelopoulos2025ltt] | Too few valid blocks, temporal assumptions fail, an eligible endpoint is incomplete, the CRC correction or LTT multiplicity contract fails, or a favorable policy is selected after outcomes |
+
+These routes control different objects. Expected FCR is not a
+high-probability bound on one realized portfolio, a block-loss guarantee is not
+loan-level coverage, and residual cash changes the fixed-capital versus
+invested-capital denominator. Predictive programming, multi-variable
+prediction-set design, and catalog-uniform decision calibration remain
+additional designs under their own independent-calibration and sampling
+contracts [@zhao2024cpp; @lutzow2026mcp;
+@shekhar2026decision_calibrated_pacing].
 
 The study uses one discontinued consumer-credit platform and accepted 36-month
 loans only. It observes no outcomes for rejected applicants and therefore no

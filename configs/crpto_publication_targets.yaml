@@ -79,6 +79,7 @@ active_scientific_contract:
       - scripts/build_ijds_policy_support_tie_evidence.py
       - scripts/build_ijds_policy_support_optimal_face_evidence.py
       - scripts/manage_ijds_dvc_capsule.py
+      - scripts/inspect_scientific_run.py
       - scripts/run_complexity_report.py
       - scripts/run_ty_advisory.py
     historical_execution_in_active_capsule: false
@@ -128,7 +129,11 @@ active_scientific_contract:
       frozen endpoint contrast, with no selector. A separate complete-catalog
       audit compares the maximum loss over all 240 frozen policies in each
       development and target block; it does not assert that every policy
-      deteriorates.
+      deteriorates. The active set-preserving grid separates unchanged binary
+      sets from allocation and endpoint-direction sensitivity without selecting
+      an embedding. Exact global score-order invariance requires positive-affine
+      equivalence on the feasible-difference span; no archive-wide non-affinity
+      audit or per-cell change theorem is claimed.
     comparator: >-
       C0, C1, C2, registered finite development-admissible support, and the
       registered [0.05,0.12] audit range are outcome-free diagnostics. Outcome

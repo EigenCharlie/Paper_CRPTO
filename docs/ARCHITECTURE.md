@@ -32,10 +32,20 @@ flowchart TB
 | `src/optimization` | Native HiGHS allocation, sparse fallback, and policy semantics | Active core; CPU only |
 | `src/evaluation` | Standardized payoff and sharp common-outcome contrast bounds | Active core |
 | `src/data` and `src/features` | Endpoint reconstruction and origination-time feature contract | Active core plus path-bound compatibility |
+| `src/utils` | Atomic I/O, artifact descriptors, isolated execution, and protocol-bound long-run observability | Active support; operational status is never scientific evidence |
 
 Renaming `src/ijds_challengers` would add wrappers while breaking protocol
 paths. The active publication contract, rather than directory naming, is the
 executable architecture authority.
+
+The implemented observer and read-only
+`scripts/inspect_scientific_run.py` tool are a single-writer,
+same-process-worker status MVP; they do not authorize resume. A future run may
+use that bounded layer only under its declared scope. Any successor that
+permits resumable shards must first implement the full checkpoint, census, and
+canonical-merge contract. All runtime state remains outside the repository and
+protected roots, and only a complete protocol-authorized canonical merge may
+enter an official artifact path.
 
 ## Dependency Layers
 

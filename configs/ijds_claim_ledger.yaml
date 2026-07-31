@@ -1,4 +1,4 @@
-schema_version: "2026-07-29.1"
+schema_version: "2026-07-30.1"
 status: active_ijds_claim_contract
 
 surfaces:
@@ -233,6 +233,27 @@ claims:
       [preferred_embedding, calibrated_upper_endpoint_magnitude,
        optimizer_or_policy_direction, allocation_change_without_experiment,
        selected_or_funded_set_validity]
+    surfaces:
+      required: [body, supplement, registry, claim_matrix]
+      allowed: [body, supplement, registry, claim_matrix]
+
+  - id: theory.feasible_difference_score_order_equivalence
+    status: active
+    kind: theorem
+    rule: documented
+    lineages:
+      [binary_geometry.outcome_free, two_ruler.outcome_free,
+       set_preserving_embedding]
+    scope: nonempty_convex_allocation_set_exact_weak_order_equivalence_on_the_span_of_feasible_allocation_differences_with_translated_caps_common_objective_floors_and_a_common_normalized_ruler_anchor
+    forbidden_inference:
+      [binary_set_equivalence_implies_decision_equivalence,
+       coordinatewise_loan_ranking_is_sufficient,
+       active_cell_nonaffinity_without_registered_audit,
+       allocation_change_at_every_fixed_cell,
+       common_solver_output_proves_equal_optimal_faces,
+       optimizer_uniqueness, solver_output_identity,
+       preferred_embedding, selected_or_funded_set_validity,
+       policy_direction_or_dominance]
     surfaces:
       required: [body, supplement, registry, claim_matrix]
       allowed: [body, supplement, registry, claim_matrix]

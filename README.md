@@ -29,6 +29,9 @@ time roles before evaluation.
 | Structural sensitivity | 36 complete scenarios |
 | Joint fit-label completion stress | 32 / 32 upper bounds below 0.90 |
 | USD 25 floor diagnostic | maximum rate perturbation 0.001284 pp |
+| Set-preserving embedding audit | 80 / 80 binary-set cells unchanged |
+| Positive-gamma allocation changes | 9,659 / 11,520 monthly contrasts |
+| Fixed theta tracks with both separated signs | 77 / 576 |
 
 Under the declared six-month outcome-availability rule, all 40 sharp
 all-candidate coverage upper bounds are below 0.90. That is a deterministic
@@ -48,6 +51,10 @@ administrative age, not exact day-level age). Label-Mondrian calibration changes
 above nominal; it is a complete sensitivity, not a repair. Portfolio direction
 changes with the outcome-blind ruler, coordinate, and comparator support; no
 model, encoding, gamma, ruler, coordinate, scenario, or policy is selected.
+Exact downstream score-order invariance requires positive-affine equivalence
+on the span of feasible allocation differences. Preserving binary sets or the
+coordinatewise loan ranking is not sufficient, while failure of that condition
+does not require every fixed cell to change.
 
 These are retrospective, archive-specific identification results. They are not
 prospective validity, selected-set conformal coverage, causal lending effects,

@@ -53,6 +53,26 @@ small code edit. Before running it:
 Do not select a model, ruler, coordinate, gamma, scenario, or policy from OOT
 outcomes.
 
+## Long-Run Workflow
+
+For a new run expected to exceed 30 minutes:
+
+1. predeclare atomic progress units, heartbeat, deadline, safe cancellation,
+   and whether resume is authorized;
+2. place status, control markers, logs, and scratch shards outside the
+   repository, protected roots, official outputs, and active DVC cache;
+3. report only operational progress, never partial scientific values;
+4. bind every resumable shard to protocol, code, configuration, sources,
+   runtime, schema, complete keys, counts, and content hashes; and
+5. materialize official outputs only after the complete canonical merge passes
+   the protocol's scientific and transport gates.
+
+Use `scripts/inspect_scientific_run.py` for a bounded, read-only status and
+process snapshot. A busy single-thread solver can consume approximately one
+effective CPU core while whole-machine CPU remains low; liveness and declared
+unit progress, not Task Manager's aggregate percentage alone, determine the
+operational diagnosis.
+
 ## Protected Boundary
 
 Never run the protected `crpto.pd.champion`, `crpto.conformal.intervals`,

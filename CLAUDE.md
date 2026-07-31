@@ -34,6 +34,10 @@ not active evidence.
 19c4. `docs/research/ijds_decision_catalog_transport_v1_protocol_2026-07-29.md`
 19c5. `docs/research/ijds_funded_selection_estimand_audit_v1_protocol_2026-07-29.md`
 19c6. `docs/research/ijds_set_preserving_embedding_sensitivity_v1d_protocol_2026-07-30.md`
+19c7. `docs/research/ijds_decision_invariance_theory_2026-07-30.md`
+   - exact score-order equivalence on feasible allocation differences, its
+     translated-cap and two-ruler corollaries, and the distinction between
+     global equivalence and local optimal-face coincidence.
 19d. `docs/research/ijds_raw_data_acquisition_provenance_2026-07-21.md`
 19e. `docs/research/ijds_submission_rights_anonymity_audit_2026-07-21.md`
 20. `configs/ijds_active_evidence_sources.yaml`
@@ -41,12 +45,17 @@ not active evidence.
 22. `reports/crpto/ijds_binary_geometry_frontier_v4_evidence.json`
 23. `.codex/skills/crpto/SKILL.md`
 
-The active claim registry and exact-theory note have theory
+The active claim registry and exact-theory notes have theory
 precedence over a conflicting skill summary: there is no universal continuity,
 common-maxima unit-crossing, guaranteed low score bin, or `l>0`-only
 miscoverage-floor claim. Coverage change between two thresholds is exactly the
 target mass in the crossed score bands; calibration support alone supplies no
 coverage-continuity bound.
+Binary-set preservation and coordinatewise loan ranking are not global
+decision invariance. The exact invariant is positive-affine equivalence modulo
+the orthogonal complement of feasible allocation differences. Failure permits
+but does not force a change at a fixed cell, and one common solver output does
+not certify equal optimal faces.
 
 The V6 geometry and post-freeze diagnostic replays dated 2026-07-26 remain
 non-active candidates. They were not run from a precommitted tag, and the V6
@@ -123,6 +132,10 @@ exception; `assert` is test syntax only.
   `1e-10`; pooled direction changes sign across theta in 77/576 fixed tracks at
   tolerance. This is retrospective finite-grid sensitivity, not an embedding
   or policy selection or a validity repair.
+- Exact decision invariance requires positive-affine score equivalence modulo
+  normals of the complete allocation affine hull. The theorem does not certify
+  that relation for every active month or turn one unchanged solver output
+  into an optimal-face or uniqueness result.
 
 The paper supports complete finite-archive shortfall reporting, a scoped
 joint-block rank-reference flag result, binary residual geometry near a prevalence
@@ -145,6 +158,9 @@ Do not claim:
 - universal favorable or adverse portfolio direction;
 - preferred continuous embedding or theta, set-native optimization, or a
   conformal-validity repair inferred from the set-preserving sensitivity;
+- binary-set preservation or loan-level ranking as global LP invariance;
+  archive-wide score non-affinity without a registered audit; or one common
+  solver output as proof of equal optimal faces or uniqueness;
 - causal, prospective, confirmatory, deployment, fair-lending, or Markov
   conclusions;
 - cash-flow return, IRR, NPV, welfare, or counterfactual funding effects.
@@ -171,6 +187,14 @@ Active execution is declared in
 `configs/crpto_publication_targets.yaml`. Top-level scripts outside that list
 may remain only because `dvc.yaml` or `EXTRACTION_MANIFEST.json` fixes their
 paths. They are sealed compatibility, not active architecture.
+
+The 2026-07-30 temporal-transport, selected/exposure-validity,
+decision-loss-alignment, and long-run-observability documents are future-design
+contracts. They authorize no current-archive execution and are not active
+evidence. Any future run expected to exceed 30 minutes must declare atomic
+progress units, heartbeat, throughput, deadline, cooperative stop, and
+hash-bound resume rules, with operational state outside Git and protected
+roots.
 
 ## Protected Operations
 

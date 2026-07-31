@@ -78,6 +78,25 @@ in YAML, code, notebooks, logs, or submission files.
 | Data/model/conformal behavior | new protocol/run tag plus explicit drift and scientific review |
 | Submission closeout | all gates, strict protected hashes, DVC remote, visual QA |
 
+## Long Scientific Runs
+
+Any new run expected to exceed 30 minutes must declare its complete progress
+denominator, atomic safe boundary, heartbeat interval, wall-time deadline,
+cooperative-stop rule, and resume authority before execution. Operational
+status, stop markers, event logs, and resumable shards must resolve outside the
+Git worktree, protected roots, official artifact directories, and active DVC
+cache.
+
+Status may expose phase, non-outcome unit key, completed/total units, wall and
+process CPU time, memory, throughput, ETA eligibility, and liveness. It must
+not expose partial scores, objectives, coverage, payoffs, directions, winners,
+or any scientific value that could influence continuation. Resume requires
+exact protocol, code, configuration, source, runtime, shard-key, schema,
+census, and content-hash agreement. High CPU without a completed unit is
+evidence of computation, not by itself a deadlock; a stale status without CPU
+or process activity is a warning, not automatic permission to alter a
+scientific stop rule.
+
 ## Closeout
 
 Before synchronization:
