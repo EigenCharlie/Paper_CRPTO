@@ -1,0 +1,213 @@
+{
+  "schema_version": "2026-07-30.1",
+  "status": "complete_retrospective_calibrator_sensitivity_evaluation",
+  "run_tag": "ijds-calibrator-sensitivity-2026-07-30-v1",
+  "protocol_tag": "protocol/ijds-calibrator-sensitivity-evaluation-2026-07-30-v1",
+  "protocol_commit": "753305e81e27f793acdea80b684b42e7eff2201d",
+  "source_artifacts": {
+    "phase_a_freeze": {
+      "path": "models/experiments/ijds_audit/ijds-calibrator-sensitivity-2026-07-30-v1-source/protocol_freeze.json",
+      "bytes": 12098,
+      "sha256": "bf00dff0084bb6d017a808897a2ef654f4efaca6880da6a91161b6a3a1171f4c"
+    },
+    "phase_a_receipt": {
+      "path": "models/experiments/ijds_audit/ijds-calibrator-sensitivity-2026-07-30-v1-source/execution_receipt.json",
+      "bytes": 1530,
+      "sha256": "d117de6253001f152d7ed558a27e125dfd43da78818347ebbc2f67431d9754c2"
+    },
+    "active_v5_config": {
+      "path": "configs/experiments/ijds_binary_geometry_frontier_v4_2026-07-15_v5.yaml",
+      "bytes": 1371,
+      "sha256": "c749befbd0ab7e0f8d6fcded7e7c730cae998032f897f65c7e7673d2a12c3715"
+    },
+    "active_v5_summary": {
+      "path": "models/experiments/ijds_audit/ijds-binary-geometry-frontier-v4-2026-07-15-v5/binary_geometry_frontier_v4_summary.json",
+      "bytes": 58584,
+      "sha256": "07e793df7e457c6afa946e04d3e95d30307faa48424249659ae8d921ea060a3f"
+    },
+    "active_v5_temporal_coverage": {
+      "path": "data/processed/experiments/ijds_audit/ijds-binary-geometry-frontier-v4-2026-07-15-v5/evaluation/temporal_coverage.parquet",
+      "bytes": 215583,
+      "sha256": "25be1d2e065a6eab632618127cb21ccfb99be6f582ef557e80122c184f28dfe2"
+    },
+    "raw_archive": {
+      "path": "data/raw/Loan_status_2007-2020Q3.csv",
+      "bytes": 1773470505,
+      "sha256": "5878af2a088f8ab5214c9337289fb8b5eb6c6338fd3f417b6cdc18513dc6f35f"
+    }
+  },
+  "counts": {
+    "methods": 4,
+    "windows": 8,
+    "scopes_per_method_window": 6,
+    "evaluation_cells": 192,
+    "overall_cells": 32,
+    "pairwise_cells": 288,
+    "candidate_rows": 376890,
+    "resolved_rows": 364814,
+    "unresolved_rows": 12076,
+    "resolved_y0": 307842,
+    "resolved_y1": 56972
+  },
+  "gates": {
+    "phase_a_vector_hash_replay_exact": true,
+    "phase_a_source_is_direct_child_of_protocol": true,
+    "annotated_tag_chain_verified": true,
+    "platt_v5_max_abs_difference": 2.220446049250313e-16,
+    "platt_v5_tolerance": 1e-12,
+    "complete_grid": true,
+    "all_methods_and_windows_reported": true
+  },
+  "git_transport": {
+    "protocol_commit_role": "B",
+    "verified_source_commit_role": "A_single_direct_child_of_P",
+    "required_final_artifact_tag": "artifacts/ijds-calibrator-sensitivity-2026-07-30-v1",
+    "final_output_commit_role": "C_single_direct_child_of_B",
+    "annotated_tags_required": true
+  },
+  "result_boundary": {
+    "nominal_coverage": 0.9,
+    "overall_cells_with_coverage_upper_below_nominal": 18,
+    "overall_cells_with_coverage_upper_at_or_above_nominal": 14,
+    "all_overall_cells_below_nominal": false,
+    "result_state": "uniform_closed_family_shortfall_not_established",
+    "allowed_if_all_below": "Within this closed four-calibrator family and the common q_raw taxonomy, the complete-archive coverage shortfall is calibrator-robust.",
+    "required_if_any_not_below": "The identified complete-archive shortfall is not established uniformly across the closed calibrator family. This does not establish that true coverage itself is calibrator-dependent.",
+    "no_theorem_refutation_from_archive": true
+  },
+  "identification": {
+    "coverage_bounds": "sharp_loanwise_binary_completion_bounds",
+    "pairwise_differences": "sharp_shared_loanwise_binary_completion_bounds",
+    "sampling_confidence_intervals": false,
+    "missing_at_random_assumption": false
+  },
+  "interpretation": {
+    "retrospective_sensitivity": true,
+    "preregistered": false,
+    "closed_calibrator_family": true,
+    "common_q_raw_taxonomy": true,
+    "learner_calibrator_window_or_result_selected": false,
+    "all_methods_windows_and_strata_reported": true,
+    "pairwise_completion_is_shared_loanwise": true,
+    "if_any_upper_at_or_above_nominal": "uniform_closed_family_shortfall_not_established",
+    "sampling_confidence_interval": false,
+    "missing_at_random_assumption": false,
+    "venn_abers_p_prime_is_scalarization": true,
+    "venn_abers_multiprobability_guarantee_transported_to_scalarization": false,
+    "latent_pd_interval": false,
+    "policy_claim": false,
+    "portfolio_optimization": false,
+    "selected_set_guarantee": false,
+    "funded_set_guarantee": false
+  },
+  "artifacts": {
+    "evaluation": {
+      "path": "data/processed/experiments/ijds_audit/ijds-calibrator-sensitivity-2026-07-30-v1/evaluation/calibrator_sensitivity.parquet",
+      "bytes": 46055,
+      "sha256": "ad64c6a9bb2a73474e4a654ed166b7f9d5080c6f725d14635329a859ad23fff9"
+    },
+    "overall_summary": {
+      "path": "data/processed/experiments/ijds_audit/ijds-calibrator-sensitivity-2026-07-30-v1/evaluation/calibrator_sensitivity_overall.parquet",
+      "bytes": 32152,
+      "sha256": "44c2b29a3b8148f0076f3bc88b8153b133bf00f71761e18ee79324f00c90e3d1"
+    },
+    "pairwise_shared_completion": {
+      "path": "data/processed/experiments/ijds_audit/ijds-calibrator-sensitivity-2026-07-30-v1/evaluation/pairwise_shared_completion.parquet",
+      "bytes": 12292,
+      "sha256": "b5770c34b501895ddfb6f221069245595ee064c0766935da8e838cd572868de0"
+    },
+    "platt_v5_reconciliation": {
+      "path": "data/processed/experiments/ijds_audit/ijds-calibrator-sensitivity-2026-07-30-v1/evaluation/platt_v5_reconciliation.parquet",
+      "bytes": 25875,
+      "sha256": "05505ebd952e260f8f35eb50c69de75ce6c2e7d85bbafcb7890a164bb4b6bffd"
+    }
+  },
+  "implementation_provenance": {
+    "source_files": {
+      "configs/experiments/ijds_calibrator_sensitivity_evaluation_2026-07-30_v1.yaml": {
+        "path": "configs/experiments/ijds_calibrator_sensitivity_evaluation_2026-07-30_v1.yaml",
+        "bytes": 4421,
+        "sha256": "76938d78fceea391684f0f0c78b47bb1af39c3a778251dc8be849dce83e6f0a4"
+      },
+      "scripts/experiments/run_ijds_calibrator_sensitivity_v1.py": {
+        "path": "scripts/experiments/run_ijds_calibrator_sensitivity_v1.py",
+        "bytes": 1181,
+        "sha256": "5680c6009f335a357d6d4f5a6f20d801d9251a63dc2c2aa8ce206c5ed7682acf"
+      },
+      "src/ijds_audit/calibrator_sensitivity.py": {
+        "path": "src/ijds_audit/calibrator_sensitivity.py",
+        "bytes": 30920,
+        "sha256": "d34bf09775bd5f79ffb893fcafb18681f81c2c6dcf693afa79955aee6357f98c"
+      },
+      "src/ijds_audit/calibrator_sensitivity_protocol.py": {
+        "path": "src/ijds_audit/calibrator_sensitivity_protocol.py",
+        "bytes": 73144,
+        "sha256": "f288066304a2476e2f271b85851510597a32c1b7086e835ec0b700a41abf64c6"
+      },
+      "src/ijds_audit/geometry.py": {
+        "path": "src/ijds_audit/geometry.py",
+        "bytes": 3936,
+        "sha256": "30929e9ec4aeb558548b1b921ef90012fa26844fefedfb3fc3cf9093fd81db02"
+      },
+      "src/ijds_audit/protocol.py": {
+        "path": "src/ijds_audit/protocol.py",
+        "bytes": 28380,
+        "sha256": "ad6c9e67b1ea268ace799e042aeddbdabc99a25c8c774dfc3ff34217a39a8cbe"
+      },
+      "src/data/outcome_observability.py": {
+        "path": "src/data/outcome_observability.py",
+        "bytes": 21985,
+        "sha256": "d54d9ccf7d54a27bb31a5f8a47e9351ca7201bed7683e9b069299f1501f80d87"
+      },
+      "src/evaluation/coverage_transport.py": {
+        "path": "src/evaluation/coverage_transport.py",
+        "bytes": 15685,
+        "sha256": "948e47916935ce92671413824fdc25ca34b7c2c6db13eaadb5eb953266f1673d"
+      },
+      "src/models/binary_conformal_guardrail.py": {
+        "path": "src/models/binary_conformal_guardrail.py",
+        "bytes": 6629,
+        "sha256": "ce4b32ce27202d5cd8b2b58792aa31b6693f0da9f11b22fbbdceb7240324a0cb"
+      },
+      "docs/research/ijds_calibrator_sensitivity_v1_protocol_2026-07-30.md": {
+        "path": "docs/research/ijds_calibrator_sensitivity_v1_protocol_2026-07-30.md",
+        "bytes": 14003,
+        "sha256": "123bdf79489b42953c1fc78e2dd3965c9473aaa0f2b39fd565f3a12f6dcdb76f"
+      },
+      "docs/research/ijds_calibrator_sensitivity_v1_evaluation_lock_2026-07-30.md": {
+        "path": "docs/research/ijds_calibrator_sensitivity_v1_evaluation_lock_2026-07-30.md",
+        "bytes": 3682,
+        "sha256": "feba5d8a23ea5ef600a7bd0ea68c098e5df8ad77500deb9f1200cd3d1f2f1b33"
+      }
+    },
+    "hash_algorithm": "sha256"
+  },
+  "environment": {
+    "python": "3.11.14 (main, Feb  3 2026, 22:51:29) [MSC v.1944 64 bit (AMD64)]",
+    "executable": "C:\\Users\\carlos\\Documents\\Paper_CRPTO\\tmp\\crpto-final-integration-20260726\\.venv\\Scripts\\python.exe",
+    "platform": "Windows-10-10.0.26200-SP0",
+    "packages": {
+      "betacal": "1.1.0",
+      "catboost": "1.2.10",
+      "highspy": "1.15.1",
+      "numpy": "2.4.6",
+      "optbinning": "0.21.0",
+      "pandas": "3.0.3",
+      "pyarrow": "25.0.0",
+      "scikit-learn": "1.9.0",
+      "scipy": "1.17.1",
+      "venn-abers": "1.5.3"
+    },
+    "solver_environment": {
+      "HIGHS_NATIVE_FALLBACK_SCIPY": null,
+      "HIGHS_PARALLEL": null,
+      "HIGHS_PRESOLVE": null,
+      "HIGHS_RESET_GLOBAL_SCHEDULER": null,
+      "HIGHS_SIMPLEX_STRATEGY": null,
+      "HIGHS_SOLVER": null
+    },
+    "uv_lock_sha256": "83a10656fcad1af30b42659df24924614576e9eaa727f83e8bb10043da236149"
+  },
+  "protected_stages_run": [],
+  "protected_artifacts_written": []
+}
