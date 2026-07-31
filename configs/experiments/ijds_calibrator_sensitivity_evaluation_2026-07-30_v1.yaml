@@ -11,14 +11,14 @@ protocol_tag: "protocol/ijds-calibrator-sensitivity-evaluation-2026-07-30-v1"
 source:
   phase_a_freeze:
     path: "models/experiments/ijds_audit/ijds-calibrator-sensitivity-2026-07-30-v1-source/protocol_freeze.json"
-    bytes: -1
-    sha256: "PENDING_AFTER_PHASE_A_FREEZE"
+    bytes: 12098
+    sha256: "bf00dff0084bb6d017a808897a2ef654f4efaca6880da6a91161b6a3a1171f4c"
   phase_a_receipt:
     path: "models/experiments/ijds_audit/ijds-calibrator-sensitivity-2026-07-30-v1-source/execution_receipt.json"
-    bytes: -1
-    sha256: "PENDING_AFTER_PHASE_A_FREEZE"
+    bytes: 1530
+    sha256: "d117de6253001f152d7ed558a27e125dfd43da78818347ebbc2f67431d9754c2"
   phase_a_source_tag: "artifacts/ijds-calibrator-sensitivity-2026-07-30-v1-source"
-  phase_a_source_commit: "PENDING_AFTER_PHASE_A_FREEZE"
+  phase_a_source_commit: "ea3e7326afc38ccc1b99b09de30792986640e3c3"
   active_v5_config:
     path: "configs/experiments/ijds_binary_geometry_frontier_v4_2026-07-15_v5.yaml"
     bytes: 1371
