@@ -46,12 +46,21 @@ def test_body_and_generated_tex_share_architecture_citations_and_displays() -> N
     assert body_table_ids == {
         "tbl-protocol",
         "tbl-credit-controls",
+        "tbl-mondrian-roles",
+        "tbl-claim-boundary",
         "tbl-two-ruler",
         "tbl-catalog-transport",
         "tbl-embedding-direction",
     }
     assert official.count(r"\begin{longtable}") == len(body_table_ids)
-    assert body.count("{#fig-") == official.count(r"\begin{figure}") == 3
+    body_figure_ids = set(re.findall(r"\{#(fig-[A-Za-z0-9_-]+)", body))
+    assert body_figure_ids == {
+        "fig-information-boundary",
+        "fig-coverage",
+        "fig-phase",
+        "fig-common-panel",
+    }
+    assert official.count(r"\begin{figure}") == len(body_figure_ids)
 
 
 def test_v4_wording_keeps_theory_and_empirical_scope_separate() -> None:

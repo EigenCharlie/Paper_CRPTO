@@ -420,3 +420,30 @@ intake remains fail-closed until the following are completed:
 The unavailable PDF bytes prevent a grade-A local corpus receipt, not a
 manuscript-facing decision. Neither paper is an active empirical evidence
 source for CRPTO, and no claim-ledger change is warranted.
+
+## Byte-level intake closure (2026-07-30)
+
+The current v3 PDFs are now materialized, and the earlier v2 object was not
+overwritten:
+
+- Zhao et al. v3:
+  `Papers_tesis/supplement/Zhao et al 2024 - Conformal Predictive Programming for Chance Constrained Optimization - arXiv 2402.07407v3.pdf`,
+  17 pages, 566,281 bytes, SHA-256
+  `a967c53a4bf9fa42a1bd8603dc652b2c3bea0bdd408c2a3191487982ccac13e5`.
+- Zhou--Zhu v3:
+  `Papers_tesis/supplement/Zhou Zhu 2025 - Calibrating Decision Robustness via Inverse Conformal Risk Control - arXiv 2510.07750v3.pdf`,
+  22 pages, 1,111,714 bytes, SHA-256
+  `8b7979c6c242570eab2b616d46609a1ac146ae91d0ae7ffdddaf9f3d1a8f03f4`.
+
+Both objects are unencrypted, have strong text layers, zero empty pages, and
+embedded CC BY 4.0 metadata. Visual inspection of Zhao pages 1 and 6--8
+confirmed the version banner, Theorems 3.4--3.6, the quantile-shift
+qualification, robust/Mondrian CPP, and case-study figures. Visual inspection
+of Zhou--Zhu pages 1, 5, 6, 8, and 15 confirmed Theorem 3.4, Proposition 3.5,
+Proposition 3.7, the corrected `|I_j|` split denominators, the still-duplicated
+`|Lambda|=10`/`20` Table 1 blocks, and the post-selection proof.
+
+This closes the PDF-documentation deficit; it does not change any theorem
+adjudication, paper-facing qualification, active claim, or evidence source.
+The unified receipt is
+`ijds_literature_corpus_ledger_2026-07-30.md`.

@@ -102,3 +102,24 @@ Primary records:
 
 - <https://arxiv.org/abs/2606.10187v1>
 - <https://arxiv.org/abs/2605.12341v1>
+
+## Byte-level intake closure (2026-07-30)
+
+The two documentary gaps above are now closed without changing the scientific
+dispositions:
+
+- Shekhar--Howard v1 is materialized at
+  `Papers_tesis/supplement/Shekhar Howard 2026 - Decision-Calibrated Conformal Uncertainty - arXiv 2606.10187v1.pdf`;
+  it has 29 pages and SHA-256
+  `546e3803f1e827a638b375c076f4c49e2f757068f2e2555972630cac4ad89ac6`.
+- Lützow et al. v1 is materialized at
+  `Papers_tesis/supplement/Lutzow et al 2026 - Multi-Variable Conformal Prediction - arXiv 2605.12341v1.pdf`;
+  it has 23 pages and SHA-256
+  `e23eb85c303a6756adb894204b72b1eca41352f13e458f1b70f421abda1f5955`.
+
+Both PDFs have strong born-digital text layers and passed targeted visual QA of
+their theorem, algorithm, formula, and limitation surfaces. Their arXiv
+metadata records version 1 and the arXiv non-exclusive distribution license;
+the files remain local research copies outside Git. Exact intake details and
+paper-facing use boundaries are centralized in
+`ijds_literature_corpus_ledger_2026-07-30.md`.

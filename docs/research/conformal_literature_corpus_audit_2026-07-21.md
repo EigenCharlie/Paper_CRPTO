@@ -908,3 +908,13 @@ novelty boundary are recorded in
 | p22 | 6 | `2bb76e01b179e57f34c9e5cf90f63f71a044f4c6` | Universal Distribution of Empirical Coverage | A / direct prior law |
 | p23 | 31 | `07f417738b88863ef4d980ff9778fab61d20dd3b` | Sample-Conditional Coverage in Split Conformal | A / boundary only |
 | f01 | 11 | `ee0a0f04d45f86bf50b24d7258e884725fcaa621` | CatBoost: Unbiased Boosting with Categorical Features | Foundational learner |
+
+## Post-audit corpus receipt (2026-07-30)
+
+This document preserves the 122-object, 4,673-page corpus as audited on
+2026-07-21. Five exact-version PDFs were subsequently materialized: Zhao v3,
+Zhou--Zhu v3, Lützow v1, Shekhar--Howard v1, and the Wei--Zhang Springer
+version of record. The current `Papers_tesis` checksum is 127 PDFs and 4,812
+pages with no duplicate full-file hash. Exact paths, SHA-256 values, parser
+results, visual-QA pages, citation keys, licenses, and dispositions are
+centralized in `ijds_literature_corpus_ledger_2026-07-30.md`.

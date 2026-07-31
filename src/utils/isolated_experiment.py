@@ -220,6 +220,7 @@ def resolve_git_tag(repo_root: Path, tag: str) -> str:
 def environment_provenance(repo_root: Path) -> dict[str, Any]:
     """Capture scientific runtime and solver-relevant metadata."""
     distributions = [
+        "betacal",
         "catboost",
         "highspy",
         "numpy",
@@ -228,6 +229,7 @@ def environment_provenance(repo_root: Path) -> dict[str, Any]:
         "pyarrow",
         "scikit-learn",
         "scipy",
+        "venn-abers",
     ]
     highs_env_names = [
         "HIGHS_NATIVE_FALLBACK_SCIPY",

@@ -206,6 +206,20 @@ Only the four internal five-stratum cutpoints assign groups; the extreme bins
 extend beyond the observed 2011 score range and therefore retain all later
 valid scores.
 
+Each learner needs a scalar score for residual construction; only the primary
+CatBoost scalar also enters the portfolio LP. Platt scaling supplies that score
+through a fixed logistic map fit on the separate 2011 block; its role is
+architectural, not a claim of calibrator optimality. Under its iid contract,
+Venn--Abers instead returns a multiprobabilistic pair
+$(p_{i0},p_{i1})$ [@vovk2014]. Reducing the pair to one score introduces a
+loss-dependent design choice; for example, its standard log-loss scalar is
+$p_{i1}/(1-p_{i0}+p_{i1})$, not an unregistered midpoint. The conversion, its
+taxonomy, and every competing calibrator would need to be frozen before OOT
+evaluation, and the scalar alone does not inherit the Venn guarantee. Neither
+Venn--Abers nor Platt by itself supplies temporal transport or
+selected/funded-set coverage. Accordingly, the active lineage contains no
+Platt--Venn--Abers comparison and no calibrator winner.
+
 The executable primary specification uses 500 trees, depth 6, learning rate
 0.04, `Balanced` automatic class weights, Bernoulli bootstrap with 0.80
 subsampling, `has_time=true`, and a temporal validation tail comprising the
@@ -1546,6 +1560,14 @@ $a^\star\in F_s\cap F_t$ is optimal for both problems when $v$ belongs to both
 relevant normal cones. One common numerical solver output therefore proves
 neither equality of faces nor optimizer uniqueness.
 
+As a related but different use of the same geometry, Wei and Zhang characterize
+co-optimal linear objectives over one common feasible set by
+common-normal-cone membership [@wei2024adjustability]. Their local
+co-optimality condition can explain one shared optimum; CRPTO instead fixes the
+objective while its score constraint can change the feasible set, and the
+result is not the global weak-order equivalence over every feasible allocation
+characterized above.
+
 Finally, because $u_i\ge p_i$ and $\gamma\in[0,1]$, $q_i\ge p_i$. At the same
 numerical cap, every guardrail-feasible allocation is point-feasible. The
 point optimum therefore weakly dominates in the shared plug-in objective.
@@ -2449,6 +2471,12 @@ inspected archive.
 | Expected fractional exposure-weighted FCP | Exactly $K$ positive exposures, $A=\sum_j a_j>0$, and a predeclared hard concentration bound $a_i/A\le\kappa/K$ | Count FCR calibrated at $\alpha/\kappa$, using the deterministic inequality $\operatorname{FCP}^{\$}\le\kappa\operatorname{FCP}^{N}$ | $\kappa$ is selected post hoc, the portfolio denominator is ambiguous, the bound is written relative to $B$ while cash makes $A<B$, or the adjusted sets are uninformative |
 | Next-month portfolio decision risk | Complete issue month as the sampling unit, complete eligible endpoints, bounded loss, and a finite policy catalog frozen before risk calibration | Conformal Risk Control for an exchangeable monotone loss family with its finite-sample safe-terminal correction, or Learn-Then-Test for a finite reoptimized/nonmonotone catalog evaluated on i.i.d. contexts [@angelopoulos2024risk; @angelopoulos2025ltt] | Too few valid blocks, temporal assumptions fail, an eligible endpoint is incomplete, the CRC correction or LTT multiplicity contract fails, or a favorable policy is selected after outcomes |
 
+In the first row, *temporal weights* means the sampling weights required by a
+named nonexchangeable or covariate-shift conformal theorem
+[@barber2023beyond; @tibshirani2019covshift]. They must be frozen without
+target labels and accompanied by the theorem's discrepancy or likelihood-ratio
+contract. They are not the optimized dollar exposures in the third row.
+
 These routes control different objects. Expected FCR is not a
 high-probability bound on one realized portfolio, a block-loss guarantee is not
 loan-level coverage, and residual cash changes the fixed-capital versus
@@ -2552,6 +2580,8 @@ credit scoring, conformal prediction, or linear programming separately.
 | Literature family | Established contribution | Active CRPTO boundary |
 |---|---|---|
 | Finite-batch and sample-conditional split conformal [@marques2025universal; @duchi2025sampleconditional] | Exact Beta--Binomial empirical-coverage law for a shared threshold, and high-probability sample-/group-conditional guarantees under iid sampling | Uses the complementary law only as a stronger joint-block retrospective reference with tie-safe domination and unresolved completion; the chronological archive does not inherit iid sample-conditional guarantees |
+| Probability scaling and Venn--Abers prediction [@platt2000; @vovk2014] | Scalar logistic recalibration and a distinct multiprobabilistic calibration construction under their respective sampling contracts | Freezes one 2011 Platt map per learner as an input; performs no calibrator contest, makes no Platt-superiority claim, and does not treat either method as a temporal-transport or funded-selection repair |
+| Covariate-shift weighted conformal prediction [@tibshirani2019covshift] | Reweights calibration examples by a source-to-target likelihood ratio to obtain marginal target-distribution coverage under an invariant conditional outcome law | The active design neither prespecifies nor validates the required ratio and conditional-invariance ingredients; LP exposure weights and date decay are not conformal sampling weights |
 | Credit scoring and cost-aware calibration [@lessmann2015; @yang2025costaware; @das2023creditgraph] | Probability quality and richer predictive structure | Treats a Platt-scaled default score as an input; no AUC-leadership claim |
 | P2P and robust credit portfolios [@serrano2016profitscoring; @chi2019p2p; @babaei2020p2p] | Economic loan selection under risk and uncertainty | Adds binary-set geometry, outcome isolation, and comparator identification |
 | Classwise and nonexchangeable conformal prediction [@ding2023; @oliveira2024split; @gibbs2024online] | Label-category calibration and guarantees under explicit discrepancy, dependence, concentration, or feedback designs | Audits a retrospective label-Mondrian sensitivity but establishes neither within-class temporal exchangeability nor an online-feedback guarantee |

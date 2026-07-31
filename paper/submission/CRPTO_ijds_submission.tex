@@ -273,6 +273,9 @@ artifacts of the decision comparison.
 
 \section{Related Work}\label{sec-related}
 
+\subsection{Decision-focused learning and comparator
+design}\label{decision-focused-learning-and-comparator-design}
+
 Decision quality is not prediction quality: the same estimate may induce
 a different ranking, feasible region, or action once costs and
 constraints enter
@@ -287,6 +290,9 @@ and solver are held constant; score and cap cannot be separated because
 together they define the feasible set. This audit-chain perspective also
 follows work connecting credit modeling to reproducible empirical design
 and the AI--OR interface \citep{das2023creditgraph, wiberg2025ai_or}.
+
+\subsection{Conformal coverage, temporal transport, and
+post-selection}\label{conformal-coverage-temporal-transport-and-post-selection}
 
 Split conformal prediction gives marginal finite-sample coverage under
 exchangeability \citep{vovk2005, angelopoulos2023}, while exact
@@ -321,6 +327,19 @@ concern marginal coverage of one next point
 defines neither the required sequential unit nor a defensible
 stationarity or mixing coefficient.
 
+Weighted conformal prediction under covariate shift is instead a
+transport construction for marginal target-distribution coverage, not a
+generic robustness patch. It requires a declared source-to-target
+covariate likelihood ratio and invariance of the conditional outcome law
+\citep{tibshirani2019covshift}. Those sampling weights are neither
+date-decay coefficients nor the exposures later chosen by the LP. The
+active design neither prespecifies nor validates the required ratio and
+conditional-invariance ingredients. Estimating temporal weights after
+reading target outcomes, or substituting funded-dollar weights for
+sampling weights, would therefore define neither a valid post-hoc
+interpretation of the active unweighted threshold nor a transport
+guarantee for it.
+
 Selection is a separate inferential problem: reporting intervals only on
 selected units can inflate non-coverage among them
 \citep{benjamini2005fcr}, and split conformal does not control the false
@@ -341,6 +360,9 @@ selection event. The 12,076 unresolved target outcomes do not obstruct
 construction of such sets, but they would still make their retrospective
 coverage evaluation partially identified. CRPTO therefore makes no
 selected- or funded-set coverage claim.
+
+\subsection{Conformal optimization and decision
+calibration}\label{conformal-optimization-and-decision-calibration}
 
 Conformal quantities have also been embedded directly in optimization
 constraints, including a Mondrian variant for class-conditional chance
@@ -366,12 +388,13 @@ Zhou and Zhu \citeyearpar{zhou2026creme} specifically assess expected
 miscoverage and regret for prespecified robustness levels and use a
 held-out split to recalibrate a post-hoc choice. Those methods require
 labeled decision contexts under their own sampling conditions. Here one
-context is a coupled monthly allocation, not each loan independently;
-the accepted-loan archive also cannot identify counterfactual funding
-effects. CRPTO thus asks a narrower empirical question: when a simple
-conformal upper score constrains a conventional credit LP, which
-apparent effects come from interval geometry, comparator choice, or
-unresolved outcomes?
+context is a coupled monthly allocation, not each loan independently.
+Counterfactual decision-set methods make the action-dependent outcome
+explicit \citep{zheng2026counterfactual_decision_sets}, but this
+accepted-loan archive cannot identify counterfactual funding effects.
+CRPTO thus asks a narrower empirical question: when a simple conformal
+upper score constrains a conventional credit LP, which apparent effects
+come from interval geometry, comparator choice, or unresolved outcomes?
 
 Multi-variable conformal prediction instead makes prediction-set shape
 and calibration parameters the object of a scenario-optimization problem
@@ -389,6 +412,9 @@ exchangeable planning blocks and a simultaneous catalog-wide uncertainty
 event. CRPTO instead audits a per-loan binary-set embedding in a
 chronological archive with partially observed outcomes; CRPTO uses
 neither their catalog-uniform impact score nor their policy certificate.
+
+\subsection{Credit calibration, censoring, and portfolio
+value}\label{credit-calibration-censoring-and-portfolio-value}
 
 Credit discrimination likewise does not determine portfolio value
 \citep{lessmann2015, serrano2016profitscoring}. Censoring-aware
@@ -501,13 +527,32 @@ Primary OOT & 2016-04--2017-06 & 376,890 & post-freeze evaluation \\
 Extension & 2017-07--2017-09 & 88,227 & stress only \\
 \end{longtable}
 
+\begin{figure}
+
+\centering{
+
+\includegraphics[width=1\linewidth,height=\textheight,keepaspectratio,alt={Chronology from PD development through calibration, residual fitting, outcome-blind policy construction, physical freeze, and a later keyed endpoint join across an outcome firewall.}]{../../reports/crpto/figures/crpto_ijds_information_boundary.png}
+
+}
+
+\caption{\label{fig-information-boundary}Active chronology and physical
+information boundary. Arrows show construction order, not statistical
+transport. Unavailable fitting labels are excluded only from the
+relevant fit; endpoint availability never filters the OOT candidate
+universe. The final keyed outcome join evaluates already frozen
+decisions while retaining all 12,076 unresolved primary candidates in
+sharp bounds; it supplies neither exchangeability nor prospective
+validity.}
+
+\end{figure}%
+
 \subsection{Information boundary}\label{information-boundary}
 
-Two ID-keyed panels enforce the boundary. The decision panel admits only
-dated origination variables, scores, endpoints, and strata; the outcome
-panel is joined one-to-one only after allocations are frozen. This
-separation makes the timing claim testable but creates no statistical
-guarantee.
+As Figure~\ref{fig-information-boundary} makes explicit, two ID-keyed
+panels enforce the boundary. The decision panel admits only dated
+origination variables, scores, endpoints, and strata; the outcome panel
+is joined one-to-one only after allocations are frozen. This separation
+makes the timing claim testable but creates no statistical guarantee.
 
 Label-dependent fitting is additionally restricted by an information
 cutoff of March 31, 2016. A Fully Paid label becomes available at the
@@ -539,6 +584,33 @@ Supplement Appendices A and G give the full audit map and boundaries.
 
 \section{Method}\label{sec-method}
 
+The downstream construction has five paper-facing objects spanning four
+inferential layers; the funded-decision layer contains both the
+continuous coefficient and the resulting allocation. For one frozen
+score stratum \(\mathcal C_g\),
+
+\[
+\{(p_j,Y_j):j\in\mathcal C_g\}\longrightarrow c_g,\qquad
+(p_i,c_{g(i)})\longrightarrow(\ell_i,u_i),
+\]
+
+\[
+(\ell_i,u_i)\longrightarrow
+S_i=[\ell_i,u_i]\cap\{0,1\},\qquad
+(p_i,u_i)\longrightarrow
+q_i(\gamma)=p_i+\gamma(u_i-p_i)
+\longrightarrow a\!\left(q(\gamma)\right).
+\]
+
+\textbf{Construction map and non-implications.} The fork is essential:
+\(S_i\) records boundary contact but does not identify the subunit value
+of \(u_i\). Each arrow specifies how CRPTO builds an object; it is not
+an inheritance arrow for validity. Score calibration does not establish
+residual exchangeability, preserving every \(S_i\) does not preserve
+portfolio ordering, and candidate-set validity would not by itself
+become selected- or exposure-weighted funded-set validity. Later
+sections audit each handoff separately.
+
 \subsection{Platt-scaled default score and credit-risk
 controls}\label{platt-scaled-default-score-and-credit-risk-controls}
 
@@ -555,6 +627,20 @@ These are specification controls, not a leaderboard, and the primary
 model is fixed by protocol rather than chosen: a control that attains
 better OOT discrimination is not promoted, because promoting it would be
 the outcome-dependent selection this design exists to avoid.
+
+Within each frozen learner specification, Platt scaling has a
+deliberately narrow role: it is a scalar map fitted once on the separate
+2011 block and then frozen. Its use is not a claim that Platt is the
+best calibrator. Venn--Abers prediction is a different
+multiprobabilistic calibration construction with its own sampling
+contract \citep{vovk2014}; converting that object to the single score
+required by this LP would add another design choice. Neither method, by
+name alone, repairs temporal nonexchangeability, unavailable endpoints,
+or selection into funded exposure. We therefore report no
+Platt--Venn--Abers winner and do not perform a post-inspection
+calibrator contest; such a comparison would require a new outcome-free
+protocol that freezes every map and point conversion before OOT
+evaluation.
 
 The raw-data contract predeclares mappings for structurally missing
 delinquency recency and sparsely recorded bankruptcy count, and a frozen
@@ -725,6 +811,51 @@ by both class ratios within an endpoint; subtracting separately
 optimized intervals is not sharp. Online Supplement Appendix B.4.2 gives
 the ratio formulas and all 40/200/400 rows. They are identification
 diagnostics, not tests.
+
+\begin{longtable}[]{@{}
+  >{\raggedright\arraybackslash}p{(\linewidth - 4\tabcolsep) * \real{0.3333}}
+  >{\raggedright\arraybackslash}p{(\linewidth - 4\tabcolsep) * \real{0.3333}}
+  >{\raggedright\arraybackslash}p{(\linewidth - 4\tabcolsep) * \real{0.3333}}@{}}
+\caption{Score-Mondrian and label-Mondrian answer different conditional
+questions and have different roles in the
+audit.}\label{tbl-mondrian-roles}\tabularnewline
+\toprule\noalign{}
+\begin{minipage}[b]{\linewidth}\raggedright
+Design dimension
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+Active score-Mondrian recipe
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+Retrospective label-Mondrian sensitivity
+\end{minipage} \\
+\midrule\noalign{}
+\endfirsthead
+\toprule\noalign{}
+\begin{minipage}[b]{\linewidth}\raggedright
+Design dimension
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+Active score-Mondrian recipe
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+Retrospective label-Mondrian sensitivity
+\end{minipage} \\
+\midrule\noalign{}
+\endhead
+\bottomrule\noalign{}
+\endlastfoot
+Frozen category & One outcome-free 2011 score stratum \(g\) & The same
+score stratum crossed with candidate label \(y\) \\
+Thresholds & One residual quantile pooled over labels within each fixed
+score stratum & Separate \(q_{g,0}\) and \(q_{g,1}\) \\
+Binary set & Symmetric absolute-residual rule, then intersection with
+\(\{0,1\}\) & Include each label against its own threshold; the set need
+not be symmetric around \(p_i\) \\
+Validity contract & Exchangeability within each fixed score stratum &
+Exchangeability within each fixed score-stratum--label category \\
+Role in CRPTO & Active set recipe; only its primary CatBoost score
+enters optimization & Complete declared coverage sensitivity; never
+enters the optimizer \\
+Shared boundary & No temporal-transport or funded-set validity follows &
+No repair, fairness conclusion, or selected method follows \\
+\end{longtable}
 
 For binary \(Y\), miscoverage has the useful identity
 
@@ -931,6 +1062,20 @@ Parts 1 and 3 are exact invariances. Parts 2 and 4 mechanically order
 feasible plug-in objectives, not realized payoff, default, or
 miscoverage.
 
+\textbf{Three-loan intuition.} Suppose a full budget is divided among
+three loans. The score vectors \(s=(0,.6,1)\) and \(t=(0,.36,1)\) rank
+the individual loans in the same order. Yet loan 2 has score \(.6\)
+under \(s\), exceeding the \(.5\) score of an equal loan-1/loan-3
+mixture, while under \(t\) its \(.36\) is below the mixture's \(.5\). A
+ranking-preserving nonlinear transformation has therefore reversed a
+portfolio comparison. Binary-set equality is weaker still: with
+\(p=(.3,.1,.8)\) and thresholds \(c=(.3,.6,.3)\), both the original and
+contracted embeddings induce \((\{0\},\{0\},\{1\})\), but their
+continuous score vectors are \((.6,.7,1)\) and \((.3,.1,1)\) and can
+choose different mixtures. Appendix D.2 gives the exact allocations. The
+invariant must consequently be stated on feasible allocation
+differences, not on loan ranks or set labels.
+
 \textbf{Proposition 1A (feasible-difference score-order equivalence).}
 Let \(\mathcal A\) be the fixed nonempty convex allocation set before
 adding a score constraint and let
@@ -954,7 +1099,12 @@ anchor. Equality of binary sets or of the coordinatewise loan ranking
 does not imply this condition. Its failure permits but does not force a
 decision change in one fixed cell, and one common solver-returned
 allocation does not establish equality of optimal faces. Online
-Supplement D.2 gives the proof and counterexamples.
+Supplement D.2 gives the proof and counterexamples. As a related but
+different use of the same geometry, Wei and Zhang characterize
+co-optimal linear objectives over one common feasible set by
+common-normal-cone membership \citep{wei2024adjustability}. CRPTO
+instead holds the objective fixed while its score constraint can change
+the feasible set.
 
 \subsection{Binary interval geometry}\label{binary-interval-geometry}
 
@@ -1328,8 +1478,9 @@ and the margin at six months is 23 basis points.
 
 This complete finite-archive shortfall is a collection of deterministic
 identification results, not sampling confidence intervals and not, by
-itself, a rejection of conformal validity. Figure 1 therefore displays
-the 40 bounds separately from the joint-block rank-reference flags.
+itself, a rejection of conformal validity. Figure~\ref{fig-coverage}
+therefore displays the 40 bounds separately from the joint-block
+rank-reference flags.
 
 \begin{figure}
 
@@ -1920,6 +2071,59 @@ candidate-set guarantee. Label-Mondrian is constructive precisely
 because it exposes a tradeoff: higher resolved-panel default coverage
 and more ambiguous sets, without uniform restoration of nominal
 coverage.
+
+Expanding the funded-decision layer into its coefficient and allocation
+handoffs gives the five-row claim-boundary card below.
+
+\begin{longtable}[]{@{}
+  >{\raggedright\arraybackslash}p{(\linewidth - 4\tabcolsep) * \real{0.3333}}
+  >{\raggedright\arraybackslash}p{(\linewidth - 4\tabcolsep) * \real{0.3333}}
+  >{\raggedright\arraybackslash}p{(\linewidth - 4\tabcolsep) * \real{0.3333}}@{}}
+\caption{Claim boundary across the score-to-decision
+handoffs.}\label{tbl-claim-boundary}\tabularnewline
+\toprule\noalign{}
+\begin{minipage}[b]{\linewidth}\raggedright
+Observed or constructed object
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+What this paper may conclude
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+What does not pass automatically to the next layer
+\end{minipage} \\
+\midrule\noalign{}
+\endfirsthead
+\toprule\noalign{}
+\begin{minipage}[b]{\linewidth}\raggedright
+Observed or constructed object
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+What this paper may conclude
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+What does not pass automatically to the next layer
+\end{minipage} \\
+\midrule\noalign{}
+\endhead
+\bottomrule\noalign{}
+\endlastfoot
+Marginal score and outcome levels & A sharp finite-archive interval for
+mean score minus default prevalence & Individual calibration, residual
+exchangeability, or a mechanism for coverage change \\
+Residual distributions and thresholds & Exact finite binary geometry and
+a scoped joint-block reference diagnostic & Prospective temporal
+validity, continuity in threshold distance, or a universal phase \\
+Candidate binary sets & Sharp finite-archive candidate-coverage ranges &
+A latent-PD interval, a unique continuous endpoint, or selected-set
+validity \\
+Continuous embedding & A declared LP coefficient and a complete
+set-preserving sensitivity & Conformal calibration of its magnitude, a
+preferred embedding, or global decision invariance \\
+Frozen funded allocations & Sharp common-outcome bounds for declared
+funded contrasts and count-versus-dollar estimand differences & FCR
+control, exposure-weighted conformal validity, causal funding effects,
+or a policy winner \\
+\end{longtable}
+
+The card is directional: downstream evidence can answer its own declared
+estimand, but no upstream guarantee is silently promoted across a
+handoff.
 
 Exact binary geometry adds a diagnostic rather than a new validity
 guarantee. The phase margin uses the frozen calibration block; a

@@ -227,6 +227,20 @@ wheels = [
 ]
 
 [[package]]
+name = "betacal"
+version = "1.1.0"
+source = { registry = "https://pypi.org/simple" }
+dependencies = [
+    { name = "numpy", version = "2.4.6", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version < '3.12'" },
+    { name = "numpy", version = "2.5.1", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version >= '3.12'" },
+    { name = "scikit-learn" },
+]
+sdist = { url = "https://files.pythonhosted.org/packages/f6/76/edaa7f9688a8a1458063ec2495ef552d99a9186b01bbbd752e61391d8f8d/betacal-1.1.0.tar.gz", hash = "sha256:fc425a0bf78a3b368d60d8b1e465ee4bc953c52440e04836eb5098a1b32d98cc", size = 3663, upload-time = "2021-04-01T21:16:54.94Z" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/42/41/4c21097cbf63a8081ab637f1ce064238ad3de9dd000ecd783e2fc81e90e3/betacal-1.1.0-py3-none-any.whl", hash = "sha256:b7063c65fb7eb1b8d5bba4498f1f91aceb727e1ed0758e3bfc4b4b455715d023", size = 5265, upload-time = "2021-04-01T21:16:53.659Z" },
+]
+
+[[package]]
 name = "billiard"
 version = "4.2.4"
 source = { registry = "https://pypi.org/simple" }
@@ -560,6 +574,7 @@ name = "crpto"
 version = "0.1.0"
 source = { editable = "." }
 dependencies = [
+    { name = "betacal" },
     { name = "catboost" },
     { name = "duckdb" },
     { name = "highspy" },
@@ -575,6 +590,7 @@ dependencies = [
     { name = "scikit-learn" },
     { name = "scipy", version = "1.17.1", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version < '3.12'" },
     { name = "scipy", version = "1.18.0", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version >= '3.12'" },
+    { name = "venn-abers" },
 ]
 
 [package.dev-dependencies]
@@ -605,6 +621,7 @@ test = [
 
 [package.metadata]
 requires-dist = [
+    { name = "betacal", specifier = "==1.1.0" },
     { name = "catboost", specifier = ">=1.2,<1.3" },
     { name = "duckdb", specifier = ">=1.3" },
     { name = "highspy", specifier = ">=1.10" },
@@ -618,6 +635,7 @@ requires-dist = [
     { name = "pyyaml", specifier = ">=6.0" },
     { name = "scikit-learn", specifier = ">=1.6,<2" },
     { name = "scipy", specifier = ">=1.14,<2" },
+    { name = "venn-abers", specifier = "==1.5.3" },
 ]
 
 [package.metadata.requires-dev]
@@ -2827,6 +2845,18 @@ sdist = { url = "https://files.pythonhosted.org/packages/53/0c/06f8b233b8fd13b9e
 wheels = [
     { url = "https://files.pythonhosted.org/packages/7f/3e/5db95bcf282c52709639744ca2a8b149baccf648e39c8cc87553df9eae0c/urllib3-2.7.0-py3-none-any.whl", hash = "sha256:9fb4c81ebbb1ce9531cce37674bbc6f1360472bc18ca9a553ede278ef7276897", size = 131087, upload-time = "2026-05-07T16:13:17.151Z" },
 ]
+
+[[package]]
+name = "venn-abers"
+version = "1.5.3"
+source = { registry = "https://pypi.org/simple" }
+dependencies = [
+    { name = "numpy", version = "2.4.6", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version < '3.12'" },
+    { name = "numpy", version = "2.5.1", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version >= '3.12'" },
+    { name = "pandas" },
+    { name = "scikit-learn" },
+]
+sdist = { url = "https://files.pythonhosted.org/packages/f1/3c/dedb9bc9e042e5c10810d7bb7ccac98f12d119a98e3a355ae476fc431886/venn_abers-1.5.3.tar.gz", hash = "sha256:b5fdd4b4a5a1e5edb76d4496235221da127084261324e752a22b424b4f7daf16", size = 19754, upload-time = "2026-05-08T16:41:29.646Z" }
 
 [[package]]
 name = "vine"

@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import hashlib
+import subprocess
 from pathlib import Path
 
 import yaml
@@ -36,7 +37,13 @@ def test_candidate_receipt_index_freezes_execution_time_code_without_local_outpu
     payload = yaml.safe_load(INDEX_PATH.read_text(encoding="utf-8"))
     assert payload["paper_evidence_allowed"] is False
     assert payload["protocol_commit_available_at_execution"] is False
-    assert payload["scientific_uv_lock_sha256"] == _sha256(ROOT / "uv.lock")
+    historical_lock = subprocess.run(
+        ["git", "show", f"{payload['base_git_commit']}:uv.lock"],
+        cwd=ROOT,
+        check=True,
+        capture_output=True,
+    ).stdout
+    assert payload["scientific_uv_lock_sha256"] == hashlib.sha256(historical_lock).hexdigest()
 
     for run in payload["runs"].values():
         config = run["execution_implementation"]["config"]

@@ -1,0 +1,110 @@
+schema_version: "2026-07-30.1"
+phase: "phase_a_target_outcome_nonuse_freeze"
+run_tag: "ijds-calibrator-sensitivity-2026-07-30-v1-source"
+protocol_tag: "protocol/ijds-calibrator-sensitivity-2026-07-30-v1"
+
+source:
+  active_v4_config:
+    path: "configs/experiments/ijds_binary_geometry_frontier_v4_2026-07-12.yaml"
+    bytes: 4136
+    sha256: "fc340e75df0db016a7caf857baa236e559ef5ef34f5dc212fa1b0ab0b842c953"
+  active_v4_freeze:
+    path: "models/experiments/ijds_audit/ijds-binary-geometry-frontier-v4-2026-07-12-v1/protocol_freeze.json"
+    bytes: 20362
+    sha256: "c2b3dc2d18c9fed80708682d5a0369c80c89643e2d28024418522d954ebe667c"
+  scores:
+    path: "data/processed/experiments/ijds_audit/ijds-binary-geometry-frontier-v4-2026-07-12-v1/prediction/scores.parquet"
+    bytes: 14212211
+    sha256: "4053efdbf13066355bb772233231e5fe4ccb436ca75aaf873fb14e213c1e319c"
+  residual_recipes:
+    path: "models/experiments/ijds_audit/ijds-binary-geometry-frontier-v4-2026-07-12-v1/prediction/residual_recipes.json"
+    bytes: 74218
+    sha256: "0874a5e9eea37adce302f4a059d4ccde5570230a7fdabcc29ceab410988f207a"
+  fit_audit:
+    path: "data/processed/experiments/ijds_audit/ijds-binary-geometry-frontier-v4-2026-07-12-v1/prediction/residual_fit_audit.parquet"
+    bytes: 18436852
+    sha256: "a80efcedfe749c52c0624536d361a8b1e9e5121901ee9b91ad4c746c68da107c"
+  catboost_model:
+    path: "models/experiments/ijds_audit/ijds-binary-geometry-frontier-v4-2026-07-12-v1/prediction/catboost_seed42.cbm"
+    bytes: 836640
+    sha256: "5c90e16a06827aa634442aeda7ee3bb4b021a8632c17a96c9e4a44be763e0224"
+  platt_calibrator:
+    path: "models/experiments/ijds_audit/ijds-binary-geometry-frontier-v4-2026-07-12-v1/prediction/catboost_platt.pkl"
+    bytes: 678
+    sha256: "9391c1c918e0707f61ae59c433c312f38668661edd90af5a44cfb29588a07594"
+  raw_archive:
+    path: "data/raw/Loan_status_2007-2020Q3.csv"
+    bytes: 1773470505
+    sha256: "5878af2a088f8ab5214c9337289fb8b5eb6c6338fd3f417b6cdc18513dc6f35f"
+
+design:
+  alpha: 0.10
+  taxonomy_groups: 5
+  minimum_rows_per_group: 1000
+  expected_score_rows: 640543
+  expected_calibration_score_rows: 14101
+  expected_calibrator_fit_rows: 14077
+  expected_calibrator_fit_y0: 12602
+  expected_calibrator_fit_y1: 1475
+  expected_calibrator_fit_ordered_id_sha256: "81045766e24eb4039c922437a92fb7e37c2715bbe67c5fd95cfd0386d07563de"
+  expected_calibrator_fit_ordered_label_sha256: "24e74d0ef1f29c60ee9b45c75741eeecb7623f8d7036a6219684df39260237c4"
+  expected_calibrator_fit_platt_probability_sha256: "3ce39046141dec723ffe080d3eb41857bbcb1f4f0e8d4a915472380a758daf57"
+  platt_fit_reconciliation_tolerance: 0.0
+  methods:
+    - "platt"
+    - "isotonic"
+    - "beta"
+    - "venn_abers"
+  window_ids:
+    - "w01_2012m01_m06"
+    - "w02_2012m02_m07"
+    - "w03_2012m03_m08"
+    - "w04_2012m04_m09"
+    - "w05_2012m05_m10"
+    - "w06_2012m06_m11"
+    - "w07_2012m07_m12"
+    - "w08_2012m08_2013m01"
+  geometry_roles:
+    - "probability_calibration"
+    - "conformal_fit"
+    - "policy_development"
+    - "primary_oot"
+    - "censored_extension"
+  taxonomy:
+    membership_score: "q_raw=expit(catboost_raw_margin)"
+    construction: "exact_inverse_transform_of_active_2011_platt_edges"
+    recompute_quantiles: false
+  venn_abers:
+    setting: "classification"
+    precision: null
+    scalarization: "standard_ivap_p_prime_positive_class"
+    hash_full_multiprobability_pair: true
+    persist_compact_gap_summaries: true
+
+output:
+  data_root: "data/processed/experiments/ijds_audit"
+  model_root: "models/experiments/ijds_audit"
+  calibrator_family: "prediction/calibrator_family.pkl"
+  taxonomy: "prediction/common_q_raw_taxonomy.json"
+  residual_recipes: "prediction/calibrator_residual_recipes.json"
+  calibration_fit_diagnostics: "prediction/calibration_fit_diagnostics.parquet"
+  recipe_audit: "prediction/recipe_audit.parquet"
+  outcome_free_geometry: "prediction/outcome_free_geometry.parquet"
+  freeze: "protocol_freeze.json"
+  execution_receipt: "execution_receipt.json"
+
+interpretation:
+  retrospective_sensitivity: true
+  preregistered: false
+  retrospective_archive_previously_inspected: true
+  raw_archive_physically_read_during_phase_a: true
+  primary_oot_outcomes_retained_or_used: false
+  primary_oot_outcomes_passed_to_calibrator_or_recipe: false
+  learner_calibrator_window_or_result_selected: false
+  calibration_fit_metrics_are_same_sample_descriptions: true
+  venn_abers_p_prime_is_scalarization: true
+  venn_abers_multiprobability_guarantee_transported_to_scalarization: false
+  latent_pd_interval: false
+  portfolio_optimization: false
+  selected_set_guarantee: false
+  funded_set_guarantee: false

@@ -1,0 +1,104 @@
+schema_version: "2026-07-30.1"
+phase: "phase_b_hash_bound_endpoint_evaluation"
+run_tag: "ijds-calibrator-sensitivity-2026-07-30-v1"
+protocol_tag: "protocol/ijds-calibrator-sensitivity-evaluation-2026-07-30-v1"
+
+# This file is intentionally non-executable at protocol commit P.  After the
+# target-outcome-nonuse Phase A is run and its compact artifacts are committed as
+# direct child A, create the annotated source tag on A. Then create direct child
+# B, replace only the PENDING fields below with exact A identities/descriptors,
+# add the Phase-B evaluation addendum, and tag B with the evaluation protocol.
+source:
+  phase_a_freeze:
+    path: "models/experiments/ijds_audit/ijds-calibrator-sensitivity-2026-07-30-v1-source/protocol_freeze.json"
+    bytes: -1
+    sha256: "PENDING_AFTER_PHASE_A_FREEZE"
+  phase_a_receipt:
+    path: "models/experiments/ijds_audit/ijds-calibrator-sensitivity-2026-07-30-v1-source/execution_receipt.json"
+    bytes: -1
+    sha256: "PENDING_AFTER_PHASE_A_FREEZE"
+  phase_a_source_tag: "artifacts/ijds-calibrator-sensitivity-2026-07-30-v1-source"
+  phase_a_source_commit: "PENDING_AFTER_PHASE_A_FREEZE"
+  active_v5_config:
+    path: "configs/experiments/ijds_binary_geometry_frontier_v4_2026-07-15_v5.yaml"
+    bytes: 1371
+    sha256: "c749befbd0ab7e0f8d6fcded7e7c730cae998032f897f65c7e7673d2a12c3715"
+  active_v5_summary:
+    path: "models/experiments/ijds_audit/ijds-binary-geometry-frontier-v4-2026-07-15-v5/binary_geometry_frontier_v4_summary.json"
+    bytes: 58584
+    sha256: "07e793df7e457c6afa946e04d3e95d30307faa48424249659ae8d921ea060a3f"
+  active_v5_temporal_coverage:
+    path: "data/processed/experiments/ijds_audit/ijds-binary-geometry-frontier-v4-2026-07-15-v5/evaluation/temporal_coverage.parquet"
+    bytes: 215583
+    sha256: "25be1d2e065a6eab632618127cb21ccfb99be6f582ef557e80122c184f28dfe2"
+  raw_archive_sha256: "5878af2a088f8ab5214c9337289fb8b5eb6c6338fd3f417b6cdc18513dc6f35f"
+
+design:
+  alpha: 0.10
+  taxonomy_groups: 5
+  role: "primary_oot"
+  methods:
+    - "platt"
+    - "isotonic"
+    - "beta"
+    - "venn_abers"
+  window_ids:
+    - "w01_2012m01_m06"
+    - "w02_2012m02_m07"
+    - "w03_2012m03_m08"
+    - "w04_2012m04_m09"
+    - "w05_2012m05_m10"
+    - "w06_2012m06_m11"
+    - "w07_2012m07_m12"
+    - "w08_2012m08_2013m01"
+  scopes:
+    - "ALL"
+    - "score_q00"
+    - "score_q01"
+    - "score_q02"
+    - "score_q03"
+    - "score_q04"
+  expected_evaluation_cells: 192
+  expected_overall_cells: 32
+  expected_pairwise_cells: 288
+  expected_candidates: 376890
+  expected_resolved: 364814
+  expected_unresolved: 12076
+  expected_resolved_y0: 307842
+  expected_resolved_y1: 56972
+  expected_calibrator_fit_y0: 12602
+  expected_calibrator_fit_y1: 1475
+  expected_calibrator_fit_ordered_id_sha256: "81045766e24eb4039c922437a92fb7e37c2715bbe67c5fd95cfd0386d07563de"
+  expected_calibrator_fit_ordered_label_sha256: "24e74d0ef1f29c60ee9b45c75741eeecb7623f8d7036a6219684df39260237c4"
+  expected_calibrator_fit_platt_probability_sha256: "3ce39046141dec723ffe080d3eb41857bbcb1f4f0e8d4a915472380a758daf57"
+  platt_fit_reconciliation_tolerance: 0.0
+  platt_v5_reconciliation_tolerance: 1.0e-12
+
+output:
+  data_root: "data/processed/experiments/ijds_audit"
+  model_root: "models/experiments/ijds_audit"
+  evaluation: "evaluation/calibrator_sensitivity.parquet"
+  overall_summary: "evaluation/calibrator_sensitivity_overall.parquet"
+  pairwise_shared_completion: "evaluation/pairwise_shared_completion.parquet"
+  platt_v5_reconciliation: "evaluation/platt_v5_reconciliation.parquet"
+  summary: "calibrator_sensitivity_summary.json"
+  execution_receipt: "execution_receipt.json"
+
+interpretation:
+  retrospective_sensitivity: true
+  preregistered: false
+  closed_calibrator_family: true
+  common_q_raw_taxonomy: true
+  learner_calibrator_window_or_result_selected: false
+  all_methods_windows_and_strata_reported: true
+  pairwise_completion_is_shared_loanwise: true
+  if_any_upper_at_or_above_nominal: "uniform_closed_family_shortfall_not_established"
+  sampling_confidence_interval: false
+  missing_at_random_assumption: false
+  venn_abers_p_prime_is_scalarization: true
+  venn_abers_multiprobability_guarantee_transported_to_scalarization: false
+  latent_pd_interval: false
+  policy_claim: false
+  portfolio_optimization: false
+  selected_set_guarantee: false
+  funded_set_guarantee: false
