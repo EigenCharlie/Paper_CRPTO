@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 from scripts.run_ty_advisory import (
+    TY_ACTIVE_HASH_BOUND_EXCLUDES,
     TY_REQUIREMENT,
     _diagnostic_lines,
     build_ty_command,
@@ -52,6 +53,22 @@ def test_ty_command_can_block_the_submission_gate() -> None:
     )
 
     assert "--exit-zero" not in command
+
+
+def test_ty_command_can_force_exclude_byte_sealed_sources() -> None:
+    command = build_ty_command(
+        uvx="uvx",
+        python_environment="C:/tmp/crpto-python",
+        files=["src/example.py"],
+        fail_on_diagnostics=True,
+        excluded_files=TY_ACTIVE_HASH_BOUND_EXCLUDES,
+    )
+
+    assert "--force-exclude" in command
+    for path in TY_ACTIVE_HASH_BOUND_EXCLUDES:
+        position = command.index(path)
+        assert command[position - 1] == "--exclude"
+    assert command[-1] == "src/example.py"
 
 
 def test_ty_diagnostic_parser_keeps_every_error() -> None:

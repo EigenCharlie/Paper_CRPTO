@@ -48,6 +48,7 @@ def test_body_and_generated_tex_share_architecture_citations_and_displays() -> N
         "tbl-credit-controls",
         "tbl-two-ruler",
         "tbl-catalog-transport",
+        "tbl-embedding-direction",
     }
     assert official.count(r"\begin{longtable}") == len(body_table_ids)
     assert body.count("{#fig-") == official.count(r"\begin{figure}") == 3

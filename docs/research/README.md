@@ -24,9 +24,10 @@ claim or source registry names it.
 16. `ijds_rolling_origin_individual_age_followup_protocol_2026-07-21.md`
 17. `ijds_rolling_origin_equal_followup_protocol_2026-07-21.md` (parent provenance)
 18. `ijds_label_mondrian_sensitivity_protocol_2026-07-21.md`
-19. `../../configs/ijds_active_evidence_sources.yaml`
-20. `../../configs/ijds_claim_ledger.yaml`
-21. `../../reports/crpto/ijds_binary_geometry_frontier_v4_evidence.json`
+19. `ijds_set_preserving_embedding_sensitivity_v1d_protocol_2026-07-30.md`
+20. `../../configs/ijds_active_evidence_sources.yaml`
+21. `../../configs/ijds_claim_ledger.yaml`
+22. `../../reports/crpto/ijds_binary_geometry_frontier_v4_evidence.json`
 
 ## Active Interpretation
 
@@ -51,6 +52,11 @@ outcome-blind ruler, coordinate, and finite evaluated comparator support. All
 include zero; this does not compute continuous-support extrema. No learner,
 missingness encoding, conformal method,
 gamma, ruler, coordinate, scenario, or policy is selected.
+The active set-preserving-embedding sensitivity keeps every binary set fixed in
+80/80 diagnostics but changes 9,659/11,520 positive-gamma monthly allocations;
+77/576 fixed pooled tracks contain both tolerance-separated outcome signs over
+theta. This is a retrospective finite-grid noninvariance result, not a preferred
+embedding, set-native optimizer, conformal-validity repair, or policy winner.
 
 ## Literature
 

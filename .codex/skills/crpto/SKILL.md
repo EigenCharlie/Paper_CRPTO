@@ -40,7 +40,7 @@ Read first:
 26. `docs/research/ijds_residual_transport_frontier_v1_protocol_2026-07-29.md`
 27. `docs/research/ijds_decision_catalog_transport_v1_protocol_2026-07-29.md`
 28. `docs/research/ijds_funded_selection_estimand_audit_v1_protocol_2026-07-29.md`
-29. `docs/research/ijds_set_preserving_embedding_sensitivity_v1_protocol_2026-07-26.md`
+29. `docs/research/ijds_set_preserving_embedding_sensitivity_v1d_protocol_2026-07-30.md`
 30. `docs/research/applied_conformal_prediction_book_audit_2026-07-21.md`
 31. `docs/research/conformal_literature_corpus_audit_2026-07-21.md`
 32. `reports/crpto/ijds_binary_geometry_frontier_v4_evidence.json`
@@ -104,6 +104,11 @@ Active evidence:
   decision-catalog, and funded-estimand V1 runs are also active through their
   exact registered direct-child Git artifact commits; none may borrow a broader
   inference than its protocol and claim-ledger boundary.
+- The active set-preserving-embedding V1d is transported through one exact
+  protocol-to-source-to-evaluation direct-child chain. It preserves every
+  binary set, reports the complete theta-by-gamma allocation and outcome census,
+  and selects no embedding, ruler, coordinate, or policy. V1c is failed
+  persistence provenance and supports no claim.
 - Calibre runs optimized Python (`sys.flags.optimize == 2`): never use
   `assert` as a runtime or scientific guard in `src/**` or `scripts/**`;
   raise an explicit exception so the check survives execution.
@@ -152,6 +157,11 @@ Headline evidence:
 - count-minus-invested-dollar coverage is positive in all `96/96` fixed funded
   tracks; count-coverage upper endpoints are below 0.90 in `80/96`, while all
   `96/96` lower endpoints are below it. No funded-set guarantee follows;
+- all `80/80` set diagnostics are unchanged under the declared continuous
+  embedding family, while `9,659/11,520` positive-gamma monthly theta contrasts
+  change allocation beyond `1e-10`; `77/576` fixed pooled tracks contain both
+  tolerance-separated outcome signs across theta. This is finite-grid
+  noninvariance, not a preferred embedding or validity repair;
 - C2 match residual is at most `8.33e-17` and reconciles weak plug-in dominance;
 - all 216 endpoint envelopes over the finite registered cap values spanning
   `[0.05,0.12]` include zero; this does not compute continuous-support extrema;
@@ -215,6 +225,8 @@ Preserve these distinctions:
 - four declared fit-label scenarios versus a sharp nonlinear region
   over all `2^215` assignments.
 - deterministic floor-with-cash granularity versus reoptimized integer lending.
+- set-equivalent binary coverage versus invariance of the unidentified
+  continuous endpoint, allocation, or descriptive outcome direction.
 
 Do not claim a learner, gamma, ruler, coordinate, or policy winner, universal
 direction, selected-set validity, Markov/tail certificate, causal effect, live
@@ -246,8 +258,9 @@ The active builder verifies the V4, two-ruler, raw-data, credit-control,
 endpoint, structural, rolling-primary recovery, conformal-set diagnostic,
 joint-block rank reference, common-panel V8, individual-age follow-up,
 label-Mondrian, fit-label completion, and allocation-granularity
-manifests/freezes and every artifact descriptor. The active capsule contains
-53 DVC pointers. It emits 36 paper-facing CSV tables and five figure families
+manifests/freezes, the set-preserving-embedding two-stage Git lineage, and every
+artifact descriptor. The active capsule contains 53 DVC pointers. It emits 38
+paper-facing CSV tables and five figure families
 in PNG and PDF under the `crpto_ijds_v4_*` naming family, and
 `ijds_binary_geometry_frontier_v4_evidence.json`. Consecutive builds must be
 byte-identical. The canonical body is `paper/CRPTO_ijds.qmd`; generate official

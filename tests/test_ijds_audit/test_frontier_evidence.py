@@ -1,4 +1,4 @@
-"""Contracts for the four active Git-transported scientific frontiers."""
+"""Contracts for the active Git-transported scientific frontiers."""
 
 from __future__ import annotations
 
@@ -40,6 +40,12 @@ def test_frontier_registry_keeps_dvc_surface_fixed_and_uses_git_artifacts() -> N
         assert identity["dvc_tracked"] is False
         assert identity["artifact_transport"] == "git_force_tracked_direct_child_commit"
         assert identity["artifact_parent_commit"] == identity["protocol_commit"]
+    embedding = diagnostics["set_preserving_embedding"]
+    assert embedding["dvc_tracked"] is False
+    assert embedding["source_artifact_parent_commit"] == embedding["protocol_commit"]
+    assert embedding["artifact_parent_commit"] == embedding["source_artifact_commit"]
+    assert len(embedding["source_artifact_paths"]) == 11
+    assert len(embedding["artifact_paths"]) == 9
 
 
 def test_residual_and_marginal_frontiers_are_complete_and_narrow() -> None:
@@ -93,6 +99,94 @@ def test_decision_and_funded_frontiers_preserve_interpretive_boundaries() -> Non
     assert funded.findings["count_selected_upper_below_point90_tracks"] == 80
     assert funded.findings["count_selected_lower_below_point90_tracks"] == 96
     assert funded.findings["selected_set_or_fcr_validity_claimed"] is False
+
+
+def test_set_preserving_embedding_is_complete_without_selecting_an_embedding() -> None:
+    _, evidence = _evidence()
+    embedding = evidence.set_preserving_embedding
+
+    assert embedding.findings["set_preservation_and_allocation_change_verified"] is True
+    assert embedding.findings["theta_direction_noninvariance_verified"] is True
+    assert embedding.findings["set_diagnostic_rows"] == 80
+    assert embedding.findings["sets_changed"] == 0
+    assert embedding.findings["allocation_changes_gt_1e10"] == 9659
+    assert embedding.findings["noncontrol_theta_allocation_contrasts"] == 11520
+    assert embedding.findings["phase_a_gamma_zero_control_cells"] == 2880
+    assert embedding.findings["pooled_gamma_zero_control_cells"] == 192
+    assert embedding.findings["selected_theta_gamma_ruler_coordinate_window_or_policy"] is False
+    allocation = embedding.publication_tables["allocation_summary"]
+    assert allocation["ruler"].tolist() == [
+        "all_rulers",
+        "objective_matched",
+        "normalized_score",
+    ]
+    assert allocation["noncontrol_theta_contrasts"].tolist() == [11520, 5760, 5760]
+    assert allocation["allocation_changes_gt_1e10"].tolist() == [9659, 3899, 5760]
+    assert allocation["maximum_normalized_exposure_distance"].tolist() == pytest.approx(
+        [0.684049776890922, 0.5758632511294073, 0.684049776890922], abs=1e-15
+    )
+    assert not allocation.isna().any().any()
+    directions = embedding.publication_tables["direction_census"]
+    assert len(directions) == 6
+    assert list(directions[["contrast_family", "metric"]].itertuples(index=False, name=None)) == [
+        ("theta_minus_theta_0_within_gamma", "standardized_payoff"),
+        ("theta_minus_theta_0_within_gamma", "funded_default"),
+        ("theta_minus_theta_0_within_gamma", "funded_binary_miscoverage"),
+        ("gamma_1_minus_gamma_0_within_theta", "standardized_payoff"),
+        ("gamma_1_minus_gamma_0_within_theta", "funded_default"),
+        ("gamma_1_minus_gamma_0_within_theta", "funded_binary_miscoverage"),
+    ]
+
+
+@pytest.mark.parametrize(
+    "payload_name", ["evaluation_summary.json", "verified_evaluation_manifest.json"]
+)
+def test_embedding_loader_rejects_false_replay_or_confirmation_flags(
+    monkeypatch: pytest.MonkeyPatch,
+    payload_name: str,
+) -> None:
+    registry, sources = load_verified_source_registry(REGISTRY, repo_root=REPO)
+    original = frontier_module._load_json_object
+
+    def mutated(path: Path, *, label: str):
+        payload = copy.deepcopy(original(path, label=label))
+        if path.name == payload_name and "set-preserving-embedding" in path.as_posix():
+            payload["confirmatory"] = True
+            payload["replay_clean"] = True
+        return payload
+
+    monkeypatch.setattr(frontier_module, "_load_json_object", mutated)
+    with pytest.raises(RuntimeError, match="selection or interpretation boundary changed"):
+        load_frontier_evidence(
+            sources,
+            registry["lineages"]["diagnostics"],
+            repo_root=REPO,
+        )
+
+
+def test_embedding_loader_rejects_nonzero_monthly_gamma_zero_control(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    registry, sources = load_verified_source_registry(REGISTRY, repo_root=REPO)
+    original = frontier_module.pd.read_parquet
+
+    def mutated(path: Path, *args, **kwargs):
+        frame = original(path, *args, **kwargs)
+        if Path(path).name == "monthly_sharp_contrasts.parquet":
+            frame = frame.copy()
+            mask = frame["contrast_family"].eq("theta_minus_theta_0_within_gamma") & frame[
+                "gamma"
+            ].eq(0.0)
+            frame.loc[frame.index[mask][0], "weighted_default_difference_lower"] = 1e-6
+        return frame
+
+    monkeypatch.setattr(frontier_module.pd, "read_parquet", mutated)
+    with pytest.raises(RuntimeError, match="monthly or pooled gamma-zero negative control changed"):
+        load_frontier_evidence(
+            sources,
+            registry["lineages"]["diagnostics"],
+            repo_root=REPO,
+        )
 
 
 @pytest.mark.parametrize(

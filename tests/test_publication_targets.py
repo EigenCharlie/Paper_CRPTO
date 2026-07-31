@@ -174,6 +174,10 @@ def test_active_capsule_paths_exist() -> None:
         "reports/crpto/tables/crpto_ijds_v4_tableS7D_equal_followup_census.csv"
         not in active["required_artifacts"]
     )
+    assert {
+        "reports/crpto/tables/crpto_ijds_v4_tableS9K_set_preserving_embedding_allocation_summary.csv",
+        "reports/crpto/tables/crpto_ijds_v4_tableS9L_set_preserving_embedding_direction_census.csv",
+    }.issubset(active["required_artifacts"])
     assert set(active["required_artifacts"]) == expected_artifacts
     for artifact in active["required_artifacts"]:
         assert Path(artifact).is_file(), artifact
@@ -184,9 +188,18 @@ def test_active_capsule_paths_exist() -> None:
     assert code_surface["historical_execution_in_active_capsule"] is False
     for path in code_surface["source_roots"]:
         assert Path(path).is_dir(), path
-    for group in ("paper_pipeline", "protocol_entrypoints", "support_tools"):
+    for group in (
+        "paper_pipeline",
+        "protocol_entrypoints",
+        "sealed_protocol_entrypoints",
+        "support_tools",
+    ):
         for path in code_surface[group]:
             assert Path(path).is_file(), path
+    assert set(code_surface["sealed_protocol_entrypoints"]) == {
+        "scripts/experiments/run_ijds_set_preserving_embedding_sensitivity_v1c.py",
+        "scripts/experiments/run_ijds_set_preserving_embedding_sensitivity_v1d.py",
+    }
     assert {
         "scripts/experiments/run_ijds_exchangeability_transport_test.py",
         "scripts/experiments/run_ijds_common_panel_threshold_response_v8.py",

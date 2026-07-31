@@ -338,6 +338,32 @@ def test_active_evidence_registry_verifies_every_source() -> None:
         "marginal_score_outcome_gap_table",
         "marginal_score_outcome_gap_endpoint_reason_census",
         "marginal_score_outcome_gap_monthly_endpoint_reason_census",
+        "set_preserving_embedding_config",
+        "set_preserving_embedding_base_config",
+        "set_preserving_embedding_protocol",
+        "set_preserving_embedding_v1c_no_go",
+        "set_preserving_embedding_runner",
+        "set_preserving_embedding_implementation",
+        "set_preserving_embedding_embedding_set_preservation",
+        "set_preserving_embedding_frontier_funded_allocations",
+        "set_preserving_embedding_frontier_independent_solver_validation",
+        "set_preserving_embedding_frontier_order_sensitivity",
+        "set_preserving_embedding_frontier_solve_records",
+        "set_preserving_embedding_minimum_endpoint_diagnostics",
+        "set_preserving_embedding_objective_optimum_diagnostics",
+        "set_preserving_embedding_outcome_free_allocation_contrasts",
+        "set_preserving_embedding_outcome_free_receipt",
+        "set_preserving_embedding_outcome_free_summary",
+        "set_preserving_embedding_protocol_freeze",
+        "set_preserving_embedding_evaluated_portfolios",
+        "set_preserving_embedding_direction_census",
+        "set_preserving_embedding_monthly_contrasts",
+        "set_preserving_embedding_outcome_audit",
+        "set_preserving_embedding_window_contrasts",
+        "set_preserving_embedding_evaluation_receipt",
+        "set_preserving_embedding_evaluation_summary",
+        "set_preserving_embedding_join_identity",
+        "set_preserving_embedding_manifest",
         "rolling_equal_followup_summary",
         "rolling_equal_followup_config",
         "rolling_equal_followup_receipt",
@@ -379,6 +405,11 @@ def test_active_evidence_registry_verifies_every_source() -> None:
         assert identity["artifact_parent_commit"] == identity["protocol_commit"]
         assert identity["artifact_transport"] == "git_force_tracked_direct_child_commit"
         assert len(identity["artifact_paths"]) == path_count
+    embedding = payload["lineages"]["diagnostics"]["set_preserving_embedding"]
+    assert embedding["source_artifact_parent_commit"] == embedding["protocol_commit"]
+    assert embedding["artifact_parent_commit"] == embedding["source_artifact_commit"]
+    assert len(embedding["source_artifact_paths"]) == 11
+    assert len(embedding["artifact_paths"]) == 9
     assert (
         payload["replay_dependencies"]["rolling_origin_equal_followup_parent"]["paper_role"]
         == "non_primary_equal_quarter_level_minimum_followup_parent_provenance"

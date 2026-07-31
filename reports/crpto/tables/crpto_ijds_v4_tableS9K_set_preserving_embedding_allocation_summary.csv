@@ -1,0 +1,4 @@
+ruler,noncontrol_theta_contrasts,allocation_changes_gt_1e10,allocation_change_fraction,maximum_normalized_exposure_distance,set_diagnostic_rows,sets_changed,maximum_upper_contraction
+all_rulers,11520,9659,0.8384548611111111,0.684049776890922,80,0,0.8920116585417792
+objective_matched,5760,3899,0.6769097222222222,0.5758632511294073,80,0,0.8920116585417792
+normalized_score,5760,5760,1.0,0.684049776890922,80,0,0.8920116585417792

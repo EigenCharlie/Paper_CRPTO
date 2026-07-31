@@ -9,6 +9,10 @@ strict-manifest-prefix := if os() == "windows" {
     "CRPTO_REQUIRE_DVC_ARTIFACTS=1"
 }
 
+# Exact-byte dependencies of active Git artifact lineages. They remain covered
+# by the read-only lint command but must never be rewritten by Ruff.
+sealed-scientific-sources := "scripts/experiments/run_ijds_decision_catalog_transport_v1.py,scripts/experiments/run_ijds_funded_selection_estimand_audit_v1.py,scripts/experiments/run_ijds_marginal_mean_score_outcome_gap_v3i.py,scripts/experiments/run_ijds_residual_transport_frontier.py,src/ijds_audit/marginal_mean_score_outcome_gap_v3i.py"
+
 default: help
 
 # --- Environment and quality ---------------------------------------------
@@ -18,11 +22,11 @@ setup:
 
 lint:
     uv run --locked ruff check .
-    uv run --locked ruff format --check .
+    uv run --locked ruff format --check . --exclude "{{ sealed-scientific-sources }}"
 
 fmt:
-    uv run --locked ruff check . --fix
-    uv run --locked ruff format .
+    uv run --locked ruff check . --fix --exclude "{{ sealed-scientific-sources }}"
+    uv run --locked ruff format . --exclude "{{ sealed-scientific-sources }}"
 
 type-check:
     uv run --locked mypy src scripts tests

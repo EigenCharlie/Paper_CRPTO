@@ -74,6 +74,32 @@
       "rolling_origin_summary",
       "rolling_primary_recovery_receipt",
       "rolling_primary_recovery_summary",
+      "set_preserving_embedding_base_config",
+      "set_preserving_embedding_config",
+      "set_preserving_embedding_direction_census",
+      "set_preserving_embedding_embedding_set_preservation",
+      "set_preserving_embedding_evaluated_portfolios",
+      "set_preserving_embedding_evaluation_receipt",
+      "set_preserving_embedding_evaluation_summary",
+      "set_preserving_embedding_frontier_funded_allocations",
+      "set_preserving_embedding_frontier_independent_solver_validation",
+      "set_preserving_embedding_frontier_order_sensitivity",
+      "set_preserving_embedding_frontier_solve_records",
+      "set_preserving_embedding_implementation",
+      "set_preserving_embedding_join_identity",
+      "set_preserving_embedding_manifest",
+      "set_preserving_embedding_minimum_endpoint_diagnostics",
+      "set_preserving_embedding_monthly_contrasts",
+      "set_preserving_embedding_objective_optimum_diagnostics",
+      "set_preserving_embedding_outcome_audit",
+      "set_preserving_embedding_outcome_free_allocation_contrasts",
+      "set_preserving_embedding_outcome_free_receipt",
+      "set_preserving_embedding_outcome_free_summary",
+      "set_preserving_embedding_protocol",
+      "set_preserving_embedding_protocol_freeze",
+      "set_preserving_embedding_runner",
+      "set_preserving_embedding_v1c_no_go",
+      "set_preserving_embedding_window_contrasts",
       "solver_tie_audit",
       "structural_sensitivity_config",
       "structural_sensitivity_freeze",
@@ -291,6 +317,46 @@
           "data/processed/experiments/ijds_audit/ijds-marginal-mean-score-outcome-gap-2026-07-29-v3i/monthly_endpoint_reason_census.csv",
           "models/experiments/ijds_audit/ijds-marginal-mean-score-outcome-gap-2026-07-29-v3i/execution_receipt.json",
           "models/experiments/ijds_audit/ijds-marginal-mean-score-outcome-gap-2026-07-29-v3i/marginal_mean_score_outcome_gap_summary.json"
+        ]
+      },
+      "set_preserving_embedding": {
+        "run_tag": "ijds-set-preserving-embedding-sensitivity-2026-07-30-v1d",
+        "protocol_tag": "protocol/ijds-set-preserving-embedding-sensitivity-2026-07-30-v1d",
+        "protocol_commit": "174c4e3d894829473a787e6d34bfc3bbab2f8ef2",
+        "scientific_uv_lock_sha256": "6c862cbad9ab7e3a07dd2823c775127403093d6ad59a789ee227d827165e4733",
+        "paper_role": "complete_retrospective_postinspection_set_preserving_embedding_sensitivity",
+        "dvc_tracked": false,
+        "source_artifact_tag": "artifacts/ijds-set-preserving-embedding-sensitivity-2026-07-30-v1a-recovery-v1d",
+        "source_artifact_commit": "95e39f05bb990429025d0115a0e55c53b1fb1ea8",
+        "source_artifact_parent_commit": "174c4e3d894829473a787e6d34bfc3bbab2f8ef2",
+        "source_artifact_transport": "git_force_tracked_direct_child_commit",
+        "source_artifact_paths": [
+          "data/processed/experiments/ijds_audit/ijds-set-preserving-embedding-sensitivity-2026-07-29-v1a/frontier/embedding_set_preservation.parquet",
+          "data/processed/experiments/ijds_audit/ijds-set-preserving-embedding-sensitivity-2026-07-29-v1a/frontier/frontier_funded_allocations.parquet",
+          "data/processed/experiments/ijds_audit/ijds-set-preserving-embedding-sensitivity-2026-07-29-v1a/frontier/frontier_independent_solver_validation.parquet",
+          "data/processed/experiments/ijds_audit/ijds-set-preserving-embedding-sensitivity-2026-07-29-v1a/frontier/frontier_order_sensitivity.parquet",
+          "data/processed/experiments/ijds_audit/ijds-set-preserving-embedding-sensitivity-2026-07-29-v1a/frontier/frontier_solve_records.parquet",
+          "data/processed/experiments/ijds_audit/ijds-set-preserving-embedding-sensitivity-2026-07-29-v1a/frontier/minimum_endpoint_diagnostics.parquet",
+          "data/processed/experiments/ijds_audit/ijds-set-preserving-embedding-sensitivity-2026-07-29-v1a/frontier/objective_optimum_diagnostics.parquet",
+          "data/processed/experiments/ijds_audit/ijds-set-preserving-embedding-sensitivity-2026-07-29-v1a/frontier/outcome_free_allocation_contrasts.parquet",
+          "models/experiments/ijds_audit/ijds-set-preserving-embedding-sensitivity-2026-07-29-v1a/outcome_free_execution_receipt.json",
+          "models/experiments/ijds_audit/ijds-set-preserving-embedding-sensitivity-2026-07-29-v1a/outcome_free_summary.json",
+          "models/experiments/ijds_audit/ijds-set-preserving-embedding-sensitivity-2026-07-29-v1a/protocol_freeze.json"
+        ],
+        "artifact_tag": "artifacts/ijds-set-preserving-embedding-sensitivity-2026-07-30-v1d",
+        "artifact_commit": "276a5db8772262aad2edd8936dbe226926e412b5",
+        "artifact_parent_commit": "95e39f05bb990429025d0115a0e55c53b1fb1ea8",
+        "artifact_transport": "git_force_tracked_direct_child_commit",
+        "artifact_paths": [
+          "data/processed/experiments/ijds_audit/ijds-set-preserving-embedding-sensitivity-2026-07-30-v1d/evaluation/evaluated_primary_portfolios.parquet",
+          "data/processed/experiments/ijds_audit/ijds-set-preserving-embedding-sensitivity-2026-07-30-v1d/evaluation/metric_direction_census.parquet",
+          "data/processed/experiments/ijds_audit/ijds-set-preserving-embedding-sensitivity-2026-07-30-v1d/evaluation/monthly_sharp_contrasts.parquet",
+          "data/processed/experiments/ijds_audit/ijds-set-preserving-embedding-sensitivity-2026-07-30-v1d/evaluation/outcome_join_audit.parquet",
+          "data/processed/experiments/ijds_audit/ijds-set-preserving-embedding-sensitivity-2026-07-30-v1d/evaluation/window_sharp_contrasts.parquet",
+          "models/experiments/ijds_audit/ijds-set-preserving-embedding-sensitivity-2026-07-30-v1d/evaluation_execution_receipt.json",
+          "models/experiments/ijds_audit/ijds-set-preserving-embedding-sensitivity-2026-07-30-v1d/evaluation_summary.json",
+          "models/experiments/ijds_audit/ijds-set-preserving-embedding-sensitivity-2026-07-30-v1d/join_identity.json",
+          "models/experiments/ijds_audit/ijds-set-preserving-embedding-sensitivity-2026-07-30-v1d/verified_evaluation_manifest.json"
         ]
       }
     }
@@ -26681,6 +26747,130 @@
       "fcr_or_jomi_guarantee_claimed": false,
       "preferred_weighting_or_policy_claimed": false,
       "joint_sharpness_across_tracks_claimed": false
+    }
+  },
+  "set_preserving_embedding": {
+    "scope": "complete_five_theta_by_five_gamma_by_two_ruler_by_three_coordinate_eight_window_retrospective_grid",
+    "run_tag": "ijds-set-preserving-embedding-sensitivity-2026-07-30-v1d",
+    "protocol_tag": "protocol/ijds-set-preserving-embedding-sensitivity-2026-07-30-v1d",
+    "protocol_commit": "174c4e3d894829473a787e6d34bfc3bbab2f8ef2",
+    "source_artifact_tag": "artifacts/ijds-set-preserving-embedding-sensitivity-2026-07-30-v1a-recovery-v1d",
+    "source_artifact_commit": "95e39f05bb990429025d0115a0e55c53b1fb1ea8",
+    "set_preservation_and_allocation_change_verified": true,
+    "theta_direction_noninvariance_verified": true,
+    "set_diagnostic_rows": 80,
+    "sets_changed": 0,
+    "maximum_upper_contraction": 0.8920116585417792,
+    "noncontrol_theta_allocation_contrasts": 11520,
+    "allocation_changes_gt_1e10": 9659,
+    "maximum_normalized_exposure_distance": 0.684049776890922,
+    "theta_direction_tracks": 576,
+    "theta_tracks_changing_direction_category": 324,
+    "theta_tracks_with_both_separated_signs_at_tolerance": 77,
+    "theta_tracks_with_both_geometric_signs": 96,
+    "phase_a_gamma_zero_control_cells": 2880,
+    "pooled_gamma_zero_control_cells": 192,
+    "retrospective_postinspection_nonconfirmatory": true,
+    "selected_theta_gamma_ruler_coordinate_window_or_policy": false,
+    "p_values_computed": false,
+    "causal_or_prospective_claimed": false,
+    "allocation_rows": [
+      {
+        "ruler": "all_rulers",
+        "noncontrol_theta_contrasts": 11520,
+        "allocation_changes_gt_1e10": 9659,
+        "allocation_change_fraction": 0.8384548611111111,
+        "maximum_normalized_exposure_distance": 0.684049776890922,
+        "set_diagnostic_rows": 80,
+        "sets_changed": 0,
+        "maximum_upper_contraction": 0.8920116585417792
+      },
+      {
+        "ruler": "objective_matched",
+        "noncontrol_theta_contrasts": 5760,
+        "allocation_changes_gt_1e10": 3899,
+        "allocation_change_fraction": 0.6769097222222222,
+        "maximum_normalized_exposure_distance": 0.5758632511294073,
+        "set_diagnostic_rows": 80,
+        "sets_changed": 0,
+        "maximum_upper_contraction": 0.8920116585417792
+      },
+      {
+        "ruler": "normalized_score",
+        "noncontrol_theta_contrasts": 5760,
+        "allocation_changes_gt_1e10": 5760,
+        "allocation_change_fraction": 1.0,
+        "maximum_normalized_exposure_distance": 0.684049776890922,
+        "set_diagnostic_rows": 80,
+        "sets_changed": 0,
+        "maximum_upper_contraction": 0.8920116585417792
+      }
+    ],
+    "direction_rows": [
+      {
+        "contrast_family": "theta_minus_theta_0_within_gamma",
+        "metric": "standardized_payoff",
+        "cells": 768,
+        "negative": 128,
+        "positive": 338,
+        "not_directionally_separated_at_tolerance": 230,
+        "within_tolerance": 72
+      },
+      {
+        "contrast_family": "theta_minus_theta_0_within_gamma",
+        "metric": "funded_default",
+        "cells": 768,
+        "negative": 350,
+        "positive": 157,
+        "not_directionally_separated_at_tolerance": 173,
+        "within_tolerance": 88
+      },
+      {
+        "contrast_family": "theta_minus_theta_0_within_gamma",
+        "metric": "funded_binary_miscoverage",
+        "cells": 768,
+        "negative": 340,
+        "positive": 259,
+        "not_directionally_separated_at_tolerance": 81,
+        "within_tolerance": 88
+      },
+      {
+        "contrast_family": "gamma_1_minus_gamma_0_within_theta",
+        "metric": "standardized_payoff",
+        "cells": 240,
+        "negative": 149,
+        "positive": 0,
+        "not_directionally_separated_at_tolerance": 74,
+        "within_tolerance": 17
+      },
+      {
+        "contrast_family": "gamma_1_minus_gamma_0_within_theta",
+        "metric": "funded_default",
+        "cells": 240,
+        "negative": 0,
+        "positive": 153,
+        "not_directionally_separated_at_tolerance": 70,
+        "within_tolerance": 17
+      },
+      {
+        "contrast_family": "gamma_1_minus_gamma_0_within_theta",
+        "metric": "funded_binary_miscoverage",
+        "cells": 240,
+        "negative": 0,
+        "positive": 191,
+        "not_directionally_separated_at_tolerance": 32,
+        "within_tolerance": 17
+      }
+    ],
+    "interpretation": {
+      "finite_archive_retrospective_postinspection_diagnostic": true,
+      "binary_sets_are_identical_over_declared_theta_grid": true,
+      "identical_sets_imply_allocation_invariance_claimed": false,
+      "outcome_direction_invariant_to_theta_claimed": false,
+      "theta_gamma_ruler_coordinate_window_or_policy_selected": false,
+      "p_value_or_confirmatory_claimed": false,
+      "causal_or_prospective_claimed": false,
+      "selected_set_or_funded_set_validity_claimed": false
     }
   },
   "evaluation_endpoint": {
@@ -60642,23 +60832,23 @@
   "source_artifacts": {
     "active_source_registry": {
       "path": "configs/ijds_active_evidence_sources.yaml",
-      "bytes": 43990,
-      "sha256": "9b1cb8df7ebd324d74449eb866a7968cb52a09858033b266d9667b658b191b07"
+      "bytes": 55133,
+      "sha256": "829b71f56ac2fbbee7081b5f04c4351c3583c3ebbae65cf08b2c254c7a52d763"
     },
     "claim_ledger_contract": {
       "path": "configs/ijds_claim_ledger.yaml",
-      "bytes": 25000,
-      "sha256": "00c35a79a4e9ad7dcb3f183c45f9ca0abfe15a75745ba76b196ea30527caf80f"
+      "bytes": 26901,
+      "sha256": "040a296b020c1ae02f5282132ab789097f1f9f2f7d49add8123d97074bfa4059"
     },
     "publication_targets_contract": {
       "path": "configs/crpto_publication_targets.yaml",
-      "bytes": 22851,
-      "sha256": "cde0f4ee20389207515f046cdba262d4d8bdb8494028be0128de7cc0384d8367"
+      "bytes": 23240,
+      "sha256": "153ca82f15da3bbb59e873fbc88d7009a244a7004fb42b84631fb20a796eba15"
     },
     "evidence_builder": {
       "path": "scripts/build_ijds_binary_geometry_frontier_v4_evidence.py",
-      "bytes": 251720,
-      "sha256": "55977debfa8a381df0e5299b1613b29a3e30fa1bb1551ed873be0a1432b98800"
+      "bytes": 254861,
+      "sha256": "ff5db8b46c0edc2be15e19f5d7264cb8ad3fc85a15c289026fab97b75ed90d3e"
     },
     "policy_support_evidence_builder": {
       "path": "scripts/build_ijds_policy_support_optimal_face_evidence.py",
@@ -60668,7 +60858,7 @@
     "publication_integrity_checker": {
       "path": "scripts/check_publication_integrity.py",
       "bytes": 36821,
-      "sha256": "207f83bc17d2898a4416e7d45c803156e00762f959594608f9c60ce73cc21979"
+      "sha256": "99038e98bc5f873173d4e0dcad856b72202e3e838eb76774266927e875deed78"
     },
     "paper_pdf_auditor": {
       "path": "scripts/inspect_ijds_pdfs.py",
@@ -60712,8 +60902,8 @@
     },
     "scientific_frontiers/loader": {
       "path": "src/ijds_audit/frontier_evidence.py",
-      "bytes": 36493,
-      "sha256": "0c520b66a48c24a1799ccd8668c99f5fcd6b8e9c2e553f7fb5e4f330888f67cb"
+      "bytes": 64720,
+      "sha256": "a16090f901c4ec6be23075e15efabcea896ede8310abcce063eb119c6e1b2da5"
     },
     "claim_ledger_loader": {
       "path": "src/ijds_audit/claim_ledger.py",
@@ -60722,8 +60912,8 @@
     },
     "source_registry_loader": {
       "path": "src/ijds_audit/publication_sources.py",
-      "bytes": 33181,
-      "sha256": "17695f3f0a059b59dc6e93313745cd7a74e13d804021568983a0d64e370969e2"
+      "bytes": 42855,
+      "sha256": "fc6f81f416c91f22c9e6342b145ac29955dfe057fc4e749db0e5909d77cbf3ce"
     },
     "artifact_descriptor_helper": {
       "path": "src/utils/artifact_descriptor.py",
@@ -61034,6 +61224,36 @@
       "path": "src/ijds_audit/funded_selection_estimand.py",
       "bytes": 43871,
       "sha256": "3a66bf03608d38c4cd3dc28bfb9f978cc4bbdf7d3cf945bca1b41ac24fca8af1"
+    },
+    "set_preserving_embedding/config": {
+      "path": "configs/experiments/ijds_set_preserving_embedding_sensitivity_2026-07-30_v1d.yaml",
+      "bytes": 3821,
+      "sha256": "9c183a594e3f283cc35f0e67fb3f2a4a3a05e1b34b0f314d4489190745642599"
+    },
+    "set_preserving_embedding/base_config": {
+      "path": "configs/experiments/ijds_set_preserving_embedding_sensitivity_2026-07-29_v1c.yaml",
+      "bytes": 14468,
+      "sha256": "60fc48e82f8c7be6431212085cb0e573a2f32376618970b9a66d7519e9100661"
+    },
+    "set_preserving_embedding/protocol": {
+      "path": "docs/research/ijds_set_preserving_embedding_sensitivity_v1d_protocol_2026-07-30.md",
+      "bytes": 5627,
+      "sha256": "8a198d7c7696cc5b027ee62ea5fde7746ad912acad007295ee37c4fe7dc34c79"
+    },
+    "set_preserving_embedding/v1c_no_go": {
+      "path": "docs/research/ijds_set_preserving_embedding_sensitivity_v1c_no_go_2026-07-30.md",
+      "bytes": 2972,
+      "sha256": "163c3140836b54a07341033d8313fe4bee07956e867a727a2d4df42a82ad3fb7"
+    },
+    "set_preserving_embedding/runner": {
+      "path": "scripts/experiments/run_ijds_set_preserving_embedding_sensitivity_v1d.py",
+      "bytes": 40613,
+      "sha256": "722caf57a474e78bc556e02bfb209fba5e480862da3d6f97e3d049c1c46459d9"
+    },
+    "set_preserving_embedding/implementation": {
+      "path": "src/ijds_challengers/set_preserving_embedding_v1d.py",
+      "bytes": 17950,
+      "sha256": "39659f41f705561e34c650b6f4d9095978c8780c425fb5131cb248e4dac65378"
     },
     "rolling_origin_equal_followup/summary": {
       "path": "models/experiments/ijds_audit/ijds-rolling-origin-equal-followup-2026-07-21-v1/rolling_origin_equal_followup_summary.json",
@@ -61650,6 +61870,106 @@
       "bytes": 24208,
       "sha256": "ebabe5ecfc2636e97d126a2c7517cfa62e6c54910cc82baa85e6d246970d81f6"
     },
+    "set_preserving_embedding/source_solve_records": {
+      "path": "data/processed/experiments/ijds_audit/ijds-set-preserving-embedding-sensitivity-2026-07-29-v1a/frontier/frontier_solve_records.parquet",
+      "bytes": 1782252,
+      "sha256": "c89bad6e9a7f9513f871be66da3950b3b690051915c51963936718314ea6598a"
+    },
+    "set_preserving_embedding/source_allocations": {
+      "path": "data/processed/experiments/ijds_audit/ijds-set-preserving-embedding-sensitivity-2026-07-29-v1a/frontier/frontier_funded_allocations.parquet",
+      "bytes": 49246668,
+      "sha256": "f192a70512f2fed01bb64c2b302cb47ecfd264648b7407b9b5aa50c5d666cf51"
+    },
+    "set_preserving_embedding/source_embedding_diagnostics": {
+      "path": "data/processed/experiments/ijds_audit/ijds-set-preserving-embedding-sensitivity-2026-07-29-v1a/frontier/embedding_set_preservation.parquet",
+      "bytes": 11160,
+      "sha256": "cc7d752488ef0657c94df5985de8fc2eb6a020132440b07f49b68ee65e639f69"
+    },
+    "set_preserving_embedding/source_minimum_endpoint_diagnostics": {
+      "path": "data/processed/experiments/ijds_audit/ijds-set-preserving-embedding-sensitivity-2026-07-29-v1a/frontier/minimum_endpoint_diagnostics.parquet",
+      "bytes": 55526,
+      "sha256": "5538e1e752cfbfc4102fe76c068402e93c6c68fada9d9c346a4dcd87752e55bb"
+    },
+    "set_preserving_embedding/source_objective_optimum_diagnostics": {
+      "path": "data/processed/experiments/ijds_audit/ijds-set-preserving-embedding-sensitivity-2026-07-29-v1a/frontier/objective_optimum_diagnostics.parquet",
+      "bytes": 13552,
+      "sha256": "f9527e361865dfa63d72e552e190cb2e06f89f120015d23095a082d59b531a29"
+    },
+    "set_preserving_embedding/source_allocation_contrasts": {
+      "path": "data/processed/experiments/ijds_audit/ijds-set-preserving-embedding-sensitivity-2026-07-29-v1a/frontier/outcome_free_allocation_contrasts.parquet",
+      "bytes": 464038,
+      "sha256": "1e9a8f5b3aead21238d984389f4f33505ef28786fdd09d9b0c0193672ced84bf"
+    },
+    "set_preserving_embedding/source_order_sensitivity": {
+      "path": "data/processed/experiments/ijds_audit/ijds-set-preserving-embedding-sensitivity-2026-07-29-v1a/frontier/frontier_order_sensitivity.parquet",
+      "bytes": 230087,
+      "sha256": "eb93a2892346966038dd4ff70377cac213d93faf39e7fb50a45bec30d6d35f7a"
+    },
+    "set_preserving_embedding/source_independent_validation": {
+      "path": "data/processed/experiments/ijds_audit/ijds-set-preserving-embedding-sensitivity-2026-07-29-v1a/frontier/frontier_independent_solver_validation.parquet",
+      "bytes": 121437,
+      "sha256": "6ccd5d776fb5044f011eaf5d4bc76257d920de14fd3ef423654070434b397a21"
+    },
+    "set_preserving_embedding/source_freeze": {
+      "path": "models/experiments/ijds_audit/ijds-set-preserving-embedding-sensitivity-2026-07-29-v1a/protocol_freeze.json",
+      "bytes": 32026,
+      "sha256": "1a4b88b0db256c9819fe24973abecef161b3f1a61c4f4c769a6a2f1c9ca037cf"
+    },
+    "set_preserving_embedding/source_summary": {
+      "path": "models/experiments/ijds_audit/ijds-set-preserving-embedding-sensitivity-2026-07-29-v1a/outcome_free_summary.json",
+      "bytes": 2568,
+      "sha256": "676c5fa388f5f7f38847632b941746183b488356f440db11acdf1803ef7819f4"
+    },
+    "set_preserving_embedding/source_receipt": {
+      "path": "models/experiments/ijds_audit/ijds-set-preserving-embedding-sensitivity-2026-07-29-v1a/outcome_free_execution_receipt.json",
+      "bytes": 809,
+      "sha256": "2841daa09a1bec9e24ce7072fa9d81cce59c63d94ae8afc21d11a6edb0972604"
+    },
+    "set_preserving_embedding/evaluation_evaluated_portfolios": {
+      "path": "data/processed/experiments/ijds_audit/ijds-set-preserving-embedding-sensitivity-2026-07-30-v1d/evaluation/evaluated_primary_portfolios.parquet",
+      "bytes": 1629139,
+      "sha256": "38c977e63affd7b4a37bec5d39027a401b97d7d4ac5d0fe40c5e8c27a5ab2fe3"
+    },
+    "set_preserving_embedding/evaluation_evaluation_receipt": {
+      "path": "models/experiments/ijds_audit/ijds-set-preserving-embedding-sensitivity-2026-07-30-v1d/evaluation_execution_receipt.json",
+      "bytes": 1598,
+      "sha256": "c06c04c8677e888ea0279852210fd1e2936c9a8fe7e247045091933670d90349"
+    },
+    "set_preserving_embedding/evaluation_evaluation_summary": {
+      "path": "models/experiments/ijds_audit/ijds-set-preserving-embedding-sensitivity-2026-07-30-v1d/evaluation_summary.json",
+      "bytes": 6710,
+      "sha256": "a5c98d83435121594928b364fc13f91f9f9fb48b72f44080c1d56111bafc4864"
+    },
+    "set_preserving_embedding/evaluation_join_identity": {
+      "path": "models/experiments/ijds_audit/ijds-set-preserving-embedding-sensitivity-2026-07-30-v1d/join_identity.json",
+      "bytes": 6993,
+      "sha256": "851ac60aa128f9b4f413d8e729a8dec8c58bbb25eb61f328db8f2f0f22619d5e"
+    },
+    "set_preserving_embedding/evaluation_metric_direction_census": {
+      "path": "data/processed/experiments/ijds_audit/ijds-set-preserving-embedding-sensitivity-2026-07-30-v1d/evaluation/metric_direction_census.parquet",
+      "bytes": 68619,
+      "sha256": "30f2b2f023aad9a26ee7b39b61a3451848ec7cebc766d60be36219fbce2831f6"
+    },
+    "set_preserving_embedding/evaluation_monthly_sharp_contrasts": {
+      "path": "data/processed/experiments/ijds_audit/ijds-set-preserving-embedding-sensitivity-2026-07-30-v1d/evaluation/monthly_sharp_contrasts.parquet",
+      "bytes": 1142100,
+      "sha256": "87fb90ba5cf054408a5818dc2046161c1524c26067b40d409495e2780ffe43db"
+    },
+    "set_preserving_embedding/evaluation_outcome_join_audit": {
+      "path": "data/processed/experiments/ijds_audit/ijds-set-preserving-embedding-sensitivity-2026-07-30-v1d/evaluation/outcome_join_audit.parquet",
+      "bytes": 5155,
+      "sha256": "edf418f93146b4fbc1286ac34e34b640d82d5c20eba9fdd5d148840a3e1eb18e"
+    },
+    "set_preserving_embedding/evaluation_window_sharp_contrasts": {
+      "path": "data/processed/experiments/ijds_audit/ijds-set-preserving-embedding-sensitivity-2026-07-30-v1d/evaluation/window_sharp_contrasts.parquet",
+      "bytes": 143876,
+      "sha256": "15cc4cb84d6339471d7c7a4de52bc3c9d25ff411cf8902aa46d87abafb36b4b7"
+    },
+    "set_preserving_embedding/evaluation_manifest": {
+      "path": "models/experiments/ijds_audit/ijds-set-preserving-embedding-sensitivity-2026-07-30-v1d/verified_evaluation_manifest.json",
+      "bytes": 24757,
+      "sha256": "6d39748a917068861b8f20f141225b5c865ccbfd3ca3c329aa9933bacbac8fc4"
+    },
     "rolling_origin_equal_followup/temporal_coverage": {
       "path": "data/processed/experiments/ijds_audit/ijds-rolling-origin-equal-followup-2026-07-21-v1/evaluation/equal_followup_temporal_coverage.parquet",
       "bytes": 31960,
@@ -62017,6 +62337,16 @@
       "bytes": 23564,
       "sha256": "5f0103f2f00f445cd230f1065ffc97f8751faf1457b5bc33ba4132d10d17adaa"
     },
+    "table/set_preserving_embedding_allocation_summary": {
+      "path": "reports/crpto/tables/crpto_ijds_v4_tableS9K_set_preserving_embedding_allocation_summary.csv",
+      "bytes": 429,
+      "sha256": "2934569a7884b925751086e8621986628128056663fe966b00334fcb1fe17666"
+    },
+    "table/set_preserving_embedding_direction_census": {
+      "path": "reports/crpto/tables/crpto_ijds_v4_tableS9L_set_preserving_embedding_direction_census.csv",
+      "bytes": 535,
+      "sha256": "d8dc6b50192f97a4c927a2129dd0d21cfeacdbe531b26961ccd4a4a3d79db1af"
+    },
     "figure/coverage/png": {
       "path": "reports/crpto/figures/crpto_ijds_v4_fig1_coverage.png",
       "bytes": 320332,
@@ -62076,8 +62406,8 @@
     "numeric_authority": "parent_evidence_manifest_only",
     "contract": {
       "path": "configs/ijds_claim_ledger.yaml",
-      "bytes": 25000,
-      "sha256": "00c35a79a4e9ad7dcb3f183c45f9ca0abfe15a75745ba76b196ea30527caf80f"
+      "bytes": 26901,
+      "sha256": "040a296b020c1ae02f5282132ab789097f1f9f2f7d49add8123d97074bfa4059"
     },
     "claims": [
       {
@@ -62572,6 +62902,88 @@
           "optimizer_or_policy_direction",
           "allocation_change_without_experiment",
           "selected_or_funded_set_validity"
+        ],
+        "surfaces": {
+          "required": [
+            "body",
+            "supplement",
+            "registry",
+            "claim_matrix"
+          ],
+          "allowed": [
+            "body",
+            "supplement",
+            "registry",
+            "claim_matrix"
+          ]
+        }
+      },
+      {
+        "id": "allocation.set_preserving_embedding_changes_allocations",
+        "status": "active",
+        "kind": "empirical",
+        "lineages": [
+          "set_preserving_embedding"
+        ],
+        "scope": "complete_monthly_theta_gt_zero_minus_theta_zero_grid_at_positive_gamma_under_two_rulers_three_coordinates_eight_windows_and_fifteen_primary_periods_with_exact_binary_set_preservation",
+        "rule": "equals",
+        "result_pointer": "/set_preserving_embedding/set_preservation_and_allocation_change_verified",
+        "result": true,
+        "forbidden_inference": [
+          "preferred_embedding",
+          "preferred_theta",
+          "preferred_gamma",
+          "preferred_ruler",
+          "preferred_coordinate",
+          "preferred_window",
+          "selected_policy",
+          "policy_winner",
+          "allocation_change_inferred_from_theorem_alone",
+          "set_native_optimizer",
+          "conformal_validity_repair",
+          "universal_allocation_sensitivity",
+          "generalization_beyond_declared_finite_grid"
+        ],
+        "surfaces": {
+          "required": [
+            "body",
+            "supplement",
+            "registry",
+            "claim_matrix"
+          ],
+          "allowed": [
+            "body",
+            "supplement",
+            "registry",
+            "claim_matrix"
+          ]
+        }
+      },
+      {
+        "id": "decision.set_preserving_embedding_direction_noninvariant",
+        "status": "active",
+        "kind": "empirical",
+        "lineages": [
+          "set_preserving_embedding"
+        ],
+        "scope": "complete_pooled_positive_gamma_theta_gt_zero_minus_theta_zero_direction_census_with_one_shared_binary_completion_per_unresolved_loan_on_each_funded_union",
+        "rule": "equals",
+        "result_pointer": "/set_preserving_embedding/theta_direction_noninvariance_verified",
+        "result": true,
+        "forbidden_inference": [
+          "preferred_embedding",
+          "preferred_theta",
+          "universal_favorable_direction",
+          "universal_adverse_direction",
+          "selected_policy",
+          "policy_winner",
+          "causal_effect",
+          "prospective_validation",
+          "confirmation",
+          "preregistration",
+          "independent_replications",
+          "conformal_validity_repair",
+          "joint_attainability_across_overlapping_tracks"
         ],
         "surfaces": {
           "required": [

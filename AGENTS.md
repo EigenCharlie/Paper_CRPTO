@@ -52,6 +52,10 @@ order before changing scientific code or paper claims:
    - active fixed-catalog worst-loss temporal diagnostic.
 16c5. [`docs/research/ijds_funded_selection_estimand_audit_v1_protocol_2026-07-29.md`](docs/research/ijds_funded_selection_estimand_audit_v1_protocol_2026-07-29.md)
    - active count-, invested-dollar-, and fixed-capital funded-estimand audit.
+16c6. [`docs/research/ijds_set_preserving_embedding_sensitivity_v1d_protocol_2026-07-30.md`](docs/research/ijds_set_preserving_embedding_sensitivity_v1d_protocol_2026-07-30.md)
+   - active two-stage Git-native recovery: exact binary-set preservation,
+     complete allocation-change census, and pooled outcome-direction
+     noninvariance without selecting an embedding.
 16d. [`docs/research/ijds_raw_data_acquisition_provenance_2026-07-21.md`](docs/research/ijds_raw_data_acquisition_provenance_2026-07-21.md)
    - verified local file identity versus unconfirmed acquisition history.
 16e. [`docs/research/ijds_submission_rights_anonymity_audit_2026-07-21.md`](docs/research/ijds_submission_rights_anonymity_audit_2026-07-21.md)
@@ -90,6 +94,9 @@ bands; calibration support alone does not bound it. The residual frontier is
 not a KS test or stochastic-dominance claim; the marginal gap is not individual
 calibration; the worst-catalog ordering does not apply to every policy; and a
 count-minus-dollar coverage gap supplies no funded-set conformal validity.
+The binary-set embedding theorem alone does not prove an allocation change;
+the separate active V1d finite-grid census supplies that empirical result and
+does not select a theta, embedding, ruler, coordinate, or policy.
 
 The V6 geometry and post-freeze diagnostic replays dated 2026-07-26 are
 non-active candidates in quarantine. Their protocols/configurations were not

@@ -54,9 +54,7 @@ def test_artifact_transport_contract_is_exact_relative_and_git_native() -> None:
     transport = runner._validate_artifact_transport(config)
 
     assert transport["artifact_tag"] == runner.ARTIFACT_TAG
-    assert transport["artifact_commit_relationship"] == (
-        "single_direct_child_of_protocol_commit"
-    )
+    assert transport["artifact_commit_relationship"] == ("single_direct_child_of_protocol_commit")
     assert transport["pending_at_runner_exit"] is True
     assert transport["dvc_required"] is False
     assert len(transport["exact_tracked_paths"]) == 4

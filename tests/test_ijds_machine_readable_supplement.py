@@ -74,9 +74,12 @@ def test_current_zip_has_fixed_metadata_and_complete_table_censuses() -> None:
         "Table_S9H_decision_catalog_target_blocks.csv": 45,
         "Table_S9I_funded_selection_track_estimands.csv": 96,
         "Table_S9J_funded_selection_gamma_contrasts.csv": 48,
+        "Table_S9K_set_preserving_embedding_allocation_summary.csv": 3,
+        "Table_S9L_set_preserving_embedding_direction_census.csv": 6,
     }
     with zipfile.ZipFile(OUTPUT) as archive:
         assert archive.namelist() == sorted(archive.namelist())
+        assert len(archive.namelist()) == 17
         for info in archive.infolist():
             assert info.date_time == (1980, 1, 1, 0, 0, 0)
             assert info.compress_type == zipfile.ZIP_STORED
@@ -254,6 +257,16 @@ def test_every_source_rejects_duplicate_composite_keys(
             "gamma1_minus_gamma0_count_selected_fcp_direction",
             "crossing",
         ),
+        (
+            "Table_S9K_set_preserving_embedding_allocation_summary.csv",
+            "sets_changed",
+            "1",
+        ),
+        (
+            "Table_S9L_set_preserving_embedding_direction_census.csv",
+            "contrast_family",
+            "selected_embedding_contrast",
+        ),
     ],
 )
 def test_every_source_rejects_a_locked_domain_violation(
@@ -377,6 +390,36 @@ def test_funded_estimand_positive_gap_drift_is_rejected(
     _write_csv_matrix(path, matrix)
 
     with pytest.raises(RuntimeError, match="lower endpoint is not positive"):
+        _zip_payload(valid_sources)
+
+
+def test_set_preserving_embedding_allocation_fraction_drift_is_rejected(
+    valid_sources: dict[str, Path],
+) -> None:
+    name = "Table_S9K_set_preserving_embedding_allocation_summary.csv"
+    path = valid_sources[name]
+    matrix = _csv_matrix(path)
+    column = matrix[0].index("allocation_change_fraction")
+    matrix[1][column] = "0.5"
+    _write_csv_matrix(path, matrix)
+
+    with pytest.raises(RuntimeError, match="allocation-change fraction"):
+        _zip_payload(valid_sources)
+
+
+def test_set_preserving_embedding_exact_direction_census_drift_is_rejected(
+    valid_sources: dict[str, Path],
+) -> None:
+    name = "Table_S9L_set_preserving_embedding_direction_census.csv"
+    path = valid_sources[name]
+    matrix = _csv_matrix(path)
+    negative = matrix[0].index("negative")
+    positive = matrix[0].index("positive")
+    matrix[1][negative] = str(int(matrix[1][negative]) + 1)
+    matrix[1][positive] = str(int(matrix[1][positive]) - 1)
+    _write_csv_matrix(path, matrix)
+
+    with pytest.raises(RuntimeError, match="exact direction census changed"):
         _zip_payload(valid_sources)
 
 

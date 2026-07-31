@@ -79,8 +79,9 @@ public. The author agrees to complete the IJDS reproducibility report.
 
 The release includes `pyproject.toml`, `uv.lock`, active source and claim
 registries and executable claim ledger, the complete `src` package,
-active experiment/build scripts, 53 DVC pointers, the evidence manifest and 36
-aggregate publication CSV tables, canonical QMD, generated TeX, bibliography,
+active experiment/build scripts, 53 DVC pointers, six exact Git artifact
+lineages, the evidence manifest and 38 aggregate publication CSV tables,
+canonical QMD, generated TeX, bibliography,
 and the scientific, type, drift, anonymity, compilation, and visual-QA gates.
 Credentials, local DVC configuration, absolute paths, protected extraction
 artifacts, and copyrighted publisher assets are excluded.

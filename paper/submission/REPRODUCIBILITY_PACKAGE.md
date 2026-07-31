@@ -18,8 +18,8 @@ instructions, and replay commands.
 | Environment | `pyproject.toml`, `uv.lock`, `justfile` |
 | Authority | Active claim registry, executable claim ledger, source registry, publication targets |
 | Method | Complete `src` package, active runners, evidence and paper builders |
-| Runs | 53 DVC pointers for active roots, sensitivities, and replay dependencies |
-| Evidence | One manifest, 36 CSV tables, five figure families in PDF/PNG |
+| Runs | 53 DVC pointers plus six exact Git artifact lineages for active roots, sensitivities, and replay dependencies |
+| Evidence | One manifest, 38 CSV tables, five figure families in PDF/PNG |
 | Manuscript | QMD body/supplement, generated INFORMS TeX, bibliography |
 | Gates | Scientific tests, lint, typing, drift, claim sync, anonymity, PDF QA |
 

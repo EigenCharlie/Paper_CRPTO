@@ -1,0 +1,7 @@
+contrast_family,metric,cells,negative,positive,not_directionally_separated_at_tolerance,within_tolerance
+theta_minus_theta_0_within_gamma,standardized_payoff,768,128,338,230,72
+theta_minus_theta_0_within_gamma,funded_default,768,350,157,173,88
+theta_minus_theta_0_within_gamma,funded_binary_miscoverage,768,340,259,81,88
+gamma_1_minus_gamma_0_within_theta,standardized_payoff,240,149,0,74,17
+gamma_1_minus_gamma_0_within_theta,funded_default,240,0,153,70,17
+gamma_1_minus_gamma_0_within_theta,funded_binary_miscoverage,240,0,191,32,17

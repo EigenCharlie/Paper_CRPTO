@@ -993,7 +993,8 @@ indicators are invariant, including at the endpoints. For any $\gamma>0$,
 however, the downstream coefficient changes by $\gamma\theta(p-u)$ whenever
 $1\notin S$ and $u>p$. Whether the LP allocation or its outcome bounds change
 is empirical and must be reported over a complete outcome-free-frozen
-sensitivity; the algebra alone selects no $\theta$.
+sensitivity; the algebra alone neither proves an allocation change nor selects
+a $\theta$. Appendix E.4.3 reports that separate empirical census.
 
 ### B.5.4 Marginal score and residual-distribution diagnostics
 
@@ -1994,6 +1995,68 @@ and one outcome assignment per unresolved loan; they establish neither a
 preferred weighting nor selected- or funded-set conformal validity, FCR control,
 or a JOMI guarantee.
 
+### E.4.3 Set-preserving continuous-embedding sensitivity
+
+<!-- claim:allocation.set_preserving_embedding_changes_allocations -->
+<!-- claim:decision.set_preserving_embedding_direction_noninvariant -->
+
+The complete grid replaces the subunit upper endpoint by
+$u^{(\theta)}=(1-\theta)u+\theta p$ while keeping every $u=1$ endpoint fixed.
+It crosses five $\theta$ values with five $\gamma$ values, both rulers, three
+coordinates, eight windows, and all role-period menus. The outcome-free phase
+freezes allocations before the endpoint join. Allocation change is measured by
+normalized exposure distance, with the protocol-locked threshold $10^{-10}$.
+All 80 role--window--$\theta$ set diagnostics remain unchanged, despite a
+maximum continuous-upper contraction of 0.892012.
+
+| Ruler scope | Contrasts | Changed | Fraction changed | Maximum normalized exposure distance |
+|---|---:|---:|---:|---:|
+| All rulers | 11,520 | 9,659 | 0.838455 | 0.684050 |
+| Objective matched | 5,760 | 3,899 | 0.676910 | 0.575863 |
+| Normalized score | 5,760 | 5,760 | 1.000000 | 0.684050 |
+
+**Table S9K.** Exact set preservation, allocation-change census, and negative
+controls. The 80 set cells span both roles, eight windows, and five $\theta$
+values; the machine-readable table repeats their 80/0 census and 0.892012
+maximum contraction as context. All 2,880 outcome-free monthly $\gamma=0$
+controls have zero exposure distance and objective difference; the separate
+2,880 monthly and 192 pooled evaluation controls have zero objective and all
+six endpoint differences. A changed allocation is not a better allocation, and the contrasting
+change rates under the two rulers do not select a ruler or embedding.
+
+The pooled outcome census uses one unresolved-label assignment per loan on the
+funded union. For the $\theta$ family, the table excludes the exact $\gamma=0$
+controls and pools all four positive $\theta$ values against $\theta=0$. For
+the $\gamma$ family it compares $\gamma=1$ with $\gamma=0$ separately at each
+of the five $\theta$ values. Negative and positive refer to the arithmetic
+contrast shown, not to a common welfare direction.
+
+| Contrast family | Metric | Negative | Positive | Not separated | Within tolerance | Total |
+|---|---|---:|---:|---:|---:|---:|
+| $\theta>0$ minus $\theta=0$, $\gamma>0$ | Standardized payoff | 128 | 338 | 230 | 72 | 768 |
+| $\theta>0$ minus $\theta=0$, $\gamma>0$ | Funded default | 350 | 157 | 173 | 88 | 768 |
+| $\theta>0$ minus $\theta=0$, $\gamma>0$ | Funded binary miscoverage | 340 | 259 | 81 | 88 | 768 |
+| $\gamma=1$ minus $\gamma=0$, all $\theta$ | Standardized payoff | 149 | 0 | 74 | 17 | 240 |
+| $\gamma=1$ minus $\gamma=0$, all $\theta$ | Funded default | 0 | 153 | 70 | 17 | 240 |
+| $\gamma=1$ minus $\gamma=0$, all $\theta$ | Funded binary miscoverage | 0 | 191 | 32 | 17 | 240 |
+
+**Table S9L.** Complete pooled direction census for both contrast families.
+*Not separated* means the sharp interval contains zero beyond the declared
+metric tolerance; *within tolerance* means both endpoints lie within it.
+The payoff tolerance is USD $10^{-4}$ and each rate tolerance is $10^{-10}$.
+
+Across the 576 fixed window--ruler--coordinate--positive-$\gamma$--metric
+tracks, the direction category changes over the four positive $\theta$ values
+in 324. Seventy-seven tracks contain both a tolerance-separated negative and
+positive contrast; 96 do so under the zero-tolerance geometric sign. Equal
+binary sets therefore do not imply allocation or endpoint-direction invariance
+in the declared finite grid. The gamma rows happen to contain no
+tolerance-separated opposite sign, but they do not establish a direction beyond
+this grid or repair selected- or funded-set validity. All results are
+retrospective, post-inspection, and non-confirmatory; no $\theta$, $\gamma$,
+ruler, coordinate, window, or policy is selected, and cellwise sharp endpoints
+are not asserted jointly attainable across overlapping tracks.
+
 ## E.5 Named-comparator census
 
 The table counts the sign of the guardrail-minus-point sharp contrast over 72
@@ -2144,11 +2207,11 @@ coverage rows, 5,112 monthly evaluations, 360 aggregates, 221,040 paired sharp
 contrasts, and 648 comparator envelopes. Separate complete families cover five
 credit learners, endpoint lag, portfolio structure, missingness encoding, and
 a second temporal origin. The evidence builder checks hashes, contracts, and
-cardinalities before producing 36 tables, five figure families in PNG and PDF,
+cardinalities before producing 38 tables, five figure families in PNG and PDF,
 and one paper-facing manifest. Additional outcome-isolated families cover joint
 fit-label completion, deterministic allocation granularity, marginal score and
 residual-distribution diagnostics, complete-catalog transport, and funded
-estimand dependence.
+estimand dependence, plus the set-preserving continuous-embedding sensitivity.
 
 ## F.2 Replay contract
 
@@ -2167,9 +2230,11 @@ The shared contract requires:
    endpoint, structure, missingness, individual-age second-origin, fit-label
    completion, allocation-granularity, joint-block rank-reference diagnostic, and
    label-Mondrian, and policy-support optimal-face/RHS-recovery families; plus
-   five hash-described, direct-child Git artifact bundles: the V8 common-panel
-   response, V3I marginal gap, residual-distribution frontier, decision catalog,
-   and funded-estimand audit, each verified against its exact registered path set;
+   six hash-described Git artifact lineages: five direct-child bundles for the
+   V8 common-panel response, V3I marginal gap, residual-distribution frontier,
+   decision catalog, and funded-estimand audit, plus the set-preserving
+   embedding's protocol-to-source-to-evaluation direct-child chain, each
+   verified against its exact registered path set;
 3. a separate freeze and evaluate command with no combined shortcut;
 4. exact ID alignment at the outcome join;
 5. byte-identical evidence builds;
@@ -2203,6 +2268,8 @@ and code policy.
 <!-- claim:coverage.joint_block_rank_reference_nominal_flags -->
 <!-- claim:sensitivity.label_mondrian_complete_mixed -->
 <!-- claim:sensitivity.label_mondrian_common_completion_gap -->
+<!-- claim:allocation.set_preserving_embedding_changes_allocations -->
+<!-- claim:decision.set_preserving_embedding_direction_noninvariant -->
 
 | Evidence object | Permitted conclusion | Not established |
 |---|---|---|
@@ -2227,6 +2294,8 @@ and code policy.
 | Timing design | Fit-label and evaluation-endpoint lags are separate one-factor sensitivities | Joint or full-factorial lag robustness |
 | Two rulers and three interior coordinates | Endpoint direction is not ruler- or coordinate-invariant on the declared grid | A continuous-frontier ordering or preferred gamma/ruler/coordinate |
 | Continuous interval embedding | Binary-outcome coverage of the embedding equals coverage of its induced binary set | A set-native optimizer, a calibrated probability magnitude for $u_i$, or an ordering of $u_i$ among loans with the same binary set |
+| Set-preserving embedding allocation census | All 80 set diagnostics are unchanged; 9,659/11,520 positive-$\gamma$ monthly $\theta$ contrasts change allocation beyond $10^{-10}$. All 2,880 monthly $\gamma=0$ allocation contrasts are zero; the corresponding 2,880 monthly and 192 pooled objective/outcome contrasts are also zero | A preferred embedding, $\theta$, ruler, coordinate, or policy; allocation change inferred from the theorem alone; set-native optimization; validity repair; generalization beyond the declared finite grid |
+| Set-preserving embedding direction census | Among 576 fixed four-$\theta$ tracks, 324 change tolerance category and 77 contain both separated signs; the complete metric counts appear in Table S9L | A universal favorable or adverse direction, causal or prospective effects, confirmation, independent replications, or joint attainability across overlapping tracks |
 | Complete portfolio-structure grid | Every scenario retains adverse default and miscoverage cells; zero scenarios are uniformly favorable or adverse | A scenario winner, structural invariance, universal harm, or deployment guidance |
 | USD 25 floor-with-cash diagnostic | Rate perturbations are at most 0.001284 percentage points in the complete baseline family | Integer optimality, discrete reoptimization, or another lot rule |
 | C0 nesting and 1,080 C2 reconciliations | Plug-in objective dominance under their stated cap constructions | Status-indexed payoff, default, or miscoverage dominance |

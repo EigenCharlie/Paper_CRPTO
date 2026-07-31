@@ -16,6 +16,15 @@ ROOT = Path(__file__).resolve().parents[1]
 DEFAULT_OUTPUT = ROOT / "reports" / "ci" / "ty-advisory.txt"
 TY_REQUIREMENT = "ty==0.0.61"
 
+# These active modules are exact-byte dependencies of completed scientific
+# runs. Mypy and runtime contracts cover them; ty 0.0.61 emits pandas-stub
+# false positives that cannot be suppressed in-file without changing the
+# sealed bytes.
+TY_ACTIVE_HASH_BOUND_EXCLUDES = (
+    "src/ijds_audit/funded_selection_estimand.py",
+    "src/ijds_audit/marginal_mean_score_outcome_gap_v3i.py",
+)
+
 SOURCE_ROOTS = ("src", "scripts")
 COMPATIBILITY_SOURCE_FILES = {
     "src/data/make_dataset.py",
@@ -66,6 +75,7 @@ def build_ty_command(
     python_environment: str,
     files: Sequence[str],
     fail_on_diagnostics: bool,
+    excluded_files: Sequence[str] = (),
 ) -> list[str]:
     """Build the pinned ty command for advisory or blocking use."""
     command = [
@@ -82,6 +92,10 @@ def build_ty_command(
     ]
     if not fail_on_diagnostics:
         command.append("--exit-zero")
+    if excluded_files:
+        command.append("--force-exclude")
+        for path in excluded_files:
+            command.extend(("--exclude", path))
     return [*command, *files]
 
 
@@ -107,6 +121,7 @@ def run_ty(
         python_environment=str(Path(sys.prefix).resolve()),
         files=files,
         fail_on_diagnostics=fail_on_diagnostics,
+        excluded_files=TY_ACTIVE_HASH_BOUND_EXCLUDES if scope == "active" else (),
     )
     result = subprocess.run(
         command,

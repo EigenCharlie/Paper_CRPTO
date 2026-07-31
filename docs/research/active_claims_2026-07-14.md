@@ -1,4 +1,4 @@
-# CRPTO Active IJDS Claim Registry - 2026-07-29
+# CRPTO Active IJDS Claim Registry - 2026-07-30
 
 This is the sole claim registry for the active IJDS manuscript. Numerical
 statements must be traceable to
@@ -26,6 +26,10 @@ pre-endpoint-correction evaluations are provenance only.
   winner.
 - No OOT outcome selects a learner, window, taxonomy, gamma, ruler, coordinate,
   cap, comparator, or policy.
+- The complete set-preserving-embedding sensitivity keeps all 80 audited binary
+  set cells unchanged yet changes 9,659/11,520 positive-gamma monthly
+  allocations beyond the declared tolerance. Its pooled theta-direction census
+  contains both signs and selects no embedding or policy.
 - The V2--V3H marginal mean-score--outcome-gap lineages remain historical
   provenance. V3H was transport-blocked by its mandatory clean-clone DVC pull.
   The separately frozen V3I reran the full calculation in a clean tagged clone
@@ -299,6 +303,43 @@ pre-endpoint-correction evaluations are provenance only.
   not selected- or funded-set conformal validity, FCR control, a JOMI guarantee,
   or a preferred weighting or policy.
 
+### Set-preserving continuous-embedding sensitivity
+
+- Active two-stage Git-native tagged authority: protocol tag
+  `protocol/ijds-set-preserving-embedding-sensitivity-2026-07-30-v1d` resolves
+  to `174c4e3d894829473a787e6d34bfc3bbab2f8ef2`; its single-parent direct-child
+  source tag
+  `artifacts/ijds-set-preserving-embedding-sensitivity-2026-07-30-v1a-recovery-v1d`
+  resolves to `95e39f05bb990429025d0115a0e55c53b1fb1ea8`; the single-parent
+  direct-child evaluation tag
+  `artifacts/ijds-set-preserving-embedding-sensitivity-2026-07-30-v1d`
+  resolves to `276a5db8772262aad2edd8936dbe226926e412b5`. The source and
+  evaluation commits add exactly the registered eleven and nine paths,
+  respectively.
+- V1d is a retrospective, post-inspection, non-confirmatory recovery. V1c
+  materialized local Phase-B files but failed its declared persistence contract
+  before any evaluation commit or tag; those files are non-evidence and were
+  not read or reused by V1d. V1d validates and removes the unidentified
+  `realized_payoff_exact` field before persistence while retaining its sharp
+  lower and upper endpoints.
+- Across both roles, eight windows, and five theta values, every one of 80
+  binary-set diagnostics is unchanged; the maximum continuous-upper contraction
+  is 0.892012. In the complete outcome-free primary grid with theta greater
+  than zero and gamma greater than zero, 9,659/11,520 monthly allocation
+  contrasts exceed normalized exposure distance `1e-10`: 5,760/5,760 under
+  the normalized-score ruler and 3,899/5,760 under objective matching. All
+  2,880 monthly gamma-zero allocation contrasts are zero; the corresponding
+  2,880 monthly and 192 pooled objective/outcome contrasts are also zero.
+- For each metric, 768 pooled positive-gamma theta-versus-zero contrasts are
+  complete. Negative/positive/not-separated/within-tolerance counts are
+  340/259/81/88 for funded binary miscoverage, 350/157/173/88 for funded
+  default, and 128/338/230/72 for standardized payoff. Of 576 fixed
+  window--ruler--coordinate--positive-gamma--metric tracks, 324 change category
+  across theta and 77 contain both tolerance-separated signs (96 by geometric
+  sign). This establishes finite-grid noninvariance, not a preferred embedding,
+  universal direction, causal effect, prospective result, confirmation,
+  validity repair, or joint sharpness across overlapping tracks.
+
 ### Label-Mondrian sensitivity
 
 - Outcome-free threshold freeze:
@@ -454,7 +495,9 @@ pre-endpoint-correction evaluations are provenance only.
    embedding, replacing `u` by `(1-theta)u+theta*p` on those loans and retaining
    `u=1` otherwise preserves every binary set and coverage event for
    `0<=theta<=1`, while it can change the LP coefficient. The theorem neither
-   selects an embedding nor proves an allocation change.
+   selects an embedding nor proves an allocation change. The separate complete
+   V1d census empirically demonstrates allocation changes on its declared
+   finite grid; that fact is not a theorem-level consequence.
 3. **Sharp common-outcome identification.** Candidate and fixed-allocation
    bounds use binary loan-wise extrema; paired-policy bounds assign each
    unresolved endpoint once over the funded union.
@@ -634,6 +677,8 @@ coverage upper bounds are below 0.90 for every model:
 <!-- claim:optimization.allocation_granularity_is_diagnostic -->
 <!-- claim:decision.catalog_all_target_blocks_exceed_development -->
 <!-- claim:allocation.count_vs_dollar_coverage_gap_all_tracks -->
+<!-- claim:allocation.set_preserving_embedding_changes_allocations -->
+<!-- claim:decision.set_preserving_embedding_direction_noninvariant -->
 
 The frozen contrast is gamma 1 minus gamma 0. The objective-matched ruler holds
 the common plug-in objective floor fixed; the normalized-score ruler holds a
@@ -718,6 +763,18 @@ The complete endpoint-availability sensitivity is:
   capital coverage is also positive, with minimum 0.008534. Count coverage has
   an upper endpoint below 0.90 in 80/96 tracks and a lower endpoint below 0.90
   in all 96; the other 16 cross nominal. No funded-set guarantee follows.
+- The set-preserving embedding grid changes no binary set in 80/80 diagnostics,
+  yet 9,659/11,520 monthly positive-gamma theta-versus-zero contrasts change
+  allocation beyond `1e-10`. The normalized-score ruler changes in 5,760/5,760
+  contrasts and the objective-matched ruler in 3,899/5,760. All 2,880 monthly
+  gamma-zero allocation contrasts are zero; the corresponding 2,880 monthly and
+  192 pooled objective/outcome contrasts are also zero.
+- Across 576 fixed positive-gamma theta tracks, 324 change direction category
+  and 77 contain both tolerance-separated signs. This is descriptive
+  noninvariance under a complete finite grid with common unresolved-outcome
+  completion per contrast, not an embedding or policy selection, universal
+  direction, causal effect, prospective validation, confirmation, or joint
+  attainability across tracks.
 
 - Objective-matched .25 crosses zero for all three metrics in all eight
   windows. Its repeated allocation remains identical across windows, but the
@@ -799,6 +856,10 @@ The complete endpoint-availability sensitivity is:
   estimands. Count-minus-invested-dollar coverage is positive in all 96 fixed
   tracks under shared binary completion, without conferring funded-set validity
   or choosing a weighting.
+- Set-equivalent continuous embeddings preserve candidate coverage but need not
+  preserve allocations or descriptive outcome direction on the complete
+  declared grid. This neither selects an embedding nor repairs selected- or
+  funded-set validity.
 - CRPTO remains one integrated ML--conformal--optimization object; its result is
   an audit of the handoff, not abandonment of any component.
 
@@ -835,6 +896,10 @@ The complete endpoint-availability sensitivity is:
 - FCR control, a JOMI guarantee, a preferred weighting, or a preferred policy
   inferred from differences among funded count, dollar, and fixed-capital
   estimands.
+- A preferred continuous embedding or theta, a set-native optimizer, conformal
+  validity repair, universal allocation sensitivity, universal outcome
+  direction, causal or prospective effects, or joint sharpness inferred from
+  the set-preserving-embedding sensitivity.
 
 ## Pre-Freeze Boundary
 

@@ -139,6 +139,12 @@ TABLE_TARGETS = {
     "funded_selection_gamma_contrasts": (
         TABLE_DIR / "crpto_ijds_v4_tableS9J_funded_selection_gamma_contrasts.csv"
     ),
+    "set_preserving_embedding_allocation_summary": (
+        TABLE_DIR / "crpto_ijds_v4_tableS9K_set_preserving_embedding_allocation_summary.csv"
+    ),
+    "set_preserving_embedding_direction_census": (
+        TABLE_DIR / "crpto_ijds_v4_tableS9L_set_preserving_embedding_direction_census.csv"
+    ),
 }
 FIGURE_STEMS = {
     "coverage": "crpto_ijds_v4_fig1_coverage",
@@ -4129,6 +4135,12 @@ def _build_evidence(staging_root: Path, *, promote: bool = True) -> Path:
             "funded_selection_gamma_contrasts": (
                 frontiers.funded_selection_estimands.publication_tables["gamma_contrasts"]
             ),
+            "set_preserving_embedding_allocation_summary": (
+                frontiers.set_preserving_embedding.publication_tables["allocation_summary"]
+            ),
+            "set_preserving_embedding_direction_census": (
+                frontiers.set_preserving_embedding.publication_tables["direction_census"]
+            ),
         },
         coverage=credit_temporal_coverage,
         exchangeability_cells=exchangeability_cells,
@@ -4281,6 +4293,16 @@ def _build_evidence(staging_root: Path, *, promote: bool = True) -> Path:
             "funded_selection_estimands/implementation": (
                 frontiers.funded_selection_estimands.implementation_path
             ),
+            "set_preserving_embedding/config": frontiers.set_preserving_embedding.config_path,
+            "set_preserving_embedding/base_config": registered[
+                "set_preserving_embedding_base_config"
+            ],
+            "set_preserving_embedding/protocol": (frontiers.set_preserving_embedding.protocol_path),
+            "set_preserving_embedding/v1c_no_go": registered["set_preserving_embedding_v1c_no_go"],
+            "set_preserving_embedding/runner": frontiers.set_preserving_embedding.runner_path,
+            "set_preserving_embedding/implementation": (
+                frontiers.set_preserving_embedding.implementation_path
+            ),
             "rolling_origin_equal_followup/summary": equal_followup_summary_path,
             "rolling_origin_equal_followup/config": registered["rolling_equal_followup_config"],
             "rolling_origin_equal_followup/execution_receipt": equal_followup_receipt_path,
@@ -4327,6 +4349,7 @@ def _build_evidence(staging_root: Path, *, promote: bool = True) -> Path:
             "marginal_score_outcome_gap": (frontiers.marginal_score_outcome_gap.artifacts),
             "decision_catalog_transport": (frontiers.decision_catalog_transport.artifacts),
             "funded_selection_estimands": frontiers.funded_selection_estimands.artifacts,
+            "set_preserving_embedding": frontiers.set_preserving_embedding.artifacts,
             "rolling_origin_equal_followup": equal_followup_artifacts,
             "rolling_origin_individual_age_followup": individual_followup_artifacts,
             "label_mondrian/outcome_free": label_mondrian.freeze_artifacts,
@@ -4708,6 +4731,38 @@ def _build_evidence(staging_root: Path, *, promote: bool = True) -> Path:
                 "fcr_or_jomi_guarantee_claimed": False,
                 "preferred_weighting_or_policy_claimed": False,
                 "joint_sharpness_across_tracks_claimed": False,
+            },
+        },
+        "set_preserving_embedding": {
+            "scope": (
+                "complete_five_theta_by_five_gamma_by_two_ruler_by_three_coordinate_"
+                "eight_window_retrospective_grid"
+            ),
+            "run_tag": frontiers.set_preserving_embedding.summary["run_tag"],
+            "protocol_tag": frontiers.set_preserving_embedding.summary["protocol_tag"],
+            "protocol_commit": frontiers.set_preserving_embedding.summary["protocol_commit"],
+            "source_artifact_tag": frontiers.set_preserving_embedding.summary[
+                "source_artifact_tag"
+            ],
+            "source_artifact_commit": frontiers.set_preserving_embedding.summary[
+                "source_artifact_commit"
+            ],
+            **frontiers.set_preserving_embedding.findings,
+            "allocation_rows": frontiers.set_preserving_embedding.publication_tables[
+                "allocation_summary"
+            ].to_dict(orient="records"),
+            "direction_rows": frontiers.set_preserving_embedding.publication_tables[
+                "direction_census"
+            ].to_dict(orient="records"),
+            "interpretation": {
+                "finite_archive_retrospective_postinspection_diagnostic": True,
+                "binary_sets_are_identical_over_declared_theta_grid": True,
+                "identical_sets_imply_allocation_invariance_claimed": False,
+                "outcome_direction_invariant_to_theta_claimed": False,
+                "theta_gamma_ruler_coordinate_window_or_policy_selected": False,
+                "p_value_or_confirmatory_claimed": False,
+                "causal_or_prospective_claimed": False,
+                "selected_set_or_funded_set_validity_claimed": False,
             },
         },
         "evaluation_endpoint": {

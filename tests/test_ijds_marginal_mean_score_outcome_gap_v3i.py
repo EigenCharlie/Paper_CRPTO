@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 from copy import deepcopy
-from io import StringIO
+from io import BytesIO
 from pathlib import Path
 
 import numpy as np
@@ -45,16 +45,16 @@ SCORE_COLUMNS = {
 }
 
 
-def _synthetic_archive() -> StringIO:
-    return StringIO(
-        "id,issue_d,term,loan_status,last_pymnt_d\n"
-        "a,Apr-2016,36 months,Fully Paid,Mar-2020\n"
-        "b,Apr-2016,36 months,Charged Off,Jan-2020\n"
-        "c,Apr-2016,36 months,Current,Aug-2020\n"
-        "d,Apr-2016,36 months,Charged Off,Jun-2020\n"
-        "e,Apr-2016,36 months,Fully Paid,\n"
-        "f,Apr-2016,60 months,Fully Paid,Mar-2020\n"
-        "g,Mar-2016,36 months,Charged Off,Jan-2020\n"
+def _synthetic_archive() -> BytesIO:
+    return BytesIO(
+        b"id,issue_d,term,loan_status,last_pymnt_d\n"
+        b"a,Apr-2016,36 months,Fully Paid,Mar-2020\n"
+        b"b,Apr-2016,36 months,Charged Off,Jan-2020\n"
+        b"c,Apr-2016,36 months,Current,Aug-2020\n"
+        b"d,Apr-2016,36 months,Charged Off,Jun-2020\n"
+        b"e,Apr-2016,36 months,Fully Paid,\n"
+        b"f,Apr-2016,60 months,Fully Paid,Mar-2020\n"
+        b"g,Mar-2016,36 months,Charged Off,Jan-2020\n"
     )
 
 
@@ -176,12 +176,8 @@ def test_direct_calculation_reproduces_endpoint_and_sharp_formulas() -> None:
     assert np.allclose(tables.table["identification_width"], 0.6)
     assert tables.table["identified_grid_points"].eq(4).all()
     assert bool(tables.table["joint_endpoint_attainment"].all())
-    assert tables.table["lower_endpoint_completion"].eq(
-        "all_unresolved_outcomes_one"
-    ).all()
-    assert tables.table["upper_endpoint_completion"].eq(
-        "all_unresolved_outcomes_zero"
-    ).all()
+    assert tables.table["lower_endpoint_completion"].eq("all_unresolved_outcomes_one").all()
+    assert tables.table["upper_endpoint_completion"].eq("all_unresolved_outcomes_zero").all()
     assert np.allclose(
         tables.table["marginal_mean_score_outcome_gap_lower"],
         tables.table["mean_score"] - 0.8,

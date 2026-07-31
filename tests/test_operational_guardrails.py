@@ -15,7 +15,11 @@ def _text(path: str) -> str:
 
 
 def _inactive_protocol_entrypoints(config: dict[str, Any]) -> set[str]:
-    return set(config["superseded_common_panel_protocol_capsule"]["protocol_entrypoints"])
+    surface = config["active_scientific_contract"]["active_code_surface"]
+    return {
+        *surface["sealed_protocol_entrypoints"],
+        *config["superseded_common_panel_protocol_capsule"]["protocol_entrypoints"],
+    }
 
 
 def test_runtime_python_has_no_optimized_away_assert_guards() -> None:

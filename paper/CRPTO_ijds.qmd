@@ -7,35 +7,32 @@ abstract: |
   coefficient? Conformal Risk-Aware Predict-Then-Optimize (CRPTO) combines
   Platt-scaled default scores, 90%-target binary split-conformal sets, a
   continuous upper-endpoint embedding, and monthly credit-allocation linear
-  programs. For binary absolute-residual scores, we derive the fitted threshold
-  as the exact order statistic of two mirror calibration samples and state the
-  calibration and target-support conditions needed for its phase
-  interpretation. On a fixed target, two-threshold coverage change equals class
-  mass crossing decision boundaries, not threshold distance. The induced binary
-  set identifies boundary membership; coverage alone does not identify the
-  subunit upper endpoint used by the LP, and set-equivalent embeddings can change
-  that coefficient. Our retrospectively locked audit uses
-  640,543 eligible 36-month loans and freezes
-  allocations before evaluation outcomes, reconstructs endpoint availability
+  programs. For binary absolute-residual scores, we derive the threshold as the
+  exact order statistic of two mirror calibration samples, distinguish its
+  calibration and target-support phase conditions, and show that fixed-target
+  coverage change equals class mass crossing decision boundaries rather than
+  threshold distance. The induced binary set identifies boundary membership but
+  not the subunit upper endpoint used by the LP. In the complete set-equivalent
+  grid, every binary set remains fixed while 9,659/11,520 positive-gamma
+  monthly allocation contrasts change and pooled outcome direction is not
+  invariant to the embedding. The audit uses 640,543 eligible 36-month
+  loans, freezes allocations before outcomes, reconstructs endpoint availability
   because the archive is not a verified point-in-time snapshot, and retains
   12,076 of 376,890 primary candidates as unresolved. Under the declared
   six-month Charged Off availability rule, all 40 sharp all-candidate coverage
-  upper bounds across five frozen learner specifications and eight residual
+  upper bounds across five frozen learners and eight residual
   windows are below 0.90 (maximum 0.8977). For all five learners, the sharp
   interval for mean score minus target outcome prevalence is wholly negative
-  (least-negative upper endpoint -0.0239). Assigning each unresolved loan the
-  same label across both thresholds yields sharp adjacent-threshold response
-  bounds on the fixed target panel without separately extremizing endpoints.
-  Two outcome-blind rulers and sharp common-outcome
-  bounds show comparator dependence: all 216 endpoint envelopes over the finite registered cap values
-  spanning $[0.05,0.12]$ include zero, without computing continuous-support
-  extrema. Across all 96 fixed rounded funded tracks, count-weighted coverage
-  exceeds invested-dollar-weighted coverage under every unresolved completion
-  (minimum sharp lower gap 0.00854); this is estimand dependence, not funded-set
-  conformal validity. No learner, ruler, coordinate, or policy is selected. CRPTO
-  contributes an executable
-  identification audit of the prediction-to-decision interface, not a deployment
-  certificate.
+  (least-negative upper endpoint -0.0239). Shared unresolved labels yield sharp
+  adjacent-threshold response bounds on the fixed panel. Two outcome-blind
+  rulers and sharp common-outcome bounds expose comparator dependence: all 216
+  endpoint envelopes over registered cap values spanning $[0.05,0.12]$ include
+  zero, without continuous-support extrema. Across 96 funded
+  tracks, count-weighted coverage exceeds invested-dollar-weighted coverage
+  under every unresolved completion (minimum sharp lower gap 0.00854); this is
+  estimand dependence, not funded-set conformal validity. No learner, embedding,
+  theta, gamma, ruler, coordinate, or policy is selected. CRPTO is an executable
+  identification audit, not a deployment certificate.
 keywords:
   - conformal prediction
   - predict-then-optimize
@@ -187,7 +184,10 @@ result. Its three scientific contributions are:
 3. **Partial identification at the decision interface.** Two common-frontier
    rulers, a conditional within-basis endpoint lemma, and registered point-cap
    support show why score, ruler, coordinate, and comparator support jointly
-   define the portfolio estimand. A monotone common completion audits transport of
+   define the portfolio estimand. A complete set-preserving sensitivity shows
+   empirically that the unidentified continuous embedding can change allocations
+   and descriptive endpoint direction without changing any binary set. A
+   monotone common completion audits transport of
    the worst loss over the entire fixed policy catalog, while count-, invested-
    dollar-, and fixed-capital coverage expose selection-weight dependence.
    Constructively, all 40 declared six-month
@@ -564,9 +564,10 @@ $$ {#eq-set-preserving-embedding}
 keeps $\ell_i\le p_i\le u_i^{(\theta)}\le u_i$, preserves $S_i$ loan by loan,
 and therefore preserves binary-set coverage. It can nevertheless change the
 LP coefficient $(1-\gamma)p_i+\gamma u_i^{(\theta)}$. Conformal validity alone
-therefore cannot choose an embedding or order its decision consequences; the
-corresponding complete finite sensitivity would require a separate experiment
-and cannot be inferred from this theorem.
+therefore cannot choose an embedding, prove that an allocation changes, or
+order its decision consequences. The complete finite sensitivity reported
+below is separate empirical evidence; its allocation changes cannot be inferred
+from this theorem alone.
 
 The four possible binary sets are $\varnothing$, $\{0\}$, $\{1\}$, and
 $\{0,1\}$, with candidate shares $e,z,o,b$ summing to one. Mean set cardinality
@@ -1342,6 +1343,51 @@ Fit-label timing refits recipes; evaluation-endpoint availability instead holds
 scores, supports, and allocations fixed. The axes were not crossed, so they do
 not establish joint lag robustness.
 
+## Set-preserving embedding sensitivity: allocation change and direction noninvariance
+
+<!-- claim:allocation.set_preserving_embedding_changes_allocations -->
+<!-- claim:decision.set_preserving_embedding_direction_noninvariant -->
+
+The set-preserving sensitivity varies
+$\theta\in\{0,.25,.50,.75,1\}$ in @eq-set-preserving-embedding jointly with
+the five declared $\gamma$ values, both outcome-blind rulers, all three
+coordinates, eight windows, and fifteen primary months. Every one of the 80
+role--window--$\theta$ diagnostics preserves every binary set exactly, even
+though the largest contraction of a continuous upper endpoint is 0.892012.
+Among the 11,520 outcome-free monthly contrasts with $\theta>0$ and
+$\gamma>0$, the normalized exposure vector changes by more than $10^{-10}$ in
+9,659 (83.85%): 5,760/5,760 under the normalized-score ruler and 3,899/5,760
+under objective matching. When $\gamma=0$, the embedding drops out of the
+score as it should. All 2,880 outcome-free monthly controls have zero exposure
+distance and objective difference; the 2,880 monthly and 192 pooled evaluation
+controls have zero objective and outcome contrasts.
+
+The outcome evaluation freezes those allocations before joining the endpoint
+panel and compares each $\theta>0$ portfolio with its $\theta=0$ counterpart
+using one loan-wise completion on the funded union. Across the 768 pooled
+noncontrol contrasts for each metric, the complete direction census is:
+
+| Metric, $\theta>0$ minus $\theta=0$ | Negative | Positive | Not separated | Within tolerance |
+|---|---:|---:|---:|---:|
+| Standardized payoff | 128 | 338 | 230 | 72 |
+| Funded default | 350 | 157 | 173 | 88 |
+| Funded binary miscoverage | 340 | 259 | 81 | 88 |
+
+: Complete pooled set-preserving-embedding direction census after excluding the exact $\gamma=0$ controls. *Not separated* means that the sharp interval contains zero beyond the metric tolerance; *within tolerance* means both endpoints are within that tolerance. Signs are numerical, not uniformly favorable or adverse. {#tbl-embedding-direction}
+
+Holding window, ruler, coordinate, positive $\gamma$, and metric fixed gives
+576 four-$\theta$ tracks. Direction category changes within 324 tracks; 77
+contain both a tolerance-separated negative and positive contrast (96 under
+the zero-tolerance geometric sign). Thus equal binary prediction sets do not
+make either the allocation or its descriptive endpoint direction invariant to
+the continuous embedding in this declared grid. This is a retrospectively
+locked, post-inspection, non-confirmatory finite-archive sensitivity. It
+selects no embedding, $\theta$, $\gamma$, ruler, coordinate, window, or policy;
+it supplies no set-native optimizer, conformal-validity repair, causal or
+prospective conclusion, or joint sharpness across overlapping tracks. Online
+Supplement Tables S9K--S9L report the outcome-free allocation census and both
+contrast families.
+
 ## Endpoint direction changes with ruler and coordinate
 
 <!-- claim:timing.endpoint_six_month_reconciles_active -->
@@ -1598,9 +1644,12 @@ competing-risk redesign would be a new estimand requiring exact event and
 censoring times, overlap, conditional-censoring, and temporal contracts; it would
 not retrospectively complete the 12,076 unresolved binary endpoints.
 
-The portfolio audit is specific to the absolute-residual continuous embedding:
-it is not set-native, and no coverage result orders $u_i$ among loans sharing the
-same binary prediction set. The learners, overlapping windows, and second origin
+The portfolio audit starts from the absolute-residual continuous embedding and
+is not set-native. The complete set-preserving sensitivity shows that changing
+the unidentified subunit endpoint can change allocations and descriptive
+outcome directions while every binary set remains fixed; it does not recommend
+an embedding or turn candidate coverage into a funded-set guarantee. The
+learners, overlapping windows, and second origin
 share one chronology, so they are neither independent nor prospective
 replications. Temporal separation does not restore exchangeability, and candidate
 coverage does not imply funded-set coverage. The four fit-label scenarios are not
@@ -1616,10 +1665,11 @@ is neither a pristine lockbox nor a preregistration.
 
 # Reproducibility {#sec-reproducibility}
 
-One registry binds 53 DVC pointers and five exact direct-child Git artifact
-lineages: V8 common-panel response, V3I marginal gap, residual-distribution
-frontier, decision catalog, and funded-estimand audit. Publication replay
-regenerates 36 tables and five figure families in both PNG and PDF; Online
+One registry binds 53 DVC pointers and six exact Git artifact lineages: V8
+common-panel response, V3I marginal gap, residual-distribution frontier,
+decision catalog, funded-estimand audit, and the two-stage set-preserving-
+embedding chain. Publication replay regenerates 38 tables and five figure
+families in both PNG and PDF; Online
 Supplement Appendix F specifies both replay modes.
 
 # Conclusion {#sec-conclusion}
@@ -1639,6 +1689,11 @@ values spanning $[0.05,0.12]$ include zero; continuous-support extrema are not
 computed. The marginal score gap, residual-distribution frontier, worst-catalog
 ordering, and funded weighting audit further show that adjacent levels of the
 pipeline answer different questions and cannot supply one another's guarantee.
+The set-preserving sensitivity sharpens that separation: all 80 audited binary
+set cells are unchanged, yet 9,659/11,520 positive-$\gamma$ monthly allocation
+contrasts change, and pooled outcome direction is not invariant across
+$\theta$. This is finite-grid sensitivity, not a preferred embedding or a
+validity repair.
 
 CRPTO therefore selects no learner or policy. Its executable contribution is to
 keep unresolved outcomes, candidate coverage, binary geometry, allocation effects,

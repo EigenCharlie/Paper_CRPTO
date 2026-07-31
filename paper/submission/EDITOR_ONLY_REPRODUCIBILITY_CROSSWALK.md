@@ -109,6 +109,28 @@ scientific CSV outputs are byte-identical. This is
 a retrospective descriptive replay, not a selected transition, temporal
 transport result, or explanation of threshold movement.
 
+### Git-transported publication lineages
+
+Five publication lineages use one protocol-to-artifact direct-child edge. The
+set-preserving-embedding lineage instead uses the registered two-stage
+`P2 -> A2 -> B2` chain because its outcome-free source bytes and evaluated
+outputs have separate authority. Every tag below is annotated, every listed
+child has one parent, and the source registry verifies the exact added-path
+census and file hashes.
+
+| Lineage | Protocol tag / commit | Intermediate source tag / commit | Evaluation artifact tag / commit |
+|---|---|---|---|
+| Common-panel V8 | `protocol/ijds-common-panel-threshold-response-2026-07-26-v8` / `06a7d864776247fbb5128105deb229de4476be65` | -- | `artifacts/ijds-common-panel-threshold-response-2026-07-26-v8` / `526a71bd0a0a7663a313dc12b0ce0eb3307719d9` |
+| Marginal gap V3I | `protocol/ijds-marginal-mean-score-outcome-gap-2026-07-29-v3i` / `9c4b082ce68eb88bf60666b4cb794348bf57a40d` | -- | `artifacts/ijds-marginal-mean-score-outcome-gap-2026-07-29-v3i` / `8fff4834aa5443150b5c2d82d07723b0de75d76e` |
+| Residual frontier V1 | `protocol/ijds-residual-transport-frontier-2026-07-29-v1` / `9c4b082ce68eb88bf60666b4cb794348bf57a40d` | -- | `artifacts/ijds-residual-transport-frontier-2026-07-29-v1` / `e6dd6422e853728a9880affbf61d8819728a1efb` |
+| Decision catalog V1 | `protocol/ijds-decision-catalog-transport-2026-07-29-v1` / `9c4b082ce68eb88bf60666b4cb794348bf57a40d` | -- | `artifacts/ijds-decision-catalog-transport-2026-07-29-v1` / `0a016e87074d7e92ce57b2d83aaf30b8b31b7e5a` |
+| Funded estimands V1 | `protocol/ijds-funded-selection-estimand-audit-2026-07-29-v1` / `9c4b082ce68eb88bf60666b4cb794348bf57a40d` | -- | `artifacts/ijds-funded-selection-estimand-audit-2026-07-29-v1` / `0d26e0247d41ae4ff1c9ad8ca230b0a627303190` |
+| Set-preserving embedding V1d | `protocol/ijds-set-preserving-embedding-sensitivity-2026-07-30-v1d` / `174c4e3d894829473a787e6d34bfc3bbab2f8ef2` | `artifacts/ijds-set-preserving-embedding-sensitivity-2026-07-30-v1a-recovery-v1d` / `95e39f05bb990429025d0115a0e55c53b1fb1ea8` | `artifacts/ijds-set-preserving-embedding-sensitivity-2026-07-30-v1d` / `276a5db8772262aad2edd8936dbe226926e412b5` |
+
+V1d is retrospective and post-inspection. V1c failed its persistence contract
+before any evaluation commit or tag; its local Phase-B files are non-evidence
+and were neither copied nor read by V1d.
+
 The fit-label completion sensitivity is
 `ijds-fit-label-completion-sensitivity-2026-07-16-v2`, protocol-locked at
 commit `fbcafcf84645024b9753aba2f04a4263b8e76236`. The allocation-granularity
@@ -129,7 +151,7 @@ structural V5 shard root and the unequal-follow-up origin roots. Pull with:
 uv run --locked python scripts/manage_ijds_dvc_capsule.py pull
 ```
 
-The registered evidence builder emits one paper-facing manifest, 36 CSV
+The registered evidence builder emits one paper-facing manifest, 38 CSV
 tables, and five figure families in both PDF and PNG.
 
 Machine-local DVC credentials belong in `.dvc/config.local` and are never

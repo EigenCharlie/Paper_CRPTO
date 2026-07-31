@@ -176,9 +176,9 @@ def test_phase_table_handles_alpha_boundary_when_n_plus_one_is_a_multiple_of_ten
 
 
 def test_publication_inventory_is_derived_from_declared_targets() -> None:
-    assert len(TABLE_TARGETS) == 36
+    assert len(TABLE_TARGETS) == 38
     assert len(FIGURE_STEMS) == 5
-    assert len(TABLE_TARGETS) + 2 * len(FIGURE_STEMS) == 46
+    assert len(TABLE_TARGETS) + 2 * len(FIGURE_STEMS) == 48
 
 
 def test_closed_coverage_contract_fails_on_invalid_bounds_or_denominators() -> None:

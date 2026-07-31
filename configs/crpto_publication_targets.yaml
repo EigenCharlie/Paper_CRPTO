@@ -72,6 +72,9 @@ active_scientific_contract:
       - scripts/experiments/run_ijds_rolling_origin_individual_age_followup.py
       - scripts/experiments/run_ijds_label_mondrian_freeze.py
       - scripts/experiments/run_ijds_label_mondrian_evaluation.py
+    sealed_protocol_entrypoints:
+      - scripts/experiments/run_ijds_set_preserving_embedding_sensitivity_v1c.py
+      - scripts/experiments/run_ijds_set_preserving_embedding_sensitivity_v1d.py
     support_tools:
       - scripts/build_ijds_policy_support_tie_evidence.py
       - scripts/build_ijds_policy_support_optimal_face_evidence.py
@@ -194,6 +197,8 @@ active_scientific_contract:
     - reports/crpto/tables/crpto_ijds_v4_tableS9H_decision_catalog_target_blocks.csv
     - reports/crpto/tables/crpto_ijds_v4_tableS9I_funded_selection_track_estimands.csv
     - reports/crpto/tables/crpto_ijds_v4_tableS9J_funded_selection_gamma_contrasts.csv
+    - reports/crpto/tables/crpto_ijds_v4_tableS9K_set_preserving_embedding_allocation_summary.csv
+    - reports/crpto/tables/crpto_ijds_v4_tableS9L_set_preserving_embedding_direction_census.csv
     - reports/crpto/figures/crpto_ijds_v4_fig1_coverage.pdf
     - reports/crpto/figures/crpto_ijds_v4_fig1_coverage.png
     - reports/crpto/figures/crpto_ijds_v4_fig2_phase_transition.pdf

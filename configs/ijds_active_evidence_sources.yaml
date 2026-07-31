@@ -184,6 +184,43 @@ lineages:
         - "data/processed/experiments/ijds_audit/ijds-marginal-mean-score-outcome-gap-2026-07-29-v3i/monthly_endpoint_reason_census.csv"
         - "models/experiments/ijds_audit/ijds-marginal-mean-score-outcome-gap-2026-07-29-v3i/execution_receipt.json"
         - "models/experiments/ijds_audit/ijds-marginal-mean-score-outcome-gap-2026-07-29-v3i/marginal_mean_score_outcome_gap_summary.json"
+    set_preserving_embedding:
+      run_tag: "ijds-set-preserving-embedding-sensitivity-2026-07-30-v1d"
+      protocol_tag: "protocol/ijds-set-preserving-embedding-sensitivity-2026-07-30-v1d"
+      protocol_commit: "174c4e3d894829473a787e6d34bfc3bbab2f8ef2"
+      scientific_uv_lock_sha256: "6c862cbad9ab7e3a07dd2823c775127403093d6ad59a789ee227d827165e4733"
+      paper_role: "complete_retrospective_postinspection_set_preserving_embedding_sensitivity"
+      dvc_tracked: false
+      source_artifact_tag: "artifacts/ijds-set-preserving-embedding-sensitivity-2026-07-30-v1a-recovery-v1d"
+      source_artifact_commit: "95e39f05bb990429025d0115a0e55c53b1fb1ea8"
+      source_artifact_parent_commit: "174c4e3d894829473a787e6d34bfc3bbab2f8ef2"
+      source_artifact_transport: "git_force_tracked_direct_child_commit"
+      source_artifact_paths:
+        - "data/processed/experiments/ijds_audit/ijds-set-preserving-embedding-sensitivity-2026-07-29-v1a/frontier/embedding_set_preservation.parquet"
+        - "data/processed/experiments/ijds_audit/ijds-set-preserving-embedding-sensitivity-2026-07-29-v1a/frontier/frontier_funded_allocations.parquet"
+        - "data/processed/experiments/ijds_audit/ijds-set-preserving-embedding-sensitivity-2026-07-29-v1a/frontier/frontier_independent_solver_validation.parquet"
+        - "data/processed/experiments/ijds_audit/ijds-set-preserving-embedding-sensitivity-2026-07-29-v1a/frontier/frontier_order_sensitivity.parquet"
+        - "data/processed/experiments/ijds_audit/ijds-set-preserving-embedding-sensitivity-2026-07-29-v1a/frontier/frontier_solve_records.parquet"
+        - "data/processed/experiments/ijds_audit/ijds-set-preserving-embedding-sensitivity-2026-07-29-v1a/frontier/minimum_endpoint_diagnostics.parquet"
+        - "data/processed/experiments/ijds_audit/ijds-set-preserving-embedding-sensitivity-2026-07-29-v1a/frontier/objective_optimum_diagnostics.parquet"
+        - "data/processed/experiments/ijds_audit/ijds-set-preserving-embedding-sensitivity-2026-07-29-v1a/frontier/outcome_free_allocation_contrasts.parquet"
+        - "models/experiments/ijds_audit/ijds-set-preserving-embedding-sensitivity-2026-07-29-v1a/outcome_free_execution_receipt.json"
+        - "models/experiments/ijds_audit/ijds-set-preserving-embedding-sensitivity-2026-07-29-v1a/outcome_free_summary.json"
+        - "models/experiments/ijds_audit/ijds-set-preserving-embedding-sensitivity-2026-07-29-v1a/protocol_freeze.json"
+      artifact_tag: "artifacts/ijds-set-preserving-embedding-sensitivity-2026-07-30-v1d"
+      artifact_commit: "276a5db8772262aad2edd8936dbe226926e412b5"
+      artifact_parent_commit: "95e39f05bb990429025d0115a0e55c53b1fb1ea8"
+      artifact_transport: "git_force_tracked_direct_child_commit"
+      artifact_paths:
+        - "data/processed/experiments/ijds_audit/ijds-set-preserving-embedding-sensitivity-2026-07-30-v1d/evaluation/evaluated_primary_portfolios.parquet"
+        - "data/processed/experiments/ijds_audit/ijds-set-preserving-embedding-sensitivity-2026-07-30-v1d/evaluation/metric_direction_census.parquet"
+        - "data/processed/experiments/ijds_audit/ijds-set-preserving-embedding-sensitivity-2026-07-30-v1d/evaluation/monthly_sharp_contrasts.parquet"
+        - "data/processed/experiments/ijds_audit/ijds-set-preserving-embedding-sensitivity-2026-07-30-v1d/evaluation/outcome_join_audit.parquet"
+        - "data/processed/experiments/ijds_audit/ijds-set-preserving-embedding-sensitivity-2026-07-30-v1d/evaluation/window_sharp_contrasts.parquet"
+        - "models/experiments/ijds_audit/ijds-set-preserving-embedding-sensitivity-2026-07-30-v1d/evaluation_execution_receipt.json"
+        - "models/experiments/ijds_audit/ijds-set-preserving-embedding-sensitivity-2026-07-30-v1d/evaluation_summary.json"
+        - "models/experiments/ijds_audit/ijds-set-preserving-embedding-sensitivity-2026-07-30-v1d/join_identity.json"
+        - "models/experiments/ijds_audit/ijds-set-preserving-embedding-sensitivity-2026-07-30-v1d/verified_evaluation_manifest.json"
 
 sensitivities:
   endpoint_availability:
@@ -597,6 +634,110 @@ sources:
     path: "data/processed/experiments/ijds_audit/ijds-marginal-mean-score-outcome-gap-2026-07-29-v3i/monthly_endpoint_reason_census.csv"
     bytes: 4928
     sha256: "cbfcb323b55ff98d5cd0354fbcd34fc490f7c13bc070e7c109e2c459f20235d2"
+  set_preserving_embedding_config:
+    path: "configs/experiments/ijds_set_preserving_embedding_sensitivity_2026-07-30_v1d.yaml"
+    bytes: 3821
+    sha256: "9c183a594e3f283cc35f0e67fb3f2a4a3a05e1b34b0f314d4489190745642599"
+  set_preserving_embedding_base_config:
+    path: "configs/experiments/ijds_set_preserving_embedding_sensitivity_2026-07-29_v1c.yaml"
+    bytes: 14468
+    sha256: "60fc48e82f8c7be6431212085cb0e573a2f32376618970b9a66d7519e9100661"
+  set_preserving_embedding_protocol:
+    path: "docs/research/ijds_set_preserving_embedding_sensitivity_v1d_protocol_2026-07-30.md"
+    bytes: 5627
+    sha256: "8a198d7c7696cc5b027ee62ea5fde7746ad912acad007295ee37c4fe7dc34c79"
+  set_preserving_embedding_v1c_no_go:
+    path: "docs/research/ijds_set_preserving_embedding_sensitivity_v1c_no_go_2026-07-30.md"
+    bytes: 2972
+    sha256: "163c3140836b54a07341033d8313fe4bee07956e867a727a2d4df42a82ad3fb7"
+  set_preserving_embedding_runner:
+    path: "scripts/experiments/run_ijds_set_preserving_embedding_sensitivity_v1d.py"
+    bytes: 40613
+    sha256: "722caf57a474e78bc556e02bfb209fba5e480862da3d6f97e3d049c1c46459d9"
+  set_preserving_embedding_implementation:
+    path: "src/ijds_challengers/set_preserving_embedding_v1d.py"
+    bytes: 17950
+    sha256: "39659f41f705561e34c650b6f4d9095978c8780c425fb5131cb248e4dac65378"
+  set_preserving_embedding_embedding_set_preservation:
+    path: "data/processed/experiments/ijds_audit/ijds-set-preserving-embedding-sensitivity-2026-07-29-v1a/frontier/embedding_set_preservation.parquet"
+    bytes: 11160
+    sha256: "cc7d752488ef0657c94df5985de8fc2eb6a020132440b07f49b68ee65e639f69"
+  set_preserving_embedding_frontier_funded_allocations:
+    path: "data/processed/experiments/ijds_audit/ijds-set-preserving-embedding-sensitivity-2026-07-29-v1a/frontier/frontier_funded_allocations.parquet"
+    bytes: 49246668
+    sha256: "f192a70512f2fed01bb64c2b302cb47ecfd264648b7407b9b5aa50c5d666cf51"
+  set_preserving_embedding_frontier_independent_solver_validation:
+    path: "data/processed/experiments/ijds_audit/ijds-set-preserving-embedding-sensitivity-2026-07-29-v1a/frontier/frontier_independent_solver_validation.parquet"
+    bytes: 121437
+    sha256: "6ccd5d776fb5044f011eaf5d4bc76257d920de14fd3ef423654070434b397a21"
+  set_preserving_embedding_frontier_order_sensitivity:
+    path: "data/processed/experiments/ijds_audit/ijds-set-preserving-embedding-sensitivity-2026-07-29-v1a/frontier/frontier_order_sensitivity.parquet"
+    bytes: 230087
+    sha256: "eb93a2892346966038dd4ff70377cac213d93faf39e7fb50a45bec30d6d35f7a"
+  set_preserving_embedding_frontier_solve_records:
+    path: "data/processed/experiments/ijds_audit/ijds-set-preserving-embedding-sensitivity-2026-07-29-v1a/frontier/frontier_solve_records.parquet"
+    bytes: 1782252
+    sha256: "c89bad6e9a7f9513f871be66da3950b3b690051915c51963936718314ea6598a"
+  set_preserving_embedding_minimum_endpoint_diagnostics:
+    path: "data/processed/experiments/ijds_audit/ijds-set-preserving-embedding-sensitivity-2026-07-29-v1a/frontier/minimum_endpoint_diagnostics.parquet"
+    bytes: 55526
+    sha256: "5538e1e752cfbfc4102fe76c068402e93c6c68fada9d9c346a4dcd87752e55bb"
+  set_preserving_embedding_objective_optimum_diagnostics:
+    path: "data/processed/experiments/ijds_audit/ijds-set-preserving-embedding-sensitivity-2026-07-29-v1a/frontier/objective_optimum_diagnostics.parquet"
+    bytes: 13552
+    sha256: "f9527e361865dfa63d72e552e190cb2e06f89f120015d23095a082d59b531a29"
+  set_preserving_embedding_outcome_free_allocation_contrasts:
+    path: "data/processed/experiments/ijds_audit/ijds-set-preserving-embedding-sensitivity-2026-07-29-v1a/frontier/outcome_free_allocation_contrasts.parquet"
+    bytes: 464038
+    sha256: "1e9a8f5b3aead21238d984389f4f33505ef28786fdd09d9b0c0193672ced84bf"
+  set_preserving_embedding_outcome_free_receipt:
+    path: "models/experiments/ijds_audit/ijds-set-preserving-embedding-sensitivity-2026-07-29-v1a/outcome_free_execution_receipt.json"
+    bytes: 809
+    sha256: "2841daa09a1bec9e24ce7072fa9d81cce59c63d94ae8afc21d11a6edb0972604"
+  set_preserving_embedding_outcome_free_summary:
+    path: "models/experiments/ijds_audit/ijds-set-preserving-embedding-sensitivity-2026-07-29-v1a/outcome_free_summary.json"
+    bytes: 2568
+    sha256: "676c5fa388f5f7f38847632b941746183b488356f440db11acdf1803ef7819f4"
+  set_preserving_embedding_protocol_freeze:
+    path: "models/experiments/ijds_audit/ijds-set-preserving-embedding-sensitivity-2026-07-29-v1a/protocol_freeze.json"
+    bytes: 32026
+    sha256: "1a4b88b0db256c9819fe24973abecef161b3f1a61c4f4c769a6a2f1c9ca037cf"
+  set_preserving_embedding_evaluated_portfolios:
+    path: "data/processed/experiments/ijds_audit/ijds-set-preserving-embedding-sensitivity-2026-07-30-v1d/evaluation/evaluated_primary_portfolios.parquet"
+    bytes: 1629139
+    sha256: "38c977e63affd7b4a37bec5d39027a401b97d7d4ac5d0fe40c5e8c27a5ab2fe3"
+  set_preserving_embedding_direction_census:
+    path: "data/processed/experiments/ijds_audit/ijds-set-preserving-embedding-sensitivity-2026-07-30-v1d/evaluation/metric_direction_census.parquet"
+    bytes: 68619
+    sha256: "30f2b2f023aad9a26ee7b39b61a3451848ec7cebc766d60be36219fbce2831f6"
+  set_preserving_embedding_monthly_contrasts:
+    path: "data/processed/experiments/ijds_audit/ijds-set-preserving-embedding-sensitivity-2026-07-30-v1d/evaluation/monthly_sharp_contrasts.parquet"
+    bytes: 1142100
+    sha256: "87fb90ba5cf054408a5818dc2046161c1524c26067b40d409495e2780ffe43db"
+  set_preserving_embedding_outcome_audit:
+    path: "data/processed/experiments/ijds_audit/ijds-set-preserving-embedding-sensitivity-2026-07-30-v1d/evaluation/outcome_join_audit.parquet"
+    bytes: 5155
+    sha256: "edf418f93146b4fbc1286ac34e34b640d82d5c20eba9fdd5d148840a3e1eb18e"
+  set_preserving_embedding_window_contrasts:
+    path: "data/processed/experiments/ijds_audit/ijds-set-preserving-embedding-sensitivity-2026-07-30-v1d/evaluation/window_sharp_contrasts.parquet"
+    bytes: 143876
+    sha256: "15cc4cb84d6339471d7c7a4de52bc3c9d25ff411cf8902aa46d87abafb36b4b7"
+  set_preserving_embedding_evaluation_receipt:
+    path: "models/experiments/ijds_audit/ijds-set-preserving-embedding-sensitivity-2026-07-30-v1d/evaluation_execution_receipt.json"
+    bytes: 1598
+    sha256: "c06c04c8677e888ea0279852210fd1e2936c9a8fe7e247045091933670d90349"
+  set_preserving_embedding_evaluation_summary:
+    path: "models/experiments/ijds_audit/ijds-set-preserving-embedding-sensitivity-2026-07-30-v1d/evaluation_summary.json"
+    bytes: 6710
+    sha256: "a5c98d83435121594928b364fc13f91f9f9fb48b72f44080c1d56111bafc4864"
+  set_preserving_embedding_join_identity:
+    path: "models/experiments/ijds_audit/ijds-set-preserving-embedding-sensitivity-2026-07-30-v1d/join_identity.json"
+    bytes: 6993
+    sha256: "851ac60aa128f9b4f413d8e729a8dec8c58bbb25eb61f328db8f2f0f22619d5e"
+  set_preserving_embedding_manifest:
+    path: "models/experiments/ijds_audit/ijds-set-preserving-embedding-sensitivity-2026-07-30-v1d/verified_evaluation_manifest.json"
+    bytes: 24757
+    sha256: "6d39748a917068861b8f20f141225b5c865ccbfd3ca3c329aa9933bacbac8fc4"
   rolling_equal_followup_summary:
     path: "models/experiments/ijds_audit/ijds-rolling-origin-equal-followup-2026-07-21-v1/rolling_origin_equal_followup_summary.json"
     bytes: 55027

@@ -159,8 +159,9 @@ every regenerated reviewer page again.
 - reviewer files contain no identity, local path, commit, tag, or hash;
 - the abstract stays below 300 words;
 - no retired endpoint or favorable `.25` claim returns; and
-- the package contains exactly 53 registered DVC pointers and 36 paper-facing
-  CSV tables, with unequal-follow-up roots labeled only as replay provenance;
+- the package contains exactly 53 registered DVC pointers, six Git artifact
+  lineages, and 38 paper-facing CSV tables, with unequal-follow-up roots labeled
+  only as replay provenance;
 - scientific, drift, publication, compilation, and visual gates pass.
 
 This is still pre-freeze. Final tagging and ScholarOne proof comparison require

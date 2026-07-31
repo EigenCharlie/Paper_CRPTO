@@ -1,6 +1,7 @@
 """Verified evidence for the post-inspection IJDS scientific frontiers.
 
-The four promoted runs are small Git-transported scientific artifacts.  They
+The promoted runs are Git-transported scientific artifacts.  This surface also
+supports the larger two-stage set-preserving embedding lineage.  They
 remain retrospective finite-archive diagnostics: this loader verifies their
 sealed identities, exact censuses, arithmetic contracts, and publication
 tables without converting them into sampling, causal, or prospective claims.
@@ -48,7 +49,13 @@ DEVELOPMENT_MONTHS = tuple(
 RULERS = ("objective_matched", "normalized_score")
 COORDINATES = (0.25, 0.50, 0.75)
 GAMMAS = (0.0, 1.0)
+EMBEDDING_LEVELS = (0.0, 0.25, 0.50, 0.75, 1.0)
 METRICS = ("payoff_shortfall", "default_gap", "miscoverage_excess")
+EMBEDDING_METRICS = ("standardized_payoff", "funded_default", "funded_binary_miscoverage")
+EMBEDDING_CONTRAST_FAMILIES = (
+    "theta_minus_theta_0_within_gamma",
+    "gamma_1_minus_gamma_0_within_theta",
+)
 RESIDUAL_DIRECTIONS = (
     "larger_target_residual_discrepancy_dominates",
     "smaller_target_residual_discrepancy_dominates",
@@ -76,12 +83,13 @@ class VerifiedFrontierRun:
 
 @dataclass(frozen=True)
 class FrontierEvidence:
-    """All four independently gated scientific frontier runs."""
+    """All independently gated scientific frontier runs."""
 
     residual_transport: VerifiedFrontierRun
     marginal_score_outcome_gap: VerifiedFrontierRun
     decision_catalog_transport: VerifiedFrontierRun
     funded_selection_estimands: VerifiedFrontierRun
+    set_preserving_embedding: VerifiedFrontierRun
 
 
 def _load_json_object(path: Path, *, label: str) -> dict[str, Any]:
@@ -405,15 +413,17 @@ def _load_residual(
         or summary.get("census", {}).get("pooled_rows") != 200
     ):
         raise RuntimeError("The residual summary no longer reconciles its full census.")
-    summary_table = (
+    summary_counts = cast(
+        pd.DataFrame,
         pooled.groupby("learner", sort=False, observed=True)[
             "sharp_directional_discrepancy_comparison"
         ]
         .value_counts()
-        .unstack(fill_value=0)
-        .reindex(index=LEARNERS, columns=RESIDUAL_DIRECTIONS, fill_value=0)
-        .reset_index()
+        .unstack(fill_value=0),
     )
+    summary_table = summary_counts.reindex(
+        index=LEARNERS, columns=RESIDUAL_DIRECTIONS, fill_value=0
+    ).reset_index()
     summary_table.insert(1, "learner_label", summary_table["learner"].map(LEARNER_LABELS))
     summary_table.insert(2, "pooled_cells", 40)
     pooled_publication = pooled[
@@ -927,13 +937,654 @@ def _load_funded(
     )
 
 
+def _require_embedding_schema(
+    frame: pd.DataFrame,
+    schema: Mapping[str, Any],
+    *,
+    name: str,
+) -> None:
+    """Validate the V1d persisted schema and its sole structural NA pattern."""
+    dtypes = schema.get("dtypes")
+    if not isinstance(dtypes, Mapping):
+        raise TypeError(f"Set-preserving embedding schema {name!r} omits dtypes.")
+    expected_columns = tuple(str(column) for column in dtypes)
+    actual_dtypes = {column: str(frame[column].dtype) for column in frame.columns}
+    if (
+        schema.get("rows") != len(frame)
+        or schema.get("columns") != len(frame.columns)
+        or tuple(frame.columns) != expected_columns
+        or actual_dtypes != dict(dtypes)
+    ):
+        raise RuntimeError(f"Set-preserving embedding persisted schema {name!r} changed.")
+
+    structural = (
+        {"frontier_cap", "objective_target", "risk_tolerance"}
+        if name == ("evaluated_portfolios")
+        else set()
+    )
+    ordinary = [column for column in frame.columns if column not in structural]
+    if bool(frame.loc[:, ordinary].isna().any().any()):
+        raise RuntimeError(f"Set-preserving embedding table {name!r} has undeclared missingness.")
+    for column in structural:
+        expected_missing = (
+            frame["frontier_ruler"].eq("objective_matched")
+            if column in {"frontier_cap", "risk_tolerance"}
+            else frame["frontier_ruler"].eq("normalized_score")
+        )
+        if int(frame[column].isna().sum()) != 9000 or not frame[column].isna().equals(
+            expected_missing
+        ):
+            raise RuntimeError(
+                f"Set-preserving embedding structural missingness changed for {column!r}."
+            )
+
+    for column in frame.select_dtypes(include=[np.number]).columns:
+        values = frame[column].dropna().to_numpy()
+        if not bool(np.isfinite(values).all()):
+            raise RuntimeError(
+                f"Set-preserving embedding table {name!r} contains nonfinite {column!r}."
+            )
+
+
+def _require_embedding_grid(frames: Mapping[str, pd.DataFrame]) -> None:
+    evaluated = frames["evaluated_portfolios"]
+    base_axes = {
+        "window_id": WINDOW_IDS,
+        "period": ISSUE_MONTHS,
+        "frontier_ruler": RULERS,
+        "frontier_coordinate": COORDINATES,
+        "theta": EMBEDDING_LEVELS,
+        "gamma": EMBEDDING_LEVELS,
+    }
+    require_exact_grid(evaluated, domains=base_axes, label="set-preserving evaluated portfolios")
+    if (
+        not evaluated["role"].eq("primary_oot").all()
+        or not evaluated["full_budget"].astype(bool).all()
+        or "realized_payoff_exact" in evaluated
+    ):
+        raise RuntimeError("The set-preserving evaluated-portfolio contract changed.")
+
+    axes = {
+        "window_id": WINDOW_IDS,
+        "ruler": RULERS,
+        "coordinate": COORDINATES,
+    }
+    for name in ("monthly_sharp_contrasts", "window_sharp_contrasts"):
+        frame = frames[name]
+        gamma = frame.loc[frame["contrast_family"].eq(EMBEDDING_CONTRAST_FAMILIES[1])]
+        theta = frame.loc[frame["contrast_family"].eq(EMBEDDING_CONTRAST_FAMILIES[0])]
+        period_axis: dict[str, Sequence[Any]] = (
+            {"period": ISSUE_MONTHS} if name == "monthly_sharp_contrasts" else {}
+        )
+        require_exact_grid(
+            gamma,
+            domains={**axes, **period_axis, "theta": EMBEDDING_LEVELS},
+            label=f"{name} gamma contrasts",
+        )
+        require_exact_grid(
+            theta,
+            domains={
+                **axes,
+                **period_axis,
+                "theta": EMBEDDING_LEVELS[1:],
+                "gamma": EMBEDDING_LEVELS,
+            },
+            label=f"{name} theta contrasts",
+        )
+        if (
+            not frame["role"].eq("primary_oot").all()
+            or frame["causal_interpretation"].astype(bool).any()
+            or not gamma["gamma"].eq(1.0).all()
+            or not gamma["gamma_reference"].eq(0.0).all()
+            or not gamma["theta_reference"].eq(gamma["theta"]).all()
+            or not theta["theta_reference"].eq(0.0).all()
+            or not theta["gamma_reference"].eq(theta["gamma"]).all()
+        ):
+            raise RuntimeError(f"The set-preserving {name} contrast semantics changed.")
+
+    directions = frames["direction_census"]
+    gamma_directions = directions.loc[
+        directions["contrast_family"].eq(EMBEDDING_CONTRAST_FAMILIES[1])
+    ]
+    theta_directions = directions.loc[
+        directions["contrast_family"].eq(EMBEDDING_CONTRAST_FAMILIES[0])
+    ]
+    require_exact_grid(
+        gamma_directions,
+        domains={**axes, "theta": EMBEDDING_LEVELS, "metric": EMBEDDING_METRICS},
+        label="set-preserving gamma direction census",
+    )
+    require_exact_grid(
+        theta_directions,
+        domains={
+            **axes,
+            "theta": EMBEDDING_LEVELS[1:],
+            "gamma": EMBEDDING_LEVELS,
+            "metric": EMBEDDING_METRICS,
+        },
+        label="set-preserving theta direction census",
+    )
+    allowed_geometric = {"negative", "positive", "contains_zero", "exact_zero"}
+    allowed_tolerance = {
+        "negative",
+        "positive",
+        "not_directionally_separated_at_tolerance",
+        "within_tolerance",
+    }
+    if (
+        set(directions["geometric_direction"].astype(str)) != allowed_geometric
+        or set(directions["direction_at_tolerance"].astype(str)) != allowed_tolerance
+    ):
+        raise RuntimeError("The set-preserving direction taxonomy changed.")
+
+    audit = frames["outcome_audit"]
+    require_exact_grid(audit, domains={"period": ISSUE_MONTHS}, label="embedding outcome audit")
+    if (
+        not audit["role"].eq("primary_oot").all()
+        or int(audit["candidate_rows"].sum()) != 376890
+        or int(audit["unresolved_rows"].sum()) != 12076
+        or int(audit["funded_allocation_rows"].sum()) != 1783274
+        or not audit["policies"].eq(150).all()
+    ):
+        raise RuntimeError("The set-preserving outcome-join audit changed.")
+
+
+def _embedding_direction_table(directions: pd.DataFrame) -> pd.DataFrame:
+    expected = {
+        ("theta_minus_theta_0_within_gamma", "standardized_payoff"): (768, 128, 338, 230, 72),
+        ("theta_minus_theta_0_within_gamma", "funded_default"): (768, 350, 157, 173, 88),
+        ("theta_minus_theta_0_within_gamma", "funded_binary_miscoverage"): (
+            768,
+            340,
+            259,
+            81,
+            88,
+        ),
+        ("gamma_1_minus_gamma_0_within_theta", "standardized_payoff"): (240, 149, 0, 74, 17),
+        ("gamma_1_minus_gamma_0_within_theta", "funded_default"): (240, 0, 153, 70, 17),
+        ("gamma_1_minus_gamma_0_within_theta", "funded_binary_miscoverage"): (
+            240,
+            0,
+            191,
+            32,
+            17,
+        ),
+    }
+    rows: list[dict[str, Any]] = []
+    for family in EMBEDDING_CONTRAST_FAMILIES:
+        for metric in EMBEDDING_METRICS:
+            subset = directions.loc[
+                directions["contrast_family"].eq(family) & directions["metric"].eq(metric)
+            ]
+            if family == EMBEDDING_CONTRAST_FAMILIES[0]:
+                subset = subset.loc[subset["gamma"].gt(0.0)]
+            counts = subset["direction_at_tolerance"].value_counts().to_dict()
+            observed = (
+                len(subset),
+                int(counts.get("negative", 0)),
+                int(counts.get("positive", 0)),
+                int(counts.get("not_directionally_separated_at_tolerance", 0)),
+                int(counts.get("within_tolerance", 0)),
+            )
+            if observed != expected[(family, metric)]:
+                raise RuntimeError(
+                    "The set-preserving embedding direction-at-tolerance census changed."
+                )
+            rows.append(
+                {
+                    "contrast_family": family,
+                    "metric": metric,
+                    "cells": observed[0],
+                    "negative": observed[1],
+                    "positive": observed[2],
+                    "not_directionally_separated_at_tolerance": observed[3],
+                    "within_tolerance": observed[4],
+                }
+            )
+    return pd.DataFrame(rows)
+
+
+def _load_embedding(
+    registered: Mapping[str, Path],
+    lineage: Mapping[str, Any],
+    *,
+    repo_root: Path,
+) -> VerifiedFrontierRun:
+    prefix = "set_preserving_embedding"
+    config_path = registered[f"{prefix}_config"]
+    summary_path = registered[f"{prefix}_evaluation_summary"]
+    receipt_path = registered[f"{prefix}_evaluation_receipt"]
+    manifest_path = registered[f"{prefix}_manifest"]
+    protocol_path = registered[f"{prefix}_protocol"]
+    runner_path = registered[f"{prefix}_runner"]
+    implementation_path = registered[f"{prefix}_implementation"]
+    summary = _load_json_object(summary_path, label="set-preserving embedding summary")
+    receipt = _load_json_object(receipt_path, label="set-preserving embedding receipt")
+    manifest = _load_json_object(manifest_path, label="set-preserving embedding manifest")
+    status = "retrospective_post_inspection_v1d_phase_b_complete_not_confirmatory"
+    for label, payload in (("summary", summary), ("receipt", receipt), ("manifest", manifest)):
+        if payload.get("status") != status:
+            raise RuntimeError(f"Set-preserving embedding {label} is not complete.")
+        if label == "manifest":
+            if payload.get("run_tag") != lineage.get("run_tag"):
+                raise RuntimeError("Set-preserving embedding manifest run identity changed.")
+        else:
+            _require_identity(payload, lineage, label=f"set-preserving embedding {label}")
+        _require_clean_execution(payload, label=f"set-preserving embedding {label}")
+        if payload.get("artifact_status") != "pending_git_artifact_commit_and_annotated_tag":
+            raise RuntimeError(f"Set-preserving embedding {label} artifact boundary changed.")
+
+    source_names = {
+        "solve_records": "frontier_solve_records",
+        "allocations": "frontier_funded_allocations",
+        "embedding_diagnostics": "embedding_set_preservation",
+        "minimum_endpoint_diagnostics": "minimum_endpoint_diagnostics",
+        "objective_optimum_diagnostics": "objective_optimum_diagnostics",
+        "allocation_contrasts": "outcome_free_allocation_contrasts",
+        "order_sensitivity": "frontier_order_sensitivity",
+        "independent_validation": "frontier_independent_solver_validation",
+        "freeze": "protocol_freeze",
+        "summary": "outcome_free_summary",
+        "receipt": "outcome_free_receipt",
+    }
+    evaluation_names = {
+        "evaluated_portfolios": "evaluated_portfolios",
+        "evaluation_receipt": "evaluation_receipt",
+        "evaluation_summary": "evaluation_summary",
+        "join_identity": "join_identity",
+        "metric_direction_census": "direction_census",
+        "monthly_sharp_contrasts": "monthly_contrasts",
+        "outcome_join_audit": "outcome_audit",
+        "window_sharp_contrasts": "window_contrasts",
+    }
+    source_artifacts = _verified_inventory(
+        manifest.get("source_v1a_artifacts"),
+        expected_names=tuple(source_names),
+        repo_root=repo_root,
+        label="set-preserving Phase-A artifacts",
+    )
+    evaluation_artifacts = _verified_inventory(
+        manifest.get("evaluation_artifacts"),
+        expected_names=tuple(evaluation_names),
+        repo_root=repo_root,
+        label="set-preserving V1d artifacts",
+    )
+    expected_registered = (
+        {
+            f"{prefix}_{registered_name}": source_artifacts[manifest_name]
+            for manifest_name, registered_name in source_names.items()
+        }
+        | {
+            f"{prefix}_{registered_name}": evaluation_artifacts[manifest_name]
+            for manifest_name, registered_name in evaluation_names.items()
+        }
+        | {f"{prefix}_manifest": manifest_path}
+    )
+    _require_registered_paths(registered, expected_registered, label="set-preserving embedding")
+
+    protocol_identity = manifest.get("protocol")
+    source_identity = manifest.get("source_artifact")
+    contract = manifest.get("artifact_contract")
+    if (
+        not isinstance(protocol_identity, Mapping)
+        or not isinstance(source_identity, Mapping)
+        or not isinstance(contract, Mapping)
+    ):
+        raise TypeError("Set-preserving embedding manifest omits Git identities.")
+    if (
+        protocol_identity.get("tag") != lineage.get("protocol_tag")
+        or protocol_identity.get("commit") != lineage.get("protocol_commit")
+        or source_identity.get("tag") != lineage.get("source_artifact_tag")
+        or source_identity.get("commit") != lineage.get("source_artifact_commit")
+        or contract.get("expected_tag") != lineage.get("artifact_tag")
+        or contract.get("expected_parent") != lineage.get("artifact_parent_commit")
+        or set(cast(Sequence[str], contract.get("exact_added_paths", ())))
+        != set(cast(Sequence[str], lineage.get("artifact_paths", ())))
+        or contract.get("direct_child_required") is not True
+        or contract.get("annotated_tag_required") is not True
+        or contract.get("dvc_required") is not False
+    ):
+        raise RuntimeError("The set-preserving embedding Git artifact contract changed.")
+
+    implementation = manifest.get("implementation")
+    if not isinstance(implementation, Mapping) or len(implementation) != 20:
+        raise RuntimeError("Set-preserving embedding implementation inventory changed.")
+    for relative, descriptor in implementation.items():
+        if not isinstance(relative, str) or not isinstance(descriptor, Mapping):
+            raise TypeError("Set-preserving embedding implementation descriptor is invalid.")
+        if relative_artifact_descriptor(repo_root / relative, repo_root=repo_root) != dict(
+            descriptor
+        ):
+            raise RuntimeError(f"Set-preserving embedding implementation drifted: {relative!r}.")
+    for registered_name, relative in {
+        "config": "configs/experiments/ijds_set_preserving_embedding_sensitivity_2026-07-30_v1d.yaml",
+        "base_config": "configs/experiments/ijds_set_preserving_embedding_sensitivity_2026-07-29_v1c.yaml",
+        "protocol": "docs/research/ijds_set_preserving_embedding_sensitivity_v1d_protocol_2026-07-30.md",
+        "v1c_no_go": "docs/research/ijds_set_preserving_embedding_sensitivity_v1c_no_go_2026-07-30.md",
+        "runner": "scripts/experiments/run_ijds_set_preserving_embedding_sensitivity_v1d.py",
+        "implementation": "src/ijds_challengers/set_preserving_embedding_v1d.py",
+    }.items():
+        if registered[f"{prefix}_{registered_name}"].resolve() != (repo_root / relative).resolve():
+            raise RuntimeError("The set-preserving embedding publication input route changed.")
+        if dict(cast(Mapping[str, Any], implementation[relative])) != relative_artifact_descriptor(
+            registered[f"{prefix}_{registered_name}"], repo_root=repo_root
+        ):
+            raise RuntimeError("The set-preserving embedding publication input hash changed.")
+
+    phase_summary = _load_json_object(
+        source_artifacts["summary"], label="set-preserving outcome-free summary"
+    )
+    phase_receipt = _load_json_object(
+        source_artifacts["receipt"], label="set-preserving outcome-free receipt"
+    )
+    phase_freeze = _load_json_object(
+        source_artifacts["freeze"], label="set-preserving outcome-free freeze"
+    )
+    for label, payload in (
+        ("Phase-A summary", phase_summary),
+        ("Phase-A receipt", phase_receipt),
+        ("Phase-A freeze", phase_freeze),
+    ):
+        _require_clean_execution(payload, label=f"set-preserving {label}")
+        if (
+            payload.get("status")
+            != "outcome_free_set_preserving_allocations_frozen_before_outcomes"
+        ):
+            raise RuntimeError(f"Set-preserving {label} status changed.")
+    null_selection = {
+        "theta": None,
+        "gamma": None,
+        "ruler": None,
+        "coordinate": None,
+        "window": None,
+        "policy": None,
+    }
+    if (
+        summary.get("selection") != null_selection
+        or phase_summary.get("selection") != null_selection
+        or phase_freeze.get("selection") != null_selection
+        or summary.get("policy_winner") is not None
+        or summary.get("p_values_computed") is not False
+        or summary.get("confirmatory") is not False
+        or summary.get("replay_clean") is not False
+        or summary.get("v1a_is_evidence") is not False
+        or summary.get("v1c_is_evidence") is not False
+        or manifest.get("confirmatory") is not False
+        or manifest.get("replay_clean") is not False
+        or manifest.get("v1a_is_evidence") is not False
+        or manifest.get("v1c_is_evidence") is not False
+        or summary.get("v1c_phase_b_outputs_reused") is not False
+        or manifest.get("v1c_phase_b_outputs_reused") is not False
+        or receipt.get("v1c_phase_b_outputs_reused") is not False
+        or phase_summary.get("causal_interpretation") is not False
+        or phase_receipt.get("outcome_columns_passed") != []
+    ):
+        raise RuntimeError("The set-preserving selection or interpretation boundary changed.")
+
+    frames = {
+        "evaluated_portfolios": pd.read_parquet(evaluation_artifacts["evaluated_portfolios"]),
+        "monthly_sharp_contrasts": pd.read_parquet(evaluation_artifacts["monthly_sharp_contrasts"]),
+        "window_sharp_contrasts": pd.read_parquet(evaluation_artifacts["window_sharp_contrasts"]),
+        "direction_census": pd.read_parquet(evaluation_artifacts["metric_direction_census"]),
+        "outcome_audit": pd.read_parquet(evaluation_artifacts["outcome_join_audit"]),
+        "set_preservation": pd.read_parquet(source_artifacts["embedding_diagnostics"]),
+        "allocation_contrasts": pd.read_parquet(source_artifacts["allocation_contrasts"]),
+    }
+    schemas = manifest.get("schemas")
+    if not isinstance(schemas, Mapping) or set(schemas) != {
+        "evaluated_portfolios",
+        "monthly_sharp_contrasts",
+        "window_sharp_contrasts",
+        "metric_direction_census",
+        "outcome_join_audit",
+    }:
+        raise RuntimeError("Set-preserving embedding persisted schema inventory changed.")
+    schema_frame_names = {
+        "evaluated_portfolios": "evaluated_portfolios",
+        "monthly_sharp_contrasts": "monthly_sharp_contrasts",
+        "window_sharp_contrasts": "window_sharp_contrasts",
+        "metric_direction_census": "direction_census",
+        "outcome_join_audit": "outcome_audit",
+    }
+    for schema_name, frame_name in schema_frame_names.items():
+        raw_schema = schemas[schema_name]
+        if not isinstance(raw_schema, Mapping):
+            raise TypeError("Set-preserving embedding schema descriptor is invalid.")
+        _require_embedding_schema(frames[frame_name], raw_schema, name=schema_name)
+    _require_embedding_grid(frames)
+
+    sets = frames["set_preservation"]
+    require_exact_grid(
+        sets,
+        domains={
+            "window_id": WINDOW_IDS,
+            "role": ("policy_development", "primary_oot"),
+            "theta": EMBEDDING_LEVELS,
+        },
+        label="set-preserving embedding diagnostics",
+    )
+    require_finite(
+        sets,
+        ("maximum_upper_contraction", "maximum_theta_zero_recovery_error"),
+        label="set-preserving embedding diagnostics",
+    )
+    if (
+        len(sets) != 80
+        or int(sets["sets_changed"].sum()) != 0
+        or not np.isclose(
+            float(sets["maximum_upper_contraction"].max()),
+            0.8920116585417792,
+            rtol=0.0,
+            atol=1e-15,
+        )
+        or not sets["maximum_theta_zero_recovery_error"].eq(0.0).all()
+    ):
+        raise RuntimeError("The set-preservation census changed.")
+
+    allocations = frames["allocation_contrasts"]
+    gamma_allocations = allocations.loc[
+        allocations["contrast_family"].eq(EMBEDDING_CONTRAST_FAMILIES[1])
+    ]
+    theta_allocations = allocations.loc[
+        allocations["contrast_family"].eq(EMBEDDING_CONTRAST_FAMILIES[0])
+    ]
+    allocation_axes = {
+        "window_id": WINDOW_IDS,
+        "period": ISSUE_MONTHS,
+        "ruler": RULERS,
+        "coordinate": COORDINATES,
+    }
+    require_exact_grid(
+        gamma_allocations,
+        domains={**allocation_axes, "theta": EMBEDDING_LEVELS},
+        label="outcome-free gamma allocation contrasts",
+    )
+    require_exact_grid(
+        theta_allocations,
+        domains={
+            **allocation_axes,
+            "theta": EMBEDDING_LEVELS[1:],
+            "gamma": EMBEDDING_LEVELS,
+        },
+        label="outcome-free theta allocation contrasts",
+    )
+    require_finite(
+        allocations,
+        (
+            "normalized_exposure_distance",
+            "objective_difference",
+            "weighted_score_difference",
+            "point_moment_difference",
+        ),
+        label="outcome-free allocation contrasts",
+    )
+    phase_controls = theta_allocations.loc[theta_allocations["gamma"].eq(0.0)]
+    if (
+        len(phase_controls) != 2880
+        or not phase_controls["normalized_exposure_distance"].eq(0.0).all()
+        or not phase_controls["objective_difference"].eq(0.0).all()
+    ):
+        raise RuntimeError("The outcome-free gamma-zero negative control changed.")
+
+    noncontrol = theta_allocations.loc[theta_allocations["gamma"].gt(0.0)]
+    allocation_rows: list[dict[str, Any]] = []
+    for ruler, subset in (
+        ("all_rulers", noncontrol),
+        ("objective_matched", noncontrol.loc[noncontrol["ruler"].eq("objective_matched")]),
+        ("normalized_score", noncontrol.loc[noncontrol["ruler"].eq("normalized_score")]),
+    ):
+        changes = int(subset["normalized_exposure_distance"].gt(1e-10).sum())
+        allocation_rows.append(
+            {
+                "ruler": ruler,
+                "noncontrol_theta_contrasts": len(subset),
+                "allocation_changes_gt_1e10": changes,
+                "allocation_change_fraction": changes / len(subset),
+                "maximum_normalized_exposure_distance": float(
+                    subset["normalized_exposure_distance"].max()
+                ),
+                "set_diagnostic_rows": 80,
+                "sets_changed": 0,
+                "maximum_upper_contraction": 0.8920116585417792,
+            }
+        )
+    allocation_table = pd.DataFrame(allocation_rows)
+    if (
+        allocation_table["noncontrol_theta_contrasts"].tolist() != [11520, 5760, 5760]
+        or allocation_table["allocation_changes_gt_1e10"].tolist() != [9659, 3899, 5760]
+        or not np.isclose(
+            allocation_table.loc[0, "maximum_normalized_exposure_distance"],
+            0.684049776890922,
+            rtol=0.0,
+            atol=1e-15,
+        )
+        or not np.isclose(
+            allocation_table.loc[1, "maximum_normalized_exposure_distance"],
+            0.5758632511294073,
+            rtol=0.0,
+            atol=1e-15,
+        )
+        or not np.isclose(
+            allocation_table.loc[2, "maximum_normalized_exposure_distance"],
+            0.684049776890922,
+            rtol=0.0,
+            atol=1e-15,
+        )
+        or bool(allocation_table.isna().any().any())
+    ):
+        raise RuntimeError("The set-preserving allocation-change census changed.")
+
+    monthly_controls = frames["monthly_sharp_contrasts"].loc[
+        frames["monthly_sharp_contrasts"]["contrast_family"].eq(EMBEDDING_CONTRAST_FAMILIES[0])
+        & frames["monthly_sharp_contrasts"]["gamma"].eq(0.0)
+    ]
+    pooled_controls = frames["window_sharp_contrasts"].loc[
+        frames["window_sharp_contrasts"]["contrast_family"].eq(EMBEDDING_CONTRAST_FAMILIES[0])
+        & frames["window_sharp_contrasts"]["gamma"].eq(0.0)
+    ]
+    control_columns = (
+        "expected_objective_difference",
+        "realized_payoff_difference_lower",
+        "realized_payoff_difference_upper",
+        "realized_payoff_rate_difference_lower",
+        "realized_payoff_rate_difference_upper",
+        "weighted_default_difference_lower",
+        "weighted_default_difference_upper",
+        "weighted_miscoverage_difference_lower",
+        "weighted_miscoverage_difference_upper",
+        "realized_payoff_identification_width",
+        "realized_payoff_rate_identification_width",
+        "weighted_default_identification_width",
+        "weighted_miscoverage_identification_width",
+    )
+    if (
+        len(monthly_controls) != 2880
+        or not monthly_controls.loc[:, control_columns].eq(0.0).all().all()
+        or len(pooled_controls) != 192
+        or not pooled_controls.loc[:, control_columns].eq(0.0).all().all()
+    ):
+        raise RuntimeError("The monthly or pooled gamma-zero negative control changed.")
+
+    direction_table = _embedding_direction_table(frames["direction_census"])
+    theta_directions = frames["direction_census"].loc[
+        frames["direction_census"]["contrast_family"].eq(EMBEDDING_CONTRAST_FAMILIES[0])
+        & frames["direction_census"]["gamma"].gt(0.0)
+    ]
+    track_categories = theta_directions.groupby(
+        ["window_id", "ruler", "coordinate", "gamma", "metric"], observed=True, sort=False
+    )
+    tracks = 0
+    tracks_changing = 0
+    tracks_with_both_tolerance_signs = 0
+    tracks_with_both_geometric_signs = 0
+    for _, group in track_categories:
+        tracks += 1
+        tolerance = set(group["direction_at_tolerance"].astype(str))
+        geometric = set(group["geometric_direction"].astype(str))
+        tracks_changing += int(len(tolerance) > 1)
+        tracks_with_both_tolerance_signs += int({"negative", "positive"}.issubset(tolerance))
+        tracks_with_both_geometric_signs += int({"negative", "positive"}.issubset(geometric))
+    if (
+        tracks,
+        tracks_changing,
+        tracks_with_both_tolerance_signs,
+        tracks_with_both_geometric_signs,
+    ) != (
+        576,
+        324,
+        77,
+        96,
+    ):
+        raise RuntimeError("The theta direction-noninvariance track census changed.")
+
+    findings = {
+        "set_preservation_and_allocation_change_verified": True,
+        "theta_direction_noninvariance_verified": True,
+        "set_diagnostic_rows": 80,
+        "sets_changed": 0,
+        "maximum_upper_contraction": 0.8920116585417792,
+        "noncontrol_theta_allocation_contrasts": 11520,
+        "allocation_changes_gt_1e10": 9659,
+        "maximum_normalized_exposure_distance": 0.684049776890922,
+        "theta_direction_tracks": 576,
+        "theta_tracks_changing_direction_category": 324,
+        "theta_tracks_with_both_separated_signs_at_tolerance": 77,
+        "theta_tracks_with_both_geometric_signs": 96,
+        "phase_a_gamma_zero_control_cells": 2880,
+        "pooled_gamma_zero_control_cells": 192,
+        "retrospective_postinspection_nonconfirmatory": True,
+        "selected_theta_gamma_ruler_coordinate_window_or_policy": False,
+        "p_values_computed": False,
+        "causal_or_prospective_claimed": False,
+    }
+    all_artifacts = {
+        **{f"source_{name}": path for name, path in source_artifacts.items()},
+        **{f"evaluation_{name}": path for name, path in evaluation_artifacts.items()},
+        "evaluation_manifest": manifest_path,
+    }
+    return VerifiedFrontierRun(
+        config_path,
+        summary_path,
+        receipt_path,
+        protocol_path,
+        runner_path,
+        implementation_path,
+        summary,
+        receipt,
+        all_artifacts,
+        frames,
+        {"allocation_summary": allocation_table, "direction_census": direction_table},
+        findings,
+    )
+
+
 def load_frontier_evidence(
     registered: Mapping[str, Path],
     diagnostics: Mapping[str, Any],
     *,
     repo_root: Path,
 ) -> FrontierEvidence:
-    """Load all four clean Git-transported frontier lineages fail-closed."""
+    """Load every active Git-transported frontier lineage fail-closed."""
     return FrontierEvidence(
         residual_transport=_load_residual(
             registered,
@@ -953,6 +1604,11 @@ def load_frontier_evidence(
         funded_selection_estimands=_load_funded(
             registered,
             cast(Mapping[str, Any], diagnostics["funded_selection_estimands"]),
+            repo_root=repo_root,
+        ),
+        set_preserving_embedding=_load_embedding(
+            registered,
+            cast(Mapping[str, Any], diagnostics["set_preserving_embedding"]),
             repo_root=repo_root,
         ),
     )

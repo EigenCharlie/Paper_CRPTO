@@ -33,6 +33,7 @@ not active evidence.
 19c3. `docs/research/ijds_residual_transport_frontier_v1_protocol_2026-07-29.md`
 19c4. `docs/research/ijds_decision_catalog_transport_v1_protocol_2026-07-29.md`
 19c5. `docs/research/ijds_funded_selection_estimand_audit_v1_protocol_2026-07-29.md`
+19c6. `docs/research/ijds_set_preserving_embedding_sensitivity_v1d_protocol_2026-07-30.md`
 19d. `docs/research/ijds_raw_data_acquisition_provenance_2026-07-21.md`
 19e. `docs/research/ijds_submission_rights_anonymity_audit_2026-07-21.md`
 20. `configs/ijds_active_evidence_sources.yaml`
@@ -59,6 +60,10 @@ and its exact direct-child Git artifact seal are active; only V3I may support
 the marginal claim and publication artifacts. The residual frontier, decision
 catalog, and funded-estimand V1 runs are likewise active only through their
 registered direct-child Git artifact commits.
+The active set-preserving-embedding V1d uses the registered two-stage
+protocol-to-source-to-evaluation direct-child chain. V1c failed its persistence
+contract before any evaluation commit/tag and supports no claim; its Phase-B
+files were not reused by V1d.
 
 The claim registry is the editorial authority. The source registry owns exact
 lineage identities, artifact descriptors, and 53 DVC pointers. The V4 evidence
@@ -113,6 +118,11 @@ exception; `assert` is test syntax only.
 - Count-minus-invested-dollar coverage is positive under every completion in
   all 96 fixed rounded tracks. Count coverage has upper endpoint below 0.90 in
   80/96 and lower endpoint below 0.90 in 96/96; no funded-set guarantee follows.
+- All 80 set-preserving-embedding diagnostics retain the exact binary set, yet
+  9,659/11,520 positive-gamma monthly theta contrasts change allocation beyond
+  `1e-10`; pooled direction changes sign across theta in 77/576 fixed tracks at
+  tolerance. This is retrospective finite-grid sensitivity, not an embedding
+  or policy selection or a validity repair.
 
 The paper supports complete finite-archive shortfall reporting, a scoped
 joint-block rank-reference flag result, binary residual geometry near a prevalence
@@ -133,6 +143,8 @@ Do not claim:
 - label-Mondrian repair, label-conditional transport, or 400 adjusted category
   tests;
 - universal favorable or adverse portfolio direction;
+- preferred continuous embedding or theta, set-native optimization, or a
+  conformal-validity repair inferred from the set-preserving sensitivity;
 - causal, prospective, confirmatory, deployment, fair-lending, or Markov
   conclusions;
 - cash-flow return, IRR, NPV, welfare, or counterfactual funding effects.

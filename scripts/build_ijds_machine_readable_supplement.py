@@ -59,6 +59,12 @@ SOURCE_FILENAMES = {
     "Table_S9J_funded_selection_gamma_contrasts.csv": (
         "crpto_ijds_v4_tableS9J_funded_selection_gamma_contrasts.csv"
     ),
+    "Table_S9K_set_preserving_embedding_allocation_summary.csv": (
+        "crpto_ijds_v4_tableS9K_set_preserving_embedding_allocation_summary.csv"
+    ),
+    "Table_S9L_set_preserving_embedding_direction_census.csv": (
+        "crpto_ijds_v4_tableS9L_set_preserving_embedding_direction_census.csv"
+    ),
 }
 SOURCES = {name: TABLE_DIR / filename for name, filename in SOURCE_FILENAMES.items()}
 
@@ -260,6 +266,15 @@ S9J_COLUMNS: Final = _columns(
     "gamma1_minus_gamma0_fixed_capital_decision_coverage_upper,",
     "gamma1_minus_gamma0_fixed_capital_decision_fcp_direction,sharpness,periods",
 )
+S9K_COLUMNS: Final = _columns(
+    "ruler,noncontrol_theta_contrasts,allocation_changes_gt_1e10,",
+    "allocation_change_fraction,maximum_normalized_exposure_distance,",
+    "set_diagnostic_rows,sets_changed,maximum_upper_contraction",
+)
+S9L_COLUMNS: Final = _columns(
+    "contrast_family,metric,cells,negative,positive,",
+    "not_directionally_separated_at_tolerance,within_tolerance",
+)
 
 LEARNER_METADATA: Final = {
     "catboost_platt": ("CatBoost", "pd_catboost_platt", "1"),
@@ -321,6 +336,16 @@ ISSUE_MONTHS: Final = (
     "2017-06",
 )
 RULERS: Final = ("objective_matched", "normalized_score")
+EMBEDDING_RULERS: Final = ("all_rulers", *RULERS)
+EMBEDDING_CONTRAST_FAMILIES: Final = (
+    "theta_minus_theta_0_within_gamma",
+    "gamma_1_minus_gamma_0_within_theta",
+)
+EMBEDDING_METRICS: Final = (
+    "standardized_payoff",
+    "funded_default",
+    "funded_binary_miscoverage",
+)
 COORDINATES: Final = ("0.25", "0.5", "0.75")
 GAMMAS: Final = ("0.0", "1.0")
 METRICS: Final = ("payoff_shortfall", "default_gap", "miscoverage_excess")
@@ -536,13 +561,34 @@ TABLE_CONTRACTS: Final = {
             "periods": frozenset({"15"}),
         },
     ),
+    "Table_S9K_set_preserving_embedding_allocation_summary.csv": CsvContract(
+        columns=S9K_COLUMNS,
+        rows=3,
+        key_columns=("ruler",),
+        expected_keys=_grid(EMBEDDING_RULERS),
+        exact_domains={
+            "ruler": frozenset(EMBEDDING_RULERS),
+            "set_diagnostic_rows": frozenset({"80"}),
+            "sets_changed": frozenset({"0"}),
+        },
+    ),
+    "Table_S9L_set_preserving_embedding_direction_census.csv": CsvContract(
+        columns=S9L_COLUMNS,
+        rows=6,
+        key_columns=("contrast_family", "metric"),
+        expected_keys=_grid(EMBEDDING_CONTRAST_FAMILIES, EMBEDDING_METRICS),
+        exact_domains={
+            "contrast_family": frozenset(EMBEDDING_CONTRAST_FAMILIES),
+            "metric": frozenset(EMBEDDING_METRICS),
+        },
+    ),
 }
 README = """Anonymous machine-readable online supplement
 
-These fourteen aggregate CSV files provide the complete cell, score-stratum,
+These sixteen aggregate CSV files provide the complete cell, score-stratum,
 label-category, common-panel adjacent-threshold, residual-distribution,
 marginal score-outcome, decision-catalog, and funded-estimand rows summarized
-by PDF Tables S6B, S6D, S6F, S6J--S6N, and S9G--S9J. S6C, S6E, and S6M are
+by PDF Tables S6B, S6D, S6F, S6J--S6N, and S9G--S9L. S6C, S6E, and S6M are
 machine-readable-only tables because their 200-row layouts are unsuitable for
 a reviewer PDF.
 
@@ -567,6 +613,12 @@ calibration. Decision-catalog rows concern the worst loss over the fixed
 catalog, not every policy. Funded-estimand rows keep count, invested-dollar,
 and fixed-capital weightings distinct and do not establish FCR or selected-set
 validity.
+
+The set-preserving embedding tables report the full allocation-change and
+descriptive direction censuses from a retrospective post-inspection
+sensitivity. Identical binary prediction sets do not select an embedding,
+ruler, coordinate, or policy, and the reported directions are neither causal
+nor confirmatory.
 
 """
 FIXED_TIME = (1980, 1, 1, 0, 0, 0)
@@ -628,6 +680,8 @@ TEXT_COLUMNS: Final = frozenset(
         "metric",
         "classification",
         "frontier_ruler",
+        "ruler",
+        "contrast_family",
         "candidate_id",
         "gamma0_candidate_id",
         "gamma1_candidate_id",
@@ -703,6 +757,14 @@ EXPLICIT_INTEGER_COLUMNS: Final = frozenset(
         "unresolved_union_positions",
         "gamma0_selected_positions",
         "gamma1_selected_positions",
+        "noncontrol_theta_contrasts",
+        "allocation_changes_gt_1e10",
+        "sets_changed",
+        "cells",
+        "negative",
+        "positive",
+        "not_directionally_separated_at_tolerance",
+        "within_tolerance",
     }
 )
 
@@ -793,6 +855,10 @@ def _validate_numeric_domain(
         lower, upper = -1.0, 1.0
     elif column in {"score_sum", "null_expected_misses"}:
         lower = 0.0
+    elif column in {"allocation_change_fraction", "maximum_upper_contraction"}:
+        lower, upper = 0.0, 1.0
+    elif column == "maximum_normalized_exposure_distance":
+        lower, upper = 0.0, 2.0
     if lower is not None and value < lower:
         _fail(name, path, f"row {row_number} column {column!r} is below {lower}: {value}.")
     if upper is not None and value > upper:
@@ -1081,6 +1147,35 @@ def _validate_row_identities(
             != 5
         ):
             _fail(name, path, f"row {row_number} threshold-direction strata do not partition five.")
+
+    if name == "Table_S9K_set_preserving_embedding_allocation_summary.csv":
+        contrasts = int(row["noncontrol_theta_contrasts"])
+        changes = int(row["allocation_changes_gt_1e10"])
+        if contrasts <= 0:
+            _fail(name, path, f"row {row_number} has no non-control theta contrasts.")
+        if changes > contrasts:
+            _fail(name, path, f"row {row_number} allocation changes exceed contrasts.")
+        _require_close(
+            name,
+            path,
+            row_number,
+            "allocation-change fraction",
+            float(row["allocation_change_fraction"]),
+            changes / contrasts,
+        )
+
+    if name == "Table_S9L_set_preserving_embedding_direction_census.csv":
+        directional_cells = sum(
+            int(row[column])
+            for column in (
+                "negative",
+                "positive",
+                "not_directionally_separated_at_tolerance",
+                "within_tolerance",
+            )
+        )
+        if directional_cells != int(row["cells"]):
+            _fail(name, path, f"row {row_number} direction counts do not partition cells.")
 
 
 def _read_validated_reviewer_csv(
@@ -1660,7 +1755,7 @@ def _validate_cross_table_contract(
         development_upper = max(float(block["development_max_upper"]) for block in blocks)
         if len(blocks) != int(row["target_blocks"]):
             _fail(s9g_name, paths[s9g_name], f"target block census fails for {metric!r}.")
-        for column, expected in (
+        for column, expected_value in (
             ("minimum_target_lower", minimum_target),
             ("development_maximum_upper", development_upper),
             ("minimum_separation_margin", minimum_target - development_upper),
@@ -1671,7 +1766,7 @@ def _validate_cross_table_contract(
                 row_number,
                 f"S9G-to-S9H {column}",
                 float(row[column]),
-                expected,
+                expected_value,
             )
         if minimum_target <= development_upper:
             _fail(s9g_name, paths[s9g_name], f"separation fails for {metric!r}.")
@@ -1738,8 +1833,8 @@ def _validate_cross_table_contract(
             {"higher": 40, "crossing": 8}
         ),
     }
-    for column, expected in expected_gamma_directions.items():
-        if Counter(row[column] for row in s9j_rows) != expected:
+    for column, expected_counts in expected_gamma_directions.items():
+        if Counter(row[column] for row in s9j_rows) != expected_counts:
             _fail(s9j_name, paths[s9j_name], f"gamma direction census changed for {column!r}.")
     for row_number, row in enumerate(s9j_rows, start=2):
         for prefix in (
@@ -1763,6 +1858,113 @@ def _validate_cross_table_contract(
                 float(row[f"{prefix}_coverage_upper"]),
                 -float(row[f"{prefix}_fcp_lower"]),
             )
+
+    s9k_name = "Table_S9K_set_preserving_embedding_allocation_summary.csv"
+    s9k_rows = rows_by_name[s9k_name]
+    expected_s9k = {
+        "all_rulers": (11_520, 9_659, 0.684049776890922),
+        "objective_matched": (5_760, 3_899, 0.5758632511294073),
+        "normalized_score": (5_760, 5_760, 0.684049776890922),
+    }
+    observed_s9k_order = [row["ruler"] for row in s9k_rows]
+    if observed_s9k_order != list(EMBEDDING_RULERS):
+        _fail(s9k_name, paths[s9k_name], "the locked all-rulers-first row order changed.")
+    for row_number, row in enumerate(s9k_rows, start=2):
+        ruler = row["ruler"]
+        contrasts, changes, maximum_distance = expected_s9k[ruler]
+        if int(row["noncontrol_theta_contrasts"]) != contrasts:
+            _fail(s9k_name, paths[s9k_name], f"contrast census changed for {ruler!r}.")
+        if int(row["allocation_changes_gt_1e10"]) != changes:
+            _fail(s9k_name, paths[s9k_name], f"allocation-change census changed for {ruler!r}.")
+        _require_close(
+            s9k_name,
+            paths[s9k_name],
+            row_number,
+            "maximum normalized exposure distance",
+            float(row["maximum_normalized_exposure_distance"]),
+            maximum_distance,
+        )
+        _require_close(
+            s9k_name,
+            paths[s9k_name],
+            row_number,
+            "common maximum upper contraction",
+            float(row["maximum_upper_contraction"]),
+            0.8920116585417792,
+        )
+    s9k_by_ruler = {row["ruler"]: row for row in s9k_rows}
+    for column in ("noncontrol_theta_contrasts", "allocation_changes_gt_1e10"):
+        if int(s9k_by_ruler["all_rulers"][column]) != sum(
+            int(s9k_by_ruler[ruler][column]) for ruler in RULERS
+        ):
+            _fail(s9k_name, paths[s9k_name], f"all-rulers {column} does not add.")
+
+    s9l_name = "Table_S9L_set_preserving_embedding_direction_census.csv"
+    s9l_rows = rows_by_name[s9l_name]
+    expected_s9l = {
+        ("theta_minus_theta_0_within_gamma", "standardized_payoff"): (
+            768,
+            128,
+            338,
+            230,
+            72,
+        ),
+        ("theta_minus_theta_0_within_gamma", "funded_default"): (
+            768,
+            350,
+            157,
+            173,
+            88,
+        ),
+        ("theta_minus_theta_0_within_gamma", "funded_binary_miscoverage"): (
+            768,
+            340,
+            259,
+            81,
+            88,
+        ),
+        ("gamma_1_minus_gamma_0_within_theta", "standardized_payoff"): (
+            240,
+            149,
+            0,
+            74,
+            17,
+        ),
+        ("gamma_1_minus_gamma_0_within_theta", "funded_default"): (
+            240,
+            0,
+            153,
+            70,
+            17,
+        ),
+        ("gamma_1_minus_gamma_0_within_theta", "funded_binary_miscoverage"): (
+            240,
+            0,
+            191,
+            32,
+            17,
+        ),
+    }
+    expected_s9l_order = [
+        (contrast_family, metric)
+        for contrast_family in EMBEDDING_CONTRAST_FAMILIES
+        for metric in EMBEDDING_METRICS
+    ]
+    observed_s9l_order = [(row["contrast_family"], row["metric"]) for row in s9l_rows]
+    if observed_s9l_order != expected_s9l_order:
+        _fail(s9l_name, paths[s9l_name], "the locked contrast-family/metric row order changed.")
+    census_columns = (
+        "cells",
+        "negative",
+        "positive",
+        "not_directionally_separated_at_tolerance",
+        "within_tolerance",
+    )
+    for row in s9l_rows:
+        key = (row["contrast_family"], row["metric"])
+        observed = tuple(int(row[column]) for column in census_columns)
+        if observed != expected_s9l[key]:
+            _fail(s9l_name, paths[s9l_name], f"the exact direction census changed for {key!r}.")
 
 
 def _zip_payload(sources: dict[str, Path] | None = None) -> bytes:

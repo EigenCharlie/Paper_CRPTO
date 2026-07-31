@@ -723,8 +723,8 @@ def _check_lineage_sync() -> list[str]:
                     if str(descriptor.get("path", "")).endswith(".csv")
                 ]
             )
-            != 36,
-            "paper evidence manifest does not contain exactly 36 CSV tables",
+            != 38,
+            "paper evidence manifest does not contain exactly 38 CSV tables",
         ),
         (
             contract.get("source_registry") != expected_registry_path,

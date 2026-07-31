@@ -237,6 +237,42 @@ claims:
       required: [body, supplement, registry, claim_matrix]
       allowed: [body, supplement, registry, claim_matrix]
 
+  - id: allocation.set_preserving_embedding_changes_allocations
+    status: active
+    kind: empirical
+    rule: equals
+    result_pointer: /set_preserving_embedding/set_preservation_and_allocation_change_verified
+    expected: true
+    lineages: [set_preserving_embedding]
+    scope: complete_monthly_theta_gt_zero_minus_theta_zero_grid_at_positive_gamma_under_two_rulers_three_coordinates_eight_windows_and_fifteen_primary_periods_with_exact_binary_set_preservation
+    forbidden_inference:
+      [preferred_embedding, preferred_theta, preferred_gamma, preferred_ruler,
+       preferred_coordinate, preferred_window, selected_policy, policy_winner,
+       allocation_change_inferred_from_theorem_alone, set_native_optimizer,
+       conformal_validity_repair, universal_allocation_sensitivity,
+       generalization_beyond_declared_finite_grid]
+    surfaces:
+      required: [body, supplement, registry, claim_matrix]
+      allowed: [body, supplement, registry, claim_matrix]
+
+  - id: decision.set_preserving_embedding_direction_noninvariant
+    status: active
+    kind: empirical
+    rule: equals
+    result_pointer: /set_preserving_embedding/theta_direction_noninvariance_verified
+    expected: true
+    lineages: [set_preserving_embedding]
+    scope: complete_pooled_positive_gamma_theta_gt_zero_minus_theta_zero_direction_census_with_one_shared_binary_completion_per_unresolved_loan_on_each_funded_union
+    forbidden_inference:
+      [preferred_embedding, preferred_theta, universal_favorable_direction,
+       universal_adverse_direction, selected_policy, policy_winner,
+       causal_effect, prospective_validation, confirmation, preregistration,
+       independent_replications, conformal_validity_repair,
+       joint_attainability_across_overlapping_tracks]
+    surfaces:
+      required: [body, supplement, registry, claim_matrix]
+      allowed: [body, supplement, registry, claim_matrix]
+
   - id: timing.fit_label_crossing_retained
     status: active
     kind: empirical
