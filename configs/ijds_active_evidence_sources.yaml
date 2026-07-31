@@ -1,4 +1,4 @@
-schema_version: "2026-07-29.1"
+schema_version: "2026-07-30.2"
 status: "active_ijds_paper_evidence_source_registry"
 
 lineages:
@@ -265,6 +265,45 @@ sensitivities:
     scientific_uv_lock_sha256: "25cefb168506538c22b86a348c42869ea7fda64338815f2adea3fe7e07608f93"
     paper_role: "continuous_allocation_granularity_diagnostic"
     dvc_tracked: true
+  calibrator_family:
+    outcome_free:
+      run_tag: "ijds-calibrator-sensitivity-2026-07-30-v1-source"
+      protocol_tag: "protocol/ijds-calibrator-sensitivity-2026-07-30-v1"
+      protocol_commit: "808827926eff5030b3cb28d2b89a87a0e6210b2e"
+      scientific_uv_lock_sha256: "83a10656fcad1af30b42659df24924614576e9eaa727f83e8bb10043da236149"
+      paper_role: "outcome_free_closed_calibrator_family_and_common_q_raw_taxonomy_freeze"
+      dvc_tracked: false
+      artifact_tag: "artifacts/ijds-calibrator-sensitivity-2026-07-30-v1-source"
+      artifact_commit: "ea3e7326afc38ccc1b99b09de30792986640e3c3"
+      artifact_parent_commit: "808827926eff5030b3cb28d2b89a87a0e6210b2e"
+      artifact_transport: "git_force_tracked_direct_child_commit"
+      artifact_paths:
+        - "data/processed/experiments/ijds_audit/ijds-calibrator-sensitivity-2026-07-30-v1-source/prediction/calibration_fit_diagnostics.parquet"
+        - "data/processed/experiments/ijds_audit/ijds-calibrator-sensitivity-2026-07-30-v1-source/prediction/outcome_free_geometry.parquet"
+        - "data/processed/experiments/ijds_audit/ijds-calibrator-sensitivity-2026-07-30-v1-source/prediction/recipe_audit.parquet"
+        - "models/experiments/ijds_audit/ijds-calibrator-sensitivity-2026-07-30-v1-source/execution_receipt.json"
+        - "models/experiments/ijds_audit/ijds-calibrator-sensitivity-2026-07-30-v1-source/prediction/calibrator_family.pkl"
+        - "models/experiments/ijds_audit/ijds-calibrator-sensitivity-2026-07-30-v1-source/prediction/calibrator_residual_recipes.json"
+        - "models/experiments/ijds_audit/ijds-calibrator-sensitivity-2026-07-30-v1-source/prediction/common_q_raw_taxonomy.json"
+        - "models/experiments/ijds_audit/ijds-calibrator-sensitivity-2026-07-30-v1-source/protocol_freeze.json"
+    evaluation:
+      run_tag: "ijds-calibrator-sensitivity-2026-07-30-v1"
+      protocol_tag: "protocol/ijds-calibrator-sensitivity-evaluation-2026-07-30-v1"
+      protocol_commit: "753305e81e27f793acdea80b684b42e7eff2201d"
+      scientific_uv_lock_sha256: "83a10656fcad1af30b42659df24924614576e9eaa727f83e8bb10043da236149"
+      paper_role: "complete_retrospective_closed_calibrator_family_sensitivity"
+      dvc_tracked: false
+      artifact_tag: "artifacts/ijds-calibrator-sensitivity-2026-07-30-v1"
+      artifact_commit: "6552524eae5a22ce66b50689900383d16df1ff13"
+      artifact_parent_commit: "753305e81e27f793acdea80b684b42e7eff2201d"
+      artifact_transport: "git_force_tracked_direct_child_commit"
+      artifact_paths:
+        - "data/processed/experiments/ijds_audit/ijds-calibrator-sensitivity-2026-07-30-v1/evaluation/calibrator_sensitivity.parquet"
+        - "data/processed/experiments/ijds_audit/ijds-calibrator-sensitivity-2026-07-30-v1/evaluation/calibrator_sensitivity_overall.parquet"
+        - "data/processed/experiments/ijds_audit/ijds-calibrator-sensitivity-2026-07-30-v1/evaluation/pairwise_shared_completion.parquet"
+        - "data/processed/experiments/ijds_audit/ijds-calibrator-sensitivity-2026-07-30-v1/evaluation/platt_v5_reconciliation.parquet"
+        - "models/experiments/ijds_audit/ijds-calibrator-sensitivity-2026-07-30-v1/calibrator_sensitivity_summary.json"
+        - "models/experiments/ijds_audit/ijds-calibrator-sensitivity-2026-07-30-v1/execution_receipt.json"
   label_mondrian:
     outcome_free:
       run_tag: "ijds-label-mondrian-freeze-2026-07-21-v1"
@@ -810,3 +849,87 @@ sources:
     path: "models/experiments/ijds_audit/ijds-allocation-granularity-sensitivity-2026-07-16-v3/allocation_granularity_summary.json"
     bytes: 2226
     sha256: "7e8d9609367ae2cb07e9d0d56e676d7af5486258f7f36a2680d66d2f90d4b51a"
+  calibrator_sensitivity_freeze_config:
+    path: "configs/experiments/ijds_calibrator_sensitivity_freeze_2026-07-30_v1.yaml"
+    bytes: 4633
+    sha256: "670308c36afb8e01f6ed71f5b1bde6a2afd4b048d9abc2b2036415140f6c9664"
+  calibrator_sensitivity_evaluation_config:
+    path: "configs/experiments/ijds_calibrator_sensitivity_evaluation_2026-07-30_v1.yaml"
+    bytes: 4421
+    sha256: "76938d78fceea391684f0f0c78b47bb1af39c3a778251dc8be849dce83e6f0a4"
+  calibrator_sensitivity_protocol:
+    path: "docs/research/ijds_calibrator_sensitivity_v1_protocol_2026-07-30.md"
+    bytes: 14003
+    sha256: "123bdf79489b42953c1fc78e2dd3965c9473aaa0f2b39fd565f3a12f6dcdb76f"
+  calibrator_sensitivity_evaluation_lock:
+    path: "docs/research/ijds_calibrator_sensitivity_v1_evaluation_lock_2026-07-30.md"
+    bytes: 3682
+    sha256: "feba5d8a23ea5ef600a7bd0ea68c098e5df8ad77500deb9f1200cd3d1f2f1b33"
+  calibrator_sensitivity_runner:
+    path: "scripts/experiments/run_ijds_calibrator_sensitivity_v1.py"
+    bytes: 1181
+    sha256: "5680c6009f335a357d6d4f5a6f20d801d9251a63dc2c2aa8ce206c5ed7682acf"
+  calibrator_sensitivity_implementation:
+    path: "src/ijds_audit/calibrator_sensitivity.py"
+    bytes: 30920
+    sha256: "d34bf09775bd5f79ffb893fcafb18681f81c2c6dcf693afa79955aee6357f98c"
+  calibrator_sensitivity_protocol_runner:
+    path: "src/ijds_audit/calibrator_sensitivity_protocol.py"
+    bytes: 73144
+    sha256: "f288066304a2476e2f271b85851510597a32c1b7086e835ec0b700a41abf64c6"
+  calibrator_sensitivity_source_freeze:
+    path: "models/experiments/ijds_audit/ijds-calibrator-sensitivity-2026-07-30-v1-source/protocol_freeze.json"
+    bytes: 12098
+    sha256: "bf00dff0084bb6d017a808897a2ef654f4efaca6880da6a91161b6a3a1171f4c"
+  calibrator_sensitivity_source_receipt:
+    path: "models/experiments/ijds_audit/ijds-calibrator-sensitivity-2026-07-30-v1-source/execution_receipt.json"
+    bytes: 1530
+    sha256: "d117de6253001f152d7ed558a27e125dfd43da78818347ebbc2f67431d9754c2"
+  calibrator_sensitivity_calibrator_family:
+    path: "models/experiments/ijds_audit/ijds-calibrator-sensitivity-2026-07-30-v1-source/prediction/calibrator_family.pkl"
+    bytes: 566016
+    sha256: "dab0b1207559118ab63742e51d0d7085e9d9d0d7e3a103802dae57f05ddeabce"
+  calibrator_sensitivity_taxonomy:
+    path: "models/experiments/ijds_audit/ijds-calibrator-sensitivity-2026-07-30-v1-source/prediction/common_q_raw_taxonomy.json"
+    bytes: 485
+    sha256: "fb1bea3f4c64985d9ab4db078bf668466f6af17d4b39da11c680edfd46309607"
+  calibrator_sensitivity_residual_recipes:
+    path: "models/experiments/ijds_audit/ijds-calibrator-sensitivity-2026-07-30-v1-source/prediction/calibrator_residual_recipes.json"
+    bytes: 35852
+    sha256: "4f1f9f8a1680eb3b2af27eaa0bdeb55088530917336863a5b60b5b34bcf2e360"
+  calibrator_sensitivity_calibration_fit_diagnostics:
+    path: "data/processed/experiments/ijds_audit/ijds-calibrator-sensitivity-2026-07-30-v1-source/prediction/calibration_fit_diagnostics.parquet"
+    bytes: 6511
+    sha256: "ebd11f6c8ad708700fb00d1d95ce1e09073cf29b3ca75ec4cded95ddd4cb3670"
+  calibrator_sensitivity_recipe_audit:
+    path: "data/processed/experiments/ijds_audit/ijds-calibrator-sensitivity-2026-07-30-v1-source/prediction/recipe_audit.parquet"
+    bytes: 8265
+    sha256: "ac554c8e0a18729bf8be4601eb44528d2e84e36eb14466ef4ec8356b3ef664c2"
+  calibrator_sensitivity_outcome_free_geometry:
+    path: "data/processed/experiments/ijds_audit/ijds-calibrator-sensitivity-2026-07-30-v1-source/prediction/outcome_free_geometry.parquet"
+    bytes: 74570
+    sha256: "e9631502a2a204478f611831ded7ab41240fe1323d3d1274a05c1f5993cebae0"
+  calibrator_sensitivity_evaluation_summary:
+    path: "models/experiments/ijds_audit/ijds-calibrator-sensitivity-2026-07-30-v1/calibrator_sensitivity_summary.json"
+    bytes: 9501
+    sha256: "f28103eb5b826d116c67ec1fff65c7e11a632f6db44f0f38d853534041cedef7"
+  calibrator_sensitivity_evaluation_receipt:
+    path: "models/experiments/ijds_audit/ijds-calibrator-sensitivity-2026-07-30-v1/execution_receipt.json"
+    bytes: 1542
+    sha256: "bc47bf6ac2f77a1635627101c31e6fa2979f7f95f8a8a0bac19cb78f03db8711"
+  calibrator_sensitivity_evaluation:
+    path: "data/processed/experiments/ijds_audit/ijds-calibrator-sensitivity-2026-07-30-v1/evaluation/calibrator_sensitivity.parquet"
+    bytes: 46055
+    sha256: "ad64c6a9bb2a73474e4a654ed166b7f9d5080c6f725d14635329a859ad23fff9"
+  calibrator_sensitivity_overall:
+    path: "data/processed/experiments/ijds_audit/ijds-calibrator-sensitivity-2026-07-30-v1/evaluation/calibrator_sensitivity_overall.parquet"
+    bytes: 32152
+    sha256: "44c2b29a3b8148f0076f3bc88b8153b133bf00f71761e18ee79324f00c90e3d1"
+  calibrator_sensitivity_pairwise:
+    path: "data/processed/experiments/ijds_audit/ijds-calibrator-sensitivity-2026-07-30-v1/evaluation/pairwise_shared_completion.parquet"
+    bytes: 12292
+    sha256: "b5770c34b501895ddfb6f221069245595ee064c0766935da8e838cd572868de0"
+  calibrator_sensitivity_platt_v5_reconciliation:
+    path: "data/processed/experiments/ijds_audit/ijds-calibrator-sensitivity-2026-07-30-v1/evaluation/platt_v5_reconciliation.parquet"
+    bytes: 25875
+    sha256: "05505ebd952e260f8f35eb50c69de75ce6c2e7d85bbafcb7890a164bb4b6bffd"

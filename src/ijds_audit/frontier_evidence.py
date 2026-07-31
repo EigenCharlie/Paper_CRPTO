@@ -19,6 +19,7 @@ import numpy as np
 import pandas as pd
 
 from src.ijds_audit.grid_contracts import require_exact_grid, require_finite
+from src.ijds_audit.publication_generation import require_historical_git_blob_descriptor
 from src.utils.artifact_descriptor import (
     relative_artifact_descriptor,
     verified_artifact_path,
@@ -159,6 +160,7 @@ def _require_implementation(
     *,
     container: str,
     required_paths: Sequence[str],
+    protocol_commit: str,
     repo_root: Path,
     label: str,
 ) -> None:
@@ -174,9 +176,13 @@ def _require_implementation(
         descriptor = sources[relative]
         if not isinstance(descriptor, Mapping):
             raise TypeError(f"{label} implementation descriptor is invalid: {relative!r}.")
-        actual = relative_artifact_descriptor(repo_root / relative, repo_root=repo_root)
-        if actual != dict(descriptor):
-            raise RuntimeError(f"{label} implementation dependency drifted: {relative!r}.")
+        require_historical_git_blob_descriptor(
+            descriptor,
+            commit=protocol_commit,
+            relative_path=relative,
+            repo_root=repo_root,
+            label=f"{label} implementation dependency drifted: {relative!r}",
+        )
 
 
 def _load_run_contract(
@@ -256,6 +262,7 @@ def _load_run_contract(
         summary,
         container=implementation_container,
         required_paths=required_implementation,
+        protocol_commit=str(lineage["protocol_commit"]),
         repo_root=repo_root,
         label=prefix,
     )
@@ -1252,10 +1259,13 @@ def _load_embedding(
     for relative, descriptor in implementation.items():
         if not isinstance(relative, str) or not isinstance(descriptor, Mapping):
             raise TypeError("Set-preserving embedding implementation descriptor is invalid.")
-        if relative_artifact_descriptor(repo_root / relative, repo_root=repo_root) != dict(
-            descriptor
-        ):
-            raise RuntimeError(f"Set-preserving embedding implementation drifted: {relative!r}.")
+        require_historical_git_blob_descriptor(
+            descriptor,
+            commit=str(lineage["protocol_commit"]),
+            relative_path=relative,
+            repo_root=repo_root,
+            label=f"set-preserving embedding execution-time implementation {relative}",
+        )
     for registered_name, relative in {
         "config": "configs/experiments/ijds_set_preserving_embedding_sensitivity_2026-07-30_v1d.yaml",
         "base_config": "configs/experiments/ijds_set_preserving_embedding_sensitivity_2026-07-29_v1c.yaml",

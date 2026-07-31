@@ -1,4 +1,4 @@
-version: "2026-07-29"
+version: "2026-07-30"
 project: paper-crpto
 decision_status: prefreeze_active
 
@@ -73,11 +73,13 @@ active_scientific_contract:
       - scripts/experiments/run_ijds_label_mondrian_freeze.py
       - scripts/experiments/run_ijds_label_mondrian_evaluation.py
     sealed_protocol_entrypoints:
+      - scripts/experiments/run_ijds_calibrator_sensitivity_v1.py
       - scripts/experiments/run_ijds_set_preserving_embedding_sensitivity_v1c.py
       - scripts/experiments/run_ijds_set_preserving_embedding_sensitivity_v1d.py
     support_tools:
       - scripts/build_ijds_policy_support_tie_evidence.py
       - scripts/build_ijds_policy_support_optimal_face_evidence.py
+      - scripts/generate_ijds_information_boundary_figure.py
       - scripts/manage_ijds_dvc_capsule.py
       - scripts/inspect_scientific_run.py
       - scripts/run_complexity_report.py
@@ -107,7 +109,10 @@ active_scientific_contract:
     prediction: >-
       CatBoost/Platt is the only portfolio score. Numeric logistic, monotonic
       CatBoost, platform-signal WOE/IV, and pricing-excluded application WOE/IV
-      are coverage-only controls and cannot be selected from OOT outcomes.
+      are coverage-only controls and cannot be selected from OOT outcomes. A
+      separate closed retrospective sensitivity compares Platt, isotonic, beta,
+      and Venn--Abers maps on the same frozen CatBoost base score without
+      selecting a calibrator or feeding an alternative map into optimization.
     conformal: >-
       Five score strata are fixed from 2011 scores. Exact binary-outcome
       residual ranks are reported for all eight eligible six-month windows;
@@ -174,6 +179,7 @@ active_scientific_contract:
     - reports/crpto/tables/crpto_ijds_v4_table6_credit_controls.csv
     - reports/crpto/tables/crpto_ijds_v4_tableS1_named_comparators.csv
     - reports/crpto/tables/crpto_ijds_v4_tableS2_credit_prediction_metrics.csv
+    - reports/crpto/tables/crpto_ijds_v4_tableS2C_calibrator_fit_diagnostics.csv
     - reports/crpto/tables/crpto_ijds_v4_tableS3_woe_iv_psi.csv
     - reports/crpto/tables/crpto_ijds_v4_tableS4_score_psi.csv
     - reports/crpto/tables/crpto_ijds_v4_tableS5_label_lag_sensitivity.csv
@@ -198,6 +204,8 @@ active_scientific_contract:
     - reports/crpto/tables/crpto_ijds_v4_tableS6L_residual_transport_summary.csv
     - reports/crpto/tables/crpto_ijds_v4_tableS6M_residual_transport_pooled.csv
     - reports/crpto/tables/crpto_ijds_v4_tableS6N_marginal_score_outcome_gap.csv
+    - reports/crpto/tables/crpto_ijds_v4_tableS6O_calibrator_sensitivity_cells.csv
+    - reports/crpto/tables/crpto_ijds_v4_tableS6P_calibrator_pairwise_shared_completion.csv
     - reports/crpto/tables/crpto_ijds_v4_tableS9G_decision_catalog_metric_separation.csv
     - reports/crpto/tables/crpto_ijds_v4_tableS9H_decision_catalog_target_blocks.csv
     - reports/crpto/tables/crpto_ijds_v4_tableS9I_funded_selection_track_estimands.csv

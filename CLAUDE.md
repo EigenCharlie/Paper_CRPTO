@@ -38,6 +38,11 @@ not active evidence.
    - exact score-order equivalence on feasible allocation differences, its
      translated-cap and two-ruler corollaries, and the distinction between
      global equivalence and local optimal-face coincidence.
+19c8. `docs/research/ijds_calibrator_sensitivity_v1_protocol_2026-07-30.md`
+   - closed four-map CatBoost sensitivity, common uncalibrated-probability
+     taxonomy, complete reporting, and no-optimization boundary.
+19c8a. `docs/research/ijds_calibrator_sensitivity_v1_evaluation_lock_2026-07-30.md`
+   - endpoint-evaluation lock and P-to-A-to-B-to-C Git transport contract.
 19d. `docs/research/ijds_raw_data_acquisition_provenance_2026-07-21.md`
 19e. `docs/research/ijds_submission_rights_anonymity_audit_2026-07-21.md`
 20. `configs/ijds_active_evidence_sources.yaml`
@@ -73,10 +78,15 @@ The active set-preserving-embedding V1d uses the registered two-stage
 protocol-to-source-to-evaluation direct-child chain. V1c failed its persistence
 contract before any evaluation commit/tag and supports no claim; its Phase-B
 files were not reused by V1d.
+The active calibrator sensitivity uses one four-commit Git chain: protocol P,
+outcome-free source A, endpoint-evaluation lock B, and result C. It reports the
+complete four-map grid without selecting a map and performs no optimization.
 
 The claim registry is the editorial authority. The source registry owns exact
-lineage identities, artifact descriptors, and 53 DVC pointers. The V4 evidence
-JSON is the only numeric paper-facing manifest.
+lineage identities, artifact descriptors, 53 DVC pointers, and seven
+scientific Git-native artifact lineages. The V4 evidence JSON is the only
+numeric paper-facing manifest; the publication builder emits 41 CSV tables and
+five figure families.
 
 The audited Calibre runtime uses `sys.flags.optimize == 2`, so it removes
 Python `assert` statements. Every runtime, scientific, provenance, and
@@ -91,6 +101,12 @@ exception; `assert` is test syntax only.
 - Five frozen coverage specifications and eight complete residual windows.
 - CatBoost/Platt is the only score entering portfolio optimization; logistic,
   monotonic CatBoost, and two WOE/IV scorecards are coverage controls.
+- A closed CatBoost score-map sensitivity reports Platt, isotonic, beta `abm`,
+  and an IVAP Venn--Abers scalar under one common uncalibrated-probability
+  taxonomy. Only 18/32 overall upper endpoints are below 0.90, so
+  `uniform_closed_family_shortfall_not_established`; this is not a calibrator
+  winner, true-coverage-dependence result, Venn-guarantee transfer, or
+  portfolio sensitivity.
 - Five gamma values, two outcome-blind rulers, and three interior coordinates;
   none is selected.
 - Fifteen separate monthly allocations, sharp common-outcome bounds, registered
@@ -155,6 +171,10 @@ Do not claim:
   inferred from a flag;
 - label-Mondrian repair, label-conditional transport, or 400 adjusted category
   tests;
+- calibrator winner or ranking, true-coverage dependence inferred from the
+  closed family, a Venn multiprobability guarantee for its scalarization,
+  method-specific retaxonomy, or portfolio robustness from the calibrator
+  sensitivity;
 - universal favorable or adverse portfolio direction;
 - preferred continuous embedding or theta, set-native optimization, or a
   conformal-validity repair inferred from the set-preserving sensitivity;
@@ -165,9 +185,9 @@ Do not claim:
   conclusions;
 - cash-flow return, IRR, NPV, welfare, or counterfactual funding effects.
 
-The five-model coverage result and the CatBoost-only missingness/second-origin
-sensitivities are distinct claims. Every first-use 40/40 statement must name
-the six-month outcome-availability rule.
+The five-model coverage result and the CatBoost-only missingness, second-origin,
+and calibrator sensitivities are distinct claims. Every first-use 40/40
+statement must name the six-month outcome-availability rule.
 
 ## Code Architecture
 

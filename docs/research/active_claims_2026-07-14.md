@@ -15,15 +15,22 @@ pre-endpoint-correction evaluations are provenance only.
 - **NO-GO:** model or policy superiority, selected-set conformal validity,
   causal effects, a universal guardrail direction, prospective confirmation,
   or deployment claims.
-- The audit separates four noninterchangeable objects: marginal score level,
-  residual distribution, candidate-set coverage, and the funded decision. All
-  40 finite-archive sharp upper coverage endpoints are below 0.90; separate
-  marginal-gap and residual-distribution lineages describe the fixed panel; a
-  combined-rank diagnostic has 31 of 40 learner-window joint-block reference
-  tail areas meet locked nominal Bonferroni--Holm reporting thresholds without
-  a post-selection FWER claim; and catalog and funded-estimand diagnostics audit
-  the decision handoff. None identifies the cause of another layer or a policy
-  winner.
+- The audit separates five noninterchangeable objects: marginal score level,
+  score-calibration map, residual distribution, candidate-set coverage, and the
+  funded decision. All
+  40 Platt-scaled five-learner finite-archive sharp upper coverage endpoints are
+  below 0.90; separate marginal-gap and residual-distribution lineages describe
+  the fixed panel; a combined-rank diagnostic has 31 of 40 learner-window
+  joint-block reference tail areas meet locked nominal Bonferroni--Holm
+  reporting thresholds without a post-selection FWER claim; and catalog and
+  funded-estimand diagnostics audit the decision handoff. None identifies the
+  cause of another layer or a policy winner.
+- The separate primary-CatBoost calibrator sensitivity does not extend the
+  40/40 result uniformly across calibration maps. It reports every one of 32
+  overall method--window cells in a frozen four-map family: 18 upper endpoints
+  are below 0.90 and 14 are at or above it. The derived state is
+  `uniform_closed_family_shortfall_not_established`; no calibrator is selected,
+  no conformal theorem is refuted, and no alternative map enters optimization.
 - No OOT outcome selects a learner, window, taxonomy, gamma, ruler, coordinate,
   cap, comparator, or policy.
 - The complete set-preserving-embedding sensitivity keeps all 80 audited binary
@@ -340,6 +347,46 @@ pre-endpoint-correction evaluations are provenance only.
   universal direction, causal effect, prospective result, confirmation,
   validity repair, or joint sharpness across overlapping tracks.
 
+### Closed CatBoost calibrator-family sensitivity
+
+- The active Git-native authority is the exact annotated four-state chain
+  `P -> A -> B -> C`. Protocol tag
+  `protocol/ijds-calibrator-sensitivity-2026-07-30-v1` resolves to
+  `808827926eff5030b3cb28d2b89a87a0e6210b2e`; its direct-child eight-path
+  outcome-free artifact tag
+  `artifacts/ijds-calibrator-sensitivity-2026-07-30-v1-source` resolves to
+  `ea3e7326afc38ccc1b99b09de30792986640e3c3`. The subsequent two-path
+  evaluation-lock tag
+  `protocol/ijds-calibrator-sensitivity-evaluation-2026-07-30-v1` resolves to
+  `753305e81e27f793acdea80b684b42e7eff2201d`, a direct child of `A`; its
+  direct-child six-path final artifact tag
+  `artifacts/ijds-calibrator-sensitivity-2026-07-30-v1` resolves to
+  `6552524eae5a22ce66b50689900383d16df1ff13`.
+- Phase A reuses the already frozen Platt map without refitting it and fits
+  isotonic, beta, and Venn--Abers maps on the same 14,077 availability-safe
+  2011 labels. It transforms the active Platt taxonomy exactly onto the
+  uncalibrated CatBoost-probability `q_raw` scale and freezes all 160
+  method--window--stratum residual recipes before Phase-B outcome evaluation.
+  The five common `q_raw` groups have zero full-panel assignment changes across
+  methods. The four fit-metric rows are same-sample descriptive diagnostics and
+  are not a selection criterion.
+- Phase B reports the complete 192 method--window--scope coverage cells (overall
+  plus five strata), all 32 overall cells, and all 288 unordered pairwise cells
+  under shared loan-wise unresolved binary completion. The primary census is
+  376,890 candidates, 364,814 resolved (307,842 nondefaults and 56,972
+  defaults), and 12,076 unresolved. Platt reconciles to active V5 within
+  `2.22e-16`.
+- Platt and beta have 8/8 overall upper endpoints below 0.90; isotonic and
+  Venn--Abers each have 1/8 below and 7/8 at or above. Across all methods this
+  is 18/32 below and 14/32 at or above. Therefore the identified
+  complete-archive shortfall is not established uniformly over this closed
+  four-map family. This is not a calibrator ranking, evidence that true coverage
+  itself is calibrator-dependent, prospective transport, a sampling interval,
+  or a Venn multiprobability guarantee for the scalar `p_prime`.
+- Phase B runs no portfolio optimization. Its alternative score maps, sets,
+  efficiency diagnostics, and pairwise contrasts support no selected-set,
+  funded-set, policy, or portfolio-robustness claim.
+
 ### Label-Mondrian sensitivity
 
 - Outcome-free threshold freeze:
@@ -400,7 +447,9 @@ pre-endpoint-correction evaluations are provenance only.
   the declared dates, maturity, schema, and origination-observability rules.
   This is not a computational sample.
 - PD development: 17,433 rows. Probability calibration/taxonomy: 14,101 rows.
-  Residual pool: 49,007 rows. Outcome-free policy development: 94,885 rows.
+  The separate closed calibrator sensitivity uses the 14,077 rows in that 2011
+  block with availability-safe binary labels. Residual pool: 49,007 rows.
+  Outcome-free policy development: 94,885 rows.
 - Primary OOT: 376,890 candidates in 15 monthly menus from April 2016 through
   June 2017. Censored extension: 88,227 candidates from July--September 2017.
 - Primary endpoint census: 364,814 resolved and 12,076 unresolved candidates.
@@ -425,6 +474,12 @@ pre-endpoint-correction evaluations are provenance only.
 - Coverage-only controls: numeric logistic, domain-constrained monotonic
   CatBoost, platform-signal WOE/IV, and a pricing-excluded application WOE/IV
   scorecard. Each has a separately fitted Platt map and fixed 2011 taxonomy.
+- A separate closed sensitivity holds the primary CatBoost base score and one
+  common five-group `q_raw` taxonomy fixed while comparing frozen Platt,
+  isotonic, beta, and Venn--Abers scalar maps. It is a retrospective complete
+  grid, not a model/calibrator contest. The Venn--Abers `p_prime` is a declared
+  scalarization; its use does not transport a Venn multiprobability guarantee
+  to the scalar conformal construction.
 - The two original V4 specifications and three later credit-risk controls form
   a complete reported coverage audit, not a model contest. Every retained
   evaluation was protocol-locked before its corresponding outcome join, but
@@ -568,6 +623,7 @@ pre-endpoint-correction evaluations are provenance only.
 <!-- claim:sensitivity.missingness_encoding_recurrence -->
 <!-- claim:sensitivity.fit_label_completion_coverage_recurrence -->
 <!-- claim:geometry.fit_label_completion_crossing_not_universal -->
+<!-- claim:calibration.closed_family_complete_state -->
 
 Under the declared six-month endpoint contract, all eight all-candidate
 coverage upper bounds are below 0.90 for every model:
@@ -580,6 +636,15 @@ coverage upper bounds are below 0.90 for every model:
 | Platform-signal WOE/IV | 0.848908 | 0.894908 | 0.633066 | 0.129485 |
 | Pricing-excluded application WOE/IV | 0.852013 | 0.897726 | 0.612939 | 0.130190 |
 
+- The preceding 40/40 statement is a complete comparison of five frozen learner
+  specifications that each use their declared Platt map; it is not
+  calibrator-universal. In the separate primary-CatBoost four-map sensitivity,
+  18/32 overall upper endpoints are below 0.90 and 14/32 are at or above.
+  Method-level below-nominal counts are Platt 8/8, beta 8/8, isotonic 1/8, and
+  Venn--Abers 1/8. The complete state is
+  `uniform_closed_family_shortfall_not_established`. All 192 overall-plus-stratum
+  cells and 288 shared-completion pairwise cells are reported; this establishes
+  neither a winning calibrator nor calibrator-dependence of true coverage.
 - Mean calibration error is negative for all five models (-0.047109 to
   -0.028923), and every calibration slope is below one (0.543210--0.918655).
   These are resolved-panel summaries. Separately, the sharp all-candidate
@@ -828,6 +893,12 @@ The complete endpoint-availability sensitivity is:
   joint-block combined-rank diagnostic has 31/40 frozen learner-window cell
   reference tail areas meeting locked nominal reporting thresholds; it has no post-selection FWER claim and is
   not a direct test of the usual one-future-point condition.
+- The 40/40 result is specific to the five declared Platt-scaled learner
+  specifications. Within the separate closed four-map primary-CatBoost
+  sensitivity, only 18/32 overall upper endpoints remain below nominal, so a
+  uniform closed-family shortfall is not established. This complete
+  retrospective grid selects no calibrator and supports no true-coverage,
+  temporal-validity, or optimization claim.
 - The same CatBoost coverage finding recurs under three feature-semantics-
   preserving missingness encodings and at one later retrospective origin on a
   common April--June horizon with cutoffs 39 months after issue-month end,
@@ -885,6 +956,13 @@ The complete endpoint-availability sensitivity is:
 - Selected-set or funded-set conformal guarantee.
 - A realized finite-archive shortfall described as proof that the conformal
   theorem fails.
+- A calibrator-robust or universal 40/40 shortfall, a Platt/isotonic/beta/
+  Venn--Abers winner, true coverage described as calibrator-dependent, or a
+  temporal-validity repair inferred from the closed calibrator sensitivity.
+- A Venn multiprobability guarantee, latent-PD interval, or selected-set
+  guarantee attributed to the scalar IVAP `p_prime`; method-specific retaxonomy;
+  or portfolio robustness inferred without running the alternative maps through
+  the optimizer.
 - A nonflag described as proof of exchangeability; a joint-block flag described
   as direct refutation of ordinary one-point split-conformal validity or as a
   specific shift mechanism; post-selection FWER control; or the 31/40 result

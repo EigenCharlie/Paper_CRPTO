@@ -36,6 +36,11 @@ STYLE_MANIFEST = ROOT / "paper" / "submission" / "informs_style_assets.json"
 TEX_BUILDER = ROOT / "scripts" / "build_ijds_submission_tex.py"
 PDF_COMPILER = ROOT / "scripts" / "compile_ijds_submission.py"
 PREVIEW_RENDERER = ROOT / "scripts" / "render_submission_pdf_previews.py"
+INFORMATION_BOUNDARY_GENERATOR = ROOT / "scripts" / "generate_ijds_information_boundary_figure.py"
+INFORMATION_BOUNDARY_FIGURES = tuple(
+    ROOT / "reports" / "crpto" / "figures" / f"crpto_ijds_information_boundary.{suffix}"
+    for suffix in ("pdf", "png")
+)
 BODY_FIGURES = (
     ROOT / "reports" / "crpto" / "figures" / "crpto_ijds_v4_fig1_coverage.png",
     ROOT / "reports" / "crpto" / "figures" / "crpto_ijds_v4_fig2_phase_transition.png",
@@ -44,6 +49,7 @@ BODY_FIGURES = (
     / "crpto"
     / "figures"
     / "crpto_ijds_v4_fig4_common_panel_threshold_response.png",
+    *INFORMATION_BOUNDARY_FIGURES,
 )
 SUPPLEMENT_FIGURES = (
     ROOT
@@ -58,6 +64,7 @@ INFORMS_STYLE_ASSETS = tuple(
     for name in ("informs4.cls", "informs2014.bst", "eqndefns-left.sty", "informs_Logo.pdf")
 )
 FRESHNESS_GRAPH = (
+    *((figure, (INFORMATION_BOUNDARY_GENERATOR,)) for figure in INFORMATION_BOUNDARY_FIGURES),
     (BODY_HTML, (BODY_QMD, REFERENCES_BIB, CSL_STYLE, HTML_STYLE, *BODY_FIGURES)),
     (BODY_PDF, (BODY_HTML, PREVIEW_RENDERER)),
     (

@@ -74,13 +74,17 @@ public. The author agrees to complete the IJDS reproducibility report.
 - Endpoint timing: Fully Paid is available at the month-end of `last_pymnt_d`;
   Charged Off is available at that month-end plus six calendar months. The
   latter is a modeling assumption, not an observed operational charge-off date.
+- Calibrator sensitivity: four frozen CatBoost maps, eight windows, and `ALL`
+  plus five common `q_raw` strata yield 192 aggregate coverage/geometry rows
+  and 288 shared-completion pairwise rows. Only 18/32 pooled upper endpoints
+  are below 0.90; no calibrator or portfolio policy is selected.
 
 ## Package Boundary
 
 The release includes `pyproject.toml`, `uv.lock`, active source and claim
 registries and executable claim ledger, the complete `src` package,
-active experiment/build scripts, 53 DVC pointers, six exact Git artifact
-lineages, the evidence manifest and 38 aggregate publication CSV tables,
+active experiment/build scripts, 53 DVC pointers, seven exact scientific Git artifact
+lineages, the evidence manifest and 41 aggregate publication CSV tables,
 canonical QMD, generated TeX, bibliography,
 and the scientific, type, drift, anonymity, compilation, and visual-QA gates.
 Credentials, local DVC configuration, absolute paths, protected extraction

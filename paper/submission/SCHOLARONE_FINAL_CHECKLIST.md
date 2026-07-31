@@ -36,6 +36,13 @@ living closeout checklist, not evidence that the package is final.
       assign every unresolved loan once and share it across both class ratios,
       although the two endpoint completions may differ. It is not a repair,
       hypothesis-test family, or fairness result.
+- [ ] The closed CatBoost calibrator sensitivity reports all 192
+      method-window-scope cells and all 288 shared-completion pairwise cells.
+      Exactly 18/32 pooled upper endpoints are below 0.90 (Platt 8/8,
+      isotonic 1/8, beta 8/8, IVAP scalar 1/8), so the uniform closed-family
+      shortfall is not established. It is not described as a calibrator
+      winner, true-coverage dependence, a Venn guarantee for the scalar, or
+      portfolio robustness.
 - [ ] Binary geometry is stated conditionally: score binning does not guarantee
       a low regime; zero positive coverage needs target support; W7 and W8 do not
       share one pair of calibration maxima; and the exact two-threshold identity
@@ -45,7 +52,8 @@ living closeout checklist, not evidence that the package is final.
 - [ ] The quarantined external V1 contributes no archive name, number, method,
       citation, table, runner, or evidence claim to reviewer-facing surfaces.
 - [ ] Identification-width statements match the exact unresolved-row identity and the six reported tracks.
-- [ ] No learner, window, gamma, ruler, coordinate, cap, comparator, or policy is selected.
+- [ ] No learner, calibrator, window, gamma, ruler, coordinate, cap,
+      comparator, or policy is selected.
 - [ ] No selected-set, causal, prospective, confirmatory, deployment, Markov,
       point-in-time-snapshot, cash-flow-return, or fair-lending claim appears.
 
@@ -57,14 +65,15 @@ living closeout checklist, not evidence that the package is final.
 - [ ] Anonymous online supplement PDF.
 - [ ] Separate title-page metadata form.
 - [ ] Optional cover letter and generative-AI disclosure, if uploaded.
-- [ ] Anonymous machine-readable supplement containing full S6C and S6E strata.
+- [ ] Anonymous machine-readable supplement containing full S6C and S6E
+      strata plus S2C, S6O, and S6P calibrator tables.
 - [ ] Data and code disclosure form.
 - [ ] Editor-only reproducibility crosswalk, if requested.
 - [ ] Sanitized reproducibility capsule, if requested.
 - [ ] LaTeX `.fls`, `.aux`, `.log`, `.blg`, and `.bbl` files are excluded from
       every reviewer upload; the editor-only crosswalk is not reviewer-facing.
-- [ ] Capsule inventory reconciles to exactly 53 DVC pointers, six Git artifact
-      lineages, and 38 paper-facing CSV tables; unequal-follow-up roots appear
+- [ ] Capsule inventory reconciles to exactly 53 DVC pointers, seven scientific
+      Git artifact lineages, and 41 paper-facing CSV tables; unequal-follow-up roots appear
       only as replay provenance.
 
 ## Build and Numerical QA

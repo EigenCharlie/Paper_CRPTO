@@ -109,14 +109,29 @@ scientific CSV outputs are byte-identical. This is
 a retrospective descriptive replay, not a selected transition, temporal
 transport result, or explanation of threshold movement.
 
+The closed CatBoost calibrator sensitivity uses a four-commit chain:
+protocol P `808827926eff5030b3cb28d2b89a87a0e6210b2e`, outcome-free source A
+`ea3e7326afc38ccc1b99b09de30792986640e3c3`, endpoint-evaluation lock B
+`753305e81e27f793acdea80b684b42e7eff2201d`, and complete result C
+`6552524eae5a22ce66b50689900383d16df1ff13`. Its four tags are annotated and
+each commit after P is the single direct child of the preceding one. The
+complete result has 192 coverage/geometry and 288 shared-completion pairwise
+cells; 18/32 pooled upper endpoints are below 0.90, so the registered state is
+`uniform_closed_family_shortfall_not_established`. This selects no calibrator,
+transfers no Venn guarantee to the IVAP scalar, and supplies no portfolio
+result.
+
 ### Git-transported publication lineages
 
 Five publication lineages use one protocol-to-artifact direct-child edge. The
 set-preserving-embedding lineage instead uses the registered two-stage
 `P2 -> A2 -> B2` chain because its outcome-free source bytes and evaluated
-outputs have separate authority. Every tag below is annotated, every listed
-child has one parent, and the source registry verifies the exact added-path
-census and file hashes.
+outputs have separate authority. The calibrator lineage uses the four-stage
+`P -> A -> B -> C` chain because the endpoint lock is committed after the
+outcome-free source and before evaluation. Together these are seven scientific
+Git-native lineages. Every tag below is annotated, every listed child has one
+parent, and the source registry verifies the exact added-path census and file
+hashes.
 
 | Lineage | Protocol tag / commit | Intermediate source tag / commit | Evaluation artifact tag / commit |
 |---|---|---|---|
@@ -126,6 +141,7 @@ census and file hashes.
 | Decision catalog V1 | `protocol/ijds-decision-catalog-transport-2026-07-29-v1` / `9c4b082ce68eb88bf60666b4cb794348bf57a40d` | -- | `artifacts/ijds-decision-catalog-transport-2026-07-29-v1` / `0a016e87074d7e92ce57b2d83aaf30b8b31b7e5a` |
 | Funded estimands V1 | `protocol/ijds-funded-selection-estimand-audit-2026-07-29-v1` / `9c4b082ce68eb88bf60666b4cb794348bf57a40d` | -- | `artifacts/ijds-funded-selection-estimand-audit-2026-07-29-v1` / `0d26e0247d41ae4ff1c9ad8ca230b0a627303190` |
 | Set-preserving embedding V1d | `protocol/ijds-set-preserving-embedding-sensitivity-2026-07-30-v1d` / `174c4e3d894829473a787e6d34bfc3bbab2f8ef2` | `artifacts/ijds-set-preserving-embedding-sensitivity-2026-07-30-v1a-recovery-v1d` / `95e39f05bb990429025d0115a0e55c53b1fb1ea8` | `artifacts/ijds-set-preserving-embedding-sensitivity-2026-07-30-v1d` / `276a5db8772262aad2edd8936dbe226926e412b5` |
+| Calibrator sensitivity V1 | `protocol/ijds-calibrator-sensitivity-2026-07-30-v1` / `808827926eff5030b3cb28d2b89a87a0e6210b2e` | `artifacts/ijds-calibrator-sensitivity-2026-07-30-v1-source` / `ea3e7326afc38ccc1b99b09de30792986640e3c3` | `protocol/ijds-calibrator-sensitivity-evaluation-2026-07-30-v1` / `753305e81e27f793acdea80b684b42e7eff2201d` -> `artifacts/ijds-calibrator-sensitivity-2026-07-30-v1` / `6552524eae5a22ce66b50689900383d16df1ff13` |
 
 V1d is retrospective and post-inspection. V1c failed its persistence contract
 before any evaluation commit or tag; its local Phase-B files are non-evidence
@@ -151,8 +167,11 @@ structural V5 shard root and the unequal-follow-up origin roots. Pull with:
 uv run --locked python scripts/manage_ijds_dvc_capsule.py pull
 ```
 
-The registered evidence builder emits one paper-facing manifest, 38 CSV
-tables, and five figure families in both PDF and PNG.
+The registered evidence builder emits one paper-facing manifest, 41 CSV
+tables, and five figure families in both PDF and PNG. Calibrator Table S2C
+contains the four same-sample fit rows, S6O contains all 192
+method--window--scope rows, and S6P contains all 288 unordered-pair
+shared-completion rows.
 
 Machine-local DVC credentials belong in `.dvc/config.local` and are never
 committed.

@@ -45,12 +45,20 @@ selects a model or method, rejects the marginal split-conformal guarantee,
 identifies a shift mechanism, restores conditional validity, or authorizes a
 fairness claim.
 
+The separate closed CatBoost calibrator sensitivity reports every Platt,
+isotonic, beta `abm`, and IVAP Venn--Abers cell under one common `q_raw`
+taxonomy. Only 18/32 pooled upper endpoints are below 0.90, so a uniform
+closed-family shortfall is not established. The result selects no calibrator,
+does not transfer the Venn multiprobability guarantee to the scalar, and
+contains no alternative-map portfolio optimization.
+
 ## IJDS Requirements
 
 - IJDS-template PDF;
 - at most 25 pages excluding references and appendices;
 - separate online supplement;
-- separate anonymous machine-readable supplement for full stratum tables;
+- separate anonymous machine-readable supplement for full stratum tables,
+  including calibrator Tables S2C, S6O, and S6P;
 - double-anonymous review;
 - abstract no longer than 300 words;
 - 1--10 keywords; and
@@ -123,8 +131,9 @@ overlap, and table or figure legibility.
 
 ## QA Record
 
-The current pre-freeze bundle was rebuilt and audited on 2026-07-29 after the
-last substantive source and evidence changes:
+The previous pre-freeze bundle was rebuilt and audited on 2026-07-29. This
+record predates the calibrator-family integration and must be replaced after
+the 41-table evidence build:
 
 - official INFORMS PDF: 36 pages, with references beginning on page 32 (31
   pre-reference pages; the final-freeze page cap was deliberately not run);
@@ -135,7 +144,8 @@ last substantive source and evidence changes:
 - all 114 rendered pages: US Letter, no blank pages, no identity or artifact
   fingerprints, and visually inspected for clipping, overlap, formula rendering,
   and table/figure legibility;
-- headless figure replay: the builder pins `Agg`; two independent 40-file
+- headless figure replay: the builder pins `Agg`; two independent prior
+  40-file
   staging builds were byte-identical, and promotion changed only the expected
   builder and regenerated Figure 4 descriptors in the evidence manifest;
 - official compiler scan: converged, with no undefined citation, reference, or
@@ -159,8 +169,8 @@ every regenerated reviewer page again.
 - reviewer files contain no identity, local path, commit, tag, or hash;
 - the abstract stays below 300 words;
 - no retired endpoint or favorable `.25` claim returns; and
-- the package contains exactly 53 registered DVC pointers, six Git artifact
-  lineages, and 38 paper-facing CSV tables, with unequal-follow-up roots labeled
+- the package contains exactly 53 registered DVC pointers, seven scientific Git
+  artifact lineages, and 41 paper-facing CSV tables, with unequal-follow-up roots labeled
   only as replay provenance;
 - scientific, drift, publication, compilation, and visual gates pass.
 

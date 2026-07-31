@@ -23,6 +23,8 @@ time roles before evaluation.
 | Joint-block rank diagnostic | 31 / 40 cells meet the locked nominal thresholds |
 | Individual-age origin sensitivity | 16 / 16 upper bounds below 0.90 |
 | Label-Mondrian sensitivity | 27 / 40 marginal and 109 / 400 category shortfalls |
+| Closed CatBoost calibrator family | 18 / 32 pooled upper endpoints below 0.90 |
+| Calibrator evaluation / pairwise cells | 192 / 288 |
 | Two-ruler optimization solves | 6,240 |
 | Registered finite point-cap support | 3,067 caps |
 | Finite registered-cap endpoint envelopes including zero | 216 / 216 |
@@ -48,7 +50,14 @@ under three feature-semantics-preserving missingness encodings and at both April
 origins with cutoffs 39 months after each issue-month end (equal whole-month
 administrative age, not exact day-level age). Label-Mondrian calibration changes the
 40 marginal states to 27 shortfalls, 12 crossings, and one lower endpoint at or
-above nominal; it is a complete sensitivity, not a repair. Portfolio direction
+above nominal; it is a complete sensitivity, not a repair. A separate closed
+four-map CatBoost sensitivity holds one common uncalibrated-probability
+(`q_raw`) taxonomy fixed. Platt and beta retain upper endpoints below 0.90 in
+8/8 pooled windows, while isotonic and the IVAP Venn--Abers scalar do so in
+1/8 each; because only 18/32 pooled cells remain below, a uniform
+closed-family shortfall is not established. This selects no calibrator,
+transfers no Venn guarantee to the scalar, and supplies no portfolio result.
+Portfolio direction
 changes with the outcome-blind ruler, coordinate, and comparator support; no
 model, encoding, gamma, ruler, coordinate, scenario, or policy is selected.
 Exact downstream score-order invariance requires positive-affine equivalence
@@ -71,9 +80,11 @@ Read these in order:
 5. [`paper/CRPTO_ijds.qmd`](paper/CRPTO_ijds.qmd)
 6. [`paper/supplement_ijds.qmd`](paper/supplement_ijds.qmd)
 
-The source registry owns lineage identities and 53 DVC pointers. The evidence
-manifest is the only numeric paper-facing manifest. The body QMD is the only
-editable source for the official submission TeX.
+The source registry owns lineage identities, 53 DVC pointers, and seven
+scientific Git-native artifact lineages. The evidence builder emits 41
+paper-facing CSV tables and five figure families. The evidence manifest is the
+only numeric paper-facing manifest. The body QMD is the only editable source
+for the official submission TeX.
 
 ## Architecture
 

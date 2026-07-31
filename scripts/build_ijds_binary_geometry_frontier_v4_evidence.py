@@ -23,6 +23,13 @@ from matplotlib.colors import (
 )
 from matplotlib.ticker import FixedFormatter, FixedLocator
 
+from src.ijds_audit.calibrator_sensitivity_evidence import (
+    CalibratorSensitivityEvidence,
+    calibrator_method_publication_table,
+    calibrator_overall_publication_table,
+    calibrator_pairwise_publication_table,
+    load_calibrator_sensitivity_evidence,
+)
 from src.ijds_audit.claim_ledger import materialize_claim_ledger
 from src.ijds_audit.config import load_v4_config
 from src.ijds_audit.frontier_evidence import load_frontier_evidence
@@ -35,6 +42,7 @@ from src.ijds_audit.grid_contracts import (
 from src.ijds_audit.publication_generation import (
     promote_publication_generation,
     publication_implementation_descriptors,
+    require_historical_git_blob_descriptor,
     staged_artifact_descriptor,
     staged_output_path,
 )
@@ -79,6 +87,9 @@ TABLE_TARGETS = {
     "named_comparators": TABLE_DIR / "crpto_ijds_v4_tableS1_named_comparators.csv",
     "credit_controls": TABLE_DIR / "crpto_ijds_v4_table6_credit_controls.csv",
     "credit_prediction_metrics": TABLE_DIR / "crpto_ijds_v4_tableS2_credit_prediction_metrics.csv",
+    "calibrator_fit_diagnostics": (
+        TABLE_DIR / "crpto_ijds_v4_tableS2C_calibrator_fit_diagnostics.csv"
+    ),
     "woe_iv_psi": TABLE_DIR / "crpto_ijds_v4_tableS3_woe_iv_psi.csv",
     "score_psi": TABLE_DIR / "crpto_ijds_v4_tableS4_score_psi.csv",
     "label_lag_sensitivity": TABLE_DIR / "crpto_ijds_v4_tableS5_label_lag_sensitivity.csv",
@@ -127,6 +138,12 @@ TABLE_TARGETS = {
     "marginal_score_outcome_gap": (
         TABLE_DIR / "crpto_ijds_v4_tableS6N_marginal_score_outcome_gap.csv"
     ),
+    "calibrator_sensitivity_cells": (
+        TABLE_DIR / "crpto_ijds_v4_tableS6O_calibrator_sensitivity_cells.csv"
+    ),
+    "calibrator_pairwise_shared_completion": (
+        TABLE_DIR / "crpto_ijds_v4_tableS6P_calibrator_pairwise_shared_completion.csv"
+    ),
     "decision_catalog_metric_separation": (
         TABLE_DIR / "crpto_ijds_v4_tableS9G_decision_catalog_metric_separation.csv"
     ),
@@ -155,6 +172,31 @@ FIGURE_STEMS = {
         "crpto_ijds_v4_figS1_common_panel_threshold_response_census"
     ),
 }
+
+CALIBRATOR_SOURCE_KEYS = (
+    "calibrator_sensitivity_freeze_config",
+    "calibrator_sensitivity_evaluation_config",
+    "calibrator_sensitivity_protocol",
+    "calibrator_sensitivity_evaluation_lock",
+    "calibrator_sensitivity_runner",
+    "calibrator_sensitivity_implementation",
+    "calibrator_sensitivity_protocol_runner",
+    "calibrator_sensitivity_source_freeze",
+    "calibrator_sensitivity_source_receipt",
+    "calibrator_sensitivity_calibrator_family",
+    "calibrator_sensitivity_taxonomy",
+    "calibrator_sensitivity_residual_recipes",
+    "calibrator_sensitivity_calibration_fit_diagnostics",
+    "calibrator_sensitivity_recipe_audit",
+    "calibrator_sensitivity_outcome_free_geometry",
+    "calibrator_sensitivity_evaluation_summary",
+    "calibrator_sensitivity_evaluation_receipt",
+    "calibrator_sensitivity_evaluation",
+    "calibrator_sensitivity_overall",
+    "calibrator_sensitivity_pairwise",
+    "calibrator_sensitivity_platt_v5_reconciliation",
+)
+CALIBRATOR_METHODS = ("platt", "isotonic", "beta", "venn_abers")
 
 CREDIT_LEARNER_ORDER = (
     "catboost_platt",
@@ -2784,9 +2826,13 @@ def _load_common_panel_threshold_response_inputs(
         descriptor = implementation[relative]
         if not isinstance(descriptor, Mapping):
             raise TypeError(f"The V8 implementation descriptor is invalid: {relative!r}.")
-        path = (ROOT / relative).resolve()
-        if relative_artifact_descriptor(path, repo_root=ROOT) != dict(descriptor):
-            raise RuntimeError(f"A V8 implementation dependency drifted: {relative!r}.")
+        require_historical_git_blob_descriptor(
+            descriptor,
+            commit=str(lineage["protocol_commit"]),
+            relative_path=relative,
+            repo_root=ROOT,
+            label=f"V8 execution-time implementation {relative}",
+        )
     if implementation[
         "configs/experiments/ijds_common_panel_threshold_response_2026-07-26_v8.yaml"
     ] != relative_artifact_descriptor(config_path, repo_root=ROOT):
@@ -3479,6 +3525,186 @@ def _load_missingness_inputs(
     )
 
 
+def _json_safe_records(frame: pd.DataFrame, *, label: str) -> list[dict[str, Any]]:
+    """Convert publication rows to strict JSON, retaining inapplicable cells as null."""
+    numeric = frame.select_dtypes(include=[np.number])
+    for column in numeric:
+        values = pd.to_numeric(numeric[column], errors="raise").to_numpy(dtype=float)
+        if bool(np.isinf(values).any()):
+            raise RuntimeError(f"{label} contains an infinite value in {column!r}.")
+    cleaned = frame.astype(object).where(pd.notna(frame), None)
+    return cast(list[dict[str, Any]], cleaned.to_dict(orient="records"))
+
+
+def _calibrator_sensitivity_manifest_payload(
+    evidence: CalibratorSensitivityEvidence,
+    *,
+    identities: Mapping[str, Any],
+    method_fit_table: pd.DataFrame,
+    cell_table: pd.DataFrame,
+    pairwise_table: pd.DataFrame,
+) -> dict[str, Any]:
+    """Materialize the closed-family result without selecting a map or policy."""
+    counts = evidence.summary.get("counts")
+    expected_counts = {
+        "methods": 4,
+        "windows": 8,
+        "scopes_per_method_window": 6,
+        "evaluation_cells": 192,
+        "overall_cells": 32,
+        "pairwise_cells": 288,
+        "candidate_rows": 376890,
+        "resolved_rows": 364814,
+        "unresolved_rows": 12076,
+        "resolved_y0": 307842,
+        "resolved_y1": 56972,
+    }
+    if not isinstance(counts, Mapping) or any(
+        counts.get(name) != expected for name, expected in expected_counts.items()
+    ):
+        raise RuntimeError("The calibrator-sensitivity manifest census changed.")
+    if (
+        len(method_fit_table) != 4
+        or len(cell_table) != 192
+        or len(pairwise_table) != 288
+        or set(method_fit_table["method"].astype(str)) != set(CALIBRATOR_METHODS)
+    ):
+        raise RuntimeError("The public calibrator-sensitivity table family is incomplete.")
+    forbidden_public_column_tokens = ("allocation", "portfolio", "objective", "net_return")
+    public_columns = {
+        str(column).lower()
+        for frame in (method_fit_table, cell_table, pairwise_table)
+        for column in frame.columns
+    }
+    if any(
+        token in column for column in public_columns for token in forbidden_public_column_tokens
+    ):
+        raise RuntimeError("The calibrator sensitivity leaked portfolio fields.")
+
+    overall = evidence.frames["overall"]
+    if (
+        len(overall) != 32
+        or set(overall["method"].astype(str)) != set(CALIBRATOR_METHODS)
+        or not overall["conformal_group"].eq(-1).all()
+    ):
+        raise RuntimeError("The calibrator-sensitivity overall grid changed.")
+    indicator = overall["coverage_upper_below_nominal"]
+    if not pd.api.types.is_bool_dtype(indicator.dtype) or bool(indicator.isna().any()):
+        raise RuntimeError("The calibrator-sensitivity result indicator is not exact boolean.")
+    below = indicator.astype(bool)
+    below_count = int(below.sum())
+    at_or_above_count = int((~below).sum())
+    derived_result_state = (
+        "all_32_overall_upper_below_nominal"
+        if below_count == len(overall)
+        else "uniform_closed_family_shortfall_not_established"
+    )
+    method_census = {
+        method: {
+            "upper_below_nominal": int(below.loc[overall["method"].astype(str).eq(method)].sum()),
+            "upper_at_or_above_nominal": int(
+                (~below.loc[overall["method"].astype(str).eq(method)]).sum()
+            ),
+        }
+        for method in CALIBRATOR_METHODS
+    }
+    expected_method_census = {
+        "platt": {"upper_below_nominal": 8, "upper_at_or_above_nominal": 0},
+        "isotonic": {"upper_below_nominal": 1, "upper_at_or_above_nominal": 7},
+        "beta": {"upper_below_nominal": 8, "upper_at_or_above_nominal": 0},
+        "venn_abers": {"upper_below_nominal": 1, "upper_at_or_above_nominal": 7},
+    }
+    if method_census != expected_method_census:
+        raise RuntimeError("The complete calibrator-sensitivity result census changed.")
+
+    result = evidence.summary.get("result_boundary")
+    if not isinstance(result, Mapping) or (
+        derived_result_state != "uniform_closed_family_shortfall_not_established"
+        or below_count != 18
+        or at_or_above_count != 14
+        or result.get("result_state") != derived_result_state
+        or result.get("overall_cells_with_coverage_upper_below_nominal") != below_count
+        or result.get("overall_cells_with_coverage_upper_at_or_above_nominal") != at_or_above_count
+        or result.get("all_overall_cells_below_nominal") is not False
+    ):
+        raise RuntimeError("The calibrator-sensitivity identified result boundary changed.")
+
+    interpretation = evidence.summary.get("interpretation")
+    required_false = (
+        "learner_calibrator_window_or_result_selected",
+        "sampling_confidence_interval",
+        "missing_at_random_assumption",
+        "venn_abers_multiprobability_guarantee_transported_to_scalarization",
+        "latent_pd_interval",
+        "policy_claim",
+        "portfolio_optimization",
+        "selected_set_guarantee",
+        "funded_set_guarantee",
+    )
+    if not isinstance(interpretation, Mapping) or any(
+        interpretation.get(field) is not False for field in required_false
+    ):
+        raise RuntimeError("The calibrator-sensitivity selection or portfolio boundary changed.")
+    freeze_contract = evidence.freeze.get("information_contract")
+    if not isinstance(freeze_contract, Mapping) or (
+        freeze_contract.get("learner_calibrator_window_or_result_selected") is not False
+        or freeze_contract.get("portfolio_optimization_run") is not False
+    ):
+        raise RuntimeError("The outcome-free calibrator freeze permits selection or optimization.")
+    if (
+        evidence.summary.get("protected_stages_run") != []
+        or evidence.summary.get("protected_artifacts_written") != []
+    ):
+        raise RuntimeError("The calibrator sensitivity reports a protected side effect.")
+
+    return {
+        "scope": (
+            "four_fixed_calibration_maps_by_eight_windows_by_pooled_plus_five_"
+            "common_uncalibrated_probability_q_raw_strata"
+        ),
+        "result_state": derived_result_state,
+        "run_tag": str(evidence.summary["run_tag"]),
+        "protocol_tag": str(evidence.summary["protocol_tag"]),
+        "protocol_commit": str(evidence.summary["protocol_commit"]),
+        "outcome_free_lineage": dict(cast(Mapping[str, Any], identities["outcome_free"])),
+        "evaluation_lineage": dict(cast(Mapping[str, Any], identities["evaluation"])),
+        "methods": list(CALIBRATOR_METHODS),
+        "counts": dict(counts),
+        "overall_cells_with_coverage_upper_below_nominal": below_count,
+        "overall_cells_with_coverage_upper_at_or_above_nominal": at_or_above_count,
+        "overall_result_census_by_method": method_census,
+        "findings": dict(evidence.findings),
+        "method_fit_rows": _json_safe_records(
+            method_fit_table,
+            label="calibrator fit diagnostics",
+        ),
+        "cell_rows": _json_safe_records(
+            cell_table,
+            label="calibrator complete cells",
+        ),
+        "pairwise_rows": _json_safe_records(
+            pairwise_table,
+            label="calibrator pairwise cells",
+        ),
+        "interpretation": {
+            **dict(interpretation),
+            "closed_family_complete_reporting": True,
+            "fit_metrics_same_sample_descriptive_only": True,
+            "common_q_raw_taxonomy": True,
+            "shared_loanwise_completion_for_pairwise_bounds": True,
+            "uniform_shortfall_not_established_is_not_true_coverage_dependence": True,
+            "temporal_transport_established": False,
+            "prospective_transport_established": False,
+            "calibrator_winner": None,
+            "selected_calibrator": None,
+            "portfolio_score_changed": False,
+            "portfolio_optimization_run": False,
+            "pre_existing_platt_score_remains_primary_portfolio_score": True,
+            "alternative_calibrator_maps_propagated_to_portfolio": False,
+        },
+    }
+
+
 def _stage_publication_generation(
     staging_root: Path,
     *,
@@ -3638,6 +3864,15 @@ def _build_evidence(staging_root: Path, *, promote: bool = True) -> Path:
     fit_label_lineage = cast(dict[str, Any], sensitivities["fit_label_completion"])
     granularity_lineage = cast(dict[str, Any], sensitivities["allocation_granularity"])
     label_mondrian_lineage = cast(dict[str, Any], sensitivities["label_mondrian"])
+    calibrator_lineage = cast(dict[str, Any], sensitivities["calibrator_family"])
+    calibrator_evidence = load_calibrator_sensitivity_evidence(
+        registered,
+        calibrator_lineage,
+        repo_root=ROOT,
+    )
+    calibrator_method_table = calibrator_method_publication_table(calibrator_evidence)
+    calibrator_cell_table = calibrator_overall_publication_table(calibrator_evidence)
+    calibrator_pairwise_table = calibrator_pairwise_publication_table(calibrator_evidence)
     v4 = _load_v4_inputs(registered, v4_lineage)
     config_path = v4.config_path
     summary_path = v4.summary_path
@@ -4093,6 +4328,7 @@ def _build_evidence(staging_root: Path, *, promote: bool = True) -> Path:
             "named_comparators": named_table,
             "credit_controls": credit_tables["credit_controls"],
             "credit_prediction_metrics": credit_tables["credit_prediction_metrics"],
+            "calibrator_fit_diagnostics": calibrator_method_table,
             "woe_iv_psi": credit_tables["woe_iv_psi"],
             "score_psi": credit_tables["score_psi"],
             "label_lag_sensitivity": lag_table.sort_values(["charged_off_lag_months", "window_id"]),
@@ -4123,6 +4359,8 @@ def _build_evidence(staging_root: Path, *, promote: bool = True) -> Path:
             "marginal_score_outcome_gap": (
                 frontiers.marginal_score_outcome_gap.publication_tables["gap"]
             ),
+            "calibrator_sensitivity_cells": calibrator_cell_table,
+            "calibrator_pairwise_shared_completion": calibrator_pairwise_table,
             "decision_catalog_metric_separation": (
                 frontiers.decision_catalog_transport.publication_tables["metric_separation"]
             ),
@@ -4207,6 +4445,12 @@ def _build_evidence(staging_root: Path, *, promote: bool = True) -> Path:
             "freeze": freeze_path,
             "summary": summary_path,
             "execution_receipt": v4_receipt_path,
+            **{
+                f"calibrator_family/{name.removeprefix('calibrator_sensitivity_')}": (
+                    registered[name]
+                )
+                for name in CALIBRATOR_SOURCE_KEYS
+            },
             "two_ruler/outcome_free/freeze": two_ruler_freeze_path,
             "two_ruler/manifest": two_ruler_manifest_path,
             "two_ruler/summary": two_ruler_summary_path,
@@ -4390,7 +4634,7 @@ def _build_evidence(staging_root: Path, *, promote: bool = True) -> Path:
     )
     paper_artifact_descriptors = _paper_artifact_descriptors(publication_generation)
     evidence = {
-        "schema_version": "2026-07-26.2",
+        "schema_version": "2026-07-30.1",
         "status": "active_ijds_v5_endpoint_reason_audited_paper_facing_evidence",
         "source_registry": {
             "schema_version": str(registry["schema_version"]),
@@ -4800,6 +5044,13 @@ def _build_evidence(staging_root: Path, *, promote: bool = True) -> Path:
             ),
         },
         "sensitivity": {
+            "calibrator_family": _calibrator_sensitivity_manifest_payload(
+                calibrator_evidence,
+                identities=calibrator_lineage,
+                method_fit_table=calibrator_method_table,
+                cell_table=calibrator_cell_table,
+                pairwise_table=calibrator_pairwise_table,
+            ),
             "evaluation_endpoint_availability": {
                 "scope": "complete_nonselective_retrospective_lag_grid",
                 "run_tag": str(endpoint_evidence.summary["run_tag"]),

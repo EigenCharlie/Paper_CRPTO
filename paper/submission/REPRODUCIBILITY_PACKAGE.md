@@ -18,8 +18,8 @@ instructions, and replay commands.
 | Environment | `pyproject.toml`, `uv.lock`, `justfile` |
 | Authority | Active claim registry, executable claim ledger, source registry, publication targets |
 | Method | Complete `src` package, active runners, evidence and paper builders |
-| Runs | 53 DVC pointers plus six exact Git artifact lineages for active roots, sensitivities, and replay dependencies |
-| Evidence | One manifest, 38 CSV tables, five figure families in PDF/PNG |
+| Runs | 53 DVC pointers plus seven exact scientific Git artifact lineages for active roots, sensitivities, and replay dependencies |
+| Evidence | One manifest, 41 CSV tables, five figure families in PDF/PNG |
 | Manuscript | QMD body/supplement, generated INFORMS TeX, bibliography |
 | Gates | Scientific tests, lint, typing, drift, claim sync, anonymity, PDF QA |
 
@@ -84,6 +84,40 @@ uv run --locked python scripts/experiments/run_ijds_label_mondrian_evaluation.py
 uv run --locked python scripts/experiments/run_ijds_policy_support_optimal_face_v2.py --config configs/experiments/ijds_policy_support_optimal_face_2026-07-21_v2.yaml
 uv run --locked python scripts/experiments/run_ijds_policy_support_rhs_semantics_recovery_v3a.py --config configs/experiments/ijds_policy_support_rhs_semantics_recovery_2026-07-21_v3a.yaml
 ```
+
+The calibrator family is a later Git-native two-phase lineage. From its
+recorded protocol P checkout, run only Phase A:
+
+```powershell
+uv run --locked python scripts/experiments/run_ijds_calibrator_sensitivity_v1.py freeze --config configs/experiments/ijds_calibrator_sensitivity_freeze_2026-07-30_v1.yaml
+```
+
+After verifying and sealing source artifact A and checking out the registered
+evaluation-lock B commit, run Phase B:
+
+```powershell
+uv run --locked python scripts/experiments/run_ijds_calibrator_sensitivity_v1.py evaluate --config configs/experiments/ijds_calibrator_sensitivity_evaluation_2026-07-30_v1.yaml
+```
+
+The P--A--B--C parent chain, four annotated tags, exact path census, and
+artifact hashes must match the source registry. The run reports all 192
+coverage/geometry and 288 shared-completion pairwise cells and performs no
+portfolio optimization.
+
+The exact pre-freeze chain is:
+
+- P: `protocol/ijds-calibrator-sensitivity-2026-07-30-v1` at
+  `808827926eff5030b3cb28d2b89a87a0e6210b2e`;
+- A: `artifacts/ijds-calibrator-sensitivity-2026-07-30-v1-source` at
+  `ea3e7326afc38ccc1b99b09de30792986640e3c3`;
+- B: `protocol/ijds-calibrator-sensitivity-evaluation-2026-07-30-v1` at
+  `753305e81e27f793acdea80b684b42e7eff2201d`; and
+- C: `artifacts/ijds-calibrator-sensitivity-2026-07-30-v1` at
+  `6552524eae5a22ce66b50689900383d16df1ff13`.
+
+All four tags are annotated; A is the single direct child of P, B of A, and C
+of B. Move these identifying references to the editor-only crosswalk when the
+submission-anonymity freeze is eventually activated.
 
 After the immutable V2 and V3a artifacts are materialized, rebuild their
 registered intermediate evidence and then the single primary numerical

@@ -20,10 +20,12 @@ abstract: |
   contrasts change, and pooled outcome direction is not embedding-invariant.
   Using 640,543 eligible 36-month loans, we freeze allocations before outcomes,
   reconstruct endpoint availability, and retain 12,076 of 376,890 primary
-  candidates as unresolved. Under the declared six-month Charged Off
-  availability rule, all 40 sharp all-candidate coverage upper bounds across
-  five frozen learners and eight residual windows are below 0.90 (maximum
-  0.8977). All five sharp mean-score-minus-prevalence intervals are negative
+  candidates as unresolved. Under the declared six-month Charged Off rule, all
+  40 sharp all-candidate upper bounds across five learners and eight windows
+  are below 0.90 (maximum 0.8977). A closed four-map CatBoost sensitivity
+  retains an upper endpoint below 0.90 in only 18/32 overall cells; uniform
+  closed-family shortfall is not established. All five sharp
+  mean-score-minus-prevalence intervals are negative
   (least-negative upper endpoint -0.0239). Shared-label bounds quantify
   adjacent-threshold response. Two outcome-blind rulers expose comparator
   dependence: all 216 endpoint envelopes over registered cap values spanning
@@ -149,7 +151,11 @@ split-conformal theorem. The finite-archive CatBoost coverage-shortfall pattern 
 semantics-preserving missing-value encodings, at two origins with equalized
 39-month administrative age, and under four declared fit-label scenarios, and a
 complete label-Mondrian sensitivity raises resolved-panel default coverage while
-expanding ambiguous sets without uniformly restoring nominal coverage. One score
+expanding ambiguous sets without uniformly restoring nominal coverage. It does
+not, however, persist uniformly over a separately frozen four-map CatBoost
+calibrator family: only 18/32 overall upper endpoints remain below 0.90.
+That complete sensitivity selects no calibrator and does not establish that true
+coverage depends on the map. One score
 stratum crosses the nominal $\alpha=0.10$ reference between W7 and W8 with an abrupt change
 in conformal geometry, but its W8 coverage bound remains below nominal and the
 crossing itself is not completion-invariant. Thus the crossing does not, by
@@ -474,10 +480,19 @@ full audit map and boundaries.
 
 # Method {#sec-method}
 
-The downstream construction has five paper-facing objects spanning four
-inferential layers; the funded-decision layer contains both the continuous
-coefficient and the resulting allocation. For one frozen score stratum
-$\mathcal C_g$,
+The construction spans five noninterchangeable inferential layers; the funded-
+decision layer contains both the continuous coefficient and the resulting
+allocation. Let $q_{\mathrm{raw},i}$ be the uncalibrated CatBoost probability
+and $h_c$ one of the four frozen score maps. The calibrator sensitivity audits
+
+$$
+q_{\mathrm{raw},i}\longrightarrow p_i^{(c)}
+=h_c(q_{\mathrm{raw},i})
+$$
+
+through the binary-set layer only. The optimization path fixes $c$ to the
+active Platt map. For one frozen score stratum $\mathcal C_g$ on that primary
+path,
 
 $$
 \{(p_j,Y_j):j\in\mathcal C_g\}\longrightarrow c_g,\qquad
@@ -518,16 +533,37 @@ design exists to avoid.
 
 Within each frozen learner specification, Platt scaling has a deliberately
 narrow role: it is a scalar map fitted once on the separate 2011 block and
-then frozen. Its use is not a claim that Platt is the best calibrator.
-Venn--Abers prediction is a different
-multiprobabilistic calibration construction with its own sampling contract
-[@vovk2014]; converting that object to the single score required by this LP
-would add another design choice. Neither method, by name alone, repairs
-temporal nonexchangeability, unavailable endpoints, or selection into funded
-exposure. We therefore report no Platt--Venn--Abers winner and do not perform a
-post-inspection calibrator contest; such a comparison would require a new
-outcome-free protocol that freezes every map and point conversion before OOT
-evaluation.
+then frozen. Its use is not a claim that Platt is the best calibrator. A
+separately tagged retrospective sensitivity freezes four maps of the same
+primary CatBoost base output on the same 14,077 availability-safe 2011 labels:
+the active Platt map (reused without refitting), increasing isotonic regression
+with clipped out-of-domain predictions [@zadrozny2002], beta calibration with
+the `abm` parameterization [@kull2017], and inductive Venn--Abers prediction
+[@vovk2014]. The active
+Platt edges are transformed exactly to the uncalibrated-probability
+$q_{\mathrm{raw}}$ scale, yielding one common five-group taxonomy with zero
+assignment changes; method-specific
+rebinning is forbidden. For each frozen map, Phase A fits five-stratum residual
+recipes in all eight windows; all four methods, the pooled panel, and all five
+common strata are reported.
+No CatBoost model is refitted.
+
+Venn--Abers returns a multiprobabilistic pair $(p_{i0},p_{i1})$. The declared
+point score is the standard positive-class scalarization
+
+$$
+p_i^\prime=\frac{p_{i1}}{1-p_{i0}+p_{i1}}.
+$$
+
+The runner retains and checks the pair, but $p_i^\prime$ does not inherit its
+multiprobability guarantee and is neither a latent-PD interval nor an
+authorized portfolio coefficient. Same-sample 2011 fit diagnostics are
+descriptive only. Phase B evaluates 192 method--window--scope cells and all 288
+unordered pairwise cells using one loan-wise unresolved-label completion per
+contrast. It performs no optimization and selects no calibrator, window,
+stratum, efficiency result, or pairwise contrast. Thus neither the comparison
+nor any method name repairs temporal nonexchangeability, unavailable
+endpoints, or selection into funded exposure.
 
 The raw-data contract predeclares mappings for structurally missing delinquency
 recency and sparsely recorded bankruptcy count, and a frozen sensitivity compares
@@ -1353,6 +1389,51 @@ below (maxima 0.8791 and 0.8753), as do all 32 cells from four declared
 completions of 215 cutoff-unavailable fit labels. These shared-chronology
 sensitivities are neither independent replications nor exact day-age matches.
 
+## Closed calibrator-family sensitivity is not uniform
+
+<!-- claim:calibration.closed_family_complete_state -->
+
+The separate CatBoost calibrator audit holds the base-score panel, common
+five-stratum taxonomy, eight residual windows, six-month endpoint, and
+loan-wise unresolved-outcome treatment fixed. It reports all four frozen maps
+without using OOT results to select among them:
+
+| CatBoost score map | Overall upper $<.90$ | Lowest lower | Highest upper | Resolved-coverage range | AvgC range |
+|---|---:|---:|---:|---:|---:|
+| Platt | 8/8 | 0.842485 | 0.882597 | 0.865855--0.879166 | 1.128128--1.183942 |
+| Isotonic | 1/8 | 0.870307 | 0.927345 | 0.892786--0.924940 | 1.199517--1.385794 |
+| Beta (`abm`) | 8/8 | 0.842485 | 0.882597 | 0.865855--0.879166 | 1.128128--1.183942 |
+| IVAP Venn--Abers scalar | 1/8 | 0.869933 | 0.922609 | 0.892455--0.920047 | 1.198090--1.359553 |
+
+: Complete overall state of the closed four-map CatBoost sensitivity. Bounds
+are sharp finite-archive identification intervals, not confidence intervals.
+{#tbl-calibrator-sensitivity}
+
+Only 18 of the 32 overall upper endpoints are below 0.90. Across the eight
+pooled shared-completion contrasts, every isotonic-minus-Platt finite-archive
+coverage-difference bound is strictly positive (all endpoints across windows,
+0.026069--0.055019), as is every IVAP-minus-Platt bound
+(0.025748--0.049587); Platt-minus-beta is exactly $[0,0]$ in all 48
+pooled-plus-stratum cells. These paired bounds describe the finite archive;
+they do not rank calibrators. For both isotonic and Venn--Abers, W2--W4 have
+lower endpoints above 0.90, W1 and W5--W7 contain 0.90, and only W8 lies below
+it. Platt and beta yield identical aggregate set-geometry counts and coverage
+estimates and bounds in all 48 pooled-plus-stratum cells, although their scalar
+scores and continuous interval widths are not identical. The active Platt
+branch reconciles all 48 corresponding baseline rows to maximum absolute
+difference $2.22\times10^{-16}$.
+
+The authorized conclusion is therefore
+`uniform_closed_family_shortfall_not_established`: the Platt result is not a
+uniform property of this closed score-map family. This does not establish that
+true coverage itself is calibrator-dependent, select a preferable map, or
+transfer the Venn multiprobability guarantee to its scalarization. Supplement
+Table S2C reports the four same-sample fit diagnostics; machine-readable Tables
+S6O and S6P report all 192 method--window--scope cells and all 288
+shared-completion pairwise cells. This sensitivity performs no portfolio
+optimization: the separate primary analysis continues to use the pre-existing
+Platt score, and none of the three alternative maps is propagated.
+
 ## Marginal score and residual-distribution transport
 
 <!-- claim:calibration.marginal_score_outcome_gap_all_five_negative -->
@@ -1682,8 +1763,9 @@ purpose cap, or LGD, while favorable cells under many scenarios prevent the
 opposite claim of universal harm. Structural sensitivity sharpens the
 identification boundary; it does not identify a preferred scenario.
 
-The audit has four noninterchangeable layers: marginal score level, residual
-distribution, candidate-set coverage, and the funded decision. Each of the 40
+The audit has five noninterchangeable layers: marginal score level, score
+calibration map, residual distribution, candidate-set coverage, and the funded
+decision. Each of the 40
 cell-specific coverage intervals gives the exact attainable finite-archive range
 under unrestricted loan-wise binary completion; they are not one joint interval
 across cells. The marginal gap and residual frontiers ask different questions
@@ -1696,14 +1778,17 @@ those p-values nor their nominal hierarchy. Funded count and exposure weighting
 change the estimand and inherit no candidate-set guarantee. Label-Mondrian is
 constructive precisely because it exposes a tradeoff: higher resolved-panel
 default coverage and more ambiguous sets, without uniform restoration of nominal
-coverage.
+coverage. The closed CatBoost score-map sensitivity adds a separate boundary:
+the all-below state persists for Platt and beta but not uniformly for isotonic
+or the IVAP scalar, without selecting a map or identifying a transport cause.
 
 Expanding the funded-decision layer into its coefficient and allocation
-handoffs gives the five-row claim-boundary card below.
+handoffs gives the six-row claim-boundary card below.
 
 | Observed or constructed object | What this paper may conclude | What does not pass automatically to the next layer |
 |---|---|---|
 | Marginal score and outcome levels | A sharp finite-archive interval for mean score minus default prevalence | Individual calibration, residual exchangeability, or a mechanism for coverage change |
+| Score calibration map | A complete finite-archive state for four frozen maps under one common uncalibrated-probability ($q_{\mathrm{raw}}$) taxonomy | A winning calibrator, true-coverage dependence, temporal transport, a Venn guarantee for $p^\prime$, or portfolio robustness |
 | Residual distributions and thresholds | Exact finite binary geometry and a scoped joint-block reference diagnostic | Prospective temporal validity, continuity in threshold distance, or a universal phase |
 | Candidate binary sets | Sharp finite-archive candidate-coverage ranges | A latent-PD interval, a unique continuous endpoint, or selected-set validity |
 | Continuous embedding | A declared LP coefficient and a complete set-preserving sensitivity | Conformal calibration of its magnitude, a preferred embedding, or global decision invariance |
@@ -1830,6 +1915,13 @@ exhaustive nonlinear bounds. The post-inspection 31/40 joint-block result has no
 post-selection familywise-error guarantee; its nine nonflags do not validate
 transport and it does not directly test the usual one-future-point guarantee.
 Label-Mondrian requires within-category exchangeability, which is not established.
+The calibrator sensitivity is likewise retrospective and reuses the same
+14,077 inspected 2011 labels and 376,890-candidate target panel. Its common
+uncalibrated-probability taxonomy isolates the score map but does not exhaust other
+calibrators or establish prospective transport. Same-sample fit metrics cannot
+rank the maps; the IVAP scalar is not a Venn multiprobability guarantee or
+latent-PD interval; and none of the alternative maps is evaluated in the
+portfolio optimizer.
 The individual-age comparison aligns whole calendar months, not exact origination
 days. The finite ruler grid, one-moment C2, point-cap support, and solver-path basis
 cover are not a certified continuous joint frontier; the structural grid is
@@ -1838,12 +1930,12 @@ is neither a pristine lockbox nor a preregistration.
 
 # Reproducibility {#sec-reproducibility}
 
-One registry binds 53 DVC pointers and six exact Git artifact lineages: V8
-common-panel response, V3I marginal gap, residual-distribution frontier,
-decision catalog, funded-estimand audit, and the two-stage set-preserving-
-embedding chain. Publication replay regenerates 38 tables and five figure
-families in both PNG and PDF; Online
-Supplement Appendix F specifies both replay modes.
+One registry binds 53 DVC pointers and seven exact scientific Git artifact
+lineages: V8 common-panel response, V3I marginal gap, residual-distribution
+frontier, decision catalog, funded-estimand audit, the two-stage set-preserving-
+embedding chain, and the four-commit calibrator-sensitivity chain. Publication
+replay regenerates 41 tables and five figure families in both PNG and PDF;
+Online Supplement Appendix F specifies both replay modes.
 
 # Conclusion {#sec-conclusion}
 
@@ -1856,7 +1948,10 @@ validity.
 Exact binary geometry identifies the calibration threshold and the target mass
 crossed between thresholds, but does not supply a universal degeneracy or transport
 claim. Label-Mondrian redistributes class coverage without uniformly restoring
-nominal coverage. Portfolio direction changes with the outcome-blind ruler and
+nominal coverage. The closed CatBoost calibrator sensitivity retains an upper
+endpoint below nominal in 18/32 overall cells, so it does not establish a
+uniform four-map shortfall and selects no map. Portfolio direction changes with
+the outcome-blind ruler and
 coordinate, and all 216 endpoint envelopes over the finite registered cap
 values spanning $[0.05,0.12]$ include zero; continuous-support extrema are not
 computed. The marginal score gap, residual-distribution frontier, worst-catalog

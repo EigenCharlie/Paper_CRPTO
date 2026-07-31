@@ -277,7 +277,7 @@ def test_active_evidence_registry_verifies_every_source() -> None:
         ROOT / "configs/ijds_active_evidence_sources.yaml",
         repo_root=ROOT,
     )
-    assert payload["schema_version"] == "2026-07-29.1"
+    assert payload["schema_version"] == "2026-07-30.2"
     assert set(sources) == {
         "v4_config",
         "v4_summary",
@@ -382,6 +382,27 @@ def test_active_evidence_registry_verifies_every_source() -> None:
         "fit_label_completion_summary",
         "allocation_granularity_freeze",
         "allocation_granularity_summary",
+        "calibrator_sensitivity_freeze_config",
+        "calibrator_sensitivity_evaluation_config",
+        "calibrator_sensitivity_protocol",
+        "calibrator_sensitivity_evaluation_lock",
+        "calibrator_sensitivity_runner",
+        "calibrator_sensitivity_implementation",
+        "calibrator_sensitivity_protocol_runner",
+        "calibrator_sensitivity_source_freeze",
+        "calibrator_sensitivity_source_receipt",
+        "calibrator_sensitivity_calibrator_family",
+        "calibrator_sensitivity_taxonomy",
+        "calibrator_sensitivity_residual_recipes",
+        "calibrator_sensitivity_calibration_fit_diagnostics",
+        "calibrator_sensitivity_recipe_audit",
+        "calibrator_sensitivity_outcome_free_geometry",
+        "calibrator_sensitivity_evaluation_summary",
+        "calibrator_sensitivity_evaluation_receipt",
+        "calibrator_sensitivity_evaluation",
+        "calibrator_sensitivity_overall",
+        "calibrator_sensitivity_pairwise",
+        "calibrator_sensitivity_platt_v5_reconciliation",
     }
     assert len(payload["dvc_pointers"]) == 53
     assert payload["lineages"]["binary_geometry"]["evaluation"]["run_tag"].endswith("2026-07-15-v5")

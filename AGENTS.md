@@ -60,6 +60,11 @@ order before changing scientific code or paper claims:
    - exact feasible-difference score-order equivalence, two-ruler
      consequences, set-preserving counterexample, and local optimal-face
      boundary.
+16c8. [`docs/research/ijds_calibrator_sensitivity_v1_protocol_2026-07-30.md`](docs/research/ijds_calibrator_sensitivity_v1_protocol_2026-07-30.md)
+   - active closed four-map CatBoost sensitivity, common
+     uncalibrated-probability taxonomy, and no-optimization boundary.
+16c8a. [`docs/research/ijds_calibrator_sensitivity_v1_evaluation_lock_2026-07-30.md`](docs/research/ijds_calibrator_sensitivity_v1_evaluation_lock_2026-07-30.md)
+   - endpoint lock and four-commit Git transport contract.
 16d. [`docs/research/ijds_raw_data_acquisition_provenance_2026-07-21.md`](docs/research/ijds_raw_data_acquisition_provenance_2026-07-21.md)
    - verified local file identity versus unconfirmed acquisition history.
 16e. [`docs/research/ijds_submission_rights_anonymity_audit_2026-07-21.md`](docs/research/ijds_submission_rights_anonymity_audit_2026-07-21.md)
@@ -106,6 +111,11 @@ decision invariance. The exact invariant is positive-affine equivalence modulo
 the orthogonal complement of feasible allocation differences. Failure permits
 but does not force a change at a fixed cell, and one common solver output does
 not certify equal optimal faces.
+The calibrator-family result is
+`uniform_closed_family_shortfall_not_established`: 18/32 pooled upper endpoints
+are below 0.90. It neither selects a map nor establishes that true coverage
+depends on the calibrator, transfers a Venn guarantee to the IVAP scalar, or
+supports a portfolio claim.
 
 The V6 geometry and post-freeze diagnostic replays dated 2026-07-26 are
 non-active candidates in quarantine. Their protocols/configurations were not
@@ -128,6 +138,9 @@ Minimum rules:
   is active.
 - The five learner specifications are coverage controls; only the primary
   CatBoost enters portfolio optimization and no OOT model winner is active.
+- The four CatBoost calibrator maps are a complete retrospective sensitivity
+  under one common `q_raw` taxonomy; no calibrator winner or alternative-map
+  optimization is active.
 - Historical V1--V3, structural-sensitivity V1--V5, selected-policy,
   compact-v7, pool93, and A1--A40 materials are provenance, not evidence for
   the active manuscript.

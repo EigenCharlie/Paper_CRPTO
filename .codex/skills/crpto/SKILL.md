@@ -41,13 +41,15 @@ Read first:
 27. `docs/research/ijds_decision_catalog_transport_v1_protocol_2026-07-29.md`
 28. `docs/research/ijds_funded_selection_estimand_audit_v1_protocol_2026-07-29.md`
 29. `docs/research/ijds_set_preserving_embedding_sensitivity_v1d_protocol_2026-07-30.md`
-30. `docs/research/applied_conformal_prediction_book_audit_2026-07-21.md`
-31. `docs/research/conformal_literature_corpus_audit_2026-07-21.md`
-32. `reports/crpto/ijds_binary_geometry_frontier_v4_evidence.json`
-33. `docs/ACADEMIC_CONTEXT.md`
-34. `docs/SCOPE_AND_GOVERNANCE.md`
-35. `CONTRIBUTING.md`
-36. `EXTRACTION_MANIFEST.md`
+30. `docs/research/ijds_calibrator_sensitivity_v1_protocol_2026-07-30.md`
+31. `docs/research/ijds_calibrator_sensitivity_v1_evaluation_lock_2026-07-30.md`
+32. `docs/research/applied_conformal_prediction_book_audit_2026-07-21.md`
+33. `docs/research/conformal_literature_corpus_audit_2026-07-21.md`
+34. `reports/crpto/ijds_binary_geometry_frontier_v4_evidence.json`
+35. `docs/ACADEMIC_CONTEXT.md`
+36. `docs/SCOPE_AND_GOVERNANCE.md`
+37. `CONTRIBUTING.md`
+38. `EXTRACTION_MANIFEST.md`
 
 Active evidence:
 
@@ -109,6 +111,11 @@ Active evidence:
   binary set, reports the complete theta-by-gamma allocation and outcome census,
   and selects no embedding, ruler, coordinate, or policy. V1c is failed
   persistence provenance and supports no claim.
+- The active calibrator sensitivity uses one exact four-commit
+  protocol-to-source-to-evaluation-lock-to-result chain. It reports Platt,
+  isotonic, beta `abm`, and the IVAP Venn--Abers scalar over all eight windows,
+  `ALL` plus five common `q_raw` strata, and all six unordered method pairs. It
+  selects no map and performs no optimization.
 - Calibre runs optimized Python (`sys.flags.optimize == 2`): never use
   `assert` as a runtime or scientific guard in `src/**` or `scripts/**`;
   raise an explicit exception so the check survives execution.
@@ -121,6 +128,11 @@ Headline evidence:
 - monotonic CatBoost, platform WOE, and pricing-excluded WOE maxima are
   `0.886489`, `0.894908`, and `0.897726`; all 40 finite-archive upper endpoints
   are below nominal, which alone is not a theorem-failure claim;
+- the closed CatBoost calibrator sensitivity has `18/32` pooled upper endpoints
+  below 0.90: Platt `8/8`, isotonic `1/8`, beta `8/8`, and the IVAP scalar
+  `1/8`. The state is `uniform_closed_family_shortfall_not_established`, not a
+  calibrator winner, true-coverage-dependence result, Venn-guarantee transfer,
+  or portfolio result;
 - the joint-block combined-rank lineage places `31/40` learner-window nulls
   past locked nominal thresholds: `8/8` CatBoost, `4/8` logistic, `8/8`
   monotonic CatBoost, `6/8` platform WOE, and `5/8` pricing-excluded WOE. A flag
@@ -198,6 +210,10 @@ Preserve these distinctions:
 - constant-score phase proposition versus varying-score empirical strata;
 - overlapping residual windows versus independent replications;
 - Platt score and plug-in objective versus true conditional probability;
+- one common uncalibrated-probability (`q_raw`) taxonomy versus
+  method-specific retaxonomy; closed-family finite-archive state versus a
+  calibrator winner or true-coverage dependence; and the IVAP pair versus its
+  scalarization;
 - candidate coverage versus funded-set validity;
 - objective-matched opportunity cost versus normalized-score relaxation;
 - finite three-coordinate diagnostics versus a continuous joint frontier;
@@ -234,7 +250,9 @@ deployment result, missingness mechanism, independent temporal replication,
 conformal theorem failure from a realized shortfall, ordinary one-point
 validity refuted by a joint-block flag, exchangeability from a nonflag,
 post-selection FWER, an identified shift mechanism from a flag, or label-Mondrian
-repair/equalized coverage.
+repair/equalized coverage. Do not claim a calibrator winner, transfer a Venn
+multiprobability guarantee to the scalar, or infer portfolio robustness from
+the no-optimization calibrator sensitivity.
 
 ## Evidence Workflow
 
@@ -258,8 +276,10 @@ The active builder verifies the V4, two-ruler, raw-data, credit-control,
 endpoint, structural, rolling-primary recovery, conformal-set diagnostic,
 joint-block rank reference, common-panel V8, individual-age follow-up,
 label-Mondrian, fit-label completion, and allocation-granularity
-manifests/freezes, the set-preserving-embedding two-stage Git lineage, and every
-artifact descriptor. The active capsule contains 53 DVC pointers. It emits 38
+manifests/freezes, the set-preserving-embedding two-stage Git lineage, the
+calibrator-sensitivity four-commit Git lineage, and every artifact descriptor.
+The active capsule contains 53 DVC pointers and seven scientific Git artifact
+lineages. It emits 41
 paper-facing CSV tables and five figure families
 in PNG and PDF under the `crpto_ijds_v4_*` naming family, and
 `ijds_binary_geometry_frontier_v4_evidence.json`. Consecutive builds must be

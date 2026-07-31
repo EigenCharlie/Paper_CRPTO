@@ -70,6 +70,7 @@ quality = [
 ]
 repro = [
     "dvc[s3]>=3.60",
+    "gitpython>=3.1.55", # Security floor for DVC/scmrepo's GitPython dependency.
 ]
 
 [project.urls]

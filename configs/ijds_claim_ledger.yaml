@@ -1,4 +1,4 @@
-schema_version: "2026-07-30.1"
+schema_version: "2026-07-30.2"
 status: active_ijds_claim_contract
 
 surfaces:
@@ -572,6 +572,31 @@ claims:
       [individual_calibration, conditional_calibration, model_ranking,
        model_winner, conformal_mechanism, sampling_interval, causal_effect,
        prospective_validity]
+    surfaces:
+      required: [body, supplement, registry, claim_matrix]
+      allowed: [body, supplement, registry, claim_matrix]
+
+  - id: calibration.closed_family_complete_state
+    status: active
+    kind: empirical
+    rule: equals
+    result_pointer: /sensitivity/calibrator_family/result_state
+    expected: uniform_closed_family_shortfall_not_established
+    lineages:
+      [calibrator_family.outcome_free, calibrator_family.evaluation,
+       binary_geometry.evaluation]
+    scope: primary_catboost_base_score_active_platt_reused_without_refit_and_three_alternative_maps_fit_on_the_same_14077_row_2011_block_eight_primary_windows_one_common_five_stratum_uncalibrated_probability_q_raw_taxonomy_six_month_endpoint_all_plus_five_strata_and_shared_unresolved_binary_completion_without_optimization
+    forbidden_inference:
+      [calibrator_winner, platt_superiority, isotonic_superiority,
+       beta_superiority, ivap_superiority,
+       venn_multiprobability_guarantee_for_scalar_p_prime,
+       individual_calibration, conditional_calibration, true_coverage_dependence,
+       temporal_exchangeability, temporal_transport, prospective_transport,
+       conformal_theorem_failure, sampling_confidence_interval,
+       missing_at_random, independent_windows, method_specific_retaxonomy,
+       post_result_selection, selected_set_validity, funded_set_validity,
+       portfolio_robustness, policy_conclusion,
+       joint_attainability_across_overlapping_cells]
     surfaces:
       required: [body, supplement, registry, claim_matrix]
       allowed: [body, supplement, registry, claim_matrix]

@@ -2,16 +2,21 @@
 
 from __future__ import annotations
 
+import hashlib
+import json
 import os
+from dataclasses import replace
 from pathlib import Path
 
 import pandas as pd
 import pytest
 
 from scripts.build_ijds_binary_geometry_frontier_v4_evidence import (
+    CALIBRATOR_SOURCE_KEYS,
     CREDIT_LEARNER_ORDER,
     FIGURE_STEMS,
     TABLE_TARGETS,
+    _calibrator_sensitivity_manifest_payload,
     _common_panel_threshold_response_census_figure,
     _common_panel_threshold_response_figure,
     _phase_transition_publication_table,
@@ -20,13 +25,21 @@ from scripts.build_ijds_binary_geometry_frontier_v4_evidence import (
     _require_coverage_contract,
 )
 from src.ijds_audit import publication_generation
+from src.ijds_audit.calibrator_sensitivity_evidence import (
+    calibrator_method_publication_table,
+    calibrator_overall_publication_table,
+    calibrator_pairwise_publication_table,
+    load_calibrator_sensitivity_evidence,
+)
 from src.ijds_audit.publication_generation import (
     PUBLICATION_IMPLEMENTATION_PATHS,
     promote_publication_generation,
     publication_implementation_descriptors,
+    require_historical_git_blob_descriptor,
     staged_artifact_descriptor,
     staged_output_path,
 )
+from src.ijds_audit.publication_sources import load_verified_source_registry
 
 REPO = Path(__file__).resolve().parents[2]
 
@@ -176,9 +189,117 @@ def test_phase_table_handles_alpha_boundary_when_n_plus_one_is_a_multiple_of_ten
 
 
 def test_publication_inventory_is_derived_from_declared_targets() -> None:
-    assert len(TABLE_TARGETS) == 38
+    assert len(TABLE_TARGETS) == 41
     assert len(FIGURE_STEMS) == 5
-    assert len(TABLE_TARGETS) + 2 * len(FIGURE_STEMS) == 48
+    assert len(TABLE_TARGETS) + 2 * len(FIGURE_STEMS) == 51
+    assert {
+        "calibrator_fit_diagnostics",
+        "calibrator_sensitivity_cells",
+        "calibrator_pairwise_shared_completion",
+    }.issubset(TABLE_TARGETS)
+    assert len(CALIBRATOR_SOURCE_KEYS) == 21
+    assert len(set(CALIBRATOR_SOURCE_KEYS)) == 21
+
+
+def test_historical_v8_lock_is_verified_at_its_protocol_commit() -> None:
+    summary_path = (
+        REPO
+        / "models/experiments/ijds_audit/ijds-common-panel-threshold-response-2026-07-26-v8"
+        / "common_panel_threshold_response_v8_summary.json"
+    )
+    summary = json.loads(summary_path.read_text(encoding="utf-8"))
+    descriptor = summary["implementation_provenance"]["source_files"]["uv.lock"]
+    protocol_commit = summary["protocol_commit"]
+
+    assert hashlib.sha256((REPO / "uv.lock").read_bytes()).hexdigest() != descriptor["sha256"]
+    require_historical_git_blob_descriptor(
+        descriptor,
+        commit=protocol_commit,
+        relative_path="uv.lock",
+        repo_root=REPO,
+        label="test V8 uv.lock",
+    )
+
+    corrupted = {**descriptor, "sha256": "0" * 64}
+    with pytest.raises(RuntimeError, match="pinned historical Git blob"):
+        require_historical_git_blob_descriptor(
+            corrupted,
+            commit=protocol_commit,
+            relative_path="uv.lock",
+            repo_root=REPO,
+            label="test corrupted V8 uv.lock",
+        )
+    for commit, relative_path in (
+        ("HEAD", "uv.lock"),
+        (protocol_commit, "../uv.lock"),
+        (protocol_commit, ""),
+    ):
+        with pytest.raises(RuntimeError, match="invalid historical descriptor"):
+            require_historical_git_blob_descriptor(
+                descriptor,
+                commit=commit,
+                relative_path=relative_path,
+                repo_root=REPO,
+                label="test invalid V8 identity",
+            )
+
+
+def test_calibrator_manifest_is_derived_from_the_complete_overall_grid() -> None:
+    registry, registered = load_verified_source_registry(
+        REPO / "configs/ijds_active_evidence_sources.yaml",
+        repo_root=REPO,
+    )
+    identities = registry["sensitivities"]["calibrator_family"]
+    evidence = load_calibrator_sensitivity_evidence(
+        registered,
+        identities,
+        repo_root=REPO,
+    )
+    method_table = calibrator_method_publication_table(evidence)
+    cell_table = calibrator_overall_publication_table(evidence)
+    pairwise_table = calibrator_pairwise_publication_table(evidence)
+
+    payload = _calibrator_sensitivity_manifest_payload(
+        evidence,
+        identities=identities,
+        method_fit_table=method_table,
+        cell_table=cell_table,
+        pairwise_table=pairwise_table,
+    )
+
+    assert payload["result_state"] == "uniform_closed_family_shortfall_not_established"
+    assert payload["overall_cells_with_coverage_upper_below_nominal"] == 18
+    assert payload["overall_cells_with_coverage_upper_at_or_above_nominal"] == 14
+    assert len(payload["method_fit_rows"]) == 4
+    assert len(payload["cell_rows"]) == 192
+    assert len(payload["pairwise_rows"]) == 288
+    assert payload["interpretation"]["calibrator_winner"] is None
+    assert payload["interpretation"]["portfolio_optimization_run"] is False
+    assert payload["interpretation"]["pre_existing_platt_score_remains_primary_portfolio_score"]
+    assert payload["interpretation"]["alternative_calibrator_maps_propagated_to_portfolio"] is False
+    assert payload["interpretation"][
+        "uniform_shortfall_not_established_is_not_true_coverage_dependence"
+    ]
+    assert payload["interpretation"]["temporal_transport_established"] is False
+    assert payload["interpretation"]["prospective_transport_established"] is False
+    json.dumps(payload, allow_nan=False)
+
+    frames = dict(evidence.frames)
+    mutated_overall = frames["overall"].copy()
+    first_true = mutated_overall.index[
+        mutated_overall["coverage_upper_below_nominal"].astype(bool)
+    ][0]
+    mutated_overall.loc[first_true, "coverage_upper_below_nominal"] = False
+    frames["overall"] = mutated_overall
+    mutated = replace(evidence, frames=frames)
+    with pytest.raises(RuntimeError, match="result census changed"):
+        _calibrator_sensitivity_manifest_payload(
+            mutated,
+            identities=identities,
+            method_fit_table=method_table,
+            cell_table=cell_table,
+            pairwise_table=pairwise_table,
+        )
 
 
 def test_closed_coverage_contract_fails_on_invalid_bounds_or_denominators() -> None:
@@ -290,6 +411,7 @@ def test_implementation_inventory_binds_every_acceptance_dependency() -> None:
         "publication_table_schemas",
         "v4_config_loader",
         "grid_contracts",
+        "calibrator_sensitivity/loader",
         "endpoint_availability_sensitivity/loader",
         "portfolio_structure_sensitivity/loader",
         "robustness_sensitivities/loader",

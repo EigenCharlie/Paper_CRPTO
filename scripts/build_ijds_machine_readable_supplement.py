@@ -25,6 +25,9 @@ ROOT = Path(__file__).resolve().parents[1]
 TABLE_DIR = ROOT / "reports" / "crpto" / "tables"
 OUTPUT = ROOT / "paper" / "submission" / "CRPTO_ijds_machine_readable_supplement.zip"
 SOURCE_FILENAMES = {
+    "Table_S2C_calibrator_fit_diagnostics.csv": (
+        "crpto_ijds_v4_tableS2C_calibrator_fit_diagnostics.csv"
+    ),
     "Table_S6B_exchangeability_cells.csv": "crpto_ijds_v4_tableS6B_exchangeability_cells.csv",
     "Table_S6C_exchangeability_strata.csv": "crpto_ijds_v4_tableS6C_exchangeability_strata.csv",
     "Table_S6D_label_mondrian_cells.csv": "crpto_ijds_v4_tableS6D_label_mondrian_cells.csv",
@@ -46,6 +49,12 @@ SOURCE_FILENAMES = {
     ),
     "Table_S6N_marginal_score_outcome_gap.csv": (
         "crpto_ijds_v4_tableS6N_marginal_score_outcome_gap.csv"
+    ),
+    "Table_S6O_calibrator_sensitivity_cells.csv": (
+        "crpto_ijds_v4_tableS6O_calibrator_sensitivity_cells.csv"
+    ),
+    "Table_S6P_calibrator_pairwise_shared_completion.csv": (
+        "crpto_ijds_v4_tableS6P_calibrator_pairwise_shared_completion.csv"
     ),
     "Table_S9G_decision_catalog_metric_separation.csv": (
         "crpto_ijds_v4_tableS9G_decision_catalog_metric_separation.csv"
@@ -75,6 +84,10 @@ def _columns(*parts: str) -> tuple[str, ...]:
     return tuple("".join(parts).split(","))
 
 
+S2C_COLUMNS: Final = _columns(
+    "method,rows,default_rate,roc_auc,brier,log_loss,ece_10,",
+    "venn_multiprobability_gap_mean,same_sample_descriptive_only,selection_metric",
+)
 S6C_COLUMNS: Final = _columns(
     "learner,learner_label,window,window_id,taxonomy_groups,score_stratum,",
     "conformal_group,role,fit_rows,finite_sample_rank,beta_a,beta_b,",
@@ -216,6 +229,23 @@ S6N_COLUMNS: Final = _columns(
     "marginal_mean_score_outcome_gap_lower,marginal_mean_score_outcome_gap_upper,",
     "identification_width,identified_grid_points,identified_grid_step,",
     "joint_endpoint_attainment",
+)
+S6O_COLUMNS: Final = _columns(
+    "method,window_id,taxonomy_groups,role,conformal_group,candidate_rows,resolved_rows,",
+    "unresolved_rows,coverage_resolved,coverage_lower,coverage_upper,",
+    "coverage_resolved_y0,coverage_resolved_y1,rows,mean_width,average_set_size,",
+    "singleton_share,set_empty_count,set_empty_share,set_zero_only_count,",
+    "set_zero_only_share,set_one_only_count,set_one_only_share,set_both_count,",
+    "set_both_share,lower_positive_share,upper_saturated_share,width_q00,width_q10,",
+    "width_q25,width_q50,width_q75,width_q90,width_q100,score_min,score_max,fit_rows,",
+    "fit_prevalence,fit_residual_quantile,fit_score_min,fit_score_max,",
+    "scores_below_fit_range,scores_above_fit_range,venn_multiprobability_gap_mean,",
+    "venn_multiprobability_gap_q50,coverage_upper_below_nominal",
+)
+S6P_COLUMNS: Final = _columns(
+    "method_a,method_b,window_id,taxonomy_groups,role,conformal_group,candidate_rows,",
+    "resolved_rows,unresolved_rows,coverage_difference_resolved,",
+    "coverage_difference_lower,coverage_difference_upper,shared_loanwise_completion",
 )
 S9G_COLUMNS: Final = _columns(
     "metric,target_blocks,minimum_target_lower,development_maximum_upper,",
@@ -369,12 +399,40 @@ WINDOWS: Final = tuple(WINDOW_METADATA)
 GROUPS_ZERO_BASED: Final = tuple(str(value) for value in range(5))
 STRATA_ONE_BASED: Final = tuple(str(value) for value in range(1, 6))
 PAIRS: Final = tuple(str(value) for value in range(7))
+CALIBRATOR_METHODS: Final = ("platt", "isotonic", "beta", "venn_abers")
+CALIBRATOR_GROUPS: Final = ("-1", *GROUPS_ZERO_BASED)
+CALIBRATOR_PAIRS: Final = (
+    ("platt", "isotonic"),
+    ("platt", "beta"),
+    ("platt", "venn_abers"),
+    ("isotonic", "beta"),
+    ("isotonic", "venn_abers"),
+    ("beta", "venn_abers"),
+)
+CALIBRATOR_PAIR_KEYS: Final = frozenset(
+    (method_a, method_b, window, group)
+    for method_a, method_b in CALIBRATOR_PAIRS
+    for window in WINDOWS
+    for group in CALIBRATOR_GROUPS
+)
 BOOLEAN_DOMAIN: Final = frozenset({"True", "False"})
 IDENTIFICATION_STATE_DOMAIN: Final = frozenset(
     {"robust_shortfall", "crosses_nominal", "robust_at_or_above_nominal", "undefined"}
 )
 
 TABLE_CONTRACTS: Final = {
+    "Table_S2C_calibrator_fit_diagnostics.csv": CsvContract(
+        columns=S2C_COLUMNS,
+        rows=4,
+        key_columns=("method",),
+        expected_keys=_grid(CALIBRATOR_METHODS),
+        exact_domains={
+            "method": frozenset(CALIBRATOR_METHODS),
+            "rows": frozenset({"14077"}),
+            "same_sample_descriptive_only": frozenset({"True"}),
+            "selection_metric": frozenset({"False"}),
+        },
+    ),
     "Table_S6B_exchangeability_cells.csv": CsvContract(
         columns=S6B_PUBLICATION_COLUMNS,
         rows=40,
@@ -505,6 +563,33 @@ TABLE_CONTRACTS: Final = {
             "joint_endpoint_attainment": frozenset({"True"}),
         },
     ),
+    "Table_S6O_calibrator_sensitivity_cells.csv": CsvContract(
+        columns=S6O_COLUMNS,
+        rows=192,
+        key_columns=("method", "window_id", "conformal_group"),
+        expected_keys=_grid(CALIBRATOR_METHODS, WINDOWS, CALIBRATOR_GROUPS),
+        exact_domains={
+            "method": frozenset(CALIBRATOR_METHODS),
+            "taxonomy_groups": frozenset({"5"}),
+            "role": frozenset({"primary_oot"}),
+            "conformal_group": frozenset(CALIBRATOR_GROUPS),
+            "coverage_upper_below_nominal": BOOLEAN_DOMAIN,
+        },
+    ),
+    "Table_S6P_calibrator_pairwise_shared_completion.csv": CsvContract(
+        columns=S6P_COLUMNS,
+        rows=288,
+        key_columns=("method_a", "method_b", "window_id", "conformal_group"),
+        expected_keys=CALIBRATOR_PAIR_KEYS,
+        exact_domains={
+            "method_a": frozenset(CALIBRATOR_METHODS),
+            "method_b": frozenset(CALIBRATOR_METHODS),
+            "taxonomy_groups": frozenset({"5"}),
+            "role": frozenset({"primary_oot"}),
+            "conformal_group": frozenset(CALIBRATOR_GROUPS),
+            "shared_loanwise_completion": frozenset({"True"}),
+        },
+    ),
     "Table_S9G_decision_catalog_metric_separation.csv": CsvContract(
         columns=S9G_COLUMNS,
         rows=3,
@@ -585,12 +670,13 @@ TABLE_CONTRACTS: Final = {
 }
 README = """Anonymous machine-readable online supplement
 
-These sixteen aggregate CSV files provide the complete cell, score-stratum,
-label-category, common-panel adjacent-threshold, residual-distribution,
-marginal score-outcome, decision-catalog, and funded-estimand rows summarized
-by PDF Tables S6B, S6D, S6F, S6J--S6N, and S9G--S9L. S6C, S6E, and S6M are
-machine-readable-only tables because their 200-row layouts are unsuitable for
-a reviewer PDF.
+These nineteen aggregate CSV files provide the complete calibration-fit, cell,
+score-stratum, label-category, common-panel adjacent-threshold,
+residual-distribution, marginal score-outcome, calibrator-pair, decision-catalog,
+and funded-estimand rows summarized by PDF Tables S2C, S6B, S6D, S6F,
+S6J--S6P, and S9G--S9L. S6C, S6E, S6M, and the stratum rows of S6O are
+machine-readable-first layouts because their 192--200-row grids are unsuitable
+for complete display in a reviewer PDF.
 
 The joint-block columns preserve the executed calculation while using active
 reporting names. A threshold flag is a retrospective nominal reporting flag,
@@ -613,6 +699,15 @@ calibration. Decision-catalog rows concern the worst loss over the fixed
 catalog, not every policy. Funded-estimand rows keep count, invested-dollar,
 and fixed-capital weightings distinct and do not establish FCR or selected-set
 validity.
+
+The calibrator tables report all four same-sample 2011 fit diagnostics, all 192
+pooled-plus-stratum evaluation cells, and all 288 pairwise cells under one
+common uncalibrated-probability taxonomy. Pairwise bounds share each loanwise
+unresolved completion across the two methods. These retrospective rows select
+no calibrator, rank no method from the fit diagnostics, transfer no Venn--Abers
+multiprobability guarantee to the scalar score, and perform no portfolio
+optimization. The separate primary portfolio analysis already uses the
+pre-existing Platt score; none of the three alternative maps is propagated.
 
 The set-preserving embedding tables report the full allocation-change and
 descriptive direction censuses from a retrospective post-inspection
@@ -662,6 +757,9 @@ FORBIDDEN_FINGERPRINT_PATTERNS = (
 TEXT_COLUMNS: Final = frozenset(
     {
         "estimand",
+        "method",
+        "method_a",
+        "method_b",
         "learner",
         "learner_label",
         "score_column",
@@ -709,6 +807,15 @@ BOOLEAN_COLUMNS: Final = frozenset(
         "joint_endpoint_attainment",
         "all_target_blocks_exceed_development",
         "exceeds_all_development_upper",
+        "same_sample_descriptive_only",
+        "selection_metric",
+        "shared_loanwise_completion",
+    }
+)
+OPTIONAL_NUMERIC_COLUMNS: Final = frozenset(
+    {
+        "venn_multiprobability_gap_mean",
+        "venn_multiprobability_gap_q50",
     }
 )
 EXPLICIT_INTEGER_COLUMNS: Final = frozenset(
@@ -840,6 +947,23 @@ def _validate_numeric_domain(
             "identification_width",
             "label_prevalence_lower",
             "label_prevalence_upper",
+            "default_rate",
+            "roc_auc",
+            "brier",
+            "ece_10",
+            "fit_prevalence",
+            "mean_width",
+            "lower_positive_share",
+            "upper_saturated_share",
+            "width_q00",
+            "width_q10",
+            "width_q25",
+            "width_q50",
+            "width_q75",
+            "width_q90",
+            "width_q100",
+            "venn_multiprobability_gap_mean",
+            "venn_multiprobability_gap_q50",
         }
     ):
         lower, upper = 0.0, 1.0
@@ -853,7 +977,7 @@ def _validate_numeric_domain(
         "delta_width",
     }:
         lower, upper = -1.0, 1.0
-    elif column in {"score_sum", "null_expected_misses"}:
+    elif column in {"score_sum", "null_expected_misses", "log_loss"}:
         lower = 0.0
     elif column in {"allocation_change_fraction", "maximum_upper_contraction"}:
         lower, upper = 0.0, 1.0
@@ -1009,6 +1133,8 @@ def _validate_row_identities(
         "Table_S6E_label_mondrian_strata.csv",
         "Table_S6J_common_panel_threshold_response_strata.csv",
         "Table_S6K_common_panel_threshold_response_learners.csv",
+        "Table_S6O_calibrator_sensitivity_cells.csv",
+        "Table_S6P_calibrator_pairwise_shared_completion.csv",
     }:
         candidate_column = (
             "candidate_stratum_rows"
@@ -1017,6 +1143,74 @@ def _validate_row_identities(
         )
         if int(row[candidate_column]) != int(row["resolved_rows"]) + int(row["unresolved_rows"]):
             _fail(name, path, f"row {row_number} resolved and unresolved rows do not partition.")
+
+    if name == "Table_S2C_calibrator_fit_diagnostics.csv":
+        gap = row["venn_multiprobability_gap_mean"]
+        if (row["method"] == "venn_abers") != (gap != ""):
+            _fail(
+                name,
+                path,
+                f"row {row_number} Venn-only multiprobability diagnostic is mis-scoped.",
+            )
+
+    if name == "Table_S6O_calibrator_sensitivity_cells.csv":
+        candidates = int(row["candidate_rows"])
+        if int(row["rows"]) != candidates:
+            _fail(name, path, f"row {row_number} duplicates inconsistent candidate counts.")
+        if row["conformal_group"] == "-1" and (
+            candidates,
+            int(row["resolved_rows"]),
+            int(row["unresolved_rows"]),
+        ) != (PRIMARY_CANDIDATES, PRIMARY_RESOLVED, PRIMARY_UNRESOLVED):
+            _fail(name, path, f"row {row_number} leaves the fixed primary endpoint census.")
+        _validate_set_partition(name, path, row_number, row)
+        _validate_set_metrics(name, path, row_number, row)
+        width_quantiles = [
+            float(row[column])
+            for column in (
+                "width_q00",
+                "width_q10",
+                "width_q25",
+                "width_q50",
+                "width_q75",
+                "width_q90",
+                "width_q100",
+            )
+        ]
+        if width_quantiles != sorted(width_quantiles):
+            _fail(name, path, f"row {row_number} width quantiles are not monotone.")
+        expected_flag = str(float(row["coverage_upper"]) < 0.90)
+        if row["coverage_upper_below_nominal"] != expected_flag:
+            _fail(name, path, f"row {row_number} has an inconsistent nominal-coverage flag.")
+        gaps = (
+            row["venn_multiprobability_gap_mean"],
+            row["venn_multiprobability_gap_q50"],
+        )
+        if (row["method"] == "venn_abers") != all(gap != "" for gap in gaps):
+            _fail(
+                name,
+                path,
+                f"row {row_number} Venn-only multiprobability diagnostics are mis-scoped.",
+            )
+        if row["method"] != "venn_abers" and any(gap != "" for gap in gaps):
+            _fail(
+                name,
+                path,
+                f"row {row_number} leaks a Venn-only diagnostic to another method.",
+            )
+
+    if name == "Table_S6P_calibrator_pairwise_shared_completion.csv":
+        if row["conformal_group"] == "-1" and (
+            int(row["candidate_rows"]),
+            int(row["resolved_rows"]),
+            int(row["unresolved_rows"]),
+        ) != (PRIMARY_CANDIDATES, PRIMARY_RESOLVED, PRIMARY_UNRESOLVED):
+            _fail(name, path, f"row {row_number} leaves the fixed primary endpoint census.")
+        lower = float(row["coverage_difference_lower"])
+        resolved = float(row["coverage_difference_resolved"])
+        upper = float(row["coverage_difference_upper"])
+        if not lower <= resolved <= upper:
+            _fail(name, path, f"row {row_number} reverses the shared-completion bounds.")
 
     if name == "Table_S6D_label_mondrian_cells.csv":
         if (
@@ -1219,12 +1413,14 @@ def _read_validated_reviewer_csv(
         for column, raw in row.items():
             if column in TEXT_COLUMNS or column in BOOLEAN_COLUMNS:
                 continue
+            if raw == "" and column in OPTIONAL_NUMERIC_COLUMNS:
+                continue
             value = _as_float(name, path, row_number, column, raw)
             _validate_numeric_domain(name, path, row_number, column, value)
             if _is_integer_column(column):
                 integer = _as_int(name, path, row_number, column, raw)
                 if integer < 0 and not (
-                    column == "threshold_sign"
+                    column in {"threshold_sign", "conformal_group"}
                     or ("delta" in column and column.endswith("_numerator"))
                 ):
                     _fail(name, path, f"row {row_number} column {column!r} is negative.")
@@ -1282,6 +1478,7 @@ def _validate_cross_table_contract(
     paths: dict[str, Path],
     rows_by_name: dict[str, list[dict[str, str]]],
 ) -> None:
+    s2c_name = "Table_S2C_calibrator_fit_diagnostics.csv"
     s6b_name = "Table_S6B_exchangeability_cells.csv"
     s6c_name = "Table_S6C_exchangeability_strata.csv"
     s6d_name = "Table_S6D_label_mondrian_cells.csv"
@@ -1289,6 +1486,8 @@ def _validate_cross_table_contract(
     s6f_name = "Table_S6F_label_mondrian_categories.csv"
     s6j_name = "Table_S6J_common_panel_threshold_response_strata.csv"
     s6k_name = "Table_S6K_common_panel_threshold_response_learners.csv"
+    s6o_name = "Table_S6O_calibrator_sensitivity_cells.csv"
+    s6p_name = "Table_S6P_calibrator_pairwise_shared_completion.csv"
     _validate_partitioned_primary_census(s6c_name, paths[s6c_name], rows_by_name[s6c_name])
     _validate_partitioned_primary_census(
         s6e_name,
@@ -1302,6 +1501,84 @@ def _validate_cross_table_contract(
         rows_by_name[s6j_name],
         group_columns=("learner", "pair_index"),
     )
+    s6o_strata = [row for row in rows_by_name[s6o_name] if row["conformal_group"] != "-1"]
+    _validate_partitioned_primary_census(
+        s6o_name,
+        paths[s6o_name],
+        s6o_strata,
+        group_columns=("method", "window_id"),
+    )
+    s6p_strata = [row for row in rows_by_name[s6p_name] if row["conformal_group"] != "-1"]
+    _validate_partitioned_primary_census(
+        s6p_name,
+        paths[s6p_name],
+        s6p_strata,
+        group_columns=("method_a", "method_b", "window_id"),
+    )
+
+    fit_methods = {row["method"] for row in rows_by_name[s2c_name]}
+    if fit_methods != set(CALIBRATOR_METHODS):
+        _fail(s2c_name, paths[s2c_name], "the closed four-method fit census changed.")
+    calibrator_cells = {
+        (row["method"], row["window_id"], row["conformal_group"]): row
+        for row in rows_by_name[s6o_name]
+    }
+    overall = [row for row in rows_by_name[s6o_name] if row["conformal_group"] == "-1"]
+    below_by_method = Counter(
+        row["method"] for row in overall if row["coverage_upper_below_nominal"] == "True"
+    )
+    if len(overall) != 32 or sum(below_by_method.values()) != 18:
+        _fail(
+            s6o_name,
+            paths[s6o_name],
+            "the complete 18-below/14-at-or-above pooled result census changed.",
+        )
+    if below_by_method != Counter({"platt": 8, "beta": 8, "isotonic": 1, "venn_abers": 1}):
+        _fail(s6o_name, paths[s6o_name], "the pooled result census by method changed.")
+
+    for row_number, pair in enumerate(rows_by_name[s6p_name], start=2):
+        key_a = (pair["method_a"], pair["window_id"], pair["conformal_group"])
+        key_b = (pair["method_b"], pair["window_id"], pair["conformal_group"])
+        cell_a = calibrator_cells[key_a]
+        cell_b = calibrator_cells[key_b]
+        for column in (
+            "taxonomy_groups",
+            "role",
+            "candidate_rows",
+            "resolved_rows",
+            "unresolved_rows",
+        ):
+            if pair[column] != cell_a[column] or pair[column] != cell_b[column]:
+                _fail(
+                    s6p_name,
+                    paths[s6p_name],
+                    f"S6O-to-S6P metadata disagree at row {row_number}.",
+                )
+        _require_close(
+            s6p_name,
+            paths[s6p_name],
+            row_number,
+            "S6O-to-S6P resolved coverage difference",
+            float(pair["coverage_difference_resolved"]),
+            float(cell_a["coverage_resolved"]) - float(cell_b["coverage_resolved"]),
+        )
+        if (
+            pair["method_a"] == "platt"
+            and pair["method_b"] == "beta"
+            and any(
+                float(pair[column]) != 0.0
+                for column in (
+                    "coverage_difference_resolved",
+                    "coverage_difference_lower",
+                    "coverage_difference_upper",
+                )
+            )
+        ):
+            _fail(
+                s6p_name,
+                paths[s6p_name],
+                "the exact Platt--beta binary-coverage equivalence changed.",
+            )
 
     exchangeability_strata: dict[tuple[str, str], list[dict[str, str]]] = defaultdict(list)
     for row in rows_by_name[s6c_name]:

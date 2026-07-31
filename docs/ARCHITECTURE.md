@@ -11,7 +11,7 @@ flowchart TB
     DVC --> DATA["src/data: endpoint observability"]
     RUN --> DATA
     DATA --> FEAT["src/features: credit-risk features"]
-    FEAT --> MODEL["src/models: CatBoost, controls, Platt, conformal"]
+    FEAT --> MODEL["src/models: CatBoost, controls, score maps, conformal"]
     MODEL --> AUDIT["src/ijds_audit: geometry, allocation, bounds, evaluation"]
     MODEL --> EVAL["src/evaluation: paired finite-archive bounds"]
     AUDIT --> FRONT["src/ijds_challengers: frozen two-ruler lineage"]
@@ -51,7 +51,7 @@ enter an official artifact path.
 
 | Layer | Contents | Installation |
 | --- | --- | --- |
-| Scientific runtime | pandas, NumPy, PyArrow, SciPy, scikit-learn, CatBoost, OptBinning, HiGHS, OR-Tools, DuckDB, Matplotlib, PyYAML, Loguru | `uv sync --no-dev` |
+| Scientific runtime | pandas, NumPy, PyArrow, SciPy, scikit-learn, CatBoost, OptBinning, BetaCal, Venn-Abers, HiGHS, OR-Tools, DuckDB, Matplotlib, PyYAML, Loguru | `uv sync --no-dev` |
 | Tests | pytest, pytest-cov, Hypothesis | `uv sync --group test` |
 | Quality | Ruff, mypy, pre-commit, pypdf | `uv sync --group quality` |
 | Reproducibility | DVC with S3 support | `uv sync --group repro` |
@@ -64,7 +64,7 @@ The project requires neither WSL, a GPU, cuOpt, nor a symbolic modeling layer.
 
 ## Direct Library Decisions
 
-Versions below are the resolution in `uv.lock` on 2026-07-20. "Feature use"
+Versions below are the resolution in `uv.lock` on 2026-07-31. "Feature use"
 means the parts that matter for the active protocol, not an attempt to exercise
 every API a package exposes.
 
@@ -78,6 +78,8 @@ every API a package exposes.
 | scikit-learn | 1.9.0 | Temporal logistic controls, Platt maps, pipelines, imputation, scaling, and discrimination/calibration metrics | Indispensable; uses the relevant compositional APIs |
 | CatBoost | 1.2.10 | Native categorical features, time-aware ordering, balanced classes, Bernoulli subsampling, raw margins, and the monotonic control | Indispensable primary learner; deliberately fixed rather than retuned OOT |
 | OptBinning | 0.21.0 | Closed WOE/IV `BinningProcess`, automatic monotone binning, exported bin tables, and two declared scorecards | Scientifically useful control; not a novelty or winner claim |
+| BetaCal | 1.1.0 | Frozen beta `abm` map in the closed retrospective CatBoost calibrator sensitivity | Narrow scientific dependency; no calibrator selection or portfolio use |
+| Venn-Abers | 1.5.3 | Frozen IVAP pair and standard positive-class scalarization in the same complete sensitivity | Pair is retained and audited; its multiprobability guarantee is not transferred to the scalar or LP |
 | HiGHS / highspy | 1.15.1 | Native sparse LPs, RHS reoptimization, basis ranging, reduced costs, deterministic threads, and exact frontier diagnostics | Indispensable optimization core; best-used library in the stack |
 | OR-Tools | 9.11.4210 | Independent GLOP reconciliation of declared finite-grid allocations; also required by OptBinning | Justified diagnostic, not a second production optimizer |
 | Matplotlib | 3.11.0 | Deterministic paper figures generated from registered evidence | Indispensable authoring dependency; upgrade only with visual parity |

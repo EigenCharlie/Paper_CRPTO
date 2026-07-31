@@ -77,7 +77,7 @@ def _normalize(text: str) -> str:
 def test_active_evidence_locks_v4_lineage_and_claim_boundary() -> None:
     evidence = _json(EVIDENCE)
 
-    assert evidence["schema_version"] == "2026-07-26.2"
+    assert evidence["schema_version"] == "2026-07-30.1"
     assert evidence["status"] == "active_ijds_v5_endpoint_reason_audited_paper_facing_evidence"
     assert evidence["run_tag"] == RUN
     assert evidence["protocol_commit"] == COMMIT
@@ -408,6 +408,87 @@ def test_two_ruler_diagnostic_is_finite_complete_and_nonselective() -> None:
     assert interpretation["preferred_ruler"] is None
     assert interpretation["preferred_coordinate"] is None
     assert interpretation["policy_winner"] is None
+
+
+def test_closed_calibrator_family_is_complete_and_nonselective() -> None:
+    evidence = _json(EVIDENCE)
+    sensitivity = evidence["sensitivity"]["calibrator_family"]
+
+    assert sensitivity["result_state"] == "uniform_closed_family_shortfall_not_established"
+    assert sensitivity["methods"] == ["platt", "isotonic", "beta", "venn_abers"]
+    assert sensitivity["counts"] == {
+        "methods": 4,
+        "windows": 8,
+        "scopes_per_method_window": 6,
+        "evaluation_cells": 192,
+        "overall_cells": 32,
+        "pairwise_cells": 288,
+        "candidate_rows": 376890,
+        "resolved_rows": 364814,
+        "unresolved_rows": 12076,
+        "resolved_y0": 307842,
+        "resolved_y1": 56972,
+    }
+    assert sensitivity["overall_cells_with_coverage_upper_below_nominal"] == 18
+    assert sensitivity["overall_cells_with_coverage_upper_at_or_above_nominal"] == 14
+    assert sensitivity["overall_result_census_by_method"] == {
+        "platt": {"upper_below_nominal": 8, "upper_at_or_above_nominal": 0},
+        "isotonic": {"upper_below_nominal": 1, "upper_at_or_above_nominal": 7},
+        "beta": {"upper_below_nominal": 8, "upper_at_or_above_nominal": 0},
+        "venn_abers": {"upper_below_nominal": 1, "upper_at_or_above_nominal": 7},
+    }
+    assert len(sensitivity["method_fit_rows"]) == 4
+    assert len(sensitivity["cell_rows"]) == 192
+    assert len(sensitivity["pairwise_rows"]) == 288
+    overall = [row for row in sensitivity["cell_rows"] if int(row["conformal_group"]) == -1]
+    assert len(overall) == 32
+    assert sum(row["coverage_upper_below_nominal"] is True for row in overall) == 18
+    assert sum(row["coverage_upper_below_nominal"] is False for row in overall) == 14
+    assert all(row["shared_loanwise_completion"] is True for row in sensitivity["pairwise_rows"])
+
+    interpretation = sensitivity["interpretation"]
+    assert interpretation["learner_calibrator_window_or_result_selected"] is False
+    assert interpretation["calibrator_winner"] is None
+    assert interpretation["selected_calibrator"] is None
+    assert interpretation["portfolio_score_changed"] is False
+    assert interpretation["portfolio_optimization"] is False
+    assert interpretation["portfolio_optimization_run"] is False
+    assert interpretation["pre_existing_platt_score_remains_primary_portfolio_score"] is True
+    assert interpretation["alternative_calibrator_maps_propagated_to_portfolio"] is False
+    assert interpretation["uniform_shortfall_not_established_is_not_true_coverage_dependence"]
+    assert interpretation["temporal_transport_established"] is False
+    assert interpretation["prospective_transport_established"] is False
+    assert (
+        interpretation["venn_abers_multiprobability_guarantee_transported_to_scalarization"]
+        is False
+    )
+
+    expected_artifacts = {
+        "table/calibrator_fit_diagnostics": (
+            "reports/crpto/tables/crpto_ijds_v4_tableS2C_calibrator_fit_diagnostics.csv"
+        ),
+        "table/calibrator_sensitivity_cells": (
+            "reports/crpto/tables/crpto_ijds_v4_tableS6O_calibrator_sensitivity_cells.csv"
+        ),
+        "table/calibrator_pairwise_shared_completion": (
+            "reports/crpto/tables/crpto_ijds_v4_tableS6P_calibrator_pairwise_shared_completion.csv"
+        ),
+    }
+    for name, path in expected_artifacts.items():
+        assert evidence["paper_artifacts"][name]["path"] == path
+
+    calibrator_surfaces = (
+        REPO / "paper/CRPTO_ijds.qmd",
+        REPO / "paper/supplement_ijds.qmd",
+        REPO / "docs/ACADEMIC_CONTEXT.md",
+        REPO / "scripts/build_ijds_machine_readable_supplement.py",
+    )
+    for surface in calibrator_surfaces:
+        text = re.sub(r"\s+", " ", surface.read_text(encoding="utf-8")).lower()
+        assert "pre-existing platt score" in text
+        assert "none of the three alternative" in text
+        assert "no map from this sensitivity enters portfolio optimization" not in text
+        assert "no sensitivity arm enters the lp" not in text
 
 
 def test_endpoint_availability_sensitivity_is_complete_and_nonselective() -> None:

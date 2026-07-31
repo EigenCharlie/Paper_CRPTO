@@ -39,9 +39,13 @@ model-class coverage checks; only the primary CatBoost enters optimization. The
 coverage record has three deliberately separate layers: sharp finite-archive
 identification bounds, a retrospective joint-block combined-rank reference
 diagnostic, and outcome-isolated sensitivities for timing and calibration
-taxonomy. The missingness-encoding, individual-age second-origin, and
-label-Mondrian families are complete sensitivities rather than selection grids. The
-decision audit reports the complete five-point gamma path, two rulers constructed
+taxonomy. The missingness-encoding, individual-age second-origin,
+label-Mondrian, and closed four-map CatBoost calibrator families are complete
+sensitivities rather than selection grids. The calibrator family uses one
+common uncalibrated-probability ($q_{\mathrm{raw}}$) taxonomy, reports every
+map and cell, and performs no optimization; only the pre-existing Platt score
+enters the separate primary portfolio analysis. The decision audit reports the
+complete five-point gamma path, two rulers constructed
 without policy-development or OOT evaluation outcomes, three interior coordinates,
 and every comparator in each named support. *Evaluation-outcome-blind* means that
 earlier model and conformal fitting may use historical labels, while policy
@@ -209,16 +213,56 @@ valid scores.
 Each learner needs a scalar score for residual construction; only the primary
 CatBoost scalar also enters the portfolio LP. Platt scaling supplies that score
 through a fixed logistic map fit on the separate 2011 block; its role is
-architectural, not a claim of calibrator optimality. Under its iid contract,
-Venn--Abers instead returns a multiprobabilistic pair
-$(p_{i0},p_{i1})$ [@vovk2014]. Reducing the pair to one score introduces a
-loss-dependent design choice; for example, its standard log-loss scalar is
-$p_{i1}/(1-p_{i0}+p_{i1})$, not an unregistered midpoint. The conversion, its
-taxonomy, and every competing calibrator would need to be frozen before OOT
-evaluation, and the scalar alone does not inherit the Venn guarantee. Neither
-Venn--Abers nor Platt by itself supplies temporal transport or
-selected/funded-set coverage. Accordingly, the active lineage contains no
-Platt--Venn--Abers comparison and no calibrator winner.
+architectural, not a claim of calibrator optimality.
+
+A separate two-phase sensitivity freezes four monotone maps of the same
+primary CatBoost base output on the same 14,077 availability-safe 2011 labels:
+the active Platt logistic map, reused without refitting [@platt2000],
+increasing isotonic regression with
+clipped out-of-domain predictions [@zadrozny2002], beta calibration with the
+`abm` parameterization [@kull2017], and
+`VennAbers(setting="classification", precision=None)` [@vovk2014].
+The scientific environment pins `betacal==1.1.0` and
+`venn-abers==1.5.3`. If $p$ is the frozen Platt probability and $a,b$ are its
+intercept and positive slope on the CatBoost raw margin, the common
+uncalibrated CatBoost probability is reconstructed as
+
+$$
+q_{\mathrm{raw}}=
+\operatorname{logit}^{-1}\!\left\{
+\frac{\operatorname{logit}(p)-a}{b}
+\right\}.
+$$
+
+No CatBoost model is refitted.
+
+The four active Platt cutpoints are transformed through the same exact inverse.
+They are not re-estimated as $q_{\mathrm{raw}}$ quantiles. This gives one common
+five-stratum taxonomy with zero assignment changes, so method-specific ties in
+isotonic or Venn--Abers predictions cannot change membership. Only residual
+values may change; each window's row counts and finite-sample ranks remain
+fixed. Phase A reuses Platt without refitting it, fits the other three maps, and
+freezes all 160 method--window--stratum recipes before the target endpoint join. Because the
+retrospective raw-file scan necessarily reads chunks containing status values
+before filtering to the locked 2011 IDs, this is logical target-outcome nonuse,
+not a physical lockbox. No primary-OOT outcome is retained or used in a map,
+taxonomy, or recipe.
+
+Venn--Abers returns the multiprobabilistic pair $(p_{i0},p_{i1})$. The declared
+point score for this finite comparison is
+
+$$
+p_i^\prime=\frac{p_{i1}}{1-p_{i0}+p_{i1}},
+$$
+
+not the historical midpoint. The frozen artifact retains both pair components
+and verifies $0\le p_{i0}\le p_i^\prime\le p_{i1}\le1$. The scalar does not
+inherit the Venn multiprobability guarantee, is not a latent-PD interval, and
+is not authorized as a portfolio endpoint. Phase B reports all four methods,
+all eight windows, `ALL` plus all five common strata, and every unordered
+method pair. It selects no map or result and runs no optimization. Neither this
+sensitivity nor a calibrator name supplies temporal transport or
+selected/funded-set coverage.
 
 The executable primary specification uses 500 trees, depth 6, learning rate
 0.04, `Balanced` automatic class weights, Bernoulli bootstrap with 0.80
@@ -267,6 +311,18 @@ contest.
 **Table S2A.** Frozen probability-calibration-block discrimination and Brier
 scores. These diagnostics describe the common 2011 role; they do not select a
 learner.
+
+| CatBoost score map | Rows | AUC | Brier | Log loss | ECE-10 | Mean IVAP pair gap |
+|---|---:|---:|---:|---:|---:|---:|
+| Platt | 14,077 | 0.676327 | 0.090206 | 0.316543 | 0.003273 | -- |
+| Isotonic | 14,077 | 0.679767 | 0.089871 | 0.314776 | 0.000000 | -- |
+| Beta (`abm`) | 14,077 | 0.676327 | 0.090205 | 0.316539 | 0.003080 | -- |
+| IVAP Venn--Abers scalar | 14,077 | 0.679493 | 0.089903 | 0.315141 | 0.001685 | 0.002339 |
+
+**Table S2C.** Complete same-sample 2011 fit diagnostics for the four frozen
+CatBoost score maps. These values describe the fit block only. In particular,
+isotonic ECE of zero on the same rows used to fit it is not an OOT performance
+claim or a selection criterion.
 
 The raw audit labels 30 origination fields as temporally eligible, whereas the
 frozen model consumes engineered predictors rather than every eligible raw
@@ -715,6 +771,105 @@ for $Y=0$, 37 identify higher coverage for $Y=1$, and 112 cross zero. The 400
 category bounds are identification diagnostics, not unadjusted tests. Neither
 the 12 crossing cells nor the sole lower-at-or-above cell establishes restored
 exchangeability, prospective validity, or a method winner.
+
+### B.4.3 Closed CatBoost calibrator-family sensitivity
+
+<!-- claim:calibration.closed_family_complete_state -->
+
+The calibrator sensitivity reconstructs the complete score vectors from the
+frozen Phase-A maps and verifies their hashes before loading the primary-OOT
+endpoint. It retains the same 376,890 candidates, 364,814 resolved outcomes,
+12,076 unresolved outcomes, eight windows, and common five-group memberships.
+The complete evaluation has
+
+$$
+4\ \text{maps}\times8\ \text{windows}\times
+(1\ \text{pooled}+5\ \text{strata})=192
+$$
+
+coverage and geometry cells. The 32 pooled rows are shown below.
+
+| Map | Window | Resolved coverage | Sharp all-candidate bound | AvgC | Empty | Both |
+|---|---:|---:|---:|---:|---:|---:|
+| Platt | W1 | 0.877047 | [0.854714, 0.880522] | 1.174579 | 0.012505 | 0.187084 |
+| Platt | W2 | 0.879166 | [0.857025, 0.882597] | 1.183942 | 0.012327 | 0.196269 |
+| Platt | W3 | 0.877735 | [0.855653, 0.881143] | 1.182650 | 0.014086 | 0.196736 |
+| Platt | W4 | 0.874873 | [0.852570, 0.878341] | 1.171156 | 0.015378 | 0.186535 |
+| Platt | W5 | 0.872513 | [0.849932, 0.876033] | 1.160824 | 0.016021 | 0.176845 |
+| Platt | W6 | 0.872113 | [0.849426, 0.875669] | 1.156828 | 0.015450 | 0.172278 |
+| Platt | W7 | 0.869481 | [0.846518, 0.873093] | 1.145225 | 0.016066 | 0.161291 |
+| Platt | W8 | 0.865855 | [0.842485, 0.869564] | 1.128128 | 0.016068 | 0.144196 |
+| Isotonic | W1 | 0.908858 | [0.889121, 0.911778] | 1.301703 | 0.000000 | 0.301703 |
+| Isotonic | W2 | 0.924940 | [0.907047, 0.927345] | 1.385794 | 0.000000 | 0.385794 |
+| Isotonic | W3 | 0.924940 | [0.907047, 0.927345] | 1.385794 | 0.000000 | 0.385794 |
+| Isotonic | W4 | 0.924940 | [0.907047, 0.927345] | 1.385794 | 0.000000 | 0.385794 |
+| Isotonic | W5 | 0.908858 | [0.889121, 0.911778] | 1.301703 | 0.000000 | 0.301703 |
+| Isotonic | W6 | 0.908858 | [0.889121, 0.911778] | 1.301703 | 0.000000 | 0.301703 |
+| Isotonic | W7 | 0.908858 | [0.889121, 0.911778] | 1.301703 | 0.000000 | 0.301703 |
+| Isotonic | W8 | 0.892786 | [0.870307, 0.896222] | 1.199517 | 0.000000 | 0.199517 |
+| Beta (`abm`) | W1 | 0.877047 | [0.854714, 0.880522] | 1.174579 | 0.012505 | 0.187084 |
+| Beta (`abm`) | W2 | 0.879166 | [0.857025, 0.882597] | 1.183942 | 0.012327 | 0.196269 |
+| Beta (`abm`) | W3 | 0.877735 | [0.855653, 0.881143] | 1.182650 | 0.014086 | 0.196736 |
+| Beta (`abm`) | W4 | 0.874873 | [0.852570, 0.878341] | 1.171156 | 0.015378 | 0.186535 |
+| Beta (`abm`) | W5 | 0.872513 | [0.849932, 0.876033] | 1.160824 | 0.016021 | 0.176845 |
+| Beta (`abm`) | W6 | 0.872113 | [0.849426, 0.875669] | 1.156828 | 0.015450 | 0.172278 |
+| Beta (`abm`) | W7 | 0.869481 | [0.846518, 0.873093] | 1.145225 | 0.016066 | 0.161291 |
+| Beta (`abm`) | W8 | 0.865855 | [0.842485, 0.869564] | 1.128128 | 0.016068 | 0.144196 |
+| IVAP Venn--Abers scalar | W1 | 0.908526 | [0.888747, 0.911457] | 1.300276 | 0.000000 | 0.300276 |
+| IVAP Venn--Abers scalar | W2 | 0.920047 | [0.901616, 0.922609] | 1.359553 | 0.000000 | 0.359553 |
+| IVAP Venn--Abers scalar | W3 | 0.920047 | [0.901616, 0.922609] | 1.359553 | 0.000000 | 0.359553 |
+| IVAP Venn--Abers scalar | W4 | 0.920047 | [0.901616, 0.922609] | 1.359553 | 0.000000 | 0.359553 |
+| IVAP Venn--Abers scalar | W5 | 0.908526 | [0.888747, 0.911457] | 1.300276 | 0.000000 | 0.300276 |
+| IVAP Venn--Abers scalar | W6 | 0.908526 | [0.888747, 0.911457] | 1.300276 | 0.000000 | 0.300276 |
+| IVAP Venn--Abers scalar | W7 | 0.908526 | [0.888747, 0.911457] | 1.300276 | 0.000000 | 0.300276 |
+| IVAP Venn--Abers scalar | W8 | 0.892455 | [0.869933, 0.895901] | 1.198090 | 0.000000 | 0.198090 |
+
+**Pooled display derived from Table S6O.** The 32 rows above are the complete
+pooled slice. Machine-readable Table S6O contains all 192 pooled-plus-stratum cells, including
+resolved-class descriptions, interval-width quantiles, all four binary-set
+shares, fit and target score ranges, and IVAP pair-gap summaries.
+
+Exactly 18/32 pooled upper endpoints are below 0.90: 8/8 for Platt, 8/8 for
+beta, 1/8 for isotonic, and 1/8 for the IVAP scalar. For both isotonic and IVAP,
+W2--W4 have lower endpoints above 0.90, W1 and W5--W7 contain 0.90, and W8 lies
+below. Thus the locked result state is
+`uniform_closed_family_shortfall_not_established`. It says that the Platt
+shortfall is not established uniformly over this closed family under the
+common taxonomy; it does not prove that true coverage depends on the map.
+Platt and beta have identical aggregate set-geometry counts and coverage
+estimates and bounds in all 48 pooled-plus-stratum cells, but their scalar
+scores and continuous width summaries differ.
+
+For maps $a,b$, define the loan-wise coverage difference
+$d_i(y)=1\{y\in S_{ia}\}-1\{y\in S_{ib}\}$. The sharp pairwise interval uses
+one completion in both terms:
+
+$$
+\left[
+\frac{\sum_{i\in R}d_i(Y_i)+\sum_{i\in U}\min_y d_i(y)}{N},
+\frac{\sum_{i\in R}d_i(Y_i)+\sum_{i\in U}\max_y d_i(y)}{N}
+\right].
+$$
+
+Subtracting separately extremized marginal coverage bounds would not answer
+this paired estimand. Machine-readable Table S6P reports all
+$\binom{4}{2}\times8\times6=288$ shared-completion cells. In the eight pooled
+contrasts, all isotonic-minus-Platt intervals are strictly positive (the
+smallest lower and largest upper endpoints across windows are 0.026069 and
+0.055019), as are all IVAP-minus-Platt intervals (corresponding extrema
+0.025748 and 0.049587) and all isotonic-minus-IVAP intervals (0.000321 and
+0.005431). Every Platt-minus-beta interval is exactly $[0,0]$ in all 48
+pooled-plus-stratum cells. These are sharp finite-archive coverage-difference
+bounds that use one loan-wise completion in both method terms, not confidence
+intervals or a calibrator ranking. The 48 Platt
+pooled-plus-stratum rows reconcile to the active V5 evidence with maximum
+absolute difference $2.22\times10^{-16}$, below the locked $10^{-12}$
+tolerance. Efficiency, same-sample fit metrics, and pairwise differences are
+reported completely and cannot select a calibrator. The sensitivity propagates
+no new score into the LP: the separate primary analysis already uses Platt,
+while none of the three alternatives is propagated. No Venn guarantee,
+temporal-validity result, selected/funded-set guarantee, or portfolio
+conclusion follows.
 
 ## B.5 Exact binary threshold geometry
 
@@ -2348,11 +2503,12 @@ coverage rows, 5,112 monthly evaluations, 360 aggregates, 221,040 paired sharp
 contrasts, and 648 comparator envelopes. Separate complete families cover five
 credit learners, endpoint lag, portfolio structure, missingness encoding, and
 a second temporal origin. The evidence builder checks hashes, contracts, and
-cardinalities before producing 38 tables, five figure families in PNG and PDF,
+cardinalities before producing 41 tables, five figure families in PNG and PDF,
 and one paper-facing manifest. Additional outcome-isolated families cover joint
 fit-label completion, deterministic allocation granularity, marginal score and
 residual-distribution diagnostics, complete-catalog transport, and funded
-estimand dependence, plus the set-preserving continuous-embedding sensitivity.
+estimand dependence, plus the set-preserving continuous-embedding and closed
+CatBoost calibrator-family sensitivities.
 
 ## F.2 Replay contract
 
@@ -2363,6 +2519,13 @@ and regenerates paper tables, figures, and the manifest transactionally.
 uses the `uv.lock` hash stored with that lineage; current source code is not
 silently substituted for historical scientific code.
 
+For the calibrator sensitivity, the exact annotated four-stage chain is
+protocol P $\rightarrow$ outcome-free artifact A $\rightarrow$ evaluation lock
+B $\rightarrow$ evaluated artifact C. A is the single direct child of P, B of
+A, and C of B. The source registry and editor-only reproducibility crosswalk
+bind the exact tags and commits; those identifiers are provenance gates, not
+empirical claims.
+
 The shared contract requires:
 
 1. a lineage-specific environment locked by `uv`;
@@ -2371,11 +2534,13 @@ The shared contract requires:
    endpoint, structure, missingness, individual-age second-origin, fit-label
    completion, allocation-granularity, joint-block rank-reference diagnostic, and
    label-Mondrian, and policy-support optimal-face/RHS-recovery families; plus
-   six hash-described Git artifact lineages: five direct-child bundles for the
-   V8 common-panel response, V3I marginal gap, residual-distribution frontier,
-   decision catalog, and funded-estimand audit, plus the set-preserving
-   embedding's protocol-to-source-to-evaluation direct-child chain, each
-   verified against its exact registered path set;
+   seven hash-described scientific Git artifact lineages: five direct-child
+   bundles for the V8 common-panel response, V3I marginal gap,
+   residual-distribution frontier, decision catalog, and funded-estimand audit,
+   plus the set-preserving embedding's protocol-to-source-to-evaluation
+   direct-child chain and the calibrator sensitivity's
+   protocol-to-source-to-evaluation-lock-to-result chain, each verified against
+   its exact registered path set;
 3. a separate freeze and evaluate command with no combined shortcut;
 4. exact ID alignment at the outcome join;
 5. byte-identical evidence builds;
@@ -2390,15 +2555,17 @@ replay the active evidence and are not overwritten.
 
 ## F.3 Anonymous-review boundary
 
-Reviewer-facing files omit exact commits, tags, hashes, repository links, and
-remote coordinates because they are searchable author fingerprints. An
-editor-only claim registry preserves that crosswalk. Any release at acceptance
-is conditional on human confirmation of acquisition and redistribution rights,
-resolution of journal-license compatibility, and remediation of the public
-repository/Pages anonymity leak. Only after those conditions are satisfied may
-the code, environment lock, evidence manifest, permitted immutable pointers,
-and lawful reconstruction instructions be released under the journal's data
-and code policy.
+At the eventual anonymous-review freeze, exact commits, tags, hashes,
+repository links, and remote coordinates must move out of reviewer artifacts
+because they are searchable author fingerprints; the editor-only registry
+preserves that crosswalk. The current pre-freeze source retains the calibrator
+chain above for scientific integration and is therefore not the final anonymous
+supplement. Any release at acceptance is conditional on human confirmation of
+acquisition and redistribution rights, resolution of journal-license
+compatibility, and remediation of the public repository/Pages anonymity leak.
+Only after those conditions are satisfied may the code, environment lock,
+evidence manifest, permitted immutable pointers, and lawful reconstruction
+instructions be released under the journal's data and code policy.
 
 # Appendix G: Claim Boundary and Limitations
 
@@ -2411,6 +2578,7 @@ and code policy.
 <!-- claim:sensitivity.label_mondrian_common_completion_gap -->
 <!-- claim:allocation.set_preserving_embedding_changes_allocations -->
 <!-- claim:decision.set_preserving_embedding_direction_noninvariant -->
+<!-- claim:calibration.closed_family_complete_state -->
 
 | Evidence object | Permitted conclusion | Not established |
 |---|---|---|
@@ -2421,6 +2589,7 @@ and code policy.
 | Joint-block combined-rank diagnostic | After within-cell Bonferroni and Holm over 40 cells, 31 learner--window cell reference tail areas meet locked nominal reporting thresholds | Post-selection FWER control, a direct test of the usual one-future-point condition, a cause of shift, rejection of every cell or stratum, or exchangeability established by a nonflag |
 | WOE/IV, monotonic, and PSI controls | The descriptive exclusion spans all five learners and nominal joint-block flags span 31 cells | Scorecard superiority, external validity, or PSI-based coverage certification |
 | Label-Mondrian sensitivity | Marginal states are 27 shortfall, 12 crossing, and one at-or-above; 109/400 class-stratum categories remain shortfalls and all 40 aggregate gap bounds cross zero when each endpoint uses shared single-assignment completions | Uniform repair, class-conditional transport, a selected method, fairness, or 400 unadjusted inferential claims |
+| Closed CatBoost calibrator family | Eighteen of 32 pooled upper endpoints are below 0.90 under four frozen maps and one common uncalibrated-probability ($q_{\mathrm{raw}}$) taxonomy; the other 14 prevent a uniform closed-family shortfall conclusion | A calibrator winner, true-coverage dependence, validity of the IVAP scalar, temporal transport, individual calibration, portfolio robustness, or selected/funded-set validity |
 | Three missingness encodings | All 24 coverage upper bounds are below 0.90 | A missingness mechanism, encoding winner, or portfolio robustness |
 | Individual-age second temporal origin | All 16 CatBoost upper bounds are below 0.90 after every candidate receives 39 months from issue-month end | Exact day-level age, independent replication, temporal invariance, prospective validation, or selection of an origin |
 | Four fit-label scenarios | All 32 overall coverage upper bounds are below 0.90; the W7--W8 crossing remains in three scenarios | Sharp bounds over all label assignments, geometry invariance, or preregistration |
@@ -2580,7 +2749,7 @@ credit scoring, conformal prediction, or linear programming separately.
 | Literature family | Established contribution | Active CRPTO boundary |
 |---|---|---|
 | Finite-batch and sample-conditional split conformal [@marques2025universal; @duchi2025sampleconditional] | Exact Beta--Binomial empirical-coverage law for a shared threshold, and high-probability sample-/group-conditional guarantees under iid sampling | Uses the complementary law only as a stronger joint-block retrospective reference with tie-safe domination and unresolved completion; the chronological archive does not inherit iid sample-conditional guarantees |
-| Probability scaling and Venn--Abers prediction [@platt2000; @vovk2014] | Scalar logistic recalibration and a distinct multiprobabilistic calibration construction under their respective sampling contracts | Freezes one 2011 Platt map per learner as an input; performs no calibrator contest, makes no Platt-superiority claim, and does not treat either method as a temporal-transport or funded-selection repair |
+| Probability scaling, beta calibration, and Venn--Abers prediction [@platt2000; @zadrozny2002; @kull2017; @vovk2014] | Logistic, isotonic, and beta probability maps plus a distinct multiprobabilistic calibration construction under their respective sampling contracts | Reports a closed four-map CatBoost sensitivity under one common uncalibrated-probability ($q_{\mathrm{raw}}$) taxonomy: 18/32 pooled upper endpoints are below 0.90, so a uniform family-wide shortfall is not established. It selects no map, transfers no Venn guarantee to $p^\prime$, and runs no alternative-map portfolio optimization |
 | Covariate-shift weighted conformal prediction [@tibshirani2019covshift] | Reweights calibration examples by a source-to-target likelihood ratio to obtain marginal target-distribution coverage under an invariant conditional outcome law | The active design neither prespecifies nor validates the required ratio and conditional-invariance ingredients; LP exposure weights and date decay are not conformal sampling weights |
 | Credit scoring and cost-aware calibration [@lessmann2015; @yang2025costaware; @das2023creditgraph] | Probability quality and richer predictive structure | Treats a Platt-scaled default score as an input; no AUC-leadership claim |
 | P2P and robust credit portfolios [@serrano2016profitscoring; @chi2019p2p; @babaei2020p2p] | Economic loan selection under risk and uncertainty | Adds binary-set geometry, outcome isolation, and comparator identification |

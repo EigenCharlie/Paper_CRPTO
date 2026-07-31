@@ -21,20 +21,28 @@ bounds rather than being dropped.
 1. **Prediction controls:** CatBoost/Platt plus four frozen learner
    specifications describe discrimination, calibration, WOE/IV, monotonicity,
    PSI, and the 40-cell finite-archive all-candidate coverage census.
-2. **Joint-block rank diagnostic:** 31/40 learner-window cells meet the locked
+2. **Score-map sensitivity:** frozen Platt, isotonic, beta `abm`, and an IVAP
+   Venn--Abers scalar are evaluated for primary CatBoost under one common
+   uncalibrated-probability (`q_raw`) taxonomy. Only 18/32 pooled upper
+   endpoints are below 0.90, so a uniform closed-family shortfall is not
+   established. The complete 192-cell and 288-pairwise grids select no map,
+   transfer no Venn guarantee to the scalar, and perform no optimization. The
+   separate primary portfolio analysis continues to use the pre-existing Platt
+   score; none of the three alternative maps is propagated.
+3. **Joint-block rank diagnostic:** 31/40 learner-window cells meet the locked
    Bonferroni-within-cell and Holm-across-cell nominal thresholds. The
    Beta--Binomial law concerns the stronger joint exchangeability of a
    calibration stratum with its entire target block, not the usual marginal
    condition for one future point. Prior inspection of the family and pattern
    also precludes post-selection or study-wide FWER control.
-3. **Binary geometry:** exact residual ranks and set intersections explain how
+4. **Binary geometry:** exact residual ranks and set intersections explain how
    a prevalence threshold can change interval width discontinuously.
-4. **Decision construction:** outcome-blind rulers and coordinates create
+5. **Decision construction:** outcome-blind rulers and coordinates create
    comparable monthly allocation tracks without selecting a winner.
-5. **Identification:** paired common-outcome bounds over registered finite
+6. **Identification:** paired common-outcome bounds over registered finite
    point-cap evaluations determine which policy contrasts are signed and which
    cross zero.
-6. **Sensitivity:** endpoint availability, fit-label timing, missingness
+7. **Sensitivity:** endpoint availability, fit-label timing, missingness
    encoding, equal 39-month administrative age at two origins,
    label-Mondrian calibration,
    and portfolio structure are separate axes. The individual-age grid has
@@ -66,4 +74,7 @@ split-conformal guarantee, supplies post-selection inference, or implies
 prospective exchangeability, selected-set validity, causal funding effects, deployment
 safety, fair-lending compliance, or external validity. The economic quantity
 is a standardized status-indexed payoff proxy, not realized cash-flow return,
-NPV, IRR, or welfare.
+NPV, IRR, or welfare. The four-map result is a finite closed-family sensitivity,
+not evidence that true coverage is calibrator-dependent, a calibrator ranking,
+or portfolio robustness; its Venn--Abers scalar does not inherit the underlying
+multiprobability guarantee.

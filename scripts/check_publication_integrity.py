@@ -24,11 +24,52 @@ SOURCE_REGISTRY_PATH = REPO / "configs/ijds_active_evidence_sources.yaml"
 PUBLICATION_TARGETS_PATH = REPO / "configs/crpto_publication_targets.yaml"
 CLAIM_LEDGER_PATH = REPO / "configs/ijds_claim_ledger.yaml"
 
+EXPECTED_SCIENTIFIC_GIT_LINEAGES = (
+    "lineages.diagnostics.common_panel_threshold_response",
+    "lineages.diagnostics.decision_catalog_transport",
+    "lineages.diagnostics.funded_selection_estimands",
+    "lineages.diagnostics.marginal_score_outcome_gap",
+    "lineages.diagnostics.residual_transport_frontier",
+    "lineages.diagnostics.set_preserving_embedding",
+    "sensitivities.calibrator_family",
+)
+
 
 @dataclass(frozen=True)
 class SurfaceCheck:
     path: Path
     required: tuple[str, ...]
+
+
+def _scientific_git_lineages(registry: Mapping[str, Any]) -> tuple[str, ...]:
+    """Derive conceptual Git-native scientific lineages from registry contracts."""
+
+    discovered: set[str] = set()
+    lineages = registry.get("lineages")
+    sensitivities = registry.get("sensitivities")
+    if not isinstance(lineages, Mapping) or not isinstance(sensitivities, Mapping):
+        raise TypeError("Active registry omits lineage or sensitivity mappings.")
+    diagnostics = lineages.get("diagnostics")
+    if not isinstance(diagnostics, Mapping):
+        raise TypeError("Active registry omits diagnostic lineages.")
+
+    for name, raw_identity in diagnostics.items():
+        if not isinstance(raw_identity, Mapping):
+            raise TypeError(f"Diagnostic lineage {name!r} is malformed.")
+        if "artifact_tag" in raw_identity or "source_artifact_tag" in raw_identity:
+            discovered.add(f"lineages.diagnostics.{name}")
+
+    for name, raw_identity in sensitivities.items():
+        if not isinstance(raw_identity, Mapping):
+            raise TypeError(f"Sensitivity lineage {name!r} is malformed.")
+        stages = (
+            raw_identity,
+            *[value for value in raw_identity.values() if isinstance(value, Mapping)],
+        )
+        if any("artifact_tag" in stage or "source_artifact_tag" in stage for stage in stages):
+            discovered.add(f"sensitivities.{name}")
+
+    return tuple(sorted(discovered))
 
 
 TITLE = (
@@ -300,6 +341,293 @@ def _check_reviewer_anonymity() -> list[str]:
             if pattern.search(raw):
                 failures.append(f"{path.relative_to(REPO)}: reviewer surface contains {label}")
     return failures
+
+
+def _check_calibrator_publication_payload() -> list[str]:
+    """Fail closed on the complete, nonselective calibrator-family publication."""
+    evidence = _evidence()
+    calibrator = evidence.get("sensitivity", {}).get("calibrator_family", {})
+    if not isinstance(calibrator, Mapping):
+        return ["calibrator-family publication payload is missing"]
+    fit_rows = calibrator.get("method_fit_rows")
+    cell_rows = calibrator.get("cell_rows")
+    pairwise_rows = calibrator.get("pairwise_rows")
+    if (
+        not isinstance(fit_rows, list)
+        or not isinstance(cell_rows, list)
+        or not isinstance(pairwise_rows, list)
+        or any(not isinstance(row, Mapping) for row in (*fit_rows, *cell_rows, *pairwise_rows))
+    ):
+        return ["calibrator-family publication rows are malformed"]
+
+    overall = [row for row in cell_rows if row.get("conformal_group") == -1]
+    exact_boolean_flags = all(
+        row.get("coverage_upper_below_nominal") in {True, False} for row in overall
+    )
+    below = sum(row.get("coverage_upper_below_nominal") is True for row in overall)
+    at_or_above = sum(row.get("coverage_upper_below_nominal") is False for row in overall)
+    methods = ("platt", "isotonic", "beta", "venn_abers")
+    method_census = {
+        method: {
+            "upper_below_nominal": sum(
+                row.get("coverage_upper_below_nominal") is True
+                for row in overall
+                if row.get("method") == method
+            ),
+            "upper_at_or_above_nominal": sum(
+                row.get("coverage_upper_below_nominal") is False
+                for row in overall
+                if row.get("method") == method
+            ),
+        }
+        for method in methods
+    }
+    expected_method_census = {
+        "platt": {"upper_below_nominal": 8, "upper_at_or_above_nominal": 0},
+        "isotonic": {"upper_below_nominal": 1, "upper_at_or_above_nominal": 7},
+        "beta": {"upper_below_nominal": 8, "upper_at_or_above_nominal": 0},
+        "venn_abers": {"upper_below_nominal": 1, "upper_at_or_above_nominal": 7},
+    }
+    method_summaries = {
+        method: {
+            "upper_below_nominal": method_census[method]["upper_below_nominal"],
+            "coverage_lower_min": min(
+                float(row["coverage_lower"]) for row in overall if row["method"] == method
+            ),
+            "coverage_upper_max": max(
+                float(row["coverage_upper"]) for row in overall if row["method"] == method
+            ),
+            "coverage_resolved_min": min(
+                float(row["coverage_resolved"]) for row in overall if row["method"] == method
+            ),
+            "coverage_resolved_max": max(
+                float(row["coverage_resolved"]) for row in overall if row["method"] == method
+            ),
+            "average_set_size_min": min(
+                float(row["average_set_size"]) for row in overall if row["method"] == method
+            ),
+            "average_set_size_max": max(
+                float(row["average_set_size"]) for row in overall if row["method"] == method
+            ),
+        }
+        for method in methods
+    }
+
+    pairwise_overall = [row for row in pairwise_rows if row["conformal_group"] == -1]
+    pairwise_summaries: dict[str, dict[str, int | float | bool]] = {}
+    for method_a in methods:
+        for method_b in methods:
+            if method_a == method_b:
+                continue
+            direct = [
+                row
+                for row in pairwise_overall
+                if row["method_a"] == method_a and row["method_b"] == method_b
+            ]
+            if direct:
+                lower = [float(row["coverage_difference_lower"]) for row in direct]
+                upper = [float(row["coverage_difference_upper"]) for row in direct]
+            else:
+                reverse = [
+                    row
+                    for row in pairwise_overall
+                    if row["method_a"] == method_b and row["method_b"] == method_a
+                ]
+                lower = [-float(row["coverage_difference_upper"]) for row in reverse]
+                upper = [-float(row["coverage_difference_lower"]) for row in reverse]
+                direct = reverse
+            pairwise_summaries[f"{method_a}_minus_{method_b}"] = {
+                "rows": len(direct),
+                "lower_min": min(lower),
+                "upper_max": max(upper),
+                "all_bounds_strictly_positive": all(
+                    lower_value > 0.0 and upper_value > 0.0
+                    for lower_value, upper_value in zip(lower, upper, strict=True)
+                ),
+            }
+
+    equality_columns = (
+        "rows",
+        "candidate_rows",
+        "resolved_rows",
+        "unresolved_rows",
+        "coverage_resolved",
+        "coverage_lower",
+        "coverage_upper",
+        "coverage_resolved_y0",
+        "coverage_resolved_y1",
+        "average_set_size",
+        "singleton_share",
+        "set_empty_count",
+        "set_empty_share",
+        "set_zero_only_count",
+        "set_zero_only_share",
+        "set_one_only_count",
+        "set_one_only_share",
+        "set_both_count",
+        "set_both_share",
+        "lower_positive_share",
+        "upper_saturated_share",
+    )
+    indexed_cells = {
+        (row["method"], row["window_id"], row["conformal_group"]): row for row in cell_rows
+    }
+    platt_keys = [
+        (row["window_id"], row["conformal_group"]) for row in cell_rows if row["method"] == "platt"
+    ]
+    platt_beta_equal_cells = sum(
+        all(
+            indexed_cells[("platt", window_id, group)][column]
+            == indexed_cells[("beta", window_id, group)][column]
+            for column in equality_columns
+        )
+        for window_id, group in platt_keys
+    )
+    platt_overall = {row["window_id"]: row for row in overall if row["method"] == "platt"}
+    alternative_set_geometry = {
+        method: {
+            "rows": len(rows),
+            "zero_empty_set_cells": sum(int(row["set_empty_count"]) == 0 for row in rows),
+            "two_label_count_greater_than_platt_cells": sum(
+                int(row["set_both_count"])
+                > int(platt_overall[str(row["window_id"])]["set_both_count"])
+                for row in rows
+            ),
+        }
+        for method in ("isotonic", "venn_abers")
+        for rows in [[row for row in overall if row["method"] == method]]
+    }
+    derived_state = (
+        "all_32_overall_upper_below_nominal"
+        if len(overall) == 32 and below == 32
+        else "uniform_closed_family_shortfall_not_established"
+    )
+    expected_counts = {
+        "methods": 4,
+        "windows": 8,
+        "scopes_per_method_window": 6,
+        "evaluation_cells": 192,
+        "overall_cells": 32,
+        "pairwise_cells": 288,
+        "candidate_rows": 376890,
+        "resolved_rows": 364814,
+        "unresolved_rows": 12076,
+        "resolved_y0": 307842,
+        "resolved_y1": 56972,
+    }
+    findings = calibrator.get("findings")
+    interpretation = calibrator.get("interpretation", {})
+    artifacts = evidence.get("paper_artifacts", {})
+    expected_artifacts = {
+        "table/calibrator_fit_diagnostics": (
+            "reports/crpto/tables/crpto_ijds_v4_tableS2C_calibrator_fit_diagnostics.csv"
+        ),
+        "table/calibrator_sensitivity_cells": (
+            "reports/crpto/tables/crpto_ijds_v4_tableS6O_calibrator_sensitivity_cells.csv"
+        ),
+        "table/calibrator_pairwise_shared_completion": (
+            "reports/crpto/tables/crpto_ijds_v4_tableS6P_calibrator_pairwise_shared_completion.csv"
+        ),
+    }
+    forbidden_columns = ("allocation", "portfolio", "objective", "net_return")
+    checks = (
+        (
+            calibrator.get("counts") != expected_counts
+            or len(fit_rows) != 4
+            or len(cell_rows) != 192
+            or len(pairwise_rows) != 288,
+            "calibrator-family 4/192/288 publication census changed",
+        ),
+        (
+            len(overall) != 32
+            or not exact_boolean_flags
+            or below != 18
+            or at_or_above != 14
+            or method_census != expected_method_census,
+            "calibrator-family pooled 18/14 result census changed",
+        ),
+        (
+            calibrator.get("result_state") != derived_state
+            or derived_state != "uniform_closed_family_shortfall_not_established",
+            "calibrator-family published result state is not derived from the 32 pooled rows",
+        ),
+        (
+            calibrator.get("overall_cells_with_coverage_upper_below_nominal") != below
+            or calibrator.get("overall_cells_with_coverage_upper_at_or_above_nominal")
+            != at_or_above
+            or calibrator.get("overall_result_census_by_method") != method_census,
+            "calibrator-family published result summaries disagree with their rows",
+        ),
+        (
+            not isinstance(findings, Mapping)
+            or findings.get("overall_method_summaries") != method_summaries
+            or findings.get("pairwise_overall_summaries") != pairwise_summaries
+            or findings.get("platt_beta_aggregate_equality_cells") != platt_beta_equal_cells
+            or platt_beta_equal_cells != 48
+            or findings.get("alternative_overall_set_geometry_census") != alternative_set_geometry
+            or alternative_set_geometry
+            != {
+                "isotonic": {
+                    "rows": 8,
+                    "zero_empty_set_cells": 8,
+                    "two_label_count_greater_than_platt_cells": 8,
+                },
+                "venn_abers": {
+                    "rows": 8,
+                    "zero_empty_set_cells": 8,
+                    "two_label_count_greater_than_platt_cells": 8,
+                },
+            },
+            "calibrator-family derived method, pairwise, or set-geometry findings "
+            "disagree with their rows",
+        ),
+        (
+            any(row.get("shared_loanwise_completion") is not True for row in pairwise_rows),
+            "calibrator pairwise rows no longer use shared loanwise completion",
+        ),
+        (
+            not isinstance(interpretation, Mapping)
+            or interpretation.get("learner_calibrator_window_or_result_selected") is not False
+            or interpretation.get("calibrator_winner") is not None
+            or interpretation.get("selected_calibrator") is not None
+            or interpretation.get("portfolio_score_changed") is not False
+            or interpretation.get("portfolio_optimization") is not False
+            or interpretation.get("portfolio_optimization_run") is not False
+            or interpretation.get("pre_existing_platt_score_remains_primary_portfolio_score")
+            is not True
+            or interpretation.get("alternative_calibrator_maps_propagated_to_portfolio")
+            is not False
+            or interpretation.get(
+                "uniform_shortfall_not_established_is_not_true_coverage_dependence"
+            )
+            is not True
+            or interpretation.get("temporal_transport_established") is not False
+            or interpretation.get("prospective_transport_established") is not False
+            or interpretation.get(
+                "venn_abers_multiprobability_guarantee_transported_to_scalarization"
+            )
+            is not False,
+            "calibrator-family selection, Venn, or portfolio boundary changed",
+        ),
+        (
+            not isinstance(artifacts, Mapping)
+            or any(
+                not isinstance(artifacts.get(name), Mapping) or artifacts[name].get("path") != path
+                for name, path in expected_artifacts.items()
+            ),
+            "calibrator-family paper artifact descriptors are missing or misbound",
+        ),
+        (
+            any(
+                token in str(column).lower()
+                for row in (*fit_rows, *cell_rows, *pairwise_rows)
+                for column in row
+                for token in forbidden_columns
+            ),
+            "calibrator-family publication rows leaked a portfolio field",
+        ),
+    )
+    return [message for failed, message in checks if failed]
 
 
 def _check_evidence_decision() -> list[str]:
@@ -706,14 +1034,20 @@ def _check_lineage_sync() -> list[str]:
         "status": str(registry["status"]),
         "sources": sorted(registered),
     }
+    scientific_git_lineages = _scientific_git_lineages(registry)
     checks = (
         (
-            str(registry.get("schema_version")) != "2026-07-29.1",
-            "active source registry schema is not 2026-07-29.1",
+            str(registry.get("schema_version")) != "2026-07-30.2",
+            "active source registry schema is not 2026-07-30.2",
         ),
         (
             len(registry.get("dvc_pointers", [])) != 53,
             "active source registry does not contain exactly 53 DVC pointers",
+        ),
+        (
+            scientific_git_lineages != EXPECTED_SCIENTIFIC_GIT_LINEAGES,
+            "active source registry does not contain exactly the seven declared "
+            "scientific Git-native lineages",
         ),
         (
             len(
@@ -723,8 +1057,8 @@ def _check_lineage_sync() -> list[str]:
                     if str(descriptor.get("path", "")).endswith(".csv")
                 ]
             )
-            != 38,
-            "paper evidence manifest does not contain exactly 38 CSV tables",
+            != 41,
+            "paper evidence manifest does not contain exactly 41 CSV tables",
         ),
         (
             contract.get("source_registry") != expected_registry_path,
@@ -757,6 +1091,22 @@ def _check_lineage_sync() -> list[str]:
     endpoint = registry["sensitivities"]["endpoint_availability"]
     endpoint_evidence = evidence.get("sensitivity", {}).get("evaluation_endpoint_availability", {})
     failures.extend(_identity_mismatches(endpoint_evidence, endpoint, label="endpoint sensitivity"))
+    calibrator_registry = registry["sensitivities"]["calibrator_family"]
+    calibrator_evidence = evidence.get("sensitivity", {}).get("calibrator_family", {})
+    failures.extend(
+        _identity_mismatches(
+            calibrator_evidence,
+            calibrator_registry["evaluation"],
+            label="calibrator-family evaluation",
+        )
+    )
+    if (
+        calibrator_evidence.get("outcome_free_lineage") != calibrator_registry["outcome_free"]
+        or calibrator_evidence.get("evaluation_lineage") != calibrator_registry["evaluation"]
+    ):
+        failures.append(
+            "calibrator-family outcome-free or evaluation lineage differs from registry"
+        )
     exact_registry = registry["lineages"]["diagnostics"]["exchangeability_transport_test"]
     failures.extend(
         _identity_mismatches(
@@ -873,6 +1223,7 @@ def check_publication_integrity() -> list[str]:
         ("retired-claim scan", _check_retired_claims),
         ("reviewer anonymity", _check_reviewer_anonymity),
         ("evidence decision contract", _check_evidence_decision),
+        ("calibrator-family publication contract", _check_calibrator_publication_payload),
         ("claim ledger", _check_claim_ledger),
         ("lineage synchronization", _check_lineage_sync),
         ("inventory-count synchronization", _check_inventory_count_sync),

@@ -60,6 +60,7 @@ def test_zip_scanner_inherits_every_central_reviewer_literal() -> None:
 
 def test_current_zip_has_fixed_metadata_and_complete_table_censuses() -> None:
     expected_rows = {
+        "Table_S2C_calibrator_fit_diagnostics.csv": 4,
         "Table_S6B_exchangeability_cells.csv": 40,
         "Table_S6C_exchangeability_strata.csv": 200,
         "Table_S6D_label_mondrian_cells.csv": 40,
@@ -70,6 +71,8 @@ def test_current_zip_has_fixed_metadata_and_complete_table_censuses() -> None:
         "Table_S6L_residual_transport_summary.csv": 5,
         "Table_S6M_residual_transport_pooled.csv": 200,
         "Table_S6N_marginal_score_outcome_gap.csv": 5,
+        "Table_S6O_calibrator_sensitivity_cells.csv": 192,
+        "Table_S6P_calibrator_pairwise_shared_completion.csv": 288,
         "Table_S9G_decision_catalog_metric_separation.csv": 3,
         "Table_S9H_decision_catalog_target_blocks.csv": 45,
         "Table_S9I_funded_selection_track_estimands.csv": 96,
@@ -79,7 +82,7 @@ def test_current_zip_has_fixed_metadata_and_complete_table_censuses() -> None:
     }
     with zipfile.ZipFile(OUTPUT) as archive:
         assert archive.namelist() == sorted(archive.namelist())
-        assert len(archive.namelist()) == 17
+        assert len(archive.namelist()) == 20
         for info in archive.infolist():
             assert info.date_time == (1980, 1, 1, 0, 0, 0)
             assert info.compress_type == zipfile.ZIP_STORED
@@ -120,6 +123,82 @@ def test_current_zip_has_complete_five_learner_eight_window_cell_structure() -> 
             )
         )
         assert {row["label"] for row in categories} == {"0", "1"}
+
+
+def test_current_zip_has_complete_closed_calibrator_family() -> None:
+    with zipfile.ZipFile(OUTPUT) as archive:
+        fit = list(
+            csv.DictReader(
+                io.StringIO(
+                    archive.read("Table_S2C_calibrator_fit_diagnostics.csv").decode("utf-8")
+                )
+            )
+        )
+        cells = list(
+            csv.DictReader(
+                io.StringIO(
+                    archive.read("Table_S6O_calibrator_sensitivity_cells.csv").decode("utf-8")
+                )
+            )
+        )
+        pairwise = list(
+            csv.DictReader(
+                io.StringIO(
+                    archive.read("Table_S6P_calibrator_pairwise_shared_completion.csv").decode(
+                        "utf-8"
+                    )
+                )
+            )
+        )
+
+    methods = {"platt", "isotonic", "beta", "venn_abers"}
+    assert len(fit) == 4
+    assert {row["method"] for row in fit} == methods
+    assert {row["same_sample_descriptive_only"] for row in fit} == {"True"}
+    assert {row["selection_metric"] for row in fit} == {"False"}
+
+    assert len(cells) == 192
+    assert {row["method"] for row in cells} == methods
+    assert {row["window_id"] for row in cells} == {
+        f"w0{index}_2012m0{index}_m0{index + 5}" for index in range(1, 4)
+    } | {
+        "w04_2012m04_m09",
+        "w05_2012m05_m10",
+        "w06_2012m06_m11",
+        "w07_2012m07_m12",
+        "w08_2012m08_2013m01",
+    }
+    assert {row["conformal_group"] for row in cells} == {"-1", "0", "1", "2", "3", "4"}
+    overall = [row for row in cells if row["conformal_group"] == "-1"]
+    assert len(overall) == 32
+    assert sum(row["coverage_upper_below_nominal"] == "True" for row in overall) == 18
+    assert Counter(
+        row["method"] for row in overall if row["coverage_upper_below_nominal"] == "True"
+    ) == Counter({"platt": 8, "beta": 8, "isotonic": 1, "venn_abers": 1})
+
+    assert len(pairwise) == 288
+    assert {row["shared_loanwise_completion"] for row in pairwise} == {"True"}
+    assert (
+        len(
+            {
+                (
+                    row["method_a"],
+                    row["method_b"],
+                    row["window_id"],
+                    row["conformal_group"],
+                )
+                for row in pairwise
+            }
+        )
+        == 288
+    )
+    forbidden = ("allocation", "portfolio", "objective", "net_return")
+    assert not any(
+        token in column.lower()
+        for rows in (fit, cells, pairwise)
+        for column in rows[0]
+        for token in forbidden
+    )
 
 
 def test_machine_readable_supplement_is_current_and_anonymous() -> None:
@@ -176,7 +255,7 @@ def test_common_panel_tables_have_complete_fixed_adjacent_grids() -> None:
         )
 
 
-def test_all_fourteen_source_contracts_validate_and_preserve_csv_bytes(
+def test_all_nineteen_source_contracts_validate_and_preserve_csv_bytes(
     valid_sources: dict[str, Path],
 ) -> None:
     assert set(valid_sources) == set(TABLE_CONTRACTS) == set(SOURCE_FILENAMES)
@@ -245,6 +324,13 @@ def test_every_source_rejects_duplicate_composite_keys(
             "False",
         ),
         ("Table_S6N_marginal_score_outcome_gap.csv", "joint_endpoint_attainment", "False"),
+        ("Table_S2C_calibrator_fit_diagnostics.csv", "selection_metric", "True"),
+        ("Table_S6O_calibrator_sensitivity_cells.csv", "role", "secondary"),
+        (
+            "Table_S6P_calibrator_pairwise_shared_completion.csv",
+            "shared_loanwise_completion",
+            "False",
+        ),
         (
             "Table_S9G_decision_catalog_metric_separation.csv",
             "all_target_blocks_exceed_development",
@@ -293,6 +379,50 @@ def test_nonfinite_scientific_values_are_rejected(valid_sources: dict[str, Path]
 
     with pytest.raises(RuntimeError, match="is not finite"):
         _reviewer_csv_payload(name, path)
+
+
+def test_calibrator_fit_rejects_non_venn_multiprobability_diagnostic(
+    valid_sources: dict[str, Path],
+) -> None:
+    name = "Table_S2C_calibrator_fit_diagnostics.csv"
+    path = valid_sources[name]
+    matrix = _csv_matrix(path)
+    method = matrix[0].index("method")
+    gap = matrix[0].index("venn_multiprobability_gap_mean")
+    row = next(values for values in matrix[1:] if values[method] == "platt")
+    row[gap] = "0.01"
+    _write_csv_matrix(path, matrix)
+
+    with pytest.raises(RuntimeError, match="Venn-only multiprobability diagnostic"):
+        _reviewer_csv_payload(name, path)
+
+
+def test_calibrator_nominal_flag_drift_is_rejected(
+    valid_sources: dict[str, Path],
+) -> None:
+    name = "Table_S6O_calibrator_sensitivity_cells.csv"
+    path = valid_sources[name]
+    matrix = _csv_matrix(path)
+    flag = matrix[0].index("coverage_upper_below_nominal")
+    matrix[1][flag] = "False" if matrix[1][flag] == "True" else "True"
+    _write_csv_matrix(path, matrix)
+
+    with pytest.raises(RuntimeError, match="nominal-coverage flag"):
+        _reviewer_csv_payload(name, path)
+
+
+def test_calibrator_pairwise_resolved_difference_drift_is_rejected(
+    valid_sources: dict[str, Path],
+) -> None:
+    name = "Table_S6P_calibrator_pairwise_shared_completion.csv"
+    path = valid_sources[name]
+    matrix = _csv_matrix(path)
+    column = matrix[0].index("coverage_difference_resolved")
+    matrix[1][column] = str(float(matrix[1][column]) + 0.0001)
+    _write_csv_matrix(path, matrix)
+
+    with pytest.raises(RuntimeError, match="S6O-to-S6P resolved coverage difference"):
+        _zip_payload(valid_sources)
 
 
 def test_cross_table_s6j_to_s6k_aggregate_drift_is_rejected(

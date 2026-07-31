@@ -2,11 +2,15 @@
 
 from __future__ import annotations
 
+import hashlib
 import os
+import re
 import shutil
+import subprocess
 import time
 from collections.abc import Mapping
-from pathlib import Path
+from functools import lru_cache
+from pathlib import Path, PurePosixPath
 from typing import Any
 
 from src.utils.artifact_descriptor import relative_artifact_descriptor, sha256_file
@@ -25,6 +29,7 @@ PUBLICATION_IMPLEMENTATION_PATHS: dict[str, str] = {
     "publication_table_schemas": "src/ijds_audit/publication_schemas.py",
     "v4_config_loader": "src/ijds_audit/config.py",
     "grid_contracts": "src/ijds_audit/grid_contracts.py",
+    "calibrator_sensitivity/loader": ("src/ijds_audit/calibrator_sensitivity_evidence.py"),
     "endpoint_availability_sensitivity/loader": "src/ijds_audit/sensitivity_evidence.py",
     "portfolio_structure_sensitivity/loader": "src/ijds_audit/structural_evidence.py",
     "robustness_sensitivities/loader": "src/ijds_audit/robustness_evidence.py",
@@ -37,6 +42,51 @@ PUBLICATION_IMPLEMENTATION_PATHS: dict[str, str] = {
 
 _WINDOWS_REPLACE_ATTEMPTS = 6
 _WINDOWS_REPLACE_INITIAL_DELAY_SECONDS = 0.05
+
+
+@lru_cache(maxsize=512)
+def _historical_git_blob(repo_root: str, commit: str, relative_path: str) -> bytes:
+    result = subprocess.run(
+        ["git", "show", f"{commit}:{relative_path}"],
+        cwd=repo_root,
+        check=False,
+        capture_output=True,
+    )
+    if result.returncode != 0:
+        raise RuntimeError(
+            f"Historical Git blob {commit}:{relative_path} is absent from {repo_root}."
+        )
+    return result.stdout
+
+
+def require_historical_git_blob_descriptor(
+    descriptor: Mapping[str, Any],
+    *,
+    commit: str,
+    relative_path: str,
+    repo_root: Path,
+    label: str,
+) -> None:
+    """Verify frozen execution bytes at their pinned Git commit."""
+    relative = PurePosixPath(relative_path)
+    if (
+        re.fullmatch(r"[0-9a-f]{40}", commit) is None
+        or not relative_path
+        or relative.is_absolute()
+        or ".." in relative.parts
+        or relative.as_posix() != relative_path
+        or set(descriptor) != {"path", "bytes", "sha256"}
+        or descriptor.get("path") != relative_path
+        or type(descriptor.get("bytes")) is not int
+        or not isinstance(descriptor.get("sha256"), str)
+    ):
+        raise RuntimeError(f"{label} has an invalid historical descriptor.")
+    payload = _historical_git_blob(str(repo_root.resolve()), commit, relative_path)
+    if (
+        len(payload) != descriptor["bytes"]
+        or hashlib.sha256(payload).hexdigest() != descriptor["sha256"]
+    ):
+        raise RuntimeError(f"{label} does not match its pinned historical Git blob.")
 
 
 def _replace_with_retry(source: Path, destination: Path) -> None:

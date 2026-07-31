@@ -10,6 +10,7 @@ from src.ijds_audit.publication_schemas import S6B_PUBLICATION_COLUMNS
 
 REPO = Path(__file__).resolve().parents[1]
 TABLES = REPO / "reports/crpto/tables"
+BODY = REPO / "paper/CRPTO_ijds.qmd"
 SUPPLEMENT = REPO / "paper/supplement_ijds.qmd"
 
 
@@ -91,6 +92,157 @@ def test_credit_control_metrics_and_shift_diagnostics_are_visible() -> None:
     assert len(primary_psi) == 5
     for row in primary_psi:
         assert f"{float(row['psi']):.6f}" in supplement
+
+
+def test_calibrator_tables_are_complete_and_pooled_rows_match_the_supplement() -> None:
+    fit = _rows("crpto_ijds_v4_tableS2C_calibrator_fit_diagnostics.csv")
+    cells = _rows("crpto_ijds_v4_tableS6O_calibrator_sensitivity_cells.csv")
+    pairwise = _rows("crpto_ijds_v4_tableS6P_calibrator_pairwise_shared_completion.csv")
+    supplement = SUPPLEMENT.read_text(encoding="utf-8")
+
+    labels = {
+        "platt": "Platt",
+        "isotonic": "Isotonic",
+        "beta": "Beta (`abm`)",
+        "venn_abers": "IVAP Venn--Abers scalar",
+    }
+    assert len(fit) == 4
+    assert {row["method"] for row in fit} == set(labels)
+    assert {row["same_sample_descriptive_only"] for row in fit} == {"True"}
+    assert {row["selection_metric"] for row in fit} == {"False"}
+    for row in fit:
+        gap = (
+            f"{float(row['venn_multiprobability_gap_mean']):.6f}"
+            if row["venn_multiprobability_gap_mean"]
+            else "--"
+        )
+        expected = (
+            f"| {labels[row['method']]} | {int(row['rows']):,} | "
+            f"{float(row['roc_auc']):.6f} | {float(row['brier']):.6f} | "
+            f"{float(row['log_loss']):.6f} | {float(row['ece_10']):.6f} | {gap} |"
+        )
+        assert expected in supplement
+
+    assert len(cells) == 192
+    overall = [row for row in cells if row["conformal_group"] == "-1"]
+    assert len(overall) == 32
+    assert sum(row["coverage_upper_below_nominal"] == "True" for row in overall) == 18
+    assert sum(row["coverage_upper_below_nominal"] == "False" for row in overall) == 14
+    for row in overall:
+        window = f"W{int(row['window_id'][1:3])}"
+        expected = (
+            f"| {labels[row['method']]} | {window} | "
+            f"{float(row['coverage_resolved']):.6f} | "
+            f"[{float(row['coverage_lower']):.6f}, {float(row['coverage_upper']):.6f}] | "
+            f"{float(row['average_set_size']):.6f} | "
+            f"{float(row['set_empty_share']):.6f} | "
+            f"{float(row['set_both_share']):.6f} |"
+        )
+        assert expected in supplement
+
+    assert len(pairwise) == 288
+    assert {row["shared_loanwise_completion"] for row in pairwise} == {"True"}
+    assert (
+        len(
+            {
+                (
+                    row["method_a"],
+                    row["method_b"],
+                    row["window_id"],
+                    row["conformal_group"],
+                )
+                for row in pairwise
+            }
+        )
+        == 288
+    )
+    forbidden = ("allocation", "portfolio", "objective", "net_return")
+    assert not any(
+        token in column.lower()
+        for rows in (fit, cells, pairwise)
+        for column in rows[0]
+        for token in forbidden
+    )
+
+
+def test_calibrator_body_summary_and_named_pairwise_ranges_are_derived() -> None:
+    cells = _rows("crpto_ijds_v4_tableS6O_calibrator_sensitivity_cells.csv")
+    pairwise = _rows("crpto_ijds_v4_tableS6P_calibrator_pairwise_shared_completion.csv")
+    body = BODY.read_text(encoding="utf-8")
+    supplement = _normalize(SUPPLEMENT.read_text(encoding="utf-8"))
+    overall = [row for row in cells if row["conformal_group"] == "-1"]
+    labels = {
+        "platt": "Platt",
+        "isotonic": "Isotonic",
+        "beta": "Beta (`abm`)",
+        "venn_abers": "IVAP Venn--Abers scalar",
+    }
+
+    for method, label in labels.items():
+        rows = [row for row in overall if row["method"] == method]
+        assert len(rows) == 8
+        below = sum(row["coverage_upper_below_nominal"] == "True" for row in rows)
+        expected = (
+            f"| {label} | {below}/8 | "
+            f"{min(float(row['coverage_lower']) for row in rows):.6f} | "
+            f"{max(float(row['coverage_upper']) for row in rows):.6f} | "
+            f"{min(float(row['coverage_resolved']) for row in rows):.6f}--"
+            f"{max(float(row['coverage_resolved']) for row in rows):.6f} | "
+            f"{min(float(row['average_set_size']) for row in rows):.6f}--"
+            f"{max(float(row['average_set_size']) for row in rows):.6f} |"
+        )
+        assert expected in body
+
+    pooled_pairs = [row for row in pairwise if row["conformal_group"] == "-1"]
+
+    def oriented_bounds(method_a: str, method_b: str) -> tuple[float, float]:
+        direct = [
+            row
+            for row in pooled_pairs
+            if row["method_a"] == method_a and row["method_b"] == method_b
+        ]
+        if direct:
+            return (
+                min(float(row["coverage_difference_lower"]) for row in direct),
+                max(float(row["coverage_difference_upper"]) for row in direct),
+            )
+        reverse = [
+            row
+            for row in pooled_pairs
+            if row["method_a"] == method_b and row["method_b"] == method_a
+        ]
+        assert reverse
+        return (
+            -max(float(row["coverage_difference_upper"]) for row in reverse),
+            -min(float(row["coverage_difference_lower"]) for row in reverse),
+        )
+
+    named = {
+        ("isotonic", "platt"): "isotonic-minus-platt",
+        ("venn_abers", "platt"): "ivap-minus-platt",
+        ("isotonic", "venn_abers"): "isotonic-minus-ivap",
+    }
+    for pair, normalized_label in named.items():
+        lower, upper = oriented_bounds(*pair)
+        assert lower > 0.0
+        assert upper > 0.0
+        assert f"{lower:.6f}" in supplement
+        assert f"{upper:.6f}" in supplement
+        assert normalized_label in supplement
+        if pair != ("isotonic", "venn_abers"):
+            assert f"{lower:.6f}--{upper:.6f}" in body
+
+    zero = [row for row in pairwise if row["method_a"] == "platt" and row["method_b"] == "beta"]
+    assert len(zero) == 48
+    assert all(
+        float(row[column]) == 0.0
+        for row in zero
+        for column in (
+            "coverage_difference_resolved",
+            "coverage_difference_lower",
+            "coverage_difference_upper",
+        )
+    )
 
 
 def test_named_and_exact_direction_counts_are_visible_in_supplement() -> None:

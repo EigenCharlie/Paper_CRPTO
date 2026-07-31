@@ -51,6 +51,7 @@ def test_body_and_generated_tex_share_architecture_citations_and_displays() -> N
         "tbl-two-ruler",
         "tbl-catalog-transport",
         "tbl-embedding-direction",
+        "tbl-calibrator-sensitivity",
     }
     assert official.count(r"\begin{longtable}") == len(body_table_ids)
     body_figure_ids = set(re.findall(r"\{#(fig-[A-Za-z0-9_-]+)", body))

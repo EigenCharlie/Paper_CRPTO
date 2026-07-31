@@ -175,6 +175,9 @@ def test_active_capsule_paths_exist() -> None:
         not in active["required_artifacts"]
     )
     assert {
+        "reports/crpto/tables/crpto_ijds_v4_tableS2C_calibrator_fit_diagnostics.csv",
+        "reports/crpto/tables/crpto_ijds_v4_tableS6O_calibrator_sensitivity_cells.csv",
+        "reports/crpto/tables/crpto_ijds_v4_tableS6P_calibrator_pairwise_shared_completion.csv",
         "reports/crpto/tables/crpto_ijds_v4_tableS9K_set_preserving_embedding_allocation_summary.csv",
         "reports/crpto/tables/crpto_ijds_v4_tableS9L_set_preserving_embedding_direction_census.csv",
     }.issubset(active["required_artifacts"])
@@ -197,6 +200,7 @@ def test_active_capsule_paths_exist() -> None:
         for path in code_surface[group]:
             assert Path(path).is_file(), path
     assert set(code_surface["sealed_protocol_entrypoints"]) == {
+        "scripts/experiments/run_ijds_calibrator_sensitivity_v1.py",
         "scripts/experiments/run_ijds_set_preserving_embedding_sensitivity_v1c.py",
         "scripts/experiments/run_ijds_set_preserving_embedding_sensitivity_v1d.py",
     }
