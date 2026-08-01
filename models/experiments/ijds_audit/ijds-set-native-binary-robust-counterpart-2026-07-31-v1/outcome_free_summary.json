@@ -1,0 +1,44 @@
+{
+  "schema_version": "2026-07-31.v1.1",
+  "status": "outcome_free_set_native_binary_robust_counterpart_complete",
+  "run_tag": "ijds-set-native-binary-robust-counterpart-2026-07-31-v1",
+  "protocol": {
+    "tag": "protocol/ijds-set-native-binary-robust-counterpart-2026-07-31-v1",
+    "tag_object": "cf24ac5acd3ba6cafd8834d99d974d282fcedaac",
+    "commit": "2066363ab0d09e25dade0f582a0c36c6aa7bee5c"
+  },
+  "counts": {
+    "cells": 1248,
+    "primary_cells": 720,
+    "funded_rows": 126686,
+    "taxonomy_rows": 208,
+    "solver_audit_rows": 1248
+  },
+  "set_counts": {
+    "n_empty": 52311,
+    "n_singleton_zero": 3003924,
+    "n_singleton_one": 0,
+    "n_two_label": 717965,
+    "n_risk_zero": 3003924,
+    "n_risk_one": 770276
+  },
+  "audit_maxima": {
+    "deterministic_exposure_distance": 0.0,
+    "deterministic_objective_difference": 0.0,
+    "deterministic_weighted_score_difference": 0.0,
+    "reversal_exposure_distance": 3.0051637622818815e-14,
+    "reversal_objective_difference": 1.7462298274040222e-10,
+    "reversal_weighted_score_difference": 3.004888005087025e-14,
+    "independent_objective_rate_difference": 2.0372681319713592e-16,
+    "independent_weighted_score_difference": 4.509934092844503e-14
+  },
+  "selection": {
+    "ruler": null,
+    "coordinate": null,
+    "window": null,
+    "policy": null
+  },
+  "outcome_columns_passed": [],
+  "protected_stages_run": [],
+  "protected_artifacts_written": []
+}

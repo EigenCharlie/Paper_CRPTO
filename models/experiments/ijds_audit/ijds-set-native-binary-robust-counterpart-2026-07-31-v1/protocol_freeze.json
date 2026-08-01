@@ -1,0 +1,414 @@
+{
+  "schema_version": "2026-07-31.v1.1",
+  "status": "outcome_free_set_native_binary_robust_counterpart_complete",
+  "artifact_status": "pending_git_artifact_commit_and_annotated_tag",
+  "run_tag": "ijds-set-native-binary-robust-counterpart-2026-07-31-v1",
+  "protocol": {
+    "tag": "protocol/ijds-set-native-binary-robust-counterpart-2026-07-31-v1",
+    "tag_object": "cf24ac5acd3ba6cafd8834d99d974d282fcedaac",
+    "commit": "2066363ab0d09e25dade0f582a0c36c6aa7bee5c"
+  },
+  "parent": {
+    "run_tag": "ijds-binary-geometry-frontier-v4-2026-07-12-v1",
+    "freeze": {
+      "path": "models/experiments/ijds_audit/ijds-binary-geometry-frontier-v4-2026-07-12-v1/protocol_freeze.json",
+      "bytes": 20362,
+      "sha256": "c2b3dc2d18c9fed80708682d5a0369c80c89643e2d28024418522d954ebe667c"
+    }
+  },
+  "decision_contract": {
+    "budget": 1000000.0,
+    "max_concentration_by_purpose": 0.25,
+    "cash_variable_present": false,
+    "candidate_identity": {
+      "rows": 471775,
+      "groups": [
+        {
+          "role": "policy_development",
+          "period": "2013-02",
+          "rows": 6011,
+          "sha256": "3de6e8b52de72fee918ea42ded97f513ba81e50db2116efac6cb230cb85d0971"
+        },
+        {
+          "role": "policy_development",
+          "period": "2013-03",
+          "rows": 6440,
+          "sha256": "7faf89dc4cee6f7e7687a15e2f760fdc024eaaaa402ba7ca9f8b328ac4eb07ab"
+        },
+        {
+          "role": "policy_development",
+          "period": "2013-04",
+          "rows": 7238,
+          "sha256": "de12d399a0de15828ce1f647788f69ec70e703f72446fd0782884ee2428ad61d"
+        },
+        {
+          "role": "policy_development",
+          "period": "2013-05",
+          "rows": 7771,
+          "sha256": "485b87a716cff9fc5845bb3ee5e4e051805bb53573af1b644c57d628bdd8a9df"
+        },
+        {
+          "role": "policy_development",
+          "period": "2013-06",
+          "rows": 8127,
+          "sha256": "d51b0c9338f57059184aadae2945f1415bda19b64d6481483f6bf58549c8abfd"
+        },
+        {
+          "role": "policy_development",
+          "period": "2013-07",
+          "rows": 8978,
+          "sha256": "ac639e0a401d4d0f09f9f04a2a7ea18e92dfb90bd21bdf8dd3d9d4af445b11c9"
+        },
+        {
+          "role": "policy_development",
+          "period": "2013-08",
+          "rows": 9181,
+          "sha256": "0e72edfa55ff3f71ee3f371fdaee2b612672bd8a4db85d263e0c2a9840ea04f4"
+        },
+        {
+          "role": "policy_development",
+          "period": "2013-09",
+          "rows": 9159,
+          "sha256": "0e045ab4e5e74d1d65460bbc4331c6da5ef2c74ed0236d950d87e69cee1b884a"
+        },
+        {
+          "role": "policy_development",
+          "period": "2013-10",
+          "rows": 9993,
+          "sha256": "3a6a2b96f64c9df5cba87e5ce8979eb779ca1aecd6754cdeab5f27fdff577fa2"
+        },
+        {
+          "role": "policy_development",
+          "period": "2013-11",
+          "rows": 10898,
+          "sha256": "89db7fce738fbd6fae50c62184cae1e6d745ac6c43724f98cbac12bd8ac2b137"
+        },
+        {
+          "role": "policy_development",
+          "period": "2013-12",
+          "rows": 11089,
+          "sha256": "8fd8a962e954f30d6609560e3f8a8783f42b8bdb48e09e0ba3d79fe48291d16d"
+        },
+        {
+          "role": "primary_oot",
+          "period": "2016-04",
+          "rows": 28106,
+          "sha256": "2429065cf6645bb5340ae0c7bf82846bb300540f50d2a16633273cc6ccb820f8"
+        },
+        {
+          "role": "primary_oot",
+          "period": "2016-05",
+          "rows": 21831,
+          "sha256": "802063549dd3ecc5aebcacec9a9328a66d5da2184ec39d2bceee0ff6151c9805"
+        },
+        {
+          "role": "primary_oot",
+          "period": "2016-06",
+          "rows": 24600,
+          "sha256": "d9f5a33983f76b2c9fb3c538ca28af86db01243ad4e402fddb90ad99a6adc949"
+        },
+        {
+          "role": "primary_oot",
+          "period": "2016-07",
+          "rows": 25375,
+          "sha256": "16207ca44e8b2d372fc5ba06fa93b8df74d3c607d211bb0b514bbc6467555825"
+        },
+        {
+          "role": "primary_oot",
+          "period": "2016-08",
+          "rows": 27181,
+          "sha256": "41d776cf13bb9d45e2d14022eee02508ec9143bc80cac8057d7bb14f68105b44"
+        },
+        {
+          "role": "primary_oot",
+          "period": "2016-09",
+          "rows": 21342,
+          "sha256": "24913c46ea1fcb7be9b9437211ab2f317ebf95ed64469d7204b457db1f7491de"
+        },
+        {
+          "role": "primary_oot",
+          "period": "2016-10",
+          "rows": 24746,
+          "sha256": "d0ba97c0b0e88b400cb67135088ab2adeceae18410d1c80f530da21d4ba6f2e3"
+        },
+        {
+          "role": "primary_oot",
+          "period": "2016-11",
+          "rows": 26209,
+          "sha256": "cf830759dc639dc008481facf52a0ce22b0f975c4789e9e4d4a60cba6658fd21"
+        },
+        {
+          "role": "primary_oot",
+          "period": "2016-12",
+          "rows": 27985,
+          "sha256": "0d1747f8a2917b74dff6943440378e04ebb2f9890c349d13aed3c8dfe74c2efa"
+        },
+        {
+          "role": "primary_oot",
+          "period": "2017-01",
+          "rows": 24152,
+          "sha256": "579bc2a2d731b8375cf6c789373717f54da2ce99c5f3506bcbd605e1a1409b4e"
+        },
+        {
+          "role": "primary_oot",
+          "period": "2017-02",
+          "rows": 20453,
+          "sha256": "f4984c0b8b921e512c3752bee25f140edc441b87a71f9f1c85267fce8467e2d6"
+        },
+        {
+          "role": "primary_oot",
+          "period": "2017-03",
+          "rows": 27805,
+          "sha256": "80603de814dff984f88c1411a0026c96cc5fa6d312dd42a31825f6231a9f53ee"
+        },
+        {
+          "role": "primary_oot",
+          "period": "2017-04",
+          "rows": 21864,
+          "sha256": "97511c0a600ecc1cbca8568b37253a607a83e134f26386fd944916a7cc24347c"
+        },
+        {
+          "role": "primary_oot",
+          "period": "2017-05",
+          "rows": 27456,
+          "sha256": "2100ff562d67648b755cdf9b1294f245c41ababea43176fd0cd7cd7607c6d13b"
+        },
+        {
+          "role": "primary_oot",
+          "period": "2017-06",
+          "rows": 27785,
+          "sha256": "2d00c9a2bfa98e71f6edddfccce39b4b024163a9c9d420eb828ea63aded7e531"
+        }
+      ],
+      "sha256": "290a7f69b588944104ec6a824233f496551aa2888dc5b5ee1564e564eb9dd682",
+      "canonicalization": "utf8_length_prefixed_json_role_period_id_sorted_mergesort_sha256"
+    }
+  },
+  "set_native_score": {
+    "source_model": "catboost_platt_primary_only",
+    "source_recipe": "fixed_taxonomy_split_mondrian_absolute_residual",
+    "canonical_groups": 5,
+    "calibration_windows": "all_eight_declared_windows",
+    "label_space": [
+      0,
+      1
+    ],
+    "default_label": 1,
+    "definition": "zero_iff_exact_singleton_zero_else_one",
+    "singleton_zero": 0.0,
+    "empty_set": 1.0,
+    "singleton_one": 1.0,
+    "two_label_set": 1.0,
+    "empty_set_semantics": "explicit_fail_closed_decision_convention_not_conformal_theorem",
+    "interval_membership": "zero_iff_lower_equals_zero_one_iff_upper_equals_one",
+    "no_continuous_endpoint_magnitude": true
+  },
+  "outcome_columns_passed_to_frontier": [],
+  "phase_a_manifest": {
+    "path": "models/experiments/ijds_audit/ijds-set-native-binary-robust-counterpart-2026-07-31-v1/verified_phase_a_manifest.json",
+    "bytes": 234143,
+    "sha256": "5d65fa7f89c290b4241e06d1662b0518c7c91ca83c6e10a96ff699e439ff49ce"
+  },
+  "official_artifacts": {
+    "solve_records": {
+      "path": "data/processed/experiments/ijds_audit/ijds-set-native-binary-robust-counterpart-2026-07-31-v1/frontier/frontier_solve_records.parquet",
+      "bytes": 99078,
+      "sha256": "52ff6db4cf4f1d0ee24b486b547300e1fe2e9071e3ea5805b55b31162066d4fb"
+    },
+    "allocations": {
+      "path": "data/processed/experiments/ijds_audit/ijds-set-native-binary-robust-counterpart-2026-07-31-v1/frontier/frontier_funded_allocations.parquet",
+      "bytes": 1460830,
+      "sha256": "580468cbd2429a316aee3022a512db0f030f11543e84c2fbfb7b9687b47c6497"
+    },
+    "set_taxonomy": {
+      "path": "data/processed/experiments/ijds_audit/ijds-set-native-binary-robust-counterpart-2026-07-31-v1/frontier/set_taxonomy_diagnostics.parquet",
+      "bytes": 12686,
+      "sha256": "35f2bcf84791165e3b6c70d6da98f683fe35c9e82f58e6fd47d7e5daa15ab5aa"
+    },
+    "solver_audit": {
+      "path": "data/processed/experiments/ijds_audit/ijds-set-native-binary-robust-counterpart-2026-07-31-v1/frontier/solver_audit.parquet",
+      "bytes": 23406,
+      "sha256": "3758d0308f81d073f380fe4dcadb7bca2585cbd002e35bcab85ef07ca6b6e3be"
+    }
+  },
+  "summary": {
+    "path": "models/experiments/ijds_audit/ijds-set-native-binary-robust-counterpart-2026-07-31-v1/outcome_free_summary.json",
+    "bytes": 1429,
+    "sha256": "716c93a7115548f6695636b9e52b76e5ad7ead83ca1189d7440a6cacd3c65459"
+  },
+  "execution_receipt": {
+    "path": "models/experiments/ijds_audit/ijds-set-native-binary-robust-counterpart-2026-07-31-v1/outcome_free_execution_receipt.json",
+    "bytes": 693,
+    "sha256": "b3ccb78aaefb24e39e1a4d9eaac4e9ba006373692883224f2ef22b37160121b6"
+  },
+  "implementation_provenance": {
+    "source_files": {
+      "configs/experiments/ijds_set_native_binary_robust_counterpart_2026-07-31_v1.yaml": {
+        "path": "configs/experiments/ijds_set_native_binary_robust_counterpart_2026-07-31_v1.yaml",
+        "bytes": 6967,
+        "sha256": "45e3e2ba40c7731792a16f7c643f0214e2cd29c26415904b846beed09e541ef6"
+      },
+      "configs/experiments/ijds_set_native_binary_robust_counterpart_2026-07-31_v1_phase_b_blocked.yaml": {
+        "path": "configs/experiments/ijds_set_native_binary_robust_counterpart_2026-07-31_v1_phase_b_blocked.yaml",
+        "bytes": 3190,
+        "sha256": "f1dfb7820c0e59b17c6b3edb98ff14d0a69024639464ec1992f922e00f8a4283"
+      },
+      "docs/research/ijds_set_native_binary_robust_counterpart_v1_protocol_2026-07-31.md": {
+        "path": "docs/research/ijds_set_native_binary_robust_counterpart_v1_protocol_2026-07-31.md",
+        "bytes": 6412,
+        "sha256": "a9ab4ba250e00a6940576dcd7957c149a561802cb342651c85fc3e4dd66aace8"
+      },
+      "scripts/experiments/run_ijds_set_native_binary_robust_counterpart_v1.py": {
+        "path": "scripts/experiments/run_ijds_set_native_binary_robust_counterpart_v1.py",
+        "bytes": 52695,
+        "sha256": "fad794542ef57f1bf47ee0c8adc3030d4005fb574d58b6d8c0538e47d5c2644a"
+      },
+      "src/ijds_challengers/set_native_binary_robust.py": {
+        "path": "src/ijds_challengers/set_native_binary_robust.py",
+        "bytes": 43905,
+        "sha256": "d3bc2d0252c33ecb70572ef2a0adc821849f84b96cdee5525ee96793c61a8c32"
+      },
+      "src/ijds_challengers/archive.py": {
+        "path": "src/ijds_challengers/archive.py",
+        "bytes": 5120,
+        "sha256": "758e3db891597e4567dba9dec3b55d44179e194655aed96862059cecb2fd47a7"
+      },
+      "src/ijds_challengers/frontier.py": {
+        "path": "src/ijds_challengers/frontier.py",
+        "bytes": 11514,
+        "sha256": "e7ad05d21a1ca885c67e2dbfcb7b51b7a4d45c1c9f0871fea60200e6ed8a2bbb"
+      },
+      "src/ijds_challengers/normalized_frontier.py": {
+        "path": "src/ijds_challengers/normalized_frontier.py",
+        "bytes": 40907,
+        "sha256": "a42b8d4128a4165067a93c37fbe83fa021e37ea788bbf1b689786ce7f826fd05"
+      },
+      "src/ijds_audit/config.py": {
+        "path": "src/ijds_audit/config.py",
+        "bytes": 25008,
+        "sha256": "a13cadec6a16267cfe80c3bfce986e6d6bbd6461b61d605036d3a917c4308f8e"
+      },
+      "src/ijds_audit/evaluation.py": {
+        "path": "src/ijds_audit/evaluation.py",
+        "bytes": 30728,
+        "sha256": "0e518fece3cb672965f437c7043993a6bffc8ce8a0ec6d5f42bdc9889b1d9046"
+      },
+      "src/ijds_audit/policy_support.py": {
+        "path": "src/ijds_audit/policy_support.py",
+        "bytes": 7810,
+        "sha256": "4bcc7c30d41e2d81d2f104d17d7d96c50059823335c600ab5bc973e51830d3e3"
+      },
+      "src/ijds_audit/portfolio.py": {
+        "path": "src/ijds_audit/portfolio.py",
+        "bytes": 13054,
+        "sha256": "65f1032856f498376b37f2623e0b2edd7ed4040fed1652c25becae100808850e"
+      },
+      "src/ijds_audit/protocol.py": {
+        "path": "src/ijds_audit/protocol.py",
+        "bytes": 28380,
+        "sha256": "ad6c9e67b1ea268ace799e042aeddbdabc99a25c8c774dfc3ff34217a39a8cbe"
+      },
+      "src/evaluation/policy_contrast_bounds.py": {
+        "path": "src/evaluation/policy_contrast_bounds.py",
+        "bytes": 19317,
+        "sha256": "ed86a1df7545dfd4128e624dc4f6c0e1e79452e6d64e3acec88b60a6689868d0"
+      },
+      "src/evaluation/standardized_credit_payoff.py": {
+        "path": "src/evaluation/standardized_credit_payoff.py",
+        "bytes": 3589,
+        "sha256": "5993fd9f5899a08090cd26ddb9120618e8ae77d0200944be7c41479652fef98c"
+      },
+      "src/models/binary_conformal_guardrail.py": {
+        "path": "src/models/binary_conformal_guardrail.py",
+        "bytes": 6629,
+        "sha256": "ce4b32ce27202d5cd8b2b58792aa31b6693f0da9f11b22fbbdceb7240324a0cb"
+      },
+      "src/utils/isolated_experiment.py": {
+        "path": "src/utils/isolated_experiment.py",
+        "bytes": 9329,
+        "sha256": "490100a7ebe13eb0693761a3b148eeb595d661c9e2baf885de823f6bd04acd65"
+      },
+      "src/utils/pipeline_runtime.py": {
+        "path": "src/utils/pipeline_runtime.py",
+        "bytes": 4932,
+        "sha256": "8b3f447cb56dba68c806fa08e79f1d1c619f9e12c70c51558f50309a177d5285"
+      },
+      "tests/test_ijds_set_native_binary_robust_counterpart_v1.py": {
+        "path": "tests/test_ijds_set_native_binary_robust_counterpart_v1.py",
+        "bytes": 11631,
+        "sha256": "108d9080c46510a56efdfb929cd5acab60197e7489221e95c71c8b7b91981a7e"
+      },
+      "pyproject.toml": {
+        "path": "pyproject.toml",
+        "bytes": 10678,
+        "sha256": "95ba8e332038897c2bc3a1612fdfc5ce2ad52f79701d309e37226ff9ed7d5e09"
+      },
+      "uv.lock": {
+        "path": "uv.lock",
+        "bytes": 430177,
+        "sha256": "41a982834374d96995457704ff291d2f6dc4a9ae9d9809cd3dc0a21b23b25367"
+      }
+    },
+    "hash_algorithm": "sha256"
+  },
+  "environment": {
+    "python": "3.11.14 (main, Feb  3 2026, 22:51:29) [MSC v.1944 64 bit (AMD64)]",
+    "executable": "C:\\Users\\carlos\\Documents\\Paper_CRPTO\\tmp\\crpto-final-integration-20260726\\.venv\\Scripts\\python.exe",
+    "platform": "Windows-10-10.0.26200-SP0",
+    "packages": {
+      "betacal": "1.1.0",
+      "catboost": "1.2.10",
+      "highspy": "1.15.1",
+      "numpy": "2.4.6",
+      "optbinning": "0.21.0",
+      "pandas": "3.0.3",
+      "pyarrow": "25.0.0",
+      "scikit-learn": "1.9.0",
+      "scipy": "1.17.1",
+      "venn-abers": "1.5.3",
+      "ortools": "9.11.4210",
+      "PyYAML": "6.0.3",
+      "loguru": "0.7.3"
+    },
+    "solver_environment": {
+      "HIGHS_NATIVE_FALLBACK_SCIPY": null,
+      "HIGHS_PARALLEL": null,
+      "HIGHS_PRESOLVE": null,
+      "HIGHS_RESET_GLOBAL_SCHEDULER": null,
+      "HIGHS_SIMPLEX_STRATEGY": null,
+      "HIGHS_SOLVER": null
+    },
+    "uv_lock_sha256": "41a982834374d96995457704ff291d2f6dc4a9ae9d9809cd3dc0a21b23b25367"
+  },
+  "git": {
+    "commit": "2066363ab0d09e25dade0f582a0c36c6aa7bee5c",
+    "dirty": false,
+    "dirty_entries": 0,
+    "dirty_paths": []
+  },
+  "selection": {
+    "ruler": null,
+    "coordinate": null,
+    "window": null,
+    "policy": null
+  },
+  "artifact_contract": {
+    "expected_tag": "artifacts/ijds-set-native-binary-robust-counterpart-2026-07-31-v1-phase-a",
+    "exact_added_paths": [
+      "data/processed/experiments/ijds_audit/ijds-set-native-binary-robust-counterpart-2026-07-31-v1/frontier/frontier_funded_allocations.parquet",
+      "data/processed/experiments/ijds_audit/ijds-set-native-binary-robust-counterpart-2026-07-31-v1/frontier/frontier_solve_records.parquet",
+      "data/processed/experiments/ijds_audit/ijds-set-native-binary-robust-counterpart-2026-07-31-v1/frontier/set_taxonomy_diagnostics.parquet",
+      "data/processed/experiments/ijds_audit/ijds-set-native-binary-robust-counterpart-2026-07-31-v1/frontier/solver_audit.parquet",
+      "models/experiments/ijds_audit/ijds-set-native-binary-robust-counterpart-2026-07-31-v1/verified_phase_a_manifest.json",
+      "models/experiments/ijds_audit/ijds-set-native-binary-robust-counterpart-2026-07-31-v1/outcome_free_summary.json",
+      "models/experiments/ijds_audit/ijds-set-native-binary-robust-counterpart-2026-07-31-v1/outcome_free_execution_receipt.json",
+      "models/experiments/ijds_audit/ijds-set-native-binary-robust-counterpart-2026-07-31-v1/protocol_freeze.json"
+    ],
+    "direct_child_required": true,
+    "annotated_tag_required": true,
+    "dvc_required": false
+  },
+  "phase_b_status": "blocked_until_hash_pinned_P2",
+  "protected_stages_run": [],
+  "protected_artifacts_written": []
+}

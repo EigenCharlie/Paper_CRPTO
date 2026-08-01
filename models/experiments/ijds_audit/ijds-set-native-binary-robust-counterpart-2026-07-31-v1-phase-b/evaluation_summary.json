@@ -1,0 +1,23 @@
+{
+  "schema_version": "2026-07-31.v1.phase-b.1",
+  "status": "set_native_binary_robust_counterpart_evaluation_complete",
+  "run_tag": "ijds-set-native-binary-robust-counterpart-2026-07-31-v1-phase-b",
+  "protocol": {
+    "tag": "protocol/ijds-set-native-binary-robust-counterpart-2026-07-31-v1-phase-b",
+    "tag_object": "dd52e3c71549ed08c418e8e7c756e104afe31294",
+    "commit": "e3d91660f5c337b3a45713b02ad2ca6ec303b31e"
+  },
+  "evaluated_robust_cells": 720,
+  "monthly_robust_minus_v1d_contrasts": 18000,
+  "pooled_robust_minus_v1d_contrasts": 1200,
+  "comparison": "same_window_month_ruler_coordinate_all_25_v1d_theta_gamma_cells",
+  "common_outcome_assignment": "loanwise_sharp_on_funded_union",
+  "selection": {
+    "ruler": null,
+    "coordinate": null,
+    "window": null,
+    "policy": null
+  },
+  "policy_winner": null,
+  "causal_interpretation": false
+}
