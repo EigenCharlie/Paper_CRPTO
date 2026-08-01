@@ -1,0 +1,85 @@
+{
+  "schema_version": "2026-07-31.v1.phase-b.1",
+  "status": "set_native_binary_robust_counterpart_evaluation_complete",
+  "run_tag": "ijds-set-native-binary-robust-counterpart-2026-07-31-v1-phase-b",
+  "protocol": {
+    "tag": "protocol/ijds-set-native-binary-robust-counterpart-2026-07-31-v1-phase-b",
+    "tag_object": "dd52e3c71549ed08c418e8e7c756e104afe31294",
+    "commit": "e3d91660f5c337b3a45713b02ad2ca6ec303b31e"
+  },
+  "completed_at_utc": "2026-08-01T06:44:36.770425+00:00",
+  "source_phase_a": {
+    "artifact_tag": "artifacts/ijds-set-native-binary-robust-counterpart-2026-07-31-v1-phase-a",
+    "artifact_commit": "3ef847491e1ecdf55315774ddb295a634e441a54",
+    "freeze": {
+      "path": "models/experiments/ijds_audit/ijds-set-native-binary-robust-counterpart-2026-07-31-v1/protocol_freeze.json",
+      "bytes": 16742,
+      "sha256": "a280af5eecea24d8e3e0796f72dc33a46e1ca9c655374b451cfbfc2ce202e0f5"
+    },
+    "summary": {
+      "path": "models/experiments/ijds_audit/ijds-set-native-binary-robust-counterpart-2026-07-31-v1/outcome_free_summary.json",
+      "bytes": 1429,
+      "sha256": "716c93a7115548f6695636b9e52b76e5ad7ead83ca1189d7440a6cacd3c65459"
+    },
+    "receipt": {
+      "path": "models/experiments/ijds_audit/ijds-set-native-binary-robust-counterpart-2026-07-31-v1/outcome_free_execution_receipt.json",
+      "bytes": 693,
+      "sha256": "b3ccb78aaefb24e39e1a4d9eaac4e9ba006373692883224f2ef22b37160121b6"
+    },
+    "phase_a_manifest": {
+      "path": "models/experiments/ijds_audit/ijds-set-native-binary-robust-counterpart-2026-07-31-v1/verified_phase_a_manifest.json",
+      "bytes": 234143,
+      "sha256": "5d65fa7f89c290b4241e06d1662b0518c7c91ca83c6e10a96ff699e439ff49ce"
+    },
+    "solve_records": {
+      "path": "data/processed/experiments/ijds_audit/ijds-set-native-binary-robust-counterpart-2026-07-31-v1/frontier/frontier_solve_records.parquet",
+      "bytes": 99078,
+      "sha256": "52ff6db4cf4f1d0ee24b486b547300e1fe2e9071e3ea5805b55b31162066d4fb"
+    },
+    "allocation": {
+      "path": "data/processed/experiments/ijds_audit/ijds-set-native-binary-robust-counterpart-2026-07-31-v1/frontier/frontier_funded_allocations.parquet",
+      "bytes": 1460830,
+      "sha256": "580468cbd2429a316aee3022a512db0f030f11543e84c2fbfb7b9687b47c6497"
+    },
+    "set_taxonomy": {
+      "path": "data/processed/experiments/ijds_audit/ijds-set-native-binary-robust-counterpart-2026-07-31-v1/frontier/set_taxonomy_diagnostics.parquet",
+      "bytes": 12686,
+      "sha256": "35f2bcf84791165e3b6c70d6da98f683fe35c9e82f58e6fd47d7e5daa15ab5aa"
+    },
+    "solver_audit": {
+      "path": "data/processed/experiments/ijds_audit/ijds-set-native-binary-robust-counterpart-2026-07-31-v1/frontier/solver_audit.parquet",
+      "bytes": 23406,
+      "sha256": "3758d0308f81d073f380fe4dcadb7bca2585cbd002e35bcab85ef07ca6b6e3be"
+    }
+  },
+  "source_v1d": {
+    "artifact_tag": "artifacts/ijds-set-preserving-embedding-sensitivity-2026-07-30-v1d",
+    "artifact_commit": "276a5db8772262aad2edd8936dbe226926e412b5",
+    "solve_records": {
+      "path": "data/processed/experiments/ijds_audit/ijds-set-preserving-embedding-sensitivity-2026-07-29-v1a/frontier/frontier_solve_records.parquet",
+      "bytes": 1782252,
+      "sha256": "c89bad6e9a7f9513f871be66da3950b3b690051915c51963936718314ea6598a"
+    },
+    "allocation": {
+      "path": "data/processed/experiments/ijds_audit/ijds-set-preserving-embedding-sensitivity-2026-07-29-v1a/frontier/frontier_funded_allocations.parquet",
+      "bytes": 49246668,
+      "sha256": "f192a70512f2fed01bb64c2b302cb47ecfd264648b7407b9b5aa50c5d666cf51"
+    }
+  },
+  "endpoint_source": {
+    "config": {
+      "path": "configs/experiments/ijds_binary_geometry_frontier_v4_2026-07-15_v5.yaml",
+      "bytes": 1371,
+      "sha256": "c749befbd0ab7e0f8d6fcded7e7c730cae998032f897f65c7e7673d2a12c3715"
+    },
+    "raw_archive": {
+      "path": "data/raw/Loan_status_2007-2020Q3.csv",
+      "bytes": 1773470505,
+      "sha256": "5878af2a088f8ab5214c9337289fb8b5eb6c6338fd3f417b6cdc18513dc6f35f"
+    }
+  },
+  "outcome_refit": false,
+  "outcome_selection": false,
+  "protected_stages_run": [],
+  "protected_artifacts_written": []
+}

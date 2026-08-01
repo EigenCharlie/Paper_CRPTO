@@ -1,0 +1,289 @@
+{
+  "schema_version": "2026-07-31.v1.phase-b.1",
+  "status": "set_native_binary_robust_counterpart_evaluation_complete",
+  "run_tag": "ijds-set-native-binary-robust-counterpart-2026-07-31-v1-phase-b",
+  "protocol": {
+    "tag": "protocol/ijds-set-native-binary-robust-counterpart-2026-07-31-v1-phase-b",
+    "tag_object": "dd52e3c71549ed08c418e8e7c756e104afe31294",
+    "commit": "e3d91660f5c337b3a45713b02ad2ca6ec303b31e"
+  },
+  "evaluated_robust_cells": 720,
+  "monthly_robust_minus_v1d_contrasts": 18000,
+  "pooled_robust_minus_v1d_contrasts": 1200,
+  "comparison": "same_window_month_ruler_coordinate_all_25_v1d_theta_gamma_cells",
+  "common_outcome_assignment": "loanwise_sharp_on_funded_union",
+  "selection": {
+    "theta": null,
+    "gamma": null,
+    "ruler": null,
+    "coordinate": null,
+    "window": null,
+    "policy": null
+  },
+  "policy_winner": null,
+  "causal_interpretation": false,
+  "artifact_status": "pending_git_artifact_commit_and_annotated_tag",
+  "evaluated_portfolios": {
+    "path": "data/processed/experiments/ijds_audit/ijds-set-native-binary-robust-counterpart-2026-07-31-v1-phase-b/evaluation/evaluated_primary_portfolios.parquet",
+    "bytes": 103415,
+    "sha256": "10d2bb7bffd2c5855f9ef77a923d91bee20f1a62efd1ca8b7c0d77e166a45fb2"
+  },
+  "monthly_v1d_contrasts": {
+    "path": "data/processed/experiments/ijds_audit/ijds-set-native-binary-robust-counterpart-2026-07-31-v1-phase-b/evaluation/monthly_robust_minus_v1d_contrasts.parquet",
+    "bytes": 988824,
+    "sha256": "c0f73e2babcd6729079c94f855933e739ac636b8930c0a7779de6e699a0b78fc"
+  },
+  "window_v1d_contrasts": {
+    "path": "data/processed/experiments/ijds_audit/ijds-set-native-binary-robust-counterpart-2026-07-31-v1-phase-b/evaluation/window_robust_minus_v1d_contrasts.parquet",
+    "bytes": 125332,
+    "sha256": "18b28a83103e0a492e81e8a08cc3f3659672168780738cb8b3ebc3a0b7746080"
+  },
+  "summary": {
+    "path": "models/experiments/ijds_audit/ijds-set-native-binary-robust-counterpart-2026-07-31-v1-phase-b/evaluation_summary.json",
+    "bytes": 865,
+    "sha256": "f3fc80c7a70e4c7da4b6866cff1d5460eb69fc29c406165ca8d4e365439da8f1"
+  },
+  "receipt": {
+    "path": "models/experiments/ijds_audit/ijds-set-native-binary-robust-counterpart-2026-07-31-v1-phase-b/evaluation_execution_receipt.json",
+    "bytes": 4181,
+    "sha256": "05ccc671fc861d0eef89d93fd9cb3b2c5e779112b4a8e419dbeed5925d62f26d"
+  },
+  "source_phase_a": {
+    "artifact_tag": "artifacts/ijds-set-native-binary-robust-counterpart-2026-07-31-v1-phase-a",
+    "artifact_commit": "3ef847491e1ecdf55315774ddb295a634e441a54",
+    "freeze": {
+      "path": "models/experiments/ijds_audit/ijds-set-native-binary-robust-counterpart-2026-07-31-v1/protocol_freeze.json",
+      "bytes": 16742,
+      "sha256": "a280af5eecea24d8e3e0796f72dc33a46e1ca9c655374b451cfbfc2ce202e0f5"
+    },
+    "summary": {
+      "path": "models/experiments/ijds_audit/ijds-set-native-binary-robust-counterpart-2026-07-31-v1/outcome_free_summary.json",
+      "bytes": 1429,
+      "sha256": "716c93a7115548f6695636b9e52b76e5ad7ead83ca1189d7440a6cacd3c65459"
+    },
+    "receipt": {
+      "path": "models/experiments/ijds_audit/ijds-set-native-binary-robust-counterpart-2026-07-31-v1/outcome_free_execution_receipt.json",
+      "bytes": 693,
+      "sha256": "b3ccb78aaefb24e39e1a4d9eaac4e9ba006373692883224f2ef22b37160121b6"
+    },
+    "phase_a_manifest": {
+      "path": "models/experiments/ijds_audit/ijds-set-native-binary-robust-counterpart-2026-07-31-v1/verified_phase_a_manifest.json",
+      "bytes": 234143,
+      "sha256": "5d65fa7f89c290b4241e06d1662b0518c7c91ca83c6e10a96ff699e439ff49ce"
+    },
+    "solve_records": {
+      "path": "data/processed/experiments/ijds_audit/ijds-set-native-binary-robust-counterpart-2026-07-31-v1/frontier/frontier_solve_records.parquet",
+      "bytes": 99078,
+      "sha256": "52ff6db4cf4f1d0ee24b486b547300e1fe2e9071e3ea5805b55b31162066d4fb"
+    },
+    "allocation": {
+      "path": "data/processed/experiments/ijds_audit/ijds-set-native-binary-robust-counterpart-2026-07-31-v1/frontier/frontier_funded_allocations.parquet",
+      "bytes": 1460830,
+      "sha256": "580468cbd2429a316aee3022a512db0f030f11543e84c2fbfb7b9687b47c6497"
+    },
+    "set_taxonomy": {
+      "path": "data/processed/experiments/ijds_audit/ijds-set-native-binary-robust-counterpart-2026-07-31-v1/frontier/set_taxonomy_diagnostics.parquet",
+      "bytes": 12686,
+      "sha256": "35f2bcf84791165e3b6c70d6da98f683fe35c9e82f58e6fd47d7e5daa15ab5aa"
+    },
+    "solver_audit": {
+      "path": "data/processed/experiments/ijds_audit/ijds-set-native-binary-robust-counterpart-2026-07-31-v1/frontier/solver_audit.parquet",
+      "bytes": 23406,
+      "sha256": "3758d0308f81d073f380fe4dcadb7bca2585cbd002e35bcab85ef07ca6b6e3be"
+    }
+  },
+  "source_v1d": {
+    "artifact_tag": "artifacts/ijds-set-preserving-embedding-sensitivity-2026-07-30-v1d",
+    "artifact_commit": "276a5db8772262aad2edd8936dbe226926e412b5",
+    "solve_records": {
+      "path": "data/processed/experiments/ijds_audit/ijds-set-preserving-embedding-sensitivity-2026-07-29-v1a/frontier/frontier_solve_records.parquet",
+      "bytes": 1782252,
+      "sha256": "c89bad6e9a7f9513f871be66da3950b3b690051915c51963936718314ea6598a"
+    },
+    "allocation": {
+      "path": "data/processed/experiments/ijds_audit/ijds-set-preserving-embedding-sensitivity-2026-07-29-v1a/frontier/frontier_funded_allocations.parquet",
+      "bytes": 49246668,
+      "sha256": "f192a70512f2fed01bb64c2b302cb47ecfd264648b7407b9b5aa50c5d666cf51"
+    }
+  },
+  "endpoint_source": {
+    "config": {
+      "path": "configs/experiments/ijds_binary_geometry_frontier_v4_2026-07-15_v5.yaml",
+      "bytes": 1371,
+      "sha256": "c749befbd0ab7e0f8d6fcded7e7c730cae998032f897f65c7e7673d2a12c3715"
+    },
+    "raw_archive": {
+      "path": "data/raw/Loan_status_2007-2020Q3.csv",
+      "bytes": 1773470505,
+      "sha256": "5878af2a088f8ab5214c9337289fb8b5eb6c6338fd3f417b6cdc18513dc6f35f"
+    }
+  },
+  "implementation_provenance": {
+    "source_files": {
+      "configs/experiments/ijds_set_native_binary_robust_counterpart_2026-07-31_v1_phase_b.yaml": {
+        "path": "configs/experiments/ijds_set_native_binary_robust_counterpart_2026-07-31_v1_phase_b.yaml",
+        "bytes": 5075,
+        "sha256": "4dec700ac5a64f65f561934c0d6681720c21f17cbe0cdcfd8961b3a221e03540"
+      },
+      "configs/experiments/ijds_set_native_binary_robust_counterpart_2026-07-31_v1.yaml": {
+        "path": "configs/experiments/ijds_set_native_binary_robust_counterpart_2026-07-31_v1.yaml",
+        "bytes": 6967,
+        "sha256": "45e3e2ba40c7731792a16f7c643f0214e2cd29c26415904b846beed09e541ef6"
+      },
+      "configs/experiments/ijds_set_native_binary_robust_counterpart_2026-07-31_v1_phase_b_blocked.yaml": {
+        "path": "configs/experiments/ijds_set_native_binary_robust_counterpart_2026-07-31_v1_phase_b_blocked.yaml",
+        "bytes": 3190,
+        "sha256": "f1dfb7820c0e59b17c6b3edb98ff14d0a69024639464ec1992f922e00f8a4283"
+      },
+      "docs/research/ijds_set_native_binary_robust_counterpart_v1_protocol_2026-07-31.md": {
+        "path": "docs/research/ijds_set_native_binary_robust_counterpart_v1_protocol_2026-07-31.md",
+        "bytes": 6412,
+        "sha256": "a9ab4ba250e00a6940576dcd7957c149a561802cb342651c85fc3e4dd66aace8"
+      },
+      "scripts/experiments/run_ijds_set_native_binary_robust_counterpart_v1.py": {
+        "path": "scripts/experiments/run_ijds_set_native_binary_robust_counterpart_v1.py",
+        "bytes": 52695,
+        "sha256": "fad794542ef57f1bf47ee0c8adc3030d4005fb574d58b6d8c0538e47d5c2644a"
+      },
+      "src/ijds_challengers/set_native_binary_robust.py": {
+        "path": "src/ijds_challengers/set_native_binary_robust.py",
+        "bytes": 43905,
+        "sha256": "d3bc2d0252c33ecb70572ef2a0adc821849f84b96cdee5525ee96793c61a8c32"
+      },
+      "src/ijds_challengers/archive.py": {
+        "path": "src/ijds_challengers/archive.py",
+        "bytes": 5120,
+        "sha256": "758e3db891597e4567dba9dec3b55d44179e194655aed96862059cecb2fd47a7"
+      },
+      "src/ijds_challengers/frontier.py": {
+        "path": "src/ijds_challengers/frontier.py",
+        "bytes": 11514,
+        "sha256": "e7ad05d21a1ca885c67e2dbfcb7b51b7a4d45c1c9f0871fea60200e6ed8a2bbb"
+      },
+      "src/ijds_challengers/normalized_frontier.py": {
+        "path": "src/ijds_challengers/normalized_frontier.py",
+        "bytes": 40907,
+        "sha256": "a42b8d4128a4165067a93c37fbe83fa021e37ea788bbf1b689786ce7f826fd05"
+      },
+      "src/ijds_audit/config.py": {
+        "path": "src/ijds_audit/config.py",
+        "bytes": 25008,
+        "sha256": "a13cadec6a16267cfe80c3bfce986e6d6bbd6461b61d605036d3a917c4308f8e"
+      },
+      "src/ijds_audit/evaluation.py": {
+        "path": "src/ijds_audit/evaluation.py",
+        "bytes": 30728,
+        "sha256": "0e518fece3cb672965f437c7043993a6bffc8ce8a0ec6d5f42bdc9889b1d9046"
+      },
+      "src/ijds_audit/policy_support.py": {
+        "path": "src/ijds_audit/policy_support.py",
+        "bytes": 7810,
+        "sha256": "4bcc7c30d41e2d81d2f104d17d7d96c50059823335c600ab5bc973e51830d3e3"
+      },
+      "src/ijds_audit/portfolio.py": {
+        "path": "src/ijds_audit/portfolio.py",
+        "bytes": 13054,
+        "sha256": "65f1032856f498376b37f2623e0b2edd7ed4040fed1652c25becae100808850e"
+      },
+      "src/ijds_audit/protocol.py": {
+        "path": "src/ijds_audit/protocol.py",
+        "bytes": 28380,
+        "sha256": "ad6c9e67b1ea268ace799e042aeddbdabc99a25c8c774dfc3ff34217a39a8cbe"
+      },
+      "src/evaluation/policy_contrast_bounds.py": {
+        "path": "src/evaluation/policy_contrast_bounds.py",
+        "bytes": 19317,
+        "sha256": "ed86a1df7545dfd4128e624dc4f6c0e1e79452e6d64e3acec88b60a6689868d0"
+      },
+      "src/evaluation/standardized_credit_payoff.py": {
+        "path": "src/evaluation/standardized_credit_payoff.py",
+        "bytes": 3589,
+        "sha256": "5993fd9f5899a08090cd26ddb9120618e8ae77d0200944be7c41479652fef98c"
+      },
+      "src/models/binary_conformal_guardrail.py": {
+        "path": "src/models/binary_conformal_guardrail.py",
+        "bytes": 6629,
+        "sha256": "ce4b32ce27202d5cd8b2b58792aa31b6693f0da9f11b22fbbdceb7240324a0cb"
+      },
+      "src/utils/isolated_experiment.py": {
+        "path": "src/utils/isolated_experiment.py",
+        "bytes": 9329,
+        "sha256": "490100a7ebe13eb0693761a3b148eeb595d661c9e2baf885de823f6bd04acd65"
+      },
+      "src/utils/pipeline_runtime.py": {
+        "path": "src/utils/pipeline_runtime.py",
+        "bytes": 4932,
+        "sha256": "8b3f447cb56dba68c806fa08e79f1d1c619f9e12c70c51558f50309a177d5285"
+      },
+      "tests/test_ijds_set_native_binary_robust_counterpart_v1.py": {
+        "path": "tests/test_ijds_set_native_binary_robust_counterpart_v1.py",
+        "bytes": 11631,
+        "sha256": "108d9080c46510a56efdfb929cd5acab60197e7489221e95c71c8b7b91981a7e"
+      },
+      "pyproject.toml": {
+        "path": "pyproject.toml",
+        "bytes": 10678,
+        "sha256": "95ba8e332038897c2bc3a1612fdfc5ce2ad52f79701d309e37226ff9ed7d5e09"
+      },
+      "uv.lock": {
+        "path": "uv.lock",
+        "bytes": 430177,
+        "sha256": "41a982834374d96995457704ff291d2f6dc4a9ae9d9809cd3dc0a21b23b25367"
+      }
+    },
+    "hash_algorithm": "sha256"
+  },
+  "environment": {
+    "python": "3.11.14 (main, Feb  3 2026, 22:51:29) [MSC v.1944 64 bit (AMD64)]",
+    "executable": "C:\\Users\\carlos\\Documents\\Paper_CRPTO\\tmp\\crpto-final-integration-20260726\\.venv\\Scripts\\python.exe",
+    "platform": "Windows-10-10.0.26200-SP0",
+    "packages": {
+      "betacal": "1.1.0",
+      "catboost": "1.2.10",
+      "highspy": "1.15.1",
+      "numpy": "2.4.6",
+      "optbinning": "0.21.0",
+      "pandas": "3.0.3",
+      "pyarrow": "25.0.0",
+      "scikit-learn": "1.9.0",
+      "scipy": "1.17.1",
+      "venn-abers": "1.5.3",
+      "ortools": "9.11.4210",
+      "PyYAML": "6.0.3",
+      "loguru": "0.7.3"
+    },
+    "solver_environment": {
+      "HIGHS_NATIVE_FALLBACK_SCIPY": null,
+      "HIGHS_PARALLEL": null,
+      "HIGHS_PRESOLVE": null,
+      "HIGHS_RESET_GLOBAL_SCHEDULER": null,
+      "HIGHS_SIMPLEX_STRATEGY": null,
+      "HIGHS_SOLVER": null
+    },
+    "uv_lock_sha256": "41a982834374d96995457704ff291d2f6dc4a9ae9d9809cd3dc0a21b23b25367"
+  },
+  "git": {
+    "commit": "e3d91660f5c337b3a45713b02ad2ca6ec303b31e",
+    "dirty": false,
+    "dirty_entries": 0,
+    "dirty_paths": []
+  },
+  "conformal_guarantee_repair": false,
+  "joint_coverage_for_cartesian_product": false,
+  "probabilistic_robustness_guarantee": false,
+  "artifact_contract": {
+    "expected_tag": "artifacts/ijds-set-native-binary-robust-counterpart-2026-07-31-v1-phase-b",
+    "expected_parent": "e3d91660f5c337b3a45713b02ad2ca6ec303b31e",
+    "exact_added_paths": [
+      "data/processed/experiments/ijds_audit/ijds-set-native-binary-robust-counterpart-2026-07-31-v1-phase-b/evaluation/evaluated_primary_portfolios.parquet",
+      "data/processed/experiments/ijds_audit/ijds-set-native-binary-robust-counterpart-2026-07-31-v1-phase-b/evaluation/monthly_robust_minus_v1d_contrasts.parquet",
+      "data/processed/experiments/ijds_audit/ijds-set-native-binary-robust-counterpart-2026-07-31-v1-phase-b/evaluation/window_robust_minus_v1d_contrasts.parquet",
+      "models/experiments/ijds_audit/ijds-set-native-binary-robust-counterpart-2026-07-31-v1-phase-b/evaluation_summary.json",
+      "models/experiments/ijds_audit/ijds-set-native-binary-robust-counterpart-2026-07-31-v1-phase-b/evaluation_execution_receipt.json",
+      "models/experiments/ijds_audit/ijds-set-native-binary-robust-counterpart-2026-07-31-v1-phase-b/verified_evaluation_manifest.json"
+    ],
+    "direct_child_required": true,
+    "annotated_tag_required": true,
+    "dvc_required": false
+  }
+}
