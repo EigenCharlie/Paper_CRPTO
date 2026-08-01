@@ -1,0 +1,18 @@
+{
+  "schema_version": "2026-07-31.1",
+  "status": "complete_outcome_free_score_equivalence_complete_hull_audit",
+  "artifact_status": "pending_single_direct_child_commit_and_annotated_artifact_tag",
+  "run_tag": "ijds-score-equivalence-complete-hull-2026-07-31-v1",
+  "protocol_tag": "protocol/ijds-score-equivalence-complete-hull-2026-07-31-v1",
+  "protocol_commit": "2066363ab0d09e25dade0f582a0c36c6aa7bee5c",
+  "required_artifact_tag": "artifacts/ijds-score-equivalence-complete-hull-2026-07-31-v1",
+  "summary": {
+    "path": "models/experiments/ijds_audit/ijds-score-equivalence-complete-hull-2026-07-31-v1/score_equivalence_summary.json",
+    "bytes": 10817,
+    "sha256": "3817e26ab22ae2ed2860a20e57746a99a18f8e36f1bbdf5f422eec0c3ef80455"
+  },
+  "elapsed_seconds": 175.7456366000115,
+  "outcome_columns_passed": [],
+  "protected_stages_run": [],
+  "protected_artifacts_written": []
+}

@@ -1,0 +1,239 @@
+{
+  "schema_version": "2026-07-31.1",
+  "status": "complete_outcome_free_score_equivalence_complete_hull_audit",
+  "artifact_status": "pending_single_direct_child_commit_and_annotated_artifact_tag",
+  "run_tag": "ijds-score-equivalence-complete-hull-2026-07-31-v1",
+  "protocol_tag": "protocol/ijds-score-equivalence-complete-hull-2026-07-31-v1",
+  "protocol_commit": "2066363ab0d09e25dade0f582a0c36c6aa7bee5c",
+  "required_artifact_tag": "artifacts/ijds-score-equivalence-complete-hull-2026-07-31-v1",
+  "started_at_utc": "2026-08-01T05:13:02.846157+00:00",
+  "elapsed_seconds": 175.7456366000115,
+  "counts": {
+    "complete_hull_certificates": 26,
+    "v1d_embedding_comparisons": 5200,
+    "calibrator_comparisons": 6240,
+    "runtime_controls": 52,
+    "v1d_equivalent_cells": 1872,
+    "v1d_nonequivalent_cells": 3328,
+    "calibrator_equivalent_cells": 0,
+    "calibrator_nonequivalent_cells": 6240
+  },
+  "gates": {
+    "complete_hull_all_26_months": true,
+    "v1d_candidate_identity_exact": true,
+    "v1d_set_preservation_80_rows_exact": true,
+    "calibrator_full_vector_hash_replay_exact": true,
+    "theta_zero_self_controls_pass": true,
+    "gamma_zero_embedding_identity_controls_pass": true,
+    "synthetic_positive_and_negative_controls_pass": true,
+    "complete_grids_and_finite_outputs": true,
+    "outcome_columns_passed": [],
+    "optimization_run": false
+  },
+  "source_tag_commits": {
+    "v1d_source": "95e39f05bb990429025d0115a0e55c53b1fb1ea8",
+    "v1d_evaluation": "276a5db8772262aad2edd8936dbe226926e412b5",
+    "calibrator_source": "ea3e7326afc38ccc1b99b09de30792986640e3c3",
+    "calibrator_evaluation": "6552524eae5a22ce66b50689900383d16df1ff13"
+  },
+  "source_artifacts": {
+    "v1d_scientific_config": {
+      "path": "configs/experiments/ijds_set_preserving_embedding_sensitivity_2026-07-26_v1.yaml",
+      "bytes": 8712,
+      "sha256": "aaf4de29f4e48226d2acccf7a22ea76911025bdbe0381cc56b1df11dabbc61a7"
+    },
+    "v1d_active_delta_config": {
+      "path": "configs/experiments/ijds_set_preserving_embedding_sensitivity_2026-07-30_v1d.yaml",
+      "bytes": 3821,
+      "sha256": "9c183a594e3f283cc35f0e67fb3f2a4a3a05e1b34b0f314d4489190745642599"
+    },
+    "v1d_outcome_free_freeze": {
+      "path": "models/experiments/ijds_audit/ijds-set-preserving-embedding-sensitivity-2026-07-29-v1a/protocol_freeze.json",
+      "bytes": 32026,
+      "sha256": "1a4b88b0db256c9819fe24973abecef161b3f1a61c4f4c769a6a2f1c9ca037cf"
+    },
+    "v1d_active_evaluation_manifest": {
+      "path": "models/experiments/ijds_audit/ijds-set-preserving-embedding-sensitivity-2026-07-30-v1d/verified_evaluation_manifest.json",
+      "bytes": 24757,
+      "sha256": "6d39748a917068861b8f20f141225b5c865ccbfd3ca3c329aa9933bacbac8fc4"
+    },
+    "calibrator_phase_a_freeze": {
+      "path": "models/experiments/ijds_audit/ijds-calibrator-sensitivity-2026-07-30-v1-source/protocol_freeze.json",
+      "bytes": 12098,
+      "sha256": "bf00dff0084bb6d017a808897a2ef654f4efaca6880da6a91161b6a3a1171f4c"
+    },
+    "scores": {
+      "path": "data/processed/experiments/ijds_audit/ijds-binary-geometry-frontier-v4-2026-07-12-v1/prediction/scores.parquet",
+      "bytes": 14212211,
+      "sha256": "4053efdbf13066355bb772233231e5fe4ccb436ca75aaf873fb14e213c1e319c"
+    },
+    "v4_residual_recipes": {
+      "path": "models/experiments/ijds_audit/ijds-binary-geometry-frontier-v4-2026-07-12-v1/prediction/residual_recipes.json",
+      "bytes": 74218,
+      "sha256": "0874a5e9eea37adce302f4a059d4ccde5570230a7fdabcc29ceab410988f207a"
+    },
+    "raw_decision_archive": {
+      "path": "data/raw/Loan_status_2007-2020Q3.csv",
+      "bytes": 1773470505,
+      "sha256": "5878af2a088f8ab5214c9337289fb8b5eb6c6338fd3f417b6cdc18513dc6f35f"
+    },
+    "calibrator_family": {
+      "path": "models/experiments/ijds_audit/ijds-calibrator-sensitivity-2026-07-30-v1-source/prediction/calibrator_family.pkl",
+      "bytes": 566016,
+      "sha256": "dab0b1207559118ab63742e51d0d7085e9d9d0d7e3a103802dae57f05ddeabce"
+    },
+    "calibrator_residual_recipes": {
+      "path": "models/experiments/ijds_audit/ijds-calibrator-sensitivity-2026-07-30-v1-source/prediction/calibrator_residual_recipes.json",
+      "bytes": 35852,
+      "sha256": "4f1f9f8a1680eb3b2af27eaa0bdeb55088530917336863a5b60b5b34bcf2e360"
+    }
+  },
+  "result_boundary": {
+    "failure_means_global_invariance_not_certified": true,
+    "failure_implies_fixed_cell_allocation_change": false,
+    "passing_requires_translated_caps": true,
+    "calibrator_common_objective_established": false,
+    "calibrator_score_equivalence_certifies_full_optimizer_invariance": false,
+    "selected_embedding_calibrator_gamma_window_role_month_or_policy": null,
+    "portfolio_performance_claim": false,
+    "selected_or_funded_set_validity": false
+  },
+  "interpretation": {
+    "retrospective": true,
+    "outcome_free": true,
+    "complete_candidate_menu_not_funded_subset": true,
+    "optimization_run": false,
+    "protected_stages_run": [],
+    "protected_artifacts_written": [],
+    "calibrator_embedding_gamma_window_role_or_month_selected": false,
+    "failure_means_global_invariance_not_certified": true,
+    "failure_implies_fixed_cell_allocation_change": false,
+    "common_objective_across_calibrator_maps_established": false,
+    "calibrator_score_equivalence_certifies_full_optimizer_invariance": false,
+    "common_solver_output_certifies_equal_optimal_faces": false,
+    "selected_or_funded_set_validity": false,
+    "portfolio_performance_claim": false,
+    "causal_claim": false
+  },
+  "artifacts": {
+    "complete_hull_certificates": {
+      "path": "data/processed/experiments/ijds_audit/ijds-score-equivalence-complete-hull-2026-07-31-v1/complete_hull_certificates.parquet",
+      "bytes": 11628,
+      "sha256": "af0b67c3926172d2ba11e715b9bc6c94a95671312e9ab1b6016d0008d300382b"
+    },
+    "v1d_embedding_score_equivalence": {
+      "path": "data/processed/experiments/ijds_audit/ijds-score-equivalence-complete-hull-2026-07-31-v1/v1d_embedding_score_equivalence.parquet",
+      "bytes": 220017,
+      "sha256": "820867bf4ce5a44313e1e79fcabd1b823975d271a914f904bb80569e53e75772"
+    },
+    "calibrator_score_equivalence": {
+      "path": "data/processed/experiments/ijds_audit/ijds-score-equivalence-complete-hull-2026-07-31-v1/calibrator_score_equivalence.parquet",
+      "bytes": 296947,
+      "sha256": "07acb2f8c58b0b4bdfd39c3f944273328361adc7e86e8179b93dd777f4f963dc"
+    },
+    "runtime_controls": {
+      "path": "data/processed/experiments/ijds_audit/ijds-score-equivalence-complete-hull-2026-07-31-v1/runtime_controls.parquet",
+      "bytes": 14623,
+      "sha256": "badbe454b676d2cebeadd1d582500adb27e6e5eb79ebeab528505123b69b0ada"
+    }
+  },
+  "implementation_provenance": {
+    "source_files": {
+      "configs/experiments/ijds_score_equivalence_complete_hull_2026-07-31_v1.yaml": {
+        "path": "configs/experiments/ijds_score_equivalence_complete_hull_2026-07-31_v1.yaml",
+        "bytes": 7653,
+        "sha256": "dd3b5bf72639e525724009613f660c55126c64ed8162296360505cc1b771a72c"
+      },
+      "scripts/experiments/run_ijds_score_equivalence_complete_hull_v1.py": {
+        "path": "scripts/experiments/run_ijds_score_equivalence_complete_hull_v1.py",
+        "bytes": 50521,
+        "sha256": "2aedbff0292fa44e5077984263cf1921d43b4094d44b3d68fd804b1b47a19f58"
+      },
+      "src/ijds_audit/score_equivalence_complete_hull.py": {
+        "path": "src/ijds_audit/score_equivalence_complete_hull.py",
+        "bytes": 12913,
+        "sha256": "fec5b64094030d988002e744fed91b011a950b3d9386f13edf895f2c64922f73"
+      },
+      "src/ijds_audit/calibrator_sensitivity.py": {
+        "path": "src/ijds_audit/calibrator_sensitivity.py",
+        "bytes": 30920,
+        "sha256": "d34bf09775bd5f79ffb893fcafb18681f81c2c6dcf693afa79955aee6357f98c"
+      },
+      "src/ijds_audit/protocol.py": {
+        "path": "src/ijds_audit/protocol.py",
+        "bytes": 28380,
+        "sha256": "ad6c9e67b1ea268ace799e042aeddbdabc99a25c8c774dfc3ff34217a39a8cbe"
+      },
+      "src/ijds_challengers/archive.py": {
+        "path": "src/ijds_challengers/archive.py",
+        "bytes": 5120,
+        "sha256": "758e3db891597e4567dba9dec3b55d44179e194655aed96862059cecb2fd47a7"
+      },
+      "src/ijds_challengers/set_preserving_embedding.py": {
+        "path": "src/ijds_challengers/set_preserving_embedding.py",
+        "bytes": 81022,
+        "sha256": "78f4d31947654c004958d2bd2e355e9647b6400d26fdf5908199f680a0172710"
+      },
+      "src/models/binary_conformal_guardrail.py": {
+        "path": "src/models/binary_conformal_guardrail.py",
+        "bytes": 6629,
+        "sha256": "ce4b32ce27202d5cd8b2b58792aa31b6693f0da9f11b22fbbdceb7240324a0cb"
+      },
+      "src/utils/artifact_descriptor.py": {
+        "path": "src/utils/artifact_descriptor.py",
+        "bytes": 1705,
+        "sha256": "ef8f6df7cf311e2173659518370cfde5ed5de4380b444aaad35dcd794cd620f8"
+      },
+      "src/utils/isolated_experiment.py": {
+        "path": "src/utils/isolated_experiment.py",
+        "bytes": 9329,
+        "sha256": "490100a7ebe13eb0693761a3b148eeb595d661c9e2baf885de823f6bd04acd65"
+      },
+      "src/utils/pipeline_runtime.py": {
+        "path": "src/utils/pipeline_runtime.py",
+        "bytes": 4932,
+        "sha256": "8b3f447cb56dba68c806fa08e79f1d1c619f9e12c70c51558f50309a177d5285"
+      },
+      "docs/research/ijds_score_equivalence_complete_hull_v1_protocol_2026-07-31.md": {
+        "path": "docs/research/ijds_score_equivalence_complete_hull_v1_protocol_2026-07-31.md",
+        "bytes": 9682,
+        "sha256": "ca44af60d819706d8f51f3c30414a883cbb4201508cf2cf5a739ea2a3839665b"
+      }
+    },
+    "hash_algorithm": "sha256"
+  },
+  "environment": {
+    "python": "3.11.14 (main, Feb  3 2026, 22:51:29) [MSC v.1944 64 bit (AMD64)]",
+    "executable": "C:\\Users\\carlos\\Documents\\Paper_CRPTO\\tmp\\crpto-final-integration-20260726\\.venv\\Scripts\\python.exe",
+    "platform": "Windows-10-10.0.26200-SP0",
+    "packages": {
+      "betacal": "1.1.0",
+      "catboost": "1.2.10",
+      "highspy": "1.15.1",
+      "numpy": "2.4.6",
+      "optbinning": "0.21.0",
+      "pandas": "3.0.3",
+      "pyarrow": "25.0.0",
+      "scikit-learn": "1.9.0",
+      "scipy": "1.17.1",
+      "venn-abers": "1.5.3"
+    },
+    "solver_environment": {
+      "HIGHS_NATIVE_FALLBACK_SCIPY": null,
+      "HIGHS_PARALLEL": null,
+      "HIGHS_PRESOLVE": null,
+      "HIGHS_RESET_GLOBAL_SCHEDULER": null,
+      "HIGHS_SIMPLEX_STRATEGY": null,
+      "HIGHS_SOLVER": null
+    },
+    "uv_lock_sha256": "41a982834374d96995457704ff291d2f6dc4a9ae9d9809cd3dc0a21b23b25367"
+  },
+  "git": {
+    "commit": "2066363ab0d09e25dade0f582a0c36c6aa7bee5c",
+    "dirty": false,
+    "dirty_entries": 0,
+    "dirty_paths": []
+  },
+  "protected_stages_run": [],
+  "protected_artifacts_written": []
+}
