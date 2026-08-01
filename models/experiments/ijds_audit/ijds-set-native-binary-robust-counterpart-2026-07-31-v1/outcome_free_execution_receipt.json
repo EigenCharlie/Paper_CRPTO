@@ -1,0 +1,17 @@
+{
+  "schema_version": "2026-07-31.v1.1",
+  "status": "outcome_free_set_native_binary_robust_counterpart_complete",
+  "run_tag": "ijds-set-native-binary-robust-counterpart-2026-07-31-v1",
+  "protocol": {
+    "tag": "protocol/ijds-set-native-binary-robust-counterpart-2026-07-31-v1",
+    "tag_object": "cf24ac5acd3ba6cafd8834d99d974d282fcedaac",
+    "commit": "2066363ab0d09e25dade0f582a0c36c6aa7bee5c"
+  },
+  "started_at_utc": "2026-08-01T05:17:35.785045+00:00",
+  "completed_at_utc": "2026-08-01T06:33:44.349370+00:00",
+  "elapsed_seconds": 4567.4320033999975,
+  "resumed_verified_shards": 0,
+  "outcome_columns_passed": [],
+  "protected_stages_run": [],
+  "protected_artifacts_written": []
+}
