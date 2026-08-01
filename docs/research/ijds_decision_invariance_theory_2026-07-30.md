@@ -186,6 +186,41 @@ available. It does not mean that every evaluated cell must change: slack,
 additional constraints, or a shared optimal face can make a particular
 decision coincide.
 
+### Complete compatible fibre and its rectangular robust limit
+
+Require each bounded continuous interval to contain its center \(p_i\). For
+\(0<\gamma\le1\), every coefficient compatible with the same binary set lies in
+
+\[
+q_i\in
+\begin{cases}
+\{p_i+\gamma(1-p_i)\},&1\in S_i,\\
+[p_i,p_i+\gamma(1-p_i)),&1\notin S_i.
+\end{cases}
+\]
+
+At \(\gamma=0\), \(q_i=p_i\). If
+\(I=\{i:1\notin S_i\}\), the linear span of compatible coefficient differences
+is \(\operatorname{span}\{e_i:i\in I\}\). The magnitude of the portfolio
+functional is therefore identified over the feasible-difference space \(D\)
+for every compatible embedding exactly when that coordinate subspace lies in
+\(D^\perp\). Outside that condition, nonidentification permits but still does
+not require a decision change.
+
+Under rectangular loan-wise ambiguity and \(a_i\ge0\),
+
+\[
+\sup_{q\text{ compatible}}q^\top a
+=\sum_i a_i\{p_i+\gamma(1-p_i)\}.
+\]
+
+For \(1\notin S_i\) this is generally a supremum over an open endpoint. At
+\(\gamma=1\), the robust coefficient is one for every loan. A binding
+full-budget cap below one is then infeasible; with optional cash the constraint
+becomes only a cap on total invested capital and no longer ranks loans. This is
+a consequence of robustifying over the entire unidentified fibre, not a
+set-native validity result and not a jointly covered Cartesian uncertainty set.
+
 Even a common coordinate ranking is insufficient. On the unit simplex, let
 
 \[
@@ -267,10 +302,31 @@ declared objective \(v\), only equality of the exposed optimal faces is needed:
 \arg\max_{a\in F_t}v^\top a.
 \]
 
-A point \(a^\star\in F_s\cap F_t\) is optimal for both problems when \(v\) lies
-in the intersection of the two relevant normal cones. A single common solver
-output does not establish equality of faces, uniqueness, or global score
-equivalence. Conversely, non-equivalent scores can share an optimizer locally.
+Use the maximization convention
+
+\[
+N_F(a)=\{w:w^\top(x-a)\le0\ \text{for every }x\in F\}.
+\]
+
+For compact polytopes, a point \(a^\star\) is optimal for both problems if and
+only if
+
+\[
+a^\star\in F_s\cap F_t,
+\qquad
+v\in N_{F_s}(a^\star)\cap N_{F_t}(a^\star).
+\]
+
+If \(a^\star\) is a vertex of both and \(v\) belongs to the relative interior
+of both normal cones, it is the unique optimizer of both. Equality of the
+complete exposed optimal face requires a common face \(G\) and
+\(v\in\operatorname{ri}N_{F_s}(G)\cap\operatorname{ri}N_{F_t}(G)\). For
+\(F_s=[0,1]^2\),
+\(F_t=\operatorname{conv}\{(0,0),(1,0),(0,1)\}\), and \(v=(1,0)\), a solver can
+return \((1,0)\) in both problems even though the first optimal face is a full
+edge and the second is a singleton. A single common output therefore does not
+establish equality of faces, uniqueness, or global score equivalence.
+Conversely, non-equivalent scores can share an optimizer locally.
 
 ## Executable diagnostic and interpretation boundary
 

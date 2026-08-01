@@ -156,13 +156,20 @@ class-`y` counts. Let `U_y^0` and `U_y^1` be the unresolved counts with
 `A_y / (B_y + U_y^0)` and
 `(A_y + U_y^1) / (B_y + U_y^1)`.
 
+These displayed formulas assume `B_y>0`, which holds in every active reporting
+cell. In a generic cell with `B_y=0`, class coverage is defined only for
+completions assigning at least one row to class `y`; `0/0` is not a coverage
+endpoint.
+
 The two class-ratio endpoints may use different completions. E1 therefore does
 not obtain a gap by subtracting those marginal intervals. For the class-0 minus
 class-1 gap it assigns every unresolved row once. Conditional on exactly `m`
 unresolved labels assigned to class 1, denominators are fixed and the objective
 is linear in the four set-membership types `(C_i(0),C_i(1))`. E1 takes the
 `m` smallest or largest exact type weights and enumerates every integer
-`m=0,...,U`. This yields the sharp common-completion gap endpoints and their
+`m` satisfying `B_1+m>0` and `B_0+U-m>0`. Because both resolved class counts
+are positive in every active cell, this admissible set equals `m=0,...,U`
+there. This yields the sharp common-completion gap endpoints and their
 class-1-count witnesses. Synthetic tests enumerate all binary completions and
 must reconcile both endpoints exactly.
 

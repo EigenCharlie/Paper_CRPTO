@@ -260,7 +260,7 @@ be converted post hoc into a transport penalty. If enough complete and
 scientifically defensible context units cannot be reserved, no monthly
 conformal claim is attempted.
 
-## Route A: conformal risk control for a monotone family
+## Route A1: classical conformal risk control for a monotone family
 
 CRC is eligible only for an ordered family
 \(\{\pi_{\lambda}:\lambda\in\Lambda\}\) locked on the design role. The finite
@@ -302,7 +302,8 @@ constraints, tie resolution, or the optimizer solution, monotonicity must not
 be inferred from wider sets. Reoptimization can move capital toward newly
 miscovered loans and make the aggregate loss increase. Empirical monotonicity
 on a finite archive is not a universal proof. A reoptimized or otherwise
-non-monotone catalog must use the LTT route fixed below.
+non-monotone catalog fails this classical scalar route; it must use either the
+stability-certified Route A2 or the LTT route fixed below.
 
 Under the exchangeable-loss and regularity conditions of conformal risk
 control, the theorem-aligned CRC rule targets
@@ -329,6 +330,37 @@ This is an expectation guarantee for a new context. It is not:
 The implementation protocol must reproduce the exact CRC selection rule from
 the cited theorem and audit its finite-grid convention. No informal
 ``empirical loss below \(\alpha\)'' rule may be substituted.
+
+## Route A2: stability-certified CRC for a non-monotone algorithm
+
+Non-monotonicity no longer implies that CRC is impossible in principle
+[@angelopoulos2026nonmonotonic]. It changes the theorem and adds a stability
+burden. Before outcomes, this route must freeze:
+
+1. exchangeable complete context units;
+2. a symmetric, permutation-invariant algorithm \(\mathcal A\), including
+   deterministic solver and tie-breaking semantics;
+3. a full-data reference algorithm \(\mathcal A^*\);
+4. the loss and multidimensional parameter space;
+5. a valid upper bound \(\beta\) on the theorem's leave-one-out stability
+   quantity; and
+6. a reference-risk certificate no larger than
+   \(\alpha_{\mathrm{risk}}-\beta\).
+
+The route stops if exchangeability or symmetry fails, if LP basis changes or
+degeneracy make the declared stability bound invalid, if \(\beta\) is vacuous,
+if \(\alpha_{\mathrm{risk}}-\beta\) is unattainable, or if the failure
+probability of an estimated bound is not propagated. A bootstrap estimate of
+\(\beta\) is a diagnostic unless accompanied by a separately proved
+finite-sample upper-confidence contract; it cannot be inserted as if exact.
+For a generic bounded loss on a discretized grid, the cited extension obtains
+an additive stability/discretization remainder rather than the unadjusted
+classical target automatically.
+
+This route can be attractive for a stable smooth algorithm. It is not the
+default for the present reoptimized LP catalog, whose active-set changes,
+degeneracy, and solver tie resolution would themselves require a new stability
+audit.
 
 ## Route B: learn-then-test for a non-monotone or reoptimized catalog
 
@@ -569,6 +601,7 @@ or prose assertions cannot replace the immutable loss matrix and audit trail.
 | Equal-notional fixed-\(K\) selection | JOMI / focal conditional validity (`jin2025focal`) | Focal selection-conditional validity and, under the exact taxonomy and selection conditions, an FCR implication; equal notional equates count and dollar FCP | Arbitrary LP-weighted selected-set coverage or temporal transport |
 | \(\kappa\)-bounded allocation | Deterministic inequality plus JOMI at \(\alpha/\kappa\) | A conservative expected dollar-FCP bound if the hard allocation bound and JOMI assumptions both hold | Direct exposure-weighted conformal validity; the inequality still requires proof audit |
 | Monotone monthly loss | Conformal risk control (`angelopoulos2024risk`) | Expected bounded loss control for a new exchangeable context under the theorem's monotonicity and regularity conditions | Non-monotone reoptimization, per-month high-probability control, focal coverage, or temporal robustness |
+| Stable non-monotone algorithm | Stability-based non-monotone CRC (`angelopoulos2026nonmonotonic`) | Expected risk control under exchangeability, algorithm symmetry, a valid reference-risk margin, and a nonvacuous certified stability penalty | Automatic validity for an unstable reoptimized LP, an unqualified bootstrap stability estimate, per-month high-probability control, or temporal transport |
 | Finite reoptimized catalog | Learn then test (`angelopoulos2025ltt`) | With valid p-values and FWER control, simultaneous high-probability certification that all returned policies meet the population-risk target | Independence/exchangeability by assertion, untested policies, per-realization control, or utility |
 | Temporal deployment | Prospective temporal contract linked above | A declared unit, chronology, population, and explicit route to a transport theorem | An active guarantee from the current archive |
 | Complete endpoints | This design requirement | A loss matrix for the full predeclared eligible population without selective missingness | A theorem for censored or selectively observed endpoints |

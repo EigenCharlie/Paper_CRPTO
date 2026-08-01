@@ -529,7 +529,12 @@ pre-endpoint-correction evaluations are provenance only.
    common-anchor conditions. Binary-set equality and coordinatewise loan
    ranking do not imply this relation. Failure of the relation permits but
    does not require a change at a fixed cell; a common solver output does not
-   establish equality of optimal faces.
+   establish equality of optimal faces. Locally, one common point is optimal
+   exactly when it is feasible for both problems and the fixed objective lies
+   in both relevant normal cones; equality or uniqueness of complete exposed
+   faces requires the corresponding relative-interior conditions. The
+   full-budget additive-offset corollary does not transfer unchanged to a
+   zero-score cash coordinate.
 2. **Binary threshold geometry.** The calibration residuals of a stratum are the
    multiset sum of the two mirror samples `{{p_i : Y_i=0}}` and
    `{{1-p_i : Y_i=1}}`, so the fitted threshold is exactly the `k`-th order
@@ -564,7 +569,16 @@ pre-endpoint-correction evaluations are provenance only.
    `0<=theta<=1`, while it can change the LP coefficient. The theorem neither
    selects an embedding nor proves an allocation change. The separate complete
    V1d census empirically demonstrates allocation changes on its declared
-   finite grid; that fact is not a theorem-level consequence.
+   finite grid; that fact is not a theorem-level consequence. If intervals
+   must contain `p`, the complete coefficient fibre for `gamma>0` is the
+   singleton `p+gamma*(1-p)` when label one belongs to the set and the
+   half-open interval `[p,p+gamma*(1-p))` otherwise. Rectangular
+   worst-embedding robustification therefore has supremum coefficient
+   `p+gamma*(1-p)` for every loan; at `gamma=1` it either makes a binding
+   full-budget cap below one infeasible or, with cash, reduces it to a total-
+   investment cap. This is a fibre-specific information-loss corollary, not a
+   claim that nonidentification must change a decision or that marginal sets
+   form a jointly covered Cartesian uncertainty set.
 3. **Sharp common-outcome identification.** Candidate and fixed-allocation
    bounds use binary loan-wise extrema; paired-policy bounds assign each
    unresolved endpoint once over the funded union.
@@ -584,13 +598,15 @@ pre-endpoint-correction evaluations are provenance only.
    then gives the four exact extrema of `sup(F_cal-F_target)` and
    `sup(F_target-F_cal)`. This is cellwise finite-archive identification, not a
    KS test, stochastic dominance, exchangeability, or a shift mechanism.
-3b. **Count--exposure covariance identity.** On one fixed nonempty support with
-   positive exposures, dollar-minus-count FCP---equivalently count-minus-dollar
-   coverage---equals empirical exposure--miss covariance divided by mean
-   exposure. Fixed-capital FCP equals invested-dollar FCP times the invested
-   share. These identities select no weighting and do not apply directly when
-   the contrast changes support; support-changing contrasts require the union
-   construction in statement 3.
+3b. **Count--exposure covariance identity.** On one fixed nonempty panel with
+   nonnegative exposures and positive total exposure, dollar-minus-unweighted
+   panel FCP---equivalently unweighted-minus-dollar coverage---equals empirical
+   exposure--miss covariance divided by mean exposure. The full candidate menu
+   gives the candidate-to-funded bridge; restricting to positive exposures
+   gives the selected-count bridge. Fixed-capital FCP equals invested-dollar
+   FCP times the invested share. These identities select no weighting and do
+   not by themselves compare policies with different supports; paired support-
+   changing contrasts require the union construction in statement 3.
 3c. **Monotone finite-catalog completion.** The maximum over a fixed finite
    catalog of coordinatewise nondecreasing binary-completion losses is itself
    nondecreasing, so the common all-zero and all-one unresolved assignments

@@ -246,8 +246,9 @@ registra en la sección “Cierre de optimización” al final de este documento
   distintos.
 - No seleccionar gamma, ruler, coordinate, support, learner, encoding, lag o
   escenario por el resultado.
-- Mantener la auditoría de página oficial: 25 páginas antes de References; el
-  preview HTML/PDF no sustituye el PDF LaTeX oficial.
+- Mientras no exista submission freeze, no comprimir ciencia para alcanzar 25
+  páginas. Al declarar ese freeze, reactivar la auditoría de páginas sobre el
+  PDF LaTeX oficial; el preview HTML/PDF no lo sustituye.
 
 ### Quitar o no incorporar
 

@@ -738,12 +738,17 @@ WOE W8, with bound $[0.900074,0.907015]$; it is not promoted.
 For any fixed aggregate or score-stratum reporting cell, suppress its non-label
 indices. For a target class $y$, let $A_y$ and $B_y$ be covered and total
 resolved class-$y$ counts, and let $U_y^0,U_y^1$ count unresolved rows that would be
-missed or covered if assigned $y$. Its sharp ratio bounds are
+missed or covered if assigned $y$. Every active cell has $B_y>0$, under which
+its sharp ratio bounds are
 
 $$
 \left[\frac{A_y}{B_y+U_y^0},
 \frac{A_y+U_y^1}{B_y+U_y^1}\right].
 $$
+
+For a generic cell with $B_y=0$, coverage is defined only for completions that
+assign at least one row to class $y$; the extremization must exclude the empty
+class rather than interpret $0/0$.
 
 The two class endpoints may use different label completions. For each endpoint
 of the class-0-minus-class-1 gap, every unresolved row is assigned only once and
@@ -1164,6 +1169,44 @@ $1\notin S$ and $u>p$. Whether the LP allocation or its outcome bounds change
 is empirical and must be reported over a complete outcome-free-frozen
 sensitivity; the algebra alone neither proves an allocation change nor selects
 a $\theta$. Appendix E.4.3 reports that separate empirical census.
+
+The full compatible fibre is larger than the contraction used by that census.
+If every interval is constrained to contain its center $p_i$ and
+$0<\gamma\le1$, then
+
+$$
+q_i\in
+\begin{cases}
+\{p_i+\gamma(1-p_i)\},&1\in S_i,\\
+[p_i,p_i+\gamma(1-p_i)),&1\notin S_i.
+\end{cases}
+$$
+
+At $\gamma=0$, $q_i=p_i$. If $I=\{i:1\notin S_i\}$, the linear span of
+all compatible coefficient differences is
+$\operatorname{span}\{e_i:i\in I\}$. Consequently the continuous functional
+is identified on the feasible-difference space $D$ for every compatible
+embedding exactly when this coordinate subspace lies in $D^\perp$; otherwise
+the global invariance theorem need not apply. This statement permits a decision
+change but does not require one at a fixed cell.
+
+There is also a sharp caution for naive robustification. Under rectangular
+loan-wise ambiguity and $a_i\ge0$,
+
+$$
+\sup_{q\text{ compatible}}q^\top a
+=\sum_i a_i\{p_i+\gamma(1-p_i)\}.
+$$
+
+For $1\notin S_i$ the endpoint is generally a supremum over an open fibre, not
+an attained maximum. At $\gamma=1$ the robust coefficient is therefore one for
+every loan. A full-budget cap $q^\top a\le\tau B$ is infeasible when $\tau<1$;
+if cash is permitted through $\sum_i a_i\le B$, the same robust constraint
+reduces to $\sum_i a_i\le\tau B$ and ceases to distinguish loans (and is
+redundant at $\tau=1$). Cross-loan restrictions or an exogenous endpoint bound
+below one would define a different uncertainty model. This fibre-specific
+corollary is not a general theorem that nonidentified scores must change an
+optimizer.
 
 For the active score
 $q_i^{(\theta)}=(1-\gamma)p_i+\gamma u_i^{(\theta)}$, the contraction has the
@@ -1668,6 +1711,13 @@ $\tau_t=\kappa\tau_s+\delta/B$. In the full-budget special case
 $t=\kappa s+b\mathbf1$, this becomes $\tau_t=\kappa\tau_s+b$ because
 $\delta=bB$.
 
+The additive-offset conclusion uses the full-budget equality. If cash is added
+as a zero-score decision coordinate and loan investment may be strictly below
+$B$, shifting only the loan scores by $b$ adds $b\sum_i a_i$, not one common
+constant, and need not preserve portfolio order unless $b=0$ (or cash receives
+the same affine shift). The floor-with-cash diagnostic must therefore not borrow
+the full-budget translation mechanically.
+
 Thus translated caps preserve the feasible set. For the optimizer corollaries,
 assume that the invoked feasible sets are nonempty and the stated optima are
 attained, as they are on the bounded CRPTO allocation polytope. For any common
@@ -1714,6 +1764,31 @@ equality of its exposed optimal faces is required. A point
 $a^\star\in F_s\cap F_t$ is optimal for both problems when $v$ belongs to both
 relevant normal cones. One common numerical solver output therefore proves
 neither equality of faces nor optimizer uniqueness.
+
+More precisely, use the maximization convention
+
+$$
+N_F(a)=\{w:w^\top(x-a)\le0\ \text{for every }x\in F\}.
+$$
+
+For nonempty compact polytopes $F_s,F_t$, a point $a^\star$ is optimal for the
+same objective $v$ on both if and only if
+
+$$
+a^\star\in F_s\cap F_t,
+\qquad
+v\in N_{F_s}(a^\star)\cap N_{F_t}(a^\star).
+$$
+
+If $a^\star$ is a vertex of both polytopes and $v$ lies in the relative
+interior of both normal cones, it is the unique optimizer of both. Equality of
+the complete exposed optimal face instead requires one common face $G$ and
+$v\in\operatorname{ri}N_{F_s}(G)\cap\operatorname{ri}N_{F_t}(G)$. The
+distinction is observable even in two dimensions: for
+$F_s=[0,1]^2$, $F_t=\operatorname{conv}\{(0,0),(1,0),(0,1)\}$, and $v=(1,0)$,
+a solver may return $(1,0)$ for both, although the first optimum is the full
+edge $\{1\}\times[0,1]$ and the second is unique. Common output certifies at
+most co-optimality unless the faces and cone interiors are audited.
 
 As a related but different use of the same geometry, Wei and Zhang characterize
 co-optimal linear objectives over one common feasible set by
@@ -1810,6 +1885,8 @@ not sampling confidence intervals.
 
 Class-specific coverage is a ratio rather than an additive endpoint. Fix one
 aggregate or score-stratum reporting cell and suppress its non-label indices.
+Every active reported cell has $B_0>0$ and $B_1>0$; for a generic cell, any
+class ratio is defined only for completions with a positive class denominator.
 For class $y$, write $z_i=1$ when unresolved loan $i$ is assigned that class and
 $c_i=C_i(y)$. Then
 
@@ -1833,7 +1910,15 @@ $$
 $$
 
 Selecting the $m$ smallest weights minimizes the gap and selecting the $m$
-largest maximizes it. Enumerating $m=0,\ldots,|U|$ is therefore exact and uses
+largest maximizes it. The exact enumeration is over
+
+$$
+\mathcal M=\{m\in\{0,\ldots,|U|\}:B_1+m>0,\ B_0+|U|-m>0\}.
+$$
+
+Because both resolved classes are nonempty in every active reporting cell,
+$\mathcal M=\{0,\ldots,|U|\}$ there. The restricted formulation is the valid
+generic statement and uses
 one common label for every unresolved loan. This proves the reported sharp gap
 bounds; subtracting two separately optimized class intervals would generally
 be only an outer bound.
@@ -1903,7 +1988,8 @@ No stochastic null or asymptotic KS reference is used.
 
 <!-- claim:theory.selection_weight_covariance_identity -->
 
-On a fixed positive support, use divisor $N$ for empirical moments and write
+On any fixed nonempty panel, allow $a_i\ge0$, require $A=\sum_i a_i>0$, use
+divisor $N$ for empirical moments, and write
 $\bar a=A/N$ and $\bar m=N^{-1}\sum_i m_i$. Direct expansion gives
 
 $$
@@ -1912,9 +1998,14 @@ $$
 =\frac{\sum_i a_i m_i}{A}-\frac{\sum_i m_i}{N}.
 $$
 
-This identity is internal to one fixed support and one policy; it does not
-compare different selected supports. It proves the main-text statement and
-shows why count and dollar coverage answer distinct questions. With fixed capital $B$, multiplying the
+This identity is internal to one fixed panel and one policy. If the panel is
+the full candidate menu, zero exposures show exactly how candidate-average FCP
+differs from funded-dollar FCP; if it is the positive support, it gives the
+selected-count comparison used in the empirical tables. Candidate and funded
+coverage coincide exactly only when the corresponding exposure--miss covariance
+is zero. The identity does not by itself compare policies with different
+supports. It proves the main-text statement and shows why count and dollar
+coverage answer distinct questions. With fixed capital $B$, multiplying the
 invested-dollar FCP by $A/B$ gives the decision FCP; the remaining share
 $1-A/B$ is cash and has no loan-level miss. For an unresolved outcome, the
 invested-dollar-minus-count FCP contribution---equivalently, the
@@ -2638,7 +2729,7 @@ inspected archive.
 | Marginal coverage of one future loan | Freeze chronology, score, taxonomy, temporal weights, and one nonexchangeable-conformal theorem before the target outcome | An external, independent, or design-based upper bound on the theorem's swap, decoupling, or dependence penalty, with any confidence-bound failure probability propagated | The penalty is unbounded, postselected, or vacuous, or its estimation failure probability is omitted; current KS-like distances, PSI, rolling origins, and joint-block flags cannot substitute for it |
 | Selection-conditional coverage and FCR | JOMI with exactly $K$ selected loans and equal exposure $B/K$ [@jin2025focal] | Same-population exchangeability or a proved replacement, permutation-equivariant selection, disjoint policy construction and final calibration, and complete reference sets | Calibration-row permutations or irrelevant ID reversals change the rule, reference sets are too small, or historical target outcomes influence the policy |
 | Expected fractional exposure-weighted FCP | Exactly $K$ positive exposures, $A=\sum_j a_j>0$, and a predeclared hard concentration bound $a_i/A\le\kappa/K$ | Count FCR calibrated at $\alpha/\kappa$, using the deterministic inequality $\operatorname{FCP}^{\$}\le\kappa\operatorname{FCP}^{N}$ | $\kappa$ is selected post hoc, the portfolio denominator is ambiguous, the bound is written relative to $B$ while cash makes $A<B$, or the adjusted sets are uninformative |
-| Next-month portfolio decision risk | Complete issue month as the sampling unit, complete eligible endpoints, bounded loss, and a finite policy catalog frozen before risk calibration | Conformal Risk Control for an exchangeable monotone loss family with its finite-sample safe-terminal correction, or Learn-Then-Test for a finite reoptimized/nonmonotone catalog evaluated on i.i.d. contexts [@angelopoulos2024risk; @angelopoulos2025ltt] | Too few valid blocks, temporal assumptions fail, an eligible endpoint is incomplete, the CRC correction or LTT multiplicity contract fails, or a favorable policy is selected after outcomes |
+| Next-month portfolio decision risk | Complete issue month as the sampling unit, complete eligible endpoints, bounded loss, and a policy family frozen before risk calibration | Classical CRC for an exchangeable monotone family with its finite-sample safe-terminal correction; stability-based CRC for a symmetric non-monotone algorithm only with a valid nonvacuous stability certificate; or LTT for a finite reoptimized catalog evaluated on valid contexts [@angelopoulos2024risk; @angelopoulos2026nonmonotonic; @angelopoulos2025ltt] | Too few valid blocks, temporal assumptions fail, an eligible endpoint is incomplete, the classical CRC correction, non-monotone stability/reference-risk margin, or LTT multiplicity contract fails, or a favorable policy is selected after outcomes |
 
 In the first row, *temporal weights* means the sampling weights required by a
 named nonexchangeable or covariate-shift conformal theorem
@@ -2760,6 +2851,7 @@ credit scoring, conformal prediction, or linear programming separately.
 | Selection-conditional coverage and false-coverage-rate control [@jin2025focal; @gazin2025informative] | Validity targets tailored to black-box or informative selection under their own reference-set and multiplicity contracts | Candidate-level coverage is not transferred to budget-selected loans; neither procedure is implemented by the monthly optimizer |
 | Chance-constrained conformal predictive programming [@zhao2024cpp] | Calibrates a constraint-function quantile; its general a-posteriori guarantee uses a second i.i.d. calibration sample and covers an offset event | CRPTO inserts a prediction-set endpoint as an LP coefficient; no funded-set, zero-threshold, or temporal-transport certificate transfers |
 | Decision-optimal and counterfactual prediction sets [@wang2026optimal_decision_prediction_sets; @zheng2026counterfactual_decision_sets] | Couple set construction or coverage to an explicit downstream loss or induced action | Audits an observational accepted-loan archive; no counterfactual funding effect or policy-coupled validity |
+| Utility-directed and learned decision-aware conformal sets [@cortesgomez2025utility; @yeh2026; @chen2026polyhedral_conformal_ro] | Incorporate downstream utility into classification-set construction, or learn conditional/polyhedral uncertainty-set geometry against robust decision loss with their own calibration or independent recalibration contracts | Freezes one binary-set lifting instead of learning the predictive object; it lacks those design/recalibration splits and inherits none of their downstream robustness guarantees |
 
 **Table S13A.** Closest-work boundary for predictive, transport, and selection
 methods.
@@ -2771,7 +2863,8 @@ methods.
 | Multi-variable conformal set design [@lutzow2026mcp] | Jointly optimizes prediction-set shape and calibration through scenario optimization; RemMCP provides expected coverage under exchangeability and optimizer regularity, with a dimension-dependent calibration cost | MCP adds an explicit set-design objective and a new algorithm; CRPTO instead audits the endpoint of a fixed binary set and inherits no MCP certificate for temporal transport or the selected credit portfolio |
 | Catalog-uniform decision-calibrated conformal pacing [@shekhar2026decision_calibrated_pacing] | Calibrates the support function of forecast errors over a finite policy-sensitivity catalog and selects a robust pacing policy under exchangeable blocks, affine effects, and simultaneous catalog-wide uncertainty contracts | Their method uses neither a binary label set nor a set-equivalent per-loan endpoint; CRPTO's chronological archive does not establish those contracts and inherits no selected-policy or funded-loan coverage guarantee |
 | Valid selection and decision-risk calibration [@hegazy2025valid_selection_conformal_sets; @bao2025croms; @yeh2025training; @zhou2026creme] | Stability for selection among conformal sets (Hegazy et al.), conformal-risk model selection in CRO (Bao et al.), optimized-certainty-equivalent/tail-risk training (Yeh et al.), and expected miscoverage--regret assessment with split recalibration after selection (Zhou and Zhu) | Uses ruler sensitivity as a diagnostic; its coupled chronological contexts lack an independent selection/recalibration split, complete decision outcomes, and a compatible iid/exchangeability contract |
-| Decision-focused learning [@donti2017; @elmachtoub2022; @mandi2024] | Training predictions against downstream loss | Preserves the predictor for governance and audits a post-hoc decision layer |
+| Decision calibration [@zhao2021decisioncalibration; @shekhar2026decision_calibrated_pacing] | Makes predictions indistinguishable to a declared decision class, or calibrates policy impacts uniformly over a finite catalog under its own block assumptions | Probability, conformal, and risk calibration in CRPTO are different objects; no decision-indistinguishability or catalog-uniform certificate is inherited |
+| Decision-focused learning with uncertain constraints [@donti2017; @elmachtoub2022; @liu2021riskbounds; @schutte2024robust; @im2025spor; @mandi2024] | Trains predictions or robust surrogates against downstream decision loss; SPO-RC adds feasibility-sensitive learning with contextual uncertainty sets for uncertain constraints | Preserves the predictor for governance and audits a post-hoc decision layer; it claims neither regret/Fisher consistency nor the SPO-RC constraint guarantee |
 | CRPTO comparator-design principle | Holding the decision problem fixed while changing one ingredient | Shows that a shared numeric cap does not hold decision stringency fixed |
 
 **Table S13B.** Closest-work boundary for decision-oriented neighboring methods

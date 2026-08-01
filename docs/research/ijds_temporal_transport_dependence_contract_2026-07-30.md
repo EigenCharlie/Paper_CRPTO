@@ -45,8 +45,11 @@ Two different theorem routes must remain separate:
 - a predictive set or upper bound for one subsequent block loss, including a
   maximum-over-catalog loss if that scalar was fixed in advance; or
 - expected population-risk control for per-policy bounded losses, using CRC
-  for a monotone family or LTT for a finite non-monotone catalog under their
-  respective sampling assumptions.
+  through either the classical monotone route or a separately frozen,
+  stability-certified non-monotone route, or using LTT for a finite
+  non-monotone catalog under their respective sampling assumptions
+  [@angelopoulos2024risk; @angelopoulos2026nonmonotonic;
+  @angelopoulos2025ltt].
 
 The first route is not supplied by CRC or LTT merely because the input is a
 block. The second route is not a high-probability upper bound on the realized

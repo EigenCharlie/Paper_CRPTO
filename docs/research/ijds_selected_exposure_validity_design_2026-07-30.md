@@ -201,10 +201,13 @@ L_t(\lambda)
 \mathbf1\{Y_{it}\notin C_{it}(\lambda)\}.
 \]
 
-Conformal Risk Control can calibrate a monotone loss family when its sampling
-and monotonicity conditions hold. If changing \(\lambda\) reoptimizes the LP and
-destroys monotonicity, Learn-Then-Test is the more appropriate route for a
-finite, preregistered policy catalog. The exchangeable unit must then be the
+Classical scalar Conformal Risk Control can calibrate a monotone loss family
+when its sampling and monotonicity conditions hold. Stability-based CRC can in
+principle handle a symmetric non-monotone algorithm, but it requires a valid,
+nonvacuous stability certificate and reference-risk margin
+[@angelopoulos2026nonmonotonic]. If changing \(\lambda\) reoptimizes the LP and
+no such solver-stability proof is available, Learn-Then-Test remains the cleaner
+route for a finite, preregistered policy catalog. The exchangeable unit must then be the
 complete month or portfolio context, not an individual loan. This controls
 aggregate risk, not focal selection-conditional coverage.
 

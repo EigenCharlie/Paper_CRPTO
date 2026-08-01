@@ -305,6 +305,26 @@ coverage, whose denominator is positive-label exposure. Neither result identifie
 policy direction or a universal incompatibility between conformal prediction and
 optimization.
 
+### Exact continuous-embedding fibre retained after binary intersection
+
+The binary set identifies only endpoint contact with zero and one. If a bounded
+continuous interval is additionally required to contain its center `p`, then for
+`0<gamma<=1` the downstream coefficient `q=(1-gamma)*p+gamma*u` has the exact
+compatible fibre
+
+    {p+gamma*(1-p)}              when 1 belongs to S,
+    [p,p+gamma*(1-p))            when 1 does not belong to S.
+
+At `gamma=0`, `q=p`. Under rectangular loan-wise ambiguity and nonnegative
+allocations, the supremum coefficient is therefore `p+gamma*(1-p)` for every
+loan. At `gamma=1`, naive worst-fibre robustification assigns coefficient one
+to every loan: a full-budget cap below one is infeasible, while a formulation
+with optional cash reduces the constraint to total invested capital and loses
+loan discrimination. For sets without label one the boundary is a supremum,
+not generally an attained maximum. This is an information-loss corollary for
+the declared fibre. It neither asserts that an optimizer must change nor treats
+the product of marginal binary sets as a jointly covered uncertainty set.
+
 ---
 
 ## 7. T3 — WITHDRAWN

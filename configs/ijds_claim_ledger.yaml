@@ -228,11 +228,12 @@ claims:
     kind: theorem
     rule: documented
     lineages: [binary_geometry.outcome_free]
-    scope: exact_endpoint_equivalence_classes_of_bounded_continuous_intervals_under_intersection_with_the_binary_label_space
+    scope: exact_endpoint_and_coefficient_fibres_of_bounded_continuous_intervals_containing_the_score_under_intersection_with_the_binary_label_space_including_rectangular_worst_fibre_suprema
     forbidden_inference:
       [preferred_embedding, calibrated_upper_endpoint_magnitude,
        optimizer_or_policy_direction, allocation_change_without_experiment,
-       selected_or_funded_set_validity]
+       selected_or_funded_set_validity, jointly_covered_cartesian_product,
+       nonidentification_requires_decision_change, normative_robust_policy]
     surfaces:
       required: [body, supplement, registry, claim_matrix]
       allowed: [body, supplement, registry, claim_matrix]
@@ -244,7 +245,7 @@ claims:
     lineages:
       [binary_geometry.outcome_free, two_ruler.outcome_free,
        set_preserving_embedding]
-    scope: nonempty_convex_allocation_set_exact_weak_order_equivalence_on_the_span_of_feasible_allocation_differences_with_translated_caps_common_objective_floors_and_a_common_normalized_ruler_anchor
+    scope: nonempty_convex_allocation_set_exact_weak_order_equivalence_on_the_span_of_feasible_allocation_differences_with_translated_caps_common_objective_floors_a_common_normalized_ruler_anchor_and_standard_local_normal_cone_cooptimality_conditions
     forbidden_inference:
       [binary_set_equivalence_implies_decision_equivalence,
        coordinatewise_loan_ranking_is_sufficient,
@@ -253,7 +254,8 @@ claims:
        common_solver_output_proves_equal_optimal_faces,
        optimizer_uniqueness, solver_output_identity,
        preferred_embedding, selected_or_funded_set_validity,
-       policy_direction_or_dominance]
+       policy_direction_or_dominance,
+       additive_full_budget_offset_invariance_with_zero_score_cash]
     surfaces:
       required: [body, supplement, registry, claim_matrix]
       allowed: [body, supplement, registry, claim_matrix]
@@ -523,7 +525,7 @@ claims:
     kind: theorem
     rule: documented
     lineages: [funded_selection_estimands]
-    scope: exposure_weighted_minus_count_weighted_miscoverage_equivalently_count_minus_exposure_coverage_on_one_fixed_positive_support
+    scope: exposure_weighted_minus_unweighted_panel_miscoverage_equivalently_unweighted_minus_exposure_coverage_on_one_fixed_nonempty_panel_with_nonnegative_exposures_and_positive_total_exposure_including_candidate_and_selected_support_special_cases
     forbidden_inference:
       [support_changing_contrast_without_union_construction, preferred_weighting,
        selected_set_conformal_validity, false_coverage_rate_control,
